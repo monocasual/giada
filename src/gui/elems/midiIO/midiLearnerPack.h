@@ -25,51 +25,37 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_MIDI_CHANNEL_H
-#define G_MIDI_CHANNEL_H
+#ifndef GE_LEARNER_PACK_H
+#define GE_LEARNER_PACK_H
 
 
-#ifdef WITH_VST
-#include "deps/juce-config.h"
-#endif
-#include "core/channels/channel.h"
+#include <string>
+#include <vector>
+#include "gui/elems/basics/pack.h"
+#include "gui/elems/midiIO/midiLearner.h"
 
 
 namespace giada {
-namespace m 
+namespace v
 {
-class MidiChannel : public Channel
+class geMidiLearnerPack : public gePack
 {
 public:
 
-	MidiChannel(int bufferSize, ID columnId, ID id);
-	MidiChannel(const MidiChannel& o);
-	MidiChannel(const patch::Channel& p, int bufferSize);
+	geMidiLearnerPack(int x, int y, std::string title="");
 
-	MidiChannel* clone() const override;
-	void parseEvents(mixer::FrameEvents fe) override;
-	void render(AudioBuffer& out, const AudioBuffer& in, AudioBuffer& inToOut, 
-		bool audible, bool running) override;
-	void start(int frame, bool doQuantize, int velocity) override;
-	void kill(int localFrame) override;
-	void empty() override;
-	void stopBySeq(bool chansStopOnSeqHalt) override;
-	void stop() override {};
-	void rewindBySeq() override;
-	void setMute(bool value) override;
-	void setSolo(bool value) override;
-	void receiveMidi(const MidiEvent& midiEvent) override;
+    void setCallbacks(std::function<void(uint32_t)>, std::function<void(uint32_t)>);
+    void addMidiLearner(std::string label, int param, bool visible=true); 
+    void setEnabled(bool v);
 
-	/* sendMidi
-	Sends Midi event to the outside world. */
+    std::vector<geMidiLearner*> learners;
 
-	void sendMidi(const MidiEvent& e, int localFrame);
-	
-	bool midiOut;      // enable midi output
-	int  midiOutChan;  // midi output channel
+private:
+
+    std::function<void(uint32_t)> m_onStartLearn;
+    std::function<void(uint32_t)> m_onClearLearn;
 };
-
-}} // giada::m::
+}} // giada::v::
 
 
 #endif

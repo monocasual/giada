@@ -31,7 +31,6 @@
 #include <cassert>
 #include <FL/Fl.H>
 #include "core/model/model.h"
-#include "core/channels/channel.h"
 #include "core/pluginManager.h"
 #include "core/pluginHost.h"
 #include "core/mixer.h"
@@ -55,9 +54,94 @@ namespace giada {
 namespace c {
 namespace plugin 
 {
-namespace
+Param::Param(const m::Plugin& p, int index)
+: index   (index)
+, pluginId(p.id)
+, name    (p.getParameterName(index))
+, text    (p.getParameterText(index))
+, label   (p.getParameterLabel(index))
+, value   (p.getParameter(index))
 {
-void updatePluginEditor_(ID pluginId, bool gui)
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+Plugin::Plugin(const m::Plugin& p, ID channelId)
+: id            (p.id)
+, channelId     (channelId)
+, valid         (p.valid)
+, hasEditor     (p.hasEditor())
+, isBypassed    (p.isBypassed())
+, name          (p.getName())
+, uniqueId      (p.getUniqueId())
+, currentProgram(p.getCurrentProgram())
+, m_plugin      (p)
+{
+	for (int i = 0; i < p.getNumPrograms(); i++)
+	 	programs.push_back({ i, p.getProgramName(i) });
+	for (int i = 0; i < p.getNumParameters(); i++)
+		paramIndexes.push_back(i);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+juce::AudioProcessorEditor* Plugin::createEditor() const
+{
+	m::model::PluginsLock l(m::model::plugins);
+	return m_plugin.createEditor();
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+Plugins::Plugins(const m::Channel& c)
+: channelId(c.id)
+, pluginIds(c.pluginIds) 
+{
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+Plugins getPlugins(ID channelId)
+{
+	namespace mm = m::model;
+
+	mm::ChannelsLock cl(mm::channels);
+	return Plugins(mm::get(mm::channels, channelId));
+}
+
+
+Plugin getPlugin(ID pluginId, ID channelId)
+{
+	m::model::PluginsLock l(m::model::plugins);
+	return Plugin(m::model::get(m::model::plugins, pluginId), channelId);
+}
+
+
+Param getParam (int index, ID pluginId)
+{
+	m::model::PluginsLock l(m::model::plugins);
+	return Param(m::model::get(m::model::plugins, pluginId), index);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void updateWindow(ID pluginId, bool gui)
 {
 	m::model::PluginsLock l(m::model::plugins);
 	const m::Plugin& p = m::model::get(m::model::plugins, pluginId);
@@ -79,11 +163,8 @@ void updatePluginEditor_(ID pluginId, bool gui)
 	child->updateParameters(!gui);
 	if (!gui) Fl::unlock();
 }
-} // {anonymous}
 
 
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 
@@ -121,17 +202,7 @@ void freePlugin(ID pluginId, ID channelId)
 void setProgram(ID pluginId, int programIndex)
 {
 	m::pluginHost::setPluginProgram(pluginId, programIndex); 
-	updatePluginEditor_(pluginId, /*gui=*/true); 
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void setParameter(ID pluginId, int paramIndex, float value, bool gui)
-{
-	m::pluginHost::setPluginParameter(pluginId, paramIndex, value); 
-	updatePluginEditor_(pluginId, gui); 
+	updateWindow(pluginId, /*gui=*/true); 
 }
 
 

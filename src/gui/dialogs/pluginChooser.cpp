@@ -30,7 +30,6 @@
 
 #include "glue/plugin.h"
 #include "utils/gui.h"
-#include "core/channels/channel.h"
 #include "core/conf.h"
 #include "core/pluginManager.h"
 #include "core/pluginHost.h"
@@ -44,9 +43,9 @@
 namespace giada {
 namespace v
 {
-gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID chanID)
-: gdWindow(X, Y, W, H, "Available plugins"),
-  m_chanID(chanID)
+gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId)
+: gdWindow   (X, Y, W, H, "Available plugins")
+, m_channelId(channelId)
 {
 	/* top area */
 	Fl_Group *group_top = new Fl_Group(8, 8, w()-16, 20);
@@ -132,7 +131,7 @@ void gdPluginChooser::cb_add()
 	int pluginIndex = browser->value() - 3; // subtract header lines
 	if (pluginIndex < 0)
 		return;
-	c::plugin::addPlugin(pluginIndex, m_chanID);
+	c::plugin::addPlugin(pluginIndex, m_channelId);
 	do_callback();
 }
 }} // giada::v::

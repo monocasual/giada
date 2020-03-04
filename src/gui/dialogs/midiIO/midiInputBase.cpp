@@ -56,16 +56,6 @@ gdMidiInputBase::~gdMidiInputBase()
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInputBase::refresh()
-{
-	for (geMidiLearnerBase* l : m_learners)
-		l->refresh();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void gdMidiInputBase::cb_close(Fl_Widget* w, void* p) { ((gdMidiInputBase*)p)->cb_close(); }
 
 

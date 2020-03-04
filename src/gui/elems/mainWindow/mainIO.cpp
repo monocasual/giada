@@ -26,12 +26,10 @@
 
 
 #include "core/const.h"
-#include "core/model/model.h"
 #include "core/graphics.h"
-#include "core/mixer.h"
-#include "core/mixerHandler.h"
-#include "core/pluginHost.h"
+#include "glue/events.h"
 #include "glue/main.h"
+#include "glue/channel.h"
 #include "utils/gui.h"
 #include "gui/elems/soundMeter.h"
 #include "gui/elems/basics/statusButton.h"
@@ -48,13 +46,8 @@ namespace giada {
 namespace v
 {
 geMainIO::geMainIO(int x, int y)
-: Fl_Pack(x, y, 396, G_GUI_UNIT)
+: gePack(x, y, Direction::HORIZONTAL)
 {
-	type(Fl_Pack::HORIZONTAL);
-	spacing(G_GUI_INNER_MARGIN);
-
-	begin();
-
 #if defined(WITH_VST)
 
 	masterFxIn  = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
@@ -64,25 +57,31 @@ geMainIO::geMainIO(int x, int y)
 	outMeter    = new geSoundMeter  (0, 0, 140, G_GUI_UNIT);
 	outVol      = new geDial        (0, 0, G_GUI_UNIT, G_GUI_UNIT);
 	masterFxOut = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
+	add(masterFxIn);
+	add(inVol);
+	add(inMeter);
+	add(inToOut);
+	add(outMeter);
+	add(outVol);
+	add(masterFxOut);
 
 #else
 
-	inVol       = new geDial      (0, 0, G_GUI_UNIT, G_GUI_UNIT);
-	inMeter     = new geSoundMeter(0, 0, 140, G_GUI_UNIT);
-	outMeter    = new geSoundMeter(0, 0, 140, G_GUI_UNIT);
-	outVol      = new geDial      (0, 0, G_GUI_UNIT, G_GUI_UNIT);
+	inVol    = new geDial      (0, 0, G_GUI_UNIT, G_GUI_UNIT);
+	inMeter  = new geSoundMeter(0, 0, 140, G_GUI_UNIT);
+	outMeter = new geSoundMeter(0, 0, 140, G_GUI_UNIT);
+	outVol   = new geDial      (0, 0, G_GUI_UNIT, G_GUI_UNIT);
+	add(inVol);    
+	add(inMeter);  
+	add(outMeter); 
+	add(outVol);   
 
 #endif
-
-	end();
 
 	resizable(nullptr);   // don't resize any widget
 
 	outVol->callback(cb_outVol, (void*)this);
 	inVol->callback(cb_inVol, (void*)this);
-
-	outVol->value(m::mh::getOutVol());
-	inVol->value(m::mh::getInVol());
 
 #ifdef WITH_VST
 
@@ -112,7 +111,7 @@ void geMainIO::cb_inToOut    (Fl_Widget* v, void* p) { ((geMainIO*)p)->cb_inToOu
 
 void geMainIO::cb_outVol()
 {
-	c::main::setOutVol(outVol->value());
+	c::events::setMasterOutVolume(outVol->value(), Thread::MAIN);
 }
 
 
@@ -121,7 +120,7 @@ void geMainIO::cb_outVol()
 
 void geMainIO::cb_inVol()
 {
-	c::main::setInVol(inVol->value());
+	c::events::setMasterInVolume(inVol->value(), Thread::MAIN);
 }
 
 
@@ -144,7 +143,7 @@ void geMainIO::cb_masterFxIn()
 
 void geMainIO::cb_inToOut()
 {
-	m::mh::setInToOut(inToOut->value());
+	c::main::setInToOut(inToOut->value());
 }
 
 #endif
@@ -155,13 +154,13 @@ void geMainIO::cb_inToOut()
 
 void geMainIO::setOutVol(float v)
 {
-  outVol->value(v);
+	outVol->value(v);
 }
 
 
 void geMainIO::setInVol(float v)
 {
-  inVol->value(v);
+	inVol->value(v);
 }
 
 
@@ -172,13 +171,13 @@ void geMainIO::setInVol(float v)
 
 void geMainIO::setMasterFxOutFull(bool v)
 {
-  masterFxOut->setStatus(v);
+	masterFxOut->setStatus(v);
 }
 
 
 void geMainIO::setMasterFxInFull(bool v)
 {
-  masterFxIn->setStatus(v);
+	masterFxIn->setStatus(v);
 }
 
 #endif
@@ -189,8 +188,8 @@ void geMainIO::setMasterFxInFull(bool v)
 
 void geMainIO::refresh()
 {
-	outMeter->mixerPeak = m::mixer::peakOut.load();
-	inMeter->mixerPeak  = m::mixer::peakIn.load();
+	outMeter->mixerPeak = m_io.a_getMasterOutPeak(); 
+	inMeter->mixerPeak  = m_io.a_getMasterInPeak();
 	outMeter->redraw();
 	inMeter->redraw();
 }
@@ -201,20 +200,14 @@ void geMainIO::refresh()
 
 void geMainIO::rebuild()
 {
-	m::model::onGet(m::model::channels, m::mixer::MASTER_OUT_CHANNEL_ID, [&](m::Channel& c)
-	{
-		outVol->value(c.volume);
-#ifdef WITH_VST
-		masterFxOut->setStatus(c.pluginIds.size() > 0);
-#endif
-	});
+	m_io = c::main::getIO();
 
-	m::model::onGet(m::model::channels, m::mixer::MASTER_IN_CHANNEL_ID, [&](m::Channel& c)
-	{
-		inVol->value(c.volume);
+	outVol->value(m_io.masterOutVol);
+	inVol->value(m_io.masterInVol);
 #ifdef WITH_VST
-		masterFxIn->setStatus(c.pluginIds.size() > 0);
+	masterFxOut->setStatus(m_io.masterOutHasPlugins);
+	masterFxIn->setStatus(m_io.masterInHasPlugins);
+	inToOut->value(m_io.inToOut);
 #endif
-	});
 }
 }} // giada::v::

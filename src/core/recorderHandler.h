@@ -68,7 +68,7 @@ bool cloneActions(ID channelId, ID newChannelId);
 /* liveRec
 Records a user-generated action. NOTE_ON or NOTE_OFF only for now. */
 
-void liveRec(ID channelId, MidiEvent e);
+void liveRec(ID channelId, MidiEvent e, Frame global);
 
 /* consolidate
 Records all live actions. Returns a set of channels IDs that have been 

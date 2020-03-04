@@ -27,15 +27,8 @@
 
 #include <cassert>
 #include <FL/Fl.H>
-#include "core/channels/channel.h"
 #include "core/init.h"
-#include "core/const.h"
-#include "core/mixer.h"
-#include "core/mixerHandler.h"
-#include "core/recManager.h"
-#include "core/conf.h"
-#include "glue/io.h"
-#include "glue/main.h"
+#include "glue/events.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
@@ -65,13 +58,20 @@ std::function<void()> signalCb_ = nullptr;
 /* -------------------------------------------------------------------------- */
 
 
-void perform_(const geChannel* gch, int event)
+void perform_(ID channelId, int event)
 {
-	if (event == FL_KEYDOWN)
-		c::io::keyPress(gch->channelId, Fl::event_ctrl(), Fl::event_shift(), G_MAX_VELOCITY);
+	if (event == FL_KEYDOWN) {
+		if (Fl::event_ctrl())
+			c::events::toggleMuteChannel(channelId, Thread::MAIN);
+		else
+		if (Fl::event_shift())
+			c::events::killChannel(channelId, Thread::MAIN);
+		else
+			c::events::pressChannel(channelId, G_MAX_VELOCITY, Thread::MAIN);
+	}
 	else
 	if (event == FL_KEYUP)	
-		c::io::keyRelease(gch->channelId, Fl::event_ctrl(), Fl::event_shift());
+		c::events::releaseChannel(channelId, Thread::MAIN);
 }
 
 
@@ -86,7 +86,7 @@ void dispatchChannels_(int event)
 	G_MainWin->keyboard->forEachChannel([=](geChannel& c)
 	{
 		if (c.handleKey(event))
-			perform_(&c, event);
+			perform_(c.getData().id, event);
 	});
 }
 
@@ -117,19 +117,19 @@ void dispatchKey(int event)
 	if (event == FL_KEYDOWN) {
 		if (Fl::event_key() == FL_BackSpace && !backspace_) {
 			backspace_ = true;
-			m::mh::rewindSequencer();
+			c::events::rewindSequencer();
 		}
 		else if (Fl::event_key() == FL_End && !end_) {
 			end_ = true;
-			c::main::toggleInputRec();
+			c::events::toggleInputRecording();
 		}
 		else if (Fl::event_key() == FL_Enter && !enter_) {
 			enter_ = true;
-			m::recManager::toggleActionRec(static_cast<RecTriggerMode>(m::conf::conf.recTriggerMode));
+			c::events::toggleActionRecording();
 		}
 		else if (Fl::event_key() == ' ' && !space_) {
 			space_ = true;
-			m::mh::toggleSequencer();
+			c::events::toggleSequencer();
 		}
 		else if (Fl::event_key() == FL_Escape && !esc_) {
 			esc_ = true;
@@ -163,10 +163,10 @@ void dispatchKey(int event)
 /* -------------------------------------------------------------------------- */
 
 
-void dispatchTouch(const geChannel* gch, bool status)
+void dispatchTouch(const geChannel& gch, bool status)
 {
 	triggerSignalCb_();
-	perform_(gch, status ? FL_KEYDOWN : FL_KEYUP);
+	perform_(gch.getData().id, status ? FL_KEYDOWN : FL_KEYUP);
 }
 
 

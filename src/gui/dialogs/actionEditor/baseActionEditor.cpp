@@ -31,13 +31,14 @@
 #include <FL/fl_draw.H>
 #include "utils/gui.h"
 #include "utils/string.h"
-#include "core/channels/channel.h"
-#include "core/model/model.h"
 #include "core/conf.h"
+#include "core/action.h"
 #include "core/const.h"
 #include "core/clock.h"
+#include "core/midiEvent.h"
+#include "glue/channel.h"
 #include "gui/elems/actionEditor/gridTool.h"
-#include "gui/elems/basics/scroll.h"
+#include "gui/elems/basics/scrollPack.h"
 #include "gui/elems/basics/choice.h"
 #include "baseActionEditor.h"
 
@@ -46,9 +47,9 @@ namespace giada {
 namespace v
 {
 gdBaseActionEditor::gdBaseActionEditor(ID channelId)
-:	gdWindow (640, 284),
-	channelId(channelId),
-	ratio    (G_DEFAULT_ZOOM_RATIO)
+: gdWindow (640, 284)
+, channelId(channelId)
+, ratio    (G_DEFAULT_ZOOM_RATIO)
 {
 	using namespace giada::m;
 
@@ -80,15 +81,6 @@ gdBaseActionEditor::~gdBaseActionEditor()
 
 void gdBaseActionEditor::cb_zoomIn(Fl_Widget* w, void* p)  { ((gdBaseActionEditor*)p)->zoomIn(); }
 void gdBaseActionEditor::cb_zoomOut(Fl_Widget* w, void* p) { ((gdBaseActionEditor*)p)->zoomOut(); }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-std::vector<m::Action> gdBaseActionEditor::getActions() const
-{
-	return m_actions;
-}
 
 
 /* -------------------------------------------------------------------------- */
@@ -198,12 +190,9 @@ void gdBaseActionEditor::prepareWindow()
 {
 	u::gui::setFavicon(this);
 
-	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
-	{
-		std::string l = "Action Editor";
-		if (c.name != "") l += " - " + c.name;
-		copy_label(l.c_str());
-	});
+	std::string l = "Action Editor";
+	if (m_data.channelName != "") l += " - " + m_data.channelName;
+	copy_label(l.c_str());
 
 	set_non_modal();
 	size_range(640, 284);

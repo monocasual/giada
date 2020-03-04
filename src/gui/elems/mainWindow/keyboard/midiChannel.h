@@ -34,17 +34,13 @@
 
 
 namespace giada {
-namespace m
-{
-class MidiChannel;
-}
 namespace v
 {
 class geMidiChannel : public geChannel
 {
 public:
 
-    geMidiChannel(int x, int y, int w, int h, ID channelId);
+    geMidiChannel(int x, int y, int w, int h, c::channel::Data d);
 
     void resize(int x, int y, int w, int h) override;
 
@@ -54,6 +50,8 @@ private:
 	static void cb_openMenu(Fl_Widget* v, void* p);
 	void cb_playButton();
 	void cb_openMenu();
+
+	c::channel::Data m_data;
 };
 }} // giada::v::
 

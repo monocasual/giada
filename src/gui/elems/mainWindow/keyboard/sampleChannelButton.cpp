@@ -26,13 +26,6 @@
 
 
 #include <FL/Fl.H>
-#include "core/channels/sampleChannel.h"
-#include "core/const.h"
-#include "core/model/model.h"
-#include "core/wave.h"
-#include "core/mixer.h"
-#include "core/recorder.h"
-#include "core/recManager.h"
 #include "utils/string.h"
 #include "utils/fs.h"
 #include "glue/channel.h"
@@ -48,33 +41,18 @@ extern giada::v::gdMainWindow* G_MainWin;
 namespace giada {
 namespace v
 {
-geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h, ID channelId)
-: geChannelButton(x, y, w, h, channelId)
+geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h, const c::channel::Data& d)
+: geChannelButton(x, y, w, h, d)
 {
-	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
-	{
-		const m::SampleChannel& sc = static_cast<m::SampleChannel&>(c);
-		
-		switch (sc.playStatus) {
-			case ChannelStatus::EMPTY:
-				label("-- no sample --");
-				break;
-			case ChannelStatus::MISSING:
-			case ChannelStatus::WRONG:
-				label("* file not found! *");
-				break;
-			default:
-				if (sc.name.empty()) {
-					m::model::onGet(m::model::waves, sc.waveId, [&](m::Wave& w)
-					{
-						label(w.getBasename(false).c_str());
-					});
-				}
-				else
-					label(sc.name.c_str());
-				break;
-		}
-	});
+	switch (m_channel.a_getPlayStatus()) {
+		case ChannelStatus::MISSING:
+		case ChannelStatus::WRONG:
+			label("* file not found! *");
+			break;
+		default:
+			label(m_channel.sample->waveId == 0 ? "-- no sample --" : m_channel.name.c_str());
+			break;
+	}
 }
 
 
@@ -84,15 +62,12 @@ geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h, ID chan
 void geSampleChannelButton::refresh()
 {
 	geChannelButton::refresh();
-	
-	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
-	{
-		if (m::recManager::isRecordingInput() && c.armed)
-			setInputRecordMode();
-		else
-		if (m::recManager::isRecordingAction() && c.hasData())
-			setActionRecordMode();
-	});
+
+	if (m_channel.a_isRecordingInput() && m_channel.a_isArmed())
+		setInputRecordMode();
+	else
+	if (m_channel.a_isRecordingAction() && m_channel.sample->waveId != 0 && !m_channel.sample->isLoop)
+		setActionRecordMode();
 
 	redraw();
 }
@@ -112,7 +87,7 @@ int geSampleChannelButton::handle(int e)
 			break;
 		}
 		case FL_PASTE: {
-			c::channel::loadChannel(m_channelId, u::string::trim(u::fs::stripFileUrl(Fl::event_text())));
+			c::channel::loadChannel(m_channel.id, u::string::trim(u::fs::stripFileUrl(Fl::event_text())));
 			ret = 1;
 			break;
 		}

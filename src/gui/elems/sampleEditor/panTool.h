@@ -45,9 +45,10 @@ class gePanTool : public Fl_Pack
 {
 public:
 
-  gePanTool(ID channelId, int x, int y);
+  gePanTool(const c::sampleEditor::Data& d, int x, int y);
 
-  void rebuild();
+  void rebuild(const c::sampleEditor::Data& d);
+  void update(float v);
 
 private:
 
@@ -56,7 +57,7 @@ private:
   void cb_panning();
   void cb_panReset();
 
-  ID m_channelId;
+	const c::sampleEditor::Data* m_data;
 
   geBox*    label;
   geDial*   dial;

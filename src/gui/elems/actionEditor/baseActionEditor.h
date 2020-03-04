@@ -43,12 +43,10 @@ class geBaseActionEditor : public Fl_Group
 {
 public:
 
-	geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h);
-
-  /* updateActions
-  Rebuild the actions widgets from scratch. */
+	/* updateActions
+	Rebuild the actions widgets from scratch. */
   
-	virtual void rebuild() = 0;
+	virtual void rebuild(c::actionEditor::Data& d) = 0;
 
 	/* handle
 	Override base FL_Group events. */
@@ -62,6 +60,13 @@ public:
 	geBaseAction* getActionAtCursor() const;
 
 protected:
+
+	geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h, gdBaseActionEditor*);
+
+	c::actionEditor::Data* m_data;
+
+	/* m_base
+	Pointer to parent class. */
 
 	gdBaseActionEditor* m_base;
 

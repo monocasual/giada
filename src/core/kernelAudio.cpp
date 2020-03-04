@@ -185,10 +185,9 @@ int openDevice()
 			nullptr,                                          // user data (unused)
 			&options);
 		
-		std::unique_ptr<model::Kernel> k = model::kernel.clone();
-		k->audioReady = true;
-		model::kernel.swap(std::move(k));
-		
+		model::onSwap(model::kernel, [](model::Kernel& k) {
+			k.audioReady = true;
+		});
 		return 1;
 	}
 	catch (RtAudioError &e) {

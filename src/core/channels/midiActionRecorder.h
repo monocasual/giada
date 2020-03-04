@@ -25,58 +25,38 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MIDI_LEARNER_BASE_H
-#define GE_MIDI_LEARNER_BASE_H
+#ifndef G_CHANNEL_MIDI_ACTION_RECORDER_H
+#define G_CHANNEL_MIDI_ACTION_RECORDER_H
 
 
-#include <string>
-#include <FL/Fl_Group.H>
-
-
-class geBox;
-class geButton;
+#include "core/types.h"
 
 
 namespace giada {
-namespace v 
+namespace m
 {
-class geMidiLearnerBase : public Fl_Group
+namespace mixer
+{
+struct Event;
+}
+struct ChannelState;
+class MidiActionRecorder
 {
 public:
 
-	virtual ~geMidiLearnerBase() = default;
+    MidiActionRecorder(ChannelState*);
+    MidiActionRecorder(const MidiActionRecorder&, ChannelState* c=nullptr);
 
-	virtual void refresh() = 0;
-	virtual void onLearn() = 0;
-	virtual void onReset() = 0;
-
-	void activate();
-	void deactivate();
-
-protected:
-
-	geMidiLearnerBase(int x, int y, int w, std::string l, int param, uint32_t value);
-
-	/* update
-	Updates and repaints the label widget with value 'value'. */
-
-	void update(uint32_t value);
-
-	/* m_param
-	Parameter index to be learnt. */
-
-	int m_param;
-
-	geBox*    m_text;
-	geButton* m_valueBtn;
-	geButton* m_button;
+    void parse(const mixer::Event& e) const;
 
 private:
 
-	static void cb_button(Fl_Widget* v, void* p);
-	static void cb_value (Fl_Widget* v, void* p);
+    bool canRecord() const;
+    void record(const MidiEvent& e) const;
+
+    ChannelState* m_channelState;
 };
-}} // giada::v::
+}} // giada::m::
 
 
 #endif

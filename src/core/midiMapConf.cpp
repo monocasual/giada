@@ -92,7 +92,7 @@ void parse_(Message& message)
 
 	std::string input = message.valueStr;
 
-	size_t f = input.find("0x"); // check if "0x" is there
+	std::size_t f = input.find("0x"); // check if "0x" is there
 	if (f != std::string::npos)
 		input = message.valueStr.replace(f, 2, "");
 

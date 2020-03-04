@@ -27,8 +27,6 @@
 
 #include <cassert>
 #include <FL/Fl_Menu_Button.H>
-#include "core/channels/sampleChannel.h"
-#include "core/channels/channel.h"
 #include "core/model/model.h"
 #include "core/const.h"
 #include "core/mixer.h"
@@ -58,19 +56,16 @@ namespace giada {
 namespace v
 {
 geMainMenu::geMainMenu(int x, int y)
-: Fl_Pack(x, y, 300, 20)
+: gePack(x, y, Direction::HORIZONTAL)
 {
-	type(Fl_Pack::HORIZONTAL);
-	spacing(G_GUI_INNER_MARGIN);
-
-	begin();
-
 	file   = new geButton(0, 0, 70, 21, "file");
 	edit   = new geButton(0, 0, 70, 21, "edit");
 	config = new geButton(0, 0, 70, 21, "config");
 	about  = new geButton(0, 0, 70, 21, "about");
-
-	end();
+	add(file);
+	add(edit);
+	add(config);
+	add(about);
 
 	resizable(nullptr);   // don't resize any widget
 
@@ -135,7 +130,7 @@ void geMainMenu::cb_file()
 	}
 	else
 	if (strcmp(m->label(), "Close project") == 0) {
-		c::main::resetToInitState(/*createColumns=*/true);
+		c::main::closeProject(/*createColumns=*/true);
 	}
 #ifndef NDEBUG
 	else
@@ -156,7 +151,7 @@ void geMainMenu::cb_file()
 void geMainMenu::cb_edit()
 {
 	Fl_Menu_Item menu[] = {
-		{"Clear all samples"},
+		{"Free all Sample channels"},
 		{"Clear all actions"},
 		{"Setup global MIDI input..."},
 		{0}
@@ -177,7 +172,7 @@ void geMainMenu::cb_edit()
 	const Fl_Menu_Item* m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, &b);
 	if (!m) return;
 
-	if (strcmp(m->label(), "Clear all samples") == 0) 
+	if (strcmp(m->label(), "Free all Sample channels") == 0) 
 		c::main::clearAllSamples();
 	else
 	if (strcmp(m->label(), "Clear all actions") == 0) 

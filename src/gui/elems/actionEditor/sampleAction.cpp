@@ -26,7 +26,6 @@
 
 
 #include <FL/fl_draw.H>
-#include "core/channels/sampleChannel.h"
 #include "core/const.h"
 #include "core/action.h"
 #include "sampleAction.h"

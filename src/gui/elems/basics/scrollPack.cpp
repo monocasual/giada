@@ -25,57 +25,65 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifdef WITH_VST
-
-
-#include <FL/Fl.H>
-#include "core/model/model.h"
-#include "glue/io.h"
-#include "gui/elems/basics/button.h"
-#include "midiLearnerPlugin.h"
+#include <cassert>
+#include "core/const.h"
+#include "boxtypes.h"
+#include "scrollPack.h"
 
 
 namespace giada {
 namespace v 
 {
-geMidiLearnerPlugin::geMidiLearnerPlugin(int x, int y, int w, std::string l, int param, uint32_t value, ID pluginId)
-: geMidiLearnerBase(x, y, w, l, param, value),
-  m_pluginId       (pluginId)
+geScrollPack::geScrollPack(int x, int y, int w, int h, int type, Direction dir,
+    int gutter)
+: geScroll   (x, y, w, h, type)
+, m_direction(dir)
+, m_gutter   (gutter)
 {
+    end();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearnerPlugin::refresh()
+std::size_t geScrollPack::countChildren() const
 {
-	m::model::onGet(m::model::plugins, m_pluginId, [&](const m::Plugin& p)
-	{
-		assert(static_cast<size_t>(m_param) < p.midiInParams.size());
-		update(p.midiInParams[m_param]);
-	});
+    return m_widgets.size();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearnerPlugin::onLearn()
+void geScrollPack::add(Fl_Widget* w)
 {
-	if (m_button->value() == 1)
-		c::io::startPluginMidiLearn(m_param, m_pluginId);
-	else
-		c::io::stopMidiLearn();
+    if (countChildren() == 0)
+        w->position(x(), y());
+    else
+    if (m_direction == Direction::HORIZONTAL)
+        w->position((getLastChild()->x() + getLastChild()->w() + m_gutter), y());
+    else
+        w->position(x(), (getLastChild()->y() + getLastChild()->h() + m_gutter));
+
+    geScroll::add(w);
+    m_widgets.push_back(w);
 }
 
 
-void geMidiLearnerPlugin::onReset()
+/* -------------------------------------------------------------------------- */
+
+
+Fl_Widget* geScrollPack::getChild(std::size_t i)
 {
-	if (Fl::event_button() == FL_RIGHT_MOUSE)
-		c::io::clearPluginMidiLearn(m_param, m_pluginId);	
+    return m_widgets.at(i); // Throws std::out_of_range in case
 }
-}} // giada::v::
+
+/* -------------------------------------------------------------------------- */
 
 
-#endif
+Fl_Widget* geScrollPack::getLastChild()
+{
+    return m_widgets.at(m_widgets.size() - 1); // Throws std::out_of_range in case
+}
+}}

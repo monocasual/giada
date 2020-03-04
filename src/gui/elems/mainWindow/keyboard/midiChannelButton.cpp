@@ -26,32 +26,16 @@
 
 
 #include "utils/string.h"
-#include "core/channels/midiChannel.h"
-#include "core/model/model.h"
-#include "core/recManager.h"
+#include "glue/channel.h"
 #include "midiChannelButton.h"
 
 
 namespace giada {
 namespace v
 {
-geMidiChannelButton::geMidiChannelButton(int x, int y, int w, int h, ID channelId)
-: geChannelButton(x, y, w, h, channelId)
+geMidiChannelButton::geMidiChannelButton(int x, int y, int w, int h, const c::channel::Data& d)
+: geChannelButton(x, y, w, h, d)
 {
-    std::string l; 
-	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
-	{
-		const m::MidiChannel& mc = static_cast<m::MidiChannel&>(c);
-		if (mc.name.empty())
-			l = "-- MIDI --";
-		else
-			l = mc.name.c_str();
-
-		if (mc.midiOut) 
-			l += " (ch " + u::string::iToString(mc.midiOutChan + 1) + " out)";
-	});
-
-    label(l.c_str());
 }
 
 
@@ -62,12 +46,25 @@ void geMidiChannelButton::refresh()
 {
 	geChannelButton::refresh();
 
-	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
-	{
-		if (m::recManager::isRecordingAction() && c.armed)
-			setActionRecordMode();
-	});
+	refreshLabel();
+
+	if (m_channel.a_isRecordingAction() && m_channel.a_isArmed())
+		setActionRecordMode();
 	
 	redraw();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geMidiChannelButton::refreshLabel()
+{
+    std::string l = m_channel.name.empty() ? "-- MIDI --" : m_channel.name; 
+
+	if (m_channel.midi->a_isOutputEnabled())
+		l += " (ch " + std::to_string(m_channel.midi->a_getFilter() + 1) + " out)";
+
+	label(l.c_str());
 }
 }} // giada::v::

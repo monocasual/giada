@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * geBaseButton
- * Base class for every button widget.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2020 Giovanni A. Zuliani | Monocasual

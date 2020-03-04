@@ -31,9 +31,6 @@
 #include "utils/log.h"
 #include "utils/math.h"
 #include "core/model/model.h"
-#include "core/channels/channel.h"
-#include "core/channels/sampleChannel.h"
-#include "core/channels/midiChannel.h"
 #include "core/wave.h"
 #include "core/kernelAudio.h"
 #include "core/recorder.h"
@@ -45,6 +42,7 @@
 #include "core/const.h"
 #include "core/audioBuffer.h"
 #include "core/action.h"
+#include "core/sequencer.h"
 #include "core/mixer.h"
 
 
@@ -54,56 +52,15 @@ namespace mixer
 {
 namespace
 {
-struct Metronome
-{
-	static constexpr Frame CLICK_SIZE = 38;
+/* recBuffer_
+Working buffer for audio recording. */
 
-	float beat[CLICK_SIZE] = {
-		 0.059033,  0.117240,  0.173807,  0.227943,  0.278890,  0.325936,
-		 0.368423,  0.405755,  0.437413,  0.462951,  0.482013,  0.494333,
-		 0.499738,  0.498153,  0.489598,  0.474195,  0.452159,  0.423798,
-		 0.389509,  0.349771,  0.289883,  0.230617,  0.173194,  0.118739,
-		 0.068260,  0.022631, -0.017423, -0.051339,	-0.078721, -0.099345,
-		-0.113163, -0.120295, -0.121028, -0.115804, -0.105209, -0.089954,
-		-0.070862, -0.048844
-	};
+AudioBuffer recBuffer_;
 
-	float bar[CLICK_SIZE] = {
-		 0.175860,  0.341914,  0.488904,  0.608633,  0.694426,  0.741500,
-		 0.747229,  0.711293,  0.635697,  0.524656,  0.384362,  0.222636,
-		 0.048496, -0.128348, -0.298035, -0.451105, -0.579021, -0.674653,
-		-0.732667, -0.749830, -0.688924, -0.594091, -0.474481, -0.340160,
-	 	-0.201360, -0.067752,  0.052194,  0.151746,  0.226280,  0.273493,
-		 0.293425,  0.288307,  0.262252,  0.220811,  0.170435,  0.117887,
-		 0.069639,  0.031320
-	};
+/* inBuffer_
+Working buffer for input channel. */
 
-	Frame tracker  = 0;
-	bool  running  = false;
-	bool  playBar  = false;
-	bool  playBeat = false;
-
-	void render(AudioBuffer& outBuf, bool& process, float* data, Frame f)
-	{
-		process = true;
-		for (int i=0; i<outBuf.countChannels(); i++)
-			outBuf[f][i] += data[tracker];
-		if (++tracker > Metronome::CLICK_SIZE) {
-			process = false;
-			tracker = 0;
-		}	
-	}
-} metronome_;
-
-/* vChanInput_
-Virtual channel for input recording. */
-
-AudioBuffer vChanInput_;
-
-/* vChanInToOut_
-Virtual channel in->out bridge (hear what you're playin). */
-
-AudioBuffer vChanInToOut_;
+AudioBuffer inBuffer_;
 
 /* inputTracker_
 Frame position while recording. */
@@ -118,16 +75,25 @@ std::function<void()> signalCb_ = nullptr;
 std::atomic<bool> processing_(false);
 std::atomic<bool> active_(false);
 
+/* eventBuffer_
+Buffer of events sent to channels for event parsing. This is filled with Events
+coming from the two event queues.*/
+
+EventBuffer eventBuffer_;
+
 
 /* -------------------------------------------------------------------------- */
 
 
-void computePeak_(const AudioBuffer& buf, std::atomic<float>& peak)
+bool isChannelAudible_(const Channel& c)
 {
-	for (int i=0; i<buf.countFrames(); i++)
-		for (int j=0; j<buf.countChannels(); j++)
-			if (buf[i][j] > peak)
-				peak = buf[i][j];
+    if (c.getType() == ChannelType::MASTER || c.getType() == ChannelType::PREVIEW)
+        return true;
+    if (c.state->mute.load() == true)
+        return false;
+    model::MixerLock ml(model::mixer);
+    bool hasSolos = model::mixer.get()->hasSolos;
+    return !hasSolos || (hasSolos && c.state->solo.load() == true);
 }
 
 
@@ -140,151 +106,91 @@ void lineInRec_(const AudioBuffer& inBuf)
 {
 	if (!recManager::isRecordingInput() || !kernelAudio::isInputEnabled())
 		return;
+	
+	float inVol        = mh::getInVol();
+	int   framesInLoop = clock::getFramesInLoop();
 
-	for (int i=0; i<inBuf.countFrames(); i++, inputTracker_++)
-		for (int j=0; j<inBuf.countChannels(); j++) {
-			if (inputTracker_ >= clock::getFramesInLoop())
-				inputTracker_ = 0;
-			vChanInput_[inputTracker_][j] += inBuf[i][j] * mh::getInVol();  // adding: overdub!
-		}
+	for (int i = 0; i < inBuf.countFrames(); i++, inputTracker_++)
+		for (int j = 0; j < inBuf.countChannels(); j++)
+			recBuffer_[inputTracker_ % framesInLoop][j] += inBuf[i][j] * inVol;  // adding: overdub!
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 /* processLineIn
-Computes line in peaks, plus handles "hear what you're playin'" thing. */
+Computes line in peaks, plus handles the internal working buffer for input. */
 
 void processLineIn_(const AudioBuffer& inBuf)
 {
 	if (!kernelAudio::isInputEnabled())
 		return;
 
-	computePeak_(inBuf, peakIn);
+	peakIn.store(inBuf.getPeak());
 
 	if (signalCb_ != nullptr && u::math::linearToDB(peakIn) > conf::conf.recTriggerLevel) {
 		signalCb_();
 		signalCb_ = nullptr;
 	}
 
-	/* "hear what you're playing" - process, copy and paste the input buffer onto 
-	the output buffer. */
+	/* Prepare the working buffer for input stream, which will be processed 
+	later on by the Master Input Channel with plug-ins.  */
 
 	model::MixerLock lock(model::mixer);
-	
-	if (model::mixer.get()->inToOut)
-		for (int i=0; i<vChanInToOut_.countFrames(); i++)
-			for (int j=0; j<vChanInToOut_.countChannels(); j++)
-				vChanInToOut_[i][j] = inBuf[i][j] * mh::getInVol();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-/* doQuantize
-Computes quantization on 'rewind' button. */
-
-void doQuantize_(unsigned frame)
-{
-	/* Nothing to do if quantizer disabled or a quanto has not passed yet. */
-
-	if (clock::getQuantize() == 0 || !clock::quantoHasPassed())
-		return;
-
-	if (rewindWait) {
-		rewindWait = false;
-		clock::rewind();
-		mh::rewindChannels();
-	}
+	inBuffer_.copyData(inBuf, mh::getInVol());
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void renderMetronome_(AudioBuffer& outBuf, Frame f)
+void processChannels_(Frame bufferSize)
 {
-	if (!metronome_.running)
-		return;
+	eventBuffer_.clear();
 
-	if (clock::isOnBar() || metronome_.playBar)
-		metronome_.render(outBuf, metronome_.playBar, metronome_.bar, f);
-	else
-	if (clock::isOnBeat() || metronome_.playBeat)
-		metronome_.render(outBuf, metronome_.playBeat, metronome_.beat, f);
-}
+	Event e;
+	while (UIevents.pop(e))   eventBuffer_.push_back(e);
+	while (MidiEvents.pop(e)) eventBuffer_.push_back(e);
 
-
-/* -------------------------------------------------------------------------- */
-
-
-void parseEvents_(Frame f)
-{
-	mixer::FrameEvents fe = {
-		.frameLocal   = f,
-		.frameGlobal  = clock::getCurrentFrame(),
-		.doQuantize   = clock::getQuantize() == 0 || !clock::quantoHasPassed(),
-		.onBar        = clock::isOnBar(),
-		.onFirstBeat  = clock::isOnFirstBeat(),
-		.quantoPassed = clock::quantoHasPassed(),
-		.actions      = recorder::getActionsOnFrame(clock::getCurrentFrame()),
-	};
+#ifdef G_DEBUG_MODE
+	for (const Event& e : eventBuffer_)
+		G_DEBUG("Event type=" << (int) e.type << ", channel=" << e.action.channelId 
+			<< ", delta=" << e.delta << ", globalFrame=" << clock::getCurrentFrame());
+#endif
 
 	model::ChannelsLock lock(model::channels);
-
-	/* TODO - channel->parseEvents alters things in Channel (i.e. it's mutable).
-	Refactoring needed ASAP. */
-
-	for (Channel* ch : model::channels)
-		ch->parseEvents(fe); 
+	for (const Channel* c : model::channels) {
+		c->parse(eventBuffer_, isChannelAudible_(*c)); 
+		c->advance(bufferSize);
+	}
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void render_(AudioBuffer& out, const AudioBuffer& in, AudioBuffer& inToOut)
+void renderMasterIn_(AudioBuffer& in)
 {
-	bool running = clock::isRunning();
-
 	model::ChannelsLock lock(model::channels);
+	model::get(model::channels, mixer::MASTER_IN_CHANNEL_ID).render(nullptr, &in, true);
+}
 
-	/* TODO - channel->render alters things in Channel (i.e. it's mutable).
-	Refactoring needed ASAP. */
-
-	for (const Channel* ch : model::channels) {
-		if (ch == nullptr ||
-			ch->id == mixer::MASTER_OUT_CHANNEL_ID ||
-			ch->id == mixer::MASTER_IN_CHANNEL_ID)
-			continue;
-		const_cast<Channel*>(ch)->render(out, in, inToOut, isChannelAudible(ch), running);
-	}
-
-	assert(model::channels.size() >= 3); // Preview channel included
-
-	/* Master channels are processed at the end, when the buffers have already 
-	been filled. */
-	
-	model::get(model::channels, mixer::MASTER_OUT_CHANNEL_ID).render(out, in, inToOut, true, true);
-	model::get(model::channels, mixer::MASTER_IN_CHANNEL_ID).render(out, in, inToOut, true, true);
+void renderMasterOut_(AudioBuffer& out)
+{
+	model::ChannelsLock lock(model::channels);
+	model::get(model::channels, mixer::MASTER_OUT_CHANNEL_ID).render(&out, nullptr, true);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void processSequencer_(AudioBuffer& out, const AudioBuffer& in)
+void renderChannels_(AudioBuffer& out, AudioBuffer& in)
 {
-	for (int j=0; j<out.countFrames(); j++) {
-		if (clock::isRunning()) {
-			parseEvents_(j);
-			doQuantize_(j);
-		}
-		clock::sendMIDIsync();
-		clock::incrCurrentFrame();
-		renderMetronome_(out, j);
-	}
-	lineInRec_(in);
+	model::ChannelsLock lock(model::channels);
+	for (const Channel* c : model::channels)
+		if (c->getType() != ChannelType::MASTER)
+			c->render(&out, &in, isChannelAudible_(*c));
 }
 
 
@@ -296,23 +202,20 @@ Cleans up every buffer. */
 void prepareBuffers_(AudioBuffer& outBuf)
 {
 	outBuf.clear();
-	vChanInToOut_.clear();
+	inBuffer_.clear();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
-/* limitOutput
+/* limit_
 Applies a very dumb hard limiter. */
 
-void limitOutput_(AudioBuffer& outBuf)
+void limit_(AudioBuffer& outBuf)
 {
-	if (!conf::conf.limitOutput)
-		return;
 	for (int i=0; i<outBuf.countFrames(); i++)
 		for (int j=0; j<outBuf.countChannels(); j++)
-			if      (outBuf[i][j] > 1.0f)  outBuf[i][j] = 1.0f;
-			else if (outBuf[i][j] < -1.0f) outBuf[i][j] = -1.0f;	
+			outBuf[i][j] = std::max(-1.0f, std::min(outBuf[i][j], 1.0f));
 }
 
 
@@ -320,20 +223,22 @@ void limitOutput_(AudioBuffer& outBuf)
 
 /* finalizeOutput
 Last touches after the output has been rendered: apply inToOut if any, apply
-output volume. */
+output volume, compute peak. */
 
 void finalizeOutput_(AudioBuffer& outBuf)
 {
-	model::MixerLock lock(model::mixer);
-	
-	//printf("%f\n", mh::getOutVol());
+	bool  inToOut = mh::getInToOut();
+	float outVol  = mh::getOutVol();
 
-	for (int i=0; i<outBuf.countFrames(); i++)
-		for (int j=0; j<outBuf.countChannels(); j++) {
-			if (model::mixer.get()->inToOut) // Merge vChanInToOut_, if enabled
-				outBuf[i][j] += vChanInToOut_[i][j];
-			outBuf[i][j] *= mh::getOutVol(); 
-		}
+	if (inToOut)
+		outBuf.addData(inBuffer_, outVol);
+	else
+		outBuf.applyGain(outVol);
+
+	if (conf::conf.limitOutput)
+		limit_(outBuf);
+	
+	peakOut.store(outBuf.getPeak());
 }
 }; // {anonymous}
 
@@ -343,9 +248,11 @@ void finalizeOutput_(AudioBuffer& outBuf)
 /* -------------------------------------------------------------------------- */
 
 
-std::atomic<bool>  rewindWait(false);
 std::atomic<float> peakOut(0.0);
 std::atomic<float> peakIn(0.0);
+
+Queue<Event, G_MAX_QUEUE_EVENTS> UIevents;
+Queue<Event, G_MAX_QUEUE_EVENTS> MidiEvents;
 
 
 /* -------------------------------------------------------------------------- */
@@ -353,16 +260,14 @@ std::atomic<float> peakIn(0.0);
 
 void init(Frame framesInSeq, Frame framesInBuffer)
 {
-	/* Allocate virtual inputs. vChanInput_ has variable size: it depends
+	/* Allocate virtual inputs. recBuffer_ has variable size: it depends
 	on how many frames there are in sequencer. */
 	
-	vChanInput_.alloc(framesInSeq, G_MAX_IO_CHANS);
-	vChanInToOut_.alloc(framesInBuffer, G_MAX_IO_CHANS);
+	recBuffer_.alloc(framesInSeq, G_MAX_IO_CHANS);
+	inBuffer_.alloc(framesInBuffer, G_MAX_IO_CHANS);
 
 	u::log::print("[mixer::init] buffers ready - framesInSeq=%d, framesInBuffer=%d\n", 
-		framesInSeq, framesInBuffer);	
-
-	clock::rewind();
+		framesInSeq, framesInBuffer);
 }
 
 
@@ -388,21 +293,21 @@ void disable()
 /* -------------------------------------------------------------------------- */
 
 
-void allocVirtualInput(Frame frames)
+void allocRecBuffer(Frame frames)
 {
-	vChanInput_.alloc(frames, G_MAX_IO_CHANS);
+	recBuffer_.alloc(frames, G_MAX_IO_CHANS);
 }
 
 
-void clearVirtualInput()
+void clearRecBuffer()
 {
-	vChanInput_.clear();
+	recBuffer_.clear();
 }
 
 
-const AudioBuffer& getVirtualInput()
+const AudioBuffer& getRecBuffer()
 {
-	return vChanInput_;
+	return recBuffer_;
 }
 
 
@@ -437,19 +342,32 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	prepareBuffers_(out);
 	processLineIn_(in);
 
-	/* Process model. */
-
 //out[0][0] = 3.0f;
 
-	if (clock::isActive()) 
-		processSequencer_(out, in);
-	render_(out, in, vChanInToOut_);
+	renderMasterIn_(inBuffer_);
+
+	/* 1) parse sequencer (if running)
+	   2) process channels (parse & advance them)
+	   3) render channels
+	   4) advance sequencer (if active) */
+
+	if (clock::isActive()) {
+		if (clock::isRunning())
+			sequencer::parse(static_cast<Frame>(bufferSize));
+		lineInRec_(inBuffer_);
+	}
+
+	processChannels_(static_cast<Frame>(bufferSize));
+
+	renderChannels_(out, inBuffer_);
+	renderMasterOut_(out);
+
+	if (clock::isActive())
+		sequencer::advance(out);
 
 	/* Post processing. */
 
 	finalizeOutput_(out);
-	limitOutput_(out);
-	computePeak_(out, peakOut);
 
 	/* Unset data in buffers. If you don't do this, buffers go out of scope and
 	destroy memory allocated by RtAudio ---> havoc. */
@@ -474,20 +392,6 @@ void close()
 /* -------------------------------------------------------------------------- */
 
 
-bool isChannelAudible(const Channel* ch)
-{
-	model::MixerLock l(model::mixer);
-
-	bool hasSolos = model::mixer.get()->hasSolos;
-	return !hasSolos || (hasSolos && ch->solo);
-}
-
-bool isMetronomeOn() { return metronome_.running; }
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void startInputRec()
 {
 	/* Start inputTracker_ from the current frame, not the beginning. */
@@ -498,21 +402,6 @@ void startInputRec()
 void stopInputRec()
 {
 	inputTracker_ = 0;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void toggleMetronome()
-{
-	metronome_.running = !metronome_.running;
-}
-
-
-void setMetronome(bool v) 
-{ 
-	metronome_.running = v; 
 }
 
 

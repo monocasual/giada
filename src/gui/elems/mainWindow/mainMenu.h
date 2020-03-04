@@ -29,7 +29,7 @@
 #define GE_MAIN_MENU_H
 
 
-#include <FL/Fl_Pack.H>
+#include "gui/elems/basics/pack.h"
 
 
 class geButton;
@@ -38,7 +38,7 @@ class geButton;
 namespace giada {
 namespace v
 {
-class geMainMenu : public Fl_Pack
+class geMainMenu : public gePack
 {
 public:
 

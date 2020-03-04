@@ -26,13 +26,10 @@
 
 
 #include "core/const.h"
-#include "core/model/model.h"
-#include "core/kernelAudio.h"
-#include "core/mixer.h"
-#include "core/recManager.h"
 #include "core/graphics.h"
 #include "core/clock.h"
 #include "glue/main.h"
+#include "glue/events.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include "gui/elems/basics/button.h"
@@ -50,27 +47,24 @@ namespace giada {
 namespace v
 {
 geMainTimer::geMainTimer(int x, int y)
-	: Fl_Group(x, y, 210, 20)
+: geGroup(x, y)
 {
-	begin();
-
-	quantizer  = new geChoice(x, y, 50, 20, "", false);
-	bpm        = new geButton(quantizer->x()+quantizer->w()+4,  y, 50, 20);
-	meter      = new geButton(bpm->x()+bpm->w()+8,  y, 50, 20);
-	multiplier = new geButton(meter->x()+meter->w()+4, y, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
-	divider    = new geButton(multiplier->x()+multiplier->w()+4, y, 20, 20, "", divideOff_xpm, divideOn_xpm);
-
-	end();
+	quantizer  = new geChoice(0, 0, 50, 20, "", false);
+	bpm        = new geButton(quantizer->x() + quantizer->w() + G_GUI_INNER_MARGIN, 0, 50, G_GUI_UNIT);
+	meter      = new geButton(bpm->x() + bpm->w() + G_GUI_OUTER_MARGIN, 0, 50, G_GUI_UNIT);
+	multiplier = new geButton(meter->x() + meter->w() + G_GUI_INNER_MARGIN, 0, G_GUI_UNIT, G_GUI_UNIT, "", multiplyOff_xpm, multiplyOn_xpm);
+	divider    = new geButton(multiplier->x() + multiplier->w() + G_GUI_INNER_MARGIN, 0, G_GUI_UNIT, G_GUI_UNIT, "", divideOff_xpm, divideOn_xpm);
+	add(quantizer);
+	add(bpm);
+	add(meter);
+	add(multiplier);
+	add(divider);
 
 	resizable(nullptr);   // don't resize any widget
 
-	bpm->copy_label(u::string::fToString(m::clock::getBpm(), 1).c_str());
 	bpm->callback(cb_bpm, (void*)this);
-
 	meter->callback(cb_meter, (void*)this);
-	
-	multiplier->callback(cb_multiplier, (void*)this);
-	
+	multiplier->callback(cb_multiplier, (void*)this);	
 	divider->callback(cb_divider, (void*)this);
 
 	quantizer->add("off", 0, cb_quantizer, (void*)this);
@@ -81,15 +75,6 @@ geMainTimer::geMainTimer(int x, int y)
 	quantizer->add("1\\/6", 0, cb_quantizer, (void*)this);
 	quantizer->add("1\\/8", 0, cb_quantizer, (void*)this);
 	quantizer->value(0); //  "off" by default
-
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
-	
-	/* Can't change bpm from within Giada when using JACK. */
-
-	if (m::kernelAudio::getAPI() == G_SYS_API_JACK)
-		bpm->deactivate();
-
-#endif
 }
 
 
@@ -135,7 +120,7 @@ void geMainTimer::cb_quantizer()
 
 void geMainTimer::cb_multiplier()
 {
-	c::main::beatsMultiply();
+	c::events::multiplyBeats();
 }
 
 
@@ -144,7 +129,7 @@ void geMainTimer::cb_multiplier()
 
 void geMainTimer::cb_divider()
 {
-	c::main::beatsDivide();
+	c::events::divideBeats();
 }
 
 
@@ -153,7 +138,9 @@ void geMainTimer::cb_divider()
 
 void geMainTimer::refresh()
 {
-	if (m::recManager::isRecordingInput()) {
+	m_timer = c::main::getTimer();
+
+	if (m_timer.isRecordingInput) {
 		bpm->deactivate();
 		meter->deactivate();
 		multiplier->deactivate();
@@ -163,8 +150,8 @@ void geMainTimer::refresh()
 		/* Don't reactivate bpm when using JACK. It must stay disabled. */
 
 #if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
-		if (m::kernelAudio::getAPI() != G_SYS_API_JACK)
-			bpm->activate();
+		if (m_timer.isUsingJack)
+			bpm->deactivate();
 #else
 		bpm->activate();
 #endif
@@ -180,12 +167,20 @@ void geMainTimer::refresh()
 
 void geMainTimer::rebuild()
 {
-	m::model::onGet(m::model::clock, [&](m::model::Clock& c)
-	{
-		setBpm(c.bpm);
-		setMeter(c.beats, c.bars);
-		setQuantizer(c.quantize);
-	});
+	m_timer = c::main::getTimer();
+
+	setBpm(m_timer.bpm);
+	setMeter(m_timer.beats, m_timer.bars);
+	setQuantizer(m_timer.quantize);
+
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+	
+	/* Can't change bpm from within Giada when using JACK. */
+
+	if (m_timer.isUsingJack)
+		bpm->deactivate();
+
+#endif
 }
 
 

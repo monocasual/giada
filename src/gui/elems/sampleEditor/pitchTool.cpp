@@ -27,12 +27,11 @@
 
 
 #include <FL/Fl.H>
-#include "core/channels/sampleChannel.h"
 #include "core/model/model.h"
 #include "core/const.h"
 #include "core/graphics.h"  
 #include "core/clock.h"
-#include "glue/channel.h"
+#include "glue/events.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include "gui/dialogs/sampleEditor.h"
@@ -46,9 +45,9 @@
 namespace giada {
 namespace v 
 {
-gePitchTool::gePitchTool(ID channelId, int x, int y)
-: Fl_Pack    (x, y, 600, G_GUI_UNIT),
-  m_channelId(channelId)
+gePitchTool::gePitchTool(const c::sampleEditor::Data& d, int x, int y)
+: Fl_Pack(x, y, 600, G_GUI_UNIT)
+, m_data (nullptr)
 {
 	type(Fl_Pack::HORIZONTAL);
 	spacing(G_GUI_INNER_MARGIN);
@@ -77,21 +76,29 @@ gePitchTool::gePitchTool(ID channelId, int x, int y)
 	pitchHalf->callback(cb_setPitchHalf, (void*)this);
 	pitchDouble->callback(cb_setPitchDouble, (void*)this);
 	pitchReset->callback(cb_resetPitch, (void*)this);
+
+	rebuild(d);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gePitchTool::rebuild()
+void gePitchTool::rebuild(const c::sampleEditor::Data& d)
 {
-	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
-	{
-		float p = static_cast<m::SampleChannel&>(c).getPitch();
-		
-		dial->value(p);
-		input->value(u::string::fToString(p, 4).c_str()); // 4 digits
-	});
+	m_data = &d;
+	update(m_data->pitch, /*isDial=*/false);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gePitchTool::update(float v, bool isDial)
+{
+	input->value(u::string::fToString(v, 4).c_str()); // 4 digits
+	if (!isDial)
+		dial->value(v);
 }
 
 
@@ -112,7 +119,7 @@ void gePitchTool::cb_setPitchNum   (Fl_Widget* w, void* p) { ((gePitchTool*)p)->
 
 void gePitchTool::cb_setPitch()
 {
-	c::channel::setPitch(m_channelId, dial->value());
+	c::events::setChannelPitch(m_data->channelId, dial->value(), Thread::MAIN);
 }
 
 
@@ -121,7 +128,7 @@ void gePitchTool::cb_setPitch()
 
 void gePitchTool::cb_setPitchNum()
 {
-	c::channel::setPitch(m_channelId, atof(input->value()));
+	c::events::setChannelPitch(m_data->channelId, atof(input->value()), Thread::MAIN);	
 }
 
 
@@ -130,7 +137,7 @@ void gePitchTool::cb_setPitchNum()
 
 void gePitchTool::cb_setPitchHalf()
 {
-	c::channel::setPitch(m_channelId, dial->value()/2);
+	c::events::setChannelPitch(m_data->channelId, dial->value() / 2, Thread::MAIN);	
 }
 
 
@@ -139,7 +146,7 @@ void gePitchTool::cb_setPitchHalf()
 
 void gePitchTool::cb_setPitchDouble()
 {
-	c::channel::setPitch(m_channelId, dial->value()*2);
+	c::events::setChannelPitch(m_data->channelId, dial->value() * 2, Thread::MAIN);	
 }
 
 
@@ -148,13 +155,8 @@ void gePitchTool::cb_setPitchDouble()
 
 void gePitchTool::cb_setPitchToBar()
 {
-	Frame end;
-	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
-	{
-		end = static_cast<m::SampleChannel&>(c).getEnd();
-	});
-
-	c::channel::setPitch(m_channelId, end / (float) m::clock::getFramesInBar());
+	c::events::setChannelPitch(m_data->channelId, m_data->end / (float) m::clock::getFramesInBar(), 
+		Thread::MAIN);	
 }
 
 
@@ -163,13 +165,8 @@ void gePitchTool::cb_setPitchToBar()
 
 void gePitchTool::cb_setPitchToSong()
 {
-	Frame end;
-	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
-	{
-		end = static_cast<m::SampleChannel&>(c).getEnd();
-	});
-
-	c::channel::setPitch(m_channelId, end / (float) m::clock::getFramesInLoop());
+	c::events::setChannelPitch(m_data->channelId, m_data->end / (float) m::clock::getFramesInLoop(), 
+		Thread::MAIN);	
 }
 
 
@@ -178,7 +175,6 @@ void gePitchTool::cb_setPitchToSong()
 
 void gePitchTool::cb_resetPitch()
 {
-	c::channel::setPitch(m_channelId, G_DEFAULT_PITCH);
+	c::events::setChannelPitch(m_data->channelId, G_DEFAULT_PITCH, Thread::MAIN);	
 }
-
 }} // giada::v::

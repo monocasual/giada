@@ -30,8 +30,8 @@
 
 
 #include <vector>
-#include <FL/Fl_Scroll.H>
-#include "core/channels/channel.h"
+#include <functional>
+#include "gui/elems/basics/scroll.h"
 #include "core/idManager.h"
 #include "core/const.h"
 
@@ -45,9 +45,7 @@ namespace v
 {
 class geColumn;
 class geChannel;
-class geSampleChannel;
-
-class geKeyboard : public Fl_Scroll
+class geKeyboard : public geScroll
 {
 public:
 

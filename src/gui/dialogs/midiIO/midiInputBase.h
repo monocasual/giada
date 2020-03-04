@@ -30,7 +30,7 @@
 
 
 #include "gui/dialogs/window.h"
-#include "gui/elems/midiIO/midiLearnerBase.h"
+#include "gui/elems/midiIO/midiLearner.h"
 
 
 class geButton;
@@ -47,18 +47,12 @@ public:
 
 	virtual ~gdMidiInputBase();
 
-	void refresh() override;
-
 protected:
 
-	gdMidiInputBase(int x, int y, int w, int h, const char* title);
-
-	static const int LEARNER_WIDTH = 284;
+	gdMidiInputBase(int x, int y, int w, int h, const char* title="");
 
 	static void cb_close(Fl_Widget* w, void* p);
 	void cb_close();
-
-	std::vector<geMidiLearnerBase*> m_learners;
 
 	geButton* m_ok;
 	geCheck*  m_enable;

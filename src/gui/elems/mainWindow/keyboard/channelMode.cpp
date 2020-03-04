@@ -30,7 +30,8 @@
 #include <cassert>
 #include <FL/fl_draw.H>
 #include "utils/gui.h"
-#include "core/channels/sampleChannel.h"
+#include "core/channels/channel.h"
+#include "core/channels/samplePlayer.h"
 #include "core/model/model.h"
 #include "core/graphics.h"
 #include "core/const.h"
@@ -42,23 +43,25 @@
 namespace giada {
 namespace v
 {
-geChannelMode::geChannelMode(int x, int y, int w, int h, ID channelId)
-: Fl_Menu_Button(x, y, w, h), 
-  m_channelId   (channelId)
+geChannelMode::geChannelMode(int x, int y, int w, int h, c::channel::Data& d)
+: Fl_Menu_Button(x, y, w, h) 
+, m_channel     (d)
 {
 	box(G_CUSTOM_BORDER_BOX);
 	textsize(G_GUI_FONT_SIZE_BASE);
 	textcolor(G_COLOR_LIGHT_2);
 	color(G_COLOR_GREY_2);
 
-	add("Loop . basic",      0, cb_changeMode, (void*) ChannelMode::LOOP_BASIC);
-	add("Loop . once",       0, cb_changeMode, (void*) ChannelMode::LOOP_ONCE);
-	add("Loop . once . bar", 0, cb_changeMode, (void*) ChannelMode::LOOP_ONCE_BAR);
-	add("Loop . repeat",     0, cb_changeMode, (void*) ChannelMode::LOOP_REPEAT);
-	add("Oneshot . basic",   0, cb_changeMode, (void*) ChannelMode::SINGLE_BASIC);
-	add("Oneshot . press",   0, cb_changeMode, (void*) ChannelMode::SINGLE_PRESS);
-	add("Oneshot . retrig",  0, cb_changeMode, (void*) ChannelMode::SINGLE_RETRIG);
-	add("Oneshot . endless", 0, cb_changeMode, (void*) ChannelMode::SINGLE_ENDLESS);
+	add("Loop . basic",      0, cb_changeMode, (void*) SamplePlayerMode::LOOP_BASIC);
+	add("Loop . once",       0, cb_changeMode, (void*) SamplePlayerMode::LOOP_ONCE);
+	add("Loop . once . bar", 0, cb_changeMode, (void*) SamplePlayerMode::LOOP_ONCE_BAR);
+	add("Loop . repeat",     0, cb_changeMode, (void*) SamplePlayerMode::LOOP_REPEAT);
+	add("Oneshot . basic",   0, cb_changeMode, (void*) SamplePlayerMode::SINGLE_BASIC);
+	add("Oneshot . press",   0, cb_changeMode, (void*) SamplePlayerMode::SINGLE_PRESS);
+	add("Oneshot . retrig",  0, cb_changeMode, (void*) SamplePlayerMode::SINGLE_RETRIG);
+	add("Oneshot . endless", 0, cb_changeMode, (void*) SamplePlayerMode::SINGLE_ENDLESS);
+
+	value(static_cast<int>(m_channel.sample->mode));
 }
 
 
@@ -69,32 +72,29 @@ void geChannelMode::draw()
 {
 	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);    // border
 
-	m::model::ChannelsLock l(m::model::channels);
-	const m::SampleChannel& ch = static_cast<m::SampleChannel&>(m::model::get(m::model::channels, m_channelId));
-	
-	switch (ch.mode) {
-		case ChannelMode::LOOP_BASIC:
+	switch (m_channel.sample->mode) {
+		case SamplePlayerMode::LOOP_BASIC:
 			fl_draw_pixmap(loopBasic_xpm, x()+1, y()+1);
 			break;
-		case ChannelMode::LOOP_ONCE:
+		case SamplePlayerMode::LOOP_ONCE:
 			fl_draw_pixmap(loopOnce_xpm, x()+1, y()+1);
 			break;
-		case ChannelMode::LOOP_ONCE_BAR:
+		case SamplePlayerMode::LOOP_ONCE_BAR:
 			fl_draw_pixmap(loopOnceBar_xpm, x()+1, y()+1);
 			break;
-		case ChannelMode::LOOP_REPEAT:
+		case SamplePlayerMode::LOOP_REPEAT:
 			fl_draw_pixmap(loopRepeat_xpm, x()+1, y()+1);
 			break;
-		case ChannelMode::SINGLE_BASIC:
+		case SamplePlayerMode::SINGLE_BASIC:
 			fl_draw_pixmap(oneshotBasic_xpm, x()+1, y()+1);
 			break;
-		case ChannelMode::SINGLE_PRESS:
+		case SamplePlayerMode::SINGLE_PRESS:
 			fl_draw_pixmap(oneshotPress_xpm, x()+1, y()+1);
 			break;
-		case ChannelMode::SINGLE_RETRIG:
+		case SamplePlayerMode::SINGLE_RETRIG:
 			fl_draw_pixmap(oneshotRetrig_xpm, x()+1, y()+1);
 			break;
-		case ChannelMode::SINGLE_ENDLESS:
+		case SamplePlayerMode::SINGLE_ENDLESS:
 			fl_draw_pixmap(oneshotEndless_xpm, x()+1, y()+1);
 			break;
 	}
@@ -112,6 +112,6 @@ void geChannelMode::cb_changeMode(Fl_Widget* v, void* p) { ((geChannelMode*)v)->
 
 void geChannelMode::cb_changeMode(int mode)
 {
-	c::channel::setSampleMode(m_channelId, static_cast<ChannelMode>(mode));
+	c::channel::setSamplePlayerMode(m_channel.id, static_cast<SamplePlayerMode>(mode));
 }
 }} // giada::v::

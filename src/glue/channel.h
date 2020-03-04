@@ -1,4 +1,4 @@
-    /* -----------------------------------------------------------------------------
+	/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
@@ -29,8 +29,11 @@
 #define G_GLUE_CHANNEL_H
 
 
+#include <optional>
+#include <atomic>
 #include <string>
 #include <vector>
+#include "core/model/model.h"
 #include "core/types.h"
 
 
@@ -38,10 +41,98 @@ namespace giada {
 namespace m
 {
 class Channel;
+class SamplePlayer;
 }
 namespace c {
 namespace channel 
 {
+struct SampleData
+{
+	SampleData() = delete;
+	SampleData(const m::SamplePlayer&, const m::AudioReceiver&);
+
+	Frame a_getTracker() const;
+	Frame a_getBegin() const;
+	Frame a_getEnd() const;
+	bool  a_getInputMonitor() const;
+
+	ID               waveId;
+	SamplePlayerMode mode;
+	bool             isLoop;
+	float            pitch;
+
+private:
+
+	const m::SamplePlayer*  m_samplePlayer;
+	const m::AudioReceiver* m_audioReceiver;
+};
+
+struct MidiData
+{
+	MidiData() = delete;
+	MidiData(const m::MidiSender&);
+
+	bool a_isOutputEnabled() const;
+	int  a_getFilter() const;
+
+private:
+
+	const m::MidiSender* m_midiSender;
+};
+
+struct Data
+{
+	Data() = default;
+	Data(const m::Channel&);
+
+	bool a_getMute() const;
+	bool a_getSolo() const;
+	ChannelStatus a_getPlayStatus() const;
+	ChannelStatus a_getRecStatus() const;
+	bool a_getReadActions() const;
+	bool a_isArmed() const;
+	bool a_isRecordingInput() const;
+	bool a_isRecordingAction() const;
+
+	ID              id;
+	ID              columnId;
+	std::vector<ID> pluginIds;
+	ChannelType     type;
+	Pixel           height;
+	std::string     name;
+	float           volume;
+	float           pan;
+	int             key;
+	bool            hasActions;
+
+	std::optional<SampleData> sample;
+	std::optional<MidiData>   midi;
+
+private:
+
+	const m::Channel& m_channel;
+};
+
+/* getChannels
+Returns a single viewModel object filled with data from a channel. */
+
+Data getData(ID channelId);
+
+/* getChannels
+Returns a vector of viewModel objects filled with data from channels. */
+
+std::vector<Data> getChannels();
+
+/* a_get
+Returns an atomic property from a Channel, by locking it first. */
+
+template <typename T>
+T a_get(const std::atomic<T>& a)
+{
+	m::model::ChannelsLock l(m::model::channels);
+	return a.load();
+}
+
 /* addChannel
 Adds an empty new channel to the stack. */
 
@@ -50,7 +141,7 @@ void addChannel(ID columnId, ChannelType type);
 /* loadChannel
 Fills an existing channel with a wave. */
 
-int loadChannel(ID channelId, const std::string& fname);
+int loadChannel(ID columnId, const std::string& fname);
 
 /* addAndLoadChannel
 Adds a new Sample Channel and fills it with a wave right away. */
@@ -73,38 +164,18 @@ Unloads the sample from a sample channel. */
 void freeChannel(ID channelId);
 
 /* cloneChannel
-Makes an exact copy of Channel *ch. */
+Makes an exact copy of a channel. */
 
 void cloneChannel(ID channelId);
 
 /* set*
 Sets several channel properties. */
 
-void setArm(ID channelId, bool value);
-void toggleArm(ID channelId);
 void setInputMonitor(ID channelId, bool value);
-void setMute(ID channelId, bool value);
-void toggleMute(ID channelId);
-void setSolo(ID channelId, bool value);
-void toggleSolo(ID channelId);
-void setVolume(ID channelId, float v, bool gui=true, bool editor=false);
 void setName(ID channelId, const std::string& name);
-void setPitch(ID channelId, float val, bool gui=true);
-void setPan(ID channelId, float val, bool gui=true);
-void setSampleMode(ID channelId, ChannelMode m);
+void setHeight(ID channelId, Pixel p);
 
-void start(ID channelId, int velocity, bool record);
-void kill(ID channelId, bool record);
-void stop(ID channelId);
-
-/* toggleReadingRecs
-Handles the 'R' button. If gui == true the signal comes from an user interaction
-on the GUI, otherwise it's a MIDI/Jack/external signal. */
-
-void toggleReadingActions(ID channelId);
-void startReadingActions(ID channelId);
-void stopReadingActions(ID channelId);
-
+void setSamplePlayerMode(ID channelId, SamplePlayerMode m);
 }}}; // giada::c::channel::
 
 #endif

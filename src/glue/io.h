@@ -43,26 +43,119 @@ class Channel;
 namespace c {
 namespace io 
 {
-/* keyPress / keyRelease
-Handle the key pressure, either via mouse/keyboard or MIDI. */
+struct PluginParamData
+{
+    int         index;
+    std::string name;
+    uint32_t    value;
+};
 
-void keyPress  (ID channelId, bool ctrl, bool shift, int velocity);
-void keyRelease(ID channelId, bool ctrl, bool shift);
+struct PluginData
+{
+    ID          id;
+    std::string name;
+    std::vector<PluginParamData> params;
+};
 
-/* setSampleChannelKey
+struct Channel_InputData
+{
+    Channel_InputData() = default;
+    Channel_InputData(const m::Channel&);
+
+    ID          channelId;
+    ChannelType channelType;
+    bool        enabled;
+    bool        velocityAsVol;
+    int         filter;
+
+    uint32_t    keyPress;
+    uint32_t    keyRelease;
+    uint32_t    kill;
+    uint32_t    arm;
+    uint32_t    volume;
+    uint32_t    mute;
+    uint32_t    solo;
+    uint32_t    pitch;
+    uint32_t    readActions;   
+
+    std::vector<PluginData> plugins;
+};
+
+struct Master_InputData
+{
+    Master_InputData() = default;
+    Master_InputData(const m::model::MidiIn&);
+
+    bool     enabled;
+    int      filter;
+
+	uint32_t rewind;
+	uint32_t startStop;
+	uint32_t actionRec;
+	uint32_t inputRec;
+	uint32_t volumeIn;
+	uint32_t volumeOut;
+	uint32_t beatDouble;
+	uint32_t beatHalf;
+	uint32_t metronome;	
+};
+
+struct MidiChannel_OutputData
+{
+    MidiChannel_OutputData(const m::MidiSender&);
+
+    bool enabled;
+    int  filter;
+};
+
+struct Channel_OutputData
+{
+    Channel_OutputData() = default;
+    Channel_OutputData(const m::Channel&);
+
+    ID       channelId;
+    bool     lightningEnabled;
+    uint32_t lightningPlaying;
+    uint32_t lightningMute;
+    uint32_t lightningSolo;
+
+    std::optional<MidiChannel_OutputData> output;
+};
+
+Channel_InputData  channel_getInputData(ID channelId);
+Channel_OutputData channel_getOutputData(ID channelId);
+Master_InputData   master_getInputData();
+
+/* Channel functions. */
+
+void channel_enableMidiLearn(ID channelId, bool v);
+void channel_enableMidiLightning(ID channelId, bool v);
+void channel_enableMidiOutput(ID channelId, bool v);
+void channel_enableVelocityAsVol(ID channelId, bool v);
+void channel_setMidiInputFilter(ID channelId, int c);
+void channel_setMidiOutputFilter(ID channelId, int c);
+
+/* channel_setKey
 Set key 'k' to Sample Channel 'channelId'. Used for keyboard bindings. */
 
-void setSampleChannelKey(ID channelId, int k);
+void channel_setKey(ID channelId, int k);
 
-void startChannelMidiLearn(int param, ID channelId);
-void startMasterMidiLearn (int param);
+/* MIDI Learning functions. */
+
+void channel_startMidiLearn(int param, ID channelId);
+void channel_clearMidiLearn(int param, ID channelId);
+void master_clearMidiLearn (int param);
+void master_startMidiLearn (int param);
 void stopMidiLearn();
-void clearChannelMidiLearn(int param, ID channelId);
-void clearMasterMidiLearn (int param);
 #ifdef WITH_VST
-void startPluginMidiLearn (int paramIndex, ID pluginId);
-void clearPluginMidiLearn (int param, ID pluginId);
+void plugin_startMidiLearn (int paramIndex, ID pluginId);
+void plugin_clearMidiLearn (int param, ID pluginId);
 #endif
+
+/* Master functions. */
+
+void master_enableMidiLearn(bool v);
+void master_setMidiFilter(int c);
 }}} // giada::c::io::
 
 #endif

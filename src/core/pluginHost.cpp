@@ -148,7 +148,6 @@ void processStack(AudioBuffer& outBuf, const std::vector<ID>& pluginIds,
 	else {
 		audioBuffer_.clear();
 		processPlugins_(pluginIds, *events);
-
 	}
 	juceToGiadaOutBuf_(outBuf);
 }
@@ -209,11 +208,12 @@ void freePlugins(const std::vector<ID>& pluginIds)
 /* -------------------------------------------------------------------------- */
 
 
-void clonePlugins(const Channel& oldChannel, Channel& newChannel)
+std::vector<ID> clonePlugins(std::vector<ID> pluginIds)
 {
-	newChannel.pluginIds.clear();
-	for (ID id : oldChannel.pluginIds)
-		newChannel.pluginIds.push_back(clonePlugin_(id));
+	std::vector<ID> out;
+	for (ID id : pluginIds)
+		out.push_back(clonePlugin_(id));
+	return out;
 }
 
 

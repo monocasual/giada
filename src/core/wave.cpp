@@ -161,6 +161,12 @@ void Wave::copyData(const float* data, int frames, int offset)
 }
 
 
+void Wave::copyData(const AudioBuffer& b)
+{
+	buffer.copyData(b);
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 

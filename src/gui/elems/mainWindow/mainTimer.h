@@ -29,7 +29,8 @@
 #define GE_MAIN_TIMER_H
 
 
-#include <FL/Fl_Group.H>
+#include "glue/main.h"
+#include "gui/elems/basics/group.h"
 
 
 class geButton;
@@ -39,7 +40,7 @@ class geChoice;
 namespace giada {
 namespace v
 {
-class geMainTimer : public Fl_Group
+class geMainTimer : public geGroup
 {
 public:
 
@@ -54,7 +55,7 @@ public:
 	void setQuantizer(int q);
 
 	/* setLock
-	Locks bpm, beter and multipliers. Used during audio recordings. */
+	Locks bpm, meter and multipliers. Used during audio recordings. */
 
 	void setLock(bool v);
 
@@ -70,6 +71,8 @@ private:
 	void cb_quantizer();
 	void cb_multiplier();
 	void cb_divider();
+
+	c::main::Timer m_timer;
 
 	geButton* bpm;
 	geButton* meter;

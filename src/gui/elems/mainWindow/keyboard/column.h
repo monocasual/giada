@@ -32,6 +32,7 @@
 #include <functional>
 #include <vector>
 #include <FL/Fl_Group.H>
+#include "glue/channel.h"
 #include "core/types.h"
 
 
@@ -55,7 +56,7 @@ public:
 	/* addChannel
 	Adds a new channel in this column. */
 
-	geChannel* addChannel(ID channelId, ChannelType t, int size);
+	geChannel* addChannel(c::channel::Data d);
 
 	/* refreshChannels
 	Updates channels' graphical statues. Called on each GUI cycle. */
@@ -77,7 +78,6 @@ private:
 
 	int countChannels() const;
 	int computeHeight() const;
-	void storeChannelHeight(const Fl_Widget* c, ID channelId) const;
 
 	std::vector<geChannel*> m_channels;
 

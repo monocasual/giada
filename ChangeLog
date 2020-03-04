@@ -11,6 +11,20 @@
 --------------------------------------------------------------------------------
 
 
+0.16.3 --- 
+- Added G_DEBUG macro
+- Optimized CPU usage when playing with many channels
+- Increased UI refresh rate to 30 frames per second
+- Improved quantizer precision
+- Simplified behavior when halting channels containing recorded actions 
+- Fix wrong audio sample looping with pitch != 1.0
+- Fix MIDI input master values not stored on quit
+- Fix One-shot press channel mode not working via mouse 
+- Fix Action recording overlap (both live and via Action Editor)
+- Fix crash when loading a project with missing audio files
+- Fix BPM not changing via Jack
+
+
 0.16.2 --- 2020 . 02 . 18
 - Switch to Json for modern C++ library for reading and writing Json data
 - Resizable channels, improved version

@@ -43,7 +43,7 @@ class gdChannelNameInput : public gdWindow
 {
 public:
 
-	gdChannelNameInput(ID channelId);
+	gdChannelNameInput(const c::channel::Data& d);
 
 private:
 
@@ -52,7 +52,7 @@ private:
 	void cb_update();
 	void cb_cancel();
 
-	ID m_channelId;
+	const c::channel::Data& m_data;
 
 	geInput*  m_name;
 	geButton* m_ok;

@@ -57,7 +57,7 @@ void close();
 Adds a new channel of type 'type' into the channels stack. Returns the new
 channel ID. */
 
-ID addChannel(ChannelType type, ID columnId);
+void addChannel(ChannelType type, ID columnId);
 
 /* loadChannel
 Loads a new Wave inside a Sample Channel. */
@@ -88,15 +88,7 @@ void cloneChannel(ID channelId);
 void renameChannel(ID channelId, const std::string& name);
 void freeAllChannels();
 
-void startSequencer();
-void stopSequencer();
-void toggleSequencer();
-void rewindSequencer();
-void rewindChannels();
-
 void setInToOut(bool v);
-void setInVol(float f);
-void setOutVol(float f);
 
 /* updateSoloCount
 Updates the number of solo-ed channels in mixer. */
@@ -108,12 +100,6 @@ Fills armed Sample Channels with audio data coming from an input recording
 session. */
 
 void finalizeInputRec();
-
-/* uniqueSamplePath
-Returns true if path 'p' is unique. Requires SampleChannel 'skip' in order
-to skip check against itself. */
-
-bool uniqueSamplePath(ID channelToSkip, const std::string& p);
 
 /* hasLogicalSamples
 True if 1 or more samples are logical (memory only, such as takes) */

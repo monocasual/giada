@@ -29,59 +29,80 @@
 #include "utils/gui.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "core/model/model.h"
-#include "gui/elems/midiIO/midiLearnerMaster.h"
+#include "gui/elems/midiIO/midiLearner.h"
+#include "gui/elems/basics/scrollPack.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/group.h"
 #include "midiInputMaster.h"
 
 
 namespace giada {
 namespace v 
 {
+geMasterLearnerPack::geMasterLearnerPack(int x, int y)
+: geMidiLearnerPack(x, y)
+{
+	setCallbacks(
+		[] (int param) { c::io::master_startMidiLearn(param); },
+		[] (int param) { c::io::master_clearMidiLearn(param); }
+	);
+	addMidiLearner("rewind",           G_MIDI_IN_REWIND);
+	addMidiLearner("play/stop",        G_MIDI_IN_START_STOP);
+	addMidiLearner("action recording", G_MIDI_IN_ACTION_REC);
+	addMidiLearner("input recording",  G_MIDI_IN_INPUT_REC);
+	addMidiLearner("metronome",        G_MIDI_IN_METRONOME);
+	addMidiLearner("input volume",     G_MIDI_IN_VOLUME_IN);
+	addMidiLearner("output volume",    G_MIDI_IN_VOLUME_OUT);
+	addMidiLearner("sequencer ×2",     G_MIDI_IN_BEAT_DOUBLE);
+	addMidiLearner("sequencer ÷2",     G_MIDI_IN_BEAT_HALF);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geMasterLearnerPack::update(const c::io::Master_InputData& d)
+{
+	learners[0]->update(d.rewind);
+	learners[1]->update(d.startStop);
+	learners[2]->update(d.actionRec);
+	learners[3]->update(d.inputRec);
+	learners[4]->update(d.metronome);	
+	learners[5]->update(d.volumeIn);
+	learners[6]->update(d.volumeOut);
+	learners[7]->update(d.beatDouble);
+	learners[8]->update(d.beatHalf);
+	setEnabled(d.enabled);
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
 gdMidiInputMaster::gdMidiInputMaster()
 : gdMidiInputBase(m::conf::conf.midiInputX, m::conf::conf.midiInputY, 300, 284, "MIDI Input Setup (global)")
 {
-	set_modal();
-
-	m::model::midiIn.lock();
-	const m::model::MidiIn* midiIn = m::model::midiIn.get();
-
-	Fl_Group* groupHeader = new Fl_Group(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w(), 20);
-	groupHeader->begin();
-
-		m_enable = new geCheck(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 120, G_GUI_UNIT, 
-			"Enable MIDI input");
-		m_channel = new geChoice(m_enable->x()+m_enable->w()+44, G_GUI_OUTER_MARGIN, 120, G_GUI_UNIT);
-
-	groupHeader->resizable(nullptr);
-	groupHeader->end();
-
-	Fl_Pack* pack = new Fl_Pack(G_GUI_OUTER_MARGIN, groupHeader->y()+groupHeader->h()+G_GUI_OUTER_MARGIN, 
-		LEARNER_WIDTH, 212);
-	pack->spacing(G_GUI_INNER_MARGIN);
-	pack->begin();
-		m_learners.push_back(new geMidiLearnerMaster(0, 0, LEARNER_WIDTH, "rewind",           G_MIDI_IN_REWIND,      midiIn->rewind));
-		m_learners.push_back(new geMidiLearnerMaster(0, 0, LEARNER_WIDTH, "play/stop",        G_MIDI_IN_START_STOP,  midiIn->startStop));
-		m_learners.push_back(new geMidiLearnerMaster(0, 0, LEARNER_WIDTH, "action recording", G_MIDI_IN_ACTION_REC,  midiIn->actionRec));
-		m_learners.push_back(new geMidiLearnerMaster(0, 0, LEARNER_WIDTH, "input recording",  G_MIDI_IN_INPUT_REC,   midiIn->inputRec));
-		m_learners.push_back(new geMidiLearnerMaster(0, 0, LEARNER_WIDTH, "metronome",        G_MIDI_IN_METRONOME,   midiIn->volumeIn));
-		m_learners.push_back(new geMidiLearnerMaster(0, 0, LEARNER_WIDTH, "input volume",     G_MIDI_IN_VOLUME_IN,   midiIn->volumeOut));
-		m_learners.push_back(new geMidiLearnerMaster(0, 0, LEARNER_WIDTH, "output volume",    G_MIDI_IN_VOLUME_OUT,  midiIn->beatDouble));
-		m_learners.push_back(new geMidiLearnerMaster(0, 0, LEARNER_WIDTH, "sequencer ×2",     G_MIDI_IN_BEAT_DOUBLE, midiIn->beatHalf));
-		m_learners.push_back(new geMidiLearnerMaster(0, 0, LEARNER_WIDTH, "sequencer ÷2",     G_MIDI_IN_BEAT_HALF,   midiIn->metronome));
-	pack->end();
-	m_ok = new geButton(w()-88, pack->y()+pack->h()+G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT, "Close");
-
 	end();
 
-	for (geMidiLearnerBase* l : m_learners)
-		midiIn->enabled ? l->activate() : l->deactivate();
+	geGroup* groupHeader = new geGroup(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN);
+		m_enable  = new geCheck(0, 0, 120, G_GUI_UNIT, "Enable MIDI input");
+		m_channel = new geChoice(m_enable->x() + m_enable->w() + 44, 0, 120, G_GUI_UNIT);
+	groupHeader->resizable(nullptr);
+	groupHeader->add(m_enable);
+	groupHeader->add(m_channel);
+
+	m_learners = new geMasterLearnerPack(G_GUI_OUTER_MARGIN, groupHeader->y() + groupHeader->h() + G_GUI_OUTER_MARGIN);
+	m_ok       = new geButton(w() - 88, m_learners->y() + m_learners->h() + G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT, "Close");
+
+	add(groupHeader);
+	add(m_learners);
+	add(m_ok);
 
 	m_ok->callback(cb_close, (void*)this);
-
-	m_enable->value(midiIn->enabled);
 	m_enable->callback(cb_enable, (void*)this);
 
 	m_channel->add("Channel (any)");
@@ -101,15 +122,28 @@ gdMidiInputMaster::gdMidiInputMaster()
 	m_channel->add("Channel 14");
 	m_channel->add("Channel 15");
 	m_channel->add("Channel 16");
-	
-	m_channel->value(midiIn->filter - 1 ? 0 : midiIn->filter + 1);
 	m_channel->callback(cb_setChannel, (void*)this);
-	midiIn->enabled ? m_channel->activate() : m_channel->deactivate();
-
-	m::model::midiIn.unlock();
 
 	u::gui::setFavicon(this);
+
+	set_modal();
+	rebuild();
 	show();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiInputMaster::rebuild()
+{
+	m_data = c::io::master_getInputData();
+
+	m_enable->value(m_data.enabled);
+	m_channel->value(m_data.filter - 1 ? 0 : m_data.filter + 1);
+	m_learners->update(m_data);
+
+	m_data.enabled ? m_channel->activate() : m_channel->deactivate();
 }
 
 
@@ -125,15 +159,7 @@ void gdMidiInputMaster::cb_setChannel(Fl_Widget* w, void* p) { ((gdMidiInputMast
 
 void gdMidiInputMaster::cb_enable()
 {
-	m::model::onSwap(m::model::midiIn, [&](m::model::MidiIn& m)
-	{
-		m.enabled = m_enable->value();
-	});
-	
-	m_enable->value() ? m_channel->activate() : m_channel->deactivate();
-
-	for (geMidiLearnerBase* l : m_learners)
-		m_enable->value() ? l->activate() : l->deactivate();
+	c::io::master_enableMidiLearn(m_enable->value());
 }
 
 
@@ -142,9 +168,6 @@ void gdMidiInputMaster::cb_enable()
 
 void gdMidiInputMaster::cb_setChannel()
 {
-	m::model::onSwap(m::model::midiIn, [&](m::model::MidiIn& m)
-	{
-		m.filter = m_channel->value() == 0 ? -1 : m_channel->value() - 1;
-	});
+	c::io::master_setMidiFilter(m_channel->value() == 0 ? -1 : m_channel->value() - 1);
 }
 }} // giada::v::

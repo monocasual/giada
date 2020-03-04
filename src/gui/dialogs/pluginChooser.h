@@ -49,7 +49,7 @@ class gdPluginChooser : public gdWindow
 {
 public:
 
-	gdPluginChooser(int x, int y, int w, int h, ID chanID);
+	gdPluginChooser(int x, int y, int w, int h, ID channelId);
 	~gdPluginChooser();
 
 private:
@@ -66,7 +66,7 @@ private:
 	geButton*        cancelBtn;
 	gePluginBrowser* browser;
 
-	ID m_chanID;
+	ID m_channelId;
 };
 }} // giada::v::
 

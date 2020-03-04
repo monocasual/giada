@@ -40,7 +40,7 @@ void update(void* p)
 {
 	if (m::model::waves.changed.load()    == true ||
 		m::model::actions.changed.load()  == true ||
-		m::model::channels.changed.load() == true)
+		m::model::channels.changed.load()  == true)
 	{
 		u::gui::rebuild();
 		m::model::waves.changed.store(false);

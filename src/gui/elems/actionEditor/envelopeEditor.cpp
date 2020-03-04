@@ -30,12 +30,12 @@
 #include <FL/fl_draw.H>
 #include "utils/log.h"
 #include "utils/math.h"
-#include "core/channels/sampleChannel.h"
 #include "core/const.h"
 #include "core/conf.h"
 #include "core/action.h"
 #include "core/recorder.h"
 #include "glue/actionEditor.h"
+#include "glue/channel.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "envelopePoint.h"
 #include "envelopeEditor.h"
@@ -44,8 +44,8 @@
 namespace giada {
 namespace v
 {
-geEnvelopeEditor::geEnvelopeEditor(Pixel x, Pixel y, const char* l)
-:	geBaseActionEditor(x, y, 200, m::conf::conf.envelopeEditorH)
+geEnvelopeEditor::geEnvelopeEditor(Pixel x, Pixel y, const char* l, gdBaseActionEditor* b)
+: geBaseActionEditor(x, y, 200, m::conf::conf.envelopeEditorH, b)
 {
 	copy_label(l);
 }
@@ -108,10 +108,9 @@ void geEnvelopeEditor::draw()
 /* -------------------------------------------------------------------------- */
 
 
-void geEnvelopeEditor::rebuild()
+void geEnvelopeEditor::rebuild(c::actionEditor::Data& d)
 {
-	namespace mr = m::recorder;
-	namespace ca = c::actionEditor;
+	m_data = &d;
 
 	/* Remove all existing actions and set a new width, according to the current
 	zoom level. */
@@ -119,7 +118,7 @@ void geEnvelopeEditor::rebuild()
 	clear();
 	size(m_base->fullWidth, h());
 
-	for (const m::Action& a : m_base->getActions()) {
+	for (const m::Action& a : m_data->actions) {
 		if (a.event.getStatus() != m::MidiEvent::ENVELOPE)
 			continue;
 		add(new geEnvelopePoint(frameToX(a.frame), valueToY(a.event.getVelocity()), a)); 		
@@ -175,9 +174,9 @@ void geEnvelopeEditor::onAddAction()
 	Frame f = m_base->pixelToFrame(Fl::event_x() - x());
 	int   v = yToValue(Fl::event_y() - y());
 	
-	c::actionEditor::recordEnvelopeAction(m_base->channelId, f, v);
+	c::actionEditor::recordEnvelopeAction(m_data->channelId, f, v);
 	
-	m_base->rebuild();
+	m_base->rebuild(); // TODO - USELESS
 }
 
 
@@ -186,9 +185,9 @@ void geEnvelopeEditor::onAddAction()
 
 void geEnvelopeEditor::onDeleteAction()  
 {
-	c::actionEditor::deleteEnvelopeAction(m_base->channelId, m_action->a1);
+	c::actionEditor::deleteEnvelopeAction(m_data->channelId, m_action->a1);
 		
-	m_base->rebuild();
+	m_base->rebuild(); // TODO - USELESS
 }
 
 
@@ -225,7 +224,7 @@ void geEnvelopeEditor::onRefreshAction()
 {
 	Frame f = m_base->pixelToFrame((m_action->x() - x()) + geEnvelopePoint::SIDE / 2);
 	float v = yToValue(m_action->y() - y(), geEnvelopePoint::SIDE);
-	c::actionEditor::updateEnvelopeAction(m_base->channelId, m_action->a1, f, v);
+	c::actionEditor::updateEnvelopeAction(m_data->channelId, m_action->a1, f, v);
 
 	m_base->rebuild();
 }

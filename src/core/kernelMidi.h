@@ -44,12 +44,6 @@ int getB3(uint32_t iValue);
 
 uint32_t getIValue(int b1, int b2, int b3);
 
-/* setChannel
-Changes MIDI channel number inside iValue. Returns new message with updated
-channel. */
-
-uint32_t setChannel(uint32_t iValue, int channel);
-
 /* send
 Sends a MIDI message 's' as uint32_t or as separate bytes. */
 
@@ -59,7 +53,7 @@ void send(int b1, int b2=-1, int b3=-1);
 /* sendMidiLightning
 Sends a MIDI lightning message defined by 'msg'. */
 
-void sendMidiLightning(uint32_t learn, const midimap::Message& msg);
+void sendMidiLightning(uint32_t learnt, const midimap::Message& msg);
 
 /* setApi
 Sets the Api in use for both in & out messages. */

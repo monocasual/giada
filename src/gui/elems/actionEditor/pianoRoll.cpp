@@ -27,7 +27,6 @@
 
 #include <cassert>
 #include <FL/Fl.H>
-#include "core/channels/midiChannel.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/clock.h"
@@ -36,6 +35,7 @@
 #include "utils/log.h"
 #include "utils/string.h"
 #include "utils/math.h"
+#include "glue/channel.h"
 #include "glue/actionEditor.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "pianoItem.h"
@@ -46,9 +46,9 @@
 namespace giada {
 namespace v
 {
-gePianoRoll::gePianoRoll(Pixel X, Pixel Y, Pixel W)
-	: geBaseActionEditor(X, Y, W, 40),
-	  pick              (0)
+gePianoRoll::gePianoRoll(Pixel X, Pixel Y, Pixel W, gdBaseActionEditor* b)
+: geBaseActionEditor(X, Y, W, 40, b)
+, pick              (0)
 {
 	position(x(), m::conf::conf.pianoRollY == -1 ? y()-(h()/2) : m::conf::conf.pianoRollY);
 }
@@ -72,7 +72,7 @@ void gePianoRoll::drawSurface1()
 
 	int octave = MAX_OCTAVES;
 
-	for (int i=1; i<=MAX_KEYS+1; i++) {
+	for (int i = 1; i <= MAX_KEYS+1; i++) {
 
 		/* print key note label. C C# D D# E F F# G G# A A# B */
 
@@ -179,11 +179,12 @@ void gePianoRoll::draw()
 {
 	fl_copy_offscreen(x(), y(), CELL_W, h(), surface1, 0, 0);
 
-#if defined(__APPLE__) // TODO - is this still useful?
-	for (Pixel i=36; i<m_base->fullWidth; i+=36) /// TODO: i < ae->coverX is faster
+// TODO - is this APPLE thing still useful?
+#if defined(__APPLE__)
+	for (Pixel i = 36; i < m_base->fullWidth; i += 36) /// TODO: i < m_base->loopWidth is faster
 		fl_copy_offscreen(x()+i, y(), CELL_W, h(), surface2, 1, 0);
 #else
-	for (Pixel i=CELL_W; i<m_base->loopWidth; i+=CELL_W)
+	for (Pixel i = CELL_W; i < m_base->loopWidth; i += CELL_W)
 		fl_copy_offscreen(x()+i, y(), CELL_W, h(), surface2, 0, 0);
 #endif
 
@@ -216,7 +217,7 @@ void gePianoRoll::onAddAction()
 {
 	Frame frame = m_base->pixelToFrame(Fl::event_x() - x());
 	int   note  = yToNote(Fl::event_y() - y());
-	c::actionEditor::recordMidiAction(m_base->channelId, note, G_MAX_VELOCITY, 
+	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY, 
 		frame);
 
 	m_base->rebuild();  // Rebuild velocityEditor as well
@@ -228,7 +229,7 @@ void gePianoRoll::onAddAction()
 
 void gePianoRoll::onDeleteAction()
 {
-	c::actionEditor::deleteMidiAction(m_base->channelId, m_action->a1);	
+	c::actionEditor::deleteMidiAction(m_data->channelId, m_action->a1);	
 	
 	m_base->rebuild();  // Rebuild velocityEditor as well
 }
@@ -314,7 +315,7 @@ void gePianoRoll::onRefreshAction()
 	int note     = yToNote(m_action->y() - y());
 	int velocity = m_action->a1.event.getVelocity();
 
-	ca::updateMidiAction(m_base->channelId, m_action->a1, note, velocity, f1, f2);
+	ca::updateMidiAction(m_data->channelId, m_action->a1, note, velocity, f1, f2);
 
 	m_base->rebuild();  // Rebuild velocityEditor as well
 }
@@ -355,9 +356,9 @@ Pixel gePianoRoll::getPianoItemW(Pixel px, const m::Action& a1, const m::Action&
 /* -------------------------------------------------------------------------- */
 
 
-void gePianoRoll::rebuild()
+void gePianoRoll::rebuild(c::actionEditor::Data& d)
 {
-	namespace ca = c::actionEditor;
+	m_data = &d;
 
 	/* Remove all existing actions and set a new width, according to the current
 	zoom level. */
@@ -365,7 +366,7 @@ void gePianoRoll::rebuild()
 	clear();
 	size(m_base->fullWidth, (MAX_KEYS + 1) * CELL_H);
 
-	for (const m::Action& a1 : m_base->getActions())
+	for (const m::Action& a1 : m_data->actions)
 	{
 		if (a1.event.getStatus() == m::MidiEvent::NOTE_OFF)
 			continue;

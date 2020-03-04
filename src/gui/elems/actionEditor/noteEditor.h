@@ -37,8 +37,6 @@ namespace v
 {
 class gdMidiActionEditor;
 class gePianoRoll;
-
-
 class geNoteEditor : public geScroll
 {
 public:
@@ -46,7 +44,7 @@ public:
 	geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base);
 	~geNoteEditor();
 
-	void rebuild();
+	void rebuild(c::actionEditor::Data& d);
 	void scroll();
 
 	gePianoRoll* pianoRoll;

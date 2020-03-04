@@ -28,14 +28,13 @@
 #include <cassert>
 #include "core/model/model.h"
 #include "core/channels/channelManager.h"
-#include "core/channels/sampleChannel.h"
-#include "core/channels/midiChannel.h"
 #include "core/kernelAudio.h"
 #include "core/patch.h"
 #include "core/conf.h"
 #include "core/pluginManager.h"
 #include "core/recorderHandler.h"
 #include "core/waveManager.h"
+#include "core/sequencer.h"
 #include "core/model/storage.h"
 
 
@@ -43,6 +42,16 @@ namespace giada {
 namespace m {
 namespace model
 {
+namespace
+{
+} // {anonymous}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
 void store(patch::Patch& patch)
 {
 #ifdef WITH_VST
@@ -57,7 +66,7 @@ void store(patch::Patch& patch)
 	patch.beats      = clock.get()->beats;
 	patch.bpm        = clock.get()->bpm;
 	patch.quantize   = clock.get()->quantize;
-	patch.metronome  = mixer::isMetronomeOn();  // TODO - not here
+	patch.metronome  = sequencer::isMetronomeOn();  // TODO - not here
 
 #ifdef WITH_VST
 	for (const Plugin* p : plugins) 
@@ -113,20 +122,35 @@ void load(const patch::Patch& patch)
 	{
 		a.map = std::move(recorderHandler::deserializeActions(patch.actions));
 	});
+
 #ifdef WITH_VST
     for (const patch::Plugin& pplugin : patch.plugins)
         plugins.push(pluginManager::deserializePlugin(pplugin));
 #endif
     
-    for (const patch::Wave& pwave : patch.waves)
-        waves.push(std::move(waveManager::deserializeWave(pwave)));	
+	for (const patch::Wave& pwave : patch.waves) {
+		std::unique_ptr<Wave> w = waveManager::deserializeWave(pwave);
+		if (w != nullptr)
+			waves.push(std::move(w));	
+	}
 
-    for (const patch::Channel& pchannel : patch.channels) {
-		if (pchannel.type == ChannelType::MASTER || pchannel.type == ChannelType::PREVIEW)
-            onSwap(channels, pchannel.id, [&](Channel& ch) { ch.load(pchannel); });
+	channels.clear();
+    for (const patch::Channel& pchannel : patch.channels)
+		channels.push(channelManager::deserializeChannel(pchannel, kernelAudio::getRealBufSize()));
+	
+	/* Load Waves into Channels. */
+
+	ChannelsLock cl(channels);
+	WavesLock    wl(waves);
+	
+	for (Channel* c : channels) {
+		if (!c->samplePlayer)
+			continue;
+		if (exists(waves, c->samplePlayer->getWaveId()))
+			c->samplePlayer->setWave(get(waves, c->samplePlayer->getWaveId()));
 		else
-			channels.push(channelManager::deserializeChannel(pchannel, kernelAudio::getRealBufSize()));
-    }
+			c->samplePlayer->setInvalidWave();
+	}
 }
 
 

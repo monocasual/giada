@@ -30,6 +30,7 @@
 
 
 #include "core/types.h"
+#include "glue/sampleEditor.h"
 #include "window.h"
 
 
@@ -44,7 +45,6 @@ class geStatusButton;
 namespace giada {
 namespace m
 {
-class SampleChannel;
 class Wave;
 }
 namespace v 
@@ -56,21 +56,17 @@ class gePanTool;
 class gePitchTool;
 class geRangeTool;
 class geShiftTool;
-
 class gdSampleEditor : public gdWindow
 {
 friend class geWaveform;
 
 public:
 
-	gdSampleEditor(ID channelId, ID waveId);
+	gdSampleEditor(ID channelId);
 	~gdSampleEditor();
 
 	void rebuild() override;
 	void refresh() override;
-
-	void updateInfo(const m::Wave& w);
-	void setWaveId(ID id);
 
 	geChoice* grid;
 	geCheck*  snap;
@@ -118,9 +114,12 @@ private:
 	void cb_enableSnap();
 	void cb_togglePreview();
 	void cb_rewindPreview();
-	
+
+	void updateInfo();
+
 	ID m_channelId;
-	ID m_waveId;
+
+	c::sampleEditor::Data m_data;
 };
 }} // giada::v::
 

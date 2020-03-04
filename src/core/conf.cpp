@@ -147,7 +147,6 @@ bool read()
 	conf.lastFileMap           =  j.value(CONF_KEY_LAST_MIDIMAP, conf.lastFileMap);
 	conf.midiSync              =  j.value(CONF_KEY_MIDI_SYNC, conf.midiSync);
 	conf.midiTCfps             =  j.value(CONF_KEY_MIDI_TC_FPS, conf.midiTCfps);
-	conf.recsStopOnChanHalt    =  j.value(CONF_KEY_RECS_STOP_ON_CHAN_HALT, conf.recsStopOnChanHalt);
 	conf.chansStopOnSeqHalt    =  j.value(CONF_KEY_CHANS_STOP_ON_SEQ_HALT, conf.chansStopOnSeqHalt);
 	conf.treatRecsAsLoops      =  j.value(CONF_KEY_TREAT_RECS_AS_LOOPS, conf.treatRecsAsLoops);
 	conf.inputMonitorDefaultOn =  j.value(CONF_KEY_INPUT_MONITOR_DEFAULT_ON, conf.inputMonitorDefaultOn);
@@ -253,7 +252,6 @@ bool write()
 	j[CONF_KEY_MIDI_IN_VOLUME_OUT]        = conf.midiInVolumeOut;
 	j[CONF_KEY_MIDI_IN_BEAT_DOUBLE]       = conf.midiInBeatDouble;
 	j[CONF_KEY_MIDI_IN_BEAT_HALF]         = conf.midiInBeatHalf;
-	j[CONF_KEY_RECS_STOP_ON_CHAN_HALT]    = conf.recsStopOnChanHalt;
 	j[CONF_KEY_CHANS_STOP_ON_SEQ_HALT]    = conf.chansStopOnSeqHalt;
 	j[CONF_KEY_TREAT_RECS_AS_LOOPS]       = conf.treatRecsAsLoops;
 	j[CONF_KEY_INPUT_MONITOR_DEFAULT_ON]  = conf.inputMonitorDefaultOn;

@@ -29,7 +29,8 @@
 #define GE_MAIN_IO_H
 
 
-#include <FL/Fl_Pack.H>
+#include "gui/elems/basics/pack.h"
+#include "glue/main.h"
 
 
 class geSoundMeter;
@@ -43,7 +44,7 @@ class geButton;
 namespace giada {
 namespace v
 {
-class geMainIO : public Fl_Pack
+class geMainIO : public gePack
 {
 public:
 
@@ -75,6 +76,8 @@ private:
 	void cb_masterFxIn();
 	void cb_inToOut();
 #endif
+
+	c::main::IO m_io;
 
 	geSoundMeter* outMeter;
 	geSoundMeter* inMeter;

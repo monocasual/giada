@@ -40,9 +40,6 @@
 #include "utils/log.h"
 #include "utils/math.h"
 #include "core/model/model.h"
-#include "core/channels/sampleChannel.h"
-#include "core/channels/channel.h"
-#include "core/channels/midiChannel.h"
 #include "core/recorder.h"
 #include "core/conf.h"
 #include "core/recManager.h"
@@ -67,12 +64,10 @@ namespace io
 {
 namespace
 {
-void refreshMidiWindows_()
+void rebuildMidiWindows_()
 {
-	Fl::lock();
-	u::gui::refreshSubWindow(WID_MIDI_INPUT);
-	u::gui::refreshSubWindow(WID_MIDI_OUTPUT);
-	Fl::unlock();	
+	u::gui::rebuildSubWindow(WID_MIDI_INPUT);
+	u::gui::rebuildSubWindow(WID_MIDI_OUTPUT);
 }
 } // {anonymous}
 
@@ -81,64 +76,224 @@ void refreshMidiWindows_()
 /* -------------------------------------------------------------------------- */
 
 
-void keyPress(ID channelId, bool ctrl, bool shift, int velocity)
+Channel_InputData::Channel_InputData(const m::Channel& c)
+: channelId    (c.id)
+, channelType  (c.getType())
+, enabled      (c.midiLearner.state->enabled.load())
+, velocityAsVol(c.samplePlayer ? c.samplePlayer->state->velocityAsVol.load() : 0)
+, filter       (c.midiLearner.state->filter.load())
+, keyPress     (c.midiLearner.state->keyPress.load())
+, keyRelease   (c.midiLearner.state->keyRelease.load())
+, kill         (c.midiLearner.state->kill.load())
+, arm          (c.midiLearner.state->arm.load())
+, volume       (c.midiLearner.state->volume.load())
+, mute         (c.midiLearner.state->mute.load())
+, solo         (c.midiLearner.state->solo.load())
+, pitch        (c.midiLearner.state->pitch.load())
+, readActions  (c.midiLearner.state->readActions.load()) 
 {
-	if (ctrl)
-		c::channel::toggleMute(channelId);
-	else
-	if (shift)
-		c::channel::kill(channelId, /*record=*/true);
-	else
-		c::channel::start(channelId, velocity, /*record=*/true);
+	for (ID id : c.pluginIds) {
+		m::Plugin& p = m::model::get(m::model::plugins, id);
+		
+		PluginData pd;
+		pd.id = p.id;
+		pd.name = p.getName();
+		for (int i = 0; i < p.getNumParameters(); i++)
+			pd.params.push_back({ i, p.getParameterName(i), p.midiInParams.at(i) });
+
+		plugins.push_back(pd);
+	}
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void keyRelease(ID channelId, bool ctrl, bool shift)
+MidiChannel_OutputData::MidiChannel_OutputData(const m::MidiSender& s)
+: enabled(s.state->enabled.load())
+, filter (s.state->filter.load())
 {
-	if (!ctrl && !shift)
-		c::channel::stop(channelId);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void setSampleChannelKey(ID channelId, int k)
+Channel_OutputData::Channel_OutputData(const m::Channel& c)
+: channelId       (c.id)
+, lightningEnabled(c.midiLighter.state->enabled.load())
+, lightningPlaying(c.midiLighter.state->playing.load())
+, lightningMute   (c.midiLighter.state->mute.load())
+, lightningSolo   (c.midiLighter.state->solo.load())
+{	
+	if (c.getType() == ChannelType::MIDI)
+		output = std::make_optional<MidiChannel_OutputData>(*c.midiSender);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Master_InputData::Master_InputData(const m::model::MidiIn& midiIn)
+: enabled   (midiIn.enabled)
+, filter    (midiIn.filter)
+, rewind    (midiIn.rewind)
+, startStop (midiIn.startStop)
+, actionRec (midiIn.actionRec)
+, inputRec  (midiIn.inputRec)
+, volumeIn  (midiIn.volumeIn)
+, volumeOut (midiIn.volumeOut)
+, beatDouble(midiIn.beatDouble)
+, beatHalf  (midiIn.beatHalf)
+, metronome (midiIn.metronome)	
 {
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c)
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+Channel_InputData channel_getInputData(ID channelId)
+{
+	namespace mm = m::model;
+
+	mm::ChannelsLock cl(mm::channels);
+	mm::PluginsLock      ml(mm::plugins);
+
+	return Channel_InputData(mm::get(mm::channels, channelId));	
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Channel_OutputData channel_getOutputData(ID channelId)
+{
+	namespace mm = m::model;
+
+	mm::ChannelsLock cl(mm::channels);
+	return Channel_OutputData(mm::get(mm::channels, channelId));		
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Master_InputData master_getInputData()
+{
+	namespace mm = m::model;
+
+	mm::MidiInLock l(mm::midiIn);
+	return Master_InputData(*mm::midiIn.get());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void channel_enableMidiLearn(ID channelId, bool v)
+{
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
 	{
-		c.key = k;
+		c.midiLearner.state->enabled.store(v);
 	});
-
-	Fl::lock();
-	G_MainWin->keyboard->getChannel(channelId)->mainButton->setKey(k);
-	Fl::unlock();
+	rebuildMidiWindows_();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void startChannelMidiLearn(int param, ID channelId)
+void channel_enableMidiLightning(ID channelId, bool v)
 {
-	m::midiDispatcher::startChannelLearn(param, channelId, refreshMidiWindows_);
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		c.midiLighter.state->enabled.store(v);
+	});
+	rebuildMidiWindows_();
 }
 
 
-void startMasterMidiLearn(int param)
+/* -------------------------------------------------------------------------- */
+
+
+void channel_enableMidiOutput(ID channelId, bool v)
 {
-	m::midiDispatcher::startMasterLearn(param, refreshMidiWindows_);
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		c.midiSender->state->enabled.store(v);
+	});	
+	rebuildMidiWindows_();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void channel_enableVelocityAsVol(ID channelId, bool v)
+{
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		c.samplePlayer->state->velocityAsVol.store(v);
+	});
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void channel_setMidiInputFilter(ID channelId, int ch)
+{
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		c.midiLearner.state->filter.store(ch);
+	});
+}
+
+
+void channel_setMidiOutputFilter(ID channelId, int ch)
+{
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		c.midiSender->state->filter.store(ch);
+	});	
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void channel_setKey(ID channelId, int k)
+{
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		c.state->key.store(k);
+	}, /*rebuild=*/true);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void channel_startMidiLearn(int param, ID channelId)
+{
+	m::midiDispatcher::startChannelLearn(param, channelId, rebuildMidiWindows_);
+}
+
+
+void master_startMidiLearn(int param)
+{
+	m::midiDispatcher::startMasterLearn(param, rebuildMidiWindows_);
 }
 
 
 #ifdef WITH_VST
 
-void startPluginMidiLearn(int paramIndex, ID pluginId)
+void plugin_startMidiLearn(int paramIndex, ID pluginId)
 {
-	m::midiDispatcher::startPluginLearn(paramIndex, pluginId, refreshMidiWindows_);
+	m::midiDispatcher::startPluginLearn(paramIndex, pluginId, rebuildMidiWindows_);
 }
 
 #endif
@@ -150,31 +305,56 @@ void startPluginMidiLearn(int paramIndex, ID pluginId)
 void stopMidiLearn()
 {
 	m::midiDispatcher::stopLearn();
-	refreshMidiWindows_();
+	rebuildMidiWindows_();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void clearChannelMidiLearn(int param, ID channelId)
+void channel_clearMidiLearn(int param, ID channelId)
 {
-	m::midiDispatcher::clearChannelLearn(param, channelId, refreshMidiWindows_);
+	m::midiDispatcher::clearChannelLearn(param, channelId, rebuildMidiWindows_);
 }
 
 
-void clearMasterMidiLearn (int param)
+void master_clearMidiLearn (int param)
 {
-	m::midiDispatcher::clearMasterLearn(param, refreshMidiWindows_);
+	m::midiDispatcher::clearMasterLearn(param, rebuildMidiWindows_);
 }
 
 
 #ifdef WITH_VST
 
-void clearPluginMidiLearn (int param, ID pluginId)
+void plugin_clearMidiLearn (int param, ID pluginId)
 {
-	m::midiDispatcher::clearPluginLearn(param, pluginId, refreshMidiWindows_);
+	m::midiDispatcher::clearPluginLearn(param, pluginId, rebuildMidiWindows_);
 }
 
 #endif
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void master_enableMidiLearn(bool v)
+{
+	m::model::onSwap(m::model::midiIn, [&](m::model::MidiIn& m)
+	{
+		m.enabled = v;
+	});	
+	rebuildMidiWindows_();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void master_setMidiFilter(int c)
+{
+	m::model::onSwap(m::model::midiIn, [&](m::model::MidiIn& m)
+	{
+		m.filter = c;
+	});
+}
 }}} // giada::c::io::

@@ -29,247 +29,116 @@
 #define G_CHANNEL_H
 
 
-#include <vector>
-#include <string>
-#include "core/types.h"
-#include "core/patch.h"
+#include <optional>
+#include "core/const.h"
 #include "core/mixer.h"
-#include "core/midiMapConf.h"
-#include "core/midiEvent.h"
-#include "core/recorder.h"
-#include "core/audioBuffer.h"
-#ifdef WITH_VST
-#include "deps/juce-config.h"
-#include "core/plugin.h"
-#include "core/pluginHost.h"
-#include "core/queue.h"
-#endif
+#include "core/channels/state.h"
+#include "core/channels/samplePlayer.h"
+#include "core/channels/audioReceiver.h"
+#include "core/channels/midiReceiver.h"
+#include "core/channels/midiLearner.h"
+#include "core/channels/midiSender.h"
+#include "core/channels/midiLighter.h"
+#include "core/channels/sampleActionRecorder.h"
+#include "core/channels/midiActionRecorder.h"
 
 
 namespace giada {
 namespace m
 {
-class Channel
+class Channel final
 {
 public:
 
-	virtual ~Channel() {};
+    Channel(ChannelType t, ID id, ID columnId, Frame bufferSize);
+    Channel(const Channel&);
+    Channel(const patch::Channel& p, Frame bufferSize);
+    Channel(Channel&&)                 = default;
+    Channel& operator=(const Channel&) = default;
+    Channel& operator=(Channel&&)      = default;
+    ~Channel()                         = default;
 
-	/* clone
-	A trick to give the caller the ability to invoke the derived class copy
-	constructor given the base. TODO - This thing will go away with the Channel
-	"no-virtual inheritance" refactoring. */
+    /* parse
+    Parses live events. */
 
-	virtual Channel* clone() const = 0;
+    void parse(const mixer::EventBuffer& e, bool audible) const;
 
-	/* load
-	Loads persistence data into an existing channel. Used for built-in channels
-	such as masters and preview. */
+    /* advance
+    Processes static events (e.g. actions) in the current block. */
 
-	virtual void load(const patch::Channel& p) {}
+    void advance(Frame bufferSize) const;
 
-	/* parseEvents
-	Prepares channel for rendering. This is called on each frame. */
+    /* render
+    Renders audio data to I/O buffers. */
+     
+    void render(AudioBuffer* out, AudioBuffer* in, bool audible) const;
 
-	virtual void parseEvents(mixer::FrameEvents fe) {};
-
-	/* render
-	Audio rendering. Warning: inBuffer might be unallocated if no input devices 
-	are available for recording. */
-
-	virtual void render(AudioBuffer& out, const AudioBuffer& in, 
-		AudioBuffer& inToOut, bool audible, bool running) {};
-
-	/* start
-	Action to do when channel starts. doQuantize = false (don't quantize)
-	when Mixer is reading actions from Recorder. */
-
-	virtual void start(int localFrame, bool doQuantize, int velocity) {};
-
-	/* stop
-	What to do when channel is stopped normally (via key or MIDI). */
-
-	virtual void stop() {};
-
-	/* kill
-	What to do when channel stops abruptly. */
-
-	virtual void kill(int localFrame) {};
-
-	/* set mute
-	What to do when channel is un/muted. */
-
-	virtual void setMute(bool value) {};
-
-	/* set solo
-	What to do when channel is un/soloed. */
-
-	virtual void setSolo(bool value) {};
-
-	/* empty
-	Frees any associated resources (e.g. waveform for SAMPLE). */
-
-	virtual void empty() {};
-
-	/* stopBySeq
-	What to do when channel is stopped by sequencer. */
-
-	virtual void stopBySeq(bool chansStopOnSeqHalt) {};
-
-	/* rewind
-	Rewinds channel when rewind button is pressed. */
-
-	virtual void rewindBySeq() {};
-
-	/* canInputRec
-	Tells whether a channel can accept and handle input audio. Always false for
-	Midi channels, true for Sample channels only if they don't contain a
-	sample yet.*/
-
-	virtual bool canInputRec()    const { return false; };
-	virtual bool hasLogicalData() const { return false; };
-	virtual bool hasEditedData()  const { return false; };
-	virtual bool hasData()        const { return false; };
-
-	virtual bool recordStart(bool canQuantize) { return true; };
-	virtual bool recordKill() { return true; };
-	virtual void recordStop() {};
-
-	virtual void startReadingActions(bool treatRecsAsLoops, 
-		bool recsStopOnChanHalt) {};
-	virtual void stopReadingActions(bool running, bool treatRecsAsLoops, 
-		bool recsStopOnChanHalt) {};
-
-	virtual void stopInputRec(int globalFrame) {};
-
-	/* receiveMidi
-	Receives and processes midi messages from external devices. */
-
-	virtual void receiveMidi(const MidiEvent& midiEvent) {};
-
-	/* calcPanning
-	Given an audio channel (stereo: 0 or 1) computes the current panning value. */
-
-	float calcPanning(int ch) const;
-
-	bool isPlaying() const;
-	float getPan() const;
-	bool isPreview() const;
-	bool isInternal() const;
-
-	/* isMidiInAllowed
-	Given a MIDI channel 'c' tells whether this channel should be allowed to 
-	receive and process MIDI events on MIDI channel 'c'. */
-
-	bool isMidiInAllowed(int c) const;
-
-	/* isReadingActions
-	Tells whether the channel as actions and it is currently reading them. */
-
-	bool isReadingActions() const;
-
-	/* sendMidiL*
-	Sends MIDI lightning events to a physical device. */
-
-	void sendMidiLmute();
-	void sendMidiLsolo();
-	void sendMidiLstatus();
-
-	void setPan(float v);
-
-	void calcVolumeEnvelope();
-
-	/* buffer
-	Working buffer for internal processing. */
-	
-	AudioBuffer buffer;
-
-	ChannelType   type;
-	ChannelStatus playStatus;
-	ChannelStatus recStatus;
-
-	ID columnId;
-	ID id;
-
-	int height;
-
-	/* previewMode
-	Whether the channel is in audio preview mode or not. */
-
-	PreviewMode previewMode;
-
-	float pan;
-	float volume;   // global volume
-	bool armed;
-	std::string name;
-	int  key;
-	bool mute;
-	bool solo;
-
-	/* volume_*
-	Internal volume variables: volume_i for envelopes, volume_d keeps track of
-	the delta during volume changes (or the line slope between two volume 
-	points). */
-	
-	double volume_i;
-	double volume_d;
-	
-	bool hasActions;  // If has some actions recorded
-	bool readActions; // If should read recorded actions
-
-	bool     midiIn;               // enable midi input
-	uint32_t midiInKeyPress;
-	uint32_t midiInKeyRel;
-	uint32_t midiInKill;
-	uint32_t midiInArm;
-	uint32_t midiInVolume;
-	uint32_t midiInMute;
-	uint32_t midiInSolo;
-
-	/* midiInFilter
-	Which MIDI channel should be filtered out when receiving MIDI messages. -1
-	means 'all'. */
-
-	int midiInFilter;
-
-	/*  midiOutL*
-	Enables MIDI lightning output, plus a set of midi lighting event to be sent
-	to a device. Those events basically contains the MIDI channel, everything
-	else gets stripped out. */
-
-	bool     midiOutL;
-	uint32_t midiOutLplaying;
-	uint32_t midiOutLmute;
-	uint32_t midiOutLsolo;
+    bool isInternal() const;
+    bool isMuted() const;
+    bool canInputRec() const;
+    ID getColumnId() const;
+    ChannelType getType() const;
+    
+    ID id;
 
 #ifdef WITH_VST
-
-	std::vector<ID> pluginIds;
-
-	/* MidiBuffer 
-	Contains MIDI events. When ready, events are sent to each plugin in the 
-	channel. This is available for any kind of channel, but it makes sense only 
-	for MIDI channels. */
-	
-	juce::MidiBuffer midiBuffer;
-
-	/* midiQueue
-	FIFO queue for collecting MIDI events from the MIDI thread and passing them
-	to the audio thread. */
-	/* TODO - magic number */
-
-	Queue<MidiEvent, 32> midiQueue;
-
+    std::vector<ID> pluginIds;
 #endif
 
-protected:
+    /* state
+    Pointer to mutable Channel state. */
 
-	Channel(ChannelType type, ChannelStatus status, int bufferSize,
-		ID columnId, ID id);
-	Channel(const Channel& o);
-	Channel(const patch::Channel& p, int bufferSize);
+    std::unique_ptr<ChannelState> state;
+
+    /* midiLearner
+    Holds MIDI learnt commands. */
+
+    MidiLearner midiLearner;
+
+    /* midiLighter
+    Emits MIDI lightning messages. */
+
+    MidiLighter midiLighter;
+
+    /* (optional) samplePlayer
+    For sample rendering. Sample Channel only. */
+
+    std::optional<SamplePlayer> samplePlayer;
+
+    /* (optional) audioReceiver
+    For input audio. Sample Channel only. */
+
+    std::optional<AudioReceiver> audioReceiver;
+
+    /* (optional) midiReceiver
+    Receives MIDI messages and events. MIDI Channel only. */
+
+    std::optional<MidiReceiver> midiReceiver;
+
+    /* (optional) midiSender
+    Sends MIDI messages to the outside world. MIDI Channel only. */
+
+    std::optional<MidiSender> midiSender;
+
+    /* (optional) sampleActionRecorder, midiActionRecorder
+    Records Actions from the outside world. */
+    
+    std::optional<SampleActionRecorder> sampleActionRecorder;
+    std::optional<MidiActionRecorder>   midiActionRecorder;
+
+private:
+
+    void parse(const mixer::Event& e) const;
+
+    void renderMasterOut(AudioBuffer& out) const;
+    void renderMasterIn(AudioBuffer& in) const;
+    void renderChannel(AudioBuffer& out, AudioBuffer& in, bool audible) const;
+
+    AudioBuffer::Pan calcPanning() const;
+
+    ChannelType m_type;
+    ID m_columnId;
 };
-
 }} // giada::m::
 
 

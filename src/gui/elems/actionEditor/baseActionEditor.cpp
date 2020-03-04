@@ -38,10 +38,12 @@
 namespace giada {
 namespace v
 {
-geBaseActionEditor::geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h)
-:	Fl_Group(x, y, w, h),
-	m_base  (static_cast<gdBaseActionEditor*>(window())),
-	m_action(nullptr)
+geBaseActionEditor::geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h,
+	gdBaseActionEditor* base)
+: Fl_Group(x, y, w, h)
+, m_data  (nullptr)
+, m_base  (base)
+, m_action(nullptr)
 {
 }
 
@@ -51,7 +53,7 @@ geBaseActionEditor::geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h)
 
 geBaseAction* geBaseActionEditor::getActionAtCursor() const
 {
-	for (int i=0; i<children(); i++) {
+	for (int i = 0; i < children(); i++) {
 		geBaseAction* a = static_cast<geBaseAction*>(child(i));
 		if (a->hovered)
 			return a;

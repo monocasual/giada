@@ -35,21 +35,24 @@
 
 
 namespace giada {
-namespace m 
-{ 
-class SampleChannel; 
-}
+namespace c {
+namespace channel
+{
+struct Data;
+}}
 namespace v
 {
 class geChannelStatus : public Fl_Box
 {
 public:
 
-	geChannelStatus(int x, int y, int w, int h, ID channelId);
+	geChannelStatus(int x, int y, int w, int h, c::channel::Data& d);
 
 	void draw() override;
 
-	ID channelId;
+private:
+
+	c::channel::Data& m_channel;
 };
 }} // giada::v::
 

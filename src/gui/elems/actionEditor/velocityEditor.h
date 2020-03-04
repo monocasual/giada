@@ -46,20 +46,20 @@ class geVelocityEditor : public geBaseActionEditor
 {
 public:
 
-	geVelocityEditor(Pixel x, Pixel y);
+	geVelocityEditor(Pixel x, Pixel y, gdBaseActionEditor*);
 	~geVelocityEditor();
 
 	void draw() override;
 
-	void rebuild() override;
+	void rebuild(c::actionEditor::Data& d) override;
 
 private:
 
 	void onMoveAction()    override;
 	void onRefreshAction() override;
-	void onAddAction()     override{};
-	void onDeleteAction()  override{};
-	void onResizeAction()  override{};
+	void onAddAction()     override {};
+	void onDeleteAction()  override {};
+	void onResizeAction()  override {};
 
 	Pixel valueToY(int v)   const;
 	int   yToValue(Pixel y) const;

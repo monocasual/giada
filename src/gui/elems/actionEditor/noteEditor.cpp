@@ -26,7 +26,6 @@
 
 
 #include <FL/Fl.H>
-#include "core/channels/midiChannel.h"
 #include "core/const.h"
 #include "core/conf.h"
 #include "gui/dialogs/actionEditor/midiActionEditor.h"
@@ -38,14 +37,16 @@ namespace giada {
 namespace v
 {
 geNoteEditor::geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base)
-: geScroll(x, y, 200, 422),
-  m_base  (base)
+: geScroll(x, y, 200, 422)
+, m_base  (base)
 {
-	pianoRoll = new gePianoRoll(x, y, m_base->fullWidth);
-	
-	size(m_base->fullWidth, m::conf::conf.pianoRollH);
+	end();
 	
 	type(Fl_Scroll::VERTICAL_ALWAYS);
+	size(m_base->fullWidth, m::conf::conf.pianoRollH);
+
+	pianoRoll = new gePianoRoll(x, y, m_base->fullWidth, base);
+	add(pianoRoll);
 }
 
 
@@ -80,9 +81,9 @@ void geNoteEditor::scroll()
 /* -------------------------------------------------------------------------- */
 
 
-void geNoteEditor::rebuild()
+void geNoteEditor::rebuild(c::actionEditor::Data& d)
 {
 	size(m_base->fullWidth, h());
-	pianoRoll->rebuild();
+	pianoRoll->rebuild(d);
 }
 }} // giada::v::

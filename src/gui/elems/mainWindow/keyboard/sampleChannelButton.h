@@ -33,17 +33,13 @@
 
 
 namespace giada {
-namespace m 
-{ 
-class SampleChannel; 
-}
 namespace v
 {
 class geSampleChannelButton : public geChannelButton
 {
 public:
 
-	geSampleChannelButton(int x, int y, int w, int h, ID channelId);
+	geSampleChannelButton(int x, int y, int w, int h, const c::channel::Data& d);
 	
     int handle(int e) override;
 

@@ -66,24 +66,29 @@ int getFramesInBar();
 int getFramesInBeat();
 int getFramesInLoop();
 int getFramesInSeq();
-int getQuantize();
-int getQuanto();
+int getQuantizerValue();
+int getQuantizerStep();
 ClockStatus getStatus();
 
 /* incrCurrentFrame
-Increases current frame of a single step (+1). */
+Increases current frame by a single step (+1). */
 
 void incrCurrentFrame();
 
 /* quantoHasPassed
-Tells whether a quanto unit has passed yet. */
+Tells whether a quantizer unit has passed yet. */
 
 bool quantoHasPassed();
 
-/* quantoHasPassed
-Whether the quantizer value is > 0 and the clock is running. */
+/* canQuantize
+Tells whether the quantizer value is > 0 and the clock is running. */
 
 bool canQuantize();
+
+/* quantize
+Quantizes the global frame 'f'.  */
+
+Frame quantize(Frame f);
 
 void setBpm(float b);
 void setBeats(int beats, int bars);

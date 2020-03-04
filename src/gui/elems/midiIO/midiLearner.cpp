@@ -25,20 +25,23 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <string>
+#include <cassert>
 #include "utils/string.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
-#include "midiLearnerBase.h"
+#include "midiLearner.h"
 
 
 namespace giada {
 namespace v 
 {
-geMidiLearnerBase::geMidiLearnerBase(int X, int Y, int W, std::string l, int param, uint32_t value)
-: Fl_Group   (X, Y, W, 20),
-  m_param    (param)
+geMidiLearner::geMidiLearner(int X, int Y, int W, std::string l, int param)
+: Fl_Group    (X, Y, W, 20)
+, onStartLearn(nullptr)
+, onStopLearn (nullptr)
+, onClearLearn(nullptr)
+, m_param     (param)
 {
 	begin();
 	m_text     = new geBox(x(), y(), 156, 20, l.c_str());
@@ -55,22 +58,20 @@ geMidiLearnerBase::geMidiLearnerBase(int X, int Y, int W, std::string l, int par
 
 	m_button->type(FL_TOGGLE_BUTTON);
 	m_button->callback(cb_button, (void*)this);
-	
-	update(value);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearnerBase::cb_button(Fl_Widget* v, void* p) { ((geMidiLearnerBase*)p)->onLearn(); }
-void geMidiLearnerBase::cb_value(Fl_Widget* v, void* p)  { ((geMidiLearnerBase*)p)->onReset(); }
+void geMidiLearner::cb_button(Fl_Widget* v, void* p) { ((geMidiLearner*)p)->onLearn(); }
+void geMidiLearner::cb_value(Fl_Widget* v, void* p)  { ((geMidiLearner*)p)->onReset(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearnerBase::update(uint32_t value)
+void geMidiLearner::update(uint32_t value)
 {
 	std::string tmp = "(not set)";
 	
@@ -88,7 +89,7 @@ void geMidiLearnerBase::update(uint32_t value)
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearnerBase::activate()
+void geMidiLearner::activate()
 {
 	Fl_Group::activate();
 	m_valueBtn->activate();
@@ -96,10 +97,37 @@ void geMidiLearnerBase::activate()
 }
 
 
-void geMidiLearnerBase::deactivate()
+void geMidiLearner::deactivate()
 {
 	Fl_Group::deactivate();
 	m_valueBtn->deactivate();
 	m_button->deactivate();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geMidiLearner::onLearn() const
+{
+	assert(onStartLearn != nullptr);
+	assert(onStopLearn != nullptr);
+
+	if (m_button->value() == 1)
+		onStartLearn(m_param);
+	else
+		onStopLearn();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geMidiLearner::onReset() const
+{
+	assert(onClearLearn != nullptr);
+
+	if (Fl::event_button() == FL_RIGHT_MOUSE)
+		onClearLearn(m_param);	
 }
 }} // giada::v::

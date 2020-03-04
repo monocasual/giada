@@ -30,9 +30,51 @@
 
 
 namespace giada {
+namespace m 
+{
+struct Channel;
+namespace model
+{ 
+struct Clock;
+struct Mixer;
+}}
 namespace c {
 namespace main
 {
+struct Timer
+{
+    Timer() = default;
+    Timer(const m::model::Clock& c);
+
+    float bpm;
+    int   beats;
+    int   bars;
+    int   quantize;
+    bool  isUsingJack;
+    bool  isRecordingInput;
+};
+
+struct IO
+{
+    IO() = default;
+    IO(const m::Channel& out, const m::Channel& in, const m::model::Mixer& m);
+
+    float masterOutVol;
+    float masterInVol;
+    bool  masterOutHasPlugins;
+    bool  masterInHasPlugins;
+    bool  inToOut;
+
+    float a_getMasterOutPeak();
+    float a_getMasterInPeak();
+};
+
+/* get*
+Returns viewModel objects filled with data. */
+
+Timer getTimer();
+IO getIO();
+
 /* setBpm (1)
 Sets bpm value from string to float. */
 
@@ -45,46 +87,19 @@ void setBpm(float v);
 
 void setBeats(int beats, int bars);
 void quantize(int val);
-void setOutVol(float v, bool gui=true);
-void setInVol(float v, bool gui=true);
 void clearAllSamples();
 void clearAllActions();
 
-/* resetToInitState
+/* setInToOut
+Enables the "hear what you playing" feature. */
+
+void setInToOut(bool v);
+
+/* closeProject
 Resets Giada to init state. If resetGui also refresh all widgets. If 
 createColumns also build initial empty columns. */
 
-void resetToInitState(bool createColumns);
-
-/* beatsDivide/Multiply
-Shrinks or enlarges the number of beats by 2. */
-
-void beatsMultiply();
-void beatsDivide();
-
-
-
-
-
-
-
-
-
-void rewind();
-void play();
-
-/* toggleInputRec
-Handles the input recording.*/
-
-void toggleInputRec();
-
-void toggleActionRec();
-void startActionRec();
-void stopActionRec();
-
-
-void toggleMetronome();
-
+void closeProject(bool createColumns);
 }}} // giada::c::main::
 
 #endif

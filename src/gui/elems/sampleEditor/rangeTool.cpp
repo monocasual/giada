@@ -27,7 +27,6 @@
 
 #include <cassert>
 #include <FL/Fl.H>
-#include "core/channels/sampleChannel.h"
 #include "core/model/model.h"
 #include "core/wave.h"
 #include "glue/channel.h"
@@ -45,10 +44,9 @@
 namespace giada {
 namespace v 
 {
-geRangeTool::geRangeTool(ID channelId, ID waveId, int x, int y)
-: Fl_Pack    (x, y, 280, G_GUI_UNIT),
-  m_channelId(channelId),
-  m_waveId   (waveId)
+geRangeTool::geRangeTool(const c::sampleEditor::Data& d, int x, int y)
+: Fl_Pack(x, y, 280, G_GUI_UNIT)
+, m_data (nullptr)
 {
 	type(Fl_Pack::HORIZONTAL);
 	spacing(G_GUI_INNER_MARGIN);
@@ -69,21 +67,29 @@ geRangeTool::geRangeTool(ID channelId, ID waveId, int x, int y)
 	m_end->callback(cb_setChanPos, this);
 
 	m_reset->callback(cb_resetStartEnd, this);
+
+	rebuild(d);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geRangeTool::rebuild()
+void geRangeTool::rebuild(const c::sampleEditor::Data& d)
 {
-	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
-	{
-		m_begin->value(std::to_string(static_cast<m::SampleChannel&>(c).getBegin()).c_str());
-		m_end->value(std::to_string(static_cast<m::SampleChannel&>(c).getEnd()).c_str());
-	});
+	m_data = &d;
+	update(m_data->begin, m_data->end);
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void geRangeTool::update(Frame begin, Frame end)
+{
+	m_begin->value(std::to_string(begin).c_str());
+	m_end->value(std::to_string(end).c_str());
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -97,7 +103,7 @@ void geRangeTool::cb_resetStartEnd(Fl_Widget* w, void* p) { ((geRangeTool*)p)->c
 
 void geRangeTool::cb_setChanPos()
 {
-	c::sampleEditor::setBeginEnd(m_channelId, atoi(m_begin->value()), atoi(m_end->value()));
+	c::sampleEditor::setBeginEnd(m_data->channelId, atoi(m_begin->value()), atoi(m_end->value()));
 }
 
 
@@ -106,13 +112,7 @@ void geRangeTool::cb_setChanPos()
 
 void geRangeTool::cb_resetStartEnd()
 {
-	Frame waveSize;
-	m::model::onGet(m::model::waves, m_waveId, [&](m::Wave& w)
-	{ 
-		waveSize = w.getSize();
-	});
-	
-	c::sampleEditor::setBeginEnd(m_channelId, 0, waveSize - 1);
+	c::sampleEditor::setBeginEnd(m_data->channelId, 0, m_data->waveSize - 1);
 }
 
 }} // giada::v::

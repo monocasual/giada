@@ -149,11 +149,11 @@ void readChannels_(const nl::json& j)
 	if (!j.contains(PATCH_KEY_CHANNELS))	
 		return;
 
-	ID id = mixer::PREVIEW_CHANNEL_ID;
+	ID defaultId = mixer::PREVIEW_CHANNEL_ID;
 
 	for (const auto& jchannel : j[PATCH_KEY_CHANNELS]) {
 		Channel c;
-		c.id                = jchannel.value(PATCH_KEY_CHANNEL_ID, ++id);
+		c.id                = jchannel.value(PATCH_KEY_CHANNEL_ID, ++defaultId);
 		c.type              = static_cast<ChannelType>(jchannel.value(PATCH_KEY_CHANNEL_TYPE, 1));
 		c.volume            = jchannel.value(PATCH_KEY_CHANNEL_VOLUME, G_DEFAULT_VOL);		
 		c.height            = jchannel.value(PATCH_KEY_CHANNEL_SIZE, G_GUI_UNIT);
@@ -178,7 +178,7 @@ void readChannels_(const nl::json& j)
 		c.midiOutLmute      = jchannel.value(PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE, 0);
 		c.midiOutLsolo      = jchannel.value(PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO, 0);
 		c.armed             = jchannel.value(PATCH_KEY_CHANNEL_ARMED, false);
-		c.mode              = static_cast<ChannelMode>(jchannel.value(PATCH_KEY_CHANNEL_MODE, 1));
+		c.mode              = static_cast<SamplePlayerMode>(jchannel.value(PATCH_KEY_CHANNEL_MODE, 1));
 		c.waveId            = jchannel.value(PATCH_KEY_CHANNEL_WAVE_ID, 0);
 		c.begin             = jchannel.value(PATCH_KEY_CHANNEL_BEGIN, 0);
 		c.end               = jchannel.value(PATCH_KEY_CHANNEL_END, 0);
@@ -366,6 +366,32 @@ void writeChannels_(nl::json& j)
 		j[PATCH_KEY_CHANNELS].push_back(jchannel);
 	}
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void modernize_()
+{
+	/* 0.16.3 
+	- Make sure that ChannelType is correct: ID 1, 2 are MASTER channels, 
+	  ID 3 is PREVIEW channel;
+	- set panning to default (0.5) and waveId to 0 for non-Sample Channels. */
+
+	for (Channel& c : patch.channels) {
+
+		if (c.id == mixer::MASTER_OUT_CHANNEL_ID || c.id == mixer::MASTER_IN_CHANNEL_ID)
+			c.type = ChannelType::MASTER;
+		else
+		if (c.id == mixer::PREVIEW_CHANNEL_ID)
+			c.type = ChannelType::PREVIEW;
+		
+		if (c.type != ChannelType::SAMPLE) {
+			c.pan    = G_DEFAULT_PAN;
+			c.waveId = 0;
+		}
+	}	
+}
 }; // {anonymous}
 
 
@@ -460,6 +486,7 @@ int read(const std::string& file, const std::string& basePath)
 		readWaves_(j, basePath);
 		readActions_(j);
 		readChannels_(j);
+		modernize_();
 	}
 	catch (nl::json::exception& e) {
 		u::log::print("[patch::read] Exception thrown: %s\n", e.what());

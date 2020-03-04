@@ -44,9 +44,10 @@ class geShiftTool : public Fl_Pack
 {
 public:
 
-	geShiftTool(ID channelId, ID waveId, int x, int y);
+	geShiftTool(const c::sampleEditor::Data& d, int x, int y);
 
-	void rebuild();
+	void rebuild(const c::sampleEditor::Data& d);
+	void update(Frame shift);
 
 private:
 
@@ -57,8 +58,7 @@ private:
 
 	void shift(int f);
 
-	ID m_channelId;
-	ID m_waveId;
+	const c::sampleEditor::Data* m_data;
 	
 	geBox*    m_label;
 	geInput*  m_shift;

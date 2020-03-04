@@ -27,9 +27,7 @@
 
 #include <cassert>
 #include "core/model/model.h"
-#ifndef NDEBUG
-#include "core/channels/channel.h"
-#include "core/channels/sampleChannel.h"
+#ifdef G_DEBUG_MODE
 #include "core/channels/channelManager.h"
 #endif
 
@@ -44,7 +42,7 @@ RCUList<Kernel>   kernel(std::make_unique<Kernel>());
 RCUList<Recorder> recorder(std::make_unique<Recorder>());
 RCUList<MidiIn>   midiIn(std::make_unique<MidiIn>());
 RCUList<Actions>  actions(std::make_unique<Actions>());
-RCUList<Channel>  channels;
+RCUList<Channel> channels;
 RCUList<Wave>     waves;
 #ifdef WITH_VST
 RCUList<Plugin>   plugins;
@@ -60,7 +58,7 @@ Actions::Actions(const Actions& o) : map(o.map)
 }
 
 
-#ifndef NDEBUG
+#ifdef G_DEBUG_MODE
 
 void debug()
 {
@@ -78,14 +76,17 @@ void debug()
 
 	int i = 0;
 	for (const Channel* c : channels) {
-		printf("    %d) %p - ID=%d name='%s' columnID=%d\n", i++, (void*)c, c->id, c->name.c_str(), c->columnId);
+		printf("\t%d) %p - ID=%d name='%s' type=%d columnID=%d\n",
+		        i++, (void*) c, c->state->id, c->state->name.c_str(), (int) c->getType(), c->getColumnId());
+/*
 		if (c->hasData())
-			printf("        wave: ID=%d\n", static_cast<const SampleChannel*>(c)->waveId);
+			printf("\t\twave: ID=%d\n", static_cast<const SampleChannel*>(c)->waveId);
+*/
 #ifdef WITH_VST
 		if (c->pluginIds.size() > 0) {
-			puts("        plugins:");
+			puts("\t\tplugins:");
 			for (ID id : c->pluginIds)
-				printf("            ID=%d\n", id);
+				printf("\t\t\tID=%d\n", id);
 		}
 #endif
 	}
@@ -94,7 +95,7 @@ void debug()
 
 	i = 0;
 	for (const Wave* w : waves) 
-		printf("    %d) %p - ID=%d name='%s'\n", i++, (void*)w, w->id, w->getPath().c_str());
+		printf("\t%d) %p - ID=%d name='%s'\n", i++, (void*)w, w->id, w->getPath().c_str());
 		
 #ifdef WITH_VST
 	puts("model::plugins");
@@ -102,31 +103,31 @@ void debug()
 	i = 0;
 	for (const Plugin* p : plugins) {
 		if (p->valid)
-			printf("    %d) %p - ID=%d name='%s'\n", i++, (void*)p, p->id, p->getName().c_str());
+			printf("\t%d) %p - ID=%d name='%s'\n", i++, (void*)p, p->id, p->getName().c_str());
 		else
-			printf("    %d) %p - ID=%d INVALID\n", i++, (void*)p, p->id); 
+			printf("\t%d) %p - ID=%d INVALID\n", i++, (void*)p, p->id); 
 	}
 #endif
 
 	puts("model::clock");
 
-	printf("    clock.status   = %d\n", static_cast<int>(clock.get()->status));
-	printf("    clock.bars     = %d\n", clock.get()->bars);
-	printf("    clock.beats    = %d\n", clock.get()->beats);
-	printf("    clock.bpm      = %f\n", clock.get()->bpm);
-	printf("    clock.quantize = %d\n", clock.get()->quantize);
+	printf("\tclock.status   = %d\n", static_cast<int>(clock.get()->status));
+	printf("\tclock.bars     = %d\n", clock.get()->bars);
+	printf("\tclock.beats    = %d\n", clock.get()->beats);
+	printf("\tclock.bpm      = %f\n", clock.get()->bpm);
+	printf("\tclock.quantize = %d\n", clock.get()->quantize);
 
 	puts("model::actions");
 
 	for (auto& kv : actions.get()->map) {
-		printf("    frame: %d\n", kv.first);
+		printf("\tframe: %d\n", kv.first);
 		for (const Action& a : kv.second)
-			printf("        (%p) - ID=%d, frame=%d, channel=%d, value=0x%X, prevId=%d, prev=%p, nextId=%d, next=%p\n", 
+			printf("\t\t(%p) - ID=%d, frame=%d, channel=%d, value=0x%X, prevId=%d, prev=%p, nextId=%d, next=%p\n", 
 				(void*) &a, a.id, a.frame, a.channelId, a.event.getRaw(), a.prevId, (void*) a.prev, a.nextId, (void*) a.next);	
 	}
 	
 	puts("===============================");
 }
 
-#endif
+#endif // G_DEBUG_MODE
 }}} // giada::m::model::

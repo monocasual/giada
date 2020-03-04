@@ -39,7 +39,7 @@ namespace m
 /* Queue
 Single producer, single consumer lock-free queue. */
 
-template<typename T, size_t size>
+template<typename T, std::size_t size>
 class Queue
 {
 public:
@@ -54,7 +54,7 @@ public:
 
     bool pop(T& item)
     {
-        size_t curr = m_head.load();
+        std::size_t curr = m_head.load();
         if (curr == m_tail.load())  // Queue empty, nothing to do
             return false;
 
@@ -66,8 +66,8 @@ public:
 
     bool push(const T& item)
     {
-        size_t curr = m_tail.load();
-        size_t next = increment(curr);
+        std::size_t curr = m_tail.load();
+        std::size_t next = increment(curr);
 
         if (next == m_head.load()) // Queue full, nothing to do
             return false;
@@ -79,15 +79,15 @@ public:
 
 private:
 
-    size_t increment(size_t i) const
+    std::size_t increment(std::size_t i) const
     {
         return (i + 1) % size;
     }
 
 
     std::array<T, size> m_data;
-    std::atomic<size_t> m_head;
-    std::atomic<size_t> m_tail;
+    std::atomic<std::size_t> m_head;
+    std::atomic<std::size_t> m_tail;
 };
 }} // giada::m::
 

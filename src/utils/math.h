@@ -59,30 +59,6 @@ TO map(TI x, TI b, TO z)
 {
 	return (x / (double) b) * z;
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-/* bound (1)
-Returns 'def' if 'x' is outside the range ('min', 'max'). */
-
-template <typename T>
-T bound(T x, T min, T max, T def)
-{
-    return x < min || x > max ? def : x;
-}
-
-
-/* bound (2)
-Clamps 'x' in the range ('min', 'max'). */
-
-template <typename T>
-T bound(T x, T min, T max)
-{
-    if (x < min) return min; 
-	if (x > max) return max;
-	return x;
-}
 }}}  // giada::u::math::
 
 

@@ -26,7 +26,6 @@
 
 
 #include <FL/Fl.H>
-#include "core/channels/sampleChannel.h"
 #include "core/const.h"
 #include "core/waveFx.h"  
 #include "glue/channel.h"

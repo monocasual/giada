@@ -26,6 +26,7 @@
 
 
 #include "glue/io.h"
+#include "gui/elems/midiIO/midiLearner.h"
 #include "gui/elems/basics/check.h"
 #include "midiOutputBase.h"
 
@@ -33,9 +34,39 @@
 namespace giada {
 namespace v 
 {
+geLightningLearnerPack::geLightningLearnerPack(int x, int y, ID channelId)
+: geMidiLearnerPack(x, y)
+{
+	setCallbacks(
+		[channelId] (int param) { c::io::channel_startMidiLearn(param, channelId); },
+		[channelId] (int param) { c::io::channel_clearMidiLearn(param, channelId); }
+	);
+	addMidiLearner("playing", G_MIDI_OUT_L_PLAYING);
+	addMidiLearner("mute",    G_MIDI_OUT_L_MUTE);
+	addMidiLearner("solo",    G_MIDI_OUT_L_SOLO);	
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geLightningLearnerPack::update(const c::io::Channel_OutputData& d)
+{
+	learners[0]->update(d.lightningPlaying);
+	learners[1]->update(d.lightningMute);
+	learners[2]->update(d.lightningSolo);
+	setEnabled(d.lightningEnabled);
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
 gdMidiOutputBase::gdMidiOutputBase(int w, int h, ID channelId)
-: gdWindow   (w, h, "Midi Output Setup"),
-  m_channelId(channelId)
+: gdWindow   (w, h, "Midi Output Setup")
+, m_channelId(channelId)
 {
 }
 
@@ -46,16 +77,6 @@ gdMidiOutputBase::gdMidiOutputBase(int w, int h, ID channelId)
 gdMidiOutputBase::~gdMidiOutputBase()
 {
 	c::io::stopMidiLearn();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdMidiOutputBase::refresh()
-{
-	for (geMidiLearnerBase* l : m_learners)
-		l->refresh();	
 }
 
 
@@ -80,23 +101,16 @@ void gdMidiOutputBase::cb_close()
 
 void gdMidiOutputBase::cb_enableLightning()
 {
-	m::model::onSwap(m::model::channels, m_channelId, [&](m::Channel& c)
-	{
-		c.midiOutL = m_enableLightning->value();
-	});
-
-	for (geMidiLearnerBase* l : m_learners)
-		m_enableLightning->value() ? l->activate() : l->deactivate();
+	c::io::channel_enableMidiLightning(m_channelId, m_enableLightning->value());
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputBase::setTitle(int chanNum)
+void gdMidiOutputBase::setTitle(ID channelId)
 {
-	std::string tmp = "MIDI Output Setup (channel " + std::to_string(chanNum) + ")"; 
+	std::string tmp = "MIDI Output Setup (channel " + std::to_string(channelId) + ")"; 
 	copy_label(tmp.c_str());
 }
-
 }} // giada::v::

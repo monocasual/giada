@@ -89,7 +89,7 @@ std::string trim(const std::string& s)
 
 std::string replace(std::string in, const std::string& search, const std::string& replace)
 {
-	size_t pos = 0;
+	std::size_t pos = 0;
 	while ((pos = in.find(search, pos)) != std::string::npos) {
 		in.replace(pos, search.length(), replace);
 		pos += replace.length();
@@ -109,7 +109,7 @@ std::string format(const char* format, ...)
 	into account). */
 
 	va_start(args, format);
-	size_t size = vsnprintf(nullptr, 0, format, args) + 1;
+	std::size_t size = vsnprintf(nullptr, 0, format, args) + 1;
 	va_end(args);
 	
 	/* Create a new temporary char array to hold the new expanded std::string. */
@@ -134,8 +134,8 @@ std::vector<std::string> split(std::string in, std::string sep)
 	std::vector<std::string> out;
 	std::string full  = in;
 	std::string token = "";
-	size_t curr = 0;
-	size_t next = -1;
+	std::size_t curr = 0;
+	std::size_t next = -1;
 	do {
 		curr  = next + 1;
 		next  = full.find_first_of(sep, curr);

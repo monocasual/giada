@@ -63,7 +63,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 
 	mainMenu      = new v::geMainMenu(8, 0);
 #if defined(WITH_VST)
-	mainIO        = new v::geMainIO(408, 8);
+	mainIO        = new v::geMainIO(412, 8);
 #else
 	mainIO        = new v::geMainIO(476, 8);
 #endif

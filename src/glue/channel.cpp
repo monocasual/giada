@@ -48,9 +48,6 @@
 #include "utils/gui.h"
 #include "utils/fs.h"
 #include "utils/log.h"
-#include "core/channels/channel.h"
-#include "core/channels/sampleChannel.h"
-#include "core/channels/midiChannel.h"
 #include "core/model/model.h"
 #include "core/kernelAudio.h"
 #include "core/mixerHandler.h"
@@ -60,6 +57,7 @@
 #include "core/conf.h"
 #include "core/wave.h"
 #include "core/recorder.h"
+#include "core/recManager.h"
 #include "core/plugin.h"
 #include "core/waveManager.h"
 #include "main.h"
@@ -86,25 +84,105 @@ void printLoadError_(int res)
 	else if (res == G_RES_ERR_NO_DATA)
 		v::gdAlert("No file specified.");
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void onRefreshSampleEditor_(bool gui, std::function<void(v::gdSampleEditor*)> f)
-{
-	v::gdSampleEditor* gdEditor = static_cast<v::gdSampleEditor*>(u::gui::getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
-	if (gdEditor == nullptr) 
-		return;
-	if (!gui) Fl::lock();
-	f(gdEditor);
-	if (!gui) Fl::unlock();
-}
 } // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+SampleData::SampleData(const m::SamplePlayer& s, const m::AudioReceiver& a)
+: waveId         (s.getWaveId())
+, mode           (s.state->mode.load())
+, isLoop         (s.state->isAnyLoopMode())
+, pitch          (s.state->pitch.load())
+, m_samplePlayer (&s)
+, m_audioReceiver(&a)
+{
+}
+
+
+Frame SampleData::a_getTracker() const      { return a_get(m_samplePlayer->state->tracker); }
+Frame SampleData::a_getBegin() const        { return a_get(m_samplePlayer->state->begin); }
+Frame SampleData::a_getEnd() const          { return a_get(m_samplePlayer->state->end); }
+bool  SampleData::a_getInputMonitor() const { return a_get(m_audioReceiver->state->inputMonitor); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+MidiData::MidiData(const m::MidiSender& m)
+: m_midiSender(&m)
+{
+}
+
+bool MidiData::a_isOutputEnabled() const { return a_get(m_midiSender->state->enabled); }
+int  MidiData::a_getFilter() const       { return a_get(m_midiSender->state->filter); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Data::Data(const m::Channel& c)
+: id         (c.id)
+, columnId   (c.getColumnId())
+, pluginIds  (c.pluginIds)
+, type       (c.getType())
+, height     (c.state->height)
+, name       (c.state->name)
+, volume     (c.state->volume.load())
+, pan        (c.state->pan.load())
+, key        (c.state->key.load())
+, hasActions (c.state->hasActions)
+, m_channel  (c)
+{
+	if (c.getType() == ChannelType::SAMPLE)
+		sample = std::make_optional<SampleData>(*c.samplePlayer, *c.audioReceiver);
+	else
+	if (c.getType() == ChannelType::MIDI)
+		midi   = std::make_optional<MidiData>(*c.midiSender);
+}
+
+
+bool          Data::a_getSolo() const           { return a_get(m_channel.state->solo); }
+bool          Data::a_getMute() const           { return a_get(m_channel.state->mute); }
+ChannelStatus Data::a_getPlayStatus() const     { return a_get(m_channel.state->playStatus); }
+ChannelStatus Data::a_getRecStatus() const      { return a_get(m_channel.state->recStatus); }
+bool          Data::a_getReadActions() const    { return a_get(m_channel.state->readActions); }
+bool          Data::a_isArmed() const           { return a_get(m_channel.state->armed); }
+bool          Data::a_isRecordingInput() const  { return m::recManager::isRecordingInput(); }
+bool          Data::a_isRecordingAction() const { return m::recManager::isRecordingAction(); }
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+Data getData(ID channelId)
+{
+	namespace mm = m::model;
+
+	mm::ChannelsLock cl(mm::channels);
+	return Data(mm::get(mm::channels, channelId));
+}
+
+
+std::vector<Data> getChannels()
+{
+	namespace mm = m::model;
+	mm::ChannelsLock cl(mm::channels);
+
+	std::vector<Data> out;
+	for (const m::Channel* ch : mm::channels)
+		if (!ch->isInternal()) 
+			out.push_back(Data(*ch));
+	
+	return out;
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 
@@ -187,26 +265,11 @@ void freeChannel(ID channelId)
 /* -------------------------------------------------------------------------- */
 
 
-void setArm(ID channelId, bool value)
-{
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c) { c.armed = value; });
-}
-
-
-void toggleArm(ID channelId)
-{
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c) { c.armed = !c.armed; });
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void setInputMonitor(ID channelId, bool value)
 {
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c) 
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c) 
 	{ 
-		static_cast<m::SampleChannel&>(c).inputMonitor = value;
+		c.audioReceiver->state->inputMonitor.store(value);
 	});
 }
 
@@ -223,72 +286,15 @@ void cloneChannel(ID channelId)
 /* -------------------------------------------------------------------------- */
 
 
-void setVolume(ID channelId, float value, bool gui, bool editor)
+void setSamplePlayerMode(ID channelId, SamplePlayerMode m)
 {
-	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c) { c.volume = value; });
-
-	/* Changing channel volume? Update wave editor (if it's shown). */
-
-	if (editor) 
-		onRefreshSampleEditor_(gui, [](v::gdSampleEditor* e) { e->volumeTool->rebuild(); });
-
-	if (!gui) {
-		Fl::lock();
-		G_MainWin->keyboard->getChannel(channelId)->vol->value(value);
-		Fl::unlock();
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void setPitch(ID channelId, float val, bool gui)
-{	
 	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
-	{ 
-		static_cast<m::SampleChannel&>(c).setPitch(val); 
-	});
-	
-	onRefreshSampleEditor_(gui, [](v::gdSampleEditor* e) { e->pitchTool->rebuild(); });
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void setPan(ID channelId, float val, bool gui)
-{
-	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c) { c.setPan(val); });
-
-	onRefreshSampleEditor_(gui, [](v::gdSampleEditor* e) { e->panTool->rebuild(); });
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void setMute(ID channelId, bool value)
-{
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch) { ch.setMute(value); });
-}
-
-
-void toggleMute(ID channelId)
-{
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch) { ch.setMute(!ch.mute); });
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void setSampleMode(ID channelId, ChannelMode m)
-{
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
 	{
-		static_cast<m::SampleChannel&>(ch).mode = m;
+		c.samplePlayer->state->mode.store(m);
 	});
+
+	/* TODO - brutal rebuild! Just rebuild the specific channel instead */
+	G_MainWin->keyboard->rebuild();
 
 	u::gui::refreshActionEditor();
 }
@@ -297,57 +303,12 @@ void setSampleMode(ID channelId, ChannelMode m)
 /* -------------------------------------------------------------------------- */
 
 
-void setSolo(ID channelId, bool value)
-{	
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch) { ch.setSolo(value); });
-	m::mh::updateSoloCount();
-}
-
-
-void toggleSolo(ID channelId)
-{	
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch) { ch.setSolo(!ch.solo); });
-	m::mh::updateSoloCount();
-}
-
-/* -------------------------------------------------------------------------- */
-
-
-void start(ID channelId, int velocity, bool record)
+void setHeight(ID channelId, Pixel p)
 {
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
 	{
-		if (record && !ch.recordStart(m::clock::canQuantize()))
-			return;
-		ch.start(/*localFrame=*/0, m::clock::canQuantize(), velocity); // Frame 0: user-generated event
-	});
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void kill(ID channelId, bool record)
-{
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
-	{
-		if (record && !ch.recordKill())
-			return;
-		ch.kill(/*localFrame=*/0); // Frame 0: user-generated event
-	});
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void stop(ID channelId)
-{	
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
-	{
-		ch.recordStop();
-		ch.stop();
-	});
+		c.state->height = p;
+	});	
 }
 
 
@@ -358,56 +319,4 @@ void setName(ID channelId, const std::string& name)
 {
 	m::mh::renameChannel(channelId, name);
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void toggleReadingActions(ID channelId)
-{
-	/* When you call startReadingRecs with conf::treatRecsAsLoops, the
-	member value ch->readActions actually is not set to true immediately, because
-	the channel is in wait mode (REC_WAITING). ch->readActions will become true on
-	the next first beat. So a 'stop rec' command should occur also when
-	ch->readActions is false but the channel is in wait mode; this check will
-	handle the case of when you press 'R', the channel goes into REC_WAITING and
-	then you press 'R' again to undo the status. */
-
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
-	{
-		if (!ch.hasActions)
-			return;
-		if (ch.readActions || (!ch.readActions && ch.recStatus == ChannelStatus::WAIT))
-			ch.stopReadingActions(m::clock::isRunning(), m::conf::conf.treatRecsAsLoops, 
-				m::conf::conf.recsStopOnChanHalt);
-		else
-			ch.startReadingActions(m::conf::conf.treatRecsAsLoops, m::conf::conf.recsStopOnChanHalt);
-	});
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void startReadingActions(ID channelId)
-{
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
-	{
-		ch.startReadingActions(m::conf::conf.treatRecsAsLoops, m::conf::conf.recsStopOnChanHalt);
-	});
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void stopReadingActions(ID channelId)
-{
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
-	{
-		ch.stopReadingActions(m::clock::isRunning(), m::conf::conf.treatRecsAsLoops, 
-			m::conf::conf.recsStopOnChanHalt);
-	});
-}
-
 }}}; // giada::c::channel::

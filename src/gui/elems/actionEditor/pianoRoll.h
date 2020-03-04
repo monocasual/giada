@@ -50,12 +50,12 @@ public:
 	static const Pixel CELL_H    = 20;
 	static const Pixel CELL_W    = 40;
 
-	gePianoRoll(Pixel x, Pixel y, Pixel w);
+	gePianoRoll(Pixel x, Pixel y, Pixel w, gdBaseActionEditor*);
 
 	void draw() override;
 	int  handle(int e) override;
 
-	void rebuild() override;
+	void rebuild(c::actionEditor::Data& d) override;
 
 	Pixel pick;
 

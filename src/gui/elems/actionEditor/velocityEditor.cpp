@@ -30,7 +30,6 @@
 #include <FL/fl_draw.H>
 #include "utils/log.h"
 #include "utils/math.h"
-#include "core/channels/midiChannel.h"
 #include "core/const.h"
 #include "core/conf.h"
 #include "core/action.h"
@@ -44,8 +43,8 @@
 namespace giada {
 namespace v
 {
-geVelocityEditor::geVelocityEditor(Pixel x, Pixel y)
-:	geBaseActionEditor(x, y, 200, m::conf::conf.velocityEditorH)
+geVelocityEditor::geVelocityEditor(Pixel x, Pixel y, gdBaseActionEditor* b)
+:	geBaseActionEditor(x, y, 200, m::conf::conf.velocityEditorH, b)
 {
 }
 
@@ -110,9 +109,9 @@ int geVelocityEditor::yToValue(Pixel px) const
 /* -------------------------------------------------------------------------- */
 
 
-void geVelocityEditor::rebuild()
+void geVelocityEditor::rebuild(c::actionEditor::Data& d)
 {
-	namespace ca = c::actionEditor;
+	m_data = &d;
 
 	/* Remove all existing actions and set a new width, according to the current
 	zoom level. */
@@ -120,8 +119,8 @@ void geVelocityEditor::rebuild()
 	clear();
 	size(m_base->fullWidth, h());
 
-	for (const m::Action& action : m_base->getActions())
-	{
+	for (const m::Action& action : m_data->actions) {
+		
 		if (action.event.getStatus() == m::MidiEvent::NOTE_OFF)
 			continue;
 

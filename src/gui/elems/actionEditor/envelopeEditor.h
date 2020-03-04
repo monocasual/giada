@@ -40,18 +40,16 @@ class SampleChannel;
 namespace v
 {
 class geEnvelopePoint;
-
-
 class geEnvelopeEditor : public geBaseActionEditor
 {
 public:
 
-	geEnvelopeEditor(Pixel x, Pixel y, const char* l);
+	geEnvelopeEditor(Pixel x, Pixel y, const char* l, gdBaseActionEditor*);
 	~geEnvelopeEditor();
 
 	void draw() override;
 
-	void rebuild() override;
+	void rebuild(c::actionEditor::Data& d) override;
 
 private:
 

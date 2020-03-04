@@ -43,6 +43,8 @@ public:
 
 	gdMidiOutputMidiCh(ID channelId);
 
+	void rebuild() override;
+
 private:
 
 	static void cb_enableOut (Fl_Widget* w, void* p);

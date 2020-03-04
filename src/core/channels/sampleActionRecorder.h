@@ -25,36 +25,52 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifdef WITH_VST
-
-
-#ifndef GE_MIDI_LEARNER_PLUGIN_H
-#define GE_MIDI_LEARNER_PLUGIN_H
+#ifndef G_CHANNEL_SAMPLE_ACTION_RECORDER_H
+#define G_CHANNEL_SAMPLE_ACTION_RECORDER_H
 
 
 #include "core/types.h"
-#include "midiLearnerBase.h"
 
 
 namespace giada {
-namespace v 
+namespace m
 {
-class geMidiLearnerPlugin : public geMidiLearnerBase
+namespace mixer
+{
+struct Event;
+}
+struct ChannelState;
+
+/* SampleActionRecorder
+Records actions for channels and optionally manages the 'read action' state ('R' 
+button on Sample Channels). */
+
+class SampleActionRecorder
 {
 public:
 
-	geMidiLearnerPlugin(int x, int y, int w, std::string l, int param, uint32_t value, ID pluginId);
-	
-	void refresh() override;
-	void onLearn() override;
-	void onReset() override;
+    SampleActionRecorder(ChannelState*, SamplePlayerState*);
+    SampleActionRecorder(const SampleActionRecorder&, ChannelState* c=nullptr, 
+        SamplePlayerState* sc=nullptr);
+
+    void parse(const mixer::Event& e) const;
 
 private:
+    void record(int note) const;
+    void onKeyPress() const;
+    void onKeyRelease() const;
+    void onFirstBeat() const;
 
-	ID m_pluginId;
+    void toggleReadActions() const;
+    void startReadActions() const;
+    void stopReadActions(ChannelStatus curRecStatus) const;
+
+    bool canRecord() const;
+
+    ChannelState*      m_channelState;
+    SamplePlayerState* m_samplePlayerState;
 };
-}} // giada::v::
+}} // giada::m::
 
 
-#endif
 #endif

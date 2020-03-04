@@ -25,40 +25,33 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_MASTER_CHANNEL_H
-#define G_MASTER_CHANNEL_H
-
-
-#include "core/channels/channel.h"
+#include "core/channels/state.h"
+#include "midiLearner.h"
 
 
 namespace giada {
 namespace m 
 {
-class MasterChannel : public Channel
+MidiLearner::MidiLearner()
+: state(std::make_unique<MidiLearnerState>())
 {
-public:
+}
 
-	MasterChannel(int bufferSize, ID id);
-	MasterChannel(const patch::Channel& p, int bufferSize);
 
-	MasterChannel* clone() const override;
-	void load(const patch::Channel& p) override;
-	void parseEvents(mixer::FrameEvents fe) override {};
-	void render(AudioBuffer& out, const AudioBuffer& in, AudioBuffer& inToOut, 
-		bool audible, bool running) override;
-	void start(int frame, bool doQuantize, int velocity) override {};
-	void kill(int localFrame) override {};
-	void empty() override {};
-	void stopBySeq(bool chansStopOnSeqHalt) override {};
-	void stop() override {};
-	void rewindBySeq() override {};
-	void setMute(bool value) override {};
-	void setSolo(bool value) override {};
-	void receiveMidi(const MidiEvent& midiEvent) override {};
-};
+/* -------------------------------------------------------------------------- */
 
+
+MidiLearner::MidiLearner(const patch::Channel& p)
+: state(std::make_unique<MidiLearnerState>(p))
+{
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+MidiLearner::MidiLearner(const MidiLearner& o)
+: state(std::make_unique<MidiLearnerState>(*o.state))
+{
+}
 }} // giada::m::
-
-
-#endif

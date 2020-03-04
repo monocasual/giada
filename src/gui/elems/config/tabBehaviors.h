@@ -47,8 +47,6 @@ public:
 
 	void save();
 
-	geRadio *recsStopOnChanHalt_1;
-	geRadio *recsStopOnChanHalt_0;
 	geRadio *chansStopOnSeqHalt_1;
 	geRadio *chansStopOnSeqHalt_0;
 	geCheck *treatRecsAsLoops;

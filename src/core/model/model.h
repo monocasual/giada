@@ -30,8 +30,9 @@
 
 
 #include <algorithm>
-#include <type_traits>
+#include "core/model/traits.h"
 #include "core/channels/channel.h"
+#include "core/channels/state.h"
 #include "core/const.h"
 #include "core/wave.h"
 #include "core/plugin.h"
@@ -43,6 +44,44 @@ namespace giada {
 namespace m {
 namespace model
 {
+namespace
+{
+/* getIter_
+Returns an iterator of an element from list 'list' with given ID. */
+
+template<typename L>
+auto getIter_(L& list, ID id)
+{
+	static_assert(has_id<typename L::value_type>(), "This type has no ID");
+	auto it = std::find_if(list.begin(), list.end(), [&](auto* t)
+	{
+		return t->id == id;
+	});
+	assert(it != list.end());
+	return it;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+/* onSwapByIndex_
+Swaps i-th element from list with a new one and applies a function f to it. */
+
+template<typename L>
+void onSwapByIndex_(L& list, std::size_t i, std::function<void(typename L::value_type&)> f)
+{
+	std::unique_ptr<typename L::value_type> o = list.clone(i);
+	f(*o.get());
+	list.swap(std::move(o), i);
+}
+} // {anonymous}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
 struct Clock
 {	
 	ClockStatus status       = ClockStatus::STOPPED;
@@ -127,53 +166,45 @@ extern RCUList<Plugin>   plugins;
 #endif
 
 
-/* ---------------------------------------------------------------------------*/ 
-
-
-template <typename T> struct has_id : std::false_type {};
-template <> struct has_id<Channel>  : std::true_type {};
-template <> struct has_id<Wave>     : std::true_type {};
-#ifdef WITH_VST
-template <> struct has_id<Plugin>   : std::true_type {};
-#endif
-
-template <typename T> struct is_copyable : std::true_type {};
-template <> struct is_copyable<Channel>  : std::false_type {};
-
-
 /* -------------------------------------------------------------------------- */
 
 
 template<typename L>
-auto getIter(L& list, ID id)
+bool exists(L& list, ID id)
 {
-	static_assert(has_id<typename L::value_type>(), "This type has no ID");
+	static_assert(has_id<typename L::value_type>(), "This type has no ID");	
+	typename L::Lock l(list);
 	auto it = std::find_if(list.begin(), list.end(), [&](auto* t)
 	{
 		return t->id == id;
 	});
-	assert(it != list.end());
-	return it;
+	return it != list.end();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
+/* getIndex (thread safe)
+Returns the index of element with ID from a list. */
+
 template<typename L>
-size_t getIndex(L& list, ID id)
+std::size_t getIndex(L& list, ID id)
 {
 	static_assert(has_id<typename L::value_type>(), "This type has no ID");
 	typename L::Lock l(list);
-	return std::distance(list.begin(), getIter(list, id));
+	return std::distance(list.begin(), getIter_(list, id));
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
+/* getIndex (thread safe)
+Returns the element ID of the i-th element of a list. */
+
 template<typename L>
-ID getId(L& list, size_t i)
+ID getId(L& list, std::size_t i)
 {
 	static_assert(has_id<typename L::value_type>(), "This type has no ID");
 	typename L::Lock l(list);
@@ -188,26 +219,28 @@ template<typename L>
 typename L::value_type& get(L& list, ID id)
 {
 	static_assert(has_id<typename L::value_type>(), "This type has no ID");
-	return **getIter(list, id);
+	return **getIter_(list, id);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-/* onGet (1)
+/* onGet (1) (thread safe)
 Utility function for reading ID-based things from a RCUList. */
 
 template<typename L>
-void onGet(L& list, ID id, std::function<void(typename L::value_type&)> f)
+void onGet(L& list, ID id, std::function<void(typename L::value_type&)> f, bool rebuild=false)
 {
 	static_assert(has_id<typename L::value_type>(), "This type has no ID");
 	typename L::Lock l(list);
-	f(**getIter(list, id));
+	f(**getIter_(list, id));
+	if (rebuild)
+		list.changed.store(true);
 }
 
 
-/* onGet (2)
+/* onGet (2) (thread safe)
 Same as (1), for non-ID-based things. */
 
 template<typename L>
@@ -222,60 +255,18 @@ void onGet(L& list, std::function<void(typename L::value_type&)> f)
 /* ---------------------------------------------------------------------------*/ 
 
 
-template<typename L>
-void onSwapByIndex_(L& list, size_t i, std::function<void(typename L::value_type&)> f)
-{
-	std::unique_ptr<typename L::value_type> o = list.clone(i);
-	f(*o.get());
-	list.swap(std::move(o), i);
-}
-
-/* onSwapById_ (1)
-Regular version for copyable types. */
+/* onSwap (1) (thread safe)
+Utility function for swapping ID-based things in a RCUList. */
 
 template<typename L>
-void onSwapById_(L& list, ID id, std::function<void(typename L::value_type&)> f, 
-	const std::true_type& /*is_copyable=true*/)
+void onSwap(L& list, ID id, std::function<void(typename L::value_type&)> f)
 {
 	static_assert(has_id<typename L::value_type>(), "This type has no ID");
 	onSwapByIndex_(list, getIndex(list, id), f); 
 }
 
 
-/* onSwapById_ (2)
-Custom version for non-copyable types, e.g. Channel types. Let's wait for the
-no-virtual channel refactoring... */
-
-template<typename L>
-void onSwapById_(L& list, ID id, std::function<void(typename L::value_type&)> f,
-	const std::false_type& /*is_copyable=false*/)
-{	
-	static_assert(has_id<typename L::value_type>(), "This type has no ID");
-	
-	size_t i = getIndex(list, id);
-	
-	list.lock();
-	std::unique_ptr<typename L::value_type> o(list.get(i)->clone());
-	list.unlock();
-
-	f(*o.get());
-
-	channels.swap(std::move(o), i);
-}
-
-
-/* onSwap (1)
-Utility function for swapping things in a RCUList. */
-
-template<typename L>
-void onSwap(L& list, ID id, std::function<void(typename L::value_type&)> f)
-{
-	static_assert(has_id<typename L::value_type>(), "This type has no ID");
-	onSwapById_(list, id, f, is_copyable<typename L::value_type>());
-}
-
-
-/* onSwap (2)
+/* onSwap (2) (thread safe)
 Utility function for swapping things in a RCUList when the list contains only
 a single element (and so with no ID). */
 
@@ -287,10 +278,10 @@ void onSwap(L& list, std::function<void(typename L::value_type&)> f)
 }
 
 
-/* ---------------------------------------------------------------------------*/ 
+/* ---------------------------------------------------------------------------*/
 
 
-#ifndef NDEBUG
+#ifdef G_DEBUG_MODE
 
 void debug();
 

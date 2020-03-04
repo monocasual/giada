@@ -25,59 +25,73 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <FL/Fl.H>
-#include "core/model/model.h"
-#include "glue/io.h"
-#include "gui/elems/basics/button.h"
-#include "midiLearnerMaster.h"
+#include <cassert>
+#include "core/clock.h"
+#include "quantizer.h"
 
 
 namespace giada {
-namespace v 
+namespace m
 {
-geMidiLearnerMaster::geMidiLearnerMaster(int X, int Y, int W, std::string l, int param, uint32_t value)
-: geMidiLearnerBase(X, Y, W, l, param, value)
+void Quantizer::trigger(int id)
 {
+	assert(id >= 0);
+	assert(id < (int) m_callbacks.size());
+
+	m_performId = id;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearnerMaster::refresh()
+void Quantizer::schedule(int id, std::function<void(Frame delta)> f)
 {
-	m::model::onGet(m::model::midiIn, [&](const m::model::MidiIn& m)
-	{
-		switch (m_param) {
-			case G_MIDI_IN_REWIND      : update(m.rewind); break;
-			case G_MIDI_IN_START_STOP  : update(m.startStop); break;
-			case G_MIDI_IN_ACTION_REC  : update(m.actionRec); break;
-			case G_MIDI_IN_INPUT_REC   : update(m.inputRec); break;
-			case G_MIDI_IN_METRONOME   : update(m.volumeIn); break;
-			case G_MIDI_IN_VOLUME_IN   : update(m.volumeOut); break;
-			case G_MIDI_IN_VOLUME_OUT  : update(m.beatDouble); break;
-			case G_MIDI_IN_BEAT_DOUBLE : update(m.beatHalf); break;
-			case G_MIDI_IN_BEAT_HALF   : update(m.metronome); break;
-		}
-	});
+	assert(id >= 0);
+	assert(id < (int) m_callbacks.size());
+
+	m_callbacks[id] = f;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearnerMaster::onLearn()
+void Quantizer::advance(Range<Frame> block, Frame quantizerStep)
 {
-	if (m_button->value() == 1)
-		c::io::startMasterMidiLearn(m_param);
-	else
-		c::io::stopMidiLearn();
+	/* Nothing to do if there's no action to perform. */
+
+	if (m_performId == -1)
+		return;
+
+	assert(m_callbacks[m_performId] != nullptr);
+
+	for (Frame global = block.getBegin(), local = 0; global < block.getEnd(); global++, local++) {
+
+		if (global % quantizerStep != 0) // Skip if it's not on a quantization unit. 
+			continue;
+
+		m_callbacks[m_performId](local);
+		m_performId = -1;
+		return;
+	}
 }
 
 
-void geMidiLearnerMaster::onReset()
+/* -------------------------------------------------------------------------- */
+
+
+void Quantizer::clear()
 {
-	if (Fl::event_button() == FL_RIGHT_MOUSE)
-		c::io::clearMasterMidiLearn(m_param);	
+	m_performId = -1;
 }
-}} // giada::v::
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool Quantizer::isTriggered() const
+{
+	return m_performId != -1;
+}
+}} // giada::m::

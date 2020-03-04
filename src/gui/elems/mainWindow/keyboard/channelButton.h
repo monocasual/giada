@@ -33,23 +33,23 @@
 
 
 namespace giada {
-namespace m 
-{ 
-class Channel; 
-}
+namespace c {
+namespace channel
+{
+struct Data;
+}}
 namespace v
 {
 class geChannelButton : public geButton
 {
 public:
 
-	geChannelButton(int x, int y, int w, int h, ID channelId);
+	geChannelButton(int x, int y, int w, int h, const c::channel::Data& d);
 
 	virtual void refresh();
 
 	void draw() override;
   
-	void setKey(int k);
 	void setPlayMode();
 	void setEndingMode();
 	void setDefaultMode(const char* l=0);
@@ -58,8 +58,7 @@ public:
 
 protected:
 
-	ID          m_channelId;
-	std::string m_key;
+    const c::channel::Data& m_channel;
 };
 }} // giada::v::
 

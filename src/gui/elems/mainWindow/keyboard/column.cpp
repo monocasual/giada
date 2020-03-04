@@ -28,8 +28,7 @@
 #include <cassert>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Button.H>
-#include "core/channels/sampleChannel.h"
-#include "core/channels/midiChannel.h"
+#include "core/channels/state.h"
 #include "core/model/model.h"
 #include "glue/channel.h"
 #include "utils/log.h"
@@ -76,32 +75,34 @@ void geColumn::cb_addChannel(Fl_Widget* v, void* p) { ((geColumn*)p)->cb_addChan
 /* -------------------------------------------------------------------------- */
 
 
-geChannel* geColumn::addChannel(ID channelId, ChannelType t, int height)
+geChannel* geColumn::addChannel(c::channel::Data d)
 {
 	geChannel* gch  = nullptr;
 	Fl_Widget* last = m_channels.size() == 0 ? static_cast<Fl_Widget*>(m_addChannelBtn) : m_channels.back();
 
-	if (t == ChannelType::SAMPLE)
-		gch = new geSampleChannel(x(), last->y() + last->h() + G_GUI_INNER_MARGIN, w(), height, channelId);
+	if (d.type == ChannelType::SAMPLE)
+		gch = new geSampleChannel(x(), last->y() + last->h() + G_GUI_INNER_MARGIN, w(), d.height, d);
 	else
-		gch = new geMidiChannel  (x(), last->y() + last->h() + G_GUI_INNER_MARGIN, w(), height, channelId);
+		gch = new geMidiChannel  (x(), last->y() + last->h() + G_GUI_INNER_MARGIN, w(), d.height, d);
 
 	geResizerBar* bar = new geResizerBar(x(), gch->y() + gch->h(), w(), 
 		G_GUI_INNER_MARGIN, G_GUI_UNIT, geResizerBar::VERTICAL, gch);
 
 	/* Update the column height while dragging the resizer bar. */
 
-	bar->onDrag = [=](const Fl_Widget* w)
+	bar->onDrag = [this](const Fl_Widget* w)
 	{
 		resizable(nullptr);	
 		size(this->w(), (child(children() - 1)->y() - y()) + G_GUI_INNER_MARGIN);
+		
 	};	
 
 	/* Store the channel height in model when the resizer bar is released. */
 
-	bar->onRelease = [=](const Fl_Widget* w)
+	bar->onRelease = [channelId = d.id, this](const Fl_Widget* w)
 	{
-		storeChannelHeight(w, channelId);
+		resizable(this);
+		c::channel::setHeight(channelId, w->h());
 	};
 
 	m_channels.push_back(gch);
@@ -164,7 +165,7 @@ void geColumn::cb_addChannel()
 geChannel* geColumn::getChannel(ID channelId) const
 {
 	for (geChannel* c : m_channels)
-		if (c->channelId == channelId)
+		if (c->getData().id == channelId)
 			return c;
 	return nullptr;
 }
@@ -214,17 +215,4 @@ int geColumn::computeHeight() const
 		out += c->h() + G_GUI_INNER_MARGIN;
 	return out + m_addChannelBtn->h() + G_GUI_INNER_MARGIN;
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geColumn::storeChannelHeight(const Fl_Widget* w, ID channelId) const
-{	
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c)
-	{	
-		c.height = w->h();
-	});
-}
-
 }} // giada::v::

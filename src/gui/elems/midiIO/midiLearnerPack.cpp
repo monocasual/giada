@@ -25,63 +25,68 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "masterChannel.h"
+#include <cassert>
+#include "core/const.h"
+#include "glue/io.h"
+#include "gui/elems/basics/box.h"
+#include "midiLearnerPack.h"
 
 
 namespace giada {
-namespace m 
+namespace v 
 {
-MasterChannel::MasterChannel(int bufferSize, ID id)
-: Channel(ChannelType::MASTER, ChannelStatus::OFF, bufferSize, 0, id)
+constexpr int LEARNER_WIDTH = 284;
+
+
+/* -------------------------------------------------------------------------- */
+
+
+geMidiLearnerPack::geMidiLearnerPack(int X, int Y, std::string title)
+: gePack(X, Y, Direction::VERTICAL)
 {
+	end();
+
+	if (title != "") {
+		geBox* header = new geBox(0, 0, LEARNER_WIDTH, G_GUI_UNIT, title.c_str());
+		header->box(FL_BORDER_BOX);
+		add(header);
+	}
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-MasterChannel::MasterChannel(const patch::Channel& p, int bufferSize)
-: Channel(p, bufferSize)
+void geMidiLearnerPack::setCallbacks(std::function<void(uint32_t)> s, std::function<void(uint32_t)> c)
 {
+    m_onStartLearn = s;
+    m_onClearLearn = c;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-MasterChannel* MasterChannel::clone() const
+void geMidiLearnerPack::addMidiLearner(std::string label, int param, bool visible)
 {
-	return new MasterChannel(*this);
-}
-
+	geMidiLearner* l = new geMidiLearner(0, 0, LEARNER_WIDTH, label, param);
 	
-/* -------------------------------------------------------------------------- */
+	l->onStartLearn = m_onStartLearn;
+	l->onClearLearn = m_onClearLearn;
+	l->onStopLearn = [] () { c::io::stopMidiLearn(); };
 
-
-void MasterChannel::load(const patch::Channel& p)
-{
-	volume    = p.volume;
-#ifdef WITH_VST
-    pluginIds = p.pluginIds;
-#endif
+	add(l);
+	if (!visible) l->hide();
+	learners.push_back(l);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void MasterChannel::render(AudioBuffer& out, const AudioBuffer& in, 
-	AudioBuffer& inToOut, bool audible, bool running)
+void geMidiLearnerPack::setEnabled(bool v)
 {
-#ifdef WITH_VST
-	if (pluginIds.size() == 0)
-		return;
-	if (id == mixer::MASTER_OUT_CHANNEL_ID)
-		pluginHost::processStack(out, pluginIds);
-	else
-	if (id == mixer::MASTER_IN_CHANNEL_ID)
-		pluginHost::processStack(inToOut, pluginIds);
-#endif
+	if (v) for (auto* l : learners) l->activate();
+	else   for (auto* l : learners) l->deactivate();
 }
-
-}} // giada::m::
+}} // giada::v::

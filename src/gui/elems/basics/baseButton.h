@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * geBaseButton
- * Base class for every button widget.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2020 Giovanni A. Zuliani | Monocasual
@@ -35,6 +32,8 @@
 #include <string>
 #include <FL/Fl_Button.H>
 
+/* geBaseButton
+Base class for every button widget. */
 
 class geBaseButton : public Fl_Button
 {

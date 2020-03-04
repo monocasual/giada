@@ -38,13 +38,18 @@ class geButton;
 
 
 namespace giada {
+namespace c {
+namespace channel
+{
+struct Data;
+}}
 namespace v 
 {
 class gdKeyGrabber : public gdWindow
 {
 public:
 
-	gdKeyGrabber(ID channelId);
+	gdKeyGrabber(const c::channel::Data& d);
 
 	int handle(int e) override;
 	void rebuild() override;
@@ -59,7 +64,7 @@ private:
 	void setButtonLabel(int key);
 	void updateText(int key);
 	
-	ID m_channelId;
+	const c::channel::Data& m_data;
 
 	geBox*    m_text;
 	geButton* m_clear;

@@ -25,47 +25,33 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_SAMPLE_CHANNEL_REC_H
-#define G_SAMPLE_CHANNEL_REC_H
+#ifndef G_SEQUENCER_H
+#define G_SEQUENCER_H
 
 
 namespace giada {
 namespace m 
 {
-class SampleChannel;
-
-namespace sampleChannelRec
+class AudioBuffer;
+namespace sequencer
 {
-void parseEvents(SampleChannel* ch, mixer::FrameEvents fe);
+void init();
 
-/* recordStart
-Records a 'start' action if capable of. Returns true if a start() call can
-be performed. */
+/* parse
+Parses sequencer events that might occur in a block and advances the internal 
+quantizer. */
 
-bool recordStart(SampleChannel* ch, bool doQuantize);
+void parse(Frame bufferSize);
+void advance(AudioBuffer& outBuf);
 
-/* recordKill
-Records a 'kill' action if capable of. Returns true if a kill() call can
-be performed. */
+void start();
+void stop();
+void rewind();
 
-bool recordKill(SampleChannel* ch);
-
-/* recordStop
-Ends overdub mode SINGLE_PRESS channels. */
-
-void recordStop(SampleChannel* ch);
-
-/* setReadActions
-If enabled (v == true), Recorder will read actions from channel 'ch'. If 
-recsStopOnChanHalt == true and v == false, will also kill the channel. */
-
-void setReadActions(SampleChannel* ch, bool v, bool recsStopOnChanHalt);
-
-void startReadingActions(SampleChannel* ch, bool treatRecsAsLoops, 
-	bool recsStopOnChanHalt);
-void stopReadingActions(SampleChannel* ch, bool isClockRunning, 
-	bool treatRecsAsLoops, bool recsStopOnChanHalt);
-}}};
+bool isMetronomeOn();
+void toggleMetronome();
+void setMetronome(bool v);
+}}}  // giada::m::sequencer::
 
 
 #endif

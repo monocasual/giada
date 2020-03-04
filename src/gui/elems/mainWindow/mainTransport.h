@@ -29,17 +29,18 @@
 #define GE_MAIN_TRANSPORT_H
 
 
-#include <FL/Fl_Pack.H>
+#include "gui/elems/basics/pack.h"
 
 
 class geButton;
+class geBox;
 class geStatusButton;
 
 
 namespace giada {
 namespace v
 {
-class geMainTransport : public Fl_Pack
+class geMainTransport : public gePack
 {
 public:
 
@@ -51,11 +52,11 @@ private:
 
 	geButton* rewind;
 	geStatusButton* play;
-	
+	geBox* spacer1;	
 	geButton* recTriggerMode;
 	geStatusButton* recAction;
 	geStatusButton* recInput;
-
+	geBox* spacer2;
 	geStatusButton* metronome;
 };
 }} // giada::v::

@@ -41,9 +41,7 @@ namespace giada {
 namespace m 
 {
 class Plugin;
-class Channel;
 class AudioBuffer;
-
 namespace pluginHost
 {
 using Stack = std::vector<std::shared_ptr<Plugin>>;
@@ -78,9 +76,10 @@ Unloads multiple plugins. Useful when freeing or deleting a channel. */
 void freePlugins(const std::vector<ID>& pluginIds);
 
 /* clonePlugins
-Clones all the plug-ins from the current channel to the new one. */
+Clones all the plug-ins from 'pluginIds' vector coming from the old channel
+and returns new IDs. */
 
-void clonePlugins(const Channel& oldChannel, Channel& newChannel);
+std::vector<ID> clonePlugins(std::vector<ID> pluginIds);
 
 void setPluginParameter(ID pluginId, int paramIndex, float value);
 

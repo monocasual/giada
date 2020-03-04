@@ -30,8 +30,6 @@
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "core/channels/channel.h"
-#include "core/channels/sampleChannel.h"
-#include "core/channels/midiChannel.h"
 #include "core/const.h"
 #include "core/clock.h"
 #include "core/model/model.h"
@@ -89,13 +87,9 @@ void clearStartStopActions(ID channelId)
 
 void updateChannel(ID channelId, bool updateActionEditor)
 {
-	/* TODO - optimization needed. This functions swaps a channel only to set a 
-	boolean flag. Query the channel first and swap it only if the flag has
-	actually changed. */
-
-	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c)
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
 	{
-		c.hasActions = m::recorder::hasActions(channelId);
+		c.state->hasActions = m::recorder::hasActions(channelId);
 	});
 				
 	if (updateActionEditor)

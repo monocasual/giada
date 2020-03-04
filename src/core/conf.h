@@ -60,7 +60,6 @@ struct Conf
 	int         midiSync    = MIDI_SYNC_NONE;
 	float       midiTCfps   = 25.0f;
 
-	bool recsStopOnChanHalt    = false;
 	bool chansStopOnSeqHalt    = false;
 	bool treatRecsAsLoops      = false;
 	bool inputMonitorDefaultOn = false;

@@ -44,14 +44,25 @@ public:
 	static const int NOTE_KILL = 0x70;
 	static const int ENVELOPE  = 0xB0;
 
-	MidiEvent();
+	/* MidiEvent (1)
+	Creates and empty and invalid MIDI event. */
+
+	MidiEvent() = default;
+
 	MidiEvent(uint32_t raw);
 	MidiEvent(int byte1, int byte2, int byte3);
+
+	/* MidiEvent (4)
+	A constructor that takes a float parameter. Useful to build ENVELOPE events 
+	for automations, volume and pitch. */
+
+	MidiEvent(float v);
 
 	int getStatus() const;	
 	int getChannel() const;	
 	int getNote() const;	
-	int getVelocity() const;	
+	int getVelocity() const;
+	float getVelocityFloat() const;
 	bool isNoteOnOff() const;	
 	int getDelta() const;
 

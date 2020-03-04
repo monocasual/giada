@@ -40,6 +40,8 @@ class gdMidiOutputSampleCh : public gdMidiOutputBase
 public:
 
     gdMidiOutputSampleCh(ID channelId);
+
+	void rebuild() override;
 };
 }} // giada::v::
 

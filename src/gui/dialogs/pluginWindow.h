@@ -41,6 +41,11 @@ class geLiquidScroll;
 
 
 namespace giada {
+namespace c {
+namespace plugin
+{
+class Plugin;
+}}
 namespace m
 {
 class Plugin;
@@ -51,16 +56,13 @@ class gdPluginWindow : public gdWindow
 {
 public:
 
-	gdPluginWindow(ID pluginId);
+	gdPluginWindow(const c::plugin::Plugin&);
 
-	void updateParameter(int index, bool changeSlider=false);
 	void updateParameters(bool changeSlider=false);
 
 private:
-
-	int getLabelWidth() const;
 	
-	ID m_pluginId;
+	const c::plugin::Plugin& m_plugin;
 		
 	geLiquidScroll* m_list;
 };

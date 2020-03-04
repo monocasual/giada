@@ -58,7 +58,7 @@ AM_CONDITIONAL(FREEBSD, test "x$os" = "xfreebsd")
 AC_ARG_ENABLE(
 	[vst],
 	AS_HELP_STRING([--enable-vst], [enable vst support]),
-  [AC_DEFINE(WITH_VST) AM_CONDITIONAL(WITH_VST, true)],
+	[AC_DEFINE(WITH_VST) AM_CONDITIONAL(WITH_VST, true)],
 	[AM_CONDITIONAL(WITH_VST, false)]
 )
 
@@ -70,7 +70,7 @@ AC_ARG_ENABLE(
 AC_ARG_ENABLE(
 	[system-catch],
 	AS_HELP_STRING([--enable-system-catch], [use system-provided Catch library]),
-  [AC_DEFINE(WITH_SYSTEM_CATCH) AM_CONDITIONAL(WITH_SYSTEM_CATCH, true)],
+	[AC_DEFINE(WITH_SYSTEM_CATCH) AM_CONDITIONAL(WITH_SYSTEM_CATCH, true)],
 	[AM_CONDITIONAL(WITH_SYSTEM_CATCH, false)]
 )
 
@@ -81,7 +81,7 @@ AC_ARG_ENABLE(
 AC_ARG_ENABLE(
 	[debug],
 	AS_HELP_STRING([--enable-debug], [enable debug mode (asserts, ...)]),
-  [],
+	[],
 	[AC_DEFINE(NDEBUG)]
 )
 

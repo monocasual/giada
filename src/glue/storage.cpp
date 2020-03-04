@@ -28,9 +28,6 @@
 #include <cassert>
 #include "core/model/model.h"
 #include "core/model/storage.h"
-#include "core/channels/channel.h"
-#include "core/channels/sampleChannel.h"
-#include "core/channels/midiChannel.h"
 #include "core/mixer.h"
 #include "core/wave.h"
 #include "core/mixerHandler.h"
@@ -92,6 +89,7 @@ std::string makeUniqueWavePath_(const std::string& base, const m::Wave& w)
 	if (isWavePathUnique_(w, path))
 		return path;
 
+	// TODO - just use a timestamp. e.g. makeWavePath_(..., ..., getTimeStamp())
 	int k = 0;
 	path = makeWavePath_(base, w, k);
 	while (!isWavePathUnique_(w, path))
@@ -125,14 +123,15 @@ bool savePatch_(const std::string& path, const std::string& name)
 /* -------------------------------------------------------------------------- */
 
 
-void saveWavesToProject_(const std::string& base)
+void saveWavesToProject_(const std::string& basePath)
 {
-	for (size_t i = 0; i < m::model::waves.size(); i++) {
-		m::model::onSwap(m::model::waves, m::model::getId(m::model::waves, i), [&](m::Wave& w)
-		{
-			w.setPath(makeUniqueWavePath_(base, w));
-			m::waveManager::save(w, w.getPath()); // TODO - error checking	
-		});
+	/* No need for a hard Wave swap here: nobody is reading the path data. */
+
+	m::model::WavesLock l(m::model::waves);
+
+	for (m::Wave* w : m::model::waves) {
+		w->setPath(makeUniqueWavePath_(basePath, *w));
+		m::waveManager::save(*w, w->getPath()); // TODO - error checking			
 	}
 }
 } // {anonymous}
@@ -145,7 +144,7 @@ void saveWavesToProject_(const std::string& base)
 
 void loadProject(void* data)
 {
-	v::gdBrowserLoad* browser = (v::gdBrowserLoad*) data;
+	v::gdBrowserLoad* browser = static_cast<v::gdBrowserLoad*>(data);
 	std::string fullPath      = browser->getSelectedItem();
 	bool isProject            = u::fs::isProject(browser->getSelectedItem());
 
@@ -190,10 +189,10 @@ void loadProject(void* data)
 	the current samplerate != patch samplerate. Clock needs to update frames
 	in sequencer. */
 
-	m::mixer::allocVirtualInput(m::clock::getFramesInLoop());
 	m::mh::updateSoloCount();
 	m::recorderHandler::updateSamplerate(m::conf::conf.samplerate, m::patch::patch.samplerate);
 	m::clock::recomputeFrames();
+	m::mixer::allocRecBuffer(m::clock::getFramesInLoop());
 
 	/* Mixer is ready to go back online. */
 
@@ -221,11 +220,11 @@ void loadProject(void* data)
 
 void saveProject(void* data)
 {
-	v::gdBrowserSave* browser = (v::gdBrowserSave*) data;
-	std::string name            = u::fs::stripExt(browser->getName());
-	std::string folderPath      = browser->getCurrentPath();
-	std::string fullPath        = folderPath + G_SLASH + name + ".gprj";
-	std::string gptcPath        = fullPath + G_SLASH + name + ".gptc";
+	v::gdBrowserSave* browser = static_cast<v::gdBrowserSave*>(data);
+	std::string name          = u::fs::stripExt(browser->getName());
+	std::string folderPath    = browser->getCurrentPath();
+	std::string fullPath      = folderPath + G_SLASH + name + ".gprj";
+	std::string gptcPath      = fullPath + G_SLASH + name + ".gptc";
 
 	if (name == "") {
 		v::gdAlert("Please choose a project name.");
@@ -257,7 +256,7 @@ void saveProject(void* data)
 
 void loadSample(void* data)
 {
-	v::gdBrowserLoad* browser  = (v::gdBrowserLoad*) data;
+	v::gdBrowserLoad* browser  = static_cast<v::gdBrowserLoad*>(data);
 	std::string       fullPath = browser->getSelectedItem();
 
 	if (fullPath.empty())
@@ -278,9 +277,10 @@ void loadSample(void* data)
 
 void saveSample(void* data)
 {
-	v::gdBrowserSave* browser = (v::gdBrowserSave*) data;
+	v::gdBrowserSave* browser = static_cast<v::gdBrowserSave*>(data);
 	std::string name          = browser->getName();
 	std::string folderPath    = browser->getCurrentPath();
+	ID channelId              = browser->getChannelId();
 
 	if (name == "") {
 		v::gdAlert("Please choose a file name.");
@@ -293,12 +293,12 @@ void saveSample(void* data)
 		return;
 
 	ID waveId;
-	m::model::onGet(m::model::channels, browser->getChannelId(), [&](m::Channel& c)
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
 	{
-		waveId = static_cast<m::SampleChannel&>(c).waveId;
+		waveId = c.samplePlayer->getWaveId();
 	});
 
-	size_t waveIndex = m::model::getIndex(m::model::waves, waveId);
+	std::size_t waveIndex = m::model::getIndex(m::model::waves, waveId);
 
 	std::unique_ptr<m::Wave> wave = m::model::waves.clone(waveIndex);
 

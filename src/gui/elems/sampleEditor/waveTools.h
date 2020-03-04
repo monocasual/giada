@@ -40,7 +40,7 @@ class geWaveTools : public Fl_Scroll
 {
 public:
 
-	geWaveTools(ID channelId, ID waveId, int x, int y, int w, int h);
+	geWaveTools(int x, int y, int w, int h);
 
 	void resize(int x, int y, int w, int h) override;
 	int  handle(int e) override;
@@ -49,7 +49,7 @@ public:
 	Updates the waveform by realloc-ing new data (i.e. when the waveform has
 	changed). */
 
-	void rebuild();
+	void rebuild(const c::sampleEditor::Data& d);
 
 	/* refresh
 	Redraws the waveform, called by the video thread. This is meant to be called
@@ -57,15 +57,16 @@ public:
 	method is smart enough to skip painting if the channel is stopped. */
 
 	void refresh();
+
+	const c::sampleEditor::Data& getChannelData() const { return *m_data; }
 	
 	v::geWaveform* waveform;
-
-	ID channelId;
-	ID waveId;
 
 private:
 
 	void openMenu();
+
+	const c::sampleEditor::Data* m_data;
 };
 }} // giada::v::
 

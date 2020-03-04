@@ -72,11 +72,12 @@ void sendMidiLightningInitMsgs_()
 	for (const midimap::Message& m : midimap::midimap.initCommands) {
 		if (m.value != 0x0 && m.channel != -1) {
 			u::log::print("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", m.channel, m.value);
-			send(m.value | G_MIDI_CHANS[m.channel]);
+			MidiEvent e(m.value);
+			e.setChannel(m.channel);
+			send(e.getRaw());
 		}
 	}
 }
-
 } // {anonymous}
 
 
@@ -224,7 +225,7 @@ void send(uint32_t data)
 	msg.push_back(getB3(data));
 
 	midiOut_->sendMessage(&msg);
-	u::log::print("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
+	u::log::print("[KM::send] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
 }
 
 
@@ -244,30 +245,30 @@ void send(int b1, int b2, int b3)
 		msg.push_back(b3);
 
 	midiOut_->sendMessage(&msg);
-	//u::log::print("[KM] send msg=(%X %X %X)\n", b1, b2, b3);
+	u::log::print("[KM::send] send msg=(%X %X %X)\n", b1, b2, b3);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void sendMidiLightning(uint32_t learn, const midimap::Message& m)
+void sendMidiLightning(uint32_t learnt, const midimap::Message& m)
 {
 	// Skip lightning message if not defined in midi map
 
 	if (!midimap::isDefined(m))
 	{
-		u::log::print("[KM] message skipped (not defined in midimap)");
+		u::log::print("[KM::sendMidiLightning] message skipped (not defined in midimap)");
 		return;
 	}
 
-	u::log::print("[KM] learn=%#X, chan=%d, msg=%#X, offset=%d\n", learn, m.channel, 
-		m.value, m.offset);
+	u::log::print("[KM::sendMidiLightning] learnt=0x%X, chan=%d, msg=0x%X, offset=%d\n", 
+		learnt, m.channel, m.value, m.offset);
 
 	/* Isolate 'channel' from learnt message and offset it as requested by 'nn' in 
 	the midimap configuration file. */
 
-	uint32_t out = ((learn & 0x00FF0000) >> 16) << m.offset;
+	uint32_t out = ((learnt & 0x00FF0000) >> 16) << m.offset;
 
 	/* Merge the previously prepared channel into final message, and finally send 
 	it. */
@@ -284,6 +285,7 @@ unsigned countInPorts()  { return numInPorts_; }
 unsigned countOutPorts() { return numOutPorts_; }
 bool getStatus()         { return status_; }
 
+
 /* -------------------------------------------------------------------------- */
 
 
@@ -296,15 +298,4 @@ uint32_t getIValue(int b1, int b2, int b3)
 {
 	return (b1 << 24) | (b2 << 16) | (b3 << 8) | (0x00);
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-uint32_t setChannel(uint32_t iValue, int channel)
-{
-	uint32_t chanMask = 0xF << 24;
-	return (iValue & (~chanMask)) | (channel << 24);
-}
-
 }}}; // giada::m::kernelMidi::

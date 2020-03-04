@@ -40,7 +40,6 @@ namespace v
 {
 class geSampleActionEditor;
 class geEnvelopeEditor;
-
 class gdSampleActionEditor : public gdBaseActionEditor
 {  
 public:
@@ -51,13 +50,13 @@ public:
 
 private:
 
+	bool canChangeActionType();
+
 	geSampleActionEditor* m_ae;
     geResizerBar*         m_aer;
 
 	geEnvelopeEditor*     m_ee;
     geResizerBar*         m_eer;
-
-	bool canChangeActionType();
 };
 }} // giada::v::
 

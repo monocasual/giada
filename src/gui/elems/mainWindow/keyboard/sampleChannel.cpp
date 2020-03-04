@@ -26,7 +26,8 @@
 
 
 #include <cassert>
-#include "core/channels/sampleChannel.h"
+#include "core/channels/channel.h"
+#include "core/channels/samplePlayer.h"
 #include "core/model/model.h"
 #include "core/mixer.h"
 #include "core/conf.h"
@@ -37,6 +38,7 @@
 #include "core/recManager.h"
 #include "glue/io.h"
 #include "glue/channel.h"
+#include "glue/events.h"
 #include "glue/recorder.h"
 #include "glue/storage.h"
 #include "utils/gui.h"
@@ -98,57 +100,48 @@ enum class Menu
 
 void menuCallback(Fl_Widget* w, void* v)
 {
-	geSampleChannel* gch = static_cast<geSampleChannel*>(w);
+	const geSampleChannel*  gch  = static_cast<geSampleChannel*>(w);
+	const c::channel::Data& data = gch->getData();
 
-	ID    waveId;
-	bool inputMonitor;
-	m::model::onGet(m::model::channels, gch->channelId, [&](m::Channel& c)
-	{
-		waveId       = static_cast<m::SampleChannel&>(c).waveId;
-		inputMonitor = static_cast<m::SampleChannel&>(c).inputMonitor;
-	});
-
-	Menu selectedItem = (Menu) (intptr_t) v;
-
-	switch (selectedItem) {
+	switch ((Menu) (intptr_t) v) {
 		case Menu::INPUT_MONITOR: {
-			c::channel::setInputMonitor(gch->channelId, !inputMonitor);
+			c::channel::setInputMonitor(data.id, !data.sample->a_getInputMonitor());
 			break;
 		}
 		case Menu::LOAD_SAMPLE: {
 			gdWindow* w = new gdBrowserLoad("Browse sample", 
-				m::conf::conf.samplePath.c_str(), c::storage::loadSample, gch->channelId);
+				m::conf::conf.samplePath.c_str(), c::storage::loadSample, data.id);
 			u::gui::openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
 			break;
 		}
 		case Menu::EXPORT_SAMPLE: {
 			gdWindow* w = new gdBrowserSave("Save sample", 
-				m::conf::conf.samplePath.c_str(), "", c::storage::saveSample, gch->channelId);
+				m::conf::conf.samplePath.c_str(), "", c::storage::saveSample, data.id);
 			u::gui::openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
 			break;
 		}
 		case Menu::SETUP_KEYBOARD_INPUT: {
-			u::gui::openSubWindow(G_MainWin, new gdKeyGrabber(gch->channelId), 
+			u::gui::openSubWindow(G_MainWin, new gdKeyGrabber(data), 
 				WID_KEY_GRABBER);
 			break;
 		}
 		case Menu::SETUP_MIDI_INPUT: {
-			u::gui::openSubWindow(G_MainWin, new gdMidiInputChannel(gch->channelId), 
+			u::gui::openSubWindow(G_MainWin, new gdMidiInputChannel(data.id), 
 				WID_MIDI_INPUT);
 			break;
 		}
 		case Menu::SETUP_MIDI_OUTPUT: {
-			u::gui::openSubWindow(G_MainWin, new gdMidiOutputSampleCh(gch->channelId), 
+			u::gui::openSubWindow(G_MainWin, new gdMidiOutputSampleCh(data.id), 
 				WID_MIDI_OUTPUT);
 			break;
 		}
 		case Menu::EDIT_SAMPLE: {
-			u::gui::openSubWindow(G_MainWin, new gdSampleEditor(gch->channelId, waveId), 
+			u::gui::openSubWindow(G_MainWin, new gdSampleEditor(data.id),
 				WID_SAMPLE_EDITOR);
 			break;
 		}
 		case Menu::EDIT_ACTIONS: {
-			u::gui::openSubWindow(G_MainWin, new gdSampleActionEditor(gch->channelId), 
+			u::gui::openSubWindow(G_MainWin, new gdSampleActionEditor(data.id), 
 				WID_ACTION_EDITOR);
 			break;
 		}
@@ -156,32 +149,32 @@ void menuCallback(Fl_Widget* w, void* v)
 		case Menu::__END_CLEAR_ACTIONS_SUBMENU__:
 			break;
 		case Menu::CLEAR_ACTIONS_ALL: {
-			c::recorder::clearAllActions(gch->channelId);
+			c::recorder::clearAllActions(data.id);
 			break;
 		}
 		case Menu::CLEAR_ACTIONS_VOLUME: {
-			c::recorder::clearVolumeActions(gch->channelId);
+			c::recorder::clearVolumeActions(data.id);
 			break;
 		}
 		case Menu::CLEAR_ACTIONS_START_STOP: {
-			c::recorder::clearStartStopActions(gch->channelId);
+			c::recorder::clearStartStopActions(data.id);
 			break;
 		}
 		case Menu::CLONE_CHANNEL: {
-			c::channel::cloneChannel(gch->channelId);
+			c::channel::cloneChannel(data.id);
 			break;
 		}
 		case Menu::RENAME_CHANNEL: {
-			u::gui::openSubWindow(G_MainWin, new gdChannelNameInput(gch->channelId), 
+			u::gui::openSubWindow(G_MainWin, new gdChannelNameInput(data), 
 				WID_SAMPLE_NAME);
 			break;
 		}
 		case Menu::FREE_CHANNEL: {
-			c::channel::freeChannel(gch->channelId);
+			c::channel::freeChannel(data.id);
 			break;
 		}
 		case Menu::DELETE_CHANNEL: {
-			c::channel::deleteChannel(gch->channelId);
+			c::channel::deleteChannel(data.id);
 			break;
 		}
 	}
@@ -194,8 +187,8 @@ void menuCallback(Fl_Widget* w, void* v)
 /* -------------------------------------------------------------------------- */
 
 
-geSampleChannel::geSampleChannel(int X, int Y, int W, int H, ID channelId)
-: geChannel(X, Y, W, H, channelId)
+geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
+: geChannel(X, Y, W, H, d)
 {
 #if defined(WITH_VST)
 	constexpr int delta = 9 * (G_GUI_UNIT + G_GUI_INNER_MARGIN);
@@ -205,10 +198,10 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, ID channelId)
 
 	playButton  = new geStatusButton       (x(), y(), G_GUI_UNIT, G_GUI_UNIT, channelStop_xpm, channelPlay_xpm);
 	arm         = new geButton             (playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
-	status      = new geChannelStatus      (arm->x() + arm->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, H, channelId);
-	mainButton  = new geSampleChannelButton(status->x() + status->w() + G_GUI_INNER_MARGIN, y(), w() - delta, H, channelId);
+	status      = new geChannelStatus      (arm->x() + arm->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, H, m_channel);
+	mainButton  = new geSampleChannelButton(status->x() + status->w() + G_GUI_INNER_MARGIN, y(), w() - delta, H, m_channel);
 	readActions = new geStatusButton       (mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, readActionOff_xpm, readActionOn_xpm, readActionDisabled_xpm);
-	modeBox     = new geChannelMode        (readActions->x() + readActions->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, channelId);
+	modeBox     = new geChannelMode        (readActions->x() + readActions->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, m_channel);
 	mute        = new geStatusButton       (modeBox->x() + modeBox->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
 	solo        = new geStatusButton       (mute->x() + mute->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
@@ -222,21 +215,15 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, ID channelId)
 
 	resizable(mainButton);
 
-	m::model::ChannelsLock l(m::model::channels);
-	const m::SampleChannel& ch = static_cast<m::SampleChannel&>(m::model::get(m::model::channels, channelId));
-
-	modeBox->value(static_cast<int>(ch.mode));
-	modeBox->redraw();
-
 #ifdef WITH_VST
-	fx->setStatus(ch.pluginIds.size() > 0);
+	fx->setStatus(m_channel.pluginIds.size() > 0);
 #endif
 
 	playButton->callback(cb_playButton, (void*)this);
 	playButton->when(FL_WHEN_CHANGED);   // On keypress && on keyrelease
 
 	arm->type(FL_TOGGLE_BUTTON);
-	arm->value(ch.armed);
+	arm->value(m_channel.a_isArmed());
 	arm->callback(cb_arm, (void*)this);
 
 #ifdef WITH_VST
@@ -249,13 +236,11 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, ID channelId)
 	solo->type(FL_TOGGLE_BUTTON);
 	solo->callback(cb_solo, (void*)this);
 
-	mainButton->setKey(ch.key);
 	mainButton->callback(cb_openMenu, (void*)this);
 
-	readActions->setStatus(ch.readActions);
 	readActions->callback(cb_readActions, (void*)this);
 
-	vol->value(ch.volume);
+	vol->value(m_channel.volume);
 	vol->callback(cb_changeVol, (void*)this);
 
 	size(w(), h()); // Force responsiveness
@@ -275,7 +260,7 @@ void geSampleChannel::cb_readActions(Fl_Widget* v, void* p) { ((geSampleChannel*
 
 void geSampleChannel::cb_playButton()
 {
-	v::dispatcher::dispatchTouch(this, playButton->value());
+	v::dispatcher::dispatchTouch(*this, playButton->value());
 }
 
 
@@ -284,19 +269,6 @@ void geSampleChannel::cb_playButton()
 
 void geSampleChannel::cb_openMenu()
 {
-	bool inputMonitor;
-	bool isEmptyOrMissing;
-	bool hasActions;
-	bool isAnyLoopMode;
-	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
-	{
-		const m::SampleChannel& sc = static_cast<m::SampleChannel&>(c);
-		inputMonitor     = sc.inputMonitor;
-		isEmptyOrMissing = sc.playStatus == ChannelStatus::EMPTY || sc.playStatus == ChannelStatus::MISSING;
-		hasActions       = sc.hasActions;
-		isAnyLoopMode    = sc.isAnyLoopMode();
-	});
-
 	/* If you're recording (input or actions) no menu is allowed; you can't do
 	anything, especially deallocate the channel. */
 
@@ -305,7 +277,7 @@ void geSampleChannel::cb_openMenu()
 
 	Fl_Menu_Item rclick_menu[] = {
 		{"Input monitor",            0, menuCallback, (void*) Menu::INPUT_MONITOR,
-			FL_MENU_TOGGLE | FL_MENU_DIVIDER | (inputMonitor ? FL_MENU_VALUE : 0)},
+			FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->a_getInputMonitor() ? FL_MENU_VALUE : 0)},
 		{"Load new sample...",       0, menuCallback, (void*) Menu::LOAD_SAMPLE},
 		{"Export sample to file...", 0, menuCallback, (void*) Menu::EXPORT_SAMPLE},
 		{"Setup keyboard input...",  0, menuCallback, (void*) Menu::SETUP_KEYBOARD_INPUT},
@@ -325,21 +297,20 @@ void geSampleChannel::cb_openMenu()
 		{0}
 	};
 
-	if (isEmptyOrMissing) {
+	if (m_channel.sample->waveId == 0) {
 		rclick_menu[(int) Menu::EXPORT_SAMPLE].deactivate();
 		rclick_menu[(int) Menu::EDIT_SAMPLE].deactivate();
 		rclick_menu[(int) Menu::FREE_CHANNEL].deactivate();
 		rclick_menu[(int) Menu::RENAME_CHANNEL].deactivate();
 	}
 
-	if (!hasActions)
+	if (!m_channel.hasActions)
 		rclick_menu[(int) Menu::CLEAR_ACTIONS].deactivate();
-
 
 	/* No 'clear start/stop actions' for those channels in loop mode: they cannot
 	have start/stop actions. */
 
-	if (isAnyLoopMode)
+	if (m_channel.sample->isLoop)
 		rclick_menu[(int) Menu::CLEAR_ACTIONS_START_STOP].deactivate();
 
 	Fl_Menu_Button b(0, 0, 100, 50);
@@ -360,7 +331,7 @@ void geSampleChannel::cb_openMenu()
 
 void geSampleChannel::cb_readActions()
 {
-	c::channel::toggleReadingActions(channelId);
+	c::events::toggleReadActionsChannel(m_channel.id, Thread::MAIN);
 }
 
 
@@ -371,17 +342,14 @@ void geSampleChannel::refresh()
 {
 	geChannel::refresh();
 
-	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
-	{
-		if (c.hasData()) 
-			status->redraw();
-		if (c.hasActions) {
-			readActions->activate();
-			readActions->setStatus(c.readActions);
-		}
-		else
-			readActions->deactivate();
-	});
+	if (m_channel.sample->waveId != 0)
+		status->redraw();
+	if (m_channel.hasActions) {
+		readActions->activate();
+		readActions->setStatus(m_channel.a_getReadActions());		
+	}
+	else
+		readActions->deactivate();
 }
 
 

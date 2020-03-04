@@ -46,12 +46,12 @@ class geSampleActionEditor : public geBaseActionEditor
 {
 public:
 
-	geSampleActionEditor(Pixel x, Pixel y);
+	geSampleActionEditor(Pixel x, Pixel y, gdBaseActionEditor*);
 	~geSampleActionEditor();
 
 	void draw() override;
 
-	void rebuild() override;
+	void rebuild(c::actionEditor::Data& d) override;
 
 private:
 

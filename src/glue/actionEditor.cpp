@@ -27,14 +27,13 @@
 
 #include <cassert>
 #include "core/model/model.h"
-#include "core/channels/sampleChannel.h"
-#include "core/channels/midiChannel.h"
 #include "core/clock.h"
 #include "core/const.h"
 #include "core/recorderHandler.h"
 #include "core/recorder.h"
 #include "core/action.h"
-#include "recorder.h"
+#include "glue/events.h"
+#include "glue/recorder.h"
 #include "actionEditor.h"
 
 
@@ -63,6 +62,7 @@ void recordFirstEnvelopeAction_(ID channelId, Frame frame, int value)
 {
 	namespace mr = m::recorder;
 
+	// TODO - use MidiEvent(float)
 	m::MidiEvent e1 = m::MidiEvent(m::MidiEvent::ENVELOPE, 0, G_MAX_VELOCITY);
 	m::MidiEvent e2 = m::MidiEvent(m::MidiEvent::ENVELOPE, 0, value);
 	const m::Action a1 = mr::rec(channelId, 0, e1);	
@@ -96,6 +96,7 @@ void recordNonFirstEnvelopeAction_(ID channelId, Frame frame, int value)
 	if (frame == -1) // Vertical points, nothing to do here
 		return;
 
+	// TODO - use MidiEvent(float)
 	m::MidiEvent e2 = m::MidiEvent(m::MidiEvent::ENVELOPE, 0, value);
 	const m::Action a2 = mr::rec(channelId, frame, e2);
 
@@ -109,10 +110,9 @@ void recordNonFirstEnvelopeAction_(ID channelId, Frame frame, int value)
 bool isSinglePressMode_(ID channelId)
 {
 	bool b;
-	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	m::model::onGet(m::model::channels, channelId, [&](const m::Channel& c)
 	{
-		const m::SampleChannel& sc = static_cast<m::SampleChannel&>(c);
-		b = sc.mode == ChannelMode::SINGLE_PRESS;
+		b = c.samplePlayer->state->mode == SamplePlayerMode::SINGLE_PRESS;
 	});
 	return b;
 }
@@ -121,6 +121,43 @@ bool isSinglePressMode_(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+SampleData::SampleData(const m::SamplePlayer& s)
+: channelMode(s.state->mode.load())
+, isLoopMode (s.state->isAnyLoopMode())
+{
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Data::Data(const m::Channel& c)
+: channelId  (c.id)
+, channelName(c.state->name)
+, actions    (m::recorder::getActionsOnChannel(c.id))
+{
+	if (c.getType() == ChannelType::SAMPLE)
+		sample = std::make_optional<SampleData>(*c.samplePlayer);
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+Data getData(ID channelId)
+{
+	namespace mm = m::model;
+
+	mm::ChannelsLock cl(mm::channels);
+	return Data(mm::get(mm::channels, channelId));
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 
@@ -155,7 +192,6 @@ void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2)
 void deleteMidiAction(ID channelId, const m::Action& a)
 {
 	namespace mr = m::recorder;
-	namespace cr = c::recorder;
 
 	assert(a.isValid());
 	assert(a.event.getStatus() == m::MidiEvent::NOTE_ON);
@@ -164,12 +200,7 @@ void deleteMidiAction(ID channelId, const m::Action& a)
 	key_on/key_off sequence. Check if 'next' exist first: could be orphaned. */
 	
 	if (a.next != nullptr) {
-		m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
-		{
-			m::MidiChannel& mc = static_cast<m::MidiChannel&>(c);
-			if (mc.isPlaying() && !mc.mute)
-				mc.sendMidi(a.next->event, 0);
-		});
+		events::sendMidiToChannel(channelId, a.next->event, Thread::MAIN);
 		mr::deleteAction(a.id, a.next->id);
 	}
 	else
@@ -240,8 +271,9 @@ void deleteSampleAction(ID channelId, const m::Action& a)
 	namespace cr = c::recorder;
 
 	if (a.next != nullptr) // For ChannelMode::SINGLE_PRESS combo
-		mr::deleteAction(a.next->id);
-	mr::deleteAction(a.id);
+		mr::deleteAction(a.id, a.next->id);
+	else
+		mr::deleteAction(a.id);
 
 	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
 }
@@ -283,13 +315,15 @@ void deleteEnvelopeAction(ID channelId, const m::Action& a)
 	/* Deleting a boundary action wipes out everything. If is volume, remember 
 	to restore _i and _d members in channel. */
 	/* TODO - move this to c::*/
+	/* TODO - FIX*/
 	if (mrh::isBoundaryEnvelopeAction(a)) {
 		if (a.isVolumeEnvelope()) {
+			/*
 			m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c)
 			{
 				c.volume_i = 1.0;
 				c.volume_d = 0.0;
-			});
+			});*/
 		}
 		mr::clearActions(channelId, a.event.getStatus());
 	}

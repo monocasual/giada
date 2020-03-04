@@ -30,7 +30,6 @@
 #include <cassert>
 #include "utils/log.h"
 #include "core/model/model.h"
-#include "core/channels/channel.h"
 #include "core/action.h"
 #include "core/idManager.h"
 #include "core/recorder.h"
@@ -50,8 +49,8 @@ IdManager actionId_;
 
 Action* findAction_(ActionMap& src, ID id)
 {
-	for (auto& kv : src)
-		for (Action& a : kv.second)
+	for (auto& [frame, actions] : src)
+		for (Action& a : actions)
 			if (a.id == id)
 				return &a;
 	assert(false);
@@ -78,13 +77,30 @@ void removeIf_(std::function<bool(const Action&)> f)
 {
 	model::onSwap(model::actions, [&](model::Actions& a)
 	{
-		for (auto& kv : a.map) {
-			std::vector<Action>& as = kv.second;
-			as.erase(std::remove_if(as.begin(), as.end(), f), as.end());
-		}
+		for (auto& [frame, actions] : a.map)
+			actions.erase(std::remove_if(actions.begin(), actions.end(), f), actions.end());
 		optimize_(a.map);
 		updateMapPointers(a.map);
 	});
+}
+
+/* -------------------------------------------------------------------------- */
+
+
+bool exists_(ID channelId, Frame frame, const MidiEvent& event, const ActionMap& target)
+{
+	for (const auto& [_, actions] : target)
+		for (const Action& a : actions) 
+			if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw())
+				return true;
+	return false;	
+}
+
+
+bool exists_(ID channelId, Frame frame, const MidiEvent& event)
+{
+	model::ActionsLock lock(model::actions);
+	return exists_(channelId, frame, event, model::actions.get()->map);
 }
 } // {anonymous}
 
@@ -156,7 +172,8 @@ void updateKeyFrames(std::function<Frame(Frame old)> f)
 {
 	std::unique_ptr<model::Actions> ma = model::actions.clone();
 	
-	/* Remove all existing actions: let's start from scratch. */
+	/* Remove all existing actions: let's start from scratch. 
+	TODO - so why cloning it?! */
 
 	ma->map.clear();
 
@@ -166,14 +183,14 @@ void updateKeyFrames(std::function<Frame(Frame old)> f)
 	{
 		model::ActionsLock lock(model::actions);
 
-		for (const auto& kv : model::actions.get()->map) {
-			Frame frame = f(kv.first);
-			for (const Action& a : kv.second) {
+		for (const auto& [oldFrame, actions] : model::actions.get()->map) {
+			Frame newFrame = f(oldFrame);
+			for (const Action& a : actions) {
 				Action copy = a;
-				copy.frame = frame;
-				ma->map[frame].push_back(copy);
+				copy.frame = newFrame;
+				ma->map[newFrame].push_back(copy);
 			}
-			u::log::print("[recorder::updateKeyFrames] %d -> %d\n", kv.first, frame);
+G_DEBUG(oldFrame << " -> " << newFrame);
 		}
 	}
 
@@ -230,8 +247,8 @@ bool hasActions(ID channelId, int type)
 {
 	model::ActionsLock lock(model::actions);
 	
-	for (const auto& kv : model::actions.get()->map)
-		for (const Action& a : kv.second)
+	for (const auto& [frame, actions] : model::actions.get()->map)
+		for (const Action& a : actions)
 			if (a.channelId == channelId && (type == 0 || type == a.event.getStatus()))
 				return true;
 	return false;
@@ -262,6 +279,11 @@ Action makeAction(const patch::Action& a)
 
 Action rec(ID channelId, Frame frame, MidiEvent event)
 {
+	/* Skip duplicates. */
+
+	if (exists_(channelId, frame, event))
+		return {};
+
 	Action a = makeAction(0, channelId, frame, event);
 	
 	/* If key frame doesn't exist yet, the [] operator in std::map is smart 
@@ -280,26 +302,16 @@ Action rec(ID channelId, Frame frame, MidiEvent event)
 /* -------------------------------------------------------------------------- */
 
 
-void rec(std::vector<Action>& as)
+void rec(std::vector<Action>& actions)
 {
-	if (as.size() == 0)
+	if (actions.size() == 0)
 		return;
 
-	/* Generate new action ID and fix next and prev IDs. */
-
-	for (Action& a : as) {
-		int id = a.id;
-		a.id = actionId_.get();
-		for (Action& aa : as) {
-			if (aa.prevId == id) aa.prevId = a.id;
-			if (aa.nextId == id) aa.nextId = a.id;
-		}
-	}
-	
 	model::onSwap(model::actions, [&](model::Actions& mas)
 	{
-		for (const Action& a : as)
-			mas.map[a.frame].push_back(a);
+		for (const Action& a : actions)
+			if (!exists_(a.channelId, a.frame, a.event, mas.map))
+				mas.map[a.frame].push_back(a);
 		updateMapPointers(mas.map);
 	});
 }
@@ -393,8 +405,17 @@ void forEachAction(std::function<void(const Action&)> f)
 {
 	model::ActionsLock lock(model::actions);
 	
-	for (auto& kv : model::actions.get()->map)
-		for (const Action& action : kv.second)
+	for (auto& [_, actions] : model::actions.get()->map)
+		for (const Action& action : actions)
 			f(action);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+ID getNewActionId()
+{
+	return actionId_.get();
 }
 }}}; // giada::m::recorder::

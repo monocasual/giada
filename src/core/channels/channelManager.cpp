@@ -27,11 +27,10 @@
 
 #include <cassert>
 #include "utils/fs.h"
-#include "core/channels/sampleChannel.h"
-#include "core/channels/midiChannel.h"
-#include "core/channels/masterChannel.h"
 #include "core/channels/channel.h"
+#include "core/channels/samplePlayer.h"
 #include "core/const.h"
+#include "core/kernelAudio.h"
 #include "core/patch.h"
 #include "core/mixer.h"
 #include "core/idManager.h"
@@ -69,25 +68,11 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Channel> create(ChannelType type, int bufferSize,
+std::unique_ptr<Channel> create(ChannelType type, int bufferSize, 
 	bool inputMonitorOn, ID columnId)
 {
-	std::unique_ptr<Channel> ch = nullptr;
-
-	if (type == ChannelType::SAMPLE)
-		ch = std::make_unique<SampleChannel>(inputMonitorOn, bufferSize, columnId, channelId_.get());
-	else
-	if (type == ChannelType::MIDI)
-		ch = std::make_unique<MidiChannel>(bufferSize, columnId, channelId_.get());
-	else
-	if (type == ChannelType::MASTER)
-		ch = std::make_unique<MasterChannel>(bufferSize, channelId_.get());
-	else
-	if (type == ChannelType::PREVIEW)
-		ch = std::make_unique<MasterChannel>(bufferSize, channelId_.get()); // TODO - temporary placeholder
-	
-	assert(ch != nullptr);
-	return ch;
+	return std::make_unique<Channel>(type, channelId_.get(), columnId, 
+		kernelAudio::getRealBufSize());
 }
 
 
@@ -96,22 +81,8 @@ std::unique_ptr<Channel> create(ChannelType type, int bufferSize,
 
 std::unique_ptr<Channel> create(const Channel& o)
 {
-	std::unique_ptr<Channel> ch = nullptr;
-	
-	if (o.type == ChannelType::SAMPLE)
-		ch = std::make_unique<SampleChannel>(static_cast<const SampleChannel&>(o));
-	else
-	if (o.type == ChannelType::MIDI)
-		ch = std::make_unique<MidiChannel>(static_cast<const MidiChannel&>(o));
-	else
-	if (o.type == ChannelType::MASTER)
-		ch = std::make_unique<MasterChannel>(static_cast<const MasterChannel&>(o));
-
-	assert(ch != nullptr);
-
-	if (o.type != ChannelType::MASTER)
-		ch->id = channelId_.get();
-
+	std::unique_ptr<Channel> ch = std::make_unique<Channel>(o);
+	ch->id = channelId_.get();
 	return ch;
 }
 
@@ -121,19 +92,8 @@ std::unique_ptr<Channel> create(const Channel& o)
 
 std::unique_ptr<Channel> deserializeChannel(const patch::Channel& pch, int bufferSize)
 {
-	std::unique_ptr<Channel> ch = nullptr;
-
-	if (pch.type == ChannelType::SAMPLE)
-		ch = std::make_unique<SampleChannel>(pch, bufferSize);
-	else
-	if (pch.type == ChannelType::MIDI)
-		ch = std::make_unique<MidiChannel>(pch, bufferSize);
-
-	assert(ch != nullptr);
-
 	channelId_.set(pch.id);
-
-	return ch;
+	return std::make_unique<Channel>(pch, bufferSize);
 }
 
 
@@ -144,58 +104,55 @@ const patch::Channel serializeChannel(const Channel& c)
 {
 	patch::Channel pc;
 
-	pc.id   = c.id;
-	pc.type = c.type;
-
 #ifdef WITH_VST
 	for (ID pid : c.pluginIds)
 		pc.pluginIds.push_back(pid);
-#endif	
+#endif
 
-	if (c.type != ChannelType::MASTER) {
-		pc.height          = c.height;
-		pc.name            = c.name.c_str();
-		pc.columnId        = c.columnId;
-		pc.key             = c.key;
-		pc.mute            = c.mute;
-		pc.solo            = c.solo;
-		pc.volume          = c.volume;
-		pc.pan             = c.pan;
-		pc.hasActions      = c.hasActions;
-		pc.armed           = c.armed;
-		pc.midiIn          = c.midiIn;
-		pc.midiInKeyPress  = c.midiInKeyRel;
-		pc.midiInKeyRel    = c.midiInKeyPress;
-		pc.midiInKill      = c.midiInKill;
-		pc.midiInArm       = c.midiInArm;
-		pc.midiInVolume    = c.midiInVolume;
-		pc.midiInMute      = c.midiInMute;
-		pc.midiInSolo      = c.midiInSolo;
-		pc.midiInFilter    = c.midiInFilter;
-		pc.midiOutL        = c.midiOutL;
-		pc.midiOutLplaying = c.midiOutLplaying;
-		pc.midiOutLmute    = c.midiOutLmute;
-		pc.midiOutLsolo    = c.midiOutLsolo;
-	}
+	pc.id                = c.id;
+	pc.type              = c.getType();
+    pc.columnId          = c.getColumnId();
+    pc.height            = c.state->height;
+    pc.name              = c.state->name;
+    pc.key               = c.state->key.load();
+    pc.mute              = c.state->mute.load();
+    pc.solo              = c.state->solo.load();
+    pc.volume            = c.state->volume.load();
+    pc.pan               = c.state->pan.load();
+    pc.hasActions        = c.state->hasActions;
+    pc.readActions       = c.state->readActions.load();
+    pc.armed             = c.state->armed.load();
+    pc.midiIn            = c.midiLearner.state->enabled.load();
+    pc.midiInFilter      = c.midiLearner.state->filter.load();
+    pc.midiInKeyPress    = c.midiLearner.state->keyPress.load();
+    pc.midiInKeyRel      = c.midiLearner.state->keyRelease.load();
+    pc.midiInKill        = c.midiLearner.state->kill.load();
+    pc.midiInArm         = c.midiLearner.state->arm.load();
+    pc.midiInVolume      = c.midiLearner.state->volume.load();
+    pc.midiInMute        = c.midiLearner.state->mute.load();
+    pc.midiInSolo        = c.midiLearner.state->solo.load();
+	pc.midiInReadActions = c.midiLearner.state->readActions.load();
+	pc.midiInPitch       = c.midiLearner.state->pitch.load();
+    pc.midiOutL          = c.midiLighter.state->enabled.load(); 
+    pc.midiOutLplaying   = c.midiLighter.state->playing.load();
+    pc.midiOutLmute      = c.midiLighter.state->mute.load();
+    pc.midiOutLsolo      = c.midiLighter.state->solo.load();
 
-	if (c.type == ChannelType::SAMPLE) {
-		const SampleChannel& sc = static_cast<const SampleChannel&>(c);
-		pc.waveId            = sc.waveId;
-		pc.mode              = sc.mode;
-		pc.begin             = sc.begin;
-		pc.end               = sc.end;
-		pc.readActions       = sc.readActions;
-		pc.pitch             = sc.pitch;
-		pc.inputMonitor      = sc.inputMonitor;
-		pc.midiInVeloAsVol   = sc.midiInVeloAsVol;
-		pc.midiInReadActions = sc.midiInReadActions;
-		pc.midiInPitch       = sc.midiInPitch;
+	if (c.getType() == ChannelType::SAMPLE) {
+		pc.waveId            = c.samplePlayer->getWaveId();
+		pc.mode              = c.samplePlayer->state->mode.load();
+		pc.begin             = c.samplePlayer->state->begin.load();
+		pc.end               = c.samplePlayer->state->end.load();
+		pc.pitch             = c.samplePlayer->state->pitch.load();
+		pc.shift             = c.samplePlayer->state->shift.load();
+		pc.midiInVeloAsVol   = c.samplePlayer->state->velocityAsVol.load();
+		pc.inputMonitor      = c.audioReceiver->state->inputMonitor.load();
+
 	}
 	else
-	if (c.type == ChannelType::MIDI) {
-		const MidiChannel& mc = static_cast<const MidiChannel&>(c);
-		pc.midiOut     = mc.midiOut;
-		pc.midiOutChan = mc.midiOutChan;
+	if (c.getType() == ChannelType::MIDI) { 
+		pc.midiOut     = c.midiSender->state->enabled.load();
+		pc.midiOutChan = c.midiSender->state->filter.load();
 	}
 
 	return pc;

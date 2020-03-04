@@ -30,8 +30,10 @@
 
 
 #include "core/types.h"
+#include "glue/io.h"
+#include "gui/elems/midiIO/midiLearnerPack.h"
+#include "gui/elems/midiIO/midiLearner.h"
 #include "gui/dialogs/window.h"
-#include "gui/elems/midiIO/midiLearnerBase.h"
 
 
 class geButton;
@@ -45,21 +47,28 @@ only with channels.
 Both MidiOutputMidiCh and MidiOutputSampleCh have the MIDI lighting widget set.
 In addition MidiOutputMidiCh has the MIDI message output box. */
 
-/* TODO - gdMidiOutput is almost the same thing of gdMidiInput. Create another
-parent class gdMidiIO to inherit from */
-
 namespace giada {
 namespace v 
 {
-class geMidiLearner;
+class geLightningLearnerPack : public geMidiLearnerPack
+{
+public:
+
+	geLightningLearnerPack(int x, int y, ID channelId);
+
+	void update(const c::io::Channel_OutputData&);
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
 class gdMidiOutputBase : public gdWindow
 {
 public:
 
 	gdMidiOutputBase(int w, int h, ID channelId);
 	~gdMidiOutputBase();
-
-	void refresh() override;
 
 protected:
 
@@ -75,14 +84,15 @@ protected:
 	/* setTitle
 	 * set window title. */
 
-	void setTitle(int chanNum);
+	void setTitle(ID channelId);
 
 	ID m_channelId;
-
-	std::vector<geMidiLearnerBase*> m_learners;
 	
-	geButton* m_close;
-	geCheck*  m_enableLightning;
+	c::io::Channel_OutputData m_data;
+	
+	geLightningLearnerPack* m_learners;
+	geButton*               m_close;
+	geCheck*                m_enableLightning;
 };
 }} // giada::v::
 

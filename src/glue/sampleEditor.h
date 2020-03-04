@@ -29,13 +29,58 @@
 #define G_GLUE_SAMPLE_EDITOR_H
 
 
+#include <functional>
 #include "core/types.h"
+#include "core/waveFx.h"
 
 
 namespace giada {
+namespace m
+{
+class Channel;
+class Wave;
+}
+namespace v 
+{
+class gdSampleEditor;
+}
 namespace c {
 namespace sampleEditor 
 {
+struct Data
+{
+    Data() = default;
+    Data(const m::Channel&, const m::Wave&);
+
+    ChannelStatus a_getPreviewStatus() const;
+    Frame a_getPreviewTracker() const;
+
+    ID          channelId; 
+    ID          waveId; 
+    std::string name;
+    float       volume;
+    float       pan;
+    float       pitch;
+    Frame       begin;
+    Frame       end;
+    Frame       shift;
+    Frame       waveSize;
+    int         waveBits;
+    int         waveDuration;
+    int         waveRate;
+    std::string wavePath;
+    bool        isLogical;
+};
+
+/* onRefresh --- TODO - wrong name */
+
+void onRefresh(bool gui, std::function<void(v::gdSampleEditor&)> f);
+
+/* getData
+Returns a Data object filled with data from a channel. */
+
+Data getData(ID channelId);
+
 /* setBeginEnd
 Sets start/end points in the sample editor. */
 
@@ -46,28 +91,25 @@ void copy(ID waveId, int a, int b);
 void paste(ID channelId, ID waveId, int a);
 
 void trim(ID channelId, ID waveId, int a, int b);
-void reverse(ID waveId, int a, int b);
-void normalizeHard(ID waveId, int a, int b);
-void silence(ID waveId, int a, int b);
-void fade(ID waveId, int a, int b, int type);
-void smoothEdges(ID waveId, int a, int b);
+void reverse(ID channelId, ID waveId, int a, int b);
+void normalize(ID channelId, ID waveId, int a, int b);
+void silence(ID channelId, ID waveId, int a, int b);
+void fade(ID channelId, ID waveId, int a, int b, m::wfx::Fade type);
+void smoothEdges(ID channelId, ID waveId, int a, int b);
 void shift(ID channelId, ID waveId, int offset);
 void reload(ID channelId, ID waveId);
 
 bool isWaveBufferFull();
 
-/* setPlayHead
-Changes playhead's position. Used in preview. */
-
-void setPlayHead(ID channelId, Frame f);
-
-void setPreview(ID channelId, PreviewMode mode);
-void rewindPreview(ID channelId);
+void playPreview(bool loop);
+void stopPreview();
+void setPreviewTracker(Frame f);
+void cleanupPreview();
 
 /* toNewChannel
 Copies the selected range into a new sample channel. */
 
-void toNewChannel(ID channelId, int a, int b);
+void toNewChannel(ID channelId, ID waveId, int a, int b);
 }}}; // giada::c::sampleEditor::
 
 #endif

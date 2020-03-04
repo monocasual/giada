@@ -69,7 +69,7 @@ struct Channel
 	bool        mute;
 	bool        solo;
 	float       volume = G_DEFAULT_VOL;
-	float       pan    = 0.5f;
+	float       pan    = G_DEFAULT_PAN;
 	bool        hasActions;
 	bool        armed;
 	bool        midiIn;
@@ -86,17 +86,17 @@ struct Channel
 	uint32_t    midiOutLmute;
 	uint32_t    midiOutLsolo;
 	// sample channel
-	ID          waveId;
-	ChannelMode mode;
-	Frame       begin;
-	Frame       end;
-	Frame       shift;
-	bool        readActions;
-	float       pitch = G_DEFAULT_PITCH;
-	bool        inputMonitor;
-	bool        midiInVeloAsVol;
-	uint32_t    midiInReadActions;
-	uint32_t    midiInPitch;
+	ID               waveId = 0;
+	SamplePlayerMode mode;
+	Frame            begin;
+	Frame            end;
+	Frame            shift;
+	bool             readActions;
+	float            pitch = G_DEFAULT_PITCH;
+	bool             inputMonitor;
+	bool             midiInVeloAsVol;
+	uint32_t         midiInReadActions;
+	uint32_t         midiInPitch;
 	// midi channel
 	bool        midiOut;
 	int         midiOutChan;

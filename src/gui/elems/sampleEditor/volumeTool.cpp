@@ -28,10 +28,8 @@
 #include <cmath>
 #include <cstdlib>
 #include <FL/Fl_Pack.H>
-#include "core/channels/sampleChannel.h"
 #include "core/const.h"
-#include "core/model/model.h"
-#include "glue/channel.h"
+#include "glue/events.h"
 #include "utils/gui.h"
 #include "utils/math.h"
 #include "utils/string.h"
@@ -46,9 +44,9 @@
 namespace giada {
 namespace v 
 {
-geVolumeTool::geVolumeTool(ID channelId, int X, int Y)
-: Fl_Pack    (X, Y, 150, G_GUI_UNIT),
-  m_channelId(channelId)
+geVolumeTool::geVolumeTool(const c::sampleEditor::Data& d, int X, int Y)
+: Fl_Pack(X, Y, 150, G_GUI_UNIT)
+, m_data (nullptr)
 {
 	type(Fl_Pack::HORIZONTAL);
 	spacing(G_GUI_INNER_MARGIN);
@@ -63,23 +61,33 @@ geVolumeTool::geVolumeTool(ID channelId, int X, int Y)
 	dial->callback(cb_setVolume, (void*)this);
 
 	input->callback(cb_setVolumeNum, (void*)this);
+
+	rebuild(d);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geVolumeTool::rebuild()
+void geVolumeTool::rebuild(const c::sampleEditor::Data& d)
 {
-	float volume;
-	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c) { volume = c.volume; });
+	m_data = &d;
+	update(m_data->volume, /*isDial=*/false);
+}
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void geVolumeTool::update(float v, bool isDial)
+{
 	std::string tmp = "-inf";
-	float dB = u::math::linearToDB(volume);
+	float dB = u::math::linearToDB(v);
 	if (dB > -INFINITY) 
 		tmp = u::string::fToString(dB, 2);  // 2 digits
 	input->value(tmp.c_str());
-	dial->value(volume);
+	if (!isDial)
+		dial->value(v);
 }
 
 
@@ -95,7 +103,7 @@ void geVolumeTool::cb_setVolumeNum(Fl_Widget* w, void* p) { ((geVolumeTool*)p)->
 
 void geVolumeTool::cb_setVolume()
 {
-	c::channel::setVolume(m_channelId, dial->value(), false, true);
+	c::events::setChannelVolume(m_data->channelId, dial->value(), Thread::MAIN);
 }
 
 
@@ -104,8 +112,7 @@ void geVolumeTool::cb_setVolume()
 
 void geVolumeTool::cb_setVolumeNum()
 {
-	float value = pow(10, (atof(input->value()) / 20)); // linear = 10^(dB/20)
-	c::channel::setVolume(m_channelId, value, false, true);
+	c::events::setChannelVolume(m_data->channelId, u::math::dBtoLinear(atof(input->value())), 
+		Thread::MAIN);
 }
-
 }} // giada::v::

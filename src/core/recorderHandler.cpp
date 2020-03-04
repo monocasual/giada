@@ -55,8 +55,8 @@ std::vector<Action> recs_;
 
 const Action* getActionPtrById_(int id, const recorder::ActionMap& source)
 {
-	for (auto& kv : source)
-		for (const Action& action : kv.second)
+	for (const auto& [_, actions] : source)
+		for (const Action& action : actions)
 			if (action.id == id)
 				return &action;
 	return nullptr;
@@ -88,7 +88,7 @@ in linear sequence, the potential partner of 'a1' always lies beyond a1 itself.
 Without this trick (i.e. if it loops from vector.begin() each time) the
 algorithm would end up matching wrong partners. */
 
-void consolidate_(const Action& a1, size_t i)
+void consolidate_(const Action& a1, std::size_t i)
 {
 	for (auto it = recs_.begin() + i; it != recs_.end(); ++it) {
 
@@ -201,14 +201,15 @@ bool cloneActions(ID channelId, ID newChannelId)
 /* -------------------------------------------------------------------------- */
 
 
-void liveRec(ID channelId, MidiEvent e)
+void liveRec(ID channelId, MidiEvent e, Frame globalFrame)
 {
 	assert(e.isNoteOnOff()); // Can't record any other kind of events for now
 
+	/* TODO - this might allocate on the MIDI thread */
 	if (recs_.size() >= recs_.capacity())
 		recs_.reserve(recs_.size() + MAX_LIVE_RECS_CHUNK);
 	
-	recs_.push_back(recorder::makeAction(-1, channelId, clock::getCurrentFrame(), e));
+	recs_.push_back(recorder::makeAction(recorder::getNewActionId(), channelId, globalFrame, e));
 }
 
 
@@ -234,8 +235,13 @@ std::unordered_set<ID> consolidate()
 
 void clearAllActions()
 {
-	for (size_t i = 0; i < model::channels.size(); i++)
-		model::onSwap(model::channels, model::getId(model::channels, i), [](Channel& c)	{ c.hasActions = false; });
+	/* TODO - disgusting */
+	for (std::size_t i = 0; i < model::channels.size(); i++) {
+		model::onSwap(model::channels, model::getId(model::channels, i), [](Channel& c) 
+		{ 
+			c.state->hasActions = false;
+		});
+	}
 	recorder::clearAll();
 }
 

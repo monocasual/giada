@@ -26,11 +26,10 @@
 
 
 #include <FL/Fl.H>
-#include "core/channels/sampleChannel.h"
 #include "core/model/model.h"
 #include "core/const.h"
 #include "core/waveFx.h"  
-#include "glue/channel.h"
+#include "glue/events.h"
 #include "utils/gui.h"
 #include "utils/math.h"
 #include "utils/string.h"
@@ -46,9 +45,9 @@
 namespace giada {
 namespace v 
 {
-gePanTool::gePanTool(ID channelId, int x, int y)
-: Fl_Pack    (x, y, 200, G_GUI_UNIT),
-  m_channelId(channelId)
+gePanTool::gePanTool(const c::sampleEditor::Data& d, int x, int y)
+: Fl_Pack(x, y, 200, G_GUI_UNIT)
+, m_data (nullptr)
 {
 	type(Fl_Pack::HORIZONTAL);
 	spacing(G_GUI_INNER_MARGIN);
@@ -60,7 +59,7 @@ gePanTool::gePanTool(ID channelId, int x, int y)
 		reset = new geButton(0, 0, 70, G_GUI_UNIT, "Reset");
 	end();
 
-	dial->range(0.0f, 1.0f);
+	dial->range(0.0f, G_MAX_PAN);
 	dial->callback(cb_panning, (void*)this);
 
 	input->align(FL_ALIGN_RIGHT);
@@ -68,31 +67,38 @@ gePanTool::gePanTool(ID channelId, int x, int y)
 	input->cursor_color(FL_WHITE);
 
 	reset->callback(cb_panReset, (void*)this);
+
+	rebuild(d);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gePanTool::rebuild()
+void gePanTool::rebuild(const c::sampleEditor::Data& d)
 {
-	float p;
-	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
-	{
-		p = static_cast<m::SampleChannel&>(c).getPan();
-	});
+	m_data = &d;
+	update(m_data->pan);
 
-	dial->value(p);
+}
 
-	if (p < 0.5f) {
-		std::string tmp = u::string::iToString((int) ((-p * 200.0f) + 100.0f)) + " L";
+
+/* -------------------------------------------------------------------------- */
+
+
+void gePanTool::update(float v)
+{
+	dial->value(v);
+
+	if (v < 0.5f) {
+		std::string tmp = u::string::iToString((int) ((-v * 200.0f) + 100.0f)) + " L";
 		input->value(tmp.c_str());
 	}
 	else 
-	if (p == 0.5)
+	if (v == 0.5)
 		input->value("C");
 	else {
-		std::string tmp = u::string::iToString((int) ((p * 200.0f) - 100.0f)) + " R";
+		std::string tmp = u::string::iToString((int) ((v * 200.0f) - 100.0f)) + " R";
 		input->value(tmp.c_str());
 	}
 }
@@ -111,7 +117,7 @@ void gePanTool::cb_panReset(Fl_Widget* w, void* p) { ((gePanTool*)p)->cb_panRese
 
 void gePanTool::cb_panning()
 {
-	c::channel::setPan(m_channelId, dial->value());
+	c::events::sendChannelPan(m_data->channelId, dial->value());
 }
 
 
@@ -120,7 +126,6 @@ void gePanTool::cb_panning()
 
 void gePanTool::cb_panReset()
 {
-	c::channel::setPan(m_channelId, 0.5f);
+	c::events::sendChannelPan(m_data->channelId, 0.5f);
 }
-
 }} // giada::v::

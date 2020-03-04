@@ -30,12 +30,12 @@
 
 
 #include "core/types.h"
+#include "glue/actionEditor.h"
 #include "gui/dialogs/window.h"
 
 
 class geChoice;
 class geButton;
-class geScroll;
 
 
 namespace giada {
@@ -47,8 +47,7 @@ struct Action;
 namespace v
 {
 class geGridTool;
-
-
+class geScrollPack;
 class gdBaseActionEditor : public gdWindow
 {
 public:
@@ -60,15 +59,14 @@ public:
 	Pixel frameToPixel(Frame f) const;
 	Frame pixelToFrame(Pixel p, bool snap=true) const;
 	int getActionType() const;
-	std::vector<m::Action> getActions() const;
-
-	geChoice*   actionType;
-	geGridTool* gridTool;
-	geButton*   zoomInBtn;
-	geButton*   zoomOutBtn;
-	geScroll*   viewport;       // widget container
 
 	ID channelId;
+
+	geChoice*     actionType;
+	geGridTool*   gridTool;
+	geButton*     zoomInBtn;
+	geButton*     zoomOutBtn;
+	geScrollPack* viewport;       // widget container
 
 	float ratio;
 	Pixel fullWidth;     // Full widgets width, i.e. scaled-down full sequencer
@@ -80,8 +78,6 @@ protected:
 	static constexpr Pixel MIN_WIDGET_H  = 10;
 	static constexpr float MIN_RATIO     = 25.0f;
 	static constexpr float MAX_RATIO     = 40000.0f;
-
-	std::vector<m::Action> m_actions;
 
 	gdBaseActionEditor(ID channelId);
 
@@ -99,6 +95,8 @@ protected:
 	void centerViewportOut();
 
 	void prepareWindow();
+
+	c::actionEditor::Data m_data;
 };
 }} // giada::v::
 

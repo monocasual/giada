@@ -41,13 +41,18 @@
 
 
 namespace giada {
+namespace c {
+namespace plugin
+{
+struct Plugin;
+}}
 namespace v
 {
 class gdPluginWindowGUI : public gdWindow
 {
 public:
 
-	gdPluginWindowGUI(ID pluginId);
+	gdPluginWindowGUI(const c::plugin::Plugin&);
 	~gdPluginWindowGUI();
 
 private:
@@ -60,7 +65,7 @@ private:
 	void openEditor(void* parent); 
 	void closeEditor(); 
 
-	ID m_pluginId;
+	const c::plugin::Plugin& m_plugin;
 
 	juce::AudioProcessorEditor* m_ui;
 };

@@ -2,6 +2,9 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
+ * geScroll
+ * Custom scroll with nice scrollbars and something else.
+ *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2020 Giovanni A. Zuliani | Monocasual
@@ -25,31 +28,49 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MIDI_LEARNER_CHANNEL_H
-#define GE_MIDI_LEARNER_CHANNEL_H
+#ifndef GE_GROUP_H
+#define GE_GROUP_H
 
 
-#include "midiLearnerBase.h"
+#include <vector>
+#include <FL/Fl_Group.H>
 
 
 namespace giada {
 namespace v 
 {
-class geMidiLearnerChannel : public geMidiLearnerBase
+/* geGroup
+A group that resizes itself accoring to the content. */
+
+class geGroup : public Fl_Group
 {
 public:
 
-	geMidiLearnerChannel(int x, int y, int w, std::string l, int param, uint32_t value, ID channelId);
-	
-	void refresh() override;
-	void onLearn() override;
-	void onReset() override;
+	geGroup(int x, int y);
+
+    /* countChildren
+    Returns the number of widgets contained in this group. */
+    
+    std::size_t countChildren() const;
+
+    /* add
+    Adds a Fl_Widget 'w' to this group. Coordinates are relative to the group,
+    so origin starts at (0, 0). */
+
+    void add(Fl_Widget* w);
+
+    Fl_Widget* getChild(std::size_t i);
+    Fl_Widget* getLastChild();
 
 private:
 
-	ID m_channelId;
+    /* m_widgets 
+    The internal Fl_Scroll::array_ is unreliable when inspected with the child()
+    method. Let's keep track of widgets that belong to this group manually. */
+
+    std::vector<Fl_Widget*> m_widgets;    
 };
-}} // giada::v::
+}}
 
 
 #endif

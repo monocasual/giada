@@ -25,54 +25,50 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_MIDI_CHANNEL_PROC_H
-#define G_MIDI_CHANNEL_PROC_H
+#ifndef G_CHANNEL_WAVE_READER_H
+#define G_CHANNEL_WAVE_READER_H
 
 
-#include "core/mixer.h"
-#include "core/audioBuffer.h"
+#include <samplerate.h>
+#include "core/types.h"
 
 
 namespace giada {
-namespace m 
+namespace m
 {
-class MidiChannel;
-namespace midiChannelProc
+class Wave;
+class WaveReader final
 {
-/* parseEvents
-Parses events gathered by Mixer::masterPlay(). */
+public:
 
-void parseEvents(MidiChannel* ch, mixer::FrameEvents ev);
+    WaveReader();
+    WaveReader(const WaveReader&);
+    WaveReader(WaveReader&&);
+    WaveReader& operator=(const WaveReader&);
+    WaveReader& operator=(WaveReader&&);
+    ~WaveReader();
 
-/**/
-void process(MidiChannel* ch, AudioBuffer& out, const AudioBuffer& in, bool audible);
+    Frame fill(AudioBuffer& out, Frame start, Frame offset, float pitch) const;
 
-/* kill
-Stops a channel abruptly. */
+	/* wave
+	Wave object. Might be null if the channel has no sample. */
 
-void kill(MidiChannel* ch, int localFrame);
+	const Wave* wave;
 
-/* start
-Starts a channel. */
+private:
 
-void start(MidiChannel* ch);
+	Frame fillResampled(AudioBuffer& out, Frame start, Frame offset, float pitch) const;
+	Frame fillCopy     (AudioBuffer& out, Frame start, Frame offset) const;
 
-/* stopBySeq
-Stops a channel when the stop button on main transport is pressed. */
+	void allocateSrc();
+	void moveSrc(SRC_STATE** o);
 
-void stopBySeq(MidiChannel* ch);
+	/* srcState
+	Struct from libsamplerate. */
 
-/* rewind
-Rewinds channel when rewind button on main transport is pressed. */
-
-void rewindBySeq(MidiChannel* ch);
-
-/* mute|unmute
-Mutes/unmutes a channel. */
-
-void setMute(MidiChannel* ch, bool v);
-void setSolo(MidiChannel* ch, bool v);
-}}};
+	SRC_STATE* m_srcState;
+};
+}} // giada::m::
 
 
 #endif

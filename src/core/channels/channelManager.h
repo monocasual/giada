@@ -40,9 +40,11 @@ namespace patch
 {
 struct Channel;
 }
-class Channel;
-class SampleChannel;
-class MidiChannel;
+class  Channel;
+struct ChannelState;
+class  Channel;
+class  SampleChannel;
+class  MidiChannel;
 namespace channelManager
 {
 /* init
@@ -53,7 +55,7 @@ void init();
 /* create (1)
 Creates a new Channel from scratch. */
 
-std::unique_ptr<Channel> create(ChannelType type, int bufferSize,
+std::unique_ptr<Channel> create(ChannelType type, int bufferSize, 
 	bool inputMonitorOn, ID columnId);
 
 /* create (2)

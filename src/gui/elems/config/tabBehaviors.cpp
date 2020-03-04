@@ -42,16 +42,10 @@ geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
 {
 	begin();
 
-	Fl_Group* radioGrp_1 = new Fl_Group(x(), y()+10, w(), 70); // radio group for the mutex
-		new geBox(x(), y()+10, 70, 25, "When a channel with recorded actions is halted:", FL_ALIGN_LEFT);
-		recsStopOnChanHalt_1 = new geRadio(x()+25, y()+35, 280, 20, "stop it immediately");
-		recsStopOnChanHalt_0 = new geRadio(x()+25, y()+60, 280, 20, "play it until finished");
-	radioGrp_1->end();
-
-	Fl_Group* radioGrp_2 = new Fl_Group(x(), radioGrp_1->y()+radioGrp_1->h(), w(), 70); // radio group for the mutex
-		new geBox(x(), y()+80, 70, 25, "When the sequencer is halted:", FL_ALIGN_LEFT);
-		chansStopOnSeqHalt_1 = new geRadio(x()+25, y()+105, 280, 20, "stop immediately all dynamic channels");
-		chansStopOnSeqHalt_0 = new geRadio(x()+25, y()+130, 280, 20, "play all dynamic channels until finished");
+	Fl_Group* radioGrp_2 = new Fl_Group(x(), y()+10, w(), 70); // radio group for the mutex
+		new geBox(x(), radioGrp_2->y(), 70, 25, "When the sequencer is halted:", FL_ALIGN_LEFT);
+		chansStopOnSeqHalt_1 = new geRadio(x()+25, radioGrp_2->y() + 25, 280, 20, "stop immediately all dynamic channels");
+		chansStopOnSeqHalt_0 = new geRadio(x()+25, radioGrp_2->y() + 50, 280, 20, "play all dynamic channels until finished");
 	radioGrp_2->end();
 
 	treatRecsAsLoops      = new geCheck(x(), radioGrp_2->y()+radioGrp_2->h() + 15, 280, 20, "Treat one shot channels with actions as loops");
@@ -62,13 +56,10 @@ geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
 	labelsize(G_GUI_FONT_SIZE_BASE);
 	selection_color(G_COLOR_GREY_4);
 
-	m::conf::conf.recsStopOnChanHalt == 1 ? recsStopOnChanHalt_1->value(1) : recsStopOnChanHalt_0->value(1);
 	m::conf::conf.chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
 	treatRecsAsLoops->value(m::conf::conf.treatRecsAsLoops);
 	inputMonitorDefaultOn->value(m::conf::conf.inputMonitorDefaultOn);
 
-	recsStopOnChanHalt_1->callback(cb_radio_mutex, (void*)this);
-	recsStopOnChanHalt_0->callback(cb_radio_mutex, (void*)this);
 	chansStopOnSeqHalt_1->callback(cb_radio_mutex, (void*)this);
 	chansStopOnSeqHalt_0->callback(cb_radio_mutex, (void*)this);
 }
@@ -97,7 +88,6 @@ void geTabBehaviors::cb_radio_mutex(Fl_Widget* w)
 
 void geTabBehaviors::save()
 {
-	m::conf::conf.recsStopOnChanHalt = recsStopOnChanHalt_1->value() == 1 ? 1 : 0;
 	m::conf::conf.chansStopOnSeqHalt = chansStopOnSeqHalt_1->value() == 1 ? 1 : 0;
 	m::conf::conf.treatRecsAsLoops = treatRecsAsLoops->value() == 1 ? 1 : 0;
 	m::conf::conf.inputMonitorDefaultOn = inputMonitorDefaultOn->value() == 1 ? 1 : 0;

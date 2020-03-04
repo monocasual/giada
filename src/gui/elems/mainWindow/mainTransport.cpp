@@ -28,12 +28,14 @@
 #include "core/graphics.h"
 #include "core/conf.h"
 #include "core/clock.h"
+#include "core/sequencer.h"
 #include "core/mixer.h"
 #include "core/mixerHandler.h"
 #include "core/recManager.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "glue/main.h"
+#include "glue/events.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/statusButton.h"
@@ -44,34 +46,39 @@ namespace giada {
 namespace v
 {
 geMainTransport::geMainTransport(int x, int y)
-: Fl_Pack(x, y, 200, 25)
+: gePack(x, y, Direction::HORIZONTAL)
 {
-	type(Fl_Pack::HORIZONTAL);
-	spacing(G_GUI_INNER_MARGIN);
-
 	rewind         = new geButton      (0, 0, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
 	play           = new geStatusButton(0, 0, 25, 25, play_xpm, pause_xpm);
-	                 new geBox         (0, 0, 10, 25);
+	spacer1        = new geBox         (0, 0, 10, 25);
 	recTriggerMode = new geButton      (0, 0, 15, 25, "", recTriggerModeOff_xpm, recTriggerModeOn_xpm);
 	recAction      = new geStatusButton(0, 0, 25, 25, recOff_xpm, recOn_xpm);
 	recInput       = new geStatusButton(0, 0, 25, 25, inputRecOff_xpm, inputRecOn_xpm);
-	                 new geBox         (0, 0, 10, 25);
+	spacer2        = new geBox         (0, 0, 10, 25);
 	metronome      = new geStatusButton(0, 0, 15, 25, metronomeOff_xpm, metronomeOn_xpm);
-
+	add(rewind);
+	add(play);
+	add(spacer1);
+	add(recTriggerMode);
+	add(recAction);
+	add(recInput);
+	add(spacer2);
+	add(metronome);
+	
 	rewind->callback([](Fl_Widget* w, void* v) { 
-		m::mh::rewindSequencer();
+		c::events::rewindSequencer();
 	});
 
 	play->callback([](Fl_Widget* w, void* v) { 
-		m::mh::toggleSequencer();
+		c::events::toggleSequencer();
 	});
 
 	recAction->callback([](Fl_Widget* w, void* v) { 
-		c::main::toggleActionRec();
+		c::events::toggleActionRecording();
 	});
 
 	recInput->callback([](Fl_Widget* w, void* v) { 
-		c::main::toggleInputRec();
+		c::events::toggleInputRecording();
 	});
 
 	recTriggerMode->value(static_cast<int>(m::conf::conf.recTriggerMode));
@@ -82,7 +89,7 @@ geMainTransport::geMainTransport(int x, int y)
 
 	metronome->type(FL_TOGGLE_BUTTON);
 	metronome->callback([](Fl_Widget* w, void* v) {
-		m::mixer::toggleMetronome();
+		c::events::toggleMetronome();
 	});
 }
 
@@ -95,7 +102,6 @@ void geMainTransport::refresh()
 	play->setStatus(m::clock::isRunning());
 	recAction->setStatus(m::recManager::isRecordingAction());
 	recInput->setStatus(m::recManager::isRecordingInput());
-	metronome->setStatus(m::mixer::isMetronomeOn());
+	metronome->setStatus(m::sequencer::isMetronomeOn());
 }
-
 }} // giada::v::

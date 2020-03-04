@@ -31,10 +31,11 @@
 #define GD_MIDI_INPUT_CHANNEL_H
 
 
+#include "glue/io.h"
+#include "gui/elems/midiIO/midiLearnerPack.h"
 #include "midiInputBase.h"
 
 
-class geScroll;
 class geCheck;
 class geChoice;
 
@@ -42,12 +43,41 @@ class geChoice;
 namespace giada {
 namespace v 
 {
-class geMidiLearner;
+class geScrollPack;
+class geChannelLearnerPack : public geMidiLearnerPack
+{
+public:
+
+	geChannelLearnerPack(int x, int y, const c::io::Channel_InputData& d);
+
+	void update(const c::io::Channel_InputData&);
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+class gePluginLearnerPack : public geMidiLearnerPack
+{
+public:
+
+	gePluginLearnerPack(int x, int y, const c::io::PluginData&);
+
+	void update(const c::io::PluginData&, bool enabled);
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+
 class gdMidiInputChannel : public gdMidiInputBase
 {
 public:
 
 	gdMidiInputChannel(ID channelId);
+
+	void rebuild() override;
 
 private:
 
@@ -58,18 +88,12 @@ private:
 	void cb_setChannel();
 	void cb_veloAsVol();
 
-	void addChannelLearners();
-
-#ifdef WITH_VST
-
-	void addPluginLearners();
-
-#endif
-
 	ID m_channelId;
+	
+	c::io::Channel_InputData m_data;
 
-	geScroll* m_container;
-	geCheck*  m_veloAsVol;
+	geScrollPack* m_container;
+	geCheck*      m_veloAsVol;
 };
 }} // giada::v::
 

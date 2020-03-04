@@ -29,7 +29,9 @@
 #define G_GLUE_ACTION_EDITOR_H
 
 
+#include <optional>
 #include <vector>
+#include <string>
 #include "core/types.h"
 
 
@@ -37,13 +39,33 @@ namespace giada {
 namespace m
 {
 struct Action;
-class SampleChannel;
-class MidiChannel;
+class  Channel;
+class  SamplePlayer;
 }
 namespace c {
 namespace actionEditor 
 {
-std::vector<m::Action> getActions(ID channelId);
+struct SampleData
+{
+	SampleData(const m::SamplePlayer&); 
+
+    SamplePlayerMode channelMode;
+	bool             isLoopMode;
+};
+
+struct Data
+{
+    Data() = default;
+    Data(const m::Channel&);
+
+    ID                     channelId; 
+    std::string            channelName;
+	std::vector<m::Action> actions;
+
+    std::optional<SampleData> sample;
+};
+
+Data getData(ID channelId);
 
 /* MIDI actions.  */
 

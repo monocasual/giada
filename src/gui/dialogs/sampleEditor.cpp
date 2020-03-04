@@ -31,8 +31,6 @@
 #include <FL/Fl_Group.H>
 #include "glue/channel.h"
 #include "glue/sampleEditor.h"
-#include "core/model/model.h"
-#include "core/channels/sampleChannel.h"
 #include "core/waveFx.h"
 #include "core/conf.h"
 #include "core/const.h"
@@ -64,15 +62,14 @@
 namespace giada {
 namespace v 
 {
-gdSampleEditor::gdSampleEditor(ID channelId, ID waveId)
+gdSampleEditor::gdSampleEditor(ID channelId)
 : gdWindow   (m::conf::conf.sampleEditorX, m::conf::conf.sampleEditorY, 
-	          m::conf::conf.sampleEditorW, m::conf::conf.sampleEditorH),
-  m_channelId(channelId),
-  m_waveId   (waveId)
+              m::conf::conf.sampleEditorW, m::conf::conf.sampleEditorH)
+, m_channelId(channelId)
 {
 	Fl_Group* upperBar = createUpperBar();
 	
-	waveTools = new geWaveTools(channelId, waveId, G_GUI_OUTER_MARGIN, upperBar->y()+upperBar->h()+G_GUI_OUTER_MARGIN, 
+	waveTools = new geWaveTools(G_GUI_OUTER_MARGIN, upperBar->y()+upperBar->h()+G_GUI_OUTER_MARGIN, 
 		w()-16, h()-128);
 	
 	Fl_Group* bottomBar = createBottomBar(G_GUI_OUTER_MARGIN, waveTools->y()+waveTools->h()+G_GUI_OUTER_MARGIN, 
@@ -107,7 +104,8 @@ gdSampleEditor::~gdSampleEditor()
 	m::conf::conf.sampleEditorGridVal = atoi(grid->text());
 	m::conf::conf.sampleEditorGridOn  = snap->value();
 	
-	c::sampleEditor::setPreview(m_channelId, PreviewMode::NONE);
+	c::sampleEditor::stopPreview();
+	c::sampleEditor::cleanupPreview();
 }
 
 
@@ -116,24 +114,21 @@ gdSampleEditor::~gdSampleEditor()
 
 void gdSampleEditor::rebuild()
 {
-	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
-	{
-		copy_label(c.name.c_str());
-	});
-	
-	volumeTool->rebuild();
-	waveTools->rebuild();
-	panTool->rebuild();
-	pitchTool->rebuild();
-	rangeTool->rebuild();
-	shiftTool->rebuild();
+	m_data = c::sampleEditor::getData(m_channelId);
 
-	m::model::onGet(m::model::waves, m_waveId, [&](m::Wave& w)
-	{
-		updateInfo(w);
-		if (w.isLogical()) // Logical samples (aka takes) cannot be reloaded.
-			reload->deactivate();
-	});
+	copy_label(m_data.name.c_str());
+
+	waveTools->rebuild(m_data);
+	volumeTool->rebuild(m_data);
+	panTool->rebuild(m_data);
+	pitchTool->rebuild(m_data);
+	rangeTool->rebuild(m_data);
+	shiftTool->rebuild(m_data);
+
+	updateInfo();
+
+	if (m_data.isLogical) // Logical samples (aka takes) cannot be reloaded.
+		reload->deactivate();	
 }
 
 
@@ -143,11 +138,7 @@ void gdSampleEditor::rebuild()
 void gdSampleEditor::refresh()
 {
 	waveTools->refresh();
-	
-	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
-	{
-		play->setStatus(c.previewMode == PreviewMode::LOOP || c.previewMode == PreviewMode::NORMAL ? 1 : 0);
-	});
+	play->setStatus(m_data.a_getPreviewStatus() == ChannelStatus::PLAY);
 }
 
 
@@ -192,22 +183,22 @@ Fl_Group* gdSampleEditor::createUpperBar()
 	return g;
 }
 
-
+\
 /* -------------------------------------------------------------------------- */
-
+\
 
 Fl_Group* gdSampleEditor::createOpTools(int x, int y, int h)
 {
 	Fl_Group* g = new Fl_Group(x, y, 572, h);
 	g->begin();
 	g->resizable(0);
-		volumeTool = new geVolumeTool(m_channelId, g->x(), g->y());
-		panTool    = new gePanTool(m_channelId, volumeTool->x()+volumeTool->w()+4, g->y());
+		volumeTool = new geVolumeTool(m_data, g->x(), g->y());
+		panTool    = new gePanTool(m_data, volumeTool->x()+volumeTool->w()+4, g->y());
 	 
-		pitchTool = new gePitchTool(m_channelId, g->x(), panTool->y()+panTool->h()+8);
+		pitchTool = new gePitchTool(m_data, g->x(), panTool->y()+panTool->h()+8);
 
-		rangeTool = new geRangeTool(m_channelId, m_waveId, g->x(), pitchTool->y()+pitchTool->h()+8);
-		shiftTool = new geShiftTool(m_channelId, m_waveId, rangeTool->x()+rangeTool->w()+4, pitchTool->y()+pitchTool->h()+8);
+		rangeTool = new geRangeTool(m_data, g->x(), pitchTool->y()+pitchTool->h()+8);
+		shiftTool = new geShiftTool(m_data, rangeTool->x()+rangeTool->w()+4, pitchTool->y()+pitchTool->h()+8);
 		reload    = new geButton(g->x()+g->w()-70, shiftTool->y(), 70, 20, "Reload");
 	g->end();
 
@@ -304,16 +295,16 @@ void gdSampleEditor::cb_enableSnap()
 
 void gdSampleEditor::cb_togglePreview()
 {
-	if (play->getStatus())
-		c::sampleEditor::setPreview(m_channelId, PreviewMode::NONE);
+	if (!play->getStatus())
+		c::sampleEditor::playPreview(loop->value());
 	else
-		c::sampleEditor::setPreview(m_channelId, loop->value() ? PreviewMode::LOOP : PreviewMode::NORMAL);
+		c::sampleEditor::stopPreview();
 }
 
 
 void gdSampleEditor::cb_rewindPreview()
 {
-	c::sampleEditor::rewindPreview(m_channelId);
+	c::sampleEditor::setPreviewTracker(m_data.begin);
 }
 
 
@@ -322,7 +313,7 @@ void gdSampleEditor::cb_rewindPreview()
 
 void gdSampleEditor::cb_reload()
 {
-	c::sampleEditor::reload(m_channelId, m_waveId);
+	c::sampleEditor::reload(m_data.channelId, m_data.waveId);
 	redraw();
 }
 
@@ -359,27 +350,16 @@ void gdSampleEditor::cb_changeGrid()
 /* -------------------------------------------------------------------------- */
 
 
-void gdSampleEditor::updateInfo(const m::Wave& w)
+void gdSampleEditor::updateInfo()
 {
-	std::string bitDepth = w.getBits() != 0 ? u::string::iToString(w.getBits()) : "(unknown)";
+	std::string bitDepth = m_data.waveBits != 0 ? u::string::iToString(m_data.waveBits) : "(unknown)";
 	std::string infoText = 
-		"File: "      + w.getPath() + "\n"
-		"Size: "      + u::string::iToString(w.getSize()) + " frames\n"
-		"Duration: "  + u::string::iToString(w.getDuration()) + " seconds\n"
+		"File: "      + m_data.wavePath + "\n"
+		"Size: "      + u::string::iToString(m_data.waveSize) + " frames\n"
+		"Duration: "  + u::string::iToString(m_data.waveDuration) + " seconds\n"
 		"Bit depth: " + bitDepth + "\n"
-		"Frequency: " + u::string::iToString(w.getRate()) + " Hz\n";
+		"Frequency: " + u::string::iToString(m_data.waveRate) + " Hz\n";
 
 	info->copy_label(infoText.c_str());
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::setWaveId(ID id)
-{
-	m_waveId = id;
-	waveTools->waveId = id;
-	waveTools->waveform->setWaveId(id);
 }
 }} // giada::v::

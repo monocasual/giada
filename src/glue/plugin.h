@@ -32,8 +32,15 @@
 #ifdef WITH_VST
 
 
+#include <vector>
+#include <string>
 #include "core/pluginHost.h"
 #include "core/types.h"
+
+
+namespace juce {
+class AudioProcessorEditor;
+}
 
 
 namespace giada {
@@ -45,16 +52,75 @@ class Channel;
 namespace c {
 namespace plugin 
 {
+struct Program
+{
+    int         index;
+    std::string name;
+};
+
+struct Param
+{
+    Param() = default;
+    Param(const m::Plugin&, int index);
+
+    int         index;
+    ID          pluginId;
+    std::string name;
+    std::string text;
+    std::string label;
+    float       value;
+};
+
+struct Plugin
+{
+    Plugin() = default;
+    Plugin(const m::Plugin&, ID channelId);
+
+    juce::AudioProcessorEditor* createEditor() const;
+
+    ID          id;
+    ID          channelId;
+    bool        valid;
+    bool        hasEditor;
+    bool        isBypassed;
+    std::string name;
+    std::string uniqueId;
+    int         currentProgram;
+
+    std::vector<Program> programs;
+    std::vector<int>     paramIndexes;
+
+private:
+
+    const m::Plugin& m_plugin;
+};
+
+struct Plugins
+{
+    Plugins() = default;
+    Plugins(const m::Channel&);
+
+    ID channelId;
+    std::vector<ID> pluginIds; 
+};
+
+/* get*
+Returns ViewModel objects. */
+
+Plugins getPlugins(ID channelId);
+Plugin  getPlugin (ID pluginId, ID channelId);
+Param   getParam  (int index, ID pluginId);
+
+/* updateWindow
+Updates the editor-less plug-in window. This is useless if the plug-in has an
+editor. */
+
+void updateWindow(ID pluginId, bool gui);
+
 void addPlugin(int pluginListIndex, ID channelId);
-
 void swapPlugins(ID pluginId1, ID pluginId2, ID channelId);
-
 void freePlugin(ID pluginId, ID channelId);
-
-void setParameter(ID pluginId, int paramIndex, float value, bool gui=true); 
-
 void setProgram(ID pluginId, int programIndex);
-
 void toggleBypass(ID pluginId);
 
 /* setPluginPathCb

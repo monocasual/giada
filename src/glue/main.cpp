@@ -38,7 +38,6 @@
 #include "utils/string.h"
 #include "utils/log.h"
 #include "core/model/model.h"
-#include "core/channels/midiChannel.h"
 #include "core/mixerHandler.h"
 #include "core/mixer.h"
 #include "core/clock.h"
@@ -78,8 +77,8 @@ void setBpm_(float current, std::string s)
 
 	float previous = m::clock::getBpm();
 	m::clock::setBpm(current);
-	m::recorderHandler::updateBpm(previous, current, m::clock::getQuanto());
-	m::mixer::allocVirtualInput(m::clock::getFramesInLoop());
+	m::recorderHandler::updateBpm(previous, current, m::clock::getQuantizerStep());
+	m::mixer::allocRecBuffer(m::clock::getFramesInLoop());
 
 	/* This function might get called by Jack callback BEFORE the UI is up
 	and running, that is when G_MainWin == nullptr. */
@@ -96,6 +95,80 @@ void setBpm_(float current, std::string s)
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+Timer::Timer(const m::model::Clock& c)
+: bpm             (c.bpm)
+, beats           (c.beats)
+, bars            (c.bars)
+, quantize        (c.quantize)
+, isUsingJack     (m::kernelAudio::getAPI() == G_SYS_API_JACK)
+, isRecordingInput(m::recManager::isRecordingInput())
+{
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+IO::IO(const m::Channel& out, const m::Channel& in, const m::model::Mixer& m)
+: masterOutVol       (out.state->volume.load())
+, masterInVol        (in.state->volume.load())
+, masterOutHasPlugins(out.pluginIds.size() > 0)
+, masterInHasPlugins (in.pluginIds.size() > 0)
+, inToOut            (m.inToOut)
+{
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+float IO::a_getMasterOutPeak()
+{
+	return m::mixer::peakOut.load();
+}
+
+
+float IO::a_getMasterInPeak()
+{
+	return m::mixer::peakIn.load();
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+Timer getTimer()
+{
+	namespace mm = m::model;
+	
+	mm::ClockLock c(mm::clock);
+	return Timer(*mm::clock.get());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+IO getIO()
+{
+	namespace mm = m::model;
+
+	mm::ChannelsLock cl(mm::channels);
+	mm::MixerLock        ml(mm::mixer);
+
+	return IO(mm::get(mm::channels, m::mixer::MASTER_OUT_CHANNEL_ID), 
+	          mm::get(mm::channels, m::mixer::MASTER_IN_CHANNEL_ID),
+			  *mm::mixer.get());
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 
@@ -152,7 +225,7 @@ void setBeats(int beats, int bars)
 		return;
 
 	m::clock::setBeats(beats, bars);
-	m::mixer::allocVirtualInput(m::clock::getFramesInLoop());
+	m::mixer::allocRecBuffer(m::clock::getFramesInLoop());
 
 	G_MainWin->mainTimer->setMeter(m::clock::getBeats(), m::clock::getBars());
 	u::gui::refreshActionEditor();  // in case the action editor is open
@@ -171,39 +244,9 @@ void quantize(int val)
 /* -------------------------------------------------------------------------- */
 
 
-void setOutVol(float v, bool gui)
-{
-	m::mh::setOutVol(v);
-	
-	if (!gui) {
-		Fl::lock();
-		G_MainWin->mainIO->setOutVol(v);
-		Fl::unlock();
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void setInVol(float v, bool gui)
-{
-	m::mh::setInVol(v);
-
-	if (!gui) {
-		Fl::lock();
-		G_MainWin->mainIO->setInVol(v);
-		Fl::unlock();
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void clearAllSamples()
 {
-	if (!v::gdConfirmWin("Warning", "Clear all samples: are you sure?"))
+	if (!v::gdConfirmWin("Warning", "Free all Sample channels: are you sure?"))
 		return;
 	G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
 	m::clock::setStatus(ClockStatus::STOPPED);
@@ -227,58 +270,20 @@ void clearAllActions()
 /* -------------------------------------------------------------------------- */
 
 
-void resetToInitState(bool createColumns)
+void setInToOut(bool v)
+{
+	m::mh::setInToOut(v);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void closeProject(bool createColumns)
 {
 	if (!v::gdConfirmWin("Warning", "Close project: are you sure?"))
 		return;
-	m::init::reset();	
+	m::init::reset();
 	m::mixer::enable();
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void beatsMultiply()
-{
-	setBeats(m::clock::getBeats() * 2, m::clock::getBars());
-}
-
-void beatsDivide()
-{
-	setBeats(m::clock::getBeats() / 2, m::clock::getBars());
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void toggleInputRec()
-{
-	if (!m::recManager::toggleInputRec(static_cast<RecTriggerMode>(m::conf::conf.recTriggerMode)))
-		v::gdAlert("No channels armed/available for audio recording.");
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void toggleActionRec()
-{
-	m::recManager::isRecordingAction() ? stopActionRec() : startActionRec();
-}
-
-
-void startActionRec()
-{
-	m::recManager::startActionRec(static_cast<RecTriggerMode>(m::conf::conf.recTriggerMode));
-}
-
-
-void stopActionRec()
-{
-	m::recManager::stopActionRec();
-	u::gui::refreshActionEditor();  // If Action Editor window is open
-}
-
 }}} // giada::c::main::

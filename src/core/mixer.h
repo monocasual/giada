@@ -33,8 +33,11 @@
 #include <functional>
 #include <vector>
 #include "deps/rtaudio/RtAudio.h"
+#include "core/ringBuffer.h"
 #include "core/recorder.h"
 #include "core/types.h"
+#include "core/queue.h"
+#include "core/midiEvent.h"
 
 
 namespace giada {
@@ -42,28 +45,59 @@ namespace m
 {
 struct Action;
 class Channel;
+class Channel;
 class AudioBuffer;
 
 namespace mixer
 {
-struct FrameEvents
-{
-	Frame frameLocal;
-	Frame frameGlobal;
-	bool  doQuantize;
-	bool  onBar;
-	bool  onFirstBeat;
-	bool  quantoPassed;
-	const std::vector<Action>* actions;
+enum class EventType 
+{ 
+	KEY_PRESS, 
+	KEY_RELEASE, 
+	KEY_KILL, 
+	SEQUENCER_FIRST_BEAT, 
+	SEQUENCER_BAR, 
+	SEQUENCER_STOP, 
+	SEQUENCER_REWIND,
+	MIDI, 
+	ACTION, 
+	CHANNEL_TOGGLE_READ_ACTIONS,
+	CHANNEL_TOGGLE_ARM,
+	CHANNEL_MUTE,
+	CHANNEL_SOLO,
+	CHANNEL_VOLUME,
+	CHANNEL_PITCH,
+	CHANNEL_PAN
 };
+
+struct Event
+{
+	EventType type;
+	Frame     delta;
+	Action    action;
+};
+
+/* EventBuffer
+Alias for a RingBuffer containing events to be sent to channels. The double size
+is due to the presence of two distinct Queues for collecting events coming from
+other threads. See below. */
+
+using EventBuffer = RingBuffer<Event, G_MAX_QUEUE_EVENTS * 2>;
 
 constexpr int MASTER_OUT_CHANNEL_ID = 1;
 constexpr int MASTER_IN_CHANNEL_ID  = 2;
 constexpr int PREVIEW_CHANNEL_ID    = 3;
 
-extern std::atomic<bool>  rewindWait;    // rewind guard, if quantized
 extern std::atomic<float> peakOut;
 extern std::atomic<float> peakIn;
+
+/* Channel Event queues
+Collect events coming from the UI or MIDI devices to be sent to channels. Our 
+poor's man Queue is a single-producer/single-consumer one, so we need two queues 
+for two writers. TODO - let's add a multi-producer queue sooner or later! */
+
+extern Queue<Event, G_MAX_QUEUE_EVENTS> UIevents;
+extern Queue<Event, G_MAX_QUEUE_EVENTS> MidiEvents;
 
 void init(Frame framesInSeq, Frame framesInBuffer);
 
@@ -75,22 +109,22 @@ called. */
 void enable();
 void disable();
 
-/* allocVirtualInput
+/* allocRecBuffer
 Allocates new memory for the virtual input channel. Call this whenever you 
 shrink or resize the sequencer. */
 
-void allocVirtualInput(Frame frames);
+void allocRecBuffer(Frame frames);
 
-/* clearVirtualInput
+/* clearRecBuffer
 Clears internal virtual channel. */
 
-void clearVirtualInput();
+void clearRecBuffer();
 
-/* getVirtualInput
+/* getRecBuffer
 Returns a read-only reference to the internal virtual channel. Use this to
 merge data into channel after an input recording session. */
 
-const AudioBuffer& getVirtualInput(); 
+const AudioBuffer& getRecBuffer(); 
 
 void close();
 
@@ -100,17 +134,11 @@ Core method (callback) */
 int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize, double streamTime,
 	RtAudioStreamStatus status, void* userData);
 
-bool isChannelAudible(const Channel* ch);
-
 /* startInputRec, stopInputRec
 Starts/stops input recording on frame clock::getCurrentFrame(). */
 
 void startInputRec();
 void stopInputRec();
-
-void toggleMetronome();
-bool isMetronomeOn();
-void setMetronome(bool v);
 
 void setSignalCallback(std::function<void()> f);
 }}} // giada::m::mixer::;

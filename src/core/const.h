@@ -29,6 +29,18 @@
 #define G_CONST_H
 
 
+#include <cstdint>
+
+
+/* -- debug ----------------------------------------------------------------- */
+#ifndef NDEBUG
+    #define G_DEBUG_MODE
+    #define G_DEBUG(x) std::cerr << __FILE__ << "::" << __func__  << "() - " << x << "\n";
+#else
+    #define G_DEBUG(x) do {} while (0)
+#endif
+
+
 /* -- environment ----------------------------------------------------------- */
 #if defined(_WIN32)
 	#define G_OS_WINDOWS
@@ -48,10 +60,10 @@
 
 /* -- version --------------------------------------------------------------- */
 constexpr auto G_APP_NAME      = "Giada";
-constexpr auto G_VERSION_STR   = "0.16.2";
+constexpr auto G_VERSION_STR   = "0.16.3";
 constexpr int  G_VERSION_MAJOR = 0;
 constexpr int  G_VERSION_MINOR = 16;
-constexpr int  G_VERSION_PATCH = 2;
+constexpr int  G_VERSION_PATCH = 3;
 
 constexpr auto CONF_FILENAME = "giada.conf";
 
@@ -65,8 +77,8 @@ constexpr auto CONF_FILENAME = "giada.conf";
 
 
 /* -- GUI ------------------------------------------------------------------- */
-constexpr float G_GUI_REFRESH_RATE   = 0.05;
-constexpr float G_GUI_PLUGIN_RATE    = 0.05;   // refresh rate for plugin GUI
+constexpr float G_GUI_REFRESH_RATE   = 1 / 30.0; // 30 fps
+constexpr float G_GUI_PLUGIN_RATE    = 1 / 30.0; // 30 fps
 constexpr int   G_GUI_FONT_SIZE_BASE = 12;
 constexpr int   G_GUI_INNER_MARGIN   = 4;
 constexpr int   G_GUI_OUTER_MARGIN   = 8;
@@ -88,28 +100,31 @@ constexpr int   G_GUI_ZOOM_FACTOR    = 2;
 
 
 /* -- MIN/MAX values -------------------------------------------------------- */
-constexpr float  G_MIN_BPM          = 20.0f;
-constexpr auto   G_MIN_BPM_STR      = "20.0";
-constexpr float  G_MAX_BPM          = 999.0f;
-constexpr auto   G_MAX_BPM_STR      = "999.0";
-constexpr int    G_MAX_BEATS        = 32;
-constexpr int    G_MAX_BARS         = 32;
-constexpr int    G_MAX_QUANTIZE     = 8;
-constexpr float  G_MIN_DB_SCALE     = 60.0f;
-constexpr int    G_MIN_COLUMN_WIDTH = 140;
-constexpr float  G_MAX_BOOST_DB     = 20.0f;
-constexpr float  G_MIN_PITCH        = 0.1f;
-constexpr float  G_MAX_PITCH        = 4.0f;
-constexpr float  G_MAX_VOLUME       = 1.0f;
-constexpr int    G_MAX_GRID_VAL     = 64;
-constexpr int    G_MIN_BUF_SIZE     = 8;
-constexpr int    G_MAX_BUF_SIZE     = 4096;
-constexpr int    G_MIN_GUI_WIDTH    = 816;
-constexpr int    G_MIN_GUI_HEIGHT   = 510;
-constexpr int    G_MAX_IO_CHANS     = 2;
-constexpr int    G_MAX_VELOCITY     = 0x7F;
-constexpr int    G_MAX_MIDI_CHANS   = 16;
-constexpr int    G_MAX_POLYPHONY    = 32;
+constexpr float  G_MIN_BPM            = 20.0f;
+constexpr auto   G_MIN_BPM_STR        = "20.0";
+constexpr float  G_MAX_BPM            = 999.0f;
+constexpr auto   G_MAX_BPM_STR        = "999.0";
+constexpr int    G_MAX_BEATS          = 32;
+constexpr int    G_MAX_BARS           = 32;
+constexpr int    G_MAX_QUANTIZE       = 8;
+constexpr float  G_MIN_DB_SCALE       = 60.0f;
+constexpr int    G_MIN_COLUMN_WIDTH   = 140;
+constexpr float  G_MAX_BOOST_DB       = 20.0f;
+constexpr float  G_MIN_PITCH          = 0.1f;
+constexpr float  G_MAX_PITCH          = 4.0f;
+constexpr float  G_MAX_PAN            = 1.0f;
+constexpr float  G_MAX_VOLUME         = 1.0f;
+constexpr int    G_MAX_GRID_VAL       = 64;
+constexpr int    G_MIN_BUF_SIZE       = 8;
+constexpr int    G_MAX_BUF_SIZE       = 4096;
+constexpr int    G_MIN_GUI_WIDTH      = 816;
+constexpr int    G_MIN_GUI_HEIGHT     = 510;
+constexpr int    G_MAX_IO_CHANS       = 2;
+constexpr int    G_MAX_VELOCITY       = 0x7F;
+constexpr int    G_MAX_MIDI_CHANS     = 16;
+constexpr int    G_MAX_POLYPHONY      = 32;
+constexpr int    G_MAX_QUEUE_EVENTS   = 32;
+constexpr int    G_MAX_QUANTIZER_SIZE = 8;
 
 
 
@@ -143,28 +158,30 @@ constexpr int G_MIDI_API_ALSA = 0x02;  // 0000 0010
 	#define G_DEFAULT_SOUNDSYS 	G_SYS_API_CORE
 #endif
 
-constexpr int   G_DEFAULT_SOUNDDEV_OUT      = 0;      // FIXME - please override with rtAudio::getDefaultDevice (or similar)
-constexpr int   G_DEFAULT_SOUNDDEV_IN       = -1;     // no recording by default: input disabled
-constexpr int   G_DEFAULT_MIDI_SYSTEM       = 0;
-constexpr int   G_DEFAULT_MIDI_PORT_IN      = -1;
-constexpr int   G_DEFAULT_MIDI_PORT_OUT     = -1;
-constexpr int   G_DEFAULT_SAMPLERATE        = 44100;
-constexpr int   G_DEFAULT_BUFSIZE           = 1024;
-constexpr int   G_DEFAULT_BIT_DEPTH         = 32;     // float
-constexpr float G_DEFAULT_VOL               = 1.0f;
-constexpr float G_DEFAULT_PITCH             = 1.0f;
-constexpr float G_DEFAULT_BPM               = 120.0f;
-constexpr int   G_DEFAULT_BEATS             = 4;
-constexpr int   G_DEFAULT_BARS              = 1;
-constexpr int   G_DEFAULT_QUANTIZE          = 0;      // quantizer off
-constexpr float G_DEFAULT_FADEOUT_STEP      = 0.01f;  // micro-fadeout speed
-constexpr int   G_DEFAULT_COLUMN_WIDTH      = 380;
-constexpr auto  G_DEFAULT_PATCH_NAME        = "(default patch)";
-constexpr int   G_DEFAULT_ACTION_SIZE       = 8192;  // frames
-constexpr int   G_DEFAULT_ZOOM_RATIO        = 128;
-constexpr float G_DEFAULT_REC_TRIGGER_LEVEL = -10.0f;
-constexpr int   G_DEFAULT_SUBWINDOW_W       = 640;
-constexpr int   G_DEFAULT_SUBWINDOW_H       = 480;
+constexpr int   G_DEFAULT_SOUNDDEV_OUT        = 0;      // FIXME - please override with rtAudio::getDefaultDevice (or similar)
+constexpr int   G_DEFAULT_SOUNDDEV_IN         = -1;     // no recording by default: input disabled
+constexpr int   G_DEFAULT_MIDI_SYSTEM         = 0;
+constexpr int   G_DEFAULT_MIDI_PORT_IN        = -1;
+constexpr int   G_DEFAULT_MIDI_PORT_OUT       = -1;
+constexpr int   G_DEFAULT_SAMPLERATE          = 44100;
+constexpr int   G_DEFAULT_BUFSIZE             = 1024;
+constexpr int   G_DEFAULT_BIT_DEPTH           = 32;     // float
+constexpr float G_DEFAULT_VOL                 = 1.0f;
+constexpr float G_DEFAULT_PAN                 = 0.5f;
+constexpr float G_DEFAULT_PITCH               = 1.0f;
+constexpr float G_DEFAULT_BPM                 = 120.0f;
+constexpr int   G_DEFAULT_BEATS               = 4;
+constexpr int   G_DEFAULT_BARS                = 1;
+constexpr int   G_DEFAULT_QUANTIZE            = 0;      // quantizer off
+constexpr float G_DEFAULT_FADEOUT_STEP        = 0.01f;  // micro-fadeout speed
+constexpr int   G_DEFAULT_COLUMN_WIDTH        = 380;
+constexpr auto  G_DEFAULT_PATCH_NAME          = "(default patch)";
+constexpr int   G_DEFAULT_ACTION_SIZE         = 8192;  // frames
+constexpr int   G_DEFAULT_ZOOM_RATIO          = 128;
+constexpr float G_DEFAULT_REC_TRIGGER_LEVEL   = -10.0f;
+constexpr int   G_DEFAULT_SUBWINDOW_W         = 640;
+constexpr int   G_DEFAULT_SUBWINDOW_H         = 480;
+constexpr int   G_DEFAULT_VST_MIDIBUFFER_SIZE = 1024;  // TODO - not 100% sure about this size
 
 
 
@@ -259,8 +276,8 @@ constexpr int G_MIDI_OUT_L_SOLO     = 5;
 Channel voices messages - controller (0xB0) is a special subset of this family:
 it drives knobs, volume, faders and such. */
 
-#define MIDI_CONTROLLER     0xB0 << 24
-#define MIDI_ALL_NOTES_OFF (MIDI_CONTROLLER) | (0x7B << 16)
+constexpr uint32_t G_MIDI_CONTROLLER    = 0xB0 << 24;
+constexpr uint32_t G_MIDI_ALL_NOTES_OFF = (G_MIDI_CONTROLLER) | (0x7B << 16);
 
 /* system common / real-time messages. Single bytes */
 
@@ -272,15 +289,6 @@ it drives knobs, volume, faders and such. */
 #define MIDI_CONTINUE       0xFB
 #define MIDI_STOP           0xFC
 #define MIDI_EOX            0xF7  // end of sysex
-
-/* Channels */
-
-constexpr int G_MIDI_CHANS[G_MAX_MIDI_CHANS] = {
-	0x00 << 24,  0x01 << 24,  0x02 << 24,  0x03 << 24,
-	0x04 << 24,  0x05 << 24,  0x06 << 24,  0x07 << 24,
-	0x08 << 24,  0x09 << 24,  0x0A << 24,  0x0B << 24,
-	0x0C << 24,  0x0D << 24,  0x0E << 24,  0x0F << 24
-};
 
 /* midi sync constants */
 
@@ -406,7 +414,6 @@ constexpr auto CONF_KEY_MIDI_IN_VOLUME_IN        = "midi_in_volume_in";
 constexpr auto CONF_KEY_MIDI_IN_VOLUME_OUT       = "midi_in_volume_out";
 constexpr auto CONF_KEY_MIDI_IN_BEAT_DOUBLE      = "midi_in_beat_doble";
 constexpr auto CONF_KEY_MIDI_IN_BEAT_HALF        = "midi_in_beat_half";
-constexpr auto CONF_KEY_RECS_STOP_ON_CHAN_HALT   = "recs_stop_on_chan_halt";
 constexpr auto CONF_KEY_CHANS_STOP_ON_SEQ_HALT   = "chans_stop_on_seq_halt";
 constexpr auto CONF_KEY_TREAT_RECS_AS_LOOPS      = "treat_recs_as_loops";
 constexpr auto CONF_KEY_INPUT_MONITOR_DEFAULT_ON = "input_monitor_default_on";

@@ -26,21 +26,17 @@
 
 
 #include <FL/fl_draw.H>
-#include "core/channels/sampleChannel.h"
-#include "core/model/model.h"
-#include "core/mixer.h"
-#include "core/clock.h"
-#include "core/recorder.h"
-#include "core/recManager.h"
 #include "core/const.h"
+#include "glue/channel.h"
 #include "channelStatus.h"
 
 
 namespace giada {
 namespace v
 {
-geChannelStatus::geChannelStatus(int x, int y, int w, int h, ID channelId)
-: Fl_Box(x, y, w, h), channelId(channelId)
+geChannelStatus::geChannelStatus(int x, int y, int w, int h, c::channel::Data& d)
+: Fl_Box   (x, y, w, h)
+, m_channel(d)
 {
 }
 
@@ -53,38 +49,32 @@ void geChannelStatus::draw()
 	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);              // reset border
 	fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);     // reset background
 
-	m::model::ChannelsLock l(m::model::channels);
-	const m::SampleChannel& ch = static_cast<m::SampleChannel&>(m::model::get(m::model::channels, channelId));
-	
-	if (ch.playStatus == ChannelStatus::WAIT    || 
-	    ch.playStatus == ChannelStatus::ENDING  ||
-	    ch.recStatus == ChannelStatus::WAIT || 
-	    ch.recStatus == ChannelStatus::ENDING)
+	ChannelStatus playStatus = m_channel.a_getPlayStatus();
+	ChannelStatus recStatus  = m_channel.a_getRecStatus();
+	Pixel         pos        = 0;
+
+	if (playStatus == ChannelStatus::WAIT    || 
+	    playStatus == ChannelStatus::ENDING  ||
+	    recStatus  == ChannelStatus::WAIT    || 
+	    recStatus  == ChannelStatus::ENDING)
 	{
 		fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
 	}
 	else
-	if (ch.playStatus == ChannelStatus::PLAY)
+	if (playStatus == ChannelStatus::PLAY) {
+		/* Equation for the progress bar: 
+		((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
+		Frame tracker = m_channel.sample->a_getTracker();
+		Frame begin   = m_channel.sample->a_getBegin();
+		Frame end     = m_channel.sample->a_getEnd();
+		pos = ((tracker - begin) * (w() - 1)) / ((end - begin));
 		fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
+	}
 	else
 		fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);  // status empty
 
-
-	if (m::recManager::isRecordingInput() && ch.armed)
-		fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_RED);     // take in progress
-	else
-	if (m::recManager::isRecordingAction())
-		fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_BLUE);    // action recording
-
-	/* Equation for the progress bar: 
-	((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
-
-	int pos = ch.getPosition();
-	if (pos == -1)
-		pos = 0;
-	else
-		pos = (pos * (w()-1)) / ((ch.getEnd() - ch.getBegin()));
-	fl_rectf(x()+1, y()+1, pos, h()-2, G_COLOR_LIGHT_1);
+	if (pos != 0)
+		fl_rectf(x()+1, y()+1, pos, h()-2, G_COLOR_LIGHT_1);
 }
 
 }} // giada::v::

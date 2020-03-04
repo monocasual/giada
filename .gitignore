@@ -26,6 +26,7 @@
 /test-plugin-list.xml
 
 # --- misc
+/cmake-build-debug/
 /make.sh
 /AUTHORS
 /ERRORS

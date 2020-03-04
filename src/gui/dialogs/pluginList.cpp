@@ -30,11 +30,8 @@
 
 #include <cassert>
 #include <string>
-#include "core/model/model.h"
-#include "core/channels/channel.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "core/pluginHost.h"
 #include "utils/string.h"
 #include "utils/gui.h"
 #include "gui/elems/basics/liquidScroll.h"
@@ -55,9 +52,9 @@ extern giada::v::gdMainWindow* G_MainWin;
 namespace giada {
 namespace v
 {
-gdPluginList::gdPluginList(ID chanID)
-: gdWindow(m::conf::conf.pluginListX, m::conf::conf.pluginListY, 468, 204), 
-  m_channelId(chanID)
+gdPluginList::gdPluginList(ID channelId)
+: gdWindow   (m::conf::conf.pluginListX, m::conf::conf.pluginListY, 468, 204)
+, m_channelId(channelId)
 {
 	end();
 
@@ -66,20 +63,9 @@ gdPluginList::gdPluginList(ID chanID)
 	list->end();
 	add(list);
 
-	rebuild();
-
-	if (m_channelId == m::mixer::MASTER_OUT_CHANNEL_ID)
-		label("Master Out Plug-ins");
-	else
-	if (m_channelId == m::mixer::MASTER_IN_CHANNEL_ID)
-		label("Master In Plug-ins");
-	else {
-		std::string l = "Channel " + u::string::iToString(m_channelId + 1) + " Plug-ins";
-		copy_label(l.c_str());
-	}
-
 	u::gui::setFavicon(this);
 	set_non_modal();
+	rebuild();
 	show();
 }
 
@@ -105,17 +91,25 @@ void gdPluginList::cb_addPlugin(Fl_Widget* v, void* p) { ((gdPluginList*)p)->cb_
 
 void gdPluginList::rebuild()
 {
+	m_plugins = c::plugin::getPlugins(m_channelId);
+
+	if (m_plugins.channelId == m::mixer::MASTER_OUT_CHANNEL_ID)
+		label("Master Out Plug-ins");
+	else
+	if (m_plugins.channelId == m::mixer::MASTER_IN_CHANNEL_ID)
+		label("Master In Plug-ins");
+	else {
+		std::string l = "Channel " + u::string::iToString(m_plugins.channelId) + " Plug-ins";
+		copy_label(l.c_str());
+	}
+
 	/* Clear the previous list. */
 
 	list->clear();
 	list->scroll_to(0, 0);
 
-	m::model::ChannelsLock l(m::model::channels);
-
-	const m::Channel& ch = m::model::get(m::model::channels, m_channelId);
-
-	for (ID pluginId : ch.pluginIds)
-		list->addWidget(new gePluginElement(pluginId, m_channelId, 0, 0, 0));
+	for (ID pluginId : m_plugins.pluginIds)
+		list->addWidget(new gePluginElement(0, 0, 0, c::plugin::getPlugin(pluginId, m_plugins.channelId)));
 	
 	addPlugin = list->addWidget(new geButton(0, 0, 0, G_GUI_UNIT, "-- add new plugin --"));
 	
@@ -133,7 +127,7 @@ void gdPluginList::cb_addPlugin()
 	int ww = m::conf::conf.pluginChooserW;
 	int wh = m::conf::conf.pluginChooserH;
 	u::gui::openSubWindow(G_MainWin, new v::gdPluginChooser(wx, wy, ww, wh, 
-		m_channelId), WID_FX_CHOOSER);
+		m_plugins.channelId), WID_FX_CHOOSER);
 }
 
 

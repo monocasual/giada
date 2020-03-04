@@ -32,7 +32,7 @@
 #define GD_PLUGINLIST_H
 
 
-#include "core/pluginHost.h"
+#include "glue/plugin.h"
 #include "window.h"
 
 
@@ -48,7 +48,7 @@ class gdPluginList : public gdWindow
 {
 public:
 
-	gdPluginList(ID chanID);
+	gdPluginList(ID channelId);
 	~gdPluginList();
 
 	void rebuild() override;
@@ -65,8 +65,8 @@ private:
 	geLiquidScroll* list;	
 
 	ID m_channelId;
+	c::plugin::Plugins m_plugins;
 };
-
 }} // giada::v::
 
 

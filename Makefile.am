@@ -6,7 +6,7 @@ AUTOMAKE_OPTIONS = foreign
 
 
 cppFlags = -I$(top_srcdir)/src
-cxxFlags = -std=c++14 -Wall
+cxxFlags = -std=c++17 -Wall
 ldAdd =
 ldFlags =
 sourcesExtra = 
@@ -14,6 +14,7 @@ sourcesMain = src/main.cpp
 sourcesCore =                               \
 	src/core/const.h                        \
 	src/core/queue.h                        \
+	src/core/ringBuffer.h                   \
 	src/core/types.h                        \
 	src/core/range.h                        \
 	src/core/action.h                       \
@@ -25,6 +26,8 @@ sourcesCore =                               \
 	src/core/midiEvent.cpp                  \
 	src/core/audioBuffer.h                  \
 	src/core/audioBuffer.cpp                \
+	src/core/quantizer.h                    \
+	src/core/quantizer.cpp                  \
 	src/core/conf.h                         \
 	src/core/conf.cpp                       \
 	src/core/kernelAudio.h                  \
@@ -35,6 +38,8 @@ sourcesCore =                               \
 	src/core/pluginManager.cpp              \
 	src/core/mixerHandler.h                 \
 	src/core/mixerHandler.cpp               \
+	src/core/sequencer.h                    \
+	src/core/sequencer.cpp                  \
 	src/core/init.h                         \
 	src/core/init.cpp                       \
 	src/core/plugin.h                       \
@@ -61,28 +66,42 @@ sourcesCore =                               \
 	src/core/waveManager.cpp                \
 	src/core/recManager.h                   \
 	src/core/recManager.cpp                 \
+	src/core/channels/state.h               \
+	src/core/channels/state.cpp             \
+	src/core/channels/sampleActionRecorder.h      \
+	src/core/channels/sampleActionRecorder.cpp    \
+	src/core/channels/midiActionRecorder.h      \
+	src/core/channels/midiActionRecorder.cpp    \
+	src/core/channels/waveReader.h          \
+	src/core/channels/waveReader.cpp        \
+	src/core/channels/midiController.h      \
+	src/core/channels/midiController.cpp    \
+	src/core/channels/sampleController.h    \
+	src/core/channels/sampleController.cpp  \
+	src/core/channels/samplePlayer.h        \
+	src/core/channels/samplePlayer.cpp      \
+	src/core/channels/audioReceiver.h       \
+	src/core/channels/audioReceiver.cpp     \
+	src/core/channels/midiLighter.h         \
+	src/core/channels/midiLighter.cpp       \
+	src/core/channels/midiLearner.h         \
+	src/core/channels/midiLearner.cpp       \
+	src/core/channels/midiSender.h          \
+	src/core/channels/midiSender.cpp        \
+	src/core/channels/midiReceiver.h        \
+	src/core/channels/midiReceiver.cpp      \
 	src/core/channels/channel.h             \
 	src/core/channels/channel.cpp           \
-	src/core/channels/midiChannel.h         \
-	src/core/channels/midiChannel.cpp       \
-	src/core/channels/masterChannel.h       \
-	src/core/channels/masterChannel.cpp     \
-	src/core/channels/sampleChannel.h       \
-	src/core/channels/sampleChannel.cpp     \
 	src/core/channels/channelManager.h      \
 	src/core/channels/channelManager.cpp    \
-	src/core/channels/sampleChannelProc.h   \
-	src/core/channels/sampleChannelProc.cpp \
-	src/core/channels/sampleChannelRec.h    \
-	src/core/channels/sampleChannelRec.cpp  \
-	src/core/channels/midiChannelProc.h     \
-	src/core/channels/midiChannelProc.cpp   \
 	src/core/model/model.h                  \
 	src/core/model/model.cpp                \
 	src/core/model/storage.h                \
 	src/core/model/storage.cpp              \
 	src/core/idManager.h                    \
 	src/core/idManager.cpp                  \
+	src/glue/events.h                       \
+	src/glue/events.cpp                     \
 	src/glue/main.h                         \
 	src/glue/main.cpp                       \
 	src/glue/io.h                           \
@@ -161,6 +180,10 @@ sourcesCore =                               \
 	src/gui/dialogs/midiIO/midiInputChannel.cpp      \
 	src/gui/dialogs/midiIO/midiInputMaster.h         \
 	src/gui/dialogs/midiIO/midiInputMaster.cpp       \
+	src/gui/elems/midiIO/midiLearner.h               \
+	src/gui/elems/midiIO/midiLearner.cpp             \
+	src/gui/elems/midiIO/midiLearnerPack.h           \
+	src/gui/elems/midiIO/midiLearnerPack.cpp         \
 	src/gui/elems/browser.h		                     \
 	src/gui/elems/browser.cpp                        \
 	src/gui/elems/soundMeter.h		                 \
@@ -199,7 +222,7 @@ sourcesCore =                               \
 	src/gui/elems/actionEditor/envelopePoint.cpp        \
 	src/gui/elems/actionEditor/pianoRoll.h              \
 	src/gui/elems/actionEditor/pianoRoll.cpp            \
-	src/gui/elems/actionEditor/noteEditor.h		          \
+	src/gui/elems/actionEditor/noteEditor.h		        \
 	src/gui/elems/actionEditor/noteEditor.cpp           \
 	src/gui/elems/actionEditor/pianoItem.h              \
 	src/gui/elems/actionEditor/pianoItem.cpp            \
@@ -249,16 +272,14 @@ sourcesCore =                               \
 	src/gui/elems/config/tabBehaviors.cpp  \
 	src/gui/elems/config/tabPlugins.h      \
 	src/gui/elems/config/tabPlugins.cpp    \
-	src/gui/elems/midiIO/midiLearnerBase.h        \
-	src/gui/elems/midiIO/midiLearnerBase.cpp      \
-	src/gui/elems/midiIO/midiLearnerMaster.h      \
-	src/gui/elems/midiIO/midiLearnerMaster.cpp    \
-	src/gui/elems/midiIO/midiLearnerChannel.h     \
-	src/gui/elems/midiIO/midiLearnerChannel.cpp   \
-	src/gui/elems/midiIO/midiLearnerPlugin.h      \
-	src/gui/elems/midiIO/midiLearnerPlugin.cpp    \
 	src/gui/elems/basics/scroll.h          \
 	src/gui/elems/basics/scroll.cpp        \
+	src/gui/elems/basics/pack.h            \
+	src/gui/elems/basics/pack.cpp          \
+	src/gui/elems/basics/group.h           \
+	src/gui/elems/basics/group.cpp         \
+	src/gui/elems/basics/scrollPack.h      \
+	src/gui/elems/basics/scrollPack.cpp    \
 	src/gui/elems/basics/boxtypes.h        \
 	src/gui/elems/basics/boxtypes.cpp      \
 	src/gui/elems/basics/baseButton.h      \
@@ -303,7 +324,7 @@ sourcesCore =                               \
 	src/utils/ver.cpp                      \
 	src/utils/string.h                     \
 	src/utils/string.cpp                   \
-	src/deps/rtaudio/RtAudio.h         \
+	src/deps/rtaudio/RtAudio.h             \
 	src/deps/rtaudio/RtAudio.cpp
 sourcesTests =                   \
 	tests/main.cpp               \
@@ -314,6 +335,7 @@ sourcesTests =                   \
 	tests/recorder.cpp           \
 	tests/waveFx.cpp             \
 	tests/audioBuffer.cpp        \
+	tests/samplePlayer.cpp       \
 	tests/sampleChannel.cpp
 
 if WITH_VST
@@ -423,7 +445,7 @@ endif
 
 bin_PROGRAMS = giada
 
-giada_SOURCES = $(sourcesCore) $(sourcesMain) $(sourcesExtra)
+giada_SOURCES = $(sourcesCore) $(sourcesExtra) $(sourcesMain)
 giada_CPPFLAGS = $(cppFlags)
 giada_CXXFLAGS = $(cxxFlags)
 giada_LDADD = $(ldAdd)

@@ -41,24 +41,27 @@ class geSlider;
 
 
 namespace giada {
+namespace c {
+namespace plugin
+{
+struct Param;
+}}
 namespace v
 {
 class gePluginParameter : public Fl_Group
 {
 public:
 
-	gePluginParameter(int paramIndex, ID pluginId, int x, int y, int w,
-		int labelWidth);
+	gePluginParameter(int x, int y, int w, int labelWidth, const c::plugin::Param);
 
-	void update(bool changeSlider);
+	void update(const c::plugin::Param& p, bool changeSlider);
 
 private:
 
 	static void cb_setValue(Fl_Widget* v, void* p);
 	void cb_setValue();
 
-	ID  m_pluginId;
-	int m_paramIndex;
+	const c::plugin::Param m_param; 
 
 	geBox*    m_label;
 	geSlider* m_slider;

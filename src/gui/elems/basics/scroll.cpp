@@ -35,8 +35,9 @@
 
 
 geScroll::geScroll(int x, int y, int w, int h, int t)
-	: Fl_Scroll(x, y, w, h)
+: Fl_Scroll(x, y, w, h)
 {
+	end();
 	type(t);
 
 	scrollbar.color(G_COLOR_GREY_2);

@@ -45,9 +45,10 @@ class gePitchTool : public Fl_Pack
 {
 public:
 
-	gePitchTool(ID channelId, int x, int y);
+	gePitchTool(const c::sampleEditor::Data& d, int x, int y);
 
-	void rebuild();
+	void rebuild(const c::sampleEditor::Data& d);
+	void update(float v, bool isDial=false);
 
 private:
 
@@ -66,7 +67,7 @@ private:
 	void cb_resetPitch();
 	void cb_setPitchNum();
 
-	ID m_channelId;
+	const c::sampleEditor::Data* m_data;
 
 	geBox*    label;
 	geDial*   dial;

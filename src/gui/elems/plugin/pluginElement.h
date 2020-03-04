@@ -33,6 +33,7 @@
 
 
 #include <FL/Fl_Pack.H>
+#include "glue/plugin.h"
 
 
 class geChoice;
@@ -47,7 +48,7 @@ class gePluginElement : public Fl_Pack
 {
 public:
 
-	gePluginElement(ID pluginId, ID channelId, int x, int y, int w);
+	gePluginElement(int x, int y, int w, c::plugin::Plugin);
 
 	ID getPluginId() const;
 
@@ -73,8 +74,7 @@ private:
 	void cb_shiftDown();
 	void cb_setProgram();
 
-	ID m_channelId;
-	ID m_pluginId;
+	c::plugin::Plugin m_plugin;
 };
 }} // giada::v::
 

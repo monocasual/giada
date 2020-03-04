@@ -71,12 +71,15 @@ float getPeak_(const Wave& w, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-void normalizeHard(ID waveId, int a, int b)
+constexpr int SMOOTH_SIZE = 32;
+
+
+void normalize(ID waveId, int a, int b)
 {
 	model::onSwap(m::model::waves, waveId, [&](Wave& w)
 	{
 		float peak = getPeak_(w, a, b);
-		if (peak == 0.0f || peak > 1.0f)  // as in ::normalizeSoft
+		if (peak == 0.0f || peak > 1.0f)
 			return;
 
 		for (int i=a; i<b; i++) {
@@ -215,7 +218,7 @@ void paste(const Wave& src, ID waveId, int a)
 /* -------------------------------------------------------------------------- */
 
 
-void fade(ID waveId, int a, int b, int type)
+void fade(ID waveId, int a, int b, Fade type)
 {
 	u::log::print("[wfx::fade] fade from %d to %d (range = %d)\n", a, b, b-a);
 
@@ -224,7 +227,7 @@ void fade(ID waveId, int a, int b, int type)
 
 	model::onSwap(m::model::waves, waveId, [&](Wave& w)
 	{
-		if (type == FADE_IN)
+		if (type == Fade::IN)
 			for (int i=a; i<=b; i++, m+=d)
 				fadeFrame_(w, i, m);
 		else
@@ -249,8 +252,8 @@ void smooth(ID waveId, int a, int b)
 		return;
 	}
 
-	fade(waveId, a, a+SMOOTH_SIZE, FADE_IN);
-	fade(waveId, b-SMOOTH_SIZE, b, FADE_OUT);
+	fade(waveId, a, a+SMOOTH_SIZE, Fade::IN);
+	fade(waveId, b-SMOOTH_SIZE, b, Fade::OUT);
 }
 
 

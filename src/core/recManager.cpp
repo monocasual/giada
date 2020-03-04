@@ -26,13 +26,13 @@
 
 
 #include "gui/dispatcher.h"
-#include "core/channels/channel.h"
 #include "core/model/model.h"
 #include "core/types.h"
 #include "core/clock.h"
 #include "core/kernelAudio.h"
 #include "core/conf.h"
 #include "core/mixer.h"
+#include "core/sequencer.h"
 #include "core/mixerHandler.h"
 #include "core/midiDispatcher.h"
 #include "core/recorder.h"
@@ -72,7 +72,7 @@ bool startActionRec_()
 	if (!kernelAudio::isReady())
 		return false;
 	clock::setStatus(ClockStatus::RUNNING);
-	m::mh::startSequencer();
+	sequencer::start();
 	return true;
 }
 
@@ -85,7 +85,7 @@ bool startInputRec_()
 	if (!kernelAudio::isReady() || !mh::hasRecordableSampleChannels())
 		return false;
 	mixer::startInputRec();
-	mh::startSequencer();
+	sequencer::start();
 	return true;
 }
 } // {anonymous}
@@ -147,7 +147,7 @@ void stopActionRec()
 
 	if (clock::getStatus() == ClockStatus::WAITING)	{
 		clock::setStatus(ClockStatus::STOPPED);
-		m::midiDispatcher::setSignalCallback(nullptr);
+		midiDispatcher::setSignalCallback(nullptr);
 		v::dispatcher::setSignalCallback(nullptr);
 		return;
 	}
@@ -158,11 +158,12 @@ void stopActionRec()
 	actions. Start reading right away, without checking whether 
 	conf::treatRecsAsLoops is enabled or not. */
 
-	for (ID id : channels)
-		m::model::onGet(m::model::channels, id, [](Channel& c)
+	for (ID id : channels) {
+		model::onGet(model::channels, id, [](Channel& c)
 		{
-			c.startReadingActions(/*treatRecsAsLoops=*/false, /*recsStopOnChanHalt=*/false);
+			c.state->readActions.store(true);
 		});
+	}
 }
 
 

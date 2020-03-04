@@ -44,22 +44,24 @@ class geVolumeTool : public Fl_Pack
 {
 public:
 
-	geVolumeTool(ID channelId, int x, int y);
+	geVolumeTool(const c::sampleEditor::Data& d, int x, int y);
 
-	void rebuild();
+	void rebuild(const c::sampleEditor::Data& d);
+	void update(float v, bool isDial=false);
 	
 private:
 
-	ID m_channelId;
+	static void cb_setVolume(Fl_Widget* w, void* p);
+	static void cb_setVolumeNum(Fl_Widget* w, void* p);
+	void cb_setVolume();
+	void cb_setVolumeNum();
+
+	const c::sampleEditor::Data* m_data;
 
 	geBox*   label;
 	geDial*  dial;
 	geInput* input;
 
-	static void cb_setVolume   (Fl_Widget* w, void* p);
-	static void cb_setVolumeNum(Fl_Widget* w, void* p);
-	void cb_setVolume   ();
-	void cb_setVolumeNum();
 };
 }} // giada::v::
 

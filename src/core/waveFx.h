@@ -29,16 +29,16 @@
 #define G_WAVE_FX_H
 
 
+#include "core/types.h"
+
+
 namespace giada {
 namespace m 
 {
 class Wave;
-
 namespace wfx
 {
-static const int FADE_IN  = 0;
-static const int FADE_OUT = 1;
-static const int SMOOTH_SIZE = 32;
+enum class Fade { IN, OUT };
 
 /* monoToStereo
 Converts a 1-channel Wave to a 2-channels wave. It works on a free Wave object,
@@ -46,10 +46,10 @@ not yet added to the RCUList. */
 
 int monoToStereo(Wave& w);
 
-/* normalizeHard
+/* normalize
 Normalizes the wave in range a-b by altering values in memory. */
 
-void normalizeHard(ID waveId, int a, int b);
+void normalize(ID waveId, int a, int b);
 
 void silence(ID waveId, int a, int b);
 void cut(ID waveId, int a, int b);
@@ -61,9 +61,9 @@ Pastes Wave 'src' into Wave at 'waveIndex', starting from frame 'a'. */
 void paste(const Wave& src, ID waveId, int a);
 
 /* fade
-Fades in or fades out selection. Fade In = type 0, Fade Out = type 1 */
+Fades in or fades out selection. Can be Fade::IN or Fade::OUT. */
 
-void fade(ID waveId, int a, int b, int type);
+void fade(ID waveId, int a, int b, Fade type);
 
 /* smooth
 Smooth edges of selection. */

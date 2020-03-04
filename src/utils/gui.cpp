@@ -33,7 +33,6 @@
 #elif defined(__linux__) || defined(__FreeBSD__)
 	#include <X11/xpm.h>
 #endif
-#include "core/channels/channel.h"
 #include "core/mixer.h"
 #include "core/mixerHandler.h"
 #include "core/clock.h"
@@ -154,7 +153,7 @@ void updateStaticWidgets()
 
 	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());
 	G_MainWin->mainTimer->setBpm(clock::getBpm());
-	G_MainWin->mainTimer->setQuantizer(clock::getQuantize());
+	G_MainWin->mainTimer->setQuantizer(clock::getQuantizerValue());
 }
 
 

@@ -37,11 +37,6 @@ namespace giada
 template<typename T>
 class Range
 {
-private:
-
-	T m_a;
-	T m_b;
-
 public:
 
 	Range() : m_a(0), m_b(0) {}
@@ -50,6 +45,11 @@ public:
 	T getBegin() const  { return m_a; }
 	T getEnd() const    { return m_b; }
 	T getLength() const { return m_b - m_a; }
+
+private:
+
+	T m_a;
+	T m_b;
 };
 } // giada::
 

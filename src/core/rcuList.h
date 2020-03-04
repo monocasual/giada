@@ -39,25 +39,26 @@
 namespace giada {
 namespace m
 {
+/* RCUList
+Single producer, multiple consumer (i.e. one writer, many readers) RCU-based 
+list. */
+ 
 template<typename T>
 class RCUList
 {
 public:
 
 	/* Lock
-	Scoped lock structure. */
+	Scoped lock structure. Not copyable, not moveable, not copy-constructible. 
+	Same as std::scoped_lock: 
+	https://en.cppreference.com/w/cpp/thread/scoped_lock .*/
 
 	struct Lock
 	{
-		Lock(RCUList<T>& r) : rcu(r) 
-		{ 
-			rcu.lock(); 
-		}
-
-		~Lock()	
-		{ 
-			rcu.unlock();
-		}
+		Lock(RCUList<T>& r) : rcu(r) { rcu.lock(); }
+		Lock(const Lock&) = delete;
+		Lock& operator=(const Lock&) = delete;
+		~Lock()	{ rcu.unlock();	}
 
 		RCUList<T>& rcu;
 	};
@@ -176,14 +177,13 @@ public:
 	void unlock()
 	{
 		m_readers[t_grace]--;
+		assert(m_readers[t_grace] >= 0 && "Negative reader");
 	}
 
 	/* get
 	Returns a reference to the data held by node 'i'. */
-	// TODO - this will return a const ref with the non-virtual Channel
-	// refactoring. 
 
-	T* get(size_t i=0) const
+	T* get(std::size_t i=0) const
 	{
 		assert(i < size() && "Index overflow");
 		assert(m_readers[t_grace].load() > 0 && "Forgot lock before reading");
@@ -192,18 +192,14 @@ public:
 
 	/* Subscript operator []
 	Same as above for the [] syntax. */
-	// TODO - this will return a const ref with the non-virtual Channel
-	// refactoring. 
 
-	T* operator[] (size_t i) const
+	T* operator[] (std::size_t i) const
 	{
     	return get(i);
     }
 
 	/* back
 	Return data held by the last node. */
-	// TODO - this will return a const ref with the non-virtual Channel
-	// refactoring. 
 
 	T* back() const
 	{
@@ -212,19 +208,13 @@ public:
 	}
 
 	/* clone
-	Returns a new copy of the data held by node 'i'. The template machinery
-	is required for when you declare a RCUList<Base> and later on want to clone
-	a derived object. Usage:
-	
-	RCUList<Base> list;
-	...
-	std::unique_ptr<Derived> d = list.clone<Derived>(i);
-	*/
+	Returns a new copy of the data held by node 'i'. */
 
-	template<typename C=T>
-	std::unique_ptr<C> clone(size_t i=0) const
+	std::unique_ptr<T> clone(std::size_t i=0) const
     {
-		return std::make_unique<C>(*static_cast<C*>(getNode(i)->data.get()));
+		/* Make sure no one is writing (swapping, popping, pushing). */
+		assert(m_writing.load() == false);
+		return std::make_unique<T>(*getNode(i)->data.get());
     }
 
 	/* swap
@@ -233,7 +223,7 @@ public:
 	multiple calls to swap() made by the same thread: the caller is blocked by 
 	the spinlock below: no progress is made until m_readers[oldgrace] > 0. */
 
-	void swap(std::unique_ptr<T> data, size_t i=0)
+	void swap(std::unique_ptr<T> data, std::size_t i=0)
 	{
 		/* Never start two overlapping writing sessions. */
 
@@ -339,7 +329,7 @@ public:
 	calls to pop() made by the same thread: the caller is blocked by the
 	spinlock below: no progress is made while m_readers[oldgrace] > 0. */
 
-	void pop(size_t i)
+	void pop(std::size_t i)
 	{
 		/* Never start two overlapping writing sessions. */
 
@@ -449,7 +439,7 @@ public:
 	/* size
 	Returns the number of nodes in the list. */
 
-	size_t size() const
+	std::size_t size() const
 	{
 		return m_size.load();
 	}
@@ -467,9 +457,9 @@ public:
 
 private:
 
-	Node* getNode(size_t i) const
+	Node* getNode(std::size_t i) const
 	{
-		size_t p    = 0;
+		std::size_t p    = 0;
 		Node*  curr = m_head.load();
 		
 		while (curr != nullptr && p < i) {
@@ -482,7 +472,7 @@ private:
 
 	std::array<std::atomic<int>, 2> m_readers;
 	std::atomic<std::int8_t>        m_grace;
-	std::atomic<size_t>             m_size;
+	std::atomic<std::size_t>             m_size;
 	std::atomic<bool>               m_writing;
 
 	/* m_head

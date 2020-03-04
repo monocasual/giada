@@ -45,13 +45,14 @@
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/warnings.h"
 #include "glue/main.h"
-#include "core/channels/channel.h"
+#include "core/model/storage.h"
 #include "core/channels/channelManager.h"
 #include "core/mixer.h"
 #include "core/wave.h"
 #include "core/const.h"
 #include "core/clock.h"
 #include "core/mixerHandler.h"
+#include "core/sequencer.h"
 #include "core/patch.h"
 #include "core/conf.h"
 #include "core/waveManager.h"
@@ -83,6 +84,8 @@ void initConf_()
 	patch::init();
 	midimap::init();
 	midimap::setDefault();
+
+	model::load(conf::conf);
 	
 	if (!u::log::init(conf::conf.logMode))
 		u::log::print("[init] log init failed! Using default stdout\n");
@@ -100,6 +103,7 @@ void initAudio_()
 	kernelAudio::openDevice();
 	clock::init(conf::conf.samplerate, conf::conf.midiTCfps);
 	mh::init();
+	sequencer::init();
 	recorder::init();
 	recorderHandler::init();
 
@@ -260,6 +264,7 @@ void reset()
 	waveManager::init();
 	clock::init(conf::conf.samplerate, conf::conf.midiTCfps);
 	mh::init();
+	sequencer::init();
 	recorder::init();
 #ifdef WITH_VST
 	pluginManager::init(conf::conf.samplerate, kernelAudio::getRealBufSize());
@@ -277,6 +282,8 @@ void reset()
 void shutdown()
 {
 	shutdownGUI_();
+
+	model::store(conf::conf);
 
 	if (!conf::write())
 		u::log::print("[init] error while saving configuration file!\n");

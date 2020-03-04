@@ -83,6 +83,7 @@ public:
 	channels than m_channels. */
 
 	void copyData(const float* data, int frames, int offset=0);
+	void copyData(const AudioBuffer& b);
 
 	void alloc(int size, int channels, int rate, int bits, const std::string& path);
 

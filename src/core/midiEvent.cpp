@@ -27,31 +27,30 @@
 
 #include <cassert>
 #include "const.h"
+#include "utils/math.h"
 #include "midiEvent.h"
 
 
 namespace giada {
 namespace m
 {
-MidiEvent::MidiEvent()
-	: m_status  (0),
-	  m_channel (0),
-	  m_note    (0),
-	  m_velocity(0),
-	  m_delta   (0)
+namespace
 {
-}
+constexpr int FLOAT_FACTOR = 10000;
+} // {anonymous}
 
 
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 
 MidiEvent::MidiEvent(uint32_t raw)
-	: m_status  ((raw & 0xF0000000) >> 24),
-	  m_channel ((raw & 0x0F000000) >> 24),
-	  m_note    ((raw & 0x00FF0000) >> 16),
-	  m_velocity((raw & 0x0000FF00) >> 8),
-	  m_delta   (0)  // not used
+: m_status  ((raw & 0xF0000000) >> 24)
+, m_channel ((raw & 0x0F000000) >> 24)
+, m_note    ((raw & 0x00FF0000) >> 16)
+, m_velocity((raw & 0x0000FF00) >> 8)
+, m_delta   (0)  // not used
 {
 }
 
@@ -59,9 +58,20 @@ MidiEvent::MidiEvent(uint32_t raw)
 /* -------------------------------------------------------------------------- */
 
 
+/* static_cast to avoid ambiguity with MidiEvent(float). */
 MidiEvent::MidiEvent(int byte1, int byte2, int byte3)
-	: MidiEvent((byte1 << 24) | (byte2 << 16) | (byte3 << 8) | (0x00))
+: MidiEvent(static_cast<uint32_t>((byte1 << 24) | (byte2 << 16) | (byte3 << 8) | (0x00)))
 {
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+MidiEvent::MidiEvent(float v) 
+: MidiEvent(ENVELOPE, 0, 0)
+{
+	m_velocity = v * FLOAT_FACTOR;
 }
 
 
@@ -126,6 +136,12 @@ int MidiEvent::getVelocity() const
 {
 	return m_velocity;
 }	
+
+
+float MidiEvent::getVelocityFloat() const
+{
+	return m_velocity / static_cast<float>(FLOAT_FACTOR);
+}
 
 
 bool MidiEvent::isNoteOnOff() const

@@ -27,8 +27,6 @@
 
 #include <cassert>
 #include <FL/fl_draw.H>
-#include "core/model/model.h"
-#include "core/channels/sampleChannel.h"
 #include "glue/io.h"
 #include "glue/channel.h"
 #include "utils/fs.h"
@@ -49,22 +47,10 @@ namespace giada {
 namespace v
 {
 geKeyboard::geKeyboard(int X, int Y, int W, int H)
-: Fl_Scroll     (X, Y, W, H),
-  m_addColumnBtn(nullptr)
+: geScroll      (X, Y, W, H, Fl_Scroll::BOTH_ALWAYS)
+, m_addColumnBtn(nullptr)
 {
 	end();
-
-	color(G_COLOR_GREY_1);
-	type(Fl_Scroll::BOTH_ALWAYS);
-	scrollbar.color(G_COLOR_GREY_2);
-	scrollbar.selection_color(G_COLOR_GREY_4);
-	scrollbar.labelcolor(G_COLOR_LIGHT_1);
-	scrollbar.slider(G_CUSTOM_BORDER_BOX);
-	hscrollbar.color(G_COLOR_GREY_2);
-	hscrollbar.selection_color(G_COLOR_GREY_4);
-	hscrollbar.labelcolor(G_COLOR_LIGHT_1);
-	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
-
 	init();
 }
 
@@ -102,13 +88,8 @@ void geKeyboard::rebuild()
 	for (ColumnLayout c : layout)
 		addColumn(c.width, c.id);
 
-	/* Parse the model and assign each channel to its column. */
-
-	m::model::ChannelsLock lock(m::model::channels);
-
-	for (const m::Channel* ch : m::model::channels)
-		if (!ch->isInternal())
-			getColumn(ch->columnId)->addChannel(ch->id, ch->type, ch->height);
+	for (const c::channel::Data& ch : c::channel::getChannels())
+		getColumn(ch.columnId)->addChannel(ch);
 	
 	redraw();
 }

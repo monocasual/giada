@@ -8,31 +8,35 @@
 
 ## What is Giada?
 
-Giada is a free, minimal, hardcore audio tool for DJs, live performers and electronic musicians. How does it work? Just pick up your channel, fill it with samples or MIDI events and start the show by using this tiny piece of software as a loop machine, drum machine, sequencer, live sampler or yet as a plugin/effect host. Giada aims to be a compact and portable virtual device for Linux, Mac OS X and Windows for production use and live sets.
+Giada is an open source, minimalistic and hardcore music production tool. Designed for DJs, live performers and electronic musicians.
 
 <p align="center">
 ✦✦✦ <a href="http://www.youtube.com/user/GiadaLoopMachine">See Giada in action!</a> ✦✦✦
 </p>
 
-![Giada Loop Machine screenshot](http://giadamusic.com/public/img/screenshots/giada-loop-machine-screenshot-14-carousel.jpg)
+![Giada Loop Machine screenshot](https://giadamusic.com/images/giada-canvas.png)
 
 ## Main features
+
+* Your sample player! Load samples from your crates and play them with a computer keyboard or a MIDI controller;
+* Your loop machine! Build your performance in real time by layering audio tracks or MIDI events, driven by the main sequencer;
+* Your song editor! Write songs from scratch or edit existing live recordings with the powerful Action Editor, for a fine-tuned control;
+* Your live recorder! Record sounds from the real world and MIDI events coming from external devices or other apps;
+* Your FX processor! Process samples or audio/MIDI input signals with VST instruments from your plug-ins collection;
+* Your MIDI controller! Control other software or synchronize physical MIDI devices by using Giada as a MIDI master sequencer.
+
+### And more:
 
 * Ultra-lightweight internal design;
 * multi-thread/multi-core support;
 * 32-bit floating point audio engine;
 * ALSA, JACK + Transport, CoreAudio, ASIO and DirectSound full support;
-* high quality internal resampler;
-* unlimited number of channels (controllable via computer keyboard);
-* several playback modes and combinations;
+* unlimited number of channels (optionally controllable via computer keyboard);
 * BPM and beat sync with sample-accurate loop engine;
-* VST and VSTi (instrument) plug-in support;
-* MIDI input and output support, featuring custom [MIDI lightning messages](https://github.com/monocasual/giada-midimaps);
-* super-sleek, built-in wave editor;
-* live sampler from external inputs;
-* live action recorder with automatic quantizer;
-* piano Roll editor;
-* portable patch storage system, based on super-hackable JSON files;
+* MIDI output support, featuring custom [MIDI lightning messages](https://github.com/monocasual/giada-midimaps);
+* super-sleek, built-in Wave Editor for audio samples and Piano Roll editor for MIDI messages;
+* automatic quantizer;
+* portable project storage system, based on super-hackable JSON files;
 * support for all major uncompressed file formats;
 * test-driven development style supported by [Travis CI](https://travis-ci.org/monocasual/giada) and [Catch](https://github.com/philsquared/Catch)
 * under a constant stage of development;

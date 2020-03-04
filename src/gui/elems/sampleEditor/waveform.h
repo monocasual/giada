@@ -48,7 +48,7 @@ public:
 #endif
 	enum class Zoom	{ IN, OUT };
 
-	geWaveform(ID channelId, ID waveId, int x, int y, int w, int h);
+	geWaveform(int x, int y, int w, int h);
 
 	void draw() override;
 	int  handle(int e) override;
@@ -82,7 +82,7 @@ public:
 	/* rebuild
 	Redraws the waveform. */
 
-	void rebuild();
+	void rebuild(const c::sampleEditor::Data& d);
 
 	/* setGridLevel
 	Sets a new frequency level for the grid. 0 means disabled. */
@@ -99,7 +99,7 @@ public:
 	/* setWaveId
 	Call this when the Wave ID has changed (e.g. after a reload). */
 
-	void setWaveId(ID id) { m_waveId = id; };
+	void setWaveId(ID id) { /* TODO m_waveId = id;*/};
 
 private:
 
@@ -125,7 +125,7 @@ private:
 		std::vector<int> sup;   // upper part of the waveform
 		std::vector<int> inf;   // lower part of the waveform
 		int  size;  // width of the waveform to draw (in pixel)
-	} m_data;
+	} m_waveform;
 
 	struct
 	{
@@ -188,8 +188,7 @@ private:
 
 	int alloc(int datasize, bool force=false);
 
-	ID m_channelId;
-	ID m_waveId;
+	const c::sampleEditor::Data* m_data;
 
 	int   m_chanStart;
 	bool  m_chanStartLit;

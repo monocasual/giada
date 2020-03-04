@@ -30,6 +30,7 @@
 
 
 #include <FL/Fl_Group.H>
+#include "glue/channel.h"
 #include "core/types.h"
 
 
@@ -40,19 +41,14 @@ class geStatusButton;
 
 
 namespace giada {
-namespace m
-{
-class Channel;
-}
 namespace v
 {
 class geChannelButton;
-
 class geChannel : public Fl_Group
 {
 public:
 
-	geChannel(int x, int y, int w, int h, ID channelId);
+	geChannel(int x, int y, int w, int h, c::channel::Data d);
 
 	void draw() override;
 
@@ -72,7 +68,10 @@ public:
 
 	bool handleKey(int e);
 
-	ID channelId;
+	/* getData
+	Returns a reference to the internal data. Read-only. */
+
+	const c::channel::Data& getData() const;
  
 	geStatusButton*  playButton;
 	geButton*        arm;
@@ -115,7 +114,7 @@ protected:
 	void cb_solo();
 	void cb_changeVol();
 #ifdef WITH_VST
-		void cb_openFxWindow();
+	void cb_openFxWindow();
 #endif
 
 	/* blink
@@ -127,6 +126,11 @@ protected:
 	Spread widgets across available space. */
 
 	void packWidgets();
+
+	/* m_channel
+	Channel's data. */
+
+	c::channel::Data m_channel;
 };
 }} // giada::v::
 

@@ -2,6 +2,9 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
+ * geScroll
+ * Custom scroll with nice scrollbars and something else.
+ *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2020 Giovanni A. Zuliani | Monocasual
@@ -25,27 +28,35 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MIDI_LEARNER_MASTER_H
-#define GE_MIDI_LEARNER_MASTER_H
-
-
-#include "midiLearnerBase.h"
+#include "core/const.h"
+#include "pack.h"
 
 
 namespace giada {
 namespace v 
 {
-class geMidiLearnerMaster : public geMidiLearnerBase
+gePack::gePack(int x, int y, Direction d, int gutter)
+: geGroup    (x, y)
+, m_direction(d)
+, m_gutter   (gutter)
 {
-public:
-
-	geMidiLearnerMaster(int x, int y, int w, std::string l, int param, uint32_t value);
-	
-	void refresh() override;
-	void onLearn() override;
-	void onReset() override;
-};
-}} // giada::v::
+    end();
+}
 
 
-#endif
+/* -------------------------------------------------------------------------- */
+
+
+void gePack::add(Fl_Widget* widget)
+{
+    if (countChildren() == 0)
+        widget->position(0, 0);
+    else
+    if (m_direction == Direction::HORIZONTAL)
+        widget->position((getLastChild()->x() + getLastChild()->w() + m_gutter) - x(), 0);
+    else
+        widget->position(0, (getLastChild()->y() + getLastChild()->h() + m_gutter) - y());
+
+    geGroup::add(widget);
+}
+}}
