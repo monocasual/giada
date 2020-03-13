@@ -52,7 +52,7 @@ gdDevInfo::gdDevInfo(unsigned dev)
 
 	body  = "Device name: " + m::kernelAudio::getDeviceName(dev) + "\n";
 	body += "Total output(s): " + std::to_string(m::kernelAudio::getMaxOutChans(dev)) + "\n";
-	body += "Total intput(s): " + std::to_string(m::kernelAudio::getMaxInChans(dev)) + "\n";
+	body += "Total input(s): " + std::to_string(m::kernelAudio::getMaxInChans(dev)) + "\n";
 	body += "Duplex channel(s): " + std::to_string(m::kernelAudio::getDuplexChans(dev)) + "\n";
 	body += "Default output: " + std::string(m::kernelAudio::isDefaultOut(dev) ? "yes" : "no") + "\n";
 	body += "Default input: " + std::string(m::kernelAudio::isDefaultIn(dev) ? "yes" : "no") + "\n";
