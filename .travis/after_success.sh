@@ -39,9 +39,12 @@ EOF
 	
 	mv extras/giada-logo.png ./temp/giada_lin.png
 
-	# Run linuxdeployqt to make the AppImage, then move it to ./build dir.
+	# Run linuxdeployqt to make the AppImage, then move it to ./build dir. 
+	# For some reasons linuxdeployqt uses the commit hash in the filename, so
+	# rename it first.
 
 	./linuxdeployqt-6-x86_64.AppImage ./temp/giada_lin -appimage
+	mv Giada-*-x86_64.AppImage Giada-x86_64.AppImage 
 	cp Giada-x86_64.AppImage ./build
 
 fi
