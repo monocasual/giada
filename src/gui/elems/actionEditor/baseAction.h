@@ -63,11 +63,11 @@ public:
 
 	void setPosition(Pixel p);
 
-	bool onRightEdge;
-	bool onLeftEdge;
-	bool hovered;
-	bool altered;
-	Pixel pick;
+	bool onRightEdge = false;
+	bool onLeftEdge = false;
+	bool hovered = false;
+	bool altered = false;
+	Pixel pick = 0;
 
 	m::Action a1;
 	m::Action a2;

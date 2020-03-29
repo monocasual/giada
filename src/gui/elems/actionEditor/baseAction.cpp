@@ -36,14 +36,9 @@ namespace v
 geBaseAction::geBaseAction(Pixel X, Pixel Y, Pixel W, Pixel H, bool resizable,
 	m::Action a1, m::Action a2)
 : Fl_Box     (X, Y, W, H),
-  m_resizable(resizable),
-  onRightEdge(false),
-  onLeftEdge (false),
-  hovered    (false),
-  altered    (false),
-  pick       (0),
   a1         (a1),
-  a2         (a2)
+  a2         (a2),
+  m_resizable(resizable)
 {
 	if (w() < MIN_WIDTH)
 		size(MIN_WIDTH, h());
