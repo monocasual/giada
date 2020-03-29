@@ -111,7 +111,7 @@ void load(const patch::Patch& patch)
 
 	onSwap(actions, [&](Actions& a)
 	{
-		a.map = std::move(recorderHandler::deserializeActions(patch.actions));
+		a.map = recorderHandler::deserializeActions(patch.actions);
 	});
 #ifdef WITH_VST
     for (const patch::Plugin& pplugin : patch.plugins)
@@ -119,7 +119,7 @@ void load(const patch::Patch& patch)
 #endif
     
     for (const patch::Wave& pwave : patch.waves)
-        waves.push(std::move(waveManager::deserializeWave(pwave)));	
+        waves.push(waveManager::deserializeWave(pwave));
 
     for (const patch::Channel& pchannel : patch.channels) {
 		if (pchannel.type == ChannelType::MASTER || pchannel.type == ChannelType::PREVIEW)
