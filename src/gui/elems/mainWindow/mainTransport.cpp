@@ -58,6 +58,13 @@ geMainTransport::geMainTransport(int x, int y)
 	                 new geBox         (0, 0, 10, 25);
 	metronome      = new geStatusButton(0, 0, 15, 25, metronomeOff_xpm, metronomeOn_xpm);
 
+	rewind->tooltip("Rewind");
+	play->tooltip("Play");
+	recTriggerMode->tooltip("Recording Trigger Mode - On: Signal, Off: Normal");
+	recAction->tooltip("Arm Action recording");
+	recInput->tooltip("Arm Input recording");
+	metronome->tooltip("Toggle Metronome");
+
 	rewind->callback([](Fl_Widget* w, void* v) { 
 		m::mh::rewindSequencer();
 	});

@@ -147,6 +147,7 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, ID channelId)
 
 	end();
 
+
 	resizable(mainButton);
 
 	m::model::ChannelsLock l(m::model::channels);
@@ -154,7 +155,13 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, ID channelId)
 
 #ifdef WITH_VST
 	fx->setStatus(ch.pluginIds.size() > 0);
+	fx->tooltip("FX");
 #endif
+	playButton->tooltip("Trigger MIDI");
+	arm->tooltip("Arm input recording");
+	mainButton->tooltip("Channel menu");
+	mute->tooltip("Toggle mute");
+	solo->tooltip("Toggle solo");
 
 	playButton->callback(cb_playButton, (void*)this);
 	playButton->when(FL_WHEN_CHANGED);   // On keypress && on keyrelease

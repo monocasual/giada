@@ -92,6 +92,11 @@ geMainIO::geMainIO(int x, int y)
 	inToOut->type(FL_TOGGLE_BUTTON);
 
 #endif
+
+	inVol->tooltip("Input volume dial");
+	inMeter->tooltip("Input volume display");
+	outVol->tooltip("Output volume dial");
+	outMeter->tooltip("Output volume display");
 }
 
 

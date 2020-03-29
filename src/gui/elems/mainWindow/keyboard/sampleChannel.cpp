@@ -220,6 +220,19 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, ID channelId)
 
 	end();
 
+	playButton->tooltip("Trigger sample");
+	arm->tooltip("Arm input recording");
+	status->tooltip("Sample playback status display");
+	mainButton->tooltip("Channel menu");
+	readActions->tooltip("Toggle action playback");
+	modeBox->tooltip("Loop mode");
+	mute->tooltip("Toggle mute");
+	solo->tooltip("Toggle solo");
+	vol->tooltip("Volume dial");
+#if defined(WITH_VST)
+	fx->tooltip("FX");
+#endif
+
 	resizable(mainButton);
 
 	m::model::ChannelsLock l(m::model::channels);

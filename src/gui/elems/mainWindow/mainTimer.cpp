@@ -62,6 +62,12 @@ geMainTimer::geMainTimer(int x, int y)
 
 	end();
 
+	quantizer->tooltip("Quantization");
+	bpm->tooltip("Beats Per Minute");
+	meter->tooltip("Beat");
+	multiplier->tooltip("Multiply by 2");
+	divider->tooltip("Divide by 2");
+
 	resizable(nullptr);   // don't resize any widget
 
 	bpm->copy_label(u::string::fToString(m::clock::getBpm(), 1).c_str());
