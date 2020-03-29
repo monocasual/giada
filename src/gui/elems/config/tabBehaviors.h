@@ -53,6 +53,7 @@ public:
 	geRadio *chansStopOnSeqHalt_0;
 	geCheck *treatRecsAsLoops;
 	geCheck *inputMonitorDefaultOn;
+	geCheck *linearDialControl;
 
 
 private:

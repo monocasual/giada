@@ -202,6 +202,7 @@ bool read()
 	conf.midiInVolumeOut       =  j.value(CONF_KEY_MIDI_IN_VOLUME_OUT, conf.midiInVolumeOut);
 	conf.midiInBeatDouble      =  j.value(CONF_KEY_MIDI_IN_BEAT_DOUBLE, conf.midiInBeatDouble);
 	conf.midiInBeatHalf        =  j.value(CONF_KEY_MIDI_IN_BEAT_HALF, conf.midiInBeatHalf);
+	conf.linearDialControl     =  j.value(CONF_KEY_LINEAR_DIAL_CONTROL, conf.linearDialControl);
 #ifdef WITH_VST
 	conf.pluginChooserX        = j.value(CONF_KEY_PLUGIN_CHOOSER_X, conf.pluginChooserX);
 	conf.pluginChooserY        = j.value(CONF_KEY_PLUGIN_CHOOSER_Y, conf.pluginChooserY);
@@ -297,6 +298,7 @@ bool write()
 	j[CONF_KEY_MIDI_INPUT_H]              = conf.midiInputH;
 	j[CONF_KEY_REC_TRIGGER_MODE]          = static_cast<int>(conf.recTriggerMode);
 	j[CONF_KEY_REC_TRIGGER_LEVEL]         = conf.recTriggerLevel;
+	j[CONF_KEY_LINEAR_DIAL_CONTROL]       = conf.linearDialControl;
 #ifdef WITH_VST
 	j[CONF_KEY_PLUGIN_CHOOSER_X]          = conf.pluginChooserX;
 	j[CONF_KEY_PLUGIN_CHOOSER_Y]          = conf.pluginChooserY;

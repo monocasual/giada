@@ -56,6 +56,7 @@ geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
 
 	treatRecsAsLoops      = new geCheck(x(), radioGrp_2->y()+radioGrp_2->h() + 15, 280, 20, "Treat one shot channels with actions as loops");
 	inputMonitorDefaultOn = new geCheck(x(), treatRecsAsLoops->y()+treatRecsAsLoops->h() + 5, 280, 20, "New sample channels have input monitor on by default");
+	linearDialControl     = new geCheck(x(), inputMonitorDefaultOn->y()+inputMonitorDefaultOn->h() + 5, 280, 20, "Linear dial controls (drag along Y axis)");
 
 	end();
 
@@ -66,6 +67,7 @@ geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
 	m::conf::conf.chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
 	treatRecsAsLoops->value(m::conf::conf.treatRecsAsLoops);
 	inputMonitorDefaultOn->value(m::conf::conf.inputMonitorDefaultOn);
+	linearDialControl->value(m::conf::conf.linearDialControl);
 
 	recsStopOnChanHalt_1->callback(cb_radio_mutex, (void*)this);
 	recsStopOnChanHalt_0->callback(cb_radio_mutex, (void*)this);
@@ -101,5 +103,6 @@ void geTabBehaviors::save()
 	m::conf::conf.chansStopOnSeqHalt = chansStopOnSeqHalt_1->value() == 1 ? 1 : 0;
 	m::conf::conf.treatRecsAsLoops = treatRecsAsLoops->value() == 1 ? 1 : 0;
 	m::conf::conf.inputMonitorDefaultOn = inputMonitorDefaultOn->value() == 1 ? 1 : 0;
+	m::conf::conf.linearDialControl = linearDialControl->value() == 1 ? true : false;
 }
 }} // giada::v::

@@ -30,6 +30,7 @@
 
 
 #include <FL/Fl_Dial.H>
+#include <FL/Fl.H>
 
 
 class geDial : public Fl_Dial
@@ -39,6 +40,13 @@ public:
 	geDial(int x, int y, int w, int h, const char *l=0);
 
 	void draw();
+
+	int handle(int event);
+	protected:
+	bool dragging = false;
+	int dragBeginY = 0;
+	float valueBeginDrag = 0.0f;
+	static const int dragDistanceToMax;
 };
 
 

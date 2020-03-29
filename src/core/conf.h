@@ -127,6 +127,7 @@ struct Conf
 	uint32_t midiInBeatDouble = 0x0;
 	uint32_t midiInBeatHalf   = 0x0;
 
+	bool linearDialControl = false;
 #ifdef WITH_VST
 
 	int pluginChooserX; 
