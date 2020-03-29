@@ -45,7 +45,7 @@ class Plugin
 public:
 
 	Plugin(ID id, const std::string& UID);
-	Plugin(ID id, juce::AudioPluginInstance* p, double samplerate, int buffersize);
+	Plugin(ID id, const std::shared_ptr<juce::AudioPluginInstance>& p, double samplerate, int buffersize);
 	Plugin(const Plugin& o);
 	~Plugin();
 
@@ -117,7 +117,7 @@ private:
 
 	int countMainOutChannels() const;
 
-	juce::AudioPluginInstance* m_plugin;
+	std::shared_ptr<juce::AudioPluginInstance> m_plugin;
 	juce::AudioBuffer<float>   m_buffer;
 
 	std::atomic<bool> m_bypass;

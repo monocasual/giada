@@ -54,7 +54,7 @@ Plugin::Plugin(ID id, const std::string& UID)
 /* -------------------------------------------------------------------------- */
 
 
-Plugin::Plugin(ID id, juce::AudioPluginInstance* plugin, double samplerate,
+Plugin::Plugin(ID id, const std::shared_ptr<juce::AudioPluginInstance>& plugin, double samplerate,
 	int buffersize)
 : id          (id),
   valid       (true),
@@ -89,10 +89,10 @@ Plugin::Plugin(ID id, juce::AudioPluginInstance* plugin, double samplerate,
 
 Plugin::Plugin(const Plugin& o)
 : id          (o.id),
+  midiInParams(o.midiInParams),
   valid       (o.valid),
   m_plugin    (o.m_plugin),
-  m_bypass    (o.m_bypass.load()),
-  midiInParams(o.midiInParams)
+  m_bypass    (o.m_bypass.load())
 {
 }
 

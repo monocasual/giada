@@ -60,6 +60,7 @@ juce::VSTPluginFormat pluginFormat_;
 List of known (i.e. scanned) plugins. */
 
 juce::KnownPluginList knownPluginList_;
+std::unique_ptr<juce::KnownPluginList::PluginTree> knownPluginTree_;
 
 /* unknownPluginList
 List of unrecognized plugins found in a patch. */
@@ -105,16 +106,19 @@ VSTs: their ID is based on the plug-in file location. E.g.:
 
 The following function simply drops the first hash code during comparison. */
 
-const juce::PluginDescription* findPluginDescription_(const std::string& id)
+const juce::PluginDescription& findPluginDescription_(const std::string& id)
 {
-	std::vector<std::string> idParts = splitPluginDescription_(id);
+	const auto idParts = splitPluginDescription_(id);
 
-	for (const juce::PluginDescription* pd : knownPluginList_) {
-		std::vector<std::string> tmpIdParts = splitPluginDescription_(pd->createIdentifierString().toStdString());
+	const auto it = std::find_if(knownPluginTree_->plugins.begin(), knownPluginTree_->plugins.end(), [&idParts](const juce::PluginDescription& pd) {
+		const auto tmpIdParts = splitPluginDescription_(pd.createIdentifierString().toStdString());
 		if (idParts[0] == tmpIdParts[0] && idParts[2] == tmpIdParts[2])
-			return pd;
+			return true;
+	});
+	if (it == knownPluginTree_->plugins.end()) {
+		throw std::runtime_error("plugin not found");
 	}
-	return nullptr;
+	return *it;
 }
 }; // {anonymous}
 
@@ -188,6 +192,8 @@ int loadList(const std::string& filepath)
 	if (elem == nullptr)
 		return 0;
 	knownPluginList_.recreateFromXml(*elem);
+	knownPluginTree_ = knownPluginList_.createTree(juce::KnownPluginList::sortAlphabetically);
+	u::log::print("[pluginManager::loadList] %d known plugins\n", knownPluginTree_->plugins.size());
 	return 1;
 }
 
@@ -202,24 +208,21 @@ std::unique_ptr<Plugin> makePlugin(const std::string& fid, ID id)
 	
 	pluginId_.set(id);
 
-	const juce::PluginDescription* pd = findPluginDescription_(fid);
-	if (pd == nullptr) {
-		u::log::print("[pluginManager::makePlugin] no plugin found with fid=%s!\n", fid.c_str());
+	try {
+		const auto pd = findPluginDescription_(fid);
+		auto pi = pluginFormat_.createInstanceFromDescription(pd, samplerate_, buffersize_);
+		if (pi == nullptr) {
+			throw std::runtime_error("unable to create instance");
+		}
+		u::log::print("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
+		return std::make_unique<Plugin>(pluginId_.get(id), std::move(pi), samplerate_, buffersize_);
+	}
+	catch (const std::exception& e) {
+		u::log::print("[pluginManager::makePlugin] %s, fid=%s!\n", e.what(), fid.c_str());
 		missingPlugins_ = true;
 		unknownPluginList_.push_back(fid);
 		return std::make_unique<Plugin>(pluginId_.get(id), fid); // Invalid plug-in
 	}
-
-	juce::AudioPluginInstance* pi = pluginFormat_.createInstanceFromDescription(*pd, samplerate_, buffersize_);
-	if (pi == nullptr) {
-		u::log::print("[pluginManager::makePlugin] unable to create instance with fid=%s!\n", fid.c_str());
-		missingPlugins_ = true;
-		unknownPluginList_.push_back(fid);
-		return std::make_unique<Plugin>(pluginId_.get(id), fid); // Invalid plug-in
-	}
-	u::log::print("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
-
-	return std::make_unique<Plugin>(pluginId_.get(id), pi, samplerate_, buffersize_);
 }
 
 
