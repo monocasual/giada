@@ -147,7 +147,6 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, ID channelId)
 
 	end();
 
-
 	resizable(mainButton);
 
 	m::model::ChannelsLock l(m::model::channels);

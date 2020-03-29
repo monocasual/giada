@@ -331,10 +331,10 @@ void geSampleChannel::cb_openMenu()
 			{"Volume",     0, menuCallback, (void*) Menu::CLEAR_ACTIONS_VOLUME},
 			{"Start/Stop", 0, menuCallback, (void*) Menu::CLEAR_ACTIONS_START_STOP},
 			{0},
+		{"Clear sample",   0, menuCallback, (void*) Menu::FREE_CHANNEL},
 		{"Rename", 0, menuCallback, (void*) Menu::RENAME_CHANNEL},
 		{"Clone",  0, menuCallback, (void*) Menu::CLONE_CHANNEL},
-		{"Free",   0, menuCallback, (void*) Menu::FREE_CHANNEL},
-		{"Delete", 0, menuCallback, (void*) Menu::DELETE_CHANNEL},
+		{"Remove channel", 0, menuCallback, (void*) Menu::DELETE_CHANNEL},
 		{0}
 	};
 
