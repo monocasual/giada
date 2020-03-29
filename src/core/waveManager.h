@@ -40,7 +40,7 @@ namespace m
 class Wave;
 namespace patch
 {
-class Wave;
+struct Wave;
 }
 namespace waveManager
 {
