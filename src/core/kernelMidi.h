@@ -29,6 +29,7 @@
 #define G_KERNELMIDI_H
 
 
+#include <atomic>
 #include <cstdint>
 #include <string>
 #include "midiMapConf.h"
@@ -38,6 +39,9 @@ namespace giada {
 namespace m {
 namespace kernelMidi
 {
+extern std::atomic_bool midiInActivity;
+extern std::atomic_bool midiOutActivity;
+
 int getB1(uint32_t iValue);
 int getB2(uint32_t iValue);
 int getB3(uint32_t iValue);

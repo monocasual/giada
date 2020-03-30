@@ -28,6 +28,7 @@
 #include "core/const.h"
 #include "core/model/model.h"
 #include "core/graphics.h"
+#include "core/kernelMidi.h"
 #include "core/mixer.h"
 #include "core/mixerHandler.h"
 #include "core/pluginHost.h"
@@ -60,7 +61,9 @@ geMainIO::geMainIO(int x, int y)
 	masterFxIn  = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
 	inVol       = new geDial        (0, 0, G_GUI_UNIT, G_GUI_UNIT);
 	inMeter     = new geSoundMeter  (0, 0, 140, G_GUI_UNIT);
+	midiInMeter  = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, nullptr, nullptr, nullptr, G_COLOR_RED_ALERT);
 	inToOut     = new geButton      (0, 0, 12, G_GUI_UNIT, "");
+	midiOutMeter = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, nullptr, nullptr, nullptr, G_COLOR_BLUE_ALERT);
 	outMeter    = new geSoundMeter  (0, 0, 140, G_GUI_UNIT);
 	outVol      = new geDial        (0, 0, G_GUI_UNIT, G_GUI_UNIT);
 	masterFxOut = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
@@ -69,13 +72,16 @@ geMainIO::geMainIO(int x, int y)
 
 	inVol       = new geDial      (0, 0, G_GUI_UNIT, G_GUI_UNIT);
 	inMeter     = new geSoundMeter(0, 0, 140, G_GUI_UNIT);
+	midiInMeter  = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, nullptr, nullptr, nullptr, G_COLOR_RED_ALERT);
+	midiOutMeter = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, nullptr, nullptr, nullptr, G_COLOR_BLUE_ALERT);
 	outMeter    = new geSoundMeter(0, 0, 140, G_GUI_UNIT);
 	outVol      = new geDial      (0, 0, G_GUI_UNIT, G_GUI_UNIT);
-
 #endif
 
 	end();
 
+	midiInMeter->tooltip("Midi input activity");
+	midiOutMeter->tooltip("Midi output activity");
 	resizable(nullptr);   // don't resize any widget
 
 	outVol->callback(cb_outVol, (void*)this);
@@ -193,6 +199,10 @@ void geMainIO::refresh()
 	inMeter->mixerPeak  = m::mixer::peakIn.load();
 	outMeter->redraw();
 	inMeter->redraw();
+	midiInMeter->setStatus(m::kernelMidi::midiInActivity.load());
+	midiOutMeter->setStatus(m::kernelMidi::midiOutActivity.load());
+	m::kernelMidi::midiInActivity = false;
+	m::kernelMidi::midiOutActivity = false;
 }
 
 

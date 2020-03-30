@@ -80,6 +80,8 @@ private:
 	geSoundMeter* inMeter;
 	geDial*       outVol;
 	geDial*       inVol;
+	geStatusButton* midiInMeter;
+	geStatusButton* midiOutMeter;
 #ifdef WITH_VST
   geStatusButton* masterFxOut;
   geStatusButton* masterFxIn;

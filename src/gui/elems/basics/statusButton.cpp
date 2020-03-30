@@ -34,10 +34,11 @@
 
 
 geStatusButton::geStatusButton(int x, int y, int w, int h, const char** imgOff,
-	const char** imgOn, const char** imgDisabled)
-: geButton(x, y, w, h, "", imgOff, imgOn, imgDisabled),
-  m_status(false)
+	const char** imgOn, const char** imgDisabled, Fl_Color enabled)
+: geButton(x, y, w, h, "", imgOff, imgOn, imgDisabled)
+, m_status(false)
 {
+	bgColor1 = enabled;
 }
 
 

@@ -41,6 +41,10 @@ namespace giada {
 namespace m {
 namespace kernelMidi
 {
+
+std::atomic_bool midiInActivity(false);
+std::atomic_bool midiOutActivity(false);
+
 namespace
 {
 bool status_ = false;
@@ -61,6 +65,7 @@ static void callback_(double t, std::vector<unsigned char>* msg, void* data)
 		return;
 	}
 	midiDispatcher::dispatch(msg->at(0), msg->at(1), msg->at(2));
+	midiInActivity = true;
 }
 
 
@@ -214,6 +219,16 @@ std::string getInPortName(unsigned p)
 /* -------------------------------------------------------------------------- */
 
 
+void maybeSetMidiOutActivity(const std::vector<unsigned char>& msg)
+{
+	if (msg[0] != MIDI_CLOCK) 
+		midiOutActivity = true;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void send(uint32_t data)
 {
 	if (!status_)
@@ -225,6 +240,7 @@ void send(uint32_t data)
 
 	midiOut_->sendMessage(&msg);
 	u::log::print("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
+	maybeSetMidiOutActivity(msg);
 }
 
 
@@ -245,6 +261,7 @@ void send(int b1, int b2, int b3)
 
 	midiOut_->sendMessage(&msg);
 	//u::log::print("[KM] send msg=(%X %X %X)\n", b1, b2, b3);
+	maybeSetMidiOutActivity(msg);
 }
 
 
