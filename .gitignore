@@ -8,6 +8,8 @@
 *.swp
 *.dirstamp
 *.deps
+*.tar.gz
+*.tar.gz.asc
 
 # --- deps
 /src/deps/vst
