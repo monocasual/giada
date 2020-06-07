@@ -227,7 +227,8 @@ void Channel::parse(const mixer::Event& e) const
 void Channel::renderMasterOut(AudioBuffer& out) const
 {
 	state->buffer.copyData(out);
-	pluginHost::processStack(state->buffer, pluginIds, nullptr);
+	if (pluginIds.size() > 0)
+		pluginHost::processStack(state->buffer, pluginIds, nullptr);
 	out.copyData(state->buffer, state->volume.load());
 }
 
@@ -237,7 +238,8 @@ void Channel::renderMasterOut(AudioBuffer& out) const
 
 void Channel::renderMasterIn(AudioBuffer& in) const
 {
-	pluginHost::processStack(in, pluginIds, nullptr);
+	if (pluginIds.size() > 0)
+		pluginHost::processStack(in, pluginIds, nullptr);
 }
 
 
@@ -258,6 +260,7 @@ void Channel::renderChannel(AudioBuffer& out, AudioBuffer& in, bool audible) con
 	if (midiReceiver)  
 		midiReceiver->render(pluginIds); 
 	else 
+	if (pluginIds.size() > 0)
 		pluginHost::processStack(state->buffer, pluginIds, nullptr);
 
 	if (audible)
