@@ -193,11 +193,11 @@ void processMaster_(const MidiEvent& midiEvent)
 	const model::MidiIn* midiIn = model::midiIn.get();
 
 	if      (pure == midiIn->rewind) {
-		c::events::rewindSequencer();
+		c::events::rewindSequencer(Thread::MIDI);
 		u::log::print("  >>> rewind (master) (pure=0x%X)\n", pure);
 	}
 	else if (pure == midiIn->startStop) {
-		c::events::toggleSequencer();
+		c::events::toggleSequencer(Thread::MIDI);
 		u::log::print("  >>> startStop (master) (pure=0x%X)\n", pure);
 	}
 	else if (pure == midiIn->actionRec) {

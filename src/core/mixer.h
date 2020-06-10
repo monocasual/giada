@@ -51,14 +51,16 @@ class AudioBuffer;
 namespace mixer
 {
 enum class EventType 
-{ 
+{
 	KEY_PRESS, 
 	KEY_RELEASE, 
-	KEY_KILL, 
-	SEQUENCER_FIRST_BEAT, 
-	SEQUENCER_BAR, 
-	SEQUENCER_STOP, 
-	SEQUENCER_REWIND,
+	KEY_KILL,
+	SEQUENCER_FIRST_BEAT, // 3
+	SEQUENCER_BAR,        // 4
+	SEQUENCER_START,      // 5
+	SEQUENCER_STOP,       // 6
+	SEQUENCER_REWIND,     // 7
+	SEQUENCER_REWIND_REQ, // 8
 	MIDI, 
 	ACTION, 
 	CHANNEL_TOGGLE_READ_ACTIONS,
@@ -78,7 +80,7 @@ struct Event
 };
 
 /* EventBuffer
-Alias for a RingBuffer containing events to be sent to channels. The double size
+Alias for a RingBuffer containing events to be sent to engine. The double size
 is due to the presence of two distinct Queues for collecting events coming from
 other threads. See below. */
 
@@ -88,8 +90,8 @@ constexpr int MASTER_OUT_CHANNEL_ID = 1;
 constexpr int MASTER_IN_CHANNEL_ID  = 2;
 constexpr int PREVIEW_CHANNEL_ID    = 3;
 
-extern std::atomic<float> peakOut;
-extern std::atomic<float> peakIn;
+extern std::atomic<float> peakOut; // TODO - move to model::
+extern std::atomic<float> peakIn;  // TODO - move to model::
 
 /* Channel Event queues
 Collect events coming from the UI or MIDI devices to be sent to channels. Our 
@@ -141,6 +143,14 @@ void startInputRec();
 void stopInputRec();
 
 void setSignalCallback(std::function<void()> f);
+
+/* pumpEvent
+Pumps a new mixer::Event into the event vector. Use this function when you want
+to inject a new event for the **current** block. Push the event in the two 
+queues UIevents and MIDIevents above if the event can be processed in the next 
+block instead. */
+
+void pumpEvent(Event e);
 }}} // giada::m::mixer::;
 
 

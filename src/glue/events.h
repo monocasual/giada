@@ -68,8 +68,8 @@ void setMasterInVolume    (float v, Thread t);
 void setMasterOutVolume   (float v, Thread t);
 void multiplyBeats        ();
 void divideBeats          ();
-void toggleSequencer      ();
-void rewindSequencer      ();
+void toggleSequencer      (Thread t);
+void rewindSequencer      (Thread t);
 void toggleActionRecording();
 void toggleInputRecording ();
 

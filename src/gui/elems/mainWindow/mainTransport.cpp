@@ -66,11 +66,11 @@ geMainTransport::geMainTransport(int x, int y)
 	add(metronome);
 	
 	rewind->callback([](Fl_Widget* w, void* v) { 
-		c::events::rewindSequencer();
+		c::events::rewindSequencer(Thread::MAIN);
 	});
 
 	play->callback([](Fl_Widget* w, void* v) { 
-		c::events::toggleSequencer();
+		c::events::toggleSequencer(Thread::MAIN);
 	});
 
 	recAction->callback([](Fl_Widget* w, void* v) { 

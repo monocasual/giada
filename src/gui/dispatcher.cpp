@@ -117,7 +117,7 @@ void dispatchKey(int event)
 	if (event == FL_KEYDOWN) {
 		if (Fl::event_key() == FL_BackSpace && !backspace_) {
 			backspace_ = true;
-			c::events::rewindSequencer();
+			c::events::rewindSequencer(Thread::MAIN);
 		}
 		else if (Fl::event_key() == FL_End && !end_) {
 			end_ = true;
@@ -129,7 +129,7 @@ void dispatchKey(int event)
 		}
 		else if (Fl::event_key() == ' ' && !space_) {
 			space_ = true;
-			c::events::toggleSequencer();
+			c::events::toggleSequencer(Thread::MAIN);
 		}
 		else if (Fl::event_key() == FL_Escape && !esc_) {
 			esc_ = true;

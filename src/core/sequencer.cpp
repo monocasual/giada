@@ -119,11 +119,8 @@ void rewind_(Frame delta)
 
 	if (conf::conf.midiSync == MIDI_SYNC_CLOCK_M)
 		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
-	
-	/* Pushing to mixer::UIEvents or mixer::MidiEvents? It doesn't really matter
-	at this point. We just need a multi-producer/multi-consumer queue ASAP. */
 
-	mixer::UIevents.push({ mixer::EventType::SEQUENCER_REWIND, delta });
+	mixer::pumpEvent({ mixer::EventType::SEQUENCER_REWIND, delta });
 }
 
 
@@ -149,7 +146,7 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-void parse(Frame bufferSize)
+void run(Frame bufferSize)
 {
 	Frame start = clock::getCurrentFrame();
 	Frame end   = start + bufferSize;
@@ -161,19 +158,37 @@ void parse(Frame bufferSize)
 		Frame global = i % total; // wraps around 'total'
 
 		if (global == 0)
-			mixer::UIevents.push({ mixer::EventType::SEQUENCER_FIRST_BEAT, local, { 0, 0, global } });
+			mixer::pumpEvent({ mixer::EventType::SEQUENCER_FIRST_BEAT, local, { 0, 0, global } });
 		else
 		if (global % bar == 0)
-			mixer::UIevents.push({ mixer::EventType::SEQUENCER_BAR, local, { 0, 0, global } });
+			mixer::pumpEvent({ mixer::EventType::SEQUENCER_BAR, local, { 0, 0, global } });
 
 		const std::vector<Action>* as = recorder::getActionsOnFrame(global);
 		if (as != nullptr)
 			for (const Action& a : *as)
-				mixer::UIevents.push({ mixer::EventType::ACTION, local, a });
+				mixer::pumpEvent({ mixer::EventType::ACTION, local, a });
 	}
 
-	Range<Frame> block(start, end);
-	quantizer_.advance(block, clock::getQuantizerStep());
+	quantizer_.advance(Range<Frame>(start, end), clock::getQuantizerStep());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void parse(const mixer::EventBuffer& events)
+{
+	for (const mixer::Event& e : events) {
+		if (e.type == mixer::EventType::SEQUENCER_START) {
+			start(); break;
+		}
+		if (e.type == mixer::EventType::SEQUENCER_STOP) {
+			stop(); break;
+		}
+		if (e.type == mixer::EventType::SEQUENCER_REWIND_REQ) {
+			rewind(); break;
+		}
+	}
 }
 
 
@@ -232,11 +247,6 @@ void stop()
 	else
 	if (recManager::isRecordingInput())
 		recManager::stopInputRec();
-
-	/* Pushing to mixer::UIEvents or mixer::MidiEvents? It doesn't really matter
-	at this point. We just need a multi-producer/multi-consumer queue ASAP. */
-
-	mixer::UIevents.push({ mixer::EventType::SEQUENCER_STOP, 0 });
 }
 
 

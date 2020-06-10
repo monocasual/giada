@@ -29,6 +29,9 @@
 #define G_SEQUENCER_H
 
 
+#include "core/mixer.h"
+
+
 namespace giada {
 namespace m 
 {
@@ -41,7 +44,8 @@ void init();
 Parses sequencer events that might occur in a block and advances the internal 
 quantizer. */
 
-void parse(Frame bufferSize);
+void run(Frame bufferSize);
+void parse(const mixer::EventBuffer& events); 
 void advance(AudioBuffer& outBuf);
 
 void start();

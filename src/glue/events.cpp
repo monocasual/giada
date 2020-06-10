@@ -243,18 +243,18 @@ void divideBeats()
 /* -------------------------------------------------------------------------- */
 
 
-void toggleSequencer()
+void toggleSequencer(Thread t)
 { 
 	if (m::clock::isRunning())
-		m::sequencer::stop();
+		pushEvent_({ m::mixer::EventType::SEQUENCER_STOP, 0 }, t);
 	else
-		m::sequencer::start();
+		pushEvent_({ m::mixer::EventType::SEQUENCER_START, 0 }, t);
 }
 
 
-void rewindSequencer()
+void rewindSequencer(Thread t)
 { 
-	m::sequencer::rewind();
+	pushEvent_({ m::mixer::EventType::SEQUENCER_REWIND_REQ, 0 }, t);
 }
 
 

@@ -144,7 +144,7 @@ void processLineIn_(const AudioBuffer& inBuf)
 /* -------------------------------------------------------------------------- */
 
 
-void processChannels_(Frame bufferSize)
+void fillEventBuffer_()
 {
 	eventBuffer_.clear();
 
@@ -157,11 +157,32 @@ void processChannels_(Frame bufferSize)
 		G_DEBUG("Event type=" << (int) e.type << ", channel=" << e.action.channelId 
 			<< ", delta=" << e.delta << ", globalFrame=" << clock::getCurrentFrame());
 #endif
+}
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void processChannels_(Frame bufferSize)
+{
 	model::ChannelsLock lock(model::channels);
 	for (const Channel* c : model::channels) {
 		c->parse(eventBuffer_, isChannelAudible_(*c)); 
 		c->advance(bufferSize);
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void processSequencer_(AudioBuffer& in)
+{
+	sequencer::parse(eventBuffer_);
+	if (clock::isActive()) {
+		if (clock::isRunning())
+			sequencer::run(in.countSamples());
+		lineInRec_(in);
 	}
 }
 
@@ -346,21 +367,14 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	renderMasterIn_(inBuffer_);
 
-	/* 1) parse sequencer (if running)
-	   2) process channels (parse & advance them)
-	   3) render channels
-	   4) advance sequencer (if active) */
+	fillEventBuffer_();
+	processSequencer_(inBuffer_);
+	processChannels_(static_cast<Frame>(bufferSize)); // TODO join
+	renderChannels_(out, inBuffer_);                  // TODO join
 
-	if (clock::isActive()) {
-		if (clock::isRunning())
-			sequencer::parse(static_cast<Frame>(bufferSize));
-		lineInRec_(inBuffer_);
-	}
-
-	processChannels_(static_cast<Frame>(bufferSize));
-
-	renderChannels_(out, inBuffer_);
 	renderMasterOut_(out);
+
+	/* Advance sequencer only when rendering is done. */
 
 	if (clock::isActive())
 		sequencer::advance(out);
@@ -371,6 +385,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	/* Unset data in buffers. If you don't do this, buffers go out of scope and
 	destroy memory allocated by RtAudio ---> havoc. */
+	
 	out.setData(nullptr, 0, 0);
 	in.setData (nullptr, 0, 0);
 
@@ -411,5 +426,14 @@ void stopInputRec()
 void setSignalCallback(std::function<void()> f)
 {
 	signalCb_ = f;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void pumpEvent(Event e)
+{
+	eventBuffer_.push_back(e);
 }
 }}}; // giada::m::mixer::
