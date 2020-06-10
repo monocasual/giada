@@ -163,12 +163,20 @@ void fillEventBuffer_()
 /* -------------------------------------------------------------------------- */
 
 
-void processChannels_(Frame bufferSize)
+void processChannels_(AudioBuffer& out, AudioBuffer& in)
 {
 	model::ChannelsLock lock(model::channels);
+
 	for (const Channel* c : model::channels) {
-		c->parse(eventBuffer_, isChannelAudible_(*c)); 
-		c->advance(bufferSize);
+
+		if (c->getType() == ChannelType::MASTER)
+			continue;
+
+		bool audible = isChannelAudible_(*c);
+		
+		c->parse(eventBuffer_, audible); 
+		c->advance(out.countFrames());
+		c->render(&out, &in, audible);
 	}
 }
 
@@ -181,7 +189,7 @@ void processSequencer_(AudioBuffer& in)
 	sequencer::parse(eventBuffer_);
 	if (clock::isActive()) {
 		if (clock::isRunning())
-			sequencer::run(in.countSamples());
+			sequencer::run(in.countFrames());
 		lineInRec_(in);
 	}
 }
@@ -200,18 +208,6 @@ void renderMasterOut_(AudioBuffer& out)
 {
 	model::ChannelsLock lock(model::channels);
 	model::get(model::channels, mixer::MASTER_OUT_CHANNEL_ID).render(&out, nullptr, true);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void renderChannels_(AudioBuffer& out, AudioBuffer& in)
-{
-	model::ChannelsLock lock(model::channels);
-	for (const Channel* c : model::channels)
-		if (c->getType() != ChannelType::MASTER)
-			c->render(&out, &in, isChannelAudible_(*c));
 }
 
 
@@ -369,8 +365,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	fillEventBuffer_();
 	processSequencer_(inBuffer_);
-	processChannels_(static_cast<Frame>(bufferSize)); // TODO join
-	renderChannels_(out, inBuffer_);                  // TODO join
+	processChannels_(out, inBuffer_);
 
 	renderMasterOut_(out);
 
@@ -385,7 +380,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	/* Unset data in buffers. If you don't do this, buffers go out of scope and
 	destroy memory allocated by RtAudio ---> havoc. */
-	
+
 	out.setData(nullptr, 0, 0);
 	in.setData (nullptr, 0, 0);
 
