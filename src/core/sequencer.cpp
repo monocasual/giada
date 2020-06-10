@@ -32,7 +32,6 @@
 #include "core/conf.h"
 #include "core/recManager.h"
 #include "core/kernelAudio.h"
-#include "core/kernelMidi.h"
 #include "sequencer.h"
 
 
@@ -112,15 +111,16 @@ void renderMetronome_(AudioBuffer& outBuf, Frame f)
 void rewind_(Frame delta)
 {
 	clock::rewind();
+	mixer::pumpEvent({ mixer::EventType::SEQUENCER_REWIND, delta });	
+}
 
+
+void rewindJack_(Frame delta)
+{
+	rewind_(delta);
 #ifdef __linux__
 	kernelAudio::jackSetPosition(0);
 #endif
-
-	if (conf::conf.midiSync == MIDI_SYNC_CLOCK_M)
-		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
-
-	mixer::pumpEvent({ mixer::EventType::SEQUENCER_REWIND, delta });
 }
 
 
@@ -138,7 +138,7 @@ Quantizer quantizer_;
 
 void init()
 {
-	quantizer_.schedule(Q_ACTION_REWIND, rewind_);
+	quantizer_.schedule(Q_ACTION_REWIND, rewindJack_);
 	clock::rewind();
 }
 
@@ -253,10 +253,13 @@ void stop()
 /* -------------------------------------------------------------------------- */
 
 
-void rewind()
+void rewind(bool jack)
 {
 	if (clock::canQuantize())
 		quantizer_.trigger(Q_ACTION_REWIND);
+	else
+	if (jack)
+		rewindJack_(/*delta=*/0);
 	else
 		rewind_(/*delta=*/0);
 }

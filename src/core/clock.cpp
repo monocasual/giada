@@ -28,6 +28,7 @@
 #include <atomic>
 #include <cassert>
 #include "glue/main.h"
+#include "glue/events.h"
 #include "core/model/model.h"
 #include "core/conf.h"
 #include "core/sequencer.h"
@@ -377,6 +378,9 @@ void sendMIDIrewind()
 		kernelMidi::send(0x00, 0x00, 0x00);        // mins, secs, frames 0
 		kernelMidi::send(MIDI_EOX, -1, -1);        // end of sysex
 	}
+	else
+	if (conf::conf.midiSync == MIDI_SYNC_CLOCK_M)
+		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
 }
 
 
@@ -390,31 +394,27 @@ void recvJackSync()
 	/* TODO - these things should be processed by a higher level, 
 	above clock:: ----> clockManager */
 
-	kernelAudio::JackState jackState = kernelAudio::jackTransportQuery();
+	kernelAudio::JackState jackStateCurr = kernelAudio::jackTransportQuery();
 
-	if (jackState.running != jackStatePrev_.running) {
-G_DEBUG ("new jackState.running received");
-		if (jackState.running) {
-			if (!isRunning())
-				sequencer::start();
+	if (jackStateCurr != jackStatePrev_) {	
+
+		if (jackStateCurr.frame != jackStatePrev_.frame && jackStateCurr.frame == 0) {
+G_DEBUG("JackState received - rewind to frame 0");
+			sequencer::rewind(/*jack=*/false);  // Avoid infinite recursion
 		}
-		else {
-			if (isRunning())
-				sequencer::stop();
+
+		if (jackStateCurr.bpm != jackStatePrev_.bpm && jackStateCurr.bpm > 1.0f) {  // 0 bpm if Jack does not send that info
+G_DEBUG("JackState received - bpm=" << jackStateCurr.bpm);
+			c::main::setBpm(jackStateCurr.bpm);
+		}
+
+		if (jackStateCurr.running != jackStatePrev_.running) {
+G_DEBUG("JackState received - running=" << jackStateCurr.running);			
+			jackStateCurr.running ? sequencer::start() : sequencer::stop();
 		}
 	}
-	if (jackState.bpm != jackStatePrev_.bpm) {
-G_DEBUG ("new jackState.bpm received");
-		if (jackState.bpm > 1.0f)  // 0 bpm if Jack does not send that info
-			c::main::setBpm(jackState.bpm);
-	}
 
-	if (jackState.frame == 0 && jackState.frame != jackStatePrev_.frame) {
-G_DEBUG ("new jackState.frame received");
-		sequencer::rewind();
-	}
-
-	jackStatePrev_ = jackState;
+	jackStatePrev_ = jackStateCurr;
 }
 
 #endif

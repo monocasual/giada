@@ -45,9 +45,11 @@ namespace kernelAudio
 
 struct JackState
 {
-  bool running;
-  double bpm;
-  uint32_t frame;
+	bool     running;
+	double   bpm;
+	uint32_t frame;
+
+	bool operator!=(const JackState& o) const;
 };
 
 #endif
@@ -82,9 +84,10 @@ void jackStart();
 void jackStop();
 void jackSetPosition(uint32_t frame);
 void jackSetBpm(double bpm);
-const JackState &jackTransportQuery();
+JackState jackTransportQuery();
 
 #endif
 }}}; // giada::m::kernelAudio::
+
 
 #endif

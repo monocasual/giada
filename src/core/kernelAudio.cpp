@@ -53,7 +53,7 @@ int      api          = 0;
 
 JackState jackState;
 
-jack_client_t* jackGetHandle()
+jack_client_t* jackGetHandle_()
 {
 	return static_cast<jack_client_t*>(rtSystem->HACK__getJackClient());
 }
@@ -67,10 +67,18 @@ jack_client_t* jackGetHandle()
 /* -------------------------------------------------------------------------- */
 
 
+bool JackState::operator!=(const JackState& o) const
+{
+	return !(running == o.running && bpm == o.bpm && frame == o.frame);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 bool isReady()
 {
 	model::KernelLock lock(model::kernel);
-
 	return model::kernel.get()->audioReady;
 }
 
@@ -434,16 +442,19 @@ int getAPI() { return api; }
 #if defined(__linux__) || defined(__FreeBSD__)
 
 
-const JackState &jackTransportQuery()
+JackState jackTransportQuery()
 {
 	if (api != G_SYS_API_JACK)
 		return jackState;
-	jack_position_t position;
-	jack_transport_state_t ts = jack_transport_query(jackGetHandle(), &position);
-	jackState.running = ts != JackTransportStopped;
-	jackState.bpm     = position.beats_per_minute;
-	jackState.frame   = position.frame;
-	return jackState;
+
+	jack_position_t        position;
+	jack_transport_state_t ts = jack_transport_query(jackGetHandle_(), &position);
+
+	return {
+		ts != JackTransportStopped,
+		position.beats_per_minute,
+		position.frame
+	};
 }
 
 
@@ -453,7 +464,7 @@ const JackState &jackTransportQuery()
 void jackStart()
 {
 	if (api == G_SYS_API_JACK)
-		jack_transport_start(jackGetHandle());
+		jack_transport_start(jackGetHandle_());
 }
 
 
@@ -465,9 +476,9 @@ void jackSetPosition(uint32_t frame)
 	if (api != G_SYS_API_JACK)
     	return;
 	jack_position_t position;
-	jack_transport_query(jackGetHandle(), &position);
+	jack_transport_query(jackGetHandle_(), &position);
 	position.frame = frame;
-	jack_transport_reposition(jackGetHandle(), &position);
+	jack_transport_reposition(jackGetHandle_(), &position);
 }
 
 
@@ -479,13 +490,13 @@ void jackSetBpm(double bpm)
 	if (api != G_SYS_API_JACK)
 		return;
 	jack_position_t position;
-	jack_transport_query(jackGetHandle(), &position);
+	jack_transport_query(jackGetHandle_(), &position);
 	position.valid = jack_position_bits_t::JackPositionBBT;
 	position.bar  = 0;  // no such info from Giada
 	position.beat = 0;  // no such info from Giada
 	position.tick = 0;  // no such info from Giada
 	position.beats_per_minute = bpm;
-	jack_transport_reposition(jackGetHandle(), &position);
+	jack_transport_reposition(jackGetHandle_(), &position);
 }
 
 
@@ -495,7 +506,7 @@ void jackSetBpm(double bpm)
 void jackStop()
 {
 	if (api == G_SYS_API_JACK)
-		jack_transport_stop(jackGetHandle());
+		jack_transport_stop(jackGetHandle_());
 }
 
 #endif  // defined(__linux__) || defined(__FreeBSD__)
