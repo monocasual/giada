@@ -168,15 +168,12 @@ void processChannels_(AudioBuffer& out, AudioBuffer& in)
 	model::ChannelsLock lock(model::channels);
 
 	for (const Channel* c : model::channels) {
-
-		if (c->getType() == ChannelType::MASTER)
-			continue;
-
-		bool audible = isChannelAudible_(*c);
-		
+		bool audible = isChannelAudible_(*c);	
 		c->parse(eventBuffer_, audible); 
-		c->advance(out.countFrames());
-		c->render(&out, &in, audible);
+		if (c->getType() != ChannelType::MASTER) {
+			c->advance(out.countFrames());
+			c->render(&out, &in, audible);
+		}
 	}
 }
 
