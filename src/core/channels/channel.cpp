@@ -55,7 +55,10 @@ Channel::Channel(ChannelType type, ID id, ID columnId, Frame bufferSize)
 			break;
 		
 		case ChannelType::MIDI:
+			midiController.emplace(state.get());
+#ifdef WITH_VST
 			midiReceiver.emplace(state.get());
+#endif
 			midiSender.emplace(state.get());
 			midiActionRecorder.emplace(state.get());		
 			break;	
@@ -70,7 +73,9 @@ Channel::Channel(ChannelType type, ID id, ID columnId, Frame bufferSize)
 
 Channel::Channel(const Channel& o)
 : id            (o.id)
+#ifdef WITH_VST
 , pluginIds     (o.pluginIds)
+#endif
 , state         (std::make_unique<ChannelState>(*o.state))
 , midiLearner   (o.midiLearner)
 , midiLighter   (o.midiLighter, state.get())
@@ -80,24 +85,20 @@ Channel::Channel(const Channel& o)
 	switch (m_type) {
 
 		case ChannelType::SAMPLE:
-			assert(o.samplePlayer);
-			assert(o.audioReceiver);
-			assert(o.sampleActionRecorder);
 			samplePlayer.emplace(o.samplePlayer.value(), state.get());
 			audioReceiver.emplace(o.audioReceiver.value(), state.get());
 			sampleActionRecorder.emplace(o.sampleActionRecorder.value(), state.get(), samplePlayer->state.get());
 			break;
 		
 		case ChannelType::PREVIEW:
-			assert(o.samplePlayer);
 			samplePlayer.emplace(o.samplePlayer.value(), state.get());
 			break;
 		
 		case ChannelType::MIDI:
-			assert(o.midiReceiver); 
-			assert(o.midiSender); 
-			assert(o.midiActionRecorder);
+			midiController.emplace(o.midiController.value(), state.get());
+#ifdef WITH_VST
 			midiReceiver.emplace(o.midiReceiver.value(), state.get());
+#endif
 			midiSender.emplace(o.midiSender.value(), state.get());
 			midiActionRecorder.emplace(o.midiActionRecorder.value(), state.get());
 			break;
@@ -112,7 +113,9 @@ Channel::Channel(const Channel& o)
 
 Channel::Channel(const patch::Channel& p, Frame bufferSize)
 : id            (p.id)
+#ifdef WITH_VST
 , pluginIds     (p.pluginIds)
+#endif
 , state         (std::make_unique<ChannelState>(p, bufferSize))
 , midiLearner   (p)
 , midiLighter   (p, state.get())
@@ -132,7 +135,10 @@ Channel::Channel(const patch::Channel& p, Frame bufferSize)
 			break;
 		
 		case ChannelType::MIDI:
+			midiController.emplace(state.get());
+#ifdef WITH_VST
 			midiReceiver.emplace(p, state.get());
+#endif
 			midiSender.emplace(state.get());
 			midiActionRecorder.emplace(state.get());	
 			break;	
@@ -155,7 +161,10 @@ void Channel::parse(const mixer::EventBuffer& events, bool audible) const
 		parse(e);
 		midiLighter.parse(e, audible);
 
+		if (midiController)       midiController->parse(e);
+#ifdef WITH_VST
 		if (midiReceiver)         midiReceiver->parse(e);
+#endif
 		if (midiSender)           midiSender->parse(e);
 		if (samplePlayer)         samplePlayer->parse(e);
 		if (midiActionRecorder)   midiActionRecorder->parse(e);
@@ -227,8 +236,10 @@ void Channel::parse(const mixer::Event& e) const
 void Channel::renderMasterOut(AudioBuffer& out) const
 {
 	state->buffer.copyData(out);
+#ifdef WITH_VST
 	if (pluginIds.size() > 0)
 		pluginHost::processStack(state->buffer, pluginIds, nullptr);
+#endif
 	out.copyData(state->buffer, state->volume.load());
 }
 
@@ -238,8 +249,10 @@ void Channel::renderMasterOut(AudioBuffer& out) const
 
 void Channel::renderMasterIn(AudioBuffer& in) const
 {
+#ifdef WITH_VST
 	if (pluginIds.size() > 0)
 		pluginHost::processStack(in, pluginIds, nullptr);
+#endif
 }
 
 
@@ -257,11 +270,13 @@ void Channel::renderChannel(AudioBuffer& out, AudioBuffer& in, bool audible) con
 	contain plug-ins that take MIDI events (i.e. synths). Otherwise process the
 	plug-in stack internally with no MIDI events. */
 
+#ifdef WITH_VST
 	if (midiReceiver)  
 		midiReceiver->render(pluginIds); 
 	else 
 	if (pluginIds.size() > 0)
 		pluginHost::processStack(state->buffer, pluginIds, nullptr);
+#endif
 
 	if (audible)
 	    out.addData(state->buffer, state->volume.load() * state->volume_i, calcPanning());

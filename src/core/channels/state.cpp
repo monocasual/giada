@@ -155,10 +155,14 @@ MidiSenderState::MidiSenderState(const MidiSenderState& o)
 /* -------------------------------------------------------------------------- */
 
 
+#ifdef WITH_VST
+
 MidiReceiverState::MidiReceiverState()
 {
     midiBuffer.ensureSize(G_DEFAULT_VST_MIDIBUFFER_SIZE);
 }
+
+#endif
 
 
 /* -------------------------------------------------------------------------- */

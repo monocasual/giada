@@ -96,7 +96,9 @@ struct Data
 
 	ID              id;
 	ID              columnId;
+#ifdef WITH_VST
 	std::vector<ID> pluginIds;
+#endif
 	ChannelType     type;
 	Pixel           height;
 	std::string     name;

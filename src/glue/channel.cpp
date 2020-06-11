@@ -127,7 +127,9 @@ int  MidiData::a_getFilter() const       { return a_get(m_midiSender->state->fil
 Data::Data(const m::Channel& c)
 : id         (c.id)
 , columnId   (c.getColumnId())
+#ifdef WITH_VST
 , pluginIds  (c.pluginIds)
+#endif
 , type       (c.getType())
 , height     (c.state->height)
 , name       (c.state->name)

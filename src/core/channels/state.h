@@ -35,7 +35,9 @@
 #include "core/types.h"
 #include "core/quantizer.h"
 #include "core/audioBuffer.h"
+#ifdef WITH_VST
 #include "deps/juce-config.h"
+#endif
 
 
 namespace giada {
@@ -127,15 +129,19 @@ struct MidiSenderState
 /* -------------------------------------------------------------------------- */
 
 
+#ifdef WITH_VST
+
 struct MidiReceiverState
 {
     MidiReceiverState();
 
 	/* midiBuffer 
 	Contains MIDI events to be sent to plug-ins. */
-	
+
 	juce::MidiBuffer midiBuffer;
 };
+
+#endif
 
 
 /* -------------------------------------------------------------------------- */

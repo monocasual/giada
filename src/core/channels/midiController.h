@@ -36,6 +36,9 @@
 namespace giada {
 namespace m
 {
+/* MidiController
+Manages events for a MIDI Channel. */
+
 class MidiController
 {
 public:

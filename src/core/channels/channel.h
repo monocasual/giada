@@ -35,9 +35,12 @@
 #include "core/channels/state.h"
 #include "core/channels/samplePlayer.h"
 #include "core/channels/audioReceiver.h"
+#ifdef WITH_VST
 #include "core/channels/midiReceiver.h"
+#endif
 #include "core/channels/midiLearner.h"
 #include "core/channels/midiSender.h"
+#include "core/channels/midiController.h"
 #include "core/channels/midiLighter.h"
 #include "core/channels/sampleActionRecorder.h"
 #include "core/channels/midiActionRecorder.h"
@@ -90,39 +93,16 @@ public:
 
     std::unique_ptr<ChannelState> state;
 
-    /* midiLearner
-    Holds MIDI learnt commands. */
-
     MidiLearner midiLearner;
-
-    /* midiLighter
-    Emits MIDI lightning messages. */
-
     MidiLighter midiLighter;
 
-    /* (optional) samplePlayer
-    For sample rendering. Sample Channel only. */
-
-    std::optional<SamplePlayer> samplePlayer;
-
-    /* (optional) audioReceiver
-    For input audio. Sample Channel only. */
-
-    std::optional<AudioReceiver> audioReceiver;
-
-    /* (optional) midiReceiver
-    Receives MIDI messages and events. MIDI Channel only. */
-
-    std::optional<MidiReceiver> midiReceiver;
-
-    /* (optional) midiSender
-    Sends MIDI messages to the outside world. MIDI Channel only. */
-
-    std::optional<MidiSender> midiSender;
-
-    /* (optional) sampleActionRecorder, midiActionRecorder
-    Records Actions from the outside world. */
-    
+    std::optional<SamplePlayer>         samplePlayer;
+    std::optional<AudioReceiver>        audioReceiver;
+    std::optional<MidiController>       midiController;
+#ifdef WITH_VST
+    std::optional<MidiReceiver>         midiReceiver;
+#endif
+    std::optional<MidiSender>           midiSender;
     std::optional<SampleActionRecorder> sampleActionRecorder;
     std::optional<MidiActionRecorder>   midiActionRecorder;
 

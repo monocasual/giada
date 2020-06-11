@@ -61,8 +61,10 @@ struct IO
 
     float masterOutVol;
     float masterInVol;
+#ifdef WITH_VST
     bool  masterOutHasPlugins;
     bool  masterInHasPlugins;
+#endif
     bool  inToOut;
 
     float a_getMasterOutPeak();

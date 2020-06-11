@@ -29,8 +29,10 @@
 #define G_CHANNEL_MIDI_RECEIVER_H
 
 
+#ifdef WITH_VST
+
+
 #include <memory>
-#include "core/channels/midiController.h"
 
 
 namespace giada {
@@ -75,15 +77,13 @@ private:
     by the PluginHost. */
 
     void sendToPlugins(const MidiEvent& e, Frame localFrame) const;
-    
-    /* m_midiController
-    Managers events for this Midi Receiver. */
-
-    MidiController m_midiController;
 
     ChannelState* m_channelState;
 };
 }} // giada::m::
+
+
+#endif // WITH_VST
 
 
 #endif

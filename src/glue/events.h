@@ -75,7 +75,9 @@ void toggleInputRecording ();
 
 /* Plug-ins. */
 
+#ifdef WITH_VST
 void setPluginParameter(ID pluginId, int paramIndex, float value, bool gui); 
+#endif
 }}} // giada::c::events::
 
 

@@ -92,6 +92,7 @@ Channel_InputData::Channel_InputData(const m::Channel& c)
 , pitch        (c.midiLearner.state->pitch.load())
 , readActions  (c.midiLearner.state->readActions.load()) 
 {
+#ifdef WITH_VST
 	for (ID id : c.pluginIds) {
 		m::Plugin& p = m::model::get(m::model::plugins, id);
 		
@@ -103,6 +104,7 @@ Channel_InputData::Channel_InputData(const m::Channel& c)
 
 		plugins.push_back(pd);
 	}
+#endif
 }
 
 
@@ -160,7 +162,9 @@ Channel_InputData channel_getInputData(ID channelId)
 	namespace mm = m::model;
 
 	mm::ChannelsLock cl(mm::channels);
-	mm::PluginsLock      ml(mm::plugins);
+#ifdef WITH_VST
+	mm::PluginsLock  ml(mm::plugins);
+#endif
 
 	return Channel_InputData(mm::get(mm::channels, channelId));	
 }

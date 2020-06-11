@@ -25,6 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 
+#ifdef WITH_VST
+
+
 #include "core/mixer.h"
 #include "core/pluginHost.h"
 #include "core/channels/state.h"
@@ -36,7 +39,6 @@ namespace m
 {
 MidiReceiver::MidiReceiver(ChannelState* c)
 : state           (std::make_unique<MidiReceiverState>())
-, m_midiController(c)
 , m_channelState  (c)
 {
 }
@@ -47,7 +49,6 @@ MidiReceiver::MidiReceiver(ChannelState* c)
 
 MidiReceiver::MidiReceiver(const patch::Channel& p, ChannelState* c)
 : state           (std::make_unique<MidiReceiverState>())
-, m_midiController(c)
 , m_channelState  (c)
 {
 }
@@ -58,7 +59,6 @@ MidiReceiver::MidiReceiver(const patch::Channel& p, ChannelState* c)
 
 MidiReceiver::MidiReceiver(const MidiReceiver& o, ChannelState* c)
 : state           (std::make_unique<MidiReceiverState>())
-, m_midiController(c)
 , m_channelState  (c)
 {
 }
@@ -69,8 +69,6 @@ MidiReceiver::MidiReceiver(const MidiReceiver& o, ChannelState* c)
 
 void MidiReceiver::parse(const mixer::Event& e) const
 {
-	m_midiController.parse(e);
-
 	switch (e.type) {
 
 		case mixer::EventType::MIDI:
@@ -128,3 +126,6 @@ void MidiReceiver::sendToPlugins(const MidiEvent& e, Frame localFrame) const
 	state->midiBuffer.addEvent(message, localFrame);
 }
 }} // giada::m::
+
+
+#endif // WITH_VST

@@ -117,8 +117,10 @@ Timer::Timer(const m::model::Clock& c)
 IO::IO(const m::Channel& out, const m::Channel& in, const m::model::Mixer& m)
 : masterOutVol       (out.state->volume.load())
 , masterInVol        (in.state->volume.load())
+#ifdef WITH_VST
 , masterOutHasPlugins(out.pluginIds.size() > 0)
 , masterInHasPlugins (in.pluginIds.size() > 0)
+#endif
 , inToOut            (m.inToOut)
 {
 }

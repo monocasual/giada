@@ -277,9 +277,11 @@ void toggleInputRecording()
 /* -------------------------------------------------------------------------- */
 
 
+#ifdef WITH_VST
 void setPluginParameter(ID pluginId, int paramIndex, float value, bool gui)
 {
 	m::pluginHost::setPluginParameter(pluginId, paramIndex, value);
 	c::plugin::updateWindow(pluginId, gui);
 }
+#endif
 }}}; // giada::c::events::

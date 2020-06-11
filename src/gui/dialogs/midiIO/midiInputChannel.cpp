@@ -91,6 +91,8 @@ void geChannelLearnerPack::update(const c::io::Channel_InputData& d)
 /* -------------------------------------------------------------------------- */
 
 
+#ifdef WITH_VST
+
 gePluginLearnerPack::gePluginLearnerPack(int x, int y, const c::io::PluginData& plugin)
 : geMidiLearnerPack(x, y, plugin.name)
 {
@@ -114,6 +116,8 @@ void gePluginLearnerPack::update(const c::io::PluginData& d, bool enabled)
 		learners[i++]->update(param.value);
 	setEnabled(enabled);
 }
+
+#endif
 
 
 /* -------------------------------------------------------------------------- */
@@ -218,8 +222,10 @@ void gdMidiInputChannel::rebuild()
 
 	int i = 0;
 	static_cast<geChannelLearnerPack*>(m_container->getChild(i++))->update(m_data);
+#ifdef WITH_VST
 	for (c::io::PluginData& plugin : m_data.plugins)
 		static_cast<gePluginLearnerPack*>(m_container->getChild(i++))->update(plugin, m_data.enabled);
+#endif
 
 	m_channel->value(m_data.filter == -1 ? 0 : m_data.filter + 1);
 
