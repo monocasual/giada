@@ -11,7 +11,8 @@
 --------------------------------------------------------------------------------
 
 
-0.16.3 --- 
+0.16.3 --- 2020 . 06. 15
+- Non-virtual Channels architecture
 - Added G_DEBUG macro
 - Optimized CPU usage when playing with many channels
 - Increased UI refresh rate to 30 frames per second
