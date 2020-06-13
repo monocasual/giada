@@ -441,7 +441,6 @@ int getAPI() { return api; }
 
 #if defined(__linux__) || defined(__FreeBSD__)
 
-
 JackState jackTransportQuery()
 {
 	if (api != G_SYS_API_JACK)

@@ -64,7 +64,7 @@ int midiTCseconds_ = 0;
 int midiTCminutes_ = 0;
 int midiTChours_   = 0;
 
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
 kernelAudio::JackState jackStatePrev_;
 #endif
 
@@ -387,7 +387,7 @@ void sendMIDIrewind()
 /* -------------------------------------------------------------------------- */
 
 
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
 
 void recvJackSync()
 {
@@ -400,7 +400,7 @@ void recvJackSync()
 
 		if (jackStateCurr.frame != jackStatePrev_.frame && jackStateCurr.frame == 0) {
 G_DEBUG("JackState received - rewind to frame 0");
-			sequencer::rewind(/*jack=*/false);  // Avoid infinite recursion
+			sequencer::rewind();
 		}
 
 		if (jackStateCurr.bpm != jackStatePrev_.bpm && jackStateCurr.bpm > 1.0f) {  // 0 bpm if Jack does not send that info

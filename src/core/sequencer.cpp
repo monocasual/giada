@@ -26,6 +26,7 @@
 
 
 #include "core/model/model.h"
+#include "core/const.h"
 #include "core/mixer.h"
 #include "core/quantizer.h"
 #include "core/clock.h"
@@ -108,19 +109,52 @@ void renderMetronome_(AudioBuffer& outBuf, Frame f)
 /* -------------------------------------------------------------------------- */
 
 
-void rewind_(Frame delta)
+void rewindQ_(Frame delta)
 {
 	clock::rewind();
 	mixer::pumpEvent({ mixer::EventType::SEQUENCER_REWIND, delta });	
 }
 
 
-void rewindJack_(Frame delta)
+/* -------------------------------------------------------------------------- */
+
+
+void start_()
 {
-	rewind_(delta);
-#ifdef __linux__
-	kernelAudio::jackSetPosition(0);
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
+	if (kernelAudio::getAPI() == G_SYS_API_JACK)
+		kernelAudio::jackStart();
+	else
 #endif
+	start(); 
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void stop_()
+{
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
+	if (kernelAudio::getAPI() == G_SYS_API_JACK)
+		kernelAudio::jackStop();
+	else
+#endif
+	stop();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void rewind_()
+{
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
+	if (kernelAudio::getAPI() == G_SYS_API_JACK)
+		kernelAudio::jackSetPosition(0);
+	else
+#endif
+	rewind();	
 }
 
 
@@ -138,7 +172,7 @@ Quantizer quantizer_;
 
 void init()
 {
-	quantizer_.schedule(Q_ACTION_REWIND, rewindJack_);
+	quantizer_.schedule(Q_ACTION_REWIND, rewindQ_);
 	clock::rewind();
 }
 
@@ -180,13 +214,13 @@ void parse(const mixer::EventBuffer& events)
 {
 	for (const mixer::Event& e : events) {
 		if (e.type == mixer::EventType::SEQUENCER_START) {
-			start(); break;
+			start_(); break;
 		}
 		if (e.type == mixer::EventType::SEQUENCER_STOP) {
-			stop(); break;
+			stop_(); break;
 		}
 		if (e.type == mixer::EventType::SEQUENCER_REWIND_REQ) {
-			rewind(); break;
+			rewind_(); break;
 		}
 	}
 }
@@ -221,10 +255,6 @@ void start()
 		default: 
 			break;
 	}
-
-#ifdef __linux__
-	kernelAudio::jackStart();
-#endif
 }
 
 
@@ -234,10 +264,6 @@ void start()
 void stop()
 {
 	clock::setStatus(ClockStatus::STOPPED);
-
-#ifdef __linux__
-	kernelAudio::jackStop();
-#endif
 
 	/* If recordings (both input and action) are active deactivate them, but 
 	store the takes. RecManager takes care of it. */
@@ -253,15 +279,12 @@ void stop()
 /* -------------------------------------------------------------------------- */
 
 
-void rewind(bool jack)
+void rewind()
 {
 	if (clock::canQuantize())
 		quantizer_.trigger(Q_ACTION_REWIND);
 	else
-	if (jack)
-		rewindJack_(/*delta=*/0);
-	else
-		rewind_(/*delta=*/0);
+		rewindQ_(/*delta=*/0);
 }
 
 

@@ -28,6 +28,7 @@
 #include <cassert>
 #include <FL/Fl.H>
 #include "core/model/model.h"
+#include "core/const.h"
 #include "core/clock.h"
 #include "core/mixer.h"
 #include "core/midiEvent.h"
@@ -243,12 +244,21 @@ void divideBeats()
 /* -------------------------------------------------------------------------- */
 
 
+void startSequencer(Thread t)
+{ 
+	pushEvent_({ m::mixer::EventType::SEQUENCER_START, 0 }, t);
+}
+
+
+void stopSequencer(Thread t)
+{ 
+	pushEvent_({ m::mixer::EventType::SEQUENCER_STOP, 0 }, t);
+}
+
+
 void toggleSequencer(Thread t)
 { 
-	if (m::clock::isRunning())
-		pushEvent_({ m::mixer::EventType::SEQUENCER_STOP, 0 }, t);
-	else
-		pushEvent_({ m::mixer::EventType::SEQUENCER_START, 0 }, t);
+	m::clock::isRunning() ? stopSequencer(t) : startSequencer(t);
 }
 
 

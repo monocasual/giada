@@ -97,7 +97,6 @@ void SampleController::parse(const mixer::Event& e) const
 			kill(e.delta); break;
 
 		case mixer::EventType::SEQUENCER_FIRST_BEAT:
-		case mixer::EventType::SEQUENCER_REWIND:
 			if (clock::isRunning())
 				onFirstBeat(e.delta); 
 			break;

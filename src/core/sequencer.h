@@ -50,7 +50,7 @@ void advance(AudioBuffer& outBuf);
 
 void start();
 void stop();
-void rewind(bool jack=true);
+void rewind();
 
 bool isMetronomeOn();
 void toggleMetronome();
