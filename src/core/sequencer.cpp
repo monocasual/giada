@@ -121,7 +121,7 @@ void rewindQ_(Frame delta)
 
 void start_()
 {
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 	if (kernelAudio::getAPI() == G_SYS_API_JACK)
 		kernelAudio::jackStart();
 	else
@@ -135,7 +135,7 @@ void start_()
 
 void stop_()
 {
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 	if (kernelAudio::getAPI() == G_SYS_API_JACK)
 		kernelAudio::jackStop();
 	else
@@ -149,7 +149,7 @@ void stop_()
 
 void rewind_()
 {
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 	if (kernelAudio::getAPI() == G_SYS_API_JACK)
 		kernelAudio::jackSetPosition(0);
 	else

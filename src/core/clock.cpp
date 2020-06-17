@@ -64,7 +64,7 @@ int midiTCseconds_ = 0;
 int midiTCminutes_ = 0;
 int midiTChours_   = 0;
 
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 kernelAudio::JackState jackStatePrev_;
 #endif
 
@@ -387,7 +387,7 @@ void sendMIDIrewind()
 /* -------------------------------------------------------------------------- */
 
 
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 
 void recvJackSync()
 {

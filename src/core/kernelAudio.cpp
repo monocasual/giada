@@ -32,6 +32,7 @@
 #include "glue/main.h"
 #include "core/model/model.h"
 #include "conf.h"
+#include "const.h"
 #include "mixer.h"
 #include "const.h"
 #include "kernelAudio.h"
@@ -49,7 +50,7 @@ bool     inputEnabled = false;
 unsigned realBufsize  = 0;     // Real buffer size from the soundcard
 int      api          = 0;
 
-#if defined(__linux__) || defined(__FreeBSD__)
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 
 JackState jackState;
 
@@ -67,10 +68,14 @@ jack_client_t* jackGetHandle_()
 /* -------------------------------------------------------------------------- */
 
 
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+
 bool JackState::operator!=(const JackState& o) const
 {
 	return !(running == o.running && bpm == o.bpm && frame == o.frame);
 }
+
+#endif
 
 
 /* -------------------------------------------------------------------------- */
@@ -173,7 +178,7 @@ int openDevice()
 
 	realBufsize = conf::conf.buffersize;
 
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 
 	if (api == G_SYS_API_JACK) {
 		conf::conf.samplerate = getFreq(conf::conf.soundDeviceOut, 0);
@@ -439,7 +444,7 @@ int getAPI() { return api; }
 /* -------------------------------------------------------------------------- */
 
 
-#if defined(__linux__) || defined(__FreeBSD__)
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 
 JackState jackTransportQuery()
 {
