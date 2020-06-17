@@ -118,8 +118,8 @@ TEST_CASE("waveFx")
 		int a = 47;
 		int b = 500;
 
-		wfx::fade(getWave(WAVE_STEREO_ID).id, a, b, wfx::FADE_IN);
-		wfx::fade(getWave(WAVE_STEREO_ID).id, a, b, wfx::FADE_OUT);
+		wfx::fade(getWave(WAVE_STEREO_ID).id, a, b, wfx::Fade::IN);
+		wfx::fade(getWave(WAVE_STEREO_ID).id, a, b, wfx::Fade::OUT);
 
 		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(a)[0] == 0.0f);
 		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(a)[1] == 0.0f);
@@ -128,8 +128,8 @@ TEST_CASE("waveFx")
 
 		SECTION("test fade (mono)")
 		{
-			wfx::fade(getWave(WAVE_MONO_ID).id, a, b, wfx::FADE_IN);
-			wfx::fade(getWave(WAVE_MONO_ID).id, a, b, wfx::FADE_OUT);
+			wfx::fade(getWave(WAVE_MONO_ID).id, a, b, wfx::Fade::IN);
+			wfx::fade(getWave(WAVE_MONO_ID).id, a, b, wfx::Fade::OUT);
 
 			REQUIRE(getWave(WAVE_MONO_ID).getFrame(a)[0] == 0.0f);
 			REQUIRE(getWave(WAVE_MONO_ID).getFrame(b)[0] == 0.0f);		

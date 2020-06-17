@@ -87,13 +87,6 @@ TEST_CASE("AudioBuffer")
 			REQUIRE(buffer[1024][0] == 2048.0f);
 		}
 
-		SECTION("test copy frame")
-		{	
-			buffer.copyFrame(16, &data[32]);
-			REQUIRE(buffer[16][0] == 32.0f);
-			REQUIRE(buffer[16][1] == 33.0f);
-		}
-
 		delete[] data;
 	}
 }

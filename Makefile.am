@@ -334,10 +334,7 @@ sourcesTests =                   \
 	tests/utils.cpp              \
 	tests/recorder.cpp           \
 	tests/waveFx.cpp             \
-	tests/audioBuffer.cpp        \
-	tests/samplePlayer.cpp       \
-	tests/sampleChannel.cpp
-
+	tests/audioBuffer.cpp
 if WITH_VST
 
 sourcesExtra += \
