@@ -45,6 +45,6 @@ deploy:
   skip_cleanup: true
   acl: public_read
   on:
-    tags: true 
+    tags: false 
     branch: "master"
   local_dir: build
