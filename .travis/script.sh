@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
+
+	export MACOSX_DEPLOYMENT_TARGET=10.2
+	
+fi
+
 make -j 2
 make rename
 
