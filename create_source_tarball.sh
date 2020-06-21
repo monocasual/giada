@@ -34,6 +34,7 @@ checkout_project() {
                           --single-branch \
                           --depth=1 \
                           --recurse-submodules \
+                          --shallow-submodules \
                           "${output_name}"
 }
 
