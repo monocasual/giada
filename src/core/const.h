@@ -60,10 +60,10 @@
 
 /* -- version --------------------------------------------------------------- */
 constexpr auto G_APP_NAME      = "Giada";
-constexpr auto G_VERSION_STR   = "0.16.3";
+constexpr auto G_VERSION_STR   = "0.16.4";
 constexpr int  G_VERSION_MAJOR = 0;
 constexpr int  G_VERSION_MINOR = 16;
-constexpr int  G_VERSION_PATCH = 3;
+constexpr int  G_VERSION_PATCH = 4;
 
 constexpr auto CONF_FILENAME = "giada.conf";
 
@@ -281,22 +281,22 @@ constexpr uint32_t G_MIDI_ALL_NOTES_OFF = (G_MIDI_CONTROLLER) | (0x7B << 16);
 
 /* system common / real-time messages. Single bytes */
 
-#define MIDI_SYSEX          0xF0
-#define MIDI_MTC_QUARTER    0xF1
-#define MIDI_POSITION_PTR   0xF2
-#define MIDI_CLOCK          0xF8
-#define MIDI_START          0xFA
-#define MIDI_CONTINUE       0xFB
-#define MIDI_STOP           0xFC
-#define MIDI_EOX            0xF7  // end of sysex
+constexpr int MIDI_SYSEX        = 0xF0;
+constexpr int MIDI_MTC_QUARTER  = 0xF1;
+constexpr int MIDI_POSITION_PTR = 0xF2;
+constexpr int MIDI_CLOCK        = 0xF8;
+constexpr int MIDI_START        = 0xFA;
+constexpr int MIDI_CONTINUE     = 0xFB;
+constexpr int MIDI_STOP         = 0xFC;
+constexpr int MIDI_EOX          = 0xF7;  // end of sysex
 
 /* midi sync constants */
 
-#define MIDI_SYNC_NONE      0x00
-#define MIDI_SYNC_CLOCK_M   0x01  // master
-#define MIDI_SYNC_CLOCK_S   0x02  // slave
-#define MIDI_SYNC_MTC_M     0x04  // master
-#define MIDI_SYNC_MTC_S     0x08  // slave
+constexpr int MIDI_SYNC_NONE    = 0x00;
+constexpr int MIDI_SYNC_CLOCK_M = 0x01;  // master
+constexpr int MIDI_SYNC_CLOCK_S = 0x02;  // slave
+constexpr int MIDI_SYNC_MTC_M   = 0x04;  // master
+constexpr int MIDI_SYNC_MTC_S   = 0x08;  // slave
 
 /* JSON patch keys */
 
