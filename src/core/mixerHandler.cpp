@@ -82,17 +82,8 @@ std::unique_ptr<Channel> createChannel_(ChannelType type, ID columnId, ID channe
 
 waveManager::Result createWave_(const std::string& fname)
 {
-	waveManager::Result res = waveManager::createFromFile(fname); 
-	if (res.status != G_RES_OK)
-		return res;
-	if (res.wave->getRate() != conf::conf.samplerate) {
-		u::log::print("[mh::createWave_] input rate (%d) != system rate (%d), conversion needed\n",
-			res.wave->getRate(), conf::conf.samplerate);
-		res.status = waveManager::resample(*res.wave.get(), conf::conf.rsmpQuality, conf::conf.samplerate); 
-		if (res.status != G_RES_OK)
-			return res;
-	}
-	return res;
+	return waveManager::createFromFile(fname, /*ID=*/0, conf::conf.samplerate, 
+		conf::conf.rsmpQuality); 
 }
 
 

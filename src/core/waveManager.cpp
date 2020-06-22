@@ -85,7 +85,7 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-Result createFromFile(const std::string& path, ID id)
+Result createFromFile(const std::string& path, ID id, int samplerate, int quality)
 {
 	if (path == "" || u::fs::isDir(path)) {
 		u::log::print("[waveManager::create] malformed path (was '%s')\n", path.c_str());
@@ -120,6 +120,13 @@ Result createFromFile(const std::string& path, ID id)
 
 	if (header.channels == 1 && !wfx::monoToStereo(*wave))
 		return { G_RES_ERR_PROCESSING };
+	
+	if (wave->getRate() != samplerate) {
+		u::log::print("[waveManager::create] input rate (%d) != required rate (%d), conversion needed\n",
+			wave->getRate(), samplerate);
+		if (resample(*wave.get(), quality, samplerate) != G_RES_OK)
+			return  { G_RES_ERR_PROCESSING };
+	}
 
 	u::log::print("[waveManager::create] new Wave created, %d frames\n", wave->getSize());
 
@@ -165,9 +172,9 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Wave> deserializeWave(const patch::Wave& w)
+std::unique_ptr<Wave> deserializeWave(const patch::Wave& w, int samplerate, int quality)
 {
-	return createFromFile(w.path, w.id).wave;
+	return createFromFile(w.path, w.id, samplerate, quality).wave;
 }
 
 

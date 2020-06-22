@@ -129,7 +129,8 @@ void load(const patch::Patch& patch)
 #endif
     
 	for (const patch::Wave& pwave : patch.waves) {
-		std::unique_ptr<Wave> w = waveManager::deserializeWave(pwave);
+		std::unique_ptr<Wave> w = waveManager::deserializeWave(pwave, conf::conf.samplerate,
+			conf::conf.rsmpQuality);
 		if (w != nullptr)
 			waves.push(std::move(w));	
 	}
