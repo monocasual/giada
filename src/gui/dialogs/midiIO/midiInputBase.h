@@ -35,12 +35,12 @@
 
 class geButton;
 class geCheck;
-class geChoice;
 
 
 namespace giada {
 namespace v 
 {
+class geChoice;
 class gdMidiInputBase : public gdWindow
 {
 public:

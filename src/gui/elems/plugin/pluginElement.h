@@ -36,13 +36,13 @@
 #include "glue/plugin.h"
 
 
-class geChoice;
 class geButton;
 
 
 namespace giada {
 namespace v
 {
+class geChoice;
 class gdPluginList;
 class gePluginElement : public Fl_Pack
 {

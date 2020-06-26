@@ -119,6 +119,8 @@ float AudioBuffer::getPeak() const
 
 void AudioBuffer::alloc(Frame size, int channels)
 {
+	assert(channels <= NUM_CHANS);
+
 	free();
 	m_size     = size;
 	m_channels = channels;
@@ -142,6 +144,8 @@ void AudioBuffer::free()
 
 void AudioBuffer::setData(float* data, Frame size, int channels)
 {
+	assert(channels <= NUM_CHANS);
+
 	m_data     = data;
 	m_size     = size;
 	m_channels = channels;
@@ -153,6 +157,8 @@ void AudioBuffer::setData(float* data, Frame size, int channels)
 
 void AudioBuffer::moveData(AudioBuffer& b)
 {
+	assert(b.countChannels() <= NUM_CHANS);
+
 	free();
 	m_data     = b[0];
 	m_size     = b.countFrames();
@@ -164,17 +170,26 @@ void AudioBuffer::moveData(AudioBuffer& b)
 /* -------------------------------------------------------------------------- */
 
 
-void AudioBuffer::copyData(const float* data, Frame frames, int offset)
+void AudioBuffer::copyData(const float* data, Frame frames, int channels, int offset)
 {
 	assert(m_data != nullptr);
 	assert(frames <= m_size - offset);
-	std::copy_n(data, frames * m_channels, m_data + (offset * m_channels)); 
+
+	if (channels < NUM_CHANS) // i.e. one channel, mono
+		for (int i = offset, k = 0; i < m_size; i++, k++)
+			for (int j = 0; j < countChannels(); j++)
+				(*this)[i][j] = data[k];
+	else
+	if (channels == NUM_CHANS)
+		std::copy_n(data, frames * channels, m_data + (offset * channels));
+	else
+		assert(false);
 }
 
 
 void AudioBuffer::copyData(const AudioBuffer& b, float gain)
 {
-	copyData(b[0], b.countFrames());
+	copyData(b[0], b.countFrames(), b.countChannels());
 	if (gain != 1.0f)
 		applyGain(gain);
 }
@@ -187,7 +202,7 @@ void AudioBuffer::addData(const AudioBuffer& b, float gain, Pan pan)
 {
 	assert(m_data != nullptr);
 	assert(countFrames() <= b.countFrames());
-	assert(countChannels() == pan.size());
+	assert(b.countChannels() <= NUM_CHANS);
 
 	for (int i = 0; i < countFrames(); i++)
 		for (int j = 0; j < countChannels(); j++)

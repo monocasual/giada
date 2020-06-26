@@ -36,13 +36,13 @@
 #include "window.h"
 
 
-class geChoice;
 class geButton;
 class geButton;
 
 namespace giada {
 namespace v
 {
+class geChoice;
 class gePluginBrowser;
 
 class gdPluginChooser : public gdWindow

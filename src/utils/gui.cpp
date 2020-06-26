@@ -268,6 +268,22 @@ std::string removeFltkChars(const std::string& s)
 /* -------------------------------------------------------------------------- */
 
 
+std::string truncate(const std::string& s, Pixel width)
+{
+	if (getStringWidth(s) <= width) 
+		return s;
+	
+	std::string tmp  = s;
+	std::size_t size = tmp.size();
+	while (getStringWidth(tmp) > width)
+		tmp.resize(--size);
+
+	return tmp + "...";
+}
+
+/* -------------------------------------------------------------------------- */
+
+
 int centerWindowX(int w)
 {
 	return (Fl::w() / 2) - (w / 2);

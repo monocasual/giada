@@ -31,17 +31,23 @@
 
 #include <array>
 #include "core/types.h"
-#include "core/const.h"
 
 
 namespace giada {
 namespace m
 {
+/* AudioBuffer
+A class that holds a buffer filled with audio data. NOTE: currently it only
+supports 2 channels (stereo). Give it a mono stream and it will convert it to
+stereo. Give it a multichannel stream and it will throw an assertion. */
+
 class AudioBuffer
 {
 public:
+	
+	static constexpr int NUM_CHANS = 2;
 
-	using Pan = std::array<float, G_MAX_IO_CHANS>;
+	using Pan = std::array<float, NUM_CHANS>;
 
 	/* AudioBuffer (1)
 	Creates an empty (and invalid) audio buffer. */
@@ -82,24 +88,36 @@ public:
 	void alloc(Frame size, int channels);
 	void free();
 
-	/* copyData
+	/* copyData (1)
 	Copies 'frames' frames from the new 'data' into m_data, and fills m_data 
-	starting from frame 'offset'. The new data MUST contain	the same number of 
-	channels than m_channels. */
+	starting from frame 'offset'. The new data MUST NOT contain more than
+	NUM_CHANS channels. If channels < NUM_CHANS, they will be spread over the
+	stereo buffer. */
 
-	void copyData(const float* data, Frame frames, int offset=0);
+	void copyData(const float* data, Frame frames, int channels=NUM_CHANS, int offset=0);
+
+	/* copyData (2)
+	Copies buffer 'b' onto this one. If 'b' has less channels than this one,
+	they will be spread over the current ones. Buffer 'b' MUST NOT contain more
+	channels than this one.  */
 
 	void copyData(const AudioBuffer& b, float gain=1.0f);
+
+	/* addData
+	Merges audio data from buffer 'b' onto this one. Applies optional gain and
+	pan if needed. */
+
 	void addData(const AudioBuffer& b, float gain=1.0f, Pan pan={1.0f, 1.0f});
 
 	/* setData
-	Borrow 'data' as new m_data. Makes sure not to delete the data 'data' points
+	Views 'data' as new m_data. Makes sure not to delete the data 'data' points
 	to while using it. Set it back to nullptr when done. */
 
 	void setData(float* data, Frame size, int channels);
 
 	/* moveData
-	Moves data held by 'b' into this buffer. Then 'b' becomes an empty buffer. */
+	Moves data held by 'b' into this buffer. Then 'b' becomes an empty buffer.
+	TODO - add move constructor instead! */
 	 
 	void moveData(AudioBuffer& b);
 

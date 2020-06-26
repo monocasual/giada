@@ -161,12 +161,14 @@ int openDevice()
 	outParams.nChannels    = G_MAX_IO_CHANS;
 	outParams.firstChannel = conf::conf.channelsOut * G_MAX_IO_CHANS; // chan 0=0, 1=2, 2=4, ...
 
-	/* inDevice can be disabled. */
+	/* Input device can be disabled. Unlike the output, here we are using all
+	channels and let the user choose which one to record from in the configuration
+	panel. */
 
 	if (conf::conf.soundDeviceIn != -1) {
 		inParams.deviceId     = conf::conf.soundDeviceIn;
-		inParams.nChannels    = G_MAX_IO_CHANS;
-		inParams.firstChannel = conf::conf.channelsIn * G_MAX_IO_CHANS;   // chan 0=0, 1=2, 2=4, ...
+		inParams.nChannels    = conf::conf.channelsInCount;
+		inParams.firstChannel = conf::conf.channelsInStart;
 		inputEnabled = true;
 	}
 	else

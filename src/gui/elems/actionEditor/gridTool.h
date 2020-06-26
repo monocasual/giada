@@ -33,13 +33,13 @@
 #include "core/types.h"
 
 
-class geChoice;
 class geCheck;
 
 
 namespace giada {
 namespace v
 {
+class geChoice;
 class geGridTool : public Fl_Group
 {
 public:

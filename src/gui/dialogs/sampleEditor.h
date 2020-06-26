@@ -35,7 +35,6 @@
 
 
 class geButton;
-class geChoice;
 class geCheck;
 class geBox;
 class geButton;
@@ -49,6 +48,7 @@ class Wave;
 }
 namespace v 
 {
+class geChoice;
 class geVolumeTool;
 class geWaveTools;
 class geBoostTool;

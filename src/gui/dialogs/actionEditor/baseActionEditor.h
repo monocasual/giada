@@ -34,7 +34,6 @@
 #include "gui/dialogs/window.h"
 
 
-class geChoice;
 class geButton;
 
 
@@ -46,6 +45,7 @@ struct Action;
 }
 namespace v
 {
+class geChoice;
 class geGridTool;
 class geScrollPack;
 class gdBaseActionEditor : public gdWindow

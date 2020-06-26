@@ -34,12 +34,12 @@
 
 
 class geButton;
-class geChoice;
 
 
 namespace giada {
 namespace v
 {
+class geChoice;
 class geMainTimer : public geGroup
 {
 public:

@@ -138,7 +138,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 			break;
 	}
 
-#elif defined (__APPLE__)
+#elif defined(__APPLE__)
 
 	if (m::kernelAudio::hasAPI(RtAudio::MACOSX_CORE))
 		soundsys->add("CoreAudio");
@@ -200,7 +200,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	buffersize->add("1024");
 	buffersize->add("2048");
 	buffersize->add("4096");
-	buffersize->showItem(u::string::iToString(m::conf::conf.buffersize).c_str());
+	buffersize->showItem(std::to_string(m::conf::conf.buffersize).c_str());
 
 	rsmpQuality->add("Sinc best quality (very slow)");
 	rsmpQuality->add("Sinc medium quality (slow)");
@@ -339,11 +339,18 @@ void geTabAudio::fetchInChans(int menuItem)
 		channelsIn->value(0);
 		return;
 	}
-	for (unsigned i=0; i<chs; i+=2) {
-		std::string tmp = u::string::iToString(i+1) + "-" + u::string::iToString(i+2);
-		channelsIn->add(tmp.c_str());
-	}
-	channelsIn->value(m::conf::conf.channelsIn);
+
+	/* Dirty trick for stereo inputs: indexes start from 1000. */
+
+	for (unsigned i = 0; i < chs; i++) 
+		channelsIn->addItem(std::to_string(i + 1).c_str(), i + 1);
+	for (unsigned i = 0; i < chs; i += 2)
+		channelsIn->addItem((std::to_string(i + 1) + "-" + std::to_string(i + 2)).c_str(), i + 1001);
+
+	if (m::conf::conf.channelsInCount == 1)
+		channelsIn->showItem(m::conf::conf.channelsInStart + 1);
+	else
+		channelsIn->showItem(m::conf::conf.channelsInStart + 1001);
 }
 
 
@@ -496,7 +503,7 @@ void geTabAudio::save()
 	else if (text == "WASAPI")
 		m::conf::conf.soundSystem = G_SYS_API_WASAPI;
 
-#elif defined (__APPLE__)
+#elif defined(__APPLE__)
 
 	else if (text == "CoreAudio")
 		m::conf::conf.soundSystem = G_SYS_API_CORE;
@@ -505,12 +512,13 @@ void geTabAudio::save()
 
 	/* use the device name to search into the drop down menu's */
 
-	m::conf::conf.soundDeviceOut = m::kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
-	m::conf::conf.soundDeviceIn  = m::kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
-	m::conf::conf.channelsOut    = channelsOut->value();
-	m::conf::conf.channelsIn     = channelsIn->value();
-	m::conf::conf.limitOutput    = limitOutput->value();
-	m::conf::conf.rsmpQuality    = rsmpQuality->value();
+	m::conf::conf.soundDeviceOut  = m::kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
+	m::conf::conf.soundDeviceIn   = m::kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
+	m::conf::conf.channelsOut     = channelsOut->value();
+	m::conf::conf.channelsInCount = channelsIn->getSelectedId() < 1000 ? 1 : 2;
+	m::conf::conf.channelsInStart = channelsIn->getSelectedId() - (m::conf::conf.channelsInCount == 1 ? 1 : 1001);
+	m::conf::conf.limitOutput     = limitOutput->value();
+	m::conf::conf.rsmpQuality     = rsmpQuality->value();
 
 	/* if sounddevOut is disabled (because of system change e.g. alsa ->
 	 * jack) its value is equal to -1. Change it! */

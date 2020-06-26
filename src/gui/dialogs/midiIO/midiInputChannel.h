@@ -37,12 +37,12 @@
 
 
 class geCheck;
-class geChoice;
 
 
 namespace giada {
 namespace v 
 {
+class geChoice;
 class geScrollPack;
 class geChannelLearnerPack : public geMidiLearnerPack
 {

@@ -40,7 +40,6 @@ class geTabMisc;
 class geTabPlugins;
 #endif
 class geButton;
-class geChoice;
 class geCheck;
 class geInput;
 class geRadio;
@@ -50,6 +49,7 @@ class geBox;
 namespace giada {
 namespace v 
 {
+class geChoice;
 class gdConfig : public gdWindow
 {
 public:

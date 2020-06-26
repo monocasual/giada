@@ -32,13 +32,13 @@
 #include <FL/Fl_Group.H>
 
 
-class geChoice;
 class geCheck;
 
 
 namespace giada {
 namespace v
 {
+class geChoice;
 class geTabMidi : public Fl_Group
 {
 public:

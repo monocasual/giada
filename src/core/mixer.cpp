@@ -58,7 +58,7 @@ Working buffer for audio recording. */
 AudioBuffer recBuffer_;
 
 /* inBuffer_
-Working buffer for input channel. */
+Working buffer for input channel. Used for the in->out bridge. */
 
 AudioBuffer inBuffer_;
 
@@ -119,7 +119,8 @@ void lineInRec_(const AudioBuffer& inBuf)
 /* -------------------------------------------------------------------------- */
 
 /* processLineIn
-Computes line in peaks, plus handles the internal working buffer for input. */
+Computes line in peaks and prepares the internal working buffer for input
+recording. */
 
 void processLineIn_(const AudioBuffer& inBuf)
 {
@@ -134,7 +135,9 @@ void processLineIn_(const AudioBuffer& inBuf)
 	}
 
 	/* Prepare the working buffer for input stream, which will be processed 
-	later on by the Master Input Channel with plug-ins.  */
+	later on by the Master Input Channel with plug-ins. */
+	
+	assert(inBuf.countChannels() <= inBuffer_.countChannels());
 
 	model::MixerLock lock(model::mixer);
 	inBuffer_.copyData(inBuf, mh::getInVol());
@@ -342,9 +345,9 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 #endif
 
 	AudioBuffer out, in;
-	out.setData((float*) outBuf, bufferSize, G_MAX_IO_CHANS);
+	out.setData(static_cast<float*>(outBuf), bufferSize, G_MAX_IO_CHANS);
 	if (kernelAudio::isInputEnabled())
-		in.setData((float*) inBuf, bufferSize, G_MAX_IO_CHANS);
+		in.setData(static_cast<float*>(inBuf), bufferSize, conf::conf.channelsInCount);
 
 	/* Reset peak computation. */
 

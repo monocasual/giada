@@ -27,19 +27,40 @@
 
 #include <string>
 #include <FL/fl_draw.H>
-#include "../../../core/const.h"
+#include "core/const.h"
+#include "utils/gui.h"
+#include "utils/vector.h"
 #include "choice.h"
 
 
-geChoice::geChoice(int x, int y, int w, int h, const char *l, bool ang)
-  : Fl_Choice(x, y, w, h, l), angle(ang)
+namespace giada {
+namespace v 
 {
-  labelsize(G_GUI_FONT_SIZE_BASE);
-  labelcolor(G_COLOR_LIGHT_2);
-  box(FL_BORDER_BOX);
-  textsize(G_GUI_FONT_SIZE_BASE);
-  textcolor(G_COLOR_LIGHT_2);
-  color(G_COLOR_GREY_2);
+geChoice::geChoice(int x, int y, int w, int h, const char* l, bool ang)
+: Fl_Choice(x, y, w, h, l)
+, angle    (ang)
+{
+	labelsize(G_GUI_FONT_SIZE_BASE);
+	labelcolor(G_COLOR_LIGHT_2);
+	box(FL_BORDER_BOX);
+	textsize(G_GUI_FONT_SIZE_BASE);
+	textcolor(G_COLOR_LIGHT_2);
+	color(G_COLOR_GREY_2);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geChoice::cb_onChange(Fl_Widget* w, void* p) { (static_cast<geChoice*>(p))->cb_onChange(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geChoice::cb_onChange()
+{
+	if (onChange != nullptr) onChange(getSelectedId());
 }
 
 
@@ -48,38 +69,50 @@ geChoice::geChoice(int x, int y, int w, int h, const char *l, bool ang)
 
 void geChoice::draw()
 {
-  fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);              // bg
-  fl_rect(x(), y(), w(), h(), (Fl_Color) G_COLOR_GREY_4);    // border
-  if (angle)
-    fl_polygon(x()+w()-8, y()+h()-1, x()+w()-1, y()+h()-8, x()+w()-1, y()+h()-1);
+	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);              // bg
+	fl_rect(x(), y(), w(), h(), (Fl_Color) G_COLOR_GREY_4);    // border
+	if (angle)
+		fl_polygon(x()+w()-8, y()+h()-1, x()+w()-1, y()+h()-8, x()+w()-1, y()+h()-1);
 
-  /* pick up the text() from the selected item (value()) and print it in
-   * the box and avoid overflows */
+	/* pick up the text() from the selected item (value()) and print it in
+	 * the box and avoid overflows */
 
-  fl_color(!active() ? G_COLOR_GREY_4 : G_COLOR_LIGHT_2);
-  if (value() != -1) {
-    if (fl_width(text(value())) < w()-8) {
-      fl_draw(text(value()), x(), y(), w(), h(), FL_ALIGN_CENTER);
-    }
-    else {
-      std::string tmp = text(value());
-      int size        = tmp.size();
-      while (fl_width(tmp.c_str()) >= w()-16) {
-        tmp.resize(size);
-        size--;
-      }
-      tmp += "...";
-      fl_draw(tmp.c_str(), x(), y(), w(), h(), FL_ALIGN_CENTER);
-    }
-
-  }
+	fl_color(!active() ? G_COLOR_GREY_4 : G_COLOR_LIGHT_2);
+	if (value() != -1) 
+		fl_draw(u::gui::truncate(text(value()), w()-16).c_str(), x(), y(), w(), h(), FL_ALIGN_CENTER);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geChoice::showItem(const char *c)
+ID geChoice::getSelectedId() const
 {
-  value(find_index(c));
+	return ids.at(value());	
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geChoice::addItem(const std::string& label, ID id)
+{
+	Fl_Choice::add(label.c_str(), 0, cb_onChange, static_cast<void*>(this));
+	ids.push_back(id);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geChoice::showItem(const char* c)
+{
+	value(find_index(c));
+}
+
+
+void geChoice::showItem(ID id)
+{
+	value(u::vector::indexOf(ids, id));
+}
+}}

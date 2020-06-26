@@ -45,6 +45,7 @@ void geBaseButton::trimLabel()
 		return;
 
 	std::string out;
+	/* TODO --- use u::gui::truncate */
 	if (w() > 20) {
 		out = initLabel;
 		int len = initLabel.size();

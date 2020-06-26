@@ -135,7 +135,8 @@ bool read()
 	conf.soundDeviceOut        =  j.value(CONF_KEY_SOUND_DEVICE_OUT, conf.soundDeviceOut);
 	conf.soundDeviceIn         =  j.value(CONF_KEY_SOUND_DEVICE_IN, conf.soundDeviceIn);
 	conf.channelsOut           =  j.value(CONF_KEY_CHANNELS_OUT, conf.channelsOut);
-	conf.channelsIn            =  j.value(CONF_KEY_CHANNELS_IN, conf.channelsIn);
+	conf.channelsInCount       =  j.value(CONF_KEY_CHANNELS_IN_COUNT, conf.channelsInCount);
+	conf.channelsInStart       =  j.value(CONF_KEY_CHANNELS_IN_START, conf.channelsInStart);
 	conf.samplerate            =  j.value(CONF_KEY_SAMPLERATE, conf.samplerate);
 	conf.buffersize            =  j.value(CONF_KEY_BUFFER_SIZE, conf.buffersize);
 	conf.limitOutput           =  j.value(CONF_KEY_LIMIT_OUTPUT, conf.limitOutput);
@@ -229,7 +230,8 @@ bool write()
 	j[CONF_KEY_SOUND_DEVICE_OUT]          = conf.soundDeviceOut;
 	j[CONF_KEY_SOUND_DEVICE_IN]           = conf.soundDeviceIn;
 	j[CONF_KEY_CHANNELS_OUT]              = conf.channelsOut;
-	j[CONF_KEY_CHANNELS_IN]               = conf.channelsIn;
+	j[CONF_KEY_CHANNELS_IN_COUNT]         = conf.channelsInCount;
+	j[CONF_KEY_CHANNELS_IN_START]         = conf.channelsInStart;
 	j[CONF_KEY_SAMPLERATE]                = conf.samplerate;
 	j[CONF_KEY_BUFFER_SIZE]               = conf.buffersize;
 	j[CONF_KEY_LIMIT_OUTPUT]              = conf.limitOutput;

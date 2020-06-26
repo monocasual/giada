@@ -32,7 +32,6 @@
 #include <FL/Fl_Group.H>
 
 
-class geChoice;
 class geCheck;
 class geButton;
 class geInput;
@@ -41,6 +40,7 @@ class geInput;
 namespace giada {
 namespace v
 {
+class geChoice;
 class geTabAudio : public Fl_Group
 {
 public:

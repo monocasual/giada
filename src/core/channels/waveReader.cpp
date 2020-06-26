@@ -144,7 +144,7 @@ Frame WaveReader::fillCopy(AudioBuffer& dest, Frame start, Frame offset) const
 	if (used > wave->getSize() - start)
 		used = wave->getSize() - start;
 
-	dest.copyData(wave->getFrame(start), used, offset);
+	dest.copyData(wave->getFrame(start), used, G_MAX_IO_CHANS, offset);
 
 	return used;
 }

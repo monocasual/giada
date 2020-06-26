@@ -29,21 +29,37 @@
 #define GE_CHOICE_H
 
 
+#include <functional>
 #include <FL/Fl_Choice.H>
+#include "core/types.h"
 
 
+namespace giada {
+namespace v 
+{
 class geChoice : public Fl_Choice
 {
 public:
 
-	geChoice(int X,int Y,int W,int H,const char *L=0, bool angle=true);
-	void draw();
+	geChoice(int x, int y, int w, int h, const char* l=0, bool angle=true);
+	void draw() override;
 
-	void showItem(const char *c);
+	ID getSelectedId() const;
+
+	void addItem(const std::string& label, ID id);
+	void showItem(const char* c);
+	void showItem(ID id);
+
+	std::function<void(ID)> onChange = nullptr;
+
+private:
+
+	static void cb_onChange(Fl_Widget* w, void* p);
+	void cb_onChange();
 
 	bool angle;
-	int  id;
+	std::vector<ID> ids;
 };
-
+}}
 
 #endif
