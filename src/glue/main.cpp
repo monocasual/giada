@@ -163,7 +163,7 @@ IO getIO()
 	namespace mm = m::model;
 
 	mm::ChannelsLock cl(mm::channels);
-	mm::MixerLock        ml(mm::mixer);
+	mm::MixerLock    ml(mm::mixer);
 
 	return IO(mm::get(mm::channels, m::mixer::MASTER_OUT_CHANNEL_ID), 
 	          mm::get(mm::channels, m::mixer::MASTER_IN_CHANNEL_ID),
@@ -275,6 +275,20 @@ void clearAllActions()
 void setInToOut(bool v)
 {
 	m::mh::setInToOut(v);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void toggleRecOnSignal()
+{
+	/* Can't set RecTriggerMode::SIGNAL while sequencer is running, in order
+	to prevent mistakes while live recording. */
+		
+	if (m::conf::conf.recTriggerMode == RecTriggerMode::NORMAL && m::clock::isRunning())
+		return;
+	m::conf::conf.recTriggerMode = m::conf::conf.recTriggerMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
 }
 
 

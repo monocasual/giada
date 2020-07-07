@@ -51,7 +51,7 @@ geMainTransport::geMainTransport(int x, int y)
 	rewind         = new geButton      (0, 0, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
 	play           = new geStatusButton(0, 0, 25, 25, play_xpm, pause_xpm);
 	spacer1        = new geBox         (0, 0, 10, 25);
-	recTriggerMode = new geButton      (0, 0, 15, 25, "", recTriggerModeOff_xpm, recTriggerModeOn_xpm);
+	recTriggerMode = new geStatusButton(0, 0, 15, 25, recTriggerModeOff_xpm, recTriggerModeOn_xpm);
 	recAction      = new geStatusButton(0, 0, 25, 25, recOff_xpm, recOn_xpm);
 	recInput       = new geStatusButton(0, 0, 25, 25, inputRecOff_xpm, inputRecOn_xpm);
 	spacer2        = new geBox         (0, 0, 10, 25);
@@ -81,10 +81,8 @@ geMainTransport::geMainTransport(int x, int y)
 		c::events::toggleInputRecording();
 	});
 
-	recTriggerMode->value(static_cast<int>(m::conf::conf.recTriggerMode));
-	recTriggerMode->type(FL_TOGGLE_BUTTON);
 	recTriggerMode->callback([](Fl_Widget* w, void* v) { 
-		m::conf::conf.recTriggerMode = static_cast<RecTriggerMode>(static_cast<geButton*>(w)->value());
+		c::main::toggleRecOnSignal();
 	});
 
 	metronome->type(FL_TOGGLE_BUTTON);
@@ -103,5 +101,6 @@ void geMainTransport::refresh()
 	recAction->setStatus(m::recManager::isRecordingAction());
 	recInput->setStatus(m::recManager::isRecordingInput());
 	metronome->setStatus(m::sequencer::isMetronomeOn());
+	recTriggerMode->setStatus(m::conf::conf.recTriggerMode == RecTriggerMode::SIGNAL);
 }
 }} // giada::v::

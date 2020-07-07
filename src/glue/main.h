@@ -29,6 +29,9 @@
 #define G_MAIN_H
 
 
+#include "core/types.h"
+
+
 namespace giada {
 namespace m 
 {
@@ -96,6 +99,8 @@ void clearAllActions();
 Enables the "hear what you playing" feature. */
 
 void setInToOut(bool v);
+
+void toggleRecOnSignal();
 
 /* closeProject
 Resets Giada to init state. If resetGui also refresh all widgets. If 

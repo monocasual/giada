@@ -53,7 +53,7 @@ private:
 	geButton* rewind;
 	geStatusButton* play;
 	geBox* spacer1;	
-	geButton* recTriggerMode;
+	geStatusButton* recTriggerMode;
 	geStatusButton* recAction;
 	geStatusButton* recInput;
 	geBox* spacer2;

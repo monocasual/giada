@@ -130,6 +130,7 @@ void processLineIn_(const AudioBuffer& inBuf)
 	peakIn.store(inBuf.getPeak());
 
 	if (signalCb_ != nullptr && u::math::linearToDB(peakIn) > conf::conf.recTriggerLevel) {
+G_DEBUG("Signal > threshold!");
 		signalCb_();
 		signalCb_ = nullptr;
 	}

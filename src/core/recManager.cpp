@@ -73,6 +73,7 @@ bool startActionRec_()
 		return false;
 	clock::setStatus(ClockStatus::RUNNING);
 	sequencer::start();
+	m::conf::conf.recTriggerMode = RecTriggerMode::NORMAL;
 	return true;
 }
 
@@ -86,6 +87,7 @@ bool startInputRec_()
 		return false;
 	mixer::startInputRec();
 	sequencer::start();
+	m::conf::conf.recTriggerMode = RecTriggerMode::NORMAL;
 	return true;
 }
 } // {anonymous}
@@ -182,12 +184,14 @@ void toggleActionRec(RecTriggerMode m)
 bool startInputRec(RecTriggerMode mode)
 {
 	if (mode == RecTriggerMode::NORMAL) {
+G_DEBUG("Start input rec, NORMAL mode");
 		if (!startInputRec_())
 			return false;
 		setRecordingInput_(true);
 		return true;
 	}
-	else {   // RecTriggerMode::SIGNAL
+	else {
+G_DEBUG("Start input rec, SIGNAL mode");
 		if (!mh::hasRecordableSampleChannels())
 			return false;
 		clock::setStatus(ClockStatus::WAITING);

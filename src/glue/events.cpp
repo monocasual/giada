@@ -247,6 +247,7 @@ void divideBeats()
 void startSequencer(Thread t)
 { 
 	pushEvent_({ m::mixer::EventType::SEQUENCER_START, 0 }, t);
+	m::conf::conf.recTriggerMode = RecTriggerMode::NORMAL;
 }
 
 
