@@ -160,7 +160,7 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 
 	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.get());
 	wave->alloc(frames, channels, src.getRate(), src.getBits(), src.getPath());
-	wave->copyData(src.getFrame(a), frames);
+	wave->copyData(src.getFrame(a), frames, channels);
 	wave->setLogical(true);
 
 	u::log::print("[waveManager::createFromWave] new Wave created, %d frames\n", frames);

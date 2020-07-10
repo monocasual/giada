@@ -79,10 +79,9 @@ public:
 	
 	/* copyData
 	Copies 'frames' frames from the new 'data' into m_data, starting from frame 
-	'offset'. It takes for granted that the new data contains the same number of 
-	channels than m_channels. */
+	'offset'. */
 
-	void copyData(const float* data, int frames, int offset=0);
+	void copyData(const float* data, int frames, int channels, int offset=0);
 	void copyData(const AudioBuffer& b);
 
 	void alloc(int size, int channels, int rate, int bits, const std::string& path);

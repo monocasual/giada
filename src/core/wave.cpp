@@ -155,9 +155,9 @@ void Wave::setPath(const std::string& p, int id)
 /* -------------------------------------------------------------------------- */
 
 
-void Wave::copyData(const float* data, int frames, int offset)
+void Wave::copyData(const float* data, int frames, int channels, int offset)
 {
-	buffer.copyData(data, frames, offset);
+	buffer.copyData(data, frames, channels, offset);
 }
 
 
