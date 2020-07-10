@@ -32,14 +32,6 @@ TEST_CASE("AudioBuffer")
 			REQUIRE(buffer.countChannels() == 2);
 		}		
 
-		SECTION("test odd channels count")
-		{
-			buffer.alloc(BUFFER_SIZE, 7);
-			REQUIRE(buffer.countFrames() == BUFFER_SIZE);
-			REQUIRE(buffer.countSamples() == BUFFER_SIZE * 7);
-			REQUIRE(buffer.countChannels() == 7);
-		}
-
 		buffer.free();
 
 		REQUIRE(buffer.countFrames() == 0);

@@ -1,4 +1,5 @@
 #include <memory>
+#include <samplerate.h>
 #include "../src/core/waveManager.h"
 #include "../src/core/wave.h"
 #include "../src/core/const.h"
@@ -21,7 +22,8 @@ TEST_CASE("waveManager")
 
 	SECTION("test creation")
 	{
-		waveManager::Result res = waveManager::createFromFile("tests/resources/test.wav");
+		waveManager::Result res = waveManager::createFromFile("tests/resources/test.wav",
+			/*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, /*quality=*/SRC_LINEAR);
 
 		REQUIRE(res.status == G_RES_OK);
 		REQUIRE(res.wave->getRate() == G_SAMPLE_RATE);
@@ -44,7 +46,8 @@ TEST_CASE("waveManager")
 
 	SECTION("test resampling")
 	{
-		waveManager::Result res = waveManager::createFromFile("tests/resources/test.wav");
+		waveManager::Result res = waveManager::createFromFile("tests/resources/test.wav",
+			/*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, /*quality=*/SRC_LINEAR);
 
 		int oldSize = res.wave->getSize();
 		waveManager::resample(*res.wave.get(), 1, G_SAMPLE_RATE * 2);

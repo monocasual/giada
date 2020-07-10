@@ -64,15 +64,6 @@ TEST_CASE("waveFx")
 		for (int i=a; i<b; i++)
 			for (int k=0; k<getWave(WAVE_STEREO_ID).getChannels(); k++)
 				REQUIRE(getWave(WAVE_STEREO_ID)[i][k] == 0.0f);
-
-		SECTION("test silence (mono)")
-		{
-			wfx::silence(getWave(WAVE_MONO_ID).id, a, b);
-
-			for (int i=a; i<b; i++)
-				for (int k=0; k<getWave(WAVE_MONO_ID).getChannels(); k++)
-					REQUIRE(getWave(WAVE_MONO_ID)[i][k] == 0.0f);
-		}
 	}
 
 	SECTION("test cut")
@@ -85,14 +76,6 @@ TEST_CASE("waveFx")
 		wfx::cut(getWave(WAVE_STEREO_ID).id, a, b);
 
 		REQUIRE(getWave(WAVE_STEREO_ID).getSize() == prevSize - range);
-
-		SECTION("test cut (mono)")
-		{
-			prevSize = getWave(WAVE_MONO_ID).getSize();
-			wfx::cut(getWave(WAVE_MONO_ID).id, a, b);
-
-			REQUIRE(getWave(WAVE_MONO_ID).getSize() == prevSize - range);
-		}
 	}
 
 	SECTION("test trim")
@@ -104,13 +87,6 @@ TEST_CASE("waveFx")
 		wfx::trim(getWave(WAVE_STEREO_ID).id, a, b);
 
 		REQUIRE(getWave(WAVE_STEREO_ID).getSize() == area);
-
-		SECTION("test trim (mono)")
-		{
-			wfx::trim(getWave(WAVE_MONO_ID).id, a, b);
-
-			REQUIRE(getWave(WAVE_MONO_ID).getSize() == area);
-		}
 	}
 
 	SECTION("test fade")
@@ -125,15 +101,6 @@ TEST_CASE("waveFx")
 		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(a)[1] == 0.0f);
 		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(b)[0] == 0.0f);
 		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(b)[1] == 0.0f);
-
-		SECTION("test fade (mono)")
-		{
-			wfx::fade(getWave(WAVE_MONO_ID).id, a, b, wfx::Fade::IN);
-			wfx::fade(getWave(WAVE_MONO_ID).id, a, b, wfx::Fade::OUT);
-
-			REQUIRE(getWave(WAVE_MONO_ID).getFrame(a)[0] == 0.0f);
-			REQUIRE(getWave(WAVE_MONO_ID).getFrame(b)[0] == 0.0f);		
-		}
 	}
 
 	SECTION("test smooth")
@@ -147,12 +114,5 @@ TEST_CASE("waveFx")
 		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(a)[1] == 0.0f);
 		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(b)[0] == 0.0f);
 		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(b)[1] == 0.0f);
-		
-		SECTION("test smooth (mono)")
-		{
-			wfx::smooth(getWave(WAVE_MONO_ID).id, a, b);
-			REQUIRE(getWave(WAVE_MONO_ID).getFrame(a)[0] == 0.0f);
-			REQUIRE(getWave(WAVE_MONO_ID).getFrame(b)[0] == 0.0f);		
-		}
 	}
 }
