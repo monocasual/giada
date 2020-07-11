@@ -66,9 +66,11 @@ public:
     void loadWave(const Wave* w);
     
     /* setWave
-    Just sets the pointer to a Wave object. Used during de-serialization. */
+    Just sets the pointer to a Wave object. Used during de-serialization. The
+    ratio is used to adjust begin/end points in case of patch vs. conf sample
+    rate mismatch. */
 
-    void setWave(const Wave& w);
+    void setWave(const Wave& w, float samplerateRatio);
 
     /* setInvalidWave
     Same as setWave(nullptr) plus the invalid ID (i.e. 0). */

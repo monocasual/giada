@@ -42,16 +42,6 @@ namespace giada {
 namespace m {
 namespace model
 {
-namespace
-{
-} // {anonymous}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
 void store(patch::Patch& patch)
 {
 #ifdef WITH_VST
@@ -66,7 +56,8 @@ void store(patch::Patch& patch)
 	patch.beats      = clock.get()->beats;
 	patch.bpm        = clock.get()->bpm;
 	patch.quantize   = clock.get()->quantize;
-	patch.metronome  = sequencer::isMetronomeOn();  // TODO - not here
+	patch.metronome  = sequencer::isMetronomeOn();
+	patch.samplerate = conf::conf.samplerate;
 
 #ifdef WITH_VST
 	for (const Plugin* p : plugins) 
@@ -143,12 +134,14 @@ void load(const patch::Patch& patch)
 
 	ChannelsLock cl(channels);
 	WavesLock    wl(waves);
+
+	float samplerateRatio = conf::conf.samplerate / static_cast<float>(patch::patch.samplerate);
 	
 	for (Channel* c : channels) {
 		if (!c->samplePlayer)
 			continue;
 		if (exists(waves, c->samplePlayer->getWaveId()))
-			c->samplePlayer->setWave(get(waves, c->samplePlayer->getWaveId()));
+			c->samplePlayer->setWave(get(waves, c->samplePlayer->getWaveId()), samplerateRatio);
 		else
 			c->samplePlayer->setInvalidWave();
 	}

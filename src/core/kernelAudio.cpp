@@ -138,7 +138,7 @@ int openDevice()
 		return 0;
 	}
 
-	u::log::print("[KA] Opening devices %d (out), %d (in), f=%d...\n",
+	u::log::print("[KA] Opening device out=%d, in=%d, samplerate=%d\n",
     conf::conf.soundDeviceOut, conf::conf.soundDeviceIn, conf::conf.samplerate);
 
 	numDevs = rtSystem->getDeviceCount();
@@ -184,20 +184,20 @@ int openDevice()
 
 	if (api == G_SYS_API_JACK) {
 		conf::conf.samplerate = getFreq(conf::conf.soundDeviceOut, 0);
-		u::log::print("[KA] JACK in use, freq = %d\n", conf::conf.samplerate);
+		u::log::print("[KA] JACK in use, samplerate=%d\n", conf::conf.samplerate);
 	}
 
 #endif
 
 	try {
 		rtSystem->openStream(
-			&outParams,                                       // output params
+			&outParams,                                            // output params
 			conf::conf.soundDeviceIn != -1 ? &inParams : nullptr,  // input params if inDevice is selected
-			RTAUDIO_FLOAT32,                                  // audio format
+			RTAUDIO_FLOAT32,                                       // audio format
 			conf::conf.samplerate,                                 // sample rate
-			&realBufsize,                                     // buffer size in byte
-			&mixer::masterPlay,                               // audio callback
-			nullptr,                                          // user data (unused)
+			&realBufsize,                                          // buffer size in byte
+			&mixer::masterPlay,                                    // audio callback
+			nullptr,                                               // user data (unused)
 			&options);
 		
 		model::onSwap(model::kernel, [](model::Kernel& k) {

@@ -181,10 +181,19 @@ void SamplePlayer::loadWave(const Wave* w)
 /* -------------------------------------------------------------------------- */
 
 
-void SamplePlayer::setWave(const Wave& w)
+void SamplePlayer::setWave(const Wave& w, float samplerateRatio)
 {
     m_waveReader.wave = &w;
     m_waveId = w.id;
+
+    if (samplerateRatio != 1.0f) {
+        Frame begin = state->begin.load();
+        Frame end   = state->end.load();
+        Frame shift = state->shift.load();
+        state->begin.store(begin * samplerateRatio);
+        state->end.store(end * samplerateRatio);
+        state->shift.store(shift * samplerateRatio);
+    }
 }
 
 
