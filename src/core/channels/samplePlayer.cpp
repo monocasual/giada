@@ -103,8 +103,6 @@ void SamplePlayer::render(AudioBuffer& out) const
     if (m_waveReader.wave == nullptr || !m_channelState->isPlaying())
         return;
 
-    /* Advance SampleController: this is needed for quantization. */
-
     Frame begin   = state->begin.load();
     Frame end     = state->end.load();
     Frame tracker = state->tracker.load();
@@ -134,12 +132,13 @@ void SamplePlayer::render(AudioBuffer& out) const
     used     = m_waveReader.fill(buffer, tracker, state->offset, pitch);
     tracker += used;
 
-//G_DEBUG ("block=[" << tracker - used << ", " << tracker << ")" << 
-//         ", used=" << used << ", range=[" << begin << ", " << end << ")" <<
-//         ", offset=" << state->offset << ", globalFrame=" << clock::getCurrentFrame());
+G_DEBUG ("block=[" << tracker - used << ", " << tracker << ")" << 
+         ", used=" << used << ", range=[" << begin << ", " << end << ")" <<
+         ", tracker=" << tracker << 
+         ", offset=" << state->offset << ", globalFrame=" << clock::getCurrentFrame());
 
     if (tracker >= end) {
-//G_DEBUG ("last frame tracker=" << tracker);
+G_DEBUG ("last frame tracker=" << tracker);
         tracker = begin;
         m_sampleController.onLastFrame();
         if (shouldLoop()) {
