@@ -112,7 +112,7 @@ void triggerSignalCb_()
 void dispatchKey(int event)
 {
 	/* These events come from the keyboard, not from a direct interaction on the 
-	UI with the mouse/touch. So the 'gui' parameter is set to false. */
+	UI with the mouse/touch. */
 
 	if (event == FL_KEYDOWN) {
 		if (Fl::event_key() == FL_BackSpace && !backspace_) {

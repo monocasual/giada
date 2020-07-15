@@ -85,7 +85,10 @@ void SampleActionRecorder::parse(const mixer::Event& e) const
 			onFirstBeat(); break;
 
 		case mixer::EventType::CHANNEL_TOGGLE_READ_ACTIONS:	
-			toggleReadActions(); break;            
+			toggleReadActions(); break;        
+
+		case mixer::EventType::CHANNEL_KILL_READ_ACTIONS:
+			killReadActions(); break;      
 		
 		default: break;
 	}
@@ -165,6 +168,21 @@ void SampleActionRecorder::toggleReadActions() const
 		stopReadActions(recStatus);
 	else
 		startReadActions();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void SampleActionRecorder::killReadActions() const
+{
+	/* Killing Read Actions, i.e. shift + click on 'R' button is meaninful only 
+	when the conf::treatRecsAsLoops is true. */
+
+	if (!conf::conf.treatRecsAsLoops)
+		return;
+	m_channelState->recStatus.store(ChannelStatus::OFF);
+	m_channelState->readActions.store(false);
 }
 
 

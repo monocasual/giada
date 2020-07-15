@@ -17,6 +17,8 @@
 - Fix wrong sample rate conversion when project rate != system rate 
 - Fix Wrong begin/end sample markers when loading a project with 
   samplerate != system.samplerate 
+- Shift + [click on R button] kills action reading when "Treat one-shot channels
+  with actions as loops" option is on
 
 
 0.16.3 --- 2020 . 06. 15

@@ -64,6 +64,7 @@ private:
     void toggleReadActions() const;
     void startReadActions() const;
     void stopReadActions(ChannelStatus curRecStatus) const;
+    void killReadActions() const;
 
     bool canRecord() const;
 

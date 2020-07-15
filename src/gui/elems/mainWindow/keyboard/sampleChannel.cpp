@@ -331,7 +331,10 @@ void geSampleChannel::cb_openMenu()
 
 void geSampleChannel::cb_readActions()
 {
-	c::events::toggleReadActionsChannel(m_channel.id, Thread::MAIN);
+	if (Fl::event_shift())
+		c::events::killReadActionsChannel(m_channel.id, Thread::MAIN);
+	else
+		c::events::toggleReadActionsChannel(m_channel.id, Thread::MAIN);
 }
 
 

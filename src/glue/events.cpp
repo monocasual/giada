@@ -181,6 +181,12 @@ void toggleReadActionsChannel(ID channelId, Thread t)
 }
 
 
+void killReadActionsChannel(ID channelId, Thread t)
+{
+	pushEvent_({ m::mixer::EventType::CHANNEL_KILL_READ_ACTIONS, 0, {0, channelId} }, t);
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 

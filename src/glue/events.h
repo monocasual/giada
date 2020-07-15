@@ -58,6 +58,7 @@ void toggleMuteChannel       (ID channelId, Thread t);
 void toggleSoloChannel       (ID channelId, Thread t);
 void toggleArmChannel        (ID channelId, Thread t);
 void toggleReadActionsChannel(ID channelId, Thread t);
+void killReadActionsChannel  (ID channelId, Thread t);
 void sendMidiToChannel       (ID channelId, m::MidiEvent e, Thread t);
 
 /* Main*
