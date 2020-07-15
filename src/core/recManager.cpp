@@ -158,12 +158,14 @@ void stopActionRec()
 
 	/* Enable reading actions for Channels that have just been filled with 
 	actions. Start reading right away, without checking whether 
-	conf::treatRecsAsLoops is enabled or not. */
+	conf::treatRecsAsLoops is enabled or not. Same thing for MIDI channels.  */
 
 	for (ID id : channels) {
 		model::onGet(model::channels, id, [](Channel& c)
 		{
 			c.state->readActions.store(true);
+			if (c.getType() == ChannelType::MIDI)
+				c.state->playStatus.store(ChannelStatus::PLAY);
 		});
 	}
 }
