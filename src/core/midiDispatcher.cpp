@@ -282,11 +282,11 @@ void learnMaster_(MidiEvent e, int param, std::function<void()> doneCb)
 			case G_MIDI_IN_START_STOP:  m.startStop  = raw; break;
 			case G_MIDI_IN_ACTION_REC:  m.actionRec  = raw; break;
 			case G_MIDI_IN_INPUT_REC:   m.inputRec   = raw; break;
-			case G_MIDI_IN_METRONOME:   m.volumeIn   = raw; break;
-			case G_MIDI_IN_VOLUME_IN:   m.volumeOut  = raw; break;
-			case G_MIDI_IN_VOLUME_OUT:  m.beatDouble = raw; break;
-			case G_MIDI_IN_BEAT_DOUBLE: m.beatHalf   = raw; break;
-			case G_MIDI_IN_BEAT_HALF:   m.metronome  = raw; break;
+			case G_MIDI_IN_METRONOME:   m.metronome  = raw; break;
+			case G_MIDI_IN_VOLUME_IN:   m.volumeIn   = raw; break;
+			case G_MIDI_IN_VOLUME_OUT:  m.volumeOut  = raw; break;
+			case G_MIDI_IN_BEAT_DOUBLE: m.beatDouble = raw; break;
+			case G_MIDI_IN_BEAT_HALF:   m.beatHalf   = raw; break;
 		}
 	});
 
