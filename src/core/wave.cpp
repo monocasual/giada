@@ -161,10 +161,8 @@ void Wave::copyData(const float* data, int frames, int channels, int offset)
 }
 
 
-void Wave::copyData(const AudioBuffer& b)
-{
-	buffer.copyData(b);
-}
+void Wave::copyData(const AudioBuffer& b) { buffer.copyData(b); }
+void Wave::addData(const AudioBuffer& b)  { buffer.addData(b); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -174,5 +172,4 @@ void Wave::moveData(AudioBuffer& b)
 {
 	buffer.moveData(b);
 }
-
 }}; // giada::m::

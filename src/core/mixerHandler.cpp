@@ -124,10 +124,13 @@ std::vector<ID> getChannelsWithWave_()
 
 std::vector<ID> getRecordableChannels_()
 {
-	return getChannelsIf_([] (const Channel* c)
-	{
-		return c->canInputRec();
-	});
+	return getChannelsIf_([] (const Channel* c) { return c->canInputRec() && !c->hasWave(); });
+}
+
+
+std::vector<ID> getOverdubbableChannels_()
+{
+	return getChannelsIf_([] (const Channel* c) { return c->canInputRec() && c->hasWave(); });
 }
 
 
@@ -145,6 +148,67 @@ void pushWave_(Channel& ch, std::unique_ptr<Wave>&& w)
 
 	model::WavesLock l(model::waves);
 	ch.samplePlayer->loadWave(model::waves.back());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+/* recordChannel_
+Records the current Mixer audio input data into an empty channel. */
+
+void recordChannel_(ID channelId)
+{
+	/* Create a new Wave with audio coming from Mixer's virtual input. */
+
+	std::string filename = "TAKE-" + std::to_string(patch::patch.lastTakeId++) + ".wav";
+
+	std::unique_ptr<Wave> wave = waveManager::createEmpty(clock::getFramesInLoop(), 
+		G_MAX_IO_CHANS, conf::conf.samplerate, filename);
+
+	wave->copyData(mixer::getRecBuffer());
+
+	/* Update Channel with the new Wave. The function pushWave_ will take
+	care of pushing it into the stack first. Also start all channels in
+	LOOP mode. */
+
+	model::onSwap(model::channels, channelId, [&](Channel& c)
+	{
+		pushWave_(c, std::move(wave));
+		if (c.samplePlayer->state->isAnyLoopMode())
+			c.samplePlayer->kickIn(clock::getCurrentFrame());
+	});
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+/* overdubChannel_
+Records the current Mixer audio input data into a channel with an existing
+Wave, overdub mode. */
+
+void overdubChannel_(ID channelId)
+{
+	ID waveId;
+	model::onGet(model::channels, channelId, [&](Channel& c)
+	{
+		waveId = c.samplePlayer->getWaveId();
+	});
+
+	model::onGet(m::model::waves, waveId, [&](Wave& w)
+	{
+		w.addData(mixer::getRecBuffer());
+		w.setLogical(true);
+	});
+
+	/* Start all channels in LOOP mode. */
+
+	model::onGet(model::channels, channelId, [&](Channel& c)
+	{
+		if (c.samplePlayer->state->isAnyLoopMode())
+			c.samplePlayer->kickIn(clock::getCurrentFrame());
+	});
 }
 }; // {anonymous}
 
@@ -406,28 +470,10 @@ has to be overwritten somehow). */
 
 void finalizeInputRec()
 {
-	for (ID id : getRecordableChannels_()) {
-
-		/* Create a new Wave with audio coming from Mixer's virtual input. */
-
-		std::string filename = "TAKE-" + std::to_string(patch::patch.lastTakeId++) + ".wav";
-	
-		std::unique_ptr<Wave> wave = waveManager::createEmpty(clock::getFramesInLoop(), 
-			G_MAX_IO_CHANS, conf::conf.samplerate, filename);
-
-		wave->copyData(mixer::getRecBuffer());
-
-		/* Update Channel with the new Wave. The function pushWave_ will take
-		care of pushing it into the stack first. Also start all channels in
-		LOOP mode. */
-
-		model::onSwap(model::channels, id, [&](Channel& c)
-		{
-			pushWave_(c, std::move(wave));
-			if (c.samplePlayer->state->isAnyLoopMode())
-				c.samplePlayer->kickIn(clock::getCurrentFrame());
-		});			
-	}
+	for (ID id : getRecordableChannels_())
+		recordChannel_(id);
+	for (ID id : getOverdubbableChannels_())
+		overdubChannel_(id);
 
 	mixer::clearRecBuffer();
 }

@@ -325,6 +325,12 @@ bool Channel::isMuted() const
 
 bool Channel::canInputRec() const
 {
-	return samplePlayer && !samplePlayer->hasWave() && state->armed.load() == true;
+	return samplePlayer && state->armed.load() == true;
+}
+
+
+bool Channel::hasWave() const
+{
+	return samplePlayer && samplePlayer->hasWave();
 }
 }} // giada::m::

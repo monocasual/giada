@@ -84,6 +84,11 @@ public:
 	void copyData(const float* data, int frames, int channels, int offset=0);
 	void copyData(const AudioBuffer& b);
 
+	/* addData
+	Merges audio data from buffer 'b' onto this one. */
+
+	void addData(const AudioBuffer& b);
+
 	void alloc(int size, int channels, int rate, int bits, const std::string& path);
 
 	ID id;
