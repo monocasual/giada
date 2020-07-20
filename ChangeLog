@@ -17,10 +17,12 @@
 - Shift + [click on R button] kills action reading when "Treat one-shot channels
   with actions as loops" option is on
 - Start MIDI channels automatically after action recording session
+- Enable overdub mode on sample channel with existing audio data
 - Fix wrong sample rate conversion when project rate != system rate 
 - Fix Wrong begin/end sample markers when loading a project with 
   samplerate != system.samplerate 
 - Fix wrong MIDI learn mapping for master parameters
+- Fix BPM button disabled after audio recording session
 
 
 0.16.3 --- 2020 . 06. 15

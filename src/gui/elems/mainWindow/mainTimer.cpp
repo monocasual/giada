@@ -147,11 +147,12 @@ void geMainTimer::refresh()
 		divider->deactivate();
 	}
 	else {
-		/* Don't reactivate bpm when using JACK. It must stay disabled. */
-
 #if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+		/* Don't reactivate bpm when using JACK. It must stay disabled. */
 		if (m_timer.isUsingJack)
 			bpm->deactivate();
+		else
+			bpm->activate();
 #else
 		bpm->activate();
 #endif
@@ -174,12 +175,9 @@ void geMainTimer::rebuild()
 	setQuantizer(m_timer.quantize);
 
 #if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
-	
 	/* Can't change bpm from within Giada when using JACK. */
-
 	if (m_timer.isUsingJack)
 		bpm->deactivate();
-
 #endif
 }
 
