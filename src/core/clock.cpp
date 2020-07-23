@@ -83,6 +83,10 @@ void recomputeFrames_(model::Clock& c)
 
 	if (c.quantize != 0)
 		quantizerStep_ = c.framesInBeat / c.quantize;
+    
+	int f = currentFrame_.load();   // Set currentFrame to a sane value
+	f = f % c.framesInSeq;
+	currentFrame_.store(f);
 }
 }; // {anonymous}
 
