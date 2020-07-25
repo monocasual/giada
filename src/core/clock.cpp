@@ -84,9 +84,6 @@ void recomputeFrames_(model::Clock& c)
 	if (c.quantize != 0)
 		quantizerStep_ = c.framesInBeat / c.quantize;
     
-	int f = currentFrame_.load();   // Set currentFrame to a sane value
-	f = f % c.framesInSeq;
-	currentFrame_.store(f);
 }
 }; // {anonymous}
 
@@ -249,8 +246,7 @@ void incrCurrentFrame()
 
 	if (c->status == ClockStatus::WAITING) {
 		int f = currentFrameWait_.load() + 1;
-		if (f >= c->framesInLoop)
-				f = 0;
+		f %= c->framesInLoop;
 		currentFrameWait_.store(f);
 		return;
 	}
@@ -258,13 +254,8 @@ void incrCurrentFrame()
 	int f = currentFrame_.load() + 1;
 	int b = currentBeat_.load();
 
-	if (f >= c->framesInLoop) {
-		f = 0;
-		b = 0;
-	}
-	else
-	if (f % c->framesInBeat == 0) // If is on beat
-		b++;
+	f %= c->framesInLoop;
+	b = f / c->framesInBeat;
 	
 	currentFrame_.store(f);
 	currentBeat_.store(b);
