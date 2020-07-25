@@ -83,7 +83,6 @@ void recomputeFrames_(model::Clock& c)
 
 	if (c.quantize != 0)
 		quantizerStep_ = c.framesInBeat / c.quantize;
-    
 }
 }; // {anonymous}
 
