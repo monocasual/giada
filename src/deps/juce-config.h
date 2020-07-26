@@ -2,12 +2,6 @@
 #define JUCE_APPCONFIG_H
 
 
-#ifdef _WIN32
-  #include <sys/types.h>
-  #include <sys/time.h>
-#endif
-
-
 #include "juce/modules/juce_audio_basics/juce_audio_basics.h"
 #include "juce/modules/juce_audio_processors/juce_audio_processors.h"
 #include "juce/modules/juce_core/juce_core.h"

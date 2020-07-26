@@ -55,7 +55,7 @@ enum class SamplePlayerMode : int
 enum class RecTriggerMode : int { NORMAL = 0, SIGNAL };
 
 enum class EventType : int { AUTO = 0, MANUAL };
-};
+}
 
 
 #endif

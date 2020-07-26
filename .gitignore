@@ -27,6 +27,7 @@
 
 # --- misc
 /cmake-build-debug/
+/build
 /make.sh
 /AUTHORS
 /ERRORS
@@ -65,5 +66,4 @@ giada.creator.user
 giada.files
 giada.includes
 /.idea/
-/CMakeLists.txt
 /Session.vim

@@ -25,26 +25,40 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <atomic>
 #include <FL/Fl.H>
 #include "core/init.h"
+#include "gui/dialogs/mainWindow.h"
+#ifdef WITH_TESTS
+	#define CATCH_CONFIG_RUNNER
+	#include <vector>
+	#include <string>
+	#include "catch.hpp"
+	#include "../tests/audioBuffer.cpp"
+	#include "../tests/rcuList.cpp"
+	#include "../tests/recorder.cpp"
+	#include "../tests/utils.cpp"
+	#include "../tests/wave.cpp"
+	#include "../tests/waveFx.cpp"
+	#include "../tests/waveManager.cpp"
+#endif
 
 
-class gdMainWindow* G_MainWin = nullptr;
+class giada::v::gdMainWindow* G_MainWin = nullptr;
 
 
 int main(int argc, char** argv)
 {
-	using namespace giada;
+#ifdef WITH_TESTS
+	std::vector<char*> args(argv, argv + argc);
+	if (args.size() > 1 && strcmp(args[1], "--run-tests") == 0)
+		return Catch::Session().run(args.size() - 1, &args[1]);
+#endif
 
-	m::init::startup(argc, argv);
+	giada::m::init::startup(argc, argv);
 
 	int ret = Fl::run();
 
-	m::init::shutdown();
+	giada::m::init::shutdown();
 
 	return ret;
 }
-
-
-
