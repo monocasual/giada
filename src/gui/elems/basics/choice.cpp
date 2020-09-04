@@ -88,7 +88,7 @@ void geChoice::draw()
 
 ID geChoice::getSelectedId() const
 {
-	return ids.at(value());	
+	return value() == -1 ? 0 : ids.at(value());	
 }
 
 
