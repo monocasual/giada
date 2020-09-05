@@ -29,16 +29,14 @@
 #define GE_MAIN_IO_H
 
 
+#include "gui/elems/soundMeter.h"
 #include "gui/elems/basics/pack.h"
-#include "glue/main.h"
-
-
-class geSoundMeter;
-class geDial;
+#include "gui/elems/basics/dial.h"
+#include "gui/elems/basics/button.h"
 #ifdef WITH_VST
-class geStatusButton;
-class geButton;
+#include "gui/elems/basics/statusButton.h"
 #endif
+#include "glue/main.h"
 
 
 namespace giada {
@@ -62,31 +60,29 @@ public:
 
 private:
 
-	static void cb_outVol     (Fl_Widget* v, void* p);
-	static void cb_inVol      (Fl_Widget* v, void* p);
+	static void cb_outVol (Fl_Widget* v, void* p);
+	static void cb_inVol  (Fl_Widget* v, void* p);
+	static void cb_inToOut(Fl_Widget* v, void* p);
+	void cb_outVol();
+	void cb_inVol();
+	void cb_inToOut();
 #ifdef WITH_VST
 	static void cb_masterFxOut(Fl_Widget* v, void* p);
 	static void cb_masterFxIn (Fl_Widget* v, void* p);
-	static void cb_inToOut    (Fl_Widget* v, void* p);
-#endif
-	void cb_outVol();
-	void cb_inVol();
-#ifdef WITH_VST
 	void cb_masterFxOut();
 	void cb_masterFxIn();
-	void cb_inToOut();
 #endif
 
 	c::main::IO m_io;
 
-	geSoundMeter* outMeter;
-	geSoundMeter* inMeter;
-	geDial*       outVol;
-	geDial*       inVol;
+	geSoundMeter   outMeter;
+	geSoundMeter   inMeter;
+	geDial         outVol;
+	geDial         inVol;
+	geButton       inToOut;
 #ifdef WITH_VST
-  geStatusButton* masterFxOut;
-  geStatusButton* masterFxIn;
-  geButton*       inToOut;
+	geStatusButton masterFxOut;
+	geStatusButton masterFxIn;
 #endif
 };
 }} // giada::v::

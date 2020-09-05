@@ -46,50 +46,40 @@ namespace giada {
 namespace v
 {
 geMainIO::geMainIO(int x, int y)
-: gePack(x, y, Direction::HORIZONTAL)
+: gePack     (x, y, Direction::HORIZONTAL)
+, outMeter   (0, 0, 140, G_GUI_UNIT)
+, inMeter    (0, 0, 140, G_GUI_UNIT)
+, outVol     (0, 0, G_GUI_UNIT, G_GUI_UNIT)
+, inVol      (0, 0, G_GUI_UNIT, G_GUI_UNIT)
+, inToOut    (0, 0, 12, G_GUI_UNIT, "")
+#ifdef WITH_VST
+, masterFxOut(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm)
+, masterFxIn (0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm)
+#endif
 {
-#if defined(WITH_VST)
-
-	masterFxIn  = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
-	inVol       = new geDial        (0, 0, G_GUI_UNIT, G_GUI_UNIT);
-	inMeter     = new geSoundMeter  (0, 0, 140, G_GUI_UNIT);
-	inToOut     = new geButton      (0, 0, 12, G_GUI_UNIT, "");
-	outMeter    = new geSoundMeter  (0, 0, 140, G_GUI_UNIT);
-	outVol      = new geDial        (0, 0, G_GUI_UNIT, G_GUI_UNIT);
-	masterFxOut = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
-	add(masterFxIn);
-	add(inVol);
-	add(inMeter);
-	add(inToOut);
-	add(outMeter);
-	add(outVol);
-	add(masterFxOut);
-
-#else
-
-	inVol    = new geDial      (0, 0, G_GUI_UNIT, G_GUI_UNIT);
-	inMeter  = new geSoundMeter(0, 0, 140, G_GUI_UNIT);
-	outMeter = new geSoundMeter(0, 0, 140, G_GUI_UNIT);
-	outVol   = new geDial      (0, 0, G_GUI_UNIT, G_GUI_UNIT);
-	add(inVol);    
-	add(inMeter);  
-	add(outMeter); 
-	add(outVol);   
-
+#ifdef WITH_VST
+	add(&masterFxIn);
+#endif
+	add(&inVol);
+	add(&inMeter);
+	add(&inToOut);
+	add(&outMeter);
+	add(&outVol);
+#ifdef WITH_VST
+	add(&masterFxOut);
 #endif
 
 	resizable(nullptr);   // don't resize any widget
 
-	outVol->callback(cb_outVol, (void*)this);
-	inVol->callback(cb_inVol, (void*)this);
+	outVol.callback(cb_outVol, (void*)this);
+	inVol.callback(cb_inVol, (void*)this);
+
+	inToOut.callback(cb_inToOut, (void*)this);
+	inToOut.type(FL_TOGGLE_BUTTON);
 
 #ifdef WITH_VST
-
-	masterFxOut->callback(cb_masterFxOut, (void*)this);
-	masterFxIn->callback(cb_masterFxIn, (void*)this);
-	inToOut->callback(cb_inToOut, (void*)this);
-	inToOut->type(FL_TOGGLE_BUTTON);
-
+	masterFxOut.callback(cb_masterFxOut, (void*)this);
+	masterFxIn.callback(cb_masterFxIn, (void*)this);
 #endif
 }
 
@@ -99,10 +89,10 @@ geMainIO::geMainIO(int x, int y)
 
 void geMainIO::cb_outVol     (Fl_Widget* v, void* p) { ((geMainIO*)p)->cb_outVol(); }
 void geMainIO::cb_inVol      (Fl_Widget* v, void* p) { ((geMainIO*)p)->cb_inVol(); }
+void geMainIO::cb_inToOut    (Fl_Widget* v, void* p) { ((geMainIO*)p)->cb_inToOut(); }
 #ifdef WITH_VST
 void geMainIO::cb_masterFxOut(Fl_Widget* v, void* p) { ((geMainIO*)p)->cb_masterFxOut(); }
 void geMainIO::cb_masterFxIn (Fl_Widget* v, void* p) { ((geMainIO*)p)->cb_masterFxIn(); }
-void geMainIO::cb_inToOut    (Fl_Widget* v, void* p) { ((geMainIO*)p)->cb_inToOut(); }
 #endif
 
 
@@ -111,18 +101,20 @@ void geMainIO::cb_inToOut    (Fl_Widget* v, void* p) { ((geMainIO*)p)->cb_inToOu
 
 void geMainIO::cb_outVol()
 {
-	c::events::setMasterOutVolume(outVol->value(), Thread::MAIN);
+	c::events::setMasterOutVolume(outVol.value(), Thread::MAIN);
 }
-
-
-/* -------------------------------------------------------------------------- */
 
 
 void geMainIO::cb_inVol()
 {
-	c::events::setMasterInVolume(inVol->value(), Thread::MAIN);
+	c::events::setMasterInVolume(inVol.value(), Thread::MAIN);
 }
 
+
+void geMainIO::cb_inToOut()
+{
+	c::main::setInToOut(inToOut.value());
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -140,12 +132,6 @@ void geMainIO::cb_masterFxIn()
 	u::gui::openSubWindow(G_MainWin, new v::gdPluginList(m::mixer::MASTER_IN_CHANNEL_ID), WID_FX_LIST);
 }
 
-
-void geMainIO::cb_inToOut()
-{
-	c::main::setInToOut(inToOut->value());
-}
-
 #endif
 
 
@@ -154,13 +140,13 @@ void geMainIO::cb_inToOut()
 
 void geMainIO::setOutVol(float v)
 {
-	outVol->value(v);
+	outVol.value(v);
 }
 
 
 void geMainIO::setInVol(float v)
 {
-	inVol->value(v);
+	inVol.value(v);
 }
 
 
@@ -171,13 +157,13 @@ void geMainIO::setInVol(float v)
 
 void geMainIO::setMasterFxOutFull(bool v)
 {
-	masterFxOut->setStatus(v);
+	masterFxOut.setStatus(v);
 }
 
 
 void geMainIO::setMasterFxInFull(bool v)
 {
-	masterFxIn->setStatus(v);
+	masterFxIn.setStatus(v);
 }
 
 #endif
@@ -188,10 +174,10 @@ void geMainIO::setMasterFxInFull(bool v)
 
 void geMainIO::refresh()
 {
-	outMeter->mixerPeak = m_io.a_getMasterOutPeak(); 
-	inMeter->mixerPeak  = m_io.a_getMasterInPeak();
-	outMeter->redraw();
-	inMeter->redraw();
+	outMeter.mixerPeak = m_io.a_getMasterOutPeak(); 
+	inMeter.mixerPeak  = m_io.a_getMasterInPeak();
+	outMeter.redraw();
+	inMeter.redraw();
 }
 
 
@@ -202,12 +188,12 @@ void geMainIO::rebuild()
 {
 	m_io = c::main::getIO();
 
-	outVol->value(m_io.masterOutVol);
-	inVol->value(m_io.masterInVol);
+	outVol.value(m_io.masterOutVol);
+	inVol.value(m_io.masterInVol);
 #ifdef WITH_VST
-	masterFxOut->setStatus(m_io.masterOutHasPlugins);
-	masterFxIn->setStatus(m_io.masterInHasPlugins);
-	inToOut->value(m_io.inToOut);
+	masterFxOut.setStatus(m_io.masterOutHasPlugins);
+	masterFxIn.setStatus(m_io.masterInHasPlugins);
+	inToOut.value(m_io.inToOut);
 #endif
 }
 }} // giada::v::

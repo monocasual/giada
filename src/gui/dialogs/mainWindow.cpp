@@ -65,7 +65,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 #if defined(WITH_VST)
 	mainIO        = new v::geMainIO(412, 8);
 #else
-	mainIO        = new v::geMainIO(476, 8);
+	mainIO        = new v::geMainIO(460, 8);
 #endif
 	mainTransport = new v::geMainTransport(8, 39);
 	mainTimer     = new v::geMainTimer(598, 44);
