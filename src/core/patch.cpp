@@ -373,23 +373,23 @@ void writeChannels_(nl::json& j)
 
 void modernize_()
 {
-	/* 0.16.3 
-	- Make sure that ChannelType is correct: ID 1, 2 are MASTER channels, 
-	  ID 3 is PREVIEW channel;
-	- make sure internal channels are never armed;
-	- set panning to default (0.5) and waveId to 0 for non-Sample Channels. */
-
 	for (Channel& c : patch.channels) {
-
+		/* 0.16.3
+		Make sure that ChannelType is correct: ID 1, 2 are MASTER channels, ID 3 
+		is PREVIEW channel. */
 		if (c.id == mixer::MASTER_OUT_CHANNEL_ID || c.id == mixer::MASTER_IN_CHANNEL_ID)
 			c.type = ChannelType::MASTER;
 		else
 		if (c.id == mixer::PREVIEW_CHANNEL_ID)
 			c.type = ChannelType::PREVIEW;
 		
+		/* 0.16.4
+		Make sure internal channels are never armed. */
 		if (c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER)
 			c.armed = false;
 		
+		/* 0.16.3
+		Set panning to default (0.5) and waveId to 0 for non-Sample Channels. */
 		if (c.type != ChannelType::SAMPLE) {
 			c.pan    = G_DEFAULT_PAN;
 			c.waveId = 0;
