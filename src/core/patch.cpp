@@ -376,6 +376,7 @@ void modernize_()
 	/* 0.16.3 
 	- Make sure that ChannelType is correct: ID 1, 2 are MASTER channels, 
 	  ID 3 is PREVIEW channel;
+	- make sure internal channels are never armed;
 	- set panning to default (0.5) and waveId to 0 for non-Sample Channels. */
 
 	for (Channel& c : patch.channels) {
@@ -385,6 +386,9 @@ void modernize_()
 		else
 		if (c.id == mixer::PREVIEW_CHANNEL_ID)
 			c.type = ChannelType::PREVIEW;
+		
+		if (c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER)
+			c.armed = false;
 		
 		if (c.type != ChannelType::SAMPLE) {
 			c.pan    = G_DEFAULT_PAN;
