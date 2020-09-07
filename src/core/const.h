@@ -352,6 +352,7 @@ constexpr auto PATCH_KEY_CHANNEL_HAS_ACTIONS          = "has_actions";
 constexpr auto PATCH_KEY_CHANNEL_READ_ACTIONS         = "read_actions";
 constexpr auto PATCH_KEY_CHANNEL_PITCH                = "pitch";
 constexpr auto PATCH_KEY_CHANNEL_INPUT_MONITOR        = "input_monitor";
+constexpr auto PATCH_KEY_CHANNEL_OVERDUB_PROTECTION   = "overdub_protection";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS = "midi_in_read_actions";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_IN_PITCH        = "midi_in_pitch";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT             = "midi_out";

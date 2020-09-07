@@ -186,6 +186,7 @@ void readChannels_(const nl::json& j)
 		c.readActions       = jchannel.value(PATCH_KEY_CHANNEL_READ_ACTIONS, false);
 		c.pitch             = jchannel.value(PATCH_KEY_CHANNEL_PITCH, G_DEFAULT_PITCH);
 		c.inputMonitor      = jchannel.value(PATCH_KEY_CHANNEL_INPUT_MONITOR, false);
+		c.overdubProtection = jchannel.value(PATCH_KEY_CHANNEL_OVERDUB_PROTECTION, false);
 		c.midiInVeloAsVol   = jchannel.value(PATCH_KEY_CHANNEL_MIDI_IN_VELO_AS_VOL, 0);
 		c.midiInReadActions = jchannel.value(PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS, 0);
 		c.midiInPitch       = jchannel.value(PATCH_KEY_CHANNEL_MIDI_IN_PITCH, 0);
@@ -351,6 +352,7 @@ void writeChannels_(nl::json& j)
 		jchannel[PATCH_KEY_CHANNEL_READ_ACTIONS]         = c.readActions;
 		jchannel[PATCH_KEY_CHANNEL_PITCH]                = c.pitch;
 		jchannel[PATCH_KEY_CHANNEL_INPUT_MONITOR]        = c.inputMonitor;
+		jchannel[PATCH_KEY_CHANNEL_OVERDUB_PROTECTION]   = c.overdubProtection;
 		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_VELO_AS_VOL]  = c.midiInVeloAsVol;
 		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS] = c.midiInReadActions;
 		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_PITCH]        = c.midiInPitch;

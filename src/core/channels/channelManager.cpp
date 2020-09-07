@@ -147,6 +147,7 @@ const patch::Channel serializeChannel(const Channel& c)
 		pc.shift             = c.samplePlayer->state->shift.load();
 		pc.midiInVeloAsVol   = c.samplePlayer->state->velocityAsVol.load();
 		pc.inputMonitor      = c.audioReceiver->state->inputMonitor.load();
+		pc.overdubProtection = c.audioReceiver->state->overdubProtection.load();
 
 	}
 	else

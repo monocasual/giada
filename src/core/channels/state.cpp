@@ -241,7 +241,7 @@ AudioReceiverState::AudioReceiverState()
 
 AudioReceiverState::AudioReceiverState(const patch::Channel& p)
 : inputMonitor     (p.inputMonitor)
-, overdubProtection(false) // TODO
+, overdubProtection(p.overdubProtection)
 {
 }
 

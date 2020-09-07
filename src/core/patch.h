@@ -94,6 +94,7 @@ struct Channel
 	bool             readActions;
 	float            pitch = G_DEFAULT_PITCH;
 	bool             inputMonitor;
+	bool             overdubProtection;
 	bool             midiInVeloAsVol;
 	uint32_t         midiInReadActions;
 	uint32_t         midiInPitch;
