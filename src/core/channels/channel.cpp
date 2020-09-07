@@ -325,12 +325,26 @@ bool Channel::isMuted() const
 
 bool Channel::canInputRec() const
 {
-	return samplePlayer && state->armed.load() == true;
+	if (m_type != ChannelType::SAMPLE)
+		return false;
+
+	bool armed       = state->armed.load();
+	bool hasWave     = samplePlayer->hasWave();
+	bool isProtected = audioReceiver->state->overdubProtection.load();
+	bool canOverdub  = !hasWave || (hasWave && !isProtected);
+
+	return armed && canOverdub;
+}
+
+
+bool Channel::canActionRec() const
+{
+	return hasWave() && !samplePlayer->state->isAnyLoopMode();
 }
 
 
 bool Channel::hasWave() const
 {
-	return samplePlayer && samplePlayer->hasWave();
+	return m_type == ChannelType::SAMPLE && samplePlayer->hasWave();
 }
 }} // giada::m::

@@ -286,8 +286,7 @@ void toggleActionRecording()
 
 void toggleInputRecording()
 {
-	if (!m::recManager::toggleInputRec(m::conf::conf.recTriggerMode))
-		v::gdAlert("No channels armed/available for audio recording.");
+	m::recManager::toggleInputRec(m::conf::conf.recTriggerMode);
 }
 
 

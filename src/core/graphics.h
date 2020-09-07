@@ -86,6 +86,7 @@ extern const char* soloOn_xpm[];
 
 extern const char* armOff_xpm[];
 extern const char* armOn_xpm[];
+extern const char* armDisabled_xpm[];
 
 extern const char* readActionOn_xpm[];
 extern const char* readActionOff_xpm[];

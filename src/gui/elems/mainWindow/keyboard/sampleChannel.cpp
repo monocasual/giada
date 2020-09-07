@@ -76,6 +76,7 @@ namespace
 enum class Menu
 {
 	INPUT_MONITOR = 0,
+	OVERDUB_PROTECTION,
 	LOAD_SAMPLE,
 	EXPORT_SAMPLE,
 	SETUP_KEYBOARD_INPUT,
@@ -106,6 +107,10 @@ void menuCallback(Fl_Widget* w, void* v)
 	switch ((Menu) (intptr_t) v) {
 		case Menu::INPUT_MONITOR: {
 			c::channel::setInputMonitor(data.id, !data.sample->a_getInputMonitor());
+			break;
+		}
+		case Menu::OVERDUB_PROTECTION: {
+			c::channel::setOverdubProtection(data.id, !data.sample->a_getOverdubProtection());
 			break;
 		}
 		case Menu::LOAD_SAMPLE: {
@@ -197,7 +202,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 #endif
 
 	playButton  = new geStatusButton       (x(), y(), G_GUI_UNIT, G_GUI_UNIT, channelStop_xpm, channelPlay_xpm);
-	arm         = new geButton             (playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
+	arm         = new geButton             (playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm, armDisabled_xpm);
 	status      = new geChannelStatus      (arm->x() + arm->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, H, m_channel);
 	mainButton  = new geSampleChannelButton(status->x() + status->w() + G_GUI_INNER_MARGIN, y(), w() - delta, H, m_channel);
 	readActions = new geStatusButton       (mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, readActionOff_xpm, readActionOn_xpm, readActionDisabled_xpm);
@@ -277,7 +282,9 @@ void geSampleChannel::cb_openMenu()
 
 	Fl_Menu_Item rclick_menu[] = {
 		{"Input monitor",            0, menuCallback, (void*) Menu::INPUT_MONITOR,
-			FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->a_getInputMonitor() ? FL_MENU_VALUE : 0)},
+			FL_MENU_TOGGLE | (m_channel.sample->a_getInputMonitor() ? FL_MENU_VALUE : 0)},
+		{"Overdub protection",       0, menuCallback, (void*) Menu::OVERDUB_PROTECTION,
+			FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->a_getOverdubProtection() ? FL_MENU_VALUE : 0)},
 		{"Load new sample...",       0, menuCallback, (void*) Menu::LOAD_SAMPLE},
 		{"Export sample to file...", 0, menuCallback, (void*) Menu::EXPORT_SAMPLE},
 		{"Setup keyboard input...",  0, menuCallback, (void*) Menu::SETUP_KEYBOARD_INPUT},
@@ -345,8 +352,14 @@ void geSampleChannel::refresh()
 {
 	geChannel::refresh();
 
-	if (m_channel.sample->waveId != 0)
+	if (m_channel.sample->waveId != 0) {
 		status->redraw();
+		if (m_channel.sample->a_getOverdubProtection())
+			arm->deactivate();
+		else
+			arm->activate();
+	}
+
 	if (m_channel.hasActions) {
 		readActions->activate();
 		readActions->setStatus(m_channel.a_getReadActions());		

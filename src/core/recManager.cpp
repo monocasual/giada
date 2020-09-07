@@ -83,7 +83,7 @@ bool startActionRec_()
 
 bool startInputRec_()
 {
-	if (!kernelAudio::isReady() || !mh::hasRecordableSampleChannels())
+	if (!kernelAudio::isReady() || !mh::hasInputRecordableChannels())
 		return false;
 	mixer::startInputRec();
 	sequencer::start();
@@ -194,7 +194,7 @@ G_DEBUG("Start input rec, NORMAL mode");
 	}
 	else {
 G_DEBUG("Start input rec, SIGNAL mode");
-		if (!mh::hasRecordableSampleChannels())
+		if (!mh::hasInputRecordableChannels())
 			return false;
 		clock::setStatus(ClockStatus::WAITING);
 		clock::rewind();

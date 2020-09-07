@@ -184,6 +184,7 @@ struct AudioReceiverState
     AudioReceiverState(const AudioReceiverState& o);
 
     std::atomic<bool> inputMonitor;
+    std::atomic<bool> overdubProtection;
 };
 
 

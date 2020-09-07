@@ -79,6 +79,7 @@ public:
     bool isInternal() const;
     bool isMuted() const;
     bool canInputRec() const;
+    bool canActionRec() const;
     bool hasWave() const;
     ID getColumnId() const;
     ChannelType getType() const;

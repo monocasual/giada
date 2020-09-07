@@ -103,10 +103,11 @@ SampleData::SampleData(const m::SamplePlayer& s, const m::AudioReceiver& a)
 }
 
 
-Frame SampleData::a_getTracker() const      { return a_get(m_samplePlayer->state->tracker); }
-Frame SampleData::a_getBegin() const        { return a_get(m_samplePlayer->state->begin); }
-Frame SampleData::a_getEnd() const          { return a_get(m_samplePlayer->state->end); }
-bool  SampleData::a_getInputMonitor() const { return a_get(m_audioReceiver->state->inputMonitor); }
+Frame SampleData::a_getTracker() const           { return a_get(m_samplePlayer->state->tracker); }
+Frame SampleData::a_getBegin() const             { return a_get(m_samplePlayer->state->begin); }
+Frame SampleData::a_getEnd() const               { return a_get(m_samplePlayer->state->end); }
+bool  SampleData::a_getInputMonitor() const      { return a_get(m_audioReceiver->state->inputMonitor); }
+bool  SampleData::a_getOverdubProtection() const { return a_get(m_audioReceiver->state->overdubProtection); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -273,6 +274,20 @@ void setInputMonitor(ID channelId, bool value)
 	{ 
 		c.audioReceiver->state->inputMonitor.store(value);
 	});
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void setOverdubProtection(ID channelId, bool value)
+{
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c) 
+	{
+		c.audioReceiver->state->overdubProtection.store(value);
+		if (value == true && c.state->armed.load() == true)
+			c.state->armed.store(false);
+	});	
 }
 
 

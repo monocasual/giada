@@ -233,19 +233,22 @@ bool SamplePlayerState::isAnyLoopMode() const
 
 
 AudioReceiverState::AudioReceiverState()
-: inputMonitor(false)
+: inputMonitor     (false)
+, overdubProtection(false)
 {
 }
 
 
 AudioReceiverState::AudioReceiverState(const patch::Channel& p)
-: inputMonitor(p.inputMonitor)
+: inputMonitor     (p.inputMonitor)
+, overdubProtection(false) // TODO
 {
 }
 
 
 AudioReceiverState::AudioReceiverState(const AudioReceiverState& o)
-: inputMonitor(o.inputMonitor.load())
+: inputMonitor     (o.inputMonitor.load())
+, overdubProtection(o.overdubProtection.load())
 {
 }
 

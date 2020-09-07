@@ -55,6 +55,7 @@ struct SampleData
 	Frame a_getBegin() const;
 	Frame a_getEnd() const;
 	bool  a_getInputMonitor() const;
+	bool  a_getOverdubProtection() const;
 
 	ID               waveId;
 	SamplePlayerMode mode;
@@ -174,6 +175,7 @@ void cloneChannel(ID channelId);
 Sets several channel properties. */
 
 void setInputMonitor(ID channelId, bool value);
+void setOverdubProtection(ID channelId, bool value);
 void setName(ID channelId, const std::string& name);
 void setHeight(ID channelId, Pixel p);
 

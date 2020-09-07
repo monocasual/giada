@@ -111,11 +111,11 @@ True if 1 or more samples was edited via gEditor */
 
 bool hasEditedSamples();
 
-/* hasRecordableSampleChannels
-Tells whether Mixer has one or more recordable Sample Channels, that is: 
-a) armed; b) empty (no Wave). */
+/* has(Input|Action)RecordableChannels
+Tells whether Mixer has one or more input or action recordable channels. */
 
-bool hasRecordableSampleChannels();
+bool hasInputRecordableChannels();
+bool hasActionRecordableChannels();
 
 /* hasActions
 True if at least one Channel has actions recorded in it. */

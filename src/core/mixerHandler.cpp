@@ -154,6 +154,20 @@ void pushWave_(Channel& ch, std::unique_ptr<Wave>&& w)
 /* -------------------------------------------------------------------------- */
 
 
+void setupChannelPostRecording_(Channel& c)
+{
+	/* Start sample channels in loop mode right away. */
+	if (c.samplePlayer->state->isAnyLoopMode())
+		c.samplePlayer->kickIn(clock::getCurrentFrame());
+	/* Disable 'arm' button if overdub protection is on. */
+	if (c.audioReceiver->state->overdubProtection.load() == true)
+		c.state->armed.store(false);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 /* recordChannel_
 Records the current Mixer audio input data into an empty channel. */
 
@@ -169,14 +183,12 @@ void recordChannel_(ID channelId)
 	wave->copyData(mixer::getRecBuffer());
 
 	/* Update Channel with the new Wave. The function pushWave_ will take
-	care of pushing it into the stack first. Also start all channels in
-	LOOP mode. */
+	care of pushing it into the Wave stack first. */
 
 	model::onSwap(model::channels, channelId, [&](Channel& c)
 	{
 		pushWave_(c, std::move(wave));
-		if (c.samplePlayer->state->isAnyLoopMode())
-			c.samplePlayer->kickIn(clock::getCurrentFrame());
+		setupChannelPostRecording_(c);
 	});
 }
 
@@ -202,12 +214,9 @@ void overdubChannel_(ID channelId)
 		w.setLogical(true);
 	});
 
-	/* Start all channels in LOOP mode. */
-
 	model::onGet(model::channels, channelId, [&](Channel& c)
 	{
-		if (c.samplePlayer->state->isAnyLoopMode())
-			c.samplePlayer->kickIn(clock::getCurrentFrame());
+		setupChannelPostRecording_(c);
 	});
 }
 }; // {anonymous}
@@ -482,9 +491,15 @@ void finalizeInputRec()
 /* -------------------------------------------------------------------------- */
 
 
-bool hasRecordableSampleChannels()
+bool hasInputRecordableChannels()
 {
 	return anyChannel_([](const Channel* ch) { return ch->canInputRec(); });
+}
+
+
+bool hasActionRecordableChannels()
+{
+	return anyChannel_([](const Channel* ch) { return ch->canActionRec(); });
 }
 
 

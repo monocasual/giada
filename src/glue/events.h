@@ -53,7 +53,7 @@ void releaseChannel          (ID channelId, Thread t);
 void killChannel             (ID channelId, Thread t);
 void setChannelVolume        (ID channelId, float v, Thread t);
 void setChannelPitch         (ID channelId, float v, Thread t);
-void sendChannelPan          (ID channelId, float v);
+void sendChannelPan          (ID channelId, float v); // FIXME typo: should be setChannelPan
 void toggleMuteChannel       (ID channelId, Thread t);
 void toggleSoloChannel       (ID channelId, Thread t);
 void toggleArmChannel        (ID channelId, Thread t);
