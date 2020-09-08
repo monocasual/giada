@@ -29,7 +29,6 @@
 #include "core/const.h"
 #include "core/conf.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/radio.h"
 #include "gui/elems/basics/check.h"
 #include "tabBehaviors.h"
 
@@ -37,56 +36,31 @@
 namespace giada {
 namespace v
 {
-geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
-: gePack(X, Y, Direction::VERTICAL, G_GUI_OUTER_MARGIN)
+geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H) 
+: Fl_Group                    (X, Y, W, H)
+, m_container                 (X, Y + G_GUI_OUTER_MARGIN, Direction::VERTICAL, G_GUI_OUTER_MARGIN)
+, m_chansStopOnSeqHalt        (0, 0, 280, 30, "Dynamic channels stop immediately when the sequencer\nis halted")
+, m_treatRecsAsLoops          (0, 0, 280, 20, "Treat one shot channels with actions as loops")
+, m_inputMonitorDefaultOn     (0, 0, 280, 20, "New sample channels have input monitor on by default")
+, m_overdubProtectionDefaultOn(0, 0, 280, 30, "New sample channels have overdub protection on\nby default")
 {
+	end();
+
 	label("Behaviors");
-
-	gePack* radioPack = new gePack(0, 0, Direction::VERTICAL);
-		geBox* text = new geBox(0, 0, 70, 25, "When the sequencer is halted:", FL_ALIGN_LEFT);
-		chansStopOnSeqHalt_1 = new geRadio(0, 0, 280, 20, "stop immediately all dynamic channels");
-		chansStopOnSeqHalt_0 = new geRadio(0, 0, 280, 20, "play all dynamic channels until finished");
-	radioPack->add(text);
-	radioPack->add(chansStopOnSeqHalt_1);
-	radioPack->add(chansStopOnSeqHalt_0);
-	
-	treatRecsAsLoops           = new geCheck(0, 0, 280, 20, "Treat one shot channels with actions as loops");
-	inputMonitorDefaultOn      = new geCheck(0, 0, 280, 20, "New sample channels have input monitor on by default");
-	overdubProtectionDefaultOn = new geCheck(0, 0, 280, 40, "New sample channels have overdub protection on\nby default");
-
-	add(radioPack);
-	add(treatRecsAsLoops);
-	add(inputMonitorDefaultOn);
-	add(overdubProtectionDefaultOn);
-
 	labelsize(G_GUI_FONT_SIZE_BASE);
 	selection_color(G_COLOR_GREY_4);
 
-	m::conf::conf.chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
-	treatRecsAsLoops->value(m::conf::conf.treatRecsAsLoops);
-	inputMonitorDefaultOn->value(m::conf::conf.inputMonitorDefaultOn);
-	overdubProtectionDefaultOn->value(m::conf::conf.overdubProtectionDefaultOn);
+	m_container.add(&m_chansStopOnSeqHalt);
+	m_container.add(&m_treatRecsAsLoops);
+	m_container.add(&m_inputMonitorDefaultOn);
+	m_container.add(&m_overdubProtectionDefaultOn);
 
-	chansStopOnSeqHalt_1->callback(cb_radio_mutex, (void*)this);
-	chansStopOnSeqHalt_0->callback(cb_radio_mutex, (void*)this);
-}
+	add(m_container);
 
-
-/* -------------------------------------------------------------------------- */
-
-
-void geTabBehaviors::cb_radio_mutex(Fl_Widget* w, void* p) 
-{ 
-	static_cast<geTabBehaviors*>(p)->cb_radio_mutex(w); 
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geTabBehaviors::cb_radio_mutex(Fl_Widget* w)
-{
-	static_cast<Fl_Button*>(w)->type(FL_RADIO_BUTTON);
+	m_chansStopOnSeqHalt.value(m::conf::conf.chansStopOnSeqHalt);
+	m_treatRecsAsLoops.value(m::conf::conf.treatRecsAsLoops);
+	m_inputMonitorDefaultOn.value(m::conf::conf.inputMonitorDefaultOn);
+	m_overdubProtectionDefaultOn.value(m::conf::conf.overdubProtectionDefaultOn);
 }
 
 
@@ -95,9 +69,9 @@ void geTabBehaviors::cb_radio_mutex(Fl_Widget* w)
 
 void geTabBehaviors::save()
 {
-	m::conf::conf.chansStopOnSeqHalt = chansStopOnSeqHalt_1->value() == 1 ? 1 : 0;
-	m::conf::conf.treatRecsAsLoops = treatRecsAsLoops->value() == 1 ? 1 : 0;
-	m::conf::conf.inputMonitorDefaultOn = inputMonitorDefaultOn->value() == 1 ? 1 : 0;
-	m::conf::conf.overdubProtectionDefaultOn = overdubProtectionDefaultOn->value() == 1 ? 1 : 0;
+	m::conf::conf.chansStopOnSeqHalt = m_chansStopOnSeqHalt.value();
+	m::conf::conf.treatRecsAsLoops = m_treatRecsAsLoops.value();
+	m::conf::conf.inputMonitorDefaultOn = m_inputMonitorDefaultOn.value();
+	m::conf::conf.overdubProtectionDefaultOn = m_overdubProtectionDefaultOn.value();
 }
 }} // giada::v::

@@ -29,17 +29,15 @@
 #define GE_TAB_BEHAVIORS_H
 
 
+#include <FL/Fl_Group.H>
 #include "gui/elems/basics/pack.h"
-
-
-class geRadio;
-class geCheck;
+#include "gui/elems/basics/check.h"
 
 
 namespace giada {
 namespace v
 {
-class geTabBehaviors : public gePack
+class geTabBehaviors : public Fl_Group
 {
 public:
 
@@ -47,17 +45,13 @@ public:
 
 	void save();
 
-	geRadio* chansStopOnSeqHalt_1;
-	geRadio* chansStopOnSeqHalt_0;
-	geCheck* treatRecsAsLoops;
-	geCheck* inputMonitorDefaultOn;
-	geCheck* overdubProtectionDefaultOn;
-
-
 private:
 
-	static void cb_radio_mutex(Fl_Widget* w, void* p);
-	void cb_radio_mutex(Fl_Widget* w);
+	gePack  m_container;
+	geCheck m_chansStopOnSeqHalt;
+	geCheck m_treatRecsAsLoops;
+	geCheck m_inputMonitorDefaultOn;
+	geCheck m_overdubProtectionDefaultOn;
 };
 }} // giada::v::
 
