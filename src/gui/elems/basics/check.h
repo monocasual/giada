@@ -39,6 +39,10 @@ public:
 	geCheck(int x, int y, int w, int h, const char *l=0);
 
 	void draw() override;
+
+private:
+
+	bool hasMultilineText() const;
 };
 
 
