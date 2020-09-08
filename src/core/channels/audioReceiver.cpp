@@ -32,8 +32,8 @@
 namespace giada {
 namespace m 
 {
-AudioReceiver::AudioReceiver(ChannelState* c)
-: state         (std::make_unique<AudioReceiverState>())
+AudioReceiver::AudioReceiver(ChannelState* c, const conf::Conf& conf)
+: state         (std::make_unique<AudioReceiverState>(conf))
 , m_channelState(c)
 {
 }

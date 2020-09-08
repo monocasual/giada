@@ -66,7 +66,7 @@ namespace
 std::unique_ptr<Channel> createChannel_(ChannelType type, ID columnId, ID channelId=0)
 {
 	std::unique_ptr<Channel> ch = channelManager::create(type, 
-		kernelAudio::getRealBufSize(), conf::conf.inputMonitorDefaultOn, columnId);
+		kernelAudio::getRealBufSize(), columnId, conf::conf);
 
 	if (type == ChannelType::MASTER) {
 		assert(channelId != 0);

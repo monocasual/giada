@@ -68,11 +68,13 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Channel> create(ChannelType type, int bufferSize, 
-	bool inputMonitorOn, ID columnId)
+std::unique_ptr<Channel> create(ChannelType type, int bufferSize, ID columnId,
+	const conf::Conf& conf)
 {
-	return std::make_unique<Channel>(type, channelId_.get(), columnId, 
-		kernelAudio::getRealBufSize());
+	std::unique_ptr<Channel> ch = std::make_unique<Channel>(type, 
+		channelId_.get(), columnId, kernelAudio::getRealBufSize(), conf);
+	
+	return ch;
 }
 
 

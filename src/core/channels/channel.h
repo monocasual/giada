@@ -49,11 +49,15 @@
 namespace giada {
 namespace m
 {
+namespace conf
+{
+struct Conf;
+}
 class Channel final
 {
 public:
 
-    Channel(ChannelType t, ID id, ID columnId, Frame bufferSize);
+    Channel(ChannelType t, ID id, ID columnId, Frame bufferSize, const conf::Conf& c);
     Channel(const Channel&);
     Channel(const patch::Channel& p, Frame bufferSize);
     Channel(Channel&&)                 = default;

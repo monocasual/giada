@@ -38,20 +38,26 @@ namespace giada {
 namespace v
 {
 geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
-: Fl_Group(X, Y, W, H, "Behaviors")
+: gePack(X, Y, Direction::VERTICAL, G_GUI_OUTER_MARGIN)
 {
-	begin();
+	label("Behaviors");
 
-	Fl_Group* radioGrp_2 = new Fl_Group(x(), y()+10, w(), 70); // radio group for the mutex
-		new geBox(x(), radioGrp_2->y(), 70, 25, "When the sequencer is halted:", FL_ALIGN_LEFT);
-		chansStopOnSeqHalt_1 = new geRadio(x()+25, radioGrp_2->y() + 25, 280, 20, "stop immediately all dynamic channels");
-		chansStopOnSeqHalt_0 = new geRadio(x()+25, radioGrp_2->y() + 50, 280, 20, "play all dynamic channels until finished");
-	radioGrp_2->end();
+	gePack* radioPack = new gePack(0, 0, Direction::VERTICAL);
+		geBox* text = new geBox(0, 0, 70, 25, "When the sequencer is halted:", FL_ALIGN_LEFT);
+		chansStopOnSeqHalt_1 = new geRadio(0, 0, 280, 20, "stop immediately all dynamic channels");
+		chansStopOnSeqHalt_0 = new geRadio(0, 0, 280, 20, "play all dynamic channels until finished");
+	radioPack->add(text);
+	radioPack->add(chansStopOnSeqHalt_1);
+	radioPack->add(chansStopOnSeqHalt_0);
+	
+	treatRecsAsLoops           = new geCheck(0, 0, 280, 20, "Treat one shot channels with actions as loops");
+	inputMonitorDefaultOn      = new geCheck(0, 0, 280, 20, "New sample channels have input monitor on by default");
+	overdubProtectionDefaultOn = new geCheck(0, 0, 280, 40, "New sample channels have overdub protection on\nby default");
 
-	treatRecsAsLoops      = new geCheck(x(), radioGrp_2->y()+radioGrp_2->h() + 15, 280, 20, "Treat one shot channels with actions as loops");
-	inputMonitorDefaultOn = new geCheck(x(), treatRecsAsLoops->y()+treatRecsAsLoops->h() + 5, 280, 20, "New sample channels have input monitor on by default");
-
-	end();
+	add(radioPack);
+	add(treatRecsAsLoops);
+	add(inputMonitorDefaultOn);
+	add(overdubProtectionDefaultOn);
 
 	labelsize(G_GUI_FONT_SIZE_BASE);
 	selection_color(G_COLOR_GREY_4);
@@ -59,6 +65,7 @@ geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
 	m::conf::conf.chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
 	treatRecsAsLoops->value(m::conf::conf.treatRecsAsLoops);
 	inputMonitorDefaultOn->value(m::conf::conf.inputMonitorDefaultOn);
+	overdubProtectionDefaultOn->value(m::conf::conf.overdubProtectionDefaultOn);
 
 	chansStopOnSeqHalt_1->callback(cb_radio_mutex, (void*)this);
 	chansStopOnSeqHalt_0->callback(cb_radio_mutex, (void*)this);
@@ -91,5 +98,6 @@ void geTabBehaviors::save()
 	m::conf::conf.chansStopOnSeqHalt = chansStopOnSeqHalt_1->value() == 1 ? 1 : 0;
 	m::conf::conf.treatRecsAsLoops = treatRecsAsLoops->value() == 1 ? 1 : 0;
 	m::conf::conf.inputMonitorDefaultOn = inputMonitorDefaultOn->value() == 1 ? 1 : 0;
+	m::conf::conf.overdubProtectionDefaultOn = overdubProtectionDefaultOn->value() == 1 ? 1 : 0;
 }
 }} // giada::v::

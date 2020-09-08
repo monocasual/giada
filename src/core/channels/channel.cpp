@@ -35,18 +35,18 @@
 namespace giada {
 namespace m 
 {
-Channel::Channel(ChannelType type, ID id, ID columnId, Frame bufferSize)
-: id            (id)
-, state         (std::make_unique<ChannelState>(id, bufferSize))
-, midiLighter   (state.get())
-, m_type        (type)
-, m_columnId    (columnId)
+Channel::Channel(ChannelType type, ID id, ID columnId, Frame bufferSize, const conf::Conf& conf)
+: id         (id)
+, state      (std::make_unique<ChannelState>(id, bufferSize))
+, midiLighter(state.get())
+, m_type     (type)
+, m_columnId (columnId)
 {
 	switch (m_type) {
 
 		case ChannelType::SAMPLE:
 			samplePlayer.emplace(state.get());
-			audioReceiver.emplace(state.get());
+			audioReceiver.emplace(state.get(), conf);
 			sampleActionRecorder.emplace(state.get(), samplePlayer->state.get());	
 			break;
 		

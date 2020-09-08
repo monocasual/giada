@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include "core/conf.h"
 #include "core/patch.h"
 #include "state.h"
 
@@ -232,9 +233,9 @@ bool SamplePlayerState::isAnyLoopMode() const
 /* -------------------------------------------------------------------------- */
 
 
-AudioReceiverState::AudioReceiverState()
-: inputMonitor     (false)
-, overdubProtection(false)
+AudioReceiverState::AudioReceiverState(const conf::Conf& c)
+: inputMonitor     (c.inputMonitorDefaultOn)
+, overdubProtection(c.overdubProtectionDefaultOn)
 {
 }
 

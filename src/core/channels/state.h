@@ -42,6 +42,10 @@
 
 namespace giada {
 namespace m {
+namespace conf
+{
+struct Conf;
+}
 namespace patch
 {
 struct Channel;
@@ -179,7 +183,7 @@ struct SamplePlayerState
 
 struct AudioReceiverState
 {
-    AudioReceiverState();
+    AudioReceiverState(const conf::Conf& c);
     AudioReceiverState(const patch::Channel& p);
     AudioReceiverState(const AudioReceiverState& o);
 
