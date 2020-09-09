@@ -64,6 +64,6 @@ void geCheck::draw()
 
 bool geCheck::hasMultilineText() const
 {
-	return std::strchr(label(), '\n') != nullptr;
+	return label() == nullptr ? false : std::strchr(label(), '\n') != nullptr;
 }
 
