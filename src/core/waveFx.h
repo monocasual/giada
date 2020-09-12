@@ -38,6 +38,11 @@ namespace m
 class Wave;
 namespace wfx
 {
+/* Windows fix */
+#ifdef _WIN32
+#undef IN
+#undef OUT
+#endif
 enum class Fade { IN, OUT };
 
 /* monoToStereo

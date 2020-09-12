@@ -37,6 +37,10 @@ using Frame = int;
 
 enum class Thread { MAIN, MIDI, AUDIO };
 
+/* Windows fix */
+#ifdef _WIN32
+#undef VOID
+#endif
 enum class ClockStatus { STOPPED, WAITING, RUNNING, ON_BEAT, ON_BAR, ON_FIRST_BEAT, VOID };
 
 enum class ChannelType : int { SAMPLE = 1, MIDI, MASTER, PREVIEW };
