@@ -430,7 +430,7 @@ cppFlags += -D__MACOSX_CORE__
 cxxFlags += -ObjC++
 
 ldAdd += -lsndfile -lfltk -lrtmidi -lsamplerate -lm -lpthread \
-	-lFLAC -logg -lvorbis -lvorbisenc
+	-lFLAC -logg -lvorbis -lvorbisenc -lopus
 
 ldFlags += -framework CoreAudio -framework Cocoa -framework Carbon \
 	-framework CoreMIDI -framework CoreFoundation -framework Accelerate \

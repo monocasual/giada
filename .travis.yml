@@ -1,6 +1,6 @@
 sudo: required
 
-dist: xenial
+dist: bionic
 
 osx_image: xcode11
 

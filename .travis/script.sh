@@ -10,8 +10,8 @@ make rename
 
 if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 	
-	make -j 2
-	xvfb-run make check -j 2
+	make -j 2 CXXFLAGS+=-Wno-class-memaccess
+	xvfb-run make check -j 2 CXXFLAGS+=-Wno-class-memaccess
 
 else
 
