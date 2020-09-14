@@ -6,8 +6,6 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 	make -j 2 CXXFLAGS+=-stdlib=libc++ 
 fi
 
-make rename
-
 if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 	
 	make -j 2 CXXFLAGS+=-Wno-class-memaccess
@@ -18,3 +16,5 @@ else
 	make check -j 2
 
 fi
+
+make rename
