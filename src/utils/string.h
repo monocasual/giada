@@ -51,8 +51,6 @@ std::string iToString(T t, bool hex=false)
 	return out.str();	
 }
 
-std::string getRealPath(const std::string& path);
-
 std::string replace(std::string in, const std::string& search,
   const std::string& replace);
 

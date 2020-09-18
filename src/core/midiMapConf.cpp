@@ -29,7 +29,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
-#include <dirent.h>
+#include <filesystem>
 #include "deps/json/single_include/nlohmann/json.hpp"
 #include "utils/string.h"
 #include "utils/log.h"
@@ -118,8 +118,7 @@ void parse_(Message& message)
 	u::log::print("[parse] parsed chan=%d valueStr=%s value=%#x, offset=%d\n",
 			message.channel, message.valueStr.c_str(), message.value, message.offset);
 }
-
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -144,28 +143,20 @@ void init()
 	u::log::print("[midiMapConf::init] scanning midimaps directory '%s'...\n",
 		midimapsPath.c_str());
 
-	DIR*    dp;
-	dirent* ep;
-	dp = opendir(midimapsPath.c_str());
-
-	if (dp == nullptr) {
+	if (!std::filesystem::exists(midimapsPath)) {
 		u::log::print("[midiMapConf::init] unable to scan midimaps directory!\n");
 		return;
 	}
 
-	while ((ep = readdir(dp))) {
-		if (!strcmp(ep->d_name, ".") || !strcmp(ep->d_name, ".."))
-			continue;
-
+	for (const auto& d : std::filesystem::directory_iterator(midimapsPath)) {
 		// TODO - check if is a valid midimap file (verify headers)
-
-		u::log::print("[midiMapConf::init] found midimap '%s'\n", ep->d_name);
-
-		maps.push_back(ep->d_name);
+		if (!d.is_regular_file())
+			continue;
+		u::log::print("[midiMapConf::init] found midimap '%s'\n", d.path().filename().string().c_str());
+		maps.push_back(d.path().filename().string());
 	}
 
 	u::log::print("[midiMapConf::init] total midimaps found: %d\n", maps.size());
-	closedir(dp);
 }
 
 
@@ -221,4 +212,4 @@ int read(const std::string& file)
 
 	return MIDIMAP_READ_OK;
 }
-}}}; // giada::m::midimap::
+}}} // giada::m::midimap::

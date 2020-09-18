@@ -30,7 +30,7 @@
 #include <iomanip>
 #include <cstdarg>
 #include <climits>
-#include "../core/const.h"
+#include "core/const.h"
 #include "string.h"
 
 
@@ -38,31 +38,6 @@ namespace giada {
 namespace u     {
 namespace string 
 {
-std::string getRealPath(const std::string& path)
-{
-	std::string out = "";
-
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
-
-	char *buf = realpath(path.c_str(), nullptr);
-
-#else // Windows
-
-	char *buf = _fullpath(nullptr, path.c_str(), PATH_MAX);
-
-#endif
-
-	if (buf) {
-		out = buf;
-		free(buf);
-	}
-	return out;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 /* TODO - use std::to_string() */
 
 std::string fToString(float f, int precision)

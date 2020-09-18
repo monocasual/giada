@@ -27,6 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <filesystem>
 #if defined(_WIN32)			// getcwd (unix) or __getcwd (win)
 	#include <direct.h>
 	#include <windows.h>
@@ -55,105 +56,45 @@ namespace giada {
 namespace u     {
 namespace fs 
 {
-namespace
+bool fileExists(const std::string& s)
 {
-std::string normalize_(const std::string& s)
-{
-	if (s.back() == G_SLASH) {
-		std::string t = s;
-		t.pop_back();
-		return t;
-	}
-	return s;
-}
-} // {anonymous}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
-bool fileExists(const std::string &filename)
-{
-	FILE* fh = fopen(filename.c_str(), "rb");
-	if (!fh) {
-		return 0;
-	}
-	else {
-		fclose(fh);
-		return 1;
-	}
+	return std::filesystem::exists(s);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool isDir(const std::string &path)
+bool isDir(const std::string& s)
 {
-	bool ret;
-
-#if defined(__linux__) || defined(__FreeBSD__)
-
-	struct stat s1;
-	stat(path.c_str(), &s1);
-	ret = S_ISDIR(s1.st_mode);
-
-#elif defined(__APPLE__)
-
-	if (strcmp(path.c_str(), "") == 0)
-		ret = false;
-	else {
-		struct stat s1;
-		stat(path.c_str(), &s1);
-		ret = S_ISDIR(s1.st_mode);
-
-		/* check if ret is a bundle, a special OS X folder which must be
-		 * shown as a regular file (VST).
-		 * FIXME - consider native functions CFBundle... */
-
-		if (ret) {
-			if (fileExists(path + "/Contents/Info.plist"))
-				ret = false;
-		}
-	}
-
-#elif defined(__WIN32)
-
-  unsigned dwAttrib = GetFileAttributes(path.c_str());
-  ret = (dwAttrib != INVALID_FILE_ATTRIBUTES &&
-        (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
-#endif
-
-	return ret & !isProject(path);
+	return std::filesystem::is_directory(s) && !isProject(s);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool dirExists(const std::string &path)
-{
-	struct stat st;
-	if (stat(path.c_str(), &st) != 0 && errno == ENOENT)
-		return false;
-	return true;
+bool dirExists(const std::string& s)
+{ 
+	return std::filesystem::exists(s);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool mkdir(const std::string &path)
+bool mkdir(const std::string& s)
 {
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
-	if (::mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0)
-#else
-	if (_mkdir(path.c_str()) == 0)
-#endif
-		return true;
-	return false;
+	return dirExists(s) ? true : std::filesystem::create_directory(s);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+std::string getRealPath(const std::string& s)
+{
+	return std::filesystem::canonical(s).string();
 }
 
 
@@ -162,22 +103,16 @@ bool mkdir(const std::string &path)
 
 std::string basename(const std::string& s)
 {
-	std::string out = s;
-	out.erase(0, out.find_last_of(G_SLASH_STR) + 1);
-	return out;
+	return std::filesystem::path(s).filename().string();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-std::string dirname(const std::string& path)
+std::string dirname(const std::string& s)
 {
-	if (path.empty())
-		return "";
-	std::string out = path;
-	out.erase(out.find_last_of(G_SLASH_STR));
-	return out;
+	return std::filesystem::path(s).parent_path().string();
 }
 
 
@@ -186,35 +121,16 @@ std::string dirname(const std::string& path)
 
 std::string getCurrentPath()
 {
- char buf[PATH_MAX];
-#if defined(__WIN32)
-	if (_getcwd(buf, PATH_MAX) != nullptr)
-#else
-	if (getcwd(buf, PATH_MAX) != nullptr)
-#endif
-		return buf;
-	else
-		return "";
+	return std::filesystem::current_path().string();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-std::string getExt(const std::string& file)
+std::string getExt(const std::string& s)
 {
-	// TODO - use std functions
-	int len = strlen(file.c_str());
-	int pos = len;
-	while (pos > 0) {
-		if (file[pos] == '.')
-			break;
-		pos--;
-	}
-	if (pos==0)
-		return "";
-	std::string out = file;
-	return out.substr(pos+1, len);
+	return std::filesystem::path(s).extension().string();
 }
 
 
@@ -223,29 +139,26 @@ std::string getExt(const std::string& file)
 
 std::string stripExt(const std::string& s)
 {
-	return s.substr(0, s.find_last_of("."));
+	return std::filesystem::path(s).stem().string();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool isProject(const std::string& path)
+bool isProject(const std::string& s)
 {
-	/** FIXME - checks too weak */
-
-	if (getExt(path.c_str()) == "gprj" && dirExists(path))
-		return 1;
-	return 0;
+	/** TODO - checks too weak. */
+	return getExt(s) == ".gprj";
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-std::string stripFileUrl(const std::string& f)
+std::string stripFileUrl(const std::string& s)
 {
-	std::string out = f;
+	std::string out = s;
 	out = u::string::replace(out, "file://", "");
 	out = u::string::replace(out, "%20", " ");
 	return out;
@@ -257,31 +170,30 @@ std::string stripFileUrl(const std::string& f)
 
 std::string getHomePath()
 {
-	char path[PATH_MAX];
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 
-#if   defined(__linux__) || defined(__FreeBSD__)
+	char buf[PATH_MAX];
+	snprintf(buf, PATH_MAX, "%s/.giada", getenv("HOME"));
 
-	snprintf(path, PATH_MAX, "%s/.giada", getenv("HOME"));
+#elif defined(G_OS_WINDOWS)
 
-#elif defined(_WIN32)
+	char buf[MAX_PATH];
+	snprintf(buf, MAX_PATH, ".");
 
-	snprintf(path, PATH_MAX, ".");
+#elif defined(G_OS_MAC)
 
-#elif defined(__APPLE__)
-
-	struct passwd* p = getpwuid(getuid());
-	if (p == nullptr) {
+	char buf[PATH_MAX];
+	struct passwd* pwd = getpwuid(getuid());
+	if (pwd == nullptr) {
 		log::print("[getHomePath] unable to fetch user infos\n");
 		return "";
 	}
-	else {
-		const char* home = p->pw_dir;
-		snprintf(path, PATH_MAX, "%s/Library/Application Support/Giada", home);
-	}
+	const char* home = pwd->pw_dir;
+	snprintf(buf, PATH_MAX, "%s/Library/Application Support/Giada", home);
 
 #endif
 
-	return std::string(path);
+	return std::filesystem::path(buf).string();
 }
 
 
@@ -290,18 +202,7 @@ std::string getHomePath()
 
 bool isRootDir(const std::string& s)
 {
-	if (s == "")
-		return false;
-
-#ifdef G_OS_WINDOWS
-
-	return s.length() <= 3 && s[1] == ':';  /* X: or X:\ */
-
-#else
-
-	return s == G_SLASH_STR;
-
-#endif
+	return std::filesystem::current_path().root_directory() == s;
 }
 
 
@@ -312,13 +213,12 @@ std::string getUpDir(const std::string& s)
 {
 #ifdef G_OS_WINDOWS
 
-	/* If root, let the user browse the drives list by returning "". */
+	// If root, let the user browse the drives list by returning "". 
 	if (isRootDir(s))
 		return "";
 
 #endif
 
-	std::string t = normalize_(s);
-	return t.substr(0, t.find_last_of(G_SLASH_STR)) + G_SLASH_STR;
+	return std::filesystem::path(s).parent_path().string();
 }
 }}}  // giada::u::fs::

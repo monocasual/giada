@@ -231,10 +231,10 @@ void saveProject(void* data)
 		return;
 	}
 
-	if (u::fs::isProject(fullPath) && !v::gdConfirmWin("Warning", "Project exists: overwrite?"))
+	if (u::fs::dirExists(fullPath) && !v::gdConfirmWin("Warning", "Project exists: overwrite?"))
 		return;
 
-	if (!u::fs::dirExists(fullPath) && !u::fs::mkdir(fullPath)) {
+	if (!u::fs::mkdir(fullPath)) {
 		u::log::print("[saveProject] Unable to make project directory!\n");
 		return;
 	}

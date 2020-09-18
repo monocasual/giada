@@ -103,6 +103,6 @@ bool isDefined(const Message& msg);
 Reads a midi map from file 'file'. */
 
 int read(const std::string& file);
-}}}; // giada::m::midimap::
+}}} // giada::m::midimap::
 
 #endif

@@ -138,7 +138,7 @@ int geBrowser::handle(int e)
 
 std::string geBrowser::getCurrentDir()
 {
-	return normalize(u::string::getRealPath(m_currentDir));
+	return normalize(u::fs::getRealPath(m_currentDir));
 }
 
 
@@ -158,7 +158,7 @@ std::string geBrowser::getSelectedItem(bool fullPath)
 #else
 		std::string sep = G_SLASH_STR;
 #endif
-		return normalize(u::string::getRealPath(m_currentDir + sep + normalize(text(value()))));
+		return normalize(u::fs::getRealPath(m_currentDir + sep + normalize(text(value()))));
 	}
 }
 

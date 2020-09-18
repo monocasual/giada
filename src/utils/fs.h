@@ -35,22 +35,28 @@
 
 
 namespace giada {
-namespace u     {
+namespace u {
 namespace fs 
 {
-bool fileExists(const std::string& path);
-bool dirExists(const std::string& path);
-bool isDir(const std::string& path);
+bool fileExists(const std::string& s);
+bool dirExists(const std::string& s);
+bool isDir(const std::string& s);
 
 /* isRootDir
 Tells whether 's' is '/' on Unix or '[X]:\' on Windows. */
 
 bool isRootDir(const std::string& s);
 
-bool isProject(const std::string& path);
-bool mkdir(const std::string& path);
+bool isProject(const std::string& s);
+bool mkdir(const std::string& s);
 std::string getCurrentPath();
 std::string getHomePath();
+
+/* getRealPath
+Expands all symbolic links and resolves references to /./, /../ and extra / 
+characters in the input path and returns the canonicalized absolute pathname. */
+
+std::string getRealPath(const std::string& s);
 
 /* basename
 /path/to/file.txt -> file.txt */
