@@ -50,8 +50,8 @@ elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
   # Download linuxdeployqt for building AppImages.
 
-  wget https://github.com/probonopd/linuxdeployqt/releases/download/6/linuxdeployqt-6-x86_64.AppImage
-  chmod a+x linuxdeployqt-6-x86_64.AppImage
+  wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+  chmod a+x linuxdeploy-x86_64.AppImage
 
   # Update the shared libraries cache
 
