@@ -25,13 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <RtMidi.h>
 #include <string>
 #include "core/const.h"
-#ifdef G_OS_MAC
-	#include <RtMidi.h>
-#else
-	#include <rtmidi/RtMidi.h>
-#endif
 #include "core/conf.h"
 #include "core/midiMapConf.h"
 #include "core/kernelMidi.h"

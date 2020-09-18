@@ -382,6 +382,12 @@ list(APPEND LIBRARIES ${FLTK_LIBRARY})
 list(APPEND LIBRARIES ${LIBRARY_RTMIDI})
 list(APPEND LIBRARIES ${LIBRARY_SNDFILE})
 list(APPEND LIBRARIES ${LIBRARY_SAMPLERATE})
+
+# RtMidi header path may vary accross OSes, so a fix is needed. 
+# TODO - Find a way to avoid this additional step
+
+find_path(LIBRARY_RTMIDI_INCLUDE_DIR RtMidi.h PATH_SUFFIXES rtmidi)
+list(APPEND INCLUDE_DIRS ${LIBRARY_RTMIDI_INCLUDE_DIR})
  
 # Conditional checks for different platforms.
 

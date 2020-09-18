@@ -25,12 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "const.h"
-#ifdef G_OS_MAC
 #include <RtMidi.h>
-#else
-#include <rtmidi/RtMidi.h>
-#endif
+#include "const.h"
 #include "utils/log.h"
 #include "midiDispatcher.h"
 #include "midiMapConf.h"
