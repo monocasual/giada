@@ -11,13 +11,13 @@
 --------------------------------------------------------------------------------
 
 
-0.16.4 ---
+0.16.4 --- 2020 . 09. 19
 - Support for mono inputs
+- Overdub mode for Sample Channels with optional overdub protection
 - Disable record-on-signal mode when sequencer is running
 - Shift + [click on R button] kills action reading when "Treat one-shot channels
   with actions as loops" option is on
 - Start MIDI channels automatically after action recording session
-- Enable overdub mode on sample channel with existing audio data
 - Fix wrong sample rate conversion when project rate != system rate 
 - Fix Wrong begin/end sample markers when loading a project with 
   samplerate != system.samplerate 
