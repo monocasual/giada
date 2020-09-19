@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.12)
 
 project(giada LANGUAGES CXX)
 
@@ -372,16 +372,17 @@ endif()
 # just fallback to find_library().
 
 set(FLTK_SKIP_FLUID TRUE) # Don't search for FLTK's fluid
+set(FLTK_SKIP_OPENGL TRUE) # Don't search for FLTK's OpenGL
 find_package(Threads REQUIRED)
 find_package(FLTK REQUIRED)
 find_library(LIBRARY_RTMIDI NAMES rtmidi REQUIRED)
 find_library(LIBRARY_SNDFILE NAMES sndfile libsndfile libsndfile-1 REQUIRED)
+find_library(LIBRARY_FLAC NAMES flac FLAC REQUIRED)
+find_library(LIBRARY_OGG NAMES ogg REQUIRED)
 find_library(LIBRARY_SAMPLERATE NAMES samplerate libsamplerate libsamplerate-0 REQUIRED)
-list(APPEND LIBRARIES ${Threads_LIBRARY})
-list(APPEND LIBRARIES ${FLTK_LIBRARY})
-list(APPEND LIBRARIES ${LIBRARY_RTMIDI})
-list(APPEND LIBRARIES ${LIBRARY_SNDFILE})
-list(APPEND LIBRARIES ${LIBRARY_SAMPLERATE})
+list(APPEND LIBRARIES 
+	${Threads_LIBRARY} ${FLTK_LIBRARY} ${LIBRARY_RTMIDI} ${LIBRARY_FLAC} 
+	${LIBRARY_OGG} ${LIBRARY_SNDFILE} ${LIBRARY_SAMPLERATE})
 
 # RtMidi header path may vary accross OSes, so a fix is needed. 
 # TODO - Find a way to avoid this additional step
@@ -435,6 +436,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 		src/deps/rtaudio/include)
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+
+	list(APPEND COMPILER_OPTIONS -mmacosx-version-min=10.15)
 
 	find_library(CORE_AUDIO_LIBRARY CoreAudio REQUIRED)
 	find_library(CORE_MIDI_LIBRARY CoreMIDI REQUIRED)
