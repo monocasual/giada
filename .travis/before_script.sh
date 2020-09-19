@@ -10,6 +10,10 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
-	/usr/bin/cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-Wno-class-memaccess -DWITH_VST=ON
+	if [[ $TRAVIS_TAG != '' ]]; then  # Tagged release, no tests
+		/usr/bin/cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-Wno-class-memaccess -DWITH_VST=ON
+	else                              # Regular commit, run tests
+		/usr/bin/cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-Wno-class-memaccess -DWITH_VST=ON -DWITH_TESTS=ON
+	fi
 
 fi

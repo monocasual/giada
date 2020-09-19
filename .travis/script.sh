@@ -11,5 +11,7 @@ fi
 if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 	
 	make -C build/ -j 2
-	#TODO tests
+	if [[ $TRAVIS_TAG == '' ]]; then  # Regular commit, run tests
+		xvfb-run ./build/giada --run-tests	
+	fi     	
 fi

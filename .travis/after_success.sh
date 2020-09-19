@@ -2,10 +2,13 @@
 
 set -e
 
+mkdir dist
+
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
 	upx --best ./build/giada
 	# TODO - collect libraries, make Bundle
+	cp ./build/giada ./dist
 
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
@@ -39,12 +42,12 @@ EOF
 	
 	mv extras/giada-logo.svg ./temp/giada.svg
 
-	# Run linuxdeploy to make the AppImage, then move it to ./build dir. 
+	# Run linuxdeploy to make the AppImage, then move it to ./dist dir. 
 	# For some reasons linuxdeploy uses the commit hash in the filename, so
 	# rename it first.
 
 	./linuxdeploy-x86_64.AppImage -e ./temp/giada -d ./temp/giada.desktop -i ./temp/giada.svg --output appimage --appdir ./temp
 	mv Giada-*-x86_64.AppImage Giada-x86_64.AppImage 
-	cp Giada-x86_64.AppImage ./build
+	cp Giada-x86_64.AppImage ./dist
 
 fi

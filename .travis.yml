@@ -10,11 +10,11 @@ os:
 language: cpp
 compiler: gcc
 notifications:
-	email:
-		recipients:
-		- giadaloopmachine@gmail.com
-		on_success: never
-		on_failure: always
+  email:
+    recipients:
+    - giadaloopmachine@gmail.com
+    on_success: never
+    on_failure: always
 
 before_install:
 - "./.travis/before_install.sh"
@@ -31,20 +31,18 @@ script:
 after_success:
 - "./.travis/after_success.sh" 
 
-after_failure: cat $TRAVIS_BUILD_DIR/test-suite.log
-
-# If build+test are successful, deploy the artifacts from build/ dir (created in 
+# If build+test are successful, deploy the artifacts from dist/ dir (created in 
 # after_success.sh) to S3. Only tagged releases on master are built.
 
 deploy:
-	provider: s3
-	access_key_id: AKIAJP2CDHVGCPZAJGSA
-	secret_access_key:
-		secure: VNheuPP1d72MzX3FqJek8diglJllnpU4dS38eVMsHoLIbynlKwGFo35lBJ11xBK5RyoxCYy4Ka9kNifWulGVmfVOKYWhj39w91xl2D4HgPf/RcaCTvBmfg/mrhtop3Ns+WjYYVoxW2K5xmShdknS7HID9ldDBiKhafHNFWhyBWE=
-	bucket: static.giadamusic.com
-	skip_cleanup: true
-	acl: public_read
-	on:
-		tags: false # TODO WIP - temporary set to false, so that each push to master triggers the build
-		branch: "master"
-	local_dir: build
+  provider: s3
+  access_key_id: AKIAJP2CDHVGCPZAJGSA
+  secret_access_key:
+    secure: VNheuPP1d72MzX3FqJek8diglJllnpU4dS38eVMsHoLIbynlKwGFo35lBJ11xBK5RyoxCYy4Ka9kNifWulGVmfVOKYWhj39w91xl2D4HgPf/RcaCTvBmfg/mrhtop3Ns+WjYYVoxW2K5xmShdknS7HID9ldDBiKhafHNFWhyBWE=
+  bucket: static.giadamusic.com
+  skip_cleanup: true
+  acl: public_read
+  on:
+    tags: true
+    branch: "master"
+  local_dir: dist
