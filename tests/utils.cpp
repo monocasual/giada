@@ -6,46 +6,46 @@
 
 TEST_CASE("u::fs")
 {
-	using namespace giada::u::fs;
+	using namespace giada::u;
 
-	REQUIRE(fileExists("README.md") == true);
-	REQUIRE(fileExists("ghost_file") == false);
-	REQUIRE(dirExists("src/") == true);
-	REQUIRE(dirExists("ghost_dir/") == false);
-	REQUIRE(isDir("src/") == true);
-	REQUIRE(isDir("giada_tests") == false);
-	REQUIRE(basename("tests/utils.cpp") == "utils.cpp");
-	REQUIRE(dirname("tests/utils.cpp") == "tests");
-	REQUIRE(getExt("tests/utils.cpp") == "cpp");
-	REQUIRE(stripExt("tests/utils.cpp") == "tests/utils");
+	REQUIRE(fs::fileExists("build/giada") == true);
+	REQUIRE(fs::fileExists("nonexistent_file") == false);
+	REQUIRE(fs::dirExists("src/") == true);
+	REQUIRE(fs::dirExists("ghost_dir/") == false);
+	REQUIRE(fs::isDir("src/") == true);
+	REQUIRE(fs::isDir("nonexistent_dir") == false);
+	REQUIRE(fs::basename("tests/utils.cpp") == "utils.cpp");
+	REQUIRE(fs::dirname("tests/utils.cpp") == "tests");
+	REQUIRE(fs::getExt("tests/utils.cpp") == ".cpp");
+	REQUIRE(fs::stripExt("tests/utils.cpp") == "tests/utils");
 #if defined(_WIN32)
-	REQUIRE(isRootDir("C:\\") == true);
-	REQUIRE(isRootDir("C:\\path\\to\\something") == false);
-	REQUIRE(getUpDir("C:\\path\\to\\something") == "C:\\path\\to\\");
-	REQUIRE(getUpDir("C:\\path") == "C:\\");
-	REQUIRE(getUpDir("C:\\") == "");
+	REQUIRE(fs::isRootDir("C:\\") == true);
+	REQUIRE(fs::isRootDir("C:\\path\\to\\something") == false);
+	REQUIRE(fs::getUpDir("C:\\path\\to\\something") == "C:\\path\\to\\");
+	REQUIRE(fs::getUpDir("C:\\path") == "C:\\");
+	REQUIRE(fs::getUpDir("C:\\") == "");
 #else
-	REQUIRE(isRootDir("/") == true);
-	REQUIRE(isRootDir("/path/to/something") == false);
-	REQUIRE(getUpDir("/path/to/something") == "/path/to/");
-	REQUIRE(getUpDir("/path") == "/");
-	REQUIRE(getUpDir("/") == "/");
+	REQUIRE(fs::isRootDir("/") == true);
+	REQUIRE(fs::isRootDir("/path/to/something") == false);
+	REQUIRE(fs::getUpDir("/path/to/something") == "/path/to");
+	REQUIRE(fs::getUpDir("/path") == "/");
+	REQUIRE(fs::getUpDir("/") == "/");
 #endif
 }
 
 
 TEST_CASE("u::string")
 {
-	using namespace giada::u::string;
+	using namespace giada::u;
 
-	REQUIRE(replace("Giada is cool", "cool", "hot") == "Giada is hot");
-	REQUIRE(trim("   Giada is cool       ") == "Giada is cool");
-	REQUIRE(iToString(666) == "666");
-	REQUIRE(iToString(0x99AABB, true) == "99AABB");
-	REQUIRE(fToString(3.14159, 2) == "3.14");
-	REQUIRE(format("I see %d men with %s hats", 5, "strange") == "I see 5 men with strange hats");
+	REQUIRE(string::replace("Giada is cool", "cool", "hot") == "Giada is hot");
+	REQUIRE(string::trim("   Giada is cool       ") == "Giada is cool");
+	REQUIRE(string::iToString(666) == "666");
+	REQUIRE(string::iToString(0x99AABB, true) == "99AABB");
+	REQUIRE(string::fToString(3.14159, 2) == "3.14");
+	REQUIRE(string::format("I see %d men with %s hats", 5, "strange") == "I see 5 men with strange hats");
 
-	std::vector<std::string> v = split("Giada is cool", " ");
+	std::vector<std::string> v = string::split("Giada is cool", " ");
 	REQUIRE(v.size() == 3);
 	REQUIRE(v.at(0) == "Giada");
 	REQUIRE(v.at(1) == "is");
@@ -55,9 +55,9 @@ TEST_CASE("u::string")
 
 TEST_CASE("::math")
 {
-	using namespace giada::u::math;
+	using namespace giada::u;
 
-	REQUIRE(map( 0.0f, 0.0f, 30.0f, 0.0f, 1.0f) == 0.0f);
-	REQUIRE(map(30.0f, 0.0f, 30.0f, 0.0f, 1.0f) == 1.0f);
-	REQUIRE(map(15.0f, 0.0f, 30.0f, 0.0f, 1.0f) == Approx(0.5f));
+	REQUIRE(math::map( 0.0f, 0.0f, 30.0f, 0.0f, 1.0f) == 0.0f);
+	REQUIRE(math::map(30.0f, 0.0f, 30.0f, 0.0f, 1.0f) == 1.0f);
+	REQUIRE(math::map(15.0f, 0.0f, 30.0f, 0.0f, 1.0f) == Approx(0.5f));
 }
