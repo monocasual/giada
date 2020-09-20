@@ -148,7 +148,7 @@ void Wave::setPath(const std::string& p, int id)
 	if (id == -1)
 		m_path = p; 
 	else 
-		m_path = u::fs::stripExt(p) + "-" + std::to_string(id) + "." + u::fs::getExt(p);
+		m_path = u::fs::stripExt(p) + "-" + std::to_string(id) + u::fs::getExt(p);
 }
 
 
@@ -172,4 +172,4 @@ void Wave::moveData(AudioBuffer& b)
 {
 	buffer.moveData(b);
 }
-}}; // giada::m::
+}} // giada::m::
