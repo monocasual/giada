@@ -139,7 +139,7 @@ std::string getExt(const std::string& s)
 
 std::string stripExt(const std::string& s)
 {
-	return std::filesystem::path(s).stem().string();
+	return std::filesystem::path(s).replace_extension("").string();
 }
 
 
