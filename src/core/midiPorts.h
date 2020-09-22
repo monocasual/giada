@@ -29,6 +29,7 @@
 #define G_MIDIPORTS_H
 
 #include <string>
+#include "midiMsg.h"
 
 namespace giada {
 namespace m {
@@ -61,12 +62,12 @@ int openInPort(std::string port);
 int closeInPort(std::string port = "");
 int closeOutPort(std::string port = "");
 
-/* getIn/OutPortName
-Returns the name of the port 'p'. */
-// These may be removed very soon //
+/* getOutDeviceName
+Returns the name of the port with a given index. */
+// TODO: To be removed when we quit numbering ports //
 
-std::string getInPortName(unsigned p);
-std::string getOutPortName(unsigned p);
+std::string getOutDeviceName(unsigned index);
+std::string getInDeviceName(unsigned index);
 
 // midiReceive
 // Sends a MIDI message 'mm' to a port named 'recipient'.

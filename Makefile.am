@@ -24,6 +24,10 @@ sourcesCore =                               \
 	src/core/midiMapConf.cpp                \
 	src/core/midiEvent.h                    \
 	src/core/midiEvent.cpp                  \
+	src/core/midiPorts.h                    \
+	src/core/midiPorts.cpp                  \
+	src/core/midiMsg.h                      \
+	src/core/midiMsg.cpp                    \
 	src/core/audioBuffer.h                  \
 	src/core/audioBuffer.cpp                \
 	src/core/quantizer.h                    \

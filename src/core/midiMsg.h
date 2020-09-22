@@ -42,7 +42,7 @@ class midiMsg
 
 	public:
 	midiMsg(std::string sender, std::vector<unsigned char>* message);
-	unsigned char			getByte(int n);
+	unsigned char			getByte(unsigned int n);
 	std::vector<unsigned char>*	getMessage();
 };
 

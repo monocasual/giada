@@ -31,7 +31,7 @@
 namespace giada {
 namespace m {
 
-//------------------------------  CONSTRUCTORS  ------------------------------
+//------------------------------  CONSTRUCTORS  --------------------------------
 
 midiMsg::midiMsg(std::string sender, std::vector<unsigned char>* message){ 
 	midiMsg::sender_ = sender;
@@ -39,12 +39,14 @@ midiMsg::midiMsg(std::string sender, std::vector<unsigned char>* message){
 }
 
 
-//----------------------------  MEMBER FUNCTIONS  ----------------------------
+//----------------------------  MEMBER FUNCTIONS  ------------------------------
 
-unsigned char midiMsg::getByte(int n){
+unsigned char midiMsg::getByte(unsigned int n){
 	if (n >= midiMsg::message_->size()) return 0;
 	return midiMsg::message_->at(n);
 }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 std::vector<unsigned char>* midiMsg::getMessage(){
 	return midiMsg::message_;

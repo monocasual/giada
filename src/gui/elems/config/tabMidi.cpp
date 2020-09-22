@@ -31,6 +31,7 @@
 #include "core/conf.h"
 #include "core/midiMapConf.h"
 #include "core/kernelMidi.h"
+#include "core/midiPorts.h"
 #include "utils/gui.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/choice.h"
@@ -82,7 +83,9 @@ geTabMidi::geTabMidi(int X, int Y, int W, int H)
 
 void geTabMidi::fetchOutPorts()
 {
-	if (m::kernelMidi::countOutPorts() == 0) {
+	std::vector<std::string> ports = m::midiPorts::getOutDevices();
+
+	if (ports.size() == 0) {
 		portOut->add("-- no ports found --");
 		portOut->value(0);
 		portOut->deactivate();
@@ -91,8 +94,8 @@ void geTabMidi::fetchOutPorts()
 
 		portOut->add("(disabled)");
 
-		for (unsigned i=0; i<m::kernelMidi::countOutPorts(); i++)
-			portOut->add(u::gui::removeFltkChars(m::kernelMidi::getOutPortName(i)).c_str());
+		for (unsigned i=0; i<ports.size(); i++)
+			portOut->add(u::gui::removeFltkChars(ports.at(i)).c_str());
 
 		portOut->value(m::conf::conf.midiPortOut+1);    // +1 because midiPortOut=-1 is '(disabled)'
 	}
@@ -103,7 +106,9 @@ void geTabMidi::fetchOutPorts()
 
 void geTabMidi::fetchInPorts()
 {
-	if (m::kernelMidi::countInPorts() == 0) {
+	std::vector<std::string> ports = m::midiPorts::getInDevices();
+
+	if (ports.size() == 0) {
 		portIn->add("-- no ports found --");
 		portIn->value(0);
 		portIn->deactivate();
@@ -112,8 +117,8 @@ void geTabMidi::fetchInPorts()
 
 		portIn->add("(disabled)");
 
-		for (unsigned i=0; i<m::kernelMidi::countInPorts(); i++)
-			portIn->add(u::gui::removeFltkChars(m::kernelMidi::getInPortName(i)).c_str());
+		for (unsigned i=0; i<ports.size(); i++)
+			portIn->add(u::gui::removeFltkChars(ports.at(i)).c_str());
 
 		portIn->value(m::conf::conf.midiPortIn+1);    // +1 because midiPortIn=-1 is '(disabled)'
 	}
@@ -182,19 +187,19 @@ void geTabMidi::fetchSystems()
 {
 #if defined(__linux__)
 
-	if (m::kernelMidi::hasAPI(RtMidi::LINUX_ALSA))
+	if (m::midiPorts::hasAPI(RtMidi::LINUX_ALSA))
 		system->add("ALSA");
-	if (m::kernelMidi::hasAPI(RtMidi::UNIX_JACK))
+	if (m::midiPorts::hasAPI(RtMidi::UNIX_JACK))
 		system->add("Jack");
 
 #elif defined(__FreeBSD__)
 
-	if (m::kernelMidi::hasAPI(RtMidi::UNIX_JACK))
+	if (m::midiPorts::hasAPI(RtMidi::UNIX_JACK))
 		system->add("Jack");
 
 #elif defined(_WIN32)
 
-	if (m::kernelMidi::hasAPI(RtMidi::WINDOWS_MM))
+	if (m::midiPorts::hasAPI(RtMidi::WINDOWS_MM))
 		system->add("Multimedia MIDI");
 
 #elif defined (__APPLE__)

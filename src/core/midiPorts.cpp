@@ -34,6 +34,8 @@
 #include "conf.h"
 #include "utils/log.h"
 #include "midiDispatcher.h"
+#include "midiMapConf.h"
+#include "kernelMidi.h"
 #include "midiMsg.h"
 #include "midiPorts.h"
 #include <map>
@@ -69,24 +71,38 @@ static void callback_(double t, std::vector<unsigned char>* msg, void* data)
 
 
 	// "data" pointer should point at a port name string // 
-	std::string port = *static_cast<std::string*>(data);
+	// std::string port = *static_cast<std::string*>(data);
 
 	// A port name shall be converted into the address string
-	
-	port = "p;" + port;
+	// port = "p;" + port;
 
 	// Creating a nice midiMsg instance //
-	midiMsg mm = midiMsg(port, msg);
+	// midiMsg mm = midiMsg(port, msg);
 
-	// Passing it to a midiDispatcher - TODO //
+	// Passing it to a new midiDispatcher - TODO //
 	// something like:
 	// midiDispatcher::dispatch(mm);
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// TODO: Legacy function - to be removed in next stages of overhaul
+// TODO: MAke use of it!
+void sendMidiLightningInitMsgs_()
+{
+	for (const midimap::Message& m : midimap::midimap.initCommands) {
+		if (m.value != 0x0 && m.channel != -1) {
+			u::log::print("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", m.channel, m.value);
+			MidiEvent e(m.value);
+			e.setChannel(m.channel);
+			kernelMidi::send(e.getRaw());
+		}
+	}
 }
 
 } // {anonymous}
 
 
-/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 void init()
@@ -95,12 +111,10 @@ void init()
 	midiOut_ = new RtMidiOut((RtMidi::Api) api_, "Giada dummy port");
 	midiIn_  = new RtMidiIn((RtMidi::Api) api_, "Giada dummy port");
 
+	// TODO: Open In port and out port for Stage 1
 }
-//init:
-// - set API and stuff
-// - create midiOut_ and midiIn_
-//
-/* -------------------------------------------------------------------------- */
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 bool hasAPI(int API)
 {
@@ -112,7 +126,7 @@ bool hasAPI(int API)
 	return false;
 }
 
-/* -------------------------------------------------------------------------- */
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 void setApi(int api)
 {
@@ -120,7 +134,6 @@ void setApi(int api)
 	u::log::print("[MP] using system 0x%x\n", api_);
 }
 
-/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 std::vector<std::string> getOutDevices(){
@@ -145,7 +158,7 @@ std::vector<std::string> getOutDevices(){
 	return output;
 }
 
-/* -------------------------------------------------------------------------- */
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 std::vector<std::string> getInDevices(){
 	
@@ -170,7 +183,6 @@ std::vector<std::string> getInDevices(){
 }
 
 /* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
 
 int getOutDeviceIndex(std::string port){
 
@@ -183,7 +195,7 @@ int getOutDeviceIndex(std::string port){
 	return -1;
 }
 
-/* -------------------------------------------------------------------------- */
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 int getInDeviceIndex(std::string port){
 
@@ -197,7 +209,7 @@ int getInDeviceIndex(std::string port){
 }
 
 /* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
+
 int openOutPort(std::string port){
 
 	// First let's see if port name is even valid
@@ -236,18 +248,20 @@ int openOutPort(std::string port){
 	// Let's open this port
 	try {
 		outPorts_[port]->openPort(index, port);
-		u::log::print("[MP::openOutPort] MIDI port \"%s\" open\n", port);
+		u::log::print("[MP::openOutPort] MIDI port \"%s\" open\n",
+							port.c_str());
+		sendMidiLightningInitMsgs_();
 		return 1;
 	}
 	catch (RtMidiError& error) {
 		u::log::print("[MP::openOutPort] unable to open port %s: %s\n",
-					port, error.getMessage().c_str());
+				port.c_str(), error.getMessage().c_str());
 		return -3;
 	}
 
 }
 
-/* -------------------------------------------------------------------------- */
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 int openInPort(std::string port){
 
@@ -295,12 +309,13 @@ int openInPort(std::string port){
 		inPorts_[port]->setCallback(&callback_, p);
 		inPorts_[port]->openPort(index, port);
 		inPorts_[port]->ignoreTypes(false, false, false);
-		u::log::print("[MP::openInPort] MIDI port \"%s\" open\n", port);
+		u::log::print("[MP::openInPort] MIDI port \"%s\" open\n",
+							port.c_str());
 		return 1;
 	}
 	catch (RtMidiError& error) {
 		u::log::print("[MP::openInPort] unable to open port %s: %s\n",
-					port, error.getMessage().c_str());
+				port.c_str(), error.getMessage().c_str());
 		return -3;
 	}
 
@@ -320,23 +335,25 @@ int closeOutPort(std::string port){
 			ports_to_destroy.push_back(it->first);
 		}
 
-		for (int i = 0; i < ports_to_destroy.size(); i++){
+		for (unsigned int i = 0; i < ports_to_destroy.size(); i++){
 			closeOutPort(ports_to_destroy.at(i));
 		}
-		return 0;
+		return 1;
 	}
 	// Let's check if this port is in the map //
 	if (outPorts_.count(port) > 0) {
 		// RtMidi port destructor closes connections on its own
 		delete outPorts_[port];
 		outPorts_.erase(port);
-		u::log::print("[MP::closeOutPort] Port \"%s\" closed.\n", port);
+		u::log::print("[MP::closeOutPort] Port \"%s\" closed.\n",
+							port.c_str());
 		return 0;
 	}
+	return 2;
 	
 }
 
-/* -------------------------------------------------------------------------- */
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 int closeInPort(std::string port){
 
@@ -350,39 +367,37 @@ int closeInPort(std::string port){
 			ports_to_destroy.push_back(it->first);
 		}
 
-		for (int i = 0; i < ports_to_destroy.size(); i++){
+		for (unsigned int i = 0; i < ports_to_destroy.size(); i++){
 			closeInPort(ports_to_destroy.at(i));
 		}
-		return 0;
+		return 1;
 	}
 	// Let's check if this port is in the map //
 	if (inPorts_.count(port) > 0) {
 		// RtMidi port destructor closes connections on its own
 		delete inPorts_[port];
 		inPorts_.erase(port);
-		u::log::print("[MP::closeInPort] Port \"%s\" closed.\n", port);
+		u::log::print("[MP::closeInPort] Port \"%s\" closed.\n",
+							port.c_str());
 		return 0;
 	}
+	return 2;
 	
 }
 
 /* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
 
-// Legacy code - but still valid. To be removed unless we find a use for it.
-//
-std::string getOutPortName(unsigned p)
-{
-	try { return midiOut_->getPortName(p); }
-	catch (RtMidiError &error) { return ""; }
+std::string getOutDeviceName(unsigned index){
+	try {return midiOut_->getPortName(index);}
+	catch (RtMidiError& error) {return 0;}
 }
 
-std::string getInPortName(unsigned p)
-{
-	try { return midiIn_->getPortName(p); }
-	catch (RtMidiError &error) { return ""; }
-}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+std::string getInDeviceName(unsigned index){
+	try {return midiIn_->getPortName(index);}
+	catch (RtMidiError& error) {return 0;}
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -398,7 +413,7 @@ void midiReceive(midiMsg mm, std::string recipient)
 		outPorts_[recipient]->sendMessage(mm.getMessage());
 
 		u::log::print("[MP::midiReceive] Message sent to \"%s\". ",
-								recipient);
+							recipient.c_str());
 		u::log::print("Data: %X",mm.getMessage()->at(0));
 		int bytes = mm.getMessage()->size();
 		for (int i=1; i< bytes; i++){
@@ -408,7 +423,8 @@ void midiReceive(midiMsg mm, std::string recipient)
 	}
 	else {
 		u::log::print("[MP::midiReceive] Sending message to \"%s\" \
-		has failed (openOutPort returned %d).", recipient, status);
+		failed (openOutPort returned %d).", recipient.c_str(),
+								status);
 	}
 }
 

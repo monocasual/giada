@@ -42,7 +42,7 @@ int getB1(uint32_t iValue);
 int getB2(uint32_t iValue);
 int getB3(uint32_t iValue);
 
-uint32_t getIValue(int b1, int b2, int b3);
+void init();
 
 /* send
 Sends a MIDI message 's' as uint32_t or as separate bytes. */
@@ -55,35 +55,5 @@ Sends a MIDI lightning message defined by 'msg'. */
 
 void sendMidiLightning(uint32_t learnt, const midimap::Message& msg);
 
-/* setApi
-Sets the Api in use for both in & out messages. */
-
-void setApi(int api);
-
-/* getStatus
-Returns current engine status. */
-
-bool getStatus();
-
-/* open/close/in/outDevice */
-
-int openOutDevice(int port);
-int openInDevice(int port);
-int closeInDevice();
-int closeOutDevice();
-
-/* getIn/OutPortName
-Returns the name of the port 'p'. */
-
-std::string getInPortName(unsigned p);
-std::string getOutPortName(unsigned p);
-
-unsigned countInPorts();
-unsigned countOutPorts();
-
-bool hasAPI(int API);
-
 }}} // giada::m::kernelMidi::
-
-
 #endif

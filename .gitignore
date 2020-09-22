@@ -10,6 +10,7 @@
 *.deps
 *.tar.gz
 *.tar.gz.asc
+*~
 
 # --- test files
 /giada_tests
