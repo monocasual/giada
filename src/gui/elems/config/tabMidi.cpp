@@ -97,7 +97,8 @@ void geTabMidi::fetchOutPorts()
 		for (unsigned i=0; i<ports.size(); i++)
 			portOut->add(u::gui::removeFltkChars(ports.at(i)).c_str());
 
-		portOut->value(m::conf::conf.midiPortOut+1);    // +1 because midiPortOut=-1 is '(disabled)'
+		int i = m::midiPorts::getOutDeviceIndex(m::conf::conf.midiPortOutName);
+		portOut->value(i+1);
 	}
 }
 
@@ -120,7 +121,8 @@ void geTabMidi::fetchInPorts()
 		for (unsigned i=0; i<ports.size(); i++)
 			portIn->add(u::gui::removeFltkChars(ports.at(i)).c_str());
 
-		portIn->value(m::conf::conf.midiPortIn+1);    // +1 because midiPortIn=-1 is '(disabled)'
+		int i = m::midiPorts::getInDeviceIndex(m::conf::conf.midiPortInName);
+		portIn->value(i+1);
 	}
 }
 
@@ -167,9 +169,9 @@ void geTabMidi::save()
 	else if (text == "OSX Core MIDI")
 		m::conf::conf.midiSystem = RtMidi::MACOSX_CORE;
 
-	m::conf::conf.midiPortOut = portOut->value()-1;   // -1 because midiPortOut=-1 is '(disabled)'
-	m::conf::conf.midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
-	m::conf::conf.midiMapPath = m::midimap::maps.size() == 0 ? "" : midiMap->text(midiMap->value());
+	m::conf::conf.midiPortOutName = m::midiPorts::getOutDeviceName(portOut->value()-1);
+	m::conf::conf.midiPortInName  = m::midiPorts::getInDeviceName(portIn->value()-1); 
+	m::conf::conf.midiMapPath     = m::midimap::maps.size() == 0 ? "" : midiMap->text(midiMap->value());
 
 	if      (sync->value() == 0)
 		m::conf::conf.midiSync = MIDI_SYNC_NONE;

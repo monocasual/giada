@@ -27,7 +27,11 @@ list(APPEND SOURCES
 	src/core/conf.h                         
 	src/core/conf.cpp                       
 	src/core/kernelAudio.h                  
-	src/core/kernelAudio.cpp                                 
+	src/core/kernelAudio.cpp                
+	src/core/midiPorts.h                  
+	src/core/midiPorts.cpp                
+	src/core/midiMsg.h                  
+	src/core/midiMsg.cpp                
 	src/core/mixerHandler.h                 
 	src/core/mixerHandler.cpp               
 	src/core/sequencer.h                    

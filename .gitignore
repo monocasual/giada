@@ -23,6 +23,11 @@
 /test-write.wav
 /test-plugin-list.xml
 
+# --- CMake stuff
+CMakeCache.txt
+/CMakeFiles
+cmake_install.cmake
+
 # --- misc
 /cmake-build-debug/
 /build

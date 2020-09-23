@@ -66,8 +66,8 @@ int closeOutPort(std::string port = "");
 Returns the name of the port with a given index. */
 // TODO: To be removed when we quit numbering ports //
 
-std::string getOutDeviceName(unsigned index);
-std::string getInDeviceName(unsigned index);
+std::string getOutDeviceName(int index);
+std::string getInDeviceName(int index);
 
 // midiReceive
 // Sends a MIDI message 'mm' to a port named 'recipient'.

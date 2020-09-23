@@ -141,8 +141,8 @@ bool read()
 	conf.limitOutput                =  j.value(CONF_KEY_LIMIT_OUTPUT, conf.limitOutput);
 	conf.rsmpQuality                =  j.value(CONF_KEY_RESAMPLE_QUALITY, conf.rsmpQuality);
 	conf.midiSystem                 =  j.value(CONF_KEY_MIDI_SYSTEM, conf.midiSystem);
-	conf.midiPortOut                =  j.value(CONF_KEY_MIDI_PORT_OUT, conf.midiPortOut);
-	conf.midiPortIn                 =  j.value(CONF_KEY_MIDI_PORT_IN, conf.midiPortIn);
+	conf.midiPortOutName            =  j.value(CONF_KEY_MIDI_PORT_OUT_NAME, conf.midiPortOutName);
+	conf.midiPortInName             =  j.value(CONF_KEY_MIDI_PORT_IN_NAME, conf.midiPortInName);
 	conf.midiMapPath                =  j.value(CONF_KEY_MIDIMAP_PATH, conf.midiMapPath);
 	conf.lastFileMap                =  j.value(CONF_KEY_LAST_MIDIMAP, conf.lastFileMap);
 	conf.midiSync                   =  j.value(CONF_KEY_MIDI_SYNC, conf.midiSync);
@@ -237,8 +237,8 @@ bool write()
 	j[CONF_KEY_LIMIT_OUTPUT]                  = conf.limitOutput;
 	j[CONF_KEY_RESAMPLE_QUALITY]              = conf.rsmpQuality;
 	j[CONF_KEY_MIDI_SYSTEM]                   = conf.midiSystem;
-	j[CONF_KEY_MIDI_PORT_OUT]                 = conf.midiPortOut;
-	j[CONF_KEY_MIDI_PORT_IN]                  = conf.midiPortIn;
+	j[CONF_KEY_MIDI_PORT_OUT_NAME]            = conf.midiPortOutName;
+	j[CONF_KEY_MIDI_PORT_IN_NAME]             = conf.midiPortInName;
 	j[CONF_KEY_MIDIMAP_PATH]                  = conf.midiMapPath;
 	j[CONF_KEY_LAST_MIDIMAP]                  = conf.lastFileMap;
 	j[CONF_KEY_MIDI_SYNC]                     = conf.midiSync;

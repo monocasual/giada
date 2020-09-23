@@ -53,13 +53,13 @@ struct Conf
 	bool limitOutput     = false;
 	int  rsmpQuality     = 0;
 
-	int         midiSystem  = 0;
-	int         midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
-	int         midiPortIn  = G_DEFAULT_MIDI_PORT_IN;
-	std::string midiMapPath = "";
-	std::string lastFileMap = "";
-	int         midiSync    = MIDI_SYNC_NONE;
-	float       midiTCfps   = 25.0f;
+	int         midiSystem      = 0;
+	std::string midiPortOutName = G_DEFAULT_MIDI_PORT_OUT;
+	std::string midiPortInName  = G_DEFAULT_MIDI_PORT_IN;
+	std::string midiMapPath     = "";
+	std::string lastFileMap     = "";
+	int         midiSync        = MIDI_SYNC_NONE;
+	float       midiTCfps       = 25.0f;
 
 	bool chansStopOnSeqHalt         = false;
 	bool treatRecsAsLoops           = false;

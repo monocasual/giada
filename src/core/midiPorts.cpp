@@ -387,16 +387,18 @@ int closeInPort(std::string port){
 
 /* -------------------------------------------------------------------------- */
 
-std::string getOutDeviceName(unsigned index){
+std::string getOutDeviceName(int index){
+	if (index < 0) return "";
 	try {return midiOut_->getPortName(index);}
-	catch (RtMidiError& error) {return 0;}
+	catch (RtMidiError& error) {return "";}
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-std::string getInDeviceName(unsigned index){
+std::string getInDeviceName(int index){
+	if (index < 0) return "";
 	try {return midiIn_->getPortName(index);}
-	catch (RtMidiError& error) {return 0;}
+	catch (RtMidiError& error) {return "";}
 }
 
 /* -------------------------------------------------------------------------- */

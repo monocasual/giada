@@ -50,18 +50,12 @@ std::string out_port_name = "";
 /* -------------------------------------------------------------------------- */
 
 void init(){
-	int out_port_index = conf::conf.midiPortOut;
-	if (out_port_index >= 0){
-		out_port_name = midiPorts::getOutDeviceName(out_port_index);
-		midiPorts::openOutPort(out_port_name);	
-	}
-	
 
-	int in_port_index = conf::conf.midiPortIn;
-	if (in_port_index >= 0){
-		std::string p = midiPorts::getInDeviceName(in_port_index);
-		midiPorts::openInPort(p);
-	}
+	out_port_name = conf::conf.midiPortOutName;
+	midiPorts::openOutPort(out_port_name);	
+	
+	midiPorts::openInPort(conf::conf.midiPortInName);
+
 }
 
 /* -------------------------------------------------------------------------- */
