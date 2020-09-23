@@ -377,12 +377,34 @@ find_package(Threads REQUIRED)
 find_package(FLTK REQUIRED)
 find_library(LIBRARY_RTMIDI NAMES rtmidi REQUIRED)
 find_library(LIBRARY_SNDFILE NAMES sndfile libsndfile libsndfile-1 REQUIRED)
-find_library(LIBRARY_FLAC NAMES flac FLAC REQUIRED)
-find_library(LIBRARY_OGG NAMES ogg REQUIRED)
 find_library(LIBRARY_SAMPLERATE NAMES samplerate libsamplerate libsamplerate-0 REQUIRED)
+
+# Find optional dependencies.
+
+find_library(LIBRARY_FLAC NAMES flac FLAC)
+find_library(LIBRARY_OGG NAMES ogg)
+find_library(LIBRARY_OPUS NAMES opus libopus)
+find_library(LIBRARY_VORBIS NAMES vorbis)
+find_library(LIBRARY_VORBISENC NAMES vorbisenc)
+
 list(APPEND LIBRARIES 
-	${Threads_LIBRARY} ${FLTK_LIBRARY} ${LIBRARY_RTMIDI} ${LIBRARY_FLAC} 
-	${LIBRARY_OGG} ${LIBRARY_SNDFILE} ${LIBRARY_SAMPLERATE})
+	${Threads_LIBRARY} ${FLTK_LIBRARY} ${LIBRARY_RTMIDI} ${LIBRARY_SNDFILE} 
+	${LIBRARY_SAMPLERATE})
+if(LIBRARY_FLAC)
+	list(APPEND LIBRARIES ${LIBRARY_FLAC})
+endif()
+if(LIBRARY_OGG)
+	list(APPEND LIBRARIES ${LIBRARY_OGG})
+endif()
+if(LIBRARY_OPUS)
+	list(APPEND LIBRARIES ${LIBRARY_OPUS})
+endif()
+if(LIBRARY_VORBIS)
+	list(APPEND LIBRARIES ${LIBRARY_VORBIS})
+endif()
+if(LIBRARY_VORBISENC)
+	list(APPEND LIBRARIES ${LIBRARY_VORBISENC})
+endif()
 
 # RtMidi header path may vary accross OSes, so a fix is needed. 
 # TODO - Find a way to avoid this additional step
