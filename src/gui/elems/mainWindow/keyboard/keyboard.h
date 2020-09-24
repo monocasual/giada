@@ -102,7 +102,7 @@ private:
 
 	static constexpr int COLUMN_GAP = 20;
 
-	static void cb_addColumn(Fl_Widget* v, void* p);
+	static void cb_addColumn(Fl_Widget* /*w*/, void* p);
 	void cb_addColumn();
 
 	void addColumn(int width=G_DEFAULT_COLUMN_WIDTH, ID id=0);

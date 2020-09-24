@@ -255,9 +255,9 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 /* -------------------------------------------------------------------------- */
 
 
-void geSampleChannel::cb_playButton (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_playButton(); }
-void geSampleChannel::cb_openMenu   (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_openMenu(); }
-void geSampleChannel::cb_readActions(Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_readActions(); }
+void geSampleChannel::cb_playButton (Fl_Widget* /*w*/, void* p) { ((geSampleChannel*)p)->cb_playButton(); }
+void geSampleChannel::cb_openMenu   (Fl_Widget* /*w*/, void* p) { ((geSampleChannel*)p)->cb_openMenu(); }
+void geSampleChannel::cb_readActions(Fl_Widget* /*w*/, void* p) { ((geSampleChannel*)p)->cb_readActions(); }
 
 
 /* -------------------------------------------------------------------------- */

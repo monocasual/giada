@@ -84,9 +84,9 @@ void geBoostTool::rebuild()
 /* -------------------------------------------------------------------------- */
 
 
-void geBoostTool::cb_setBoost   (Fl_Widget* w, void* p) { ((geBoostTool*)p)->cb_setBoost(); }
-void geBoostTool::cb_setBoostNum(Fl_Widget* w, void* p) { ((geBoostTool*)p)->cb_setBoostNum(); }
-void geBoostTool::cb_normalize  (Fl_Widget* w, void* p) { ((geBoostTool*)p)->cb_normalize(); }
+void geBoostTool::cb_setBoost   (Fl_Widget* /*w*/, void* p) { ((geBoostTool*)p)->cb_setBoost(); }
+void geBoostTool::cb_setBoostNum(Fl_Widget* /*w*/, void* p) { ((geBoostTool*)p)->cb_setBoostNum(); }
+void geBoostTool::cb_normalize  (Fl_Widget* /*w*/, void* p) { ((geBoostTool*)p)->cb_normalize(); }
 
 
 /* -------------------------------------------------------------------------- */

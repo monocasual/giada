@@ -60,7 +60,7 @@ private:
 	void fetchInPorts();
 	void fetchMidiMaps();
 
-	static void cb_changeSystem(Fl_Widget* w, void* p);
+	static void cb_changeSystem(Fl_Widget* /*w*/, void* p);
 	void cb_changeSystem();
 
 	int systemInitValue;

@@ -291,7 +291,7 @@ void writeWaves_(nl::json& j)
 /* -------------------------------------------------------------------------- */
 
 
-void writeCommons_(nl::json& j, const std::string& name)
+void writeCommons_(nl::json& j)
 {
 	j[PATCH_KEY_HEADER]        = "GIADAPTC";
 	j[PATCH_KEY_VERSION_MAJOR] = G_VERSION_MAJOR;
@@ -439,11 +439,11 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-bool write(const std::string& name, const std::string& file)
+bool write(const std::string& file)
 {
 	nl::json j;
 
-	writeCommons_(j, name);
+	writeCommons_(j);
 	writeColumns_(j);
 	writeChannels_(j);
 	writeActions_(j);

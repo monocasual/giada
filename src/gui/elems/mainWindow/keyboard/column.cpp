@@ -69,7 +69,7 @@ void geColumn::refresh()
 /* -------------------------------------------------------------------------- */
 
 
-void geColumn::cb_addChannel(Fl_Widget* v, void* p) { ((geColumn*)p)->cb_addChannel(); }
+void geColumn::cb_addChannel(Fl_Widget* /*w*/, void* p) { ((geColumn*)p)->cb_addChannel(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -90,7 +90,7 @@ geChannel* geColumn::addChannel(c::channel::Data d)
 
 	/* Update the column height while dragging the resizer bar. */
 
-	bar->onDrag = [this](const Fl_Widget* w)
+	bar->onDrag = [this](const Fl_Widget* /*w*/)
 	{
 		resizable(nullptr);	
 		size(this->w(), (child(children() - 1)->y() - y()) + G_GUI_INNER_MARGIN);

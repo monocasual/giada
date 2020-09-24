@@ -51,8 +51,8 @@ public:
 
 private:
 
-	static void cb_setChanPos   (Fl_Widget* w, void* p);
-	static void cb_resetStartEnd(Fl_Widget* w, void* p);
+	static void cb_setChanPos   (Fl_Widget* /*w*/, void* p);
+	static void cb_resetStartEnd(Fl_Widget* /*w*/, void* p);
 	void cb_setChanPos();
 	void cb_resetStartEnd();
 

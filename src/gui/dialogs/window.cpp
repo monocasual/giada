@@ -32,7 +32,7 @@
 namespace giada {
 namespace v 
 {
-void cb_window_closer(Fl_Widget* v, void* p)
+void cb_window_closer(Fl_Widget* /*v*/, void* p)
 {
   delete (Fl_Window*) p;
 }
@@ -74,9 +74,9 @@ gdWindow::~gdWindow()
 /* this is the default callback of each window, fired when the user closes
  * the window with the 'x'. Watch out: is the parent that calls delSubWIndow */
 
-void gdWindow::cb_closeChild(Fl_Widget* v, void* p)
+void gdWindow::cb_closeChild(Fl_Widget* w, void* /*p*/)
 {
-	gdWindow* child = (gdWindow*) v;
+	gdWindow* child = (gdWindow*) w;
 	if (child->getParent() != nullptr)
 		(child->getParent())->delSubWindow(child);
 }

@@ -72,10 +72,10 @@ geMainMenu::geMainMenu(int x, int y)
 	file->callback(cb_file, (void*)this);
 	edit->callback(cb_edit, (void*)this);
 
-	about->callback([](Fl_Widget* w, void* v) { 
+	about->callback([](Fl_Widget* /*w*/, void* /*v*/) { 
 		u::gui::openSubWindow(G_MainWin, new gdAbout(), WID_ABOUT);
 	});
-	config->callback([](Fl_Widget* w, void* v) { 
+	config->callback([](Fl_Widget* /*w*/, void* /*v*/) { 
 		u::gui::openSubWindow(G_MainWin, new gdConfig(400, 370), WID_CONFIG);
 	});
 }
@@ -84,8 +84,8 @@ geMainMenu::geMainMenu(int x, int y)
 /* -------------------------------------------------------------------------- */
 
 
-void geMainMenu::cb_file(Fl_Widget* v, void* p) { ((geMainMenu*)p)->cb_file(); }
-void geMainMenu::cb_edit(Fl_Widget* v, void* p) { ((geMainMenu*)p)->cb_edit(); }
+void geMainMenu::cb_file(Fl_Widget* /*w*/, void* p) { ((geMainMenu*)p)->cb_file(); }
+void geMainMenu::cb_edit(Fl_Widget* /*w*/, void* p) { ((geMainMenu*)p)->cb_edit(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -130,7 +130,7 @@ void geMainMenu::cb_file()
 	}
 	else
 	if (strcmp(m->label(), "Close project") == 0) {
-		c::main::closeProject(/*createColumns=*/true);
+		c::main::closeProject();
 	}
 #ifndef NDEBUG
 	else

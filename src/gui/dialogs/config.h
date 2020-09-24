@@ -72,8 +72,8 @@ public:
 
 private:
 
-	static void cb_save_config(Fl_Widget* w, void* p);
-	static void cb_cancel(Fl_Widget* w, void* p);
+	static void cb_save_config(Fl_Widget* /*w*/, void* p);
+	static void cb_cancel(Fl_Widget* /*w*/, void* p);
 	void cb_save_config();
 	void cb_cancel();
 };

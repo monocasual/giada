@@ -48,7 +48,7 @@ public:
 
 private:
 
-	static void cb_update(Fl_Widget* w, void* p);
+	static void cb_update(Fl_Widget* /*w*/, void* p);
 	void cb_update();
 
 	geInput* beats;

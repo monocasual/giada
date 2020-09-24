@@ -333,7 +333,7 @@ const AudioBuffer& getRecBuffer()
 
 
 int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize, 
-	double streamTime, RtAudioStreamStatus status, void* userData)
+	double /*streamTime*/, RtAudioStreamStatus /*status*/, void* /*userData*/)
 {
 	if (!kernelAudio::isReady() || active_.load() == false)
 		return 0;

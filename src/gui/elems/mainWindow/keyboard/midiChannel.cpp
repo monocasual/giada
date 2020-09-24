@@ -181,8 +181,8 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiChannel::cb_playButton(Fl_Widget* v, void* p) { ((geMidiChannel*)p)->cb_playButton(); }
-void geMidiChannel::cb_openMenu(Fl_Widget* v, void* p) { ((geMidiChannel*)p)->cb_openMenu(); }
+void geMidiChannel::cb_playButton(Fl_Widget* /*w*/, void* p) { ((geMidiChannel*)p)->cb_playButton(); }
+void geMidiChannel::cb_openMenu(Fl_Widget* /*w*/, void* p) { ((geMidiChannel*)p)->cb_openMenu(); }
 
 
 /* -------------------------------------------------------------------------- */

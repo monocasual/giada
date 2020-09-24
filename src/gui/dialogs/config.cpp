@@ -77,8 +77,8 @@ gdConfig::gdConfig(int w, int h)
 /* -------------------------------------------------------------------------- */
 
 
-void gdConfig::cb_save_config(Fl_Widget* w, void* p) { ((gdConfig*)p)->cb_save_config(); }
-void gdConfig::cb_cancel     (Fl_Widget* w, void* p) { ((gdConfig*)p)->cb_cancel(); }
+void gdConfig::cb_save_config(Fl_Widget* /*w*/, void* p) { ((gdConfig*)p)->cb_save_config(); }
+void gdConfig::cb_cancel     (Fl_Widget* /*w*/, void* p) { ((gdConfig*)p)->cb_cancel(); }
 
 
 /* -------------------------------------------------------------------------- */

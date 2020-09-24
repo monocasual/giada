@@ -39,7 +39,7 @@ namespace v
 /* cb_window_closer
 Callback for closing windows. Deletes the widget (delete). */
 
-void cb_window_closer(Fl_Widget* v, void* p);
+void cb_window_closer(Fl_Widget* /*w*/, void* p);
 
 class gdWindow : public Fl_Double_Window
 {
@@ -49,7 +49,7 @@ public:
 	gdWindow(int w, int h, const char* title=0, int id=0);
 	~gdWindow();
 
-	static void cb_closeChild(Fl_Widget* v, void* p);
+	static void cb_closeChild(Fl_Widget* /*w*/, void* p);
 
 	/* rebuild, refresh
 	Rebuild() is called by the View Updater when something structural changes

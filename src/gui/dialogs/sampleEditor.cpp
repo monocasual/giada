@@ -246,7 +246,7 @@ Fl_Group* gdSampleEditor::createInfoBox(int x, int y, int h)
 /* -------------------------------------------------------------------------- */
 
 
-Fl_Group* gdSampleEditor::createBottomBar(int x, int y, int h)
+Fl_Group* gdSampleEditor::createBottomBar(int /*x*/, int /*y*/, int h)
 {
 	Fl_Group* g = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, h);
 	g->begin();
@@ -272,13 +272,13 @@ Fl_Group* gdSampleEditor::createBottomBar(int x, int y, int h)
 /* -------------------------------------------------------------------------- */
 
 
-void gdSampleEditor::cb_reload       (Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->cb_reload(); }
-void gdSampleEditor::cb_zoomIn       (Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->cb_zoomIn(); }
-void gdSampleEditor::cb_zoomOut      (Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->cb_zoomOut(); }
-void gdSampleEditor::cb_changeGrid   (Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->cb_changeGrid(); }
-void gdSampleEditor::cb_enableSnap   (Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->cb_enableSnap(); }
-void gdSampleEditor::cb_togglePreview(Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->cb_togglePreview(); }
-void gdSampleEditor::cb_rewindPreview(Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->cb_rewindPreview(); }
+void gdSampleEditor::cb_reload       (Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_reload(); }
+void gdSampleEditor::cb_zoomIn       (Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_zoomIn(); }
+void gdSampleEditor::cb_zoomOut      (Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_zoomOut(); }
+void gdSampleEditor::cb_changeGrid   (Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_changeGrid(); }
+void gdSampleEditor::cb_enableSnap   (Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_enableSnap(); }
+void gdSampleEditor::cb_togglePreview(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_togglePreview(); }
+void gdSampleEditor::cb_rewindPreview(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_rewindPreview(); }
 
 
 /* -------------------------------------------------------------------------- */

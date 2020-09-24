@@ -45,7 +45,7 @@ public:
 
     gdAbout();
 
-    static void cb_close(Fl_Widget* w, void* p);
+    static void cb_close(Fl_Widget* /*w*/, void* p);
     inline void cb_close();
 
 private:

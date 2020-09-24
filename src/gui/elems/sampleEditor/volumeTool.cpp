@@ -94,8 +94,8 @@ void geVolumeTool::update(float v, bool isDial)
 /* -------------------------------------------------------------------------- */
 
 
-void geVolumeTool::cb_setVolume   (Fl_Widget* w, void* p) { ((geVolumeTool*)p)->cb_setVolume(); }
-void geVolumeTool::cb_setVolumeNum(Fl_Widget* w, void* p) { ((geVolumeTool*)p)->cb_setVolumeNum(); }
+void geVolumeTool::cb_setVolume   (Fl_Widget* /*w*/, void* p) { ((geVolumeTool*)p)->cb_setVolume(); }
+void geVolumeTool::cb_setVolumeNum(Fl_Widget* /*w*/, void* p) { ((geVolumeTool*)p)->cb_setVolumeNum(); }
 
 
 /* -------------------------------------------------------------------------- */

@@ -52,13 +52,13 @@ public:
 
 private:
 
-	static void cb_setPitch      (Fl_Widget* w, void* p);
-	static void cb_setPitchToBar (Fl_Widget* w, void* p);
-	static void cb_setPitchToSong(Fl_Widget* w, void* p);
-	static void cb_setPitchHalf  (Fl_Widget* w, void* p);
-	static void cb_setPitchDouble(Fl_Widget* w, void* p);
-	static void cb_resetPitch    (Fl_Widget* w, void* p);
-	static void cb_setPitchNum   (Fl_Widget* w, void* p);
+	static void cb_setPitch      (Fl_Widget* /*w*/, void* p);
+	static void cb_setPitchToBar (Fl_Widget* /*w*/, void* p);
+	static void cb_setPitchToSong(Fl_Widget* /*w*/, void* p);
+	static void cb_setPitchHalf  (Fl_Widget* /*w*/, void* p);
+	static void cb_setPitchDouble(Fl_Widget* /*w*/, void* p);
+	static void cb_resetPitch    (Fl_Widget* /*w*/, void* p);
+	static void cb_setPitchNum   (Fl_Widget* /*w*/, void* p);
 	void cb_setPitch();
 	void cb_setPitchToBar();
 	void cb_setPitchToSong();

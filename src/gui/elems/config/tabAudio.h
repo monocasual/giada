@@ -64,11 +64,11 @@ public:
 
 private:
 
-	static void cb_deactivate_sounddev(Fl_Widget* w, void* p);
-	static void cb_fetchInChans       (Fl_Widget* w, void* p);
-	static void cb_fetchOutChans      (Fl_Widget* w, void* p);
-	static void cb_showInputInfo      (Fl_Widget* w, void* p);
-	static void cb_showOutputInfo     (Fl_Widget* w, void* p);
+	static void cb_deactivate_sounddev(Fl_Widget* /*w*/, void* p);
+	static void cb_fetchInChans       (Fl_Widget* /*w*/, void* p);
+	static void cb_fetchOutChans      (Fl_Widget* /*w*/, void* p);
+	static void cb_showInputInfo      (Fl_Widget* /*w*/, void* p);
+	static void cb_showOutputInfo     (Fl_Widget* /*w*/, void* p);
 	void cb_deactivate_sounddev();
 	void cb_fetchInChans();
 	void cb_fetchOutChans();
@@ -77,7 +77,7 @@ private:
 
 	void fetchSoundDevs();
 	void fetchInChans(int menuItem);
-	void fetchOutChans(int menuItem);
+	void fetchOutChans();
 	int  findMenuDevice(geChoice* m, int device);
 
 	int soundsysInitValue;

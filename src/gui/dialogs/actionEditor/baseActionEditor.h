@@ -83,8 +83,8 @@ protected:
 
 	void zoomIn();
 	void zoomOut();
-	static void cb_zoomIn(Fl_Widget* w, void* p);
-	static void cb_zoomOut(Fl_Widget* w, void* p);
+	static void cb_zoomIn(Fl_Widget* /*w*/, void* p);
+	static void cb_zoomOut(Fl_Widget* /*w*/, void* p);
 	
 	/* computeWidth
 	Computes total width, in pixel. */

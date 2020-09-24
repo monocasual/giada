@@ -77,9 +77,9 @@ protected:
 	gdBrowserBase(const std::string& title, const std::string& path, 
 		std::function<void(void*)> f, ID channelId);
 
-	static void cb_up(Fl_Widget* v, void* p);
-	static void cb_close(Fl_Widget* w, void* p);
-	static void cb_toggleHiddenFiles(Fl_Widget* w, void* p);
+	static void cb_up(Fl_Widget* /*w*/, void* p);
+	static void cb_close(Fl_Widget* /*w*/, void* p);
+	static void cb_toggleHiddenFiles(Fl_Widget* /*w*/, void* p);
 	void cb_up();
 	void cb_close();
 	void cb_toggleHiddenFiles();

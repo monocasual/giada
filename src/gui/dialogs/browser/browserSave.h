@@ -56,8 +56,8 @@ private:
 
     geInput* name;
 
-    static void cb_down(Fl_Widget* v, void* p);
-    static void cb_save(Fl_Widget* w, void* p);
+    static void cb_down(Fl_Widget* /*w*/, void* p);
+    static void cb_save(Fl_Widget* /*w*/, void* p);
     void cb_down();
     void cb_save();
 };

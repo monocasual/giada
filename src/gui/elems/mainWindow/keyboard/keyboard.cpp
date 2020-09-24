@@ -122,7 +122,7 @@ void geKeyboard::deleteAllColumns()
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::cb_addColumn(Fl_Widget* v, void* p)
+void geKeyboard::cb_addColumn(Fl_Widget* /*w*/, void* p)
 {
 	((geKeyboard*)p)->cb_addColumn();
 }
@@ -227,7 +227,7 @@ void geKeyboard::addColumn(int width, ID id)
 
 	/* Store the column width in layout when the resizer bar is released. */
 
-	bar->onRelease = [=](const Fl_Widget* w)
+	bar->onRelease = [=](const Fl_Widget* /*w*/)
 	{
 		storeLayout();
 	};

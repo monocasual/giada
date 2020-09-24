@@ -48,7 +48,7 @@ MidiActionRecorder::MidiActionRecorder(ChannelState* c)
 /* -------------------------------------------------------------------------- */
 
 
-MidiActionRecorder::MidiActionRecorder(const MidiActionRecorder& o, ChannelState* c)
+MidiActionRecorder::MidiActionRecorder(const MidiActionRecorder& /*o*/, ChannelState* c)
 : MidiActionRecorder(c)
 {
 }

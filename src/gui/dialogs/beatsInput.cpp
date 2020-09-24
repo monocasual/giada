@@ -76,7 +76,7 @@ gdBeatsInput::gdBeatsInput()
 /* -------------------------------------------------------------------------- */
 
 
-void gdBeatsInput::cb_update(Fl_Widget* w, void* p) { ((gdBeatsInput*)p)->cb_update(); }
+void gdBeatsInput::cb_update(Fl_Widget* /*w*/, void* p) { ((gdBeatsInput*)p)->cb_update(); }
 
 
 /* -------------------------------------------------------------------------- */

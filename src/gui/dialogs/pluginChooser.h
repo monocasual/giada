@@ -54,9 +54,9 @@ public:
 
 private:
 
-	static void cb_close(Fl_Widget* w, void* p);
-	static void cb_add  (Fl_Widget* w, void* p);
-	static void cb_sort (Fl_Widget* w, void* p);
+	static void cb_close(Fl_Widget* /*w*/, void* p);
+	static void cb_add  (Fl_Widget* /*w*/, void* p);
+	static void cb_sort (Fl_Widget* /*w*/, void* p);
 	void cb_close();
 	void cb_add  ();
 	void cb_sort ();

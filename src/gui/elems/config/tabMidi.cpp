@@ -216,7 +216,7 @@ void geTabMidi::fetchSystems()
 /* -------------------------------------------------------------------------- */
 
 
-void geTabMidi::cb_changeSystem(Fl_Widget* w, void* p) { ((geTabMidi*)p)->cb_changeSystem(); }
+void geTabMidi::cb_changeSystem(Fl_Widget* /*w*/, void* p) { ((geTabMidi*)p)->cb_changeSystem(); }
 
 
 /* -------------------------------------------------------------------------- */

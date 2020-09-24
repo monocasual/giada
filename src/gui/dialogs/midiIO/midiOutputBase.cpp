@@ -83,8 +83,8 @@ gdMidiOutputBase::~gdMidiOutputBase()
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputBase::cb_close(Fl_Widget* w, void* p)           { ((gdMidiOutputBase*)p)->cb_close(); }
-void gdMidiOutputBase::cb_enableLightning(Fl_Widget *w, void *p) { ((gdMidiOutputBase*)p)->cb_enableLightning(); }
+void gdMidiOutputBase::cb_close          (Fl_Widget* /*w*/, void* p) { ((gdMidiOutputBase*)p)->cb_close(); }
+void gdMidiOutputBase::cb_enableLightning(Fl_Widget* /*w*/, void* p) { ((gdMidiOutputBase*)p)->cb_enableLightning(); }
 
 
 /* -------------------------------------------------------------------------- */

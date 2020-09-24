@@ -105,13 +105,13 @@ void gePitchTool::update(float v, bool isDial)
 /* -------------------------------------------------------------------------- */
 
 
-void gePitchTool::cb_setPitch      (Fl_Widget* w, void* p) { ((gePitchTool*)p)->cb_setPitch(); }
-void gePitchTool::cb_setPitchToBar (Fl_Widget* w, void* p) { ((gePitchTool*)p)->cb_setPitchToBar(); }
-void gePitchTool::cb_setPitchToSong(Fl_Widget* w, void* p) { ((gePitchTool*)p)->cb_setPitchToSong(); }
-void gePitchTool::cb_setPitchHalf  (Fl_Widget* w, void* p) { ((gePitchTool*)p)->cb_setPitchHalf(); }
-void gePitchTool::cb_setPitchDouble(Fl_Widget* w, void* p) { ((gePitchTool*)p)->cb_setPitchDouble(); }
-void gePitchTool::cb_resetPitch    (Fl_Widget* w, void* p) { ((gePitchTool*)p)->cb_resetPitch(); }
-void gePitchTool::cb_setPitchNum   (Fl_Widget* w, void* p) { ((gePitchTool*)p)->cb_setPitchNum(); }
+void gePitchTool::cb_setPitch      (Fl_Widget* /*w*/, void* p) { ((gePitchTool*)p)->cb_setPitch(); }
+void gePitchTool::cb_setPitchToBar (Fl_Widget* /*w*/, void* p) { ((gePitchTool*)p)->cb_setPitchToBar(); }
+void gePitchTool::cb_setPitchToSong(Fl_Widget* /*w*/, void* p) { ((gePitchTool*)p)->cb_setPitchToSong(); }
+void gePitchTool::cb_setPitchHalf  (Fl_Widget* /*w*/, void* p) { ((gePitchTool*)p)->cb_setPitchHalf(); }
+void gePitchTool::cb_setPitchDouble(Fl_Widget* /*w*/, void* p) { ((gePitchTool*)p)->cb_setPitchDouble(); }
+void gePitchTool::cb_resetPitch    (Fl_Widget* /*w*/, void* p) { ((gePitchTool*)p)->cb_resetPitch(); }
+void gePitchTool::cb_setPitchNum   (Fl_Widget* /*w*/, void* p) { ((gePitchTool*)p)->cb_setPitchNum(); }
 
 
 /* -------------------------------------------------------------------------- */

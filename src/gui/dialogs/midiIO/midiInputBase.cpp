@@ -56,7 +56,7 @@ gdMidiInputBase::~gdMidiInputBase()
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInputBase::cb_close(Fl_Widget* w, void* p) { ((gdMidiInputBase*)p)->cb_close(); }
+void gdMidiInputBase::cb_close(Fl_Widget* /*w*/, void* p) { ((gdMidiInputBase*)p)->cb_close(); }
 
 
 /* -------------------------------------------------------------------------- */

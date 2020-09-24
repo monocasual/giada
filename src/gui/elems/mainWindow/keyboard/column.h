@@ -73,7 +73,7 @@ public:
 
 private:
 
-	static void cb_addChannel(Fl_Widget* v, void* p);
+	static void cb_addChannel(Fl_Widget* /*w*/, void* p);
 	void cb_addChannel();
 
 	int countChannels() const;

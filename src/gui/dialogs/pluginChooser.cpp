@@ -99,9 +99,9 @@ gdPluginChooser::~gdPluginChooser()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginChooser::cb_close(Fl_Widget* v, void* p) { ((gdPluginChooser*)p)->cb_close(); }
-void gdPluginChooser::cb_add(Fl_Widget* v, void* p)   { ((gdPluginChooser*)p)->cb_add(); }
-void gdPluginChooser::cb_sort(Fl_Widget* v, void* p)  { ((gdPluginChooser*)p)->cb_sort(); }
+void gdPluginChooser::cb_close(Fl_Widget* /*w*/, void* p) { ((gdPluginChooser*)p)->cb_close(); }
+void gdPluginChooser::cb_add  (Fl_Widget* /*w*/, void* p) { ((gdPluginChooser*)p)->cb_add(); }
+void gdPluginChooser::cb_sort (Fl_Widget* /*w*/, void* p) { ((gdPluginChooser*)p)->cb_sort(); }
 
 
 /* -------------------------------------------------------------------------- */

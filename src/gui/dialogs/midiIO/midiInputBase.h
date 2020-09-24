@@ -51,7 +51,7 @@ protected:
 
 	gdMidiInputBase(int x, int y, int w, int h, const char* title="");
 
-	static void cb_close(Fl_Widget* w, void* p);
+	static void cb_close(Fl_Widget* /*w*/, void* p);
 	void cb_close();
 
 	geButton* m_ok;

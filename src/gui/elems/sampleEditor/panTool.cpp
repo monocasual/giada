@@ -107,8 +107,8 @@ void gePanTool::update(float v)
 /* -------------------------------------------------------------------------- */
 
 
-void gePanTool::cb_panning (Fl_Widget* w, void* p) { ((gePanTool*)p)->cb_panning(); }
-void gePanTool::cb_panReset(Fl_Widget* w, void* p) { ((gePanTool*)p)->cb_panReset(); }
+void gePanTool::cb_panning (Fl_Widget* /*w*/, void* p) { ((gePanTool*)p)->cb_panning(); }
+void gePanTool::cb_panReset(Fl_Widget* /*w*/, void* p) { ((gePanTool*)p)->cb_panReset(); }
 
 
 

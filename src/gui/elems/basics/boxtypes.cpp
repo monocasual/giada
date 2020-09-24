@@ -41,7 +41,7 @@ void g_customBorderBox(int x, int y, int w, int h, Fl_Color c)
 }
 
 
-void g_customUpBox(int x, int y, int w, int h, Fl_Color c)
+void g_customUpBox(int x, int y, int w, int h, Fl_Color /*c*/)
 {
   fl_color(G_COLOR_GREY_2);
   fl_rectf(x, y, w, h);

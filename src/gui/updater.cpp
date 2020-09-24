@@ -36,7 +36,7 @@ namespace giada {
 namespace v {
 namespace updater
 {
-void update(void* p)
+void update(void* /*p*/)
 {
 	if (m::model::waves.changed.load()    == true ||
 		m::model::actions.changed.load()  == true ||

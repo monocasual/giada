@@ -54,8 +54,8 @@ public:
 
 private:
 
-	static void cb_scan(Fl_Widget* w, void* p);
-	static void cb_browse(Fl_Widget* w, void* p);
+	static void cb_scan(Fl_Widget* /*w*/, void* p);
+	static void cb_browse(Fl_Widget* /*w*/, void* p);
 	void cb_scan();
 	void cb_browse();
 

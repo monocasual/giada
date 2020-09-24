@@ -87,12 +87,12 @@ geMainIO::geMainIO(int x, int y)
 /* -------------------------------------------------------------------------- */
 
 
-void geMainIO::cb_outVol     (Fl_Widget* v, void* p) { ((geMainIO*)p)->cb_outVol(); }
-void geMainIO::cb_inVol      (Fl_Widget* v, void* p) { ((geMainIO*)p)->cb_inVol(); }
-void geMainIO::cb_inToOut    (Fl_Widget* v, void* p) { ((geMainIO*)p)->cb_inToOut(); }
+void geMainIO::cb_outVol     (Fl_Widget* /*w*/, void* p) { ((geMainIO*)p)->cb_outVol(); }
+void geMainIO::cb_inVol      (Fl_Widget* /*w*/, void* p) { ((geMainIO*)p)->cb_inVol(); }
+void geMainIO::cb_inToOut    (Fl_Widget* /*w*/, void* p) { ((geMainIO*)p)->cb_inToOut(); }
 #ifdef WITH_VST
-void geMainIO::cb_masterFxOut(Fl_Widget* v, void* p) { ((geMainIO*)p)->cb_masterFxOut(); }
-void geMainIO::cb_masterFxIn (Fl_Widget* v, void* p) { ((geMainIO*)p)->cb_masterFxIn(); }
+void geMainIO::cb_masterFxOut(Fl_Widget* /*w*/, void* p) { ((geMainIO*)p)->cb_masterFxOut(); }
+void geMainIO::cb_masterFxIn (Fl_Widget* /*w*/, void* p) { ((geMainIO*)p)->cb_masterFxIn(); }
 #endif
 
 

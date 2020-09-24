@@ -103,10 +103,9 @@ void setInToOut(bool v);
 void toggleRecOnSignal();
 
 /* closeProject
-Resets Giada to init state. If resetGui also refresh all widgets. If 
-createColumns also build initial empty columns. */
+Resets Giada to init state. If resetGui also refresh all widgets. */
 
-void closeProject(bool createColumns);
+void closeProject();
 }}} // giada::c::main::
 
 #endif

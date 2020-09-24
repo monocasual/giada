@@ -62,7 +62,7 @@ private:
   	geChoice* gridType;
 	geCheck*  active;
 
-	static void cb_changeType(Fl_Widget* w, void* p);
+	static void cb_changeType(Fl_Widget* /*w*/, void* p);
 	void cb_changeType();
 };
 }} // giada::v::

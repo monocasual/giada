@@ -58,7 +58,7 @@ public:
 
 private:
 
-	static void cb_setValue(Fl_Widget* v, void* p);
+	static void cb_setValue(Fl_Widget* /*w*/, void* p);
 	void cb_setValue();
 
 	const c::plugin::Param m_param; 

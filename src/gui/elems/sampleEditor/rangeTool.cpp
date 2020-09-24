@@ -94,8 +94,8 @@ void geRangeTool::update(Frame begin, Frame end)
 /* -------------------------------------------------------------------------- */
 
 
-void geRangeTool::cb_setChanPos   (Fl_Widget* w, void* p) { ((geRangeTool*)p)->cb_setChanPos(); }
-void geRangeTool::cb_resetStartEnd(Fl_Widget* w, void* p) { ((geRangeTool*)p)->cb_resetStartEnd(); }
+void geRangeTool::cb_setChanPos   (Fl_Widget* /*w*/, void* p) { ((geRangeTool*)p)->cb_setChanPos(); }
+void geRangeTool::cb_resetStartEnd(Fl_Widget* /*w*/, void* p) { ((geRangeTool*)p)->cb_resetStartEnd(); }
 
 
 /* -------------------------------------------------------------------------- */

@@ -106,7 +106,7 @@ gdPluginWindowGUI::~gdPluginWindowGUI()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginWindowGUI::cb_close(Fl_Widget* v, void* p) { ((gdPluginWindowGUI*)p)->cb_close(); }
+void gdPluginWindowGUI::cb_close(Fl_Widget* /*v*/, void* p) { ((gdPluginWindowGUI*)p)->cb_close(); }
 void gdPluginWindowGUI::cb_refresh(void* data) { ((gdPluginWindowGUI*)data)->cb_refresh(); }
 
 

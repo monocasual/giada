@@ -69,8 +69,8 @@ geShiftTool::geShiftTool(const c::sampleEditor::Data& d, int x, int y)
 /* -------------------------------------------------------------------------- */
 
 
-void geShiftTool::cb_setShift(Fl_Widget* w, void* p) { ((geShiftTool*)p)->cb_setShift(); }
-void geShiftTool::cb_reset(Fl_Widget* w, void* p) { ((geShiftTool*)p)->cb_reset(); }
+void geShiftTool::cb_setShift(Fl_Widget* /*w*/, void* p) { ((geShiftTool*)p)->cb_setShift(); }
+void geShiftTool::cb_reset(Fl_Widget* /*w*/, void* p) { ((geShiftTool*)p)->cb_reset(); }
 
 
 /* -------------------------------------------------------------------------- */

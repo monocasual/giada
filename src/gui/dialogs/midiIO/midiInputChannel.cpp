@@ -244,9 +244,9 @@ void gdMidiInputChannel::rebuild()
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInputChannel::cb_enable(Fl_Widget* w, void* p) { ((gdMidiInputChannel*)p)->cb_enable(); }
-void gdMidiInputChannel::cb_setChannel(Fl_Widget* w, void* p) { ((gdMidiInputChannel*)p)->cb_setChannel(); }
-void gdMidiInputChannel::cb_veloAsVol(Fl_Widget* w, void* p) { ((gdMidiInputChannel*)p)->cb_veloAsVol(); }
+void gdMidiInputChannel::cb_enable(Fl_Widget* /*w*/, void* p) { ((gdMidiInputChannel*)p)->cb_enable(); }
+void gdMidiInputChannel::cb_setChannel(Fl_Widget* /*w*/, void* p) { ((gdMidiInputChannel*)p)->cb_setChannel(); }
+void gdMidiInputChannel::cb_veloAsVol(Fl_Widget* /*w*/, void* p) { ((gdMidiInputChannel*)p)->cb_veloAsVol(); }
 
 
 /* -------------------------------------------------------------------------- */

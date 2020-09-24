@@ -104,7 +104,7 @@ void geChannelMode::draw()
 /* -------------------------------------------------------------------------- */
 
 
-void geChannelMode::cb_changeMode(Fl_Widget* v, void* p) { ((geChannelMode*)v)->cb_changeMode((intptr_t)p); }
+void geChannelMode::cb_changeMode(Fl_Widget* w, void* p) { ((geChannelMode*)w)->cb_changeMode((intptr_t)p); }
 
 
 /* -------------------------------------------------------------------------- */

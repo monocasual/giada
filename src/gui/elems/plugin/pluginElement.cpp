@@ -109,12 +109,12 @@ ID gePluginElement::getPluginId() const
 /* -------------------------------------------------------------------------- */
 
 
-void gePluginElement::cb_removePlugin    (Fl_Widget* v, void* p) { ((gePluginElement*)p)->cb_removePlugin(); }
-void gePluginElement::cb_openPluginWindow(Fl_Widget* v, void* p) { ((gePluginElement*)p)->cb_openPluginWindow(); }
-void gePluginElement::cb_setBypass       (Fl_Widget* v, void* p) { ((gePluginElement*)p)->cb_setBypass(); }
-void gePluginElement::cb_shiftUp         (Fl_Widget* v, void* p) { ((gePluginElement*)p)->cb_shiftUp(); }
-void gePluginElement::cb_shiftDown       (Fl_Widget* v, void* p) { ((gePluginElement*)p)->cb_shiftDown(); }
-void gePluginElement::cb_setProgram      (Fl_Widget* v, void* p) { ((gePluginElement*)p)->cb_setProgram(); }
+void gePluginElement::cb_removePlugin    (Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_removePlugin(); }
+void gePluginElement::cb_openPluginWindow(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_openPluginWindow(); }
+void gePluginElement::cb_setBypass       (Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_setBypass(); }
+void gePluginElement::cb_shiftUp         (Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_shiftUp(); }
+void gePluginElement::cb_shiftDown       (Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_shiftDown(); }
+void gePluginElement::cb_setProgram      (Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_setProgram(); }
 
 
 /* -------------------------------------------------------------------------- */

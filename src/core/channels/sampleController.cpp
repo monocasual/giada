@@ -72,7 +72,7 @@ SampleController::SampleController(ChannelState* c, SamplePlayerState* s)
 /* -------------------------------------------------------------------------- */
 
 
-SampleController::SampleController(const SampleController& o, ChannelState* c, SamplePlayerState* s)
+SampleController::SampleController(const SampleController& /*o*/, ChannelState* c, SamplePlayerState* s)
 : SampleController(c, s)
 {
 }

@@ -57,9 +57,9 @@ public:
 
 private:
 
-	static void cb_playButton(Fl_Widget* v, void* p);
-	static void cb_openMenu(Fl_Widget* v, void* p);
-	static void cb_readActions(Fl_Widget* v, void* p);
+	static void cb_playButton(Fl_Widget* /*w*/, void* p);
+	static void cb_openMenu(Fl_Widget* /*w*/, void* p);
+	static void cb_readActions(Fl_Widget* /*w*/, void* p);
 	void cb_playButton();
 	void cb_openMenu();
 	void cb_readActions();

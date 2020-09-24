@@ -62,8 +62,8 @@ gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserSave::cb_save(Fl_Widget* v, void* p) { ((gdBrowserSave*)p)->cb_save(); }
-void gdBrowserSave::cb_down(Fl_Widget* v, void* p) { ((gdBrowserSave*)p)->cb_down(); }
+void gdBrowserSave::cb_save(Fl_Widget* /*v*/, void* p) { ((gdBrowserSave*)p)->cb_save(); }
+void gdBrowserSave::cb_down(Fl_Widget* /*v*/, void* p) { ((gdBrowserSave*)p)->cb_down(); }
 
 
 /* -------------------------------------------------------------------------- */

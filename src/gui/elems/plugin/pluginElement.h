@@ -61,12 +61,12 @@ public:
 
 private:
 
-	static void cb_removePlugin(Fl_Widget* v, void* p);
-	static void cb_openPluginWindow(Fl_Widget* v, void* p);
-	static void cb_setBypass(Fl_Widget* v, void* p);
-	static void cb_shiftUp(Fl_Widget* v, void* p);
-	static void cb_shiftDown(Fl_Widget* v, void* p);
-	static void cb_setProgram(Fl_Widget* v, void* p);
+	static void cb_removePlugin(Fl_Widget* /*w*/, void* p);
+	static void cb_openPluginWindow(Fl_Widget* /*w*/, void* p);
+	static void cb_setBypass(Fl_Widget* /*w*/, void* p);
+	static void cb_shiftUp(Fl_Widget* /*w*/, void* p);
+	static void cb_shiftDown(Fl_Widget* /*w*/, void* p);
+	static void cb_setProgram(Fl_Widget* /*w*/, void* p);
 	void cb_removePlugin();
 	void cb_openPluginWindow();
 	void cb_setBypass();

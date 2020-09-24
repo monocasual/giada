@@ -66,8 +66,8 @@ gdChannelNameInput::gdChannelNameInput(const c::channel::Data& d)
 /* -------------------------------------------------------------------------- */
 
 
-void gdChannelNameInput::cb_update(Fl_Widget* w, void* p) { ((gdChannelNameInput*)p)->cb_update(); }
-void gdChannelNameInput::cb_cancel(Fl_Widget* w, void* p) { ((gdChannelNameInput*)p)->cb_cancel(); }
+void gdChannelNameInput::cb_update(Fl_Widget* /*w*/, void* p) { ((gdChannelNameInput*)p)->cb_update(); }
+void gdChannelNameInput::cb_cancel(Fl_Widget* /*w*/, void* p) { ((gdChannelNameInput*)p)->cb_cancel(); }
 
 
 /* -------------------------------------------------------------------------- */

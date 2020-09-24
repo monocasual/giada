@@ -51,8 +51,8 @@ public:
 	
 private:
 
-	static void cb_setVolume(Fl_Widget* w, void* p);
-	static void cb_setVolumeNum(Fl_Widget* w, void* p);
+	static void cb_setVolume(Fl_Widget* /*w*/, void* p);
+	static void cb_setVolumeNum(Fl_Widget* /*w*/, void* p);
 	void cb_setVolume();
 	void cb_setVolumeNum();
 

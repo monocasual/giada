@@ -52,8 +52,8 @@ public:
 
 private:
 
-  static void cb_panning (Fl_Widget* w, void* p);
-  static void cb_panReset(Fl_Widget* w, void* p);
+  static void cb_panning (Fl_Widget* /*w*/, void* p);
+  static void cb_panReset(Fl_Widget* /*w*/, void* p);
   void cb_panning();
   void cb_panReset();
 

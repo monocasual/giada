@@ -46,8 +46,8 @@ public:
 
 private:
 
-	static void cb_file(Fl_Widget* v, void* p);
-	static void cb_edit(Fl_Widget* v, void* p);
+	static void cb_file(Fl_Widget* /*w*/, void* p);
+	static void cb_edit(Fl_Widget* /*w*/, void* p);
 	void cb_file();
 	void cb_edit();
 

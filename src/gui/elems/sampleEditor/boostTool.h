@@ -51,9 +51,9 @@ public:
 
 private:
 
-	static void cb_setBoost(Fl_Widget* w, void* p);
-	static void cb_setBoostNum(Fl_Widget* w, void* p);
-	static void cb_normalize(Fl_Widget* w, void* p);
+	static void cb_setBoost(Fl_Widget* /*w*/, void* p);
+	static void cb_setBoostNum(Fl_Widget* /*w*/, void* p);
+	static void cb_normalize(Fl_Widget* /*w*/, void* p);
 	void cb_setBoost();
 	void cb_setBoostNum();
 	void cb_normalize();

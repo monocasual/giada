@@ -55,7 +55,7 @@ public:
 
 private:
 
-	static void cb_onChange(Fl_Widget* w, void* p);
+	static void cb_onChange(Fl_Widget* /*w*/, void* p);
 	void cb_onChange();
 
 	bool angle;

@@ -47,7 +47,7 @@ public:
 
 private:
 
-    static void cb_changeMode(Fl_Widget* v, void* p);
+    static void cb_changeMode(Fl_Widget* /*w*/, void* p);
     void cb_changeMode(int mode);
 
     c::channel::Data& m_channel;

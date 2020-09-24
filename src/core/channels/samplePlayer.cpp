@@ -96,7 +96,7 @@ void SamplePlayer::advance(Frame bufferSize) const
 /* -------------------------------------------------------------------------- */
 
 
-void SamplePlayer::render(AudioBuffer& out) const
+void SamplePlayer::render(AudioBuffer& /*out*/) const
 {
     assert(m_channelState != nullptr);
 

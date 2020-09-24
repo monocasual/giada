@@ -112,8 +112,8 @@ void gdMidiOutputMidiCh::rebuild()
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputMidiCh::cb_enableOut (Fl_Widget *w, void *p) { ((gdMidiOutputMidiCh*)p)->cb_enableOut(); }
-void gdMidiOutputMidiCh::cb_setChannel(Fl_Widget *w, void *p) { ((gdMidiOutputMidiCh*)p)->cb_setChannel(); }
+void gdMidiOutputMidiCh::cb_enableOut (Fl_Widget* /*w*/, void* p) { ((gdMidiOutputMidiCh*)p)->cb_enableOut(); }
+void gdMidiOutputMidiCh::cb_setChannel(Fl_Widget* /*w*/, void* p) { ((gdMidiOutputMidiCh*)p)->cb_setChannel(); }
 
 
 /* -------------------------------------------------------------------------- */

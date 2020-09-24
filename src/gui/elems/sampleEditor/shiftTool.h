@@ -51,8 +51,8 @@ public:
 
 private:
 
-	static void cb_setShift(Fl_Widget* w, void* p);
-	static void cb_reset(Fl_Widget* w, void* p);
+	static void cb_setShift(Fl_Widget* /*w*/, void* p);
+	static void cb_reset(Fl_Widget* /*w*/, void* p);
 	void cb_setShift();
 	void cb_reset();
 

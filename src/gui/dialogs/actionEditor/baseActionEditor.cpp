@@ -79,8 +79,8 @@ gdBaseActionEditor::~gdBaseActionEditor()
 /* -------------------------------------------------------------------------- */
 
 
-void gdBaseActionEditor::cb_zoomIn(Fl_Widget* w, void* p)  { ((gdBaseActionEditor*)p)->zoomIn(); }
-void gdBaseActionEditor::cb_zoomOut(Fl_Widget* w, void* p) { ((gdBaseActionEditor*)p)->zoomOut(); }
+void gdBaseActionEditor::cb_zoomIn(Fl_Widget* /*w*/, void* p)  { ((gdBaseActionEditor*)p)->zoomIn(); }
+void gdBaseActionEditor::cb_zoomOut(Fl_Widget* /*w*/, void* p) { ((gdBaseActionEditor*)p)->zoomOut(); }
 
 
 /* -------------------------------------------------------------------------- */

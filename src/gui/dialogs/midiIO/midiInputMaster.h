@@ -64,8 +64,8 @@ public:
 
 private:
 
-	static void cb_enable(Fl_Widget* w, void* p);
-	static void cb_setChannel(Fl_Widget* w, void* p);
+	static void cb_enable(Fl_Widget* /*w*/, void* p);
+	static void cb_setChannel(Fl_Widget* /*w*/, void* p);
 	void cb_enable();
 	void cb_setChannel();
 

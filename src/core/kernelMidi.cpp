@@ -47,7 +47,7 @@ unsigned numOutPorts_ = 0;
 unsigned numInPorts_  = 0;
 
 
-static void callback_(double t, std::vector<unsigned char>* msg, void* data)
+static void callback_(double /*t*/, std::vector<unsigned char>* msg, void* /*data*/)
 {
 	if (msg->size() < 3) {
 		//u::log::print("[KM] MIDI received - unknown signal - size=%d, value=0x", (int) msg->size());

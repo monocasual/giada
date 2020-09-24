@@ -57,7 +57,7 @@ public:
 
 private:
 
-	static void cb_close(Fl_Widget* v, void* p);
+	static void cb_close(Fl_Widget* /*w*/, void* p);
 	static void cb_refresh(void* data);
 	void cb_close();
 	void cb_refresh();

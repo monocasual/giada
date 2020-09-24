@@ -52,7 +52,7 @@ geChoice::geChoice(int x, int y, int w, int h, const char* l, bool ang)
 /* -------------------------------------------------------------------------- */
 
 
-void geChoice::cb_onChange(Fl_Widget* w, void* p) { (static_cast<geChoice*>(p))->cb_onChange(); }
+void geChoice::cb_onChange(Fl_Widget* /*w*/, void* p) { (static_cast<geChoice*>(p))->cb_onChange(); }
 
 
 /* -------------------------------------------------------------------------- */

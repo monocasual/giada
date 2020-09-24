@@ -295,7 +295,7 @@ void toggleRecOnSignal()
 /* -------------------------------------------------------------------------- */
 
 
-void closeProject(bool createColumns)
+void closeProject()
 {
 	if (!v::gdConfirmWin("Warning", "Close project: are you sure?"))
 		return;

@@ -57,8 +57,8 @@ gdBrowserLoad::gdBrowserLoad(const std::string& title, const std::string& path,
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserLoad::cb_load(Fl_Widget* v, void* p) { ((gdBrowserLoad*)p)->cb_load(); }
-void gdBrowserLoad::cb_down(Fl_Widget* v, void* p) { ((gdBrowserLoad*)p)->cb_down(); }
+void gdBrowserLoad::cb_load(Fl_Widget* /*v*/, void* p) { ((gdBrowserLoad*)p)->cb_load(); }
+void gdBrowserLoad::cb_down(Fl_Widget* /*v*/, void* p) { ((gdBrowserLoad*)p)->cb_down(); }
 
 
 /* -------------------------------------------------------------------------- */

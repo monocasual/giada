@@ -65,28 +65,28 @@ geMainTransport::geMainTransport(int x, int y)
 	add(spacer2);
 	add(metronome);
 	
-	rewind->callback([](Fl_Widget* w, void* v) { 
+	rewind->callback([](Fl_Widget* /*w*/, void* /*v*/) { 
 		c::events::rewindSequencer(Thread::MAIN);
 	});
 
-	play->callback([](Fl_Widget* w, void* v) { 
+	play->callback([](Fl_Widget* /*w*/, void* /*v*/) { 
 		c::events::toggleSequencer(Thread::MAIN);
 	});
 
-	recAction->callback([](Fl_Widget* w, void* v) { 
+	recAction->callback([](Fl_Widget* /*w*/, void* /*v*/) { 
 		c::events::toggleActionRecording();
 	});
 
-	recInput->callback([](Fl_Widget* w, void* v) { 
+	recInput->callback([](Fl_Widget* /*w*/, void* /*v*/) { 
 		c::events::toggleInputRecording();
 	});
 
-	recTriggerMode->callback([](Fl_Widget* w, void* v) { 
+	recTriggerMode->callback([](Fl_Widget* /*w*/, void* /*v*/) { 
 		c::main::toggleRecOnSignal();
 	});
 
 	metronome->type(FL_TOGGLE_BUTTON);
-	metronome->callback([](Fl_Widget* w, void* v) {
+	metronome->callback([](Fl_Widget* /*w*/, void* /*v*/) {
 		c::events::toggleMetronome();
 	});
 }

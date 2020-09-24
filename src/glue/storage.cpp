@@ -109,7 +109,7 @@ bool savePatch_(const std::string& path, const std::string& name)
 	m::model::store(m::patch::patch);
 	v::model::store(m::patch::patch);
 
-	if (!m::patch::write(name, path))
+	if (!m::patch::write(path))
 		return false;
 
 	u::gui::updateMainWinLabel(name);

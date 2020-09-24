@@ -166,7 +166,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 
 	if (m::conf::conf.soundSystem != G_SYS_API_NONE) {
 		fetchSoundDevs();
-		fetchOutChans(sounddevOut->value());
+		fetchOutChans();
 		fetchInChans(sounddevIn->value());
 
 		/* fill frequency dropdown menu */
@@ -218,11 +218,11 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 /* -------------------------------------------------------------------------- */
 
 
-void geTabAudio::cb_deactivate_sounddev(Fl_Widget* w, void* p) { ((geTabAudio*)p)->cb_deactivate_sounddev(); }
-void geTabAudio::cb_fetchInChans(Fl_Widget* w, void* p)        { ((geTabAudio*)p)->cb_fetchInChans(); }
-void geTabAudio::cb_fetchOutChans(Fl_Widget* w, void* p)       { ((geTabAudio*)p)->cb_fetchOutChans(); }
-void geTabAudio::cb_showInputInfo(Fl_Widget* w, void* p)       { ((geTabAudio*)p)->cb_showInputInfo(); }
-void geTabAudio::cb_showOutputInfo(Fl_Widget* w, void* p)      { ((geTabAudio*)p)->cb_showOutputInfo(); }
+void geTabAudio::cb_deactivate_sounddev(Fl_Widget* /*w*/, void* p) { ((geTabAudio*)p)->cb_deactivate_sounddev(); }
+void geTabAudio::cb_fetchInChans(Fl_Widget* /*w*/, void* p)        { ((geTabAudio*)p)->cb_fetchInChans(); }
+void geTabAudio::cb_fetchOutChans(Fl_Widget* /*w*/, void* p)       { ((geTabAudio*)p)->cb_fetchOutChans(); }
+void geTabAudio::cb_showInputInfo(Fl_Widget* /*w*/, void* p)       { ((geTabAudio*)p)->cb_showInputInfo(); }
+void geTabAudio::cb_showOutputInfo(Fl_Widget* /*w*/, void* p)      { ((geTabAudio*)p)->cb_showOutputInfo(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -240,7 +240,7 @@ void geTabAudio::cb_fetchInChans()
 
 void geTabAudio::cb_fetchOutChans()
 {
-	fetchOutChans(sounddevOut->value());
+	fetchOutChans();
 	channelsOut->value(0);
 }
 
@@ -283,7 +283,7 @@ void geTabAudio::cb_deactivate_sounddev()
 
 		/* the '?' button is added by fetchSoundDevs */
 
-		fetchOutChans(sounddevOut->value());
+		fetchOutChans();
 		sounddevOut->activate();
 		channelsOut->activate();
 
@@ -357,7 +357,7 @@ void geTabAudio::fetchInChans(int menuItem)
 /* -------------------------------------------------------------------------- */
 
 
-void geTabAudio::fetchOutChans(int menuItem)
+void geTabAudio::fetchOutChans()
 {
 	channelsOut->clear();
 

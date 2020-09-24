@@ -99,7 +99,7 @@ public:
 	/* setWaveId
 	Call this when the Wave ID has changed (e.g. after a reload). */
 
-	void setWaveId(ID id) { /* TODO m_waveId = id;*/};
+	void setWaveId(ID /*id*/ ) { /* TODO m_waveId = id;*/};
 
 private:
 

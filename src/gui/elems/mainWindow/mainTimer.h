@@ -61,11 +61,11 @@ public:
 
 private:
 
-	static void cb_bpm       (Fl_Widget* v, void* p);
-	static void cb_meter     (Fl_Widget* v, void* p);
-	static void cb_quantizer (Fl_Widget* v, void* p);
-	static void cb_multiplier(Fl_Widget* v, void* p);
-	static void cb_divider   (Fl_Widget* v, void* p);
+	static void cb_bpm       (Fl_Widget* /*w*/, void* p);
+	static void cb_meter     (Fl_Widget* /*w*/, void* p);
+	static void cb_quantizer (Fl_Widget* /*w*/, void* p);
+	static void cb_multiplier(Fl_Widget* /*w*/, void* p);
+	static void cb_divider   (Fl_Widget* /*w*/, void* p);
 	void cb_bpm();
 	void cb_meter();
 	void cb_quantizer();

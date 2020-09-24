@@ -56,8 +56,8 @@ public:
 
 private:
 
-	static void cb_clear (Fl_Widget* w, void* p);
-	static void cb_cancel(Fl_Widget* w, void* p);
+	static void cb_clear (Fl_Widget* /*w*/, void* p);
+	static void cb_cancel(Fl_Widget* /*w*/, void* p);
 	void cb_clear ();
 	void cb_cancel();
 

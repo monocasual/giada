@@ -49,7 +49,7 @@ SampleActionRecorder::SampleActionRecorder(ChannelState* c, SamplePlayerState* s
 /* -------------------------------------------------------------------------- */
 
 
-SampleActionRecorder::SampleActionRecorder(const SampleActionRecorder& o, 
+SampleActionRecorder::SampleActionRecorder(const SampleActionRecorder& /*o*/, 
 	ChannelState* c, SamplePlayerState* sc)
 : SampleActionRecorder(c, sc)
 {

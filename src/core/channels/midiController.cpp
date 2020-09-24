@@ -43,7 +43,7 @@ MidiController::MidiController(ChannelState* c)
 /* -------------------------------------------------------------------------- */
 
 
-MidiController::MidiController(const MidiController& o, ChannelState* c)
+MidiController::MidiController(const MidiController& /*o*/, ChannelState* c)
 : m_channelState(c)
 {
 }

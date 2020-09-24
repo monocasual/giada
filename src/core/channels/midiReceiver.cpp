@@ -47,7 +47,7 @@ MidiReceiver::MidiReceiver(ChannelState* c)
 /* -------------------------------------------------------------------------- */
 
 
-MidiReceiver::MidiReceiver(const patch::Channel& p, ChannelState* c)
+MidiReceiver::MidiReceiver(const patch::Channel& /*p*/, ChannelState* c)
 : state           (std::make_unique<MidiReceiverState>())
 , m_channelState  (c)
 {
@@ -57,7 +57,7 @@ MidiReceiver::MidiReceiver(const patch::Channel& p, ChannelState* c)
 /* -------------------------------------------------------------------------- */
 
 
-MidiReceiver::MidiReceiver(const MidiReceiver& o, ChannelState* c)
+MidiReceiver::MidiReceiver(const MidiReceiver& /*o*/, ChannelState* c)
 : state           (std::make_unique<MidiReceiverState>())
 , m_channelState  (c)
 {

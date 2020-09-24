@@ -60,15 +60,15 @@ public:
 
 private:
 
-	static void cb_outVol (Fl_Widget* v, void* p);
-	static void cb_inVol  (Fl_Widget* v, void* p);
-	static void cb_inToOut(Fl_Widget* v, void* p);
+	static void cb_outVol (Fl_Widget* /*w*/, void* p);
+	static void cb_inVol  (Fl_Widget* /*w*/, void* p);
+	static void cb_inToOut(Fl_Widget* /*w*/, void* p);
 	void cb_outVol();
 	void cb_inVol();
 	void cb_inToOut();
 #ifdef WITH_VST
-	static void cb_masterFxOut(Fl_Widget* v, void* p);
-	static void cb_masterFxIn (Fl_Widget* v, void* p);
+	static void cb_masterFxOut(Fl_Widget* /*w*/, void* p);
+	static void cb_masterFxIn (Fl_Widget* /*w*/, void* p);
 	void cb_masterFxOut();
 	void cb_masterFxIn();
 #endif

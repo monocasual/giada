@@ -94,8 +94,8 @@ void geTabPlugins::refreshCount()
 /* -------------------------------------------------------------------------- */
 
 
-void geTabPlugins::cb_scan(Fl_Widget* w, void* p) { ((geTabPlugins*)p)->cb_scan(); }
-void geTabPlugins::cb_browse(Fl_Widget* w, void* p) { ((geTabPlugins*)p)->cb_browse(); }
+void geTabPlugins::cb_scan(Fl_Widget* /*w*/, void* p) { ((geTabPlugins*)p)->cb_scan(); }
+void geTabPlugins::cb_browse(Fl_Widget* /*w*/, void* p) { ((geTabPlugins*)p)->cb_browse(); }
 
 
 /* -------------------------------------------------------------------------- */

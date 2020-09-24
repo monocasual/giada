@@ -47,8 +47,8 @@ public:
 
 private:
 
-	static void cb_update(Fl_Widget* w, void* p);
-	static void cb_cancel(Fl_Widget* w, void* p);
+	static void cb_update(Fl_Widget* /*w*/, void* p);
+	static void cb_cancel(Fl_Widget* /*w*/, void* p);
 	void cb_update();
 	void cb_cancel();
 

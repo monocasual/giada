@@ -93,7 +93,7 @@ gdAbout::gdAbout()
 /* -------------------------------------------------------------------------- */
 
 
-void gdAbout::cb_close(Fl_Widget* w, void* p) { ((gdAbout*)p)->cb_close(); }
+void gdAbout::cb_close(Fl_Widget* /*w*/, void* p) { ((gdAbout*)p)->cb_close(); }
 
 
 /* -------------------------------------------------------------------------- */

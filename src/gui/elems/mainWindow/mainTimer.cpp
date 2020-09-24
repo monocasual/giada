@@ -81,11 +81,11 @@ geMainTimer::geMainTimer(int x, int y)
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTimer::cb_bpm       (Fl_Widget* v, void* p) { ((geMainTimer*)p)->cb_bpm(); }
-void geMainTimer::cb_meter     (Fl_Widget* v, void* p) { ((geMainTimer*)p)->cb_meter(); }
-void geMainTimer::cb_quantizer (Fl_Widget* v, void* p) { ((geMainTimer*)p)->cb_quantizer(); }
-void geMainTimer::cb_multiplier(Fl_Widget* v, void* p) { ((geMainTimer*)p)->cb_multiplier(); }
-void geMainTimer::cb_divider   (Fl_Widget* v, void* p) { ((geMainTimer*)p)->cb_divider(); }
+void geMainTimer::cb_bpm       (Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_bpm(); }
+void geMainTimer::cb_meter     (Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_meter(); }
+void geMainTimer::cb_quantizer (Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_quantizer(); }
+void geMainTimer::cb_multiplier(Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_multiplier(); }
+void geMainTimer::cb_divider   (Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_divider(); }
 
 
 /* -------------------------------------------------------------------------- */

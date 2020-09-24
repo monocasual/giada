@@ -71,7 +71,7 @@ gePluginParameter::gePluginParameter(int X, int Y, int W, int labelWidth, const 
 /* -------------------------------------------------------------------------- */
 
 
-void gePluginParameter::cb_setValue(Fl_Widget* v, void* p) { ((gePluginParameter*)p)->cb_setValue(); }
+void gePluginParameter::cb_setValue(Fl_Widget* /*w*/, void* p) { ((gePluginParameter*)p)->cb_setValue(); }
 
 
 /* -------------------------------------------------------------------------- */

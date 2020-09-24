@@ -102,12 +102,12 @@ protected:
 
 	static const int MIN_ELEM_W = 20;
 
-	static void cb_arm(Fl_Widget* v, void* p);
-	static void cb_mute(Fl_Widget* v, void* p);
-	static void cb_solo(Fl_Widget* v, void* p);
-	static void cb_changeVol(Fl_Widget* v, void* p);
+	static void cb_arm(Fl_Widget* /*w*/, void* p);
+	static void cb_mute(Fl_Widget* /*w*/, void* p);
+	static void cb_solo(Fl_Widget* /*w*/, void* p);
+	static void cb_changeVol(Fl_Widget* /*w*/, void* p);
 #ifdef WITH_VST
-	static void cb_openFxWindow(Fl_Widget* v, void* p);
+	static void cb_openFxWindow(Fl_Widget* /*w*/, void* p);
 #endif
 	void cb_mute();
 	void cb_arm();

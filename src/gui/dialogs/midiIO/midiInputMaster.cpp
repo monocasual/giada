@@ -150,8 +150,8 @@ void gdMidiInputMaster::rebuild()
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInputMaster::cb_enable(Fl_Widget* w, void* p) { ((gdMidiInputMaster*)p)->cb_enable(); }
-void gdMidiInputMaster::cb_setChannel(Fl_Widget* w, void* p) { ((gdMidiInputMaster*)p)->cb_setChannel(); }
+void gdMidiInputMaster::cb_enable(Fl_Widget* /*w*/, void* p) { ((gdMidiInputMaster*)p)->cb_enable(); }
+void gdMidiInputMaster::cb_setChannel(Fl_Widget* /*w*/, void* p) { ((gdMidiInputMaster*)p)->cb_setChannel(); }
 
 
 /* -------------------------------------------------------------------------- */

@@ -72,8 +72,8 @@ protected:
 
 private:
 
-	static void cb_button(Fl_Widget* v, void* p);
-	static void cb_value (Fl_Widget* v, void* p);
+	static void cb_button(Fl_Widget* /*w*/, void* p);
+	static void cb_value (Fl_Widget* /*w*/, void* p);
 
 	void onLearn() const;
 	void onReset() const;

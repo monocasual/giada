@@ -80,8 +80,8 @@ void gdKeyGrabber::rebuild()
 /* -------------------------------------------------------------------------- */
 
 
-void gdKeyGrabber::cb_clear (Fl_Widget* w, void* p) { ((gdKeyGrabber*)p)->cb_clear(); }
-void gdKeyGrabber::cb_cancel(Fl_Widget* w, void* p) { ((gdKeyGrabber*)p)->cb_cancel(); }
+void gdKeyGrabber::cb_clear (Fl_Widget* /*w*/, void* p) { ((gdKeyGrabber*)p)->cb_clear(); }
+void gdKeyGrabber::cb_cancel(Fl_Widget* /*w*/, void* p) { ((gdKeyGrabber*)p)->cb_cancel(); }
 
 
 /* -------------------------------------------------------------------------- */

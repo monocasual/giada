@@ -79,7 +79,7 @@ gdBpmInput::gdBpmInput(const char* label)
 /* -------------------------------------------------------------------------- */
 
 
-void gdBpmInput::cb_update(Fl_Widget* w, void* p) { ((gdBpmInput*)p)->cb_update(); }
+void gdBpmInput::cb_update(Fl_Widget* /*w*/, void* p) { ((gdBpmInput*)p)->cb_update(); }
 
 
 /* -------------------------------------------------------------------------- */

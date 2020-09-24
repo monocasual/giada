@@ -100,13 +100,13 @@ private:
 	Fl_Group* createOpTools(int x, int y, int h);
 	Fl_Group* createInfoBox(int x, int y, int h);
 
-	static void cb_reload    (Fl_Widget* w, void* p);
-	static void cb_zoomIn    (Fl_Widget* w, void* p);
-	static void cb_zoomOut   (Fl_Widget* w, void* p);
-	static void cb_changeGrid(Fl_Widget* w, void* p);
-	static void cb_enableSnap(Fl_Widget* w, void* p);
-	static void cb_togglePreview(Fl_Widget* w, void* p);
-	static void cb_rewindPreview(Fl_Widget* w, void* p);
+	static void cb_reload    (Fl_Widget* /*w*/, void* p);
+	static void cb_zoomIn    (Fl_Widget* /*w*/, void* p);
+	static void cb_zoomOut   (Fl_Widget* /*w*/, void* p);
+	static void cb_changeGrid(Fl_Widget* /*w*/, void* p);
+	static void cb_enableSnap(Fl_Widget* /*w*/, void* p);
+	static void cb_togglePreview(Fl_Widget* /*w*/, void* p);
+	static void cb_rewindPreview(Fl_Widget* /*w*/, void* p);
 	void cb_reload();
 	void cb_zoomIn();
 	void cb_zoomOut();

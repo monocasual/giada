@@ -83,7 +83,7 @@ gdPluginList::~gdPluginList()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginList::cb_addPlugin(Fl_Widget* v, void* p) { ((gdPluginList*)p)->cb_addPlugin(); }
+void gdPluginList::cb_addPlugin(Fl_Widget* /*v*/, void* p) { ((gdPluginList*)p)->cb_addPlugin(); }
 
 
 /* -------------------------------------------------------------------------- */

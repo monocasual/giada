@@ -59,8 +59,7 @@ void init();
 /* create (1)
 Creates a new Channel from scratch. */
 
-std::unique_ptr<Channel> create(ChannelType type, int bufferSize, ID columnId,
-	const conf::Conf& conf);
+std::unique_ptr<Channel> create(ChannelType type, ID columnId, const conf::Conf& conf);
 
 /* create (2)
 Creates a new Channel given an existing one (i.e. clone). */

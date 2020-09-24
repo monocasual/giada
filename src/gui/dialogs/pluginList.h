@@ -58,7 +58,7 @@ public:
 
 private:
 
-	static void cb_addPlugin(Fl_Widget* v, void* p);
+	static void cb_addPlugin(Fl_Widget* /*w*/, void* p);
 	void cb_addPlugin();
 
 	geButton*       addPlugin;

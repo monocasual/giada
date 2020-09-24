@@ -48,8 +48,8 @@ public:
 
 private:
 
-	static void cb_load(Fl_Widget* w, void* p);
-	static void cb_down(Fl_Widget* v, void* p);
+	static void cb_load(Fl_Widget* /*w*/, void* p);
+	static void cb_down(Fl_Widget* /*w*/, void* p);
 	void cb_load();
 	void cb_down();
 };

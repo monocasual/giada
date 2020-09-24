@@ -64,8 +64,8 @@ geMidiLearner::geMidiLearner(int X, int Y, int W, std::string l, int param)
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearner::cb_button(Fl_Widget* v, void* p) { ((geMidiLearner*)p)->onLearn(); }
-void geMidiLearner::cb_value(Fl_Widget* v, void* p)  { ((geMidiLearner*)p)->onReset(); }
+void geMidiLearner::cb_button(Fl_Widget* /*w*/, void* p) { ((geMidiLearner*)p)->onLearn(); }
+void geMidiLearner::cb_value(Fl_Widget* /*w*/, void* p)  { ((geMidiLearner*)p)->onReset(); }
 
 
 /* -------------------------------------------------------------------------- */

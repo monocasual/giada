@@ -83,12 +83,12 @@ void geChannel::draw()
 /* -------------------------------------------------------------------------- */
 
 
-void geChannel::cb_arm(Fl_Widget* v, void* p) { ((geChannel*)p)->cb_arm(); }
-void geChannel::cb_mute(Fl_Widget* v, void* p) { ((geChannel*)p)->cb_mute(); }
-void geChannel::cb_solo(Fl_Widget* v, void* p) { ((geChannel*)p)->cb_solo(); }
-void geChannel::cb_changeVol(Fl_Widget* v, void* p) { ((geChannel*)p)->cb_changeVol(); }
+void geChannel::cb_arm(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_arm(); }
+void geChannel::cb_mute(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_mute(); }
+void geChannel::cb_solo(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_solo(); }
+void geChannel::cb_changeVol(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_changeVol(); }
 #ifdef WITH_VST
-void geChannel::cb_openFxWindow(Fl_Widget* v, void* p) { ((geChannel*)p)->cb_openFxWindow(); }
+void geChannel::cb_openFxWindow(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_openFxWindow(); }
 #endif
 
 

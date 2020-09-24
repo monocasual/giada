@@ -110,9 +110,9 @@ gdBrowserBase::~gdBrowserBase()
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserBase::cb_up(Fl_Widget* v, void* p) { ((gdBrowserBase*)p)->cb_up(); }
-void gdBrowserBase::cb_close(Fl_Widget* v, void* p) { ((gdBrowserBase*)p)->cb_close(); }
-void gdBrowserBase::cb_toggleHiddenFiles(Fl_Widget *v, void *p) { ((gdBrowserBase*)p)->cb_toggleHiddenFiles(); }
+void gdBrowserBase::cb_up(Fl_Widget* /*v*/, void* p) { ((gdBrowserBase*)p)->cb_up(); }
+void gdBrowserBase::cb_close(Fl_Widget* /*v*/, void* p) { ((gdBrowserBase*)p)->cb_close(); }
+void gdBrowserBase::cb_toggleHiddenFiles(Fl_Widget* /*v*/, void* p) { ((gdBrowserBase*)p)->cb_toggleHiddenFiles(); }
 
 
 /* -------------------------------------------------------------------------- */

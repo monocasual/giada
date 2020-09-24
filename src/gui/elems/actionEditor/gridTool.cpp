@@ -74,7 +74,7 @@ geGridTool::~geGridTool()
 /* -------------------------------------------------------------------------- */
 
 
-void geGridTool::cb_changeType(Fl_Widget *w, void *p) { ((geGridTool*)p)->cb_changeType(); }
+void geGridTool::cb_changeType(Fl_Widget* /*w*/, void* p) { ((geGridTool*)p)->cb_changeType(); }
 
 
 /* -------------------------------------------------------------------------- */
