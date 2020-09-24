@@ -113,7 +113,7 @@ void menuCallback_(Fl_Widget* w, void* v)
 			break;
 	}
 }
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */

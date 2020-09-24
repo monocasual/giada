@@ -302,6 +302,6 @@ std::vector<patch::Action> serializeActions(const recorder::ActionMap& actions)
 	return out;	
 }
 
-}}}; // giada::m::recorderHandler::
+}}} // giada::m::recorderHandler::
 
 

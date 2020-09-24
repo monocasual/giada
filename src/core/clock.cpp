@@ -84,7 +84,7 @@ void recomputeFrames_(model::Clock& c)
 	if (c.quantize != 0)
 		quantizerStep_ = c.framesInBeat / c.quantize;
 }
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -457,4 +457,4 @@ int         getQuantizerValue() { model::ClockLock lock(model::clock); return mo
 float       getBpm()            { model::ClockLock lock(model::clock); return model::clock.get()->bpm; }
 int         getBeats()          { model::ClockLock lock(model::clock); return model::clock.get()->beats; }
 int         getBars()           { model::ClockLock lock(model::clock); return model::clock.get()->bars; }
-}}}; // giada::m::clock::
+}}} // giada::m::clock::

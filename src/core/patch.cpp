@@ -398,7 +398,7 @@ void modernize_()
 		}
 	}	
 }
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -501,4 +501,4 @@ int read(const std::string& file, const std::string& basePath)
 
 	return G_PATCH_OK;
 }
-}}}; // giada::m::patch::
+}}} // giada::m::patch::

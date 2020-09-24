@@ -108,7 +108,7 @@ bool hasMissingPlugins();
 
 void sortPlugins(SortMethod sortMethod);
 
-}}}; // giada::m::pluginManager::
+}}} // giada::m::pluginManager::
 
 
 #endif

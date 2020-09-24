@@ -152,6 +152,6 @@ extern Conf conf;
 void init();
 bool read();
 bool write();
-}}}; // giada::m::conf::
+}}} // giada::m::conf::
 
 #endif

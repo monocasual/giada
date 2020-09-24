@@ -116,7 +116,7 @@ bool isSinglePressMode_(ID channelId)
 	});
 	return b;
 }
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -393,4 +393,4 @@ void updateVelocity(const m::Action& a, int value)
 
 	mr::updateEvent(a.id, event);
 }
-}}}; // giada::c::actionEditor::
+}}} // giada::c::actionEditor::

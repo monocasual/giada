@@ -104,7 +104,7 @@ void updateWavePtr_(ID channelId, ID waveId)
 		c.samplePlayer->loadWave(&wave);
 	});
 }
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -453,4 +453,4 @@ void shift(ID channelId, ID waveId, int offset)
 
 	getSampleEditorWindow()->shiftTool->update(offset);
 }
-}}}; // giada::c::sampleEditor::
+}}} // giada::c::sampleEditor::

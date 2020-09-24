@@ -39,7 +39,7 @@ namespace ver
 std::string getLibsndfileVersion();
 std::string getRtAudioVersion();
 std::string getRtMidiVersion();
-}}};  // giada::u::ver::
+}}}  // giada::u::ver::
 
 
 #endif

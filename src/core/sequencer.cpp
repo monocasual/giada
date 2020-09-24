@@ -294,6 +294,6 @@ void rewind()
 bool isMetronomeOn()      { return metronome_.running; }
 void toggleMetronome()    { metronome_.running = !metronome_.running; }
 void setMetronome(bool v) { metronome_.running = v; }
-}}}; // giada::m::sequencer::
+}}} // giada::m::sequencer::
 
 

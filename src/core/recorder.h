@@ -156,7 +156,7 @@ Returns a new action ID, internally generated. */
 
 ID getNewActionId();
 
-}}}; // giada::m::recorder::
+}}} // giada::m::recorder::
 
 
 #endif

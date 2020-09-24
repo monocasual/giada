@@ -303,8 +303,8 @@ AudioBuffer::Pan Channel::calcPanning() const
 /* -------------------------------------------------------------------------- */
 
 
-ID Channel::getColumnId() const { return m_columnId; };
-ChannelType Channel::getType() const { return m_type; };
+ID Channel::getColumnId() const { return m_columnId; }
+ChannelType Channel::getType() const { return m_type; }
 
 
 /* -------------------------------------------------------------------------- */

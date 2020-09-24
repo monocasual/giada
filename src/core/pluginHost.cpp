@@ -101,7 +101,7 @@ ID clonePlugin_(ID pluginId)
 
 	return newId;
 }
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -261,7 +261,7 @@ void runDispatchLoop()
 	messageManager_->runDispatchLoopUntil(10);
 }
 
-}}}; // giada::m::pluginHost::
+}}} // giada::m::pluginHost::
 
 
 #endif // #ifdef WITH_VST

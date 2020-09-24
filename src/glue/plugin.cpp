@@ -237,7 +237,7 @@ void setPluginPathCb(void* data)
 	configWin->refreshVstPath();
 }
 
-}}}; // giada::c::plugin::
+}}} // giada::c::plugin::
 
 
 #endif

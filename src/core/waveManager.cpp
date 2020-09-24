@@ -68,7 +68,7 @@ int getBits_(const SF_INFO& header)
 		return 64;
 	return 0;
 }
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -241,4 +241,4 @@ int save(const Wave& w, const std::string& path)
 
 	return G_RES_OK;
 }
-}}}; // giada::m::waveManager
+}}} // giada::m::waveManager

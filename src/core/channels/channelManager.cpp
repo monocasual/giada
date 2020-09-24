@@ -160,4 +160,4 @@ const patch::Channel serializeChannel(const Channel& c)
 
 	return pc;
 }
-}}}; // giada::m::channelManager
+}}} // giada::m::channelManager

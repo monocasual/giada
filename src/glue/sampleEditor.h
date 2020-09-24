@@ -111,6 +111,6 @@ void cleanupPreview();
 Copies the selected range into a new sample channel. */
 
 void toNewChannel(ID channelId, ID waveId, int a, int b);
-}}}; // giada::c::sampleEditor::
+}}} // giada::c::sampleEditor::
 
 #endif

@@ -68,4 +68,4 @@ std::string getRtMidiVersion()
 	return RtMidi::getVersion();
 #endif
 }
-}}};  // giada::u::ver::
+}}}  // giada::u::ver::

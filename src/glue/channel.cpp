@@ -336,4 +336,4 @@ void setName(ID channelId, const std::string& name)
 {
 	m::mh::renameChannel(channelId, name);
 }
-}}}; // giada::c::channel::
+}}} // giada::c::channel::

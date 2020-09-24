@@ -83,7 +83,7 @@ unsigned countOutPorts();
 
 bool hasAPI(int API);
 
-}}}; // giada::m::kernelMidi::
+}}} // giada::m::kernelMidi::
 
 
 #endif

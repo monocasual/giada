@@ -87,7 +87,7 @@ void jackSetBpm(double bpm);
 JackState jackTransportQuery();
 
 #endif
-}}}; // giada::m::kernelAudio::
+}}} // giada::m::kernelAudio::
 
 
 #endif

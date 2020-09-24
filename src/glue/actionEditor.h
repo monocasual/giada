@@ -88,7 +88,7 @@ void updateSampleAction(ID channelId, const m::Action& a, int type,
 void recordEnvelopeAction(ID channelId, Frame f, int value);
 void deleteEnvelopeAction(ID channelId, const m::Action& a);
 void updateEnvelopeAction(ID channelId, const m::Action& a, Frame f, int value);
-}}}; // giada::c::actionEditor::
+}}} // giada::c::actionEditor::
 
 
 #endif

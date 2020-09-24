@@ -53,7 +53,7 @@ void clearPluginLearn (int paramIndex, ID pluginId, std::function<void()> f);
 void dispatch(int byte1, int byte2, int byte3);
 
 void setSignalCallback(std::function<void()> f);
-}}}; // giada::m::midiDispatcher::
+}}} // giada::m::midiDispatcher::
 
 
 #endif

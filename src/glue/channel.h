@@ -180,6 +180,6 @@ void setName(ID channelId, const std::string& name);
 void setHeight(ID channelId, Pixel p);
 
 void setSamplePlayerMode(ID channelId, SamplePlayerMode m);
-}}}; // giada::c::channel::
+}}} // giada::c::channel::
 
 #endif

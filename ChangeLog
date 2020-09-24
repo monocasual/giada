@@ -11,6 +11,10 @@
 --------------------------------------------------------------------------------
 
 
+0.17.0 --- 
+- Add CMake build system
+
+
 0.16.4 --- 2020 . 09. 19
 - Support for mono inputs
 - Overdub mode for Sample Channels with optional overdub protection

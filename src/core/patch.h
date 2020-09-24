@@ -180,7 +180,7 @@ int read(const std::string& file, const std::string& basePath);
 Writes patch to file. */
 
 bool write(const std::string& name, const std::string& file);
-}}};  // giada::m::patch::
+}}}  // giada::m::patch::
 
 
 #endif

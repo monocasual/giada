@@ -81,8 +81,7 @@ int createConfigFolder_()
 
 #endif
 }
-
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -316,4 +315,4 @@ bool write()
     ofs << j;
 	return true;
 }
-}}}; // giada::m::conf::
+}}} // giada::m::conf::

@@ -91,7 +91,7 @@ void toggleBypass(ID pluginId);
 Wakes up plugins' GUI manager for N milliseconds. */
 
 void runDispatchLoop();
-}}}; // giada::m::pluginHost::
+}}} // giada::m::pluginHost::
 
 
 #endif

@@ -60,6 +60,6 @@ void remove(T& v, V val)
 {
     v.erase(std::remove(v.begin(), v.end(), val), v.end());
 }
-}}};  // giada::u::vector::
+}}}  // giada::u::vector::
 
 #endif

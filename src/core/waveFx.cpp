@@ -63,7 +63,7 @@ float getPeak_(const Wave& w, int a, int b)
 	}
 	return peak;
 }
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -293,4 +293,4 @@ void reverse(ID waveId, int a, int b)
 	});
 }
 
-}}}; // giada::m::wfx::
+}}} // giada::m::wfx::

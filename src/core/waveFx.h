@@ -81,7 +81,7 @@ Flips Wave's data. */
 void reverse(ID waveId, int a, int b);
 
 void shift(ID waveId, int offset);
-}}}; // giada::m::wfx::
+}}} // giada::m::wfx::
 
 
 #endif

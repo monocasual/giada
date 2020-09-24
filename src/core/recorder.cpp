@@ -418,4 +418,4 @@ ID getNewActionId()
 {
 	return actionId_.get();
 }
-}}}; // giada::m::recorder::
+}}} // giada::m::recorder::

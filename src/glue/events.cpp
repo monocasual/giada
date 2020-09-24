@@ -300,4 +300,4 @@ void setPluginParameter(ID pluginId, int paramIndex, float value, bool gui)
 	c::plugin::updateWindow(pluginId, gui);
 }
 #endif
-}}}; // giada::c::events::
+}}} // giada::c::events::

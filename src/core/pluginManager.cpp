@@ -116,7 +116,7 @@ const juce::PluginDescription* findPluginDescription_(const std::string& id)
 	}
 	return nullptr;
 }
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -345,7 +345,7 @@ PluginInfo getAvailablePluginInfo(int i)
 bool hasMissingPlugins()
 {
 	return missingPlugins_;
-};
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -386,7 +386,7 @@ void sortPlugins(SortMethod method)
 			break;
 	}
 }
-}}}; // giada::m::pluginManager::
+}}} // giada::m::pluginManager::
 
 
 #endif // #ifdef WITH_VST

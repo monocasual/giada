@@ -423,5 +423,5 @@ void setSignalCallback(std::function<void()> f)
 	signalCb_ = f;
 }
 
-}}}; // giada::m::midiDispatcher::
+}}} // giada::m::midiDispatcher::
 

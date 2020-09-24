@@ -111,7 +111,7 @@ bool isOnFirstBeat();
 
 void rewind();
 void setStatus(ClockStatus s);
-}}}; // giada::m::clock::
+}}} // giada::m::clock::
 
 
 #endif

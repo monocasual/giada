@@ -60,7 +60,7 @@ jack_client_t* jackGetHandle_()
 }
 
 #endif
-};  // {anonymous}
+}  // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -517,4 +517,4 @@ void jackStop()
 
 #endif  // defined(__linux__) || defined(__FreeBSD__)
 
-}}}; // giada::m::kernelAudio
+}}} // giada::m::kernelAudio

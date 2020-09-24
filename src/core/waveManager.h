@@ -89,7 +89,7 @@ Writes Wave data to file 'path'. Only 'wav' format is supported for now. */
 
 int save(const Wave& w, const std::string& path);
 
-}}}; // giada::m::waveManager
+}}} // giada::m::waveManager
 
 
 #endif

@@ -258,7 +258,7 @@ void finalizeOutput_(AudioBuffer& outBuf)
 	
 	peakOut.store(outBuf.getPeak());
 }
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -430,4 +430,4 @@ void pumpEvent(Event e)
 {
 	eventBuffer_.push_back(e);
 }
-}}}; // giada::m::mixer::
+}}} // giada::m::mixer::

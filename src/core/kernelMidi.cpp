@@ -294,4 +294,4 @@ uint32_t getIValue(int b1, int b2, int b3)
 {
 	return (b1 << 24) | (b2 << 16) | (b3 << 8) | (0x00);
 }
-}}}; // giada::m::kernelMidi::
+}}} // giada::m::kernelMidi::

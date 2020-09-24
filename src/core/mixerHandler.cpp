@@ -219,7 +219,7 @@ void overdubChannel_(ID channelId)
 		setupChannelPostRecording_(c);
 	});
 }
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -534,4 +534,4 @@ bool hasAudioData()
 		return ch->samplePlayer && ch->samplePlayer->hasWave(); 
 	});
 }
-}}}; // giada::m::mh::
+}}} // giada::m::mh::
