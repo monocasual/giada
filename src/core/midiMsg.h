@@ -44,6 +44,7 @@ class midiMsg
 	midiMsg(std::string sender, std::vector<unsigned char>* message);
 	unsigned char			getByte(unsigned int n);
 	std::vector<unsigned char>*	getMessage();
+	unsigned int			getMessageLength();
 };
 
 }}; // giada::m
