@@ -43,10 +43,10 @@ namespace giada {
 namespace m 
 {
 Plugin::Plugin(ID id, const std::string& UID)
-: id      (id),
-  valid   (false),
-  m_plugin(nullptr),
-  m_UID   (UID)
+: id      (id)
+, valid   (false)
+, m_plugin(nullptr)
+, m_UID   (UID)
 {
 }
 
@@ -56,10 +56,10 @@ Plugin::Plugin(ID id, const std::string& UID)
 
 Plugin::Plugin(ID id, juce::AudioPluginInstance* plugin, double samplerate,
 	int buffersize)
-: id          (id),
-  valid       (true),
-  m_plugin    (plugin),
-  m_bypass    (false)
+: id      (id)
+, valid   (true)
+, m_plugin(plugin)
+, m_bypass(false)
 {
 	/* Initialize midiInParams vector, where midiInParams.size == number of 
 	plugin parameters. All values are initially empty (0x0): they will be filled
@@ -88,11 +88,11 @@ Plugin::Plugin(ID id, juce::AudioPluginInstance* plugin, double samplerate,
 
 
 Plugin::Plugin(const Plugin& o)
-: id          (o.id),
-  valid       (o.valid),
-  m_plugin    (o.m_plugin),
-  m_bypass    (o.m_bypass.load()),
-  midiInParams(o.midiInParams)
+: id          (o.id)
+, midiInParams(o.midiInParams)
+, valid       (o.valid)
+, m_plugin    (o.m_plugin)
+, m_bypass    (o.m_bypass.load())
 {
 }
 
