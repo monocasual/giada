@@ -86,6 +86,13 @@ void midiMsgFilter::setMaskByte(unsigned int n, unsigned char b){
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+void midiMsgFilter::ignoreByte(unsigned int n){
+	if (n >= midiMsgFilter::mask_.size()) return;
+	midiMsgFilter::mask_.at(n) = 0;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 void midiMsgFilter::allowLongerMsg(){
 	midiMsgFilter::allow_longer_msg_ = true;
 }
@@ -123,7 +130,7 @@ bool midiMsgFilter::check(midiMsg mm){
 		if (b != 0) return false;
 	}
 
-	// All checks succeded, so it's a match
+	// All checks succeeded, so it's a match
 	return true;
 }
 
@@ -155,7 +162,7 @@ bool check(midiMsg mm, midiMsgFilter mmf){
 		if (b != 0) return false;
 	}
 
-	// All checks succeded, so it's a match
+	// All checks succeeded, so it's a match
 	return true;
 }
 
