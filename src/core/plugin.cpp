@@ -32,7 +32,8 @@
 #include <FL/Fl.H>
 #include "utils/log.h"
 #include "utils/time.h"
-#include "const.h"
+#include "core/const.h"
+#include "core/pluginManager.h"
 #include "plugin.h"
 
 
@@ -54,11 +55,11 @@ Plugin::Plugin(ID id, const std::string& UID)
 /* -------------------------------------------------------------------------- */
 
 
-Plugin::Plugin(ID id, juce::AudioPluginInstance* plugin, double samplerate,
+Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin, double samplerate,
 	int buffersize)
 : id      (id)
 , valid   (true)
-, m_plugin(plugin)
+, m_plugin(std::move(plugin))
 , m_bypass(false)
 {
 	/* Initialize midiInParams vector, where midiInParams.size == number of 
@@ -91,7 +92,7 @@ Plugin::Plugin(const Plugin& o)
 : id          (o.id)
 , midiInParams(o.midiInParams)
 , valid       (o.valid)
-, m_plugin    (o.m_plugin)
+, m_plugin    (std::move(pluginManager::makePlugin(o)->m_plugin))
 , m_bypass    (o.m_bypass.load())
 {
 }

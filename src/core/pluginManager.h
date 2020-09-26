@@ -71,8 +71,8 @@ int scanDirs(const std::string& paths, const std::function<void(float)>& cb);
 /* (save|load)List
 (Save|Load) knownPluginList (in|from) an XML file. */
 
-int saveList(const std::string& path);
-int loadList(const std::string& path);
+bool saveList(const std::string& path);
+bool loadList(const std::string& path);
 
 /* countAvailablePlugins
 Returns how many plug-ins are ready and available for usage. */
@@ -84,7 +84,7 @@ Returns how many plug-ins are in a unknown/not-found state. */
 
 unsigned countUnknownPlugins();
 
-std::unique_ptr<Plugin> makePlugin(const std::string& fid, ID id=0);
+std::unique_ptr<Plugin> makePlugin(const std::string& pid, ID id=0);
 std::unique_ptr<Plugin> makePlugin(int index);
 std::unique_ptr<Plugin> makePlugin(const Plugin& other);
 
@@ -102,7 +102,7 @@ PluginInfo getAvailablePluginInfo(int index);
 
 std::string getUnknownPluginInfo(int index);
 
-bool doesPluginExist(const std::string& fid);
+bool doesPluginExist(const std::string& pid);
 
 bool hasMissingPlugins();
 

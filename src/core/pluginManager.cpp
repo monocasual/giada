@@ -71,50 +71,12 @@ If some plugins from any stack are missing. */
 
 bool missingPlugins_;
 
-std::vector<std::string> splitPluginDescription_(const std::string& descr)
+
+std::unique_ptr<Plugin> makeInvalidPlugin_(const std::string& pid, ID id)
 {
-	// input:  VST-mda-Ambience-18fae2d2-6d646141  string
-	// output: [2-------------] [1-----] [0-----]  vector.size() == 3
-	
-	std::vector<std::string> out;
-
-	std::string chunk = "";
-	int count = 2;
-	for (int i=descr.length()-1; i >= 0; i--) {
-		if (descr[i] == '-' && count != 0) {
-			out.push_back(chunk);
-			count--;
-			chunk = "";
-		}
-		else
-			chunk += descr[i];
-	}
-	out.push_back(chunk);
-
-	return out;
-}
-
-
-/* findPluginDescription
-Browses the list of known plug-ins until plug-in with id == 'id' is found.
-Unfortunately knownPluginList_.getTypeForIdentifierString(id) doesn't work for
-VSTs: their ID is based on the plug-in file location. E.g.:
-
-	/home/vst/mdaAmbience.so      -> VST-mdaAmbience-18fae2d2-6d646141
-	/home/vst-test/mdaAmbience.so -> VST-mdaAmbience-b328b2f6-6d646141
-
-The following function simply drops the first hash code during comparison. */
-
-const juce::PluginDescription* findPluginDescription_(const std::string& id)
-{
-	std::vector<std::string> idParts = splitPluginDescription_(id);
-
-	for (const juce::PluginDescription* pd : knownPluginList_) {
-		std::vector<std::string> tmpIdParts = splitPluginDescription_(pd->createIdentifierString().toStdString());
-		if (idParts[0] == tmpIdParts[0] && idParts[2] == tmpIdParts[2])
-			return pd;
-	}
-	return nullptr;
+	missingPlugins_ = true;
+	unknownPluginList_.push_back(pid);
+	return std::make_unique<Plugin>(pluginId_.get(id), pid); // Invalid plug-in	
 }
 } // {anonymous}
 
@@ -170,9 +132,9 @@ int scanDirs(const std::string& dirs, const std::function<void(float)>& cb)
 /* -------------------------------------------------------------------------- */
 
 
-int saveList(const std::string& filepath)
+bool saveList(const std::string& filepath)
 {
-	int out = knownPluginList_.createXml()->writeToFile(juce::File(filepath), "");
+	bool out = knownPluginList_.createXml()->writeTo(juce::File(filepath));
 	if (!out)
 		u::log::print("[pluginManager::saveList] unable to save plugin list to %s\n", filepath.c_str());
 	return out;
@@ -182,44 +144,41 @@ int saveList(const std::string& filepath)
 /* -------------------------------------------------------------------------- */
 
 
-int loadList(const std::string& filepath)
+bool loadList(const std::string& filepath)
 {
 	std::unique_ptr<juce::XmlElement> elem(juce::XmlDocument::parse(juce::File(filepath)));
 	if (elem == nullptr)
-		return 0;
+		return false;
 	knownPluginList_.recreateFromXml(*elem);
-	return 1;
+	return true;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Plugin> makePlugin(const std::string& fid, ID id)
+std::unique_ptr<Plugin> makePlugin(const std::string& pid, ID id)
 {
 	/* Plug-in ID generator is updated anyway, as we store Plugin objects also
 	if they are in an invalid state. */
 	
 	pluginId_.set(id);
 
-	const juce::PluginDescription* pd = findPluginDescription_(fid);
+	const std::unique_ptr<juce::PluginDescription> pd = knownPluginList_.getTypeForIdentifierString(pid);
 	if (pd == nullptr) {
-		u::log::print("[pluginManager::makePlugin] no plugin found with fid=%s!\n", fid.c_str());
-		missingPlugins_ = true;
-		unknownPluginList_.push_back(fid);
-		return std::make_unique<Plugin>(pluginId_.get(id), fid); // Invalid plug-in
+		u::log::print("[pluginManager::makePlugin] no plugin found with pid=%s!\n", pid.c_str());
+		return makeInvalidPlugin_(pid, id);
 	}
 
-	juce::AudioPluginInstance* pi = pluginFormat_.createInstanceFromDescription(*pd, samplerate_, buffersize_);
+	std::unique_ptr<juce::AudioPluginInstance> pi = pluginFormat_.createInstanceFromDescription(*pd, samplerate_, buffersize_);
 	if (pi == nullptr) {
-		u::log::print("[pluginManager::makePlugin] unable to create instance with fid=%s!\n", fid.c_str());
-		missingPlugins_ = true;
-		unknownPluginList_.push_back(fid);
-		return std::make_unique<Plugin>(pluginId_.get(id), fid); // Invalid plug-in
+		u::log::print("[pluginManager::makePlugin] unable to create instance with pid=%s!\n", pid.c_str());
+		return makeInvalidPlugin_(pid, id);
 	}
-	u::log::print("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
 
-	return std::make_unique<Plugin>(pluginId_.get(id), pi, samplerate_, buffersize_);
+	u::log::print("[pluginManager::makePlugin] plugin instance with pid=%s created\n", pid.c_str());
+
+	return std::make_unique<Plugin>(pluginId_.get(id), std::move(pi), samplerate_, buffersize_);
 }
 
 
@@ -228,15 +187,15 @@ std::unique_ptr<Plugin> makePlugin(const std::string& fid, ID id)
 
 std::unique_ptr<Plugin> makePlugin(int index)
 {
-	juce::PluginDescription* pd = knownPluginList_.getType(index);
+	juce::PluginDescription pd = knownPluginList_.getTypes()[index];
 	
-	if (pd == nullptr) 
+	if (pd.uid == 0) // Invalid
 		return {};
 	
 	u::log::print("[pluginManager::makePlugin] plugin found, uid=%s, name=%s...\n",
-		pd->createIdentifierString().toRawUTF8(), pd->name.toRawUTF8());
+		pd.createIdentifierString().toRawUTF8(), pd.name.toRawUTF8());
 	
-	return makePlugin(pd->createIdentifierString().toStdString());
+	return makePlugin(pd.createIdentifierString().toStdString());
 
 }
 
@@ -327,14 +286,14 @@ unsigned countUnknownPlugins()
 
 PluginInfo getAvailablePluginInfo(int i)
 {
-	juce::PluginDescription* pd = knownPluginList_.getType(i);
+	juce::PluginDescription pd = knownPluginList_.getTypes()[i];
 	PluginInfo pi;
-	pi.uid              = pd->fileOrIdentifier.toStdString();
-	pi.name             = pd->name.toStdString();
-	pi.category         = pd->category.toStdString();
-	pi.manufacturerName = pd->manufacturerName.toStdString();
-	pi.format           = pd->pluginFormatName.toStdString();
-	pi.isInstrument     = pd->isInstrument;
+	pi.uid              = pd.fileOrIdentifier.toStdString();
+	pi.name             = pd.name.toStdString();
+	pi.category         = pd.category.toStdString();
+	pi.manufacturerName = pd.manufacturerName.toStdString();
+	pi.format           = pd.pluginFormatName.toStdString();
+	pi.isInstrument     = pd.isInstrument;
 	return pi;
 }
 
@@ -360,9 +319,9 @@ std::string getUnknownPluginInfo(int i)
 /* -------------------------------------------------------------------------- */
 
 
-bool doesPluginExist(const std::string& fid)
+bool doesPluginExist(const std::string& pid)
 {
-	return pluginFormat_.doesPluginStillExist(*knownPluginList_.getTypeForFile(fid));
+	return pluginFormat_.doesPluginStillExist(*knownPluginList_.getTypeForFile(pid));
 }
 
 
