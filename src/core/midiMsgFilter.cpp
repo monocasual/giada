@@ -24,7 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "midiMsg.h"
 #include "midiMsgFilter.h"
 #include <vector>
 
@@ -169,9 +168,9 @@ void MidiMsgFilter::disallowLongerMsg(){
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-bool MidiMsgFilter::check(MidiMsg* mm){
+bool MidiMsgFilter::check(MidiMsg& mm){
 
-	unsigned int l  = mm->getMessageLength();
+	unsigned int l  = mm.getMessageLength();
 	unsigned int fl = m_mask.size();
 	unsigned char b;
 
@@ -183,7 +182,7 @@ bool MidiMsgFilter::check(MidiMsg* mm){
 
 	for (unsigned int i=0; i<fl; i++){
 		
-		b  = mm->getByte(i);
+		b  = mm.getByte(i);
 		b ^= m_template.at(i);
 		b &= m_mask.at(i);
 
@@ -201,9 +200,9 @@ bool MidiMsgFilter::check(MidiMsg* mm){
 //----------------------------  FRIEND FUNCTIONS  ------------------------------
 
 
-bool check(MidiMsg* mm, MidiMsgFilter mmf){
+bool check(MidiMsg& mm, MidiMsgFilter mmf){
 
-	unsigned int l  = mm->getMessageLength();
+	unsigned int l  = mm.getMessageLength();
 	unsigned int fl = mmf.m_mask.size();
 	unsigned char b;
 
@@ -215,7 +214,7 @@ bool check(MidiMsg* mm, MidiMsgFilter mmf){
 
 	for (unsigned int i=0; i<fl; i++){
 		
-		b  = mm->getByte(i);
+		b  = mm.getByte(i);
 		b ^= mmf.m_template.at(i);
 		b &= mmf.m_mask.at(i);
 

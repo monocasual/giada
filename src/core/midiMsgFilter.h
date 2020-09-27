@@ -76,10 +76,10 @@ class MidiMsgFilter
 	void	disallowLongerMsg();
 
 	// Check a message against this filter
-	bool			check(MidiMsg* mm);
+	bool			check(MidiMsg& mm);
 	
 	// Check a message against a given filter
-	friend bool		check(MidiMsg* mm, MidiMsgFilter mmf);
+	friend bool		check(MidiMsg& mm, MidiMsgFilter mmf);
 
 	private:
 
@@ -92,5 +92,5 @@ class MidiMsgFilter
 
 };
 
-}}; // giada::m
+}} // giada::m
 #endif

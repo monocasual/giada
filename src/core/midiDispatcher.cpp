@@ -41,7 +41,6 @@
 #include "core/recManager.h"
 #include "core/types.h"
 #include "core/midiDispatcher.h"
-#include "core/midiMsgFilter.h"
 // TODO: Remove unnecessary includes at the end
 
 namespace giada {
@@ -54,55 +53,51 @@ namespace midiDispatcher
 
 //-------------------------------- CONSTRUCTORS --------------------------------
 	
-DispatchTableItem::DispatchTableItem(std::vector<std::string>* s,
-				MidiMsgFilter* mmf, std::string r, bool wl){
-	m_senders			= *s;
+DispatchTableItem::DispatchTableItem(std::vector<std::string>& s,
+				MidiMsgFilter& mmf, std::string& r, bool wl){
+	m_senders			= s;
 	m_whitelist 			= wl;
 	m_receiver 			= r;
-	DispatchTableItem::mmf 		= *mmf;
+	DispatchTableItem::mmf 		= mmf;
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-DispatchTableItem::DispatchTableItem(std::string s,
-				MidiMsgFilter* mmf, std::string r, bool wl){
+DispatchTableItem::DispatchTableItem(std::string& s,
+				MidiMsgFilter& mmf, std::string& r, bool wl){
 	m_senders.push_back(s);
 	m_whitelist 			= wl;
 	m_receiver 			= r;
-	DispatchTableItem::mmf 		= *mmf;
+	DispatchTableItem::mmf 		= mmf;
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-DispatchTableItem::DispatchTableItem(std::vector<std::string>* s,
-				std::string r, bool wl){
-	m_senders			= *s;
+DispatchTableItem::DispatchTableItem(std::vector<std::string>& s,
+				std::string& r, bool wl){
+	m_senders			= s;
 	m_whitelist 			= wl;
 	m_receiver 			= r;
-	DispatchTableItem::mmf 		= MidiMsgFilter(); 
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-DispatchTableItem::DispatchTableItem(std::string s,
-				std::string r, bool wl){
+DispatchTableItem::DispatchTableItem(std::string& s,
+				std::string& r, bool wl){
 	m_senders.push_back(s);
 	m_whitelist 			= wl;
 	m_receiver 			= r;
-	DispatchTableItem::mmf 		= MidiMsgFilter();
 }
 
 //------------------------------ MEMBER FUNCTIONS ------------------------------
 
-void DispatchTableItem::addSender(std::string s){
+void DispatchTableItem::addSender(std::string& s){
 	m_senders.push_back(s);
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-bool DispatchTableItem::removeSender(std::string s){
-	
-	unsigned int l = m_senders.size();
+bool DispatchTableItem::removeSender(std::string& s){
 	
 	// TODO: Allegedly this is the C++20 equivalent,
 	// but compiler seems to not understand it yet 
@@ -116,7 +111,7 @@ bool DispatchTableItem::removeSender(std::string s){
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-void DispatchTableItem::setReceiver(std::string r){
+void DispatchTableItem::setReceiver(std::string& r){
 	m_receiver = r;
 }
 
@@ -134,11 +129,11 @@ void DispatchTableItem::setWhitelist(){
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-bool DispatchTableItem::check(MidiMsg* mm){
+bool DispatchTableItem::check(MidiMsg& mm){
 
 	// Check message sender
 	auto it = find(m_senders.begin(), m_senders.end(),
-						mm->getMessageSender());
+						mm.getMessageSender());
 
 	// if found and on a blacklist, or not found and on a whitelist...
 	if ((it != m_senders.end()) != m_whitelist) return false;
@@ -156,7 +151,7 @@ std::string DispatchTableItem::receiver(){
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-bool DispatchTableItem::isReceiver(std::string r){
+bool DispatchTableItem::isReceiver(std::string& r){
 	return (m_receiver == r);
 }
 

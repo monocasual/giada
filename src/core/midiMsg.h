@@ -37,6 +37,7 @@ namespace m {
 class MidiMsg
 {
 	public:
+	MidiMsg() = delete;	
 	MidiMsg(std::string sender, std::vector<unsigned char>* message);
 	unsigned char			getByte(unsigned int n);
 	std::vector<unsigned char>*	getMessage();
@@ -49,5 +50,5 @@ class MidiMsg
 
 };
 
-}}; // giada::m
+}} // giada::m
 #endif

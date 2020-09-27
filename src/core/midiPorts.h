@@ -76,7 +76,7 @@ void midiReceive(MidiMsg mm, std::string recipient);
 
 bool hasAPI(int API);
 
-}}}; // giada::m::midiPorts::
+}}} // giada::m::midiPorts::
 
 
 #endif
