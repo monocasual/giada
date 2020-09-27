@@ -40,7 +40,6 @@ namespace kernelMidi
 {
 namespace
 {
-
 // An output port name for use with new midiPorts backend
 std::string out_port_name = "";
 
@@ -128,4 +127,4 @@ int getB2(uint32_t iValue) { return (iValue >> 16) & 0xFF; }
 int getB3(uint32_t iValue) { return (iValue >> 8)  & 0xFF; }
 
 
-}}}; // giada::m::kernelMidi::
+}}} // giada::m::kernelMidi::
