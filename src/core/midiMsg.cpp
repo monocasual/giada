@@ -57,4 +57,10 @@ std::vector<unsigned char>* midiMsg::getMessage(){
 unsigned int midiMsg::getMessageLength(){
 	return midiMsg::message_->size();
 }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+std::string midiMsg::getMessageSender(){
+	return midiMsg::sender_;
+}
 }} // giada::m::

@@ -87,7 +87,6 @@ static void callback_(double t, std::vector<unsigned char>* msg, void* data)
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // TODO: Legacy function - to be removed in next stages of overhaul
-// TODO: MAke use of it!
 void sendMidiLightningInitMsgs_()
 {
 	for (const midimap::Message& m : midimap::midimap.initCommands) {

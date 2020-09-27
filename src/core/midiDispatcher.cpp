@@ -27,6 +27,7 @@
 
 #include <cassert>
 #include <vector>
+#include <string>
 #include "glue/plugin.h"
 #include "glue/events.h"
 #include "utils/log.h"
@@ -40,12 +41,132 @@
 #include "core/recManager.h"
 #include "core/types.h"
 #include "core/midiDispatcher.h"
-
+// TODO: Remove unnecessary includes at the end
 
 namespace giada {
 namespace m {
 namespace midiDispatcher
 {
+//----------------------------------------------------------------------------//
+//-------------------- DISPATCH TABLE ITEM MEMBER FUNCTIONS ------------------//
+
+
+//-------------------------------- CONSTRUCTORS --------------------------------
+	
+dispatchTableItem::dispatchTableItem(std::vector<std::string>* s,
+				midiMsgFilter* mmf, std::string r, bool wl){
+	dispatchTableItem::senders_	= *s;
+	dispatchTableItem::whitelist_ 	= wl;
+	dispatchTableItem::receiver_ 	= r;
+	dispatchTableItem::mmf 		= *mmf;
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+dispatchTableItem::dispatchTableItem(std::string s,
+				midiMsgFilter* mmf, std::string r, bool wl){
+	dispatchTableItem::senders_.push_back(s);
+	dispatchTableItem::whitelist_ 	= wl;
+	dispatchTableItem::receiver_ 	= r;
+	dispatchTableItem::mmf 		= *mmf;
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+dispatchTableItem::dispatchTableItem(std::vector<std::string>* s,
+				std::string r, bool wl){
+	dispatchTableItem::senders_	= *s;
+	dispatchTableItem::whitelist_ 	= wl;
+	dispatchTableItem::receiver_ 	= r;
+	dispatchTableItem::mmf 		= midiMsgFilter(); 
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+dispatchTableItem::dispatchTableItem(std::string s,
+				std::string r, bool wl){
+	dispatchTableItem::senders_.push_back(s);
+	dispatchTableItem::whitelist_ 	= wl;
+	dispatchTableItem::receiver_ 	= r;
+	dispatchTableItem::mmf 		= midiMsgFilter();
+}
+
+//------------------------------ MEMBER FUNCTIONS ------------------------------
+
+void dispatchTableItem::addSender(std::string s){
+	dispatchTableItem::senders_.push_back(s);
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+bool dispatchTableItem::removeSender(std::string s){
+	
+	unsigned int l = dispatchTableItem::senders_.size();
+	
+	// TODO: Allegedly this is the C++20 equivalent,
+	// but compiler seems to not understand it yet 
+	// std::erase(dispatchTableItem::senders_, s);
+
+	auto it = std::remove(dispatchTableItem::senders_.begin(),
+				dispatchTableItem::senders_.end(),
+				s);
+	dispatchTableItem::senders_.erase(it, dispatchTableItem::senders_.end());
+
+	return dispatchTableItem::senders_.empty();
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+void dispatchTableItem::setReceiver(std::string r){
+	dispatchTableItem::receiver_ = r;
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+void dispatchTableItem::setBlacklist(){
+	dispatchTableItem::whitelist_ = false;
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+void dispatchTableItem::setWhitelist(){
+	dispatchTableItem::whitelist_ = true;
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+bool dispatchTableItem::check(midiMsg* mm){
+
+	// Check message sender
+	auto it = find(dispatchTableItem::senders_.begin(),
+			dispatchTableItem::senders_.end(),
+			mm->getMessageSender());
+
+	// if found and on a blacklist, or not found and on a whitelist...
+	if ((it != dispatchTableItem::senders_.end()) != dispatchTableItem::whitelist_) return false;
+
+	// Check message body against a filter
+	return dispatchTableItem::mmf.check(mm);
+
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+std::string dispatchTableItem::receiver(){
+	return dispatchTableItem::receiver_;
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+bool dispatchTableItem::isReceiver(std::string r){
+	return (dispatchTableItem::receiver_ == r);
+}
+
+
+//----------------- END OF DISPATCH TABLE ITEM MEMBER FUNCTIONS --------------//
+//----------------------------------------------------------------------------//
+
+
 namespace
 {
 /* cb_midiLearn, cb_data_

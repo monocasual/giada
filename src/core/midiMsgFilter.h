@@ -57,26 +57,38 @@ class midiMsgFilter
 	// Creates a midiMsgFilter that passes only a given message
 	midiMsgFilter(midiMsg mm, bool alm = 0);
 
+	// Creates the simplest, fully transparent filter
+	// Note it has allow_longer_msg set to true
+	midiMsgFilter();
+
 	// Creates a transparent filter of a given length
-	midiMsgFilter(unsigned int l, bool alm = 0);
+	midiMsgFilter(unsigned int fl, bool alm = 0);
 
 	// Creates a filter defined by length l, and mask and tmpl arrays
 	// allow_longer_msg_ is optional
-	midiMsgFilter(unsigned int l, unsigned char* mask, unsigned char* tmpl,
+	midiMsgFilter(unsigned int fl, unsigned char* mask, unsigned char* tmpl,
 							bool alm = 0);
 
-	// Filter manipulation methods //
-	void			setTemplateByte(unsigned n, unsigned char b);
-	void			setMaskByte(unsigned n, unsigned char b);
-	void			ignoreByte(unsigned n);
-	void			allowLongerMsg();
-	void			disallowLongerMsg();
+	// Filter manipulation methods
+	// Note the byte indices are zero-based
+	// 'n' is byte index
+	// 'b' is binary data byte
+	// 'shl' is left-shift of input 'b', optional
+	// 'fl' is filter length
+	void	setTemplateByte(unsigned n, unsigned char b);
+	void	setMaskByte(unsigned n, unsigned char b);
+	void	orTemplateByte(unsigned n, unsigned char b, unsigned shl = 0);
+	void	orMaskByte(unsigned n, unsigned char b, unsigned shl = 0);
+	void	ignoreByte(unsigned n);
+	void	setFilterLength(unsigned fl);
+	void	allowLongerMsg();
+	void	disallowLongerMsg();
 
 	// Check a message against this filter
-	bool			check(midiMsg mm);
+	bool			check(midiMsg* mm);
 	
 	// Check a message against a given filter
-	friend bool		check(midiMsg mm, midiMsgFilter mmf);
+	friend bool		check(midiMsg* mm, midiMsgFilter mmf);
 
 };
 
