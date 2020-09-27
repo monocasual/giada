@@ -35,38 +35,29 @@ namespace giada {
 namespace m {
 
 
-// A midiMsg filtering class
-// Allows to tell whether midiMsg is of a defined type
+// A MidiMsg filtering class
+// Allows to tell whether MidiMsg is of a defined type
 //
 // TODO: Knob/slider jitter filter
 
 
-class midiMsgFilter
+class MidiMsgFilter
 {
-	private:
-
-	// template_ vector contains data to which message is compared
-	// mask_ indicates which bits are to be included in comparison
-	// template_ and mask_ must always be of equal size	
-	std::vector<unsigned char>	template_;
-	std::vector<unsigned char>	mask_;
-	bool 				allow_longer_msg_;
-
 	public:
 
-	// Creates a midiMsgFilter that passes only a given message
-	midiMsgFilter(midiMsg mm, bool alm = 0);
+	// Creates a MidiMsgFilter that passes only a given message
+	MidiMsgFilter(MidiMsg mm, bool alm = 0);
 
 	// Creates the simplest, fully transparent filter
 	// Note it has allow_longer_msg set to true
-	midiMsgFilter();
+	MidiMsgFilter();
 
 	// Creates a transparent filter of a given length
-	midiMsgFilter(unsigned int fl, bool alm = 0);
+	MidiMsgFilter(unsigned int fl, bool alm = 0);
 
 	// Creates a filter defined by length l, and mask and tmpl arrays
-	// allow_longer_msg_ is optional
-	midiMsgFilter(unsigned int fl, unsigned char* mask, unsigned char* tmpl,
+	// m_allow_longer_msg is optional
+	MidiMsgFilter(unsigned int fl, unsigned char* mask, unsigned char* tmpl,
 							bool alm = 0);
 
 	// Filter manipulation methods
@@ -85,10 +76,19 @@ class midiMsgFilter
 	void	disallowLongerMsg();
 
 	// Check a message against this filter
-	bool			check(midiMsg* mm);
+	bool			check(MidiMsg* mm);
 	
 	// Check a message against a given filter
-	friend bool		check(midiMsg* mm, midiMsgFilter mmf);
+	friend bool		check(MidiMsg* mm, MidiMsgFilter mmf);
+
+	private:
+
+	// m_template vector contains data to which message is compared
+	// m_mask indicates which bits are to be included in comparison
+	// m_template and m_mask must always be of equal size	
+	std::vector<unsigned char>	m_template;
+	std::vector<unsigned char>	m_mask;
+	bool 				m_allow_longer_msg;
 
 };
 

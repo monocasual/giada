@@ -34,18 +34,19 @@
 namespace giada {
 namespace m {
 
-class midiMsg
+class MidiMsg
 {
-	private:
-	std::string			sender_;
-	std::vector<unsigned char>*	message_;
-
 	public:
-	midiMsg(std::string sender, std::vector<unsigned char>* message);
+	MidiMsg(std::string sender, std::vector<unsigned char>* message);
 	unsigned char			getByte(unsigned int n);
 	std::vector<unsigned char>*	getMessage();
 	unsigned int			getMessageLength();
 	std::string			getMessageSender();
+
+	private:
+	std::string			m_sender;
+	std::vector<unsigned char>*	m_message;
+
 };
 
 }}; // giada::m

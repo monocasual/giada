@@ -45,45 +45,39 @@ namespace giada {
 namespace m {
 namespace midiDispatcher
 {
-class dispatchTableItem{
-
-	private:
-
-	std::vector<std::string>	senders_;
-	bool				whitelist_; // senders_ list is wl/!bl
-	std::string			receiver_;
+class DispatchTableItem{
 
 	public:
 
 	// mmf is public to let us manipulate filter easily
 	// using its member functions
-	midiMsgFilter			mmf;
+	MidiMsgFilter			mmf;
 
 	//  -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
 	// Constructors, pretty much straightforward
-	// They copy midiMsgFilter so these don't need to be persistent
-	dispatchTableItem(std::vector<std::string>* s, midiMsgFilter* mmf,
+	// They copy MidiMsgFilter so these don't need to be persistent
+	DispatchTableItem(std::vector<std::string>* s, MidiMsgFilter* mmf,
 						std::string r, bool wl = 1);
-	dispatchTableItem(		std::string s, midiMsgFilter* mmf,
+	DispatchTableItem(		std::string s, MidiMsgFilter* mmf,
 						std::string r, bool wl = 1);
 
 	// These constructors create empty, transparent filters
 	// rather than copying an existing filter.
-	dispatchTableItem(std::vector<std::string>* s, std::string r, 
+	DispatchTableItem(std::vector<std::string>* s, std::string r, 
 								bool wl = 1);
-	dispatchTableItem(		std::string s, std::string r,
+	DispatchTableItem(		std::string s, std::string r,
 								bool wl = 1);
 
 	// Table item manipulation methods
 	void	addSender(std::string s);
-	bool	removeSender(std::string s); // returns senders_.empty()
+	bool	removeSender(std::string s); // returns m_senders.empty()
 	void	setReceiver(std::string r);
 	void	setBlacklist();
 	void	setWhitelist();
 
 	// Checks if a message fits to senders, whitelist and filter 
-	bool		check(midiMsg* mm);
+	bool		check(MidiMsg* mm);
 
 	// Returns receiver's address
 	std::string	receiver();
@@ -91,8 +85,13 @@ class dispatchTableItem{
 	// useful for unregistering
 	bool		isReceiver(std::string r);
 
+	private:
 
-}
+	std::vector<std::string>	m_senders;
+	bool				m_whitelist; // m_senders list is wl/!bl
+	std::string			m_receiver;
+
+};
 
 void startChannelLearn(int param, ID channelId, std::function<void()> f);
 void startMasterLearn (int param, std::function<void()> f);

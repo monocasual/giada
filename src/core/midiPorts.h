@@ -71,7 +71,7 @@ std::string getInDeviceName(int index);
 
 // midiReceive
 // Sends a MIDI message 'mm' to a port named 'recipient'.
-void midiReceive(midiMsg mm, std::string recipient);
+void midiReceive(MidiMsg mm, std::string recipient);
 
 
 bool hasAPI(int API);

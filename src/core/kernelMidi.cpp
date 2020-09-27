@@ -66,7 +66,7 @@ void send(uint32_t data)
 	msg.push_back(getB2(data));
 	msg.push_back(getB3(data));
 
-	midiMsg mm = midiMsg("", &msg);
+	MidiMsg mm = MidiMsg("", &msg);
 	midiPorts::midiReceive(mm, out_port_name);
 
 	u::log::print("[KM::send] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
@@ -85,7 +85,7 @@ void send(int b1, int b2, int b3)
 	if (b3 != -1)
 		msg.push_back(b3);
 
-	midiMsg mm = midiMsg("", &msg);
+	MidiMsg mm = MidiMsg("", &msg);
 	midiPorts::midiReceive(mm, out_port_name);
 
 	u::log::print("[KM::send] send msg=(%X %X %X)\n", b1, b2, b3);

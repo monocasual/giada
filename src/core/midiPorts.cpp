@@ -25,12 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifdef G_OS_MAC
 #include <RtMidi.h>
-#else
-#include <rtmidi/RtMidi.h>
-#endif
-
 #include "conf.h"
 #include "utils/log.h"
 #include "midiDispatcher.h"
@@ -76,8 +71,8 @@ static void callback_(double t, std::vector<unsigned char>* msg, void* data)
 	// A port name shall be converted into the address string
 	// port = "p;" + port;
 
-	// Creating a nice midiMsg instance //
-	// midiMsg mm = midiMsg(port, msg);
+	// Creating a nice MidiMsg instance //
+	// MidiMsg mm = MidiMsg(port, msg);
 
 	// Passing it to a new midiDispatcher - TODO //
 	// something like:
@@ -327,11 +322,10 @@ int closeOutPort(std::string port){
 	if (port == ""){
 
 		// Create a list of open ports and destroy them all!
-		std::map<std::string, RtMidiOut*>::iterator it;
 		std::vector<std::string> ports_to_destroy;
 
-		for (it = outPorts_.begin(); it != outPorts_.end(); ++it){
-			ports_to_destroy.push_back(it->first);
+		for (auto const& [name, rtm] : outPorts_){
+			ports_to_destroy.push_back(name);
 		}
 
 		for (unsigned int i = 0; i < ports_to_destroy.size(); i++){
@@ -359,11 +353,10 @@ int closeInPort(std::string port){
 	if (port == ""){
 
 		// Create a list of open ports and destroy them all!
-		std::map<std::string, RtMidiIn*>::iterator it;
 		std::vector<std::string> ports_to_destroy;
 
-		for (it = inPorts_.begin(); it != inPorts_.end(); ++it){
-			ports_to_destroy.push_back(it->first);
+		for (auto const& [name, rtm] : inPorts_){
+			ports_to_destroy.push_back(name);
 		}
 
 		for (unsigned int i = 0; i < ports_to_destroy.size(); i++){
@@ -405,7 +398,7 @@ std::string getInDeviceName(int index){
 // This method sends data from Giada to ports - the name follows the global
 // naming convention from midiDispatcher's point of view.
 
-void midiReceive(midiMsg mm, std::string recipient)
+void midiReceive(MidiMsg mm, std::string recipient)
 {
 	// Every time a message is sent, a port status is checked first.
 	int status = openOutPort(recipient);
