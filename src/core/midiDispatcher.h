@@ -80,10 +80,14 @@ class DispatchTableItem{
 	bool		check(MidiMsg& mm);
 
 	// Returns receiver's address
-	std::string	receiver();
+	std::string	getReceiver();
 
-	// useful for unregistering
+	// Checks if a given address is receiver's address
 	bool		isReceiver(std::string& r);
+
+	// Checks if a given address is in a sender's addresses vector
+	// NOTE it ignores 'whitelist' flag
+	bool		isSender(std::string s);
 
 	private:
 
@@ -93,19 +97,18 @@ class DispatchTableItem{
 
 };
 
-void startChannelLearn(int param, ID channelId, std::function<void()> f);
-void startMasterLearn (int param, std::function<void()> f);
-void stopLearn();
-void clearMasterLearn (int param, std::function<void()> f);
-void clearChannelLearn(int param, ID channelId, std::function<void()> f);
-#ifdef WITH_VST
-void startPluginLearn (int paramIndex, ID pluginId, std::function<void()> f);
-void clearPluginLearn (int paramIndex, ID pluginId, std::function<void()> f);
-#endif
+// reg function for registering receivers of certain messages
+void reg(std::string s, MidiMsgFilter& mmf, std::string &r, bool wl = 1);
+void regEx(std::string s, MidiMsgFilter& mmf, std::string &r, bool wl = 1);
 
-void dispatch(int byte1, int byte2, int byte3);
+// TODO: unreg functions
 
-void setSignalCallback(std::function<void()> f);
+// The ultimate MidiMsg dispatching method
+void dispatch(MidiMsg& mm);
+
+// Forwards messages (resolves addresses)
+//void _forward(MidiMsg& mm, std::string r);
+
 }}} // giada::m::midiDispatcher::
 
 

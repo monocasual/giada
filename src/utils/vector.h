@@ -60,6 +60,13 @@ void remove(T& v, V val)
 {
     v.erase(std::remove(v.begin(), v.end(), val), v.end());
 }
+
+template <typename T, typename V>
+bool has(T& v, V val)
+{
+    return (std::find(v.begin(), v.end(), val) != v.end());
+}
+
 }}}  // giada::u::vector::
 
 #endif
