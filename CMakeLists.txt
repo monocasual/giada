@@ -352,7 +352,8 @@ endif()
 
 # Set CMake options.
 
-option(WITH_VST "Build giada with VST support." OFF)
+option(WITH_VST2 "Build giada with VST2 support." OFF)
+option(WITH_VST3 "Build giada with VST3 support." OFF)
 option(ENABLE_DEBUG "Build giada in debug mode." OFF)
 option(WITH_TESTS "Build giada with tests suite." OFF)
 option(WITH_SYSTEM_CATCH "Build giada with system catch (only if WITH_TESTS=ON)." OFF)
@@ -507,7 +508,7 @@ endif()
 
 # Define extra parameters if compiled with VST.
 
-if(WITH_VST)
+if(WITH_VST2 OR WITH_VST3)
 
 	list(APPEND SOURCES
 		src/deps/juce/modules/juce_audio_basics/juce_audio_basics.cpp
@@ -532,12 +533,21 @@ if(WITH_VST)
 	list(APPEND PREPROCESSOR_DEFS
 		WITH_VST
 		JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1
-		JUCE_STANDALONE_APPLICATION=1
-		JUCE_PLUGINHOST_VST=1
-		JUCE_PLUGINHOST_VST3=0
+		JUCE_STANDALONE_APPLICATION=1		
 		JUCE_PLUGINHOST_AU=0
 		JUCE_WEB_BROWSER=0
 		JUCE_USE_CURL=0)
+	
+	if(WITH_VST2)
+		list(APPEND PREPROCESSOR_DEFS 
+			WITH_VST2
+			JUCE_PLUGINHOST_VST=1)
+	endif()
+	if(WITH_VST3)
+		list(APPEND PREPROCESSOR_DEFS 
+			WITH_VST3
+			JUCE_PLUGINHOST_VST3=1)
+	endif()
 
 endif()
 

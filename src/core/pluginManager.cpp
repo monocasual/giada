@@ -51,10 +51,10 @@ IdManager pluginId_;
 int samplerate_;
 int buffersize_;
 
-/* pluginFormat
+/* formatManager
 Plugin format manager. */
 
-juce::VSTPluginFormat pluginFormat_;
+juce::AudioPluginFormatManager formatManager_;
 
 /* knownPuginList
 List of known (i.e. scanned) plugins. */
@@ -92,7 +92,10 @@ void init(int samplerate, int buffersize)
 	samplerate_     = samplerate;
     buffersize_     = buffersize;
 	missingPlugins_ = false;
+
+	formatManager_.addDefaultFormats();
 	unknownPluginList_.clear();
+
 	loadList(u::fs::getHomePath() + G_SLASH + "plugins.xml");
 	sortPlugins(static_cast<pluginManager::SortMethod>(conf::conf.pluginSortMethod));
 }
@@ -110,18 +113,20 @@ int scanDirs(const std::string& dirs, const std::function<void(float)>& cb)
 
 	std::vector<std::string> dirVec = u::string::split(dirs, ";");
 
-	juce::VSTPluginFormat format;
 	juce::FileSearchPath searchPath;
 	for (const std::string& dir : dirVec)
 		searchPath.add(juce::File(dir));
 
-	juce::PluginDirectoryScanner scanner(knownPluginList_, format, searchPath, 
-		/*recursive=*/true, juce::File());
+	for (int i = 0; i < formatManager_.getNumFormats(); i++) {
 
-	juce::String name;
-	while (scanner.scanNextFile(false, name)) {
-		u::log::print("[pluginManager::scanDir]   scanning '%s'\n", name.toRawUTF8());
-		cb(scanner.getProgress());
+		juce::PluginDirectoryScanner scanner(knownPluginList_, *formatManager_.getFormat(i), searchPath, 
+			/*recursive=*/true, juce::File());
+
+		juce::String name;
+		while (scanner.scanNextFile(false, name)) {
+			u::log::print("[pluginManager::scanDir]   scanning '%s'\n", name.toRawUTF8());
+			cb(scanner.getProgress());
+		}
 	}
 
 	u::log::print("[pluginManager::scanDir] %d plugin(s) found\n", knownPluginList_.getNumTypes());
@@ -170,9 +175,11 @@ std::unique_ptr<Plugin> makePlugin(const std::string& pid, ID id)
 		return makeInvalidPlugin_(pid, id);
 	}
 
-	std::unique_ptr<juce::AudioPluginInstance> pi = pluginFormat_.createInstanceFromDescription(*pd, samplerate_, buffersize_);
+	juce::String error;
+	std::unique_ptr<juce::AudioPluginInstance> pi = formatManager_.createPluginInstance(*pd, samplerate_, buffersize_, error);
 	if (pi == nullptr) {
-		u::log::print("[pluginManager::makePlugin] unable to create instance with pid=%s!\n", pid.c_str());
+		u::log::print("[pluginManager::makePlugin] unable to create instance with pid=%s! Error: %s\n", 
+			pid.c_str(), error.toStdString().c_str());
 		return makeInvalidPlugin_(pid, id);
 	}
 
@@ -321,7 +328,7 @@ std::string getUnknownPluginInfo(int i)
 
 bool doesPluginExist(const std::string& pid)
 {
-	return pluginFormat_.doesPluginStillExist(*knownPluginList_.getTypeForFile(pid));
+	return formatManager_.doesPluginStillExist(*knownPluginList_.getTypeForFile(pid));
 }
 
 
