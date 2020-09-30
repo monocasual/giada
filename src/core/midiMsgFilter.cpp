@@ -168,6 +168,23 @@ void MidiMsgFilter::disallowLongerMsg(){
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+void MidiMsgFilter::setChannel(unsigned ch){
+
+	// If filter is completely empty, expand it to 1 byte
+	if (m_mask.size() < 1) setFilterLength(1);
+
+	if ((ch >=1) and (ch <=16)){
+		m_template[0] &= 0xF0;
+		m_template[0] += ch - 1;
+		m_mask[0]     |= 0x0F;
+	}
+	else {
+		m_mask[0]     &= 0xF0;
+	}
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 bool MidiMsgFilter::check(MidiMsg& mm){
 
 	unsigned int l  = mm.getMessageLength();

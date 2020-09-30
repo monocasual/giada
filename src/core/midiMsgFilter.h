@@ -75,9 +75,14 @@ class MidiMsgFilter
 	void	allowLongerMsg();
 	void	disallowLongerMsg();
 
+	// Set filter to accept specific NoteOnOff/CC channel 
+	// Note MIDI channels have numbers 1-16
+	// Any number outside that range (like 0) allows any channel
+	void    setChannel(unsigned n);
+
 	// Check a message against this filter
 	bool			check(MidiMsg& mm);
-	
+
 	// Check a message against a given filter
 	friend bool		check(MidiMsg& mm, MidiMsgFilter mmf);
 

@@ -30,7 +30,7 @@
 
 
 #include <cstdint>
-
+#include "core/midiMsgFilter.h"
 
 /* -- debug ----------------------------------------------------------------- */
 #ifndef NDEBUG
@@ -229,6 +229,13 @@ constexpr int G_PATCH_UNREADABLE  = -1;
 constexpr int G_PATCH_INVALID     =  0;
 constexpr int G_PATCH_OK          =  1;
 
+
+
+/* -- Typical midiMsgFilters ------------------------------------------------ */
+const midiMsgFilter MMF_NOTEONOFF     = midiMsgFilter(3, "\xE0\0\0","\x80\0\0"); 
+const midiMsgFilter MMF_NOTEON        = midiMsgFilter(3, "\xF0\0\0","\x80\0\0"); 
+const midiMsgFilter MMF_NOTEOFF       = midiMsgFilter(3, "\xF0\0\0","\x90\0\0"); 
+const midiMsgFilter MMF_CC 	      = midiMsgFilter(3, "\xF0\0\0","\xB0\0\0"); 
 
 
 /* -- midimap signals ------------------------------------------------------- */
