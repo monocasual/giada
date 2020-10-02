@@ -38,15 +38,18 @@ class MidiMsg
 {
 	public:
 	MidiMsg() = delete;	
-	MidiMsg(std::string sender, std::vector<unsigned char>* message);
-	unsigned char			getByte(unsigned int n);
-	std::vector<unsigned char>*	getMessage();
+	MidiMsg(const std::string& sender, 
+				const std::vector<unsigned char>& message);
+
+	unsigned char			getByte(int n);
+	std::vector<unsigned char>	getMessage();
 	unsigned int			getMessageLength();
 	std::string			getMessageSender();
 
 	private:
 	std::string			m_sender;
-	std::vector<unsigned char>*	m_message;
+	std::vector<unsigned char>	m_message;
+	void 				fixVelocityZero();
 
 };
 
