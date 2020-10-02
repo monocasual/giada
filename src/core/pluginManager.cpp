@@ -296,7 +296,7 @@ PluginInfo getAvailablePluginInfo(int i)
 	juce::PluginDescription pd = knownPluginList_.getTypes()[i];
 	PluginInfo pi;
 	pi.uid              = pd.fileOrIdentifier.toStdString();
-	pi.name             = pd.name.toStdString();
+	pi.name             = pd.descriptiveName.toStdString();
 	pi.category         = pd.category.toStdString();
 	pi.manufacturerName = pd.manufacturerName.toStdString();
 	pi.format           = pd.pluginFormatName.toStdString();
