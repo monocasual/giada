@@ -61,7 +61,7 @@ EOF
 	echo "Copy final bundle to dist/, zip it and clean it up"
 
 	cp -r temp/giada.app dist/
-	zip -r dist/giada-$TRAVIS_TAG-macos.zip dist/giada.app
+	zip -r dist/giada-$TRAVIS_TAG-x86_64-macos.zip dist/giada.app
 	rm -rf dist/giada.app
 
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
@@ -91,12 +91,22 @@ EOF
 	
 	mv extras/giada-logo.svg temp/giada.svg
 
-	# Run linuxdeploy to make the AppImage, then move it to ./dist dir. 
-	# For some reasons linuxdeploy uses the commit hash in the filename, so
+	# Run linuxdeploy to make the AppImage, then move it to dist/ dir. 
+	# For some reason linuxdeploy uses the commit hash in the filename, so
 	# rename it first.
 
 	./linuxdeploy-x86_64.AppImage -e temp/giada -d temp/giada.desktop -i temp/giada.svg --output appimage --appdir temp/
 	mv Giada-*-x86_64.AppImage Giada-$TRAVIS_TAG-x86_64.AppImage 
 	cp Giada-$TRAVIS_TAG-x86_64.AppImage dist/
+
+elif [[ $TRAVIS_OS_NAME == 'windows' ]]; then
+
+	echo "Copy binary and dll files to temp/"
+
+	cp build/Release/giada.exe build/Release/*.dll temp/
+
+	echo "Make zip archive, save it to to dist/"
+	
+	7z a -tzip dist/giada-$TRAVIS_TAG-x86_64-windows.zip ./temp/*
 
 fi
