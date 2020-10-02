@@ -55,9 +55,9 @@ class MidiMsgFilter
 	// Creates a transparent filter of a given length
 	MidiMsgFilter(unsigned int fl, bool alm = 0);
 
-	// Creates a filter defined by length l, and mask and tmpl arrays
+	// Creates a filter defined by length l, and mask and tmpl strings 
 	// m_allow_longer_msg is optional
-	MidiMsgFilter(unsigned int fl, unsigned char* mask, unsigned char* tmpl,
+	MidiMsgFilter(unsigned int fl, std::string mask, std::string tmpl,
 							bool alm = 0);
 
 	// Filter manipulation methods
@@ -94,8 +94,14 @@ class MidiMsgFilter
 	std::vector<unsigned char>	m_template;
 	std::vector<unsigned char>	m_mask;
 	bool 				m_allow_longer_msg;
-
 };
 
-}} // giada::m
+//------------------- const MidiMsgFilters for typical uses -------------------	
+
+const MidiMsgFilter MMF_NOTEONOFF    = MidiMsgFilter(3, "\xE0\0\0", "\x80\0\0");
+const MidiMsgFilter MMF_NOTEON       = MidiMsgFilter(3, "\xF0\0\0", "\x80\0\0");
+const MidiMsgFilter MMF_NOTEOFF      = MidiMsgFilter(3, "\xF0\0\0", "\x90\0\0");
+const MidiMsgFilter MMF_CC           = MidiMsgFilter(3, "\xF0\0\0", "\xB0\0\0");
+
+}} // giada::m::
 #endif

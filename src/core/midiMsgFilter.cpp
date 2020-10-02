@@ -67,8 +67,8 @@ MidiMsgFilter::MidiMsgFilter(unsigned int fl, bool alm){
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-MidiMsgFilter::MidiMsgFilter(unsigned int fl, unsigned char* mask, 
-						unsigned char* tmpl, bool alm){
+MidiMsgFilter::MidiMsgFilter(unsigned int fl, std::string mask, 
+						std::string tmpl, bool alm){
 
 	for (unsigned int i=0; i<fl; i++){
 		m_template.push_back(tmpl[i]);
@@ -202,9 +202,6 @@ bool MidiMsgFilter::check(MidiMsg& mm){
 		b  = mm.getByte(i);
 		b ^= m_template.at(i);
 		b &= m_mask.at(i);
-
-		// MIDI words are 7 bits long, so we ignore MSB
-		b &= 0x7F;
 
 		// If any meaningful difference is found, return false
 		if (b != 0) return false;
