@@ -14,6 +14,7 @@
 0.17.0 --- 
 - Add CMake build system
 - Update JUCE, version 6
+- VST3 support
 
 
 0.16.4 --- 2020 . 09. 19
