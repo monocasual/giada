@@ -114,7 +114,7 @@ bool savePatch_(const std::string& path, const std::string& name)
 
 	u::gui::updateMainWinLabel(name);
 	m::conf::conf.patchPath = u::fs::getUpDir(u::fs::getUpDir(path));
-	u::log::print("[savePatch] patch saved as %s\n", path.c_str());
+	u::log::print("[savePatch] patch saved as %s\n", path);
 
 	return true;
 }
@@ -150,7 +150,7 @@ void loadProject(void* data)
 
 	browser->showStatusBar();
 
-	u::log::print("[loadProject] load from %s\n", fullPath.c_str());
+	u::log::print("[loadProject] load from %s\n", fullPath);
 
 	std::string fileToLoad = fullPath;  // patch file to read from
 	std::string basePath   = "";        // base path, in case of reading from a project
@@ -239,7 +239,7 @@ void saveProject(void* data)
 		return;
 	}
 
-	u::log::print("[saveProject] Project dir created: %s\n", fullPath.c_str());
+	u::log::print("[saveProject] Project dir created: %s\n", fullPath);
 
 	saveWavesToProject_(fullPath);
 
@@ -306,9 +306,9 @@ void saveSample(void* data)
 		v::gdAlert("Unable to save this sample!");
 		return;
 	}
-	
-	u::log::print("[saveSample] sample saved to %s\n", filePath.c_str());
-	
+
+	u::log::print("[saveSample] sample saved to %s\n", filePath);
+
 	/* Update last used path in conf, so that it can be reused next time. */
 
 	m::conf::conf.samplePath = u::fs::dirname(filePath);

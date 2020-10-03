@@ -88,7 +88,7 @@ void init()
 Result createFromFile(const std::string& path, ID id, int samplerate, int quality)
 {
 	if (path == "" || u::fs::isDir(path)) {
-		u::log::print("[waveManager::create] malformed path (was '%s')\n", path.c_str());
+		u::log::print("[waveManager::create] malformed path (was '%s')\n", path);
 		return { G_RES_ERR_NO_DATA };
 	}
 
@@ -99,7 +99,7 @@ Result createFromFile(const std::string& path, ID id, int samplerate, int qualit
 	SNDFILE* fileIn = sf_open(path.c_str(), SFM_READ, &header);
 
 	if (fileIn == nullptr) {
-		u::log::print("[waveManager::create] unable to read %s. %s\n", path.c_str(), sf_strerror(fileIn));
+		u::log::print("[waveManager::create] unable to read %s. %s\n", path, sf_strerror(fileIn));
 		return { G_RES_ERR_IO };
 	}
 
@@ -230,7 +230,7 @@ int save(const Wave& w, const std::string& path)
 	SNDFILE* file = sf_open(path.c_str(), SFM_WRITE, &header);
 	if (file == nullptr) {
 		u::log::print("[waveManager::save] unable to open %s for exporting: %s\n",
-			path.c_str(), sf_strerror(file));
+			path, sf_strerror(file));
 		return G_RES_ERR_IO;
 	}
 

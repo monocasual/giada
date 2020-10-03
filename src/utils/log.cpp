@@ -28,37 +28,19 @@
 
 
 #include <cstdio>
-#include <cstdarg>
 #include <string>
-#include "utils/fs.h"
-#include "core/const.h"
 #include "log.h"
 
 
-namespace giada {
-namespace u {
-namespace log 
+namespace giada::u::log
 {
-namespace
-{
-FILE* f;
-int   mode;
-bool  stat;
-} // {anonymouse}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
 int init(int m)
 {
 	mode = m;
 	stat = true;
 	if (mode == LOG_MODE_FILE) {
 		std::string fpath = fs::getHomePath() + G_SLASH + "giada.log";
-		f = fopen(fpath.c_str(), "a");
+		f = std::fopen(fpath.c_str(), "a");
 		if (!f) {
 			stat = false;
 			return 0;
@@ -74,27 +56,6 @@ int init(int m)
 void close()
 {
 	if (mode == LOG_MODE_FILE)
-		fclose(f);
+		std::fclose(f);
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void print(const char* format, ...)
-{
-	if (mode == LOG_MODE_MUTE)
-		return;
-	va_list args;
-	va_start(args, format);
-	if (mode == LOG_MODE_FILE && stat == true) {
-		vfprintf(f, format, args);
-#ifdef _WIN32
-		fflush(f);
-#endif
-	}
-  	else
-		vprintf(format, args);
-	va_end(args);
-}
-}}}  // giada::u::log::
+}  // giada::u::log

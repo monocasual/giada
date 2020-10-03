@@ -106,7 +106,7 @@ void init(int samplerate, int buffersize)
 
 int scanDirs(const std::string& dirs, const std::function<void(float)>& cb)
 {
-	u::log::print("[pluginManager::scanDir] requested directories: '%s'\n", dirs.c_str());
+	u::log::print("[pluginManager::scanDir] requested directories: '%s'\n", dirs);
 	u::log::print("[pluginManager::scanDir] current plugins: %d\n", knownPluginList_.getNumTypes());
 
 	knownPluginList_.clear();   // clear up previous plugins
@@ -141,7 +141,7 @@ bool saveList(const std::string& filepath)
 {
 	bool out = knownPluginList_.createXml()->writeTo(juce::File(filepath));
 	if (!out)
-		u::log::print("[pluginManager::saveList] unable to save plugin list to %s\n", filepath.c_str());
+		u::log::print("[pluginManager::saveList] unable to save plugin list to %s\n", filepath);
 	return out;
 }
 
@@ -171,19 +171,19 @@ std::unique_ptr<Plugin> makePlugin(const std::string& pid, ID id)
 
 	const std::unique_ptr<juce::PluginDescription> pd = knownPluginList_.getTypeForIdentifierString(pid);
 	if (pd == nullptr) {
-		u::log::print("[pluginManager::makePlugin] no plugin found with pid=%s!\n", pid.c_str());
+		u::log::print("[pluginManager::makePlugin] no plugin found with pid=%s!\n", pid);
 		return makeInvalidPlugin_(pid, id);
 	}
 
 	juce::String error;
 	std::unique_ptr<juce::AudioPluginInstance> pi = formatManager_.createPluginInstance(*pd, samplerate_, buffersize_, error);
 	if (pi == nullptr) {
-		u::log::print("[pluginManager::makePlugin] unable to create instance with pid=%s! Error: %s\n", 
-			pid.c_str(), error.toStdString().c_str());
+		u::log::print("[pluginManager::makePlugin] unable to create instance with pid=%s! Error: %s\n",
+			pid, error.toStdString());
 		return makeInvalidPlugin_(pid, id);
 	}
 
-	u::log::print("[pluginManager::makePlugin] plugin instance with pid=%s created\n", pid.c_str());
+	u::log::print("[pluginManager::makePlugin] plugin instance with pid=%s created\n", pid);
 
 	return std::make_unique<Plugin>(pluginId_.get(id), std::move(pi), samplerate_, buffersize_);
 }

@@ -151,7 +151,7 @@ int openDevice()
 	else {
 		u::log::print("[KA] %d device(s) found\n", numDevs);
 		for (unsigned i=0; i<numDevs; i++)
-			u::log::print("  %d) %s\n", i, getDeviceName(i).c_str());
+			u::log::print("  %d) %s\n", i, getDeviceName(i));
 	}
 
 	RtAudio::StreamParameters outParams;
@@ -206,7 +206,7 @@ int openDevice()
 		return 1;
 	}
 	catch (RtAudioError &e) {
-		u::log::print("[KA] rtSystem init error: %s\n", e.getMessage().c_str());
+		u::log::print("[KA] rtSystem init error: %s\n", e.getMessage());
 		closeDevice();
 		return 0;
 	}
@@ -224,7 +224,7 @@ int startStream()
 		return 1;
 	}
 	catch (RtAudioError &e) {
-		u::log::print("[KA] Start stream error: %s\n", e.getMessage().c_str());
+		u::log::print("[KA] Start stream error: %s\n", e.getMessage());
 		return 0;
 	}
 }
