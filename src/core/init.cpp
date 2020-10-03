@@ -206,11 +206,11 @@ void printBuildInfo_()
 	u::log::print("[init] Build date: " BUILD_DATE "\n");
 	u::log::print("[init] Dependencies:\n");
 	u::log::print("[init]   FLTK - %d.%d.%d\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
-	u::log::print("[init]   RtAudio - %s\n", u::ver::getRtAudioVersion().c_str());
-	u::log::print("[init]   RtMidi - %s\n", u::ver::getRtMidiVersion().c_str());
+	u::log::print("[init]   RtAudio - %s\n", u::ver::getRtAudioVersion());
+	u::log::print("[init]   RtMidi - %s\n", u::ver::getRtMidiVersion());
 	u::log::print("[init]   Libsamplerate\n"); // TODO - print version
-	u::log::print("[init]   Libsndfile - %s\n", u::ver::getLibsndfileVersion().c_str());
-	u::log::print("[init]   JSON for modern C++ - %d.%d.%d\n", 
+	u::log::print("[init]   Libsndfile - %s\n", u::ver::getLibsndfileVersion());
+	u::log::print("[init]   JSON for modern C++ - %d.%d.%d\n",
 		NLOHMANN_JSON_VERSION_MAJOR, NLOHMANN_JSON_VERSION_MINOR, NLOHMANN_JSON_VERSION_PATCH);
 #ifdef WITH_VST
 	u::log::print("[init]   JUCE - %d.%d.%d\n", JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER);

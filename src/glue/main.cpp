@@ -88,7 +88,7 @@ void setBpm_(float current, std::string s)
 		G_MainWin->mainTimer->setBpm(s.c_str());
 	}
 
-	u::log::print("[glue::setBpm_] Bpm changed to %s (real=%f)\n", s.c_str(), m::clock::getBpm());
+	u::log::print("[glue::setBpm_] Bpm changed to %s (real=%f)\n", s, m::clock::getBpm());
 }
 } // {anonymous}
 

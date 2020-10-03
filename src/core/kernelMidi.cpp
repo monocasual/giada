@@ -99,7 +99,7 @@ int openOutDevice(int port)
 		status_  = true;
 	}
 	catch (RtMidiError &error) {
-		u::log::print("[KM] MIDI out device error: %s\n", error.getMessage().c_str());
+		u::log::print("[KM] MIDI out device error: %s\n", error.getMessage());
 		status_ = false;
 		return 0;
 	}
@@ -109,7 +109,7 @@ int openOutDevice(int port)
 	numOutPorts_ = midiOut_->getPortCount();
 	u::log::print("[KM] %d output MIDI ports found\n", numOutPorts_);
 	for (unsigned i=0; i<numOutPorts_; i++)
-		u::log::print("  %d) %s\n", i, getOutPortName(i).c_str());
+		u::log::print("  %d) %s\n", i, getOutPortName(i));
 
 	/* try to open a port, if enabled */
 
@@ -125,7 +125,7 @@ int openOutDevice(int port)
 			return 1;
 		}
 		catch (RtMidiError& error) {
-			u::log::print("[KM] unable to open MIDI out port %d: %s\n", port, error.getMessage().c_str());
+			u::log::print("[KM] unable to open MIDI out port %d: %s\n", port, error.getMessage());
 			status_ = false;
 			return 0;
 		}
@@ -145,7 +145,7 @@ int openInDevice(int port)
 		status_ = true;
 	}
 	catch (RtMidiError &error) {
-		u::log::print("[KM] MIDI in device error: %s\n", error.getMessage().c_str());
+		u::log::print("[KM] MIDI in device error: %s\n", error.getMessage());
 		status_ = false;
 		return 0;
 	}
@@ -155,7 +155,7 @@ int openInDevice(int port)
 	numInPorts_ = midiIn_->getPortCount();
 	u::log::print("[KM] %d input MIDI ports found\n", numInPorts_);
 	for (unsigned i=0; i<numInPorts_; i++)
-		u::log::print("  %d) %s\n", i, getInPortName(i).c_str());
+		u::log::print("  %d) %s\n", i, getInPortName(i));
 
 	/* try to open a port, if enabled */
 
@@ -168,7 +168,7 @@ int openInDevice(int port)
 			return 1;
 		}
 		catch (RtMidiError& error) {
-			u::log::print("[KM] unable to open MIDI in port %d: %s\n", port, error.getMessage().c_str());
+			u::log::print("[KM] unable to open MIDI in port %d: %s\n", port, error.getMessage());
 			status_ = false;
 			return 0;
 		}

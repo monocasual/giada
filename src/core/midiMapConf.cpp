@@ -116,7 +116,7 @@ void parse_(Message& message)
 	message.value = strtoul(output.c_str(), nullptr, 16);
 
 	u::log::print("[parse] parsed chan=%d valueStr=%s value=%#x, offset=%d\n",
-			message.channel, message.valueStr.c_str(), message.value, message.offset);
+			message.channel, message.valueStr, message.value, message.offset);
 }
 } // {anonymous}
 
@@ -141,7 +141,7 @@ void init()
 	/* scan dir of midi maps and load the filenames into <>maps. */
 
 	u::log::print("[midiMapConf::init] scanning midimaps directory '%s'...\n",
-		midimapsPath.c_str());
+		midimapsPath);
 
 	if (!std::filesystem::exists(midimapsPath)) {
 		u::log::print("[midiMapConf::init] unable to scan midimaps directory!\n");
@@ -152,7 +152,7 @@ void init()
 		// TODO - check if is a valid midimap file (verify headers)
 		if (!d.is_regular_file())
 			continue;
-		u::log::print("[midiMapConf::init] found midimap '%s'\n", d.path().filename().string().c_str());
+		u::log::print("[midiMapConf::init] found midimap '%s'\n", d.path().filename().string());
 		maps.push_back(d.path().filename().string());
 	}
 
@@ -188,7 +188,7 @@ int read(const std::string& file)
 		return MIDIMAP_NOT_SPECIFIED;
 	}
 
-	u::log::print("[midiMapConf::read] reading midimap file '%s'\n", file.c_str());
+	u::log::print("[midiMapConf::read] reading midimap file '%s'\n", file);
 
 	std::ifstream ifs(midimapsPath + file);
 	if (!ifs.good())
