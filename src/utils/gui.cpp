@@ -270,7 +270,7 @@ std::string removeFltkChars(const std::string& s)
 
 std::string truncate(const std::string& s, Pixel width)
 {
-	if (getStringWidth(s) <= width) 
+	if (s.empty() || getStringWidth(s) <= width) 
 		return s;
 	
 	std::string tmp  = s;

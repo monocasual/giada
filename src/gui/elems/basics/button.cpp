@@ -27,6 +27,7 @@
 
 #include <FL/fl_draw.H>
 #include "core/const.h"
+#include "utils/gui.h"
 #include "button.h"
 
 
@@ -68,11 +69,14 @@ void geButton::draw(const char** img, Fl_Color bgColor, Fl_Color textColor)
 
 	if (img != nullptr) {
 		fl_draw_pixmap(img, x()+1, y()+1);
+		return;
 	}
-	else {
-		fl_rectf(x()+1, y()+1, w()-2, h()-2, bgColor); // draw background
-		fl_color(textColor);
+
+	fl_rectf(x()+1, y()+1, w()-2, h()-2, bgColor); // draw background
+	fl_color(textColor);
+
+	if (label() != nullptr) {
 		fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-		fl_draw(label(), x()+2, y(), w()-2, h(), FL_ALIGN_CENTER);
+		fl_draw(giada::u::gui::truncate(label(), w()-16).c_str(), x()+2, y(), w()-2, h(), FL_ALIGN_CENTER);
 	}
 }
