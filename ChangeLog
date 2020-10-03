@@ -15,6 +15,9 @@
 - Add CMake build system
 - Update JUCE, version 6
 - VST3 support
+- Show descriptive plug-in names in Plug-in List Window
+- Resizable plug-in list
+- Improved text truncation for small buttons
 
 
 0.16.4 --- 2020 . 09. 19
