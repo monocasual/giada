@@ -32,32 +32,29 @@
 #define GE_PLUGIN_ELEMENT_H
 
 
-#include <FL/Fl_Pack.H>
+#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/choice.h"
 #include "glue/plugin.h"
-
-
-class geButton;
 
 
 namespace giada {
 namespace v
 {
-class geChoice;
-class gdPluginList;
-class gePluginElement : public Fl_Pack
+class gePluginElement : public gePack
 {
 public:
 
-	gePluginElement(int x, int y, int w, c::plugin::Plugin);
+	gePluginElement(int x, int y, c::plugin::Plugin);
 
 	ID getPluginId() const;
 
-	geButton* button;
-	geChoice* program;
-	geButton* bypass;
-	geButton* shiftUp;
-	geButton* shiftDown;
-	geButton* remove;
+	geButton button;
+	geChoice program;
+	geButton bypass;
+	geButton shiftUp;
+	geButton shiftDown;
+	geButton remove;
 
 private:
 

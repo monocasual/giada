@@ -48,52 +48,57 @@
 namespace giada {
 namespace v
 {
-gePluginElement::gePluginElement(int X, int Y, int W, c::plugin::Plugin data)
-: Fl_Pack(X, Y, W, G_GUI_UNIT) 
+gePluginElement::gePluginElement(int x, int y, c::plugin::Plugin data)
+: gePack   (x, y, Direction::HORIZONTAL) 
+, button   (0, 0, 196, G_GUI_UNIT)
+, program  (0, 0, 132, G_GUI_UNIT)
+, bypass   (0, 0, G_GUI_UNIT, G_GUI_UNIT)
+, shiftUp  (0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm)
+, shiftDown(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm)
+, remove   (0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxRemoveOff_xpm, fxRemoveOn_xpm)
 , m_plugin (data)
 {
-	type(Fl_Pack::HORIZONTAL);
-	spacing(G_GUI_INNER_MARGIN);
-	begin();
-		button    = new geButton(0, 0, 196, G_GUI_UNIT);
-		program   = new geChoice(0, 0, 132, G_GUI_UNIT);
-		bypass    = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT);
-		shiftUp   = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm);
-		shiftDown = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm);
-		remove    = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxRemoveOff_xpm, fxRemoveOn_xpm);
-	end();
+	add(&button);
+	add(&program);
+	add(&bypass);
+	add(&shiftUp);
+	add(&shiftDown);
+	add(&remove);
 
-	remove->callback(cb_removePlugin, (void*)this);
+	resizable(button);
+
+	remove.callback(cb_removePlugin, (void*)this);
 
 	if (!m_plugin.valid) {
-		button->copy_label(m_plugin.uniqueId.c_str());
-		button->deactivate();
-		bypass->deactivate();
-		shiftUp->deactivate();
-		shiftDown->deactivate();
+		button.copy_label(m_plugin.uniqueId.c_str());
+		button.deactivate();
+		bypass.deactivate();
+		shiftUp.deactivate();
+		shiftDown.deactivate();
 		return;
 	}
-	button->copy_label(m_plugin.name.c_str());
-	button->callback(cb_openPluginWindow, (void*)this);
 
-	program->callback(cb_setProgram, (void*)this);
+	button.copy_label(m_plugin.name.c_str());
+	button.callback(cb_openPluginWindow, (void*)this);
+
+	program.callback(cb_setProgram, (void*)this);
 
 	for (const auto& p : m_plugin.programs)
-		program->add(u::gui::removeFltkChars(p.name).c_str());
+		program.add(u::gui::removeFltkChars(p.name).c_str());
 
-	if (program->size() == 0) {
-		program->add("-- no programs --\0");
-		program->deactivate();
+	if (program.size() == 0) {
+		program.add("-- no programs --\0");
+		program.deactivate();
 	}
 	else
-		program->value(m_plugin.currentProgram);
+		program.value(m_plugin.currentProgram);
 
-	bypass->callback(cb_setBypass, (void*)this);
-	bypass->type(FL_TOGGLE_BUTTON);
-	bypass->value(m_plugin.isBypassed ? 0 : 1);
+	bypass.callback(cb_setBypass, (void*)this);
+	bypass.type(FL_TOGGLE_BUTTON);
+	bypass.value(m_plugin.isBypassed ? 0 : 1);
 
-	shiftUp->callback(cb_shiftUp, (void*)this);
-	shiftDown->callback(cb_shiftDown, (void*)this);
+	shiftUp.callback(cb_shiftUp, (void*)this);
+	shiftDown.callback(cb_shiftDown, (void*)this);
 }
 
 
@@ -194,7 +199,7 @@ void gePluginElement::cb_setBypass()
 
 void gePluginElement::cb_setProgram()
 {
-	c::plugin::setProgram(m_plugin.id, program->value());
+	c::plugin::setProgram(m_plugin.id, program.value());
 }
 }} // giada::v::
 

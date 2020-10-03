@@ -62,6 +62,7 @@ gdPluginList::gdPluginList(ID channelId)
 		w() - (G_GUI_OUTER_MARGIN*2), h() - (G_GUI_OUTER_MARGIN*2));
 	list->end();
 	add(list);
+	resizable(list);
 
 	u::gui::setFavicon(this);
 	set_non_modal();
@@ -109,7 +110,7 @@ void gdPluginList::rebuild()
 	list->scroll_to(0, 0);
 
 	for (ID pluginId : m_plugins.pluginIds)
-		list->addWidget(new gePluginElement(0, 0, 0, c::plugin::getPlugin(pluginId, m_plugins.channelId)));
+		list->addWidget(new gePluginElement(0, 0, c::plugin::getPlugin(pluginId, m_plugins.channelId)));
 	
 	addPlugin = list->addWidget(new geButton(0, 0, 0, G_GUI_UNIT, "-- add new plugin --"));
 	
