@@ -183,6 +183,8 @@ void Plugin::setParameter(int paramIndex, float value) const
 
 string Plugin::getName() const
 {
+	if (!valid)
+		return "** invalid **";
 	return m_plugin->getName().toStdString();
 }
 
@@ -192,6 +194,8 @@ string Plugin::getName() const
 
 bool Plugin::isSuspended() const
 {
+	if (!valid)
+		return false;
 	return m_plugin->isSuspended();
 }
 
@@ -201,6 +205,8 @@ bool Plugin::isSuspended() const
 
 bool Plugin::acceptsMidi() const
 {
+	if (!valid)
+		return false;
 	return m_plugin->acceptsMidi();
 }
 
@@ -253,6 +259,8 @@ void Plugin::process(juce::AudioBuffer<float>& out, juce::MidiBuffer m)
 
 int Plugin::getNumPrograms() const
 {
+	if (!valid)
+		return 0;
 	return m_plugin->getNumPrograms();
 }
 
@@ -262,6 +270,8 @@ int Plugin::getNumPrograms() const
 
 int Plugin::getCurrentProgram() const
 {
+	if (!valid)
+		return 0;
 	return m_plugin->getCurrentProgram();
 }
 
@@ -271,7 +281,8 @@ int Plugin::getCurrentProgram() const
 
 void Plugin::setCurrentProgram(int index) const
 {
-	m_plugin->setCurrentProgram(index);
+	if (valid)
+		m_plugin->setCurrentProgram(index);
 }
 
 
@@ -280,6 +291,8 @@ void Plugin::setCurrentProgram(int index) const
 
 bool Plugin::hasEditor() const
 {
+	if (!valid)
+		return false;
 	return m_plugin->hasEditor();
 }
 
@@ -289,6 +302,8 @@ bool Plugin::hasEditor() const
 
 string Plugin::getProgramName(int index) const
 {
+	if (!valid)
+		return {};
 	return m_plugin->getProgramName(index).toStdString();
 }
 
@@ -298,6 +313,8 @@ string Plugin::getProgramName(int index) const
 
 string Plugin::getParameterName(int index) const
 {
+	if (!valid)
+		return {};
 	const int labelSize = 64;
 	return m_plugin->getParameters()[index]->getName(labelSize).toStdString();
 }
