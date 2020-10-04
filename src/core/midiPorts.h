@@ -46,8 +46,9 @@ void setApi(int api);
 
 // getIn/OutDevices
 // Lists available devices that can be connected to ports
-std::vector<std::string> getOutDevices();
-std::vector<std::string> getInDevices();
+// The default non-full list omits Giada-created ports.
+std::vector<std::string> getOutDevices(bool full = false);
+std::vector<std::string> getInDevices(bool full = false);
 
 // getIn/OutDeviceIndex
 // Returns a device number on the list returned by RtMidi
@@ -62,6 +63,12 @@ int openInPort(std::string port);
 int closeInPort(std::string port = "");
 int closeOutPort(std::string port = "");
 
+// getIn/OuPorts
+// Lists open ports in desired direction
+// Optionally returns vector of addresses rather than names
+std::vector<std::string> getOutPorts(bool addr = false);
+std::vector<std::string> getInPorts(bool addr = false);
+
 /* getOutDeviceName
 Returns the name of the port with a given index. */
 // TODO: To be removed when we quit numbering ports //
@@ -71,7 +78,7 @@ std::string getInDeviceName(int index);
 
 // midiReceive
 // Sends a MIDI message 'mm' to a port named 'recipient'.
-void midiReceive(MidiMsg mm, std::string recipient);
+void midiReceive(const MidiMsg& mm, const std::string& recipient);
 
 
 bool hasAPI(int API);

@@ -25,33 +25,18 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_MIDIMSG_H
-#define G_MIDIMSG_H
+#ifndef G_MIDI_DEVICE_H
+#define G_MIDI_DEVICE_H
 
-#include <vector>
-#include <string>
+#include "core/midiMsg.h"
 
 namespace giada {
 namespace m {
-
-class MidiMsg
+namespace midiDevice
 {
-	public:
-	MidiMsg() = delete;	
-	MidiMsg(const std::string& sender, 
-				const std::vector<unsigned char>& message);
+void init();
+void midiReceive(const MidiMsg& mm);
+}}} // giada::m::midiDevice::
 
-	unsigned char				getByte(int n) const;
-	const std::vector<unsigned char>*	getMessage() const;
-	int					getMessageLength() const;
-	std::string				getMessageSender() const;
 
-	private:
-	std::string				m_sender;
-	std::vector<unsigned char>		m_message;
-	void 					fixVelocityZero();
-
-};
-
-}} // giada::m
 #endif

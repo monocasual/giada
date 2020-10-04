@@ -28,6 +28,12 @@ list(APPEND SOURCES
 	src/core/conf.cpp                       
 	src/core/kernelAudio.h                  
 	src/core/kernelAudio.cpp                
+	src/core/midiController.h                  
+	src/core/midiController.cpp                
+	src/core/midiDevice.h                  
+	src/core/midiDevice.cpp                
+	src/core/midiLearner.h                  
+	src/core/midiLearner.cpp                
 	src/core/midiPorts.h                  
 	src/core/midiPorts.cpp                
 	src/core/midiMsg.h                  
@@ -36,6 +42,8 @@ list(APPEND SOURCES
 =======
 	src/core/midiMsgFilter.h                  
 	src/core/midiMsgFilter.cpp                
+	src/core/midiSignalCb.h                  
+	src/core/midiSignalCb.cpp                
 	src/core/pluginHost.h                   
 	src/core/pluginHost.cpp                 
 	src/core/pluginManager.h                

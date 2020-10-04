@@ -38,9 +38,9 @@ namespace giada {
 namespace m {
 namespace kernelMidi
 {
-int getB1(uint32_t iValue);
-int getB2(uint32_t iValue);
-int getB3(uint32_t iValue);
+unsigned char getB1(uint32_t iValue);
+unsigned char getB2(uint32_t iValue);
+unsigned char getB3(uint32_t iValue);
 
 void init();
 

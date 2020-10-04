@@ -25,12 +25,16 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <vector>
 #include <string>
+#include <vector>
+#include <list>
 #include <sstream>
 #include "utils/vector.h"
-//#include "core/midiController.h"
-//#include "core/midiDevice.h"
+#include "utils/log.h"
+#include "core/midiController.h"
+#include "core/midiDevice.h"
+#include "core/midiLearner.h"
+#include "core/midiSignalCb.h"
 #include "core/midiDispatcher.h"
 #include "core/midiPorts.h"
 #include "core/types.h"
@@ -45,8 +49,8 @@ namespace midiDispatcher
 
 //-------------------------------- CONSTRUCTORS --------------------------------
 	
-DispatchTableItem::DispatchTableItem(std::vector<std::string>& s,
-				MidiMsgFilter& mmf, std::string& r, bool wl){
+DispatchTableItem::DispatchTableItem(const std::vector<std::string>& s,
+		const MidiMsgFilter& mmf, const std::string& r, bool wl){
 	m_senders			= s;
 	m_whitelist 			= wl;
 	m_receiver 			= r;
@@ -55,8 +59,8 @@ DispatchTableItem::DispatchTableItem(std::vector<std::string>& s,
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-DispatchTableItem::DispatchTableItem(std::string& s,
-				MidiMsgFilter& mmf, std::string& r, bool wl){
+DispatchTableItem::DispatchTableItem(const std::string& s,
+		const MidiMsgFilter& mmf, const std::string& r, bool wl){
 	m_senders.push_back(s);
 	m_whitelist 			= wl;
 	m_receiver 			= r;
@@ -65,8 +69,8 @@ DispatchTableItem::DispatchTableItem(std::string& s,
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-DispatchTableItem::DispatchTableItem(std::vector<std::string>& s,
-				std::string& r, bool wl){
+DispatchTableItem::DispatchTableItem(const std::vector<std::string>& s,
+					const std::string& r, bool wl){
 	m_senders			= s;
 	m_whitelist 			= wl;
 	m_receiver 			= r;
@@ -74,8 +78,8 @@ DispatchTableItem::DispatchTableItem(std::vector<std::string>& s,
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-DispatchTableItem::DispatchTableItem(std::string& s,
-				std::string& r, bool wl){
+DispatchTableItem::DispatchTableItem(const std::string& s,
+					const std::string& r, bool wl){
 	m_senders.push_back(s);
 	m_whitelist 			= wl;
 	m_receiver 			= r;
@@ -83,13 +87,13 @@ DispatchTableItem::DispatchTableItem(std::string& s,
 
 //------------------------------ MEMBER FUNCTIONS ------------------------------
 
-void DispatchTableItem::addSender(std::string& s){
+void DispatchTableItem::addSender(const std::string& s){
 	m_senders.push_back(s);
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-bool DispatchTableItem::removeSender(std::string& s){
+bool DispatchTableItem::removeSender(const std::string& s){
 	
 	u::vector::remove(m_senders, s);
 	return m_senders.empty();
@@ -97,7 +101,7 @@ bool DispatchTableItem::removeSender(std::string& s){
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-void DispatchTableItem::setReceiver(std::string& r){
+void DispatchTableItem::setReceiver(const std::string& r){
 	m_receiver = r;
 }
 
@@ -115,7 +119,7 @@ void DispatchTableItem::setWhitelist(){
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-bool DispatchTableItem::check(MidiMsg& mm){
+bool DispatchTableItem::check(const MidiMsg& mm){
 
 	// Sender cannot be a receiver of its own message
 	if (mm.getMessageSender() == m_receiver) return false;
@@ -137,7 +141,7 @@ std::string DispatchTableItem::getReceiver(){
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-bool DispatchTableItem::isReceiver(std::string& r){
+bool DispatchTableItem::isReceiver(const std::string& r){
 	return (m_receiver == r);
 }
 
@@ -161,13 +165,14 @@ namespace
 // matching receivers.
 // Other MIDI-related modules can manipulate these tables using
 // reg() and unreg() functions.
-std::vector<DispatchTableItem> dispatchTableEx;
-std::vector<DispatchTableItem> dispatchTable;
+std::list<DispatchTableItem> dispatchTableEx;
+std::list<DispatchTableItem> dispatchTable;
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-void _forward(MidiMsg& mm, std::string r){
+void _forward(const MidiMsg& mm, const std::string r){
 
+	u::log::print("[MD] Forwarding message to: %s", r.c_str());
 	// Addresses are a semicolon delimited strings.
 	// First part is either:
 	// 'p' for ports,
@@ -209,12 +214,15 @@ void _forward(MidiMsg& mm, std::string r){
 */
 
 		case 'm':
-
 			if (parsed_r[1]=="midiController")
 				midiController::midiReceive(mm);
-			if (parsed_r[1]=="midiDevice")
+			else if (parsed_r[1]=="midiDevice")
 				midiDevice::midiReceive(mm);
-			
+			else if (parsed_r[1]=="midiLearner")
+				midiLearner::midiReceive(mm);
+			else if (parsed_r[1]=="midiSignalCb")
+				midiSignalCb::midiReceive(mm);
+			break;
 	}
 
 
@@ -222,19 +230,53 @@ void _forward(MidiMsg& mm, std::string r){
 
 } //------------------------------- {anonymous} -------------------------------
 
-void reg(std::string s, MidiMsgFilter& mmf, std::string& r, bool wl){
+void reg(const std::string& s, const MidiMsgFilter& mmf, const std::string& r,
+								bool wl){
 	dispatchTable.push_back(DispatchTableItem(s, mmf, r, wl));
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-void regEx(std::string s, MidiMsgFilter& mmf, std::string& r, bool wl){
-	dispatchTableEx.push_back(DispatchTableItem(s, mmf, r, wl));
+void reg(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
+						const std::string& r, bool wl){
+	dispatchTable.push_back(DispatchTableItem(s, mmf, r, wl));
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-void dispatch(MidiMsg& mm){
+void regEx(const std::string& s, const MidiMsgFilter& mmf, const std::string& r,
+								bool wl){
+	dispatchTableEx.push_front(DispatchTableItem(s, mmf, r, wl));
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+void regEx(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
+						const std::string& r, bool wl){
+	dispatchTableEx.push_front(DispatchTableItem(s, mmf, r, wl));
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+void unreg(const std::string& r){
+	dispatchTable.remove_if([&] (DispatchTableItem er)
+						{return er.isReceiver(r);});
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+void unregEx(const std::string& r){
+	dispatchTableEx.remove_if([&] (DispatchTableItem er)
+						{return er.isReceiver(r);});
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+void dispatch(const MidiMsg& mm){
+
+u::log::print("Dispatching message\n");
+u::log::print("dispatchTableEx size: %d\n", dispatchTableEx.size());
+u::log::print("dispatchTable size: %d\n", dispatchTable.size());
 
 	// Consult dispatchTableEx first
 	// If a match is found, send message and ignore all the rest
@@ -251,7 +293,8 @@ void dispatch(MidiMsg& mm){
 	std::vector<std::string> receivers;
 
 	for (DispatchTableItem& dti : dispatchTable){
-		if (u::vector::has(receivers, dti.getReceiver())) continue;
+		if (u::vector::has(receivers, dti.getReceiver()))
+			continue;
 		if (dti.check(mm)){
 			_forward(mm, dti.getReceiver());
 			receivers.push_back(dti.getReceiver());

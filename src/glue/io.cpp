@@ -47,7 +47,7 @@
 #include "core/mixer.h"
 #include "core/mixerHandler.h"
 #include "core/wave.h"
-#include "core/midiDispatcher.h"
+#include "core/midiLearner.h"
 #include "core/clock.h"
 #include "core/recorderHandler.h"
 #include "main.h"
@@ -283,13 +283,13 @@ void channel_setKey(ID channelId, int k)
 
 void channel_startMidiLearn(int param, ID channelId)
 {
-	m::midiDispatcher::startChannelLearn(param, channelId, rebuildMidiWindows_);
+	m::midiLearner::startChannelLearn(param, channelId, rebuildMidiWindows_);
 }
 
 
 void master_startMidiLearn(int param)
 {
-	m::midiDispatcher::startMasterLearn(param, rebuildMidiWindows_);
+	m::midiLearner::startMasterLearn(param, rebuildMidiWindows_);
 }
 
 
@@ -297,7 +297,7 @@ void master_startMidiLearn(int param)
 
 void plugin_startMidiLearn(int paramIndex, ID pluginId)
 {
-	m::midiDispatcher::startPluginLearn(paramIndex, pluginId, rebuildMidiWindows_);
+	m::midiLearner::startPluginLearn(paramIndex, pluginId, rebuildMidiWindows_);
 }
 
 #endif
@@ -308,7 +308,7 @@ void plugin_startMidiLearn(int paramIndex, ID pluginId)
 
 void stopMidiLearn()
 {
-	m::midiDispatcher::stopLearn();
+	m::midiLearner::stopLearn();
 	rebuildMidiWindows_();
 }
 
@@ -318,13 +318,13 @@ void stopMidiLearn()
 
 void channel_clearMidiLearn(int param, ID channelId)
 {
-	m::midiDispatcher::clearChannelLearn(param, channelId, rebuildMidiWindows_);
+	m::midiLearner::clearChannelLearn(param, channelId, rebuildMidiWindows_);
 }
 
 
 void master_clearMidiLearn (int param)
 {
-	m::midiDispatcher::clearMasterLearn(param, rebuildMidiWindows_);
+	m::midiLearner::clearMasterLearn(param, rebuildMidiWindows_);
 }
 
 
@@ -332,7 +332,7 @@ void master_clearMidiLearn (int param)
 
 void plugin_clearMidiLearn (int param, ID pluginId)
 {
-	m::midiDispatcher::clearPluginLearn(param, pluginId, rebuildMidiWindows_);
+	m::midiLearner::clearPluginLearn(param, pluginId, rebuildMidiWindows_);
 }
 
 #endif

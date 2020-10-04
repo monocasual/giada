@@ -25,33 +25,34 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_MIDIMSG_H
-#define G_MIDIMSG_H
+#ifndef G_MIDI_LEARNER_H
+#define G_MIDI_LEARNER_H
 
-#include <vector>
-#include <string>
+
+#include <functional>
+#include <cstdint>
+#include "core/model/model.h"
+#include "core/midiEvent.h"
+#include "core/types.h"
+
 
 namespace giada {
 namespace m {
-
-class MidiMsg
+namespace midiLearner
 {
-	public:
-	MidiMsg() = delete;	
-	MidiMsg(const std::string& sender, 
-				const std::vector<unsigned char>& message);
+void startChannelLearn(int param, ID channelId, std::function<void()> f);
+void startMasterLearn (int param, std::function<void()> f);
+void stopLearn();
+void clearMasterLearn (int param, std::function<void()> f);
+void clearChannelLearn(int param, ID channelId, std::function<void()> f);
+#ifdef WITH_VST
+void startPluginLearn (int paramIndex, ID pluginId, std::function<void()> f);
+void clearPluginLearn (int paramIndex, ID pluginId, std::function<void()> f);
+#endif
 
-	unsigned char				getByte(int n) const;
-	const std::vector<unsigned char>*	getMessage() const;
-	int					getMessageLength() const;
-	std::string				getMessageSender() const;
+void midiReceive(const MidiMsg& mm);
 
-	private:
-	std::string				m_sender;
-	std::vector<unsigned char>		m_message;
-	void 					fixVelocityZero();
+}}} // giada::m::midiLearner::
 
-};
 
-}} // giada::m
 #endif

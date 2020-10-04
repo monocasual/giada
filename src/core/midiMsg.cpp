@@ -28,13 +28,15 @@
 #include "midiMsgFilter.h"
 #include <string>
 #include <vector>
+#include "utils/log.h"
 
 namespace giada {
 namespace m {
 
 //------------------------------  CONSTRUCTORS  --------------------------------
 
-MidiMsg::MidiMsg(std::string sender, std::vector<unsigned char> message){ 
+MidiMsg::MidiMsg(const std::string& sender,
+				const std::vector<unsigned char>& message){ 
 	m_sender = sender;
 	m_message = message;
 	fixVelocityZero();
@@ -43,33 +45,34 @@ MidiMsg::MidiMsg(std::string sender, std::vector<unsigned char> message){
 
 //----------------------------  MEMBER FUNCTIONS  ------------------------------
 
-unsigned char MidiMsg::getByte(int n){
+unsigned char MidiMsg::getByte(int n) const{
 	if (n >= m_message.size()) return 0;
 	return m_message[n];
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-std::vector<unsigned char>* MidiMsg::getMessage(){
-	return m_message;
+const std::vector<unsigned char>* MidiMsg::getMessage() const{
+	return &m_message;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-unsigned int MidiMsg::getMessageLength(){
-	return m_message->size();
+int MidiMsg::getMessageLength() const{
+	return m_message.size();
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-std::string MidiMsg::getMessageSender(){
+std::string MidiMsg::getMessageSender() const{
 	return m_sender;
 }
 
 //-------------------------- PRIVATE MEMBER FUNCTIONS --------------------------
 
-void MidiMsg:fixVelocityZero(){
-	if (MMF_NOTEON.check(self)){
+void MidiMsg::fixVelocityZero(){
+	// TODO: Prettify this (more fancy MidiMsg functions)
+	if (MMF_NOTEON.check(*this)){
 		if (getByte(2) == 0){
 			m_message[0] |= 0b00010000;
 		}

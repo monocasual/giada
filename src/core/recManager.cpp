@@ -34,7 +34,7 @@
 #include "core/mixer.h"
 #include "core/sequencer.h"
 #include "core/mixerHandler.h"
-#include "core/midiDispatcher.h"
+#include "core/midiSignalCb.h"
 #include "core/recorder.h"
 #include "core/recorderHandler.h"
 #include "core/recManager.h"
@@ -130,7 +130,7 @@ void startActionRec(RecTriggerMode mode)
 	else {   // RecTriggerMode::SIGNAL
 		clock::setStatus(ClockStatus::WAITING);
 		clock::rewind();
-		m::midiDispatcher::setSignalCallback(startActionRec_);
+		m::midiSignalCb::setSignalCallback(startActionRec_);
 		v::dispatcher::setSignalCallback(startActionRec_);
 		setRecordingAction_(true);
 	}
@@ -149,7 +149,7 @@ void stopActionRec()
 
 	if (clock::getStatus() == ClockStatus::WAITING)	{
 		clock::setStatus(ClockStatus::STOPPED);
-		midiDispatcher::setSignalCallback(nullptr);
+		midiSignalCb::setSignalCallback(nullptr);
 		v::dispatcher::setSignalCallback(nullptr);
 		return;
 	}

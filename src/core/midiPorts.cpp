@@ -57,26 +57,18 @@ std::map<std::string, RtMidiIn*> inPorts_;	// communication purposes
 
 static void callback_(double t, std::vector<unsigned char>* msg, void* data)
 {
-	// TODO: Compatibility with legacy code - to be removed later on // 
-	if (msg->size() < 3) {
-		return;
-	}
-	midiDispatcher::dispatch(msg->at(0), msg->at(1), msg->at(2));
-	// TODO: End of compatibility with legacy code // 
-
-
 	// "data" pointer should point at a port name string // 
-	// std::string port = *static_cast<std::string*>(data);
+	std::string port = *static_cast<std::string*>(data);
 
 	// A port name shall be converted into the address string
-	// port = "p;" + port;
+	port = "p;" + port;
 
 	// Creating a nice MidiMsg instance //
-	// MidiMsg mm = MidiMsg(port, msg);
+	MidiMsg mm = MidiMsg(port, *msg);
 
 	// Passing it to a new midiDispatcher - TODO //
 	// something like:
-	// midiDispatcher::dispatch(mm);
+	midiDispatcher::dispatch(mm);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -130,7 +122,7 @@ void setApi(int api)
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<std::string> getOutDevices(){
+std::vector<std::string> getOutDevices(bool full){
 	
 	std::vector<std::string> output;
 
@@ -138,10 +130,18 @@ std::vector<std::string> getOutDevices(){
 	try {
 		// Get port count first //
 		count = midiOut_->getPortCount();
+		std::string portname;
 	
 		// Get names of all available ports //
 		for (int i=0; i<count; i++) {
-			output.push_back(midiOut_->getPortName(i));
+			portname = midiOut_->getPortName(i);
+			// If Giada port, don't push back to output
+			if (!(full)){
+				if (portname.rfind("Giada Output", 0) == 0){
+					continue;
+				}
+			}
+			output.push_back(portname);
 		}
 	}
 	catch (RtMidiError &error) {
@@ -154,7 +154,7 @@ std::vector<std::string> getOutDevices(){
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-std::vector<std::string> getInDevices(){
+std::vector<std::string> getInDevices(bool full){
 	
 	std::vector<std::string> output;
 
@@ -162,10 +162,18 @@ std::vector<std::string> getInDevices(){
 	try {
 		// Get port count first //
 		count = midiIn_->getPortCount();
+		std::string portname;
 
 		// Get names of all available ports //
 		for (int i=0; i<count; i++) {
-			output.push_back(midiIn_->getPortName(i));
+			portname = midiOut_->getPortName(i);
+			// If Giada port, don't push back to output
+			if (!(full)){
+				if (portname.rfind("Giada Input", 0) == 0){
+					continue;
+				}
+			}
+			output.push_back(portname);
 		}	
 	}
 	catch (RtMidiError &error) {
@@ -180,7 +188,7 @@ std::vector<std::string> getInDevices(){
 
 int getOutDeviceIndex(std::string port){
 
-	std::vector<std::string> devices = getOutDevices();
+	std::vector<std::string> devices = getOutDevices(true);
 
 	auto it = find(devices.begin(), devices.end(), port);
 	if (it !=devices.end()) {
@@ -193,7 +201,7 @@ int getOutDeviceIndex(std::string port){
 
 int getInDeviceIndex(std::string port){
 
-	std::vector<std::string> devices = getInDevices();
+	std::vector<std::string> devices = getInDevices(true);
 
 	auto it = find(devices.begin(), devices.end(), port);
 	if (it !=devices.end()) {
@@ -283,7 +291,7 @@ int openInPort(std::string port){
 	else {
 		try {
 			inPorts_[port] = new RtMidiIn((RtMidi::Api) api_,
-						"Giada Input to " + port);
+						"Giada Input from " + port);
 		}
 		catch (RtMidiError& error) {
 			u::log::print("[MP::openInPort] RtMidiError: %s\n",
@@ -322,14 +330,10 @@ int closeOutPort(std::string port){
 	if (port == ""){
 
 		// Create a list of open ports and destroy them all!
-		std::vector<std::string> ports_to_destroy;
-
-		for (auto const& [name, rtm] : outPorts_){
-			ports_to_destroy.push_back(name);
-		}
+		std::vector<std::string> ports_to_destroy = getOutPorts();
 
 		for (unsigned int i = 0; i < ports_to_destroy.size(); i++){
-			closeOutPort(ports_to_destroy.at(i));
+			closeOutPort(ports_to_destroy[i]);
 		}
 		return 1;
 	}
@@ -353,14 +357,10 @@ int closeInPort(std::string port){
 	if (port == ""){
 
 		// Create a list of open ports and destroy them all!
-		std::vector<std::string> ports_to_destroy;
-
-		for (auto const& [name, rtm] : inPorts_){
-			ports_to_destroy.push_back(name);
-		}
+		std::vector<std::string> ports_to_destroy = getInPorts();
 
 		for (unsigned int i = 0; i < ports_to_destroy.size(); i++){
-			closeInPort(ports_to_destroy.at(i));
+			closeInPort(ports_to_destroy[i]);
 		}
 		return 1;
 	}
@@ -377,7 +377,35 @@ int closeInPort(std::string port){
 	
 }
 
-/* -------------------------------------------------------------------------- */
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+std::vector<std::string> getOutPorts(bool addr){
+	
+	std::vector<std::string> output;
+
+	for (auto const& [name, rtm] : outPorts_){
+		if (addr) output.push_back("p;" + name);
+		else output.push_back(name);
+	}
+
+	return output;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+std::vector<std::string> getInPorts(bool addr){
+	
+	std::vector<std::string> output;
+
+	for (auto const& [name, rtm] : inPorts_){
+		if (addr) output.push_back("p;" + name);
+		else output.push_back(name);
+	}
+
+	return output;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 std::string getOutDeviceName(int index){
 	if (index < 0) return "";
@@ -398,7 +426,7 @@ std::string getInDeviceName(int index){
 // This method sends data from Giada to ports - the name follows the global
 // naming convention from midiDispatcher's point of view.
 
-void midiReceive(MidiMsg mm, std::string recipient)
+void midiReceive(const MidiMsg& mm, const std::string& recipient)
 {
 	// Every time a message is sent, a port status is checked first.
 	int status = openOutPort(recipient);

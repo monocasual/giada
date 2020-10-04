@@ -57,33 +57,33 @@ class DispatchTableItem{
 
 	// Constructors, pretty much straightforward
 	// They copy MidiMsgFilter so these don't need to be persistent
-	DispatchTableItem(std::vector<std::string>& s, MidiMsgFilter& mmf,
-						std::string& r, bool wl = 1);
-	DispatchTableItem(		std::string& s, MidiMsgFilter& mmf,
-						std::string& r, bool wl = 1);
+	DispatchTableItem(const std::vector<std::string>& s,
+		const MidiMsgFilter& mmf, const std::string& r, bool wl = 1);
+	DispatchTableItem(const std::string& s,
+		const MidiMsgFilter& mmf, const std::string& r, bool wl = 1);
 
 	// These constructors create empty, transparent filters
 	// rather than copying an existing filter.
-	DispatchTableItem(std::vector<std::string>& s, std::string& r, 
-								bool wl = 1);
-	DispatchTableItem(		std::string& s, std::string& r,
-								bool wl = 1);
+	DispatchTableItem(const std::vector<std::string>& s,
+					const std::string& r, bool wl = 1);
+	DispatchTableItem(const std::string& s, 
+					const std::string& r, bool wl = 1);
 
 	// Table item manipulation methods
-	void	addSender(std::string& s);
-	bool	removeSender(std::string& s); // returns m_senders.empty()
-	void	setReceiver(std::string& r);
+	void	addSender(const std::string& s);
+	bool	removeSender(const std::string& s); // ret. m_senders.empty()
+	void	setReceiver(const std::string& r);
 	void	setBlacklist();
 	void	setWhitelist();
 
 	// Checks if a message fits to senders, whitelist and filter 
-	bool		check(MidiMsg& mm);
+	bool		check(const MidiMsg& mm);
 
 	// Returns receiver's address
 	std::string	getReceiver();
 
 	// Checks if a given address is receiver's address
-	bool		isReceiver(std::string& r);
+	bool		isReceiver(const std::string& r);
 
 	// Checks if a given address is in a sender's addresses vector
 	// NOTE it ignores 'whitelist' flag
@@ -98,13 +98,19 @@ class DispatchTableItem{
 };
 
 // reg function for registering receivers of certain messages
-void reg(std::string s, MidiMsgFilter& mmf, std::string &r, bool wl = 1);
-void regEx(std::string s, MidiMsgFilter& mmf, std::string &r, bool wl = 1);
-
-// TODO: unreg functions
+void reg(const std::string& s, const MidiMsgFilter& mmf,
+					const std::string &r, bool wl = 1);
+void reg(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
+					const std::string &r, bool wl = 1);
+void regEx(const std::string& s, const MidiMsgFilter& mmf,
+					const std::string &r, bool wl = 1);
+void regEx(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
+					const std::string &r, bool wl = 1);
+void unreg(const std::string& r);
+void unregEx(const std::string& r);
 
 // The ultimate MidiMsg dispatching method
-void dispatch(MidiMsg& mm);
+void dispatch(const MidiMsg& mm);
 
 // Forwards messages (resolves addresses)
 //void _forward(MidiMsg& mm, std::string r);
