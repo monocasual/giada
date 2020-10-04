@@ -42,6 +42,7 @@ MidiMsgFilter::MidiMsgFilter(MidiMsg mm, bool alm){
 	}
 
 	m_allow_longer_msg = alm;
+	m_extra_filter = ([](MidiMsg){return true;});
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -51,11 +52,13 @@ MidiMsgFilter::MidiMsgFilter(){
 //	m_template.push_back(0);
 //	m_mask.push_back(0);
 	m_allow_longer_msg = true;
+	m_extra_filter = ([](MidiMsg){return true;});
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-MidiMsgFilter::MidiMsgFilter(unsigned int fl, bool alm){
+MidiMsgFilter::MidiMsgFilter(unsigned int fl, bool alm,
+					std::function<bool(MidiMsg)> ef){
 
 	for (unsigned int i=0; i<fl; i++){
 		m_template.push_back(0);
@@ -63,12 +66,13 @@ MidiMsgFilter::MidiMsgFilter(unsigned int fl, bool alm){
 	}
 
 	m_allow_longer_msg = alm;
+	m_extra_filter = (ef ? ef : ([](MidiMsg){return true;}));
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 MidiMsgFilter::MidiMsgFilter(unsigned int fl, std::string mask, 
-						std::string tmpl, bool alm){
+		std::string tmpl, bool alm, std::function<bool(MidiMsg)> ef){
 
 	for (unsigned int i=0; i<fl; i++){
 		m_template.push_back(tmpl[i]);
@@ -76,6 +80,7 @@ MidiMsgFilter::MidiMsgFilter(unsigned int fl, std::string mask,
 	}
 
 	m_allow_longer_msg = alm;
+	m_extra_filter = (ef ? ef : ([](MidiMsg){return true;}));
 }
 
 //----------------------------  MEMBER FUNCTIONS  ------------------------------
@@ -85,7 +90,7 @@ void MidiMsgFilter::setTemplateByte(unsigned int n, unsigned char b){
 	// If filter is shorter than necessary,
 	// it is expanded with transparent bytes
 	if (n >= m_mask.size()) 
-		MidiMsgFilter::setFilterLength(n-1);
+		MidiMsgFilter::setFilterLength(n+1);
 
 	m_template.at(n) = b;
 }
@@ -97,7 +102,7 @@ void MidiMsgFilter::setMaskByte(unsigned int n, unsigned char b){
 	// If filter is shorter than necessary,
 	// it is expanded with transparent bytes
 	if (n >= m_mask.size()) 
-		MidiMsgFilter::setFilterLength(n-1);
+		MidiMsgFilter::setFilterLength(n+1);
 	
 	m_mask.at(n) = b;
 }
@@ -185,7 +190,7 @@ void MidiMsgFilter::setChannel(unsigned ch){
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-bool MidiMsgFilter::check(MidiMsg& mm){
+bool MidiMsgFilter::check(const MidiMsg& mm) const{
 
 	unsigned int l  = mm.getMessageLength();
 	unsigned int fl = m_mask.size();
@@ -207,14 +212,14 @@ bool MidiMsgFilter::check(MidiMsg& mm){
 		if (b != 0) return false;
 	}
 
-	// All checks succeeded, so it's a match
-	return true;
+	// All checks succeeded so far, so extra_filter has a final word
+	return m_extra_filter(mm);
 }
 
 //----------------------------  FRIEND FUNCTIONS  ------------------------------
 
 
-bool check(MidiMsg& mm, MidiMsgFilter mmf){
+bool check(const MidiMsg& mm, const MidiMsgFilter& mmf){
 
 	unsigned int l  = mm.getMessageLength();
 	unsigned int fl = mmf.m_mask.size();
@@ -239,8 +244,8 @@ bool check(MidiMsg& mm, MidiMsgFilter mmf){
 		if (b != 0) return false;
 	}
 
-	// All checks succeeded, so it's a match
-	return true;
+	// All checks succeeded so far, so extra_filter has a final word
+	return mmf.m_extra_filter(mm);
 }
 
 }} // giada::m::

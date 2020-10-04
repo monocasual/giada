@@ -29,6 +29,7 @@
 #define G_MIDIMSGFILTER_H
 
 #include <vector>
+#include <functional>
 #include "midiMsg.h"
 
 namespace giada {
@@ -53,12 +54,13 @@ class MidiMsgFilter
 	MidiMsgFilter();
 
 	// Creates a transparent filter of a given length
-	MidiMsgFilter(unsigned int fl, bool alm = 0);
+	MidiMsgFilter(unsigned int fl, bool alm = 0,
+				std::function<bool(MidiMsg)> ef = nullptr);
 
 	// Creates a filter defined by length l, and mask and tmpl strings 
 	// m_allow_longer_msg is optional
 	MidiMsgFilter(unsigned int fl, std::string mask, std::string tmpl,
-							bool alm = 0);
+		bool alm = 0, std::function<bool(MidiMsg)> ef = nullptr);
 
 	// Filter manipulation methods
 	// Note the byte indices are zero-based
@@ -78,13 +80,13 @@ class MidiMsgFilter
 	// Set filter to accept specific NoteOnOff/CC channel 
 	// Note MIDI channels have numbers 1-16
 	// Any number outside that range (like 0) allows any channel
-	void    setChannel(unsigned n);
+	void    	setChannel(unsigned n);
 
 	// Check a message against this filter
-	bool			check(MidiMsg& mm);
+	bool		check(const MidiMsg& mm) const;
 
 	// Check a message against a given filter
-	friend bool		check(MidiMsg& mm, MidiMsgFilter mmf);
+	friend bool	check(const MidiMsg& mm, const MidiMsgFilter& mmf);
 
 	private:
 
@@ -94,6 +96,7 @@ class MidiMsgFilter
 	std::vector<unsigned char>	m_template;
 	std::vector<unsigned char>	m_mask;
 	bool 				m_allow_longer_msg;
+	std::function<bool(MidiMsg)>	m_extra_filter;
 };
 
 //------------------- const MidiMsgFilters for typical uses -------------------	
@@ -102,6 +105,8 @@ const MidiMsgFilter MMF_NOTEONOFF    = MidiMsgFilter(3, "\xE0\0\0", "\x80\0\0");
 const MidiMsgFilter MMF_NOTEON       = MidiMsgFilter(3, "\xF0\0\0", "\x80\0\0");
 const MidiMsgFilter MMF_NOTEOFF      = MidiMsgFilter(3, "\xF0\0\0", "\x90\0\0");
 const MidiMsgFilter MMF_CC           = MidiMsgFilter(3, "\xF0\0\0", "\xB0\0\0");
+const MidiMsgFilter MMF_NOTEONOFFCC  = MidiMsgFilter(3, "\xC0\0\0", "\x80\0\0",
+	false, ([&](MidiMsg mm){return ((mm.getByte(0) & 0xF0) != 0xA0);}));
 
 }} // giada::m::
 #endif
