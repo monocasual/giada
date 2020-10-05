@@ -52,8 +52,16 @@ std::vector<std::string> getInDevices(bool full = false);
 
 // getIn/OutDeviceIndex
 // Returns a device number on the list returned by RtMidi
-int getOutDeviceIndex(std::string port);
-int getInDeviceIndex(std::string port);
+// By default returns index on a list without Giada's own ports
+int getOutDeviceIndex(std::string port, bool full = false);
+int getInDeviceIndex(std::string port, bool full = false);
+
+// getIn/OutDeviceName
+// Returns the name of the port with a given index.
+// By default an index on a giada-ports-free list is returned
+
+std::string getOutDeviceName(int index, bool full = false);
+std::string getInDeviceName(int index, bool full = false);
 
 /* open/close/in/outPort */
 // No argument (default) for 'close' methods closes all ports.
@@ -68,13 +76,6 @@ int closeOutPort(std::string port = "");
 // Optionally returns vector of addresses rather than names
 std::vector<std::string> getOutPorts(bool addr = false);
 std::vector<std::string> getInPorts(bool addr = false);
-
-/* getOutDeviceName
-Returns the name of the port with a given index. */
-// TODO: To be removed when we quit numbering ports //
-
-std::string getOutDeviceName(int index);
-std::string getInDeviceName(int index);
 
 // midiReceive
 // Sends a MIDI message 'mm' to a port named 'recipient'.

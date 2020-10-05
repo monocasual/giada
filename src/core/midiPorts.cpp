@@ -137,7 +137,7 @@ std::vector<std::string> getOutDevices(bool full){
 			portname = midiOut_->getPortName(i);
 			// If Giada port, don't push back to output
 			if (!(full)){
-				if (portname.rfind("Giada Output", 0) == 0){
+				if (portname.rfind("Giada Input", 0) == 0){
 					continue;
 				}
 			}
@@ -166,10 +166,10 @@ std::vector<std::string> getInDevices(bool full){
 
 		// Get names of all available ports //
 		for (int i=0; i<count; i++) {
-			portname = midiOut_->getPortName(i);
+			portname = midiIn_->getPortName(i);
 			// If Giada port, don't push back to output
 			if (!(full)){
-				if (portname.rfind("Giada Input", 0) == 0){
+				if (portname.rfind("Giada Output", 0) == 0){
 					continue;
 				}
 			}
@@ -186,9 +186,9 @@ std::vector<std::string> getInDevices(bool full){
 
 /* -------------------------------------------------------------------------- */
 
-int getOutDeviceIndex(std::string port){
+int getOutDeviceIndex(std::string port, bool full){
 
-	std::vector<std::string> devices = getOutDevices(true);
+	std::vector<std::string> devices = getOutDevices(full);
 
 	auto it = find(devices.begin(), devices.end(), port);
 	if (it !=devices.end()) {
@@ -199,9 +199,9 @@ int getOutDeviceIndex(std::string port){
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-int getInDeviceIndex(std::string port){
+int getInDeviceIndex(std::string port, bool full){
 
-	std::vector<std::string> devices = getInDevices(true);
+	std::vector<std::string> devices = getInDevices(full);
 
 	auto it = find(devices.begin(), devices.end(), port);
 	if (it !=devices.end()) {
@@ -210,12 +210,26 @@ int getInDeviceIndex(std::string port){
 	return -1;
 }
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+std::string getOutDeviceName(int index, bool full){
+	if (index < 0) return "";
+	return getOutDevices(full)[index];
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+std::string getInDeviceName(int index, bool full){
+	if (index < 0) return "";
+	return getInDevices(full)[index];
+}
+
 /* -------------------------------------------------------------------------- */
 
 int openOutPort(std::string port){
 
 	// First let's see if port name is even valid
-	int index = getOutDeviceIndex(port);
+	int index = getOutDeviceIndex(port, true);
 	if (index < 0) {
 		// No such port is available, exiting
 		return -1;
@@ -268,7 +282,7 @@ int openOutPort(std::string port){
 int openInPort(std::string port){
 
 	// First let's see if port name is even valid
-	int index = getInDeviceIndex(port);
+	int index = getInDeviceIndex(port, true);
 	if (index < 0) {
 		// No such port is available, exiting
 		return -1;
@@ -403,22 +417,6 @@ std::vector<std::string> getInPorts(bool addr){
 	}
 
 	return output;
-}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-std::string getOutDeviceName(int index){
-	if (index < 0) return "";
-	try {return midiOut_->getPortName(index);}
-	catch (RtMidiError& error) {return "";}
-}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-std::string getInDeviceName(int index){
-	if (index < 0) return "";
-	try {return midiIn_->getPortName(index);}
-	catch (RtMidiError& error) {return "";}
 }
 
 /* -------------------------------------------------------------------------- */
