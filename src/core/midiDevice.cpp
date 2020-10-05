@@ -112,6 +112,8 @@ void init(){
 
 void midiReceive(const MidiMsg& mm)
 {
+	u::log::print("[MDe::midiReceive] Received message from %s.\n",
+						mm.getMessageSender().c_str());
 	MidiEvent midiEvent(mm.getByte(0), mm.getByte(1), mm.getByte(2));
 	processMaster_(midiEvent);
 }

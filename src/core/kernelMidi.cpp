@@ -53,7 +53,6 @@ void init(){
 
 	out_port_name = conf::conf.midiPortOutName;
 	midiPorts::openOutPort(out_port_name);	
-	
 	midiPorts::openInPort(conf::conf.midiPortInName);
 
 }

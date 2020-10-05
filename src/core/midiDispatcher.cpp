@@ -172,7 +172,9 @@ std::list<DispatchTableItem> dispatchTable;
 
 void _forward(const MidiMsg& mm, const std::string r){
 
-	u::log::print("[MD] Forwarding message to: %s", r.c_str());
+	u::log::print("[MDi::_forward] Forwarding message from %s to: %s...\n",
+				mm.getMessageSender().c_str(), r.c_str());
+
 	// Addresses are a semicolon delimited strings.
 	// First part is either:
 	// 'p' for ports,
@@ -186,6 +188,7 @@ void _forward(const MidiMsg& mm, const std::string r){
 	// The second part is an actual address
 	// Should any following parts occur, those are for future use.
 	
+	
 	// Parse the address into 'parsed_r' vector
 	std::vector<std::string> parsed_r;
 	std::stringstream ss(r);
@@ -198,22 +201,24 @@ void _forward(const MidiMsg& mm, const std::string r){
 	// Interpret the address and call appropriate midiReceive function
 	switch(parsed_r[0][0]){
 		case 'p':
-
+			// Forwarding to port
 			midiPorts::midiReceive(mm, parsed_r[1]);		
-			break;
+			return;
 
 /*
- * Here messages will be send to channels directly
+ * Here messages will be sent to channels directly
  * Not implemented at this stage, midiController does that the old way
  
 		case 'c':
+			// Forwarding to channel
 			ID _id;
 			_id = std::stoi(parsed_r[1]);
 				//TODO
-			break;
+			return;
 */
 
 		case 'm':
+			// Forwarding to a module
 			if (parsed_r[1]=="midiController")
 				midiController::midiReceive(mm);
 			else if (parsed_r[1]=="midiDevice")
@@ -222,9 +227,10 @@ void _forward(const MidiMsg& mm, const std::string r){
 				midiLearner::midiReceive(mm);
 			else if (parsed_r[1]=="midiSignalCb")
 				midiSignalCb::midiReceive(mm);
-			break;
+			return;
 	}
 
+	u::log::print("MDi::_forward] Message forwarded to nowhere.\n");
 
 }
 
@@ -233,6 +239,8 @@ void _forward(const MidiMsg& mm, const std::string r){
 void reg(const std::string& s, const MidiMsgFilter& mmf, const std::string& r,
 								bool wl){
 	dispatchTable.push_back(DispatchTableItem(s, mmf, r, wl));
+	u::log::print("[MDi::reg] Registered new DTI (receiver %s).\n", 
+								r.c_str());
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -240,6 +248,8 @@ void reg(const std::string& s, const MidiMsgFilter& mmf, const std::string& r,
 void reg(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
 						const std::string& r, bool wl){
 	dispatchTable.push_back(DispatchTableItem(s, mmf, r, wl));
+	u::log::print("[MDi::reg] Registered new DTI (receiver %s).\n",
+								r.c_str());
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -247,6 +257,8 @@ void reg(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
 void regEx(const std::string& s, const MidiMsgFilter& mmf, const std::string& r,
 								bool wl){
 	dispatchTableEx.push_front(DispatchTableItem(s, mmf, r, wl));
+	u::log::print("[MDi::regEx] Registered new DTIEx (receiver %s).\n",
+								r.c_str());
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -254,6 +266,8 @@ void regEx(const std::string& s, const MidiMsgFilter& mmf, const std::string& r,
 void regEx(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
 						const std::string& r, bool wl){
 	dispatchTableEx.push_front(DispatchTableItem(s, mmf, r, wl));
+	u::log::print("[MDi::regEx] Registered new DTIEx (receiver %s).\n",
+								r.c_str());
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -261,6 +275,7 @@ void regEx(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
 void unreg(const std::string& r){
 	dispatchTable.remove_if([&] (DispatchTableItem er)
 						{return er.isReceiver(r);});
+	u::log::print("[MDi::unreg] Unregistering receiver %s\n", r.c_str());
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -268,20 +283,22 @@ void unreg(const std::string& r){
 void unregEx(const std::string& r){
 	dispatchTableEx.remove_if([&] (DispatchTableItem er)
 						{return er.isReceiver(r);});
+	u::log::print("[MDi::unregEx] Unregistering receiver %s\n",
+								r.c_str());
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
 void dispatch(const MidiMsg& mm){
 
-u::log::print("Dispatching message\n");
-u::log::print("dispatchTableEx size: %d\n", dispatchTableEx.size());
-u::log::print("dispatchTable size: %d\n", dispatchTable.size());
+u::log::print("[MDi::dispatch] Dispatching message from %s...\n",
+					mm.getMessageSender().c_str());
 
 	// Consult dispatchTableEx first
 	// If a match is found, send message and ignore all the rest
 	for (DispatchTableItem& dti : dispatchTableEx){
 		if (dti.check(mm)){
+			u::log::print("[MDi::dispatch] Applied Ex rule.\n");
 			_forward(mm, dti.getReceiver());
 			return;
 		}

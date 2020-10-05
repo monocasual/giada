@@ -49,8 +49,6 @@ MidiMsgFilter::MidiMsgFilter(MidiMsg mm, bool alm){
 
 MidiMsgFilter::MidiMsgFilter(){
 
-//	m_template.push_back(0);
-//	m_mask.push_back(0);
 	m_allow_longer_msg = true;
 	m_extra_filter = ([](MidiMsg){return true;});
 }

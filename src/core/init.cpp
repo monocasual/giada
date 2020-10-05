@@ -136,9 +136,6 @@ void initMIDI_()
 	midiSignalCb::init();
 	midiController::init();
 	midiDevice::init();
-	//kernelMidi::setApi(conf::conf.midiSystem);
-	//kernelMidi::openOutDevice(conf::conf.midiPortOut);
-	//kernelMidi::openInDevice(conf::conf.midiPortIn);	
 }
 
 

@@ -53,8 +53,6 @@ class DispatchTableItem{
 	// using its member functions
 	MidiMsgFilter			mmf;
 
-	//  -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-
 	// Constructors, pretty much straightforward
 	// They copy MidiMsgFilter so these don't need to be persistent
 	DispatchTableItem(const std::vector<std::string>& s,
@@ -89,6 +87,8 @@ class DispatchTableItem{
 	// NOTE it ignores 'whitelist' flag
 	bool		isSender(std::string s);
 
+	//  -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
 	private:
 
 	std::vector<std::string>  m_senders;
@@ -111,9 +111,6 @@ void unregEx(const std::string& r);
 
 // The ultimate MidiMsg dispatching method
 void dispatch(const MidiMsg& mm);
-
-// Forwards messages (resolves addresses)
-//void _forward(MidiMsg& mm, std::string r);
 
 }}} // giada::m::midiDispatcher::
 

@@ -46,6 +46,7 @@ class MidiMsg
 	int					getMessageLength() const;
 	std::string				getMessageSender() const;
 
+
 	private:
 	std::string				m_sender;
 	std::vector<unsigned char>		m_message;

@@ -68,6 +68,8 @@ class MidiMsgFilter
 	// 'b' is binary data byte
 	// 'shl' is left-shift of input 'b', optional
 	// 'fl' is filter length
+	// 
+	// TODO: Do we really want these functions anyway?
 	void	setTemplateByte(unsigned n, unsigned char b);
 	void	setMaskByte(unsigned n, unsigned char b);
 	void	orTemplateByte(unsigned n, unsigned char b, unsigned shl = 0);
@@ -102,6 +104,7 @@ class MidiMsgFilter
 //------------------- const MidiMsgFilters for typical uses -------------------	
 
 const MidiMsgFilter MMF_ANY          = MidiMsgFilter();
+
 const MidiMsgFilter MMF_NOTEONOFF    = MidiMsgFilter(3, "\xE0\0\0", "\x80\0\0");
 const MidiMsgFilter MMF_NOTEON       = MidiMsgFilter(3, "\xF0\0\0", "\x80\0\0");
 const MidiMsgFilter MMF_NOTEOFF      = MidiMsgFilter(3, "\xF0\0\0", "\x90\0\0");

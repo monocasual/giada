@@ -28,7 +28,6 @@
 #include "midiMsgFilter.h"
 #include <string>
 #include <vector>
-#include "utils/log.h"
 
 namespace giada {
 namespace m {
@@ -71,7 +70,6 @@ std::string MidiMsg::getMessageSender() const{
 //-------------------------- PRIVATE MEMBER FUNCTIONS --------------------------
 
 void MidiMsg::fixVelocityZero(){
-	// TODO: Prettify this (more fancy MidiMsg functions)
 	if (MMF_NOTEON.check(*this)){
 		if (getByte(2) == 0){
 			m_message[0] |= 0b00010000;
