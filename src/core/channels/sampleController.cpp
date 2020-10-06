@@ -143,14 +143,8 @@ void SampleController::onLastFrame() const
             playStatus = ChannelStatus::WAIT;
     }
     else
-    if (playStatus == ChannelStatus::ENDING) {
-		/* LOOP_ONCE or LOOP_ONCE_BAR: if ending (i.e. the user requested 
-		their termination), stop 'em. Let them wait otherwise. */
-		if (mode == SamplePlayerMode::LOOP_ONCE || mode == SamplePlayerMode::LOOP_ONCE_BAR)
-			playStatus = ChannelStatus::WAIT;			
-        else
-            playStatus = ChannelStatus::OFF;
-	}
+    if (playStatus == ChannelStatus::ENDING)
+        playStatus = ChannelStatus::OFF;
 
     m_channelState->playStatus.store(playStatus);	
 }
