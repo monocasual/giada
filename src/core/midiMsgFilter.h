@@ -59,8 +59,8 @@ class MidiMsgFilter
 
 	// Creates a filter defined by length l, and mask and tmpl strings 
 	// m_allow_longer_msg is optional
-	MidiMsgFilter(const int& fl, const std::string& mask, 
-			const std::string& tmpl, bool alm = 0,
+	MidiMsgFilter(const std::vector<unsigned char>& mask, 
+			const std::vector<unsigned char>& tmpl, bool alm = 0,
 			std::function<bool(MidiMsg)> ef = nullptr);
 
 	// Filter manipulation methods
@@ -88,6 +88,9 @@ class MidiMsgFilter
 	// Any number outside that range (like 0) allows any channel
 	void    	setChannel(const unsigned& n);
 
+	// Dumps filter structure for diagnostic purposes
+	void		dump() const;
+
 	// Check a message against this filter
 	bool		check(const MidiMsg& mm) const;
 
@@ -109,11 +112,11 @@ class MidiMsgFilter
 
 const MidiMsgFilter MMF_ANY          = MidiMsgFilter();
 
-const MidiMsgFilter MMF_NOTEONOFF    = MidiMsgFilter(3, "\xE0\0\0", "\x80\0\0");
-const MidiMsgFilter MMF_NOTEON       = MidiMsgFilter(3, "\xF0\0\0", "\x80\0\0");
-const MidiMsgFilter MMF_NOTEOFF      = MidiMsgFilter(3, "\xF0\0\0", "\x90\0\0");
-const MidiMsgFilter MMF_CC           = MidiMsgFilter(3, "\xF0\0\0", "\xB0\0\0");
-const MidiMsgFilter MMF_NOTEONOFFCC  = MidiMsgFilter(3, "\xC0\0\0", "\x80\0\0",
+const MidiMsgFilter MMF_NOTEONOFF    = MidiMsgFilter({0xE0,0,0}, {0x80,0,0});
+const MidiMsgFilter MMF_NOTEON       = MidiMsgFilter({0xF0,0,0}, {0x80,0,0});
+const MidiMsgFilter MMF_NOTEOFF      = MidiMsgFilter({0xF0,0,0}, {0x90,0,0});
+const MidiMsgFilter MMF_CC           = MidiMsgFilter({0xF0,0,0}, {0xB0,0,0});
+const MidiMsgFilter MMF_NOTEONOFFCC  = MidiMsgFilter({0xC0,0,0}, {0x80,0,0},
 	false, ([](MidiMsg mm){return ((mm.getByte(0) & 0xF0) != 0xA0);}));
 
 }} // giada::m::

@@ -136,6 +136,7 @@ void registerRule(const std::string& s, const MidiMsgFilter& mmf,
 	dispatchTable.push_back(DispatchTableItem(s, mmf, r, wl));
 	u::log::print("[MDi::reg] Registered new DTI (receiver %s).\n", 
 								r.c_str());
+	mmf.dump();
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -146,6 +147,7 @@ void registerRule(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
 	dispatchTable.push_back(DispatchTableItem(s, mmf, r, wl));
 	u::log::print("[MDi::reg] Registered new DTI (receiver %s).\n",
 								r.c_str());
+	mmf.dump();
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -156,6 +158,7 @@ void registerExRule(const std::string& s, const MidiMsgFilter& mmf,
 	dispatchTableEx.push_front(DispatchTableItem(s, mmf, r, wl));
 	u::log::print("[MDi::regEx] Registered new DTIEx (receiver %s).\n",
 								r.c_str());
+	mmf.dump();
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -166,6 +169,7 @@ void registerExRule(const std::vector<std::string>& s,
 	dispatchTableEx.push_front(DispatchTableItem(s, mmf, r, wl));
 	u::log::print("[MDi::regEx] Registered new DTIEx (receiver %s).\n",
 								r.c_str());
+	mmf.dump();
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -

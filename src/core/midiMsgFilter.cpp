@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "midiMsgFilter.h"
+#include "utils/log.h"
 #include <vector>
 
 namespace giada {
@@ -42,7 +43,7 @@ MidiMsgFilter::MidiMsgFilter(const MidiMsg& mm, bool alm) {
 	}
 
 	m_allow_longer_msg = alm;
-	m_extra_filter = ([](MidiMsg) {return true;});
+	m_extra_filter = nullptr;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -50,7 +51,7 @@ MidiMsgFilter::MidiMsgFilter(const MidiMsg& mm, bool alm) {
 MidiMsgFilter::MidiMsgFilter() {
 
 	m_allow_longer_msg = true;
-	m_extra_filter = ([](MidiMsg) {return true;});
+	m_extra_filter = nullptr;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -64,21 +65,20 @@ MidiMsgFilter::MidiMsgFilter(const int& fl, bool alm,
 	}
 
 	m_allow_longer_msg = alm;
-	m_extra_filter = (ef ? ef : ([](MidiMsg) {return true;}));
+	m_extra_filter = (ef ? ef : nullptr);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-MidiMsgFilter::MidiMsgFilter(const int& fl, const std::string& mask, 
-	const std::string& tmpl, bool alm, std::function<bool(MidiMsg)> ef) {
+MidiMsgFilter::MidiMsgFilter(const std::vector<unsigned char>& mask, 
+		const std::vector<unsigned char>& tmpl,
+		bool alm, std::function<bool(MidiMsg)> ef) {
 
-	for (auto i = 0; i < fl; i++) {
-		m_template.push_back(tmpl[i]);
-		m_mask.push_back(mask[i]);
-	}
+		m_template = tmpl;
+		m_mask = mask;
 
 	m_allow_longer_msg = alm;
-	m_extra_filter = (ef ? ef : ([](MidiMsg) {return true;}));
+	m_extra_filter = (ef ? ef : nullptr);
 }
 
 //----------------------------  MEMBER FUNCTIONS  ------------------------------
@@ -178,6 +178,29 @@ void MidiMsgFilter::setChannel(const unsigned& ch) {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+void MidiMsgFilter::dump() const{
+
+	unsigned int fl = m_mask.size();
+
+	u::log::print("[MMF::dump]\n");
+	u::log::print("\tTemplate:");
+
+	for (unsigned int i = 0; i < fl; i++) {
+		u::log::print("%X ", m_template.at(i));
+	}
+	u::log::print("\n\tMask:");
+	for (unsigned int i = 0; i < fl; i++) {
+		u::log::print("%X ", m_mask.at(i));
+	}
+	u::log::print("\n\tLonger Messages: %s",
+			m_allow_longer_msg ? "Allowed" : "Disallowed");
+	u::log::print("\n\tLambda filter: %s\n",
+		(m_extra_filter != nullptr) ? "Defined" : "Not defined");
+
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 bool MidiMsgFilter::check(const MidiMsg& mm) const {
 
 	unsigned int l  = mm.getMessageLength();
@@ -188,8 +211,8 @@ bool MidiMsgFilter::check(const MidiMsg& mm) const {
 	if (l < fl) 
 		return false;
 
-	// Message cannot be longer than a filter if m_allow_longer_msg isn't set
-	if (!(m_allow_longer_msg && (l > fl))) 
+	// Message cannot be longer than a filter if allow_longer_msg isn't set
+	if (!m_allow_longer_msg && (l > fl)) 
 		return false;
 
 	for (unsigned int i = 0; i < fl; i++) {
@@ -204,7 +227,11 @@ bool MidiMsgFilter::check(const MidiMsg& mm) const {
 	}
 
 	// All checks succeeded so far, so extra_filter has a final word
-	return m_extra_filter(mm);
+	// (if defined)
+	if (m_extra_filter != nullptr)
+		return m_extra_filter(mm);
+
+	return true;
 }
 
 //----------------------------  FRIEND FUNCTIONS  ------------------------------

@@ -154,8 +154,8 @@ void processChannels_(const MidiEvent& midiEvent)
 /* -------------------------------------------------------------------------- */
 
 void init(){
-	midiDispatcher::registerRule(midiPorts::getInPorts(1), MMF_NOTEONOFFCC, 
-			"m;midiController");
+	midiDispatcher::registerRule(midiPorts::getInPorts(1), MMF_NOTEONOFFCC,
+							"m;midiController");
 }
 
 /* -------------------------------------------------------------------------- */
