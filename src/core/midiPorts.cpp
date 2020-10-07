@@ -99,7 +99,14 @@ void init()
 	midiOut_ = new RtMidiOut((RtMidi::Api) api_, "Giada dummy port");
 	midiIn_  = new RtMidiIn((RtMidi::Api) api_, "Giada dummy port");
 
-	// TODO: Open In port and out port for Stage 1
+	u::log::print("[MP::init] Available input devices:\n");
+	for (std::string d : getInDevices(false)) {
+		u::log::print("           %s\n", d.c_str());
+	}
+	u::log::print("[MP::init] Available output devices:\n");
+	for (std::string d : getOutDevices(false)) {
+		u::log::print("           %s\n", d.c_str());
+	}
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

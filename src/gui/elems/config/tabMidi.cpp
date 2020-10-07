@@ -119,7 +119,7 @@ void geTabMidi::fetchInPorts()
 		portIn->add("(disabled)");
 
 		for (auto& p : ports)
-			portOut->add(u::gui::removeFltkChars(p).c_str());
+			portIn->add(u::gui::removeFltkChars(p).c_str());
 
 		int i = m::midiPorts::getInDeviceIndex(m::conf::conf.midiPortInName);
 		portIn->value(i+1);
