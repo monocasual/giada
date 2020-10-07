@@ -30,11 +30,6 @@
 
 
 #include <functional>
-#include <cstdint>
-#include "core/model/model.h"
-#include "core/midiEvent.h"
-#include "core/types.h"
-
 
 namespace giada {
 namespace m {

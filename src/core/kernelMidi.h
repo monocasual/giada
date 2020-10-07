@@ -29,8 +29,6 @@
 #define G_KERNELMIDI_H
 
 
-#include <cstdint>
-#include <string>
 #include "midiMapConf.h"
 
 

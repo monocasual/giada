@@ -25,25 +25,15 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <cassert>
 #include <vector>
-#include "glue/plugin.h"
 #include "glue/events.h"
 #include "utils/log.h"
 #include "utils/math.h"
-#include "core/model/model.h"
-#include "core/conf.h"
-#include "core/mixer.h"
-#include "core/mixerHandler.h"
-#include "core/pluginHost.h"
-#include "core/plugin.h"
-#include "core/recManager.h"
-#include "core/types.h"
 #include "core/midiDevice.h"
 #include "core/midiDispatcher.h"
 #include "core/midiPorts.h"
 #include "core/midiMsg.h"
-
+#include "core/model/model.h"
 
 namespace giada {
 namespace m {

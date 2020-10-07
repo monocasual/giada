@@ -31,13 +31,13 @@
 #include <sstream>
 #include "utils/vector.h"
 #include "utils/log.h"
+#include "core/types.h"
 #include "core/midiController.h"
 #include "core/midiDevice.h"
 #include "core/midiLearner.h"
 #include "core/midiSignalCb.h"
 #include "core/midiDispatcher.h"
 #include "core/midiPorts.h"
-#include "core/types.h"
 
 namespace giada {
 namespace m {

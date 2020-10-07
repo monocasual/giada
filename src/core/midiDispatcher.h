@@ -30,15 +30,10 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "core/midiMsg.h"
 #include "core/midiMsgFilter.h"
-
-#include <functional>
-#include <cstdint>
-#include "core/model/model.h"
-#include "core/midiEvent.h"
-#include "core/types.h"
 
 #include "utils/vector.h"
 

@@ -31,6 +31,7 @@
 #include "utils/vector.h"
 #include "midiDispatcher.h"
 #include "midiMapConf.h"
+#include "midiEvent.h"
 #include "kernelMidi.h"
 #include "midiMsg.h"
 #include "midiPorts.h"
