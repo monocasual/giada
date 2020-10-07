@@ -28,6 +28,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <mutex>
 #include <sstream>
 #include "utils/vector.h"
 #include "utils/log.h"
@@ -56,6 +57,10 @@ namespace
 // registerRule() and unregisterRule() functions.
 std::list<DispatchTableItem> dispatchTableEx;
 std::list<DispatchTableItem> dispatchTable;
+
+// Mutex for each table
+std::mutex DTE_mutex;
+std::mutex DT_mutex;
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
@@ -127,6 +132,7 @@ void _forward(const MidiMsg& mm, const std::string r){
 
 void registerRule(const std::string& s, const MidiMsgFilter& mmf,
 						const std::string& r, bool wl){
+	std::lock_guard lg(DT_mutex);
 	dispatchTable.push_back(DispatchTableItem(s, mmf, r, wl));
 	u::log::print("[MDi::reg] Registered new DTI (receiver %s).\n", 
 								r.c_str());
@@ -136,6 +142,7 @@ void registerRule(const std::string& s, const MidiMsgFilter& mmf,
 
 void registerRule(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
 						const std::string& r, bool wl){
+	std::lock_guard lg(DT_mutex);
 	dispatchTable.push_back(DispatchTableItem(s, mmf, r, wl));
 	u::log::print("[MDi::reg] Registered new DTI (receiver %s).\n",
 								r.c_str());
@@ -145,6 +152,7 @@ void registerRule(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
 
 void registerExRule(const std::string& s, const MidiMsgFilter& mmf,
 						const std::string& r, bool wl){
+	std::lock_guard lg(DTE_mutex);
 	dispatchTableEx.push_front(DispatchTableItem(s, mmf, r, wl));
 	u::log::print("[MDi::regEx] Registered new DTIEx (receiver %s).\n",
 								r.c_str());
@@ -154,6 +162,7 @@ void registerExRule(const std::string& s, const MidiMsgFilter& mmf,
 
 void registerExRule(const std::vector<std::string>& s,
 		const MidiMsgFilter& mmf, const std::string& r, bool wl){
+	std::lock_guard lg(DTE_mutex);
 	dispatchTableEx.push_front(DispatchTableItem(s, mmf, r, wl));
 	u::log::print("[MDi::regEx] Registered new DTIEx (receiver %s).\n",
 								r.c_str());
@@ -162,6 +171,7 @@ void registerExRule(const std::vector<std::string>& s,
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
 void unregisterRule(const std::string& r){
+	std::lock_guard lg(DT_mutex);
 	dispatchTable.remove_if([&] (DispatchTableItem er)
 						{return er.isReceiver(r);});
 	u::log::print("[MDi::unreg] Unregistering receiver %s\n", r.c_str());
@@ -170,6 +180,7 @@ void unregisterRule(const std::string& r){
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
 void unregisterExRule(const std::string& r){
+	std::lock_guard lg(DTE_mutex);
 	dispatchTableEx.remove_if([&] (DispatchTableItem er)
 						{return er.isReceiver(r);});
 	u::log::print("[MDi::unregEx] Unregistering receiver %s\n",
@@ -185,11 +196,15 @@ u::log::print("[MDi::dispatch] Dispatching message from %s...\n",
 
 	// Consult dispatchTableEx first
 	// If a match is found, send message and ignore all the rest
-	for (DispatchTableItem& dti : dispatchTableEx){
-		if (dti.check(mm)) {
-			u::log::print("[MDi::dispatch] Applied Ex rule.\n");
-			_forward(mm, dti.getReceiver());
-			return;
+	if (true) {		// lock_guard container ;)
+		std::lock_guard lg(DTE_mutex);
+		for (DispatchTableItem& dti : dispatchTableEx){
+			if (dti.check(mm)) {
+				u::log::print("[MDi::dispatch] \
+						Applied Ex rule.\n");
+				_forward(mm, dti.getReceiver());
+				return;
+			}
 		}
 	}
 
@@ -198,12 +213,15 @@ u::log::print("[MDi::dispatch] Dispatching message from %s...\n",
 	// to avoid multiple deliveries
 	std::vector<std::string> receivers;
 
-	for (DispatchTableItem& dti : dispatchTable){
-		if (u::vector::has(receivers, dti.getReceiver()))
-			continue;
-		if (dti.check(mm)) {
-			_forward(mm, dti.getReceiver());
-			receivers.push_back(dti.getReceiver());
+	if (true) {
+		std::lock_guard lg(DT_mutex);
+		for (DispatchTableItem& dti : dispatchTable){
+			if (u::vector::has(receivers, dti.getReceiver()))
+				continue;
+			if (dti.check(mm)) {
+				_forward(mm, dti.getReceiver());
+				receivers.push_back(dti.getReceiver());
+			}
 		}
 	}
 }
