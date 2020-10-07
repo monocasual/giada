@@ -39,7 +39,8 @@
 #include "core/model/model.h"
 #include "core/midiEvent.h"
 #include "core/types.h"
-// TODO: Clean includes at the end
+
+#include "utils/vector.h"
 
 namespace giada {
 namespace m {
@@ -85,7 +86,7 @@ class DispatchTableItem{
 
 	// Checks if a given address is in a sender's addresses vector
 	// NOTE it ignores 'whitelist' flag
-	bool		isSender(std::string s);
+	bool		isSender(const std::string& s);
 
 	//  -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
@@ -98,19 +99,123 @@ class DispatchTableItem{
 };
 
 // reg function for registering receivers of certain messages
-void reg(const std::string& s, const MidiMsgFilter& mmf,
+void registerRule(const std::string& s, const MidiMsgFilter& mmf,
 					const std::string &r, bool wl = 1);
-void reg(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
+void registerRule(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
 					const std::string &r, bool wl = 1);
-void regEx(const std::string& s, const MidiMsgFilter& mmf,
+void registerExRule(const std::string& s, const MidiMsgFilter& mmf,
 					const std::string &r, bool wl = 1);
-void regEx(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
+void registerExRule(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
 					const std::string &r, bool wl = 1);
-void unreg(const std::string& r);
-void unregEx(const std::string& r);
+void unregisterRule(const std::string& r);
+void unregisterExRule(const std::string& r);
 
 // The ultimate MidiMsg dispatching method
 void dispatch(const MidiMsg& mm);
+
+//-------------------------------- CONSTRUCTORS --------------------------------
+	
+inline DispatchTableItem::DispatchTableItem(const std::vector<std::string>& s,
+		const MidiMsgFilter& mmf, const std::string& r, bool wl){
+	m_senders			= s;
+	m_whitelist 			= wl;
+	m_receiver 			= r;
+	DispatchTableItem::mmf 		= mmf;
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+inline DispatchTableItem::DispatchTableItem(const std::string& s,
+		const MidiMsgFilter& mmf, const std::string& r, bool wl){
+	m_senders.push_back(s);
+	m_whitelist 			= wl;
+	m_receiver 			= r;
+	DispatchTableItem::mmf 		= mmf;
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+inline DispatchTableItem::DispatchTableItem(const std::vector<std::string>& s,
+					const std::string& r, bool wl){
+	m_senders			= s;
+	m_whitelist 			= wl;
+	m_receiver 			= r;
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+inline DispatchTableItem::DispatchTableItem(const std::string& s,
+					const std::string& r, bool wl){
+	m_senders.push_back(s);
+	m_whitelist 			= wl;
+	m_receiver 			= r;
+}
+
+//------------------------------ MEMBER FUNCTIONS ------------------------------
+
+inline void DispatchTableItem::addSender(const std::string& s){
+	m_senders.push_back(s);
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+inline bool DispatchTableItem::removeSender(const std::string& s){
+	
+	u::vector::remove(m_senders, s);
+	return m_senders.empty();
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+inline void DispatchTableItem::setReceiver(const std::string& r){
+	m_receiver = r;
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+inline void DispatchTableItem::setBlacklist(){
+	m_whitelist = false;
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+inline void DispatchTableItem::setWhitelist(){
+	m_whitelist = true;
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+inline bool DispatchTableItem::check(const MidiMsg& mm){
+
+	// Sender cannot be a receiver of its own message
+	if (mm.getMessageSender() == m_receiver) return false;
+
+	// Check message sender
+	// if found and on a blacklist, or not found and on a whitelist...
+	if (isSender(mm.getMessageSender()) != m_whitelist) return false;
+
+	// Check message body against a filter
+	return DispatchTableItem::mmf.check(mm);
+
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+inline std::string DispatchTableItem::getReceiver(){
+	return m_receiver;
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+inline bool DispatchTableItem::isReceiver(const std::string& r){
+	return (m_receiver == r);
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+inline bool DispatchTableItem::isSender(const std::string& s){
+	return u::vector::has(m_senders, s);
+}
 
 }}} // giada::m::midiDispatcher::
 

@@ -56,8 +56,8 @@ struct Conf
 	int         midiSystem      = 0;
 	std::string midiPortOutName = G_DEFAULT_MIDI_PORT_OUT;
 	std::string midiPortInName  = G_DEFAULT_MIDI_PORT_IN;
-	std::string midiMapPath     = "";
-	std::string lastFileMap     = "";
+	std::string midiMapPath;
+	std::string lastFileMap;
 	int         midiSync        = MIDI_SYNC_NONE;
 	float       midiTCfps       = 25.0f;
 

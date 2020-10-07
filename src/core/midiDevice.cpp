@@ -103,8 +103,8 @@ void processMaster_(const MidiEvent& midiEvent)
 
 } // anonymous
 
-void init(){
-	midiDispatcher::reg(midiPorts::getInPorts(1), MMF_NOTEONOFFCC, 
+void init() {
+	midiDispatcher::registerRule(midiPorts::getInPorts(1), MMF_NOTEONOFFCC, 
 			"m;midiDevice");
 }
 

@@ -49,11 +49,12 @@ MidiMsgFilter			signalCbMmf_ = MidiMsgFilter();
 
 /* -------------------------------------------------------------------------- */
 
-void init(){
+void init() {
 	// midiSignalCb should always get messages, and filter them on its own
 	// Will be easier to support multiple and persistent callbacks
 	// However, signals are limited to port inputs only
-	midiDispatcher::reg(midiPorts::getInPorts(1), MMF_ANY, "m;midiSignalCb");
+	midiDispatcher::registerRule(midiPorts::getInPorts(1),
+						MMF_ANY, "m;midiSignalCb");
 }
 
 /* -------------------------------------------------------------------------- */
@@ -70,9 +71,10 @@ void midiReceive(const MidiMsg& mm)
 
 /* -------------------------------------------------------------------------- */
 
-void setSignalCallback(std::function<void()> f, MidiMsgFilter mmf)
+void setSignalCallback(std::function<void()> f, const MidiMsgFilter& mmf)
 {
 	signalCb_ = f;
+	signalCbMmf_ = mmf;
 }
 
 }}} // giada::m::midiSignalCb::

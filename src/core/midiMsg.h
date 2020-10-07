@@ -41,7 +41,7 @@ class MidiMsg
 	MidiMsg(const std::string& sender, 
 				const std::vector<unsigned char>& message);
 
-	unsigned char				getByte(int n) const;
+	unsigned char				getByte(const int& n) const;
 	const std::vector<unsigned char>*	getMessage() const;
 	int					getMessageLength() const;
 	std::string				getMessageSender() const;

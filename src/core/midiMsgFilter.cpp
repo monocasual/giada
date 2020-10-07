@@ -32,58 +32,58 @@ namespace m {
 
 //------------------------------  CONSTRUCTORS  --------------------------------
 
-MidiMsgFilter::MidiMsgFilter(MidiMsg mm, bool alm){ 
+MidiMsgFilter::MidiMsgFilter(const MidiMsg& mm, bool alm) { 
 	
-	unsigned l = mm.getMessageLength();
+	auto l = mm.getMessageLength();
 	
-	for (unsigned int i=0; i<l; i++){
+	for (auto i = 0; i < l; i++) {
 		m_template.push_back(mm.getByte(i));
 		m_mask.push_back(0xFF);
 	}
 
 	m_allow_longer_msg = alm;
-	m_extra_filter = ([](MidiMsg){return true;});
+	m_extra_filter = ([](MidiMsg) {return true;});
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-MidiMsgFilter::MidiMsgFilter(){
+MidiMsgFilter::MidiMsgFilter() {
 
 	m_allow_longer_msg = true;
-	m_extra_filter = ([](MidiMsg){return true;});
+	m_extra_filter = ([](MidiMsg) {return true;});
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-MidiMsgFilter::MidiMsgFilter(unsigned int fl, bool alm,
-					std::function<bool(MidiMsg)> ef){
+MidiMsgFilter::MidiMsgFilter(const int& fl, bool alm,
+					std::function<bool(MidiMsg)> ef) {
 
-	for (unsigned int i=0; i<fl; i++){
+	for (auto i = 0; i < fl; i++) {
 		m_template.push_back(0);
 		m_mask.push_back(0);
 	}
 
 	m_allow_longer_msg = alm;
-	m_extra_filter = (ef ? ef : ([](MidiMsg){return true;}));
+	m_extra_filter = (ef ? ef : ([](MidiMsg) {return true;}));
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-MidiMsgFilter::MidiMsgFilter(unsigned int fl, std::string mask, 
-		std::string tmpl, bool alm, std::function<bool(MidiMsg)> ef){
+MidiMsgFilter::MidiMsgFilter(const int& fl, const std::string& mask, 
+	const std::string& tmpl, bool alm, std::function<bool(MidiMsg)> ef) {
 
-	for (unsigned int i=0; i<fl; i++){
+	for (auto i = 0; i < fl; i++) {
 		m_template.push_back(tmpl[i]);
 		m_mask.push_back(mask[i]);
 	}
 
 	m_allow_longer_msg = alm;
-	m_extra_filter = (ef ? ef : ([](MidiMsg){return true;}));
+	m_extra_filter = (ef ? ef : ([](MidiMsg) {return true;}));
 }
 
 //----------------------------  MEMBER FUNCTIONS  ------------------------------
-
-void MidiMsgFilter::setTemplateByte(unsigned int n, unsigned char b){
+/*
+void MidiMsgFilter::setTemplateByte(unsigned int n, unsigned char b) {
 	
 	// If filter is shorter than necessary,
 	// it is expanded with transparent bytes
@@ -95,7 +95,7 @@ void MidiMsgFilter::setTemplateByte(unsigned int n, unsigned char b){
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-void MidiMsgFilter::setMaskByte(unsigned int n, unsigned char b){
+void MidiMsgFilter::setMaskByte(unsigned int n, unsigned char b) {
 	
 	// If filter is shorter than necessary,
 	// it is expanded with transparent bytes
@@ -108,7 +108,7 @@ void MidiMsgFilter::setMaskByte(unsigned int n, unsigned char b){
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 void MidiMsgFilter::orTemplateByte(unsigned int n, unsigned char b,
-							unsigned int shl){
+							unsigned int shl) {
 
 	// If filter is shorter than necessary,
 	// it is expanded with transparent bytes
@@ -121,7 +121,7 @@ void MidiMsgFilter::orTemplateByte(unsigned int n, unsigned char b,
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 void MidiMsgFilter::orMaskByte(unsigned int n, unsigned char b,
-							unsigned int shl){
+							unsigned int shl) {
 	
 	// If filter is shorter than necessary,
 	// it is expanded with transparent bytes
@@ -133,50 +133,40 @@ void MidiMsgFilter::orMaskByte(unsigned int n, unsigned char b,
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-void MidiMsgFilter::ignoreByte(unsigned int n){
+void MidiMsgFilter::ignoreByte(unsigned int n) {
 	if (n >= m_mask.size()) return;
 	m_mask.at(n) = 0;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-void MidiMsgFilter::setFilterLength(unsigned int fl){
-
-	unsigned int l = m_mask.size();
-	
-	// Truncate too long filters
-	for (; l > fl; l--){
-		m_template.pop_back();
-		m_mask.pop_back();
-	}
-
-	// Expand too short filters with transparent chunks (mask = 0)
-	for (; l < fl; l++){
-		m_template.push_back(0);
-		m_mask.push_back(0);
-	}
-}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-void MidiMsgFilter::allowLongerMsg(){
+void MidiMsgFilter::allowLongerMsg() {
 	m_allow_longer_msg = true;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-void MidiMsgFilter::disallowLongerMsg(){
+void MidiMsgFilter::disallowLongerMsg() {
 	m_allow_longer_msg = false;
+}
+
+*/
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+void MidiMsgFilter::setFilterLength(const int& fl) {
+	m_template.resize(fl, 0x00);
+	m_mask.resize(fl, 0x00);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-void MidiMsgFilter::setChannel(unsigned ch){
+void MidiMsgFilter::setChannel(const unsigned& ch) {
 
 	// If filter is completely empty, expand it to 1 byte
 	if (m_mask.size() < 1) setFilterLength(1);
 
-	if ((ch >=1) and (ch <=16)){
+	if ((ch >=1) and (ch <=16)) {
 		m_template[0] &= 0xF0;
 		m_template[0] += ch - 1;
 		m_mask[0]     |= 0x0F;
@@ -188,26 +178,29 @@ void MidiMsgFilter::setChannel(unsigned ch){
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-bool MidiMsgFilter::check(const MidiMsg& mm) const{
+bool MidiMsgFilter::check(const MidiMsg& mm) const {
 
 	unsigned int l  = mm.getMessageLength();
 	unsigned int fl = m_mask.size();
 	unsigned char b;
 
 	// If message is shorter than a filter, it's clearly not a match
-	if (l < fl) return false;
+	if (l < fl) 
+		return false;
 
 	// Message cannot be longer than a filter if m_allow_longer_msg isn't set
-	if ((l > fl) and !(m_allow_longer_msg)) return false;
+	if (!(m_allow_longer_msg && (l > fl))) 
+		return false;
 
-	for (unsigned int i=0; i<fl; i++){
+	for (unsigned int i = 0; i < fl; i++) {
 		
 		b  = mm.getByte(i);
 		b ^= m_template.at(i);
 		b &= m_mask.at(i);
 
 		// If any meaningful difference is found, return false
-		if (b != 0) return false;
+		if (b != 0) 
+			return false;
 	}
 
 	// All checks succeeded so far, so extra_filter has a final word
@@ -217,33 +210,8 @@ bool MidiMsgFilter::check(const MidiMsg& mm) const{
 //----------------------------  FRIEND FUNCTIONS  ------------------------------
 
 
-bool check(const MidiMsg& mm, const MidiMsgFilter& mmf){
-
-	unsigned int l  = mm.getMessageLength();
-	unsigned int fl = mmf.m_mask.size();
-	unsigned char b;
-
-	// If message is shorter than a filter, it's clearly not a match
-	if (l < fl) return false;
-
-	// Message cannot be longer than a filter if m_allow_longer_msg isn't set
-	if ((l > fl) and !(mmf.m_allow_longer_msg)) return false;
-
-	for (unsigned int i=0; i<fl; i++){
-		
-		b  = mm.getByte(i);
-		b ^= mmf.m_template.at(i);
-		b &= mmf.m_mask.at(i);
-
-		// MIDI words are 7 bits long, so we ignore MSB
-		b &= 0x7F;
-
-		// If any meaningful difference is found, return false
-		if (b != 0) return false;
-	}
-
-	// All checks succeeded so far, so extra_filter has a final word
-	return mmf.m_extra_filter(mm);
+bool check(const MidiMsg& mm, const MidiMsgFilter& mmf) {
+	return mmf.check(mm);
 }
 
 }} // giada::m::

@@ -53,23 +53,23 @@ std::vector<std::string> getInDevices(bool full = false);
 // getIn/OutDeviceIndex
 // Returns a device number on the list returned by RtMidi
 // By default returns index on a list without Giada's own ports
-int getOutDeviceIndex(std::string port, bool full = false);
-int getInDeviceIndex(std::string port, bool full = false);
+int getOutDeviceIndex(const std::string& port, bool full = false);
+int getInDeviceIndex(const std::string& port, bool full = false);
 
 // getIn/OutDeviceName
 // Returns the name of the port with a given index.
 // By default an index on a giada-ports-free list is returned
 
-std::string getOutDeviceName(int index, bool full = false);
-std::string getInDeviceName(int index, bool full = false);
+std::string getOutDeviceName(const int& index, bool full = false);
+std::string getInDeviceName(const int& index, bool full = false);
 
 /* open/close/in/outPort */
 // No argument (default) for 'close' methods closes all ports.
 
-int openOutPort(std::string port);
-int openInPort(std::string port);
-int closeInPort(std::string port = "");
-int closeOutPort(std::string port = "");
+int openOutPort(const std::string& port);
+int openInPort(const std::string& port);
+int closeInPort(const std::string& port = "");
+int closeOutPort(const std::string& port = "");
 
 // getIn/OuPorts
 // Lists open ports in desired direction

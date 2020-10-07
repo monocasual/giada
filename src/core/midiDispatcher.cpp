@@ -43,117 +43,6 @@ namespace giada {
 namespace m {
 namespace midiDispatcher
 {
-//----------------------------------------------------------------------------//
-//-------------------- DISPATCH TABLE ITEM MEMBER FUNCTIONS ------------------//
-
-
-//-------------------------------- CONSTRUCTORS --------------------------------
-	
-DispatchTableItem::DispatchTableItem(const std::vector<std::string>& s,
-		const MidiMsgFilter& mmf, const std::string& r, bool wl){
-	m_senders			= s;
-	m_whitelist 			= wl;
-	m_receiver 			= r;
-	DispatchTableItem::mmf 		= mmf;
-}
-
-//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-
-DispatchTableItem::DispatchTableItem(const std::string& s,
-		const MidiMsgFilter& mmf, const std::string& r, bool wl){
-	m_senders.push_back(s);
-	m_whitelist 			= wl;
-	m_receiver 			= r;
-	DispatchTableItem::mmf 		= mmf;
-}
-
-//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-
-DispatchTableItem::DispatchTableItem(const std::vector<std::string>& s,
-					const std::string& r, bool wl){
-	m_senders			= s;
-	m_whitelist 			= wl;
-	m_receiver 			= r;
-}
-
-//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-
-DispatchTableItem::DispatchTableItem(const std::string& s,
-					const std::string& r, bool wl){
-	m_senders.push_back(s);
-	m_whitelist 			= wl;
-	m_receiver 			= r;
-}
-
-//------------------------------ MEMBER FUNCTIONS ------------------------------
-
-void DispatchTableItem::addSender(const std::string& s){
-	m_senders.push_back(s);
-}
-
-//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-
-bool DispatchTableItem::removeSender(const std::string& s){
-	
-	u::vector::remove(m_senders, s);
-	return m_senders.empty();
-}
-
-//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-
-void DispatchTableItem::setReceiver(const std::string& r){
-	m_receiver = r;
-}
-
-//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-
-void DispatchTableItem::setBlacklist(){
-	m_whitelist = false;
-}
-
-//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-
-void DispatchTableItem::setWhitelist(){
-	m_whitelist = true;
-}
-
-//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-
-bool DispatchTableItem::check(const MidiMsg& mm){
-
-	// Sender cannot be a receiver of its own message
-	if (mm.getMessageSender() == m_receiver) return false;
-
-	// Check message sender
-	// if found and on a blacklist, or not found and on a whitelist...
-	if (this->isSender(mm.getMessageSender()) != m_whitelist) return false;
-
-	// Check message body against a filter
-	return DispatchTableItem::mmf.check(mm);
-
-}
-
-//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-
-std::string DispatchTableItem::getReceiver(){
-	return m_receiver;
-}
-
-//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-
-bool DispatchTableItem::isReceiver(const std::string& r){
-	return (m_receiver == r);
-}
-
-//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-
-bool DispatchTableItem::isSender(std::string s){
-	return u::vector::has(m_senders, s);
-}
-
-//----------------- END OF DISPATCH TABLE ITEM MEMBER FUNCTIONS --------------//
-//----------------------------------------------------------------------------//
-
 
 namespace
 {
@@ -164,7 +53,7 @@ namespace
 // dispatchTable allows for multiple matches and forwards messages to all
 // matching receivers.
 // Other MIDI-related modules can manipulate these tables using
-// reg() and unreg() functions.
+// registerRule() and unregisterRule() functions.
 std::list<DispatchTableItem> dispatchTableEx;
 std::list<DispatchTableItem> dispatchTable;
 
@@ -194,7 +83,7 @@ void _forward(const MidiMsg& mm, const std::string r){
 	std::stringstream ss(r);
 	while (ss.good()){
 		std::string str;
-		getline(ss, str, ';');
+		std::getline(ss, str, ';');
 		parsed_r.push_back(str);
 	}
 
@@ -236,8 +125,8 @@ void _forward(const MidiMsg& mm, const std::string r){
 
 } //------------------------------- {anonymous} -------------------------------
 
-void reg(const std::string& s, const MidiMsgFilter& mmf, const std::string& r,
-								bool wl){
+void registerRule(const std::string& s, const MidiMsgFilter& mmf,
+						const std::string& r, bool wl){
 	dispatchTable.push_back(DispatchTableItem(s, mmf, r, wl));
 	u::log::print("[MDi::reg] Registered new DTI (receiver %s).\n", 
 								r.c_str());
@@ -245,7 +134,7 @@ void reg(const std::string& s, const MidiMsgFilter& mmf, const std::string& r,
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-void reg(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
+void registerRule(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
 						const std::string& r, bool wl){
 	dispatchTable.push_back(DispatchTableItem(s, mmf, r, wl));
 	u::log::print("[MDi::reg] Registered new DTI (receiver %s).\n",
@@ -254,16 +143,7 @@ void reg(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-void regEx(const std::string& s, const MidiMsgFilter& mmf, const std::string& r,
-								bool wl){
-	dispatchTableEx.push_front(DispatchTableItem(s, mmf, r, wl));
-	u::log::print("[MDi::regEx] Registered new DTIEx (receiver %s).\n",
-								r.c_str());
-}
-
-//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-
-void regEx(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
+void registerExRule(const std::string& s, const MidiMsgFilter& mmf,
 						const std::string& r, bool wl){
 	dispatchTableEx.push_front(DispatchTableItem(s, mmf, r, wl));
 	u::log::print("[MDi::regEx] Registered new DTIEx (receiver %s).\n",
@@ -272,7 +152,16 @@ void regEx(const std::vector<std::string>& s, const MidiMsgFilter& mmf,
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-void unreg(const std::string& r){
+void registerExRule(const std::vector<std::string>& s,
+		const MidiMsgFilter& mmf, const std::string& r, bool wl){
+	dispatchTableEx.push_front(DispatchTableItem(s, mmf, r, wl));
+	u::log::print("[MDi::regEx] Registered new DTIEx (receiver %s).\n",
+								r.c_str());
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+void unregisterRule(const std::string& r){
 	dispatchTable.remove_if([&] (DispatchTableItem er)
 						{return er.isReceiver(r);});
 	u::log::print("[MDi::unreg] Unregistering receiver %s\n", r.c_str());
@@ -280,7 +169,7 @@ void unreg(const std::string& r){
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-void unregEx(const std::string& r){
+void unregisterExRule(const std::string& r){
 	dispatchTableEx.remove_if([&] (DispatchTableItem er)
 						{return er.isReceiver(r);});
 	u::log::print("[MDi::unregEx] Unregistering receiver %s\n",
@@ -297,7 +186,7 @@ u::log::print("[MDi::dispatch] Dispatching message from %s...\n",
 	// Consult dispatchTableEx first
 	// If a match is found, send message and ignore all the rest
 	for (DispatchTableItem& dti : dispatchTableEx){
-		if (dti.check(mm)){
+		if (dti.check(mm)) {
 			u::log::print("[MDi::dispatch] Applied Ex rule.\n");
 			_forward(mm, dti.getReceiver());
 			return;
@@ -312,7 +201,7 @@ u::log::print("[MDi::dispatch] Dispatching message from %s...\n",
 	for (DispatchTableItem& dti : dispatchTable){
 		if (u::vector::has(receivers, dti.getReceiver()))
 			continue;
-		if (dti.check(mm)){
+		if (dti.check(mm)) {
 			_forward(mm, dti.getReceiver());
 			receivers.push_back(dti.getReceiver());
 		}

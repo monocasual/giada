@@ -43,7 +43,7 @@ void init();
 void midiReceive(const MidiMsg& mm);
 
 void setSignalCallback(std::function<void()> f,
-					MidiMsgFilter mmf = MidiMsgFilter());
+				const MidiMsgFilter& mmf = MidiMsgFilter());
 
 }}} // giada::m::midiSignalCb::
 

@@ -47,20 +47,21 @@ class MidiMsgFilter
 	public:
 
 	// Creates a MidiMsgFilter that passes only a given message
-	MidiMsgFilter(MidiMsg mm, bool alm = 0);
+	MidiMsgFilter(const MidiMsg& mm, bool alm = 0);
 
 	// Creates the simplest, fully transparent filter
 	// Note it has allow_longer_msg set to true
 	MidiMsgFilter();
 
 	// Creates a transparent filter of a given length
-	MidiMsgFilter(unsigned int fl, bool alm = 0,
+	MidiMsgFilter(const int& fl, bool alm = 0,
 				std::function<bool(MidiMsg)> ef = nullptr);
 
 	// Creates a filter defined by length l, and mask and tmpl strings 
 	// m_allow_longer_msg is optional
-	MidiMsgFilter(unsigned int fl, std::string mask, std::string tmpl,
-		bool alm = 0, std::function<bool(MidiMsg)> ef = nullptr);
+	MidiMsgFilter(const int& fl, const std::string& mask, 
+			const std::string& tmpl, bool alm = 0,
+			std::function<bool(MidiMsg)> ef = nullptr);
 
 	// Filter manipulation methods
 	// Note the byte indices are zero-based
@@ -70,19 +71,22 @@ class MidiMsgFilter
 	// 'fl' is filter length
 	// 
 	// TODO: Do we really want these functions anyway?
+/*
 	void	setTemplateByte(unsigned n, unsigned char b);
 	void	setMaskByte(unsigned n, unsigned char b);
 	void	orTemplateByte(unsigned n, unsigned char b, unsigned shl = 0);
 	void	orMaskByte(unsigned n, unsigned char b, unsigned shl = 0);
 	void	ignoreByte(unsigned n);
-	void	setFilterLength(unsigned fl);
 	void	allowLongerMsg();
 	void	disallowLongerMsg();
+*/
+
+	void	setFilterLength(const int& fl);
 
 	// Set filter to accept specific NoteOnOff/CC channel 
 	// Note MIDI channels have numbers 1-16
 	// Any number outside that range (like 0) allows any channel
-	void    	setChannel(unsigned n);
+	void    	setChannel(const unsigned& n);
 
 	// Check a message against this filter
 	bool		check(const MidiMsg& mm) const;

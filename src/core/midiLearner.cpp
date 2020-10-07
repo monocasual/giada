@@ -163,7 +163,7 @@ void learnPlugin_(MidiEvent e, int paramIndex, ID pluginId, std::function<void()
 void startChannelLearn(int param, ID channelId, std::function<void()> f)
 {
 	learnCb_ = [=](m::MidiEvent e) { learnChannel_(e, param, channelId, f); };
-	midiDispatcher::regEx(midiPorts::getInPorts(1),
+	midiDispatcher::registerExRule(midiPorts::getInPorts(1),
 			MMF_NOTEONOFFCC,
 			"m;midiLearner");
 }
@@ -172,7 +172,7 @@ void startChannelLearn(int param, ID channelId, std::function<void()> f)
 void startMasterLearn (int param, std::function<void()> f)
 {
 	learnCb_ = [=](m::MidiEvent e) { learnMaster_(e, param, f); };
-	midiDispatcher::regEx(midiPorts::getInPorts(1),
+	midiDispatcher::registerExRule(midiPorts::getInPorts(1),
 			MMF_NOTEONOFFCC,
 			"m;midiLearner");
 }
@@ -183,7 +183,7 @@ void startMasterLearn (int param, std::function<void()> f)
 void startPluginLearn (int paramIndex, ID pluginId, std::function<void()> f)
 {
 	learnCb_ = [=](m::MidiEvent e) { learnPlugin_(e, paramIndex, pluginId, f); };
-	midiDispatcher::regEx(midiPorts::getInPorts(1),
+	midiDispatcher::registerExRule(midiPorts::getInPorts(1),
 			MMF_NOTEONOFFCC,
 			"m;midiLearner");
 }
@@ -193,7 +193,7 @@ void startPluginLearn (int paramIndex, ID pluginId, std::function<void()> f)
 
 void stopLearn()
 {
-	midiDispatcher::unregEx("m;midiLearner");
+	midiDispatcher::unregisterExRule("m;midiLearner");
 	learnCb_ = nullptr;
 }
 
@@ -203,14 +203,14 @@ void stopLearn()
 
 void clearMasterLearn(int param, std::function<void()> f)
 {
-	midiDispatcher::unregEx("m;midiLearner");
+	midiDispatcher::unregisterExRule("m;midiLearner");
 	learnMaster_(MidiEvent(), param, f); // Empty event (0x0)
 }
 
 
 void clearChannelLearn(int param, ID channelId, std::function<void()> f)
 {
-	midiDispatcher::unregEx("m;midiLearner");
+	midiDispatcher::unregisterExRule("m;midiLearner");
 	learnChannel_(MidiEvent(), param, channelId, f); // Empty event (0x0)
 }
 
@@ -219,7 +219,7 @@ void clearChannelLearn(int param, ID channelId, std::function<void()> f)
 
 void clearPluginLearn (int paramIndex, ID pluginId, std::function<void()> f)
 {
-	midiDispatcher::unregEx("m;midiLearner");
+	midiDispatcher::unregisterExRule("m;midiLearner");
 	learnPlugin_(MidiEvent(), paramIndex, pluginId, f); // Empty event (0x0)
 }
 
@@ -235,7 +235,7 @@ void midiReceive(const MidiMsg& mm)
 
 	if (learnCb_ != nullptr) {
 		learnCb_(midiEvent);
-		midiDispatcher::unregEx("m;midiLearner");
+		midiDispatcher::unregisterExRule("m;midiLearner");
 	}
 }
 

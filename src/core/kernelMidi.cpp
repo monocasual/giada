@@ -42,18 +42,18 @@ namespace kernelMidi
 namespace
 {
 // An output port name for use with new midiPorts backend
-std::string out_port_name = "";
+std::string out_port_name;
 
 } // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
 
-void init(){
+void init() {
 
 	out_port_name = conf::conf.midiPortOutName;
 	midiPorts::openInPort(conf::conf.midiPortInName);
-	midiPorts::openOutPort(out_port_name);	
+	midiPorts::openOutPort(out_port_name);
 
 }
 
@@ -61,13 +61,9 @@ void init(){
 
 void send(uint32_t data)
 {
-	std::vector<unsigned char> msg;
-	msg.push_back(getB1(data));
-	msg.push_back(getB2(data));
-	msg.push_back(getB3(data));
+	std::vector msg { getB1(data), getB2(data), getB3(data) };
 
-	MidiMsg mm = MidiMsg("", msg);
-	midiPorts::midiReceive(mm, out_port_name);
+	midiPorts::midiReceive({"", msg}, out_port_name);
 
 	u::log::print("[KM::send] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
 }

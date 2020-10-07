@@ -85,7 +85,7 @@ void geTabMidi::fetchOutPorts()
 {
 	std::vector<std::string> ports = m::midiPorts::getOutDevices();
 
-	if (ports.size() == 0) {
+	if (ports.empty()) {
 		portOut->add("-- no ports found --");
 		portOut->value(0);
 		portOut->deactivate();
@@ -94,8 +94,8 @@ void geTabMidi::fetchOutPorts()
 
 		portOut->add("(disabled)");
 
-		for (unsigned i=0; i<ports.size(); i++)
-			portOut->add(u::gui::removeFltkChars(ports.at(i)).c_str());
+		for (auto& p : ports)
+			portOut->add(u::gui::removeFltkChars(p).c_str());
 
 		int i = m::midiPorts::getOutDeviceIndex(m::conf::conf.midiPortOutName);
 		portOut->value(i+1);
@@ -109,7 +109,7 @@ void geTabMidi::fetchInPorts()
 {
 	std::vector<std::string> ports = m::midiPorts::getInDevices();
 
-	if (ports.size() == 0) {
+	if (ports.empty()) {
 		portIn->add("-- no ports found --");
 		portIn->value(0);
 		portIn->deactivate();
@@ -118,8 +118,8 @@ void geTabMidi::fetchInPorts()
 
 		portIn->add("(disabled)");
 
-		for (unsigned i=0; i<ports.size(); i++)
-			portIn->add(u::gui::removeFltkChars(ports.at(i)).c_str());
+		for (auto& p : ports)
+			portOut->add(u::gui::removeFltkChars(p).c_str());
 
 		int i = m::midiPorts::getInDeviceIndex(m::conf::conf.midiPortInName);
 		portIn->value(i+1);
@@ -132,7 +132,7 @@ void geTabMidi::fetchInPorts()
 
 void geTabMidi::fetchMidiMaps()
 {
-	if (m::midimap::maps.size() == 0) {
+	if (m::midimap::maps.empty()) {
 		midiMap->add("(no MIDI maps available)");
 		midiMap->value(0);
 		midiMap->deactivate();

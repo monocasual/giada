@@ -35,6 +35,7 @@
 #include "core/sequencer.h"
 #include "core/mixerHandler.h"
 #include "core/midiSignalCb.h"
+#include "core/midiMsgFilter.h"
 #include "core/recorder.h"
 #include "core/recorderHandler.h"
 #include "core/recManager.h"
@@ -130,7 +131,7 @@ void startActionRec(RecTriggerMode mode)
 	else {   // RecTriggerMode::SIGNAL
 		clock::setStatus(ClockStatus::WAITING);
 		clock::rewind();
-		m::midiSignalCb::setSignalCallback(startActionRec_);
+		m::midiSignalCb::setSignalCallback(startActionRec_, MMF_ANY);
 		v::dispatcher::setSignalCallback(startActionRec_);
 		setRecordingAction_(true);
 	}
