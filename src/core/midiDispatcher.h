@@ -37,6 +37,9 @@
 
 #include "utils/vector.h"
 
+#include "deps/json/single_include/nlohmann/json.hpp"
+namespace nl = nlohmann;
+
 namespace giada {
 namespace m {
 namespace midiDispatcher
@@ -82,6 +85,10 @@ class DispatchTableItem{
 	// Checks if a given address is in a sender's addresses vector
 	// NOTE it ignores 'whitelist' flag
 	bool		isSender(const std::string& s);
+
+	// json parser serializers
+	friend void	to_json(nl::json& j, const DispatchTableItem& dti);
+	friend void	from_json(nl::json& j, DispatchTableItem& dti);
 
 	//  -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
@@ -212,7 +219,45 @@ inline bool DispatchTableItem::isSender(const std::string& s){
 	return u::vector::has(m_senders, s);
 }
 
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+inline void to_json(nl::json& j, const DispatchTableItem& dti){
+	j = nl::json{{"senders", dti.m_senders},
+			{"wl", dti.m_whitelist},
+			{"receiver", dti.m_receiver},
+			{"mmf", dti.mmf}};
+}
+
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+inline void from_json(nl::json& j, DispatchTableItem& dti){
+	j.at("senders").get_to(dti.m_senders);
+	j.at("wl").get_to(dti.m_whitelist);
+	j.at("receiver").get_to(dti.m_receiver);
+	j.at("mmf").get_to(dti.mmf);
+}
+
 }}} // giada::m::midiDispatcher::
+
+
+// The following template is necessary
+// so the whole DispatchTables could be serialized 
+namespace nlohmann {
+template <>
+struct adl_serializer<giada::m::midiDispatcher::DispatchTableItem> {
+
+	static void to_json(json& j, 
+	const giada::m::midiDispatcher::DispatchTableItem& dti) {
+		giada::m::midiDispatcher::to_json(j, dti);
+	}
+
+	static giada::m::midiDispatcher::DispatchTableItem 
+						from_json(const json& j) {
+		return j.get<giada::m::midiDispatcher::DispatchTableItem>();
+	}
+
+};
+} // nl
 
 
 #endif

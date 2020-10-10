@@ -32,6 +32,9 @@
 #include <functional>
 #include "midiMsg.h"
 
+#include "deps/json/single_include/nlohmann/json.hpp"
+namespace nl = nlohmann;
+
 namespace giada {
 namespace m {
 
@@ -97,27 +100,60 @@ class MidiMsgFilter
 	// Check a message against a given filter
 	friend bool	check(const MidiMsg& mm, const MidiMsgFilter& mmf);
 
+	// Json serialization methods
+	friend void		to_json(nl::json& j, const MidiMsgFilter& mmf);
+	friend void		from_json(nl::json& j, MidiMsgFilter& mmf);
+
 	private:
 
 	// m_template vector contains data to which message is compared
 	// m_mask indicates which bits are to be included in comparison
 	// m_template and m_mask must always be of equal size	
+	// m_lambda_filter lets you define a custom message filter
+	// NOTE: since std::function cannot be serialized, lambdas are 
+	// NOT stored in json files, and filters loaded from them will have
+	// no lambda filter specified. 
+	// TODO: This HAS TO be fixed 
+	// (think about serialization of DispatchTables) 
 	std::vector<unsigned char>	m_template;
 	std::vector<unsigned char>	m_mask;
 	bool 				m_allow_longer_msg;
-	std::function<bool(MidiMsg)>	m_extra_filter;
+	std::function<bool(MidiMsg)>	m_lambda_filter;
 };
+
+void to_json(nl::json& j, const MidiMsgFilter& mmf);
+void from_json(nl::json& j, MidiMsgFilter& mmf);
+
 
 //------------------- const MidiMsgFilters for typical uses -------------------	
 
-const MidiMsgFilter MMF_ANY          = MidiMsgFilter();
+const MidiMsgFilter MMF_ANY		= MidiMsgFilter();
 
-const MidiMsgFilter MMF_NOTEONOFF    = MidiMsgFilter({0xE0,0,0}, {0x80,0,0});
-const MidiMsgFilter MMF_NOTEON       = MidiMsgFilter({0xF0,0,0}, {0x90,0,0});
-const MidiMsgFilter MMF_NOTEOFF      = MidiMsgFilter({0xF0,0,0}, {0x80,0,0});
-const MidiMsgFilter MMF_CC           = MidiMsgFilter({0xF0,0,0}, {0xB0,0,0});
-const MidiMsgFilter MMF_NOTEONOFFCC  = MidiMsgFilter({0xC0,0,0}, {0x80,0,0},
+const MidiMsgFilter MMF_NOTEONOFF	= MidiMsgFilter({0xE0,0,0}, {0x80,0,0});
+const MidiMsgFilter MMF_NOTEON		= MidiMsgFilter({0xF0,0,0}, {0x90,0,0});
+const MidiMsgFilter MMF_NOTEOFF		= MidiMsgFilter({0xF0,0,0}, {0x80,0,0});
+const MidiMsgFilter MMF_CC		= MidiMsgFilter({0xF0,0,0}, {0xB0,0,0});
+const MidiMsgFilter MMF_NOTEONOFFCC	= MidiMsgFilter({0xC0,0,0}, {0x80,0,0},
 	false, ([](MidiMsg mm){return ((mm.getByte(0) & 0xF0) != 0xA0);}));
 
+
 }} // giada::m::
+
+// The following template is necessary
+// so DispatchTableItem (that includes mmf) could be serialized as well.
+namespace nlohmann {
+template <>
+struct adl_serializer<giada::m::MidiMsgFilter> {
+
+	static void to_json(json& j, const giada::m::MidiMsgFilter& mmf) {
+		giada::m::to_json(j, mmf);
+	}
+
+	static void from_json(const json& j, giada::m::MidiMsgFilter& mmf) {
+		mmf = j.get<giada::m::MidiMsgFilter>();
+	}
+
+};
+} // nl
+
 #endif

@@ -84,6 +84,19 @@ void MidiMsg::dump() const {
 
 }
 
+//----------------------------  FRIEND FUNCTIONS  ------------------------------
+
+void to_json(nl::json& j, const MidiMsg& mm){
+	j = nl::json{{"sender", mm.m_sender}, {"msg", mm.m_message}};
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+void from_json(nl::json& j, MidiMsg& mm) {
+	j.at("sender").get_to(mm.m_sender);
+	j.at("msg").get_to(mm.m_message);
+}
+
 //-------------------------- PRIVATE MEMBER FUNCTIONS --------------------------
 
 void MidiMsg::fixVelocityZero() {

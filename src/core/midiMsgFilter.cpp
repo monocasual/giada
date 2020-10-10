@@ -43,7 +43,7 @@ MidiMsgFilter::MidiMsgFilter(const MidiMsg& mm, bool alm) {
 	}
 
 	m_allow_longer_msg = alm;
-	m_extra_filter = nullptr;
+	m_lambda_filter = nullptr;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -51,7 +51,7 @@ MidiMsgFilter::MidiMsgFilter(const MidiMsg& mm, bool alm) {
 MidiMsgFilter::MidiMsgFilter() {
 
 	m_allow_longer_msg = true;
-	m_extra_filter = nullptr;
+	m_lambda_filter = nullptr;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -65,7 +65,7 @@ MidiMsgFilter::MidiMsgFilter(const int& fl, bool alm,
 	}
 
 	m_allow_longer_msg = alm;
-	m_extra_filter = (ef ? ef : nullptr);
+	m_lambda_filter = (ef ? ef : nullptr);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -78,7 +78,7 @@ MidiMsgFilter::MidiMsgFilter(const std::vector<unsigned char>& mask,
 		m_mask = mask;
 
 	m_allow_longer_msg = alm;
-	m_extra_filter = (ef ? ef : nullptr);
+	m_lambda_filter = (ef ? ef : nullptr);
 }
 
 //----------------------------  MEMBER FUNCTIONS  ------------------------------
@@ -195,7 +195,7 @@ void MidiMsgFilter::dump() const{
 	u::log::print("\n\tLonger Messages: %s",
 			m_allow_longer_msg ? "Allowed" : "Disallowed");
 	u::log::print("\n\tLambda filter: %s\n",
-		(m_extra_filter != nullptr) ? "Defined" : "Not defined");
+		(m_lambda_filter != nullptr) ? "Defined" : "Not defined");
 
 }
 
@@ -226,10 +226,10 @@ bool MidiMsgFilter::check(const MidiMsg& mm) const {
 			return false;
 	}
 
-	// All checks succeeded so far, so extra_filter has a final word
+	// All checks succeeded so far, so lambda_filter has a final word
 	// (if defined)
-	if (m_extra_filter != nullptr)
-		return m_extra_filter(mm);
+	if (m_lambda_filter != nullptr)
+		return m_lambda_filter(mm);
 
 	return true;
 }
@@ -239,6 +239,23 @@ bool MidiMsgFilter::check(const MidiMsg& mm) const {
 
 bool check(const MidiMsg& mm, const MidiMsgFilter& mmf) {
 	return mmf.check(mm);
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+void to_json(nl::json& j, const MidiMsgFilter& mmf){
+	j = nl::json{{"template", mmf.m_template},
+			{"mask", mmf.m_mask},
+			{"alm", mmf.m_allow_longer_msg}};
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+void from_json(nl::json& j, MidiMsgFilter& mmf) {
+	j.at("template").get_to(mmf.m_template);
+	j.at("mask").get_to(mmf.m_mask);
+	j.at("alm").get_to(mmf.m_allow_longer_msg);
+	mmf.m_lambda_filter = nullptr;
 }
 
 }} // giada::m::

@@ -31,13 +31,15 @@
 #include <vector>
 #include <string>
 
+#include "deps/json/single_include/nlohmann/json.hpp"
+namespace nl = nlohmann;
+
 namespace giada {
 namespace m {
 
 class MidiMsg
 {
 	public:
-	MidiMsg() = delete;	
 	MidiMsg(const std::string& sender, 
 				const std::vector<unsigned char>& message);
 
@@ -45,7 +47,11 @@ class MidiMsg
 	const std::vector<unsigned char>*	getMessage() const;
 	int					getMessageLength() const;
 	std::string				getMessageSender() const;
+
 	void					dump() const;
+
+	friend void		to_json(nl::json& j, const MidiMsg& mm);
+	friend void		from_json(nl::json& j, MidiMsg& mm);
 
 	private:
 	std::string				m_sender;
