@@ -113,8 +113,8 @@ class MidiMsgFilter
 const MidiMsgFilter MMF_ANY          = MidiMsgFilter();
 
 const MidiMsgFilter MMF_NOTEONOFF    = MidiMsgFilter({0xE0,0,0}, {0x80,0,0});
-const MidiMsgFilter MMF_NOTEON       = MidiMsgFilter({0xF0,0,0}, {0x80,0,0});
-const MidiMsgFilter MMF_NOTEOFF      = MidiMsgFilter({0xF0,0,0}, {0x90,0,0});
+const MidiMsgFilter MMF_NOTEON       = MidiMsgFilter({0xF0,0,0}, {0x90,0,0});
+const MidiMsgFilter MMF_NOTEOFF      = MidiMsgFilter({0xF0,0,0}, {0x80,0,0});
 const MidiMsgFilter MMF_CC           = MidiMsgFilter({0xF0,0,0}, {0xB0,0,0});
 const MidiMsgFilter MMF_NOTEONOFFCC  = MidiMsgFilter({0xC0,0,0}, {0x80,0,0},
 	false, ([](MidiMsg mm){return ((mm.getByte(0) & 0xF0) != 0xA0);}));
