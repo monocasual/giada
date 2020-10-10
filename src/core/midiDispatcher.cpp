@@ -195,8 +195,8 @@ void unregisterExRule(const std::string& r){
 
 void dispatch(const MidiMsg& mm){
 
-u::log::print("[MDi::dispatch] Dispatching message from %s...\n",
-					mm.getMessageSender().c_str());
+	u::log::print("[MDi::dispatch] Dispatching message: ");
+	mm.dump();
 
 	// Consult dispatchTableEx first
 	// If a match is found, send message and ignore all the rest

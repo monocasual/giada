@@ -26,8 +26,10 @@
 
 #include "midiMsg.h"
 #include "midiMsgFilter.h"
+#include "utils/log.h"
 #include <string>
 #include <vector>
+
 
 namespace giada {
 namespace m {
@@ -38,7 +40,9 @@ MidiMsg::MidiMsg(const std::string& sender,
 				const std::vector<unsigned char>& message) { 
 	m_sender = sender;
 	m_message = message;
+
 	fixVelocityZero();
+	fixNoteOffValue();
 }
 
 
@@ -68,14 +72,31 @@ std::string MidiMsg::getMessageSender() const {
 	return m_sender;
 }
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+void MidiMsg::dump() const {
+	
+	u::log::print("[MM:dump] Data: ");
+	for (auto b : m_message) {
+		u::log::print("0x%X ", b);
+	}
+	u::log::print("; Sent by: %s\n", m_sender.c_str());
+
+}
+
 //-------------------------- PRIVATE MEMBER FUNCTIONS --------------------------
 
 void MidiMsg::fixVelocityZero() {
-	if (MMF_NOTEON.check(*this)) {
-		if (getByte(2) == 0) {
-			m_message[0] |= 0b00010000;
-		}
+	if (MMF_NOTEON.check(*this) && (getByte(2) == 0)) {
+		m_message[0] &= 0b11101111;
 	}
 }
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+void MidiMsg::fixNoteOffValue() {
+	if (MMF_NOTEOFF.check(*this)) {
+		m_message[2] = 0;
+	}
+}
 }} // giada::m::

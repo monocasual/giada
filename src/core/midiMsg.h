@@ -45,12 +45,18 @@ class MidiMsg
 	const std::vector<unsigned char>*	getMessage() const;
 	int					getMessageLength() const;
 	std::string				getMessageSender() const;
-
+	void					dump() const;
 
 	private:
 	std::string				m_sender;
 	std::vector<unsigned char>		m_message;
+	
+	// Convert NoteOn with zero velocity into NoteOff
 	void 					fixVelocityZero();
+
+	// Set NoteOff value to zero, due to incompatible handling between 
+	// ALSA and JACK (and possibly others).
+	void 					fixNoteOffValue();
 
 };
 
