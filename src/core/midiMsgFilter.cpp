@@ -37,10 +37,8 @@ MidiMsgFilter::MidiMsgFilter(const MidiMsg& mm, bool alm) {
 	
 	auto l = mm.getMessageLength();
 	
-	for (auto i = 0; i < l; i++) {
-		m_template.push_back(mm.getByte(i));
-		m_mask.push_back(0xFF);
-	}
+	m_template = *mm.getMessage();
+	m_mask.resize(l, 0xFF);
 
 	m_allow_longer_msg = alm;
 	m_lambda_filter = nullptr;
@@ -59,11 +57,7 @@ MidiMsgFilter::MidiMsgFilter() {
 MidiMsgFilter::MidiMsgFilter(const int& fl, bool alm,
 					std::function<bool(MidiMsg)> ef) {
 
-	for (auto i = 0; i < fl; i++) {
-		m_template.push_back(0);
-		m_mask.push_back(0);
-	}
-
+	setFilterLength(fl);
 	m_allow_longer_msg = alm;
 	m_lambda_filter = (ef ? ef : nullptr);
 }
