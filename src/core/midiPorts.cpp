@@ -28,6 +28,7 @@
 #include <RtMidi.h>
 #include "conf.h"
 #include "utils/log.h"
+#include "utils/time.h"
 #include "utils/vector.h"
 #include "midiDispatcher.h"
 #include "midiMapConf.h"
@@ -68,8 +69,7 @@ static void callback_(double t, std::vector<unsigned char>* msg, void* data)
 	// Creating a nice MidiMsg instance //
 	MidiMsg mm = MidiMsg(port, *msg);
 
-	// Passing it to a new midiDispatcher - TODO //
-	// something like:
+	// Passing it to a new midiDispatcher //
 	midiDispatcher::dispatch(mm);
 }
 
@@ -96,8 +96,8 @@ void sendMidiLightningInitMsgs_()
 void init()
 {
 	setApi(conf::conf.midiSystem);
-	midiOut_ = new RtMidiOut((RtMidi::Api) api_, "Giada dummy port");
-	midiIn_  = new RtMidiIn((RtMidi::Api) api_, "Giada dummy port");
+	midiOut_ = new RtMidiOut((RtMidi::Api) api_, "Giada dummy out port");
+	midiIn_  = new RtMidiIn((RtMidi::Api) api_, "Giada dummy in port");
 
 	u::log::print("[MP::init] Available input devices:\n");
 	for (std::string d : getInDevices(false)) {
@@ -198,7 +198,12 @@ std::vector<std::string> getInDevices(bool full) {
 int getOutDeviceIndex(const std::string& port, bool full) {
 
 	std::vector<std::string> devices = getOutDevices(full);
-	return u::vector::indexOf(devices, port);
+	int output = u::vector::indexOf(devices, port);
+
+	// Return -1 if not found
+	if (output >= devices.size()) 
+		return -1;
+	return output;
 	
 }
 
@@ -207,7 +212,12 @@ int getOutDeviceIndex(const std::string& port, bool full) {
 int getInDeviceIndex(const std::string& port, bool full) {
 
 	std::vector<std::string> devices = getInDevices(full);
-	return u::vector::indexOf(devices, port);
+	int output = u::vector::indexOf(devices, port);
+
+	// Return -1 if not found
+	if (output >= devices.size()) 
+		return -1;
+	return output;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -237,22 +247,24 @@ int openOutPort(const std::string& port) {
 
 	// Let's check if this port is in the map, possibly already open //
 	if (outPorts_.count(port) > 0) {
-
 		// This port already exists in the map
-		if (outPorts_[port]->isPortOpen()) {
+// JAck always return 0 in RtMidi before 4.0.0
+// Can be uncommented after RtMidi upgrade - TODO
+		//if (outPorts_[port]->isPortOpen()) {
 		
 			// And this port is indeed open, nothing to do.
 			return 2;
-		}
+		//}
 		// However if it is in the map but not open, something is wrong
-		// Oh well, we'll se what happens next.
 	}
 
 	// No entry in map, so we shall create one
 	else {
 		try {
 			outPorts_[port] = new RtMidiOut((RtMidi::Api) api_,
-						"Giada Output to " + port);
+						"Giada Output");
+					// TODO: More verbose port name
+					// Remember Jack's limit of 63 chars
 		}
 		catch (const RtMidiError& error) {
 			u::log::print("[MP::openOutPort] RtMidiError: %s\n",
@@ -270,8 +282,9 @@ int openOutPort(const std::string& port) {
 		return 1;
 	}
 	catch (const RtMidiError& error) {
-		u::log::print("[MP::openOutPort] unable to open port %s: %s\n",
-				port.c_str(), error.getMessage().c_str());
+		u::log::print("[MP::openOutPort] unable to open output port "
+							"#%d (%s): %s\n",
+			index, port.c_str(), error.getMessage().c_str());
 		return -3;
 	}
 
@@ -305,7 +318,9 @@ int openInPort(const std::string& port) {
 	else {
 		try {
 			inPorts_[port] = new RtMidiIn((RtMidi::Api) api_,
-						"Giada Input from " + port);
+						"Giada Input");
+					//TODO: More verbose port name
+					// Remember Jack's limit of 63 chars
 		}
 		catch (const RtMidiError& error) {
 			u::log::print("[MP::openInPort] RtMidiError: %s\n",
@@ -330,8 +345,9 @@ int openInPort(const std::string& port) {
 		return 1;
 	}
 	catch (const RtMidiError& error) {
-		u::log::print("[MP::openInPort] unable to open port %s: %s\n",
-				port.c_str(), error.getMessage().c_str());
+		u::log::print("[MP::openInPort] unable to open input port "
+							"#%d (%s): %s\n",
+			index, port.c_str(), error.getMessage().c_str());
 		return -3;
 	}
 
@@ -428,14 +444,15 @@ std::vector<std::string> getInPorts(bool addr) {
 
 void midiReceive(const MidiMsg& mm, const std::string& recipient)
 {
+	u::log::print("[MP::midiReceive] Sending message to \"%s\"... ",
+						recipient.c_str());
+
 	// Every time a message is sent, a port status is checked first.
 	int status = openOutPort(recipient);
 
 	if (status >= 0) {
 		outPorts_[recipient]->sendMessage(mm.getMessage());
 
-		u::log::print("[MP::midiReceive] Message sent to \"%s\". ",
-							recipient.c_str());
 		u::log::print("Data: %X",mm.getMessage()->at(0));
 		int bytes = mm.getMessage()->size();
 		for (int i=1; i< bytes; i++) {
