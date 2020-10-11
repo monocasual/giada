@@ -202,15 +202,17 @@ void MidiMsgFilter::dump(int level) const{
 	u::log::print("\tLonger Messages: %s\n",
 			m_allow_longer_msg ? "Allowed" : "Disallowed");
 
+	int nextLevel;
 	for (auto& mbo : m_bin_ops) {
+		nextLevel = (mbo.mmf->m_bin_ops.empty() ? level : level + 1);
 		switch (mbo.bo) {
 			case MMF_AND:
 				u::log::print("%sAND\n", tabs.c_str());
-				mbo.mmf->dump(level+1);
+				mbo.mmf->dump(nextLevel);
 				break;
 			case MMF_OR:
 				u::log::print("%sOR\n", tabs.c_str());
-				mbo.mmf->dump(level+1);
+				mbo.mmf->dump(nextLevel);
 				break;
 			case MMF_NOT:
 				u::log::print("%sNOT\n", tabs.c_str());
@@ -279,6 +281,17 @@ bool check(const MidiMsg& mm, const MidiMsgFilter& mmf) {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+MidiMsgFilter MMF_Channel(const int& ch) {
+
+	if ((ch > 16) || (ch < 1))
+		return MidiMsgFilter();
+
+	unsigned char och = ch - 1;
+	return MidiMsgFilter({0x0F}, {och}, true);
+}
+
+//--------------------- JSON SERIALIZERS AND DESERIALIZERS ---------------------
+
 void to_json(nl::json& j, const MidiMsgFilter& mmf){
 	j = nl::json{{"template", mmf.m_template},
 			{"mask", mmf.m_mask},
@@ -295,10 +308,14 @@ void from_json(nl::json& j, MidiMsgFilter& mmf) {
 	j.at("binops").get_to(mmf.m_bin_ops);
 }
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 void mbo_to_json(nl::json& j, const MidiMsgFilter::mmfBinOps& mbo) {
 	j["bo"] = mbo.bo;
 	j["mmf"] = *mbo.mmf;
 }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 void mbo_from_json(const nl::json& j, MidiMsgFilter::mmfBinOps& mbo) {
 	j.at("bo").get_to(mbo.bo);

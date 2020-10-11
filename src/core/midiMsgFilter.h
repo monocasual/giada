@@ -50,6 +50,8 @@ enum mmfBinOper {MMF_NOT,
 		MMF_AND,
 		MMF_OR};
 
+//    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
+
 class MidiMsgFilter
 {
 	public:
@@ -80,6 +82,8 @@ class MidiMsgFilter
 		return MidiMsgFilter(mmf);
 	}
 
+//    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
+
 	// Filter manipulation methods
 	// Note the byte indices are zero-based
 	// 'n' is byte index
@@ -99,11 +103,16 @@ class MidiMsgFilter
 	// given as a new mask byte (zeros mean "ignore")
 	// Note that you cannot use this method to "unignore" any bits.
 	void	ignoreByte(unsigned n, unsigned char mask = 0b00000000);
+
+	// Expand or truncate filter
+	// Filters are always expanded with transparent bytes
 	void	setFilterLength(const int& fl);
 
 	// Dumps filter structure for diagnostic purposes
 	// Don't touch that level parameter.
 	void		dump(int level = 1) const;
+
+//    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
 
 	// Check a message against this filter
 	bool		check(const MidiMsg& mm) const;
@@ -111,11 +120,23 @@ class MidiMsgFilter
 	// Check a message against a given filter
 	friend bool	check(const MidiMsg& mm, const MidiMsgFilter& mmf);
 
+//    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
+
 	// Json serialization methods
 	friend void		to_json(nl::json& j, const MidiMsgFilter& mmf);
 	friend void		from_json(nl::json& j, MidiMsgFilter& mmf);
 
+//    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
+
+	// Returns a MMF for a particular NoteOnOff/CC channel
+	// Channels span from 1 to 16
+	// Returns transparent filter if number outside of that range
+	friend MidiMsgFilter	MMF_Channel(const int& ch);
+
+//    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
+
 	// inter-MMF binary operation
+	// Defined by operator and another MMF that takes part in operation
 	struct mmfBinOps {
 		mmfBinOper bo;
 		MidiMsgFilter* mmf;
@@ -144,6 +165,8 @@ class MidiMsgFilter
 	bool operator<<(const MidiMsg& mm) const {
 		return check(mm);
 	}
+
+//    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
 
 	private:
 
@@ -175,6 +198,11 @@ const MidiMsgFilter MMF_NOTEOFF		= MidiMsgFilter({0xF0,0,0}, {0x80,0,0});
 const MidiMsgFilter MMF_CC		= MidiMsgFilter({0xF0,0,0}, {0xB0,0,0});
 const MidiMsgFilter MMF_NOTEONOFFCC	= MMF_NOTEONOFF | MMF_CC;
 
+// Return binary value of NoteOnOff/CC
+// In case of Notes, "on" means true
+// In case of CC, value >=64 is true
+const MidiMsgFilter MMF_BOOL		= MMF_NOTEON | 
+				MidiMsgFilter({0xF0,0,0x40}, {0XB0,0,0x40});
 }} //------------------------------- giada::m:: -------------------------------
 
 
@@ -193,6 +221,8 @@ struct adl_serializer<giada::m::MidiMsgFilter> {
 	}
 
 };
+
+//    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
 
 template <>
 struct adl_serializer<giada::m::MidiMsgFilter::mmfBinOps> {
