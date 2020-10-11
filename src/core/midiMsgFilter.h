@@ -110,7 +110,7 @@ class MidiMsgFilter
 
 	// Dumps filter structure for diagnostic purposes
 	// Don't touch that level parameter.
-	void		dump(int level = 1) const;
+	void		dump(int level = 0) const;
 
 //    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
 
@@ -147,24 +147,10 @@ class MidiMsgFilter
 	// | - logical sum of filters (or)
 	// ! - inverts filter (not)
 	// << - checks MidiMsg against this filter :)
-	MidiMsgFilter operator&(const MidiMsgFilter& mmf) const {
-		MidiMsgFilter output = *this;
-		output.m_bin_ops.push_back({MMF_AND, new MidiMsgFilter(mmf)});
-		return output;
-	}
-	MidiMsgFilter operator|(const MidiMsgFilter& mmf) const {
-		MidiMsgFilter output = *this;
-		output.m_bin_ops.push_back({MMF_OR, new MidiMsgFilter(mmf)});
-		return output;
-	}
-	MidiMsgFilter operator!() const {
-		MidiMsgFilter output = *this;
-		output.m_bin_ops.push_back({MMF_NOT, nullptr});
-		return output;
-	}
-	bool operator<<(const MidiMsg& mm) const {
-		return check(mm);
-	}
+	MidiMsgFilter operator&(const MidiMsgFilter& mmf) const;
+	MidiMsgFilter operator|(const MidiMsgFilter& mmf) const;
+	MidiMsgFilter operator!() const;
+	bool operator<<(const MidiMsg& mm) const;
 
 //    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
 

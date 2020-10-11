@@ -184,7 +184,10 @@ void MidiMsgFilter::setFilterLength(const int& fl) {
 
 void MidiMsgFilter::dump(int level) const{
 
-	if (level <=1 ) u::log::print("[MMF::dump]\n");
+	if (level < 1) {
+		level = 1;
+		u::log::print("[MMF::dump]\n");
+	}
 	std::string tabs; 
 	for (int i=0; i<level; i++) tabs+="\t";
 
@@ -320,6 +323,36 @@ void mbo_to_json(nl::json& j, const MidiMsgFilter::mmfBinOps& mbo) {
 void mbo_from_json(const nl::json& j, MidiMsgFilter::mmfBinOps& mbo) {
 	j.at("bo").get_to(mbo.bo);
 	mbo.mmf = new MidiMsgFilter(j["mmf"]);
+}
+
+//--------------------------------- OPERATORS ----------------------------------
+
+MidiMsgFilter MidiMsgFilter::operator&(const MidiMsgFilter& mmf) const {
+	MidiMsgFilter output = *this;
+	output.m_bin_ops.push_back({MMF_AND, new MidiMsgFilter(mmf)});
+	return output;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+MidiMsgFilter MidiMsgFilter::operator|(const MidiMsgFilter& mmf) const {
+	MidiMsgFilter output = *this;
+	output.m_bin_ops.push_back({MMF_OR, new MidiMsgFilter(mmf)});
+	return output;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+MidiMsgFilter MidiMsgFilter::operator!() const {
+	MidiMsgFilter output = *this;
+	output.m_bin_ops.push_back({MMF_NOT, nullptr});
+	return output;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+bool MidiMsgFilter::operator<<(const MidiMsg& mm) const {
+	return check(mm);
 }
 
 }} // giada::m::
