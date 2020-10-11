@@ -112,4 +112,21 @@ void MidiMsg::fixNoteOffValue() {
 		m_message[2] = 0;
 	}
 }
+
+//--------------------------------- OPERATORS ----------------------------------
+
+bool MidiMsg::operator<(const MidiMsg& mm) const{
+	int tml = this->getMessageLength();
+	if (tml > mm.getMessageLength())
+		return false;
+
+	if (tml < mm.getMessageLength())
+		return true;
+
+	for (int i = 0; i < tml; i++) {
+		if (this->getByte(i) < mm.getByte(i))
+			return true;
+	}
+	return false;
+}
 }} // giada::m::

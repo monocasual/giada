@@ -53,6 +53,9 @@ class MidiMsg
 	friend void		to_json(nl::json& j, const MidiMsg& mm);
 	friend void		from_json(nl::json& j, MidiMsg& mm);
 
+	// An operator necessary for using MidiMsg as map key
+	bool operator<(const MidiMsg& mm) const;
+
 	private:
 	std::string				m_sender;
 	std::vector<unsigned char>		m_message;
