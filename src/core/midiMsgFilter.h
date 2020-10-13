@@ -136,6 +136,15 @@ class MidiMsgFilter
 
 //    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
 
+
+	// Returns a MMF for a particular NoteOnOff note / CC parameter
+	// This value spans from 0 to 127.
+	// Returns transparent filter if number outside of that range
+	friend MidiMsgFilter		MMF_Note(const int& n);
+	friend inline MidiMsgFilter	MMF_Param(const int& p);
+
+//    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
+
 	// inter-MMF binary operation
 	// Defined by operator and another MMF that takes part in operation
 	struct mmfBinOps {
@@ -158,7 +167,7 @@ class MidiMsgFilter
 	bool operator<(const MidiMsgFilter& mmf) const;
 	bool operator==(const MidiMsgFilter& mmf) const;
 
-//    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
+//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
 	private:
 
@@ -175,6 +184,10 @@ class MidiMsgFilter
 
 	std::vector<mmfBinOps>		m_bin_ops;
 	
+	// Try applying logical "and" by merging another filter into this one
+	// This is expected to be a common scenario while constructing filters
+	// from non-overlapping parts, like NOTEONOFF+Channel
+	bool 				_tryMerge(const MidiMsgFilter& mmf);
 };
 
 void to_json(nl::json& j, const MidiMsgFilter& mmf);

@@ -298,6 +298,20 @@ MidiMsgFilter MMF_Channel(const int& ch) {
 	return MidiMsgFilter({0x0F}, {och}, true);
 }
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+MidiMsgFilter MMF_Note(const int& n) {
+
+	if ((n > 127) || (n < 0))
+		return MidiMsgFilter();
+
+	return MidiMsgFilter({0x00, 0x7F}, {0x00, (unsigned char)n}, true);
+}
+
+
+inline MidiMsgFilter MMF_Param(const int& p) {
+	return MMF_Note(p);
+}
 //--------------------- JSON SERIALIZERS AND DESERIALIZERS ---------------------
 
 void to_json(nl::json& j, const MidiMsgFilter& mmf){
@@ -336,8 +350,12 @@ void mbo_from_json(const nl::json& j, MidiMsgFilter::mmfBinOps& mbo) {
 
 MidiMsgFilter MidiMsgFilter::operator&(const MidiMsgFilter& mmf) const {
 	MidiMsgFilter output = *this;
-	output.m_bin_ops.push_back({MMF_AND, new MidiMsgFilter(mmf)});
-	return output;
+	if (output._tryMerge(mmf))
+		return output;
+	else {
+		output.m_bin_ops.push_back({MMF_AND, new MidiMsgFilter(mmf)});
+		return output;
+	}
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -412,6 +430,53 @@ bool MidiMsgFilter::operator==(const MidiMsgFilter& mmf) const {
 	}
 
 	return true;
+}
+
+
+//-------------------------- PRIVATE MEMBER FUNCTIONS --------------------------
+
+bool MidiMsgFilter::_tryMerge(const MidiMsgFilter& mmf) {
+	
+	// Two filters cannot be merged if
+	// either of them has already partnered through mmfBinOps
+	if (m_bin_ops.size() || mmf.m_bin_ops.size())
+		return false;
+
+	// or have incompatible sizes 
+	// and the shorter one doesn't allow for longer messages
+	if ((m_mask.size() > mmf.m_mask.size()) && !(mmf.m_allow_longer_msg))
+		return false;
+	if ((m_mask.size() < mmf.m_mask.size()) && !(m_allow_longer_msg))
+		return false;
+
+	// Let's just copy these two and get over with it..
+	MidiMsgFilter o = *this;
+	MidiMsgFilter i = mmf;
+
+	// Equalize their lengths..
+	i.setFilterLength(std::max(i.m_mask.size(), o.m_mask.size()));
+	o.setFilterLength(std::max(i.m_mask.size(), o.m_mask.size()));
+
+	// If they have conflicting rules, the result is a
+	// filter that passes no messages at all (please don't do that)
+	for (auto j = 0; j < i.m_mask.size(); j++) {
+		if ((i.m_mask[j] & o.m_mask[j]) &
+					(i.m_template[j] ^ o.m_template[j])){
+			*this = !MMF_ANY;
+			return true;
+		}
+	}
+
+	// Otherwise, this is actually going to be successful
+	for (auto j = 0; j < i.m_mask.size(); j++) {
+		o.m_template[j] &= o.m_mask[j];
+		o.m_template[j] |= (i.m_template[j] & i.m_mask[j]);
+		o.m_mask[j] |= i.m_mask[j];
+	}
+
+	*this = o;
+	return true;
+
 }
 
 }} // giada::m::
