@@ -522,7 +522,7 @@ if(WITH_VST2 OR WITH_VST3)
 	
 	list(APPEND INCLUDE_DIRS
 		${CMAKE_SOURCE_DIR}/src/deps/juce/modules 
-		${CMAKE_SOURCE_DIR}/src/deps/vst)
+		${CMAKE_SOURCE_DIR}/src/deps/vst3sdk)
 	
 	if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 		find_package(Freetype REQUIRED)

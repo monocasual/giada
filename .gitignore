@@ -11,9 +11,6 @@
 *.tar.gz
 *.tar.gz.asc
 
-# --- deps
-/src/deps/vst
-
 # --- test files
 /giada_tests
 /giada_tests.log
