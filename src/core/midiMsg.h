@@ -61,11 +61,11 @@ class MidiMsg
 	std::vector<unsigned char>		m_message;
 	
 	// Convert NoteOn with zero velocity into NoteOff
-	void 					fixVelocityZero();
+	void 					_fixVelocityZero();
 
 	// Set NoteOff value to zero, due to incompatible handling between 
 	// ALSA and JACK (and possibly others).
-	void 					fixNoteOffValue();
+	void 					_fixNoteOffValue();
 
 };
 

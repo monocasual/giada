@@ -41,8 +41,8 @@ MidiMsg::MidiMsg(const std::string& sender,
 	m_sender = sender;
 	m_message = message;
 
-	fixVelocityZero();
-	fixNoteOffValue();
+	_fixVelocityZero();
+	_fixNoteOffValue();
 }
 
 
@@ -99,7 +99,7 @@ void from_json(nl::json& j, MidiMsg& mm) {
 
 //-------------------------- PRIVATE MEMBER FUNCTIONS --------------------------
 
-void MidiMsg::fixVelocityZero() {
+void MidiMsg::_fixVelocityZero() {
 	if (MMF_NOTEON.check(*this) && (getByte(2) == 0)) {
 		m_message[0] &= 0b11101111;
 	}
@@ -107,7 +107,7 @@ void MidiMsg::fixVelocityZero() {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-void MidiMsg::fixNoteOffValue() {
+void MidiMsg::_fixNoteOffValue() {
 	if (MMF_NOTEOFF.check(*this)) {
 		m_message[2] = 0;
 	}
