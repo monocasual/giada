@@ -77,8 +77,8 @@ constexpr auto CONF_FILENAME = "giada.conf";
 
 
 /* -- GUI ------------------------------------------------------------------- */
-constexpr float G_GUI_REFRESH_RATE   = 1 / 30.0; // 30 fps
-constexpr float G_GUI_PLUGIN_RATE    = 1 / 30.0; // 30 fps
+constexpr float G_GUI_REFRESH_RATE   = 1 / 30.0f; // 30 fps
+constexpr float G_GUI_PLUGIN_RATE    = 1 / 30.0f; // 30 fps
 constexpr int   G_GUI_FONT_SIZE_BASE = 12;
 constexpr int   G_GUI_INNER_MARGIN   = 4;
 constexpr int   G_GUI_OUTER_MARGIN   = 8;
@@ -276,7 +276,7 @@ constexpr int G_MIDI_OUT_L_SOLO     = 5;
 Channel voices messages - controller (0xB0) is a special subset of this family:
 it drives knobs, volume, faders and such. */
 
-constexpr uint32_t G_MIDI_CONTROLLER    = 0xB0 << 24;
+constexpr uint32_t G_MIDI_CONTROLLER    = static_cast<uint32_t>(0xB0 << 24);
 constexpr uint32_t G_MIDI_ALL_NOTES_OFF = (G_MIDI_CONTROLLER) | (0x7B << 16);
 
 /* system common / real-time messages. Single bytes */

@@ -71,7 +71,7 @@ MidiEvent::MidiEvent(int byte1, int byte2, int byte3)
 MidiEvent::MidiEvent(float v) 
 : MidiEvent(ENVELOPE, 0, 0)
 {
-	m_velocity = v * FLOAT_FACTOR;
+	m_velocity = static_cast<int>(v * FLOAT_FACTOR);
 }
 
 

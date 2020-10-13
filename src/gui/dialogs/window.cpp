@@ -63,8 +63,8 @@ gdWindow::~gdWindow()
 {
 	/* delete all subwindows in order to empty the stack */
 
-	for (unsigned i=0; i<subWindows.size(); i++)
-		delete subWindows.at(i);
+	for (unsigned j = 0; j < subWindows.size(); j++)
+		delete subWindows.at(j);
 	subWindows.clear();
 }
 
@@ -87,15 +87,6 @@ void gdWindow::cb_closeChild(Fl_Widget* w, void* /*p*/)
 
 void gdWindow::addSubWindow(gdWindow* w)
 {
-	/** TODO - useless: delete ---------------------------------------- */
-	for (unsigned i=0; i<subWindows.size(); i++)
-		if (w->getId() == subWindows.at(i)->getId()) {
-			//u::log::print("[gdWindow] window %p (id=%d) exists, not added (and deleted)\n", (void*)w, w->getId());
-			delete w;
-			return;
-		}
-	/** --------------------------------------------------------------- */
-
 	w->setParent(this);
 	w->callback(cb_closeChild); // you can pass params: w->callback(cb_closeChild, (void*)params)
 	subWindows.push_back(w);
@@ -108,30 +99,26 @@ void gdWindow::addSubWindow(gdWindow* w)
 
 void gdWindow::delSubWindow(gdWindow* w)
 {
-	for (unsigned i=0; i<subWindows.size(); i++)
-		if (w->getId() == subWindows.at(i)->getId()) {
-			delete subWindows.at(i);
-			subWindows.erase(subWindows.begin() + i);
-			//debug();
+	for (unsigned j = 0; j < subWindows.size(); j++)
+		if (w->getId() == subWindows.at(j)->getId()) {
+			delete subWindows.at(j);
+			subWindows.erase(subWindows.begin() + j);
 			return;
 		}
-	//debug();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdWindow::delSubWindow(int id)
+void gdWindow::delSubWindow(int wid)
 {
-	for (unsigned i=0; i<subWindows.size(); i++)
-		if (subWindows.at(i)->getId() == id) {
-			delete subWindows.at(i);
-			subWindows.erase(subWindows.begin() + i);
-			//debug();
+	for (unsigned j = 0; j < subWindows.size(); j++)
+		if (subWindows.at(j)->getId() == wid) {
+			delete subWindows.at(j);
+			subWindows.erase(subWindows.begin() + j);
 			return;
 		}
-	//debug();
 }
 
 
@@ -144,9 +131,9 @@ int gdWindow::getId() const
 }
 
 
-void gdWindow::setId(int id)
+void gdWindow::setId(int wid)
 {
-	this->id = id;
+	id = wid;
 }
 
 
@@ -155,10 +142,12 @@ void gdWindow::setId(int id)
 
 void gdWindow::debug() const
 {
+	/* TODO - use G_DEBUG
 	u::log::print("---- window stack (id=%d): ----\n", getId());
 	for (unsigned i=0; i<subWindows.size(); i++)
 		u::log::print("[gdWindow] %p (id=%d)\n", (void*)subWindows.at(i), subWindows.at(i)->getId());
 	u::log::print("----\n");
+	*/
 }
 
 
@@ -180,10 +169,10 @@ void gdWindow::setParent(gdWindow* w)
 /* -------------------------------------------------------------------------- */
 
 
-bool gdWindow::hasWindow(int id) const
+bool gdWindow::hasWindow(int wid) const
 {
-	for (unsigned i=0; i<subWindows.size(); i++)
-		if (id == subWindows.at(i)->getId())
+	for (unsigned j = 0; j < subWindows.size(); j++)
+		if (wid == subWindows.at(j)->getId())
 			return true;
 	return false;
 }
@@ -192,11 +181,11 @@ bool gdWindow::hasWindow(int id) const
 /* -------------------------------------------------------------------------- */
 
 
-gdWindow* gdWindow::getChild(int id)
+gdWindow* gdWindow::getChild(int wid)
 {
-	for (unsigned i=0; i<subWindows.size(); i++)
-		if (id == subWindows.at(i)->getId())
-			return subWindows.at(i);
+	for (unsigned j = 0; j < subWindows.size(); j++)
+		if (wid == subWindows.at(j)->getId())
+			return subWindows.at(j);
 	return nullptr;
 }
 }} // giada::v::

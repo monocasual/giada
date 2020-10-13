@@ -162,7 +162,7 @@ void readChannels_(const nl::json& j)
 		c.key               = jchannel.value(PATCH_KEY_CHANNEL_KEY, 0);
 		c.mute              = jchannel.value(PATCH_KEY_CHANNEL_MUTE, 0);
 		c.solo              = jchannel.value(PATCH_KEY_CHANNEL_SOLO, 0);
-		c.pan               = jchannel.value(PATCH_KEY_CHANNEL_PAN, 0.5);
+		c.pan               = jchannel.value(PATCH_KEY_CHANNEL_PAN, 0.5f);
 		c.hasActions        = jchannel.value(PATCH_KEY_CHANNEL_HAS_ACTIONS, false);
 		c.midiIn            = jchannel.value(PATCH_KEY_CHANNEL_MIDI_IN, 0);
 		c.midiInKeyPress    = jchannel.value(PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS, 0);
@@ -222,12 +222,12 @@ void writePlugins_(nl::json& j)
 		jplugin[PATCH_KEY_PLUGIN_BYPASS] = p.bypass;
 
 		jplugin[PATCH_KEY_PLUGIN_PARAMS] = nl::json::array();
-		for (float p : p.params)
-			jplugin[PATCH_KEY_PLUGIN_PARAMS].push_back(p);
+		for (float param : p.params)
+			jplugin[PATCH_KEY_PLUGIN_PARAMS].push_back(param);
 
 		jplugin[PATCH_KEY_PLUGIN_MIDI_IN_PARAMS] = nl::json::array();
-		for (uint32_t p : p.midiInParams)
-			jplugin[PATCH_KEY_PLUGIN_MIDI_IN_PARAMS].push_back(p);
+		for (uint32_t param : p.midiInParams)
+			jplugin[PATCH_KEY_PLUGIN_MIDI_IN_PARAMS].push_back(param);
 		
 		j[PATCH_KEY_PLUGINS].push_back(jplugin);
 	}

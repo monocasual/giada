@@ -143,12 +143,12 @@ void Wave::setEdited(bool e)  { m_edited = e; }
 /* -------------------------------------------------------------------------- */
 
 
-void Wave::setPath(const std::string& p, int id) 
+void Wave::setPath(const std::string& p, int wid) 
 { 
-	if (id == -1)
+	if (wid == -1)
 		m_path = p; 
 	else 
-		m_path = u::fs::stripExt(p) + "-" + std::to_string(id) + u::fs::getExt(p);
+		m_path = u::fs::stripExt(p) + "-" + std::to_string(wid) + u::fs::getExt(p);
 }
 
 

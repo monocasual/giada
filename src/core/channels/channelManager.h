@@ -46,9 +46,6 @@ struct Channel;
 }
 class  Channel;
 struct ChannelState;
-class  Channel;
-class  SampleChannel;
-class  MidiChannel;
 namespace channelManager
 {
 /* init

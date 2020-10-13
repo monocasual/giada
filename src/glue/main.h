@@ -35,7 +35,7 @@
 namespace giada {
 namespace m 
 {
-struct Channel;
+class Channel;
 namespace model
 { 
 struct Clock;

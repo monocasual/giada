@@ -45,7 +45,6 @@ namespace m
 {
 struct Action;
 class Channel;
-class Channel;
 class AudioBuffer;
 
 namespace mixer

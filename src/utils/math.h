@@ -29,6 +29,9 @@
 #define G_UTILS_MATH_H
 
 
+#include <type_traits>
+
+
 namespace giada {
 namespace u     {
 namespace math 
@@ -47,6 +50,9 @@ Maps 'x' in range [a, b] to a new range [w, z]. Source:
 template <typename TI, typename TO>
 TO map(TI x, TI a, TI b, TO w, TO z)
 {
+	static_assert(std::is_arithmetic_v<TI>);
+	static_assert(std::is_arithmetic_v<TO>);
+	
 	return (((x - a) / (double) (b - a)) * (z - w)) + w;
 }
 
@@ -57,7 +63,10 @@ Maps 'x' in range [0, b) to a new range [0, z]. */
 template <typename TI, typename TO>
 TO map(TI x, TI b, TO z)
 {
-	return (x / (double) b) * z;
+	static_assert(std::is_arithmetic_v<TI>);
+	static_assert(std::is_arithmetic_v<TO>);
+	
+	return static_cast<TO>((x / (double) b) * z);
 }
 }}}  // giada::u::math::
 

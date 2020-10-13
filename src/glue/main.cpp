@@ -186,7 +186,7 @@ void setBpm(const char* v1, const char* v2)
 	the nice looking (but fake) one to the GUI. 
 	On Linux, let Jack handle the bpm change if it's on. */
 
-	float       f = std::atof(v1) + (std::atof(v2)/10);
+	float       f = static_cast<float>(std::atof(v1) + (std::atof(v2)/10));
 	std::string s = std::string(v1) + "." + std::string(v2);
 
 #if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)

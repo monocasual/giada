@@ -82,7 +82,7 @@ int countAvailablePlugins();
 /* countUnknownPlugins
 Returns how many plug-ins are in a unknown/not-found state. */
 
-unsigned countUnknownPlugins();
+int countUnknownPlugins();
 
 std::unique_ptr<Plugin> makePlugin(const std::string& pid, ID id=0);
 std::unique_ptr<Plugin> makePlugin(int index);

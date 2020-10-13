@@ -239,7 +239,7 @@ int stopStream()
 		rtSystem->stopStream();
 		return 1;
 	}
-	catch (RtAudioError &e) {
+	catch (RtAudioError& /*e*/) {
 		u::log::print("[KA] Stop stream error\n");
 		return 0;
 	}
@@ -254,7 +254,7 @@ std::string getDeviceName(unsigned dev)
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).name;
 	}
-	catch (RtAudioError &e) {
+	catch (RtAudioError& /*e*/) {
 		u::log::print("[KA] invalid device ID = %d\n", dev);
 		return "";
 	}
@@ -286,7 +286,7 @@ unsigned getMaxInChans(int dev)
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).inputChannels;
 	}
-	catch (RtAudioError &e) {
+	catch (RtAudioError& /*e*/) {
 		u::log::print("[KA] Unable to get input channels\n");
 		return 0;
 	}
@@ -301,7 +301,7 @@ unsigned getMaxOutChans(unsigned dev)
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).outputChannels;
 	}
-	catch (RtAudioError &e) {
+	catch (RtAudioError& /*e*/) {
 		u::log::print("[KA] Unable to get output channels\n");
 		return 0;
 	}
@@ -316,7 +316,7 @@ bool isProbed(unsigned dev)
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).probed;
 	}
-	catch (RtAudioError &e) {
+	catch (RtAudioError& /*e*/) {
 		return 0;
 	}
 }
@@ -330,7 +330,7 @@ unsigned getDuplexChans(unsigned dev)
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).duplexChannels;
 	}
-	catch (RtAudioError &e) {
+	catch (RtAudioError& /*e*/) {
 		return 0;
 	}
 }
@@ -344,7 +344,7 @@ bool isDefaultIn(unsigned dev)
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).isDefaultInput;
 	}
-	catch (RtAudioError &e) {
+	catch (RtAudioError& /*e*/) {
 		return 0;
 	}
 }
@@ -358,7 +358,7 @@ bool isDefaultOut(unsigned dev)
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).isDefaultOutput;
 	}
-	catch (RtAudioError &e) {
+	catch (RtAudioError& /*e*/) {
 		return 0;
 	}
 }
@@ -372,7 +372,7 @@ int getTotalFreqs(unsigned dev)
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).sampleRates.size();
 	}
-	catch (RtAudioError &e) {
+	catch (RtAudioError& /*e*/) {
 		return 0;
 	}
 }
@@ -386,7 +386,7 @@ int	getFreq(unsigned dev, int i)
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).sampleRates.at(i);
 	}
-	catch (RtAudioError &e) {
+	catch (RtAudioError& /*e*/) {
 		return 0;
 	}
 }

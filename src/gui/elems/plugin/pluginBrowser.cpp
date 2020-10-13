@@ -90,7 +90,7 @@ void gePluginBrowser::refresh()
 		add(s.c_str());
 	}
 
-	for (unsigned i=0; i<m::pluginManager::countUnknownPlugins(); i++) {
+	for (int i = 0; i < m::pluginManager::countUnknownPlugins(); i++) {
 		std::string s = "?\t?\t?\t?\t? " + m::pluginManager::getUnknownPluginInfo(i) + " ?";
 		add(s.c_str());
 	}
@@ -103,7 +103,7 @@ void gePluginBrowser::refresh()
 void gePluginBrowser::computeWidths()
 {
 	int w0, w1, w3;
-	for (int i=0; i<m::pluginManager::countAvailablePlugins(); i++) {
+	for (int i = 0; i < m::pluginManager::countAvailablePlugins(); i++) {
 		m::pluginManager::PluginInfo pi = m::pluginManager::getAvailablePluginInfo(i);
 		w0 = (int) fl_width(pi.name.c_str());
 		w1 = (int) fl_width(pi.manufacturerName.c_str());
@@ -114,7 +114,7 @@ void gePluginBrowser::computeWidths()
 	}
 	widths[0] += 60;
 	widths[1] += 60;
-	widths[2] = fl_width("CATEGORY") + 60;
+	widths[2] = static_cast<int>(fl_width("CATEGORY") + 60);
 	widths[3] += 60;
 	widths[4] = 0;
 }

@@ -76,9 +76,9 @@ Updates bpm, frames, beats and so on. Private version. */
 
 void recomputeFrames_(model::Clock& c)
 {
-	c.framesInLoop = (conf::conf.samplerate * (60.0f / c.bpm)) * c.beats;
-	c.framesInBar  = c.framesInLoop / (float) c.bars;
-	c.framesInBeat = c.framesInLoop / (float) c.beats;
+	c.framesInLoop = static_cast<int>((conf::conf.samplerate * (60.0f / c.bpm)) * c.beats);
+	c.framesInBar  = static_cast<int>(c.framesInLoop / (float) c.bars);
+	c.framesInBeat = static_cast<int>(c.framesInLoop / (float) c.beats);
 	c.framesInSeq  = c.framesInBeat * G_MAX_BEATS;
 
 	if (c.quantize != 0)
@@ -94,7 +94,7 @@ void recomputeFrames_(model::Clock& c)
 
 void init(int sampleRate, float midiTCfps)
 {
-	midiTCrate_ = (sampleRate / midiTCfps) * G_MAX_IO_CHANS;  // stereo values
+	midiTCrate_ = static_cast<int>((sampleRate / midiTCfps) * G_MAX_IO_CHANS);  // stereo values
 
 	model::onSwap(model::clock, [&](model::Clock& c)
 	{

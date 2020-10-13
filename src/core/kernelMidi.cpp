@@ -198,13 +198,13 @@ bool hasAPI(int API)
 std::string getOutPortName(unsigned p)
 {
 	try { return midiOut_->getPortName(p); }
-	catch (RtMidiError &error) { return ""; }
+	catch (RtMidiError& /*error*/) { return ""; }
 }
 
 std::string getInPortName(unsigned p)
 {
 	try { return midiIn_->getPortName(p); }
-	catch (RtMidiError &error) { return ""; }
+	catch (RtMidiError& /*error*/) { return ""; }
 }
 
 

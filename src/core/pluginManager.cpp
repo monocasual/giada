@@ -282,7 +282,7 @@ int countAvailablePlugins()
 /* -------------------------------------------------------------------------- */
 
 
-unsigned countUnknownPlugins()
+int countUnknownPlugins()
 {
 	return unknownPluginList_.size();
 }

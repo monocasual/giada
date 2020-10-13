@@ -142,8 +142,8 @@ void processStack(AudioBuffer& outBuf, const std::vector<ID>& pluginIds,
 	
 	if (events == nullptr) {
 		giadaToJuceTempBuf_(outBuf);
-		juce::MidiBuffer events; // empty
-		processPlugins_(pluginIds, events);
+		juce::MidiBuffer dummyEvents; // empty
+		processPlugins_(pluginIds, dummyEvents);
 	}
 	else {
 		audioBuffer_.clear();

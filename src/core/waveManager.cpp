@@ -190,7 +190,7 @@ const patch::Wave serializeWave(const Wave& w)
 int resample(Wave& w, int quality, int samplerate)
 {
 	float ratio = samplerate / (float) w.getRate();
-	int newSizeFrames = ceil(w.getSize() * ratio);
+	int newSizeFrames = static_cast<int>(ceil(w.getSize() * ratio));
 
 	AudioBuffer newData;
 	newData.alloc(newSizeFrames, w.getChannels());
