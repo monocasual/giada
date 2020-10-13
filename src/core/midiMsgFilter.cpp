@@ -33,27 +33,26 @@ namespace m {
 
 //------------------------------  CONSTRUCTORS  --------------------------------
 
-MidiMsgFilter::MidiMsgFilter(const MidiMsg& mm, bool alm) {
+MidiMsgFilter::MidiMsgFilter(const MidiMsg& mm, const std::string& sender,
+								bool alm) {
 
 	auto l = mm.getMessageLength();
 
 	m_template = *mm.getMessage();
 	m_mask.resize(l, 0xFF);
-
 	m_allow_longer_msg = alm;
+	m_sender = sender;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 MidiMsgFilter::MidiMsgFilter() {
-
 	m_allow_longer_msg = true;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 MidiMsgFilter::MidiMsgFilter(const int& fl, bool alm) {
-
 	setFilterLength(fl);
 	m_allow_longer_msg = alm;
 }
@@ -62,10 +61,8 @@ MidiMsgFilter::MidiMsgFilter(const int& fl, bool alm) {
 
 MidiMsgFilter::MidiMsgFilter(const std::vector<unsigned char>& mask,
 		const std::vector<unsigned char>& tmpl, bool alm) {
-
-		m_template = tmpl;
-		m_mask = mask;
-
+	m_template = tmpl;
+	m_mask = mask;
 	m_allow_longer_msg = alm;
 }
 
@@ -75,6 +72,7 @@ MidiMsgFilter::MidiMsgFilter(const MidiMsgFilter& mmf) {
 	m_template = mmf.m_template;
 	m_mask = mmf.m_mask;
 	m_allow_longer_msg = mmf.m_allow_longer_msg;
+	m_sender = mmf.m_sender;
 
 	for (auto& mbo : mmf.m_bin_ops) {
 		m_bin_ops.push_back({mbo.bo, new MidiMsgFilter(*mbo.mmf)});
@@ -196,14 +194,17 @@ void MidiMsgFilter::dump(int level) const{
 	u::log::print("%sTemplate:", tabs.c_str());
 
 	for (unsigned int i = 0; i < fl; i++) {
-		u::log::print("%X ", m_template.at(i));
+		u::log::print("0x%02X ", m_template.at(i));
 	}
-	u::log::print("\tMask:");
+	u::log::print(";\tMask:");
 	for (unsigned int i = 0; i < fl; i++) {
-		u::log::print("%X ", m_mask.at(i));
+		u::log::print("0x%02X ", m_mask.at(i));
 	}
-	u::log::print("\tLonger Messages: %s\n",
+	u::log::print(";\tLonger Messages: %s",
 			m_allow_longer_msg ? "Allowed" : "Disallowed");
+
+	u::log::print(";\tFrom sender:: %s\n",
+			m_sender.empty() ? "(Any)" : m_sender.c_str());
 
 	int nextLevel;
 	for (auto& mbo : m_bin_ops) {
@@ -233,8 +234,12 @@ bool MidiMsgFilter::check(const MidiMsg& mm) const {
 
 	bool output = true;
 
+	// First of all, check if sender matches
+	if (!m_sender.empty() && (mm.getMessageSender() == m_sender))
+		output = false;
+
 	// If message is shorter than a filter, it's clearly not a match
-	if (l < fl) 
+	else if (l < fl) 
 		output = false;
 
 	// Message cannot be longer than a filter if allow_longer_msg isn't set
@@ -299,6 +304,7 @@ void to_json(nl::json& j, const MidiMsgFilter& mmf){
 	j = nl::json{{"template", mmf.m_template},
 			{"mask", mmf.m_mask},
 			{"alm", mmf.m_allow_longer_msg},
+			{"sender", mmf.m_sender},
 			{"binops", mmf.m_bin_ops}};
 }
 
@@ -308,6 +314,7 @@ void from_json(nl::json& j, MidiMsgFilter& mmf) {
 	j.at("template").get_to(mmf.m_template);
 	j.at("mask").get_to(mmf.m_mask);
 	j.at("alm").get_to(mmf.m_allow_longer_msg);
+	j.at("sender").get_to(mmf.m_sender);
 	j.at("binops").get_to(mmf.m_bin_ops);
 }
 

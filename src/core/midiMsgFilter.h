@@ -57,7 +57,8 @@ class MidiMsgFilter
 	public:
 
 	// Creates a MidiMsgFilter that passes only a given message
-	MidiMsgFilter(const MidiMsg& mm, bool alm = 0);
+	MidiMsgFilter(const MidiMsg& mm, const std::string& sender = "", 
+								bool alm = 0);
 
 	// Creates the simplest, fully transparent filter
 	// Note it has allow_longer_msg set to true
@@ -156,14 +157,16 @@ class MidiMsgFilter
 
 	private:
 
-	// m_template vector contains data to which message is compared
-	// m_mask indicates which bits are to be included in comparison
-	// m_template and m_mask must always be of equal size	
-	// m_bin_ops contains binary relations and copies of other MMFs
-	// as constructed using binary operators by a user.
+// m_template vector contains data to which message is compared
+// m_mask indicates which bits are to be included in comparison
+// m_template and m_mask must always be of equal size	
+// m_sender is an expected sender of a message ("" disables this feature)
+// m_bin_ops contains binary relations and copies of other MMFs
+// as constructed using binary operators by a user.
 	std::vector<unsigned char>	m_template;
 	std::vector<unsigned char>	m_mask;
 	bool 				m_allow_longer_msg;
+	std::string			m_sender;
 
 	std::vector<mmfBinOps>		m_bin_ops;
 	
