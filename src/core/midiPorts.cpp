@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-
+#include <memory>
 #include <RtMidi.h>
 #include "conf.h"
 #include "utils/log.h"
@@ -54,8 +54,10 @@ RtMidiIn*  midiIn_  = nullptr;	// should always exist and never open ports.
 // is connected to once connection is estabilished,
 // so this information must be stored internally.
 
-std::map<std::string, RtMidiOut*> outPorts_;	// These are meant for actual
-std::map<std::string, RtMidiIn*> inPorts_;	// communication purposes
+
+// These are meant for actual communication purposes.
+std::map<std::string, std::unique_ptr<RtMidiOut>> outPorts_;
+std::map<std::string, std::unique_ptr<RtMidiIn>> inPorts_;
 
 
 static void callback_(double t, std::vector<unsigned char>* msg, void* data)
@@ -261,8 +263,8 @@ int openOutPort(const std::string& port) {
 	// No entry in map, so we shall create one
 	else {
 		try {
-			outPorts_[port] = new RtMidiOut((RtMidi::Api) api_,
-						"Giada Output");
+			outPorts_.emplace(port,
+			new RtMidiOut((RtMidi::Api) api_, "Giada Output"));
 					// TODO: More verbose port name
 					// Remember Jack's limit of 63 chars
 		}
@@ -317,8 +319,8 @@ int openInPort(const std::string& port) {
 	// No entry in map, so we shall create one
 	else {
 		try {
-			inPorts_[port] = new RtMidiIn((RtMidi::Api) api_,
-						"Giada Input");
+			inPorts_.emplace(port,
+			new RtMidiIn((RtMidi::Api) api_, "Giada Input"));
 					//TODO: More verbose port name
 					// Remember Jack's limit of 63 chars
 		}
@@ -371,7 +373,6 @@ int closeOutPort(const std::string& port) {
 	// Let's check if this port is in the map //
 	if (outPorts_.count(port) > 0) {
 		// RtMidi port destructor closes connections on its own
-		delete outPorts_[port];
 		outPorts_.erase(port);
 		u::log::print("[MP::closeOutPort] Port \"%s\" closed.\n",
 							port.c_str());
@@ -399,7 +400,6 @@ int closeInPort(const std::string& port) {
 	// Let's check if this port is in the map //
 	if (inPorts_.count(port) > 0) {
 		// RtMidi port destructor closes connections on its own
-		delete inPorts_[port];
 		inPorts_.erase(port);
 		u::log::print("[MP::closeInPort] Port \"%s\" closed.\n",
 							port.c_str());
