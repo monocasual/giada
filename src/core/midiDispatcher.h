@@ -115,6 +115,9 @@ void unregisterExRule(const std::string& r);
 // The ultimate MidiMsg dispatching method
 void dispatch(const MidiMsg& mm);
 
+// Direct dispatching method
+void dispatchTo(const MidiMsg& mm, const std::string& receiver);
+
 //-------------------------------- CONSTRUCTORS --------------------------------
 	
 inline DispatchTableItem::DispatchTableItem(const std::vector<std::string>& s,

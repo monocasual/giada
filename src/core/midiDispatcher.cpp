@@ -230,6 +230,12 @@ void dispatch(const MidiMsg& mm){
 	}
 }
 
+//   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+void dispatchTo(const MidiMsg& mm, const std::string& receiver){
+	_forward(mm, receiver);
+}
+
 
 }}} // giada::m::midiDispatcher::
 
