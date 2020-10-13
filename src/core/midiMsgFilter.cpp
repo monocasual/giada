@@ -362,4 +362,56 @@ bool MidiMsgFilter::operator<<(const MidiMsg& mm) const {
 	return check(mm);
 }
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+bool MidiMsgFilter::operator<(const MidiMsgFilter& mmf) const {
+	if (m_template < mmf.m_template)
+		return true;
+	if (m_mask < mmf.m_mask)
+		return true;
+	if (!m_allow_longer_msg && mmf.m_allow_longer_msg)
+		return true;
+	if (m_sender < mmf.m_sender)
+		return true;
+
+	if (m_bin_ops.size() < mmf.m_bin_ops.size())
+		return true;
+	if (m_bin_ops.size() > mmf.m_bin_ops.size())
+		return false;
+
+	for (int i = 0; i < m_bin_ops.size(); i++) {
+		if (m_bin_ops[i].bo < mmf.m_bin_ops[i].bo)
+			return true;
+		if (*m_bin_ops[i].mmf < *mmf.m_bin_ops[i].mmf)
+			return true;
+	}
+
+	return false;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+bool MidiMsgFilter::operator==(const MidiMsgFilter& mmf) const {
+	if (m_template != mmf.m_template)
+		return false;
+	if (m_mask != mmf.m_mask)
+		return false;
+	if (m_allow_longer_msg != mmf.m_allow_longer_msg)
+		return false;
+	if (m_sender != mmf.m_sender)
+		return false;
+
+	if (m_bin_ops.size() != mmf.m_bin_ops.size())
+		return false;
+
+	for (int i = 0; i < m_bin_ops.size(); i++) {
+		if (m_bin_ops[i].bo != mmf.m_bin_ops[i].bo)
+			return false;
+		if (!(*m_bin_ops[i].mmf == *mmf.m_bin_ops[i].mmf))
+			return false;
+	}
+
+	return true;
+}
+
 }} // giada::m::

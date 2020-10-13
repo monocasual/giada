@@ -148,10 +148,15 @@ class MidiMsgFilter
 	// | - logical sum of filters (or)
 	// ! - inverts filter (not)
 	// << - checks MidiMsg against this filter :)
+	// Also:
+	// < - lets MMFs be used as std::map keys
+	// == - determines whether MMFs are equal structurally
 	MidiMsgFilter operator&(const MidiMsgFilter& mmf) const;
 	MidiMsgFilter operator|(const MidiMsgFilter& mmf) const;
 	MidiMsgFilter operator!() const;
 	bool operator<<(const MidiMsg& mm) const;
+	bool operator<(const MidiMsgFilter& mmf) const;
+	bool operator==(const MidiMsgFilter& mmf) const;
 
 //    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
 
