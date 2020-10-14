@@ -57,8 +57,7 @@ class MidiMsgFilter
 	public:
 
 	// Creates a MidiMsgFilter that passes only a given message
-	MidiMsgFilter(const MidiMsg& mm, const std::string& sender = "", 
-								bool alm = 0);
+	MidiMsgFilter(const MidiMsg& mm, bool alm = 0);
 
 	// Creates the simplest, fully transparent filter
 	// Note it has allow_longer_msg set to true

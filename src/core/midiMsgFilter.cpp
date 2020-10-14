@@ -33,15 +33,14 @@ namespace m {
 
 //------------------------------  CONSTRUCTORS  --------------------------------
 
-MidiMsgFilter::MidiMsgFilter(const MidiMsg& mm, const std::string& sender,
-								bool alm) {
+MidiMsgFilter::MidiMsgFilter(const MidiMsg& mm, bool alm) {
 
 	auto l = mm.getMessageLength();
 
 	m_template = *mm.getMessage();
 	m_mask.resize(l, 0xFF);
 	m_allow_longer_msg = alm;
-	m_sender = sender;
+	m_sender = mm.getMessageSender();
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -448,6 +447,12 @@ bool MidiMsgFilter::_tryMerge(const MidiMsgFilter& mmf) {
 		return false;
 	if ((m_mask.size() < mmf.m_mask.size()) && !(m_allow_longer_msg))
 		return false;
+
+	// If a message is expected to come from two different senders..
+	if (m_sender != mmf.m_sender) {
+		*this = !MMF_ANY;
+		return true;
+	}
 
 	// Let's just copy these two and get over with it..
 	MidiMsgFilter o = *this;
