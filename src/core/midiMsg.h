@@ -48,6 +48,8 @@ class MidiMsg
 	int					getMessageLength() const;
 	std::string				getMessageSender() const;
 
+	bool compare(const MidiMsg& mm, std::vector<unsigned char> mask) const;
+
 	void					dump() const;
 
 	friend void		to_json(nl::json& j, const MidiMsg& mm);
@@ -55,6 +57,12 @@ class MidiMsg
 
 	// An operator necessary for using MidiMsg as map key
 	bool operator<(const MidiMsg& mm) const;
+
+	// Checks if messages are close enough to be considered equal
+	// Most notably, in case of Note messages, velocity and On/Offness
+	// are not important. 
+	// Similarly, CC message value is not compared either.
+	bool operator<<(const MidiMsg& mm) const;
 
 	private:
 	std::string				m_sender;

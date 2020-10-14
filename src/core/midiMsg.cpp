@@ -74,6 +74,22 @@ std::string MidiMsg::getMessageSender() const {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+bool MidiMsg::compare(const MidiMsg& mm,
+				std::vector<unsigned char> mask) const {
+	
+	// Messages must be of equal length
+	int tml = this->getMessageLength();
+	if (tml != mm.getMessageLength())
+		return false;
+	
+	// mask needs to be adjusted to MM lengths
+	mask.resize(tml, 0xFF);
+
+	return MidiMsgFilter(mask, *mm.getMessage()) << *this;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 void MidiMsg::dump() const {
 	
 	u::log::print("[MM:dump] Data: ");
@@ -128,5 +144,22 @@ bool MidiMsg::operator<(const MidiMsg& mm) const{
 			return true;
 	}
 	return false;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+bool MidiMsg::operator<<(const MidiMsg& mm) const{
+
+	// Some special cases
+	if ((MMF_NOTEONOFF << *this) && (MMF_NOTEONOFF << mm))
+		return compare(mm, {0x0F, 0xFF, 0x00});
+	
+	if ((MMF_CC << *this) && (MMF_CC << mm))
+		return compare(mm, {0xFF, 0xFF, 0x00});
+
+	
+	// in all other cases, messages should be completely identical
+	return compare(mm, {});
+
 }
 }} // giada::m::
