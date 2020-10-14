@@ -204,6 +204,7 @@ const MidiMsgFilter MMF_NOTEON		= MidiMsgFilter({0xF0,0,0}, {0x90,0,0});
 const MidiMsgFilter MMF_NOTEOFF		= MidiMsgFilter({0xF0,0,0}, {0x80,0,0});
 const MidiMsgFilter MMF_CC		= MidiMsgFilter({0xF0,0,0}, {0xB0,0,0});
 const MidiMsgFilter MMF_NOTEONOFFCC	= MMF_NOTEONOFF | MMF_CC;
+const MidiMsgFilter MMF_PITCHWHEEL	= MidiMsgFilter({0xF0,0,0}, {0xE0,0,0});
 
 // Return binary value of NoteOnOff/CC
 // In case of Notes, "on" means true
