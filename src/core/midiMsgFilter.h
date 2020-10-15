@@ -140,7 +140,7 @@ class MidiMsgFilter
 	// This value spans from 0 to 127.
 	// Returns transparent filter if number outside of that range
 	friend MidiMsgFilter		MMF_Note(const int& n);
-	friend inline MidiMsgFilter	MMF_Param(const int& p);
+	friend MidiMsgFilter		MMF_Param(const int& p);
 
 //    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
 
@@ -193,6 +193,11 @@ void to_json(nl::json& j, const MidiMsgFilter& mmf);
 void from_json(nl::json& j, MidiMsgFilter& mmf);
 void mbo_to_json(nl::json& j, const MidiMsgFilter::mmfBinOps& mbo);
 void mbo_from_json(const nl::json& j, MidiMsgFilter::mmfBinOps& mbo);
+
+bool			check(const MidiMsg& mm, const MidiMsgFilter& mmf);
+MidiMsgFilter		MMF_Channel(const int& ch);
+MidiMsgFilter		MMF_Note(const int& n);
+MidiMsgFilter		MMF_Param(const int& p);
 
 //------------------- const MidiMsgFilters for typical uses -------------------	
 

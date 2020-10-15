@@ -308,7 +308,7 @@ MidiMsgFilter MMF_Note(const int& n) {
 }
 
 
-inline MidiMsgFilter MMF_Param(const int& p) {
+MidiMsgFilter MMF_Param(const int& p) {
 	return MMF_Note(p);
 }
 //--------------------- JSON SERIALIZERS AND DESERIALIZERS ---------------------
