@@ -47,6 +47,13 @@ class MidiMsg
 	const std::vector<unsigned char>*	getMessage() const;
 	int					getMessageLength() const;
 	std::string				getMessageSender() const;
+	
+	// NoteOnOff/CC messages
+	int					getChannel() const;
+	int					getNote() const;
+	int					getParam() const;
+	int					getVelocity() const;
+	int					getValue() const;
 
 	bool compare(const MidiMsg& mm, std::vector<unsigned char> mask) const;
 

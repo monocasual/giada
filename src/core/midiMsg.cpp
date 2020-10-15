@@ -74,6 +74,36 @@ std::string MidiMsg::getMessageSender() const {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+int MidiMsg::getChannel() const {
+	return (int) (m_message.at(0) & 0x0F) + 1;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+int MidiMsg::getNote() const {
+	return (int) (m_message.at(1));
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+int MidiMsg::getParam() const {
+	return getNote();
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+int MidiMsg::getVelocity() const {
+	return (int) (m_message.at(2));
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+int MidiMsg::getValue() const {
+	return getVelocity();
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 bool MidiMsg::compare(const MidiMsg& mm,
 				std::vector<unsigned char> mask) const {
 	
