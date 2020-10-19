@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-<strong>Giada - Your Hardcore Loop Machine</strong> | Official website: <a href="https://www.giadamusic.com">giadamusic.com</a> | Travis CI status: <a href="https://travis-ci.org/monocasual/giada"><img src="https://travis-ci.org/monocasual/giada.svg?branch=master" alt="Build status"></a>
+<strong>Giada - Your Hardcore Loop Machine</strong> | Official website: <a href="https://www.giadamusic.com">giadamusic.com</a> | Travis CI status: <a href="https://travis-ci.com/monocasual/giada"><img src="https://travis-ci.com/monocasual/giada.svg?branch=master" alt="Build status"></a>
 </p>
 
 ## What is Giada?
