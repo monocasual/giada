@@ -55,6 +55,9 @@ class MidiMsg
 	int					getVelocity() const;
 	int					getValue() const;
 
+	// Returns a copy with CC value / Note Velocity set to 0x00
+	MidiMsg					noValue() const;
+
 	bool compare(const MidiMsg& mm, std::vector<unsigned char> mask) const;
 
 	void					dump() const;
@@ -78,8 +81,10 @@ class MidiMsg
 	// Convert NoteOn with zero velocity into NoteOff
 	void 					_fixVelocityZero();
 
-	// Set NoteOff value to zero, due to incompatible handling between 
-	// ALSA and JACK (and possibly others).
+	// Set NoteOff value to 64 if it is 0 
+	// This is a recommended NoteOff value if a controller does not 
+	// support NoteOff velocity.
+	// Zero value has unspecified behavior and should never occur.
 	void 					_fixNoteOffValue();
 
 };

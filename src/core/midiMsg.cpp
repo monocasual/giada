@@ -104,6 +104,13 @@ int MidiMsg::getValue() const {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+MidiMsg MidiMsg::noValue() const {
+	MidiMsg o = *this;
+	o.m_message[2] = 0x00;
+	return o;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 bool MidiMsg::compare(const MidiMsg& mm,
 				std::vector<unsigned char> mask) const {
 	
@@ -148,6 +155,7 @@ void from_json(nl::json& j, MidiMsg& mm) {
 void MidiMsg::_fixVelocityZero() {
 	if (MMF_NOTEON.check(*this) && (getByte(2) == 0)) {
 		m_message[0] &= 0b11101111;
+		m_message[2] &= 64;
 	}
 }
 
@@ -155,7 +163,9 @@ void MidiMsg::_fixVelocityZero() {
 
 void MidiMsg::_fixNoteOffValue() {
 	if (MMF_NOTEOFF.check(*this)) {
-		m_message[2] = 0;
+		if (getValue() == 0) {
+			m_message[2] = 64;
+		}
 	}
 }
 
