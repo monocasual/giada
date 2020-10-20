@@ -328,7 +328,9 @@ list(APPEND PREPROCESSOR_DEFS)
 
 # Define INCLUDE_DIRS, containing include directories (e.g. -I).
 
-list(APPEND INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/src)
+list(APPEND INCLUDE_DIRS 
+	${CMAKE_SOURCE_DIR}
+	${CMAKE_SOURCE_DIR}/src)
 
 # Define COMPILER_OPTIONS lists, additional flags for the compiler.
 
@@ -352,16 +354,16 @@ endif()
 
 # Set CMake options.
 
-option(WITH_VST2 "Build giada with VST2 support." OFF)
-option(WITH_VST3 "Build giada with VST3 support." OFF)
-option(ENABLE_DEBUG "Build giada in debug mode." OFF)
-option(WITH_TESTS "Build giada with tests suite." OFF)
-option(WITH_SYSTEM_CATCH "Build giada with system catch (only if WITH_TESTS=ON)." OFF)
+option(WITH_VST2 "Enable VST2 support." OFF)
+option(WITH_VST3 "Enable VST3 support." OFF)
+option(ENABLE_DEBUG "Enable debug mode." OFF)
+option(WITH_TESTS "Include the test suite." OFF)
+option(WITH_SYSTEM_CATCH "Use system-wide Catch (not the submodule dep) (only if WITH_TESTS=ON)." OFF)
 
 if(WITH_TESTS)
 	list(APPEND PREPROCESSOR_DEFS WITH_TESTS)
 	if(NOT WITH_SYSTEM_CATCH)
-		list(APPEND INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/tests/catch2/single_include)
+		list(APPEND INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/tests/catch2/single_include/catch2)
 	endif()
 endif()
 

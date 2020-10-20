@@ -33,13 +33,13 @@
 	#include <vector>
 	#include <string>
 	#include "catch.hpp"
-	#include "../tests/audioBuffer.cpp"
-	#include "../tests/rcuList.cpp"
-	#include "../tests/recorder.cpp"
-	#include "../tests/utils.cpp"
-	#include "../tests/wave.cpp"
-	#include "../tests/waveFx.cpp"
-	#include "../tests/waveManager.cpp"
+	#include "tests/audioBuffer.cpp"
+	#include "tests/rcuList.cpp"
+	#include "tests/recorder.cpp"
+	#include "tests/utils.cpp"
+	#include "tests/wave.cpp"
+	#include "tests/waveFx.cpp"
+	#include "tests/waveManager.cpp"
 #endif
 
 
