@@ -25,7 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 #include <functional>
-
+#include <map>
+#include <cmath>
 #include "utils/log.h"
 #include "core/model/model.h"
 
@@ -40,6 +41,9 @@ namespace midiLearner
 {
 namespace
 {
+// Remembers values of first occurences of CC, so it's easier to tell
+// which one changed and how much
+std::map<MidiMsg, int> ccMon;
 
 std::function<void(MidiEvent)> learnCb_  = nullptr;
 
@@ -94,7 +98,6 @@ void learnChannel_(MidiEvent e, int param, ID channelId, std::function<void()> d
 		}
 	});
 
-	stopLearn();
 	doneCb();
 }
 
@@ -120,8 +123,6 @@ void learnMaster_(MidiEvent e, int param, std::function<void()> doneCb)
 			case G_MIDI_IN_BEAT_HALF:   m.beatHalf   = raw; break;
 		}
 	});
-
-	stopLearn();
 	doneCb();
 }
 
@@ -135,7 +136,6 @@ void learnPlugin_(MidiEvent e, int paramIndex, ID pluginId, std::function<void()
 		p.midiInParams[paramIndex] = e.getRawNoVelocity();
 	});
 
-	stopLearn();
 	doneCb();
 }
 
@@ -184,6 +184,8 @@ void stopLearn()
 {
 	midiDispatcher::unregisterExRule("m;midiLearner");
 	learnCb_ = nullptr;
+	ccMon.clear();
+	u::log::print("[ML::stopLearn] Done.\n");
 }
 
 
@@ -220,12 +222,33 @@ void clearPluginLearn (int paramIndex, ID pluginId, std::function<void()> f)
 
 void midiReceive(const MidiMsg& mm) 
 {
-	MidiEvent midiEvent(mm.getByte(0), mm.getByte(1), mm.getByte(2));
-
-	if (learnCb_ != nullptr) {
-		learnCb_(midiEvent);
-		midiDispatcher::unregisterExRule("m;midiLearner");
+	if (learnCb_ == nullptr) {
+		stopLearn();
+		u::log::print("[ML::midiReceive] No learnCb_ set! Aborting.\n");
+		return;
 	}
+
+	// CCs are accepted only if their value changed by 32 or more.
+	// The purpose is to filter out possible pot jitter
+	// and to make it easier to learn coupled controllers, like XY pads
+
+	MidiMsg noval = mm.noValue();
+	if (MMF_CC << mm) {
+		if (ccMon.count(noval) == 0) {
+			ccMon[noval] = mm.getValue();
+			return;
+		}
+		else {
+			if (std::abs(ccMon[noval] - (int)mm.getValue()) <= 32) {
+				return;
+			}
+		}
+
+	}
+
+	MidiEvent midiEvent(mm.getByte(0), mm.getByte(1), mm.getByte(2));
+	learnCb_(midiEvent);
+	stopLearn();
 }
 
 }}} // giada::m::midiLearner::
