@@ -356,7 +356,6 @@ endif()
 
 option(WITH_VST2 "Enable VST2 support." OFF)
 option(WITH_VST3 "Enable VST3 support." OFF)
-option(ENABLE_DEBUG "Enable debug mode." OFF)
 option(WITH_TESTS "Include the test suite." OFF)
 option(WITH_SYSTEM_CATCH "Use system-wide Catch (not the submodule dep) (only if WITH_TESTS=ON)." OFF)
 
@@ -367,7 +366,7 @@ if(WITH_TESTS)
 	endif()
 endif()
 
-if(NOT ENABLE_DEBUG)
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 	list(APPEND PREPROCESSOR_DEFS NDEBUG)	
 endif()
 
