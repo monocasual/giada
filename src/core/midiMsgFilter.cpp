@@ -59,10 +59,12 @@ MidiMsgFilter::MidiMsgFilter(const int& fl, bool alm) {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 MidiMsgFilter::MidiMsgFilter(const std::vector<unsigned char>& mask,
-		const std::vector<unsigned char>& tmpl, bool alm) {
+		const std::vector<unsigned char>& tmpl, bool alm,
+		const std::string& sender) {
 	m_template = tmpl;
 	m_mask = mask;
 	m_allow_longer_msg = alm;
+	m_sender = sender;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -307,10 +309,18 @@ MidiMsgFilter MMF_Note(const int& n) {
 	return MidiMsgFilter({0x00, 0x7F}, {0x00, (unsigned char)n}, true);
 }
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 MidiMsgFilter MMF_Param(const int& p) {
 	return MMF_Note(p);
 }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+MidiMsgFilter MMF_Sender(const std::string& s) {
+	return MidiMsgFilter({}, {}, true, s);
+}
+
 //--------------------- JSON SERIALIZERS AND DESERIALIZERS ---------------------
 
 void to_json(nl::json& j, const MidiMsgFilter& mmf){
@@ -449,7 +459,8 @@ bool MidiMsgFilter::_tryMerge(const MidiMsgFilter& mmf) {
 		return false;
 
 	// If a message is expected to come from two different senders..
-	if (m_sender != mmf.m_sender) {
+	if ((!m_sender.empty()) && (!mmf.m_sender.empty()) &&
+						(m_sender != mmf.m_sender)) {
 		*this = !MMF_ANY;
 		return true;
 	}
@@ -478,6 +489,12 @@ bool MidiMsgFilter::_tryMerge(const MidiMsgFilter& mmf) {
 		o.m_template[j] |= (i.m_template[j] & i.m_mask[j]);
 		o.m_mask[j] |= i.m_mask[j];
 	}
+
+	// Merge m_sender from one and another
+	// The options are: Either both have the same m_sender (no action)
+	// Or the "i" filter's m_sender takes over the empty space
+	if (m_sender.empty())
+		o.m_sender = mmf.m_sender;
 
 	*this = o;
 	return true;

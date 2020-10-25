@@ -66,10 +66,12 @@ class MidiMsgFilter
 	// Creates a transparent filter of a given length
 	MidiMsgFilter(const int& fl, bool alm = 0);
 
-	// Creates a filter defined by length l, and mask and tmpl strings 
+	// Creates a filter defined by mask and tmpl vectors 
 	// m_allow_longer_msg is optional
+	// Sender is also optional
 	MidiMsgFilter(const std::vector<unsigned char>& mask, 
-			const std::vector<unsigned char>& tmpl, bool alm = 0);
+		const std::vector<unsigned char>& tmpl, bool alm = 0,
+		const std::string& sender = "");
 
 	// Copy constructor
 	MidiMsgFilter(const MidiMsgFilter& mmf);
@@ -135,7 +137,6 @@ class MidiMsgFilter
 
 //    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
 
-
 	// Returns a MMF for a particular NoteOnOff note / CC parameter
 	// This value spans from 0 to 127.
 	// Returns transparent filter if number outside of that range
@@ -144,6 +145,10 @@ class MidiMsgFilter
 
 //    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
 
+	// Returns a MMF for a particular message sender
+	friend MidiMsgFilter		MMF_Sender(const std::string& s);
+
+//    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -
 	// inter-MMF binary operation
 	// Defined by operator and another MMF that takes part in operation
 	struct mmfBinOps {
@@ -198,6 +203,7 @@ bool			check(const MidiMsg& mm, const MidiMsgFilter& mmf);
 MidiMsgFilter		MMF_Channel(const int& ch);
 MidiMsgFilter		MMF_Note(const int& n);
 MidiMsgFilter		MMF_Param(const int& p);
+MidiMsgFilter		MMF_Sender(const std::string& s);
 
 //------------------- const MidiMsgFilters for typical uses -------------------	
 
