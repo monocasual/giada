@@ -468,4 +468,28 @@ void midiReceive(const MidiMsg& mm, const std::string& recipient)
 }
 
 
+/* -------------------------------------------------------------------------- */
+
+std::string shortName(const std::string& port) {
+
+	std::string o = port;
+
+	// Remove non-alphanumeric chars
+	o.erase(std::remove_if(o.begin(), o.end(), 
+	[] (auto const& c) -> bool {return !std::isalnum(c);}), o.end());
+
+	// "y" is a vowel in most languages, let's just keep it, aight?
+	std::string vowels = "aeiouyAEIOUY";
+
+	o.erase(std::remove_if(o.begin(), o.end(), 
+	[&] (auto const& c) -> 
+	bool {return (vowels.find(c)!=std::string::npos);}), o.end());
+
+	if (o.length() > 7)
+		o = o.substr(0,7);
+
+	return o;
+
+}
+
 }}} // giada::m::midiPorts::

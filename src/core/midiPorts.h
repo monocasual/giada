@@ -81,6 +81,9 @@ std::vector<std::string> getInPorts(bool addr = false);
 // Sends a MIDI message 'mm' to a port named 'recipient'.
 void midiReceive(const MidiMsg& mm, const std::string& recipient);
 
+// shortName
+// Returns shortened port name (for representation in tight spaces)
+std::string shortName(const std::string& port);
 
 bool hasAPI(int API);
 
