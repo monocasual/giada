@@ -64,9 +64,9 @@ std::mutex DT_mutex;
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-void _forward(const MidiMsg& mm, const std::string r){
+void forward_(const MidiMsg& mm, const std::string r){
 
-	u::log::print("[MDi::_forward] Forwarding message from %s to: %s...\n",
+	u::log::print("[MDi::forward_] Forwarding message from %s to: %s...\n",
 				mm.getMessageSender().c_str(), r.c_str());
 
 	// Addresses are a semicolon delimited strings.
@@ -124,7 +124,7 @@ void _forward(const MidiMsg& mm, const std::string r){
 			return;
 	}
 
-	u::log::print("MDi::_forward] Message forwarded to nowhere.\n");
+	u::log::print("MDi::forward_] Message forwarded to nowhere.\n");
 
 }
 
@@ -198,6 +198,10 @@ void dispatch(const MidiMsg& mm){
 	u::log::print("[MDi::dispatch] Dispatching message: ");
 	mm.dump();
 
+	// Create a list of receivers to send message to
+	// to avoid invoking forward_ with lock guard on.
+	std::vector<std::string> receivers;
+
 	// Consult dispatchTableEx first
 	// If a match is found, send message and ignore all the rest
 	if (true) {		// lock_guard container ;)
@@ -206,16 +210,19 @@ void dispatch(const MidiMsg& mm){
 			if (dti.check(mm)) {
 				u::log::print("[MDi::dispatch] \
 						Applied Ex rule.\n");
-				_forward(mm, dti.getReceiver());
-				return;
+				receivers.push_back(dti.getReceiver());
+				break;
 			}
 		}
+	}
+	if (receivers.size() > 0) {
+		forward_(mm, receivers[0]);
+		return;
 	}
 
 	// Then consult dispatchTable
 	// Store recipients that already got this message,
 	// to avoid multiple deliveries
-	std::vector<std::string> receivers;
 
 	if (true) {
 		std::lock_guard lg(DT_mutex);
@@ -223,17 +230,19 @@ void dispatch(const MidiMsg& mm){
 			if (u::vector::has(receivers, dti.getReceiver()))
 				continue;
 			if (dti.check(mm)) {
-				_forward(mm, dti.getReceiver());
 				receivers.push_back(dti.getReceiver());
 			}
 		}
+	}
+	for (std::string& r : receivers) {
+		forward_(mm, r);
 	}
 }
 
 //   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
 void dispatchTo(const MidiMsg& mm, const std::string& receiver){
-	_forward(mm, receiver);
+	forward_(mm, receiver);
 }
 
 
