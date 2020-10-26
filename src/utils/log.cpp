@@ -31,10 +31,9 @@
 #include <string>
 #include "log.h"
 
+namespace giada::u::log {
 
-namespace giada::u {
-
-int log::init(int m)
+int init(int m)
 {
 	mode = m;
 	stat = true;
@@ -53,10 +52,10 @@ int log::init(int m)
 /* -------------------------------------------------------------------------- */
 
 
-void log::close()
+void close()
 {
 	if (mode == LOG_MODE_FILE)
 		std::fclose(f);
 }
 
-}  // giada::u
+}  // giada::u::log

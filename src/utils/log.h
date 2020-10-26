@@ -38,19 +38,18 @@
 #include "utils/fs.h"
 #include "core/const.h"
 
-namespace giada::u {
+namespace giada::u::log {
 
-struct log {
-  static inline FILE* f;
-  static inline int   mode;
-  static inline bool  stat;
+  inline FILE* f;
+  inline int   mode;
+  inline bool  stat;
 
   /* init
   Initializes logger. Mode defines where to write the output: LOG_MODE_STDOUT,
   LOG_MODE_FILE and LOG_MODE_MUTE. */
-  static int init(int mode);
+  int init(int mode);
 
-  static void close();
+  void close();
 
   // Use forwarding references && to avoid useless string copy
   static constexpr auto string_to_c_str = [] (auto&& s) {
@@ -89,8 +88,6 @@ struct log {
       std::printf(format, string_to_c_str(std::forward<Args>(args))...);
   }
 
-};
-
-}  // giada::u
+}  // giada::u::log
 
 #endif
