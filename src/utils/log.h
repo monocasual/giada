@@ -40,53 +40,53 @@
 
 namespace giada::u::log {
 
-  inline FILE* f;
-  inline int   mode;
-  inline bool  stat;
+	inline FILE* f;
+	inline int   mode;
+	inline bool  stat;
 
-  /* init
-  Initializes logger. Mode defines where to write the output: LOG_MODE_STDOUT,
-  LOG_MODE_FILE and LOG_MODE_MUTE. */
-  int init(int mode);
+	/* init
+	Initializes logger. Mode defines where to write the output: LOG_MODE_STDOUT,
+	LOG_MODE_FILE and LOG_MODE_MUTE. */
+	int init(int mode);
 
-  void close();
+	void close();
 
-  // Use forwarding references && to avoid useless string copy
-  static constexpr auto string_to_c_str = [] (auto&& s) {
-    // Remove any reference and const-ness, since the function can
-    // handle l-value and r-value, const or not.
-    // Use std::remove_cvref instead, when sitching to C++20...
-    if constexpr (std::is_same_v<std::remove_const_t<std::remove_reference_t<
-                                   decltype(s)>>,
-                                 std::string>)
-      // If the argument is a std::string return an old-style C-string
-      return s.c_str();
-    else
-      // Return the argument unchanged otherwise
-      return s;
-  };
+	// Use forwarding references && to avoid useless string copy
+	static constexpr auto string_to_c_str = [] (auto&& s) {
+		// Remove any reference and const-ness, since the function can
+		// handle l-value and r-value, const or not.
+		// Use std::remove_cvref instead, when sitching to C++20...
+		if constexpr (std::is_same_v<std::remove_const_t<std::remove_reference_t<
+			decltype(s)>>,
+			std::string>)
+			// If the argument is a std::string return an old-style C-string
+			return s.c_str();
+		else
+			// Return the argument unchanged otherwise
+			return s;
+	};
 
-  /** A variadic printf-like logging fonction
+	/** A variadic printf-like logging fonction
 
-      Any `std::string` argument will be automatically transformed
-      into a C-string.
+			Any `std::string` argument will be automatically transformed
+			into a C-string.
 
-      Use forwarding references to avoid useless string copy. */
-  template <typename... Args>
-  static void print(const char* format, Args&&... args) {
-    if (mode == LOG_MODE_MUTE)
-      return;
+			Use forwarding references to avoid useless string copy. */
+	template <typename... Args>
+	static void print(const char* format, Args&&... args) {
+		if (mode == LOG_MODE_MUTE)
+			return;
 
-    if (mode == LOG_MODE_FILE && stat == true) {
-      // Replace any std::string in the arguments by its C-string
-      std::fprintf(f, format, string_to_c_str(std::forward<Args>(args))...);
+		if (mode == LOG_MODE_FILE && stat == true) {
+			// Replace any std::string in the arguments by its C-string
+			std::fprintf(f, format, string_to_c_str(std::forward<Args>(args))...);
 #ifdef _WIN32
-      fflush(f);
+			fflush(f);
 #endif
-    }
-    else
-      std::printf(format, string_to_c_str(std::forward<Args>(args))...);
-  }
+		}
+		else
+			std::printf(format, string_to_c_str(std::forward<Args>(args))...);
+	}
 
 }  // giada::u::log
 
