@@ -47,34 +47,34 @@ namespace giada {
 namespace v
 {
 geMainTimer::geMainTimer(int x, int y)
-: geGroup(x, y)
+: gePack      (x, y, Direction::HORIZONTAL)
+, m_bpm       (0, 0, 60, G_GUI_UNIT)
+, m_meter     (0, 0, 60, G_GUI_UNIT)
+, m_quantizer (0, 0, 60, G_GUI_UNIT, "", false)
+, m_multiplier(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", multiplyOff_xpm, multiplyOn_xpm)
+, m_divider   (0, 0, G_GUI_UNIT, G_GUI_UNIT, "", divideOff_xpm, divideOn_xpm)
 {
-	quantizer  = new geChoice(0, 0, 50, 20, "", false);
-	bpm        = new geButton(quantizer->x() + quantizer->w() + G_GUI_INNER_MARGIN, 0, 50, G_GUI_UNIT);
-	meter      = new geButton(bpm->x() + bpm->w() + G_GUI_OUTER_MARGIN, 0, 50, G_GUI_UNIT);
-	multiplier = new geButton(meter->x() + meter->w() + G_GUI_INNER_MARGIN, 0, G_GUI_UNIT, G_GUI_UNIT, "", multiplyOff_xpm, multiplyOn_xpm);
-	divider    = new geButton(multiplier->x() + multiplier->w() + G_GUI_INNER_MARGIN, 0, G_GUI_UNIT, G_GUI_UNIT, "", divideOff_xpm, divideOn_xpm);
-	add(quantizer);
-	add(bpm);
-	add(meter);
-	add(multiplier);
-	add(divider);
+	add(&m_quantizer);
+	add(&m_bpm);
+	add(&m_meter);
+	add(&m_multiplier);
+	add(&m_divider);
 
 	resizable(nullptr);   // don't resize any widget
 
-	bpm->callback(cb_bpm, (void*)this);
-	meter->callback(cb_meter, (void*)this);
-	multiplier->callback(cb_multiplier, (void*)this);	
-	divider->callback(cb_divider, (void*)this);
+	m_bpm.callback(cb_bpm, (void*)this);
+	m_meter.callback(cb_meter, (void*)this);
+	m_multiplier.callback(cb_multiplier, (void*)this);	
+	m_divider.callback(cb_divider, (void*)this);
 
-	quantizer->add("off", 0, cb_quantizer, (void*)this);
-	quantizer->add("1\\/1", 0, cb_quantizer, (void*)this);
-	quantizer->add("1\\/2", 0, cb_quantizer, (void*)this);
-	quantizer->add("1\\/3", 0, cb_quantizer, (void*)this);
-	quantizer->add("1\\/4", 0, cb_quantizer, (void*)this);
-	quantizer->add("1\\/6", 0, cb_quantizer, (void*)this);
-	quantizer->add("1\\/8", 0, cb_quantizer, (void*)this);
-	quantizer->value(0); //  "off" by default
+	m_quantizer.add("off", 0, cb_quantizer, (void*)this);
+	m_quantizer.add("1\\/1", 0, cb_quantizer, (void*)this);
+	m_quantizer.add("1\\/2", 0, cb_quantizer, (void*)this);
+	m_quantizer.add("1\\/3", 0, cb_quantizer, (void*)this);
+	m_quantizer.add("1\\/4", 0, cb_quantizer, (void*)this);
+	m_quantizer.add("1\\/6", 0, cb_quantizer, (void*)this);
+	m_quantizer.add("1\\/8", 0, cb_quantizer, (void*)this);
+	m_quantizer.value(0); //  "off" by default
 }
 
 
@@ -93,7 +93,7 @@ void geMainTimer::cb_divider   (Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->
 
 void geMainTimer::cb_bpm()
 {
-	u::gui::openSubWindow(G_MainWin, new gdBpmInput(bpm->label()), WID_BPM);
+	u::gui::openSubWindow(G_MainWin, new gdBpmInput(m_bpm.label()), WID_BPM);
 }
 
 
@@ -111,7 +111,7 @@ void geMainTimer::cb_meter()
 
 void geMainTimer::cb_quantizer()
 {
-	c::main::quantize(quantizer->value());
+	c::main::quantize(m_quantizer.value());
 }
 
 
@@ -141,24 +141,24 @@ void geMainTimer::refresh()
 	m_timer = c::main::getTimer();
 
 	if (m_timer.isRecordingInput) {
-		bpm->deactivate();
-		meter->deactivate();
-		multiplier->deactivate();
-		divider->deactivate();
+		m_bpm.deactivate();
+		m_meter.deactivate();
+		m_multiplier.deactivate();
+		m_divider.deactivate();
 	}
 	else {
 #if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
-		/* Don't reactivate bpm when using JACK. It must stay disabled. */
+		/* Don't reactivate m_bpm when using JACK. It must stay disabled. */
 		if (m_timer.isUsingJack)
-			bpm->deactivate();
+			m_bpm.deactivate();
 		else
-			bpm->activate();
+			m_bpm.activate();
 #else
-		bpm->activate();
+		m_bpm.activate();
 #endif
-		meter->activate();	
-		multiplier->activate();
-		divider->activate();	
+		m_meter.activate();	
+		m_multiplier.activate();
+		m_divider.activate();	
 	}
 }
 
@@ -175,9 +175,9 @@ void geMainTimer::rebuild()
 	setQuantizer(m_timer.quantize);
 
 #if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
-	/* Can't change bpm from within Giada when using JACK. */
+	/* Can't change m_bpm from within Giada when using JACK. */
 	if (m_timer.isUsingJack)
-		bpm->deactivate();
+		m_bpm.deactivate();
 #endif
 }
 
@@ -187,13 +187,13 @@ void geMainTimer::rebuild()
 
 void geMainTimer::setBpm(const char* v)
 {
-	bpm->copy_label(v);
+	m_bpm.copy_label(v);
 }
 
 
 void geMainTimer::setBpm(float v)
 {
-	bpm->copy_label(u::string::fToString((float) v, 1).c_str()); // Only 1 decimal place (e.g. 120.0)
+	m_bpm.copy_label(u::string::fToString((float) v, 1).c_str()); // Only 1 decimal place (e.g. 120.0)
 }
 
 
@@ -203,16 +203,16 @@ void geMainTimer::setBpm(float v)
 void geMainTimer::setLock(bool v)
 {
   if (v) {
-    bpm->deactivate();
-    meter->deactivate();
-    multiplier->deactivate();
-    divider->deactivate();
+    m_bpm.deactivate();
+    m_meter.deactivate();
+    m_multiplier.deactivate();
+    m_divider.deactivate();
   }
   else {
-    bpm->activate();
-    meter->activate();
-    multiplier->activate();
-    divider->activate();
+    m_bpm.activate();
+    m_meter.activate();
+    m_multiplier.activate();
+    m_divider.activate();
   }
 }
 
@@ -222,7 +222,7 @@ void geMainTimer::setLock(bool v)
 
 void geMainTimer::setQuantizer(int q)
 {
-	quantizer->value(q);
+	m_quantizer.value(q);
 }
 
 
@@ -232,7 +232,7 @@ void geMainTimer::setQuantizer(int q)
 void geMainTimer::setMeter(int beats, int bars)
 {
 	std::string s = std::to_string(beats) + "/" + std::to_string(bars);
-	meter->copy_label(s.c_str());
+	m_meter.copy_label(s.c_str());
 }
 
 }} // giada::v::

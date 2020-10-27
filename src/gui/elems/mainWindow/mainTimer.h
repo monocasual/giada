@@ -30,7 +30,9 @@
 
 
 #include "glue/main.h"
-#include "gui/elems/basics/group.h"
+#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/choice.h"
 
 
 class geButton;
@@ -40,7 +42,7 @@ namespace giada {
 namespace v
 {
 class geChoice;
-class geMainTimer : public geGroup
+class geMainTimer : public gePack
 {
 public:
 
@@ -74,11 +76,11 @@ private:
 
 	c::main::Timer m_timer;
 
-	geButton* bpm;
-	geButton* meter;
-	geChoice* quantizer;
-	geButton* multiplier;
-	geButton* divider;
+	geButton m_bpm;
+	geButton m_meter;
+	geChoice m_quantizer;
+	geButton m_multiplier;
+	geButton m_divider;
 };
 }} // giada::v::
 

@@ -68,7 +68,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 	mainIO        = new v::geMainIO(460, 8);
 #endif
 	mainTransport = new v::geMainTransport(8, 39);
-	mainTimer     = new v::geMainTimer(598, 44);
+	mainTimer     = new v::geMainTimer(571, 44);
 	beatMeter     = new v::geBeatMeter(100, 83, 609, 20);
 	keyboard      = new v::geKeyboard(8, 122, w()-16, 380);
 
