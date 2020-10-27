@@ -49,7 +49,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	begin();
 	soundsys        = new geChoice(x()+114, y()+9,  250, 20, "System");
 	buffersize      = new geChoice(x()+114, y()+37, 55,  20, "Buffer size");
-	samplerate      = new geChoice(x()+309, y()+37, 55,  20, "Sample rate");
+	samplerate      = new geChoice(x()+304, y()+37, 60,  20, "Sample rate");
 	sounddevOut     = new geChoice(x()+114, y()+65, 222, 20, "Output device");
 	devOutInfo      = new geButton(x()+344, y()+65, 20,  20, "?");
 	channelsOut     = new geChoice(x()+114, y()+93, 55,  20, "Output channels");
