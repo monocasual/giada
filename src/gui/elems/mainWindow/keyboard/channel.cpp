@@ -30,7 +30,7 @@
 #include "core/model/model.h"
 #include "core/const.h"
 #include "core/graphics.h"
-#include "core/pluginHost.h"
+#include "core/plugins/pluginHost.h"
 #include "utils/gui.h"
 #include "glue/channel.h"
 #include "glue/events.h"

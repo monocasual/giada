@@ -34,7 +34,7 @@
 
 #include <vector>
 #include <string>
-#include "core/pluginHost.h"
+#include "core/plugins/pluginHost.h"
 #include "core/types.h"
 
 

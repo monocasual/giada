@@ -32,9 +32,9 @@ sourcesCore =                               \
 	src/core/conf.cpp                       \
 	src/core/kernelAudio.h                  \
 	src/core/kernelAudio.cpp                \
-	src/core/pluginHost.h                   \
+	src/core/plugins/pluginHost.h                   \
 	src/core/pluginHost.cpp                 \
-	src/core/pluginManager.h                \
+	src/core/plugins/pluginManager.h                \
 	src/core/pluginManager.cpp              \
 	src/core/mixerHandler.h                 \
 	src/core/mixerHandler.cpp               \
@@ -42,7 +42,7 @@ sourcesCore =                               \
 	src/core/sequencer.cpp                  \
 	src/core/init.h                         \
 	src/core/init.cpp                       \
-	src/core/plugin.h                       \
+	src/core/plugins/plugin.h                       \
 	src/core/plugin.cpp                     \
 	src/core/wave.h                         \
 	src/core/wave.cpp                       \

@@ -33,7 +33,7 @@
 #include "core/const.h"
 #include "core/conf.h"
 #include "core/graphics.h"
-#include "core/pluginManager.h"
+#include "core/plugins/pluginManager.h"
 #include "glue/plugin.h"
 #include "utils/string.h"
 #include "utils/fs.h"

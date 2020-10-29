@@ -29,7 +29,7 @@
 
 
 #include "core/mixer.h"
-#include "core/pluginHost.h"
+#include "core/plugins/pluginHost.h"
 #include "core/channels/state.h"
 #include "midiReceiver.h"
 

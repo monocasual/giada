@@ -31,7 +31,7 @@
 
 #include <type_traits>
 #include "core/wave.h"
-#include "core/plugin.h"
+#include "core/plugins/plugin.h"
 #include "core/channels/channel.h"
 
 

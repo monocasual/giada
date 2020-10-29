@@ -33,7 +33,7 @@
 #include "utils/log.h"
 #include "utils/time.h"
 #include "core/const.h"
-#include "core/pluginManager.h"
+#include "core/plugins/pluginManager.h"
 #include "plugin.h"
 
 

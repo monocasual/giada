@@ -36,7 +36,7 @@
 #include "core/mixer.h"
 #include "core/mixerHandler.h"
 #include "core/clock.h"
-#include "core/pluginHost.h"
+#include "core/plugins/pluginHost.h"
 #include "core/conf.h"
 #include "core/graphics.h"
 #include "gui/dialogs/warnings.h"

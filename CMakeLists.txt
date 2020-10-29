@@ -27,19 +27,13 @@ list(APPEND SOURCES
 	src/core/conf.h                         
 	src/core/conf.cpp                       
 	src/core/kernelAudio.h                  
-	src/core/kernelAudio.cpp                
-	src/core/pluginHost.h                   
-	src/core/pluginHost.cpp                 
-	src/core/pluginManager.h                
-	src/core/pluginManager.cpp              
+	src/core/kernelAudio.cpp                                 
 	src/core/mixerHandler.h                 
 	src/core/mixerHandler.cpp               
 	src/core/sequencer.h                    
 	src/core/sequencer.cpp                  
 	src/core/init.h                         
 	src/core/init.cpp                       
-	src/core/plugin.h                       
-	src/core/plugin.cpp                     
 	src/core/wave.h                         
 	src/core/wave.cpp                       
 	src/core/waveFx.h                       
@@ -61,7 +55,13 @@ list(APPEND SOURCES
 	src/core/waveManager.h                  
 	src/core/waveManager.cpp                
 	src/core/recManager.h                   
-	src/core/recManager.cpp                 
+	src/core/recManager.cpp
+	src/core/plugins/pluginHost.h
+	src/core/plugins/pluginHost.cpp
+	src/core/plugins/pluginManager.h
+	src/core/plugins/pluginManager.cpp
+	src/core/plugins/plugin.h
+	src/core/plugins/plugin.cpp
 	src/core/channels/state.h               
 	src/core/channels/state.cpp             
 	src/core/channels/sampleActionRecorder.h      

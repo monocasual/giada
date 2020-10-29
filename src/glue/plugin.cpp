@@ -31,10 +31,10 @@
 #include <cassert>
 #include <FL/Fl.H>
 #include "core/model/model.h"
-#include "core/pluginManager.h"
-#include "core/pluginHost.h"
+#include "core/plugins/pluginManager.h"
+#include "core/plugins/pluginHost.h"
 #include "core/mixer.h"
-#include "core/plugin.h"
+#include "core/plugins/plugin.h"
 #include "core/const.h"
 #include "core/conf.h"
 #include "utils/gui.h"

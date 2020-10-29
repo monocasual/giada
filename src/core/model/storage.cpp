@@ -31,7 +31,7 @@
 #include "core/kernelAudio.h"
 #include "core/patch.h"
 #include "core/conf.h"
-#include "core/pluginManager.h"
+#include "core/plugins/pluginManager.h"
 #include "core/recorderHandler.h"
 #include "core/waveManager.h"
 #include "core/sequencer.h"

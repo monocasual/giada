@@ -29,10 +29,10 @@
 
 
 #include <FL/fl_draw.H>
-#include "core/plugin.h"
+#include "core/plugins/plugin.h"
 #include "core/const.h"
-#include "core/pluginManager.h"
-#include "core/pluginHost.h"
+#include "core/plugins/pluginManager.h"
+#include "core/plugins/pluginHost.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "pluginBrowser.h"
 

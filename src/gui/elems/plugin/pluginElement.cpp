@@ -31,8 +31,8 @@
 #include <cassert>
 #include <string>
 #include "core/graphics.h"
-#include "core/pluginHost.h"
-#include "core/plugin.h"
+#include "core/plugins/pluginHost.h"
+#include "core/plugins/plugin.h"
 #include "utils/gui.h"
 #include "utils/log.h"
 #include "glue/plugin.h"

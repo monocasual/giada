@@ -33,9 +33,9 @@
 #include "core/model/model.h"
 #include "core/channels/channel.h"
 #include "core/const.h"
-#include "core/plugin.h"
-#include "core/pluginManager.h"
-#include "core/pluginHost.h"
+#include "core/plugins/plugin.h"
+#include "core/plugins/pluginManager.h"
+#include "core/plugins/pluginHost.h"
 
 
 namespace giada {

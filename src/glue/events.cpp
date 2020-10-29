@@ -32,7 +32,7 @@
 #include "core/clock.h"
 #include "core/mixer.h"
 #include "core/midiEvent.h"
-#include "core/pluginHost.h"
+#include "core/plugins/pluginHost.h"
 #include "core/sequencer.h"
 #include "core/mixerHandler.h"
 #include "core/conf.h"

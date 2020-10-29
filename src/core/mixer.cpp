@@ -35,7 +35,7 @@
 #include "core/kernelAudio.h"
 #include "core/recorder.h"
 #include "core/recManager.h"
-#include "core/pluginHost.h"
+#include "core/plugins/pluginHost.h"
 #include "core/conf.h"
 #include "core/mixerHandler.h"
 #include "core/clock.h"

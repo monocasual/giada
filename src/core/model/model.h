@@ -35,7 +35,7 @@
 #include "core/channels/state.h"
 #include "core/const.h"
 #include "core/wave.h"
-#include "core/plugin.h"
+#include "core/plugins/plugin.h"
 #include "core/rcuList.h"
 #include "core/recorder.h"
 

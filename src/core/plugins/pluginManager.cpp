@@ -36,7 +36,7 @@
 #include "core/idManager.h"
 #include "core/patch.h"
 #include "core/conf.h"
-#include "core/plugin.h"
+#include "core/plugins/plugin.h"
 #include "pluginManager.h"
 
 

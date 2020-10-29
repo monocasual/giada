@@ -33,8 +33,8 @@
 
 #include <deque>
 #include "deps/juce-config.h"
-#include "pluginHost.h"
-#include "const.h"
+#include "core/plugins/pluginHost.h"
+#include "core/const.h"
 
 
 namespace giada {

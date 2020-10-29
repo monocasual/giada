@@ -32,7 +32,7 @@
 #include "core/const.h"
 #include "core/conf.h"
 #ifdef WITH_VST
-#include "core/plugin.h"
+#include "core/plugins/plugin.h"
 #endif
 #include "utils/string.h"
 #include "gui/elems/midiIO/midiLearner.h"

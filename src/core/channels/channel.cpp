@@ -28,7 +28,7 @@
 #include <cassert>
 #include "core/channels/state.h"
 #include "core/mixerHandler.h"
-#include "core/pluginHost.h"
+#include "core/plugins/pluginHost.h"
 #include "channel.h"
 
 

@@ -49,8 +49,8 @@
 #include "core/recManager.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "core/pluginManager.h"
-#include "core/pluginHost.h"
+#include "core/plugins/pluginManager.h"
+#include "core/plugins/pluginHost.h"
 #include "main.h"
 
 
