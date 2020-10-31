@@ -24,6 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
+#ifdef WITH_VST
 
 #include <cassert>
 #include "pluginState.h"
@@ -69,3 +70,5 @@ size_t PluginState::getSize() const
 	return m_data.getSize();
 }
 }}
+
+#endif // #ifdef WITH_VST
