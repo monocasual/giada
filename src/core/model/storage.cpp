@@ -116,7 +116,7 @@ void load(const patch::Patch& patch)
 
 #ifdef WITH_VST
     for (const patch::Plugin& pplugin : patch.plugins)
-        plugins.push(pluginManager::deserializePlugin(pplugin));
+        plugins.push(pluginManager::deserializePlugin(pplugin, patch.version));
 #endif
     
 	for (const patch::Wave& pwave : patch.waves) {

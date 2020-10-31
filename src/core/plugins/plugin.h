@@ -34,6 +34,7 @@
 #include <deque>
 #include "deps/juce-config.h"
 #include "core/plugins/pluginHost.h"
+#include "core/plugins/pluginState.h"
 #include "core/const.h"
 
 
@@ -68,7 +69,7 @@ public:
 	void setParameter(int index, float value) const;
 	void setCurrentProgram(int index) const;
 	bool acceptsMidi() const;
-
+	PluginState getState() const;
 	juce::AudioProcessorEditor* createEditor() const;
 
 	/* process
@@ -79,7 +80,8 @@ public:
 	copy. */
 
 	void process(juce::AudioBuffer<float>& b, juce::MidiBuffer m);
-
+	
+	void setState(PluginState p);
 	void setBypass(bool b);
 
 	/* id

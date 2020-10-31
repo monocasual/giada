@@ -62,6 +62,8 @@ list(APPEND SOURCES
 	src/core/plugins/pluginManager.cpp
 	src/core/plugins/plugin.h
 	src/core/plugins/plugin.cpp
+	src/core/plugins/pluginState.h
+	src/core/plugins/pluginState.cpp
 	src/core/channels/state.h               
 	src/core/channels/state.cpp             
 	src/core/channels/sampleActionRecorder.h      

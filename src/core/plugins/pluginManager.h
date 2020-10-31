@@ -41,6 +41,7 @@ namespace m
 namespace patch
 {
 struct Plugin;
+struct Version;
 }
 namespace pluginManager
 {
@@ -92,7 +93,7 @@ std::unique_ptr<Plugin> makePlugin(const Plugin& other);
 Transforms patch data into a Plugin object and vice versa. */
 
 const patch::Plugin     serializePlugin(const Plugin& p);
-std::unique_ptr<Plugin> deserializePlugin(const patch::Plugin& p);
+std::unique_ptr<Plugin> deserializePlugin(const patch::Plugin& p, patch::Version version);
 
 /* getAvailablePluginInfo
 Returns the available plugin information (name, type, ...) given a plug-in

@@ -230,9 +230,7 @@ const patch::Plugin serializePlugin(const Plugin& p)
 	pp.id     = p.id;
 	pp.path   = p.getUniqueId();
 	pp.bypass = p.isBypassed();
-
-	for (int i = 0; i < p.getNumParameters(); i++)
-		pp.params.push_back(p.getParameter(i));
+	pp.state  = p.getState().asBase64();
 
 	for (uint32_t param : p.midiInParams)
 		pp.midiInParams.push_back(param);
@@ -244,17 +242,20 @@ const patch::Plugin serializePlugin(const Plugin& p)
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Plugin> deserializePlugin(const patch::Plugin& p)
+std::unique_ptr<Plugin> deserializePlugin(const patch::Plugin& p, patch::Version version)
 {
 	std::unique_ptr<Plugin> plugin = makePlugin(p.path, p.id);
 	if (!plugin->valid)
 		return plugin; // Return invalid version
 	
 	/* Fill plug-in parameters. */
-
 	plugin->setBypass(p.bypass);
-	for (unsigned j=0; j<p.params.size(); j++)
-		plugin->setParameter(j, p.params.at(j));
+	
+	if (version < patch::Version{0, 17, 0}) // TODO - to be removed in 0.18.0
+		for (unsigned j=0; j<p.params.size(); j++)
+			plugin->setParameter(j, p.params.at(j));
+	else
+		plugin->setState(PluginState(p.state));
 
 	/* Fill plug-in MidiIn parameters. Don't fill Channel::midiInParam if 
 	Plugin::midiInParams are zero: it would wipe out the current default 0x0

@@ -131,7 +131,8 @@ struct Plugin
 	ID                    id;
 	std::string           path;
 	bool                  bypass;
-	std::vector<float>    params;
+	std::vector<float>    params; // TODO - to be removed in 0.18.0
+	std::string           state;
 	std::vector<uint32_t> midiInParams;
 };
 #endif
@@ -139,6 +140,7 @@ struct Plugin
 
 struct Patch
 {
+	Version     version;
 	std::string name       = G_DEFAULT_PATCH_NAME;
 	int         bars       = G_DEFAULT_BARS;
 	int         beats      = G_DEFAULT_BEATS;

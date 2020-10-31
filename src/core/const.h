@@ -372,6 +372,7 @@ constexpr auto PATCH_KEY_PLUGIN_ID                    = "id";
 constexpr auto PATCH_KEY_PLUGIN_PATH                  = "path";
 constexpr auto PATCH_KEY_PLUGIN_BYPASS                = "bypass";
 constexpr auto PATCH_KEY_PLUGIN_PARAMS                = "params";
+constexpr auto PATCH_KEY_PLUGIN_STATE                 = "state";
 constexpr auto PATCH_KEY_PLUGIN_MIDI_IN_PARAMS        = "midi_in_params";
 constexpr auto PATCH_KEY_COLUMN_ID                    = "id";
 constexpr auto PATCH_KEY_COLUMN_WIDTH                 = "width";

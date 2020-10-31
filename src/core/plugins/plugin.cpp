@@ -214,6 +214,17 @@ bool Plugin::acceptsMidi() const
 /* -------------------------------------------------------------------------- */
 
 
+PluginState Plugin::getState() const
+{
+	juce::MemoryBlock data;
+	m_plugin->getStateInformation(data);
+	return PluginState(std::move(data));
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 bool Plugin::isBypassed() const { return m_bypass.load(); }
 void Plugin::setBypass(bool b) { m_bypass.store(b); }
 
@@ -251,6 +262,15 @@ void Plugin::process(juce::AudioBuffer<float>& out, juce::MidiBuffer m)
 		if (i < countMainOutChannels() - 1)
 			j++;
 	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Plugin::setState(PluginState state)
+{
+	m_plugin->setStateInformation(state.getData(), state.getSize());
 }
 
 

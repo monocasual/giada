@@ -87,8 +87,11 @@ void readPlugins_(const nl::json& j)
 		p.path   = jplugin.value(PATCH_KEY_PLUGIN_PATH, "");
 		p.bypass = jplugin.value(PATCH_KEY_PLUGIN_BYPASS, false);
 
-		for (const auto& jparam : jplugin[PATCH_KEY_PLUGIN_PARAMS])
-			p.params.push_back(jparam);
+		if (patch.version < Version{0, 17, 0})
+			for (const auto& jparam : jplugin[PATCH_KEY_PLUGIN_PARAMS])
+				p.params.push_back(jparam);
+		else
+			p.state = jplugin.value(PATCH_KEY_PLUGIN_STATE, "");
 
 		for (const auto& jmidiParam : jplugin[PATCH_KEY_PLUGIN_MIDI_IN_PARAMS])
 			p.midiInParams.push_back(jmidiParam);			
@@ -220,10 +223,7 @@ void writePlugins_(nl::json& j)
 		jplugin[PATCH_KEY_PLUGIN_ID]     = p.id;
 		jplugin[PATCH_KEY_PLUGIN_PATH]   = p.path;
 		jplugin[PATCH_KEY_PLUGIN_BYPASS] = p.bypass;
-
-		jplugin[PATCH_KEY_PLUGIN_PARAMS] = nl::json::array();
-		for (float param : p.params)
-			jplugin[PATCH_KEY_PLUGIN_PARAMS].push_back(param);
+		jplugin[PATCH_KEY_PLUGIN_STATE]  = p.state;
 
 		jplugin[PATCH_KEY_PLUGIN_MIDI_IN_PARAMS] = nl::json::array();
 		for (uint32_t param : p.midiInParams)
@@ -475,12 +475,12 @@ int read(const std::string& file, const std::string& basePath)
 	if (j[PATCH_KEY_HEADER] != "GIADAPTC")
 		return G_PATCH_INVALID;
 	
-	Version version = {
+	patch.version = {
 		static_cast<int>(j[PATCH_KEY_VERSION_MAJOR]),
 		static_cast<int>(j[PATCH_KEY_VERSION_MINOR]),
 		static_cast<int>(j[PATCH_KEY_VERSION_PATCH])
 	};
-	if (version < Version{0, 16, 0})
+	if (patch.version < Version{0, 16, 0})
 		return G_PATCH_UNSUPPORTED;
 
 	try {
