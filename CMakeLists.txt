@@ -38,17 +38,10 @@ list(APPEND SOURCES
 	src/core/midiPorts.cpp                
 	src/core/midiMsg.h                  
 	src/core/midiMsg.cpp                
-<<<<<<< HEAD
-=======
 	src/core/midiMsgFilter.h                  
 	src/core/midiMsgFilter.cpp                
 	src/core/midiSignalCb.h                  
 	src/core/midiSignalCb.cpp                
-	src/core/pluginHost.h                   
-	src/core/pluginHost.cpp                 
-	src/core/pluginManager.h                
-	src/core/pluginManager.cpp              
->>>>>>> Fixed build errors
 	src/core/mixerHandler.h                 
 	src/core/mixerHandler.cpp               
 	src/core/sequencer.h                    
