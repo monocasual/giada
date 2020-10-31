@@ -25,17 +25,32 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../core/const.h"
+#include <FL/fl_draw.H>
+#include "core/const.h"
+#include "utils/gui.h"
 #include "box.h"
 
 
-geBox::geBox(int x, int y, int w, int h, const char *l, Fl_Align al)
-: Fl_Box(x, y, w, h)
+geBox::geBox(int x, int y, int w, int h, const char* l, Fl_Align al)
+: Fl_Box (x, y, w, h)
 {
-  copy_label(l);
-  labelsize(G_GUI_FONT_SIZE_BASE);
-  box(FL_NO_BOX);
-  labelcolor(G_COLOR_LIGHT_2);
-  if (al != 0)
-    align(al | FL_ALIGN_INSIDE);
+	copy_label(l);
+	box(FL_NO_BOX);
+	align(al | FL_ALIGN_INSIDE);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geBox::draw()
+{
+	if (box() != FL_NO_BOX)
+		fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4); // Border
+
+	if (label() != nullptr) {
+		fl_color(G_COLOR_LIGHT_2);
+		fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
+		fl_draw(giada::u::gui::truncate(label(), w()-20).c_str(), x()+4, y(), w()-4, h(), align());
+	}
 }
