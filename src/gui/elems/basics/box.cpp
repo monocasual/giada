@@ -48,6 +48,9 @@ void geBox::draw()
 	if (box() != FL_NO_BOX)
 		fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4); // Border
 
+	if (image() != nullptr)
+  		draw_label(); // draw_label also paints image, if any
+	else
 	if (label() != nullptr) {
 		fl_color(G_COLOR_LIGHT_2);
 		fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
