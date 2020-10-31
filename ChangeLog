@@ -13,11 +13,21 @@
 
 0.17.0 --- 
 - Add CMake build system
-- Update JUCE, version 6
 - VST3 support
 - Show descriptive plug-in names in Plug-in List Window
 - Resizable plug-in list
-- Improved text truncation for small buttons
+- New persistence mechanism for Plug-ins state
+- Improved text truncation for small buttons and text boxes
+- Beautify Sample Editor window
+- Resizable plug-in list window
+- Show descriptive plug-in name in plug-in list
+- Update JUCE, version 6.0.4
+- Update Catch2 to version 2.13.2
+- Replace old filesystem functions in fs.h with std::filesystem
+- Add VST3 SDK as git submodule
+- Avoid crash on opening plug-in list with invalid plug-ins
+- Fix playStatus logic for ending sample channels in loop-once-bar mode (#404)
+- Fix shrinking beats can glitch the output (issue #361)
 
 
 0.16.4 --- 2020 . 09. 19
