@@ -61,10 +61,15 @@ gdAbout::gdAbout()
 #endif
 	end();
 
+	std::string version = G_VERSION_STR;
+#ifdef G_DEBUG_MODE
+	version += " (debug build)";
+#endif
+
 	logo->image(new Fl_Pixmap(giada_logo_xpm));
 	text->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
 	text->copy_label(std::string(
-		"Version " + std::string(G_VERSION_STR) + " (" BUILD_DATE ")\n\n"
+		"Version " + version + " (" BUILD_DATE ")\n\n"
 		"Developed by Monocasual Laboratories\n\n"
 		"Released under the terms of the GNU General\n"
 		"Public License (GPL v3)\n\n"

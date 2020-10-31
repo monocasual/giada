@@ -204,6 +204,11 @@ void printBuildInfo_()
 {
 	u::log::print("[init] Giada %s\n", G_VERSION_STR);
 	u::log::print("[init] Build date: " BUILD_DATE "\n");
+#ifdef G_DEBUG_MODE
+	u::log::print("[init] Debug build\n");
+#else
+	u::log::print("[init] Release build\n");
+#endif
 	u::log::print("[init] Dependencies:\n");
 	u::log::print("[init]   FLTK - %d.%d.%d\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
 	u::log::print("[init]   RtAudio - %s\n", u::ver::getRtAudioVersion().c_str());
