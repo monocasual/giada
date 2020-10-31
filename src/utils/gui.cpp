@@ -275,7 +275,7 @@ std::string truncate(const std::string& s, Pixel width)
 	
 	std::string tmp  = s;
 	std::size_t size = tmp.size();
-	while (getStringWidth(tmp) > width)
+	while (getStringWidth(tmp + "...") > width)
 		tmp.resize(--size);
 
 	return tmp + "...";
