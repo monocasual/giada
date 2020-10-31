@@ -29,19 +29,17 @@
 #define GE_PITCH_TOOL_H
 
 
-#include <FL/Fl_Pack.H>
-
-
-class geDial;
-class geInput;
-class geButton;
-class geBox;
+#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/dial.h"
+#include "gui/elems/basics/input.h"
+#include "gui/elems/basics/button.h"
 
 
 namespace giada {
 namespace v 
 {
-class gePitchTool : public Fl_Pack
+class gePitchTool : public gePack
 {
 public:
 
@@ -69,14 +67,14 @@ private:
 
 	const c::sampleEditor::Data* m_data;
 
-	geBox*    label;
-	geDial*   dial;
-	geInput*  input;
-	geButton* pitchToBar;
-	geButton* pitchToSong;
-	geButton* pitchHalf;
-	geButton* pitchDouble;
-	geButton* pitchReset;
+	geBox    m_label;
+	geDial   m_dial;
+	geInput  m_input;
+	geButton m_pitchToBar;
+	geButton m_pitchToSong;
+	geButton m_pitchHalf;
+	geButton m_pitchDouble;
+	geButton m_pitchReset;
 };
 }} // giada::v::
 

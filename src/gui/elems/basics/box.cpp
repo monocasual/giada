@@ -54,6 +54,6 @@ void geBox::draw()
 	if (label() != nullptr) {
 		fl_color(G_COLOR_LIGHT_2);
 		fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-		fl_draw(giada::u::gui::truncate(label(), w()-20).c_str(), x()+4, y(), w()-4, h(), align());
+		fl_draw(giada::u::gui::truncate(label(), w()-8).c_str(), x()+4, y(), w()-4, h(), align());
 	}
 }

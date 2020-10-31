@@ -46,36 +46,39 @@ namespace giada {
 namespace v 
 {
 gePitchTool::gePitchTool(const c::sampleEditor::Data& d, int x, int y)
-: Fl_Pack(x, y, 600, G_GUI_UNIT)
-, m_data (nullptr)
+: gePack       (x, y, Direction::HORIZONTAL)
+, m_data       (nullptr)
+, m_label      (0, 0, 60, G_GUI_UNIT, "Pitch", FL_ALIGN_LEFT)
+, m_dial       (0, 0, G_GUI_UNIT, G_GUI_UNIT)
+, m_input      (0, 0, 70, G_GUI_UNIT)
+, m_pitchToBar (0, 0, 70, G_GUI_UNIT, "To bar")
+, m_pitchToSong(0, 0, 70, G_GUI_UNIT, "To song")
+, m_pitchHalf  (0, 0, G_GUI_UNIT, G_GUI_UNIT, "", divideOff_xpm, divideOn_xpm)
+, m_pitchDouble(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", multiplyOff_xpm, multiplyOn_xpm)
+, m_pitchReset (0, 0, 70, G_GUI_UNIT, "Reset")
 {
-	type(Fl_Pack::HORIZONTAL);
-	spacing(G_GUI_INNER_MARGIN);
-	
-	begin();
-		label       = new geBox   (0, 0, u::gui::getStringWidth("Pitch"), G_GUI_UNIT, "Pitch", FL_ALIGN_RIGHT);
-		dial        = new geDial  (0, 0, G_GUI_UNIT, G_GUI_UNIT);
-		input       = new geInput (0, 0, 70, G_GUI_UNIT);
-		pitchToBar  = new geButton(0, 0, 70, G_GUI_UNIT, "To bar");
-		pitchToSong = new geButton(0, 0, 70, G_GUI_UNIT, "To song");
-		pitchHalf   = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", divideOff_xpm, divideOn_xpm);
-		pitchDouble = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", multiplyOff_xpm, multiplyOn_xpm);
-		pitchReset  = new geButton(0, 0, 70, G_GUI_UNIT, "Reset");
-	end();
+	add(&m_label);
+	add(&m_dial);
+	add(&m_input);
+	add(&m_pitchToBar);
+	add(&m_pitchToSong);
+	add(&m_pitchHalf);
+	add(&m_pitchDouble);
+	add(&m_pitchReset);
 
-	dial->range(0.01f, 4.0f);
-	dial->callback(cb_setPitch, (void*)this);
-	dial->when(FL_WHEN_RELEASE);
+	m_dial.range(0.01f, 4.0f);
+	m_dial.callback(cb_setPitch, (void*)this);
+	m_dial.when(FL_WHEN_RELEASE);
 
-	input->align(FL_ALIGN_RIGHT);
-	input->callback(cb_setPitchNum, (void*)this);
-	input->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
+	m_input.align(FL_ALIGN_RIGHT);
+	m_input.callback(cb_setPitchNum, (void*)this);
+	m_input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
-	pitchToBar->callback(cb_setPitchToBar, (void*)this);
-	pitchToSong->callback(cb_setPitchToSong, (void*)this);
-	pitchHalf->callback(cb_setPitchHalf, (void*)this);
-	pitchDouble->callback(cb_setPitchDouble, (void*)this);
-	pitchReset->callback(cb_resetPitch, (void*)this);
+	m_pitchToBar.callback(cb_setPitchToBar, (void*)this);
+	m_pitchToSong.callback(cb_setPitchToSong, (void*)this);
+	m_pitchHalf.callback(cb_setPitchHalf, (void*)this);
+	m_pitchDouble.callback(cb_setPitchDouble, (void*)this);
+	m_pitchReset.callback(cb_resetPitch, (void*)this);
 
 	rebuild(d);
 }
@@ -96,9 +99,9 @@ void gePitchTool::rebuild(const c::sampleEditor::Data& d)
 
 void gePitchTool::update(float v, bool isDial)
 {
-	input->value(u::string::fToString(v, 4).c_str()); // 4 digits
+	m_input.value(u::string::fToString(v, 4).c_str()); // 4 digits
 	if (!isDial)
-		dial->value(v);
+		m_dial.value(v);
 }
 
 
@@ -119,7 +122,7 @@ void gePitchTool::cb_setPitchNum   (Fl_Widget* /*w*/, void* p) { ((gePitchTool*)
 
 void gePitchTool::cb_setPitch()
 {
-	c::events::setChannelPitch(m_data->channelId, dial->value(), Thread::MAIN);
+	c::events::setChannelPitch(m_data->channelId, m_dial.value(), Thread::MAIN);
 }
 
 
@@ -128,7 +131,7 @@ void gePitchTool::cb_setPitch()
 
 void gePitchTool::cb_setPitchNum()
 {
-	c::events::setChannelPitch(m_data->channelId, atof(input->value()), Thread::MAIN);	
+	c::events::setChannelPitch(m_data->channelId, atof(m_input.value()), Thread::MAIN);	
 }
 
 
@@ -137,7 +140,7 @@ void gePitchTool::cb_setPitchNum()
 
 void gePitchTool::cb_setPitchHalf()
 {
-	c::events::setChannelPitch(m_data->channelId, dial->value() / 2, Thread::MAIN);	
+	c::events::setChannelPitch(m_data->channelId, m_dial.value() / 2, Thread::MAIN);	
 }
 
 
@@ -146,7 +149,7 @@ void gePitchTool::cb_setPitchHalf()
 
 void gePitchTool::cb_setPitchDouble()
 {
-	c::events::setChannelPitch(m_data->channelId, dial->value() * 2, Thread::MAIN);	
+	c::events::setChannelPitch(m_data->channelId, m_dial.value() * 2, Thread::MAIN);	
 }
 
 

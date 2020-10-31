@@ -34,9 +34,6 @@
 #include "utils/math.h"
 #include "utils/string.h"
 #include "gui/dialogs/sampleEditor.h"
-#include "gui/elems/basics/dial.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/box.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "volumeTool.h"
 
@@ -44,23 +41,21 @@
 namespace giada {
 namespace v 
 {
-geVolumeTool::geVolumeTool(const c::sampleEditor::Data& d, int X, int Y)
-: Fl_Pack(X, Y, 150, G_GUI_UNIT)
+geVolumeTool::geVolumeTool(const c::sampleEditor::Data& d, int x, int y)
+: gePack (x, y, Direction::HORIZONTAL)
 , m_data (nullptr)
-{
-	type(Fl_Pack::HORIZONTAL);
-	spacing(G_GUI_INNER_MARGIN);
+, m_label(0, 0, 60, G_GUI_UNIT, "Volume", FL_ALIGN_LEFT)
+, m_dial (0, 0, G_GUI_UNIT, G_GUI_UNIT)
+, m_input(0, 0, 70, G_GUI_UNIT)
+{		
+	add(&m_label);
+	add(&m_dial);
+	add(&m_input);
 
-	begin();
-		label = new geBox  (0, 0, u::gui::getStringWidth("Volume"), G_GUI_UNIT, "Volume", FL_ALIGN_RIGHT);
-		dial  = new geDial (0, 0, G_GUI_UNIT, G_GUI_UNIT);
-		input = new geInput(0, 0, 70, G_GUI_UNIT);
-	end();
+	m_dial.range(0.0f, 1.0f);
+	m_dial.callback(cb_setVolume, (void*)this);
 
-	dial->range(0.0f, 1.0f);
-	dial->callback(cb_setVolume, (void*)this);
-
-	input->callback(cb_setVolumeNum, (void*)this);
+	m_input.callback(cb_setVolumeNum, (void*)this);
 
 	rebuild(d);
 }
@@ -85,9 +80,9 @@ void geVolumeTool::update(float v, bool isDial)
 	float dB = u::math::linearToDB(v);
 	if (dB > -INFINITY) 
 		tmp = u::string::fToString(dB, 2);  // 2 digits
-	input->value(tmp.c_str());
+	m_input.value(tmp.c_str());
 	if (!isDial)
-		dial->value(v);
+		m_dial.value(v);
 }
 
 
@@ -103,7 +98,7 @@ void geVolumeTool::cb_setVolumeNum(Fl_Widget* /*w*/, void* p) { ((geVolumeTool*)
 
 void geVolumeTool::cb_setVolume()
 {
-	c::events::setChannelVolume(m_data->channelId, dial->value(), Thread::MAIN);
+	c::events::setChannelVolume(m_data->channelId, m_dial.value(), Thread::MAIN);
 }
 
 
@@ -112,7 +107,7 @@ void geVolumeTool::cb_setVolume()
 
 void geVolumeTool::cb_setVolumeNum()
 {
-	c::events::setChannelVolume(m_data->channelId, u::math::dBtoLinear(atof(input->value())), 
+	c::events::setChannelVolume(m_data->channelId, u::math::dBtoLinear(atof(m_input.value())), 
 		Thread::MAIN);
 }
 }} // giada::v::

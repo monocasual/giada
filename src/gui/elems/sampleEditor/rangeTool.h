@@ -29,18 +29,16 @@
 #define GE_RANGE_TOOL_H
 
 
-#include <FL/Fl_Pack.H>
-
-
-class geInput;
-class geButton;
-class geBox;
+#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/input.h"
+#include "gui/elems/basics/button.h"
 
 
 namespace giada {
 namespace v 
 {
-class geRangeTool : public Fl_Pack
+class geRangeTool : public gePack
 {
 public:
 
@@ -58,10 +56,10 @@ private:
 
 	const c::sampleEditor::Data* m_data;
 
-	geBox*    m_label;
-	geInput*  m_begin;
-	geInput*  m_end;
-	geButton* m_reset;
+	geBox    m_label;
+	geInput  m_begin;
+	geInput  m_end;
+	geButton m_reset;
 };
 }} // giada::v::
 

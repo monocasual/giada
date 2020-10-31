@@ -194,12 +194,12 @@ Fl_Group* gdSampleEditor::createOpTools(int x, int y, int h)
 	g->resizable(0);
 		volumeTool = new geVolumeTool(m_data, g->x(), g->y());
 		panTool    = new gePanTool(m_data, volumeTool->x()+volumeTool->w()+4, g->y());
+		reload     = new geButton(g->x()+g->w()-70, g->y(), 70, 20, "Reload");
 	 
 		pitchTool = new gePitchTool(m_data, g->x(), panTool->y()+panTool->h()+8);
 
 		rangeTool = new geRangeTool(m_data, g->x(), pitchTool->y()+pitchTool->h()+8);
 		shiftTool = new geShiftTool(m_data, rangeTool->x()+rangeTool->w()+4, pitchTool->y()+pitchTool->h()+8);
-		reload    = new geButton(g->x()+g->w()-70, shiftTool->y(), 70, 20, "Reload");
 	g->end();
 
 	reload->callback(cb_reload, (void*)this);

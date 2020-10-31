@@ -34,9 +34,9 @@
 #include <FL/Fl.H>
 
 
-#define G_CUSTOM_BORDER_BOX FL_FREE_BOXTYPE
-#define G_CUSTOM_UP_BOX     (Fl_Boxtype)(FL_FREE_BOXTYPE + 1)
-#define G_CUSTOM_DOWN_BOX   (Fl_Boxtype)(FL_FREE_BOXTYPE + 3)
+constexpr Fl_Boxtype G_CUSTOM_BORDER_BOX = FL_FREE_BOXTYPE;
+constexpr Fl_Boxtype G_CUSTOM_UP_BOX     = static_cast<Fl_Boxtype>(FL_FREE_BOXTYPE + 1);
+constexpr Fl_Boxtype G_CUSTOM_DOWN_BOX   = static_cast<Fl_Boxtype>(FL_FREE_BOXTYPE + 3);
 
 
 void g_customBorderBox(int x, int y, int w, int h, Fl_Color c);

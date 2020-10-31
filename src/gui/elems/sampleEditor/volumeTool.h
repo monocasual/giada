@@ -29,18 +29,16 @@
 #define GE_VOLUME_TOOL_H
 
 
-#include <FL/Fl_Pack.H>
-
-
-class geDial;
-class geInput;
-class geBox;
+#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/dial.h"
+#include "gui/elems/basics/input.h"
 
 
 namespace giada {
 namespace v 
 {
-class geVolumeTool : public Fl_Pack
+class geVolumeTool : public gePack
 {
 public:
 
@@ -58,9 +56,9 @@ private:
 
 	const c::sampleEditor::Data* m_data;
 
-	geBox*   label;
-	geDial*  dial;
-	geInput* input;
+	geBox   m_label;
+	geDial  m_dial;
+	geInput m_input;
 
 };
 }} // giada::v::

@@ -34,9 +34,6 @@
 #include "glue/sampleEditor.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/dialogs/sampleEditor.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
 #include "shiftTool.h"
 
 
@@ -44,23 +41,21 @@ namespace giada {
 namespace v 
 {
 geShiftTool::geShiftTool(const c::sampleEditor::Data& d, int x, int y)
-: Fl_Pack(x, y, 300, G_GUI_UNIT)
+: gePack (x, y, Direction::HORIZONTAL)
 , m_data (nullptr)
+, m_label(0, 0, 60, G_GUI_UNIT, "Shift", FL_ALIGN_RIGHT)
+, m_shift(0, 0, 70, G_GUI_UNIT)
+, m_reset(0, 0, 70, G_GUI_UNIT, "Reset")
 {
-	type(Fl_Pack::HORIZONTAL);
-	spacing(G_GUI_INNER_MARGIN);
+	add(&m_label);
+	add(&m_shift);
+	add(&m_reset);
 
-	begin();
-		m_label = new geBox   (0, 0, u::gui::getStringWidth("Shift"), G_GUI_UNIT, "Shift", FL_ALIGN_RIGHT);
-		m_shift = new geInput (0, 0, 70, G_GUI_UNIT);
-		m_reset = new geButton(0, 0, 70, G_GUI_UNIT, "Reset");
-	end();
+	m_shift.type(FL_INT_INPUT);
+	m_shift.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
+	m_shift.callback(cb_setShift, (void*)this);
 
-	m_shift->type(FL_INT_INPUT);
-	m_shift->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
-	m_shift->callback(cb_setShift, (void*)this);
-
-	m_reset->callback(cb_reset, (void*)this);
+	m_reset.callback(cb_reset, (void*)this);
 
 	rebuild(d);
 }
@@ -78,7 +73,7 @@ void geShiftTool::cb_reset(Fl_Widget* /*w*/, void* p) { ((geShiftTool*)p)->cb_re
 
 void geShiftTool::cb_setShift()
 {
-	shift(atoi(m_shift->value()));
+	shift(atoi(m_shift.value()));
 }
 
 
@@ -106,7 +101,7 @@ void geShiftTool::rebuild(const c::sampleEditor::Data& d)
 
 void geShiftTool::update(Frame shift)
 {
-	m_shift->value(std::to_string(shift).c_str());
+	m_shift.value(std::to_string(shift).c_str());
 }
 
 

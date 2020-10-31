@@ -34,9 +34,6 @@
 #include "utils/gui.h"
 #include "utils/string.h"
 #include "gui/dialogs/sampleEditor.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
 #include "waveTools.h"
 #include "rangeTool.h"
 
@@ -45,28 +42,27 @@ namespace giada {
 namespace v 
 {
 geRangeTool::geRangeTool(const c::sampleEditor::Data& d, int x, int y)
-: Fl_Pack(x, y, 280, G_GUI_UNIT)
+: gePack (x, y, Direction::HORIZONTAL)
 , m_data (nullptr)
+, m_label(0, 0, 60, G_GUI_UNIT, "Range", FL_ALIGN_LEFT)
+, m_begin(0, 0, 70, G_GUI_UNIT)
+, m_end  (0, 0, 70, G_GUI_UNIT)
+, m_reset(0, 0, 70, G_GUI_UNIT, "Reset")
 {
-	type(Fl_Pack::HORIZONTAL);
-	spacing(G_GUI_INNER_MARGIN);
+	add(&m_label);
+	add(&m_begin);
+	add(&m_end);
+	add(&m_reset);
 
-	begin();
-		m_label = new geBox   (0, 0, u::gui::getStringWidth("Range"), G_GUI_UNIT, "Range", FL_ALIGN_RIGHT);
-		m_begin = new geInput (0, 0, 70, G_GUI_UNIT);
-		m_end   = new geInput (0, 0, 70, G_GUI_UNIT);
-		m_reset = new geButton(0, 0, 70, G_GUI_UNIT, "Reset");
-	end();
-
-	m_begin->type(FL_INT_INPUT);
-	m_begin->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
-	m_begin->callback(cb_setChanPos, this);
+	m_begin.type(FL_INT_INPUT);
+	m_begin.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
+	m_begin.callback(cb_setChanPos, this);
 	
-	m_end->type(FL_INT_INPUT);
-	m_end->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
-	m_end->callback(cb_setChanPos, this);
+	m_end.type(FL_INT_INPUT);
+	m_end.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
+	m_end.callback(cb_setChanPos, this);
 
-	m_reset->callback(cb_resetStartEnd, this);
+	m_reset.callback(cb_resetStartEnd, this);
 
 	rebuild(d);
 }
@@ -87,8 +83,8 @@ void geRangeTool::rebuild(const c::sampleEditor::Data& d)
 
 void geRangeTool::update(Frame begin, Frame end)
 {
-	m_begin->value(std::to_string(begin).c_str());
-	m_end->value(std::to_string(end).c_str());
+	m_begin.value(std::to_string(begin).c_str());
+	m_end.value(std::to_string(end).c_str());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -103,7 +99,7 @@ void geRangeTool::cb_resetStartEnd(Fl_Widget* /*w*/, void* p) { ((geRangeTool*)p
 
 void geRangeTool::cb_setChanPos()
 {
-	c::sampleEditor::setBeginEnd(m_data->channelId, atoi(m_begin->value()), atoi(m_end->value()));
+	c::sampleEditor::setBeginEnd(m_data->channelId, atoi(m_begin.value()), atoi(m_end.value()));
 }
 
 

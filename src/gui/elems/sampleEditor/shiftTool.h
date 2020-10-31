@@ -29,18 +29,16 @@
 #define GE_SHIFT_TOOL_H
 
 
-#include <FL/Fl_Pack.H>
-
-
-class geInput;
-class geButton;
-class geBox;
+#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/input.h"
+#include "gui/elems/basics/button.h"
 
 
 namespace giada {
 namespace v 
 {
-class geShiftTool : public Fl_Pack
+class geShiftTool : public gePack
 {
 public:
 
@@ -60,9 +58,9 @@ private:
 
 	const c::sampleEditor::Data* m_data;
 	
-	geBox*    m_label;
-	geInput*  m_shift;
-	geButton* m_reset;
+	geBox    m_label;
+	geInput  m_shift;
+	geButton m_reset;
 };
 }} // giada::v::
 
