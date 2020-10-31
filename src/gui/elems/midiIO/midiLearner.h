@@ -31,7 +31,9 @@
 
 #include <functional>
 #include <string>
-#include <FL/Fl_Group.H>
+#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/button.h"
 
 
 class geBox;
@@ -41,11 +43,11 @@ class geButton;
 namespace giada {
 namespace v 
 {
-class geMidiLearner : public Fl_Group
+class geMidiLearner : public gePack
 {
 public:
 
-	geMidiLearner(int x, int y, int w, std::string l, int param);
+	geMidiLearner(int x, int y, std::string l, int param);
 
 	/* update
 	Updates and repaints the label widget with value 'value'. */
@@ -66,9 +68,9 @@ protected:
 
 	int m_param;
 
-	geBox*    m_text;
-	geButton* m_valueBtn;
-	geButton* m_button;
+	geBox    m_text;
+	geButton m_valueBtn;
+	geButton m_button;
 
 private:
 

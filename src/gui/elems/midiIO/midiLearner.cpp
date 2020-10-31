@@ -36,28 +36,29 @@
 namespace giada {
 namespace v 
 {
-geMidiLearner::geMidiLearner(int X, int Y, int W, std::string l, int param)
-: Fl_Group    (X, Y, W, 20)
+geMidiLearner::geMidiLearner(int x, int y, std::string l, int param)
+: gePack      (x, y, Direction::HORIZONTAL)
 , onStartLearn(nullptr)
 , onStopLearn (nullptr)
 , onClearLearn(nullptr)
 , m_param     (param)
+, m_text      (0, 0, 146, 20, l.c_str())
+, m_valueBtn  (0, 0, 80, 20)
+, m_button    (0, 0, 50, 20, "learn")
 {
-	begin();
-	m_text     = new geBox(x(), y(), 156, 20, l.c_str());
-	m_valueBtn = new geButton(m_text->x()+m_text->w()+4, y(), 80, 20);
-	m_button   = new geButton(m_valueBtn->x()+m_valueBtn->w()+4, y(), 40, 20, "learn");
-	end();
+	add(&m_text);
+	add(&m_valueBtn);
+	add(&m_button);
 
-	m_text->box(G_CUSTOM_BORDER_BOX);
-	m_text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_text.box(G_CUSTOM_BORDER_BOX);
+	m_text.align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-	m_valueBtn->box(G_CUSTOM_BORDER_BOX);
-	m_valueBtn->callback(cb_value, (void*)this);
-	m_valueBtn->when(FL_WHEN_RELEASE);
+	m_valueBtn.box(G_CUSTOM_BORDER_BOX);
+	m_valueBtn.callback(cb_value, (void*)this);
+	m_valueBtn.when(FL_WHEN_RELEASE);
 
-	m_button->type(FL_TOGGLE_BUTTON);
-	m_button->callback(cb_button, (void*)this);
+	m_button.type(FL_TOGGLE_BUTTON);
+	m_button.callback(cb_button, (void*)this);
 }
 
 
@@ -81,8 +82,8 @@ void geMidiLearner::update(uint32_t value)
 		tmp.pop_back();  // Remove last two digits, useless in MIDI messages
 	}
 
-	m_valueBtn->copy_label(tmp.c_str());
-	m_button->value(0);	
+	m_valueBtn.copy_label(tmp.c_str());
+	m_button.value(0);	
 }
 
 
@@ -92,16 +93,16 @@ void geMidiLearner::update(uint32_t value)
 void geMidiLearner::activate()
 {
 	Fl_Group::activate();
-	m_valueBtn->activate();
-	m_button->activate();
+	m_valueBtn.activate();
+	m_button.activate();
 }
 
 
 void geMidiLearner::deactivate()
 {
 	Fl_Group::deactivate();
-	m_valueBtn->deactivate();
-	m_button->deactivate();
+	m_valueBtn.deactivate();
+	m_button.deactivate();
 }
 
 
@@ -113,7 +114,7 @@ void geMidiLearner::onLearn() const
 	assert(onStartLearn != nullptr);
 	assert(onStopLearn != nullptr);
 
-	if (m_button->value() == 1)
+	if (m_button.value() == 1)
 		onStartLearn(m_param);
 	else
 		onStopLearn();
