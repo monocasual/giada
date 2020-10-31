@@ -244,7 +244,7 @@ gePack* gdSampleEditor::createBottomBar(int x, int y, int h)
 {
 	geGroup*  previewBox = createPreviewBox(0, 0, h);
 	geBox*    divisor1   = new geBox       (0, 0, 1, h);
-	Fl_Group* opTools    = createOpTools   (0, 0, h);
+	Fl_Group* opTools    = createOpTools   (0, 0);
 	geBox*    divisor2   = new geBox       (0, 0, 1, h);
 	          info       = new geBox       (0, 0, 400, h);
 
