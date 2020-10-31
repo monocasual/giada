@@ -51,7 +51,6 @@ geMidiLearner::geMidiLearner(int x, int y, std::string l, int param)
 	add(&m_button);
 
 	m_text.box(G_CUSTOM_BORDER_BOX);
-	m_text.align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
 	m_valueBtn.box(G_CUSTOM_BORDER_BOX);
 	m_valueBtn.callback(cb_value, (void*)this);

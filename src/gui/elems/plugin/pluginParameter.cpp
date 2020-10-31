@@ -50,7 +50,6 @@ gePluginParameter::gePluginParameter(int X, int Y, int W, int labelWidth, const 
 
 		m_label = new geBox(x(), y(), labelWidth, G_GUI_UNIT);
 		m_label->copy_label(m_param.name.c_str());
-		m_label->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
 		m_slider = new geSlider(m_label->x()+m_label->w()+G_GUI_OUTER_MARGIN, y(), 
 			w()-(m_label->x()+m_label->w()+G_GUI_OUTER_MARGIN)-VALUE_WIDTH, G_GUI_UNIT);
