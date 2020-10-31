@@ -49,9 +49,9 @@ void geCheck::draw()
 	const int textAlign = hasMultilineText() ? FL_ALIGN_LEFT | FL_ALIGN_TOP : FL_ALIGN_LEFT | FL_ALIGN_CENTER;
 
 	if (value())
-		fl_rectf(x(), y(), 12, 20, (Fl_Color) boxColor);
+		fl_rectf(x(), y(), 12, h(), (Fl_Color) boxColor);
 	else
-		fl_rect(x(), y(), 12, 20, (Fl_Color) boxColor);
+		fl_rect(x(), y(), 12, h(), (Fl_Color) boxColor);
 
 	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
 	fl_color(textColor);
