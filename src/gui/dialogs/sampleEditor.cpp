@@ -46,6 +46,8 @@
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
+#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/group.h"
 #include "gui/elems/sampleEditor/waveform.h"
 #include "gui/elems/sampleEditor/waveTools.h"
 #include "gui/elems/sampleEditor/volumeTool.h"
@@ -67,15 +69,15 @@ gdSampleEditor::gdSampleEditor(ID channelId)
               m::conf::conf.sampleEditorW, m::conf::conf.sampleEditorH)
 , m_channelId(channelId)
 {
-	Fl_Group* upperBar = createUpperBar();
+	end();
+
+	gePack* upperBar = createUpperBar();
 	
 	waveTools = new geWaveTools(G_GUI_OUTER_MARGIN, upperBar->y()+upperBar->h()+G_GUI_OUTER_MARGIN, 
-		w()-16, h()-128);
+		w()-16, h()-168);
 	
-	Fl_Group* bottomBar = createBottomBar(G_GUI_OUTER_MARGIN, waveTools->y()+waveTools->h()+G_GUI_OUTER_MARGIN, 
+	gePack* bottomBar = createBottomBar(G_GUI_OUTER_MARGIN, waveTools->y()+waveTools->h()+G_GUI_OUTER_MARGIN, 
 		h()-waveTools->h()-upperBar->h()-32);
-
-	end();
 
 	add(upperBar);
 	add(waveTools);
@@ -145,17 +147,16 @@ void gdSampleEditor::refresh()
 /* -------------------------------------------------------------------------- */
 
 
-Fl_Group* gdSampleEditor::createUpperBar()
+gePack* gdSampleEditor::createUpperBar()
 {
-	Fl_Group* g = new Fl_Group(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w()-16, G_GUI_UNIT);
-	g->begin();
-		grid    = new geChoice(g->x(), g->y(), 50, G_GUI_UNIT);
-		snap    = new geCheck(grid->x()+grid->w()+4, g->y(), 12, G_GUI_UNIT, "Snap");
-		sep1    = new geBox(snap->x()+snap->w()+4, g->y(), g->w() - 118, G_GUI_UNIT);
-		zoomOut = new geButton(sep1->x()+sep1->w()+4, g->y(), G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm);
-		zoomIn  = new geButton(zoomOut->x()+zoomOut->w()+4, g->y(), G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm);
-	g->end();
-	g->resizable(sep1);
+	reload  = new geButton(0, 0, 70, G_GUI_UNIT, "Reload");
+	grid    = new geChoice(0, 0, 50, G_GUI_UNIT);
+	snap    = new geCheck (0, 0, 12, G_GUI_UNIT, "Snap");
+	sep1    = new geBox   (0, 0, w() - 208, G_GUI_UNIT);
+	zoomOut = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm);
+	zoomIn  = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm);
+
+	reload->callback(cb_reload, (void*)this);
 
 	grid->add("(off)");
 	grid->add("2");
@@ -180,6 +181,15 @@ Fl_Group* gdSampleEditor::createUpperBar()
 	zoomOut->callback(cb_zoomOut, (void*)this);
 	zoomIn->callback(cb_zoomIn, (void*)this);
 
+	gePack* g = new gePack(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, Direction::HORIZONTAL);
+	g->add(reload);
+	g->add(grid);
+	g->add(snap);
+	g->add(sep1);
+	g->add(zoomOut);
+	g->add(zoomIn);	
+	g->resizable(sep1);
+
 	return g;
 }
 
@@ -187,22 +197,20 @@ Fl_Group* gdSampleEditor::createUpperBar()
 /* -------------------------------------------------------------------------- */
 \
 
-Fl_Group* gdSampleEditor::createOpTools(int x, int y, int h)
+gePack* gdSampleEditor::createOpTools(int x, int y)
 {
-	Fl_Group* g = new Fl_Group(x, y, 572, h);
-	g->begin();
-	g->resizable(0);
-		volumeTool = new geVolumeTool(m_data, g->x(), g->y());
-		panTool    = new gePanTool(m_data, volumeTool->x()+volumeTool->w()+4, g->y());
-		reload     = new geButton(g->x()+g->w()-70, g->y(), 70, 20, "Reload");
-	 
-		pitchTool = new gePitchTool(m_data, g->x(), panTool->y()+panTool->h()+8);
-
-		rangeTool = new geRangeTool(m_data, g->x(), pitchTool->y()+pitchTool->h()+8);
-		shiftTool = new geShiftTool(m_data, rangeTool->x()+rangeTool->w()+4, pitchTool->y()+pitchTool->h()+8);
-	g->end();
-
-	reload->callback(cb_reload, (void*)this);
+	volumeTool = new geVolumeTool(m_data, 0, 0);
+	panTool    = new gePanTool   (m_data, 0, 0);
+	pitchTool  = new gePitchTool (m_data, 0, 0);
+	rangeTool  = new geRangeTool (m_data, 0, 0);
+	shiftTool  = new geShiftTool (m_data, 0, 0);
+	
+	gePack* g = new gePack(x, y, Direction::VERTICAL);
+	g->add(volumeTool);
+	g->add(panTool);
+	g->add(pitchTool);
+	g->add(rangeTool);
+	g->add(shiftTool);
 
 	return g;
 }
@@ -211,18 +219,20 @@ Fl_Group* gdSampleEditor::createOpTools(int x, int y, int h)
 /* -------------------------------------------------------------------------- */
 
 
-Fl_Group* gdSampleEditor::createPreviewBox(int x, int y, int h)
+geGroup* gdSampleEditor::createPreviewBox(int x, int y, int h)
 {
-	Fl_Group* g = new Fl_Group(x, y, 110, h);
-	g->begin();
-		rewind = new geButton(g->x(), g->y()+(g->h()/2)-12, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
-		play   = new geStatusButton(rewind->x()+rewind->w()+4, rewind->y(), 25, 25, play_xpm, pause_xpm);
-		loop   = new geCheck(play->x()+play->w()+4, play->y(), 12, 25, "Loop");
-	g->end();
+	rewind = new geButton(x, y + (h / 2) - 12, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
+	play   = new geStatusButton(rewind->x() + rewind->w() + 4, rewind->y(), 25, 25, play_xpm, pause_xpm);
+	loop   = new geCheck(play->x() + play->w() + 4, play->y(), 50, 25, "Loop");
 
 	play->callback(cb_togglePreview, (void*)this);
 	rewind->callback(cb_rewindPreview, (void*)this);
 
+	geGroup* g = new geGroup(x, y);
+	g->add(rewind);
+	g->add(play);
+	g->add(loop);
+
 	return g;
 }
 
@@ -230,39 +240,25 @@ Fl_Group* gdSampleEditor::createPreviewBox(int x, int y, int h)
 /* -------------------------------------------------------------------------- */
 
 
-Fl_Group* gdSampleEditor::createInfoBox(int x, int y, int h)
+gePack* gdSampleEditor::createBottomBar(int x, int y, int h)
 {
-	Fl_Group* g = new Fl_Group(x, y, 400, h);
-	g->begin();
-		info = new geBox(g->x(), g->y(), g->w(), g->h());
-	g->end();	
+	geGroup*  previewBox = createPreviewBox(0, 0, h);
+	geBox*    divisor1   = new geBox       (0, 0, 1, h);
+	Fl_Group* opTools    = createOpTools   (0, 0, h);
+	geBox*    divisor2   = new geBox       (0, 0, 1, h);
+	          info       = new geBox       (0, 0, 400, h);
+
+	divisor1->box(FL_BORDER_BOX);
+	divisor2->box(FL_BORDER_BOX);
 
 	info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
 
-	return g;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-Fl_Group* gdSampleEditor::createBottomBar(int /*x*/, int /*y*/, int h)
-{
-	Fl_Group* g = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, h);
-	g->begin();
-		Fl_Group* previewBox = createPreviewBox(g->x(), g->y(), g->h());
-
-		geBox* divisor1 = new geBox(previewBox->x()+previewBox->w()+8, g->y(), 1, g->h());
-		divisor1->box(FL_BORDER_BOX);
-
-		Fl_Group* opTools = createOpTools(divisor1->x()+divisor1->w()+12, g->y(), g->h());
-
-		geBox* divisor2 = new geBox(opTools->x()+opTools->w()+8, g->y(), 1, g->h());
-		divisor2->box(FL_BORDER_BOX);
-
-		createInfoBox(divisor2->x()+divisor2->w()+8, g->y(), g->h());
-
-	g->end();
+	gePack* g = new gePack(x, y, Direction::HORIZONTAL, /*gutter=*/G_GUI_OUTER_MARGIN);
+	g->add(previewBox);
+	g->add(divisor1);
+	g->add(opTools);
+	g->add(divisor2);
+	g->add(info);
 	g->resizable(0);
 
 	return g;

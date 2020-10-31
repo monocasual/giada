@@ -43,7 +43,7 @@ namespace v
 geShiftTool::geShiftTool(const c::sampleEditor::Data& d, int x, int y)
 : gePack (x, y, Direction::HORIZONTAL)
 , m_data (nullptr)
-, m_label(0, 0, 60, G_GUI_UNIT, "Shift", FL_ALIGN_RIGHT)
+, m_label(0, 0, 60, G_GUI_UNIT, "Shift", FL_ALIGN_LEFT)
 , m_shift(0, 0, 70, G_GUI_UNIT)
 , m_reset(0, 0, 70, G_GUI_UNIT, "Reset")
 {

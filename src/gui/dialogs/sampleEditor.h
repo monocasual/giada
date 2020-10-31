@@ -49,6 +49,8 @@ class Wave;
 namespace v 
 {
 class geChoice;
+class gePack;
+class geGroup;
 class geVolumeTool;
 class geWaveTools;
 class geBoostTool;
@@ -93,12 +95,10 @@ public:
 
 private:
 
-	Fl_Group* createUpperBar();
-	Fl_Group* createBottomBar(int x, int y, int h);
-
-	Fl_Group* createPreviewBox(int x, int y, int h);
-	Fl_Group* createOpTools(int x, int y, int h);
-	Fl_Group* createInfoBox(int x, int y, int h);
+	gePack* createUpperBar();
+	gePack* createBottomBar(int x, int y, int h);
+	geGroup* createPreviewBox(int x, int y, int h);
+	gePack* createOpTools(int x, int y);
 
 	static void cb_reload    (Fl_Widget* /*w*/, void* p);
 	static void cb_zoomIn    (Fl_Widget* /*w*/, void* p);
