@@ -33,17 +33,19 @@ sourcesCore =                               \
 	src/core/kernelAudio.h                  \
 	src/core/kernelAudio.cpp                \
 	src/core/plugins/pluginHost.h                   \
-	src/core/pluginHost.cpp                 \
+	src/core/plugins/pluginHost.cpp                 \
 	src/core/plugins/pluginManager.h                \
-	src/core/pluginManager.cpp              \
+	src/core/plugins/pluginManager.cpp              \
+	src/core/plugins/plugin.h                       \
+	src/core/plugins/plugin.cpp                     \
+	src/core/plugins/pluginState.h                       \
+	src/core/plugins/pluginState.cpp                     \
 	src/core/mixerHandler.h                 \
 	src/core/mixerHandler.cpp               \
 	src/core/sequencer.h                    \
 	src/core/sequencer.cpp                  \
 	src/core/init.h                         \
 	src/core/init.cpp                       \
-	src/core/plugins/plugin.h                       \
-	src/core/plugin.cpp                     \
 	src/core/wave.h                         \
 	src/core/wave.cpp                       \
 	src/core/waveFx.h                       \
