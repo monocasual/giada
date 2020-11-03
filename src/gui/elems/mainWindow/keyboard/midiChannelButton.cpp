@@ -65,6 +65,6 @@ void geMidiChannelButton::refreshLabel()
 	if (m_channel.midi->a_isOutputEnabled())
 		l += " (ch " + std::to_string(m_channel.midi->a_getFilter() + 1) + " out)";
 
-	label(l.c_str());
+	copy_label(l.c_str());
 }
 }} // giada::v::

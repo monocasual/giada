@@ -280,8 +280,6 @@ list(APPEND SOURCES
 	src/gui/elems/basics/scrollPack.cpp    
 	src/gui/elems/basics/boxtypes.h        
 	src/gui/elems/basics/boxtypes.cpp      
-	src/gui/elems/basics/baseButton.h      
-	src/gui/elems/basics/baseButton.cpp    
 	src/gui/elems/basics/statusButton.h    
 	src/gui/elems/basics/statusButton.cpp  
 	src/gui/elems/basics/button.h          

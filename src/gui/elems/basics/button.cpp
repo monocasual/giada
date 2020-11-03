@@ -33,14 +33,14 @@
 
 geButton::geButton(int x, int y, int w, int h, const char* l, 
 	const char** imgOff, const char** imgOn, const char** imgDisabled)
-: geBaseButton(x, y, w, h, l),
-  imgOff      (imgOff),
-  imgOn       (imgOn),
-  imgDisabled (imgDisabled),
-  bgColor0    (G_COLOR_GREY_2),
-  bgColor1    (G_COLOR_GREY_4),
-  bdColor     (G_COLOR_GREY_4),
-  txtColor    (G_COLOR_LIGHT_2)
+: Fl_Button  (x, y, w, h, l),
+  imgOff     (imgOff),
+  imgOn      (imgOn),
+  imgDisabled(imgDisabled),
+  bgColor0   (G_COLOR_GREY_2),
+  bgColor1   (G_COLOR_GREY_4),
+  bdColor    (G_COLOR_GREY_4),
+  txtColor   (G_COLOR_LIGHT_2)
 {
 }
 
@@ -50,7 +50,7 @@ geButton::geButton(int x, int y, int w, int h, const char* l,
 
 void geButton::draw()
 {
-	geBaseButton::draw();
+	//Fl_Button::draw();
 
 	if (active())
 		if (value()) draw(imgOn,  bgColor1, txtColor);

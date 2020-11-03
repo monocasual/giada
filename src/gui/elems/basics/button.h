@@ -32,10 +32,10 @@
 #define GE_BUTTON_H
 
 
-#include "baseButton.h"
+#include <FL/Fl_Button.H>
 
 
-class geButton : public geBaseButton
+class geButton : public Fl_Button
 {
 public:
 
