@@ -30,6 +30,7 @@
 
 
 #include <functional>
+#include <string>
 #include <vector>
 #include <FL/Fl_Choice.H>
 #include "core/types.h"
