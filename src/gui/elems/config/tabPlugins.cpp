@@ -60,7 +60,7 @@ geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 	m_browse     = new geButton(x()+w()-G_GUI_UNIT, y()+9, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm);
 	m_folderPath = new geInput(m_browse->x()-258, y()+9, 250, G_GUI_UNIT);
 	m_scanButton = new geButton(x()+w()-150, m_folderPath->y()+m_folderPath->h()+8, 150, G_GUI_UNIT);
-	m_info       = new geBox(x(), m_scanButton->y()+m_scanButton->h()+8, w(), 242);
+	m_info       = new geBox(x(), m_scanButton->y()+m_scanButton->h()+8, w(), 240);
 
 	end();
 
@@ -87,7 +87,7 @@ geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 void geTabPlugins::refreshCount()
 {
 	std::string scanLabel = "Scan (" + std::to_string(m::pluginManager::countAvailablePlugins()) + " found)";
-	m_scanButton->label(scanLabel.c_str());
+	m_scanButton->copy_label(scanLabel.c_str());
 }
 
 
