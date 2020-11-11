@@ -41,7 +41,7 @@
 namespace giada {
 namespace m 
 {
-class Plugin
+class Plugin : private juce::ComponentListener
 {
 public:
 
@@ -99,6 +99,8 @@ public:
 
 	bool valid;
 
+	std::function<void(int w, int h)> onEditorResize;
+
 private:
 
 #ifdef G_OS_WINDOWS
@@ -111,6 +113,10 @@ private:
 	{ 
 		IN = true, OUT = false 
 	};
+
+	/* JUCE overrides. */
+	
+	void componentMovedOrResized(juce::Component& c, bool moved, bool resized) override;
 
 	juce::AudioProcessor::Bus* getMainBus(BusType b) const;
 

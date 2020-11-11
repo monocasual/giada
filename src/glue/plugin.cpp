@@ -70,7 +70,7 @@ Param::Param(const m::Plugin& p, int index)
 /* -------------------------------------------------------------------------- */
 
 
-Plugin::Plugin(const m::Plugin& p, ID channelId)
+Plugin::Plugin(m::Plugin& p, ID channelId)
 : id            (p.id)
 , channelId     (channelId)
 , valid         (p.valid)
@@ -95,6 +95,15 @@ juce::AudioProcessorEditor* Plugin::createEditor() const
 {
 	m::model::PluginsLock l(m::model::plugins);
 	return m_plugin.createEditor();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Plugin::setResizeCallback(std::function<void(int, int)> f)
+{
+	m_plugin.onEditorResize = f;
 }
 
 

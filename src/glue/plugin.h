@@ -74,9 +74,11 @@ struct Param
 struct Plugin
 {
     Plugin() = default;
-    Plugin(const m::Plugin&, ID channelId);
+    Plugin(m::Plugin&, ID channelId);
 
     juce::AudioProcessorEditor* createEditor() const;
+
+    void setResizeCallback(std::function<void(int, int)> f);
 
     ID          id;
     ID          channelId;
@@ -92,7 +94,7 @@ struct Plugin
 
 private:
 
-    const m::Plugin& m_plugin;
+    m::Plugin& m_plugin;
 };
 
 struct Plugins

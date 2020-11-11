@@ -44,10 +44,11 @@ namespace giada {
 namespace m 
 {
 Plugin::Plugin(ID id, const std::string& UID)
-: id      (id)
-, valid   (false)
-, m_plugin(nullptr)
-, m_UID   (UID)
+: id            (id)
+, valid         (false)
+, onEditorResize(nullptr)
+, m_plugin      (nullptr)
+, m_UID         (UID)
 {
 }
 
@@ -57,10 +58,11 @@ Plugin::Plugin(ID id, const std::string& UID)
 
 Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin, double samplerate,
 	int buffersize)
-: id      (id)
-, valid   (true)
-, m_plugin(std::move(plugin))
-, m_bypass(false)
+: id            (id)
+, valid         (true)
+, onEditorResize(nullptr)
+, m_plugin      (std::move(plugin))
+, m_bypass      (false)
 {
 	/* Initialize midiInParams vector, where midiInParams.size == number of 
 	plugin parameters. All values are initially empty (0x0): they will be filled
@@ -89,11 +91,12 @@ Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin, double 
 
 
 Plugin::Plugin(const Plugin& o)
-: id          (o.id)
-, midiInParams(o.midiInParams)
-, valid       (o.valid)
-, m_plugin    (std::move(pluginManager::makePlugin(o)->m_plugin))
-, m_bypass    (o.m_bypass.load())
+: id            (o.id)
+, midiInParams  (o.midiInParams)
+, valid         (o.valid)
+, onEditorResize(o.onEditorResize)
+, m_plugin      (std::move(pluginManager::makePlugin(o)->m_plugin))
+, m_bypass      (o.m_bypass.load())
 {
 }
 
@@ -105,8 +108,25 @@ Plugin::~Plugin()
 {
 	if (!valid)
 		return;
+
+	juce::AudioProcessorEditor* e = m_plugin->getActiveEditor();
+	if (e != nullptr)
+		e->removeComponentListener(this);
+
 	m_plugin->suspendProcessing(true);
 	m_plugin->releaseResources();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Plugin::componentMovedOrResized(juce::Component& c, bool moved, bool/* resized*/)
+{
+	if (moved)
+		return;
+	if (onEditorResize != nullptr)
+		onEditorResize(c.getWidth(), c.getHeight());
 }
 
 
@@ -136,7 +156,10 @@ int Plugin::countMainOutChannels() const
 
 juce::AudioProcessorEditor* Plugin::createEditor() const
 {
-	return m_plugin->createEditorIfNeeded();
+	juce::AudioProcessorEditor* e = m_plugin->createEditorIfNeeded();
+	if (e != nullptr)
+		e->addComponentListener(const_cast<Plugin*>(this));
+	return e;
 }
 
 

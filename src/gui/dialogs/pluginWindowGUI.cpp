@@ -42,7 +42,7 @@
 namespace giada {
 namespace v
 {
-gdPluginWindowGUI::gdPluginWindowGUI(const c::plugin::Plugin& p)
+gdPluginWindowGUI::gdPluginWindowGUI(c::plugin::Plugin& p)
 #ifdef G_OS_MAC
 : gdWindow(Fl::w(), Fl::h())
 #else
@@ -86,9 +86,16 @@ gdPluginWindowGUI::gdPluginWindowGUI(const c::plugin::Plugin& p)
 
 	resize((Fl::w() - pluginW) / 2, (Fl::h() - pluginH) / 2, pluginW, pluginH);
 
+	m_plugin.setResizeCallback([this] (int w, int h)
+	{
+		resize(x(), y(), w, h);
+	});
+
 #endif
 
+#ifdef G_OS_LINUX
 	Fl::add_timeout(G_GUI_PLUGIN_RATE, cb_refresh, (void*) this);
+#endif
 
 	copy_label(m_plugin.name.c_str());
 }
@@ -115,7 +122,9 @@ void gdPluginWindowGUI::cb_refresh(void* data) { ((gdPluginWindowGUI*)data)->cb_
 
 void gdPluginWindowGUI::cb_close()
 {
+#ifdef G_OS_LINUX
 	Fl::remove_timeout(cb_refresh);
+#endif
 	closeEditor();
 	u::log::print("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*) this);
 }
@@ -154,7 +163,6 @@ void gdPluginWindowGUI::closeEditor()
 	delete m_ui;
 	m_ui = nullptr;
 }
-
 }} // giada::v::
 
 
