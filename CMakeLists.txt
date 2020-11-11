@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 3.12)
 
+# CMAKE_OSX_DEPLOYMENT_TARGET should be set prior to the first project() or 
+# enable_language() command invocation because it may influence configuration 
+# of the toolchain and flags. A
+# Also, see https://stackoverflow.com/questions/34208360/cmake-seems-to-ignore-cmake-osx-deployment-target
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	set(CMAKE_OSX_DEPLOYMENT_TARGET "10.14" CACHE STRING "Minimum OS X deployment version")
+endif()
+
 project(giada LANGUAGES CXX)
 
 add_executable(giada)
