@@ -446,6 +446,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
+	# Enable static linking of the MSVC runtime library. 
+	
+	set_target_properties(giada PROPERTIES 
+		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 	list(APPEND LIBRARIES dsound)
 
 	list(APPEND SOURCES
