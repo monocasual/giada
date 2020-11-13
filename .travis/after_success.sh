@@ -9,7 +9,7 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
 	echo "UPX binary"
 
-	upx --best ./build/giada
+	upx --best ./build/Release/giada
 
 	echo "Create temporary directory giada.app"
 
@@ -48,7 +48,7 @@ EOF
 
 	echo "Copy the binary file into the .app bundle"
 
-	mv ./build/giada temp/giada.app/Contents/MacOS/
+	mv ./build/Release/giada temp/giada.app/Contents/MacOS/
 
 	echo "Set executable permissions"
 
@@ -61,8 +61,9 @@ EOF
 	echo "Copy final bundle to dist/, zip it and clean it up"
 
 	cp -r temp/giada.app dist/
-	zip -r dist/giada-$TRAVIS_TAG-x86_64-macos.zip dist/giada.app
-	rm -rf dist/giada.app
+	cd dist
+	zip -r giada-$TRAVIS_TAG-x86_64-macos.zip giada.app
+	rm -rf giada.app
 
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 

@@ -4,7 +4,7 @@ set -e
 
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
-	make -C build/ -j 2
+	xcodebuild -quiet -project build/giada.xcodeproj -scheme 'giada' -configuration Release build
 	#TODO tests
 fi
 

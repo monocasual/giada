@@ -6,7 +6,7 @@ mkdir build
 
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
-	cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-ObjC++ -DWITH_VST3=ON
+	cmake -S . -B build/ -G "Xcode" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-x objective-c++" -DWITH_VST3=ON
 
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 

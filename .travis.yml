@@ -2,7 +2,7 @@ sudo: required
 
 dist: bionic
 
-osx_image: xcode11
+osx_image: xcode11.4
 
 os:
 - linux
