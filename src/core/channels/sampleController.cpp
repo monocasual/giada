@@ -300,7 +300,8 @@ void SampleController::onBar(Frame localFrame) const
     ChannelStatus    playStatus = m_channelState->playStatus.load();
     SamplePlayerMode mode       = m_samplePlayerState->mode.load();
 
-    if (playStatus == ChannelStatus::PLAY && mode == SamplePlayerMode::LOOP_REPEAT)
+    if (playStatus == ChannelStatus::PLAY && (mode == SamplePlayerMode::LOOP_REPEAT || 
+	                                          mode == SamplePlayerMode::LOOP_ONCE_BAR))
         rewind(localFrame);
     else
     if (playStatus == ChannelStatus::WAIT && mode == SamplePlayerMode::LOOP_ONCE_BAR) {
