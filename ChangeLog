@@ -11,7 +11,7 @@
 --------------------------------------------------------------------------------
 
 
-0.17.0 --- 
+0.17.0 --- 2020 . 11 . 15
 - Add CMake build system
 - VST3 support
 - Show descriptive plug-in names in Plug-in List Window
@@ -25,10 +25,13 @@
 - Update Catch2 to version 2.13.2
 - Replace old filesystem functions in fs.h with std::filesystem
 - Add VST3 SDK as git submodule
+- Set minimum macOS version to 10.14
+- Statically link the MSVC runtime library on Windows
 - Avoid crash on opening plug-in list with invalid plug-ins
+- Rewind sample channels in loop.once.bar mode on bar, if still playing (fix #403)
 - Modernize log::print() function to handle std::string arguments (PR #402)
 - Fix playStatus logic for ending sample channels in loop-once-bar mode (#404)
-- Fix shrinking beats can glitch the output (#361)
+- Fix shrinking beats that could glitch the output (#361)
 
 
 0.16.4 --- 2020 . 09. 19
