@@ -41,8 +41,6 @@ namespace kernelMidi
 {
 namespace
 {
-// An output port name for use with new midiPorts backend
-std::string out_port_name;
 
 } // {anonymous}
 
@@ -51,19 +49,24 @@ std::string out_port_name;
 
 void init() {
 
-	out_port_name = conf::conf.midiPortOutName;
-	midiPorts::openInPort(conf::conf.midiPortInName);
-	midiPorts::openOutPort(out_port_name);
-
+	for (std::string& p : conf::conf.midiPortInNames) {
+		midiPorts::openInPort(p);
+	}
+	for (std::string& p : conf::conf.midiPortOutNames) {
+		midiPorts::openOutPort(p);
+	}
+	// TODO: Notify about ports unable to open
+	// TODO: Maybe try opening unavailable ports periodically?
 }
 
 /* -------------------------------------------------------------------------- */
 
 void send(uint32_t data)
 {
+	// TODO: Get rid of this, it doesn't work anymore.
 	std::vector msg { getB1(data), getB2(data), getB3(data) };
 
-	midiPorts::midiReceive({"", msg}, out_port_name);
+	midiPorts::midiReceive({"", msg}, "");
 
 	u::log::print("[KM::send] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
 }
@@ -74,6 +77,7 @@ void send(uint32_t data)
 
 void send(int b1, int b2, int b3)
 {
+	// TODO: Get rid of this, it doesn't work anymore.
 	std::vector<unsigned char> msg(1, b1);
 
 	if (b2 != -1)
@@ -82,7 +86,7 @@ void send(int b1, int b2, int b3)
 		msg.push_back(b3);
 
 	MidiMsg mm = MidiMsg("", msg);
-	midiPorts::midiReceive(mm, out_port_name);
+	midiPorts::midiReceive(mm, "");
 
 	u::log::print("[KM::send] send msg=(%X %X %X)\n", b1, b2, b3);
 }

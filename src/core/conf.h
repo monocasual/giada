@@ -54,8 +54,8 @@ struct Conf
 	int  rsmpQuality     = 0;
 
 	int         midiSystem      = 0;
-	std::string midiPortOutName = G_DEFAULT_MIDI_PORT_OUT;
-	std::string midiPortInName  = G_DEFAULT_MIDI_PORT_IN;
+	std::vector<std::string> midiPortOutNames = G_DEFAULT_MIDI_PORTS_OUT;
+	std::vector<std::string> midiPortInNames  = G_DEFAULT_MIDI_PORTS_IN;
 	std::string midiMapPath;
 	std::string lastFileMap;
 	int         midiSync        = MIDI_SYNC_NONE;

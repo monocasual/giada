@@ -33,6 +33,7 @@
 
 
 class geCheck;
+class geMenuButton;
 
 
 namespace giada {
@@ -48,16 +49,18 @@ public:
 	void save();
 
 	geChoice* system;
-	geChoice* portOut;
-	geChoice* portIn;
+	geMenuButton* portOut;
+	geMenuButton* portIn;
 	geChoice* midiMap;
 	geChoice* sync;
 
 private:
 
 	void fetchSystems();
-	void fetchOutPorts();
-	void fetchInPorts();
+	void populateOutPorts();
+	static void cb_portOutMenu(Fl_Widget* /*w*/, void* p);
+	void populateInPorts();
+	static void cb_portInMenu(Fl_Widget* /*w*/, void* p);
 	void fetchMidiMaps();
 
 	static void cb_changeSystem(Fl_Widget* /*w*/, void* p);

@@ -33,11 +33,14 @@
 #include "core/kernelMidi.h"
 #include "core/midiPorts.h"
 #include "utils/gui.h"
+#include "utils/log.h"
+#include "utils/vector.h"
 #include "gui/elems/basics/box.h"
+#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/check.h"
+#include "gui/elems/basics/menuButton.h"
 #include "tabMidi.h"
-
 
 namespace giada {
 namespace v
@@ -47,8 +50,8 @@ geTabMidi::geTabMidi(int X, int Y, int W, int H)
 {
 	begin();
 	system	= new geChoice(x()+w()-250, y()+9, 250, 20, "System");
-	portOut	= new geChoice(x()+w()-250, system->y()+system->h()+8, 250, 20, "Output port");
-	portIn	= new geChoice(x()+w()-250, portOut->y()+portOut->h()+8, 250, 20, "Input port");
+	portOut	= new geMenuButton(x()+w()-250, system->y()+system->h()+8, 250, 20, "Output port", "Output ports");
+	portIn	= new geMenuButton(x()+w()-250, portOut->y()+portOut->h()+8, 250, 20, "Input port", "Input Ports");
 	midiMap	= new geChoice(x()+w()-250, portIn->y()+portIn->h()+8, 250, 20, "Output Midi Map");
 	sync    = new geChoice(x()+w()-250, midiMap->y()+midiMap->h()+8, 250, 20, "Sync");
 	new geBox(x(), sync->y()+sync->h()+8, w(), h()-150, "Restart Giada for the changes to take effect.");
@@ -60,8 +63,8 @@ geTabMidi::geTabMidi(int X, int Y, int W, int H)
 	system->callback(cb_changeSystem, (void*)this);
 
 	fetchSystems();
-	fetchOutPorts();
-	fetchInPorts();
+	populateOutPorts();
+	populateInPorts();
 	fetchMidiMaps();
 
 	sync->add("(disabled)");
@@ -80,52 +83,56 @@ geTabMidi::geTabMidi(int X, int Y, int W, int H)
 
 /* -------------------------------------------------------------------------- */
 
-
-void geTabMidi::fetchOutPorts()
+void geTabMidi::populateOutPorts()
 {
 	std::vector<std::string> ports = m::midiPorts::getOutDevices();
+	int i;
 
-	if (ports.empty()) {
-		portOut->add("-- no ports found --");
-		portOut->value(0);
-		portOut->deactivate();
-	}
-	else {
+	for (auto& p : ports)
+		portOut->add(u::gui::removeFltkChars(p).c_str(), 0,
+					cb_portOutMenu, 0, FL_MENU_TOGGLE);
 
-		portOut->add("(disabled)");
-
-		for (auto& p : ports)
-			portOut->add(u::gui::removeFltkChars(p).c_str());
-
-		int i = m::midiPorts::getOutDeviceIndex(m::conf::conf.midiPortOutName);
-		portOut->value(i+1);
+	// Let's also add ports that are currently in config file but are
+	// not present in the system
+	
+	for (std::string& p : m::conf::conf.midiPortOutNames) {
+		if (!u::vector::has(ports, p)) {
+			i = portOut->add(u::gui::removeFltkChars(p).c_str(),
+			0, cb_portOutMenu, 0, FL_MENU_TOGGLE | FL_MENU_VALUE);
+			//portOut->menu()[i].labelcolor(G_COLOR_GREY_4);
+		}
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
 
-void geTabMidi::fetchInPorts()
+void geTabMidi::cb_portOutMenu(Fl_Widget *w, void*)
+{
+	// Does nothing, but could do something!
+	return;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geTabMidi::populateInPorts()
 {
 	std::vector<std::string> ports = m::midiPorts::getInDevices();
 
-	if (ports.empty()) {
-		portIn->add("-- no ports found --");
-		portIn->value(0);
-		portIn->deactivate();
-	}
-	else {
+	for (auto& p : ports)
+		portIn->add(u::gui::removeFltkChars(p).c_str(), 0,
+					cb_portInMenu, 0, FL_MENU_TOGGLE);
 
-		portIn->add("(disabled)");
-
-		for (auto& p : ports)
-			portIn->add(u::gui::removeFltkChars(p).c_str());
-
-		int i = m::midiPorts::getInDeviceIndex(m::conf::conf.midiPortInName);
-		portIn->value(i+1);
-	}
 }
 
+/* -------------------------------------------------------------------------- */
+
+
+void geTabMidi::cb_portInMenu(Fl_Widget *w, void*)
+{
+	// Does nothing, but could do something!
+	return;
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -169,8 +176,25 @@ void geTabMidi::save()
 	else if (text == "OSX Core MIDI")
 		m::conf::conf.midiSystem = RtMidi::MACOSX_CORE;
 
-	m::conf::conf.midiPortOutName = m::midiPorts::getOutDeviceName(portOut->value()-1);
-	m::conf::conf.midiPortInName  = m::midiPorts::getInDeviceName(portIn->value()-1); 
+	m::conf::conf.midiPortOutNames.clear();
+u::log::print("%d <- portOut->size()\n", portOut->size());
+	for (int i = 0; i < portOut->size(); i++) {
+u::log::print("%d <- value pozycji %d\n", portOut->menu()[i].value(), i);
+		if (portOut->menu()[i].value()) {
+			m::conf::conf.midiPortOutNames.push_back(
+					portOut->menu()[i].label());
+		}
+	}
+
+
+	m::conf::conf.midiPortInNames.clear();
+	for (int i = 0; i < portIn->size(); i++) {
+		if (portIn->menu()[i].value()) {
+			m::conf::conf.midiPortInNames.push_back(
+					portIn->menu()[i].label());
+		}
+	}
+
 	m::conf::conf.midiMapPath     = m::midimap::maps.size() == 0 ? "" : midiMap->text(midiMap->value());
 
 	if      (sync->value() == 0)
@@ -236,23 +260,24 @@ void geTabMidi::cb_changeSystem()
 	 * querying m::kernelMidi. */
 
 	if (systemInitValue == system->value()) {
-		portOut->clear();
-		fetchOutPorts();
-		portOut->activate();
-		portIn->clear();
-		fetchInPorts();
-		portIn->activate();
+	//	portOut->clear();
+	//	fetchOutPorts();
+	//	TODO
+	//	portOut->activate();
+	//	portIn->clear();
+	//	fetchInPorts();
+	//	portIn->activate();
 		sync->activate();
 	}
 	else {
-		portOut->deactivate();
-		portOut->clear();
-		portOut->add("-- restart to fetch device(s) --");
-		portOut->value(0);
-		portIn->deactivate();
-		portIn->clear();
-		portIn->add("-- restart to fetch device(s) --");
-		portIn->value(0);
+	//	portOut->deactivate();
+	//	portOut->clear();
+	//	portOut->add("-- restart to fetch device(s) --");
+	//	portOut->value(0);
+	//	portIn->deactivate();
+	//	portIn->clear();
+	//	portIn->add("-- restart to fetch device(s) --");
+	//	portIn->value(0);
 		sync->deactivate();
 	}
 }
