@@ -112,7 +112,7 @@ void renderMetronome_(AudioBuffer& outBuf, Frame f)
 void rewindQ_(Frame delta)
 {
 	clock::rewind();
-	mixer::pumpEvent({ mixer::EventType::SEQUENCER_REWIND, delta });	
+	mixer::pumpEvent({ mixer::EventType::SEQUENCER_REWIND, delta, {} });	
 }
 
 
@@ -192,10 +192,10 @@ void run(Frame bufferSize)
 		Frame global = i % total; // wraps around 'total'
 
 		if (global == 0)
-			mixer::pumpEvent({ mixer::EventType::SEQUENCER_FIRST_BEAT, local, { 0, 0, global } });
+			mixer::pumpEvent({ mixer::EventType::SEQUENCER_FIRST_BEAT, local, { 0, 0, global, {} } });
 		else
 		if (global % bar == 0)
-			mixer::pumpEvent({ mixer::EventType::SEQUENCER_BAR, local, { 0, 0, global } });
+			mixer::pumpEvent({ mixer::EventType::SEQUENCER_BAR, local, { 0, 0, global, {} } });
 
 		const std::vector<Action>* as = recorder::getActionsOnFrame(global);
 		if (as != nullptr)
