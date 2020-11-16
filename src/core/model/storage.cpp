@@ -111,7 +111,7 @@ void load(const patch::Patch& patch)
 
 	onSwap(actions, [&](Actions& a)
 	{
-		a.map = std::move(recorderHandler::deserializeActions(patch.actions));
+		a.map = recorderHandler::deserializeActions(patch.actions);
 	});
 
 #ifdef WITH_VST
