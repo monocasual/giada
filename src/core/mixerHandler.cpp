@@ -256,7 +256,7 @@ void close()
 
 void addChannel(ChannelType type, ID columnId)
 {
-	model::channels.push(std::move(createChannel_(type, columnId)));
+	model::channels.push(createChannel_(type, columnId));
 }
 
 
