@@ -47,7 +47,7 @@ namespace waveManager
 struct Result
 {
     int status;
-    std::unique_ptr<Wave> wave;
+    std::unique_ptr<Wave> wave = nullptr;
 };
 /* init
 Initializes internal data. */
