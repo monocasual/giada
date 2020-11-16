@@ -61,8 +61,8 @@ public:
     Channel(const Channel&);
     Channel(const patch::Channel& p, Frame bufferSize);
     Channel(Channel&&)                 = default;
-    Channel& operator=(const Channel&) = default;
-    Channel& operator=(Channel&&)      = default;
+    Channel& operator=(const Channel&) = delete;
+    Channel& operator=(Channel&&)      = delete;
     ~Channel()                         = default;
 
     /* parse
