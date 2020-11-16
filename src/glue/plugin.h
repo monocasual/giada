@@ -73,7 +73,6 @@ struct Param
 
 struct Plugin
 {
-    Plugin() = default;
     Plugin(m::Plugin&, ID channelId);
 
     juce::AudioProcessorEditor* createEditor() const;

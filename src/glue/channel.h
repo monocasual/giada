@@ -83,7 +83,6 @@ private:
 
 struct Data
 {
-	Data() = default;
 	Data(const m::Channel&);
 
 	bool a_getMute() const;
