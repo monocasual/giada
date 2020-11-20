@@ -520,13 +520,15 @@ void geTabAudio::save()
 	m::conf::conf.limitOutput     = limitOutput->value();
 	m::conf::conf.rsmpQuality     = rsmpQuality->value();
 
-	/* if sounddevOut is disabled (because of system change e.g. alsa ->
-	 * jack) its value is equal to -1. Change it! */
+	/* If sounddevOut is disabled because of system change e.g. alsa -> jack, 
+	soundDeviceOut and channelsOut are == -1. Change them! */
 
-	if (m::conf::conf.soundDeviceOut == -1)
+	if (m::conf::conf.soundDeviceOut == -1) {
 		m::conf::conf.soundDeviceOut = 0;
+		m::conf::conf.channelsOut    = 0;
+	}
 
-	m::conf::conf.buffersize = std::atoi(buffersize->text());
+	m::conf::conf.buffersize      = std::atoi(buffersize->text());
 	m::conf::conf.recTriggerLevel = std::atof(recTriggerLevel->value());
 
 	const Fl_Menu_Item* i = nullptr;
