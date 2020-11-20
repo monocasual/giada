@@ -156,16 +156,16 @@ void load(const conf::Conf& c)
 	onSwap(midiIn, [&](MidiIn& m)
 	{
 		m.enabled    = c.midiInEnabled;
-		m.filter     = c.midiInFilter;
+		m.filter      = c.midiInFilter;
 		m.rewind     = c.midiInRewind;
 		m.startStop  = c.midiInStartStop;
 		m.actionRec  = c.midiInActionRec;
 		m.inputRec   = c.midiInInputRec;
-		m.volumeIn   = c.midiInMetronome;
-		m.volumeOut  = c.midiInVolumeIn;
-		m.beatDouble = c.midiInVolumeOut;
-		m.beatHalf   = c.midiInBeatDouble;
-		m.metronome  = c.midiInBeatHalf;
+		m.volumeIn   = c.midiInVolumeIn;
+		m.volumeOut  = c.midiInVolumeOut;
+		m.beatDouble = c.midiInBeatDouble;
+		m.beatHalf   = c.midiInBeatHalf;
+		m.metronome  = c.midiInMetronome;
 	});	
 }
 }}} // giada::m::model::
