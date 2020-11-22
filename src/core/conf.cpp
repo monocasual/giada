@@ -53,6 +53,16 @@ std::string confDirPath_  = "";
 /* -------------------------------------------------------------------------- */
 
 
+void sanitize_()
+{
+	conf.soundDeviceOut = std::max(0, conf.soundDeviceOut);
+	conf.channelsOut    = std::max(0, conf.channelsOut);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 /* createConfigFolder
 Creates local folder where to put the configuration file. Path differs from OS
 to OS. */
@@ -209,6 +219,8 @@ bool read()
 	conf.pluginChooserH             = j.value(CONF_KEY_PLUGIN_CHOOSER_H, conf.pluginChooserH);
 	conf.pluginSortMethod           = j.value(CONF_KEY_PLUGIN_SORT_METHOD, conf.pluginSortMethod);
 #endif
+
+	sanitize_();
 
 	return true;
 }
