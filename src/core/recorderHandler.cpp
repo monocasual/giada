@@ -182,18 +182,31 @@ bool cloneActions(ID channelId, ID newChannelId)
 {
 	bool cloned = false;
 	std::vector<Action> actions;
-	std::unordered_map<ID, ID> map;
+	std::unordered_map<ID, ID> map; // Action ID mapper, old -> new
 
 	recorder::forEachAction([&](const Action& a) 
 	{
 		if (a.channelId != channelId)
 			return;
+		
+		ID newActionId = recorder::getNewActionId();
+
+		map.insert({a.id, newActionId});
+
 		Action clone(a);
-		clone.id        = recorder::getNewActionId();
+		clone.id        = newActionId;
 		clone.channelId = newChannelId;
+
 		actions.push_back(clone);
 		cloned = true;
 	});
+
+	/* Update nextId and prevId relationships given the new action ID. */
+
+	for (Action& a : actions) {
+		if (a.prevId != 0) a.prevId = map.at(a.prevId);
+		if (a.nextId != 0) a.nextId = map.at(a.nextId);
+	}
 
 	recorder::rec(actions);
 
