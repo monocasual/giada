@@ -11,6 +11,10 @@
 --------------------------------------------------------------------------------
 
 
+0.17.1 ---
+- Fix wrong action ID mapping when cloning a channel
+
+
 0.17.0 --- 2020 . 11 . 15
 - Add CMake build system
 - VST3 support
