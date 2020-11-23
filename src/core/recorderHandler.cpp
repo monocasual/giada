@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <unordered_map>
 #include <algorithm>
 #include <cmath>
 #include <cassert>
@@ -181,12 +182,14 @@ bool cloneActions(ID channelId, ID newChannelId)
 {
 	bool cloned = false;
 	std::vector<Action> actions;
+	std::unordered_map<ID, ID> map;
 
 	recorder::forEachAction([&](const Action& a) 
 	{
 		if (a.channelId != channelId)
 			return;
 		Action clone(a);
+		clone.id        = recorder::getNewActionId();
 		clone.channelId = newChannelId;
 		actions.push_back(clone);
 		cloned = true;
