@@ -12,7 +12,8 @@
 
 
 0.17.1 ---
-- Fix wrong action ID mapping when cloning a channel
+- Fix wrong action ID mapping when cloning a channel (#426)
+- Fix scrambled MIDI bindings (#427)
 
 
 0.17.0 --- 2020 . 11 . 15
