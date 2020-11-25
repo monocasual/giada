@@ -1,19 +1,35 @@
+# ------------------------------------------------------------------------------
+# Preliminary setup
+# ------------------------------------------------------------------------------
+
 cmake_minimum_required(VERSION 3.12)
 
-# CMAKE_OSX_DEPLOYMENT_TARGET should be set prior to the first project() or 
-# enable_language() command invocation because it may influence configuration 
-# of the toolchain and flags. A
+# CMAKE_OSX_DEPLOYMENT_TARGET should be set prior to the first project() or
+# enable_language() command invocation because it may influence configuration
+# of the toolchain and flags.
 # Also, see https://stackoverflow.com/questions/34208360/cmake-seems-to-ignore-cmake-osx-deployment-target
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	set(CMAKE_OSX_DEPLOYMENT_TARGET "10.14" CACHE STRING "Minimum OS X deployment version")
 endif()
 
+# ------------------------------------------------------------------------------
+# Project
+# ------------------------------------------------------------------------------
+
 project(giada LANGUAGES CXX)
 
-add_executable(giada)
-
-# Define SOURCES list, containing the source files.
+# ------------------------------------------------------------------------------
+# Lists definition
+#
+# SOURCES - contains the source files
+# PREPROCESSOR_DEFS - preprocessor definitions
+# INCLUDE_DIRS - include directories (e.g. -I)
+# COMPILER_OPTIONS - additional flags for the compiler
+# LIBRARIES - external dependencies to link
+# COMPILER_FEATURES - e.g. C++17
+# TARGET_PROPERTIES - additional properties for the target 'giada'.
+# ------------------------------------------------------------------------------
 
 list(APPEND SOURCES
 	src/main.cpp
@@ -172,42 +188,53 @@ list(APPEND SOURCES
 	src/utils/string.cpp
 	src/deps/rtaudio/RtAudio.cpp)
 
-# Define PREPROCESSOR_DEFS lists, containing preprocessor definitions.
-
 list(APPEND PREPROCESSOR_DEFS)
-
-# Define INCLUDE_DIRS, containing include directories (e.g. -I).
-
-list(APPEND INCLUDE_DIRS 
+list(APPEND INCLUDE_DIRS
 	${CMAKE_SOURCE_DIR}
 	${CMAKE_SOURCE_DIR}/src)
-
-# Define COMPILER_OPTIONS lists, additional flags for the compiler.
-
 list(APPEND COMPILER_OPTIONS)
-
-# Define LIBRARIES lists, ie. external dependencies to link.
-
 list(APPEND LIBRARIES)
+list(APPEND COMPILER_FEATURES cxx_std_17)
+list(APPEND TARGET_PROPERTIES)
 
-# Set C++17.
+# ------------------------------------------------------------------------------
+# Detect OS
+# ------------------------------------------------------------------------------
 
-target_compile_features(giada PRIVATE cxx_std_17)
-	
-# Enable compiler warnings. 
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set(OS_LINUX 1)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	set(OS_WINDOWS 1)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	set(OS_MACOS 1)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+	set(OS_FREEBSD 1)
+else()
+	message(FATAL_ERROR "Unsupported platform '${CMAKE_SYSTEM_NAME}', quitting.")
+endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+# ------------------------------------------------------------------------------
+# Compiler warnings
+# ------------------------------------------------------------------------------
+
+if(DEFINED OS_WINDOWS)
 	list(APPEND COMPILER_OPTIONS /W4)
 else()
 	list(APPEND COMPILER_OPTIONS -Wall -Wextra -Wpedantic)
 endif()
 
-# Set CMake options.
+# ------------------------------------------------------------------------------
+# Options
+# ------------------------------------------------------------------------------
 
 option(WITH_VST2 "Enable VST2 support." OFF)
 option(WITH_VST3 "Enable VST3 support." OFF)
 option(WITH_TESTS "Include the test suite." OFF)
-option(WITH_SYSTEM_CATCH "Use system-wide Catch (not the submodule dep) (only if WITH_TESTS=ON)." OFF)
+option(WITH_SYSTEM_RTMIDI "Use system-wide RtMidi (instead of the vcpkg dependency)." OFF)
+option(WITH_SYSTEM_FLTK "Use system-wide FLTK (instead of the vcpkg dependency)." OFF)
+option(WITH_SYSTEM_LIBSNDFILE "Use system-wide Libsndfile (instead of the vcpkg dependency)." OFF)
+option(WITH_SYSTEM_LIBSAMPLERATE "Use system-wide Libsamplerate (instead of the vcpkg dependency)." OFF)
+option(WITH_SYSTEM_CATCH "Use system-wide Catch (instead of the git submodule)." OFF)
 
 if(WITH_TESTS)
 	list(APPEND PREPROCESSOR_DEFS WITH_TESTS)
@@ -217,56 +244,132 @@ if(WITH_TESTS)
 endif()
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-	list(APPEND PREPROCESSOR_DEFS NDEBUG)	
+	list(APPEND PREPROCESSOR_DEFS NDEBUG)
 endif()
 
-# Find required dependencies. Some don't support the find_package() command: 
-# just fallback to find_library().
+# ------------------------------------------------------------------------------
+# Dependencies
+# ------------------------------------------------------------------------------
 
-set(FLTK_SKIP_FLUID TRUE) # Don't search for FLTK's fluid
-set(FLTK_SKIP_OPENGL TRUE) # Don't search for FLTK's OpenGL
+# Threads (system)
+
 find_package(Threads REQUIRED)
-find_package(FLTK REQUIRED)
-find_library(LIBRARY_RTMIDI NAMES rtmidi REQUIRED)
-find_library(LIBRARY_SNDFILE NAMES sndfile libsndfile libsndfile-1 REQUIRED)
-find_library(LIBRARY_SAMPLERATE NAMES samplerate libsamplerate libsamplerate-0 REQUIRED)
+list(APPEND LIBRARIES ${Threads_LIBRARY})
 
-# Find optional dependencies.
+# RtMidi
 
-find_library(LIBRARY_FLAC NAMES flac FLAC)
-find_library(LIBRARY_OGG NAMES ogg)
-find_library(LIBRARY_OPUS NAMES opus libopus)
-find_library(LIBRARY_VORBIS NAMES vorbis)
-find_library(LIBRARY_VORBISENC NAMES vorbisenc)
+if(WITH_SYSTEM_RTMIDI)
 
-list(APPEND LIBRARIES 
-	${Threads_LIBRARY} ${FLTK_LIBRARY} ${LIBRARY_RTMIDI} ${LIBRARY_SNDFILE} 
-	${LIBRARY_SAMPLERATE})
-if(LIBRARY_FLAC)
-	list(APPEND LIBRARIES ${LIBRARY_FLAC})
-endif()
-if(LIBRARY_OGG)
-	list(APPEND LIBRARIES ${LIBRARY_OGG})
-endif()
-if(LIBRARY_OPUS)
-	list(APPEND LIBRARIES ${LIBRARY_OPUS})
-endif()
-if(LIBRARY_VORBIS)
-	list(APPEND LIBRARIES ${LIBRARY_VORBIS})
-endif()
-if(LIBRARY_VORBISENC)
-	list(APPEND LIBRARIES ${LIBRARY_VORBISENC})
+	find_library(LIBRARY_RTMIDI NAMES rtmidi REQUIRED)
+	list(APPEND LIBRARIES ${LIBRARY_RTMIDI})
+
+	# RtMidi header path may vary accross OSes, so a fix is needed.
+	# TODO - Find a way to avoid this additional step
+
+	find_path(LIBRARY_RTMIDI_INCLUDE_DIR RtMidi.h PATH_SUFFIXES rtmidi)
+	list(APPEND INCLUDE_DIRS ${LIBRARY_RTMIDI_INCLUDE_DIR})
+
+else()
+
+	if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+		message(FATAL_ERROR "CMAKE_TOOLCHAIN_FILE not defined!")
+	endif()
+
+	find_package(RtMidi CONFIG REQUIRED)
+	list(APPEND LIBRARIES RtMidi::rtmidi)
+
 endif()
 
-# RtMidi header path may vary accross OSes, so a fix is needed. 
-# TODO - Find a way to avoid this additional step
+# FLTK 
 
-find_path(LIBRARY_RTMIDI_INCLUDE_DIR RtMidi.h PATH_SUFFIXES rtmidi)
-list(APPEND INCLUDE_DIRS ${LIBRARY_RTMIDI_INCLUDE_DIR})
- 
+if(WITH_SYSTEM_FLTK)
+
+	set(FLTK_SKIP_FLUID TRUE)  # Don't search for FLTK's fluid
+	set(FLTK_SKIP_OPENGL TRUE) # Don't search for FLTK's OpenGL
+	find_package(FLTK REQUIRED)
+	list(APPEND LIBRARIES ${FLTK_LIBRARY})
+
+else()
+
+	if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+		message(FATAL_ERROR "CMAKE_TOOLCHAIN_FILE not defined!")
+	endif()
+
+	find_package(FLTK CONFIG REQUIRED)
+	list(APPEND LIBRARIES fltk fltk_gl fltk_forms fltk_images)
+
+endif()
+
+# Libsndfile
+
+if (WITH_SYSTEM_LIBSNDFILE)
+
+	find_library(LIBRARY_SNDFILE NAMES sndfile libsndfile libsndfile-1 REQUIRED)
+	list(APPEND LIBRARIES ${LIBRARY_SNDFILE})
+
+	# Find optional dependencies.
+
+	find_library(LIBRARY_FLAC NAMES flac FLAC)
+	find_library(LIBRARY_OGG NAMES ogg)
+	find_library(LIBRARY_OPUS NAMES opus libopus)
+	find_library(LIBRARY_VORBIS NAMES vorbis)
+	find_library(LIBRARY_VORBISENC NAMES vorbisenc)
+
+	if(LIBRARY_FLAC)
+		list(APPEND LIBRARIES ${LIBRARY_FLAC})
+	endif()
+	if(LIBRARY_OGG)
+		list(APPEND LIBRARIES ${LIBRARY_OGG})
+	endif()
+	if(LIBRARY_OPUS)
+		list(APPEND LIBRARIES ${LIBRARY_OPUS})
+	endif()
+	if(LIBRARY_VORBIS)
+		list(APPEND LIBRARIES ${LIBRARY_VORBIS})
+	endif()
+	if(LIBRARY_VORBISENC)
+		list(APPEND LIBRARIES ${LIBRARY_VORBISENC})
+	endif()
+
+else()
+
+	if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+		message(FATAL_ERROR "CMAKE_TOOLCHAIN_FILE not defined!")
+	endif()
+
+	find_package(SndFile CONFIG REQUIRED)
+	list(APPEND LIBRARIES SndFile::sndfile)
+
+endif()
+
+# Libsamplerate
+
+if (WITH_SYSTEM_LIBSAMPLERATE)
+
+	find_library(LIBRARY_SAMPLERATE NAMES samplerate libsamplerate libsamplerate-0 REQUIRED)
+	list(APPEND LIBRARIES ${LIBRARY_SAMPLERATE})
+
+else()
+
+	# TODO - vcpkg currently doesn't provide CMake targets for libsamplerate: 
+	# let's include it the manual way. 
+
+	if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+		message(FATAL_ERROR "CMAKE_TOOLCHAIN_FILE not defined!")
+	endif()
+
+	find_library(LIBRARY_SAMPLERATE 
+		NAMES samplerate libsamplerate libsamplerate-0 liblibsamplerate-0
+		PATH ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET})
+	list(APPEND LIBRARIES ${LIBRARY_SAMPLERATE})
+
+endif()
+
+# ------------------------------------------------------------------------------
 # Conditional checks for different platforms.
+# ------------------------------------------------------------------------------
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+if(DEFINED OS_LINUX)
 
 	find_package(X11 REQUIRED)
 	find_package(ALSA REQUIRED)
@@ -274,23 +377,19 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	find_library(LIBRARY_PULSE_SIMPLE NAMES pulse-simple REQUIRED)
 	find_library(LIBRARY_FONTCONFIG NAMES fontconfig REQUIRED)
 	find_library(LIBRARY_JACK NAMES jack REQUIRED)
-	list(APPEND LIBRARIES 
+	list(APPEND LIBRARIES
 		${X11_LIBRARIES} ${X11_Xrender_LIB} ${X11_Xft_LIB} ${X11_Xfixes_LIB}
-		${X11_Xinerama_LIB} ${X11_Xcursor_LIB} ${X11_Xpm_LIB} ${LIBRARY_PULSE} 
+		${X11_Xinerama_LIB} ${X11_Xcursor_LIB} ${X11_Xpm_LIB} ${LIBRARY_PULSE}
 		${LIBRARY_PULSE_SIMPLE} ${LIBRARY_FONTCONFIG} ${LIBRARY_JACK}
 		${CMAKE_DL_LIBS} ${ALSA_LIBRARIES} pthread stdc++fs)
 
 	list(APPEND PREPROCESSOR_DEFS
+		WITH_AUDIO_JACK
 		__LINUX_ALSA__
 		__LINUX_PULSE__
 		__UNIX_JACK__)
 
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-
-	# Enable static linking of the MSVC runtime library. 
-	
-	set_target_properties(giada PROPERTIES 
-		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+elseif(DEFINED OS_WINDOWS)
 
 	list(APPEND LIBRARIES dsound)
 
@@ -306,16 +405,17 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 		src/deps/rtaudio/include/iasiothiscallresolver.cpp
 		src/ext/resource.rc)
 
+	list(APPEND INCLUDE_DIRS
+		src/deps/rtaudio/include)
+
 	list(APPEND PREPROCESSOR_DEFS
 		__WINDOWS_ASIO__
 		__WINDOWS_WASAPI__
 		__WINDOWS_DS__)
 
-	list(APPEND INCLUDE_DIRS
-		src/deps/rtaudio/include)
+elseif(DEFINED OS_MACOS)
 
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-
+	# TODO - doesn't this clash with the instruction on top??
 	list(APPEND COMPILER_OPTIONS -mmacosx-version-min=10.15)
 
 	find_library(CORE_AUDIO_LIBRARY CoreAudio REQUIRED)
@@ -327,42 +427,44 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	find_library(WEBKIT_LIBRARY WebKit REQUIRED)
 	find_library(QUARZ_CORE_LIBRARY QuartzCore REQUIRED)
 	find_library(IOKIT_LIBRARY IOKit REQUIRED)
-	list(APPEND LIBRARIES 
+	list(APPEND LIBRARIES
 		${CORE_AUDIO_LIBRARY} ${CORE_MIDI_LIBRARY} ${COCOA_LIBRARY}
 		${CARBON_LIBRARY} ${CORE_FOUNDATION_LIBRARY} ${ACCELERATE_LIBRARY}
 		${WEBKIT_LIBRARY} ${QUARZ_CORE_LIBRARY} ${IOKIT_LIBRARY})
 
 	list(APPEND SOURCES
-		src/utils/cocoa.mm 
+		src/utils/cocoa.mm
 		src/utils/cocoa.h)
 
-	list(APPEND PREPROCESSOR_DEFS 
-		__MACOSX_CORE__)
-	
 	# TODO: why??
 	list(APPEND INCLUDE_DIRS
 		"/usr/local/include")
-	
-elseif (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+
+	list(APPEND PREPROCESSOR_DEFS 
+		__MACOSX_CORE__)
+
+elseif (DEFINED OS_FREEBSD)
 
 	find_package(X11 REQUIRED)
 	find_library(LIBRARY_PULSE NAMES pulse REQUIRED)
 	find_library(LIBRARY_PULSE_SIMPLE NAMES pulse-simple REQUIRED)
 	find_library(LIBRARY_FONTCONFIG NAMES fontconfig REQUIRED)
 	find_library(LIBRARY_JACK NAMES jack REQUIRED)
-	list(APPEND LIBRARIES 
+	list(APPEND LIBRARIES
 		${X11_LIBRARIES} ${X11_Xrender_LIB} ${X11_Xft_LIB} ${X11_Xfixes_LIB}
-		${X11_Xinerama_LIB} ${X11_Xcursor_LIB} ${X11_Xpm_LIB} ${LIBRARY_PULSE} 
+		${X11_Xinerama_LIB} ${X11_Xcursor_LIB} ${X11_Xpm_LIB} ${LIBRARY_PULSE}
 		${LIBRARY_PULSE_SIMPLE} ${LIBRARY_FONTCONFIG} ${LIBRARY_JACK}
 		${CMAKE_DL_LIBS} pthread)
-
+	
 	list(APPEND PREPROCESSOR_DEFS
 		__LINUX_PULSE__
 		__UNIX_JACK__)
 
 endif()
 
-# Define extra parameters if compiled with VST.
+# ------------------------------------------------------------------------------
+# Extra parameters if compiled with VST.
+# ------------------------------------------------------------------------------
 
 if(WITH_VST2 OR WITH_VST3)
 
@@ -375,43 +477,59 @@ if(WITH_VST2 OR WITH_VST3)
 		src/deps/juce/modules/juce_graphics/juce_graphics.cpp
 		src/deps/juce/modules/juce_gui_basics/juce_gui_basics.cpp
 		src/deps/juce/modules/juce_gui_extra/juce_gui_extra.cpp)
-	
+
 	list(APPEND INCLUDE_DIRS
-		${CMAKE_SOURCE_DIR}/src/deps/juce/modules 
+		${CMAKE_SOURCE_DIR}/src/deps/juce/modules
 		${CMAKE_SOURCE_DIR}/src/deps/vst3sdk)
-	
-	if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+
+	if(DEFINED OS_LINUX)
 		find_package(Freetype REQUIRED)
 		list(APPEND LIBRARIES ${FREETYPE_LIBRARIES})
 		list(APPEND INCLUDE_DIRS ${FREETYPE_INCLUDE_DIRS})
 	endif()
-	
+
 	list(APPEND PREPROCESSOR_DEFS
 		WITH_VST
 		JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1
 		JUCE_MODULE_AVAILABLE_juce_gui_basics=1
-		JUCE_STANDALONE_APPLICATION=1		
+		JUCE_STANDALONE_APPLICATION=1
 		JUCE_PLUGINHOST_AU=0
 		JUCE_WEB_BROWSER=0
 		JUCE_USE_CURL=0)
-	
+
 	if(WITH_VST2)
-		list(APPEND PREPROCESSOR_DEFS 
+		list(APPEND PREPROCESSOR_DEFS
 			WITH_VST2
 			JUCE_PLUGINHOST_VST=1)
 	endif()
 	if(WITH_VST3)
-		list(APPEND PREPROCESSOR_DEFS 
+		list(APPEND PREPROCESSOR_DEFS
 			WITH_VST3
 			JUCE_PLUGINHOST_VST3=1)
 	endif()
 
 endif()
 
+# ------------------------------------------------------------------------------
 # Finalize 'giada' target (main executable).
+# ------------------------------------------------------------------------------
 
+add_executable(giada)
+target_compile_features(giada PRIVATE ${COMPILER_FEATURES})
 target_sources(giada PRIVATE ${SOURCES})
 target_compile_definitions(giada PRIVATE ${PREPROCESSOR_DEFS})
 target_include_directories(giada PRIVATE ${INCLUDE_DIRS})
 target_link_libraries(giada PRIVATE ${LIBRARIES})
 target_compile_options(giada PRIVATE ${COMPILER_OPTIONS})
+
+# ------------------------------------------------------------------------------
+# Extra
+# ------------------------------------------------------------------------------
+
+# Enable static linking of the MSVC runtime library on Windows
+# TODO - move this into the 'if windows' conditional (needs smarter list first)
+
+if(DEFINED OS_WINDOWS)
+	set_target_properties(giada PROPERTIES
+		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()

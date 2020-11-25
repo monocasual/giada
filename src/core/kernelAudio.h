@@ -30,18 +30,16 @@
 
 
 #include <string>
-#if defined(__linux__) || defined(__FreeBSD__)
+#ifdef WITH_AUDIO_JACK
 	#include <jack/jack.h>
 	#include <jack/intclient.h>
 	#include <jack/transport.h>
 #endif
 
 
-namespace giada {
-namespace m {
-namespace kernelAudio
+namespace giada::m::kernelAudio
 {
-#if defined(__linux__) || defined(__FreeBSD__)
+#ifdef WITH_AUDIO_JACK
 
 struct JackState
 {
@@ -77,8 +75,9 @@ int getDefaultOut();
 int getDefaultIn();
 bool hasAPI(int API);
 int getAPI();
+void logCompiledAPIs();
 
-#if defined(__linux__) || defined(__FreeBSD__)
+#ifdef WITH_AUDIO_JACK
 
 void jackStart();
 void jackStop();
@@ -87,7 +86,7 @@ void jackSetBpm(double bpm);
 JackState jackTransportQuery();
 
 #endif
-}}} // giada::m::kernelAudio::
+} // giada::m::kernelAudio::
 
 
 #endif

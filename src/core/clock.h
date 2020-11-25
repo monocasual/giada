@@ -32,9 +32,7 @@
 #include "types.h"
 
 
-namespace giada {
-namespace m {
-namespace clock
+namespace giada::m::clock
 {
 void init(int sampleRate, float midiTCfps);
 
@@ -111,7 +109,7 @@ bool isOnFirstBeat();
 
 void rewind();
 void setStatus(ClockStatus s);
-}}} // giada::m::clock::
+} // giada::m::clock::
 
 
 #endif

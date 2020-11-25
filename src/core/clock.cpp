@@ -40,9 +40,7 @@
 #include "clock.h"
 
 
-namespace giada {
-namespace m {
-namespace clock
+namespace giada::m::clock
 {
 namespace
 {
@@ -64,7 +62,7 @@ int midiTCseconds_ = 0;
 int midiTCminutes_ = 0;
 int midiTChours_   = 0;
 
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+#ifdef WITH_AUDIO_JACK
 kernelAudio::JackState jackStatePrev_;
 #endif
 
@@ -381,7 +379,7 @@ void sendMIDIrewind()
 /* -------------------------------------------------------------------------- */
 
 
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+#ifdef WITH_AUDIO_JACK
 
 void recvJackSync()
 {
@@ -451,4 +449,4 @@ int         getQuantizerValue() { model::ClockLock lock(model::clock); return mo
 float       getBpm()            { model::ClockLock lock(model::clock); return model::clock.get()->bpm; }
 int         getBeats()          { model::ClockLock lock(model::clock); return model::clock.get()->beats; }
 int         getBars()           { model::ClockLock lock(model::clock); return model::clock.get()->bars; }
-}}} // giada::m::clock::
+} // giada::m::clock::

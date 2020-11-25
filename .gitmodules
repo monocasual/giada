@@ -11,3 +11,6 @@
 [submodule "src/deps/vst3sdk"]
 	path = src/deps/vst3sdk
 	url = https://github.com/steinbergmedia/vst3sdk.git
+[submodule "src/deps/rtaudio"]
+	path = src/deps/rtaudio
+	url = https://github.com/monocasual/rtaudio.git

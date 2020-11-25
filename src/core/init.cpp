@@ -220,6 +220,7 @@ void printBuildInfo_()
 #ifdef WITH_VST
 	u::log::print("[init]   JUCE - %d.%d.%d\n", JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER);
 #endif
+	kernelAudio::logCompiledAPIs();
 }
 } // {anonymous}
 

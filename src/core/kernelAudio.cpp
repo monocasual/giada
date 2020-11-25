@@ -38,9 +38,7 @@
 #include "kernelAudio.h"
 
 
-namespace giada {
-namespace m {
-namespace kernelAudio
+namespace giada::m::kernelAudio
 {
 namespace
 {
@@ -50,7 +48,7 @@ bool     inputEnabled = false;
 unsigned realBufsize  = 0;     // Real buffer size from the soundcard
 int      api          = 0;
 
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+#ifdef WITH_AUDIO_JACK
 
 JackState jackState;
 
@@ -68,7 +66,7 @@ jack_client_t* jackGetHandle_()
 /* -------------------------------------------------------------------------- */
 
 
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+#ifdef WITH_AUDIO_JACK
 
 bool JackState::operator!=(const JackState& o) const
 {
@@ -180,7 +178,7 @@ int openDevice()
 
 	realBufsize = conf::conf.buffersize;
 
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+#ifdef WITH_AUDIO_JACK
 
 	if (api == G_SYS_API_JACK) {
 		conf::conf.samplerate = getFreq(conf::conf.soundDeviceOut, 0);
@@ -446,7 +444,42 @@ int getAPI() { return api; }
 /* -------------------------------------------------------------------------- */
 
 
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+void logCompiledAPIs()
+{
+	std::vector<RtAudio::Api> APIs;
+	RtAudio::getCompiledApi(APIs);
+
+	u::log::print("[KA] Compiled RtAudio APIs: %d\n", APIs.size());
+
+	for (const RtAudio::Api& api : APIs) {
+		switch (api) {
+			case RtAudio::Api::LINUX_ALSA:
+				u::log::print("  ALSA\n"); break;
+			case RtAudio::Api::LINUX_PULSE:
+				u::log::print("  PulseAudio\n"); break;
+			case RtAudio::Api::UNIX_JACK:
+				u::log::print("  JACK\n"); break;
+			case RtAudio::Api::MACOSX_CORE:
+				u::log::print("  CoreAudio\n"); break;
+			case RtAudio::Api::WINDOWS_WASAPI:
+				u::log::print("  WASAPI\n"); break;
+			case RtAudio::Api::WINDOWS_ASIO:
+				u::log::print("  ASIO\n"); break;
+			case RtAudio::Api::WINDOWS_DS:
+				u::log::print("  DirectSound\n"); break;
+			case RtAudio::Api::RTAUDIO_DUMMY:
+				u::log::print("  Dummy\n"); break;
+			default:
+				u::log::print("  (unknown)\n"); break;
+		}
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+#ifdef WITH_AUDIO_JACK
 
 JackState jackTransportQuery()
 {
@@ -515,6 +548,5 @@ void jackStop()
 		jack_transport_stop(jackGetHandle_());
 }
 
-#endif  // defined(__linux__) || defined(__FreeBSD__)
-
-}}} // giada::m::kernelAudio
+#endif  // WITH_AUDIO_JACK
+} // giada::m::kernelAudio
