@@ -94,7 +94,7 @@ bool mkdir(const std::string& s)
 
 std::string getRealPath(const std::string& s)
 {
-	return std::filesystem::canonical(s).string();
+	return s.empty() ? "" : std::filesystem::canonical(s).string();
 }
 
 
