@@ -77,9 +77,9 @@ void geChannelLearnerPack::update(const c::io::Channel_InputData& d)
 	learners[1]->update(d.keyRelease);
 	learners[2]->update(d.kill);
 	learners[3]->update(d.arm);
-	learners[4]->update(d.volume);
-	learners[5]->update(d.mute);
-	learners[6]->update(d.solo);
+	learners[4]->update(d.mute);
+	learners[5]->update(d.solo);
+	learners[6]->update(d.volume);
 	learners[7]->update(d.pitch);
 	learners[8]->update(d.readActions);
 	setEnabled(d.enabled);
