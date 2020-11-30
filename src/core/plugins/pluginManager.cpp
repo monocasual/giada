@@ -232,8 +232,8 @@ const patch::Plugin serializePlugin(const Plugin& p)
 	pp.bypass = p.isBypassed();
 	pp.state  = p.getState().asBase64();
 
-	for (uint32_t param : p.midiInParams)
-		pp.midiInParams.push_back(param);
+	for (const MidiLearnParam& param : p.midiInParams)
+		pp.midiInParams.push_back(param.getValue());
 
 	return pp;
 }
@@ -257,14 +257,15 @@ std::unique_ptr<Plugin> deserializePlugin(const patch::Plugin& p, patch::Version
 	else
 		plugin->setState(PluginState(p.state));
 
-	/* Fill plug-in MidiIn parameters. Don't fill Channel::midiInParam if 
-	Plugin::midiInParams are zero: it would wipe out the current default 0x0
+	/* Fill plug-in MidiIn parameters. Don't fill Plugin::midiInParam if 
+	Patch::midiInParams are zero: it would wipe out the current default 0x0
 	values. */
 	
 	if (!p.midiInParams.empty()) {
 		plugin->midiInParams.clear();
+		std::size_t paramIndex = 0;
 		for (uint32_t midiInParam : p.midiInParams)
-			plugin->midiInParams.emplace_back(midiInParam);
+			plugin->midiInParams.emplace_back(midiInParam, paramIndex++);
 	}
 
 	return plugin;

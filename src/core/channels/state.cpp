@@ -36,15 +36,6 @@ namespace m
 MidiLearnerState::MidiLearnerState()
 : enabled      (true)
 , filter       (0)
-, keyPress     (0x0)
-, keyRelease   (0x0)
-, kill         (0x0)
-, arm          (0x0)
-, volume       (0x0)
-, mute         (0x0)
-, solo         (0x0)
-, readActions  (0x0)
-, pitch        (0x0)
 {
 }
 
@@ -68,15 +59,15 @@ MidiLearnerState::MidiLearnerState(const patch::Channel& p)
 MidiLearnerState::MidiLearnerState(const MidiLearnerState& o)
 : enabled      (o.enabled.load())
 , filter       (o.filter.load())
-, keyPress     (o.keyPress.load())
-, keyRelease   (o.keyRelease.load())
-, kill         (o.kill.load())
-, arm          (o.arm.load())
-, volume       (o.volume.load())
-, mute         (o.mute.load())
-, solo         (o.solo.load())
-, readActions  (o.readActions.load())
-, pitch        (o.pitch.load())
+, keyPress     (o.keyPress)
+, keyRelease   (o.keyRelease)
+, kill         (o.kill)
+, arm          (o.arm)
+, volume       (o.volume)
+, mute         (o.mute)
+, solo         (o.solo)
+, readActions  (o.readActions)
+, pitch        (o.pitch)
 {
 }
 
@@ -101,8 +92,6 @@ bool MidiLearnerState::isAllowed(int c) const
 MidiLighterState::MidiLighterState()
 : enabled(false)
 , playing(0x0)
-, mute   (0x0)
-, solo   (0x0)
 {
 }
 
@@ -118,9 +107,9 @@ MidiLighterState::MidiLighterState(const patch::Channel& p)
 
 MidiLighterState::MidiLighterState(const MidiLighterState& o)
 : enabled(o.enabled.load())
-, playing(o.playing.load())
-, mute   (o.mute.load())
-, solo   (o.solo.load())
+, playing(o.playing)
+, mute   (o.mute)
+, solo   (o.solo)
 {
 }
 

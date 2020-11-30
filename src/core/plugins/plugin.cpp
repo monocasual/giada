@@ -64,11 +64,12 @@ Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin, double 
 , m_plugin      (std::move(plugin))
 , m_bypass      (false)
 {
-	/* Initialize midiInParams vector, where midiInParams.size == number of 
+	/* (1) Initialize midiInParams vector, where midiInParams.size == number of 
 	plugin parameters. All values are initially empty (0x0): they will be filled
 	during MIDI learning process. */
 
-	midiInParams = std::vector<uint32_t>(m_plugin->getParameters().size());
+	for (int i = 0; i < m_plugin->getParameters().size(); i++)
+		midiInParams.emplace_back(0x0, i);
 
 	m_buffer.setSize(G_MAX_IO_CHANS, buffersize);
 

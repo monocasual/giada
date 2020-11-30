@@ -65,6 +65,7 @@ list(APPEND SOURCES
 	src/core/waveManager.cpp                
 	src/core/recManager.h                   
 	src/core/recManager.cpp
+	src/core/midiLearnParam.cpp
 	src/core/plugins/pluginHost.h
 	src/core/plugins/pluginHost.cpp
 	src/core/plugins/pluginManager.h

@@ -125,19 +125,19 @@ const patch::Channel serializeChannel(const Channel& c)
     pc.armed             = c.state->armed.load();
     pc.midiIn            = c.midiLearner.state->enabled.load();
     pc.midiInFilter      = c.midiLearner.state->filter.load();
-    pc.midiInKeyPress    = c.midiLearner.state->keyPress.load();
-    pc.midiInKeyRel      = c.midiLearner.state->keyRelease.load();
-    pc.midiInKill        = c.midiLearner.state->kill.load();
-    pc.midiInArm         = c.midiLearner.state->arm.load();
-    pc.midiInVolume      = c.midiLearner.state->volume.load();
-    pc.midiInMute        = c.midiLearner.state->mute.load();
-    pc.midiInSolo        = c.midiLearner.state->solo.load();
-	pc.midiInReadActions = c.midiLearner.state->readActions.load();
-	pc.midiInPitch       = c.midiLearner.state->pitch.load();
+    pc.midiInKeyPress    = c.midiLearner.state->keyPress.getValue();
+    pc.midiInKeyRel      = c.midiLearner.state->keyRelease.getValue();
+    pc.midiInKill        = c.midiLearner.state->kill.getValue();
+    pc.midiInArm         = c.midiLearner.state->arm.getValue();
+    pc.midiInVolume      = c.midiLearner.state->volume.getValue();
+    pc.midiInMute        = c.midiLearner.state->mute.getValue();
+    pc.midiInSolo        = c.midiLearner.state->solo.getValue();
+	pc.midiInReadActions = c.midiLearner.state->readActions.getValue();
+	pc.midiInPitch       = c.midiLearner.state->pitch.getValue();
     pc.midiOutL          = c.midiLighter.state->enabled.load(); 
-    pc.midiOutLplaying   = c.midiLighter.state->playing.load();
-    pc.midiOutLmute      = c.midiLighter.state->mute.load();
-    pc.midiOutLsolo      = c.midiLighter.state->solo.load();
+    pc.midiOutLplaying   = c.midiLighter.state->playing.getValue();
+    pc.midiOutLmute      = c.midiLighter.state->mute.getValue();
+    pc.midiOutLsolo      = c.midiLighter.state->solo.getValue();
 
 	if (c.getType() == ChannelType::SAMPLE) {
 		pc.waveId            = c.samplePlayer->getWaveId();

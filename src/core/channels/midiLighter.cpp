@@ -70,9 +70,9 @@ void MidiLighter::parse(const mixer::Event& e, bool audible) const
     if (state->enabled.load() == false)
         return;
 
-    uint32_t l_playing = state->playing.load();
-    uint32_t l_mute    = state->mute.load();
-    uint32_t l_solo    = state->solo.load();
+    uint32_t l_playing = state->playing.getValue();
+    uint32_t l_mute    = state->mute.getValue();
+    uint32_t l_solo    = state->solo.getValue();
 
 	switch (e.type) {
 

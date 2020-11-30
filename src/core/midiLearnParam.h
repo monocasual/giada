@@ -25,35 +25,33 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_MIDI_DISPATCHER_H
-#define G_MIDI_DISPATCHER_H
+#ifndef G_MIDI_LEARN_PARAM_H
+#define G_MIDI_LEARN_PARAM_H
 
 
-#include <functional>
-#include <cstdint>
-#include "core/model/model.h"
-#include "core/midiEvent.h"
-#include "core/types.h"
+#include <atomic>
 
 
-namespace giada {
-namespace m {
-namespace midiDispatcher
+namespace giada::m
 {
-void startChannelLearn(int param, ID channelId, std::function<void()> f);
-void startMasterLearn (int param, std::function<void()> f);
-void stopLearn();
-void clearMasterLearn (int param, std::function<void()> f);
-void clearChannelLearn(int param, ID channelId, std::function<void()> f);
-#ifdef WITH_VST
-void startPluginLearn (std::size_t paramIndex, ID pluginId, std::function<void()> f);
-void clearPluginLearn (std::size_t paramIndex, ID pluginId, std::function<void()> f);
-#endif
+class MidiLearnParam
+{
+public:
 
-void dispatch(int byte1, int byte2, int byte3);
+	MidiLearnParam();
+	MidiLearnParam(uint32_t v, std::size_t index=0);
+	MidiLearnParam(const MidiLearnParam& o);
 
-void setSignalCallback(std::function<void()> f);
-}}} // giada::m::midiDispatcher::
+    uint32_t getValue() const;
+    std::size_t getIndex() const;
+    void setValue(uint32_t v);
+
+private:
+
+    std::atomic<uint32_t> m_param;
+    std::size_t           m_index;
+};
+} // giada::m::
 
 
 #endif

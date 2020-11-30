@@ -82,15 +82,15 @@ Channel_InputData::Channel_InputData(const m::Channel& c)
 , enabled      (c.midiLearner.state->enabled.load())
 , velocityAsVol(c.samplePlayer ? c.samplePlayer->state->velocityAsVol.load() : 0)
 , filter       (c.midiLearner.state->filter.load())
-, keyPress     (c.midiLearner.state->keyPress.load())
-, keyRelease   (c.midiLearner.state->keyRelease.load())
-, kill         (c.midiLearner.state->kill.load())
-, arm          (c.midiLearner.state->arm.load())
-, volume       (c.midiLearner.state->volume.load())
-, mute         (c.midiLearner.state->mute.load())
-, solo         (c.midiLearner.state->solo.load())
-, pitch        (c.midiLearner.state->pitch.load())
-, readActions  (c.midiLearner.state->readActions.load()) 
+, keyPress     (c.midiLearner.state->keyPress.getValue())
+, keyRelease   (c.midiLearner.state->keyRelease.getValue())
+, kill         (c.midiLearner.state->kill.getValue())
+, arm          (c.midiLearner.state->arm.getValue())
+, volume       (c.midiLearner.state->volume.getValue())
+, mute         (c.midiLearner.state->mute.getValue())
+, solo         (c.midiLearner.state->solo.getValue())
+, pitch        (c.midiLearner.state->pitch.getValue())
+, readActions  (c.midiLearner.state->readActions.getValue()) 
 {
 #ifdef WITH_VST
 	for (ID id : c.pluginIds) {
@@ -100,7 +100,7 @@ Channel_InputData::Channel_InputData(const m::Channel& c)
 		pd.id = p.id;
 		pd.name = p.getName();
 		for (int i = 0; i < p.getNumParameters(); i++)
-			pd.params.push_back({ i, p.getParameterName(i), p.midiInParams.at(i) });
+			pd.params.push_back({ i, p.getParameterName(i), p.midiInParams.at(i).getValue() });
 
 		plugins.push_back(pd);
 	}
@@ -124,9 +124,9 @@ MidiChannel_OutputData::MidiChannel_OutputData(const m::MidiSender& s)
 Channel_OutputData::Channel_OutputData(const m::Channel& c)
 : channelId       (c.id)
 , lightningEnabled(c.midiLighter.state->enabled.load())
-, lightningPlaying(c.midiLighter.state->playing.load())
-, lightningMute   (c.midiLighter.state->mute.load())
-, lightningSolo   (c.midiLighter.state->solo.load())
+, lightningPlaying(c.midiLighter.state->playing.getValue())
+, lightningMute   (c.midiLighter.state->mute.getValue())
+, lightningSolo   (c.midiLighter.state->solo.getValue())
 {	
 	if (c.getType() == ChannelType::MIDI)
 		output = std::make_optional<MidiChannel_OutputData>(*c.midiSender);

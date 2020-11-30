@@ -35,6 +35,7 @@
 #include "core/types.h"
 #include "core/quantizer.h"
 #include "core/audioBuffer.h"
+#include "core/midiLearnParam.h"
 #ifdef WITH_VST
 #include "deps/juce-config.h"
 #endif
@@ -75,15 +76,15 @@ struct MidiLearnerState
 
     /* MIDI learning fields. */
 
-	std::atomic<uint32_t> keyPress;
-	std::atomic<uint32_t> keyRelease;
-	std::atomic<uint32_t> kill;
-	std::atomic<uint32_t> arm;
-	std::atomic<uint32_t> volume;
-	std::atomic<uint32_t> mute;
-	std::atomic<uint32_t> solo;
-	std::atomic<uint32_t> readActions; // Sample Channels only
-	std::atomic<uint32_t> pitch;       // Sample Channels only
+	MidiLearnParam keyPress;
+	MidiLearnParam keyRelease;
+	MidiLearnParam kill;
+	MidiLearnParam arm;
+	MidiLearnParam volume;
+	MidiLearnParam mute;
+	MidiLearnParam solo;
+	MidiLearnParam readActions; // Sample Channels only
+	MidiLearnParam pitch;       // Sample Channels only
 };
 
 
@@ -103,9 +104,9 @@ struct MidiLighterState
 
     /* MIDI learning fields for MIDI ligthing. */
 
-	std::atomic<uint32_t> playing;
-	std::atomic<uint32_t> mute;
-	std::atomic<uint32_t> solo;
+	MidiLearnParam playing;
+	MidiLearnParam mute;
+	MidiLearnParam solo;
 };
 
 

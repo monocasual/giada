@@ -31,10 +31,11 @@
 #define G_PLUGIN_H
 
 
-#include <deque>
+#include <vector>
 #include "deps/juce-config.h"
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginState.h"
+#include "core/midiLearnParam.h"
 #include "core/const.h"
 
 
@@ -90,9 +91,10 @@ public:
 	ID id;
 
 	/* midiInParams
-	A vector of midiIn hex values for parameter automation. */
+	A vector of MidiLearnParam's for controlling plug-in parameters with
+	external hardware. */
 
-	std::vector<uint32_t> midiInParams;
+	std::vector<MidiLearnParam> midiInParams;
 	
 	/* valid
 	A missing plug-in is loaded anyway, yet marked as 'invalid'. */
