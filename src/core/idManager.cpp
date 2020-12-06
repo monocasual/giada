@@ -28,8 +28,7 @@
 #include "idManager.h"
 
 
-namespace giada {
-namespace m 
+namespace giada::m 
 {
 IdManager::IdManager() : m_id(0)
 {
@@ -53,4 +52,4 @@ ID IdManager::get(ID id)
 {
 	return id != 0 ? id : ++m_id;
 }
-}} // giada::m::
+} // giada::m::

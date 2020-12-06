@@ -32,23 +32,31 @@
 #include "core/types.h"
 
 
-namespace giada {
-namespace m 
+namespace giada::m 
 {
 class IdManager
 {
 public:
 
 	IdManager();
-	
+
+	/* set
+	Stores a new id, only if != 0 (valid) and greater than current id (unique). */
+
 	void set(ID id);
+
+	/* get
+	Generates a new unique id. If 'id' parameter is passed in is valid, it just 
+	returns it with no unique id generation. Useful when loading things from the 
+	model that already have their own id. */
+
 	ID   get(ID id=0);
 
 private:
 
 	ID m_id;
 };
-}} // giada::m::
+} // giada::m::
 
 
 #endif
