@@ -83,7 +83,9 @@ std::unique_ptr<Channel> create(ChannelType type, ID columnId, const conf::Conf&
 std::unique_ptr<Channel> create(const Channel& o)
 {
 	std::unique_ptr<Channel> ch = std::make_unique<Channel>(o);
-	ch->id = channelId_.get();
+	ID id = channelId_.get();
+	ch->id        = id;
+	ch->state->id = id;
 	return ch;
 }
 
