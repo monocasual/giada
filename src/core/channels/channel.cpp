@@ -139,7 +139,7 @@ Channel::Channel(const patch::Channel& p, Frame bufferSize)
 #ifdef WITH_VST
 			midiReceiver.emplace(p, state.get());
 #endif
-			midiSender.emplace(state.get());
+			midiSender.emplace(p, state.get());
 			midiActionRecorder.emplace(state.get());	
 			break;	
 		

@@ -120,7 +120,7 @@ MidiLighterState::MidiLighterState(const MidiLighterState& o)
 
 
 MidiSenderState::MidiSenderState()
-: enabled(true)
+: enabled(false)
 , filter (0)
 {
 }
