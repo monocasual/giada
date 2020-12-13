@@ -1,0 +1,145 @@
+name: Packaging
+
+# Runs on new tags.
+
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  # create-release -------------------------------------------------------------
+  create-release:
+    name: Create release
+    runs-on: ubuntu-18.04
+    outputs: # Output contains the upload url. Will be reused on upload release
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: false
+
+  # Linux ----------------------------------------------------------------------
+  linux:
+    name: Linux
+    runs-on: ubuntu-18.04
+    timeout-minutes: 60
+    needs: create-release
+    steps:
+      - name: Prepare RELEASE_VERSION env variable
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Download repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: bash ./.github/scripts/linux/install-deps.sh
+        
+      - name: Generate Makefile
+        run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-Wno-class-memaccess -DWITH_VST3=ON -DWITH_SYSTEM_RTMIDI=ON -DWITH_SYSTEM_FLTK=ON -DWITH_SYSTEM_LIBSNDFILE=ON -DWITH_SYSTEM_LIBSAMPLERATE=ON
+
+      - name: Build
+        run: cmake --build build/ -j 2
+
+      - name: Make package
+        run: bash ./.github/scripts/linux/make-package.sh
+
+      - name: Upload release
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/Giada-${{ env.RELEASE_VERSION }}-x86_64.AppImage
+          asset_name: Giada-${{ env.RELEASE_VERSION }}-x86_64.AppImage
+          asset_content_type: application/x-executable
+
+  # Windows --------------------------------------------------------------------
+  windows:
+    name: Windows
+    runs-on: windows-2019
+    timeout-minutes: 60
+    needs: create-release
+    steps:
+      - name: Prepare RELEASE_VERSION env variable
+        shell: bash
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Download repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        shell: bash
+        run: bash ./.github/scripts/windows/install-deps.sh
+        
+      - name: Generate Makefile
+        shell: bash
+        run: cmake -S . -B build/ -G "Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=/c/vcpkg/scripts/buildsystems/vcpkg.cmake -DWITH_VST3=ON
+
+      - name: Build
+        shell: bash
+        run: cmake --build build/ --config Release -j 2
+
+      - name: Make package
+        run: bash ./.github/scripts/windows/make-package.sh
+
+      - name: Upload release
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/giada-${{ env.RELEASE_VERSION }}-x86_64-windows.zip
+          asset_name: giada-${{ env.RELEASE_VERSION }}-x86_64-windows.zip
+          asset_content_type: application/zip
+
+  # macOS ----------------------------------------------------------------------
+  macos:
+    name: macOS
+    runs-on: macos-10.15
+    timeout-minutes: 60
+    needs: create-release
+    steps:
+      - name: Prepare RELEASE_VERSION env variable
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Download repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: bash ./.github/scripts/macos/install-deps.sh
+
+      - name: Generate Makefile
+        run: cmake -S . -B build/ -G "Xcode" -DCMAKE_CXX_FLAGS="-x objective-c++" -DWITH_VST3=ON -DWITH_SYSTEM_RTMIDI=ON -DWITH_SYSTEM_FLTK=ON -DWITH_SYSTEM_LIBSNDFILE=ON -DWITH_SYSTEM_LIBSAMPLERATE=ON
+
+      - name: Build
+        run: cmake --build build/ --config Release -j 2
+
+      - name: Make package
+        run: bash ./.github/scripts/macos/make-package.sh
+
+      - name: Upload release
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/giada-${{ env.RELEASE_VERSION }}-x86_64-macos.zip
+          asset_name: giada-${{ env.RELEASE_VERSION }}-x86_64-macos.zip
+          asset_content_type: application/zip
