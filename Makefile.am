@@ -54,6 +54,7 @@ sourcesCore =                               \
 	src/core/kernelMidi.cpp                 \
 	src/core/graphics.h                     \
 	src/core/graphics.cpp                   \
+	src/core/midiLearnParam.cpp             \
 	src/core/patch.h                        \
 	src/core/patch.cpp                      \
 	src/core/recorderHandler.h              \
