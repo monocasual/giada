@@ -22,7 +22,7 @@ TEST_CASE("waveManager")
 
 	SECTION("test creation")
 	{
-		waveManager::Result res = waveManager::createFromFile("tests/resources/test.wav",
+		waveManager::Result res = waveManager::createFromFile(TEST_RESOURCES_DIR "test.wav",
 			/*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, /*quality=*/SRC_LINEAR);
 
 		REQUIRE(res.status == G_RES_OK);
@@ -46,7 +46,7 @@ TEST_CASE("waveManager")
 
 	SECTION("test resampling")
 	{
-		waveManager::Result res = waveManager::createFromFile("tests/resources/test.wav",
+		waveManager::Result res = waveManager::createFromFile(TEST_RESOURCES_DIR "test.wav",
 			/*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, /*quality=*/SRC_LINEAR);
 
 		int oldSize = res.wave->getSize();

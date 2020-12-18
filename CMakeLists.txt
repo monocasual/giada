@@ -237,7 +237,9 @@ option(WITH_SYSTEM_LIBSAMPLERATE "Use system-wide Libsamplerate (instead of the 
 option(WITH_SYSTEM_CATCH "Use system-wide Catch (instead of the git submodule)." OFF)
 
 if(WITH_TESTS)
-	list(APPEND PREPROCESSOR_DEFS WITH_TESTS)
+	list(APPEND PREPROCESSOR_DEFS 
+		WITH_TESTS
+		TEST_RESOURCES_DIR="${CMAKE_SOURCE_DIR}/tests/resources/")
 	if(NOT WITH_SYSTEM_CATCH)
 		list(APPEND INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/tests/catch2/single_include/catch2)
 	endif()

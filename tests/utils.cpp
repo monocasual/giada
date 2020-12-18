@@ -8,11 +8,11 @@ TEST_CASE("u::fs")
 {
 	using namespace giada::u;
 
-	REQUIRE(fs::fileExists("build/giada") == true);
+	REQUIRE(fs::fileExists(TEST_RESOURCES_DIR "test.wav") == true);
 	REQUIRE(fs::fileExists("nonexistent_file") == false);
-	REQUIRE(fs::dirExists("src/") == true);
+	REQUIRE(fs::dirExists(TEST_RESOURCES_DIR) == true);
 	REQUIRE(fs::dirExists("ghost_dir/") == false);
-	REQUIRE(fs::isDir("src/") == true);
+	REQUIRE(fs::isDir(TEST_RESOURCES_DIR) == true);
 	REQUIRE(fs::isDir("nonexistent_dir") == false);
 	REQUIRE(fs::basename("tests/utils.cpp") == "utils.cpp");
 	REQUIRE(fs::dirname("tests/utils.cpp") == "tests");
