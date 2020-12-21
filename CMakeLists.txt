@@ -230,19 +230,11 @@ endif()
 option(WITH_VST2 "Enable VST2 support." OFF)
 option(WITH_VST3 "Enable VST3 support." OFF)
 option(WITH_TESTS "Include the test suite." OFF)
-option(WITH_SYSTEM_RTMIDI "Use system-wide RtMidi (instead of the vcpkg dependency)." OFF)
-option(WITH_SYSTEM_FLTK "Use system-wide FLTK (instead of the vcpkg dependency)." OFF)
-option(WITH_SYSTEM_LIBSNDFILE "Use system-wide Libsndfile (instead of the vcpkg dependency)." OFF)
-option(WITH_SYSTEM_LIBSAMPLERATE "Use system-wide Libsamplerate (instead of the vcpkg dependency)." OFF)
-option(WITH_SYSTEM_CATCH "Use system-wide Catch (instead of the git submodule)." OFF)
 
 if(WITH_TESTS)
 	list(APPEND PREPROCESSOR_DEFS 
 		WITH_TESTS
 		TEST_RESOURCES_DIR="${CMAKE_SOURCE_DIR}/tests/resources/")
-	if(NOT WITH_SYSTEM_CATCH)
-		list(APPEND INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/tests/catch2/single_include/catch2)
-	endif()
 endif()
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -260,54 +252,34 @@ list(APPEND LIBRARIES ${Threads_LIBRARY})
 
 # RtMidi
 
-if(WITH_SYSTEM_RTMIDI)
-
-	find_library(LIBRARY_RTMIDI NAMES rtmidi REQUIRED)
-	list(APPEND LIBRARIES ${LIBRARY_RTMIDI})
-
-	# RtMidi header path may vary accross OSes, so a fix is needed.
-	# TODO - Find a way to avoid this additional step
-
-	find_path(LIBRARY_RTMIDI_INCLUDE_DIR RtMidi.h PATH_SUFFIXES rtmidi)
-	list(APPEND INCLUDE_DIRS ${LIBRARY_RTMIDI_INCLUDE_DIR})
-
-else()
-
-	if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-		message(FATAL_ERROR "CMAKE_TOOLCHAIN_FILE not defined!")
-	endif()
-
-	find_package(RtMidi CONFIG REQUIRED)
-	list(APPEND LIBRARIES RtMidi::rtmidi)
-
-endif()
+find_package(RtMidi CONFIG REQUIRED)
+list(APPEND LIBRARIES RtMidi::rtmidi)
+message("RtMidi library found in " ${RtMidi_DIR})
 
 # FLTK 
 
-if(WITH_SYSTEM_FLTK)
-
-	set(FLTK_SKIP_FLUID TRUE)  # Don't search for FLTK's fluid
-	set(FLTK_SKIP_OPENGL TRUE) # Don't search for FLTK's OpenGL
-	find_package(FLTK REQUIRED)
-	list(APPEND LIBRARIES ${FLTK_LIBRARY})
-
-else()
-
-	if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-		message(FATAL_ERROR "CMAKE_TOOLCHAIN_FILE not defined!")
-	endif()
-
-	find_package(FLTK CONFIG REQUIRED)
-	list(APPEND LIBRARIES fltk fltk_gl fltk_forms fltk_images)
-
-endif()
+set(FLTK_SKIP_FLUID TRUE)  # Don't search for FLTK's fluid
+set(FLTK_SKIP_OPENGL TRUE) # Don't search for FLTK's OpenGL
+find_package(FLTK CONFIG REQUIRED)
+list(APPEND LIBRARIES fltk fltk_gl fltk_forms fltk_images)
+message("FLTK library found in " ${FLTK_DIR})
 
 # Libsndfile
 
-if (WITH_SYSTEM_LIBSNDFILE)
+find_package(SndFile CONFIG)
+if (SndFile)
+	list(APPEND LIBRARIES SndFile::sndfile)
+	message("Libsndfile library found in " ${SndFile_DIR})
+else()
+	# Fallback to find_library mode (in case libsndfile is too old). 
+	find_library(LIBRARY_SNDFILE NAMES sndfile libsndfile libsndfile-1)
+	
+	if (NOT LIBRARY_SNDFILE)
+		message(FATAL_ERROR "Can't find libsndfile, aborting.")
+	endif()
 
-	find_library(LIBRARY_SNDFILE NAMES sndfile libsndfile libsndfile-1 REQUIRED)
 	list(APPEND LIBRARIES ${LIBRARY_SNDFILE})
+	message("Libsndfile library found in " ${LIBRARY_SNDFILE})
 
 	# Find optional dependencies.
 
@@ -331,39 +303,27 @@ if (WITH_SYSTEM_LIBSNDFILE)
 	endif()
 	if(LIBRARY_VORBISENC)
 		list(APPEND LIBRARIES ${LIBRARY_VORBISENC})
-	endif()
-
-else()
-
-	if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-		message(FATAL_ERROR "CMAKE_TOOLCHAIN_FILE not defined!")
-	endif()
-
-	find_package(SndFile CONFIG REQUIRED)
-	list(APPEND LIBRARIES SndFile::sndfile)
-
+	endif()	
 endif()
 
 # Libsamplerate
 
-if (WITH_SYSTEM_LIBSAMPLERATE)
+# TODO - libsamplerate currently doesn't provide CMake targets. Let's include it 
+# the manual way. 
 
-	find_library(LIBRARY_SAMPLERATE NAMES samplerate libsamplerate libsamplerate-0 REQUIRED)
-	list(APPEND LIBRARIES ${LIBRARY_SAMPLERATE})
+find_library(LIBRARY_SAMPLERATE 
+	NAMES samplerate libsamplerate libsamplerate-0 liblibsamplerate-0
+	PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET})
+list(APPEND LIBRARIES ${LIBRARY_SAMPLERATE})
+message("Libsamplerate library found in " ${LIBRARY_SAMPLERATE})
 
-else()
+# Catch (if tests enabled)
 
-	# TODO - vcpkg currently doesn't provide CMake targets for libsamplerate: 
-	# let's include it the manual way. 
+if (WITH_TESTS)
 
-	if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-		message(FATAL_ERROR "CMAKE_TOOLCHAIN_FILE not defined!")
-	endif()
-
-	find_library(LIBRARY_SAMPLERATE 
-		NAMES samplerate libsamplerate libsamplerate-0 liblibsamplerate-0
-		PATH ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET})
-	list(APPEND LIBRARIES ${LIBRARY_SAMPLERATE})
+	find_package(Catch2 CONFIG REQUIRED)
+	list(APPEND LIBRARIES Catch2::Catch2)
+	message("Catch2 library found in " ${Catch2_DIR})
 
 endif()
 
