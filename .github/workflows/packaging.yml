@@ -1,8 +1,9 @@
 name: Packaging
 
-# Runs on new tags.
+# Runs on new tags and manually (workflow_dispatch).
 
 on:
+  workflow_dispatch:
   push:
     tags:
     - '*'
