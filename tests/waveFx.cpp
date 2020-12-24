@@ -4,7 +4,7 @@
 #include "../src/core/wave.h"
 #include "../src/core/waveFx.h"
 #include "../src/core/types.h"
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 
 using namespace giada;

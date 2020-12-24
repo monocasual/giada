@@ -252,8 +252,25 @@ list(APPEND LIBRARIES ${Threads_LIBRARY})
 
 # RtMidi
 
-find_package(RtMidi CONFIG REQUIRED)
-list(APPEND LIBRARIES RtMidi::rtmidi)
+find_package(RtMidi CONFIG)
+if (RtMidi_FOUND)
+	list(APPEND LIBRARIES RtMidi::rtmidi)
+else()
+	# Fallback to find_library mode (in case rtmidi is too old). 
+	find_library(LIBRARY_RTMIDI NAMES rtmidi)
+	list(APPEND LIBRARIES ${LIBRARY_RTMIDI})
+
+	if (NOT LIBRARY_RTMIDI)
+		message(FATAL_ERROR "Can't find RtMidi, aborting.")
+	endif()
+
+	# RtMidi header path may vary accross OSes, so a fix is needed.
+	# TODO - Find a way to avoid this additional step
+
+	find_path(LIBRARY_RTMIDI_INCLUDE_DIR RtMidi.h PATH_SUFFIXES rtmidi)
+	list(APPEND INCLUDE_DIRS ${LIBRARY_RTMIDI_INCLUDE_DIR})
+endif()
+
 message("RtMidi library found in " ${RtMidi_DIR})
 
 # FLTK 
@@ -267,7 +284,7 @@ message("FLTK library found in " ${FLTK_DIR})
 # Libsndfile
 
 find_package(SndFile CONFIG)
-if (SndFile)
+if (SndFile_FOUND)
 	list(APPEND LIBRARIES SndFile::sndfile)
 	message("Libsndfile library found in " ${SndFile_DIR})
 else()

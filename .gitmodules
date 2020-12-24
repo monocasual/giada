@@ -1,10 +1,6 @@
 [submodule "src/deps/juce"]
 	path = src/deps/juce
 	url = https://github.com/juce-framework/JUCE.git 
-  ignore = dirty
-[submodule "tests/catch2"]
-	path = tests/catch2
-	url = https://github.com/catchorg/Catch2.git
 [submodule "src/deps/json"]
 	path = src/deps/json
 	url = https://github.com/nlohmann/json.git

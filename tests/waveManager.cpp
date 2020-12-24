@@ -3,7 +3,7 @@
 #include "../src/core/waveManager.h"
 #include "../src/core/wave.h"
 #include "../src/core/const.h"
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 
 using std::string;

@@ -1,6 +1,6 @@
 #include <memory>
 #include "../src/core/wave.h"
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 
 TEST_CASE("Wave")

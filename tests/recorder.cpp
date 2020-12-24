@@ -2,7 +2,7 @@
 #include "../src/core/const.h"
 #include "../src/core/types.h"
 #include "../src/core/action.h"
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 
 TEST_CASE("recorder")

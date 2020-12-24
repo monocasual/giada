@@ -1,6 +1,6 @@
 #include <memory>
 #include "../src/core/audioBuffer.h"
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 
 TEST_CASE("AudioBuffer")
