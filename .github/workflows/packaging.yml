@@ -46,7 +46,7 @@ jobs:
         run: bash ./.github/scripts/linux/install-deps.sh
         
       - name: Generate Makefile
-        run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-Wno-class-memaccess -DWITH_VST3=ON -DWITH_SYSTEM_RTMIDI=ON -DWITH_SYSTEM_FLTK=ON -DWITH_SYSTEM_LIBSNDFILE=ON -DWITH_SYSTEM_LIBSAMPLERATE=ON
+        run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-Wno-class-memaccess -DWITH_VST3=ON
 
       - name: Build
         run: cmake --build build/ -j 2
@@ -126,7 +126,7 @@ jobs:
         run: bash ./.github/scripts/macos/install-deps.sh
 
       - name: Generate Makefile
-        run: cmake -S . -B build/ -G "Xcode" -DCMAKE_CXX_FLAGS="-x objective-c++" -DWITH_VST3=ON -DWITH_SYSTEM_RTMIDI=ON -DWITH_SYSTEM_FLTK=ON -DWITH_SYSTEM_LIBSNDFILE=ON -DWITH_SYSTEM_LIBSAMPLERATE=ON
+        run: cmake -S . -B build/ -G "Xcode" -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_CXX_FLAGS="-x objective-c++" -DWITH_VST3=ON
 
       - name: Build
         run: cmake --build build/ --config Release -j 2

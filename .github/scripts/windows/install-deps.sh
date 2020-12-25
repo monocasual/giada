@@ -4,7 +4,7 @@
 
 choco install -y visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
 
-# Install vcpkg + Giada dependencies
+# Install vcpkg dependencies
 
 vcpkg install libsndfile:x64-windows
 vcpkg install libsamplerate:x64-windows
