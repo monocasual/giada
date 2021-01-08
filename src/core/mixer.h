@@ -29,9 +29,7 @@
 #define G_MIXER_H
 
 
-#include <atomic>
 #include <functional>
-#include <vector>
 #include "deps/rtaudio/RtAudio.h"
 #include "core/ringBuffer.h"
 #include "core/recorder.h"
@@ -40,66 +38,17 @@
 #include "core/midiEvent.h"
 
 
-namespace giada {
-namespace m
+namespace giada::m
 {
 struct Action;
-class Channel;
 class AudioBuffer;
-
-namespace mixer
+}
+namespace giada::m::channel { struct Data; }
+namespace giada::m::mixer
 {
-enum class EventType 
-{
-	KEY_PRESS, 
-	KEY_RELEASE, 
-	KEY_KILL,
-	SEQUENCER_FIRST_BEAT, // 3
-	SEQUENCER_BAR,        // 4
-	SEQUENCER_START,      // 5
-	SEQUENCER_STOP,       // 6
-	SEQUENCER_REWIND,     // 7
-	SEQUENCER_REWIND_REQ, // 8
-	MIDI, 
-	ACTION, 
-	CHANNEL_TOGGLE_READ_ACTIONS,
-	CHANNEL_KILL_READ_ACTIONS,
-	CHANNEL_TOGGLE_ARM,
-	CHANNEL_MUTE,
-	CHANNEL_SOLO,
-	CHANNEL_VOLUME,
-	CHANNEL_PITCH,
-	CHANNEL_PAN
-};
-
-struct Event
-{
-	EventType type;
-	Frame     delta;
-	Action    action;
-};
-
-/* EventBuffer
-Alias for a RingBuffer containing events to be sent to engine. The double size
-is due to the presence of two distinct Queues for collecting events coming from
-other threads. See below. */
-
-using EventBuffer = RingBuffer<Event, G_MAX_QUEUE_EVENTS * 2>;
-
 constexpr int MASTER_OUT_CHANNEL_ID = 1;
 constexpr int MASTER_IN_CHANNEL_ID  = 2;
 constexpr int PREVIEW_CHANNEL_ID    = 3;
-
-extern std::atomic<float> peakOut; // TODO - move to model::
-extern std::atomic<float> peakIn;  // TODO - move to model::
-
-/* Channel Event queues
-Collect events coming from the UI or MIDI devices to be sent to channels. Our 
-poor's man Queue is a single-producer/single-consumer one, so we need two queues 
-for two writers. TODO - let's add a multi-producer queue sooner or later! */
-
-extern Queue<Event, G_MAX_QUEUE_EVENTS> UIevents;
-extern Queue<Event, G_MAX_QUEUE_EVENTS> MidiEvents;
 
 void init(Frame framesInSeq, Frame framesInBuffer);
 
@@ -128,8 +77,6 @@ merge data into channel after an input recording session. */
 
 const AudioBuffer& getRecBuffer(); 
 
-void close();
-
 /* masterPlay
 Core method (callback) */
 
@@ -143,15 +90,11 @@ void startInputRec();
 void stopInputRec();
 
 void setSignalCallback(std::function<void()> f);
+bool isChannelAudible(const channel::Data& c);
 
-/* pumpEvent
-Pumps a new mixer::Event into the event vector. Use this function when you want
-to inject a new event for the **current** block. Push the event in the two 
-queues UIevents and MIDIevents above if the event can be processed in the next 
-block instead. */
-
-void pumpEvent(Event e);
-}}} // giada::m::mixer::;
+float getPeakOut();
+float getPeakIn();
+} // giada::m::mixer::;
 
 
 #endif

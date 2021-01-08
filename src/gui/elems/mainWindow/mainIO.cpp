@@ -174,8 +174,8 @@ void geMainIO::setMasterFxInFull(bool v)
 
 void geMainIO::refresh()
 {
-	outMeter.mixerPeak = m_io.a_getMasterOutPeak(); 
-	inMeter.mixerPeak  = m_io.a_getMasterInPeak();
+	outMeter.mixerPeak = m_io.getMasterOutPeak();
+	inMeter.mixerPeak  = m_io.getMasterInPeak();
 	outMeter.redraw();
 	inMeter.redraw();
 }

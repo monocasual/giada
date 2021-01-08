@@ -34,15 +34,9 @@
 #include "core/types.h"
 
 
-namespace giada {
-namespace m 
-{
-class Wave;
-namespace patch
-{
-struct Wave;
-}
-namespace waveManager
+namespace giada::m { class Wave; }
+namespace giada::m::patch { struct Wave; }
+namespace giada::m::waveManager
 {
 struct Result
 {
@@ -77,6 +71,7 @@ Creates a new Wave given the patch raw data and vice versa. */
 
 std::unique_ptr<Wave> deserializeWave(const patch::Wave& w, int samplerate, int quality);
 const patch::Wave     serializeWave(const Wave& w);
+Wave*                 hydrateWave(ID waveId);
 
 /* resample
 Change sample rate of 'w' to the desider value. The 'quality' parameter sets the
@@ -88,8 +83,7 @@ int resample(Wave& w, int quality, int samplerate);
 Writes Wave data to file 'path'. Only 'wav' format is supported for now. */
 
 int save(const Wave& w, const std::string& path);
-
-}}} // giada::m::waveManager
+} // giada::m::waveManager::
 
 
 #endif

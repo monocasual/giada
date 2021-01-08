@@ -66,9 +66,9 @@ public:
 		m_end   = std::max(m_index, m_end);      // Points to the greater index
 	}
 
-	constexpr std::size_t size() const noexcept
+	std::size_t size() const noexcept
 	{
-		return m_data.size();
+		return m_end;
 	}
 
 private:

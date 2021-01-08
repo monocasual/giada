@@ -48,8 +48,21 @@ void IdManager::set(ID id)
 /* -------------------------------------------------------------------------- */
 
 
-ID IdManager::get(ID id)
+ID IdManager::generate(ID id)
 {
-	return id != 0 ? id : ++m_id;
+    if (id != 0) {
+        m_id = id;
+        return id;
+    }
+    return ++m_id;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+ID IdManager::get()
+{
+	return m_id;
 }
 } // giada::m::

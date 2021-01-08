@@ -34,14 +34,32 @@
 #include <functional>
 
 
-namespace giada {
-namespace u {
-namespace vector 
+namespace giada::u::vector 
 {
 template <typename T, typename P>
 std::size_t indexOf(T& v, const P& p)
 {
 	return std::distance(v.begin(), std::find(v.begin(), v.end(), p));
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+template <typename T, typename F>
+auto findIf(T& v, F&& func)
+{
+	return std::find_if(v.begin(), v.end(),	func);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+template <typename T, typename F>
+bool has(T& v, F&& func)
+{
+	return findIf(v, func) != v.end();
 }
 
 
@@ -56,10 +74,11 @@ void removeIf(T& v, F&& func)
 
 
 template <typename T, typename V>
-void remove(T& v, V val)
+void remove(T& v, const V& o)
 {
-    v.erase(std::remove(v.begin(), v.end(), val), v.end());
+    v.erase(std::remove(v.begin(), v.end(), o), v.end());
 }
-}}}  // giada::u::vector::
+}  // giada::u::vector::
+
 
 #endif

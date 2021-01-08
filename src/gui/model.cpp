@@ -37,9 +37,7 @@
 extern giada::v::gdMainWindow* G_MainWin;
 
 
-namespace giada {
-namespace v {
-namespace model
+namespace giada::v::model
 {
 void store(m::patch::Patch& patch)
 {
@@ -59,4 +57,4 @@ void load(const m::patch::Patch& patch)
     for (const m::patch::Column& col : patch.columns)
         G_MainWin->keyboard->layout.push_back({ col.id, col.width });
 }
-}}} // giada::v::model
+} // giada::v::model

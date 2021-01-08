@@ -67,9 +67,7 @@
 extern giada::v::gdMainWindow* G_MainWin;
 
 
-namespace giada {
-namespace c {
-namespace channel 
+namespace giada::c::channel 
 {
 namespace
 {
@@ -92,70 +90,73 @@ void printLoadError_(int res)
 /* -------------------------------------------------------------------------- */
 
 
-SampleData::SampleData(const m::SamplePlayer& s, const m::AudioReceiver& a)
-: waveId         (s.getWaveId())
-, mode           (s.state->mode.load())
-, isLoop         (s.state->isAnyLoopMode())
-, pitch          (s.state->pitch.load())
-, m_samplePlayer (&s)
-, m_audioReceiver(&a)
+// TODO - just pass const channel::Data&
+SampleData::SampleData(const m::channel::Data& ch)
+: waveId         (ch.samplePlayer->getWaveId())
+, mode           (ch.samplePlayer->mode)
+, isLoop         (ch.samplePlayer->isAnyLoopMode())
+, pitch          (ch.samplePlayer->pitch)
+, m_channel      (&ch)
 {
 }
 
 
-Frame SampleData::a_getTracker() const           { return a_get(m_samplePlayer->state->tracker); }
-Frame SampleData::a_getBegin() const             { return a_get(m_samplePlayer->state->begin); }
-Frame SampleData::a_getEnd() const               { return a_get(m_samplePlayer->state->end); }
-bool  SampleData::a_getInputMonitor() const      { return a_get(m_audioReceiver->state->inputMonitor); }
-bool  SampleData::a_getOverdubProtection() const { return a_get(m_audioReceiver->state->overdubProtection); }
+Frame SampleData::getTracker() const           { return m_channel->state->tracker.load(); }
+/* TODO - useless methods, turn them into member vars */
+Frame SampleData::getBegin() const             { return m_channel->samplePlayer->begin; }
+Frame SampleData::getEnd() const               { return m_channel->samplePlayer->end; }
+bool  SampleData::getInputMonitor() const      { return m_channel->audioReceiver->inputMonitor; }
+bool  SampleData::getOverdubProtection() const { return m_channel->audioReceiver->overdubProtection; }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-MidiData::MidiData(const m::MidiSender& m)
-: m_midiSender(&m)
+MidiData::MidiData(const m::channel::Data& m)
+: m_channel(&m)
 {
 }
 
-bool MidiData::a_isOutputEnabled() const { return a_get(m_midiSender->state->enabled); }
-int  MidiData::a_getFilter() const       { return a_get(m_midiSender->state->filter); }
+/* TODO - useless methods, turn them into member vars */
+bool MidiData::isOutputEnabled() const { return m_channel->midiSender->enabled; }
+int  MidiData::getFilter() const       { return m_channel->midiSender->filter; }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-Data::Data(const m::Channel& c)
+Data::Data(const m::channel::Data& c)
 : id         (c.id)
-, columnId   (c.getColumnId())
+, columnId   (c.columnId)
 #ifdef WITH_VST
-, pluginIds  (c.pluginIds)
+, plugins    (c.plugins)
 #endif
-, type       (c.getType())
-, height     (c.state->height)
-, name       (c.state->name)
-, volume     (c.state->volume.load())
-, pan        (c.state->pan.load())
-, key        (c.state->key.load())
-, hasActions (c.state->hasActions)
+, type       (c.type)
+, height     (c.height)
+, name       (c.name)
+, volume     (c.volume)
+, pan        (c.pan)
+, key        (c.key)
+, hasActions (c.hasActions)
 , m_channel  (c)
 {
-	if (c.getType() == ChannelType::SAMPLE)
-		sample = std::make_optional<SampleData>(*c.samplePlayer, *c.audioReceiver);
+	if (c.type == ChannelType::SAMPLE)
+		sample = std::make_optional<SampleData>(c);
 	else
-	if (c.getType() == ChannelType::MIDI)
-		midi   = std::make_optional<MidiData>(*c.midiSender);
+	if (c.type == ChannelType::MIDI)
+		midi   = std::make_optional<MidiData>(c);
 }
 
 
-bool          Data::a_getSolo() const           { return a_get(m_channel.state->solo); }
-bool          Data::a_getMute() const           { return a_get(m_channel.state->mute); }
-ChannelStatus Data::a_getPlayStatus() const     { return a_get(m_channel.state->playStatus); }
-ChannelStatus Data::a_getRecStatus() const      { return a_get(m_channel.state->recStatus); }
-bool          Data::a_getReadActions() const    { return a_get(m_channel.state->readActions); }
-bool          Data::a_isArmed() const           { return a_get(m_channel.state->armed); }
-bool          Data::a_isRecordingInput() const  { return m::recManager::isRecordingInput(); }
-bool          Data::a_isRecordingAction() const { return m::recManager::isRecordingAction(); }
+ChannelStatus Data::getPlayStatus() const     { return m_channel.state->playStatus.load(); }
+ChannelStatus Data::getRecStatus() const      { return m_channel.state->recStatus.load(); }
+bool          Data::isRecordingInput() const  { return m::recManager::isRecordingInput(); }
+bool          Data::isRecordingAction() const { return m::recManager::isRecordingAction(); }
+/* TODO - useless methods, turn them into member vars */
+bool          Data::getSolo() const           { return m_channel.solo; }
+bool          Data::getMute() const           { return m_channel.mute; }
+bool          Data::getReadActions() const    { return m_channel.readActions; }
+bool          Data::isArmed() const           { return m_channel.armed; }
 
 
 /* -------------------------------------------------------------------------- */
@@ -165,23 +166,16 @@ bool          Data::a_isRecordingAction() const { return m::recManager::isRecord
 
 Data getData(ID channelId)
 {
-	namespace mm = m::model;
-
-	mm::ChannelsLock cl(mm::channels);
-	return Data(mm::get(mm::channels, channelId));
+	return Data(m::model::get().getChannel(channelId));
 }
 
 
 std::vector<Data> getChannels()
 {
-	namespace mm = m::model;
-	mm::ChannelsLock cl(mm::channels);
-
 	std::vector<Data> out;
-	for (const m::Channel* ch : mm::channels)
-		if (!ch->isInternal()) 
-			out.push_back(Data(*ch));
-	
+	for (const m::channel::Data& ch : m::model::get().channels)
+		if (!ch.isInternal())
+			out.push_back(Data(ch));
 	return out;
 }
 
@@ -270,10 +264,8 @@ void freeChannel(ID channelId)
 
 void setInputMonitor(ID channelId, bool value)
 {
-	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c) 
-	{ 
-		c.audioReceiver->state->inputMonitor.store(value);
-	});
+	m::model::get().getChannel(channelId).audioReceiver->inputMonitor = value;
+    m::model::swap(m::model::SwapType::SOFT);
 }
 
 
@@ -282,12 +274,11 @@ void setInputMonitor(ID channelId, bool value)
 
 void setOverdubProtection(ID channelId, bool value)
 {
-	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c) 
-	{
-		c.audioReceiver->state->overdubProtection.store(value);
-		if (value == true && c.state->armed.load() == true)
-			c.state->armed.store(false);
-	});	
+	m::channel::Data& ch = m::model::get().getChannel(channelId);
+	ch.audioReceiver->overdubProtection = value;
+	if (value == true && ch.armed)
+		ch.armed = false;
+	m::model::swap(m::model::SwapType::SOFT);
 }
 
 
@@ -303,16 +294,10 @@ void cloneChannel(ID channelId)
 /* -------------------------------------------------------------------------- */
 
 
-void setSamplePlayerMode(ID channelId, SamplePlayerMode m)
+void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
-	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
-	{
-		c.samplePlayer->state->mode.store(m);
-	});
-
-	/* TODO - brutal rebuild! Just rebuild the specific channel instead */
-	G_MainWin->keyboard->rebuild();
-
+	m::model::get().getChannel(channelId).samplePlayer->mode = mode;
+    m::model::swap(m::model::SwapType::HARD); // TODO - SOFT should be enough, fix geChannel refresh method
 	u::gui::refreshActionEditor();
 }
 
@@ -322,10 +307,8 @@ void setSamplePlayerMode(ID channelId, SamplePlayerMode m)
 
 void setHeight(ID channelId, Pixel p)
 {
-	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
-	{
-		c.state->height = p;
-	});	
+	m::model::get().getChannel(channelId).height = p;
+    m::model::swap(m::model::SwapType::SOFT);
 }
 
 
@@ -336,4 +319,4 @@ void setName(ID channelId, const std::string& name)
 {
 	m::mh::renameChannel(channelId, name);
 }
-}}} // giada::c::channel::
+} // giada::c::channel::

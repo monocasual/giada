@@ -37,9 +37,7 @@
 #include "actionEditor.h"
 
 
-namespace giada {
-namespace c {
-namespace actionEditor
+namespace giada::c::actionEditor
 {
 namespace
 {
@@ -109,12 +107,8 @@ void recordNonFirstEnvelopeAction_(ID channelId, Frame frame, int value)
 
 bool isSinglePressMode_(ID channelId)
 {
-	bool b;
-	m::model::onGet(m::model::channels, channelId, [&](const m::Channel& c)
-	{
-		b = c.samplePlayer->state->mode == SamplePlayerMode::SINGLE_PRESS;
-	});
-	return b;
+	/* TODO - use m::model getChannel utils (to be added) */
+	return m::model::get().getChannel(channelId).samplePlayer->mode == SamplePlayerMode::SINGLE_PRESS;
 }
 } // {anonymous}
 
@@ -124,9 +118,9 @@ bool isSinglePressMode_(ID channelId)
 /* -------------------------------------------------------------------------- */
 
 
-SampleData::SampleData(const m::SamplePlayer& s)
-: channelMode(s.state->mode.load())
-, isLoopMode (s.state->isAnyLoopMode())
+SampleData::SampleData(const m::samplePlayer::Data& s)
+: channelMode(s.mode)
+, isLoopMode (s.isAnyLoopMode())
 {
 }
 
@@ -134,13 +128,13 @@ SampleData::SampleData(const m::SamplePlayer& s)
 /* -------------------------------------------------------------------------- */
 
 
-Data::Data(const m::Channel& c)
+Data::Data(const m::channel::Data& c)
 : channelId  (c.id)
-, channelName(c.state->name)
+, channelName(c.name)
 , actions    (m::recorder::getActionsOnChannel(c.id))
 {
-	if (c.getType() == ChannelType::SAMPLE)
-		sample = std::make_optional<SampleData>(*c.samplePlayer);
+	if (c.type == ChannelType::SAMPLE)
+		sample = std::make_optional<SampleData>(c.samplePlayer.value());
 }
 
 
@@ -151,10 +145,7 @@ Data::Data(const m::Channel& c)
 
 Data getData(ID channelId)
 {
-	namespace mm = m::model;
-
-	mm::ChannelsLock cl(mm::channels);
-	return Data(mm::get(mm::channels, channelId));
+    return Data(m::model::get().getChannel(channelId));
 }
 
 
@@ -393,4 +384,4 @@ void updateVelocity(const m::Action& a, int value)
 
 	mr::updateEvent(a.id, event);
 }
-}}} // giada::c::actionEditor::
+} // giada::c::actionEditor::

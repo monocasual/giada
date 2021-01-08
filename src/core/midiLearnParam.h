@@ -30,6 +30,7 @@
 
 
 #include <atomic>
+#include "core/weakAtomic.h"
 
 
 namespace giada::m
@@ -40,7 +41,7 @@ public:
 
 	MidiLearnParam();
 	MidiLearnParam(uint32_t v, std::size_t index=0);
-	MidiLearnParam(const MidiLearnParam& o);
+	MidiLearnParam(const MidiLearnParam& o) = default;
 
     uint32_t getValue() const;
     std::size_t getIndex() const;
@@ -48,8 +49,8 @@ public:
 
 private:
 
-    std::atomic<uint32_t> m_param;
-    std::size_t           m_index;
+    WeakAtomic<uint32_t> m_param;
+    std::size_t          m_index;
 };
 } // giada::m::
 

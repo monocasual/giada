@@ -11,6 +11,10 @@
 --------------------------------------------------------------------------------
 
 
+0.17.2
+- Improved sample rendering precision
+
+
 0.17.1 --- 2021 . 02 . 01
 - Better CMake dependency management
 - Add CMake install rules (#422)

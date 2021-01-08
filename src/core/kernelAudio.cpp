@@ -81,8 +81,7 @@ bool JackState::operator!=(const JackState& o) const
 
 bool isReady()
 {
-	model::KernelLock lock(model::kernel);
-	return model::kernel.get()->audioReady;
+    return model::get().kernel.audioReady;
 }
 
 
@@ -198,9 +197,8 @@ int openDevice()
 			nullptr,                                               // user data (unused)
 			&options);
 		
-		model::onSwap(model::kernel, [](model::Kernel& k) {
-			k.audioReady = true;
-		});
+		model::get().kernel.audioReady = true;
+		model::swap(model::SwapType::NONE);
 		return 1;
 	}
 	catch (RtAudioError &e) {

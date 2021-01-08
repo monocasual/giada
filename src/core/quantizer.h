@@ -29,15 +29,14 @@
 #define G_QUANTIZER_H
 
 
-#include <array>
+#include <map>
 #include <functional>
 #include "core/const.h"
 #include "core/range.h"
 #include "core/types.h"
 
 
-namespace giada {
-namespace m
+namespace giada::m
 {
 class Quantizer
 {
@@ -67,17 +66,17 @@ public:
 
 	void clear();
 
-	/* isTriggered
+	/* hasBeenTriggered
 	True if a quantizer function has been triggered(). */
 	
-	bool isTriggered() const;
+	bool hasBeenTriggered() const;
 
 private:
 
-	std::array<std::function<void(Frame)>, G_MAX_QUANTIZER_SIZE> m_callbacks;
+	std::map<int, std::function<void(Frame)>> m_callbacks;
 	int m_performId = -1;
 };
-}} // giada::m::
+} // giada::m::
 
 
 #endif

@@ -26,66 +26,50 @@
 
 
 #include <cassert>
+#include "core/eventDispatcher.h"
 #include "core/action.h"
 #include "core/clock.h"
 #include "core/conf.h"
 #include "core/mixer.h"
 #include "core/recorderHandler.h"
 #include "core/recManager.h"
-#include "core/channels/state.h"
+#include "core/channels/channel.h"
 #include "midiActionRecorder.h"
 
 
-namespace giada {
-namespace m
+namespace giada::m::midiActionRecorder
 {
-MidiActionRecorder::MidiActionRecorder(ChannelState* c)
-: m_channelState(c)
+namespace
 {
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-MidiActionRecorder::MidiActionRecorder(const MidiActionRecorder& /*o*/, ChannelState* c)
-: MidiActionRecorder(c)
-{
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void MidiActionRecorder::parse(const mixer::Event& e) const
-{
-	assert(m_channelState != nullptr);
-
-	if (e.type == mixer::EventType::MIDI && canRecord()) 
-		record(e.action.event);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void MidiActionRecorder::record(const MidiEvent& e) const
+void record_(channel::Data& ch, const MidiEvent& e)
 {
 	MidiEvent flat(e);
 	flat.setChannel(0);
-	recorderHandler::liveRec(m_channelState->id, flat, clock::quantize(clock::getCurrentFrame()));
-	m_channelState->hasActions = true;
+	recorderHandler::liveRec(ch.id, flat, clock::quantize(clock::getCurrentFrame()));
+	ch.hasActions = true;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool MidiActionRecorder::canRecord() const
+bool canRecord_()
 {
 	return recManager::isRecordingAction() && 
 	       clock::isRunning()              && 
 	       !recManager::isRecordingInput();
 }
-}} // giada::m::
+} // {anonymous}
 
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+void react(channel::Data& ch, const eventDispatcher::Event& e)
+{
+	if (e.type == eventDispatcher::EventType::MIDI && canRecord_())
+		record_(ch, std::get<Action>(e.data).event);
+}
+} // giada::m::midiActionRecorder::

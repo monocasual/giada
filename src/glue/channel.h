@@ -37,25 +37,19 @@
 #include "core/types.h"
 
 
-namespace giada {
-namespace m
-{
-class Channel;
-class SamplePlayer;
-}
-namespace c {
-namespace channel 
+namespace giada::m { class Plugin; }
+namespace giada::c::channel 
 {
 struct SampleData
 {
 	SampleData() = delete;
-	SampleData(const m::SamplePlayer&, const m::AudioReceiver&);
+	SampleData(const m::channel::Data&);
 
-	Frame a_getTracker() const;
-	Frame a_getBegin() const;
-	Frame a_getEnd() const;
-	bool  a_getInputMonitor() const;
-	bool  a_getOverdubProtection() const;
+	Frame getTracker() const;
+	Frame getBegin() const;
+	Frame getEnd() const;
+	bool  getInputMonitor() const;
+	bool  getOverdubProtection() const;
 
 	ID               waveId;
 	SamplePlayerMode mode;
@@ -64,40 +58,39 @@ struct SampleData
 
 private:
 
-	const m::SamplePlayer*  m_samplePlayer;
-	const m::AudioReceiver* m_audioReceiver;
+	const m::channel::Data* m_channel;
 };
 
 struct MidiData
 {
 	MidiData() = delete;
-	MidiData(const m::MidiSender&);
+	MidiData(const m::channel::Data&);
 
-	bool a_isOutputEnabled() const;
-	int  a_getFilter() const;
+	bool isOutputEnabled() const;
+	int  getFilter() const;
 
 private:
 
-	const m::MidiSender* m_midiSender;
+	const m::channel::Data* m_channel;
 };
 
 struct Data
 {
-	Data(const m::Channel&);
+	Data(const m::channel::Data&);
 
-	bool a_getMute() const;
-	bool a_getSolo() const;
-	ChannelStatus a_getPlayStatus() const;
-	ChannelStatus a_getRecStatus() const;
-	bool a_getReadActions() const;
-	bool a_isArmed() const;
-	bool a_isRecordingInput() const;
-	bool a_isRecordingAction() const;
+	bool getMute() const;
+	bool getSolo() const;
+	ChannelStatus getPlayStatus() const;
+	ChannelStatus getRecStatus() const;
+	bool getReadActions() const;
+	bool isArmed() const;
+	bool isRecordingInput() const;
+	bool isRecordingAction() const;
 
 	ID              id;
 	ID              columnId;
 #ifdef WITH_VST
-	std::vector<ID> pluginIds;
+	std::vector<m::Plugin*> plugins;
 #endif
 	ChannelType     type;
 	Pixel           height;
@@ -112,7 +105,7 @@ struct Data
 
 private:
 
-	const m::Channel& m_channel;
+	const m::channel::Data& m_channel;
 };
 
 /* getChannels
@@ -124,16 +117,6 @@ Data getData(ID channelId);
 Returns a vector of viewModel objects filled with data from channels. */
 
 std::vector<Data> getChannels();
-
-/* a_get
-Returns an atomic property from a Channel, by locking it first. */
-
-template <typename T>
-T a_get(const std::atomic<T>& a)
-{
-	m::model::ChannelsLock l(m::model::channels);
-	return a.load();
-}
 
 /* addChannel
 Adds an empty new channel to the stack. */
@@ -179,6 +162,7 @@ void setName(ID channelId, const std::string& name);
 void setHeight(ID channelId, Pixel p);
 
 void setSamplePlayerMode(ID channelId, SamplePlayerMode m);
-}}} // giada::c::channel::
+} // giada::c::channel::
+
 
 #endif

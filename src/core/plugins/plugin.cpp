@@ -37,11 +37,7 @@
 #include "plugin.h"
 
 
-using std::string;
-
-
-namespace giada {
-namespace m 
+namespace giada::m 
 {
 Plugin::Plugin(ID id, const std::string& UID)
 : id            (id)
@@ -49,6 +45,7 @@ Plugin::Plugin(ID id, const std::string& UID)
 , onEditorResize(nullptr)
 , m_plugin      (nullptr)
 , m_UID         (UID)
+, m_hasEditor   (false)
 {
 }
 
@@ -63,6 +60,7 @@ Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin, double 
 , onEditorResize(nullptr)
 , m_plugin      (std::move(plugin))
 , m_bypass      (false)
+, m_hasEditor   (m_plugin->hasEditor())
 {
 	/* (1) Initialize midiInParams vector, where midiInParams.size == number of 
 	plugin parameters. All values are initially empty (0x0): they will be filled
@@ -167,7 +165,7 @@ juce::AudioProcessorEditor* Plugin::createEditor() const
 /* -------------------------------------------------------------------------- */
 
 
-string Plugin::getUniqueId() const
+std::string Plugin::getUniqueId() const
 {
 	if (!valid)
 		return m_UID;
@@ -205,7 +203,7 @@ void Plugin::setParameter(int paramIndex, float value) const
 /* -------------------------------------------------------------------------- */
 
 
-string Plugin::getName() const
+std::string Plugin::getName() const
 {
 	if (!valid)
 		return "** invalid **";
@@ -335,16 +333,14 @@ void Plugin::setCurrentProgram(int index) const
 
 bool Plugin::hasEditor() const
 {
-	if (!valid)
-		return false;
-	return m_plugin->hasEditor();
+	return m_hasEditor;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-string Plugin::getProgramName(int index) const
+std::string Plugin::getProgramName(int index) const
 {
 	if (!valid)
 		return {};
@@ -355,7 +351,7 @@ string Plugin::getProgramName(int index) const
 /* -------------------------------------------------------------------------- */
 
 
-string Plugin::getParameterName(int index) const
+std::string Plugin::getParameterName(int index) const
 {
 	if (!valid)
 		return {};
@@ -367,7 +363,7 @@ string Plugin::getParameterName(int index) const
 /* -------------------------------------------------------------------------- */
 
 
-string Plugin::getParameterText(int index) const
+std::string Plugin::getParameterText(int index) const
 {
 	return m_plugin->getParameters()[index]->getCurrentValueAsText().toStdString();
 }
@@ -376,12 +372,11 @@ string Plugin::getParameterText(int index) const
 /* -------------------------------------------------------------------------- */
 
 
-string Plugin::getParameterLabel(int index) const
+std::string Plugin::getParameterLabel(int index) const
 {
 	return m_plugin->getParameters()[index]->getLabel().toStdString();
 }
-
-}} // giada::m::
+} // giada::m::
 
 
 #endif

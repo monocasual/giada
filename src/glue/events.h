@@ -37,13 +37,11 @@ Functions that take care of live event dispatching. Every live gesture that
 comes from the UI, MIDI thread or keyboard interaction and wants to change the
 internal engine state must call these functions. */
 
-namespace giada {
-namespace m
+namespace giada::m
 {
 class MidiEvent;
 }
-namespace c {
-namespace events
+namespace giada::c::events
 {
 /* Channel*
 Channel-related events. */
@@ -79,9 +77,9 @@ void toggleInputRecording ();
 /* Plug-ins. */
 
 #ifdef WITH_VST
-void setPluginParameter(ID pluginId, int paramIndex, float value, bool gui); 
+void setPluginParameter(ID pluginId, int paramIndex, float value, bool gui);
 #endif
-}}} // giada::c::events::
+} // giada::c::events::
 
 
 #endif

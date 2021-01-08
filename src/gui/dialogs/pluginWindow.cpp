@@ -55,7 +55,8 @@ gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin)
 		for (int index : m_plugin.paramIndexes) {
 			int py = m_list->y() + (index * (G_GUI_UNIT + G_GUI_INNER_MARGIN));
 			int pw = m_list->w() - m_list->scrollbar_size() - (G_GUI_OUTER_MARGIN*3);
-			new v::gePluginParameter(m_list->x(), py, pw, labelWidth, c::plugin::getParam(index, m_plugin.id));
+			new v::gePluginParameter(m_list->x(), py, pw, labelWidth, c::plugin::getParam(index, m_plugin.getPluginRef(),
+                m_plugin.channelId));
 		}
 	m_list->end();
 
@@ -77,7 +78,7 @@ gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin)
 void gdPluginWindow::updateParameters(bool changeSlider)
 {
 	for (int index : m_plugin.paramIndexes)
-		static_cast<v::gePluginParameter*>(m_list->child(index))->update(c::plugin::getParam(index, m_plugin.id), changeSlider);
+		static_cast<v::gePluginParameter*>(m_list->child(index))->update(c::plugin::getParam(index, m_plugin.getPluginRef(), m_plugin.channelId), changeSlider);
 }
 }} // giada::v::
 

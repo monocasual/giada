@@ -31,87 +31,63 @@
 
 #include "core/types.h"
 #include "core/const.h"
-#include "core/mixer.h" // TODO - forward declare
-#include "core/audioBuffer.h" // TODO - forward declare
 #include "core/channels/waveReader.h"
-#include "core/channels/sampleController.h"
+#include "core/channels/sampleAdvancer.h"
+#include "core/channels/sampleReactor.h"
 
 
-namespace giada {
-namespace m
+namespace giada::m::channel { struct Data; }
+namespace giada::m::samplePlayer
 {
-class  Wave;
-struct SamplePlayerState;
-class SamplePlayer
+struct Data
 {
-public:
-
-    SamplePlayer(ChannelState*);
-    SamplePlayer(const patch::Channel& p, ChannelState*);
-    SamplePlayer(const SamplePlayer&, ChannelState* c=nullptr);
-
-    void parse(const mixer::Event& e) const;
-    void advance(Frame bufferSize) const;
-    void render(AudioBuffer& out) const;
+    Data();
+    Data(const patch::Channel& p, float samplerateRatio);
+    Data(const Data& o)          = default;
+    Data(Data&& o)               = default;
+    Data& operator=(const Data&) = default;
+    Data& operator=(Data&&)      = default;
 
     bool hasWave() const;
     bool hasLogicalWave() const;
     bool hasEditedWave() const;
+    bool isAnyLoopMode() const;
     ID getWaveId() const;
     Frame getWaveSize() const;
+    Wave* getWave() const;
 
-    /* loadWave
-    Loads Wave 'w' into this channel and sets it up (name, markers, ...). */
-
-    void loadWave(const Wave* w);
-    
-    /* setWave
-    Just sets the pointer to a Wave object. Used during de-serialization. The
-    ratio is used to adjust begin/end points in case of patch vs. conf sample
-    rate mismatch. */
-
-    void setWave(const Wave& w, float samplerateRatio);
-
-    /* setInvalidWave
-    Same as setWave(nullptr) plus the invalid ID (i.e. 0). */
-    
-    void setInvalidWave(); 
-
-    /* kickIn
-    Starts the player right away at frame 'f'. Used when launching a loop after
-    being live recorded. */
-    
-    void kickIn(Frame f);
-
-
-    /* state
-    Pointer to mutable SamplePlayerState state. */
-
-    std::unique_ptr<SamplePlayerState> state;
-
-private:
-
-    bool shouldLoop() const;
-
-    ID m_waveId;
-
-    /* m_waveReader
-    Used to read data from Wave and fill incoming buffer. */
-
-    WaveReader m_waveReader;
-
-    /* m_sampleController
-    Managers events for this Sample Player. */
-
-    SampleController m_sampleController;
-
-    /* m_channelState
-    Pointer to Channel state. Needed to alter the playStatus status when the
-    sample is over. */
-
-    ChannelState* m_channelState;
+    float            pitch;
+    SamplePlayerMode mode;
+    Frame            shift;
+    Frame            begin;
+    Frame            end;
+	bool             velocityAsVol; // Velocity drives volume
+    WaveReader       waveReader;
 };
-}} // giada::m::
+
+
+void react  (channel::Data& ch, const eventDispatcher::Event& e);
+void advance(const channel::Data& ch, const sequencer::Event& e);
+void render (const channel::Data& ch);
+
+/* loadWave
+Loads Wave 'w' into channel ch and sets it up (name, markers, ...). */
+
+void loadWave(channel::Data& ch, Wave* w);
+
+/* setWave
+Just sets the pointer to a Wave object. Used during de-serialization. The
+ratio is used to adjust begin/end points in case of patch vs. conf sample
+rate mismatch. If nullptr, set the wave to invalid. */
+
+void setWave(channel::Data& ch, Wave* w, float samplerateRatio);
+
+/* kickIn
+Starts the player right away at frame 'f'. Used when launching a loop after
+being live recorded. */
+
+void kickIn(channel::Data& ch, Frame f);
+} // giada::m::samplePlayer::
 
 
 #endif

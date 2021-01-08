@@ -48,19 +48,15 @@ namespace
 {
 void setRecordingAction_(bool v)
 {
-	model::onSwap(model::recorder, [&](model::Recorder& r)
-	{
-		r.isRecordingAction = v;
-	});
+	model::get().recorder.isRecordingAction = v;
+    model::swap(model::SwapType::NONE);
 }
 
 
 void setRecordingInput_(bool v)
 {
-	model::onSwap(model::recorder, [&](model::Recorder& r)
-	{
-		r.isRecordingInput = v;
-	});
+    model::get().recorder.isRecordingInput = v;
+    model::swap(model::SwapType::NONE);
 }
 
 
@@ -105,16 +101,14 @@ bool isRecording()
 
 
 bool isRecordingAction()
-{ 
-	model::RecorderLock lock(model::recorder); 
-	return model::recorder.get()->isRecordingAction;
+{
+    return model::get().recorder.isRecordingAction;
 }
 
 
 bool isRecordingInput()
-{ 
-	model::RecorderLock lock(model::recorder); 
-	return model::recorder.get()->isRecordingInput; 
+{
+    return model::get().recorder.isRecordingInput;
 }
 
 
@@ -161,13 +155,12 @@ void stopActionRec()
 	conf::treatRecsAsLoops is enabled or not. Same thing for MIDI channels.  */
 
 	for (ID id : channels) {
-		model::onGet(model::channels, id, [](Channel& c)
-		{
-			c.state->readActions.store(true);
-			if (c.getType() == ChannelType::MIDI)
-				c.state->playStatus.store(ChannelStatus::PLAY);
-		});
+	    channel::Data& ch = model::get().getChannel(id);
+	    ch.readActions = true;
+	    if (ch.type == ChannelType::MIDI)
+            ch.state->playStatus.store(ChannelStatus::PLAY);
 	}
+    model::swap(model::SwapType::HARD);
 }
 
 

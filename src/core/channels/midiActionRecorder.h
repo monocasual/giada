@@ -29,34 +29,14 @@
 #define G_CHANNEL_MIDI_ACTION_RECORDER_H
 
 
-#include "core/types.h"
-
-
-namespace giada {
-namespace m
+namespace giada::m::channel { struct Data; }
+namespace giada::m::midiActionRecorder
 {
-namespace mixer
+struct Data
 {
-struct Event;
-}
-struct ChannelState;
-class MidiActionRecorder
-{
-public:
-
-    MidiActionRecorder(ChannelState*);
-    MidiActionRecorder(const MidiActionRecorder&, ChannelState* c=nullptr);
-
-    void parse(const mixer::Event& e) const;
-
-private:
-
-    bool canRecord() const;
-    void record(const MidiEvent& e) const;
-
-    ChannelState* m_channelState;
 };
-}} // giada::m::
 
+void react(channel::Data& ch, const eventDispatcher::Event& e);
+}
 
 #endif

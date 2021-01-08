@@ -34,8 +34,7 @@
 #include "core/types.h"
 
 
-namespace giada {
-namespace m 
+namespace giada::m 
 {
 class Wave
 {
@@ -102,7 +101,7 @@ private:
 	bool m_edited;      // edited via editor
 	std::string m_path; // E.g. /path/to/my/sample.wav
 };
-}} // giada::m::
+} // giada::m::
 
 
 #endif

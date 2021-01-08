@@ -38,19 +38,10 @@
 #include "core/types.h"
 
 
-namespace juce {
-class AudioProcessorEditor;
-}
-
-
-namespace giada {
-namespace m
-{
-class Plugin;
-class Channel;
-}
-namespace c {
-namespace plugin 
+namespace juce { class AudioProcessorEditor; }
+namespace giada::m { class Plugin; }
+namespace giada::m::channel { struct Data; }
+namespace giada::c::plugin 
 {
 struct Program
 {
@@ -61,10 +52,11 @@ struct Program
 struct Param
 {
     Param() = default;
-    Param(const m::Plugin&, int index);
+    Param(const m::Plugin&, int index, ID channelId);
 
     int         index;
     ID          pluginId;
+    ID          channelId;
     std::string name;
     std::string text;
     std::string label;
@@ -76,6 +68,7 @@ struct Plugin
     Plugin(m::Plugin&, ID channelId);
 
     juce::AudioProcessorEditor* createEditor() const;
+    const m::Plugin& getPluginRef() const;
 
     void setResizeCallback(std::function<void(int, int)> f);
 
@@ -99,18 +92,18 @@ private:
 struct Plugins
 {
     Plugins() = default;
-    Plugins(const m::Channel&);
+    Plugins(const m::channel::Data&);
 
     ID channelId;
-    std::vector<ID> pluginIds; 
+    std::vector<m::Plugin*> plugins; 
 };
 
 /* get*
 Returns ViewModel objects. */
 
 Plugins getPlugins(ID channelId);
-Plugin  getPlugin (ID pluginId, ID channelId);
-Param   getParam  (int index, ID pluginId);
+Plugin  getPlugin (m::Plugin& plugin, ID channelId);
+Param   getParam  (int index, const m::Plugin& plugin, ID channelId);
 
 /* updateWindow
 Updates the editor-less plug-in window. This is useless if the plug-in has an
@@ -119,8 +112,8 @@ editor. */
 void updateWindow(ID pluginId, bool gui);
 
 void addPlugin(int pluginListIndex, ID channelId);
-void swapPlugins(ID pluginId1, ID pluginId2, ID channelId);
-void freePlugin(ID pluginId, ID channelId);
+void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId);
+void freePlugin(const m::Plugin& plugin, ID channelId);
 void setProgram(ID pluginId, int programIndex);
 void toggleBypass(ID pluginId);
 
@@ -129,7 +122,7 @@ Callback attached to the DirBrowser for adding new Plug-in search paths in the
 configuration window. */
 
 void setPluginPathCb(void* data);
-}}} // giada::c::plugin::
+} // giada::c::plugin::
 
 
 #endif

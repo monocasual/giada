@@ -32,6 +32,7 @@
 #include "utils/log.h"
 #include "utils/fs.h"
 #include "utils/string.h"
+#include "core/model/model.h"
 #include "core/const.h"
 #include "core/idManager.h"
 #include "core/patch.h"
@@ -40,9 +41,7 @@
 #include "pluginManager.h"
 
 
-namespace giada {
-namespace m {
-namespace pluginManager
+namespace giada::m::pluginManager
 {
 namespace
 {
@@ -76,7 +75,7 @@ std::unique_ptr<Plugin> makeInvalidPlugin_(const std::string& pid, ID id)
 {
 	missingPlugins_ = true;
 	unknownPluginList_.push_back(pid);
-	return std::make_unique<Plugin>(pluginId_.get(id), pid); // Invalid plug-in	
+	return std::make_unique<Plugin>(pluginId_.generate(id), pid); // Invalid plug-in	
 }
 } // {anonymous}
 
@@ -185,7 +184,7 @@ std::unique_ptr<Plugin> makePlugin(const std::string& pid, ID id)
 
 	u::log::print("[pluginManager::makePlugin] plugin instance with pid=%s created\n", pid);
 
-	return std::make_unique<Plugin>(pluginId_.get(id), std::move(pi), samplerate_, buffersize_);
+	return std::make_unique<Plugin>(pluginId_.generate(id), std::move(pi), samplerate_, buffersize_);
 }
 
 
@@ -275,6 +274,21 @@ std::unique_ptr<Plugin> deserializePlugin(const patch::Plugin& p, patch::Version
 /* -------------------------------------------------------------------------- */
 
 
+std::vector<Plugin*> hydratePlugins(std::vector<ID> pluginIds)
+{
+	std::vector<Plugin*> out;
+	for (ID id : pluginIds) {
+		Plugin* plugin = model::find<Plugin>(id);
+		if (plugin != nullptr)
+			out.push_back(plugin);
+	}
+	return out;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int countAvailablePlugins()
 {
 	return knownPluginList_.getNumTypes();
@@ -354,7 +368,7 @@ void sortPlugins(SortMethod method)
 			break;
 	}
 }
-}}} // giada::m::pluginManager::
+} // giada::m::pluginManager::
 
 
 #endif // #ifdef WITH_VST

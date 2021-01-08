@@ -85,10 +85,7 @@ void geWaveform::clearData()
 
 int geWaveform::alloc(int datasize, bool force)
 {
-	/* TODO - geWaveform needs better isolation from m::. Refactoring needed. */
-	
-	m::model::WavesLock l(m::model::waves);
-	const m::Wave& wave = m::model::get(m::model::waves, m_data->waveId);
+	const m::Wave& wave = m_data->getWaveRef();
 
 	m_ratio = wave.getSize() / (float) datasize;
 
@@ -322,10 +319,7 @@ void geWaveform::draw()
 
 int geWaveform::handle(int e)
 {
-	/* TODO - geWaveform needs better isolation from m::. Refactoring needed. */
-
-	m::model::WavesLock l(m::model::waves);
-	const m::Wave& wave = m::model::get(m::model::waves, m_data->waveId);
+	const m::Wave& wave = m_data->getWaveRef();
 
 	m_mouseX = pixelToFrame(Fl::event_x() - x());
 	m_mouseY = pixelToFrame(Fl::event_y() - y());

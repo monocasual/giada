@@ -50,7 +50,7 @@ geChannelButton::geChannelButton(int x, int y, int w, int h, const c::channel::D
 
 void geChannelButton::refresh()
 {
-	switch (m_channel.a_getPlayStatus()) {
+	switch (m_channel.getPlayStatus()) {
 		case ChannelStatus::OFF:
 		case ChannelStatus::EMPTY:
 			setDefaultMode(); break;
@@ -60,7 +60,7 @@ void geChannelButton::refresh()
 			setEndingMode(); break;
 		default: break;
 	}	
-	switch (m_channel.a_getRecStatus()) {
+	switch (m_channel.getRecStatus()) {
 		case ChannelStatus::ENDING:
 			setEndingMode(); break;
 		default: break;

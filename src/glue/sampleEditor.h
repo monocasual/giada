@@ -35,29 +35,21 @@
 #include "core/waveFx.h"
 
 
-namespace giada {
-namespace m
-{
-class Channel;
-class Wave;
-}
-namespace v 
-{
-class gdSampleEditor;
-}
-namespace c {
-namespace sampleEditor 
+namespace giada::m { class Wave; }
+namespace giada::m::channel { struct Data; }
+namespace giada::v { class gdSampleEditor; }
+namespace giada::c::sampleEditor
 {
 struct Data
 {
     Data() = default;
-    Data(const m::Channel&, const m::Wave&);
+    Data(const m::channel::Data&);
 
     ChannelStatus a_getPreviewStatus() const;
     Frame a_getPreviewTracker() const;
+    const m::Wave& getWaveRef() const; // TODO - getWaveData (or public ptr member to Wave::data)
 
     ID          channelId; 
-    ID          waveId; 
     std::string name;
     float       volume;
     float       pan;
@@ -71,6 +63,10 @@ struct Data
     int         waveRate;
     std::string wavePath;
     bool        isLogical;
+
+private:
+
+	const m::channel::Data* m_channel;
 };
 
 /* onRefresh --- TODO - wrong name */
@@ -85,20 +81,20 @@ Data getData(ID channelId);
 /* setBeginEnd
 Sets start/end points in the sample editor. */
 
-void setBeginEnd(ID channelId, int b, int e);
+void setBeginEnd(ID channelId, Frame b, Frame e);
 
-void cut(ID channelId, ID waveId, int a, int b);
-void copy(ID waveId, int a, int b);
-void paste(ID channelId, ID waveId, int a);
+void cut(ID channelId, Frame a, Frame b);
+void copy(ID channelId, Frame a, Frame b);
+void paste(ID channelId, Frame a);
 
-void trim(ID channelId, ID waveId, int a, int b);
-void reverse(ID channelId, ID waveId, int a, int b);
-void normalize(ID channelId, ID waveId, int a, int b);
-void silence(ID channelId, ID waveId, int a, int b);
-void fade(ID channelId, ID waveId, int a, int b, m::wfx::Fade type);
-void smoothEdges(ID channelId, ID waveId, int a, int b);
-void shift(ID channelId, ID waveId, int offset);
-void reload(ID channelId, ID waveId);
+void trim(ID channelId, Frame a, Frame b);
+void reverse(ID channelId, Frame a, Frame b);
+void normalize(ID channelId, Frame a, Frame b);
+void silence(ID channelId, Frame a, Frame b);
+void fade(ID channelId, Frame a, Frame b, m::wfx::Fade type);
+void smoothEdges(ID channelId, Frame a, Frame b);
+void shift(ID channelId, Frame offset);
+void reload(ID channelId);
 
 bool isWaveBufferFull();
 
@@ -110,7 +106,8 @@ void cleanupPreview();
 /* toNewChannel
 Copies the selected range into a new sample channel. */
 
-void toNewChannel(ID channelId, ID waveId, int a, int b);
-}}} // giada::c::sampleEditor::
+void toNewChannel(ID channelId, Frame a, Frame b);
+} // giada::c::sampleEditor::
+
 
 #endif

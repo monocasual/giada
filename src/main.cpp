@@ -34,7 +34,6 @@
 	#include <string>
 	#include <catch2/catch.hpp>
 	#include "tests/audioBuffer.cpp"
-	#include "tests/rcuList.cpp"
 	#include "tests/recorder.cpp"
 	#include "tests/utils.cpp"
 	#include "tests/wave.cpp"
@@ -56,6 +55,7 @@ int main(int argc, char** argv)
 
 	giada::m::init::startup(argc, argv);
 
+	Fl::lock();  // Enable multithreading in FLTK
 	int ret = Fl::run();
 
 	giada::m::init::shutdown();

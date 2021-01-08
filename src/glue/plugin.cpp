@@ -50,17 +50,16 @@
 extern giada::v::gdMainWindow* G_MainWin;
 
 
-namespace giada {
-namespace c {
-namespace plugin 
+namespace giada::c::plugin 
 {
-Param::Param(const m::Plugin& p, int index)
-: index   (index)
-, pluginId(p.id)
-, name    (p.getParameterName(index))
-, text    (p.getParameterText(index))
-, label   (p.getParameterLabel(index))
-, value   (p.getParameter(index))
+Param::Param(const m::Plugin& p, int index, ID channelId)
+: index    (index)
+, pluginId (p.id)
+, channelId(channelId)
+, name     (p.getParameterName(index))
+, text     (p.getParameterText(index))
+, label    (p.getParameterLabel(index))
+, value    (p.getParameter(index))
 {
 }
 
@@ -93,9 +92,14 @@ Plugin::Plugin(m::Plugin& p, ID channelId)
 
 juce::AudioProcessorEditor* Plugin::createEditor() const
 {
-	m::model::PluginsLock l(m::model::plugins);
 	return m_plugin.createEditor();
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+const m::Plugin& Plugin::getPluginRef() const { return m_plugin; }
 
 
 /* -------------------------------------------------------------------------- */
@@ -112,9 +116,9 @@ void Plugin::setResizeCallback(std::function<void(int, int)> f)
 /* -------------------------------------------------------------------------- */
 
 
-Plugins::Plugins(const m::Channel& c)
+Plugins::Plugins(const m::channel::Data& c)
 : channelId(c.id)
-, pluginIds(c.pluginIds) 
+, plugins  (c.plugins) 
 {
 }
 
@@ -126,24 +130,19 @@ Plugins::Plugins(const m::Channel& c)
 
 Plugins getPlugins(ID channelId)
 {
-	namespace mm = m::model;
-
-	mm::ChannelsLock cl(mm::channels);
-	return Plugins(mm::get(mm::channels, channelId));
+	return Plugins(m::model::get().getChannel(channelId));
 }
 
 
-Plugin getPlugin(ID pluginId, ID channelId)
+Plugin getPlugin(m::Plugin& plugin, ID channelId)
 {
-	m::model::PluginsLock l(m::model::plugins);
-	return Plugin(m::model::get(m::model::plugins, pluginId), channelId);
+	return Plugin(plugin, channelId);
 }
 
 
-Param getParam (int index, ID pluginId)
+Param getParam (int index, const m::Plugin& plugin, ID channelId)
 {
-	m::model::PluginsLock l(m::model::plugins);
-	return Param(m::model::get(m::model::plugins, pluginId), index);
+	return Param(plugin, index, channelId);
 }
 
 
@@ -152,25 +151,26 @@ Param getParam (int index, ID pluginId)
 
 void updateWindow(ID pluginId, bool gui)
 {
-	m::model::PluginsLock l(m::model::plugins);
-	const m::Plugin& p = m::model::get(m::model::plugins, pluginId);
+    m::Plugin* p = m::model::find<m::Plugin>(pluginId);
 
-	if (p.hasEditor())
-		return;
+    assert(p != nullptr);
 
-	/* Get the parent window first: the plug-in list. Then, if it exists, get
-	the child window - the actual pluginWindow. */
+    if (p->hasEditor())
+        return;
 
-	v::gdPluginList* parent = static_cast<v::gdPluginList*>(u::gui::getSubwindow(G_MainWin, WID_FX_LIST));
-	if (parent == nullptr)
-		return;
-	v::gdPluginWindow* child = static_cast<v::gdPluginWindow*>(u::gui::getSubwindow(parent, pluginId + 1));
-	if (child == nullptr) 
-		return;
-	
-	if (!gui) Fl::lock();
-	child->updateParameters(!gui);
-	if (!gui) Fl::unlock();
+    /* Get the parent window first: the plug-in list. Then, if it exists, get
+    the child window - the actual pluginWindow. */
+
+    v::gdPluginList* parent = static_cast<v::gdPluginList*>(u::gui::getSubwindow(G_MainWin, WID_FX_LIST));
+    if (parent == nullptr)
+        return;
+    v::gdPluginWindow* child = static_cast<v::gdPluginWindow*>(u::gui::getSubwindow(parent, pluginId + 1));
+    if (child == nullptr)
+        return;
+
+    if (!gui) Fl::lock();
+    child->updateParameters(!gui);
+    if (!gui) Fl::unlock();
 }
 
 
@@ -190,18 +190,18 @@ void addPlugin(int pluginListIndex, ID channelId)
 /* -------------------------------------------------------------------------- */
 
 
-void swapPlugins(ID pluginId1, ID pluginId2, ID channelId)
+void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId)
 {
-	m::pluginHost::swapPlugin(pluginId1, pluginId2, channelId);
+	m::pluginHost::swapPlugin(p1, p2, channelId);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void freePlugin(ID pluginId, ID channelId)
+void freePlugin(const m::Plugin& plugin, ID channelId)
 {
-	m::pluginHost::freePlugin(pluginId, channelId);
+	m::pluginHost::freePlugin(plugin, channelId);
 }
 
 
@@ -210,7 +210,7 @@ void freePlugin(ID pluginId, ID channelId)
 
 void setProgram(ID pluginId, int programIndex)
 {
-	m::pluginHost::setPluginProgram(pluginId, programIndex); 
+	m::pluginHost::setPluginProgram(pluginId, programIndex);
 	updateWindow(pluginId, /*gui=*/true); 
 }
 
@@ -245,8 +245,7 @@ void setPluginPathCb(void* data)
 	v::gdConfig* configWin = static_cast<v::gdConfig*>(u::gui::getSubwindow(G_MainWin, WID_CONFIG));
 	configWin->refreshVstPath();
 }
-
-}}} // giada::c::plugin::
+} // giada::c::plugin::
 
 
 #endif

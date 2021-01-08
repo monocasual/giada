@@ -44,7 +44,7 @@ namespace v
 geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h, const c::channel::Data& d)
 : geChannelButton(x, y, w, h, d)
 {
-	switch (m_channel.a_getPlayStatus()) {
+	switch (m_channel.getPlayStatus()) {
 		case ChannelStatus::MISSING:
 		case ChannelStatus::WRONG:
 			label("* file not found! *");
@@ -63,10 +63,10 @@ void geSampleChannelButton::refresh()
 {
 	geChannelButton::refresh();
 
-	if (m_channel.a_isRecordingInput() && m_channel.a_isArmed())
+	if (m_channel.isRecordingInput() && m_channel.isArmed())
 		setInputRecordMode();
 	else
-	if (m_channel.a_isRecordingAction() && m_channel.sample->waveId != 0 && !m_channel.sample->isLoop)
+	if (m_channel.isRecordingAction() && m_channel.sample->waveId != 0 && !m_channel.sample->isLoop)
 		setActionRecordMode();
 
 	redraw();

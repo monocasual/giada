@@ -45,12 +45,17 @@ public:
 
 	void set(ID id);
 
-	/* get
+	/* generate
 	Generates a new unique id. If 'id' parameter is passed in is valid, it just 
 	returns it with no unique id generation. Useful when loading things from the 
 	model that already have their own id. */
 
-	ID   get(ID id=0);
+	ID generate(ID id=0);
+
+	/* get
+	Returns the current id, a.k.a. the last generated one. */
+	
+	ID get();
 
 private:
 

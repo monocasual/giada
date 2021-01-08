@@ -29,14 +29,13 @@
 #define G_INIT_H
 
 
-namespace giada {
-namespace m {
-namespace init
+namespace giada::m::init
 {
 void startup(int argc, char** argv);
 void reset(); 
 void closeMainWindow();
 void shutdown();
-}}} // giada::m::init
+} // giada::m::init
+
 
 #endif

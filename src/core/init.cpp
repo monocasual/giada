@@ -46,6 +46,7 @@
 #include "gui/dialogs/warnings.h"
 #include "glue/main.h"
 #include "core/model/storage.h"
+#include "core/model/model.h"
 #include "core/channels/channelManager.h"
 #include "core/mixer.h"
 #include "core/wave.h"
@@ -64,15 +65,14 @@
 #include "core/midiMapConf.h"
 #include "core/kernelMidi.h"
 #include "core/kernelAudio.h"
+#include "core/eventDispatcher.h"
 #include "init.h"
 
 
 extern giada::v::gdMainWindow* G_MainWin;
 
 
-namespace giada {
-namespace m {
-namespace init
+namespace giada::m::init
 {
 namespace
 {
@@ -92,6 +92,16 @@ void initConf_()
 
 	if (midimap::read(conf::conf.midiMapPath) != MIDIMAP_READ_OK)
 		u::log::print("[init] MIDI map read failed!\n");
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void initSystem_()
+{
+	model::init();
+	eventDispatcher::init();
 }
 
 
@@ -156,6 +166,7 @@ void initGUI_(int argc, char** argv)
 		v::gdAlert("Your soundcard isn't configured correctly.\n"
 			"Check the configuration and restart Giada.");
 
+	v::updater::init();
 	u::gui::updateStaticWidgets();
 
 	Fl::add_timeout(G_GUI_REFRESH_RATE, v::updater::update, nullptr);
@@ -233,7 +244,9 @@ void printBuildInfo_()
 void startup(int argc, char** argv)
 {
 	printBuildInfo_();
+	
 	initConf_();
+	initSystem_();
 	initAudio_();
 	initMIDI_();
 	initGUI_(argc, argv);
@@ -266,6 +279,7 @@ void reset()
 	pluginHost::close();
 #endif
 
+	model::init();
 	channelManager::init();
 	waveManager::init();
 	clock::init(conf::conf.samplerate, conf::conf.midiTCfps);
@@ -301,4 +315,4 @@ void shutdown()
 	u::log::print("[init] Giada %s closed\n\n", G_VERSION_STR);
 	u::log::close();
 }
-}}} // giada::m::init
+} // giada::m::init

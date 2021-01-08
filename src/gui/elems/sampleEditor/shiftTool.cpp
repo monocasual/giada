@@ -110,6 +110,6 @@ void geShiftTool::update(Frame shift)
 
 void geShiftTool::shift(int f)
 {
-	c::sampleEditor::shift(m_data->channelId, m_data->waveId, f);
+	c::sampleEditor::shift(m_data->channelId, f);
 }
 }} // giada::v::

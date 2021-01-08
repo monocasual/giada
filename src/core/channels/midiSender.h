@@ -29,37 +29,28 @@
 #define G_CHANNEL_MIDI_SENDER_H
 
 
-namespace giada {
-namespace m
+namespace giada::m::channel { struct Data; }
+namespace giada::m::midiSender
 {
-namespace mixer
+struct Data
 {
-struct Event;
-}
-struct ChannelState;
-struct MidiSenderState;
-class MidiSender
-{
-public:
+    Data() = default;
+    Data(const patch::Channel& p);
+    Data(const Data& o) = default;
 
-    MidiSender(ChannelState*);
-    MidiSender(const patch::Channel&, ChannelState*);
-    MidiSender(const MidiSender&, ChannelState* c=nullptr);
+    /* enabled
+    Tells whether MIDI output is enabled or not. */
+    
+	bool enabled;
 
-    void parse(const mixer::Event& e) const;
-
-    /* state
-    Pointer to mutable MidiSenderState state. */
-
-    std::unique_ptr<MidiSenderState> state;
-
-private:
-
-    void send(MidiEvent e) const;
-
-    ChannelState* m_channelState;
+    /* filter
+    Which MIDI channel data should be sent to. */
+    
+    int filter;
 };
-}} // giada::m::
 
+void react  (const channel::Data& ch, const eventDispatcher::Event& e);
+void advance(const channel::Data& ch, const sequencer::Event& e);
+}
 
 #endif

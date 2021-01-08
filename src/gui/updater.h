@@ -29,12 +29,11 @@
 #define G_V_UPDATER_H
 
 
-namespace giada {
-namespace v {
-namespace updater
+namespace giada::v::updater
 {
+void init();
 void update(void* p);
-}}} // giada::v::updater
+} // giada::v::updater::
 
 
 #endif

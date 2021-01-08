@@ -67,49 +67,48 @@ void menuCallback_(Fl_Widget* w, void* v)
 {
 	const geWaveTools* wt = static_cast<geWaveTools*>(w);
 	
-	ID   channelId = wt->getChannelData().channelId;
-	ID   waveId    = wt->getChannelData().waveId;
+	ID   channelId    = wt->getChannelData().channelId;
 	Menu selectedItem = (Menu) (intptr_t) v;
 
-	int a = wt->waveform->getSelectionA();
-	int b = wt->waveform->getSelectionB();
+	Frame a = wt->waveform->getSelectionA();
+	Frame b = wt->waveform->getSelectionB();
 
 	switch (selectedItem) {
 		case Menu::CUT:
-			c::sampleEditor::cut(channelId, waveId, a, b);
+			c::sampleEditor::cut(channelId, a, b);
 			break;		
 		case Menu::COPY:
-			c::sampleEditor::copy(waveId, a, b);
+			c::sampleEditor::copy(channelId, a, b);
 			break;		
 		case Menu::PASTE:
-			c::sampleEditor::paste(channelId, waveId, a);
+			c::sampleEditor::paste(channelId, a);
 			break;
 		case Menu::TRIM:
-			c::sampleEditor::trim(channelId, waveId, a, b);
+			c::sampleEditor::trim(channelId, a, b);
 			break;
 		case Menu::SILENCE:
-			c::sampleEditor::silence(channelId, waveId, a, b);
+			c::sampleEditor::silence(channelId, a, b);
 			break;	  
 		case Menu::REVERSE:
-			c::sampleEditor::reverse(channelId, waveId, a, b);
+			c::sampleEditor::reverse(channelId, a, b);
 			break;			
 		case Menu::NORMALIZE:
-			c::sampleEditor::normalize(channelId, waveId, a, b);
+			c::sampleEditor::normalize(channelId, a, b);
 			break;	
 		case Menu::FADE_IN:
-			c::sampleEditor::fade(channelId, waveId, a, b, m::wfx::Fade::IN);
+			c::sampleEditor::fade(channelId, a, b, m::wfx::Fade::IN);
 			break;
 		case Menu::FADE_OUT:
-			c::sampleEditor::fade(channelId, waveId, a, b, m::wfx::Fade::OUT);
+			c::sampleEditor::fade(channelId, a, b, m::wfx::Fade::OUT);
 			break;
 		case Menu::SMOOTH_EDGES:
-			c::sampleEditor::smoothEdges(channelId, waveId, a, b);
+			c::sampleEditor::smoothEdges(channelId, a, b);
 			break;
 		case Menu::SET_BEGIN_END:
 			c::sampleEditor::setBeginEnd(channelId, a, b);
 			break;		
 		case Menu::TO_NEW_CHANNEL:
-			c::sampleEditor::toNewChannel(channelId, waveId, a, b);
+			c::sampleEditor::toNewChannel(channelId, a, b);
 			break;
 	}
 }

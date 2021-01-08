@@ -38,39 +38,57 @@
 #include "core/model/storage.h"
 
 
-namespace giada {
-namespace m {
-namespace model
+namespace giada::m::model
 {
+namespace
+{
+void loadChannels_(const std::vector<patch::Channel>& channels, int samplerate)
+{
+	float samplerateRatio = conf::conf.samplerate / static_cast<float>(samplerate);
+
+    for (const patch::Channel& pchannel : channels)
+		get().channels.push_back(channelManager::deserializeChannel(pchannel, samplerateRatio));
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void loadActions_(const std::vector<patch::Action>& pactions)
+{
+	getAll<Actions>() = std::move(recorderHandler::deserializeActions(pactions));
+}
+} // 
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
 void store(patch::Patch& patch)
 {
-#ifdef WITH_VST
-	PluginsLock  pl (plugins);
-#endif
-	ActionsLock  al (actions);
-	WavesLock    wl (waves);
-	ClockLock    cl (clock);
-	ChannelsLock chl(channels);
+	const Layout& layout = get();
 
-	patch.bars       = clock.get()->bars;
-	patch.beats      = clock.get()->beats;
-	patch.bpm        = clock.get()->bpm;
-	patch.quantize   = clock.get()->quantize;
-	patch.metronome  = sequencer::isMetronomeOn();
+	patch.bars       = layout.clock.bars;
+	patch.beats      = layout.clock.beats;
+	patch.bpm        = layout.clock.bpm;
+	patch.quantize   = layout.clock.quantize;
+	patch.metronome  = sequencer::isMetronomeOn(); // TODO - add bool metronome to Layout
 	patch.samplerate = conf::conf.samplerate;
 
 #ifdef WITH_VST
-	for (const Plugin* p : plugins) 
+	for (const auto& p : getAll<PluginPtrs>())
 		patch.plugins.push_back(pluginManager::serializePlugin(*p));
 #endif
 
-	patch.actions = recorderHandler::serializeActions(actions.get()->map); 
+	patch.actions = recorderHandler::serializeActions(getAll<Actions>());
 
-	for (const Wave* w : waves)
+	for (const auto& w : getAll<WavePtrs>())
 		patch.waves.push_back(waveManager::serializeWave(*w));
 
-	for (const Channel* c : channels)
-		patch.channels.push_back(channelManager::serializeChannel(*c));
+	for (const channel::Data& c : layout.channels)
+		patch.channels.push_back(channelManager::serializeChannel(c));
 }
 
 
@@ -79,19 +97,19 @@ void store(patch::Patch& patch)
 
 void store(conf::Conf& conf)
 {
-	MidiInLock l(midiIn);
+	const Layout& layout = get();
 
-	conf.midiInEnabled    = midiIn.get()->enabled;
-	conf.midiInFilter     = midiIn.get()->filter;
-	conf.midiInRewind     = midiIn.get()->rewind;
-	conf.midiInStartStop  = midiIn.get()->startStop;
-	conf.midiInActionRec  = midiIn.get()->actionRec;
-	conf.midiInInputRec   = midiIn.get()->inputRec;
-	conf.midiInMetronome  = midiIn.get()->metronome;
-	conf.midiInVolumeIn   = midiIn.get()->volumeIn;
-	conf.midiInVolumeOut  = midiIn.get()->volumeOut;
-	conf.midiInBeatDouble = midiIn.get()->beatDouble;
-	conf.midiInBeatHalf   = midiIn.get()->beatHalf;
+	conf.midiInEnabled    = layout.midiIn.enabled;
+	conf.midiInFilter     = layout.midiIn.filter;
+	conf.midiInRewind     = layout.midiIn.rewind;
+	conf.midiInStartStop  = layout.midiIn.startStop;
+	conf.midiInActionRec  = layout.midiIn.actionRec;
+	conf.midiInInputRec   = layout.midiIn.inputRec;
+	conf.midiInMetronome  = layout.midiIn.metronome;
+	conf.midiInVolumeIn   = layout.midiIn.volumeIn;
+	conf.midiInVolumeOut  = layout.midiIn.volumeOut;
+	conf.midiInBeatDouble = layout.midiIn.beatDouble;
+	conf.midiInBeatHalf   = layout.midiIn.beatHalf;
 }
 
 
@@ -100,51 +118,40 @@ void store(conf::Conf& conf)
 
 void load(const patch::Patch& patch)
 {
-	onSwap(clock, [&](Clock& c)
-	{
-	    c.status       = ClockStatus::STOPPED;
-	    c.bars         = patch.bars;
-	    c.beats        = patch.beats;
-	    c.bpm          = patch.bpm;
-	    c.quantize     = patch.quantize;
-	});
+    DataLock lock;
 
-	onSwap(actions, [&](Actions& a)
-	{
-		a.map = recorderHandler::deserializeActions(patch.actions);
-	});
+	/* Clear and re-initialize channels first. */
+
+	get().channels = {};
+	getAll<ChannelBufferPtrs>().clear();
+	getAll<ChannelStatePtrs>().clear();
+
+	/* Load external data first: plug-ins and waves. */
 
 #ifdef WITH_VST
+	getAll<PluginPtrs>().clear();
     for (const patch::Plugin& pplugin : patch.plugins)
-        plugins.push(pluginManager::deserializePlugin(pplugin, patch.version));
+        getAll<PluginPtrs>().push_back(pluginManager::deserializePlugin(pplugin, patch.version));
 #endif
     
+	getAll<WavePtrs>().clear();
 	for (const patch::Wave& pwave : patch.waves) {
 		std::unique_ptr<Wave> w = waveManager::deserializeWave(pwave, conf::conf.samplerate,
 			conf::conf.rsmpQuality);
 		if (w != nullptr)
-			waves.push(std::move(w));	
+			getAll<WavePtrs>().push_back(std::move(w));
 	}
 
-	channels.clear();
-    for (const patch::Channel& pchannel : patch.channels)
-		channels.push(channelManager::deserializeChannel(pchannel, kernelAudio::getRealBufSize()));
-	
-	/* Load Waves into Channels. */
+	/* Then load up channels, actions and global properties. */
 
-	ChannelsLock cl(channels);
-	WavesLock    wl(waves);
+	loadChannels_(patch.channels, patch::patch.samplerate);
+	loadActions_(patch.actions);
 
-	float samplerateRatio = conf::conf.samplerate / static_cast<float>(patch::patch.samplerate);
-	
-	for (Channel* c : channels) {
-		if (!c->samplePlayer)
-			continue;
-		if (exists(waves, c->samplePlayer->getWaveId()))
-			c->samplePlayer->setWave(get(waves, c->samplePlayer->getWaveId()), samplerateRatio);
-		else
-			c->samplePlayer->setInvalidWave();
-	}
+	get().clock.status   = ClockStatus::STOPPED;
+	get().clock.bars     = patch.bars;
+	get().clock.beats    = patch.beats;
+	get().clock.bpm      = patch.bpm;
+	get().clock.quantize = patch.quantize;
 }
 
 
@@ -153,19 +160,18 @@ void load(const patch::Patch& patch)
 
 void load(const conf::Conf& c)
 {
-	onSwap(midiIn, [&](MidiIn& m)
-	{
-		m.enabled    = c.midiInEnabled;
-		m.filter      = c.midiInFilter;
-		m.rewind     = c.midiInRewind;
-		m.startStop  = c.midiInStartStop;
-		m.actionRec  = c.midiInActionRec;
-		m.inputRec   = c.midiInInputRec;
-		m.volumeIn   = c.midiInVolumeIn;
-		m.volumeOut  = c.midiInVolumeOut;
-		m.beatDouble = c.midiInBeatDouble;
-		m.beatHalf   = c.midiInBeatHalf;
-		m.metronome  = c.midiInMetronome;
-	});	
+	get().midiIn.enabled    = c.midiInEnabled;
+	get().midiIn.filter     = c.midiInFilter;
+	get().midiIn.rewind     = c.midiInRewind;
+	get().midiIn.startStop  = c.midiInStartStop;
+	get().midiIn.actionRec  = c.midiInActionRec;
+	get().midiIn.inputRec   = c.midiInInputRec;
+	get().midiIn.volumeIn   = c.midiInVolumeIn;
+	get().midiIn.volumeOut  = c.midiInVolumeOut;
+	get().midiIn.beatDouble = c.midiInBeatDouble;
+	get().midiIn.beatHalf   = c.midiInBeatHalf;
+	get().midiIn.metronome  = c.midiInMetronome;
+
+	swap(SwapType::NONE);	
 }
-}}} // giada::m::model::
+} // giada::m::model::

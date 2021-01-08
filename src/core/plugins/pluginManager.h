@@ -35,15 +35,12 @@
 #include "plugin.h"
 
 
-namespace giada {
-namespace m
-{
-namespace patch
+namespace giada::m::patch
 {
 struct Plugin;
 struct Version;
 }
-namespace pluginManager
+namespace giada::m::pluginManager
 {
 enum class SortMethod : int
 {
@@ -94,6 +91,7 @@ Transforms patch data into a Plugin object and vice versa. */
 
 const patch::Plugin     serializePlugin(const Plugin& p);
 std::unique_ptr<Plugin> deserializePlugin(const patch::Plugin& p, patch::Version version);
+std::vector<Plugin*>    hydratePlugins(std::vector<ID> pluginIds);
 
 /* getAvailablePluginInfo
 Returns the available plugin information (name, type, ...) given a plug-in
@@ -109,7 +107,7 @@ bool hasMissingPlugins();
 
 void sortPlugins(SortMethod sortMethod);
 
-}}} // giada::m::pluginManager::
+} // giada::m::pluginManager::
 
 
 #endif

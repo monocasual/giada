@@ -27,9 +27,11 @@
 
 #include <cassert>
 #include "utils/fs.h"
+#include "core/model/model.h"
 #include "core/channels/channel.h"
 #include "core/channels/samplePlayer.h"
 #include "core/const.h"
+#include "core/conf.h"
 #include "core/kernelAudio.h"
 #include "core/patch.h"
 #include "core/mixer.h"
@@ -44,13 +46,31 @@
 #include "channelManager.h"
 
 
-namespace giada {
-namespace m {
-namespace channelManager
+namespace giada::m::channelManager
 {
 namespace
 {
 IdManager channelId_;
+
+
+/* -------------------------------------------------------------------------- */
+
+
+channel::State& makeState_()
+{
+	model::add(std::make_unique<channel::State>());
+	return model::back<channel::State>();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+channel::Buffer& makeBuffer_()
+{
+	model::add(std::make_unique<channel::Buffer>(kernelAudio::getRealBufSize()));
+    return model::back<channel::Buffer>();
+}
 } // {anonymous}
 
 
@@ -68,97 +88,97 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Channel> create(ChannelType type, ID columnId, const conf::Conf& conf)
+channel::Data create(ID channelId, ChannelType type, ID columnId)
 {
-	std::unique_ptr<Channel> ch = std::make_unique<Channel>(type, 
-		channelId_.get(), columnId, kernelAudio::getRealBufSize(), conf);
-	
-	return ch;
+	ID id = channelId_.generate(channelId);
+	return channel::Data(type, id, columnId, makeState_(), makeBuffer_());
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Channel> create(const Channel& o)
+channel::Data create(const channel::Data& o)
 {
-	std::unique_ptr<Channel> ch = std::make_unique<Channel>(o);
-	ID id = channelId_.get();
-	ch->id        = id;
-	ch->state->id = id;
-	return ch;
+	channel::Data out = channel::Data(o);
+
+	out.id     = channelId_.generate();
+	out.state  = &makeState_();
+	out.buffer = &makeBuffer_();
+
+	return out;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Channel> deserializeChannel(const patch::Channel& pch, int bufferSize)
+channel::Data deserializeChannel(const patch::Channel& pch, float samplerateRatio)
 {
 	channelId_.set(pch.id);
-	return std::make_unique<Channel>(pch, bufferSize);
+	return channel::Data(pch, makeState_(), makeBuffer_(), samplerateRatio);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-const patch::Channel serializeChannel(const Channel& c)
+const patch::Channel serializeChannel(const channel::Data& c)
 {
 	patch::Channel pc;
 
 #ifdef WITH_VST
-	for (ID pid : c.pluginIds)
-		pc.pluginIds.push_back(pid);
+	for (const Plugin* p : c.plugins)
+		pc.pluginIds.push_back(p->id);
 #endif
 
 	pc.id                = c.id;
-	pc.type              = c.getType();
-    pc.columnId          = c.getColumnId();
-    pc.height            = c.state->height;
-    pc.name              = c.state->name;
-    pc.key               = c.state->key.load();
-    pc.mute              = c.state->mute.load();
-    pc.solo              = c.state->solo.load();
-    pc.volume            = c.state->volume.load();
-    pc.pan               = c.state->pan.load();
-    pc.hasActions        = c.state->hasActions;
-    pc.readActions       = c.state->readActions.load();
-    pc.armed             = c.state->armed.load();
-    pc.midiIn            = c.midiLearner.state->enabled.load();
-    pc.midiInFilter      = c.midiLearner.state->filter.load();
-    pc.midiInKeyPress    = c.midiLearner.state->keyPress.getValue();
-    pc.midiInKeyRel      = c.midiLearner.state->keyRelease.getValue();
-    pc.midiInKill        = c.midiLearner.state->kill.getValue();
-    pc.midiInArm         = c.midiLearner.state->arm.getValue();
-    pc.midiInVolume      = c.midiLearner.state->volume.getValue();
-    pc.midiInMute        = c.midiLearner.state->mute.getValue();
-    pc.midiInSolo        = c.midiLearner.state->solo.getValue();
-	pc.midiInReadActions = c.midiLearner.state->readActions.getValue();
-	pc.midiInPitch       = c.midiLearner.state->pitch.getValue();
-    pc.midiOutL          = c.midiLighter.state->enabled.load(); 
-    pc.midiOutLplaying   = c.midiLighter.state->playing.getValue();
-    pc.midiOutLmute      = c.midiLighter.state->mute.getValue();
-    pc.midiOutLsolo      = c.midiLighter.state->solo.getValue();
+	pc.type              = c.type;
+    pc.columnId          = c.columnId;
+    pc.height            = c.height;
+    pc.name              = c.name;
+    pc.key               = c.key;
+    pc.mute              = c.mute;
+    pc.solo              = c.solo;
+    pc.volume            = c.volume;
+    pc.pan               = c.pan;
+    pc.hasActions        = c.hasActions;
+    pc.readActions       = c.readActions;
+    pc.armed             = c.armed;
+    pc.midiIn            = c.midiLearner.enabled;
+    pc.midiInFilter      = c.midiLearner.filter;
+    pc.midiInKeyPress    = c.midiLearner.keyPress.getValue();
+    pc.midiInKeyRel      = c.midiLearner.keyRelease.getValue();
+    pc.midiInKill        = c.midiLearner.kill.getValue();
+    pc.midiInArm         = c.midiLearner.arm.getValue();
+    pc.midiInVolume      = c.midiLearner.volume.getValue();
+    pc.midiInMute        = c.midiLearner.mute.getValue();
+    pc.midiInSolo        = c.midiLearner.solo.getValue();
+	pc.midiInReadActions = c.midiLearner.readActions.getValue();
+	pc.midiInPitch       = c.midiLearner.pitch.getValue();
+    pc.midiOutL          = c.midiLighter.enabled;
+    pc.midiOutLplaying   = c.midiLighter.playing.getValue();
+    pc.midiOutLmute      = c.midiLighter.mute.getValue();
+    pc.midiOutLsolo      = c.midiLighter.solo.getValue();
 
-	if (c.getType() == ChannelType::SAMPLE) {
+	if (c.type == ChannelType::SAMPLE) {
 		pc.waveId            = c.samplePlayer->getWaveId();
-		pc.mode              = c.samplePlayer->state->mode.load();
-		pc.begin             = c.samplePlayer->state->begin.load();
-		pc.end               = c.samplePlayer->state->end.load();
-		pc.pitch             = c.samplePlayer->state->pitch.load();
-		pc.shift             = c.samplePlayer->state->shift.load();
-		pc.midiInVeloAsVol   = c.samplePlayer->state->velocityAsVol.load();
-		pc.inputMonitor      = c.audioReceiver->state->inputMonitor.load();
-		pc.overdubProtection = c.audioReceiver->state->overdubProtection.load();
+		pc.mode              = c.samplePlayer->mode;
+		pc.begin             = c.samplePlayer->begin;
+		pc.end               = c.samplePlayer->end;
+		pc.pitch             = c.samplePlayer->pitch;
+		pc.shift             = c.samplePlayer->shift;
+		pc.midiInVeloAsVol   = c.samplePlayer->velocityAsVol;
+		pc.inputMonitor      = c.audioReceiver->inputMonitor;
+		pc.overdubProtection = c.audioReceiver->overdubProtection;
 
 	}
 	else
-	if (c.getType() == ChannelType::MIDI) { 
-		pc.midiOut     = c.midiSender->state->enabled.load();
-		pc.midiOutChan = c.midiSender->state->filter.load();
+	if (c.type == ChannelType::MIDI) {
+		pc.midiOut     = c.midiSender->enabled;
+		pc.midiOutChan = c.midiSender->filter;
 	}
 
 	return pc;
 }
-}}} // giada::m::channelManager
+} // giada::m::channelManager::

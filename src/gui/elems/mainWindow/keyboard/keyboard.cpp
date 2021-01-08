@@ -52,6 +52,7 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 {
 	end();
 	init();
+	rebuild();
 }
 
 
@@ -223,7 +224,7 @@ void geKeyboard::addColumn(int width, ID id)
 	/* Add a new column + a new resizer bar. */
 
 	geResizerBar* bar    = new geResizerBar(colx + width, y(), COLUMN_GAP, h(), G_MIN_COLUMN_WIDTH, geResizerBar::HORIZONTAL);
-	geColumn*     column = new geColumn(colx, y(), width, G_GUI_UNIT, m_columnId.get(id), bar);
+	geColumn*     column = new geColumn(colx, y(), width, G_GUI_UNIT, m_columnId.generate(id), bar);
 
 	/* Store the column width in layout when the resizer bar is released. */
 

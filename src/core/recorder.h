@@ -39,10 +39,7 @@
 #include "core/midiEvent.h"
 
 
-namespace giada {
-namespace m 
-{
-namespace recorder
+namespace giada::m::recorder
 {
 using ActionMap = std::map<Frame, std::vector<Action>>;
 
@@ -143,20 +140,11 @@ Given a frame 'f' returns the closest action. */
 
 Action getClosestAction(ID channelId, Frame f, int type);
 
-/* updateMapPointers
-Updates all prev/next actions pointers into the action map. This is required
-after an action has been recorded, since pushing back new actions in a Action 
-vector makes it reallocating the existing ones. Also needed in model::Data copy
-constructor. */
-
-void updateMapPointers(ActionMap& src); 
-
 /* getNewActionId
 Returns a new action ID, internally generated. */
 
 ID getNewActionId();
-
-}}} // giada::m::recorder::
+} // giada::m::recorder::
 
 
 #endif

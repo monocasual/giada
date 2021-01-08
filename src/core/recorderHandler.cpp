@@ -251,13 +251,11 @@ std::unordered_set<ID> consolidate()
 
 void clearAllActions()
 {
-	/* TODO - disgusting */
-	for (std::size_t i = 0; i < model::channels.size(); i++) {
-		model::onSwap(model::channels, model::getId(model::channels, i), [](Channel& c) 
-		{ 
-			c.state->hasActions = false;
-		});
-	}
+	for (channel::Data& ch : model::get().channels)
+		ch.hasActions = false;
+
+    model::swap(model::SwapType::HARD);
+
 	recorder::clearAll();
 }
 

@@ -33,8 +33,7 @@
 #include "midiEvent.h"
 
 
-namespace giada {
-namespace m
+namespace giada::m
 {
 struct Action
 {
@@ -60,7 +59,7 @@ struct Action
 		return event.getStatus() == MidiEvent::ENVELOPE && pluginId == -1; 
 	}
 };
+} // giada::m::
 
-}} // giada::m::
 
 #endif

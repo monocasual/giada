@@ -33,6 +33,8 @@ project(giada LANGUAGES CXX)
 
 list(APPEND SOURCES
 	src/main.cpp
+	src/core/worker.cpp
+	src/core/eventDispatcher.cpp
 	src/core/midiDispatcher.cpp
 	src/core/midiMapConf.cpp
 	src/core/midiEvent.cpp
@@ -42,6 +44,7 @@ list(APPEND SOURCES
 	src/core/kernelAudio.cpp
 	src/core/mixerHandler.cpp
 	src/core/sequencer.cpp
+	src/core/metronome.cpp
 	src/core/init.cpp
 	src/core/wave.cpp
 	src/core/waveFx.cpp
@@ -59,12 +62,12 @@ list(APPEND SOURCES
 	src/core/plugins/pluginManager.cpp
 	src/core/plugins/plugin.cpp
 	src/core/plugins/pluginState.cpp
-	src/core/channels/state.cpp
 	src/core/channels/sampleActionRecorder.cpp
 	src/core/channels/midiActionRecorder.cpp
 	src/core/channels/waveReader.cpp
 	src/core/channels/midiController.cpp
-	src/core/channels/sampleController.cpp
+	src/core/channels/sampleReactor.cpp
+	src/core/channels/sampleAdvancer.cpp
 	src/core/channels/samplePlayer.cpp
 	src/core/channels/audioReceiver.cpp
 	src/core/channels/midiLighter.cpp

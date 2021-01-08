@@ -29,12 +29,14 @@
 #define G_CONST_H
 
 
+#include <iostream>
 #include <cstdint>
 
 
 /* -- debug ----------------------------------------------------------------- */
 #ifndef NDEBUG
     #define G_DEBUG_MODE
+	// TODO - move G_DEBUG macro definition to u::log
     #define G_DEBUG(x) std::cerr << __FILE__ << "::" << __func__  << "() - " << x << "\n";
 #else
     #define G_DEBUG(x) do {} while (0)
@@ -60,10 +62,10 @@
 
 /* -- version --------------------------------------------------------------- */
 constexpr auto G_APP_NAME      = "Giada";
-constexpr auto G_VERSION_STR   = "0.17.1";
+constexpr auto G_VERSION_STR   = "0.17.2";
 constexpr int  G_VERSION_MAJOR = 0;
 constexpr int  G_VERSION_MINOR = 17;
-constexpr int  G_VERSION_PATCH = 1;
+constexpr int  G_VERSION_PATCH = 2;
 
 constexpr auto CONF_FILENAME = "giada.conf";
 
@@ -100,31 +102,32 @@ constexpr int   G_GUI_ZOOM_FACTOR    = 2;
 
 
 /* -- MIN/MAX values -------------------------------------------------------- */
-constexpr float  G_MIN_BPM            = 20.0f;
-constexpr auto   G_MIN_BPM_STR        = "20.0";
-constexpr float  G_MAX_BPM            = 999.0f;
-constexpr auto   G_MAX_BPM_STR        = "999.0";
-constexpr int    G_MAX_BEATS          = 32;
-constexpr int    G_MAX_BARS           = 32;
-constexpr int    G_MAX_QUANTIZE       = 8;
-constexpr float  G_MIN_DB_SCALE       = 60.0f;
-constexpr int    G_MIN_COLUMN_WIDTH   = 140;
-constexpr float  G_MAX_BOOST_DB       = 20.0f;
-constexpr float  G_MIN_PITCH          = 0.1f;
-constexpr float  G_MAX_PITCH          = 4.0f;
-constexpr float  G_MAX_PAN            = 1.0f;
-constexpr float  G_MAX_VOLUME         = 1.0f;
-constexpr int    G_MAX_GRID_VAL       = 64;
-constexpr int    G_MIN_BUF_SIZE       = 8;
-constexpr int    G_MAX_BUF_SIZE       = 4096;
-constexpr int    G_MIN_GUI_WIDTH      = 816;
-constexpr int    G_MIN_GUI_HEIGHT     = 510;
-constexpr int    G_MAX_IO_CHANS       = 2;
-constexpr int    G_MAX_VELOCITY       = 0x7F;
-constexpr int    G_MAX_MIDI_CHANS     = 16;
-constexpr int    G_MAX_POLYPHONY      = 32;
-constexpr int    G_MAX_QUEUE_EVENTS   = 32;
-constexpr int    G_MAX_QUANTIZER_SIZE = 8;
+constexpr float  G_MIN_BPM               = 20.0f;
+constexpr auto   G_MIN_BPM_STR           = "20.0";
+constexpr float  G_MAX_BPM               = 999.0f;
+constexpr auto   G_MAX_BPM_STR           = "999.0";
+constexpr int    G_MAX_BEATS             = 32;
+constexpr int    G_MAX_BARS              = 32;
+constexpr int    G_MAX_QUANTIZE          = 8;
+constexpr float  G_MIN_DB_SCALE          = 60.0f;
+constexpr int    G_MIN_COLUMN_WIDTH      = 140;
+constexpr float  G_MAX_BOOST_DB          = 20.0f;
+constexpr float  G_MIN_PITCH             = 0.1f;
+constexpr float  G_MAX_PITCH             = 4.0f;
+constexpr float  G_MAX_PAN               = 1.0f;
+constexpr float  G_MAX_VOLUME            = 1.0f;
+constexpr int    G_MAX_GRID_VAL          = 64;
+constexpr int    G_MIN_BUF_SIZE          = 8;
+constexpr int    G_MAX_BUF_SIZE          = 4096;
+constexpr int    G_MIN_GUI_WIDTH         = 816;
+constexpr int    G_MIN_GUI_HEIGHT        = 510;
+constexpr int    G_MAX_IO_CHANS          = 2;
+constexpr int    G_MAX_VELOCITY          = 0x7F;
+constexpr int    G_MAX_MIDI_CHANS        = 16;
+constexpr int    G_MAX_POLYPHONY         = 32;
+constexpr int    G_MAX_DISPATCHER_EVENTS = 32;
+constexpr int    G_MAX_SEQUENCER_EVENTS  = 128;  // Per block
+constexpr int    G_MAX_QUANTIZER_SIZE    = 32;
 
 
 

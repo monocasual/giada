@@ -309,7 +309,7 @@ void gdSampleEditor::cb_rewindPreview()
 
 void gdSampleEditor::cb_reload()
 {
-	c::sampleEditor::reload(m_data.channelId, m_data.waveId);
+	c::sampleEditor::reload(m_data.channelId);
 	redraw();
 }
 

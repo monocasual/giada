@@ -57,9 +57,7 @@
 extern giada::v::gdMainWindow *G_MainWin;
 
 
-namespace giada {
-namespace c {
-namespace main
+namespace giada::c::main
 {
 namespace
 {
@@ -114,12 +112,12 @@ Timer::Timer(const m::model::Clock& c)
 /* -------------------------------------------------------------------------- */
 
 
-IO::IO(const m::Channel& out, const m::Channel& in, const m::model::Mixer& m)
-: masterOutVol       (out.state->volume.load())
-, masterInVol        (in.state->volume.load())
+IO::IO(const m::channel::Data& out, const m::channel::Data& in, const m::model::Mixer& m)
+: masterOutVol       (out.volume)
+, masterInVol        (in.volume)
 #ifdef WITH_VST
-, masterOutHasPlugins(out.pluginIds.size() > 0)
-, masterInHasPlugins (in.pluginIds.size() > 0)
+, masterOutHasPlugins(out.plugins.size() > 0)
+, masterInHasPlugins (in.plugins.size() > 0)
 #endif
 , inToOut            (m.inToOut)
 {
@@ -129,15 +127,15 @@ IO::IO(const m::Channel& out, const m::Channel& in, const m::model::Mixer& m)
 /* -------------------------------------------------------------------------- */
 
 
-float IO::a_getMasterOutPeak()
+float IO::getMasterOutPeak()
 {
-	return m::mixer::peakOut.load();
+	return m::mixer::getPeakOut();
 }
 
 
-float IO::a_getMasterInPeak()
+float IO::getMasterInPeak()
 {
-	return m::mixer::peakIn.load();
+	return m::mixer::getPeakIn();
 }
 
 
@@ -148,10 +146,7 @@ float IO::a_getMasterInPeak()
 
 Timer getTimer()
 {
-	namespace mm = m::model;
-	
-	mm::ClockLock c(mm::clock);
-	return Timer(*mm::clock.get());
+	return Timer(m::model::get().clock);
 }
 
 
@@ -160,14 +155,9 @@ Timer getTimer()
 
 IO getIO()
 {
-	namespace mm = m::model;
-
-	mm::ChannelsLock cl(mm::channels);
-	mm::MixerLock    ml(mm::mixer);
-
-	return IO(mm::get(mm::channels, m::mixer::MASTER_OUT_CHANNEL_ID), 
-	          mm::get(mm::channels, m::mixer::MASTER_IN_CHANNEL_ID),
-			  *mm::mixer.get());
+	return IO(m::model::get().getChannel(m::mixer::MASTER_OUT_CHANNEL_ID),
+	          m::model::get().getChannel(m::mixer::MASTER_IN_CHANNEL_ID),
+			  m::model::get().mixer);
 }
 
 
@@ -302,4 +292,4 @@ void closeProject()
 	m::init::reset();
 	m::mixer::enable();
 }
-}}} // giada::c::main::
+} // giada::c::main::

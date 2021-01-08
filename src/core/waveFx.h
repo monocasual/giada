@@ -32,11 +32,11 @@
 #include "core/types.h"
 
 
-namespace giada {
-namespace m 
+namespace giada::m 
 {
 class Wave;
-namespace wfx
+}
+namespace giada::m::wfx
 {
 /* Windows fix */
 #ifdef _WIN32
@@ -46,42 +46,41 @@ namespace wfx
 enum class Fade { IN, OUT };
 
 /* monoToStereo
-Converts a 1-channel Wave to a 2-channels wave. It works on a free Wave object,
-not yet added to the RCUList. */
+Converts a 1-channel Wave to a 2-channels wave. */
 
 int monoToStereo(Wave& w);
 
 /* normalize
 Normalizes the wave in range a-b by altering values in memory. */
 
-void normalize(ID waveId, int a, int b);
+void normalize(Wave& w, int a, int b);
 
-void silence(ID waveId, int a, int b);
-void cut(ID waveId, int a, int b);
-void trim(ID waveId, int a, int b);
+void silence(Wave& w, int a, int b);
+void cut(Wave& w, int a, int b);
+void trim(Wave& w, int a, int b);
 
 /* paste
-Pastes Wave 'src' into Wave at 'waveIndex', starting from frame 'a'. */
+Pastes Wave 'src' into Wave 'dest', starting from frame 'a'. */
 
-void paste(const Wave& src, ID waveId, int a);
+void paste(const Wave& src, Wave& dest, Frame a);
 
 /* fade
 Fades in or fades out selection. Can be Fade::IN or Fade::OUT. */
 
-void fade(ID waveId, int a, int b, Fade type);
+void fade(Wave& w, int a, int b, Fade type);
 
 /* smooth
 Smooth edges of selection. */
 
-void smooth(ID waveId, int a, int b);
+void smooth(Wave& w, int a, int b);
 
 /* reverse
 Flips Wave's data. */
 
-void reverse(ID waveId, int a, int b);
+void reverse(Wave& v, Frame a, Frame b);
 
-void shift(ID waveId, int offset);
-}}} // giada::m::wfx::
+void shift(Wave& w, Frame offset);
+} // giada::m::wfx::
 
 
 #endif

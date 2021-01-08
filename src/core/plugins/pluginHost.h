@@ -37,15 +37,13 @@
 #include "core/types.h"
 
 
-namespace giada {
-namespace m 
+namespace giada::m 
 {
 class Plugin;
 class AudioBuffer;
-namespace pluginHost
+}
+namespace giada::m::pluginHost
 {
-using Stack = std::vector<std::shared_ptr<Plugin>>;
-
 void init(int buffersize);
 void close();
 
@@ -57,41 +55,38 @@ void addPlugin(std::unique_ptr<Plugin> p, ID channelId);
 /* processStack
 Applies the fx list to the buffer. */
 
-void processStack(AudioBuffer& outBuf, const std::vector<ID>& pluginIds, 
+void processStack(AudioBuffer& outBuf, const std::vector<Plugin*>& plugins, 
 	juce::MidiBuffer* events=nullptr);
 
 /* swapPlugin 
-Swaps plug-in with ID 1 with plug-in with ID 2 in Channel 'channelId'. */
+Swaps plug-in 1 with plug-in 2 in Channel 'channelId'. */
 
-void swapPlugin(ID pluginId1, ID pluginId2, ID channelId);
+void swapPlugin(const m::Plugin& p1, const m::Plugin& p2, ID channelId);
 
 /* freePlugin.
 Unloads plugin from channel 'channelId'. */
 
-void freePlugin(ID pluginId, ID channelId);
+void freePlugin(const m::Plugin& plugin, ID channelId);
 
 /* freePlugins
 Unloads multiple plugins. Useful when freeing or deleting a channel. */
 
-void freePlugins(const std::vector<ID>& pluginIds);
+void freePlugins(const std::vector<Plugin*>& plugins);
 
 /* clonePlugins
-Clones all the plug-ins from 'pluginIds' vector coming from the old channel
-and returns new IDs. */
+Clones all the plug-ins in the 'plugins' vector. */
 
-std::vector<ID> clonePlugins(std::vector<ID> pluginIds);
+std::vector<Plugin*> clonePlugins(const std::vector<Plugin*>& plugins);
 
 void setPluginParameter(ID pluginId, int paramIndex, float value);
-
-void setPluginProgram(ID pluginId, int programIndex); 
-
+void setPluginProgram(ID pluginId, int programIndex);
 void toggleBypass(ID pluginId);
 
 /* runDispatchLoop
 Wakes up plugins' GUI manager for N milliseconds. */
 
 void runDispatchLoop();
-}}} // giada::m::pluginHost::
+} // giada::m::pluginHost::
 
 
 #endif

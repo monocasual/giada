@@ -34,8 +34,7 @@
 #include "wave.h"
 
 
-namespace giada {
-namespace m 
+namespace giada::m 
 {
 Wave::Wave(ID id)
 : id       (id),
@@ -172,4 +171,4 @@ void Wave::moveData(AudioBuffer& b)
 {
 	buffer.moveData(b);
 }
-}} // giada::m::
+} // giada::m::

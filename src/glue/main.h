@@ -32,17 +32,15 @@
 #include "core/types.h"
 
 
-namespace giada {
-namespace m 
-{
-class Channel;
-namespace model
+namespace giada::m::channel { struct Data; }
+namespace giada::m::model
 { 
 struct Clock;
+struct Clock;
 struct Mixer;
-}}
-namespace c {
-namespace main
+struct Mixer;
+}
+namespace giada::c::main
 {
 struct Timer
 {
@@ -60,7 +58,7 @@ struct Timer
 struct IO
 {
     IO() = default;
-    IO(const m::Channel& out, const m::Channel& in, const m::model::Mixer& m);
+    IO(const m::channel::Data& out, const m::channel::Data& in, const m::model::Mixer& m);
 
     float masterOutVol;
     float masterInVol;
@@ -70,8 +68,8 @@ struct IO
 #endif
     bool  inToOut;
 
-    float a_getMasterOutPeak();
-    float a_getMasterInPeak();
+    float getMasterOutPeak();
+    float getMasterInPeak();
 };
 
 /* get*
@@ -106,6 +104,7 @@ void toggleRecOnSignal();
 Resets Giada to init state. If resetGui also refresh all widgets. */
 
 void closeProject();
-}}} // giada::c::main::
+} // giada::c::main::
+
 
 #endif

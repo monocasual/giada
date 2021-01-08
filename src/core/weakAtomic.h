@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2021 Giovanni A. Zuliani | Monocasual
+ * Copyright (C) 2010-2020 Giovanni A. Zuliani | Monocasual
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -25,27 +25,60 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_MODEL_TRAITS_H
-#define G_MODEL_TRAITS_H
+#ifndef G_WEAK_ATOMIC_H
+#define G_WEAK_ATOMIC_H
 
 
-#include <type_traits>
-#include "core/wave.h"
-#include "core/plugins/plugin.h"
-#include "core/channels/channel.h"
+#include <atomic>
 
 
-namespace giada {
-namespace m {
-namespace model
+namespace giada
 {
-template <typename T> struct has_id : std::false_type {};
-template <> struct has_id<Channel>  : std::true_type {};
-template <> struct has_id<Wave>     : std::true_type {};
-#ifdef WITH_VST
-template <> struct has_id<Plugin>   : std::true_type {};
-#endif
-}}} // giada::m::model::
+template <typename T>
+class WeakAtomic
+{
+public:
+
+    WeakAtomic() = default;
+
+    WeakAtomic(T t) : m_value(t)
+    {
+    }
+
+    WeakAtomic(const WeakAtomic& o) 
+    : m_value(o.m_value.load(std::memory_order_relaxed))
+    {
+    }
+
+    WeakAtomic(WeakAtomic&& o) 
+    : m_value(o.m_value.load(std::memory_order_relaxed), std::memory_order_relaxed)
+    {
+    }
+
+    WeakAtomic& operator=(const WeakAtomic& o)
+    {
+        if(this == &o) return *this;
+        m_value.store(o.m_value.load(std::memory_order_relaxed), std::memory_order_relaxed);
+        return *this;
+    }
+
+    WeakAtomic& operator=(WeakAtomic&& o) = delete;
+
+    T load() const
+    {
+        return m_value.load(std::memory_order_relaxed);
+    }
+
+    void store(T t)
+    {
+        return m_value.store(t, std::memory_order_relaxed);
+    }
+
+private:
+
+    std::atomic<T> m_value;
+};
+} // giada::
 
 
 #endif

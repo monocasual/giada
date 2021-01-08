@@ -32,56 +32,17 @@
 #ifdef WITH_VST
 
 
-#include <memory>
-
-
-namespace giada {
-namespace m
+namespace giada::m::channel { struct Data; }
+namespace giada::m::midiReceiver
 {
-namespace mixer
+struct Data
 {
-struct Event;
-}
-struct MidiReceiverState;
-
-/* MidiReceiver 
-Takes live action gestures AND recorded actions and redirect them as MIDI events 
-to plug-in soft synths. */
-
-class MidiReceiver
-{
-public:
-
-    MidiReceiver(ChannelState*);
-    MidiReceiver(const patch::Channel&, ChannelState*);
-    MidiReceiver(const MidiReceiver&, ChannelState* c=nullptr);
-
-    void parse(const mixer::Event& e) const;
-    void render(const std::vector<ID>& pluginIds) const;
-
-    /* state
-    Pointer to mutable MidiReceiverState state. */
-
-    std::unique_ptr<MidiReceiverState> state;
-
-private:
-
-    /* parseMidi
-    Takes a live message (e.g. from a MIDI keyboard), strips it and sends it
-    to plug-ins. */
-
-    void parseMidi(const MidiEvent& e) const;
-
-	/* sendToPlugins
-    Enqueues the MIDI event for plug-ins processing. This will be read later on 
-    by the PluginHost. */
-
-    void sendToPlugins(const MidiEvent& e, Frame localFrame) const;
-
-    ChannelState* m_channelState;
 };
-}} // giada::m::
 
+void react  (const channel::Data& ch, const eventDispatcher::Event& e);
+void advance(const channel::Data& ch, const sequencer::Event& e); 
+void render (const channel::Data& ch);
+}
 
 #endif // WITH_VST
 

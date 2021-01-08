@@ -106,11 +106,11 @@ void menuCallback(Fl_Widget* w, void* v)
 
 	switch ((Menu) (intptr_t) v) {
 		case Menu::INPUT_MONITOR: {
-			c::channel::setInputMonitor(data.id, !data.sample->a_getInputMonitor());
+			c::channel::setInputMonitor(data.id, !data.sample->getInputMonitor());
 			break;
 		}
 		case Menu::OVERDUB_PROTECTION: {
-			c::channel::setOverdubProtection(data.id, !data.sample->a_getOverdubProtection());
+			c::channel::setOverdubProtection(data.id, !data.sample->getOverdubProtection());
 			break;
 		}
 		case Menu::LOAD_SAMPLE: {
@@ -221,14 +221,14 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 	resizable(mainButton);
 
 #ifdef WITH_VST
-	fx->setStatus(m_channel.pluginIds.size() > 0);
+	fx->setStatus(m_channel.plugins.size() > 0);
 #endif
 
 	playButton->callback(cb_playButton, (void*)this);
 	playButton->when(FL_WHEN_CHANGED);   // On keypress && on keyrelease
 
 	arm->type(FL_TOGGLE_BUTTON);
-	arm->value(m_channel.a_isArmed());
+	arm->value(m_channel.isArmed());
 	arm->callback(cb_arm, (void*)this);
 
 #ifdef WITH_VST
@@ -282,9 +282,9 @@ void geSampleChannel::cb_openMenu()
 
 	Fl_Menu_Item rclick_menu[] = {
 		{"Input monitor",            0, menuCallback, (void*) Menu::INPUT_MONITOR,
-			FL_MENU_TOGGLE | (m_channel.sample->a_getInputMonitor() ? FL_MENU_VALUE : 0)},
+			FL_MENU_TOGGLE | (m_channel.sample->getInputMonitor() ? FL_MENU_VALUE : 0)},
 		{"Overdub protection",       0, menuCallback, (void*) Menu::OVERDUB_PROTECTION,
-			FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->a_getOverdubProtection() ? FL_MENU_VALUE : 0)},
+			FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->getOverdubProtection() ? FL_MENU_VALUE : 0)},
 		{"Load new sample...",       0, menuCallback, (void*) Menu::LOAD_SAMPLE},
 		{"Export sample to file...", 0, menuCallback, (void*) Menu::EXPORT_SAMPLE},
 		{"Setup keyboard input...",  0, menuCallback, (void*) Menu::SETUP_KEYBOARD_INPUT},
@@ -354,7 +354,7 @@ void geSampleChannel::refresh()
 
 	if (m_channel.sample->waveId != 0) {
 		status->redraw();
-		if (m_channel.sample->a_getOverdubProtection())
+		if (m_channel.sample->getOverdubProtection())
 			arm->deactivate();
 		else
 			arm->activate();
@@ -362,7 +362,7 @@ void geSampleChannel::refresh()
 
 	if (m_channel.hasActions) {
 		readActions->activate();
-		readActions->setStatus(m_channel.a_getReadActions());		
+		readActions->setStatus(m_channel.getReadActions());
 	}
 	else
 		readActions->deactivate();

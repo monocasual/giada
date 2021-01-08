@@ -111,6 +111,12 @@ ID gePluginElement::getPluginId() const
 }
 
 
+const m::Plugin& gePluginElement::getPluginRef() const
+{
+	return m_plugin.getPluginRef();
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 
@@ -129,7 +135,7 @@ void gePluginElement::cb_shiftUp()
 {
 	const gdPluginList* parent = static_cast<const gdPluginList*>(window());
 
-	c::plugin::swapPlugins(m_plugin.id, parent->getPrevElement(*this).getPluginId(), m_plugin.channelId);
+	c::plugin::swapPlugins(m_plugin.getPluginRef(), parent->getPrevElement(*this).getPluginRef(), m_plugin.channelId);
 }
 
 
@@ -140,7 +146,7 @@ void gePluginElement::cb_shiftDown()
 {
 	const gdPluginList* parent = static_cast<const gdPluginList*>(window());
 
-	c::plugin::swapPlugins(m_plugin.id, parent->getNextElement(*this).getPluginId(), m_plugin.channelId);
+	c::plugin::swapPlugins(m_plugin.getPluginRef(), parent->getNextElement(*this).getPluginRef(), m_plugin.channelId);
 }
 
 
@@ -154,7 +160,7 @@ void gePluginElement::cb_removePlugin()
 	window 'add plugin'.*/
 	
 	static_cast<gdWindow*>(window())->delSubWindow(m_plugin.id + 1);
-	c::plugin::freePlugin(m_plugin.id, m_plugin.channelId);
+	c::plugin::freePlugin(m_plugin.getPluginRef(), m_plugin.channelId);
 }
 
 

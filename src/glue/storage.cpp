@@ -75,9 +75,7 @@ std::string makeWavePath_(const std::string& base, const m::Wave& w, int k)
 
 bool isWavePathUnique_(const m::Wave& skip, const std::string& path)
 {
-	m::model::WavesLock l(m::model::waves);
-
-	for (const m::Wave* w : m::model::waves)
+	for (const auto& w : m::model::getAll<m::model::WavePtrs>())
 		if (w->id != skip.id && w->getPath() == path)
 			return false;
 	return true;
@@ -125,13 +123,9 @@ bool savePatch_(const std::string& path, const std::string& name)
 
 void saveWavesToProject_(const std::string& basePath)
 {
-	/* No need for a hard Wave swap here: nobody is reading the path data. */
-
-	m::model::WavesLock l(m::model::waves);
-
-	for (m::Wave* w : m::model::waves) {
+	for (const std::unique_ptr<m::Wave>& w : m::model::getAll<m::model::WavePtrs>()) {
 		w->setPath(makeUniqueWavePath_(basePath, *w));
-		m::waveManager::save(*w, w->getPath()); // TODO - error checking			
+		m::waveManager::save(*w, w->getPath()); // TODO - error checking	
 	}
 }
 } // {anonymous}
@@ -182,8 +176,8 @@ void loadProject(void* data)
 	/* Then reset the system (it disables mixer) and fill the model. */
 
 	m::init::reset();
-	m::model::load(m::patch::patch);
-	v::model::load(m::patch::patch);
+    v::model::load(m::patch::patch);
+    m::model::load(m::patch::patch);
 
 	/* Prepare the engine. Recorder has to recompute the actions positions if 
 	the current samplerate != patch samplerate. Clock needs to update frames
@@ -291,18 +285,13 @@ void saveSample(void* data)
 
 	if (u::fs::fileExists(filePath) && !v::gdConfirmWin("Warning", "File exists: overwrite?"))
 		return;
+	
+	ID       waveId = m::model::get().getChannel(channelId).samplePlayer->getWaveId();
+	m::Wave* wave   = m::model::find<m::Wave>(waveId);
 
-	ID waveId;
-	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
-	{
-		waveId = c.samplePlayer->getWaveId();
-	});
+	assert(wave != nullptr);
 
-	std::size_t waveIndex = m::model::getIndex(m::model::waves, waveId);
-
-	std::unique_ptr<m::Wave> wave = m::model::waves.clone(waveIndex);
-
-	if (!m::waveManager::save(*wave.get(), filePath)) {
+	if (!m::waveManager::save(*wave, filePath)) {
 		v::gdAlert("Unable to save this sample!");
 		return;
 	}
@@ -314,11 +303,10 @@ void saveSample(void* data)
 	m::conf::conf.samplePath = u::fs::dirname(filePath);
 
 	/* Update logical and edited states in Wave. */
-
+    
+	m::model::DataLock lock;
 	wave->setLogical(false);
 	wave->setEdited(false);
-
-	m::model::waves.swap(std::move(wave), waveIndex);
 
 	/* Finally close the browser. */
 

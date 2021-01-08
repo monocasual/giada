@@ -34,14 +34,13 @@
 #include "types.h"
 
 
-namespace giada {
-namespace m 
+namespace giada::m 
 {
 class Wave;
 class Channel;
 class SampleChannel;
-
-namespace mh
+}
+namespace giada::m::mh
 {
 /* init
 Initializes mixer. */
@@ -130,7 +129,7 @@ bool hasAudioData();
 float getInVol();
 float getOutVol();
 bool getInToOut();
-}}}  // giada::m::mh::
+}  // giada::m::mh::
 
 
 #endif

@@ -29,19 +29,13 @@
 #define G_GLUE_IO_H
 
 
-#include <atomic>
 #include "core/types.h"
 #include "core/midiEvent.h"
 #include "core/model/model.h"
 
 
-namespace giada {
-namespace m
-{
-class Channel;
-}
-namespace c {
-namespace io 
+namespace giada::m::channel { struct Data; }
+namespace giada::c::io 
 {
 struct PluginParamData
 {
@@ -60,7 +54,7 @@ struct PluginData
 struct Channel_InputData
 {
     Channel_InputData() = default;
-    Channel_InputData(const m::Channel&);
+    Channel_InputData(const m::channel::Data&);
 
     ID          channelId;
     ChannelType channelType;
@@ -102,7 +96,7 @@ struct Master_InputData
 
 struct MidiChannel_OutputData
 {
-    MidiChannel_OutputData(const m::MidiSender&);
+    MidiChannel_OutputData(const m::midiSender::Data&);
 
     bool enabled;
     int  filter;
@@ -111,7 +105,7 @@ struct MidiChannel_OutputData
 struct Channel_OutputData
 {
     Channel_OutputData() = default;
-    Channel_OutputData(const m::Channel&);
+    Channel_OutputData(const m::channel::Data&);
 
     ID       channelId;
     bool     lightningEnabled;
@@ -156,6 +150,6 @@ void plugin_clearMidiLearn (int param, ID pluginId);
 
 void master_enableMidiLearn(bool v);
 void master_setMidiFilter(int c);
-}}} // giada::c::io::
+} // giada::c::io::
 
 #endif

@@ -109,8 +109,8 @@ void gdPluginList::rebuild()
 	list->clear();
 	list->scroll_to(0, 0);
 
-	for (ID pluginId : m_plugins.pluginIds)
-		list->addWidget(new gePluginElement(0, 0, c::plugin::getPlugin(pluginId, m_plugins.channelId)));
+	for (m::Plugin* plugin : m_plugins.plugins)
+		list->addWidget(new gePluginElement(0, 0, c::plugin::getPlugin(*plugin, m_plugins.channelId)));
 	
 	addPlugin = list->addWidget(new geButton(0, 0, 0, G_GUI_UNIT, "-- add new plugin --"));
 	

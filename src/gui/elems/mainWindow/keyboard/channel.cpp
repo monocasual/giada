@@ -97,8 +97,8 @@ void geChannel::cb_openFxWindow(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb
 
 void geChannel::refresh()
 {
-	ChannelStatus playStatus = m_channel.a_getPlayStatus(); 
-	ChannelStatus recStatus  = m_channel.a_getRecStatus(); 
+	ChannelStatus playStatus = m_channel.getPlayStatus();
+	ChannelStatus recStatus  = m_channel.getRecStatus();
 
 	if (mainButton->visible())
 		mainButton->refresh();
@@ -107,8 +107,8 @@ void geChannel::refresh()
 		blink();
 
 	playButton->setStatus(playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING);
-	mute->setStatus(m_channel.a_getMute());
-	solo->setStatus(m_channel.a_getSolo());
+	mute->setStatus(m_channel.getMute());
+	solo->setStatus(m_channel.getSolo());
 }
 
 

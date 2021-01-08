@@ -49,8 +49,8 @@ void geChannelStatus::draw()
 	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);              // reset border
 	fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);     // reset background
 
-	ChannelStatus playStatus = m_channel.a_getPlayStatus();
-	ChannelStatus recStatus  = m_channel.a_getRecStatus();
+	ChannelStatus playStatus = m_channel.getPlayStatus();
+	ChannelStatus recStatus  = m_channel.getRecStatus();
 	Pixel         pos        = 0;
 
 	if (playStatus == ChannelStatus::WAIT    || 
@@ -64,9 +64,9 @@ void geChannelStatus::draw()
 	if (playStatus == ChannelStatus::PLAY) {
 		/* Equation for the progress bar: 
 		((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
-		Frame tracker = m_channel.sample->a_getTracker();
-		Frame begin   = m_channel.sample->a_getBegin();
-		Frame end     = m_channel.sample->a_getEnd();
+		Frame tracker = m_channel.sample->getTracker();
+		Frame begin   = m_channel.sample->getBegin();
+		Frame end     = m_channel.sample->getEnd();
 		pos = ((tracker - begin) * (w() - 1)) / ((end - begin));
 		fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
 	}

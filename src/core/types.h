@@ -35,7 +35,7 @@ using ID    = int;
 using Pixel = int;
 using Frame = int;
 
-enum class Thread { MAIN, MIDI, AUDIO };
+enum class Thread { MAIN, MIDI, AUDIO, EVENTS };
 
 /* Windows fix */
 #ifdef _WIN32

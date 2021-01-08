@@ -32,12 +32,31 @@
 #include "updater.h"
 
 
-namespace giada {
-namespace v {
-namespace updater
+namespace giada::v::updater
 {
+void init()
+{
+	m::model::onSwap([](m::model::SwapType type)
+	{
+        if (type == m::model::SwapType::NONE)
+            return;
+
+		/* This callback is fired by the updater thread, so it requires
+		synchronization with the main one. */
+		
+		Fl::lock();
+		type == m::model::SwapType::HARD ? u::gui::rebuild() : u::gui::refresh();
+		Fl::unlock();
+	});
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void update(void* /*p*/)
 {
+	/*
 	if (m::model::waves.changed.load()    == true ||
 		m::model::actions.changed.load()  == true ||
 		m::model::channels.changed.load()  == true)
@@ -47,9 +66,9 @@ void update(void* /*p*/)
 		m::model::actions.changed.store(false);
 		m::model::channels.changed.store(false);
 	}
-	else
+	else*/
 		u::gui::refresh();
 
 	Fl::add_timeout(G_GUI_REFRESH_RATE, update, nullptr);
 }
-}}} // giada::v::updater
+} // giada::v::updater::

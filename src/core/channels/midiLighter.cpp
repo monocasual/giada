@@ -25,95 +25,32 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "core/channels/state.h"
+#include "core/channels/channel.h"
 #include "core/mixer.h"
 #include "core/kernelMidi.h"
 #include "core/midiMapConf.h"
 #include "midiLighter.h"
 
 
-namespace giada {
-namespace m 
+namespace giada::m::midiLighter
 {
-MidiLighter::MidiLighter(ChannelState* c)
-: state         (std::make_unique<MidiLighterState>())
-, m_channelState(c)
+namespace
 {
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-MidiLighter::MidiLighter(const patch::Channel& p, ChannelState* c)
-: state         (std::make_unique<MidiLighterState>(p))
-, m_channelState(c)
+void sendMute_(channel::Data& ch, uint32_t l_mute)
 {
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-MidiLighter::MidiLighter(const MidiLighter& o, ChannelState* c)
-: state         (std::make_unique<MidiLighterState>(*o.state))
-, m_channelState(c)
-{
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void MidiLighter::parse(const mixer::Event& e, bool audible) const
-{
-    if (state->enabled.load() == false)
-        return;
-
-    uint32_t l_playing = state->playing.getValue();
-    uint32_t l_mute    = state->mute.getValue();
-    uint32_t l_solo    = state->solo.getValue();
-
-	switch (e.type) {
-
-        case mixer::EventType::KEY_PRESS:
-        case mixer::EventType::KEY_RELEASE:
-        case mixer::EventType::KEY_KILL:
-        case mixer::EventType::SEQUENCER_STOP:
-            if (l_playing != 0x0) sendStatus(l_playing, audible); 
-            break;
-
-        case mixer::EventType::CHANNEL_MUTE:
-            if (l_mute != 0x0) sendMute(l_mute); 
-            break;
-
-        case mixer::EventType::CHANNEL_SOLO:
-            if (l_solo != 0x0) sendSolo(l_solo); 
-            break;
-
-        default: break;
-    }
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void MidiLighter::sendMute(uint32_t l_mute) const
-{
-	if (m_channelState->mute.load() == true)
+	if (ch.mute)
 		kernelMidi::sendMidiLightning(l_mute, midimap::midimap.muteOn);
 	else
-		kernelMidi::sendMidiLightning(l_mute, midimap::midimap.muteOff);    
+		kernelMidi::sendMidiLightning(l_mute, midimap::midimap.muteOff);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void MidiLighter::sendSolo(uint32_t l_solo) const
+void sendSolo_(channel::Data& ch, uint32_t l_solo)
 {
-	if (m_channelState->solo.load() == true)
+	if (ch.solo)
 		kernelMidi::sendMidiLightning(l_solo, midimap::midimap.soloOn);
 	else
 		kernelMidi::sendMidiLightning(l_solo, midimap::midimap.soloOff);
@@ -123,9 +60,9 @@ void MidiLighter::sendSolo(uint32_t l_solo) const
 /* -------------------------------------------------------------------------- */
 
 
-void MidiLighter::sendStatus(uint32_t l_playing, bool audible) const
+void sendStatus_(channel::Data& ch, uint32_t l_playing, bool audible)
 {
-    switch (m_channelState->playStatus.load()) {
+    switch (ch.state->playStatus.load()) {
         
         case ChannelStatus::OFF:
             kernelMidi::sendMidiLightning(l_playing, midimap::midimap.stopped);
@@ -146,4 +83,53 @@ void MidiLighter::sendStatus(uint32_t l_playing, bool audible) const
         default: break;        
     }
 }
-}} // giada::m::
+} // {anonymous}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+Data::Data(const patch::Channel& p)
+: enabled(p.midiOutL)
+, playing(p.midiOutLplaying)
+, mute   (p.midiOutLmute)
+, solo   (p.midiOutLsolo)
+{
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void react(channel::Data& ch, const eventDispatcher::Event& e, bool audible)
+{
+    if (!ch.midiLighter.enabled)
+        return;
+
+    uint32_t l_playing = ch.midiLighter.playing.getValue();
+    uint32_t l_mute    = ch.midiLighter.mute.getValue();
+    uint32_t l_solo    = ch.midiLighter.solo.getValue();
+
+	switch (e.type) {
+
+        case eventDispatcher::EventType::KEY_PRESS:
+        case eventDispatcher::EventType::KEY_RELEASE:
+        case eventDispatcher::EventType::KEY_KILL:
+        case eventDispatcher::EventType::SEQUENCER_STOP:
+            if (l_playing != 0x0) sendStatus_(ch, l_playing, audible);
+            break;
+
+        case eventDispatcher::EventType::CHANNEL_MUTE:
+            if (l_mute != 0x0) sendMute_(ch, l_mute);
+            break;
+
+        case eventDispatcher::EventType::CHANNEL_SOLO:
+            if (l_solo != 0x0) sendSolo_(ch, l_solo);
+            break;
+
+        default: break;
+    }
+}
+} // giada::m::midiLighter::

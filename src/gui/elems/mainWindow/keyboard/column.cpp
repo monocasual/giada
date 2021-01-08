@@ -28,7 +28,6 @@
 #include <cassert>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Button.H>
-#include "core/channels/state.h"
 #include "core/model/model.h"
 #include "glue/channel.h"
 #include "utils/log.h"

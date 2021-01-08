@@ -48,6 +48,7 @@ public:
 	gePluginElement(int x, int y, c::plugin::Plugin);
 
 	ID getPluginId() const;
+	const m::Plugin& getPluginRef() const;
 
 	geButton button;
 	geChoice program;

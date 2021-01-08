@@ -29,17 +29,12 @@
 #define G_V_MODEL_H
 
 
-namespace giada {
-namespace m { namespace patch
-{
-struct Patch;
-}}
-namespace v {
-namespace model
+namespace giada::m::patch { struct Patch;}
+namespace giada::v::model
 {
 void store(m::patch::Patch& patch);
 void load(const m::patch::Patch& patch);
-}}} // giada::v::model
+} // giada::v::model
 
 
 #endif

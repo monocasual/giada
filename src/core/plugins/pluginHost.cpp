@@ -38,9 +38,7 @@
 #include "core/plugins/pluginHost.h"
 
 
-namespace giada {
-namespace m {
-namespace pluginHost
+namespace giada::m::pluginHost
 {
 namespace
 {
@@ -75,31 +73,14 @@ void juceToGiadaOutBuf_(AudioBuffer& outBuf)
 /* -------------------------------------------------------------------------- */
 
 
-void processPlugins_(const std::vector<ID>& pluginIds, juce::MidiBuffer& events)
+void processPlugins_(const std::vector<Plugin*>& plugins, juce::MidiBuffer& events)
 {
-	model::PluginsLock l(model::plugins);
-
-	for (ID id : pluginIds) {
-		Plugin& p = model::get(model::plugins, id);
-		if (!p.valid || p.isSuspended() || p.isBypassed())
+	for (Plugin* p : plugins) {
+		if (!p->valid || p->isSuspended() || p->isBypassed())
 			continue;
-		p.process(audioBuffer_, events);
+		p->process(audioBuffer_, events);
 		events.clear();
 	}
-}
-
-
-ID clonePlugin_(ID pluginId)
-{
-	model::PluginsLock l(model::plugins);
-
-	const Plugin&           original = model::get(model::plugins, pluginId);
-	std::unique_ptr<Plugin> clone    = pluginManager::makePlugin(original);
-	ID                      newId    = clone->id;
-
-	model::plugins.push(std::move(clone));
-
-	return newId;
 }
 } // {anonymous}
 
@@ -112,7 +93,7 @@ ID clonePlugin_(ID pluginId)
 void close()
 {
 	messageManager_->deleteInstance();
-	model::plugins.clear();
+	model::clear<model::PluginPtrs>();
 }
 
 
@@ -130,7 +111,7 @@ void init(int buffersize)
 /* -------------------------------------------------------------------------- */
 
 
-void processStack(AudioBuffer& outBuf, const std::vector<ID>& pluginIds, 
+void processStack(AudioBuffer& outBuf, const std::vector<Plugin*>& plugins, 
 	juce::MidiBuffer* events)
 {
 	assert(outBuf.countFrames() == audioBuffer_.getNumSamples());
@@ -143,76 +124,75 @@ void processStack(AudioBuffer& outBuf, const std::vector<ID>& pluginIds,
 	if (events == nullptr) {
 		giadaToJuceTempBuf_(outBuf);
 		juce::MidiBuffer dummyEvents; // empty
-		processPlugins_(pluginIds, dummyEvents);
+		processPlugins_(plugins, dummyEvents);
 	}
 	else {
 		audioBuffer_.clear();
-		processPlugins_(pluginIds, *events);
+		processPlugins_(plugins, *events);
 	}
 	juceToGiadaOutBuf_(outBuf);
 }
-
 
 /* -------------------------------------------------------------------------- */
 
 
 void addPlugin(std::unique_ptr<Plugin> p, ID channelId)
 {
-	ID pluginId = p->id;
+    model::add(std::move(p));
+
+	const Plugin& pluginRef = model::back<Plugin>();
+
+	/* TODO - unfortunately JUCE wants mutable plugin objects due to the
+	presence of the non-const processBlock() method. Why not const_casting
+	only in the Plugin class? */
+	model::get().getChannel(channelId).plugins.push_back(const_cast<Plugin*>(&pluginRef));
+    model::swap(model::SwapType::HARD);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void swapPlugin(const m::Plugin& p1, const m::Plugin& p2, ID channelId)
+{
+	std::vector<m::Plugin*>& pvec = model::get().getChannel(channelId).plugins;
+	std::size_t index1 = u::vector::indexOf(pvec, &p1);
+	std::size_t index2 = u::vector::indexOf(pvec, &p2);
+	std::swap(pvec.at(index1), pvec.at(index2));
 	
-	model::plugins.push(std::move(p));
-
-	model::onSwap(model::channels, channelId, [&](Channel& c)
-	{
-		c.pluginIds.push_back(pluginId);
-	});
+    model::swap(model::SwapType::HARD);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void swapPlugin(ID pluginId1, ID pluginId2, ID channelId)
+void freePlugin(const m::Plugin& plugin, ID channelId)
 {
-	model::onSwap(model::channels, channelId, [&](Channel& c)
-	{
-		auto a = u::vector::indexOf(c.pluginIds, pluginId1); 
-		auto b = u::vector::indexOf(c.pluginIds, pluginId2); 
-	
-		std::swap(c.pluginIds.at(a), c.pluginIds.at(b));
-	});
+	u::vector::remove(model::get().getChannel(channelId).plugins, &plugin);
+    model::swap(model::SwapType::HARD);
+    model::remove(plugin);
+}
+
+
+void freePlugins(const std::vector<Plugin*>& plugins)
+{
+	// TODO - channels???
+	for (const Plugin* p : plugins)
+		model::remove(*p);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void freePlugin(ID pluginId, ID channelId)
+std::vector<Plugin*> clonePlugins(const std::vector<Plugin*>& plugins)
 {
-	model::onSwap(model::channels, channelId, [&](Channel& c)
-	{
-		u::vector::remove(c.pluginIds, pluginId);
-	});
-
-	model::plugins.pop(model::getIndex(model::plugins, pluginId));
-}
-
-
-void freePlugins(const std::vector<ID>& pluginIds)
-{
-	for (ID id : pluginIds)
-		model::plugins.pop(model::getIndex(model::plugins, id));
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-std::vector<ID> clonePlugins(std::vector<ID> pluginIds)
-{
-	std::vector<ID> out;
-	for (ID id : pluginIds)
-		out.push_back(clonePlugin_(id));
+	std::vector<Plugin*> out;
+	for (const Plugin* p : plugins) {
+        model::add(pluginManager::makePlugin(*p));
+        out.push_back(&model::back<Plugin>());
+    }
 	return out;
 }
 
@@ -222,10 +202,7 @@ std::vector<ID> clonePlugins(std::vector<ID> pluginIds)
 
 void setPluginParameter(ID pluginId, int paramIndex, float value)
 {
-	model::onGet(model::plugins, pluginId, [&](Plugin& p)
-	{
-		p.setParameter(paramIndex, value);
-	});
+    model::find<Plugin>(pluginId)->setParameter(paramIndex, value);
 }
 
 
@@ -234,10 +211,7 @@ void setPluginParameter(ID pluginId, int paramIndex, float value)
 
 void setPluginProgram(ID pluginId, int programIndex)
 {
-	model::onGet(model::plugins, pluginId, [&](Plugin& p)
-	{
-		p.setCurrentProgram(programIndex);
-	});
+    model::find<Plugin>(pluginId)->setCurrentProgram(programIndex);
 }
 
 
@@ -246,10 +220,8 @@ void setPluginProgram(ID pluginId, int programIndex)
 
 void toggleBypass(ID pluginId)
 {
-	model::onGet(model::plugins, pluginId, [&](Plugin& p)
-	{
-		p.setBypass(!p.isBypassed());
-	});
+	Plugin& plugin = *model::find<Plugin>(pluginId);
+	plugin.setBypass(!plugin.isBypassed());
 }
 
 
@@ -260,8 +232,7 @@ void runDispatchLoop()
 {
 	messageManager_->runDispatchLoopUntil(10);
 }
-
-}}} // giada::m::pluginHost::
+} // giada::m::pluginHost::
 
 
 #endif // #ifdef WITH_VST

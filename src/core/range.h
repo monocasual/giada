@@ -45,6 +45,11 @@ public:
 	T getBegin() const  { return m_a; }
 	T getEnd() const    { return m_b; }
 	T getLength() const { return m_b - m_a; }
+	
+	bool contains(T t) const 
+	{
+		return t >= m_a && t < m_b;
+	}
 
 private:
 

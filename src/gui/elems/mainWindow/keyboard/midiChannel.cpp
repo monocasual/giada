@@ -149,14 +149,14 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 	resizable(mainButton);
 
 #ifdef WITH_VST
-	fx->setStatus(m_channel.pluginIds.size() > 0);
+	fx->setStatus(m_channel.plugins.size() > 0);
 #endif
 
 	playButton->callback(cb_playButton, (void*)this);
 	playButton->when(FL_WHEN_CHANGED);   // On keypress && on keyrelease
 
 	arm->type(FL_TOGGLE_BUTTON);
-	arm->value(m_channel.a_isArmed());
+	arm->value(m_channel.isArmed());
 	arm->callback(cb_arm, (void*)this);
 
 #ifdef WITH_VST

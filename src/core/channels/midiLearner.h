@@ -29,27 +29,46 @@
 #define G_CHANNEL_MIDI_LEARNER_H
 
 
-#include <memory>
+#include "core/midiLearnParam.h"
 
 
-namespace giada {
-namespace m
+namespace giada::m::midiLearner
 {
-struct MidiLearnerState;
-class MidiLearner
+struct Data
 {
-public:
+    Data() = default;
+    Data(const patch::Channel&);
+    Data(const Data&) = default;
 
-    MidiLearner();
-    MidiLearner(const patch::Channel&);
-    MidiLearner(const MidiLearner&);
+    /* isAllowed
+    Tells whether the MIDI channel 'c' is enabled to receive MIDI data. */
 
-    /* state
-    Pointer to mutable MidiLearnerState state. */
+    bool isAllowed(int c) const;
 
-    std::unique_ptr<MidiLearnerState> state;
+    /* enabled
+    Tells whether MIDI learning is enabled for the current channel. */
+    
+	bool enabled;
+
+    /* filter
+    Which MIDI channel should be filtered out when receiving MIDI messages. 
+    If -1 means 'all'. */
+    
+    int filter;
+
+    /* MIDI learning fields. */
+
+	MidiLearnParam keyPress;
+	MidiLearnParam keyRelease;
+	MidiLearnParam kill;
+	MidiLearnParam arm;
+	MidiLearnParam volume;
+	MidiLearnParam mute;
+	MidiLearnParam solo;
+	MidiLearnParam readActions; // Sample Channels only
+	MidiLearnParam pitch;       // Sample Channels only
 };
-}} // giada::m::
+} // giada::m::midiLearner::
 
 
 #endif

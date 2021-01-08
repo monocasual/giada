@@ -29,24 +29,56 @@
 #define G_SEQUENCER_H
 
 
-#include "core/mixer.h"
+#include <vector>
+#include "core/eventDispatcher.h"
+#include "core/quantizer.h"
 
 
-namespace giada {
-namespace m 
+namespace giada::m { class AudioBuffer; }
+namespace giada::m::sequencer
 {
-class AudioBuffer;
-namespace sequencer
+enum class EventType 
 {
+    NONE,
+	FIRST_BEAT,
+	BAR,
+    REWIND,
+    ACTIONS
+};
+
+struct Event
+{
+    EventType                  type    = EventType::NONE;
+    Frame                      global  = 0;
+    Frame                      delta   = 0;
+    const std::vector<Action>* actions = nullptr;
+};
+
+using EventBuffer = RingBuffer<Event, G_MAX_SEQUENCER_EVENTS>;
+
+/* quantizer
+Used by the sequencer itself and each sample channel. */
+
+extern Quantizer quantizer;
+
 void init();
 
-/* parse
-Parses sequencer events that might occur in a block and advances the internal 
-quantizer. */
+/* react
+Reacts to live events coming from the EventDispatcher (human events). */
 
-void run(Frame bufferSize);
-void parse(const mixer::EventBuffer& events); 
-void advance(AudioBuffer& outBuf);
+void react(const eventDispatcher::EventBuffer& e);
+
+/* advance
+Parses sequencer events that might occur in a block and advances the internal 
+quantizer. Returns a reference to the internal EventBuffer filled with events
+(if any). Call this on each new audio block. */
+
+const EventBuffer& advance(Frame bufferSize);
+
+/* render
+Renders audio coming out from the sequencer: that is, the metronome! */
+
+void render(AudioBuffer& outBuf);
 
 void start();
 void stop();
@@ -55,7 +87,7 @@ void rewind();
 bool isMetronomeOn();
 void toggleMetronome();
 void setMetronome(bool v);
-}}}  // giada::m::sequencer::
+}  // giada::m::sequencer::
 
 
 #endif

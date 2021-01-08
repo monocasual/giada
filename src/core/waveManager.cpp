@@ -30,6 +30,7 @@
 #include <samplerate.h>
 #include "utils/log.h"
 #include "utils/fs.h"
+#include "model/model.h"
 #include "const.h"
 #include "idManager.h"
 #include "wave.h"
@@ -38,9 +39,7 @@
 #include "waveManager.h"
 
 
-namespace giada {
-namespace m {
-namespace waveManager
+namespace giada::m::waveManager
 {
 namespace
 {
@@ -110,7 +109,7 @@ Result createFromFile(const std::string& path, ID id, int samplerate, int qualit
 
 	waveId_.set(id);
 
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.get(id));
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.generate(id));
 	wave->alloc(header.frames, header.channels, header.samplerate, getBits_(header), path);
 
 	if (sf_readf_float(fileIn, wave->getFrame(0), header.frames) != header.frames)
@@ -139,7 +138,7 @@ Result createFromFile(const std::string& path, ID id, int samplerate, int qualit
 std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate, 
 	const std::string& name)
 {
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.get());
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.generate());
 	wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, name);
 	wave->setLogical(true);
 
@@ -158,7 +157,7 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 	int channels = src.getChannels();
 	int frames   = b - a;
 
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.get());
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.generate());
 	wave->alloc(frames, channels, src.getRate(), src.getBits(), src.getPath());
 	wave->copyData(src.getFrame(a), frames, channels);
 	wave->setLogical(true);
@@ -181,6 +180,15 @@ std::unique_ptr<Wave> deserializeWave(const patch::Wave& w, int samplerate, int 
 const patch::Wave serializeWave(const Wave& w)
 {
 	return { w.id, u::fs::basename(w.getPath()) };
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Wave* hydrateWave(ID waveId)
+{
+	return model::find<Wave>(waveId);
 }
 
 
@@ -241,4 +249,4 @@ int save(const Wave& w, const std::string& path)
 
 	return G_RES_OK;
 }
-}}} // giada::m::waveManager
+} // giada::m::waveManager::

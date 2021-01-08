@@ -48,7 +48,7 @@ void geMidiChannelButton::refresh()
 
 	refreshLabel();
 
-	if (m_channel.a_isRecordingAction() && m_channel.a_isArmed())
+	if (m_channel.isRecordingAction() && m_channel.isArmed())
 		setActionRecordMode();
 	
 	redraw();
@@ -62,8 +62,8 @@ void geMidiChannelButton::refreshLabel()
 {
     std::string l = m_channel.name.empty() ? "-- MIDI --" : m_channel.name; 
 
-	if (m_channel.midi->a_isOutputEnabled())
-		l += " (ch " + std::to_string(m_channel.midi->a_getFilter() + 1) + " out)";
+	if (m_channel.midi->isOutputEnabled())
+		l += " (ch " + std::to_string(m_channel.midi->getFilter() + 1) + " out)";
 
 	copy_label(l.c_str());
 }

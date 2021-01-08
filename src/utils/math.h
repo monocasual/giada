@@ -32,9 +32,7 @@
 #include <type_traits>
 
 
-namespace giada {
-namespace u     {
-namespace math 
+namespace giada::u::math 
 {
 float linearToDB(float f);
 float dBtoLinear(float f);
@@ -68,7 +66,7 @@ TO map(TI x, TI b, TO z)
 	
 	return static_cast<TO>((x / (double) b) * z);
 }
-}}}  // giada::u::math::
+}  // giada::u::math::
 
 
 #endif
