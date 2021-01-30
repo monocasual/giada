@@ -324,9 +324,7 @@ else()
 endif()
 
 # Libsamplerate
-
-# TODO - libsamplerate currently doesn't provide CMake targets. Let's include it 
-# the manual way. 
+# TODO - new libsamplerate now provides CMake targets. Update it!
 
 find_library(LIBRARY_SAMPLERATE 
 	NAMES samplerate libsamplerate libsamplerate-0 liblibsamplerate-0
