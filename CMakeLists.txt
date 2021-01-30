@@ -392,9 +392,6 @@ elseif(DEFINED OS_WINDOWS)
 
 elseif(DEFINED OS_MACOS)
 
-	# TODO - doesn't this clash with the instruction on top??
-	list(APPEND COMPILER_OPTIONS -mmacosx-version-min=10.15)
-
 	find_library(CORE_AUDIO_LIBRARY CoreAudio REQUIRED)
 	find_library(CORE_MIDI_LIBRARY CoreMIDI REQUIRED)
 	find_library(COCOA_LIBRARY Cocoa REQUIRED)
