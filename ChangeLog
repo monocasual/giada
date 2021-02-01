@@ -15,7 +15,7 @@
 - Better CMake dependency management
 - Add CMake install rules (#422)
 - Switch to GitHub Actions for CI and release builds (#440)
-- Remove hardcored 'test' folder in test suite (#432)
+- Remove hardcoded 'test' folder in test suite (#432)
 - Make sure macOS minimum target is set to 10.14 (#444)
 - Fix crash when restarting after setting jack as an audio server (#409, #368)
 - Fix crash when clicking "Cancel" button in Browser dialog (#430)
