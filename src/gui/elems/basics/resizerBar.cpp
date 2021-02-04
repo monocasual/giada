@@ -20,7 +20,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2020 Giovanni A. Zuliani | Monocasual
+ * Copyright (C) 2010-2021 Giovanni A. Zuliani | Monocasual
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
