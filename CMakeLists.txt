@@ -250,12 +250,25 @@ endif()
 find_package(Threads REQUIRED)
 list(APPEND LIBRARIES ${Threads_LIBRARY})
 
+# pkg-config/pkgconf, required to find some external dependencies on some
+# platforms
+find_package(PkgConfig)
+
 # RtMidi
 
 find_package(RtMidi CONFIG)
 if (RtMidi_FOUND)
 	list(APPEND LIBRARIES RtMidi::rtmidi)
-else()
+	message("RtMidi library found in " ${RtMidi_DIR})
+elseif (PkgConfig_FOUND)
+	pkg_check_modules(RtMidi IMPORTED_TARGET rtmidi)
+	if (RtMidi_FOUND)
+		list(APPEND LIBRARIES PkgConfig::RtMidi)
+		message("RtMidi library found")
+	endif()
+endif()
+
+if (NOT RtMidi_FOUND)
 	# Fallback to find_library mode (in case rtmidi is too old). 
 	find_library(LIBRARY_RTMIDI NAMES rtmidi)
 	list(APPEND LIBRARIES ${LIBRARY_RTMIDI})
@@ -269,9 +282,8 @@ else()
 
 	find_path(LIBRARY_RTMIDI_INCLUDE_DIR RtMidi.h PATH_SUFFIXES rtmidi)
 	list(APPEND INCLUDE_DIRS ${LIBRARY_RTMIDI_INCLUDE_DIR})
+	message("RtMidi library found in " ${RtMidi_DIR})
 endif()
-
-message("RtMidi library found in " ${RtMidi_DIR})
 
 # FLTK 
 
