@@ -299,7 +299,15 @@ find_package(SndFile CONFIG)
 if (SndFile_FOUND)
 	list(APPEND LIBRARIES SndFile::sndfile)
 	message("Libsndfile library found in " ${SndFile_DIR})
-else()
+elseif(PkgConfig_FOUND)
+	pkg_check_modules(SndFile IMPORTED_TARGET sndfile)
+	if (SndFile_FOUND)
+		list(APPEND LIBRARIES PkgConfig::SndFile)
+		message("Libsndfile library found")
+	endif()	
+endif()
+
+if (NOT SndFile_FOUND)
 	# Fallback to find_library mode (in case libsndfile is too old). 
 	find_library(LIBRARY_SNDFILE NAMES sndfile libsndfile libsndfile-1)
 	
