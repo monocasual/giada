@@ -105,7 +105,7 @@ WaveReader::Result WaveReader::fill(AudioBuffer& out, Frame start, Frame max, Fr
 {
 	assert(wave != nullptr);
 	assert(start >= 0);
-	assert(max < wave->getSize());
+	assert(max <= wave->getSize());
 	assert(offset < out.countFrames());
 
 	if (pitch == 1.0) return fillCopy(out, start, max, offset);
