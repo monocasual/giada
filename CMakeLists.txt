@@ -347,13 +347,10 @@ if (NOT SndFile_FOUND)
 endif()
 
 # Libsamplerate
-# TODO - new libsamplerate now provides CMake targets. Update it!
 
-find_library(LIBRARY_SAMPLERATE 
-	NAMES samplerate libsamplerate libsamplerate-0 liblibsamplerate-0
-	PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET})
-list(APPEND LIBRARIES ${LIBRARY_SAMPLERATE})
-message("Libsamplerate library found in " ${LIBRARY_SAMPLERATE})
+find_package(SampleRate CONFIG REQUIRED)
+list(APPEND LIBRARIES SampleRate::samplerate)
+message("Libsndfile library found in " ${SampleRate_DIR})
 
 # Catch (if tests enabled)
 
