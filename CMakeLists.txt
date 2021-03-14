@@ -349,8 +349,18 @@ endif()
 # Libsamplerate
 
 find_package(SampleRate CONFIG REQUIRED)
-list(APPEND LIBRARIES SampleRate::samplerate)
-message("Libsndfile library found in " ${SampleRate_DIR})
+if (SampleRate_FOUND)
+	list(APPEND LIBRARIES SampleRate::samplerate)
+	message("Libsndfile library found in " ${SampleRate_DIR})
+else() 
+	# Fallback to find_library mode (in case Libsamplerate is too old). 
+	find_library(LIBRARY_SAMPLERATE 
+	    NAMES samplerate libsamplerate libsamplerate-0 liblibsamplerate-0
+	    PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}
+		REQUIRED)
+	list(APPEND LIBRARIES ${LIBRARY_SAMPLERATE})
+	message("Libsamplerate library found in " ${LIBRARY_SAMPLERATE})
+endif()
 
 # Catch (if tests enabled)
 
