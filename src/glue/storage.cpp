@@ -140,18 +140,13 @@ void loadProject(void* data)
 {
 	v::gdBrowserLoad* browser = static_cast<v::gdBrowserLoad*>(data);
 	std::string fullPath      = browser->getSelectedItem();
-	bool isProject            = u::fs::isProject(browser->getSelectedItem());
 
 	browser->showStatusBar();
 
 	u::log::print("[loadProject] load from %s\n", fullPath);
 
-	std::string fileToLoad = fullPath;  // patch file to read from
-	std::string basePath   = "";        // base path, in case of reading from a project
-	if (isProject) {
-		fileToLoad = fullPath + G_SLASH + u::fs::stripExt(u::fs::basename(fullPath)) + ".gptc";
-		basePath   = fullPath + G_SLASH;
-	}
+	std::string fileToLoad = fullPath + G_SLASH + u::fs::stripExt(u::fs::basename(fullPath)) + ".gptc";
+	std::string basePath   = fullPath + G_SLASH;
 
 	/* Read the patch from file. */
 
@@ -169,9 +164,6 @@ void loadProject(void* data)
 		browser->hideStatusBar();
 		return;
 	}	
-
-	if (!isProject)
-		v::gdAlert("Support for raw patches is deprecated\nand will be removed soon!");
 
 	/* Then reset the system (it disables mixer) and fill the model. */
 
