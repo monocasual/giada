@@ -348,7 +348,7 @@ endif()
 
 # Libsamplerate
 
-find_package(SampleRate CONFIG REQUIRED)
+find_package(SampleRate CONFIG)
 if (SampleRate_FOUND)
 	list(APPEND LIBRARIES SampleRate::samplerate)
 	message("Libsndfile library found in " ${SampleRate_DIR})
