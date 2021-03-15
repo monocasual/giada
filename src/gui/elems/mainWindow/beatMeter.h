@@ -27,21 +27,20 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_BEAT_METER_H
-#define GE_BEAT_METER_H
+#ifndef GE_SEQUENCER_H
+#define GE_SEQUENCER_H
 
 
 #include <FL/Fl_Box.H>
 
 
-namespace giada {
-namespace v
+namespace giada::v
 {
-class geBeatMeter : public Fl_Box
+class geSequencer : public Fl_Box
 {
 public:
 
-	geBeatMeter(int x, int y, int w, int h);
+	geSequencer(int x, int y, int w, int h);
 	
 	void draw() override;
 
@@ -51,7 +50,7 @@ private:
 
     Fl_Color getCursorColor();
 };
-}} // giada::v::
+} // giada::v::
 
 
 #endif

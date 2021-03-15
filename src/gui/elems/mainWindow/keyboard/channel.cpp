@@ -48,8 +48,7 @@
 extern giada::v::gdMainWindow* G_MainWin;
 
 
-namespace giada {
-namespace v
+namespace giada::v
 {
 geChannel::geChannel(int X, int Y, int W, int H, c::channel::Data d)
 : Fl_Group (X, Y, W, H)
@@ -245,4 +244,4 @@ const c::channel::Data& geChannel::getData() const
 {
 	return m_channel;
 }
-}} // giada::v::
+} // giada::v::

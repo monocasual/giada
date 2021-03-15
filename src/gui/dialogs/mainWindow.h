@@ -38,7 +38,7 @@ namespace v
 class geKeyboard;
 class geMainIO;
 class geMainMenu;
-class geBeatMeter;
+class geSequencer;
 class geMainTransport;
 class geMainTimer;
 class gdMainWindow : public gdWindow
@@ -57,7 +57,7 @@ public:
 	void clearKeyboard();
 
 	geKeyboard*      keyboard;
-	geBeatMeter*     beatMeter;
+	geSequencer*     beatMeter;
 	geMainMenu*      mainMenu;
 	geMainIO*        mainIO;
 	geMainTimer*     mainTimer;

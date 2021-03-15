@@ -42,8 +42,7 @@
 #include "column.h"
 
 
-namespace giada {
-namespace v
+namespace giada::v
 {
 geColumn::geColumn(int X, int Y, int W, int H, ID id, geResizerBar* b)
 : Fl_Group  (X, Y, W, H), 
@@ -93,7 +92,6 @@ geChannel* geColumn::addChannel(c::channel::Data d)
 	{
 		resizable(nullptr);	
 		size(this->w(), (child(children() - 1)->y() - y()) + G_GUI_INNER_MARGIN);
-		
 	};	
 
 	/* Store the channel height in model when the resizer bar is released. */
@@ -214,4 +212,4 @@ int geColumn::computeHeight() const
 		out += c->h() + G_GUI_INNER_MARGIN;
 	return out + m_addChannelBtn->h() + G_GUI_INNER_MARGIN;
 }
-}} // giada::v::
+} // giada::v::

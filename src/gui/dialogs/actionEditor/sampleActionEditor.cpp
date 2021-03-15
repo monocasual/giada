@@ -74,11 +74,14 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId)
 	actionType->add("Key release");
 	actionType->add("Kill chan");
 	actionType->value(0);
+	actionType->copy_tooltip("Action type to add");
 	if (!canChangeActionType())
 		actionType->deactivate();
 
 	zoomInBtn->callback(cb_zoomIn, (void*)this);
+	zoomInBtn->copy_tooltip("Zoom in");
 	zoomOutBtn->callback(cb_zoomOut, (void*)this);
+	zoomOutBtn->copy_tooltip("Zoom out");
 
 	/* Main viewport: contains all widgets. */
 

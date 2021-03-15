@@ -34,8 +34,7 @@
 #include "gridTool.h"
 
 
-namespace giada {
-namespace v
+namespace giada::v
 {
 geGridTool::geGridTool(Pixel x, Pixel y)
 :	Fl_Group(x, y, 80, 20)
@@ -58,6 +57,9 @@ geGridTool::geGridTool(Pixel x, Pixel y)
 	active->value(m::conf::conf.actionEditorGridOn);
 
 	end();
+
+	gridType->copy_tooltip("Grid resolution");
+	active->copy_tooltip("Snap to grid");
 }
 
 
@@ -132,4 +134,4 @@ Frame geGridTool::getCellSize() const
 {
 	return m::clock::getFramesInBeat() / getValue();
 }
-}} // giada::v::
+} // giada::v::

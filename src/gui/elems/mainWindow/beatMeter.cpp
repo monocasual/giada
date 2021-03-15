@@ -36,19 +36,19 @@
 #include "beatMeter.h"
 
 
-namespace giada {
-namespace v
+namespace giada::v
 {
-geBeatMeter::geBeatMeter(int x, int y, int w, int h)
+geSequencer::geSequencer(int x, int y, int w, int h)
 : Fl_Box(x, y, w, h)
 {
+	copy_tooltip("Main sequencer");
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-Fl_Color geBeatMeter::getCursorColor()
+Fl_Color geSequencer::getCursorColor()
 {
 	if (m::clock::getStatus() == ClockStatus::WAITING && u::gui::shouldBlink())
 		return FL_BACKGROUND_COLOR;
@@ -59,7 +59,7 @@ Fl_Color geBeatMeter::getCursorColor()
 /* -------------------------------------------------------------------------- */
 
 
-void geBeatMeter::refresh()
+void geSequencer::refresh()
 {
 	redraw();
 }
@@ -68,7 +68,7 @@ void geBeatMeter::refresh()
 /* -------------------------------------------------------------------------- */
 
 
-void geBeatMeter::draw()
+void geSequencer::draw()
 {
 	using namespace giada::m;
 
@@ -101,4 +101,4 @@ void geBeatMeter::draw()
 
 	fl_rectf(x()+greyX+1, y()+1, w()-greyX-1,  h()-2, G_COLOR_GREY_4);
 }
-}} // giada::v::
+} // giada::v::

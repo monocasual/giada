@@ -40,8 +40,7 @@ class geButton;
 class geResizerBar;
 
 
-namespace giada {
-namespace v
+namespace giada::v
 {
 class geKeyboard;
 class geChannel;
@@ -83,7 +82,7 @@ private:
 
 	geButton* m_addChannelBtn;
 };
-}} // giada::v::
+} // giada::v::
 
 
 #endif

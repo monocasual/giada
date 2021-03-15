@@ -40,8 +40,7 @@ class geDial;
 class geStatusButton;
 
 
-namespace giada {
-namespace v
+namespace giada::v
 {
 class geChannelButton;
 class geChannel : public Fl_Group
@@ -132,7 +131,7 @@ protected:
 
 	c::channel::Data m_channel;
 };
-}} // giada::v::
+} // giada::v::
 
 
 #endif

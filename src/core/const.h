@@ -391,6 +391,7 @@ constexpr auto G_PATCH_KEY_ACTION_NEXT                = "next";
 
 constexpr auto CONF_KEY_HEADER                        = "header";
 constexpr auto CONF_KEY_LOG_MODE                      = "log_mode";
+constexpr auto CONF_KEY_SHOW_TOOLTIPS                 = "show_tooltips";
 constexpr auto CONF_KEY_SOUND_SYSTEM                  = "sound_system";
 constexpr auto CONF_KEY_SOUND_DEVICE_IN               = "sound_device_in";
 constexpr auto CONF_KEY_SOUND_DEVICE_OUT              = "sound_device_out";

@@ -75,7 +75,9 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId)
 	viewport->add(m_ver);
 
 	zoomInBtn->callback(cb_zoomIn, (void*)this);
+	zoomInBtn->copy_tooltip("Zoom in");
 	zoomOutBtn->callback(cb_zoomOut, (void*)this);
+	zoomOutBtn->copy_tooltip("Zoom out");
 
 	add(upperArea);
 	add(viewport);

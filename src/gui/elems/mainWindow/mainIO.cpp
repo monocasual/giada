@@ -71,6 +71,16 @@ geMainIO::geMainIO(int x, int y)
 
 	resizable(nullptr);   // don't resize any widget
 
+	outMeter.copy_tooltip("Main output meter");
+	inMeter.copy_tooltip("Main input meter");
+	outVol.copy_tooltip("Main output volume");
+	inVol.copy_tooltip("Main input volume");
+	inToOut.copy_tooltip("Stream linker\n\nConnects input to output to enable \"hear what you're playing\" mode.");
+#ifdef WITH_VST
+	masterFxOut.copy_tooltip("Main output plug-ins");
+	masterFxIn.copy_tooltip("Main input plug-ins");
+#endif
+
 	outVol.callback(cb_outVol, (void*)this);
 	inVol.callback(cb_inVol, (void*)this);
 

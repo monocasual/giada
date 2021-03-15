@@ -40,9 +40,7 @@
 namespace nl = nlohmann;
 
 
-namespace giada {
-namespace m {
-namespace conf
+namespace giada::m::conf
 {
 namespace
 {
@@ -140,6 +138,7 @@ bool read()
 	nl::json j = nl::json::parse(ifs);
 
 	conf.logMode                    =  j.value(CONF_KEY_LOG_MODE, conf.logMode);
+	conf.showTooltips               =  j.value(CONF_KEY_SHOW_TOOLTIPS, conf.showTooltips);
 	conf.soundSystem                =  j.value(CONF_KEY_SOUND_SYSTEM, conf.soundSystem);
 	conf.soundDeviceOut             =  j.value(CONF_KEY_SOUND_DEVICE_OUT, conf.soundDeviceOut);
 	conf.soundDeviceIn              =  j.value(CONF_KEY_SOUND_DEVICE_IN, conf.soundDeviceIn);
@@ -238,6 +237,7 @@ bool write()
 
 	j[CONF_KEY_HEADER]                        = "GIADACFG";
 	j[CONF_KEY_LOG_MODE]                      = conf.logMode;
+	j[CONF_KEY_SHOW_TOOLTIPS]                 = conf.showTooltips;
 	j[CONF_KEY_SOUND_SYSTEM]                  = conf.soundSystem;
 	j[CONF_KEY_SOUND_DEVICE_OUT]              = conf.soundDeviceOut;
 	j[CONF_KEY_SOUND_DEVICE_IN]               = conf.soundDeviceIn;
@@ -327,4 +327,4 @@ bool write()
     ofs << j;
 	return true;
 }
-}}} // giada::m::conf::
+} // giada::m::conf::

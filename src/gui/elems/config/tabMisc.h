@@ -29,14 +29,14 @@
 #define GE_TAB_MISC_H
 
 
-#include <FL/Fl_Group.H>
+#include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/group.h"
 
 
-namespace giada {
-namespace v
+namespace giada::v
 {
 class geChoice;
-class geTabMisc : public Fl_Group
+class geTabMisc : public geGroup
 {
 public:
 
@@ -44,9 +44,12 @@ public:
 
 	void save();
 
-	geChoice* debugMsg;
+private:
+
+	geChoice m_debugMsg;
+	geChoice m_tooltips;
 };
-}} // giada::v::
+} // giada::v::
 
 
 #endif

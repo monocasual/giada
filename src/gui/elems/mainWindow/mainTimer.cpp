@@ -43,8 +43,7 @@
 extern giada::v::gdMainWindow* G_MainWin;
 
 
-namespace giada {
-namespace v
+namespace giada::v
 {
 geMainTimer::geMainTimer(int x, int y)
 : gePack      (x, y, Direction::HORIZONTAL)
@@ -61,6 +60,12 @@ geMainTimer::geMainTimer(int x, int y)
 	add(&m_divider);
 
 	resizable(nullptr);   // don't resize any widget
+
+	m_bpm.copy_tooltip("Beats per minute (BPM)");
+	m_meter.copy_tooltip("Beats and bars");
+	m_quantizer.copy_tooltip("Live quantizer");
+	m_multiplier.copy_tooltip("Beat multiplier");
+	m_divider.copy_tooltip("Beat divider");
 
 	m_bpm.callback(cb_bpm, (void*)this);
 	m_meter.callback(cb_meter, (void*)this);
@@ -234,5 +239,4 @@ void geMainTimer::setMeter(int beats, int bars)
 	std::string s = std::to_string(beats) + "/" + std::to_string(bars);
 	m_meter.copy_label(s.c_str());
 }
-
-}} // giada::v::
+} // giada::v::

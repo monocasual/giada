@@ -41,12 +41,8 @@ class geButton;
 class geStatusButton;
 
 
-namespace giada {
-namespace m
-{
-class Wave;
-}
-namespace v 
+namespace giada::m { class Wave; }
+namespace giada::v 
 {
 class geChoice;
 class gePack;
@@ -121,7 +117,7 @@ private:
 
 	c::sampleEditor::Data m_data;
 };
-}} // giada::v::
+} // giada::v::
 
 
 #endif

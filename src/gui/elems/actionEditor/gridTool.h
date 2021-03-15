@@ -36,8 +36,7 @@
 class geCheck;
 
 
-namespace giada {
-namespace v
+namespace giada::v
 {
 class geChoice;
 class geGridTool : public Fl_Group
@@ -65,7 +64,7 @@ private:
 	static void cb_changeType(Fl_Widget* /*w*/, void* p);
 	void cb_changeType();
 };
-}} // giada::v::
+} // giada::v::
 
 
 #endif

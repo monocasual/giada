@@ -38,8 +38,7 @@
 class geButton;
 
 
-namespace giada {
-namespace v
+namespace giada::v
 {
 class geChoice;
 class geMainTimer : public gePack
@@ -82,7 +81,7 @@ private:
 	geButton m_multiplier;
 	geButton m_divider;
 };
-}} // giada::v::
+} // giada::v::
 
 
 #endif

@@ -35,13 +35,12 @@
 #include "core/types.h"
 
 
-namespace giada {
-namespace m {
-namespace conf
+namespace giada::m::conf
 {
 struct Conf
 {
 	int  logMode         = LOG_MODE_MUTE;
+	bool showTooltips    = true;
 	int  soundSystem     = G_DEFAULT_SOUNDSYS;
 	int  soundDeviceOut  = G_DEFAULT_SOUNDDEV_OUT;
 	int  soundDeviceIn   = G_DEFAULT_SOUNDDEV_IN;
@@ -152,6 +151,6 @@ extern Conf conf;
 void init();
 bool read();
 bool write();
-}}} // giada::m::conf::
+} // giada::m::conf::
 
 #endif

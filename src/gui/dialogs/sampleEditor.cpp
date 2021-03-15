@@ -61,8 +61,7 @@
 #include "sampleEditor.h"
 
 
-namespace giada {
-namespace v 
+namespace giada::v 
 {
 gdSampleEditor::gdSampleEditor(ID channelId)
 : gdWindow   (m::conf::conf.sampleEditorX, m::conf::conf.sampleEditorY, 
@@ -167,6 +166,8 @@ gePack* gdSampleEditor::createUpperBar()
 	grid->add("16");
 	grid->add("32");
 	grid->add("64");
+	grid->copy_tooltip("Grid frequency");
+
 	if (m::conf::conf.sampleEditorGridVal == 0)
 		grid->value(0);
 	else 
@@ -174,12 +175,15 @@ gePack* gdSampleEditor::createUpperBar()
 	grid->callback(cb_changeGrid, (void*)this);
 
 	snap->value(m::conf::conf.sampleEditorGridOn);
+	snap->copy_tooltip("Snap to grid");
 	snap->callback(cb_enableSnap, (void*)this);
 
 	/* TODO - redraw grid if != (off) */
 
 	zoomOut->callback(cb_zoomOut, (void*)this);
+	zoomOut->copy_tooltip("Zoom out");
 	zoomIn->callback(cb_zoomIn, (void*)this);
+	zoomIn->copy_tooltip("Zoom in");
 
 	gePack* g = new gePack(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, Direction::HORIZONTAL);
 	g->add(reload);
@@ -358,4 +362,4 @@ void gdSampleEditor::updateInfo()
 
 	info->copy_label(infoText.c_str());
 }
-}} // giada::v::
+} // giada::v::

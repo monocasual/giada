@@ -220,6 +220,19 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 
 	resizable(mainButton);
 
+	playButton->copy_tooltip("Play/stop");
+	arm->copy_tooltip("Arm for recording");
+	status->copy_tooltip("Progress bar");
+	readActions->copy_tooltip("Read actions\n\nToggles playback of pre-recorded "
+		"actions (key press, key release, ...).");
+	modeBox->copy_tooltip("Mode");
+	mute->copy_tooltip("Mute");
+	solo->copy_tooltip("Solo");
+#if defined(WITH_VST)
+	fx->copy_tooltip("Plug-ins");
+#endif
+	vol->copy_tooltip("Volume");
+
 #ifdef WITH_VST
 	fx->setStatus(m_channel.plugins.size() > 0);
 #endif

@@ -30,15 +30,12 @@
 
 
 #include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/statusButton.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/button.h"
 
 
-class geButton;
-class geBox;
-class geStatusButton;
-
-
-namespace giada {
-namespace v
+namespace giada::v
 {
 class geMainTransport : public gePack
 {
@@ -50,16 +47,16 @@ public:
 
 private:
 
-	geButton* rewind;
-	geStatusButton* play;
-	geBox* spacer1;	
-	geStatusButton* recTriggerMode;
-	geStatusButton* recAction;
-	geStatusButton* recInput;
-	geBox* spacer2;
-	geStatusButton* metronome;
+	geButton        m_rewind;
+	geStatusButton  m_play;
+	geBox           m_spacer1;	
+	geStatusButton  m_recTriggerMode;
+	geStatusButton  m_recAction;
+	geStatusButton  m_recInput;
+	geBox           m_spacer2;
+	geStatusButton  m_metronome;
 };
-}} // giada::v::
+} // giada::v::
 
 
 #endif

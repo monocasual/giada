@@ -42,7 +42,6 @@ class geTabPlugins;
 class geButton;
 class geCheck;
 class geInput;
-class geRadio;
 class geBox;
 
 

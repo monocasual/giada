@@ -26,6 +26,7 @@
 
 
 #include <FL/Fl.H>
+#include <FL/Fl_Tooltip.H>
 #include "core/const.h"
 #include "core/conf.h"
 #include "core/init.h"
@@ -59,6 +60,11 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 	Fl::set_boxtype(FL_UP_BOX,     G_CUSTOM_UP_BOX);
 	Fl::set_boxtype(FL_DOWN_BOX,   G_CUSTOM_DOWN_BOX);
 
+	Fl_Tooltip::color(G_COLOR_GREY_1);
+	Fl_Tooltip::textcolor(G_COLOR_LIGHT_2);
+	Fl_Tooltip::size(G_GUI_FONT_SIZE_BASE);
+	Fl_Tooltip::enable(m::conf::conf.showTooltips);
+
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 
 	mainMenu      = new v::geMainMenu(8, 0);
@@ -69,7 +75,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 #endif
 	mainTransport = new v::geMainTransport(8, 39);
 	mainTimer     = new v::geMainTimer(571, 44);
-	beatMeter     = new v::geBeatMeter(100, 83, 609, 20);
+	beatMeter     = new v::geSequencer(100, 83, 609, 20);
 	keyboard      = new v::geKeyboard(8, 122, w()-16, 380);
 
 	/* zone 1 - menus, and I/O tools */
