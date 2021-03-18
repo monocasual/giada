@@ -181,7 +181,6 @@ list(APPEND SOURCES
 	src/gui/elems/basics/slider.cpp
 	src/gui/elems/basics/progress.cpp
 	src/gui/elems/basics/check.cpp
-	src/gui/elems/basics/radio.cpp
 	src/utils/log.cpp
 	src/utils/time.cpp
 	src/utils/math.cpp
