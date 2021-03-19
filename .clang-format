@@ -1,0 +1,15 @@
+---
+BasedOnStyle: Microsoft
+AlignAfterOpenBracket: 'false'
+AlignConsecutiveAssignments: 'true'
+AlignConsecutiveDeclarations: 'true'
+AllowShortFunctionsOnASingleLine: All
+BreakBeforeBraces: Allman
+BreakConstructorInitializers: BeforeComma
+ColumnLimit: 0
+ConstructorInitializerIndentWidth: '0'
+IndentWrappedFunctionNames: 'false'
+Language: Cpp
+NamespaceIndentation: None
+PointerAlignment: Left
+UseTab: ForIndentation
