@@ -30,8 +30,7 @@
 #include "audioBuffer.h"
 
 
-namespace giada {
-namespace m
+namespace giada::m
 {
 AudioBuffer::AudioBuffer()
 : m_data    (nullptr)
@@ -63,9 +62,29 @@ AudioBuffer::AudioBuffer(const AudioBuffer& o)
 /* -------------------------------------------------------------------------- */
 
 
+AudioBuffer::AudioBuffer(AudioBuffer&& o)
+{
+	move(std::move(o));
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 AudioBuffer::~AudioBuffer()
 {
 	free();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+AudioBuffer& AudioBuffer::operator=(AudioBuffer&& o)
+{
+	if (this == &o) return *this;
+	move(std::move(o));
+	return *this;	
 }
 
 
@@ -155,21 +174,6 @@ void AudioBuffer::setData(float* data, Frame size, int channels)
 /* -------------------------------------------------------------------------- */
 
 
-void AudioBuffer::moveData(AudioBuffer& b)
-{
-	assert(b.countChannels() <= NUM_CHANS);
-
-	free();
-	m_data     = b[0];
-	m_size     = b.countFrames();
-	m_channels = b.countChannels();
-	b.setData(nullptr, 0, 0);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void AudioBuffer::copyData(const float* data, Frame frames, int channels, int offset)
 {
 	assert(m_data != nullptr);
@@ -218,4 +222,19 @@ void AudioBuffer::applyGain(float g)
 	for (int i = 0; i < countSamples(); i++)
 		m_data[i] *= g;
 }
-}} // giada::m::
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void AudioBuffer::move(AudioBuffer&& o)
+{
+	assert(o.countChannels() <= NUM_CHANS);
+
+	m_data     = o.m_data;
+	m_size     = o.m_size;
+	m_channels = o.m_channels;
+
+	o.setData(nullptr, 0, 0);	
+}
+} // giada::m::

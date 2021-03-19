@@ -41,7 +41,10 @@ class Wave
 public:
 
 	Wave(ID id);
-	Wave(const Wave& other);
+	Wave(const Wave& o);
+	Wave(Wave&& o) = default;
+
+	Wave& operator=(Wave&& o) = default;
 
 	float* operator [](int offset) const;
 
@@ -71,10 +74,10 @@ public:
 	void setLogical(bool l);
 	void setEdited(bool e);
 
-	/* moveData
-	Moves data held by 'b' into this buffer. Then 'b' becomes an empty buffer. */
+	/* replaceData
+	Replaces internal audio buffer with 'b' by moving it. */
 
-	void moveData(AudioBuffer& b); 
+	void replaceData(AudioBuffer&& b);
 	
 	/* copyData
 	Copies 'frames' frames from the new 'data' into m_data, starting from frame 
@@ -94,12 +97,12 @@ public:
 
 private:
 
-	AudioBuffer buffer;
-	int m_rate;
-	int m_bits;
-	bool m_logical;     // memory only (a take)
-	bool m_edited;      // edited via editor
-	std::string m_path; // E.g. /path/to/my/sample.wav
+	AudioBuffer m_buffer;
+	int         m_rate;
+	int         m_bits;
+	bool        m_logical;  // memory only (a take)
+	bool        m_edited;   // edited via editor
+	std::string m_path;     // E.g. /path/to/my/sample.wav
 };
 } // giada::m::
 

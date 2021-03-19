@@ -100,7 +100,7 @@ int monoToStereo(Wave& w)
 		for (int j = 0; j < newData.countChannels(); j++)
 			newData[i][j] = w[i][0];
 
-	w.moveData(newData);
+	w.replaceData(std::move(newData));
 
 	return G_RES_OK;
 }
@@ -146,7 +146,7 @@ void cut(Wave& w, int a, int b)
         }
     }
 
-    w.moveData(newData);
+    w.replaceData(std::move(newData));
     w.setEdited(true);
 }
 
@@ -170,7 +170,7 @@ void trim(Wave& w, Frame a, Frame b)
 		for (int j = 0; j < newData.countChannels(); j++)
 			newData[i][j] = w[i+a][j];
 
-	w.moveData(newData);
+    w.replaceData(std::move(newData));
 	w.setEdited(true);
 }
 
@@ -192,7 +192,7 @@ void paste(const Wave& src, Wave& des, Frame a)
 	newData.copyData(src[0], src.getSize(), a);
 	newData.copyData(des[a], des.getSize() - a, src.getSize() + a);
 
-	des.moveData(newData);
+    des.replaceData(std::move(newData));
 	des.setEdited(true);
 }
 

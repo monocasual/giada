@@ -218,7 +218,7 @@ int resample(Wave& w, int quality, int samplerate)
 		return G_RES_ERR_PROCESSING;
 	}
 
-	w.moveData(newData);
+	w.replaceData(std::move(newData));
 	w.setRate(samplerate);
 
 	return G_RES_OK;

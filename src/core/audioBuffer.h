@@ -33,8 +33,7 @@
 #include "core/types.h"
 
 
-namespace giada {
-namespace m
+namespace giada::m
 {
 /* AudioBuffer
 A class that holds a buffer filled with audio data. NOTE: currently it only
@@ -59,8 +58,25 @@ public:
 
 	AudioBuffer(Frame size, int channels);
 
+	/* AudioBuffer(const AudioBuffer&)
+	Copy constructor. */
+
 	AudioBuffer(const AudioBuffer& o);
+
+	/* AudioBuffer(AudioBuffer&&)
+	Move constructor. */
+
+	AudioBuffer(AudioBuffer&& o);
+
+	/* ~AudioBuffer
+	Destructor. */
+
 	~AudioBuffer();
+
+	/* operator = 
+	Move assignment operator. */
+
+	AudioBuffer& operator=(AudioBuffer&& o);
 
 	/* operator []
 	Given a frame 'offset', returns a pointer to it. This is useful for digging 
@@ -115,12 +131,6 @@ public:
 
 	void setData(float* data, Frame size, int channels);
 
-	/* moveData
-	Moves data held by 'b' into this buffer. Then 'b' becomes an empty buffer.
-	TODO - add move constructor instead! */
-	 
-	void moveData(AudioBuffer& b);
-
 	/* clear
 	Clears the internal data by setting all bytes to 0.0f. Optional parameters
 	'a' and 'b' set the range. */
@@ -131,11 +141,12 @@ public:
 
 private:
 
+	void move(AudioBuffer&& o);
+	
 	float* m_data;
 	Frame  m_size;
 	int    m_channels;
 };
-
-}} // giada::m::
+} // giada::m::
 
 #endif
