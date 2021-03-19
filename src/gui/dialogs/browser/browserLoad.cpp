@@ -24,54 +24,47 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "utils/fs.h"
-#include "gui/elems/browser.h"
+#include "browserLoad.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/input.h"
-#include "browserLoad.h"
+#include "gui/elems/browser.h"
+#include "utils/fs.h"
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
-gdBrowserLoad::gdBrowserLoad(const std::string& title, const std::string& path, 
-	std::function<void(void*)> cb, ID channelId)
+gdBrowserLoad::gdBrowserLoad(const std::string& title, const std::string& path,
+    std::function<void(void*)> cb, ID channelId)
 : gdBrowserBase(title, path, cb, channelId)
 {
-	where->size(groupTop->w()-updir->w()-8, 20);
+	where->size(groupTop->w() - updir->w() - 8, 20);
 
-	browser->callback(cb_down, (void*) this);
+	browser->callback(cb_down, (void*)this);
 
 	ok->label("Load");
-	ok->callback(cb_load, (void*) this);
+	ok->callback(cb_load, (void*)this);
 	ok->shortcut(FL_ENTER);
 
 	/* On OS X the 'where' input doesn't get resized properly on startup. Let's 
 	force it. */
-	
+
 	where->redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdBrowserLoad::cb_load(Fl_Widget* /*v*/, void* p) { ((gdBrowserLoad*)p)->cb_load(); }
 void gdBrowserLoad::cb_down(Fl_Widget* /*v*/, void* p) { ((gdBrowserLoad*)p)->cb_down(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdBrowserLoad::cb_load()
 {
 	fireCallback();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdBrowserLoad::cb_down()
 {
@@ -84,4 +77,5 @@ void gdBrowserLoad::cb_down()
 	where->value(browser->getCurrentDir().c_str());
 }
 
-}} // giada::v::
+} // namespace v
+} // namespace giada

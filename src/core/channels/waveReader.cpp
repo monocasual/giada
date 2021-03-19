@@ -24,82 +24,72 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <memory>
-#include <cassert>
-#include <algorithm>
+#include "waveReader.h"
+#include "core/audioBuffer.h"
 #include "core/const.h"
 #include "core/model/model.h"
-#include "core/audioBuffer.h"
 #include "core/wave.h"
 #include "utils/log.h"
-#include "waveReader.h"
-
+#include <algorithm>
+#include <cassert>
+#include <memory>
 
 namespace giada::m
 {
 WaveReader::WaveReader()
-: wave      (nullptr)
+: wave(nullptr)
 , m_srcState(nullptr)
 {
 	allocateSrc();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 WaveReader::WaveReader(const WaveReader& o)
-: wave      (o.wave)
+: wave(o.wave)
 , m_srcState(nullptr)
 {
 	allocateSrc();
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
 WaveReader::WaveReader(WaveReader&& o)
-: wave      (o.wave)
+: wave(o.wave)
 , m_srcState(nullptr)
 {
 	moveSrc(&o.m_srcState);
 }
-    
 
 /* -------------------------------------------------------------------------- */
 
 WaveReader& WaveReader::operator=(const WaveReader& o)
 {
-	if (this == &o) return *this;
+	if (this == &o)
+		return *this;
 	wave = o.wave;
 	allocateSrc();
 	return *this;
 }
 
-
 WaveReader& WaveReader::operator=(WaveReader&& o)
 {
-	if (this == &o) return *this;
+	if (this == &o)
+		return *this;
 	wave = o.wave;
 	moveSrc(&o.m_srcState);
 	return *this;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 WaveReader::~WaveReader()
 {
 	if (m_srcState != nullptr)
-		src_delete(m_srcState);    
+		src_delete(m_srcState);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 WaveReader::Result WaveReader::fill(AudioBuffer& out, Frame start, Frame max, Frame offset, float pitch) const
 {
@@ -108,22 +98,22 @@ WaveReader::Result WaveReader::fill(AudioBuffer& out, Frame start, Frame max, Fr
 	assert(max <= wave->getSize());
 	assert(offset < out.countFrames());
 
-	if (pitch == 1.0) return fillCopy(out, start, max, offset);
-	else              return fillResampled(out, start, max, offset, pitch);
+	if (pitch == 1.0)
+		return fillCopy(out, start, max, offset);
+	else
+		return fillResampled(out, start, max, offset, pitch);
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 WaveReader::Result WaveReader::fillResampled(AudioBuffer& dest, Frame start, Frame max, Frame offset, float pitch) const
 {
-    SRC_DATA srcData;
-	
-	srcData.data_in       = wave->getFrame(start);        // Source data
-	srcData.input_frames  = max - start;                  // How many readable frames in Wave
-	srcData.data_out      = dest[offset];                 // Destination (processed data)
-	srcData.output_frames = dest.countFrames() - offset;  // How many writable frames in dest
+	SRC_DATA srcData;
+
+	srcData.data_in       = wave->getFrame(start);       // Source data
+	srcData.input_frames  = max - start;                 // How many readable frames in Wave
+	srcData.data_out      = dest[offset];                // Destination (processed data)
+	srcData.output_frames = dest.countFrames() - offset; // How many writable frames in dest
 	srcData.end_of_input  = false;
 	srcData.src_ratio     = 1 / pitch;
 
@@ -131,13 +121,10 @@ WaveReader::Result WaveReader::fillResampled(AudioBuffer& dest, Frame start, Fra
 
 	return {
 	    static_cast<Frame>(srcData.input_frames_used),
-        static_cast<Frame>(srcData.output_frames_gen)
-	};
+	    static_cast<Frame>(srcData.output_frames_gen)};
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 WaveReader::Result WaveReader::fillCopy(AudioBuffer& dest, Frame start, Frame max, Frame offset) const
 {
@@ -150,19 +137,17 @@ WaveReader::Result WaveReader::fillCopy(AudioBuffer& dest, Frame start, Frame ma
 	return {used, used};
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void WaveReader::allocateSrc()
 {
 	m_srcState = src_new(SRC_LINEAR, G_MAX_IO_CHANS, nullptr);
-	if (m_srcState == nullptr) {
+	if (m_srcState == nullptr)
+	{
 		u::log::print("[WaveReader] unable to allocate memory for SRC_STATE!\n");
 		throw std::bad_alloc();
 	}
 }
-
 
 /* -------------------------------------------------------------------------- */
 
@@ -171,6 +156,6 @@ void WaveReader::moveSrc(SRC_STATE** other)
 	if (m_srcState != nullptr)
 		src_delete(m_srcState);
 	m_srcState = *other;
-	*other = nullptr;
+	*other     = nullptr;
 }
-} // giada::m::
+} // namespace giada::m

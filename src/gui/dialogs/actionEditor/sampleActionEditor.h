@@ -24,41 +24,36 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_SAMPLE_ACTION_EDITOR_H
 #define GD_SAMPLE_ACTION_EDITOR_H
 
-
 #include "baseActionEditor.h"
-
 
 class geResizerBar;
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class geSampleActionEditor;
 class geEnvelopeEditor;
 class gdSampleActionEditor : public gdBaseActionEditor
-{  
-public:
+{
+  public:
+	gdSampleActionEditor(ID channelId);
 
-    gdSampleActionEditor(ID channelId);
+	void rebuild() override;
 
-    void rebuild() override;
-
-private:
-
+  private:
 	bool canChangeActionType();
 
 	geSampleActionEditor* m_ae;
-    geResizerBar*         m_aer;
+	geResizerBar*         m_aer;
 
-	geEnvelopeEditor*     m_ee;
-    geResizerBar*         m_eer;
+	geEnvelopeEditor* m_ee;
+	geResizerBar*     m_eer;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

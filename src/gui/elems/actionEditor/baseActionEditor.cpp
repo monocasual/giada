@@ -24,36 +24,34 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/Fl.H>
-#include <FL/fl_draw.H>
-#include "core/const.h"
-#include "core/clock.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "gridTool.h"
 #include "baseAction.h"
 #include "baseActionEditor.h"
+#include "core/clock.h"
+#include "core/const.h"
+#include "gridTool.h"
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 geBaseActionEditor::geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h,
-	gdBaseActionEditor* base)
+    gdBaseActionEditor* base)
 : Fl_Group(x, y, w, h)
-, m_data  (nullptr)
-, m_base  (base)
+, m_data(nullptr)
+, m_base(base)
 , m_action(nullptr)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 geBaseAction* geBaseActionEditor::getActionAtCursor() const
 {
-	for (int i = 0; i < children(); i++) {
+	for (int i = 0; i < children(); i++)
+	{
 		geBaseAction* a = static_cast<geBaseAction*>(child(i));
 		if (a->hovered)
 			return a;
@@ -61,9 +59,7 @@ geBaseAction* geBaseActionEditor::getActionAtCursor() const
 	return nullptr;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geBaseActionEditor::baseDraw(bool clear) const
 {
@@ -80,7 +76,8 @@ void geBaseActionEditor::baseDraw(bool clear) const
 	/* Draw grid, beats and bars. A grid set to 1 has a cell size == beat, so
 	painting it is useless. */
 
-	if (m_base->gridTool->getValue() > 1) {
+	if (m_base->gridTool->getValue() > 1)
+	{
 		fl_color(G_COLOR_GREY_3);
 		drawVerticals(m_base->gridTool->getCellSize());
 	}
@@ -95,70 +92,68 @@ void geBaseActionEditor::baseDraw(bool clear) const
 
 	Pixel coverWidth = m_base->fullWidth - m_base->loopWidth;
 	if (coverWidth != 0)
-		fl_rectf(m_base->loopWidth+x(), y()+1, coverWidth, h()-2, G_COLOR_GREY_4);
+		fl_rectf(m_base->loopWidth + x(), y() + 1, coverWidth, h() - 2, G_COLOR_GREY_4);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geBaseActionEditor::drawVerticals(int steps) const
 {
 	/* Start drawing from steps, not from 0. The zero-th element is always 
 	graphically useless. */
-	for (Frame i=steps; i<m::clock::getFramesInLoop(); i+=steps) {
+	for (Frame i = steps; i < m::clock::getFramesInLoop(); i += steps)
+	{
 		Pixel p = m_base->frameToPixel(i) + x();
-		fl_line(p, y()+1, p, y()+h()-2);
-	}	
-}
-
-/* -------------------------------------------------------------------------- */
-
-
-int geBaseActionEditor::handle(int e)
-{
-	switch (e) {
-		case FL_PUSH:
-			return push();
-		case FL_DRAG:
-			return drag();
-		case FL_RELEASE:
-			fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK); // Make sure cursor returns normal
-			return release();
-		default:
-			return Fl_Group::handle(e);
+		fl_line(p, y() + 1, p, y() + h() - 2);
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
 
+int geBaseActionEditor::handle(int e)
+{
+	switch (e)
+	{
+	case FL_PUSH:
+		return push();
+	case FL_DRAG:
+		return drag();
+	case FL_RELEASE:
+		fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK); // Make sure cursor returns normal
+		return release();
+	default:
+		return Fl_Group::handle(e);
+	}
+}
+
+/* -------------------------------------------------------------------------- */
 
 int geBaseActionEditor::push()
 {
 	m_action = getActionAtCursor();
 
-	if (Fl::event_button1()) {    // Left button
-		if (m_action == nullptr) {  // No action under cursor: add a new one
+	if (Fl::event_button1())
+	{ // Left button
+		if (m_action == nullptr)
+		{                                          // No action under cursor: add a new one
 			if (Fl::event_x() < m_base->loopWidth) // Avoid click on grey area
 				onAddAction();
 		}
-		else                        // Prepare for dragging
+		else // Prepare for dragging
 			m_action->pick = Fl::event_x() - m_action->x();
 	}
-	else
-	if (Fl::event_button3()) {    // Right button
-		if (m_action != nullptr) {
+	else if (Fl::event_button3())
+	{ // Right button
+		if (m_action != nullptr)
+		{
 			onDeleteAction();
 			m_action = nullptr;
 		}
 	}
-	return 1;	
+	return 1;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int geBaseActionEditor::drag()
 {
@@ -173,18 +168,18 @@ int geBaseActionEditor::drag()
 	return 1;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int geBaseActionEditor::release()
 {
 	int ret = 0;
-	if (m_action != nullptr && m_action->altered) {
+	if (m_action != nullptr && m_action->altered)
+	{
 		onRefreshAction();
 		ret = 1;
 	}
 	m_action = nullptr;
 	return ret;
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

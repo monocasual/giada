@@ -24,26 +24,26 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_MIXER_H
 #define G_MIXER_H
 
-
-#include <functional>
-#include "deps/rtaudio/RtAudio.h"
-#include "core/ringBuffer.h"
-#include "core/recorder.h"
-#include "core/types.h"
-#include "core/queue.h"
 #include "core/midiEvent.h"
-
+#include "core/queue.h"
+#include "core/recorder.h"
+#include "core/ringBuffer.h"
+#include "core/types.h"
+#include "deps/rtaudio/RtAudio.h"
+#include <functional>
 
 namespace giada::m
 {
 struct Action;
 class AudioBuffer;
+} // namespace giada::m
+namespace giada::m::channel
+{
+struct Data;
 }
-namespace giada::m::channel { struct Data; }
 namespace giada::m::mixer
 {
 constexpr int MASTER_OUT_CHANNEL_ID = 1;
@@ -75,13 +75,13 @@ void clearRecBuffer();
 Returns a read-only reference to the internal virtual channel. Use this to
 merge data into channel after an input recording session. */
 
-const AudioBuffer& getRecBuffer(); 
+const AudioBuffer& getRecBuffer();
 
 /* masterPlay
 Core method (callback) */
 
 int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize, double streamTime,
-	RtAudioStreamStatus status, void* userData);
+    RtAudioStreamStatus status, void* userData);
 
 /* startInputRec, stopInputRec
 Starts/stops input recording on frame clock::getCurrentFrame(). */
@@ -94,7 +94,6 @@ bool isChannelAudible(const channel::Data& c);
 
 float getPeakOut();
 float getPeakIn();
-} // giada::m::mixer::;
-
+} // namespace giada::m::mixer
 
 #endif

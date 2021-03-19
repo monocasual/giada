@@ -24,29 +24,26 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cmath>
-#include <FL/fl_draw.H>
+#include "soundMeter.h"
 #include "core/const.h"
 #include "core/kernelAudio.h"
 #include "utils/math.h"
-#include "soundMeter.h"
+#include <FL/fl_draw.H>
+#include <cmath>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 geSoundMeter::geSoundMeter(int x, int y, int w, int h, const char* l)
-: Fl_Box      (x, y, w, h, l),
-  mixerPeak   (0.0f),
-  m_dbLevelCur(0.0f),
-  m_dbLevelOld(0.0f)
+: Fl_Box(x, y, w, h, l)
+, mixerPeak(0.0f)
+, m_dbLevelCur(0.0f)
+, m_dbLevelOld(0.0f)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geSoundMeter::draw()
 {
@@ -67,9 +64,10 @@ void geSoundMeter::draw()
 
 	/* Paint the meter on screen. */
 
-	float pxLevel = ((w()/G_MIN_DB_SCALE) * m_dbLevelCur) + w();
+	float pxLevel = ((w() / G_MIN_DB_SCALE) * m_dbLevelCur) + w();
 
-	fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);
-	fl_rectf(x()+1, y()+1, (int) pxLevel, h()-2, clip || !m::kernelAudio::isReady() ? G_COLOR_RED_ALERT : G_COLOR_GREY_4);
+	fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2, G_COLOR_GREY_2);
+	fl_rectf(x() + 1, y() + 1, (int)pxLevel, h() - 2, clip || !m::kernelAudio::isReady() ? G_COLOR_RED_ALERT : G_COLOR_GREY_4);
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

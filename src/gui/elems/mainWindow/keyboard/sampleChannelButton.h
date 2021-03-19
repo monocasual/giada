@@ -24,28 +24,25 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_SAMPLE_CHANNEL_BUTTON_H
 #define GE_SAMPLE_CHANNEL_BUTTON_H
 
-
 #include "channelButton.h"
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class geSampleChannelButton : public geChannelButton
 {
-public:
-
+  public:
 	geSampleChannelButton(int x, int y, int w, int h, const c::channel::Data& d);
-	
-    int handle(int e) override;
 
-    void refresh() override;
+	int handle(int e) override;
+
+	void refresh() override;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

@@ -24,25 +24,24 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
-#include <cstdlib>
-#include "core/model/model.h"
+#include "shiftTool.h"
 #include "core/const.h"
+#include "core/model/model.h"
+#include "glue/sampleEditor.h"
+#include "gui/dialogs/sampleEditor.h"
+#include "gui/dialogs/warnings.h"
 #include "utils/gui.h"
 #include "utils/string.h"
-#include "glue/sampleEditor.h"
-#include "gui/dialogs/warnings.h"
-#include "gui/dialogs/sampleEditor.h"
-#include "shiftTool.h"
+#include <cassert>
+#include <cstdlib>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 geShiftTool::geShiftTool(const c::sampleEditor::Data& d, int x, int y)
-: gePack (x, y, Direction::HORIZONTAL)
-, m_data (nullptr)
+: gePack(x, y, Direction::HORIZONTAL)
+, m_data(nullptr)
 , m_label(0, 0, 60, G_GUI_UNIT, "Shift", FL_ALIGN_LEFT)
 , m_shift(0, 0, 70, G_GUI_UNIT)
 , m_reset(0, 0, 70, G_GUI_UNIT, "Reset")
@@ -60,34 +59,26 @@ geShiftTool::geShiftTool(const c::sampleEditor::Data& d, int x, int y)
 	rebuild(d);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geShiftTool::cb_setShift(Fl_Widget* /*w*/, void* p) { ((geShiftTool*)p)->cb_setShift(); }
 void geShiftTool::cb_reset(Fl_Widget* /*w*/, void* p) { ((geShiftTool*)p)->cb_reset(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geShiftTool::cb_setShift()
 {
 	shift(atoi(m_shift.value()));
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geShiftTool::cb_reset()
 {
 	shift(0);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geShiftTool::rebuild(const c::sampleEditor::Data& d)
 {
@@ -95,21 +86,18 @@ void geShiftTool::rebuild(const c::sampleEditor::Data& d)
 	update(m_data->shift);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geShiftTool::update(Frame shift)
 {
 	m_shift.value(std::to_string(shift).c_str());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geShiftTool::shift(int f)
 {
 	c::sampleEditor::shift(m_data->channelId, f);
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

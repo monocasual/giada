@@ -24,31 +24,27 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "glue/io.h"
-#include "gui/elems/midiIO/midiLearner.h"
-#include "gui/elems/basics/check.h"
 #include "midiOutputBase.h"
+#include "glue/io.h"
+#include "gui/elems/basics/check.h"
+#include "gui/elems/midiIO/midiLearner.h"
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 geLightningLearnerPack::geLightningLearnerPack(int x, int y, ID channelId)
 : geMidiLearnerPack(x, y)
 {
 	setCallbacks(
-		[channelId] (int param) { c::io::channel_startMidiLearn(param, channelId); },
-		[channelId] (int param) { c::io::channel_clearMidiLearn(param, channelId); }
-	);
+	    [channelId](int param) { c::io::channel_startMidiLearn(param, channelId); },
+	    [channelId](int param) { c::io::channel_clearMidiLearn(param, channelId); });
 	addMidiLearner("playing", G_MIDI_OUT_L_PLAYING);
-	addMidiLearner("mute",    G_MIDI_OUT_L_MUTE);
-	addMidiLearner("solo",    G_MIDI_OUT_L_SOLO);	
+	addMidiLearner("mute", G_MIDI_OUT_L_MUTE);
+	addMidiLearner("solo", G_MIDI_OUT_L_SOLO);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geLightningLearnerPack::update(const c::io::Channel_OutputData& d)
 {
@@ -58,59 +54,48 @@ void geLightningLearnerPack::update(const c::io::Channel_OutputData& d)
 	setEnabled(d.lightningEnabled);
 }
 
-
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 gdMidiOutputBase::gdMidiOutputBase(int w, int h, ID channelId)
-: gdWindow   (w, h, "Midi Output Setup")
+: gdWindow(w, h, "Midi Output Setup")
 , m_channelId(channelId)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 gdMidiOutputBase::~gdMidiOutputBase()
 {
 	c::io::stopMidiLearn();
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void gdMidiOutputBase::cb_close          (Fl_Widget* /*w*/, void* p) { ((gdMidiOutputBase*)p)->cb_close(); }
+void gdMidiOutputBase::cb_close(Fl_Widget* /*w*/, void* p) { ((gdMidiOutputBase*)p)->cb_close(); }
 void gdMidiOutputBase::cb_enableLightning(Fl_Widget* /*w*/, void* p) { ((gdMidiOutputBase*)p)->cb_enableLightning(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdMidiOutputBase::cb_close()
 {
 	do_callback();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdMidiOutputBase::cb_enableLightning()
 {
 	c::io::channel_enableMidiLightning(m_channelId, m_enableLightning->value());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdMidiOutputBase::setTitle(ID channelId)
 {
-	std::string tmp = "MIDI Output Setup (channel " + std::to_string(channelId) + ")"; 
+	std::string tmp = "MIDI Output Setup (channel " + std::to_string(channelId) + ")";
 	copy_label(tmp.c_str());
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

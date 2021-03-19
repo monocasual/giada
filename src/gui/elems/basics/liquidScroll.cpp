@@ -29,30 +29,25 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "core/const.h"
-#include "boxtypes.h"
 #include "liquidScroll.h"
-
+#include "boxtypes.h"
+#include "core/const.h"
 
 geLiquidScroll::geLiquidScroll(int x, int y, int w, int h)
 : geScroll(x, y, w, h, Fl_Scroll::VERTICAL_ALWAYS)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geLiquidScroll::resize(int X, int Y, int W, int H)
 {
-	int nc = children()-2;               // skip hscrollbar and vscrollbar
-	for (int t=0; t<nc; t++) {           // tell children to resize to our new width
+	int nc = children() - 2; // skip hscrollbar and vscrollbar
+	for (int t = 0; t < nc; t++)
+	{ // tell children to resize to our new width
 		Fl_Widget* c = child(t);
-		c->resize(c->x(), c->y(), W-24, c->h());    // W-24: leave room for scrollbar
+		c->resize(c->x(), c->y(), W - 24, c->h()); // W-24: leave room for scrollbar
 	}
-	init_sizes();   // tell scroll children changed in size
-	Fl_Scroll::resize(X,Y,W,H);
+	init_sizes(); // tell scroll children changed in size
+	Fl_Scroll::resize(X, Y, W, H);
 }
-
-

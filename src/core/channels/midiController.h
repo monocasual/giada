@@ -24,21 +24,21 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CHANNEL_MIDI_CONTROLLER_H
 #define G_CHANNEL_MIDI_CONTROLLER_H
 
-
-namespace giada::m::channel { struct Data; }
+namespace giada::m::channel
+{
+struct Data;
+}
 namespace giada::m::midiController
 {
 struct Data
 {
 };
 
-void react  (channel::Data& ch, const eventDispatcher::Event& e);
+void react(channel::Data& ch, const eventDispatcher::Event& e);
 void advance(const channel::Data& ch, const sequencer::Event& e);
-}
-
+} // namespace giada::m::midiController
 
 #endif

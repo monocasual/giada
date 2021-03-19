@@ -24,34 +24,28 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_WORKER_H
 #define G_WORKER_H
 
-
 #include <atomic>
-#include <thread>
 #include <functional>
-
+#include <thread>
 
 namespace giada
 {
 class Worker
 {
-public:
+  public:
+	Worker();
+	~Worker();
 
-    Worker();
-    ~Worker();
+	void start(std::function<void()> f, int sleep);
+	void stop();
 
-    void start(std::function<void()> f, int sleep);
-    void stop();
-
-private:
-
-    std::thread       m_thread;
-    std::atomic<bool> m_running;
+  private:
+	std::thread       m_thread;
+	std::atomic<bool> m_running;
 };
-} // giada::
-
+} // namespace giada
 
 #endif

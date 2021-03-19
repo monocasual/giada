@@ -24,48 +24,53 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_GLUE_SAMPLE_EDITOR_H
 #define G_GLUE_SAMPLE_EDITOR_H
 
-
-#include <functional>
-#include <string>
 #include "core/types.h"
 #include "core/waveFx.h"
+#include <functional>
+#include <string>
 
-
-namespace giada::m { class Wave; }
-namespace giada::m::channel { struct Data; }
-namespace giada::v { class gdSampleEditor; }
+namespace giada::m
+{
+class Wave;
+}
+namespace giada::m::channel
+{
+struct Data;
+}
+namespace giada::v
+{
+class gdSampleEditor;
+}
 namespace giada::c::sampleEditor
 {
 struct Data
 {
-    Data() = default;
-    Data(const m::channel::Data&);
+	Data() = default;
+	Data(const m::channel::Data&);
 
-    ChannelStatus a_getPreviewStatus() const;
-    Frame a_getPreviewTracker() const;
-    const m::Wave& getWaveRef() const; // TODO - getWaveData (or public ptr member to Wave::data)
+	ChannelStatus  a_getPreviewStatus() const;
+	Frame          a_getPreviewTracker() const;
+	const m::Wave& getWaveRef() const; // TODO - getWaveData (or public ptr member to Wave::data)
 
-    ID          channelId; 
-    std::string name;
-    float       volume;
-    float       pan;
-    float       pitch;
-    Frame       begin;
-    Frame       end;
-    Frame       shift;
-    Frame       waveSize;
-    int         waveBits;
-    int         waveDuration;
-    int         waveRate;
-    std::string wavePath;
-    bool        isLogical;
+	ID          channelId;
+	std::string name;
+	float       volume;
+	float       pan;
+	float       pitch;
+	Frame       begin;
+	Frame       end;
+	Frame       shift;
+	Frame       waveSize;
+	int         waveBits;
+	int         waveDuration;
+	int         waveRate;
+	std::string wavePath;
+	bool        isLogical;
 
-private:
-
+  private:
 	const m::channel::Data* m_channel;
 };
 
@@ -107,7 +112,6 @@ void cleanupPreview();
 Copies the selected range into a new sample channel. */
 
 void toNewChannel(ID channelId, Frame a, Frame b);
-} // giada::c::sampleEditor::
-
+} // namespace giada::c::sampleEditor
 
 #endif

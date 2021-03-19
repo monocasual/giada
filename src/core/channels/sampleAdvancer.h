@@ -24,20 +24,19 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CHANNEL_SAMPLE_ADVANCER_H
 #define G_CHANNEL_SAMPLE_ADVANCER_H
 
-
 #include "core/sequencer.h"
 
-
-namespace giada::m::channel { struct Data; }
+namespace giada::m::channel
+{
+struct Data;
+}
 namespace giada::m::sampleAdvancer
 {
 void onLastFrame(const channel::Data& ch);
 void advance(const channel::Data& ch, const sequencer::Event& e);
-}
-
+} // namespace giada::m::sampleAdvancer
 
 #endif

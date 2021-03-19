@@ -24,69 +24,67 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
+#include "midiLearnerPack.h"
 #include "core/const.h"
 #include "glue/io.h"
 #include "gui/elems/basics/box.h"
-#include "midiLearnerPack.h"
+#include <cassert>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 constexpr int LEARNER_WIDTH = 284;
 
-
 /* -------------------------------------------------------------------------- */
-
 
 geMidiLearnerPack::geMidiLearnerPack(int X, int Y, std::string title)
 : gePack(X, Y, Direction::VERTICAL)
 {
 	end();
 
-	if (title != "") {
+	if (title != "")
+	{
 		geBox* header = new geBox(0, 0, LEARNER_WIDTH, G_GUI_UNIT, title.c_str());
 		header->box(FL_BORDER_BOX);
 		add(header);
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMidiLearnerPack::setCallbacks(std::function<void(uint32_t)> s, std::function<void(uint32_t)> c)
 {
-    m_onStartLearn = s;
-    m_onClearLearn = c;
+	m_onStartLearn = s;
+	m_onClearLearn = c;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMidiLearnerPack::addMidiLearner(std::string label, int param, bool visible)
 {
 	geMidiLearner* l = new geMidiLearner(0, 0, label, param);
-	
+
 	l->onStartLearn = m_onStartLearn;
 	l->onClearLearn = m_onClearLearn;
-	l->onStopLearn = [] () { c::io::stopMidiLearn(); };
+	l->onStopLearn  = []() { c::io::stopMidiLearn(); };
 
 	add(l);
-	if (!visible) l->hide();
+	if (!visible)
+		l->hide();
 	learners.push_back(l);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMidiLearnerPack::setEnabled(bool v)
 {
-	if (v) for (auto* l : learners) l->activate();
-	else   for (auto* l : learners) l->deactivate();
+	if (v)
+		for (auto* l : learners)
+			l->activate();
+	else
+		for (auto* l : learners)
+			l->deactivate();
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

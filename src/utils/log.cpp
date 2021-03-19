@@ -26,11 +26,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-
+#include "log.h"
 #include <cstdio>
 #include <string>
-#include "log.h"
-
 
 namespace giada::u::log
 {
@@ -38,10 +36,12 @@ int init(int m)
 {
 	mode = m;
 	stat = true;
-	if (mode == LOG_MODE_FILE) {
+	if (mode == LOG_MODE_FILE)
+	{
 		std::string fpath = fs::getHomePath() + G_SLASH + "giada.log";
-		f = std::fopen(fpath.c_str(), "a");
-		if (!f) {
+		f                 = std::fopen(fpath.c_str(), "a");
+		if (!f)
+		{
 			stat = false;
 			return 0;
 		}
@@ -49,13 +49,11 @@ int init(int m)
 	return 1;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void close()
 {
 	if (mode == LOG_MODE_FILE)
 		std::fclose(f);
 }
-}  // giada::u::log
+} // namespace giada::u::log

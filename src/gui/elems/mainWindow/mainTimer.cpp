@@ -24,34 +24,31 @@
  *
  * -------------------------------------------------------------------------- */
 
-
+#include "mainTimer.h"
+#include "core/clock.h"
 #include "core/const.h"
 #include "core/graphics.h"
-#include "core/clock.h"
-#include "glue/main.h"
 #include "glue/events.h"
-#include "utils/gui.h"
-#include "utils/string.h"
+#include "glue/main.h"
+#include "gui/dialogs/beatsInput.h"
+#include "gui/dialogs/bpmInput.h"
+#include "gui/dialogs/mainWindow.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
-#include "gui/dialogs/mainWindow.h"
-#include "gui/dialogs/bpmInput.h"
-#include "gui/dialogs/beatsInput.h"
-#include "mainTimer.h"
-
+#include "utils/gui.h"
+#include "utils/string.h"
 
 extern giada::v::gdMainWindow* G_MainWin;
-
 
 namespace giada::v
 {
 geMainTimer::geMainTimer(int x, int y)
-: gePack      (x, y, Direction::HORIZONTAL)
-, m_bpm       (0, 0, 60, G_GUI_UNIT)
-, m_meter     (0, 0, 60, G_GUI_UNIT)
-, m_quantizer (0, 0, 60, G_GUI_UNIT, "", false)
+: gePack(x, y, Direction::HORIZONTAL)
+, m_bpm(0, 0, 60, G_GUI_UNIT)
+, m_meter(0, 0, 60, G_GUI_UNIT)
+, m_quantizer(0, 0, 60, G_GUI_UNIT, "", false)
 , m_multiplier(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", multiplyOff_xpm, multiplyOn_xpm)
-, m_divider   (0, 0, G_GUI_UNIT, G_GUI_UNIT, "", divideOff_xpm, divideOn_xpm)
+, m_divider(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", divideOff_xpm, divideOn_xpm)
 {
 	add(&m_quantizer);
 	add(&m_bpm);
@@ -59,7 +56,7 @@ geMainTimer::geMainTimer(int x, int y)
 	add(&m_multiplier);
 	add(&m_divider);
 
-	resizable(nullptr);   // don't resize any widget
+	resizable(nullptr); // don't resize any widget
 
 	m_bpm.copy_tooltip("Beats per minute (BPM)");
 	m_meter.copy_tooltip("Beats and bars");
@@ -69,7 +66,7 @@ geMainTimer::geMainTimer(int x, int y)
 
 	m_bpm.callback(cb_bpm, (void*)this);
 	m_meter.callback(cb_meter, (void*)this);
-	m_multiplier.callback(cb_multiplier, (void*)this);	
+	m_multiplier.callback(cb_multiplier, (void*)this);
 	m_divider.callback(cb_divider, (void*)this);
 
 	m_quantizer.add("off", 0, cb_quantizer, (void*)this);
@@ -82,76 +79,64 @@ geMainTimer::geMainTimer(int x, int y)
 	m_quantizer.value(0); //  "off" by default
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geMainTimer::cb_bpm       (Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_bpm(); }
-void geMainTimer::cb_meter     (Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_meter(); }
-void geMainTimer::cb_quantizer (Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_quantizer(); }
+void geMainTimer::cb_bpm(Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_bpm(); }
+void geMainTimer::cb_meter(Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_meter(); }
+void geMainTimer::cb_quantizer(Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_quantizer(); }
 void geMainTimer::cb_multiplier(Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_multiplier(); }
-void geMainTimer::cb_divider   (Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_divider(); }
-
+void geMainTimer::cb_divider(Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_divider(); }
 
 /* -------------------------------------------------------------------------- */
-
 
 void geMainTimer::cb_bpm()
 {
 	u::gui::openSubWindow(G_MainWin, new gdBpmInput(m_bpm.label()), WID_BPM);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMainTimer::cb_meter()
 {
 	u::gui::openSubWindow(G_MainWin, new gdBeatsInput(), WID_BEATS);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMainTimer::cb_quantizer()
 {
 	c::main::quantize(m_quantizer.value());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMainTimer::cb_multiplier()
 {
 	c::events::multiplyBeats();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMainTimer::cb_divider()
 {
 	c::events::divideBeats();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMainTimer::refresh()
 {
 	m_timer = c::main::getTimer();
 
-	if (m_timer.isRecordingInput) {
+	if (m_timer.isRecordingInput)
+	{
 		m_bpm.deactivate();
 		m_meter.deactivate();
 		m_multiplier.deactivate();
 		m_divider.deactivate();
 	}
-	else {
+	else
+	{
 #if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 		/* Don't reactivate m_bpm when using JACK. It must stay disabled. */
 		if (m_timer.isUsingJack)
@@ -161,15 +146,13 @@ void geMainTimer::refresh()
 #else
 		m_bpm.activate();
 #endif
-		m_meter.activate();	
+		m_meter.activate();
 		m_multiplier.activate();
-		m_divider.activate();	
+		m_divider.activate();
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMainTimer::rebuild()
 {
@@ -186,57 +169,50 @@ void geMainTimer::rebuild()
 #endif
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMainTimer::setBpm(const char* v)
 {
 	m_bpm.copy_label(v);
 }
 
-
 void geMainTimer::setBpm(float v)
 {
-	m_bpm.copy_label(u::string::fToString((float) v, 1).c_str()); // Only 1 decimal place (e.g. 120.0)
+	m_bpm.copy_label(u::string::fToString((float)v, 1).c_str()); // Only 1 decimal place (e.g. 120.0)
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMainTimer::setLock(bool v)
 {
-  if (v) {
-    m_bpm.deactivate();
-    m_meter.deactivate();
-    m_multiplier.deactivate();
-    m_divider.deactivate();
-  }
-  else {
-    m_bpm.activate();
-    m_meter.activate();
-    m_multiplier.activate();
-    m_divider.activate();
-  }
+	if (v)
+	{
+		m_bpm.deactivate();
+		m_meter.deactivate();
+		m_multiplier.deactivate();
+		m_divider.deactivate();
+	}
+	else
+	{
+		m_bpm.activate();
+		m_meter.activate();
+		m_multiplier.activate();
+		m_divider.activate();
+	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMainTimer::setQuantizer(int q)
 {
 	m_quantizer.value(q);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMainTimer::setMeter(int beats, int bars)
 {
 	std::string s = std::to_string(beats) + "/" + std::to_string(bars);
 	m_meter.copy_label(s.c_str());
 }
-} // giada::v::
+} // namespace giada::v

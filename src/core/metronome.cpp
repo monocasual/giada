@@ -24,34 +24,31 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "core/audioBuffer.h"
 #include "metronome.h"
-
+#include "core/audioBuffer.h"
 
 namespace giada::m
 {
 void Metronome::trigger(Click c, Frame o)
 {
-    m_rendering = true;
-    m_click     = c;
-    m_offset    = o;
+	m_rendering = true;
+	m_click     = c;
+	m_offset    = o;
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 void Metronome::render(AudioBuffer& outBuf)
 {
-    const float* data = m_click == Click::BEAT ? beat : bar;
-    for (Frame f = m_offset; f < outBuf.countFrames() && m_rendering; f++) {
-        for (int c = 0; c < outBuf.countChannels(); c++)
-            outBuf[f][c] += data[m_tracker];
-        m_tracker = (m_tracker + 1) % CLICK_SIZE;
-        if (m_tracker == 0)
-            m_rendering = false;
-    }
-    m_offset = 0;
+	const float* data = m_click == Click::BEAT ? beat : bar;
+	for (Frame f = m_offset; f < outBuf.countFrames() && m_rendering; f++)
+	{
+		for (int c = 0; c < outBuf.countChannels(); c++)
+			outBuf[f][c] += data[m_tracker];
+		m_tracker = (m_tracker + 1) % CLICK_SIZE;
+		if (m_tracker == 0)
+			m_rendering = false;
+	}
+	m_offset = 0;
 }
-} // giada::m::
+} // namespace giada::m

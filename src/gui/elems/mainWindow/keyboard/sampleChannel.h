@@ -24,47 +24,41 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_SAMPLE_CHANNEL_H
 #define GE_SAMPLE_CHANNEL_H
 
-
-#include "glue/channel.h"
 #include "channel.h"
-
+#include "glue/channel.h"
 
 class geStatusButton;
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class geChannelMode;
 class geSampleChannel : public geChannel
 {
-public:
-
+  public:
 	geSampleChannel(int x, int y, int w, int h, c::channel::Data d);
 
 	void resize(int x, int y, int w, int h) override;
 	void draw() override;
-
 
 	void refresh() override;
 
 	geChannelMode*  modeBox;
 	geStatusButton* readActions;
 
-private:
-
+  private:
 	static void cb_playButton(Fl_Widget* /*w*/, void* p);
 	static void cb_openMenu(Fl_Widget* /*w*/, void* p);
 	static void cb_readActions(Fl_Widget* /*w*/, void* p);
-	void cb_playButton();
-	void cb_openMenu();
-	void cb_readActions();
+	void        cb_playButton();
+	void        cb_openMenu();
+	void        cb_readActions();
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

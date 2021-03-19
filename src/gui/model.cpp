@@ -24,37 +24,31 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "core/patch.h"
-#include "utils/log.h"
-#include "gui/dialogs/mainWindow.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/keyboard/column.h"
-#include "gui/elems/mainWindow/keyboard/channel.h"
 #include "model.h"
-
+#include "core/patch.h"
+#include "gui/dialogs/mainWindow.h"
+#include "gui/elems/mainWindow/keyboard/channel.h"
+#include "gui/elems/mainWindow/keyboard/column.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
+#include "utils/log.h"
 
 extern giada::v::gdMainWindow* G_MainWin;
-
 
 namespace giada::v::model
 {
 void store(m::patch::Patch& patch)
 {
-    G_MainWin->keyboard->forEachColumn([&](const geColumn& c)
-    {
-        patch.columns.push_back({ c.id, c.w() });
-    });
+	G_MainWin->keyboard->forEachColumn([&](const geColumn& c) {
+		patch.columns.push_back({c.id, c.w()});
+	});
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 void load(const m::patch::Patch& patch)
 {
-    G_MainWin->keyboard->layout.clear();
-    for (const m::patch::Column& col : patch.columns)
-        G_MainWin->keyboard->layout.push_back({ col.id, col.width });
+	G_MainWin->keyboard->layout.clear();
+	for (const m::patch::Column& col : patch.columns)
+		G_MainWin->keyboard->layout.push_back({col.id, col.width});
 }
-} // giada::v::model
+} // namespace giada::v::model

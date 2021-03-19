@@ -24,26 +24,24 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
+#include "core/recorder.h"
+#include "core/action.h"
+#include "core/channels/channel.h"
+#include "core/clock.h"
+#include "core/const.h"
+#include "core/kernelMidi.h"
+#include "core/mixer.h"
+#include "core/model/model.h"
+#include "core/recorderHandler.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannel.h"
-#include "core/channels/channel.h"
-#include "core/const.h"
-#include "core/clock.h"
-#include "core/model/model.h"
-#include "core/kernelMidi.h"
-#include "core/recorderHandler.h"
-#include "core/recorder.h"
-#include "core/action.h"
-#include "core/mixer.h"
+#include "recorder.h"
 #include "utils/gui.h"
 #include "utils/log.h"
-#include "recorder.h"
+#include <cassert>
 
-
-namespace giada::c::recorder 
+namespace giada::c::recorder
 {
 void clearAllActions(ID channelId)
 {
@@ -53,9 +51,7 @@ void clearAllActions(ID channelId)
 	updateChannel(channelId, /*updateActionEditor=*/true);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void clearVolumeActions(ID channelId)
 {
@@ -65,9 +61,7 @@ void clearVolumeActions(ID channelId)
 	updateChannel(channelId, /*updateActionEditor=*/true);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void clearStartStopActions(ID channelId)
 {
@@ -79,17 +73,15 @@ void clearStartStopActions(ID channelId)
 	updateChannel(channelId, /*updateActionEditor=*/true);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void updateChannel(ID channelId, bool updateActionEditor)
 {
 	/* TODO - move somewhere else in the core area */
 	m::model::get().getChannel(channelId).hasActions = m::recorder::hasActions(channelId);
 	m::model::swap(m::model::SwapType::HARD);
-				
+
 	if (updateActionEditor)
 		u::gui::refreshActionEditor();
 }
-} // giada::c::recorder::
+} // namespace giada::c::recorder

@@ -24,29 +24,30 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_WAVEFORM_H
 #define GE_WAVEFORM_H
 
-
-#include <vector>
-#include <FL/Fl_Widget.H>
 #include "core/const.h"
+#include <FL/Fl_Widget.H>
+#include <vector>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class geWaveform : public Fl_Widget
 {
-public:
-
+  public:
 #ifdef G_OS_WINDOWS
-	/* Fuck... */
-	#undef IN
-	#undef OUT
+/* Fuck... */
+#undef IN
+#undef OUT
 #endif
-	enum class Zoom	{ IN, OUT };
+	enum class Zoom
+	{
+		IN,
+		OUT
+	};
 
 	geWaveform(int x, int y, int w, int h);
 
@@ -62,7 +63,7 @@ public:
 	int getSelectionB() const;
 
 	bool getSnap() const;
-	int getSize() const;
+	int  getSize() const;
 
 	/* recalcPoints
 	Recomputes m_chanStart, m_chanEnd, ... */
@@ -99,13 +100,12 @@ public:
 	/* setWaveId
 	Call this when the Wave ID has changed (e.g. after a reload). */
 
-	void setWaveId(ID /*id*/ ) { /* TODO m_waveId = id;*/};
+	void setWaveId(ID /*id*/){/* TODO m_waveId = id;*/};
 
-private:
-
+  private:
 	static const int FLAG_WIDTH  = 20;
 	static const int FLAG_HEIGHT = 20;
-	static const int BORDER      = 8;  // window border <-> widget border
+	static const int BORDER      = 8; // window border <-> widget border
 	static const int SNAPPING    = 16;
 
 	/* selection
@@ -122,18 +122,18 @@ private:
 
 	struct
 	{
-		std::vector<int> sup;   // upper part of the waveform
-		std::vector<int> inf;   // lower part of the waveform
-		int  size;  // width of the waveform to draw (in pixel)
+		std::vector<int> sup;  // upper part of the waveform
+		std::vector<int> inf;  // lower part of the waveform
+		int              size; // width of the waveform to draw (in pixel)
 	} m_waveform;
 
 	struct
 	{
-		bool snap;
-		int level;
+		bool             snap;
+		int              level;
 		std::vector<int> points;
 	} m_grid;
-	
+
 	/* mouseOnStart/end
 	Is mouse on start or end flag? */
 
@@ -151,8 +151,8 @@ private:
 
 	bool smaller() const;
 
-	int pixelToFrame(int p) const;  // TODO - move these to utils::, will be needed in actionEditor 
-	int frameToPixel(int f) const;  // TODO - move these to utils::, will be needed in actionEditor 
+	int pixelToFrame(int p) const; // TODO - move these to utils::, will be needed in actionEditor
+	int frameToPixel(int f) const; // TODO - move these to utils::, will be needed in actionEditor
 
 	/* fixSelection
 	Helper function which flattens the selection if it was made from right to left 
@@ -186,7 +186,7 @@ private:
 	Allocates memory for the picture. It's smart enough not to reallocate if 
 	datasize hasn't changed, but it can be forced otherwise. */
 
-	int alloc(int datasize, bool force=false);
+	int alloc(int datasize, bool force = false);
 
 	const c::sampleEditor::Data* m_data;
 
@@ -202,7 +202,7 @@ private:
 	int   m_mouseX;
 	int   m_mouseY;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

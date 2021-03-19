@@ -24,30 +24,29 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cmath>
-#include <cstdlib>
-#include <FL/Fl_Pack.H>
+#include "volumeTool.h"
 #include "core/const.h"
 #include "glue/events.h"
+#include "gui/dialogs/sampleEditor.h"
+#include "gui/elems/mainWindow/keyboard/channel.h"
 #include "utils/gui.h"
 #include "utils/math.h"
 #include "utils/string.h"
-#include "gui/dialogs/sampleEditor.h"
-#include "gui/elems/mainWindow/keyboard/channel.h"
-#include "volumeTool.h"
+#include <FL/Fl_Pack.H>
+#include <cmath>
+#include <cstdlib>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 geVolumeTool::geVolumeTool(const c::sampleEditor::Data& d, int x, int y)
-: gePack (x, y, Direction::HORIZONTAL)
-, m_data (nullptr)
+: gePack(x, y, Direction::HORIZONTAL)
+, m_data(nullptr)
 , m_label(0, 0, 60, G_GUI_UNIT, "Volume", FL_ALIGN_LEFT)
-, m_dial (0, 0, G_GUI_UNIT, G_GUI_UNIT)
+, m_dial(0, 0, G_GUI_UNIT, G_GUI_UNIT)
 , m_input(0, 0, 70, G_GUI_UNIT)
-{		
+{
 	add(&m_label);
 	add(&m_dial);
 	add(&m_input);
@@ -60,9 +59,7 @@ geVolumeTool::geVolumeTool(const c::sampleEditor::Data& d, int x, int y)
 	rebuild(d);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geVolumeTool::rebuild(const c::sampleEditor::Data& d)
 {
@@ -70,44 +67,37 @@ void geVolumeTool::rebuild(const c::sampleEditor::Data& d)
 	update(m_data->volume, /*isDial=*/false);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geVolumeTool::update(float v, bool isDial)
 {
 	std::string tmp = "-inf";
-	float dB = u::math::linearToDB(v);
-	if (dB > -INFINITY) 
-		tmp = u::string::fToString(dB, 2);  // 2 digits
+	float       dB  = u::math::linearToDB(v);
+	if (dB > -INFINITY)
+		tmp = u::string::fToString(dB, 2); // 2 digits
 	m_input.value(tmp.c_str());
 	if (!isDial)
 		m_dial.value(v);
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geVolumeTool::cb_setVolume   (Fl_Widget* /*w*/, void* p) { ((geVolumeTool*)p)->cb_setVolume(); }
+void geVolumeTool::cb_setVolume(Fl_Widget* /*w*/, void* p) { ((geVolumeTool*)p)->cb_setVolume(); }
 void geVolumeTool::cb_setVolumeNum(Fl_Widget* /*w*/, void* p) { ((geVolumeTool*)p)->cb_setVolumeNum(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geVolumeTool::cb_setVolume()
 {
 	c::events::setChannelVolume(m_data->channelId, m_dial.value(), Thread::MAIN);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geVolumeTool::cb_setVolumeNum()
 {
-	c::events::setChannelVolume(m_data->channelId, u::math::dBtoLinear(atof(m_input.value())), 
-		Thread::MAIN);
+	c::events::setChannelVolume(m_data->channelId, u::math::dBtoLinear(atof(m_input.value())),
+	    Thread::MAIN);
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

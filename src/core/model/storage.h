@@ -24,20 +24,23 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_MODEL_STORAGE_H
 #define G_MODEL_STORAGE_H
 
-
-namespace giada::m::patch { struct Patch; }
-namespace giada::m::conf  { struct Conf; }
+namespace giada::m::patch
+{
+struct Patch;
+}
+namespace giada::m::conf
+{
+struct Conf;
+}
 namespace giada::m::model
 {
 void store(conf::Conf& c);
 void store(patch::Patch& p);
 void load(const patch::Patch& p);
 void load(const conf::Conf& c);
-} // giada::m::model::
-
+} // namespace giada::m::model
 
 #endif

@@ -24,21 +24,18 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_EVENT_DISPATCHER_H
 #define G_EVENT_DISPATCHER_H
 
-
-#include <thread>
-#include <variant>
-#include <atomic>
-#include <functional>
+#include "core/action.h"
+#include "core/const.h"
+#include "core/queue.h"
 #include "core/ringBuffer.h"
 #include "core/types.h"
-#include "core/action.h"
-#include "core/queue.h"
-#include "core/const.h"
-
+#include <atomic>
+#include <functional>
+#include <thread>
+#include <variant>
 
 /* giada::m::eventDispatcher
 Takes events from the two queues (MIDI and UI) filled by c::events and turns 
@@ -46,10 +43,10 @@ them into actual changes in the data model. */
 
 namespace giada::m::eventDispatcher
 {
-enum class EventType 
+enum class EventType
 {
-	KEY_PRESS, 
-	KEY_RELEASE, 
+	KEY_PRESS,
+	KEY_RELEASE,
 	KEY_KILL,
 	SEQUENCER_START,
 	SEQUENCER_STOP,
@@ -94,7 +91,6 @@ extern Queue<Event, G_MAX_DISPATCHER_EVENTS> MidiEvents;
 void init();
 
 void pumpEvent(Event e);
-} // giada::m
-
+} // namespace giada::m::eventDispatcher
 
 #endif

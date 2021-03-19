@@ -27,41 +27,41 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_PACK_H
 #define GE_PACK_H
-
 
 #include "core/const.h"
 #include "gui/elems/basics/group.h"
 
-
-namespace giada {
-namespace v 
+namespace giada
 {
-enum class Direction { HORIZONTAL, VERTICAL };
+namespace v
+{
+enum class Direction
+{
+	HORIZONTAL,
+	VERTICAL
+};
 
 /* gePack
 A stack of widgets that resize itself according to its content. */
 
 class gePack : public geGroup
 {
-public:
+  public:
+	gePack(int x, int y, Direction d, int gutter = G_GUI_INNER_MARGIN);
 
-	gePack(int x, int y, Direction d, int gutter=G_GUI_INNER_MARGIN);
-
-    /* add
+	/* add
     Adds a Fl_Widget 'w' to this pack. Coordinates are relative to the group,
     so origin starts at (0, 0). */
 
-    void add(Fl_Widget* w);
+	void add(Fl_Widget* w);
 
-private:
-
-    Direction m_direction;
-    int       m_gutter;
+  private:
+	Direction m_direction;
+	int       m_gutter;
 };
-}}
-
+} // namespace v
+} // namespace giada
 
 #endif

@@ -24,38 +24,36 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cmath>
 #include "math.h"
+#include <cmath>
 
-
-namespace giada {
-namespace u     {
-namespace math 
+namespace giada
+{
+namespace u
+{
+namespace math
 {
 float linearToDB(float f)
 {
 	return 20 * std::log10(f);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int quantize(int x, int step)
 {
 	/* Source:
 	https://en.wikipedia.org/wiki/Quantization_(signal_processing)#Rounding_example */
-	return step * std::floor((x / (float) step) + 0.5f);
+	return step * std::floor((x / (float)step) + 0.5f);
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 float dBtoLinear(float f)
 {
-	return std::pow(10, f/20.0f); 
+	return std::pow(10, f / 20.0f);
 }
 
-}}}  // giada::u::math::
+} // namespace math
+} // namespace u
+} // namespace giada

@@ -24,18 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_MIDI_ACTION_EDITOR_H
 #define GD_MIDI_ACTION_EDITOR_H
 
-
 #include "baseActionEditor.h"
-
 
 class geResizerBar;
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class geNoteEditor;
@@ -43,21 +40,19 @@ class geVelocityEditor;
 
 class gdMidiActionEditor : public gdBaseActionEditor
 {
-public:
+  public:
+	gdMidiActionEditor(ID channelId);
 
-    gdMidiActionEditor(ID channelId);
+	void rebuild() override;
 
-    void rebuild() override;
-
-private:
-
-    geNoteEditor*     m_ne;
-	geResizerBar*     m_ner;
+  private:
+	geNoteEditor* m_ne;
+	geResizerBar* m_ner;
 
 	geVelocityEditor* m_ve;
-    geResizerBar*     m_ver;
+	geResizerBar*     m_ver;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

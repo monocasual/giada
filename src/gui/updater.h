@@ -24,16 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_V_UPDATER_H
 #define G_V_UPDATER_H
-
 
 namespace giada::v::updater
 {
 void init();
 void update(void* p);
-} // giada::v::updater::
-
+} // namespace giada::v::updater
 
 #endif

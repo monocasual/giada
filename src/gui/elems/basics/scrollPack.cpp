@@ -24,66 +24,58 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
-#include "core/const.h"
-#include "boxtypes.h"
 #include "scrollPack.h"
+#include "boxtypes.h"
+#include "core/const.h"
+#include <cassert>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 geScrollPack::geScrollPack(int x, int y, int w, int h, int type, Direction dir,
     int gutter)
-: geScroll   (x, y, w, h, type)
+: geScroll(x, y, w, h, type)
 , m_direction(dir)
-, m_gutter   (gutter)
+, m_gutter(gutter)
 {
-    end();
+	end();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::size_t geScrollPack::countChildren() const
 {
-    return m_widgets.size();
+	return m_widgets.size();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geScrollPack::add(Fl_Widget* w)
 {
-    if (countChildren() == 0)
-        w->position(x(), y());
-    else
-    if (m_direction == Direction::HORIZONTAL)
-        w->position((getLastChild()->x() + getLastChild()->w() + m_gutter), y());
-    else
-        w->position(x(), (getLastChild()->y() + getLastChild()->h() + m_gutter));
+	if (countChildren() == 0)
+		w->position(x(), y());
+	else if (m_direction == Direction::HORIZONTAL)
+		w->position((getLastChild()->x() + getLastChild()->w() + m_gutter), y());
+	else
+		w->position(x(), (getLastChild()->y() + getLastChild()->h() + m_gutter));
 
-    geScroll::add(w);
-    m_widgets.push_back(w);
+	geScroll::add(w);
+	m_widgets.push_back(w);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 Fl_Widget* geScrollPack::getChild(std::size_t i)
 {
-    return m_widgets.at(i); // Throws std::out_of_range in case
+	return m_widgets.at(i); // Throws std::out_of_range in case
 }
 
 /* -------------------------------------------------------------------------- */
 
-
 Fl_Widget* geScrollPack::getLastChild()
 {
-    return m_widgets.at(m_widgets.size() - 1); // Throws std::out_of_range in case
+	return m_widgets.at(m_widgets.size() - 1); // Throws std::out_of_range in case
 }
-}}
+} // namespace v
+} // namespace giada

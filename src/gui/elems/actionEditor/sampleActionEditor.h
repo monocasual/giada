@@ -24,28 +24,25 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_SAMPLE_ACTION_EDITOR_H
 #define GE_SAMPLE_ACTION_EDITOR_H
 
-
 #include "baseActionEditor.h"
 
-
-namespace giada {
+namespace giada
+{
 namespace m
 {
 class SampleChannel;
 struct Action;
-}
+} // namespace m
 namespace v
 {
 class geSampleAction;
 
 class geSampleActionEditor : public geBaseActionEditor
 {
-public:
-
+  public:
 	geSampleActionEditor(Pixel x, Pixel y, gdBaseActionEditor*);
 	~geSampleActionEditor();
 
@@ -53,16 +50,16 @@ public:
 
 	void rebuild(c::actionEditor::Data& d) override;
 
-private:
-
-	void onAddAction()     override;
-	void onDeleteAction()  override;
-	void onMoveAction()    override;
-	void onResizeAction()  override;
+  private:
+	void onAddAction() override;
+	void onDeleteAction() override;
+	void onMoveAction() override;
+	void onResizeAction() override;
 	void onRefreshAction() override;
 
-    bool isNoteOffSinglePress(const m::Action& a);
+	bool isNoteOffSinglePress(const m::Action& a);
 };
-}} // giada::v::
+} // namespace v
+} // namespace giada
 
 #endif

@@ -24,49 +24,44 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CHANNEL_WAVE_READER_H
 #define G_CHANNEL_WAVE_READER_H
 
-
-#include <samplerate.h>
 #include "core/types.h"
-
+#include <samplerate.h>
 
 namespace giada::m
 {
 class Wave;
 class WaveReader final
 {
-public:
-
+  public:
 	struct Result
 	{
 		Frame used, generated;
 	};
 
-    WaveReader();
-    WaveReader(const WaveReader& o);
-    WaveReader(WaveReader&&);
+	WaveReader();
+	WaveReader(const WaveReader& o);
+	WaveReader(WaveReader&&);
 	WaveReader& operator=(const WaveReader&);
-    WaveReader& operator=(WaveReader&&);
-    ~WaveReader();
+	WaveReader& operator=(WaveReader&&);
+	~WaveReader();
 
 	/* fill
 	Fills audio buffer 'out' with data coming from Wave, copying it from 'start'
 	frame up to 'max'. The buffer is filled starting at 'offset'. */
-	
-    Result fill(AudioBuffer& out, Frame start, Frame max, Frame offset, float pitch) const;
+
+	Result fill(AudioBuffer& out, Frame start, Frame max, Frame offset, float pitch) const;
 
 	/* wave
 	Wave object. Might be null if the channel has no sample. */
 
 	Wave* wave;
 
-private:
-
+  private:
 	Result fillResampled(AudioBuffer& out, Frame start, Frame max, Frame offset, float pitch) const;
-	Result fillCopy     (AudioBuffer& out, Frame start, Frame max, Frame offset) const;
+	Result fillCopy(AudioBuffer& out, Frame start, Frame max, Frame offset) const;
 
 	void allocateSrc();
 	void moveSrc(SRC_STATE** o);
@@ -76,7 +71,6 @@ private:
 
 	SRC_STATE* m_srcState;
 };
-} // giada::m::
-
+} // namespace giada::m
 
 #endif

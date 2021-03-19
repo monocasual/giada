@@ -27,52 +27,48 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
-
 
 #ifndef GD_PLUGIN_WINDOW_GUI_H
 #define GD_PLUGIN_WINDOW_GUI_H
 
-
+#include "window.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "window.h"
 
-
-namespace giada {
-namespace c {
+namespace giada
+{
+namespace c
+{
 namespace plugin
 {
 struct Plugin;
-}}
+}
+} // namespace c
 namespace v
 {
 class gdPluginWindowGUI : public gdWindow
 {
-public:
-
+  public:
 	gdPluginWindowGUI(c::plugin::Plugin&);
 	~gdPluginWindowGUI();
 
-private:
-
+  private:
 	static void cb_close(Fl_Widget* /*w*/, void* p);
 	static void cb_refresh(void* data);
-	void cb_close();
-	void cb_refresh();
+	void        cb_close();
+	void        cb_refresh();
 
-	void openEditor(void* parent); 
-	void closeEditor(); 
+	void openEditor(void* parent);
+	void closeEditor();
 
 	c::plugin::Plugin& m_plugin;
 
 	juce::AudioProcessorEditor* m_ui;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif // include guard
-
 
 #endif // #ifdef WITH_VST

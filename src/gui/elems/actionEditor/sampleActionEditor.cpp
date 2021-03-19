@@ -24,23 +24,22 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
-#include <FL/Fl.H>
-#include <FL/fl_draw.H>
-#include "core/recorder.h"
-#include "core/const.h"
-#include "core/conf.h"
+#include "sampleActionEditor.h"
 #include "core/action.h"
-#include "utils/log.h"
+#include "core/conf.h"
+#include "core/const.h"
+#include "core/recorder.h"
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "sampleAction.h"
-#include "sampleActionEditor.h"
+#include "utils/log.h"
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
+#include <cassert>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 geSampleActionEditor::geSampleActionEditor(Pixel x, Pixel y, gdBaseActionEditor* b)
@@ -48,18 +47,14 @@ geSampleActionEditor::geSampleActionEditor(Pixel x, Pixel y, gdBaseActionEditor*
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 geSampleActionEditor::~geSampleActionEditor()
 {
 	m::conf::conf.sampleActionEditorH = h();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 {
@@ -73,13 +68,14 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 
 	clear();
 	size(m_base->fullWidth, h());
-	
-	for (const m::Action& a1 : m_data->actions) {
+
+	for (const m::Action& a1 : m_data->actions)
+	{
 
 		if (a1.event.getStatus() == m::MidiEvent::ENVELOPE || isNoteOffSinglePress(a1))
 			continue;
 
-        const m::Action& a2 = a1.next != nullptr ? *a1.next : m::Action{};
+		const m::Action& a2 = a1.next != nullptr ? *a1.next : m::Action{};
 
 		Pixel px = x() + m_base->frameToPixel(a1.frame);
 		Pixel py = y() + 4;
@@ -95,15 +91,13 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 
 	/* If channel is LOOP_ANY, deactivate it: a loop mode channel cannot hold 
 	keypress/keyrelease actions. */
-	
+
 	isAnyLoopMode ? deactivate() : activate();
 
 	redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geSampleActionEditor::draw()
 {
@@ -117,72 +111,68 @@ void geSampleActionEditor::draw()
 	fl_color(G_COLOR_GREY_4);
 	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
 	if (active())
-		fl_draw("start/stop", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+		fl_draw("start/stop", x() + 4, y(), w(), h(), (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 	else
-		fl_draw("start/stop (disabled)", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+		fl_draw("start/stop (disabled)", x() + 4, y(), w(), h(), (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 
 	draw_children();
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geSampleActionEditor::onAddAction()     
+void geSampleActionEditor::onAddAction()
 {
 	Frame f = m_base->pixelToFrame(Fl::event_x() - x());
 	c::actionEditor::recordSampleAction(m_data->channelId, m_base->getActionType(), f);
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geSampleActionEditor::onDeleteAction()  
+void geSampleActionEditor::onDeleteAction()
 {
 	c::actionEditor::deleteSampleAction(m_data->channelId, m_action->a1);
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geSampleActionEditor::onMoveAction()    
+void geSampleActionEditor::onMoveAction()
 {
 	Pixel ex = Fl::event_x() - m_action->pick;
 
 	Pixel x1 = x();
 	Pixel x2 = m_base->loopWidth + x() - m_action->w();
 
-	if (ex < x1) ex = x1; else if (ex > x2) ex = x2;
+	if (ex < x1)
+		ex = x1;
+	else if (ex > x2)
+		ex = x2;
 
 	m_action->setPosition(ex);
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geSampleActionEditor::onResizeAction()  
+void geSampleActionEditor::onResizeAction()
 {
 	Pixel ex = Fl::event_x();
 
 	Pixel x1 = x();
 	Pixel x2 = m_base->loopWidth + x();
 
-	if (ex < x1) ex = x1; else if (ex > x2) ex = x2;
+	if (ex < x1)
+		ex = x1;
+	else if (ex > x2)
+		ex = x2;
 
-	if (m_action->onRightEdge) 
+	if (m_action->onRightEdge)
 		m_action->setRightEdge(ex - m_action->x());
 	else
 		m_action->setLeftEdge(ex);
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geSampleActionEditor::onRefreshAction() 
+void geSampleActionEditor::onRefreshAction()
 {
 	namespace ca = c::actionEditor;
 
@@ -192,32 +182,33 @@ void geSampleActionEditor::onRefreshAction()
 	Frame f2   = 0;
 	int   type = m_action->a1.event.getStatus();
 
-	if (!m_action->isOnEdges()) {
+	if (!m_action->isOnEdges())
+	{
 		f1 = m_base->pixelToFrame(p1);
 		f2 = m_base->pixelToFrame(p2, /*snap=*/false) - (m_base->pixelToFrame(p1, /*snap=*/false) - f1);
-	}	
-	else if (m_action->onLeftEdge) {
+	}
+	else if (m_action->onLeftEdge)
+	{
 		f1 = m_base->pixelToFrame(p1);
 		f2 = m_action->a2.frame;
 	}
-	else if (m_action->onRightEdge) {
+	else if (m_action->onRightEdge)
+	{
 		f1 = m_action->a1.frame;
 		f2 = m_base->pixelToFrame(p2);
 	}
 
 	ca::updateSampleAction(m_data->channelId, m_action->a1, type, f1, f2);
-			
+
 	m_base->rebuild();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool geSampleActionEditor::isNoteOffSinglePress(const m::Action& a)
 {
-	return m_data->sample->channelMode == SamplePlayerMode::SINGLE_PRESS && 
+	return m_data->sample->channelMode == SamplePlayerMode::SINGLE_PRESS &&
 	       a.event.getStatus() == m::MidiEvent::NOTE_OFF;
-
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

@@ -24,24 +24,23 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/Fl.H>
-#include "core/const.h"
+#include "noteEditor.h"
 #include "core/conf.h"
+#include "core/const.h"
 #include "gui/dialogs/actionEditor/midiActionEditor.h"
 #include "pianoRoll.h"
-#include "noteEditor.h"
+#include <FL/Fl.H>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 geNoteEditor::geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base)
 : geScroll(x, y, 200, 422)
-, m_base  (base)
+, m_base(base)
 {
 	end();
-	
+
 	type(Fl_Scroll::VERTICAL_ALWAYS);
 	size(m_base->fullWidth, m::conf::conf.pianoRollH);
 
@@ -49,9 +48,7 @@ geNoteEditor::geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base)
 	add(pianoRoll);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 geNoteEditor::~geNoteEditor()
 {
@@ -59,9 +56,7 @@ geNoteEditor::~geNoteEditor()
 	m::conf::conf.pianoRollY = pianoRoll->y();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geNoteEditor::scroll()
 {
@@ -70,20 +65,22 @@ void geNoteEditor::scroll()
 	Pixel y1 = y();
 	Pixel y2 = (y() + h()) - pianoRoll->h();
 
-	if (ey > y1) ey = y1; else if (ey < y2) ey = y2;
+	if (ey > y1)
+		ey = y1;
+	else if (ey < y2)
+		ey = y2;
 
 	pianoRoll->position(x(), ey);
 
 	redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geNoteEditor::rebuild(c::actionEditor::Data& d)
 {
 	size(m_base->fullWidth, h());
 	pianoRoll->rebuild(d);
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

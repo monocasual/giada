@@ -24,46 +24,41 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_BOOST_TOOL_H
 #define GE_BOOST_TOOL_H
 
-
 #include <FL/Fl_Pack.H>
-
 
 class geDial;
 class geInput;
 class geButton;
 class geBox;
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class geBoostTool : public Fl_Pack
 {
-public:
-
+  public:
 	geBoostTool(int x, int y);
 
 	void rebuild();
 
-private:
-
+  private:
 	static void cb_setBoost(Fl_Widget* /*w*/, void* p);
 	static void cb_setBoostNum(Fl_Widget* /*w*/, void* p);
 	static void cb_normalize(Fl_Widget* /*w*/, void* p);
-	void cb_setBoost();
-	void cb_setBoostNum();
-	void cb_normalize();
+	void        cb_setBoost();
+	void        cb_setBoostNum();
+	void        cb_normalize();
 
 	geBox*    label;
 	geDial*   dial;
 	geInput*  input;
 	geButton* normalize;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

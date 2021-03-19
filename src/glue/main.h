@@ -24,59 +24,59 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_MAIN_H
 #define G_MAIN_H
 
-
 #include "core/types.h"
 
-
-namespace giada::m::channel { struct Data; }
-namespace giada::m::model
-{ 
-struct Clock;
-struct Clock;
-struct Mixer;
-struct Mixer;
+namespace giada::m::channel
+{
+struct Data;
 }
+namespace giada::m::model
+{
+struct Clock;
+struct Clock;
+struct Mixer;
+struct Mixer;
+} // namespace giada::m::model
 namespace giada::c::main
 {
 struct Timer
 {
-    Timer() = default;
-    Timer(const m::model::Clock& c);
+	Timer() = default;
+	Timer(const m::model::Clock& c);
 
-    float bpm;
-    int   beats;
-    int   bars;
-    int   quantize;
-    bool  isUsingJack;
-    bool  isRecordingInput;
+	float bpm;
+	int   beats;
+	int   bars;
+	int   quantize;
+	bool  isUsingJack;
+	bool  isRecordingInput;
 };
 
 struct IO
 {
-    IO() = default;
-    IO(const m::channel::Data& out, const m::channel::Data& in, const m::model::Mixer& m);
+	IO() = default;
+	IO(const m::channel::Data& out, const m::channel::Data& in, const m::model::Mixer& m);
 
-    float masterOutVol;
-    float masterInVol;
+	float masterOutVol;
+	float masterInVol;
 #ifdef WITH_VST
-    bool  masterOutHasPlugins;
-    bool  masterInHasPlugins;
+	bool masterOutHasPlugins;
+	bool masterInHasPlugins;
 #endif
-    bool  inToOut;
+	bool inToOut;
 
-    float getMasterOutPeak();
-    float getMasterInPeak();
+	float getMasterOutPeak();
+	float getMasterInPeak();
 };
 
 /* get*
 Returns viewModel objects filled with data. */
 
 Timer getTimer();
-IO getIO();
+IO    getIO();
 
 /* setBpm (1)
 Sets bpm value from string to float. */
@@ -104,7 +104,6 @@ void toggleRecOnSignal();
 Resets Giada to init state. If resetGui also refresh all widgets. */
 
 void closeProject();
-} // giada::c::main::
-
+} // namespace giada::c::main
 
 #endif

@@ -26,20 +26,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_UTILS_LOG_H
 #define G_UTILS_LOG_H
 
-
+#include "core/const.h"
+#include "utils/fs.h"
 #include <cstdio>
 #include <string>
 #include <type_traits>
 #include <utility>
-#include "utils/fs.h"
-#include "core/const.h"
 
-
-namespace giada::u::log 
+namespace giada::u::log
 {
 inline FILE* f;
 inline int   mode;
@@ -57,14 +54,13 @@ void close();
 Internal utility function for string transformation. Uses forwarding references
 (&&) to avoid useless string copy. */
 
-static constexpr auto string_to_c_str = [] (auto&& s) 
-{
+static constexpr auto string_to_c_str = [](auto&& s) {
 	/* Remove any reference and const-ness, since the function can handle 
 	l-value and r-value, const or not. TODO - Use std::remove_cvref instead, 
 	when switching to C++20. */
 	if constexpr (std::is_same_v<std::remove_const_t<std::remove_reference_t<
-		decltype(s)>>,
-		std::string>)
+	                                 decltype(s)>>,
+	                  std::string>)
 		// If the argument is a std::string return an old-style C-string
 		return s.c_str();
 	else
@@ -77,12 +73,13 @@ A variadic printf-like logging function. Any `std::string` argument will be
 automatically transformed into a C-string. */
 
 template <typename... Args>
-static void print(const char* format, Args&&... args) 
+static void print(const char* format, Args&&... args)
 {
 	if (mode == LOG_MODE_MUTE)
 		return;
 
-	if (mode == LOG_MODE_FILE && stat == true) {
+	if (mode == LOG_MODE_FILE && stat == true)
+	{
 		// Replace any std::string in the arguments by its C-string
 		std::fprintf(f, format, string_to_c_str(std::forward<Args>(args))...);
 #ifdef _WIN32
@@ -92,7 +89,6 @@ static void print(const char* format, Args&&... args)
 	else
 		std::printf(format, string_to_c_str(std::forward<Args>(args))...);
 }
-} // giada::u::log
-
+} // namespace giada::u::log
 
 #endif

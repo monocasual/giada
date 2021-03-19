@@ -24,19 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
-#include "core/model/model.h"
+#include "core/model/storage.h"
 #include "core/channels/channelManager.h"
-#include "core/kernelAudio.h"
-#include "core/patch.h"
 #include "core/conf.h"
+#include "core/kernelAudio.h"
+#include "core/model/model.h"
+#include "core/patch.h"
 #include "core/plugins/pluginManager.h"
 #include "core/recorderHandler.h"
-#include "core/waveManager.h"
 #include "core/sequencer.h"
-#include "core/model/storage.h"
-
+#include "core/waveManager.h"
+#include <cassert>
 
 namespace giada::m::model
 {
@@ -46,25 +44,21 @@ void loadChannels_(const std::vector<patch::Channel>& channels, int samplerate)
 {
 	float samplerateRatio = conf::conf.samplerate / static_cast<float>(samplerate);
 
-    for (const patch::Channel& pchannel : channels)
+	for (const patch::Channel& pchannel : channels)
 		get().channels.push_back(channelManager::deserializeChannel(pchannel, samplerateRatio));
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void loadActions_(const std::vector<patch::Action>& pactions)
 {
 	getAll<Actions>() = std::move(recorderHandler::deserializeActions(pactions));
 }
-} // 
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 void store(patch::Patch& patch)
 {
@@ -91,9 +85,7 @@ void store(patch::Patch& patch)
 		patch.channels.push_back(channelManager::serializeChannel(c));
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void store(conf::Conf& conf)
 {
@@ -112,13 +104,11 @@ void store(conf::Conf& conf)
 	conf.midiInBeatHalf   = layout.midiIn.beatHalf;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void load(const patch::Patch& patch)
 {
-    DataLock lock;
+	DataLock lock;
 
 	/* Clear and re-initialize channels first. */
 
@@ -130,14 +120,15 @@ void load(const patch::Patch& patch)
 
 #ifdef WITH_VST
 	getAll<PluginPtrs>().clear();
-    for (const patch::Plugin& pplugin : patch.plugins)
-        getAll<PluginPtrs>().push_back(pluginManager::deserializePlugin(pplugin, patch.version));
+	for (const patch::Plugin& pplugin : patch.plugins)
+		getAll<PluginPtrs>().push_back(pluginManager::deserializePlugin(pplugin, patch.version));
 #endif
-    
+
 	getAll<WavePtrs>().clear();
-	for (const patch::Wave& pwave : patch.waves) {
+	for (const patch::Wave& pwave : patch.waves)
+	{
 		std::unique_ptr<Wave> w = waveManager::deserializeWave(pwave, conf::conf.samplerate,
-			conf::conf.rsmpQuality);
+		    conf::conf.rsmpQuality);
 		if (w != nullptr)
 			getAll<WavePtrs>().push_back(std::move(w));
 	}
@@ -154,9 +145,7 @@ void load(const patch::Patch& patch)
 	get().clock.quantize = patch.quantize;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void load(const conf::Conf& c)
 {
@@ -172,6 +161,6 @@ void load(const conf::Conf& c)
 	get().midiIn.beatHalf   = c.midiInBeatHalf;
 	get().midiIn.metronome  = c.midiInMetronome;
 
-	swap(SwapType::NONE);	
+	swap(SwapType::NONE);
 }
-} // giada::m::model::
+} // namespace giada::m::model

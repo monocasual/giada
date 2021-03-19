@@ -24,42 +24,39 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
 
-
-#include <cassert>
-#include <string>
+#include "pluginList.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "utils/string.h"
-#include "utils/gui.h"
-#include "gui/elems/basics/liquidScroll.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/button.h"
+#include "gui/elems/basics/liquidScroll.h"
 #include "gui/elems/basics/statusButton.h"
-#include "gui/elems/mainWindow/mainIO.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
+#include "gui/elems/mainWindow/mainIO.h"
 #include "gui/elems/plugin/pluginElement.h"
-#include "pluginChooser.h"
 #include "mainWindow.h"
-#include "pluginList.h"
-
+#include "pluginChooser.h"
+#include "utils/gui.h"
+#include "utils/string.h"
+#include <cassert>
+#include <string>
 
 extern giada::v::gdMainWindow* G_MainWin;
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 gdPluginList::gdPluginList(ID channelId)
-: gdWindow   (m::conf::conf.pluginListX, m::conf::conf.pluginListY, 468, 204)
+: gdWindow(m::conf::conf.pluginListX, m::conf::conf.pluginListY, 468, 204)
 , m_channelId(channelId)
 {
 	end();
 
-	list = new geLiquidScroll(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 
-		w() - (G_GUI_OUTER_MARGIN*2), h() - (G_GUI_OUTER_MARGIN*2));
+	list = new geLiquidScroll(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN,
+	    w() - (G_GUI_OUTER_MARGIN * 2), h() - (G_GUI_OUTER_MARGIN * 2));
 	list->end();
 	add(list);
 	resizable(list);
@@ -70,9 +67,7 @@ gdPluginList::gdPluginList(ID channelId)
 	show();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 gdPluginList::~gdPluginList()
 {
@@ -80,15 +75,11 @@ gdPluginList::~gdPluginList()
 	m::conf::conf.pluginListY = y();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdPluginList::cb_addPlugin(Fl_Widget* /*v*/, void* p) { ((gdPluginList*)p)->cb_addPlugin(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdPluginList::rebuild()
 {
@@ -96,10 +87,10 @@ void gdPluginList::rebuild()
 
 	if (m_plugins.channelId == m::mixer::MASTER_OUT_CHANNEL_ID)
 		label("Master Out Plug-ins");
-	else
-	if (m_plugins.channelId == m::mixer::MASTER_IN_CHANNEL_ID)
+	else if (m_plugins.channelId == m::mixer::MASTER_IN_CHANNEL_ID)
 		label("Master In Plug-ins");
-	else {
+	else
+	{
 		std::string l = "Channel " + u::string::iToString(m_plugins.channelId) + " Plug-ins";
 		copy_label(l.c_str());
 	}
@@ -111,15 +102,13 @@ void gdPluginList::rebuild()
 
 	for (m::Plugin* plugin : m_plugins.plugins)
 		list->addWidget(new gePluginElement(0, 0, c::plugin::getPlugin(*plugin, m_plugins.channelId)));
-	
+
 	addPlugin = list->addWidget(new geButton(0, 0, 0, G_GUI_UNIT, "-- add new plugin --"));
-	
+
 	addPlugin->callback(cb_addPlugin, (void*)this);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdPluginList::cb_addPlugin()
 {
@@ -127,13 +116,10 @@ void gdPluginList::cb_addPlugin()
 	int wy = m::conf::conf.pluginChooserY;
 	int ww = m::conf::conf.pluginChooserW;
 	int wh = m::conf::conf.pluginChooserH;
-	u::gui::openSubWindow(G_MainWin, new v::gdPluginChooser(wx, wy, ww, wh, 
-		m_plugins.channelId), WID_FX_CHOOSER);
+	u::gui::openSubWindow(G_MainWin, new v::gdPluginChooser(wx, wy, ww, wh, m_plugins.channelId), WID_FX_CHOOSER);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 const gePluginElement& gdPluginList::getNextElement(const gePluginElement& currEl) const
 {
@@ -144,7 +130,6 @@ const gePluginElement& gdPluginList::getNextElement(const gePluginElement& currE
 	return *static_cast<gePluginElement*>(list->child(next));
 }
 
-
 const gePluginElement& gdPluginList::getPrevElement(const gePluginElement& currEl) const
 {
 	int curr = list->find(currEl);
@@ -153,7 +138,7 @@ const gePluginElement& gdPluginList::getPrevElement(const gePluginElement& currE
 		prev = 0;
 	return *static_cast<gePluginElement*>(list->child(prev));
 }
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif // #ifdef WITH_VST

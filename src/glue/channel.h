@@ -1,4 +1,4 @@
-	/* -----------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
@@ -24,21 +24,21 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_GLUE_CHANNEL_H
 #define G_GLUE_CHANNEL_H
 
-
-#include <optional>
-#include <atomic>
-#include <string>
-#include <vector>
 #include "core/model/model.h"
 #include "core/types.h"
+#include <atomic>
+#include <optional>
+#include <string>
+#include <vector>
 
-
-namespace giada::m { class Plugin; }
-namespace giada::c::channel 
+namespace giada::m
+{
+class Plugin;
+}
+namespace giada::c::channel
 {
 struct SampleData
 {
@@ -56,8 +56,7 @@ struct SampleData
 	bool             isLoop;
 	float            pitch;
 
-private:
-
+  private:
 	const m::channel::Data* m_channel;
 };
 
@@ -69,8 +68,7 @@ struct MidiData
 	bool isOutputEnabled() const;
 	int  getFilter() const;
 
-private:
-
+  private:
 	const m::channel::Data* m_channel;
 };
 
@@ -78,33 +76,32 @@ struct Data
 {
 	Data(const m::channel::Data&);
 
-	bool getMute() const;
-	bool getSolo() const;
+	bool          getMute() const;
+	bool          getSolo() const;
 	ChannelStatus getPlayStatus() const;
 	ChannelStatus getRecStatus() const;
-	bool getReadActions() const;
-	bool isArmed() const;
-	bool isRecordingInput() const;
-	bool isRecordingAction() const;
+	bool          getReadActions() const;
+	bool          isArmed() const;
+	bool          isRecordingInput() const;
+	bool          isRecordingAction() const;
 
-	ID              id;
-	ID              columnId;
+	ID id;
+	ID columnId;
 #ifdef WITH_VST
 	std::vector<m::Plugin*> plugins;
 #endif
-	ChannelType     type;
-	Pixel           height;
-	std::string     name;
-	float           volume;
-	float           pan;
-	int             key;
-	bool            hasActions;
+	ChannelType type;
+	Pixel       height;
+	std::string name;
+	float       volume;
+	float       pan;
+	int         key;
+	bool        hasActions;
 
 	std::optional<SampleData> sample;
 	std::optional<MidiData>   midi;
 
-private:
-
+  private:
 	const m::channel::Data& m_channel;
 };
 
@@ -131,7 +128,7 @@ int loadChannel(ID columnId, const std::string& fname);
 /* addAndLoadChannel
 Adds a new Sample Channel and fills it with a wave right away. */
 
-void addAndLoadChannel(ID columnId, const std::string& fpath); 
+void addAndLoadChannel(ID columnId, const std::string& fpath);
 
 /* addAndLoadChannels
 As above, with multiple audio file paths in input. */
@@ -162,7 +159,6 @@ void setName(ID channelId, const std::string& name);
 void setHeight(ID channelId, Pixel p);
 
 void setSamplePlayerMode(ID channelId, SamplePlayerMode m);
-} // giada::c::channel::
-
+} // namespace giada::c::channel
 
 #endif

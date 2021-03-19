@@ -24,14 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_UTILS_GUI_H
 #define G_UTILS_GUI_H
 
-
-#include <string>
 #include "core/types.h"
-
+#include <string>
 
 namespace giada
 {
@@ -39,8 +36,9 @@ namespace v
 {
 class gdWindow;
 }
-namespace u {
-namespace gui 
+namespace u
+{
+namespace gui
 {
 /* refresh
 Repaints some dynamic GUI elements. */
@@ -113,7 +111,8 @@ std::string truncate(const std::string& s, Pixel width);
 int centerWindowX(int w);
 int centerWindowY(int h);
 
-}}} // giada::u::gui::
-
+} // namespace gui
+} // namespace u
+} // namespace giada
 
 #endif

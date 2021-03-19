@@ -24,31 +24,28 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_PIANO_ROLL_H
 #define GE_PIANO_ROLL_H
 
-
-#include <FL/fl_draw.H>
 #include "baseActionEditor.h"
+#include <FL/fl_draw.H>
 
-
-namespace giada {
+namespace giada
+{
 namespace m
 {
 class MidiChannel;
-}	
+}
 namespace v
 {
 class gePianoRoll : public geBaseActionEditor
 {
-public:
-
-	static const int MAX_KEYS    = 127;
-	static const int MAX_OCTAVES = 9;
-	static const int KEYS        = 12;
-	static const Pixel CELL_H    = 20;
-	static const Pixel CELL_W    = 40;
+  public:
+	static const int   MAX_KEYS    = 127;
+	static const int   MAX_OCTAVES = 9;
+	static const int   KEYS        = 12;
+	static const Pixel CELL_H      = 20;
+	static const Pixel CELL_W      = 40;
 
 	gePianoRoll(Pixel x, Pixel y, Pixel w, gdBaseActionEditor*);
 
@@ -59,21 +56,30 @@ public:
 
 	Pixel pick;
 
-private:
-
+  private:
 	enum class Notes
 	{
-		G = 1, FS = 2, F = 3, E = 4, DS = 5, D = 6, CS = 7, C = 8, B = 9, AS = 10,
-		A = 11, GS = 0
+		G  = 1,
+		FS = 2,
+		F  = 3,
+		E  = 4,
+		DS = 5,
+		D  = 6,
+		CS = 7,
+		C  = 8,
+		B  = 9,
+		AS = 10,
+		A  = 11,
+		GS = 0
 	};
 
-	Fl_Offscreen surface1;  // notes, no repeat
-	Fl_Offscreen surface2;  // lines, x-repeat
+	Fl_Offscreen surface1; // notes, no repeat
+	Fl_Offscreen surface2; // lines, x-repeat
 
-	void onAddAction()     override;
-	void onDeleteAction()  override;
-	void onMoveAction()    override;
-	void onResizeAction()  override;
+	void onAddAction() override;
+	void onDeleteAction() override;
+	void onMoveAction() override;
+	void onResizeAction() override;
 	void onRefreshAction() override;
 
 	/* drawSurface*
@@ -92,7 +98,7 @@ private:
 	Pixel noteToY(int n) const;
 	Pixel getPianoItemW(Pixel x, const m::Action& a1, const m::Action& a2) const;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

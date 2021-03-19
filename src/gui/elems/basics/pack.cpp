@@ -27,36 +27,33 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "core/const.h"
 #include "pack.h"
+#include "core/const.h"
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 gePack::gePack(int x, int y, Direction d, int gutter)
-: geGroup    (x, y)
+: geGroup(x, y)
 , m_direction(d)
-, m_gutter   (gutter)
+, m_gutter(gutter)
 {
-    end();
+	end();
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 void gePack::add(Fl_Widget* widget)
 {
-    if (countChildren() == 0)
-        widget->position(0, 0);
-    else
-    if (m_direction == Direction::HORIZONTAL)
-        widget->position((getLastChild()->x() + getLastChild()->w() + m_gutter) - x(), 0);
-    else
-        widget->position(0, (getLastChild()->y() + getLastChild()->h() + m_gutter) - y());
+	if (countChildren() == 0)
+		widget->position(0, 0);
+	else if (m_direction == Direction::HORIZONTAL)
+		widget->position((getLastChild()->x() + getLastChild()->w() + m_gutter) - x(), 0);
+	else
+		widget->position(0, (getLastChild()->y() + getLastChild()->h() + m_gutter) - y());
 
-    geGroup::add(widget);
+	geGroup::add(widget);
 }
-}}
+} // namespace v
+} // namespace giada

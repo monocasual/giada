@@ -24,20 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_RECORDER_H
 #define G_RECORDER_H
 
-
-#include <map>
-#include <vector>
-#include <functional>
-#include <memory>
-#include "core/types.h"
 #include "core/action.h"
-#include "core/patch.h"
 #include "core/midiEvent.h"
-
+#include "core/patch.h"
+#include "core/types.h"
+#include <functional>
+#include <map>
+#include <memory>
+#include <vector>
 
 namespace giada::m::recorder
 {
@@ -93,7 +90,7 @@ void updateSiblings(ID id, ID prevId, ID nextId);
 /* hasActions
 Checks if the channel has at least one action recorded. */
 
-bool hasActions(ID channelId, int type=0);
+bool hasActions(ID channelId, int type = 0);
 
 /* makeAction
 Makes a new action given some data. */
@@ -144,7 +141,6 @@ Action getClosestAction(ID channelId, Frame f, int type);
 Returns a new action ID, internally generated. */
 
 ID getNewActionId();
-} // giada::m::recorder::
-
+} // namespace giada::m::recorder
 
 #endif

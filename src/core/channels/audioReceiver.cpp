@@ -24,22 +24,18 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "core/channels/channel.h"
 #include "audioReceiver.h"
-
+#include "core/channels/channel.h"
 
 namespace giada::m::audioReceiver
 {
 Data::Data(const patch::Channel& p)
-: inputMonitor     (p.inputMonitor)
+: inputMonitor(p.inputMonitor)
 , overdubProtection(p.overdubProtection)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void render(const channel::Data& ch, const AudioBuffer& in)
 {
@@ -49,6 +45,6 @@ void render(const channel::Data& ch, const AudioBuffer& in)
 	(i.e. not plugin-processed). */
 
 	if (ch.armed && ch.audioReceiver->inputMonitor)
-		ch.buffer->audio.addData(in);  // add, don't overwrite
+		ch.buffer->audio.addData(in); // add, don't overwrite
 }
-} // giada::m::audioReceiver::
+} // namespace giada::m::audioReceiver

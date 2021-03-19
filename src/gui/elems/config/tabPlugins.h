@@ -24,40 +24,34 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_TAB_PLUGINS_H
 #define GE_TAB_PLUGINS_H
 
-
 #ifdef WITH_VST
 
-
 #include <FL/Fl_Group.H>
-
 
 class geInput;
 class geButton;
 class geBox;
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class geTabPlugins : public Fl_Group
 {
-public:
-
+  public:
 	geTabPlugins(int x, int y, int w, int h);
 
 	void save();
 	void refreshVstPath();
 
-private:
-
+  private:
 	static void cb_scan(Fl_Widget* /*w*/, void* p);
 	static void cb_browse(Fl_Widget* /*w*/, void* p);
-	void cb_scan();
-	void cb_browse();
+	void        cb_scan();
+	void        cb_browse();
 
 	void refreshCount();
 
@@ -66,10 +60,9 @@ private:
 	geButton* m_scanButton;
 	geBox*    m_info;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif // WITH_VST
-
 
 #endif

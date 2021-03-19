@@ -24,22 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-
+#include "input.h"
 #include "../../../core/const.h"
 #include "boxtypes.h"
-#include "input.h"
 
-
-geInput::geInput(int x, int y, int w, int h, const char *l)
-  : Fl_Input(x, y, w, h, l)
+geInput::geInput(int x, int y, int w, int h, const char* l)
+: Fl_Input(x, y, w, h, l)
 {
-  //Fl::set_boxtype(G_CUSTOM_BORDER_BOX, gDrawBox, 1, 1, 2, 2);
-  box(G_CUSTOM_BORDER_BOX);
-  labelsize(G_GUI_FONT_SIZE_BASE);
-  labelcolor(G_COLOR_LIGHT_2);
-  color(G_COLOR_BLACK);
-  textcolor(G_COLOR_LIGHT_2);
-  cursor_color(G_COLOR_LIGHT_2);
-  selection_color(G_COLOR_GREY_4);
-  textsize(G_GUI_FONT_SIZE_BASE);
+	//Fl::set_boxtype(G_CUSTOM_BORDER_BOX, gDrawBox, 1, 1, 2, 2);
+	box(G_CUSTOM_BORDER_BOX);
+	labelsize(G_GUI_FONT_SIZE_BASE);
+	labelcolor(G_COLOR_LIGHT_2);
+	color(G_COLOR_BLACK);
+	textcolor(G_COLOR_LIGHT_2);
+	cursor_color(G_COLOR_LIGHT_2);
+	selection_color(G_COLOR_GREY_4);
+	textsize(G_GUI_FONT_SIZE_BASE);
 }

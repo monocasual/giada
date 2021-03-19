@@ -24,28 +24,31 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_WAVE_MANAGER_H
 #define G_WAVE_MANAGER_H
 
-
-#include <string>
-#include <memory>
 #include "core/types.h"
+#include <memory>
+#include <string>
 
-
-namespace giada::m { class Wave; }
-namespace giada::m::patch { struct Wave; }
+namespace giada::m
+{
+class Wave;
+}
+namespace giada::m::patch
+{
+struct Wave;
+}
 namespace giada::m::waveManager
 {
 struct Result
 {
-    int status;
-    std::unique_ptr<Wave> wave = nullptr;
+	int                   status;
+	std::unique_ptr<Wave> wave = nullptr;
 };
 /* init
 Initializes internal data. */
-	
+
 void init();
 
 /* create
@@ -58,7 +61,7 @@ Result createFromFile(const std::string& path, ID id, int samplerate, int qualit
 /* createEmpty
 Creates a new silent Wave object. */
 
-std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate, 
+std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
     const std::string& name);
 
 /* createFromWave
@@ -77,13 +80,12 @@ Wave*                 hydrateWave(ID waveId);
 Change sample rate of 'w' to the desider value. The 'quality' parameter sets the
 algorithm to use for the conversion. */
 
-int resample(Wave& w, int quality, int samplerate); 
+int resample(Wave& w, int quality, int samplerate);
 
 /* save
 Writes Wave data to file 'path'. Only 'wav' format is supported for now. */
 
 int save(const Wave& w, const std::string& path);
-} // giada::m::waveManager::
-
+} // namespace giada::m::waveManager
 
 #endif

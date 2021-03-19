@@ -25,15 +25,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_BASE_ACTION_EDITOR_H
 #define GE_BASE_ACTION_EDITOR_H
 
-
 #include <FL/Fl_Group.H>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class gdBaseActionEditor;
@@ -41,16 +39,15 @@ class geBaseAction;
 
 class geBaseActionEditor : public Fl_Group
 {
-public:
-
+  public:
 	/* updateActions
 	Rebuild the actions widgets from scratch. */
-  
+
 	virtual void rebuild(c::actionEditor::Data& d) = 0;
 
 	/* handle
 	Override base FL_Group events. */
-	
+
 	int handle(int e) override;
 
 	/* getActionAtCursor
@@ -59,8 +56,7 @@ public:
 
 	geBaseAction* getActionAtCursor() const;
 
-protected:
-
+  protected:
 	geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h, gdBaseActionEditor*);
 
 	c::actionEditor::Data* m_data;
@@ -78,7 +74,7 @@ protected:
 	/* baseDraw
 	Draws basic things like borders and grids. Optional background clear. */
 
-  void baseDraw(bool clear=true) const;
+	void baseDraw(bool clear = true) const;
 
 	virtual void onAddAction()     = 0;
 	virtual void onDeleteAction()  = 0;
@@ -86,18 +82,17 @@ protected:
 	virtual void onResizeAction()  = 0;
 	virtual void onRefreshAction() = 0;
 
-private:
-	
+  private:
 	/* drawVerticals
 	Draws generic vertical lines (beats, bars, grid lines...). */
-	
+
 	void drawVerticals(int steps) const;
-	
+
 	int push();
 	int drag();
 	int release();
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

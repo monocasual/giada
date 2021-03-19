@@ -24,37 +24,35 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
-#include "utils/gui.h"
-#include "utils/string.h"
-#include "glue/io.h"
-#include "core/model/model.h"
-#include "core/conf.h"
-#include "utils/log.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/keyboard/channel.h"
-#include "gui/elems/mainWindow/keyboard/channelButton.h"
 #include "keyGrabber.h"
 #include "config.h"
+#include "core/conf.h"
+#include "core/model/model.h"
+#include "glue/io.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/mainWindow/keyboard/channel.h"
+#include "gui/elems/mainWindow/keyboard/channelButton.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "mainWindow.h"
-
+#include "utils/gui.h"
+#include "utils/log.h"
+#include "utils/string.h"
+#include <cassert>
 
 extern giada::v::gdMainWindow* mainWin;
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 gdKeyGrabber::gdKeyGrabber(const c::channel::Data& d)
 : gdWindow(300, 126, "Key configuration")
-, m_data  (d)
+, m_data(d)
 {
 	begin();
 	m_text   = new geBox(8, 8, 284, 80, "");
-	m_clear  = new geButton(w()-88, m_text->y()+m_text->h()+8, 80, 20, "Clear");
-	m_cancel = new geButton(m_clear->x()-88, m_clear->y(), 80, 20, "Close");
+	m_clear  = new geButton(w() - 88, m_text->y() + m_text->h() + 8, 80, 20, "Clear");
+	m_cancel = new geButton(m_clear->x() - 88, m_clear->y(), 80, 20, "Close");
 	end();
 
 	m_clear->callback(cb_clear, (void*)this);
@@ -67,34 +65,26 @@ gdKeyGrabber::gdKeyGrabber(const c::channel::Data& d)
 	show();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdKeyGrabber::rebuild()
 {
 	updateText(m_data.key);
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void gdKeyGrabber::cb_clear (Fl_Widget* /*w*/, void* p) { ((gdKeyGrabber*)p)->cb_clear(); }
+void gdKeyGrabber::cb_clear(Fl_Widget* /*w*/, void* p) { ((gdKeyGrabber*)p)->cb_clear(); }
 void gdKeyGrabber::cb_cancel(Fl_Widget* /*w*/, void* p) { ((gdKeyGrabber*)p)->cb_cancel(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdKeyGrabber::cb_cancel()
 {
 	do_callback();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdKeyGrabber::cb_clear()
 {
@@ -102,9 +92,7 @@ void gdKeyGrabber::cb_clear()
 	setButtonLabel(0);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdKeyGrabber::setButtonLabel(int key)
 {
@@ -112,7 +100,6 @@ void gdKeyGrabber::setButtonLabel(int key)
 }
 
 /* -------------------------------------------------------------------------- */
-
 
 void gdKeyGrabber::updateText(int key)
 {
@@ -124,34 +111,29 @@ void gdKeyGrabber::updateText(int key)
 	m_text->copy_label(tmp.c_str());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int gdKeyGrabber::handle(int e)
 {
 	int ret = Fl_Group::handle(e);
-	switch(e) {
-		case FL_KEYUP: {
-			int x = Fl::event_key();
-			if (strlen(Fl::event_text()) != 0
-			    && x != FL_BackSpace
-			    && x != FL_Enter
-			    && x != FL_Delete
-			    && x != FL_Tab
-			    && x != FL_End
-			    && x != ' ')
-			{
-				u::log::print("set key '%c' (%d) for channel ID=%d\n", x, x, m_data.id);
-				setButtonLabel(x);
-				updateText(x);
-				break;
-			}
-			else
-				u::log::print("invalid key\n");
+	switch (e)
+	{
+	case FL_KEYUP:
+	{
+		int x = Fl::event_key();
+		if (strlen(Fl::event_text()) != 0 && x != FL_BackSpace && x != FL_Enter && x != FL_Delete && x != FL_Tab && x != FL_End && x != ' ')
+		{
+			u::log::print("set key '%c' (%d) for channel ID=%d\n", x, x, m_data.id);
+			setButtonLabel(x);
+			updateText(x);
+			break;
 		}
+		else
+			u::log::print("invalid key\n");
 	}
-	return(ret);
+	}
+	return (ret);
 }
 
-}} // giada::v::
+} // namespace v
+} // namespace giada

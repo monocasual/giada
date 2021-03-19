@@ -24,24 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_QUANTIZER_H
 #define G_QUANTIZER_H
 
-
-#include <map>
-#include <functional>
 #include "core/const.h"
 #include "core/range.h"
 #include "core/types.h"
-
+#include <functional>
+#include <map>
 
 namespace giada::m
 {
 class Quantizer
 {
-public:
-
+  public:
 	/* schedule
 	Schedules a function in slot 'id' to be called at the right time. The 
 	function has a 'delta' parameter for the buffer offset. */
@@ -68,15 +64,13 @@ public:
 
 	/* hasBeenTriggered
 	True if a quantizer function has been triggered(). */
-	
+
 	bool hasBeenTriggered() const;
 
-private:
-
+  private:
 	std::map<int, std::function<void(Frame)>> m_callbacks;
-	int m_performId = -1;
+	int                                       m_performId = -1;
 };
-} // giada::m::
-
+} // namespace giada::m
 
 #endif

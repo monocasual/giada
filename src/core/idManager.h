@@ -24,20 +24,16 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_ID_MANAGER_H
 #define G_ID_MANAGER_H
 
-
 #include "core/types.h"
 
-
-namespace giada::m 
+namespace giada::m
 {
 class IdManager
 {
-public:
-
+  public:
 	IdManager();
 
 	/* set
@@ -50,18 +46,16 @@ public:
 	returns it with no unique id generation. Useful when loading things from the 
 	model that already have their own id. */
 
-	ID generate(ID id=0);
+	ID generate(ID id = 0);
 
 	/* get
 	Returns the current id, a.k.a. the last generated one. */
-	
+
 	ID get();
 
-private:
-
+  private:
 	ID m_id;
 };
-} // giada::m::
-
+} // namespace giada::m
 
 #endif

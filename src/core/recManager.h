@@ -24,16 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_REC_MANAGER_H
 #define G_REC_MANAGER_H
 
-
 #include "core/types.h"
 
-
-namespace giada {
-namespace m {
+namespace giada
+{
+namespace m
+{
 namespace recManager
 {
 bool isRecording();
@@ -47,6 +46,8 @@ void toggleActionRec(RecTriggerMode m);
 bool startInputRec(RecTriggerMode m);
 void stopInputRec();
 bool toggleInputRec(RecTriggerMode m);
-}}} // giada::m::recManager
+} // namespace recManager
+} // namespace m
+} // namespace giada
 
 #endif

@@ -26,22 +26,19 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_BROWSER_H
 #define GE_BROWSER_H
 
-
-#include <string>
 #include <FL/Fl_File_Browser.H>
+#include <string>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class geBrowser : public Fl_File_Browser
 {
-public:
-
+  public:
 	geBrowser(int x, int y, int w, int h);
 
 	void toggleHiddenFiles();
@@ -55,7 +52,7 @@ public:
 	Returns the full path or just the displayed name of the i-th selected item.
 	Always with the trailing slash! */
 
-	std::string getSelectedItem(bool fullPath=true);
+	std::string getSelectedItem(bool fullPath = true);
 
 	std::string getCurrentDir();
 
@@ -63,17 +60,16 @@ public:
 
 	int handle(int e);
 
-private:
-
+  private:
 	/* normalize
 	Makes sure the std::string never ends with a trailing slash. */
 
 	std::string normalize(const std::string& s);
 
 	std::string m_currentDir;
-	bool m_showHiddenFiles;
+	bool        m_showHiddenFiles;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

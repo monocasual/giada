@@ -24,20 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_PROGRESS_H
 #define GE_PROGRESS_H
 
-
 #include <FL/Fl_Progress.H>
-
 
 class geProgress : public Fl_Progress
 {
-public:
-
-	geProgress(int x, int y, int w, int h, const char *l=0);
+  public:
+	geProgress(int x, int y, int w, int h, const char* l = 0);
 };
-
 
 #endif

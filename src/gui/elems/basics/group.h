@@ -27,50 +27,46 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_GROUP_H
 #define GE_GROUP_H
 
-
-#include <vector>
 #include <FL/Fl_Group.H>
+#include <vector>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 /* geGroup
 A group that resizes itself accoring to the content. */
 
 class geGroup : public Fl_Group
 {
-public:
-
+  public:
 	geGroup(int x, int y);
 
-    /* countChildren
+	/* countChildren
     Returns the number of widgets contained in this group. */
-    
-    std::size_t countChildren() const;
 
-    /* add
+	std::size_t countChildren() const;
+
+	/* add
     Adds a Fl_Widget 'w' to this group. Coordinates are relative to the group,
     so origin starts at (0, 0). */
 
-    void add(Fl_Widget* w);
+	void add(Fl_Widget* w);
 
-    Fl_Widget* getChild(std::size_t i);
-    Fl_Widget* getLastChild();
+	Fl_Widget* getChild(std::size_t i);
+	Fl_Widget* getLastChild();
 
-private:
-
-    /* m_widgets 
+  private:
+	/* m_widgets 
     The internal Fl_Scroll::array_ is unreliable when inspected with the child()
     method. Let's keep track of widgets that belong to this group manually. */
 
-    std::vector<Fl_Widget*> m_widgets;    
+	std::vector<Fl_Widget*> m_widgets;
 };
-}}
-
+} // namespace v
+} // namespace giada
 
 #endif

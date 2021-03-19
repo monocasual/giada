@@ -24,22 +24,19 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_WAVE_TOOLS_H
 #define GE_WAVE_TOOLS_H
 
-
 #include <FL/Fl_Scroll.H>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class geWaveform;
 class geWaveTools : public Fl_Scroll
 {
-public:
-
+  public:
 	geWaveTools(int x, int y, int w, int h);
 
 	void resize(int x, int y, int w, int h) override;
@@ -59,16 +56,15 @@ public:
 	void refresh();
 
 	const c::sampleEditor::Data& getChannelData() const { return *m_data; }
-	
+
 	v::geWaveform* waveform;
 
-private:
-
+  private:
 	void openMenu();
 
 	const c::sampleEditor::Data* m_data;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

@@ -24,51 +24,47 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
-
 
 #ifndef GE_PLUGIN_PARAMETER_H
 #define GE_PLUGIN_PARAMETER_H
 
-
-#include <FL/Fl_Group.H>
 #include "core/types.h"
-
+#include <FL/Fl_Group.H>
 
 class geBox;
 class geSlider;
 
-
-namespace giada {
-namespace c {
+namespace giada
+{
+namespace c
+{
 namespace plugin
 {
 struct Param;
-}}
+}
+} // namespace c
 namespace v
 {
 class gePluginParameter : public Fl_Group
 {
-public:
-
+  public:
 	gePluginParameter(int x, int y, int w, int labelWidth, const c::plugin::Param);
 
 	void update(const c::plugin::Param& p, bool changeSlider);
 
-private:
-
+  private:
 	static void cb_setValue(Fl_Widget* /*w*/, void* p);
-	void cb_setValue();
+	void        cb_setValue();
 
-	const c::plugin::Param m_param; 
+	const c::plugin::Param m_param;
 
 	geBox*    m_label;
 	geSlider* m_slider;
 	geBox*    m_value;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif
 

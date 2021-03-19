@@ -24,17 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_RECORDER_HANDLER_H
 #define G_RECORDER_HANDLER_H
 
-
-#include <unordered_set>
 #include "midiEvent.h"
+#include <unordered_set>
 
-
-namespace giada {
-namespace m 
+namespace giada
+{
+namespace m
 {
 namespace patch
 {
@@ -84,9 +82,10 @@ void clearAllActions();
 /* (de)serializeActions
 Creates new Actions given the patch raw data and vice versa. */
 
-recorder::ActionMap deserializeActions(const std::vector<patch::Action>& as);
+recorder::ActionMap        deserializeActions(const std::vector<patch::Action>& as);
 std::vector<patch::Action> serializeActions(const recorder::ActionMap& as);
-}}} // giada::m::recorderHandler::
-
+} // namespace recorderHandler
+} // namespace m
+} // namespace giada
 
 #endif

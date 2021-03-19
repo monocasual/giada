@@ -24,18 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_KERNELAUDIO_H
 #define G_KERNELAUDIO_H
 
-
 #include <string>
 #ifdef WITH_AUDIO_JACK
-	#include <jack/jack.h>
-	#include <jack/intclient.h>
-	#include <jack/transport.h>
+#include <jack/jack.h>
+#include <jack/intclient.h>
+#include <jack/transport.h>
 #endif
-
 
 namespace giada::m::kernelAudio
 {
@@ -57,36 +54,35 @@ int closeDevice();
 int startStream();
 int stopStream();
 
-bool isReady();
-bool isProbed(unsigned dev);
-bool isDefaultIn(unsigned dev);
-bool isDefaultOut(unsigned dev);
-bool isInputEnabled();
+bool        isReady();
+bool        isProbed(unsigned dev);
+bool        isDefaultIn(unsigned dev);
+bool        isDefaultOut(unsigned dev);
+bool        isInputEnabled();
 std::string getDeviceName(unsigned dev);
-unsigned getMaxInChans(int dev);
-unsigned getMaxOutChans(unsigned dev);
-unsigned getDuplexChans(unsigned dev);
-unsigned getRealBufSize();
-unsigned countDevices();
-int getTotalFreqs(unsigned dev);
-int getFreq(unsigned dev, int i);
-int getDeviceByName(const char* name);
-int getDefaultOut();
-int getDefaultIn();
-bool hasAPI(int API);
-int getAPI();
-void logCompiledAPIs();
+unsigned    getMaxInChans(int dev);
+unsigned    getMaxOutChans(unsigned dev);
+unsigned    getDuplexChans(unsigned dev);
+unsigned    getRealBufSize();
+unsigned    countDevices();
+int         getTotalFreqs(unsigned dev);
+int         getFreq(unsigned dev, int i);
+int         getDeviceByName(const char* name);
+int         getDefaultOut();
+int         getDefaultIn();
+bool        hasAPI(int API);
+int         getAPI();
+void        logCompiledAPIs();
 
 #ifdef WITH_AUDIO_JACK
 
-void jackStart();
-void jackStop();
-void jackSetPosition(uint32_t frame);
-void jackSetBpm(double bpm);
+void      jackStart();
+void      jackStop();
+void      jackSetPosition(uint32_t frame);
+void      jackSetBpm(double bpm);
 JackState jackTransportQuery();
 
 #endif
-} // giada::m::kernelAudio::
-
+} // namespace giada::m::kernelAudio
 
 #endif

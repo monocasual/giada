@@ -24,18 +24,16 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
-#include "core/eventDispatcher.h"
+#include "midiActionRecorder.h"
 #include "core/action.h"
+#include "core/channels/channel.h"
 #include "core/clock.h"
 #include "core/conf.h"
+#include "core/eventDispatcher.h"
 #include "core/mixer.h"
-#include "core/recorderHandler.h"
 #include "core/recManager.h"
-#include "core/channels/channel.h"
-#include "midiActionRecorder.h"
-
+#include "core/recorderHandler.h"
+#include <cassert>
 
 namespace giada::m::midiActionRecorder
 {
@@ -49,27 +47,23 @@ void record_(channel::Data& ch, const MidiEvent& e)
 	ch.hasActions = true;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool canRecord_()
 {
-	return recManager::isRecordingAction() && 
-	       clock::isRunning()              && 
+	return recManager::isRecordingAction() &&
+	       clock::isRunning() &&
 	       !recManager::isRecordingInput();
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 void react(channel::Data& ch, const eventDispatcher::Event& e)
 {
 	if (e.type == eventDispatcher::EventType::MIDI && canRecord_())
 		record_(ch, std::get<Action>(e.data).event);
 }
-} // giada::m::midiActionRecorder::
+} // namespace giada::m::midiActionRecorder

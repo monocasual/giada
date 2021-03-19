@@ -24,24 +24,23 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
-#include <FL/Fl.H>
-#include <FL/fl_draw.H>
-#include "utils/log.h"
-#include "utils/math.h"
-#include "core/const.h"
-#include "core/conf.h"
+#include "envelopeEditor.h"
 #include "core/action.h"
+#include "core/conf.h"
+#include "core/const.h"
 #include "core/recorder.h"
+#include "envelopePoint.h"
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "envelopePoint.h"
-#include "envelopeEditor.h"
+#include "utils/log.h"
+#include "utils/math.h"
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
+#include <cassert>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 geEnvelopeEditor::geEnvelopeEditor(Pixel x, Pixel y, const char* l, gdBaseActionEditor* b)
@@ -50,20 +49,16 @@ geEnvelopeEditor::geEnvelopeEditor(Pixel x, Pixel y, const char* l, gdBaseAction
 	copy_label(l);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 geEnvelopeEditor::~geEnvelopeEditor()
 {
 	m::conf::conf.envelopeEditorH = h();
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geEnvelopeEditor::draw() 
+void geEnvelopeEditor::draw()
 {
 	baseDraw();
 
@@ -71,7 +66,7 @@ void geEnvelopeEditor::draw()
 
 	fl_color(G_COLOR_GREY_4);
 	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-	fl_draw(label(), x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT));
+	fl_draw(label(), x() + 4, y(), w(), h(), (Fl_Align)(FL_ALIGN_LEFT));
 
 	if (children() == 0)
 		return;
@@ -88,11 +83,13 @@ void geEnvelopeEditor::draw()
 		- reposition it on the y axis, only if there's no point selected (dragged
 	    around). */
 
-	for (int i=0; i<children(); i++) {
+	for (int i = 0; i < children(); i++)
+	{
 		geEnvelopePoint* p = static_cast<geEnvelopePoint*>(child(i));
 		if (m_action == nullptr)
 			p->position(p->x(), valueToY(p->a1.event.getVelocity()));
-		if (i > 0) {
+		if (i > 0)
+		{
 			x2 = p->x() + side;
 			y2 = p->y() + side;
 			fl_line(x1, y1, x2, y2);
@@ -104,9 +101,7 @@ void geEnvelopeEditor::draw()
 	draw_children();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geEnvelopeEditor::rebuild(c::actionEditor::Data& d)
 {
@@ -118,10 +113,11 @@ void geEnvelopeEditor::rebuild(c::actionEditor::Data& d)
 	clear();
 	size(m_base->fullWidth, h());
 
-	for (const m::Action& a : m_data->actions) {
+	for (const m::Action& a : m_data->actions)
+	{
 		if (a.event.getStatus() != m::MidiEvent::ENVELOPE)
 			continue;
-		add(new geEnvelopePoint(frameToX(a.frame), valueToY(a.event.getVelocity()), a)); 		
+		add(new geEnvelopePoint(frameToX(a.frame), valueToY(a.event.getVelocity()), a));
 	}
 
 	resizable(nullptr);
@@ -129,72 +125,59 @@ void geEnvelopeEditor::rebuild(c::actionEditor::Data& d)
 	redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool geEnvelopeEditor::isFirstPoint() const
 {
 	return find(m_action) == 0;
 }
 
-
 bool geEnvelopeEditor::isLastPoint() const
 {
 	return find(m_action) == children() - 1;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 Pixel geEnvelopeEditor::frameToX(Frame frame) const
 {
 	return x() + m_base->frameToPixel(frame) - (geEnvelopePoint::SIDE / 2);
 }
 
-
 Pixel geEnvelopeEditor::valueToY(int value) const
 {
 	return u::math::map<int, Pixel>(value, 0, G_MAX_VELOCITY, y() + (h() - geEnvelopePoint::SIDE), y());
 }
 
-
 int geEnvelopeEditor::yToValue(Pixel pixel, Pixel offset) const
 {
-	return u::math::map<Pixel, int>(pixel, h() - offset, 0, 0, G_MAX_VELOCITY);	
+	return u::math::map<Pixel, int>(pixel, h() - offset, 0, 0, G_MAX_VELOCITY);
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
-void geEnvelopeEditor::onAddAction()     
+void geEnvelopeEditor::onAddAction()
 {
 	Frame f = m_base->pixelToFrame(Fl::event_x() - x());
 	int   v = yToValue(Fl::event_y() - y());
-	
+
 	c::actionEditor::recordEnvelopeAction(m_data->channelId, f, v);
-	
+
 	m_base->rebuild(); // TODO - USELESS
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geEnvelopeEditor::onDeleteAction()  
+void geEnvelopeEditor::onDeleteAction()
 {
 	c::actionEditor::deleteEnvelopeAction(m_data->channelId, m_action->a1);
-		
+
 	m_base->rebuild(); // TODO - USELESS
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geEnvelopeEditor::onMoveAction()    
+void geEnvelopeEditor::onMoveAction()
 {
 	Pixel side = geEnvelopePoint::SIDE / 2;
 	Pixel ex   = Fl::event_x() - side;
@@ -206,21 +189,24 @@ void geEnvelopeEditor::onMoveAction()
 	Pixel y2 = y() + h() - geEnvelopePoint::SIDE;
 
 	/* x-axis constraints. */
-	if      (isFirstPoint() || ex < x1) ex = x1; 
-	else if (isLastPoint()  || ex > x2) ex = x2;
+	if (isFirstPoint() || ex < x1)
+		ex = x1;
+	else if (isLastPoint() || ex > x2)
+		ex = x2;
 
 	/* y-axis constraints. */
-	if (ey < y1) ey = y1; else if (ey > y2) ey = y2;
+	if (ey < y1)
+		ey = y1;
+	else if (ey > y2)
+		ey = y2;
 
 	m_action->position(ex, ey);
 	redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geEnvelopeEditor::onRefreshAction() 
+void geEnvelopeEditor::onRefreshAction()
 {
 	Frame f = m_base->pixelToFrame((m_action->x() - x()) + geEnvelopePoint::SIDE / 2);
 	float v = yToValue(m_action->y() - y(), geEnvelopePoint::SIDE);
@@ -228,4 +214,5 @@ void geEnvelopeEditor::onRefreshAction()
 
 	m_base->rebuild();
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

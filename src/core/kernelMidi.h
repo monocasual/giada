@@ -24,18 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_KERNELMIDI_H
 #define G_KERNELMIDI_H
 
-
+#include "midiMapConf.h"
 #include <cstdint>
 #include <string>
-#include "midiMapConf.h"
 
-
-namespace giada {
-namespace m {
+namespace giada
+{
+namespace m
+{
 namespace kernelMidi
 {
 int getB1(uint32_t iValue);
@@ -48,7 +47,7 @@ uint32_t getIValue(int b1, int b2, int b3);
 Sends a MIDI message 's' as uint32_t or as separate bytes. */
 
 void send(uint32_t s);
-void send(int b1, int b2=-1, int b3=-1);
+void send(int b1, int b2 = -1, int b3 = -1);
 
 /* sendMidiLightning
 Sends a MIDI lightning message defined by 'msg'. */
@@ -83,7 +82,8 @@ unsigned countOutPorts();
 
 bool hasAPI(int API);
 
-}}} // giada::m::kernelMidi::
-
+} // namespace kernelMidi
+} // namespace m
+} // namespace giada
 
 #endif

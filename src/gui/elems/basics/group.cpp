@@ -27,68 +27,63 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <algorithm>
 #include "group.h"
+#include <algorithm>
 
-
-namespace giada {
-namespace v 
+namespace giada
 {
-geGroup::geGroup(int x, int y) : Fl_Group(x, y, 0, 0)
+namespace v
 {
-    end();
+geGroup::geGroup(int x, int y)
+: Fl_Group(x, y, 0, 0)
+{
+	end();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::size_t geGroup::countChildren() const
 {
-    return m_widgets.size();
+	return m_widgets.size();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geGroup::add(Fl_Widget* widget)
 {
-    widget->position(widget->x() + x(), widget->y() + y());
-    
-    Fl_Group::add(widget);
-    m_widgets.push_back(widget);
+	widget->position(widget->x() + x(), widget->y() + y());
 
-    int newW = 0;
-    int newH = 0;
+	Fl_Group::add(widget);
+	m_widgets.push_back(widget);
 
-    for (const Fl_Widget* wg : m_widgets) {
-        newW = std::max(newW, (wg->x() + wg->w()) - x());
-        newH = std::max(newH, (wg->y() + wg->h()) - y());
-    }
+	int newW = 0;
+	int newH = 0;
 
-    /* Don't call size(newW, newH) as it changes widgets position. Adjust width
+	for (const Fl_Widget* wg : m_widgets)
+	{
+		newW = std::max(newW, (wg->x() + wg->w()) - x());
+		newH = std::max(newH, (wg->y() + wg->h()) - y());
+	}
+
+	/* Don't call size(newW, newH) as it changes widgets position. Adjust width
     and height manually instead. */
 
-    w(newW); h(newH);
+	w(newW);
+	h(newH);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 Fl_Widget* geGroup::getChild(std::size_t i)
 {
-    return m_widgets.at(i); // Throws std::out_of_range in case
+	return m_widgets.at(i); // Throws std::out_of_range in case
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 Fl_Widget* geGroup::getLastChild()
 {
-    return m_widgets.at(m_widgets.size() - 1); // Throws std::out_of_range in case
+	return m_widgets.at(m_widgets.size() - 1); // Throws std::out_of_range in case
 }
-}}
+} // namespace v
+} // namespace giada

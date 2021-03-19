@@ -24,43 +24,36 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #include "midiLearnParam.h"
-
 
 namespace giada::m
 {
 MidiLearnParam::MidiLearnParam()
 : m_param(0)
-, m_index(0) 
+, m_index(0)
 {
 }
-
 
 MidiLearnParam::MidiLearnParam(uint32_t v, std::size_t index)
 : m_param(v)
-, m_index(index) 
+, m_index(index)
 {
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 uint32_t MidiLearnParam::getValue() const
 {
-    return m_param.load();
+	return m_param.load();
 }
-
 
 void MidiLearnParam::setValue(uint32_t v)
 {
-    m_param.store(v);
+	m_param.store(v);
 }
-
 
 std::size_t MidiLearnParam::getIndex() const
 {
-    return m_index;
+	return m_index;
 }
-} // giada::m::
+} // namespace giada::m

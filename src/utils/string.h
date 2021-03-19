@@ -26,33 +26,32 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_UTILS_STRING_H
 #define G_UTILS_STRING_H
 
-
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
 
-
-namespace giada {
-namespace u     {
-namespace string 
+namespace giada
+{
+namespace u
+{
+namespace string
 {
 template <typename T>
-std::string iToString(T t, bool hex=false)
+std::string iToString(T t, bool hex = false)
 {
 	std::stringstream out;
 	if (hex)
 		out << std::hex << std::uppercase << t;
 	else
 		out << t;
-	return out.str();	
+	return out.str();
 }
 
 std::string replace(std::string in, const std::string& search,
-  const std::string& replace);
+    const std::string& replace);
 
 std::string trim(const std::string& s);
 
@@ -62,6 +61,8 @@ std::string fToString(float f, int precision);
 
 std::string format(const char* format, ...);
 
-}}} // giada::u::string
+} // namespace string
+} // namespace u
+} // namespace giada
 
 #endif

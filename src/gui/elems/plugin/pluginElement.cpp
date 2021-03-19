@@ -24,39 +24,37 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
 
-
-#include <cassert>
-#include <string>
+#include "pluginElement.h"
 #include "core/graphics.h"
-#include "core/plugins/pluginHost.h"
 #include "core/plugins/plugin.h"
-#include "utils/gui.h"
-#include "utils/log.h"
+#include "core/plugins/pluginHost.h"
 #include "glue/plugin.h"
-#include "gui/elems/basics/button.h"
-#include "gui/elems/basics/choice.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/pluginList.h"
-#include "gui/dialogs/pluginWindowGUI.h"
 #include "gui/dialogs/pluginWindow.h"
-#include "pluginElement.h"
+#include "gui/dialogs/pluginWindowGUI.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/choice.h"
+#include "utils/gui.h"
+#include "utils/log.h"
+#include <cassert>
+#include <string>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 gePluginElement::gePluginElement(int x, int y, c::plugin::Plugin data)
-: gePack   (x, y, Direction::HORIZONTAL) 
-, button   (0, 0, 196, G_GUI_UNIT)
-, program  (0, 0, 132, G_GUI_UNIT)
-, bypass   (0, 0, G_GUI_UNIT, G_GUI_UNIT)
-, shiftUp  (0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm)
+: gePack(x, y, Direction::HORIZONTAL)
+, button(0, 0, 196, G_GUI_UNIT)
+, program(0, 0, 132, G_GUI_UNIT)
+, bypass(0, 0, G_GUI_UNIT, G_GUI_UNIT)
+, shiftUp(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm)
 , shiftDown(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm)
-, remove   (0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxRemoveOff_xpm, fxRemoveOn_xpm)
-, m_plugin (data)
+, remove(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxRemoveOff_xpm, fxRemoveOn_xpm)
+, m_plugin(data)
 {
 	add(&button);
 	add(&program);
@@ -69,7 +67,8 @@ gePluginElement::gePluginElement(int x, int y, c::plugin::Plugin data)
 
 	remove.callback(cb_removePlugin, (void*)this);
 
-	if (!m_plugin.valid) {
+	if (!m_plugin.valid)
+	{
 		button.copy_label(m_plugin.uniqueId.c_str());
 		button.deactivate();
 		bypass.deactivate();
@@ -86,7 +85,8 @@ gePluginElement::gePluginElement(int x, int y, c::plugin::Plugin data)
 	for (const auto& p : m_plugin.programs)
 		program.add(u::gui::removeFltkChars(p.name).c_str());
 
-	if (program.size() == 0) {
+	if (program.size() == 0)
+	{
 		program.add("-- no programs --\0");
 		program.deactivate();
 	}
@@ -101,35 +101,28 @@ gePluginElement::gePluginElement(int x, int y, c::plugin::Plugin data)
 	shiftDown.callback(cb_shiftDown, (void*)this);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 ID gePluginElement::getPluginId() const
 {
 	return m_plugin.id;
 }
 
-
 const m::Plugin& gePluginElement::getPluginRef() const
 {
 	return m_plugin.getPluginRef();
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void gePluginElement::cb_removePlugin    (Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_removePlugin(); }
+void gePluginElement::cb_removePlugin(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_removePlugin(); }
 void gePluginElement::cb_openPluginWindow(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_openPluginWindow(); }
-void gePluginElement::cb_setBypass       (Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_setBypass(); }
-void gePluginElement::cb_shiftUp         (Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_shiftUp(); }
-void gePluginElement::cb_shiftDown       (Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_shiftDown(); }
-void gePluginElement::cb_setProgram      (Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_setProgram(); }
-
+void gePluginElement::cb_setBypass(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_setBypass(); }
+void gePluginElement::cb_shiftUp(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_shiftUp(); }
+void gePluginElement::cb_shiftDown(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_shiftDown(); }
+void gePluginElement::cb_setProgram(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_setProgram(); }
 
 /* -------------------------------------------------------------------------- */
-
 
 void gePluginElement::cb_shiftUp()
 {
@@ -138,9 +131,7 @@ void gePluginElement::cb_shiftUp()
 	c::plugin::swapPlugins(m_plugin.getPluginRef(), parent->getPrevElement(*this).getPluginRef(), m_plugin.channelId);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePluginElement::cb_shiftDown()
 {
@@ -149,23 +140,19 @@ void gePluginElement::cb_shiftDown()
 	c::plugin::swapPlugins(m_plugin.getPluginRef(), parent->getNextElement(*this).getPluginRef(), m_plugin.channelId);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePluginElement::cb_removePlugin()
 {
 	/* Any subwindow linked to the plugin must be destroyed first. The 
 	pluginWindow has id = id_plugin + 1, because id=0 is reserved for the parent 
 	window 'add plugin'.*/
-	
+
 	static_cast<gdWindow*>(window())->delSubWindow(m_plugin.id + 1);
 	c::plugin::freePlugin(m_plugin.getPluginRef(), m_plugin.channelId);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePluginElement::cb_openPluginWindow()
 {
@@ -177,37 +164,35 @@ void gePluginElement::cb_openPluginWindow()
 	gdWindow* parent = static_cast<gdWindow*>(window());
 	gdWindow* child  = parent->getChild(pwid);
 
-	if (child != nullptr) {
-		child->show();  // Raise it to top
+	if (child != nullptr)
+	{
+		child->show(); // Raise it to top
 	}
-	else {
+	else
+	{
 		if (m_plugin.hasEditor)
 			child = new gdPluginWindowGUI(m_plugin);
-		else 
+		else
 			child = new gdPluginWindow(m_plugin);
 		child->setId(pwid);
 		parent->addSubWindow(child);
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePluginElement::cb_setBypass()
 {
 	c::plugin::toggleBypass(m_plugin.id);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePluginElement::cb_setProgram()
 {
 	c::plugin::setProgram(m_plugin.id, program.value());
 }
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif // #ifdef WITH_VST

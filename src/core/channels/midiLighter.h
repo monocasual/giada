@@ -24,26 +24,27 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CHANNEL_MIDI_LIGHTER_H
 #define G_CHANNEL_MIDI_LIGHTER_H
 
-
-namespace giada::m::channel { struct Data; }
+namespace giada::m::channel
+{
+struct Data;
+}
 namespace giada::m::midiLighter
 {
 struct Data
 {
-    Data() = default;
-    Data(const patch::Channel& p);
-    Data(const Data& o) = default;
+	Data() = default;
+	Data(const patch::Channel& p);
+	Data(const Data& o) = default;
 
-    /* enabled
+	/* enabled
     Tells whether MIDI ligthing is enabled or not. */
-    
+
 	bool enabled;
 
-    /* MIDI learning fields for MIDI ligthing. */
+	/* MIDI learning fields for MIDI ligthing. */
 
 	MidiLearnParam playing;
 	MidiLearnParam mute;
@@ -51,7 +52,6 @@ struct Data
 };
 
 void react(channel::Data& ch, const eventDispatcher::Event& e, bool audible);
-} // giada::m::midiLighter::
-
+} // namespace giada::m::midiLighter
 
 #endif

@@ -24,51 +24,49 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
+#include "sampleChannel.h"
+#include "channelMode.h"
+#include "channelStatus.h"
+#include "column.h"
 #include "core/channels/channel.h"
 #include "core/channels/samplePlayer.h"
-#include "core/model/model.h"
-#include "core/mixer.h"
-#include "core/conf.h"
 #include "core/clock.h"
+#include "core/conf.h"
 #include "core/graphics.h"
-#include "core/wave.h"
-#include "core/recorder.h"
+#include "core/mixer.h"
+#include "core/model/model.h"
 #include "core/recManager.h"
-#include "glue/io.h"
+#include "core/recorder.h"
+#include "core/wave.h"
 #include "glue/channel.h"
 #include "glue/events.h"
+#include "glue/io.h"
 #include "glue/recorder.h"
 #include "glue/storage.h"
-#include "utils/gui.h"
-#include "gui/dispatcher.h"
-#include "gui/dialogs/mainWindow.h"
-#include "gui/dialogs/keyGrabber.h"
-#include "gui/dialogs/sampleEditor.h"
-#include "gui/dialogs/channelNameInput.h"
-#include "gui/dialogs/warnings.h"
 #include "gui/dialogs/actionEditor/sampleActionEditor.h"
-#include "gui/dialogs/browser/browserSave.h"
 #include "gui/dialogs/browser/browserLoad.h"
-#include "gui/dialogs/midiIO/midiOutputSampleCh.h"
+#include "gui/dialogs/browser/browserSave.h"
+#include "gui/dialogs/channelNameInput.h"
+#include "gui/dialogs/keyGrabber.h"
+#include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/midiIO/midiInputChannel.h"
+#include "gui/dialogs/midiIO/midiOutputSampleCh.h"
+#include "gui/dialogs/sampleEditor.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/dispatcher.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/button.h"
-#include "gui/elems/basics/statusButton.h"
 #include "gui/elems/basics/dial.h"
-#include "channelStatus.h"
-#include "channelMode.h"
-#include "sampleChannelButton.h"
+#include "gui/elems/basics/statusButton.h"
 #include "keyboard.h"
-#include "column.h"
-#include "sampleChannel.h"
-
+#include "sampleChannelButton.h"
+#include "utils/gui.h"
+#include <cassert>
 
 extern giada::v::gdMainWindow* G_MainWin;
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 namespace
@@ -95,102 +93,115 @@ enum class Menu
 	DELETE_CHANNEL
 };
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void menuCallback(Fl_Widget* w, void* v)
 {
 	const geSampleChannel*  gch  = static_cast<geSampleChannel*>(w);
 	const c::channel::Data& data = gch->getData();
 
-	switch ((Menu) (intptr_t) v) {
-		case Menu::INPUT_MONITOR: {
-			c::channel::setInputMonitor(data.id, !data.sample->getInputMonitor());
-			break;
-		}
-		case Menu::OVERDUB_PROTECTION: {
-			c::channel::setOverdubProtection(data.id, !data.sample->getOverdubProtection());
-			break;
-		}
-		case Menu::LOAD_SAMPLE: {
-			gdWindow* w = new gdBrowserLoad("Browse sample", 
-				m::conf::conf.samplePath.c_str(), c::storage::loadSample, data.id);
-			u::gui::openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
-			break;
-		}
-		case Menu::EXPORT_SAMPLE: {
-			gdWindow* w = new gdBrowserSave("Save sample", 
-				m::conf::conf.samplePath.c_str(), "", c::storage::saveSample, data.id);
-			u::gui::openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
-			break;
-		}
-		case Menu::SETUP_KEYBOARD_INPUT: {
-			u::gui::openSubWindow(G_MainWin, new gdKeyGrabber(data), 
-				WID_KEY_GRABBER);
-			break;
-		}
-		case Menu::SETUP_MIDI_INPUT: {
-			u::gui::openSubWindow(G_MainWin, new gdMidiInputChannel(data.id), 
-				WID_MIDI_INPUT);
-			break;
-		}
-		case Menu::SETUP_MIDI_OUTPUT: {
-			u::gui::openSubWindow(G_MainWin, new gdMidiOutputSampleCh(data.id), 
-				WID_MIDI_OUTPUT);
-			break;
-		}
-		case Menu::EDIT_SAMPLE: {
-			u::gui::openSubWindow(G_MainWin, new gdSampleEditor(data.id),
-				WID_SAMPLE_EDITOR);
-			break;
-		}
-		case Menu::EDIT_ACTIONS: {
-			u::gui::openSubWindow(G_MainWin, new gdSampleActionEditor(data.id), 
-				WID_ACTION_EDITOR);
-			break;
-		}
-		case Menu::CLEAR_ACTIONS:
-		case Menu::__END_CLEAR_ACTIONS_SUBMENU__:
-			break;
-		case Menu::CLEAR_ACTIONS_ALL: {
-			c::recorder::clearAllActions(data.id);
-			break;
-		}
-		case Menu::CLEAR_ACTIONS_VOLUME: {
-			c::recorder::clearVolumeActions(data.id);
-			break;
-		}
-		case Menu::CLEAR_ACTIONS_START_STOP: {
-			c::recorder::clearStartStopActions(data.id);
-			break;
-		}
-		case Menu::CLONE_CHANNEL: {
-			c::channel::cloneChannel(data.id);
-			break;
-		}
-		case Menu::RENAME_CHANNEL: {
-			u::gui::openSubWindow(G_MainWin, new gdChannelNameInput(data), 
-				WID_SAMPLE_NAME);
-			break;
-		}
-		case Menu::FREE_CHANNEL: {
-			c::channel::freeChannel(data.id);
-			break;
-		}
-		case Menu::DELETE_CHANNEL: {
-			c::channel::deleteChannel(data.id);
-			break;
-		}
+	switch ((Menu)(intptr_t)v)
+	{
+	case Menu::INPUT_MONITOR:
+	{
+		c::channel::setInputMonitor(data.id, !data.sample->getInputMonitor());
+		break;
+	}
+	case Menu::OVERDUB_PROTECTION:
+	{
+		c::channel::setOverdubProtection(data.id, !data.sample->getOverdubProtection());
+		break;
+	}
+	case Menu::LOAD_SAMPLE:
+	{
+		gdWindow* w = new gdBrowserLoad("Browse sample",
+		    m::conf::conf.samplePath.c_str(), c::storage::loadSample, data.id);
+		u::gui::openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
+		break;
+	}
+	case Menu::EXPORT_SAMPLE:
+	{
+		gdWindow* w = new gdBrowserSave("Save sample",
+		    m::conf::conf.samplePath.c_str(), "", c::storage::saveSample, data.id);
+		u::gui::openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
+		break;
+	}
+	case Menu::SETUP_KEYBOARD_INPUT:
+	{
+		u::gui::openSubWindow(G_MainWin, new gdKeyGrabber(data),
+		    WID_KEY_GRABBER);
+		break;
+	}
+	case Menu::SETUP_MIDI_INPUT:
+	{
+		u::gui::openSubWindow(G_MainWin, new gdMidiInputChannel(data.id),
+		    WID_MIDI_INPUT);
+		break;
+	}
+	case Menu::SETUP_MIDI_OUTPUT:
+	{
+		u::gui::openSubWindow(G_MainWin, new gdMidiOutputSampleCh(data.id),
+		    WID_MIDI_OUTPUT);
+		break;
+	}
+	case Menu::EDIT_SAMPLE:
+	{
+		u::gui::openSubWindow(G_MainWin, new gdSampleEditor(data.id),
+		    WID_SAMPLE_EDITOR);
+		break;
+	}
+	case Menu::EDIT_ACTIONS:
+	{
+		u::gui::openSubWindow(G_MainWin, new gdSampleActionEditor(data.id),
+		    WID_ACTION_EDITOR);
+		break;
+	}
+	case Menu::CLEAR_ACTIONS:
+	case Menu::__END_CLEAR_ACTIONS_SUBMENU__:
+		break;
+	case Menu::CLEAR_ACTIONS_ALL:
+	{
+		c::recorder::clearAllActions(data.id);
+		break;
+	}
+	case Menu::CLEAR_ACTIONS_VOLUME:
+	{
+		c::recorder::clearVolumeActions(data.id);
+		break;
+	}
+	case Menu::CLEAR_ACTIONS_START_STOP:
+	{
+		c::recorder::clearStartStopActions(data.id);
+		break;
+	}
+	case Menu::CLONE_CHANNEL:
+	{
+		c::channel::cloneChannel(data.id);
+		break;
+	}
+	case Menu::RENAME_CHANNEL:
+	{
+		u::gui::openSubWindow(G_MainWin, new gdChannelNameInput(data),
+		    WID_SAMPLE_NAME);
+		break;
+	}
+	case Menu::FREE_CHANNEL:
+	{
+		c::channel::freeChannel(data.id);
+		break;
+	}
+	case Menu::DELETE_CHANNEL:
+	{
+		c::channel::deleteChannel(data.id);
+		break;
+	}
 	}
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 : geChannel(X, Y, W, H, d)
@@ -201,19 +212,19 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 	constexpr int delta = 8 * (G_GUI_UNIT + G_GUI_INNER_MARGIN);
 #endif
 
-	playButton  = new geStatusButton       (x(), y(), G_GUI_UNIT, G_GUI_UNIT, channelStop_xpm, channelPlay_xpm);
-	arm         = new geButton             (playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm, armDisabled_xpm);
-	status      = new geChannelStatus      (arm->x() + arm->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, H, m_channel);
+	playButton  = new geStatusButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, channelStop_xpm, channelPlay_xpm);
+	arm         = new geButton(playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm, armDisabled_xpm);
+	status      = new geChannelStatus(arm->x() + arm->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, H, m_channel);
 	mainButton  = new geSampleChannelButton(status->x() + status->w() + G_GUI_INNER_MARGIN, y(), w() - delta, H, m_channel);
-	readActions = new geStatusButton       (mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, readActionOff_xpm, readActionOn_xpm, readActionDisabled_xpm);
-	modeBox     = new geChannelMode        (readActions->x() + readActions->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, m_channel);
-	mute        = new geStatusButton       (modeBox->x() + modeBox->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
-	solo        = new geStatusButton       (mute->x() + mute->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
+	readActions = new geStatusButton(mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, readActionOff_xpm, readActionOn_xpm, readActionDisabled_xpm);
+	modeBox     = new geChannelMode(readActions->x() + readActions->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, m_channel);
+	mute        = new geStatusButton(modeBox->x() + modeBox->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
+	solo        = new geStatusButton(mute->x() + mute->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
-	fx          = new geStatusButton       (solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
-	vol         = new geDial               (fx->x() + fx->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
+	fx  = new geStatusButton(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
+	vol = new geDial(fx->x() + fx->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
 #else
-	vol         = new geDial               (solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);	
+	vol                 = new geDial(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
 #endif
 
 	end();
@@ -224,7 +235,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 	arm->copy_tooltip("Arm for recording");
 	status->copy_tooltip("Progress bar");
 	readActions->copy_tooltip("Read actions\n\nToggles playback of pre-recorded "
-		"actions (key press, key release, ...).");
+	                          "actions (key press, key release, ...).");
 	modeBox->copy_tooltip("Mode");
 	mute->copy_tooltip("Mute");
 	solo->copy_tooltip("Solo");
@@ -238,7 +249,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 #endif
 
 	playButton->callback(cb_playButton, (void*)this);
-	playButton->when(FL_WHEN_CHANGED);   // On keypress && on keyrelease
+	playButton->when(FL_WHEN_CHANGED); // On keypress && on keyrelease
 
 	arm->type(FL_TOGGLE_BUTTON);
 	arm->value(m_channel.isArmed());
@@ -264,26 +275,20 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 	size(w(), h()); // Force responsiveness
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geSampleChannel::cb_playButton (Fl_Widget* /*w*/, void* p) { ((geSampleChannel*)p)->cb_playButton(); }
-void geSampleChannel::cb_openMenu   (Fl_Widget* /*w*/, void* p) { ((geSampleChannel*)p)->cb_openMenu(); }
+void geSampleChannel::cb_playButton(Fl_Widget* /*w*/, void* p) { ((geSampleChannel*)p)->cb_playButton(); }
+void geSampleChannel::cb_openMenu(Fl_Widget* /*w*/, void* p) { ((geSampleChannel*)p)->cb_openMenu(); }
 void geSampleChannel::cb_readActions(Fl_Widget* /*w*/, void* p) { ((geSampleChannel*)p)->cb_readActions(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geSampleChannel::cb_playButton()
 {
 	v::dispatcher::dispatchTouch(*this, playButton->value());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geSampleChannel::cb_openMenu()
 {
@@ -294,44 +299,44 @@ void geSampleChannel::cb_openMenu()
 		return;
 
 	Fl_Menu_Item rclick_menu[] = {
-		{"Input monitor",            0, menuCallback, (void*) Menu::INPUT_MONITOR,
-			FL_MENU_TOGGLE | (m_channel.sample->getInputMonitor() ? FL_MENU_VALUE : 0)},
-		{"Overdub protection",       0, menuCallback, (void*) Menu::OVERDUB_PROTECTION,
-			FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->getOverdubProtection() ? FL_MENU_VALUE : 0)},
-		{"Load new sample...",       0, menuCallback, (void*) Menu::LOAD_SAMPLE},
-		{"Export sample to file...", 0, menuCallback, (void*) Menu::EXPORT_SAMPLE},
-		{"Setup keyboard input...",  0, menuCallback, (void*) Menu::SETUP_KEYBOARD_INPUT},
-		{"Setup MIDI input...",      0, menuCallback, (void*) Menu::SETUP_MIDI_INPUT},
-		{"Setup MIDI output...",     0, menuCallback, (void*) Menu::SETUP_MIDI_OUTPUT},
-		{"Edit sample...",           0, menuCallback, (void*) Menu::EDIT_SAMPLE},
-		{"Edit actions...",          0, menuCallback, (void*) Menu::EDIT_ACTIONS},
-		{"Clear actions",            0, menuCallback, (void*) Menu::CLEAR_ACTIONS, FL_SUBMENU},
-			{"All",        0, menuCallback, (void*) Menu::CLEAR_ACTIONS_ALL},
-			{"Volume",     0, menuCallback, (void*) Menu::CLEAR_ACTIONS_VOLUME},
-			{"Start/Stop", 0, menuCallback, (void*) Menu::CLEAR_ACTIONS_START_STOP},
-			{0},
-		{"Rename", 0, menuCallback, (void*) Menu::RENAME_CHANNEL},
-		{"Clone",  0, menuCallback, (void*) Menu::CLONE_CHANNEL},
-		{"Free",   0, menuCallback, (void*) Menu::FREE_CHANNEL},
-		{"Delete", 0, menuCallback, (void*) Menu::DELETE_CHANNEL},
-		{0}
-	};
+	    {"Input monitor", 0, menuCallback, (void*)Menu::INPUT_MONITOR,
+	        FL_MENU_TOGGLE | (m_channel.sample->getInputMonitor() ? FL_MENU_VALUE : 0)},
+	    {"Overdub protection", 0, menuCallback, (void*)Menu::OVERDUB_PROTECTION,
+	        FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->getOverdubProtection() ? FL_MENU_VALUE : 0)},
+	    {"Load new sample...", 0, menuCallback, (void*)Menu::LOAD_SAMPLE},
+	    {"Export sample to file...", 0, menuCallback, (void*)Menu::EXPORT_SAMPLE},
+	    {"Setup keyboard input...", 0, menuCallback, (void*)Menu::SETUP_KEYBOARD_INPUT},
+	    {"Setup MIDI input...", 0, menuCallback, (void*)Menu::SETUP_MIDI_INPUT},
+	    {"Setup MIDI output...", 0, menuCallback, (void*)Menu::SETUP_MIDI_OUTPUT},
+	    {"Edit sample...", 0, menuCallback, (void*)Menu::EDIT_SAMPLE},
+	    {"Edit actions...", 0, menuCallback, (void*)Menu::EDIT_ACTIONS},
+	    {"Clear actions", 0, menuCallback, (void*)Menu::CLEAR_ACTIONS, FL_SUBMENU},
+	    {"All", 0, menuCallback, (void*)Menu::CLEAR_ACTIONS_ALL},
+	    {"Volume", 0, menuCallback, (void*)Menu::CLEAR_ACTIONS_VOLUME},
+	    {"Start/Stop", 0, menuCallback, (void*)Menu::CLEAR_ACTIONS_START_STOP},
+	    {0},
+	    {"Rename", 0, menuCallback, (void*)Menu::RENAME_CHANNEL},
+	    {"Clone", 0, menuCallback, (void*)Menu::CLONE_CHANNEL},
+	    {"Free", 0, menuCallback, (void*)Menu::FREE_CHANNEL},
+	    {"Delete", 0, menuCallback, (void*)Menu::DELETE_CHANNEL},
+	    {0}};
 
-	if (m_channel.sample->waveId == 0) {
-		rclick_menu[(int) Menu::EXPORT_SAMPLE].deactivate();
-		rclick_menu[(int) Menu::EDIT_SAMPLE].deactivate();
-		rclick_menu[(int) Menu::FREE_CHANNEL].deactivate();
-		rclick_menu[(int) Menu::RENAME_CHANNEL].deactivate();
+	if (m_channel.sample->waveId == 0)
+	{
+		rclick_menu[(int)Menu::EXPORT_SAMPLE].deactivate();
+		rclick_menu[(int)Menu::EDIT_SAMPLE].deactivate();
+		rclick_menu[(int)Menu::FREE_CHANNEL].deactivate();
+		rclick_menu[(int)Menu::RENAME_CHANNEL].deactivate();
 	}
 
 	if (!m_channel.hasActions)
-		rclick_menu[(int) Menu::CLEAR_ACTIONS].deactivate();
+		rclick_menu[(int)Menu::CLEAR_ACTIONS].deactivate();
 
 	/* No 'clear start/stop actions' for those channels in loop mode: they cannot
 	have start/stop actions. */
 
 	if (m_channel.sample->isLoop)
-		rclick_menu[(int) Menu::CLEAR_ACTIONS_START_STOP].deactivate();
+		rclick_menu[(int)Menu::CLEAR_ACTIONS_START_STOP].deactivate();
 
 	Fl_Menu_Button b(0, 0, 100, 50);
 	b.box(G_CUSTOM_BORDER_BOX);
@@ -345,9 +350,7 @@ void geSampleChannel::cb_openMenu()
 	return;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geSampleChannel::cb_readActions()
 {
@@ -357,15 +360,14 @@ void geSampleChannel::cb_readActions()
 		c::events::toggleReadActionsChannel(m_channel.id, Thread::MAIN);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geSampleChannel::refresh()
 {
 	geChannel::refresh();
 
-	if (m_channel.sample->waveId != 0) {
+	if (m_channel.sample->waveId != 0)
+	{
 		status->redraw();
 		if (m_channel.sample->getOverdubProtection())
 			arm->deactivate();
@@ -373,7 +375,8 @@ void geSampleChannel::refresh()
 			arm->activate();
 	}
 
-	if (m_channel.hasActions) {
+	if (m_channel.hasActions)
+	{
 		readActions->activate();
 		readActions->setStatus(m_channel.getReadActions());
 	}
@@ -381,11 +384,9 @@ void geSampleChannel::refresh()
 		readActions->deactivate();
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geSampleChannel::draw() 
+void geSampleChannel::draw()
 {
 	const int ny = y() + (h() / 2) - (G_GUI_UNIT / 2);
 
@@ -396,9 +397,7 @@ void geSampleChannel::draw()
 	geChannel::draw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geSampleChannel::resize(int X, int Y, int W, int H)
 {
@@ -410,7 +409,7 @@ void geSampleChannel::resize(int X, int Y, int W, int H)
 #ifdef WITH_VST
 	fx->hide();
 #endif
-	
+
 	if (w() > BREAK_ARM)
 		arm->show();
 #ifdef WITH_VST
@@ -424,4 +423,5 @@ void geSampleChannel::resize(int X, int Y, int W, int H)
 
 	packWidgets();
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

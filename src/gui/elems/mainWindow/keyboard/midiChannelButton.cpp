@@ -24,13 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "utils/string.h"
-#include "glue/channel.h"
 #include "midiChannelButton.h"
+#include "glue/channel.h"
+#include "utils/string.h"
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 geMidiChannelButton::geMidiChannelButton(int x, int y, int w, int h, const c::channel::Data& d)
@@ -38,9 +37,7 @@ geMidiChannelButton::geMidiChannelButton(int x, int y, int w, int h, const c::ch
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMidiChannelButton::refresh()
 {
@@ -50,21 +47,20 @@ void geMidiChannelButton::refresh()
 
 	if (m_channel.isRecordingAction() && m_channel.isArmed())
 		setActionRecordMode();
-	
+
 	redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geMidiChannelButton::refreshLabel()
 {
-    std::string l = m_channel.name.empty() ? "-- MIDI --" : m_channel.name; 
+	std::string l = m_channel.name.empty() ? "-- MIDI --" : m_channel.name;
 
 	if (m_channel.midi->isOutputEnabled())
 		l += " (ch " + std::to_string(m_channel.midi->getFilter() + 1) + " out)";
 
 	copy_label(l.c_str());
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

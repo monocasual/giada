@@ -24,20 +24,19 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_PATCH_H
 #define G_PATCH_H
 
-
+#include "core/const.h"
+#include "core/types.h"
+#include <cstdint>
 #include <string>
 #include <vector>
-#include <cstdint>
-#include "core/types.h"
-#include "core/const.h"
 
-
-namespace giada {
-namespace m {
+namespace giada
+{
+namespace m
+{
 namespace patch
 {
 struct Version
@@ -46,17 +45,15 @@ struct Version
 	int minor = G_VERSION_MINOR;
 	int patch = G_VERSION_PATCH;
 
-	bool operator ==(const Version& o) const;
-	bool operator < (const Version& o) const;
+	bool operator==(const Version& o) const;
+	bool operator<(const Version& o) const;
 };
-
 
 struct Column
 {
 	ID  id;
 	int width;
 };
-
 
 struct Channel
 {
@@ -99,13 +96,12 @@ struct Channel
 	uint32_t         midiInReadActions;
 	uint32_t         midiInPitch;
 	// midi channel
-	bool        midiOut;
-	int         midiOutChan;
+	bool midiOut;
+	int  midiOutChan;
 #ifdef WITH_VST
 	std::vector<ID> pluginIds;
 #endif
 };
-
 
 struct Action
 {
@@ -117,13 +113,11 @@ struct Action
 	ID       nextId;
 };
 
-
 struct Wave
 {
 	ID          id;
 	std::string path;
 };
-
 
 #ifdef WITH_VST
 struct Plugin
@@ -136,7 +130,6 @@ struct Plugin
 	std::vector<uint32_t> midiInParams;
 };
 #endif
-
 
 struct Patch
 {
@@ -155,16 +148,13 @@ struct Patch
 	std::vector<Action>  actions;
 	std::vector<Wave>    waves;
 #ifdef WITH_VST
-	std::vector<Plugin>  plugins;
+	std::vector<Plugin> plugins;
 #endif
 };
 
-
 /* -------------------------------------------------------------------------- */
 
-
 extern Patch patch;
-
 
 /* -------------------------------------------------------------------------- */
 
@@ -182,7 +172,8 @@ int read(const std::string& file, const std::string& basePath);
 Writes patch to file. */
 
 bool write(const std::string& file);
-}}}  // giada::m::patch::
-
+} // namespace patch
+} // namespace m
+} // namespace giada
 
 #endif

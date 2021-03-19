@@ -24,37 +24,32 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_BPMINPUT_H
 #define GD_BPMINPUT_H
 
-
 #include "window.h"
-
 
 class geInput;
 class geButton;
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class gdBpmInput : public gdWindow
 {
-public:
-
+  public:
 	gdBpmInput(const char* label); // pointer to mainWin->timing->bpm->label()
 
-private:
+  private:
+	static void cb_update(Fl_Widget* /*w*/, void* p);
+	void        cb_update();
 
-    static void cb_update(Fl_Widget* /*w*/, void* p);
-    void cb_update();
-
-    geInput* input_a;
-    geInput* input_b;
-    geButton* ok;
+	geInput*  input_a;
+	geInput*  input_b;
+	geButton* ok;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

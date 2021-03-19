@@ -24,15 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-
+#include "progress.h"
 #include "../../../core/const.h"
 #include "boxtypes.h"
-#include "progress.h"
 
-
-geProgress::geProgress(int x, int y, int w, int h, const char *l)
+geProgress::geProgress(int x, int y, int w, int h, const char* l)
 : Fl_Progress(x, y, w, h, l)
 {
-  color(G_COLOR_GREY_2, G_COLOR_GREY_4);
-  box(G_CUSTOM_BORDER_BOX);
+	color(G_COLOR_GREY_2, G_COLOR_GREY_4);
+	box(G_CUSTOM_BORDER_BOX);
 }

@@ -24,36 +24,32 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/fl_draw.H>
-#include "../../../core/const.h"
 #include "dial.h"
+#include "../../../core/const.h"
+#include <FL/fl_draw.H>
 
-
-geDial::geDial(int x, int y, int w, int h, const char *l)
+geDial::geDial(int x, int y, int w, int h, const char* l)
 : Fl_Dial(x, y, w, h, l)
 {
-  labelsize(G_GUI_FONT_SIZE_BASE);
-  labelcolor(G_COLOR_LIGHT_2);
-  align(FL_ALIGN_LEFT);
-  type(FL_FILL_DIAL);
-  angles(0, 360);
-  color(G_COLOR_GREY_2);            // background
-  selection_color(G_COLOR_GREY_4);   // selection
+	labelsize(G_GUI_FONT_SIZE_BASE);
+	labelcolor(G_COLOR_LIGHT_2);
+	align(FL_ALIGN_LEFT);
+	type(FL_FILL_DIAL);
+	angles(0, 360);
+	color(G_COLOR_GREY_2);           // background
+	selection_color(G_COLOR_GREY_4); // selection
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 void geDial::draw()
 {
-  double angle = (angle2()-angle1())*(value()-minimum())/(maximum()-minimum()) + angle1();
+	double angle = (angle2() - angle1()) * (value() - minimum()) / (maximum() - minimum()) + angle1();
 
-  fl_color(G_COLOR_GREY_2);
-  fl_pie(x(), y(), w(), h(), 270-angle1(), angle > angle1() ? 360+270-angle : 270-360-angle);
+	fl_color(G_COLOR_GREY_2);
+	fl_pie(x(), y(), w(), h(), 270 - angle1(), angle > angle1() ? 360 + 270 - angle : 270 - 360 - angle);
 
-  fl_color(G_COLOR_GREY_4);
-  fl_arc(x(), y(), w(), h(), 0, 360);
-  fl_pie(x(), y(), w(), h(), 270-angle, 270-angle1());
+	fl_color(G_COLOR_GREY_4);
+	fl_arc(x(), y(), w(), h(), 0, 360);
+	fl_pie(x(), y(), w(), h(), 270 - angle, 270 - angle1());
 }

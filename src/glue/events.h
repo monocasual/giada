@@ -24,13 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_GLUE_EVENTS_H
 #define G_GLUE_EVENTS_H
 
-
 #include "core/types.h"
-
 
 /* giada::c::events
 Functions that take care of live event dispatching. Every live gesture that 
@@ -46,40 +43,39 @@ namespace giada::c::events
 /* Channel*
 Channel-related events. */
 
-void pressChannel            (ID channelId, int velocity, Thread t);
-void releaseChannel          (ID channelId, Thread t);
-void killChannel             (ID channelId, Thread t);
-void setChannelVolume        (ID channelId, float v, Thread t);
-void setChannelPitch         (ID channelId, float v, Thread t);
-void sendChannelPan          (ID channelId, float v); // FIXME typo: should be setChannelPan
-void toggleMuteChannel       (ID channelId, Thread t);
-void toggleSoloChannel       (ID channelId, Thread t);
-void toggleArmChannel        (ID channelId, Thread t);
+void pressChannel(ID channelId, int velocity, Thread t);
+void releaseChannel(ID channelId, Thread t);
+void killChannel(ID channelId, Thread t);
+void setChannelVolume(ID channelId, float v, Thread t);
+void setChannelPitch(ID channelId, float v, Thread t);
+void sendChannelPan(ID channelId, float v); // FIXME typo: should be setChannelPan
+void toggleMuteChannel(ID channelId, Thread t);
+void toggleSoloChannel(ID channelId, Thread t);
+void toggleArmChannel(ID channelId, Thread t);
 void toggleReadActionsChannel(ID channelId, Thread t);
-void killReadActionsChannel  (ID channelId, Thread t);
-void sendMidiToChannel       (ID channelId, m::MidiEvent e, Thread t);
+void killReadActionsChannel(ID channelId, Thread t);
+void sendMidiToChannel(ID channelId, m::MidiEvent e, Thread t);
 
 /* Main*
 Master I/O, transport and other engine-related events. */
 
-void toggleMetronome      ();
-void setMasterInVolume    (float v, Thread t);
-void setMasterOutVolume   (float v, Thread t);
-void multiplyBeats        ();
-void divideBeats          ();
-void startSequencer       (Thread t);
-void stopSequencer        (Thread t);
-void toggleSequencer      (Thread t);
-void rewindSequencer      (Thread t);
+void toggleMetronome();
+void setMasterInVolume(float v, Thread t);
+void setMasterOutVolume(float v, Thread t);
+void multiplyBeats();
+void divideBeats();
+void startSequencer(Thread t);
+void stopSequencer(Thread t);
+void toggleSequencer(Thread t);
+void rewindSequencer(Thread t);
 void toggleActionRecording();
-void toggleInputRecording ();
+void toggleInputRecording();
 
 /* Plug-ins. */
 
 #ifdef WITH_VST
 void setPluginParameter(ID pluginId, int paramIndex, float value, bool gui);
 #endif
-} // giada::c::events::
-
+} // namespace giada::c::events
 
 #endif

@@ -24,41 +24,36 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_MIDI_INPUT_BASE_H
 #define GD_MIDI_INPUT_BASE_H
-
 
 #include "gui/dialogs/window.h"
 #include "gui/elems/midiIO/midiLearner.h"
 
-
 class geButton;
 class geCheck;
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class geChoice;
 class gdMidiInputBase : public gdWindow
 {
-public:
-
+  public:
 	virtual ~gdMidiInputBase();
 
-protected:
-
-	gdMidiInputBase(int x, int y, int w, int h, const char* title="");
+  protected:
+	gdMidiInputBase(int x, int y, int w, int h, const char* title = "");
 
 	static void cb_close(Fl_Widget* /*w*/, void* p);
-	void cb_close();
+	void        cb_close();
 
 	geButton* m_ok;
 	geCheck*  m_enable;
 	geChoice* m_channel;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

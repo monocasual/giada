@@ -24,67 +24,59 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
 
-
-#include "core/const.h"
-#include "glue/plugin.h"
-#include "glue/events.h"
-#include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/slider.h"
 #include "pluginParameter.h"
+#include "core/const.h"
+#include "glue/events.h"
+#include "glue/plugin.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/basics/slider.h"
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 gePluginParameter::gePluginParameter(int X, int Y, int W, int labelWidth, const c::plugin::Param p)
-: Fl_Group  (X, Y, W, G_GUI_UNIT)
-, m_param   (p)
+: Fl_Group(X, Y, W, G_GUI_UNIT)
+, m_param(p)
 {
 	begin();
 
-		const int VALUE_WIDTH = 100;
+	const int VALUE_WIDTH = 100;
 
-		m_label = new geBox(x(), y(), labelWidth, G_GUI_UNIT);
-		m_label->copy_label(m_param.name.c_str());
+	m_label = new geBox(x(), y(), labelWidth, G_GUI_UNIT);
+	m_label->copy_label(m_param.name.c_str());
 
-		m_slider = new geSlider(m_label->x()+m_label->w()+G_GUI_OUTER_MARGIN, y(), 
-			w()-(m_label->x()+m_label->w()+G_GUI_OUTER_MARGIN)-VALUE_WIDTH, G_GUI_UNIT);
-		m_slider->value(m_param.value);
-		m_slider->callback(cb_setValue, (void*)this);
+	m_slider = new geSlider(m_label->x() + m_label->w() + G_GUI_OUTER_MARGIN, y(),
+	    w() - (m_label->x() + m_label->w() + G_GUI_OUTER_MARGIN) - VALUE_WIDTH, G_GUI_UNIT);
+	m_slider->value(m_param.value);
+	m_slider->callback(cb_setValue, (void*)this);
 
-		m_value = new geBox(m_slider->x()+m_slider->w()+G_GUI_OUTER_MARGIN, y(), VALUE_WIDTH, G_GUI_UNIT);
-		m_value->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-		m_value->box(G_CUSTOM_BORDER_BOX);
-		
+	m_value = new geBox(m_slider->x() + m_slider->w() + G_GUI_OUTER_MARGIN, y(), VALUE_WIDTH, G_GUI_UNIT);
+	m_value->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_value->box(G_CUSTOM_BORDER_BOX);
+
 	end();
 
 	resizable(m_slider);
 	update(m_param, false);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePluginParameter::cb_setValue(Fl_Widget* /*w*/, void* p) { ((gePluginParameter*)p)->cb_setValue(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePluginParameter::cb_setValue()
 {
 	c::events::setPluginParameter(m_param.pluginId, m_param.index,
-        m_slider->value(), /*gui=*/true);
+	    m_slider->value(), /*gui=*/true);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePluginParameter::update(const c::plugin::Param& p, bool changeSlider)
 {
@@ -92,7 +84,7 @@ void gePluginParameter::update(const c::plugin::Param& p, bool changeSlider)
 	if (changeSlider)
 		m_slider->value(p.value);
 }
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif // #ifdef WITH_VST

@@ -24,19 +24,16 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #include "idManager.h"
 
-
-namespace giada::m 
+namespace giada::m
 {
-IdManager::IdManager() : m_id(0)
+IdManager::IdManager()
+: m_id(0)
 {
 }
-	
 
 /* -------------------------------------------------------------------------- */
-
 
 void IdManager::set(ID id)
 {
@@ -44,25 +41,22 @@ void IdManager::set(ID id)
 		m_id = id;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 ID IdManager::generate(ID id)
 {
-    if (id != 0) {
-        m_id = id;
-        return id;
-    }
-    return ++m_id;
+	if (id != 0)
+	{
+		m_id = id;
+		return id;
+	}
+	return ++m_id;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 ID IdManager::get()
 {
 	return m_id;
 }
-} // giada::m::
+} // namespace giada::m

@@ -24,30 +24,29 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
-#include <FL/fl_draw.H>
-#include "glue/io.h"
+#include "keyboard.h"
+#include "channelButton.h"
+#include "column.h"
 #include "glue/channel.h"
-#include "utils/fs.h"
-#include "utils/log.h"
-#include "utils/vector.h"
-#include "utils/string.h"
-#include "gui/dispatcher.h"
+#include "glue/io.h"
 #include "gui/dialogs/warnings.h"
+#include "gui/dispatcher.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/resizerBar.h"
-#include "column.h"
 #include "sampleChannel.h"
-#include "channelButton.h"
-#include "keyboard.h"
+#include "utils/fs.h"
+#include "utils/log.h"
+#include "utils/string.h"
+#include "utils/vector.h"
+#include <FL/fl_draw.H>
+#include <cassert>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 geKeyboard::geKeyboard(int X, int Y, int W, int H)
-: geScroll      (X, Y, W, H, Fl_Scroll::BOTH_ALWAYS)
+: geScroll(X, Y, W, H, Fl_Scroll::BOTH_ALWAYS)
 , m_addColumnBtn(nullptr)
 {
 	end();
@@ -55,9 +54,7 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 	rebuild();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geKeyboard::init()
 {
@@ -76,28 +73,24 @@ void geKeyboard::init()
 	layout.push_back({6, G_DEFAULT_COLUMN_WIDTH});
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geKeyboard::rebuild()
 {
 	/* Wipe out all columns and add them according to the current layout. */
 
 	deleteAllColumns();
-	
+
 	for (ColumnLayout c : layout)
 		addColumn(c.width, c.id);
 
 	for (const c::channel::Data& ch : c::channel::getChannels())
 		getColumn(ch.columnId)->addChannel(ch);
-	
+
 	redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geKeyboard::deleteColumn(ID id)
 {
@@ -105,9 +98,7 @@ void geKeyboard::deleteColumn(ID id)
 	rebuild();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geKeyboard::deleteAllColumns()
 {
@@ -115,22 +106,18 @@ void geKeyboard::deleteAllColumns()
 	m_columns.clear();
 
 	m_addColumnBtn = new geButton(8, y(), 200, 20, "Add new column");
-	m_addColumnBtn->callback(cb_addColumn, (void*) this);
+	m_addColumnBtn->callback(cb_addColumn, (void*)this);
 	add(m_addColumnBtn);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geKeyboard::cb_addColumn(Fl_Widget* /*w*/, void* p)
 {
 	((geKeyboard*)p)->cb_addColumn();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geKeyboard::refresh()
 {
@@ -138,41 +125,42 @@ void geKeyboard::refresh()
 		c->refresh();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int geKeyboard::handle(int e)
 {
-	switch (e) {
-		case FL_FOCUS:
-		case FL_UNFOCUS: {
-			return 1;               // Enables receiving Keyboard events
-		}
-		case FL_SHORTCUT:           // In case widget that isn't ours has focus
-		case FL_KEYDOWN:            // Keyboard key pushed
-		case FL_KEYUP: {            // Keyboard key released
-			dispatcher::dispatchKey(e);
-			return 1;
-		}
-		case FL_DND_ENTER:          // return(1) for these events to 'accept' dnd
-		case FL_DND_DRAG:
-		case FL_DND_RELEASE: {
-			return 1;
-		}
-		case FL_PASTE: {            // handle actual drop (paste) operation
-			const geColumn* c = getColumnAtCursor(Fl::event_x());
-			if (c != nullptr)
-				c::channel::addAndLoadChannels(c->id, getDroppedFilePaths());
-			return 1;
-		}
+	switch (e)
+	{
+	case FL_FOCUS:
+	case FL_UNFOCUS:
+	{
+		return 1; // Enables receiving Keyboard events
 	}
-	return Fl_Group::handle(e);     // Assume the buttons won't handle the Keyboard events
+	case FL_SHORTCUT: // In case widget that isn't ours has focus
+	case FL_KEYDOWN:  // Keyboard key pushed
+	case FL_KEYUP:
+	{ // Keyboard key released
+		dispatcher::dispatchKey(e);
+		return 1;
+	}
+	case FL_DND_ENTER: // return(1) for these events to 'accept' dnd
+	case FL_DND_DRAG:
+	case FL_DND_RELEASE:
+	{
+		return 1;
+	}
+	case FL_PASTE:
+	{ // handle actual drop (paste) operation
+		const geColumn* c = getColumnAtCursor(Fl::event_x());
+		if (c != nullptr)
+			c::channel::addAndLoadChannels(c->id, getDroppedFilePaths());
+		return 1;
+	}
+	}
+	return Fl_Group::handle(e); // Assume the buttons won't handle the Keyboard events
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geKeyboard::draw()
 {
@@ -183,10 +171,10 @@ void geKeyboard::draw()
 	fl_color(G_COLOR_GREY_1_5);
 
 	fl_push_clip(
-		x(), 
-		y(), 
-		w() - scrollbar_size() - (G_GUI_OUTER_MARGIN * 2), 
-		h() - scrollbar_size() - (G_GUI_OUTER_MARGIN * 2));
+	    x(),
+	    y(),
+	    w() - scrollbar_size() - (G_GUI_OUTER_MARGIN * 2),
+	    h() - scrollbar_size() - (G_GUI_OUTER_MARGIN * 2));
 
 	for (const geColumn* c : m_columns)
 		fl_rectf(c->x(), c->y() + c->h(), c->w(), h() + yposition());
@@ -194,9 +182,7 @@ void geKeyboard::draw()
 	fl_pop_clip();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geKeyboard::cb_addColumn()
 {
@@ -204,13 +190,11 @@ void geKeyboard::cb_addColumn()
 	storeLayout();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geKeyboard::addColumn(int width, ID id)
 {
-	int colx = x() - xposition();  // Mind the x-scroll offset with xposition()
+	int colx = x() - xposition(); // Mind the x-scroll offset with xposition()
 
 	/* If this is not the first column... */
 
@@ -228,8 +212,7 @@ void geKeyboard::addColumn(int width, ID id)
 
 	/* Store the column width in layout when the resizer bar is released. */
 
-	bar->onRelease = [=](const Fl_Widget* /*w*/)
-	{
+	bar->onRelease = [=](const Fl_Widget* /*w*/) {
 		storeLayout();
 	};
 
@@ -244,36 +227,30 @@ void geKeyboard::addColumn(int width, ID id)
 	redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geKeyboard::forEachChannel(std::function<void(geChannel& c)> f) const
 {
-	for (geColumn* column : m_columns) 
+	for (geColumn* column : m_columns)
 		column->forEachChannel(f);
 }
 
-
 void geKeyboard::forEachColumn(std::function<void(const geColumn& c)> f) const
 {
-	for (geColumn* column : m_columns) 
+	for (geColumn* column : m_columns)
 		f(*column);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 geColumn* geKeyboard::getColumn(ID id)
 {
-	for (geColumn* c : m_columns) 
+	for (geColumn* c : m_columns)
 		if (c->id == id)
 			return c;
 	assert(false);
 	return nullptr;
 }
-
 
 geColumn* geKeyboard::getColumnAtCursor(Pixel px)
 {
@@ -284,42 +261,38 @@ geColumn* geKeyboard::getColumnAtCursor(Pixel px)
 	return nullptr;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 geChannel* geKeyboard::getChannel(ID channelId)
 {
-	for (geColumn* column : m_columns) {
+	for (geColumn* column : m_columns)
+	{
 		geChannel* c = column->getChannel(channelId);
-		if (c != nullptr) 
+		if (c != nullptr)
 			return c;
 	}
 	assert(false);
 	return nullptr;
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
 std::vector<std::string> geKeyboard::getDroppedFilePaths() const
-{			
+{
 	std::vector<std::string> paths = u::string::split(Fl::event_text(), "\n");
-		for (std::string& p : paths)
-			p = u::fs::stripFileUrl(p);
+	for (std::string& p : paths)
+		p = u::fs::stripFileUrl(p);
 	return paths;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geKeyboard::storeLayout()
 {
 	layout.clear();
 	for (const geColumn* c : m_columns)
-		layout.push_back({ c->id, c->w() });
+		layout.push_back({c->id, c->w()});
 }
 
-}} // giada::v::
+} // namespace v
+} // namespace giada

@@ -24,21 +24,18 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_MIDI_EVENT_H
 #define G_MIDI_EVENT_H
 
-
 #include <cstdint>
 
-
-namespace giada {
+namespace giada
+{
 namespace m
 {
 class MidiEvent
 {
-public:
-
+  public:
 	static const int NOTE_ON   = 0x90;
 	static const int NOTE_OFF  = 0x80;
 	static const int NOTE_KILL = 0x70;
@@ -58,13 +55,13 @@ public:
 
 	MidiEvent(float v);
 
-	int getStatus() const;	
-	int getChannel() const;	
-	int getNote() const;	
-	int getVelocity() const;
+	int   getStatus() const;
+	int   getChannel() const;
+	int   getNote() const;
+	int   getVelocity() const;
 	float getVelocityFloat() const;
-	bool isNoteOnOff() const;	
-	int getDelta() const;
+	bool  isNoteOnOff() const;
+	int   getDelta() const;
 
 	/* getRaw(), getRawNoVelocity()
 	Returns the raw MIDI message. If getRawNoVelocity(), the velocity value is
@@ -86,15 +83,14 @@ public:
 
 	void fixVelocityZero();
 
-private:
-
+  private:
 	int m_status;
 	int m_channel;
 	int m_note;
 	int m_velocity;
 	int m_delta;
 };
-}} // giada::m::
-
+} // namespace m
+} // namespace giada
 
 #endif

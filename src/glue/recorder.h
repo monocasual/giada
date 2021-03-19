@@ -24,17 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_GLUE_RECORDER_H
 #define G_GLUE_RECORDER_H
 
-
-namespace giada::c::recorder 
+namespace giada::c::recorder
 {
 void clearAllActions(ID channelId);
 void clearVolumeActions(ID channelId);
 void clearStartStopActions(ID channelId);
 void updateChannel(ID channelId, bool updateActionEditor);
-} // giada::c::recorder::
+} // namespace giada::c::recorder
 
 #endif

@@ -24,20 +24,19 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <fstream>
-#include "deps/json/single_include/nlohmann/json.hpp"
-#include "utils/math.h"
-#include "utils/log.h"
-#include "core/mixer.h"
 #include "patch.h"
-
+#include "core/mixer.h"
+#include "deps/json/single_include/nlohmann/json.hpp"
+#include "utils/log.h"
+#include "utils/math.h"
+#include <fstream>
 
 namespace nl = nlohmann;
 
-
-namespace giada {
-namespace m {
+namespace giada
+{
+namespace m
+{
 namespace patch
 {
 namespace
@@ -54,34 +53,32 @@ void readCommons_(const nl::json& j)
 	patch.metronome  = j.value(PATCH_KEY_METRONOME, false);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void readColumns_(const nl::json& j)
 {
 	ID id = 0;
-	for (const auto& jcol : j[PATCH_KEY_COLUMNS]) {
+	for (const auto& jcol : j[PATCH_KEY_COLUMNS])
+	{
 		Column c;
 		c.id    = jcol.value(PATCH_KEY_COLUMN_ID, ++id);
-		c.width = jcol.value(PATCH_KEY_COLUMN_WIDTH, G_DEFAULT_COLUMN_WIDTH);	
+		c.width = jcol.value(PATCH_KEY_COLUMN_WIDTH, G_DEFAULT_COLUMN_WIDTH);
 		patch.columns.push_back(c);
 	}
 }
-
 
 /* -------------------------------------------------------------------------- */
 
 #ifdef WITH_VST
 
-
 void readPlugins_(const nl::json& j)
 {
-	if (!j.contains(PATCH_KEY_PLUGINS))	
+	if (!j.contains(PATCH_KEY_PLUGINS))
 		return;
 
 	ID id = 0;
-	for (const auto& jplugin : j[PATCH_KEY_PLUGINS]) {
+	for (const auto& jplugin : j[PATCH_KEY_PLUGINS])
+	{
 		Plugin p;
 		p.id     = jplugin.value(PATCH_KEY_PLUGIN_ID, ++id);
 		p.path   = jplugin.value(PATCH_KEY_PLUGIN_PATH, "");
@@ -94,26 +91,24 @@ void readPlugins_(const nl::json& j)
 			p.state = jplugin.value(PATCH_KEY_PLUGIN_STATE, "");
 
 		for (const auto& jmidiParam : jplugin[PATCH_KEY_PLUGIN_MIDI_IN_PARAMS])
-			p.midiInParams.push_back(jmidiParam);			
+			p.midiInParams.push_back(jmidiParam);
 
 		patch.plugins.push_back(p);
 	}
 }
 
-
 #endif
-
 
 /* -------------------------------------------------------------------------- */
 
-
 void readWaves_(const nl::json& j, const std::string& basePath)
 {
-	if (!j.contains(PATCH_KEY_WAVES))	
+	if (!j.contains(PATCH_KEY_WAVES))
 		return;
 
 	ID id = 0;
-	for (const auto& jwave : j[PATCH_KEY_WAVES]) {
+	for (const auto& jwave : j[PATCH_KEY_WAVES])
+	{
 		Wave w;
 		w.id   = jwave.value(PATCH_KEY_WAVE_ID, ++id);
 		w.path = basePath + jwave.value(PATCH_KEY_WAVE_PATH, "");
@@ -121,17 +116,16 @@ void readWaves_(const nl::json& j, const std::string& basePath)
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void readActions_(const nl::json& j)
 {
-	if (!j.contains(PATCH_KEY_ACTIONS))	
+	if (!j.contains(PATCH_KEY_ACTIONS))
 		return;
 
 	ID id = 0;
-	for (const auto& jaction : j[PATCH_KEY_ACTIONS]) {
+	for (const auto& jaction : j[PATCH_KEY_ACTIONS])
+	{
 		Action a;
 		a.id        = jaction.value(G_PATCH_KEY_ACTION_ID, ++id);
 		a.channelId = jaction.value(G_PATCH_KEY_ACTION_CHANNEL, 0);
@@ -143,22 +137,21 @@ void readActions_(const nl::json& j)
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void readChannels_(const nl::json& j)
 {
-	if (!j.contains(PATCH_KEY_CHANNELS))	
+	if (!j.contains(PATCH_KEY_CHANNELS))
 		return;
 
 	ID defaultId = mixer::PREVIEW_CHANNEL_ID;
 
-	for (const auto& jchannel : j[PATCH_KEY_CHANNELS]) {
+	for (const auto& jchannel : j[PATCH_KEY_CHANNELS])
+	{
 		Channel c;
 		c.id                = jchannel.value(PATCH_KEY_CHANNEL_ID, ++defaultId);
 		c.type              = static_cast<ChannelType>(jchannel.value(PATCH_KEY_CHANNEL_TYPE, 1));
-		c.volume            = jchannel.value(PATCH_KEY_CHANNEL_VOLUME, G_DEFAULT_VOL);		
+		c.volume            = jchannel.value(PATCH_KEY_CHANNEL_VOLUME, G_DEFAULT_VOL);
 		c.height            = jchannel.value(PATCH_KEY_CHANNEL_SIZE, G_GUI_UNIT);
 		c.name              = jchannel.value(PATCH_KEY_CHANNEL_NAME, "");
 		c.columnId          = jchannel.value(PATCH_KEY_CHANNEL_COLUMN, 1);
@@ -197,8 +190,8 @@ void readChannels_(const nl::json& j)
 		c.midiOutChan       = jchannel.value(PATCH_KEY_CHANNEL_MIDI_OUT_CHAN, 0);
 
 #ifdef WITH_VST
-		if (jchannel.contains(PATCH_KEY_CHANNEL_PLUGINS))	
-			for (const auto& jplugin : jchannel[PATCH_KEY_CHANNEL_PLUGINS]) 
+		if (jchannel.contains(PATCH_KEY_CHANNEL_PLUGINS))
+			for (const auto& jplugin : jchannel[PATCH_KEY_CHANNEL_PLUGINS])
 				c.pluginIds.push_back(jplugin);
 #endif
 
@@ -206,9 +199,7 @@ void readChannels_(const nl::json& j)
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 #ifdef WITH_VST
 
@@ -216,7 +207,8 @@ void writePlugins_(nl::json& j)
 {
 	j[PATCH_KEY_PLUGINS] = nl::json::array();
 
-	for (const Plugin& p : patch.plugins) {
+	for (const Plugin& p : patch.plugins)
+	{
 
 		nl::json jplugin;
 
@@ -228,22 +220,21 @@ void writePlugins_(nl::json& j)
 		jplugin[PATCH_KEY_PLUGIN_MIDI_IN_PARAMS] = nl::json::array();
 		for (uint32_t param : p.midiInParams)
 			jplugin[PATCH_KEY_PLUGIN_MIDI_IN_PARAMS].push_back(param);
-		
+
 		j[PATCH_KEY_PLUGINS].push_back(jplugin);
 	}
 }
 
 #endif
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void writeColumns_(nl::json& j)
 {
 	j[PATCH_KEY_COLUMNS] = nl::json::array();
 
-	for (const Column& column : patch.columns) {
+	for (const Column& column : patch.columns)
+	{
 		nl::json jcolumn;
 		jcolumn[PATCH_KEY_COLUMN_ID]    = column.id;
 		jcolumn[PATCH_KEY_COLUMN_WIDTH] = column.width;
@@ -251,15 +242,14 @@ void writeColumns_(nl::json& j)
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void writeActions_(nl::json& j)
 {
 	j[PATCH_KEY_ACTIONS] = nl::json::array();
 
-	for (const Action& a : patch.actions) {
+	for (const Action& a : patch.actions)
+	{
 		nl::json jaction;
 		jaction[G_PATCH_KEY_ACTION_ID]      = a.id;
 		jaction[G_PATCH_KEY_ACTION_CHANNEL] = a.channelId;
@@ -271,15 +261,14 @@ void writeActions_(nl::json& j)
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void writeWaves_(nl::json& j)
 {
 	j[PATCH_KEY_WAVES] = nl::json::array();
 
-	for (const Wave& w : patch.waves) {
+	for (const Wave& w : patch.waves)
+	{
 		nl::json jwave;
 		jwave[PATCH_KEY_WAVE_ID]   = w.id;
 		jwave[PATCH_KEY_WAVE_PATH] = w.path;
@@ -289,7 +278,6 @@ void writeWaves_(nl::json& j)
 }
 
 /* -------------------------------------------------------------------------- */
-
 
 void writeCommons_(nl::json& j)
 {
@@ -307,15 +295,14 @@ void writeCommons_(nl::json& j)
 	j[PATCH_KEY_METRONOME]     = patch.metronome;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void writeChannels_(nl::json& j)
 {
 	j[PATCH_KEY_CHANNELS] = nl::json::array();
 
-	for (const Channel& c : patch.channels) {
+	for (const Channel& c : patch.channels)
+	{
 
 		nl::json jchannel;
 
@@ -369,75 +356,68 @@ void writeChannels_(nl::json& j)
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void modernize_()
 {
-	for (Channel& c : patch.channels) {
+	for (Channel& c : patch.channels)
+	{
 		/* 0.16.3
 		Make sure that ChannelType is correct: ID 1, 2 are MASTER channels, ID 3 
 		is PREVIEW channel. */
 		if (c.id == mixer::MASTER_OUT_CHANNEL_ID || c.id == mixer::MASTER_IN_CHANNEL_ID)
 			c.type = ChannelType::MASTER;
-		else
-		if (c.id == mixer::PREVIEW_CHANNEL_ID)
+		else if (c.id == mixer::PREVIEW_CHANNEL_ID)
 			c.type = ChannelType::PREVIEW;
-		
+
 		/* 0.16.4
 		Make sure internal channels are never armed. */
 		if (c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER)
 			c.armed = false;
-		
+
 		/* 0.16.3
 		Set panning to default (0.5) and waveId to 0 for non-Sample Channels. */
-		if (c.type != ChannelType::SAMPLE) {
+		if (c.type != ChannelType::SAMPLE)
+		{
 			c.pan    = G_DEFAULT_PAN;
 			c.waveId = 0;
 		}
-	}	
+	}
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 Patch patch;
 
-
 /* -------------------------------------------------------------------------- */
 
-
-bool Version::operator ==(const Version& o) const
+bool Version::operator==(const Version& o) const
 {
-	return major == o.major && minor == o.minor && patch == o.patch;	
+	return major == o.major && minor == o.minor && patch == o.patch;
 }
 
-
-bool Version::operator <(const Version& o) const
+bool Version::operator<(const Version& o) const
 {
-	if (major < o.major) return true;
-	if (minor < o.minor) return true;
-	if (patch < o.patch) return true;
+	if (major < o.major)
+		return true;
+	if (minor < o.minor)
+		return true;
+	if (patch < o.patch)
+		return true;
 	return false;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void init()
 {
 	patch = Patch();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool write(const std::string& file)
 {
@@ -452,38 +432,36 @@ bool write(const std::string& file)
 	writePlugins_(j);
 #endif
 
-    std::ofstream ofs(file);
+	std::ofstream ofs(file);
 	if (!ofs.good())
 		return false;
 
-    ofs << j;
+	ofs << j;
 	return true;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int read(const std::string& file, const std::string& basePath)
 {
 	std::ifstream ifs(file);
 	if (!ifs.good())
 		return G_PATCH_UNREADABLE;
-	
+
 	nl::json j = nl::json::parse(ifs);
 
 	if (j[PATCH_KEY_HEADER] != "GIADAPTC")
 		return G_PATCH_INVALID;
-	
+
 	patch.version = {
-		static_cast<int>(j[PATCH_KEY_VERSION_MAJOR]),
-		static_cast<int>(j[PATCH_KEY_VERSION_MINOR]),
-		static_cast<int>(j[PATCH_KEY_VERSION_PATCH])
-	};
+	    static_cast<int>(j[PATCH_KEY_VERSION_MAJOR]),
+	    static_cast<int>(j[PATCH_KEY_VERSION_MINOR]),
+	    static_cast<int>(j[PATCH_KEY_VERSION_PATCH])};
 	if (patch.version < Version{0, 16, 0})
 		return G_PATCH_UNSUPPORTED;
 
-	try {
+	try
+	{
 		readCommons_(j);
 		readColumns_(j);
 #ifdef WITH_VST
@@ -494,11 +472,14 @@ int read(const std::string& file, const std::string& basePath)
 		readChannels_(j);
 		modernize_();
 	}
-	catch (nl::json::exception& e) {
+	catch (nl::json::exception& e)
+	{
 		u::log::print("[patch::read] Exception thrown: %s\n", e.what());
 		return G_PATCH_INVALID;
 	}
 
 	return G_PATCH_OK;
 }
-}}} // giada::m::patch::
+} // namespace patch
+} // namespace m
+} // namespace giada

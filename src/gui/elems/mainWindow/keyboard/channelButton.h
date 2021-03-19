@@ -24,43 +24,41 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_CHANNEL_BUTTON_H
 #define GE_CHANNEL_BUTTON_H
 
-
 #include "gui/elems/basics/button.h"
 
-
-namespace giada {
-namespace c {
+namespace giada
+{
+namespace c
+{
 namespace channel
 {
 struct Data;
-}}
+}
+} // namespace c
 namespace v
 {
 class geChannelButton : public geButton
 {
-public:
-
+  public:
 	geChannelButton(int x, int y, int w, int h, const c::channel::Data& d);
 
 	virtual void refresh();
 
 	void draw() override;
-  
+
 	void setPlayMode();
 	void setEndingMode();
-	void setDefaultMode(const char* l=0);
+	void setDefaultMode(const char* l = 0);
 	void setInputRecordMode();
 	void setActionRecordMode();
 
-protected:
-
-    const c::channel::Data& m_channel;
+  protected:
+	const c::channel::Data& m_channel;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

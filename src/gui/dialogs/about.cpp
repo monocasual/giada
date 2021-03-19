@@ -24,24 +24,23 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/Fl_Pixmap.H>
-#include <FL/fl_draw.H>
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/graphics.h"
+#include <FL/Fl_Pixmap.H>
+#include <FL/fl_draw.H>
 #ifdef WITH_VST
 #include "deps/juce-config.h"
 #endif
+#include "about.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/button.h"
 #include "utils/gui.h"
 #include "utils/string.h"
-#include "gui/elems/basics/button.h"
-#include "gui/elems/basics/box.h"
-#include "about.h"
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 gdAbout::gdAbout()
 #ifdef WITH_VST
@@ -54,7 +53,7 @@ gdAbout::gdAbout()
 
 	logo  = new geBox(8, 20, 324, 86);
 	text  = new geBox(8, 120, 324, 140);
-	close = new geButton(252, h()-28, 80, 20, "Close");
+	close = new geButton(252, h() - 28, 80, 20, "Close");
 #ifdef WITH_VST
 	vstLogo = new geBox(8, 265, 324, 50);
 	vstText = new geBox(8, 315, 324, 46);
@@ -69,22 +68,22 @@ gdAbout::gdAbout()
 	logo->image(new Fl_Pixmap(giada_logo_xpm));
 	text->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
 	text->copy_label(std::string(
-		"Version " + version + " (" BUILD_DATE ")\n\n"
-		"Developed by Monocasual Laboratories\n\n"
-		"Released under the terms of the GNU General\n"
-		"Public License (GPL v3)\n\n"
-		"News, infos, contacts and documentation:\n"
-		"www.giadamusic.com").c_str());
+	    "Version " + version + " (" BUILD_DATE ")\n\n"
+	                           "Developed by Monocasual Laboratories\n\n"
+	                           "Released under the terms of the GNU General\n"
+	                           "Public License (GPL v3)\n\n"
+	                           "News, infos, contacts and documentation:\n"
+	                           "www.giadamusic.com")
+	                     .c_str());
 
 #ifdef WITH_VST
 
 	vstLogo->image(new Fl_Pixmap(vstLogo_xpm));
 	vstLogo->position(vstLogo->x(), text->y() + text->h() + 8);
 	vstText->label(
-		"VST Plug-In Technology by Steinberg\n"
-		"VST is a trademark of Steinberg\nMedia Technologies GmbH"
-	);
-	vstText->position(vstText->x(), vstLogo->y()+vstLogo->h());
+	    "VST Plug-In Technology by Steinberg\n"
+	    "VST is a trademark of Steinberg\nMedia Technologies GmbH");
+	vstText->position(vstText->x(), vstLogo->y() + vstLogo->h());
 
 #endif
 
@@ -94,19 +93,16 @@ gdAbout::gdAbout()
 	show();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdAbout::cb_close(Fl_Widget* /*w*/, void* p) { ((gdAbout*)p)->cb_close(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdAbout::cb_close()
 {
 	do_callback();
 }
 
-}} // giada::v::
+} // namespace v
+} // namespace giada

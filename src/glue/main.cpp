@@ -24,38 +24,35 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cmath>
-#include <cassert>
-#include <FL/Fl.H>
-#include "gui/dialogs/warnings.h"
-#include "gui/elems/mainWindow/mainIO.h"
-#include "gui/elems/mainWindow/mainTimer.h"
-#include "gui/elems/mainWindow/keyboard/sampleChannel.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/dialogs/mainWindow.h"
-#include "utils/gui.h"
-#include "utils/string.h"
-#include "utils/log.h"
-#include "core/model/model.h"
-#include "core/mixerHandler.h"
-#include "core/mixer.h"
+#include "main.h"
 #include "core/clock.h"
-#include "core/init.h"
-#include "core/kernelMidi.h"
-#include "core/kernelAudio.h"
-#include "core/recorder.h"
-#include "core/recorderHandler.h"
-#include "core/recManager.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "core/plugins/pluginManager.h"
+#include "core/init.h"
+#include "core/kernelAudio.h"
+#include "core/kernelMidi.h"
+#include "core/mixer.h"
+#include "core/mixerHandler.h"
+#include "core/model/model.h"
 #include "core/plugins/pluginHost.h"
-#include "main.h"
+#include "core/plugins/pluginManager.h"
+#include "core/recManager.h"
+#include "core/recorder.h"
+#include "core/recorderHandler.h"
+#include "gui/dialogs/mainWindow.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
+#include "gui/elems/mainWindow/keyboard/sampleChannel.h"
+#include "gui/elems/mainWindow/mainIO.h"
+#include "gui/elems/mainWindow/mainTimer.h"
+#include "utils/gui.h"
+#include "utils/log.h"
+#include "utils/string.h"
+#include <FL/Fl.H>
+#include <cassert>
+#include <cmath>
 
-
-extern giada::v::gdMainWindow *G_MainWin;
-
+extern giada::v::gdMainWindow* G_MainWin;
 
 namespace giada::c::main
 {
@@ -63,14 +60,15 @@ namespace
 {
 void setBpm_(float current, std::string s)
 {
-	if (current < G_MIN_BPM) {
+	if (current < G_MIN_BPM)
+	{
 		current = G_MIN_BPM;
-		s = G_MIN_BPM_STR;
+		s       = G_MIN_BPM_STR;
 	}
-	else
-	if (current > G_MAX_BPM) {
+	else if (current > G_MAX_BPM)
+	{
 		current = G_MAX_BPM;
-		s = G_MAX_BPM_STR;		
+		s       = G_MAX_BPM_STR;
 	}
 
 	float previous = m::clock::getBpm();
@@ -80,89 +78,77 @@ void setBpm_(float current, std::string s)
 
 	/* This function might get called by Jack callback BEFORE the UI is up
 	and running, that is when G_MainWin == nullptr. */
-	
-	if (G_MainWin != nullptr) {
+
+	if (G_MainWin != nullptr)
+	{
 		u::gui::refreshActionEditor();
 		G_MainWin->mainTimer->setBpm(s.c_str());
 	}
 
 	u::log::print("[glue::setBpm_] Bpm changed to %s (real=%f)\n", s, m::clock::getBpm());
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 Timer::Timer(const m::model::Clock& c)
-: bpm             (c.bpm)
-, beats           (c.beats)
-, bars            (c.bars)
-, quantize        (c.quantize)
-, isUsingJack     (m::kernelAudio::getAPI() == G_SYS_API_JACK)
+: bpm(c.bpm)
+, beats(c.beats)
+, bars(c.bars)
+, quantize(c.quantize)
+, isUsingJack(m::kernelAudio::getAPI() == G_SYS_API_JACK)
 , isRecordingInput(m::recManager::isRecordingInput())
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 IO::IO(const m::channel::Data& out, const m::channel::Data& in, const m::model::Mixer& m)
-: masterOutVol       (out.volume)
-, masterInVol        (in.volume)
+: masterOutVol(out.volume)
+, masterInVol(in.volume)
 #ifdef WITH_VST
 , masterOutHasPlugins(out.plugins.size() > 0)
-, masterInHasPlugins (in.plugins.size() > 0)
+, masterInHasPlugins(in.plugins.size() > 0)
 #endif
-, inToOut            (m.inToOut)
+, inToOut(m.inToOut)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 float IO::getMasterOutPeak()
 {
 	return m::mixer::getPeakOut();
 }
 
-
 float IO::getMasterInPeak()
 {
 	return m::mixer::getPeakIn();
 }
 
-
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 Timer getTimer()
 {
 	return Timer(m::model::get().clock);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 IO getIO()
 {
 	return IO(m::model::get().getChannel(m::mixer::MASTER_OUT_CHANNEL_ID),
-	          m::model::get().getChannel(m::mixer::MASTER_IN_CHANNEL_ID),
-			  m::model::get().mixer);
+	    m::model::get().getChannel(m::mixer::MASTER_IN_CHANNEL_ID),
+	    m::model::get().mixer);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void setBpm(const char* v1, const char* v2)
 {
@@ -176,7 +162,7 @@ void setBpm(const char* v1, const char* v2)
 	the nice looking (but fake) one to the GUI. 
 	On Linux, let Jack handle the bpm change if it's on. */
 
-	float       f = static_cast<float>(std::atof(v1) + (std::atof(v2)/10));
+	float       f = static_cast<float>(std::atof(v1) + (std::atof(v2) / 10));
 	std::string s = std::string(v1) + "." + std::string(v2);
 
 #ifdef WITH_AUDIO_JACK
@@ -184,12 +170,10 @@ void setBpm(const char* v1, const char* v2)
 		m::kernelAudio::jackSetBpm(f);
 	else
 #endif
-	setBpm_(f, s);
+		setBpm_(f, s);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void setBpm(float f)
 {
@@ -198,16 +182,14 @@ void setBpm(float f)
 	if (m::recManager::isRecordingInput())
 		return;
 
-	float intpart;
-	float fracpart = std::round(std::modf(f, &intpart) * 10);
-	std::string s = std::to_string((int) intpart) + "." + std::to_string((int)fracpart);
+	float       intpart;
+	float       fracpart = std::round(std::modf(f, &intpart) * 10);
+	std::string s        = std::to_string((int)intpart) + "." + std::to_string((int)fracpart);
 
 	setBpm_(f, s);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void setBeats(int beats, int bars)
 {
@@ -220,21 +202,17 @@ void setBeats(int beats, int bars)
 	m::mixer::allocRecBuffer(m::clock::getFramesInLoop());
 
 	G_MainWin->mainTimer->setMeter(m::clock::getBeats(), m::clock::getBars());
-	u::gui::refreshActionEditor();  // in case the action editor is open
+	u::gui::refreshActionEditor(); // in case the action editor is open
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void quantize(int val)
 {
 	m::clock::setQuantize(val);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void clearAllSamples()
 {
@@ -246,9 +224,7 @@ void clearAllSamples()
 	m::recorderHandler::clearAllActions();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void clearAllActions()
 {
@@ -258,32 +234,26 @@ void clearAllActions()
 	m::recorderHandler::clearAllActions();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void setInToOut(bool v)
 {
 	m::mh::setInToOut(v);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void toggleRecOnSignal()
 {
 	/* Can't set RecTriggerMode::SIGNAL while sequencer is running, in order
 	to prevent mistakes while live recording. */
-		
+
 	if (m::conf::conf.recTriggerMode == RecTriggerMode::NORMAL && m::clock::isRunning())
 		return;
 	m::conf::conf.recTriggerMode = m::conf::conf.recTriggerMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void closeProject()
 {
@@ -292,4 +262,4 @@ void closeProject()
 	m::init::reset();
 	m::mixer::enable();
 }
-} // giada::c::main::
+} // namespace giada::c::main

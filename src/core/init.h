@@ -24,18 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_INIT_H
 #define G_INIT_H
-
 
 namespace giada::m::init
 {
 void startup(int argc, char** argv);
-void reset(); 
+void reset();
 void closeMainWindow();
 void shutdown();
-} // giada::m::init
-
+} // namespace giada::m::init
 
 #endif

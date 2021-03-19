@@ -24,27 +24,25 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
-#include "utils/fs.h"
-#include "core/model/model.h"
+#include "channelManager.h"
+#include "core/action.h"
 #include "core/channels/channel.h"
 #include "core/channels/samplePlayer.h"
-#include "core/const.h"
 #include "core/conf.h"
-#include "core/kernelAudio.h"
-#include "core/patch.h"
-#include "core/mixer.h"
+#include "core/const.h"
 #include "core/idManager.h"
-#include "core/wave.h"
-#include "core/waveManager.h"
+#include "core/kernelAudio.h"
+#include "core/mixer.h"
+#include "core/model/model.h"
+#include "core/patch.h"
+#include "core/plugins/plugin.h"
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
-#include "core/plugins/plugin.h"
-#include "core/action.h"
 #include "core/recorderHandler.h"
-#include "channelManager.h"
-
+#include "core/wave.h"
+#include "core/waveManager.h"
+#include "utils/fs.h"
+#include <cassert>
 
 namespace giada::m::channelManager
 {
@@ -52,9 +50,7 @@ namespace
 {
 IdManager channelId_;
 
-
 /* -------------------------------------------------------------------------- */
-
 
 channel::State& makeState_()
 {
@@ -62,31 +58,25 @@ channel::State& makeState_()
 	return model::back<channel::State>();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 channel::Buffer& makeBuffer_()
 {
 	model::add(std::make_unique<channel::Buffer>(kernelAudio::getRealBufSize()));
-    return model::back<channel::Buffer>();
+	return model::back<channel::Buffer>();
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 void init()
 {
 	channelId_ = IdManager();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 channel::Data create(ID channelId, ChannelType type, ID columnId)
 {
@@ -94,9 +84,7 @@ channel::Data create(ID channelId, ChannelType type, ID columnId)
 	return channel::Data(type, id, columnId, makeState_(), makeBuffer_());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 channel::Data create(const channel::Data& o)
 {
@@ -109,9 +97,7 @@ channel::Data create(const channel::Data& o)
 	return out;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 channel::Data deserializeChannel(const patch::Channel& pch, float samplerateRatio)
 {
@@ -119,9 +105,7 @@ channel::Data deserializeChannel(const patch::Channel& pch, float samplerateRati
 	return channel::Data(pch, makeState_(), makeBuffer_(), samplerateRatio);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 const patch::Channel serializeChannel(const channel::Data& c)
 {
@@ -134,34 +118,35 @@ const patch::Channel serializeChannel(const channel::Data& c)
 
 	pc.id                = c.id;
 	pc.type              = c.type;
-    pc.columnId          = c.columnId;
-    pc.height            = c.height;
-    pc.name              = c.name;
-    pc.key               = c.key;
-    pc.mute              = c.mute;
-    pc.solo              = c.solo;
-    pc.volume            = c.volume;
-    pc.pan               = c.pan;
-    pc.hasActions        = c.hasActions;
-    pc.readActions       = c.readActions;
-    pc.armed             = c.armed;
-    pc.midiIn            = c.midiLearner.enabled;
-    pc.midiInFilter      = c.midiLearner.filter;
-    pc.midiInKeyPress    = c.midiLearner.keyPress.getValue();
-    pc.midiInKeyRel      = c.midiLearner.keyRelease.getValue();
-    pc.midiInKill        = c.midiLearner.kill.getValue();
-    pc.midiInArm         = c.midiLearner.arm.getValue();
-    pc.midiInVolume      = c.midiLearner.volume.getValue();
-    pc.midiInMute        = c.midiLearner.mute.getValue();
-    pc.midiInSolo        = c.midiLearner.solo.getValue();
+	pc.columnId          = c.columnId;
+	pc.height            = c.height;
+	pc.name              = c.name;
+	pc.key               = c.key;
+	pc.mute              = c.mute;
+	pc.solo              = c.solo;
+	pc.volume            = c.volume;
+	pc.pan               = c.pan;
+	pc.hasActions        = c.hasActions;
+	pc.readActions       = c.readActions;
+	pc.armed             = c.armed;
+	pc.midiIn            = c.midiLearner.enabled;
+	pc.midiInFilter      = c.midiLearner.filter;
+	pc.midiInKeyPress    = c.midiLearner.keyPress.getValue();
+	pc.midiInKeyRel      = c.midiLearner.keyRelease.getValue();
+	pc.midiInKill        = c.midiLearner.kill.getValue();
+	pc.midiInArm         = c.midiLearner.arm.getValue();
+	pc.midiInVolume      = c.midiLearner.volume.getValue();
+	pc.midiInMute        = c.midiLearner.mute.getValue();
+	pc.midiInSolo        = c.midiLearner.solo.getValue();
 	pc.midiInReadActions = c.midiLearner.readActions.getValue();
 	pc.midiInPitch       = c.midiLearner.pitch.getValue();
-    pc.midiOutL          = c.midiLighter.enabled;
-    pc.midiOutLplaying   = c.midiLighter.playing.getValue();
-    pc.midiOutLmute      = c.midiLighter.mute.getValue();
-    pc.midiOutLsolo      = c.midiLighter.solo.getValue();
+	pc.midiOutL          = c.midiLighter.enabled;
+	pc.midiOutLplaying   = c.midiLighter.playing.getValue();
+	pc.midiOutLmute      = c.midiLighter.mute.getValue();
+	pc.midiOutLsolo      = c.midiLighter.solo.getValue();
 
-	if (c.type == ChannelType::SAMPLE) {
+	if (c.type == ChannelType::SAMPLE)
+	{
 		pc.waveId            = c.samplePlayer->getWaveId();
 		pc.mode              = c.samplePlayer->mode;
 		pc.begin             = c.samplePlayer->begin;
@@ -171,14 +156,13 @@ const patch::Channel serializeChannel(const channel::Data& c)
 		pc.midiInVeloAsVol   = c.samplePlayer->velocityAsVol;
 		pc.inputMonitor      = c.audioReceiver->inputMonitor;
 		pc.overdubProtection = c.audioReceiver->overdubProtection;
-
 	}
-	else
-	if (c.type == ChannelType::MIDI) {
+	else if (c.type == ChannelType::MIDI)
+	{
 		pc.midiOut     = c.midiSender->enabled;
 		pc.midiOutChan = c.midiSender->filter;
 	}
 
 	return pc;
 }
-} // giada::m::channelManager::
+} // namespace giada::m::channelManager

@@ -24,12 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "core/mixer.h"
-#include "core/kernelMidi.h"
-#include "core/channels/channel.h"
 #include "midiSender.h"
-
+#include "core/channels/channel.h"
+#include "core/kernelMidi.h"
+#include "core/mixer.h"
 
 namespace giada::m::midiSender
 {
@@ -38,50 +36,42 @@ namespace
 void send_(const channel::Data& ch, MidiEvent e)
 {
 	e.setChannel(ch.midiSender->filter);
-	kernelMidi::send(e.getRaw());	
+	kernelMidi::send(e.getRaw());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void parseActions_(const channel::Data& ch, const std::vector<Action>& as)
 {
-    for (const Action& a : as)
-        if (a.channelId == ch.id)
-            send_(ch, a.event);
+	for (const Action& a : as)
+		if (a.channelId == ch.id)
+			send_(ch, a.event);
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 Data::Data(const patch::Channel& p)
 : enabled(p.midiOut)
-, filter (p.midiOutChan)
+, filter(p.midiOutChan)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void react(const channel::Data& ch, const eventDispatcher::Event& e)
 {
 	if (!ch.isPlaying() || !ch.midiSender->enabled)
 		return;
 
-	if (e.type == eventDispatcher::EventType::KEY_KILL || 
+	if (e.type == eventDispatcher::EventType::KEY_KILL ||
 	    e.type == eventDispatcher::EventType::SEQUENCER_STOP)
 		send_(ch, MidiEvent(G_MIDI_ALL_NOTES_OFF));
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void advance(const channel::Data& ch, const sequencer::Event& e)
 {
@@ -90,4 +80,4 @@ void advance(const channel::Data& ch, const sequencer::Event& e)
 	if (e.type == sequencer::EventType::ACTIONS)
 		parseActions_(ch, *e.actions);
 }
-} // giada::m::midiSender::
+} // namespace giada::m::midiSender

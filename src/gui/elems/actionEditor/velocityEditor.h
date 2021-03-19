@@ -24,15 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_VELOCITY_EDITOR_H
 #define GE_VELOCITY_EDITOR_H
 
-
 #include "baseActionEditor.h"
 
-
-namespace giada {
+namespace giada
+{
 namespace m
 {
 class MidiChannel;
@@ -41,11 +39,9 @@ namespace v
 {
 class geEnvelopePoint;
 
-
 class geVelocityEditor : public geBaseActionEditor
 {
-public:
-
+  public:
 	geVelocityEditor(Pixel x, Pixel y, gdBaseActionEditor*);
 	~geVelocityEditor();
 
@@ -53,18 +49,17 @@ public:
 
 	void rebuild(c::actionEditor::Data& d) override;
 
-private:
-
-	void onMoveAction()    override;
+  private:
+	void onMoveAction() override;
 	void onRefreshAction() override;
-	void onAddAction()     override {};
-	void onDeleteAction()  override {};
-	void onResizeAction()  override {};
+	void onAddAction() override{};
+	void onDeleteAction() override{};
+	void onResizeAction() override{};
 
-	Pixel valueToY(int v)   const;
+	Pixel valueToY(int v) const;
 	int   yToValue(Pixel y) const;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

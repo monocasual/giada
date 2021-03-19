@@ -24,25 +24,26 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CHANNEL_AUDIO_RECEIVER_H
 #define G_CHANNEL_AUDIO_RECEIVER_H
 
-
-namespace giada::m::channel { struct Data; }
+namespace giada::m::channel
+{
+struct Data;
+}
 namespace giada::m::audioReceiver
 {
 struct Data
 {
-    Data() = default;
-    Data(const patch::Channel& p);
-    Data(const Data& o) = default;
+	Data() = default;
+	Data(const patch::Channel& p);
+	Data(const Data& o) = default;
 
-    bool inputMonitor;
-    bool overdubProtection;
+	bool inputMonitor;
+	bool overdubProtection;
 };
 
 void render(const channel::Data& ch, const AudioBuffer& in);
-} // giada::m::audioReceiver::
+} // namespace giada::m::audioReceiver
 
 #endif

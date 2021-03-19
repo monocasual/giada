@@ -24,50 +24,44 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
+#include "sampleActionRecorder.h"
 #include "core/action.h"
-#include "core/eventDispatcher.h"
+#include "core/channels/channel.h"
 #include "core/clock.h"
 #include "core/conf.h"
+#include "core/eventDispatcher.h"
 #include "core/mixer.h"
-#include "core/recorderHandler.h"
 #include "core/recManager.h"
-#include "core/channels/channel.h"
-#include "sampleActionRecorder.h"
-
+#include "core/recorderHandler.h"
+#include <cassert>
 
 namespace giada::m::sampleActionRecorder
 {
 namespace
 {
-void record_           (channel::Data& ch, int note);
-void onKeyPress_       (channel::Data& ch);
+void record_(channel::Data& ch, int note);
+void onKeyPress_(channel::Data& ch);
 void toggleReadActions_(channel::Data& ch);
-void startReadActions_ (channel::Data& ch);
-void stopReadActions_  (channel::Data& ch, ChannelStatus curRecStatus);
-void killReadActions_  (channel::Data& ch);
-bool canRecord_        (const channel::Data& ch);
-
+void startReadActions_(channel::Data& ch);
+void stopReadActions_(channel::Data& ch, ChannelStatus curRecStatus);
+void killReadActions_(channel::Data& ch);
+bool canRecord_(const channel::Data& ch);
 
 /* -------------------------------------------------------------------------- */
-
 
 bool canRecord_(const channel::Data& ch)
 {
-	return recManager::isRecordingAction() && 
-	       clock::isRunning()              && 
+	return recManager::isRecordingAction() &&
+	       clock::isRunning() &&
 	       !recManager::isRecordingInput() &&
-		   !ch.samplePlayer->isAnyLoopMode();
+	       !ch.samplePlayer->isAnyLoopMode();
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 void onKeyPress_(channel::Data& ch)
 {
-	if (!canRecord_(ch)) 
+	if (!canRecord_(ch))
 		return;
 	record_(ch, MidiEvent::NOTE_ON);
 
@@ -78,21 +72,17 @@ void onKeyPress_(channel::Data& ch)
 		ch.readActions = false;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void record_(channel::Data& ch, int note)
 {
-	recorderHandler::liveRec(ch.id, MidiEvent(note, 0, 0), 
-		clock::quantize(clock::getCurrentFrame()));
+	recorderHandler::liveRec(ch.id, MidiEvent(note, 0, 0),
+	    clock::quantize(clock::getCurrentFrame()));
 
 	ch.hasActions = true;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void toggleReadActions_(channel::Data& ch)
 {
@@ -116,23 +106,20 @@ void toggleReadActions_(channel::Data& ch)
 		startReadActions_(ch);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void startReadActions_(channel::Data& ch)
 {
 	if (conf::conf.treatRecsAsLoops)
 		ch.state->recStatus.store(ChannelStatus::WAIT);
-	else {
-        ch.state->recStatus.store(ChannelStatus::PLAY);
+	else
+	{
+		ch.state->recStatus.store(ChannelStatus::PLAY);
 		ch.readActions = true;
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void stopReadActions_(channel::Data& ch, ChannelStatus curRecStatus)
 {
@@ -140,23 +127,20 @@ void stopReadActions_(channel::Data& ch, ChannelStatus curRecStatus)
 	just stop and disable everything. Otherwise make sure a channel with actions
 	behave like a dynamic one. */
 
-	if (!clock::isRunning() || !conf::conf.treatRecsAsLoops) {
-        ch.state->recStatus.store(ChannelStatus::OFF);
-	    ch.readActions = false;
+	if (!clock::isRunning() || !conf::conf.treatRecsAsLoops)
+	{
+		ch.state->recStatus.store(ChannelStatus::OFF);
+		ch.readActions = false;
 	}
+	else if (curRecStatus == ChannelStatus::WAIT)
+		ch.state->recStatus.store(ChannelStatus::OFF);
+	else if (curRecStatus == ChannelStatus::ENDING)
+		ch.state->recStatus.store(ChannelStatus::PLAY);
 	else
-	if (curRecStatus == ChannelStatus::WAIT)
-        ch.state->recStatus.store(ChannelStatus::OFF);
-	else
-	if (curRecStatus == ChannelStatus::ENDING)
-        ch.state->recStatus.store(ChannelStatus::PLAY);
-	else
-        ch.state->recStatus.store(ChannelStatus::ENDING);
+		ch.state->recStatus.store(ChannelStatus::ENDING);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void killReadActions_(channel::Data& ch)
 {
@@ -165,47 +149,50 @@ void killReadActions_(channel::Data& ch)
 
 	if (!conf::conf.treatRecsAsLoops)
 		return;
-    ch.state->recStatus.store(ChannelStatus::OFF);
+	ch.state->recStatus.store(ChannelStatus::OFF);
 	ch.readActions = false;
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 void react(channel::Data& ch, const eventDispatcher::Event& e)
 {
 	if (!ch.hasWave())
 		return;
-		
-	switch (e.type) {
 
-		case eventDispatcher::EventType::KEY_PRESS:
-			onKeyPress_(ch); break;
+	switch (e.type)
+	{
+
+	case eventDispatcher::EventType::KEY_PRESS:
+		onKeyPress_(ch);
+		break;
 
 		/* Record a stop event only if channel is SINGLE_PRESS. For any other 
 		mode the key release event is meaningless. */
 
-		case eventDispatcher::EventType::KEY_RELEASE:
-			if (canRecord_(ch) && ch.samplePlayer->mode == SamplePlayerMode::SINGLE_PRESS) 
-				record_(ch, MidiEvent::NOTE_OFF);
-			break;
+	case eventDispatcher::EventType::KEY_RELEASE:
+		if (canRecord_(ch) && ch.samplePlayer->mode == SamplePlayerMode::SINGLE_PRESS)
+			record_(ch, MidiEvent::NOTE_OFF);
+		break;
 
-		case eventDispatcher::EventType::KEY_KILL:
-			if (canRecord_(ch)) 
-				record_(ch, MidiEvent::NOTE_KILL);
-			break;
+	case eventDispatcher::EventType::KEY_KILL:
+		if (canRecord_(ch))
+			record_(ch, MidiEvent::NOTE_KILL);
+		break;
 
-		case eventDispatcher::EventType::CHANNEL_TOGGLE_READ_ACTIONS:	
-			toggleReadActions_(ch); break;        
+	case eventDispatcher::EventType::CHANNEL_TOGGLE_READ_ACTIONS:
+		toggleReadActions_(ch);
+		break;
 
-		case eventDispatcher::EventType::CHANNEL_KILL_READ_ACTIONS:
-			killReadActions_(ch); break;      
-		
-		default: break;
+	case eventDispatcher::EventType::CHANNEL_KILL_READ_ACTIONS:
+		killReadActions_(ch);
+		break;
+
+	default:
+		break;
 	}
 }
-} // giada::m::sampleActionRecorder::
+} // namespace giada::m::sampleActionRecorder

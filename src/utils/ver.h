@@ -24,22 +24,22 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_UTILS_VER_H
 #define G_UTILS_VER_H
 
-
 #include <string>
 
-
-namespace giada {
-namespace u     {
-namespace ver 
+namespace giada
+{
+namespace u
+{
+namespace ver
 {
 std::string getLibsndfileVersion();
 std::string getRtAudioVersion();
 std::string getRtMidiVersion();
-}}}  // giada::u::ver::
-
+} // namespace ver
+} // namespace u
+} // namespace giada
 
 #endif

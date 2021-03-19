@@ -24,38 +24,33 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_BEATSINPUT_H
 #define GD_BEATSINPUT_H
 
-
 #include "window.h"
-
 
 class geInput;
 class geButton;
 class geCheck;
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class gdBeatsInput : public gdWindow
 {
-public:
+  public:
+	gdBeatsInput();
 
-    gdBeatsInput();
-
-private:
-
+  private:
 	static void cb_update(Fl_Widget* /*w*/, void* p);
-	void cb_update();
+	void        cb_update();
 
-	geInput* beats;
-	geInput* bars;
+	geInput*  beats;
+	geInput*  bars;
 	geButton* ok;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

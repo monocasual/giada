@@ -24,34 +24,34 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_SEQUENCER_H
 #define G_SEQUENCER_H
 
-
-#include <vector>
 #include "core/eventDispatcher.h"
 #include "core/quantizer.h"
+#include <vector>
 
-
-namespace giada::m { class AudioBuffer; }
+namespace giada::m
+{
+class AudioBuffer;
+}
 namespace giada::m::sequencer
 {
-enum class EventType 
+enum class EventType
 {
-    NONE,
+	NONE,
 	FIRST_BEAT,
 	BAR,
-    REWIND,
-    ACTIONS
+	REWIND,
+	ACTIONS
 };
 
 struct Event
 {
-    EventType                  type    = EventType::NONE;
-    Frame                      global  = 0;
-    Frame                      delta   = 0;
-    const std::vector<Action>* actions = nullptr;
+	EventType                  type    = EventType::NONE;
+	Frame                      global  = 0;
+	Frame                      delta   = 0;
+	const std::vector<Action>* actions = nullptr;
 };
 
 using EventBuffer = RingBuffer<Event, G_MAX_SEQUENCER_EVENTS>;
@@ -87,7 +87,6 @@ void rewind();
 bool isMetronomeOn();
 void toggleMetronome();
 void setMetronome(bool v);
-}  // giada::m::sequencer::
-
+} // namespace giada::m::sequencer
 
 #endif

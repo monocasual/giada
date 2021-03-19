@@ -24,43 +24,38 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
 
-
-#include <cassert>
-#include <FL/Fl.H>
-#include "utils/log.h"
-#include "utils/time.h"
+#include "plugin.h"
 #include "core/const.h"
 #include "core/plugins/pluginManager.h"
-#include "plugin.h"
+#include "utils/log.h"
+#include "utils/time.h"
+#include <FL/Fl.H>
+#include <cassert>
 
-
-namespace giada::m 
+namespace giada::m
 {
 Plugin::Plugin(ID id, const std::string& UID)
-: id            (id)
-, valid         (false)
+: id(id)
+, valid(false)
 , onEditorResize(nullptr)
-, m_plugin      (nullptr)
-, m_UID         (UID)
-, m_hasEditor   (false)
+, m_plugin(nullptr)
+, m_UID(UID)
+, m_hasEditor(false)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
 Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin, double samplerate,
-	int buffersize)
-: id            (id)
-, valid         (true)
+    int buffersize)
+: id(id)
+, valid(true)
 , onEditorResize(nullptr)
-, m_plugin      (std::move(plugin))
-, m_bypass      (false)
-, m_hasEditor   (m_plugin->hasEditor())
+, m_plugin(std::move(plugin))
+, m_bypass(false)
+, m_hasEditor(m_plugin->hasEditor())
 {
 	/* (1) Initialize midiInParams vector, where midiInParams.size == number of 
 	plugin parameters. All values are initially empty (0x0): they will be filled
@@ -76,32 +71,30 @@ Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin, double 
 
 	juce::AudioProcessor::Bus* outBus = getMainBus(BusType::OUT);
 	juce::AudioProcessor::Bus* inBus  = getMainBus(BusType::IN);
-	if (outBus != nullptr) outBus->setNumberOfChannels(G_MAX_IO_CHANS);
-	if (inBus != nullptr)  inBus->setNumberOfChannels(G_MAX_IO_CHANS);
+	if (outBus != nullptr)
+		outBus->setNumberOfChannels(G_MAX_IO_CHANS);
+	if (inBus != nullptr)
+		inBus->setNumberOfChannels(G_MAX_IO_CHANS);
 
 	m_plugin->prepareToPlay(samplerate, buffersize);
 
-	u::log::print("[Plugin] plugin initialized and ready. MIDI input params: %lu\n", 
-		midiInParams.size());
+	u::log::print("[Plugin] plugin initialized and ready. MIDI input params: %lu\n",
+	    midiInParams.size());
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 Plugin::Plugin(const Plugin& o)
-: id            (o.id)
-, midiInParams  (o.midiInParams)
-, valid         (o.valid)
+: id(o.id)
+, midiInParams(o.midiInParams)
+, valid(o.valid)
 , onEditorResize(o.onEditorResize)
-, m_plugin      (std::move(pluginManager::makePlugin(o)->m_plugin))
-, m_bypass      (o.m_bypass.load())
+, m_plugin(std::move(pluginManager::makePlugin(o)->m_plugin))
+, m_bypass(o.m_bypass.load())
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 Plugin::~Plugin()
 {
@@ -116,11 +109,9 @@ Plugin::~Plugin()
 	m_plugin->releaseResources();
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void Plugin::componentMovedOrResized(juce::Component& c, bool moved, bool/* resized*/)
+void Plugin::componentMovedOrResized(juce::Component& c, bool moved, bool /* resized*/)
 {
 	if (moved)
 		return;
@@ -128,19 +119,16 @@ void Plugin::componentMovedOrResized(juce::Component& c, bool moved, bool/* resi
 		onEditorResize(c.getWidth(), c.getHeight());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 juce::AudioProcessor::Bus* Plugin::getMainBus(BusType b) const
 {
 	const bool isInput = static_cast<bool>(b);
-	for (int i=0; i<m_plugin->getBusCount(isInput); i++)
+	for (int i = 0; i < m_plugin->getBusCount(isInput); i++)
 		if (m_plugin->getBus(isInput, i)->isMain())
-			return m_plugin->getBus(isInput, i); 
+			return m_plugin->getBus(isInput, i);
 	return nullptr;
 }
-
 
 int Plugin::countMainOutChannels() const
 {
@@ -149,9 +137,7 @@ int Plugin::countMainOutChannels() const
 	return b->getNumberOfChannels();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 juce::AudioProcessorEditor* Plugin::createEditor() const
 {
@@ -161,9 +147,7 @@ juce::AudioProcessorEditor* Plugin::createEditor() const
 	return e;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::string Plugin::getUniqueId() const
 {
@@ -172,36 +156,28 @@ std::string Plugin::getUniqueId() const
 	return m_plugin->getPluginDescription().createIdentifierString().toStdString();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int Plugin::getNumParameters() const
 {
 	return valid ? m_plugin->getParameters().size() : 0;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 float Plugin::getParameter(int paramIndex) const
 {
 	return m_plugin->getParameters()[paramIndex]->getValue();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void Plugin::setParameter(int paramIndex, float value) const
 {
 	m_plugin->getParameters()[paramIndex]->setValue(value);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::string Plugin::getName() const
 {
@@ -210,9 +186,7 @@ std::string Plugin::getName() const
 	return m_plugin->getName().toStdString();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool Plugin::isSuspended() const
 {
@@ -221,9 +195,7 @@ bool Plugin::isSuspended() const
 	return m_plugin->isSuspended();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool Plugin::acceptsMidi() const
 {
@@ -232,9 +204,7 @@ bool Plugin::acceptsMidi() const
 	return m_plugin->acceptsMidi();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 PluginState Plugin::getState() const
 {
@@ -243,16 +213,12 @@ PluginState Plugin::getState() const
 	return PluginState(std::move(data));
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool Plugin::isBypassed() const { return m_bypass.load(); }
 void Plugin::setBypass(bool b) { m_bypass.store(b); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void Plugin::process(juce::AudioBuffer<float>& out, juce::MidiBuffer m)
 {
@@ -276,7 +242,8 @@ void Plugin::process(juce::AudioBuffer<float>& out, juce::MidiBuffer m)
 	by taking into account the bus layout - many plug-ins might have mono output
 	and we have a stereo buffer to fill. */
 
-	for (int i=0, j=0; i<out.getNumChannels(); i++) {
+	for (int i = 0, j = 0; i < out.getNumChannels(); i++)
+	{
 		if (isInstrument)
 			out.addFrom(i, 0, m_buffer, j, 0, m_buffer.getNumSamples());
 		else
@@ -286,18 +253,14 @@ void Plugin::process(juce::AudioBuffer<float>& out, juce::MidiBuffer m)
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void Plugin::setState(PluginState state)
 {
 	m_plugin->setStateInformation(state.getData(), state.getSize());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int Plugin::getNumPrograms() const
 {
@@ -306,9 +269,7 @@ int Plugin::getNumPrograms() const
 	return m_plugin->getNumPrograms();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int Plugin::getCurrentProgram() const
 {
@@ -317,9 +278,7 @@ int Plugin::getCurrentProgram() const
 	return m_plugin->getCurrentProgram();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void Plugin::setCurrentProgram(int index) const
 {
@@ -327,18 +286,14 @@ void Plugin::setCurrentProgram(int index) const
 		m_plugin->setCurrentProgram(index);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool Plugin::hasEditor() const
 {
 	return m_hasEditor;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::string Plugin::getProgramName(int index) const
 {
@@ -347,9 +302,7 @@ std::string Plugin::getProgramName(int index) const
 	return m_plugin->getProgramName(index).toStdString();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::string Plugin::getParameterName(int index) const
 {
@@ -359,24 +312,19 @@ std::string Plugin::getParameterName(int index) const
 	return m_plugin->getParameters()[index]->getName(labelSize).toStdString();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::string Plugin::getParameterText(int index) const
 {
 	return m_plugin->getParameters()[index]->getCurrentValueAsText().toStdString();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::string Plugin::getParameterLabel(int index) const
 {
 	return m_plugin->getParameters()[index]->getLabel().toStdString();
 }
-} // giada::m::
-
+} // namespace giada::m
 
 #endif

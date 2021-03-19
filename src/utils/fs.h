@@ -26,17 +26,16 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_UTILS_FS_H
 #define G_UTILS_FS_H
 
-
 #include <string>
 
-
-namespace giada {
-namespace u {
-namespace fs 
+namespace giada
+{
+namespace u
+{
+namespace fs
 {
 bool fileExists(const std::string& s);
 bool dirExists(const std::string& s);
@@ -47,8 +46,8 @@ Tells whether 's' is '/' on Unix or '[X]:\' on Windows. */
 
 bool isRootDir(const std::string& s);
 
-bool isProject(const std::string& s);
-bool mkdir(const std::string& s);
+bool        isProject(const std::string& s);
+bool        mkdir(const std::string& s);
 std::string getCurrentPath();
 std::string getHomePath();
 
@@ -85,7 +84,8 @@ Returns the upper directory:
 /path/to/my/directory -> /path/to/my/ */
 
 std::string getUpDir(const std::string& s);
-}}}  // giada::u::fs::
-
+} // namespace fs
+} // namespace u
+} // namespace giada
 
 #endif

@@ -24,22 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_SLIDER_H
 #define GE_SLIDER_H
 
-
 #include <FL/Fl_Slider.H>
-
 
 class geSlider : public Fl_Slider
 {
-public:
+  public:
+	geSlider(int x, int y, int w, int h, const char* l = 0);
 
-  geSlider(int x, int y, int w, int h, const char *l=0);
-
-  int id;
+	int id;
 };
-
 
 #endif

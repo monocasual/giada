@@ -24,44 +24,41 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_MIDIMAPCONF_H
 #define G_MIDIMAPCONF_H
 
-
-#include <vector>
 #include <string>
+#include <vector>
 
-
-namespace giada {
-namespace m {
+namespace giada
+{
+namespace m
+{
 namespace midimap
 {
 struct Message
 {
-    int         channel  = 0;
-    std::string valueStr = "";
+	int         channel  = 0;
+	std::string valueStr = "";
 	int         offset   = -1;
 	uint32_t    value    = 0;
 };
 
-
 struct MidiMap
 {
-    std::string brand;
-    std::string device;
-    std::vector<Message> initCommands;
-    Message muteOn;
-    Message muteOff;
-    Message soloOn;
-    Message soloOff;
-    Message waiting;
-    Message playing;
-    Message stopping;
-    Message stopped;
-    Message playingInaudible;
+	std::string          brand;
+	std::string          device;
+	std::vector<Message> initCommands;
+	Message              muteOn;
+	Message              muteOff;
+	Message              soloOn;
+	Message              soloOff;
+	Message              waiting;
+	Message              playing;
+	Message              stopping;
+	Message              stopped;
+	Message              playingInaudible;
 };
-
 
 /* -------------------------------------------------------------------------- */
 
@@ -80,7 +77,6 @@ Maps are the available .giadamap files. Each element of the std::vector
 represents a .giadamap filename. */
 
 extern std::vector<std::string> maps;
-
 
 /* -------------------------------------------------------------------------- */
 
@@ -103,6 +99,8 @@ bool isDefined(const Message& msg);
 Reads a midi map from file 'file'. */
 
 int read(const std::string& file);
-}}} // giada::m::midimap::
+} // namespace midimap
+} // namespace m
+} // namespace giada
 
 #endif

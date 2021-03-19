@@ -24,35 +24,33 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <unordered_map>
-#include <algorithm>
-#include <cmath>
-#include <cassert>
-#include "utils/log.h"
-#include "utils/ver.h"
-#include "model/model.h"
-#include "recorder.h"
+#include "recorderHandler.h"
 #include "action.h"
 #include "clock.h"
 #include "const.h"
+#include "model/model.h"
 #include "patch.h"
-#include "recorderHandler.h"
+#include "recorder.h"
+#include "utils/log.h"
+#include "utils/ver.h"
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <unordered_map>
 
-
-namespace giada {
-namespace m {
+namespace giada
+{
+namespace m
+{
 namespace recorderHandler
 {
 namespace
 {
 constexpr int MAX_LIVE_RECS_CHUNK = 128;
 
-std::vector<Action> recs_; 
-
+std::vector<Action> recs_;
 
 /* -------------------------------------------------------------------------- */
-
 
 const Action* getActionPtrById_(int id, const recorder::ActionMap& source)
 {
@@ -63,24 +61,20 @@ const Action* getActionPtrById_(int id, const recorder::ActionMap& source)
 	return nullptr;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 /* areComposite_
 Composite: NOTE_ON + NOTE_OFF on the same note. */
 
 bool areComposite_(const Action& a1, const Action& a2)
 {
-	return a1.event.getStatus() == MidiEvent::NOTE_ON  &&
+	return a1.event.getStatus() == MidiEvent::NOTE_ON &&
 	       a2.event.getStatus() == MidiEvent::NOTE_OFF &&
-	       a1.event.getNote() == a2.event.getNote()    &&
+	       a1.event.getNote() == a2.event.getNote() &&
 	       a1.channelId == a2.channelId;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 /* consolidate_
 Given an action 'a1' tries to find the matching NOTE_OFF. This algorithm must
@@ -91,7 +85,8 @@ algorithm would end up matching wrong partners. */
 
 void consolidate_(const Action& a1, std::size_t i)
 {
-	for (auto it = recs_.begin() + i; it != recs_.end(); ++it) {
+	for (auto it = recs_.begin() + i; it != recs_.end(); ++it)
+	{
 
 		const Action& a2 = *it;
 
@@ -105,31 +100,25 @@ void consolidate_(const Action& a1, std::size_t i)
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void consolidate_()
 {
 	for (auto it = recs_.begin(); it != recs_.end(); ++it)
-		consolidate_(*it, it - recs_.begin());  // Pass current index
+		consolidate_(*it, it - recs_.begin()); // Pass current index
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 void init()
 {
 	recs_.reserve(MAX_LIVE_RECS_CHUNK);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool isBoundaryEnvelopeAction(const Action& a)
 {
@@ -138,20 +127,18 @@ bool isBoundaryEnvelopeAction(const Action& a)
 	return a.prev->frame > a.frame || a.next->frame < a.frame;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void updateBpm(float oldval, float newval, int oldquanto)
 {
-	recorder::updateKeyFrames([=](Frame old) 
-	{
+	recorder::updateKeyFrames([=](Frame old) {
 		/* The division here cannot be precise. A new frame can be 44099 and the 
 		quantizer set to 44100. That would mean two recs completely useless. So we 
 		compute a reject value ('scarto'): if it's lower than 6 frames the new frame 
 		is collapsed with a quantized frame. FIXME - maybe 6 frames are too low. */
 		Frame frame = static_cast<Frame>((old / newval) * oldval);
-		if (frame != 0) {
+		if (frame != 0)
+		{
 			Frame delta = oldquanto % frame;
 			if (delta > 0 && delta <= 6)
 				frame = frame + delta;
@@ -160,35 +147,30 @@ void updateBpm(float oldval, float newval, int oldquanto)
 	});
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void updateSamplerate(int systemRate, int patchRate)
 {
 	if (systemRate == patchRate)
 		return;
 
-	float ratio = systemRate / (float) patchRate;
+	float ratio = systemRate / (float)patchRate;
 
 	recorder::updateKeyFrames([=](Frame old) { return floorf(old * ratio); });
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool cloneActions(ID channelId, ID newChannelId)
 {
-	bool cloned = false;
-	std::vector<Action> actions;
+	bool                       cloned = false;
+	std::vector<Action>        actions;
 	std::unordered_map<ID, ID> map; // Action ID mapper, old -> new
 
-	recorder::forEachAction([&](const Action& a) 
-	{
+	recorder::forEachAction([&](const Action& a) {
 		if (a.channelId != channelId)
 			return;
-		
+
 		ID newActionId = recorder::getNewActionId();
 
 		map.insert({a.id, newActionId});
@@ -203,9 +185,12 @@ bool cloneActions(ID channelId, ID newChannelId)
 
 	/* Update nextId and prevId relationships given the new action ID. */
 
-	for (Action& a : actions) {
-		if (a.prevId != 0) a.prevId = map.at(a.prevId);
-		if (a.nextId != 0) a.nextId = map.at(a.nextId);
+	for (Action& a : actions)
+	{
+		if (a.prevId != 0)
+			a.prevId = map.at(a.prevId);
+		if (a.nextId != 0)
+			a.nextId = map.at(a.nextId);
 	}
 
 	recorder::rec(actions);
@@ -213,9 +198,7 @@ bool cloneActions(ID channelId, ID newChannelId)
 	return cloned;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void liveRec(ID channelId, MidiEvent e, Frame globalFrame)
 {
@@ -224,13 +207,11 @@ void liveRec(ID channelId, MidiEvent e, Frame globalFrame)
 	/* TODO - this might allocate on the MIDI thread */
 	if (recs_.size() >= recs_.capacity())
 		recs_.reserve(recs_.size() + MAX_LIVE_RECS_CHUNK);
-	
+
 	recs_.push_back(recorder::makeAction(recorder::getNewActionId(), channelId, globalFrame, e));
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::unordered_set<ID> consolidate()
 {
@@ -245,23 +226,19 @@ std::unordered_set<ID> consolidate()
 	return out;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void clearAllActions()
 {
 	for (channel::Data& ch : model::get().channels)
 		ch.hasActions = false;
 
-    model::swap(model::SwapType::HARD);
+	model::swap(model::SwapType::HARD);
 
 	recorder::clearAll();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 recorder::ActionMap deserializeActions(const std::vector<patch::Action>& pactions)
 {
@@ -276,16 +253,19 @@ recorder::ActionMap deserializeActions(const std::vector<patch::Action>& paction
 	/* Second pass: fill in previous and next actions, if any. Is this the
 	fastest/smartest way to do it? Maybe not. Optimizations are welcome. */
 
-	for (const patch::Action& paction : pactions) {
-		if (paction.nextId == 0 && paction.prevId == 0) 
+	for (const patch::Action& paction : pactions)
+	{
+		if (paction.nextId == 0 && paction.prevId == 0)
 			continue;
 		Action* curr = const_cast<Action*>(getActionPtrById_(paction.id, out));
 		assert(curr != nullptr);
-		if (paction.nextId != 0) {
+		if (paction.nextId != 0)
+		{
 			curr->next = getActionPtrById_(paction.nextId, out);
 			assert(curr->next != nullptr);
 		}
-		if (paction.prevId != 0) {
+		if (paction.prevId != 0)
+		{
 			curr->prev = getActionPtrById_(paction.prevId, out);
 			assert(curr->prev != nullptr);
 		}
@@ -294,28 +274,28 @@ recorder::ActionMap deserializeActions(const std::vector<patch::Action>& paction
 	return out;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::vector<patch::Action> serializeActions(const recorder::ActionMap& actions)
 {
 	std::vector<patch::Action> out;
-	for (const auto& kv : actions) {
-		for (const Action& a : kv.second) {
+	for (const auto& kv : actions)
+	{
+		for (const Action& a : kv.second)
+		{
 			out.push_back({
-				a.id,
-				a.channelId,
-				a.frame,
-				a.event.getRaw(),
-				a.prevId,
-				a.nextId,
+			    a.id,
+			    a.channelId,
+			    a.frame,
+			    a.event.getRaw(),
+			    a.prevId,
+			    a.nextId,
 			});
 		}
 	}
-	return out;	
+	return out;
 }
 
-}}} // giada::m::recorderHandler::
-
-
+} // namespace recorderHandler
+} // namespace m
+} // namespace giada

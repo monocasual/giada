@@ -24,24 +24,24 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "gui/dispatcher.h"
-#include "core/model/model.h"
-#include "core/types.h"
+#include "core/recManager.h"
 #include "core/clock.h"
-#include "core/kernelAudio.h"
 #include "core/conf.h"
-#include "core/mixer.h"
-#include "core/sequencer.h"
-#include "core/mixerHandler.h"
+#include "core/kernelAudio.h"
 #include "core/midiDispatcher.h"
+#include "core/mixer.h"
+#include "core/mixerHandler.h"
+#include "core/model/model.h"
 #include "core/recorder.h"
 #include "core/recorderHandler.h"
-#include "core/recManager.h"
+#include "core/sequencer.h"
+#include "core/types.h"
+#include "gui/dispatcher.h"
 
-
-namespace giada {
-namespace m {
+namespace giada
+{
+namespace m
+{
 namespace recManager
 {
 namespace
@@ -49,19 +49,16 @@ namespace
 void setRecordingAction_(bool v)
 {
 	model::get().recorder.isRecordingAction = v;
-    model::swap(model::SwapType::NONE);
+	model::swap(model::SwapType::NONE);
 }
-
 
 void setRecordingInput_(bool v)
 {
-    model::get().recorder.isRecordingInput = v;
-    model::swap(model::SwapType::NONE);
+	model::get().recorder.isRecordingInput = v;
+	model::swap(model::SwapType::NONE);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool startActionRec_()
 {
@@ -73,9 +70,7 @@ bool startActionRec_()
 	return true;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool startInputRec_()
 {
@@ -86,42 +81,38 @@ bool startInputRec_()
 	m::conf::conf.recTriggerMode = RecTriggerMode::NORMAL;
 	return true;
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 bool isRecording()
-{ 
+{
 	return isRecordingAction() || isRecordingInput();
 }
 
-
 bool isRecordingAction()
 {
-    return model::get().recorder.isRecordingAction;
+	return model::get().recorder.isRecordingAction;
 }
-
 
 bool isRecordingInput()
 {
-    return model::get().recorder.isRecordingInput;
+	return model::get().recorder.isRecordingInput;
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 void startActionRec(RecTriggerMode mode)
 {
-	if (mode == RecTriggerMode::NORMAL) {
+	if (mode == RecTriggerMode::NORMAL)
+	{
 		if (startActionRec_())
 			setRecordingAction_(true);
 	}
-	else {   // RecTriggerMode::SIGNAL
+	else
+	{ // RecTriggerMode::SIGNAL
 		clock::setStatus(ClockStatus::WAITING);
 		clock::rewind();
 		m::midiDispatcher::setSignalCallback(startActionRec_);
@@ -130,9 +121,7 @@ void startActionRec(RecTriggerMode mode)
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void stopActionRec()
 {
@@ -141,7 +130,8 @@ void stopActionRec()
 	/* If you stop the Action Recorder in SIGNAL mode before any actual 
 	recording: just clean up everything and return. */
 
-	if (clock::getStatus() == ClockStatus::WAITING)	{
+	if (clock::getStatus() == ClockStatus::WAITING)
+	{
 		clock::setStatus(ClockStatus::STOPPED);
 		midiDispatcher::setSignalCallback(nullptr);
 		v::dispatcher::setSignalCallback(nullptr);
@@ -154,39 +144,38 @@ void stopActionRec()
 	actions. Start reading right away, without checking whether 
 	conf::treatRecsAsLoops is enabled or not. Same thing for MIDI channels.  */
 
-	for (ID id : channels) {
-	    channel::Data& ch = model::get().getChannel(id);
-	    ch.readActions = true;
-	    if (ch.type == ChannelType::MIDI)
-            ch.state->playStatus.store(ChannelStatus::PLAY);
+	for (ID id : channels)
+	{
+		channel::Data& ch = model::get().getChannel(id);
+		ch.readActions    = true;
+		if (ch.type == ChannelType::MIDI)
+			ch.state->playStatus.store(ChannelStatus::PLAY);
 	}
-    model::swap(model::SwapType::HARD);
+	model::swap(model::SwapType::HARD);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void toggleActionRec(RecTriggerMode m)
 {
 	isRecordingAction() ? stopActionRec() : startActionRec(m);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool startInputRec(RecTriggerMode mode)
 {
-	if (mode == RecTriggerMode::NORMAL) {
-G_DEBUG("Start input rec, NORMAL mode");
+	if (mode == RecTriggerMode::NORMAL)
+	{
+		G_DEBUG("Start input rec, NORMAL mode");
 		if (!startInputRec_())
 			return false;
 		setRecordingInput_(true);
 		return true;
 	}
-	else {
-G_DEBUG("Start input rec, SIGNAL mode");
+	else
+	{
+		G_DEBUG("Start input rec, SIGNAL mode");
 		if (!mh::hasInputRecordableChannels())
 			return false;
 		clock::setStatus(ClockStatus::WAITING);
@@ -197,20 +186,19 @@ G_DEBUG("Start input rec, SIGNAL mode");
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void stopInputRec()
 {
 	setRecordingInput_(false);
 
 	mixer::stopInputRec();
-	
+
 	/* If you stop the Input Recorder in SIGNAL mode before any actual 
 	recording: just clean up everything and return. */
 
-	if (clock::getStatus() == ClockStatus::WAITING) {
+	if (clock::getStatus() == ClockStatus::WAITING)
+	{
 		clock::setStatus(ClockStatus::STOPPED);
 		mixer::setSignalCallback(nullptr);
 	}
@@ -218,16 +206,17 @@ void stopInputRec()
 		mh::finalizeInputRec();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool toggleInputRec(RecTriggerMode m)
 {
-	if (isRecordingInput()) {
+	if (isRecordingInput())
+	{
 		stopInputRec();
 		return true;
 	}
 	return startInputRec(m);
 }
-}}} // giada::m::recManager
+} // namespace recManager
+} // namespace m
+} // namespace giada

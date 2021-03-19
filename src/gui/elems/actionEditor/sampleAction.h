@@ -24,16 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_SAMPLE_ACTION_H
 #define GE_SAMPLE_ACTION_H
 
-
-#include "core/recorder.h"
 #include "baseAction.h"
+#include "core/recorder.h"
 
-
-namespace giada {
+namespace giada
+{
 namespace m
 {
 class SampleChannel;
@@ -42,18 +40,16 @@ namespace v
 {
 class geSampleAction : public geBaseAction
 {
-public:
-
-	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, bool singlePress, 
-		m::Action a1, m::Action a2);
+  public:
+	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, bool singlePress,
+	    m::Action a1, m::Action a2);
 
 	void draw() override;
 
-private:
-
+  private:
 	bool m_singlePress;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

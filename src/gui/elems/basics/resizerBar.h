@@ -40,35 +40,30 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_RESIZER_BAR_H
 #define GE_RESIZER_BAR_H
 
-
-#include <functional>
 #include <FL/Fl_Box.H>
-
+#include <functional>
 
 class geResizerBar : public Fl_Box
 {
-public:
-
+  public:
 	static const int HORIZONTAL = 0;
 	static const int VERTICAL   = 1;
 
-	geResizerBar(int x, int y, int w, int h, int minSize, bool type, Fl_Widget* target=nullptr);
+	geResizerBar(int x, int y, int w, int h, int minSize, bool type, Fl_Widget* target = nullptr);
 
-	int handle(int e) override;
+	int  handle(int e) override;
 	void draw() override;
 	void resize(int x, int y, int w, int h) override;
 
 	int getMinSize() const;
 
-	std::function<void(const Fl_Widget*)> onDrag = nullptr;
+	std::function<void(const Fl_Widget*)> onDrag    = nullptr;
 	std::function<void(const Fl_Widget*)> onRelease = nullptr;
 
-private:
-
+  private:
 	void handleDrag(int diff);
 
 	bool m_type;
@@ -80,6 +75,5 @@ private:
 
 	Fl_Widget* m_target;
 };
-
 
 #endif

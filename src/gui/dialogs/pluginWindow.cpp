@@ -24,20 +24,18 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
 
-
-#include <FL/fl_draw.H>
-#include "glue/plugin.h"
-#include "utils/gui.h"
+#include "pluginWindow.h"
 #include "core/const.h"
+#include "glue/plugin.h"
 #include "gui/elems/basics/liquidScroll.h"
 #include "gui/elems/plugin/pluginParameter.h"
-#include "pluginWindow.h"
+#include "utils/gui.h"
+#include <FL/fl_draw.H>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin)
@@ -46,41 +44,39 @@ gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin)
 {
 	set_non_modal();
 
-	m_list = new geLiquidScroll(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 
-		w()-(G_GUI_OUTER_MARGIN*2), h()-(G_GUI_OUTER_MARGIN*2));
-	
+	m_list = new geLiquidScroll(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN,
+	    w() - (G_GUI_OUTER_MARGIN * 2), h() - (G_GUI_OUTER_MARGIN * 2));
+
 	m_list->type(Fl_Scroll::VERTICAL_ALWAYS);
 	m_list->begin();
-		int labelWidth = 100; // TODO
-		for (int index : m_plugin.paramIndexes) {
-			int py = m_list->y() + (index * (G_GUI_UNIT + G_GUI_INNER_MARGIN));
-			int pw = m_list->w() - m_list->scrollbar_size() - (G_GUI_OUTER_MARGIN*3);
-			new v::gePluginParameter(m_list->x(), py, pw, labelWidth, c::plugin::getParam(index, m_plugin.getPluginRef(),
-                m_plugin.channelId));
-		}
+	int labelWidth = 100; // TODO
+	for (int index : m_plugin.paramIndexes)
+	{
+		int py = m_list->y() + (index * (G_GUI_UNIT + G_GUI_INNER_MARGIN));
+		int pw = m_list->w() - m_list->scrollbar_size() - (G_GUI_OUTER_MARGIN * 3);
+		new v::gePluginParameter(m_list->x(), py, pw, labelWidth, c::plugin::getParam(index, m_plugin.getPluginRef(), m_plugin.channelId));
+	}
 	m_list->end();
 
 	end();
 
 	label(m_plugin.name.c_str());
 
-	size_range(450, (G_GUI_UNIT + (G_GUI_OUTER_MARGIN*2)));
+	size_range(450, (G_GUI_UNIT + (G_GUI_OUTER_MARGIN * 2)));
 	resizable(m_list);
 
 	u::gui::setFavicon(this);
 	show();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdPluginWindow::updateParameters(bool changeSlider)
 {
 	for (int index : m_plugin.paramIndexes)
 		static_cast<v::gePluginParameter*>(m_list->child(index))->update(c::plugin::getParam(index, m_plugin.getPluginRef(), m_plugin.channelId), changeSlider);
 }
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif // #ifdef WITH_VST

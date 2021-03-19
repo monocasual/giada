@@ -24,17 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_WINDOW_H
 #define GD_WINDOW_H
 
-
-#include <vector>
 #include <FL/Fl_Double_Window.H>
+#include <vector>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 /* cb_window_closer
 Callback for closing windows. Deletes the widget (delete). */
@@ -43,10 +41,9 @@ void cb_window_closer(Fl_Widget* /*w*/, void* p);
 
 class gdWindow : public Fl_Double_Window
 {
-public:
-
-	gdWindow(int x, int y, int w, int h, const char* title=0, int id=0);
-	gdWindow(int w, int h, const char* title=0, int id=0);
+  public:
+	gdWindow(int x, int y, int w, int h, const char* title = 0, int id = 0);
+	gdWindow(int w, int h, const char* title = 0, int id = 0);
 	~gdWindow();
 
 	static void cb_closeChild(Fl_Widget* /*w*/, void* p);
@@ -55,33 +52,32 @@ public:
 	Rebuild() is called by the View Updater when something structural changes
 	(e.g. a new channel added). Refresh() is called periodically by the View 
 	Updater during the refresh loop. */
-	
-	virtual void rebuild() {};
-	virtual void refresh() {};
+
+	virtual void rebuild(){};
+	virtual void refresh(){};
 
 	/* hasWindow
 	True if the window with id 'id' exists in the stack. */
 
 	bool hasWindow(int id) const;
-	
+
 	int  getId() const;
 	void debug() const;
 
-	void addSubWindow(gdWindow* w);
-	void delSubWindow(gdWindow* w);
-	void delSubWindow(int id);
-	void setId(int id);
-	void setParent(gdWindow* w);
+	void      addSubWindow(gdWindow* w);
+	void      delSubWindow(gdWindow* w);
+	void      delSubWindow(int id);
+	void      setId(int id);
+	void      setParent(gdWindow* w);
 	gdWindow* getParent();
 	gdWindow* getChild(int id);
 
-protected:
-
+  protected:
 	std::vector<gdWindow*> subWindows;
-	int id;
-	gdWindow* parent;
+	int                    id;
+	gdWindow*              parent;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

@@ -24,18 +24,16 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_BASE_ACTION_H
 #define GE_BASE_ACTION_H
 
-
-#include <FL/Fl_Box.H>
 #include "core/recorder.h"
 #include "core/types.h"
+#include <FL/Fl_Box.H>
 
-
-namespace giada {
-namespace m 
+namespace giada
+{
+namespace m
 {
 struct Action;
 }
@@ -43,13 +41,12 @@ namespace v
 {
 class geBaseAction : public Fl_Box
 {
-public:
-
+  public:
 	static const Pixel MIN_WIDTH    = 12;
 	static const Pixel HANDLE_WIDTH = 6;
 
-	geBaseAction(Pixel x, Pixel y, Pixel w, Pixel h, bool resizable, 
-		m::Action a1, m::Action a2);
+	geBaseAction(Pixel x, Pixel y, Pixel w, Pixel h, bool resizable,
+	    m::Action a1, m::Action a2);
 
 	int handle(int e) override;
 
@@ -63,19 +60,19 @@ public:
 
 	void setPosition(Pixel p);
 
-	bool onRightEdge;
-	bool onLeftEdge;
-	bool hovered;
-	bool altered;
+	bool  onRightEdge;
+	bool  onLeftEdge;
+	bool  hovered;
+	bool  altered;
 	Pixel pick;
 
 	m::Action a1;
 	m::Action a2;
-	
-protected:
-	
+
+  protected:
 	bool m_resizable;
 };
-}} // giada::v::
+} // namespace v
+} // namespace giada
 
 #endif

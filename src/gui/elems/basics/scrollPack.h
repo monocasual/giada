@@ -24,50 +24,46 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_SCROLL_PACK_H
 #define GE_SCROLL_PACK_H
 
-
-#include "gui/elems/basics/scroll.h"
 #include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/scroll.h"
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 /* geScrollPack
 A scrollable viewport that contains packed widgets. */
 
 class geScrollPack : public geScroll
 {
-public:
+  public:
+	geScrollPack(int x, int y, int w, int h, int type = Fl_Scroll::BOTH,
+	    Direction d = Direction::HORIZONTAL, int gutter = G_GUI_INNER_MARGIN);
 
-	geScrollPack(int x, int y, int w, int h, int type=Fl_Scroll::BOTH, 
-        Direction d=Direction::HORIZONTAL, int gutter=G_GUI_INNER_MARGIN);
-
-    /* countChildren
+	/* countChildren
     Returns the number of widgets contained in this group. */
-    
-    std::size_t countChildren() const;
-    
-    void add(Fl_Widget* w);
 
-    Fl_Widget* getChild(std::size_t i);
-    Fl_Widget* getLastChild();
+	std::size_t countChildren() const;
 
-private:
+	void add(Fl_Widget* w);
 
-    /* m_widgets 
+	Fl_Widget* getChild(std::size_t i);
+	Fl_Widget* getLastChild();
+
+  private:
+	/* m_widgets 
     The internal Fl_Scroll::array_ is unreliable when inspected with the child()
     method. Let's keep track of widgets that belong to this group manually. */
 
-    std::vector<Fl_Widget*> m_widgets;  
+	std::vector<Fl_Widget*> m_widgets;
 
-    Direction m_direction;
-    int       m_gutter;
+	Direction m_direction;
+	int       m_gutter;
 };
-}}
-
+} // namespace v
+} // namespace giada
 
 #endif

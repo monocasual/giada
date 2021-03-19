@@ -24,16 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_MAINWINDOW_H
 #define GD_MAINWINDOW_H
 
-
 #include "window.h"
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class geKeyboard;
 class geMainIO;
@@ -43,13 +41,12 @@ class geMainTransport;
 class geMainTimer;
 class gdMainWindow : public gdWindow
 {
-public:
-
-    gdMainWindow(int w, int h, const char* title, int argc, char** argv);
+  public:
+	gdMainWindow(int w, int h, const char* title, int argc, char** argv);
 	~gdMainWindow();
 
 	void refresh() override;
-    void rebuild() override;
+	void rebuild() override;
 
 	/* clearKeyboard
 	Resets Keyboard to initial state, with no columns. */
@@ -63,7 +60,7 @@ public:
 	geMainTimer*     mainTimer;
 	geMainTransport* mainTransport;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

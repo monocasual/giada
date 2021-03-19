@@ -24,57 +24,55 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/fl_draw.H>
+#include "channelStatus.h"
 #include "core/const.h"
 #include "glue/channel.h"
-#include "channelStatus.h"
+#include <FL/fl_draw.H>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 geChannelStatus::geChannelStatus(int x, int y, int w, int h, c::channel::Data& d)
-: Fl_Box   (x, y, w, h)
+: Fl_Box(x, y, w, h)
 , m_channel(d)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannelStatus::draw()
 {
-	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);              // reset border
-	fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);     // reset background
+	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);                  // reset border
+	fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2, G_COLOR_GREY_2); // reset background
 
 	ChannelStatus playStatus = m_channel.getPlayStatus();
 	ChannelStatus recStatus  = m_channel.getRecStatus();
 	Pixel         pos        = 0;
 
-	if (playStatus == ChannelStatus::WAIT    || 
-	    playStatus == ChannelStatus::ENDING  ||
-	    recStatus  == ChannelStatus::WAIT    || 
-	    recStatus  == ChannelStatus::ENDING)
+	if (playStatus == ChannelStatus::WAIT ||
+	    playStatus == ChannelStatus::ENDING ||
+	    recStatus == ChannelStatus::WAIT ||
+	    recStatus == ChannelStatus::ENDING)
 	{
 		fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
 	}
-	else
-	if (playStatus == ChannelStatus::PLAY) {
+	else if (playStatus == ChannelStatus::PLAY)
+	{
 		/* Equation for the progress bar: 
 		((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
 		Frame tracker = m_channel.sample->getTracker();
 		Frame begin   = m_channel.sample->getBegin();
 		Frame end     = m_channel.sample->getEnd();
-		pos = ((tracker - begin) * (w() - 1)) / ((end - begin));
+		pos           = ((tracker - begin) * (w() - 1)) / ((end - begin));
 		fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
 	}
 	else
-		fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);  // status empty
+		fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2, G_COLOR_GREY_2); // status empty
 
 	if (pos != 0)
-		fl_rectf(x()+1, y()+1, pos, h()-2, G_COLOR_LIGHT_1);
+		fl_rectf(x() + 1, y() + 1, pos, h() - 2, G_COLOR_LIGHT_1);
 }
 
-}} // giada::v::
+} // namespace v
+} // namespace giada

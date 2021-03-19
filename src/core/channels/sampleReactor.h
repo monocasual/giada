@@ -24,28 +24,28 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CHANNEL_SAMPLE_REACTOR_H
 #define G_CHANNEL_SAMPLE_REACTOR_H
-
 
 #include "core/eventDispatcher.h"
 #include "core/quantizer.h"
 
-
-namespace giada::m::channel { struct Data; }
+namespace giada::m::channel
+{
+struct Data;
+}
 namespace giada::m::sampleReactor
 {
 struct Data
 {
-    Data(ID channelId);
-    Data(const Data&)            = default;
-    Data(Data&&)                 = default;
-    Data& operator=(const Data&) = default;
-    Data& operator=(Data&&)      = default;
+	Data(ID channelId);
+	Data(const Data&) = default;
+	Data(Data&&)      = default;
+	Data& operator=(const Data&) = default;
+	Data& operator=(Data&&) = default;
 };
 
 void react(channel::Data& ch, const eventDispatcher::Event& e);
-}
+} // namespace giada::m::sampleReactor
 
 #endif

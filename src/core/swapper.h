@@ -24,14 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_SWAPPER_H
 #define G_SWAPPER_H
 
-
 #include <atomic>
 #include <functional>
-
 
 namespace giada
 {
@@ -41,14 +38,14 @@ A template class that performs atomic double buffering on type T. */
 template <typename T>
 class Swapper
 {
-public:
-
+  public:
 	class RtLock
 	{
-	friend Swapper;
-	public:
+		friend Swapper;
 
-        RtLock(Swapper& s) : m_swapper(s)
+	  public:
+		RtLock(Swapper& s)
+		: m_swapper(s)
 		{
 			m_swapper.rt_lock();
 		}
@@ -63,8 +60,7 @@ public:
 			return m_swapper.rt_get();
 		}
 
-	private:
-
+	  private:
 		Swapper& m_swapper;
 	};
 
@@ -81,33 +77,31 @@ public:
 		return m_data[(m_bits.load() & BIT_INDEX) ^ 1];
 	}
 
-    void swap()
-    {
-        int bits = m_bits.load();
+	void swap()
+	{
+		int bits = m_bits.load();
 
-        /* Wait for the audio thread to finish, i.e. until the BUSY bit becomes
+		/* Wait for the audio thread to finish, i.e. until the BUSY bit becomes
         zero. Only then, swap indexes. This will let the audio thread to pick
         the updated data on its next cycle. */
-        int desired;
-        do
-        {
-            bits    = bits & ~BIT_BUSY;               // Expected: current value without busy bit set
-            desired = (bits ^ BIT_INDEX) & BIT_INDEX; // Desired: flipped (xor) index
-        }
-        while (!m_bits.compare_exchange_weak(bits, desired));
+		int desired;
+		do
+		{
+			bits    = bits & ~BIT_BUSY;               // Expected: current value without busy bit set
+			desired = (bits ^ BIT_INDEX) & BIT_INDEX; // Desired: flipped (xor) index
+		} while (!m_bits.compare_exchange_weak(bits, desired));
 
-        bits = desired;
+		bits = desired;
 
-        /* After the swap above, m_data[(bits & BIT_INDEX) ^ 1] has become the 
+		/* After the swap above, m_data[(bits & BIT_INDEX) ^ 1] has become the 
 		non-realtime slot and it points to the data previously read by the
 		realtime thread. That data is old, so update it: overwrite it with the 
 		realtime data in the realtime slot (m_data[bits & BIT_INDEX]) that is 
 		currently being read by the realtime thread. */
-        m_data[(bits & BIT_INDEX) ^ 1] = m_data[bits & BIT_INDEX];
-    }
+		m_data[(bits & BIT_INDEX) ^ 1] = m_data[bits & BIT_INDEX];
+	}
 
-private:
-
+  private:
 	static constexpr int BIT_INDEX = (1 << 0); // 0001
 	static constexpr int BIT_BUSY  = (1 << 1); // 0010
 
@@ -135,9 +129,8 @@ private:
 
 	std::array<T, 2> m_data;
 	std::atomic<int> m_bits{0};
-	int              m_index{0};     
+	int              m_index{0};
 };
-} // giada::
-
+} // namespace giada
 
 #endif

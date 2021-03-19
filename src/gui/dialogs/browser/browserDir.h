@@ -24,32 +24,28 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_BROWSER_DIR_H
 #define GD_BROWSER_DIR_H
 
-
 #include "browserBase.h"
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class gdBrowserDir : public gdBrowserBase
 {
-public:
+  public:
+	gdBrowserDir(const std::string& title, const std::string& path,
+	    std::function<void(void*)> cb);
 
-	gdBrowserDir(const std::string& title, const std::string& path, 
-        std::function<void(void*)> cb);
-
-private:
-
-    static void cb_load(Fl_Widget* /*w*/, void* p);
-    static void cb_down(Fl_Widget* /*w*/, void* p);
-    void cb_load();
-    void cb_down();
+  private:
+	static void cb_load(Fl_Widget* /*w*/, void* p);
+	static void cb_down(Fl_Widget* /*w*/, void* p);
+	void        cb_load();
+	void        cb_down();
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

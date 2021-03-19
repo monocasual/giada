@@ -24,53 +24,50 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_KEYGRABBER_H
 #define GD_KEYGRABBER_H
 
-
-#include <FL/Fl.H>
 #include "window.h"
-
+#include <FL/Fl.H>
 
 class geBox;
 class geButton;
 
-
-namespace giada {
-namespace c {
+namespace giada
+{
+namespace c
+{
 namespace channel
 {
 struct Data;
-}}
-namespace v 
+}
+} // namespace c
+namespace v
 {
 class gdKeyGrabber : public gdWindow
 {
-public:
-
+  public:
 	gdKeyGrabber(const c::channel::Data& d);
 
-	int handle(int e) override;
+	int  handle(int e) override;
 	void rebuild() override;
 
-private:
-
-	static void cb_clear (Fl_Widget* /*w*/, void* p);
+  private:
+	static void cb_clear(Fl_Widget* /*w*/, void* p);
 	static void cb_cancel(Fl_Widget* /*w*/, void* p);
-	void cb_clear ();
-	void cb_cancel();
+	void        cb_clear();
+	void        cb_cancel();
 
 	void setButtonLabel(int key);
 	void updateText(int key);
-	
+
 	const c::channel::Data& m_data;
 
 	geBox*    m_text;
 	geButton* m_clear;
 	geButton* m_cancel;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

@@ -24,19 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_INPUT_H
 #define GE_INPUT_H
 
-
 #include <FL/Fl_Input.H>
-
 
 class geInput : public Fl_Input
 {
-public:
-
-	geInput(int x, int y, int w, int h, const char *l=0);
+  public:
+	geInput(int x, int y, int w, int h, const char* l = 0);
 };
 
 #endif

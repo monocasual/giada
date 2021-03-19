@@ -24,18 +24,16 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/Fl_Tooltip.H>
-#include "core/const.h"
-#include "core/conf.h"
 #include "tabMisc.h"
-
+#include "core/conf.h"
+#include "core/const.h"
+#include <FL/Fl_Tooltip.H>
 
 namespace giada::v
 {
 geTabMisc::geTabMisc(int X, int Y, int W, int H)
-: geGroup   (X, Y)
-, m_debugMsg(W - 230, 9,  230, 20, "Debug messages")
+: geGroup(X, Y)
+, m_debugMsg(W - 230, 9, 230, 20, "Debug messages")
 , m_tooltips(W - 230, 37, 230, 20, "Tooltips")
 {
 	add(&m_debugMsg);
@@ -48,16 +46,17 @@ geTabMisc::geTabMisc(int X, int Y, int W, int H)
 	m_tooltips.add("Disabled");
 	m_tooltips.add("Enabled");
 
-	switch (m::conf::conf.logMode) {
-		case LOG_MODE_MUTE:
-			m_debugMsg.value(0);
-			break;
-		case LOG_MODE_STDOUT:
-			m_debugMsg.value(1);
-			break;
-		case LOG_MODE_FILE:
-			m_debugMsg.value(2);
-			break;
+	switch (m::conf::conf.logMode)
+	{
+	case LOG_MODE_MUTE:
+		m_debugMsg.value(0);
+		break;
+	case LOG_MODE_STDOUT:
+		m_debugMsg.value(1);
+		break;
+	case LOG_MODE_FILE:
+		m_debugMsg.value(2);
+		break;
 	}
 
 	m_tooltips.value(m::conf::conf.showTooltips);
@@ -67,22 +66,24 @@ geTabMisc::geTabMisc(int X, int Y, int W, int H)
 	selection_color(G_COLOR_GREY_4);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geTabMisc::save()
 {
-	switch(m_debugMsg.value()) {
-		case 0:
-			m::conf::conf.logMode = LOG_MODE_MUTE; break;
-		case 1:
-			m::conf::conf.logMode = LOG_MODE_STDOUT; break;
-		case 2:
-			m::conf::conf.logMode = LOG_MODE_FILE; break;
+	switch (m_debugMsg.value())
+	{
+	case 0:
+		m::conf::conf.logMode = LOG_MODE_MUTE;
+		break;
+	case 1:
+		m::conf::conf.logMode = LOG_MODE_STDOUT;
+		break;
+	case 2:
+		m::conf::conf.logMode = LOG_MODE_FILE;
+		break;
 	}
 
 	m::conf::conf.showTooltips = m_tooltips.value();
 	Fl_Tooltip::enable(m_tooltips.value());
 }
-} // giada::v::
+} // namespace giada::v

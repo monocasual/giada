@@ -24,33 +24,29 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_SOUND_METER_H
 #define GE_SOUND_METER_H
 
-
 #include <FL/Fl_Box.H>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class geSoundMeter : public Fl_Box
 {
-public:
-
-	geSoundMeter(int x, int y, int w, int h, const char* l=0);
+  public:
+	geSoundMeter(int x, int y, int w, int h, const char* l = 0);
 
 	void draw() override;
 
-    float mixerPeak;    // peak from mixer
+	float mixerPeak; // peak from mixer
 
-private:
-
+  private:
 	float m_dbLevelCur;
 	float m_dbLevelOld;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

@@ -24,33 +24,32 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/fl_draw.H>
+#include "devInfo.h"
 #include "core/kernelAudio.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/button.h"
 #include "utils/gui.h"
 #include "utils/string.h"
-#include "gui/elems/basics/button.h"
-#include "gui/elems/basics/box.h"
 #include "window.h"
-#include "devInfo.h"
+#include <FL/fl_draw.H>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 gdDevInfo::gdDevInfo(unsigned dev)
 : gdWindow(340, 300, "Device information")
 {
 	set_modal();
 
-	text  = new geBox(8, 8, 320, 200, "", (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
-	close = new geButton(252, h()-28, 80, 20, "Close");
+	text  = new geBox(8, 8, 320, 200, "", (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_TOP));
+	close = new geButton(252, h() - 28, 80, 20, "Close");
 	end();
 
 	std::string body  = "";
 	int         lines = 7;
 
-	body  = "Device name: " + m::kernelAudio::getDeviceName(dev) + "\n";
+	body = "Device name: " + m::kernelAudio::getDeviceName(dev) + "\n";
 	body += "Total output(s): " + std::to_string(m::kernelAudio::getMaxOutChans(dev)) + "\n";
 	body += "Total input(s): " + std::to_string(m::kernelAudio::getMaxInChans(dev)) + "\n";
 	body += "Duplex channel(s): " + std::to_string(m::kernelAudio::getDuplexChans(dev)) + "\n";
@@ -60,9 +59,11 @@ gdDevInfo::gdDevInfo(unsigned dev)
 	int totalFreq = m::kernelAudio::getTotalFreqs(dev);
 	body += "Supported frequencies: " + std::to_string(totalFreq);
 
-	for (int i=0; i<totalFreq; i++) {
-		if (i % 6 == 0) {
-			body += "\n    ";  // add new line each 6 printed freqs AND on the first line (i % 0 != 0)
+	for (int i = 0; i < totalFreq; i++)
+	{
+		if (i % 6 == 0)
+		{
+			body += "\n    "; // add new line each 6 printed freqs AND on the first line (i % 0 != 0)
 			lines++;
 		}
 		body += std::to_string(m::kernelAudio::getFreq(dev, i)) + "  ";
@@ -80,4 +81,5 @@ gdDevInfo::gdDevInfo(unsigned dev)
 	u::gui::setFavicon(this);
 	show();
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

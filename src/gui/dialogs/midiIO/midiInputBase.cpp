@@ -24,47 +24,41 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "glue/io.h"
-#include "core/conf.h"
 #include "midiInputBase.h"
+#include "core/conf.h"
+#include "glue/io.h"
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 gdMidiInputBase::gdMidiInputBase(int x, int y, int w, int h, const char* title)
 : gdWindow(x, y, w, h, title)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 gdMidiInputBase::~gdMidiInputBase()
 {
 	c::io::stopMidiLearn();
-	
+
 	m::conf::conf.midiInputX = x();
 	m::conf::conf.midiInputY = y();
 	m::conf::conf.midiInputW = w();
 	m::conf::conf.midiInputH = h();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdMidiInputBase::cb_close(Fl_Widget* /*w*/, void* p) { ((gdMidiInputBase*)p)->cb_close(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdMidiInputBase::cb_close()
 {
 	do_callback();
 }
 
-}} // giada::v::
+} // namespace v
+} // namespace giada

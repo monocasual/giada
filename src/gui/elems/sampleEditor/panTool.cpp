@@ -24,33 +24,32 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/Fl.H>
-#include "core/model/model.h"
+#include "panTool.h"
 #include "core/const.h"
-#include "core/waveFx.h"  
+#include "core/model/model.h"
+#include "core/waveFx.h"
 #include "glue/events.h"
+#include "gui/dialogs/sampleEditor.h"
 #include "utils/gui.h"
 #include "utils/math.h"
 #include "utils/string.h"
-#include "gui/dialogs/sampleEditor.h"
 #include "waveTools.h"
-#include "panTool.h"
+#include <FL/Fl.H>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 gePanTool::gePanTool(const c::sampleEditor::Data& d, int x, int y)
-: gePack (x, y, Direction::HORIZONTAL)
-, m_data (nullptr)
+: gePack(x, y, Direction::HORIZONTAL)
+, m_data(nullptr)
 , m_label(0, 0, 60, G_GUI_UNIT, "Pan", FL_ALIGN_LEFT)
-, m_dial (0, 0, G_GUI_UNIT, G_GUI_UNIT)
+, m_dial(0, 0, G_GUI_UNIT, G_GUI_UNIT)
 , m_input(0, 0, 70, G_GUI_UNIT)
 , m_reset(0, 0, 70, G_GUI_UNIT, "Reset")
 {
 	add(&m_label);
-	add(&m_dial); 
+	add(&m_dial);
 	add(&m_input);
 	add(&m_reset);
 
@@ -66,61 +65,51 @@ gePanTool::gePanTool(const c::sampleEditor::Data& d, int x, int y)
 	rebuild(d);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePanTool::rebuild(const c::sampleEditor::Data& d)
 {
 	m_data = &d;
 	update(m_data->pan);
-
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePanTool::update(float v)
 {
 	m_dial.value(v);
 
-	if (v < 0.5f) {
-		std::string tmp = u::string::iToString((int) ((-v * 200.0f) + 100.0f)) + " L";
+	if (v < 0.5f)
+	{
+		std::string tmp = u::string::iToString((int)((-v * 200.0f) + 100.0f)) + " L";
 		m_input.value(tmp.c_str());
 	}
-	else 
-	if (v == 0.5)
+	else if (v == 0.5)
 		m_input.value("C");
-	else {
-		std::string tmp = u::string::iToString((int) ((v * 200.0f) - 100.0f)) + " R";
+	else
+	{
+		std::string tmp = u::string::iToString((int)((v * 200.0f) - 100.0f)) + " R";
 		m_input.value(tmp.c_str());
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void gePanTool::cb_panning (Fl_Widget* /*w*/, void* p) { ((gePanTool*)p)->cb_panning(); }
+void gePanTool::cb_panning(Fl_Widget* /*w*/, void* p) { ((gePanTool*)p)->cb_panning(); }
 void gePanTool::cb_panReset(Fl_Widget* /*w*/, void* p) { ((gePanTool*)p)->cb_panReset(); }
 
-
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePanTool::cb_panning()
 {
 	c::events::sendChannelPan(m_data->channelId, m_dial.value());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePanTool::cb_panReset()
 {
 	c::events::sendChannelPan(m_data->channelId, 0.5f);
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

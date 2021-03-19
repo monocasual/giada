@@ -24,27 +24,26 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <string>
-#include "core/model/model.h"
+#include "gui/elems/actionEditor/sampleActionEditor.h"
 #include "core/const.h"
-#include "core/midiEvent.h"
 #include "core/graphics.h"
+#include "core/midiEvent.h"
+#include "core/model/model.h"
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
-#include "gui/elems/basics/pack.h"
-#include "gui/elems/basics/scrollPack.h"
-#include "gui/elems/basics/button.h"
-#include "gui/elems/basics/resizerBar.h"
-#include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/actionEditor/sampleActionEditor.h"
 #include "gui/elems/actionEditor/envelopeEditor.h"
 #include "gui/elems/actionEditor/gridTool.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/resizerBar.h"
+#include "gui/elems/basics/scrollPack.h"
 #include "sampleActionEditor.h"
+#include <string>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 gdSampleActionEditor::gdSampleActionEditor(ID channelId)
@@ -58,11 +57,11 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId)
 	resizable boxes: |[--b1--][actionType][--b2--][+][-]| */
 
 	gePack* upperArea = new gePack(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, Direction::HORIZONTAL);
-		actionType = new geChoice  (0, 0, 80, 20);
-		gridTool   = new geGridTool(0, 0);
-		geBox* b1  = new geBox     (0, 0, w() - 232, 20);    // padding actionType - zoomButtons
-		zoomInBtn  = new geButton  (0, 0, 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
-		zoomOutBtn = new geButton  (0, 0, 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
+	actionType        = new geChoice(0, 0, 80, 20);
+	gridTool          = new geGridTool(0, 0);
+	geBox* b1         = new geBox(0, 0, w() - 232, 20); // padding actionType - zoomButtons
+	zoomInBtn         = new geButton(0, 0, 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
+	zoomOutBtn        = new geButton(0, 0, 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
 	upperArea->add(actionType);
 	upperArea->add(gridTool);
 	upperArea->add(b1);
@@ -85,12 +84,12 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId)
 
 	/* Main viewport: contains all widgets. */
 
-	viewport = new geScrollPack(G_GUI_OUTER_MARGIN, upperArea->y() + upperArea->h() + G_GUI_OUTER_MARGIN, 
-		upperArea->w(), h()-44, Fl_Scroll::BOTH, Direction::VERTICAL, /*gutter=*/0);
-		m_ae  = new geSampleActionEditor(0, 0, this);
-		m_aer = new geResizerBar        (0, 0, viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);	
-		m_ee  = new geEnvelopeEditor    (0, 0, "volume", this);
-		m_eer = new geResizerBar        (0, 0, viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);
+	viewport = new geScrollPack(G_GUI_OUTER_MARGIN, upperArea->y() + upperArea->h() + G_GUI_OUTER_MARGIN,
+	    upperArea->w(), h() - 44, Fl_Scroll::BOTH, Direction::VERTICAL, /*gutter=*/0);
+	m_ae     = new geSampleActionEditor(0, 0, this);
+	m_aer    = new geResizerBar(0, 0, viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);
+	m_ee     = new geEnvelopeEditor(0, 0, "volume", this);
+	m_eer    = new geResizerBar(0, 0, viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);
 	viewport->add(m_ae);
 	viewport->add(m_aer);
 	viewport->add(m_ee);
@@ -104,30 +103,27 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId)
 	rebuild();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool gdSampleActionEditor::canChangeActionType()
 {
-	return m_data.sample->channelMode != SamplePlayerMode::SINGLE_PRESS && 
+	return m_data.sample->channelMode != SamplePlayerMode::SINGLE_PRESS &&
 	       m_data.sample->isLoopMode == false;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdSampleActionEditor::rebuild()
 {
 	m_data = c::actionEditor::getData(channelId);
 
-	canChangeActionType() ? actionType->activate() : actionType->deactivate(); 
+	canChangeActionType() ? actionType->activate() : actionType->deactivate();
 	computeWidth();
-	
+
 	m_ae->rebuild(m_data);
 	m_aer->size(m_ae->w(), m_aer->h());
-	m_ee->rebuild(m_data);	
+	m_ee->rebuild(m_data);
 	m_eer->size(m_ee->w(), m_eer->h());
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

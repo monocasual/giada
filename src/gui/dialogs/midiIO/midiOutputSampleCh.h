@@ -24,26 +24,23 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_MIDI_OUTPUT_SAMPLE_CH_H
 #define GD_MIDI_OUTPUT_SAMPLE_CH_H
 
-
 #include "midiOutputBase.h"
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class gdMidiOutputSampleCh : public gdMidiOutputBase
 {
-public:
-
-    gdMidiOutputSampleCh(ID channelId);
+  public:
+	gdMidiOutputSampleCh(ID channelId);
 
 	void rebuild() override;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

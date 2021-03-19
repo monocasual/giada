@@ -24,41 +24,36 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/Fl.H>
-#include <FL/fl_draw.H>
-#include "core/model/model.h"
+#include "glue/channel.h"
+#include "channel.h"
+#include "channelButton.h"
+#include "channelStatus.h"
+#include "column.h"
 #include "core/const.h"
 #include "core/graphics.h"
+#include "core/model/model.h"
 #include "core/plugins/pluginHost.h"
-#include "utils/gui.h"
-#include "glue/channel.h"
 #include "glue/events.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/pluginList.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/statusButton.h"
-#include "column.h"
-#include "channelStatus.h"
-#include "channelButton.h"
-#include "channel.h"
-
+#include "utils/gui.h"
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
 
 extern giada::v::gdMainWindow* G_MainWin;
-
 
 namespace giada::v
 {
 geChannel::geChannel(int X, int Y, int W, int H, c::channel::Data d)
-: Fl_Group (X, Y, W, H)
+: Fl_Group(X, Y, W, H)
 , m_channel(d)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannel::draw()
 {
@@ -75,24 +70,23 @@ void geChannel::draw()
 
 	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_1_5);
 
-	Fl_Group::draw();	
+	Fl_Group::draw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannel::cb_arm(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_arm(); }
 void geChannel::cb_mute(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_mute(); }
 void geChannel::cb_solo(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_solo(); }
 void geChannel::cb_changeVol(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_changeVol(); }
 #ifdef WITH_VST
-void geChannel::cb_openFxWindow(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_openFxWindow(); }
+void geChannel::cb_openFxWindow(Fl_Widget* /*w*/, void* p)
+{
+	((geChannel*)p)->cb_openFxWindow();
+}
 #endif
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannel::refresh()
 {
@@ -110,45 +104,35 @@ void geChannel::refresh()
 	solo->setStatus(m_channel.getSolo());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannel::cb_arm()
 {
 	c::events::toggleArmChannel(m_channel.id, Thread::MAIN);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannel::cb_mute()
 {
 	c::events::toggleMuteChannel(m_channel.id, Thread::MAIN);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannel::cb_solo()
 {
 	c::events::toggleSoloChannel(m_channel.id, Thread::MAIN);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannel::cb_changeVol()
 {
 	c::events::setChannelVolume(m_channel.id, vol->value(), Thread::MAIN);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 #ifdef WITH_VST
 void geChannel::cb_openFxWindow()
@@ -157,19 +141,14 @@ void geChannel::cb_openFxWindow()
 }
 #endif
 
-
 /* -------------------------------------------------------------------------- */
-
-
 
 int geChannel::getColumnId()
 {
 	return static_cast<geColumn*>(parent())->id;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannel::blink()
 {
@@ -179,9 +158,7 @@ void geChannel::blink()
 		mainButton->setDefaultMode();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannel::packWidgets()
 {
@@ -189,21 +166,24 @@ void geChannel::packWidgets()
 	are visible. */
 
 	int visibles = 0;
-	for (int i = 0; i < children(); i++) {
-		child(i)->size(MIN_ELEM_W, child(i)->h());  // also normalize widths
+	for (int i = 0; i < children(); i++)
+	{
+		child(i)->size(MIN_ELEM_W, child(i)->h()); // also normalize widths
 		if (child(i)->visible())
 			visibles++;
 	}
-	mainButton->size(w() - ((visibles - 1) * (MIN_ELEM_W + G_GUI_INNER_MARGIN)),   // -1: exclude itself
-		mainButton->h());
+	mainButton->size(w() - ((visibles - 1) * (MIN_ELEM_W + G_GUI_INNER_MARGIN)), // -1: exclude itself
+	    mainButton->h());
 
 	/* Reposition everything else */
 
-	for (int i = 1, p = 0; i < children(); i++) {
+	for (int i = 1, p = 0; i < children(); i++)
+	{
 		if (!child(i)->visible())
 			continue;
 		for (int k = i - 1; k >= 0; k--) // Get the first visible item prior to i
-			if (child(k)->visible()) {
+			if (child(k)->visible())
+			{
 				p = k;
 				break;
 			}
@@ -213,22 +193,22 @@ void geChannel::packWidgets()
 	init_sizes(); // Resets the internal array of widget sizes and positions
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool geChannel::handleKey(int e)
 {
-	if (Fl::event_key() != m_channel.key) 
+	if (Fl::event_key() != m_channel.key)
 		return false;
 
-	if (e == FL_KEYDOWN && !playButton->value()) {  // Key not already pressed
-		playButton->take_focus();                   // Move focus to this playButton
+	if (e == FL_KEYDOWN && !playButton->value())
+	{                             // Key not already pressed
+		playButton->take_focus(); // Move focus to this playButton
 		playButton->value(1);
 		return true;
 	}
 
-	if (e == FL_KEYUP) {
+	if (e == FL_KEYUP)
+	{
 		playButton->value(0);
 		return true;
 	}
@@ -236,12 +216,10 @@ bool geChannel::handleKey(int e)
 	return false;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 const c::channel::Data& geChannel::getData() const
 {
 	return m_channel;
 }
-} // giada::v::
+} // namespace giada::v

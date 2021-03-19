@@ -24,16 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
 
-
-#include "core/mixer.h"
-#include "core/eventDispatcher.h"
-#include "core/plugins/pluginHost.h"
-#include "core/channels/channel.h"
 #include "midiReceiver.h"
-
+#include "core/channels/channel.h"
+#include "core/eventDispatcher.h"
+#include "core/mixer.h"
+#include "core/plugins/pluginHost.h"
 
 namespace giada::m::midiReceiver
 {
@@ -41,16 +38,14 @@ namespace
 {
 void sendToPlugins_(const channel::Data& ch, const MidiEvent& e, Frame localFrame)
 {
-    juce::MidiMessage message = juce::MidiMessage(
-        e.getStatus(),
-        e.getNote(),
-        e.getVelocity());
-    ch.buffer->midi.addEvent(message, localFrame);
+	juce::MidiMessage message = juce::MidiMessage(
+	    e.getStatus(),
+	    e.getNote(),
+	    e.getVelocity());
+	ch.buffer->midi.addEvent(message, localFrame);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void parseMidi_(const channel::Data& ch, const MidiEvent& e)
 {
@@ -62,52 +57,49 @@ void parseMidi_(const channel::Data& ch, const MidiEvent& e)
 	flat.setChannel(0);
 	sendToPlugins_(ch, flat, /*delta=*/0);
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 void react(const channel::Data& ch, const eventDispatcher::Event& e)
 {
-	switch (e.type) {
+	switch (e.type)
+	{
 
-		case eventDispatcher::EventType::MIDI:
-			parseMidi_(ch, std::get<Action>(e.data).event); break;
+	case eventDispatcher::EventType::MIDI:
+		parseMidi_(ch, std::get<Action>(e.data).event);
+		break;
 
-		case eventDispatcher::EventType::KEY_KILL:
-		case eventDispatcher::EventType::SEQUENCER_STOP:
-		case eventDispatcher::EventType::SEQUENCER_REWIND:
-			sendToPlugins_(ch, MidiEvent(G_MIDI_ALL_NOTES_OFF), 0); break;
-		
-		default: break;
+	case eventDispatcher::EventType::KEY_KILL:
+	case eventDispatcher::EventType::SEQUENCER_STOP:
+	case eventDispatcher::EventType::SEQUENCER_REWIND:
+		sendToPlugins_(ch, MidiEvent(G_MIDI_ALL_NOTES_OFF), 0);
+		break;
+
+	default:
+		break;
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void advance(const channel::Data& ch, const sequencer::Event& e)
 {
 	if (e.type == sequencer::EventType::ACTIONS && ch.isPlaying())
 		for (const Action& action : *e.actions)
-		    if (action.channelId == ch.id)
-			    sendToPlugins_(ch, action.event, e.delta);
+			if (action.channelId == ch.id)
+				sendToPlugins_(ch, action.event, e.delta);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void render(const channel::Data& ch)
 {
 	pluginHost::processStack(ch.buffer->audio, ch.plugins, &ch.buffer->midi);
-    ch.buffer->midi.clear();
+	ch.buffer->midi.clear();
 }
-} // giada::m::midiReceiver::
-
+} // namespace giada::m::midiReceiver
 
 #endif // WITH_VST

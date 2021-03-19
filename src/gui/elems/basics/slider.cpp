@@ -24,22 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-
+#include "slider.h"
 #include "../../../core/const.h"
 #include "boxtypes.h"
-#include "slider.h"
 
-
-geSlider::geSlider(int x, int y, int w, int h, const char *l)
- : Fl_Slider(x, y, w, h, l)
+geSlider::geSlider(int x, int y, int w, int h, const char* l)
+: Fl_Slider(x, y, w, h, l)
 {
- type(FL_HOR_FILL_SLIDER);
+	type(FL_HOR_FILL_SLIDER);
 
- labelsize(G_GUI_FONT_SIZE_BASE);
- align(FL_ALIGN_LEFT);
- labelcolor(G_COLOR_LIGHT_2);
+	labelsize(G_GUI_FONT_SIZE_BASE);
+	align(FL_ALIGN_LEFT);
+	labelcolor(G_COLOR_LIGHT_2);
 
- box(G_CUSTOM_BORDER_BOX);
- color(G_COLOR_GREY_2);
- selection_color(G_COLOR_GREY_4);
+	box(G_CUSTOM_BORDER_BOX);
+	color(G_COLOR_GREY_2);
+	selection_color(G_COLOR_GREY_4);
 }

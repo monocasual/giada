@@ -24,32 +24,28 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_DEV_INFO_H
 #define GD_DEV_INFO_H
 
-
 #include "window.h"
-
 
 class geBox;
 class geButton;
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class gdDevInfo : public gdWindow
 {
-public:
+  public:
+	gdDevInfo(unsigned dev);
 
-    gdDevInfo(unsigned dev);
-
-private:
-
+  private:
 	geBox*    text;
 	geButton* close;
 };
-}} // giada::v::
+} // namespace v
+} // namespace giada
 
 #endif

@@ -24,52 +24,55 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/fl_draw.H>
+#include "channelButton.h"
 #include "core/channels/channel.h"
-#include "core/model/model.h"
 #include "core/const.h"
+#include "core/model/model.h"
 #include "core/recorder.h"
 #include "glue/channel.h"
 #include "utils/string.h"
-#include "channelButton.h"
+#include <FL/fl_draw.H>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 geChannelButton::geChannelButton(int x, int y, int w, int h, const c::channel::Data& d)
-: geButton (x, y, w, h)
+: geButton(x, y, w, h)
 , m_channel(d)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannelButton::refresh()
 {
-	switch (m_channel.getPlayStatus()) {
-		case ChannelStatus::OFF:
-		case ChannelStatus::EMPTY:
-			setDefaultMode(); break;
-		case ChannelStatus::PLAY:
-			setPlayMode(); break;
-		case ChannelStatus::ENDING:
-			setEndingMode(); break;
-		default: break;
-	}	
-	switch (m_channel.getRecStatus()) {
-		case ChannelStatus::ENDING:
-			setEndingMode(); break;
-		default: break;
+	switch (m_channel.getPlayStatus())
+	{
+	case ChannelStatus::OFF:
+	case ChannelStatus::EMPTY:
+		setDefaultMode();
+		break;
+	case ChannelStatus::PLAY:
+		setPlayMode();
+		break;
+	case ChannelStatus::ENDING:
+		setEndingMode();
+		break;
+	default:
+		break;
+	}
+	switch (m_channel.getRecStatus())
+	{
+	case ChannelStatus::ENDING:
+		setEndingMode();
+		break;
+	default:
+		break;
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannelButton::draw()
 {
@@ -80,7 +83,7 @@ void geChannelButton::draw()
 
 	/* draw background */
 
-	fl_rectf(x()+1, y()+1, 18, h()-2, bgColor0);
+	fl_rectf(x() + 1, y() + 1, 18, h() - 2, bgColor0);
 
 	/* draw m_key */
 
@@ -89,18 +92,14 @@ void geChannelButton::draw()
 	fl_draw(std::string(1, static_cast<wchar_t>(m_channel.key)).c_str(), x(), y(), 18, h(), FL_ALIGN_CENTER);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannelButton::setInputRecordMode()
 {
 	bgColor0 = G_COLOR_RED;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannelButton::setActionRecordMode()
 {
@@ -108,9 +107,7 @@ void geChannelButton::setActionRecordMode()
 	txtColor = G_COLOR_LIGHT_2;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannelButton::setDefaultMode(const char* l)
 {
@@ -121,9 +118,7 @@ void geChannelButton::setDefaultMode(const char* l)
 		label(l);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannelButton::setPlayMode()
 {
@@ -132,12 +127,11 @@ void geChannelButton::setPlayMode()
 	txtColor = G_COLOR_GREY_1;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geChannelButton::setEndingMode()
 {
 	bgColor0 = G_COLOR_GREY_4;
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

@@ -24,33 +24,32 @@
  *
  * -------------------------------------------------------------------------- */
 
-
+#include "tabMidi.h"
+#include "core/conf.h"
+#include "core/const.h"
+#include "core/kernelMidi.h"
+#include "core/midiMapConf.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/check.h"
+#include "gui/elems/basics/choice.h"
+#include "utils/gui.h"
 #include <RtMidi.h>
 #include <string>
-#include "core/const.h"
-#include "core/conf.h"
-#include "core/midiMapConf.h"
-#include "core/kernelMidi.h"
-#include "utils/gui.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/check.h"
-#include "tabMidi.h"
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 geTabMidi::geTabMidi(int X, int Y, int W, int H)
 : Fl_Group(X, Y, W, H, "MIDI")
 {
 	begin();
-	system	= new geChoice(x()+w()-250, y()+9, 250, 20, "System");
-	portOut	= new geChoice(x()+w()-250, system->y()+system->h()+8, 250, 20, "Output port");
-	portIn	= new geChoice(x()+w()-250, portOut->y()+portOut->h()+8, 250, 20, "Input port");
-	midiMap	= new geChoice(x()+w()-250, portIn->y()+portIn->h()+8, 250, 20, "Output Midi Map");
-	sync    = new geChoice(x()+w()-250, midiMap->y()+midiMap->h()+8, 250, 20, "Sync");
-	new geBox(x(), sync->y()+sync->h()+8, w(), h()-150, "Restart Giada for the changes to take effect.");
+	system  = new geChoice(x() + w() - 250, y() + 9, 250, 20, "System");
+	portOut = new geChoice(x() + w() - 250, system->y() + system->h() + 8, 250, 20, "Output port");
+	portIn  = new geChoice(x() + w() - 250, portOut->y() + portOut->h() + 8, 250, 20, "Input port");
+	midiMap = new geChoice(x() + w() - 250, portIn->y() + portIn->h() + 8, 250, 20, "Output Midi Map");
+	sync    = new geChoice(x() + w() - 250, midiMap->y() + midiMap->h() + 8, 250, 20, "Sync");
+	new geBox(x(), sync->y() + sync->h() + 8, w(), h() - 150, "Restart Giada for the changes to take effect.");
 	end();
 
 	labelsize(G_GUI_FONT_SIZE_BASE);
@@ -66,7 +65,7 @@ geTabMidi::geTabMidi(int X, int Y, int W, int H)
 	sync->add("(disabled)");
 	sync->add("MIDI Clock (master)");
 	sync->add("MTC (master)");
-	if      (m::conf::conf.midiSync == MIDI_SYNC_NONE)
+	if (m::conf::conf.midiSync == MIDI_SYNC_NONE)
 		sync->value(0);
 	else if (m::conf::conf.midiSync == MIDI_SYNC_CLOCK_M)
 		sync->value(1);
@@ -76,64 +75,65 @@ geTabMidi::geTabMidi(int X, int Y, int W, int H)
 	systemInitValue = system->value();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geTabMidi::fetchOutPorts()
 {
-	if (m::kernelMidi::countOutPorts() == 0) {
+	if (m::kernelMidi::countOutPorts() == 0)
+	{
 		portOut->add("-- no ports found --");
 		portOut->value(0);
 		portOut->deactivate();
 	}
-	else {
+	else
+	{
 
 		portOut->add("(disabled)");
 
-		for (unsigned i=0; i<m::kernelMidi::countOutPorts(); i++)
+		for (unsigned i = 0; i < m::kernelMidi::countOutPorts(); i++)
 			portOut->add(u::gui::removeFltkChars(m::kernelMidi::getOutPortName(i)).c_str());
 
-		portOut->value(m::conf::conf.midiPortOut+1);    // +1 because midiPortOut=-1 is '(disabled)'
+		portOut->value(m::conf::conf.midiPortOut + 1); // +1 because midiPortOut=-1 is '(disabled)'
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-
 void geTabMidi::fetchInPorts()
 {
-	if (m::kernelMidi::countInPorts() == 0) {
+	if (m::kernelMidi::countInPorts() == 0)
+	{
 		portIn->add("-- no ports found --");
 		portIn->value(0);
 		portIn->deactivate();
 	}
-	else {
+	else
+	{
 
 		portIn->add("(disabled)");
 
-		for (unsigned i=0; i<m::kernelMidi::countInPorts(); i++)
+		for (unsigned i = 0; i < m::kernelMidi::countInPorts(); i++)
 			portIn->add(u::gui::removeFltkChars(m::kernelMidi::getInPortName(i)).c_str());
 
-		portIn->value(m::conf::conf.midiPortIn+1);    // +1 because midiPortIn=-1 is '(disabled)'
+		portIn->value(m::conf::conf.midiPortIn + 1); // +1 because midiPortIn=-1 is '(disabled)'
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geTabMidi::fetchMidiMaps()
 {
-	if (m::midimap::maps.size() == 0) {
+	if (m::midimap::maps.size() == 0)
+	{
 		midiMap->add("(no MIDI maps available)");
 		midiMap->value(0);
 		midiMap->deactivate();
 		return;
 	}
 
-	for (unsigned i=0; i<m::midimap::maps.size(); i++) {
-		const char *imap = m::midimap::maps.at(i).c_str();
+	for (unsigned i = 0; i < m::midimap::maps.size(); i++)
+	{
+		const char* imap = m::midimap::maps.at(i).c_str();
 		midiMap->add(imap);
 		if (m::conf::conf.midiMapPath == imap)
 			midiMap->value(i);
@@ -145,15 +145,13 @@ void geTabMidi::fetchMidiMaps()
 		midiMap->value(0);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geTabMidi::save()
 {
 	std::string text = system->text(system->value());
 
-	if      (text == "ALSA")
+	if (text == "ALSA")
 		m::conf::conf.midiSystem = RtMidi::LINUX_ALSA;
 	else if (text == "Jack")
 		m::conf::conf.midiSystem = RtMidi::UNIX_JACK;
@@ -162,11 +160,11 @@ void geTabMidi::save()
 	else if (text == "OSX Core MIDI")
 		m::conf::conf.midiSystem = RtMidi::MACOSX_CORE;
 
-	m::conf::conf.midiPortOut = portOut->value()-1;   // -1 because midiPortOut=-1 is '(disabled)'
-	m::conf::conf.midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
+	m::conf::conf.midiPortOut = portOut->value() - 1; // -1 because midiPortOut=-1 is '(disabled)'
+	m::conf::conf.midiPortIn  = portIn->value() - 1;  // -1 because midiPortIn=-1 is '(disabled)'
 	m::conf::conf.midiMapPath = m::midimap::maps.size() == 0 ? "" : midiMap->text(midiMap->value());
 
-	if      (sync->value() == 0)
+	if (sync->value() == 0)
 		m::conf::conf.midiSync = MIDI_SYNC_NONE;
 	else if (sync->value() == 1)
 		m::conf::conf.midiSync = MIDI_SYNC_CLOCK_M;
@@ -174,9 +172,7 @@ void geTabMidi::save()
 		m::conf::conf.midiSync = MIDI_SYNC_MTC_M;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geTabMidi::fetchSystems()
 {
@@ -197,30 +193,37 @@ void geTabMidi::fetchSystems()
 	if (m::kernelMidi::hasAPI(RtMidi::WINDOWS_MM))
 		system->add("Multimedia MIDI");
 
-#elif defined (__APPLE__)
+#elif defined(__APPLE__)
 
 	system->add("OSX Core MIDI");
 
 #endif
 
-	switch (m::conf::conf.midiSystem) {
-		case RtMidi::LINUX_ALSA:  system->showItem("ALSA"); break;
-		case RtMidi::UNIX_JACK:   system->showItem("Jack"); break;
-		case RtMidi::WINDOWS_MM:  system->showItem("Multimedia MIDI"); break;
-		case RtMidi::MACOSX_CORE: system->showItem("OSX Core MIDI"); break;
-		default: system->value(0); break;
+	switch (m::conf::conf.midiSystem)
+	{
+	case RtMidi::LINUX_ALSA:
+		system->showItem("ALSA");
+		break;
+	case RtMidi::UNIX_JACK:
+		system->showItem("Jack");
+		break;
+	case RtMidi::WINDOWS_MM:
+		system->showItem("Multimedia MIDI");
+		break;
+	case RtMidi::MACOSX_CORE:
+		system->showItem("OSX Core MIDI");
+		break;
+	default:
+		system->value(0);
+		break;
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geTabMidi::cb_changeSystem(Fl_Widget* /*w*/, void* p) { ((geTabMidi*)p)->cb_changeSystem(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geTabMidi::cb_changeSystem()
 {
@@ -228,7 +231,8 @@ void geTabMidi::cb_changeSystem()
 	 * If it returns to the original system, we re-fill the list by
 	 * querying m::kernelMidi. */
 
-	if (systemInitValue == system->value()) {
+	if (systemInitValue == system->value())
+	{
 		portOut->clear();
 		fetchOutPorts();
 		portOut->activate();
@@ -237,7 +241,8 @@ void geTabMidi::cb_changeSystem()
 		portIn->activate();
 		sync->activate();
 	}
-	else {
+	else
+	{
 		portOut->deactivate();
 		portOut->clear();
 		portOut->add("-- restart to fetch device(s) --");
@@ -249,4 +254,5 @@ void geTabMidi::cb_changeSystem()
 		sync->deactivate();
 	}
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

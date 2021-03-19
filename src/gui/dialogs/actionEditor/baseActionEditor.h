@@ -24,25 +24,22 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_BASE_ACTION_EDITOR_H
 #define GD_BASE_ACTION_EDITOR_H
-
 
 #include "core/types.h"
 #include "glue/actionEditor.h"
 #include "gui/dialogs/window.h"
 
-
 class geButton;
 
-
-namespace giada {
+namespace giada
+{
 namespace m
 {
 class Channel;
 struct Action;
-}
+} // namespace m
 namespace v
 {
 class geChoice;
@@ -50,15 +47,14 @@ class geGridTool;
 class geScrollPack;
 class gdBaseActionEditor : public gdWindow
 {
-public:
-
+  public:
 	virtual ~gdBaseActionEditor();
 
 	int handle(int e) override;
 
 	Pixel frameToPixel(Frame f) const;
-	Frame pixelToFrame(Pixel p, bool snap=true) const;
-	int getActionType() const;
+	Frame pixelToFrame(Pixel p, bool snap = true) const;
+	int   getActionType() const;
 
 	ID channelId;
 
@@ -66,14 +62,13 @@ public:
 	geGridTool*   gridTool;
 	geButton*     zoomInBtn;
 	geButton*     zoomOutBtn;
-	geScrollPack* viewport;       // widget container
+	geScrollPack* viewport; // widget container
 
 	float ratio;
-	Pixel fullWidth;     // Full widgets width, i.e. scaled-down full sequencer
-	Pixel loopWidth; 	 // Loop width, i.e. scaled-down sequencer range
+	Pixel fullWidth; // Full widgets width, i.e. scaled-down full sequencer
+	Pixel loopWidth; // Loop width, i.e. scaled-down sequencer range
 
-protected:
-
+  protected:
 	static constexpr Pixel RESIZER_BAR_H = 20;
 	static constexpr Pixel MIN_WIDGET_H  = 10;
 	static constexpr float MIN_RATIO     = 25.0f;
@@ -81,11 +76,11 @@ protected:
 
 	gdBaseActionEditor(ID channelId);
 
-	void zoomIn();
-	void zoomOut();
+	void        zoomIn();
+	void        zoomOut();
 	static void cb_zoomIn(Fl_Widget* /*w*/, void* p);
 	static void cb_zoomOut(Fl_Widget* /*w*/, void* p);
-	
+
 	/* computeWidth
 	Computes total width, in pixel. */
 
@@ -98,7 +93,7 @@ protected:
 
 	c::actionEditor::Data m_data;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

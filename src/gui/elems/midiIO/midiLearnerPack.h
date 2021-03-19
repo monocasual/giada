@@ -24,38 +24,34 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_LEARNER_PACK_H
 #define GE_LEARNER_PACK_H
 
-
-#include <string>
-#include <vector>
 #include "gui/elems/basics/pack.h"
 #include "gui/elems/midiIO/midiLearner.h"
+#include <string>
+#include <vector>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class geMidiLearnerPack : public gePack
 {
-public:
+  public:
+	geMidiLearnerPack(int x, int y, std::string title = "");
 
-	geMidiLearnerPack(int x, int y, std::string title="");
+	void setCallbacks(std::function<void(uint32_t)>, std::function<void(uint32_t)>);
+	void addMidiLearner(std::string label, int param, bool visible = true);
+	void setEnabled(bool v);
 
-    void setCallbacks(std::function<void(uint32_t)>, std::function<void(uint32_t)>);
-    void addMidiLearner(std::string label, int param, bool visible=true); 
-    void setEnabled(bool v);
+	std::vector<geMidiLearner*> learners;
 
-    std::vector<geMidiLearner*> learners;
-
-private:
-
-    std::function<void(uint32_t)> m_onStartLearn;
-    std::function<void(uint32_t)> m_onClearLearn;
+  private:
+	std::function<void(uint32_t)> m_onStartLearn;
+	std::function<void(uint32_t)> m_onClearLearn;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

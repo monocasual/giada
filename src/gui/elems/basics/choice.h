@@ -24,26 +24,23 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_CHOICE_H
 #define GE_CHOICE_H
 
-
+#include "core/types.h"
+#include <FL/Fl_Choice.H>
 #include <functional>
 #include <string>
 #include <vector>
-#include <FL/Fl_Choice.H>
-#include "core/types.h"
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class geChoice : public Fl_Choice
 {
-public:
-
-	geChoice(int x, int y, int w, int h, const char* l=0, bool angle=true);
+  public:
+	geChoice(int x, int y, int w, int h, const char* l = 0, bool angle = true);
 	void draw() override;
 
 	ID getSelectedId() const;
@@ -54,14 +51,14 @@ public:
 
 	std::function<void(ID)> onChange = nullptr;
 
-private:
-
+  private:
 	static void cb_onChange(Fl_Widget* /*w*/, void* p);
-	void cb_onChange();
+	void        cb_onChange();
 
-	bool angle;
+	bool            angle;
 	std::vector<ID> ids;
 };
-}}
+} // namespace v
+} // namespace giada
 
 #endif

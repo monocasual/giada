@@ -26,31 +26,25 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_SEQUENCER_H
 #define GE_SEQUENCER_H
 
-
 #include <FL/Fl_Box.H>
-
 
 namespace giada::v
 {
 class geSequencer : public Fl_Box
 {
-public:
-
+  public:
 	geSequencer(int x, int y, int w, int h);
-	
+
 	void draw() override;
 
 	void refresh();
 
-private:
-
-    Fl_Color getCursorColor();
+  private:
+	Fl_Color getCursorColor();
 };
-} // giada::v::
-
+} // namespace giada::v
 
 #endif

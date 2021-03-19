@@ -24,44 +24,42 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
 
-
-#include "glue/plugin.h"
-#include "utils/gui.h"
+#include "pluginChooser.h"
 #include "core/conf.h"
-#include "core/plugins/pluginManager.h"
 #include "core/plugins/pluginHost.h"
-#include "gui/elems/plugin/pluginBrowser.h"
+#include "core/plugins/pluginManager.h"
+#include "glue/plugin.h"
+#include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/box.h"
-#include "pluginChooser.h"
+#include "gui/elems/plugin/pluginBrowser.h"
+#include "utils/gui.h"
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId)
-: gdWindow   (X, Y, W, H, "Available plugins")
+: gdWindow(X, Y, W, H, "Available plugins")
 , m_channelId(channelId)
 {
 	/* top area */
-	Fl_Group *group_top = new Fl_Group(8, 8, w()-16, 20);
-	sortMethod  = new geChoice(group_top->x() + 45, group_top->y(), 100, 20, "Sort by");
-		geBox *b1 = new geBox(sortMethod->x()+sortMethod->w(), group_top->y(), 100, 20); 	// spacer window border <-> menu
+	Fl_Group* group_top = new Fl_Group(8, 8, w() - 16, 20);
+	sortMethod          = new geChoice(group_top->x() + 45, group_top->y(), 100, 20, "Sort by");
+	geBox* b1           = new geBox(sortMethod->x() + sortMethod->w(), group_top->y(), 100, 20); // spacer window border <-> menu
 	group_top->resizable(b1);
 	group_top->end();
 
 	/* center browser */
-	browser = new v::gePluginBrowser(8, 36, w()-16, h()-70);
+	browser = new v::gePluginBrowser(8, 36, w() - 16, h() - 70);
 
 	/* ok/cancel buttons */
-	Fl_Group *group_btn = new Fl_Group(8, browser->y()+browser->h()+8, w()-16, h()-browser->h()-16);
-		geBox *b2 = new geBox(8, browser->y()+browser->h(), 100, 20); 	// spacer window border <-> buttons
-		addBtn = new geButton(w()-88, group_btn->y(), 80, 20, "Add");
-		cancelBtn = new geButton(addBtn->x()-88, group_btn->y(), 80, 20, "Cancel");
+	Fl_Group* group_btn = new Fl_Group(8, browser->y() + browser->h() + 8, w() - 16, h() - browser->h() - 16);
+	geBox*    b2        = new geBox(8, browser->y() + browser->h(), 100, 20); // spacer window border <-> buttons
+	addBtn              = new geButton(w() - 88, group_btn->y(), 80, 20, "Add");
+	cancelBtn           = new geButton(addBtn->x() - 88, group_btn->y(), 80, 20, "Cancel");
 	group_btn->resizable(b2);
 	group_btn->end();
 
@@ -70,51 +68,43 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId)
 	sortMethod->add("Name");
 	sortMethod->add("Category");
 	sortMethod->add("Manufacturer");
-	sortMethod->callback(cb_sort, (void*) this);
+	sortMethod->callback(cb_sort, (void*)this);
 	sortMethod->value(m::conf::conf.pluginSortMethod);
 
-	addBtn->callback(cb_add, (void*) this);
+	addBtn->callback(cb_add, (void*)this);
 	addBtn->shortcut(FL_Enter);
-	cancelBtn->callback(cb_close, (void*) this);
+	cancelBtn->callback(cb_close, (void*)this);
 
 	resizable(browser);
 	u::gui::setFavicon(this);
 	show();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 gdPluginChooser::~gdPluginChooser()
 {
-	m::conf::conf.pluginChooserX = x();
-	m::conf::conf.pluginChooserY = y();
-	m::conf::conf.pluginChooserW = w();
-	m::conf::conf.pluginChooserH = h();
+	m::conf::conf.pluginChooserX   = x();
+	m::conf::conf.pluginChooserY   = y();
+	m::conf::conf.pluginChooserW   = w();
+	m::conf::conf.pluginChooserH   = h();
 	m::conf::conf.pluginSortMethod = sortMethod->value();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdPluginChooser::cb_close(Fl_Widget* /*w*/, void* p) { ((gdPluginChooser*)p)->cb_close(); }
-void gdPluginChooser::cb_add  (Fl_Widget* /*w*/, void* p) { ((gdPluginChooser*)p)->cb_add(); }
-void gdPluginChooser::cb_sort (Fl_Widget* /*w*/, void* p) { ((gdPluginChooser*)p)->cb_sort(); }
-
+void gdPluginChooser::cb_add(Fl_Widget* /*w*/, void* p) { ((gdPluginChooser*)p)->cb_add(); }
+void gdPluginChooser::cb_sort(Fl_Widget* /*w*/, void* p) { ((gdPluginChooser*)p)->cb_sort(); }
 
 /* -------------------------------------------------------------------------- */
-
 
 void gdPluginChooser::cb_close()
 {
 	do_callback();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdPluginChooser::cb_sort()
 {
@@ -122,9 +112,7 @@ void gdPluginChooser::cb_sort()
 	browser->refresh();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdPluginChooser::cb_add()
 {
@@ -134,7 +122,7 @@ void gdPluginChooser::cb_add()
 	c::plugin::addPlugin(pluginIndex, m_channelId);
 	do_callback();
 }
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif // #ifdef WITH_VST

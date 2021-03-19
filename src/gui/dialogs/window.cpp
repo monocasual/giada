@@ -24,40 +24,37 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "utils/log.h"
 #include "window.h"
+#include "utils/log.h"
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 void cb_window_closer(Fl_Widget* /*v*/, void* p)
 {
-  delete (Fl_Window*) p;
+	delete (Fl_Window*)p;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 gdWindow::gdWindow(int x, int y, int w, int h, const char* title, int id)
-	: Fl_Double_Window(x, y, w, h, title), id(id), parent(nullptr)
+: Fl_Double_Window(x, y, w, h, title)
+, id(id)
+, parent(nullptr)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 gdWindow::gdWindow(int w, int h, const char* title, int id)
-	: Fl_Double_Window(w, h, title), id(id), parent(nullptr)
+: Fl_Double_Window(w, h, title)
+, id(id)
+, parent(nullptr)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 gdWindow::~gdWindow()
 {
@@ -68,7 +65,6 @@ gdWindow::~gdWindow()
 	subWindows.clear();
 }
 
-
 /* -------------------------------------------------------------------------- */
 
 /* this is the default callback of each window, fired when the user closes
@@ -76,14 +72,12 @@ gdWindow::~gdWindow()
 
 void gdWindow::cb_closeChild(Fl_Widget* w, void* /*p*/)
 {
-	gdWindow* child = (gdWindow*) w;
+	gdWindow* child = (gdWindow*)w;
 	if (child->getParent() != nullptr)
 		(child->getParent())->delSubWindow(child);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdWindow::addSubWindow(gdWindow* w)
 {
@@ -93,52 +87,45 @@ void gdWindow::addSubWindow(gdWindow* w)
 	//debug();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdWindow::delSubWindow(gdWindow* w)
 {
 	for (unsigned j = 0; j < subWindows.size(); j++)
-		if (w->getId() == subWindows.at(j)->getId()) {
+		if (w->getId() == subWindows.at(j)->getId())
+		{
 			delete subWindows.at(j);
 			subWindows.erase(subWindows.begin() + j);
 			return;
 		}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdWindow::delSubWindow(int wid)
 {
 	for (unsigned j = 0; j < subWindows.size(); j++)
-		if (subWindows.at(j)->getId() == wid) {
+		if (subWindows.at(j)->getId() == wid)
+		{
 			delete subWindows.at(j);
 			subWindows.erase(subWindows.begin() + j);
 			return;
 		}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int gdWindow::getId() const
 {
 	return id;
 }
 
-
 void gdWindow::setId(int wid)
 {
 	id = wid;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdWindow::debug() const
 {
@@ -150,24 +137,19 @@ void gdWindow::debug() const
 	*/
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 gdWindow* gdWindow::getParent()
 {
 	return parent;
 }
 
-
 void gdWindow::setParent(gdWindow* w)
 {
 	parent = w;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool gdWindow::hasWindow(int wid) const
 {
@@ -177,9 +159,7 @@ bool gdWindow::hasWindow(int wid) const
 	return false;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 gdWindow* gdWindow::getChild(int wid)
 {
@@ -188,4 +168,5 @@ gdWindow* gdWindow::getChild(int wid)
 			return subWindows.at(j);
 	return nullptr;
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

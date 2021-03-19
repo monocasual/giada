@@ -24,15 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_BROWSER_BASE_H
 #define GD_BROWSER_BASE_H
 
-
-#include<functional>
-#include "gui/dialogs/window.h"
 #include "core/types.h"
-
+#include "gui/dialogs/window.h"
+#include <functional>
 
 class Fl_Group;
 class geCheck;
@@ -41,18 +38,17 @@ class geButton;
 class geInput;
 class geProgress;
 
-
-namespace giada {
-namespace m 
-{ 
-class Channel; 
+namespace giada
+{
+namespace m
+{
+class Channel;
 }
 namespace v
 {
 class gdBrowserBase : public gdWindow
 {
-public:
-
+  public:
 	~gdBrowserBase();
 
 	/* getSelectedItem
@@ -61,9 +57,9 @@ public:
 	std::string getSelectedItem() const;
 
 	std::string getCurrentPath() const;
-	ID getChannelId() const;
-	void fireCallback() const;
-	
+	ID          getChannelId() const;
+	void        fireCallback() const;
+
 	/* setStatusBar
 	Increments status bar for progress tracking. */
 
@@ -72,17 +68,16 @@ public:
 	void showStatusBar();
 	void hideStatusBar();
 
-protected:
-
-	gdBrowserBase(const std::string& title, const std::string& path, 
-		std::function<void(void*)> f, ID channelId);
+  protected:
+	gdBrowserBase(const std::string& title, const std::string& path,
+	    std::function<void(void*)> f, ID channelId);
 
 	static void cb_up(Fl_Widget* /*w*/, void* p);
 	static void cb_close(Fl_Widget* /*w*/, void* p);
 	static void cb_toggleHiddenFiles(Fl_Widget* /*w*/, void* p);
-	void cb_up();
-	void cb_close();
-	void cb_toggleHiddenFiles();
+	void        cb_up();
+	void        cb_close();
+	void        cb_toggleHiddenFiles();
 
 	/* m_callback
 	Fired when the save/load button is pressed. */
@@ -100,7 +95,7 @@ protected:
 	geButton*   updir;
 	geProgress* status;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

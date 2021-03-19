@@ -24,27 +24,26 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CHANNEL_MIDI_RECEIVER_H
 #define G_CHANNEL_MIDI_RECEIVER_H
 
-
 #ifdef WITH_VST
 
-
-namespace giada::m::channel { struct Data; }
+namespace giada::m::channel
+{
+struct Data;
+}
 namespace giada::m::midiReceiver
 {
 struct Data
 {
 };
 
-void react  (const channel::Data& ch, const eventDispatcher::Event& e);
-void advance(const channel::Data& ch, const sequencer::Event& e); 
-void render (const channel::Data& ch);
-}
+void react(const channel::Data& ch, const eventDispatcher::Event& e);
+void advance(const channel::Data& ch, const sequencer::Event& e);
+void render(const channel::Data& ch);
+} // namespace giada::m::midiReceiver
 
 #endif // WITH_VST
-
 
 #endif

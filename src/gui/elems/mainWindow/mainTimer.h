@@ -24,29 +24,24 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_MAIN_TIMER_H
 #define GE_MAIN_TIMER_H
 
-
 #include "glue/main.h"
-#include "gui/elems/basics/pack.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
-
+#include "gui/elems/basics/pack.h"
 
 class geButton;
-
 
 namespace giada::v
 {
 class geChoice;
 class geMainTimer : public gePack
 {
-public:
-
+  public:
 	geMainTimer(int x, int y);
-	
+
 	void refresh();
 	void rebuild();
 
@@ -60,18 +55,17 @@ public:
 
 	void setLock(bool v);
 
-private:
-
-	static void cb_bpm       (Fl_Widget* /*w*/, void* p);
-	static void cb_meter     (Fl_Widget* /*w*/, void* p);
-	static void cb_quantizer (Fl_Widget* /*w*/, void* p);
+  private:
+	static void cb_bpm(Fl_Widget* /*w*/, void* p);
+	static void cb_meter(Fl_Widget* /*w*/, void* p);
+	static void cb_quantizer(Fl_Widget* /*w*/, void* p);
 	static void cb_multiplier(Fl_Widget* /*w*/, void* p);
-	static void cb_divider   (Fl_Widget* /*w*/, void* p);
-	void cb_bpm();
-	void cb_meter();
-	void cb_quantizer();
-	void cb_multiplier();
-	void cb_divider();
+	static void cb_divider(Fl_Widget* /*w*/, void* p);
+	void        cb_bpm();
+	void        cb_meter();
+	void        cb_quantizer();
+	void        cb_multiplier();
+	void        cb_divider();
 
 	c::main::Timer m_timer;
 
@@ -81,7 +75,6 @@ private:
 	geButton m_multiplier;
 	geButton m_divider;
 };
-} // giada::v::
-
+} // namespace giada::v
 
 #endif

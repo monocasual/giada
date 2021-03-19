@@ -24,20 +24,18 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cmath>
-#include <sndfile.h>
-#include <samplerate.h>
-#include "utils/log.h"
-#include "utils/fs.h"
-#include "model/model.h"
+#include "waveManager.h"
 #include "const.h"
 #include "idManager.h"
-#include "wave.h"
+#include "model/model.h"
 #include "patch.h"
+#include "utils/fs.h"
+#include "utils/log.h"
+#include "wave.h"
 #include "waveFx.h"
-#include "waveManager.h"
-
+#include <cmath>
+#include <samplerate.h>
+#include <sndfile.h>
 
 namespace giada::m::waveManager
 {
@@ -45,13 +43,11 @@ namespace
 {
 IdManager waveId_;
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int getBits_(const SF_INFO& header)
 {
-	if      (header.format & SF_FORMAT_PCM_S8)
+	if (header.format & SF_FORMAT_PCM_S8)
 		return 8;
 	else if (header.format & SF_FORMAT_PCM_16)
 		return 16;
@@ -67,44 +63,43 @@ int getBits_(const SF_INFO& header)
 		return 64;
 	return 0;
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 void init()
 {
 	waveId_ = IdManager();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 Result createFromFile(const std::string& path, ID id, int samplerate, int quality)
 {
-	if (path == "" || u::fs::isDir(path)) {
+	if (path == "" || u::fs::isDir(path))
+	{
 		u::log::print("[waveManager::create] malformed path (was '%s')\n", path);
-		return { G_RES_ERR_NO_DATA };
+		return {G_RES_ERR_NO_DATA};
 	}
 
 	if (path.size() > FILENAME_MAX)
-		return { G_RES_ERR_PATH_TOO_LONG };
+		return {G_RES_ERR_PATH_TOO_LONG};
 
-	SF_INFO header;
+	SF_INFO  header;
 	SNDFILE* fileIn = sf_open(path.c_str(), SFM_READ, &header);
 
-	if (fileIn == nullptr) {
+	if (fileIn == nullptr)
+	{
 		u::log::print("[waveManager::create] unable to read %s. %s\n", path, sf_strerror(fileIn));
-		return { G_RES_ERR_IO };
+		return {G_RES_ERR_IO};
 	}
 
-	if (header.channels > G_MAX_IO_CHANS) {
+	if (header.channels > G_MAX_IO_CHANS)
+	{
 		u::log::print("[waveManager::create] unsupported multi-channel sample\n");
-		return { G_RES_ERR_WRONG_DATA };
+		return {G_RES_ERR_WRONG_DATA};
 	}
 
 	waveId_.set(id);
@@ -118,39 +113,37 @@ Result createFromFile(const std::string& path, ID id, int samplerate, int qualit
 	sf_close(fileIn);
 
 	if (header.channels == 1 && !wfx::monoToStereo(*wave))
-		return { G_RES_ERR_PROCESSING };
-	
-	if (wave->getRate() != samplerate) {
+		return {G_RES_ERR_PROCESSING};
+
+	if (wave->getRate() != samplerate)
+	{
 		u::log::print("[waveManager::create] input rate (%d) != required rate (%d), conversion needed\n",
-			wave->getRate(), samplerate);
+		    wave->getRate(), samplerate);
 		if (resample(*wave.get(), quality, samplerate) != G_RES_OK)
-			return  { G_RES_ERR_PROCESSING };
+			return {G_RES_ERR_PROCESSING};
 	}
 
 	u::log::print("[waveManager::create] new Wave created, %d frames\n", wave->getSize());
 
-	return { G_RES_OK, std::move(wave) };
+	return {G_RES_OK, std::move(wave)};
 }
 
 /* -------------------------------------------------------------------------- */
 
-
-std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate, 
-	const std::string& name)
+std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
+    const std::string& name)
 {
 	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.generate());
 	wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, name);
 	wave->setLogical(true);
 
-	u::log::print("[waveManager::createEmpty] new empty Wave created, %d frames\n", 
-		wave->getSize());
+	u::log::print("[waveManager::createEmpty] new empty Wave created, %d frames\n",
+	    wave->getSize());
 
 	return wave;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 {
@@ -167,38 +160,31 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 	return wave;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::unique_ptr<Wave> deserializeWave(const patch::Wave& w, int samplerate, int quality)
 {
 	return createFromFile(w.path, w.id, samplerate, quality).wave;
 }
 
-
 const patch::Wave serializeWave(const Wave& w)
 {
-	return { w.id, u::fs::basename(w.getPath()) };
+	return {w.id, u::fs::basename(w.getPath())};
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 Wave* hydrateWave(ID waveId)
 {
 	return model::find<Wave>(waveId);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int resample(Wave& w, int quality, int samplerate)
 {
-	float ratio = samplerate / (float) w.getRate();
-	int newSizeFrames = static_cast<int>(ceil(w.getSize() * ratio));
+	float ratio         = samplerate / (float)w.getRate();
+	int   newSizeFrames = static_cast<int>(ceil(w.getSize() * ratio));
 
 	AudioBuffer newData;
 	newData.alloc(newSizeFrames, w.getChannels());
@@ -213,7 +199,8 @@ int resample(Wave& w, int quality, int samplerate)
 	u::log::print("[waveManager::resample] resampling: new size=%d frames\n", newSizeFrames);
 
 	int ret = src_simple(&src_data, quality, w.getChannels());
-	if (ret != 0) {
+	if (ret != 0)
+	{
 		u::log::print("[waveManager::resample] resampling error: %s\n", src_strerror(ret));
 		return G_RES_ERR_PROCESSING;
 	}
@@ -224,9 +211,7 @@ int resample(Wave& w, int quality, int samplerate)
 	return G_RES_OK;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int save(const Wave& w, const std::string& path)
 {
@@ -236,9 +221,10 @@ int save(const Wave& w, const std::string& path)
 	header.format     = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
 
 	SNDFILE* file = sf_open(path.c_str(), SFM_WRITE, &header);
-	if (file == nullptr) {
+	if (file == nullptr)
+	{
 		u::log::print("[waveManager::save] unable to open %s for exporting: %s\n",
-			path, sf_strerror(file));
+		    path, sf_strerror(file));
 		return G_RES_ERR_IO;
 	}
 
@@ -249,4 +235,4 @@ int save(const Wave& w, const std::string& path)
 
 	return G_RES_OK;
 }
-} // giada::m::waveManager::
+} // namespace giada::m::waveManager

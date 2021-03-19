@@ -24,13 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CLOCK_H
 #define G_CLOCK_H
 
-
 #include "types.h"
-
 
 namespace giada::m::clock
 {
@@ -55,17 +52,17 @@ void sendMIDIrewind();
 void recvJackSync();
 #endif
 
-float getBpm();
-int getBeats();
-int getBars();
-int getCurrentBeat();
-int getCurrentFrame();
-int getFramesInBar();
-int getFramesInBeat();
-int getFramesInLoop();
-int getFramesInSeq();
-int getQuantizerValue();
-int getQuantizerStep();
+float       getBpm();
+int         getBeats();
+int         getBars();
+int         getCurrentBeat();
+int         getCurrentFrame();
+int         getFramesInBar();
+int         getFramesInBeat();
+int         getFramesInLoop();
+int         getFramesInSeq();
+int         getQuantizerValue();
+int         getQuantizerStep();
 ClockStatus getStatus();
 
 /* advance
@@ -109,7 +106,6 @@ bool isOnFirstBeat();
 
 void rewind();
 void setStatus(ClockStatus s);
-} // giada::m::clock::
-
+} // namespace giada::m::clock
 
 #endif

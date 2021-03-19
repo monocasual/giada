@@ -24,22 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
 
-
-#include <FL/x.H>
-#include "utils/log.h"
-#include "utils/gui.h"
-#include "glue/plugin.h"
-#include "core/const.h"
 #include "pluginWindowGUI.h"
+#include "core/const.h"
+#include "glue/plugin.h"
+#include "utils/gui.h"
+#include "utils/log.h"
+#include <FL/x.H>
 #ifdef G_OS_MAC
 #import "utils/cocoa.h" // objective-c
 #endif
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 gdPluginWindowGUI::gdPluginWindowGUI(c::plugin::Plugin& p)
@@ -49,7 +47,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(c::plugin::Plugin& p)
 : gdWindow(320, 200)
 #endif
 , m_plugin(p)
-, m_ui    (nullptr)
+, m_ui(nullptr)
 {
 	show();
 
@@ -70,55 +68,48 @@ gdPluginWindowGUI::gdPluginWindowGUI(c::plugin::Plugin& p)
 #endif
 
 	u::log::print("[gdPluginWindowGUI] opening GUI, this=%p, xid=%p\n",
-		(void*) this, (void*) fl_xid(this));
+	    (void*)this, (void*)fl_xid(this));
 
 #ifdef G_OS_MAC
 
-	void* cocoaWindow = (void*) fl_xid(this);
+	void* cocoaWindow = (void*)fl_xid(this);
 	openEditor(cocoa_getViewFromWindow(cocoaWindow));
 
 #else
 
-	openEditor((void*) fl_xid(this));
+	openEditor((void*)fl_xid(this));
 
 	int pluginW = m_ui->getWidth();
 	int pluginH = m_ui->getHeight();
 
 	resize((Fl::w() - pluginW) / 2, (Fl::h() - pluginH) / 2, pluginW, pluginH);
 
-	m_plugin.setResizeCallback([this] (int w, int h)
-	{
+	m_plugin.setResizeCallback([this](int w, int h) {
 		resize(x(), y(), w, h);
 	});
 
 #endif
 
 #ifdef G_OS_LINUX
-	Fl::add_timeout(G_GUI_PLUGIN_RATE, cb_refresh, (void*) this);
+	Fl::add_timeout(G_GUI_PLUGIN_RATE, cb_refresh, (void*)this);
 #endif
 
 	copy_label(m_plugin.name.c_str());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 gdPluginWindowGUI::~gdPluginWindowGUI()
 {
 	cb_close();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdPluginWindowGUI::cb_close(Fl_Widget* /*v*/, void* p) { ((gdPluginWindowGUI*)p)->cb_close(); }
 void gdPluginWindowGUI::cb_refresh(void* data) { ((gdPluginWindowGUI*)data)->cb_refresh(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdPluginWindowGUI::cb_close()
 {
@@ -126,44 +117,39 @@ void gdPluginWindowGUI::cb_close()
 	Fl::remove_timeout(cb_refresh);
 #endif
 	closeEditor();
-	u::log::print("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*) this);
+	u::log::print("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*)this);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdPluginWindowGUI::cb_refresh()
 {
 	m::pluginHost::runDispatchLoop();
-	Fl::repeat_timeout(G_GUI_PLUGIN_RATE, cb_refresh, (void*) this);
+	Fl::repeat_timeout(G_GUI_PLUGIN_RATE, cb_refresh, (void*)this);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdPluginWindowGUI::openEditor(void* parent)
 {
 	m_ui = m_plugin.createEditor();
-	if (m_ui == nullptr) {
+	if (m_ui == nullptr)
+	{
 		u::log::print("[gdPluginWindowGUI::openEditor] unable to create editor!\n");
 		return;
 	}
 	m_ui->setOpaque(true);
-	m_ui->addToDesktop(0, parent);	
+	m_ui->addToDesktop(0, parent);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdPluginWindowGUI::closeEditor()
 {
 	delete m_ui;
 	m_ui = nullptr;
 }
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif // #ifdef WITH_VST

@@ -24,16 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_V_DISPATCHER_H
 #define G_V_DISPATCHER_H
 
-
 #include <functional>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class geChannel;
 
@@ -50,7 +48,8 @@ Processes a mouse click/touch event. */
 void dispatchTouch(const geChannel& gch, bool status);
 
 void setSignalCallback(std::function<void()> f);
-}}} // giada::v::dispatcher
-
+} // namespace dispatcher
+} // namespace v
+} // namespace giada
 
 #endif

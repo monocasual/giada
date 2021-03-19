@@ -26,12 +26,12 @@
 
 #ifdef WITH_VST
 
-#include <cassert>
 #include "pluginState.h"
+#include <cassert>
 
-
-namespace giada {
-namespace m 
+namespace giada
+{
+namespace m
 {
 PluginState::PluginState(juce::MemoryBlock&& data)
 : m_data(std::move(data))
@@ -40,35 +40,31 @@ PluginState::PluginState(juce::MemoryBlock&& data)
 
 /* -------------------------------------------------------------------------- */
 
-
 PluginState::PluginState(const std::string& base64)
 {
 	bool res = m_data.fromBase64Encoding(base64);
 	assert(res);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::string PluginState::asBase64() const
 {
 	return m_data.toBase64Encoding().toStdString();
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-const void* PluginState::getData() const 
+const void* PluginState::getData() const
 {
 	return m_data.getData();
 }
-
 
 size_t PluginState::getSize() const
 {
 	return m_data.getSize();
 }
-}}
+} // namespace m
+} // namespace giada
 
 #endif // #ifdef WITH_VST

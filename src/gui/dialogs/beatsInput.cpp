@@ -24,46 +24,44 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cstring>
-#include "utils/gui.h"
-#include "utils/string.h"
-#include "core/mixer.h"
+#include "beatsInput.h"
 #include "core/clock.h"
 #include "core/conf.h"
 #include "core/const.h"
+#include "core/mixer.h"
 #include "glue/main.h"
-#include "gui/elems/basics/input.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
-#include "beatsInput.h"
+#include "gui/elems/basics/input.h"
 #include "mainWindow.h"
-
+#include "utils/gui.h"
+#include "utils/string.h"
+#include <cstring>
 
 extern giada::v::gdMainWindow* mainWin;
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 gdBeatsInput::gdBeatsInput()
 : gdWindow(u::gui::centerWindowX(180), u::gui::centerWindowY(36), 180, 36, "Beats")
 {
 	set_modal();
 
-	beats = new geInput(8,  8,  43, G_GUI_UNIT);
-	bars  = new geInput(beats->x()+beats->w()+4, 8,  43, G_GUI_UNIT);
-	ok 	  = new geButton(bars->x()+bars->w()+4, 8,  70, G_GUI_UNIT, "Ok");
+	beats = new geInput(8, 8, 43, G_GUI_UNIT);
+	bars  = new geInput(beats->x() + beats->w() + 4, 8, 43, G_GUI_UNIT);
+	ok    = new geButton(bars->x() + bars->w() + 4, 8, 70, G_GUI_UNIT, "Ok");
 	end();
 
 	beats->maximum_size(2);
 	beats->value(std::to_string(m::clock::getBeats()).c_str());
 	beats->type(FL_INT_INPUT);
-	
+
 	bars->maximum_size(2);
 	bars->value(std::to_string(m::clock::getBars()).c_str());
 	bars->type(FL_INT_INPUT);
-	
+
 	ok->shortcut(FL_Enter);
 	ok->callback(cb_update, (void*)this);
 
@@ -72,15 +70,11 @@ gdBeatsInput::gdBeatsInput()
 	show();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdBeatsInput::cb_update(Fl_Widget* /*w*/, void* p) { ((gdBeatsInput*)p)->cb_update(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdBeatsInput::cb_update()
 {
@@ -90,4 +84,5 @@ void gdBeatsInput::cb_update()
 	do_callback();
 }
 
-}} // giada::v::
+} // namespace v
+} // namespace giada

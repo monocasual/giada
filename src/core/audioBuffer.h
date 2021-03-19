@@ -24,14 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_AUDIO_BUFFER_H
 #define G_AUDIO_BUFFER_H
 
-
-#include <array>
 #include "core/types.h"
-
+#include <array>
 
 namespace giada::m
 {
@@ -42,8 +39,7 @@ stereo. Give it a multichannel stream and it will throw an assertion. */
 
 class AudioBuffer
 {
-public:
-	
+  public:
 	static constexpr int NUM_CHANS = 2;
 
 	using Pan = std::array<float, NUM_CHANS>;
@@ -89,16 +85,16 @@ public:
 	Also note that buffer[0] will give you a pointer to the whole internal data
 	array. */
 
-	float* operator [](int offset) const;
+	float* operator[](int offset) const;
 
 	Frame countFrames() const;
-	int countSamples() const;
-	int countChannels() const;
-	bool isAllocd() const;
+	int   countSamples() const;
+	int   countChannels() const;
+	bool  isAllocd() const;
 
 	/* getPeak
 	Returns the highest value from any channel. */
-	
+
 	float getPeak() const;
 
 	void alloc(Frame size, int channels);
@@ -110,20 +106,20 @@ public:
 	NUM_CHANS channels. If channels < NUM_CHANS, they will be spread over the
 	stereo buffer. */
 
-	void copyData(const float* data, Frame frames, int channels=NUM_CHANS, int offset=0);
+	void copyData(const float* data, Frame frames, int channels = NUM_CHANS, int offset = 0);
 
 	/* copyData (2)
 	Copies buffer 'b' onto this one. If 'b' has less channels than this one,
 	they will be spread over the current ones. Buffer 'b' MUST NOT contain more
 	channels than this one.  */
 
-	void copyData(const AudioBuffer& b, float gain=1.0f);
+	void copyData(const AudioBuffer& b, float gain = 1.0f);
 
 	/* addData
 	Merges audio data from buffer 'b' onto this one. Applies optional gain and
 	pan if needed. */
 
-	void addData(const AudioBuffer& b, float gain=1.0f, Pan pan={1.0f, 1.0f});
+	void addData(const AudioBuffer& b, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
 
 	/* setData
 	Views 'data' as new m_data. Makes sure not to delete the data 'data' points
@@ -134,19 +130,18 @@ public:
 	/* clear
 	Clears the internal data by setting all bytes to 0.0f. Optional parameters
 	'a' and 'b' set the range. */
-	
-	void clear(Frame a=0, Frame b=-1);
+
+	void clear(Frame a = 0, Frame b = -1);
 
 	void applyGain(float g);
 
-private:
-
+  private:
 	void move(AudioBuffer&& o);
-	
+
 	float* m_data;
 	Frame  m_size;
 	int    m_channels;
 };
-} // giada::m::
+} // namespace giada::m
 
 #endif

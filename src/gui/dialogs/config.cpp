@@ -24,44 +24,43 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/Fl_Tabs.H>
+#include "config.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "utils/gui.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/button.h"
-#include "gui/elems/config/tabMisc.h"
-#include "gui/elems/config/tabMidi.h"
 #include "gui/elems/config/tabAudio.h"
 #include "gui/elems/config/tabBehaviors.h"
+#include "gui/elems/config/tabMidi.h"
+#include "gui/elems/config/tabMisc.h"
 #include "gui/elems/config/tabPlugins.h"
-#include "config.h"
+#include "utils/gui.h"
+#include <FL/Fl_Tabs.H>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 gdConfig::gdConfig(int w, int h)
 : gdWindow(u::gui::centerWindowX(w), u::gui::centerWindowY(h), w, h, "Configuration")
 {
-	Fl_Tabs* tabs = new Fl_Tabs(8, 8, w-16, h-44);
+	Fl_Tabs* tabs = new Fl_Tabs(8, 8, w - 16, h - 44);
 	tabs->box(G_CUSTOM_BORDER_BOX);
 	tabs->labelcolor(G_COLOR_LIGHT_2);
 	tabs->begin();
 
-		tabAudio     = new geTabAudio(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
-		tabMidi      = new geTabMidi(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
-		tabBehaviors = new geTabBehaviors(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
-		tabMisc      = new geTabMisc(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
+	tabAudio     = new geTabAudio(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40);
+	tabMidi      = new geTabMidi(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40);
+	tabBehaviors = new geTabBehaviors(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40);
+	tabMisc      = new geTabMisc(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40);
 #ifdef WITH_VST
-		tabPlugins   = new geTabPlugins(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
+	tabPlugins = new geTabPlugins(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40);
 #endif
 
 	tabs->end();
 
-	save   = new geButton (w-88, h-28, 80, 20, "Save");
-	cancel = new geButton (w-176, h-28, 80, 20, "Cancel");
+	save   = new geButton(w - 88, h - 28, 80, 20, "Save");
+	cancel = new geButton(w - 176, h - 28, 80, 20, "Cancel");
 
 	end();
 
@@ -73,16 +72,12 @@ gdConfig::gdConfig(int w, int h)
 	show();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdConfig::cb_save_config(Fl_Widget* /*w*/, void* p) { ((gdConfig*)p)->cb_save_config(); }
-void gdConfig::cb_cancel     (Fl_Widget* /*w*/, void* p) { ((gdConfig*)p)->cb_cancel(); }
-
+void gdConfig::cb_cancel(Fl_Widget* /*w*/, void* p) { ((gdConfig*)p)->cb_cancel(); }
 
 /* -------------------------------------------------------------------------- */
-
 
 void gdConfig::cb_save_config()
 {
@@ -96,15 +91,12 @@ void gdConfig::cb_save_config()
 	do_callback();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdConfig::cb_cancel()
 {
 	do_callback();
 }
-
 
 /* -------------------------------------------------------------------------- */
 
@@ -117,4 +109,5 @@ void gdConfig::refreshVstPath()
 
 #endif
 
-}} // giada::v::
+} // namespace v
+} // namespace giada

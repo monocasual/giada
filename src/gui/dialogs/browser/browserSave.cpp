@@ -24,31 +24,30 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "utils/fs.h"
-#include "gui/elems/browser.h"
+#include "browserSave.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/input.h"
-#include "browserSave.h"
+#include "gui/elems/browser.h"
+#include "utils/fs.h"
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
-gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path, 
-	const std::string& name_, std::function<void(void*)> cb, ID channelId)
+gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
+    const std::string& name_, std::function<void(void*)> cb, ID channelId)
 : gdBrowserBase(title, path, cb, channelId)
 {
-	where->size(groupTop->w()-236, 20);
+	where->size(groupTop->w() - 236, 20);
 
-	name = new geInput(where->x()+where->w()+8, where->y(), 200, 20);
+	name = new geInput(where->x() + where->w() + 8, where->y(), 200, 20);
 	name->value(name_.c_str());
 	groupTop->add(name);
 
-	browser->callback(cb_down, (void*) this);
+	browser->callback(cb_down, (void*)this);
 
 	ok->label("Save");
-	ok->callback(cb_save, (void*) this);
+	ok->callback(cb_save, (void*)this);
 	ok->shortcut(FL_ENTER);
 
 	/* On OS X the 'where' and 'name' inputs don't get resized properly on startup. 
@@ -58,28 +57,25 @@ gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
 	name->redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdBrowserSave::cb_save(Fl_Widget* /*v*/, void* p) { ((gdBrowserSave*)p)->cb_save(); }
 void gdBrowserSave::cb_down(Fl_Widget* /*v*/, void* p) { ((gdBrowserSave*)p)->cb_down(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdBrowserSave::cb_down()
 {
 	std::string path = browser->getSelectedItem();
 
-	if (path.empty())  // when click on an empty area
+	if (path.empty()) // when click on an empty area
 		return;
 
 	/* if the selected item is a directory just load its content. If it's a file
 	 * use it as the file name (i.e. fill name->value()). */
 
-	if (u::fs::isDir(path)) {
+	if (u::fs::isDir(path))
+	{
 		browser->loadDir(path);
 		where->value(browser->getCurrentDir().c_str());
 	}
@@ -87,22 +83,19 @@ void gdBrowserSave::cb_down()
 		name->value(browser->getSelectedItem(false).c_str());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::string gdBrowserSave::getName() const
 {
-  return name->value();
+	return name->value();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdBrowserSave::cb_save()
 {
 	fireCallback();
 }
 
-}} // giada::v::
+} // namespace v
+} // namespace giada

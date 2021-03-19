@@ -24,21 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_MIDI_OUTPUT_BASE_H
 #define GD_MIDI_OUTPUT_BASE_H
 
-
 #include "core/types.h"
 #include "glue/io.h"
-#include "gui/elems/midiIO/midiLearnerPack.h"
-#include "gui/elems/midiIO/midiLearner.h"
 #include "gui/dialogs/window.h"
-
+#include "gui/elems/midiIO/midiLearner.h"
+#include "gui/elems/midiIO/midiLearnerPack.h"
 
 class geButton;
 class geCheck;
-
 
 /* There's no such thing as a gdMidiOutputMaster vs gdMidiOutputChannel. MIDI
 output master is managed by the configuration window, hence gdMidiOutput deals
@@ -47,39 +43,35 @@ only with channels.
 Both MidiOutputMidiCh and MidiOutputSampleCh have the MIDI lighting widget set.
 In addition MidiOutputMidiCh has the MIDI message output box. */
 
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class geLightningLearnerPack : public geMidiLearnerPack
 {
-public:
-
+  public:
 	geLightningLearnerPack(int x, int y, ID channelId);
 
 	void update(const c::io::Channel_OutputData&);
 };
 
-
 /* -------------------------------------------------------------------------- */
-
 
 class gdMidiOutputBase : public gdWindow
 {
-public:
-
+  public:
 	gdMidiOutputBase(int w, int h, ID channelId);
 	~gdMidiOutputBase();
 
-protected:
-
+  protected:
 	/* cb_close
 	close current window. */
 
 	static void cb_close(Fl_Widget* /*w*/, void* p);
-	void cb_close();
+	void        cb_close();
 
 	static void cb_enableLightning(Fl_Widget* /*w*/, void* p);
-	void cb_enableLightning();
+	void        cb_enableLightning();
 
 	/* setTitle
 	 * set window title. */
@@ -87,14 +79,14 @@ protected:
 	void setTitle(ID channelId);
 
 	ID m_channelId;
-	
+
 	c::io::Channel_OutputData m_data;
-	
+
 	geLightningLearnerPack* m_learners;
 	geButton*               m_close;
 	geCheck*                m_enableLightning;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

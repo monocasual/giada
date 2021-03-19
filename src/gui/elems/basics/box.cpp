@@ -24,24 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/fl_draw.H>
+#include "box.h"
 #include "core/const.h"
 #include "utils/gui.h"
-#include "box.h"
-
+#include <FL/fl_draw.H>
 
 geBox::geBox(int x, int y, int w, int h, const char* l, Fl_Align al)
-: Fl_Box (x, y, w, h)
+: Fl_Box(x, y, w, h)
 {
 	copy_label(l);
 	box(FL_NO_BOX);
 	align(al | FL_ALIGN_INSIDE);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geBox::draw()
 {
@@ -51,11 +47,11 @@ void geBox::draw()
 		fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4); // Border
 
 	if (image() != nullptr)
-  		draw_label(); // draw_label also paints image, if any
-	else
-	if (label() != nullptr) {
+		draw_label(); // draw_label also paints image, if any
+	else if (label() != nullptr)
+	{
 		fl_color(G_COLOR_LIGHT_2);
 		fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-		fl_draw(giada::u::gui::truncate(label(), w()-8).c_str(), x()+4, y(), w()-4, h(), align());
+		fl_draw(giada::u::gui::truncate(label(), w() - 8).c_str(), x() + 4, y(), w() - 4, h(), align());
 	}
 }

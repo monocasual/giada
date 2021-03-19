@@ -24,38 +24,35 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
-#include <FL/Fl.H>
+#include "pianoRoll.h"
+#include "core/action.h"
+#include "core/clock.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "core/clock.h"
-#include "core/action.h"
 #include "core/midiEvent.h"
-#include "utils/log.h"
-#include "utils/string.h"
-#include "utils/math.h"
-#include "glue/channel.h"
 #include "glue/actionEditor.h"
+#include "glue/channel.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "pianoItem.h"
 #include "noteEditor.h"
-#include "pianoRoll.h"
+#include "pianoItem.h"
+#include "utils/log.h"
+#include "utils/math.h"
+#include "utils/string.h"
+#include <FL/Fl.H>
+#include <cassert>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 gePianoRoll::gePianoRoll(Pixel X, Pixel Y, Pixel W, gdBaseActionEditor* b)
 : geBaseActionEditor(X, Y, W, 40, b)
-, pick              (0)
+, pick(0)
 {
-	position(x(), m::conf::conf.pianoRollY == -1 ? y()-(h()/2) : m::conf::conf.pianoRollY);
+	position(x(), m::conf::conf.pianoRollY == -1 ? y() - (h() / 2) : m::conf::conf.pianoRollY);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePianoRoll::drawSurface1()
 {
@@ -72,75 +69,75 @@ void gePianoRoll::drawSurface1()
 
 	int octave = MAX_OCTAVES;
 
-	for (int i = 1; i <= MAX_KEYS+1; i++) {
+	for (int i = 1; i <= MAX_KEYS + 1; i++)
+	{
 
 		/* print key note label. C C# D D# E F F# G G# A A# B */
 
 		std::string note = u::string::iToString(octave);
-		switch (i % KEYS) {
-			case (int) Notes::G:
-				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				note += " G"; 
-				break;
-			case (int) Notes::FS:
-				note += " F#";
-				break;
-			case (int) Notes::F:
-				note += " F";
-				break;
-			case (int) Notes::E:
-				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				note += " E";
-				break;
-			case (int) Notes::DS:
-				note += " D#";
-				break;
-			case (int) Notes::D:
-				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				note += " D";
-				break;
-			case (int) Notes::CS:
-				note += " C#";
-				break;
-			case (int) Notes::C:
-				note += " C";
-				octave--;
-				break;
-			case (int) Notes::B:
-				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				note += " B";
-				break;
-			case (int) Notes::AS:
-				note += " A#";
-				break;
-			case (int) Notes::A:
-				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				note += " A";
-				break;
-			case (int) Notes::GS:
-				note += " G#";
-				break;
+		switch (i % KEYS)
+		{
+		case (int)Notes::G:
+			fl_rectf(0, i * CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
+			note += " G";
+			break;
+		case (int)Notes::FS:
+			note += " F#";
+			break;
+		case (int)Notes::F:
+			note += " F";
+			break;
+		case (int)Notes::E:
+			fl_rectf(0, i * CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
+			note += " E";
+			break;
+		case (int)Notes::DS:
+			note += " D#";
+			break;
+		case (int)Notes::D:
+			fl_rectf(0, i * CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
+			note += " D";
+			break;
+		case (int)Notes::CS:
+			note += " C#";
+			break;
+		case (int)Notes::C:
+			note += " C";
+			octave--;
+			break;
+		case (int)Notes::B:
+			fl_rectf(0, i * CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
+			note += " B";
+			break;
+		case (int)Notes::AS:
+			note += " A#";
+			break;
+		case (int)Notes::A:
+			fl_rectf(0, i * CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
+			note += " A";
+			break;
+		case (int)Notes::GS:
+			note += " G#";
+			break;
 		}
 
 		/* Print note name */
 
 		fl_color(G_COLOR_GREY_3);
-		fl_draw(note.c_str(), 4, ((i-1)*CELL_H)+1, CELL_W, CELL_H,
-			(Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+		fl_draw(note.c_str(), 4, ((i - 1) * CELL_H) + 1, CELL_W, CELL_H,
+		    (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 
 		/* Print horizontal line */
 
-		if (i < MAX_KEYS+1)
-			fl_line(0, i*CELL_H, CELL_W, +i*CELL_H);
+		if (i < MAX_KEYS + 1)
+			fl_line(0, i * CELL_H, CELL_W, +i * CELL_H);
 	}
 
 	fl_line_style(0);
 	fl_end_offscreen();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePianoRoll::drawSurface2()
 {
@@ -151,19 +148,22 @@ void gePianoRoll::drawSurface2()
 	fl_color(G_COLOR_GREY_3);
 	fl_line_style(FL_DASH, 0, nullptr);
 
-	for (int i=1; i<=MAX_KEYS+1; i++) {
-		switch (i % KEYS) {
-			case (int) Notes::G:
-			case (int) Notes::E:
-			case (int) Notes::D:
-			case (int) Notes::B:
-			case (int) Notes::A:
-				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				break;
+	for (int i = 1; i <= MAX_KEYS + 1; i++)
+	{
+		switch (i % KEYS)
+		{
+		case (int)Notes::G:
+		case (int)Notes::E:
+		case (int)Notes::D:
+		case (int)Notes::B:
+		case (int)Notes::A:
+			fl_rectf(0, i * CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
+			break;
 		}
-		if (i < MAX_KEYS+1) {
+		if (i < MAX_KEYS + 1)
+		{
 			fl_color(G_COLOR_GREY_3);
-			fl_line(0, i*CELL_H, CELL_W, i*CELL_H);
+			fl_line(0, i * CELL_H, CELL_W, i * CELL_H);
 		}
 	}
 
@@ -171,9 +171,7 @@ void gePianoRoll::drawSurface2()
 	fl_end_offscreen();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePianoRoll::draw()
 {
@@ -182,61 +180,55 @@ void gePianoRoll::draw()
 // TODO - is this APPLE thing still useful?
 #if defined(__APPLE__)
 	for (Pixel i = 36; i < m_base->fullWidth; i += 36) /// TODO: i < m_base->loopWidth is faster
-		fl_copy_offscreen(x()+i, y(), CELL_W, h(), surface2, 1, 0);
+		fl_copy_offscreen(x() + i, y(), CELL_W, h(), surface2, 1, 0);
 #else
 	for (Pixel i = CELL_W; i < m_base->loopWidth; i += CELL_W)
-		fl_copy_offscreen(x()+i, y(), CELL_W, h(), surface2, 0, 0);
+		fl_copy_offscreen(x() + i, y(), CELL_W, h(), surface2, 0, 0);
 #endif
 
 	baseDraw(false);
 	draw_children();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int gePianoRoll::handle(int e)
 {
-	if (e == FL_PUSH && Fl::event_button3()) {
+	if (e == FL_PUSH && Fl::event_button3())
+	{
 		pick = Fl::event_y() - y();
 		return geBaseActionEditor::handle(e);
 	}
-	if (e == FL_DRAG && Fl::event_button3()) {
+	if (e == FL_DRAG && Fl::event_button3())
+	{
 		static_cast<geNoteEditor*>(parent())->scroll();
 		return 1;
 	}
 	return geBaseActionEditor::handle(e);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePianoRoll::onAddAction()
 {
 	Frame frame = m_base->pixelToFrame(Fl::event_x() - x());
 	int   note  = yToNote(Fl::event_y() - y());
-	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY, 
-		frame);
+	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY,
+	    frame);
 
-	m_base->rebuild();  // Rebuild velocityEditor as well
+	m_base->rebuild(); // Rebuild velocityEditor as well
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePianoRoll::onDeleteAction()
 {
-	c::actionEditor::deleteMidiAction(m_data->channelId, m_action->a1);	
-	
-	m_base->rebuild();  // Rebuild velocityEditor as well
+	c::actionEditor::deleteMidiAction(m_data->channelId, m_action->a1);
+
+	m_base->rebuild(); // Rebuild velocityEditor as well
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePianoRoll::onMoveAction()
 {
@@ -244,22 +236,26 @@ void gePianoRoll::onMoveAction()
 	done with x. Let's change this when vertical piano zoom will be available. */
 
 	Pixel ex = Fl::event_x() - m_action->pick;
-	Pixel ey = snapToY(Fl::event_y() - y() - (CELL_H/2)) + y();
+	Pixel ey = snapToY(Fl::event_y() - y() - (CELL_H / 2)) + y();
 
 	Pixel x1 = x();
 	Pixel x2 = (m_base->loopWidth + x()) - m_action->w();
 	Pixel y1 = y();
 	Pixel y2 = y() + h();
 
-	if (ex < x1) ex = x1; else if (ex > x2) ex = x2;
-	if (ey < y1) ey = y1; else if (ey > y2) ey = y2;
+	if (ex < x1)
+		ex = x1;
+	else if (ex > x2)
+		ex = x2;
+	if (ey < y1)
+		ey = y1;
+	else if (ey > y2)
+		ey = y2;
 
 	m_action->position(ex, ey);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePianoRoll::onResizeAction()
 {
@@ -270,18 +266,19 @@ void gePianoRoll::onResizeAction()
 
 	Pixel x1 = x();
 	Pixel x2 = m_base->loopWidth + x();
-	
-	if (ex < x1) ex = x1; else if (ex > x2) ex = x2;
 
-	if (m_action->onRightEdge) 
+	if (ex < x1)
+		ex = x1;
+	else if (ex > x2)
+		ex = x2;
+
+	if (m_action->onRightEdge)
 		m_action->setRightEdge(ex - m_action->x());
 	else
 		m_action->setLeftEdge(ex);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePianoRoll::onRefreshAction()
 {
@@ -293,17 +290,20 @@ void gePianoRoll::onRefreshAction()
 	Frame f1 = 0;
 	Frame f2 = 0;
 
-	if (!m_action->isOnEdges()) {
+	if (!m_action->isOnEdges())
+	{
 		f1 = m_base->pixelToFrame(p1);
 		f2 = m_base->pixelToFrame(p2, /*snap=*/false) - (m_base->pixelToFrame(p1, /*snap=*/false) - f1);
-	}	
-	else if (m_action->onLeftEdge) {
+	}
+	else if (m_action->onLeftEdge)
+	{
 		f1 = m_base->pixelToFrame(p1);
 		f2 = m_action->a2.frame;
 		if (f1 == f2) // If snapping makes an action fall onto the other
 			f1 -= G_DEFAULT_ACTION_SIZE;
 	}
-	else if (m_action->onRightEdge) {
+	else if (m_action->onRightEdge)
+	{
 		f1 = m_action->a1.frame;
 		f2 = m_base->pixelToFrame(p2);
 		if (f1 == f2) // If snapping makes an action fall onto the other
@@ -317,44 +317,38 @@ void gePianoRoll::onRefreshAction()
 
 	ca::updateMidiAction(m_data->channelId, m_action->a1, note, velocity, f1, f2);
 
-	m_base->rebuild();  // Rebuild velocityEditor as well
+	m_base->rebuild(); // Rebuild velocityEditor as well
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int gePianoRoll::yToNote(Pixel p) const
 {
 	return gePianoRoll::MAX_KEYS - (p / gePianoRoll::CELL_H);
 }
 
-
 Pixel gePianoRoll::noteToY(int n) const
 {
 	return (MAX_KEYS * CELL_H) - (n * gePianoRoll::CELL_H);
 }
-
 
 Pixel gePianoRoll::snapToY(Pixel p) const
 {
 	return u::math::quantize(p, CELL_H);
 }
 
-
 Pixel gePianoRoll::getPianoItemW(Pixel px, const m::Action& a1, const m::Action& a2) const
 {
-	if (a2.isValid()) {             // Regular
-		if (a1.frame > a2.frame)    // Ring-loop
+	if (a2.isValid())
+	{                            // Regular
+		if (a1.frame > a2.frame) // Ring-loop
 			return m_base->loopWidth - (px - x());
 		return m_base->frameToPixel(a2.frame - a1.frame);
 	}
-	return geBaseAction::MIN_WIDTH;	// Orphaned
+	return geBaseAction::MIN_WIDTH; // Orphaned
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gePianoRoll::rebuild(c::actionEditor::Data& d)
 {
@@ -371,7 +365,7 @@ void gePianoRoll::rebuild(c::actionEditor::Data& d)
 		if (a1.event.getStatus() == m::MidiEvent::NOTE_OFF)
 			continue;
 
-		assert(a1.isValid());  // a2 might be null if orphaned
+		assert(a1.isValid()); // a2 might be null if orphaned
 
 		const m::Action& a2 = a1.next != nullptr ? *a1.next : m::Action{};
 
@@ -388,4 +382,5 @@ void gePianoRoll::rebuild(c::actionEditor::Data& d)
 
 	redraw();
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

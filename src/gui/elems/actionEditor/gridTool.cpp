@@ -24,20 +24,18 @@
 *
 * --------------------------------------------------------------------------- */
 
-
-#include <FL/Fl_Double_Window.H>
-#include "core/conf.h"
-#include "core/clock.h"
-#include "utils/math.h"
-#include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/check.h"
 #include "gridTool.h"
-
+#include "core/clock.h"
+#include "core/conf.h"
+#include "gui/elems/basics/check.h"
+#include "gui/elems/basics/choice.h"
+#include "utils/math.h"
+#include <FL/Fl_Double_Window.H>
 
 namespace giada::v
 {
 geGridTool::geGridTool(Pixel x, Pixel y)
-:	Fl_Group(x, y, 80, 20)
+: Fl_Group(x, y, 80, 20)
 {
 	gridType = new geChoice(x, y, 40, 20);
 	gridType->add("1");
@@ -62,9 +60,7 @@ geGridTool::geGridTool(Pixel x, Pixel y)
 	active->copy_tooltip("Snap to grid");
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 geGridTool::~geGridTool()
 {
@@ -72,52 +68,51 @@ geGridTool::~geGridTool()
 	m::conf::conf.actionEditorGridOn  = active->value();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geGridTool::cb_changeType(Fl_Widget* /*w*/, void* p) { ((geGridTool*)p)->cb_changeType(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geGridTool::cb_changeType()
 {
 	window()->redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool geGridTool::isOn() const
 {
 	return active->value();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int geGridTool::getValue() const
 {
-	switch (gridType->value()) {
-		case 0:	return 1;
-		case 1: return 2;
-		case 2: return 3;
-		case 3: return 4;
-		case 4: return 6;
-		case 5: return 8;
-		case 6: return 16;
-		case 7: return 32;
+	switch (gridType->value())
+	{
+	case 0:
+		return 1;
+	case 1:
+		return 2;
+	case 2:
+		return 3;
+	case 3:
+		return 4;
+	case 4:
+		return 6;
+	case 5:
+		return 8;
+	case 6:
+		return 16;
+	case 7:
+		return 32;
 	}
 	return 0;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 Frame geGridTool::getSnapFrame(Frame v) const
 {
@@ -126,12 +121,10 @@ Frame geGridTool::getSnapFrame(Frame v) const
 	return u::math::quantize(v, getCellSize());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 Frame geGridTool::getCellSize() const
 {
 	return m::clock::getFramesInBeat() / getValue();
 }
-} // giada::v::
+} // namespace giada::v

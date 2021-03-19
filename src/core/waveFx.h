@@ -24,15 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_WAVE_FX_H
 #define G_WAVE_FX_H
 
-
 #include "core/types.h"
 
-
-namespace giada::m 
+namespace giada::m
 {
 class Wave;
 }
@@ -43,7 +40,11 @@ namespace giada::m::wfx
 #undef IN
 #undef OUT
 #endif
-enum class Fade { IN, OUT };
+enum class Fade
+{
+	IN,
+	OUT
+};
 
 /* monoToStereo
 Converts a 1-channel Wave to a 2-channels wave. */
@@ -80,7 +81,6 @@ Flips Wave's data. */
 void reverse(Wave& v, Frame a, Frame b);
 
 void shift(Wave& w, Frame offset);
-} // giada::m::wfx::
-
+} // namespace giada::m::wfx
 
 #endif

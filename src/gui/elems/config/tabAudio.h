@@ -24,27 +24,23 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_TAB_AUDIO_H
 #define GE_TAB_AUDIO_H
 
-
 #include <FL/Fl_Group.H>
-
 
 class geCheck;
 class geButton;
 class geInput;
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class geChoice;
 class geTabAudio : public Fl_Group
 {
-public:
-
+  public:
 	geTabAudio(int x, int y, int w, int h);
 
 	void save();
@@ -62,18 +58,17 @@ public:
 	geInput*  recTriggerLevel;
 	geChoice* rsmpQuality;
 
-private:
-
+  private:
 	static void cb_deactivate_sounddev(Fl_Widget* /*w*/, void* p);
-	static void cb_fetchInChans       (Fl_Widget* /*w*/, void* p);
-	static void cb_fetchOutChans      (Fl_Widget* /*w*/, void* p);
-	static void cb_showInputInfo      (Fl_Widget* /*w*/, void* p);
-	static void cb_showOutputInfo     (Fl_Widget* /*w*/, void* p);
-	void cb_deactivate_sounddev();
-	void cb_fetchInChans();
-	void cb_fetchOutChans();
-	void cb_showInputInfo();
-	void cb_showOutputInfo();
+	static void cb_fetchInChans(Fl_Widget* /*w*/, void* p);
+	static void cb_fetchOutChans(Fl_Widget* /*w*/, void* p);
+	static void cb_showInputInfo(Fl_Widget* /*w*/, void* p);
+	static void cb_showOutputInfo(Fl_Widget* /*w*/, void* p);
+	void        cb_deactivate_sounddev();
+	void        cb_fetchInChans();
+	void        cb_fetchOutChans();
+	void        cb_showInputInfo();
+	void        cb_showOutputInfo();
 
 	void fetchSoundDevs();
 	void fetchInChans(int menuItem);
@@ -82,7 +77,7 @@ private:
 
 	int soundsysInitValue;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

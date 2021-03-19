@@ -24,34 +24,30 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "core/patch.h"
 #include "midiLearner.h"
-
+#include "core/patch.h"
 
 namespace giada::m::midiLearner
 {
 Data::Data(const patch::Channel& p)
-: enabled    (p.midiIn)
-, filter     (p.midiInFilter)
-, keyPress   (p.midiInKeyPress)
-, keyRelease (p.midiInKeyRel)
-, kill       (p.midiInKill)
-, arm        (p.midiInArm)
-, volume     (p.midiInVolume)
-, mute       (p.midiInMute)
-, solo       (p.midiInSolo)
+: enabled(p.midiIn)
+, filter(p.midiInFilter)
+, keyPress(p.midiInKeyPress)
+, keyRelease(p.midiInKeyRel)
+, kill(p.midiInKill)
+, arm(p.midiInArm)
+, volume(p.midiInVolume)
+, mute(p.midiInMute)
+, solo(p.midiInSolo)
 , readActions(p.midiInReadActions)
-, pitch      (p.midiInPitch)
+, pitch(p.midiInPitch)
 {
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 bool Data::isAllowed(int c) const
 {
-    return enabled && (filter == -1 || filter == c);
+	return enabled && (filter == -1 || filter == c);
 }
-} // giada::m::midiLearner::
+} // namespace giada::m::midiLearner

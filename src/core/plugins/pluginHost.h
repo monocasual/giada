@@ -24,24 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
-
 
 #ifndef G_PLUGIN_HOST_H
 #define G_PLUGIN_HOST_H
 
-
-#include <functional>
-#include "deps/juce-config.h"
 #include "core/types.h"
+#include "deps/juce-config.h"
+#include <functional>
 
-
-namespace giada::m 
+namespace giada::m
 {
 class Plugin;
 class AudioBuffer;
-}
+} // namespace giada::m
 namespace giada::m::pluginHost
 {
 void init(int buffersize);
@@ -55,8 +51,8 @@ void addPlugin(std::unique_ptr<Plugin> p, ID channelId);
 /* processStack
 Applies the fx list to the buffer. */
 
-void processStack(AudioBuffer& outBuf, const std::vector<Plugin*>& plugins, 
-	juce::MidiBuffer* events=nullptr);
+void processStack(AudioBuffer& outBuf, const std::vector<Plugin*>& plugins,
+    juce::MidiBuffer* events = nullptr);
 
 /* swapPlugin 
 Swaps plug-in 1 with plug-in 2 in Channel 'channelId'. */
@@ -86,8 +82,7 @@ void toggleBypass(ID pluginId);
 Wakes up plugins' GUI manager for N milliseconds. */
 
 void runDispatchLoop();
-} // giada::m::pluginHost::
-
+} // namespace giada::m::pluginHost
 
 #endif
 

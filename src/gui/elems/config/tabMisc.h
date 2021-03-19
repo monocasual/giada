@@ -24,32 +24,26 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_TAB_MISC_H
 #define GE_TAB_MISC_H
 
-
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/group.h"
-
 
 namespace giada::v
 {
 class geChoice;
 class geTabMisc : public geGroup
 {
-public:
-
+  public:
 	geTabMisc(int x, int y, int w, int h);
 
 	void save();
 
-private:
-
+  private:
 	geChoice m_debugMsg;
 	geChoice m_tooltips;
 };
-} // giada::v::
-
+} // namespace giada::v
 
 #endif

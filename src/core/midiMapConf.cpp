@@ -24,25 +24,24 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <fstream>
-#include <vector>
-#include <string>
+#include "midiMapConf.h"
+#include "const.h"
+#include "deps/json/single_include/nlohmann/json.hpp"
+#include "utils/fs.h"
+#include "utils/log.h"
+#include "utils/string.h"
 #include <cstring>
 #include <filesystem>
-#include "deps/json/single_include/nlohmann/json.hpp"
-#include "utils/string.h"
-#include "utils/log.h"
-#include "utils/fs.h"
-#include "const.h"
-#include "midiMapConf.h"
-
+#include <fstream>
+#include <string>
+#include <vector>
 
 namespace nl = nlohmann;
 
-
-namespace giada {
-namespace m {
+namespace giada
+{
+namespace m
+{
 namespace midimap
 {
 namespace
@@ -65,9 +64,7 @@ bool readInitCommands_(const nl::json& j)
 	return true;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool readCommand_(const nl::json& j, Message& m, const std::string& key)
 {
@@ -82,9 +79,7 @@ bool readCommand_(const nl::json& j, Message& m, const std::string& key)
 	return true;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void parse_(Message& message)
 {
@@ -101,8 +96,10 @@ void parse_(Message& message)
 	zeros. */
 
 	std::string output;
-	for (unsigned i=0, p=24; i<input.length(); i++, p-=4) {
-		if (input[i] == 'n') {
+	for (unsigned i = 0, p = 24; i < input.length(); i++, p -= 4)
+	{
+		if (input[i] == 'n')
+		{
 			output += '0';
 			if (message.offset == -1) // do it once
 				message.offset = p;
@@ -116,23 +113,19 @@ void parse_(Message& message)
 	message.value = strtoul(output.c_str(), nullptr, 16);
 
 	u::log::print("[parse] parsed chan=%d valueStr=%s value=%#x, offset=%d\n",
-			message.channel, message.valueStr, message.value, message.offset);
+	    message.channel, message.valueStr, message.value, message.offset);
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 MidiMap                  midimap;
 std::string              midimapsPath;
 std::vector<std::string> maps;
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void init()
 {
@@ -141,14 +134,16 @@ void init()
 	/* scan dir of midi maps and load the filenames into <>maps. */
 
 	u::log::print("[midiMapConf::init] scanning midimaps directory '%s'...\n",
-		midimapsPath);
+	    midimapsPath);
 
-	if (!std::filesystem::exists(midimapsPath)) {
+	if (!std::filesystem::exists(midimapsPath))
+	{
 		u::log::print("[midiMapConf::init] unable to scan midimaps directory!\n");
 		return;
 	}
 
-	for (const auto& d : std::filesystem::directory_iterator(midimapsPath)) {
+	for (const auto& d : std::filesystem::directory_iterator(midimapsPath))
+	{
 		// TODO - check if is a valid midimap file (verify headers)
 		if (!d.is_regular_file())
 			continue;
@@ -159,31 +154,26 @@ void init()
 	u::log::print("[midiMapConf::init] total midimaps found: %d\n", maps.size());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void setDefault()
 {
 	midimap = MidiMap();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool isDefined(const Message& m)
 {
 	return m.offset != -1;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int read(const std::string& file)
 {
-	if (file.empty()) {
+	if (file.empty())
+	{
 		u::log::print("[midiMapConf::read] midimap not specified, nothing to do\n");
 		return MIDIMAP_NOT_SPECIFIED;
 	}
@@ -198,18 +188,30 @@ int read(const std::string& file)
 
 	midimap.brand  = j[MIDIMAP_KEY_BRAND];
 	midimap.device = j[MIDIMAP_KEY_DEVICE];
-	
-	if (!readInitCommands_(j)) return MIDIMAP_UNREADABLE;
-	if (readCommand_(j, midimap.muteOn,           MIDIMAP_KEY_MUTE_ON))  parse_(midimap.muteOn);
-	if (readCommand_(j, midimap.muteOff,          MIDIMAP_KEY_MUTE_OFF)) parse_(midimap.muteOff);
-	if (readCommand_(j, midimap.soloOn,           MIDIMAP_KEY_SOLO_ON))  parse_(midimap.soloOn);
-	if (readCommand_(j, midimap.soloOff,          MIDIMAP_KEY_SOLO_OFF)) parse_(midimap.soloOff);
-	if (readCommand_(j, midimap.waiting,          MIDIMAP_KEY_WAITING))  parse_(midimap.waiting);
-	if (readCommand_(j, midimap.playing,          MIDIMAP_KEY_PLAYING))  parse_(midimap.playing);
-	if (readCommand_(j, midimap.stopping,         MIDIMAP_KEY_STOPPING)) parse_(midimap.stopping);
-	if (readCommand_(j, midimap.stopped,          MIDIMAP_KEY_STOPPED))  parse_(midimap.stopped);
-	if (readCommand_(j, midimap.playingInaudible, MIDIMAP_KEY_PLAYING_INAUDIBLE))  parse_(midimap.playingInaudible);
+
+	if (!readInitCommands_(j))
+		return MIDIMAP_UNREADABLE;
+	if (readCommand_(j, midimap.muteOn, MIDIMAP_KEY_MUTE_ON))
+		parse_(midimap.muteOn);
+	if (readCommand_(j, midimap.muteOff, MIDIMAP_KEY_MUTE_OFF))
+		parse_(midimap.muteOff);
+	if (readCommand_(j, midimap.soloOn, MIDIMAP_KEY_SOLO_ON))
+		parse_(midimap.soloOn);
+	if (readCommand_(j, midimap.soloOff, MIDIMAP_KEY_SOLO_OFF))
+		parse_(midimap.soloOff);
+	if (readCommand_(j, midimap.waiting, MIDIMAP_KEY_WAITING))
+		parse_(midimap.waiting);
+	if (readCommand_(j, midimap.playing, MIDIMAP_KEY_PLAYING))
+		parse_(midimap.playing);
+	if (readCommand_(j, midimap.stopping, MIDIMAP_KEY_STOPPING))
+		parse_(midimap.stopping);
+	if (readCommand_(j, midimap.stopped, MIDIMAP_KEY_STOPPED))
+		parse_(midimap.stopped);
+	if (readCommand_(j, midimap.playingInaudible, MIDIMAP_KEY_PLAYING_INAUDIBLE))
+		parse_(midimap.playingInaudible);
 
 	return MIDIMAP_READ_OK;
 }
-}}} // giada::m::midimap::
+} // namespace midimap
+} // namespace m
+} // namespace giada

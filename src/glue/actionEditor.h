@@ -24,66 +24,71 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_GLUE_ACTION_EDITOR_H
 #define G_GLUE_ACTION_EDITOR_H
 
-
-#include <optional>
-#include <vector>
-#include <string>
 #include "core/types.h"
+#include <optional>
+#include <string>
+#include <vector>
 
-
-namespace giada::m               { struct Action; }
-namespace giada::m::channel      { struct Data; }
-namespace giada::m::samplePlayer { struct Data; }
+namespace giada::m
+{
+struct Action;
+}
+namespace giada::m::channel
+{
+struct Data;
+}
+namespace giada::m::samplePlayer
+{
+struct Data;
+}
 namespace giada::c::actionEditor
 {
 struct SampleData
 {
 	SampleData(const m::samplePlayer::Data&);
 
-    SamplePlayerMode channelMode;
+	SamplePlayerMode channelMode;
 	bool             isLoopMode;
 };
 
 struct Data
 {
-    Data() = default;
-    Data(const m::channel::Data&);
+	Data() = default;
+	Data(const m::channel::Data&);
 
-    ID                     channelId; 
-    std::string            channelName;
+	ID                     channelId;
+	std::string            channelName;
 	std::vector<m::Action> actions;
 
-    std::optional<SampleData> sample;
+	std::optional<SampleData> sample;
 };
 
 Data getData(ID channelId);
 
 /* MIDI actions.  */
 
-void recordMidiAction(ID channelId, int note, int velocity, Frame f1, 
-	Frame f2=0);
+void recordMidiAction(ID channelId, int note, int velocity, Frame f1,
+    Frame f2 = 0);
 void deleteMidiAction(ID channelId, const m::Action& a);
-void updateMidiAction(ID channelId, const m::Action& a, int note, int velocity, 
-	Frame f1, Frame f2);
+void updateMidiAction(ID channelId, const m::Action& a, int note, int velocity,
+    Frame f1, Frame f2);
 void updateVelocity(const m::Action& a, int value);
 
 /* Sample Actions. */
 
-void recordSampleAction(ID channelId, int type, Frame f1, Frame f2=0);
+void recordSampleAction(ID channelId, int type, Frame f1, Frame f2 = 0);
 void deleteSampleAction(ID channelId, const m::Action& a);
-void updateSampleAction(ID channelId, const m::Action& a, int type, 
-    Frame f1, Frame f2=0);
+void updateSampleAction(ID channelId, const m::Action& a, int type,
+    Frame f1, Frame f2 = 0);
 
 /* Envelope actions (only volume for now). */
 
 void recordEnvelopeAction(ID channelId, Frame f, int value);
 void deleteEnvelopeAction(ID channelId, const m::Action& a);
 void updateEnvelopeAction(ID channelId, const m::Action& a, Frame f, int value);
-} // giada::c::actionEditor::
-
+} // namespace giada::c::actionEditor
 
 #endif

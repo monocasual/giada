@@ -24,51 +24,50 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CHANNEL_SAMPLE_PLAYER_H
 #define G_CHANNEL_SAMPLE_PLAYER_H
 
-
-#include "core/types.h"
-#include "core/const.h"
-#include "core/channels/waveReader.h"
 #include "core/channels/sampleAdvancer.h"
 #include "core/channels/sampleReactor.h"
+#include "core/channels/waveReader.h"
+#include "core/const.h"
+#include "core/types.h"
 
-
-namespace giada::m::channel { struct Data; }
+namespace giada::m::channel
+{
+struct Data;
+}
 namespace giada::m::samplePlayer
 {
 struct Data
 {
-    Data();
-    Data(const patch::Channel& p, float samplerateRatio);
-    Data(const Data& o)          = default;
-    Data(Data&& o)               = default;
-    Data& operator=(const Data&) = default;
-    Data& operator=(Data&&)      = default;
+	Data();
+	Data(const patch::Channel& p, float samplerateRatio);
+	Data(const Data& o) = default;
+	Data(Data&& o)      = default;
+	Data& operator=(const Data&) = default;
+	Data& operator=(Data&&) = default;
 
-    bool hasWave() const;
-    bool hasLogicalWave() const;
-    bool hasEditedWave() const;
-    bool isAnyLoopMode() const;
-    ID getWaveId() const;
-    Frame getWaveSize() const;
-    Wave* getWave() const;
+	bool  hasWave() const;
+	bool  hasLogicalWave() const;
+	bool  hasEditedWave() const;
+	bool  isAnyLoopMode() const;
+	ID    getWaveId() const;
+	Frame getWaveSize() const;
+	Wave* getWave() const;
 
-    float            pitch;
-    SamplePlayerMode mode;
-    Frame            shift;
-    Frame            begin;
-    Frame            end;
+	float            pitch;
+	SamplePlayerMode mode;
+	Frame            shift;
+	Frame            begin;
+	Frame            end;
 	bool             velocityAsVol; // Velocity drives volume
-    WaveReader       waveReader;
+	WaveReader       waveReader;
 };
 
-
-void react  (channel::Data& ch, const eventDispatcher::Event& e);
+void react(channel::Data& ch, const eventDispatcher::Event& e);
 void advance(const channel::Data& ch, const sequencer::Event& e);
-void render (const channel::Data& ch);
+void render(const channel::Data& ch);
 
 /* loadWave
 Loads Wave 'w' into channel ch and sets it up (name, markers, ...). */
@@ -87,7 +86,6 @@ Starts the player right away at frame 'f'. Used when launching a loop after
 being live recorded. */
 
 void kickIn(channel::Data& ch, Frame f);
-} // giada::m::samplePlayer::
-
+} // namespace giada::m::samplePlayer
 
 #endif

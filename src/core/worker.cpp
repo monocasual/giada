@@ -24,51 +24,43 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "utils/time.h"
 #include "worker.h"
-
+#include "utils/time.h"
 
 namespace giada
 {
-Worker::Worker() : m_running(false)
+Worker::Worker()
+: m_running(false)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 Worker::~Worker()
 {
-    stop();
+	stop();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void Worker::start(std::function<void()> f, int sleep)
 {
-    m_running.store(true);
-    m_thread = std::thread([this, f, sleep]()
-    {
-        while (m_running.load() == true)
-        {
-            f();
-            u::time::sleep(sleep);
-        }
-    });
+	m_running.store(true);
+	m_thread = std::thread([this, f, sleep]() {
+		while (m_running.load() == true)
+		{
+			f();
+			u::time::sleep(sleep);
+		}
+	});
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 void Worker::stop()
 {
-    m_running.store(false);
-    if (m_thread.joinable())
-        m_thread.join();
+	m_running.store(false);
+	if (m_thread.joinable())
+		m_thread.join();
 }
-} // giada::
+} // namespace giada

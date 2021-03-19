@@ -24,77 +24,70 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <string>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+#include <string>
 #if defined(_WIN32)
-	#include "../ext/resource.h"
+#include "../ext/resource.h"
 #elif defined(__linux__) || defined(__FreeBSD__)
-	#include <X11/xpm.h>
+#include <X11/xpm.h>
 #endif
-#include "core/mixer.h"
-#include "core/mixerHandler.h"
 #include "core/clock.h"
-#include "core/plugins/pluginHost.h"
 #include "core/conf.h"
 #include "core/graphics.h"
-#include "gui/dialogs/warnings.h"
-#include "gui/dialogs/mainWindow.h"
+#include "core/mixer.h"
+#include "core/mixerHandler.h"
+#include "core/plugins/pluginHost.h"
+#include "gui.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "gui/dialogs/window.h"
+#include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/sampleEditor.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/dialogs/window.h"
+#include "gui/elems/mainWindow/beatMeter.h"
+#include "gui/elems/mainWindow/keyboard/channel.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/mainIO.h"
 #include "gui/elems/mainWindow/mainTimer.h"
 #include "gui/elems/mainWindow/mainTransport.h"
-#include "gui/elems/mainWindow/beatMeter.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/sampleEditor/waveTools.h"
 #include "log.h"
 #include "string.h"
-#include "gui.h"
-
 
 extern giada::v::gdMainWindow* G_MainWin;
 
-
-namespace giada {
-namespace u {
-namespace gui 
+namespace giada
+{
+namespace u
+{
+namespace gui
 {
 namespace
 {
 int blinker_ = 0;
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 void rebuildSubWindow(int wid)
 {
 	v::gdWindow* w = getSubwindow(G_MainWin, wid);
-	if(w != nullptr)  // If its open
-		w->rebuild();	
+	if (w != nullptr) // If its open
+		w->rebuild();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void refreshSubWindow(int wid)
 {
 	v::gdWindow* w = getSubwindow(G_MainWin, wid);
-	if(w != nullptr)  // If its open
-		w->refresh();		
+	if (w != nullptr) // If its open
+		w->refresh();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void refresh()
 {
@@ -112,9 +105,7 @@ void refresh()
 	refreshSubWindow(WID_SAMPLE_EDITOR);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void rebuild()
 {
@@ -124,18 +115,14 @@ void rebuild()
 	rebuildSubWindow(WID_ACTION_EDITOR);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool shouldBlink()
 {
 	return blinker_ > 6;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void updateStaticWidgets()
 {
@@ -146,9 +133,9 @@ void updateStaticWidgets()
 
 #ifdef WITH_VST
 
-//	G_MainWin->mainIO->setMasterFxOutFull(pluginHost::getStack(pluginHost::StackType::MASTER_OUT).plugins.size() > 0);
-//	G_MainWin->mainIO->setMasterFxInFull(pluginHost::getStack(pluginHost::StackType::MASTER_IN).plugins.size() > 0);
-	
+	//	G_MainWin->mainIO->setMasterFxOutFull(pluginHost::getStack(pluginHost::StackType::MASTER_OUT).plugins.size() > 0);
+	//	G_MainWin->mainIO->setMasterFxInFull(pluginHost::getStack(pluginHost::StackType::MASTER_IN).plugins.size() > 0);
+
 #endif
 
 	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());
@@ -156,9 +143,7 @@ void updateStaticWidgets()
 	G_MainWin->mainTimer->setQuantizer(clock::getQuantizerValue());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void updateMainWinLabel(const std::string& s)
 {
@@ -166,9 +151,7 @@ void updateMainWinLabel(const std::string& s)
 	G_MainWin->copy_label(out.c_str());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void setFavicon(v::gdWindow* w)
 {
@@ -177,23 +160,22 @@ void setFavicon(v::gdWindow* w)
 	fl_open_display();
 	Pixmap p, mask;
 	XpmCreatePixmapFromData(fl_display, DefaultRootWindow(fl_display),
-		(char **) giada_icon, &p, &mask, nullptr);
-	w->icon((char *)p);
+	    (char**)giada_icon, &p, &mask, nullptr);
+	w->icon((char*)p);
 
 #elif defined(_WIN32)
 
-	w->icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON1)));
+	w->icon((char*)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON1)));
 
 #endif
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void openSubWindow(v::gdWindow* parent, v::gdWindow* child, int id)
 {
-	if (parent->hasWindow(id)) {
+	if (parent->hasWindow(id))
+	{
 		u::log::print("[GU] parent has subwindow with id=%d, deleting\n", id);
 		parent->delSubWindow(id);
 	}
@@ -201,9 +183,7 @@ void openSubWindow(v::gdWindow* parent, v::gdWindow* child, int id)
 	parent->addSubWindow(child);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void refreshActionEditor()
 {
@@ -212,9 +192,7 @@ void refreshActionEditor()
 		ae->rebuild();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 v::gdWindow* getSubwindow(v::gdWindow* parent, int id)
 {
@@ -224,9 +202,7 @@ v::gdWindow* getSubwindow(v::gdWindow* parent, int id)
 		return nullptr;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void closeAllSubwindows()
 {
@@ -239,9 +215,7 @@ void closeAllSubwindows()
 	G_MainWin->delSubWindow(WID_FX);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int getStringWidth(const std::string& s)
 {
@@ -251,32 +225,29 @@ int getStringWidth(const std::string& s)
 	return w;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::string removeFltkChars(const std::string& s)
 {
 	std::string out = u::string::replace(s, "/", "-");
-	out = u::string::replace(out, "|", "-");
-	out = u::string::replace(out, "&", "-");
-	out = u::string::replace(out, "_", "-");
+	out             = u::string::replace(out, "|", "-");
+	out             = u::string::replace(out, "&", "-");
+	out             = u::string::replace(out, "_", "-");
 	return out;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::string truncate(const std::string& s, Pixel width)
 {
-	if (s.empty() || getStringWidth(s) <= width) 
+	if (s.empty() || getStringWidth(s) <= width)
 		return s;
-	
+
 	std::string tmp  = s;
 	std::size_t size = tmp.size();
 
-	while (getStringWidth(tmp + "...") > width) {
+	while (getStringWidth(tmp + "...") > width)
+	{
 		if (size == 0)
 			return "";
 		tmp.resize(--size);
@@ -287,15 +258,15 @@ std::string truncate(const std::string& s, Pixel width)
 
 /* -------------------------------------------------------------------------- */
 
-
 int centerWindowX(int w)
 {
 	return (Fl::w() / 2) - (w / 2);
 }
 
-
 int centerWindowY(int h)
 {
 	return (Fl::h() / 2) - (h / 2);
 }
-}}} // giada::u::gui::
+} // namespace gui
+} // namespace u
+} // namespace giada

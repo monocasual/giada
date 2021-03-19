@@ -26,10 +26,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_GRAPHICS_H
 #define G_GRAPHICS_H
-
 
 extern const char* giada_logo_xpm[];
 
@@ -111,6 +109,5 @@ extern const char* vstLogo_xpm[];
 #endif
 
 extern const char* giada_icon[];
-
 
 #endif

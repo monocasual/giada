@@ -24,18 +24,16 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include "core/model/model.h"
-#include "core/const.h"
-#include "core/mixer.h"
-#include "core/quantizer.h"
+#include "sequencer.h"
 #include "core/clock.h"
 #include "core/conf.h"
-#include "core/recManager.h"
+#include "core/const.h"
 #include "core/kernelAudio.h"
 #include "core/metronome.h"
-#include "sequencer.h"
-
+#include "core/mixer.h"
+#include "core/model/model.h"
+#include "core/quantizer.h"
+#include "core/recManager.h"
 
 namespace giada::m::sequencer
 {
@@ -51,19 +49,15 @@ EventBuffer eventBuffer_;
 
 Metronome metronome_;
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void rewindQ_(Frame delta)
 {
 	clock::rewind();
-	eventBuffer_.push_back({ EventType::REWIND, 0, delta });
+	eventBuffer_.push_back({EventType::REWIND, 0, delta});
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void start_()
 {
@@ -72,12 +66,10 @@ void start_()
 		kernelAudio::jackStart();
 	else
 #endif
-	start(); 
+		start();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void stop_()
 {
@@ -86,12 +78,10 @@ void stop_()
 		kernelAudio::jackStop();
 	else
 #endif
-	stop();
+		stop();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void rewind_()
 {
@@ -100,21 +90,17 @@ void rewind_()
 		kernelAudio::jackSetPosition(0);
 	else
 #endif
-	rewind();	
+		rewind();
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 Quantizer quantizer;
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void init()
 {
@@ -122,28 +108,31 @@ void init()
 	clock::rewind();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void react(const eventDispatcher::EventBuffer& events)
 {
-	for (const eventDispatcher::Event& e : events) {
-		if (e.type == eventDispatcher::EventType::SEQUENCER_START) {
-			start_(); break;
+	for (const eventDispatcher::Event& e : events)
+	{
+		if (e.type == eventDispatcher::EventType::SEQUENCER_START)
+		{
+			start_();
+			break;
 		}
-		if (e.type == eventDispatcher::EventType::SEQUENCER_STOP) {
-			stop_(); break;
+		if (e.type == eventDispatcher::EventType::SEQUENCER_STOP)
+		{
+			stop_();
+			break;
 		}
-		if (e.type == eventDispatcher::EventType::SEQUENCER_REWIND) {
-			rewind_(); break;
+		if (e.type == eventDispatcher::EventType::SEQUENCER_REWIND)
+		{
+			rewind_();
+			break;
 		}
-	}	
+	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 const EventBuffer& advance(Frame bufferSize)
 {
@@ -155,39 +144,39 @@ const EventBuffer& advance(Frame bufferSize)
 	const Frame framesInBar  = clock::getFramesInBar();
 	const Frame framesInBeat = clock::getFramesInBeat();
 
-	for (Frame i = start, local = 0; i < end; i++, local++) {
+	for (Frame i = start, local = 0; i < end; i++, local++)
+	{
 
 		Frame global = i % framesInLoop; // wraps around 'framesInLoop'
 
-		if (global == 0) {
-			eventBuffer_.push_back({ EventType::FIRST_BEAT, global, local });
+		if (global == 0)
+		{
+			eventBuffer_.push_back({EventType::FIRST_BEAT, global, local});
 			metronome_.trigger(Metronome::Click::BEAT, local);
 		}
-		else
-		if (global % framesInBar == 0) {
-			eventBuffer_.push_back({ EventType::BAR, global, local });
+		else if (global % framesInBar == 0)
+		{
+			eventBuffer_.push_back({EventType::BAR, global, local});
 			metronome_.trigger(Metronome::Click::BAR, local);
 		}
-		else
-		if (global % framesInBeat == 0) {
+		else if (global % framesInBeat == 0)
+		{
 			metronome_.trigger(Metronome::Click::BEAT, local);
 		}
 
 		const std::vector<Action>* as = recorder::getActionsOnFrame(global);
 		if (as != nullptr)
-		    eventBuffer_.push_back({ EventType::ACTIONS, global, local, as });
+			eventBuffer_.push_back({EventType::ACTIONS, global, local, as});
 	}
 
 	/* Advance clock and quantizer after the event parsing. */
-    clock::advance(bufferSize);
+	clock::advance(bufferSize);
 	quantizer.advance(Range<Frame>(start, end), clock::getQuantizerStep());
 
 	return eventBuffer_;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void render(AudioBuffer& outBuf)
 {
@@ -197,25 +186,23 @@ void render(AudioBuffer& outBuf)
 
 /* -------------------------------------------------------------------------- */
 
-
 void start()
 {
-	switch (clock::getStatus()) {
-		case ClockStatus::STOPPED:
-			clock::setStatus(ClockStatus::RUNNING); 
-			break;
-		case ClockStatus::WAITING:
-			clock::setStatus(ClockStatus::RUNNING); 
-			recManager::stopActionRec();
-			break;
-		default: 
-			break;
+	switch (clock::getStatus())
+	{
+	case ClockStatus::STOPPED:
+		clock::setStatus(ClockStatus::RUNNING);
+		break;
+	case ClockStatus::WAITING:
+		clock::setStatus(ClockStatus::RUNNING);
+		recManager::stopActionRec();
+		break;
+	default:
+		break;
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void stop()
 {
@@ -226,14 +213,11 @@ void stop()
 
 	if (recManager::isRecordingAction())
 		recManager::stopActionRec();
-	else
-	if (recManager::isRecordingInput())
+	else if (recManager::isRecordingInput())
 		recManager::stopInputRec();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void rewind()
 {
@@ -243,11 +227,9 @@ void rewind()
 		rewindQ_(/*delta=*/0);
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-bool isMetronomeOn()      { return metronome_.running; }
-void toggleMetronome()    { metronome_.running = !metronome_.running; }
+bool isMetronomeOn() { return metronome_.running; }
+void toggleMetronome() { metronome_.running = !metronome_.running; }
 void setMetronome(bool v) { metronome_.running = v; }
-} // giada::m::sequencer::
+} // namespace giada::m::sequencer

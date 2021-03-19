@@ -24,39 +24,34 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_MAIN_MENU_H
 #define GE_MAIN_MENU_H
 
-
 #include "gui/elems/basics/pack.h"
-
 
 class geButton;
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class geMainMenu : public gePack
 {
-public:
-
+  public:
 	geMainMenu(int x, int y);
 
-private:
-
+  private:
 	static void cb_file(Fl_Widget* /*w*/, void* p);
 	static void cb_edit(Fl_Widget* /*w*/, void* p);
-	void cb_file();
-	void cb_edit();
+	void        cb_file();
+	void        cb_edit();
 
 	geButton* file;
 	geButton* edit;
 	geButton* config;
 	geButton* about;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

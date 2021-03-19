@@ -24,35 +24,30 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/Fl.H>
+#include "updater.h"
 #include "core/const.h"
 #include "core/model/model.h"
 #include "utils/gui.h"
-#include "updater.h"
-
+#include <FL/Fl.H>
 
 namespace giada::v::updater
 {
 void init()
 {
-	m::model::onSwap([](m::model::SwapType type)
-	{
-        if (type == m::model::SwapType::NONE)
-            return;
+	m::model::onSwap([](m::model::SwapType type) {
+		if (type == m::model::SwapType::NONE)
+			return;
 
 		/* This callback is fired by the updater thread, so it requires
 		synchronization with the main one. */
-		
+
 		Fl::lock();
 		type == m::model::SwapType::HARD ? u::gui::rebuild() : u::gui::refresh();
 		Fl::unlock();
 	});
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void update(void* /*p*/)
 {
@@ -67,8 +62,8 @@ void update(void* /*p*/)
 		m::model::channels.changed.store(false);
 	}
 	else*/
-		u::gui::refresh();
+	u::gui::refresh();
 
 	Fl::add_timeout(G_GUI_REFRESH_RATE, update, nullptr);
 }
-} // giada::v::updater::
+} // namespace giada::v::updater

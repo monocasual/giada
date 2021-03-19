@@ -24,11 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
-#include "core/clock.h"
 #include "quantizer.h"
-
+#include "core/clock.h"
+#include <cassert>
 
 namespace giada::m
 {
@@ -39,18 +37,14 @@ void Quantizer::trigger(int id)
 	m_performId = id;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void Quantizer::schedule(int id, std::function<void(Frame delta)> f)
 {
 	m_callbacks[id] = f;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void Quantizer::advance(Range<Frame> block, Frame quantizerStep)
 {
@@ -61,9 +55,10 @@ void Quantizer::advance(Range<Frame> block, Frame quantizerStep)
 
 	assert(m_callbacks.count(m_performId) > 0);
 
-	for (Frame global = block.getBegin(), local = 0; global < block.getEnd(); global++, local++) {
+	for (Frame global = block.getBegin(), local = 0; global < block.getEnd(); global++, local++)
+	{
 
-		if (global % quantizerStep != 0) // Skip if it's not on a quantization unit. 
+		if (global % quantizerStep != 0) // Skip if it's not on a quantization unit.
 			continue;
 
 		m_callbacks.at(m_performId)(local);
@@ -72,21 +67,17 @@ void Quantizer::advance(Range<Frame> block, Frame quantizerStep)
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void Quantizer::clear()
 {
 	m_performId = -1;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 bool Quantizer::hasBeenTriggered() const
 {
 	return m_performId != -1;
 }
-} // giada::m::
+} // namespace giada::m

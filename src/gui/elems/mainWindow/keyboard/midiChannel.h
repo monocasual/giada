@@ -24,36 +24,32 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_MIDI_CHANNEL_H
 #define GE_MIDI_CHANNEL_H
-
 
 #include "channel.h"
 #include "channelButton.h"
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class geMidiChannel : public geChannel
 {
-public:
+  public:
+	geMidiChannel(int x, int y, int w, int h, c::channel::Data d);
 
-    geMidiChannel(int x, int y, int w, int h, c::channel::Data d);
+	void resize(int x, int y, int w, int h) override;
 
-    void resize(int x, int y, int w, int h) override;
-
-private:
-
+  private:
 	static void cb_playButton(Fl_Widget* /*w*/, void* p);
 	static void cb_openMenu(Fl_Widget* /*w*/, void* p);
-	void cb_playButton();
-	void cb_openMenu();
+	void        cb_playButton();
+	void        cb_openMenu();
 
 	c::channel::Data m_data;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

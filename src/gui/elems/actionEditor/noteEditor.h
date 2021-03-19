@@ -24,23 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_NOTE_EDITOR_H
 #define GE_NOTE_EDITOR_H
 
-
 #include "gui/elems/basics/scroll.h"
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class gdMidiActionEditor;
 class gePianoRoll;
 class geNoteEditor : public geScroll
 {
-public:
-
+  public:
 	geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base);
 	~geNoteEditor();
 
@@ -49,10 +46,10 @@ public:
 
 	gePianoRoll* pianoRoll;
 
-private:
-
-    gdMidiActionEditor* m_base;
+  private:
+	gdMidiActionEditor* m_base;
 };
-}} // giada::v::
+} // namespace v
+} // namespace giada
 
 #endif

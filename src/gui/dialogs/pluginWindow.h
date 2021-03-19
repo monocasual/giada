@@ -24,28 +24,26 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
-
 
 #ifndef GD_PLUGIN_WINDOW_H
 #define GD_PLUGIN_WINDOW_H
 
-
 #include "window.h"
-
 
 class geBox;
 class geSlider;
 class geLiquidScroll;
 
-
-namespace giada {
-namespace c {
+namespace giada
+{
+namespace c
+{
 namespace plugin
 {
 class Plugin;
-}}
+}
+} // namespace c
 namespace m
 {
 class Plugin;
@@ -54,20 +52,18 @@ namespace v
 {
 class gdPluginWindow : public gdWindow
 {
-public:
-
+  public:
 	gdPluginWindow(const c::plugin::Plugin&);
 
-	void updateParameters(bool changeSlider=false);
+	void updateParameters(bool changeSlider = false);
 
-private:
-	
+  private:
 	const c::plugin::Plugin& m_plugin;
-		
+
 	geLiquidScroll* m_list;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif
 

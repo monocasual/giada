@@ -26,35 +26,33 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_CHANNEL_STATUS_H
 #define GE_CHANNEL_STATUS_H
 
-
 #include <FL/Fl_Box.H>
 
-
-namespace giada {
-namespace c {
+namespace giada
+{
+namespace c
+{
 namespace channel
 {
 struct Data;
-}}
+}
+} // namespace c
 namespace v
 {
 class geChannelStatus : public Fl_Box
 {
-public:
-
+  public:
 	geChannelStatus(int x, int y, int w, int h, c::channel::Data& d);
 
 	void draw() override;
 
-private:
-
+  private:
 	c::channel::Data& m_channel;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

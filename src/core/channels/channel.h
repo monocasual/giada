@@ -24,106 +24,106 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CHANNEL_H
 #define G_CHANNEL_H
-
 
 #include <optional>
 #ifdef WITH_VST
 #include "deps/juce-config.h"
 #endif
-#include "core/const.h"
-#include "core/mixer.h"
 #include "core/audioBuffer.h"
-#include "core/eventDispatcher.h"
-#include "core/sequencer.h"
-#include "core/channels/samplePlayer.h"
 #include "core/channels/audioReceiver.h"
+#include "core/channels/samplePlayer.h"
+#include "core/const.h"
+#include "core/eventDispatcher.h"
+#include "core/mixer.h"
+#include "core/sequencer.h"
 #ifdef WITH_VST
 #include "core/channels/midiReceiver.h"
 #endif
-#include "core/channels/midiLearner.h"
-#include "core/channels/midiSender.h"
-#include "core/channels/midiController.h"
-#include "core/channels/midiLighter.h"
-#include "core/channels/sampleActionRecorder.h"
 #include "core/channels/midiActionRecorder.h"
+#include "core/channels/midiController.h"
+#include "core/channels/midiLearner.h"
+#include "core/channels/midiLighter.h"
+#include "core/channels/midiSender.h"
+#include "core/channels/sampleActionRecorder.h"
 
-
-namespace giada::m { class Plugin; }
+namespace giada::m
+{
+class Plugin;
+}
 namespace giada::m::channel
 {
 struct State
 {
-    WeakAtomic<Frame>         tracker    = 0;
-    WeakAtomic<ChannelStatus> playStatus = ChannelStatus::OFF;
-    WeakAtomic<ChannelStatus> recStatus  = ChannelStatus::OFF;
-    bool                      rewinding;
-    Frame                     offset;
+	WeakAtomic<Frame>         tracker    = 0;
+	WeakAtomic<ChannelStatus> playStatus = ChannelStatus::OFF;
+	WeakAtomic<ChannelStatus> recStatus  = ChannelStatus::OFF;
+	bool                      rewinding;
+	Frame                     offset;
 };
 
 struct Buffer
 {
-    Buffer(Frame bufferSize);
-    
-    AudioBuffer      audio;
+	Buffer(Frame bufferSize);
+
+	AudioBuffer audio;
 #ifdef WITH_VST
-    juce::MidiBuffer midi;
+	juce::MidiBuffer midi;
 #endif
 };
 
 struct Data
 {
-    Data(ChannelType t, ID id, ID columnId, State& state, Buffer& buffer);
-    Data(const patch::Channel& p, State& state, Buffer& buffer, float samplerateRatio);
-    Data(const Data& o)          = default;
-    Data(Data&& o)               = default;
-    Data& operator=(const Data&) = default;
-    Data& operator=(Data&&)      = default;
+	Data(ChannelType t, ID id, ID columnId, State& state, Buffer& buffer);
+	Data(const patch::Channel& p, State& state, Buffer& buffer, float samplerateRatio);
+	Data(const Data& o) = default;
+	Data(Data&& o)      = default;
+	Data& operator=(const Data&) = default;
+	Data& operator=(Data&&) = default;
 
-    bool operator==(const Data&);
+	bool operator==(const Data&);
 
-    bool isPlaying() const;
-    bool isInternal() const;
-    bool isMuted() const;
-    bool canInputRec() const;
-    bool canActionRec() const;
-    bool hasWave() const;    
-    
-    State*               state;
-    Buffer*              buffer;
-    ID                   id;
-    ChannelType          type;
-    ID                   columnId;
-    float                volume;
-    float                volume_i;    // Internal volume used for velocity-drives-volume mode on Sample Channels
-    float                pan;
-    bool                 mute;
-    bool                 solo;
-    bool                 armed;
-    int                  key;
-    bool                 readActions;
-    bool                 hasActions;
-    std::string          name;
-    Pixel                height;
+	bool isPlaying() const;
+	bool isInternal() const;
+	bool isMuted() const;
+	bool canInputRec() const;
+	bool canActionRec() const;
+	bool hasWave() const;
+
+	State*      state;
+	Buffer*     buffer;
+	ID          id;
+	ChannelType type;
+	ID          columnId;
+	float       volume;
+	float       volume_i; // Internal volume used for velocity-drives-volume mode on Sample Channels
+	float       pan;
+	bool        mute;
+	bool        solo;
+	bool        armed;
+	int         key;
+	bool        readActions;
+	bool        hasActions;
+	std::string name;
+	Pixel       height;
 #ifdef WITH_VST
-    std::vector<Plugin*> plugins;
+	std::vector<Plugin*> plugins;
 #endif
 
-    midiLearner::Data midiLearner;
-    midiLighter::Data midiLighter;
+	midiLearner::Data midiLearner;
+	midiLighter::Data midiLighter;
 
-    std::optional<samplePlayer::Data>         samplePlayer;
-    std::optional<sampleReactor::Data>        sampleReactor;
-    std::optional<audioReceiver::Data>        audioReceiver;
-    std::optional<midiController::Data>       midiController;
+	std::optional<samplePlayer::Data>   samplePlayer;
+	std::optional<sampleReactor::Data>  sampleReactor;
+	std::optional<audioReceiver::Data>  audioReceiver;
+	std::optional<midiController::Data> midiController;
 #ifdef WITH_VST
-    std::optional<midiReceiver::Data>         midiReceiver;
+	std::optional<midiReceiver::Data> midiReceiver;
 #endif
-    std::optional<midiSender::Data>           midiSender;
-    std::optional<sampleActionRecorder::Data> sampleActionRecorder;
-    std::optional<midiActionRecorder::Data>   midiActionRecorder;
+	std::optional<midiSender::Data>           midiSender;
+	std::optional<sampleActionRecorder::Data> sampleActionRecorder;
+	std::optional<midiActionRecorder::Data>   midiActionRecorder;
 };
 
 /* advance
@@ -140,9 +140,8 @@ void react(Data& d, const eventDispatcher::EventBuffer& e, bool audible);
 
 /* render
 Renders audio data to I/O buffers. */
-    
-void render(const Data& d, AudioBuffer* out, AudioBuffer* in, bool audible);
-} // giada::m::channel::
 
+void render(const Data& d, AudioBuffer* out, AudioBuffer* in, bool audible);
+} // namespace giada::m::channel
 
 #endif

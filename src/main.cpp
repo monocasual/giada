@@ -24,26 +24,23 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/Fl.H>
 #include "core/init.h"
 #include "gui/dialogs/mainWindow.h"
+#include <FL/Fl.H>
 #ifdef WITH_TESTS
-	#define CATCH_CONFIG_RUNNER
-	#include <vector>
-	#include <string>
-	#include <catch2/catch.hpp>
-	#include "tests/audioBuffer.cpp"
-	#include "tests/recorder.cpp"
-	#include "tests/utils.cpp"
-	#include "tests/wave.cpp"
-	#include "tests/waveFx.cpp"
-	#include "tests/waveManager.cpp"
+#define CATCH_CONFIG_RUNNER
+#include <vector>
+#include <string>
+#include <catch2/catch.hpp>
+#include "tests/audioBuffer.cpp"
+#include "tests/recorder.cpp"
+#include "tests/utils.cpp"
+#include "tests/wave.cpp"
+#include "tests/waveFx.cpp"
+#include "tests/waveManager.cpp"
 #endif
 
-
 class giada::v::gdMainWindow* G_MainWin = nullptr;
-
 
 int main(int argc, char** argv)
 {
@@ -55,7 +52,7 @@ int main(int argc, char** argv)
 
 	giada::m::init::startup(argc, argv);
 
-	Fl::lock();  // Enable multithreading in FLTK
+	Fl::lock(); // Enable multithreading in FLTK
 	int ret = Fl::run();
 
 	giada::m::init::shutdown();

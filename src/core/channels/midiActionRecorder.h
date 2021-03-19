@@ -24,12 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CHANNEL_MIDI_ACTION_RECORDER_H
 #define G_CHANNEL_MIDI_ACTION_RECORDER_H
 
-
-namespace giada::m::channel { struct Data; }
+namespace giada::m::channel
+{
+struct Data;
+}
 namespace giada::m::midiActionRecorder
 {
 struct Data
@@ -37,6 +38,6 @@ struct Data
 };
 
 void react(channel::Data& ch, const eventDispatcher::Event& e);
-}
+} // namespace giada::m::midiActionRecorder
 
 #endif

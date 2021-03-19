@@ -24,18 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/Fl_Pack.H>
+#include "midiOutputSampleCh.h"
 #include "core/model/model.h"
-#include "utils/gui.h"
-#include "gui/elems/midiIO/midiLearner.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
-#include "midiOutputSampleCh.h"
+#include "gui/elems/midiIO/midiLearner.h"
+#include "utils/gui.h"
+#include <FL/Fl_Pack.H>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 : gdMidiOutputBase(300, 140, channelId)
@@ -45,8 +44,8 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 
 	m_enableLightning = new geCheck(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 120, 20, "Enable MIDI lightning output");
 
-	m_learners = new geLightningLearnerPack(G_GUI_OUTER_MARGIN, 
-		m_enableLightning->y() + m_enableLightning->h() + 8, channelId);
+	m_learners = new geLightningLearnerPack(G_GUI_OUTER_MARGIN,
+	    m_enableLightning->y() + m_enableLightning->h() + 8, channelId);
 
 	m_close = new geButton(w() - 88, m_learners->y() + m_learners->h() + 8, 80, 20, "Close");
 
@@ -56,7 +55,7 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 
 	m_close->callback(cb_close, (void*)this);
 	m_enableLightning->callback(cb_enableLightning, (void*)this);
-	
+
 	u::gui::setFavicon(this);
 
 	set_modal();
@@ -64,9 +63,7 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 	show();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdMidiOutputSampleCh::rebuild()
 {
@@ -75,4 +72,5 @@ void gdMidiOutputSampleCh::rebuild()
 	m_enableLightning->value(m_data.lightningEnabled);
 	m_learners->update(m_data);
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

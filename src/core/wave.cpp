@@ -24,55 +24,47 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
-#include <cstring>  // memcpy
+#include "wave.h"
+#include "const.h"
 #include "utils/fs.h"
 #include "utils/log.h"
 #include "utils/string.h"
-#include "const.h"
-#include "wave.h"
+#include <cassert>
+#include <cstring> // memcpy
 
-
-namespace giada::m 
+namespace giada::m
 {
 Wave::Wave(ID id)
-: id       (id),
-  m_rate   (0),
-  m_bits   (0),
-  m_logical(false),
-  m_edited (false) 
+: id(id)
+, m_rate(0)
+, m_bits(0)
+, m_logical(false)
+, m_edited(false)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-float* Wave::operator [](int offset) const
+float* Wave::operator[](int offset) const
 {
 	return m_buffer[offset];
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
 Wave::Wave(const Wave& other)
-: id        (other.id), 
-  m_rate    (other.m_rate),
-  m_bits    (other.m_bits),	
-  m_logical (false),
-  m_edited  (false),
-  m_path    (other.m_path)
+: id(other.id)
+, m_rate(other.m_rate)
+, m_bits(other.m_bits)
+, m_logical(false)
+, m_edited(false)
+, m_path(other.m_path)
 {
 	m_buffer.alloc(other.getSize(), other.getChannels());
 	m_buffer.copyData(other.getFrame(0), other.getSize());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void Wave::alloc(int size, int channels, int rate, int bits, const std::string& path)
 {
@@ -82,93 +74,74 @@ void Wave::alloc(int size, int channels, int rate, int bits, const std::string& 
 	m_path = path;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::string Wave::getBasename(bool ext) const
 {
 	return ext ? u::fs::basename(m_path) : u::fs::stripExt(u::fs::basename(m_path));
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-int Wave::getRate() const { return m_rate; }
-int Wave::getChannels() const { return m_buffer.countChannels(); }
+int         Wave::getRate() const { return m_rate; }
+int         Wave::getChannels() const { return m_buffer.countChannels(); }
 std::string Wave::getPath() const { return m_path; }
-int Wave::getSize() const { return m_buffer.countFrames(); }
-int Wave::getBits() const { return m_bits; }
-bool Wave::isLogical() const { return m_logical; }
-bool Wave::isEdited() const { return m_edited; }
-
+int         Wave::getSize() const { return m_buffer.countFrames(); }
+int         Wave::getBits() const { return m_bits; }
+bool        Wave::isLogical() const { return m_logical; }
+bool        Wave::isEdited() const { return m_edited; }
 
 /* -------------------------------------------------------------------------- */
-
 
 int Wave::getDuration() const
 {
 	return m_buffer.countFrames() / m_rate;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 std::string Wave::getExtension() const
 {
 	return u::fs::getExt(m_path);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 float* Wave::getFrame(int f) const
 {
 	return m_buffer[f];
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void Wave::setRate(int v)     { m_rate = v; }
+void Wave::setRate(int v) { m_rate = v; }
 void Wave::setLogical(bool l) { m_logical = l; }
-void Wave::setEdited(bool e)  { m_edited = e; }
-
+void Wave::setEdited(bool e) { m_edited = e; }
 
 /* -------------------------------------------------------------------------- */
 
-
-void Wave::setPath(const std::string& p, int wid) 
-{ 
+void Wave::setPath(const std::string& p, int wid)
+{
 	if (wid == -1)
-		m_path = p; 
-	else 
+		m_path = p;
+	else
 		m_path = u::fs::stripExt(p) + "-" + std::to_string(wid) + u::fs::getExt(p);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void Wave::replaceData(AudioBuffer&& b)
 {
 	m_buffer = std::move(b);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void Wave::copyData(const float* data, int frames, int channels, int offset)
 {
 	m_buffer.copyData(data, frames, channels, offset);
 }
 
-
 void Wave::copyData(const AudioBuffer& b) { m_buffer.copyData(b); }
-void Wave::addData(const AudioBuffer& b)  { m_buffer.addData(b); }
-} // giada::m::
+void Wave::addData(const AudioBuffer& b) { m_buffer.addData(b); }
+} // namespace giada::m

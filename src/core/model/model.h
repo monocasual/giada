@@ -24,20 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_RENDER_MODEL_H
 #define G_RENDER_MODEL_H
 
-
-#include <algorithm>
 #include "core/channels/channel.h"
 #include "core/const.h"
-#include "core/wave.h"
 #include "core/plugins/plugin.h"
 #include "core/recorder.h"
 #include "core/swapper.h"
+#include "core/wave.h"
 #include "utils/vector.h"
-
+#include <algorithm>
 
 namespace giada::m::model
 {
@@ -65,11 +62,11 @@ struct MidiIn
 	uint32_t volumeOut  = 0x0;
 	uint32_t beatDouble = 0x0;
 	uint32_t beatHalf   = 0x0;
-	uint32_t metronome  = 0x0;	
+	uint32_t metronome  = 0x0;
 };
 
 struct Clock
-{	
+{
 	struct State
 	{
 		WeakAtomic<int> currentFrameWait = 0;
@@ -100,13 +97,13 @@ struct Mixer
 	};
 
 	State* state    = nullptr;
-	bool   hasSolos = false;    
+	bool   hasSolos = false;
 	bool   inToOut  = false;
 };
 
 struct Layout
 {
-	channel::Data&       getChannel(ID id); 
+	channel::Data&       getChannel(ID id);
 	const channel::Data& getChannel(ID id) const;
 
 	Clock    clock;
@@ -138,27 +135,26 @@ Type of Layout change.
 Used by model listeners to determine the type of change that occured in the 
 layout. */
 
-enum class SwapType { HARD, SOFT, NONE };
-
+enum class SwapType
+{
+	HARD,
+	SOFT,
+	NONE
+};
 
 /* -------------------------------------------------------------------------- */
-
 
 class DataLock
 {
-public:
-
-	DataLock(SwapType t=SwapType::HARD);
+  public:
+	DataLock(SwapType t = SwapType::HARD);
 	~DataLock();
 
-private:
-
+  private:
 	SwapType m_swapType;
 };
 
-
 /* -------------------------------------------------------------------------- */
-
 
 /* init
 Initializes the internal layout. */
@@ -187,20 +183,19 @@ for listening to model changes. */
 
 void onSwap(std::function<void(SwapType)> f);
 
-
 /* -------------------------------------------------------------------------- */
 
 /* Model utilities */
 
 #ifdef WITH_VST
-using PluginPtr        = std::unique_ptr<Plugin>;
+using PluginPtr = std::unique_ptr<Plugin>;
 #endif
 using WavePtr          = std::unique_ptr<Wave>;
 using ChannelBufferPtr = std::unique_ptr<channel::Buffer>;
 using ChannelStatePtr  = std::unique_ptr<channel::State>;
 
 #ifdef WITH_VST
-using PluginPtrs        = std::vector<PluginPtr>;
+using PluginPtrs = std::vector<PluginPtr>;
 #endif
 using WavePtrs          = std::vector<WavePtr>;
 using Actions           = recorder::ActionMap;
@@ -209,32 +204,31 @@ using ChannelStatePtrs  = std::vector<ChannelStatePtr>;
 
 // TODO - are ID-based objects still necessary?
 
-template <typename T> 
+template <typename T>
 T& getAll();
 
 /* find
 Finds something (Plugins or Waves) given an ID. Returns nullptr if the object is
 not found. */
 
-template <typename T> 
+template <typename T>
 T* find(ID id);
 
-template <typename T> 
+template <typename T>
 void add(T);
 
-template <typename T> 
+template <typename T>
 void remove(const T&);
 
-template <typename T> 
+template <typename T>
 T& back();
 
-template <typename T> 
+template <typename T>
 void clear();
 
 #ifdef G_DEBUG_MODE
 void debug();
 #endif
-} // giada::m::model::
-
+} // namespace giada::m::model
 
 #endif

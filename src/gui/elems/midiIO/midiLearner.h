@@ -24,29 +24,25 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_MIDI_LEARNER_H
 #define GE_MIDI_LEARNER_H
 
-
-#include <functional>
-#include <string>
-#include "gui/elems/basics/pack.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
-
+#include "gui/elems/basics/pack.h"
+#include <functional>
+#include <string>
 
 class geBox;
 class geButton;
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class geMidiLearner : public gePack
 {
-public:
-
+  public:
 	geMidiLearner(int x, int y, std::string l, int param);
 
 	/* update
@@ -61,8 +57,7 @@ public:
 	std::function<void()>         onStopLearn;
 	std::function<void(uint32_t)> onClearLearn;
 
-protected:
-
+  protected:
 	/* m_param
 	Parameter index to be learnt. */
 
@@ -72,16 +67,14 @@ protected:
 	geButton m_valueBtn;
 	geButton m_button;
 
-private:
-
+  private:
 	static void cb_button(Fl_Widget* /*w*/, void* p);
-	static void cb_value (Fl_Widget* /*w*/, void* p);
+	static void cb_value(Fl_Widget* /*w*/, void* p);
 
 	void onLearn() const;
 	void onReset() const;
-
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

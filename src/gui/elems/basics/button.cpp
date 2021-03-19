@@ -24,59 +24,57 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <FL/fl_draw.H>
+#include "button.h"
 #include "core/const.h"
 #include "utils/gui.h"
-#include "button.h"
+#include <FL/fl_draw.H>
 
-
-geButton::geButton(int x, int y, int w, int h, const char* l, 
-	const char** imgOff, const char** imgOn, const char** imgDisabled)
-: Fl_Button  (x, y, w, h, l),
-  imgOff     (imgOff),
-  imgOn      (imgOn),
-  imgDisabled(imgDisabled),
-  bgColor0   (G_COLOR_GREY_2),
-  bgColor1   (G_COLOR_GREY_4),
-  bdColor    (G_COLOR_GREY_4),
-  txtColor   (G_COLOR_LIGHT_2)
+geButton::geButton(int x, int y, int w, int h, const char* l,
+    const char** imgOff, const char** imgOn, const char** imgDisabled)
+: Fl_Button(x, y, w, h, l)
+, imgOff(imgOff)
+, imgOn(imgOn)
+, imgDisabled(imgDisabled)
+, bgColor0(G_COLOR_GREY_2)
+, bgColor1(G_COLOR_GREY_4)
+, bdColor(G_COLOR_GREY_4)
+, txtColor(G_COLOR_LIGHT_2)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geButton::draw()
 {
 	//Fl_Button::draw();
 
 	if (active())
-		if (value()) draw(imgOn,  bgColor1, txtColor);
-		else         draw(imgOff, bgColor0, txtColor);
+		if (value())
+			draw(imgOn, bgColor1, txtColor);
+		else
+			draw(imgOff, bgColor0, txtColor);
 	else
 		draw(imgDisabled, bgColor0, bdColor);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geButton::draw(const char** img, Fl_Color bgColor, Fl_Color textColor)
 {
-	fl_rect(x(), y(), w(), h(), bdColor);               // draw border
+	fl_rect(x(), y(), w(), h(), bdColor); // draw border
 
-	if (img != nullptr) {
-		fl_draw_pixmap(img, x()+1, y()+1);
+	if (img != nullptr)
+	{
+		fl_draw_pixmap(img, x() + 1, y() + 1);
 		return;
 	}
 
-	fl_rectf(x()+1, y()+1, w()-2, h()-2, bgColor); // draw background
+	fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2, bgColor); // draw background
 	fl_color(textColor);
 
-	if (label() != nullptr) {
+	if (label() != nullptr)
+	{
 		fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-		fl_draw(giada::u::gui::truncate(label(), w()-16).c_str(), x()+2, y(), w()-2, h(), FL_ALIGN_CENTER);
+		fl_draw(giada::u::gui::truncate(label(), w() - 16).c_str(), x() + 2, y(), w() - 2, h(), FL_ALIGN_CENTER);
 	}
 }

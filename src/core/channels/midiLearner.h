@@ -24,39 +24,36 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CHANNEL_MIDI_LEARNER_H
 #define G_CHANNEL_MIDI_LEARNER_H
 
-
 #include "core/midiLearnParam.h"
-
 
 namespace giada::m::midiLearner
 {
 struct Data
 {
-    Data() = default;
-    Data(const patch::Channel&);
-    Data(const Data&) = default;
+	Data() = default;
+	Data(const patch::Channel&);
+	Data(const Data&) = default;
 
-    /* isAllowed
+	/* isAllowed
     Tells whether the MIDI channel 'c' is enabled to receive MIDI data. */
 
-    bool isAllowed(int c) const;
+	bool isAllowed(int c) const;
 
-    /* enabled
+	/* enabled
     Tells whether MIDI learning is enabled for the current channel. */
-    
+
 	bool enabled;
 
-    /* filter
+	/* filter
     Which MIDI channel should be filtered out when receiving MIDI messages. 
     If -1 means 'all'. */
-    
-    int filter;
 
-    /* MIDI learning fields. */
+	int filter;
+
+	/* MIDI learning fields. */
 
 	MidiLearnParam keyPress;
 	MidiLearnParam keyRelease;
@@ -68,7 +65,6 @@ struct Data
 	MidiLearnParam readActions; // Sample Channels only
 	MidiLearnParam pitch;       // Sample Channels only
 };
-} // giada::m::midiLearner::
-
+} // namespace giada::m::midiLearner
 
 #endif

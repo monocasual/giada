@@ -24,30 +24,25 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
-
 
 #ifndef GD_PLUGINLIST_H
 #define GD_PLUGINLIST_H
 
-
 #include "glue/plugin.h"
 #include "window.h"
-
 
 class geLiquidScroll;
 class geButton;
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class gePluginElement;
 class gdPluginList : public gdWindow
 {
-public:
-
+  public:
 	gdPluginList(ID channelId);
 	~gdPluginList();
 
@@ -56,19 +51,18 @@ public:
 	const gePluginElement& getNextElement(const gePluginElement& curr) const;
 	const gePluginElement& getPrevElement(const gePluginElement& curr) const;
 
-private:
-
+  private:
 	static void cb_addPlugin(Fl_Widget* /*w*/, void* p);
-	void cb_addPlugin();
+	void        cb_addPlugin();
 
 	geButton*       addPlugin;
-	geLiquidScroll* list;	
+	geLiquidScroll* list;
 
-	ID m_channelId;
+	ID                 m_channelId;
 	c::plugin::Plugins m_plugins;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif
 

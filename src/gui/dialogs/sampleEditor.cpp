@@ -24,59 +24,57 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cmath>
-#include <cassert>
-#include <FL/Fl.H>
-#include <FL/Fl_Group.H>
-#include "glue/channel.h"
 #include "glue/sampleEditor.h"
-#include "core/waveFx.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/graphics.h"
 #include "core/mixer.h"
 #include "core/wave.h"
-#include "utils/gui.h"
-#include "utils/string.h"
+#include "core/waveFx.h"
+#include "glue/channel.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
-#include "gui/elems/basics/statusButton.h"
-#include "gui/elems/basics/input.h"
+#include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/dial.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/check.h"
-#include "gui/elems/basics/pack.h"
 #include "gui/elems/basics/group.h"
-#include "gui/elems/sampleEditor/waveform.h"
-#include "gui/elems/sampleEditor/waveTools.h"
-#include "gui/elems/sampleEditor/volumeTool.h"
+#include "gui/elems/basics/input.h"
+#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/statusButton.h"
+#include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/sampleEditor/boostTool.h"
 #include "gui/elems/sampleEditor/panTool.h"
 #include "gui/elems/sampleEditor/pitchTool.h"
 #include "gui/elems/sampleEditor/rangeTool.h"
 #include "gui/elems/sampleEditor/shiftTool.h"
-#include "gui/elems/mainWindow/keyboard/channel.h"
-#include "gui/dialogs/warnings.h"
+#include "gui/elems/sampleEditor/volumeTool.h"
+#include "gui/elems/sampleEditor/waveTools.h"
+#include "gui/elems/sampleEditor/waveform.h"
 #include "sampleEditor.h"
+#include "utils/gui.h"
+#include "utils/string.h"
+#include <FL/Fl.H>
+#include <FL/Fl_Group.H>
+#include <cassert>
+#include <cmath>
 
-
-namespace giada::v 
+namespace giada::v
 {
 gdSampleEditor::gdSampleEditor(ID channelId)
-: gdWindow   (m::conf::conf.sampleEditorX, m::conf::conf.sampleEditorY, 
-              m::conf::conf.sampleEditorW, m::conf::conf.sampleEditorH)
+: gdWindow(m::conf::conf.sampleEditorX, m::conf::conf.sampleEditorY,
+      m::conf::conf.sampleEditorW, m::conf::conf.sampleEditorH)
 , m_channelId(channelId)
 {
 	end();
 
 	gePack* upperBar = createUpperBar();
-	
-	waveTools = new geWaveTools(G_GUI_OUTER_MARGIN, upperBar->y()+upperBar->h()+G_GUI_OUTER_MARGIN, 
-		w()-16, h()-168);
-	
-	gePack* bottomBar = createBottomBar(G_GUI_OUTER_MARGIN, waveTools->y()+waveTools->h()+G_GUI_OUTER_MARGIN, 
-		h()-waveTools->h()-upperBar->h()-32);
+
+	waveTools = new geWaveTools(G_GUI_OUTER_MARGIN, upperBar->y() + upperBar->h() + G_GUI_OUTER_MARGIN,
+	    w() - 16, h() - 168);
+
+	gePack* bottomBar = createBottomBar(G_GUI_OUTER_MARGIN, waveTools->y() + waveTools->h() + G_GUI_OUTER_MARGIN,
+	    h() - waveTools->h() - upperBar->h() - 32);
 
 	add(upperBar);
 	add(waveTools);
@@ -92,26 +90,22 @@ gdSampleEditor::gdSampleEditor(ID channelId)
 	show();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 gdSampleEditor::~gdSampleEditor()
 {
-	m::conf::conf.sampleEditorX = x();
-	m::conf::conf.sampleEditorY = y();
-	m::conf::conf.sampleEditorW = w();
-	m::conf::conf.sampleEditorH = h();
+	m::conf::conf.sampleEditorX       = x();
+	m::conf::conf.sampleEditorY       = y();
+	m::conf::conf.sampleEditorW       = w();
+	m::conf::conf.sampleEditorH       = h();
 	m::conf::conf.sampleEditorGridVal = atoi(grid->text());
 	m::conf::conf.sampleEditorGridOn  = snap->value();
-	
+
 	c::sampleEditor::stopPreview();
 	c::sampleEditor::cleanupPreview();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdSampleEditor::rebuild()
 {
@@ -129,12 +123,10 @@ void gdSampleEditor::rebuild()
 	updateInfo();
 
 	if (m_data.isLogical) // Logical samples (aka takes) cannot be reloaded.
-		reload->deactivate();	
+		reload->deactivate();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdSampleEditor::refresh()
 {
@@ -142,16 +134,14 @@ void gdSampleEditor::refresh()
 	play->setStatus(m_data.a_getPreviewStatus() == ChannelStatus::PLAY);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 gePack* gdSampleEditor::createUpperBar()
 {
 	reload  = new geButton(0, 0, 70, G_GUI_UNIT, "Reload");
 	grid    = new geChoice(0, 0, 50, G_GUI_UNIT);
-	snap    = new geCheck (0, 0, 12, G_GUI_UNIT, "Snap");
-	sep1    = new geBox   (0, 0, w() - 208, G_GUI_UNIT);
+	snap    = new geCheck(0, 0, 12, G_GUI_UNIT, "Snap");
+	sep1    = new geBox(0, 0, w() - 208, G_GUI_UNIT);
 	zoomOut = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm);
 	zoomIn  = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm);
 
@@ -170,7 +160,7 @@ gePack* gdSampleEditor::createUpperBar()
 
 	if (m::conf::conf.sampleEditorGridVal == 0)
 		grid->value(0);
-	else 
+	else
 		grid->value(grid->find_item(u::string::iToString(m::conf::conf.sampleEditorGridVal).c_str()));
 	grid->callback(cb_changeGrid, (void*)this);
 
@@ -191,24 +181,22 @@ gePack* gdSampleEditor::createUpperBar()
 	g->add(snap);
 	g->add(sep1);
 	g->add(zoomOut);
-	g->add(zoomIn);	
+	g->add(zoomIn);
 	g->resizable(sep1);
 
 	return g;
 }
 
-\
 /* -------------------------------------------------------------------------- */
-\
 
 gePack* gdSampleEditor::createOpTools(int x, int y)
 {
 	volumeTool = new geVolumeTool(m_data, 0, 0);
-	panTool    = new gePanTool   (m_data, 0, 0);
-	pitchTool  = new gePitchTool (m_data, 0, 0);
-	rangeTool  = new geRangeTool (m_data, 0, 0);
-	shiftTool  = new geShiftTool (m_data, 0, 0);
-	
+	panTool    = new gePanTool(m_data, 0, 0);
+	pitchTool  = new gePitchTool(m_data, 0, 0);
+	rangeTool  = new geRangeTool(m_data, 0, 0);
+	shiftTool  = new geShiftTool(m_data, 0, 0);
+
 	gePack* g = new gePack(x, y, Direction::VERTICAL);
 	g->add(volumeTool);
 	g->add(panTool);
@@ -219,9 +207,7 @@ gePack* gdSampleEditor::createOpTools(int x, int y)
 	return g;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 geGroup* gdSampleEditor::createPreviewBox(int x, int y, int h)
 {
@@ -240,17 +226,15 @@ geGroup* gdSampleEditor::createPreviewBox(int x, int y, int h)
 	return g;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 gePack* gdSampleEditor::createBottomBar(int x, int y, int h)
 {
 	geGroup*  previewBox = createPreviewBox(0, 0, h);
-	geBox*    divisor1   = new geBox       (0, 0, 1, h);
-	Fl_Group* opTools    = createOpTools   (0, 0);
-	geBox*    divisor2   = new geBox       (0, 0, 1, h);
-	          info       = new geBox       (0, 0, 400, h);
+	geBox*    divisor1   = new geBox(0, 0, 1, h);
+	Fl_Group* opTools    = createOpTools(0, 0);
+	geBox*    divisor2   = new geBox(0, 0, 1, h);
+	info                 = new geBox(0, 0, 400, h);
 
 	divisor1->box(FL_BORDER_BOX);
 	divisor2->box(FL_BORDER_BOX);
@@ -268,30 +252,24 @@ gePack* gdSampleEditor::createBottomBar(int x, int y, int h)
 	return g;
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void gdSampleEditor::cb_reload       (Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_reload(); }
-void gdSampleEditor::cb_zoomIn       (Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_zoomIn(); }
-void gdSampleEditor::cb_zoomOut      (Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_zoomOut(); }
-void gdSampleEditor::cb_changeGrid   (Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_changeGrid(); }
-void gdSampleEditor::cb_enableSnap   (Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_enableSnap(); }
+void gdSampleEditor::cb_reload(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_reload(); }
+void gdSampleEditor::cb_zoomIn(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_zoomIn(); }
+void gdSampleEditor::cb_zoomOut(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_zoomOut(); }
+void gdSampleEditor::cb_changeGrid(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_changeGrid(); }
+void gdSampleEditor::cb_enableSnap(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_enableSnap(); }
 void gdSampleEditor::cb_togglePreview(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_togglePreview(); }
 void gdSampleEditor::cb_rewindPreview(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_rewindPreview(); }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdSampleEditor::cb_enableSnap()
 {
 	waveTools->waveform->setSnap(!waveTools->waveform->getSnap());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdSampleEditor::cb_togglePreview()
 {
@@ -301,15 +279,12 @@ void gdSampleEditor::cb_togglePreview()
 		c::sampleEditor::stopPreview();
 }
 
-
 void gdSampleEditor::cb_rewindPreview()
 {
 	c::sampleEditor::setPreviewTracker(m_data.begin);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdSampleEditor::cb_reload()
 {
@@ -317,9 +292,7 @@ void gdSampleEditor::cb_reload()
 	redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdSampleEditor::cb_zoomIn()
 {
@@ -327,9 +300,7 @@ void gdSampleEditor::cb_zoomIn()
 	waveTools->redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdSampleEditor::cb_zoomOut()
 {
@@ -337,29 +308,29 @@ void gdSampleEditor::cb_zoomOut()
 	waveTools->redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdSampleEditor::cb_changeGrid()
 {
 	waveTools->waveform->setGridLevel(atoi(grid->text()));
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdSampleEditor::updateInfo()
 {
 	std::string bitDepth = m_data.waveBits != 0 ? u::string::iToString(m_data.waveBits) : "(unknown)";
-	std::string infoText = 
-		"File: "      + m_data.wavePath + "\n"
-		"Size: "      + u::string::iToString(m_data.waveSize) + " frames\n"
-		"Duration: "  + u::string::iToString(m_data.waveDuration) + " seconds\n"
-		"Bit depth: " + bitDepth + "\n"
-		"Frequency: " + u::string::iToString(m_data.waveRate) + " Hz\n";
+	std::string infoText =
+	    "File: " + m_data.wavePath + "\n"
+	                                 "Size: " +
+	    u::string::iToString(m_data.waveSize) + " frames\n"
+	                                            "Duration: " +
+	    u::string::iToString(m_data.waveDuration) + " seconds\n"
+	                                                "Bit depth: " +
+	    bitDepth + "\n"
+	               "Frequency: " +
+	    u::string::iToString(m_data.waveRate) + " Hz\n";
 
 	info->copy_label(infoText.c_str());
 }
-} // giada::v::
+} // namespace giada::v

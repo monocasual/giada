@@ -24,44 +24,39 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cassert>
-#include <FL/Fl.H>
-#include <FL/fl_draw.H>
-#include "utils/log.h"
-#include "utils/math.h"
-#include "core/const.h"
-#include "core/conf.h"
+#include "velocityEditor.h"
 #include "core/action.h"
 #include "core/clock.h"
+#include "core/conf.h"
+#include "core/const.h"
+#include "envelopePoint.h"
 #include "glue/actionEditor.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "envelopePoint.h"
-#include "velocityEditor.h"
+#include "utils/log.h"
+#include "utils/math.h"
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
+#include <cassert>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 geVelocityEditor::geVelocityEditor(Pixel x, Pixel y, gdBaseActionEditor* b)
-:	geBaseActionEditor(x, y, 200, m::conf::conf.velocityEditorH, b)
+: geBaseActionEditor(x, y, 200, m::conf::conf.velocityEditorH, b)
 {
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 geVelocityEditor::~geVelocityEditor()
 {
 	m::conf::conf.velocityEditorH = h();
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geVelocityEditor::draw() 
+void geVelocityEditor::draw()
 {
 	baseDraw();
 
@@ -69,14 +64,15 @@ void geVelocityEditor::draw()
 
 	fl_color(G_COLOR_GREY_4);
 	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-	fl_draw("Velocity", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT));
+	fl_draw("Velocity", x() + 4, y(), w(), h(), (Fl_Align)(FL_ALIGN_LEFT));
 
 	if (children() == 0)
 		return;
 
 	Pixel side = geEnvelopePoint::SIDE / 2;
 
-	for (int i=0; i<children(); i++) {
+	for (int i = 0; i < children(); i++)
+	{
 		geEnvelopePoint* p = static_cast<geEnvelopePoint*>(child(i));
 		if (m_action == nullptr)
 			p->position(p->x(), valueToY(p->a1.event.getVelocity()));
@@ -89,9 +85,7 @@ void geVelocityEditor::draw()
 	draw_children();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 Pixel geVelocityEditor::valueToY(int v) const
 {
@@ -99,15 +93,12 @@ Pixel geVelocityEditor::valueToY(int v) const
 	return u::math::map<float, Pixel>(v, 0, G_MAX_VELOCITY, y() + (h() - geEnvelopePoint::SIDE), y());
 }
 
-
 int geVelocityEditor::yToValue(Pixel px) const
 {
-	return u::math::map<Pixel, int>(px, h() - geEnvelopePoint::SIDE, 0, 0, G_MAX_VELOCITY);	
+	return u::math::map<Pixel, int>(px, h() - geEnvelopePoint::SIDE, 0, 0, G_MAX_VELOCITY);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geVelocityEditor::rebuild(c::actionEditor::Data& d)
 {
@@ -119,8 +110,9 @@ void geVelocityEditor::rebuild(c::actionEditor::Data& d)
 	clear();
 	size(m_base->fullWidth, h());
 
-	for (const m::Action& action : m_data->actions) {
-		
+	for (const m::Action& action : m_data->actions)
+	{
+
 		if (action.event.getStatus() == m::MidiEvent::NOTE_OFF)
 			continue;
 
@@ -129,36 +121,36 @@ void geVelocityEditor::rebuild(c::actionEditor::Data& d)
 
 		add(new geEnvelopePoint(px, py, action));
 	}
-	
+
 	resizable(nullptr);
 	redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geVelocityEditor::onMoveAction()    
+void geVelocityEditor::onMoveAction()
 {
 	Pixel ey = Fl::event_y() - (geEnvelopePoint::SIDE / 2);
 
 	Pixel y1 = y();
 	Pixel y2 = y() + h() - geEnvelopePoint::SIDE;
 
-	if (ey < y1) ey = y1; else if (ey > y2) ey = y2;
+	if (ey < y1)
+		ey = y1;
+	else if (ey > y2)
+		ey = y2;
 
 	m_action->position(m_action->x(), ey);
 	redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
 
-
-void geVelocityEditor::onRefreshAction() 
+void geVelocityEditor::onRefreshAction()
 {
 	c::actionEditor::updateVelocity(m_action->a1, yToValue(m_action->y() - y()));
 
-	m_base->rebuild();  // Rebuild pianoRoll as well
+	m_base->rebuild(); // Rebuild pianoRoll as well
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

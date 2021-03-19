@@ -24,27 +24,27 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifdef WITH_VST
 
 #ifndef G_PLUGIN_MANAGER_H
 #define G_PLUGIN_MANAGER_H
 
-
 #include "deps/juce-config.h"
 #include "plugin.h"
-
 
 namespace giada::m::patch
 {
 struct Plugin;
 struct Version;
-}
+} // namespace giada::m::patch
 namespace giada::m::pluginManager
 {
 enum class SortMethod : int
 {
-	NAME = 0, CATEGORY,	MANUFACTURER, FORMAT
+	NAME = 0,
+	CATEGORY,
+	MANUFACTURER,
+	FORMAT
 };
 
 struct PluginInfo
@@ -54,7 +54,7 @@ struct PluginInfo
 	std::string category;
 	std::string manufacturerName;
 	std::string format;
-	bool isInstrument;
+	bool        isInstrument;
 };
 
 void init(int samplerate, int buffersize);
@@ -82,7 +82,7 @@ Returns how many plug-ins are in a unknown/not-found state. */
 
 int countUnknownPlugins();
 
-std::unique_ptr<Plugin> makePlugin(const std::string& pid, ID id=0);
+std::unique_ptr<Plugin> makePlugin(const std::string& pid, ID id = 0);
 std::unique_ptr<Plugin> makePlugin(int index);
 std::unique_ptr<Plugin> makePlugin(const Plugin& other);
 
@@ -107,8 +107,7 @@ bool hasMissingPlugins();
 
 void sortPlugins(SortMethod sortMethod);
 
-} // giada::m::pluginManager::
-
+} // namespace giada::m::pluginManager
 
 #endif
 

@@ -24,15 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <functional>
-#include "core/model/model.h"
-#include "utils/log.h"
-#include "core/worker.h"
-#include "core/clock.h"
-#include "core/sequencer.h"
 #include "eventDispatcher.h"
-
+#include "core/clock.h"
+#include "core/model/model.h"
+#include "core/sequencer.h"
+#include "core/worker.h"
+#include "utils/log.h"
+#include <functional>
 
 namespace giada::m::eventDispatcher
 {
@@ -46,22 +44,19 @@ coming from the two event queues.*/
 
 EventBuffer eventBuffer_;
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void processFuntions_()
 {
-	for (const Event& e : eventBuffer_) {
+	for (const Event& e : eventBuffer_)
+	{
 		if (e.type == EventType::FUNCTION)
 			std::get<std::function<void()>>(e.data)();
-G_DEBUG("Event type=" << (int) e.type << ", delta=" << e.delta << ", frame=" << clock::getCurrentFrame());
+		G_DEBUG("Event type=" << (int)e.type << ", delta=" << e.delta << ", frame=" << clock::getCurrentFrame());
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void processChannels_()
 {
@@ -70,62 +65,54 @@ void processChannels_()
 	model::swap(model::SwapType::SOFT);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void processSequencer_()
 {
 	sequencer::react(eventBuffer_);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void process_()
 {
 	eventBuffer_.clear();
 
 	Event e;
-	while (UIevents.pop(e))   eventBuffer_.push_back(e);
-	while (MidiEvents.pop(e)) eventBuffer_.push_back(e);
+	while (UIevents.pop(e))
+		eventBuffer_.push_back(e);
+	while (MidiEvents.pop(e))
+		eventBuffer_.push_back(e);
 
 	if (eventBuffer_.size() == 0)
 		return;
-		
+
 	processFuntions_();
 	processChannels_();
 	processSequencer_();
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 Queue<Event, G_MAX_DISPATCHER_EVENTS> UIevents;
 Queue<Event, G_MAX_DISPATCHER_EVENTS> MidiEvents;
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void init()
 {
-    worker_.start(process_, /*sleep=*/5); // TODO - <= than audio thread speed
+	worker_.start(process_, /*sleep=*/5); // TODO - <= than audio thread speed
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void pumpEvent(Event e)
 {
 	/* TODO - two threads push events here: mixer/rt-thread and main thread, so
 	this breaks the 1-producer 1-consumer rule! */
-	UIevents.push(e); 
+	UIevents.push(e);
 }
-} // giada::m
+} // namespace giada::m::eventDispatcher

@@ -24,23 +24,22 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <string>
+#include "midiActionEditor.h"
 #include "core/graphics.h"
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
-#include "gui/elems/basics/scrollPack.h"
+#include "gui/elems/actionEditor/gridTool.h"
+#include "gui/elems/actionEditor/noteEditor.h"
+#include "gui/elems/actionEditor/pianoRoll.h"
+#include "gui/elems/actionEditor/velocityEditor.h"
+#include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/resizerBar.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/actionEditor/noteEditor.h"
-#include "gui/elems/actionEditor/velocityEditor.h"
-#include "gui/elems/actionEditor/pianoRoll.h"
-#include "gui/elems/actionEditor/gridTool.h"
-#include "midiActionEditor.h"
+#include "gui/elems/basics/scrollPack.h"
+#include <string>
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 gdMidiActionEditor::gdMidiActionEditor(ID channelId)
@@ -51,24 +50,24 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId)
 	computeWidth();
 
 	gePack* upperArea = new gePack(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, Direction::HORIZONTAL);
-		gridTool   = new geGridTool(0, 0);
-		geBox* b1  = new geBox     (0, 0, w() - 150, G_GUI_UNIT);    // padding actionType - zoomButtons
-		zoomInBtn  = new geButton  (0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm);
-		zoomOutBtn = new geButton  (0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm);
-	upperArea->add(gridTool); 
-	upperArea->add(b1); 
-	upperArea->add(zoomInBtn); 
-	upperArea->add(zoomOutBtn); 
+	gridTool          = new geGridTool(0, 0);
+	geBox* b1         = new geBox(0, 0, w() - 150, G_GUI_UNIT); // padding actionType - zoomButtons
+	zoomInBtn         = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm);
+	zoomOutBtn        = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm);
+	upperArea->add(gridTool);
+	upperArea->add(b1);
+	upperArea->add(zoomInBtn);
+	upperArea->add(zoomOutBtn);
 	upperArea->resizable(b1);
 
 	/* Main viewport: contains all widgets. */
 
-	viewport = new geScrollPack(G_GUI_OUTER_MARGIN, upperArea->y() + upperArea->h() + G_GUI_OUTER_MARGIN, 
-		upperArea->w(), h()-44, Fl_Scroll::BOTH, Direction::VERTICAL, /*gutter=*/0);
-		m_ne  = new geNoteEditor    (0, 0, this);
-		m_ner = new geResizerBar    (0, 0, viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);
-		m_ve  = new geVelocityEditor(0, 0, this);
-		m_ver = new geResizerBar    (0, 0, viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);
+	viewport = new geScrollPack(G_GUI_OUTER_MARGIN, upperArea->y() + upperArea->h() + G_GUI_OUTER_MARGIN,
+	    upperArea->w(), h() - 44, Fl_Scroll::BOTH, Direction::VERTICAL, /*gutter=*/0);
+	m_ne     = new geNoteEditor(0, 0, this);
+	m_ner    = new geResizerBar(0, 0, viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);
+	m_ve     = new geVelocityEditor(0, 0, this);
+	m_ver    = new geResizerBar(0, 0, viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);
 	viewport->add(m_ne);
 	viewport->add(m_ner);
 	viewport->add(m_ve);
@@ -87,9 +86,7 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId)
 	rebuild();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void gdMidiActionEditor::rebuild()
 {
@@ -101,4 +98,5 @@ void gdMidiActionEditor::rebuild()
 	m_ve->rebuild(m_data);
 	m_ver->size(m_ve->w(), m_ver->h());
 }
-}} // giada::v::
+} // namespace v
+} // namespace giada

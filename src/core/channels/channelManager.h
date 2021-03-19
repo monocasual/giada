@@ -24,22 +24,28 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CHANNEL_MANAGER_H
 #define G_CHANNEL_MANAGER_H
 
-
 #include "core/types.h"
 
-
-namespace giada::m::channel { struct Data; }
-namespace giada::m::conf    { struct Conf; }
-namespace giada::m::patch   { struct Channel; }
+namespace giada::m::channel
+{
+struct Data;
+}
+namespace giada::m::conf
+{
+struct Conf;
+}
+namespace giada::m::patch
+{
+struct Channel;
+}
 namespace giada::m::channelManager
 {
 /* init
 Initializes internal data. */
-	
+
 void init();
 
 /* create (1)
@@ -56,9 +62,8 @@ channel::Data create(const channel::Data& ch);
 /* (de)serializeWave
 Creates a new channel given the patch raw data and vice versa. */
 
-channel::Data deserializeChannel(const patch::Channel& c, float samplerateRatio);
+channel::Data        deserializeChannel(const patch::Channel& c, float samplerateRatio);
 const patch::Channel serializeChannel(const channel::Data& c);
-} // giada::m::channelManager::
-
+} // namespace giada::m::channelManager
 
 #endif

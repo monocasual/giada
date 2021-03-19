@@ -24,40 +24,36 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_KEYBOARD_H
 #define GE_KEYBOARD_H
 
-
-#include <vector>
-#include <functional>
-#include "gui/elems/basics/scroll.h"
-#include "core/idManager.h"
 #include "core/const.h"
-
+#include "core/idManager.h"
+#include "gui/elems/basics/scroll.h"
+#include <functional>
+#include <vector>
 
 class geButton;
 class geResizerBar;
 
-
-namespace giada {
+namespace giada
+{
 namespace v
 {
 class geColumn;
 class geChannel;
 class geKeyboard : public geScroll
 {
-public:
-
+  public:
 	struct ColumnLayout
 	{
-		ID id;
+		ID  id;
 		int width;
 	};
 
 	geKeyboard(int X, int Y, int W, int H);
 
-	int handle(int e) override;
+	int  handle(int e) override;
 	void draw() override;
 
 	/* rebuild
@@ -72,7 +68,7 @@ public:
 
 	/* deleteColumn
 	Deletes column by id. */
-	
+
 	void deleteColumn(ID id);
 
 	/* deleteAllColumns
@@ -98,14 +94,13 @@ public:
 
 	std::vector<ColumnLayout> layout;
 
-private:
-
+  private:
 	static constexpr int COLUMN_GAP = 20;
 
 	static void cb_addColumn(Fl_Widget* /*w*/, void* p);
-	void cb_addColumn();
+	void        cb_addColumn();
 
-	void addColumn(int width=G_DEFAULT_COLUMN_WIDTH, ID id=0);
+	void addColumn(int width = G_DEFAULT_COLUMN_WIDTH, ID id = 0);
 
 	/* getDroppedFilePaths
 	Returns a vector of audio file paths after a drag-n-drop from desktop
@@ -125,15 +120,15 @@ private:
 
 	/* storeLayout
 	Stores the current column layout into the layout vector. */
-	
+
 	void storeLayout();
 
-	m::IdManager m_columnId;
+	m::IdManager           m_columnId;
 	std::vector<geColumn*> m_columns;
 
 	geButton* m_addColumnBtn;
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

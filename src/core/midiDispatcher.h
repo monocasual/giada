@@ -24,34 +24,30 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_MIDI_DISPATCHER_H
 #define G_MIDI_DISPATCHER_H
 
-
-#include <functional>
-#include <cstdint>
-#include "core/model/model.h"
 #include "core/midiEvent.h"
+#include "core/model/model.h"
 #include "core/types.h"
-
+#include <cstdint>
+#include <functional>
 
 namespace giada::m::midiDispatcher
 {
 void startChannelLearn(int param, ID channelId, std::function<void()> f);
-void startMasterLearn (int param, std::function<void()> f);
+void startMasterLearn(int param, std::function<void()> f);
 void stopLearn();
-void clearMasterLearn (int param, std::function<void()> f);
+void clearMasterLearn(int param, std::function<void()> f);
 void clearChannelLearn(int param, ID channelId, std::function<void()> f);
 #ifdef WITH_VST
-void startPluginLearn (std::size_t paramIndex, ID pluginId, std::function<void()> f);
-void clearPluginLearn (std::size_t paramIndex, ID pluginId, std::function<void()> f);
+void startPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f);
+void clearPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f);
 #endif
 
 void dispatch(int byte1, int byte2, int byte3);
 
 void setSignalCallback(std::function<void()> f);
-} // giada::m::midiDispatcher::
-
+} // namespace giada::m::midiDispatcher
 
 #endif

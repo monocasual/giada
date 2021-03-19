@@ -24,86 +24,90 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_GLUE_PLUGIN_H
 #define G_GLUE_PLUGIN_H
 
-
 #ifdef WITH_VST
 
-
-#include <vector>
-#include <string>
 #include "core/plugins/pluginHost.h"
 #include "core/types.h"
+#include <string>
+#include <vector>
 
-
-namespace juce { class AudioProcessorEditor; }
-namespace giada::m { class Plugin; }
-namespace giada::m::channel { struct Data; }
-namespace giada::c::plugin 
+namespace juce
+{
+class AudioProcessorEditor;
+}
+namespace giada::m
+{
+class Plugin;
+}
+namespace giada::m::channel
+{
+struct Data;
+}
+namespace giada::c::plugin
 {
 struct Program
 {
-    int         index;
-    std::string name;
+	int         index;
+	std::string name;
 };
 
 struct Param
 {
-    Param() = default;
-    Param(const m::Plugin&, int index, ID channelId);
+	Param() = default;
+	Param(const m::Plugin&, int index, ID channelId);
 
-    int         index;
-    ID          pluginId;
-    ID          channelId;
-    std::string name;
-    std::string text;
-    std::string label;
-    float       value;
+	int         index;
+	ID          pluginId;
+	ID          channelId;
+	std::string name;
+	std::string text;
+	std::string label;
+	float       value;
 };
 
 struct Plugin
 {
-    Plugin(m::Plugin&, ID channelId);
+	Plugin(m::Plugin&, ID channelId);
 
-    juce::AudioProcessorEditor* createEditor() const;
-    const m::Plugin& getPluginRef() const;
+	juce::AudioProcessorEditor* createEditor() const;
+	const m::Plugin&            getPluginRef() const;
 
-    void setResizeCallback(std::function<void(int, int)> f);
+	void setResizeCallback(std::function<void(int, int)> f);
 
-    ID          id;
-    ID          channelId;
-    bool        valid;
-    bool        hasEditor;
-    bool        isBypassed;
-    std::string name;
-    std::string uniqueId;
-    int         currentProgram;
+	ID          id;
+	ID          channelId;
+	bool        valid;
+	bool        hasEditor;
+	bool        isBypassed;
+	std::string name;
+	std::string uniqueId;
+	int         currentProgram;
 
-    std::vector<Program> programs;
-    std::vector<int>     paramIndexes;
+	std::vector<Program> programs;
+	std::vector<int>     paramIndexes;
 
-private:
-
-    m::Plugin& m_plugin;
+  private:
+	m::Plugin& m_plugin;
 };
 
 struct Plugins
 {
-    Plugins() = default;
-    Plugins(const m::channel::Data&);
+	Plugins() = default;
+	Plugins(const m::channel::Data&);
 
-    ID channelId;
-    std::vector<m::Plugin*> plugins; 
+	ID                      channelId;
+	std::vector<m::Plugin*> plugins;
 };
 
 /* get*
 Returns ViewModel objects. */
 
 Plugins getPlugins(ID channelId);
-Plugin  getPlugin (m::Plugin& plugin, ID channelId);
-Param   getParam  (int index, const m::Plugin& plugin, ID channelId);
+Plugin  getPlugin(m::Plugin& plugin, ID channelId);
+Param   getParam(int index, const m::Plugin& plugin, ID channelId);
 
 /* updateWindow
 Updates the editor-less plug-in window. This is useless if the plug-in has an
@@ -122,10 +126,8 @@ Callback attached to the DirBrowser for adding new Plug-in search paths in the
 configuration window. */
 
 void setPluginPathCb(void* data);
-} // giada::c::plugin::
-
+} // namespace giada::c::plugin
 
 #endif
-
 
 #endif

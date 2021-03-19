@@ -24,15 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cmath>
-#include <cassert>
-#include <algorithm>
-#include "utils/log.h"
-#include "const.h"
-#include "wave.h"
 #include "waveFx.h"
-
+#include "const.h"
+#include "utils/log.h"
+#include "wave.h"
+#include <algorithm>
+#include <cassert>
+#include <cmath>
 
 namespace giada::m::wfx
 {
@@ -44,15 +42,14 @@ void fadeFrame_(Wave& w, int i, float val)
 		w[i][j] *= val;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 float getPeak_(const Wave& w, int a, int b)
 {
 	float peak = 0.0f;
 	float abs  = 0.0f;
-	for (int i = a; i < b; i++) {
+	for (int i = a; i < b; i++)
+	{
 		for (int j = 0; j < w.getChannels(); j++) // Find highest value in any channel
 			abs = fabs(w[i][j]);
 		if (abs > peak)
@@ -60,16 +57,13 @@ float getPeak_(const Wave& w, int a, int b)
 	}
 	return peak;
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 constexpr int SMOOTH_SIZE = 32;
-
 
 void normalize(Wave& w, int a, int b)
 {
@@ -77,16 +71,15 @@ void normalize(Wave& w, int a, int b)
 	if (peak == 0.0f || peak > 1.0f)
 		return;
 
-	for (int i = a; i < b; i++) {
+	for (int i = a; i < b; i++)
+	{
 		for (int j = 0; j < w.getChannels(); j++)
 			w[i][j] = w[i][j] * (1.0f / peak);
 	}
 	w.setEdited(true);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int monoToStereo(Wave& w)
 {
@@ -105,78 +98,76 @@ int monoToStereo(Wave& w)
 	return G_RES_OK;
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void silence(Wave& w, int a, int b)
 {
 	u::log::print("[wfx::silence] silencing from %d to %d\n", a, b);
-	
+
 	for (int i = a; i < b; i++)
-		for (int j = 0; j < w.getChannels(); j++)	
+		for (int j = 0; j < w.getChannels(); j++)
 			w[i][j] = 0.0f;
 	w.setEdited(true);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void cut(Wave& w, int a, int b)
 {
-    if (a < 0) a = 0;
-    if (b > w.getSize()) b = w.getSize();
+	if (a < 0)
+		a = 0;
+	if (b > w.getSize())
+		b = w.getSize();
 
-    /* Create a new temp wave and copy there the original one, skipping the a-b
+	/* Create a new temp wave and copy there the original one, skipping the a-b
     range. */
 
-    int newSize = w.getSize() - (b - a);
+	int newSize = w.getSize() - (b - a);
 
-    AudioBuffer newData;
-    newData.alloc(newSize, w.getChannels());
+	AudioBuffer newData;
+	newData.alloc(newSize, w.getChannels());
 
-    u::log::print("[wfx::cut] cutting from %d to %d\n", a, b);
+	u::log::print("[wfx::cut] cutting from %d to %d\n", a, b);
 
-    for (int i = 0, k = 0; i < w.getSize(); i++) {
-        if (i < a || i >= b) {
-            for (int j = 0; j < w.getChannels(); j++)
-                newData[k][j] = w[i][j];
-            k++;
-        }
-    }
+	for (int i = 0, k = 0; i < w.getSize(); i++)
+	{
+		if (i < a || i >= b)
+		{
+			for (int j = 0; j < w.getChannels(); j++)
+				newData[k][j] = w[i][j];
+			k++;
+		}
+	}
 
-    w.replaceData(std::move(newData));
-    w.setEdited(true);
+	w.replaceData(std::move(newData));
+	w.setEdited(true);
 }
-
 
 /* -------------------------------------------------------------------------- */
 
-
 void trim(Wave& w, Frame a, Frame b)
 {
-	if (a < 0) a = 0;
-	if (b > w.getSize()) b = w.getSize();
+	if (a < 0)
+		a = 0;
+	if (b > w.getSize())
+		b = w.getSize();
 
 	Frame newSize = b - a;
 
 	AudioBuffer newData;
 	newData.alloc(newSize, w.getChannels());
 
-	u::log::print("[wfx::trim] trimming from %d to %d (area = %d)\n", a, b, b-a);
+	u::log::print("[wfx::trim] trimming from %d to %d (area = %d)\n", a, b, b - a);
 
 	for (int i = 0; i < newData.countFrames(); i++)
 		for (int j = 0; j < newData.countChannels(); j++)
-			newData[i][j] = w[i+a][j];
+			newData[i][j] = w[i + a][j];
 
-    w.replaceData(std::move(newData));
+	w.replaceData(std::move(newData));
 	w.setEdited(true);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void paste(const Wave& src, Wave& des, Frame a)
 {
@@ -192,52 +183,47 @@ void paste(const Wave& src, Wave& des, Frame a)
 	newData.copyData(src[0], src.getSize(), a);
 	newData.copyData(des[a], des.getSize() - a, src.getSize() + a);
 
-    des.replaceData(std::move(newData));
+	des.replaceData(std::move(newData));
 	des.setEdited(true);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void fade(Wave& w, int a, int b, Fade type)
 {
-	u::log::print("[wfx::fade] fade from %d to %d (range = %d)\n", a, b, b-a);
+	u::log::print("[wfx::fade] fade from %d to %d (range = %d)\n", a, b, b - a);
 
 	float m = 0.0f;
-	float d = 1.0f / (float) (b - a);
+	float d = 1.0f / (float)(b - a);
 
 	if (type == Fade::IN)
 		for (int i = a; i <= b; i++, m += d)
 			fadeFrame_(w, i, m);
 	else
 		for (int i = b; i >= a; i--, m += d)
-			fadeFrame_(w, i, m);		
-	
+			fadeFrame_(w, i, m);
+
 	w.setEdited(true);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void smooth(Wave& w, int a, int b)
 {
 	/* Do nothing if fade edges (both of SMOOTH_SIZE samples) are > than selected 
 	portion of wave. SMOOTH_SIZE*2 to count both edges. */
 
-	if (SMOOTH_SIZE*2 > (b-a)) {
+	if (SMOOTH_SIZE * 2 > (b - a))
+	{
 		u::log::print("[wfx::smooth] selection is too small, nothing to do\n");
 		return;
 	}
 
-	fade(w, a, a+SMOOTH_SIZE, Fade::IN);
-	fade(w, b-SMOOTH_SIZE, b, Fade::OUT);
+	fade(w, a, a + SMOOTH_SIZE, Fade::IN);
+	fade(w, b - SMOOTH_SIZE, b, Fade::OUT);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void shift(Wave& w, Frame offset)
 {
@@ -251,9 +237,7 @@ void shift(Wave& w, Frame offset)
 	w.setEdited(true);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void reverse(Wave& w, Frame a, Frame b)
 {
@@ -265,4 +249,4 @@ void reverse(Wave& w, Frame a, Frame b)
 
 	w.setEdited(true);
 }
-} // giada::m::wfx::
+} // namespace giada::m::wfx

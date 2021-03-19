@@ -26,18 +26,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-
+#include "time.h"
 #include <chrono>
 #include <thread>
-#include "time.h"
 
-
-namespace giada {
-namespace u     {
-namespace time 
+namespace giada
+{
+namespace u
+{
+namespace time
 {
 void sleep(int millisecs)
 {
 	std::this_thread::sleep_for(std::chrono::milliseconds(millisecs));
 }
-}}}  // giada::u::time::
+} // namespace time
+} // namespace u
+} // namespace giada

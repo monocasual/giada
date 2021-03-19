@@ -24,33 +24,34 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef G_CHANNEL_MIDI_SENDER_H
 #define G_CHANNEL_MIDI_SENDER_H
 
-
-namespace giada::m::channel { struct Data; }
+namespace giada::m::channel
+{
+struct Data;
+}
 namespace giada::m::midiSender
 {
 struct Data
 {
-    Data() = default;
-    Data(const patch::Channel& p);
-    Data(const Data& o) = default;
+	Data() = default;
+	Data(const patch::Channel& p);
+	Data(const Data& o) = default;
 
-    /* enabled
+	/* enabled
     Tells whether MIDI output is enabled or not. */
-    
+
 	bool enabled;
 
-    /* filter
+	/* filter
     Which MIDI channel data should be sent to. */
-    
-    int filter;
+
+	int filter;
 };
 
-void react  (const channel::Data& ch, const eventDispatcher::Event& e);
+void react(const channel::Data& ch, const eventDispatcher::Event& e);
 void advance(const channel::Data& ch, const sequencer::Event& e);
-}
+} // namespace giada::m::midiSender
 
 #endif

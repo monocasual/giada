@@ -24,32 +24,27 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GD_ABOUT_H
 #define GD_ABOUT_H
 
-
 #include "window.h"
-
 
 class geBox;
 class geButton;
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 class gdAbout : public gdWindow
 {
-public:
+  public:
+	gdAbout();
 
-    gdAbout();
+	static void cb_close(Fl_Widget* /*w*/, void* p);
+	inline void cb_close();
 
-    static void cb_close(Fl_Widget* /*w*/, void* p);
-    inline void cb_close();
-
-private:
-
+  private:
 	geBox*    logo;
 	geBox*    text;
 	geButton* close;
@@ -59,7 +54,7 @@ private:
 	geBox* vstLogo;
 #endif
 };
-}} // giada::v::
-
+} // namespace v
+} // namespace giada
 
 #endif

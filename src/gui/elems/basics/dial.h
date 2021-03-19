@@ -24,22 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_DIAL_H
 #define GE_DIAL_H
 
-
 #include <FL/Fl_Dial.H>
-
 
 class geDial : public Fl_Dial
 {
-public:
-
-	geDial(int x, int y, int w, int h, const char *l=0);
+  public:
+	geDial(int x, int y, int w, int h, const char* l = 0);
 
 	void draw();
 };
-
 
 #endif

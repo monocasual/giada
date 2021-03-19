@@ -24,22 +24,21 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#include <cstdint>
-#include <FL/Fl_Menu_Item.H>
-#include <FL/Fl_Menu_Button.H>
+#include "waveTools.h"
+#include "core/const.h"
 #include "core/model/model.h"
 #include "core/waveFx.h"
-#include "core/const.h"
 #include "glue/sampleEditor.h"
-#include "gui/elems/basics/boxtypes.h"
 #include "gui/dialogs/sampleEditor.h"
+#include "gui/elems/basics/boxtypes.h"
 #include "waveform.h"
-#include "waveTools.h"
+#include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Menu_Item.H>
+#include <cstdint>
 
-
-namespace giada {
-namespace v 
+namespace giada
+{
+namespace v
 {
 namespace
 {
@@ -59,70 +58,67 @@ enum class Menu
 	TO_NEW_CHANNEL
 };
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void menuCallback_(Fl_Widget* w, void* v)
 {
 	const geWaveTools* wt = static_cast<geWaveTools*>(w);
-	
+
 	ID   channelId    = wt->getChannelData().channelId;
-	Menu selectedItem = (Menu) (intptr_t) v;
+	Menu selectedItem = (Menu)(intptr_t)v;
 
 	Frame a = wt->waveform->getSelectionA();
 	Frame b = wt->waveform->getSelectionB();
 
-	switch (selectedItem) {
-		case Menu::CUT:
-			c::sampleEditor::cut(channelId, a, b);
-			break;		
-		case Menu::COPY:
-			c::sampleEditor::copy(channelId, a, b);
-			break;		
-		case Menu::PASTE:
-			c::sampleEditor::paste(channelId, a);
-			break;
-		case Menu::TRIM:
-			c::sampleEditor::trim(channelId, a, b);
-			break;
-		case Menu::SILENCE:
-			c::sampleEditor::silence(channelId, a, b);
-			break;	  
-		case Menu::REVERSE:
-			c::sampleEditor::reverse(channelId, a, b);
-			break;			
-		case Menu::NORMALIZE:
-			c::sampleEditor::normalize(channelId, a, b);
-			break;	
-		case Menu::FADE_IN:
-			c::sampleEditor::fade(channelId, a, b, m::wfx::Fade::IN);
-			break;
-		case Menu::FADE_OUT:
-			c::sampleEditor::fade(channelId, a, b, m::wfx::Fade::OUT);
-			break;
-		case Menu::SMOOTH_EDGES:
-			c::sampleEditor::smoothEdges(channelId, a, b);
-			break;
-		case Menu::SET_BEGIN_END:
-			c::sampleEditor::setBeginEnd(channelId, a, b);
-			break;		
-		case Menu::TO_NEW_CHANNEL:
-			c::sampleEditor::toNewChannel(channelId, a, b);
-			break;
+	switch (selectedItem)
+	{
+	case Menu::CUT:
+		c::sampleEditor::cut(channelId, a, b);
+		break;
+	case Menu::COPY:
+		c::sampleEditor::copy(channelId, a, b);
+		break;
+	case Menu::PASTE:
+		c::sampleEditor::paste(channelId, a);
+		break;
+	case Menu::TRIM:
+		c::sampleEditor::trim(channelId, a, b);
+		break;
+	case Menu::SILENCE:
+		c::sampleEditor::silence(channelId, a, b);
+		break;
+	case Menu::REVERSE:
+		c::sampleEditor::reverse(channelId, a, b);
+		break;
+	case Menu::NORMALIZE:
+		c::sampleEditor::normalize(channelId, a, b);
+		break;
+	case Menu::FADE_IN:
+		c::sampleEditor::fade(channelId, a, b, m::wfx::Fade::IN);
+		break;
+	case Menu::FADE_OUT:
+		c::sampleEditor::fade(channelId, a, b, m::wfx::Fade::OUT);
+		break;
+	case Menu::SMOOTH_EDGES:
+		c::sampleEditor::smoothEdges(channelId, a, b);
+		break;
+	case Menu::SET_BEGIN_END:
+		c::sampleEditor::setBeginEnd(channelId, a, b);
+		break;
+	case Menu::TO_NEW_CHANNEL:
+		c::sampleEditor::toNewChannel(channelId, a, b);
+		break;
 	}
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 geWaveTools::geWaveTools(int x, int y, int w, int h)
 : Fl_Scroll(x, y, w, h, nullptr)
-, m_data   (nullptr)
+, m_data(nullptr)
 {
 	type(Fl_Scroll::HORIZONTAL_ALWAYS);
 	hscrollbar.color(G_COLOR_GREY_2);
@@ -130,13 +126,10 @@ geWaveTools::geWaveTools(int x, int y, int w, int h)
 	hscrollbar.labelcolor(G_COLOR_LIGHT_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-	waveform = new v::geWaveform(x, y, w, h-24);
+	waveform = new v::geWaveform(x, y, w, h - 24);
 }
 
-
-
 /* -------------------------------------------------------------------------- */
-
 
 void geWaveTools::rebuild(const c::sampleEditor::Data& d)
 {
@@ -144,9 +137,7 @@ void geWaveTools::rebuild(const c::sampleEditor::Data& d)
 	waveform->rebuild(d);
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geWaveTools::refresh()
 {
@@ -154,16 +145,15 @@ void geWaveTools::refresh()
 		waveform->redraw();
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geWaveTools::resize(int x, int y, int w, int h)
 {
 	Fl_Widget::resize(x, y, w, h);
 
-	if (this->w() == w || (this->w() != w && this->h() != h)) {   // vertical or both resize
-		waveform->resize(x, y, waveform->w(), h-24);
+	if (this->w() == w || (this->w() != w && this->h() != h))
+	{ // vertical or both resize
+		waveform->resize(x, y, waveform->w(), h - 24);
 		waveform->rebuild(*m_data);
 	}
 
@@ -172,67 +162,67 @@ void geWaveTools::resize(int x, int y, int w, int h)
 
 	int offset = waveform->x() + waveform->w() - this->w() - this->x();
 	if (offset < 0)
-		waveform->position(waveform->x()-offset, this->y());
+		waveform->position(waveform->x() - offset, this->y());
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 int geWaveTools::handle(int e)
 {
-	switch (e) {
-		case FL_MOUSEWHEEL: {
-			waveform->setZoom(Fl::event_dy() == 1 ? geWaveform::Zoom::OUT : geWaveform::Zoom::IN);
-			redraw();
+	switch (e)
+	{
+	case FL_MOUSEWHEEL:
+	{
+		waveform->setZoom(Fl::event_dy() == 1 ? geWaveform::Zoom::OUT : geWaveform::Zoom::IN);
+		redraw();
+		return 1;
+	}
+	case FL_PUSH:
+	{
+		if (Fl::event_button3())
+		{ // right button
+			openMenu();
 			return 1;
 		}
-		case FL_PUSH: {
-			if (Fl::event_button3()) {  // right button
-				openMenu();
-				return 1;
-			}
-			Fl::focus(waveform);
-		}
-		default:
-			return Fl_Group::handle(e);
+		Fl::focus(waveform);
+	}
+	default:
+		return Fl_Group::handle(e);
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void geWaveTools::openMenu()
 {
 	Fl_Menu_Item menu[] = {
-		{"Cut",                 0, menuCallback_, (void*) Menu::CUT},
-		{"Copy",                0, menuCallback_, (void*) Menu::COPY},
-		{"Paste",               0, menuCallback_, (void*) Menu::PASTE},
-		{"Trim",                0, menuCallback_, (void*) Menu::TRIM},
-		{"Silence",             0, menuCallback_, (void*) Menu::SILENCE},
-		{"Reverse",             0, menuCallback_, (void*) Menu::REVERSE},
-		{"Normalize",           0, menuCallback_, (void*) Menu::NORMALIZE},
-		{"Fade in",             0, menuCallback_, (void*) Menu::FADE_IN},
-		{"Fade out",            0, menuCallback_, (void*) Menu::FADE_OUT},
-		{"Smooth edges",        0, menuCallback_, (void*) Menu::SMOOTH_EDGES},
-		{"Set begin/end here",  0, menuCallback_, (void*) Menu::SET_BEGIN_END},
-		{"Copy to new channel", 0, menuCallback_, (void*) Menu::TO_NEW_CHANNEL},
-		{0}
-	};
+	    {"Cut", 0, menuCallback_, (void*)Menu::CUT},
+	    {"Copy", 0, menuCallback_, (void*)Menu::COPY},
+	    {"Paste", 0, menuCallback_, (void*)Menu::PASTE},
+	    {"Trim", 0, menuCallback_, (void*)Menu::TRIM},
+	    {"Silence", 0, menuCallback_, (void*)Menu::SILENCE},
+	    {"Reverse", 0, menuCallback_, (void*)Menu::REVERSE},
+	    {"Normalize", 0, menuCallback_, (void*)Menu::NORMALIZE},
+	    {"Fade in", 0, menuCallback_, (void*)Menu::FADE_IN},
+	    {"Fade out", 0, menuCallback_, (void*)Menu::FADE_OUT},
+	    {"Smooth edges", 0, menuCallback_, (void*)Menu::SMOOTH_EDGES},
+	    {"Set begin/end here", 0, menuCallback_, (void*)Menu::SET_BEGIN_END},
+	    {"Copy to new channel", 0, menuCallback_, (void*)Menu::TO_NEW_CHANNEL},
+	    {0}};
 
-	if (!waveform->isSelected()) {
+	if (!waveform->isSelected())
+	{
 		menu[(int)Menu::CUT].deactivate();
-		menu[(int)Menu::COPY].deactivate();		
-		menu[(int)Menu::TRIM].deactivate();		
-		menu[(int)Menu::SILENCE].deactivate();		
-		menu[(int)Menu::REVERSE].deactivate();		
-		menu[(int)Menu::NORMALIZE].deactivate();		
-		menu[(int)Menu::FADE_IN].deactivate();		
-		menu[(int)Menu::FADE_OUT].deactivate();		
-		menu[(int)Menu::SMOOTH_EDGES].deactivate();		
-		menu[(int)Menu::SET_BEGIN_END].deactivate();		
-		menu[(int)Menu::TO_NEW_CHANNEL].deactivate();		
+		menu[(int)Menu::COPY].deactivate();
+		menu[(int)Menu::TRIM].deactivate();
+		menu[(int)Menu::SILENCE].deactivate();
+		menu[(int)Menu::REVERSE].deactivate();
+		menu[(int)Menu::NORMALIZE].deactivate();
+		menu[(int)Menu::FADE_IN].deactivate();
+		menu[(int)Menu::FADE_OUT].deactivate();
+		menu[(int)Menu::SMOOTH_EDGES].deactivate();
+		menu[(int)Menu::SET_BEGIN_END].deactivate();
+		menu[(int)Menu::TO_NEW_CHANNEL].deactivate();
 	}
 
 	Fl_Menu_Button b(0, 0, 100, 50);
@@ -248,4 +238,5 @@ void geWaveTools::openMenu()
 	return;
 }
 
-}} // giada::v::
+} // namespace v
+} // namespace giada

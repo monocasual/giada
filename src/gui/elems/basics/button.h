@@ -27,37 +27,31 @@
  *
  * -------------------------------------------------------------------------- */
 
-
 #ifndef GE_BUTTON_H
 #define GE_BUTTON_H
 
-
 #include <FL/Fl_Button.H>
-
 
 class geButton : public Fl_Button
 {
-public:
-
-	geButton(int x, int y, int w, int h, const char* l=nullptr,
-		const char** imgOff=nullptr, const char** imgOn=nullptr, 
-		const char** imgDisabled=nullptr);
+  public:
+	geButton(int x, int y, int w, int h, const char* l = nullptr,
+	    const char** imgOff = nullptr, const char** imgOn = nullptr,
+	    const char** imgDisabled = nullptr);
 
 	void draw() override;
 
-protected:
-
+  protected:
 	void draw(const char** img, Fl_Color bgColor, Fl_Color textColor);
 
 	const char** imgOff;
 	const char** imgOn;
 	const char** imgDisabled;
 
-	Fl_Color bgColor0;   // background not clicked
-	Fl_Color bgColor1;   // background clicked
-	Fl_Color bdColor;    // border
-	Fl_Color txtColor;	 // text
+	Fl_Color bgColor0; // background not clicked
+	Fl_Color bgColor1; // background clicked
+	Fl_Color bdColor;  // border
+	Fl_Color txtColor; // text
 };
-
 
 #endif
