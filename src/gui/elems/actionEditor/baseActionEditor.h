@@ -28,15 +28,17 @@
 #ifndef GE_BASE_ACTION_EDITOR_H
 #define GE_BASE_ACTION_EDITOR_H
 
+#include "core/types.h"
 #include <FL/Fl_Group.H>
 
-namespace giada
+namespace giada::c::actionEditor
 {
-namespace v
+struct Data;
+}
+namespace giada::v
 {
 class gdBaseActionEditor;
 class geBaseAction;
-
 class geBaseActionEditor : public Fl_Group
 {
   public:
@@ -92,7 +94,6 @@ class geBaseActionEditor : public Fl_Group
 	int drag();
 	int release();
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

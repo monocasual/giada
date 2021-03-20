@@ -28,12 +28,15 @@
 #define GE_WAVEFORM_H
 
 #include "core/const.h"
+#include "core/types.h"
 #include <FL/Fl_Widget.H>
 #include <vector>
 
-namespace giada
+namespace giada::c::sampleEditor
 {
-namespace v
+struct Data;
+}
+namespace giada::v
 {
 class geWaveform : public Fl_Widget
 {
@@ -202,7 +205,6 @@ class geWaveform : public Fl_Widget
 	int   m_mouseX;
 	int   m_mouseY;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

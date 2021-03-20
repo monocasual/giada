@@ -33,6 +33,7 @@
 namespace giada::m
 {
 class Wave;
+class AudioBuffer;
 class WaveReader final
 {
   public:

@@ -32,6 +32,7 @@
 #ifndef GD_PLUGIN_WINDOW_GUI_H
 #define GD_PLUGIN_WINDOW_GUI_H
 
+#include "deps/juce-config.h"
 #include "window.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>

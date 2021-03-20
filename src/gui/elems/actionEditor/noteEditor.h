@@ -27,11 +27,14 @@
 #ifndef GE_NOTE_EDITOR_H
 #define GE_NOTE_EDITOR_H
 
+#include "core/types.h"
 #include "gui/elems/basics/scroll.h"
 
-namespace giada
+namespace giada::c::actionEditor
 {
-namespace v
+struct Data;
+}
+namespace giada::v
 {
 class gdMidiActionEditor;
 class gePianoRoll;
@@ -49,7 +52,6 @@ class geNoteEditor : public geScroll
   private:
 	gdMidiActionEditor* m_base;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

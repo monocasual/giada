@@ -33,9 +33,11 @@
 #include "gui/elems/basics/input.h"
 #include "gui/elems/basics/pack.h"
 
-namespace giada
+namespace giada::c::sampleEditor
 {
-namespace v
+struct Data;
+}
+namespace giada::v
 {
 class gePitchTool : public gePack
 {
@@ -72,7 +74,6 @@ class gePitchTool : public gePack
 	geButton m_pitchDouble;
 	geButton m_pitchReset;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

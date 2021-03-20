@@ -32,9 +32,11 @@
 class geInput;
 class geButton;
 
-namespace giada
+namespace giada::c::channel
 {
-namespace v
+struct Data;
+}
+namespace giada::v
 {
 class gdChannelNameInput : public gdWindow
 {
@@ -53,7 +55,6 @@ class gdChannelNameInput : public gdWindow
 	geButton* m_ok;
 	geButton* m_cancel;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

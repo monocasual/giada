@@ -30,12 +30,9 @@
 #include "channel.h"
 #include "glue/channel.h"
 
+namespace giada::v
+{
 class geStatusButton;
-
-namespace giada
-{
-namespace v
-{
 class geChannelMode;
 class geSampleChannel : public geChannel
 {
@@ -58,7 +55,6 @@ class geSampleChannel : public geChannel
 	void        cb_openMenu();
 	void        cb_readActions();
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

@@ -31,17 +31,17 @@
 #include "glue/channel.h"
 #include <FL/Fl_Group.H>
 
-class geChannelStatus;
 class geButton;
 class geDial;
-class geStatusButton;
 
 namespace giada::v
 {
+class geChannelStatus;
+class geStatusButton;
 class geChannelButton;
 class geChannel : public Fl_Group
 {
-  public:
+public:
 	geChannel(int x, int y, int w, int h, c::channel::Data d);
 
 	void draw() override;
@@ -78,7 +78,7 @@ class geChannel : public Fl_Group
 	geStatusButton* fx;
 #endif
 
-  protected:
+protected:
 	/* Define some breakpoints for dynamic resize. BREAK_DELTA: base amount of
 	pixels to shrink sampleButton. */
 

@@ -27,14 +27,17 @@
 #ifndef GE_RANGE_TOOL_H
 #define GE_RANGE_TOOL_H
 
+#include "core/types.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/input.h"
 #include "gui/elems/basics/pack.h"
 
-namespace giada
+namespace giada::c::sampleEditor
 {
-namespace v
+struct Data;
+}
+namespace giada::v
 {
 class geRangeTool : public gePack
 {
@@ -57,7 +60,6 @@ class geRangeTool : public gePack
 	geInput  m_end;
 	geButton m_reset;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

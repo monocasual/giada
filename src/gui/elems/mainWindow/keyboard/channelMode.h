@@ -31,9 +31,11 @@
 
 #include <FL/Fl_Menu_Button.H>
 
-namespace giada
+namespace giada::c::channel
 {
-namespace v
+struct Data;
+}
+namespace giada::v
 {
 class geChannelMode : public Fl_Menu_Button
 {
@@ -48,7 +50,6 @@ class geChannelMode : public Fl_Menu_Button
 
 	c::channel::Data& m_channel;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

@@ -31,28 +31,22 @@
 
 #include <FL/Fl_Box.H>
 
-namespace giada
-{
-namespace c
-{
-namespace channel
+namespace giada::c::channel
 {
 struct Data;
 }
-} // namespace c
-namespace v
+namespace giada::v
 {
 class geChannelStatus : public Fl_Box
 {
-  public:
+public:
 	geChannelStatus(int x, int y, int w, int h, c::channel::Data& d);
 
 	void draw() override;
 
-  private:
+private:
 	c::channel::Data& m_channel;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

@@ -27,7 +27,9 @@
 #ifndef G_RECORDER_HANDLER_H
 #define G_RECORDER_HANDLER_H
 
-#include "midiEvent.h"
+#include "core/midiEvent.h"
+#include "core/recorder.h"
+#include "core/types.h"
 #include <unordered_set>
 
 namespace giada

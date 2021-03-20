@@ -29,15 +29,15 @@
 #include <FL/Fl.H>
 #ifdef WITH_TESTS
 #define CATCH_CONFIG_RUNNER
-#include <vector>
-#include <string>
-#include <catch2/catch.hpp>
 #include "tests/audioBuffer.cpp"
 #include "tests/recorder.cpp"
 #include "tests/utils.cpp"
 #include "tests/wave.cpp"
 #include "tests/waveFx.cpp"
 #include "tests/waveManager.cpp"
+#include <catch2/catch.hpp>
+#include <string>
+#include <vector>
 #endif
 
 class giada::v::gdMainWindow* G_MainWin = nullptr;

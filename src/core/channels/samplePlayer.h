@@ -37,6 +37,10 @@ namespace giada::m::channel
 {
 struct Data;
 }
+namespace giada::m::patch
+{
+struct Channel;
+}
 namespace giada::m::samplePlayer
 {
 struct Data

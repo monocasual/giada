@@ -30,21 +30,13 @@
 #define GE_PLUGIN_PARAMETER_H
 
 #include "core/types.h"
+#include "glue/plugin.h"
 #include <FL/Fl_Group.H>
 
 class geBox;
 class geSlider;
 
-namespace giada
-{
-namespace c
-{
-namespace plugin
-{
-struct Param;
-}
-} // namespace c
-namespace v
+namespace giada::v
 {
 class gePluginParameter : public Fl_Group
 {
@@ -63,8 +55,7 @@ class gePluginParameter : public Fl_Group
 	geSlider* m_slider;
 	geBox*    m_value;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif
 

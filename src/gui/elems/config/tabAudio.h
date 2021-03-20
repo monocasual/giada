@@ -33,9 +33,7 @@ class geCheck;
 class geButton;
 class geInput;
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geChoice;
 class geTabAudio : public Fl_Group
@@ -77,7 +75,6 @@ class geTabAudio : public Fl_Group
 
 	int soundsysInitValue;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

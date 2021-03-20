@@ -33,7 +33,6 @@
 
 class Fl_Group;
 class geCheck;
-class geBrowser;
 class geButton;
 class geInput;
 class geProgress;
@@ -46,6 +45,7 @@ class Channel;
 }
 namespace v
 {
+class geBrowser;
 class gdBrowserBase : public gdWindow
 {
   public:

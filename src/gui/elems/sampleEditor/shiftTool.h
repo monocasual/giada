@@ -27,14 +27,17 @@
 #ifndef GE_SHIFT_TOOL_H
 #define GE_SHIFT_TOOL_H
 
+#include "core/types.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/input.h"
 #include "gui/elems/basics/pack.h"
 
-namespace giada
+namespace giada::c::sampleEditor
 {
-namespace v
+struct Data;
+}
+namespace giada::v
 {
 class geShiftTool : public gePack
 {
@@ -58,7 +61,6 @@ class geShiftTool : public gePack
 	geInput  m_shift;
 	geButton m_reset;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

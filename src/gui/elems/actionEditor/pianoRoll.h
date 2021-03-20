@@ -30,13 +30,12 @@
 #include "baseActionEditor.h"
 #include <FL/fl_draw.H>
 
-namespace giada
-{
-namespace m
+namespace giada::m
 {
 class MidiChannel;
-}
-namespace v
+class Action;
+} // namespace giada::m
+namespace giada::v
 {
 class gePianoRoll : public geBaseActionEditor
 {
@@ -98,7 +97,6 @@ class gePianoRoll : public geBaseActionEditor
 	Pixel noteToY(int n) const;
 	Pixel getPianoItemW(Pixel x, const m::Action& a1, const m::Action& a2) const;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

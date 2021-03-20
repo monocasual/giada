@@ -29,9 +29,11 @@
 
 #include <FL/Fl_Scroll.H>
 
-namespace giada
+namespace giada::c::sampleEditor
 {
-namespace v
+struct Data;
+}
+namespace giada::v
 {
 class geWaveform;
 class geWaveTools : public Fl_Scroll
@@ -64,7 +66,6 @@ class geWaveTools : public Fl_Scroll
 
 	const c::sampleEditor::Data* m_data;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

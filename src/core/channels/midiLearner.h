@@ -29,6 +29,10 @@
 
 #include "core/midiLearnParam.h"
 
+namespace giada::m::patch
+{
+struct Channel;
+}
 namespace giada::m::midiLearner
 {
 struct Data

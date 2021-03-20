@@ -32,6 +32,8 @@
 
 #include "button.h"
 
+namespace giada::v
+{
 class geStatusButton : public geButton
 {
   public:
@@ -47,5 +49,6 @@ class geStatusButton : public geButton
   private:
 	bool m_status;
 };
+} // namespace giada::v
 
 #endif

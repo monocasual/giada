@@ -29,13 +29,6 @@
 
 #include "window.h"
 
-class geTabAudio;
-class geTabBehaviors;
-class geTabMidi;
-class geTabMisc;
-#ifdef WITH_VST
-class geTabPlugins;
-#endif
 class geButton;
 class geCheck;
 class geInput;
@@ -46,6 +39,13 @@ namespace giada
 namespace v
 {
 class geChoice;
+class geTabAudio;
+class geTabBehaviors;
+class geTabMidi;
+class geTabMisc;
+#ifdef WITH_VST
+class geTabPlugins;
+#endif
 class gdConfig : public gdWindow
 {
   public:

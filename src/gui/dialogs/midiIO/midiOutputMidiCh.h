@@ -35,6 +35,7 @@ namespace giada
 {
 namespace v
 {
+class geChoice;
 class gdMidiOutputMidiCh : public gdMidiOutputBase
 {
   public:

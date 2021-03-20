@@ -27,9 +27,19 @@
 #ifndef G_CHANNEL_MIDI_LIGHTER_H
 #define G_CHANNEL_MIDI_LIGHTER_H
 
+#include "core/midiLearnParam.h"
+
 namespace giada::m::channel
 {
 struct Data;
+}
+namespace giada::m::patch
+{
+struct Channel;
+}
+namespace giada::m::eventDispatcher
+{
+struct Event;
 }
 namespace giada::m::midiLighter
 {

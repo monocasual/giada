@@ -29,6 +29,7 @@
 #ifndef GD_PLUGIN_CHOOSER_H
 #define GD_PLUGIN_CHOOSER_H
 
+#include "core/types.h"
 #include "window.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>

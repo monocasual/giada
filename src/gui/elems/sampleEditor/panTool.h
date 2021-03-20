@@ -33,9 +33,11 @@
 #include "gui/elems/basics/input.h"
 #include "gui/elems/basics/pack.h"
 
-namespace giada
+namespace giada::c::sampleEditor
 {
-namespace v
+struct Data;
+}
+namespace giada::v
 {
 class gePanTool : public gePack
 {
@@ -58,7 +60,6 @@ class gePanTool : public gePack
 	geInput  m_input;
 	geButton m_reset;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

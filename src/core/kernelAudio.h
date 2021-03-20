@@ -29,8 +29,8 @@
 
 #include <string>
 #ifdef WITH_AUDIO_JACK
-#include <jack/jack.h>
 #include <jack/intclient.h>
+#include <jack/jack.h>
 #include <jack/transport.h>
 #endif
 

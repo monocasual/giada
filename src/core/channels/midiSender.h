@@ -31,6 +31,18 @@ namespace giada::m::channel
 {
 struct Data;
 }
+namespace giada::m::patch
+{
+struct Channel;
+}
+namespace giada::m::eventDispatcher
+{
+struct Event;
+}
+namespace giada::m::sequencer
+{
+struct Event;
+}
 namespace giada::m::midiSender
 {
 struct Data

@@ -31,13 +31,11 @@
 #include "core/types.h"
 #include <FL/Fl_Box.H>
 
-namespace giada
-{
-namespace m
+namespace giada::m
 {
 struct Action;
 }
-namespace v
+namespace giada::v
 {
 class geBaseAction : public Fl_Box
 {
@@ -72,7 +70,6 @@ class geBaseAction : public Fl_Box
   protected:
 	bool m_resizable;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

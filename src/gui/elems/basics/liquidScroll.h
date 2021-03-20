@@ -32,6 +32,7 @@
 #ifndef GE_LIQUID_SCROLL_H
 #define GE_LIQUID_SCROLL_H
 
+#include "core/const.h"
 #include "scroll.h"
 
 class geLiquidScroll : public geScroll

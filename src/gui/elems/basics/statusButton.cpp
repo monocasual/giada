@@ -31,6 +31,8 @@
 #include "core/const.h"
 #include <FL/fl_draw.H>
 
+namespace giada::v
+{
 geStatusButton::geStatusButton(int x, int y, int w, int h, const char** imgOff,
     const char** imgOn, const char** imgDisabled)
 : geButton(x, y, w, h, "", imgOff, imgOn, imgDisabled)
@@ -63,3 +65,4 @@ bool geStatusButton::getStatus() const
 {
 	return m_status;
 }
+} // namespace giada::v

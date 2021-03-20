@@ -29,9 +29,7 @@
 #include "glue/channel.h"
 #include <FL/fl_draw.H>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geChannelStatus::geChannelStatus(int x, int y, int w, int h, c::channel::Data& d)
 : Fl_Box(x, y, w, h)
@@ -73,6 +71,4 @@ void geChannelStatus::draw()
 	if (pos != 0)
 		fl_rectf(x() + 1, y() + 1, pos, h() - 2, G_COLOR_LIGHT_1);
 }
-
-} // namespace v
-} // namespace giada
+} // namespace giada::v
