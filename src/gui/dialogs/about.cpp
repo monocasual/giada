@@ -38,9 +38,7 @@
 #include "utils/gui.h"
 #include "utils/string.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 gdAbout::gdAbout()
 #ifdef WITH_VST
@@ -48,46 +46,45 @@ gdAbout::gdAbout()
 #else
 : gdWindow(340, 330, "About Giada")
 #endif
-{
-	set_modal();
-
-	logo  = new geBox(8, 20, 324, 86);
-	text  = new geBox(8, 120, 324, 140);
-	close = new geButton(252, h() - 28, 80, 20, "Close");
+, logo(8, 20, 324, 86)
+, text(8, 120, 324, 140)
+, close(252, h() - 28, 80, 20, "Close")
 #ifdef WITH_VST
-	vstLogo = new geBox(8, 265, 324, 50);
-	vstText = new geBox(8, 315, 324, 46);
+, vstLogo(8, 265, 324, 50)
+, vstText(8, 315, 324, 46)
 #endif
+{
 	end();
+	set_modal();
 
 	std::string version = G_VERSION_STR;
 #ifdef G_DEBUG_MODE
 	version += " (debug build)";
 #endif
 
-	logo->image(new Fl_Pixmap(giada_logo_xpm));
-	text->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-	text->copy_label(std::string(
+	logo.image(new Fl_Pixmap(giada_logo_xpm));
+	text.align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
+	text.copy_label(std::string(
 	    "Version " + version + " (" BUILD_DATE ")\n\n"
 	                           "Developed by Monocasual Laboratories\n\n"
 	                           "Released under the terms of the GNU General\n"
 	                           "Public License (GPL v3)\n\n"
 	                           "News, infos, contacts and documentation:\n"
 	                           "www.giadamusic.com")
-	                     .c_str());
+	                    .c_str());
 
 #ifdef WITH_VST
 
-	vstLogo->image(new Fl_Pixmap(vstLogo_xpm));
-	vstLogo->position(vstLogo->x(), text->y() + text->h() + 8);
-	vstText->label(
+	vstLogo.image(new Fl_Pixmap(vstLogo_xpm));
+	vstLogo.position(vstLogo.x(), text.y() + text.h() + 8);
+	vstText.label(
 	    "VST Plug-In Technology by Steinberg\n"
 	    "VST is a trademark of Steinberg\nMedia Technologies GmbH");
-	vstText->position(vstText->x(), vstLogo->y() + vstLogo->h());
+	vstText.position(vstText.x(), vstLogo.y() + vstLogo.h());
 
 #endif
 
-	close->callback(cb_close, (void*)this);
+	close.callback(cb_close, (void*)this);
 	u::gui::setFavicon(this);
 	setId(WID_ABOUT);
 	show();
@@ -103,6 +100,4 @@ void gdAbout::cb_close()
 {
 	do_callback();
 }
-
-} // namespace v
-} // namespace giada
+} // namespace giada::v
