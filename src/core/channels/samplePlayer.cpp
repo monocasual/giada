@@ -170,17 +170,22 @@ void render(const channel::Data& ch)
 	if (!isPlaying_(ch))
 		return;
 
-	Frame tracker = ch.state->tracker.load();
+	const Frame begin = ch.samplePlayer->begin;
+	const Frame end   = ch.samplePlayer->end;
+
+	/* Make sure tracker stays within begin-end range. */
+
+	Frame tracker = std::clamp(ch.state->tracker.load(), begin, end);
 
 	/* If rewinding, fill the tail first, then reset the tracker to the begin
     point. The rest is performed as usual. */
 
 	if (ch.state->rewinding)
 	{
-		if (tracker < ch.samplePlayer->end)
+		if (tracker < end)
 			fillBuffer_(ch, tracker, 0);
 		ch.state->rewinding = false;
-		tracker             = ch.samplePlayer->begin;
+		tracker             = begin;
 	}
 
 	WaveReader::Result res = fillBuffer_(ch, tracker, ch.state->offset);
@@ -190,9 +195,9 @@ void render(const channel::Data& ch)
     channel is in loop mode, fill the second part of the buffer with data
     coming from the sample's head. */
 
-	if (tracker >= ch.samplePlayer->end)
+	if (tracker >= end)
 	{
-		tracker = ch.samplePlayer->begin;
+		tracker = begin;
 		sampleAdvancer::onLastFrame(ch); // TODO - better moving this to samplerAdvancer::advance
 		if (shouldLoop_(ch))
 			tracker += fillBuffer_(ch, tracker, res.generated - 1).used;
