@@ -98,9 +98,8 @@ void onBar_(const channel::Data& ch, Frame localFrame)
 {
 	G_DEBUG("onBar ch=" << ch.id << ", localFrame=" << localFrame);
 
-	ChannelStatus playStatus = ch.state->playStatus.load();
-	;
-	SamplePlayerMode mode = ch.samplePlayer->mode;
+	ChannelStatus    playStatus = ch.state->playStatus.load();
+	SamplePlayerMode mode       = ch.samplePlayer->mode;
 
 	if (playStatus == ChannelStatus::PLAY && (mode == SamplePlayerMode::LOOP_REPEAT ||
 	                                             mode == SamplePlayerMode::LOOP_ONCE_BAR))
@@ -122,7 +121,7 @@ void onNoteOn_(const channel::Data& ch, Frame localFrame)
 	else if (playStatus == ChannelStatus::PLAY)
 	{
 		if (ch.samplePlayer->mode == SamplePlayerMode::SINGLE_RETRIG)
-			ch.state->tracker.store(ch.samplePlayer->begin);
+			rewind_(ch, localFrame);
 		else
 			playStatus = ChannelStatus::OFF;
 	}
