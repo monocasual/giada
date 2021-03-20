@@ -49,7 +49,7 @@ namespace v
 {
 class geLightningLearnerPack : public geMidiLearnerPack
 {
-  public:
+public:
 	geLightningLearnerPack(int x, int y, ID channelId);
 
 	void update(const c::io::Channel_OutputData&);
@@ -59,7 +59,7 @@ class geLightningLearnerPack : public geMidiLearnerPack
 
 class gdMidiOutputBase : public gdWindow
 {
-  public:
+public:
 	gdMidiOutputBase(int w, int h, ID channelId);
 	~gdMidiOutputBase();
 

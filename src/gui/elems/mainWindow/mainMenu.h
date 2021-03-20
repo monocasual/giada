@@ -37,7 +37,7 @@ namespace v
 {
 class geMainMenu : public gePack
 {
-  public:
+public:
 	geMainMenu(int x, int y);
 
   private:

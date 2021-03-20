@@ -31,7 +31,7 @@
 
 class geSlider : public Fl_Slider
 {
-  public:
+public:
 	geSlider(int x, int y, int w, int h, const char* l = 0);
 
 	int id;

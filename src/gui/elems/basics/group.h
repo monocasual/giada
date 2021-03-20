@@ -42,7 +42,7 @@ A group that resizes itself accoring to the content. */
 
 class geGroup : public Fl_Group
 {
-  public:
+public:
 	geGroup(int x, int y);
 
 	/* countChildren

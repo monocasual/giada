@@ -39,7 +39,7 @@ stereo. Give it a multichannel stream and it will throw an assertion. */
 
 class AudioBuffer
 {
-  public:
+public:
 	static constexpr int NUM_CHANS = 2;
 
 	using Pan = std::array<float, NUM_CHANS>;

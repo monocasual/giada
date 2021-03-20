@@ -36,7 +36,7 @@ namespace v
 {
 class geEnvelopePoint : public geBaseAction
 {
-  public:
+public:
 	static const Pixel SIDE = 12;
 
 	geEnvelopePoint(Pixel x, Pixel y, m::Action a);

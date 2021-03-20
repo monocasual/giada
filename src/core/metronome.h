@@ -34,7 +34,7 @@ namespace giada::m
 class AudioBuffer;
 class Metronome
 {
-  public:
+public:
 	enum class Click
 	{
 		BEAT,

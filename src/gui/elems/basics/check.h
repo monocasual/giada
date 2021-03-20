@@ -31,7 +31,7 @@
 
 class geCheck : public Fl_Check_Button
 {
-  public:
+public:
 	geCheck(int x, int y, int w, int h, const char* l = 0);
 
 	void draw() override;

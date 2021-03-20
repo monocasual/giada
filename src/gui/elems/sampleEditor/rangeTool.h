@@ -41,7 +41,7 @@ namespace giada::v
 {
 class geRangeTool : public gePack
 {
-  public:
+public:
 	geRangeTool(const c::sampleEditor::Data& d, int x, int y);
 
 	void rebuild(const c::sampleEditor::Data& d);

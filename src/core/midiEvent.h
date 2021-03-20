@@ -35,7 +35,7 @@ namespace m
 {
 class MidiEvent
 {
-  public:
+public:
 	static const int NOTE_ON   = 0x90;
 	static const int NOTE_OFF  = 0x80;
 	static const int NOTE_KILL = 0x70;

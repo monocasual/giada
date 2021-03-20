@@ -35,7 +35,7 @@ namespace giada
 {
 class Worker
 {
-  public:
+public:
 	Worker();
 	~Worker();
 

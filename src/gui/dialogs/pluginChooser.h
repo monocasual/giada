@@ -46,7 +46,7 @@ class gePluginBrowser;
 
 class gdPluginChooser : public gdWindow
 {
-  public:
+public:
 	gdPluginChooser(int x, int y, int w, int h, ID channelId);
 	~gdPluginChooser();
 

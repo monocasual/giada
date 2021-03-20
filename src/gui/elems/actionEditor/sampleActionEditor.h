@@ -42,7 +42,7 @@ class geSampleAction;
 
 class geSampleActionEditor : public geBaseActionEditor
 {
-  public:
+public:
 	geSampleActionEditor(Pixel x, Pixel y, gdBaseActionEditor*);
 	~geSampleActionEditor();
 

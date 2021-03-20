@@ -34,7 +34,7 @@
 
 class geButton : public Fl_Button
 {
-  public:
+public:
 	geButton(int x, int y, int w, int h, const char* l = nullptr,
 	    const char** imgOff = nullptr, const char** imgOn = nullptr,
 	    const char** imgDisabled = nullptr);

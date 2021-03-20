@@ -47,7 +47,7 @@ class geGridTool;
 class geScrollPack;
 class gdBaseActionEditor : public gdWindow
 {
-  public:
+public:
 	virtual ~gdBaseActionEditor();
 
 	int handle(int e) override;

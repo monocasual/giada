@@ -39,7 +39,7 @@ namespace giada::v
 class geChoice;
 class geMainTimer : public gePack
 {
-  public:
+public:
 	geMainTimer(int x, int y);
 
 	void refresh();

@@ -36,7 +36,7 @@ class geStatusButton;
 class geChannelMode;
 class geSampleChannel : public geChannel
 {
-  public:
+public:
 	geSampleChannel(int x, int y, int w, int h, c::channel::Data d);
 
 	void resize(int x, int y, int w, int h) override;

@@ -36,7 +36,7 @@ namespace giada::v
 {
 class geMainTransport : public gePack
 {
-  public:
+public:
 	geMainTransport(int x, int y);
 
 	void refresh();

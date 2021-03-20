@@ -35,7 +35,7 @@ namespace v
 {
 class gdMidiOutputSampleCh : public gdMidiOutputBase
 {
-  public:
+public:
 	gdMidiOutputSampleCh(ID channelId);
 
 	void rebuild() override;

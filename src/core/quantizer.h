@@ -37,7 +37,7 @@ namespace giada::m
 {
 class Quantizer
 {
-  public:
+public:
 	/* schedule
 	Schedules a function in slot 'id' to be called at the right time. The 
 	function has a 'delta' parameter for the buffer offset. */

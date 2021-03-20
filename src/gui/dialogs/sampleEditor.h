@@ -57,7 +57,7 @@ class gdSampleEditor : public gdWindow
 {
 	friend class geWaveform;
 
-  public:
+public:
 	gdSampleEditor(ID channelId);
 	~gdSampleEditor();
 

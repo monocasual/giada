@@ -41,7 +41,7 @@ namespace v
 {
 class gdBrowserSave : public gdBrowserBase
 {
-  public:
+public:
 	gdBrowserSave(const std::string& title, const std::string& path,
 	    const std::string& name, std::function<void(void*)> cb,
 	    ID channelId);

@@ -42,7 +42,7 @@ class geKeyboard;
 class geChannel;
 class geColumn : public Fl_Group
 {
-  public:
+public:
 	geColumn(int x, int y, int w, int h, ID id, geResizerBar* b);
 
 	geChannel* getChannel(ID channelId) const;

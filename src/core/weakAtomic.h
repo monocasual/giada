@@ -34,7 +34,7 @@ namespace giada
 template <typename T>
 class WeakAtomic
 {
-  public:
+public:
 	WeakAtomic() = default;
 
 	WeakAtomic(T t)

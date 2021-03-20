@@ -38,7 +38,7 @@ namespace v
 {
 class gdBpmInput : public gdWindow
 {
-  public:
+public:
 	gdBpmInput(const char* label); // pointer to mainWin->timing->bpm->label()
 
   private:

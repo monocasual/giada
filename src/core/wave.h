@@ -35,7 +35,7 @@ namespace giada::m
 {
 class Wave
 {
-  public:
+public:
 	Wave(ID id);
 	Wave(const Wave& o);
 	Wave(Wave&& o) = default;

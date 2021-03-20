@@ -37,7 +37,7 @@
 
 class geLiquidScroll : public geScroll
 {
-  public:
+public:
 	geLiquidScroll(int x, int y, int w, int h);
 
 	void resize(int x, int y, int w, int h) override;

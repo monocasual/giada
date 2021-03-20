@@ -40,7 +40,7 @@ class geVelocityEditor;
 
 class gdMidiActionEditor : public gdBaseActionEditor
 {
-  public:
+public:
 	gdMidiActionEditor(ID channelId);
 
 	void rebuild() override;

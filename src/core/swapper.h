@@ -38,12 +38,12 @@ A template class that performs atomic double buffering on type T. */
 template <typename T>
 class Swapper
 {
-  public:
+public:
 	class RtLock
 	{
 		friend Swapper;
 
-	  public:
+	public:
 		RtLock(Swapper& s)
 		: m_swapper(s)
 		{

@@ -38,7 +38,7 @@ namespace giada::v
 class geWaveform;
 class geWaveTools : public Fl_Scroll
 {
-  public:
+public:
 	geWaveTools(int x, int y, int w, int h);
 
 	void resize(int x, int y, int w, int h) override;

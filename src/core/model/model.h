@@ -146,7 +146,7 @@ enum class SwapType
 
 class DataLock
 {
-  public:
+public:
 	DataLock(SwapType t = SwapType::HARD);
 	~DataLock();
 

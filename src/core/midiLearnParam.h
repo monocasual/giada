@@ -34,7 +34,7 @@ namespace giada::m
 {
 class MidiLearnParam
 {
-  public:
+public:
 	MidiLearnParam();
 	MidiLearnParam(uint32_t v, std::size_t index = 0);
 	MidiLearnParam(const MidiLearnParam& o) = default;

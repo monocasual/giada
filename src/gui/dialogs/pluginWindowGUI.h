@@ -50,7 +50,7 @@ namespace v
 {
 class gdPluginWindowGUI : public gdWindow
 {
-  public:
+public:
 	gdPluginWindowGUI(c::plugin::Plugin&);
 	~gdPluginWindowGUI();
 

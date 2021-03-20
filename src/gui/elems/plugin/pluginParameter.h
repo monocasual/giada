@@ -40,7 +40,7 @@ namespace giada::v
 {
 class gePluginParameter : public Fl_Group
 {
-  public:
+public:
 	gePluginParameter(int x, int y, int w, int labelWidth, const c::plugin::Param);
 
 	void update(const c::plugin::Param& p, bool changeSlider);

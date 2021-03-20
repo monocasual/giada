@@ -31,7 +31,7 @@
 
 class geInput : public Fl_Input
 {
-  public:
+public:
 	geInput(int x, int y, int w, int h, const char* l = 0);
 };
 

@@ -41,7 +41,7 @@ namespace giada::v
 {
 class gePitchTool : public gePack
 {
-  public:
+public:
 	gePitchTool(const c::sampleEditor::Data& d, int x, int y);
 
 	void rebuild(const c::sampleEditor::Data& d);

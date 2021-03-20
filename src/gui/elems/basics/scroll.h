@@ -34,7 +34,7 @@
 
 class geScroll : public Fl_Scroll
 {
-  public:
+public:
 	geScroll(int x, int y, int w, int h, int type = Fl_Scroll::BOTH);
 
 	int countChildren() const;

@@ -41,7 +41,7 @@ namespace v
 {
 class geTabPlugins : public Fl_Group
 {
-  public:
+public:
 	geTabPlugins(int x, int y, int w, int h);
 
 	void save();

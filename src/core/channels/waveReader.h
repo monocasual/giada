@@ -36,7 +36,7 @@ class Wave;
 class AudioBuffer;
 class WaveReader final
 {
-  public:
+public:
 	struct Result
 	{
 		Frame used, generated;

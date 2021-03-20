@@ -48,7 +48,7 @@
 
 class geResizerBar : public Fl_Box
 {
-  public:
+public:
 	static const int HORIZONTAL = 0;
 	static const int VERTICAL   = 1;
 

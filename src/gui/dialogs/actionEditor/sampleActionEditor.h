@@ -39,7 +39,7 @@ class geSampleActionEditor;
 class geEnvelopeEditor;
 class gdSampleActionEditor : public gdBaseActionEditor
 {
-  public:
+public:
 	gdSampleActionEditor(ID channelId);
 
 	void rebuild() override;

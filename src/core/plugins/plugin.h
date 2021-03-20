@@ -40,7 +40,7 @@ namespace giada::m
 {
 class Plugin : private juce::ComponentListener
 {
-  public:
+public:
 	Plugin(ID id, const std::string& UID);
 	Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> p, double samplerate, int buffersize);
 	Plugin(const Plugin& o);

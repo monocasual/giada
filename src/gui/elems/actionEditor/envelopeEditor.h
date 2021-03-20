@@ -40,7 +40,7 @@ namespace v
 class geEnvelopePoint;
 class geEnvelopeEditor : public geBaseActionEditor
 {
-  public:
+public:
 	geEnvelopeEditor(Pixel x, Pixel y, const char* l, gdBaseActionEditor*);
 	~geEnvelopeEditor();
 

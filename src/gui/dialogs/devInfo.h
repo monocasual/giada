@@ -38,7 +38,7 @@ namespace v
 {
 class gdDevInfo : public gdWindow
 {
-  public:
+public:
 	gdDevInfo(unsigned dev);
 
   private:

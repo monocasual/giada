@@ -40,7 +40,7 @@ namespace v
 class geChoice;
 class geMasterLearnerPack : public geMidiLearnerPack
 {
-  public:
+public:
 	geMasterLearnerPack(int x, int y);
 
 	void update(const c::io::Master_InputData&);
@@ -50,7 +50,7 @@ class geMasterLearnerPack : public geMidiLearnerPack
 
 class gdMidiInputMaster : public gdMidiInputBase
 {
-  public:
+public:
 	gdMidiInputMaster();
 
 	void rebuild() override;

@@ -35,7 +35,7 @@ namespace giada::v
 class geChoice;
 class geTabMisc : public geGroup
 {
-  public:
+public:
 	geTabMisc(int x, int y, int w, int h);
 
 	void save();

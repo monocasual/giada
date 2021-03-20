@@ -42,7 +42,7 @@ namespace v
 {
 class geMidiLearner : public gePack
 {
-  public:
+public:
 	geMidiLearner(int x, int y, std::string l, int param);
 
 	/* update

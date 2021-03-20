@@ -48,7 +48,7 @@ A stack of widgets that resize itself according to its content. */
 
 class gePack : public geGroup
 {
-  public:
+public:
 	gePack(int x, int y, Direction d, int gutter = G_GUI_INNER_MARGIN);
 
 	/* add

@@ -40,7 +40,7 @@ namespace v
 {
 class geBoostTool : public Fl_Pack
 {
-  public:
+public:
 	geBoostTool(int x, int y);
 
 	void rebuild();

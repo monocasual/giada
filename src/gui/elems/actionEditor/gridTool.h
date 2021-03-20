@@ -37,7 +37,7 @@ namespace giada::v
 class geChoice;
 class geGridTool : public Fl_Group
 {
-  public:
+public:
 	geGridTool(Pixel x, Pixel y);
 	~geGridTool();
 

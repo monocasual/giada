@@ -39,7 +39,7 @@ A scrollable viewport that contains packed widgets. */
 
 class geScrollPack : public geScroll
 {
-  public:
+public:
 	geScrollPack(int x, int y, int w, int h, int type = Fl_Scroll::BOTH,
 	    Direction d = Direction::HORIZONTAL, int gutter = G_GUI_INNER_MARGIN);
 

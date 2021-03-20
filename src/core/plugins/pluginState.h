@@ -38,7 +38,7 @@ namespace m
 {
 class PluginState
 {
-  public:
+public:
 	PluginState(juce::MemoryBlock&& data);
 	PluginState(const std::string& base64);
 

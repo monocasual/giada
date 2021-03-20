@@ -39,7 +39,7 @@ namespace v
 {
 class gdBrowserLoad : public gdBrowserBase
 {
-  public:
+public:
 	gdBrowserLoad(const std::string& title, const std::string& path,
 	    std::function<void(void*)> cb, ID channelId);
 

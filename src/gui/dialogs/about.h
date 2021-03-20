@@ -38,7 +38,7 @@ namespace v
 {
 class gdAbout : public gdWindow
 {
-  public:
+public:
 	gdAbout();
 
 	static void cb_close(Fl_Widget* /*w*/, void* p);

@@ -37,7 +37,7 @@ namespace v
 {
 class gePluginBrowser : public Fl_Browser
 {
-  public:
+public:
 	gePluginBrowser(int x, int y, int w, int h);
 
 	void refresh();

@@ -48,7 +48,7 @@ namespace v
 class geBrowser;
 class gdBrowserBase : public gdWindow
 {
-  public:
+public:
 	~gdBrowserBase();
 
 	/* getSelectedItem

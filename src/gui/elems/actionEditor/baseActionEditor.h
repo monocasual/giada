@@ -41,7 +41,7 @@ class gdBaseActionEditor;
 class geBaseAction;
 class geBaseActionEditor : public Fl_Group
 {
-  public:
+public:
 	/* updateActions
 	Rebuild the actions widgets from scratch. */
 

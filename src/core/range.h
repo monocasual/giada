@@ -34,7 +34,7 @@ namespace giada
 template <typename T>
 class Range
 {
-  public:
+public:
 	Range()
 	: m_a(0)
 	, m_b(0)

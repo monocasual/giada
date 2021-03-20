@@ -31,7 +31,7 @@
 
 class geDial : public Fl_Dial
 {
-  public:
+public:
 	geDial(int x, int y, int w, int h, const char* l = 0);
 
 	void draw();

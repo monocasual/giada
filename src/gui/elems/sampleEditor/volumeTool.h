@@ -40,7 +40,7 @@ namespace giada::v
 {
 class geVolumeTool : public gePack
 {
-  public:
+public:
 	geVolumeTool(const c::sampleEditor::Data& d, int x, int y);
 
 	void rebuild(const c::sampleEditor::Data& d);

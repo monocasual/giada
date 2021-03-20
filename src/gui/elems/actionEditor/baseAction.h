@@ -39,7 +39,7 @@ namespace giada::v
 {
 class geBaseAction : public Fl_Box
 {
-  public:
+public:
 	static const Pixel MIN_WIDTH    = 12;
 	static const Pixel HANDLE_WIDTH = 6;
 

@@ -35,7 +35,7 @@ namespace v
 {
 class gdBrowserDir : public gdBrowserBase
 {
-  public:
+public:
 	gdBrowserDir(const std::string& title, const std::string& path,
 	    std::function<void(void*)> cb);
 

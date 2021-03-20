@@ -38,7 +38,7 @@ namespace v
 class geChoice;
 class gdMidiOutputMidiCh : public gdMidiOutputBase
 {
-  public:
+public:
 	gdMidiOutputMidiCh(ID channelId);
 
 	void rebuild() override;

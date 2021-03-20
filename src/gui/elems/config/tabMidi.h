@@ -38,7 +38,7 @@ namespace v
 class geChoice;
 class geTabMidi : public Fl_Group
 {
-  public:
+public:
 	geTabMidi(int x, int y, int w, int h);
 
 	void save();

@@ -35,7 +35,7 @@ namespace v
 {
 class geSoundMeter : public Fl_Box
 {
-  public:
+public:
 	geSoundMeter(int x, int y, int w, int h, const char* l = 0);
 
 	void draw() override;

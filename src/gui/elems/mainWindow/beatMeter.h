@@ -35,7 +35,7 @@ namespace giada::v
 {
 class geSequencer : public Fl_Box
 {
-  public:
+public:
 	geSequencer(int x, int y, int w, int h);
 
 	void draw() override;

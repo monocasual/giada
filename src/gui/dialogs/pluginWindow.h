@@ -52,7 +52,7 @@ namespace v
 {
 class gdPluginWindow : public gdWindow
 {
-  public:
+public:
 	gdPluginWindow(const c::plugin::Plugin&);
 
 	void updateParameters(bool changeSlider = false);

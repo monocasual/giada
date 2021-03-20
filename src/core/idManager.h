@@ -33,7 +33,7 @@ namespace giada::m
 {
 class IdManager
 {
-  public:
+public:
 	IdManager();
 
 	/* set

@@ -42,7 +42,7 @@ namespace v
 {
 class geMainIO : public gePack
 {
-  public:
+public:
 	geMainIO(int x, int y);
 
 	void refresh();

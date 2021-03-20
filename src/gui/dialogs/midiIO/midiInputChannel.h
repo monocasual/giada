@@ -43,7 +43,7 @@ class geChoice;
 class geScrollPack;
 class geChannelLearnerPack : public geMidiLearnerPack
 {
-  public:
+public:
 	geChannelLearnerPack(int x, int y, const c::io::Channel_InputData& d);
 
 	void update(const c::io::Channel_InputData&);
@@ -55,7 +55,7 @@ class geChannelLearnerPack : public geMidiLearnerPack
 
 class gePluginLearnerPack : public geMidiLearnerPack
 {
-  public:
+public:
 	gePluginLearnerPack(int x, int y, const c::io::PluginData&);
 
 	void update(const c::io::PluginData&, bool enabled);
@@ -67,7 +67,7 @@ class gePluginLearnerPack : public geMidiLearnerPack
 
 class gdMidiInputChannel : public gdMidiInputBase
 {
-  public:
+public:
 	gdMidiInputChannel(ID channelId);
 
 	void rebuild() override;

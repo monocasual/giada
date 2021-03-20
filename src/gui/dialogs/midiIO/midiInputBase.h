@@ -40,7 +40,7 @@ namespace v
 class geChoice;
 class gdMidiInputBase : public gdWindow
 {
-  public:
+public:
 	virtual ~gdMidiInputBase();
 
   protected:

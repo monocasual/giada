@@ -40,7 +40,7 @@ namespace v
 {
 class geSampleAction : public geBaseAction
 {
-  public:
+public:
 	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, bool singlePress,
 	    m::Action a1, m::Action a2);
 

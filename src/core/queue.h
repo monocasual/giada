@@ -40,7 +40,7 @@ Single producer, single consumer lock-free queue. */
 template <typename T, std::size_t size>
 class Queue
 {
-  public:
+public:
 	Queue()
 	: m_head(0)
 	, m_tail(0)

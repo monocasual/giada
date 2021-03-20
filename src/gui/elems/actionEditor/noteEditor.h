@@ -40,7 +40,7 @@ class gdMidiActionEditor;
 class gePianoRoll;
 class geNoteEditor : public geScroll
 {
-  public:
+public:
 	geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base);
 	~geNoteEditor();
 

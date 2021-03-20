@@ -44,7 +44,7 @@ class geColumn;
 class geChannel;
 class geKeyboard : public geScroll
 {
-  public:
+public:
 	struct ColumnLayout
 	{
 		ID  id;

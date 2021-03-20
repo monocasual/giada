@@ -48,7 +48,7 @@ class geTabPlugins;
 #endif
 class gdConfig : public gdWindow
 {
-  public:
+public:
 	gdConfig(int w, int h);
 
 #ifdef WITH_VST

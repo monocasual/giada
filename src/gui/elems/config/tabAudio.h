@@ -38,7 +38,7 @@ namespace giada::v
 class geChoice;
 class geTabAudio : public Fl_Group
 {
-  public:
+public:
 	geTabAudio(int x, int y, int w, int h);
 
 	void save();

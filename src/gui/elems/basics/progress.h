@@ -31,7 +31,7 @@
 
 class geProgress : public Fl_Progress
 {
-  public:
+public:
 	geProgress(int x, int y, int w, int h, const char* l = 0);
 };
 

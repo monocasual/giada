@@ -41,7 +41,7 @@ class geEnvelopePoint;
 
 class geVelocityEditor : public geBaseActionEditor
 {
-  public:
+public:
 	geVelocityEditor(Pixel x, Pixel y, gdBaseActionEditor*);
 	~geVelocityEditor();
 

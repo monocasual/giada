@@ -39,7 +39,7 @@ namespace v
 {
 class gdBeatsInput : public gdWindow
 {
-  public:
+public:
 	gdBeatsInput();
 
   private:

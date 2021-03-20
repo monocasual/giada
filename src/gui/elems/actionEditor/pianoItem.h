@@ -41,7 +41,7 @@ class gdActionEditor;
 
 class gePianoItem : public geBaseAction
 {
-  public:
+public:
 	gePianoItem(int x, int y, int w, int h, m::Action a1, m::Action a2);
 
 	void draw() override;

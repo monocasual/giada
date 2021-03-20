@@ -40,7 +40,7 @@ namespace v
 {
 class gePluginElement : public gePack
 {
-  public:
+public:
 	gePluginElement(int x, int y, c::plugin::Plugin);
 
 	ID               getPluginId() const;

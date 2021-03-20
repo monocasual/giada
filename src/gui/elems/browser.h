@@ -38,7 +38,7 @@ namespace v
 {
 class geBrowser : public Fl_File_Browser
 {
-  public:
+public:
 	geBrowser(int x, int y, int w, int h);
 
 	void toggleHiddenFiles();

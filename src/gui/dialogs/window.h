@@ -41,7 +41,7 @@ void cb_window_closer(Fl_Widget* /*w*/, void* p);
 
 class gdWindow : public Fl_Double_Window
 {
-  public:
+public:
 	gdWindow(int x, int y, int w, int h, const char* title = 0, int id = 0);
 	gdWindow(int w, int h, const char* title = 0, int id = 0);
 	~gdWindow();

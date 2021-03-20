@@ -46,7 +46,7 @@ namespace v
 {
 class gdKeyGrabber : public gdWindow
 {
-  public:
+public:
 	gdKeyGrabber(const c::channel::Data& d);
 
 	int  handle(int e) override;

@@ -31,7 +31,7 @@
 
 class geBox : public Fl_Box
 {
-  public:
+public:
 	geBox(int x, int y, int w, int h, const char* l = nullptr, Fl_Align al = FL_ALIGN_CENTER);
 
 	void draw() override;

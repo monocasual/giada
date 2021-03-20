@@ -42,7 +42,7 @@ namespace v
 class gePluginElement;
 class gdPluginList : public gdWindow
 {
-  public:
+public:
 	gdPluginList(ID channelId);
 	~gdPluginList();
 

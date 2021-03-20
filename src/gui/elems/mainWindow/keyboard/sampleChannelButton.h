@@ -35,7 +35,7 @@ namespace v
 {
 class geSampleChannelButton : public geChannelButton
 {
-  public:
+public:
 	geSampleChannelButton(int x, int y, int w, int h, const c::channel::Data& d);
 
 	int handle(int e) override;

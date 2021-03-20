@@ -41,7 +41,7 @@ namespace giada::v
 {
 class gePanTool : public gePack
 {
-  public:
+public:
 	gePanTool(const c::sampleEditor::Data& d, int x, int y);
 
 	void rebuild(const c::sampleEditor::Data& d);

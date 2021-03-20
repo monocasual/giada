@@ -40,7 +40,7 @@ namespace giada::v
 {
 class gdChannelNameInput : public gdWindow
 {
-  public:
+public:
 	gdChannelNameInput(const c::channel::Data& d);
 
   private:

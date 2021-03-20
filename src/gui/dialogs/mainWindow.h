@@ -41,7 +41,7 @@ class geMainTransport;
 class geMainTimer;
 class gdMainWindow : public gdWindow
 {
-  public:
+public:
 	gdMainWindow(int w, int h, const char* title, int argc, char** argv);
 	~gdMainWindow();
 

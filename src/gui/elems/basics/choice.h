@@ -39,7 +39,7 @@ namespace v
 {
 class geChoice : public Fl_Choice
 {
-  public:
+public:
 	geChoice(int x, int y, int w, int h, const char* l = 0, bool angle = true);
 	void draw() override;
 

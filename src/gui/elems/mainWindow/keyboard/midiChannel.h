@@ -36,7 +36,7 @@ namespace v
 {
 class geMidiChannel : public geChannel
 {
-  public:
+public:
 	geMidiChannel(int x, int y, int w, int h, c::channel::Data d);
 
 	void resize(int x, int y, int w, int h) override;

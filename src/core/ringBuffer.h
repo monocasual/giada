@@ -38,7 +38,7 @@ then items are overwritten starting from position 0. */
 template <typename T, std::size_t S>
 class RingBuffer
 {
-  public:
+public:
 	using iterator       = typename std::array<T, S>::iterator;
 	using const_iterator = typename std::array<T, S>::const_iterator;
 

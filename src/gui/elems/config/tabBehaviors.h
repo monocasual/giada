@@ -37,7 +37,7 @@ namespace v
 {
 class geTabBehaviors : public Fl_Group
 {
-  public:
+public:
 	geTabBehaviors(int x, int y, int w, int h);
 
 	void save();

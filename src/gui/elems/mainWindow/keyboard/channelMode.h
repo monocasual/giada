@@ -39,7 +39,7 @@ namespace giada::v
 {
 class geChannelMode : public Fl_Menu_Button
 {
-  public:
+public:
 	geChannelMode(int x, int y, int w, int h, c::channel::Data& d);
 
 	void draw() override;

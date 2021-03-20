@@ -39,7 +39,7 @@ namespace giada::v
 {
 class gePianoRoll : public geBaseActionEditor
 {
-  public:
+public:
 	static const int   MAX_KEYS    = 127;
 	static const int   MAX_OCTAVES = 9;
 	static const int   KEYS        = 12;

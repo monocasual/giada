@@ -38,7 +38,7 @@ namespace v
 {
 class geMidiLearnerPack : public gePack
 {
-  public:
+public:
 	geMidiLearnerPack(int x, int y, std::string title = "");
 
 	void setCallbacks(std::function<void(uint32_t)>, std::function<void(uint32_t)>);

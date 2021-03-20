@@ -42,7 +42,7 @@ namespace v
 {
 class geChannelButton : public geButton
 {
-  public:
+public:
 	geChannelButton(int x, int y, int w, int h, const c::channel::Data& d);
 
 	virtual void refresh();
