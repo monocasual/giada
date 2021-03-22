@@ -57,6 +57,7 @@ int         getBeats();
 int         getBars();
 int         getCurrentBeat();
 int         getCurrentFrame();
+float       getCurrentSecond();
 int         getFramesInBar();
 int         getFramesInBeat();
 int         getFramesInLoop();

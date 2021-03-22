@@ -163,7 +163,7 @@ int openDevice()
 
 	RtAudio::StreamOptions options;
 	options.streamName      = G_APP_NAME;
-	options.numberOfBuffers = 4;
+	options.numberOfBuffers = 4; // TODO - wtf?
 
 	realBufsize = conf::conf.buffersize;
 

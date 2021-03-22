@@ -28,6 +28,7 @@
 
 #include "core/plugins/pluginHost.h"
 #include "core/channels/channel.h"
+#include "core/clock.h"
 #include "core/const.h"
 #include "core/model/model.h"
 #include "core/plugins/plugin.h"
@@ -40,6 +41,7 @@ namespace giada::m::pluginHost
 {
 namespace
 {
+std::vector<Plugin*>     plugins_;
 juce::MessageManager*    messageManager_;
 juce::AudioBuffer<float> audioBuffer_;
 ID                       pluginId_;
@@ -77,6 +79,27 @@ void processPlugins_(const std::vector<Plugin*>& plugins, juce::MidiBuffer& even
 	}
 }
 } // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+bool Info::getCurrentPosition(CurrentPositionInfo& result)
+{
+	result.bpm           = clock::getBpm();
+	result.timeInSamples = clock::getCurrentFrame();
+	result.timeInSeconds = clock::getCurrentSecond();
+	result.isPlaying     = clock::isRunning();
+
+	return true;
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Info::canControlTransport()
+{
+	return false;
+}
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */

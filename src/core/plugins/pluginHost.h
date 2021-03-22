@@ -40,6 +40,14 @@ class AudioBuffer;
 } // namespace giada::m
 namespace giada::m::pluginHost
 {
+struct Info : public juce::AudioPlayHead
+{
+	bool getCurrentPosition(CurrentPositionInfo& result) override;
+	bool canControlTransport() override;
+};
+
+/* -------------------------------------------------------------------------- */
+
 void init(int buffersize);
 void close();
 

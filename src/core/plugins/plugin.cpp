@@ -54,6 +54,7 @@ Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin, double 
 , valid(true)
 , onEditorResize(nullptr)
 , m_plugin(std::move(plugin))
+, m_playHead(std::make_unique<pluginHost::Info>())
 , m_bypass(false)
 , m_hasEditor(m_plugin->hasEditor())
 {
@@ -75,6 +76,11 @@ Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin, double 
 		outBus->setNumberOfChannels(G_MAX_IO_CHANS);
 	if (inBus != nullptr)
 		inBus->setNumberOfChannels(G_MAX_IO_CHANS);
+
+	/* Set pointer to PlayHead, used to pass Giada information (bpm, time, ...)
+	to the plug-in. */
+
+	m_plugin->setPlayHead(m_playHead.get());
 
 	m_plugin->prepareToPlay(samplerate, buffersize);
 

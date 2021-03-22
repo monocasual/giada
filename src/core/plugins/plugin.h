@@ -99,7 +99,7 @@ public:
 
 	std::function<void(int w, int h)> onEditorResize;
 
-  private:
+private:
 #ifdef G_OS_WINDOWS
 /* Fuck... */
 #undef IN
@@ -124,6 +124,7 @@ public:
 	int countMainOutChannels() const;
 
 	std::unique_ptr<juce::AudioPluginInstance> m_plugin;
+	std::unique_ptr<pluginHost::Info>          m_playHead;
 	juce::AudioBuffer<float>                   m_buffer;
 
 	std::atomic<bool> m_bypass;
