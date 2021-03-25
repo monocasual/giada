@@ -214,6 +214,8 @@ bool Plugin::acceptsMidi() const
 
 PluginState Plugin::getState() const
 {
+	if (!valid)
+		return {};
 	juce::MemoryBlock data;
 	m_plugin->getStateInformation(data);
 	return PluginState(std::move(data));

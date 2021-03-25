@@ -39,6 +39,7 @@ namespace m
 class PluginState
 {
 public:
+	PluginState() = default; // Invalid state
 	PluginState(juce::MemoryBlock&& data);
 	PluginState(const std::string& base64);
 
