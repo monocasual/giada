@@ -29,9 +29,7 @@
 
 #include <FL/Fl_Box.H>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geSoundMeter : public Fl_Box
 {
@@ -42,11 +40,9 @@ public:
 
 	float mixerPeak; // peak from mixer
 
-  private:
-	float m_dbLevelCur;
+private:
 	float m_dbLevelOld;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

@@ -27,18 +27,30 @@
 #include "soundMeter.h"
 #include "core/const.h"
 #include "core/kernelAudio.h"
+#include "core/types.h"
 #include "utils/math.h"
 #include <FL/fl_draw.H>
+#include <algorithm>
 #include <cmath>
 
-namespace giada
+namespace giada::v
 {
-namespace v
+namespace
 {
+Pixel dbToPx_(float db, Pixel max)
+{
+	const float maxf = max;
+	return std::clamp(u::math::map(db, -G_MIN_DB_SCALE, 0.0f, 0.0f, maxf), 0.0f, maxf);
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 geSoundMeter::geSoundMeter(int x, int y, int w, int h, const char* l)
 : Fl_Box(x, y, w, h, l)
 , mixerPeak(0.0f)
-, m_dbLevelCur(0.0f)
 , m_dbLevelOld(0.0f)
 {
 }
@@ -51,23 +63,22 @@ void geSoundMeter::draw()
 
 	/* Compute peak level on 0.0 -> 1.0 scale. 1.0 is considered clip. */
 
-	bool clip = std::fabs(mixerPeak) >= 1.0f ? true : false;
+	const bool clip = std::fabs(mixerPeak) >= 1.0f ? true : false;
 
 	/*  dBFS (full scale) calculation, plus decay of -2dB per frame. */
 
-	m_dbLevelCur = u::math::linearToDB(std::fabs(mixerPeak));
+	float dbLevelCur = u::math::linearToDB(std::fabs(mixerPeak));
 
-	if (m_dbLevelCur < m_dbLevelOld && m_dbLevelOld > -G_MIN_DB_SCALE)
-		m_dbLevelCur = m_dbLevelOld - 2.0f;
+	if (dbLevelCur < m_dbLevelOld && m_dbLevelOld > -G_MIN_DB_SCALE)
+		dbLevelCur = m_dbLevelOld - 2.0f;
 
-	m_dbLevelOld = m_dbLevelCur;
+	m_dbLevelOld = dbLevelCur;
 
 	/* Paint the meter on screen. */
 
-	float pxLevel = ((w() / G_MIN_DB_SCALE) * m_dbLevelCur) + w();
+	const int bodyCol = clip || !m::kernelAudio::isReady() ? G_COLOR_RED_ALERT : G_COLOR_GREY_4;
 
 	fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2, G_COLOR_GREY_2);
-	fl_rectf(x() + 1, y() + 1, (int)pxLevel, h() - 2, clip || !m::kernelAudio::isReady() ? G_COLOR_RED_ALERT : G_COLOR_GREY_4);
+	fl_rectf(x() + 1, y() + 1, dbToPx_(dbLevelCur, w()), h() - 2, bodyCol);
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v
