@@ -75,8 +75,8 @@ void processPlugins_(const std::vector<Plugin*>& plugins, juce::MidiBuffer& even
 		if (!p->valid || p->isSuspended() || p->isBypassed())
 			continue;
 		p->process(audioBuffer_, events);
-		events.clear();
 	}
+	events.clear();
 }
 } // namespace
 
