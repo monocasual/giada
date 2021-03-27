@@ -1,8 +1,7 @@
 #include "../src/utils/fs.h"
-#include "../src/utils/string.h"
 #include "../src/utils/math.h"
+#include "../src/utils/string.h"
 #include <catch2/catch.hpp>
-
 
 TEST_CASE("u::fs")
 {
@@ -33,7 +32,6 @@ TEST_CASE("u::fs")
 #endif
 }
 
-
 TEST_CASE("u::string")
 {
 	using namespace giada::u;
@@ -52,12 +50,15 @@ TEST_CASE("u::string")
 	REQUIRE(v.at(2) == "cool");
 }
 
-
 TEST_CASE("::math")
 {
 	using namespace giada::u;
 
-	REQUIRE(math::map( 0.0f, 0.0f, 30.0f, 0.0f, 1.0f) == 0.0f);
+	REQUIRE(math::map(0.0f, 0.0f, 30.0f, 0.0f, 1.0f) == 0.0f);
 	REQUIRE(math::map(30.0f, 0.0f, 30.0f, 0.0f, 1.0f) == 1.0f);
 	REQUIRE(math::map(15.0f, 0.0f, 30.0f, 0.0f, 1.0f) == Approx(0.5f));
+
+	REQUIRE(math::map(0.0f, 30.0f, 1.0f) == 0.0f);
+	REQUIRE(math::map(30.0f, 30.0f, 1.0f) == 1.0f);
+	REQUIRE(math::map(15.0f, 30.0f, 1.0f) == Approx(0.5f));
 }
