@@ -11,8 +11,18 @@
 --------------------------------------------------------------------------------
 
 
-0.17.2
-- Improved sample rendering precision
+0.17.2 --- 2021 . 03 . 29
+- New double-buffered audio engine
+- Improved audio sample rendering precision
+- Show tooltips when hovering over UI components
+- Add .clang-format file 
+- Removed support for Autotools build system
+- Removed support for old raw patches
+- [CMake] Use find_package command for libsamplerate
+- Improved AudioBuffer move semantics
+- Send time + position information to plug-ins
+- Update JUCE library to version 6.0.7
+- Fix crash when saving project with plug-ins in invalid state
 
 
 0.17.1 --- 2021 . 02 . 01
