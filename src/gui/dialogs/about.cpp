@@ -50,8 +50,8 @@ gdAbout::gdAbout()
 , text(8, 120, 324, 140)
 , close(252, h() - 28, 80, 20, "Close")
 #ifdef WITH_VST
-, vstLogo(8, 265, 324, 50)
 , vstText(8, 315, 324, 46)
+, vstLogo(8, 265, 324, 50)
 #endif
 {
 	end();
