@@ -56,10 +56,7 @@ Maps 'x' in range [0, b) to a new range [0, z]. */
 template <typename TI, typename TO>
 TO map(TI x, TI b, TO z)
 {
-	static_assert(std::is_arithmetic_v<TI>);
-	static_assert(std::is_arithmetic_v<TO>);
-
-	return static_cast<TO>((x / (double)b) * z);
+	return map(x, static_cast<TI>(0), b, static_cast<TO>(0), z);
 }
 } // namespace giada::u::math
 
