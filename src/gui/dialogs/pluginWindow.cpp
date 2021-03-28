@@ -34,9 +34,7 @@
 #include "utils/gui.h"
 #include <FL/fl_draw.H>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin)
 : gdWindow(450, 156)
@@ -76,7 +74,6 @@ void gdPluginWindow::updateParameters(bool changeSlider)
 	for (int index : m_plugin.paramIndexes)
 		static_cast<v::gePluginParameter*>(m_list->child(index))->update(c::plugin::getParam(index, m_plugin.getPluginRef(), m_plugin.channelId), changeSlider);
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif // #ifdef WITH_VST

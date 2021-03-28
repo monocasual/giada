@@ -35,20 +35,15 @@ class geBox;
 class geSlider;
 class geLiquidScroll;
 
-namespace giada
+namespace giada::c::plugin
 {
-namespace c
-{
-namespace plugin
+struct Plugin;
+}
+namespace giada::m
 {
 class Plugin;
 }
-} // namespace c
-namespace m
-{
-class Plugin;
-}
-namespace v
+namespace giada::v
 {
 class gdPluginWindow : public gdWindow
 {
@@ -62,8 +57,7 @@ public:
 
 	geLiquidScroll* m_list;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif
 
