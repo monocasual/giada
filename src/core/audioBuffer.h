@@ -54,6 +54,12 @@ public:
 
 	AudioBuffer(Frame size, int channels);
 
+	/* AudioBuffer (3)
+	Creates an audio buffer out of a raw pointer. AudioBuffer created this way
+	is instructed not to free the owned data on destruction. */
+
+	AudioBuffer(float* data, Frame size, int channels);
+
 	/* AudioBuffer(const AudioBuffer&)
 	Copy constructor. */
 
@@ -69,7 +75,12 @@ public:
 
 	~AudioBuffer();
 
-	/* operator = 
+	/* operator = (const AudioBuffer& o)
+	Copy assignment operator. */
+
+	AudioBuffer& operator=(const AudioBuffer& o);
+
+	/* operator = (AudioBuffer&& o)
 	Move assignment operator. */
 
 	AudioBuffer& operator=(AudioBuffer&& o);
@@ -121,12 +132,6 @@ public:
 
 	void addData(const AudioBuffer& b, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
 
-	/* setData
-	Views 'data' as new m_data. Makes sure not to delete the data 'data' points
-	to while using it. Set it back to nullptr when done. */
-
-	void setData(float* data, Frame size, int channels);
-
 	/* clear
 	Clears the internal data by setting all bytes to 0.0f. Optional parameters
 	'a' and 'b' set the range. */
@@ -135,12 +140,14 @@ public:
 
 	void applyGain(float g);
 
-  private:
+private:
 	void move(AudioBuffer&& o);
+	void copy(const AudioBuffer& o);
 
 	float* m_data;
 	Frame  m_size;
 	int    m_channels;
+	bool   m_viewing;
 };
 } // namespace giada::m
 

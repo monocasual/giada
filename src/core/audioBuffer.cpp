@@ -34,8 +34,11 @@ AudioBuffer::AudioBuffer()
 : m_data(nullptr)
 , m_size(0)
 , m_channels(0)
+, m_viewing(false)
 {
 }
+
+/* -------------------------------------------------------------------------- */
 
 AudioBuffer::AudioBuffer(Frame size, int channels)
 : AudioBuffer()
@@ -45,12 +48,20 @@ AudioBuffer::AudioBuffer(Frame size, int channels)
 
 /* -------------------------------------------------------------------------- */
 
-AudioBuffer::AudioBuffer(const AudioBuffer& o)
-: m_data(new float[o.m_size * o.m_channels])
-, m_size(o.m_size)
-, m_channels(o.m_channels)
+AudioBuffer::AudioBuffer(float* data, Frame size, int channels)
+: m_data(data)
+, m_size(size)
+, m_channels(channels)
+, m_viewing(true)
 {
-	std::copy(o.m_data, o.m_data + (o.m_size * o.m_channels), m_data);
+	assert(channels <= NUM_CHANS);
+}
+
+/* -------------------------------------------------------------------------- */
+
+AudioBuffer::AudioBuffer(const AudioBuffer& o)
+{
+	copy(o);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -64,7 +75,18 @@ AudioBuffer::AudioBuffer(AudioBuffer&& o)
 
 AudioBuffer::~AudioBuffer()
 {
-	free();
+	if (!m_viewing)
+		free();
+}
+
+/* -------------------------------------------------------------------------- */
+
+AudioBuffer& AudioBuffer::operator=(const AudioBuffer& o)
+{
+	if (this == &o)
+		return *this;
+	copy(o);
+	return *this;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -132,18 +154,10 @@ void AudioBuffer::alloc(Frame size, int channels)
 void AudioBuffer::free()
 {
 	delete[] m_data;
-	setData(nullptr, 0, 0);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void AudioBuffer::setData(float* data, Frame size, int channels)
-{
-	assert(channels <= NUM_CHANS);
-
-	m_data     = data;
-	m_size     = size;
-	m_channels = channels;
+	m_data     = nullptr;
+	m_size     = 0;
+	m_channels = 0;
+	m_viewing  = false;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -200,7 +214,20 @@ void AudioBuffer::move(AudioBuffer&& o)
 	m_data     = o.m_data;
 	m_size     = o.m_size;
 	m_channels = o.m_channels;
+	m_viewing  = o.m_viewing;
 
-	o.setData(nullptr, 0, 0);
+	o.free();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void AudioBuffer::copy(const AudioBuffer& o)
+{
+	m_data     = new float[o.m_size * o.m_channels];
+	m_size     = o.m_size;
+	m_channels = o.m_channels;
+	m_viewing  = o.m_viewing;
+
+	std::copy(o.m_data, o.m_data + (o.m_size * o.m_channels), m_data);
 }
 } // namespace giada::m

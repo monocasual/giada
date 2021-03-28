@@ -284,6 +284,20 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	const model::Kernel& kernel   = rtLock.get().kernel;
 	const bool           hasInput = kernelAudio::isInputEnabled();
 
+	/* Prepare temporary working buffers instead of raw pointers provided by 
+	RtAudio. */
+
+	AudioBuffer out(static_cast<float*>(outBuf), bufferSize, G_MAX_IO_CHANS);
+	AudioBuffer in;
+	if (hasInput)
+		in = AudioBuffer(static_cast<float*>(inBuf), bufferSize, conf::conf.channelsInCount);
+
+	/* Clean up all buffers before any rendering. Do this even if mixer is
+	disabled to avoid audio leftovers during a temporary suspension (e.g. when
+	loading a new patch). */
+
+	prepareBuffers_(out);
+
 	if (!kernel.audioReady || mixer.state->active.load() == false)
 		return 0;
 
@@ -292,19 +306,10 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 		clock::recvJackSync();
 #endif
 
-	AudioBuffer out, in;
-	out.setData(static_cast<float*>(outBuf), bufferSize, G_MAX_IO_CHANS);
-	if (hasInput)
-		in.setData(static_cast<float*>(inBuf), bufferSize, conf::conf.channelsInCount);
-
 	/* Reset peak computation. */
 
 	mixer.state->peakOut.store(0.0);
 	mixer.state->peakIn.store(0.0);
-
-	/* Clean up all buffers before any rendering. */
-
-	prepareBuffers_(out);
 
 	/* Process line IN if input has been enabled in KernelAudio. */
 
@@ -339,12 +344,6 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	/* Post processing. */
 
 	finalizeOutput_(mixer, out);
-
-	/* Unset data in buffers. If you don't do this, buffers go out of scope and
-	destroy memory allocated by RtAudio ---> havoc. */
-
-	out.setData(nullptr, 0, 0);
-	in.setData(nullptr, 0, 0);
 
 	return 0;
 }
