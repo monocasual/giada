@@ -1,7 +1,6 @@
-#include <memory>
 #include "../src/core/wave.h"
 #include <catch2/catch.hpp>
-
+#include <memory>
 
 TEST_CASE("Wave")
 {
@@ -9,12 +8,11 @@ TEST_CASE("Wave")
 
 	static const int SAMPLE_RATE = 44100;
 	static const int BUFFER_SIZE = 4096;
-	static const int CHANNELS = 2;
-	static const int BIT_DEPTH = 32;
+	static const int CHANNELS    = 2;
+	static const int BIT_DEPTH   = 32;
 
 	/* Each SECTION the TEST_CASE is executed from the start. Any code between 
 	this comment and the first SECTION macro is executed before each SECTION. */
-
 
 	SECTION("test allocation")
 	{
@@ -37,7 +35,7 @@ TEST_CASE("Wave")
 			wave.setPath("path/is/now/different.mp3", 5);
 
 			REQUIRE(wave.getPath() == "path/is/now/different-5.mp3");
-		}  
+		}
 
 		SECTION("test change name")
 		{

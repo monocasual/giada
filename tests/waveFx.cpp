@@ -1,20 +1,18 @@
-#include <memory>
-#include "../src/core/const.h"
-#include "../src/core/wave.h"
 #include "../src/core/waveFx.h"
+#include "../src/core/const.h"
 #include "../src/core/types.h"
+#include "../src/core/wave.h"
 #include <catch2/catch.hpp>
-
+#include <memory>
 
 using namespace giada;
 using namespace giada::m;
 
-
 TEST_CASE("waveFx")
 {
-	static const int SAMPLE_RATE    = 44100;
-	static const int BUFFER_SIZE    = 4000;
-	static const int BIT_DEPTH      = 32;
+	static const int SAMPLE_RATE = 44100;
+	static const int BUFFER_SIZE = 4000;
+	static const int BIT_DEPTH   = 32;
 
 	Wave waveMono(0);
 	Wave waveStereo(0);
@@ -27,7 +25,7 @@ TEST_CASE("waveFx")
 		int prevSize = waveMono.getSize();
 
 		REQUIRE(wfx::monoToStereo(waveMono) == G_RES_OK);
-		REQUIRE(waveMono.getSize() == prevSize);  // size does not change, channels do
+		REQUIRE(waveMono.getSize() == prevSize); // size does not change, channels do
 		REQUIRE(waveMono.getChannels() == 2);
 
 		SECTION("test mono->stereo conversion for already stereo wave")
@@ -47,16 +45,16 @@ TEST_CASE("waveFx")
 		int b = 57;
 		wfx::silence(waveStereo, a, b);
 
-		for (int i=a; i<b; i++)
-			for (int k=0; k<waveStereo.getChannels(); k++)
+		for (int i = a; i < b; i++)
+			for (int k = 0; k < waveStereo.getChannels(); k++)
 				REQUIRE(waveStereo[i][k] == 0.0f);
 	}
 
 	SECTION("test cut")
 	{
-		int a = 47;
-		int b = 210;
-		int range = b - a;
+		int a        = 47;
+		int b        = 210;
+		int range    = b - a;
 		int prevSize = waveStereo.getSize();
 
 		wfx::cut(waveStereo, a, b);
@@ -66,8 +64,8 @@ TEST_CASE("waveFx")
 
 	SECTION("test trim")
 	{
-		int a = 47;
-		int b = 210;
+		int a    = 47;
+		int b    = 210;
 		int area = b - a;
 
 		wfx::trim(waveStereo, a, b);

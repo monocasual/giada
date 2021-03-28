@@ -1,9 +1,8 @@
 #include "../src/core/recorder.h"
+#include "../src/core/action.h"
 #include "../src/core/const.h"
 #include "../src/core/types.h"
-#include "../src/core/action.h"
 #include <catch2/catch.hpp>
-
 
 TEST_CASE("recorder")
 {
@@ -45,7 +44,7 @@ TEST_CASE("recorder")
 			recorder::rec(ch, f2, e2);
 
 			recorder::clearChannel(/*channel=*/0);
-			
+
 			REQUIRE(recorder::hasActions(/*channel=*/0) == false);
 			REQUIRE(recorder::hasActions(/*channel=*/1) == true);
 		}
@@ -54,10 +53,9 @@ TEST_CASE("recorder")
 		{
 			recorder::clearActions(/*channel=*/0, MidiEvent::NOTE_ON);
 			recorder::clearActions(/*channel=*/0, MidiEvent::NOTE_OFF);
-			
+
 			REQUIRE(recorder::hasActions(/*channel=*/0) == false);
 		}
-
 
 		SECTION("Test clear all")
 		{
