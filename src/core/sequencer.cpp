@@ -214,7 +214,7 @@ void stop()
 	if (recManager::isRecordingAction())
 		recManager::stopActionRec();
 	else if (recManager::isRecordingInput())
-		recManager::stopInputRec();
+		recManager::stopInputRec(conf::conf.inputRecMode);
 }
 
 /* -------------------------------------------------------------------------- */

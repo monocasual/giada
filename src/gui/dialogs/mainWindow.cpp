@@ -25,24 +25,23 @@
  * -------------------------------------------------------------------------- */
 
 #include "mainWindow.h"
+#include "core/clock.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/init.h"
 #include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/mainWindow/beatMeter.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/mainIO.h"
 #include "gui/elems/mainWindow/mainMenu.h"
 #include "gui/elems/mainWindow/mainTimer.h"
 #include "gui/elems/mainWindow/mainTransport.h"
+#include "gui/elems/mainWindow/sequencer.h"
 #include "utils/gui.h"
 #include "warnings.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Tooltip.H>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** argv)
 : gdWindow(W, H, title)
@@ -74,7 +73,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 #endif
 	mainTransport = new v::geMainTransport(8, 39);
 	mainTimer     = new v::geMainTimer(571, 44);
-	beatMeter     = new v::geSequencer(100, 83, 609, 20);
+	sequencer     = new v::geSequencer(100, 78, 609, 30);
 	keyboard      = new v::geKeyboard(8, 122, w() - 16, 380);
 
 	/* zone 1 - menus, and I/O tools */
@@ -93,8 +92,8 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 
 	/* zone 3 - beat meter */
 
-	Fl_Group* zone3 = new Fl_Group(8, beatMeter->y(), W - 16, beatMeter->h());
-	zone3->add(beatMeter);
+	Fl_Group* zone3 = new Fl_Group(8, sequencer->y(), W - 16, sequencer->h());
+	zone3->add(sequencer);
 
 	/* zone 4 - the keyboard (Fl_Group is unnecessary here, keyboard is
 	 * a group by itself) */
@@ -109,6 +108,8 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 		m::init::closeMainWindow();
 	});
 	u::gui::setFavicon(this);
+
+	refresh();
 
 	show(argc, argv);
 }
@@ -130,7 +131,7 @@ void gdMainWindow::refresh()
 	mainIO->refresh();
 	mainTimer->refresh();
 	mainTransport->refresh();
-	beatMeter->refresh();
+	sequencer->refresh();
 	keyboard->refresh();
 }
 
@@ -149,5 +150,4 @@ void gdMainWindow::clearKeyboard()
 {
 	keyboard->init();
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

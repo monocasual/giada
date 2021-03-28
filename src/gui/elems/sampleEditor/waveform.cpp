@@ -82,13 +82,13 @@ int geWaveform::alloc(int datasize, bool force)
 {
 	const m::Wave& wave = m_data->getWaveRef();
 
-	m_ratio = wave.getSize() / (float)datasize;
+	m_ratio = wave.getBuffer().countFrames() / (float)datasize;
 
 	/* Limit 1:1 drawing (to avoid sub-frame drawing) by keeping m_ratio >= 1. */
 
 	if (m_ratio < 1)
 	{
-		datasize = wave.getSize();
+		datasize = wave.getBuffer().countFrames();
 		m_ratio  = 1;
 	}
 
@@ -109,7 +109,7 @@ int geWaveform::alloc(int datasize, bool force)
 	/* Frid frequency: store a grid point every 'gridFreq' frame (if grid is
 	enabled). TODO - this will cause round off errors, since gridFreq is integer. */
 
-	int gridFreq = m_grid.level != 0 ? wave.getSize() / m_grid.level : 0;
+	int gridFreq = m_grid.level != 0 ? wave.getBuffer().countFrames() / m_grid.level : 0;
 
 	/* Resampling the waveform, hardcore way. Many thanks to 
 	http://fourier.eng.hmc.edu/e161/lectures/resize/node3.html */
@@ -128,16 +128,16 @@ int geWaveform::alloc(int datasize, bool force)
 		for (int k = pc; k < pn; k++)
 		{ // TODO - int until we switch to uint32_t for Wave size...
 
-			if (k >= wave.getSize())
+			if (k >= wave.getBuffer().countFrames())
 				continue;
 
 			/* Compute average of stereo signal. */
 
 			float  avg   = 0.0f;
-			float* frame = wave.getFrame(k);
-			for (int j = 0; j < wave.getChannels(); j++)
+			float* frame = wave.getBuffer()[k];
+			for (int j = 0; j < wave.getBuffer().countChannels(); j++)
 				avg += frame[j];
-			avg /= wave.getChannels();
+			avg /= wave.getBuffer().countChannels();
 
 			/* Find peaks (greater and lower). */
 
@@ -454,8 +454,8 @@ int geWaveform::handle(int e)
 
 			m_chanEnd = snap(m_mouseX);
 
-			if (m_chanEnd > wave.getSize())
-				m_chanEnd = wave.getSize();
+			if (m_chanEnd > wave.getBuffer().countFrames())
+				m_chanEnd = wave.getBuffer().countFrames();
 			else if (m_chanEnd <= m_chanStart)
 				m_chanEnd = m_chanStart + 2;
 

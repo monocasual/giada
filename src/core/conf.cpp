@@ -189,6 +189,7 @@ bool read()
 	conf.midiInputH                 = j.value(CONF_KEY_MIDI_INPUT_H, conf.midiInputH);
 	conf.recTriggerMode             = j.value(CONF_KEY_REC_TRIGGER_MODE, conf.recTriggerMode);
 	conf.recTriggerLevel            = j.value(CONF_KEY_REC_TRIGGER_LEVEL, conf.recTriggerLevel);
+	conf.inputRecMode               = j.value(CONF_KEY_INPUT_REC_MODE, conf.inputRecMode);
 	conf.midiInEnabled              = j.value(CONF_KEY_MIDI_IN, conf.midiInEnabled);
 	conf.midiInFilter               = j.value(CONF_KEY_MIDI_IN_FILTER, conf.midiInFilter);
 	conf.midiInRewind               = j.value(CONF_KEY_MIDI_IN_REWIND, conf.midiInRewind);
@@ -297,6 +298,7 @@ bool write()
 	j[CONF_KEY_MIDI_INPUT_H]                  = conf.midiInputH;
 	j[CONF_KEY_REC_TRIGGER_MODE]              = static_cast<int>(conf.recTriggerMode);
 	j[CONF_KEY_REC_TRIGGER_LEVEL]             = conf.recTriggerLevel;
+	j[CONF_KEY_INPUT_REC_MODE]                = static_cast<int>(conf.inputRecMode);
 #ifdef WITH_VST
 	j[CONF_KEY_PLUGIN_CHOOSER_X]   = conf.pluginChooserX;
 	j[CONF_KEY_PLUGIN_CHOOSER_Y]   = conf.pluginChooserY;

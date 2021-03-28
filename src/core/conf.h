@@ -111,6 +111,7 @@ struct Conf
 
 	RecTriggerMode recTriggerMode  = RecTriggerMode::NORMAL;
 	float          recTriggerLevel = G_DEFAULT_REC_TRIGGER_LEVEL;
+	InputRecMode   inputRecMode    = InputRecMode::FREE;
 
 	bool     midiInEnabled    = false;
 	int      midiInFilter     = -1;

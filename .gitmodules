@@ -10,3 +10,6 @@
 [submodule "src/deps/rtaudio"]
 	path = src/deps/rtaudio
 	url = https://github.com/monocasual/rtaudio.git
+[submodule "src/deps/geompp"]
+	path = src/deps/geompp
+	url = git@github.com:monocasual/geompp.git

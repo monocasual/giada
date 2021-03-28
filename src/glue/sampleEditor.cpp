@@ -107,7 +107,7 @@ Data::Data(const m::channel::Data& c)
 , begin(c.samplePlayer->begin)
 , end(c.samplePlayer->end)
 , shift(c.samplePlayer->shift)
-, waveSize(c.samplePlayer->getWave()->getSize())
+, waveSize(c.samplePlayer->getWave()->getBuffer().countFrames())
 , waveBits(c.samplePlayer->getWave()->getBits())
 , waveDuration(c.samplePlayer->getWave()->getDuration())
 , waveRate(c.samplePlayer->getWave()->getRate())
@@ -236,7 +236,7 @@ void paste(ID channelId, Frame a)
 
 	/* In the meantime, shift begin/end points to keep the previous position. */
 
-	int   delta = waveBuffer_->getSize();
+	int   delta = waveBuffer_->getBuffer().countFrames();
 	Frame begin = getSamplePlayer_(channelId).begin;
 	Frame end   = getSamplePlayer_(channelId).end;
 

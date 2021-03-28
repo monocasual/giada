@@ -410,8 +410,24 @@ float       getBpm() { return model::get().clock.bpm; }
 int         getBeats() { return model::get().clock.beats; }
 int         getBars() { return model::get().clock.bars; }
 
+/* -------------------------------------------------------------------------- */
+
 float getCurrentSecond()
 {
 	return getCurrentFrame() / static_cast<float>(conf::conf.samplerate);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Frame getMaxFramesInLoop()
+{
+	return (conf::conf.samplerate * (60.0f / G_MIN_BPM)) * getBeats();
+}
+
+/* -------------------------------------------------------------------------- */
+
+float calcBpmFromRec(Frame recordedFrames)
+{
+	return (60.0f * getBeats()) / (recordedFrames / static_cast<float>(conf::conf.samplerate));
 }
 } // namespace giada::m::clock

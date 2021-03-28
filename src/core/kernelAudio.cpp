@@ -29,7 +29,10 @@
 #include "kernelAudio.h"
 #include "conf.h"
 #include "const.h"
+#include "core/clock.h"
+#include "core/mixerHandler.h"
 #include "core/model/model.h"
+#include "core/recManager.h"
 #include "deps/rtaudio/RtAudio.h"
 #include "glue/main.h"
 #include "mixer.h"
@@ -55,6 +58,53 @@ jack_client_t* jackGetHandle_()
 }
 
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+bool canRender_()
+{
+	return model::get().kernel.audioReady && model::get().mixer.state->active.load() == true;
+}
+
+/* -------------------------------------------------------------------------- */
+
+int callback_(void* outBuf, void* inBuf, unsigned bufferSize, double /*streamTime*/,
+    RtAudioStreamStatus /*status*/, void* /*userData*/)
+{
+	AudioBuffer out(static_cast<float*>(outBuf), bufferSize, G_MAX_IO_CHANS);
+	AudioBuffer in;
+	if (isInputEnabled())
+		in = AudioBuffer(static_cast<float*>(inBuf), bufferSize, conf::conf.channelsInCount);
+
+	/* Clean up output buffer before any rendering. Do this even if mixer is
+	disabled to avoid audio leftovers during a temporary suspension (e.g. when
+	loading a new patch). */
+
+	out.clear();
+
+	if (!canRender_())
+		return 0;
+
+#ifdef WITH_AUDIO_JACK
+	if (getAPI() == G_SYS_API_JACK)
+		clock::recvJackSync();
+#endif
+
+	mixer::RenderInfo info;
+	info.isAudioReady    = model::get().kernel.audioReady;
+	info.hasInput        = isInputEnabled();
+	info.isClockActive   = clock::isActive();
+	info.isClockRunning  = clock::isRunning();
+	info.canLineInRec    = recManager::isRecordingInput() && isInputEnabled();
+	info.limitOutput     = conf::conf.limitOutput;
+	info.inToOut         = mh::getInToOut();
+	info.maxFramesToRec  = conf::conf.inputRecMode == InputRecMode::FREE ? clock::getMaxFramesInLoop() : clock::getFramesInLoop();
+	info.outVol          = mh::getOutVol();
+	info.inVol           = mh::getInVol();
+	info.recTriggerLevel = conf::conf.recTriggerLevel;
+
+	return mixer::render(out, in, info);
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -185,7 +235,7 @@ int openDevice()
 		    RTAUDIO_FLOAT32,                                      // audio format
 		    conf::conf.samplerate,                                // sample rate
 		    &realBufsize,                                         // buffer size in byte
-		    &mixer::masterPlay,                                   // audio callback
+		    &callback_,                                           // audio callback
 		    nullptr,                                              // user data (unused)
 		    &options);
 

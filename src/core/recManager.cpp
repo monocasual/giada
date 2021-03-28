@@ -38,14 +38,22 @@
 #include "core/types.h"
 #include "gui/dispatcher.h"
 
-namespace giada
-{
-namespace m
-{
-namespace recManager
+namespace giada::m::recManager
 {
 namespace
 {
+bool canRec_()
+{
+	return kernelAudio::isReady();
+}
+
+bool canInputRec_()
+{
+	return canRec_() && mh::hasInputRecordableChannels();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void setRecordingAction_(bool v)
 {
 	model::get().recorder.isRecordingAction = v;
@@ -62,24 +70,20 @@ void setRecordingInput_(bool v)
 
 bool startActionRec_()
 {
-	if (!kernelAudio::isReady())
-		return false;
 	clock::setStatus(ClockStatus::RUNNING);
 	sequencer::start();
-	m::conf::conf.recTriggerMode = RecTriggerMode::NORMAL;
+	conf::conf.recTriggerMode = RecTriggerMode::NORMAL;
 	return true;
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool startInputRec_()
+void startInputRec_()
 {
-	if (!kernelAudio::isReady() || !mh::hasInputRecordableChannels())
-		return false;
-	mixer::startInputRec();
+	/* Start recording from the current frame, not the beginning. */
+	mixer::startInputRec(clock::getCurrentFrame());
 	sequencer::start();
-	m::conf::conf.recTriggerMode = RecTriggerMode::NORMAL;
-	return true;
+	conf::conf.recTriggerMode = RecTriggerMode::NORMAL;
 }
 } // namespace
 
@@ -106,16 +110,19 @@ bool isRecordingInput()
 
 void startActionRec(RecTriggerMode mode)
 {
+	if (!canRec_())
+		return;
+
 	if (mode == RecTriggerMode::NORMAL)
 	{
-		if (startActionRec_())
-			setRecordingAction_(true);
+		startActionRec_();
+		setRecordingAction_(true);
 	}
 	else
 	{ // RecTriggerMode::SIGNAL
 		clock::setStatus(ClockStatus::WAITING);
 		clock::rewind();
-		m::midiDispatcher::setSignalCallback(startActionRec_);
+		midiDispatcher::setSignalCallback(startActionRec_);
 		v::dispatcher::setSignalCallback(startActionRec_);
 		setRecordingAction_(true);
 	}
@@ -163,36 +170,48 @@ void toggleActionRec(RecTriggerMode m)
 
 /* -------------------------------------------------------------------------- */
 
-bool startInputRec(RecTriggerMode mode)
+bool startInputRec(RecTriggerMode triggerMode, InputRecMode inputMode)
 {
-	if (mode == RecTriggerMode::NORMAL)
+	if (!canInputRec_())
+		return false;
+
+	if (triggerMode == RecTriggerMode::SIGNAL || inputMode == InputRecMode::FREE)
+		clock::rewind();
+
+	if (inputMode == InputRecMode::FREE)
+		mixer::setEndOfRecCallback([inputMode] { stopInputRec(inputMode); });
+
+	if (triggerMode == RecTriggerMode::NORMAL)
 	{
+		startInputRec_();
 		G_DEBUG("Start input rec, NORMAL mode");
-		if (!startInputRec_())
-			return false;
-		setRecordingInput_(true);
-		return true;
 	}
 	else
 	{
-		G_DEBUG("Start input rec, SIGNAL mode");
-		if (!mh::hasInputRecordableChannels())
-			return false;
 		clock::setStatus(ClockStatus::WAITING);
-		clock::rewind();
-		mixer::setSignalCallback(startInputRec_);
-		setRecordingInput_(true);
-		return true;
+		mixer::setSignalCallback([] { startInputRec_(); });
+		G_DEBUG("Start input rec, SIGNAL mode");
 	}
+
+	setRecordingInput_(true);
+	return true;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void stopInputRec()
+void stopInputRec(InputRecMode recMode)
 {
 	setRecordingInput_(false);
 
-	mixer::stopInputRec();
+	Frame recordedFrames = mixer::stopInputRec();
+
+	/* When recording in RIGID mode, the amount of recorded frames is always 
+	equal to the current loop length. */
+
+	if (recMode == InputRecMode::RIGID)
+		recordedFrames = clock::getFramesInLoop();
+
+	G_DEBUG("Stop input rec, recordedFrames=" << recordedFrames);
 
 	/* If you stop the Input Recorder in SIGNAL mode before any actual 
 	recording: just clean up everything and return. */
@@ -201,22 +220,42 @@ void stopInputRec()
 	{
 		clock::setStatus(ClockStatus::STOPPED);
 		mixer::setSignalCallback(nullptr);
+		return;
 	}
-	else
-		mh::finalizeInputRec();
+
+	/* Finalize recordings. InputRecMode::FREE requires some adjustments. */
+
+	mh::finalizeInputRec(recordedFrames);
+
+	if (recMode == InputRecMode::FREE)
+	{
+		clock::rewind();
+		clock::setBpm(clock::calcBpmFromRec(recordedFrames));
+		mixer::setEndOfRecCallback(nullptr);
+		refreshInputRecMode(); // Back to RIGID mode if necessary
+	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool toggleInputRec(RecTriggerMode m)
+bool toggleInputRec(RecTriggerMode m, InputRecMode i)
 {
 	if (isRecordingInput())
 	{
-		stopInputRec();
+		stopInputRec(i);
 		return true;
 	}
-	return startInputRec(m);
+	return startInputRec(m, i);
 }
-} // namespace recManager
-} // namespace m
-} // namespace giada
+
+/* -------------------------------------------------------------------------- */
+
+bool canEnableRecOnSignal() { return !clock::isRunning(); }
+bool canEnableFreeInputRec() { return !mh::hasAudioData(); }
+
+void refreshInputRecMode()
+{
+	if (!canEnableFreeInputRec())
+		conf::conf.inputRecMode = InputRecMode::RIGID;
+}
+} // namespace giada::m::recManager

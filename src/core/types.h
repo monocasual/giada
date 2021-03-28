@@ -93,6 +93,12 @@ enum class RecTriggerMode : int
 	SIGNAL
 };
 
+enum class InputRecMode : int
+{
+	RIGID = 0,
+	FREE
+};
+
 enum class EventType : int
 {
 	AUTO = 0,

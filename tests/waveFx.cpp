@@ -22,20 +22,20 @@ TEST_CASE("waveFx")
 
 	SECTION("test mono->stereo conversion")
 	{
-		int prevSize = waveMono.getSize();
+		int prevSize = waveMono.getBuffer().countFrames();
 
 		REQUIRE(wfx::monoToStereo(waveMono) == G_RES_OK);
-		REQUIRE(waveMono.getSize() == prevSize); // size does not change, channels do
-		REQUIRE(waveMono.getChannels() == 2);
+		REQUIRE(waveMono.getBuffer().countFrames() == prevSize); // size does not change, channels do
+		REQUIRE(waveMono.getBuffer().countChannels() == 2);
 
 		SECTION("test mono->stereo conversion for already stereo wave")
 		{
 			/* Should do nothing. */
-			int prevSize = waveStereo.getSize();
+			int prevSize = waveStereo.getBuffer().countFrames();
 
 			REQUIRE(wfx::monoToStereo(waveStereo) == G_RES_OK);
-			REQUIRE(waveStereo.getSize() == prevSize);
-			REQUIRE(waveStereo.getChannels() == 2);
+			REQUIRE(waveStereo.getBuffer().countFrames() == prevSize);
+			REQUIRE(waveStereo.getBuffer().countChannels() == 2);
 		}
 	}
 
@@ -46,8 +46,8 @@ TEST_CASE("waveFx")
 		wfx::silence(waveStereo, a, b);
 
 		for (int i = a; i < b; i++)
-			for (int k = 0; k < waveStereo.getChannels(); k++)
-				REQUIRE(waveStereo[i][k] == 0.0f);
+			for (int k = 0; k < waveStereo.getBuffer().countChannels(); k++)
+				REQUIRE(waveStereo.getBuffer()[i][k] == 0.0f);
 	}
 
 	SECTION("test cut")
@@ -55,11 +55,11 @@ TEST_CASE("waveFx")
 		int a        = 47;
 		int b        = 210;
 		int range    = b - a;
-		int prevSize = waveStereo.getSize();
+		int prevSize = waveStereo.getBuffer().countFrames();
 
 		wfx::cut(waveStereo, a, b);
 
-		REQUIRE(waveStereo.getSize() == prevSize - range);
+		REQUIRE(waveStereo.getBuffer().countFrames() == prevSize - range);
 	}
 
 	SECTION("test trim")
@@ -70,7 +70,7 @@ TEST_CASE("waveFx")
 
 		wfx::trim(waveStereo, a, b);
 
-		REQUIRE(waveStereo.getSize() == area);
+		REQUIRE(waveStereo.getBuffer().countFrames() == area);
 	}
 
 	SECTION("test fade")
@@ -81,10 +81,10 @@ TEST_CASE("waveFx")
 		wfx::fade(waveStereo, a, b, wfx::Fade::IN);
 		wfx::fade(waveStereo, a, b, wfx::Fade::OUT);
 
-		REQUIRE(waveStereo.getFrame(a)[0] == 0.0f);
-		REQUIRE(waveStereo.getFrame(a)[1] == 0.0f);
-		REQUIRE(waveStereo.getFrame(b)[0] == 0.0f);
-		REQUIRE(waveStereo.getFrame(b)[1] == 0.0f);
+		REQUIRE(waveStereo.getBuffer()[a][0] == 0.0f);
+		REQUIRE(waveStereo.getBuffer()[a][1] == 0.0f);
+		REQUIRE(waveStereo.getBuffer()[b][0] == 0.0f);
+		REQUIRE(waveStereo.getBuffer()[b][1] == 0.0f);
 	}
 
 	SECTION("test smooth")
@@ -94,9 +94,9 @@ TEST_CASE("waveFx")
 
 		wfx::smooth(waveStereo, a, b);
 
-		REQUIRE(waveStereo.getFrame(a)[0] == 0.0f);
-		REQUIRE(waveStereo.getFrame(a)[1] == 0.0f);
-		REQUIRE(waveStereo.getFrame(b)[0] == 0.0f);
-		REQUIRE(waveStereo.getFrame(b)[1] == 0.0f);
+		REQUIRE(waveStereo.getBuffer()[a][0] == 0.0f);
+		REQUIRE(waveStereo.getBuffer()[a][1] == 0.0f);
+		REQUIRE(waveStereo.getBuffer()[b][0] == 0.0f);
+		REQUIRE(waveStereo.getBuffer()[b][1] == 0.0f);
 	}
 }

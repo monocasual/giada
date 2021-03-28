@@ -32,16 +32,15 @@
 #include "core/types.h"
 #include <unordered_set>
 
-namespace giada
-{
-namespace m
-{
-namespace patch
+namespace giada::m::patch
 {
 struct Action;
 }
+namespace giada::m
+{
 struct Action;
-namespace recorderHandler
+}
+namespace giada::m::recorderHandler
 {
 void init();
 
@@ -86,8 +85,6 @@ Creates new Actions given the patch raw data and vice versa. */
 
 recorder::ActionMap        deserializeActions(const std::vector<patch::Action>& as);
 std::vector<patch::Action> serializeActions(const recorder::ActionMap& as);
-} // namespace recorderHandler
-} // namespace m
-} // namespace giada
+} // namespace giada::m::recorderHandler
 
 #endif

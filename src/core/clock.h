@@ -40,15 +40,16 @@ void recomputeFrames();
 
 /* sendMIDIsync
 Generates MIDI sync output data. */
-
+/*TODO - move this to giada::m::sync*/
 void sendMIDIsync();
 
 /* sendMIDIrewind
 Rewinds timecode to beat 0 and also send a MTC full frame to cue the slave. */
-
+/*TODO - move this to giada::m::sync*/
 void sendMIDIrewind();
 
 #if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
+/*TODO - move this to giada::m::sync*/
 void recvJackSync();
 #endif
 
@@ -65,6 +66,12 @@ int         getFramesInSeq();
 int         getQuantizerValue();
 int         getQuantizerStep();
 ClockStatus getStatus();
+
+/* getMaxFramesInLoop
+Returns how many frames the current loop length might contain at the slowest
+speed possible (G_MIN_BPM). Call this whenever you change the number or beats. */
+
+Frame getMaxFramesInLoop();
 
 /* advance
 Increases current frame by a specific amount. */
@@ -107,6 +114,12 @@ bool isOnFirstBeat();
 
 void rewind();
 void setStatus(ClockStatus s);
+
+/* calcBpmFromRec
+Given the amount of recorded frames, returns the speed of the current 
+performance. Used while input recording in FREE mode. */
+
+float calcBpmFromRec(Frame recordedFrames);
 } // namespace giada::m::clock
 
 #endif

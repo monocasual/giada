@@ -41,13 +41,14 @@ public:
 
 	void refresh();
 
-  private:
+private:
 	geButton       m_rewind;
 	geStatusButton m_play;
 	geBox          m_spacer1;
 	geStatusButton m_recTriggerMode;
 	geStatusButton m_recAction;
 	geStatusButton m_recInput;
+	geStatusButton m_inputRecMode;
 	geBox          m_spacer2;
 	geStatusButton m_metronome;
 };

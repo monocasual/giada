@@ -50,19 +50,43 @@ constexpr int MASTER_OUT_CHANNEL_ID = 1;
 constexpr int MASTER_IN_CHANNEL_ID  = 2;
 constexpr int PREVIEW_CHANNEL_ID    = 3;
 
-void init(Frame framesInSeq, Frame framesInBuffer);
+/* RenderInfo
+Struct of parameters passed to Mixer for rendering. */
+
+struct RenderInfo
+{
+	bool  isAudioReady;
+	bool  hasInput;
+	bool  isClockActive;
+	bool  isClockRunning;
+	bool  canLineInRec;
+	bool  limitOutput;
+	bool  inToOut;
+	Frame maxFramesToRec;
+	float outVol;
+	float inVol;
+	float recTriggerLevel;
+};
+
+/* RecordInfo
+Information regarding the input recording progress. */
+
+struct RecordInfo
+{
+	Frame position;
+	Frame maxLength;
+};
+
+void init(Frame framesInLoop, Frame framesInBuffer);
 
 /* enable, disable
-Toggles master callback processing. Useful when loading a new patch. Mixer
-will flush itself to wait for a processing cycle to finish when disable() is
-called. */
+Toggles master callback processing. Useful to suspend the rendering. */
 
 void enable();
 void disable();
 
 /* allocRecBuffer
-Allocates new memory for the virtual input channel. Call this whenever you 
-shrink or resize the sequencer. */
+Allocates new memory for the virtual input channel. */
 
 void allocRecBuffer(Frame frames);
 
@@ -77,23 +101,40 @@ merge data into channel after an input recording session. */
 
 const AudioBuffer& getRecBuffer();
 
-/* masterPlay
-Core method (callback) */
+/* render
+Core rendering function. */
 
-int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize, double streamTime,
-    RtAudioStreamStatus status, void* userData);
+int render(AudioBuffer& out, const AudioBuffer& in, const RenderInfo& info);
 
 /* startInputRec, stopInputRec
-Starts/stops input recording on frame clock::getCurrentFrame(). */
+Starts/stops input recording on frame 'from'. The latter returns the number of
+recorded frames. */
 
-void startInputRec();
-void stopInputRec();
+void  startInputRec(Frame from);
+Frame stopInputRec();
+
+/* setSignalCallback
+Registers the function to be called when the audio signal reaches a certain
+threshold (record-on-signal mode). */
 
 void setSignalCallback(std::function<void()> f);
+
+/* setEndOfRecCallback
+Registers the function to be called when the end of the internal recording 
+buffer has been reached. */
+
+void setEndOfRecCallback(std::function<void()> f);
+
+/* isChannelAudible
+True if the channel 'c' is currently audible: not muted or not included in a 
+solo session. */
+
 bool isChannelAudible(const channel::Data& c);
 
 float getPeakOut();
 float getPeakIn();
+
+RecordInfo getRecordInfo();
 } // namespace giada::m::mixer
 
 #endif

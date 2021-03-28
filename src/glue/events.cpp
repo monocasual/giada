@@ -36,6 +36,7 @@
 #include "core/plugins/pluginHost.h"
 #include "core/recManager.h"
 #include "core/sequencer.h"
+#include "core/types.h"
 #include "glue/main.h"
 #include "glue/plugin.h"
 #include "glue/sampleEditor.h"
@@ -250,7 +251,7 @@ void toggleActionRecording()
 
 void toggleInputRecording()
 {
-	m::recManager::toggleInputRec(m::conf::conf.recTriggerMode);
+	m::recManager::toggleInputRec(m::conf::conf.recTriggerMode, m::conf::conf.inputRecMode);
 }
 
 /* -------------------------------------------------------------------------- */

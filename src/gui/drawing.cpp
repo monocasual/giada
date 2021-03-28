@@ -24,42 +24,28 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_REC_MANAGER_H
-#define G_REC_MANAGER_H
+#include "drawing.h"
+#include <FL/Fl.H>
 
-#include "core/types.h"
-
-namespace giada::m::recManager
+namespace giada::v
 {
-bool isRecording();
-bool isRecordingAction();
-bool isRecordingInput();
+void drawRectf(geompp::Rect<int> r, Fl_Color c)
+{
+	fl_rectf(r.x, r.y, r.w, r.h, c);
+}
 
-void startActionRec(RecTriggerMode);
-void stopActionRec();
-void toggleActionRec(RecTriggerMode);
+/* -------------------------------------------------------------------------- */
 
-bool startInputRec(RecTriggerMode, InputRecMode);
-void stopInputRec(InputRecMode);
-bool toggleInputRec(RecTriggerMode, InputRecMode);
+void drawRect(geompp::Rect<int> r, Fl_Color c)
+{
+	fl_rect(r.x, r.y, r.w, r.h, c);
+}
 
-/* canEnableRecOnSignal
-True if rec-on-signal can be enabled: can't set it while sequencer is running,
-in order to prevent mistakes while live recording. */
+/* -------------------------------------------------------------------------- */
 
-bool canEnableRecOnSignal();
-
-/* canEnableFreeInputRec
-True if free loop-length can be enabled: Can't set it if there's already a 
-filled Sample Channel in the current project. */
-
-bool canEnableFreeInputRec();
-
-/* refreshInputRecMode
-Makes sure the input rec mode stays the right one when a new Sample Channel is
-filled with data. See canEnableFreeInputRec() rationale. */
-
-void refreshInputRecMode();
-} // namespace giada::m::recManager
-
-#endif
+void drawLine(geompp::Line<int> l, Fl_Color c)
+{
+	fl_color(c);
+	fl_line(l.x1, l.y1, l.x2, l.y2);
+}
+} // namespace giada::v

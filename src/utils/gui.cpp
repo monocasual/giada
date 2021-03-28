@@ -44,7 +44,7 @@
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/dialogs/window.h"
-#include "gui/elems/mainWindow/beatMeter.h"
+#include "gui/elems/mainWindow/sequencer.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/mainIO.h"

@@ -95,7 +95,7 @@ void updateSoloCount();
 Fills armed Sample Channels with audio data coming from an input recording
 session. */
 
-void finalizeInputRec();
+void finalizeInputRec(Frame recordedFrames);
 
 /* hasLogicalSamples
 True if 1 or more samples are logical (memory only, such as takes) */

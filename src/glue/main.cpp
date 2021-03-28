@@ -74,7 +74,6 @@ void setBpm_(float current, std::string s)
 	float previous = m::clock::getBpm();
 	m::clock::setBpm(current);
 	m::recorderHandler::updateBpm(previous, current, m::clock::getQuantizerStep());
-	m::mixer::allocRecBuffer(m::clock::getFramesInLoop());
 
 	/* This function might get called by Jack callback BEFORE the UI is up
 	and running, that is when G_MainWin == nullptr. */
@@ -150,6 +149,25 @@ IO getIO()
 
 /* -------------------------------------------------------------------------- */
 
+Sequencer getSequencer()
+{
+	Sequencer out;
+
+	m::mixer::RecordInfo recInfo = m::mixer::getRecordInfo();
+
+	out.isFreeModeInputRec = m::recManager::isRecordingInput() && m::conf::conf.inputRecMode == InputRecMode::FREE;
+	out.shouldBlink        = u::gui::shouldBlink() && (m::clock::getStatus() == ClockStatus::WAITING || out.isFreeModeInputRec);
+	out.beats              = m::clock::getBeats();
+	out.bars               = m::clock::getBars();
+	out.currentBeat        = m::clock::getCurrentBeat();
+	out.recPosition        = recInfo.position;
+	out.recMaxLength       = recInfo.maxLength;
+
+	return out;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void setBpm(const char* v1, const char* v2)
 {
 	/* Never change this stuff while recording audio. */
@@ -199,7 +217,7 @@ void setBeats(int beats, int bars)
 		return;
 
 	m::clock::setBeats(beats, bars);
-	m::mixer::allocRecBuffer(m::clock::getFramesInLoop());
+	m::mixer::allocRecBuffer(m::clock::getMaxFramesInLoop());
 
 	G_MainWin->mainTimer->setMeter(m::clock::getBeats(), m::clock::getBars());
 	u::gui::refreshActionEditor(); // in case the action editor is open
@@ -245,12 +263,24 @@ void setInToOut(bool v)
 
 void toggleRecOnSignal()
 {
-	/* Can't set RecTriggerMode::SIGNAL while sequencer is running, in order
-	to prevent mistakes while live recording. */
-
-	if (m::conf::conf.recTriggerMode == RecTriggerMode::NORMAL && m::clock::isRunning())
+	if (!m::recManager::canEnableRecOnSignal())
+	{
+		m::conf::conf.recTriggerMode = RecTriggerMode::NORMAL;
 		return;
+	}
 	m::conf::conf.recTriggerMode = m::conf::conf.recTriggerMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void toggleFreeInputRec()
+{
+	if (!m::recManager::canEnableFreeInputRec())
+	{
+		m::conf::conf.inputRecMode = InputRecMode::RIGID;
+		return;
+	}
+	m::conf::conf.inputRecMode = m::conf::conf.inputRecMode == InputRecMode::FREE ? InputRecMode::RIGID : InputRecMode::FREE;
 }
 
 /* -------------------------------------------------------------------------- */

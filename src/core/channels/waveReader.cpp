@@ -95,7 +95,7 @@ WaveReader::Result WaveReader::fill(AudioBuffer& out, Frame start, Frame max, Fr
 {
 	assert(wave != nullptr);
 	assert(start >= 0);
-	assert(max <= wave->getSize());
+	assert(max <= wave->getBuffer().countFrames());
 	assert(offset < out.countFrames());
 
 	if (pitch == 1.0)
@@ -110,7 +110,7 @@ WaveReader::Result WaveReader::fillResampled(AudioBuffer& dest, Frame start, Fra
 {
 	SRC_DATA srcData;
 
-	srcData.data_in       = wave->getFrame(start);       // Source data
+	srcData.data_in       = wave->getBuffer()[start];    // Source data
 	srcData.input_frames  = max - start;                 // How many readable frames in Wave
 	srcData.data_out      = dest[offset];                // Destination (processed data)
 	srcData.output_frames = dest.countFrames() - offset; // How many writable frames in dest
@@ -132,7 +132,7 @@ WaveReader::Result WaveReader::fillCopy(AudioBuffer& dest, Frame start, Frame ma
 	if (used > max - start)
 		used = max - start;
 
-	dest.copyData(wave->getFrame(start), used, G_MAX_IO_CHANS, offset);
+	dest.set(wave->getBuffer(), used, start, offset);
 
 	return {used, used};
 }

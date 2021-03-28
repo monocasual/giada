@@ -45,6 +45,6 @@ void render(const channel::Data& ch, const AudioBuffer& in)
 	(i.e. not plugin-processed). */
 
 	if (ch.armed && ch.audioReceiver->inputMonitor)
-		ch.buffer->audio.addData(in); // add, don't overwrite
+		ch.buffer->audio.set(in, /*gain=*/1.0f); // add, don't overwrite
 }
 } // namespace giada::m::audioReceiver

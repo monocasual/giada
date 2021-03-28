@@ -121,16 +121,19 @@ void setupChannelPostRecording_(channel::Data& ch)
 /* recordChannel_
 Records the current Mixer audio input data into an empty channel. */
 
-void recordChannel_(channel::Data& ch)
+void recordChannel_(channel::Data& ch, Frame recordedFrames)
 {
-	/* Create a new Wave with audio coming from Mixer's virtual input. */
+	/* Create a new Wave with audio coming from Mixer's input buffer. */
 
-	std::string filename = "TAKE-" + std::to_string(patch::patch.lastTakeId++) + ".wav";
+	std::string           filename = "TAKE-" + std::to_string(patch::patch.lastTakeId++) + ".wav";
+	std::unique_ptr<Wave> wave     = waveManager::createEmpty(recordedFrames, G_MAX_IO_CHANS,
+        conf::conf.samplerate, filename);
 
-	std::unique_ptr<Wave> wave = waveManager::createEmpty(clock::getFramesInLoop(),
-	    G_MAX_IO_CHANS, conf::conf.samplerate, filename);
+	G_DEBUG("Created new Wave, size=" << wave->getBuffer().countFrames());
 
-	wave->copyData(mixer::getRecBuffer());
+	/* Copy up to wave.getSize() from the mixer's input buffer into wave's. */
+
+	wave->getBuffer().set(mixer::getRecBuffer(), wave->getBuffer().countFrames());
 
 	/* Update channel with the new Wave. */
 
@@ -155,7 +158,7 @@ void overdubChannel_(channel::Data& ch)
 	thread at the same time. */
 
 	model::DataLock lock;
-	wave->addData(mixer::getRecBuffer());
+	wave->getBuffer().sum(mixer::getRecBuffer(), /*gain=*/1.0f);
 	wave->setLogical(true);
 
 	setupChannelPostRecording_(ch);
@@ -168,7 +171,7 @@ void overdubChannel_(channel::Data& ch)
 
 void init()
 {
-	mixer::init(clock::getFramesInLoop(), kernelAudio::getRealBufSize());
+	mixer::init(clock::getMaxFramesInLoop(), kernelAudio::getRealBufSize());
 
 	model::get().channels.clear();
 
@@ -219,6 +222,8 @@ int loadChannel(ID channelId, const std::string& fname)
 	if (old != nullptr)
 		model::remove<Wave>(*old);
 
+	recManager::refreshInputRecMode();
+
 	return res.status;
 }
 
@@ -241,6 +246,8 @@ void addAndLoadChannel(ID columnId, std::unique_ptr<Wave>&& w)
 
 	samplePlayer::loadWave(channel, &wave);
 	model::swap(model::SwapType::HARD);
+
+	recManager::refreshInputRecMode();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -260,7 +267,7 @@ void cloneChannel(ID channelId)
 	if (newChannel.samplePlayer && newChannel.samplePlayer->hasWave())
 	{
 		Wave* wave = newChannel.samplePlayer->getWave();
-		model::add(waveManager::createFromWave(*wave, 0, wave->getSize()));
+		model::add(waveManager::createFromWave(*wave, 0, wave->getBuffer().countFrames()));
 	}
 
 	/* Then push the new channel in the channels vector. */
@@ -284,6 +291,8 @@ void freeChannel(ID channelId)
 
 	if (wave != nullptr)
 		model::remove<Wave>(*wave);
+
+	recManager::refreshInputRecMode();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -293,8 +302,11 @@ void freeAllChannels()
 	for (channel::Data& ch : model::get().channels)
 		if (ch.samplePlayer)
 			samplePlayer::loadWave(ch, nullptr);
+
 	model::swap(model::SwapType::HARD);
 	model::clear<model::WavePtrs>();
+
+	recManager::refreshInputRecMode();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -318,6 +330,8 @@ void deleteChannel(ID channelId)
 #ifdef WITH_VST
 	pluginHost::freePlugins(plugins);
 #endif
+
+	recManager::refreshInputRecMode();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -367,14 +381,10 @@ bool getInToOut()
 
 /* -------------------------------------------------------------------------- */
 
-/* Push a new Wave into each recordable channel. Warning: this algorithm will 
-require some changes when we will allow overdubbing (the previous existing Wave
-has to be overwritten somehow). */
-
-void finalizeInputRec()
+void finalizeInputRec(Frame recordedFrames)
 {
 	for (channel::Data* ch : getRecordableChannels_())
-		recordChannel_(*ch);
+		recordChannel_(*ch, recordedFrames);
 	for (channel::Data* ch : getOverdubbableChannels_())
 		overdubChannel_(*ch);
 

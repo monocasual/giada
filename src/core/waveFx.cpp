@@ -38,8 +38,8 @@ namespace
 {
 void fadeFrame_(Wave& w, int i, float val)
 {
-	for (int j = 0; j < w.getChannels(); j++)
-		w[i][j] *= val;
+	for (int j = 0; j < w.getBuffer().countChannels(); j++)
+		w.getBuffer()[i][j] *= val;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -50,8 +50,8 @@ float getPeak_(const Wave& w, int a, int b)
 	float abs  = 0.0f;
 	for (int i = a; i < b; i++)
 	{
-		for (int j = 0; j < w.getChannels(); j++) // Find highest value in any channel
-			abs = fabs(w[i][j]);
+		for (int j = 0; j < w.getBuffer().countChannels(); j++) // Find highest value in any channel
+			abs = fabs(w.getBuffer()[i][j]);
 		if (abs > peak)
 			peak = abs;
 	}
@@ -73,8 +73,8 @@ void normalize(Wave& w, int a, int b)
 
 	for (int i = a; i < b; i++)
 	{
-		for (int j = 0; j < w.getChannels(); j++)
-			w[i][j] = w[i][j] * (1.0f / peak);
+		for (int j = 0; j < w.getBuffer().countChannels(); j++)
+			w.getBuffer()[i][j] = w.getBuffer()[i][j] * (1.0f / peak);
 	}
 	w.setEdited(true);
 }
@@ -83,15 +83,15 @@ void normalize(Wave& w, int a, int b)
 
 int monoToStereo(Wave& w)
 {
-	if (w.getChannels() >= G_MAX_IO_CHANS)
+	if (w.getBuffer().countChannels() >= G_MAX_IO_CHANS)
 		return G_RES_OK;
 
 	AudioBuffer newData;
-	newData.alloc(w.getSize(), G_MAX_IO_CHANS);
+	newData.alloc(w.getBuffer().countFrames(), G_MAX_IO_CHANS);
 
 	for (int i = 0; i < newData.countFrames(); i++)
 		for (int j = 0; j < newData.countChannels(); j++)
-			newData[i][j] = w[i][0];
+			newData[i][j] = w.getBuffer()[i][0];
 
 	w.replaceData(std::move(newData));
 
@@ -105,8 +105,8 @@ void silence(Wave& w, int a, int b)
 	u::log::print("[wfx::silence] silencing from %d to %d\n", a, b);
 
 	for (int i = a; i < b; i++)
-		for (int j = 0; j < w.getChannels(); j++)
-			w[i][j] = 0.0f;
+		for (int j = 0; j < w.getBuffer().countChannels(); j++)
+			w.getBuffer()[i][j] = 0.0f;
 	w.setEdited(true);
 }
 
@@ -116,25 +116,25 @@ void cut(Wave& w, int a, int b)
 {
 	if (a < 0)
 		a = 0;
-	if (b > w.getSize())
-		b = w.getSize();
+	if (b > w.getBuffer().countFrames())
+		b = w.getBuffer().countFrames();
 
 	/* Create a new temp wave and copy there the original one, skipping the a-b
     range. */
 
-	int newSize = w.getSize() - (b - a);
+	int newSize = w.getBuffer().countFrames() - (b - a);
 
 	AudioBuffer newData;
-	newData.alloc(newSize, w.getChannels());
+	newData.alloc(newSize, w.getBuffer().countChannels());
 
 	u::log::print("[wfx::cut] cutting from %d to %d\n", a, b);
 
-	for (int i = 0, k = 0; i < w.getSize(); i++)
+	for (int i = 0, k = 0; i < w.getBuffer().countFrames(); i++)
 	{
 		if (i < a || i >= b)
 		{
-			for (int j = 0; j < w.getChannels(); j++)
-				newData[k][j] = w[i][j];
+			for (int j = 0; j < w.getBuffer().countChannels(); j++)
+				newData[k][j] = w.getBuffer()[i][j];
 			k++;
 		}
 	}
@@ -149,19 +149,19 @@ void trim(Wave& w, Frame a, Frame b)
 {
 	if (a < 0)
 		a = 0;
-	if (b > w.getSize())
-		b = w.getSize();
+	if (b > w.getBuffer().countFrames())
+		b = w.getBuffer().countFrames();
 
 	Frame newSize = b - a;
 
 	AudioBuffer newData;
-	newData.alloc(newSize, w.getChannels());
+	newData.alloc(newSize, w.getBuffer().countChannels());
 
 	u::log::print("[wfx::trim] trimming from %d to %d (area = %d)\n", a, b, b - a);
 
 	for (int i = 0; i < newData.countFrames(); i++)
 		for (int j = 0; j < newData.countChannels(); j++)
-			newData[i][j] = w[i + a][j];
+			newData[i][j] = w.getBuffer()[i + a][j];
 
 	w.replaceData(std::move(newData));
 	w.setEdited(true);
@@ -171,17 +171,17 @@ void trim(Wave& w, Frame a, Frame b)
 
 void paste(const Wave& src, Wave& des, Frame a)
 {
-	assert(src.getChannels() == des.getChannels());
+	assert(src.getBuffer().countChannels() == des.getBuffer().countChannels());
 
 	AudioBuffer newData;
-	newData.alloc(src.getSize() + des.getSize(), des.getChannels());
+	newData.alloc(src.getBuffer().countFrames() + des.getBuffer().countFrames(), des.getBuffer().countChannels());
 
 	/* |---original data---|///paste data///|---original data---|
-				des[0, a)      src[0, src.size)   des[a, des.size)	*/
+	         des[0, a)      src[0, src.size)   des[a, des.size)	*/
 
-	newData.copyData(des[0], a, 0);
-	newData.copyData(src[0], src.getSize(), a);
-	newData.copyData(des[a], des.getSize() - a, src.getSize() + a);
+	newData.set(des.getBuffer(), a, 0);
+	newData.set(src.getBuffer(), src.getBuffer().countFrames(), a);
+	newData.set(des.getBuffer(), des.getBuffer().countFrames() - a, src.getBuffer().countFrames() + a);
 
 	des.replaceData(std::move(newData));
 	des.setEdited(true);
@@ -228,12 +228,12 @@ void smooth(Wave& w, int a, int b)
 void shift(Wave& w, Frame offset)
 {
 	if (offset < 0)
-		offset = (w.getSize() + w.getChannels()) + offset;
+		offset = (w.getBuffer().countFrames() + w.getBuffer().countChannels()) + offset;
 
-	float* begin = w.getFrame(0);
-	float* end   = w.getFrame(0) + (w.getSize() * w.getChannels());
+	float* begin = w.getBuffer()[0];
+	float* end   = w.getBuffer()[0] + (w.getBuffer().countFrames() * w.getBuffer().countChannels());
 
-	std::rotate(begin, end - (offset * w.getChannels()), end);
+	std::rotate(begin, end - (offset * w.getBuffer().countChannels()), end);
 	w.setEdited(true);
 }
 
@@ -242,8 +242,8 @@ void shift(Wave& w, Frame offset)
 void reverse(Wave& w, Frame a, Frame b)
 {
 	/* https://stackoverflow.com/questions/33201528/reversing-an-array-of-structures-in-c */
-	float* begin = w.getFrame(0) + (a * w.getChannels());
-	float* end   = w.getFrame(0) + (b * w.getChannels());
+	float* begin = w.getBuffer()[0] + (a * w.getBuffer().countChannels());
+	float* end   = w.getBuffer()[0] + (b * w.getBuffer().countChannels());
 
 	std::reverse(begin, end);
 

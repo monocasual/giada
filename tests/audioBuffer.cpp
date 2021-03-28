@@ -63,6 +63,8 @@ TEST_CASE("AudioBuffer")
 
 	SECTION("test copy")
 	{
+		assert(false); // TODO
+		/*
 		int    size = BUFFER_SIZE * 2;
 		float* data = new float[size];
 		for (int i = 0; i < size; i++)
@@ -78,6 +80,6 @@ TEST_CASE("AudioBuffer")
 			REQUIRE(buffer[1024][0] == 2048.0f);
 		}
 
-		delete[] data;
+		delete[] data;*/
 	}
 }

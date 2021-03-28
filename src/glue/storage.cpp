@@ -169,7 +169,7 @@ void loadProject(void* data)
 	m::mh::updateSoloCount();
 	m::recorderHandler::updateSamplerate(m::conf::conf.samplerate, m::patch::patch.samplerate);
 	m::clock::recomputeFrames();
-	m::mixer::allocRecBuffer(m::clock::getFramesInLoop());
+	m::mixer::allocRecBuffer(m::clock::getMaxFramesInLoop());
 
 	/* Mixer is ready to go back online. */
 

@@ -42,23 +42,20 @@ public:
 
 	Wave& operator=(Wave&& o) = default;
 
-	float* operator[](int offset) const;
-
-	/* getFrame
-	Works like operator []. See AudioBuffer for reference. */
-
-	float* getFrame(int f) const;
-
 	std::string getBasename(bool ext = false) const;
 	std::string getExtension() const;
 	int         getRate() const;
-	int         getChannels() const;
 	std::string getPath() const;
 	int         getBits() const;
-	int         getSize() const; // in frames
 	int         getDuration() const;
 	bool        isLogical() const;
 	bool        isEdited() const;
+
+	/* getBuffer
+	Returns a (non-)const reference to the underlying audio buffer. */
+
+	AudioBuffer&       getBuffer();
+	const AudioBuffer& getBuffer() const;
 
 	/* setPath
 	Sets new path 'p'. If 'id' != -1 inserts a numeric id next to the file 
@@ -75,23 +72,11 @@ public:
 
 	void replaceData(AudioBuffer&& b);
 
-	/* copyData
-	Copies 'frames' frames from the new 'data' into m_data, starting from frame 
-	'offset'. */
-
-	void copyData(const float* data, int frames, int channels, int offset = 0);
-	void copyData(const AudioBuffer& b);
-
-	/* addData
-	Merges audio data from buffer 'b' onto this one. */
-
-	void addData(const AudioBuffer& b);
-
-	void alloc(int size, int channels, int rate, int bits, const std::string& path);
+	void alloc(Frame size, int channels, int rate, int bits, const std::string& path);
 
 	ID id;
 
-  private:
+private:
 	AudioBuffer m_buffer;
 	int         m_rate;
 	int         m_bits;

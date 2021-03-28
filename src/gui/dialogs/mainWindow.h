@@ -29,9 +29,7 @@
 
 #include "window.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geKeyboard;
 class geMainIO;
@@ -54,13 +52,12 @@ public:
 	void clearKeyboard();
 
 	geKeyboard*      keyboard;
-	geSequencer*     beatMeter;
+	geSequencer*     sequencer;
 	geMainMenu*      mainMenu;
 	geMainIO*        mainIO;
 	geMainTimer*     mainTimer;
 	geMainTransport* mainTransport;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

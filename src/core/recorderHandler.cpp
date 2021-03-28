@@ -38,11 +38,7 @@
 #include <cmath>
 #include <unordered_map>
 
-namespace giada
-{
-namespace m
-{
-namespace recorderHandler
+namespace giada::m::recorderHandler
 {
 namespace
 {
@@ -295,7 +291,4 @@ std::vector<patch::Action> serializeActions(const recorder::ActionMap& actions)
 	}
 	return out;
 }
-
-} // namespace recorderHandler
-} // namespace m
-} // namespace giada
+} // namespace giada::m::recorderHandler

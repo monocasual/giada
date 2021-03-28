@@ -24,7 +24,7 @@ TEST_CASE("waveManager")
 
 		REQUIRE(res.status == G_RES_OK);
 		REQUIRE(res.wave->getRate() == G_SAMPLE_RATE);
-		REQUIRE(res.wave->getChannels() == G_CHANNELS);
+		REQUIRE(res.wave->getBuffer().countChannels() == G_CHANNELS);
 		REQUIRE(res.wave->isLogical() == false);
 		REQUIRE(res.wave->isEdited() == false);
 	}
@@ -35,8 +35,8 @@ TEST_CASE("waveManager")
 		    G_MAX_IO_CHANS, G_SAMPLE_RATE, "test.wav");
 
 		REQUIRE(wave->getRate() == G_SAMPLE_RATE);
-		REQUIRE(wave->getSize() == G_BUFFER_SIZE);
-		REQUIRE(wave->getChannels() == G_CHANNELS);
+		REQUIRE(wave->getBuffer().countFrames() == G_BUFFER_SIZE);
+		REQUIRE(wave->getBuffer().countChannels() == G_CHANNELS);
 		REQUIRE(wave->isLogical() == true);
 		REQUIRE(wave->isEdited() == false);
 	}
@@ -46,12 +46,12 @@ TEST_CASE("waveManager")
 		waveManager::Result res = waveManager::createFromFile(TEST_RESOURCES_DIR "test.wav",
 		    /*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, /*quality=*/SRC_LINEAR);
 
-		int oldSize = res.wave->getSize();
+		int oldSize = res.wave->getBuffer().countFrames();
 		waveManager::resample(*res.wave.get(), 1, G_SAMPLE_RATE * 2);
 
 		REQUIRE(res.wave->getRate() == G_SAMPLE_RATE * 2);
-		REQUIRE(res.wave->getSize() == oldSize * 2);
-		REQUIRE(res.wave->getChannels() == G_CHANNELS);
+		REQUIRE(res.wave->getBuffer().countFrames() == oldSize * 2);
+		REQUIRE(res.wave->getBuffer().countChannels() == G_CHANNELS);
 		REQUIRE(res.wave->isLogical() == false);
 		REQUIRE(res.wave->isEdited() == false);
 	}

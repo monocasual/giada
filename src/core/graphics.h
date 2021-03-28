@@ -71,6 +71,9 @@ extern const char* recTriggerModeOn_xpm[];
 extern const char* inputRecOn_xpm[];
 extern const char* inputRecOff_xpm[];
 
+extern const char* freeInputRecOn_xpm[];
+extern const char* freeInputRecOff_xpm[];
+
 extern const char* divideOn_xpm[];
 extern const char* divideOff_xpm[];
 extern const char* multiplyOn_xpm[];

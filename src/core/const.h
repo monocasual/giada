@@ -442,6 +442,7 @@ constexpr auto CONF_KEY_MIDI_INPUT_H                  = "midi_input_h";
 constexpr auto CONF_KEY_PLUGIN_SORT_METHOD            = "plugin_sort_method";
 constexpr auto CONF_KEY_REC_TRIGGER_MODE              = "rec_trigger_mode";
 constexpr auto CONF_KEY_REC_TRIGGER_LEVEL             = "rec_trigger_level";
+constexpr auto CONF_KEY_INPUT_REC_MODE                = "input_rec_mode";
 
 /* JSON midimaps keys */
 

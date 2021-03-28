@@ -2,6 +2,8 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
+ * beatMeter
+ *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2021 Giovanni A. Zuliani | Monocasual
@@ -24,42 +26,39 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_REC_MANAGER_H
-#define G_REC_MANAGER_H
+#ifndef GE_SEQUENCER_H
+#define GE_SEQUENCER_H
 
 #include "core/types.h"
+#include "deps/geompp/src/rect.hpp"
+#include "glue/main.h"
+#include <FL/Fl_Box.H>
 
-namespace giada::m::recManager
+namespace giada::v
 {
-bool isRecording();
-bool isRecordingAction();
-bool isRecordingInput();
+class geSequencer : public Fl_Box
+{
+public:
+	geSequencer(int x, int y, int w, int h);
 
-void startActionRec(RecTriggerMode);
-void stopActionRec();
-void toggleActionRec(RecTriggerMode);
+	void draw() override;
 
-bool startInputRec(RecTriggerMode, InputRecMode);
-void stopInputRec(InputRecMode);
-bool toggleInputRec(RecTriggerMode, InputRecMode);
+	void refresh();
 
-/* canEnableRecOnSignal
-True if rec-on-signal can be enabled: can't set it while sequencer is running,
-in order to prevent mistakes while live recording. */
+private:
+	static constexpr int REC_BARS_H = 3;
+	static constexpr int CURSOR_PAD = 3;
 
-bool canEnableRecOnSignal();
+	void drawBody() const;
+	void drawCursor() const;
+	void drawCursor(int beat, Fl_Color col) const;
+	void drawRecBars() const;
 
-/* canEnableFreeInputRec
-True if free loop-length can be enabled: Can't set it if there's already a 
-filled Sample Channel in the current project. */
+	c::main::Sequencer m_data;
 
-bool canEnableFreeInputRec();
-
-/* refreshInputRecMode
-Makes sure the input rec mode stays the right one when a new Sample Channel is
-filled with data. See canEnableFreeInputRec() rationale. */
-
-void refreshInputRecMode();
-} // namespace giada::m::recManager
+	geompp::Rect<int> m_background;
+	geompp::Rect<int> m_cell;
+};
+} // namespace giada::v
 
 #endif

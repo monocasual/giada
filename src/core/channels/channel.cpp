@@ -83,12 +83,12 @@ void react_(Data& d, const eventDispatcher::Event& e)
 
 void renderMasterOut_(const Data& d, AudioBuffer& out)
 {
-	d.buffer->audio.copyData(out);
+	d.buffer->audio.set(out, /*gain=*/1.0f);
 #ifdef WITH_VST
 	if (d.plugins.size() > 0)
 		pluginHost::processStack(d.buffer->audio, d.plugins, nullptr);
 #endif
-	out.copyData(d.buffer->audio, d.volume);
+	out.set(d.buffer->audio, d.volume);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -124,7 +124,7 @@ void renderChannel_(const Data& d, AudioBuffer& out, AudioBuffer& in, bool audib
 #endif
 
 	if (audible)
-		out.addData(d.buffer->audio, d.volume * d.volume_i, calcPanning_(d.pan));
+		out.sum(d.buffer->audio, d.volume * d.volume_i, calcPanning_(d.pan));
 }
 } // namespace
 

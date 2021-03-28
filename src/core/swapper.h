@@ -60,7 +60,7 @@ public:
 			return m_swapper.rt_get();
 		}
 
-	  private:
+	private:
 		Swapper& m_swapper;
 	};
 
@@ -101,7 +101,12 @@ public:
 		m_data[(bits & BIT_INDEX) ^ 1] = m_data[bits & BIT_INDEX];
 	}
 
-  private:
+	bool isLocked()
+	{
+		return m_bits.load() & BIT_BUSY;
+	}
+
+private:
 	static constexpr int BIT_INDEX = (1 << 0); // 0001
 	static constexpr int BIT_BUSY  = (1 << 1); // 0010
 

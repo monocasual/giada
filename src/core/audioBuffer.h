@@ -111,26 +111,23 @@ public:
 	void alloc(Frame size, int channels);
 	void free();
 
-	/* copyData (1)
-	Copies 'frames' frames from the new 'data' into m_data, and fills m_data 
-	starting from frame 'offset'. The new data MUST NOT contain more than
-	NUM_CHANS channels. If channels < NUM_CHANS, they will be spread over the
-	stereo buffer. */
+	/* sum, set (1)
+	Merges (sum) or copies (set) 'framesToCopy' frames of buffer 'b' onto this 
+	one. If 'framesToCopy' is -1 the whole buffer will be copied. If 'b' has 
+	less channels than this one, they will be spread over the current ones. 
+	Buffer 'b' MUST NOT contain more channels than this one. */
 
-	void copyData(const float* data, Frame frames, int channels = NUM_CHANS, int offset = 0);
+	void sum(const AudioBuffer& b, Frame framesToCopy = -1, Frame srcOffset = 0,
+	    Frame destOffset = 0, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
+	void set(const AudioBuffer& b, Frame framesToCopy = -1, Frame srcOffset = 0,
+	    Frame destOffset = 0, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
 
-	/* copyData (2)
-	Copies buffer 'b' onto this one. If 'b' has less channels than this one,
-	they will be spread over the current ones. Buffer 'b' MUST NOT contain more
-	channels than this one.  */
+	/* sum, set (2)
+	Same as sum, set (1) without boundaries or offsets: it just copies as much
+	as possibile. */
 
-	void copyData(const AudioBuffer& b, float gain = 1.0f);
-
-	/* addData
-	Merges audio data from buffer 'b' onto this one. Applies optional gain and
-	pan if needed. */
-
-	void addData(const AudioBuffer& b, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
+	void sum(const AudioBuffer& b, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
+	void set(const AudioBuffer& b, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
 
 	/* clear
 	Clears the internal data by setting all bytes to 0.0f. Optional parameters
@@ -141,8 +138,21 @@ public:
 	void applyGain(float g);
 
 private:
+	enum class Operation
+	{
+		SUM,
+		SET
+	};
+
+	template <Operation O = Operation::SET>
+	void copyData(const AudioBuffer& b, Frame framesToCopy = -1,
+	    Frame srcOffset = 0, Frame destOffset = 0, float gain = 1.0f,
+	    Pan pan = {1.0f, 1.0f});
+
 	void move(AudioBuffer&& o);
 	void copy(const AudioBuffer& o);
+	void sum(Frame f, int channel, float val);
+	void set(Frame f, int channel, float val);
 
 	float* m_data;
 	Frame  m_size;

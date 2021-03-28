@@ -25,25 +25,12 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/mixer.h"
-#include "core/action.h"
 #include "core/audioBuffer.h"
-#include "core/clock.h"
-#include "core/conf.h"
 #include "core/const.h"
-#include "core/kernelAudio.h"
-#include "core/mixerHandler.h"
 #include "core/model/model.h"
-#include "core/plugins/pluginHost.h"
-#include "core/recManager.h"
-#include "core/recorder.h"
 #include "core/sequencer.h"
-#include "core/swapper.h"
-#include "core/wave.h"
-#include "deps/rtaudio/RtAudio.h"
 #include "utils/log.h"
 #include "utils/math.h"
-#include <cassert>
-#include <cstring>
 
 namespace giada::m::mixer
 {
@@ -69,15 +56,21 @@ Callback triggered when the input signal level reaches a threshold. */
 
 std::function<void()> signalCb_ = nullptr;
 
+/* endOfRecCb_
+Callback triggered when the end of the internal recording buffer has been 
+reached.*/
+
+std::function<void()> endOfRecCb_ = nullptr;
+
 /* -------------------------------------------------------------------------- */
 
-/* invokeSignalCb_
+/* fireSignalCb_
 Invokes the signal callback. This is done by pumping a FUNCTION event to the
 event dispatcher, rather than invoking the callback directly. This is done on
 purpose: the callback might (and surely will) contain blocking stuff from 
 model:: that the realtime thread cannot perform directly. */
 
-void invokeSignalCb_()
+void fireSignalCb_()
 {
 	eventDispatcher::pumpEvent({eventDispatcher::EventType::FUNCTION, 0, 0, []() {
 		                            signalCb_();
@@ -87,24 +80,41 @@ void invokeSignalCb_()
 
 /* -------------------------------------------------------------------------- */
 
-bool canLineInRec_()
+/* fireEndOfRecCb_
+Same rationale of fireSignalCb_, for the endOfRecCb_ callback. */
+
+void fireEndOfRecCb_()
 {
-	return recManager::isRecordingInput() && kernelAudio::isInputEnabled();
+	eventDispatcher::pumpEvent({eventDispatcher::EventType::FUNCTION, 0, 0, []() {
+		                            endOfRecCb_();
+		                            endOfRecCb_ = nullptr;
+	                            }});
 }
 
 /* -------------------------------------------------------------------------- */
 
 /* lineInRec
-Records from line in. */
+Records from line in. 'maxFrames' determines how many frames to record before
+the internal tracker loops over. The value changes whether you are recording
+in RIGID or FREE mode. */
 
-void lineInRec_(const AudioBuffer& inBuf)
+void lineInRec_(const AudioBuffer& inBuf, Frame maxFrames, float inVol)
 {
-	float inVol        = mh::getInVol();
-	int   framesInLoop = clock::getFramesInLoop();
+	assert(maxFrames <= recBuffer_.countFrames());
 
-	for (int i = 0; i < inBuf.countFrames(); i++, inputTracker_++)
-		for (int j = 0; j < inBuf.countChannels(); j++)
-			recBuffer_[inputTracker_ % framesInLoop][j] += inBuf[i][j] * inVol; // adding: overdub!
+	if (inputTracker_ >= maxFrames && endOfRecCb_ != nullptr)
+	{
+		fireEndOfRecCb_();
+		return;
+	}
+
+	const Frame framesToCopy = -1; // copy everything
+	const Frame srcOffset    = 0;
+	const Frame destOffset   = inputTracker_ % maxFrames; // loop over at maxFrames
+
+	recBuffer_.sum(inBuf, framesToCopy, srcOffset, destOffset, inVol);
+
+	inputTracker_ += inBuf.countFrames();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -113,14 +123,15 @@ void lineInRec_(const AudioBuffer& inBuf)
 Computes line in peaks and prepares the internal working buffer for input
 recording. */
 
-void processLineIn_(const model::Mixer& mixer, const AudioBuffer& inBuf)
+void processLineIn_(const model::Mixer& mixer, const AudioBuffer& inBuf,
+    float inVol, float recTriggerLevel)
 {
 	float peak = inBuf.getPeak();
 
-	if (signalCb_ != nullptr && u::math::linearToDB(peak) > conf::conf.recTriggerLevel)
+	if (signalCb_ != nullptr && u::math::linearToDB(peak) > recTriggerLevel)
 	{
 		G_DEBUG("Signal > threshold!");
-		invokeSignalCb_();
+		fireSignalCb_();
 	}
 
 	mixer.state->peakIn.store(peak);
@@ -130,7 +141,7 @@ void processLineIn_(const model::Mixer& mixer, const AudioBuffer& inBuf)
 
 	assert(inBuf.countChannels() <= inBuffer_.countChannels());
 
-	inBuffer_.copyData(inBuf, mh::getInVol());
+	inBuffer_.set(inBuf, inVol);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -183,17 +194,6 @@ void renderPreview_(const model::Layout& layout, AudioBuffer& out)
 
 /* -------------------------------------------------------------------------- */
 
-/* prepareBuffers
-Cleans up every buffer. */
-
-void prepareBuffers_(AudioBuffer& outBuf)
-{
-	outBuf.clear();
-	inBuffer_.clear();
-}
-
-/* -------------------------------------------------------------------------- */
-
 /* limit_
 Applies a very dumb hard limiter. */
 
@@ -210,17 +210,15 @@ void limit_(AudioBuffer& outBuf)
 Last touches after the output has been rendered: apply inToOut if any, apply
 output volume, compute peak. */
 
-void finalizeOutput_(const model::Mixer& mixer, AudioBuffer& outBuf)
+void finalizeOutput_(const model::Mixer& mixer, AudioBuffer& outBuf,
+    const RenderInfo& info)
 {
-	bool  inToOut = mh::getInToOut();
-	float outVol  = mh::getOutVol();
-
-	if (inToOut)
-		outBuf.addData(inBuffer_, outVol);
+	if (info.inToOut)
+		outBuf.sum(inBuffer_, info.outVol);
 	else
-		outBuf.applyGain(outVol);
+		outBuf.applyGain(info.outVol);
 
-	if (conf::conf.limitOutput)
+	if (info.limitOutput)
 		limit_(outBuf);
 
 	mixer.state->peakOut.store(outBuf.getPeak());
@@ -231,16 +229,16 @@ void finalizeOutput_(const model::Mixer& mixer, AudioBuffer& outBuf)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void init(Frame framesInSeq, Frame framesInBuffer)
+void init(Frame maxFramesInLoop, Frame framesInBuffer)
 {
-	/* Allocate virtual inputs. recBuffer_ has variable size: it depends
-	on how many frames there are in sequencer. */
+	/* Allocate working buffers. recBuffer_ has variable size: it depends on how
+	many frames there are in the current loop. */
 
-	recBuffer_.alloc(framesInSeq, G_MAX_IO_CHANS);
+	recBuffer_.alloc(maxFramesInLoop, G_MAX_IO_CHANS);
 	inBuffer_.alloc(framesInBuffer, G_MAX_IO_CHANS);
 
-	u::log::print("[mixer::init] buffers ready - framesInSeq=%d, framesInBuffer=%d\n",
-	    framesInSeq, framesInBuffer);
+	u::log::print("[mixer::init] buffers ready - maxFramesInLoop=%d, framesInBuffer=%d\n",
+	    maxFramesInLoop, framesInBuffer);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -254,6 +252,8 @@ void enable()
 void disable()
 {
 	model::get().mixer.state->active.store(false);
+	while (model::isLocked())
+		;
 	u::log::print("[mixer::disable] disabled\n");
 }
 
@@ -276,35 +276,12 @@ const AudioBuffer& getRecBuffer()
 
 /* -------------------------------------------------------------------------- */
 
-int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
-    double /*streamTime*/, RtAudioStreamStatus /*status*/, void* /*userData*/)
+int render(AudioBuffer& out, const AudioBuffer& in, const RenderInfo& info)
 {
-	model::Lock          rtLock   = model::get_RT();
-	const model::Mixer&  mixer    = rtLock.get().mixer;
-	const model::Kernel& kernel   = rtLock.get().kernel;
-	const bool           hasInput = kernelAudio::isInputEnabled();
+	const model::Lock   rtLock = model::get_RT();
+	const model::Mixer& mixer  = rtLock.get().mixer;
 
-	/* Prepare temporary working buffers instead of raw pointers provided by 
-	RtAudio. */
-
-	AudioBuffer out(static_cast<float*>(outBuf), bufferSize, G_MAX_IO_CHANS);
-	AudioBuffer in;
-	if (hasInput)
-		in = AudioBuffer(static_cast<float*>(inBuf), bufferSize, conf::conf.channelsInCount);
-
-	/* Clean up all buffers before any rendering. Do this even if mixer is
-	disabled to avoid audio leftovers during a temporary suspension (e.g. when
-	loading a new patch). */
-
-	prepareBuffers_(out);
-
-	if (!kernel.audioReady || mixer.state->active.load() == false)
-		return 0;
-
-#ifdef WITH_AUDIO_JACK
-	if (kernelAudio::getAPI() == G_SYS_API_JACK)
-		clock::recvJackSync();
-#endif
+	inBuffer_.clear();
 
 	/* Reset peak computation. */
 
@@ -313,20 +290,20 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	/* Process line IN if input has been enabled in KernelAudio. */
 
-	if (hasInput)
+	if (info.hasInput)
 	{
-		processLineIn_(mixer, in);
+		processLineIn_(mixer, in, info.inVol, info.recTriggerLevel);
 		renderMasterIn_(rtLock.get(), inBuffer_);
 	}
 
 	/* Record input audio and advance the sequencer only if clock is active:
 	can't record stuff with the sequencer off. */
 
-	if (clock::isActive())
+	if (info.isClockActive)
 	{
-		if (canLineInRec_())
-			lineInRec_(in);
-		if (clock::isRunning())
+		if (info.canLineInRec)
+			lineInRec_(in, info.maxFramesToRec, info.inVol);
+		if (info.isClockRunning)
 			processSequencer_(rtLock.get(), out, inBuffer_);
 	}
 
@@ -343,30 +320,29 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	/* Post processing. */
 
-	finalizeOutput_(mixer, out);
+	finalizeOutput_(mixer, out, info);
 
 	return 0;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void startInputRec()
+void startInputRec(Frame from)
 {
-	/* Start inputTracker_ from the current frame, not the beginning. */
-	inputTracker_ = clock::getCurrentFrame();
+	inputTracker_ = from;
 }
 
-void stopInputRec()
+Frame stopInputRec()
 {
+	Frame ret     = inputTracker_;
 	inputTracker_ = 0;
+	return ret;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void setSignalCallback(std::function<void()> f)
-{
-	signalCb_ = f;
-}
+void setSignalCallback(std::function<void()> f) { signalCb_ = f; }
+void setEndOfRecCallback(std::function<void()> f) { endOfRecCb_ = f; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -384,4 +360,11 @@ bool isChannelAudible(const channel::Data& c)
 
 float getPeakOut() { return m::model::get().mixer.state->peakOut.load(); }
 float getPeakIn() { return m::model::get().mixer.state->peakIn.load(); }
+
+/* -------------------------------------------------------------------------- */
+
+RecordInfo getRecordInfo()
+{
+	return {inputTracker_, recBuffer_.countFrames()};
+}
 } // namespace giada::m::mixer
