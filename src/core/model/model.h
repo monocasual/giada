@@ -90,10 +90,9 @@ struct Mixer
 {
 	struct State
 	{
-		std::atomic<bool> processing = false;
-		std::atomic<bool> active     = false;
-		WeakAtomic<float> peakOut    = 0.0f;
-		WeakAtomic<float> peakIn     = 0.0f;
+		std::atomic<bool> active  = false;
+		WeakAtomic<float> peakOut = 0.0f;
+		WeakAtomic<float> peakIn  = 0.0f;
 	};
 
 	State* state    = nullptr;
@@ -150,7 +149,7 @@ public:
 	DataLock(SwapType t = SwapType::HARD);
 	~DataLock();
 
-  private:
+private:
 	SwapType m_swapType;
 };
 

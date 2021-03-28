@@ -87,14 +87,18 @@ void invokeSignalCb_()
 
 /* -------------------------------------------------------------------------- */
 
+bool canLineInRec_()
+{
+	return recManager::isRecordingInput() && kernelAudio::isInputEnabled();
+}
+
+/* -------------------------------------------------------------------------- */
+
 /* lineInRec
 Records from line in. */
 
 void lineInRec_(const AudioBuffer& inBuf)
 {
-	if (!recManager::isRecordingInput() || !kernelAudio::isInputEnabled())
-		return;
-
 	float inVol        = mh::getInVol();
 	int   framesInLoop = clock::getFramesInLoop();
 
@@ -111,9 +115,6 @@ recording. */
 
 void processLineIn_(const model::Mixer& mixer, const AudioBuffer& inBuf)
 {
-	if (!kernelAudio::isInputEnabled())
-		return;
-
 	float peak = inBuf.getPeak();
 
 	if (signalCb_ != nullptr && u::math::linearToDB(peak) > conf::conf.recTriggerLevel)
@@ -136,12 +137,6 @@ void processLineIn_(const model::Mixer& mixer, const AudioBuffer& inBuf)
 
 void processChannels_(const model::Layout& layout, AudioBuffer& out, AudioBuffer& in)
 {
-	/* No channel processing if layout is locked: another thread is changing
-	data (e.g. Plugins or Waves). */
-
-	if (layout.locked)
-		return;
-
 	for (const channel::Data& c : layout.channels)
 		if (!c.isInternal())
 			channel::render(c, &out, &in, isChannelAudible(c));
@@ -151,11 +146,6 @@ void processChannels_(const model::Layout& layout, AudioBuffer& out, AudioBuffer
 
 void processSequencer_(const model::Layout& layout, AudioBuffer& out, const AudioBuffer& in)
 {
-	lineInRec_(in);
-
-	if (!clock::isRunning())
-		return;
-
 	/* Advance sequencer first, then render it (rendering is just about
 	generating metronome audio). This way the metronome is aligned with 
 	everything else. */
@@ -264,8 +254,6 @@ void enable()
 void disable()
 {
 	model::get().mixer.state->active.store(false);
-	while (model::get().mixer.state->processing.load() == true)
-		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	u::log::print("[mixer::disable] disabled\n");
 }
 
@@ -291,14 +279,13 @@ const AudioBuffer& getRecBuffer()
 int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
     double /*streamTime*/, RtAudioStreamStatus /*status*/, void* /*userData*/)
 {
-	model::Lock          rtLock = model::get_RT();
-	const model::Mixer&  mixer  = rtLock.get().mixer;
-	const model::Kernel& kernel = rtLock.get().kernel;
+	model::Lock          rtLock   = model::get_RT();
+	const model::Mixer&  mixer    = rtLock.get().mixer;
+	const model::Kernel& kernel   = rtLock.get().kernel;
+	const bool           hasInput = kernelAudio::isInputEnabled();
 
 	if (!kernel.audioReady || mixer.state->active.load() == false)
 		return 0;
-
-	mixer.state->processing.store(true);
 
 #ifdef WITH_AUDIO_JACK
 	if (kernelAudio::getAPI() == G_SYS_API_JACK)
@@ -307,7 +294,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	AudioBuffer out, in;
 	out.setData(static_cast<float*>(outBuf), bufferSize, G_MAX_IO_CHANS);
-	if (kernelAudio::isInputEnabled())
+	if (hasInput)
 		in.setData(static_cast<float*>(inBuf), bufferSize, conf::conf.channelsInCount);
 
 	/* Reset peak computation. */
@@ -315,16 +302,36 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	mixer.state->peakOut.store(0.0);
 	mixer.state->peakIn.store(0.0);
 
+	/* Clean up all buffers before any rendering. */
+
 	prepareBuffers_(out);
-	processLineIn_(mixer, in);
 
-	//out[0][0] = 3.0f;
+	/* Process line IN if input has been enabled in KernelAudio. */
 
-	renderMasterIn_(rtLock.get(), inBuffer_);
+	if (hasInput)
+	{
+		processLineIn_(mixer, in);
+		renderMasterIn_(rtLock.get(), inBuffer_);
+	}
+
+	/* Record input audio and advance the sequencer only if clock is active:
+	can't record stuff with the sequencer off. */
 
 	if (clock::isActive())
-		processSequencer_(rtLock.get(), out, inBuffer_);
-	processChannels_(rtLock.get(), out, inBuffer_);
+	{
+		if (canLineInRec_())
+			lineInRec_(in);
+		if (clock::isRunning())
+			processSequencer_(rtLock.get(), out, inBuffer_);
+	}
+
+	/* Channel processing. Don't do it if layout is locked: another thread is 
+	changing data (e.g. Plugins or Waves). */
+
+	if (!rtLock.get().locked)
+		processChannels_(rtLock.get(), out, inBuffer_);
+
+	/* Render remaining internal channels. */
 
 	renderMasterOut_(rtLock.get(), out);
 	renderPreview_(rtLock.get(), out);
@@ -338,8 +345,6 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	out.setData(nullptr, 0, 0);
 	in.setData(nullptr, 0, 0);
-
-	mixer.state->processing.store(false);
 
 	return 0;
 }
