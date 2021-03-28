@@ -153,6 +153,8 @@ void AudioBuffer::alloc(Frame size, int channels)
 
 void AudioBuffer::free()
 {
+	if (m_data == nullptr)
+		return;
 	delete[] m_data;
 	m_data     = nullptr;
 	m_size     = 0;
@@ -216,7 +218,10 @@ void AudioBuffer::move(AudioBuffer&& o)
 	m_channels = o.m_channels;
 	m_viewing  = o.m_viewing;
 
-	o.free();
+	o.m_data     = nullptr;
+	o.m_size     = 0;
+	o.m_channels = 0;
+	o.m_viewing  = false;
 }
 
 /* -------------------------------------------------------------------------- */
