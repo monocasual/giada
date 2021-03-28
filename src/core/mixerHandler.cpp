@@ -85,21 +85,21 @@ bool anyChannel_(std::function<bool(const channel::Data&)> f)
 /* -------------------------------------------------------------------------- */
 
 template <typename F>
-std::vector<ID> getChannelsIf_(F f)
+std::vector<channel::Data*> getChannelsIf_(F f)
 {
-	std::vector<ID> ids;
-	for (const channel::Data& ch : model::get().channels)
+	std::vector<channel::Data*> out;
+	for (channel::Data& ch : model::get().channels)
 		if (f(ch))
-			ids.push_back(ch.id);
-	return ids;
+			out.push_back(&ch);
+	return out;
 }
 
-std::vector<ID> getRecordableChannels_()
+std::vector<channel::Data*> getRecordableChannels_()
 {
 	return getChannelsIf_([](const channel::Data& c) { return c.canInputRec() && !c.hasWave(); });
 }
 
-std::vector<ID> getOverdubbableChannels_()
+std::vector<channel::Data*> getOverdubbableChannels_()
 {
 	return getChannelsIf_([](const channel::Data& c) { return c.canInputRec() && c.hasWave(); });
 }
@@ -121,7 +121,7 @@ void setupChannelPostRecording_(channel::Data& ch)
 /* recordChannel_
 Records the current Mixer audio input data into an empty channel. */
 
-void recordChannel_(ID channelId)
+void recordChannel_(channel::Data& ch)
 {
 	/* Create a new Wave with audio coming from Mixer's virtual input. */
 
@@ -135,8 +135,6 @@ void recordChannel_(ID channelId)
 	/* Update channel with the new Wave. */
 
 	model::add(std::move(wave));
-
-	channel::Data& ch = model::get().getChannel(channelId);
 	samplePlayer::loadWave(ch, &model::back<Wave>());
 	setupChannelPostRecording_(ch);
 
@@ -149,15 +147,18 @@ void recordChannel_(ID channelId)
 Records the current Mixer audio input data into a channel with an existing
 Wave, overdub mode. */
 
-void overdubChannel_(ID channelId)
+void overdubChannel_(channel::Data& ch)
 {
-	Wave* wave = model::get().getChannel(channelId).samplePlayer->getWave();
+	Wave* wave = ch.samplePlayer->getWave();
+
+	/* Need model::DataLock here, as data might be being read by the audio
+	thread at the same time. */
 
 	model::DataLock lock;
 	wave->addData(mixer::getRecBuffer());
 	wave->setLogical(true);
 
-	setupChannelPostRecording_(model::get().getChannel(channelId));
+	setupChannelPostRecording_(ch);
 }
 } // namespace
 
@@ -372,10 +373,10 @@ has to be overwritten somehow). */
 
 void finalizeInputRec()
 {
-	for (ID id : getRecordableChannels_())
-		recordChannel_(id);
-	for (ID id : getOverdubbableChannels_())
-		overdubChannel_(id);
+	for (channel::Data* ch : getRecordableChannels_())
+		recordChannel_(*ch);
+	for (channel::Data* ch : getOverdubbableChannels_())
+		overdubChannel_(*ch);
 
 	mixer::clearRecBuffer();
 }
