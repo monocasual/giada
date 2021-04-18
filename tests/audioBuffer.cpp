@@ -63,23 +63,21 @@ TEST_CASE("AudioBuffer")
 
 	SECTION("test copy")
 	{
-		assert(false); // TODO
-		/*
-		int    size = BUFFER_SIZE * 2;
-		float* data = new float[size];
-		for (int i = 0; i < size; i++)
-			data[i] = (float)i;
+		AudioBuffer other(BUFFER_SIZE, 2);
+
+		for (int i = 0; i < other.countFrames(); i++)
+			for (int k = 0; k < other.countChannels(); k++)
+				other[i][k] = (float)i;
 
 		SECTION("test full copy")
 		{
-			buffer.copyData(data, BUFFER_SIZE);
+			buffer.set(other, 1.0f);
 
 			REQUIRE(buffer[0][0] == 0.0f);
-			REQUIRE(buffer[16][0] == 32.0f);
-			REQUIRE(buffer[32][0] == 64.0f);
-			REQUIRE(buffer[1024][0] == 2048.0f);
+			REQUIRE(buffer[16][0] == 16.0f);
+			REQUIRE(buffer[128][0] == 128.0f);
+			REQUIRE(buffer[1024][0] == 1024.0f);
+			REQUIRE(buffer[BUFFER_SIZE - 1][0] == (float)BUFFER_SIZE - 1);
 		}
-
-		delete[] data;*/
 	}
 }
