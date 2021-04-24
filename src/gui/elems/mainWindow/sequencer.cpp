@@ -70,7 +70,7 @@ void geSequencer::draw()
 void geSequencer::drawBody() const
 {
 	const geompp::Rect body = m_background.reduced(0, REC_BARS_H);
-	const geompp::Line line = m_cell.getHeightAsLine().withY2(m_cell.yh - 1); // TODO m_cell.yh - 1: FLTK glitch?
+	const geompp::Line line = m_cell.getHeightAsLine();
 
 	/* Background and borders. */
 
