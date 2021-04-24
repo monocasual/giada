@@ -30,6 +30,7 @@
 #include "core/types.h"
 #include "gui/dialogs/window.h"
 #include <functional>
+#include <string>
 
 class Fl_Group;
 class geCheck;
