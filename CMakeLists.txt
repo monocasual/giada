@@ -530,7 +530,8 @@ target_compile_options(giada PRIVATE ${COMPILER_OPTIONS})
 # Install rules
 # ------------------------------------------------------------------------------
 
-install(TARGETS giada DESTINATION ${CMAKE_INSTALL_PREFIX})
+include(GNUInstallDirs)
+install(TARGETS giada DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR})
 
 # ------------------------------------------------------------------------------
 # Extra
