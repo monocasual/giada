@@ -74,6 +74,13 @@ constexpr auto CONF_FILENAME = "giada.conf";
 #define G_SLASH_STR "/"
 #endif
 
+/* -- Engine ---------------------------------------------------------------- */
+/* G_EVENT_DISPATCHER_RATE_MS
+The amount of sleep between each Event Dispatcher cycle. It should be lower
+than the audio thread sleep time. Note: this value will obviously increase the 
+live input latency, keep it small! */
+constexpr int G_EVENT_DISPATCHER_RATE_MS = 5;
+
 /* -- GUI ------------------------------------------------------------------- */
 constexpr float G_GUI_REFRESH_RATE   = 1 / 30.0f; // 30 fps
 constexpr float G_GUI_PLUGIN_RATE    = 1 / 30.0f; // 30 fps

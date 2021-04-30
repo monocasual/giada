@@ -39,7 +39,8 @@
 
 /* giada::m::eventDispatcher
 Takes events from the two queues (MIDI and UI) filled by c::events and turns 
-them into actual changes in the data model. */
+them into actual changes in the data model. The EventDispatcher runs in a
+separate worker thread. */
 
 namespace giada::m::eventDispatcher
 {

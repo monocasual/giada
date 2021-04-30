@@ -26,6 +26,7 @@
 
 #include "eventDispatcher.h"
 #include "core/clock.h"
+#include "core/const.h"
 #include "core/model/model.h"
 #include "core/sequencer.h"
 #include "core/worker.h"
@@ -104,7 +105,7 @@ Queue<Event, G_MAX_DISPATCHER_EVENTS> MidiEvents;
 
 void init()
 {
-	worker_.start(process_, /*sleep=*/5); // TODO - <= than audio thread speed
+	worker_.start(process_, /*sleep=*/G_EVENT_DISPATCHER_RATE_MS);
 }
 
 /* -------------------------------------------------------------------------- */
