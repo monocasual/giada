@@ -62,6 +62,14 @@ reached.*/
 
 std::function<void()> endOfRecCb_ = nullptr;
 
+/* signalCbFired_
+Boolean guard to determine whether the signal callback has been fired or not.
+Checking if signalCb_ != null (i.e. a callback is still present, so not fired
+yet) is not enough, as the actual firing takes place on a different thread in
+a slightly different moment (see fireSignalCb_() below). */
+
+bool signalCbFired_ = false;
+
 /* -------------------------------------------------------------------------- */
 
 /* fireSignalCb_
@@ -128,10 +136,11 @@ void processLineIn_(const model::Mixer& mixer, const AudioBuffer& inBuf,
 {
 	float peak = inBuf.getPeak();
 
-	if (signalCb_ != nullptr && u::math::linearToDB(peak) > recTriggerLevel)
+	if (signalCb_ != nullptr && u::math::linearToDB(peak) > recTriggerLevel && !signalCbFired_)
 	{
 		G_DEBUG("Signal > threshold!");
 		fireSignalCb_();
+		signalCbFired_ = true;
 	}
 
 	mixer.state->peakIn.store(peak);
@@ -329,13 +338,15 @@ int render(AudioBuffer& out, const AudioBuffer& in, const RenderInfo& info)
 
 void startInputRec(Frame from)
 {
-	inputTracker_ = from;
+	inputTracker_  = from;
+	signalCbFired_ = false;
 }
 
 Frame stopInputRec()
 {
-	Frame ret     = inputTracker_;
-	inputTracker_ = 0;
+	Frame ret      = inputTracker_;
+	inputTracker_  = 0;
+	signalCbFired_ = false;
 	return ret;
 }
 

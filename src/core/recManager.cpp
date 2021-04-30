@@ -184,16 +184,19 @@ bool startInputRec(RecTriggerMode triggerMode, InputRecMode inputMode)
 	if (triggerMode == RecTriggerMode::NORMAL)
 	{
 		startInputRec_();
+		setRecordingInput_(true);
 		G_DEBUG("Start input rec, NORMAL mode");
 	}
 	else
 	{
 		clock::setStatus(ClockStatus::WAITING);
-		mixer::setSignalCallback([] { startInputRec_(); });
+		mixer::setSignalCallback([] {
+			startInputRec_();
+			setRecordingInput_(true);
+		});
 		G_DEBUG("Start input rec, SIGNAL mode");
 	}
 
-	setRecordingInput_(true);
 	return true;
 }
 
