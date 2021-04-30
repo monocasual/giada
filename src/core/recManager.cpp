@@ -235,7 +235,8 @@ void stopInputRec(InputRecMode recMode)
 		clock::rewind();
 		clock::setBpm(clock::calcBpmFromRec(recordedFrames));
 		mixer::setEndOfRecCallback(nullptr);
-		refreshInputRecMode(); // Back to RIGID mode if necessary
+		refreshInputRecMode();                       // Back to RIGID mode if necessary
+		model::triggerSwapCb(model::SwapType::HARD); // Rebuild UI to show new BPM value
 	}
 }
 
