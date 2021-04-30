@@ -51,19 +51,7 @@ void init()
 
 void update(void* /*p*/)
 {
-	/*
-	if (m::model::waves.changed.load()    == true ||
-		m::model::actions.changed.load()  == true ||
-		m::model::channels.changed.load()  == true)
-	{
-		u::gui::rebuild();
-		m::model::waves.changed.store(false);
-		m::model::actions.changed.store(false);
-		m::model::channels.changed.store(false);
-	}
-	else*/
 	u::gui::refresh();
-
 	Fl::add_timeout(G_GUI_REFRESH_RATE, update, nullptr);
 }
 } // namespace giada::v::updater
