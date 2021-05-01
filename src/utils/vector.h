@@ -68,6 +68,14 @@ void remove(T& v, const V& o)
 {
 	v.erase(std::remove(v.begin(), v.end(), o), v.end());
 }
+
+/* -------------------------------------------------------------------------- */
+
+template <typename T, typename I>
+std::vector<T> cast(const I& i)
+{
+	return {i.begin(), i.end()};
+}
 } // namespace giada::u::vector
 
 #endif
