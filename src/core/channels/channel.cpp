@@ -52,7 +52,6 @@ void react_(Data& d, const eventDispatcher::Event& e)
 {
 	switch (e.type)
 	{
-
 	case eventDispatcher::EventType::CHANNEL_VOLUME:
 		d.volume = std::get<float>(e.data);
 		break;
@@ -158,7 +157,6 @@ Data::Data(ChannelType type, ID id, ID columnId, State& state, Buffer& buffer)
 {
 	switch (type)
 	{
-
 	case ChannelType::SAMPLE:
 		samplePlayer.emplace();
 		sampleReactor.emplace(id);
@@ -173,11 +171,11 @@ Data::Data(ChannelType type, ID id, ID columnId, State& state, Buffer& buffer)
 
 	case ChannelType::MIDI:
 		midiController.emplace();
+		midiSender.emplace();
+		midiActionRecorder.emplace();
 #ifdef WITH_VST
 		midiReceiver.emplace();
 #endif
-		midiSender.emplace();
-		midiActionRecorder.emplace();
 		break;
 
 	default:
@@ -211,7 +209,6 @@ Data::Data(const patch::Channel& p, State& state, Buffer& buffer, float samplera
 {
 	switch (type)
 	{
-
 	case ChannelType::SAMPLE:
 		samplePlayer.emplace(p, samplerateRatio);
 		sampleReactor.emplace(id);
@@ -226,11 +223,11 @@ Data::Data(const patch::Channel& p, State& state, Buffer& buffer, float samplera
 
 	case ChannelType::MIDI:
 		midiController.emplace();
+		midiSender.emplace(p);
+		midiActionRecorder.emplace();
 #ifdef WITH_VST
 		midiReceiver.emplace();
 #endif
-		midiSender.emplace(p);
-		midiActionRecorder.emplace();
 		break;
 
 	default:
@@ -292,7 +289,6 @@ void advance(const Data& d, const sequencer::EventBuffer& events)
 {
 	for (const sequencer::Event& e : events)
 	{
-
 		if (d.midiController)
 			midiController::advance(d, e);
 		if (d.samplePlayer)
@@ -312,7 +308,6 @@ void react(Data& d, const eventDispatcher::EventBuffer& events, bool audible)
 {
 	for (const eventDispatcher::Event& e : events)
 	{
-
 		if (e.channelId > 0 && e.channelId != d.id)
 			continue;
 
@@ -321,10 +316,6 @@ void react(Data& d, const eventDispatcher::EventBuffer& events, bool audible)
 
 		if (d.midiController)
 			midiController::react(d, e);
-#ifdef WITH_VST
-		if (d.midiReceiver)
-			midiReceiver::react(d, e);
-#endif
 		if (d.midiSender)
 			midiSender::react(d, e);
 		if (d.samplePlayer)
@@ -335,6 +326,10 @@ void react(Data& d, const eventDispatcher::EventBuffer& events, bool audible)
 			sampleActionRecorder::react(d, e);
 		if (d.sampleReactor)
 			sampleReactor::react(d, e);
+#ifdef WITH_VST
+		if (d.midiReceiver)
+			midiReceiver::react(d, e);
+#endif
 	}
 }
 
