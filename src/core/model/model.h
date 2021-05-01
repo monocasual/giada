@@ -182,12 +182,6 @@ for listening to model changes. */
 
 void onSwap(std::function<void(SwapType)> f);
 
-/* triggerSwapCb
-Sometimes the model doesn't change but you want to execute the trigger callback
-anyway (e.g. to update the UI). */
-
-void triggerSwapCb(SwapType t);
-
 bool isLocked();
 
 /* -------------------------------------------------------------------------- */

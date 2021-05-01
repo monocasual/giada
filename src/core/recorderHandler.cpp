@@ -130,7 +130,7 @@ void updateBpm(float oldval, float newval, int oldquanto)
 	recorder::updateKeyFrames([=](Frame old) {
 		/* The division here cannot be precise. A new frame can be 44099 and the 
 		quantizer set to 44100. That would mean two recs completely useless. So we 
-		compute a reject value ('scarto'): if it's lower than 6 frames the new frame 
+		compute a reject value ('delta'): if it's lower than 6 frames the new frame 
 		is collapsed with a quantized frame. FIXME - maybe 6 frames are too low. */
 		Frame frame = static_cast<Frame>((old / newval) * oldval);
 		if (frame != 0)

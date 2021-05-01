@@ -142,18 +142,13 @@ Lock get_RT()
 void swap(SwapType t)
 {
 	layout.swap();
-	triggerSwapCb(t);
+	if (onSwap_)
+		onSwap_(t);
 }
 
 void onSwap(std::function<void(SwapType)> f)
 {
 	onSwap_ = f;
-}
-
-void triggerSwapCb(SwapType t)
-{
-	if (onSwap_)
-		onSwap_(t);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -31,9 +31,10 @@
 #include "core/kernelMidi.h"
 #include "core/mixerHandler.h"
 #include "core/model/model.h"
+#include "core/recorderHandler.h"
 #include "core/sequencer.h"
 #include "glue/events.h"
-#include "glue/main.h"
+#include "utils/log.h"
 #include "utils/math.h"
 #include <atomic>
 #include <cassert>
@@ -74,6 +75,22 @@ void recomputeFrames_(model::Clock& c)
 
 	if (c.quantize != 0)
 		quantizerStep_ = c.framesInBeat / c.quantize;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void setBpm_(float current)
+{
+	float previous = model::get().clock.bpm;
+
+	model::get().clock.bpm = current;
+	recomputeFrames_(model::get().clock);
+
+	m::recorderHandler::updateBpm(previous, current, quantizerStep_);
+
+	model::swap(model::SwapType::HARD);
+
+	u::log::print("[clock::setBpm_] Bpm changed to %f\n", current);
 }
 } // namespace
 
@@ -152,10 +169,17 @@ void setBpm(float b)
 {
 	b = std::clamp(b, G_MIN_BPM, G_MAX_BPM);
 
-	model::get().clock.bpm = b;
-	recomputeFrames_(model::get().clock);
+	/* If JACK is being used, let it handle the bpm change. */
 
-	model::swap(model::SwapType::SOFT);
+#ifdef WITH_AUDIO_JACK
+	if (kernelAudio::getAPI() == G_SYS_API_JACK)
+	{
+		kernelAudio::jackSetBpm(b);
+		return;
+	}
+#endif
+
+	setBpm_(b);
 }
 
 void setBeats(int newBeats, int newBars)
@@ -167,7 +191,7 @@ void setBeats(int newBeats, int newBars)
 	model::get().clock.bars  = newBars;
 	recomputeFrames_(model::get().clock);
 
-	model::swap(model::SwapType::SOFT);
+	model::swap(model::SwapType::HARD);
 }
 
 void setQuantize(int q)
@@ -175,7 +199,7 @@ void setQuantize(int q)
 	model::get().clock.quantize = q;
 	recomputeFrames_(model::get().clock);
 
-	model::swap(model::SwapType::SOFT);
+	model::swap(model::SwapType::HARD);
 }
 
 void setStatus(ClockStatus s)
@@ -352,17 +376,17 @@ void recvJackSync()
 
 	if (jackStateCurr != jackStatePrev_)
 	{
-
 		if (jackStateCurr.frame != jackStatePrev_.frame && jackStateCurr.frame == 0)
 		{
 			G_DEBUG("JackState received - rewind to frame 0");
 			sequencer::rewind();
 		}
 
+		// jackStateCurr.bpm == 0 if JACK doesn't send that info
 		if (jackStateCurr.bpm != jackStatePrev_.bpm && jackStateCurr.bpm > 1.0f)
-		{ // 0 bpm if Jack does not send that info
+		{
 			G_DEBUG("JackState received - bpm=" << jackStateCurr.bpm);
-			c::main::setBpm(jackStateCurr.bpm);
+			setBpm_(jackStateCurr.bpm);
 		}
 
 		if (jackStateCurr.running != jackStatePrev_.running)

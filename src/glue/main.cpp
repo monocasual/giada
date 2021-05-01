@@ -56,42 +56,6 @@ extern giada::v::gdMainWindow* G_MainWin;
 
 namespace giada::c::main
 {
-namespace
-{
-void setBpm_(float current, std::string s)
-{
-	if (current < G_MIN_BPM)
-	{
-		current = G_MIN_BPM;
-		s       = G_MIN_BPM_STR;
-	}
-	else if (current > G_MAX_BPM)
-	{
-		current = G_MAX_BPM;
-		s       = G_MAX_BPM_STR;
-	}
-
-	float previous = m::clock::getBpm();
-	m::clock::setBpm(current);
-	m::recorderHandler::updateBpm(previous, current, m::clock::getQuantizerStep());
-
-	/* This function might get called by Jack callback BEFORE the UI is up
-	and running, that is when G_MainWin == nullptr. */
-
-	if (G_MainWin != nullptr)
-	{
-		u::gui::refreshActionEditor();
-		G_MainWin->mainTimer->setBpm(s.c_str());
-	}
-
-	u::log::print("[glue::setBpm_] Bpm changed to %s (real=%f)\n", s, m::clock::getBpm());
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 Timer::Timer(const m::model::Clock& c)
 : bpm(c.bpm)
 , beats(c.beats)
@@ -168,27 +132,14 @@ Sequencer getSequencer()
 
 /* -------------------------------------------------------------------------- */
 
-void setBpm(const char* v1, const char* v2)
+void setBpm(const char* i, const char* f)
 {
 	/* Never change this stuff while recording audio. */
 
 	if (m::recManager::isRecordingInput())
 		return;
 
-	/* A value such as atof("120.1") will never be 120.1 but 120.0999999, because 
-	of the rounding error. So we pass the actual "wrong" value to mixer and we show 
-	the nice looking (but fake) one to the GUI. 
-	On Linux, let Jack handle the bpm change if it's on. */
-
-	float       f = static_cast<float>(std::atof(v1) + (std::atof(v2) / 10));
-	std::string s = std::string(v1) + "." + std::string(v2);
-
-#ifdef WITH_AUDIO_JACK
-	if (m::kernelAudio::getAPI() == G_SYS_API_JACK)
-		m::kernelAudio::jackSetBpm(f);
-	else
-#endif
-		setBpm_(f, s);
+	m::clock::setBpm(std::atof(i) + (std::atof(f) / 10.0f));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -200,11 +151,7 @@ void setBpm(float f)
 	if (m::recManager::isRecordingInput())
 		return;
 
-	float       intpart;
-	float       fracpart = std::round(std::modf(f, &intpart) * 10);
-	std::string s        = std::to_string((int)intpart) + "." + std::to_string((int)fracpart);
-
-	setBpm_(f, s);
+	m::clock::setBpm(f);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -218,9 +165,6 @@ void setBeats(int beats, int bars)
 
 	m::clock::setBeats(beats, bars);
 	m::mixer::allocRecBuffer(m::clock::getMaxFramesInLoop());
-
-	G_MainWin->mainTimer->setMeter(m::clock::getBeats(), m::clock::getBars());
-	u::gui::refreshActionEditor(); // in case the action editor is open
 }
 
 /* -------------------------------------------------------------------------- */

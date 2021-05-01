@@ -137,15 +137,7 @@ void geMainTimer::refresh()
 	}
 	else
 	{
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
-		/* Don't reactivate m_bpm when using JACK. It must stay disabled. */
-		if (m_timer.isUsingJack)
-			m_bpm.deactivate();
-		else
-			m_bpm.activate();
-#else
 		m_bpm.activate();
-#endif
 		m_meter.activate();
 		m_multiplier.activate();
 		m_divider.activate();
@@ -161,12 +153,6 @@ void geMainTimer::rebuild()
 	setBpm(m_timer.bpm);
 	setMeter(m_timer.beats, m_timer.bars);
 	setQuantizer(m_timer.quantize);
-
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
-	/* Can't change m_bpm from within Giada when using JACK. */
-	if (m_timer.isUsingJack)
-		m_bpm.deactivate();
-#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -178,7 +164,7 @@ void geMainTimer::setBpm(const char* v)
 
 void geMainTimer::setBpm(float v)
 {
-	m_bpm.copy_label(u::string::fToString((float)v, 1).c_str()); // Only 1 decimal place (e.g. 120.0)
+	m_bpm.copy_label(u::string::fToString(v, 1).c_str()); // Only 1 decimal place (e.g. 120.0)
 }
 
 /* -------------------------------------------------------------------------- */
