@@ -49,7 +49,7 @@ bool isBoundaryEnvelopeAction(const Action& a);
 /* updateBpm
 Changes actions position by calculating the new bpm value. */
 
-void updateBpm(float oldval, float newval, int oldquanto);
+void updateBpm(float ratio, int quantizerStep);
 
 /* updateSamplerate
 Changes actions position by taking in account the new samplerate. If 

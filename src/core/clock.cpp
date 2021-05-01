@@ -81,12 +81,12 @@ void recomputeFrames_(model::Clock& c)
 
 void setBpm_(float current)
 {
-	float previous = model::get().clock.bpm;
+	float ratio = model::get().clock.bpm / current;
 
 	model::get().clock.bpm = current;
 	recomputeFrames_(model::get().clock);
 
-	m::recorderHandler::updateBpm(previous, current, quantizerStep_);
+	m::recorderHandler::updateBpm(ratio, quantizerStep_);
 
 	model::swap(model::SwapType::HARD);
 
