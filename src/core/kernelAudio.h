@@ -72,8 +72,6 @@ int stopStream();
 bool                       isReady();
 bool                       isInputEnabled();
 unsigned                   getRealBufSize();
-int                        getDefaultOut();
-int                        getDefaultIn();
 bool                       hasAPI(int API);
 int                        getAPI();
 void                       logCompiledAPIs();

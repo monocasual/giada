@@ -235,7 +235,7 @@ int openDevice()
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
 
-	outParams.deviceId     = conf::conf.soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT ? getDefaultOut() : conf::conf.soundDeviceOut;
+	outParams.deviceId     = conf::conf.soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT ? rtSystem_->getDefaultOutputDevice() : conf::conf.soundDeviceOut;
 	outParams.nChannels    = G_MAX_IO_CHANS;
 	outParams.firstChannel = conf::conf.channelsOut * G_MAX_IO_CHANS; // chan 0=0, 1=2, 2=4, ...
 
@@ -344,18 +344,6 @@ int closeDevice()
 
 unsigned getRealBufSize() { return realBufsize_; }
 bool     isInputEnabled() { return inputEnabled_; }
-
-/* -------------------------------------------------------------------------- */
-
-int getDefaultIn()
-{
-	return rtSystem_->getDefaultInputDevice();
-}
-
-int getDefaultOut()
-{
-	return rtSystem_->getDefaultOutputDevice();
-}
 
 /* -------------------------------------------------------------------------- */
 
