@@ -31,9 +31,7 @@
 #include <FL/fl_draw.H>
 #include <string>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geChoice::geChoice(int x, int y, int w, int h, const char* l, bool ang)
 : Fl_Choice(x, y, w, h, l)
@@ -102,5 +100,4 @@ void geChoice::showItem(ID id)
 {
 	value(u::vector::indexOf(ids, id));
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

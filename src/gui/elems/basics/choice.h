@@ -33,9 +33,7 @@
 #include <string>
 #include <vector>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geChoice : public Fl_Choice
 {
@@ -51,14 +49,13 @@ public:
 
 	std::function<void(ID)> onChange = nullptr;
 
-  private:
-	static void cb_onChange(Fl_Widget* /*w*/, void* p);
+private:
+	static void cb_onChange(Fl_Widget* w, void* p);
 	void        cb_onChange();
 
 	bool            angle;
 	std::vector<ID> ids;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif
