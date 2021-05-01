@@ -110,10 +110,6 @@ void init()
 
 /* -------------------------------------------------------------------------- */
 
-void pumpEvent(Event e)
-{
-	/* TODO - two threads push events here: mixer/rt-thread and main thread, so
-	this breaks the 1-producer 1-consumer rule! */
-	UIevents.push(e);
-}
+void pumpUIevent(Event e) { UIevents.push(e); }
+void pumpMidiEvent(Event e) { MidiEvents.push(e); }
 } // namespace giada::m::eventDispatcher

@@ -91,7 +91,8 @@ extern Queue<Event, G_MAX_DISPATCHER_EVENTS> MidiEvents;
 
 void init();
 
-void pumpEvent(Event e);
+void pumpUIevent(Event e);
+void pumpMidiEvent(Event e);
 } // namespace giada::m::eventDispatcher
 
 #endif

@@ -431,18 +431,20 @@ void dispatch(int byte1, int byte2, int byte3)
 	then each channel in the stack. This way incoming signals don't get processed 
 	by glue_* when MIDI learning is on. */
 
-	eventDispatcher::pumpEvent({eventDispatcher::EventType::FUNCTION, 0, 0, [midiEvent]() {
-		                            if (learnCb_ != nullptr)
-		                            {
-			                            learnCb_(midiEvent);
-		                            }
-		                            else
-		                            {
-			                            processMaster_(midiEvent);
-			                            processChannels_(midiEvent);
-			                            triggerSignalCb_();
-		                            }
-	                            }});
+	std::function<void()> f = [midiEvent]() {
+		if (learnCb_ != nullptr)
+		{
+			learnCb_(midiEvent);
+		}
+		else
+		{
+			processMaster_(midiEvent);
+			processChannels_(midiEvent);
+			triggerSignalCb_();
+		}
+	};
+
+	eventDispatcher::pumpMidiEvent({eventDispatcher::EventType::FUNCTION, 0, 0, f});
 }
 
 /* -------------------------------------------------------------------------- */

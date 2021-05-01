@@ -80,10 +80,10 @@ model:: that the realtime thread cannot perform directly. */
 
 void fireSignalCb_()
 {
-	eventDispatcher::pumpEvent({eventDispatcher::EventType::FUNCTION, 0, 0, []() {
-		                            signalCb_();
-		                            signalCb_ = nullptr;
-	                            }});
+	eventDispatcher::pumpUIevent({eventDispatcher::EventType::FUNCTION, 0, 0, []() {
+		                              signalCb_();
+		                              signalCb_ = nullptr;
+	                              }});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -93,10 +93,10 @@ Same rationale of fireSignalCb_, for the endOfRecCb_ callback. */
 
 void fireEndOfRecCb_()
 {
-	eventDispatcher::pumpEvent({eventDispatcher::EventType::FUNCTION, 0, 0, []() {
-		                            endOfRecCb_();
-		                            endOfRecCb_ = nullptr;
-	                            }});
+	eventDispatcher::pumpUIevent({eventDispatcher::EventType::FUNCTION, 0, 0, []() {
+		                              endOfRecCb_();
+		                              endOfRecCb_ = nullptr;
+	                              }});
 }
 
 /* -------------------------------------------------------------------------- */
