@@ -7,10 +7,6 @@ echo "Create working dirs"
 mkdir dist
 mkdir temp
 
-echo "UPX binary"
-
-upx --best ./build/Release/giada
-
 echo "Create temporary directory giada.app"
 
 mkdir temp/giada.app
