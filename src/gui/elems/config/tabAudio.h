@@ -56,7 +56,7 @@ public:
 	geInput*  recTriggerLevel;
 	geChoice* rsmpQuality;
 
-  private:
+private:
 	static void cb_deactivate_sounddev(Fl_Widget* /*w*/, void* p);
 	static void cb_fetchInChans(Fl_Widget* /*w*/, void* p);
 	static void cb_fetchOutChans(Fl_Widget* /*w*/, void* p);
@@ -71,6 +71,7 @@ public:
 	void fetchSoundDevs();
 	void fetchInChans(int menuItem);
 	void fetchOutChans();
+	void fetchSampleRates();
 	int  findMenuDevice(geChoice* m, int device);
 
 	int soundsysInitValue;

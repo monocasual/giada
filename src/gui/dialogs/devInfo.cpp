@@ -33,11 +33,9 @@
 #include "window.h"
 #include <FL/fl_draw.H>
 
-namespace giada
+namespace giada::v
 {
-namespace v
-{
-gdDevInfo::gdDevInfo(unsigned dev)
+gdDevInfo::gdDevInfo(m::kernelAudio::Device device)
 : gdWindow(340, 300, "Device information")
 {
 	set_modal();
@@ -49,24 +47,25 @@ gdDevInfo::gdDevInfo(unsigned dev)
 	std::string body  = "";
 	int         lines = 7;
 
-	body = "Device name: " + m::kernelAudio::getDeviceName(dev) + "\n";
-	body += "Total output(s): " + std::to_string(m::kernelAudio::getMaxOutChans(dev)) + "\n";
-	body += "Total input(s): " + std::to_string(m::kernelAudio::getMaxInChans(dev)) + "\n";
-	body += "Duplex channel(s): " + std::to_string(m::kernelAudio::getDuplexChans(dev)) + "\n";
-	body += "Default output: " + std::string(m::kernelAudio::isDefaultOut(dev) ? "yes" : "no") + "\n";
-	body += "Default input: " + std::string(m::kernelAudio::isDefaultIn(dev) ? "yes" : "no") + "\n";
+	body = "Device name: " + device.name + "\n";
+	body += "Total output(s): " + std::to_string(device.maxOutputChannels) + "\n";
+	body += "Total input(s): " + std::to_string(device.maxInputChannels) + "\n";
+	body += "Duplex channel(s): " + std::to_string(device.maxDuplexChannels) + "\n";
+	body += "Default output: " + std::string(device.isDefaultOut ? "yes" : "no") + "\n";
+	body += "Default input: " + std::string(device.isDefaultIn ? "yes" : "no") + "\n";
 
-	int totalFreq = m::kernelAudio::getTotalFreqs(dev);
-	body += "Supported frequencies: " + std::to_string(totalFreq);
+	body += "Supported frequencies: " + std::to_string(device.sampleRates.size());
 
-	for (int i = 0; i < totalFreq; i++)
+	int i = 0;
+	for (int sampleRate : device.sampleRates)
 	{
 		if (i % 6 == 0)
 		{
 			body += "\n    "; // add new line each 6 printed freqs AND on the first line (i % 0 != 0)
 			lines++;
 		}
-		body += std::to_string(m::kernelAudio::getFreq(dev, i)) + "  ";
+		body += std::to_string(sampleRate) + "  ";
+		i++;
 	}
 
 	text->copy_label(body.c_str());
@@ -81,5 +80,4 @@ gdDevInfo::gdDevInfo(unsigned dev)
 	u::gui::setFavicon(this);
 	show();
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

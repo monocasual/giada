@@ -27,7 +27,9 @@
 #ifndef G_KERNELAUDIO_H
 #define G_KERNELAUDIO_H
 
+#include <optional>
 #include <string>
+#include <vector>
 #ifdef WITH_AUDIO_JACK
 #include <jack/intclient.h>
 #include <jack/jack.h>
@@ -49,30 +51,34 @@ struct JackState
 
 #endif
 
+struct Device
+{
+	size_t           index             = 0;
+	bool             probed            = false;
+	std::string      name              = "";
+	int              maxOutputChannels = 0;
+	int              maxInputChannels  = 0;
+	int              maxDuplexChannels = 0;
+	bool             isDefaultOut      = false;
+	bool             isDefaultIn       = false;
+	std::vector<int> sampleRates       = {};
+};
+
 int openDevice();
 int closeDevice();
 int startStream();
 int stopStream();
 
-bool        isReady();
-bool        isProbed(unsigned dev);
-bool        isDefaultIn(unsigned dev);
-bool        isDefaultOut(unsigned dev);
-bool        isInputEnabled();
-std::string getDeviceName(unsigned dev);
-unsigned    getMaxInChans(int dev);
-unsigned    getMaxOutChans(unsigned dev);
-unsigned    getDuplexChans(unsigned dev);
-unsigned    getRealBufSize();
-unsigned    countDevices();
-int         getTotalFreqs(unsigned dev);
-int         getFreq(unsigned dev, int i);
-int         getDeviceByName(const char* name);
-int         getDefaultOut();
-int         getDefaultIn();
-bool        hasAPI(int API);
-int         getAPI();
-void        logCompiledAPIs();
+bool                       isReady();
+bool                       isInputEnabled();
+unsigned                   getRealBufSize();
+int                        getDefaultOut();
+int                        getDefaultIn();
+bool                       hasAPI(int API);
+int                        getAPI();
+void                       logCompiledAPIs();
+Device                     getDevice(const char* name);
+const std::vector<Device>& getDevices();
 
 #ifdef WITH_AUDIO_JACK
 

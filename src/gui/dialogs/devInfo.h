@@ -27,25 +27,23 @@
 #ifndef GD_DEV_INFO_H
 #define GD_DEV_INFO_H
 
+#include "core/kernelAudio.h"
 #include "window.h"
 
 class geBox;
 class geButton;
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class gdDevInfo : public gdWindow
 {
 public:
-	gdDevInfo(unsigned dev);
+	gdDevInfo(m::kernelAudio::Device d);
 
-  private:
+private:
 	geBox*    text;
 	geButton* close;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

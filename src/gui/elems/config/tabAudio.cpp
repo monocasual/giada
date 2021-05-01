@@ -172,18 +172,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 		fetchSoundDevs();
 		fetchOutChans();
 		fetchInChans(sounddevIn->value());
-
-		/* fill frequency dropdown menu */
-		/* TODO - add fetchFrequencies() */
-
-		int nfreq = m::kernelAudio::getTotalFreqs(sounddevOut->value());
-		for (int i = 0; i < nfreq; i++)
-		{
-			int freq = m::kernelAudio::getFreq(sounddevOut->value(), i);
-			samplerate->add(u::string::iToString(freq).c_str());
-			if (freq == m::conf::conf.samplerate)
-				samplerate->value(i);
-		}
+		fetchSampleRates();
 	}
 	else
 	{
@@ -248,16 +237,14 @@ void geTabAudio::cb_fetchOutChans()
 
 void geTabAudio::cb_showInputInfo()
 {
-	unsigned dev = m::kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
-	new v::gdDevInfo(dev);
+	new v::gdDevInfo(m::kernelAudio::getDevice(sounddevIn->text(sounddevIn->value())));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geTabAudio::cb_showOutputInfo()
 {
-	unsigned dev = m::kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
-	new v::gdDevInfo(dev);
+	new v::gdDevInfo(m::kernelAudio::getDevice(sounddevOut->text(sounddevOut->value())));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -327,10 +314,9 @@ void geTabAudio::fetchInChans(int menuItem)
 
 	channelsIn->clear();
 
-	unsigned dev = m::kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
-	unsigned chs = m::kernelAudio::getMaxInChans(dev);
+	m::kernelAudio::Device info = m::kernelAudio::getDevice(sounddevIn->text(sounddevIn->value()));
 
-	if (chs == 0)
+	if (info.maxInputChannels == 0)
 	{
 		channelsIn->add("none");
 		channelsIn->value(0);
@@ -339,9 +325,9 @@ void geTabAudio::fetchInChans(int menuItem)
 
 	/* Dirty trick for stereo inputs: indexes start from 1000. */
 
-	for (unsigned i = 0; i < chs; i++)
+	for (int i = 0; i < info.maxInputChannels; i++)
 		channelsIn->addItem(std::to_string(i + 1).c_str(), i + 1);
-	for (unsigned i = 0; i < chs; i += 2)
+	for (int i = 0; i < info.maxInputChannels; i += 2)
 		channelsIn->addItem((std::to_string(i + 1) + "-" + std::to_string(i + 2)).c_str(), i + 1001);
 
 	if (m::conf::conf.channelsInCount == 1)
@@ -356,21 +342,39 @@ void geTabAudio::fetchOutChans()
 {
 	channelsOut->clear();
 
-	unsigned dev = m::kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
-	unsigned chs = m::kernelAudio::getMaxOutChans(dev);
+	m::kernelAudio::Device info = m::kernelAudio::getDevice(sounddevOut->text(sounddevOut->value()));
 
-	if (chs == 0)
+	if (info.maxOutputChannels == 0)
 	{
 		channelsOut->add("none");
 		channelsOut->value(0);
 		return;
 	}
-	for (unsigned i = 0; i < chs; i += 2)
+	for (int i = 0; i < info.maxOutputChannels; i += 2)
 	{
 		std::string tmp = u::string::iToString(i + 1) + "-" + u::string::iToString(i + 2);
 		channelsOut->add(tmp.c_str());
 	}
 	channelsOut->value(m::conf::conf.channelsOut);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geTabAudio::fetchSampleRates()
+{
+	std::vector<m::kernelAudio::Device> devices = m::kernelAudio::getDevices();
+
+	if (devices.size() == 0)
+		return;
+
+	int i = 0;
+	for (int sampleRate : devices[sounddevOut->value()].sampleRates)
+	{
+		samplerate->add(u::string::iToString(sampleRate).c_str());
+		if (sampleRate == m::conf::conf.samplerate)
+			samplerate->value(i);
+		i++;
+	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -382,11 +386,11 @@ int geTabAudio::findMenuDevice(geChoice* m, int device)
 
 	for (int i = 0; i < m->size(); i++)
 	{
-		if (m::kernelAudio::getDeviceName(device) == "")
+		if (m::kernelAudio::getDevices()[device].name == "")
 			continue;
 		if (m->text(i) == nullptr)
 			continue;
-		if (m->text(i) == m::kernelAudio::getDeviceName(device))
+		if (m->text(i) == m::kernelAudio::getDevices()[device].name)
 			return i;
 	}
 
@@ -397,7 +401,9 @@ int geTabAudio::findMenuDevice(geChoice* m, int device)
 
 void geTabAudio::fetchSoundDevs()
 {
-	if (m::kernelAudio::countDevices() == 0)
+	std::vector<m::kernelAudio::Device> devices = m::kernelAudio::getDevices();
+
+	if (devices.size() == 0)
 	{
 		sounddevOut->add("-- no devices found --");
 		sounddevOut->value(0);
@@ -408,34 +414,27 @@ void geTabAudio::fetchSoundDevs()
 	}
 	else
 	{
-
 		devInInfo->activate();
 		devOutInfo->activate();
 
-		/* input device may be disabled: now device number -1 is the disabled
-		 * one. KernelAudio knows how to handle it. */
+		/* Input device may be disabled: now device number -1 is the disabled 
+		one. KernelAudio knows how to handle it. */
 
 		sounddevIn->add("(disabled)");
 
-		for (unsigned i = 0; i < m::kernelAudio::countDevices(); i++)
+		for (m::kernelAudio::Device device : devices)
 		{
+			std::string deviceName = u::gui::removeFltkChars(device.name);
 
-			/* escaping '/', very dangerous in FLTK (it creates a submenu) */
+			/* Add to list devices with at least 1 channel available. This way 
+			we can filter devices only for input or output, e.g. an input 
+			devices has 0 output channels. */
 
-			std::string tmp = m::kernelAudio::getDeviceName(i);
-			for (unsigned k = 0; k < tmp.size(); k++)
-				if (tmp[k] == '/' || tmp[k] == '|' || tmp[k] == '&' || tmp[k] == '_')
-					tmp[k] = '-';
+			if (device.maxOutputChannels > 0)
+				sounddevOut->add(deviceName.c_str());
 
-			/* add to list devices with at least 1 channel available. In this
-			 * way we can filter devices only for input or output, e.g. an input
-			 * devices has 0 output channels. */
-
-			if (m::kernelAudio::getMaxOutChans(i) > 0)
-				sounddevOut->add(tmp.c_str());
-
-			if (m::kernelAudio::getMaxInChans(i) > 0)
-				sounddevIn->add(tmp.c_str());
+			if (device.maxInputChannels > 0)
+				sounddevIn->add(deviceName.c_str());
 		}
 
 		/* we show the device saved in the configuration file. */
@@ -512,8 +511,8 @@ void geTabAudio::save()
 
 	/* use the device name to search into the drop down menu's */
 
-	m::conf::conf.soundDeviceOut  = m::kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
-	m::conf::conf.soundDeviceIn   = m::kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
+	m::conf::conf.soundDeviceOut  = m::kernelAudio::getDevice(sounddevOut->text(sounddevOut->value())).index;
+	m::conf::conf.soundDeviceIn   = m::kernelAudio::getDevice(sounddevIn->text(sounddevIn->value())).index;
 	m::conf::conf.channelsOut     = channelsOut->value();
 	m::conf::conf.channelsInCount = channelsIn->getSelectedId() < 1000 ? 1 : 2;
 	m::conf::conf.channelsInStart = channelsIn->getSelectedId() - (m::conf::conf.channelsInCount == 1 ? 1 : 1001);
