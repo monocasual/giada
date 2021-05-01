@@ -80,8 +80,13 @@ void init()
 
 channel::Data create(ID channelId, ChannelType type, ID columnId)
 {
-	ID id = channelId_.generate(channelId);
-	return channel::Data(type, id, columnId, makeState_(), makeBuffer_());
+	channel::Data out = channel::Data(type, channelId_.generate(channelId),
+	    columnId, makeState_(), makeBuffer_());
+
+	if (out.audioReceiver)
+		out.audioReceiver->overdubProtection = conf::conf.overdubProtectionDefaultOn;
+
+	return out;
 }
 
 /* -------------------------------------------------------------------------- */
