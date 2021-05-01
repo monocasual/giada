@@ -27,11 +27,9 @@
 #ifdef WITH_VST
 
 #include "pluginState.h"
-#include <cassert>
+#include "core/const.h"
 
-namespace giada
-{
-namespace m
+namespace giada::m
 {
 PluginState::PluginState(juce::MemoryBlock&& data)
 : m_data(std::move(data))
@@ -43,7 +41,8 @@ PluginState::PluginState(juce::MemoryBlock&& data)
 PluginState::PluginState(const std::string& base64)
 {
 	bool res = m_data.fromBase64Encoding(base64);
-	assert(res);
+	if (!res)
+		G_DEBUG("Error while loading plug-in state!");
 }
 
 /* -------------------------------------------------------------------------- */
@@ -64,7 +63,6 @@ size_t PluginState::getSize() const
 {
 	return m_data.getSize();
 }
-} // namespace m
-} // namespace giada
+} // namespace giada::m
 
 #endif // #ifdef WITH_VST

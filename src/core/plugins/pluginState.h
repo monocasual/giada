@@ -32,9 +32,7 @@
 #include "deps/juce-config.h"
 #include <string>
 
-namespace giada
-{
-namespace m
+namespace giada::m
 {
 class PluginState
 {
@@ -47,11 +45,10 @@ public:
 	const void* getData() const;
 	size_t      getSize() const;
 
-  private:
+private:
 	juce::MemoryBlock m_data;
 };
-} // namespace m
-} // namespace giada
+} // namespace giada::m
 
 #endif
 
