@@ -179,12 +179,13 @@ int geWaveTools::handle(int e)
 	}
 	case FL_PUSH:
 	{
-		if (Fl::event_button3())
-		{ // right button
+		if (Fl::event_button3()) // right button
+		{
 			openMenu();
 			return 1;
 		}
 		Fl::focus(waveform);
+		return Fl_Group::handle(e);
 	}
 	default:
 		return Fl_Group::handle(e);
@@ -196,18 +197,18 @@ int geWaveTools::handle(int e)
 void geWaveTools::openMenu()
 {
 	Fl_Menu_Item menu[] = {
-	    {"Cut", 0, menuCallback_, (void*)Menu::CUT},
-	    {"Copy", 0, menuCallback_, (void*)Menu::COPY},
-	    {"Paste", 0, menuCallback_, (void*)Menu::PASTE},
-	    {"Trim", 0, menuCallback_, (void*)Menu::TRIM},
-	    {"Silence", 0, menuCallback_, (void*)Menu::SILENCE},
-	    {"Reverse", 0, menuCallback_, (void*)Menu::REVERSE},
-	    {"Normalize", 0, menuCallback_, (void*)Menu::NORMALIZE},
-	    {"Fade in", 0, menuCallback_, (void*)Menu::FADE_IN},
-	    {"Fade out", 0, menuCallback_, (void*)Menu::FADE_OUT},
-	    {"Smooth edges", 0, menuCallback_, (void*)Menu::SMOOTH_EDGES},
-	    {"Set begin/end here", 0, menuCallback_, (void*)Menu::SET_BEGIN_END},
-	    {"Copy to new channel", 0, menuCallback_, (void*)Menu::TO_NEW_CHANNEL},
+	    {"Cut", 0, menuCallback_, (void*)Menu::CUT, 0, 0, 0, 0, 0},
+	    {"Copy", 0, menuCallback_, (void*)Menu::COPY, 0, 0, 0, 0, 0},
+	    {"Paste", 0, menuCallback_, (void*)Menu::PASTE, 0, 0, 0, 0, 0},
+	    {"Trim", 0, menuCallback_, (void*)Menu::TRIM, 0, 0, 0, 0, 0},
+	    {"Silence", 0, menuCallback_, (void*)Menu::SILENCE, 0, 0, 0, 0, 0},
+	    {"Reverse", 0, menuCallback_, (void*)Menu::REVERSE, 0, 0, 0, 0, 0},
+	    {"Normalize", 0, menuCallback_, (void*)Menu::NORMALIZE, 0, 0, 0, 0, 0},
+	    {"Fade in", 0, menuCallback_, (void*)Menu::FADE_IN, 0, 0, 0, 0, 0},
+	    {"Fade out", 0, menuCallback_, (void*)Menu::FADE_OUT, 0, 0, 0, 0, 0},
+	    {"Smooth edges", 0, menuCallback_, (void*)Menu::SMOOTH_EDGES, 0, 0, 0, 0, 0},
+	    {"Set begin/end here", 0, menuCallback_, (void*)Menu::SET_BEGIN_END, 0, 0, 0, 0, 0},
+	    {"Copy to new channel", 0, menuCallback_, (void*)Menu::TO_NEW_CHANNEL, 0, 0, 0, 0, 0},
 	    {0}};
 
 	if (!waveform->isSelected())
