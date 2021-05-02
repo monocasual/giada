@@ -29,13 +29,14 @@
 #include "utils/gui.h"
 #include "utils/vector.h"
 #include <FL/fl_draw.H>
+#include <cassert>
 #include <string>
 
 namespace giada::v
 {
 geChoice::geChoice(int x, int y, int w, int h, const char* l, bool ang)
 : Fl_Choice(x, y, w, h, l)
-, angle(ang)
+, m_angle(ang)
 {
 	labelsize(G_GUI_FONT_SIZE_BASE);
 	labelcolor(G_COLOR_LIGHT_2);
@@ -63,7 +64,7 @@ void geChoice::draw()
 {
 	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);          // bg
 	fl_rect(x(), y(), w(), h(), (Fl_Color)G_COLOR_GREY_4); // border
-	if (angle)
+	if (m_angle)
 		fl_polygon(x() + w() - 8, y() + h() - 1, x() + w() - 1, y() + h() - 8, x() + w() - 1, y() + h() - 1);
 
 	/* pick up the text() from the selected item (value()) and print it in
@@ -78,15 +79,17 @@ void geChoice::draw()
 
 ID geChoice::getSelectedId() const
 {
-	return value() == -1 ? 0 : ids.at(value());
+	return value() == -1 ? 0 : m_ids.at(value());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geChoice::addItem(const std::string& label, ID id)
 {
+	assert(id > 0); // 0 is reserved for 'no selection'
+
 	Fl_Choice::add(label.c_str(), 0, cb_onChange, static_cast<void*>(this));
-	ids.push_back(id);
+	m_ids.push_back(id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -98,6 +101,6 @@ void geChoice::showItem(const char* c)
 
 void geChoice::showItem(ID id)
 {
-	value(u::vector::indexOf(ids, id));
+	value(u::vector::indexOf(m_ids, id));
 }
 } // namespace giada::v

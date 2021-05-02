@@ -53,8 +53,8 @@ private:
 	static void cb_onChange(Fl_Widget* w, void* p);
 	void        cb_onChange();
 
-	bool            angle;
-	std::vector<ID> ids;
+	bool            m_angle;
+	std::vector<ID> m_ids;
 };
 } // namespace giada::v
 
