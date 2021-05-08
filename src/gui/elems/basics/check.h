@@ -28,6 +28,7 @@
 #define GE_CHECK_H
 
 #include <FL/Fl_Check_Button.H>
+#include <functional>
 
 class geCheck : public Fl_Check_Button
 {
@@ -36,7 +37,12 @@ public:
 
 	void draw() override;
 
-  private:
+	std::function<void(bool)> onChange = nullptr;
+
+private:
+	static void cb_onChange(Fl_Widget* w, void* p);
+	void        cb_onChange();
+
 	bool hasMultilineText() const;
 };
 

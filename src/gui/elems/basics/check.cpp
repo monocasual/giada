@@ -32,6 +32,19 @@
 geCheck::geCheck(int x, int y, int w, int h, const char* l)
 : Fl_Check_Button(x, y, w, h, l)
 {
+	callback(cb_onChange, this);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geCheck::cb_onChange(Fl_Widget* /*w*/, void* p) { (static_cast<geCheck*>(p))->cb_onChange(); }
+
+/* -------------------------------------------------------------------------- */
+
+void geCheck::cb_onChange()
+{
+	if (onChange != nullptr)
+		onChange(value());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -40,18 +53,18 @@ void geCheck::draw()
 {
 	fl_rectf(x(), y(), w(), h(), FL_BACKGROUND_COLOR); // clearer
 
-	const int boxColor  = !active() ? FL_INACTIVE_COLOR : G_COLOR_GREY_4;
-	const int textColor = !active() ? FL_INACTIVE_COLOR : G_COLOR_LIGHT_2;
-	const int textAlign = hasMultilineText() ? FL_ALIGN_LEFT | FL_ALIGN_TOP : FL_ALIGN_LEFT | FL_ALIGN_CENTER;
+	const Fl_Color boxColor  = !active() ? FL_INACTIVE_COLOR : G_COLOR_GREY_4;
+	const int      textColor = !active() ? FL_INACTIVE_COLOR : G_COLOR_LIGHT_2;
+	const Fl_Align textAlign = hasMultilineText() ? FL_ALIGN_LEFT | FL_ALIGN_TOP : FL_ALIGN_LEFT | FL_ALIGN_CENTER;
 
 	if (value())
-		fl_rectf(x(), y(), 12, h(), (Fl_Color)boxColor);
+		fl_rectf(x(), y(), 12, h(), boxColor);
 	else
-		fl_rect(x(), y(), 12, h(), (Fl_Color)boxColor);
+		fl_rect(x(), y(), 12, h(), boxColor);
 
 	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
 	fl_color(textColor);
-	fl_draw(label(), x() + 20, y(), w(), h(), (Fl_Align)textAlign);
+	fl_draw(label(), x() + 20, y(), w(), h(), textAlign);
 }
 
 /* -------------------------------------------------------------------------- */

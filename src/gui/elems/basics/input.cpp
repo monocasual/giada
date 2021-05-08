@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 #include "input.h"
-#include "../../../core/const.h"
 #include "boxtypes.h"
+#include "core/const.h"
 
 geInput::geInput(int x, int y, int w, int h, const char* l)
 : Fl_Input(x, y, w, h, l)
@@ -40,4 +40,19 @@ geInput::geInput(int x, int y, int w, int h, const char* l)
 	cursor_color(G_COLOR_LIGHT_2);
 	selection_color(G_COLOR_GREY_4);
 	textsize(G_GUI_FONT_SIZE_BASE);
+
+	when(FL_WHEN_CHANGED);
+	callback(cb_onChange, this);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geInput::cb_onChange(Fl_Widget* /*w*/, void* p) { (static_cast<geInput*>(p))->cb_onChange(); }
+
+/* -------------------------------------------------------------------------- */
+
+void geInput::cb_onChange()
+{
+	if (onChange != nullptr)
+		onChange(value());
 }

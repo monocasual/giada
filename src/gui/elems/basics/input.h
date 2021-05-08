@@ -28,11 +28,18 @@
 #define GE_INPUT_H
 
 #include <FL/Fl_Input.H>
+#include <functional>
 
 class geInput : public Fl_Input
 {
 public:
 	geInput(int x, int y, int w, int h, const char* l = 0);
+
+	std::function<void(const std::string&)> onChange = nullptr;
+
+private:
+	static void cb_onChange(Fl_Widget* w, void* p);
+	void        cb_onChange();
 };
 
 #endif
