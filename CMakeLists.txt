@@ -88,6 +88,7 @@ list(APPEND SOURCES
 	src/glue/recorder.cpp
 	src/glue/sampleEditor.cpp
 	src/glue/actionEditor.cpp
+	src/glue/config.cpp
 	src/gui/dialogs/window.cpp
 	src/gui/dispatcher.cpp
 	src/gui/updater.cpp
