@@ -62,8 +62,8 @@ void geChoice::cb_onChange()
 
 void geChoice::draw()
 {
-	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);          // bg
-	fl_rect(x(), y(), w(), h(), (Fl_Color)G_COLOR_GREY_4); // border
+	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);                       // bg
+	fl_rect(x(), y(), w(), h(), static_cast<Fl_Color>(G_COLOR_GREY_4)); // border
 	if (m_angle)
 		fl_polygon(x() + w() - 8, y() + h() - 1, x() + w() - 1, y() + h() - 8, x() + w() - 1, y() + h() - 1);
 
@@ -79,14 +79,14 @@ void geChoice::draw()
 
 ID geChoice::getSelectedId() const
 {
-	return value() == -1 ? 0 : m_ids.at(value());
+	return value() == -1 ? -1 : m_ids.at(value());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geChoice::addItem(const std::string& label, ID id)
 {
-	assert(id > 0); // 0 is reserved for 'no selection'
+	assert(id >= 0);
 
 	Fl_Choice::add(label.c_str(), 0, cb_onChange, static_cast<void*>(this));
 	m_ids.push_back(id);
@@ -94,9 +94,9 @@ void geChoice::addItem(const std::string& label, ID id)
 
 /* -------------------------------------------------------------------------- */
 
-void geChoice::showItem(const char* c)
+void geChoice::showItem(const std::string& label)
 {
-	value(find_index(c));
+	value(find_index(label.c_str()));
 }
 
 void geChoice::showItem(ID id)

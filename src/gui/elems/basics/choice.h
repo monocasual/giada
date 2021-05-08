@@ -44,7 +44,7 @@ public:
 	ID getSelectedId() const;
 
 	void addItem(const std::string& label, ID id);
-	void showItem(const char* c);
+	void showItem(const std::string& label);
 	void showItem(ID id);
 
 	std::function<void(ID)> onChange = nullptr;
