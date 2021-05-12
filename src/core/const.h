@@ -131,15 +131,14 @@ constexpr int   G_MAX_SEQUENCER_EVENTS  = 128; // Per block
 constexpr int   G_MAX_QUANTIZER_SIZE    = 32;
 
 /* -- kernel audio ---------------------------------------------------------- */
-constexpr int G_SYS_API_NONE   = 0x00; // 0000 0000
-constexpr int G_SYS_API_JACK   = 0x01; // 0000 0001
-constexpr int G_SYS_API_ALSA   = 0x02; // 0000 0010
-constexpr int G_SYS_API_DS     = 0x04; // 0000 0100
-constexpr int G_SYS_API_ASIO   = 0x08; // 0000 1000
-constexpr int G_SYS_API_CORE   = 0x10; // 0001 0000
-constexpr int G_SYS_API_PULSE  = 0x20; // 0010 0000
-constexpr int G_SYS_API_WASAPI = 0x40; // 0100 0000
-constexpr int G_SYS_API_ANY    = 0x7F; // 0111 1111
+constexpr int G_SYS_API_NONE   = 0;
+constexpr int G_SYS_API_JACK   = 1;
+constexpr int G_SYS_API_ALSA   = 2;
+constexpr int G_SYS_API_DS     = 3;
+constexpr int G_SYS_API_ASIO   = 4;
+constexpr int G_SYS_API_CORE   = 5;
+constexpr int G_SYS_API_PULSE  = 6;
+constexpr int G_SYS_API_WASAPI = 7;
 
 /* -- kernel midi ----------------------------------------------------------- */
 constexpr int G_MIDI_API_JACK = 0x01; // 0000 0001
@@ -156,14 +155,14 @@ constexpr int G_MIDI_API_ALSA = 0x02; // 0000 0010
 #define G_DEFAULT_SOUNDSYS G_SYS_API_CORE
 #endif
 
-constexpr int   G_DEFAULT_SOUNDDEV_OUT        = 0;  // FIXME - please override with rtAudio::getDefaultDevice (or similar)
-constexpr int   G_DEFAULT_SOUNDDEV_IN         = -1; // no recording by default: input disabled
+constexpr int   G_DEFAULT_SOUNDDEV_OUT        = -1; // disabled by default
+constexpr int   G_DEFAULT_SOUNDDEV_IN         = -1; // disabled by default
 constexpr int   G_DEFAULT_MIDI_SYSTEM         = 0;
 constexpr int   G_DEFAULT_MIDI_PORT_IN        = -1;
 constexpr int   G_DEFAULT_MIDI_PORT_OUT       = -1;
 constexpr int   G_DEFAULT_SAMPLERATE          = 44100;
 constexpr int   G_DEFAULT_BUFSIZE             = 1024;
-constexpr int   G_DEFAULT_BIT_DEPTH           = 32; // float
+constexpr int   G_DEFAULT_BIT_DEPTH           = 32;
 constexpr float G_DEFAULT_VOL                 = 1.0f;
 constexpr float G_DEFAULT_PAN                 = 0.5f;
 constexpr float G_DEFAULT_PITCH               = 1.0f;
@@ -374,7 +373,8 @@ constexpr auto CONF_KEY_SHOW_TOOLTIPS                 = "show_tooltips";
 constexpr auto CONF_KEY_SOUND_SYSTEM                  = "sound_system";
 constexpr auto CONF_KEY_SOUND_DEVICE_IN               = "sound_device_in";
 constexpr auto CONF_KEY_SOUND_DEVICE_OUT              = "sound_device_out";
-constexpr auto CONF_KEY_CHANNELS_OUT                  = "channels_out";
+constexpr auto CONF_KEY_CHANNELS_OUT_COUNT            = "channels_out_count";
+constexpr auto CONF_KEY_CHANNELS_OUT_START            = "channels_out_start";
 constexpr auto CONF_KEY_CHANNELS_IN_COUNT             = "channels_in_count";
 constexpr auto CONF_KEY_CHANNELS_IN_START             = "channels_in_start";
 constexpr auto CONF_KEY_SAMPLERATE                    = "samplerate";

@@ -103,4 +103,13 @@ void geChoice::showItem(ID id)
 {
 	value(u::vector::indexOf(m_ids, id));
 }
+
+/* -------------------------------------------------------------------------- */
+
+void geChoice::clear()
+{
+	Fl_Choice::clear();
+	m_ids.clear();
+}
+
 } // namespace giada::v

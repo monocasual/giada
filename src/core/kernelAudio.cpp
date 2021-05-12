@@ -104,6 +104,23 @@ std::vector<Device> fetchDevices_()
 
 /* -------------------------------------------------------------------------- */
 
+void printDevices_(const std::vector<Device>& devices)
+{
+	u::log::print("[KA] %d device(s) found\n", devices.size());
+	for (const Device& d : devices)
+	{
+		u::log::print("  %d) %s\n", d.index, d.name);
+		u::log::print("      ins=%d outs=%d duplex=%d\n", d.maxInputChannels, d.maxOutputChannels, d.maxDuplexChannels);
+		u::log::print("      isDefaultOut=%d isDefaultIn=%d\n", d.isDefaultOut, d.isDefaultIn);
+		u::log::print("      sampleRates:\n\t");
+		for (int s : d.sampleRates)
+			u::log::print("%d ", s);
+		u::log::print("\n");
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool canRender_()
 {
 	return model::get().kernel.audioReady && model::get().mixer.state->active.load() == true;
@@ -219,10 +236,7 @@ int openDevice()
 	    conf::conf.soundDeviceOut, conf::conf.soundDeviceIn, conf::conf.samplerate);
 
 	devices_ = fetchDevices_();
-
-	u::log::print("[KA] %d device(s) found\n", devices_.size());
-	for (Device info : devices_)
-		u::log::print("  %d) %s\n", info.index, info.name);
+	printDevices_(devices_);
 
 	/* Abort here if devices found are zero. */
 
@@ -236,8 +250,8 @@ int openDevice()
 	RtAudio::StreamParameters inParams;
 
 	outParams.deviceId     = conf::conf.soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT ? rtSystem_->getDefaultOutputDevice() : conf::conf.soundDeviceOut;
-	outParams.nChannels    = G_MAX_IO_CHANS;
-	outParams.firstChannel = conf::conf.channelsOut * G_MAX_IO_CHANS; // chan 0=0, 1=2, 2=4, ...
+	outParams.nChannels    = conf::conf.channelsOutCount;
+	outParams.firstChannel = conf::conf.channelsOutStart;
 
 	/* Input device can be disabled. Unlike the output, here we are using all
 	channels and let the user choose which one to record from in the configuration

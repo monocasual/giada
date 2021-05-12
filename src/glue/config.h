@@ -37,46 +37,57 @@ struct Device;
 }
 namespace giada::c::config
 {
-struct AudioDeviceData
+enum class DeviceType
 {
-	AudioDeviceData(const m::kernelAudio::Device&);
-
-	int              index             = 0;
-	std::string      name              = "";
-	int              maxOutputChannels = 0;
-	int              maxInputChannels  = 0;
-	std::vector<int> sampleRates       = {};
+	INPUT,
+	OUTPUT
 };
 
-struct SelectedAudioDeviceData
+struct AudioDeviceData
 {
-	int index         = -1;
+	AudioDeviceData() = default;
+	AudioDeviceData(DeviceType t, const m::kernelAudio::Device&, int channelsCount, int channelsStart);
+
+	DeviceType       type        = DeviceType::OUTPUT;
+	int              index       = -1;
+	std::string      name        = "";
+	int              channelsMax = 0;
+	std::vector<int> sampleRates = {};
+
+	/* Selectable values. */
+
 	int channelsCount = 0;
 	int channelsStart = 0;
-	int channelsMax   = 0;
 };
 
 struct AudioData
 {
+	void setOutputDevice(int index);
+	void setInputDevice(int index);
+
 	std::map<int, std::string>   apis;
 	std::vector<AudioDeviceData> outputDevices;
 	std::vector<AudioDeviceData> inputDevices;
 
-	int                     api;
-	SelectedAudioDeviceData outputDevice;
-	SelectedAudioDeviceData inputDevice;
-	int                     bufferSize;
-	int                     sampleRate;
-	bool                    limitOutput;
-	float                   recTriggerLevel;
-	int                     resampleQuality;
+	/* Selectable values. */
+
+	int             api;
+	AudioDeviceData outputDevice;
+	AudioDeviceData inputDevice;
+	int             bufferSize;
+	int             sampleRate;
+	bool            limitOutput;
+	float           recTriggerLevel;
+	int             resampleQuality;
 };
 
 /* getAudioData
 Returns viewModel object filled with data. */
 
 AudioData getAudioData();
-
+/*
+AudioDeviceData getAudioDeviceData(size_t index, int channelsCount, int channelsStart);
+*/
 void save(const AudioData&);
 } // namespace giada::c::config
 

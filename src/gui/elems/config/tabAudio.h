@@ -27,6 +27,8 @@
 #ifndef GE_TAB_AUDIO_H
 #define GE_TAB_AUDIO_H
 
+#include "glue/config.h"
+#include "gui/elems/basics/choice.h"
 #include <FL/Fl_Group.H>
 
 class geCheck;
@@ -35,46 +37,54 @@ class geInput;
 
 namespace giada::v
 {
-class geChoice;
 class geTabAudio : public Fl_Group
 {
 public:
+	struct geDeviceMenu : public geChoice
+	{
+		geDeviceMenu(int x, int y, int w, int h, const char* l, const std::vector<c::config::AudioDeviceData>&);
+	};
+
+	struct geChannelMenu : public geChoice
+	{
+		geChannelMenu(int x, int y, int w, int h, const char* l, c::config::AudioDeviceData&);
+
+		int getChannelsCount() const;
+		int getChannelsStart() const;
+
+		void rebuild(c::config::AudioDeviceData&);
+
+	private:
+		static constexpr int STEREO_OFFSET = 1000;
+
+		c::config::AudioDeviceData& m_data;
+	};
+
 	geTabAudio(int x, int y, int w, int h);
 
 	void save();
 
-	geChoice* soundsys;
-	geChoice* buffersize;
-	geChoice* samplerate;
-	geChoice* sounddevOut;
-	geButton* devOutInfo;
-	geChoice* channelsOut;
-	geCheck*  limitOutput;
-	geChoice* sounddevIn;
-	geButton* devInInfo;
-	geChoice* channelsIn;
-	geInput*  recTriggerLevel;
-	geChoice* rsmpQuality;
+	geChoice*      soundsys;
+	geChoice*      buffersize;
+	geChoice*      samplerate;
+	geDeviceMenu*  sounddevOut;
+	geChannelMenu* channelsOut;
+	geCheck*       limitOutput;
+	geDeviceMenu*  sounddevIn;
+	geCheck*       enableIn;
+	geChannelMenu* channelsIn;
+	geInput*       recTriggerLevel;
+	geChoice*      rsmpQuality;
 
 private:
-	static void cb_deactivate_sounddev(Fl_Widget* /*w*/, void* p);
-	static void cb_fetchInChans(Fl_Widget* /*w*/, void* p);
-	static void cb_fetchOutChans(Fl_Widget* /*w*/, void* p);
-	static void cb_showInputInfo(Fl_Widget* /*w*/, void* p);
-	static void cb_showOutputInfo(Fl_Widget* /*w*/, void* p);
-	void        cb_deactivate_sounddev();
-	void        cb_fetchInChans();
-	void        cb_fetchOutChans();
-	void        cb_showInputInfo();
-	void        cb_showOutputInfo();
+	void invalidate();
+	void fetch();
+	void deactivateAll();
+	void activateAll();
 
-	void fetchSoundDevs();
-	void fetchInChans(int menuItem);
-	void fetchOutChans();
-	void fetchSampleRates();
-	int  findMenuDevice(geChoice* m, int device);
+	c::config::AudioData m_data;
 
-	int soundsysInitValue;
+	int m_initialApi;
 };
 } // namespace giada::v
 

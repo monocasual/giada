@@ -32,13 +32,60 @@
 
 namespace giada::c::config
 {
-AudioDeviceData::AudioDeviceData(const m::kernelAudio::Device& device)
-: index(device.index)
-, name(device.name)
-, maxOutputChannels(device.maxOutputChannels)
-, maxInputChannels(device.maxInputChannels)
-, sampleRates(device.sampleRates)
+namespace
 {
+AudioDeviceData getAudioDeviceData_(DeviceType type, size_t index, int channelsCount, int channelsStart)
+{
+	for (const m::kernelAudio::Device& device : m::kernelAudio::getDevices())
+		if (device.index == index)
+			return AudioDeviceData(type, device, channelsCount, channelsStart);
+	return AudioDeviceData();
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+AudioDeviceData::AudioDeviceData(DeviceType type, const m::kernelAudio::Device& device,
+    int channelsCount, int channelsStart)
+: type(type)
+, index(device.index)
+, name(device.name)
+, channelsMax(type == DeviceType::OUTPUT ? device.maxOutputChannels : device.maxInputChannels)
+, sampleRates(device.sampleRates)
+, channelsCount(channelsCount)
+, channelsStart(channelsStart)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+void AudioData::setOutputDevice(int index)
+{
+	for (AudioDeviceData& d : outputDevices)
+	{
+		if (index != d.index)
+			continue;
+		outputDevice = d;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void AudioData::setInputDevice(int index)
+{
+	for (AudioDeviceData& d : inputDevices)
+	{
+		if (index == d.index)
+		{
+			inputDevice = d;
+			return;
+		}
+	}
+	inputDevice = {};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -88,9 +135,9 @@ AudioData getAudioData()
 	for (const m::kernelAudio::Device& device : devices)
 	{
 		if (device.maxOutputChannels > 0)
-			audioData.outputDevices.push_back(AudioDeviceData(device));
+			audioData.outputDevices.push_back(AudioDeviceData(DeviceType::OUTPUT, device, G_MAX_IO_CHANS, 0));
 		if (device.maxInputChannels > 0)
-			audioData.inputDevices.push_back(AudioDeviceData(device));
+			audioData.inputDevices.push_back(AudioDeviceData(DeviceType::INPUT, device, 1, 0));
 	}
 
 	audioData.api             = m::conf::conf.soundSystem;
@@ -99,20 +146,12 @@ AudioData getAudioData()
 	audioData.limitOutput     = m::conf::conf.limitOutput;
 	audioData.recTriggerLevel = m::conf::conf.recTriggerLevel;
 	audioData.resampleQuality = m::conf::conf.rsmpQuality;
-
-	if (m::conf::conf.soundDeviceOut != -1)
-		audioData.outputDevice = {
-		    m::conf::conf.soundDeviceOut,
-		    2, // TODO channels count shit
-		    m::conf::conf.channelsOut,
-		    devices[m::conf::conf.soundDeviceOut].maxOutputChannels};
-
-	if (m::conf::conf.soundDeviceIn != -1)
-		audioData.inputDevice = {
-		    m::conf::conf.soundDeviceIn,
-		    m::conf::conf.channelsInCount,
-		    m::conf::conf.channelsInStart,
-		    devices[m::conf::conf.soundDeviceIn].maxInputChannels};
+	audioData.outputDevice    = getAudioDeviceData_(DeviceType::OUTPUT,
+        m::conf::conf.soundDeviceOut, m::conf::conf.channelsOutCount,
+        m::conf::conf.channelsOutStart);
+	audioData.inputDevice     = getAudioDeviceData_(DeviceType::INPUT,
+        m::conf::conf.soundDeviceIn, m::conf::conf.channelsInCount,
+        m::conf::conf.channelsInStart);
 
 	return audioData;
 }
@@ -121,16 +160,17 @@ AudioData getAudioData()
 
 void save(const AudioData& data)
 {
-	m::conf::conf.soundSystem     = data.api;
-	m::conf::conf.soundDeviceOut  = data.outputDevice.index;
-	m::conf::conf.soundDeviceIn   = data.inputDevice.index;
-	m::conf::conf.channelsOut     = data.outputDevice.channelsStart;
-	m::conf::conf.channelsInCount = data.inputDevice.channelsCount;
-	m::conf::conf.channelsInStart = data.inputDevice.channelsStart;
-	m::conf::conf.limitOutput     = data.limitOutput;
-	m::conf::conf.rsmpQuality     = data.resampleQuality;
-	m::conf::conf.buffersize      = data.bufferSize;
-	m::conf::conf.recTriggerLevel = data.recTriggerLevel;
-	m::conf::conf.samplerate      = data.sampleRate;
+	m::conf::conf.soundSystem      = data.api;
+	m::conf::conf.soundDeviceOut   = data.outputDevice.index;
+	m::conf::conf.soundDeviceIn    = data.inputDevice.index;
+	m::conf::conf.channelsOutCount = data.outputDevice.channelsCount;
+	m::conf::conf.channelsOutStart = data.outputDevice.channelsStart;
+	m::conf::conf.channelsInCount  = data.inputDevice.channelsCount;
+	m::conf::conf.channelsInStart  = data.inputDevice.channelsStart;
+	m::conf::conf.limitOutput      = data.limitOutput;
+	m::conf::conf.rsmpQuality      = data.resampleQuality;
+	m::conf::conf.buffersize       = data.bufferSize;
+	m::conf::conf.recTriggerLevel  = data.recTriggerLevel;
+	m::conf::conf.samplerate       = data.sampleRate;
 }
 } // namespace giada::c::config

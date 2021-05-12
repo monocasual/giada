@@ -48,8 +48,11 @@ std::string confDirPath_  = "";
 
 void sanitize_()
 {
-	conf.soundDeviceOut = std::max(0, conf.soundDeviceOut);
-	conf.channelsOut    = std::max(0, conf.channelsOut);
+	conf.soundDeviceOut   = std::max(0, conf.soundDeviceOut);
+	conf.channelsOutCount = G_MAX_IO_CHANS;
+	conf.channelsOutStart = std::max(0, conf.channelsOutStart);
+	conf.channelsInCount  = std::max(1, conf.channelsInCount);
+	conf.channelsInStart  = std::max(0, conf.channelsInStart);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -131,7 +134,8 @@ bool read()
 	conf.soundSystem                = j.value(CONF_KEY_SOUND_SYSTEM, conf.soundSystem);
 	conf.soundDeviceOut             = j.value(CONF_KEY_SOUND_DEVICE_OUT, conf.soundDeviceOut);
 	conf.soundDeviceIn              = j.value(CONF_KEY_SOUND_DEVICE_IN, conf.soundDeviceIn);
-	conf.channelsOut                = j.value(CONF_KEY_CHANNELS_OUT, conf.channelsOut);
+	conf.channelsOutCount           = j.value(CONF_KEY_CHANNELS_OUT_COUNT, conf.channelsOutCount);
+	conf.channelsOutStart           = j.value(CONF_KEY_CHANNELS_OUT_START, conf.channelsOutStart);
 	conf.channelsInCount            = j.value(CONF_KEY_CHANNELS_IN_COUNT, conf.channelsInCount);
 	conf.channelsInStart            = j.value(CONF_KEY_CHANNELS_IN_START, conf.channelsInStart);
 	conf.samplerate                 = j.value(CONF_KEY_SAMPLERATE, conf.samplerate);
@@ -229,7 +233,8 @@ bool write()
 	j[CONF_KEY_SOUND_SYSTEM]                  = conf.soundSystem;
 	j[CONF_KEY_SOUND_DEVICE_OUT]              = conf.soundDeviceOut;
 	j[CONF_KEY_SOUND_DEVICE_IN]               = conf.soundDeviceIn;
-	j[CONF_KEY_CHANNELS_OUT]                  = conf.channelsOut;
+	j[CONF_KEY_CHANNELS_OUT_COUNT]            = conf.channelsOutCount;
+	j[CONF_KEY_CHANNELS_OUT_START]            = conf.channelsOutStart;
 	j[CONF_KEY_CHANNELS_IN_COUNT]             = conf.channelsInCount;
 	j[CONF_KEY_CHANNELS_IN_START]             = conf.channelsInStart;
 	j[CONF_KEY_SAMPLERATE]                    = conf.samplerate;

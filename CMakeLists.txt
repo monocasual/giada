@@ -102,7 +102,6 @@ list(APPEND SOURCES
 	src/gui/dialogs/bpmInput.cpp
 	src/gui/dialogs/channelNameInput.cpp
 	src/gui/dialogs/config.cpp
-	src/gui/dialogs/devInfo.cpp
 	src/gui/dialogs/pluginList.cpp
 	src/gui/dialogs/pluginWindow.cpp
 	src/gui/dialogs/sampleEditor.cpp

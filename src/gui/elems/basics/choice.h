@@ -46,6 +46,7 @@ public:
 	void addItem(const std::string& label, ID id);
 	void showItem(const std::string& label);
 	void showItem(ID id);
+	void clear();
 
 	std::function<void(ID)> onChange = nullptr;
 
