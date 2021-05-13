@@ -31,11 +31,7 @@
 
 #include <string>
 
-namespace giada
-{
-namespace u
-{
-namespace fs
+namespace giada::u::fs
 {
 bool fileExists(const std::string& s);
 bool dirExists(const std::string& s);
@@ -84,8 +80,6 @@ Returns the upper directory:
 /path/to/my/directory -> /path/to/my/ */
 
 std::string getUpDir(const std::string& s);
-} // namespace fs
-} // namespace u
-} // namespace giada
+} // namespace giada::u::fs
 
 #endif

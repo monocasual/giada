@@ -50,78 +50,76 @@
 #include "utils/log.h"
 #include "utils/string.h"
 
-namespace giada
-{
-namespace u
-{
-namespace fs
+namespace stdfs = std::filesystem;
+
+namespace giada::u::fs
 {
 bool fileExists(const std::string& s)
 {
-	return std::filesystem::exists(s);
+	return stdfs::exists(s);
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool isDir(const std::string& s)
 {
-	return std::filesystem::is_directory(s) && !isProject(s);
+	return stdfs::is_directory(s) && !isProject(s);
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool dirExists(const std::string& s)
 {
-	return std::filesystem::exists(s);
+	return stdfs::exists(s);
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool mkdir(const std::string& s)
 {
-	return dirExists(s) ? true : std::filesystem::create_directory(s);
+	return dirExists(s) ? true : stdfs::create_directory(s);
 }
 
 /* -------------------------------------------------------------------------- */
 
 std::string getRealPath(const std::string& s)
 {
-	return s.empty() ? "" : std::filesystem::canonical(s).string();
+	return s.empty() || !stdfs::exists(s) ? "" : stdfs::canonical(s).string();
 }
 
 /* -------------------------------------------------------------------------- */
 
 std::string basename(const std::string& s)
 {
-	return std::filesystem::path(s).filename().string();
+	return stdfs::path(s).filename().string();
 }
 
 /* -------------------------------------------------------------------------- */
 
 std::string dirname(const std::string& s)
 {
-	return std::filesystem::path(s).parent_path().string();
+	return stdfs::path(s).parent_path().string();
 }
 
 /* -------------------------------------------------------------------------- */
 
 std::string getCurrentPath()
 {
-	return std::filesystem::current_path().string();
+	return stdfs::current_path().string();
 }
 
 /* -------------------------------------------------------------------------- */
 
 std::string getExt(const std::string& s)
 {
-	return std::filesystem::path(s).extension().string();
+	return stdfs::path(s).extension().string();
 }
 
 /* -------------------------------------------------------------------------- */
 
 std::string stripExt(const std::string& s)
 {
-	return std::filesystem::path(s).replace_extension("").string();
+	return stdfs::path(s).replace_extension("").string();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -170,14 +168,14 @@ std::string getHomePath()
 
 #endif
 
-	return std::filesystem::path(buf).string();
+	return stdfs::path(buf).string();
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool isRootDir(const std::string& s)
 {
-	return std::filesystem::current_path().root_directory() == s;
+	return stdfs::current_path().root_directory() == s;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -192,8 +190,6 @@ std::string getUpDir(const std::string& s)
 
 #endif
 
-	return std::filesystem::path(s).parent_path().string();
+	return stdfs::path(s).parent_path().string();
 }
-} // namespace fs
-} // namespace u
-} // namespace giada
+} // namespace giada::u::fs
