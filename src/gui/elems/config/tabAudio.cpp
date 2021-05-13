@@ -83,7 +83,7 @@ void geTabAudio::geChannelMenu::rebuild(c::config::AudioDeviceData& data)
 
 	clear();
 
-	if (m_data.index == -1 /*|| m_data.channelsCount == 0*/)
+	if (m_data.index == -1)
 	{
 		addItem("none", 0);
 		showItem(0);
