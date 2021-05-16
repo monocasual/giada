@@ -216,6 +216,11 @@ void geTabAudio::fetch()
 	m_data.outputDevice.channelsCount = channelsOut->getChannelsCount();
 	m_data.outputDevice.channelsStart = channelsOut->getChannelsStart();
 
+	if (m_data.api == G_SYS_API_JACK)
+		buffersize->deactivate();
+	else
+		buffersize->activate();
+
 	if (m_data.inputDevice.index != -1)
 	{
 		channelsIn->rebuild(m_data.inputDevice);
