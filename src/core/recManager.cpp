@@ -42,14 +42,14 @@ namespace giada::m::recManager
 {
 namespace
 {
-bool canRec_()
+bool isKernelReady_()
 {
 	return kernelAudio::isReady();
 }
 
-bool canInputRec_()
+bool canRec_()
 {
-	return canRec_() && mh::hasInputRecordableChannels();
+	return isKernelReady_() && kernelAudio::isInputEnabled();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -110,7 +110,7 @@ bool isRecordingInput()
 
 void startActionRec(RecTriggerMode mode)
 {
-	if (!canRec_())
+	if (!isKernelReady_())
 		return;
 
 	if (mode == RecTriggerMode::NORMAL)
@@ -172,7 +172,7 @@ void toggleActionRec(RecTriggerMode m)
 
 bool startInputRec(RecTriggerMode triggerMode, InputRecMode inputMode)
 {
-	if (!canInputRec_())
+	if (!canRec_() || !mh::hasInputRecordableChannels())
 		return false;
 
 	if (triggerMode == RecTriggerMode::SIGNAL || inputMode == InputRecMode::FREE)
