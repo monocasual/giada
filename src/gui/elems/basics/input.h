@@ -29,6 +29,7 @@
 
 #include <FL/Fl_Input.H>
 #include <functional>
+#include <string>
 
 class geInput : public Fl_Input
 {

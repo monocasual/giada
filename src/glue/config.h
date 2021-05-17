@@ -29,6 +29,7 @@
 
 #include "core/types.h"
 #include <map>
+#include <string>
 #include <vector>
 
 namespace giada::m::kernelAudio
