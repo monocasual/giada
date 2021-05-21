@@ -33,7 +33,7 @@ Giada is an open source, minimalistic and hardcore music production tool. Design
 * ALSA, JACK + Transport, CoreAudio, ASIO and DirectSound full support;
 * unlimited number of channels (optionally controllable via computer keyboard);
 * BPM and beat sync with sample-accurate loop engine;
-* MIDI output support, featuring custom [MIDI lightning messages](https://github.com/monocasual/giada-midimaps);
+* MIDI input and output support, featuring custom [MIDI lightning messages](https://github.com/monocasual/giada-midimaps);
 * super-sleek, built-in Wave Editor for audio samples and Piano Roll editor for MIDI messages;
 * automatic quantizer;
 * portable project storage system, based on super-hackable JSON files;
@@ -49,19 +49,19 @@ Take a look at the COPYING file for further informations.
 
 ## Documentation
 
-Docs are available online on the [official website](https://www.giadamusic.com/documentation-index).
+Documentation is available online in the [user guide page](https://www.giadamusic.com/documentation-index).
 
-An ongoing collection of tutorials (both text and video) and live demos is available in the [tutorials & media page](https://www.giadamusic.com/media).
+An ever-growing collection of tutorials (both text and video) and live demos is available in the [tutorials & media page](https://www.giadamusic.com/media).
 
 Found a typo or a terrible mistake? Feel free to clone the [website repository](https://github.com/monocasual/giada-www) and send us your pull requests.
 
 ## Build Giada from source
 
-We do our best to make the compilation process as simple as possible. You can find all the information in the [user guide](https://www.giadamusic.com/documentation-compiling-from-source).
+We do our best to make the compilation process as simple as possible. You can find all the information in the [compiling from source](https://www.giadamusic.com/documentation-compiling-from-source) chapter from the user guide.
 
 ## Bugs, requests and questions for non-developers
 
-Feel free to ask anything on the [discussions area](https://github.com/monocasual/giada/discussions).
+Feel free to ask anything in the [discussions area](https://github.com/monocasual/giada/discussions).
 
 ## Copyright
 
