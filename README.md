@@ -38,7 +38,7 @@ Giada is an open source, minimalistic and hardcore music production tool. Design
 * automatic quantizer;
 * portable project storage system, based on super-hackable JSON files;
 * support for all major uncompressed file formats;
-* test-driven development style supported by [Travis CI](https://travis-ci.org/monocasual/giada) and [Catch](https://github.com/philsquared/Catch)
+* test-driven development style supported by [GitHub Actions](https://github.com/monocasual/giada/actions) and [Catch](https://github.com/philsquared/Catch)
 * under a constant stage of development;
 * 100% open-source GPL v3.
 
@@ -49,19 +49,19 @@ Take a look at the COPYING file for further informations.
 
 ## Documentation
 
-Docs are available online on [the official website](https://www.giadamusic.com/documentation-index).
+Docs are available online on the [official website](https://www.giadamusic.com/documentation-index).
+
+An ongoing collection of tutorials (both text and video) and live demos is available in the [tutorials & media page](https://www.giadamusic.com/media).
 
 Found a typo or a terrible mistake? Feel free to clone the [website repository](https://github.com/monocasual/giada-www) and send us your pull requests.
 
 ## Build Giada from source
 
-We do our best to make the compilation process as simple as possible. You can find all the information in the [official docs page](https://www.giadamusic.com/documentation-compiling-from-source).
-
-Something went wrong? Try our new [Docker image](https://github.com/monocasual/giada-docker) for building and running Giada without hurdles. 
+We do our best to make the compilation process as simple as possible. You can find all the information in the [user guide](https://www.giadamusic.com/documentation-compiling-from-source).
 
 ## Bugs, requests and questions for non-developers
 
-Feel free to ask anything on [our end-user forum](https://www.giadamusic.com/forum).
+Feel free to ask anything on the [discussions area](https://github.com/monocasual/giada/discussions).
 
 ## Copyright
 
