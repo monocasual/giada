@@ -10,3 +10,4 @@ vcpkg install libsndfile:x64-windows
 vcpkg install libsamplerate:x64-windows
 vcpkg install fltk:x64-windows
 vcpkg install rtmidi:x64-windows
+vcpkg install catch2:x64-windows
