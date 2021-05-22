@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2010-2021 Giovanni A. Zuliani | Monocasual Laboratories -->
+<component type="desktop">
+ <id>com.giadamusic.Giada</id>
+ <metadata_license>CC0</metadata_license>
+ <project_license>GPL-2.0+</project_license>
+ <name>Giada</name>
+ <summary>Your hardcore loop machine</summary>
+ <description>
+   <p>
+     Giada is an open source, minimalistic and hardcore music
+     production tool. Designed for DJs, live performers and electronic
+     musicians.
+   </p>
+ </description>
+ <content_rating type="oars-1.1" />
+ <launchable type="desktop-id">com.giadamusic.Giada.desktop</launchable>
+ <screenshots>
+  <screenshot type="default">
+    <image>
+      https://www.giadamusic.com/images/screenshots/giada-loop-machine-screenshot-03-large-project.png
+    </image>
+   <caption>A fairly large project with samples and MIDI events</caption>
+  </screenshot>
+  <screenshot>
+    <image>
+      https://www.giadamusic.com/images/screenshots/giada-loop-machine-screenshot-17-midi-action-editor.png
+    </image>
+   <caption>New Action Editor for MIDI events</caption>
+  </screenshot>
+  <screenshot>
+    <image>
+      https://www.giadamusic.com/images/screenshots/giada-loop-machine-screenshot-01-sample-editor.png
+    </image>
+   <caption>Chopping samples in the advanced Sample Editor</caption>
+  </screenshot>
+ </screenshots>
+ <update_contact>giadaloopmachine_AT_gmail.com</update_contact>
+ <url type="homepage">https://www.giadamusic.com/</url>
+ <url type="help">https://www.giadamusic.com/forum</url>
+ <releases>
+   <release version="0.18.0" date="2021-05-19">
+     <description>
+       <ul>
+         <li>New 'free loop-length' audio recording mode (#63)</li>
+         <li>Many AudioBuffer improvements</li>
+         <li>Audio configuration panel refactoring</li>
+         <li>KernelAudio improvements and cleanups</li>
+         <li>Relaxed BPM handling when working with JACK</li>
+         <li>Install executable to FHS compliant location (#450)</li>
+         <li>[CI] Don't UPX binaries on macOS (#459)</li>
+         <li>Fix Overdub protection ON by default not working (#460)</li>
+         <li>Fix crash when moving up from a deleted folder (#455)</li>
+       </ul>
+     </description>
+   </release>
+ </releases>
+</component>

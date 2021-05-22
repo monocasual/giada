@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Giada
+Name[es]=Giada
+GenericName=Drum machine and loop sequencer
+GenericName[es]=Caja de ritmos y secuenciador de loops
+Exec=giada %f
+Terminal=false
+Icon=giada-logo
+Categories=Music;AudioVideo;Audio;Midi;X-Digital_Processing;X-Jack;X-MIDI;
+Keywords=Giada;
