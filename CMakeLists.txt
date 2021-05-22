@@ -533,6 +533,11 @@ target_compile_options(giada PRIVATE ${COMPILER_OPTIONS})
 
 include(GNUInstallDirs)
 install(TARGETS giada DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR})
+if(DEFINED OS_LINUX)
+	install(FILES ${CMAKE_SOURCE_DIR}/extras/com.giadamusic.Giada.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
+	install(FILES ${CMAKE_SOURCE_DIR}/extras/com.giadamusic.Giada.metainfo.xml DESTINATION ${CMAKE_INSTALL_PREFIX}/share/metainfo)
+	install(FILES ${CMAKE_SOURCE_DIR}/extras/giada-logo.svg RENAME com.giadamusic.Giada.svg DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps)
+endif()
 
 # ------------------------------------------------------------------------------
 # Extra
