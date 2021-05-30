@@ -241,6 +241,7 @@ void closeMainWindow()
 	if (!v::gdConfirmWin("Warning", "Quit Giada: are you sure?"))
 		return;
 
+	v::updater::close();
 	G_MainWin->hide();
 	delete G_MainWin;
 }

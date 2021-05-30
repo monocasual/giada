@@ -31,6 +31,7 @@ namespace giada::v::updater
 {
 void init();
 void update(void* p);
+void close();
 } // namespace giada::v::updater
 
 #endif

@@ -54,4 +54,11 @@ void update(void* /*p*/)
 	u::gui::refresh();
 	Fl::add_timeout(G_GUI_REFRESH_RATE, update, nullptr);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void close()
+{
+	Fl::remove_timeout(update);
+}
 } // namespace giada::v::updater
