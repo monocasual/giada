@@ -37,6 +37,13 @@ class AudioBuffer;
 class WaveReader final
 {
 public:
+	/* Result
+	A Result object is returned by the fill() function below, containing the 
+	number of frames used and generated from a buffer filling operation. The
+	two values are different only when pitch is != 1.0, where a chunk of audio
+	in input (used) might result in a longer or shorter portion of audio in 
+	output (generated). */
+
 	struct Result
 	{
 		Frame used, generated;
@@ -60,7 +67,7 @@ public:
 
 	Wave* wave;
 
-  private:
+private:
 	Result fillResampled(AudioBuffer& out, Frame start, Frame max, Frame offset, float pitch) const;
 	Result fillCopy(AudioBuffer& out, Frame start, Frame max, Frame offset) const;
 
