@@ -157,8 +157,6 @@ void initGUI_(int argc, char** argv)
 
 	v::updater::init();
 	u::gui::updateStaticWidgets();
-
-	Fl::add_timeout(G_GUI_REFRESH_RATE, v::updater::update, nullptr);
 }
 
 /* -------------------------------------------------------------------------- */

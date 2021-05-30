@@ -45,6 +45,8 @@ void init()
 		type == m::model::SwapType::HARD ? u::gui::rebuild() : u::gui::refresh();
 		Fl::unlock();
 	});
+
+	Fl::add_timeout(G_GUI_REFRESH_RATE, update, nullptr);
 }
 
 /* -------------------------------------------------------------------------- */
