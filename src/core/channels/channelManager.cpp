@@ -132,7 +132,7 @@ const patch::Channel serializeChannel(const channel::Data& c)
 	pc.volume            = c.volume;
 	pc.pan               = c.pan;
 	pc.hasActions        = c.hasActions;
-	pc.readActions       = c.readActions;
+	pc.readActions       = c.state->readActions.load();
 	pc.armed             = c.armed;
 	pc.midiIn            = c.midiLearner.enabled;
 	pc.midiInFilter      = c.midiLearner.filter;

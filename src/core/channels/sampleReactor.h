@@ -34,6 +34,11 @@ namespace giada::m::channel
 {
 struct Data;
 }
+
+/* sampleReactor
+Reacts to manual events sent to Sample Channels: key press, key release, 
+sequencer stop, ... . */
+
 namespace giada::m::sampleReactor
 {
 struct Data

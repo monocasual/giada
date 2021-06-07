@@ -138,12 +138,12 @@ Data::Data(const m::channel::Data& c)
 
 ChannelStatus Data::getPlayStatus() const { return m_channel.state->playStatus.load(); }
 ChannelStatus Data::getRecStatus() const { return m_channel.state->recStatus.load(); }
+bool          Data::getReadActions() const { return m_channel.state->readActions.load(); }
 bool          Data::isRecordingInput() const { return m::recManager::isRecordingInput(); }
 bool          Data::isRecordingAction() const { return m::recManager::isRecordingAction(); }
 /* TODO - useless methods, turn them into member vars */
 bool Data::getSolo() const { return m_channel.solo; }
 bool Data::getMute() const { return m_channel.mute; }
-bool Data::getReadActions() const { return m_channel.readActions; }
 bool Data::isArmed() const { return m_channel.armed; }
 
 /* -------------------------------------------------------------------------- */

@@ -69,7 +69,7 @@ void onKeyPress_(channel::Data& ch)
 	prevent	existing actions to interfere with the keypress/keyrel combo. */
 
 	if (ch.samplePlayer->mode == SamplePlayerMode::SINGLE_PRESS)
-		ch.readActions = false;
+		ch.state->readActions.store(false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -97,8 +97,8 @@ void toggleReadActions_(channel::Data& ch)
 	if (!ch.hasActions)
 		return;
 
-	bool          readActions = ch.readActions;
-	ChannelStatus recStatus   = ch.state->recStatus.load();
+	const bool          readActions = ch.state->readActions.load();
+	const ChannelStatus recStatus   = ch.state->recStatus.load();
 
 	if (readActions || (!readActions && recStatus == ChannelStatus::WAIT))
 		stopReadActions_(ch, recStatus);
@@ -115,7 +115,7 @@ void startReadActions_(channel::Data& ch)
 	else
 	{
 		ch.state->recStatus.store(ChannelStatus::PLAY);
-		ch.readActions = true;
+		ch.state->readActions.store(true);
 	}
 }
 
@@ -130,7 +130,7 @@ void stopReadActions_(channel::Data& ch, ChannelStatus curRecStatus)
 	if (!clock::isRunning() || !conf::conf.treatRecsAsLoops)
 	{
 		ch.state->recStatus.store(ChannelStatus::OFF);
-		ch.readActions = false;
+		ch.state->readActions.store(false);
 	}
 	else if (curRecStatus == ChannelStatus::WAIT)
 		ch.state->recStatus.store(ChannelStatus::OFF);
@@ -150,7 +150,7 @@ void killReadActions_(channel::Data& ch)
 	if (!conf::conf.treatRecsAsLoops)
 		return;
 	ch.state->recStatus.store(ChannelStatus::OFF);
-	ch.readActions = false;
+	ch.state->readActions.store(false);
 }
 } // namespace
 

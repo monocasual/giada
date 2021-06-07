@@ -154,7 +154,7 @@ void stopActionRec()
 	for (ID id : channels)
 	{
 		channel::Data& ch = model::get().getChannel(id);
-		ch.readActions    = true;
+		ch.state->readActions.store(true);
 		if (ch.type == ChannelType::MIDI)
 			ch.state->playStatus.store(ChannelStatus::PLAY);
 	}

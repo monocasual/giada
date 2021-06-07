@@ -56,11 +56,12 @@ namespace giada::m::channel
 {
 struct State
 {
-	WeakAtomic<Frame>         tracker    = 0;
-	WeakAtomic<ChannelStatus> playStatus = ChannelStatus::OFF;
-	WeakAtomic<ChannelStatus> recStatus  = ChannelStatus::OFF;
-	bool                      rewinding;
-	Frame                     offset;
+	WeakAtomic<Frame>         tracker     = 0;
+	WeakAtomic<ChannelStatus> playStatus  = ChannelStatus::OFF;
+	WeakAtomic<ChannelStatus> recStatus   = ChannelStatus::OFF;
+	WeakAtomic<bool>          readActions = false;
+	bool                      rewinding   = false;
+	Frame                     offset      = 0;
 };
 
 struct Buffer
@@ -85,6 +86,7 @@ struct Data
 	bool operator==(const Data&);
 
 	bool isPlaying() const;
+	bool isReadingActions() const;
 	bool isInternal() const;
 	bool isMuted() const;
 	bool canInputRec() const;
@@ -103,7 +105,6 @@ struct Data
 	bool        solo;
 	bool        armed;
 	int         key;
-	bool        readActions;
 	bool        hasActions;
 	std::string name;
 	Pixel       height;

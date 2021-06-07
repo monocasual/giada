@@ -151,7 +151,6 @@ Data::Data(ChannelType type, ID id, ID columnId, State& state, Buffer& buffer)
 , solo(false)
 , armed(false)
 , key(0)
-, readActions(true)
 , hasActions(false)
 , height(G_GUI_UNIT)
 {
@@ -198,7 +197,6 @@ Data::Data(const patch::Channel& p, State& state, Buffer& buffer, float samplera
 , solo(p.solo)
 , armed(p.armed)
 , key(p.key)
-, readActions(p.readActions)
 , hasActions(p.hasActions)
 , name(p.name)
 , height(p.height)
@@ -207,6 +205,9 @@ Data::Data(const patch::Channel& p, State& state, Buffer& buffer, float samplera
 #endif
 , midiLearner(p)
 {
+	state.readActions.store(p.readActions);
+	state.recStatus.store(p.readActions ? ChannelStatus::PLAY : ChannelStatus::OFF);
+
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
@@ -280,6 +281,12 @@ bool Data::hasWave() const
 bool Data::isPlaying() const
 {
 	ChannelStatus s = state->playStatus.load();
+	return s == ChannelStatus::PLAY || s == ChannelStatus::ENDING;
+}
+
+bool Data::isReadingActions() const
+{
+	ChannelStatus s = state->recStatus.load();
 	return s == ChannelStatus::PLAY || s == ChannelStatus::ENDING;
 }
 

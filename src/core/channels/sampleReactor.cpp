@@ -115,7 +115,7 @@ void onStopBySeq_(channel::Data& ch)
 	G_DEBUG("onStopBySeq ch=" << ch.id);
 
 	ChannelStatus playStatus       = ch.state->playStatus.load();
-	bool          isReadingActions = ch.readActions;
+	bool          isReadingActions = ch.state->readActions.load();
 	bool          isLoop           = ch.samplePlayer->isAnyLoopMode();
 
 	switch (playStatus)

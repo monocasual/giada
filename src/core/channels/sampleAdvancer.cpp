@@ -68,11 +68,11 @@ void onFirstBeat_(const channel::Data& ch, Frame localFrame)
 	G_DEBUG("onFirstBeat ch=" << ch.id << ", localFrame=" << localFrame);
 
 	ChannelStatus playStatus = ch.state->playStatus.load();
+	ChannelStatus recStatus  = ch.state->recStatus.load();
 	bool          isLoop     = ch.samplePlayer->isAnyLoopMode();
 
 	switch (playStatus)
 	{
-
 	case ChannelStatus::PLAY:
 		if (isLoop)
 			rewind_(ch, localFrame);
@@ -85,6 +85,22 @@ void onFirstBeat_(const channel::Data& ch, Frame localFrame)
 	case ChannelStatus::ENDING:
 		if (isLoop)
 			stop_(ch, localFrame);
+		break;
+
+	default:
+		break;
+	}
+
+	switch (recStatus)
+	{
+	case ChannelStatus::WAIT:
+		ch.state->recStatus.store(ChannelStatus::PLAY);
+		ch.state->readActions.store(true);
+		break;
+
+	case ChannelStatus::ENDING:
+		ch.state->recStatus.store(ChannelStatus::OFF);
+		ch.state->readActions.store(false);
 		break;
 
 	default:
@@ -148,18 +164,16 @@ void onNoteOff_(const channel::Data& ch, Frame localFrame)
 
 void parseActions_(const channel::Data& ch, const std::vector<Action>& as, Frame localFrame)
 {
-	if (ch.samplePlayer->isAnyLoopMode())
+	if (ch.samplePlayer->isAnyLoopMode() || !ch.isReadingActions())
 		return;
 
 	for (const Action& a : as)
 	{
-
 		if (a.channelId != ch.id)
 			continue;
 
 		switch (a.event.getStatus())
 		{
-
 		case MidiEvent::NOTE_ON:
 			onNoteOn_(ch, localFrame);
 			break;
@@ -215,7 +229,6 @@ void advance(const channel::Data& ch, const sequencer::Event& e)
 {
 	switch (e.type)
 	{
-
 	case sequencer::EventType::FIRST_BEAT:
 		onFirstBeat_(ch, e.delta);
 		break;
@@ -229,7 +242,7 @@ void advance(const channel::Data& ch, const sequencer::Event& e)
 		break;
 
 	case sequencer::EventType::ACTIONS:
-		if (ch.readActions)
+		if (ch.state->readActions.load() == true)
 			parseActions_(ch, *e.actions, e.delta);
 		break;
 
