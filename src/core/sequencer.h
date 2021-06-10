@@ -80,6 +80,15 @@ Renders audio coming out from the sequencer: that is, the metronome! */
 
 void render(AudioBuffer& outBuf);
 
+/* raw[*]
+Raw functions to start, stop and rewind the sequencer. These functions must be
+called only by clock:: when the JACK signal is received. Other modules should
+use the non-raw versions below. */
+
+void rawStart();
+void rawStop();
+void rawRewind();
+
 void start();
 void stop();
 void rewind();

@@ -379,7 +379,7 @@ void recvJackSync()
 		if (jackStateCurr.frame != jackStatePrev_.frame && jackStateCurr.frame == 0)
 		{
 			G_DEBUG("JackState received - rewind to frame 0");
-			sequencer::rewind();
+			sequencer::rawRewind();
 		}
 
 		// jackStateCurr.bpm == 0 if JACK doesn't send that info
@@ -392,7 +392,7 @@ void recvJackSync()
 		if (jackStateCurr.running != jackStatePrev_.running)
 		{
 			G_DEBUG("JackState received - running=" << jackStateCurr.running);
-			jackStateCurr.running ? sequencer::start() : sequencer::stop();
+			jackStateCurr.running ? sequencer::rawStart() : sequencer::rawStop();
 		}
 	}
 

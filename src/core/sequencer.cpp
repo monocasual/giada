@@ -56,42 +56,6 @@ void rewindQ_(Frame delta)
 	clock::rewind();
 	eventBuffer_.push_back({EventType::REWIND, 0, delta});
 }
-
-/* -------------------------------------------------------------------------- */
-
-void start_()
-{
-#ifdef WITH_AUDIO_JACK
-	if (kernelAudio::getAPI() == G_SYS_API_JACK)
-		kernelAudio::jackStart();
-	else
-#endif
-		start();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void stop_()
-{
-#ifdef WITH_AUDIO_JACK
-	if (kernelAudio::getAPI() == G_SYS_API_JACK)
-		kernelAudio::jackStop();
-	else
-#endif
-		stop();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void rewind_()
-{
-#ifdef WITH_AUDIO_JACK
-	if (kernelAudio::getAPI() == G_SYS_API_JACK)
-		kernelAudio::jackSetPosition(0);
-	else
-#endif
-		rewind();
-}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -116,17 +80,17 @@ void react(const eventDispatcher::EventBuffer& events)
 	{
 		if (e.type == eventDispatcher::EventType::SEQUENCER_START)
 		{
-			start_();
+			start();
 			break;
 		}
 		if (e.type == eventDispatcher::EventType::SEQUENCER_STOP)
 		{
-			stop_();
+			stop();
 			break;
 		}
 		if (e.type == eventDispatcher::EventType::SEQUENCER_REWIND)
 		{
-			rewind_();
+			rewind();
 			break;
 		}
 	}
@@ -186,7 +150,7 @@ void render(AudioBuffer& outBuf)
 
 /* -------------------------------------------------------------------------- */
 
-void start()
+void rawStart()
 {
 	switch (clock::getStatus())
 	{
@@ -204,7 +168,7 @@ void start()
 
 /* -------------------------------------------------------------------------- */
 
-void stop()
+void rawStop()
 {
 	clock::setStatus(ClockStatus::STOPPED);
 
@@ -219,12 +183,48 @@ void stop()
 
 /* -------------------------------------------------------------------------- */
 
-void rewind()
+void rawRewind()
 {
 	if (clock::canQuantize())
 		quantizer.trigger(Q_ACTION_REWIND);
 	else
 		rewindQ_(/*delta=*/0);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void start()
+{
+#ifdef WITH_AUDIO_JACK
+	if (kernelAudio::getAPI() == G_SYS_API_JACK)
+		kernelAudio::jackStart();
+	else
+#endif
+		rawStart();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void stop()
+{
+#ifdef WITH_AUDIO_JACK
+	if (kernelAudio::getAPI() == G_SYS_API_JACK)
+		kernelAudio::jackStop();
+	else
+#endif
+		rawStop();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void rewind()
+{
+#ifdef WITH_AUDIO_JACK
+	if (kernelAudio::getAPI() == G_SYS_API_JACK)
+		kernelAudio::jackSetPosition(0);
+	else
+#endif
+		rawRewind();
 }
 
 /* -------------------------------------------------------------------------- */
