@@ -67,7 +67,7 @@ namespace
 {
 std::string makeWavePath_(const std::string& base, const m::Wave& w, int k)
 {
-	return base + G_SLASH + w.getBasename(/*ext=*/false) + "-" + std::to_string(k) + "." + w.getExtension();
+	return base + G_SLASH + w.getBasename(/*ext=*/false) + "-" + std::to_string(k) + w.getExtension();
 }
 
 bool isWavePathUnique_(const m::Wave& skip, const std::string& path)
