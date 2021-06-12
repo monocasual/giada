@@ -45,8 +45,8 @@ namespace giada::m::samplePlayer
 {
 struct Data
 {
-	Data();
-	Data(const patch::Channel& p, float samplerateRatio);
+	Data(Resampler* r);
+	Data(const patch::Channel& p, float samplerateRatio, Resampler* r);
 	Data(const Data& o) = default;
 	Data(Data&& o)      = default;
 	Data& operator=(const Data&) = default;

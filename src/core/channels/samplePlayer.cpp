@@ -89,22 +89,24 @@ void setWave_(samplePlayer::Data& sp, Wave* w, float samplerateRatio)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Data::Data()
+Data::Data(Resampler* r)
 : pitch(G_DEFAULT_PITCH)
 , mode(SamplePlayerMode::SINGLE_BASIC)
 , velocityAsVol(false)
+, waveReader(r)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const patch::Channel& p, float samplerateRatio)
+Data::Data(const patch::Channel& p, float samplerateRatio, Resampler* r)
 : pitch(p.pitch)
 , mode(p.mode)
 , shift(p.shift)
 , begin(p.begin)
 , end(p.end)
 , velocityAsVol(p.midiInVeloAsVol)
+, waveReader(r)
 {
 	setWave_(*this, waveManager::hydrateWave(p.waveId), samplerateRatio);
 }
@@ -183,7 +185,10 @@ void render(const channel::Data& ch)
 	if (ch.state->rewinding)
 	{
 		if (tracker < end)
+		{
 			fillBuffer_(ch, tracker, 0);
+			ch.samplePlayer->waveReader.last();
+		}
 		ch.state->rewinding = false;
 		tracker             = begin;
 	}
@@ -197,6 +202,7 @@ void render(const channel::Data& ch)
 
 	if (tracker >= end)
 	{
+		ch.samplePlayer->waveReader.last();
 		tracker = begin;
 		sampleAdvancer::onLastFrame(ch); // TODO - better moving this to samplerAdvancer::advance
 		if (shouldLoop_(ch) && res.generated < ch.buffer->audio.countFrames())

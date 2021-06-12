@@ -36,69 +36,22 @@
 
 namespace giada::m
 {
-WaveReader::WaveReader()
-: wave(nullptr)
-, m_srcState(nullptr)
+WaveReader::WaveReader(Resampler* r)
+: m_resampler(r)
 {
-	allocateSrc();
 }
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::WaveReader(const WaveReader& o)
-: wave(o.wave)
-, m_srcState(nullptr)
-{
-	allocateSrc();
-}
-
-/* -------------------------------------------------------------------------- */
-
-WaveReader::WaveReader(WaveReader&& o)
-: wave(o.wave)
-, m_srcState(nullptr)
-{
-	moveSrc(&o.m_srcState);
-}
-
-/* -------------------------------------------------------------------------- */
-
-WaveReader& WaveReader::operator=(const WaveReader& o)
-{
-	if (this == &o)
-		return *this;
-	wave = o.wave;
-	allocateSrc();
-	return *this;
-}
-
-WaveReader& WaveReader::operator=(WaveReader&& o)
-{
-	if (this == &o)
-		return *this;
-	wave = o.wave;
-	moveSrc(&o.m_srcState);
-	return *this;
-}
-
-/* -------------------------------------------------------------------------- */
-
-WaveReader::~WaveReader()
-{
-	if (m_srcState != nullptr)
-		src_delete(m_srcState);
-}
-
-/* -------------------------------------------------------------------------- */
-
-WaveReader::Result WaveReader::fill(AudioBuffer& out, Frame start, Frame max, Frame offset, float pitch) const
+WaveReader::Result WaveReader::fill(AudioBuffer& out, Frame start, Frame max,
+    Frame offset, float pitch) const
 {
 	assert(wave != nullptr);
 	assert(start >= 0);
 	assert(max <= wave->getBuffer().countFrames());
 	assert(offset < out.countFrames());
 
-	if (pitch == 1.0)
+	if (pitch == 1.0f)
 		return fillCopy(out, start, max, offset);
 	else
 		return fillResampled(out, start, max, offset, pitch);
@@ -106,22 +59,20 @@ WaveReader::Result WaveReader::fill(AudioBuffer& out, Frame start, Frame max, Fr
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result WaveReader::fillResampled(AudioBuffer& dest, Frame start, Frame max, Frame offset, float pitch) const
+WaveReader::Result WaveReader::fillResampled(AudioBuffer& dest, Frame start,
+    Frame max, Frame offset, float pitch) const
 {
-	SRC_DATA srcData;
-
-	srcData.data_in       = wave->getBuffer()[start];    // Source data
-	srcData.input_frames  = max - start;                 // How many readable frames in Wave
-	srcData.data_out      = dest[offset];                // Destination (processed data)
-	srcData.output_frames = dest.countFrames() - offset; // How many writable frames in dest
-	srcData.end_of_input  = false;
-	srcData.src_ratio     = 1 / pitch;
-
-	src_process(m_srcState, &srcData);
+	Resampler::Result res = m_resampler->process(
+	    /*input=*/wave->getBuffer()[0],
+	    /*inputPos=*/start,
+	    /*inputLen=*/max,
+	    /*output=*/dest[offset],
+	    /*outputLen=*/dest.countFrames() - offset,
+	    /*pitch=*/pitch);
 
 	return {
-	    static_cast<Frame>(srcData.input_frames_used),
-	    static_cast<Frame>(srcData.output_frames_gen)};
+	    static_cast<int>(res.used),
+	    static_cast<int>(res.generated)};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -137,25 +88,9 @@ WaveReader::Result WaveReader::fillCopy(AudioBuffer& dest, Frame start, Frame ma
 	return {used, used};
 }
 
-/* -------------------------------------------------------------------------- */
-
-void WaveReader::allocateSrc()
+void WaveReader::last() const
 {
-	m_srcState = src_new(SRC_LINEAR, G_MAX_IO_CHANS, nullptr);
-	if (m_srcState == nullptr)
-	{
-		u::log::print("[WaveReader] unable to allocate memory for SRC_STATE!\n");
-		throw std::bad_alloc();
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void WaveReader::moveSrc(SRC_STATE** other)
-{
-	if (m_srcState != nullptr)
-		src_delete(m_srcState);
-	m_srcState = *other;
-	*other     = nullptr;
+	if (m_resampler != nullptr)
+		m_resampler->last();
 }
 } // namespace giada::m

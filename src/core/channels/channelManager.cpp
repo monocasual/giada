@@ -52,9 +52,14 @@ IdManager channelId_;
 
 /* -------------------------------------------------------------------------- */
 
-channel::State& makeState_()
+channel::State& makeState_(ChannelType type)
 {
-	model::add(std::make_unique<channel::State>());
+	std::unique_ptr<channel::State> state = std::make_unique<channel::State>();
+
+	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
+		state->resampler = Resampler(static_cast<Resampler::Quality>(conf::conf.rsmpQuality), G_MAX_IO_CHANS);
+
+	model::add(std::move(state));
 	return model::back<channel::State>();
 }
 
@@ -81,7 +86,7 @@ void init()
 channel::Data create(ID channelId, ChannelType type, ID columnId)
 {
 	channel::Data out = channel::Data(type, channelId_.generate(channelId),
-	    columnId, makeState_(), makeBuffer_());
+	    columnId, makeState_(type), makeBuffer_());
 
 	if (out.audioReceiver)
 		out.audioReceiver->overdubProtection = conf::conf.overdubProtectionDefaultOn;
@@ -96,7 +101,7 @@ channel::Data create(const channel::Data& o)
 	channel::Data out = channel::Data(o);
 
 	out.id     = channelId_.generate();
-	out.state  = &makeState_();
+	out.state  = &makeState_(o.type);
 	out.buffer = &makeBuffer_();
 
 	return out;
@@ -107,7 +112,7 @@ channel::Data create(const channel::Data& o)
 channel::Data deserializeChannel(const patch::Channel& pch, float samplerateRatio)
 {
 	channelId_.set(pch.id);
-	return channel::Data(pch, makeState_(), makeBuffer_(), samplerateRatio);
+	return channel::Data(pch, makeState_(pch.type), makeBuffer_(), samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */

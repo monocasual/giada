@@ -157,14 +157,14 @@ Data::Data(ChannelType type, ID id, ID columnId, State& state, Buffer& buffer)
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		samplePlayer.emplace();
+		samplePlayer.emplace(&state.resampler.value());
 		sampleReactor.emplace(id);
 		audioReceiver.emplace();
 		sampleActionRecorder.emplace();
 		break;
 
 	case ChannelType::PREVIEW:
-		samplePlayer.emplace();
+		samplePlayer.emplace(&state.resampler.value());
 		sampleReactor.emplace(id);
 		break;
 
@@ -211,14 +211,14 @@ Data::Data(const patch::Channel& p, State& state, Buffer& buffer, float samplera
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		samplePlayer.emplace(p, samplerateRatio);
+		samplePlayer.emplace(p, samplerateRatio, &state.resampler.value());
 		sampleReactor.emplace(id);
 		audioReceiver.emplace(p);
 		sampleActionRecorder.emplace();
 		break;
 
 	case ChannelType::PREVIEW:
-		samplePlayer.emplace(p, samplerateRatio);
+		samplePlayer.emplace(p, samplerateRatio, &state.resampler.value());
 		sampleReactor.emplace(id);
 		break;
 

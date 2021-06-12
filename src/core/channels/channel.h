@@ -33,20 +33,21 @@
 #endif
 #include "core/audioBuffer.h"
 #include "core/channels/audioReceiver.h"
-#include "core/channels/samplePlayer.h"
-#include "core/const.h"
-#include "core/eventDispatcher.h"
-#include "core/mixer.h"
-#include "core/sequencer.h"
-#ifdef WITH_VST
-#include "core/channels/midiReceiver.h"
-#endif
 #include "core/channels/midiActionRecorder.h"
 #include "core/channels/midiController.h"
 #include "core/channels/midiLearner.h"
 #include "core/channels/midiLighter.h"
 #include "core/channels/midiSender.h"
 #include "core/channels/sampleActionRecorder.h"
+#include "core/channels/samplePlayer.h"
+#include "core/const.h"
+#include "core/eventDispatcher.h"
+#include "core/mixer.h"
+#include "core/resampler.h"
+#include "core/sequencer.h"
+#ifdef WITH_VST
+#include "core/channels/midiReceiver.h"
+#endif
 
 namespace giada::m
 {
@@ -62,6 +63,13 @@ struct State
 	WeakAtomic<bool>          readActions = false;
 	bool                      rewinding   = false;
 	Frame                     offset      = 0;
+
+	/* Optional resampler for sample-based channels. Unfortunately a Resampler
+	object (based on libsamplerate) doesn't like to get copied while rendering
+	audio, so can't live inside WaveReader object (which is copied on model 
+	changes by the Swapper mechanism). Let's put it in the shared state here. */
+
+	std::optional<Resampler> resampler = {};
 };
 
 struct Buffer
