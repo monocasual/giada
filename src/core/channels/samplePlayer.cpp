@@ -199,7 +199,7 @@ void render(const channel::Data& ch)
 	{
 		tracker = begin;
 		sampleAdvancer::onLastFrame(ch); // TODO - better moving this to samplerAdvancer::advance
-		if (shouldLoop_(ch))
+		if (shouldLoop_(ch) && res.generated < ch.buffer->audio.countFrames())
 			tracker += fillBuffer_(ch, tracker, res.generated).used;
 	}
 
