@@ -544,10 +544,21 @@ endif()
 # Extra
 # ------------------------------------------------------------------------------
 
-# Enable static linking of the MSVC runtime library on Windows
-# TODO - move this into the 'if windows' conditional (needs smarter list first)
+# TODO - move these into the 'if [OS]' conditionals (needs smarter list first)
 
 if(DEFINED OS_WINDOWS)
+
+	# Enable static linking of the MSVC runtime library on Windows
+	
 	set_target_properties(giada PROPERTIES
 		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+elseif(DEFINED OS_MACOS)
+
+	# Enable hardened runtime:
+	# https://developer.apple.com/documentation/security/hardened_runtime
+	
+	set_target_properties(giada PROPERTIES
+		XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
+
 endif()
