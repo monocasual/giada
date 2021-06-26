@@ -235,6 +235,12 @@ option(WITH_VST2 "Enable VST2 support." OFF)
 option(WITH_VST3 "Enable VST3 support." OFF)
 option(WITH_TESTS "Include the test suite." OFF)
 
+if(DEFINED OS_LINUX)
+	option(WITH_ALSA "Enable ALSA support (Linux only)." ON)
+	option(WITH_PULSE "Enable PulseAudio support (Linux only)." ON)
+	option(WITH_JACK "Enable JACK support (Linux only)." ON)
+endif()
+
 if(WITH_TESTS)
 	list(APPEND PREPROCESSOR_DEFS 
 		WITH_TESTS
@@ -391,11 +397,15 @@ if(DEFINED OS_LINUX)
 		${LIBRARY_PULSE_SIMPLE} ${LIBRARY_FONTCONFIG} ${JACK_LDFLAGS}
 		${CMAKE_DL_LIBS} ${ALSA_LIBRARIES} pthread stdc++fs)
 
-	list(APPEND PREPROCESSOR_DEFS
-		WITH_AUDIO_JACK
-		__LINUX_ALSA__
-		__LINUX_PULSE__
-		__UNIX_JACK__)
+	if (WITH_ALSA)
+		list(APPEND PREPROCESSOR_DEFS __LINUX_ALSA__)
+	endif()
+	if (WITH_PULSE)
+		list(APPEND PREPROCESSOR_DEFS __LINUX_PULSE__)
+	endif()
+	if (WITH_JACK)
+		list(APPEND PREPROCESSOR_DEFS WITH_AUDIO_JACK __UNIX_JACK__)
+	endif()
 
 elseif(DEFINED OS_WINDOWS)
 
