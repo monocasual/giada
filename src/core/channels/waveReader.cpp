@@ -37,7 +37,8 @@
 namespace giada::m
 {
 WaveReader::WaveReader(Resampler* r)
-: m_resampler(r)
+: wave(nullptr)
+, m_resampler(r)
 {
 }
 
