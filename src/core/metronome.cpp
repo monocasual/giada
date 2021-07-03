@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "metronome.h"
-#include "core/audioBuffer.h"
+#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 
 namespace giada::m
 {
@@ -38,7 +38,7 @@ void Metronome::trigger(Click c, Frame o)
 
 /* -------------------------------------------------------------------------- */
 
-void Metronome::render(AudioBuffer& outBuf)
+void Metronome::render(mcl::AudioBuffer& outBuf)
 {
 	const float* data = m_click == Click::BEAT ? beat : bar;
 	for (Frame f = m_offset; f < outBuf.countFrames() && m_rendering; f++)

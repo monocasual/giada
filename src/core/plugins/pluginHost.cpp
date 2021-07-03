@@ -33,9 +33,12 @@
 #include "core/model/model.h"
 #include "core/plugins/plugin.h"
 #include "core/plugins/pluginManager.h"
+#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "utils/log.h"
 #include "utils/vector.h"
 #include <cassert>
+
+using namespace mcl;
 
 namespace giada::m::pluginHost
 {

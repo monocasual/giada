@@ -25,12 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/mixer.h"
-#include "core/audioBuffer.h"
 #include "core/const.h"
 #include "core/model/model.h"
 #include "core/sequencer.h"
+#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "utils/log.h"
 #include "utils/math.h"
+
+using namespace mcl;
 
 namespace giada::m::mixer
 {

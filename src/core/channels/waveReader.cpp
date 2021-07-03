@@ -25,14 +25,16 @@
  * -------------------------------------------------------------------------- */
 
 #include "waveReader.h"
-#include "core/audioBuffer.h"
 #include "core/const.h"
 #include "core/model/model.h"
 #include "core/wave.h"
+#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "utils/log.h"
 #include <algorithm>
 #include <cassert>
 #include <memory>
+
+using namespace mcl;
 
 namespace giada::m
 {

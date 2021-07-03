@@ -26,6 +26,7 @@
 
 #include "waveManager.h"
 #include "const.h"
+#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "idManager.h"
 #include "model/model.h"
 #include "patch.h"
@@ -36,6 +37,8 @@
 #include <cmath>
 #include <samplerate.h>
 #include <sndfile.h>
+
+using namespace mcl;
 
 namespace giada::m::waveManager
 {

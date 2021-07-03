@@ -33,10 +33,13 @@
 #include "deps/juce-config.h"
 #include <functional>
 
+namespace mcl
+{
+class AudioBuffer;
+}
 namespace giada::m
 {
 class Plugin;
-class AudioBuffer;
 } // namespace giada::m
 namespace giada::m::pluginHost
 {
@@ -59,7 +62,7 @@ void addPlugin(std::unique_ptr<Plugin> p, ID channelId);
 /* processStack
 Applies the fx list to the buffer. */
 
-void processStack(AudioBuffer& outBuf, const std::vector<Plugin*>& plugins,
+void processStack(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>& plugins,
     juce::MidiBuffer* events = nullptr);
 
 /* swapPlugin 

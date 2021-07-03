@@ -29,8 +29,11 @@
 #include "core/clock.h"
 #include "core/wave.h"
 #include "core/waveManager.h"
+#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include <algorithm>
 #include <cassert>
+
+using namespace mcl;
 
 namespace giada::m::samplePlayer
 {

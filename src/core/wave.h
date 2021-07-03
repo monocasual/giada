@@ -27,8 +27,8 @@
 #ifndef G_WAVE_H
 #define G_WAVE_H
 
-#include "core/audioBuffer.h"
 #include "core/types.h"
+#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include <string>
 
 namespace giada::m
@@ -54,8 +54,8 @@ public:
 	/* getBuffer
 	Returns a (non-)const reference to the underlying audio buffer. */
 
-	AudioBuffer&       getBuffer();
-	const AudioBuffer& getBuffer() const;
+	mcl::AudioBuffer&       getBuffer();
+	const mcl::AudioBuffer& getBuffer() const;
 
 	/* setPath
 	Sets new path 'p'. If 'id' != -1 inserts a numeric id next to the file 
@@ -70,19 +70,19 @@ public:
 	/* replaceData
 	Replaces internal audio buffer with 'b' by moving it. */
 
-	void replaceData(AudioBuffer&& b);
+	void replaceData(mcl::AudioBuffer&& b);
 
 	void alloc(Frame size, int channels, int rate, int bits, const std::string& path);
 
 	ID id;
 
 private:
-	AudioBuffer m_buffer;
-	int         m_rate;
-	int         m_bits;
-	bool        m_logical; // memory only (a take)
-	bool        m_edited;  // edited via editor
-	std::string m_path;    // E.g. /path/to/my/sample.wav
+	mcl::AudioBuffer m_buffer;
+	int              m_rate;
+	int              m_bits;
+	bool             m_logical; // memory only (a take)
+	bool             m_edited;  // edited via editor
+	std::string      m_path;    // E.g. /path/to/my/sample.wav
 };
 } // namespace giada::m
 

@@ -31,7 +31,7 @@
 #include "core/quantizer.h"
 #include <vector>
 
-namespace giada::m
+namespace mcl
 {
 class AudioBuffer;
 }
@@ -78,7 +78,7 @@ const EventBuffer& advance(Frame bufferSize);
 /* render
 Renders audio coming out from the sequencer: that is, the metronome! */
 
-void render(AudioBuffer& outBuf);
+void render(mcl::AudioBuffer& outBuf);
 
 /* raw[*]
 Raw functions to start, stop and rewind the sequencer. These functions must be

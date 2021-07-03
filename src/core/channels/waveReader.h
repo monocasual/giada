@@ -29,10 +29,13 @@
 
 #include "core/types.h"
 
+namespace mcl
+{
+class AudioBuffer;
+}
 namespace giada::m
 {
 class Wave;
-class AudioBuffer;
 class Resampler;
 class WaveReader final
 {
@@ -56,7 +59,7 @@ public:
 	Fills audio buffer 'out' with data coming from Wave, copying it from 'start'
 	frame up to 'max'. The buffer is filled starting at 'offset'. */
 
-	Result fill(AudioBuffer& out, Frame start, Frame max, Frame offset,
+	Result fill(mcl::AudioBuffer& out, Frame start, Frame max, Frame offset,
 	    float pitch) const;
 
 	/* last
@@ -71,9 +74,9 @@ public:
 	Wave* wave;
 
 private:
-	Result fillResampled(AudioBuffer& out, Frame start, Frame max, Frame offset,
+	Result fillResampled(mcl::AudioBuffer& out, Frame start, Frame max, Frame offset,
 	    float pitch) const;
-	Result fillCopy(AudioBuffer& out, Frame start, Frame max, Frame offset) const;
+	Result fillCopy(mcl::AudioBuffer& out, Frame start, Frame max, Frame offset) const;
 
 	Resampler* m_resampler;
 };

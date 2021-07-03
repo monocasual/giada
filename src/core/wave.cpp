@@ -31,6 +31,8 @@
 #include "utils/string.h"
 #include <cassert>
 
+using namespace mcl;
+
 namespace giada::m
 {
 Wave::Wave(ID id)

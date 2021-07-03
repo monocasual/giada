@@ -27,7 +27,7 @@
 #ifndef G_CHANNEL_AUDIO_RECEIVER_H
 #define G_CHANNEL_AUDIO_RECEIVER_H
 
-namespace giada::m
+namespace mcl
 {
 class AudioBuffer;
 }
@@ -51,7 +51,7 @@ struct Data
 	bool overdubProtection;
 };
 
-void render(const channel::Data& ch, const AudioBuffer& in);
+void render(const channel::Data& ch, const mcl::AudioBuffer& in);
 } // namespace giada::m::audioReceiver
 
 #endif

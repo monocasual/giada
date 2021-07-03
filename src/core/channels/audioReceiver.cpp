@@ -26,6 +26,9 @@
 
 #include "audioReceiver.h"
 #include "core/channels/channel.h"
+#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
+
+using namespace mcl;
 
 namespace giada::m::audioReceiver
 {

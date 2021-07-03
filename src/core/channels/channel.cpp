@@ -30,6 +30,8 @@
 #include "core/plugins/pluginManager.h"
 #include <cassert>
 
+using namespace mcl;
+
 namespace giada::m::channel
 {
 namespace

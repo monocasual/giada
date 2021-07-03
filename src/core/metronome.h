@@ -29,9 +29,12 @@
 
 #include "core/types.h"
 
-namespace giada::m
+namespace mcl
 {
 class AudioBuffer;
+}
+namespace giada::m
+{
 class Metronome
 {
 public:
@@ -41,12 +44,12 @@ public:
 		BAR
 	};
 
-	void render(AudioBuffer& outBuf);
+	void render(mcl::AudioBuffer& outBuf);
 	void trigger(Click c, Frame o);
 
 	bool running = false;
 
-  private:
+private:
 	static constexpr Frame CLICK_SIZE = 38;
 
 	static constexpr float beat[CLICK_SIZE] = {

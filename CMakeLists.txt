@@ -38,7 +38,6 @@ list(APPEND SOURCES
 	src/core/midiDispatcher.cpp
 	src/core/midiMapConf.cpp
 	src/core/midiEvent.cpp
-	src/core/audioBuffer.cpp
 	src/core/quantizer.cpp
 	src/core/conf.cpp
 	src/core/kernelAudio.cpp
@@ -190,7 +189,8 @@ list(APPEND SOURCES
 	src/utils/fs.cpp
 	src/utils/ver.cpp
 	src/utils/string.cpp
-	src/deps/rtaudio/RtAudio.cpp)
+	src/deps/rtaudio/RtAudio.cpp
+	src/deps/mcl-audio-buffer/src/audioBuffer.cpp)
 
 list(APPEND PREPROCESSOR_DEFS)
 list(APPEND INCLUDE_DIRS

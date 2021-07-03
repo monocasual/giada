@@ -31,7 +31,6 @@
 #ifdef WITH_VST
 #include "deps/juce-config.h"
 #endif
-#include "core/audioBuffer.h"
 #include "core/channels/audioReceiver.h"
 #include "core/channels/midiActionRecorder.h"
 #include "core/channels/midiController.h"
@@ -45,6 +44,7 @@
 #include "core/mixer.h"
 #include "core/resampler.h"
 #include "core/sequencer.h"
+#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #ifdef WITH_VST
 #include "core/channels/midiReceiver.h"
 #endif
@@ -76,7 +76,7 @@ struct Buffer
 {
 	Buffer(Frame bufferSize);
 
-	AudioBuffer audio;
+	mcl::AudioBuffer audio;
 #ifdef WITH_VST
 	juce::MidiBuffer midi;
 #endif
@@ -150,7 +150,7 @@ void react(Data& d, const eventDispatcher::EventBuffer& e, bool audible);
 /* render
 Renders audio data to I/O buffers. */
 
-void render(const Data& d, AudioBuffer* out, AudioBuffer* in, bool audible);
+void render(const Data& d, mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible);
 } // namespace giada::m::channel
 
 #endif

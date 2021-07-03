@@ -33,11 +33,14 @@
 #include "core/mixerHandler.h"
 #include "core/model/model.h"
 #include "core/recManager.h"
+#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "deps/rtaudio/RtAudio.h"
 #include "glue/main.h"
 #include "mixer.h"
 #include "utils/log.h"
 #include "utils/vector.h"
+
+using namespace mcl;
 
 namespace giada::m::kernelAudio
 {

@@ -35,6 +35,8 @@
 #include "core/quantizer.h"
 #include "core/recManager.h"
 
+using namespace mcl;
+
 namespace giada::m::sequencer
 {
 namespace

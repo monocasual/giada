@@ -26,11 +26,14 @@
 
 #include "waveFx.h"
 #include "const.h"
+#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "utils/log.h"
 #include "wave.h"
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+
+using namespace mcl;
 
 namespace giada::m::wfx
 {

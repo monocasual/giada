@@ -35,10 +35,13 @@
 #include "deps/rtaudio/RtAudio.h"
 #include <functional>
 
+namespace mcl
+{
+class AudioBuffer;
+}
 namespace giada::m
 {
 struct Action;
-class AudioBuffer;
 } // namespace giada::m
 namespace giada::m::channel
 {
@@ -99,12 +102,12 @@ void clearRecBuffer();
 Returns a read-only reference to the internal virtual channel. Use this to
 merge data into channel after an input recording session. */
 
-const AudioBuffer& getRecBuffer();
+const mcl::AudioBuffer& getRecBuffer();
 
 /* render
 Core rendering function. */
 
-int render(AudioBuffer& out, const AudioBuffer& in, const RenderInfo& info);
+int render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const RenderInfo& info);
 
 /* startInputRec, stopInputRec
 Starts/stops input recording on frame 'from'. The latter returns the number of
