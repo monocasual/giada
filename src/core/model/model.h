@@ -90,9 +90,11 @@ struct Mixer
 {
 	struct State
 	{
-		std::atomic<bool> active  = false;
-		WeakAtomic<float> peakOut = 0.0f;
-		WeakAtomic<float> peakIn  = 0.0f;
+		std::atomic<bool> active   = false;
+		WeakAtomic<float> peakOutL = 0.0f;
+		WeakAtomic<float> peakOutR = 0.0f;
+		WeakAtomic<float> peakInL  = 0.0f;
+		WeakAtomic<float> peakInR  = 0.0f;
 	};
 
 	State* state    = nullptr;

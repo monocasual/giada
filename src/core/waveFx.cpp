@@ -33,8 +33,6 @@
 #include <cassert>
 #include <cmath>
 
-using namespace mcl;
-
 namespace giada::m::wfx
 {
 namespace
@@ -89,7 +87,7 @@ int monoToStereo(Wave& w)
 	if (w.getBuffer().countChannels() >= G_MAX_IO_CHANS)
 		return G_RES_OK;
 
-	AudioBuffer newData;
+	mcl::AudioBuffer newData;
 	newData.alloc(w.getBuffer().countFrames(), G_MAX_IO_CHANS);
 
 	for (int i = 0; i < newData.countFrames(); i++)
@@ -127,7 +125,7 @@ void cut(Wave& w, int a, int b)
 
 	int newSize = w.getBuffer().countFrames() - (b - a);
 
-	AudioBuffer newData;
+	mcl::AudioBuffer newData;
 	newData.alloc(newSize, w.getBuffer().countChannels());
 
 	u::log::print("[wfx::cut] cutting from %d to %d\n", a, b);
@@ -157,7 +155,7 @@ void trim(Wave& w, Frame a, Frame b)
 
 	Frame newSize = b - a;
 
-	AudioBuffer newData;
+	mcl::AudioBuffer newData;
 	newData.alloc(newSize, w.getBuffer().countChannels());
 
 	u::log::print("[wfx::trim] trimming from %d to %d (area = %d)\n", a, b, b - a);
@@ -176,7 +174,7 @@ void paste(const Wave& src, Wave& des, Frame a)
 {
 	assert(src.getBuffer().countChannels() == des.getBuffer().countChannels());
 
-	AudioBuffer newData;
+	mcl::AudioBuffer newData;
 	newData.alloc(src.getBuffer().countFrames() + des.getBuffer().countFrames(), des.getBuffer().countChannels());
 
 	/* |---original data---|///paste data///|---original data---|

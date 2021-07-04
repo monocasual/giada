@@ -104,6 +104,15 @@ enum class EventType : int
 	AUTO = 0,
 	MANUAL
 };
+
+/* Peak
+Audio peak information for two In/Out channels. */
+
+struct Peak
+{
+	float left;
+	float right;
+};
 } // namespace giada
 
 #endif

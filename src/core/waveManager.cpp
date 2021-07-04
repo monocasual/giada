@@ -38,8 +38,6 @@
 #include <samplerate.h>
 #include <sndfile.h>
 
-using namespace mcl;
-
 namespace giada::m::waveManager
 {
 namespace
@@ -189,7 +187,7 @@ int resample(Wave& w, int quality, int samplerate)
 	float ratio         = samplerate / (float)w.getRate();
 	int   newSizeFrames = static_cast<int>(ceil(w.getBuffer().countFrames() * ratio));
 
-	AudioBuffer newData;
+	mcl::AudioBuffer newData;
 	newData.alloc(newSizeFrames, w.getBuffer().countChannels());
 
 	SRC_DATA src_data;

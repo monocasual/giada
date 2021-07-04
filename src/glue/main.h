@@ -36,8 +36,6 @@ struct Data;
 namespace giada::m::model
 {
 struct Clock;
-struct Clock;
-struct Mixer;
 struct Mixer;
 } // namespace giada::m::model
 namespace giada::c::main
@@ -68,8 +66,9 @@ struct IO
 #endif
 	bool inToOut;
 
-	float getMasterOutPeak();
-	float getMasterInPeak();
+	Peak getMasterOutPeak();
+	Peak getMasterInPeak();
+	bool isKernelReady();
 };
 
 struct Sequencer

@@ -40,8 +40,6 @@
 #include "utils/log.h"
 #include "utils/vector.h"
 
-using namespace mcl;
-
 namespace giada::m::kernelAudio
 {
 namespace
@@ -134,10 +132,10 @@ bool canRender_()
 int callback_(void* outBuf, void* inBuf, unsigned bufferSize, double /*streamTime*/,
     RtAudioStreamStatus /*status*/, void* /*userData*/)
 {
-	AudioBuffer out(static_cast<float*>(outBuf), bufferSize, G_MAX_IO_CHANS);
-	AudioBuffer in;
+	mcl::AudioBuffer out(static_cast<float*>(outBuf), bufferSize, G_MAX_IO_CHANS);
+	mcl::AudioBuffer in;
 	if (isInputEnabled())
-		in = AudioBuffer(static_cast<float*>(inBuf), bufferSize, conf::conf.channelsInCount);
+		in = mcl::AudioBuffer(static_cast<float*>(inBuf), bufferSize, conf::conf.channelsInCount);
 
 	/* Clean up output buffer before any rendering. Do this even if mixer is
 	disabled to avoid audio leftovers during a temporary suspension (e.g. when

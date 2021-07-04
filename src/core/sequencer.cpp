@@ -35,8 +35,6 @@
 #include "core/quantizer.h"
 #include "core/recManager.h"
 
-using namespace mcl;
-
 namespace giada::m::sequencer
 {
 namespace
@@ -144,7 +142,7 @@ const EventBuffer& advance(Frame bufferSize)
 
 /* -------------------------------------------------------------------------- */
 
-void render(AudioBuffer& outBuf)
+void render(mcl::AudioBuffer& outBuf)
 {
 	if (metronome_.running)
 		metronome_.render(outBuf);

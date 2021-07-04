@@ -29,7 +29,6 @@
 #include <FL/Fl.H>
 #ifdef WITH_TESTS
 #define CATCH_CONFIG_RUNNER
-#include "tests/audioBuffer.cpp"
 #include "tests/recorder.cpp"
 #include "tests/utils.cpp"
 #include "tests/wave.cpp"

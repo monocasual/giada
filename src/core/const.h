@@ -92,7 +92,6 @@ constexpr int   G_GUI_ZOOM_FACTOR    = 2;
 
 #define G_COLOR_RED fl_rgb_color(28, 32, 80)
 #define G_COLOR_BLUE fl_rgb_color(113, 31, 31)
-#define G_COLOR_RED_ALERT fl_rgb_color(239, 75, 53)
 #define G_COLOR_LIGHT_2 fl_rgb_color(200, 200, 200)
 #define G_COLOR_LIGHT_1 fl_rgb_color(170, 170, 170)
 #define G_COLOR_GREY_4 fl_rgb_color(78, 78, 78)

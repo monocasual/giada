@@ -28,6 +28,7 @@
 #include "core/const.h"
 #include "core/kernelAudio.h"
 #include "core/types.h"
+#include "gui/drawing.h"
 #include "utils/math.h"
 #include <FL/fl_draw.H>
 #include <algorithm>
@@ -48,10 +49,26 @@ Pixel dbToPx_(float db, Pixel max)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+float geSoundMeter::Meter::compute(float peak)
+{
+	/*  dBFS (full scale) calculation, plus decay of -2dB per call. */
+
+	float dbLevelCur = u::math::linearToDB(std::fabs(peak));
+
+	if (dbLevelCur < m_dbLevelOld && m_dbLevelOld > -G_MIN_DB_SCALE)
+		dbLevelCur = m_dbLevelOld - 2.0f;
+
+	m_dbLevelOld = dbLevelCur;
+
+	return dbLevelCur;
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 geSoundMeter::geSoundMeter(int x, int y, int w, int h, const char* l)
 : Fl_Box(x, y, w, h, l)
-, mixerPeak(0.0f)
-, m_dbLevelOld(0.0f)
 {
 }
 
@@ -59,26 +76,28 @@ geSoundMeter::geSoundMeter(int x, int y, int w, int h, const char* l)
 
 void geSoundMeter::draw()
 {
-	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);
+	const geompp::Rect outline(x(), y(), w(), h());
+	const geompp::Rect body(outline.reduced(1));
 
-	/* Compute peak level on 0.0 -> 1.0 scale. 1.0 is considered clip. */
+	drawRect(outline, G_COLOR_GREY_4);
 
-	const bool clip = std::fabs(mixerPeak) >= 1.0f ? true : false;
+	if (!ready)
+	{
+		drawRectf(body, G_COLOR_BLUE);
+		return;
+	}
 
-	/*  dBFS (full scale) calculation, plus decay of -2dB per frame. */
+	drawRectf(body, G_COLOR_GREY_2); // Cleanup
 
-	float dbLevelCur = u::math::linearToDB(std::fabs(mixerPeak));
+	const float dbL    = m_left.compute(peak.left);
+	const float dbR    = m_right.compute(peak.right);
+	const int   colorL = std::fabs(peak.left) > 1.0f ? G_COLOR_BLUE : G_COLOR_GREY_4;
+	const int   colorR = std::fabs(peak.right) > 1.0f ? G_COLOR_BLUE : G_COLOR_GREY_4;
 
-	if (dbLevelCur < m_dbLevelOld && m_dbLevelOld > -G_MIN_DB_SCALE)
-		dbLevelCur = m_dbLevelOld - 2.0f;
+	const geompp::Rect bodyL(body.withTrimmedBottom(h() / 2));
+	const geompp::Rect bodyR(body.withTrimmedTop(h() / 2));
 
-	m_dbLevelOld = dbLevelCur;
-
-	/* Paint the meter on screen. */
-
-	const int bodyCol = clip || !m::kernelAudio::isReady() ? G_COLOR_RED_ALERT : G_COLOR_GREY_4;
-
-	fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2, G_COLOR_GREY_2);
-	fl_rectf(x() + 1, y() + 1, dbToPx_(dbLevelCur, w()), h() - 2, bodyCol);
+	drawRectf(bodyL.withW(dbToPx_(dbL, w() - 2)), colorL);
+	drawRectf(bodyR.withW(dbToPx_(dbR, w() - 2)), colorR);
 }
 } // namespace giada::v

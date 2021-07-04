@@ -38,8 +38,6 @@
 #include "utils/vector.h"
 #include <cassert>
 
-using namespace mcl;
-
 namespace giada::m::pluginHost
 {
 namespace
@@ -51,7 +49,7 @@ ID                       pluginId_;
 
 /* -------------------------------------------------------------------------- */
 
-void giadaToJuceTempBuf_(const AudioBuffer& outBuf)
+void giadaToJuceTempBuf_(const mcl::AudioBuffer& outBuf)
 {
 	for (int i = 0; i < outBuf.countFrames(); i++)
 		for (int j = 0; j < outBuf.countChannels(); j++)
@@ -62,7 +60,7 @@ void giadaToJuceTempBuf_(const AudioBuffer& outBuf)
 Converts buffer from Juce to Giada. A note for the future: if we overwrite (=) 
 (as we do now) it's SEND, if we add (+) it's INSERT. */
 
-void juceToGiadaOutBuf_(AudioBuffer& outBuf)
+void juceToGiadaOutBuf_(mcl::AudioBuffer& outBuf)
 {
 	for (int i = 0; i < outBuf.countFrames(); i++)
 		for (int j = 0; j < outBuf.countChannels(); j++)
@@ -125,7 +123,7 @@ void init(int buffersize)
 
 /* -------------------------------------------------------------------------- */
 
-void processStack(AudioBuffer& outBuf, const std::vector<Plugin*>& plugins,
+void processStack(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>& plugins,
     juce::MidiBuffer* events)
 {
 	assert(outBuf.countFrames() == audioBuffer_.getNumSamples());

@@ -32,21 +32,25 @@
 #include "utils/log.h"
 #include "utils/math.h"
 
-using namespace mcl;
-
 namespace giada::m::mixer
 {
 namespace
 {
+/* CH_LEFT, CH_RIGHT
+Channels identifiers. */
+
+constexpr int CH_LEFT  = 0;
+constexpr int CH_RIGHT = 1;
+
 /* recBuffer_
 Working buffer for audio recording. */
 
-AudioBuffer recBuffer_;
+mcl::AudioBuffer recBuffer_;
 
 /* inBuffer_
 Working buffer for input channel. Used for the in->out bridge. */
 
-AudioBuffer inBuffer_;
+mcl::AudioBuffer inBuffer_;
 
 /* inputTracker_
 Frame position while recording. */
@@ -103,12 +107,23 @@ void fireEndOfRecCb_()
 
 /* -------------------------------------------------------------------------- */
 
+/* thresholdReached_
+Returns true if left or right channel's peak has reached a certain threshold. */
+
+bool thresholdReached_(Peak p, float threshold)
+{
+	return u::math::linearToDB(p.left) > threshold ||
+	       u::math::linearToDB(p.right) > threshold;
+}
+
+/* -------------------------------------------------------------------------- */
+
 /* lineInRec
 Records from line in. 'maxFrames' determines how many frames to record before
 the internal tracker loops over. The value changes whether you are recording
 in RIGID or FREE mode. */
 
-void lineInRec_(const AudioBuffer& inBuf, Frame maxFrames, float inVol)
+void lineInRec_(const mcl::AudioBuffer& inBuf, Frame maxFrames, float inVol)
 {
 	assert(maxFrames <= recBuffer_.countFrames());
 
@@ -133,19 +148,20 @@ void lineInRec_(const AudioBuffer& inBuf, Frame maxFrames, float inVol)
 Computes line in peaks and prepares the internal working buffer for input
 recording. */
 
-void processLineIn_(const model::Mixer& mixer, const AudioBuffer& inBuf,
+void processLineIn_(const model::Mixer& mixer, const mcl::AudioBuffer& inBuf,
     float inVol, float recTriggerLevel)
 {
-	float peak = inBuf.getPeak();
+	const Peak peak{inBuf.getPeak(CH_LEFT), inBuf.getPeak(CH_RIGHT)};
 
-	if (signalCb_ != nullptr && u::math::linearToDB(peak) > recTriggerLevel && !signalCbFired_)
+	if (signalCb_ != nullptr && thresholdReached_(peak, recTriggerLevel) && !signalCbFired_)
 	{
 		G_DEBUG("Signal > threshold!");
 		fireSignalCb_();
 		signalCbFired_ = true;
 	}
 
-	mixer.state->peakIn.store(peak);
+	mixer.state->peakInL.store(peak.left);
+	mixer.state->peakInR.store(peak.right);
 
 	/* Prepare the working buffer for input stream, which will be processed 
 	later on by the Master Input Channel with plug-ins. */
@@ -157,7 +173,7 @@ void processLineIn_(const model::Mixer& mixer, const AudioBuffer& inBuf,
 
 /* -------------------------------------------------------------------------- */
 
-void processChannels_(const model::Layout& layout, AudioBuffer& out, AudioBuffer& in)
+void processChannels_(const model::Layout& layout, mcl::AudioBuffer& out, mcl::AudioBuffer& in)
 {
 	for (const channel::Data& c : layout.channels)
 		if (!c.isInternal())
@@ -166,7 +182,7 @@ void processChannels_(const model::Layout& layout, AudioBuffer& out, AudioBuffer
 
 /* -------------------------------------------------------------------------- */
 
-void processSequencer_(const model::Layout& layout, AudioBuffer& out, const AudioBuffer& in)
+void processSequencer_(const model::Layout& layout, mcl::AudioBuffer& out, const mcl::AudioBuffer& in)
 {
 	/* Advance sequencer first, then render it (rendering is just about
 	generating metronome audio). This way the metronome is aligned with 
@@ -188,17 +204,17 @@ void processSequencer_(const model::Layout& layout, AudioBuffer& out, const Audi
 
 /* -------------------------------------------------------------------------- */
 
-void renderMasterIn_(const model::Layout& layout, AudioBuffer& in)
+void renderMasterIn_(const model::Layout& layout, mcl::AudioBuffer& in)
 {
 	channel::render(layout.getChannel(mixer::MASTER_IN_CHANNEL_ID), nullptr, &in, true);
 }
 
-void renderMasterOut_(const model::Layout& layout, AudioBuffer& out)
+void renderMasterOut_(const model::Layout& layout, mcl::AudioBuffer& out)
 {
 	channel::render(layout.getChannel(mixer::MASTER_OUT_CHANNEL_ID), &out, nullptr, true);
 }
 
-void renderPreview_(const model::Layout& layout, AudioBuffer& out)
+void renderPreview_(const model::Layout& layout, mcl::AudioBuffer& out)
 {
 	channel::render(layout.getChannel(mixer::PREVIEW_CHANNEL_ID), &out, nullptr, true);
 }
@@ -208,7 +224,7 @@ void renderPreview_(const model::Layout& layout, AudioBuffer& out)
 /* limit_
 Applies a very dumb hard limiter. */
 
-void limit_(AudioBuffer& outBuf)
+void limit_(mcl::AudioBuffer& outBuf)
 {
 	for (int i = 0; i < outBuf.countFrames(); i++)
 		for (int j = 0; j < outBuf.countChannels(); j++)
@@ -221,7 +237,7 @@ void limit_(AudioBuffer& outBuf)
 Last touches after the output has been rendered: apply inToOut if any, apply
 output volume, compute peak. */
 
-void finalizeOutput_(const model::Mixer& mixer, AudioBuffer& outBuf,
+void finalizeOutput_(const model::Mixer& mixer, mcl::AudioBuffer& outBuf,
     const RenderInfo& info)
 {
 	if (info.inToOut)
@@ -232,7 +248,8 @@ void finalizeOutput_(const model::Mixer& mixer, AudioBuffer& outBuf,
 	if (info.limitOutput)
 		limit_(outBuf);
 
-	mixer.state->peakOut.store(outBuf.getPeak());
+	mixer.state->peakOutL.store(outBuf.getPeak(CH_LEFT));
+	mixer.state->peakOutR.store(outBuf.getPeak(CH_RIGHT));
 }
 } // namespace
 
@@ -280,14 +297,14 @@ void clearRecBuffer()
 	recBuffer_.clear();
 }
 
-const AudioBuffer& getRecBuffer()
+const mcl::AudioBuffer& getRecBuffer()
 {
 	return recBuffer_;
 }
 
 /* -------------------------------------------------------------------------- */
 
-int render(AudioBuffer& out, const AudioBuffer& in, const RenderInfo& info)
+int render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const RenderInfo& info)
 {
 	const model::Lock   rtLock = model::get_RT();
 	const model::Mixer& mixer  = rtLock.get().mixer;
@@ -296,8 +313,10 @@ int render(AudioBuffer& out, const AudioBuffer& in, const RenderInfo& info)
 
 	/* Reset peak computation. */
 
-	mixer.state->peakOut.store(0.0);
-	mixer.state->peakIn.store(0.0);
+	mixer.state->peakOutL.store(0.0);
+	mixer.state->peakOutR.store(0.0);
+	mixer.state->peakInL.store(0.0);
+	mixer.state->peakInR.store(0.0);
 
 	/* Process line IN if input has been enabled in KernelAudio. */
 
@@ -371,8 +390,19 @@ bool isChannelAudible(const channel::Data& c)
 
 /* -------------------------------------------------------------------------- */
 
-float getPeakOut() { return m::model::get().mixer.state->peakOut.load(); }
-float getPeakIn() { return m::model::get().mixer.state->peakIn.load(); }
+Peak getPeakOut()
+{
+	return {
+	    m::model::get().mixer.state->peakOutL.load(),
+	    m::model::get().mixer.state->peakOutR.load()};
+}
+
+Peak getPeakIn()
+{
+	return {
+	    m::model::get().mixer.state->peakInL.load(),
+	    m::model::get().mixer.state->peakInR.load()};
+}
 
 /* -------------------------------------------------------------------------- */
 

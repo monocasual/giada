@@ -30,13 +30,11 @@
 #include "core/plugins/pluginManager.h"
 #include <cassert>
 
-using namespace mcl;
-
 namespace giada::m::channel
 {
 namespace
 {
-AudioBuffer::Pan calcPanning_(float pan)
+mcl::AudioBuffer::Pan calcPanning_(float pan)
 {
 	/* TODO - precompute the AudioBuffer::Pan when pan value changes instead of
 	building it on the fly. */
@@ -82,7 +80,7 @@ void react_(Data& d, const eventDispatcher::Event& e)
 
 /* -------------------------------------------------------------------------- */
 
-void renderMasterOut_(const Data& d, AudioBuffer& out)
+void renderMasterOut_(const Data& d, mcl::AudioBuffer& out)
 {
 	d.buffer->audio.set(out, /*gain=*/1.0f);
 #ifdef WITH_VST
@@ -94,7 +92,7 @@ void renderMasterOut_(const Data& d, AudioBuffer& out)
 
 /* -------------------------------------------------------------------------- */
 
-void renderMasterIn_(const Data& d, AudioBuffer& in)
+void renderMasterIn_(const Data& d, mcl::AudioBuffer& in)
 {
 #ifdef WITH_VST
 	if (d.plugins.size() > 0)
@@ -104,7 +102,7 @@ void renderMasterIn_(const Data& d, AudioBuffer& in)
 
 /* -------------------------------------------------------------------------- */
 
-void renderChannel_(const Data& d, AudioBuffer& out, AudioBuffer& in, bool audible)
+void renderChannel_(const Data& d, mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool audible)
 {
 	d.buffer->audio.clear();
 
@@ -344,7 +342,7 @@ void react(Data& d, const eventDispatcher::EventBuffer& events, bool audible)
 
 /* -------------------------------------------------------------------------- */
 
-void render(const Data& d, AudioBuffer* out, AudioBuffer* in, bool audible)
+void render(const Data& d, mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible)
 {
 	if (d.id == mixer::MASTER_OUT_CHANNEL_ID)
 		renderMasterOut_(d, *out);

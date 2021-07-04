@@ -134,8 +134,8 @@ solo session. */
 
 bool isChannelAudible(const channel::Data& c);
 
-float getPeakOut();
-float getPeakIn();
+Peak getPeakOut();
+Peak getPeakIn();
 
 RecordInfo getRecordInfo();
 } // namespace giada::m::mixer

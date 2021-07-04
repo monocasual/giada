@@ -31,8 +31,6 @@
 #include "utils/string.h"
 #include <cassert>
 
-using namespace mcl;
-
 namespace giada::m
 {
 Wave::Wave(ID id)
@@ -84,8 +82,8 @@ bool        Wave::isEdited() const { return m_edited; }
 
 /* -------------------------------------------------------------------------- */
 
-AudioBuffer&       Wave::getBuffer() { return m_buffer; }
-const AudioBuffer& Wave::getBuffer() const { return m_buffer; }
+mcl::AudioBuffer&       Wave::getBuffer() { return m_buffer; }
+const mcl::AudioBuffer& Wave::getBuffer() const { return m_buffer; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -119,7 +117,7 @@ void Wave::setPath(const std::string& p, int wid)
 
 /* -------------------------------------------------------------------------- */
 
-void Wave::replaceData(AudioBuffer&& b)
+void Wave::replaceData(mcl::AudioBuffer&& b)
 {
 	m_buffer = std::move(b);
 }

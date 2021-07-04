@@ -34,8 +34,6 @@
 #include <cassert>
 #include <memory>
 
-using namespace mcl;
-
 namespace giada::m
 {
 WaveReader::WaveReader(Resampler* r)
@@ -46,7 +44,7 @@ WaveReader::WaveReader(Resampler* r)
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result WaveReader::fill(AudioBuffer& out, Frame start, Frame max,
+WaveReader::Result WaveReader::fill(mcl::AudioBuffer& out, Frame start, Frame max,
     Frame offset, float pitch) const
 {
 	assert(wave != nullptr);
@@ -62,7 +60,7 @@ WaveReader::Result WaveReader::fill(AudioBuffer& out, Frame start, Frame max,
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result WaveReader::fillResampled(AudioBuffer& dest, Frame start,
+WaveReader::Result WaveReader::fillResampled(mcl::AudioBuffer& dest, Frame start,
     Frame max, Frame offset, float pitch) const
 {
 	Resampler::Result res = m_resampler->process(
@@ -80,7 +78,8 @@ WaveReader::Result WaveReader::fillResampled(AudioBuffer& dest, Frame start,
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result WaveReader::fillCopy(AudioBuffer& dest, Frame start, Frame max, Frame offset) const
+WaveReader::Result WaveReader::fillCopy(mcl::AudioBuffer& dest, Frame start,
+    Frame max, Frame offset) const
 {
 	Frame used = dest.countFrames() - offset;
 	if (used > max - start)

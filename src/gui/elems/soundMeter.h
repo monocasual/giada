@@ -27,6 +27,7 @@
 #ifndef GE_SOUND_METER_H
 #define GE_SOUND_METER_H
 
+#include "core/types.h"
 #include <FL/Fl_Box.H>
 
 namespace giada::v
@@ -38,10 +39,21 @@ public:
 
 	void draw() override;
 
-	float mixerPeak; // peak from mixer
+	Peak peak;  // Peak from Mixer
+	bool ready; // Kernel state
 
 private:
-	float m_dbLevelOld;
+	class Meter
+	{
+	public:
+		float compute(float peak);
+
+	private:
+		float m_dbLevelOld = 0.0f;
+	};
+
+	Meter m_left;
+	Meter m_right;
 };
 } // namespace giada::v
 

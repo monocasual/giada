@@ -83,14 +83,21 @@ IO::IO(const m::channel::Data& out, const m::channel::Data& in, const m::model::
 
 /* -------------------------------------------------------------------------- */
 
-float IO::getMasterOutPeak()
+Peak IO::getMasterOutPeak()
 {
 	return m::mixer::getPeakOut();
 }
 
-float IO::getMasterInPeak()
+Peak IO::getMasterInPeak()
 {
 	return m::mixer::getPeakIn();
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool IO::isKernelReady()
+{
+	return m::kernelAudio::isReady();
 }
 
 /* -------------------------------------------------------------------------- */

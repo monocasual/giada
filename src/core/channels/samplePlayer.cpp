@@ -33,8 +33,6 @@
 #include <algorithm>
 #include <cassert>
 
-using namespace mcl;
-
 namespace giada::m::samplePlayer
 {
 namespace
@@ -54,7 +52,7 @@ bool shouldLoop_(const channel::Data& ch)
 
 WaveReader::Result fillBuffer_(const channel::Data& ch, Frame start, Frame offset)
 {
-	AudioBuffer&      buffer     = ch.buffer->audio;
+	mcl::AudioBuffer& buffer     = ch.buffer->audio;
 	const WaveReader& waveReader = ch.samplePlayer->waveReader;
 
 	return waveReader.fill(buffer, start, ch.samplePlayer->end, offset, ch.samplePlayer->pitch);
