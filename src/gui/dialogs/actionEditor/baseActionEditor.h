@@ -70,9 +70,14 @@ public:
 protected:
 	static constexpr float MIN_RATIO  = 25.0f;
 	static constexpr float MAX_RATIO  = 40000.0f;
-	static constexpr float RATIO_STEP = 2.0f;
+	static constexpr float RATIO_STEP = 1.5f;
 
 	gdBaseActionEditor(ID channelId, m::conf::Conf& c);
+
+	/* getMouseOverContent
+	Returns mouse x-position relative to the viewport content. */
+
+	int getMouseOverContent() const;
 
 	static void cb_zoomIn(Fl_Widget* w, void* p);
 	static void cb_zoomOut(Fl_Widget* w, void* p);
@@ -84,10 +89,16 @@ protected:
 
 	void computeWidth();
 
-	void centerViewportIn();
-	void centerViewportOut();
+	/* prepareWindow
+	Initializes window (favicon, limits, ...). */
 
 	void prepareWindow();
+
+	/* centerZoom
+	Centers zoom on cursor. Wants a function to apply the new position given
+	the new zoom ratio. */
+
+	void centerZoom(std::function<int(int)> f);
 
 	gePack        m_barTop;
 	geSplitScroll m_splitScroll;

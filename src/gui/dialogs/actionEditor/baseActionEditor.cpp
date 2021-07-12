@@ -131,11 +131,7 @@ void gdBaseActionEditor::zoomIn()
 	ratio = std::max<int>(ratio / RATIO_STEP, MIN_RATIO);
 
 	if (ratioPrev != ratio)
-	{
-		rebuild();
-		centerViewportIn();
-		redraw();
-	}
+		centerZoom([](int pos) { return pos * RATIO_STEP; });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -148,27 +144,7 @@ void gdBaseActionEditor::zoomOut()
 	ratio = std::min<int>(ratio * RATIO_STEP, MAX_RATIO);
 
 	if (ratioPrev != ratio)
-	{
-		rebuild();
-		centerViewportOut();
-		redraw();
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdBaseActionEditor::centerViewportIn()
-{
-	Pixel sx = Fl::event_x() + (m_splitScroll.getScroll() * RATIO_STEP);
-	m_splitScroll.setScroll(sx);
-}
-
-void gdBaseActionEditor::centerViewportOut()
-{
-	Pixel sx = -((Fl::event_x() + m_splitScroll.getScroll()) / RATIO_STEP) + m_splitScroll.getScroll();
-	if (sx < 0)
-		sx = 0;
-	m_splitScroll.setScroll(sx);
+		centerZoom([](int pos) { return pos / RATIO_STEP; });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -184,7 +160,6 @@ void gdBaseActionEditor::prepareWindow()
 
 	set_non_modal();
 	size_range(640, 284);
-	//resizable(viewport);
 
 	show();
 }
