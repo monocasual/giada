@@ -31,6 +31,7 @@
 #include "core/const.h"
 #include "core/graphics.h"
 #include "glue/channel.h"
+#include "gui/drawing.h"
 #include "gui/elems/actionEditor/gridTool.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
@@ -55,6 +56,7 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::conf::Conf& conf)
 , m_barTop(0, 0, Direction::HORIZONTAL)
 , m_splitScroll(0, 0, 0, 0)
 , m_conf(conf)
+, m_playhead(0)
 {
 	end();
 
@@ -177,6 +179,20 @@ int gdBaseActionEditor::handle(int e)
 		return Fl_Group::handle(e);
 	}
 }
+
+/* -------------------------------------------------------------------------- */
+
+void gdBaseActionEditor::draw()
+{
+	gdWindow::draw();
+
+	const geompp::Rect splitBounds = m_splitScroll.getBoundsNoScrollbar();
+	const geompp::Line playhead    = splitBounds.getHeightAsLine().withX(m_playhead);
+
+	if (splitBounds.contains(playhead))
+		drawLine(playhead, G_COLOR_LIGHT_2);
+}
+
 /* -------------------------------------------------------------------------- */
 
 void gdBaseActionEditor::centerZoom(std::function<int(int)> f)
@@ -191,6 +207,14 @@ void gdBaseActionEditor::centerZoom(std::function<int(int)> f)
 	/* Add that delta to the current scroll position, then redraw to apply. */
 
 	m_splitScroll.setScrollX(m_splitScroll.getScrollX() + (mnow - mpre));
+	redraw();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdBaseActionEditor::refresh()
+{
+	m_playhead = (frameToPixel(m_data.getCurrentFrame()) + m_splitScroll.x()) - m_splitScroll.getScrollX();
 	redraw();
 }
 } // namespace giada::v

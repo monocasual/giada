@@ -36,14 +36,17 @@ namespace giada::m
 {
 struct Action;
 }
+
 namespace giada::m::channel
 {
 struct Data;
 }
+
 namespace giada::m::samplePlayer
 {
 struct Data;
 }
+
 namespace giada::c::actionEditor
 {
 struct SampleData
@@ -58,6 +61,8 @@ struct Data
 {
 	Data() = default;
 	Data(const m::channel::Data&);
+
+	Frame getCurrentFrame() const;
 
 	ID                     channelId;
 	std::string            channelName;

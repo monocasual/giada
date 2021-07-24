@@ -44,23 +44,19 @@
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/dialogs/window.h"
-#include "gui/elems/mainWindow/sequencer.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/mainIO.h"
 #include "gui/elems/mainWindow/mainTimer.h"
 #include "gui/elems/mainWindow/mainTransport.h"
+#include "gui/elems/mainWindow/sequencer.h"
 #include "gui/elems/sampleEditor/waveTools.h"
 #include "log.h"
 #include "string.h"
 
 extern giada::v::gdMainWindow* G_MainWin;
 
-namespace giada
-{
-namespace u
-{
-namespace gui
+namespace giada::u::gui
 {
 namespace
 {
@@ -100,9 +96,10 @@ void refresh()
 
 	blinker_ = (blinker_ + 1) % 12;
 
-	/* Refresh Sample Editor (if open) for dynamic play head. */
+	/* Refresh Sample Editor and Action Editor for dynamic playhead. */
 
 	refreshSubWindow(WID_SAMPLE_EDITOR);
+	refreshSubWindow(WID_ACTION_EDITOR);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -267,6 +264,4 @@ int centerWindowY(int h)
 {
 	return (Fl::h() / 2) - (h / 2);
 }
-} // namespace gui
-} // namespace u
-} // namespace giada
+} // namespace giada::u::gui

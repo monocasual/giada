@@ -33,14 +33,14 @@ geSplitScroll::geSplitScroll(Pixel x, Pixel y, Pixel w, Pixel h)
 , m_a(0, 0, 0, 0, Fl_Scroll::VERTICAL_ALWAYS)
 , m_b(0, 0, 0, 0, Direction::HORIZONTAL)
 {
-	m_b.onScrollH = [&a = m_a](int x) {
+	m_b.onScrollH = [&a = m_a](Pixel x) {
 		a.scroll_to(x, a.yposition());
 	};
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geSplitScroll::addWidgets(Fl_Widget& wa, Fl_Widget& wb, int topContentH)
+void geSplitScroll::addWidgets(Fl_Widget& wa, Fl_Widget& wb, Pixel topContentH)
 {
 	m_a.add(&wa);
 	m_b.addWidget(&wb);
@@ -53,19 +53,19 @@ void geSplitScroll::addWidgets(Fl_Widget& wa, Fl_Widget& wb, int topContentH)
 
 /* -------------------------------------------------------------------------- */
 
-int geSplitScroll::getScrollX() const
+Pixel geSplitScroll::getScrollX() const
 {
 	return m_b.xposition();
 }
 
-int geSplitScroll::getScrollY() const
+Pixel geSplitScroll::getScrollY() const
 {
 	return m_a.yposition();
 }
 
 /* -------------------------------------------------------------------------- */
 
-int geSplitScroll::getContentWidth() const
+Pixel geSplitScroll::getContentWidth() const
 {
 	if (m_a.countChildren() == 0)
 		return 0;
@@ -74,21 +74,31 @@ int geSplitScroll::getContentWidth() const
 
 /* -------------------------------------------------------------------------- */
 
-int geSplitScroll::getTopContentH() const
+Pixel geSplitScroll::getTopContentH() const
 {
 	return m_a.h();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geSplitScroll::setScrollX(int p)
+geompp::Rect<Pixel> geSplitScroll::getBoundsNoScrollbar() const
+{
+	return {
+	    x(), y(),
+	    w() - m_a.scrollbar.w() - G_GUI_OUTER_MARGIN,
+	    h() - m_b.hscrollbar.h() - G_GUI_OUTER_MARGIN};
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geSplitScroll::setScrollX(Pixel p)
 {
 	p = std::max(0, p);
 	m_a.scroll_to(p, m_a.yposition());
 	m_b.scroll_to(p, m_b.yposition());
 }
 
-void geSplitScroll::setScrollY(int p)
+void geSplitScroll::setScrollY(Pixel p)
 {
 	m_a.scroll_to(m_a.xposition(), p);
 }

@@ -30,15 +30,12 @@
 #include "core/types.h"
 #include <string>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class gdWindow;
 }
-namespace u
-{
-namespace gui
+
+namespace giada::u::gui
 {
 /* refresh
 Repaints some dynamic GUI elements. */
@@ -110,9 +107,6 @@ std::string truncate(const std::string& s, Pixel width);
 
 int centerWindowX(int w);
 int centerWindowY(int h);
-
-} // namespace gui
-} // namespace u
-} // namespace giada
+} // namespace giada::u::gui
 
 #endif

@@ -52,7 +52,8 @@ class gdBaseActionEditor : public gdWindow
 public:
 	virtual ~gdBaseActionEditor();
 
-	int handle(int e) override;
+	int  handle(int e) override;
+	void draw() override;
 
 	Pixel frameToPixel(Frame f) const;
 	Frame pixelToFrame(Pixel p, bool snap = true) const;
@@ -105,6 +106,11 @@ protected:
 
 	c::actionEditor::Data m_data;
 	m::conf::Conf&        m_conf;
+
+private:
+	void refresh() override;
+
+	Pixel m_playhead;
 };
 } // namespace giada::v
 #endif

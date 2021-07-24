@@ -27,6 +27,8 @@
 #ifndef GE_SPLITSCROLL_H
 #define GE_SPLITSCROLL_H
 
+#include "core/types.h"
+#include "deps/geompp/src/rect.hpp"
 #include "gui/elems/basics/liquidScroll.h"
 #include "gui/elems/basics/scroll.h"
 #include "gui/elems/basics/split.h"
@@ -36,16 +38,17 @@ namespace giada::v
 class geSplitScroll : public geSplit
 {
 public:
-	geSplitScroll(int x, int y, int w, int h);
+	geSplitScroll(Pixel x, Pixel y, Pixel w, Pixel h);
 
-	int getScrollX() const;
-	int getScrollY() const;
-	int getContentWidth() const;
-	int getTopContentH() const;
+	Pixel               getScrollX() const;
+	Pixel               getScrollY() const;
+	Pixel               getContentWidth() const;
+	Pixel               getTopContentH() const;
+	geompp::Rect<Pixel> getBoundsNoScrollbar() const;
 
-	void addWidgets(Fl_Widget& a, Fl_Widget& b, int topContentH = -1);
-	void setScrollX(int p);
-	void setScrollY(int p);
+	void addWidgets(Fl_Widget& a, Fl_Widget& b, Pixel topContentH = -1);
+	void setScrollX(Pixel p);
+	void setScrollY(Pixel p);
 
 private:
 	geScroll       m_a;
