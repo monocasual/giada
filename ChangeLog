@@ -11,6 +11,19 @@
 --------------------------------------------------------------------------------
 
 
+0.18.1 --- 2021 . 07 . 25
+- New resampler architecture: allows for changing quality also for live rendering (#288)
+- Gracefully shutdown UI on close to random crashes on quit on Windows 
+- Fix 'one shot channels with actions as loops' mode not working correctly
+- Fix wrong sequencer signals while starting/stopping action recs with JACK (#397)
+- Fix extra dot in unique audio file name generation
+- Fix sample overflow when looping a sample with pitch != 1.0
+- [CMake, Linux] Detect JACK with pkg-config
+- [CMake, Linux] Install Freedesktop files and icon
+- [CMake, Linux] Add configure switches for ALSA, JACK and PulseAudio
+- [macOS] Enable hardened runtime
+
+
 0.18.0 --- 2021 . 05 . 18
 - New 'free loop-length' audio recording mode (#63)
 - Many AudioBuffer improvements
