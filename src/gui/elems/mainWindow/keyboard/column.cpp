@@ -76,20 +76,21 @@ geChannel* geColumn::addChannel(c::channel::Data d)
 		gch = new geMidiChannel(x(), last->y() + last->h() + G_GUI_INNER_MARGIN, w(), d.height, d);
 
 	geResizerBar* bar = new geResizerBar(x(), gch->y() + gch->h(), w(),
-	    G_GUI_INNER_MARGIN, G_GUI_UNIT, geResizerBar::VERTICAL, gch);
+	    G_GUI_INNER_MARGIN, G_GUI_UNIT, geResizerBar::Direction::VERTICAL,
+	    geResizerBar::Mode::MOVE);
 
 	/* Update the column height while dragging the resizer bar. */
 
-	bar->onDrag = [this](const Fl_Widget* /*w*/) {
+	bar->onDrag = [this](const Fl_Widget& /*w*/) {
 		resizable(nullptr);
 		size(this->w(), (child(children() - 1)->y() - y()) + G_GUI_INNER_MARGIN);
 	};
 
 	/* Store the channel height in model when the resizer bar is released. */
 
-	bar->onRelease = [channelId = d.id, this](const Fl_Widget* w) {
+	bar->onRelease = [channelId = d.id, this](const Fl_Widget& w) {
 		resizable(this);
-		c::channel::setHeight(channelId, w->h());
+		c::channel::setHeight(channelId, w.h());
 	};
 
 	m_channels.push_back(gch);

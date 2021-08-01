@@ -2,22 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * geResizerBar
- * 'resizer bar' between widgets Fl_Scroll. Thanks to Greg Ercolano from
- * FLTK dev team. http://seriss.com/people/erco/fltk/
- *
- * Shows a resize cursor when hovered over.
- * Assumes:
- *     - Parent is an Fl_Scroll
- *     - All children of Fl_Scroll are vertically arranged
- *     - The widget above us has a bottom edge touching our top edge
- *       ie. (w->y()+w->h() == this->y())
- *
- * When this widget is dragged:
- *     - The widget above us (with a common edge) will be /resized/
- *       vertically
- *     - All children below us will be /moved/ vertically
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2021 Giovanni A. Zuliani | Monocasual
@@ -46,34 +30,93 @@
 #include <FL/Fl_Box.H>
 #include <functional>
 
+/* geResizerBar
+A 'resizer bar' between widgets inside a Fl_Scroll. Thanks to Greg Ercolano from
+FLTK dev team (http://seriss.com/people/erco/fltk/). It also shows a resize 
+cursor when hovered over.
+
+Assumes:
+	- Parent is an Fl_Group;
+	- The widget before us has an edge touching our edge;
+	  ie. w->y() + w->h() == this->y() if Direction::VERTICAL.
+
+When this widget is dragged:
+	- The widget before us (with a common edge) will be resized;
+	- if Mode == MOVE 
+		All children after us will be moved.
+	- else if Mode == RESIZE
+		The child after us is resized. */
+
+namespace giada::v
+{
 class geResizerBar : public Fl_Box
 {
 public:
-	static const int HORIZONTAL = 0;
-	static const int VERTICAL   = 1;
+	enum class Direction
+	{
+		HORIZONTAL,
+		VERTICAL
+	};
 
-	geResizerBar(int x, int y, int w, int h, int minSize, bool type, Fl_Widget* target = nullptr);
+	enum class Mode
+	{
+		MOVE,
+		RESIZE
+	};
+
+	geResizerBar(int x, int y, int w, int h, int minSize, Direction dir, Mode m = Mode::MOVE);
 
 	int  handle(int e) override;
 	void draw() override;
 	void resize(int x, int y, int w, int h) override;
 
-	int getMinSize() const;
+	void moveTo(int p);
 
-	std::function<void(const Fl_Widget*)> onDrag    = nullptr;
-	std::function<void(const Fl_Widget*)> onRelease = nullptr;
+	std::function<void(const Fl_Widget&)> onDrag    = nullptr;
+	std::function<void(const Fl_Widget&)> onRelease = nullptr;
 
-  private:
+private:
+	/* isBefore
+	True if widget 'w' is before the drag bar. */
+
+	bool isBefore(const Fl_Widget& w) const;
+
+	/* isBefore
+	True if widget 'w' is after the drag bar. */
+	bool isAfter(const Fl_Widget& w) const;
+
+	/* findWidgets
+	Returns a vector of widgets according to a certain logic specified in the
+	lambda function. Limits the output to 'howmany' widgets if 'howmany' != -1. */
+
+	std::vector<Fl_Widget*> findWidgets(std::function<bool(const Fl_Widget&)> f, int howmany = -1) const;
+
+	/* handleDrag
+	Main entrypoint for the dragging operation. */
+
 	void handleDrag(int diff);
 
-	bool m_type;
-	int  m_origSize;
-	int  m_minSize;
-	int  m_lastPos;
-	int  m_initialPos;
-	bool m_hover;
+	/* move
+	Resize the first widget and shift all others. */
 
-	Fl_Widget* m_target;
+	void move(int diff);
+
+	/* resize 
+	Resize the first and the second widget, leaving all others untouched. */
+
+	void resize(int diff);
+
+	/* getFirstWidget
+	Returns a ref to the first widget before the drag bar. */
+
+	Fl_Widget& getFirstWidget();
+
+	Direction m_direction;
+	Mode      m_mode;
+	int       m_minSize;
+	int       m_lastPos;
+	bool      m_hover;
 };
+} // namespace giada::v
 
 #endif

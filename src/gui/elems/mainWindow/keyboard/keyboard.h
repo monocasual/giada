@@ -34,12 +34,10 @@
 #include <vector>
 
 class geButton;
-class geResizerBar;
 
-namespace giada
+namespace giada::v
 {
-namespace v
-{
+class geResizerBar;
 class geColumn;
 class geChannel;
 class geKeyboard : public geScroll
@@ -94,7 +92,7 @@ public:
 
 	std::vector<ColumnLayout> layout;
 
-  private:
+private:
 	static constexpr int COLUMN_GAP = 20;
 
 	static void cb_addColumn(Fl_Widget* /*w*/, void* p);
@@ -128,7 +126,6 @@ public:
 
 	geButton* m_addColumnBtn;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

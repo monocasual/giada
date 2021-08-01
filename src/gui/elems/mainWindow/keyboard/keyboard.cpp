@@ -41,9 +41,7 @@
 #include <FL/fl_draw.H>
 #include <cassert>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geKeyboard::geKeyboard(int X, int Y, int W, int H)
 : geScroll(X, Y, W, H, Fl_Scroll::BOTH_ALWAYS)
@@ -207,12 +205,12 @@ void geKeyboard::addColumn(int width, ID id)
 
 	/* Add a new column + a new resizer bar. */
 
-	geResizerBar* bar    = new geResizerBar(colx + width, y(), COLUMN_GAP, h(), G_MIN_COLUMN_WIDTH, geResizerBar::HORIZONTAL);
+	geResizerBar* bar    = new geResizerBar(colx + width, y(), COLUMN_GAP, h(), G_MIN_COLUMN_WIDTH, geResizerBar::Direction::HORIZONTAL);
 	geColumn*     column = new geColumn(colx, y(), width, G_GUI_UNIT, m_columnId.generate(id), bar);
 
 	/* Store the column width in layout when the resizer bar is released. */
 
-	bar->onRelease = [=](const Fl_Widget* /*w*/) {
+	bar->onRelease = [=](const Fl_Widget& /*w*/) {
 		storeLayout();
 	};
 
@@ -294,5 +292,4 @@ void geKeyboard::storeLayout()
 		layout.push_back({c->id, c->w()});
 }
 
-} // namespace v
-} // namespace giada
+} // namespace giada::v

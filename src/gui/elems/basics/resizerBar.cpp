@@ -2,22 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * geResizerBar
- * 'resizer bar' between widgets Fl_Scroll. Thanks to Greg Ercolano from
- * FLTK dev team. http://seriss.com/people/erco/fltk/
- *
- * Shows a resize cursor when hovered over.
- * Assumes:
- *     - Parent is an Fl_Scroll
- *     - All children of Fl_Scroll are m_vertically arranged
- *     - The widget above us has a bottom edge touching our top edge
- *       ie. (w->y()+w->h() == this->y())
- *
- * When this widget is dragged:
- *     - The widget above us (with a common edge) will be /resized/
- *       m_vertically
- *     - All children below us will be /moved/ m_vertically
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2021 Giovanni A. Zuliani | Monocasual
@@ -43,30 +27,21 @@
 #include "resizerBar.h"
 #include "core/const.h"
 #include <FL/Fl.H>
-#include <FL/Fl_Scroll.H>
+#include <FL/Fl_Group.H>
 #include <FL/fl_draw.H>
+#include <cassert>
+#include <vector>
 
-geResizerBar::geResizerBar(int X, int Y, int W, int H, int minSize, bool type, Fl_Widget* target)
+namespace giada::v
+{
+geResizerBar::geResizerBar(int X, int Y, int W, int H, int minSize, Direction dir, Mode mode)
 : Fl_Box(X, Y, W, H)
-, m_type(type)
+, m_direction(dir)
+, m_mode(mode)
 , m_minSize(minSize)
 , m_lastPos(0)
-, m_initialPos(0)
 , m_hover(false)
-, m_target(target)
 {
-	if (m_type == VERTICAL)
-	{
-		m_origSize = H;
-		labelsize(H);
-	}
-	else
-	{
-		m_origSize = W;
-		labelsize(W);
-	}
-	align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE);
-	labelfont(FL_COURIER);
 	visible_focus(0);
 }
 
@@ -74,65 +49,113 @@ geResizerBar::geResizerBar(int X, int Y, int W, int H, int minSize, bool type, F
 
 void geResizerBar::handleDrag(int diff)
 {
-	Fl_Scroll* group = static_cast<Fl_Scroll*>(parent());
+	m_mode == Mode::MOVE ? move(diff) : resize(diff);
 
-	const int top = m_type == VERTICAL ? y() : x();
-	const int bot = m_type == VERTICAL ? y() + h() : x() + w();
-
-	// First pass: find widget directly above us with common edge
-	// Possibly clamp 'diff' if widget would get too small..
-
-	for (int t = 0; t < group->children(); t++)
-	{
-		Fl_Widget* wd = group->child(t);
-		if (m_type == VERTICAL)
-		{
-			if ((wd->y() + wd->h()) == top)
-			{ // found widget directly above?
-				if ((wd->h() + diff) < m_minSize)
-					diff = wd->h() - m_minSize;                        // clamp
-				wd->resize(wd->x(), wd->y(), wd->w(), wd->h() + diff); // change height
-				break;                                                 // done with first pass
-			}
-		}
-		else
-		{
-			if ((wd->x() + wd->w()) == top)
-			{ // found widget directly above?
-				if ((wd->w() + diff) < m_minSize)
-					diff = wd->w() - m_minSize;                        // clamp
-				wd->resize(wd->x(), wd->y(), wd->w() + diff, wd->h()); // change width
-				break;                                                 // done with first pass
-			}
-		}
-	}
-
-	// Second pass: find widgets below us, move based on clamped diff
-
-	for (int t = 0; t < group->children(); t++)
-	{
-		Fl_Widget* wd = group->child(t);
-		if (m_type == VERTICAL)
-		{
-			if (wd->y() >= bot)                                        // found widget below us?
-				wd->resize(wd->x(), wd->y() + diff, wd->w(), wd->h()); // change position
-		}
-		else
-		{
-			if (wd->x() >= bot)
-				wd->resize(wd->x() + diff, wd->y(), wd->w(), wd->h());
-		}
-	}
-
-	// Change our position last
-
-	if (m_type == VERTICAL)
-		resize(x(), y() + diff, w(), h());
-	else
-		resize(x() + diff, y(), w(), h());
-
+	Fl_Group* group = static_cast<Fl_Group*>(parent());
 	group->init_sizes();
 	group->redraw();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geResizerBar::move(int diff)
+{
+	Fl_Widget&              wfirst  = getFirstWidget();
+	std::vector<Fl_Widget*> wothers = findWidgets([this](const Fl_Widget& wd) { return isAfter(wd); });
+
+	if (m_direction == Direction::VERTICAL)
+	{
+		if (wfirst.h() + diff < m_minSize)
+			diff = 0;
+		wfirst.resize(wfirst.x(), wfirst.y(), wfirst.w(), wfirst.h() + diff);
+		for (Fl_Widget* wd : wothers)
+			wd->resize(wd->x(), wd->y() + diff, wd->w(), wd->h());
+		resize(x(), y() + diff, w(), h());
+	}
+	else if (m_direction == Direction::HORIZONTAL)
+	{
+		if (wfirst.w() + diff < m_minSize)
+			diff = 0;
+		wfirst.resize(wfirst.x(), wfirst.y(), wfirst.w() + diff, wfirst.h());
+		for (Fl_Widget* wd : wothers)
+			wd->resize(wd->x() + diff, wd->y(), wd->w(), wd->h());
+		resize(x() + diff, y(), w(), h());
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geResizerBar::resize(int diff)
+{
+	Fl_Widget& wa = getFirstWidget();
+	Fl_Widget& wb = *findWidgets([this](const Fl_Widget& wd) { return isAfter(wd); }, /*howmany=*/1)[0];
+
+	if (m_direction == Direction::VERTICAL)
+	{
+		if (wa.h() + diff < m_minSize || wb.h() - diff < m_minSize)
+			diff = 0;
+		wa.resize(wa.x(), wa.y(), wa.w(), wa.h() + diff);
+		wb.resize(wb.x(), wb.y() + diff, wb.w(), wb.h() - diff);
+		resize(x(), y() + diff, w(), h());
+	}
+	else if (m_direction == Direction::HORIZONTAL)
+	{
+		if (wa.w() + diff < m_minSize || wb.w() - diff < m_minSize)
+			diff = 0;
+		wa.resize(wa.x(), wa.y(), wa.w() + diff, wa.h());
+		wb.resize(wb.x() + diff, wb.y(), wb.w() - diff, wb.h());
+		resize(x() + diff, y(), w(), h());
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool geResizerBar::isBefore(const Fl_Widget& wd) const
+{
+	const int before = m_direction == Direction::VERTICAL ? y() : x();
+	return (m_direction == Direction::VERTICAL && wd.y() + wd.h() == before) ||
+	       (m_direction == Direction::HORIZONTAL && wd.x() + wd.w() == before);
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool geResizerBar::isAfter(const Fl_Widget& wd) const
+{
+	const int after = m_direction == Direction::VERTICAL ? y() + h() : x() + w();
+	return (m_direction == Direction::VERTICAL && wd.y() >= after) ||
+	       (m_direction == Direction::HORIZONTAL && wd.x() >= after);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Fl_Widget& geResizerBar::getFirstWidget()
+{
+	return *findWidgets([this](const Fl_Widget& wd) { return isBefore(wd); }, /*howmany=*/1)[0];
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::vector<Fl_Widget*> geResizerBar::findWidgets(std::function<bool(const Fl_Widget&)> f, int howmany) const
+{
+	std::vector<Fl_Widget*> out;
+	Fl_Group*               group = static_cast<Fl_Group*>(parent());
+
+	for (int t = 0; t < group->children(); t++)
+	{
+		Fl_Widget* wd = group->child(t);
+		if (!f(*wd))
+			continue;
+		out.push_back(wd);
+		if (howmany != -1 && out.size() == (size_t)howmany)
+			break;
+	}
+
+	/* Make sure it finds the exact number of widgets requested, in case 
+	howmany != -1. */
+
+	assert(howmany == -1 || (howmany != -1 && out.size() == (size_t)howmany));
+
+	return out;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -148,7 +171,7 @@ void geResizerBar::draw()
 int geResizerBar::handle(int e)
 {
 	int ret        = 0;
-	int currentPos = m_type == VERTICAL ? Fl::event_y_root() : Fl::event_x_root();
+	int currentPos = m_direction == Direction::VERTICAL ? Fl::event_y_root() : Fl::event_x_root();
 
 	switch (e)
 	{
@@ -157,7 +180,7 @@ int geResizerBar::handle(int e)
 		break;
 	case FL_ENTER:
 		ret = 1;
-		fl_cursor(m_type == VERTICAL ? FL_CURSOR_NS : FL_CURSOR_WE);
+		fl_cursor(m_direction == Direction::VERTICAL ? FL_CURSOR_NS : FL_CURSOR_WE);
 		m_hover = true;
 		redraw();
 		break;
@@ -168,20 +191,19 @@ int geResizerBar::handle(int e)
 		redraw();
 		break;
 	case FL_PUSH:
-		ret          = 1;
-		m_lastPos    = currentPos;
-		m_initialPos = currentPos;
+		ret       = 1;
+		m_lastPos = currentPos;
 		break;
 	case FL_DRAG:
 		handleDrag(currentPos - m_lastPos);
 		m_lastPos = currentPos;
 		ret       = 1;
 		if (onDrag != nullptr)
-			onDrag(m_target);
+			onDrag(getFirstWidget());
 		break;
 	case FL_RELEASE:
-		if (m_initialPos != currentPos && onRelease != nullptr)
-			onRelease(m_target);
+		if (onRelease != nullptr)
+			onRelease(getFirstWidget());
 		break;
 	default:
 		break;
@@ -191,17 +213,20 @@ int geResizerBar::handle(int e)
 
 /* -------------------------------------------------------------------------- */
 
-int geResizerBar::getMinSize() const
+void geResizerBar::resize(int X, int Y, int W, int H)
 {
-	return m_minSize;
+	if (m_direction == Direction::VERTICAL)
+		Fl_Box::resize(X, Y, W, h());
+	else
+		Fl_Box::resize(X, Y, w(), H);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geResizerBar::resize(int x, int y, int w, int h)
+void geResizerBar::moveTo(int p)
 {
-	if (m_type == VERTICAL)
-		Fl_Box::resize(x, y, w, m_origSize); // Height of resizer stays constant size
-	else
-		Fl_Box::resize(x, y, m_origSize, h);
+	const Fl_Widget& wd   = getFirstWidget();
+	const int        curr = m_direction == Direction::VERTICAL ? wd.h() : wd.w();
+	handleDrag(p - curr);
 }
+} // namespace giada::v

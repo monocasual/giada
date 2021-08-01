@@ -34,10 +34,10 @@
 #include <vector>
 
 class geButton;
-class geResizerBar;
 
 namespace giada::v
 {
+class geResizerBar;
 class geKeyboard;
 class geChannel;
 class geColumn : public Fl_Group
@@ -65,7 +65,7 @@ public:
 
 	geResizerBar* resizerBar;
 
-  private:
+private:
 	static void cb_addChannel(Fl_Widget* /*w*/, void* p);
 	void        cb_addChannel();
 
