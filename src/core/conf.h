@@ -80,13 +80,15 @@ struct Conf
 	int         browserLastValue;
 	std::string browserLastPath;
 
-	int actionEditorY       = u::gui::centerWindowY(G_DEFAULT_SUBWINDOW_H);
-	int actionEditorX       = u::gui::centerWindowX(G_DEFAULT_SUBWINDOW_W);
-	int actionEditorW       = G_DEFAULT_SUBWINDOW_W;
-	int actionEditorH       = G_DEFAULT_SUBWINDOW_H;
-	int actionEditorZoom    = 100;
-	int actionEditorGridVal = 0;
-	int actionEditorGridOn  = false;
+	int actionEditorY          = u::gui::centerWindowY(G_DEFAULT_SUBWINDOW_H);
+	int actionEditorX          = u::gui::centerWindowX(G_DEFAULT_SUBWINDOW_W);
+	int actionEditorW          = G_DEFAULT_SUBWINDOW_W;
+	int actionEditorH          = G_DEFAULT_SUBWINDOW_H;
+	int actionEditorZoom       = G_DEFAULT_ZOOM_RATIO;
+	int actionEditorSplitH     = -1;
+	int actionEditorGridVal    = 0;
+	int actionEditorGridOn     = false;
+	int actionEditorPianoRollY = -1;
 
 	int sampleEditorX;
 	int sampleEditorY;
@@ -99,13 +101,6 @@ struct Conf
 	int midiInputY;
 	int midiInputW = G_DEFAULT_SUBWINDOW_W;
 	int midiInputH = G_DEFAULT_SUBWINDOW_H;
-
-	int pianoRollY = -1;
-	int pianoRollH = 422;
-
-	int sampleActionEditorH = 40;
-	int velocityEditorH     = 40;
-	int envelopeEditorH     = 40;
 
 	int pluginListX;
 	int pluginListY;

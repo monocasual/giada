@@ -45,9 +45,7 @@
 
 extern giada::v::gdMainWindow* G_MainWin;
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 gdPluginList::gdPluginList(ID channelId)
 : gdWindow(m::conf::conf.pluginListX, m::conf::conf.pluginListY, 468, 204)
@@ -56,7 +54,8 @@ gdPluginList::gdPluginList(ID channelId)
 	end();
 
 	list = new geLiquidScroll(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN,
-	    w() - (G_GUI_OUTER_MARGIN * 2), h() - (G_GUI_OUTER_MARGIN * 2));
+	    w() - (G_GUI_OUTER_MARGIN * 2), h() - (G_GUI_OUTER_MARGIN * 2),
+	    Direction::VERTICAL);
 	list->end();
 	add(list);
 	resizable(list);
@@ -138,7 +137,6 @@ const gePluginElement& gdPluginList::getPrevElement(const gePluginElement& currE
 		prev = 0;
 	return *static_cast<gePluginElement*>(list->child(prev));
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif // #ifdef WITH_VST

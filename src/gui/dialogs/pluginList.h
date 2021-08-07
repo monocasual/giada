@@ -32,13 +32,11 @@
 #include "glue/plugin.h"
 #include "window.h"
 
-class geLiquidScroll;
 class geButton;
 
-namespace giada
+namespace giada::v
 {
-namespace v
-{
+class geLiquidScroll;
 class gePluginElement;
 class gdPluginList : public gdWindow
 {
@@ -51,7 +49,7 @@ public:
 	const gePluginElement& getNextElement(const gePluginElement& curr) const;
 	const gePluginElement& getPrevElement(const gePluginElement& curr) const;
 
-  private:
+private:
 	static void cb_addPlugin(Fl_Widget* /*w*/, void* p);
 	void        cb_addPlugin();
 
@@ -61,8 +59,7 @@ public:
 	ID                 m_channelId;
 	c::plugin::Plugins m_plugins;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif
 

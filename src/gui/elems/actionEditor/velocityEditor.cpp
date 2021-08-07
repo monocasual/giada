@@ -38,20 +38,11 @@
 #include <FL/fl_draw.H>
 #include <cassert>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geVelocityEditor::geVelocityEditor(Pixel x, Pixel y, gdBaseActionEditor* b)
-: geBaseActionEditor(x, y, 200, m::conf::conf.velocityEditorH, b)
+: geBaseActionEditor(x, y, 200, 40, b)
 {
-}
-
-/* -------------------------------------------------------------------------- */
-
-geVelocityEditor::~geVelocityEditor()
-{
-	m::conf::conf.velocityEditorH = h();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -60,25 +51,28 @@ void geVelocityEditor::draw()
 {
 	baseDraw();
 
+	if (h() < geEnvelopePoint::SIDE)
+		return;
+
 	/* Print label. */
 
 	fl_color(G_COLOR_GREY_4);
 	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-	fl_draw("Velocity", x() + 4, y(), w(), h(), (Fl_Align)(FL_ALIGN_LEFT));
+	fl_draw("Velocity", x() + 4, y(), w(), h(), FL_ALIGN_LEFT);
 
 	if (children() == 0)
 		return;
 
-	Pixel side = geEnvelopePoint::SIDE / 2;
+	const Pixel side = geEnvelopePoint::SIDE / 2;
 
 	for (int i = 0; i < children(); i++)
 	{
 		geEnvelopePoint* p = static_cast<geEnvelopePoint*>(child(i));
 		if (m_action == nullptr)
 			p->position(p->x(), valueToY(p->a1.event.getVelocity()));
-		Pixel x1 = p->x() + side;
-		Pixel y1 = p->y();
-		Pixel y2 = y() + h();
+		const Pixel x1 = p->x() + side;
+		const Pixel y1 = p->y();
+		const Pixel y2 = y() + h();
 		fl_line(x1, y1, x1, y2);
 	}
 
@@ -152,5 +146,4 @@ void geVelocityEditor::onRefreshAction()
 
 	m_base->rebuild(); // Rebuild pianoRoll as well
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

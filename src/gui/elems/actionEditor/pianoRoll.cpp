@@ -33,31 +33,27 @@
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "noteEditor.h"
-#include "pianoItem.h"
+#include "gui/elems/actionEditor/pianoItem.h"
 #include "utils/log.h"
 #include "utils/math.h"
 #include "utils/string.h"
 #include <FL/Fl.H>
 #include <cassert>
 
-namespace giada
+namespace giada::v
 {
-namespace v
-{
-gePianoRoll::gePianoRoll(Pixel X, Pixel Y, Pixel W, gdBaseActionEditor* b)
-: geBaseActionEditor(X, Y, W, 40, b)
+gePianoRoll::gePianoRoll(Pixel X, Pixel Y, gdBaseActionEditor* b)
+: geBaseActionEditor(X, Y, 200, CELL_H * MAX_KEYS, b)
 , pick(0)
 {
-	position(x(), m::conf::conf.pianoRollY == -1 ? y() - (h() / 2) : m::conf::conf.pianoRollY);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void gePianoRoll::drawSurface1()
+void gePianoRoll::drawSurfaceY()
 {
-	surface1 = fl_create_offscreen(CELL_W, h());
-	fl_begin_offscreen(surface1);
+	surfaceY = fl_create_offscreen(CELL_W, h());
+	fl_begin_offscreen(surfaceY);
 
 	/* Warning: only w() and h() come from this widget, x and y coordinates are 
 	absolute, since we are writing in a memory chunk. */
@@ -71,7 +67,6 @@ void gePianoRoll::drawSurface1()
 
 	for (int i = 1; i <= MAX_KEYS + 1; i++)
 	{
-
 		/* print key note label. C C# D D# E F F# G G# A A# B */
 
 		std::string note = u::string::iToString(octave);
@@ -139,11 +134,11 @@ void gePianoRoll::drawSurface1()
 
 /* -------------------------------------------------------------------------- */
 
-void gePianoRoll::drawSurface2()
+void gePianoRoll::drawSurfaceX()
 {
-	surface2 = fl_create_offscreen(CELL_W, h());
+	surfaceX = fl_create_offscreen(CELL_W, h());
 
-	fl_begin_offscreen(surface2);
+	fl_begin_offscreen(surfaceX);
 	fl_rectf(0, 0, CELL_W, h(), G_COLOR_GREY_1);
 	fl_color(G_COLOR_GREY_3);
 	fl_line_style(FL_DASH, 0, nullptr);
@@ -152,11 +147,11 @@ void gePianoRoll::drawSurface2()
 	{
 		switch (i % KEYS)
 		{
-		case (int)Notes::G:
-		case (int)Notes::E:
-		case (int)Notes::D:
-		case (int)Notes::B:
-		case (int)Notes::A:
+		case static_cast<int>(Notes::G):
+		case static_cast<int>(Notes::E):
+		case static_cast<int>(Notes::D):
+		case static_cast<int>(Notes::B):
+		case static_cast<int>(Notes::A):
 			fl_rectf(0, i * CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
 			break;
 		}
@@ -175,15 +170,15 @@ void gePianoRoll::drawSurface2()
 
 void gePianoRoll::draw()
 {
-	fl_copy_offscreen(x(), y(), CELL_W, h(), surface1, 0, 0);
+	fl_copy_offscreen(x(), y(), CELL_W, h(), surfaceY, 0, 0);
 
 // TODO - is this APPLE thing still useful?
 #if defined(__APPLE__)
 	for (Pixel i = 36; i < m_base->fullWidth; i += 36) /// TODO: i < m_base->loopWidth is faster
-		fl_copy_offscreen(x() + i, y(), CELL_W, h(), surface2, 1, 0);
+		fl_copy_offscreen(x() + i, y(), CELL_W, h(), surfaceX, 1, 0);
 #else
 	for (Pixel i = CELL_W; i < m_base->loopWidth; i += CELL_W)
-		fl_copy_offscreen(x() + i, y(), CELL_W, h(), surface2, 0, 0);
+		fl_copy_offscreen(x() + i, y(), CELL_W, h(), surfaceX, 0, 0);
 #endif
 
 	baseDraw(false);
@@ -198,11 +193,6 @@ int gePianoRoll::handle(int e)
 	{
 		pick = Fl::event_y() - y();
 		return geBaseActionEditor::handle(e);
-	}
-	if (e == FL_DRAG && Fl::event_button3())
-	{
-		static_cast<geNoteEditor*>(parent())->scroll();
-		return 1;
 	}
 	return geBaseActionEditor::handle(e);
 }
@@ -377,10 +367,9 @@ void gePianoRoll::rebuild(c::actionEditor::Data& d)
 		add(new gePianoItem(px, py, pw, ph, a1, a2));
 	}
 
-	drawSurface1();
-	drawSurface2();
+	drawSurfaceY();
+	drawSurfaceX();
 
 	redraw();
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

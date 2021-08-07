@@ -27,24 +27,26 @@
 #ifndef GD_BASE_ACTION_EDITOR_H
 #define GD_BASE_ACTION_EDITOR_H
 
-#include "core/types.h"
 #include "glue/actionEditor.h"
 #include "gui/dialogs/window.h"
+#include "gui/elems/actionEditor/gridTool.h"
+#include "gui/elems/actionEditor/splitScroll.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/pack.h"
 
-class geButton;
-
-namespace giada
-{
-namespace m
+namespace giada::m
 {
 class Channel;
 struct Action;
-} // namespace m
-namespace v
+} // namespace giada::m
+
+namespace giada::m::conf
 {
-class geChoice;
-class geGridTool;
-class geScrollPack;
+struct Conf;
+} // namespace giada::m::conf
+
+namespace giada::v
+{
 class gdBaseActionEditor : public gdWindow
 {
 public:
@@ -54,32 +56,28 @@ public:
 
 	Pixel frameToPixel(Frame f) const;
 	Frame pixelToFrame(Pixel p, bool snap = true) const;
-	int   getActionType() const;
 
 	ID channelId;
 
-	geChoice*     actionType;
-	geGridTool*   gridTool;
-	geButton*     zoomInBtn;
-	geButton*     zoomOutBtn;
-	geScrollPack* viewport; // widget container
+	geGridTool gridTool;
+	geButton   zoomInBtn;
+	geButton   zoomOutBtn;
 
 	float ratio;
 	Pixel fullWidth; // Full widgets width, i.e. scaled-down full sequencer
 	Pixel loopWidth; // Loop width, i.e. scaled-down sequencer range
 
-  protected:
-	static constexpr Pixel RESIZER_BAR_H = 20;
-	static constexpr Pixel MIN_WIDGET_H  = 10;
-	static constexpr float MIN_RATIO     = 25.0f;
-	static constexpr float MAX_RATIO     = 40000.0f;
+protected:
+	static constexpr float MIN_RATIO  = 25.0f;
+	static constexpr float MAX_RATIO  = 40000.0f;
+	static constexpr float RATIO_STEP = 2.0f;
 
-	gdBaseActionEditor(ID channelId);
+	gdBaseActionEditor(ID channelId, m::conf::Conf& c);
 
+	static void cb_zoomIn(Fl_Widget* w, void* p);
+	static void cb_zoomOut(Fl_Widget* w, void* p);
 	void        zoomIn();
 	void        zoomOut();
-	static void cb_zoomIn(Fl_Widget* /*w*/, void* p);
-	static void cb_zoomOut(Fl_Widget* /*w*/, void* p);
 
 	/* computeWidth
 	Computes total width, in pixel. */
@@ -91,9 +89,11 @@ public:
 
 	void prepareWindow();
 
-	c::actionEditor::Data m_data;
-};
-} // namespace v
-} // namespace giada
+	gePack        m_barTop;
+	geSplitScroll m_splitScroll;
 
+	c::actionEditor::Data m_data;
+	m::conf::Conf&        m_conf;
+};
+} // namespace giada::v
 #endif

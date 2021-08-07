@@ -152,7 +152,7 @@ void menuCallback(Fl_Widget* w, void* v)
 	}
 	case Menu::EDIT_ACTIONS:
 	{
-		u::gui::openSubWindow(G_MainWin, new gdSampleActionEditor(data.id),
+		u::gui::openSubWindow(G_MainWin, new gdSampleActionEditor(data.id, m::conf::conf),
 		    WID_ACTION_EDITOR);
 		break;
 	}

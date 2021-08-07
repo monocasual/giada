@@ -29,26 +29,17 @@
 
 #include "baseActionEditor.h"
 
-namespace giada
+namespace giada::v
 {
-namespace m
-{
-class SampleChannel;
-}
-namespace v
-{
-class geEnvelopePoint;
 class geEnvelopeEditor : public geBaseActionEditor
 {
 public:
 	geEnvelopeEditor(Pixel x, Pixel y, const char* l, gdBaseActionEditor*);
-	~geEnvelopeEditor();
-
 	void draw() override;
 
 	void rebuild(c::actionEditor::Data& d) override;
 
-  private:
+private:
 	void onAddAction() override;
 	void onDeleteAction() override;
 	void onMoveAction() override;
@@ -62,7 +53,6 @@ public:
 	bool isFirstPoint() const;
 	bool isLastPoint() const;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

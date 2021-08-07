@@ -32,9 +32,9 @@
 
 namespace giada::m
 {
-class MidiChannel;
 class Action;
-} // namespace giada::m
+}
+
 namespace giada::v
 {
 class gePianoRoll : public geBaseActionEditor
@@ -46,7 +46,7 @@ public:
 	static const Pixel CELL_H      = 20;
 	static const Pixel CELL_W      = 40;
 
-	gePianoRoll(Pixel x, Pixel y, Pixel w, gdBaseActionEditor*);
+	gePianoRoll(Pixel x, Pixel y, gdBaseActionEditor* b);
 
 	void draw() override;
 	int  handle(int e) override;
@@ -55,7 +55,7 @@ public:
 
 	Pixel pick;
 
-  private:
+private:
 	enum class Notes
 	{
 		G  = 1,
@@ -72,9 +72,6 @@ public:
 		GS = 0
 	};
 
-	Fl_Offscreen surface1; // notes, no repeat
-	Fl_Offscreen surface2; // lines, x-repeat
-
 	void onAddAction() override;
 	void onDeleteAction() override;
 	void onMoveAction() override;
@@ -89,13 +86,16 @@ public:
 	containing the rest of the piano roll. The latter will then be tiled during
 	the ::draw() call. */
 
-	void drawSurface1();
-	void drawSurface2();
+	void drawSurfaceY();
+	void drawSurfaceX();
 
 	Pixel snapToY(Pixel p) const;
 	int   yToNote(Pixel y) const;
 	Pixel noteToY(int n) const;
 	Pixel getPianoItemW(Pixel x, const m::Action& a1, const m::Action& a2) const;
+
+	Fl_Offscreen surfaceY; // vertical notes, no x-repeat
+	Fl_Offscreen surfaceX; // lines, x-repeat
 };
 } // namespace giada::v
 

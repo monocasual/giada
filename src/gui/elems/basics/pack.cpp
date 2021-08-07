@@ -30,9 +30,7 @@
 #include "pack.h"
 #include "core/const.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 gePack::gePack(int x, int y, Direction d, int gutter)
 : geGroup(x, y)
@@ -55,5 +53,4 @@ void gePack::add(Fl_Widget* widget)
 
 	geGroup::add(widget);
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

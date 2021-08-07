@@ -42,11 +42,51 @@ geScroll::geScroll(int x, int y, int w, int h, int t)
 	scrollbar.selection_color(G_COLOR_GREY_4);
 	scrollbar.labelcolor(G_COLOR_LIGHT_1);
 	scrollbar.slider(G_CUSTOM_BORDER_BOX);
+	scrollbar.callback(cb_onScrollV, this);
 
 	hscrollbar.color(G_COLOR_GREY_2);
 	hscrollbar.selection_color(G_COLOR_GREY_4);
 	hscrollbar.labelcolor(G_COLOR_LIGHT_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
+	hscrollbar.callback(cb_onScrollH, this);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geScroll::cb_onScrollV(Fl_Widget* w, void* p)
+{
+	geScroll*     s = static_cast<geScroll*>(w->parent());
+	Fl_Scrollbar* b = static_cast<Fl_Scrollbar*>(w);
+
+	s->scroll_to(s->xposition(), b->value());
+
+	(static_cast<geScroll*>(p))->cb_onScrollV();
+}
+
+void geScroll::cb_onScrollH(Fl_Widget* w, void* p)
+{
+	geScroll*     s = static_cast<geScroll*>(w->parent());
+	Fl_Scrollbar* b = static_cast<Fl_Scrollbar*>(w);
+
+	s->scroll_to(b->value(), s->yposition());
+
+	(static_cast<geScroll*>(p))->cb_onScrollH();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geScroll::cb_onScrollV()
+{
+	if (onScrollV != nullptr)
+		onScrollV(yposition());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geScroll::cb_onScrollH()
+{
+	if (onScrollH != nullptr)
+		onScrollH(xposition());
 }
 
 /* -------------------------------------------------------------------------- */

@@ -33,7 +33,6 @@
 
 class geBox;
 class geSlider;
-class geLiquidScroll;
 
 namespace giada::c::plugin
 {
@@ -45,6 +44,7 @@ class Plugin;
 }
 namespace giada::v
 {
+class geLiquidScroll;
 class gdPluginWindow : public gdWindow
 {
 public:
@@ -52,7 +52,7 @@ public:
 
 	void updateParameters(bool changeSlider = false);
 
-  private:
+private:
 	const c::plugin::Plugin& m_plugin;
 
 	geLiquidScroll* m_list;

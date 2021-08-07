@@ -32,17 +32,10 @@
 
 #include "core/const.h"
 #include "gui/elems/basics/group.h"
+#include "gui/types.h"
 
-namespace giada
+namespace giada::v
 {
-namespace v
-{
-enum class Direction
-{
-	HORIZONTAL,
-	VERTICAL
-};
-
 /* gePack
 A stack of widgets that resize itself according to its content. */
 
@@ -53,15 +46,18 @@ public:
 
 	/* add
     Adds a Fl_Widget 'w' to this pack. Coordinates are relative to the group,
-    so origin starts at (0, 0). */
+    so origin starts at (0, 0). As with any other FLTK group, the widget becomes
+	owned by this group: If you add static or automatic (local) variables, then 
+	it is your responsibility to remove (or delete) all such static or automatic
+	child widgets before destroying the group - otherwise the child widgets' 
+	destructors would be called twice! */
 
 	void add(Fl_Widget* w);
 
-  private:
+private:
 	Direction m_direction;
 	int       m_gutter;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

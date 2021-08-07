@@ -29,16 +29,13 @@
 
 #include "baseAction.h"
 
-namespace giada
-{
-namespace m
+namespace giada::m
 {
 struct Action;
 }
-namespace v
-{
-class gdActionEditor;
 
+namespace giada::v
+{
 class gePianoItem : public geBaseAction
 {
 public:
@@ -48,13 +45,12 @@ public:
 
 	bool isResizable() const;
 
-  private:
+private:
 	bool m_ringLoop;
 	bool m_orphaned;
 
 	Pixel calcVelocityH() const;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

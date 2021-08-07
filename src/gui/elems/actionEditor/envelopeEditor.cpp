@@ -39,21 +39,12 @@
 #include <FL/fl_draw.H>
 #include <cassert>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geEnvelopeEditor::geEnvelopeEditor(Pixel x, Pixel y, const char* l, gdBaseActionEditor* b)
-: geBaseActionEditor(x, y, 200, m::conf::conf.envelopeEditorH, b)
+: geBaseActionEditor(x, y, 200, 40, b)
 {
 	copy_label(l);
-}
-
-/* -------------------------------------------------------------------------- */
-
-geEnvelopeEditor::~geEnvelopeEditor()
-{
-	m::conf::conf.envelopeEditorH = h();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -214,5 +205,4 @@ void geEnvelopeEditor::onRefreshAction()
 
 	m_base->rebuild();
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

@@ -76,10 +76,10 @@ void geBaseActionEditor::baseDraw(bool clear) const
 	/* Draw grid, beats and bars. A grid set to 1 has a cell size == beat, so
 	painting it is useless. */
 
-	if (m_base->gridTool->getValue() > 1)
+	if (m_base->gridTool.getValue() > 1)
 	{
 		fl_color(G_COLOR_GREY_3);
-		drawVerticals(m_base->gridTool->getCellSize());
+		drawVerticals(m_base->gridTool.getCellSize());
 	}
 
 	fl_color(G_COLOR_GREY_4);

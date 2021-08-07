@@ -141,11 +141,11 @@ list(APPEND SOURCES
 	src/gui/elems/actionEditor/velocityEditor.cpp
 	src/gui/elems/actionEditor/envelopePoint.cpp
 	src/gui/elems/actionEditor/pianoRoll.cpp
-	src/gui/elems/actionEditor/noteEditor.cpp
 	src/gui/elems/actionEditor/pianoItem.cpp
 	src/gui/elems/actionEditor/sampleActionEditor.cpp
 	src/gui/elems/actionEditor/sampleAction.cpp
 	src/gui/elems/actionEditor/gridTool.cpp
+	src/gui/elems/actionEditor/splitScroll.cpp
 	src/gui/elems/mainWindow/mainIO.cpp
 	src/gui/elems/mainWindow/mainMenu.cpp
 	src/gui/elems/mainWindow/mainTimer.cpp
@@ -182,6 +182,7 @@ list(APPEND SOURCES
 	src/gui/elems/basics/slider.cpp
 	src/gui/elems/basics/progress.cpp
 	src/gui/elems/basics/check.cpp
+	src/gui/elems/basics/split.cpp
 	src/utils/log.cpp
 	src/utils/time.cpp
 	src/utils/math.cpp

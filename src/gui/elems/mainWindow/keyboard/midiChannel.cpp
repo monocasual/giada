@@ -26,6 +26,7 @@
 
 #include "midiChannel.h"
 #include "column.h"
+#include "core/conf.h"
 #include "core/const.h"
 #include "core/graphics.h"
 #include "core/model/model.h"
@@ -87,7 +88,7 @@ void menuCallback(Fl_Widget* w, void* v)
 	case Menu::__END_CLEAR_ACTION_SUBMENU__:
 		break;
 	case Menu::EDIT_ACTIONS:
-		u::gui::openSubWindow(G_MainWin, new v::gdMidiActionEditor(data.id), WID_ACTION_EDITOR);
+		u::gui::openSubWindow(G_MainWin, new v::gdMidiActionEditor(data.id, m::conf::conf), WID_ACTION_EDITOR);
 		break;
 	case Menu::CLEAR_ACTIONS_ALL:
 		c::recorder::clearAllActions(data.id);

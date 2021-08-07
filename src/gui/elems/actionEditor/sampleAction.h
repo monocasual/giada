@@ -30,13 +30,7 @@
 #include "baseAction.h"
 #include "core/recorder.h"
 
-namespace giada
-{
-namespace m
-{
-class SampleChannel;
-}
-namespace v
+namespace giada::v
 {
 class geSampleAction : public geBaseAction
 {
@@ -46,10 +40,9 @@ public:
 
 	void draw() override;
 
-  private:
+private:
 	bool m_singlePress;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

@@ -25,65 +25,46 @@
  * -------------------------------------------------------------------------- */
 
 #include "midiActionEditor.h"
-#include "core/graphics.h"
+#include "core/conf.h"
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
-#include "gui/elems/actionEditor/gridTool.h"
-#include "gui/elems/actionEditor/noteEditor.h"
-#include "gui/elems/actionEditor/pianoRoll.h"
-#include "gui/elems/actionEditor/velocityEditor.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
-#include "gui/elems/basics/resizerBar.h"
-#include "gui/elems/basics/scrollPack.h"
-#include <string>
 
-namespace giada
+namespace giada::v
 {
-namespace v
-{
-gdMidiActionEditor::gdMidiActionEditor(ID channelId)
-: gdBaseActionEditor(channelId)
+gdMidiActionEditor::gdMidiActionEditor(ID channelId, m::conf::Conf& conf)
+: gdBaseActionEditor(channelId, conf)
+, m_barPadding(0, 0, w() - 150, G_GUI_UNIT)
+, m_pianoRoll(0, 0, this)
+, m_velocityEditor(0, 0, this)
 {
 	end();
 
-	computeWidth();
+	m_barTop.add(&gridTool);
+	m_barTop.add(&m_barPadding);
+	m_barTop.add(&zoomInBtn);
+	m_barTop.add(&zoomOutBtn);
+	m_barTop.resizable(m_barPadding);
 
-	gePack* upperArea = new gePack(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, Direction::HORIZONTAL);
-	gridTool          = new geGridTool(0, 0);
-	geBox* b1         = new geBox(0, 0, w() - 150, G_GUI_UNIT); // padding actionType - zoomButtons
-	zoomInBtn         = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm);
-	zoomOutBtn        = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm);
-	upperArea->add(gridTool);
-	upperArea->add(b1);
-	upperArea->add(zoomInBtn);
-	upperArea->add(zoomOutBtn);
-	upperArea->resizable(b1);
+	m_splitScroll.addWidgets(m_pianoRoll, m_velocityEditor, conf.actionEditorSplitH);
 
-	/* Main viewport: contains all widgets. */
+	if (conf.actionEditorPianoRollY != -1)
+		m_splitScroll.setScrollY(conf.actionEditorPianoRollY);
 
-	viewport = new geScrollPack(G_GUI_OUTER_MARGIN, upperArea->y() + upperArea->h() + G_GUI_OUTER_MARGIN,
-	    upperArea->w(), h() - 44, Fl_Scroll::BOTH, Direction::VERTICAL, /*gutter=*/0);
-	m_ne     = new geNoteEditor(0, 0, this);
-	m_ner    = new geResizerBar(0, 0, viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);
-	m_ve     = new geVelocityEditor(0, 0, this);
-	m_ver    = new geResizerBar(0, 0, viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);
-	viewport->add(m_ne);
-	viewport->add(m_ner);
-	viewport->add(m_ve);
-	viewport->add(m_ver);
-
-	zoomInBtn->callback(cb_zoomIn, (void*)this);
-	zoomInBtn->copy_tooltip("Zoom in");
-	zoomOutBtn->callback(cb_zoomOut, (void*)this);
-	zoomOutBtn->copy_tooltip("Zoom out");
-
-	add(upperArea);
-	add(viewport);
-	resizable(upperArea);
+	resizable(m_splitScroll); // Make it resizable only once filled with widgets
 
 	prepareWindow();
 	rebuild();
+}
+
+/* -------------------------------------------------------------------------- */
+
+gdMidiActionEditor::~gdMidiActionEditor()
+{
+	m_conf.actionEditorPianoRollY = m_splitScroll.getScrollY();
+	m_barTop.remove(gridTool);
+	m_barTop.remove(zoomInBtn);
+	m_barTop.remove(zoomOutBtn);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -93,10 +74,8 @@ void gdMidiActionEditor::rebuild()
 	m_data = c::actionEditor::getData(channelId);
 
 	computeWidth();
-	m_ne->rebuild(m_data);
-	m_ner->size(m_ne->w(), m_ner->h());
-	m_ve->rebuild(m_data);
-	m_ver->size(m_ve->w(), m_ver->h());
+
+	m_pianoRoll.rebuild(m_data);
+	m_velocityEditor.rebuild(m_data);
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

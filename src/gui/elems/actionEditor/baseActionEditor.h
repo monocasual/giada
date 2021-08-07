@@ -35,6 +35,7 @@ namespace giada::c::actionEditor
 {
 struct Data;
 }
+
 namespace giada::v
 {
 class gdBaseActionEditor;
@@ -58,7 +59,7 @@ public:
 
 	geBaseAction* getActionAtCursor() const;
 
-  protected:
+protected:
 	geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h, gdBaseActionEditor*);
 
 	c::actionEditor::Data* m_data;
@@ -84,7 +85,7 @@ public:
 	virtual void onResizeAction()  = 0;
 	virtual void onRefreshAction() = 0;
 
-  private:
+private:
 	/* drawVerticals
 	Draws generic vertical lines (beats, bars, grid lines...). */
 

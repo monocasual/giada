@@ -29,27 +29,19 @@
 
 #include "baseActionEditor.h"
 
-namespace giada
-{
-namespace m
-{
-class MidiChannel;
-}
-namespace v
+namespace giada::v
 {
 class geEnvelopePoint;
-
 class geVelocityEditor : public geBaseActionEditor
 {
 public:
 	geVelocityEditor(Pixel x, Pixel y, gdBaseActionEditor*);
-	~geVelocityEditor();
 
 	void draw() override;
 
 	void rebuild(c::actionEditor::Data& d) override;
 
-  private:
+private:
 	void onMoveAction() override;
 	void onRefreshAction() override;
 	void onAddAction() override{};
@@ -59,7 +51,6 @@ public:
 	Pixel valueToY(int v) const;
 	int   yToValue(Pixel y) const;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

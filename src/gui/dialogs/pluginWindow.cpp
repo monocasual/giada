@@ -43,7 +43,8 @@ gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin)
 	set_non_modal();
 
 	m_list = new geLiquidScroll(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN,
-	    w() - (G_GUI_OUTER_MARGIN * 2), h() - (G_GUI_OUTER_MARGIN * 2));
+	    w() - (G_GUI_OUTER_MARGIN * 2), h() - (G_GUI_OUTER_MARGIN * 2),
+	    Direction::VERTICAL);
 
 	m_list->type(Fl_Scroll::VERTICAL_ALWAYS);
 	m_list->begin();

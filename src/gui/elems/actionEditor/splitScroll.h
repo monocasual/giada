@@ -2,11 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gLiquidScroll
- * custom scroll that tells children to follow scroll's width when
- * resized. Thanks to Greg Ercolano from FLTK dev team.
- * http://seriss.com/people/erco/fltk/
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2021 Giovanni A. Zuliani | Monocasual
@@ -29,44 +24,32 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_LIQUID_SCROLL_H
-#define GE_LIQUID_SCROLL_H
+#ifndef GE_SPLITSCROLL_H
+#define GE_SPLITSCROLL_H
 
-#include "core/const.h"
-#include "gui/types.h"
-#include "scroll.h"
+#include "gui/elems/basics/liquidScroll.h"
+#include "gui/elems/basics/scroll.h"
+#include "gui/elems/basics/split.h"
 
 namespace giada::v
 {
-class geLiquidScroll : public geScroll
+class geSplitScroll : public geSplit
 {
 public:
-	geLiquidScroll(int x, int y, int w, int h, Direction d);
+	geSplitScroll(int x, int y, int w, int h);
 
-	void resize(int x, int y, int w, int h) override;
+	int getScrollX() const;
+	int getScrollY() const;
+	int getContentWidth() const;
+	int getTopContentH() const;
 
-	/* addWidget
-    Adds a new widget to the bottom, with proper spacing. */
-
-	template <typename T>
-	T* addWidget(T* wg)
-	{
-		int numChildren = countChildren();
-
-		int wx = x();
-		int wy = y() - yposition() + (numChildren * (wg->h() + G_GUI_INNER_MARGIN));
-		int ww = w() - 24;
-		int wh = wg->h();
-
-		wg->resize(wx, wy, ww, wh);
-		add(wg);
-		redraw();
-
-		return wg;
-	}
+	void addWidgets(Fl_Widget& a, Fl_Widget& b, int topContentH = -1);
+	void setScrollX(int p);
+	void setScrollY(int p);
 
 private:
-	Direction m_direction;
+	geScroll       m_a;
+	geLiquidScroll m_b;
 };
 } // namespace giada::v
 

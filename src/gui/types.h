@@ -24,33 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_NOTE_EDITOR_H
-#define GE_NOTE_EDITOR_H
+#ifndef G_V_TYPES_H
+#define G_V_TYPES_H
 
-#include "core/types.h"
-#include "gui/elems/basics/scroll.h"
-
-namespace giada::c::actionEditor
-{
-struct Data;
-}
 namespace giada::v
 {
-class gdMidiActionEditor;
-class gePianoRoll;
-class geNoteEditor : public geScroll
+enum class Direction
 {
-public:
-	geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base);
-	~geNoteEditor();
-
-	void rebuild(c::actionEditor::Data& d);
-	void scroll();
-
-	gePianoRoll* pianoRoll;
-
-  private:
-	gdMidiActionEditor* m_base;
+	HORIZONTAL,
+	VERTICAL
 };
 } // namespace giada::v
 

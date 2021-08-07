@@ -31,6 +31,7 @@
 #define GE_SCROLL_H
 
 #include <FL/Fl_Scroll.H>
+#include <functional>
 
 class geScroll : public Fl_Scroll
 {
@@ -38,6 +39,15 @@ public:
 	geScroll(int x, int y, int w, int h, int type = Fl_Scroll::BOTH);
 
 	int countChildren() const;
+
+	std::function<void(int)> onScrollV{nullptr};
+	std::function<void(int)> onScrollH{nullptr};
+
+private:
+	static void cb_onScrollV(Fl_Widget* w, void* p);
+	static void cb_onScrollH(Fl_Widget* w, void* p);
+	void        cb_onScrollV();
+	void        cb_onScrollH();
 };
 
 #endif

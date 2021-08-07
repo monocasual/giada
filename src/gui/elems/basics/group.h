@@ -52,14 +52,18 @@ public:
 
 	/* add
     Adds a Fl_Widget 'w' to this group. Coordinates are relative to the group,
-    so origin starts at (0, 0). */
+    so origin starts at (0, 0). As with any other FLTK group, the widget becomes
+	owned by this group: If you add static or automatic (local) variables, then 
+	it is your responsibility to remove (or delete) all such static or automatic
+	child widgets before destroying the group - otherwise the child widgets' 
+	destructors would be called twice! */
 
 	void add(Fl_Widget* w);
 
 	Fl_Widget* getChild(std::size_t i);
 	Fl_Widget* getLastChild();
 
-  private:
+private:
 	/* m_widgets 
     The internal Fl_Scroll::array_ is unreliable when inspected with the child()
     method. Let's keep track of widgets that belong to this group manually. */

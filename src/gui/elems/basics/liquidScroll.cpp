@@ -33,8 +33,11 @@
 #include "boxtypes.h"
 #include "core/const.h"
 
-geLiquidScroll::geLiquidScroll(int x, int y, int w, int h)
-: geScroll(x, y, w, h, Fl_Scroll::VERTICAL_ALWAYS)
+namespace giada::v
+{
+geLiquidScroll::geLiquidScroll(int x, int y, int w, int h, Direction d)
+: geScroll(x, y, w, h, d == Direction::VERTICAL ? Fl_Scroll::VERTICAL_ALWAYS : Fl_Scroll::HORIZONTAL_ALWAYS)
+, m_direction(d)
 {
 }
 
@@ -42,12 +45,16 @@ geLiquidScroll::geLiquidScroll(int x, int y, int w, int h)
 
 void geLiquidScroll::resize(int X, int Y, int W, int H)
 {
-	int nc = children() - 2; // skip hscrollbar and vscrollbar
-	for (int t = 0; t < nc; t++)
-	{ // tell children to resize to our new width
+	const int nc = children() - 2; // skip hscrollbar and vscrollbar
+	for (int t = 0; t < nc; t++)   // tell children to resize to our new width
+	{
 		Fl_Widget* c = child(t);
-		c->resize(c->x(), c->y(), W - 24, c->h()); // W-24: leave room for scrollbar
+		if (m_direction == Direction::VERTICAL)
+			c->resize(c->x(), c->y(), W - 24, c->h()); // -24: leave room for scrollbar
+		else
+			c->resize(c->x(), c->y(), c->w(), H - 24); // -24: leave room for scrollbar
 	}
 	init_sizes(); // tell scroll children changed in size
 	Fl_Scroll::resize(X, Y, W, H);
 }
+} // namespace giada::v

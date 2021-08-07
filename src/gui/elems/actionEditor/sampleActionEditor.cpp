@@ -26,32 +26,23 @@
 
 #include "sampleActionEditor.h"
 #include "core/action.h"
-#include "core/conf.h"
 #include "core/const.h"
 #include "core/recorder.h"
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
+#include "gui/dialogs/actionEditor/sampleActionEditor.h"
 #include "sampleAction.h"
 #include "utils/log.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <cassert>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geSampleActionEditor::geSampleActionEditor(Pixel x, Pixel y, gdBaseActionEditor* b)
-: geBaseActionEditor(x, y, 200, m::conf::conf.sampleActionEditorH, b)
+: geBaseActionEditor(x, y, 200, 40, b)
 {
-}
-
-/* -------------------------------------------------------------------------- */
-
-geSampleActionEditor::~geSampleActionEditor()
-{
-	m::conf::conf.sampleActionEditorH = h();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -101,6 +92,12 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 
 void geSampleActionEditor::draw()
 {
+	/* Force height to match its parent's height. This widget belongs to a 
+	geScroll container (see geSplitScroll class in baseActionEditor.h) but
+	there's nothing to scroll here actually. */
+
+	size(w(), parent()->h());
+
 	/* Draw basic boundaries (+ beat bars) and hide the unused area. Then draw 
 	children (the actions). */
 
@@ -123,7 +120,7 @@ void geSampleActionEditor::draw()
 void geSampleActionEditor::onAddAction()
 {
 	Frame f = m_base->pixelToFrame(Fl::event_x() - x());
-	c::actionEditor::recordSampleAction(m_data->channelId, m_base->getActionType(), f);
+	c::actionEditor::recordSampleAction(m_data->channelId, static_cast<gdSampleActionEditor*>(m_base)->getActionType(), f);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -210,5 +207,4 @@ bool geSampleActionEditor::isNoteOffSinglePress(const m::Action& a)
 	return m_data->sample->channelMode == SamplePlayerMode::SINGLE_PRESS &&
 	       a.event.getStatus() == m::MidiEvent::NOTE_OFF;
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

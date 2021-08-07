@@ -28,31 +28,25 @@
 #define GD_MIDI_ACTION_EDITOR_H
 
 #include "baseActionEditor.h"
+#include "gui/elems/actionEditor/pianoRoll.h"
+#include "gui/elems/actionEditor/velocityEditor.h"
+#include "gui/elems/basics/box.h"
 
-class geResizerBar;
-
-namespace giada
+namespace giada::v
 {
-namespace v
-{
-class geNoteEditor;
-class geVelocityEditor;
-
 class gdMidiActionEditor : public gdBaseActionEditor
 {
 public:
-	gdMidiActionEditor(ID channelId);
+	gdMidiActionEditor(ID channelId, m::conf::Conf& c);
+	~gdMidiActionEditor();
 
 	void rebuild() override;
 
-  private:
-	geNoteEditor* m_ne;
-	geResizerBar* m_ner;
-
-	geVelocityEditor* m_ve;
-	geResizerBar*     m_ver;
+private:
+	geBox            m_barPadding;
+	gePianoRoll      m_pianoRoll;
+	geVelocityEditor m_velocityEditor;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

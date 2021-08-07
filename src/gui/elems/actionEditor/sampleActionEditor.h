@@ -29,28 +29,24 @@
 
 #include "baseActionEditor.h"
 
-namespace giada
+namespace giada::m
 {
-namespace m
-{
-class SampleChannel;
 struct Action;
-} // namespace m
-namespace v
+}
+
+namespace giada::v
 {
 class geSampleAction;
-
 class geSampleActionEditor : public geBaseActionEditor
 {
 public:
 	geSampleActionEditor(Pixel x, Pixel y, gdBaseActionEditor*);
-	~geSampleActionEditor();
 
 	void draw() override;
 
 	void rebuild(c::actionEditor::Data& d) override;
 
-  private:
+private:
 	void onAddAction() override;
 	void onDeleteAction() override;
 	void onMoveAction() override;
@@ -59,7 +55,6 @@ public:
 
 	bool isNoteOffSinglePress(const m::Action& a);
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

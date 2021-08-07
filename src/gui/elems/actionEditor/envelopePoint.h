@@ -30,9 +30,7 @@
 #include "baseAction.h"
 #include "core/recorder.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geEnvelopePoint : public geBaseAction
 {
@@ -43,7 +41,6 @@ public:
 
 	void draw() override;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

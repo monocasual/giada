@@ -51,7 +51,7 @@ public:
 
 	Frame getCellSize() const;
 
-  private:
+private:
 	geChoice* gridType;
 	geCheck*  active;
 

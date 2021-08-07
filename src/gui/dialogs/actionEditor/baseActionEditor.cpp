@@ -29,9 +29,10 @@
 #include "core/clock.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "core/midiEvent.h"
+#include "core/graphics.h"
 #include "glue/channel.h"
 #include "gui/elems/actionEditor/gridTool.h"
+#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/scrollPack.h"
 #include "utils/gui.h"
@@ -39,25 +40,39 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <cassert>
+#include <limits>
 #include <string>
 
-namespace giada
+namespace giada::v
 {
-namespace v
-{
-gdBaseActionEditor::gdBaseActionEditor(ID channelId)
-: gdWindow(640, 284)
+gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::conf::Conf& conf)
+: gdWindow(conf.actionEditorX, conf.actionEditorY, conf.actionEditorW, conf.actionEditorH)
 , channelId(channelId)
-, ratio(G_DEFAULT_ZOOM_RATIO)
+, gridTool(0, 0)
+, zoomInBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm)
+, zoomOutBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm)
+, ratio(conf.actionEditorZoom)
+, m_barTop(0, 0, Direction::HORIZONTAL)
+, m_splitScroll(0, 0, 0, 0)
+, m_conf(conf)
 {
-	using namespace giada::m;
+	end();
 
-	if (conf::conf.actionEditorW)
-	{
-		resize(conf::conf.actionEditorX, conf::conf.actionEditorY,
-		    conf::conf.actionEditorW, conf::conf.actionEditorH);
-		ratio = conf::conf.actionEditorZoom;
-	}
+	m_barTop.position(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN);
+
+	m_splitScroll.resize(
+	    G_GUI_OUTER_MARGIN,
+	    (G_GUI_OUTER_MARGIN * 2) + 20,
+	    w() - G_GUI_OUTER_MARGIN * 2,
+	    h() - (G_GUI_OUTER_MARGIN * 3) - 20);
+
+	zoomInBtn.callback(cb_zoomIn, this);
+	zoomInBtn.copy_tooltip("Zoom in");
+	zoomOutBtn.callback(cb_zoomOut, this);
+	zoomOutBtn.copy_tooltip("Zoom out");
+
+	add(m_barTop);
+	add(m_splitScroll);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -66,11 +81,19 @@ gdBaseActionEditor::~gdBaseActionEditor()
 {
 	using namespace giada::m;
 
-	conf::conf.actionEditorX    = x();
-	conf::conf.actionEditorY    = y();
-	conf::conf.actionEditorW    = w();
-	conf::conf.actionEditorH    = h();
-	conf::conf.actionEditorZoom = ratio;
+	m_conf.actionEditorX      = x();
+	m_conf.actionEditorY      = y();
+	m_conf.actionEditorW      = w();
+	m_conf.actionEditorH      = h();
+	m_conf.actionEditorSplitH = m_splitScroll.getTopContentH();
+	m_conf.actionEditorZoom   = ratio;
+}
+
+/* -------------------------------------------------------------------------- */
+
+int gdBaseActionEditor::getMouseOverContent() const
+{
+	return m_splitScroll.getScrollX() + (Fl::event_x() - G_GUI_OUTER_MARGIN);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -95,18 +118,17 @@ Pixel gdBaseActionEditor::frameToPixel(Frame f) const
 
 Frame gdBaseActionEditor::pixelToFrame(Pixel p, bool snap) const
 {
-	return snap ? gridTool->getSnapFrame(p * ratio) : p * ratio;
+	return snap ? gridTool.getSnapFrame(p * ratio) : p * ratio;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void gdBaseActionEditor::zoomIn()
 {
-	float ratioPrev = ratio;
+	const float ratioPrev = ratio;
 
-	ratio /= 2;
-	if (ratio < MIN_RATIO)
-		ratio = MIN_RATIO;
+	// Explicit type <int> to fix MINMAX macro hell on Windows
+	ratio = std::max<int>(ratio / RATIO_STEP, MIN_RATIO);
 
 	if (ratioPrev != ratio)
 	{
@@ -120,11 +142,10 @@ void gdBaseActionEditor::zoomIn()
 
 void gdBaseActionEditor::zoomOut()
 {
-	float ratioPrev = ratio;
+	const float ratioPrev = ratio;
 
-	ratio *= 2;
-	if (ratio > MAX_RATIO)
-		ratio = MAX_RATIO;
+	// Explicit type <int> to fix MINMAX macro hell on Windows
+	ratio = std::min<int>(ratio * RATIO_STEP, MAX_RATIO);
 
 	if (ratioPrev != ratio)
 	{
@@ -138,31 +159,16 @@ void gdBaseActionEditor::zoomOut()
 
 void gdBaseActionEditor::centerViewportIn()
 {
-	Pixel sx = Fl::event_x() + (viewport->xposition() * 2);
-	viewport->scroll_to(sx, viewport->yposition());
+	Pixel sx = Fl::event_x() + (m_splitScroll.getScroll() * RATIO_STEP);
+	m_splitScroll.setScroll(sx);
 }
 
 void gdBaseActionEditor::centerViewportOut()
 {
-	Pixel sx = -((Fl::event_x() + viewport->xposition()) / 2) + viewport->xposition();
+	Pixel sx = -((Fl::event_x() + m_splitScroll.getScroll()) / RATIO_STEP) + m_splitScroll.getScroll();
 	if (sx < 0)
 		sx = 0;
-	viewport->scroll_to(sx, viewport->yposition());
-}
-
-/* -------------------------------------------------------------------------- */
-
-int gdBaseActionEditor::getActionType() const
-{
-	if (actionType->value() == 0)
-		return m::MidiEvent::NOTE_ON;
-	else if (actionType->value() == 1)
-		return m::MidiEvent::NOTE_OFF;
-	else if (actionType->value() == 2)
-		return m::MidiEvent::NOTE_KILL;
-
-	assert(false);
-	return -1;
+	m_splitScroll.setScroll(sx);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -178,7 +184,7 @@ void gdBaseActionEditor::prepareWindow()
 
 	set_non_modal();
 	size_range(640, 284);
-	resizable(viewport);
+	//resizable(viewport);
 
 	show();
 }
@@ -196,5 +202,20 @@ int gdBaseActionEditor::handle(int e)
 		return Fl_Group::handle(e);
 	}
 }
-} // namespace v
-} // namespace giada
+/* -------------------------------------------------------------------------- */
+
+void gdBaseActionEditor::centerZoom(std::function<int(int)> f)
+{
+	/* Determine how much the point under mouse has changed given the zoom
+	operation (i.e. delta). */
+
+	const int mpre = getMouseOverContent();
+	rebuild();
+	const int mnow = f(getMouseOverContent());
+
+	/* Add that delta to the current scroll position, then redraw to apply. */
+
+	m_splitScroll.setScrollX(m_splitScroll.getScrollX() + (mnow - mpre));
+	redraw();
+}
+} // namespace giada::v
