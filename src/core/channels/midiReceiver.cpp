@@ -38,11 +38,7 @@ namespace
 {
 void sendToPlugins_(const channel::Data& ch, const MidiEvent& e, Frame localFrame)
 {
-	juce::MidiMessage message = juce::MidiMessage(
-	    e.getStatus(),
-	    e.getNote(),
-	    e.getVelocity());
-	ch.buffer->midi.addEvent(message, localFrame);
+	ch.buffer->midiQueue.push(MidiEvent(e.getRaw(), localFrame));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -67,7 +63,6 @@ void react(const channel::Data& ch, const eventDispatcher::Event& e)
 {
 	switch (e.type)
 	{
-
 	case eventDispatcher::EventType::MIDI:
 		parseMidi_(ch, std::get<Action>(e.data).event);
 		break;
@@ -97,8 +92,19 @@ void advance(const channel::Data& ch, const sequencer::Event& e)
 
 void render(const channel::Data& ch)
 {
-	pluginHost::processStack(ch.buffer->audio, ch.plugins, &ch.buffer->midi);
 	ch.buffer->midi.clear();
+
+	MidiEvent e;
+	while (ch.buffer->midiQueue.pop(e))
+	{
+		juce::MidiMessage message = juce::MidiMessage(
+		    e.getStatus(),
+		    e.getNote(),
+		    e.getVelocity());
+		ch.buffer->midi.addEvent(message, e.getDelta());
+	}
+
+	pluginHost::processStack(ch.buffer->audio, ch.plugins, &ch.buffer->midi);
 }
 } // namespace giada::m::midiReceiver
 

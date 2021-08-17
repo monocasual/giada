@@ -41,7 +41,9 @@
 #include "core/channels/samplePlayer.h"
 #include "core/const.h"
 #include "core/eventDispatcher.h"
+#include "core/midiEvent.h"
 #include "core/mixer.h"
+#include "core/queue.h"
 #include "core/resampler.h"
 #include "core/sequencer.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
@@ -78,7 +80,8 @@ struct Buffer
 
 	mcl::AudioBuffer audio;
 #ifdef WITH_VST
-	juce::MidiBuffer midi;
+	juce::MidiBuffer     midi;
+	Queue<MidiEvent, 32> midiQueue;
 #endif
 };
 
