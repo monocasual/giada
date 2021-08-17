@@ -85,7 +85,7 @@ other threads. See below. */
 using EventBuffer = RingBuffer<Event, G_MAX_DISPATCHER_EVENTS * 2>;
 
 /* Event queues
-Collect events coming from the UI or MIDI devices. Our poor's man Queue is a 
+Collect events coming from the UI or MIDI devices. Our poor man's Queue is a 
 single-producer/single-consumer one, so we need two queues for two writers. 
 TODO - let's add a multi-producer queue sooner or later! */
 
