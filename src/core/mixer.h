@@ -138,6 +138,18 @@ Peak getPeakOut();
 Peak getPeakIn();
 
 RecordInfo getRecordInfo();
+
+/* execSignalCb
+Executes the signal callback registered with setSignalCallback(). Called by the 
+Event Dispatcher. */
+
+void execSignalCb();
+
+/* execEndOfRecCb
+Executes the end-of-rec callback registered with setEndOfRecCallback(). Called 
+by the Event Dispatcher. */
+
+void execEndOfRecCb();
 } // namespace giada::m::mixer
 
 #endif

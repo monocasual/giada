@@ -27,6 +27,7 @@
 #include "eventDispatcher.h"
 #include "core/clock.h"
 #include "core/const.h"
+#include "core/midiDispatcher.h"
 #include "core/model/model.h"
 #include "core/sequencer.h"
 #include "core/worker.h"
@@ -51,8 +52,27 @@ void processFuntions_()
 {
 	for (const Event& e : eventBuffer_)
 	{
-		if (e.type == EventType::FUNCTION)
-			std::get<std::function<void()>>(e.data)();
+		switch (e.type)
+		{
+		case EventType::MIDI_DISPATCHER_LEARN:
+			midiDispatcher::learn(std::get<Action>(e.data).event);
+			break;
+
+		case EventType::MIDI_DISPATCHER_PROCESS:
+			midiDispatcher::process(std::get<Action>(e.data).event);
+			break;
+
+		case EventType::MIXER_SIGNAL_CALLBACK:
+			mixer::execSignalCb();
+			break;
+
+		case EventType::MIXER_END_OF_REC_CALLBACK:
+			mixer::execEndOfRecCb();
+			break;
+
+		default:
+			break;
+		}
 	}
 }
 

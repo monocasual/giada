@@ -414,8 +414,8 @@ void clearPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()>
 
 void dispatch(int byte1, int byte2, int byte3)
 {
-	/* Here we want to catch two things: a) note on/note off from a keyboard and 
-	b) knob/wheel/slider movements from a controller. 
+	/* Here we want to catch two things: a) note on/note off from a MIDI keyboard 
+	and b) knob/wheel/slider movements from a MIDI controller. 
 	We must also fix the velocity zero issue for those devices that sends NOTE
 	OFF events as NOTE ON + velocity zero. Let's make it a real NOTE OFF event. */
 
@@ -425,26 +425,31 @@ void dispatch(int byte1, int byte2, int byte3)
 	u::log::print("[midiDispatcher] MIDI received - 0x%X (chan %d)\n", midiEvent.getRaw(),
 	    midiEvent.getChannel());
 
-	/* Start dispatcher. If midi learn is on don't parse channels, just learn 
-	incoming MIDI signal. Learn callback wants 'pure' MIDI event, i.e. with
-	velocity value stripped off. If midi learn is off process master events first, 
-	then each channel in the stack. This way incoming signals don't get processed 
-	by glue_* when MIDI learning is on. */
+	/* Start dispatcher. Don't parse channels if MIDI learn is ON, just learn 
+	the incoming MIDI signal. The action is not invoked directly, but scheduled 
+	to be perfomed by the Event Dispatcher. */
 
-	std::function<void()> f = [midiEvent]() {
-		if (learnCb_ != nullptr)
-		{
-			learnCb_(midiEvent);
-		}
-		else
-		{
-			processMaster_(midiEvent);
-			processChannels_(midiEvent);
-			triggerSignalCb_();
-		}
-	};
+	Action                     action = {0, 0, 0, midiEvent};
+	eventDispatcher::EventType event  = learnCb_ != nullptr ? eventDispatcher::EventType::MIDI_DISPATCHER_LEARN : eventDispatcher::EventType::MIDI_DISPATCHER_PROCESS;
 
-	eventDispatcher::pumpMidiEvent({eventDispatcher::EventType::FUNCTION, 0, 0, f});
+	eventDispatcher::pumpMidiEvent({event, 0, 0, action});
+}
+
+/* -------------------------------------------------------------------------- */
+
+void learn(const MidiEvent& e)
+{
+	assert(learnCb_ != nullptr);
+	learnCb_(e);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void process(const MidiEvent& e)
+{
+	processMaster_(e);
+	processChannels_(e);
+	triggerSignalCb_();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -45,7 +45,21 @@ void startPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()>
 void clearPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f);
 #endif
 
+/* dispatch
+Main callback invoked by kernelMidi whenever a new MIDI data comes in. */
+
 void dispatch(int byte1, int byte2, int byte3);
+
+/* learn
+Learns event 'e'. Called by the Event Dispatcher. */
+
+void learn(const MidiEvent& e);
+
+/* process
+Sends event 'e' to channels (masters and keyboard). Called by the Event 
+Dispatcher. */
+
+void process(const MidiEvent& e);
 
 void setSignalCallback(std::function<void()> f);
 } // namespace giada::m::midiDispatcher

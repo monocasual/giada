@@ -53,6 +53,10 @@ enum class EventType
 	SEQUENCER_STOP,
 	SEQUENCER_REWIND,
 	MIDI,
+	MIDI_DISPATCHER_LEARN,
+	MIDI_DISPATCHER_PROCESS,
+	MIXER_SIGNAL_CALLBACK,
+	MIXER_END_OF_REC_CALLBACK,
 	CHANNEL_TOGGLE_READ_ACTIONS,
 	CHANNEL_KILL_READ_ACTIONS,
 	CHANNEL_TOGGLE_ARM,
@@ -60,18 +64,17 @@ enum class EventType
 	CHANNEL_SOLO,
 	CHANNEL_VOLUME,
 	CHANNEL_PITCH,
-	CHANNEL_PAN,
-	FUNCTION
+	CHANNEL_PAN
 };
 
-using EventData = std::variant<int, float, Action, std::function<void()>>;
+using EventData = std::variant<int, float, Action>;
 
 struct Event
 {
 	EventType type;
 	Frame     delta     = 0;
 	ID        channelId = 0;
-	EventData data;
+	EventData data      = {};
 };
 
 /* EventBuffer

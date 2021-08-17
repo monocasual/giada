@@ -86,10 +86,7 @@ model:: that the realtime thread cannot perform directly. */
 
 void fireSignalCb_()
 {
-	eventDispatcher::pumpUIevent({eventDispatcher::EventType::FUNCTION, 0, 0, []() {
-		                              signalCb_();
-		                              signalCb_ = nullptr;
-	                              }});
+	eventDispatcher::pumpUIevent({eventDispatcher::EventType::MIXER_SIGNAL_CALLBACK});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -99,10 +96,7 @@ Same rationale of fireSignalCb_, for the endOfRecCb_ callback. */
 
 void fireEndOfRecCb_()
 {
-	eventDispatcher::pumpUIevent({eventDispatcher::EventType::FUNCTION, 0, 0, []() {
-		                              endOfRecCb_();
-		                              endOfRecCb_ = nullptr;
-	                              }});
+	eventDispatcher::pumpUIevent({eventDispatcher::EventType::MIXER_END_OF_REC_CALLBACK});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -409,5 +403,21 @@ Peak getPeakIn()
 RecordInfo getRecordInfo()
 {
 	return {inputTracker_, recBuffer_.countFrames()};
+}
+
+/* -------------------------------------------------------------------------- */
+
+void execSignalCb()
+{
+	signalCb_();
+	signalCb_ = nullptr;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void execEndOfRecCb()
+{
+	endOfRecCb_();
+	endOfRecCb_ = nullptr;
 }
 } // namespace giada::m::mixer
