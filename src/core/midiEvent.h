@@ -46,14 +46,14 @@ public:
 
 	MidiEvent() = default;
 
-	MidiEvent(uint32_t raw);
-	MidiEvent(int byte1, int byte2, int byte3);
+	MidiEvent(uint32_t raw, int delta = 0);
+	MidiEvent(int byte1, int byte2, int byte3, int delta = 0);
 
 	/* MidiEvent (4)
 	A constructor that takes a float parameter. Useful to build ENVELOPE events 
 	for automations, volume and pitch. */
 
-	MidiEvent(float v);
+	MidiEvent(float v, int delta = 0);
 
 	int   getStatus() const;
 	int   getChannel() const;
@@ -83,7 +83,7 @@ public:
 
 	void fixVelocityZero();
 
-  private:
+private:
 	int m_status;
 	int m_channel;
 	int m_note;

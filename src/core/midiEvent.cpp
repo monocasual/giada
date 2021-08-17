@@ -42,27 +42,27 @@ constexpr int FLOAT_FACTOR = 10000;
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-MidiEvent::MidiEvent(uint32_t raw)
+MidiEvent::MidiEvent(uint32_t raw, int delta)
 : m_status((raw & 0xF0000000) >> 24)
 , m_channel((raw & 0x0F000000) >> 24)
 , m_note((raw & 0x00FF0000) >> 16)
 , m_velocity((raw & 0x0000FF00) >> 8)
-, m_delta(0) // not used
+, m_delta(delta)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
 /* static_cast to avoid ambiguity with MidiEvent(float). */
-MidiEvent::MidiEvent(int byte1, int byte2, int byte3)
-: MidiEvent(static_cast<uint32_t>((byte1 << 24) | (byte2 << 16) | (byte3 << 8) | (0x00)))
+MidiEvent::MidiEvent(int byte1, int byte2, int byte3, int delta)
+: MidiEvent(static_cast<uint32_t>((byte1 << 24) | (byte2 << 16) | (byte3 << 8) | (0x00)), delta)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-MidiEvent::MidiEvent(float v)
-: MidiEvent(ENVELOPE, 0, 0)
+MidiEvent::MidiEvent(float v, int delta)
+: MidiEvent(ENVELOPE, 0, 0, delta)
 {
 	m_velocity = static_cast<int>(v * FLOAT_FACTOR);
 }
