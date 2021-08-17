@@ -30,9 +30,7 @@
 #include <array>
 #include <atomic>
 
-namespace giada
-{
-namespace m
+namespace giada::m
 {
 /* Queue
 Single producer, single consumer lock-free queue. */
@@ -48,6 +46,9 @@ public:
 	}
 
 	Queue(const Queue&) = delete;
+	Queue(Queue&&)      = delete;
+	Queue& operator=(const Queue&) = delete;
+	Queue& operator=(Queue&&) = delete;
 
 	bool pop(T& item)
 	{
@@ -73,7 +74,7 @@ public:
 		return true;
 	}
 
-  private:
+private:
 	std::size_t increment(std::size_t i) const
 	{
 		return (i + 1) % size;
@@ -83,7 +84,6 @@ public:
 	std::atomic<std::size_t> m_head;
 	std::atomic<std::size_t> m_tail;
 };
-} // namespace m
-} // namespace giada
+} // namespace giada::m
 
 #endif
