@@ -45,7 +45,7 @@ uint32_t getIValue(int b1, int b2, int b3);
 
 /* send
 Sends a MIDI message 's' as uint32_t or as separate bytes. */
-
+void send_thru(int b1,int b2,int b3);
 void send(uint32_t s);
 void send(int b1, int b2 = -1, int b3 = -1);
 

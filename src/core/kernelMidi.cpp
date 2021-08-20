@@ -221,6 +221,12 @@ std::string getInPortName(unsigned p)
 
 /* -------------------------------------------------------------------------- */
 
+void send_thru(int b1, int b2, int b3)
+{
+	midiOut_->sendMessage(b1,b2,b3);
+	u::log::print("[KM::send] sending thru=(%X %X %X)\n", b1, b2, b3);
+}
+
 void send(uint32_t data)
 {
 	if (!status_)

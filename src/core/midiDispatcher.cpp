@@ -425,6 +425,8 @@ void dispatch(int byte1, int byte2, int byte3)
 	u::log::print("[midiDispatcher] MIDI received - 0x%X (chan %d)\n", midiEvent.getRaw(),
 	    midiEvent.getChannel());
 
+	// can I get the armed ch/ch's to put instead of 144 ? 
+	kernelMidi::send_thru(144,byte2,byte3);
 	/* Start dispatcher. Don't parse channels if MIDI learn is ON, just learn 
 	the incoming MIDI signal. The action is not invoked directly, but scheduled 
 	to be perfomed by the Event Dispatcher. */
