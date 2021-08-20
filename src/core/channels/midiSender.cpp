@@ -45,7 +45,9 @@ void parseActions_(const channel::Data& ch, const std::vector<Action>& as)
 {
 	for (const Action& a : as)
 		if (a.channelId == ch.id)
-			send_(ch, a.event);
+			if (ch.isPlaying() && !ch.isMuted() )//|| ch.isArmed())
+				send_(ch, a.event);
+			
 }
 } // namespace
 
@@ -67,7 +69,8 @@ void react(const channel::Data& ch, const eventDispatcher::Event& e)
 		return;
 
 	if (e.type == eventDispatcher::EventType::KEY_KILL ||
-	    e.type == eventDispatcher::EventType::SEQUENCER_STOP)
+	    e.type == eventDispatcher::EventType::SEQUENCER_STOP ||
+		e.type == eventDispatcher::EventType::CHANNEL_MUTE)
 		send_(ch, MidiEvent(G_MIDI_ALL_NOTES_OFF));
 }
 
@@ -81,3 +84,4 @@ void advance(const channel::Data& ch, const sequencer::Event& e)
 		parseActions_(ch, *e.actions);
 }
 } // namespace giada::m::midiSender
+

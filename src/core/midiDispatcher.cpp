@@ -459,3 +459,4 @@ void setSignalCallback(std::function<void()> f)
 	signalCb_ = f;
 }
 } // namespace giada::m::midiDispatcher
+
