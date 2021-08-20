@@ -3,7 +3,7 @@
 /cmake-*
 .clang*
 /.vscode/
-
+/build/
 # Vim
 Session.vim
 *~
