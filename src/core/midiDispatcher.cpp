@@ -39,7 +39,7 @@
 #include "utils/math.h"
 #include <cassert>
 #include <vector>
-
+#include "core/kernelMidi.h"
 namespace giada::m::midiDispatcher
 {
 namespace
