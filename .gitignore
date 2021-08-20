@@ -1,7 +1,7 @@
 # CLion
 /.idea/
 /cmake-*
-
+.clang*
 /.vscode/
 
 # Vim
