@@ -10,3 +10,9 @@ Session.vim
 *.swp
 *.swo
 .netrwhist
+
+# freeze deps
+/src/deps/
+
+#Freeze CMakeList
+CMakeLists.txt

@@ -82,7 +82,7 @@ void react(const channel::Data& ch, const eventDispatcher::Event& e)
 
 void advance(const channel::Data& ch, const sequencer::Event& e)
 {
-	if (e.type == sequencer::EventType::ACTIONS && ch.isPlaying())
+	if (e.type == sequencer::EventType::ACTIONS && ch.isPlaying() && !ch.isMuted() && ch.isReadingActions())
 		for (const Action& action : *e.actions)
 			if (action.channelId == ch.id)
 				sendToPlugins_(ch, action.event, e.delta);

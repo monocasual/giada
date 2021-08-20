@@ -1,0 +1,7 @@
+/home/patch/giada/build/CMakeFiles/install/strip.dir
+/home/patch/giada/build/CMakeFiles/edit_cache.dir
+/home/patch/giada/build/CMakeFiles/giada.dir
+/home/patch/giada/build/CMakeFiles/rebuild_cache.dir
+/home/patch/giada/build/CMakeFiles/list_install_components.dir
+/home/patch/giada/build/CMakeFiles/install.dir
+/home/patch/giada/build/CMakeFiles/install/local.dir

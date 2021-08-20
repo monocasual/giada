@@ -12,7 +12,7 @@
 	url = https://github.com/monocasual/rtaudio.git
 [submodule "src/deps/geompp"]
 	path = src/deps/geompp
-	url = git@github.com:monocasual/geompp.git
+	url = https://github.com/monocasual/geompp.git
 [submodule "src/deps/mcl-audio-buffer"]
 	path = src/deps/mcl-audio-buffer
-	url = git@github.com:monocasual/mcl-audio-buffer.git
+	url = https://github.com/monocasual/mcl-audio-buffer.git
