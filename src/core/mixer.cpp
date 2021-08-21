@@ -79,10 +79,10 @@ bool signalCbFired_ = false;
 /* -------------------------------------------------------------------------- */
 
 /* fireSignalCb_
-Invokes the signal callback. This is done by pumping a FUNCTION event to the
-event dispatcher, rather than invoking the callback directly. This is done on
-purpose: the callback might (and surely will) contain blocking stuff from 
-model:: that the realtime thread cannot perform directly. */
+Invokes the signal callback. This is done by pumping a MIXER_SIGNAL_CALLBACK
+event to the event dispatcher, rather than invoking the callback directly. This 
+is done on purpose: the callback might (and surely will) contain blocking stuff 
+from model:: that the realtime thread cannot perform directly. */
 
 void fireSignalCb_()
 {
