@@ -164,11 +164,14 @@ void processChannels_(const MidiEvent& midiEvent)
 		/* Process learned plugins parameters. */
 		processPlugins_(c.plugins, midiEvent);
 #endif
-
 		/* Redirect raw MIDI message (pure + velocity) to plug-ins in armed
 		channels. */
-		if (c.armed)
+
+		if (c.armed){
+			// u::log::print("ARMED : %X (chan %d)\n", c.id);
+			// set_thruMonitor(c.id);
 			c::events::sendMidiToChannel(c.id, midiEvent, Thread::MIDI);
+		}
 	}
 }
 
@@ -411,6 +414,12 @@ void clearPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()>
 #endif
 
 /* -------------------------------------------------------------------------- */
+int thruMonitorCh = 144;
+
+void set_thruMonitor(int thruCh){
+	thruMonitorCh = thruCh;
+	u::log::print("thruMonitor Ch %X \n", thruCh);
+}
 
 void dispatch(int byte1, int byte2, int byte3)
 {
@@ -426,7 +435,7 @@ void dispatch(int byte1, int byte2, int byte3)
 	    midiEvent.getChannel());
 
 	// can I get the armed ch/ch's to put instead of 144 ? 
-	kernelMidi::send_thru(144,byte2,byte3);
+	kernelMidi::send_thru(thruMonitorCh,byte2,byte3);
 	/* Start dispatcher. Don't parse channels if MIDI learn is ON, just learn 
 	the incoming MIDI signal. The action is not invoked directly, but scheduled 
 	to be perfomed by the Event Dispatcher. */

@@ -223,11 +223,18 @@ std::string getInPortName(unsigned p)
 
 void send_thru(int b1, int b2, int b3)
 {
-	std::vector<unsigned char> msg(1, getB1(b1));
-	msg.push_back(getB2(b2));
-	msg.push_back(getB3(b3));
-	midiOut_->sendMessage(&msgs);
-	u::log::print("[KM::send] sending thru=(%X %X %X)\n", b1, b2, b3);
+	if (!status_)
+		return;
+
+	std::vector<unsigned char> msg(1, b1);
+
+	if (b2 != -1)
+		msg.push_back(b2);
+	if (b3 != -1)
+		msg.push_back(b3);
+
+	midiOut_->sendMessage(&msg);
+	u::log::print("[KM::send] send THRU=(%X %X %X)\n", b1, b2, b3);
 }
 
 void send(uint32_t data)

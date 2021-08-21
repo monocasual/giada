@@ -45,6 +45,7 @@ void startPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()>
 void clearPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f);
 #endif
 
+void set_thruMonitor (int thruCh) ;
 /* dispatch
 Main callback invoked by kernelMidi whenever a new MIDI data comes in. */
 

@@ -45,8 +45,8 @@ namespace giada::c::recorder
 {
 void clearAllActions(ID channelId)
 {
-	if (!v::gdConfirmWin("Warning", "Clear all actions: are you sure?"))
-		return;
+	// if (!v::gdConfirmWin("Warning", "Clear all actions: are you sure?"))
+	// 	return;
 	m::recorder::clearChannel(channelId);
 	updateChannel(channelId, /*updateActionEditor=*/true);
 }
@@ -65,8 +65,8 @@ void clearVolumeActions(ID channelId)
 
 void clearStartStopActions(ID channelId)
 {
-	if (!v::gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
-		return;
+	// if (!v::gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
+	// 	return;
 	m::recorder::clearActions(channelId, m::MidiEvent::NOTE_ON);
 	m::recorder::clearActions(channelId, m::MidiEvent::NOTE_OFF);
 	m::recorder::clearActions(channelId, m::MidiEvent::NOTE_KILL);

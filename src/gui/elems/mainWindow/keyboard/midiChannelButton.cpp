@@ -47,7 +47,7 @@ void geMidiChannelButton::refresh()
 
 	if (m_channel.isRecordingAction() && m_channel.isArmed())
 		setActionRecordMode();
-
+		
 	redraw();
 }
 

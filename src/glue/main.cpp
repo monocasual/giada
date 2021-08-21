@@ -197,8 +197,8 @@ void clearAllSamples()
 
 void clearAllActions()
 {
-	if (!v::gdConfirmWin("Warning", "Clear all actions: are you sure?"))
-		return;
+	// if (!v::gdConfirmWin("Warning", "Clear all actions: are you sure?"))
+	// 	return;
 	G_MainWin->delSubWindow(WID_ACTION_EDITOR);
 	m::recorderHandler::clearAllActions();
 }
@@ -238,8 +238,8 @@ void toggleFreeInputRec()
 
 void closeProject()
 {
-	if (!v::gdConfirmWin("Warning", "Close project: are you sure?"))
-		return;
+	// if (!v::gdConfirmWin("Warning", "Close project: are you sure?"))
+	// 	return;
 	m::init::reset();
 	m::mixer::enable();
 }

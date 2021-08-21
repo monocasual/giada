@@ -254,8 +254,7 @@ void gdMidiInputChannel::cb_veloAsVol()
 
 void gdMidiInputChannel::cb_setChannel()
 {
-	c::io::channel_setMidiInputFilter(m_data.channelId,
-	    m_channel->value() == 0 ? -1 : m_channel->value() - 1);
+	c::io::channel_setMidiInputFilter(m_data.channelId, m_channel->value() == 0 ? -1 : m_channel->value() - 1);
 }
 } // namespace v
 } // namespace giada
