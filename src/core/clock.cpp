@@ -28,7 +28,6 @@
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/kernelAudio.h"
-#include "core/kernelMidi.h"
 #include "core/mixerHandler.h"
 #include "core/model/model.h"
 #include "core/recorderHandler.h"
@@ -222,18 +221,9 @@ void setStatus(ClockStatus s)
 	model::swap(model::SwapType::SOFT);
 
 	if (s == ClockStatus::RUNNING)
-	{
-		if (conf::conf.midiSync == MIDI_SYNC_CLOCK_M)
-		{
-			kernelMidi::send(MIDI_START, -1, -1);
-			kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
-		}
-	}
+		sync::sendMIDIstart();
 	else if (s == ClockStatus::STOPPED)
-	{
-		if (conf::conf.midiSync == MIDI_SYNC_CLOCK_M)
-			kernelMidi::send(MIDI_STOP, -1, -1);
-	}
+		sync::sendMIDIstop();
 }
 
 /* -------------------------------------------------------------------------- */

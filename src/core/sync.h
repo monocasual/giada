@@ -48,6 +48,9 @@ Rewinds timecode to beat 0 and also send a MTC full frame to cue the slave. */
 
 void sendMIDIrewind();
 
+void sendMIDIstart();
+void sendMIDIstop();
+
 #ifdef WITH_AUDIO_JACK
 
 /* recvJackSync

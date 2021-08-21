@@ -173,6 +173,25 @@ void sendMIDIrewind()
 
 /* -------------------------------------------------------------------------- */
 
+void sendMIDIstart()
+{
+	if (conf::conf.midiSync == MIDI_SYNC_CLOCK_M)
+	{
+		kernelMidi::send(MIDI_START, -1, -1);
+		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void sendMIDIstop()
+{
+	if (conf::conf.midiSync == MIDI_SYNC_CLOCK_M)
+		kernelMidi::send(MIDI_STOP, -1, -1);
+}
+
+/* -------------------------------------------------------------------------- */
+
 #ifdef WITH_AUDIO_JACK
 
 void recvJackSync(const kernelAudio::JackState& state)
