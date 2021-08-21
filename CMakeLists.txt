@@ -54,6 +54,7 @@ list(APPEND SOURCES
 	src/core/recorder.cpp
 	src/core/mixer.cpp
 	src/core/clock.cpp
+	src/core/sync.cpp
 	src/core/waveManager.cpp
 	src/core/recManager.cpp
 	src/core/midiLearnParam.cpp

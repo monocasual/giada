@@ -31,27 +31,12 @@
 
 namespace giada::m::clock
 {
-void init(int sampleRate, float midiTCfps);
+void init();
 
 /* recomputeFrames
 Updates bpm, frames, beats and so on. */
 
 void recomputeFrames();
-
-/* sendMIDIsync
-Generates MIDI sync output data. */
-/*TODO - move this to giada::m::sync*/
-void sendMIDIsync();
-
-/* sendMIDIrewind
-Rewinds timecode to beat 0 and also send a MTC full frame to cue the slave. */
-/*TODO - move this to giada::m::sync*/
-void sendMIDIrewind();
-
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
-/*TODO - move this to giada::m::sync*/
-void recvJackSync();
-#endif
 
 float       getBpm();
 int         getBeats();

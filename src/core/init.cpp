@@ -52,6 +52,7 @@
 #include "core/recorder.h"
 #include "core/recorderHandler.h"
 #include "core/sequencer.h"
+#include "core/sync.h"
 #include "core/wave.h"
 #include "core/waveManager.h"
 #include "deps/json/single_include/nlohmann/json.hpp"
@@ -104,7 +105,8 @@ void initSystem_()
 void initAudio_()
 {
 	kernelAudio::openDevice();
-	clock::init(conf::conf.samplerate, conf::conf.midiTCfps);
+	clock::init();
+	sync::init(conf::conf.samplerate, conf::conf.midiTCfps);
 	mh::init();
 	sequencer::init();
 	recorder::init();
@@ -259,7 +261,8 @@ void reset()
 	model::init();
 	channelManager::init();
 	waveManager::init();
-	clock::init(conf::conf.samplerate, conf::conf.midiTCfps);
+	clock::init();
+	sync::init(conf::conf.samplerate, conf::conf.midiTCfps);
 	mh::init();
 	sequencer::init();
 	recorder::init();

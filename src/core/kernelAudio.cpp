@@ -33,6 +33,7 @@
 #include "core/mixerHandler.h"
 #include "core/model/model.h"
 #include "core/recManager.h"
+#include "core/sync.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "deps/rtaudio/RtAudio.h"
 #include "glue/main.h"
@@ -148,7 +149,7 @@ int callback_(void* outBuf, void* inBuf, unsigned bufferSize, double /*streamTim
 
 #ifdef WITH_AUDIO_JACK
 	if (getAPI() == G_SYS_API_JACK)
-		clock::recvJackSync();
+		sync::recvJackSync(jackTransportQuery());
 #endif
 
 	mixer::RenderInfo info;
