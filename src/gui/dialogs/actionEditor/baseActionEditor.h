@@ -64,7 +64,6 @@ public:
 	geButton   zoomInBtn;
 	geButton   zoomOutBtn;
 
-	float ratio;
 	Pixel fullWidth; // Full widgets width, i.e. scaled-down full sequencer
 	Pixel loopWidth; // Loop width, i.e. scaled-down sequencer range
 
@@ -95,12 +94,6 @@ protected:
 
 	void prepareWindow();
 
-	/* centerZoom
-	Centers zoom on cursor. Wants a function to apply the new position given
-	the new zoom ratio. */
-
-	void centerZoom(std::function<int(int)> f);
-
 	gePack        m_barTop;
 	geSplitScroll m_splitScroll;
 
@@ -110,9 +103,16 @@ protected:
 private:
 	void refresh() override;
 
+	/* zoomAbout
+	Zooms and centers the viewport around the mouse cursor. Wants a function to 
+	apply to the current ratio. */
+
+	void zoomAbout(std::function<float()> f);
+
 	Pixel currentFrameToPixel() const;
 
 	Pixel m_playhead;
+	float m_ratio;
 };
 } // namespace giada::v
 #endif

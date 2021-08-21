@@ -52,11 +52,11 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::conf::Conf& conf)
 , gridTool(0, 0)
 , zoomInBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm)
 , zoomOutBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm)
-, ratio(conf.actionEditorZoom)
 , m_barTop(0, 0, Direction::HORIZONTAL)
 , m_splitScroll(0, 0, 0, 0)
 , m_conf(conf)
 , m_playhead(0)
+, m_ratio(conf.actionEditorZoom)
 {
 	end();
 
@@ -88,7 +88,7 @@ gdBaseActionEditor::~gdBaseActionEditor()
 	m_conf.actionEditorW      = w();
 	m_conf.actionEditorH      = h();
 	m_conf.actionEditorSplitH = m_splitScroll.getTopContentH();
-	m_conf.actionEditorZoom   = ratio;
+	m_conf.actionEditorZoom   = m_ratio;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -115,38 +115,28 @@ void gdBaseActionEditor::computeWidth()
 
 Pixel gdBaseActionEditor::frameToPixel(Frame f) const
 {
-	return f / ratio;
+	return f / m_ratio;
 }
 
 Frame gdBaseActionEditor::pixelToFrame(Pixel p, bool snap) const
 {
-	return snap ? gridTool.getSnapFrame(p * ratio) : p * ratio;
+	return snap ? gridTool.getSnapFrame(p * m_ratio) : p * m_ratio;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void gdBaseActionEditor::zoomIn()
 {
-	const float ratioPrev = ratio;
-
-	// Explicit type <int> to fix MINMAX macro hell on Windows
-	ratio = std::max<int>(ratio / RATIO_STEP, MIN_RATIO);
-
-	if (ratioPrev != ratio)
-		centerZoom([](int pos) { return pos * RATIO_STEP; });
+	// Explicit type std::max<int> to fix MINMAX macro hell on Windows
+	zoomAbout([&r = m_ratio]() { return std::max<int>(r / RATIO_STEP, MIN_RATIO); });
 }
 
 /* -------------------------------------------------------------------------- */
 
 void gdBaseActionEditor::zoomOut()
 {
-	const float ratioPrev = ratio;
-
-	// Explicit type <int> to fix MINMAX macro hell on Windows
-	ratio = std::min<int>(ratio * RATIO_STEP, MAX_RATIO);
-
-	if (ratioPrev != ratio)
-		centerZoom([](int pos) { return pos / RATIO_STEP; });
+	// Explicit type std::max<int> to fix MINMAX macro hell on Windows
+	zoomAbout([&r = m_ratio]() { return std::min<int>(r * RATIO_STEP, MAX_RATIO); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -195,17 +185,22 @@ void gdBaseActionEditor::draw()
 
 /* -------------------------------------------------------------------------- */
 
-void gdBaseActionEditor::centerZoom(std::function<int(int)> f)
+void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 {
-	/* Determine how much the point under mouse has changed given the zoom
-	operation (i.e. delta). */
+	const float ratioPrev = m_ratio;
+
+	m_ratio = f();
+
+	/* 1. Store the current x-position, then the new x-position affcted by the
+	zoom change. */
 
 	const int mpre = getMouseOverContent();
+	const int mnow = mpre / (m_ratio / ratioPrev);
+
+	/* 2. Rebuild everything and adjust scrolling given the change occured in
+	the x-position. This effectively centers the view on the mouse cursor. */
+
 	rebuild();
-	const int mnow = f(getMouseOverContent());
-
-	/* Add that delta to the current scroll position, then redraw to apply. */
-
 	m_splitScroll.setScrollX(m_splitScroll.getScrollX() + (mnow - mpre));
 	redraw();
 }
