@@ -214,7 +214,14 @@ void gdBaseActionEditor::centerZoom(std::function<int(int)> f)
 
 void gdBaseActionEditor::refresh()
 {
-	m_playhead = (frameToPixel(m_data.getCurrentFrame()) + m_splitScroll.x()) - m_splitScroll.getScrollX();
+	m_playhead = m_data.isChannelPlaying() ? currentFrameToPixel() : 0;
 	redraw();
+}
+
+/* -------------------------------------------------------------------------- */
+
+Pixel gdBaseActionEditor::currentFrameToPixel() const
+{
+	return (frameToPixel(m_data.getCurrentFrame()) + m_splitScroll.x()) - m_splitScroll.getScrollX();
 }
 } // namespace giada::v

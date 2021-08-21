@@ -63,6 +63,7 @@ struct Data
 	Data(const m::channel::Data&);
 
 	Frame getCurrentFrame() const;
+	bool  isChannelPlaying() const;
 
 	ID                     channelId;
 	std::string            channelName;

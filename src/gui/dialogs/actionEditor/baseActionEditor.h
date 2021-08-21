@@ -110,6 +110,8 @@ protected:
 private:
 	void refresh() override;
 
+	Pixel currentFrameToPixel() const;
+
 	Pixel m_playhead;
 };
 } // namespace giada::v
