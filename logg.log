@@ -1,0 +1,923 @@
+Scanning dependencies of target giada
+[  0%] Building CXX object CMakeFiles/giada.dir/src/main.cpp.o
+[  1%] Building CXX object CMakeFiles/giada.dir/src/core/worker.cpp.o
+[  1%] Building CXX object CMakeFiles/giada.dir/src/core/eventDispatcher.cpp.o
+[  2%] Building CXX object CMakeFiles/giada.dir/src/core/midiDispatcher.cpp.o
+[  2%] Building CXX object CMakeFiles/giada.dir/src/core/midiMapConf.cpp.o
+In file included from /usr/include/c++/8/vector:69,
+                 from /home/patch/dev/giada/src/core/midiMapConf.h:31,
+                 from /home/patch/dev/giada/src/core/midiMapConf.cpp:27:
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {nlohmann::basic_json<std::map, std::vector, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, long long int, long long unsigned int, double, std::allocator, nlohmann::adl_serializer, std::vector<unsigned char, std::allocator<unsigned char> > >}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+       vector<_Tp, _Alloc>::
+       ^~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘std::vector<_Tp, _Alloc>::reference std::vector<_Tp, _Alloc>::emplace_back(_Args&& ...) [with _Args = {nlohmann::basic_json<std::map, std::vector, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, long long int, long long unsigned int, double, std::allocator, nlohmann::adl_serializer, std::vector<unsigned char, std::allocator<unsigned char> > >}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/8/map:60,
+                 from /home/patch/dev/giada/src/deps/json/single_include/nlohmann/json.hpp:61,
+                 from /home/patch/dev/giada/src/core/midiMapConf.cpp:29:
+/usr/include/c++/8/bits/stl_tree.h: In member function ‘std::pair<std::_Rb_tree_node_base*, std::_Rb_tree_node_base*> std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::_M_get_insert_hint_unique_pos(std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::const_iterator, const key_type&) [with _Key = std::__cxx11::basic_string<char>; _Val = std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >; _KeyOfValue = std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >; _Compare = std::less<void>; _Alloc = std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >]’:
+/usr/include/c++/8/bits/stl_tree.h:2146:5: note: parameter passing for argument of type ‘std::_Rb_tree<std::__cxx11::basic_string<char>, std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >, std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >, std::less<void>, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > > >::const_iterator’ {aka ‘std::_Rb_tree_const_iterator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >’} changed in GCC 7.1
+     _Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/stl_tree.h: In member function ‘std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::iterator std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::_M_emplace_hint_unique(std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::const_iterator, _Args&& ...) [with _Args = {const std::piecewise_construct_t&, std::tuple<const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&>, std::tuple<>}; _Key = std::__cxx11::basic_string<char>; _Val = std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >; _KeyOfValue = std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >; _Compare = std::less<void>; _Alloc = std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >]’:
+/usr/include/c++/8/bits/stl_tree.h:2411:7: note: parameter passing for argument of type ‘std::_Rb_tree<std::__cxx11::basic_string<char>, std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >, std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >, std::less<void>, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > > >::const_iterator’ {aka ‘std::_Rb_tree_const_iterator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >’} changed in GCC 7.1
+       _Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/8/map:61,
+                 from /home/patch/dev/giada/src/deps/json/single_include/nlohmann/json.hpp:61,
+                 from /home/patch/dev/giada/src/core/midiMapConf.cpp:29:
+/usr/include/c++/8/bits/stl_map.h: In member function ‘std::map<_Key, _Tp, _Compare, _Alloc>::mapped_type& std::map<_Key, _Tp, _Compare, _Alloc>::operator[](const key_type&) [with _Key = std::__cxx11::basic_string<char>; _Tp = nlohmann::basic_json<>; _Compare = std::less<void>; _Alloc = std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >]’:
+/usr/include/c++/8/bits/stl_map.h:499:8: note: parameter passing for argument of type ‘std::_Rb_tree<std::__cxx11::basic_string<char>, std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >, std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >, std::less<void>, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > > >::const_iterator’ {aka ‘std::_Rb_tree_const_iterator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >’} changed in GCC 7.1
+    __i = _M_t._M_emplace_hint_unique(__i, std::piecewise_construct,
+In file included from /usr/include/c++/8/vector:69,
+                 from /home/patch/dev/giada/src/core/midiMapConf.h:31,
+                 from /home/patch/dev/giada/src/core/midiMapConf.cpp:27:
+/usr/include/c++/8/bits/vector.tcc: In member function ‘std::vector<_Tp, _Alloc>::iterator std::vector<_Tp, _Alloc>::_M_erase(std::vector<_Tp, _Alloc>::iterator) [with _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:159:5: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+     vector<_Tp, _Alloc>::
+     ^~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/8/vector:64,
+                 from /home/patch/dev/giada/src/core/midiMapConf.h:31,
+                 from /home/patch/dev/giada/src/core/midiMapConf.cpp:27:
+/usr/include/c++/8/bits/stl_vector.h: In member function ‘IteratorType nlohmann::basic_json<ObjectType, ArrayType, StringType, BooleanType, NumberIntegerType, NumberUnsignedType, NumberFloatType, AllocatorType, JSONSerializer, BinaryType>::erase(IteratorType) [with IteratorType = nlohmann::detail::iter_impl<nlohmann::basic_json<> >; typename std::enable_if<(std::is_same<InputIT, nlohmann::detail::iter_impl<nlohmann::basic_json<ObjectType, ArrayType, StringType, BooleanType, NumberIntegerType, NumberUnsignedType, NumberFloatType, AllocatorType, JSONSerializer, BinaryType> > >::value || std::is_same<InputIT, nlohmann::detail::iter_impl<const nlohmann::basic_json<ObjectType, ArrayType, StringType, BooleanType, NumberIntegerType, NumberUnsignedType, NumberFloatType, AllocatorType, JSONSerializer, BinaryType> > >::value), int>::type <anonymous> = 0; ObjectType = std::map; ArrayType = std::vector; StringType = std::__cxx11::basic_string<char>; BooleanType = bool; NumberIntegerType = long long int; NumberUnsignedType = long long unsigned int; NumberFloatType = double; AllocatorType = std::allocator; JSONSerializer = nlohmann::adl_serializer; BinaryType = std::vector<unsigned char>]’:
+/usr/include/c++/8/bits/stl_vector.h:1318:58: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+       { return _M_erase(begin() + (__position - cbegin())); }
+                                                          ^
+In file included from /usr/include/c++/8/vector:69,
+                 from /home/patch/dev/giada/src/core/midiMapConf.h:31,
+                 from /home/patch/dev/giada/src/core/midiMapConf.cpp:27:
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {nlohmann::detail::value_t}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+       vector<_Tp, _Alloc>::
+       ^~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {double&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {bool&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+/usr/include/c++/8/bits/vector.tcc: In member function ‘BasicJsonType* nlohmann::detail::json_sax_dom_parser<BasicJsonType>::handle_value(Value&&) [with Value = bool&; BasicJsonType = nlohmann::basic_json<>]’:
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {long long int&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+       vector<_Tp, _Alloc>::
+       ^~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {long long unsigned int&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+In file included from /usr/include/c++/8/map:61,
+                 from /home/patch/dev/giada/src/deps/json/single_include/nlohmann/json.hpp:61,
+                 from /home/patch/dev/giada/src/core/midiMapConf.cpp:29:
+/usr/include/c++/8/bits/stl_map.h: In member function ‘bool nlohmann::detail::json_sax_dom_callback_parser<BasicJsonType>::key(nlohmann::detail::json_sax_dom_callback_parser<BasicJsonType>::string_t&) [with BasicJsonType = nlohmann::basic_json<>]’:
+/usr/include/c++/8/bits/stl_map.h:499:8: note: parameter passing for argument of type ‘std::_Rb_tree<std::__cxx11::basic_string<char>, std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >, std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >, std::less<void>, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > > >::const_iterator’ {aka ‘std::_Rb_tree_const_iterator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >’} changed in GCC 7.1
+    __i = _M_t._M_emplace_hint_unique(__i, std::piecewise_construct,
+In file included from /usr/include/c++/8/vector:69,
+                 from /home/patch/dev/giada/src/core/midiMapConf.h:31,
+                 from /home/patch/dev/giada/src/core/midiMapConf.cpp:27:
+/usr/include/c++/8/bits/vector.tcc: In member function ‘bool nlohmann::detail::parser<BasicJsonType, InputAdapterType>::sax_parse_internal(SAX*) [with SAX = nlohmann::detail::json_sax_dom_parser<nlohmann::basic_json<> >; BasicJsonType = nlohmann::basic_json<>; InputAdapterType = nlohmann::detail::input_stream_adapter]’:
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+[  3%] Building CXX object CMakeFiles/giada.dir/src/core/midiEvent.cpp.o
+[  4%] Building CXX object CMakeFiles/giada.dir/src/core/quantizer.cpp.o
+[  4%] Building CXX object CMakeFiles/giada.dir/src/core/conf.cpp.o
+In file included from /usr/include/c++/8/vector:69,
+                 from /usr/include/c++/8/functional:62,
+                 from /home/patch/dev/giada/src/deps/json/single_include/nlohmann/json.hpp:39,
+                 from /home/patch/dev/giada/src/core/conf.cpp:30:
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void nlohmann::basic_json<ObjectType, ArrayType, StringType, BooleanType, NumberIntegerType, NumberUnsignedType, NumberFloatType, AllocatorType, JSONSerializer, BinaryType>::json_value::destroy(nlohmann::basic_json<ObjectType, ArrayType, StringType, BooleanType, NumberIntegerType, NumberUnsignedType, NumberFloatType, AllocatorType, JSONSerializer, BinaryType>::value_t) [with ObjectType = std::map; ArrayType = std::vector; StringType = std::__cxx11::basic_string<char>; BooleanType = bool; NumberIntegerType = long long int; NumberUnsignedType = long long unsigned int; NumberFloatType = double; AllocatorType = std::allocator; JSONSerializer = nlohmann::adl_serializer; BinaryType = std::vector<unsigned char>]’:
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {nlohmann::basic_json<std::map, std::vector, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, long long int, long long unsigned int, double, std::allocator, nlohmann::adl_serializer, std::vector<unsigned char, std::allocator<unsigned char> > >}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+       vector<_Tp, _Alloc>::
+       ^~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘std::vector<_Tp, _Alloc>::reference std::vector<_Tp, _Alloc>::emplace_back(_Args&& ...) [with _Args = {nlohmann::basic_json<std::map, std::vector, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, long long int, long long unsigned int, double, std::allocator, nlohmann::adl_serializer, std::vector<unsigned char, std::allocator<unsigned char> > >}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/8/map:60,
+                 from /home/patch/dev/giada/src/deps/json/single_include/nlohmann/json.hpp:61,
+                 from /home/patch/dev/giada/src/core/conf.cpp:30:
+/usr/include/c++/8/bits/stl_tree.h: In member function ‘std::pair<std::_Rb_tree_node_base*, std::_Rb_tree_node_base*> std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::_M_get_insert_hint_unique_pos(std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::const_iterator, const key_type&) [with _Key = std::__cxx11::basic_string<char>; _Val = std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >; _KeyOfValue = std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >; _Compare = std::less<void>; _Alloc = std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >]’:
+/usr/include/c++/8/bits/stl_tree.h:2146:5: note: parameter passing for argument of type ‘std::_Rb_tree<std::__cxx11::basic_string<char>, std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >, std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >, std::less<void>, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > > >::const_iterator’ {aka ‘std::_Rb_tree_const_iterator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >’} changed in GCC 7.1
+     _Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/stl_tree.h: In member function ‘std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::iterator std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::_M_emplace_hint_unique(std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::const_iterator, _Args&& ...) [with _Args = {const std::piecewise_construct_t&, std::tuple<const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&>, std::tuple<>}; _Key = std::__cxx11::basic_string<char>; _Val = std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >; _KeyOfValue = std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >; _Compare = std::less<void>; _Alloc = std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >]’:
+/usr/include/c++/8/bits/stl_tree.h:2411:7: note: parameter passing for argument of type ‘std::_Rb_tree<std::__cxx11::basic_string<char>, std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >, std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >, std::less<void>, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > > >::const_iterator’ {aka ‘std::_Rb_tree_const_iterator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >’} changed in GCC 7.1
+       _Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/8/map:61,
+                 from /home/patch/dev/giada/src/deps/json/single_include/nlohmann/json.hpp:61,
+                 from /home/patch/dev/giada/src/core/conf.cpp:30:
+/usr/include/c++/8/bits/stl_map.h: In member function ‘std::map<_Key, _Tp, _Compare, _Alloc>::mapped_type& std::map<_Key, _Tp, _Compare, _Alloc>::operator[](const key_type&) [with _Key = std::__cxx11::basic_string<char>; _Tp = nlohmann::basic_json<>; _Compare = std::less<void>; _Alloc = std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >]’:
+/usr/include/c++/8/bits/stl_map.h:499:8: note: parameter passing for argument of type ‘std::_Rb_tree<std::__cxx11::basic_string<char>, std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >, std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >, std::less<void>, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > > >::const_iterator’ {aka ‘std::_Rb_tree_const_iterator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >’} changed in GCC 7.1
+    __i = _M_t._M_emplace_hint_unique(__i, std::piecewise_construct,
+In file included from /usr/include/c++/8/vector:69,
+                 from /usr/include/c++/8/functional:62,
+                 from /home/patch/dev/giada/src/deps/json/single_include/nlohmann/json.hpp:39,
+                 from /home/patch/dev/giada/src/core/conf.cpp:30:
+/usr/include/c++/8/bits/vector.tcc: In member function ‘std::vector<_Tp, _Alloc>::iterator std::vector<_Tp, _Alloc>::_M_erase(std::vector<_Tp, _Alloc>::iterator) [with _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:159:5: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+     vector<_Tp, _Alloc>::
+     ^~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {nlohmann::detail::value_t}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+       vector<_Tp, _Alloc>::
+       ^~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {double&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {bool&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+/usr/include/c++/8/bits/vector.tcc: In member function ‘BasicJsonType* nlohmann::detail::json_sax_dom_parser<BasicJsonType>::handle_value(Value&&) [with Value = bool&; BasicJsonType = nlohmann::basic_json<>]’:
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {long long int&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+       vector<_Tp, _Alloc>::
+       ^~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {long long unsigned int&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+In file included from /usr/include/c++/8/map:61,
+                 from /home/patch/dev/giada/src/deps/json/single_include/nlohmann/json.hpp:61,
+                 from /home/patch/dev/giada/src/core/conf.cpp:30:
+/usr/include/c++/8/bits/stl_map.h: In member function ‘bool nlohmann::detail::json_sax_dom_callback_parser<BasicJsonType>::key(nlohmann::detail::json_sax_dom_callback_parser<BasicJsonType>::string_t&) [with BasicJsonType = nlohmann::basic_json<>]’:
+/usr/include/c++/8/bits/stl_map.h:499:8: note: parameter passing for argument of type ‘std::_Rb_tree<std::__cxx11::basic_string<char>, std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >, std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >, std::less<void>, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > > >::const_iterator’ {aka ‘std::_Rb_tree_const_iterator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >’} changed in GCC 7.1
+    __i = _M_t._M_emplace_hint_unique(__i, std::piecewise_construct,
+In file included from /usr/include/c++/8/vector:64,
+                 from /usr/include/c++/8/functional:62,
+                 from /home/patch/dev/giada/src/deps/json/single_include/nlohmann/json.hpp:39,
+                 from /home/patch/dev/giada/src/core/conf.cpp:30:
+/usr/include/c++/8/bits/stl_vector.h: In member function ‘bool nlohmann::detail::json_sax_dom_callback_parser<BasicJsonType>::end_object() [with BasicJsonType = nlohmann::basic_json<>]’:
+/usr/include/c++/8/bits/stl_vector.h:1318:58: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+       { return _M_erase(begin() + (__position - cbegin())); }
+                                                          ^
+In file included from /usr/include/c++/8/vector:69,
+                 from /usr/include/c++/8/functional:62,
+                 from /home/patch/dev/giada/src/deps/json/single_include/nlohmann/json.hpp:39,
+                 from /home/patch/dev/giada/src/core/conf.cpp:30:
+/usr/include/c++/8/bits/vector.tcc: In member function ‘bool nlohmann::detail::parser<BasicJsonType, InputAdapterType>::sax_parse_internal(SAX*) [with SAX = nlohmann::detail::json_sax_dom_parser<nlohmann::basic_json<> >; BasicJsonType = nlohmann::basic_json<>; InputAdapterType = nlohmann::detail::input_stream_adapter]’:
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+[  5%] Building CXX object CMakeFiles/giada.dir/src/core/kernelAudio.cpp.o
+[  5%] Building CXX object CMakeFiles/giada.dir/src/core/mixerHandler.cpp.o
+[  6%] Building CXX object CMakeFiles/giada.dir/src/core/sequencer.cpp.o
+[  7%] Building CXX object CMakeFiles/giada.dir/src/core/metronome.cpp.o
+[  7%] Building CXX object CMakeFiles/giada.dir/src/core/init.cpp.o
+[  8%] Building CXX object CMakeFiles/giada.dir/src/core/wave.cpp.o
+[  8%] Building CXX object CMakeFiles/giada.dir/src/core/waveFx.cpp.o
+[  9%] Building CXX object CMakeFiles/giada.dir/src/core/kernelMidi.cpp.o
+[ 10%] Building CXX object CMakeFiles/giada.dir/src/core/graphics.cpp.o
+[ 10%] Building CXX object CMakeFiles/giada.dir/src/core/patch.cpp.o
+In file included from /usr/include/c++/8/vector:69,
+                 from /home/patch/dev/giada/src/core/patch.h:34,
+                 from /home/patch/dev/giada/src/core/patch.cpp:27:
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {nlohmann::basic_json<std::map, std::vector, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, long long int, long long unsigned int, double, std::allocator, nlohmann::adl_serializer, std::vector<unsigned char, std::allocator<unsigned char> > >}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+       vector<_Tp, _Alloc>::
+       ^~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘std::vector<_Tp, _Alloc>::reference std::vector<_Tp, _Alloc>::emplace_back(_Args&& ...) [with _Args = {nlohmann::basic_json<std::map, std::vector, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, long long int, long long unsigned int, double, std::allocator, nlohmann::adl_serializer, std::vector<unsigned char, std::allocator<unsigned char> > >}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/8/map:60,
+                 from /home/patch/dev/giada/src/core/recorder.h:35,
+                 from /home/patch/dev/giada/src/core/mixer.h:32,
+                 from /home/patch/dev/giada/src/core/patch.cpp:28:
+/usr/include/c++/8/bits/stl_tree.h: In member function ‘std::pair<std::_Rb_tree_node_base*, std::_Rb_tree_node_base*> std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::_M_get_insert_hint_unique_pos(std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::const_iterator, const key_type&) [with _Key = std::__cxx11::basic_string<char>; _Val = std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >; _KeyOfValue = std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >; _Compare = std::less<void>; _Alloc = std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >]’:
+/usr/include/c++/8/bits/stl_tree.h:2146:5: note: parameter passing for argument of type ‘std::_Rb_tree<std::__cxx11::basic_string<char>, std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >, std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >, std::less<void>, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > > >::const_iterator’ {aka ‘std::_Rb_tree_const_iterator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >’} changed in GCC 7.1
+     _Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/stl_tree.h: In member function ‘std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::iterator std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::_M_emplace_hint_unique(std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::const_iterator, _Args&& ...) [with _Args = {const std::piecewise_construct_t&, std::tuple<const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&>, std::tuple<>}; _Key = std::__cxx11::basic_string<char>; _Val = std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >; _KeyOfValue = std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >; _Compare = std::less<void>; _Alloc = std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >]’:
+/usr/include/c++/8/bits/stl_tree.h:2411:7: note: parameter passing for argument of type ‘std::_Rb_tree<std::__cxx11::basic_string<char>, std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >, std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >, std::less<void>, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > > >::const_iterator’ {aka ‘std::_Rb_tree_const_iterator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >’} changed in GCC 7.1
+       _Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>::
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/8/map:61,
+                 from /home/patch/dev/giada/src/core/recorder.h:35,
+                 from /home/patch/dev/giada/src/core/mixer.h:32,
+                 from /home/patch/dev/giada/src/core/patch.cpp:28:
+/usr/include/c++/8/bits/stl_map.h: In member function ‘std::map<_Key, _Tp, _Compare, _Alloc>::mapped_type& std::map<_Key, _Tp, _Compare, _Alloc>::operator[](const key_type&) [with _Key = std::__cxx11::basic_string<char>; _Tp = nlohmann::basic_json<>; _Compare = std::less<void>; _Alloc = std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >]’:
+/usr/include/c++/8/bits/stl_map.h:499:8: note: parameter passing for argument of type ‘std::_Rb_tree<std::__cxx11::basic_string<char>, std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >, std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >, std::less<void>, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > > >::const_iterator’ {aka ‘std::_Rb_tree_const_iterator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >’} changed in GCC 7.1
+    __i = _M_t._M_emplace_hint_unique(__i, std::piecewise_construct,
+In file included from /usr/include/c++/8/vector:69,
+                 from /home/patch/dev/giada/src/core/patch.h:34,
+                 from /home/patch/dev/giada/src/core/patch.cpp:27:
+/usr/include/c++/8/bits/vector.tcc: In member function ‘std::vector<_Tp, _Alloc>::iterator std::vector<_Tp, _Alloc>::_M_erase(std::vector<_Tp, _Alloc>::iterator) [with _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:159:5: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+     vector<_Tp, _Alloc>::
+     ^~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/8/vector:64,
+                 from /home/patch/dev/giada/src/core/patch.h:34,
+                 from /home/patch/dev/giada/src/core/patch.cpp:27:
+/usr/include/c++/8/bits/stl_vector.h: In member function ‘IteratorType nlohmann::basic_json<ObjectType, ArrayType, StringType, BooleanType, NumberIntegerType, NumberUnsignedType, NumberFloatType, AllocatorType, JSONSerializer, BinaryType>::erase(IteratorType) [with IteratorType = nlohmann::detail::iter_impl<nlohmann::basic_json<> >; typename std::enable_if<(std::is_same<InputIT, nlohmann::detail::iter_impl<nlohmann::basic_json<ObjectType, ArrayType, StringType, BooleanType, NumberIntegerType, NumberUnsignedType, NumberFloatType, AllocatorType, JSONSerializer, BinaryType> > >::value || std::is_same<InputIT, nlohmann::detail::iter_impl<const nlohmann::basic_json<ObjectType, ArrayType, StringType, BooleanType, NumberIntegerType, NumberUnsignedType, NumberFloatType, AllocatorType, JSONSerializer, BinaryType> > >::value), int>::type <anonymous> = 0; ObjectType = std::map; ArrayType = std::vector; StringType = std::__cxx11::basic_string<char>; BooleanType = bool; NumberIntegerType = long long int; NumberUnsignedType = long long unsigned int; NumberFloatType = double; AllocatorType = std::allocator; JSONSerializer = nlohmann::adl_serializer; BinaryType = std::vector<unsigned char>]’:
+/usr/include/c++/8/bits/stl_vector.h:1318:58: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+       { return _M_erase(begin() + (__position - cbegin())); }
+                                                          ^
+In file included from /usr/include/c++/8/vector:69,
+                 from /home/patch/dev/giada/src/core/patch.h:34,
+                 from /home/patch/dev/giada/src/core/patch.cpp:27:
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {nlohmann::detail::value_t}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+       vector<_Tp, _Alloc>::
+       ^~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {double&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {bool&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+/usr/include/c++/8/bits/vector.tcc: In member function ‘BasicJsonType* nlohmann::detail::json_sax_dom_parser<BasicJsonType>::handle_value(Value&&) [with Value = bool&; BasicJsonType = nlohmann::basic_json<>]’:
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {long long int&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+       vector<_Tp, _Alloc>::
+       ^~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {long long unsigned int&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {const nlohmann::basic_json<std::map, std::vector, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, long long int, long long unsigned int, double, std::allocator, nlohmann::adl_serializer, std::vector<unsigned char, std::allocator<unsigned char> > >&}; _Tp = nlohmann::basic_json<>; _Alloc = std::allocator<nlohmann::basic_json<> >]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > >::iterator’ {aka ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’} changed in GCC 7.1
+In file included from /usr/include/c++/8/vector:64,
+                 from /home/patch/dev/giada/src/core/patch.h:34,
+                 from /home/patch/dev/giada/src/core/patch.cpp:27:
+/usr/include/c++/8/bits/stl_vector.h: In member function ‘void nlohmann::basic_json<ObjectType, ArrayType, StringType, BooleanType, NumberIntegerType, NumberUnsignedType, NumberFloatType, AllocatorType, JSONSerializer, BinaryType>::push_back(const nlohmann::basic_json<ObjectType, ArrayType, StringType, BooleanType, NumberIntegerType, NumberUnsignedType, NumberFloatType, AllocatorType, JSONSerializer, BinaryType>&) [with ObjectType = std::map; ArrayType = std::vector; StringType = std::__cxx11::basic_string<char>; BooleanType = bool; NumberIntegerType = long long int; NumberUnsignedType = long long unsigned int; NumberFloatType = double; AllocatorType = std::allocator; JSONSerializer = nlohmann::adl_serializer; BinaryType = std::vector<unsigned char>]’:
+/usr/include/c++/8/bits/stl_vector.h:1085:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), __x);
+    ^~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/8/map:61,
+                 from /home/patch/dev/giada/src/core/recorder.h:35,
+                 from /home/patch/dev/giada/src/core/mixer.h:32,
+                 from /home/patch/dev/giada/src/core/patch.cpp:28:
+/usr/include/c++/8/bits/stl_map.h: In member function ‘bool nlohmann::detail::json_sax_dom_callback_parser<BasicJsonType>::key(nlohmann::detail::json_sax_dom_callback_parser<BasicJsonType>::string_t&) [with BasicJsonType = nlohmann::basic_json<>]’:
+/usr/include/c++/8/bits/stl_map.h:499:8: note: parameter passing for argument of type ‘std::_Rb_tree<std::__cxx11::basic_string<char>, std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> >, std::_Select1st<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >, std::less<void>, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > > >::const_iterator’ {aka ‘std::_Rb_tree_const_iterator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::basic_json<> > >’} changed in GCC 7.1
+    __i = _M_t._M_emplace_hint_unique(__i, std::piecewise_construct,
+In file included from /usr/include/c++/8/vector:64,
+                 from /home/patch/dev/giada/src/core/patch.h:34,
+                 from /home/patch/dev/giada/src/core/patch.cpp:27:
+/usr/include/c++/8/bits/stl_vector.h: In function ‘bool giada::m::patch::write(const string&)’:
+/usr/include/c++/8/bits/stl_vector.h:1085:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), __x);
+    ^~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/8/vector:69,
+                 from /home/patch/dev/giada/src/core/patch.h:34,
+                 from /home/patch/dev/giada/src/core/patch.cpp:27:
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc: In member function ‘bool nlohmann::detail::parser<BasicJsonType, InputAdapterType>::sax_parse_internal(SAX*) [with SAX = nlohmann::detail::json_sax_dom_parser<nlohmann::basic_json<> >; BasicJsonType = nlohmann::basic_json<>; InputAdapterType = nlohmann::detail::input_stream_adapter]’:
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/vector.tcc:109:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<nlohmann::basic_json<>*, std::vector<nlohmann::basic_json<>, std::allocator<nlohmann::basic_json<> > > >’ changed in GCC 7.1
+    _M_realloc_insert(end(), std::forward<_Args>(__args)...);
+    ^~~~~~~~~~~~~~~~~
+[ 11%] Building CXX object CMakeFiles/giada.dir/src/core/recorderHandler.cpp.o
+[ 11%] Building CXX object CMakeFiles/giada.dir/src/core/recorder.cpp.o
+[ 12%] Building CXX object CMakeFiles/giada.dir/src/core/mixer.cpp.o
+[ 12%] Building CXX object CMakeFiles/giada.dir/src/core/clock.cpp.o
+[ 13%] Building CXX object CMakeFiles/giada.dir/src/core/sync.cpp.o
+[ 14%] Building CXX object CMakeFiles/giada.dir/src/core/waveManager.cpp.o
+[ 14%] Building CXX object CMakeFiles/giada.dir/src/core/recManager.cpp.o
+[ 15%] Building CXX object CMakeFiles/giada.dir/src/core/midiLearnParam.cpp.o
+[ 15%] Building CXX object CMakeFiles/giada.dir/src/core/resampler.cpp.o
+[ 16%] Building CXX object CMakeFiles/giada.dir/src/core/plugins/pluginHost.cpp.o
+[ 17%] Building CXX object CMakeFiles/giada.dir/src/core/plugins/pluginManager.cpp.o
+[ 17%] Building CXX object CMakeFiles/giada.dir/src/core/plugins/plugin.cpp.o
+[ 18%] Building CXX object CMakeFiles/giada.dir/src/core/plugins/pluginState.cpp.o
+[ 18%] Building CXX object CMakeFiles/giada.dir/src/core/channels/sampleActionRecorder.cpp.o
+[ 19%] Building CXX object CMakeFiles/giada.dir/src/core/channels/midiActionRecorder.cpp.o
+[ 20%] Building CXX object CMakeFiles/giada.dir/src/core/channels/waveReader.cpp.o
+[ 20%] Building CXX object CMakeFiles/giada.dir/src/core/channels/midiController.cpp.o
+[ 21%] Building CXX object CMakeFiles/giada.dir/src/core/channels/sampleReactor.cpp.o
+[ 21%] Building CXX object CMakeFiles/giada.dir/src/core/channels/sampleAdvancer.cpp.o
+[ 22%] Building CXX object CMakeFiles/giada.dir/src/core/channels/samplePlayer.cpp.o
+[ 22%] Building CXX object CMakeFiles/giada.dir/src/core/channels/audioReceiver.cpp.o
+[ 23%] Building CXX object CMakeFiles/giada.dir/src/core/channels/midiLighter.cpp.o
+[ 24%] Building CXX object CMakeFiles/giada.dir/src/core/channels/midiLearner.cpp.o
+[ 24%] Building CXX object CMakeFiles/giada.dir/src/core/channels/midiSender.cpp.o
+[ 25%] Building CXX object CMakeFiles/giada.dir/src/core/channels/midiReceiver.cpp.o
+[ 25%] Building CXX object CMakeFiles/giada.dir/src/core/channels/channel.cpp.o
+[ 26%] Building CXX object CMakeFiles/giada.dir/src/core/channels/channelManager.cpp.o
+[ 27%] Building CXX object CMakeFiles/giada.dir/src/core/model/model.cpp.o
+[ 27%] Building CXX object CMakeFiles/giada.dir/src/core/model/storage.cpp.o
+[ 28%] Building CXX object CMakeFiles/giada.dir/src/core/idManager.cpp.o
+[ 28%] Building CXX object CMakeFiles/giada.dir/src/glue/events.cpp.o
+[ 29%] Building CXX object CMakeFiles/giada.dir/src/glue/main.cpp.o
+[ 30%] Building CXX object CMakeFiles/giada.dir/src/glue/io.cpp.o
+[ 30%] Building CXX object CMakeFiles/giada.dir/src/glue/storage.cpp.o
+[ 31%] Building CXX object CMakeFiles/giada.dir/src/glue/channel.cpp.o
+[ 31%] Building CXX object CMakeFiles/giada.dir/src/glue/plugin.cpp.o
+[ 32%] Building CXX object CMakeFiles/giada.dir/src/glue/recorder.cpp.o
+[ 32%] Building CXX object CMakeFiles/giada.dir/src/glue/sampleEditor.cpp.o
+[ 33%] Building CXX object CMakeFiles/giada.dir/src/glue/actionEditor.cpp.o
+[ 34%] Building CXX object CMakeFiles/giada.dir/src/glue/config.cpp.o
+[ 34%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/window.cpp.o
+[ 35%] Building CXX object CMakeFiles/giada.dir/src/gui/dispatcher.cpp.o
+[ 35%] Building CXX object CMakeFiles/giada.dir/src/gui/updater.cpp.o
+[ 36%] Building CXX object CMakeFiles/giada.dir/src/gui/model.cpp.o
+[ 37%] Building CXX object CMakeFiles/giada.dir/src/gui/drawing.cpp.o
+[ 37%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/keyGrabber.cpp.o
+[ 38%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/about.cpp.o
+[ 38%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/mainWindow.cpp.o
+[ 39%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/beatsInput.cpp.o
+[ 40%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/warnings.cpp.o
+[ 40%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/bpmInput.cpp.o
+[ 41%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/channelNameInput.cpp.o
+[ 41%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/config.cpp.o
+[ 42%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/pluginList.cpp.o
+[ 42%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/pluginWindow.cpp.o
+[ 43%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/sampleEditor.cpp.o
+[ 44%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/pluginWindowGUI.cpp.o
+[ 44%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/pluginChooser.cpp.o
+[ 45%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/actionEditor/baseActionEditor.cpp.o
+[ 45%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/actionEditor/sampleActionEditor.cpp.o
+[ 46%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/actionEditor/midiActionEditor.cpp.o
+[ 47%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/browser/browserBase.cpp.o
+[ 47%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/browser/browserDir.cpp.o
+[ 48%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/browser/browserLoad.cpp.o
+[ 48%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/browser/browserSave.cpp.o
+[ 49%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/midiIO/midiOutputBase.cpp.o
+[ 50%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/midiIO/midiOutputSampleCh.cpp.o
+[ 50%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/midiIO/midiOutputMidiCh.cpp.o
+[ 51%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/midiIO/midiInputBase.cpp.o
+[ 51%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/midiIO/midiInputChannel.cpp.o
+[ 52%] Building CXX object CMakeFiles/giada.dir/src/gui/dialogs/midiIO/midiInputMaster.cpp.o
+[ 52%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/midiIO/midiLearner.cpp.o
+[ 53%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/midiIO/midiLearnerPack.cpp.o
+[ 54%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/browser.cpp.o
+[ 54%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/soundMeter.cpp.o
+[ 55%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/plugin/pluginBrowser.cpp.o
+[ 55%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/plugin/pluginParameter.cpp.o
+[ 56%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/plugin/pluginElement.cpp.o
+[ 57%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/sampleEditor/waveform.cpp.o
+[ 57%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/sampleEditor/waveTools.cpp.o
+/home/patch/dev/giada/src/gui/elems/sampleEditor/waveTools.cpp: In member function ‘void giada::v::geWaveTools::openMenu()’:
+/home/patch/dev/giada/src/gui/elems/sampleEditor/waveTools.cpp:212:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+      {0}};
+         ^
+/home/patch/dev/giada/src/gui/elems/sampleEditor/waveTools.cpp:212:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/sampleEditor/waveTools.cpp:212:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/sampleEditor/waveTools.cpp:212:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/sampleEditor/waveTools.cpp:212:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/sampleEditor/waveTools.cpp:212:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/sampleEditor/waveTools.cpp:212:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/sampleEditor/waveTools.cpp:212:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+[ 58%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/sampleEditor/volumeTool.cpp.o
+[ 58%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/sampleEditor/boostTool.cpp.o
+[ 59%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/sampleEditor/panTool.cpp.o
+[ 60%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/sampleEditor/pitchTool.cpp.o
+[ 60%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/sampleEditor/rangeTool.cpp.o
+[ 61%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/sampleEditor/shiftTool.cpp.o
+[ 61%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/actionEditor/baseActionEditor.cpp.o
+[ 62%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/actionEditor/baseAction.cpp.o
+[ 62%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/actionEditor/envelopeEditor.cpp.o
+[ 63%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/actionEditor/velocityEditor.cpp.o
+[ 64%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/actionEditor/envelopePoint.cpp.o
+[ 64%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/actionEditor/pianoRoll.cpp.o
+[ 65%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/actionEditor/pianoItem.cpp.o
+[ 65%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/actionEditor/sampleActionEditor.cpp.o
+[ 66%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/actionEditor/sampleAction.cpp.o
+[ 67%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/actionEditor/gridTool.cpp.o
+[ 67%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/actionEditor/splitScroll.cpp.o
+[ 68%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/mainIO.cpp.o
+[ 68%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/mainMenu.cpp.o
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp: In member function ‘void giada::v::geMainMenu::cb_file()’:
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+      {0}};
+         ^
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:102:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp: In member function ‘void giada::v::geMainMenu::cb_edit()’:
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+      {0}};
+         ^
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/mainMenu.cpp:150:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+[ 69%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/mainTimer.cpp.o
+[ 70%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/mainTransport.cpp.o
+[ 70%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/sequencer.cpp.o
+[ 71%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/keyboard/channelMode.cpp.o
+[ 71%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/keyboard/channelButton.cpp.o
+[ 72%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/keyboard/channelStatus.cpp.o
+[ 72%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/keyboard/keyboard.cpp.o
+[ 73%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/keyboard/column.cpp.o
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp: In member function ‘void giada::v::geColumn::cb_addChannel()’:
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+      {0}};
+         ^
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/column.cpp:122:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+[ 74%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp.o
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp: In member function ‘void giada::v::geSampleChannel::cb_openMenu()’:
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+      {0}};
+         ^
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/sampleChannel.cpp:322:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+[ 74%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/keyboard/midiChannel.cpp.o
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp: In member function ‘void giada::v::geMidiChannel::cb_openMenu()’:
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+      {0}};
+         ^
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::shortcut_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::callback_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::user_data_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::flags’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labeltype_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelfont_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelsize_’ [-Wmissing-field-initializers]
+/home/patch/dev/giada/src/gui/elems/mainWindow/keyboard/midiChannel.cpp:211:9: warning: missing initializer for member ‘Fl_Menu_Item::labelcolor_’ [-Wmissing-field-initializers]
+[ 75%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/keyboard/channel.cpp.o
+[ 75%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/keyboard/sampleChannelButton.cpp.o
+[ 76%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/mainWindow/keyboard/midiChannelButton.cpp.o
+[ 77%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/config/tabMisc.cpp.o
+/home/patch/dev/giada/src/gui/elems/config/tabMisc.cpp: In constructor ‘giada::v::geTabMisc::geTabMisc(int, int, int, int)’:
+/home/patch/dev/giada/src/gui/elems/config/tabMisc.cpp:34:47: warning: unused parameter ‘H’ [-Wunused-parameter]
+ geTabMisc::geTabMisc(int X, int Y, int W, int H)
+                                           ~~~~^
+[ 77%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/config/tabMidi.cpp.o
+[ 78%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/config/tabAudio.cpp.o
+[ 78%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/config/tabBehaviors.cpp.o
+[ 79%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/config/tabPlugins.cpp.o
+[ 80%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/scroll.cpp.o
+[ 80%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/pack.cpp.o
+[ 81%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/group.cpp.o
+[ 81%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/scrollPack.cpp.o
+[ 82%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/boxtypes.cpp.o
+[ 82%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/statusButton.cpp.o
+[ 83%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/button.cpp.o
+[ 84%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/resizerBar.cpp.o
+[ 84%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/input.cpp.o
+[ 85%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/liquidScroll.cpp.o
+[ 85%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/choice.cpp.o
+[ 86%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/dial.cpp.o
+[ 87%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/box.cpp.o
+[ 87%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/slider.cpp.o
+[ 88%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/progress.cpp.o
+[ 88%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/check.cpp.o
+[ 89%] Building CXX object CMakeFiles/giada.dir/src/gui/elems/basics/split.cpp.o
+[ 90%] Building CXX object CMakeFiles/giada.dir/src/utils/log.cpp.o
+[ 90%] Building CXX object CMakeFiles/giada.dir/src/utils/time.cpp.o
+[ 91%] Building CXX object CMakeFiles/giada.dir/src/utils/math.cpp.o
+[ 91%] Building CXX object CMakeFiles/giada.dir/src/utils/gui.cpp.o
+[ 92%] Building CXX object CMakeFiles/giada.dir/src/utils/fs.cpp.o
+[ 92%] Building CXX object CMakeFiles/giada.dir/src/utils/ver.cpp.o
+[ 93%] Building CXX object CMakeFiles/giada.dir/src/utils/string.cpp.o
+[ 94%] Building CXX object CMakeFiles/giada.dir/src/deps/rtaudio/RtAudio.cpp.o
+/home/patch/dev/giada/src/deps/rtaudio/RtAudio.cpp:2044:47: warning: extra ‘;’ [-Wpedantic]
+ static void jackSilentError( const char * ) {};
+                                               ^
+/home/patch/dev/giada/src/deps/rtaudio/RtAudio.cpp: In member function ‘void RtApiAlsa::callbackEvent()’:
+/home/patch/dev/giada/src/deps/rtaudio/RtAudio.cpp:8326:26: warning: ISO C++ forbids variable length array ‘bufs’ [-Wvla]
+       void *bufs[channels];
+                          ^
+/home/patch/dev/giada/src/deps/rtaudio/RtAudio.cpp:8396:26: warning: ISO C++ forbids variable length array ‘bufs’ [-Wvla]
+       void *bufs[channels];
+                          ^
+[ 94%] Building CXX object CMakeFiles/giada.dir/src/deps/mcl-audio-buffer/src/audioBuffer.cpp.o
+[ 95%] Building CXX object CMakeFiles/giada.dir/src/deps/juce/modules/juce_audio_basics/juce_audio_basics.cpp.o
+[ 95%] Building CXX object CMakeFiles/giada.dir/src/deps/juce/modules/juce_audio_processors/juce_audio_processors.cpp.o
+In file included from /home/patch/dev/giada/src/deps/juce/modules/juce_audio_processors/format_types/juce_VST3Headers.h:109,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_audio_processors/format_types/juce_VST3PluginFormat.cpp:28,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_audio_processors/juce_audio_processors.cpp:148:
+/home/patch/dev/giada/src/deps/vst3sdk/base/source/fstring.cpp:290:2: warning: #warning is a GCC extension
+ #warning DEPRECATED No Linux implementation
+  ^~~~~~~
+/home/patch/dev/giada/src/deps/vst3sdk/base/source/fstring.cpp:290:2: warning: #warning DEPRECATED No Linux implementation [-Wcpp]
+/home/patch/dev/giada/src/deps/vst3sdk/base/source/fstring.cpp:314:2: warning: #warning is a GCC extension
+ #warning DEPRECATED No Linux implementation
+  ^~~~~~~
+/home/patch/dev/giada/src/deps/vst3sdk/base/source/fstring.cpp:314:2: warning: #warning DEPRECATED No Linux implementation [-Wcpp]
+In file included from /home/patch/dev/giada/src/deps/juce/modules/juce_audio_processors/format_types/juce_VST3Headers.h:109,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_audio_processors/format_types/juce_VST3PluginFormat.cpp:28,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_audio_processors/juce_audio_processors.cpp:148:
+/home/patch/dev/giada/src/deps/vst3sdk/base/source/fstring.cpp:1589:3: warning: #warning is a GCC extension
+  #warning DEPRECATED No Linux implementation
+   ^~~~~~~
+/home/patch/dev/giada/src/deps/vst3sdk/base/source/fstring.cpp:1589:3: warning: #warning DEPRECATED No Linux implementation [-Wcpp]
+/home/patch/dev/giada/src/deps/vst3sdk/base/source/fstring.cpp:1618:3: warning: #warning is a GCC extension
+  #warning DEPRECATED No Linux implementation
+   ^~~~~~~
+/home/patch/dev/giada/src/deps/vst3sdk/base/source/fstring.cpp:1618:3: warning: #warning DEPRECATED No Linux implementation [-Wcpp]
+/home/patch/dev/giada/src/deps/vst3sdk/base/source/fstring.cpp:1917:2: warning: #warning is a GCC extension
+ #warning DEPRECATED No Linux implementation
+  ^~~~~~~
+/home/patch/dev/giada/src/deps/vst3sdk/base/source/fstring.cpp:1917:2: warning: #warning DEPRECATED No Linux implementation [-Wcpp]
+/home/patch/dev/giada/src/deps/vst3sdk/base/source/fstring.cpp:1998:2: warning: #warning is a GCC extension
+ #warning DEPRECATED No Linux implementation
+  ^~~~~~~
+/home/patch/dev/giada/src/deps/vst3sdk/base/source/fstring.cpp:1998:2: warning: #warning DEPRECATED No Linux implementation [-Wcpp]
+[ 96%] Building CXX object CMakeFiles/giada.dir/src/deps/juce/modules/juce_core/juce_core.cpp.o
+In file included from /home/patch/dev/giada/src/deps/juce/modules/juce_core/juce_core.cpp:122:
+/home/patch/dev/giada/src/deps/juce/modules/juce_core/containers/juce_NamedValueSet.cpp: In constructor ‘juce::NamedValueSet::NamedValueSet(std::initializer_list<juce::NamedValueSet::NamedValue>)’:
+/home/patch/dev/giada/src/deps/juce/modules/juce_core/containers/juce_NamedValueSet.cpp:66:1: note: parameter passing for argument of type ‘std::initializer_list<juce::NamedValueSet::NamedValue>’ changed in GCC 7.1
+ NamedValueSet::NamedValueSet (std::initializer_list<NamedValue> list)
+ ^~~~~~~~~~~~~
+[ 97%] Building CXX object CMakeFiles/giada.dir/src/deps/juce/modules/juce_data_structures/juce_data_structures.cpp.o
+In file included from /home/patch/dev/giada/src/deps/juce/modules/juce_data_structures/juce_data_structures.cpp:38:
+/home/patch/dev/giada/src/deps/juce/modules/juce_data_structures/values/juce_ValueTree.cpp: In constructor ‘juce::ValueTree::ValueTree(const juce::Identifier&, std::initializer_list<juce::NamedValueSet::NamedValue>, std::initializer_list<juce::ValueTree>)’:
+/home/patch/dev/giada/src/deps/juce/modules/juce_data_structures/values/juce_ValueTree.cpp:589:1: note: parameter passing for argument of type ‘std::initializer_list<juce::NamedValueSet::NamedValue>’ changed in GCC 7.1
+ ValueTree::ValueTree (const Identifier& type,
+ ^~~~~~~~~
+/home/patch/dev/giada/src/deps/juce/modules/juce_data_structures/values/juce_ValueTree.cpp:594:26: note: parameter passing for argument of type ‘std::initializer_list<juce::NamedValueSet::NamedValue>’ changed in GCC 7.1
+     object->properties = NamedValueSet (std::move (properties));
+                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 97%] Building CXX object CMakeFiles/giada.dir/src/deps/juce/modules/juce_events/juce_events.cpp.o
+In file included from /usr/include/c++/8/bits/stl_algobase.h:71,
+                 from /usr/include/c++/8/algorithm:61,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/system/juce_StandardHeader.h:46,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/juce_core.h:203,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.h:51,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.cpp:42:
+/usr/include/c++/8/bits/predefined_ops.h: In member function ‘bool __gnu_cxx::__ops::_Iter_pred<_Predicate>::operator()(_Iterator) [with _Iterator = __gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >; _Predicate = juce::NetworkServiceDiscovery::AvailableServiceList::removeTimedOutServices()::<lambda(const juce::NetworkServiceDiscovery::Service&)>]’:
+/usr/include/c++/8/bits/predefined_ops.h:282:2: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+  operator()(_Iterator __it)
+  ^~~~~~~~
+In file included from /usr/include/c++/8/algorithm:62,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/system/juce_StandardHeader.h:46,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/juce_core.h:203,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.h:51,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.cpp:42:
+/usr/include/c++/8/bits/stl_algo.h: In function ‘void std::__unguarded_linear_insert(_RandomAccessIterator, _Compare) [with _RandomAccessIterator = __gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >; _Compare = __gnu_cxx::__ops::_Val_comp_iter<juce::sortServiceList(std::vector<juce::NetworkServiceDiscovery::Service>&)::<lambda(const juce::NetworkServiceDiscovery::Service&, const juce::NetworkServiceDiscovery::Service&)> >]’:
+/usr/include/c++/8/bits/stl_algo.h:1821:5: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+     __unguarded_linear_insert(_RandomAccessIterator __last,
+     ^~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/stl_algo.h: In function ‘void std::__insertion_sort(_RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = __gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >; _Compare = __gnu_cxx::__ops::_Iter_comp_iter<juce::sortServiceList(std::vector<juce::NetworkServiceDiscovery::Service>&)::<lambda(const juce::NetworkServiceDiscovery::Service&, const juce::NetworkServiceDiscovery::Service&)> >]’:
+/usr/include/c++/8/bits/stl_algo.h:1840:5: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+     __insertion_sort(_RandomAccessIterator __first,
+     ^~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/stl_algo.h:1840:5: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+In file included from /usr/include/c++/8/bits/stl_algo.h:61,
+                 from /usr/include/c++/8/algorithm:62,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/system/juce_StandardHeader.h:46,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/juce_core.h:203,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.h:51,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.cpp:42:
+/usr/include/c++/8/bits/stl_heap.h: In function ‘void std::__adjust_heap(_RandomAccessIterator, _Distance, _Distance, _Tp, _Compare) [with _RandomAccessIterator = __gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >; _Distance = int; _Tp = juce::NetworkServiceDiscovery::Service; _Compare = __gnu_cxx::__ops::_Iter_comp_iter<juce::sortServiceList(std::vector<juce::NetworkServiceDiscovery::Service>&)::<lambda(const juce::NetworkServiceDiscovery::Service&, const juce::NetworkServiceDiscovery::Service&)> >]’:
+/usr/include/c++/8/bits/stl_heap.h:214:5: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+     __adjust_heap(_RandomAccessIterator __first, _Distance __holeIndex,
+     ^~~~~~~~~~~~~
+In file included from /usr/include/c++/8/algorithm:62,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/system/juce_StandardHeader.h:46,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/juce_core.h:203,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.h:51,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.cpp:42:
+/usr/include/c++/8/bits/stl_algo.h: In member function ‘void juce::NetworkServiceDiscovery::AvailableServiceList::removeTimedOutServices()’:
+/usr/include/c++/8/bits/stl_algo.h:140:14: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+    if (__pred(__first))
+        ~~~~~~^~~~~~~~~
+/usr/include/c++/8/bits/stl_algo.h:144:14: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+    if (__pred(__first))
+        ~~~~~~^~~~~~~~~
+/usr/include/c++/8/bits/stl_algo.h:148:14: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+    if (__pred(__first))
+        ~~~~~~^~~~~~~~~
+In file included from /usr/include/c++/8/vector:69,
+                 from /usr/include/c++/8/functional:62,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/system/juce_StandardHeader.h:52,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/juce_core.h:203,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.h:51,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.cpp:42:
+/usr/include/c++/8/bits/vector.tcc: In member function ‘void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {const juce::NetworkServiceDiscovery::Service&}; _Tp = juce::NetworkServiceDiscovery::Service; _Alloc = std::allocator<juce::NetworkServiceDiscovery::Service>]’:
+/usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type ‘std::vector<juce::NetworkServiceDiscovery::Service>::iterator’ {aka ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’} changed in GCC 7.1
+       vector<_Tp, _Alloc>::
+       ^~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/8/algorithm:62,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/system/juce_StandardHeader.h:46,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/juce_core.h:203,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.h:51,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.cpp:42:
+/usr/include/c++/8/bits/stl_algo.h: In function ‘void std::__introsort_loop(_RandomAccessIterator, _RandomAccessIterator, _Size, _Compare) [with _RandomAccessIterator = __gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >; _Size = int; _Compare = __gnu_cxx::__ops::_Iter_comp_iter<juce::sortServiceList(std::vector<juce::NetworkServiceDiscovery::Service>&)::<lambda(const juce::NetworkServiceDiscovery::Service&, const juce::NetworkServiceDiscovery::Service&)> >]’:
+/usr/include/c++/8/bits/stl_algo.h:1940:5: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+     __introsort_loop(_RandomAccessIterator __first,
+     ^~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/stl_algo.h:1940:5: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+/usr/include/c++/8/bits/stl_algo.h:1954:25: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+    std::__introsort_loop(__cut, __last, __depth_limit, __comp);
+    ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/8/vector:64,
+                 from /usr/include/c++/8/functional:62,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/system/juce_StandardHeader.h:52,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/juce_core.h:203,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.h:51,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.cpp:42:
+/usr/include/c++/8/bits/stl_vector.h: In member function ‘void juce::NetworkServiceDiscovery::AvailableServiceList::handleMessage(const juce::NetworkServiceDiscovery::Service&)’:
+/usr/include/c++/8/bits/stl_vector.h:1085:4: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+    _M_realloc_insert(end(), __x);
+    ^~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/8/algorithm:62,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/system/juce_StandardHeader.h:46,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_core/juce_core.h:203,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.h:51,
+                 from /home/patch/dev/giada/src/deps/juce/modules/juce_events/juce_events.cpp:42:
+/usr/include/c++/8/bits/stl_algo.h:1968:25: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+    std::__introsort_loop(__first, __last,
+    ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+     std::__lg(__last - __first) * 2,
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     __comp);
+     ~~~~~~~              
+/usr/include/c++/8/bits/stl_algo.h:1885:25: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+    std::__insertion_sort(__first, __first + int(_S_threshold), __comp);
+    ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/8/bits/stl_algo.h:1890:23: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<juce::NetworkServiceDiscovery::Service*, std::vector<juce::NetworkServiceDiscovery::Service> >’ changed in GCC 7.1
+  std::__insertion_sort(__first, __last, __comp);
+  ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+[ 98%] Building CXX object CMakeFiles/giada.dir/src/deps/juce/modules/juce_graphics/juce_graphics.cpp.o
+[ 98%] Building CXX object CMakeFiles/giada.dir/src/deps/juce/modules/juce_gui_basics/juce_gui_basics.cpp.o
+[ 99%] Building CXX object CMakeFiles/giada.dir/src/deps/juce/modules/juce_gui_extra/juce_gui_extra.cpp.o
+[100%] Linking CXX executable giada
+[100%] Built target giada
