@@ -3,7 +3,7 @@
 /cmake-*
 /build/
 /.vscode/
-
+/src/deps/vst3sdk/
 # Vim
 Session.vim
 *~
