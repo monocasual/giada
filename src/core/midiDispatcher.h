@@ -45,9 +45,13 @@ void startPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()>
 void clearPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f);
 #endif
 
+/*set_thruMonitor 
+Sets the midi output monitor to the channel selected  
+TODO : How to manage several ouputs ? ?             */
+void set_thruMonitor(int thruCh);
+
 /* dispatch
 Main callback invoked by kernelMidi whenever a new MIDI data comes in. */
-void set_thruMonitor(int thruCh);
 void dispatch(int byte1, int byte2, int byte3);
 
 /* learn

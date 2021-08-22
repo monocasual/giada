@@ -130,7 +130,7 @@ void gdMidiOutputMidiCh::cb_enableMonitor()
 		u::log::print("  MIDI MONITOR CH: %X)\n", m_chanListOut->value());
 	}else{
 		c::io::assign_thru_monitor(-144); 
-		u::log::print("  MIDI MONITOR DEACTIVATED -144\n", m_chanListOut->value());
+		u::log::print("  MIDI MONITOR DEACTIVATED -144\n");
 	}
 }
 
@@ -139,7 +139,8 @@ void gdMidiOutputMidiCh::cb_enableMonitor()
 void gdMidiOutputMidiCh::cb_setChannel()
 {
 	c::io::channel_setMidiOutputFilter(m_channelId, m_chanListOut->value());
-	cb_enableMonitor();
+	if(m_enableMonitor->value() == 1)
+		cb_enableMonitor();
 }
 } // namespace v
 } // namespace giada
