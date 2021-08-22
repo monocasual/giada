@@ -1,7 +1,8 @@
 # CLion
 /.idea/
 /cmake-*
-/build*
+/build/
+
 /.vscode/
 /src/deps/vst3sdk*
 # Vim
