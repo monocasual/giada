@@ -1,9 +1,9 @@
 # CLion
 /.idea/
 /cmake-*
-/build/
+/build*
 /.vscode/
-/src/deps/vst3sdk/
+/src/deps/vst3sdk*
 # Vim
 Session.vim
 *~
