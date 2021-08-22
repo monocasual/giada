@@ -47,7 +47,7 @@ void clearPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()>
 
 /* dispatch
 Main callback invoked by kernelMidi whenever a new MIDI data comes in. */
-
+void set_thruMonitor(int thruCh);
 void dispatch(int byte1, int byte2, int byte3);
 
 /* learn

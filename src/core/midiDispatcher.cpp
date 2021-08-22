@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/midiDispatcher.h"
+#include "core/kernelMidi.h"
 #include "core/conf.h"
 #include "core/mixer.h"
 #include "core/mixerHandler.h"
@@ -411,6 +412,12 @@ void clearPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()>
 #endif
 
 /* -------------------------------------------------------------------------- */
+int thruMonitorCh = 0;
+
+void set_thruMonitor(int thruCh){
+	thruMonitorCh = 144+thruCh;
+	u::log::print("thruMonitor Ch %X \n", thruMonitorCh);
+}
 
 void dispatch(int byte1, int byte2, int byte3)
 {
@@ -424,7 +431,8 @@ void dispatch(int byte1, int byte2, int byte3)
 
 	u::log::print("[midiDispatcher] MIDI received - 0x%X (chan %d)\n", midiEvent.getRaw(),
 	    midiEvent.getChannel());
-
+	
+	kernelMidi::send_thru(thruMonitorCh,byte2,byte3);
 	/* Start dispatcher. Don't parse channels if MIDI learn is ON, just learn 
 	the incoming MIDI signal. The action is not invoked directly, but scheduled 
 	to be perfomed by the Event Dispatcher. */

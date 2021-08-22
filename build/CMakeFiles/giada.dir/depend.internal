@@ -8678,9 +8678,11 @@ CMakeFiles/giada.dir/src/core/midiDispatcher.cpp.o
  ../src/core/conf.h
  ../src/core/const.h
  ../src/core/eventDispatcher.h
+ ../src/core/kernelMidi.h
  ../src/core/midiDispatcher.h
  ../src/core/midiEvent.h
  ../src/core/midiLearnParam.h
+ ../src/core/midiMapConf.h
  ../src/core/mixer.h
  ../src/core/mixerHandler.h
  ../src/core/model/model.h
@@ -28549,7 +28551,9 @@ CMakeFiles/giada.dir/src/gui/dialogs/midiIO/midiOutputMidiCh.cpp.o
  ../src/gui/elems/midiIO/midiLearner.h
  ../src/gui/elems/midiIO/midiLearnerPack.h
  ../src/gui/types.h
+ ../src/utils/fs.h
  ../src/utils/gui.h
+ ../src/utils/log.h
  ../src/utils/vector.h
  /home/patch/dev/giada/src/gui/dialogs/midiIO/midiOutputBase.h
  /home/patch/dev/giada/src/gui/dialogs/midiIO/midiOutputMidiCh.cpp

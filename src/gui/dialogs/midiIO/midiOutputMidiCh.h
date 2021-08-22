@@ -46,10 +46,13 @@ public:
   private:
 	static void cb_enableOut(Fl_Widget* /*w*/, void* p);
 	static void cb_setChannel(Fl_Widget* /*w*/, void* p);
+	static void cb_enableMonitor(Fl_Widget* /*w*/, void* p);
 	void        cb_enableOut();
+	void        cb_enableMonitor();
 	void        cb_setChannel();
 
 	geCheck*  m_enableOut;
+	geCheck*  m_enableMonitor;
 	geChoice* m_chanListOut;
 };
 } // namespace v

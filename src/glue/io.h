@@ -128,6 +128,7 @@ void channel_enableMidiOutput(ID channelId, bool v);
 void channel_enableVelocityAsVol(ID channelId, bool v);
 void channel_setMidiInputFilter(ID channelId, int c);
 void channel_setMidiOutputFilter(ID channelId, int c);
+void assign_thru_monitor(int c);
 
 /* channel_setKey
 Set key 'k' to Sample Channel 'channelId'. Used for keyboard bindings. */

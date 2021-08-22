@@ -32,6 +32,7 @@
 #include "gui/elems/midiIO/midiLearner.h"
 #include "utils/gui.h"
 #include <FL/Fl_Pack.H>
+#include "utils/log.h"
 
 namespace giada
 {
@@ -45,8 +46,9 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 
 	m_enableOut   = new geCheck(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 150, G_GUI_UNIT, "Enable MIDI output");
 	m_chanListOut = new geChoice(w() - 108, G_GUI_OUTER_MARGIN, 100, G_GUI_UNIT);
+	m_enableMonitor = new geCheck(G_GUI_OUTER_MARGIN, m_chanListOut->y() + m_chanListOut->h() + G_GUI_OUTER_MARGIN, 150, G_GUI_UNIT, "MIDI Monitor");
 
-	m_enableLightning = new geCheck(G_GUI_OUTER_MARGIN, m_chanListOut->y() + m_chanListOut->h() + G_GUI_OUTER_MARGIN,
+	m_enableLightning = new geCheck(G_GUI_OUTER_MARGIN, m_enableMonitor->y() + m_enableMonitor->h() + G_GUI_OUTER_MARGIN,
 	    120, G_GUI_UNIT, "Enable MIDI lightning output");
 
 	m_learners = new geLightningLearnerPack(G_GUI_OUTER_MARGIN,
@@ -56,6 +58,7 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 
 	add(m_enableOut);
 	add(m_chanListOut);
+	add(m_enableMonitor);
 	add(m_enableLightning);
 	add(m_learners);
 	add(m_close);
@@ -80,6 +83,7 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 
 	m_chanListOut->callback(cb_setChannel, (void*)this);
 	m_enableOut->callback(cb_enableOut, (void*)this);
+	m_enableMonitor->callback(cb_enableMonitor, (void*)this);
 	m_enableLightning->callback(cb_enableLightning, (void*)this);
 	m_close->callback(cb_close, (void*)this);
 
@@ -109,6 +113,7 @@ void gdMidiOutputMidiCh::rebuild()
 
 void gdMidiOutputMidiCh::cb_enableOut(Fl_Widget* /*w*/, void* p) { ((gdMidiOutputMidiCh*)p)->cb_enableOut(); }
 void gdMidiOutputMidiCh::cb_setChannel(Fl_Widget* /*w*/, void* p) { ((gdMidiOutputMidiCh*)p)->cb_setChannel(); }
+void gdMidiOutputMidiCh::cb_enableMonitor(Fl_Widget* /*w*/, void* p) { ((gdMidiOutputMidiCh*)p)->cb_enableMonitor(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -118,10 +123,23 @@ void gdMidiOutputMidiCh::cb_enableOut()
 }
 
 /* -------------------------------------------------------------------------- */
+void gdMidiOutputMidiCh::cb_enableMonitor()
+{
+	if(m_enableMonitor->value() == 1){
+		c::io::assign_thru_monitor(m_chanListOut->value()); 
+		u::log::print("  MIDI MONITOR CH: %X)\n", m_chanListOut->value());
+	}else{
+		c::io::assign_thru_monitor(-144); 
+		u::log::print("  MIDI MONITOR DEACTIVATED -144\n", m_chanListOut->value());
+	}
+}
+
+/* -------------------------------------------------------------------------- */
 
 void gdMidiOutputMidiCh::cb_setChannel()
 {
 	c::io::channel_setMidiOutputFilter(m_channelId, m_chanListOut->value());
+	cb_enableMonitor();
 }
 } // namespace v
 } // namespace giada

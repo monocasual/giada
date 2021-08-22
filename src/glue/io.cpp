@@ -210,6 +210,11 @@ void channel_setMidiOutputFilter(ID channelId, int ch)
 }
 
 /* -------------------------------------------------------------------------- */
+void assign_thru_monitor(int ch)
+{
+	m::midiDispatcher::set_thruMonitor(ch);
+}
+/* -------------------------------------------------------------------------- */
 
 void channel_setKey(ID channelId, int k)
 {

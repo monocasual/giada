@@ -45,7 +45,8 @@ void parseActions_(const channel::Data& ch, const std::vector<Action>& as)
 {
 	for (const Action& a : as)
 		if (a.channelId == ch.id)
-			send_(ch, a.event);
+			if (ch.isPlaying() && !ch.isMuted() )
+				send_(ch, a.event);
 }
 } // namespace
 
@@ -67,7 +68,8 @@ void react(const channel::Data& ch, const eventDispatcher::Event& e)
 		return;
 
 	if (e.type == eventDispatcher::EventType::KEY_KILL ||
-	    e.type == eventDispatcher::EventType::SEQUENCER_STOP)
+	    e.type == eventDispatcher::EventType::SEQUENCER_STOP ||
+		e.type == eventDispatcher::EventType::CHANNEL_MUTE)
 		send_(ch, MidiEvent(G_MIDI_ALL_NOTES_OFF));
 }
 
