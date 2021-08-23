@@ -183,7 +183,7 @@ std::unique_ptr<Plugin> makePlugin(int index)
 {
 	juce::PluginDescription pd = knownPluginList_.getTypes()[index];
 
-	if (pd.uid == 0) // Invalid
+	if (pd.uniqueId == 0) // Invalid
 		return {};
 
 	u::log::print("[pluginManager::makePlugin] plugin found, uid=%s, name=%s...\n",
