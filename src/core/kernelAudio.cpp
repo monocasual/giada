@@ -48,12 +48,12 @@ namespace
 #ifdef WITH_AUDIO_JACK
 std::optional<JackTransport> jackTransport_;
 #endif
-std::vector<Device> devices_;
-RtAudio*            rtSystem_       = nullptr;
-bool                inputEnabled_   = false;
-unsigned            realBufsize_    = 0; // Real buffer size from the soundcard
-int                 realSampleRate_ = 0; // Sample rate might differ if JACK in use
-int                 api_            = 0;
+std::vector<Device>      devices_;
+std::unique_ptr<RtAudio> rtSystem_;
+bool                     inputEnabled_   = false;
+unsigned                 realBufsize_    = 0; // Real buffer size from the soundcard
+int                      realSampleRate_ = 0; // Sample rate might differ if JACK in use
+int                      api_            = 0;
 
 /* -------------------------------------------------------------------------- */
 
@@ -181,32 +181,32 @@ int openDevice(const conf::Conf& conf)
 #if defined(__linux__) || defined(__FreeBSD__)
 
 	if (api_ == G_SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
-		rtSystem_ = new RtAudio(RtAudio::UNIX_JACK);
+		rtSystem_ = std::make_unique<RtAudio>(RtAudio::UNIX_JACK);
 	else if (api_ == G_SYS_API_ALSA && hasAPI(RtAudio::LINUX_ALSA))
-		rtSystem_ = new RtAudio(RtAudio::LINUX_ALSA);
+		rtSystem_ = std::make_unique<RtAudio>(RtAudio::LINUX_ALSA);
 	else if (api_ == G_SYS_API_PULSE && hasAPI(RtAudio::LINUX_PULSE))
-		rtSystem_ = new RtAudio(RtAudio::LINUX_PULSE);
+		rtSystem_ = std::make_unique<RtAudio>(RtAudio::LINUX_PULSE);
 
 #elif defined(__FreeBSD__)
 
 	if (api_ == G_SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
-		rtSystem_ = new RtAudio(RtAudio::UNIX_JACK);
+		rtSystem_ = std::make_unique<RtAudio>(RtAudio::UNIX_JACK);
 	else if (api_ == G_SYS_API_PULSE && hasAPI(RtAudio::LINUX_PULSE))
-		rtSystem_ = new RtAudio(RtAudio::LINUX_PULSE);
+		rtSystem_ = std::make_unique<RtAudio>(RtAudio::LINUX_PULSE);
 
 #elif defined(_WIN32)
 
 	if (api_ == G_SYS_API_DS && hasAPI(RtAudio::WINDOWS_DS))
-		rtSystem_ = new RtAudio(RtAudio::WINDOWS_DS);
+		rtSystem_ = std::make_unique<RtAudio>(RtAudio::WINDOWS_DS);
 	else if (api_ == G_SYS_API_ASIO && hasAPI(RtAudio::WINDOWS_ASIO))
-		rtSystem_ = new RtAudio(RtAudio::WINDOWS_ASIO);
+		rtSystem_ = std::make_unique<RtAudio>(RtAudio::WINDOWS_ASIO);
 	else if (api_ == G_SYS_API_WASAPI && hasAPI(RtAudio::WINDOWS_WASAPI))
-		rtSystem_ = new RtAudio(RtAudio::WINDOWS_WASAPI);
+		rtSystem_ = std::make_unique<RtAudio>(RtAudio::WINDOWS_WASAPI);
 
 #elif defined(__APPLE__)
 
 	if (api_ == G_SYS_API_CORE && hasAPI(RtAudio::MACOSX_CORE))
-		rtSystem_ = new RtAudio(RtAudio::MACOSX_CORE);
+		rtSystem_ = std::make_unique<RtAudio>(RtAudio::MACOSX_CORE);
 
 #endif
 
@@ -344,8 +344,7 @@ int closeDevice()
 	{
 		rtSystem_->stopStream();
 		rtSystem_->closeStream();
-		delete rtSystem_;
-		rtSystem_ = nullptr;
+		rtSystem_.reset(nullptr);
 	}
 	return 1;
 }
