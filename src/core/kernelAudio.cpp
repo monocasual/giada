@@ -258,9 +258,14 @@ int openDevice()
 
 #ifdef WITH_AUDIO_JACK
 
+	/* If JACK, use and store its own sample rate. */
+
 	if (api_ == G_SYS_API_JACK)
 	{
-		conf::conf.samplerate = devices_[conf::conf.soundDeviceOut].sampleRates[0];
+		assert(devices_.size() > 0);
+		assert(devices_[0].sampleRates.size() > 0);
+
+		conf::conf.samplerate = devices_[0].sampleRates[0];
 		u::log::print("[KA] JACK in use, samplerate=%d\n", conf::conf.samplerate);
 	}
 
