@@ -41,6 +41,7 @@ list(APPEND SOURCES
 	src/core/quantizer.cpp
 	src/core/conf.cpp
 	src/core/kernelAudio.cpp
+	src/core/jackTransport.cpp
 	src/core/mixerHandler.cpp
 	src/core/sequencer.cpp
 	src/core/metronome.cpp

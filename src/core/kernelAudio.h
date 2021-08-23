@@ -31,26 +31,11 @@
 #include <string>
 #include <vector>
 #ifdef WITH_AUDIO_JACK
-#include <jack/intclient.h>
-#include <jack/jack.h>
-#include <jack/transport.h>
+#include "core/jackTransport.h"
 #endif
 
 namespace giada::m::kernelAudio
 {
-#ifdef WITH_AUDIO_JACK
-
-struct JackState
-{
-	bool     running;
-	double   bpm;
-	uint32_t frame;
-
-	bool operator!=(const JackState& o) const;
-};
-
-#endif
-
 struct Device
 {
 	size_t           index             = 0;
@@ -79,13 +64,11 @@ Device                     getDevice(const char* name);
 const std::vector<Device>& getDevices();
 
 #ifdef WITH_AUDIO_JACK
-
-void      jackStart();
-void      jackStop();
-void      jackSetPosition(uint32_t frame);
-void      jackSetBpm(double bpm);
-JackState jackTransportQuery();
-
+void                 jackStart();
+void                 jackStop();
+void                 jackSetPosition(uint32_t frame);
+void                 jackSetBpm(double bpm);
+JackTransport::State jackTransportQuery();
 #endif
 } // namespace giada::m::kernelAudio
 

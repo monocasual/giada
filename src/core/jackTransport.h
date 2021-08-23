@@ -24,52 +24,40 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_SYNC_H
-#define G_SYNC_H
-
-#ifdef WITH_AUDIO_JACK
-#include "core/jackTransport.h"
-#endif
-#include "types.h"
-#include <functional>
-
-namespace giada::m::kernelAudio
-{
-struct JackState;
-}
-namespace giada::m::sync
-{
-void init(int sampleRate, float midiTCfps);
-
-/* sendMIDIsync
-Generates MIDI sync output data. */
-
-void sendMIDIsync();
-
-/* sendMIDIrewind
-Rewinds timecode to beat 0 and also send a MTC full frame to cue the slave. */
-
-void sendMIDIrewind();
-
-void sendMIDIstart();
-void sendMIDIstop();
-
 #ifdef WITH_AUDIO_JACK
 
-/* recvJackSync
-Receives a new JACK state. Called by Kernel Audio on each audio block. */
+#ifndef G_JACK_TRANSPORT_H
+#define G_JACK_TRANSPORT_H
 
-void recvJackSync(const JackTransport::State& state);
+#include <jack/jack.h>
 
-/* onJack[...]
-Callbacks called when something happens in the JACK state. */
+namespace giada
+{
+class JackTransport
+{
+public:
+	struct State
+	{
+		bool     running;
+		double   bpm;
+		uint32_t frame;
 
-extern std::function<void()>      onJackRewind;
-extern std::function<void(float)> onJackChangeBpm;
-extern std::function<void()>      onJackStart;
-extern std::function<void()>      onJackStop;
+		bool operator!=(const State& o) const;
+	};
+
+	JackTransport(jack_client_t&);
+
+	void  start();
+	void  stop();
+	void  setPosition(uint32_t frame);
+	void  setBpm(double bpm);
+	State getState();
+
+private:
+	jack_client_t& m_jackHandle;
+};
+} // namespace giada
 
 #endif
-} // namespace giada::m::sync
 
 #endif

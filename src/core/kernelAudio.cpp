@@ -45,22 +45,14 @@ namespace giada::m::kernelAudio
 {
 namespace
 {
+#ifdef WITH_AUDIO_JACK
+std::optional<JackTransport> jackTransport_;
+#endif
 std::vector<Device> devices_;
 RtAudio*            rtSystem_     = nullptr;
 bool                inputEnabled_ = false;
 unsigned            realBufsize_  = 0; // Real buffer size from the soundcard
 int                 api_          = 0;
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef WITH_AUDIO_JACK
-
-jack_client_t* jackGetHandle_()
-{
-	return static_cast<jack_client_t*>(rtSystem_->HACK__getJackClient());
-}
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -171,17 +163,6 @@ int callback_(void* outBuf, void* inBuf, unsigned bufferSize, double /*streamTim
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-#ifdef WITH_AUDIO_JACK
-
-bool JackState::operator!=(const JackState& o) const
-{
-	return !(running == o.running && bpm == o.bpm && frame == o.frame);
-}
-
-#endif
-
 /* -------------------------------------------------------------------------- */
 
 bool isReady()
@@ -296,6 +277,11 @@ int openDevice()
 		    &callback_,                                           // audio callback
 		    nullptr,                                              // user data (unused)
 		    &options);
+
+#ifdef WITH_AUDIO_JACK
+		// Initialize JACK transport - TODO waiting for KernelAudio class + constructor
+		jackTransport_.emplace(*static_cast<jack_client_t*>(rtSystem_->HACK__getJackClient()));
+#endif
 
 		model::get().kernel.audioReady = true;
 		model::swap(model::SwapType::NONE);
@@ -440,18 +426,11 @@ void logCompiledAPIs()
 
 #ifdef WITH_AUDIO_JACK
 
-JackState jackTransportQuery()
+JackTransport::State jackTransportQuery()
 {
-	if (api_ != G_SYS_API_JACK)
-		return {};
-
-	jack_position_t        position;
-	jack_transport_state_t ts = jack_transport_query(jackGetHandle_(), &position);
-
-	return {
-	    ts != JackTransportStopped,
-	    position.beats_per_minute,
-	    position.frame};
+	if (api_ == G_SYS_API_JACK)
+		return jackTransport_->getState();
+	return {};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -459,35 +438,23 @@ JackState jackTransportQuery()
 void jackStart()
 {
 	if (api_ == G_SYS_API_JACK)
-		jack_transport_start(jackGetHandle_());
+		jackTransport_->start();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void jackSetPosition(uint32_t frame)
 {
-	if (api_ != G_SYS_API_JACK)
-		return;
-	jack_position_t position;
-	jack_transport_query(jackGetHandle_(), &position);
-	position.frame = frame;
-	jack_transport_reposition(jackGetHandle_(), &position);
+	if (api_ == G_SYS_API_JACK)
+		jackTransport_->setPosition(frame);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void jackSetBpm(double bpm)
 {
-	if (api_ != G_SYS_API_JACK)
-		return;
-	jack_position_t position;
-	jack_transport_query(jackGetHandle_(), &position);
-	position.valid            = jack_position_bits_t::JackPositionBBT;
-	position.bar              = 0; // no such info from Giada
-	position.beat             = 0; // no such info from Giada
-	position.tick             = 0; // no such info from Giada
-	position.beats_per_minute = bpm;
-	jack_transport_reposition(jackGetHandle_(), &position);
+	if (api_ == G_SYS_API_JACK)
+		jackTransport_->setBpm(bpm);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -495,7 +462,7 @@ void jackSetBpm(double bpm)
 void jackStop()
 {
 	if (api_ == G_SYS_API_JACK)
-		jack_transport_stop(jackGetHandle_());
+		jackTransport_->stop();
 }
 
 #endif // WITH_AUDIO_JACK
