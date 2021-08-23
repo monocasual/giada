@@ -34,6 +34,11 @@
 #include "core/jackTransport.h"
 #endif
 
+namespace giada::m::conf
+{
+struct Conf;
+}
+
 namespace giada::m::kernelAudio
 {
 struct Device
@@ -49,7 +54,7 @@ struct Device
 	std::vector<int> sampleRates       = {};
 };
 
-int openDevice();
+int openDevice(const conf::Conf& conf);
 int closeDevice();
 int startStream();
 int stopStream();

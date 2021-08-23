@@ -49,10 +49,11 @@ namespace
 std::optional<JackTransport> jackTransport_;
 #endif
 std::vector<Device> devices_;
-RtAudio*            rtSystem_     = nullptr;
-bool                inputEnabled_ = false;
-unsigned            realBufsize_  = 0; // Real buffer size from the soundcard
-int                 api_          = 0;
+RtAudio*            rtSystem_       = nullptr;
+bool                inputEnabled_   = false;
+unsigned            realBufsize_    = 0; // Real buffer size from the soundcard
+int                 realSampleRate_ = 0; // Sample rate might differ if JACK in use
+int                 api_            = 0;
 
 /* -------------------------------------------------------------------------- */
 
@@ -172,9 +173,9 @@ bool isReady()
 
 /* -------------------------------------------------------------------------- */
 
-int openDevice()
+int openDevice(const conf::Conf& conf)
 {
-	api_ = conf::conf.soundSystem;
+	api_ = conf.soundSystem;
 	u::log::print("[KA] using system 0x%x\n", api_);
 
 #if defined(__linux__) || defined(__FreeBSD__)
@@ -216,7 +217,7 @@ int openDevice()
 	}
 
 	u::log::print("[KA] Opening device out=%d, in=%d, samplerate=%d\n",
-	    conf::conf.soundDeviceOut, conf::conf.soundDeviceIn, conf::conf.samplerate);
+	    conf.soundDeviceOut, conf.soundDeviceIn, conf.samplerate);
 
 	devices_ = fetchDevices_();
 	printDevices_(devices_);
@@ -232,19 +233,19 @@ int openDevice()
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
 
-	outParams.deviceId     = conf::conf.soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT ? rtSystem_->getDefaultOutputDevice() : conf::conf.soundDeviceOut;
-	outParams.nChannels    = conf::conf.channelsOutCount;
-	outParams.firstChannel = conf::conf.channelsOutStart;
+	outParams.deviceId     = conf.soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT ? rtSystem_->getDefaultOutputDevice() : conf.soundDeviceOut;
+	outParams.nChannels    = conf.channelsOutCount;
+	outParams.firstChannel = conf.channelsOutStart;
 
 	/* Input device can be disabled. Unlike the output, here we are using all
 	channels and let the user choose which one to record from in the configuration
 	panel. */
 
-	if (conf::conf.soundDeviceIn != -1)
+	if (conf.soundDeviceIn != -1)
 	{
-		inParams.deviceId     = conf::conf.soundDeviceIn;
-		inParams.nChannels    = conf::conf.channelsInCount;
-		inParams.firstChannel = conf::conf.channelsInStart;
+		inParams.deviceId     = conf.soundDeviceIn;
+		inParams.nChannels    = conf.channelsInCount;
+		inParams.firstChannel = conf.channelsInStart;
 		inputEnabled_         = true;
 	}
 	else
@@ -254,19 +255,21 @@ int openDevice()
 	options.streamName      = G_APP_NAME;
 	options.numberOfBuffers = 4; // TODO - wtf?
 
-	realBufsize_ = conf::conf.buffersize;
+	realBufsize_    = conf.buffersize;
+	realSampleRate_ = conf.samplerate;
 
 #ifdef WITH_AUDIO_JACK
 
-	/* If JACK, use and store its own sample rate. */
+	/* If JACK, use its own sample rate, not the one coming from the conf
+	object. */
 
 	if (api_ == G_SYS_API_JACK)
 	{
 		assert(devices_.size() > 0);
 		assert(devices_[0].sampleRates.size() > 0);
 
-		conf::conf.samplerate = devices_[0].sampleRates[0];
-		u::log::print("[KA] JACK in use, samplerate=%d\n", conf::conf.samplerate);
+		realSampleRate_ = devices_[0].sampleRates[0];
+		u::log::print("[KA] JACK in use, samplerate=%d\n", realSampleRate_);
 	}
 
 #endif
@@ -274,13 +277,13 @@ int openDevice()
 	try
 	{
 		rtSystem_->openStream(
-		    &outParams,                                           // output params
-		    conf::conf.soundDeviceIn != -1 ? &inParams : nullptr, // input params if inDevice is selected
-		    RTAUDIO_FLOAT32,                                      // audio format
-		    conf::conf.samplerate,                                // sample rate
-		    &realBufsize_,                                        // buffer size in byte
-		    &callback_,                                           // audio callback
-		    nullptr,                                              // user data (unused)
+		    &outParams,                                     // output params
+		    conf.soundDeviceIn != -1 ? &inParams : nullptr, // input params if inDevice is selected
+		    RTAUDIO_FLOAT32,                                // audio format
+		    realSampleRate_,                                // sample rate
+		    &realBufsize_,                                  // buffer size in byte
+		    &callback_,                                     // audio callback
+		    nullptr,                                        // user data (unused)
 		    &options);
 
 #ifdef WITH_AUDIO_JACK
