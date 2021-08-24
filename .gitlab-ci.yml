@@ -1,0 +1,23 @@
+image: syso/giada-builder:latest
+
+stages:
+  - build
+
+build-job:
+  stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+    - wget https://archive.org/download/VST2SDK/vst_sdk2_4_rev2.zip
+    - unzip vst_sdk2_4_rev2.zip
+    - mkdir src/deps/vst3sdk/plugininterfaces || exit 0
+    - cp -r vstsdk2.4/pluginterfaces/vst2.x/  src/deps/vst3sdk/pluginterfaces/
+    - cp -r vstsdk2.4/pluginterfaces/vst2.x  src/deps/vst3sdk/pluginterfaces/
+    - cmake -B build/ -S . -DWITH_VST3=ON -DWITH_VST2=ON -DCMAKE_BUILD_TYPE=Release -DRASPBERRYPI=ON
+    - cd build && make -j6
+  cache:
+    paths:
+      - build
+  artifacts:
+    paths:
+      - build
