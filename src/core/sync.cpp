@@ -44,7 +44,7 @@ int midiTCminutes_ = 0;
 int midiTChours_   = 0;
 
 #ifdef WITH_AUDIO_JACK
-kernelAudio::JackState jackStatePrev_;
+JackTransport::State jackStatePrev_;
 #endif
 } // namespace
 
@@ -194,14 +194,14 @@ void sendMIDIstop()
 
 #ifdef WITH_AUDIO_JACK
 
-void recvJackSync(const kernelAudio::JackState& state)
+void recvJackSync(const JackTransport::State& state)
 {
 	assert(onJackRewind != nullptr);
 	assert(onJackChangeBpm != nullptr);
 	assert(onJackStart != nullptr);
 	assert(onJackStop != nullptr);
 
-	kernelAudio::JackState jackStateCurr = state;
+	JackTransport::State jackStateCurr = state;
 
 	if (jackStateCurr != jackStatePrev_)
 	{

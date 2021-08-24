@@ -41,6 +41,7 @@ list(APPEND SOURCES
 	src/core/quantizer.cpp
 	src/core/conf.cpp
 	src/core/kernelAudio.cpp
+	src/core/jackTransport.cpp
 	src/core/mixerHandler.cpp
 	src/core/sequencer.cpp
 	src/core/metronome.cpp
@@ -509,6 +510,7 @@ if(WITH_VST2 OR WITH_VST3)
 
 	list(APPEND PREPROCESSOR_DEFS
 		WITH_VST
+		JUCE_MODAL_LOOPS_PERMITTED=1
 		JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1
 		JUCE_MODULE_AVAILABLE_juce_gui_basics=1
 		JUCE_STANDALONE_APPLICATION=1

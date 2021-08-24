@@ -104,7 +104,7 @@ void initSystem_()
 
 void initAudio_()
 {
-	kernelAudio::openDevice();
+	kernelAudio::openDevice(conf::conf);
 	clock::init();
 	sync::init(conf::conf.samplerate, conf::conf.midiTCfps);
 	mh::init();
