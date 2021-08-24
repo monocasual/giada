@@ -20,4 +20,4 @@ build-job:
       - build
   artifacts:
     paths:
-      - build
+      - build/giada
