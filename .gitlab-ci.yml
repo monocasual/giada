@@ -13,7 +13,7 @@ build-job:
     - mkdir src/deps/vst3sdk/plugininterfaces || exit 0
     - cp -r vstsdk2.4/pluginterfaces/vst2.x/  src/deps/vst3sdk/pluginterfaces/
     - cp -r vstsdk2.4/pluginterfaces/vst2.x  src/deps/vst3sdk/pluginterfaces/
-    - cmake -B build/ -S . -DWITH_VST3=ON -DWITH_VST2=ON -DCMAKE_BUILD_TYPE=Release -DRASPBERRYPI=ON
+    - cmake -B build/ -S . -DWITH_VST3=ON -DWITH_VST2=ON -DCMAKE_BUILD_TYPE=Release -DRASPBERRYPI=ON -DWITH_PULSE=OFF -DWITH_ALSA=OFF
     - cd build && make -j6
   cache:
     paths:
