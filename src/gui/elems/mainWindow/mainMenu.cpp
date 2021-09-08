@@ -56,10 +56,10 @@ namespace v
 geMainMenu::geMainMenu(int x, int y)
 : gePack(x, y, Direction::HORIZONTAL)
 {
-	file   = new geButton(0, 0, 70, 21, "file");
-	edit   = new geButton(0, 0, 70, 21, "edit");
-	config = new geButton(0, 0, 70, 21, "config");
-	about  = new geButton(0, 0, 70, 21, "about");
+	file   = new geButton(0, 0, 50, 21, "file");
+	edit   = new geButton(0, 0, 50, 21, "edit");
+	config = new geButton(0, 0, 50, 21, "config");
+	about  = new geButton(0, 0, 50, 21, "about");
 	add(file);
 	add(edit);
 	add(config);

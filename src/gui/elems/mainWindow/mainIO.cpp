@@ -44,7 +44,7 @@ namespace giada
 namespace v
 {
 geMainIO::geMainIO(int x, int y)
-: gePack(x, y, Direction::HORIZONTAL)
+: gePack(x-160, y, Direction::HORIZONTAL)
 , outMeter(0, 0, 140, G_GUI_UNIT)
 , inMeter(0, 0, 140, G_GUI_UNIT)
 , outVol(0, 0, G_GUI_UNIT, G_GUI_UNIT)

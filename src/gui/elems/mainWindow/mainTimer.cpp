@@ -43,7 +43,7 @@ extern giada::v::gdMainWindow* G_MainWin;
 namespace giada::v
 {
 geMainTimer::geMainTimer(int x, int y)
-: gePack(x, y, Direction::HORIZONTAL)
+: gePack(x-350, y, Direction::HORIZONTAL)
 , m_bpm(0, 0, 60, G_GUI_UNIT)
 , m_meter(0, 0, 60, G_GUI_UNIT)
 , m_quantizer(0, 0, 60, G_GUI_UNIT, "", false)

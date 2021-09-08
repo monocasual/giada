@@ -82,13 +82,13 @@ live input latency, keep it small! */
 constexpr int G_EVENT_DISPATCHER_RATE_MS = 5;
 
 /* -- GUI ------------------------------------------------------------------- */
-constexpr float G_GUI_REFRESH_RATE   = 1 / 30.0f; // 30 fps
-constexpr float G_GUI_PLUGIN_RATE    = 1 / 30.0f; // 30 fps
-constexpr int   G_GUI_FONT_SIZE_BASE = 12;
+constexpr float G_GUI_REFRESH_RATE   = 1 / 20.0f; // 30 fps
+constexpr float G_GUI_PLUGIN_RATE    = 1 / 20.0f; // 30 fps
+constexpr int   G_GUI_FONT_SIZE_BASE = 10;
 constexpr int   G_GUI_INNER_MARGIN   = 4;
 constexpr int   G_GUI_OUTER_MARGIN   = 8;
 constexpr int   G_GUI_UNIT           = 20; // base unit for elements
-constexpr int   G_GUI_ZOOM_FACTOR    = 2;
+constexpr int   G_GUI_ZOOM_FACTOR    = 1;
 
 #define G_COLOR_RED fl_rgb_color(28, 32, 80)
 #define G_COLOR_BLUE fl_rgb_color(113, 31, 31)
@@ -119,8 +119,8 @@ constexpr float G_MAX_VOLUME            = 1.0f;
 constexpr int   G_MAX_GRID_VAL          = 64;
 constexpr int   G_MIN_BUF_SIZE          = 8;
 constexpr int   G_MAX_BUF_SIZE          = 4096;
-constexpr int   G_MIN_GUI_WIDTH         = 816;
-constexpr int   G_MIN_GUI_HEIGHT        = 510;
+constexpr int   G_MIN_GUI_WIDTH         = 616;
+constexpr int   G_MIN_GUI_HEIGHT        = 410;
 constexpr int   G_MAX_IO_CHANS          = 2;
 constexpr int   G_MAX_VELOCITY          = 0x7F;
 constexpr int   G_MAX_MIDI_CHANS        = 16;
@@ -170,13 +170,13 @@ constexpr int   G_DEFAULT_BEATS               = 4;
 constexpr int   G_DEFAULT_BARS                = 1;
 constexpr int   G_DEFAULT_QUANTIZE            = 0;     // quantizer off
 constexpr float G_DEFAULT_FADEOUT_STEP        = 0.01f; // micro-fadeout speed
-constexpr int   G_DEFAULT_COLUMN_WIDTH        = 380;
+constexpr int   G_DEFAULT_COLUMN_WIDTH        = 300;
 constexpr auto  G_DEFAULT_PATCH_NAME          = "(default patch)";
 constexpr int   G_DEFAULT_ACTION_SIZE         = 8192; // frames
 constexpr int   G_DEFAULT_ZOOM_RATIO          = 128;
 constexpr float G_DEFAULT_REC_TRIGGER_LEVEL   = -10.0f;
-constexpr int   G_DEFAULT_SUBWINDOW_W         = 640;
-constexpr int   G_DEFAULT_SUBWINDOW_H         = 480;
+constexpr int   G_DEFAULT_SUBWINDOW_W         = 420;
+constexpr int   G_DEFAULT_SUBWINDOW_H         = 320;
 constexpr int   G_DEFAULT_VST_MIDIBUFFER_SIZE = 1024; // TODO - not 100% sure about this size
 
 /* -- responses and return codes -------------------------------------------- */
