@@ -75,7 +75,7 @@ void react(const channel::Data& ch, const eventDispatcher::Event& e)
 
 void advance(const channel::Data& ch, const sequencer::Event& e)
 {
-	if (!ch.midiSender->enabled)
+	if (!ch.isPlaying() || !ch.midiSender->enabled)
 		return;
 	if (e.type == sequencer::EventType::ACTIONS)
 		parseActions_(ch, *e.actions);
