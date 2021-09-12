@@ -63,7 +63,7 @@ Data::Data(const patch::Channel& p)
 
 void react(const channel::Data& ch, const eventDispatcher::Event& e)
 {
-	if (!ch.isPlaying() || !ch.midiSender->enabled)
+	if (!ch.isPlaying() || !ch.midiSender->enabled || ch.isMuted())
 		return;
 
 	if (e.type == eventDispatcher::EventType::KEY_KILL ||
@@ -75,7 +75,7 @@ void react(const channel::Data& ch, const eventDispatcher::Event& e)
 
 void advance(const channel::Data& ch, const sequencer::Event& e)
 {
-	if (!ch.isPlaying() || !ch.midiSender->enabled)
+	if (!ch.isPlaying() || !ch.midiSender->enabled || ch.isMuted())
 		return;
 	if (e.type == sequencer::EventType::ACTIONS)
 		parseActions_(ch, *e.actions);
