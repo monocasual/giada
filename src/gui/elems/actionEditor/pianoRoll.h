@@ -53,8 +53,6 @@ public:
 
 	void rebuild(c::actionEditor::Data& d) override;
 
-	Pixel pick;
-
 private:
 	enum class Notes
 	{
@@ -96,6 +94,12 @@ private:
 
 	Fl_Offscreen surfaceY; // vertical notes, no x-repeat
 	Fl_Offscreen surfaceX; // lines, x-repeat
+
+	/* m_pick
+	Y-coordinate of the click event when the user clicks on an empty area of the
+	piano roll. Used for right mouse button scrolling. */
+
+	Pixel m_pick;
 };
 } // namespace giada::v
 
