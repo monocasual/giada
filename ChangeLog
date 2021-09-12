@@ -11,6 +11,19 @@
 --------------------------------------------------------------------------------
 
 
+0.18.2 --- 2021 . 09 . 13
+- New stereo In/Out audio meters 
+- Revamped Action Editor: better UI, improved usability 
+- Show play head in Action Editor
+- Implement queue for MIDI events, fix issue #482
+- Simplified Event Dispatcher's Event type
+- Move JACK transport operations to new JackTransport class
+- Always pick sample rate from the first audio device when using JACK
+- Don't send MIDI events if MIDI channel is not playing (#499) or muted (#497)
+- Add AtomicSwapper as git submodule
+- Upgrade JUCE to version 6.1.0
+
+
 0.18.1 --- 2021 . 07 . 25
 - New resampler architecture: allows for changing quality also for live rendering (#288)
 - Gracefully shutdown UI on close to random crashes on quit on Windows 
