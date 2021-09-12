@@ -145,13 +145,13 @@ constexpr int G_MIDI_API_ALSA = 0x02; // 0000 0010
 
 /* -- default system -------------------------------------------------------- */
 #if defined(G_OS_LINUX)
-#define G_DEFAULT_SOUNDSYS G_SYS_API_NONE
+constexpr int G_DEFAULT_SOUNDSYS = G_SYS_API_NONE;
 #elif defined(G_OS_FREEBSD)
-#define G_DEFAULT_SOUNDSYS G_SYS_API_PULSE
+constexpr int G_DEFAULT_SOUNDSYS = G_SYS_API_PULSE;
 #elif defined(G_OS_WINDOWS)
-#define G_DEFAULT_SOUNDSYS G_SYS_API_DS
+constexpr int G_DEFAULT_SOUNDSYS = G_SYS_API_DS;
 #elif defined(G_OS_MAC)
-#define G_DEFAULT_SOUNDSYS G_SYS_API_CORE
+constexpr int G_DEFAULT_SOUNDSYS = G_SYS_API_CORE;
 #endif
 
 constexpr int   G_DEFAULT_SOUNDDEV_OUT        = -1; // disabled by default
