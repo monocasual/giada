@@ -31,8 +31,8 @@
 #include "core/const.h"
 #include "core/plugins/plugin.h"
 #include "core/recorder.h"
-#include "core/swapper.h"
 #include "core/wave.h"
+#include "deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
 #include "utils/vector.h"
 #include <algorithm>
 
@@ -126,7 +126,7 @@ struct Layout
 Alias for a REALTIME scoped lock provided by the Swapper class. Use this in the
 real-time thread to lock the Layout. */
 
-using Lock = Swapper<Layout>::RtLock;
+using Lock = mcl::AtomicSwapper<Layout>::RtLock;
 
 /* SwapType
 Type of Layout change. 

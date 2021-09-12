@@ -30,6 +30,8 @@
 #include "core/channels/channelManager.h"
 #endif
 
+using namespace mcl;
+
 namespace giada::m::model
 {
 namespace
@@ -83,9 +85,9 @@ void remove_(D& dest, T& ref)
 
 std::function<void(SwapType)> onSwap_ = nullptr;
 
-Swapper<Layout> layout;
-State           state;
-Data            data;
+AtomicSwapper<Layout> layout;
+State                 state;
+Data                  data;
 
 /* -------------------------------------------------------------------------- */
 

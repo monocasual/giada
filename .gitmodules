@@ -16,3 +16,6 @@
 [submodule "src/deps/mcl-audio-buffer"]
 	path = src/deps/mcl-audio-buffer
 	url = git@github.com:monocasual/mcl-audio-buffer.git
+[submodule "src/deps/mcl-atomic-swapper"]
+	path = src/deps/mcl-atomic-swapper
+	url = git@github.com:monocasual/mcl-atomic-swapper.git
