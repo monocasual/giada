@@ -133,7 +133,7 @@ Type of Layout change.
 	Hard: the structure has changed (e.g. add a new channel);
 	Soft: a property has changed (e.g. change volume);
 	None: something has changed but we don't care. 
-Used by model listeners to determine the type of change that occured in the 
+Used by model listeners to determine the type of change that occurred in the 
 layout. */
 
 enum class SwapType

@@ -45,7 +45,7 @@ Giada is an open source, minimalistic and hardcore music production tool. Design
 ## License
 
 Giada is available under the terms of the GNU General Public License.
-Take a look at the COPYING file for further informations.
+Take a look at the COPYING file for further information.
 
 ## Documentation
 

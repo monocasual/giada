@@ -144,7 +144,7 @@ void stopReadActions_(channel::Data& ch, ChannelStatus curRecStatus)
 
 void killReadActions_(channel::Data& ch)
 {
-	/* Killing Read Actions, i.e. shift + click on 'R' button is meaninful only 
+	/* Killing Read Actions, i.e. shift + click on 'R' button is meaningful only 
 	when the conf::treatRecsAsLoops is true. */
 
 	if (!conf::conf.treatRecsAsLoops)

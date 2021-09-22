@@ -207,7 +207,7 @@ void addAndLoadChannels(ID columnId, const std::vector<std::string>& fpaths)
 			errors = true;
 
 	if (errors)
-		v::gdAlert("Some files weren't loaded sucessfully.");
+		v::gdAlert("Some files weren't loaded successfully.");
 }
 
 /* -------------------------------------------------------------------------- */

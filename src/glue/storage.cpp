@@ -176,7 +176,7 @@ void loadProject(void* data)
 	m::mixer::enable();
 
 	/* Utilities and cosmetics. Save patchPath by taking the last dir of the 
-	broswer, in order to reuse it the next time. Also update UI. */
+	browser, in order to reuse it the next time. Also update UI. */
 
 	m::conf::conf.patchPath = u::fs::dirname(fullPath);
 	u::gui::updateMainWinLabel(m::patch::patch.name);

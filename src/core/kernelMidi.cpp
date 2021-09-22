@@ -118,7 +118,7 @@ int openOutDevice(int port)
 			midiOut_->openPort(port, getOutPortName(port));
 			u::log::print("[KM] MIDI out port %d open\n", port);
 
-			/* TODO - it shold send midiLightning message only if there is a map loaded
+			/* TODO - it should send midiLightning message only if there is a map loaded
 			and available in midimap:: */
 
 			sendMidiLightningInitMsgs_();
