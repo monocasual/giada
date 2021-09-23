@@ -157,7 +157,7 @@
 
 
 0.16.0 --- 2019 . 12 . 02
-- Fix columns' resizer bar height on verical window resize
+- Fix columns' resizer bar height on vertical window resize
 - Fix crash on MIDI learn global commands
 - Fix wrong channel routing when triggering MIDI learnt commands
 - Fix rewind button not rewinding sample channels in LOOP_* mode 
@@ -305,7 +305,7 @@
 - Update JUCE to version 5.1.2
 - UI-less plug-in window refinements
 - Update UI-less plug-in window on MIDI parameter's change
-- Strip .gptc/.gprj extention from patch name
+- Strip .gptc/.gprj extension from patch name
 - [Sample Editor] Fix non-working 'cut' operation
 - Fix missed MIDI events with more than 1 plug-in in the stack
 - Fix File Browser path widget drawn incorrectly in OS X
@@ -889,7 +889,7 @@
 - Enhanced patch/conf architecture
 - Ability to edit a sample while playing
 - Mutex controls in VST processing
-- Lots of security issues fixed while changing pitch dinamically
+- Lots of security issues fixed while changing pitch dynamically
 - Enhanced sub-window system
 - Several minor bugs fixed
 
@@ -1321,7 +1321,7 @@
 - (giada) Startup no longer fails if a sample from the ini file is not found
 - (giada) Internal optimization for the sample loading routine
 - (giada) More graphical consistency between subwindows
-- (giada) The sample name is now trucated to fit into its box, preventing overflow
+- (giada) The sample name is now truncated to fit into its box, preventing overflow
 - (giada) Other minor GUI tweaks
 - (giada) Internal memory improvements to prevent a bad bug of allocation with malformed wave files
 - (wa) More information about sample size

@@ -427,7 +427,7 @@ void dispatch(int byte1, int byte2, int byte3)
 
 	/* Start dispatcher. Don't parse channels if MIDI learn is ON, just learn 
 	the incoming MIDI signal. The action is not invoked directly, but scheduled 
-	to be perfomed by the Event Dispatcher. */
+	to be performed by the Event Dispatcher. */
 
 	Action                     action = {0, 0, 0, midiEvent};
 	eventDispatcher::EventType event  = learnCb_ != nullptr ? eventDispatcher::EventType::MIDI_DISPATCHER_LEARN : eventDispatcher::EventType::MIDI_DISPATCHER_PROCESS;

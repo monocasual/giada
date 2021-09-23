@@ -290,7 +290,7 @@ void geWaveform::draw()
 	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2); // blank canvas
 
 	/* Draw things from 'from' (offset driven by the scrollbar) to 'to' (width of 
-	parent window). We don't draw the entire waveform, only the visibile part. */
+	parent window). We don't draw the entire waveform, only the visible part. */
 
 	int from = abs(x() - parent()->x());
 	int to   = from + parent()->w();

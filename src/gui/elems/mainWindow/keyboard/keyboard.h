@@ -88,7 +88,7 @@ public:
 	void forEachColumn(std::function<void(const geColumn& c)> f) const;
 
 	/* layout
-	The column layout. Each element is a column with a specific witdh. */
+	The column layout. Each element is a column with a specific width. */
 
 	std::vector<ColumnLayout> layout;
 

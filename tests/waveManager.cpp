@@ -15,7 +15,7 @@ using namespace giada::m;
 TEST_CASE("waveManager")
 {
 	/* Each SECTION the TEST_CASE is executed from the start. Any code between 
-	this comment and the first SECTION macro is exectuted before each SECTION. */
+	this comment and the first SECTION macro is executed before each SECTION. */
 
 	SECTION("test creation")
 	{

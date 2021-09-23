@@ -50,11 +50,11 @@ struct Data
 	Data(const Data& o) = default;
 
 	/* enabled
-    Tells whether MIDI ligthing is enabled or not. */
+    Tells whether MIDI lighting is enabled or not. */
 
 	bool enabled;
 
-	/* MIDI learning fields for MIDI ligthing. */
+	/* MIDI learning fields for MIDI lighting. */
 
 	MidiLearnParam playing;
 	MidiLearnParam mute;

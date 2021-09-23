@@ -38,7 +38,7 @@ namespace giada
 namespace v
 {
 /* geGroup
-A group that resizes itself accoring to the content. */
+A group that resizes itself according to the content. */
 
 class geGroup : public Fl_Group
 {

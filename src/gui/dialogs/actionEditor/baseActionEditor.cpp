@@ -197,7 +197,7 @@ void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 	const int mpre = getMouseOverContent();
 	const int mnow = mpre / (m_ratio / ratioPrev);
 
-	/* 2. Rebuild everything and adjust scrolling given the change occured in
+	/* 2. Rebuild everything and adjust scrolling given the change occurred in
 	the x-position. This effectively centers the view on the mouse cursor. */
 
 	rebuild();

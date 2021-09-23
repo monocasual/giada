@@ -290,7 +290,7 @@ if (NOT RtMidi_FOUND)
 		message(FATAL_ERROR "Can't find RtMidi, aborting.")
 	endif()
 
-	# RtMidi header path may vary accross OSes, so a fix is needed.
+	# RtMidi header path may vary across OSes, so a fix is needed.
 	# TODO - Find a way to avoid this additional step
 
 	find_path(LIBRARY_RTMIDI_INCLUDE_DIR RtMidi.h PATH_SUFFIXES rtmidi)
