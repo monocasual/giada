@@ -24,8 +24,7 @@
 *
 * --------------------------------------------------------------------------- */
 
-#include "gridTool.h"
-#include "core/clock.h"
+#include "gui/elems/actionEditor/gridTool.h"
 #include "core/conf.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
@@ -34,8 +33,10 @@
 
 namespace giada::v
 {
-geGridTool::geGridTool(Pixel x, Pixel y)
+geGridTool::geGridTool(Pixel x, Pixel y, m::Conf::Data& c, Frame framesInBeat)
 : Fl_Group(x, y, 80, 20)
+, m_conf(c)
+, m_framesInBeat(framesInBeat)
 {
 	gridType = new geChoice(x, y, 40, 20);
 	gridType->add("1");
@@ -51,8 +52,8 @@ geGridTool::geGridTool(Pixel x, Pixel y)
 
 	active = new geCheck(gridType->x() + gridType->w() + 4, y, 20, 20);
 
-	gridType->value(m::conf::conf.actionEditorGridVal);
-	active->value(m::conf::conf.actionEditorGridOn);
+	gridType->value(m_conf.actionEditorGridVal);
+	active->value(m_conf.actionEditorGridOn);
 
 	end();
 
@@ -64,8 +65,8 @@ geGridTool::geGridTool(Pixel x, Pixel y)
 
 geGridTool::~geGridTool()
 {
-	m::conf::conf.actionEditorGridVal = gridType->value();
-	m::conf::conf.actionEditorGridOn  = active->value();
+	m_conf.actionEditorGridVal = gridType->value();
+	m_conf.actionEditorGridOn  = active->value();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -125,6 +126,6 @@ Frame geGridTool::getSnapFrame(Frame v) const
 
 Frame geGridTool::getCellSize() const
 {
-	return m::clock::getFramesInBeat() / getValue();
+	return m_framesInBeat / getValue();
 }
 } // namespace giada::v

@@ -24,9 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "sampleReactor.h"
+#include "core/channels/sampleReactor.h"
 #include "core/channels/channel.h"
-#include "core/clock.h"
 #include "core/conf.h"
 #include "src/core/model/model.h"
 #include "utils/math.h"
@@ -39,18 +38,66 @@ namespace
 constexpr int Q_ACTION_PLAY   = 0;
 constexpr int Q_ACTION_REWIND = 1;
 
-void          press_(channel::Data& ch, int velocity);
-void          release_(channel::Data& ch);
-void          kill_(channel::Data& ch);
-void          onStopBySeq_(channel::Data& ch);
-void          toggleReadActions_(channel::Data& ch);
-ChannelStatus pressWhileOff_(channel::Data& ch, int velocity, bool isLoop);
-ChannelStatus pressWhilePlay_(channel::Data& ch, SamplePlayerMode mode, bool isLoop);
-void          rewind_(channel::Data& ch, Frame localFrame = 0);
+/* -------------------------------------------------------------------------- */
+
+void rewind_(channel::Data& ch, Frame localFrame)
+{
+	if (ch.isPlaying())
+	{
+		ch.state->rewinding = true;
+		ch.state->offset    = localFrame;
+	}
+	else
+		ch.state->tracker.store(ch.samplePlayer->begin);
+}
 
 /* -------------------------------------------------------------------------- */
 
-void press_(channel::Data& ch, int velocity)
+ChannelStatus pressWhileOff_(channel::Data& ch, Sequencer& sequencer, int velocity, bool isLoop)
+{
+	if (isLoop)
+		return ChannelStatus::WAIT;
+
+	if (ch.samplePlayer->velocityAsVol)
+		ch.volume_i = u::math::map(velocity, G_MAX_VELOCITY, G_MAX_VOLUME);
+
+	if (sequencer.canQuantize())
+	{
+		sequencer.quantizer.trigger(Q_ACTION_PLAY + ch.id);
+		return ChannelStatus::OFF;
+	}
+	else
+		return ChannelStatus::PLAY;
+}
+
+/* -------------------------------------------------------------------------- */
+
+ChannelStatus pressWhilePlay_(channel::Data& ch, Sequencer& sequencer, SamplePlayerMode mode, bool isLoop)
+{
+	if (mode == SamplePlayerMode::SINGLE_RETRIG)
+	{
+		if (sequencer.canQuantize())
+			sequencer.quantizer.trigger(Q_ACTION_REWIND + ch.id);
+		else
+			rewind_(ch, /*localFrame=*/0);
+		return ChannelStatus::PLAY;
+	}
+
+	if (isLoop || mode == SamplePlayerMode::SINGLE_ENDLESS)
+		return ChannelStatus::ENDING;
+
+	if (mode == SamplePlayerMode::SINGLE_BASIC)
+	{
+		rewind_(ch, /*localFrame=*/0);
+		return ChannelStatus::OFF;
+	}
+
+	return ChannelStatus::OFF;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void press_(channel::Data& ch, Sequencer& sequencer, int velocity)
 {
 	ChannelStatus    playStatus = ch.state->playStatus.load();
 	SamplePlayerMode mode       = ch.samplePlayer->mode;
@@ -59,11 +106,11 @@ void press_(channel::Data& ch, int velocity)
 	switch (playStatus)
 	{
 	case ChannelStatus::OFF:
-		playStatus = pressWhileOff_(ch, velocity, isLoop);
+		playStatus = pressWhileOff_(ch, sequencer, velocity, isLoop);
 		break;
 
 	case ChannelStatus::PLAY:
-		playStatus = pressWhilePlay_(ch, mode, isLoop);
+		playStatus = pressWhilePlay_(ch, sequencer, mode, isLoop);
 		break;
 
 	case ChannelStatus::WAIT:
@@ -83,7 +130,14 @@ void press_(channel::Data& ch, int velocity)
 
 /* -------------------------------------------------------------------------- */
 
-void release_(channel::Data& ch)
+void kill_(channel::Data& ch)
+{
+	ch.state->playStatus.store(ChannelStatus::OFF);
+	ch.state->tracker.store(ch.samplePlayer->begin);
+}
+/* -------------------------------------------------------------------------- */
+
+void release_(channel::Data& ch, Sequencer& sequencer)
 {
 	/* Key release is meaningful only for SINGLE_PRESS modes. */
 
@@ -96,21 +150,13 @@ void release_(channel::Data& ch)
 
 	if (ch.state->playStatus.load() == ChannelStatus::PLAY)
 		kill_(ch);
-	else if (sequencer::quantizer.hasBeenTriggered())
-		sequencer::quantizer.clear();
+	else if (sequencer.quantizer.hasBeenTriggered())
+		sequencer.quantizer.clear();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void kill_(channel::Data& ch)
-{
-	ch.state->playStatus.store(ChannelStatus::OFF);
-	ch.state->tracker.store(ch.samplePlayer->begin);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void onStopBySeq_(channel::Data& ch)
+void onStopBySeq_(channel::Data& ch, bool chansStopOnSeqHalt)
 {
 	G_DEBUG("onStopBySeq ch=" << ch.id);
 
@@ -128,7 +174,7 @@ void onStopBySeq_(channel::Data& ch)
 		break;
 
 	case ChannelStatus::PLAY:
-		if (conf::conf.chansStopOnSeqHalt && (isLoop || isReadingActions))
+		if (chansStopOnSeqHalt && (isLoop || isReadingActions))
 			kill_(ch);
 		break;
 
@@ -139,67 +185,10 @@ void onStopBySeq_(channel::Data& ch)
 
 /* -------------------------------------------------------------------------- */
 
-ChannelStatus pressWhileOff_(channel::Data& ch, int velocity, bool isLoop)
+void toggleReadActions_(channel::Data& ch, bool isSequencerRunning, bool treatRecsAsLoops)
 {
-	if (isLoop)
-		return ChannelStatus::WAIT;
-
-	if (ch.samplePlayer->velocityAsVol)
-		ch.volume_i = u::math::map(velocity, G_MAX_VELOCITY, G_MAX_VOLUME);
-
-	if (clock::canQuantize())
-	{
-		sequencer::quantizer.trigger(Q_ACTION_PLAY + ch.id);
-		return ChannelStatus::OFF;
-	}
-	else
-		return ChannelStatus::PLAY;
-}
-
-/* -------------------------------------------------------------------------- */
-
-ChannelStatus pressWhilePlay_(channel::Data& ch, SamplePlayerMode mode, bool isLoop)
-{
-	if (mode == SamplePlayerMode::SINGLE_RETRIG)
-	{
-		if (clock::canQuantize())
-			sequencer::quantizer.trigger(Q_ACTION_REWIND + ch.id);
-		else
-			rewind_(ch);
-		return ChannelStatus::PLAY;
-	}
-
-	if (isLoop || mode == SamplePlayerMode::SINGLE_ENDLESS)
-		return ChannelStatus::ENDING;
-
-	if (mode == SamplePlayerMode::SINGLE_BASIC)
-	{
-		rewind_(ch);
-		return ChannelStatus::OFF;
-	}
-
-	return ChannelStatus::OFF;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void toggleReadActions_(channel::Data& ch)
-{
-	if (clock::isRunning() && ch.state->recStatus.load() == ChannelStatus::PLAY && !conf::conf.treatRecsAsLoops)
+	if (isSequencerRunning && ch.state->recStatus.load() == ChannelStatus::PLAY && !treatRecsAsLoops)
 		kill_(ch);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void rewind_(channel::Data& ch, Frame localFrame)
-{
-	if (ch.isPlaying())
-	{
-		ch.state->rewinding = true;
-		ch.state->offset    = localFrame;
-	}
-	else
-		ch.state->tracker.store(ch.samplePlayer->begin);
 }
 } // namespace
 
@@ -207,16 +196,14 @@ void rewind_(channel::Data& ch, Frame localFrame)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Data::Data(ID channelId)
+Data::Data(ID channelId, Sequencer& sequencer, channel::Data& ch)
 {
-	sequencer::quantizer.schedule(Q_ACTION_PLAY + channelId, [channelId](Frame delta) {
-		channel::Data& ch = model::get().getChannel(channelId);
-		ch.state->offset  = delta;
+	sequencer.quantizer.schedule(Q_ACTION_PLAY + channelId, [&ch](Frame delta) {
+		ch.state->offset = delta;
 		ch.state->playStatus.store(ChannelStatus::PLAY);
 	});
 
-	sequencer::quantizer.schedule(Q_ACTION_REWIND + channelId, [channelId](Frame delta) {
-		channel::Data& ch = model::get().getChannel(channelId);
+	sequencer.quantizer.schedule(Q_ACTION_REWIND + channelId, [&ch](Frame delta) {
 		rewind_(ch, delta);
 	});
 }
@@ -225,32 +212,31 @@ Data::Data(ID channelId)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void react(channel::Data& ch, const eventDispatcher::Event& e)
+void react(channel::Data& ch, const EventDispatcher::Event& e, Sequencer& sequencer, const Conf::Data& conf)
 {
 	if (!ch.hasWave())
 		return;
 
 	switch (e.type)
 	{
-
-	case eventDispatcher::EventType::KEY_PRESS:
-		press_(ch, std::get<int>(e.data));
+	case EventDispatcher::EventType::KEY_PRESS:
+		press_(ch, sequencer, std::get<int>(e.data));
 		break;
 
-	case eventDispatcher::EventType::KEY_RELEASE:
-		release_(ch);
+	case EventDispatcher::EventType::KEY_RELEASE:
+		release_(ch, sequencer);
 		break;
 
-	case eventDispatcher::EventType::KEY_KILL:
+	case EventDispatcher::EventType::KEY_KILL:
 		kill_(ch);
 		break;
 
-	case eventDispatcher::EventType::SEQUENCER_STOP:
-		onStopBySeq_(ch);
+	case EventDispatcher::EventType::SEQUENCER_STOP:
+		onStopBySeq_(ch, conf.chansStopOnSeqHalt);
 		break;
 
-	case eventDispatcher::EventType::CHANNEL_TOGGLE_READ_ACTIONS:
-		toggleReadActions_(ch);
+	case EventDispatcher::EventType::CHANNEL_TOGGLE_READ_ACTIONS:
+		toggleReadActions_(ch, sequencer.isRunning(), conf.treatRecsAsLoops);
 		break;
 
 	default:

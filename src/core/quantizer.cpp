@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "quantizer.h"
-#include "core/clock.h"
 #include <cassert>
 
 namespace giada::m

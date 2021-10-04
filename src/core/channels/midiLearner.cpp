@@ -29,7 +29,7 @@
 
 namespace giada::m::midiLearner
 {
-Data::Data(const patch::Channel& p)
+Data::Data(const Patch::Channel& p)
 : enabled(p.midiIn)
 , filter(p.midiInFilter)
 , keyPress(p.midiInKeyPress)

@@ -27,20 +27,22 @@
 #ifndef GE_TAB_MISC_H
 #define GE_TAB_MISC_H
 
+#include "glue/config.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/group.h"
 
 namespace giada::v
 {
-class geChoice;
 class geTabMisc : public geGroup
 {
 public:
-	geTabMisc(int x, int y, int w, int h);
+	geTabMisc(int x, int y, int w);
 
 	void save();
 
-  private:
+private:
+	c::config::MiscData m_data;
+
 	geChoice m_debugMsg;
 	geChoice m_tooltips;
 };

@@ -29,8 +29,14 @@
 
 namespace giada::m::init
 {
+/* tests
+Performs tests, if requested. Returns -1 if no tests are available or the 
+`--run-tests` has not been passed in. */
+
+int tests(int argc, char** argv);
+
 void startup(int argc, char** argv);
-void reset();
+int  run();
 void closeMainWindow();
 void shutdown();
 } // namespace giada::m::init

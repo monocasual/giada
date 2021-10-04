@@ -33,13 +33,14 @@ namespace giada::c::sampleEditor
 {
 struct Data;
 }
+
 namespace giada::v
 {
 class geWaveform;
 class geWaveTools : public Fl_Scroll
 {
 public:
-	geWaveTools(int x, int y, int w, int h);
+	geWaveTools(int x, int y, int w, int h, bool gridEnabled, int gridVal);
 
 	void resize(int x, int y, int w, int h) override;
 	int  handle(int e) override;
@@ -61,7 +62,7 @@ public:
 
 	v::geWaveform* waveform;
 
-  private:
+private:
 	void openMenu();
 
 	const c::sampleEditor::Data* m_data;

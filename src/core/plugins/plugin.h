@@ -41,11 +41,23 @@ namespace giada::m
 class Plugin : private juce::ComponentListener
 {
 public:
+	/* Plugin (1)
+	Constructs an invalid plug-in. */
+
 	Plugin(ID id, const std::string& UID);
-	Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> p, double samplerate, int buffersize);
-	Plugin(const Plugin& o);
+
+	/* Plugin (2)
+	Constructs a valid and working plug-in. */
+
+	Plugin(ID  id, std::unique_ptr<juce::AudioPluginInstance>, std::unique_ptr<PluginHost::Info>,
+	    double samplerate, int buffersize);
+
+	Plugin(const Plugin& o) = delete;
+	Plugin(Plugin&& o)      = delete;
+	Plugin& operator=(const Plugin&) = delete;
+	Plugin& operator=(Plugin&&) = delete;
+
 	~Plugin();
-	/* TODO - mark is as non-copiable/movable*/
 
 	/* getUniqueId
 	Returns a string-based UID. */
@@ -124,7 +136,7 @@ private:
 	int countMainOutChannels() const;
 
 	std::unique_ptr<juce::AudioPluginInstance> m_plugin;
-	std::unique_ptr<pluginHost::Info>          m_playHead;
+	std::unique_ptr<PluginHost::Info>          m_playHead;
 	juce::AudioBuffer<float>                   m_buffer;
 
 	std::atomic<bool> m_bypass;

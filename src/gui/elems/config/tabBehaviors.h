@@ -27,29 +27,29 @@
 #ifndef GE_TAB_BEHAVIORS_H
 #define GE_TAB_BEHAVIORS_H
 
+#include "core/conf.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/pack.h"
 #include <FL/Fl_Group.H>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geTabBehaviors : public Fl_Group
 {
 public:
-	geTabBehaviors(int x, int y, int w, int h);
+	geTabBehaviors(int x, int y, int w, int h, m::Conf::Data&);
 
 	void save();
 
-  private:
+private:
 	gePack  m_container;
 	geCheck m_chansStopOnSeqHalt;
 	geCheck m_treatRecsAsLoops;
 	geCheck m_inputMonitorDefaultOn;
 	geCheck m_overdubProtectionDefaultOn;
+
+	m::Conf::Data& m_conf;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

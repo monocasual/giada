@@ -36,6 +36,7 @@ namespace giada::c::sampleEditor
 {
 struct Data;
 }
+
 namespace giada::v
 {
 class geWaveform : public Fl_Widget
@@ -52,7 +53,7 @@ public:
 		OUT
 	};
 
-	geWaveform(int x, int y, int w, int h);
+	geWaveform(int x, int y, int w, int h, bool gridEnabled, int gridVal);
 
 	void draw() override;
 	int  handle(int e) override;
@@ -105,7 +106,7 @@ public:
 
 	void setWaveId(ID /*id*/){/* TODO m_waveId = id;*/};
 
-  private:
+private:
 	static const int FLAG_WIDTH  = 20;
 	static const int FLAG_HEIGHT = 20;
 	static const int BORDER      = 8; // window border <-> widget border

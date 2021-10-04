@@ -33,24 +33,21 @@ class geInput;
 class geButton;
 class geCheck;
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class gdBeatsInput : public gdWindow
 {
 public:
-	gdBeatsInput();
+	gdBeatsInput(int beats, int bars);
 
-  private:
+private:
 	static void cb_update(Fl_Widget* /*w*/, void* p);
 	void        cb_update();
 
-	geInput*  beats;
-	geInput*  bars;
-	geButton* ok;
+	geInput*  m_beats;
+	geInput*  m_bars;
+	geButton* m_ok;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

@@ -33,11 +33,7 @@
 #include "utils/string.h"
 #include <FL/Fl.H>
 
-extern giada::v::gdMainWindow* G_MainWin;
-
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h, const c::channel::Data& d)
 : geChannelButton(x, y, w, h, d)
@@ -91,6 +87,4 @@ int geSampleChannelButton::handle(int e)
 	}
 	return ret;
 }
-
-} // namespace v
-} // namespace giada
+} // namespace giada::v

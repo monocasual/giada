@@ -24,17 +24,32 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_V_MODEL_H
-#define G_V_MODEL_H
+#ifndef G_MODEL_RECORDER_H
+#define G_MODEL_RECORDER_H
 
-namespace giada::m::patch
+#include "core/weakAtomic.h"
+
+namespace giada::m::model
 {
-struct Patch;
-}
-namespace giada::v::model
+class Recorder
 {
-void store(m::patch::Patch& patch);
-void load(const m::patch::Patch& patch);
-} // namespace giada::v::model
+	friend class Model;
+
+public:
+	bool a_isRecordingAction() const;
+	bool a_isRecordingInput() const;
+	void a_setRecordingAction(bool) const;
+	void a_setRecordingInput(bool) const;
+
+private:
+	struct State
+	{
+		WeakAtomic<bool> isRecordingAction = false;
+		WeakAtomic<bool> isRecordingInput  = false;
+	};
+
+	State* state = nullptr;
+};
+} // namespace giada::m::model
 
 #endif

@@ -28,8 +28,8 @@
 #include "core/channels/channel.h"
 #include "core/const.h"
 #include "core/model/model.h"
-#include "core/recorder.h"
 #include "glue/channel.h"
+#include "src/core/actions/actions.h"
 #include "utils/string.h"
 #include <FL/fl_draw.H>
 

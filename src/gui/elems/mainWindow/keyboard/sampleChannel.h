@@ -47,7 +47,7 @@ public:
 	geChannelMode*  modeBox;
 	geStatusButton* readActions;
 
-  private:
+private:
 	static void cb_playButton(Fl_Widget* /*w*/, void* p);
 	static void cb_openMenu(Fl_Widget* /*w*/, void* p);
 	static void cb_readActions(Fl_Widget* /*w*/, void* p);

@@ -24,24 +24,19 @@
 *
 * --------------------------------------------------------------------------- */
 
-#include "mainIO.h"
+#include "gui/elems/mainWindow/mainIO.h"
 #include "core/const.h"
 #include "core/graphics.h"
 #include "glue/channel.h"
 #include "glue/events.h"
+#include "glue/layout.h"
 #include "glue/main.h"
-#include "gui/dialogs/mainWindow.h"
-#include "gui/dialogs/pluginList.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/statusButton.h"
 #include "gui/elems/soundMeter.h"
 #include "utils/gui.h"
 
-extern giada::v::gdMainWindow* G_MainWin;
-
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geMainIO::geMainIO(int x, int y)
 : gePack(x, y, Direction::HORIZONTAL)
@@ -127,12 +122,12 @@ void geMainIO::cb_inToOut()
 
 void geMainIO::cb_masterFxOut()
 {
-	u::gui::openSubWindow(G_MainWin, new v::gdPluginList(m::mixer::MASTER_OUT_CHANNEL_ID), WID_FX_LIST);
+	c::layout::openMasterOutPluginListWindow();
 }
 
 void geMainIO::cb_masterFxIn()
 {
-	u::gui::openSubWindow(G_MainWin, new v::gdPluginList(m::mixer::MASTER_IN_CHANNEL_ID), WID_FX_LIST);
+	c::layout::openMasterInPluginListWindow();
 }
 
 #endif
@@ -191,5 +186,4 @@ void geMainIO::rebuild()
 	inToOut.value(m_io.inToOut);
 #endif
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

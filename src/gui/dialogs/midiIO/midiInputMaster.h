@@ -27,15 +27,14 @@
 #ifndef GD_MIDI_INPUT_MASTER_H
 #define GD_MIDI_INPUT_MASTER_H
 
+#include "core/conf.h"
 #include "glue/io.h"
 #include "gui/elems/midiIO/midiLearnerPack.h"
 #include "midiInputBase.h"
 
 class geCheck;
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geChoice;
 class geMasterLearnerPack : public geMidiLearnerPack
@@ -51,11 +50,11 @@ public:
 class gdMidiInputMaster : public gdMidiInputBase
 {
 public:
-	gdMidiInputMaster();
+	gdMidiInputMaster(m::Conf::Data&);
 
 	void rebuild() override;
 
-  private:
+private:
 	static void cb_enable(Fl_Widget* /*w*/, void* p);
 	static void cb_setChannel(Fl_Widget* /*w*/, void* p);
 	void        cb_enable();
@@ -65,7 +64,6 @@ public:
 
 	geMasterLearnerPack* m_learners;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

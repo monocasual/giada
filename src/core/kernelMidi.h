@@ -27,63 +27,67 @@
 #ifndef G_KERNELMIDI_H
 #define G_KERNELMIDI_H
 
-#include "midiMapConf.h"
+#include "midiMapper.h"
+#include <RtMidi.h>
 #include <cstdint>
+#include <functional>
+#include <memory>
 #include <string>
 
-namespace giada
+namespace giada::m
 {
-namespace m
+class KernelMidi final
 {
-namespace kernelMidi
-{
-int getB1(uint32_t iValue);
-int getB2(uint32_t iValue);
-int getB3(uint32_t iValue);
+public:
+	KernelMidi();
 
-uint32_t getIValue(int b1, int b2, int b3);
+	/* getStatus
+    Returns current engine status. */
 
-/* send
-Sends a MIDI message 's' as uint32_t or as separate bytes. */
+	bool getStatus() const;
 
-void send(uint32_t s);
-void send(int b1, int b2 = -1, int b3 = -1);
+	unsigned countInPorts() const;
+	unsigned countOutPorts() const;
 
-/* sendMidiLightning
-Sends a MIDI lightning message defined by 'msg'. */
+	/* getIn/OutPortName
+    Returns the name of the port 'p'. */
 
-void sendMidiLightning(uint32_t learnt, const midimap::Message& msg);
+	std::string getInPortName(unsigned p) const;
+	std::string getOutPortName(unsigned p) const;
 
-/* setApi
-Sets the Api in use for both in & out messages. */
+	bool hasAPI(int API) const;
 
-void setApi(int api);
+	/* send
+    Sends a MIDI message 's' as uint32_t or as separate bytes. */
 
-/* getStatus
-Returns current engine status. */
+	void send(uint32_t s);
+	void send(int b1, int b2 = -1, int b3 = -1);
 
-bool getStatus();
+	/* setApi
+    Sets the Api in use for both in & out messages. */
 
-/* open/close/in/outDevice */
+	void setApi(int api);
 
-int openOutDevice(int port);
-int openInDevice(int port);
-int closeInDevice();
-int closeOutDevice();
+	/* open/close/in/outDevice */
 
-/* getIn/OutPortName
-Returns the name of the port 'p'. */
+	int openOutDevice(int port);
+	int openInDevice(int port);
+	int closeInDevice();
+	int closeOutDevice();
 
-std::string getInPortName(unsigned p);
-std::string getOutPortName(unsigned p);
+	std::function<void(uint32_t)> onMidiReceived;
 
-unsigned countInPorts();
-unsigned countOutPorts();
+private:
+	static void callback(double, std::vector<unsigned char>*, void*);
+	void        callback(std::vector<unsigned char>*);
 
-bool hasAPI(int API);
-
-} // namespace kernelMidi
-} // namespace m
-} // namespace giada
+	std::unique_ptr<RtMidiOut> m_midiOut;
+	std::unique_ptr<RtMidiIn>  m_midiIn;
+	bool                       m_status;
+	int                        m_api;
+	unsigned                   m_numOutPorts;
+	unsigned                   m_numInPorts;
+};
+} // namespace giada::m
 
 #endif

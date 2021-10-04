@@ -27,41 +27,80 @@
 #ifndef G_MIDI_DISPATCHER_H
 #define G_MIDI_DISPATCHER_H
 
+#include "core/actions/action.h"
 #include "core/midiEvent.h"
 #include "core/model/model.h"
 #include "core/types.h"
 #include <cstdint>
 #include <functional>
 
-namespace giada::m::midiDispatcher
+namespace giada::m
 {
-void startChannelLearn(int param, ID channelId, std::function<void()> f);
-void startMasterLearn(int param, std::function<void()> f);
-void stopLearn();
-void clearMasterLearn(int param, std::function<void()> f);
-void clearChannelLearn(int param, ID channelId, std::function<void()> f);
+class MidiDispatcher
+{
+public:
+	MidiDispatcher(model::Model&);
+
+	void startChannelLearn(int param, ID channelId, std::function<void()> f);
+	void startMasterLearn(int param, std::function<void()> f);
+	void stopLearn();
+	void clearMasterLearn(int param, std::function<void()> f);
+	void clearChannelLearn(int param, ID channelId, std::function<void()> f);
 #ifdef WITH_VST
-void startPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f);
-void clearPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f);
+	void startPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f);
+	void clearPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f);
 #endif
 
-/* dispatch
-Main callback invoked by kernelMidi whenever a new MIDI data comes in. */
+	/* dispatch
+    Main callback invoked by kernelMidi whenever a new MIDI data comes in. */
 
-void dispatch(int byte1, int byte2, int byte3);
+	void dispatch(uint32_t msg);
 
-/* learn
-Learns event 'e'. Called by the Event Dispatcher. */
+	/* learn
+    Learns event 'e'. Called by the Event Dispatcher. */
 
-void learn(const MidiEvent& e);
+	void learn(const MidiEvent& e);
 
-/* process
-Sends event 'e' to channels (masters and keyboard). Called by the Event 
-Dispatcher. */
+	/* process
+    Sends event 'e' to channels (masters and keyboard). Called by the Event 
+    Dispatcher. */
 
-void process(const MidiEvent& e);
+	void process(const MidiEvent& e);
 
-void setSignalCallback(std::function<void()> f);
-} // namespace giada::m::midiDispatcher
+	/* onDispatch
+	Callback fired when the dispatch() method is invoked by KernelMidi. */
+
+	std::function<void(EventDispatcher::EventType, Action)> onDispatch;
+
+	/* onEventReceived
+	Callback fired when a MIDI event has been received (passed in by the Event
+	Dispatcher). */
+
+	std::function<void()> onEventReceived;
+
+private:
+	bool isMasterMidiInAllowed(int c);
+	bool isChannelMidiInAllowed(ID channelId, int c);
+
+	void processChannels(const MidiEvent& midiEvent);
+	void processMaster(const MidiEvent& midiEvent);
+
+	void learnChannel(MidiEvent e, int param, ID channelId, std::function<void()> doneCb);
+	void learnMaster(MidiEvent e, int param, std::function<void()> doneCb);
+
+#ifdef WITH_VST
+	void processPlugins(const std::vector<Plugin*>& plugins, const MidiEvent& midiEvent);
+	void learnPlugin(MidiEvent e, std::size_t paramIndex, ID pluginId, std::function<void()> doneCb);
+#endif
+
+	/* cb_midiLearn
+    Callback prepared by the gdMidiGrabber window and called by midiDispatcher. 
+    It contains things to do once the midi message has been stored. */
+
+	std::function<void(MidiEvent)> m_learnCb;
+
+	model::Model& m_model;
+};
+} // namespace giada::m
 
 #endif

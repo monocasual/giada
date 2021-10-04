@@ -25,41 +25,30 @@
  * -------------------------------------------------------------------------- */
 
 #include "tabMisc.h"
-#include "core/conf.h"
 #include "core/const.h"
-#include <FL/Fl_Tooltip.H>
 
 namespace giada::v
 {
-geTabMisc::geTabMisc(int X, int Y, int W, int H)
+geTabMisc::geTabMisc(int X, int Y, int W)
 : geGroup(X, Y)
+, m_data(c::config::getMiscData())
 , m_debugMsg(W - 230, 9, 230, 20, "Debug messages")
 , m_tooltips(W - 230, 37, 230, 20, "Tooltips")
 {
 	add(&m_debugMsg);
 	add(&m_tooltips);
 
-	m_debugMsg.add("Disabled");
-	m_debugMsg.add("To standard output");
-	m_debugMsg.add("To file");
+	m_debugMsg.addItem("Disabled");
+	m_debugMsg.addItem("To standard output");
+	m_debugMsg.addItem("To file");
+	m_debugMsg.onChange = [this](ID id) { m_data.logMode = id; };
 
-	m_tooltips.add("Disabled");
-	m_tooltips.add("Enabled");
+	m_tooltips.addItem("Disabled");
+	m_tooltips.addItem("Enabled");
+	m_tooltips.onChange = [this](ID id) { m_data.showTooltips = id; };
 
-	switch (m::conf::conf.logMode)
-	{
-	case LOG_MODE_MUTE:
-		m_debugMsg.value(0);
-		break;
-	case LOG_MODE_STDOUT:
-		m_debugMsg.value(1);
-		break;
-	case LOG_MODE_FILE:
-		m_debugMsg.value(2);
-		break;
-	}
-
-	m_tooltips.value(m::conf::conf.showTooltips);
+	m_debugMsg.showItem(m_data.logMode);
+	m_tooltips.showItem(m_data.showTooltips);
 
 	copy_label("Misc");
 	labelsize(G_GUI_FONT_SIZE_BASE);
@@ -70,20 +59,6 @@ geTabMisc::geTabMisc(int X, int Y, int W, int H)
 
 void geTabMisc::save()
 {
-	switch (m_debugMsg.value())
-	{
-	case 0:
-		m::conf::conf.logMode = LOG_MODE_MUTE;
-		break;
-	case 1:
-		m::conf::conf.logMode = LOG_MODE_STDOUT;
-		break;
-	case 2:
-		m::conf::conf.logMode = LOG_MODE_FILE;
-		break;
-	}
-
-	m::conf::conf.showTooltips = m_tooltips.value();
-	Fl_Tooltip::enable(m_tooltips.value());
+	c::config::save(m_data);
 }
 } // namespace giada::v

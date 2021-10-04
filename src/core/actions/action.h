@@ -27,8 +27,8 @@
 #ifndef G_ACTION_H
 #define G_ACTION_H
 
-#include "midiEvent.h"
-#include "types.h"
+#include "src/core/midiEvent.h"
+#include "src/core/types.h"
 
 namespace giada::m
 {

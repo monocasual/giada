@@ -27,29 +27,28 @@
 #ifndef G_CHANNEL_MIDI_SENDER_H
 #define G_CHANNEL_MIDI_SENDER_H
 
+#include "core/patch.h"
+#include "core/sequencer.h"
+
+namespace giada::m
+{
+class KernelMidi;
+}
+
 namespace giada::m::channel
 {
 struct Data;
 }
-namespace giada::m::patch
-{
-struct Channel;
-}
-namespace giada::m::eventDispatcher
-{
-struct Event;
-}
-namespace giada::m::sequencer
-{
-struct Event;
-}
+
 namespace giada::m::midiSender
 {
 struct Data
 {
-	Data() = default;
-	Data(const patch::Channel& p);
+	Data(KernelMidi&);
+	Data(const Patch::Channel& p, KernelMidi&);
 	Data(const Data& o) = default;
+
+	KernelMidi* kernelMidi;
 
 	/* enabled
     Tells whether MIDI output is enabled or not. */
@@ -62,8 +61,8 @@ struct Data
 	int filter;
 };
 
-void react(const channel::Data& ch, const eventDispatcher::Event& e);
-void advance(const channel::Data& ch, const sequencer::Event& e);
+void react(const channel::Data& ch, const EventDispatcher::Event& e);
+void advance(const channel::Data& ch, const Sequencer::Event& e);
 } // namespace giada::m::midiSender
 
 #endif

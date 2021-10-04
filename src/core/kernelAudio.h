@@ -27,54 +27,94 @@
 #ifndef G_KERNELAUDIO_H
 #define G_KERNELAUDIO_H
 
-#include <optional>
+#include "core/conf.h"
+#include "deps/rtaudio/RtAudio.h"
+#include <functional>
+#include <memory>
 #include <string>
 #include <vector>
 #ifdef WITH_AUDIO_JACK
 #include "core/jackTransport.h"
 #endif
 
-namespace giada::m::conf
+namespace giada::m
 {
-struct Conf;
-}
-
-namespace giada::m::kernelAudio
+class KernelAudio final
 {
-struct Device
-{
-	size_t           index             = 0;
-	bool             probed            = false;
-	std::string      name              = "";
-	int              maxOutputChannels = 0;
-	int              maxInputChannels  = 0;
-	int              maxDuplexChannels = 0;
-	bool             isDefaultOut      = false;
-	bool             isDefaultIn       = false;
-	std::vector<int> sampleRates       = {};
-};
+public:
+	struct Device
+	{
+		size_t           index             = 0;
+		bool             probed            = false;
+		std::string      name              = "";
+		int              maxOutputChannels = 0;
+		int              maxInputChannels  = 0;
+		int              maxDuplexChannels = 0;
+		bool             isDefaultOut      = false;
+		bool             isDefaultIn       = false;
+		std::vector<int> sampleRates       = {};
+	};
 
-int openDevice(const conf::Conf& conf);
-int closeDevice();
-int startStream();
-int stopStream();
+	struct CallbackInfo
+	{
+		KernelAudio* kernelAudio;
+		bool         ready;
+		bool         withJack;
+		void*        outBuf;
+		void*        inBuf;
+		int          bufferSize;
+		int          channelsOutCount;
+		int          channelsInCount;
+	};
 
-bool                       isReady();
-bool                       isInputEnabled();
-unsigned                   getRealBufSize();
-bool                       hasAPI(int API);
-int                        getAPI();
-void                       logCompiledAPIs();
-Device                     getDevice(const char* name);
-const std::vector<Device>& getDevices();
+	KernelAudio();
+
+	int  openDevice(const Conf::Data& conf);
+	void closeDevice();
+	int  startStream();
+	int  stopStream();
+
+	bool                       isReady() const;
+	bool                       isInputEnabled() const;
+	int                        getBufferSize() const;
+	int                        getSampleRate() const;
+	int                        getChannelsOutCount() const;
+	int                        getChannelsInCount() const;
+	bool                       hasAPI(int API) const;
+	int                        getAPI() const;
+	void                       logCompiledAPIs() const;
+	Device                     getDevice(const char* name) const;
+	const std::vector<Device>& getDevices() const;
+#ifdef WITH_AUDIO_JACK
+	jack_client_t* getJackHandle() const;
+#endif
+
+	/* onAudioCallback
+	Main callback invoked on each audio block. */
+
+	std::function<int(CallbackInfo)> onAudioCallback;
+
+private:
+	static int audioCallback(void*, void*, unsigned, double, RtAudioStreamStatus, void*);
+
+	Device              fetchDevice(size_t deviceIndex) const;
+	std::vector<Device> fetchDevices() const;
+	void                printDevices(const std::vector<Device>& devices) const;
 
 #ifdef WITH_AUDIO_JACK
-void                 jackStart();
-void                 jackStop();
-void                 jackSetPosition(uint32_t frame);
-void                 jackSetBpm(double bpm);
-JackTransport::State jackTransportQuery();
+	JackTransport m_jackTransport;
 #endif
-} // namespace giada::m::kernelAudio
+	std::vector<Device>      m_devices;
+	std::unique_ptr<RtAudio> m_rtAudio;
+	CallbackInfo             m_callbackInfo;
+	bool                     m_ready;
+	bool                     m_inputEnabled;
+	unsigned                 m_realBufferSize; // Real buffer size from the soundcard
+	int                      m_realSampleRate; // Sample rate might differ if JACK in use
+	int                      m_channelsOutCount;
+	int                      m_channelsInCount;
+	int                      m_api;
+};
+} // namespace giada::m
 
 #endif

@@ -37,66 +37,15 @@ class gdWindow;
 
 namespace giada::u::gui
 {
-/* refresh
-Repaints some dynamic GUI elements. */
-
-void refresh();
-
-/* rebuild
-Rebuilds the UI from scratch. Used when the model has changed. */
-
-void rebuild();
-
-/* [rebuild|refresh]SubWindow 
-Rebuilds or refreshes subwindow with ID 'wid' if it exists. i.e. if its open. */
-
-void rebuildSubWindow(int wid);
-void refreshSubWindow(int wid);
-
-/* shouldBlink
-Return whether is time to blink something or not. This is used to make widgets 
-blink. */
-
-bool shouldBlink();
-
-/* updateStaticWidgets
-Updates attributes of static widgets, i.e. those elements that don't get
-automatically refreshed during the UI update loop. Useful when loading a new 
-patch. */
-
-void updateStaticWidgets();
-
-/* updateMainWinLabel
-Updates the name of the main window */
-
-void updateMainWinLabel(const std::string& s);
-
 void setFavicon(v::gdWindow* w);
-
-void openSubWindow(v::gdWindow* parent, v::gdWindow* child, int id);
-
-// TODO closeSubWindow(...)
-
-/* refreshActionEditor
-Reloads the action editor window by closing and reopening it. It's used when you
-delete some actions from the mainWindow and the action editor window is open. */
-
-void refreshActionEditor();
-
-/* closeAllSubwindows
-Closes all subwindows attached to mainWin. */
-
-void closeAllSubwindows();
-
-/* getSubwindow
-Returns a pointer to an open subwindow, otherwise nullptr. */
-
-v::gdWindow* getSubwindow(v::gdWindow* parent, int id);
 
 /* removeFltkChars
 Strips special chars used by FLTK to split menus into sub-menus. */
 
 std::string removeFltkChars(const std::string& s);
+
+/* getStringWidth
+Returns the width in pixels of a string 's'. */
 
 int getStringWidth(const std::string& s);
 

@@ -24,9 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "baseActionEditor.h"
-#include "core/action.h"
-#include "core/clock.h"
+#include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/graphics.h"
@@ -36,6 +34,7 @@
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/scrollPack.h"
+#include "src/core/actions/action.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include <FL/Fl.H>
@@ -46,10 +45,10 @@
 
 namespace giada::v
 {
-gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::conf::Conf& conf)
+gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf, Frame framesInBeat)
 : gdWindow(conf.actionEditorX, conf.actionEditorY, conf.actionEditorW, conf.actionEditorH)
 , channelId(channelId)
-, gridTool(0, 0)
+, gridTool(0, 0, conf, framesInBeat)
 , zoomInBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm)
 , zoomOutBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm)
 , m_barTop(0, 0, Direction::HORIZONTAL)
@@ -105,10 +104,10 @@ void gdBaseActionEditor::cb_zoomOut(Fl_Widget* /*w*/, void* p) { ((gdBaseActionE
 
 /* -------------------------------------------------------------------------- */
 
-void gdBaseActionEditor::computeWidth()
+void gdBaseActionEditor::computeWidth(Frame framesInSeq, Frame framesInLoop)
 {
-	fullWidth = frameToPixel(m::clock::getFramesInSeq());
-	loopWidth = frameToPixel(m::clock::getFramesInLoop());
+	fullWidth = frameToPixel(framesInSeq);
+	loopWidth = frameToPixel(framesInLoop);
 }
 
 /* -------------------------------------------------------------------------- */

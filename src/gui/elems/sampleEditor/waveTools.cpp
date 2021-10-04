@@ -116,7 +116,7 @@ void menuCallback_(Fl_Widget* w, void* v)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geWaveTools::geWaveTools(int x, int y, int w, int h)
+geWaveTools::geWaveTools(int x, int y, int w, int h, bool gridEnabled, int gridVal)
 : Fl_Scroll(x, y, w, h, nullptr)
 , m_data(nullptr)
 {
@@ -126,7 +126,7 @@ geWaveTools::geWaveTools(int x, int y, int w, int h)
 	hscrollbar.labelcolor(G_COLOR_LIGHT_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-	waveform = new v::geWaveform(x, y, w, h - 24);
+	waveform = new v::geWaveform(x, y, w, h - 24, gridEnabled, gridVal);
 }
 
 /* -------------------------------------------------------------------------- */

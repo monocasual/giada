@@ -36,25 +36,6 @@ namespace giada::m::model
 {
 namespace
 {
-struct State
-{
-	Clock::State                                 clock;
-	Mixer::State                                 mixer;
-	std::vector<std::unique_ptr<channel::State>> channels;
-};
-
-struct Data
-{
-	std::vector<std::unique_ptr<channel::Buffer>> channels;
-	std::vector<std::unique_ptr<Wave>>            waves;
-	recorder::ActionMap                           actions;
-#ifdef WITH_VST
-	std::vector<std::unique_ptr<Plugin>> plugins;
-#endif
-};
-
-/* -------------------------------------------------------------------------- */
-
 template <typename T>
 auto getIter_(const std::vector<std::unique_ptr<T>>& source, ID id)
 {
@@ -83,27 +64,22 @@ void remove_(D& dest, T& ref)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-std::function<void(SwapType)> onSwap_ = nullptr;
-
-AtomicSwapper<Layout> layout;
-State                 state;
-Data                  data;
-
-/* -------------------------------------------------------------------------- */
-
-DataLock::DataLock(SwapType t)
-: m_swapType(t)
+DataLock::DataLock(Model& m, SwapType t)
+: m_model(m)
+, m_swapType(t)
 {
-	get().locked = true;
-	swap(SwapType::NONE);
+	m_model.get().locked = true;
+	m_model.swap(SwapType::NONE);
 }
 
 DataLock::~DataLock()
 {
-	get().locked = false;
-	swap(m_swapType);
+	m_model.get().locked = false;
+	m_model.swap(m_swapType);
 }
 
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 channel::Data& Layout::getChannel(ID id)
@@ -121,187 +97,202 @@ const channel::Data& Layout::getChannel(ID id) const
 }
 
 /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
-void init()
+Model::Model()
+: onSwap(nullptr)
 {
-	get().clock.state = &state.clock;
-	get().mixer.state = &state.mixer;
+	get().sequencer.state = &m_states.sequencer;
+	get().mixer.state     = &m_states.mixer;
+	get().mixer.buffer    = &m_buffers.mixer;
+	get().recorder.state  = &m_states.recorder;
+
 	swap(SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
 
-Layout& get()
+void Model::reset()
 {
-	return layout.get();
-}
-
-Lock get_RT()
-{
-	return Lock(layout);
-}
-
-void swap(SwapType t)
-{
-	layout.swap();
-	if (onSwap_)
-		onSwap_(t);
-}
-
-void onSwap(std::function<void(SwapType)> f)
-{
-	onSwap_ = f;
+	m_states.channels.clear();
+	m_buffers = {};
+	m_data    = {};
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool isLocked()
+Layout&       Model::get() { return m_layout.get(); }
+const Layout& Model::get() const { return m_layout.get(); }
+
+LayoutLock Model::get_RT()
 {
-	return layout.isLocked();
+	return LayoutLock(m_layout);
+}
+
+void Model::swap(SwapType t)
+{
+	m_layout.swap();
+	if (onSwap)
+		onSwap(t);
+}
+
+/* -------------------------------------------------------------------------- */
+
+DataLock Model::lockData(SwapType t)
+{
+	return DataLock(*this, t);
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Model::isLocked() const
+{
+	return m_layout.isLocked();
 }
 
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-T& getAll()
+T& Model::getAll()
 {
 #ifdef WITH_VST
 	if constexpr (std::is_same_v<T, PluginPtrs>)
-		return data.plugins;
+		return m_data.plugins;
 #endif
 	if constexpr (std::is_same_v<T, WavePtrs>)
-		return data.waves;
-	if constexpr (std::is_same_v<T, Actions>)
-		return data.actions;
+		return m_data.waves;
+	if constexpr (std::is_same_v<T, Actions::Map>)
+		return m_data.actions;
 	if constexpr (std::is_same_v<T, ChannelBufferPtrs>)
-		return data.channels;
+		return m_data.channels;
 	if constexpr (std::is_same_v<T, ChannelStatePtrs>)
-		return state.channels;
+		return m_states.channels;
 
 	assert(false);
 }
 
 #ifdef WITH_VST
-template PluginPtrs& getAll<PluginPtrs>();
+template PluginPtrs& Model::getAll<PluginPtrs>();
 #endif
-template WavePtrs&          getAll<WavePtrs>();
-template Actions&           getAll<Actions>();
-template ChannelBufferPtrs& getAll<ChannelBufferPtrs>();
-template ChannelStatePtrs&  getAll<ChannelStatePtrs>();
+template WavePtrs&          Model::getAll<WavePtrs>();
+template Actions::Map&      Model::getAll<Actions::Map>();
+template ChannelBufferPtrs& Model::getAll<ChannelBufferPtrs>();
+template ChannelStatePtrs&  Model::getAll<ChannelStatePtrs>();
 
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-T* find(ID id)
+T* Model::find(ID id)
 {
 #ifdef WITH_VST
 	if constexpr (std::is_same_v<T, Plugin>)
-		return get_(data.plugins, id);
+		return get_(m_data.plugins, id);
 #endif
 	if constexpr (std::is_same_v<T, Wave>)
-		return get_(data.waves, id);
+		return get_(m_data.waves, id);
 
 	assert(false);
 }
 
 #ifdef WITH_VST
-template Plugin* find<Plugin>(ID id);
+template Plugin* Model::find<Plugin>(ID id);
 #endif
-template Wave* find<Wave>(ID id);
+template Wave* Model::find<Wave>(ID id);
 
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-void add(T obj)
+void Model::add(T obj)
 {
 #ifdef WITH_VST
 	if constexpr (std::is_same_v<T, PluginPtr>)
-		data.plugins.push_back(std::move(obj));
+		m_data.plugins.push_back(std::move(obj));
 #endif
 	if constexpr (std::is_same_v<T, WavePtr>)
-		data.waves.push_back(std::move(obj));
+		m_data.waves.push_back(std::move(obj));
 	if constexpr (std::is_same_v<T, ChannelBufferPtr>)
-		data.channels.push_back(std::move(obj));
+		m_data.channels.push_back(std::move(obj));
 	if constexpr (std::is_same_v<T, ChannelStatePtr>)
-		state.channels.push_back(std::move(obj));
+		m_states.channels.push_back(std::move(obj));
 }
 
 #ifdef WITH_VST
-template void add<PluginPtr>(PluginPtr p);
+template void Model::add<PluginPtr>(PluginPtr p);
 #endif
-template void add<WavePtr>(WavePtr p);
-template void add<ChannelBufferPtr>(ChannelBufferPtr p);
-template void add<ChannelStatePtr>(ChannelStatePtr p);
+template void Model::add<WavePtr>(WavePtr p);
+template void Model::add<ChannelBufferPtr>(ChannelBufferPtr p);
+template void Model::add<ChannelStatePtr>(ChannelStatePtr p);
 
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-void remove(const T& ref)
+void Model::remove(const T& ref)
 {
 #ifdef WITH_VST
 	if constexpr (std::is_same_v<T, Plugin>)
-		remove_(data.plugins, ref);
+		remove_(m_data.plugins, ref);
 #endif
 	if constexpr (std::is_same_v<T, Wave>)
-		remove_(data.waves, ref);
+		remove_(m_data.waves, ref);
 }
 
 #ifdef WITH_VST
-template void remove<Plugin>(const Plugin& t);
+template void Model::remove<Plugin>(const Plugin& t);
 #endif
-template void remove<Wave>(const Wave& t);
+template void Model::remove<Wave>(const Wave& t);
 
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-T& back()
+T& Model::back()
 {
 #ifdef WITH_VST
 	if constexpr (std::is_same_v<T, Plugin>)
-		return *data.plugins.back().get();
+		return *m_data.plugins.back().get();
 #endif
 	if constexpr (std::is_same_v<T, Wave>)
-		return *data.waves.back().get();
+		return *m_data.waves.back().get();
 	if constexpr (std::is_same_v<T, channel::State>)
-		return *state.channels.back().get();
+		return *m_states.channels.back().get();
 	if constexpr (std::is_same_v<T, channel::Buffer>)
-		return *data.channels.back().get();
+		return *m_data.channels.back().get();
 }
 
 #ifdef WITH_VST
-template Plugin& back<Plugin>();
+template Plugin& Model::back<Plugin>();
 #endif
-template Wave&            back<Wave>();
-template channel::State&  back<channel::State>();
-template channel::Buffer& back<channel::Buffer>();
+template Wave&            Model::back<Wave>();
+template channel::State&  Model::back<channel::State>();
+template channel::Buffer& Model::back<channel::Buffer>();
 
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-void clear()
+void Model::clear()
 {
 #ifdef WITH_VST
 	if constexpr (std::is_same_v<T, PluginPtrs>)
-		data.plugins.clear();
+		m_data.plugins.clear();
 #endif
 	if constexpr (std::is_same_v<T, WavePtrs>)
-		data.waves.clear();
+		m_data.waves.clear();
 }
 
 #ifdef WITH_VST
-template void clear<PluginPtrs>();
+template void Model::clear<PluginPtrs>();
 #endif
-template void clear<WavePtrs>();
+template void Model::clear<WavePtrs>();
 
 /* -------------------------------------------------------------------------- */
 
 #ifdef G_DEBUG_MODE
 
-void debug()
+void Model::debug()
 {
 	puts("======== SYSTEM STATUS ========");
 
-	puts("model::layout");
+	puts("model::layout.channels");
 
 	int i = 0;
 	for (const channel::Data& c : get().channels)
@@ -321,7 +312,7 @@ void debug()
 	puts("model::state.channels");
 
 	i = 0;
-	for (const auto& c : state.channels)
+	for (const auto& c : m_states.channels)
 	{
 		printf("\t%d) - %p\n", i++, (void*)c.get());
 	}
@@ -329,12 +320,12 @@ void debug()
 	puts("model::data.waves");
 
 	i = 0;
-	for (const auto& w : data.waves)
+	for (const auto& w : m_data.waves)
 		printf("\t%d) %p - ID=%d name='%s'\n", i++, (void*)w.get(), w->id, w->getPath().c_str());
 
 	puts("model::data.actions");
 
-	for (const auto& [frame, actions] : getAll<Actions>())
+	for (const auto& [frame, actions] : getAll<Actions::Map>())
 	{
 		printf("\tframe: %d\n", frame);
 		for (const Action& a : actions)
@@ -347,7 +338,7 @@ void debug()
 	puts("model::data.plugins");
 
 	i = 0;
-	for (const auto& p : data.plugins)
+	for (const auto& p : m_data.plugins)
 		printf("\t%d) %p - ID=%d\n", i++, (void*)p.get(), p->id);
 
 #endif

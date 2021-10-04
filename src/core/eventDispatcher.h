@@ -27,75 +27,111 @@
 #ifndef G_EVENT_DISPATCHER_H
 #define G_EVENT_DISPATCHER_H
 
-#include "core/action.h"
 #include "core/const.h"
 #include "core/queue.h"
 #include "core/ringBuffer.h"
 #include "core/types.h"
+#include "core/worker.h"
+#include "src/core/actions/action.h"
 #include <atomic>
 #include <functional>
 #include <thread>
 #include <variant>
 
-/* giada::m::eventDispatcher
+/* giada::m::EventDispatcher
 Takes events from the two queues (MIDI and UI) filled by c::events and turns 
 them into actual changes in the data model. The EventDispatcher runs in a
 separate worker thread. */
 
-namespace giada::m::eventDispatcher
+namespace giada::m
 {
-enum class EventType
+class EventDispatcher
 {
-	KEY_PRESS,
-	KEY_RELEASE,
-	KEY_KILL,
-	SEQUENCER_START,
-	SEQUENCER_STOP,
-	SEQUENCER_REWIND,
-	MIDI,
-	MIDI_DISPATCHER_LEARN,
-	MIDI_DISPATCHER_PROCESS,
-	MIXER_SIGNAL_CALLBACK,
-	MIXER_END_OF_REC_CALLBACK,
-	CHANNEL_TOGGLE_READ_ACTIONS,
-	CHANNEL_KILL_READ_ACTIONS,
-	CHANNEL_TOGGLE_ARM,
-	CHANNEL_MUTE,
-	CHANNEL_SOLO,
-	CHANNEL_VOLUME,
-	CHANNEL_PITCH,
-	CHANNEL_PAN
+public:
+	enum class EventType
+	{
+		KEY_PRESS,
+		KEY_RELEASE,
+		KEY_KILL,
+		SEQUENCER_START,
+		SEQUENCER_STOP,
+		SEQUENCER_REWIND,
+		MIDI,
+		MIDI_DISPATCHER_LEARN,
+		MIDI_DISPATCHER_PROCESS,
+		MIXER_SIGNAL_CALLBACK,
+		MIXER_END_OF_REC_CALLBACK,
+		CHANNEL_TOGGLE_READ_ACTIONS,
+		CHANNEL_KILL_READ_ACTIONS,
+		CHANNEL_TOGGLE_ARM,
+		CHANNEL_MUTE,
+		CHANNEL_SOLO,
+		CHANNEL_VOLUME,
+		CHANNEL_PITCH,
+		CHANNEL_PAN
+	};
+
+	struct Event
+	{
+		using EventData = std::variant<int, float, Action>;
+
+		EventType type;
+		Frame     delta     = 0;
+		ID        channelId = 0;
+		EventData data      = {};
+	};
+
+	/* EventBuffer
+	Alias for a RingBuffer containing events to be sent to engine. The double 
+	size is due to the presence of two distinct Queues for collecting events 
+	coming from other threads. See below. */
+
+	using EventBuffer = RingBuffer<Event, G_MAX_DISPATCHER_EVENTS * 2>;
+
+	EventDispatcher();
+
+	/* start
+	Starts the internal worker on a separate thread. Call this on startup. */
+
+	void start();
+
+	void pumpUIevent(Event e);
+	void pumpMidiEvent(Event e);
+
+	/* Event queues
+	Collect events coming from the UI or MIDI devices. Our poor man's Queue is a 
+	single-producer/single-consumer one, so we need two queues for two writers. 
+	TODO - let's add a multi-producer queue sooner or later! */
+	/*TODO - make them private*/
+
+	Queue<Event, G_MAX_DISPATCHER_EVENTS> UIevents;
+	Queue<Event, G_MAX_DISPATCHER_EVENTS> MidiEvents;
+
+	/* on[...]
+	Callbacks fired when something happens in the Event Dispatcher. */
+
+	std::function<void(const MidiEvent& e)> onMidiLearn;
+	std::function<void(const MidiEvent& e)> onMidiProcess;
+	std::function<void(const EventBuffer&)> onProcessChannels;
+	std::function<void(const EventBuffer&)> onProcessSequencer;
+	std::function<void()>                   onMixerSignalCallback;
+	std::function<void()>                   onMixerEndOfRecCallback;
+
+private:
+	void processFuntions();
+	void process();
+
+	/* m_worker
+	A separate thread responsible for the event processing. */
+
+	Worker m_worker;
+
+	/* m_eventBuffer
+	Buffer of events sent to channels for event parsing. This is filled with 
+	Events coming from the two event queues.*/
+
+	EventBuffer m_eventBuffer;
 };
-
-using EventData = std::variant<int, float, Action>;
-
-struct Event
-{
-	EventType type;
-	Frame     delta     = 0;
-	ID        channelId = 0;
-	EventData data      = {};
-};
-
-/* EventBuffer
-Alias for a RingBuffer containing events to be sent to engine. The double size
-is due to the presence of two distinct Queues for collecting events coming from
-other threads. See below. */
-
-using EventBuffer = RingBuffer<Event, G_MAX_DISPATCHER_EVENTS * 2>;
-
-/* Event queues
-Collect events coming from the UI or MIDI devices. Our poor man's Queue is a 
-single-producer/single-consumer one, so we need two queues for two writers. 
-TODO - let's add a multi-producer queue sooner or later! */
-
-extern Queue<Event, G_MAX_DISPATCHER_EVENTS> UIevents;
-extern Queue<Event, G_MAX_DISPATCHER_EVENTS> MidiEvents;
-
-void init();
-
-void pumpUIevent(Event e);
-void pumpMidiEvent(Event e);
-} // namespace giada::m::eventDispatcher
+} // namespace giada::m
 
 #endif

@@ -26,25 +26,11 @@
 
 #include "core/mixerHandler.h"
 #include "core/channels/channelManager.h"
-#include "core/clock.h"
-#include "core/conf.h"
 #include "core/const.h"
-#include "core/init.h"
-#include "core/kernelAudio.h"
-#include "core/kernelMidi.h"
-#include "core/midiMapConf.h"
 #include "core/mixer.h"
 #include "core/model/model.h"
-#include "core/patch.h"
-#include "core/plugins/plugin.h"
-#include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
-#include "core/recManager.h"
 #include "core/recorder.h"
-#include "core/recorderHandler.h"
-#include "core/wave.h"
-#include "core/waveFx.h"
-#include "core/waveManager.h"
 #include "glue/channel.h"
 #include "glue/main.h"
 #include "utils/fs.h"
@@ -55,62 +41,327 @@
 #include <cassert>
 #include <vector>
 
-namespace giada::m::mh
+namespace giada::m
 {
-namespace
+MixerHandler::MixerHandler(model::Model& model, Mixer& mixer)
+: onChannelsAltered(nullptr)
+, onChannelRecorded(nullptr)
+, m_model(model)
+, m_mixer(mixer)
 {
-channel::Data& addChannel_(ChannelType type, ID columnId)
-{
-	model::get().channels.push_back(channelManager::create(/*id=*/0, type, columnId));
-	model::swap(model::SwapType::HARD);
-
-	return model::get().channels.back();
 }
 
 /* -------------------------------------------------------------------------- */
 
-waveManager::Result createWave_(const std::string& fname)
+void MixerHandler::reset(Frame framesInLoop, Frame framesInBuffer, ChannelManager& channelManager)
 {
-	return waveManager::createFromFile(fname, /*id=*/0, conf::conf.samplerate,
-	    conf::conf.rsmpQuality);
+	m_mixer.reset(framesInLoop, framesInBuffer);
+
+	m_model.get().channels.clear();
+
+	m_model.get().channels.push_back(channelManager.create(
+	    Mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, /*columnId=*/0, framesInBuffer));
+	m_model.get().channels.push_back(channelManager.create(
+	    Mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, /*columnId=*/0, framesInBuffer));
+	m_model.get().channels.push_back(channelManager.create(
+	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, /*columnId=*/0, framesInBuffer));
+
+	m_model.swap(model::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool anyChannel_(std::function<bool(const channel::Data&)> f)
+channel::Data& MixerHandler::addChannel(ChannelType type, ID columnId, int bufferSize,
+    ChannelManager& channelManager)
 {
-	return std::any_of(model::get().channels.begin(), model::get().channels.end(), f);
+	m_model.get().channels.push_back(channelManager.create(/*id=*/0, type, columnId, bufferSize));
+	m_model.swap(model::SwapType::HARD);
+
+	return m_model.get().channels.back();
 }
 
 /* -------------------------------------------------------------------------- */
 
-template <typename F>
-std::vector<channel::Data*> getChannelsIf_(F f)
+void MixerHandler::loadChannel(ID channelId, std::unique_ptr<Wave> w)
+{
+	assert(onChannelsAltered != nullptr);
+
+	m_model.add(std::move(w));
+
+	Wave& wave = m_model.back<Wave>();
+	Wave* old  = m_model.get().getChannel(channelId).samplePlayer->getWave();
+
+	samplePlayer::loadWave(m_model.get().getChannel(channelId), &wave);
+	m_model.swap(model::SwapType::HARD);
+
+	/* Remove old wave, if any. It is safe to do it now: the audio thread is
+	already processing the new layout. */
+
+	if (old != nullptr)
+		m_model.remove<Wave>(*old);
+
+	onChannelsAltered();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MixerHandler::addAndLoadChannel(ID columnId, std::unique_ptr<Wave> w, int bufferSize,
+    ChannelManager& channelManager)
+{
+	assert(onChannelsAltered != nullptr);
+
+	m_model.add(std::move(w));
+
+	Wave&          wave    = m_model.back<Wave>();
+	channel::Data& channel = addChannel(ChannelType::SAMPLE, columnId, bufferSize, channelManager);
+
+	samplePlayer::loadWave(channel, &wave);
+	m_model.swap(model::SwapType::HARD);
+
+	onChannelsAltered();
+}
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef WITH_VST
+void MixerHandler::cloneChannel(ID channelId, int sampleRate, int bufferSize,
+    ChannelManager& channelManager, WaveManager& waveManager, const Sequencer& sequencer,
+    PluginManager& pluginManager)
+#else
+void MixerHandler::cloneChannel(ID channelId, int bufferSize, ChannelManager& channelManager,
+    WaveManager& waveManager, const Sequencer& sequencer)
+#endif
+{
+	const channel::Data& oldChannel = m_model.get().getChannel(channelId);
+	channel::Data        newChannel = channelManager.create(oldChannel, bufferSize);
+
+	/* Clone waves and plugins first in their own lists. */
+
+	if (oldChannel.samplePlayer && oldChannel.samplePlayer->hasWave())
+	{
+		const Wave& oldWave = *oldChannel.samplePlayer->getWave();
+		m_model.add(waveManager.createFromWave(oldWave, 0, oldWave.getBuffer().countFrames()));
+		samplePlayer::loadWave(newChannel, &m_model.back<Wave>());
+	}
+
+#ifdef WITH_VST
+	for (const Plugin* plugin : oldChannel.plugins)
+	{
+		m_model.add(pluginManager.makePlugin(*plugin, sampleRate, bufferSize, sequencer));
+		newChannel.plugins.push_back(&m_model.back<Plugin>());
+	}
+#endif
+
+	/* Then push the new channel in the channels vector. */
+
+	m_model.get().channels.push_back(newChannel);
+	m_model.swap(model::SwapType::HARD);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MixerHandler::freeChannel(ID channelId)
+{
+	assert(onChannelsAltered != nullptr);
+
+	channel::Data& ch = m_model.get().getChannel(channelId);
+
+	assert(ch.samplePlayer);
+
+	const Wave* wave = ch.samplePlayer->getWave();
+
+	samplePlayer::loadWave(ch, nullptr);
+	m_model.swap(model::SwapType::HARD);
+
+	if (wave != nullptr)
+		m_model.remove<Wave>(*wave);
+
+	onChannelsAltered();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MixerHandler::freeAllChannels()
+{
+	assert(onChannelsAltered != nullptr);
+
+	for (channel::Data& ch : m_model.get().channels)
+		if (ch.samplePlayer)
+			samplePlayer::loadWave(ch, nullptr);
+
+	m_model.swap(model::SwapType::HARD);
+	m_model.clear<model::WavePtrs>();
+
+	onChannelsAltered();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MixerHandler::deleteChannel(ID channelId)
+{
+	assert(onChannelsAltered != nullptr);
+
+	const channel::Data& ch   = m_model.get().getChannel(channelId);
+	const Wave*          wave = ch.samplePlayer ? ch.samplePlayer->getWave() : nullptr;
+#ifdef WITH_VST
+	const std::vector<Plugin*> plugins = ch.plugins;
+#endif
+
+	u::vector::removeIf(m_model.get().channels, [channelId](const channel::Data& c) {
+		return c.id == channelId;
+	});
+	m_model.swap(model::SwapType::HARD);
+
+	if (wave != nullptr)
+		m_model.remove<Wave>(*wave);
+
+	onChannelsAltered();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MixerHandler::renameChannel(ID channelId, const std::string& name)
+{
+	m_model.get().getChannel(channelId).name = name;
+	m_model.swap(model::SwapType::HARD);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MixerHandler::updateSoloCount()
+{
+	bool hasSolos = forAnyChannel([](const channel::Data& ch) {
+		return !ch.isInternal() && ch.solo;
+	});
+
+	m_model.get().mixer.hasSolos = hasSolos;
+	m_model.swap(model::SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MixerHandler::setInToOut(bool v)
+{
+	m_model.get().mixer.inToOut = v;
+	m_model.swap(model::SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
+
+float MixerHandler::getInVol() const
+{
+	return m_model.get().getChannel(Mixer::MASTER_IN_CHANNEL_ID).volume;
+}
+
+float MixerHandler::getOutVol() const
+{
+	return m_model.get().getChannel(Mixer::MASTER_OUT_CHANNEL_ID).volume;
+}
+
+bool MixerHandler::getInToOut() const
+{
+	return m_model.get().mixer.inToOut;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MixerHandler::startInputRec(Frame currentFrame)
+{
+	m_mixer.startInputRec(currentFrame);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Frame MixerHandler::stopInputRec()
+{
+	return m_mixer.stopInputRec();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MixerHandler::finalizeInputRec(Frame recordedFrames, Frame currentFrame)
+{
+	for (channel::Data* ch : getRecordableChannels())
+		recordChannel(*ch, recordedFrames, currentFrame);
+	for (channel::Data* ch : getOverdubbableChannels())
+		overdubChannel(*ch, currentFrame);
+
+	m_mixer.clearRecBuffer();
+
+	onChannelsAltered();
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool MixerHandler::hasInputRecordableChannels() const
+{
+	return forAnyChannel([](const channel::Data& ch) { return ch.canInputRec(); });
+}
+
+bool MixerHandler::hasActionRecordableChannels() const
+{
+	return forAnyChannel([](const channel::Data& ch) { return ch.canActionRec(); });
+}
+
+bool MixerHandler::hasLogicalSamples() const
+{
+	return forAnyChannel([](const channel::Data& ch) { return ch.samplePlayer && ch.samplePlayer->hasLogicalWave(); });
+}
+
+bool MixerHandler::hasEditedSamples() const
+{
+	return forAnyChannel([](const channel::Data& ch) {
+		return ch.samplePlayer && ch.samplePlayer->hasEditedWave();
+	});
+}
+
+bool MixerHandler::hasActions() const
+{
+	return forAnyChannel([](const channel::Data& ch) { return ch.hasActions; });
+}
+
+bool MixerHandler::hasAudioData() const
+{
+	return forAnyChannel([](const channel::Data& ch) {
+		return ch.samplePlayer && ch.samplePlayer->hasWave();
+	});
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool MixerHandler::forAnyChannel(std::function<bool(const channel::Data&)> f) const
+{
+	return std::any_of(m_model.get().channels.begin(), m_model.get().channels.end(), f);
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::vector<channel::Data*> MixerHandler::getChannelsIf(std::function<bool(const channel::Data&)> f)
 {
 	std::vector<channel::Data*> out;
-	for (channel::Data& ch : model::get().channels)
+	for (channel::Data& ch : m_model.get().channels)
 		if (f(ch))
 			out.push_back(&ch);
 	return out;
 }
 
-std::vector<channel::Data*> getRecordableChannels_()
+std::vector<channel::Data*> MixerHandler::getRecordableChannels()
 {
-	return getChannelsIf_([](const channel::Data& c) { return c.canInputRec() && !c.hasWave(); });
+	return getChannelsIf([](const channel::Data& c) { return c.canInputRec() && !c.hasWave(); });
 }
 
-std::vector<channel::Data*> getOverdubbableChannels_()
+std::vector<channel::Data*> MixerHandler::getOverdubbableChannels()
 {
-	return getChannelsIf_([](const channel::Data& c) { return c.canInputRec() && c.hasWave(); });
+	return getChannelsIf([](const channel::Data& c) { return c.canInputRec() && c.hasWave(); });
 }
 
 /* -------------------------------------------------------------------------- */
 
-void setupChannelPostRecording_(channel::Data& ch)
+void MixerHandler::setupChannelPostRecording(channel::Data& ch, Frame currentFrame)
 {
 	/* Start sample channels in loop mode right away. */
 	if (ch.samplePlayer->isAnyLoopMode())
-		samplePlayer::kickIn(ch, clock::getCurrentFrame());
+		samplePlayer::kickIn(ch, currentFrame);
 	/* Disable 'arm' button if overdub protection is on. */
 	if (ch.audioReceiver->overdubProtection == true)
 		ch.armed = false;
@@ -118,312 +369,41 @@ void setupChannelPostRecording_(channel::Data& ch)
 
 /* -------------------------------------------------------------------------- */
 
-/* recordChannel_
-Records the current Mixer audio input data into an empty channel. */
-
-void recordChannel_(channel::Data& ch, Frame recordedFrames)
+void MixerHandler::recordChannel(channel::Data& ch, Frame recordedFrames, Frame currentFrame)
 {
-	/* Create a new Wave with audio coming from Mixer's input buffer. */
+	assert(onChannelRecorded != nullptr);
 
-	std::string           filename = "TAKE-" + std::to_string(patch::patch.lastTakeId++) + ".wav";
-	std::unique_ptr<Wave> wave     = waveManager::createEmpty(recordedFrames, G_MAX_IO_CHANS,
-        conf::conf.samplerate, filename);
+	std::unique_ptr<Wave> wave = onChannelRecorded(recordedFrames);
 
 	G_DEBUG("Created new Wave, size=" << wave->getBuffer().countFrames());
 
 	/* Copy up to wave.getSize() from the mixer's input buffer into wave's. */
 
-	wave->getBuffer().set(mixer::getRecBuffer(), wave->getBuffer().countFrames());
+	wave->getBuffer().set(m_mixer.getRecBuffer(), wave->getBuffer().countFrames());
 
 	/* Update channel with the new Wave. */
 
-	model::add(std::move(wave));
-	samplePlayer::loadWave(ch, &model::back<Wave>());
-	setupChannelPostRecording_(ch);
+	m_model.add(std::move(wave));
+	samplePlayer::loadWave(ch, &m_model.back<Wave>());
+	setupChannelPostRecording(ch, currentFrame);
 
-	model::swap(model::SwapType::HARD);
+	m_model.swap(model::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
-/* overdubChannel_
-Records the current Mixer audio input data into a channel with an existing
-Wave, overdub mode. */
-
-void overdubChannel_(channel::Data& ch)
+void MixerHandler::overdubChannel(channel::Data& ch, Frame currentFrame)
 {
 	Wave* wave = ch.samplePlayer->getWave();
 
 	/* Need model::DataLock here, as data might be being read by the audio
 	thread at the same time. */
 
-	model::DataLock lock;
-	wave->getBuffer().sum(mixer::getRecBuffer(), /*gain=*/1.0f);
+	model::DataLock lock = m_model.lockData();
+
+	wave->getBuffer().sum(m_mixer.getRecBuffer(), /*gain=*/1.0f);
 	wave->setLogical(true);
 
-	setupChannelPostRecording_(ch);
+	setupChannelPostRecording(ch, currentFrame);
 }
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-void init()
-{
-	mixer::init(clock::getMaxFramesInLoop(), kernelAudio::getRealBufSize());
-
-	model::get().channels.clear();
-
-	model::get().channels.push_back(channelManager::create(
-	    mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, /*columnId=*/0));
-	model::get().channels.push_back(channelManager::create(
-	    mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, /*columnId=*/0));
-	model::get().channels.push_back(channelManager::create(
-	    mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, /*columnId=*/0));
-
-	model::swap(model::SwapType::NONE);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void close()
-{
-	mixer::disable();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void addChannel(ChannelType type, ID columnId)
-{
-	addChannel_(type, columnId);
-}
-
-/* -------------------------------------------------------------------------- */
-
-int loadChannel(ID channelId, const std::string& fname)
-{
-	waveManager::Result res = createWave_(fname);
-
-	if (res.status != G_RES_OK)
-		return res.status;
-
-	model::add(std::move(res.wave));
-
-	Wave& wave = model::back<Wave>();
-	Wave* old  = model::get().getChannel(channelId).samplePlayer->getWave();
-
-	samplePlayer::loadWave(model::get().getChannel(channelId), &wave);
-	model::swap(model::SwapType::HARD);
-
-	/* Remove old wave, if any. It is safe to do it now: the audio thread is
-	already processing the new layout. */
-
-	if (old != nullptr)
-		model::remove<Wave>(*old);
-
-	recManager::refreshInputRecMode();
-
-	return res.status;
-}
-
-/* -------------------------------------------------------------------------- */
-
-int addAndLoadChannel(ID columnId, const std::string& fname)
-{
-	waveManager::Result res = createWave_(fname);
-	if (res.status == G_RES_OK)
-		addAndLoadChannel(columnId, std::move(res.wave));
-	return res.status;
-}
-
-void addAndLoadChannel(ID columnId, std::unique_ptr<Wave>&& w)
-{
-	model::add(std::move(w));
-
-	Wave&          wave    = model::back<Wave>();
-	channel::Data& channel = addChannel_(ChannelType::SAMPLE, columnId);
-
-	samplePlayer::loadWave(channel, &wave);
-	model::swap(model::SwapType::HARD);
-
-	recManager::refreshInputRecMode();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void cloneChannel(ID channelId)
-{
-	channel::Data& oldChannel = model::get().getChannel(channelId);
-	channel::Data  newChannel = channelManager::create(oldChannel);
-
-	/* Clone plugins, actions and wave first in their own lists. */
-
-#ifdef WITH_VST
-	newChannel.plugins = pluginHost::clonePlugins(oldChannel.plugins);
-#endif
-	recorderHandler::cloneActions(channelId, newChannel.id);
-
-	if (newChannel.samplePlayer && newChannel.samplePlayer->hasWave())
-	{
-		Wave* wave = newChannel.samplePlayer->getWave();
-		model::add(waveManager::createFromWave(*wave, 0, wave->getBuffer().countFrames()));
-	}
-
-	/* Then push the new channel in the channels vector. */
-
-	model::get().channels.push_back(newChannel);
-	model::swap(model::SwapType::HARD);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void freeChannel(ID channelId)
-{
-	channel::Data& ch = model::get().getChannel(channelId);
-
-	assert(ch.samplePlayer);
-
-	const Wave* wave = ch.samplePlayer->getWave();
-
-	samplePlayer::loadWave(ch, nullptr);
-	model::swap(model::SwapType::HARD);
-
-	if (wave != nullptr)
-		model::remove<Wave>(*wave);
-
-	recManager::refreshInputRecMode();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void freeAllChannels()
-{
-	for (channel::Data& ch : model::get().channels)
-		if (ch.samplePlayer)
-			samplePlayer::loadWave(ch, nullptr);
-
-	model::swap(model::SwapType::HARD);
-	model::clear<model::WavePtrs>();
-
-	recManager::refreshInputRecMode();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void deleteChannel(ID channelId)
-{
-	const channel::Data& ch   = model::get().getChannel(channelId);
-	const Wave*          wave = ch.samplePlayer ? ch.samplePlayer->getWave() : nullptr;
-#ifdef WITH_VST
-	const std::vector<Plugin*> plugins = ch.plugins;
-#endif
-
-	u::vector::removeIf(model::get().channels, [channelId](const channel::Data& c) {
-		return c.id == channelId;
-	});
-	model::swap(model::SwapType::HARD);
-
-	if (wave != nullptr)
-		model::remove<Wave>(*wave);
-
-#ifdef WITH_VST
-	pluginHost::freePlugins(plugins);
-#endif
-
-	recManager::refreshInputRecMode();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void renameChannel(ID channelId, const std::string& name)
-{
-	model::get().getChannel(channelId).name = name;
-	model::swap(model::SwapType::HARD);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void updateSoloCount()
-{
-	bool hasSolos = anyChannel_([](const channel::Data& ch) {
-		return !ch.isInternal() && ch.solo;
-	});
-
-	model::get().mixer.hasSolos = hasSolos;
-	model::swap(model::SwapType::NONE);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void setInToOut(bool v)
-{
-	model::get().mixer.inToOut = v;
-	model::swap(model::SwapType::NONE);
-}
-
-/* -------------------------------------------------------------------------- */
-
-float getInVol()
-{
-	return model::get().getChannel(mixer::MASTER_IN_CHANNEL_ID).volume;
-}
-
-float getOutVol()
-{
-	return model::get().getChannel(mixer::MASTER_OUT_CHANNEL_ID).volume;
-}
-
-bool getInToOut()
-{
-	return model::get().mixer.inToOut;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void finalizeInputRec(Frame recordedFrames)
-{
-	for (channel::Data* ch : getRecordableChannels_())
-		recordChannel_(*ch, recordedFrames);
-	for (channel::Data* ch : getOverdubbableChannels_())
-		overdubChannel_(*ch);
-
-	mixer::clearRecBuffer();
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool hasInputRecordableChannels()
-{
-	return anyChannel_([](const channel::Data& ch) { return ch.canInputRec(); });
-}
-
-bool hasActionRecordableChannels()
-{
-	return anyChannel_([](const channel::Data& ch) { return ch.canActionRec(); });
-}
-
-bool hasLogicalSamples()
-{
-	return anyChannel_([](const channel::Data& ch) { return ch.samplePlayer && ch.samplePlayer->hasLogicalWave(); });
-}
-
-bool hasEditedSamples()
-{
-	return anyChannel_([](const channel::Data& ch) {
-		return ch.samplePlayer && ch.samplePlayer->hasEditedWave();
-	});
-}
-
-bool hasActions()
-{
-	return anyChannel_([](const channel::Data& ch) { return ch.hasActions; });
-}
-
-bool hasAudioData()
-{
-	return anyChannel_([](const channel::Data& ch) {
-		return ch.samplePlayer && ch.samplePlayer->hasWave();
-	});
-}
-} // namespace giada::m::mh
+} // namespace giada::m

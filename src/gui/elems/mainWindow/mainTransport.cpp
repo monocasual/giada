@@ -24,20 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "mainTransport.h"
-#include "core/clock.h"
+#include "gui/elems/mainWindow/mainTransport.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/graphics.h"
-#include "core/mixer.h"
-#include "core/mixerHandler.h"
-#include "core/recManager.h"
-#include "core/sequencer.h"
 #include "glue/events.h"
 #include "glue/main.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
-#include "gui/elems/basics/statusButton.h"
 
 namespace giada::v
 {
@@ -110,11 +102,13 @@ geMainTransport::geMainTransport(int x, int y)
 
 void geMainTransport::refresh()
 {
-	m_play.setStatus(m::clock::isRunning());
-	m_recAction.setStatus(m::recManager::isRecordingAction());
-	m_recInput.setStatus(m::recManager::isRecordingInput());
-	m_metronome.setStatus(m::sequencer::isMetronomeOn());
-	m_recTriggerMode.setStatus(m::conf::conf.recTriggerMode == RecTriggerMode::SIGNAL);
-	m_inputRecMode.setStatus(m::conf::conf.inputRecMode == InputRecMode::FREE);
+	c::main::Transport transport = c::main::getTransport();
+
+	m_play.setStatus(transport.isRunning);
+	m_recAction.setStatus(transport.isRecordingAction);
+	m_recInput.setStatus(transport.isRecordingInput);
+	m_metronome.setStatus(transport.isMetronomeOn);
+	m_recTriggerMode.setStatus(transport.recTriggerMode == RecTriggerMode::SIGNAL);
+	m_inputRecMode.setStatus(transport.inputRecMode == InputRecMode::FREE);
 }
 } // namespace giada::v

@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "main.h"
-#include "core/clock.h"
+#include "glue/main.h"
 #include "core/conf.h"
 #include "core/const.h"
+#include "core/engine.h"
 #include "core/init.h"
 #include "core/kernelAudio.h"
 #include "core/kernelMidi.h"
@@ -36,15 +36,18 @@
 #include "core/model/model.h"
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
-#include "core/recManager.h"
 #include "core/recorder.h"
-#include "core/recorderHandler.h"
+#include "core/sequencer.h"
+#include "core/synchronizer.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "gui/elems/mainWindow/mainIO.h"
 #include "gui/elems/mainWindow/mainTimer.h"
+#include "gui/ui.h"
+#include "src/core/actions/actionRecorder.h"
+#include "src/core/actions/actions.h"
 #include "utils/gui.h"
 #include "utils/log.h"
 #include "utils/string.h"
@@ -52,17 +55,18 @@
 #include <cassert>
 #include <cmath>
 
-extern giada::v::gdMainWindow* G_MainWin;
+extern giada::v::Ui     g_ui;
+extern giada::m::Engine g_engine;
 
 namespace giada::c::main
 {
-Timer::Timer(const m::model::Clock& c)
+Timer::Timer(const m::model::Sequencer& c)
 : bpm(c.bpm)
 , beats(c.beats)
 , bars(c.bars)
 , quantize(c.quantize)
-, isUsingJack(m::kernelAudio::getAPI() == G_SYS_API_JACK)
-, isRecordingInput(m::recManager::isRecordingInput())
+, isUsingJack(g_engine.kernelAudio.getAPI() == G_SYS_API_JACK)
+, isRecordingInput(g_engine.recorder.isRecordingInput())
 {
 }
 
@@ -85,19 +89,19 @@ IO::IO(const m::channel::Data& out, const m::channel::Data& in, const m::model::
 
 Peak IO::getMasterOutPeak()
 {
-	return m::mixer::getPeakOut();
+	return g_engine.mixer.getPeakOut();
 }
 
 Peak IO::getMasterInPeak()
 {
-	return m::mixer::getPeakIn();
+	return g_engine.mixer.getPeakIn();
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool IO::isKernelReady()
 {
-	return m::kernelAudio::isReady();
+	return g_engine.kernelAudio.isReady();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -106,16 +110,16 @@ bool IO::isKernelReady()
 
 Timer getTimer()
 {
-	return Timer(m::model::get().clock);
+	return Timer(g_engine.model.get().sequencer);
 }
 
 /* -------------------------------------------------------------------------- */
 
 IO getIO()
 {
-	return IO(m::model::get().getChannel(m::mixer::MASTER_OUT_CHANNEL_ID),
-	    m::model::get().getChannel(m::mixer::MASTER_IN_CHANNEL_ID),
-	    m::model::get().mixer);
+	return IO(g_engine.model.get().getChannel(m::Mixer::MASTER_OUT_CHANNEL_ID),
+	    g_engine.model.get().getChannel(m::Mixer::MASTER_IN_CHANNEL_ID),
+	    g_engine.model.get().mixer);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -124,13 +128,13 @@ Sequencer getSequencer()
 {
 	Sequencer out;
 
-	m::mixer::RecordInfo recInfo = m::mixer::getRecordInfo();
+	m::Mixer::RecordInfo recInfo = g_engine.mixer.getRecordInfo();
 
-	out.isFreeModeInputRec = m::recManager::isRecordingInput() && m::conf::conf.inputRecMode == InputRecMode::FREE;
-	out.shouldBlink        = u::gui::shouldBlink() && (m::clock::getStatus() == ClockStatus::WAITING || out.isFreeModeInputRec);
-	out.beats              = m::clock::getBeats();
-	out.bars               = m::clock::getBars();
-	out.currentBeat        = m::clock::getCurrentBeat();
+	out.isFreeModeInputRec = g_engine.recorder.isRecordingInput() && g_engine.conf.data.inputRecMode == InputRecMode::FREE;
+	out.shouldBlink        = g_ui.shouldBlink() && (g_engine.sequencer.getStatus() == SeqStatus::WAITING || out.isFreeModeInputRec);
+	out.beats              = g_engine.sequencer.getBeats();
+	out.bars               = g_engine.sequencer.getBars();
+	out.currentBeat        = g_engine.sequencer.getCurrentBeat();
 	out.recPosition        = recInfo.position;
 	out.recMaxLength       = recInfo.maxLength;
 
@@ -139,14 +143,38 @@ Sequencer getSequencer()
 
 /* -------------------------------------------------------------------------- */
 
+Transport getTransport()
+{
+	Transport transport;
+	transport.isRunning         = g_engine.sequencer.isRunning();
+	transport.isRecordingAction = g_engine.recorder.isRecordingAction();
+	transport.isRecordingInput  = g_engine.recorder.isRecordingInput();
+	transport.isMetronomeOn     = g_engine.sequencer.isMetronomeOn();
+	transport.recTriggerMode    = g_engine.conf.data.recTriggerMode;
+	transport.inputRecMode      = g_engine.conf.data.inputRecMode;
+	return transport;
+}
+
+/* -------------------------------------------------------------------------- */
+
+MainMenu getMainMenu()
+{
+	MainMenu mainMenu;
+	mainMenu.hasAudioData = g_engine.mixerHandler.hasAudioData();
+	mainMenu.hasActions   = g_engine.mixerHandler.hasActions();
+	return mainMenu;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void setBpm(const char* i, const char* f)
 {
 	/* Never change this stuff while recording audio. */
 
-	if (m::recManager::isRecordingInput())
+	if (g_engine.recorder.isRecordingInput())
 		return;
 
-	m::clock::setBpm(std::atof(i) + (std::atof(f) / 10.0f));
+	g_engine.sequencer.setBpm(std::atof(i) + (std::atof(f) / 10.0f), g_engine.kernelAudio.getSampleRate());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -155,10 +183,10 @@ void setBpm(float f)
 {
 	/* Never change this stuff while recording audio. */
 
-	if (m::recManager::isRecordingInput())
+	if (g_engine.recorder.isRecordingInput())
 		return;
 
-	m::clock::setBpm(f);
+	g_engine.sequencer.setBpm(f, g_engine.kernelAudio.getSampleRate());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -167,18 +195,18 @@ void setBeats(int beats, int bars)
 {
 	/* Never change this stuff while recording audio. */
 
-	if (m::recManager::isRecordingInput())
+	if (g_engine.recorder.isRecordingInput())
 		return;
 
-	m::clock::setBeats(beats, bars);
-	m::mixer::allocRecBuffer(m::clock::getMaxFramesInLoop());
+	g_engine.sequencer.setBeats(beats, bars, g_engine.kernelAudio.getSampleRate());
+	g_engine.mixer.allocRecBuffer(g_engine.sequencer.getMaxFramesInLoop(g_engine.kernelAudio.getSampleRate()));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void quantize(int val)
 {
-	m::clock::setQuantize(val);
+	g_engine.sequencer.setQuantize(val, g_engine.kernelAudio.getSampleRate());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -187,10 +215,11 @@ void clearAllSamples()
 {
 	if (!v::gdConfirmWin("Warning", "Free all Sample channels: are you sure?"))
 		return;
-	G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
-	m::clock::setStatus(ClockStatus::STOPPED);
-	m::mh::freeAllChannels();
-	m::recorderHandler::clearAllActions();
+	g_ui.closeSubWindow(WID_SAMPLE_EDITOR);
+	g_engine.sequencer.setStatus(SeqStatus::STOPPED);
+	g_engine.synchronizer.sendMIDIstop();
+	g_engine.mixerHandler.freeAllChannels();
+	g_engine.actionRecorder.clearAllActions();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -199,39 +228,44 @@ void clearAllActions()
 {
 	if (!v::gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 		return;
-	G_MainWin->delSubWindow(WID_ACTION_EDITOR);
-	m::recorderHandler::clearAllActions();
+	g_ui.closeSubWindow(WID_ACTION_EDITOR);
+	g_engine.actionRecorder.clearAllActions();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setInToOut(bool v)
 {
-	m::mh::setInToOut(v);
+	g_engine.mixerHandler.setInToOut(v);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void toggleRecOnSignal()
 {
-	if (!m::recManager::canEnableRecOnSignal())
-	{
-		m::conf::conf.recTriggerMode = RecTriggerMode::NORMAL;
-		return;
-	}
-	m::conf::conf.recTriggerMode = m::conf::conf.recTriggerMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
+	if (!g_engine.recorder.canEnableRecOnSignal())
+		g_engine.conf.data.recTriggerMode = RecTriggerMode::NORMAL;
+	else
+		g_engine.conf.data.recTriggerMode = g_engine.conf.data.recTriggerMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
+	g_engine.updateMixerModel();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void toggleFreeInputRec()
 {
-	if (!m::recManager::canEnableFreeInputRec())
-	{
-		m::conf::conf.inputRecMode = InputRecMode::RIGID;
-		return;
-	}
-	m::conf::conf.inputRecMode = m::conf::conf.inputRecMode == InputRecMode::FREE ? InputRecMode::RIGID : InputRecMode::FREE;
+	if (!g_engine.recorder.canEnableFreeInputRec())
+		g_engine.conf.data.inputRecMode = InputRecMode::RIGID;
+	else
+		g_engine.conf.data.inputRecMode = g_engine.conf.data.inputRecMode == InputRecMode::FREE ? InputRecMode::RIGID : InputRecMode::FREE;
+	g_engine.updateMixerModel();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void printDebugInfo()
+{
+	g_engine.model.debug();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -240,7 +274,16 @@ void closeProject()
 {
 	if (!v::gdConfirmWin("Warning", "Close project: are you sure?"))
 		return;
-	m::init::reset();
-	m::mixer::enable();
+	g_engine.mixer.disable();
+	g_engine.reset();
+	g_ui.reset();
+	g_engine.mixer.enable();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void quitGiada()
+{
+	m::init::closeMainWindow();
 }
 } // namespace giada::c::main

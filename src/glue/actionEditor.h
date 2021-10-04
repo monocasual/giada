@@ -67,6 +67,10 @@ struct Data
 
 	ID                     channelId;
 	std::string            channelName;
+	Frame                  framesInSeq;
+	Frame                  framesInBeat;
+	Frame                  framesInBar;
+	Frame                  framesInLoop;
 	std::vector<m::Action> actions;
 
 	std::optional<SampleData> sample;

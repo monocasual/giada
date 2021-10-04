@@ -61,17 +61,17 @@
 
 namespace giada::v
 {
-gdSampleEditor::gdSampleEditor(ID channelId)
-: gdWindow(m::conf::conf.sampleEditorX, m::conf::conf.sampleEditorY,
-      m::conf::conf.sampleEditorW, m::conf::conf.sampleEditorH)
+gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
+: gdWindow(c.sampleEditorX, c.sampleEditorY, c.sampleEditorW, c.sampleEditorH)
 , m_channelId(channelId)
+, m_conf(c)
 {
 	end();
 
 	gePack* upperBar = createUpperBar();
 
 	waveTools = new geWaveTools(G_GUI_OUTER_MARGIN, upperBar->y() + upperBar->h() + G_GUI_OUTER_MARGIN,
-	    w() - 16, h() - 168);
+	    w() - 16, h() - 168, m_conf.sampleEditorGridOn, m_conf.sampleEditorGridVal);
 
 	gePack* bottomBar = createBottomBar(G_GUI_OUTER_MARGIN, waveTools->y() + waveTools->h() + G_GUI_OUTER_MARGIN,
 	    h() - waveTools->h() - upperBar->h() - 32);
@@ -94,12 +94,12 @@ gdSampleEditor::gdSampleEditor(ID channelId)
 
 gdSampleEditor::~gdSampleEditor()
 {
-	m::conf::conf.sampleEditorX       = x();
-	m::conf::conf.sampleEditorY       = y();
-	m::conf::conf.sampleEditorW       = w();
-	m::conf::conf.sampleEditorH       = h();
-	m::conf::conf.sampleEditorGridVal = atoi(grid->text());
-	m::conf::conf.sampleEditorGridOn  = snap->value();
+	m_conf.sampleEditorX       = x();
+	m_conf.sampleEditorY       = y();
+	m_conf.sampleEditorW       = w();
+	m_conf.sampleEditorH       = h();
+	m_conf.sampleEditorGridVal = atoi(grid->text());
+	m_conf.sampleEditorGridOn  = snap->value();
 
 	c::sampleEditor::stopPreview();
 	c::sampleEditor::cleanupPreview();
@@ -158,13 +158,13 @@ gePack* gdSampleEditor::createUpperBar()
 	grid->add("64");
 	grid->copy_tooltip("Grid frequency");
 
-	if (m::conf::conf.sampleEditorGridVal == 0)
+	if (m_conf.sampleEditorGridVal == 0)
 		grid->value(0);
 	else
-		grid->value(grid->find_item(u::string::iToString(m::conf::conf.sampleEditorGridVal).c_str()));
+		grid->value(grid->find_item(u::string::iToString(m_conf.sampleEditorGridVal).c_str()));
 	grid->callback(cb_changeGrid, (void*)this);
 
-	snap->value(m::conf::conf.sampleEditorGridOn);
+	snap->value(m_conf.sampleEditorGridOn);
 	snap->copy_tooltip("Snap to grid");
 	snap->callback(cb_enableSnap, (void*)this);
 

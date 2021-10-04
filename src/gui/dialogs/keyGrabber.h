@@ -33,16 +33,12 @@
 class geBox;
 class geButton;
 
-namespace giada
-{
-namespace c
-{
-namespace channel
+namespace giada::c::channel
 {
 struct Data;
 }
-} // namespace c
-namespace v
+
+namespace giada::v
 {
 class gdKeyGrabber : public gdWindow
 {
@@ -52,7 +48,7 @@ public:
 	int  handle(int e) override;
 	void rebuild() override;
 
-  private:
+private:
 	static void cb_clear(Fl_Widget* /*w*/, void* p);
 	static void cb_cancel(Fl_Widget* /*w*/, void* p);
 	void        cb_clear();
@@ -67,7 +63,6 @@ public:
 	geButton* m_clear;
 	geButton* m_cancel;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

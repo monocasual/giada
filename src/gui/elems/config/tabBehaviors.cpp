@@ -31,17 +31,16 @@
 #include "gui/elems/basics/check.h"
 #include <FL/Fl_Pack.H>
 
-namespace giada
+namespace giada::v
 {
-namespace v
-{
-geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
+geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H, m::Conf::Data& c)
 : Fl_Group(X, Y, W, H)
 , m_container(X, Y + G_GUI_OUTER_MARGIN, Direction::VERTICAL, G_GUI_OUTER_MARGIN)
 , m_chansStopOnSeqHalt(0, 0, 280, 30, "Dynamic channels stop immediately when the sequencer\nis halted")
 , m_treatRecsAsLoops(0, 0, 280, 20, "Treat one shot channels with actions as loops")
 , m_inputMonitorDefaultOn(0, 0, 280, 20, "New sample channels have input monitor on by default")
 , m_overdubProtectionDefaultOn(0, 0, 280, 30, "New sample channels have overdub protection on\nby default")
+, m_conf(c)
 {
 	end();
 
@@ -56,20 +55,19 @@ geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
 
 	add(m_container);
 
-	m_chansStopOnSeqHalt.value(m::conf::conf.chansStopOnSeqHalt);
-	m_treatRecsAsLoops.value(m::conf::conf.treatRecsAsLoops);
-	m_inputMonitorDefaultOn.value(m::conf::conf.inputMonitorDefaultOn);
-	m_overdubProtectionDefaultOn.value(m::conf::conf.overdubProtectionDefaultOn);
+	m_chansStopOnSeqHalt.value(m_conf.chansStopOnSeqHalt);
+	m_treatRecsAsLoops.value(m_conf.treatRecsAsLoops);
+	m_inputMonitorDefaultOn.value(m_conf.inputMonitorDefaultOn);
+	m_overdubProtectionDefaultOn.value(m_conf.overdubProtectionDefaultOn);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geTabBehaviors::save()
 {
-	m::conf::conf.chansStopOnSeqHalt         = m_chansStopOnSeqHalt.value();
-	m::conf::conf.treatRecsAsLoops           = m_treatRecsAsLoops.value();
-	m::conf::conf.inputMonitorDefaultOn      = m_inputMonitorDefaultOn.value();
-	m::conf::conf.overdubProtectionDefaultOn = m_overdubProtectionDefaultOn.value();
+	m_conf.chansStopOnSeqHalt         = m_chansStopOnSeqHalt.value();
+	m_conf.treatRecsAsLoops           = m_treatRecsAsLoops.value();
+	m_conf.inputMonitorDefaultOn      = m_inputMonitorDefaultOn.value();
+	m_conf.overdubProtectionDefaultOn = m_overdubProtectionDefaultOn.value();
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

@@ -37,11 +37,9 @@
 #include "utils/gui.h"
 #include <FL/Fl_Tabs.H>
 
-namespace giada
+namespace giada::v
 {
-namespace v
-{
-gdConfig::gdConfig(int w, int h)
+gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
 : gdWindow(u::gui::centerWindowX(w), u::gui::centerWindowY(h), w, h, "Configuration")
 {
 	Fl_Tabs* tabs = new Fl_Tabs(8, 8, w - 16, h - 44);
@@ -51,8 +49,8 @@ gdConfig::gdConfig(int w, int h)
 
 	tabAudio     = new geTabAudio(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40);
 	tabMidi      = new geTabMidi(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40);
-	tabBehaviors = new geTabBehaviors(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40);
-	tabMisc      = new geTabMisc(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40);
+	tabBehaviors = new geTabBehaviors(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40, conf);
+	tabMisc      = new geTabMisc(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20);
 #ifdef WITH_VST
 	tabPlugins = new geTabPlugins(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40);
 #endif
@@ -97,17 +95,4 @@ void gdConfig::cb_cancel()
 {
 	do_callback();
 }
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef WITH_VST
-
-void gdConfig::refreshVstPath()
-{
-	tabPlugins->refreshVstPath();
-}
-
-#endif
-
-} // namespace v
-} // namespace giada
+} // namespace giada::v

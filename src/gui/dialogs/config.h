@@ -27,6 +27,7 @@
 #ifndef GD_CONFIG_H
 #define GD_CONFIG_H
 
+#include "core/conf.h"
 #include "window.h"
 
 class geButton;
@@ -34,9 +35,7 @@ class geCheck;
 class geInput;
 class geBox;
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geChoice;
 class geTabAudio;
@@ -49,11 +48,7 @@ class geTabPlugins;
 class gdConfig : public gdWindow
 {
 public:
-	gdConfig(int w, int h);
-
-#ifdef WITH_VST
-	void refreshVstPath();
-#endif
+	gdConfig(int w, int h, m::Conf::Data&);
 
 	geTabAudio*     tabAudio;
 	geTabBehaviors* tabBehaviors;
@@ -65,13 +60,12 @@ public:
 	geButton* save;
 	geButton* cancel;
 
-  private:
+private:
 	static void cb_save_config(Fl_Widget* /*w*/, void* p);
 	static void cb_cancel(Fl_Widget* /*w*/, void* p);
 	void        cb_save_config();
 	void        cb_cancel();
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

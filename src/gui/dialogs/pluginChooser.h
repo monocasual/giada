@@ -29,6 +29,7 @@
 #ifndef GD_PLUGIN_CHOOSER_H
 #define GD_PLUGIN_CHOOSER_H
 
+#include "core/conf.h"
 #include "core/types.h"
 #include "window.h"
 #include <FL/Fl.H>
@@ -37,9 +38,7 @@
 class geButton;
 class geButton;
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geChoice;
 class gePluginBrowser;
@@ -47,16 +46,18 @@ class gePluginBrowser;
 class gdPluginChooser : public gdWindow
 {
 public:
-	gdPluginChooser(int x, int y, int w, int h, ID channelId);
+	gdPluginChooser(int x, int y, int w, int h, ID channelId, m::Conf::Data&);
 	~gdPluginChooser();
 
-  private:
+private:
 	static void cb_close(Fl_Widget* /*w*/, void* p);
 	static void cb_add(Fl_Widget* /*w*/, void* p);
 	static void cb_sort(Fl_Widget* /*w*/, void* p);
 	void        cb_close();
 	void        cb_add();
 	void        cb_sort();
+
+	m::Conf::Data& m_conf;
 
 	geChoice*        sortMethod;
 	geButton*        addBtn;
@@ -65,8 +66,7 @@ public:
 
 	ID m_channelId;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif
 

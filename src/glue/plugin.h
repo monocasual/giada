@@ -30,6 +30,7 @@
 #ifdef WITH_VST
 
 #include "core/plugins/pluginHost.h"
+#include "core/plugins/pluginManager.h"
 #include "core/types.h"
 #include <string>
 #include <vector>
@@ -38,14 +39,17 @@ namespace juce
 {
 class AudioProcessorEditor;
 }
+
 namespace giada::m
 {
 class Plugin;
 }
+
 namespace giada::m::channel
 {
 struct Data;
 }
+
 namespace giada::c::plugin
 {
 struct Program
@@ -89,7 +93,7 @@ struct Plugin
 	std::vector<Program> programs;
 	std::vector<int>     paramIndexes;
 
-  private:
+private:
 	m::Plugin& m_plugin;
 };
 
@@ -109,6 +113,8 @@ Plugins getPlugins(ID channelId);
 Plugin  getPlugin(m::Plugin& plugin, ID channelId);
 Param   getParam(int index, const m::Plugin& plugin, ID channelId);
 
+std::vector<m::PluginManager::PluginInfo> getPluginsInfo();
+
 /* updateWindow
 Updates the editor-less plug-in window. This is useless if the plug-in has an
 editor. */
@@ -117,9 +123,12 @@ void updateWindow(ID pluginId, bool gui);
 
 void addPlugin(int pluginListIndex, ID channelId);
 void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId);
+void sortPlugins(m::PluginManager::SortMethod);
 void freePlugin(const m::Plugin& plugin, ID channelId);
 void setProgram(ID pluginId, int programIndex);
 void toggleBypass(ID pluginId);
+void startDispatchLoop();
+void stopDispatchLoop();
 
 /* setPluginPathCb
 Callback attached to the DirBrowser for adding new Plug-in search paths in the

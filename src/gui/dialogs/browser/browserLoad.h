@@ -28,28 +28,27 @@
 #define GD_BROWSER_LOAD_H
 
 #include "browserBase.h"
+#include "core/conf.h"
 
-namespace giada
-{
-namespace m
+namespace giada::m
 {
 class Channel;
 }
-namespace v
+
+namespace giada::v
 {
 class gdBrowserLoad : public gdBrowserBase
 {
 public:
 	gdBrowserLoad(const std::string& title, const std::string& path,
-	    std::function<void(void*)> cb, ID channelId);
+	    std::function<void(void*)> cb, ID channelId, m::Conf::Data&);
 
-  private:
+private:
 	static void cb_load(Fl_Widget* /*w*/, void* p);
 	static void cb_down(Fl_Widget* /*w*/, void* p);
 	void        cb_load();
 	void        cb_down();
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

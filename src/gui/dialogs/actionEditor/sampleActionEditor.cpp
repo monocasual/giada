@@ -36,8 +36,8 @@
 
 namespace giada::v
 {
-gdSampleActionEditor::gdSampleActionEditor(ID channelId, m::conf::Conf& conf)
-: gdBaseActionEditor(channelId, conf)
+gdSampleActionEditor::gdSampleActionEditor(ID channelId, m::Conf::Data& conf, Frame framesInBeat)
+: gdBaseActionEditor(channelId, conf, framesInBeat)
 , m_barPadding(0, 0, w() - 232, G_GUI_UNIT)
 , m_sampleActionEditor(0, 0, this)
 , m_envelopeEditor(0, 0, "Volume", this)
@@ -93,7 +93,7 @@ void gdSampleActionEditor::rebuild()
 	m_data = c::actionEditor::getData(channelId);
 
 	canChangeActionType() ? m_actionType.activate() : m_actionType.deactivate();
-	computeWidth();
+	computeWidth(m_data.framesInSeq, m_data.framesInLoop);
 
 	m_sampleActionEditor.rebuild(m_data);
 	m_envelopeEditor.rebuild(m_data);

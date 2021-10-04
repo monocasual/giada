@@ -28,6 +28,7 @@
 #define GD_EDITOR_H
 
 #include "core/types.h"
+#include "core/conf.h"
 #include "glue/sampleEditor.h"
 #include "window.h"
 
@@ -41,6 +42,7 @@ namespace giada::m
 {
 class Wave;
 }
+
 namespace giada::v
 {
 class geChoice;
@@ -58,7 +60,7 @@ class gdSampleEditor : public gdWindow
 	friend class geWaveform;
 
 public:
-	gdSampleEditor(ID channelId);
+	gdSampleEditor(ID channelId, m::Conf::Data&);
 	~gdSampleEditor();
 
 	void rebuild() override;
@@ -86,7 +88,7 @@ public:
 	geCheck*        loop;
 	geBox*          info;
 
-  private:
+private:
 	gePack*  createUpperBar();
 	gePack*  createBottomBar(int x, int y, int h);
 	geGroup* createPreviewBox(int x, int y, int h);
@@ -112,6 +114,7 @@ public:
 	ID m_channelId;
 
 	c::sampleEditor::Data m_data;
+	m::Conf::Data&        m_conf;
 };
 } // namespace giada::v
 

@@ -24,123 +24,65 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_RECORDER_H
-#define G_RECORDER_H
+#ifndef G_REC_MANAGER_H
+#define G_REC_MANAGER_H
 
-#include "core/action.h"
-#include "core/midiEvent.h"
-#include "core/patch.h"
 #include "core/types.h"
-#include <functional>
-#include <map>
-#include <memory>
-#include <vector>
 
-namespace giada::m::recorder
+namespace giada::m::model
 {
-using ActionMap = std::map<Frame, std::vector<Action>>;
+class Model;
+}
 
-/* init
-Initializes the recorder: everything starts from here. */
+namespace giada::m
+{
+class ActionRecorder;
+class MixerHandler;
+class Sequencer;
+class Recorder final
+{
+public:
+	Recorder(model::Model&, Sequencer&, MixerHandler&);
 
-void init();
+	bool isRecording() const;
+	bool isRecordingAction() const;
+	bool isRecordingInput() const;
 
-/* clearAll
-Deletes all recorded actions. */
+	/* canEnableRecOnSignal
+    True if rec-on-signal can be enabled: can't set it while sequencer is 
+    running, in order to prevent mistakes while live recording. */
 
-void clearAll();
+	bool canEnableRecOnSignal() const;
 
-/* clearChannel
-Clears all actions from a channel. */
+	/* canEnableFreeInputRec
+    True if free loop-length can be enabled: Can't set it if there's already a 
+    filled Sample Channel in the current project. */
 
-void clearChannel(ID channelId);
+	bool canEnableFreeInputRec() const;
 
-/* clearActions
-Clears the actions by type from a channel. */
+	/* canRecordActions
+	True if actions are recordable right now. */
 
-void clearActions(ID channelId, int type);
+	bool canRecordActions() const;
 
-/* deleteAction (1)
-Deletes a specific action. */
+	void prepareActionRec(RecTriggerMode);
+	void startActionRec();
+	void startActionRecOnCallback();
+	void stopActionRec(ActionRecorder&);
 
-void deleteAction(ID id);
+	bool prepareInputRec(RecTriggerMode, InputRecMode);
+	void startInputRec();
+	void startInputRecOnCallback();
+	void stopInputRec(InputRecMode, int sampleRate);
 
-/* deleteAction (2)
-Deletes a specific pair of actions. Useful for composite stuff (i.e. MIDI). */
+private:
+	void setRecordingAction(bool v);
+	void setRecordingInput(bool v);
 
-void deleteAction(ID currId, ID nextId);
-
-/* updateKeyFrames
-Update all the key frames in the internal map of actions, according to a lambda 
-function 'f'. */
-
-void updateKeyFrames(std::function<Frame(Frame old)> f);
-
-/* updateEvent
-Changes the event in action 'a'. */
-
-void updateEvent(ID id, MidiEvent e);
-
-/* updateSiblings
-Changes previous and next actions in action with id 'id'. Mostly used for 
-chained actions such as envelopes. */
-
-void updateSiblings(ID id, ID prevId, ID nextId);
-
-/* hasActions
-Checks if the channel has at least one action recorded. */
-
-bool hasActions(ID channelId, int type = 0);
-
-/* makeAction
-Makes a new action given some data. */
-
-Action makeAction(ID id, ID channelId, Frame frame, MidiEvent e);
-Action makeAction(const patch::Action& a);
-
-/* rec (1)
-Records an action and returns it. Used by the Action Editor. */
-
-Action rec(ID channelId, Frame frame, MidiEvent e);
-
-/* rec (2)
-Transfer a vector of actions into the current ActionMap. This is called by 
-recordHandler when a live session is over and consolidation is required. */
-
-void rec(std::vector<Action>& actions);
-
-/* rec (3)
-Records two actions on channel 'channel'. Useful when recording composite 
-actions in the Action Editor. */
-
-void rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
-
-/* forEachAction
-Applies a read-only callback on each action recorded. NEVER do anything inside 
-the callback that might alter the ActionMap. */
-
-void forEachAction(std::function<void(const Action&)> f);
-
-/* getActionsOnFrame
-Returns a pointer to a vector of actions recorded on frame 'f', or nullptr if
-the frame has no actions. */
-
-const std::vector<Action>* getActionsOnFrame(Frame f);
-
-/* getActionsOnChannel
-Returns a vector of actions belonging to channel 'ch'. */
-
-std::vector<Action> getActionsOnChannel(ID channelId);
-
-/* getClosestAction
-Given a frame 'f' returns the closest action. */
-
-Action getClosestAction(ID channelId, Frame f, int type);
-
-/* getNewActionId
-Returns a new action ID, internally generated. */
-
-ID getNewActionId();
-} // namespace giada::m::recorder
+	model::Model& m_model;
+	Sequencer&    m_sequencer;
+	MixerHandler& m_mixerHandler;
+};
+} // namespace giada::m
 
 #endif

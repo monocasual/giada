@@ -76,6 +76,14 @@ std::vector<T> cast(const I& i)
 {
 	return {i.begin(), i.end()};
 }
+
+/* -------------------------------------------------------------------------- */
+
+template <typename Vector, typename Default>
+auto atOr(const Vector& v, int index, Default d)
+{
+	return index >= 0 && static_cast<size_t>(index) < v.size() ? v[index] : d;
+}
 } // namespace giada::u::vector
 
 #endif

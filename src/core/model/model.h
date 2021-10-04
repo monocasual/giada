@@ -24,32 +24,24 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_RENDER_MODEL_H
-#define G_RENDER_MODEL_H
+#ifndef G_MODEL_H
+#define G_MODEL_H
 
 #include "core/channels/channel.h"
 #include "core/const.h"
+#include "core/model/mixer.h"
+#include "core/model/recorder.h"
+#include "core/model/sequencer.h"
 #include "core/plugins/plugin.h"
 #include "core/recorder.h"
 #include "core/wave.h"
 #include "deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
+#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/core/actions/actions.h"
 #include "utils/vector.h"
-#include <algorithm>
 
 namespace giada::m::model
 {
-struct Kernel
-{
-	bool audioReady = false;
-	bool midiReady  = false;
-};
-
-struct Recorder
-{
-	bool isRecordingAction = false;
-	bool isRecordingInput  = false;
-};
-
 struct MidiIn
 {
 	bool     enabled    = false;
@@ -65,54 +57,15 @@ struct MidiIn
 	uint32_t metronome  = 0x0;
 };
 
-struct Clock
-{
-	struct State
-	{
-		WeakAtomic<int> currentFrameWait = 0;
-		WeakAtomic<int> currentFrame     = 0;
-		WeakAtomic<int> currentBeat      = 0;
-	};
-
-	State*      state        = nullptr;
-	ClockStatus status       = ClockStatus::STOPPED;
-	int         framesInLoop = 0;
-	int         framesInBar  = 0;
-	int         framesInBeat = 0;
-	int         framesInSeq  = 0;
-	int         bars         = G_DEFAULT_BARS;
-	int         beats        = G_DEFAULT_BEATS;
-	float       bpm          = G_DEFAULT_BPM;
-	int         quantize     = G_DEFAULT_QUANTIZE;
-};
-
-struct Mixer
-{
-	struct State
-	{
-		std::atomic<bool> active   = false;
-		WeakAtomic<float> peakOutL = 0.0f;
-		WeakAtomic<float> peakOutR = 0.0f;
-		WeakAtomic<float> peakInL  = 0.0f;
-		WeakAtomic<float> peakInR  = 0.0f;
-	};
-
-	State* state    = nullptr;
-	bool   hasSolos = false;
-	bool   inToOut  = false;
-};
-
 struct Layout
 {
 	channel::Data&       getChannel(ID id);
 	const channel::Data& getChannel(ID id) const;
 
-	Clock    clock;
-	Mixer    mixer;
-	Kernel   kernel;
-	Recorder recorder;
-	MidiIn   midiIn;
-
+	Sequencer                  sequencer;
+	Mixer                      mixer;
+	Recorder                   recorder;
+	MidiIn                     midiIn;
 	std::vector<channel::Data> channels;
 
 	/* locked
@@ -122,11 +75,11 @@ struct Layout
 	bool locked = false;
 };
 
-/* Lock
+/* LayoutLock
 Alias for a REALTIME scoped lock provided by the Swapper class. Use this in the
 real-time thread to lock the Layout. */
 
-using Lock = mcl::AtomicSwapper<Layout>::RtLock;
+using LayoutLock = mcl::AtomicSwapper<Layout>::RtLock;
 
 /* SwapType
 Type of Layout change. 
@@ -143,53 +96,6 @@ enum class SwapType
 	NONE
 };
 
-/* -------------------------------------------------------------------------- */
-
-class DataLock
-{
-public:
-	DataLock(SwapType t = SwapType::HARD);
-	~DataLock();
-
-private:
-	SwapType m_swapType;
-};
-
-/* -------------------------------------------------------------------------- */
-
-/* init
-Initializes the internal layout. */
-
-void init();
-
-/* get
-Returns a reference to the NON-REALTIME layout structure. */
-
-Layout& get();
-
-/* get_RT
-Returns a Lock object for REALTIME processing. Access layout by calling 
-Lock::get() method (returns ready-only Layout). */
-
-Lock get_RT();
-
-/* swap
-Swap non-rt layout with the rt one. See 'SwapType' notes above. */
-
-void swap(SwapType t);
-
-/* onSwap
-Registers an optional callback fired when the layout has been swapped. Useful 
-for listening to model changes. */
-
-void onSwap(std::function<void(SwapType)> f);
-
-bool isLocked();
-
-/* -------------------------------------------------------------------------- */
-
-/* Model utilities */
-
 #ifdef WITH_VST
 using PluginPtr = std::unique_ptr<Plugin>;
 #endif
@@ -201,37 +107,126 @@ using ChannelStatePtr  = std::unique_ptr<channel::State>;
 using PluginPtrs = std::vector<PluginPtr>;
 #endif
 using WavePtrs          = std::vector<WavePtr>;
-using Actions           = recorder::ActionMap;
 using ChannelBufferPtrs = std::vector<ChannelBufferPtr>;
 using ChannelStatePtrs  = std::vector<ChannelStatePtr>;
 
-// TODO - are ID-based objects still necessary?
+/* -------------------------------------------------------------------------- */
 
-template <typename T>
-T& getAll();
+class DataLock;
+class Model
+{
+public:
+	Model();
 
-/* find
-Finds something (Plugins or Waves) given an ID. Returns nullptr if the object is
-not found. */
+	bool isLocked() const;
 
-template <typename T>
-T* find(ID id);
+	/* lockData
+	Returns a scoped locker DataLock object. Use this when you want to lock
+	the model: a locked model won't be processed by Mixer. */
 
-template <typename T>
-void add(T);
+	[[nodiscard]] DataLock lockData(SwapType t = SwapType::HARD);
 
-template <typename T>
-void remove(const T&);
+	/* reser
+	Resets the internal layout to default. */
 
-template <typename T>
-T& back();
+	void reset();
 
-template <typename T>
-void clear();
+	/* get_RT
+	Returns a LayoutLock object for REALTIME processing. Access layout by 
+	calling LayoutLock::get() method (returns ready-only Layout). */
+
+	LayoutLock get_RT();
+
+	/* get
+	Returns a reference to the NON-REALTIME layout structure. */
+
+	Layout&       get();
+	const Layout& get() const;
+
+	/* swap
+	Swap non-rt layout with the rt one. See 'SwapType' notes above. */
+
+	void swap(SwapType t);
+
+	// TODO - are ID-based objects still necessary?
+
+	template <typename T>
+	T& getAll();
+
+	/* find
+	Finds something (Plugins or Waves) given an ID. Returns nullptr if the 
+	object is not found. */
+
+	template <typename T>
+	T* find(ID id);
+
+	/* add
+	Adds something (by moving it). */
+
+	template <typename T>
+	void add(T);
+
+	template <typename T>
+	void remove(const T&);
+
+	template <typename T>
+	T& back();
+
+	template <typename T>
+	void clear();
 
 #ifdef G_DEBUG_MODE
-void debug();
+	void debug();
 #endif
+
+	/* onSwap
+	Optional callback fired when the layout has been swapped. Useful for 
+	listening to model changes. */
+
+	std::function<void(SwapType)> onSwap = nullptr;
+
+private:
+	struct States
+	{
+		Sequencer::State                             sequencer;
+		Mixer::State                                 mixer;
+		Recorder::State                              recorder;
+		std::vector<std::unique_ptr<channel::State>> channels;
+	};
+
+	struct Buffers
+	{
+		Mixer::Buffer mixer;
+	};
+
+	struct Data
+	{
+		std::vector<std::unique_ptr<channel::Buffer>> channels;
+		std::vector<std::unique_ptr<Wave>>            waves;
+		Actions::Map                                  actions;
+#ifdef WITH_VST
+		std::vector<std::unique_ptr<Plugin>> plugins;
+#endif
+	};
+
+	mcl::AtomicSwapper<Layout> m_layout;
+	States                     m_states;
+	Buffers                    m_buffers;
+	Data                       m_data;
+};
+
+/* -------------------------------------------------------------------------- */
+
+class DataLock
+{
+public:
+	DataLock(Model&, SwapType t);
+	~DataLock();
+
+private:
+	Model&   m_model;
+	SwapType m_swapType;
+};
 } // namespace giada::m::model
 
 #endif

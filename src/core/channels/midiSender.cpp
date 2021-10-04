@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "midiSender.h"
+#include "core/channels/midiSender.h"
 #include "core/channels/channel.h"
 #include "core/kernelMidi.h"
 #include "core/mixer.h"
@@ -36,7 +36,7 @@ namespace
 void send_(const channel::Data& ch, MidiEvent e)
 {
 	e.setChannel(ch.midiSender->filter);
-	kernelMidi::send(e.getRaw());
+	ch.midiSender->kernelMidi->send(e.getRaw());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -53,31 +53,39 @@ void parseActions_(const channel::Data& ch, const std::vector<Action>& as)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const patch::Channel& p)
-: enabled(p.midiOut)
+Data::Data(KernelMidi& k)
+: kernelMidi(&k)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
+Data::Data(const Patch::Channel& p, KernelMidi& k)
+: kernelMidi(&k)
+, enabled(p.midiOut)
 , filter(p.midiOutChan)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-void react(const channel::Data& ch, const eventDispatcher::Event& e)
+void react(const channel::Data& ch, const EventDispatcher::Event& e)
 {
 	if (!ch.isPlaying() || !ch.midiSender->enabled || ch.isMuted())
 		return;
 
-	if (e.type == eventDispatcher::EventType::KEY_KILL ||
-	    e.type == eventDispatcher::EventType::SEQUENCER_STOP)
+	if (e.type == EventDispatcher::EventType::KEY_KILL ||
+	    e.type == EventDispatcher::EventType::SEQUENCER_STOP)
 		send_(ch, MidiEvent(G_MIDI_ALL_NOTES_OFF));
 }
 
 /* -------------------------------------------------------------------------- */
 
-void advance(const channel::Data& ch, const sequencer::Event& e)
+void advance(const channel::Data& ch, const Sequencer::Event& e)
 {
 	if (!ch.isPlaying() || !ch.midiSender->enabled || ch.isMuted())
 		return;
-	if (e.type == sequencer::EventType::ACTIONS)
+	if (e.type == Sequencer::EventType::ACTIONS)
 		parseActions_(ch, *e.actions);
 }
 } // namespace giada::m::midiSender

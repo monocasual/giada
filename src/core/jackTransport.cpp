@@ -30,7 +30,7 @@
 #include <jack/intclient.h>
 #include <jack/transport.h>
 
-namespace giada
+namespace giada::m
 {
 bool JackTransport::State::operator!=(const State& o) const
 {
@@ -41,61 +41,107 @@ bool JackTransport::State::operator!=(const State& o) const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-JackTransport::JackTransport(jack_client_t& h)
-: m_jackHandle(h)
+JackTransport::JackTransport()
+#ifdef WITH_AUDIO_JACK
+: m_jackHandle(nullptr)
+#endif
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-void JackTransport::start()
+bool JackTransport::start() const
 {
-	jack_transport_start(&m_jackHandle);
+#ifdef WITH_AUDIO_JACK
+	if (m_jackHandle == nullptr)
+		return false;
+	jack_transport_start(m_jackHandle);
+	return true;
+#else
+	return false;
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
 
-void JackTransport::stop()
+bool JackTransport::stop() const
 {
-	jack_transport_stop(&m_jackHandle);
+#ifdef WITH_AUDIO_JACK
+	if (m_jackHandle == nullptr)
+		return false;
+	jack_transport_stop(m_jackHandle);
+	return true;
+#else
+	return false;
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
 
-void JackTransport::setPosition(uint32_t frame)
+bool JackTransport::setPosition(uint32_t frame) const
 {
+#ifdef WITH_AUDIO_JACK
+	if (m_jackHandle == nullptr)
+		return false;
 	jack_position_t position;
-	jack_transport_query(&m_jackHandle, &position);
+	jack_transport_query(m_jackHandle, &position);
 	position.frame = frame;
-	jack_transport_reposition(&m_jackHandle, &position);
+	jack_transport_reposition(m_jackHandle, &position);
+	return true;
+#else
+	return false;
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
 
-void JackTransport::setBpm(double bpm)
+bool JackTransport::setBpm(double bpm) const
 {
+#ifdef WITH_AUDIO_JACK
+	if (m_jackHandle == nullptr)
+		return false;
 	jack_position_t position;
-	jack_transport_query(&m_jackHandle, &position);
+	jack_transport_query(m_jackHandle, &position);
 	position.valid            = jack_position_bits_t::JackPositionBBT;
 	position.bar              = 0; // no such info from Giada
 	position.beat             = 0; // no such info from Giada
 	position.tick             = 0; // no such info from Giada
 	position.beats_per_minute = bpm;
-	jack_transport_reposition(&m_jackHandle, &position);
+	jack_transport_reposition(m_jackHandle, &position);
+	return true;
+#else
+	return false;
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
 
-JackTransport::State JackTransport::getState()
+JackTransport::State JackTransport::getState() const
 {
+#ifdef WITH_AUDIO_JACK
+	if (m_jackHandle == nullptr)
+		return {};
+
 	jack_position_t        position;
-	jack_transport_state_t ts = jack_transport_query(&m_jackHandle, &position);
+	jack_transport_state_t ts = jack_transport_query(m_jackHandle, &position);
 
 	return {
 	    ts != JackTransportStopped,
 	    position.beats_per_minute,
 	    position.frame};
+#else
+	return {};
+#endif
 }
-} // namespace giada
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef WITH_AUDIO_JACK
+void JackTransport::setHandle(jack_client_t* h)
+{
+	m_jackHandle = h;
+}
+#endif
+} // namespace giada::m
 
 #endif // WITH_AUDIO_JACK

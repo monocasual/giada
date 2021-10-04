@@ -29,6 +29,7 @@
 #ifndef GD_PLUGINLIST_H
 #define GD_PLUGINLIST_H
 
+#include "core/conf.h"
 #include "glue/plugin.h"
 #include "window.h"
 
@@ -41,7 +42,7 @@ class gePluginElement;
 class gdPluginList : public gdWindow
 {
 public:
-	gdPluginList(ID channelId);
+	gdPluginList(ID channelId, m::Conf::Data&);
 	~gdPluginList();
 
 	void rebuild() override;
@@ -52,6 +53,8 @@ public:
 private:
 	static void cb_addPlugin(Fl_Widget* /*w*/, void* p);
 	void        cb_addPlugin();
+
+	m::Conf::Data& m_conf;
 
 	geButton*       addPlugin;
 	geLiquidScroll* list;

@@ -51,9 +51,15 @@ public:
 	/* get
 	Returns the current id, a.k.a. the last generated one. */
 
-	ID get();
+	ID get() const;
 
-  private:
+	/* getNext
+	Returns the upcoming ID, that is the ID that will be generated on the next
+	call. */
+
+	ID getNext() const;
+
+private:
 	ID m_id;
 };
 } // namespace giada::m

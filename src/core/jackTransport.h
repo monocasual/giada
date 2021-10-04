@@ -24,16 +24,16 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_AUDIO_JACK
-
 #ifndef G_JACK_TRANSPORT_H
 #define G_JACK_TRANSPORT_H
 
+#ifdef WITH_AUDIO_JACK
 #include <jack/jack.h>
+#endif
 
-namespace giada
+namespace giada::m
 {
-class JackTransport
+class JackTransport final
 {
 public:
 	struct State
@@ -45,19 +45,29 @@ public:
 		bool operator!=(const State& o) const;
 	};
 
-	JackTransport(jack_client_t&);
+	JackTransport();
 
-	void  start();
-	void  stop();
-	void  setPosition(uint32_t frame);
-	void  setBpm(double bpm);
-	State getState();
+	bool  start() const;
+	bool  stop() const;
+	bool  setPosition(uint32_t frame) const;
+	bool  setBpm(double bpm) const;
+	State getState() const;
+
+#ifdef WITH_AUDIO_JACK
+	void setHandle(jack_client_t*);
+#endif
 
 private:
-	jack_client_t& m_jackHandle;
-};
-} // namespace giada
+	/* m_jackHandle
+	Optional handle to JACK. If nullptr the JackTransport class is not
+	initialized and all public transport methods above will return false. This
+	is useful when you are on a platform that supports JACK (e.g. Linux) but
+	the JACK API is currently not selected. */
 
+#ifdef WITH_AUDIO_JACK
+	jack_client_t* m_jackHandle;
 #endif
+};
+} // namespace giada::m
 
 #endif

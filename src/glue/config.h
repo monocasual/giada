@@ -27,15 +27,12 @@
 #ifndef G_GLUE_CONFIG_H
 #define G_GLUE_CONFIG_H
 
+#include "core/kernelAudio.h"
 #include "core/types.h"
 #include <map>
 #include <string>
 #include <vector>
 
-namespace giada::m::kernelAudio
-{
-struct Device;
-}
 namespace giada::c::config
 {
 enum class DeviceType
@@ -47,7 +44,7 @@ enum class DeviceType
 struct AudioDeviceData
 {
 	AudioDeviceData() = default;
-	AudioDeviceData(DeviceType t, const m::kernelAudio::Device&, int channelsCount, int channelsStart);
+	AudioDeviceData(DeviceType t, const m::KernelAudio::Device&, int channelsCount, int channelsStart);
 
 	DeviceType       type        = DeviceType::OUTPUT;
 	int              index       = -1;
@@ -82,14 +79,49 @@ struct AudioData
 	int             resampleQuality;
 };
 
-/* getAudioData
-Returns viewModel object filled with data. */
+struct MidiData
+{
+	std::map<int, std::string> apis;
+	std::map<int, std::string> syncModes;
+	std::vector<std::string>   midiMaps;
+	std::vector<std::string>   outPorts;
+	std::vector<std::string>   inPorts;
 
-AudioData getAudioData();
-/*
-AudioDeviceData getAudioDeviceData(size_t index, int channelsCount, int channelsStart);
-*/
+	/* Selectable values. */
+
+	int api;
+	int syncMode;
+	int midiMap;
+	int outPort;
+	int inPort;
+};
+
+struct PluginData
+{
+	int         numAvailablePlugins;
+	std::string pluginPath;
+};
+
+struct MiscData
+{
+	int  logMode;
+	bool showTooltips;
+};
+
+/* get*
+Return viewModel objects filled with data. */
+
+AudioData  getAudioData();
+MidiData   getMidiData();
+PluginData getPluginData();
+MiscData   getMiscData();
+
 void save(const AudioData&);
+void save(const PluginData&);
+void save(const MidiData&);
+void save(const MiscData&);
+
+void scanPlugins(std::string dir, const std::function<void(float)>& progress);
 } // namespace giada::c::config
 
 #endif

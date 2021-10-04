@@ -31,26 +31,20 @@
 #include "core/channels/sampleReactor.h"
 #include "core/channels/waveReader.h"
 #include "core/const.h"
+#include "core/patch.h"
 #include "core/types.h"
 
 namespace giada::m::channel
 {
 struct Data;
 }
-namespace giada::m::patch
-{
-struct Channel;
-}
+
 namespace giada::m::samplePlayer
 {
 struct Data
 {
 	Data(Resampler* r);
-	Data(const patch::Channel& p, float samplerateRatio, Resampler* r);
-	Data(const Data& o) = default;
-	Data(Data&& o)      = default;
-	Data& operator=(const Data&) = default;
-	Data& operator=(Data&&) = default;
+	Data(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w);
 
 	bool  hasWave() const;
 	bool  hasLogicalWave() const;
@@ -69,9 +63,9 @@ struct Data
 	WaveReader       waveReader;
 };
 
-void react(channel::Data& ch, const eventDispatcher::Event& e);
-void advance(const channel::Data& ch, const sequencer::Event& e);
-void render(const channel::Data& ch);
+void react(channel::Data& ch, const EventDispatcher::Event& e);
+void advance(const channel::Data& ch, const Sequencer::Event& e);
+void render(const channel::Data& ch, bool seqIsRunning);
 
 /* loadWave
 Loads Wave 'w' into channel ch and sets it up (name, markers, ...). */

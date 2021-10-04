@@ -25,14 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 #include "sampleActionEditor.h"
-#include "core/action.h"
 #include "core/const.h"
-#include "core/recorder.h"
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "gui/dialogs/actionEditor/sampleActionEditor.h"
 #include "sampleAction.h"
+#include "src/core/actions/action.h"
+#include "src/core/actions/actions.h"
 #include "utils/log.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>

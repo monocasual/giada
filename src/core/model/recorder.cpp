@@ -24,42 +24,27 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_REC_MANAGER_H
-#define G_REC_MANAGER_H
+#include "core/model/recorder.h"
 
-#include "core/types.h"
-
-namespace giada::m::recManager
+namespace giada::m::model
 {
-bool isRecording();
-bool isRecordingAction();
-bool isRecordingInput();
+bool Recorder::a_isRecordingAction() const
+{
+	return state->isRecordingAction.load();
+}
 
-void startActionRec(RecTriggerMode);
-void stopActionRec();
-void toggleActionRec(RecTriggerMode);
+bool Recorder::a_isRecordingInput() const
+{
+	return state->isRecordingInput.load();
+}
 
-bool startInputRec(RecTriggerMode, InputRecMode);
-void stopInputRec(InputRecMode);
-bool toggleInputRec(RecTriggerMode, InputRecMode);
+void Recorder::a_setRecordingAction(bool b) const
+{
+	state->isRecordingAction.store(b);
+}
 
-/* canEnableRecOnSignal
-True if rec-on-signal can be enabled: can't set it while sequencer is running,
-in order to prevent mistakes while live recording. */
-
-bool canEnableRecOnSignal();
-
-/* canEnableFreeInputRec
-True if free loop-length can be enabled: Can't set it if there's already a 
-filled Sample Channel in the current project. */
-
-bool canEnableFreeInputRec();
-
-/* refreshInputRecMode
-Makes sure the input rec mode stays the right one when a new Sample Channel is
-filled with data. See canEnableFreeInputRec() rationale. */
-
-void refreshInputRecMode();
-} // namespace giada::m::recManager
-
-#endif
+void Recorder::a_setRecordingInput(bool b) const
+{
+	state->isRecordingInput.store(b);
+}
+} // namespace giada::m::model

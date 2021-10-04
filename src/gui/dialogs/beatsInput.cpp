@@ -25,10 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "beatsInput.h"
-#include "core/clock.h"
-#include "core/conf.h"
 #include "core/const.h"
-#include "core/mixer.h"
 #include "glue/main.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
@@ -40,30 +37,28 @@
 
 extern giada::v::gdMainWindow* mainWin;
 
-namespace giada
+namespace giada::v
 {
-namespace v
-{
-gdBeatsInput::gdBeatsInput()
+gdBeatsInput::gdBeatsInput(int beats, int bars)
 : gdWindow(u::gui::centerWindowX(180), u::gui::centerWindowY(36), 180, 36, "Beats")
 {
 	set_modal();
 
-	beats = new geInput(8, 8, 43, G_GUI_UNIT);
-	bars  = new geInput(beats->x() + beats->w() + 4, 8, 43, G_GUI_UNIT);
-	ok    = new geButton(bars->x() + bars->w() + 4, 8, 70, G_GUI_UNIT, "Ok");
+	m_beats = new geInput(8, 8, 43, G_GUI_UNIT);
+	m_bars  = new geInput(m_beats->x() + m_beats->w() + 4, 8, 43, G_GUI_UNIT);
+	m_ok    = new geButton(m_bars->x() + m_bars->w() + 4, 8, 70, G_GUI_UNIT, "Ok");
 	end();
 
-	beats->maximum_size(2);
-	beats->value(std::to_string(m::clock::getBeats()).c_str());
-	beats->type(FL_INT_INPUT);
+	m_beats->maximum_size(2);
+	m_beats->value(std::to_string(beats).c_str());
+	m_beats->type(FL_INT_INPUT);
 
-	bars->maximum_size(2);
-	bars->value(std::to_string(m::clock::getBars()).c_str());
-	bars->type(FL_INT_INPUT);
+	m_bars->maximum_size(2);
+	m_bars->value(std::to_string(bars).c_str());
+	m_bars->type(FL_INT_INPUT);
 
-	ok->shortcut(FL_Enter);
-	ok->callback(cb_update, (void*)this);
+	m_ok->shortcut(FL_Enter);
+	m_ok->callback(cb_update, (void*)this);
 
 	u::gui::setFavicon(this);
 	setId(WID_BEATS);
@@ -78,11 +73,9 @@ void gdBeatsInput::cb_update(Fl_Widget* /*w*/, void* p) { ((gdBeatsInput*)p)->cb
 
 void gdBeatsInput::cb_update()
 {
-	if (!strcmp(beats->value(), "") || !strcmp(bars->value(), ""))
+	if (!strcmp(m_beats->value(), "") || !strcmp(m_bars->value(), ""))
 		return;
-	c::main::setBeats(atoi(beats->value()), atoi(bars->value()));
+	c::main::setBeats(atoi(m_beats->value()), atoi(m_bars->value()));
 	do_callback();
 }
-
-} // namespace v
-} // namespace giada
+} // namespace giada::v

@@ -30,9 +30,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <vector>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 /* cb_window_closer
 Callback for closing windows. Deletes the widget (delete). */
@@ -72,12 +70,11 @@ public:
 	gdWindow* getParent();
 	gdWindow* getChild(int id);
 
-  protected:
+protected:
 	std::vector<gdWindow*> subWindows;
 	int                    id;
 	gdWindow*              parent;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

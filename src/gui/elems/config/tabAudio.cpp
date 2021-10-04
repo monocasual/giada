@@ -37,7 +37,8 @@
 
 namespace giada::v
 {
-geTabAudio::geDeviceMenu::geDeviceMenu(int x, int y, int w, int h, const char* l, const std::vector<c::config::AudioDeviceData>& devices)
+geTabAudio::geDeviceMenu::geDeviceMenu(int x, int y, int w, int h, const char* l,
+    const std::vector<c::config::AudioDeviceData>& devices)
 : geChoice(x, y, w, h, l)
 {
 	if (devices.size() == 0)
@@ -55,7 +56,8 @@ geTabAudio::geDeviceMenu::geDeviceMenu(int x, int y, int w, int h, const char* l
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geTabAudio::geChannelMenu::geChannelMenu(int x, int y, int w, int h, const char* l, c::config::AudioDeviceData& data)
+geTabAudio::geChannelMenu::geChannelMenu(int x, int y, int w, int h, const char* l,
+    const c::config::AudioDeviceData& data)
 : geChoice(x, y, w, h, l)
 , m_data(data)
 {
@@ -77,7 +79,7 @@ int geTabAudio::geChannelMenu::getChannelsStart() const
 
 /* -------------------------------------------------------------------------- */
 
-void geTabAudio::geChannelMenu::rebuild(c::config::AudioDeviceData& data)
+void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 {
 	m_data = data;
 

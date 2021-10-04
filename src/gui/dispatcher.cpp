@@ -30,31 +30,27 @@
 #include "gui/dialogs/mainWindow.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
+#include "gui/ui.h"
 #include <FL/Fl.H>
 #include <cassert>
 
-extern giada::v::gdMainWindow* G_MainWin;
+extern giada::v::Ui g_ui;
 
-namespace giada
+namespace giada::v
 {
-namespace v
+Dispatcher::Dispatcher()
+: m_backspace(false)
+, m_end(false)
+, m_enter(false)
+, m_space(false)
+, m_esc(false)
+, m_key(false)
 {
-namespace dispatcher
-{
-namespace
-{
-bool backspace_ = false;
-bool end_       = false;
-bool enter_     = false;
-bool space_     = false;
-bool esc_       = false;
-bool key_       = false;
-
-std::function<void()> signalCb_ = nullptr;
+}
 
 /* -------------------------------------------------------------------------- */
 
-void perform_(ID channelId, int event)
+void Dispatcher::perform(ID channelId, int event) const
 {
 	if (event == FL_KEYDOWN)
 	{
@@ -74,103 +70,84 @@ void perform_(ID channelId, int event)
 /* Walk channels array, trying to match button's bound key with the event. If 
 found, trigger the key-press/key-release function. */
 
-void dispatchChannels_(int event)
+void Dispatcher::dispatchChannels(int event) const
 {
-	G_MainWin->keyboard->forEachChannel([=](geChannel& c) {
+	g_ui.mainWindow->keyboard->forEachChannel([=](geChannel& c) {
 		if (c.handleKey(event))
-			perform_(c.getData().id, event);
+			perform(c.getData().id, event);
 	});
 }
 
 /* -------------------------------------------------------------------------- */
 
-void triggerSignalCb_()
+void Dispatcher::dispatchKey(int event)
 {
-	if (signalCb_ == nullptr)
-		return;
-	signalCb_();
-	signalCb_ = nullptr;
-}
-} // namespace
+	assert(onEventOccured != nullptr);
 
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-void dispatchKey(int event)
-{
 	/* These events come from the keyboard, not from a direct interaction on the 
 	UI with the mouse/touch. */
 
 	if (event == FL_KEYDOWN)
 	{
-		if (Fl::event_key() == FL_BackSpace && !backspace_)
+		if (Fl::event_key() == FL_BackSpace && !m_backspace)
 		{
-			backspace_ = true;
+			m_backspace = true;
 			c::events::rewindSequencer(Thread::MAIN);
 		}
-		else if (Fl::event_key() == FL_End && !end_)
+		else if (Fl::event_key() == FL_End && !m_end)
 		{
-			end_ = true;
+			m_end = true;
 			c::events::toggleInputRecording();
 		}
-		else if (Fl::event_key() == FL_Enter && !enter_)
+		else if (Fl::event_key() == FL_Enter && !m_enter)
 		{
-			enter_ = true;
+			m_enter = true;
 			c::events::toggleActionRecording();
 		}
-		else if (Fl::event_key() == ' ' && !space_)
+		else if (Fl::event_key() == ' ' && !m_space)
 		{
-			space_ = true;
+			m_space = true;
 			c::events::toggleSequencer(Thread::MAIN);
 		}
-		else if (Fl::event_key() == FL_Escape && !esc_)
+		else if (Fl::event_key() == FL_Escape && !m_esc)
 		{
-			esc_ = true;
+			m_esc = true;
 			m::init::closeMainWindow();
 		}
-		else if (!key_)
+		else if (!m_key)
 		{
-			key_ = true;
-			triggerSignalCb_();
-			dispatchChannels_(event);
+			m_key = true;
+			onEventOccured();
+			dispatchChannels(event);
 		}
 	}
 	else if (event == FL_KEYUP)
 	{
 		if (Fl::event_key() == FL_BackSpace)
-			backspace_ = false;
+			m_backspace = false;
 		else if (Fl::event_key() == FL_End)
-			end_ = false;
+			m_end = false;
 		else if (Fl::event_key() == ' ')
-			space_ = false;
+			m_space = false;
 		else if (Fl::event_key() == FL_Enter)
-			enter_ = false;
+			m_enter = false;
 		else if (Fl::event_key() == FL_Escape)
-			esc_ = false;
+			m_esc = false;
 		else
 		{
-			key_ = false;
-			dispatchChannels_(event);
+			m_key = false;
+			dispatchChannels(event);
 		}
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void dispatchTouch(const geChannel& gch, bool status)
+void Dispatcher::dispatchTouch(const geChannel& gch, bool status)
 {
-	triggerSignalCb_();
-	perform_(gch.getData().id, status ? FL_KEYDOWN : FL_KEYUP);
+	assert(onEventOccured != nullptr);
+
+	onEventOccured();
+	perform(gch.getData().id, status ? FL_KEYDOWN : FL_KEYUP);
 }
-
-/* -------------------------------------------------------------------------- */
-
-void setSignalCallback(std::function<void()> f)
-{
-	signalCb_ = f;
-}
-
-} // namespace dispatcher
-} // namespace v
-} // namespace giada
+} // namespace giada::v

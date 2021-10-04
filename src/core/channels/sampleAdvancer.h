@@ -35,8 +35,8 @@ struct Data;
 }
 namespace giada::m::sampleAdvancer
 {
-void onLastFrame(const channel::Data& ch);
-void advance(const channel::Data& ch, const sequencer::Event& e);
+void onLastFrame(const channel::Data& ch, bool seqIsRunning);
+void advance(const channel::Data& ch, const Sequencer::Event& e);
 } // namespace giada::m::sampleAdvancer
 
 #endif

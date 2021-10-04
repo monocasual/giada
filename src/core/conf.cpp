@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "conf.h"
+#include "core/conf.h"
 #include "core/const.h"
 #include "core/types.h"
 #include "deps/json/single_include/nlohmann/json.hpp"
@@ -37,276 +37,216 @@
 
 namespace nl = nlohmann;
 
-namespace giada::m::conf
+namespace giada::m
 {
-namespace
+Conf::Conf()
 {
-std::string confFilePath_ = "";
-std::string confDirPath_  = "";
-
-/* -------------------------------------------------------------------------- */
-
-void sanitize_()
-{
-	conf.soundDeviceOut   = std::max(0, conf.soundDeviceOut);
-	conf.channelsOutCount = G_MAX_IO_CHANS;
-	conf.channelsOutStart = std::max(0, conf.channelsOutStart);
-	conf.channelsInCount  = std::max(1, conf.channelsInCount);
-	conf.channelsInStart  = std::max(0, conf.channelsInStart);
-}
-
-/* -------------------------------------------------------------------------- */
-
-/* createConfigFolder
-Creates local folder where to put the configuration file. Path differs from OS
-to OS. */
-
-int createConfigFolder_()
-{
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
-
-	if (u::fs::dirExists(confDirPath_))
-		return 1;
-
-	u::log::print("[conf::createConfigFolder] .giada folder not present. Updating...\n");
-
-	if (u::fs::mkdir(confDirPath_))
-	{
-		u::log::print("[conf::createConfigFolder] status: ok\n");
-		return 1;
-	}
-	else
-	{
-		u::log::print("[conf::createConfigFolder] status: error!\n");
-		return 0;
-	}
-
-#else // Windows: nothing to do
-
-	return 1;
-
-#endif
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-Conf conf;
-
-/* -------------------------------------------------------------------------- */
-
-void init()
-{
-	conf = Conf();
-
-	/* Initialize confFilePath_, i.e. the configuration file. In windows it is in
-	 * the same dir of the .exe, while in Linux and OS X in ~/.giada */
+	/* Initialize m_confFilePath, i.e. the configuration file. In windows it is 
+	in the same dir of the .exe, while in Linux and OS X in ~/.giada */
 
 #if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
 
-	confFilePath_ = u::fs::getHomePath() + G_SLASH + CONF_FILENAME;
-	confDirPath_  = u::fs::getHomePath() + G_SLASH;
+	m_confFilePath = u::fs::getHomePath() + G_SLASH + CONF_FILENAME;
+	m_confDirPath  = u::fs::getHomePath() + G_SLASH;
 
 #elif defined(_WIN32)
 
-	confFilePath_ = CONF_FILENAME;
-	confDirPath_  = "";
+	m_confFilePath = CONF_FILENAME;
+	m_confDirPath  = "";
 
 #endif
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool read()
+bool Conf::read()
 {
-	init();
+	data = Data(); // Reset it first
 
-	std::ifstream ifs(confFilePath_);
+	std::ifstream ifs(m_confFilePath);
 	if (!ifs.good())
 		return false;
 
 	nl::json j = nl::json::parse(ifs);
 
-	conf.logMode                    = j.value(CONF_KEY_LOG_MODE, conf.logMode);
-	conf.showTooltips               = j.value(CONF_KEY_SHOW_TOOLTIPS, conf.showTooltips);
-	conf.soundSystem                = j.value(CONF_KEY_SOUND_SYSTEM, conf.soundSystem);
-	conf.soundDeviceOut             = j.value(CONF_KEY_SOUND_DEVICE_OUT, conf.soundDeviceOut);
-	conf.soundDeviceIn              = j.value(CONF_KEY_SOUND_DEVICE_IN, conf.soundDeviceIn);
-	conf.channelsOutCount           = j.value(CONF_KEY_CHANNELS_OUT_COUNT, conf.channelsOutCount);
-	conf.channelsOutStart           = j.value(CONF_KEY_CHANNELS_OUT_START, conf.channelsOutStart);
-	conf.channelsInCount            = j.value(CONF_KEY_CHANNELS_IN_COUNT, conf.channelsInCount);
-	conf.channelsInStart            = j.value(CONF_KEY_CHANNELS_IN_START, conf.channelsInStart);
-	conf.samplerate                 = j.value(CONF_KEY_SAMPLERATE, conf.samplerate);
-	conf.buffersize                 = j.value(CONF_KEY_BUFFER_SIZE, conf.buffersize);
-	conf.limitOutput                = j.value(CONF_KEY_LIMIT_OUTPUT, conf.limitOutput);
-	conf.rsmpQuality                = j.value(CONF_KEY_RESAMPLE_QUALITY, conf.rsmpQuality);
-	conf.midiSystem                 = j.value(CONF_KEY_MIDI_SYSTEM, conf.midiSystem);
-	conf.midiPortOut                = j.value(CONF_KEY_MIDI_PORT_OUT, conf.midiPortOut);
-	conf.midiPortIn                 = j.value(CONF_KEY_MIDI_PORT_IN, conf.midiPortIn);
-	conf.midiMapPath                = j.value(CONF_KEY_MIDIMAP_PATH, conf.midiMapPath);
-	conf.lastFileMap                = j.value(CONF_KEY_LAST_MIDIMAP, conf.lastFileMap);
-	conf.midiSync                   = j.value(CONF_KEY_MIDI_SYNC, conf.midiSync);
-	conf.midiTCfps                  = j.value(CONF_KEY_MIDI_TC_FPS, conf.midiTCfps);
-	conf.chansStopOnSeqHalt         = j.value(CONF_KEY_CHANS_STOP_ON_SEQ_HALT, conf.chansStopOnSeqHalt);
-	conf.treatRecsAsLoops           = j.value(CONF_KEY_TREAT_RECS_AS_LOOPS, conf.treatRecsAsLoops);
-	conf.inputMonitorDefaultOn      = j.value(CONF_KEY_INPUT_MONITOR_DEFAULT_ON, conf.inputMonitorDefaultOn);
-	conf.overdubProtectionDefaultOn = j.value(CONF_KEY_OVERDUB_PROTECTION_DEFAULT_ON, conf.overdubProtectionDefaultOn);
-	conf.pluginPath                 = j.value(CONF_KEY_PLUGINS_PATH, conf.pluginPath);
-	conf.patchPath                  = j.value(CONF_KEY_PATCHES_PATH, conf.patchPath);
-	conf.samplePath                 = j.value(CONF_KEY_SAMPLES_PATH, conf.samplePath);
-	conf.mainWindowX                = j.value(CONF_KEY_MAIN_WINDOW_X, conf.mainWindowX);
-	conf.mainWindowY                = j.value(CONF_KEY_MAIN_WINDOW_Y, conf.mainWindowY);
-	conf.mainWindowW                = j.value(CONF_KEY_MAIN_WINDOW_W, conf.mainWindowW);
-	conf.mainWindowH                = j.value(CONF_KEY_MAIN_WINDOW_H, conf.mainWindowH);
-	conf.browserX                   = j.value(CONF_KEY_BROWSER_X, conf.browserX);
-	conf.browserY                   = j.value(CONF_KEY_BROWSER_Y, conf.browserY);
-	conf.browserW                   = j.value(CONF_KEY_BROWSER_W, conf.browserW);
-	conf.browserH                   = j.value(CONF_KEY_BROWSER_H, conf.browserH);
-	conf.browserPosition            = j.value(CONF_KEY_BROWSER_POSITION, conf.browserPosition);
-	conf.browserLastPath            = j.value(CONF_KEY_BROWSER_LAST_PATH, conf.browserLastPath);
-	conf.browserLastValue           = j.value(CONF_KEY_BROWSER_LAST_VALUE, conf.browserLastValue);
-	conf.actionEditorX              = j.value(CONF_KEY_ACTION_EDITOR_X, conf.actionEditorX);
-	conf.actionEditorY              = j.value(CONF_KEY_ACTION_EDITOR_Y, conf.actionEditorY);
-	conf.actionEditorW              = j.value(CONF_KEY_ACTION_EDITOR_W, conf.actionEditorW);
-	conf.actionEditorH              = j.value(CONF_KEY_ACTION_EDITOR_H, conf.actionEditorH);
-	conf.actionEditorZoom           = j.value(CONF_KEY_ACTION_EDITOR_ZOOM, conf.actionEditorZoom);
-	conf.actionEditorSplitH         = j.value(CONF_KEY_ACTION_EDITOR_SPLIT_H, conf.actionEditorSplitH);
-	conf.actionEditorGridVal        = j.value(CONF_KEY_ACTION_EDITOR_GRID_VAL, conf.actionEditorGridVal);
-	conf.actionEditorGridOn         = j.value(CONF_KEY_ACTION_EDITOR_GRID_ON, conf.actionEditorGridOn);
-	conf.actionEditorPianoRollY     = j.value(CONF_KEY_ACTION_EDITOR_PIANO_ROLL_Y, conf.actionEditorPianoRollY);
-	conf.sampleEditorX              = j.value(CONF_KEY_SAMPLE_EDITOR_X, conf.sampleEditorX);
-	conf.sampleEditorY              = j.value(CONF_KEY_SAMPLE_EDITOR_Y, conf.sampleEditorY);
-	conf.sampleEditorW              = j.value(CONF_KEY_SAMPLE_EDITOR_W, conf.sampleEditorW);
-	conf.sampleEditorH              = j.value(CONF_KEY_SAMPLE_EDITOR_H, conf.sampleEditorH);
-	conf.sampleEditorGridVal        = j.value(CONF_KEY_SAMPLE_EDITOR_GRID_VAL, conf.sampleEditorGridVal);
-	conf.sampleEditorGridOn         = j.value(CONF_KEY_SAMPLE_EDITOR_GRID_ON, conf.sampleEditorGridOn);
-	conf.pluginListX                = j.value(CONF_KEY_PLUGIN_LIST_X, conf.pluginListX);
-	conf.pluginListY                = j.value(CONF_KEY_PLUGIN_LIST_Y, conf.pluginListY);
-	conf.midiInputX                 = j.value(CONF_KEY_MIDI_INPUT_X, conf.midiInputX);
-	conf.midiInputY                 = j.value(CONF_KEY_MIDI_INPUT_Y, conf.midiInputY);
-	conf.midiInputW                 = j.value(CONF_KEY_MIDI_INPUT_W, conf.midiInputW);
-	conf.midiInputH                 = j.value(CONF_KEY_MIDI_INPUT_H, conf.midiInputH);
-	conf.recTriggerMode             = j.value(CONF_KEY_REC_TRIGGER_MODE, conf.recTriggerMode);
-	conf.recTriggerLevel            = j.value(CONF_KEY_REC_TRIGGER_LEVEL, conf.recTriggerLevel);
-	conf.inputRecMode               = j.value(CONF_KEY_INPUT_REC_MODE, conf.inputRecMode);
-	conf.midiInEnabled              = j.value(CONF_KEY_MIDI_IN, conf.midiInEnabled);
-	conf.midiInFilter               = j.value(CONF_KEY_MIDI_IN_FILTER, conf.midiInFilter);
-	conf.midiInRewind               = j.value(CONF_KEY_MIDI_IN_REWIND, conf.midiInRewind);
-	conf.midiInStartStop            = j.value(CONF_KEY_MIDI_IN_START_STOP, conf.midiInStartStop);
-	conf.midiInActionRec            = j.value(CONF_KEY_MIDI_IN_ACTION_REC, conf.midiInActionRec);
-	conf.midiInInputRec             = j.value(CONF_KEY_MIDI_IN_INPUT_REC, conf.midiInInputRec);
-	conf.midiInMetronome            = j.value(CONF_KEY_MIDI_IN_METRONOME, conf.midiInMetronome);
-	conf.midiInVolumeIn             = j.value(CONF_KEY_MIDI_IN_VOLUME_IN, conf.midiInVolumeIn);
-	conf.midiInVolumeOut            = j.value(CONF_KEY_MIDI_IN_VOLUME_OUT, conf.midiInVolumeOut);
-	conf.midiInBeatDouble           = j.value(CONF_KEY_MIDI_IN_BEAT_DOUBLE, conf.midiInBeatDouble);
-	conf.midiInBeatHalf             = j.value(CONF_KEY_MIDI_IN_BEAT_HALF, conf.midiInBeatHalf);
+	data.logMode                    = j.value(CONF_KEY_LOG_MODE, data.logMode);
+	data.showTooltips               = j.value(CONF_KEY_SHOW_TOOLTIPS, data.showTooltips);
+	data.soundSystem                = j.value(CONF_KEY_SOUND_SYSTEM, data.soundSystem);
+	data.soundDeviceOut             = j.value(CONF_KEY_SOUND_DEVICE_OUT, data.soundDeviceOut);
+	data.soundDeviceIn              = j.value(CONF_KEY_SOUND_DEVICE_IN, data.soundDeviceIn);
+	data.channelsOutCount           = j.value(CONF_KEY_CHANNELS_OUT_COUNT, data.channelsOutCount);
+	data.channelsOutStart           = j.value(CONF_KEY_CHANNELS_OUT_START, data.channelsOutStart);
+	data.channelsInCount            = j.value(CONF_KEY_CHANNELS_IN_COUNT, data.channelsInCount);
+	data.channelsInStart            = j.value(CONF_KEY_CHANNELS_IN_START, data.channelsInStart);
+	data.samplerate                 = j.value(CONF_KEY_SAMPLERATE, data.samplerate);
+	data.buffersize                 = j.value(CONF_KEY_BUFFER_SIZE, data.buffersize);
+	data.limitOutput                = j.value(CONF_KEY_LIMIT_OUTPUT, data.limitOutput);
+	data.rsmpQuality                = j.value(CONF_KEY_RESAMPLE_QUALITY, data.rsmpQuality);
+	data.midiSystem                 = j.value(CONF_KEY_MIDI_SYSTEM, data.midiSystem);
+	data.midiPortOut                = j.value(CONF_KEY_MIDI_PORT_OUT, data.midiPortOut);
+	data.midiPortIn                 = j.value(CONF_KEY_MIDI_PORT_IN, data.midiPortIn);
+	data.midiMapPath                = j.value(CONF_KEY_MIDIMAP_PATH, data.midiMapPath);
+	data.lastFileMap                = j.value(CONF_KEY_LAST_MIDIMAP, data.lastFileMap);
+	data.midiSync                   = j.value(CONF_KEY_MIDI_SYNC, data.midiSync);
+	data.midiTCfps                  = j.value(CONF_KEY_MIDI_TC_FPS, data.midiTCfps);
+	data.chansStopOnSeqHalt         = j.value(CONF_KEY_CHANS_STOP_ON_SEQ_HALT, data.chansStopOnSeqHalt);
+	data.treatRecsAsLoops           = j.value(CONF_KEY_TREAT_RECS_AS_LOOPS, data.treatRecsAsLoops);
+	data.inputMonitorDefaultOn      = j.value(CONF_KEY_INPUT_MONITOR_DEFAULT_ON, data.inputMonitorDefaultOn);
+	data.overdubProtectionDefaultOn = j.value(CONF_KEY_OVERDUB_PROTECTION_DEFAULT_ON, data.overdubProtectionDefaultOn);
+	data.pluginPath                 = j.value(CONF_KEY_PLUGINS_PATH, data.pluginPath);
+	data.patchPath                  = j.value(CONF_KEY_PATCHES_PATH, data.patchPath);
+	data.samplePath                 = j.value(CONF_KEY_SAMPLES_PATH, data.samplePath);
+	data.mainWindowX                = j.value(CONF_KEY_MAIN_WINDOW_X, data.mainWindowX);
+	data.mainWindowY                = j.value(CONF_KEY_MAIN_WINDOW_Y, data.mainWindowY);
+	data.mainWindowW                = j.value(CONF_KEY_MAIN_WINDOW_W, data.mainWindowW);
+	data.mainWindowH                = j.value(CONF_KEY_MAIN_WINDOW_H, data.mainWindowH);
+	data.browserX                   = j.value(CONF_KEY_BROWSER_X, data.browserX);
+	data.browserY                   = j.value(CONF_KEY_BROWSER_Y, data.browserY);
+	data.browserW                   = j.value(CONF_KEY_BROWSER_W, data.browserW);
+	data.browserH                   = j.value(CONF_KEY_BROWSER_H, data.browserH);
+	data.browserPosition            = j.value(CONF_KEY_BROWSER_POSITION, data.browserPosition);
+	data.browserLastPath            = j.value(CONF_KEY_BROWSER_LAST_PATH, data.browserLastPath);
+	data.browserLastValue           = j.value(CONF_KEY_BROWSER_LAST_VALUE, data.browserLastValue);
+	data.actionEditorX              = j.value(CONF_KEY_ACTION_EDITOR_X, data.actionEditorX);
+	data.actionEditorY              = j.value(CONF_KEY_ACTION_EDITOR_Y, data.actionEditorY);
+	data.actionEditorW              = j.value(CONF_KEY_ACTION_EDITOR_W, data.actionEditorW);
+	data.actionEditorH              = j.value(CONF_KEY_ACTION_EDITOR_H, data.actionEditorH);
+	data.actionEditorZoom           = j.value(CONF_KEY_ACTION_EDITOR_ZOOM, data.actionEditorZoom);
+	data.actionEditorSplitH         = j.value(CONF_KEY_ACTION_EDITOR_SPLIT_H, data.actionEditorSplitH);
+	data.actionEditorGridVal        = j.value(CONF_KEY_ACTION_EDITOR_GRID_VAL, data.actionEditorGridVal);
+	data.actionEditorGridOn         = j.value(CONF_KEY_ACTION_EDITOR_GRID_ON, data.actionEditorGridOn);
+	data.actionEditorPianoRollY     = j.value(CONF_KEY_ACTION_EDITOR_PIANO_ROLL_Y, data.actionEditorPianoRollY);
+	data.sampleEditorX              = j.value(CONF_KEY_SAMPLE_EDITOR_X, data.sampleEditorX);
+	data.sampleEditorY              = j.value(CONF_KEY_SAMPLE_EDITOR_Y, data.sampleEditorY);
+	data.sampleEditorW              = j.value(CONF_KEY_SAMPLE_EDITOR_W, data.sampleEditorW);
+	data.sampleEditorH              = j.value(CONF_KEY_SAMPLE_EDITOR_H, data.sampleEditorH);
+	data.sampleEditorGridVal        = j.value(CONF_KEY_SAMPLE_EDITOR_GRID_VAL, data.sampleEditorGridVal);
+	data.sampleEditorGridOn         = j.value(CONF_KEY_SAMPLE_EDITOR_GRID_ON, data.sampleEditorGridOn);
+	data.pluginListX                = j.value(CONF_KEY_PLUGIN_LIST_X, data.pluginListX);
+	data.pluginListY                = j.value(CONF_KEY_PLUGIN_LIST_Y, data.pluginListY);
+	data.midiInputX                 = j.value(CONF_KEY_MIDI_INPUT_X, data.midiInputX);
+	data.midiInputY                 = j.value(CONF_KEY_MIDI_INPUT_Y, data.midiInputY);
+	data.midiInputW                 = j.value(CONF_KEY_MIDI_INPUT_W, data.midiInputW);
+	data.midiInputH                 = j.value(CONF_KEY_MIDI_INPUT_H, data.midiInputH);
+	data.recTriggerMode             = j.value(CONF_KEY_REC_TRIGGER_MODE, data.recTriggerMode);
+	data.recTriggerLevel            = j.value(CONF_KEY_REC_TRIGGER_LEVEL, data.recTriggerLevel);
+	data.inputRecMode               = j.value(CONF_KEY_INPUT_REC_MODE, data.inputRecMode);
+	data.midiInEnabled              = j.value(CONF_KEY_MIDI_IN, data.midiInEnabled);
+	data.midiInFilter               = j.value(CONF_KEY_MIDI_IN_FILTER, data.midiInFilter);
+	data.midiInRewind               = j.value(CONF_KEY_MIDI_IN_REWIND, data.midiInRewind);
+	data.midiInStartStop            = j.value(CONF_KEY_MIDI_IN_START_STOP, data.midiInStartStop);
+	data.midiInActionRec            = j.value(CONF_KEY_MIDI_IN_ACTION_REC, data.midiInActionRec);
+	data.midiInInputRec             = j.value(CONF_KEY_MIDI_IN_INPUT_REC, data.midiInInputRec);
+	data.midiInMetronome            = j.value(CONF_KEY_MIDI_IN_METRONOME, data.midiInMetronome);
+	data.midiInVolumeIn             = j.value(CONF_KEY_MIDI_IN_VOLUME_IN, data.midiInVolumeIn);
+	data.midiInVolumeOut            = j.value(CONF_KEY_MIDI_IN_VOLUME_OUT, data.midiInVolumeOut);
+	data.midiInBeatDouble           = j.value(CONF_KEY_MIDI_IN_BEAT_DOUBLE, data.midiInBeatDouble);
+	data.midiInBeatHalf             = j.value(CONF_KEY_MIDI_IN_BEAT_HALF, data.midiInBeatHalf);
 #ifdef WITH_VST
-	conf.pluginChooserX   = j.value(CONF_KEY_PLUGIN_CHOOSER_X, conf.pluginChooserX);
-	conf.pluginChooserY   = j.value(CONF_KEY_PLUGIN_CHOOSER_Y, conf.pluginChooserY);
-	conf.pluginChooserW   = j.value(CONF_KEY_PLUGIN_CHOOSER_W, conf.pluginChooserW);
-	conf.pluginChooserH   = j.value(CONF_KEY_PLUGIN_CHOOSER_H, conf.pluginChooserH);
-	conf.pluginSortMethod = j.value(CONF_KEY_PLUGIN_SORT_METHOD, conf.pluginSortMethod);
+	data.pluginChooserX   = j.value(CONF_KEY_PLUGIN_CHOOSER_X, data.pluginChooserX);
+	data.pluginChooserY   = j.value(CONF_KEY_PLUGIN_CHOOSER_Y, data.pluginChooserY);
+	data.pluginChooserW   = j.value(CONF_KEY_PLUGIN_CHOOSER_W, data.pluginChooserW);
+	data.pluginChooserH   = j.value(CONF_KEY_PLUGIN_CHOOSER_H, data.pluginChooserH);
+	data.pluginSortMethod = j.value(CONF_KEY_PLUGIN_SORT_METHOD, data.pluginSortMethod);
 #endif
 
-	sanitize_();
+	sanitize();
 
 	return true;
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool write()
+bool Conf::write() const
 {
-	if (!createConfigFolder_())
+	if (!createConfigFolder())
 		return false;
 
 	nl::json j;
 
 	j[CONF_KEY_HEADER]                        = "GIADACFG";
-	j[CONF_KEY_LOG_MODE]                      = conf.logMode;
-	j[CONF_KEY_SHOW_TOOLTIPS]                 = conf.showTooltips;
-	j[CONF_KEY_SOUND_SYSTEM]                  = conf.soundSystem;
-	j[CONF_KEY_SOUND_DEVICE_OUT]              = conf.soundDeviceOut;
-	j[CONF_KEY_SOUND_DEVICE_IN]               = conf.soundDeviceIn;
-	j[CONF_KEY_CHANNELS_OUT_COUNT]            = conf.channelsOutCount;
-	j[CONF_KEY_CHANNELS_OUT_START]            = conf.channelsOutStart;
-	j[CONF_KEY_CHANNELS_IN_COUNT]             = conf.channelsInCount;
-	j[CONF_KEY_CHANNELS_IN_START]             = conf.channelsInStart;
-	j[CONF_KEY_SAMPLERATE]                    = conf.samplerate;
-	j[CONF_KEY_BUFFER_SIZE]                   = conf.buffersize;
-	j[CONF_KEY_LIMIT_OUTPUT]                  = conf.limitOutput;
-	j[CONF_KEY_RESAMPLE_QUALITY]              = conf.rsmpQuality;
-	j[CONF_KEY_MIDI_SYSTEM]                   = conf.midiSystem;
-	j[CONF_KEY_MIDI_PORT_OUT]                 = conf.midiPortOut;
-	j[CONF_KEY_MIDI_PORT_IN]                  = conf.midiPortIn;
-	j[CONF_KEY_MIDIMAP_PATH]                  = conf.midiMapPath;
-	j[CONF_KEY_LAST_MIDIMAP]                  = conf.lastFileMap;
-	j[CONF_KEY_MIDI_SYNC]                     = conf.midiSync;
-	j[CONF_KEY_MIDI_TC_FPS]                   = conf.midiTCfps;
-	j[CONF_KEY_MIDI_IN]                       = conf.midiInEnabled;
-	j[CONF_KEY_MIDI_IN_FILTER]                = conf.midiInFilter;
-	j[CONF_KEY_MIDI_IN_REWIND]                = conf.midiInRewind;
-	j[CONF_KEY_MIDI_IN_START_STOP]            = conf.midiInStartStop;
-	j[CONF_KEY_MIDI_IN_ACTION_REC]            = conf.midiInActionRec;
-	j[CONF_KEY_MIDI_IN_INPUT_REC]             = conf.midiInInputRec;
-	j[CONF_KEY_MIDI_IN_METRONOME]             = conf.midiInMetronome;
-	j[CONF_KEY_MIDI_IN_VOLUME_IN]             = conf.midiInVolumeIn;
-	j[CONF_KEY_MIDI_IN_VOLUME_OUT]            = conf.midiInVolumeOut;
-	j[CONF_KEY_MIDI_IN_BEAT_DOUBLE]           = conf.midiInBeatDouble;
-	j[CONF_KEY_MIDI_IN_BEAT_HALF]             = conf.midiInBeatHalf;
-	j[CONF_KEY_CHANS_STOP_ON_SEQ_HALT]        = conf.chansStopOnSeqHalt;
-	j[CONF_KEY_TREAT_RECS_AS_LOOPS]           = conf.treatRecsAsLoops;
-	j[CONF_KEY_INPUT_MONITOR_DEFAULT_ON]      = conf.inputMonitorDefaultOn;
-	j[CONF_KEY_OVERDUB_PROTECTION_DEFAULT_ON] = conf.overdubProtectionDefaultOn;
-	j[CONF_KEY_PLUGINS_PATH]                  = conf.pluginPath;
-	j[CONF_KEY_PATCHES_PATH]                  = conf.patchPath;
-	j[CONF_KEY_SAMPLES_PATH]                  = conf.samplePath;
-	j[CONF_KEY_MAIN_WINDOW_X]                 = conf.mainWindowX;
-	j[CONF_KEY_MAIN_WINDOW_Y]                 = conf.mainWindowY;
-	j[CONF_KEY_MAIN_WINDOW_W]                 = conf.mainWindowW;
-	j[CONF_KEY_MAIN_WINDOW_H]                 = conf.mainWindowH;
-	j[CONF_KEY_BROWSER_X]                     = conf.browserX;
-	j[CONF_KEY_BROWSER_Y]                     = conf.browserY;
-	j[CONF_KEY_BROWSER_W]                     = conf.browserW;
-	j[CONF_KEY_BROWSER_H]                     = conf.browserH;
-	j[CONF_KEY_BROWSER_POSITION]              = conf.browserPosition;
-	j[CONF_KEY_BROWSER_LAST_PATH]             = conf.browserLastPath;
-	j[CONF_KEY_BROWSER_LAST_VALUE]            = conf.browserLastValue;
-	j[CONF_KEY_ACTION_EDITOR_X]               = conf.actionEditorX;
-	j[CONF_KEY_ACTION_EDITOR_Y]               = conf.actionEditorY;
-	j[CONF_KEY_ACTION_EDITOR_W]               = conf.actionEditorW;
-	j[CONF_KEY_ACTION_EDITOR_H]               = conf.actionEditorH;
-	j[CONF_KEY_ACTION_EDITOR_ZOOM]            = conf.actionEditorZoom;
-	j[CONF_KEY_ACTION_EDITOR_SPLIT_H]         = conf.actionEditorSplitH;
-	j[CONF_KEY_ACTION_EDITOR_GRID_VAL]        = conf.actionEditorGridVal;
-	j[CONF_KEY_ACTION_EDITOR_GRID_ON]         = conf.actionEditorGridOn;
-	j[CONF_KEY_ACTION_EDITOR_PIANO_ROLL_Y]    = conf.actionEditorPianoRollY;
-	j[CONF_KEY_SAMPLE_EDITOR_X]               = conf.sampleEditorX;
-	j[CONF_KEY_SAMPLE_EDITOR_Y]               = conf.sampleEditorY;
-	j[CONF_KEY_SAMPLE_EDITOR_W]               = conf.sampleEditorW;
-	j[CONF_KEY_SAMPLE_EDITOR_H]               = conf.sampleEditorH;
-	j[CONF_KEY_SAMPLE_EDITOR_GRID_VAL]        = conf.sampleEditorGridVal;
-	j[CONF_KEY_SAMPLE_EDITOR_GRID_ON]         = conf.sampleEditorGridOn;
-	j[CONF_KEY_PLUGIN_LIST_X]                 = conf.pluginListX;
-	j[CONF_KEY_PLUGIN_LIST_Y]                 = conf.pluginListY;
-	j[CONF_KEY_MIDI_INPUT_X]                  = conf.midiInputX;
-	j[CONF_KEY_MIDI_INPUT_Y]                  = conf.midiInputY;
-	j[CONF_KEY_MIDI_INPUT_W]                  = conf.midiInputW;
-	j[CONF_KEY_MIDI_INPUT_H]                  = conf.midiInputH;
-	j[CONF_KEY_REC_TRIGGER_MODE]              = static_cast<int>(conf.recTriggerMode);
-	j[CONF_KEY_REC_TRIGGER_LEVEL]             = conf.recTriggerLevel;
-	j[CONF_KEY_INPUT_REC_MODE]                = static_cast<int>(conf.inputRecMode);
+	j[CONF_KEY_LOG_MODE]                      = data.logMode;
+	j[CONF_KEY_SHOW_TOOLTIPS]                 = data.showTooltips;
+	j[CONF_KEY_SOUND_SYSTEM]                  = data.soundSystem;
+	j[CONF_KEY_SOUND_DEVICE_OUT]              = data.soundDeviceOut;
+	j[CONF_KEY_SOUND_DEVICE_IN]               = data.soundDeviceIn;
+	j[CONF_KEY_CHANNELS_OUT_COUNT]            = data.channelsOutCount;
+	j[CONF_KEY_CHANNELS_OUT_START]            = data.channelsOutStart;
+	j[CONF_KEY_CHANNELS_IN_COUNT]             = data.channelsInCount;
+	j[CONF_KEY_CHANNELS_IN_START]             = data.channelsInStart;
+	j[CONF_KEY_SAMPLERATE]                    = data.samplerate;
+	j[CONF_KEY_BUFFER_SIZE]                   = data.buffersize;
+	j[CONF_KEY_LIMIT_OUTPUT]                  = data.limitOutput;
+	j[CONF_KEY_RESAMPLE_QUALITY]              = data.rsmpQuality;
+	j[CONF_KEY_MIDI_SYSTEM]                   = data.midiSystem;
+	j[CONF_KEY_MIDI_PORT_OUT]                 = data.midiPortOut;
+	j[CONF_KEY_MIDI_PORT_IN]                  = data.midiPortIn;
+	j[CONF_KEY_MIDIMAP_PATH]                  = data.midiMapPath;
+	j[CONF_KEY_LAST_MIDIMAP]                  = data.lastFileMap;
+	j[CONF_KEY_MIDI_SYNC]                     = data.midiSync;
+	j[CONF_KEY_MIDI_TC_FPS]                   = data.midiTCfps;
+	j[CONF_KEY_MIDI_IN]                       = data.midiInEnabled;
+	j[CONF_KEY_MIDI_IN_FILTER]                = data.midiInFilter;
+	j[CONF_KEY_MIDI_IN_REWIND]                = data.midiInRewind;
+	j[CONF_KEY_MIDI_IN_START_STOP]            = data.midiInStartStop;
+	j[CONF_KEY_MIDI_IN_ACTION_REC]            = data.midiInActionRec;
+	j[CONF_KEY_MIDI_IN_INPUT_REC]             = data.midiInInputRec;
+	j[CONF_KEY_MIDI_IN_METRONOME]             = data.midiInMetronome;
+	j[CONF_KEY_MIDI_IN_VOLUME_IN]             = data.midiInVolumeIn;
+	j[CONF_KEY_MIDI_IN_VOLUME_OUT]            = data.midiInVolumeOut;
+	j[CONF_KEY_MIDI_IN_BEAT_DOUBLE]           = data.midiInBeatDouble;
+	j[CONF_KEY_MIDI_IN_BEAT_HALF]             = data.midiInBeatHalf;
+	j[CONF_KEY_CHANS_STOP_ON_SEQ_HALT]        = data.chansStopOnSeqHalt;
+	j[CONF_KEY_TREAT_RECS_AS_LOOPS]           = data.treatRecsAsLoops;
+	j[CONF_KEY_INPUT_MONITOR_DEFAULT_ON]      = data.inputMonitorDefaultOn;
+	j[CONF_KEY_OVERDUB_PROTECTION_DEFAULT_ON] = data.overdubProtectionDefaultOn;
+	j[CONF_KEY_PLUGINS_PATH]                  = data.pluginPath;
+	j[CONF_KEY_PATCHES_PATH]                  = data.patchPath;
+	j[CONF_KEY_SAMPLES_PATH]                  = data.samplePath;
+	j[CONF_KEY_MAIN_WINDOW_X]                 = data.mainWindowX;
+	j[CONF_KEY_MAIN_WINDOW_Y]                 = data.mainWindowY;
+	j[CONF_KEY_MAIN_WINDOW_W]                 = data.mainWindowW;
+	j[CONF_KEY_MAIN_WINDOW_H]                 = data.mainWindowH;
+	j[CONF_KEY_BROWSER_X]                     = data.browserX;
+	j[CONF_KEY_BROWSER_Y]                     = data.browserY;
+	j[CONF_KEY_BROWSER_W]                     = data.browserW;
+	j[CONF_KEY_BROWSER_H]                     = data.browserH;
+	j[CONF_KEY_BROWSER_POSITION]              = data.browserPosition;
+	j[CONF_KEY_BROWSER_LAST_PATH]             = data.browserLastPath;
+	j[CONF_KEY_BROWSER_LAST_VALUE]            = data.browserLastValue;
+	j[CONF_KEY_ACTION_EDITOR_X]               = data.actionEditorX;
+	j[CONF_KEY_ACTION_EDITOR_Y]               = data.actionEditorY;
+	j[CONF_KEY_ACTION_EDITOR_W]               = data.actionEditorW;
+	j[CONF_KEY_ACTION_EDITOR_H]               = data.actionEditorH;
+	j[CONF_KEY_ACTION_EDITOR_ZOOM]            = data.actionEditorZoom;
+	j[CONF_KEY_ACTION_EDITOR_SPLIT_H]         = data.actionEditorSplitH;
+	j[CONF_KEY_ACTION_EDITOR_GRID_VAL]        = data.actionEditorGridVal;
+	j[CONF_KEY_ACTION_EDITOR_GRID_ON]         = data.actionEditorGridOn;
+	j[CONF_KEY_ACTION_EDITOR_PIANO_ROLL_Y]    = data.actionEditorPianoRollY;
+	j[CONF_KEY_SAMPLE_EDITOR_X]               = data.sampleEditorX;
+	j[CONF_KEY_SAMPLE_EDITOR_Y]               = data.sampleEditorY;
+	j[CONF_KEY_SAMPLE_EDITOR_W]               = data.sampleEditorW;
+	j[CONF_KEY_SAMPLE_EDITOR_H]               = data.sampleEditorH;
+	j[CONF_KEY_SAMPLE_EDITOR_GRID_VAL]        = data.sampleEditorGridVal;
+	j[CONF_KEY_SAMPLE_EDITOR_GRID_ON]         = data.sampleEditorGridOn;
+	j[CONF_KEY_PLUGIN_LIST_X]                 = data.pluginListX;
+	j[CONF_KEY_PLUGIN_LIST_Y]                 = data.pluginListY;
+	j[CONF_KEY_MIDI_INPUT_X]                  = data.midiInputX;
+	j[CONF_KEY_MIDI_INPUT_Y]                  = data.midiInputY;
+	j[CONF_KEY_MIDI_INPUT_W]                  = data.midiInputW;
+	j[CONF_KEY_MIDI_INPUT_H]                  = data.midiInputH;
+	j[CONF_KEY_REC_TRIGGER_MODE]              = static_cast<int>(data.recTriggerMode);
+	j[CONF_KEY_REC_TRIGGER_LEVEL]             = data.recTriggerLevel;
+	j[CONF_KEY_INPUT_REC_MODE]                = static_cast<int>(data.inputRecMode);
 #ifdef WITH_VST
-	j[CONF_KEY_PLUGIN_CHOOSER_X]   = conf.pluginChooserX;
-	j[CONF_KEY_PLUGIN_CHOOSER_Y]   = conf.pluginChooserY;
-	j[CONF_KEY_PLUGIN_CHOOSER_W]   = conf.pluginChooserW;
-	j[CONF_KEY_PLUGIN_CHOOSER_H]   = conf.pluginChooserH;
-	j[CONF_KEY_PLUGIN_SORT_METHOD] = conf.pluginSortMethod;
+	j[CONF_KEY_PLUGIN_CHOOSER_X]   = data.pluginChooserX;
+	j[CONF_KEY_PLUGIN_CHOOSER_Y]   = data.pluginChooserY;
+	j[CONF_KEY_PLUGIN_CHOOSER_W]   = data.pluginChooserW;
+	j[CONF_KEY_PLUGIN_CHOOSER_H]   = data.pluginChooserH;
+	j[CONF_KEY_PLUGIN_SORT_METHOD] = data.pluginSortMethod;
 #endif
 
-	std::ofstream ofs(confFilePath_);
+	std::ofstream ofs(m_confFilePath);
 	if (!ofs.good())
 	{
 		u::log::print("[conf::write] unable to write configuration file!\n");
@@ -316,4 +256,44 @@ bool write()
 	ofs << j;
 	return true;
 }
-} // namespace giada::m::conf
+
+/* -------------------------------------------------------------------------- */
+
+bool Conf::createConfigFolder() const
+{
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
+
+	if (u::fs::dirExists(m_confDirPath))
+		return true;
+
+	u::log::print("[conf::createConfigFolder] .giada folder not present. Updating...\n");
+
+	if (u::fs::mkdir(m_confDirPath))
+	{
+		u::log::print("[conf::createConfigFolder] status: ok\n");
+		return true;
+	}
+	else
+	{
+		u::log::print("[conf::createConfigFolder] status: error!\n");
+		return false;
+	}
+
+#else // Windows: nothing to do
+
+	return true;
+
+#endif
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Conf::sanitize()
+{
+	data.soundDeviceOut   = std::max(0, data.soundDeviceOut);
+	data.channelsOutCount = G_MAX_IO_CHANS;
+	data.channelsOutStart = std::max(0, data.channelsOutStart);
+	data.channelsInCount  = std::max(1, data.channelsInCount);
+	data.channelsInStart  = std::max(0, data.channelsInStart);
+}
+} // namespace giada::m

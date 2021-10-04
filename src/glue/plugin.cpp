@@ -29,6 +29,8 @@
 #include "core/plugins/plugin.h"
 #include "core/conf.h"
 #include "core/const.h"
+#include "core/engine.h"
+#include "core/kernelAudio.h"
 #include "core/mixer.h"
 #include "core/model/model.h"
 #include "core/plugins/pluginHost.h"
@@ -39,12 +41,15 @@
 #include "gui/dialogs/pluginList.h"
 #include "gui/dialogs/pluginWindow.h"
 #include "gui/dialogs/warnings.h"
+#include "gui/elems/config/tabPlugins.h"
+#include "gui/ui.h"
 #include "plugin.h"
 #include "utils/gui.h"
 #include <FL/Fl.H>
 #include <cassert>
 
-extern giada::v::gdMainWindow* G_MainWin;
+extern giada::v::Ui     g_ui;
+extern giada::m::Engine g_engine;
 
 namespace giada::c::plugin
 {
@@ -114,7 +119,7 @@ Plugins::Plugins(const m::channel::Data& c)
 
 Plugins getPlugins(ID channelId)
 {
-	return Plugins(m::model::get().getChannel(channelId));
+	return Plugins(g_engine.model.get().getChannel(channelId));
 }
 
 Plugin getPlugin(m::Plugin& plugin, ID channelId)
@@ -127,11 +132,16 @@ Param getParam(int index, const m::Plugin& plugin, ID channelId)
 	return Param(plugin, index, channelId);
 }
 
+std::vector<m::PluginManager::PluginInfo> getPluginsInfo()
+{
+	return g_engine.pluginManager.getPluginsInfo();
+}
+
 /* -------------------------------------------------------------------------- */
 
 void updateWindow(ID pluginId, bool gui)
 {
-	m::Plugin* p = m::model::find<m::Plugin>(pluginId);
+	m::Plugin* p = g_engine.model.find<m::Plugin>(pluginId);
 
 	assert(p != nullptr);
 
@@ -141,10 +151,10 @@ void updateWindow(ID pluginId, bool gui)
 	/* Get the parent window first: the plug-in list. Then, if it exists, get
     the child window - the actual pluginWindow. */
 
-	v::gdPluginList* parent = static_cast<v::gdPluginList*>(u::gui::getSubwindow(G_MainWin, WID_FX_LIST));
+	v::gdPluginList* parent = static_cast<v::gdPluginList*>(g_ui.getSubwindow(*g_ui.mainWindow.get(), WID_FX_LIST));
 	if (parent == nullptr)
 		return;
-	v::gdPluginWindow* child = static_cast<v::gdPluginWindow*>(u::gui::getSubwindow(parent, pluginId + 1));
+	v::gdPluginWindow* child = static_cast<v::gdPluginWindow*>(g_ui.getSubwindow(*parent, pluginId + 1));
 	if (child == nullptr)
 		return;
 
@@ -159,32 +169,50 @@ void updateWindow(ID pluginId, bool gui)
 
 void addPlugin(int pluginListIndex, ID channelId)
 {
-	if (pluginListIndex >= m::pluginManager::countAvailablePlugins())
+	if (pluginListIndex >= g_engine.pluginManager.countAvailablePlugins())
 		return;
-	std::unique_ptr<m::Plugin> p = m::pluginManager::makePlugin(pluginListIndex);
-	if (p != nullptr)
-		m::pluginHost::addPlugin(std::move(p), channelId);
+	std::unique_ptr<m::Plugin> plugin    = g_engine.pluginManager.makePlugin(pluginListIndex, g_engine.kernelAudio.getSampleRate(), g_engine.kernelAudio.getBufferSize(), g_engine.sequencer);
+	const m::Plugin*           pluginPtr = plugin.get();
+	if (plugin != nullptr)
+		g_engine.pluginHost.addPlugin(std::move(plugin));
+
+	/* TODO - unfortunately JUCE wants mutable plugin objects due to the
+	presence of the non-const processBlock() method. Why not const_casting
+	only in the Plugin class? */
+	g_engine.model.get().getChannel(channelId).plugins.push_back(const_cast<m::Plugin*>(pluginPtr));
+	g_engine.model.swap(m::model::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId)
 {
-	m::pluginHost::swapPlugin(p1, p2, channelId);
+	g_engine.pluginHost.swapPlugin(p1, p2, g_engine.model.get().getChannel(channelId).plugins);
+	g_engine.model.swap(m::model::SwapType::HARD);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void sortPlugins(m::PluginManager::SortMethod method)
+{
+	g_engine.pluginManager.sortPlugins(method);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void freePlugin(const m::Plugin& plugin, ID channelId)
 {
-	m::pluginHost::freePlugin(plugin, channelId);
+	u::vector::remove(g_engine.model.get().getChannel(channelId).plugins, &plugin);
+	g_engine.model.swap(m::model::SwapType::HARD);
+
+	g_engine.pluginHost.freePlugin(plugin);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setProgram(ID pluginId, int programIndex)
 {
-	m::pluginHost::setPluginProgram(pluginId, programIndex);
+	g_engine.pluginHost.setPluginProgram(pluginId, programIndex);
 	updateWindow(pluginId, /*gui=*/true);
 }
 
@@ -192,7 +220,19 @@ void setProgram(ID pluginId, int programIndex)
 
 void toggleBypass(ID pluginId)
 {
-	m::pluginHost::toggleBypass(pluginId);
+	g_engine.pluginHost.toggleBypass(pluginId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void startDispatchLoop()
+{
+	g_ui.startJuceDispatchLoop();
+}
+
+void stopDispatchLoop()
+{
+	g_ui.stopJuceDispatchLoop();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -207,14 +247,14 @@ void setPluginPathCb(void* data)
 		return;
 	}
 
-	if (!m::conf::conf.pluginPath.empty() && m::conf::conf.pluginPath.back() != ';')
-		m::conf::conf.pluginPath += ";";
-	m::conf::conf.pluginPath += browser->getCurrentPath();
+	if (!g_engine.conf.data.pluginPath.empty() && g_engine.conf.data.pluginPath.back() != ';')
+		g_engine.conf.data.pluginPath += ";";
+	g_engine.conf.data.pluginPath += browser->getCurrentPath();
 
 	browser->do_callback();
 
-	v::gdConfig* configWin = static_cast<v::gdConfig*>(u::gui::getSubwindow(G_MainWin, WID_CONFIG));
-	configWin->refreshVstPath();
+	v::gdConfig* configWin = static_cast<v::gdConfig*>(g_ui.getSubwindow(*g_ui.mainWindow.get(), WID_CONFIG));
+	configWin->tabPlugins->refreshVstPath(g_engine.conf.data.pluginPath);
 }
 } // namespace giada::c::plugin
 

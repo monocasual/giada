@@ -25,25 +25,21 @@
  * -------------------------------------------------------------------------- */
 
 #include "glue/channel.h"
-#include "channel.h"
-#include "channelButton.h"
-#include "channelStatus.h"
-#include "column.h"
-#include "core/const.h"
 #include "core/graphics.h"
-#include "core/model/model.h"
-#include "core/plugins/pluginHost.h"
 #include "glue/events.h"
-#include "gui/dialogs/mainWindow.h"
-#include "gui/dialogs/pluginList.h"
+#include "glue/layout.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/statusButton.h"
-#include "utils/gui.h"
+#include "gui/elems/mainWindow/keyboard/channel.h"
+#include "gui/elems/mainWindow/keyboard/channelButton.h"
+#include "gui/elems/mainWindow/keyboard/channelStatus.h"
+#include "gui/elems/mainWindow/keyboard/column.h"
+#include "gui/ui.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-extern giada::v::gdMainWindow* G_MainWin;
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -137,7 +133,7 @@ void geChannel::cb_changeVol()
 #ifdef WITH_VST
 void geChannel::cb_openFxWindow()
 {
-	u::gui::openSubWindow(G_MainWin, new v::gdPluginList(m_channel.id), WID_FX_LIST);
+	c::layout::openChannelPluginListWindow(m_channel.id);
 }
 #endif
 
@@ -152,7 +148,7 @@ int geChannel::getColumnId()
 
 void geChannel::blink()
 {
-	if (u::gui::shouldBlink())
+	if (g_ui.shouldBlink())
 		mainButton->setPlayMode();
 	else
 		mainButton->setDefaultMode();

@@ -27,29 +27,48 @@
 #ifndef G_V_DISPATCHER_H
 #define G_V_DISPATCHER_H
 
+#include "core/types.h"
 #include <functional>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geChannel;
-
-namespace dispatcher
+class Dispatcher final
 {
-/* dispatchKey
-Processes a key pressed on the physical keyboard. */
+public:
+	Dispatcher();
 
-void dispatchKey(int event);
+	/* dispatchKey
+    Processes a key pressed on the physical keyboard. */
 
-/* dispatchTouch
-Processes a mouse click/touch event. */
+	void dispatchKey(int event);
 
-void dispatchTouch(const geChannel& gch, bool status);
+	/* dispatchTouch
+    Processes a mouse click/touch event. */
 
-void setSignalCallback(std::function<void()> f);
-} // namespace dispatcher
-} // namespace v
-} // namespace giada
+	void dispatchTouch(const geChannel& gch, bool status);
+
+	/* onEventOccured
+    Callback fired when a key has been pressed or a mouse button clicked. */
+
+	std::function<void()> onEventOccured;
+
+private:
+	void perform(ID channelId, int event) const;
+
+	/* dispatchChannels
+    Walks channels array, trying to match button's bound key with the event. If 
+    found, trigger the key-press/key-release function. */
+
+	void dispatchChannels(int event) const;
+
+	bool m_backspace;
+	bool m_end;
+	bool m_enter;
+	bool m_space;
+	bool m_esc;
+	bool m_key;
+};
+} // namespace giada::v
 
 #endif

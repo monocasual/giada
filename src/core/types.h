@@ -45,7 +45,7 @@ enum class Thread
 #ifdef _WIN32
 #undef VOID
 #endif
-enum class ClockStatus
+enum class SeqStatus
 {
 	STOPPED,
 	WAITING,

@@ -30,13 +30,12 @@
 #include "gui/elems/browser.h"
 #include "utils/fs.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
-    const std::string& name_, std::function<void(void*)> cb, ID channelId)
-: gdBrowserBase(title, path, cb, channelId)
+    const std::string& name_, std::function<void(void*)> cb, ID channelId,
+    m::Conf::Data& conf)
+: gdBrowserBase(title, path, cb, channelId, conf)
 {
 	where->size(groupTop->w() - 236, 20);
 
@@ -96,6 +95,4 @@ void gdBrowserSave::cb_save()
 {
 	fireCallback();
 }
-
-} // namespace v
-} // namespace giada
+} // namespace giada::v

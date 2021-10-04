@@ -27,9 +27,7 @@
 #include "window.h"
 #include "utils/log.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 void cb_window_closer(Fl_Widget* /*v*/, void* p)
 {
@@ -168,5 +166,4 @@ gdWindow* gdWindow::getChild(int wid)
 			return subWindows.at(j);
 	return nullptr;
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

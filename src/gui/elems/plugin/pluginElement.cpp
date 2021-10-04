@@ -159,24 +159,25 @@ void gePluginElement::cb_openPluginWindow()
 	/* The new pluginWindow has id = id_plugin + 1, because id=0 is reserved for 
 	the parent window 'add plugin'. */
 
-	int pwid = m_plugin.id + 1;
+	const int pwid = m_plugin.id + 1;
 
 	gdWindow* parent = static_cast<gdWindow*>(window());
 	gdWindow* child  = parent->getChild(pwid);
 
+	/* If Plug-in window is already opened, just raise it on top and quit. */
+
 	if (child != nullptr)
 	{
-		child->show(); // Raise it to top
+		child->show();
+		return;
 	}
+
+	if (m_plugin.hasEditor)
+		child = new gdPluginWindowGUI(m_plugin);
 	else
-	{
-		if (m_plugin.hasEditor)
-			child = new gdPluginWindowGUI(m_plugin);
-		else
-			child = new gdPluginWindow(m_plugin);
-		child->setId(pwid);
-		parent->addSubWindow(child);
-	}
+		child = new gdPluginWindow(m_plugin);
+	child->setId(pwid);
+	parent->addSubWindow(child);
 }
 
 /* -------------------------------------------------------------------------- */

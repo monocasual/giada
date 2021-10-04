@@ -31,16 +31,14 @@
 
 class geButton;
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geMainMenu : public gePack
 {
 public:
 	geMainMenu(int x, int y);
 
-  private:
+private:
 	static void cb_file(Fl_Widget* /*w*/, void* p);
 	static void cb_edit(Fl_Widget* /*w*/, void* p);
 	void        cb_file();
@@ -51,7 +49,6 @@ public:
 	geButton* config;
 	geButton* about;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

@@ -37,6 +37,7 @@ namespace giada::c::sampleEditor
 {
 struct Data;
 }
+
 namespace giada::v
 {
 class gePitchTool : public gePack
@@ -47,7 +48,7 @@ public:
 	void rebuild(const c::sampleEditor::Data& d);
 	void update(float v, bool isDial = false);
 
-  private:
+private:
 	static void cb_setPitch(Fl_Widget* /*w*/, void* p);
 	static void cb_setPitchToBar(Fl_Widget* /*w*/, void* p);
 	static void cb_setPitchToSong(Fl_Widget* /*w*/, void* p);

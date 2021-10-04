@@ -25,20 +25,15 @@
  * -------------------------------------------------------------------------- */
 
 #include "mainTimer.h"
-#include "core/clock.h"
 #include "core/const.h"
 #include "core/graphics.h"
 #include "glue/events.h"
+#include "glue/layout.h"
 #include "glue/main.h"
-#include "gui/dialogs/beatsInput.h"
-#include "gui/dialogs/bpmInput.h"
-#include "gui/dialogs/mainWindow.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
 #include "utils/gui.h"
 #include "utils/string.h"
-
-extern giada::v::gdMainWindow* G_MainWin;
 
 namespace giada::v
 {
@@ -91,14 +86,14 @@ void geMainTimer::cb_divider(Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_
 
 void geMainTimer::cb_bpm()
 {
-	u::gui::openSubWindow(G_MainWin, new gdBpmInput(m_bpm.label()), WID_BPM);
+	c::layout::openBpmWindow(m_bpm.label());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geMainTimer::cb_meter()
 {
-	u::gui::openSubWindow(G_MainWin, new gdBeatsInput(), WID_BEATS);
+	c::layout::openBeatsWindow(m_timer.beats, m_timer.bars);
 }
 
 /* -------------------------------------------------------------------------- */

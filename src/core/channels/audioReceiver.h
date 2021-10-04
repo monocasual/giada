@@ -27,24 +27,24 @@
 #ifndef G_CHANNEL_AUDIO_RECEIVER_H
 #define G_CHANNEL_AUDIO_RECEIVER_H
 
+#include "core/patch.h"
+
 namespace mcl
 {
 class AudioBuffer;
 }
+
 namespace giada::m::channel
 {
 struct Data;
 }
-namespace giada::m::patch
-{
-struct Channel;
-}
+
 namespace giada::m::audioReceiver
 {
 struct Data
 {
 	Data() = default;
-	Data(const patch::Channel& p);
+	Data(const Patch::Channel& p);
 	Data(const Data& o) = default;
 
 	bool inputMonitor;

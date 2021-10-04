@@ -24,37 +24,16 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/init.h"
-#include "gui/dialogs/mainWindow.h"
-#include <FL/Fl.H>
-#ifdef WITH_TESTS
-#define CATCH_CONFIG_RUNNER
-#include "tests/recorder.cpp"
-#include "tests/utils.cpp"
-#include "tests/wave.cpp"
-#include "tests/waveFx.cpp"
-#include "tests/waveManager.cpp"
-#include <catch2/catch.hpp>
-#include <string>
-#include <vector>
-#endif
+#include "core/engine.h"
+#include "gui/ui.h"
 
-class giada::v::gdMainWindow* G_MainWin = nullptr;
+giada::m::Engine g_engine;
+giada::v::Ui     g_ui(g_engine.recorder);
 
 int main(int argc, char** argv)
 {
-#ifdef WITH_TESTS
-	std::vector<char*> args(argv, argv + argc);
-	if (args.size() > 1 && strcmp(args[1], "--run-tests") == 0)
-		return Catch::Session().run(args.size() - 1, &args[1]);
-#endif
-
+	if (int ret = giada::m::init::tests(argc, argv) != -1)
+		return ret;
 	giada::m::init::startup(argc, argv);
-
-	Fl::lock(); // Enable multithreading in FLTK
-	int ret = Fl::run();
-
-	giada::m::init::shutdown();
-
-	return ret;
+	return giada::m::init::run();
 }

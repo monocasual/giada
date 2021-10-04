@@ -33,10 +33,11 @@ project(giada LANGUAGES CXX)
 
 list(APPEND SOURCES
 	src/main.cpp
+	src/core/engine.cpp
 	src/core/worker.cpp
 	src/core/eventDispatcher.cpp
 	src/core/midiDispatcher.cpp
-	src/core/midiMapConf.cpp
+	src/core/midiMapper.cpp
 	src/core/midiEvent.cpp
 	src/core/quantizer.cpp
 	src/core/conf.cpp
@@ -51,13 +52,12 @@ list(APPEND SOURCES
 	src/core/kernelMidi.cpp
 	src/core/graphics.cpp
 	src/core/patch.cpp
-	src/core/recorderHandler.cpp
-	src/core/recorder.cpp
+	src/core/actions/actionRecorder.cpp
+	src/core/actions/actions.cpp
 	src/core/mixer.cpp
-	src/core/clock.cpp
-	src/core/sync.cpp
+    src/core/synchronizer.cpp
 	src/core/waveManager.cpp
-	src/core/recManager.cpp
+    src/core/recorder.cpp
 	src/core/midiLearnParam.cpp
 	src/core/resampler.cpp
 	src/core/plugins/pluginHost.cpp
@@ -78,6 +78,9 @@ list(APPEND SOURCES
 	src/core/channels/midiReceiver.cpp
 	src/core/channels/channel.cpp
 	src/core/channels/channelManager.cpp
+	src/core/model/sequencer.cpp
+	src/core/model/mixer.cpp
+	src/core/model/recorder.cpp
 	src/core/model/model.cpp
 	src/core/model/storage.cpp
 	src/core/idManager.cpp
@@ -91,10 +94,11 @@ list(APPEND SOURCES
 	src/glue/sampleEditor.cpp
 	src/glue/actionEditor.cpp
 	src/glue/config.cpp
+	src/glue/layout.cpp
+	src/gui/ui.cpp
 	src/gui/dialogs/window.cpp
 	src/gui/dispatcher.cpp
 	src/gui/updater.cpp
-	src/gui/model.cpp
 	src/gui/drawing.cpp
 	src/gui/dialogs/keyGrabber.cpp
 	src/gui/dialogs/about.cpp

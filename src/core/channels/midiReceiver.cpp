@@ -59,17 +59,17 @@ void parseMidi_(const channel::Data& ch, const MidiEvent& e)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void react(const channel::Data& ch, const eventDispatcher::Event& e)
+void react(const channel::Data& ch, const EventDispatcher::Event& e)
 {
 	switch (e.type)
 	{
-	case eventDispatcher::EventType::MIDI:
+	case EventDispatcher::EventType::MIDI:
 		parseMidi_(ch, std::get<Action>(e.data).event);
 		break;
 
-	case eventDispatcher::EventType::KEY_KILL:
-	case eventDispatcher::EventType::SEQUENCER_STOP:
-	case eventDispatcher::EventType::SEQUENCER_REWIND:
+	case EventDispatcher::EventType::KEY_KILL:
+	case EventDispatcher::EventType::SEQUENCER_STOP:
+	case EventDispatcher::EventType::SEQUENCER_REWIND:
 		sendToPlugins_(ch, MidiEvent(G_MIDI_ALL_NOTES_OFF), 0);
 		break;
 
@@ -80,9 +80,9 @@ void react(const channel::Data& ch, const eventDispatcher::Event& e)
 
 /* -------------------------------------------------------------------------- */
 
-void advance(const channel::Data& ch, const sequencer::Event& e)
+void advance(const channel::Data& ch, const Sequencer::Event& e)
 {
-	if (e.type == sequencer::EventType::ACTIONS && ch.isPlaying())
+	if (e.type == Sequencer::EventType::ACTIONS && ch.isPlaying())
 		for (const Action& action : *e.actions)
 			if (action.channelId == ch.id)
 				sendToPlugins_(ch, action.event, e.delta);
@@ -90,7 +90,7 @@ void advance(const channel::Data& ch, const sequencer::Event& e)
 
 /* -------------------------------------------------------------------------- */
 
-void render(const channel::Data& ch)
+void render(const channel::Data& ch, PluginHost& pluginHost)
 {
 	ch.buffer->midi.clear();
 
@@ -104,7 +104,7 @@ void render(const channel::Data& ch)
 		ch.buffer->midi.addEvent(message, e.getDelta());
 	}
 
-	pluginHost::processStack(ch.buffer->audio, ch.plugins, &ch.buffer->midi);
+	pluginHost.processStack(ch.buffer->audio, ch.plugins, &ch.buffer->midi);
 }
 } // namespace giada::m::midiReceiver
 

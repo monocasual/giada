@@ -30,7 +30,7 @@
 
 namespace giada::m::audioReceiver
 {
-Data::Data(const patch::Channel& p)
+Data::Data(const Patch::Channel& p)
 : inputMonitor(p.inputMonitor)
 , overdubProtection(p.overdubProtection)
 {

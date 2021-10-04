@@ -29,6 +29,8 @@
 #ifndef G_PLUGIN_MANAGER_H
 #define G_PLUGIN_MANAGER_H
 
+#include "core/idManager.h"
+#include "core/patch.h"
 #include "deps/juce-config.h"
 #include "plugin.h"
 
@@ -37,77 +39,113 @@ namespace giada::m::patch
 struct Plugin;
 struct Version;
 } // namespace giada::m::patch
-namespace giada::m::pluginManager
+
+namespace giada::m::model
 {
-enum class SortMethod : int
+class Model;
+}
+
+namespace giada::m
 {
-	NAME = 0,
-	CATEGORY,
-	MANUFACTURER,
-	FORMAT
+class Sequencer;
+class PluginManager final
+{
+public:
+	enum class SortMethod : int
+	{
+		NAME = 0,
+		CATEGORY,
+		MANUFACTURER,
+		FORMAT
+	};
+
+	struct PluginInfo
+	{
+		std::string uid;
+		std::string name;
+		std::string category;
+		std::string manufacturerName;
+		std::string format;
+		bool        isInstrument;
+		bool        exists;
+		bool        isKnown;
+	};
+
+	PluginManager(SortMethod);
+
+	/* getPluginsInfo
+	Returns a vector of PluginInfo objects containing all plug-ins, known and
+	unknown, scanned so far. */
+
+	std::vector<PluginInfo> getPluginsInfo() const;
+
+	/* hasMissingPlugins
+	True if some plug-ins have been marked as missing during the initial scan. */
+
+	bool hasMissingPlugins() const;
+
+	/* countAvailablePlugins
+	Returns how many plug-ins are ready and available for usage. */
+
+	int countAvailablePlugins() const;
+
+	/* reset
+	Brings everything back to the initial state. */
+
+	void reset(SortMethod);
+
+	/* scanDirs
+	Parses plugin directories (semicolon-separated) and store list in 
+	knownPluginList. The callback is called on each plugin found. Used to update
+	the main window from the GUI thread. */
+
+	int scanDirs(const std::string& paths, const std::function<void(float)>& cb);
+
+	/* (save|load)List
+	(Save|Load) knownPluginList (in|from) an XML file. */
+
+	bool saveList(const std::string& path) const;
+	bool loadList(const std::string& path);
+
+	std::unique_ptr<Plugin> makePlugin(const std::string& pid, int sampleRate, int bufferSize, const Sequencer&, ID id = 0);
+	std::unique_ptr<Plugin> makePlugin(int index, int sampleRate, int bufferSize, const Sequencer&);
+	std::unique_ptr<Plugin> makePlugin(const Plugin& other, int sampleRate, int bufferSize, const Sequencer&);
+
+	/* (de)serializePlugin
+	Transforms patch data into a Plugin object and vice versa. */
+
+	const Patch::Plugin     serializePlugin(const Plugin& p) const;
+	std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin& p, Patch::Version version, int sampleRate, int bufferSize, const Sequencer&);
+	std::vector<Plugin*>    hydratePlugins(std::vector<ID> pluginIds, model::Model& model);
+
+	void sortPlugins(SortMethod sortMethod);
+
+private:
+	std::unique_ptr<Plugin> makeInvalidPlugin(const std::string& pid, ID id);
+
+	IdManager m_pluginId;
+
+	/* formatManager
+	Plugin format manager. */
+
+	juce::AudioPluginFormatManager m_formatManager;
+
+	/* knownPuginList
+	List of known (i.e. scanned) plugins. */
+
+	juce::KnownPluginList m_knownPluginList;
+
+	/* unknownPluginList
+	List of unrecognized plugins found in a patch. */
+
+	std::vector<std::string> m_unknownPluginList;
+
+	/* missingPlugins
+	If some plugins from any stack are missing. */
+
+	bool m_missingPlugins;
 };
-
-struct PluginInfo
-{
-	std::string uid;
-	std::string name;
-	std::string category;
-	std::string manufacturerName;
-	std::string format;
-	bool        isInstrument;
-};
-
-void init(int samplerate, int buffersize);
-
-/* scanDirs
-Parses plugin directories (semicolon-separated) and store list in 
-knownPluginList. The callback is called on each plugin found. Used to update the 
-main window from the GUI thread. */
-
-int scanDirs(const std::string& paths, const std::function<void(float)>& cb);
-
-/* (save|load)List
-(Save|Load) knownPluginList (in|from) an XML file. */
-
-bool saveList(const std::string& path);
-bool loadList(const std::string& path);
-
-/* countAvailablePlugins
-Returns how many plug-ins are ready and available for usage. */
-
-int countAvailablePlugins();
-
-/* countUnknownPlugins
-Returns how many plug-ins are in a unknown/not-found state. */
-
-int countUnknownPlugins();
-
-std::unique_ptr<Plugin> makePlugin(const std::string& pid, ID id = 0);
-std::unique_ptr<Plugin> makePlugin(int index);
-std::unique_ptr<Plugin> makePlugin(const Plugin& other);
-
-/* (de)serializePlugin
-Transforms patch data into a Plugin object and vice versa. */
-
-const patch::Plugin     serializePlugin(const Plugin& p);
-std::unique_ptr<Plugin> deserializePlugin(const patch::Plugin& p, patch::Version version);
-std::vector<Plugin*>    hydratePlugins(std::vector<ID> pluginIds);
-
-/* getAvailablePluginInfo
-Returns the available plugin information (name, type, ...) given a plug-in
-index. */
-
-PluginInfo getAvailablePluginInfo(int index);
-
-std::string getUnknownPluginInfo(int index);
-
-bool doesPluginExist(const std::string& pid);
-
-bool hasMissingPlugins();
-
-void sortPlugins(SortMethod sortMethod);
-
-} // namespace giada::m::pluginManager
+} // namespace giada::m
 
 #endif
 

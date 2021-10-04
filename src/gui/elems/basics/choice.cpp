@@ -86,10 +86,12 @@ ID geChoice::getSelectedId() const
 
 void geChoice::addItem(const std::string& label, ID id)
 {
-	assert(id >= 0);
-
 	Fl_Choice::add(label.c_str(), 0, cb_onChange, static_cast<void*>(this));
-	m_ids.push_back(id);
+
+	if (id != -1)
+		m_ids.push_back(id);
+	else // auto-increment
+		m_ids.push_back(m_ids.size() == 0 ? 0 : m_ids.back() + 1);
 }
 
 /* -------------------------------------------------------------------------- */

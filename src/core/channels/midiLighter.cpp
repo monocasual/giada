@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "midiLighter.h"
+#include "core/channels/midiLighter.h"
 #include "core/channels/channel.h"
 #include "core/kernelMidi.h"
-#include "core/midiMapConf.h"
+#include "core/midiMapper.h"
 #include "core/mixer.h"
 
 namespace giada::m::midiLighter
@@ -36,43 +36,51 @@ namespace
 {
 void sendMute_(channel::Data& ch, uint32_t l_mute)
 {
+	MidiMapper&    midiMapper = *ch.midiLighter.midiMapper;
+	const MidiMap& midiMap    = midiMapper.getCurrentMap();
+
 	if (ch.mute)
-		kernelMidi::sendMidiLightning(l_mute, midimap::midimap.muteOn);
+		midiMapper.sendMidiLightning(l_mute, midiMap.muteOn);
 	else
-		kernelMidi::sendMidiLightning(l_mute, midimap::midimap.muteOff);
+		midiMapper.sendMidiLightning(l_mute, midiMap.muteOff);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void sendSolo_(channel::Data& ch, uint32_t l_solo)
 {
+	MidiMapper&    midiMapper = *ch.midiLighter.midiMapper;
+	const MidiMap& midiMap    = midiMapper.getCurrentMap();
+
 	if (ch.solo)
-		kernelMidi::sendMidiLightning(l_solo, midimap::midimap.soloOn);
+		midiMapper.sendMidiLightning(l_solo, midiMap.soloOn);
 	else
-		kernelMidi::sendMidiLightning(l_solo, midimap::midimap.soloOff);
+		midiMapper.sendMidiLightning(l_solo, midiMap.soloOff);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void sendStatus_(channel::Data& ch, uint32_t l_playing, bool audible)
 {
+	MidiMapper&    midiMapper = *ch.midiLighter.midiMapper;
+	const MidiMap& midiMap    = midiMapper.getCurrentMap();
+
 	switch (ch.state->playStatus.load())
 	{
-
 	case ChannelStatus::OFF:
-		kernelMidi::sendMidiLightning(l_playing, midimap::midimap.stopped);
+		midiMapper.sendMidiLightning(l_playing, midiMap.stopped);
 		break;
 
 	case ChannelStatus::WAIT:
-		kernelMidi::sendMidiLightning(l_playing, midimap::midimap.waiting);
+		midiMapper.sendMidiLightning(l_playing, midiMap.waiting);
 		break;
 
 	case ChannelStatus::ENDING:
-		kernelMidi::sendMidiLightning(l_playing, midimap::midimap.stopping);
+		midiMapper.sendMidiLightning(l_playing, midiMap.stopping);
 		break;
 
 	case ChannelStatus::PLAY:
-		kernelMidi::sendMidiLightning(l_playing, audible ? midimap::midimap.playing : midimap::midimap.playingInaudible);
+		midiMapper.sendMidiLightning(l_playing, audible ? midiMap.playing : midiMap.playingInaudible);
 		break;
 
 	default:
@@ -85,7 +93,14 @@ void sendStatus_(channel::Data& ch, uint32_t l_playing, bool audible)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const patch::Channel& p)
+Data::Data(MidiMapper& m)
+: midiMapper(&m)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
+Data::Data(const Patch::Channel& p)
 : enabled(p.midiOutL)
 , playing(p.midiOutLplaying)
 , mute(p.midiOutLmute)
@@ -95,7 +110,7 @@ Data::Data(const patch::Channel& p)
 
 /* -------------------------------------------------------------------------- */
 
-void react(channel::Data& ch, const eventDispatcher::Event& e, bool audible)
+void react(channel::Data& ch, const EventDispatcher::Event& e, bool audible)
 {
 	if (!ch.midiLighter.enabled)
 		return;
@@ -107,20 +122,20 @@ void react(channel::Data& ch, const eventDispatcher::Event& e, bool audible)
 	switch (e.type)
 	{
 
-	case eventDispatcher::EventType::KEY_PRESS:
-	case eventDispatcher::EventType::KEY_RELEASE:
-	case eventDispatcher::EventType::KEY_KILL:
-	case eventDispatcher::EventType::SEQUENCER_STOP:
+	case EventDispatcher::EventType::KEY_PRESS:
+	case EventDispatcher::EventType::KEY_RELEASE:
+	case EventDispatcher::EventType::KEY_KILL:
+	case EventDispatcher::EventType::SEQUENCER_STOP:
 		if (l_playing != 0x0)
 			sendStatus_(ch, l_playing, audible);
 		break;
 
-	case eventDispatcher::EventType::CHANNEL_MUTE:
+	case EventDispatcher::EventType::CHANNEL_MUTE:
 		if (l_mute != 0x0)
 			sendMute_(ch, l_mute);
 		break;
 
-	case eventDispatcher::EventType::CHANNEL_SOLO:
+	case EventDispatcher::EventType::CHANNEL_SOLO:
 		if (l_solo != 0x0)
 			sendSolo_(ch, l_solo);
 		break;

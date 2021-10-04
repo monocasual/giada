@@ -47,17 +47,17 @@ public:
 
 	struct geChannelMenu : public geChoice
 	{
-		geChannelMenu(int x, int y, int w, int h, const char* l, c::config::AudioDeviceData&);
+		geChannelMenu(int x, int y, int w, int h, const char* l, const c::config::AudioDeviceData&);
 
 		int getChannelsCount() const;
 		int getChannelsStart() const;
 
-		void rebuild(c::config::AudioDeviceData&);
+		void rebuild(const c::config::AudioDeviceData&);
 
 	private:
 		static constexpr int STEREO_OFFSET = 1000;
 
-		c::config::AudioDeviceData& m_data;
+		c::config::AudioDeviceData m_data;
 	};
 
 	geTabAudio(int x, int y, int w, int h);

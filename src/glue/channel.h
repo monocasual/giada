@@ -38,6 +38,12 @@ namespace giada::m
 {
 class Plugin;
 }
+
+namespace giada::v
+{
+class Dispatcher;
+}
+
 namespace giada::c::channel
 {
 struct SampleData
@@ -56,7 +62,7 @@ struct SampleData
 	bool             isLoop;
 	float            pitch;
 
-  private:
+private:
 	const m::channel::Data* m_channel;
 };
 
@@ -68,7 +74,7 @@ struct MidiData
 	bool isOutputEnabled() const;
 	int  getFilter() const;
 
-  private:
+private:
 	const m::channel::Data* m_channel;
 };
 
@@ -84,6 +90,8 @@ struct Data
 	bool          isArmed() const;
 	bool          isRecordingInput() const;
 	bool          isRecordingAction() const;
+
+	v::Dispatcher& viewDispatcher;
 
 	ID id;
 	ID columnId;
@@ -101,7 +109,7 @@ struct Data
 	std::optional<SampleData> sample;
 	std::optional<MidiData>   midi;
 
-  private:
+private:
 	const m::channel::Data& m_channel;
 };
 

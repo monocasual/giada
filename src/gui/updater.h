@@ -27,11 +27,28 @@
 #ifndef G_V_UPDATER_H
 #define G_V_UPDATER_H
 
-namespace giada::v::updater
+namespace giada::m::model
 {
-void init();
-void update(void* p);
-void close();
-} // namespace giada::v::updater
+class Model;
+}
+
+namespace giada::v
+{
+class Ui;
+class Updater final
+{
+public:
+	Updater(Ui& ui);
+
+	void init(m::model::Model&);
+	void close();
+
+private:
+	static void update(void*);
+	void        update();
+
+	Ui& m_ui;
+};
+} // namespace giada::v
 
 #endif

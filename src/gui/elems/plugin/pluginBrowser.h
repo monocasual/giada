@@ -31,9 +31,7 @@
 
 #include <FL/Fl_Browser.H>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class gePluginBrowser : public Fl_Browser
 {
@@ -42,13 +40,12 @@ public:
 
 	void refresh();
 
-  private:
+private:
 	void computeWidths();
 
-	int widths[5] = {0};
+	int m_widths[5];
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif
 

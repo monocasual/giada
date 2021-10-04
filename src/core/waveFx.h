@@ -33,6 +33,7 @@ namespace giada::m
 {
 class Wave;
 }
+
 namespace giada::m::wfx
 {
 /* Windows fix */

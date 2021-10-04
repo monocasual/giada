@@ -24,17 +24,24 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "updater.h"
+#include "gui/updater.h"
 #include "core/const.h"
 #include "core/model/model.h"
-#include "utils/gui.h"
+#include "gui/ui.h"
 #include <FL/Fl.H>
 
-namespace giada::v::updater
+namespace giada::v
 {
-void init()
+Updater::Updater(Ui& ui)
+: m_ui(ui)
 {
-	m::model::onSwap([](m::model::SwapType type) {
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Updater::init(m::model::Model& model)
+{
+	model.onSwap = [this](m::model::SwapType type) {
 		if (type == m::model::SwapType::NONE)
 			return;
 
@@ -42,25 +49,29 @@ void init()
 		synchronization with the main one. */
 
 		Fl::lock();
-		type == m::model::SwapType::HARD ? u::gui::rebuild() : u::gui::refresh();
+		type == m::model::SwapType::HARD ? m_ui.rebuild() : m_ui.refresh();
 		Fl::unlock();
-	});
+	};
 
-	Fl::add_timeout(G_GUI_REFRESH_RATE, update, nullptr);
+	Fl::add_timeout(G_GUI_REFRESH_RATE, update, this);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void update(void* /*p*/)
+void Updater::update(void* p) { static_cast<Updater*>(p)->update(); }
+
+/* -------------------------------------------------------------------------- */
+
+void Updater::update()
 {
-	u::gui::refresh();
-	Fl::add_timeout(G_GUI_REFRESH_RATE, update, nullptr);
+	m_ui.refresh();
+	Fl::add_timeout(G_GUI_REFRESH_RATE, update, this);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void close()
+void Updater::close()
 {
 	Fl::remove_timeout(update);
 }
-} // namespace giada::v::updater
+} // namespace giada::v

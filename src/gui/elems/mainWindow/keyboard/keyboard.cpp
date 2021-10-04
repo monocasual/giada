@@ -33,6 +33,7 @@
 #include "gui/dispatcher.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/resizerBar.h"
+#include "gui/ui.h"
 #include "sampleChannel.h"
 #include "utils/fs.h"
 #include "utils/log.h"
@@ -40,6 +41,8 @@
 #include "utils/vector.h"
 #include <FL/fl_draw.H>
 #include <cassert>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -138,7 +141,7 @@ int geKeyboard::handle(int e)
 	case FL_KEYDOWN:  // Keyboard key pushed
 	case FL_KEYUP:
 	{ // Keyboard key released
-		dispatcher::dispatchKey(e);
+		g_ui.dispatcher.dispatchKey(e);
 		return 1;
 	}
 	case FL_DND_ENTER: // return(1) for these events to 'accept' dnd

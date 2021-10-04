@@ -27,6 +27,8 @@
 #ifndef G_GLUE_RECORDER_H
 #define G_GLUE_RECORDER_H
 
+#include "core/types.h"
+
 namespace giada::c::recorder
 {
 void clearAllActions(ID channelId);

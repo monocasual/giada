@@ -27,40 +27,42 @@
 #ifndef GE_TAB_MIDI_H
 #define GE_TAB_MIDI_H
 
+#include "glue/config.h"
+#include "gui/elems/basics/choice.h"
 #include <FL/Fl_Group.H>
 
 class geCheck;
 
-namespace giada
+namespace giada::v
 {
-namespace v
-{
-class geChoice;
 class geTabMidi : public Fl_Group
 {
 public:
+	struct geMenu : public geChoice
+	{
+		geMenu(int x, int y, int w, int h, const char* l, const std::vector<std::string>&,
+		    const std::string& msgIfNotFound);
+	};
+
 	geTabMidi(int x, int y, int w, int h);
 
-	void save();
+	void save() const;
 
 	geChoice* system;
-	geChoice* portOut;
-	geChoice* portIn;
-	geChoice* midiMap;
+	geMenu*   portOut;
+	geMenu*   portIn;
+	geCheck*  enableOut;
+	geCheck*  enableIn;
+	geMenu*   midiMap;
 	geChoice* sync;
 
-  private:
-	void fetchSystems();
-	void fetchOutPorts();
-	void fetchInPorts();
-	void fetchMidiMaps();
+private:
+	void invalidate();
 
-	static void cb_changeSystem(Fl_Widget* /*w*/, void* p);
-	void        cb_changeSystem();
+	c::config::MidiData m_data;
 
-	int systemInitValue;
+	int m_initialApi;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

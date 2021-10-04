@@ -28,17 +28,14 @@
 #define G_CHANNEL_MIDI_LEARNER_H
 
 #include "core/midiLearnParam.h"
+#include "core/patch.h"
 
-namespace giada::m::patch
-{
-struct Channel;
-}
 namespace giada::m::midiLearner
 {
 struct Data
 {
 	Data() = default;
-	Data(const patch::Channel&);
+	Data(const Patch::Channel&);
 	Data(const Data&) = default;
 
 	/* isAllowed

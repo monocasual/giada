@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 #include "sampleAction.h"
-#include "core/action.h"
 #include "core/const.h"
+#include "src/core/actions/action.h"
 #include <FL/fl_draw.H>
 
 namespace giada

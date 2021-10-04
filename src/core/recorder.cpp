@@ -25,335 +25,203 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/recorder.h"
-#include "core/action.h"
-#include "core/idManager.h"
+#include "core/mixerHandler.h"
 #include "core/model/model.h"
-#include "utils/log.h"
-#include <algorithm>
-#include <cassert>
-#include <memory>
+#include "core/sequencer.h"
+#include "core/types.h"
+#include "src/core/actions/actionRecorder.h"
+#include "src/core/actions/actions.h"
 
-namespace giada::m::recorder
+namespace giada::m
 {
-namespace
+Recorder::Recorder(model::Model& m, Sequencer& s, MixerHandler& mh)
+: m_model(m)
+, m_sequencer(s)
+, m_mixerHandler(mh)
 {
-IdManager actionId_;
-
-/* -------------------------------------------------------------------------- */
-
-Action* findAction_(ActionMap& src, ID id)
-{
-	for (auto& [frame, actions] : src)
-		for (Action& a : actions)
-			if (a.id == id)
-				return &a;
-	assert(false);
-	return nullptr;
 }
 
 /* -------------------------------------------------------------------------- */
 
-/* updateMapPointers_
-Updates all prev/next actions pointers into the action map. This is required
-after an action has been recorded, since pushing back new actions in a Action 
-vector makes it reallocating the existing ones. */
-
-void updateMapPointers_(ActionMap& src)
+bool Recorder::isRecording() const
 {
-	for (auto& kv : src)
+	return isRecordingAction() || isRecordingInput();
+}
+
+bool Recorder::isRecordingAction() const
+{
+	return m_model.get().recorder.a_isRecordingAction();
+}
+
+bool Recorder::isRecordingInput() const
+{
+	return m_model.get().recorder.a_isRecordingInput();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Recorder::prepareActionRec(RecTriggerMode mode)
+{
+	if (mode == RecTriggerMode::NORMAL)
 	{
-		for (Action& action : kv.second)
-		{
-			if (action.nextId != 0)
-				action.next = findAction_(src, action.nextId);
-			if (action.prevId != 0)
-				action.prev = findAction_(src, action.prevId);
-		}
+		startActionRec();
+		m_sequencer.setStatus(SeqStatus::RUNNING);
+		G_DEBUG("Start action rec, NORMAL mode");
+	}
+	else
+	{ // RecTriggerMode::SIGNAL
+		m_sequencer.setStatus(SeqStatus::WAITING);
+		G_DEBUG("Start action rec, SIGNAL mode (waiting for signal from Midi Dispatcher...)");
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-/* optimize
-Removes frames without actions. */
-
-void optimize_(ActionMap& map)
+void Recorder::stopActionRec(ActionRecorder& actionRecorder)
 {
-	for (auto it = map.cbegin(); it != map.cend();)
-		it->second.size() == 0 ? it = map.erase(it) : ++it;
-}
+	setRecordingAction(false);
 
-/* -------------------------------------------------------------------------- */
+	/* If you stop the Action Recorder in SIGNAL mode before any actual 
+	recording: just clean up everything and return. */
 
-void removeIf_(std::function<bool(const Action&)> f)
-{
-	model::DataLock lock;
-
-	ActionMap& map = model::getAll<model::Actions>();
-	for (auto& [frame, actions] : map)
-		actions.erase(std::remove_if(actions.begin(), actions.end(), f), actions.end());
-	optimize_(map);
-	updateMapPointers_(map);
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool exists_(ID channelId, Frame frame, const MidiEvent& event, const ActionMap& target)
-{
-	for (const auto& [_, actions] : target)
-		for (const Action& a : actions)
-			if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw())
-				return true;
-	return false;
-}
-
-bool exists_(ID channelId, Frame frame, const MidiEvent& event)
-{
-	return exists_(channelId, frame, event, model::getAll<model::Actions>());
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-void init()
-{
-	actionId_ = IdManager();
-	clearAll();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void clearAll()
-{
-	model::DataLock lock;
-	model::getAll<model::Actions>().clear();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void clearChannel(ID channelId)
-{
-	removeIf_([=](const Action& a) { return a.channelId == channelId; });
-}
-
-/* -------------------------------------------------------------------------- */
-
-void clearActions(ID channelId, int type)
-{
-	removeIf_([=](const Action& a) {
-		return a.channelId == channelId && a.event.getStatus() == type;
-	});
-}
-
-/* -------------------------------------------------------------------------- */
-
-void deleteAction(ID id)
-{
-	removeIf_([=](const Action& a) { return a.id == id; });
-}
-
-void deleteAction(ID currId, ID nextId)
-{
-	removeIf_([=](const Action& a) { return a.id == currId || a.id == nextId; });
-}
-
-/* -------------------------------------------------------------------------- */
-
-void updateKeyFrames(std::function<Frame(Frame old)> f)
-{
-	recorder::ActionMap temp;
-
-	/* Copy all existing actions in local map by cloning them, with just a
-	difference: they have a new frame value. */
-
-	for (const auto& [oldFrame, actions] : model::getAll<model::Actions>())
+	if (m_sequencer.getStatus() == SeqStatus::WAITING)
 	{
-		Frame newFrame = f(oldFrame);
-		for (const Action& a : actions)
-		{
-			Action copy = a;
-			copy.frame  = newFrame;
-			temp[newFrame].push_back(copy);
-		}
-		G_DEBUG(oldFrame << " -> " << newFrame);
-	}
-
-	updateMapPointers_(temp);
-
-	model::DataLock lock;
-	model::getAll<model::Actions>() = std::move(temp);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void updateEvent(ID id, MidiEvent e)
-{
-	model::DataLock lock;
-	findAction_(model::getAll<model::Actions>(), id)->event = e;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void updateSiblings(ID id, ID prevId, ID nextId)
-{
-	model::DataLock lock;
-
-	Action* pcurr = findAction_(model::getAll<model::Actions>(), id);
-	Action* pprev = findAction_(model::getAll<model::Actions>(), prevId);
-	Action* pnext = findAction_(model::getAll<model::Actions>(), nextId);
-
-	pcurr->prev   = pprev;
-	pcurr->prevId = pprev->id;
-	pcurr->next   = pnext;
-	pcurr->nextId = pnext->id;
-
-	if (pprev != nullptr)
-	{
-		pprev->next   = pcurr;
-		pprev->nextId = pcurr->id;
-	}
-	if (pnext != nullptr)
-	{
-		pnext->prev   = pcurr;
-		pnext->prevId = pcurr->id;
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool hasActions(ID channelId, int type)
-{
-	for (const auto& [frame, actions] : model::getAll<model::Actions>())
-		for (const Action& a : actions)
-			if (a.channelId == channelId && (type == 0 || type == a.event.getStatus()))
-				return true;
-	return false;
-}
-
-/* -------------------------------------------------------------------------- */
-
-Action makeAction(ID id, ID channelId, Frame frame, MidiEvent e)
-{
-	Action out{actionId_.generate(id), channelId, frame, e, -1, -1};
-	actionId_.set(id);
-	return out;
-}
-
-Action makeAction(const patch::Action& a)
-{
-	actionId_.set(a.id);
-	return Action{a.id, a.channelId, a.frame, a.event, -1, -1, a.prevId,
-	    a.nextId};
-}
-
-/* -------------------------------------------------------------------------- */
-
-Action rec(ID channelId, Frame frame, MidiEvent event)
-{
-	/* Skip duplicates. */
-
-	if (exists_(channelId, frame, event))
-		return {};
-
-	Action a = makeAction(0, channelId, frame, event);
-
-	/* If key frame doesn't exist yet, the [] operator in std::map is smart 
-	enough to insert a new item first. No plug-in data for now. */
-
-	model::DataLock lock;
-
-	model::getAll<model::Actions>()[frame].push_back(a);
-	updateMapPointers_(model::getAll<model::Actions>());
-
-	return a;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void rec(std::vector<Action>& actions)
-{
-	if (actions.size() == 0)
+		m_sequencer.setStatus(SeqStatus::STOPPED);
 		return;
+	}
 
-	model::DataLock lock;
+	std::unordered_set<ID> channels = actionRecorder.consolidate();
 
-	ActionMap& map = model::getAll<model::Actions>();
+	/* Enable reading actions for Channels that have just been filled with 
+	actions. Start reading right away, without checking whether 
+	conf::treatRecsAsLoops is enabled or not. Same thing for MIDI channels.  */
 
-	for (const Action& a : actions)
-		if (!exists_(a.channelId, a.frame, a.event, map))
-			map[a.frame].push_back(a);
-	updateMapPointers_(map);
+	for (ID id : channels)
+	{
+		channel::Data& ch = m_model.get().getChannel(id);
+		ch.state->readActions.store(true);
+		ch.state->recStatus.store(ChannelStatus::PLAY);
+		if (ch.type == ChannelType::MIDI)
+			ch.state->playStatus.store(ChannelStatus::PLAY);
+	}
+	m_model.swap(model::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
+bool Recorder::prepareInputRec(RecTriggerMode triggerMode, InputRecMode inputMode)
 {
-	model::DataLock lock;
+	if (inputMode == InputRecMode::FREE)
+		m_sequencer.rewind();
 
-	ActionMap& map = model::getAll<model::Actions>();
+	if (triggerMode == RecTriggerMode::NORMAL)
+	{
+		startInputRec();
+		m_sequencer.setStatus(SeqStatus::RUNNING);
+		G_DEBUG("Start input rec, NORMAL mode");
+	}
+	else
+	{
+		m_sequencer.setStatus(SeqStatus::WAITING);
+		G_DEBUG("Start input rec, SIGNAL mode (waiting for signal from Mixer...)");
+	}
 
-	map[f1].push_back(makeAction(0, channelId, f1, e1));
-	map[f2].push_back(makeAction(0, channelId, f2, e2));
-
-	Action* a1 = findAction_(map, map[f1].back().id);
-	Action* a2 = findAction_(map, map[f2].back().id);
-	a1->nextId = a2->id;
-	a2->prevId = a1->id;
-
-	updateMapPointers_(map);
+	return true;
 }
 
 /* -------------------------------------------------------------------------- */
 
-const std::vector<Action>* getActionsOnFrame(Frame frame)
+void Recorder::stopInputRec(InputRecMode recMode, int sampleRate)
 {
-	if (model::getAll<model::Actions>().count(frame) == 0)
-		return nullptr;
-	return &model::getAll<model::Actions>().at(frame);
+	setRecordingInput(false);
+
+	Frame recordedFrames = m_mixerHandler.stopInputRec();
+
+	/* When recording in RIGID mode, the amount of recorded frames is always 
+	equal to the current loop length. */
+
+	if (recMode == InputRecMode::RIGID)
+		recordedFrames = m_sequencer.getFramesInLoop();
+
+	G_DEBUG("Stop input rec, recordedFrames=" << recordedFrames);
+
+	/* If you stop the Input Recorder in SIGNAL mode before any actual 
+	recording: just clean up everything and return. */
+
+	if (m_sequencer.getStatus() == SeqStatus::WAITING)
+	{
+		m_sequencer.setStatus(SeqStatus::STOPPED);
+		return;
+	}
+
+	/* Finalize recordings. InputRecMode::FREE requires some adjustments. */
+
+	m_mixerHandler.finalizeInputRec(recordedFrames, m_sequencer.getCurrentFrame());
+
+	if (recMode == InputRecMode::FREE)
+	{
+		m_sequencer.rewind();
+		m_sequencer.setBpm(m_sequencer.calcBpmFromRec(recordedFrames, sampleRate), sampleRate);
+	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-Action getClosestAction(ID channelId, Frame f, int type)
+bool Recorder::canEnableRecOnSignal() const { return !m_sequencer.isRunning(); }
+bool Recorder::canEnableFreeInputRec() const { return !m_mixerHandler.hasAudioData(); }
+
+/* -------------------------------------------------------------------------- */
+
+bool Recorder::canRecordActions() const
 {
-	Action out = {};
-	forEachAction([&](const Action& a) {
-		if (a.event.getStatus() != type || a.channelId != channelId)
-			return;
-		if (!out.isValid() || (a.frame <= f && a.frame > out.frame))
-			out = a;
-	});
-	return out;
+	return isRecordingAction() && m_sequencer.isRunning() && !isRecordingInput();
 }
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Action> getActionsOnChannel(ID channelId)
+void Recorder::setRecordingAction(bool v)
 {
-	std::vector<Action> out;
-	forEachAction([&](const Action& a) {
-		if (a.channelId == channelId)
-			out.push_back(a);
-	});
-	return out;
+	m_model.get().recorder.a_setRecordingAction(v);
+}
+
+void Recorder::setRecordingInput(bool v)
+{
+	m_model.get().recorder.a_setRecordingInput(v);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void forEachAction(std::function<void(const Action&)> f)
+void Recorder::startActionRec()
 {
-	for (auto& [_, actions] : model::getAll<model::Actions>())
-		for (const Action& action : actions)
-			f(action);
+	setRecordingAction(true);
 }
 
 /* -------------------------------------------------------------------------- */
 
-ID getNewActionId()
+void Recorder::startActionRecOnCallback()
 {
-	return actionId_.generate();
+	if (m_sequencer.getStatus() != SeqStatus::WAITING)
+		return;
+	startActionRec();
+	m_sequencer.setStatus(SeqStatus::RUNNING);
 }
-} // namespace giada::m::recorder
+
+/* -------------------------------------------------------------------------- */
+
+void Recorder::startInputRec()
+{
+	/* Start recording from the current frame, not the beginning. */
+	m_mixerHandler.startInputRec(m_sequencer.getCurrentFrame());
+	setRecordingInput(true);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Recorder::startInputRecOnCallback()
+{
+	if (m_sequencer.getStatus() != SeqStatus::WAITING)
+		return;
+	startInputRec();
+	m_sequencer.setStatus(SeqStatus::RUNNING);
+}
+} // namespace giada::m

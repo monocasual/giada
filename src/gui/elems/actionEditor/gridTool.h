@@ -27,6 +27,7 @@
 #ifndef GE_GRID_TOOL_H
 #define GE_GRID_TOOL_H
 
+#include "core/conf.h"
 #include "core/types.h"
 #include <FL/Fl_Group.H>
 
@@ -38,7 +39,7 @@ class geChoice;
 class geGridTool : public Fl_Group
 {
 public:
-	geGridTool(Pixel x, Pixel y);
+	geGridTool(Pixel x, Pixel y, m::Conf::Data&, Frame framesInBeat);
 	~geGridTool();
 
 	int  getValue() const;
@@ -52,6 +53,9 @@ public:
 	Frame getCellSize() const;
 
 private:
+	m::Conf::Data& m_conf;
+	Frame          m_framesInBeat;
+
 	geChoice* gridType;
 	geCheck*  active;
 

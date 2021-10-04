@@ -24,50 +24,61 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "eventDispatcher.h"
-#include "core/clock.h"
+#include "core/eventDispatcher.h"
 #include "core/const.h"
-#include "core/midiDispatcher.h"
-#include "core/model/model.h"
-#include "core/sequencer.h"
-#include "core/worker.h"
-#include "utils/log.h"
-#include <functional>
+#include <cassert>
 
-namespace giada::m::eventDispatcher
+namespace giada::m
 {
-namespace
+EventDispatcher::EventDispatcher()
+: onMidiLearn(nullptr)
+, onMidiProcess(nullptr)
+, onProcessChannels(nullptr)
+, onProcessSequencer(nullptr)
+, onMixerSignalCallback(nullptr)
+, onMixerEndOfRecCallback(nullptr)
 {
-Worker worker_;
-
-/* eventBuffer_
-Buffer of events sent to channels for event parsing. This is filled with Events
-coming from the two event queues.*/
-
-EventBuffer eventBuffer_;
+}
 
 /* -------------------------------------------------------------------------- */
 
-void processFuntions_()
+void EventDispatcher::start()
 {
-	for (const Event& e : eventBuffer_)
+	m_worker.start([this]() { process(); }, /*sleep=*/G_EVENT_DISPATCHER_RATE_MS);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void EventDispatcher::pumpUIevent(Event e) { UIevents.push(e); }
+void EventDispatcher::pumpMidiEvent(Event e) { MidiEvents.push(e); }
+
+/* -------------------------------------------------------------------------- */
+
+void EventDispatcher::processFuntions()
+{
+	assert(onMidiLearn != nullptr);
+	assert(onMidiProcess != nullptr);
+	assert(onMixerSignalCallback != nullptr);
+	assert(onMixerEndOfRecCallback != nullptr);
+
+	for (const Event& e : m_eventBuffer)
 	{
 		switch (e.type)
 		{
 		case EventType::MIDI_DISPATCHER_LEARN:
-			midiDispatcher::learn(std::get<Action>(e.data).event);
+			onMidiLearn(std::get<Action>(e.data).event);
 			break;
 
 		case EventType::MIDI_DISPATCHER_PROCESS:
-			midiDispatcher::process(std::get<Action>(e.data).event);
+			onMidiProcess(std::get<Action>(e.data).event);
 			break;
 
 		case EventType::MIXER_SIGNAL_CALLBACK:
-			mixer::execSignalCb();
+			onMixerSignalCallback();
 			break;
 
 		case EventType::MIXER_END_OF_REC_CALLBACK:
-			mixer::execEndOfRecCb();
+			onMixerEndOfRecCallback();
 			break;
 
 		default:
@@ -78,57 +89,24 @@ void processFuntions_()
 
 /* -------------------------------------------------------------------------- */
 
-void processChannels_()
+void EventDispatcher::process()
 {
-	for (channel::Data& ch : model::get().channels)
-		channel::react(ch, eventBuffer_, mixer::isChannelAudible(ch));
-	model::swap(model::SwapType::SOFT);
-}
+	assert(onProcessChannels != nullptr);
+	assert(onProcessSequencer != nullptr);
 
-/* -------------------------------------------------------------------------- */
-
-void processSequencer_()
-{
-	sequencer::react(eventBuffer_);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void process_()
-{
-	eventBuffer_.clear();
+	m_eventBuffer.clear();
 
 	Event e;
 	while (UIevents.pop(e))
-		eventBuffer_.push_back(e);
+		m_eventBuffer.push_back(e);
 	while (MidiEvents.pop(e))
-		eventBuffer_.push_back(e);
+		m_eventBuffer.push_back(e);
 
-	if (eventBuffer_.size() == 0)
+	if (m_eventBuffer.size() == 0)
 		return;
 
-	processFuntions_();
-	processChannels_();
-	processSequencer_();
+	processFuntions();
+	onProcessChannels(m_eventBuffer);
+	onProcessSequencer(m_eventBuffer);
 }
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-Queue<Event, G_MAX_DISPATCHER_EVENTS> UIevents;
-Queue<Event, G_MAX_DISPATCHER_EVENTS> MidiEvents;
-
-/* -------------------------------------------------------------------------- */
-
-void init()
-{
-	worker_.start(process_, /*sleep=*/G_EVENT_DISPATCHER_RATE_MS);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void pumpUIevent(Event e) { UIevents.push(e); }
-void pumpMidiEvent(Event e) { MidiEvents.push(e); }
-} // namespace giada::m::eventDispatcher
+} // namespace giada::m

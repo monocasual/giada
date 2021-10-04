@@ -30,29 +30,23 @@
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/graphics.h"
-#include "core/plugins/pluginManager.h"
+#include "glue/layout.h"
 #include "glue/plugin.h"
-#include "gui/dialogs/browser/browserDir.h"
-#include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/window.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/input.h"
-#include "utils/fs.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include <FL/Fl.H>
 #include <functional>
 
-extern giada::v::gdMainWindow* G_MainWin;
-
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 : Fl_Group(X, Y, W, H, "Plugins")
+, m_data(c::config::getPluginData())
 {
 	m_browse     = new geButton(x() + w() - G_GUI_UNIT, y() + 9, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm);
 	m_folderPath = new geInput(m_browse->x() - 258, y() + 9, 250, G_GUI_UNIT);
@@ -67,7 +61,7 @@ geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 	m_info->label("Scan in progress. Please wait...");
 	m_info->hide();
 
-	m_folderPath->value(m::conf::conf.pluginPath.c_str());
+	m_folderPath->value(m_data.pluginPath.c_str());
 	m_folderPath->label("Plugins folder");
 
 	m_browse->callback(cb_browse, (void*)this);
@@ -81,7 +75,7 @@ geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 
 void geTabPlugins::refreshCount()
 {
-	std::string scanLabel = "Scan (" + std::to_string(m::pluginManager::countAvailablePlugins()) + " found)";
+	std::string scanLabel = "Scan (" + std::to_string(m_data.numAvailablePlugins) + " found)";
 	m_scanButton->copy_label(scanLabel.c_str());
 }
 
@@ -94,10 +88,12 @@ void geTabPlugins::cb_browse(Fl_Widget* /*w*/, void* p) { ((geTabPlugins*)p)->cb
 
 void geTabPlugins::cb_browse()
 {
+	c::layout::openBrowserForPlugins(*static_cast<v::gdWindow*>(top_window()));
+	/*
 	v::gdBrowserDir* browser = new v::gdBrowserDir("Add plug-ins directory",
-	    m::conf::conf.patchPath, c::plugin::setPluginPathCb);
+	    m_conf.patchPath, c::plugin::setPluginPathCb);
 
-	static_cast<v::gdWindow*>(top_window())->addSubWindow(browser);
+	static_cast<v::gdWindow*>(top_window())->addSubWindow(browser);*/
 }
 
 /* -------------------------------------------------------------------------- */
@@ -111,8 +107,7 @@ void geTabPlugins::cb_scan()
 	};
 
 	m_info->show();
-	m::pluginManager::scanDirs(m_folderPath->value(), callback);
-	m::pluginManager::saveList(u::fs::getHomePath() + G_SLASH + "plugins.xml");
+	c::config::scanPlugins(m_folderPath->value(), callback);
 	m_info->hide();
 	refreshCount();
 }
@@ -121,17 +116,18 @@ void geTabPlugins::cb_scan()
 
 void geTabPlugins::save()
 {
-	m::conf::conf.pluginPath = m_folderPath->value();
+	c::config::save(m_data);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geTabPlugins::refreshVstPath()
+void geTabPlugins::refreshVstPath(const std::string& path)
 {
-	m_folderPath->value(m::conf::conf.pluginPath.c_str());
+	m_data.pluginPath = path;
+
+	m_folderPath->value(path.c_str());
 	m_folderPath->redraw();
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif // WITH_VST

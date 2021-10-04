@@ -27,28 +27,28 @@
 #ifndef GD_BROWSER_SAVE_H
 #define GD_BROWSER_SAVE_H
 
+#include "core/conf.h"
 #include "browserBase.h"
 
 class geInput;
 
-namespace giada
-{
-namespace m
+namespace giada::m
 {
 class Channel;
 }
-namespace v
+
+namespace giada::v
 {
 class gdBrowserSave : public gdBrowserBase
 {
 public:
 	gdBrowserSave(const std::string& title, const std::string& path,
 	    const std::string& name, std::function<void(void*)> cb,
-	    ID channelId);
+	    ID channelId, m::Conf::Data&);
 
 	std::string getName() const;
 
-  private:
+private:
 	geInput* name;
 
 	static void cb_down(Fl_Widget* /*w*/, void* p);
@@ -56,7 +56,6 @@ public:
 	void        cb_down();
 	void        cb_save();
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

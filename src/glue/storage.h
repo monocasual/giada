@@ -27,18 +27,12 @@
 #ifndef G_GLUE_STORAGE_H
 #define G_GLUE_STORAGE_H
 
-namespace giada
-{
-namespace c
-{
-namespace storage
+namespace giada::c::storage
 {
 void loadProject(void* data);
 void saveProject(void* data);
 void saveSample(void* data);
 void loadSample(void* data);
-} // namespace storage
-} // namespace c
-} // namespace giada
+} // namespace giada::c::storage
 
 #endif

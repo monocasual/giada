@@ -67,7 +67,7 @@ public:
 
 	bool hasBeenTriggered() const;
 
-  private:
+private:
 	std::map<int, std::function<void(Frame)>> m_callbacks;
 	int                                       m_performId = -1;
 };

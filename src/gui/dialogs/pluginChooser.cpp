@@ -28,8 +28,6 @@
 
 #include "pluginChooser.h"
 #include "core/conf.h"
-#include "core/plugins/pluginHost.h"
-#include "core/plugins/pluginManager.h"
 #include "glue/plugin.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
@@ -37,12 +35,11 @@
 #include "gui/elems/plugin/pluginBrowser.h"
 #include "utils/gui.h"
 
-namespace giada
+namespace giada::v
 {
-namespace v
-{
-gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId)
+gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Conf::Data& c)
 : gdWindow(X, Y, W, H, "Available plugins")
+, m_conf(c)
 , m_channelId(channelId)
 {
 	/* top area */
@@ -69,7 +66,7 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId)
 	sortMethod->add("Category");
 	sortMethod->add("Manufacturer");
 	sortMethod->callback(cb_sort, (void*)this);
-	sortMethod->value(m::conf::conf.pluginSortMethod);
+	sortMethod->value(m_conf.pluginSortMethod);
 
 	addBtn->callback(cb_add, (void*)this);
 	addBtn->shortcut(FL_Enter);
@@ -84,11 +81,11 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId)
 
 gdPluginChooser::~gdPluginChooser()
 {
-	m::conf::conf.pluginChooserX   = x();
-	m::conf::conf.pluginChooserY   = y();
-	m::conf::conf.pluginChooserW   = w();
-	m::conf::conf.pluginChooserH   = h();
-	m::conf::conf.pluginSortMethod = sortMethod->value();
+	m_conf.pluginChooserX   = x();
+	m_conf.pluginChooserY   = y();
+	m_conf.pluginChooserW   = w();
+	m_conf.pluginChooserH   = h();
+	m_conf.pluginSortMethod = sortMethod->value();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -108,7 +105,7 @@ void gdPluginChooser::cb_close()
 
 void gdPluginChooser::cb_sort()
 {
-	m::pluginManager::sortPlugins(static_cast<m::pluginManager::SortMethod>(sortMethod->value()));
+	c::plugin::sortPlugins(static_cast<m::PluginManager::SortMethod>(sortMethod->value()));
 	browser->refresh();
 }
 
@@ -122,7 +119,6 @@ void gdPluginChooser::cb_add()
 	c::plugin::addPlugin(pluginIndex, m_channelId);
 	do_callback();
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif // #ifdef WITH_VST

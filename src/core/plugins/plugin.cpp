@@ -26,9 +26,8 @@
 
 #ifdef WITH_VST
 
-#include "plugin.h"
+#include "core/plugins/plugin.h"
 #include "core/const.h"
-#include "core/plugins/pluginManager.h"
 #include "utils/log.h"
 #include "utils/time.h"
 #include <FL/Fl.H>
@@ -48,13 +47,13 @@ Plugin::Plugin(ID id, const std::string& UID)
 
 /* -------------------------------------------------------------------------- */
 
-Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin, double samplerate,
-    int buffersize)
+Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin,
+    std::unique_ptr<PluginHost::Info> playHead, double samplerate, int buffersize)
 : id(id)
 , valid(true)
 , onEditorResize(nullptr)
 , m_plugin(std::move(plugin))
-, m_playHead(std::make_unique<pluginHost::Info>())
+, m_playHead(std::move(playHead))
 , m_bypass(false)
 , m_hasEditor(m_plugin->hasEditor())
 {
@@ -86,18 +85,6 @@ Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin, double 
 
 	u::log::print("[Plugin] plugin initialized and ready. MIDI input params: %lu\n",
 	    midiInParams.size());
-}
-
-/* -------------------------------------------------------------------------- */
-
-Plugin::Plugin(const Plugin& o)
-: id(o.id)
-, midiInParams(o.midiInParams)
-, valid(o.valid)
-, onEditorResize(o.onEditorResize)
-, m_plugin(std::move(pluginManager::makePlugin(o)->m_plugin))
-, m_bypass(o.m_bypass.load())
-{
 }
 
 /* -------------------------------------------------------------------------- */

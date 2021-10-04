@@ -1,7 +1,7 @@
-#include "../src/core/recorder.h"
-#include "../src/core/action.h"
 #include "../src/core/const.h"
 #include "../src/core/types.h"
+#include "src/core/actions/action.h"
+#include "src/core/actions/actions.h"
 #include <catch2/catch.hpp>
 
 TEST_CASE("recorder")
@@ -9,8 +9,9 @@ TEST_CASE("recorder")
 	using namespace giada;
 	using namespace giada::m;
 
-	recorder::init();
+	REQUIRE(1 == 0); // TODO
 
+#if 0
 	REQUIRE(recorder::hasActions(/*ch=*/0) == false);
 
 	SECTION("Test record")
@@ -63,4 +64,6 @@ TEST_CASE("recorder")
 			REQUIRE(recorder::hasActions(/*channel=*/0) == false);
 		}
 	}
+
+#endif
 }

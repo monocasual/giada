@@ -36,14 +36,17 @@ namespace giada::m
 {
 class Wave;
 }
+
 namespace giada::m::channel
 {
 struct Data;
 }
+
 namespace giada::v
 {
 class gdSampleEditor;
 }
+
 namespace giada::c::sampleEditor
 {
 struct Data
@@ -54,6 +57,8 @@ struct Data
 	ChannelStatus  a_getPreviewStatus() const;
 	Frame          a_getPreviewTracker() const;
 	const m::Wave& getWaveRef() const; // TODO - getWaveData (or public ptr member to Wave::data)
+	Frame          getFramesInBar() const;
+	Frame          getFramesInLoop() const;
 
 	ID          channelId;
 	std::string name;
@@ -70,7 +75,7 @@ struct Data
 	std::string wavePath;
 	bool        isLogical;
 
-  private:
+private:
 	const m::channel::Data* m_channel;
 };
 

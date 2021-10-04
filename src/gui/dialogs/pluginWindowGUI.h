@@ -37,16 +37,12 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 
-namespace giada
-{
-namespace c
-{
-namespace plugin
+namespace giada::c::plugin
 {
 struct Plugin;
 }
-} // namespace c
-namespace v
+
+namespace giada::v
 {
 class gdPluginWindowGUI : public gdWindow
 {
@@ -54,22 +50,15 @@ public:
 	gdPluginWindowGUI(c::plugin::Plugin&);
 	~gdPluginWindowGUI();
 
-  private:
-	static void cb_close(Fl_Widget* /*w*/, void* p);
-	static void cb_refresh(void* data);
-	void        cb_close();
-	void        cb_refresh();
-
-	void openEditor(void* parent);
+	void openEditor();
 	void closeEditor();
 
-	c::plugin::Plugin& m_plugin;
-
-	juce::AudioProcessorEditor* m_ui;
+private:
+	c::plugin::Plugin&                          m_plugin;
+	std::unique_ptr<juce::AudioProcessorEditor> m_editor;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
-#endif // include guard
+#endif
 
 #endif // #ifdef WITH_VST

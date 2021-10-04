@@ -30,13 +30,11 @@
 #include "gui/elems/browser.h"
 #include "utils/fs.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 gdBrowserLoad::gdBrowserLoad(const std::string& title, const std::string& path,
-    std::function<void(void*)> cb, ID channelId)
-: gdBrowserBase(title, path, cb, channelId)
+    std::function<void(void*)> cb, ID channelId, m::Conf::Data& conf)
+: gdBrowserBase(title, path, cb, channelId, conf)
 {
 	where->size(groupTop->w() - updir->w() - 8, 20);
 
@@ -76,6 +74,4 @@ void gdBrowserLoad::cb_down()
 	browser->loadDir(path);
 	where->value(browser->getCurrentDir().c_str());
 }
-
-} // namespace v
-} // namespace giada
+} // namespace giada::v

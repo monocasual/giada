@@ -27,27 +27,29 @@
 #ifndef G_CHANNEL_MIDI_LIGHTER_H
 #define G_CHANNEL_MIDI_LIGHTER_H
 
+#include "core/eventDispatcher.h"
 #include "core/midiLearnParam.h"
+#include "core/patch.h"
+
+namespace giada::m
+{
+class MidiMapper;
+}
 
 namespace giada::m::channel
 {
 struct Data;
 }
-namespace giada::m::patch
-{
-struct Channel;
-}
-namespace giada::m::eventDispatcher
-{
-struct Event;
-}
+
 namespace giada::m::midiLighter
 {
 struct Data
 {
-	Data() = default;
-	Data(const patch::Channel& p);
+	Data(MidiMapper&);
+	Data(const Patch::Channel& p);
 	Data(const Data& o) = default;
+
+	MidiMapper* midiMapper;
 
 	/* enabled
     Tells whether MIDI lighting is enabled or not. */
@@ -61,7 +63,7 @@ struct Data
 	MidiLearnParam solo;
 };
 
-void react(channel::Data& ch, const eventDispatcher::Event& e, bool audible);
+void react(channel::Data& ch, const EventDispatcher::Event& e, bool audible);
 } // namespace giada::m::midiLighter
 
 #endif

@@ -25,10 +25,18 @@
  * -------------------------------------------------------------------------- */
 
 #include "channel.h"
+#include "core/actions/actionRecorder.h"
+#include "core/conf.h"
+#include "core/engine.h"
+#include "core/midiMapper.h"
 #include "core/mixerHandler.h"
+#include "core/model/model.h"
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
+#include "core/recorder.h"
 #include <cassert>
+
+extern giada::m::Engine g_engine;
 
 namespace giada::m::channel
 {
@@ -48,29 +56,29 @@ mcl::AudioBuffer::Pan calcPanning_(float pan)
 
 /* -------------------------------------------------------------------------- */
 
-void react_(Data& d, const eventDispatcher::Event& e)
+void react_(Data& d, const EventDispatcher::Event& e)
 {
 	switch (e.type)
 	{
-	case eventDispatcher::EventType::CHANNEL_VOLUME:
+	case EventDispatcher::EventType::CHANNEL_VOLUME:
 		d.volume = std::get<float>(e.data);
 		break;
 
-	case eventDispatcher::EventType::CHANNEL_PAN:
+	case EventDispatcher::EventType::CHANNEL_PAN:
 		d.pan = std::get<float>(e.data);
 		break;
 
-	case eventDispatcher::EventType::CHANNEL_MUTE:
+	case EventDispatcher::EventType::CHANNEL_MUTE:
 		d.mute = !d.mute;
 		break;
 
-	case eventDispatcher::EventType::CHANNEL_TOGGLE_ARM:
+	case EventDispatcher::EventType::CHANNEL_TOGGLE_ARM:
 		d.armed = !d.armed;
 		break;
 
-	case eventDispatcher::EventType::CHANNEL_SOLO:
+	case EventDispatcher::EventType::CHANNEL_SOLO:
 		d.solo = !d.solo;
-		m::mh::updateSoloCount();
+		g_engine.mixerHandler.updateSoloCount();
 		break;
 
 	default:
@@ -85,7 +93,7 @@ void renderMasterOut_(const Data& d, mcl::AudioBuffer& out)
 	d.buffer->audio.set(out, /*gain=*/1.0f);
 #ifdef WITH_VST
 	if (d.plugins.size() > 0)
-		pluginHost::processStack(d.buffer->audio, d.plugins, nullptr);
+		g_engine.pluginHost.processStack(d.buffer->audio, d.plugins, nullptr);
 #endif
 	out.set(d.buffer->audio, d.volume);
 }
@@ -96,7 +104,7 @@ void renderMasterIn_(const Data& d, mcl::AudioBuffer& in)
 {
 #ifdef WITH_VST
 	if (d.plugins.size() > 0)
-		pluginHost::processStack(in, d.plugins, nullptr);
+		g_engine.pluginHost.processStack(in, d.plugins, nullptr);
 #endif
 }
 
@@ -107,7 +115,7 @@ void renderChannel_(const Data& d, mcl::AudioBuffer& out, mcl::AudioBuffer& in, 
 	d.buffer->audio.clear();
 
 	if (d.samplePlayer)
-		samplePlayer::render(d);
+		samplePlayer::render(d, g_engine.sequencer.isRunning());
 	if (d.audioReceiver)
 		audioReceiver::render(d, in);
 
@@ -117,9 +125,9 @@ void renderChannel_(const Data& d, mcl::AudioBuffer& out, mcl::AudioBuffer& in, 
 
 #ifdef WITH_VST
 	if (d.midiReceiver)
-		midiReceiver::render(d);
+		midiReceiver::render(d, g_engine.pluginHost);
 	else if (d.plugins.size() > 0)
-		pluginHost::processStack(d.buffer->audio, d.plugins, nullptr);
+		g_engine.pluginHost.processStack(d.buffer->audio, d.plugins, nullptr);
 #endif
 
 	if (audible)
@@ -153,25 +161,26 @@ Data::Data(ChannelType type, ID id, ID columnId, State& state, Buffer& buffer)
 , key(0)
 , hasActions(false)
 , height(G_GUI_UNIT)
+, midiLighter(g_engine.midiMapper)
 {
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
 		samplePlayer.emplace(&state.resampler.value());
-		sampleReactor.emplace(id);
+		sampleReactor.emplace(id, g_engine.sequencer, *this);
 		audioReceiver.emplace();
-		sampleActionRecorder.emplace();
+		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
 		break;
 
 	case ChannelType::PREVIEW:
 		samplePlayer.emplace(&state.resampler.value());
-		sampleReactor.emplace(id);
+		sampleReactor.emplace(id, g_engine.sequencer, *this);
 		break;
 
 	case ChannelType::MIDI:
 		midiController.emplace();
-		midiSender.emplace();
-		midiActionRecorder.emplace();
+		midiSender.emplace(g_engine.kernelMidi);
+		midiActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
 #ifdef WITH_VST
 		midiReceiver.emplace();
 #endif
@@ -184,7 +193,7 @@ Data::Data(ChannelType type, ID id, ID columnId, State& state, Buffer& buffer)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const patch::Channel& p, State& state, Buffer& buffer, float samplerateRatio)
+Data::Data(const Patch::Channel& p, State& state, Buffer& buffer, float samplerateRatio, Wave* wave)
 : state(&state)
 , buffer(&buffer)
 , id(p.id)
@@ -201,9 +210,10 @@ Data::Data(const patch::Channel& p, State& state, Buffer& buffer, float samplera
 , name(p.name)
 , height(p.height)
 #ifdef WITH_VST
-, plugins(pluginManager::hydratePlugins(p.pluginIds))
+, plugins(g_engine.pluginManager.hydratePlugins(p.pluginIds, g_engine.model)) // TODO move outside, as constructor parameter
 #endif
 , midiLearner(p)
+, midiLighter(g_engine.midiMapper)
 {
 	state.readActions.store(p.readActions);
 	state.recStatus.store(p.readActions ? ChannelStatus::PLAY : ChannelStatus::OFF);
@@ -211,21 +221,21 @@ Data::Data(const patch::Channel& p, State& state, Buffer& buffer, float samplera
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		samplePlayer.emplace(p, samplerateRatio, &state.resampler.value());
-		sampleReactor.emplace(id);
+		samplePlayer.emplace(p, samplerateRatio, &state.resampler.value(), wave);
+		sampleReactor.emplace(id, g_engine.sequencer, *this);
 		audioReceiver.emplace(p);
-		sampleActionRecorder.emplace();
+		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
 		break;
 
 	case ChannelType::PREVIEW:
-		samplePlayer.emplace(p, samplerateRatio, &state.resampler.value());
-		sampleReactor.emplace(id);
+		samplePlayer.emplace(p, samplerateRatio, &state.resampler.value(), nullptr);
+		sampleReactor.emplace(id, g_engine.sequencer, *this);
 		break;
 
 	case ChannelType::MIDI:
 		midiController.emplace();
-		midiSender.emplace(p);
-		midiActionRecorder.emplace();
+		midiSender.emplace(p, g_engine.kernelMidi);
+		midiActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
 #ifdef WITH_VST
 		midiReceiver.emplace();
 #endif
@@ -292,9 +302,9 @@ bool Data::isReadingActions() const
 
 /* -------------------------------------------------------------------------- */
 
-void advance(const Data& d, const sequencer::EventBuffer& events)
+void advance(const Data& d, const Sequencer::EventBuffer& events)
 {
-	for (const sequencer::Event& e : events)
+	for (const Sequencer::Event& e : events)
 	{
 		if (d.midiController)
 			midiController::advance(d, e);
@@ -311,9 +321,9 @@ void advance(const Data& d, const sequencer::EventBuffer& events)
 
 /* -------------------------------------------------------------------------- */
 
-void react(Data& d, const eventDispatcher::EventBuffer& events, bool audible)
+void react(Data& d, const EventDispatcher::EventBuffer& events, bool audible)
 {
-	for (const eventDispatcher::Event& e : events)
+	for (const EventDispatcher::Event& e : events)
 	{
 		if (e.channelId > 0 && e.channelId != d.id)
 			continue;
@@ -328,11 +338,12 @@ void react(Data& d, const eventDispatcher::EventBuffer& events, bool audible)
 		if (d.samplePlayer)
 			samplePlayer::react(d, e);
 		if (d.midiActionRecorder)
-			midiActionRecorder::react(d, e);
+			midiActionRecorder::react(d, e, g_engine.recorder.canRecordActions());
 		if (d.sampleActionRecorder)
-			sampleActionRecorder::react(d, e);
+			sampleActionRecorder::react(d, e, g_engine.conf.data.treatRecsAsLoops,
+			    g_engine.sequencer.isRunning(), g_engine.recorder.canRecordActions());
 		if (d.sampleReactor)
-			sampleReactor::react(d, e);
+			sampleReactor::react(d, e, g_engine.sequencer, g_engine.conf.data);
 #ifdef WITH_VST
 		if (d.midiReceiver)
 			midiReceiver::react(d, e);
@@ -344,9 +355,9 @@ void react(Data& d, const eventDispatcher::EventBuffer& events, bool audible)
 
 void render(const Data& d, mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible)
 {
-	if (d.id == mixer::MASTER_OUT_CHANNEL_ID)
+	if (d.id == Mixer::MASTER_OUT_CHANNEL_ID)
 		renderMasterOut_(d, *out);
-	else if (d.id == mixer::MASTER_IN_CHANNEL_ID)
+	else if (d.id == Mixer::MASTER_IN_CHANNEL_ID)
 		renderMasterIn_(d, *in);
 	else
 		renderChannel_(d, *out, *in, audible);

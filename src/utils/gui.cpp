@@ -32,15 +32,14 @@
 #elif defined(__linux__) || defined(__FreeBSD__)
 #include <X11/xpm.h>
 #endif
-#include "core/clock.h"
 #include "core/conf.h"
 #include "core/graphics.h"
 #include "core/mixer.h"
 #include "core/mixerHandler.h"
 #include "core/plugins/pluginHost.h"
+#include "core/sequencer.h"
 #include "gui.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/dialogs/window.h"
@@ -54,102 +53,8 @@
 #include "log.h"
 #include "string.h"
 
-extern giada::v::gdMainWindow* G_MainWin;
-
 namespace giada::u::gui
 {
-namespace
-{
-int blinker_ = 0;
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-void rebuildSubWindow(int wid)
-{
-	v::gdWindow* w = getSubwindow(G_MainWin, wid);
-	if (w != nullptr) // If its open
-		w->rebuild();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void refreshSubWindow(int wid)
-{
-	v::gdWindow* w = getSubwindow(G_MainWin, wid);
-	if (w != nullptr) // If its open
-		w->refresh();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void refresh()
-{
-	/* Update dynamic elements inside main window: in and out meters, beat meter
-	and each channel. */
-
-	G_MainWin->refresh();
-
-	/* Compute timer for blinker. */
-
-	blinker_ = (blinker_ + 1) % 12;
-
-	/* Refresh Sample Editor and Action Editor for dynamic playhead. */
-
-	refreshSubWindow(WID_SAMPLE_EDITOR);
-	refreshSubWindow(WID_ACTION_EDITOR);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void rebuild()
-{
-	G_MainWin->rebuild();
-	rebuildSubWindow(WID_FX_LIST);
-	rebuildSubWindow(WID_SAMPLE_EDITOR);
-	rebuildSubWindow(WID_ACTION_EDITOR);
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool shouldBlink()
-{
-	return blinker_ > 6;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void updateStaticWidgets()
-{
-	using namespace giada::m;
-
-	G_MainWin->mainIO->setOutVol(mh::getOutVol());
-	G_MainWin->mainIO->setInVol(mh::getInVol());
-
-#ifdef WITH_VST
-
-	//	G_MainWin->mainIO->setMasterFxOutFull(pluginHost::getStack(pluginHost::StackType::MASTER_OUT).plugins.size() > 0);
-	//	G_MainWin->mainIO->setMasterFxInFull(pluginHost::getStack(pluginHost::StackType::MASTER_IN).plugins.size() > 0);
-
-#endif
-
-	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());
-	G_MainWin->mainTimer->setBpm(clock::getBpm());
-	G_MainWin->mainTimer->setQuantizer(clock::getQuantizerValue());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void updateMainWinLabel(const std::string& s)
-{
-	std::string out = std::string(G_APP_NAME) + " - " + s;
-	G_MainWin->copy_label(out.c_str());
-}
-
-/* -------------------------------------------------------------------------- */
-
 void setFavicon(v::gdWindow* w)
 {
 #if defined(__linux__) || defined(__FreeBSD__)
@@ -165,51 +70,6 @@ void setFavicon(v::gdWindow* w)
 	w->icon((char*)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON1)));
 
 #endif
-}
-
-/* -------------------------------------------------------------------------- */
-
-void openSubWindow(v::gdWindow* parent, v::gdWindow* child, int id)
-{
-	if (parent->hasWindow(id))
-	{
-		u::log::print("[GU] parent has subwindow with id=%d, deleting\n", id);
-		parent->delSubWindow(id);
-	}
-	child->setId(id);
-	parent->addSubWindow(child);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void refreshActionEditor()
-{
-	v::gdBaseActionEditor* ae = static_cast<v::gdBaseActionEditor*>(G_MainWin->getChild(WID_ACTION_EDITOR));
-	if (ae != nullptr)
-		ae->rebuild();
-}
-
-/* -------------------------------------------------------------------------- */
-
-v::gdWindow* getSubwindow(v::gdWindow* parent, int id)
-{
-	if (parent->hasWindow(id))
-		return parent->getChild(id);
-	else
-		return nullptr;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void closeAllSubwindows()
-{
-	/* don't close WID_FILE_BROWSER, because it's the caller of this
-	 * function */
-
-	G_MainWin->delSubWindow(WID_ACTION_EDITOR);
-	G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
-	G_MainWin->delSubWindow(WID_FX_LIST);
-	G_MainWin->delSubWindow(WID_FX);
 }
 
 /* -------------------------------------------------------------------------- */

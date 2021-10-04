@@ -29,15 +29,14 @@
 
 #ifdef WITH_VST
 
+#include "glue/config.h"
 #include <FL/Fl_Group.H>
 
 class geInput;
 class geButton;
 class geBox;
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geTabPlugins : public Fl_Group
 {
@@ -45,9 +44,9 @@ public:
 	geTabPlugins(int x, int y, int w, int h);
 
 	void save();
-	void refreshVstPath();
+	void refreshVstPath(const std::string&);
 
-  private:
+private:
 	static void cb_scan(Fl_Widget* /*w*/, void* p);
 	static void cb_browse(Fl_Widget* /*w*/, void* p);
 	void        cb_scan();
@@ -55,13 +54,14 @@ public:
 
 	void refreshCount();
 
+	c::config::PluginData m_data;
+
 	geInput*  m_folderPath;
 	geButton* m_browse;
 	geButton* m_scanButton;
 	geBox*    m_info;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif // WITH_VST
 

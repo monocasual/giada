@@ -38,6 +38,7 @@ namespace giada::m
 {
 class MidiEvent;
 }
+
 namespace giada::c::events
 {
 /* Channel*

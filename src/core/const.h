@@ -140,8 +140,10 @@ constexpr int G_SYS_API_PULSE  = 6;
 constexpr int G_SYS_API_WASAPI = 7;
 
 /* -- kernel midi ----------------------------------------------------------- */
-constexpr int G_MIDI_API_JACK = 0x01; // 0000 0001
-constexpr int G_MIDI_API_ALSA = 0x02; // 0000 0010
+constexpr int G_MIDI_API_JACK = 1;
+constexpr int G_MIDI_API_ALSA = 2;
+constexpr int G_MIDI_API_MM   = 3;
+constexpr int G_MIDI_API_CORE = 4;
 
 /* -- default system -------------------------------------------------------- */
 #if defined(G_OS_LINUX)
@@ -190,9 +192,9 @@ constexpr int G_RES_ERR               = 0;
 constexpr int G_RES_OK                = 1;
 
 /* -- log modes ------------------------------------------------------------- */
-constexpr int LOG_MODE_STDOUT = 0x01;
-constexpr int LOG_MODE_FILE   = 0x02;
-constexpr int LOG_MODE_MUTE   = 0x04;
+constexpr int LOG_MODE_MUTE   = 0;
+constexpr int LOG_MODE_STDOUT = 1;
+constexpr int LOG_MODE_FILE   = 2;
 
 /* -- unique IDs of mainWin's subwindows ------------------------------------ */
 /* -- wid > 0 are reserved by gg_keyboard ----------------------------------- */
@@ -272,11 +274,11 @@ constexpr int MIDI_EOX          = 0xF7; // end of sysex
 
 /* midi sync constants */
 
-constexpr int MIDI_SYNC_NONE    = 0x00;
-constexpr int MIDI_SYNC_CLOCK_M = 0x01; // master
-constexpr int MIDI_SYNC_CLOCK_S = 0x02; // slave
-constexpr int MIDI_SYNC_MTC_M   = 0x04; // master
-constexpr int MIDI_SYNC_MTC_S   = 0x08; // slave
+constexpr int G_MIDI_SYNC_NONE    = 0;
+constexpr int G_MIDI_SYNC_CLOCK_M = 1; // master
+constexpr int G_MIDI_SYNC_CLOCK_S = 2; // slave
+constexpr int G_MIDI_SYNC_MTC_M   = 3; // master
+constexpr int G_MIDI_SYNC_MTC_S   = 4; // slave
 
 /* JSON patch keys */
 

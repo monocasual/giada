@@ -28,6 +28,7 @@
 #define GD_MAINWINDOW_H
 
 #include "window.h"
+#include "core/conf.h"
 
 namespace giada::v
 {
@@ -40,7 +41,7 @@ class geMainTimer;
 class gdMainWindow : public gdWindow
 {
 public:
-	gdMainWindow(int w, int h, const char* title, int argc, char** argv);
+	gdMainWindow(int w, int h, const char* title, int argc, char** argv, m::Conf::Data&);
 	~gdMainWindow();
 
 	void refresh() override;
@@ -57,6 +58,9 @@ public:
 	geMainIO*        mainIO;
 	geMainTimer*     mainTimer;
 	geMainTransport* mainTransport;
+
+private:
+	m::Conf::Data& m_conf;
 };
 } // namespace giada::v
 

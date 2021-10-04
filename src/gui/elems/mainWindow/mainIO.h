@@ -36,9 +36,7 @@
 #endif
 #include "glue/main.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geMainIO : public gePack
 {
@@ -55,7 +53,7 @@ public:
 	void setMasterFxInFull(bool v);
 #endif
 
-  private:
+private:
 	static void cb_outVol(Fl_Widget* /*w*/, void* p);
 	static void cb_inVol(Fl_Widget* /*w*/, void* p);
 	static void cb_inToOut(Fl_Widget* /*w*/, void* p);
@@ -81,7 +79,6 @@ public:
 	geStatusButton masterFxIn;
 #endif
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

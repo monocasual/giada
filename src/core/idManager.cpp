@@ -55,8 +55,15 @@ ID IdManager::generate(ID id)
 
 /* -------------------------------------------------------------------------- */
 
-ID IdManager::get()
+ID IdManager::get() const
 {
 	return m_id;
+}
+
+/* -------------------------------------------------------------------------- */
+
+ID IdManager::getNext() const
+{
+	return m_id + 1;
 }
 } // namespace giada::m

@@ -27,8 +27,8 @@
 #ifndef GE_BASE_ACTION_H
 #define GE_BASE_ACTION_H
 
-#include "core/recorder.h"
 #include "core/types.h"
+#include "src/core/actions/actions.h"
 #include <FL/Fl_Box.H>
 
 namespace giada::m
@@ -67,7 +67,7 @@ public:
 	m::Action a1;
 	m::Action a2;
 
-  protected:
+protected:
 	bool m_resizable;
 };
 } // namespace giada::v

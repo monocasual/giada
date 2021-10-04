@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "browserBase.h"
+#include "gui/dialogs/browser/browserBase.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/graphics.h"
@@ -36,15 +36,14 @@
 #include "utils/fs.h"
 #include "utils/gui.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
-    std::function<void(void*)> callback, ID channelId)
-: gdWindow(m::conf::conf.browserX, m::conf::conf.browserY, m::conf::conf.browserW,
-      m::conf::conf.browserH, title.c_str())
+    std::function<void(void*)> callback, ID channelId, m::Conf::Data& c)
+: gdWindow(c.browserX, c.browserY, c.browserW,
+      c.browserH, title.c_str())
 , m_callback(callback)
+, m_conf(c)
 , m_channelId(channelId)
 {
 	set_non_modal();
@@ -66,8 +65,8 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 	browser = new geBrowser(8, groupTop->y() + groupTop->h() + 8, w() - 16, h() - 101);
 	browser->loadDir(path);
-	if (path == m::conf::conf.browserLastPath)
-		browser->preselect(m::conf::conf.browserPosition, m::conf::conf.browserLastValue);
+	if (path == m_conf.browserLastPath)
+		browser->preselect(m_conf.browserPosition, m_conf.browserLastValue);
 
 	Fl_Group* groupButtons = new Fl_Group(8, browser->y() + browser->h() + 8, w() - 16, 20);
 	ok                     = new geButton(w() - 88, groupButtons->y(), 80, 20);
@@ -94,13 +93,13 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 gdBrowserBase::~gdBrowserBase()
 {
-	m::conf::conf.browserX         = x();
-	m::conf::conf.browserY         = y();
-	m::conf::conf.browserW         = w();
-	m::conf::conf.browserH         = h();
-	m::conf::conf.browserPosition  = browser->position();
-	m::conf::conf.browserLastPath  = browser->getCurrentDir();
-	m::conf::conf.browserLastValue = browser->value();
+	m_conf.browserX         = x();
+	m_conf.browserY         = y();
+	m_conf.browserW         = w();
+	m_conf.browserH         = h();
+	m_conf.browserPosition  = browser->position();
+	m_conf.browserLastPath  = browser->getCurrentDir();
+	m_conf.browserLastValue = browser->value();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -176,6 +175,4 @@ void gdBrowserBase::fireCallback() const
 {
 	m_callback((void*)this);
 }
-
-} // namespace v
-} // namespace giada
+} // namespace giada::v
