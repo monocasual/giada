@@ -78,6 +78,13 @@ bool signalCbFired_ = false;
 
 /* -------------------------------------------------------------------------- */
 
+Peak makePeak_(const mcl::AudioBuffer& b)
+{
+	return {b.getPeak(CH_LEFT), b.getPeak(b.countChannels() == 1 ? CH_LEFT : CH_RIGHT)};
+}
+
+/* -------------------------------------------------------------------------- */
+
 /* fireSignalCb_
 Invokes the signal callback. This is done by pumping a MIXER_SIGNAL_CALLBACK
 event to the event dispatcher, rather than invoking the callback directly. This 
@@ -145,7 +152,7 @@ recording. */
 void processLineIn_(const model::Mixer& mixer, const mcl::AudioBuffer& inBuf,
     float inVol, float recTriggerLevel)
 {
-	const Peak peak{inBuf.getPeak(CH_LEFT), inBuf.getPeak(CH_RIGHT)};
+	const Peak peak = makePeak_(inBuf);
 
 	if (signalCb_ != nullptr && thresholdReached_(peak, recTriggerLevel) && !signalCbFired_)
 	{
