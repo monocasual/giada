@@ -32,8 +32,6 @@
 #include "utils/log.h"
 #include "utils/math.h"
 
-using namespace mcl;
-
 namespace giada::m::mixer
 {
 namespace
@@ -47,12 +45,12 @@ constexpr int CH_RIGHT = 1;
 /* recBuffer_
 Working buffer for audio recording. */
 
-AudioBuffer recBuffer_;
+mcl::AudioBuffer recBuffer_;
 
 /* inBuffer_
 Working buffer for input channel. Used for the in->out bridge. */
 
-AudioBuffer inBuffer_;
+mcl::AudioBuffer inBuffer_;
 
 /* inputTracker_
 Frame position while recording. */
@@ -80,7 +78,7 @@ bool signalCbFired_ = false;
 
 /* -------------------------------------------------------------------------- */
 
-Peak makePeak_(const AudioBuffer& b)
+Peak makePeak_(const mcl::AudioBuffer& b)
 {
 	return {b.getPeak(CH_LEFT), b.getPeak(b.countChannels() == 1 ? CH_LEFT : CH_RIGHT)};
 }
@@ -126,7 +124,7 @@ Records from line in. 'maxFrames' determines how many frames to record before
 the internal tracker loops over. The value changes whether you are recording
 in RIGID or FREE mode. */
 
-void lineInRec_(const AudioBuffer& inBuf, Frame maxFrames, float inVol)
+void lineInRec_(const mcl::AudioBuffer& inBuf, Frame maxFrames, float inVol)
 {
 	assert(maxFrames <= recBuffer_.countFrames());
 
@@ -151,7 +149,7 @@ void lineInRec_(const AudioBuffer& inBuf, Frame maxFrames, float inVol)
 Computes line in peaks and prepares the internal working buffer for input
 recording. */
 
-void processLineIn_(const model::Mixer& mixer, const AudioBuffer& inBuf,
+void processLineIn_(const model::Mixer& mixer, const mcl::AudioBuffer& inBuf,
     float inVol, float recTriggerLevel)
 {
 	const Peak peak = makePeak_(inBuf);
@@ -176,7 +174,7 @@ void processLineIn_(const model::Mixer& mixer, const AudioBuffer& inBuf,
 
 /* -------------------------------------------------------------------------- */
 
-void processChannels_(const model::Layout& layout, AudioBuffer& out, AudioBuffer& in)
+void processChannels_(const model::Layout& layout, mcl::AudioBuffer& out, mcl::AudioBuffer& in)
 {
 	for (const channel::Data& c : layout.channels)
 		if (!c.isInternal())
@@ -185,7 +183,7 @@ void processChannels_(const model::Layout& layout, AudioBuffer& out, AudioBuffer
 
 /* -------------------------------------------------------------------------- */
 
-void processSequencer_(const model::Layout& layout, AudioBuffer& out, const AudioBuffer& in)
+void processSequencer_(const model::Layout& layout, mcl::AudioBuffer& out, const mcl::AudioBuffer& in)
 {
 	/* Advance sequencer first, then render it (rendering is just about
 	generating metronome audio). This way the metronome is aligned with 
@@ -207,17 +205,17 @@ void processSequencer_(const model::Layout& layout, AudioBuffer& out, const Audi
 
 /* -------------------------------------------------------------------------- */
 
-void renderMasterIn_(const model::Layout& layout, AudioBuffer& in)
+void renderMasterIn_(const model::Layout& layout, mcl::AudioBuffer& in)
 {
 	channel::render(layout.getChannel(mixer::MASTER_IN_CHANNEL_ID), nullptr, &in, true);
 }
 
-void renderMasterOut_(const model::Layout& layout, AudioBuffer& out)
+void renderMasterOut_(const model::Layout& layout, mcl::AudioBuffer& out)
 {
 	channel::render(layout.getChannel(mixer::MASTER_OUT_CHANNEL_ID), &out, nullptr, true);
 }
 
-void renderPreview_(const model::Layout& layout, AudioBuffer& out)
+void renderPreview_(const model::Layout& layout, mcl::AudioBuffer& out)
 {
 	channel::render(layout.getChannel(mixer::PREVIEW_CHANNEL_ID), &out, nullptr, true);
 }
@@ -227,7 +225,7 @@ void renderPreview_(const model::Layout& layout, AudioBuffer& out)
 /* limit_
 Applies a very dumb hard limiter. */
 
-void limit_(AudioBuffer& outBuf)
+void limit_(mcl::AudioBuffer& outBuf)
 {
 	for (int i = 0; i < outBuf.countFrames(); i++)
 		for (int j = 0; j < outBuf.countChannels(); j++)
@@ -240,7 +238,7 @@ void limit_(AudioBuffer& outBuf)
 Last touches after the output has been rendered: apply inToOut if any, apply
 output volume, compute peak. */
 
-void finalizeOutput_(const model::Mixer& mixer, AudioBuffer& outBuf,
+void finalizeOutput_(const model::Mixer& mixer, mcl::AudioBuffer& outBuf,
     const RenderInfo& info)
 {
 	if (info.inToOut)
@@ -300,14 +298,14 @@ void clearRecBuffer()
 	recBuffer_.clear();
 }
 
-const AudioBuffer& getRecBuffer()
+const mcl::AudioBuffer& getRecBuffer()
 {
 	return recBuffer_;
 }
 
 /* -------------------------------------------------------------------------- */
 
-int render(AudioBuffer& out, const AudioBuffer& in, const RenderInfo& info)
+int render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const RenderInfo& info)
 {
 	const model::Lock   rtLock = model::get_RT();
 	const model::Mixer& mixer  = rtLock.get().mixer;
