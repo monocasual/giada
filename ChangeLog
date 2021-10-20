@@ -11,6 +11,11 @@
 --------------------------------------------------------------------------------
 
 
+0.19.0 --- 
+- Refactoring: new component-based architecture
+- Fix crash on startup if recording from mono input
+
+
 0.18.2 --- 2021 . 09 . 13
 - New stereo In/Out audio meters 
 - Revamped Action Editor: better UI, improved usability 
