@@ -33,10 +33,12 @@
 namespace giada::m
 {
 Synchronizer::Synchronizer(const Conf::Data& c, KernelMidi& k)
+#ifdef WITH_AUDIO_JACK
 : onJackRewind(nullptr)
 , onJackChangeBpm(nullptr)
 , onJackStart(nullptr)
 , onJackStop(nullptr)
+#endif
 , m_kernelMidi(k)
 , m_conf(c)
 {
