@@ -32,7 +32,7 @@ giada::v::Ui     g_ui(g_engine.recorder);
 
 int main(int argc, char** argv)
 {
-	if (int ret = giada::m::init::tests(argc, argv) != -1)
+	if (int ret = giada::m::init::tests(argc, argv); ret != -1)
 		return ret;
 	giada::m::init::startup(argc, argv);
 	return giada::m::init::run();
