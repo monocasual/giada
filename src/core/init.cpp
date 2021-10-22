@@ -35,7 +35,7 @@
 #include "utils/ver.h"
 #ifdef WITH_TESTS
 #define CATCH_CONFIG_RUNNER
-#include "tests/recorder.cpp"
+#include "tests/actionRecorder.cpp"
 #include "tests/utils.cpp"
 #include "tests/wave.cpp"
 #include "tests/waveFx.cpp"
