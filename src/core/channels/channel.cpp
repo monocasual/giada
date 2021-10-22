@@ -100,13 +100,15 @@ void renderMasterOut_(const Data& d, mcl::AudioBuffer& out)
 
 /* -------------------------------------------------------------------------- */
 
+#ifdef WITH_VST
+
 void renderMasterIn_(const Data& d, mcl::AudioBuffer& in)
 {
-#ifdef WITH_VST
 	if (d.plugins.size() > 0)
 		g_engine.pluginHost.processStack(in, d.plugins, nullptr);
-#endif
 }
+
+#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -357,8 +359,10 @@ void render(const Data& d, mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool aud
 {
 	if (d.id == Mixer::MASTER_OUT_CHANNEL_ID)
 		renderMasterOut_(d, *out);
+#ifdef WITH_VST
 	else if (d.id == Mixer::MASTER_IN_CHANNEL_ID)
 		renderMasterIn_(d, *in);
+#endif
 	else
 		renderChannel_(d, *out, *in, audible);
 }

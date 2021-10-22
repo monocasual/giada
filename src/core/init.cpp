@@ -90,6 +90,8 @@ int tests(int argc, char** argv)
 	else
 		return -1;
 #else
+	(void)argc;
+	(void)argv;
 	return -1;
 #endif
 }
