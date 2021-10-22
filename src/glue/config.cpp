@@ -217,6 +217,8 @@ MidiData getMidiData()
 
 /* -------------------------------------------------------------------------- */
 
+#ifdef WITH_VST
+
 PluginData getPluginData()
 {
 	PluginData pluginData;
@@ -224,6 +226,8 @@ PluginData getPluginData()
 	pluginData.pluginPath          = g_engine.conf.data.pluginPath;
 	return pluginData;
 }
+
+#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -255,10 +259,14 @@ void save(const AudioData& data)
 
 /* -------------------------------------------------------------------------- */
 
+#ifdef WITH_VST
+
 void save(const PluginData& data)
 {
 	g_engine.conf.data.pluginPath = data.pluginPath;
 }
+
+#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -283,9 +291,13 @@ void save(const MiscData& data)
 
 /* -------------------------------------------------------------------------- */
 
+#ifdef WITH_VST
+
 void scanPlugins(std::string dir, const std::function<void(float)>& progress)
 {
 	g_engine.pluginManager.scanDirs(dir, progress);
 	g_engine.pluginManager.saveList(u::fs::getHomePath() + G_SLASH + "plugins.xml");
 }
+
+#endif
 } // namespace giada::c::config

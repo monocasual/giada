@@ -92,15 +92,6 @@ void openBrowserForSampleSave(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void openBrowserForPlugins(v::gdWindow& parent)
-{
-	v::gdBrowserDir* browser = new v::gdBrowserDir("Add plug-ins directory",
-	    g_engine.conf.data.patchPath, c::plugin::setPluginPathCb, g_engine.conf.data);
-	parent.addSubWindow(browser);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void openAboutWindow()
 {
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdAbout(), WID_ABOUT);
@@ -200,6 +191,17 @@ void openRenameChannelWindow(const c::channel::Data& data)
 
 /* -------------------------------------------------------------------------- */
 
+#ifdef WITH_VST
+
+void openBrowserForPlugins(v::gdWindow& parent)
+{
+	v::gdBrowserDir* browser = new v::gdBrowserDir("Add plug-ins directory",
+	    g_engine.conf.data.patchPath, c::plugin::setPluginPathCb, g_engine.conf.data);
+	parent.addSubWindow(browser);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void openChannelPluginListWindow(ID channelId)
 {
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdPluginList(channelId, g_engine.conf.data),
@@ -232,4 +234,6 @@ void openPluginChooser(ID channelId)
 	        g_engine.conf.data.pluginChooserH, channelId, g_engine.conf.data),
 	    WID_FX_CHOOSER);
 }
+
+#endif
 } // namespace giada::c::layout

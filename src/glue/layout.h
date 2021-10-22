@@ -46,7 +46,6 @@ void openBrowserForProjectLoad();
 void openBrowserForProjectSave();
 void openBrowserForSampleLoad(ID channelId);
 void openBrowserForSampleSave(ID channelId);
-void openBrowserForPlugins(v::gdWindow& parent);
 void openAboutWindow();
 void openKeyGrabberWindow(const c::channel::Data&);
 void openBpmWindow(std::string bpmValue);
@@ -60,10 +59,13 @@ void openSampleActionEditor(ID channelId);
 void openMidiActionEditor(ID channelId);
 void openSampleEditor(ID channelId);
 void openRenameChannelWindow(const c::channel::Data&);
+#ifdef WITH_VST
+void openBrowserForPlugins(v::gdWindow& parent);
 void openChannelPluginListWindow(ID channelId);
 void openMasterInPluginListWindow();
 void openMasterOutPluginListWindow();
 void openPluginChooser(ID channelId);
+#endif
 } // namespace giada::c::layout
 
 #endif

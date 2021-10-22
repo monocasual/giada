@@ -96,11 +96,15 @@ struct MidiData
 	int inPort;
 };
 
+#ifdef WITH_VST
+
 struct PluginData
 {
 	int         numAvailablePlugins;
 	std::string pluginPath;
 };
+
+#endif
 
 struct MiscData
 {
@@ -111,17 +115,20 @@ struct MiscData
 /* get*
 Return viewModel objects filled with data. */
 
-AudioData  getAudioData();
-MidiData   getMidiData();
+AudioData getAudioData();
+MidiData  getMidiData();
+MiscData  getMiscData();
+#ifdef WITH_VST
 PluginData getPluginData();
-MiscData   getMiscData();
+#endif
 
 void save(const AudioData&);
-void save(const PluginData&);
 void save(const MidiData&);
 void save(const MiscData&);
-
+#ifdef WITH_VST
+void save(const PluginData&);
 void scanPlugins(std::string dir, const std::function<void(float)>& progress);
+#endif
 } // namespace giada::c::config
 
 #endif

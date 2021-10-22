@@ -35,15 +35,17 @@ namespace giada::m
 Engine::Engine()
 : midiMapper(kernelMidi)
 , channelManager(conf.data, model)
-, pluginManager(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod))
 , midiDispatcher(model)
 , actionRecorder(model)
 , synchronizer(conf.data, kernelMidi)
 , sequencer(model, synchronizer, jackTransport)
 , mixer(model)
 , mixerHandler(model, mixer)
-, pluginHost(model)
 , recorder(model, sequencer, mixerHandler)
+#ifdef WITH_VST
+, pluginHost(model)
+, pluginManager(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod))
+#endif
 {
 	kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -169,7 +171,9 @@ void Engine::init()
 	mixerHandler.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()),
 	    kernelAudio.getBufferSize(), channelManager);
 	sequencer.reset(kernelAudio.getSampleRate());
+#ifdef WITH_VST
 	pluginHost.reset(kernelAudio.getBufferSize());
+#endif
 	mixer.enable();
 	kernelAudio.startStream();
 

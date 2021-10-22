@@ -285,8 +285,14 @@ void setOverdubProtection(ID channelId, bool value)
 void cloneChannel(ID channelId)
 {
 	g_engine.actionRecorder.cloneActions(channelId, g_engine.channelManager.getNextId());
-	g_engine.mixerHandler.cloneChannel(channelId, g_engine.patch.data.samplerate, g_engine.kernelAudio.getBufferSize(),
-	    g_engine.channelManager, g_engine.waveManager, g_engine.sequencer, g_engine.pluginManager);
+#ifdef WITH_VST
+	g_engine.mixerHandler.cloneChannel(channelId, g_engine.patch.data.samplerate,
+	    g_engine.kernelAudio.getBufferSize(), g_engine.channelManager, g_engine.waveManager,
+	    g_engine.sequencer, g_engine.pluginManager);
+#else
+	g_engine.mixerHandler.cloneChannel(channelId, g_engine.kernelAudio.getBufferSize(),
+	    g_engine.channelManager, g_engine.waveManager);
+#endif
 }
 
 /* -------------------------------------------------------------------------- */

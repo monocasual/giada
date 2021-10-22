@@ -106,15 +106,17 @@ public:
 	EventDispatcher eventDispatcher;
 	MidiMapper      midiMapper;
 	ChannelManager  channelManager;
-	PluginManager   pluginManager;
 	MidiDispatcher  midiDispatcher;
 	ActionRecorder  actionRecorder;
 	Synchronizer    synchronizer;
 	Sequencer       sequencer;
 	Mixer           mixer;
 	MixerHandler    mixerHandler;
-	PluginHost      pluginHost;
 	Recorder        recorder;
+#ifdef WITH_VST
+	PluginHost    pluginHost;
+	PluginManager pluginManager;
+#endif
 
 private:
 	int audioCallback(KernelAudio::CallbackInfo);

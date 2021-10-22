@@ -27,6 +27,7 @@
 #ifndef G_MIXER_HANDLER_H
 #define G_MIXER_HANDLER_H
 
+#include "core/plugins/pluginManager.h"
 #include "core/waveManager.h"
 #include "types.h"
 #include <functional>
@@ -49,8 +50,6 @@ class Wave;
 class Mixer;
 class Plugin;
 class ChannelManager;
-class PluginManager;
-class WaveManager;
 class Sequencer;
 class MixerHandler final
 {
@@ -123,8 +122,7 @@ public:
 	void cloneChannel(ID channelId, int sampleRate, int bufferSize, ChannelManager&,
 	    WaveManager&, const Sequencer&, PluginManager&);
 #else
-	void cloneChannel(ID channelId, int bufferSize, ChannelManager&, WaveManager&,
-	    const Sequencer&);
+	void cloneChannel(ID channelId, int bufferSize, ChannelManager&, WaveManager&);
 #endif
 	void renameChannel(ID channelId, const std::string& name);
 	void freeAllChannels();

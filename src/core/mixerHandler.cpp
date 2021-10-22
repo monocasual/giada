@@ -129,7 +129,7 @@ void MixerHandler::cloneChannel(ID channelId, int sampleRate, int bufferSize,
     PluginManager& pluginManager)
 #else
 void MixerHandler::cloneChannel(ID channelId, int bufferSize, ChannelManager& channelManager,
-    WaveManager& waveManager, const Sequencer& sequencer)
+    WaveManager& waveManager)
 #endif
 {
 	const channel::Data& oldChannel = m_model.get().getChannel(channelId);
