@@ -128,7 +128,8 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const mode
 
 	const bool  hasInput        = in.isAllocd();
 	const bool  inToOut         = mixer.inToOut;
-	const bool  shouldLineInRec = sequencer.isActive() && recorder.a_isRecordingInput() && hasInput;
+	const bool  isSeqActive     = sequencer.isActive();
+	const bool  shouldLineInRec = isSeqActive && recorder.a_isRecordingInput() && hasInput;
 	const float recTriggerLevel = mixer.recTriggerLevel;
 	const Frame maxFramesToRec  = mixer.maxFramesToRec;
 	const bool  allowsOverdub   = mixer.allowsOverdub;
@@ -143,7 +144,7 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const mode
 
 	if (hasInput)
 	{
-		processLineIn(mixer, in, masterInCh.volume, recTriggerLevel);
+		processLineIn(mixer, in, masterInCh.volume, recTriggerLevel, isSeqActive);
 		renderMasterIn(masterInCh, mixer.getInBuffer());
 	}
 
@@ -176,8 +177,6 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const mode
 void Mixer::startInputRec(Frame from)
 {
 	m_model.get().mixer.a_setInputTracker(from);
-	m_signalCbFired   = false;
-	m_endOfRecCbFired = false;
 }
 
 Frame Mixer::stopInputRec()
@@ -259,15 +258,15 @@ Frame Mixer::lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf, 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inBuf,
-    float inVol, float recTriggerLevel) const
+    float inVol, float recTriggerLevel, bool isSeqActive) const
 {
 	const Peak peak = makePeak(inBuf);
 
-	if (thresholdReached(peak, recTriggerLevel) && !m_signalCbFired)
+	if (thresholdReached(peak, recTriggerLevel) && !m_signalCbFired && isSeqActive)
 	{
-		G_DEBUG("Signal > threshold!");
-		onSignalTresholdReached();
 		m_signalCbFired = true;
+		onSignalTresholdReached();
+		G_DEBUG("Signal > threshold!");
 	}
 
 	mixer.a_setPeakIn(peak);

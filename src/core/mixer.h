@@ -172,7 +172,7 @@ private:
 	recording. */
 
 	void processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inBuf,
-	    float inVol, float recTriggerLevel) const;
+	    float inVol, float recTriggerLevel, bool isSeqActive) const;
 
 	void renderChannels(const std::vector<channel::Data>& channels, mcl::AudioBuffer& out, mcl::AudioBuffer& in) const;
 	void renderMasterIn(const channel::Data&, mcl::AudioBuffer& in) const;
