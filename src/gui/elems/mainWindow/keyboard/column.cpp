@@ -34,6 +34,7 @@
 #include "midiChannel.h"
 #include "sampleChannel.h"
 #include "utils/fs.h"
+#include "utils/gui.h"
 #include "utils/log.h"
 #include "utils/string.h"
 #include <FL/Fl_Menu_Button.H>
@@ -116,10 +117,10 @@ void geColumn::cb_addChannel()
 	u::log::print("[geColumn::cb_addChannel] id = %d\n", id);
 
 	Fl_Menu_Item menu[] = {
-	    {"Add Sample channel"},
-	    {"Add MIDI channel"},
-	    {"Remove"},
-	    {0}};
+	    u::gui::makeMenuItem("Add Sample channel"),
+	    u::gui::makeMenuItem("Add MIDI channel"),
+	    u::gui::makeMenuItem("Remove"),
+	    {}};
 
 	if (countChannels() > 0)
 		menu[2].deactivate();

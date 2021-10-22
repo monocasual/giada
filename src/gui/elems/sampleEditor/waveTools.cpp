@@ -31,6 +31,7 @@
 #include "glue/sampleEditor.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/elems/basics/boxtypes.h"
+#include "utils/gui.h"
 #include "waveform.h"
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Menu_Item.H>
@@ -197,19 +198,19 @@ int geWaveTools::handle(int e)
 void geWaveTools::openMenu()
 {
 	Fl_Menu_Item menu[] = {
-	    {"Cut", 0, menuCallback_, (void*)Menu::CUT, 0, 0, 0, 0, 0},
-	    {"Copy", 0, menuCallback_, (void*)Menu::COPY, 0, 0, 0, 0, 0},
-	    {"Paste", 0, menuCallback_, (void*)Menu::PASTE, 0, 0, 0, 0, 0},
-	    {"Trim", 0, menuCallback_, (void*)Menu::TRIM, 0, 0, 0, 0, 0},
-	    {"Silence", 0, menuCallback_, (void*)Menu::SILENCE, 0, 0, 0, 0, 0},
-	    {"Reverse", 0, menuCallback_, (void*)Menu::REVERSE, 0, 0, 0, 0, 0},
-	    {"Normalize", 0, menuCallback_, (void*)Menu::NORMALIZE, 0, 0, 0, 0, 0},
-	    {"Fade in", 0, menuCallback_, (void*)Menu::FADE_IN, 0, 0, 0, 0, 0},
-	    {"Fade out", 0, menuCallback_, (void*)Menu::FADE_OUT, 0, 0, 0, 0, 0},
-	    {"Smooth edges", 0, menuCallback_, (void*)Menu::SMOOTH_EDGES, 0, 0, 0, 0, 0},
-	    {"Set begin/end here", 0, menuCallback_, (void*)Menu::SET_BEGIN_END, 0, 0, 0, 0, 0},
-	    {"Copy to new channel", 0, menuCallback_, (void*)Menu::TO_NEW_CHANNEL, 0, 0, 0, 0, 0},
-	    {0}};
+	    u::gui::makeMenuItem("Cut", menuCallback_, (void*)Menu::CUT),
+	    u::gui::makeMenuItem("Copy", menuCallback_, (void*)Menu::COPY),
+	    u::gui::makeMenuItem("Paste", menuCallback_, (void*)Menu::PASTE),
+	    u::gui::makeMenuItem("Trim", menuCallback_, (void*)Menu::TRIM),
+	    u::gui::makeMenuItem("Silence", menuCallback_, (void*)Menu::SILENCE),
+	    u::gui::makeMenuItem("Reverse", menuCallback_, (void*)Menu::REVERSE),
+	    u::gui::makeMenuItem("Normalize", menuCallback_, (void*)Menu::NORMALIZE),
+	    u::gui::makeMenuItem("Fade in", menuCallback_, (void*)Menu::FADE_IN),
+	    u::gui::makeMenuItem("Fade out", menuCallback_, (void*)Menu::FADE_OUT),
+	    u::gui::makeMenuItem("Smooth edges", menuCallback_, (void*)Menu::SMOOTH_EDGES),
+	    u::gui::makeMenuItem("Set begin/end here", menuCallback_, (void*)Menu::SET_BEGIN_END),
+	    u::gui::makeMenuItem("Copy to new channel", menuCallback_, (void*)Menu::TO_NEW_CHANNEL),
+	    {}};
 
 	if (!waveform->isSelected())
 	{

@@ -28,6 +28,7 @@
 #define G_UTILS_GUI_H
 
 #include "core/types.h"
+#include <FL/Fl_Menu_Item.H>
 #include <string>
 
 namespace giada::v
@@ -56,6 +57,15 @@ std::string truncate(const std::string& s, Pixel width);
 
 int centerWindowX(int w);
 int centerWindowY(int h);
+
+/* makeMenuItem
+Makes a new Fl_Menu_Item at compile time. Used to initialize pop-up menus. */
+
+constexpr Fl_Menu_Item makeMenuItem(const char* text, Fl_Callback* callback = nullptr,
+    void* data = nullptr, int flags = 0)
+{
+	return Fl_Menu_Item{text, 0, callback, data, flags, 0, 0, 0, 0};
+}
 } // namespace giada::u::gui
 
 #endif

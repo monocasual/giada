@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "mainMenu.h"
+#include "gui/elems/mainWindow/mainMenu.h"
 #include "core/const.h"
 #include "core/patch.h"
 #include "glue/layout.h"
@@ -32,6 +32,7 @@
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/button.h"
 #include "keyboard/keyboard.h"
+#include "utils/gui.h"
 #include <FL/Fl_Menu_Button.H>
 
 namespace giada::v
@@ -75,14 +76,14 @@ void geMainMenu::cb_file()
 	/* An Fl_Menu_Button is made of many Fl_Menu_Item */
 
 	Fl_Menu_Item menu[] = {
-	    {"Open project..."},
-	    {"Save project..."},
-	    {"Close project"},
+	    u::gui::makeMenuItem("Open project..."),
+	    u::gui::makeMenuItem("Save project..."),
+	    u::gui::makeMenuItem("Close project"),
 #ifndef NDEBUG
-	    {"Debug stats"},
+	    u::gui::makeMenuItem("Debug stats"),
 #endif
-	    {"Quit Giada"},
-	    {0}};
+	    u::gui::makeMenuItem("Quit Giada"),
+	    {}};
 
 	Fl_Menu_Button b(0, 0, 100, 50);
 	b.box(G_CUSTOM_BORDER_BOX);
@@ -125,10 +126,10 @@ void geMainMenu::cb_edit()
 	c::main::MainMenu menu = c::main::getMainMenu();
 
 	Fl_Menu_Item menuItem[] = {
-	    {"Free all Sample channels"},
-	    {"Clear all actions"},
-	    {"Setup global MIDI input..."},
-	    {0}};
+	    u::gui::makeMenuItem("Free all Sample channels"),
+	    u::gui::makeMenuItem("Clear all actions"),
+	    u::gui::makeMenuItem("Setup global MIDI input..."),
+	    {}};
 
 	menuItem[0].deactivate();
 	menuItem[1].deactivate();

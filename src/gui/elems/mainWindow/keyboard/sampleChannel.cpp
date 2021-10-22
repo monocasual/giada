@@ -266,27 +266,27 @@ void geSampleChannel::cb_openMenu()
 		return;
 
 	Fl_Menu_Item rclick_menu[] = {
-	    {"Input monitor", 0, menuCallback, (void*)Menu::INPUT_MONITOR,
-	        FL_MENU_TOGGLE | (m_channel.sample->getInputMonitor() ? FL_MENU_VALUE : 0)},
-	    {"Overdub protection", 0, menuCallback, (void*)Menu::OVERDUB_PROTECTION,
-	        FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->getOverdubProtection() ? FL_MENU_VALUE : 0)},
-	    {"Load new sample...", 0, menuCallback, (void*)Menu::LOAD_SAMPLE},
-	    {"Export sample to file...", 0, menuCallback, (void*)Menu::EXPORT_SAMPLE},
-	    {"Setup keyboard input...", 0, menuCallback, (void*)Menu::SETUP_KEYBOARD_INPUT},
-	    {"Setup MIDI input...", 0, menuCallback, (void*)Menu::SETUP_MIDI_INPUT},
-	    {"Setup MIDI output...", 0, menuCallback, (void*)Menu::SETUP_MIDI_OUTPUT},
-	    {"Edit sample...", 0, menuCallback, (void*)Menu::EDIT_SAMPLE},
-	    {"Edit actions...", 0, menuCallback, (void*)Menu::EDIT_ACTIONS},
-	    {"Clear actions", 0, menuCallback, (void*)Menu::CLEAR_ACTIONS, FL_SUBMENU},
-	    {"All", 0, menuCallback, (void*)Menu::CLEAR_ACTIONS_ALL},
-	    {"Volume", 0, menuCallback, (void*)Menu::CLEAR_ACTIONS_VOLUME},
-	    {"Start/Stop", 0, menuCallback, (void*)Menu::CLEAR_ACTIONS_START_STOP},
-	    {0},
-	    {"Rename", 0, menuCallback, (void*)Menu::RENAME_CHANNEL},
-	    {"Clone", 0, menuCallback, (void*)Menu::CLONE_CHANNEL},
-	    {"Free", 0, menuCallback, (void*)Menu::FREE_CHANNEL},
-	    {"Delete", 0, menuCallback, (void*)Menu::DELETE_CHANNEL},
-	    {0}};
+	    u::gui::makeMenuItem("Input monitor", menuCallback, (void*)Menu::INPUT_MONITOR,
+	        FL_MENU_TOGGLE | (m_channel.sample->getInputMonitor() ? FL_MENU_VALUE : 0)),
+	    u::gui::makeMenuItem("Overdub protection", menuCallback, (void*)Menu::OVERDUB_PROTECTION,
+	        FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->getOverdubProtection() ? FL_MENU_VALUE : 0)),
+	    u::gui::makeMenuItem("Load new sample...", menuCallback, (void*)Menu::LOAD_SAMPLE),
+	    u::gui::makeMenuItem("Export sample to file...", menuCallback, (void*)Menu::EXPORT_SAMPLE),
+	    u::gui::makeMenuItem("Setup keyboard input...", menuCallback, (void*)Menu::SETUP_KEYBOARD_INPUT),
+	    u::gui::makeMenuItem("Setup MIDI input...", menuCallback, (void*)Menu::SETUP_MIDI_INPUT),
+	    u::gui::makeMenuItem("Setup MIDI output...", menuCallback, (void*)Menu::SETUP_MIDI_OUTPUT),
+	    u::gui::makeMenuItem("Edit sample...", menuCallback, (void*)Menu::EDIT_SAMPLE),
+	    u::gui::makeMenuItem("Edit actions...", menuCallback, (void*)Menu::EDIT_ACTIONS),
+	    u::gui::makeMenuItem("Clear actions", menuCallback, (void*)Menu::CLEAR_ACTIONS, FL_SUBMENU),
+	    u::gui::makeMenuItem("All", menuCallback, (void*)Menu::CLEAR_ACTIONS_ALL),
+	    u::gui::makeMenuItem("Volume", menuCallback, (void*)Menu::CLEAR_ACTIONS_VOLUME),
+	    u::gui::makeMenuItem("Start/Stop", menuCallback, (void*)Menu::CLEAR_ACTIONS_START_STOP),
+	    {},
+	    u::gui::makeMenuItem("Rename", menuCallback, (void*)Menu::RENAME_CHANNEL),
+	    u::gui::makeMenuItem("Clone", menuCallback, (void*)Menu::CLONE_CHANNEL),
+	    u::gui::makeMenuItem("Free", menuCallback, (void*)Menu::FREE_CHANNEL),
+	    u::gui::makeMenuItem("Delete", menuCallback, (void*)Menu::DELETE_CHANNEL),
+	    {}};
 
 	if (m_channel.sample->waveId == 0)
 	{

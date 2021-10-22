@@ -185,17 +185,17 @@ void geMidiChannel::cb_playButton()
 void geMidiChannel::cb_openMenu()
 {
 	Fl_Menu_Item rclick_menu[] = {
-	    {"Edit actions...", 0, menuCallback, (void*)Menu::EDIT_ACTIONS},
-	    {"Clear actions", 0, menuCallback, (void*)Menu::CLEAR_ACTIONS, FL_SUBMENU},
-	    {"All", 0, menuCallback, (void*)Menu::CLEAR_ACTIONS_ALL},
-	    {0},
-	    {"Setup keyboard input...", 0, menuCallback, (void*)Menu::SETUP_KEYBOARD_INPUT},
-	    {"Setup MIDI input...", 0, menuCallback, (void*)Menu::SETUP_MIDI_INPUT},
-	    {"Setup MIDI output...", 0, menuCallback, (void*)Menu::SETUP_MIDI_OUTPUT},
-	    {"Rename", 0, menuCallback, (void*)Menu::RENAME_CHANNEL},
-	    {"Clone", 0, menuCallback, (void*)Menu::CLONE_CHANNEL},
-	    {"Delete", 0, menuCallback, (void*)Menu::DELETE_CHANNEL},
-	    {0}};
+	    u::gui::makeMenuItem("Edit actions...", menuCallback, (void*)Menu::EDIT_ACTIONS),
+	    u::gui::makeMenuItem("Clear actions", menuCallback, (void*)Menu::CLEAR_ACTIONS, FL_SUBMENU),
+	    u::gui::makeMenuItem("All", menuCallback, (void*)Menu::CLEAR_ACTIONS_ALL),
+	    {},
+	    u::gui::makeMenuItem("Setup keyboard input...", menuCallback, (void*)Menu::SETUP_KEYBOARD_INPUT),
+	    u::gui::makeMenuItem("Setup MIDI input...", menuCallback, (void*)Menu::SETUP_MIDI_INPUT),
+	    u::gui::makeMenuItem("Setup MIDI output...", menuCallback, (void*)Menu::SETUP_MIDI_OUTPUT),
+	    u::gui::makeMenuItem("Rename", menuCallback, (void*)Menu::RENAME_CHANNEL),
+	    u::gui::makeMenuItem("Clone", menuCallback, (void*)Menu::CLONE_CHANNEL),
+	    u::gui::makeMenuItem("Delete", menuCallback, (void*)Menu::DELETE_CHANNEL),
+	    {}};
 
 	/* No 'clear actions' if there are no actions. */
 
