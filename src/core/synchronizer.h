@@ -41,7 +41,7 @@ struct JackState;
 
 namespace giada::m::model
 {
-struct Sequencer;
+class Sequencer;
 }
 
 namespace giada::m

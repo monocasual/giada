@@ -44,8 +44,8 @@ class AudioBuffer;
 
 namespace giada::m::model
 {
-struct Mixer;
-struct Layout;
+class Mixer;
+class Layout;
 } // namespace giada::m::model
 
 namespace giada::m::channel

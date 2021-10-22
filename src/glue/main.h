@@ -36,8 +36,8 @@ struct Data;
 
 namespace giada::m::model
 {
-struct Sequencer;
-struct Mixer;
+class Sequencer;
+class Mixer;
 } // namespace giada::m::model
 
 namespace giada::c::main
