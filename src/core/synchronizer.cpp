@@ -38,9 +38,12 @@ Synchronizer::Synchronizer(const Conf::Data& c, KernelMidi& k)
 , onJackChangeBpm(nullptr)
 , onJackStart(nullptr)
 , onJackStop(nullptr)
-#endif
 , m_kernelMidi(k)
 , m_conf(c)
+#else
+: m_kernelMidi(k)
+, m_conf(c)
+#endif
 {
 	reset();
 }
