@@ -36,7 +36,7 @@
 
 namespace giada::m::channel
 {
-class Data;
+struct Data;
 }
 
 namespace giada::m::model
