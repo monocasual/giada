@@ -30,6 +30,7 @@
 #ifdef WITH_AUDIO_JACK
 #include <jack/jack.h>
 #endif
+#include <cstdint>
 
 namespace giada::m
 {
