@@ -78,7 +78,7 @@ public:
 	std::function<void(uint32_t)> onMidiReceived;
 
 private:
-	static void callback(double, std::vector<unsigned char>*, void*);
+	static void s_callback(double, std::vector<unsigned char>*, void*);
 	void        callback(std::vector<unsigned char>*);
 
 	std::unique_ptr<RtMidiOut> m_midiOut;

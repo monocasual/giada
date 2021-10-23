@@ -143,7 +143,7 @@ int KernelMidi::openInDevice(int port)
 	{
 		try
 		{
-			m_midiIn->setCallback(&callback, this);
+			m_midiIn->setCallback(&s_callback, this);
 			m_midiIn->openPort(port, getInPortName(port));
 			m_midiIn->ignoreTypes(true, false, true); // ignore all system/time msgs, for now
 			u::log::print("[KM] MIDI in port %d open\n", port);
@@ -237,7 +237,7 @@ bool     KernelMidi::getStatus() const { return m_status; }
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::callback(double /*t*/, std::vector<unsigned char>* msg, void* data)
+void KernelMidi::s_callback(double /*t*/, std::vector<unsigned char>* msg, void* data)
 {
 	static_cast<KernelMidi*>(data)->callback(msg);
 }
