@@ -143,10 +143,10 @@ int KernelMidi::openInDevice(int port)
 	{
 		try
 		{
+			m_midiIn->setCallback(&callback, this);
 			m_midiIn->openPort(port, getInPortName(port));
 			m_midiIn->ignoreTypes(true, false, true); // ignore all system/time msgs, for now
 			u::log::print("[KM] MIDI in port %d open\n", port);
-			m_midiIn->setCallback(&callback);
 			return 1;
 		}
 		catch (RtMidiError& error)
