@@ -29,6 +29,14 @@
 
 namespace giada::m::midiLearner
 {
+Data::Data()
+: enabled(false)
+, filter(-1)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 Data::Data(const Patch::Channel& p)
 : enabled(p.midiIn)
 , filter(p.midiInFilter)

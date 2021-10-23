@@ -55,6 +55,8 @@ void parseActions_(const channel::Data& ch, const std::vector<Action>& as)
 
 Data::Data(KernelMidi& k)
 : kernelMidi(&k)
+, enabled(false)
+, filter(0)
 {
 }
 

@@ -34,7 +34,7 @@ namespace giada::m::midiLearner
 {
 struct Data
 {
-	Data() = default;
+	Data();
 	Data(const Patch::Channel&);
 	Data(const Data&) = default;
 
