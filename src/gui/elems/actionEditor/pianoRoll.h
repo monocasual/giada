@@ -32,7 +32,7 @@
 
 namespace giada::m
 {
-class Action;
+struct Action;
 }
 
 namespace giada::v
