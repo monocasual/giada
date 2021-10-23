@@ -580,6 +580,10 @@ void geWaveform::clearSelection()
 
 /* -------------------------------------------------------------------------- */
 
+#ifdef G_OS_WINDOWS
+#undef IN
+#endif
+
 void geWaveform::setZoom(Zoom z)
 {
 	if (!alloc(z == Zoom::IN ? m_waveform.size * G_GUI_ZOOM_FACTOR : m_waveform.size / G_GUI_ZOOM_FACTOR))

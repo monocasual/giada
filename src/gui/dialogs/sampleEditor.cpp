@@ -59,6 +59,11 @@
 #include <cassert>
 #include <cmath>
 
+#ifdef G_OS_WINDOWS
+#undef IN
+#undef OUT
+#endif
+
 namespace giada::v
 {
 gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
