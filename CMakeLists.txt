@@ -229,7 +229,7 @@ endif()
 # ------------------------------------------------------------------------------
 
 if(DEFINED OS_WINDOWS)
-	list(APPEND COMPILER_OPTIONS /W4 /bigobj)
+	list(APPEND COMPILER_OPTIONS /W4 /bigobj /external:anglebrackets /external:W0)
 else()
 	list(APPEND COMPILER_OPTIONS -Wall -Wextra -Wpedantic)
 endif()
