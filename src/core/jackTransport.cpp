@@ -89,6 +89,7 @@ bool JackTransport::setPosition(uint32_t frame) const
 	jack_transport_reposition(m_jackHandle, &position);
 	return true;
 #else
+	(void)frame;
 	return false;
 #endif
 }
@@ -110,6 +111,7 @@ bool JackTransport::setBpm(double bpm) const
 	jack_transport_reposition(m_jackHandle, &position);
 	return true;
 #else
+	(void)bpm;
 	return false;
 #endif
 }
