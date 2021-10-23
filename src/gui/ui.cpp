@@ -35,9 +35,11 @@
 #include "gui/updater.h"
 #include "utils/gui.h"
 #include "utils/log.h"
-#if (defined(__linux__) || defined(__FreeBSD__)) && defined(WITH_VST)
+#ifdef WITH_VST
 #include <FL/Fl.H>
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 #include <X11/Xlib.h> // For XInitThreads
+#endif
 #endif
 
 namespace giada::v
