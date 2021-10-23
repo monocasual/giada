@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_AUDIO_JACK
-
 #include "jackTransport.h"
+#ifdef WITH_AUDIO_JACK
 #include <jack/intclient.h>
 #include <jack/transport.h>
+#endif
 
 namespace giada::m
 {
@@ -143,5 +143,3 @@ void JackTransport::setHandle(jack_client_t* h)
 }
 #endif
 } // namespace giada::m
-
-#endif // WITH_AUDIO_JACK
