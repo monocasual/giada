@@ -131,7 +131,9 @@ void setInToOut(bool v);
 
 void toggleRecOnSignal();
 void toggleFreeInputRec();
+#ifdef G_DEBUG_MODE
 void printDebugInfo();
+#endif
 
 /* closeProject
 Resets Giada to init state. If resetGui also refresh all widgets. */

@@ -107,7 +107,7 @@ void geMainMenu::cb_file()
 	{
 		c::main::closeProject();
 	}
-#ifndef NDEBUG
+#ifdef G_DEBUG_MODE
 	else if (strcmp(m->label(), "Debug stats") == 0)
 	{
 		c::main::printDebugInfo();
