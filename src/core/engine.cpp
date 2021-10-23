@@ -266,7 +266,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo)
 		return 0;
 
 #ifdef WITH_AUDIO_JACK
-	if (kernelInfo.withJack == G_SYS_API_JACK)
+	if (kernelInfo.withJack)
 		synchronizer.recvJackSync(jackTransport.getState());
 #endif
 
