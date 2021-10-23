@@ -26,6 +26,7 @@
 
 #include "core/sequencer.h"
 #include "core/actions/actionRecorder.h"
+#include "core/jackTransport.h"
 #include "core/kernelAudio.h"
 #include "core/metronome.h"
 #include "core/model/model.h"
