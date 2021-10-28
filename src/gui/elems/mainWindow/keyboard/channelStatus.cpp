@@ -24,9 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "channelStatus.h"
+#include "gui/elems/mainWindow/keyboard/channelStatus.h"
 #include "core/const.h"
 #include "glue/channel.h"
+#include "utils/math.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v
@@ -44,9 +45,12 @@ void geChannelStatus::draw()
 	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);                  // reset border
 	fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2, G_COLOR_GREY_2); // reset background
 
-	ChannelStatus playStatus = m_channel.getPlayStatus();
-	ChannelStatus recStatus  = m_channel.getRecStatus();
-	Pixel         pos        = 0;
+	const ChannelStatus playStatus = m_channel.getPlayStatus();
+	const ChannelStatus recStatus  = m_channel.getRecStatus();
+	const Frame         tracker    = m_channel.sample->getTracker();
+	const Frame         begin      = m_channel.sample->getBegin();
+	const Frame         end        = m_channel.sample->getEnd();
+	const Pixel         pos        = u::math::map(tracker, begin, end, 0, w());
 
 	if (playStatus == ChannelStatus::WAIT ||
 	    playStatus == ChannelStatus::ENDING ||
@@ -57,18 +61,13 @@ void geChannelStatus::draw()
 	}
 	else if (playStatus == ChannelStatus::PLAY)
 	{
-		/* Equation for the progress bar: 
-		((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
-		Frame tracker = m_channel.sample->getTracker();
-		Frame begin   = m_channel.sample->getBegin();
-		Frame end     = m_channel.sample->getEnd();
-		pos           = ((tracker - begin) * (w() - 1)) / ((end - begin));
 		fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
+		fl_rectf(x() + 1, y() + 1, pos, h() - 2, G_COLOR_LIGHT_1);
 	}
 	else
+	{
 		fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2, G_COLOR_GREY_2); // status empty
-
-	if (pos != 0)
-		fl_rectf(x() + 1, y() + 1, pos, h() - 2, G_COLOR_LIGHT_1);
+		fl_rectf(x() + 1, y() + 1, pos, h() - 2, G_COLOR_GREY_4);
+	}
 }
 } // namespace giada::v

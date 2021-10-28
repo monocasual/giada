@@ -84,7 +84,8 @@ enum class SamplePlayerMode : int
 	SINGLE_BASIC,
 	SINGLE_PRESS,
 	SINGLE_RETRIG,
-	SINGLE_ENDLESS
+	SINGLE_ENDLESS,
+	SINGLE_BASIC_PAUSE
 };
 
 enum class RecTriggerMode : int

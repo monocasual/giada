@@ -38,9 +38,7 @@
 #include <FL/fl_draw.H>
 #include <cassert>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geChannelMode::geChannelMode(int x, int y, int w, int h, c::channel::Data& d)
 : Fl_Menu_Button(x, y, w, h)
@@ -56,6 +54,7 @@ geChannelMode::geChannelMode(int x, int y, int w, int h, c::channel::Data& d)
 	add("Loop . once . bar", 0, cb_changeMode, (void*)SamplePlayerMode::LOOP_ONCE_BAR);
 	add("Loop . repeat", 0, cb_changeMode, (void*)SamplePlayerMode::LOOP_REPEAT);
 	add("Oneshot . basic", 0, cb_changeMode, (void*)SamplePlayerMode::SINGLE_BASIC);
+	add("Oneshot . basic . pause", 0, cb_changeMode, (void*)SamplePlayerMode::SINGLE_BASIC_PAUSE);
 	add("Oneshot . press", 0, cb_changeMode, (void*)SamplePlayerMode::SINGLE_PRESS);
 	add("Oneshot . retrig", 0, cb_changeMode, (void*)SamplePlayerMode::SINGLE_RETRIG);
 	add("Oneshot . endless", 0, cb_changeMode, (void*)SamplePlayerMode::SINGLE_ENDLESS);
@@ -86,6 +85,9 @@ void geChannelMode::draw()
 	case SamplePlayerMode::SINGLE_BASIC:
 		fl_draw_pixmap(oneshotBasic_xpm, x() + 1, y() + 1);
 		break;
+	case SamplePlayerMode::SINGLE_BASIC_PAUSE:
+		fl_draw_pixmap(oneshotBasicPause_xpm, x() + 1, y() + 1);
+		break;
 	case SamplePlayerMode::SINGLE_PRESS:
 		fl_draw_pixmap(oneshotPress_xpm, x() + 1, y() + 1);
 		break;
@@ -94,6 +96,9 @@ void geChannelMode::draw()
 		break;
 	case SamplePlayerMode::SINGLE_ENDLESS:
 		fl_draw_pixmap(oneshotEndless_xpm, x() + 1, y() + 1);
+		break;
+	default:
+		assert(false);
 		break;
 	}
 }
@@ -108,5 +113,4 @@ void geChannelMode::cb_changeMode(int mode)
 {
 	c::channel::setSamplePlayerMode(m_channel.id, static_cast<SamplePlayerMode>(mode));
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

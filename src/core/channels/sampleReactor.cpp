@@ -42,13 +42,15 @@ constexpr int Q_ACTION_REWIND = 1;
 
 void rewind_(channel::Data& ch, Frame localFrame)
 {
-	if (ch.isPlaying())
-	{
-		ch.state->rewinding = true;
-		ch.state->offset    = localFrame;
-	}
-	else
-		ch.state->tracker.store(ch.samplePlayer->begin);
+	ch.state->rewinding = true;
+	ch.state->offset    = localFrame;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void reset_(channel::Data& ch)
+{
+	ch.state->tracker.store(ch.samplePlayer->begin);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -74,25 +76,28 @@ ChannelStatus pressWhileOff_(channel::Data& ch, Sequencer& sequencer, int veloci
 
 ChannelStatus pressWhilePlay_(channel::Data& ch, Sequencer& sequencer, SamplePlayerMode mode, bool isLoop)
 {
-	if (mode == SamplePlayerMode::SINGLE_RETRIG)
+	if (isLoop)
+		return ChannelStatus::ENDING;
+
+	switch (mode)
 	{
+	case SamplePlayerMode::SINGLE_RETRIG:
 		if (sequencer.canQuantize())
 			sequencer.quantizer.trigger(Q_ACTION_REWIND + ch.id);
 		else
 			rewind_(ch, /*localFrame=*/0);
 		return ChannelStatus::PLAY;
-	}
 
-	if (isLoop || mode == SamplePlayerMode::SINGLE_ENDLESS)
+	case SamplePlayerMode::SINGLE_ENDLESS:
 		return ChannelStatus::ENDING;
 
-	if (mode == SamplePlayerMode::SINGLE_BASIC)
-	{
-		rewind_(ch, /*localFrame=*/0);
+	case SamplePlayerMode::SINGLE_BASIC:
+		reset_(ch);
+		return ChannelStatus::OFF;
+
+	default:
 		return ChannelStatus::OFF;
 	}
-
-	return ChannelStatus::OFF;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -205,7 +210,7 @@ Data::Data(ID channelId, Sequencer& sequencer, channel::Data& ch)
 	});
 
 	sequencer.quantizer.schedule(Q_ACTION_REWIND + channelId, [&ch](Frame delta) {
-		rewind_(ch, delta);
+		ch.isPlaying() ? rewind_(ch, delta) : reset_(ch);
 	});
 }
 

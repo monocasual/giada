@@ -35,6 +35,7 @@ namespace giada::c::channel
 {
 struct Data;
 }
+
 namespace giada::v
 {
 class geChannelMode : public Fl_Menu_Button
@@ -44,7 +45,7 @@ public:
 
 	void draw() override;
 
-  private:
+private:
 	static void cb_changeMode(Fl_Widget* /*w*/, void* p);
 	void        cb_changeMode(int mode);
 

@@ -36,6 +36,7 @@ extern const char* loopBasic_xpm[];
 extern const char* loopOnce_xpm[];
 extern const char* loopOnceBar_xpm[];
 extern const char* oneshotBasic_xpm[];
+extern const char* oneshotBasicPause_xpm[];
 extern const char* oneshotRetrig_xpm[];
 extern const char* oneshotPress_xpm[];
 extern const char* oneshotEndless_xpm[];

@@ -209,6 +209,7 @@ void onLastFrame(const channel::Data& ch, bool seqIsRunning)
 		SINGLE_ENDLESS, which runs forever unless it's in ENDING mode. 
 		Other loop once modes are put in wait mode. */
 		if ((mode == SamplePlayerMode::SINGLE_BASIC ||
+		        mode == SamplePlayerMode::SINGLE_BASIC_PAUSE ||
 		        mode == SamplePlayerMode::SINGLE_PRESS ||
 		        mode == SamplePlayerMode::SINGLE_RETRIG) ||
 		    (isLoop && !seqIsRunning))
