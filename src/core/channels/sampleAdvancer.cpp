@@ -198,9 +198,10 @@ void parseActions_(const channel::Data& ch, const std::vector<Action>& as, Frame
 
 void onLastFrame(const channel::Data& ch, bool seqIsRunning)
 {
-	ChannelStatus    playStatus = ch.state->playStatus.load();
-	SamplePlayerMode mode       = ch.samplePlayer->mode;
-	bool             isLoop     = ch.samplePlayer->isAnyLoopMode();
+	const SamplePlayerMode mode   = ch.samplePlayer->mode;
+	const bool             isLoop = ch.samplePlayer->isAnyLoopMode();
+
+	ChannelStatus playStatus = ch.state->playStatus.load();
 
 	if (playStatus == ChannelStatus::PLAY)
 	{

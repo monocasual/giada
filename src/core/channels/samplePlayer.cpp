@@ -37,8 +37,8 @@ namespace
 {
 bool shouldLoop_(const channel::Data& ch)
 {
-	ChannelStatus    playStatus = ch.state->playStatus.load();
-	SamplePlayerMode mode       = ch.samplePlayer->mode;
+	const ChannelStatus    playStatus = ch.state->playStatus.load();
+	const SamplePlayerMode mode       = ch.samplePlayer->mode;
 
 	return (mode == SamplePlayerMode::LOOP_BASIC ||
 	           mode == SamplePlayerMode::LOOP_REPEAT ||

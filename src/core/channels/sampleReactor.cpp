@@ -99,9 +99,10 @@ ChannelStatus pressWhilePlay_(channel::Data& ch, Sequencer& sequencer, SamplePla
 
 void press_(channel::Data& ch, Sequencer& sequencer, int velocity)
 {
-	ChannelStatus    playStatus = ch.state->playStatus.load();
-	SamplePlayerMode mode       = ch.samplePlayer->mode;
-	bool             isLoop     = ch.samplePlayer->isAnyLoopMode();
+	const SamplePlayerMode mode   = ch.samplePlayer->mode;
+	const bool             isLoop = ch.samplePlayer->isAnyLoopMode();
+
+	ChannelStatus playStatus = ch.state->playStatus.load();
 
 	switch (playStatus)
 	{
