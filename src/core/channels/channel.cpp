@@ -169,14 +169,14 @@ Data::Data(ChannelType type, ID id, ID columnId, State& state, Buffer& buffer)
 	{
 	case ChannelType::SAMPLE:
 		samplePlayer.emplace(&state.resampler.value());
-		sampleReactor.emplace(id, g_engine.sequencer, *this);
+		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		audioReceiver.emplace();
 		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
 		break;
 
 	case ChannelType::PREVIEW:
 		samplePlayer.emplace(&state.resampler.value());
-		sampleReactor.emplace(id, g_engine.sequencer, *this);
+		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		break;
 
 	case ChannelType::MIDI:
@@ -224,14 +224,14 @@ Data::Data(const Patch::Channel& p, State& state, Buffer& buffer, float samplera
 	{
 	case ChannelType::SAMPLE:
 		samplePlayer.emplace(p, samplerateRatio, &state.resampler.value(), wave);
-		sampleReactor.emplace(id, g_engine.sequencer, *this);
+		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		audioReceiver.emplace(p);
 		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
 		break;
 
 	case ChannelType::PREVIEW:
 		samplePlayer.emplace(p, samplerateRatio, &state.resampler.value(), nullptr);
-		sampleReactor.emplace(id, g_engine.sequencer, *this);
+		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		break;
 
 	case ChannelType::MIDI:

@@ -27,7 +27,7 @@
 #include "core/channels/sampleReactor.h"
 #include "core/channels/channel.h"
 #include "core/conf.h"
-#include "src/core/model/model.h"
+#include "core/model/model.h"
 #include "utils/math.h"
 #include <cassert>
 
@@ -202,14 +202,16 @@ void toggleReadActions_(channel::Data& ch, bool isSequencerRunning, bool treatRe
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Data::Data(ID channelId, Sequencer& sequencer, channel::Data& ch)
+Data::Data(ID channelId, Sequencer& sequencer, model::Model& model)
 {
-	sequencer.quantizer.schedule(Q_ACTION_PLAY + channelId, [&ch](Frame delta) {
-		ch.state->offset = delta;
+	sequencer.quantizer.schedule(Q_ACTION_PLAY + channelId, [channelId, &model](Frame delta) {
+		channel::Data& ch = model.get().getChannel(channelId);
+		ch.state->offset  = delta;
 		ch.state->playStatus.store(ChannelStatus::PLAY);
 	});
 
-	sequencer.quantizer.schedule(Q_ACTION_REWIND + channelId, [&ch](Frame delta) {
+	sequencer.quantizer.schedule(Q_ACTION_REWIND + channelId, [channelId, &model](Frame delta) {
+		channel::Data& ch = model.get().getChannel(channelId);
 		ch.isPlaying() ? rewind_(ch, delta) : reset_(ch);
 	});
 }

@@ -36,6 +36,11 @@ namespace giada::m
 class Sequencer;
 }
 
+namespace giada::m::model
+{
+class Model;
+}
+
 namespace giada::m::channel
 {
 struct Data;
@@ -49,7 +54,7 @@ namespace giada::m::sampleReactor
 {
 struct Data
 {
-	Data(ID channelId, Sequencer& sequencer, channel::Data&);
+	Data(ID channelId, Sequencer&, model::Model&);
 };
 
 void react(channel::Data&, const EventDispatcher::Event&, Sequencer&, const Conf::Data&);
