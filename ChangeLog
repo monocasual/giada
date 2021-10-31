@@ -11,11 +11,12 @@
 --------------------------------------------------------------------------------
 
 
-0.19.0 --- 
+0.19.0 --- 2021 . 11 . 01
+- New "One-shot Pause" channel mode
 - Refactoring: new component-based architecture
 - Fix crash on startup if recording from mono input
 - Improved event handling for plug-ins GUIs 
-- Fix many compiler warings on menu items initialization
+- Fix many compiler warnings on menu items initialization
 
 
 0.18.2 --- 2021 . 09 . 13
