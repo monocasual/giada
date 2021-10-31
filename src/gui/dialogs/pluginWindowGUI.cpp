@@ -107,6 +107,7 @@ void gdPluginWindowGUI::openEditor()
 
 void gdPluginWindowGUI::closeEditor()
 {
+	m_editor->removeFromDesktop();
 	m_editor.reset();
 }
 } // namespace giada::v

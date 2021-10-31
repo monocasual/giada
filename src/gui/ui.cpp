@@ -126,11 +126,11 @@ void Ui::reset()
 
 void Ui::shutdown()
 {
+	mainWindow.reset();
+	m_updater.close();
 #ifdef WITH_VST
 	juce::shutdownJuce_GUI();
 #endif
-	m_updater.close();
-	mainWindow.reset();
 	u::log::print("[ui] All windows closed\n");
 }
 

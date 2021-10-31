@@ -131,8 +131,8 @@ void closeMainWindow()
 
 void shutdown()
 {
-	g_engine.shutdown();
 	g_ui.shutdown();
+	g_engine.shutdown();
 	u::log::print("[init] Giada %s closed\n\n", G_VERSION_STR);
 }
 } // namespace giada::m::init
