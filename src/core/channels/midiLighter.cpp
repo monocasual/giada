@@ -95,6 +95,7 @@ void sendStatus_(channel::Data& ch, uint32_t l_playing, bool audible)
 
 Data::Data(MidiMapper& m)
 : midiMapper(&m)
+, enabled(false)
 {
 }
 
