@@ -227,7 +227,7 @@ void MidiMapper::parse(MidiMap::Message& message) const
 
 	message.value = strtoul(output.c_str(), nullptr, 16);
 
-	u::log::print("[parse] parsed chan=%d valueStr=%s value=%#x, offset=%d\n",
+	u::log::print("[MidiMapper::parse] parsed chan=%d valueStr=%s value=%#x, offset=%d\n",
 	    message.channel, message.valueStr, message.value, message.offset);
 }
 
