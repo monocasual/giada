@@ -36,6 +36,9 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#ifdef WITH_TESTS
+#include "tests/mocks/kernelMidiMock.h"
+#endif
 
 namespace nl = nlohmann;
 
@@ -50,28 +53,32 @@ bool MidiMap::isValid() const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-MidiMapper::MidiMapper(KernelMidi& k)
+template <typename KernelMidiI>
+MidiMapper<KernelMidiI>::MidiMapper(KernelMidiI& k)
 : m_kernelMidi(k)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-const MidiMap& MidiMapper::getCurrentMap() const
+template <typename KernelMidiI>
+const MidiMap& MidiMapper<KernelMidiI>::getCurrentMap() const
 {
 	return m_currentMap;
 }
 
 /* -------------------------------------------------------------------------- */
 
-const std::vector<std::string>& MidiMapper::getMapFilesFound() const
+template <typename KernelMidiI>
+const std::vector<std::string>& MidiMapper<KernelMidiI>::getMapFilesFound() const
 {
 	return m_mapFiles;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MidiMapper::init()
+template <typename KernelMidiI>
+void MidiMapper<KernelMidiI>::init()
 {
 	m_mapsPath = u::fs::getHomePath() + G_SLASH + "midimaps" + G_SLASH;
 
@@ -100,7 +107,8 @@ void MidiMapper::init()
 
 /* -------------------------------------------------------------------------- */
 
-int MidiMapper::read(const std::string& file)
+template <typename KernelMidiI>
+int MidiMapper<KernelMidiI>::read(const std::string& file)
 {
 	if (file.empty())
 	{
@@ -145,14 +153,16 @@ int MidiMapper::read(const std::string& file)
 
 /* -------------------------------------------------------------------------- */
 
-bool MidiMapper::isMessageDefined(const MidiMap::Message& m) const
+template <typename KernelMidiI>
+bool MidiMapper<KernelMidiI>::isMessageDefined(const MidiMap::Message& m) const
 {
 	return m.offset != -1;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MidiMapper::sendInitMessages(const MidiMap& midiMap)
+template <typename KernelMidiI>
+void MidiMapper<KernelMidiI>::sendInitMessages(const MidiMap& midiMap)
 {
 	if (!midiMap.isValid())
 		return;
@@ -169,7 +179,8 @@ void MidiMapper::sendInitMessages(const MidiMap& midiMap)
 
 /* -------------------------------------------------------------------------- */
 
-void MidiMapper::sendMidiLightning(uint32_t learnt, const MidiMap::Message& m)
+template <typename KernelMidiI>
+void MidiMapper<KernelMidiI>::sendMidiLightning(uint32_t learnt, const MidiMap::Message& m)
 {
 	// Skip lightning message if not defined in midi map
 
@@ -196,7 +207,8 @@ void MidiMapper::sendMidiLightning(uint32_t learnt, const MidiMap::Message& m)
 
 /* -------------------------------------------------------------------------- */
 
-void MidiMapper::parse(MidiMap::Message& message) const
+template <typename KernelMidiI>
+void MidiMapper<KernelMidiI>::parse(MidiMap::Message& message) const
 {
 	/* Remove '0x' part from the original string. */
 
@@ -233,7 +245,8 @@ void MidiMapper::parse(MidiMap::Message& message) const
 
 /* -------------------------------------------------------------------------- */
 
-bool MidiMapper::readCommand(const nl::json& j, MidiMap::Message& m, const std::string& key) const
+template <typename KernelMidiI>
+bool MidiMapper<KernelMidiI>::readCommand(const nl::json& j, MidiMap::Message& m, const std::string& key) const
 {
 	if (j.find(key) == j.end())
 		return false;
@@ -247,7 +260,8 @@ bool MidiMapper::readCommand(const nl::json& j, MidiMap::Message& m, const std::
 }
 /* -------------------------------------------------------------------------- */
 
-bool MidiMapper::readInitCommands(MidiMap& midiMap, const nl::json& j)
+template <typename KernelMidiI>
+bool MidiMapper<KernelMidiI>::readInitCommands(MidiMap& midiMap, const nl::json& j)
 {
 	if (j.find(MIDIMAP_KEY_INIT_COMMANDS) == j.end())
 		return false;
@@ -264,4 +278,9 @@ bool MidiMapper::readInitCommands(MidiMap& midiMap, const nl::json& j)
 
 	return true;
 }
+
+template class MidiMapper<KernelMidi>;
+#ifdef WITH_TESTS
+template class MidiMapper<KernelMidiMock>;
+#endif
 } // namespace giada::m

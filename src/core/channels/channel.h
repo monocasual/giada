@@ -125,8 +125,8 @@ struct Data
 	std::vector<Plugin*> plugins;
 #endif
 
-	midiLearner::Data midiLearner;
-	midiLighter::Data midiLighter;
+	midiLearner::Data             midiLearner;
+	midiLighter::Data<KernelMidi> midiLighter;
 
 	std::optional<samplePlayer::Data>   samplePlayer;
 	std::optional<sampleReactor::Data>  sampleReactor;

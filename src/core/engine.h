@@ -96,23 +96,23 @@ public:
 
 	void shutdown();
 
-	model::Model    model;
-	Conf            conf;
-	Patch           patch;
-	KernelAudio     kernelAudio;
-	KernelMidi      kernelMidi;
-	JackTransport   jackTransport;
-	WaveManager     waveManager;
-	EventDispatcher eventDispatcher;
-	MidiMapper      midiMapper;
-	ChannelManager  channelManager;
-	MidiDispatcher  midiDispatcher;
-	ActionRecorder  actionRecorder;
-	Synchronizer    synchronizer;
-	Sequencer       sequencer;
-	Mixer           mixer;
-	MixerHandler    mixerHandler;
-	Recorder        recorder;
+	model::Model           model;
+	Conf                   conf;
+	Patch                  patch;
+	KernelAudio            kernelAudio;
+	KernelMidi             kernelMidi;
+	JackTransport          jackTransport;
+	WaveManager            waveManager;
+	EventDispatcher        eventDispatcher;
+	MidiMapper<KernelMidi> midiMapper;
+	ChannelManager         channelManager;
+	MidiDispatcher         midiDispatcher;
+	ActionRecorder         actionRecorder;
+	Synchronizer           synchronizer;
+	Sequencer              sequencer;
+	Mixer                  mixer;
+	MixerHandler           mixerHandler;
+	Recorder               recorder;
 #ifdef WITH_VST
 	PluginHost    pluginHost;
 	PluginManager pluginManager;

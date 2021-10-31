@@ -29,12 +29,8 @@
 
 #include "core/eventDispatcher.h"
 #include "core/midiLearnParam.h"
+#include "core/midiMapper.h"
 #include "core/patch.h"
-
-namespace giada::m
-{
-class MidiMapper;
-}
 
 namespace giada::m::channel
 {
@@ -43,13 +39,14 @@ struct Data;
 
 namespace giada::m::midiLighter
 {
+template <typename KernelMidiI>
 struct Data
 {
-	Data(MidiMapper&);
-	Data(MidiMapper&, const Patch::Channel&);
+	Data(MidiMapper<KernelMidiI>&);
+	Data(MidiMapper<KernelMidiI>&, const Patch::Channel&);
 	Data(const Data& o) = default;
 
-	MidiMapper* midiMapper;
+	MidiMapper<KernelMidiI>* midiMapper;
 
 	/* enabled
     Tells whether MIDI lighting is enabled or not. */
@@ -64,6 +61,11 @@ struct Data
 };
 
 void react(channel::Data& ch, const EventDispatcher::Event& e, bool audible);
+
+extern template struct Data<KernelMidi>;
+#ifdef WITH_TESTS
+extern template struct Data<KernelMidiMock>;
+#endif
 } // namespace giada::m::midiLighter
 
 #endif

@@ -34,7 +34,10 @@
 namespace giada::m
 {
 class KernelMidi;
-}
+#ifdef WITH_TESTS
+class KernelMidiMock;
+#endif
+} // namespace giada::m
 
 namespace giada::m
 {
@@ -67,10 +70,11 @@ struct MidiMap
 	Message              playingInaudible;
 };
 
+template <typename KernelMidiI>
 class MidiMapper final
 {
 public:
-	MidiMapper(KernelMidi&);
+	MidiMapper(KernelMidiI&);
 
 	/* getCurrentMap
 	Returns a reference to the currently selected midimap. It might be invalid
@@ -104,7 +108,7 @@ public:
 	void sendMidiLightning(uint32_t learnt, const MidiMap::Message& msg);
 
 private:
-	KernelMidi& m_kernelMidi;
+	KernelMidiI& m_kernelMidi;
 
 	/* isMessageDefined
 	Checks whether a specific message has been defined within a midimap file. */
@@ -139,6 +143,11 @@ private:
 
 	std::vector<std::string> m_mapFiles;
 };
+
+extern template class MidiMapper<KernelMidi>;
+#ifdef WITH_TESTS
+extern template class MidiMapper<KernelMidiMock>;
+#endif
 } // namespace giada::m
 
 #endif

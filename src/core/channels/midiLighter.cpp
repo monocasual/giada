@@ -36,8 +36,8 @@ namespace
 {
 void sendMute_(channel::Data& ch, uint32_t l_mute)
 {
-	MidiMapper&    midiMapper = *ch.midiLighter.midiMapper;
-	const MidiMap& midiMap    = midiMapper.getCurrentMap();
+	MidiMapper<KernelMidi>& midiMapper = *ch.midiLighter.midiMapper;
+	const MidiMap&          midiMap    = midiMapper.getCurrentMap();
 
 	if (ch.mute)
 		midiMapper.sendMidiLightning(l_mute, midiMap.muteOn);
@@ -49,8 +49,8 @@ void sendMute_(channel::Data& ch, uint32_t l_mute)
 
 void sendSolo_(channel::Data& ch, uint32_t l_solo)
 {
-	MidiMapper&    midiMapper = *ch.midiLighter.midiMapper;
-	const MidiMap& midiMap    = midiMapper.getCurrentMap();
+	MidiMapper<KernelMidi>& midiMapper = *ch.midiLighter.midiMapper;
+	const MidiMap&          midiMap    = midiMapper.getCurrentMap();
 
 	if (ch.solo)
 		midiMapper.sendMidiLightning(l_solo, midiMap.soloOn);
@@ -62,8 +62,8 @@ void sendSolo_(channel::Data& ch, uint32_t l_solo)
 
 void sendStatus_(channel::Data& ch, uint32_t l_playing, bool audible)
 {
-	MidiMapper&    midiMapper = *ch.midiLighter.midiMapper;
-	const MidiMap& midiMap    = midiMapper.getCurrentMap();
+	MidiMapper<KernelMidi>& midiMapper = *ch.midiLighter.midiMapper;
+	const MidiMap&          midiMap    = midiMapper.getCurrentMap();
 
 	switch (ch.state->playStatus.load())
 	{
@@ -93,7 +93,8 @@ void sendStatus_(channel::Data& ch, uint32_t l_playing, bool audible)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Data::Data(MidiMapper& m)
+template <typename KernelMidiI>
+Data<KernelMidiI>::Data(MidiMapper<KernelMidiI>& m)
 : midiMapper(&m)
 , enabled(false)
 {
@@ -101,7 +102,8 @@ Data::Data(MidiMapper& m)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(MidiMapper& m, const Patch::Channel& p)
+template <typename KernelMidiI>
+Data<KernelMidiI>::Data(MidiMapper<KernelMidiI>& m, const Patch::Channel& p)
 : midiMapper(&m)
 , enabled(p.midiOutL)
 , playing(p.midiOutLplaying)
@@ -146,4 +148,9 @@ void react(channel::Data& ch, const EventDispatcher::Event& e, bool audible)
 		break;
 	}
 }
+
+template struct Data<KernelMidi>;
+#ifdef WITH_TESTS
+template struct Data<KernelMidiMock>;
+#endif
 } // namespace giada::m::midiLighter
