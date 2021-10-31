@@ -215,7 +215,7 @@ Data::Data(const Patch::Channel& p, State& state, Buffer& buffer, float samplera
 , plugins(g_engine.pluginManager.hydratePlugins(p.pluginIds, g_engine.model)) // TODO move outside, as constructor parameter
 #endif
 , midiLearner(p)
-, midiLighter(g_engine.midiMapper)
+, midiLighter(g_engine.midiMapper, p)
 {
 	state.readActions.store(p.readActions);
 	state.recStatus.store(p.readActions ? ChannelStatus::PLAY : ChannelStatus::OFF);

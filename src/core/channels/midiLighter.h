@@ -46,7 +46,7 @@ namespace giada::m::midiLighter
 struct Data
 {
 	Data(MidiMapper&);
-	Data(const Patch::Channel& p);
+	Data(MidiMapper&, const Patch::Channel&);
 	Data(const Data& o) = default;
 
 	MidiMapper* midiMapper;

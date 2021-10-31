@@ -101,8 +101,9 @@ Data::Data(MidiMapper& m)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const Patch::Channel& p)
-: enabled(p.midiOutL)
+Data::Data(MidiMapper& m, const Patch::Channel& p)
+: midiMapper(&m)
+, enabled(p.midiOutL)
 , playing(p.midiOutLplaying)
 , mute(p.midiOutLmute)
 , solo(p.midiOutLsolo)
