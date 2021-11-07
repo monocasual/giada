@@ -44,7 +44,6 @@ Engine::Engine()
 , recorder(model, sequencer, mixerHandler)
 #ifdef WITH_VST
 , pluginHost(model)
-, pluginManager(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod))
 #endif
 {
 	kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
@@ -173,6 +172,7 @@ void Engine::init()
 	sequencer.reset(kernelAudio.getSampleRate());
 #ifdef WITH_VST
 	pluginHost.reset(kernelAudio.getBufferSize());
+	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
 #endif
 	mixer.enable();
 	kernelAudio.startStream();

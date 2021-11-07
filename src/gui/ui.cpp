@@ -87,10 +87,6 @@ void Ui::store(m::Patch::Data& patch)
 
 void Ui::init(int argc, char** argv, m::Engine& engine)
 {
-#ifdef WITH_VST
-	juce::initialiseJuce_GUI();
-#endif
-
 	/* This is of paramount importance on Linux with VST enabled, otherwise many
 	plug-ins go nuts and crash hard. It seems that some plug-ins on our Juce-based
 	PluginHost use Xlib concurrently. */
@@ -128,9 +124,7 @@ void Ui::shutdown()
 {
 	mainWindow.reset();
 	m_updater.close();
-#ifdef WITH_VST
-	juce::shutdownJuce_GUI();
-#endif
+
 	u::log::print("[ui] All windows closed\n");
 }
 

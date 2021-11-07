@@ -38,20 +38,13 @@
 
 namespace giada::m
 {
-PluginManager::PluginManager(SortMethod sortMethod)
-{
-	m_formatManager.addDefaultFormats();
-	reset(sortMethod);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void PluginManager::reset(SortMethod sortMethod)
 {
 	m_pluginId       = IdManager();
 	m_missingPlugins = false;
 
 	m_unknownPluginList.clear();
+	m_formatManager.addDefaultFormats();
 
 	loadList(u::fs::getHomePath() + G_SLASH + "plugins.xml");
 	sortPlugins(sortMethod);

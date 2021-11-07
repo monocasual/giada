@@ -71,8 +71,6 @@ public:
 		bool        isKnown;
 	};
 
-	PluginManager(SortMethod);
-
 	/* getPluginsInfo
 	Returns a vector of PluginInfo objects containing all plug-ins, known and
 	unknown, scanned so far. */

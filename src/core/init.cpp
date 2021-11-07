@@ -103,6 +103,9 @@ void startup(int argc, char** argv)
 {
 	printBuildInfo_();
 
+#ifdef WITH_VST
+	juce::initialiseJuce_GUI();
+#endif
 	g_engine.init();
 	g_ui.init(argc, argv, g_engine);
 
@@ -134,6 +137,9 @@ void shutdown()
 {
 	g_ui.shutdown();
 	g_engine.shutdown();
+#ifdef WITH_VST
+	juce::shutdownJuce_GUI();
+#endif
 	u::log::print("[init] Giada %s closed\n\n", G_VERSION_STR);
 }
 } // namespace giada::m::init
