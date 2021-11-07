@@ -27,12 +27,13 @@
 #ifndef G_CHANNEL_SAMPLE_PLAYER_H
 #define G_CHANNEL_SAMPLE_PLAYER_H
 
-#include "core/channels/sampleAdvancer.h"
-#include "core/channels/sampleReactor.h"
 #include "core/channels/waveReader.h"
 #include "core/const.h"
+#include "core/eventDispatcher.h"
 #include "core/patch.h"
+#include "core/sequencer.h"
 #include "core/types.h"
+#include <functional>
 
 namespace giada::m::channel
 {
@@ -61,11 +62,12 @@ struct Data
 	Frame            end;
 	bool             velocityAsVol; // Velocity drives volume
 	WaveReader       waveReader;
+
+	std::function<void(const channel::Data&)> onLastFrame;
 };
 
 void react(channel::Data& ch, const EventDispatcher::Event& e);
-void advance(const channel::Data& ch, const Sequencer::Event& e);
-void render(const channel::Data& ch, bool seqIsRunning);
+void render(const channel::Data& ch);
 
 /* loadWave
 Loads Wave 'w' into channel ch and sets it up (name, markers, ...). */

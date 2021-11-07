@@ -39,6 +39,7 @@
 #include "core/channels/midiSender.h"
 #include "core/channels/sampleActionRecorder.h"
 #include "core/channels/samplePlayer.h"
+#include "core/channels/sampleReactor.h"
 #include "core/const.h"
 #include "core/eventDispatcher.h"
 #include "core/midiEvent.h"

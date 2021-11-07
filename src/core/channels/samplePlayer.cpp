@@ -109,6 +109,7 @@ Data::Data(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w
 , end(p.end)
 , velocityAsVol(p.midiInVeloAsVol)
 , waveReader(r)
+, onLastFrame(nullptr)
 {
 	setWave_(*this, w, samplerateRatio);
 }
@@ -162,14 +163,7 @@ void react(channel::Data& ch, const EventDispatcher::Event& e)
 
 /* -------------------------------------------------------------------------- */
 
-void advance(const channel::Data& ch, const Sequencer::Event& e)
-{
-	sampleAdvancer::advance(ch, e);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void render(const channel::Data& ch, bool seqIsRunning)
+void render(const channel::Data& ch)
 {
 	if (!isPlaying_(ch))
 		return;
@@ -204,9 +198,11 @@ void render(const channel::Data& ch, bool seqIsRunning)
 
 	if (tracker >= end)
 	{
-		ch.samplePlayer->waveReader.last();
+		assert(ch.samplePlayer->onLastFrame != nullptr);
+
 		tracker = begin;
-		sampleAdvancer::onLastFrame(ch, seqIsRunning); // TODO - better moving this to samplerAdvancer::advance
+		ch.samplePlayer->waveReader.last();
+		ch.samplePlayer->onLastFrame(ch);
 		if (shouldLoop_(ch) && res.generated < ch.buffer->audio.countFrames())
 			tracker += fillBuffer_(ch, tracker, res.generated).used;
 	}

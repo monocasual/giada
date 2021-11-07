@@ -24,8 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "channel.h"
+#include "core/channels/channel.h"
 #include "core/actions/actionRecorder.h"
+#include "core/channels/sampleAdvancer.h"
 #include "core/conf.h"
 #include "core/engine.h"
 #include "core/midiMapper.h"
@@ -117,7 +118,7 @@ void renderChannel_(const Data& d, mcl::AudioBuffer& out, mcl::AudioBuffer& in, 
 	d.buffer->audio.clear();
 
 	if (d.samplePlayer)
-		samplePlayer::render(d, g_engine.sequencer.isRunning());
+		samplePlayer::render(d);
 	if (d.audioReceiver)
 		audioReceiver::render(d, in);
 
@@ -168,10 +169,13 @@ Data::Data(ChannelType type, ID id, ID columnId, State& state, Buffer& buffer)
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		samplePlayer.emplace(&state.resampler.value());
 		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		audioReceiver.emplace();
 		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
+		samplePlayer.emplace(&state.resampler.value());
+		samplePlayer->onLastFrame = [](const Data& ch) {
+			sampleAdvancer::onLastFrame(ch, g_engine.sequencer.isRunning());
+		};
 		break;
 
 	case ChannelType::PREVIEW:
@@ -223,10 +227,13 @@ Data::Data(const Patch::Channel& p, State& state, Buffer& buffer, float samplera
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		samplePlayer.emplace(p, samplerateRatio, &state.resampler.value(), wave);
 		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		audioReceiver.emplace(p);
 		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
+		samplePlayer.emplace(p, samplerateRatio, &state.resampler.value(), wave);
+		samplePlayer->onLastFrame = [](const Data& ch) {
+			sampleAdvancer::onLastFrame(ch, g_engine.sequencer.isRunning());
+		};
 		break;
 
 	case ChannelType::PREVIEW:
@@ -311,7 +318,7 @@ void advance(const Data& d, const Sequencer::EventBuffer& events)
 		if (d.midiController)
 			midiController::advance(d, e);
 		if (d.samplePlayer)
-			samplePlayer::advance(d, e);
+			sampleAdvancer::advance(d, e);
 		if (d.midiSender)
 			midiSender::advance(d, e);
 #ifdef WITH_VST
