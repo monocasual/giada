@@ -264,8 +264,9 @@ endif()
 
 # Threads (system)
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-list(APPEND LIBRARIES ${Threads_LIBRARY})
+list(APPEND LIBRARIES Threads::Threads)
 
 # pkg-config/pkgconf, required to find some external dependencies on some
 # platforms
