@@ -120,7 +120,7 @@ void onBar_(const channel::Data& ch, Frame localFrame)
 	                                             mode == SamplePlayerMode::LOOP_ONCE_BAR))
 		rewind_(ch, localFrame);
 	else if (playStatus == ChannelStatus::WAIT && mode == SamplePlayerMode::LOOP_ONCE_BAR)
-		ch.state->playStatus.store(ChannelStatus::PLAY);
+		play_(ch, localFrame);
 }
 
 /* -------------------------------------------------------------------------- */
