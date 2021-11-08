@@ -62,6 +62,14 @@ void play_(const channel::Data& ch, Frame localFrame)
 
 /* -------------------------------------------------------------------------- */
 
+void wait_(const channel::Data& ch)
+{
+	ch.state->playStatus.store(ChannelStatus::WAIT);
+	ch.state->tracker.store(ch.samplePlayer->begin);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void onFirstBeat_(const channel::Data& ch, Frame localFrame)
 {
 	G_DEBUG("onFirstBeat ch=" << ch.id << ", localFrame=" << localFrame);
@@ -184,10 +192,9 @@ void onLastFrame(const channel::Data& ch, bool seqIsRunning)
 	const SamplePlayerMode mode   = ch.samplePlayer->mode;
 	const bool             isLoop = ch.samplePlayer->isAnyLoopMode();
 
-	ChannelStatus playStatus = ch.state->playStatus.load();
-
-	if (playStatus == ChannelStatus::PLAY)
+	switch (ch.state->playStatus.load())
 	{
+	case ChannelStatus::PLAY:
 		/* Stop LOOP_* when the sequencer is off, or SINGLE_* except for
 		SINGLE_ENDLESS, which runs forever unless it's in ENDING mode. 
 		Other loop once modes are put in wait mode. */
@@ -196,14 +203,18 @@ void onLastFrame(const channel::Data& ch, bool seqIsRunning)
 		        mode == SamplePlayerMode::SINGLE_PRESS ||
 		        mode == SamplePlayerMode::SINGLE_RETRIG) ||
 		    (isLoop && !seqIsRunning))
-			playStatus = ChannelStatus::OFF;
+			stop_(ch, 0);
 		else if (mode == SamplePlayerMode::LOOP_ONCE || mode == SamplePlayerMode::LOOP_ONCE_BAR)
-			playStatus = ChannelStatus::WAIT;
-	}
-	else if (playStatus == ChannelStatus::ENDING)
-		playStatus = ChannelStatus::OFF;
+			wait_(ch);
+		break;
 
-	ch.state->playStatus.store(playStatus);
+	case ChannelStatus::ENDING:
+		stop_(ch, 0);
+		break;
+
+	default:
+		break;
+	}
 }
 
 /* -------------------------------------------------------------------------- */
