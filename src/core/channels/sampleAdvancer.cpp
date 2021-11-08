@@ -127,36 +127,22 @@ void onBar_(const channel::Data& ch, Frame localFrame)
 
 void onNoteOn_(const channel::Data& ch, Frame localFrame)
 {
-	ChannelStatus playStatus = ch.state->playStatus.load();
+	switch (ch.state->playStatus.load())
+	{
+	case ChannelStatus::OFF:
+		play_(ch, localFrame);
+		break;
 
-	if (playStatus == ChannelStatus::OFF)
-	{
-		playStatus = ChannelStatus::PLAY;
-	}
-	else if (playStatus == ChannelStatus::PLAY)
-	{
+	case ChannelStatus::PLAY:
 		if (ch.samplePlayer->mode == SamplePlayerMode::SINGLE_RETRIG)
 			rewind_(ch, localFrame);
 		else
-			playStatus = ChannelStatus::OFF;
+			stop_(ch, localFrame);
+		break;
+
+	default:
+		break;
 	}
-
-	ch.state->playStatus.store(playStatus);
-	ch.state->offset = localFrame;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void onNoteOff_(const channel::Data& ch, Frame localFrame)
-{
-	ch.state->playStatus.store(ChannelStatus::OFF);
-	ch.state->tracker.store(ch.samplePlayer->begin);
-
-	/*  Clear data in range [localFrame, (buffer.size)) if the kill event occurs
-    in the middle of the buffer. */
-
-	if (localFrame != 0)
-		ch.buffer->audio.clear(localFrame);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -178,11 +164,8 @@ void parseActions_(const channel::Data& ch, const std::vector<Action>& as, Frame
 			break;
 
 		case MidiEvent::NOTE_OFF:
-			onNoteOff_(ch, localFrame);
-			break;
-
 		case MidiEvent::NOTE_KILL:
-			onNoteOff_(ch, localFrame);
+			stop_(ch, localFrame);
 			break;
 
 		default:
