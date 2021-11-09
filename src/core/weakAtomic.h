@@ -43,7 +43,7 @@ public:
 	}
 
 	WeakAtomic(const WeakAtomic& o)
-	: m_value(o.m_value.load(std::memory_order_relaxed))
+	: m_value(o.load())
 	{
 	}
 
@@ -53,7 +53,7 @@ public:
 	{
 		if (this == &o)
 			return *this;
-		m_value.store(o.m_value.load(std::memory_order_relaxed), std::memory_order_relaxed);
+		store(o.load());
 		return *this;
 	}
 
