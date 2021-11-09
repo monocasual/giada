@@ -47,10 +47,7 @@ public:
 	{
 	}
 
-	WeakAtomic(WeakAtomic&& o)
-	: m_value(o.m_value.load(std::memory_order_relaxed), std::memory_order_relaxed)
-	{
-	}
+	WeakAtomic(WeakAtomic&& o) = delete;
 
 	WeakAtomic& operator=(const WeakAtomic& o)
 	{
