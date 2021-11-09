@@ -28,6 +28,7 @@
 #define G_WEAK_ATOMIC_H
 
 #include <atomic>
+#include <functional>
 
 namespace giada
 {
@@ -38,12 +39,14 @@ public:
 	WeakAtomic() = default;
 
 	WeakAtomic(T t)
-	: m_value(t)
+	: m_atomic(t)
+	, m_value(t)
 	{
 	}
 
 	WeakAtomic(const WeakAtomic& o)
-	: m_value(o.load())
+	: m_atomic(o.load())
+	, m_value(o.m_value)
 	{
 	}
 
@@ -54,6 +57,7 @@ public:
 		if (this == &o)
 			return *this;
 		store(o.load());
+		m_value = o.m_value;
 		return *this;
 	}
 
@@ -61,16 +65,22 @@ public:
 
 	T load() const
 	{
-		return m_value.load(std::memory_order_relaxed);
+		return m_atomic.load(std::memory_order_relaxed);
 	}
 
 	void store(T t)
 	{
-		return m_value.store(t, std::memory_order_relaxed);
+		m_atomic.store(t, std::memory_order_relaxed);
+		if (onChange != nullptr && t != m_value)
+			onChange(t);
+		m_value = t;
 	}
 
-  private:
-	std::atomic<T> m_value;
+	std::function<void(T)> onChange = nullptr;
+
+private:
+	std::atomic<T> m_atomic;
+	T              m_value;
 };
 } // namespace giada
 
