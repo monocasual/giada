@@ -139,6 +139,9 @@ struct Data
 	std::optional<midiSender::Data>           midiSender;
 	std::optional<sampleActionRecorder::Data> sampleActionRecorder;
 	std::optional<midiActionRecorder::Data>   midiActionRecorder;
+
+private:
+	void initCallbacks();
 };
 
 /* advance

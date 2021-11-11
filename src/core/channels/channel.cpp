@@ -193,16 +193,7 @@ Data::Data(ChannelType type, ID id, ID columnId, State& s, Buffer& b)
 		break;
 	}
 
-	state->playStatus.onChange = [this](ChannelStatus status) {
-		midiLighter.sendStatus(status, g_engine.mixer.isChannelAudible(*this));
-	};
-
-	if (samplePlayer)
-	{
-		samplePlayer->onLastFrame = [this]() {
-			sampleAdvancer::onLastFrame(*this, g_engine.sequencer.isRunning());
-		};
-	}
+	initCallbacks();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -259,16 +250,7 @@ Data::Data(const Patch::Channel& p, State& s, Buffer& b, float samplerateRatio, 
 		break;
 	}
 
-	state->playStatus.onChange = [this](ChannelStatus status) {
-		midiLighter.sendStatus(status, g_engine.mixer.isChannelAudible(*this));
-	};
-
-	if (samplePlayer)
-	{
-		samplePlayer->onLastFrame = [this] {
-			sampleAdvancer::onLastFrame(*this, g_engine.sequencer.isRunning());
-		};
-	}
+	initCallbacks();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -318,16 +300,7 @@ Data& Data::operator=(const Data& other)
 	sampleActionRecorder = other.sampleActionRecorder;
 	midiActionRecorder   = other.midiActionRecorder;
 
-	state->playStatus.onChange = [this](ChannelStatus status) {
-		midiLighter.sendStatus(status, g_engine.mixer.isChannelAudible(*this));
-	};
-
-	if (samplePlayer)
-	{
-		samplePlayer->onLastFrame = [this] {
-			sampleAdvancer::onLastFrame(*this, g_engine.sequencer.isRunning());
-		};
-	}
+	initCallbacks();
 
 	return *this;
 }
@@ -384,6 +357,22 @@ bool Data::isReadingActions() const
 {
 	ChannelStatus s = state->recStatus.load();
 	return s == ChannelStatus::PLAY || s == ChannelStatus::ENDING;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Data::initCallbacks()
+{
+	state->playStatus.onChange = [this](ChannelStatus status) {
+		midiLighter.sendStatus(status, g_engine.mixer.isChannelAudible(*this));
+	};
+
+	if (samplePlayer)
+	{
+		samplePlayer->onLastFrame = [this]() {
+			sampleAdvancer::onLastFrame(*this, g_engine.sequencer.isRunning());
+		};
+	}
 }
 
 /* -------------------------------------------------------------------------- */
