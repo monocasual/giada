@@ -63,7 +63,7 @@ struct Data
 	bool             velocityAsVol; // Velocity drives volume
 	WaveReader       waveReader;
 
-	std::function<void(const channel::Data&)> onLastFrame;
+	std::function<void()> onLastFrame;
 };
 
 void react(channel::Data& ch, const EventDispatcher::Event& e);

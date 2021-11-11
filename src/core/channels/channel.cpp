@@ -195,8 +195,8 @@ Data::Data(ChannelType type, ID id, ID columnId, State& s, Buffer& b)
 
 	if (samplePlayer)
 	{
-		samplePlayer->onLastFrame = [](const Data& ch) {
-			sampleAdvancer::onLastFrame(ch, g_engine.sequencer.isRunning());
+		samplePlayer->onLastFrame = [this]() {
+			sampleAdvancer::onLastFrame(*this, g_engine.sequencer.isRunning());
 		};
 	}
 }
@@ -257,8 +257,8 @@ Data::Data(const Patch::Channel& p, State& s, Buffer& b, float samplerateRatio, 
 
 	if (samplePlayer)
 	{
-		samplePlayer->onLastFrame = [](const Data& ch) {
-			sampleAdvancer::onLastFrame(ch, g_engine.sequencer.isRunning());
+		samplePlayer->onLastFrame = [this] {
+			sampleAdvancer::onLastFrame(*this, g_engine.sequencer.isRunning());
 		};
 	}
 }
@@ -312,8 +312,8 @@ Data& Data::operator=(const Data& other)
 
 	if (samplePlayer)
 	{
-		samplePlayer->onLastFrame = [](const Data& ch) {
-			sampleAdvancer::onLastFrame(ch, g_engine.sequencer.isRunning());
+		samplePlayer->onLastFrame = [this] {
+			sampleAdvancer::onLastFrame(*this, g_engine.sequencer.isRunning());
 		};
 	}
 

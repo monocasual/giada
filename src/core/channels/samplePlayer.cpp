@@ -202,7 +202,7 @@ void render(const channel::Data& ch)
 
 		tracker = begin;
 		ch.samplePlayer->waveReader.last();
-		ch.samplePlayer->onLastFrame(ch);
+		ch.samplePlayer->onLastFrame();
 		if (shouldLoop_(ch) && res.generated < ch.buffer->audio.countFrames())
 			tracker += fillBuffer_(ch, tracker, res.generated).used;
 	}
