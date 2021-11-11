@@ -93,8 +93,8 @@ struct Data
 	Data(ChannelType t, ID id, ID columnId, State& state, Buffer& buffer);
 	Data(const Patch::Channel& p, State& state, Buffer& buffer, float samplerateRatio, Wave* w);
 	Data(const Data& o);
-	Data(Data&& o)      = default;
-	Data& operator=(const Data&);
+	Data(Data&& o) = default;
+	Data& operator =(const Data&);
 	Data& operator=(Data&&) = default;
 
 	bool operator==(const Data&);
@@ -151,7 +151,7 @@ void advance(const Data& d, const Sequencer::EventBuffer& e);
 Reacts to live events coming from the EventDispatcher (human events) and
 updates itself accordingly. */
 
-void react(Data& d, const EventDispatcher::EventBuffer& e, bool audible);
+void react(Data& d, const EventDispatcher::EventBuffer& e);
 
 /* render
 Renders audio data to I/O buffers. */

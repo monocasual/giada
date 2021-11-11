@@ -193,6 +193,10 @@ Data::Data(ChannelType type, ID id, ID columnId, State& s, Buffer& b)
 		break;
 	}
 
+	state->playStatus.onChange = [this](ChannelStatus status) {
+		midiLighter.sendStatus(status, g_engine.mixer.isChannelAudible(*this));
+	};
+
 	if (samplePlayer)
 	{
 		samplePlayer->onLastFrame = [this]() {
@@ -255,6 +259,10 @@ Data::Data(const Patch::Channel& p, State& s, Buffer& b, float samplerateRatio, 
 		break;
 	}
 
+	state->playStatus.onChange = [this](ChannelStatus status) {
+		midiLighter.sendStatus(status, g_engine.mixer.isChannelAudible(*this));
+	};
+
 	if (samplePlayer)
 	{
 		samplePlayer->onLastFrame = [this] {
@@ -309,6 +317,10 @@ Data& Data::operator=(const Data& other)
 	midiSender           = other.midiSender;
 	sampleActionRecorder = other.sampleActionRecorder;
 	midiActionRecorder   = other.midiActionRecorder;
+
+	state->playStatus.onChange = [this](ChannelStatus status) {
+		midiLighter.sendStatus(status, g_engine.mixer.isChannelAudible(*this));
+	};
 
 	if (samplePlayer)
 	{
@@ -395,7 +407,7 @@ void advance(const Data& d, const Sequencer::EventBuffer& events)
 
 /* -------------------------------------------------------------------------- */
 
-void react(Data& d, const EventDispatcher::EventBuffer& events, bool audible)
+void react(Data& d, const EventDispatcher::EventBuffer& events)
 {
 	for (const EventDispatcher::Event& e : events)
 	{
@@ -403,8 +415,6 @@ void react(Data& d, const EventDispatcher::EventBuffer& events, bool audible)
 			continue;
 
 		react_(d, e);
-		midiLighter::react(d, e, audible);
-
 		if (d.midiController)
 			midiController::react(d, e);
 		if (d.midiSender)

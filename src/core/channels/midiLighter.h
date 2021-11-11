@@ -46,6 +46,10 @@ struct Data
 	Data(MidiMapper<KernelMidiI>&, const Patch::Channel&);
 	Data(const Data& o) = default;
 
+	void sendStatus(ChannelStatus, bool audible);
+	void sendMute(bool isMuted);
+	void sendSolo(bool isSoloed);
+
 	MidiMapper<KernelMidiI>* midiMapper;
 
 	/* enabled
@@ -59,8 +63,6 @@ struct Data
 	MidiLearnParam mute;
 	MidiLearnParam solo;
 };
-
-void react(channel::Data& ch, const EventDispatcher::Event& e, bool audible);
 
 extern template struct Data<KernelMidi>;
 #ifdef WITH_TESTS
