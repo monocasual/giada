@@ -231,7 +231,7 @@ void MixerHandler::renameChannel(ID channelId, const std::string& name)
 void MixerHandler::updateSoloCount()
 {
 	bool hasSolos = forAnyChannel([](const channel::Data& ch) {
-		return !ch.isInternal() && ch.solo;
+		return ch.isSoloed();
 	});
 
 	m_model.get().mixer.hasSolos = hasSolos;

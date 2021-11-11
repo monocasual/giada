@@ -103,9 +103,13 @@ struct Data
 	bool isReadingActions() const;
 	bool isInternal() const;
 	bool isMuted() const;
+	bool isSoloed() const;
 	bool canInputRec() const;
 	bool canActionRec() const;
 	bool hasWave() const;
+
+	void setMute(bool);
+	void setSolo(bool);
 
 	State*      state;
 	Buffer*     buffer;
@@ -115,8 +119,6 @@ struct Data
 	float       volume;
 	float       volume_i; // Internal volume used for velocity-drives-volume mode on Sample Channels
 	float       pan;
-	bool        mute;
-	bool        solo;
 	bool        armed;
 	int         key;
 	bool        hasActions;
@@ -142,6 +144,9 @@ struct Data
 
 private:
 	void initCallbacks();
+
+	bool m_mute;
+	bool m_solo;
 };
 
 /* advance

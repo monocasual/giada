@@ -70,7 +70,7 @@ void react_(Data& d, const EventDispatcher::Event& e)
 		break;
 
 	case EventDispatcher::EventType::CHANNEL_MUTE:
-		d.mute = !d.mute;
+		d.setMute(!d.isMuted());
 		break;
 
 	case EventDispatcher::EventType::CHANNEL_TOGGLE_ARM:
@@ -78,7 +78,7 @@ void react_(Data& d, const EventDispatcher::Event& e)
 		break;
 
 	case EventDispatcher::EventType::CHANNEL_SOLO:
-		d.solo = !d.solo;
+		d.setSolo(!d.isSoloed());
 		g_engine.mixerHandler.updateSoloCount();
 		break;
 
@@ -158,13 +158,13 @@ Data::Data(ChannelType type, ID id, ID columnId, State& s, Buffer& b)
 , volume(G_DEFAULT_VOL)
 , volume_i(G_DEFAULT_VOL)
 , pan(G_DEFAULT_PAN)
-, mute(false)
-, solo(false)
 , armed(false)
 , key(0)
 , hasActions(false)
 , height(G_GUI_UNIT)
 , midiLighter(g_engine.midiMapper)
+, m_mute(false)
+, m_solo(false)
 {
 	switch (type)
 	{
@@ -207,8 +207,6 @@ Data::Data(const Patch::Channel& p, State& s, Buffer& b, float samplerateRatio, 
 , volume(p.volume)
 , volume_i(G_DEFAULT_VOL)
 , pan(p.pan)
-, mute(p.mute)
-, solo(p.solo)
 , armed(p.armed)
 , key(p.key)
 , hasActions(p.hasActions)
@@ -219,6 +217,8 @@ Data::Data(const Patch::Channel& p, State& s, Buffer& b, float samplerateRatio, 
 #endif
 , midiLearner(p)
 , midiLighter(g_engine.midiMapper, p)
+, m_mute(p.mute)
+, m_solo(p.solo)
 {
 	state->readActions.store(p.readActions);
 	state->recStatus.store(p.readActions ? ChannelStatus::PLAY : ChannelStatus::OFF);
@@ -276,8 +276,8 @@ Data& Data::operator=(const Data& other)
 	volume     = other.volume;
 	volume_i   = other.volume_i;
 	pan        = other.pan;
-	mute       = other.mute;
-	solo       = other.solo;
+	m_mute     = other.m_mute;
+	m_solo     = other.m_solo;
 	armed      = other.armed;
 	key        = other.key;
 	hasActions = other.hasActions;
@@ -322,7 +322,12 @@ bool Data::isInternal() const
 bool Data::isMuted() const
 {
 	/* Internals can't be muted. */
-	return !isInternal() && mute;
+	return !isInternal() && m_mute;
+}
+
+bool Data::isSoloed() const
+{
+	return m_solo;
 }
 
 bool Data::canInputRec() const
@@ -357,6 +362,22 @@ bool Data::isReadingActions() const
 {
 	ChannelStatus s = state->recStatus.load();
 	return s == ChannelStatus::PLAY || s == ChannelStatus::ENDING;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Data::setMute(bool v)
+{
+	if (m_mute != v)
+		midiLighter.sendMute(v);
+	m_mute = v;
+}
+
+void Data::setSolo(bool v)
+{
+	if (m_solo != v)
+		midiLighter.sendSolo(v);
+	m_solo = v;
 }
 
 /* -------------------------------------------------------------------------- */

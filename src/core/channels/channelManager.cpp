@@ -109,8 +109,8 @@ const Patch::Channel ChannelManager::serializeChannel(const channel::Data& c)
 	pc.height            = c.height;
 	pc.name              = c.name;
 	pc.key               = c.key;
-	pc.mute              = c.mute;
-	pc.solo              = c.solo;
+	pc.mute              = c.isMuted();
+	pc.solo              = c.isSoloed();
 	pc.volume            = c.volume;
 	pc.pan               = c.pan;
 	pc.hasActions        = c.hasActions;

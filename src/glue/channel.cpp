@@ -150,8 +150,8 @@ bool          Data::getReadActions() const { return m_channel.state->readActions
 bool          Data::isRecordingInput() const { return g_engine.recorder.isRecordingInput(); }
 bool          Data::isRecordingAction() const { return g_engine.recorder.isRecordingAction(); }
 /* TODO - useless methods, turn them into member vars */
-bool Data::getSolo() const { return m_channel.solo; }
-bool Data::getMute() const { return m_channel.mute; }
+bool Data::getSolo() const { return m_channel.isSoloed(); }
+bool Data::getMute() const { return m_channel.isMuted(); }
 bool Data::isArmed() const { return m_channel.armed; }
 
 /* -------------------------------------------------------------------------- */

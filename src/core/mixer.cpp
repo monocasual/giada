@@ -194,10 +194,10 @@ bool Mixer::isChannelAudible(const channel::Data& c) const
 {
 	if (c.isInternal())
 		return true;
-	if (c.mute)
+	if (c.isMuted())
 		return false;
 	const bool hasSolos = m_model.get().mixer.hasSolos;
-	return !hasSolos || (hasSolos && c.solo);
+	return !hasSolos || (hasSolos && c.isSoloed());
 }
 
 /* -------------------------------------------------------------------------- */
