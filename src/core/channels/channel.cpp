@@ -149,9 +149,9 @@ Buffer::Buffer(Frame bufferSize)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(ChannelType type, ID id, ID columnId, State& state, Buffer& buffer)
-: state(&state)
-, buffer(&buffer)
+Data::Data(ChannelType type, ID id, ID columnId, State& s, Buffer& b)
+: state(&s)
+, buffer(&b)
 , id(id)
 , type(type)
 , columnId(columnId)
@@ -172,11 +172,11 @@ Data::Data(ChannelType type, ID id, ID columnId, State& state, Buffer& buffer)
 		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		audioReceiver.emplace();
 		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
-		samplePlayer.emplace(&state.resampler.value());
+		samplePlayer.emplace(&(state->resampler.value()));
 		break;
 
 	case ChannelType::PREVIEW:
-		samplePlayer.emplace(&state.resampler.value());
+		samplePlayer.emplace(&(state->resampler.value()));
 		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		break;
 
@@ -203,9 +203,9 @@ Data::Data(ChannelType type, ID id, ID columnId, State& state, Buffer& buffer)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const Patch::Channel& p, State& state, Buffer& buffer, float samplerateRatio, Wave* wave)
-: state(&state)
-, buffer(&buffer)
+Data::Data(const Patch::Channel& p, State& s, Buffer& b, float samplerateRatio, Wave* wave)
+: state(&s)
+, buffer(&b)
 , id(p.id)
 , type(p.type)
 , columnId(p.columnId)
@@ -225,8 +225,8 @@ Data::Data(const Patch::Channel& p, State& state, Buffer& buffer, float samplera
 , midiLearner(p)
 , midiLighter(g_engine.midiMapper, p)
 {
-	state.readActions.store(p.readActions);
-	state.recStatus.store(p.readActions ? ChannelStatus::PLAY : ChannelStatus::OFF);
+	state->readActions.store(p.readActions);
+	state->recStatus.store(p.readActions ? ChannelStatus::PLAY : ChannelStatus::OFF);
 
 	switch (type)
 	{
@@ -234,11 +234,11 @@ Data::Data(const Patch::Channel& p, State& state, Buffer& buffer, float samplera
 		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		audioReceiver.emplace(p);
 		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
-		samplePlayer.emplace(p, samplerateRatio, &state.resampler.value(), wave);
+		samplePlayer.emplace(p, samplerateRatio, &(state->resampler.value()), wave);
 		break;
 
 	case ChannelType::PREVIEW:
-		samplePlayer.emplace(p, samplerateRatio, &state.resampler.value(), nullptr);
+		samplePlayer.emplace(p, samplerateRatio, &(state->resampler.value()), nullptr);
 		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		break;
 
