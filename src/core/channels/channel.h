@@ -92,9 +92,9 @@ struct Data
 {
 	Data(ChannelType t, ID id, ID columnId, State& state, Buffer& buffer);
 	Data(const Patch::Channel& p, State& state, Buffer& buffer, float samplerateRatio, Wave* w);
-	Data(const Data& o) = default;
+	Data(const Data& o);
 	Data(Data&& o)      = default;
-	Data& operator=(const Data&) = default;
+	Data& operator=(const Data&);
 	Data& operator=(Data&&) = default;
 
 	bool operator==(const Data&);

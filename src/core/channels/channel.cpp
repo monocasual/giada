@@ -173,9 +173,6 @@ Data::Data(ChannelType type, ID id, ID columnId, State& state, Buffer& buffer)
 		audioReceiver.emplace();
 		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
 		samplePlayer.emplace(&state.resampler.value());
-		samplePlayer->onLastFrame = [](const Data& ch) {
-			sampleAdvancer::onLastFrame(ch, g_engine.sequencer.isRunning());
-		};
 		break;
 
 	case ChannelType::PREVIEW:
@@ -194,6 +191,13 @@ Data::Data(ChannelType type, ID id, ID columnId, State& state, Buffer& buffer)
 
 	default:
 		break;
+	}
+
+	if (samplePlayer)
+	{
+		samplePlayer->onLastFrame = [](const Data& ch) {
+			sampleAdvancer::onLastFrame(ch, g_engine.sequencer.isRunning());
+		};
 	}
 }
 
@@ -231,9 +235,6 @@ Data::Data(const Patch::Channel& p, State& state, Buffer& buffer, float samplera
 		audioReceiver.emplace(p);
 		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
 		samplePlayer.emplace(p, samplerateRatio, &state.resampler.value(), wave);
-		samplePlayer->onLastFrame = [](const Data& ch) {
-			sampleAdvancer::onLastFrame(ch, g_engine.sequencer.isRunning());
-		};
 		break;
 
 	case ChannelType::PREVIEW:
@@ -253,6 +254,70 @@ Data::Data(const Patch::Channel& p, State& state, Buffer& buffer, float samplera
 	default:
 		break;
 	}
+
+	if (samplePlayer)
+	{
+		samplePlayer->onLastFrame = [](const Data& ch) {
+			sampleAdvancer::onLastFrame(ch, g_engine.sequencer.isRunning());
+		};
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+Data::Data(const Data& other)
+: midiLighter(g_engine.midiMapper)
+{
+	*this = other;
+}
+
+/* -------------------------------------------------------------------------- */
+
+Data& Data::operator=(const Data& other)
+{
+	if (this == &other)
+		return *this;
+
+	state      = other.state;
+	buffer     = other.buffer;
+	id         = other.id;
+	type       = other.type;
+	columnId   = other.columnId;
+	volume     = other.volume;
+	volume_i   = other.volume_i;
+	pan        = other.pan;
+	mute       = other.mute;
+	solo       = other.solo;
+	armed      = other.armed;
+	key        = other.key;
+	hasActions = other.hasActions;
+	name       = other.name;
+	height     = other.height;
+#ifdef WITH_VST
+	plugins = other.plugins;
+#endif
+
+	midiLearner    = other.midiLearner;
+	midiLighter    = other.midiLighter;
+	samplePlayer   = other.samplePlayer;
+	sampleReactor  = other.sampleReactor;
+	audioReceiver  = other.audioReceiver;
+	midiController = other.midiController;
+#ifdef WITH_VST
+	midiReceiver = other.midiReceiver;
+#endif
+	midiSender           = other.midiSender;
+	sampleActionRecorder = other.sampleActionRecorder;
+	midiActionRecorder   = other.midiActionRecorder;
+
+	if (samplePlayer)
+	{
+		samplePlayer->onLastFrame = [](const Data& ch) {
+			sampleAdvancer::onLastFrame(ch, g_engine.sequencer.isRunning());
+		};
+	}
+
+	return *this;
 }
 
 /* -------------------------------------------------------------------------- */
