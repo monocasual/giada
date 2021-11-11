@@ -7,6 +7,6 @@ GenericName=Drum machine and loop sequencer
 GenericName[es]=Caja de ritmos y secuenciador de loops
 Exec=giada %f
 Terminal=false
-Icon=giada-logo
+Icon=com.giadamusic.Giada
 Categories=Music;AudioVideo;Audio;Midi;X-Digital_Processing;X-Jack;X-MIDI;
 Keywords=Giada;
