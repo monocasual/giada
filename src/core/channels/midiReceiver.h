@@ -43,8 +43,9 @@ struct Data;
 
 namespace giada::m::midiReceiver
 {
-struct Data
+class Data final
 {
+public:
 	void react(const channel::Data& ch, const EventDispatcher::Event& e) const;
 	void advance(const channel::Data& ch, const Sequencer::Event& e) const;
 	void render(const channel::Data& ch, PluginHost& plugiHost) const;

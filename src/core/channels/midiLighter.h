@@ -40,8 +40,9 @@ struct Data;
 namespace giada::m::midiLighter
 {
 template <typename KernelMidiI>
-struct Data
+class Data final
 {
+public:
 	Data(MidiMapper<KernelMidiI>&);
 	Data(MidiMapper<KernelMidiI>&, const Patch::Channel&);
 	Data(const Data& o) = default;
@@ -49,8 +50,6 @@ struct Data
 	void sendStatus(ChannelStatus, bool audible);
 	void sendMute(bool isMuted);
 	void sendSolo(bool isSoloed);
-
-	MidiMapper<KernelMidiI>* midiMapper;
 
 	/* enabled
     Tells whether MIDI lighting is enabled or not. */
@@ -62,6 +61,9 @@ struct Data
 	MidiLearnParam playing;
 	MidiLearnParam mute;
 	MidiLearnParam solo;
+
+private:
+	MidiMapper<KernelMidiI>* midiMapper;
 };
 
 extern template struct Data<KernelMidi>;

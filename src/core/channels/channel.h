@@ -89,8 +89,9 @@ struct Buffer
 #endif
 };
 
-struct Data
+class Data final
 {
+public:
 	Data(ChannelType t, ID id, ID columnId, State& state, Buffer& buffer);
 	Data(const Patch::Channel& p, State& state, Buffer& buffer, float samplerateRatio, Wave* w);
 	Data(const Data& o);

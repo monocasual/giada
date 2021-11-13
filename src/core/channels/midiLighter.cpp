@@ -34,8 +34,8 @@ namespace giada::m::midiLighter
 {
 template <typename KernelMidiI>
 Data<KernelMidiI>::Data(MidiMapper<KernelMidiI>& m)
-: midiMapper(&m)
-, enabled(false)
+: enabled(false)
+, midiMapper(&m)
 {
 }
 
@@ -43,11 +43,11 @@ Data<KernelMidiI>::Data(MidiMapper<KernelMidiI>& m)
 
 template <typename KernelMidiI>
 Data<KernelMidiI>::Data(MidiMapper<KernelMidiI>& m, const Patch::Channel& p)
-: midiMapper(&m)
-, enabled(p.midiOutL)
+: enabled(p.midiOutL)
 , playing(p.midiOutLplaying)
 , mute(p.midiOutLmute)
 , solo(p.midiOutLsolo)
+, midiMapper(&m)
 {
 }
 

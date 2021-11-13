@@ -42,15 +42,13 @@ struct Data;
 
 namespace giada::m::sampleActionRecorder
 {
-struct Data
+class Data final
 {
+public:
 	Data(ActionRecorder&, Sequencer&);
 
 	void react(channel::Data&, const EventDispatcher::Event&, bool treatRecsAsLoops,
 	    bool seqIsRunning, bool canRecordActions) const;
-
-	ActionRecorder* actionRecorder;
-	Sequencer*      sequencer;
 
 private:
 	void record(channel::Data&, int note) const;
@@ -59,6 +57,9 @@ private:
 	void stopReadActions(channel::Data&, ChannelStatus, bool treatRecsAsLoops, bool seqIsRunning) const;
 	void toggleReadActions(channel::Data&, bool treatRecsAsLoops, bool seqIsRunning) const;
 	void killReadActions(channel::Data& ch) const;
+
+	ActionRecorder* actionRecorder;
+	Sequencer*      sequencer;
 };
 
 } // namespace giada::m::sampleActionRecorder

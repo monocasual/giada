@@ -41,8 +41,9 @@ struct Data;
 
 namespace giada::m::audioReceiver
 {
-struct Data
+class Data final
 {
+public:
 	Data() = default;
 	Data(const Patch::Channel& p);
 	Data(const Data& o) = default;

@@ -42,8 +42,9 @@ struct Data;
 
 namespace giada::m::samplePlayer
 {
-struct Data
+class Data final
 {
+public:
 	Data(Resampler* r);
 	Data(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w);
 
@@ -54,8 +55,8 @@ struct Data
 	ID    getWaveId() const;
 	Frame getWaveSize() const;
 	Wave* getWave() const;
-	void render(const channel::Data& ch) const;
-	
+	void  render(const channel::Data& ch) const;
+
 	void react(const EventDispatcher::Event& e);
 
 	/* loadWave

@@ -42,8 +42,9 @@ struct Data;
 
 namespace giada::m::midiSender
 {
-struct Data
+class Data final
 {
+public:
 	Data(KernelMidi&);
 	Data(const Patch::Channel& p, KernelMidi&);
 	Data(const Data& o) = default;

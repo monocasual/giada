@@ -52,8 +52,9 @@ sequencer stop, ... . */
 
 namespace giada::m::sampleReactor
 {
-struct Data
+class Data final
 {
+public:
 	Data(ID channelId, Sequencer&, model::Model&);
 
 	void react(channel::Data&, const EventDispatcher::Event&, Sequencer&, const Conf::Data&) const;

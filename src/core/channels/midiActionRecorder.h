@@ -42,8 +42,9 @@ struct Data;
 
 namespace giada::m::midiActionRecorder
 {
-struct Data
+class Data final
 {
+public:
 	Data(ActionRecorder&, Sequencer&);
 
 	void react(channel::Data&, const EventDispatcher::Event&, bool canRecordActions);

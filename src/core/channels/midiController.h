@@ -36,8 +36,9 @@ struct Data;
 
 namespace giada::m::midiController
 {
-struct Data
+class Data final
 {
+public:
 	void advance(const channel::Data& ch, const Sequencer::Event& e) const;
 	void react(channel::Data& ch, const EventDispatcher::Event& e) const;
 
