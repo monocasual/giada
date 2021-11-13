@@ -54,6 +54,27 @@ struct Data
 	ID    getWaveId() const;
 	Frame getWaveSize() const;
 	Wave* getWave() const;
+	void render(const channel::Data& ch) const;
+	
+	void react(const EventDispatcher::Event& e);
+
+	/* loadWave
+	Loads Wave 'w' into channel ch and sets it up (name, markers, ...). */
+
+	void loadWave(channel::Data& ch, Wave* w);
+
+	/* setWave
+	Just sets the pointer to a Wave object. Used during de-serialization. The
+	ratio is used to adjust begin/end points in case of patch vs. conf sample
+	rate mismatch. If nullptr, set the wave to invalid. */
+
+	void setWave(Wave* w, float samplerateRatio);
+
+	/* kickIn
+	Starts the player right away at frame 'f'. Used when launching a loop after
+	being live recorded. */
+
+	void kickIn(channel::Data& ch, Frame f);
 
 	float            pitch;
 	SamplePlayerMode mode;
@@ -64,28 +85,12 @@ struct Data
 	WaveReader       waveReader;
 
 	std::function<void()> onLastFrame;
+
+private:
+	bool               isPlaying(const channel::Data& ch) const;
+	WaveReader::Result fillBuffer(const channel::Data& ch, Frame start, Frame offset) const;
+	bool               shouldLoop(const channel::Data& ch) const;
 };
-
-void react(channel::Data& ch, const EventDispatcher::Event& e);
-void render(const channel::Data& ch);
-
-/* loadWave
-Loads Wave 'w' into channel ch and sets it up (name, markers, ...). */
-
-void loadWave(channel::Data& ch, Wave* w);
-
-/* setWave
-Just sets the pointer to a Wave object. Used during de-serialization. The
-ratio is used to adjust begin/end points in case of patch vs. conf sample
-rate mismatch. If nullptr, set the wave to invalid. */
-
-void setWave(channel::Data& ch, Wave* w, float samplerateRatio);
-
-/* kickIn
-Starts the player right away at frame 'f'. Used when launching a loop after
-being live recorded. */
-
-void kickIn(channel::Data& ch, Frame f);
 } // namespace giada::m::samplePlayer
 
 #endif

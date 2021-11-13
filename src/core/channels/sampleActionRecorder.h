@@ -46,12 +46,21 @@ struct Data
 {
 	Data(ActionRecorder&, Sequencer&);
 
+	void react(channel::Data&, const EventDispatcher::Event&, bool treatRecsAsLoops,
+	    bool seqIsRunning, bool canRecordActions) const;
+
 	ActionRecorder* actionRecorder;
 	Sequencer*      sequencer;
+
+private:
+	void record(channel::Data&, int note) const;
+	void onKeyPress(channel::Data&) const;
+	void startReadActions(channel::Data&, bool treatRecsAsLoops) const;
+	void stopReadActions(channel::Data&, ChannelStatus, bool treatRecsAsLoops, bool seqIsRunning) const;
+	void toggleReadActions(channel::Data&, bool treatRecsAsLoops, bool seqIsRunning) const;
+	void killReadActions(channel::Data& ch) const;
 };
 
-void react(channel::Data& ch, const EventDispatcher::Event& e, bool treatRecsAsLoops,
-    bool seqIsRunning, bool canRecordActions);
 } // namespace giada::m::sampleActionRecorder
 
 #endif

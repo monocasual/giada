@@ -34,43 +34,18 @@
 
 namespace giada::m::midiReceiver
 {
-namespace
-{
-void sendToPlugins_(const channel::Data& ch, const MidiEvent& e, Frame localFrame)
-{
-	ch.buffer->midiQueue.push(MidiEvent(e.getRaw(), localFrame));
-}
-
-/* -------------------------------------------------------------------------- */
-
-void parseMidi_(const channel::Data& ch, const MidiEvent& e)
-{
-	/* Now all messages are turned into Channel-0 messages. Giada doesn't care 
-	about holding MIDI channel information. Moreover, having all internal 
-	messages on channel 0 is way easier. Then send it to plug-ins. */
-
-	MidiEvent flat(e);
-	flat.setChannel(0);
-	sendToPlugins_(ch, flat, /*delta=*/0);
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-void react(const channel::Data& ch, const EventDispatcher::Event& e)
+void Data::react(const channel::Data& ch, const EventDispatcher::Event& e) const
 {
 	switch (e.type)
 	{
 	case EventDispatcher::EventType::MIDI:
-		parseMidi_(ch, std::get<Action>(e.data).event);
+		parseMidi(ch, std::get<Action>(e.data).event);
 		break;
 
 	case EventDispatcher::EventType::KEY_KILL:
 	case EventDispatcher::EventType::SEQUENCER_STOP:
 	case EventDispatcher::EventType::SEQUENCER_REWIND:
-		sendToPlugins_(ch, MidiEvent(G_MIDI_ALL_NOTES_OFF), 0);
+		sendToPlugins(ch, MidiEvent(G_MIDI_ALL_NOTES_OFF), 0);
 		break;
 
 	default:
@@ -80,17 +55,17 @@ void react(const channel::Data& ch, const EventDispatcher::Event& e)
 
 /* -------------------------------------------------------------------------- */
 
-void advance(const channel::Data& ch, const Sequencer::Event& e)
+void Data::advance(const channel::Data& ch, const Sequencer::Event& e) const
 {
 	if (e.type == Sequencer::EventType::ACTIONS && ch.isPlaying())
 		for (const Action& action : *e.actions)
 			if (action.channelId == ch.id)
-				sendToPlugins_(ch, action.event, e.delta);
+				sendToPlugins(ch, action.event, e.delta);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void render(const channel::Data& ch, PluginHost& pluginHost)
+void Data::render(const channel::Data& ch, PluginHost& pluginHost) const
 {
 	ch.buffer->midi.clear();
 
@@ -105,6 +80,26 @@ void render(const channel::Data& ch, PluginHost& pluginHost)
 	}
 
 	pluginHost.processStack(ch.buffer->audio, ch.plugins, &ch.buffer->midi);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Data::sendToPlugins(const channel::Data& ch, const MidiEvent& e, Frame localFrame) const
+{
+	ch.buffer->midiQueue.push(MidiEvent(e.getRaw(), localFrame));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Data::parseMidi(const channel::Data& ch, const MidiEvent& e) const
+{
+	/* Now all messages are turned into Channel-0 messages. Giada doesn't care 
+	about holding MIDI channel information. Moreover, having all internal 
+	messages on channel 0 is way easier. Then send it to plug-ins. */
+
+	MidiEvent flat(e);
+	flat.setChannel(0);
+	sendToPlugins(ch, flat, /*delta=*/0);
 }
 } // namespace giada::m::midiReceiver
 

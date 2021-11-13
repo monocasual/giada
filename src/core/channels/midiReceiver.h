@@ -45,11 +45,14 @@ namespace giada::m::midiReceiver
 {
 struct Data
 {
-};
+	void react(const channel::Data& ch, const EventDispatcher::Event& e) const;
+	void advance(const channel::Data& ch, const Sequencer::Event& e) const;
+	void render(const channel::Data& ch, PluginHost& plugiHost) const;
 
-void react(const channel::Data& ch, const EventDispatcher::Event& e);
-void advance(const channel::Data& ch, const Sequencer::Event& e);
-void render(const channel::Data& ch, PluginHost& plugiHost);
+private:
+	void sendToPlugins(const channel::Data& ch, const MidiEvent& e, Frame localFrame) const;
+	void parseMidi(const channel::Data& ch, const MidiEvent& e) const;
+};
 } // namespace giada::m::midiReceiver
 
 #endif // WITH_VST

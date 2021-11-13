@@ -111,7 +111,7 @@ void Mixer::advanceChannels(const Sequencer::EventBuffer& events, const model::L
 {
 	for (const channel::Data& c : rtLayout.channels)
 		if (!c.isInternal())
-			channel::advance(c, events);
+			c.advance(events);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -285,24 +285,24 @@ void Mixer::renderChannels(const std::vector<channel::Data>& channels, mcl::Audi
 {
 	for (const channel::Data& c : channels)
 		if (!c.isInternal())
-			channel::render(c, &out, &in, isChannelAudible(c));
+			c.render(&out, &in, isChannelAudible(c));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::renderMasterIn(const channel::Data& ch, mcl::AudioBuffer& in) const
 {
-	channel::render(ch, nullptr, &in, true);
+	ch.render(nullptr, &in, true);
 }
 
 void Mixer::renderMasterOut(const channel::Data& ch, mcl::AudioBuffer& out) const
 {
-	channel::render(ch, &out, nullptr, true);
+	ch.render(&out, nullptr, true);
 }
 
 void Mixer::renderPreview(const channel::Data& ch, mcl::AudioBuffer& out) const
 {
-	channel::render(ch, &out, nullptr, true);
+	ch.render(&out, nullptr, true);
 }
 
 /* -------------------------------------------------------------------------- */

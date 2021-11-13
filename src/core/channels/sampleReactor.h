@@ -55,9 +55,21 @@ namespace giada::m::sampleReactor
 struct Data
 {
 	Data(ID channelId, Sequencer&, model::Model&);
+
+	void react(channel::Data&, const EventDispatcher::Event&, Sequencer&, const Conf::Data&) const;
+
+private:
+	void          toggleReadActions(channel::Data&, bool isSequencerRunning, bool treatRecsAsLoops) const;
+	void          onStopBySeq(channel::Data&, bool chansStopOnSeqHalt) const;
+	void          release(channel::Data&, Sequencer&) const;
+	void          kill(channel::Data&) const;
+	void          press(channel::Data&, Sequencer&, int velocity) const;
+	ChannelStatus pressWhilePlay(channel::Data&, Sequencer&, SamplePlayerMode, bool isLoop) const;
+	ChannelStatus pressWhileOff(channel::Data&, Sequencer&, int velocity, bool isLoop) const;
+	void          reset(channel::Data&) const;
+	void          rewind(channel::Data&, Frame localFrame) const;
 };
 
-void react(channel::Data&, const EventDispatcher::Event&, Sequencer&, const Conf::Data&);
 } // namespace giada::m::sampleReactor
 
 #endif

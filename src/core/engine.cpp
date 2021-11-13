@@ -66,7 +66,7 @@ Engine::Engine()
 	eventDispatcher.onMidiProcess     = [this](const MidiEvent& e) { midiDispatcher.process(e); };
 	eventDispatcher.onProcessChannels = [this](const EventDispatcher::EventBuffer& eb) {
 		for (channel::Data& ch : model.get().channels)
-			channel::react(ch, eb);
+			ch.react(eb);
 		model.swap(model::SwapType::SOFT); // TODO - is this necessary???
 	};
 	eventDispatcher.onProcessSequencer = [this](const EventDispatcher::EventBuffer& eb) {

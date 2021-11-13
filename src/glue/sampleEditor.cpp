@@ -154,7 +154,8 @@ Frame Data::getFramesInLoop() const
 Data getData(ID channelId)
 {
 	/* Prepare the preview channel first, then return Data object. */
-	m::samplePlayer::loadWave(getChannel_(m::Mixer::PREVIEW_CHANNEL_ID), &getWave_(channelId));
+	m::channel::Data& previewChannel = getChannel_(m::Mixer::PREVIEW_CHANNEL_ID);
+	previewChannel.samplePlayer->loadWave(previewChannel, &getWave_(channelId));
 	g_engine.model.swap(m::model::SwapType::SOFT);
 
 	return Data(getChannel_(channelId));
@@ -247,7 +248,7 @@ void paste(ID channelId, Frame a)
 
 	/* Pass the old wave that contains the pasted data to channel. */
 
-	m::samplePlayer::setWave(getChannel_(channelId), &wave, 1.0f);
+	getChannel_(channelId).samplePlayer->setWave(&wave, 1.0f);
 
 	/* In the meantime, shift begin/end points to keep the previous position. */
 
@@ -346,7 +347,9 @@ void setPreviewTracker(Frame f)
 
 void cleanupPreview()
 {
-	m::samplePlayer::loadWave(g_engine.model.get().getChannel(m::Mixer::PREVIEW_CHANNEL_ID), nullptr);
+	m::channel::Data& channel = getChannel_(m::Mixer::PREVIEW_CHANNEL_ID);
+
+	channel.samplePlayer->loadWave(channel, nullptr);
 	g_engine.model.swap(m::model::SwapType::SOFT);
 }
 

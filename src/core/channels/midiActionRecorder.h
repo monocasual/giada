@@ -46,11 +46,12 @@ struct Data
 {
 	Data(ActionRecorder&, Sequencer&);
 
+	void react(channel::Data&, const EventDispatcher::Event&, bool canRecordActions);
+
 	ActionRecorder* actionRecorder;
 	Sequencer*      sequencer;
 };
 
-void react(channel::Data& ch, const EventDispatcher::Event& e, bool canRecordActions);
 } // namespace giada::m::midiActionRecorder
 
 #endif

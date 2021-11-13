@@ -54,88 +54,6 @@ mcl::AudioBuffer::Pan calcPanning_(float pan)
 		return {1.0f, 1.0f};
 	return {1.0f - pan, pan};
 }
-
-/* -------------------------------------------------------------------------- */
-
-void react_(Data& d, const EventDispatcher::Event& e)
-{
-	switch (e.type)
-	{
-	case EventDispatcher::EventType::CHANNEL_VOLUME:
-		d.volume = std::get<float>(e.data);
-		break;
-
-	case EventDispatcher::EventType::CHANNEL_PAN:
-		d.pan = std::get<float>(e.data);
-		break;
-
-	case EventDispatcher::EventType::CHANNEL_MUTE:
-		d.setMute(!d.isMuted());
-		break;
-
-	case EventDispatcher::EventType::CHANNEL_TOGGLE_ARM:
-		d.armed = !d.armed;
-		break;
-
-	case EventDispatcher::EventType::CHANNEL_SOLO:
-		d.setSolo(!d.isSoloed());
-		g_engine.mixerHandler.updateSoloCount();
-		break;
-
-	default:
-		break;
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void renderMasterOut_(const Data& d, mcl::AudioBuffer& out)
-{
-	d.buffer->audio.set(out, /*gain=*/1.0f);
-#ifdef WITH_VST
-	if (d.plugins.size() > 0)
-		g_engine.pluginHost.processStack(d.buffer->audio, d.plugins, nullptr);
-#endif
-	out.set(d.buffer->audio, d.volume);
-}
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef WITH_VST
-
-void renderMasterIn_(const Data& d, mcl::AudioBuffer& in)
-{
-	if (d.plugins.size() > 0)
-		g_engine.pluginHost.processStack(in, d.plugins, nullptr);
-}
-
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-void renderChannel_(const Data& d, mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool audible)
-{
-	d.buffer->audio.clear();
-
-	if (d.samplePlayer)
-		samplePlayer::render(d);
-	if (d.audioReceiver)
-		audioReceiver::render(d, in);
-
-		/* If MidiReceiver exists, let it process the plug-in stack, as it can 
-	contain plug-ins that take MIDI events (i.e. synths). Otherwise process the
-	plug-in stack internally with no MIDI events. */
-
-#ifdef WITH_VST
-	if (d.midiReceiver)
-		midiReceiver::render(d, g_engine.pluginHost);
-	else if (d.plugins.size() > 0)
-		g_engine.pluginHost.processStack(d.buffer->audio, d.plugins, nullptr);
-#endif
-
-	if (audible)
-		out.sum(d.buffer->audio, d.volume * d.volume_i, calcPanning_(d.pan));
-}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -169,10 +87,11 @@ Data::Data(ChannelType type, ID id, ID columnId, State& s, Buffer& b)
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
+		samplePlayer.emplace(&(state->resampler.value()));
+		sampleAdvancer.emplace();
 		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		audioReceiver.emplace();
 		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
-		samplePlayer.emplace(&(state->resampler.value()));
 		break;
 
 	case ChannelType::PREVIEW:
@@ -226,10 +145,11 @@ Data::Data(const Patch::Channel& p, State& s, Buffer& b, float samplerateRatio, 
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
+		samplePlayer.emplace(p, samplerateRatio, &(state->resampler.value()), wave);
+		sampleAdvancer.emplace();
 		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		audioReceiver.emplace(p);
 		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
-		samplePlayer.emplace(p, samplerateRatio, &(state->resampler.value()), wave);
 		break;
 
 	case ChannelType::PREVIEW:
@@ -290,6 +210,7 @@ Data& Data::operator=(const Data& other)
 	midiLearner    = other.midiLearner;
 	midiLighter    = other.midiLighter;
 	samplePlayer   = other.samplePlayer;
+	sampleAdvancer = other.sampleAdvancer;
 	sampleReactor  = other.sampleReactor;
 	audioReceiver  = other.audioReceiver;
 	midiController = other.midiController;
@@ -391,71 +312,153 @@ void Data::initCallbacks()
 	if (samplePlayer)
 	{
 		samplePlayer->onLastFrame = [this]() {
-			sampleAdvancer::onLastFrame(*this, g_engine.sequencer.isRunning());
+			sampleAdvancer->onLastFrame(*this, g_engine.sequencer.isRunning());
 		};
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void advance(const Data& d, const Sequencer::EventBuffer& events)
+void Data::advance(const Sequencer::EventBuffer& events) const
 {
 	for (const Sequencer::Event& e : events)
 	{
-		if (d.midiController)
-			midiController::advance(d, e);
-		if (d.samplePlayer)
-			sampleAdvancer::advance(d, e);
-		if (d.midiSender)
-			midiSender::advance(d, e);
+		if (midiController)
+			midiController->advance(*this, e);
+		if (samplePlayer)
+			sampleAdvancer->advance(*this, e);
+		if (midiSender)
+			midiSender->advance(*this, e);
 #ifdef WITH_VST
-		if (d.midiReceiver)
-			midiReceiver::advance(d, e);
+		if (midiReceiver)
+			midiReceiver->advance(*this, e);
 #endif
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void react(Data& d, const EventDispatcher::EventBuffer& events)
+void Data::react(const EventDispatcher::EventBuffer& events)
 {
 	for (const EventDispatcher::Event& e : events)
 	{
-		if (e.channelId > 0 && e.channelId != d.id)
+		if (e.channelId > 0 && e.channelId != id)
 			continue;
 
-		react_(d, e);
-		if (d.midiController)
-			midiController::react(d, e);
-		if (d.midiSender)
-			midiSender::react(d, e);
-		if (d.samplePlayer)
-			samplePlayer::react(d, e);
-		if (d.midiActionRecorder)
-			midiActionRecorder::react(d, e, g_engine.recorder.canRecordActions());
-		if (d.sampleActionRecorder)
-			sampleActionRecorder::react(d, e, g_engine.conf.data.treatRecsAsLoops,
+		react(e);
+		if (midiController)
+			midiController->react(*this, e);
+		if (midiSender)
+			midiSender->react(*this, e);
+		if (samplePlayer)
+			samplePlayer->react(e);
+		if (midiActionRecorder)
+			midiActionRecorder->react(*this, e, g_engine.recorder.canRecordActions());
+		if (sampleActionRecorder)
+			sampleActionRecorder->react(*this, e, g_engine.conf.data.treatRecsAsLoops,
 			    g_engine.sequencer.isRunning(), g_engine.recorder.canRecordActions());
-		if (d.sampleReactor)
-			sampleReactor::react(d, e, g_engine.sequencer, g_engine.conf.data);
+		if (sampleReactor)
+			sampleReactor->react(*this, e, g_engine.sequencer, g_engine.conf.data);
 #ifdef WITH_VST
-		if (d.midiReceiver)
-			midiReceiver::react(d, e);
+		if (midiReceiver)
+			midiReceiver->react(*this, e);
 #endif
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void render(const Data& d, mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible)
+void Data::react(const EventDispatcher::Event& e)
 {
-	if (d.id == Mixer::MASTER_OUT_CHANNEL_ID)
-		renderMasterOut_(d, *out);
+	switch (e.type)
+	{
+	case EventDispatcher::EventType::CHANNEL_VOLUME:
+		volume = std::get<float>(e.data);
+		break;
+
+	case EventDispatcher::EventType::CHANNEL_PAN:
+		pan = std::get<float>(e.data);
+		break;
+
+	case EventDispatcher::EventType::CHANNEL_MUTE:
+		setMute(!isMuted());
+		break;
+
+	case EventDispatcher::EventType::CHANNEL_TOGGLE_ARM:
+		armed = !armed;
+		break;
+
+	case EventDispatcher::EventType::CHANNEL_SOLO:
+		setSolo(!isSoloed());
+		g_engine.mixerHandler.updateSoloCount();
+		break;
+
+	default:
+		break;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Data::render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible) const
+{
+	if (id == Mixer::MASTER_OUT_CHANNEL_ID)
+		renderMasterOut(*out);
 #ifdef WITH_VST
-	else if (d.id == Mixer::MASTER_IN_CHANNEL_ID)
-		renderMasterIn_(d, *in);
+	else if (id == Mixer::MASTER_IN_CHANNEL_ID)
+		renderMasterIn(*in);
 #endif
 	else
-		renderChannel_(d, *out, *in, audible);
+		renderChannel(*out, *in, audible);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Data::renderMasterOut(mcl::AudioBuffer& out) const
+{
+	buffer->audio.set(out, /*gain=*/1.0f);
+#ifdef WITH_VST
+	if (plugins.size() > 0)
+		g_engine.pluginHost.processStack(buffer->audio, plugins, nullptr);
+#endif
+	out.set(buffer->audio, volume);
+}
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef WITH_VST
+
+void Data::renderMasterIn(mcl::AudioBuffer& in) const
+{
+	if (plugins.size() > 0)
+		g_engine.pluginHost.processStack(in, plugins, nullptr);
+}
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+void Data::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool audible) const
+{
+	buffer->audio.clear();
+
+	if (samplePlayer)
+		samplePlayer->render(*this);
+	if (audioReceiver)
+		audioReceiver->render(*this, in);
+
+		/* If MidiReceiver exists, let it process the plug-in stack, as it can 
+	contain plug-ins that take MIDI events (i.e. synths). Otherwise process the
+	plug-in stack internally with no MIDI events. */
+
+#ifdef WITH_VST
+	if (midiReceiver)
+		midiReceiver->render(*this, g_engine.pluginHost);
+	else if (plugins.size() > 0)
+		g_engine.pluginHost.processStack(buffer->audio, plugins, nullptr);
+#endif
+
+	if (audible)
+		out.sum(buffer->audio, volume * volume_i, calcPanning_(pan));
 }
 } // namespace giada::m::channel

@@ -47,11 +47,11 @@ struct Data
 	Data(const Patch::Channel& p);
 	Data(const Data& o) = default;
 
+	void render(const channel::Data& ch, const mcl::AudioBuffer& in) const;
+
 	bool inputMonitor;
 	bool overdubProtection;
 };
-
-void render(const channel::Data& ch, const mcl::AudioBuffer& in);
 } // namespace giada::m::audioReceiver
 
 #endif

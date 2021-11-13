@@ -38,6 +38,7 @@
 #include "core/channels/midiLighter.h"
 #include "core/channels/midiSender.h"
 #include "core/channels/sampleActionRecorder.h"
+#include "core/channels/sampleAdvancer.h"
 #include "core/channels/samplePlayer.h"
 #include "core/channels/sampleReactor.h"
 #include "core/const.h"
@@ -99,6 +100,23 @@ struct Data
 
 	bool operator==(const Data&);
 
+	/* advance
+	Advances internal state by processing static events (e.g. pre-recorded 
+	actions or sequencer events) in the current block. */
+
+	void advance(const Sequencer::EventBuffer& e) const;
+
+	/* render
+	Renders audio data to I/O buffers. */
+
+	void render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible) const;
+
+	/* react
+	Reacts to live events coming from the EventDispatcher (human events) and
+	updates itself accordingly. */
+
+	void react(const EventDispatcher::EventBuffer& e);
+
 	bool isPlaying() const;
 	bool isReadingActions() const;
 	bool isInternal() const;
@@ -132,6 +150,7 @@ struct Data
 	midiLighter::Data<KernelMidi> midiLighter;
 
 	std::optional<samplePlayer::Data>   samplePlayer;
+	std::optional<SampleAdvancer>       sampleAdvancer;
 	std::optional<sampleReactor::Data>  sampleReactor;
 	std::optional<audioReceiver::Data>  audioReceiver;
 	std::optional<midiController::Data> midiController;
@@ -143,28 +162,16 @@ struct Data
 	std::optional<midiActionRecorder::Data>   midiActionRecorder;
 
 private:
+	void renderMasterOut(mcl::AudioBuffer&) const;
+	void renderMasterIn(mcl::AudioBuffer&) const;
+	void renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool audible) const;
+
 	void initCallbacks();
+	void react(const EventDispatcher::Event&);
 
 	bool m_mute;
 	bool m_solo;
 };
-
-/* advance
-Advances internal state by processing static events (e.g. pre-recorded 
-actions or sequencer events) in the current block. */
-
-void advance(const Data& d, const Sequencer::EventBuffer& e);
-
-/* react
-Reacts to live events coming from the EventDispatcher (human events) and
-updates itself accordingly. */
-
-void react(Data& d, const EventDispatcher::EventBuffer& e);
-
-/* render
-Renders audio data to I/O buffers. */
-
-void render(const Data& d, mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible);
 } // namespace giada::m::channel
 
 #endif

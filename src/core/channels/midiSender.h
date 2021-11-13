@@ -48,6 +48,9 @@ struct Data
 	Data(const Patch::Channel& p, KernelMidi&);
 	Data(const Data& o) = default;
 
+	void react(const channel::Data& ch, const EventDispatcher::Event& e);
+	void advance(const channel::Data& ch, const Sequencer::Event& e) const;
+
 	KernelMidi* kernelMidi;
 
 	/* enabled
@@ -59,10 +62,11 @@ struct Data
     Which MIDI channel data should be sent to. */
 
 	int filter;
-};
 
-void react(const channel::Data& ch, const EventDispatcher::Event& e);
-void advance(const channel::Data& ch, const Sequencer::Event& e);
+private:
+	void send(MidiEvent e) const;
+	void parseActions(const channel::Data& ch, const std::vector<Action>& as) const;
+};
 } // namespace giada::m::midiSender
 
 #endif

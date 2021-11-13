@@ -34,24 +34,6 @@
 
 namespace giada::m::midiActionRecorder
 {
-namespace
-{
-void record_(channel::Data& ch, const MidiEvent& e)
-{
-	const Sequencer& sequencer      = *ch.midiActionRecorder->sequencer;
-	ActionRecorder&  actionRecorder = *ch.midiActionRecorder->actionRecorder;
-
-	MidiEvent flat(e);
-	flat.setChannel(0);
-	actionRecorder.liveRec(ch.id, flat, sequencer.getCurrentFrameQuantized());
-	ch.hasActions = true;
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 Data::Data(ActionRecorder& a, Sequencer& s)
 : actionRecorder(&a)
 , sequencer(&s)
@@ -59,12 +41,15 @@ Data::Data(ActionRecorder& a, Sequencer& s)
 }
 
 /* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
 
-void react(channel::Data& ch, const EventDispatcher::Event& e, bool canRecordActions)
+void Data::react(channel::Data& ch, const EventDispatcher::Event& e, bool canRecordActions)
 {
 	if (e.type == EventDispatcher::EventType::MIDI && canRecordActions)
-		record_(ch, std::get<Action>(e.data).event);
+	{
+		MidiEvent flat(std::get<Action>(e.data).event);
+		flat.setChannel(0);
+		actionRecorder->liveRec(ch.id, flat, sequencer->getCurrentFrameQuantized());
+		ch.hasActions = true;
+	}
 }
 } // namespace giada::m::midiActionRecorder

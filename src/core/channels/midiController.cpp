@@ -31,9 +31,38 @@
 
 namespace giada::m::midiController
 {
-namespace
+void Data::react(channel::Data& ch, const EventDispatcher::Event& e) const
 {
-ChannelStatus onFirstBeat_(const channel::Data& ch)
+	switch (e.type)
+	{
+	case EventDispatcher::EventType::KEY_PRESS:
+		ch.state->playStatus.store(press(ch));
+		break;
+
+	case EventDispatcher::EventType::KEY_KILL:
+	case EventDispatcher::EventType::SEQUENCER_STOP:
+		ch.state->playStatus.store(ChannelStatus::OFF);
+		break;
+
+	case EventDispatcher::EventType::SEQUENCER_REWIND:
+		ch.state->playStatus.store(onFirstBeat(ch));
+
+	default:
+		break;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Data::advance(const channel::Data& ch, const Sequencer::Event& e) const
+{
+	if (e.type == Sequencer::EventType::FIRST_BEAT)
+		ch.state->playStatus.store(onFirstBeat(ch));
+}
+
+/* -------------------------------------------------------------------------- */
+
+ChannelStatus Data::onFirstBeat(const channel::Data& ch) const
 {
 	ChannelStatus playStatus = ch.state->playStatus.load();
 
@@ -47,7 +76,7 @@ ChannelStatus onFirstBeat_(const channel::Data& ch)
 
 /* -------------------------------------------------------------------------- */
 
-ChannelStatus press_(const channel::Data& ch)
+ChannelStatus Data::press(const channel::Data& ch) const
 {
 	ChannelStatus playStatus = ch.state->playStatus.load();
 
@@ -71,40 +100,5 @@ ChannelStatus press_(const channel::Data& ch)
 	}
 
 	return playStatus;
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-void react(channel::Data& ch, const EventDispatcher::Event& e)
-{
-	switch (e.type)
-	{
-
-	case EventDispatcher::EventType::KEY_PRESS:
-		ch.state->playStatus.store(press_(ch));
-		break;
-
-	case EventDispatcher::EventType::KEY_KILL:
-	case EventDispatcher::EventType::SEQUENCER_STOP:
-		ch.state->playStatus.store(ChannelStatus::OFF);
-		break;
-
-	case EventDispatcher::EventType::SEQUENCER_REWIND:
-		ch.state->playStatus.store(onFirstBeat_(ch));
-
-	default:
-		break;
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void advance(const channel::Data& ch, const Sequencer::Event& e)
-{
-	if (e.type == Sequencer::EventType::FIRST_BEAT)
-		ch.state->playStatus.store(onFirstBeat_(ch));
 }
 } // namespace giada::m::midiController

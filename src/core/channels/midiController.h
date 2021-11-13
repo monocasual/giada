@@ -38,10 +38,13 @@ namespace giada::m::midiController
 {
 struct Data
 {
-};
+	void advance(const channel::Data& ch, const Sequencer::Event& e) const;
+	void react(channel::Data& ch, const EventDispatcher::Event& e) const;
 
-void react(channel::Data& ch, const EventDispatcher::Event& e);
-void advance(const channel::Data& ch, const Sequencer::Event& e);
+private:
+	ChannelStatus onFirstBeat(const channel::Data& ch) const;
+	ChannelStatus press(const channel::Data& ch) const;
+};
 } // namespace giada::m::midiController
 
 #endif

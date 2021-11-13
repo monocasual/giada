@@ -31,28 +31,6 @@
 
 namespace giada::m::midiSender
 {
-namespace
-{
-void send_(const channel::Data& ch, MidiEvent e)
-{
-	e.setChannel(ch.midiSender->filter);
-	ch.midiSender->kernelMidi->send(e.getRaw());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void parseActions_(const channel::Data& ch, const std::vector<Action>& as)
-{
-	for (const Action& a : as)
-		if (a.channelId == ch.id)
-			send_(ch, a.event);
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 Data::Data(KernelMidi& k)
 : kernelMidi(&k)
 , enabled(false)
@@ -71,23 +49,40 @@ Data::Data(const Patch::Channel& p, KernelMidi& k)
 
 /* -------------------------------------------------------------------------- */
 
-void react(const channel::Data& ch, const EventDispatcher::Event& e)
+void Data::react(const channel::Data& ch, const EventDispatcher::Event& e)
 {
-	if (!ch.isPlaying() || !ch.midiSender->enabled || ch.isMuted())
+	if (!ch.isPlaying() || !enabled || ch.isMuted())
 		return;
 
 	if (e.type == EventDispatcher::EventType::KEY_KILL ||
 	    e.type == EventDispatcher::EventType::SEQUENCER_STOP)
-		send_(ch, MidiEvent(G_MIDI_ALL_NOTES_OFF));
+		send(MidiEvent(G_MIDI_ALL_NOTES_OFF));
 }
 
 /* -------------------------------------------------------------------------- */
 
-void advance(const channel::Data& ch, const Sequencer::Event& e)
+void Data::advance(const channel::Data& ch, const Sequencer::Event& e) const
 {
-	if (!ch.isPlaying() || !ch.midiSender->enabled || ch.isMuted())
+	if (!ch.isPlaying() || !enabled || ch.isMuted())
 		return;
 	if (e.type == Sequencer::EventType::ACTIONS)
-		parseActions_(ch, *e.actions);
+		parseActions(ch, *e.actions);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Data::send(MidiEvent e) const
+{
+	e.setChannel(filter);
+	kernelMidi->send(e.getRaw());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Data::parseActions(const channel::Data& ch, const std::vector<Action>& as) const
+{
+	for (const Action& a : as)
+		if (a.channelId == ch.id)
+			send(a.event);
 }
 } // namespace giada::m::midiSender

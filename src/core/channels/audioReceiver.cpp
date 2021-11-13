@@ -38,14 +38,14 @@ Data::Data(const Patch::Channel& p)
 
 /* -------------------------------------------------------------------------- */
 
-void render(const channel::Data& ch, const mcl::AudioBuffer& in)
+void Data::render(const channel::Data& ch, const mcl::AudioBuffer& in) const
 {
 	/* If armed and input monitor is on, copy input buffer to channel buffer: 
 	this enables the input monitoring. The channel buffer will be overwritten 
 	later on by pluginHost::processStack, so that you would record "clean" audio 
 	(i.e. not plugin-processed). */
 
-	if (ch.armed && ch.audioReceiver->inputMonitor)
+	if (ch.armed && inputMonitor)
 		ch.buffer->audio.set(in, /*gain=*/1.0f); // add, don't overwrite
 }
 } // namespace giada::m::audioReceiver

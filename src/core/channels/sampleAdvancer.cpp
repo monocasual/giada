@@ -28,11 +28,69 @@
 #include "core/channels/channel.h"
 #include <cassert>
 
-namespace giada::m::sampleAdvancer
+namespace giada::m
 {
-namespace
+void SampleAdvancer::onLastFrame(const channel::Data& ch, bool seqIsRunning) const
 {
-void rewind_(const channel::Data& ch, Frame localFrame)
+	const SamplePlayerMode mode   = ch.samplePlayer->mode;
+	const bool             isLoop = ch.samplePlayer->isAnyLoopMode();
+
+	switch (ch.state->playStatus.load())
+	{
+	case ChannelStatus::PLAY:
+		/* Stop LOOP_* when the sequencer is off, or SINGLE_* except for
+		SINGLE_ENDLESS, which runs forever unless it's in ENDING mode. 
+		Other loop once modes are put in wait mode. */
+		if ((mode == SamplePlayerMode::SINGLE_BASIC ||
+		        mode == SamplePlayerMode::SINGLE_BASIC_PAUSE ||
+		        mode == SamplePlayerMode::SINGLE_PRESS ||
+		        mode == SamplePlayerMode::SINGLE_RETRIG) ||
+		    (isLoop && !seqIsRunning))
+			stop(ch, 0);
+		else if (mode == SamplePlayerMode::LOOP_ONCE || mode == SamplePlayerMode::LOOP_ONCE_BAR)
+			wait(ch);
+		break;
+
+	case ChannelStatus::ENDING:
+		stop(ch, 0);
+		break;
+
+	default:
+		break;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleAdvancer::advance(const channel::Data& ch, const Sequencer::Event& e) const
+{
+	switch (e.type)
+	{
+	case Sequencer::EventType::FIRST_BEAT:
+		onFirstBeat(ch, e.delta);
+		break;
+
+	case Sequencer::EventType::BAR:
+		onBar(ch, e.delta);
+		break;
+
+	case Sequencer::EventType::REWIND:
+		rewind(ch, e.delta);
+		break;
+
+	case Sequencer::EventType::ACTIONS:
+		if (ch.state->readActions.load() == true)
+			parseActions(ch, *e.actions, e.delta);
+		break;
+
+	default:
+		break;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleAdvancer::rewind(const channel::Data& ch, Frame localFrame) const
 {
 	ch.state->rewinding = true;
 	ch.state->offset    = localFrame;
@@ -40,7 +98,7 @@ void rewind_(const channel::Data& ch, Frame localFrame)
 
 /* -------------------------------------------------------------------------- */
 
-void stop_(const channel::Data& ch, Frame localFrame)
+void SampleAdvancer::stop(const channel::Data& ch, Frame localFrame) const
 {
 	ch.state->playStatus.store(ChannelStatus::OFF);
 	ch.state->tracker.store(ch.samplePlayer->begin);
@@ -54,7 +112,7 @@ void stop_(const channel::Data& ch, Frame localFrame)
 
 /* -------------------------------------------------------------------------- */
 
-void play_(const channel::Data& ch, Frame localFrame)
+void SampleAdvancer::play(const channel::Data& ch, Frame localFrame) const
 {
 	ch.state->playStatus.store(ChannelStatus::PLAY);
 	ch.state->offset = localFrame;
@@ -62,7 +120,7 @@ void play_(const channel::Data& ch, Frame localFrame)
 
 /* -------------------------------------------------------------------------- */
 
-void wait_(const channel::Data& ch)
+void SampleAdvancer::wait(const channel::Data& ch) const
 {
 	ch.state->playStatus.store(ChannelStatus::WAIT);
 	ch.state->tracker.store(ch.samplePlayer->begin);
@@ -70,7 +128,7 @@ void wait_(const channel::Data& ch)
 
 /* -------------------------------------------------------------------------- */
 
-void onFirstBeat_(const channel::Data& ch, Frame localFrame)
+void SampleAdvancer::onFirstBeat(const channel::Data& ch, Frame localFrame) const
 {
 	G_DEBUG("onFirstBeat ch=" << ch.id << ", localFrame=" << localFrame);
 
@@ -82,16 +140,16 @@ void onFirstBeat_(const channel::Data& ch, Frame localFrame)
 	{
 	case ChannelStatus::PLAY:
 		if (isLoop)
-			rewind_(ch, localFrame);
+			rewind(ch, localFrame);
 		break;
 
 	case ChannelStatus::WAIT:
-		play_(ch, localFrame);
+		play(ch, localFrame);
 		break;
 
 	case ChannelStatus::ENDING:
 		if (isLoop)
-			stop_(ch, localFrame);
+			stop(ch, localFrame);
 		break;
 
 	default:
@@ -117,7 +175,7 @@ void onFirstBeat_(const channel::Data& ch, Frame localFrame)
 
 /* -------------------------------------------------------------------------- */
 
-void onBar_(const channel::Data& ch, Frame localFrame)
+void SampleAdvancer::onBar(const channel::Data& ch, Frame localFrame) const
 {
 	G_DEBUG("onBar ch=" << ch.id << ", localFrame=" << localFrame);
 
@@ -126,26 +184,26 @@ void onBar_(const channel::Data& ch, Frame localFrame)
 
 	if (playStatus == ChannelStatus::PLAY && (mode == SamplePlayerMode::LOOP_REPEAT ||
 	                                             mode == SamplePlayerMode::LOOP_ONCE_BAR))
-		rewind_(ch, localFrame);
+		rewind(ch, localFrame);
 	else if (playStatus == ChannelStatus::WAIT && mode == SamplePlayerMode::LOOP_ONCE_BAR)
-		play_(ch, localFrame);
+		play(ch, localFrame);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void onNoteOn_(const channel::Data& ch, Frame localFrame)
+void SampleAdvancer::onNoteOn(const channel::Data& ch, Frame localFrame) const
 {
 	switch (ch.state->playStatus.load())
 	{
 	case ChannelStatus::OFF:
-		play_(ch, localFrame);
+		play(ch, localFrame);
 		break;
 
 	case ChannelStatus::PLAY:
 		if (ch.samplePlayer->mode == SamplePlayerMode::SINGLE_RETRIG)
-			rewind_(ch, localFrame);
+			rewind(ch, localFrame);
 		else
-			stop_(ch, localFrame);
+			stop(ch, localFrame);
 		break;
 
 	default:
@@ -155,7 +213,8 @@ void onNoteOn_(const channel::Data& ch, Frame localFrame)
 
 /* -------------------------------------------------------------------------- */
 
-void parseActions_(const channel::Data& ch, const std::vector<Action>& as, Frame localFrame)
+void SampleAdvancer::parseActions(const channel::Data& ch,
+    const std::vector<Action>& as, Frame localFrame) const
 {
 	if (ch.samplePlayer->isAnyLoopMode() || !ch.isReadingActions())
 		return;
@@ -168,12 +227,12 @@ void parseActions_(const channel::Data& ch, const std::vector<Action>& as, Frame
 		switch (a.event.getStatus())
 		{
 		case MidiEvent::NOTE_ON:
-			onNoteOn_(ch, localFrame);
+			onNoteOn(ch, localFrame);
 			break;
 
 		case MidiEvent::NOTE_OFF:
 		case MidiEvent::NOTE_KILL:
-			stop_(ch, localFrame);
+			stop(ch, localFrame);
 			break;
 
 		default:
@@ -181,67 +240,4 @@ void parseActions_(const channel::Data& ch, const std::vector<Action>& as, Frame
 		}
 	}
 }
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-void onLastFrame(const channel::Data& ch, bool seqIsRunning)
-{
-	const SamplePlayerMode mode   = ch.samplePlayer->mode;
-	const bool             isLoop = ch.samplePlayer->isAnyLoopMode();
-
-	switch (ch.state->playStatus.load())
-	{
-	case ChannelStatus::PLAY:
-		/* Stop LOOP_* when the sequencer is off, or SINGLE_* except for
-		SINGLE_ENDLESS, which runs forever unless it's in ENDING mode. 
-		Other loop once modes are put in wait mode. */
-		if ((mode == SamplePlayerMode::SINGLE_BASIC ||
-		        mode == SamplePlayerMode::SINGLE_BASIC_PAUSE ||
-		        mode == SamplePlayerMode::SINGLE_PRESS ||
-		        mode == SamplePlayerMode::SINGLE_RETRIG) ||
-		    (isLoop && !seqIsRunning))
-			stop_(ch, 0);
-		else if (mode == SamplePlayerMode::LOOP_ONCE || mode == SamplePlayerMode::LOOP_ONCE_BAR)
-			wait_(ch);
-		break;
-
-	case ChannelStatus::ENDING:
-		stop_(ch, 0);
-		break;
-
-	default:
-		break;
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void advance(const channel::Data& ch, const Sequencer::Event& e)
-{
-	switch (e.type)
-	{
-	case Sequencer::EventType::FIRST_BEAT:
-		onFirstBeat_(ch, e.delta);
-		break;
-
-	case Sequencer::EventType::BAR:
-		onBar_(ch, e.delta);
-		break;
-
-	case Sequencer::EventType::REWIND:
-		rewind_(ch, e.delta);
-		break;
-
-	case Sequencer::EventType::ACTIONS:
-		if (ch.state->readActions.load() == true)
-			parseActions_(ch, *e.actions, e.delta);
-		break;
-
-	default:
-		break;
-	}
-}
-} // namespace giada::m::sampleAdvancer
+} // namespace giada::m

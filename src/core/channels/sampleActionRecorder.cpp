@@ -33,22 +33,71 @@
 
 namespace giada::m::sampleActionRecorder
 {
-namespace
+Data::Data(ActionRecorder& a, Sequencer& s)
+: actionRecorder(&a)
+, sequencer(&s)
 {
-void record_(channel::Data& ch, int note)
-{
-	const Sequencer& sequencer      = *ch.sampleActionRecorder->sequencer;
-	ActionRecorder&  actionRecorder = *ch.sampleActionRecorder->actionRecorder;
+}
 
-	actionRecorder.liveRec(ch.id, MidiEvent(note, 0, 0), sequencer.getCurrentFrameQuantized());
+/* -------------------------------------------------------------------------- */
+
+void Data::react(channel::Data& ch, const EventDispatcher::Event& e, bool treatRecsAsLoops,
+    bool seqIsRunning, bool canRecordActions) const
+{
+	if (!ch.hasWave())
+		return;
+
+	canRecordActions = canRecordActions && !ch.samplePlayer->isAnyLoopMode();
+
+	switch (e.type)
+	{
+	case EventDispatcher::EventType::KEY_PRESS:
+		if (canRecordActions)
+			onKeyPress(ch);
+		break;
+
+	case EventDispatcher::EventType::KEY_RELEASE:
+		/* Record a stop event only if channel is SINGLE_PRESS. For any other 
+		mode the key release event is meaningless. */
+		if (canRecordActions && ch.samplePlayer->mode == SamplePlayerMode::SINGLE_PRESS)
+			record(ch, MidiEvent::NOTE_OFF);
+		break;
+
+	case EventDispatcher::EventType::KEY_KILL:
+		if (canRecordActions)
+			record(ch, MidiEvent::NOTE_KILL);
+		break;
+
+	case EventDispatcher::EventType::CHANNEL_TOGGLE_READ_ACTIONS:
+		if (ch.hasActions)
+			toggleReadActions(ch, treatRecsAsLoops, seqIsRunning);
+		break;
+
+	case EventDispatcher::EventType::CHANNEL_KILL_READ_ACTIONS:
+		/* Killing Read Actions, i.e. shift + click on 'R' button is meaningful 
+		only when the conf::treatRecsAsLoops is true. */
+		if (treatRecsAsLoops)
+			killReadActions(ch);
+		break;
+
+	default:
+		break;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Data::record(channel::Data& ch, int note) const
+{
+	actionRecorder->liveRec(ch.id, MidiEvent(note, 0, 0), sequencer->getCurrentFrameQuantized());
 	ch.hasActions = true;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void onKeyPress_(channel::Data& ch)
+void Data::onKeyPress(channel::Data& ch) const
 {
-	record_(ch, MidiEvent::NOTE_ON);
+	record(ch, MidiEvent::NOTE_ON);
 
 	/* Skip reading actions when recording on ChannelMode::SINGLE_PRESS to 
 	prevent	existing actions to interfere with the keypress/keyrel combo. */
@@ -59,7 +108,7 @@ void onKeyPress_(channel::Data& ch)
 
 /* -------------------------------------------------------------------------- */
 
-void startReadActions_(channel::Data& ch, bool treatRecsAsLoops)
+void Data::startReadActions(channel::Data& ch, bool treatRecsAsLoops) const
 {
 	if (treatRecsAsLoops)
 		ch.state->recStatus.store(ChannelStatus::WAIT);
@@ -72,7 +121,8 @@ void startReadActions_(channel::Data& ch, bool treatRecsAsLoops)
 
 /* -------------------------------------------------------------------------- */
 
-void stopReadActions_(channel::Data& ch, ChannelStatus curRecStatus, bool treatRecsAsLoops, bool seqIsRunning)
+void Data::stopReadActions(channel::Data& ch, ChannelStatus curRecStatus,
+    bool treatRecsAsLoops, bool seqIsRunning) const
 {
 	/* First of all, if the sequencer is not running or treatRecsAsLoops is off, 
 	just stop and disable everything. Otherwise make sure a channel with actions
@@ -93,7 +143,7 @@ void stopReadActions_(channel::Data& ch, ChannelStatus curRecStatus, bool treatR
 
 /* -------------------------------------------------------------------------- */
 
-void toggleReadActions_(channel::Data& ch, bool treatRecsAsLoops, bool seqIsRunning)
+void Data::toggleReadActions(channel::Data& ch, bool treatRecsAsLoops, bool seqIsRunning) const
 {
 	/* When you start reading actions while conf::treatRecsAsLoops is true, the
 	value ch.state->readActions actually is not set to true immediately, because
@@ -107,73 +157,16 @@ void toggleReadActions_(channel::Data& ch, bool treatRecsAsLoops, bool seqIsRunn
 	const ChannelStatus recStatus   = ch.state->recStatus.load();
 
 	if (readActions || (!readActions && recStatus == ChannelStatus::WAIT))
-		stopReadActions_(ch, recStatus, treatRecsAsLoops, seqIsRunning);
+		stopReadActions(ch, recStatus, treatRecsAsLoops, seqIsRunning);
 	else
-		startReadActions_(ch, treatRecsAsLoops);
+		startReadActions(ch, treatRecsAsLoops);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void killReadActions_(channel::Data& ch)
+void Data::killReadActions(channel::Data& ch) const
 {
 	ch.state->recStatus.store(ChannelStatus::OFF);
 	ch.state->readActions.store(false);
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-Data::Data(ActionRecorder& a, Sequencer& s)
-: actionRecorder(&a)
-, sequencer(&s)
-{
-}
-
-/* -------------------------------------------------------------------------- */
-
-void react(channel::Data& ch, const EventDispatcher::Event& e, bool treatRecsAsLoops,
-    bool seqIsRunning, bool canRecordActions)
-{
-	if (!ch.hasWave())
-		return;
-
-	canRecordActions = canRecordActions && !ch.samplePlayer->isAnyLoopMode();
-
-	switch (e.type)
-	{
-	case EventDispatcher::EventType::KEY_PRESS:
-		if (canRecordActions)
-			onKeyPress_(ch);
-		break;
-
-	case EventDispatcher::EventType::KEY_RELEASE:
-		/* Record a stop event only if channel is SINGLE_PRESS. For any other 
-		mode the key release event is meaningless. */
-		if (canRecordActions && ch.samplePlayer->mode == SamplePlayerMode::SINGLE_PRESS)
-			record_(ch, MidiEvent::NOTE_OFF);
-		break;
-
-	case EventDispatcher::EventType::KEY_KILL:
-		if (canRecordActions)
-			record_(ch, MidiEvent::NOTE_KILL);
-		break;
-
-	case EventDispatcher::EventType::CHANNEL_TOGGLE_READ_ACTIONS:
-		if (ch.hasActions)
-			toggleReadActions_(ch, treatRecsAsLoops, seqIsRunning);
-		break;
-
-	case EventDispatcher::EventType::CHANNEL_KILL_READ_ACTIONS:
-		/* Killing Read Actions, i.e. shift + click on 'R' button is meaningful 
-		only when the conf::treatRecsAsLoops is true. */
-		if (treatRecsAsLoops)
-			killReadActions_(ch);
-		break;
-
-	default:
-		break;
-	}
 }
 } // namespace giada::m::sampleActionRecorder
