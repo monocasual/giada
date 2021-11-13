@@ -33,24 +33,16 @@
 namespace giada::m
 {
 class KernelMidi;
-}
-
-namespace giada::m::channel
-{
-struct Data;
-}
-
-namespace giada::m::midiSender
-{
-class Data final
+class Channel;
+class MidiSender final
 {
 public:
-	Data(KernelMidi&);
-	Data(const Patch::Channel& p, KernelMidi&);
-	Data(const Data& o) = default;
+	MidiSender(KernelMidi&);
+	MidiSender(const Patch::Channel& p, KernelMidi&);
+	MidiSender(const MidiSender& o) = default;
 
-	void react(const channel::Data& ch, const EventDispatcher::Event& e);
-	void advance(const channel::Data& ch, const Sequencer::Event& e) const;
+	void react(const Channel& ch, const EventDispatcher::Event& e);
+	void advance(const Channel& ch, const Sequencer::Event& e) const;
 
 	KernelMidi* kernelMidi;
 
@@ -66,8 +58,8 @@ public:
 
 private:
 	void send(MidiEvent e) const;
-	void parseActions(const channel::Data& ch, const std::vector<Action>& as) const;
+	void parseActions(const Channel& ch, const std::vector<Action>& as) const;
 };
-} // namespace giada::m::midiSender
+} // namespace giada::m
 
 #endif

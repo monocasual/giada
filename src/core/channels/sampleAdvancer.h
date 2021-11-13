@@ -29,28 +29,24 @@
 
 #include "core/sequencer.h"
 
-namespace giada::m::channel
-{
-struct Data;
-}
-
 namespace giada::m
 {
+class Channel;
 class SampleAdvancer final
 {
 public:
-	void onLastFrame(const channel::Data& ch, bool seqIsRunning) const;
-	void advance(const channel::Data& ch, const Sequencer::Event& e) const;
+	void onLastFrame(const Channel& ch, bool seqIsRunning) const;
+	void advance(const Channel& ch, const Sequencer::Event& e) const;
 
 private:
-	void rewind(const channel::Data& ch, Frame localFrame) const;
-	void stop(const channel::Data& ch, Frame localFrame) const;
-	void play(const channel::Data& ch, Frame localFrame) const;
-	void wait(const channel::Data& ch) const;
-	void onFirstBeat(const channel::Data& ch, Frame localFrame) const;
-	void onBar(const channel::Data& ch, Frame localFrame) const;
-	void onNoteOn(const channel::Data& ch, Frame localFrame) const;
-	void parseActions(const channel::Data& ch, const std::vector<Action>& as, Frame localFrame) const;
+	void rewind(const Channel& ch, Frame localFrame) const;
+	void stop(const Channel& ch, Frame localFrame) const;
+	void play(const Channel& ch, Frame localFrame) const;
+	void wait(const Channel& ch) const;
+	void onFirstBeat(const Channel& ch, Frame localFrame) const;
+	void onBar(const Channel& ch, Frame localFrame) const;
+	void onNoteOn(const Channel& ch, Frame localFrame) const;
+	void parseActions(const Channel& ch, const std::vector<Action>& as, Frame localFrame) const;
 };
 } // namespace giada::m
 

@@ -48,14 +48,10 @@ class Mixer;
 struct Layout;
 } // namespace giada::m::model
 
-namespace giada::m::channel
-{
-struct Data;
-}
-
 namespace giada::m
 {
 struct Action;
+class Channel;
 class MixerHandler;
 class Mixer
 {
@@ -86,7 +82,7 @@ public:
 	True if the channel 'c' is currently audible: not muted or not included in a 
 	solo session. */
 
-	bool isChannelAudible(const channel::Data& c) const;
+	bool isChannelAudible(const Channel& c) const;
 
 	Peak getPeakOut() const;
 	Peak getPeakIn() const;
@@ -174,10 +170,10 @@ private:
 	void processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inBuf,
 	    float inVol, float recTriggerLevel, bool isSeqActive) const;
 
-	void renderChannels(const std::vector<channel::Data>& channels, mcl::AudioBuffer& out, mcl::AudioBuffer& in) const;
-	void renderMasterIn(const channel::Data&, mcl::AudioBuffer& in) const;
-	void renderMasterOut(const channel::Data&, mcl::AudioBuffer& out) const;
-	void renderPreview(const channel::Data&, mcl::AudioBuffer& out) const;
+	void renderChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out, mcl::AudioBuffer& in) const;
+	void renderMasterIn(const Channel&, mcl::AudioBuffer& in) const;
+	void renderMasterOut(const Channel&, mcl::AudioBuffer& out) const;
+	void renderPreview(const Channel&, mcl::AudioBuffer& out) const;
 
 	/* limit
 	Applies a very dumb hard limiter. */

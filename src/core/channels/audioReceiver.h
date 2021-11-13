@@ -34,25 +34,21 @@ namespace mcl
 class AudioBuffer;
 }
 
-namespace giada::m::channel
+namespace giada::m
 {
-struct Data;
-}
-
-namespace giada::m::audioReceiver
-{
-class Data final
+class Channel;
+class AudioReceiver final
 {
 public:
-	Data() = default;
-	Data(const Patch::Channel& p);
-	Data(const Data& o) = default;
+	AudioReceiver() = default;
+	AudioReceiver(const Patch::Channel& p);
+	AudioReceiver(const AudioReceiver& o) = default;
 
-	void render(const channel::Data& ch, const mcl::AudioBuffer& in) const;
+	void render(const Channel& ch, const mcl::AudioBuffer& in) const;
 
 	bool inputMonitor;
 	bool overdubProtection;
 };
-} // namespace giada::m::audioReceiver
+} // namespace giada::m
 
 #endif

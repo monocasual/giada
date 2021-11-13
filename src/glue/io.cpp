@@ -71,7 +71,7 @@ void rebuildMidiWindows_()
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Channel_InputData::Channel_InputData(const m::channel::Data& c)
+Channel_InputData::Channel_InputData(const m::Channel& c)
 : channelId(c.id)
 , channelType(c.type)
 , enabled(c.midiLearner.enabled)
@@ -102,7 +102,7 @@ Channel_InputData::Channel_InputData(const m::channel::Data& c)
 
 /* -------------------------------------------------------------------------- */
 
-MidiChannel_OutputData::MidiChannel_OutputData(const m::midiSender::Data& s)
+MidiChannel_OutputData::MidiChannel_OutputData(const m::MidiSender& s)
 : enabled(s.enabled)
 , filter(s.filter)
 {
@@ -110,7 +110,7 @@ MidiChannel_OutputData::MidiChannel_OutputData(const m::midiSender::Data& s)
 
 /* -------------------------------------------------------------------------- */
 
-Channel_OutputData::Channel_OutputData(const m::channel::Data& c)
+Channel_OutputData::Channel_OutputData(const m::Channel& c)
 : channelId(c.id)
 , lightningEnabled(c.midiLighter.enabled)
 , lightningPlaying(c.midiLighter.playing.getValue())

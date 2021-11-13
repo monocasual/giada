@@ -28,9 +28,9 @@
 #include "core/channels/channel.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 
-namespace giada::m::audioReceiver
+namespace giada::m
 {
-Data::Data(const Patch::Channel& p)
+AudioReceiver::AudioReceiver(const Patch::Channel& p)
 : inputMonitor(p.inputMonitor)
 , overdubProtection(p.overdubProtection)
 {
@@ -38,7 +38,7 @@ Data::Data(const Patch::Channel& p)
 
 /* -------------------------------------------------------------------------- */
 
-void Data::render(const channel::Data& ch, const mcl::AudioBuffer& in) const
+void AudioReceiver::render(const Channel& ch, const mcl::AudioBuffer& in) const
 {
 	/* If armed and input monitor is on, copy input buffer to channel buffer: 
 	this enables the input monitoring. The channel buffer will be overwritten 
@@ -48,4 +48,4 @@ void Data::render(const channel::Data& ch, const mcl::AudioBuffer& in) const
 	if (ch.armed && inputMonitor)
 		ch.buffer->audio.set(in, /*gain=*/1.0f); // add, don't overwrite
 }
-} // namespace giada::m::audioReceiver
+} // namespace giada::m

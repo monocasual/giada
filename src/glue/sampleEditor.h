@@ -35,12 +35,8 @@
 namespace giada::m
 {
 class Wave;
-}
-
-namespace giada::m::channel
-{
-struct Data;
-}
+class Channel;
+} // namespace giada::m
 
 namespace giada::v
 {
@@ -52,7 +48,7 @@ namespace giada::c::sampleEditor
 struct Data
 {
 	Data() = default;
-	Data(const m::channel::Data&);
+	Data(const m::Channel&);
 
 	ChannelStatus  a_getPreviewStatus() const;
 	Frame          a_getPreviewTracker() const;
@@ -76,7 +72,7 @@ struct Data
 	bool        isLogical;
 
 private:
-	const m::channel::Data* m_channel;
+	const m::Channel* m_channel;
 };
 
 /* onRefresh --- TODO - wrong name */

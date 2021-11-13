@@ -82,14 +82,14 @@ DataLock::~DataLock()
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-channel::Data& Layout::getChannel(ID id)
+Channel& Layout::getChannel(ID id)
 {
-	return const_cast<channel::Data&>(const_cast<const Layout*>(this)->getChannel(id));
+	return const_cast<Channel&>(const_cast<const Layout*>(this)->getChannel(id));
 }
 
-const channel::Data& Layout::getChannel(ID id) const
+const Channel& Layout::getChannel(ID id) const
 {
-	auto it = std::find_if(channels.begin(), channels.end(), [id](const channel::Data& c) {
+	auto it = std::find_if(channels.begin(), channels.end(), [id](const Channel& c) {
 		return c.id == id;
 	});
 	assert(it != channels.end());
@@ -253,9 +253,9 @@ T& Model::back()
 #endif
 	if constexpr (std::is_same_v<T, Wave>)
 		return *m_data.waves.back().get();
-	if constexpr (std::is_same_v<T, channel::State>)
+	if constexpr (std::is_same_v<T, Channel::State>)
 		return *m_states.channels.back().get();
-	if constexpr (std::is_same_v<T, channel::Buffer>)
+	if constexpr (std::is_same_v<T, Channel::Buffer>)
 		return *m_data.channels.back().get();
 }
 
@@ -263,8 +263,8 @@ T& Model::back()
 template Plugin& Model::back<Plugin>();
 #endif
 template Wave&            Model::back<Wave>();
-template channel::State&  Model::back<channel::State>();
-template channel::Buffer& Model::back<channel::Buffer>();
+template Channel::State&  Model::back<Channel::State>();
+template Channel::Buffer& Model::back<Channel::Buffer>();
 
 /* -------------------------------------------------------------------------- */
 
@@ -295,7 +295,7 @@ void Model::debug()
 	puts("model::layout.channels");
 
 	int i = 0;
-	for (const channel::Data& c : get().channels)
+	for (const Channel& c : get().channels)
 	{
 		printf("\t%d) - ID=%d name='%s' type=%d columnID=%d state=%p\n",
 		    i++, c.id, c.name.c_str(), (int)c.type, c.columnId, (void*)&c.state);

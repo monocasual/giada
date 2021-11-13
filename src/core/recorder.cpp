@@ -98,7 +98,7 @@ void Recorder::stopActionRec(ActionRecorder& actionRecorder)
 
 	for (ID id : channels)
 	{
-		channel::Data& ch = m_model.get().getChannel(id);
+		Channel& ch = m_model.get().getChannel(id);
 		ch.state->readActions.store(true);
 		ch.state->recStatus.store(ChannelStatus::PLAY);
 		if (ch.type == ChannelType::MIDI)

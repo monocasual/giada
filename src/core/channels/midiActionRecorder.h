@@ -33,26 +33,19 @@ namespace giada::m
 {
 class ActionRecorder;
 class Sequencer;
-} // namespace giada::m
-
-namespace giada::m::channel
-{
-struct Data;
-}
-
-namespace giada::m::midiActionRecorder
-{
-class Data final
+class Channel;
+class MidiActionRecorder final
 {
 public:
-	Data(ActionRecorder&, Sequencer&);
+	MidiActionRecorder(ActionRecorder&, Sequencer&);
 
-	void react(channel::Data&, const EventDispatcher::Event&, bool canRecordActions);
+	void react(Channel&, const EventDispatcher::Event&, bool canRecordActions);
 
-	ActionRecorder* actionRecorder;
-	Sequencer*      sequencer;
+private:
+	ActionRecorder* m_actionRecorder;
+	Sequencer*      m_sequencer;
 };
 
-} // namespace giada::m::midiActionRecorder
+} // namespace giada::m
 
 #endif

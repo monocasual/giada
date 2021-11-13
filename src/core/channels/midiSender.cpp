@@ -29,9 +29,9 @@
 #include "core/kernelMidi.h"
 #include "core/mixer.h"
 
-namespace giada::m::midiSender
+namespace giada::m
 {
-Data::Data(KernelMidi& k)
+MidiSender::MidiSender(KernelMidi& k)
 : kernelMidi(&k)
 , enabled(false)
 , filter(0)
@@ -40,7 +40,7 @@ Data::Data(KernelMidi& k)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const Patch::Channel& p, KernelMidi& k)
+MidiSender::MidiSender(const Patch::Channel& p, KernelMidi& k)
 : kernelMidi(&k)
 , enabled(p.midiOut)
 , filter(p.midiOutChan)
@@ -49,7 +49,7 @@ Data::Data(const Patch::Channel& p, KernelMidi& k)
 
 /* -------------------------------------------------------------------------- */
 
-void Data::react(const channel::Data& ch, const EventDispatcher::Event& e)
+void MidiSender::react(const Channel& ch, const EventDispatcher::Event& e)
 {
 	if (!ch.isPlaying() || !enabled || ch.isMuted())
 		return;
@@ -61,7 +61,7 @@ void Data::react(const channel::Data& ch, const EventDispatcher::Event& e)
 
 /* -------------------------------------------------------------------------- */
 
-void Data::advance(const channel::Data& ch, const Sequencer::Event& e) const
+void MidiSender::advance(const Channel& ch, const Sequencer::Event& e) const
 {
 	if (!ch.isPlaying() || !enabled || ch.isMuted())
 		return;
@@ -71,7 +71,7 @@ void Data::advance(const channel::Data& ch, const Sequencer::Event& e) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::send(MidiEvent e) const
+void MidiSender::send(MidiEvent e) const
 {
 	e.setChannel(filter);
 	kernelMidi->send(e.getRaw());
@@ -79,10 +79,10 @@ void Data::send(MidiEvent e) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::parseActions(const channel::Data& ch, const std::vector<Action>& as) const
+void MidiSender::parseActions(const Channel& ch, const std::vector<Action>& as) const
 {
 	for (const Action& a : as)
 		if (a.channelId == ch.id)
 			send(a.event);
 }
-} // namespace giada::m::midiSender
+} // namespace giada::m

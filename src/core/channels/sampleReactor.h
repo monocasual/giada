@@ -31,46 +31,39 @@
 #include "core/eventDispatcher.h"
 #include "core/quantizer.h"
 
-namespace giada::m
-{
-class Sequencer;
-}
-
 namespace giada::m::model
 {
 class Model;
 }
 
-namespace giada::m::channel
+namespace giada::m
 {
-struct Data;
-}
+class Channel;
+class Sequencer;
 
-/* sampleReactor
+/* SampleReactor
 Reacts to manual events sent to Sample Channels: key press, key release, 
 sequencer stop, ... . */
 
-namespace giada::m::sampleReactor
-{
-class Data final
+class SampleReactor final
 {
 public:
-	Data(ID channelId, Sequencer&, model::Model&);
+	SampleReactor(ID channelId, Sequencer&, model::Model&);
 
-	void react(channel::Data&, const EventDispatcher::Event&, Sequencer&, const Conf::Data&) const;
+	void react(Channel&, const EventDispatcher::Event&, Sequencer&, const Conf::Data&) const;
 
 private:
-	void          toggleReadActions(channel::Data&, bool isSequencerRunning, bool treatRecsAsLoops) const;
-	void          onStopBySeq(channel::Data&, bool chansStopOnSeqHalt) const;
-	void          release(channel::Data&, Sequencer&) const;
-	void          kill(channel::Data&) const;
-	void          press(channel::Data&, Sequencer&, int velocity) const;
-	ChannelStatus pressWhilePlay(channel::Data&, Sequencer&, SamplePlayerMode, bool isLoop) const;
-	ChannelStatus pressWhileOff(channel::Data&, Sequencer&, int velocity, bool isLoop) const;
-	void          reset(channel::Data&) const;
-	void          rewind(channel::Data&, Frame localFrame) const;
+	void          toggleReadActions(Channel&, bool isSequencerRunning, bool treatRecsAsLoops) const;
+	void          onStopBySeq(Channel&, bool chansStopOnSeqHalt) const;
+	void          release(Channel&, Sequencer&) const;
+	void          kill(Channel&) const;
+	void          press(Channel&, Sequencer&, int velocity) const;
+	ChannelStatus pressWhilePlay(Channel&, Sequencer&, SamplePlayerMode, bool isLoop) const;
+	ChannelStatus pressWhileOff(Channel&, Sequencer&, int velocity, bool isLoop) const;
+	void          reset(Channel&) const;
+	void          rewind(Channel&, Frame localFrame) const;
 };
 
-} // namespace giada::m::sampleReactor
+} // namespace giada::m
 
 #endif

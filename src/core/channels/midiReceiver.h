@@ -34,27 +34,19 @@
 namespace giada::m
 {
 class PluginHost;
-}
-
-namespace giada::m::channel
-{
-struct Data;
-}
-
-namespace giada::m::midiReceiver
-{
-class Data final
+class Channel;
+class MidiReceiver final
 {
 public:
-	void react(const channel::Data& ch, const EventDispatcher::Event& e) const;
-	void advance(const channel::Data& ch, const Sequencer::Event& e) const;
-	void render(const channel::Data& ch, PluginHost& plugiHost) const;
+	void react(const Channel& ch, const EventDispatcher::Event& e) const;
+	void advance(const Channel& ch, const Sequencer::Event& e) const;
+	void render(const Channel& ch, PluginHost& plugiHost) const;
 
 private:
-	void sendToPlugins(const channel::Data& ch, const MidiEvent& e, Frame localFrame) const;
-	void parseMidi(const channel::Data& ch, const MidiEvent& e) const;
+	void sendToPlugins(const Channel& ch, const MidiEvent& e, Frame localFrame) const;
+	void parseMidi(const Channel& ch, const MidiEvent& e) const;
 };
-} // namespace giada::m::midiReceiver
+} // namespace giada::m
 
 #endif // WITH_VST
 

@@ -49,7 +49,7 @@ namespace giada::c::channel
 struct SampleData
 {
 	SampleData() = delete;
-	SampleData(const m::channel::Data&);
+	SampleData(const m::Channel&);
 
 	Frame getTracker() const;
 	Frame getBegin() const;
@@ -63,24 +63,24 @@ struct SampleData
 	float            pitch;
 
 private:
-	const m::channel::Data* m_channel;
+	const m::Channel* m_channel;
 };
 
 struct MidiData
 {
 	MidiData() = delete;
-	MidiData(const m::channel::Data&);
+	MidiData(const m::Channel&);
 
 	bool isOutputEnabled() const;
 	int  getFilter() const;
 
 private:
-	const m::channel::Data* m_channel;
+	const m::Channel* m_channel;
 };
 
 struct Data
 {
-	Data(const m::channel::Data&);
+	Data(const m::Channel&);
 
 	bool          getMute() const;
 	bool          getSolo() const;
@@ -110,7 +110,7 @@ struct Data
 	std::optional<MidiData>   midi;
 
 private:
-	const m::channel::Data& m_channel;
+	const m::Channel& m_channel;
 };
 
 /* getChannels

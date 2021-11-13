@@ -62,12 +62,12 @@ namespace giada::c::sampleEditor
 {
 namespace
 {
-m::channel::Data& getChannel_(ID channelId)
+m::Channel& getChannel_(ID channelId)
 {
 	return g_engine.model.get().getChannel(channelId);
 }
 
-m::samplePlayer::Data& getSamplePlayer_(ID channelId)
+m::SamplePlayer& getSamplePlayer_(ID channelId)
 {
 	return getChannel_(channelId).samplePlayer.value();
 }
@@ -103,7 +103,7 @@ void resetBeginEnd_(ID channelId)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::channel::Data& c)
+Data::Data(const m::Channel& c)
 : channelId(c.id)
 , name(c.name)
 , volume(c.volume)
@@ -154,7 +154,7 @@ Frame Data::getFramesInLoop() const
 Data getData(ID channelId)
 {
 	/* Prepare the preview channel first, then return Data object. */
-	m::channel::Data& previewChannel = getChannel_(m::Mixer::PREVIEW_CHANNEL_ID);
+	m::Channel& previewChannel = getChannel_(m::Mixer::PREVIEW_CHANNEL_ID);
 	previewChannel.samplePlayer->loadWave(previewChannel, &getWave_(channelId));
 	g_engine.model.swap(m::model::SwapType::SOFT);
 
@@ -186,7 +186,7 @@ v::gdSampleEditor* getSampleEditorWindow()
 
 void setBeginEnd(ID channelId, Frame b, Frame e)
 {
-	m::channel::Data& c = getChannel_(channelId);
+	m::Channel& c = getChannel_(channelId);
 
 	b = std::clamp(b, 0, c.samplePlayer->getWaveSize() - 1);
 	e = std::clamp(e, 1, c.samplePlayer->getWaveSize() - 1);
@@ -347,7 +347,7 @@ void setPreviewTracker(Frame f)
 
 void cleanupPreview()
 {
-	m::channel::Data& channel = getChannel_(m::Mixer::PREVIEW_CHANNEL_ID);
+	m::Channel& channel = getChannel_(m::Mixer::PREVIEW_CHANNEL_ID);
 
 	channel.samplePlayer->loadWave(channel, nullptr);
 	g_engine.model.swap(m::model::SwapType::SOFT);

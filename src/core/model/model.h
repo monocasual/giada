@@ -59,14 +59,14 @@ struct MidiIn
 
 struct Layout
 {
-	channel::Data&       getChannel(ID id);
-	const channel::Data& getChannel(ID id) const;
+	Channel&       getChannel(ID id);
+	const Channel& getChannel(ID id) const;
 
-	Sequencer                  sequencer;
-	Mixer                      mixer;
-	Recorder                   recorder;
-	MidiIn                     midiIn;
-	std::vector<channel::Data> channels;
+	Sequencer            sequencer;
+	Mixer                mixer;
+	Recorder             recorder;
+	MidiIn               midiIn;
+	std::vector<Channel> channels;
 
 	/* locked
 	If locked, Mixer won't process channels. This is used to allow editing the 
@@ -100,8 +100,8 @@ enum class SwapType
 using PluginPtr = std::unique_ptr<Plugin>;
 #endif
 using WavePtr          = std::unique_ptr<Wave>;
-using ChannelBufferPtr = std::unique_ptr<channel::Buffer>;
-using ChannelStatePtr  = std::unique_ptr<channel::State>;
+using ChannelBufferPtr = std::unique_ptr<Channel::Buffer>;
+using ChannelStatePtr  = std::unique_ptr<Channel::State>;
 
 #ifdef WITH_VST
 using PluginPtrs = std::vector<PluginPtr>;
@@ -191,7 +191,7 @@ private:
 		Sequencer::State                             sequencer;
 		Mixer::State                                 mixer;
 		Recorder::State                              recorder;
-		std::vector<std::unique_ptr<channel::State>> channels;
+		std::vector<std::unique_ptr<Channel::State>> channels;
 	};
 
 	struct Buffers
@@ -201,7 +201,7 @@ private:
 
 	struct Data
 	{
-		std::vector<std::unique_ptr<channel::Buffer>> channels;
+		std::vector<std::unique_ptr<Channel::Buffer>> channels;
 		std::vector<std::unique_ptr<Wave>>            waves;
 		Actions::Map                                  actions;
 #ifdef WITH_VST

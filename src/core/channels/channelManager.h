@@ -27,30 +27,20 @@
 #ifndef G_CHANNEL_MANAGER_H
 #define G_CHANNEL_MANAGER_H
 
-#include "core/idManager.h"
+#include "core/channels/channel.h"
 #include "core/conf.h"
+#include "core/idManager.h"
 #include "core/patch.h"
 #include "core/types.h"
-
-namespace giada::m
-{
-class KernelAudio;
-}
 
 namespace giada::m::model
 {
 class Model;
 }
 
-namespace giada::m::channel
-{
-struct Data;
-struct State;
-struct Buffer;
-} // namespace giada::m::channel
-
 namespace giada::m
 {
+class KernelAudio;
 class ChannelManager final
 {
 public:
@@ -70,22 +60,22 @@ public:
     Creates a new channel. If channelId == 0 generates a new ID, reuse the one 
     passed in otherwise. */
 
-	channel::Data create(ID channelId, ChannelType type, ID columnId, int bufferSize);
+	Channel create(ID channelId, ChannelType type, ID columnId, int bufferSize);
 
 	/* create (2)
     Creates a new channel given an existing one (i.e. clone). */
 
-	channel::Data create(const channel::Data& ch, int bufferSize);
+	Channel create(const Channel& ch, int bufferSize);
 
 	/* (de)serializeWave
     Creates a new channel given the patch raw data and vice versa. */
 
-	channel::Data        deserializeChannel(const Patch::Channel& c, float samplerateRatio, int bufferSize);
-	const Patch::Channel serializeChannel(const channel::Data& c);
+	Channel              deserializeChannel(const Patch::Channel& c, float samplerateRatio, int bufferSize);
+	const Patch::Channel serializeChannel(const Channel& c);
 
 private:
-	channel::State&  makeState_(ChannelType type);
-	channel::Buffer& makeBuffer_(int bufferSize);
+	Channel::State&  makeState_(ChannelType type);
+	Channel::Buffer& makeBuffer_(int bufferSize);
 
 	IdManager m_channelId;
 

@@ -29,23 +29,19 @@
 
 #include "core/sequencer.h"
 
-namespace giada::m::channel
+namespace giada::m
 {
-struct Data;
-}
-
-namespace giada::m::midiController
-{
-class Data final
+class Channel;
+class MidiController final
 {
 public:
-	void advance(const channel::Data& ch, const Sequencer::Event& e) const;
-	void react(channel::Data& ch, const EventDispatcher::Event& e) const;
+	void advance(const Channel& ch, const Sequencer::Event& e) const;
+	void react(Channel& ch, const EventDispatcher::Event& e) const;
 
 private:
-	ChannelStatus onFirstBeat(const channel::Data& ch) const;
-	ChannelStatus press(const channel::Data& ch) const;
+	ChannelStatus onFirstBeat(const Channel& ch) const;
+	ChannelStatus press(const Channel& ch) const;
 };
-} // namespace giada::m::midiController
+} // namespace giada::m
 
 #endif

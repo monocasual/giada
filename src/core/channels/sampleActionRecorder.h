@@ -33,35 +33,27 @@ namespace giada::m
 {
 class ActionRecorder;
 class Sequencer;
-} // namespace giada::m
-
-namespace giada::m::channel
-{
-struct Data;
-}
-
-namespace giada::m::sampleActionRecorder
-{
-class Data final
+class Channel;
+class SampleActionRecorder final
 {
 public:
-	Data(ActionRecorder&, Sequencer&);
+	SampleActionRecorder(ActionRecorder&, Sequencer&);
 
-	void react(channel::Data&, const EventDispatcher::Event&, bool treatRecsAsLoops,
+	void react(Channel&, const EventDispatcher::Event&, bool treatRecsAsLoops,
 	    bool seqIsRunning, bool canRecordActions) const;
 
 private:
-	void record(channel::Data&, int note) const;
-	void onKeyPress(channel::Data&) const;
-	void startReadActions(channel::Data&, bool treatRecsAsLoops) const;
-	void stopReadActions(channel::Data&, ChannelStatus, bool treatRecsAsLoops, bool seqIsRunning) const;
-	void toggleReadActions(channel::Data&, bool treatRecsAsLoops, bool seqIsRunning) const;
-	void killReadActions(channel::Data& ch) const;
+	void record(Channel&, int note) const;
+	void onKeyPress(Channel&) const;
+	void startReadActions(Channel&, bool treatRecsAsLoops) const;
+	void stopReadActions(Channel&, ChannelStatus, bool treatRecsAsLoops, bool seqIsRunning) const;
+	void toggleReadActions(Channel&, bool treatRecsAsLoops, bool seqIsRunning) const;
+	void killReadActions(Channel& ch) const;
 
-	ActionRecorder* actionRecorder;
-	Sequencer*      sequencer;
+	ActionRecorder* m_actionRecorder;
+	Sequencer*      m_sequencer;
 };
 
-} // namespace giada::m::sampleActionRecorder
+} // namespace giada::m
 
 #endif

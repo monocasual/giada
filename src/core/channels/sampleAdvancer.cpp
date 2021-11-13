@@ -30,7 +30,7 @@
 
 namespace giada::m
 {
-void SampleAdvancer::onLastFrame(const channel::Data& ch, bool seqIsRunning) const
+void SampleAdvancer::onLastFrame(const Channel& ch, bool seqIsRunning) const
 {
 	const SamplePlayerMode mode   = ch.samplePlayer->mode;
 	const bool             isLoop = ch.samplePlayer->isAnyLoopMode();
@@ -62,7 +62,7 @@ void SampleAdvancer::onLastFrame(const channel::Data& ch, bool seqIsRunning) con
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::advance(const channel::Data& ch, const Sequencer::Event& e) const
+void SampleAdvancer::advance(const Channel& ch, const Sequencer::Event& e) const
 {
 	switch (e.type)
 	{
@@ -90,7 +90,7 @@ void SampleAdvancer::advance(const channel::Data& ch, const Sequencer::Event& e)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::rewind(const channel::Data& ch, Frame localFrame) const
+void SampleAdvancer::rewind(const Channel& ch, Frame localFrame) const
 {
 	ch.state->rewinding = true;
 	ch.state->offset    = localFrame;
@@ -98,7 +98,7 @@ void SampleAdvancer::rewind(const channel::Data& ch, Frame localFrame) const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::stop(const channel::Data& ch, Frame localFrame) const
+void SampleAdvancer::stop(const Channel& ch, Frame localFrame) const
 {
 	ch.state->playStatus.store(ChannelStatus::OFF);
 	ch.state->tracker.store(ch.samplePlayer->begin);
@@ -112,7 +112,7 @@ void SampleAdvancer::stop(const channel::Data& ch, Frame localFrame) const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::play(const channel::Data& ch, Frame localFrame) const
+void SampleAdvancer::play(const Channel& ch, Frame localFrame) const
 {
 	ch.state->playStatus.store(ChannelStatus::PLAY);
 	ch.state->offset = localFrame;
@@ -120,7 +120,7 @@ void SampleAdvancer::play(const channel::Data& ch, Frame localFrame) const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::wait(const channel::Data& ch) const
+void SampleAdvancer::wait(const Channel& ch) const
 {
 	ch.state->playStatus.store(ChannelStatus::WAIT);
 	ch.state->tracker.store(ch.samplePlayer->begin);
@@ -128,7 +128,7 @@ void SampleAdvancer::wait(const channel::Data& ch) const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::onFirstBeat(const channel::Data& ch, Frame localFrame) const
+void SampleAdvancer::onFirstBeat(const Channel& ch, Frame localFrame) const
 {
 	G_DEBUG("onFirstBeat ch=" << ch.id << ", localFrame=" << localFrame);
 
@@ -175,7 +175,7 @@ void SampleAdvancer::onFirstBeat(const channel::Data& ch, Frame localFrame) cons
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::onBar(const channel::Data& ch, Frame localFrame) const
+void SampleAdvancer::onBar(const Channel& ch, Frame localFrame) const
 {
 	G_DEBUG("onBar ch=" << ch.id << ", localFrame=" << localFrame);
 
@@ -191,7 +191,7 @@ void SampleAdvancer::onBar(const channel::Data& ch, Frame localFrame) const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::onNoteOn(const channel::Data& ch, Frame localFrame) const
+void SampleAdvancer::onNoteOn(const Channel& ch, Frame localFrame) const
 {
 	switch (ch.state->playStatus.load())
 	{
@@ -213,7 +213,7 @@ void SampleAdvancer::onNoteOn(const channel::Data& ch, Frame localFrame) const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::parseActions(const channel::Data& ch,
+void SampleAdvancer::parseActions(const Channel& ch,
     const std::vector<Action>& as, Frame localFrame) const
 {
 	if (ch.samplePlayer->isAnyLoopMode() || !ch.isReadingActions())

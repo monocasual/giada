@@ -60,9 +60,9 @@ void ChannelManager::reset()
 
 /* -------------------------------------------------------------------------- */
 
-channel::Data ChannelManager::create(ID channelId, ChannelType type, ID columnId, int bufferSize)
+Channel ChannelManager::create(ID channelId, ChannelType type, ID columnId, int bufferSize)
 {
-	channel::Data out = channel::Data(type, m_channelId.generate(channelId),
+	Channel out = Channel(type, m_channelId.generate(channelId),
 	    columnId, makeState_(type), makeBuffer_(bufferSize));
 
 	if (out.audioReceiver)
@@ -73,9 +73,9 @@ channel::Data ChannelManager::create(ID channelId, ChannelType type, ID columnId
 
 /* -------------------------------------------------------------------------- */
 
-channel::Data ChannelManager::create(const channel::Data& o, int bufferSize)
+Channel ChannelManager::create(const Channel& o, int bufferSize)
 {
-	channel::Data out = channel::Data(o);
+	Channel out = Channel(o);
 
 	out.id     = m_channelId.generate();
 	out.state  = &makeState_(o.type);
@@ -86,15 +86,15 @@ channel::Data ChannelManager::create(const channel::Data& o, int bufferSize)
 
 /* -------------------------------------------------------------------------- */
 
-channel::Data ChannelManager::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
+Channel ChannelManager::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
 {
 	m_channelId.set(pch.id);
-	return channel::Data(pch, makeState_(pch.type), makeBuffer_(bufferSize), samplerateRatio, m_model.find<Wave>(pch.waveId));
+	return Channel(pch, makeState_(pch.type), makeBuffer_(bufferSize), samplerateRatio, m_model.find<Wave>(pch.waveId));
 }
 
 /* -------------------------------------------------------------------------- */
 
-const Patch::Channel ChannelManager::serializeChannel(const channel::Data& c)
+const Patch::Channel ChannelManager::serializeChannel(const Channel& c)
 {
 	Patch::Channel pc;
 
@@ -155,22 +155,22 @@ const Patch::Channel ChannelManager::serializeChannel(const channel::Data& c)
 
 /* -------------------------------------------------------------------------- */
 
-channel::State& ChannelManager::makeState_(ChannelType type)
+Channel::State& ChannelManager::makeState_(ChannelType type)
 {
-	std::unique_ptr<channel::State> state = std::make_unique<channel::State>();
+	std::unique_ptr<Channel::State> state = std::make_unique<Channel::State>();
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
 		state->resampler = Resampler(static_cast<Resampler::Quality>(m_conf.rsmpQuality), G_MAX_IO_CHANS);
 
 	m_model.add(std::move(state));
-	return m_model.back<channel::State>();
+	return m_model.back<Channel::State>();
 }
 
 /* -------------------------------------------------------------------------- */
 
-channel::Buffer& ChannelManager::makeBuffer_(int bufferSize)
+Channel::Buffer& ChannelManager::makeBuffer_(int bufferSize)
 {
-	m_model.add(std::make_unique<channel::Buffer>(bufferSize));
-	return m_model.back<channel::Buffer>();
+	m_model.add(std::make_unique<Channel::Buffer>(bufferSize));
+	return m_model.back<Channel::Buffer>();
 }
 } // namespace giada::m

@@ -110,7 +110,7 @@ bool isSinglePressMode_(ID channelId)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-SampleData::SampleData(const m::samplePlayer::Data& s)
+SampleData::SampleData(const m::SamplePlayer& s)
 : channelMode(s.mode)
 , isLoopMode(s.isAnyLoopMode())
 {
@@ -118,7 +118,7 @@ SampleData::SampleData(const m::samplePlayer::Data& s)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::channel::Data& c)
+Data::Data(const m::Channel& c)
 : channelId(c.id)
 , channelName(c.name)
 , framesInSeq(g_engine.sequencer.getFramesInSeq())

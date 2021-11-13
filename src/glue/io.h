@@ -31,10 +31,11 @@
 #include "core/model/model.h"
 #include "core/types.h"
 
-namespace giada::m::channel
+namespace giada::m
 {
-struct Data;
+class Channel;
 }
+
 namespace giada::c::io
 {
 struct PluginParamData
@@ -54,7 +55,7 @@ struct PluginData
 struct Channel_InputData
 {
 	Channel_InputData() = default;
-	Channel_InputData(const m::channel::Data&);
+	Channel_InputData(const m::Channel&);
 
 	ID          channelId;
 	ChannelType channelType;
@@ -96,7 +97,7 @@ struct Master_InputData
 
 struct MidiChannel_OutputData
 {
-	MidiChannel_OutputData(const m::midiSender::Data&);
+	MidiChannel_OutputData(const m::MidiSender&);
 
 	bool enabled;
 	int  filter;
@@ -105,7 +106,7 @@ struct MidiChannel_OutputData
 struct Channel_OutputData
 {
 	Channel_OutputData() = default;
-	Channel_OutputData(const m::channel::Data&);
+	Channel_OutputData(const m::Channel&);
 
 	ID       channelId;
 	bool     lightningEnabled;

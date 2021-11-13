@@ -30,14 +30,14 @@
 #include "core/midiLearnParam.h"
 #include "core/patch.h"
 
-namespace giada::m::midiLearner
+namespace giada::m
 {
-class Data final
+class MidiLearner final
 {
 public:
-	Data();
-	Data(const Patch::Channel&);
-	Data(const Data&) = default;
+	MidiLearner();
+	MidiLearner(const Patch::Channel&);
+	MidiLearner(const MidiLearner&) = default;
 
 	/* isAllowed
     Tells whether the MIDI channel 'c' is enabled to receive MIDI data. */
@@ -67,6 +67,6 @@ public:
 	MidiLearnParam readActions; // Sample Channels only
 	MidiLearnParam pitch;       // Sample Channels only
 };
-} // namespace giada::m::midiLearner
+} // namespace giada::m
 
 #endif

@@ -25,38 +25,36 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/channels/midiLighter.h"
-#include "core/channels/channel.h"
 #include "core/kernelMidi.h"
 #include "core/midiMapper.h"
-#include "core/mixer.h"
 
-namespace giada::m::midiLighter
+namespace giada::m
 {
 template <typename KernelMidiI>
-Data<KernelMidiI>::Data(MidiMapper<KernelMidiI>& m)
+MidiLighter<KernelMidiI>::MidiLighter(MidiMapper<KernelMidiI>& m)
 : enabled(false)
-, midiMapper(&m)
+, m_midiMapper(&m)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-Data<KernelMidiI>::Data(MidiMapper<KernelMidiI>& m, const Patch::Channel& p)
+MidiLighter<KernelMidiI>::MidiLighter(MidiMapper<KernelMidiI>& m, const Patch::Channel& p)
 : enabled(p.midiOutL)
 , playing(p.midiOutLplaying)
 , mute(p.midiOutLmute)
 , solo(p.midiOutLsolo)
-, midiMapper(&m)
+, m_midiMapper(&m)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-void Data<KernelMidiI>::sendStatus(ChannelStatus status, bool audible)
+void MidiLighter<KernelMidiI>::sendStatus(ChannelStatus status, bool audible)
 {
-	const MidiMap& midiMap   = midiMapper->getCurrentMap();
+	const MidiMap& midiMap   = m_midiMapper->getCurrentMap();
 	const uint32_t l_playing = playing.getValue();
 
 	if (l_playing == 0x0)
@@ -65,19 +63,19 @@ void Data<KernelMidiI>::sendStatus(ChannelStatus status, bool audible)
 	switch (status)
 	{
 	case ChannelStatus::OFF:
-		midiMapper->sendMidiLightning(l_playing, midiMap.stopped);
+		m_midiMapper->sendMidiLightning(l_playing, midiMap.stopped);
 		break;
 
 	case ChannelStatus::WAIT:
-		midiMapper->sendMidiLightning(l_playing, midiMap.waiting);
+		m_midiMapper->sendMidiLightning(l_playing, midiMap.waiting);
 		break;
 
 	case ChannelStatus::ENDING:
-		midiMapper->sendMidiLightning(l_playing, midiMap.stopping);
+		m_midiMapper->sendMidiLightning(l_playing, midiMap.stopping);
 		break;
 
 	case ChannelStatus::PLAY:
-		midiMapper->sendMidiLightning(l_playing, audible ? midiMap.playing : midiMap.playingInaudible);
+		m_midiMapper->sendMidiLightning(l_playing, audible ? midiMap.playing : midiMap.playingInaudible);
 		break;
 
 	default:
@@ -88,31 +86,31 @@ void Data<KernelMidiI>::sendStatus(ChannelStatus status, bool audible)
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-void Data<KernelMidiI>::sendMute(bool isMuted)
+void MidiLighter<KernelMidiI>::sendMute(bool isMuted)
 {
-	const MidiMap& midiMap = midiMapper->getCurrentMap();
+	const MidiMap& midiMap = m_midiMapper->getCurrentMap();
 	const uint32_t l_mute  = mute.getValue();
 
 	if (l_mute != 0x0)
-		midiMapper->sendMidiLightning(l_mute, isMuted ? midiMap.muteOn : midiMap.muteOff);
+		m_midiMapper->sendMidiLightning(l_mute, isMuted ? midiMap.muteOn : midiMap.muteOff);
 }
 
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-void Data<KernelMidiI>::sendSolo(bool isSoloed)
+void MidiLighter<KernelMidiI>::sendSolo(bool isSoloed)
 {
-	const MidiMap& midiMap = midiMapper->getCurrentMap();
+	const MidiMap& midiMap = m_midiMapper->getCurrentMap();
 	const uint32_t l_solo  = solo.getValue();
 
 	if (l_solo != 0x0)
-		midiMapper->sendMidiLightning(l_solo, isSoloed ? midiMap.soloOn : midiMap.soloOff);
+		m_midiMapper->sendMidiLightning(l_solo, isSoloed ? midiMap.soloOn : midiMap.soloOff);
 }
 
 /* -------------------------------------------------------------------------- */
 
-template struct Data<KernelMidi>;
+template struct MidiLighter<KernelMidi>;
 #ifdef WITH_TESTS
-template struct Data<KernelMidiMock>;
+template struct MidiLighter<KernelMidiMock>;
 #endif
-} // namespace giada::m::midiLighter
+} // namespace giada::m

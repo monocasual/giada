@@ -109,7 +109,7 @@ const mcl::AudioBuffer& Mixer::getRecBuffer()
 
 void Mixer::advanceChannels(const Sequencer::EventBuffer& events, const model::Layout& rtLayout)
 {
-	for (const channel::Data& c : rtLayout.channels)
+	for (const Channel& c : rtLayout.channels)
 		if (!c.isInternal())
 			c.advance(events);
 }
@@ -122,9 +122,9 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const mode
 	const model::Sequencer& sequencer = layout_RT.sequencer;
 	const model::Recorder&  recorder  = layout_RT.recorder;
 
-	const channel::Data& masterOutCh = layout_RT.getChannel(Mixer::MASTER_OUT_CHANNEL_ID);
-	const channel::Data& masterInCh  = layout_RT.getChannel(Mixer::MASTER_IN_CHANNEL_ID);
-	const channel::Data& previewCh   = layout_RT.getChannel(Mixer::PREVIEW_CHANNEL_ID);
+	const Channel& masterOutCh = layout_RT.getChannel(Mixer::MASTER_OUT_CHANNEL_ID);
+	const Channel& masterInCh  = layout_RT.getChannel(Mixer::MASTER_IN_CHANNEL_ID);
+	const Channel& previewCh   = layout_RT.getChannel(Mixer::PREVIEW_CHANNEL_ID);
 
 	const bool  hasInput        = in.isAllocd();
 	const bool  inToOut         = mixer.inToOut;
@@ -190,7 +190,7 @@ Frame Mixer::stopInputRec()
 
 /* -------------------------------------------------------------------------- */
 
-bool Mixer::isChannelAudible(const channel::Data& c) const
+bool Mixer::isChannelAudible(const Channel& c) const
 {
 	if (c.isInternal())
 		return true;
@@ -281,26 +281,26 @@ void Mixer::processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inB
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::renderChannels(const std::vector<channel::Data>& channels, mcl::AudioBuffer& out, mcl::AudioBuffer& in) const
+void Mixer::renderChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out, mcl::AudioBuffer& in) const
 {
-	for (const channel::Data& c : channels)
+	for (const Channel& c : channels)
 		if (!c.isInternal())
 			c.render(&out, &in, isChannelAudible(c));
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::renderMasterIn(const channel::Data& ch, mcl::AudioBuffer& in) const
+void Mixer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
 {
 	ch.render(nullptr, &in, true);
 }
 
-void Mixer::renderMasterOut(const channel::Data& ch, mcl::AudioBuffer& out) const
+void Mixer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const
 {
 	ch.render(&out, nullptr, true);
 }
 
-void Mixer::renderPreview(const channel::Data& ch, mcl::AudioBuffer& out) const
+void Mixer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 {
 	ch.render(&out, nullptr, true);
 }

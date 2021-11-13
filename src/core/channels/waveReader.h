@@ -33,6 +33,7 @@ namespace mcl
 {
 class AudioBuffer;
 }
+
 namespace giada::m
 {
 class Wave;

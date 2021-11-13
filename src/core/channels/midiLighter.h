@@ -32,20 +32,15 @@
 #include "core/midiMapper.h"
 #include "core/patch.h"
 
-namespace giada::m::channel
-{
-struct Data;
-}
-
-namespace giada::m::midiLighter
+namespace giada::m
 {
 template <typename KernelMidiI>
-class Data final
+class MidiLighter final
 {
 public:
-	Data(MidiMapper<KernelMidiI>&);
-	Data(MidiMapper<KernelMidiI>&, const Patch::Channel&);
-	Data(const Data& o) = default;
+	MidiLighter(MidiMapper<KernelMidiI>&);
+	MidiLighter(MidiMapper<KernelMidiI>&, const Patch::Channel&);
+	MidiLighter(const MidiLighter& o) = default;
 
 	void sendStatus(ChannelStatus, bool audible);
 	void sendMute(bool isMuted);
@@ -63,13 +58,13 @@ public:
 	MidiLearnParam solo;
 
 private:
-	MidiMapper<KernelMidiI>* midiMapper;
+	MidiMapper<KernelMidiI>* m_midiMapper;
 };
 
-extern template struct Data<KernelMidi>;
+extern template struct MidiLighter<KernelMidi>;
 #ifdef WITH_TESTS
-extern template struct Data<KernelMidiMock>;
+extern template struct MidiLighter<KernelMidiMock>;
 #endif
-} // namespace giada::m::midiLighter
+} // namespace giada::m
 
 #endif

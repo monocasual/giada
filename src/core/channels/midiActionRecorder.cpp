@@ -32,24 +32,24 @@
 #include "src/core/actions/action.h"
 #include "src/core/actions/actionRecorder.h"
 
-namespace giada::m::midiActionRecorder
+namespace giada::m
 {
-Data::Data(ActionRecorder& a, Sequencer& s)
-: actionRecorder(&a)
-, sequencer(&s)
+MidiActionRecorder::MidiActionRecorder(ActionRecorder& a, Sequencer& s)
+: m_actionRecorder(&a)
+, m_sequencer(&s)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Data::react(channel::Data& ch, const EventDispatcher::Event& e, bool canRecordActions)
+void MidiActionRecorder::react(Channel& ch, const EventDispatcher::Event& e, bool canRecordActions)
 {
 	if (e.type == EventDispatcher::EventType::MIDI && canRecordActions)
 	{
 		MidiEvent flat(std::get<Action>(e.data).event);
 		flat.setChannel(0);
-		actionRecorder->liveRec(ch.id, flat, sequencer->getCurrentFrameQuantized());
+		m_actionRecorder->liveRec(ch.id, flat, m_sequencer->getCurrentFrameQuantized());
 		ch.hasActions = true;
 	}
 }
-} // namespace giada::m::midiActionRecorder
+} // namespace giada::m

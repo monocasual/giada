@@ -31,9 +31,9 @@
 #include <algorithm>
 #include <cassert>
 
-namespace giada::m::samplePlayer
+namespace giada::m
 {
-Data::Data(Resampler* r)
+SamplePlayer::SamplePlayer(Resampler* r)
 : pitch(G_DEFAULT_PITCH)
 , mode(SamplePlayerMode::SINGLE_BASIC)
 , shift(0)
@@ -46,7 +46,7 @@ Data::Data(Resampler* r)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w)
+SamplePlayer::SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w)
 : pitch(p.pitch)
 , mode(p.mode)
 , shift(p.shift)
@@ -61,13 +61,13 @@ Data::Data(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w
 
 /* -------------------------------------------------------------------------- */
 
-bool Data::hasWave() const { return waveReader.wave != nullptr; }
-bool Data::hasLogicalWave() const { return hasWave() && waveReader.wave->isLogical(); }
-bool Data::hasEditedWave() const { return hasWave() && waveReader.wave->isEdited(); }
+bool SamplePlayer::hasWave() const { return waveReader.wave != nullptr; }
+bool SamplePlayer::hasLogicalWave() const { return hasWave() && waveReader.wave->isLogical(); }
+bool SamplePlayer::hasEditedWave() const { return hasWave() && waveReader.wave->isEdited(); }
 
 /* -------------------------------------------------------------------------- */
 
-bool Data::isAnyLoopMode() const
+bool SamplePlayer::isAnyLoopMode() const
 {
 	return mode == SamplePlayerMode::LOOP_BASIC ||
 	       mode == SamplePlayerMode::LOOP_ONCE ||
@@ -77,12 +77,12 @@ bool Data::isAnyLoopMode() const
 
 /* -------------------------------------------------------------------------- */
 
-Wave* Data::getWave() const
+Wave* SamplePlayer::getWave() const
 {
 	return waveReader.wave;
 }
 
-ID Data::getWaveId() const
+ID SamplePlayer::getWaveId() const
 {
 	if (hasWave())
 		return waveReader.wave->id;
@@ -91,14 +91,14 @@ ID Data::getWaveId() const
 
 /* -------------------------------------------------------------------------- */
 
-Frame Data::getWaveSize() const
+Frame SamplePlayer::getWaveSize() const
 {
 	return hasWave() ? waveReader.wave->getBuffer().countFrames() : 0;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Data::react(const EventDispatcher::Event& e)
+void SamplePlayer::react(const EventDispatcher::Event& e)
 {
 	if (e.type == EventDispatcher::EventType::CHANNEL_PITCH)
 		pitch = std::get<float>(e.data);
@@ -106,7 +106,7 @@ void Data::react(const EventDispatcher::Event& e)
 
 /* -------------------------------------------------------------------------- */
 
-void Data::render(const channel::Data& ch) const
+void SamplePlayer::render(const Channel& ch) const
 {
 	if (!isPlaying(ch))
 		return;
@@ -153,7 +153,7 @@ void Data::render(const channel::Data& ch) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::loadWave(channel::Data& ch, Wave* w)
+void SamplePlayer::loadWave(Channel& ch, Wave* w)
 {
 	waveReader.wave = w;
 
@@ -177,7 +177,7 @@ void Data::loadWave(channel::Data& ch, Wave* w)
 
 /* -------------------------------------------------------------------------- */
 
-void Data::setWave(Wave* w, float samplerateRatio)
+void SamplePlayer::setWave(Wave* w, float samplerateRatio)
 {
 	if (w == nullptr)
 	{
@@ -197,7 +197,7 @@ void Data::setWave(Wave* w, float samplerateRatio)
 
 /* -------------------------------------------------------------------------- */
 
-void Data::kickIn(channel::Data& ch, Frame f)
+void SamplePlayer::kickIn(Channel& ch, Frame f)
 {
 	ch.state->tracker.store(f);
 	ch.state->playStatus.store(ChannelStatus::PLAY);
@@ -205,21 +205,21 @@ void Data::kickIn(channel::Data& ch, Frame f)
 
 /* -------------------------------------------------------------------------- */
 
-bool Data::isPlaying(const channel::Data& ch) const
+bool SamplePlayer::isPlaying(const Channel& ch) const
 {
 	return waveReader.wave != nullptr && ch.isPlaying();
 }
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result Data::fillBuffer(const channel::Data& ch, Frame start, Frame offset) const
+WaveReader::Result SamplePlayer::fillBuffer(const Channel& ch, Frame start, Frame offset) const
 {
 	return waveReader.fill(ch.buffer->audio, start, end, offset, pitch);
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool Data::shouldLoop(const channel::Data& ch) const
+bool SamplePlayer::shouldLoop(const Channel& ch) const
 {
 	const ChannelStatus playStatus = ch.state->playStatus.load();
 
@@ -228,4 +228,4 @@ bool Data::shouldLoop(const channel::Data& ch) const
 	           mode == SamplePlayerMode::SINGLE_ENDLESS) &&
 	       playStatus == ChannelStatus::PLAY;
 }
-} // namespace giada::m::samplePlayer
+} // namespace giada::m

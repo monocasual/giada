@@ -57,49 +57,45 @@
 namespace giada::m
 {
 class Plugin;
-}
-
-namespace giada::m::channel
+class Channel final
 {
-struct State
-{
-	WeakAtomic<Frame>         tracker     = 0;
-	WeakAtomic<ChannelStatus> playStatus  = ChannelStatus::OFF;
-	WeakAtomic<ChannelStatus> recStatus   = ChannelStatus::OFF;
-	WeakAtomic<bool>          readActions = false;
-	bool                      rewinding   = false;
-	Frame                     offset      = 0;
+public:
+	struct Buffer
+	{
+		Buffer(Frame bufferSize);
 
-	/* Optional resampler for sample-based channels. Unfortunately a Resampler
+		mcl::AudioBuffer audio;
+#ifdef WITH_VST
+		juce::MidiBuffer     midi;
+		Queue<MidiEvent, 32> midiQueue;
+#endif
+	};
+
+	struct State
+	{
+		WeakAtomic<Frame>         tracker     = 0;
+		WeakAtomic<ChannelStatus> playStatus  = ChannelStatus::OFF;
+		WeakAtomic<ChannelStatus> recStatus   = ChannelStatus::OFF;
+		WeakAtomic<bool>          readActions = false;
+		bool                      rewinding   = false;
+		Frame                     offset      = 0;
+
+		/* Optional resampler for sample-based channels. Unfortunately a Resampler
 	object (based on libsamplerate) doesn't like to get copied while rendering
 	audio, so can't live inside WaveReader object (which is copied on model 
 	changes by the Swapper mechanism). Let's put it in the shared state here. */
 
-	std::optional<Resampler> resampler = {};
-};
+		std::optional<Resampler> resampler = {};
+	};
 
-struct Buffer
-{
-	Buffer(Frame bufferSize);
+	Channel(ChannelType t, ID id, ID columnId, State& state, Buffer& buffer);
+	Channel(const Patch::Channel& p, State& state, Buffer& buffer, float samplerateRatio, Wave* w);
+	Channel(const Channel& o);
+	Channel(Channel&& o) = default;
 
-	mcl::AudioBuffer audio;
-#ifdef WITH_VST
-	juce::MidiBuffer     midi;
-	Queue<MidiEvent, 32> midiQueue;
-#endif
-};
-
-class Data final
-{
-public:
-	Data(ChannelType t, ID id, ID columnId, State& state, Buffer& buffer);
-	Data(const Patch::Channel& p, State& state, Buffer& buffer, float samplerateRatio, Wave* w);
-	Data(const Data& o);
-	Data(Data&& o) = default;
-	Data& operator =(const Data&);
-	Data& operator=(Data&&) = default;
-
-	bool operator==(const Data&);
+	Channel& operator=(const Channel&);
+	Channel& operator=(Channel&&) = default;
+	bool     operator==(const Channel&);
 
 	/* advance
 	Advances internal state by processing static events (e.g. pre-recorded 
@@ -147,20 +143,20 @@ public:
 	std::vector<Plugin*> plugins;
 #endif
 
-	midiLearner::Data             midiLearner;
-	midiLighter::Data<KernelMidi> midiLighter;
+	MidiLearner             midiLearner;
+	MidiLighter<KernelMidi> midiLighter;
 
-	std::optional<samplePlayer::Data>   samplePlayer;
-	std::optional<SampleAdvancer>       sampleAdvancer;
-	std::optional<sampleReactor::Data>  sampleReactor;
-	std::optional<audioReceiver::Data>  audioReceiver;
-	std::optional<midiController::Data> midiController;
+	std::optional<SamplePlayer>   samplePlayer;
+	std::optional<SampleAdvancer> sampleAdvancer;
+	std::optional<SampleReactor>  sampleReactor;
+	std::optional<AudioReceiver>  audioReceiver;
+	std::optional<MidiController> midiController;
 #ifdef WITH_VST
-	std::optional<midiReceiver::Data> midiReceiver;
+	std::optional<MidiReceiver> midiReceiver;
 #endif
-	std::optional<midiSender::Data>           midiSender;
-	std::optional<sampleActionRecorder::Data> sampleActionRecorder;
-	std::optional<midiActionRecorder::Data>   midiActionRecorder;
+	std::optional<MidiSender>           midiSender;
+	std::optional<SampleActionRecorder> sampleActionRecorder;
+	std::optional<MidiActionRecorder>   midiActionRecorder;
 
 private:
 	void renderMasterOut(mcl::AudioBuffer&) const;
@@ -173,6 +169,6 @@ private:
 	bool m_mute;
 	bool m_solo;
 };
-} // namespace giada::m::channel
+} // namespace giada::m
 
 #endif

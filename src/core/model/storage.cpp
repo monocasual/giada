@@ -88,7 +88,7 @@ void store(Patch::Data& patch)
 		patch.waves.push_back(g_engine.waveManager.serializeWave(*w));
 
 	patch.channels.clear();
-	for (const channel::Data& c : layout.channels)
+	for (const Channel& c : layout.channels)
 		patch.channels.push_back(g_engine.channelManager.serializeChannel(c));
 }
 

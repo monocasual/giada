@@ -9,7 +9,7 @@ TEST_CASE("MidiMapper")
 
 	m::KernelMidiMock                kernelMidi;
 	m::MidiMapper<m::KernelMidiMock> midiMapper(kernelMidi);
-	m::midiLighter::Data             midiLighter(midiMapper);
+	m::MidiLighter                   midiLighter(midiMapper);
 
 	SECTION("Test initialization")
 	{

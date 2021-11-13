@@ -193,7 +193,7 @@ void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 {
 	uint32_t pure = midiEvent.getRawNoVelocity();
 
-	for (const channel::Data& c : m_model.get().channels)
+	for (const Channel& c : m_model.get().channels)
 	{
 
 		/* Do nothing on this channel if MIDI in is disabled or filtered out for
@@ -330,7 +330,7 @@ void MidiDispatcher::learnChannel(MidiEvent e, int param, ID channelId, std::fun
 
 	uint32_t raw = e.getRawNoVelocity();
 
-	channel::Data& ch = m_model.get().getChannel(channelId);
+	Channel& ch = m_model.get().getChannel(channelId);
 
 	switch (param)
 	{

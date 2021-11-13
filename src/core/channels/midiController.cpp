@@ -29,9 +29,9 @@
 #include "core/conf.h"
 #include <cassert>
 
-namespace giada::m::midiController
+namespace giada::m
 {
-void Data::react(channel::Data& ch, const EventDispatcher::Event& e) const
+void MidiController::react(Channel& ch, const EventDispatcher::Event& e) const
 {
 	switch (e.type)
 	{
@@ -54,7 +54,7 @@ void Data::react(channel::Data& ch, const EventDispatcher::Event& e) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::advance(const channel::Data& ch, const Sequencer::Event& e) const
+void MidiController::advance(const Channel& ch, const Sequencer::Event& e) const
 {
 	if (e.type == Sequencer::EventType::FIRST_BEAT)
 		ch.state->playStatus.store(onFirstBeat(ch));
@@ -62,7 +62,7 @@ void Data::advance(const channel::Data& ch, const Sequencer::Event& e) const
 
 /* -------------------------------------------------------------------------- */
 
-ChannelStatus Data::onFirstBeat(const channel::Data& ch) const
+ChannelStatus MidiController::onFirstBeat(const Channel& ch) const
 {
 	ChannelStatus playStatus = ch.state->playStatus.load();
 
@@ -76,7 +76,7 @@ ChannelStatus Data::onFirstBeat(const channel::Data& ch) const
 
 /* -------------------------------------------------------------------------- */
 
-ChannelStatus Data::press(const channel::Data& ch) const
+ChannelStatus MidiController::press(const Channel& ch) const
 {
 	ChannelStatus playStatus = ch.state->playStatus.load();
 
@@ -101,4 +101,4 @@ ChannelStatus Data::press(const channel::Data& ch) const
 
 	return playStatus;
 }
-} // namespace giada::m::midiController
+} // namespace giada::m

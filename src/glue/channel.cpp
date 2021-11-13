@@ -92,8 +92,8 @@ void printLoadError_(int res)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-// TODO - just pass const channel::Data&
-SampleData::SampleData(const m::channel::Data& ch)
+// TODO - just pass const Channel&
+SampleData::SampleData(const m::Channel& ch)
 : waveId(ch.samplePlayer->getWaveId())
 , mode(ch.samplePlayer->mode)
 , isLoop(ch.samplePlayer->isAnyLoopMode())
@@ -111,7 +111,7 @@ bool  SampleData::getOverdubProtection() const { return m_channel->audioReceiver
 
 /* -------------------------------------------------------------------------- */
 
-MidiData::MidiData(const m::channel::Data& m)
+MidiData::MidiData(const m::Channel& m)
 : m_channel(&m)
 {
 }
@@ -122,7 +122,7 @@ int  MidiData::getFilter() const { return m_channel->midiSender->filter; }
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::channel::Data& c)
+Data::Data(const m::Channel& c)
 : viewDispatcher(g_ui.dispatcher)
 , id(c.id)
 , columnId(c.columnId)
@@ -166,7 +166,7 @@ Data getData(ID channelId)
 std::vector<Data> getChannels()
 {
 	std::vector<Data> out;
-	for (const m::channel::Data& ch : g_engine.model.get().channels)
+	for (const m::Channel& ch : g_engine.model.get().channels)
 		if (!ch.isInternal())
 			out.push_back(Data(ch));
 	return out;
@@ -273,7 +273,7 @@ void setInputMonitor(ID channelId, bool value)
 
 void setOverdubProtection(ID channelId, bool value)
 {
-	m::channel::Data& ch                = g_engine.model.get().getChannel(channelId);
+	m::Channel& ch                      = g_engine.model.get().getChannel(channelId);
 	ch.audioReceiver->overdubProtection = value;
 	if (value == true && ch.armed)
 		ch.armed = false;

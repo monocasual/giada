@@ -39,7 +39,7 @@
 
 extern giada::m::Engine g_engine;
 
-namespace giada::m::channel
+namespace giada::m
 {
 namespace
 {
@@ -60,14 +60,14 @@ mcl::AudioBuffer::Pan calcPanning_(float pan)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Buffer::Buffer(Frame bufferSize)
+Channel::Buffer::Buffer(Frame bufferSize)
 : audio(bufferSize, G_MAX_IO_CHANS)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(ChannelType type, ID id, ID columnId, State& s, Buffer& b)
+Channel::Channel(ChannelType type, ID id, ID columnId, State& s, Buffer& b)
 : state(&s)
 , buffer(&b)
 , id(id)
@@ -117,7 +117,7 @@ Data::Data(ChannelType type, ID id, ID columnId, State& s, Buffer& b)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const Patch::Channel& p, State& s, Buffer& b, float samplerateRatio, Wave* wave)
+Channel::Channel(const Patch::Channel& p, State& s, Buffer& b, float samplerateRatio, Wave* wave)
 : state(&s)
 , buffer(&b)
 , id(p.id)
@@ -175,7 +175,7 @@ Data::Data(const Patch::Channel& p, State& s, Buffer& b, float samplerateRatio, 
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const Data& other)
+Channel::Channel(const Channel& other)
 : midiLighter(g_engine.midiMapper)
 {
 	*this = other;
@@ -183,7 +183,7 @@ Data::Data(const Data& other)
 
 /* -------------------------------------------------------------------------- */
 
-Data& Data::operator=(const Data& other)
+Channel& Channel::operator=(const Channel& other)
 {
 	if (this == &other)
 		return *this;
@@ -228,30 +228,30 @@ Data& Data::operator=(const Data& other)
 
 /* -------------------------------------------------------------------------- */
 
-bool Data::operator==(const Data& other)
+bool Channel::operator==(const Channel& other)
 {
 	return id == other.id;
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool Data::isInternal() const
+bool Channel::isInternal() const
 {
 	return type == ChannelType::MASTER || type == ChannelType::PREVIEW;
 }
 
-bool Data::isMuted() const
+bool Channel::isMuted() const
 {
 	/* Internals can't be muted. */
 	return !isInternal() && m_mute;
 }
 
-bool Data::isSoloed() const
+bool Channel::isSoloed() const
 {
 	return m_solo;
 }
 
-bool Data::canInputRec() const
+bool Channel::canInputRec() const
 {
 	if (type != ChannelType::SAMPLE)
 		return false;
@@ -263,23 +263,23 @@ bool Data::canInputRec() const
 	return armed && canOverdub;
 }
 
-bool Data::canActionRec() const
+bool Channel::canActionRec() const
 {
 	return hasWave() && !samplePlayer->isAnyLoopMode();
 }
 
-bool Data::hasWave() const
+bool Channel::hasWave() const
 {
 	return samplePlayer && samplePlayer->hasWave();
 }
 
-bool Data::isPlaying() const
+bool Channel::isPlaying() const
 {
 	ChannelStatus s = state->playStatus.load();
 	return s == ChannelStatus::PLAY || s == ChannelStatus::ENDING;
 }
 
-bool Data::isReadingActions() const
+bool Channel::isReadingActions() const
 {
 	ChannelStatus s = state->recStatus.load();
 	return s == ChannelStatus::PLAY || s == ChannelStatus::ENDING;
@@ -287,14 +287,14 @@ bool Data::isReadingActions() const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::setMute(bool v)
+void Channel::setMute(bool v)
 {
 	if (m_mute != v)
 		midiLighter.sendMute(v);
 	m_mute = v;
 }
 
-void Data::setSolo(bool v)
+void Channel::setSolo(bool v)
 {
 	if (m_solo != v)
 		midiLighter.sendSolo(v);
@@ -303,7 +303,7 @@ void Data::setSolo(bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void Data::initCallbacks()
+void Channel::initCallbacks()
 {
 	state->playStatus.onChange = [this](ChannelStatus status) {
 		midiLighter.sendStatus(status, g_engine.mixer.isChannelAudible(*this));
@@ -319,7 +319,7 @@ void Data::initCallbacks()
 
 /* -------------------------------------------------------------------------- */
 
-void Data::advance(const Sequencer::EventBuffer& events) const
+void Channel::advance(const Sequencer::EventBuffer& events) const
 {
 	for (const Sequencer::Event& e : events)
 	{
@@ -338,7 +338,7 @@ void Data::advance(const Sequencer::EventBuffer& events) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::react(const EventDispatcher::EventBuffer& events)
+void Channel::react(const EventDispatcher::EventBuffer& events)
 {
 	for (const EventDispatcher::Event& e : events)
 	{
@@ -368,7 +368,7 @@ void Data::react(const EventDispatcher::EventBuffer& events)
 
 /* -------------------------------------------------------------------------- */
 
-void Data::react(const EventDispatcher::Event& e)
+void Channel::react(const EventDispatcher::Event& e)
 {
 	switch (e.type)
 	{
@@ -400,7 +400,7 @@ void Data::react(const EventDispatcher::Event& e)
 
 /* -------------------------------------------------------------------------- */
 
-void Data::render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible) const
+void Channel::render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible) const
 {
 	if (id == Mixer::MASTER_OUT_CHANNEL_ID)
 		renderMasterOut(*out);
@@ -414,7 +414,7 @@ void Data::render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible) con
 
 /* -------------------------------------------------------------------------- */
 
-void Data::renderMasterOut(mcl::AudioBuffer& out) const
+void Channel::renderMasterOut(mcl::AudioBuffer& out) const
 {
 	buffer->audio.set(out, /*gain=*/1.0f);
 #ifdef WITH_VST
@@ -428,7 +428,7 @@ void Data::renderMasterOut(mcl::AudioBuffer& out) const
 
 #ifdef WITH_VST
 
-void Data::renderMasterIn(mcl::AudioBuffer& in) const
+void Channel::renderMasterIn(mcl::AudioBuffer& in) const
 {
 	if (plugins.size() > 0)
 		g_engine.pluginHost.processStack(in, plugins, nullptr);
@@ -438,7 +438,7 @@ void Data::renderMasterIn(mcl::AudioBuffer& in) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool audible) const
+void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool audible) const
 {
 	buffer->audio.clear();
 
@@ -461,4 +461,4 @@ void Data::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool audib
 	if (audible)
 		out.sum(buffer->audio, volume * volume_i, calcPanning_(pan));
 }
-} // namespace giada::m::channel
+} // namespace giada::m

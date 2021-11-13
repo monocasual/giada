@@ -35,18 +35,14 @@
 #include "core/types.h"
 #include <functional>
 
-namespace giada::m::channel
+namespace giada::m
 {
-struct Data;
-}
-
-namespace giada::m::samplePlayer
-{
-class Data final
+class Channel;
+class SamplePlayer final
 {
 public:
-	Data(Resampler* r);
-	Data(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w);
+	SamplePlayer(Resampler* r);
+	SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w);
 
 	bool  hasWave() const;
 	bool  hasLogicalWave() const;
@@ -55,14 +51,14 @@ public:
 	ID    getWaveId() const;
 	Frame getWaveSize() const;
 	Wave* getWave() const;
-	void  render(const channel::Data& ch) const;
+	void  render(const Channel& ch) const;
 
 	void react(const EventDispatcher::Event& e);
 
 	/* loadWave
 	Loads Wave 'w' into channel ch and sets it up (name, markers, ...). */
 
-	void loadWave(channel::Data& ch, Wave* w);
+	void loadWave(Channel& ch, Wave* w);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The
@@ -75,7 +71,7 @@ public:
 	Starts the player right away at frame 'f'. Used when launching a loop after
 	being live recorded. */
 
-	void kickIn(channel::Data& ch, Frame f);
+	void kickIn(Channel& ch, Frame f);
 
 	float            pitch;
 	SamplePlayerMode mode;
@@ -88,10 +84,10 @@ public:
 	std::function<void()> onLastFrame;
 
 private:
-	bool               isPlaying(const channel::Data& ch) const;
-	WaveReader::Result fillBuffer(const channel::Data& ch, Frame start, Frame offset) const;
-	bool               shouldLoop(const channel::Data& ch) const;
+	bool               isPlaying(const Channel& ch) const;
+	WaveReader::Result fillBuffer(const Channel& ch, Frame start, Frame offset) const;
+	bool               shouldLoop(const Channel& ch) const;
 };
-} // namespace giada::m::samplePlayer
+} // namespace giada::m
 
 #endif

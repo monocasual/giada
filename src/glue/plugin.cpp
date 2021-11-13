@@ -107,7 +107,7 @@ void Plugin::setResizeCallback(std::function<void(int, int)> f)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Plugins::Plugins(const m::channel::Data& c)
+Plugins::Plugins(const m::Channel& c)
 : channelId(c.id)
 , plugins(c.plugins)
 {

@@ -29,9 +29,9 @@
 
 #include "core/types.h"
 
-namespace giada::m::channel
+namespace giada::m
 {
-struct Data;
+class Channel;
 }
 
 namespace giada::m::model
@@ -58,7 +58,7 @@ struct Timer
 struct IO
 {
 	IO() = default;
-	IO(const m::channel::Data& out, const m::channel::Data& in, const m::model::Mixer& m);
+	IO(const m::Channel& out, const m::Channel& in, const m::model::Mixer& m);
 
 	float masterOutVol;
 	float masterInVol;

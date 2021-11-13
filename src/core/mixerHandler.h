@@ -34,11 +34,6 @@
 #include <memory>
 #include <string>
 
-namespace giada::m::channel
-{
-struct Data;
-}
-
 namespace giada::m::model
 {
 class Model;
@@ -46,6 +41,7 @@ class Model;
 
 namespace giada::m
 {
+class Channel;
 class Wave;
 class Mixer;
 class Plugin;
@@ -95,7 +91,7 @@ public:
     Adds a new channel of type 'type' into the channels stack. Returns the new
     channel ID. */
 
-	channel::Data& addChannel(ChannelType type, ID columnId, int bufferSize, ChannelManager&);
+	Channel& addChannel(ChannelType type, ID columnId, int bufferSize, ChannelManager&);
 
 	/* loadChannel
     Loads a new Wave inside a Sample Channel. */
@@ -165,24 +161,24 @@ public:
 	std::function<std::unique_ptr<Wave>(Frame)> onChannelRecorded;
 
 private:
-	bool forAnyChannel(std::function<bool(const channel::Data&)> f) const;
+	bool forAnyChannel(std::function<bool(const Channel&)> f) const;
 
-	std::vector<channel::Data*> getChannelsIf(std::function<bool(const channel::Data&)> f);
-	std::vector<channel::Data*> getRecordableChannels();
-	std::vector<channel::Data*> getOverdubbableChannels();
+	std::vector<Channel*> getChannelsIf(std::function<bool(const Channel&)> f);
+	std::vector<Channel*> getRecordableChannels();
+	std::vector<Channel*> getOverdubbableChannels();
 
-	void setupChannelPostRecording(channel::Data& ch, Frame currentFrame);
+	void setupChannelPostRecording(Channel& ch, Frame currentFrame);
 
 	/* recordChannel
 	Records the current Mixer audio input data into an empty channel. */
 
-	void recordChannel(channel::Data& ch, Frame recordedFrames, Frame currentFrame);
+	void recordChannel(Channel& ch, Frame recordedFrames, Frame currentFrame);
 
 	/* overdubChannel
 	Records the current Mixer audio input data into a channel with an existing
 	Wave, overdub mode. */
 
-	void overdubChannel(channel::Data& ch, Frame currentFrame);
+	void overdubChannel(Channel& ch, Frame currentFrame);
 
 	model::Model& m_model;
 	Mixer&        m_mixer;

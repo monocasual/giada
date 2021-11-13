@@ -180,7 +180,7 @@ std::unordered_set<ID> ActionRecorder::consolidate()
 
 void ActionRecorder::clearAllActions()
 {
-	for (channel::Data& ch : m_model.get().channels)
+	for (Channel& ch : m_model.get().channels)
 		ch.hasActions = false;
 	m_model.swap(model::SwapType::HARD);
 

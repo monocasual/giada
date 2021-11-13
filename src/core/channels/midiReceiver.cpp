@@ -32,9 +32,9 @@
 #include "core/mixer.h"
 #include "core/plugins/pluginHost.h"
 
-namespace giada::m::midiReceiver
+namespace giada::m
 {
-void Data::react(const channel::Data& ch, const EventDispatcher::Event& e) const
+void MidiReceiver::react(const Channel& ch, const EventDispatcher::Event& e) const
 {
 	switch (e.type)
 	{
@@ -55,7 +55,7 @@ void Data::react(const channel::Data& ch, const EventDispatcher::Event& e) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::advance(const channel::Data& ch, const Sequencer::Event& e) const
+void MidiReceiver::advance(const Channel& ch, const Sequencer::Event& e) const
 {
 	if (e.type == Sequencer::EventType::ACTIONS && ch.isPlaying())
 		for (const Action& action : *e.actions)
@@ -65,7 +65,7 @@ void Data::advance(const channel::Data& ch, const Sequencer::Event& e) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::render(const channel::Data& ch, PluginHost& pluginHost) const
+void MidiReceiver::render(const Channel& ch, PluginHost& pluginHost) const
 {
 	ch.buffer->midi.clear();
 
@@ -84,14 +84,14 @@ void Data::render(const channel::Data& ch, PluginHost& pluginHost) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::sendToPlugins(const channel::Data& ch, const MidiEvent& e, Frame localFrame) const
+void MidiReceiver::sendToPlugins(const Channel& ch, const MidiEvent& e, Frame localFrame) const
 {
 	ch.buffer->midiQueue.push(MidiEvent(e.getRaw(), localFrame));
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Data::parseMidi(const channel::Data& ch, const MidiEvent& e) const
+void MidiReceiver::parseMidi(const Channel& ch, const MidiEvent& e) const
 {
 	/* Now all messages are turned into Channel-0 messages. Giada doesn't care 
 	about holding MIDI channel information. Moreover, having all internal 
@@ -101,6 +101,6 @@ void Data::parseMidi(const channel::Data& ch, const MidiEvent& e) const
 	flat.setChannel(0);
 	sendToPlugins(ch, flat, /*delta=*/0);
 }
-} // namespace giada::m::midiReceiver
+} // namespace giada::m
 
 #endif // WITH_VST

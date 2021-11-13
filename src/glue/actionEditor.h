@@ -35,23 +35,15 @@
 namespace giada::m
 {
 struct Action;
-}
-
-namespace giada::m::channel
-{
-struct Data;
-}
-
-namespace giada::m::samplePlayer
-{
-struct Data;
-}
+class SamplePlayer;
+class Channel;
+} // namespace giada::m
 
 namespace giada::c::actionEditor
 {
 struct SampleData
 {
-	SampleData(const m::samplePlayer::Data&);
+	SampleData(const m::SamplePlayer&);
 
 	SamplePlayerMode channelMode;
 	bool             isLoopMode;
@@ -60,7 +52,7 @@ struct SampleData
 struct Data
 {
 	Data() = default;
-	Data(const m::channel::Data&);
+	Data(const m::Channel&);
 
 	Frame getCurrentFrame() const;
 	bool  isChannelPlaying() const;

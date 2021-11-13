@@ -65,7 +65,7 @@ Engine::Engine()
 	eventDispatcher.onMidiLearn       = [this](const MidiEvent& e) { midiDispatcher.learn(e); };
 	eventDispatcher.onMidiProcess     = [this](const MidiEvent& e) { midiDispatcher.process(e); };
 	eventDispatcher.onProcessChannels = [this](const EventDispatcher::EventBuffer& eb) {
-		for (channel::Data& ch : model.get().channels)
+		for (Channel& ch : model.get().channels)
 			ch.react(eb);
 		model.swap(model::SwapType::SOFT); // TODO - is this necessary???
 	};

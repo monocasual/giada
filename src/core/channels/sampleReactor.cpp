@@ -31,7 +31,7 @@
 #include "utils/math.h"
 #include <cassert>
 
-namespace giada::m::sampleReactor
+namespace giada::m
 {
 namespace
 {
@@ -43,23 +43,23 @@ constexpr int Q_ACTION_REWIND = 1;
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Data::Data(ID channelId, Sequencer& sequencer, model::Model& model)
+SampleReactor::SampleReactor(ID channelId, Sequencer& sequencer, model::Model& model)
 {
 	sequencer.quantizer.schedule(Q_ACTION_PLAY + channelId, [channelId, &model](Frame delta) {
-		channel::Data& ch = model.get().getChannel(channelId);
-		ch.state->offset  = delta;
+		Channel& ch      = model.get().getChannel(channelId);
+		ch.state->offset = delta;
 		ch.state->playStatus.store(ChannelStatus::PLAY);
 	});
 
 	sequencer.quantizer.schedule(Q_ACTION_REWIND + channelId, [this, channelId, &model](Frame delta) {
-		channel::Data& ch = model.get().getChannel(channelId);
+		Channel& ch = model.get().getChannel(channelId);
 		ch.isPlaying() ? rewind(ch, delta) : reset(ch);
 	});
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Data::react(channel::Data& ch, const EventDispatcher::Event& e,
+void SampleReactor::react(Channel& ch, const EventDispatcher::Event& e,
     Sequencer& sequencer, const Conf::Data& conf) const
 {
 	if (!ch.hasWave())
@@ -94,7 +94,7 @@ void Data::react(channel::Data& ch, const EventDispatcher::Event& e,
 
 /* -------------------------------------------------------------------------- */
 
-void Data::rewind(channel::Data& ch, Frame localFrame) const
+void SampleReactor::rewind(Channel& ch, Frame localFrame) const
 {
 	ch.state->rewinding = true;
 	ch.state->offset    = localFrame;
@@ -102,14 +102,14 @@ void Data::rewind(channel::Data& ch, Frame localFrame) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::reset(channel::Data& ch) const
+void SampleReactor::reset(Channel& ch) const
 {
 	ch.state->tracker.store(ch.samplePlayer->begin);
 }
 
 /* -------------------------------------------------------------------------- */
 
-ChannelStatus Data::pressWhileOff(channel::Data& ch, Sequencer& sequencer,
+ChannelStatus SampleReactor::pressWhileOff(Channel& ch, Sequencer& sequencer,
     int velocity, bool isLoop) const
 {
 	if (isLoop)
@@ -129,7 +129,7 @@ ChannelStatus Data::pressWhileOff(channel::Data& ch, Sequencer& sequencer,
 
 /* -------------------------------------------------------------------------- */
 
-ChannelStatus Data::pressWhilePlay(channel::Data& ch, Sequencer& sequencer,
+ChannelStatus SampleReactor::pressWhilePlay(Channel& ch, Sequencer& sequencer,
     SamplePlayerMode mode, bool isLoop) const
 {
 	if (isLoop)
@@ -158,7 +158,7 @@ ChannelStatus Data::pressWhilePlay(channel::Data& ch, Sequencer& sequencer,
 
 /* -------------------------------------------------------------------------- */
 
-void Data::press(channel::Data& ch, Sequencer& sequencer, int velocity) const
+void SampleReactor::press(Channel& ch, Sequencer& sequencer, int velocity) const
 {
 	const SamplePlayerMode mode   = ch.samplePlayer->mode;
 	const bool             isLoop = ch.samplePlayer->isAnyLoopMode();
@@ -192,14 +192,14 @@ void Data::press(channel::Data& ch, Sequencer& sequencer, int velocity) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::kill(channel::Data& ch) const
+void SampleReactor::kill(Channel& ch) const
 {
 	ch.state->playStatus.store(ChannelStatus::OFF);
 	ch.state->tracker.store(ch.samplePlayer->begin);
 }
 /* -------------------------------------------------------------------------- */
 
-void Data::release(channel::Data& ch, Sequencer& sequencer) const
+void SampleReactor::release(Channel& ch, Sequencer& sequencer) const
 {
 	/* Key release is meaningful only for SINGLE_PRESS modes. */
 
@@ -218,7 +218,7 @@ void Data::release(channel::Data& ch, Sequencer& sequencer) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::onStopBySeq(channel::Data& ch, bool chansStopOnSeqHalt) const
+void SampleReactor::onStopBySeq(Channel& ch, bool chansStopOnSeqHalt) const
 {
 	G_DEBUG("onStopBySeq ch=" << ch.id);
 
@@ -247,9 +247,9 @@ void Data::onStopBySeq(channel::Data& ch, bool chansStopOnSeqHalt) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::toggleReadActions(channel::Data& ch, bool isSequencerRunning, bool treatRecsAsLoops) const
+void SampleReactor::toggleReadActions(Channel& ch, bool isSequencerRunning, bool treatRecsAsLoops) const
 {
 	if (isSequencerRunning && ch.state->recStatus.load() == ChannelStatus::PLAY && !treatRecsAsLoops)
 		kill(ch);
 }
-} // namespace giada::m::sampleReactor
+} // namespace giada::m

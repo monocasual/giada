@@ -31,17 +31,17 @@
 #include "src/core/actions/actionRecorder.h"
 #include <cassert>
 
-namespace giada::m::sampleActionRecorder
+namespace giada::m
 {
-Data::Data(ActionRecorder& a, Sequencer& s)
-: actionRecorder(&a)
-, sequencer(&s)
+SampleActionRecorder::SampleActionRecorder(ActionRecorder& a, Sequencer& s)
+: m_actionRecorder(&a)
+, m_sequencer(&s)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Data::react(channel::Data& ch, const EventDispatcher::Event& e, bool treatRecsAsLoops,
+void SampleActionRecorder::react(Channel& ch, const EventDispatcher::Event& e, bool treatRecsAsLoops,
     bool seqIsRunning, bool canRecordActions) const
 {
 	if (!ch.hasWave())
@@ -87,15 +87,15 @@ void Data::react(channel::Data& ch, const EventDispatcher::Event& e, bool treatR
 
 /* -------------------------------------------------------------------------- */
 
-void Data::record(channel::Data& ch, int note) const
+void SampleActionRecorder::record(Channel& ch, int note) const
 {
-	actionRecorder->liveRec(ch.id, MidiEvent(note, 0, 0), sequencer->getCurrentFrameQuantized());
+	m_actionRecorder->liveRec(ch.id, MidiEvent(note, 0, 0), m_sequencer->getCurrentFrameQuantized());
 	ch.hasActions = true;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Data::onKeyPress(channel::Data& ch) const
+void SampleActionRecorder::onKeyPress(Channel& ch) const
 {
 	record(ch, MidiEvent::NOTE_ON);
 
@@ -108,7 +108,7 @@ void Data::onKeyPress(channel::Data& ch) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::startReadActions(channel::Data& ch, bool treatRecsAsLoops) const
+void SampleActionRecorder::startReadActions(Channel& ch, bool treatRecsAsLoops) const
 {
 	if (treatRecsAsLoops)
 		ch.state->recStatus.store(ChannelStatus::WAIT);
@@ -121,7 +121,7 @@ void Data::startReadActions(channel::Data& ch, bool treatRecsAsLoops) const
 
 /* -------------------------------------------------------------------------- */
 
-void Data::stopReadActions(channel::Data& ch, ChannelStatus curRecStatus,
+void SampleActionRecorder::stopReadActions(Channel& ch, ChannelStatus curRecStatus,
     bool treatRecsAsLoops, bool seqIsRunning) const
 {
 	/* First of all, if the sequencer is not running or treatRecsAsLoops is off, 
@@ -143,7 +143,7 @@ void Data::stopReadActions(channel::Data& ch, ChannelStatus curRecStatus,
 
 /* -------------------------------------------------------------------------- */
 
-void Data::toggleReadActions(channel::Data& ch, bool treatRecsAsLoops, bool seqIsRunning) const
+void SampleActionRecorder::toggleReadActions(Channel& ch, bool treatRecsAsLoops, bool seqIsRunning) const
 {
 	/* When you start reading actions while conf::treatRecsAsLoops is true, the
 	value ch.state->readActions actually is not set to true immediately, because
@@ -164,9 +164,9 @@ void Data::toggleReadActions(channel::Data& ch, bool treatRecsAsLoops, bool seqI
 
 /* -------------------------------------------------------------------------- */
 
-void Data::killReadActions(channel::Data& ch) const
+void SampleActionRecorder::killReadActions(Channel& ch) const
 {
 	ch.state->recStatus.store(ChannelStatus::OFF);
 	ch.state->readActions.store(false);
 }
-} // namespace giada::m::sampleActionRecorder
+} // namespace giada::m

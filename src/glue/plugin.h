@@ -43,12 +43,8 @@ class AudioProcessorEditor;
 namespace giada::m
 {
 class Plugin;
-}
-
-namespace giada::m::channel
-{
-struct Data;
-}
+class Channel;
+} // namespace giada::m
 
 namespace giada::c::plugin
 {
@@ -100,7 +96,7 @@ private:
 struct Plugins
 {
 	Plugins() = default;
-	Plugins(const m::channel::Data&);
+	Plugins(const m::Channel&);
 
 	ID                      channelId;
 	std::vector<m::Plugin*> plugins;
