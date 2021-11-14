@@ -190,7 +190,7 @@ void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 
 	m_ratio = f();
 
-	/* 1. Store the current x-position, then the new x-position affcted by the
+	/* 1. Store the current x-position, then the new x-position affected by the
 	zoom change. */
 
 	const int mpre = getMouseOverContent();
