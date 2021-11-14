@@ -187,8 +187,18 @@ void gdBaseActionEditor::draw()
 void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 {
 	const float ratioPrev = m_ratio;
+	const int   minWidth  = w() - (G_GUI_OUTER_MARGIN * 2);
 
 	m_ratio = f();
+
+	/* Make sure the new content width doesn't underflow the window space (i.e. 
+	the minimum width allowed). */
+
+	if (frameToPixel(m_data.framesInSeq) < minWidth)
+	{
+		m_ratio = m_data.framesInSeq / static_cast<float>(minWidth);
+		m_splitScroll.setScrollX(0);
+	}
 
 	/* 1. Store the current x-position, then the new x-position affected by the
 	zoom change. */
