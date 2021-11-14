@@ -62,14 +62,6 @@ MidiMapper<KernelMidiI>::MidiMapper(KernelMidiI& k)
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-const MidiMap& MidiMapper<KernelMidiI>::getCurrentMap() const
-{
-	return m_currentMap;
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename KernelMidiI>
 const std::vector<std::string>& MidiMapper<KernelMidiI>::getMapFilesFound() const
 {
 	return m_mapFiles;
@@ -124,29 +116,29 @@ int MidiMapper<KernelMidiI>::read(const std::string& file)
 
 	nl::json j = nl::json::parse(ifs);
 
-	m_currentMap.brand  = j[MIDIMAP_KEY_BRAND];
-	m_currentMap.device = j[MIDIMAP_KEY_DEVICE];
+	currentMap.brand  = j[MIDIMAP_KEY_BRAND];
+	currentMap.device = j[MIDIMAP_KEY_DEVICE];
 
-	if (!readInitCommands(m_currentMap, j))
+	if (!readInitCommands(currentMap, j))
 		return MIDIMAP_UNREADABLE;
-	if (readCommand(j, m_currentMap.muteOn, MIDIMAP_KEY_MUTE_ON))
-		parse(m_currentMap.muteOn);
-	if (readCommand(j, m_currentMap.muteOff, MIDIMAP_KEY_MUTE_OFF))
-		parse(m_currentMap.muteOff);
-	if (readCommand(j, m_currentMap.soloOn, MIDIMAP_KEY_SOLO_ON))
-		parse(m_currentMap.soloOn);
-	if (readCommand(j, m_currentMap.soloOff, MIDIMAP_KEY_SOLO_OFF))
-		parse(m_currentMap.soloOff);
-	if (readCommand(j, m_currentMap.waiting, MIDIMAP_KEY_WAITING))
-		parse(m_currentMap.waiting);
-	if (readCommand(j, m_currentMap.playing, MIDIMAP_KEY_PLAYING))
-		parse(m_currentMap.playing);
-	if (readCommand(j, m_currentMap.stopping, MIDIMAP_KEY_STOPPING))
-		parse(m_currentMap.stopping);
-	if (readCommand(j, m_currentMap.stopped, MIDIMAP_KEY_STOPPED))
-		parse(m_currentMap.stopped);
-	if (readCommand(j, m_currentMap.playingInaudible, MIDIMAP_KEY_PLAYING_INAUDIBLE))
-		parse(m_currentMap.playingInaudible);
+	if (readCommand(j, currentMap.muteOn, MIDIMAP_KEY_MUTE_ON))
+		parse(currentMap.muteOn);
+	if (readCommand(j, currentMap.muteOff, MIDIMAP_KEY_MUTE_OFF))
+		parse(currentMap.muteOff);
+	if (readCommand(j, currentMap.soloOn, MIDIMAP_KEY_SOLO_ON))
+		parse(currentMap.soloOn);
+	if (readCommand(j, currentMap.soloOff, MIDIMAP_KEY_SOLO_OFF))
+		parse(currentMap.soloOff);
+	if (readCommand(j, currentMap.waiting, MIDIMAP_KEY_WAITING))
+		parse(currentMap.waiting);
+	if (readCommand(j, currentMap.playing, MIDIMAP_KEY_PLAYING))
+		parse(currentMap.playing);
+	if (readCommand(j, currentMap.stopping, MIDIMAP_KEY_STOPPING))
+		parse(currentMap.stopping);
+	if (readCommand(j, currentMap.stopped, MIDIMAP_KEY_STOPPED))
+		parse(currentMap.stopped);
+	if (readCommand(j, currentMap.playingInaudible, MIDIMAP_KEY_PLAYING_INAUDIBLE))
+		parse(currentMap.playingInaudible);
 
 	return MIDIMAP_READ_OK;
 }

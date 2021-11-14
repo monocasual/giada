@@ -76,12 +76,6 @@ class MidiMapper final
 public:
 	MidiMapper(KernelMidiI&);
 
-	/* getCurrentMap
-	Returns a reference to the currently selected midimap. It might be invalid
-	if no midimaps have been found. */
-
-	const MidiMap& getCurrentMap() const;
-
 	/* getMapFilesFound
 	Returns a reference to the list of midimaps found. */
 
@@ -107,6 +101,12 @@ public:
 
 	void sendMidiLightning(uint32_t learnt, const MidiMap::Message& msg);
 
+	/* currentMap
+	The current MidiMap selected and loaded. It might be invalid if no midimaps
+	have been found. */
+
+	MidiMap currentMap;
+
 private:
 	KernelMidiI& m_kernelMidi;
 
@@ -126,11 +126,6 @@ private:
 
 	/* TODO - don't edit message in place! */
 	bool readCommand(const nlohmann::json& j, MidiMap::Message& m, const std::string& key) const;
-
-	/* m_currentMap
-	The current MidiMap selected and loaded. */
-
-	MidiMap m_currentMap;
 
 	/* m_mapsPath
 	Path to folder containing midimap files, different between OSes. */

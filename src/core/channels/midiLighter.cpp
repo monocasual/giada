@@ -54,7 +54,7 @@ MidiLighter<KernelMidiI>::MidiLighter(MidiMapper<KernelMidiI>& m, const Patch::C
 template <typename KernelMidiI>
 void MidiLighter<KernelMidiI>::sendStatus(ChannelStatus status, bool audible)
 {
-	const MidiMap& midiMap   = m_midiMapper->getCurrentMap();
+	const MidiMap& midiMap   = m_midiMapper->currentMap;
 	const uint32_t l_playing = playing.getValue();
 
 	if (l_playing == 0x0)
@@ -88,7 +88,7 @@ void MidiLighter<KernelMidiI>::sendStatus(ChannelStatus status, bool audible)
 template <typename KernelMidiI>
 void MidiLighter<KernelMidiI>::sendMute(bool isMuted)
 {
-	const MidiMap& midiMap = m_midiMapper->getCurrentMap();
+	const MidiMap& midiMap = m_midiMapper->currentMap;
 	const uint32_t l_mute  = mute.getValue();
 
 	if (l_mute != 0x0)
@@ -100,7 +100,7 @@ void MidiLighter<KernelMidiI>::sendMute(bool isMuted)
 template <typename KernelMidiI>
 void MidiLighter<KernelMidiI>::sendSolo(bool isSoloed)
 {
-	const MidiMap& midiMap = m_midiMapper->getCurrentMap();
+	const MidiMap& midiMap = m_midiMapper->currentMap;
 	const uint32_t l_solo  = solo.getValue();
 
 	if (l_solo != 0x0)

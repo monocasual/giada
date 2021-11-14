@@ -180,7 +180,7 @@ void Engine::init()
 	kernelMidi.setApi(conf.data.midiSystem);
 	kernelMidi.openOutDevice(conf.data.midiPortOut);
 	kernelMidi.openInDevice(conf.data.midiPortIn);
-	midiMapper.sendInitMessages(midiMapper.getCurrentMap());
+	midiMapper.sendInitMessages(midiMapper.currentMap);
 
 	eventDispatcher.start();
 
