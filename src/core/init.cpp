@@ -52,9 +52,24 @@ extern giada::v::Ui     g_ui;
 
 namespace giada::m::init
 {
-namespace
+int tests(int argc, char** argv)
 {
-void printBuildInfo_()
+#ifdef WITH_TESTS
+	std::vector<char*> args(argv, argv + argc);
+	if (args.size() > 1 && strcmp(args[1], "--run-tests") == 0)
+		return Catch::Session().run(args.size() - 1, &args[1]);
+	else
+		return -1;
+#else
+	(void)argc;
+	(void)argv;
+	return -1;
+#endif
+}
+
+/* -------------------------------------------------------------------------- */
+
+void printBuildInfo()
 {
 	u::log::print("[init] Giada %s\n", G_VERSION_STR);
 	u::log::print("[init] Build date: " BUILD_DATE "\n");
@@ -74,35 +89,13 @@ void printBuildInfo_()
 #ifdef WITH_VST
 	u::log::print("[init]   JUCE - %d.%d.%d\n", JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER);
 #endif
-	g_engine.kernelAudio.logCompiledAPIs();
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-int tests(int argc, char** argv)
-{
-#ifdef WITH_TESTS
-	std::vector<char*> args(argv, argv + argc);
-	if (args.size() > 1 && strcmp(args[1], "--run-tests") == 0)
-		return Catch::Session().run(args.size() - 1, &args[1]);
-	else
-		return -1;
-#else
-	(void)argc;
-	(void)argv;
-	return -1;
-#endif
+	KernelAudio::logCompiledAPIs();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void startup(int argc, char** argv)
 {
-	printBuildInfo_();
-
 #ifdef WITH_VST
 	juce::initialiseJuce_GUI();
 #endif

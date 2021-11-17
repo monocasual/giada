@@ -35,6 +35,7 @@ Performs tests, if requested. Returns -1 if no tests are available or the
 
 int tests(int argc, char** argv);
 
+void printBuildInfo();
 void startup(int argc, char** argv);
 int  run();
 void closeMainWindow();
