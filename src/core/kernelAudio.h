@@ -69,6 +69,8 @@ public:
 
 	KernelAudio();
 
+	static void logCompiledAPIs();
+
 	int  openDevice(const Conf::Data& conf);
 	void closeDevice();
 	int  startStream();
@@ -82,7 +84,6 @@ public:
 	int                        getChannelsInCount() const;
 	bool                       hasAPI(int API) const;
 	int                        getAPI() const;
-	void                       logCompiledAPIs() const;
 	Device                     getDevice(const char* name) const;
 	const std::vector<Device>& getDevices() const;
 #ifdef WITH_AUDIO_JACK

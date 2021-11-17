@@ -287,7 +287,7 @@ int KernelAudio::getAPI() const { return m_api; }
 
 /* -------------------------------------------------------------------------- */
 
-void KernelAudio::logCompiledAPIs() const
+void KernelAudio::logCompiledAPIs()
 {
 	std::vector<RtAudio::Api> APIs;
 	RtAudio::getCompiledApi(APIs);
