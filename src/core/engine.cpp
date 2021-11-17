@@ -270,11 +270,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo)
 		synchronizer.recvJackSync(jackTransport.getState());
 #endif
 
-	/* Render Mixer first: render channels, process I/O. */
-
-	mixer.render(out, in, layout_RT);
-
-	/* Then, if the sequencer is running, advance it (i.e. parse it for events). 
+	/* If the sequencer is running, advance it first (i.e. parse it for events). 
 	Also advance channels (i.e. let them react to sequencer events), only if the 
 	layout is not locked: another thread might altering channel's data in the 
 	meantime (e.g. Plugins or Waves). */
@@ -286,6 +282,10 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo)
 		if (!layout_RT.locked)
 			mixer.advanceChannels(events, layout_RT);
 	}
+
+	/* Then render Mixer: render channels, process I/O. */
+
+	mixer.render(out, in, layout_RT);
 
 	return 0;
 }
