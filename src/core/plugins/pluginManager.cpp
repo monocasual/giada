@@ -44,7 +44,8 @@ void PluginManager::reset(SortMethod sortMethod)
 	m_missingPlugins = false;
 
 	m_unknownPluginList.clear();
-	m_formatManager.addDefaultFormats();
+	if (m_formatManager.getNumFormats() == 0) // Must be called only once
+		m_formatManager.addDefaultFormats();
 
 	loadList(u::fs::getHomePath() + G_SLASH + "plugins.xml");
 	sortPlugins(sortMethod);
