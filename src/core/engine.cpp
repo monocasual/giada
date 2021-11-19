@@ -194,12 +194,12 @@ void Engine::init()
 void Engine::reset()
 {
 	model.reset();
+	mixerHandler.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()),
+	    kernelAudio.getBufferSize(), channelManager);
 	channelManager.reset();
 	waveManager.reset();
 	synchronizer.reset();
 	sequencer.reset(kernelAudio.getSampleRate());
-	mixerHandler.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()),
-	    kernelAudio.getBufferSize(), channelManager);
 	actionRecorder.reset();
 #ifdef WITH_VST
 	pluginHost.reset(kernelAudio.getBufferSize());
