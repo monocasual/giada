@@ -94,6 +94,10 @@ int KernelAudio::openDevice(const Conf::Data& conf)
 		return 0;
 	}
 
+	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg) {
+		u::log::print("[KA] RtAudio error %d: %s\n", type, msg.c_str());
+	});
+
 	u::log::print("[KA] Opening device out=%d, in=%d, samplerate=%d\n",
 	    conf.soundDeviceOut, conf.soundDeviceIn, conf.samplerate);
 
@@ -154,33 +158,33 @@ int KernelAudio::openDevice(const Conf::Data& conf)
 
 #endif
 
-	try
-	{
-		m_callbackInfo = {
-		    /* kernelAudio      = */ this,
-		    /* ready            = */ true,
-		    /* withJack         = */ getAPI() == G_SYS_API_JACK,
-		    /* outBuf           = */ nullptr, // filled later on in audio callback
-		    /* inBuf            = */ nullptr, // filled later on in audio callback
-		    /* bufferSize       = */ 0,       // filled later on in audio callback
-		    /* channelsOutCount = */ m_channelsOutCount,
-		    /* channelsInCount  = */ m_channelsInCount};
+	m_callbackInfo = {
+	    /* kernelAudio      = */ this,
+	    /* ready            = */ true,
+	    /* withJack         = */ getAPI() == G_SYS_API_JACK,
+	    /* outBuf           = */ nullptr, // filled later on in audio callback
+	    /* inBuf            = */ nullptr, // filled later on in audio callback
+	    /* bufferSize       = */ 0,       // filled later on in audio callback
+	    /* channelsOutCount = */ m_channelsOutCount,
+	    /* channelsInCount  = */ m_channelsInCount};
 
-		m_rtAudio->openStream(
-		    &outParams,                                     // output params
-		    conf.soundDeviceIn != -1 ? &inParams : nullptr, // input params if inDevice is selected
-		    RTAUDIO_FLOAT32,                                // audio format
-		    m_realSampleRate,                               // sample rate
-		    &m_realBufferSize,                              // buffer size in byte
-		    &audioCallback,                                 // audio callback
-		    &m_callbackInfo,                                // user data passed to callback
-		    &options);
+	RtAudioErrorType res = m_rtAudio->openStream(
+	    &outParams,                                     // output params
+	    conf.soundDeviceIn != -1 ? &inParams : nullptr, // input params if inDevice is selected
+	    RTAUDIO_FLOAT32,                                // audio format
+	    m_realSampleRate,                               // sample rate
+	    &m_realBufferSize,                              // buffer size in byte
+	    &audioCallback,                                 // audio callback
+	    &m_callbackInfo,                                // user data passed to callback
+	    &options);
+
+	if (res == RtAudioErrorType::RTAUDIO_NO_ERROR)
+	{
 		m_ready = true;
 		return 1;
 	}
-	catch (RtAudioError& e)
+	else
 	{
-		u::log::print("[KA] RtAudio init error: %s\n", e.getMessage());
 		closeDevice();
 		return 0;
 	}
@@ -190,33 +194,24 @@ int KernelAudio::openDevice(const Conf::Data& conf)
 
 int KernelAudio::startStream()
 {
-	try
+	if (m_rtAudio->startStream() == RtAudioErrorType::RTAUDIO_NO_ERROR)
 	{
-		m_rtAudio->startStream();
-		u::log::print("[KA] latency = %lu\n", m_rtAudio->getStreamLatency());
+		u::log::print("[KA] Start stream - latency = %lu\n", m_rtAudio->getStreamLatency());
 		return 1;
 	}
-	catch (RtAudioError& e)
-	{
-		u::log::print("[KA] Start stream error: %s\n", e.getMessage());
-		return 0;
-	}
+	return 0;
 }
 
 /* -------------------------------------------------------------------------- */
 
 int KernelAudio::stopStream()
 {
-	try
+	if (m_rtAudio->stopStream() == RtAudioErrorType::RTAUDIO_NO_ERROR)
 	{
-		m_rtAudio->stopStream();
+		u::log::print("[KA] Stop stream\n");
 		return 1;
 	}
-	catch (RtAudioError& /*e*/)
-	{
-		u::log::print("[KA] Stop stream error\n");
-		return 0;
-	}
+	return 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -333,32 +328,24 @@ void KernelAudio::logCompiledAPIs()
 
 m::KernelAudio::Device KernelAudio::fetchDevice(size_t deviceIndex) const
 {
-	try
-	{
-		RtAudio::DeviceInfo info = m_rtAudio->getDeviceInfo(deviceIndex);
+	RtAudio::DeviceInfo info = m_rtAudio->getDeviceInfo(deviceIndex);
 
-		if (!info.probed)
-		{
-			u::log::print("[KA] Can't probe device %d\n", deviceIndex);
-			return {deviceIndex};
-		}
-
-		return {
-		    deviceIndex,
-		    true,
-		    info.name,
-		    static_cast<int>(info.outputChannels),
-		    static_cast<int>(info.inputChannels),
-		    static_cast<int>(info.duplexChannels),
-		    info.isDefaultOutput,
-		    info.isDefaultInput,
-		    u::vector::cast<int>(info.sampleRates)};
-	}
-	catch (RtAudioError& e)
+	if (!info.probed)
 	{
-		u::log::print("[KA] Error fetching device %d: %s\n", deviceIndex, e.getMessage());
-		return {0};
+		u::log::print("[KA] Can't probe device %d\n", deviceIndex);
+		return {deviceIndex};
 	}
+
+	return {
+	    deviceIndex,
+	    true,
+	    info.name,
+	    static_cast<int>(info.outputChannels),
+	    static_cast<int>(info.inputChannels),
+	    static_cast<int>(info.duplexChannels),
+	    info.isDefaultOutput,
+	    info.isDefaultInput,
+	    u::vector::cast<int>(info.sampleRates)};
 }
 
 /* -------------------------------------------------------------------------- */
