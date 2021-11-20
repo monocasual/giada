@@ -56,7 +56,7 @@ void loadChannels_(const std::vector<Patch::Channel>& channels, int samplerate)
 
 void loadActions_(const std::vector<Patch::Action>& pactions)
 {
-	g_engine.model.getAll<Actions::Map>() = std::move(g_engine.actionRecorder.deserializeActions(pactions));
+	g_engine.model.getAllShared<Actions::Map>() = std::move(g_engine.actionRecorder.deserializeActions(pactions));
 }
 } // namespace
 
@@ -72,19 +72,19 @@ void store(Patch::Data& patch)
 	patch.beats      = layout.sequencer.beats;
 	patch.bpm        = layout.sequencer.bpm;
 	patch.quantize   = layout.sequencer.quantize;
-	patch.metronome  = g_engine.sequencer.isMetronomeOn(); // TODO - add bool metronome to Layout
+	patch.metronome  = g_engine.sequencer.isMetronomeOn(); // TODO - addShared bool metronome to Layout
 	patch.samplerate = g_engine.kernelAudio.getSampleRate();
 
 #ifdef WITH_VST
 	patch.plugins.clear();
-	for (const auto& p : g_engine.model.getAll<PluginPtrs>())
+	for (const auto& p : g_engine.model.getAllShared<PluginPtrs>())
 		patch.plugins.push_back(g_engine.pluginManager.serializePlugin(*p));
 #endif
 
-	patch.actions = g_engine.actionRecorder.serializeActions(g_engine.model.getAll<Actions::Map>());
+	patch.actions = g_engine.actionRecorder.serializeActions(g_engine.model.getAllShared<Actions::Map>());
 
 	patch.waves.clear();
-	for (const auto& w : g_engine.model.getAll<WavePtrs>())
+	for (const auto& w : g_engine.model.getAllShared<WavePtrs>())
 		patch.waves.push_back(g_engine.waveManager.serializeWave(*w));
 
 	patch.channels.clear();
@@ -120,25 +120,24 @@ void load(const Patch::Data& patch)
 	/* Clear and re-initialize channels first. */
 
 	g_engine.model.get().channels = {};
-	g_engine.model.getAll<ChannelBufferPtrs>().clear();
-	g_engine.model.getAll<ChannelStatePtrs>().clear();
+	g_engine.model.getAllShared<ChannelSharedPtrs>().clear();
 
 	/* Load external data first: plug-ins and waves. */
 
 #ifdef WITH_VST
-	g_engine.model.getAll<PluginPtrs>().clear();
+	g_engine.model.getAllShared<PluginPtrs>().clear();
 	for (const Patch::Plugin& pplugin : patch.plugins)
-		g_engine.model.getAll<PluginPtrs>().push_back(g_engine.pluginManager.deserializePlugin(
+		g_engine.model.getAllShared<PluginPtrs>().push_back(g_engine.pluginManager.deserializePlugin(
 		    pplugin, patch.version, g_engine.kernelAudio.getSampleRate(), g_engine.kernelAudio.getBufferSize(), g_engine.sequencer));
 #endif
 
-	g_engine.model.getAll<WavePtrs>().clear();
+	g_engine.model.getAllShared<WavePtrs>().clear();
 	for (const Patch::Wave& pwave : patch.waves)
 	{
 		std::unique_ptr<Wave> w = g_engine.waveManager.deserializeWave(pwave, g_engine.kernelAudio.getSampleRate(),
 		    g_engine.conf.data.rsmpQuality);
 		if (w != nullptr)
-			g_engine.model.getAll<WavePtrs>().push_back(std::move(w));
+			g_engine.model.getAllShared<WavePtrs>().push_back(std::move(w));
 	}
 
 	/* Then load up channels, actions and global properties. */

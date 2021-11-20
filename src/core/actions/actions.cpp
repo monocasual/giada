@@ -53,7 +53,7 @@ void Actions::reset()
 void Actions::clearAll()
 {
 	model::DataLock lock = m_model.lockData();
-	m_model.getAll<Map>().clear();
+	m_model.getAllShared<Map>().clear();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -93,7 +93,7 @@ void Actions::updateKeyFrames(std::function<Frame(Frame old)> f)
 	/* Copy all existing actions in local map by cloning them, with just a
 	difference: they have a new frame value. */
 
-	for (const auto& [oldFrame, actions] : m_model.getAll<Map>())
+	for (const auto& [oldFrame, actions] : m_model.getAllShared<Map>())
 	{
 		Frame newFrame = f(oldFrame);
 		for (const Action& a : actions)
@@ -108,7 +108,7 @@ void Actions::updateKeyFrames(std::function<Frame(Frame old)> f)
 	updateMapPointers(temp);
 
 	model::DataLock lock  = m_model.lockData();
-	m_model.getAll<Map>() = std::move(temp);
+	m_model.getAllShared<Map>() = std::move(temp);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -117,7 +117,7 @@ void Actions::updateEvent(ID id, MidiEvent e)
 {
 	model::DataLock lock = m_model.lockData();
 
-	findAction(m_model.getAll<Map>(), id)->event = e;
+	findAction(m_model.getAllShared<Map>(), id)->event = e;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -126,9 +126,9 @@ void Actions::updateSiblings(ID id, ID prevId, ID nextId)
 {
 	model::DataLock lock = m_model.lockData();
 
-	Action* pcurr = findAction(m_model.getAll<Map>(), id);
-	Action* pprev = findAction(m_model.getAll<Map>(), prevId);
-	Action* pnext = findAction(m_model.getAll<Map>(), nextId);
+	Action* pcurr = findAction(m_model.getAllShared<Map>(), id);
+	Action* pprev = findAction(m_model.getAllShared<Map>(), prevId);
+	Action* pnext = findAction(m_model.getAllShared<Map>(), nextId);
 
 	pcurr->prev   = pprev;
 	pcurr->prevId = pprev->id;
@@ -151,7 +151,7 @@ void Actions::updateSiblings(ID id, ID prevId, ID nextId)
 
 bool Actions::hasActions(ID channelId, int type) const
 {
-	for (const auto& [frame, actions] : m_model.getAll<Map>())
+	for (const auto& [frame, actions] : m_model.getAllShared<Map>())
 		for (const Action& a : actions)
 			if (a.channelId == channelId && (type == 0 || type == a.event.getStatus()))
 				return true;
@@ -190,8 +190,8 @@ Action Actions::rec(ID channelId, Frame frame, MidiEvent event)
 
 	model::DataLock lock = m_model.lockData();
 
-	m_model.getAll<Map>()[frame].push_back(a);
-	updateMapPointers(m_model.getAll<Map>());
+	m_model.getAllShared<Map>()[frame].push_back(a);
+	updateMapPointers(m_model.getAllShared<Map>());
 
 	return a;
 }
@@ -205,7 +205,7 @@ void Actions::rec(std::vector<Action>& actions)
 
 	model::DataLock lock = m_model.lockData();
 
-	Map& map = m_model.getAll<Map>();
+	Map& map = m_model.getAllShared<Map>();
 
 	for (const Action& a : actions)
 		if (!exists(a.channelId, a.frame, a.event, map))
@@ -219,7 +219,7 @@ void Actions::rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
 	model::DataLock lock = m_model.lockData();
 
-	Map& map = m_model.getAll<Map>();
+	Map& map = m_model.getAllShared<Map>();
 
 	map[f1].push_back(makeAction(0, channelId, f1, e1));
 	map[f2].push_back(makeAction(0, channelId, f2, e2));
@@ -236,9 +236,9 @@ void Actions::rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 
 const std::vector<Action>* Actions::getActionsOnFrame(Frame frame) const
 {
-	if (m_model.getAll<Map>().count(frame) == 0)
+	if (m_model.getAllShared<Map>().count(frame) == 0)
 		return nullptr;
-	return &m_model.getAll<Map>().at(frame);
+	return &m_model.getAllShared<Map>().at(frame);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -271,7 +271,7 @@ std::vector<Action> Actions::getActionsOnChannel(ID channelId) const
 
 void Actions::forEachAction(std::function<void(const Action&)> f) const
 {
-	for (auto& [_, actions] : m_model.getAll<Map>())
+	for (auto& [_, actions] : m_model.getAllShared<Map>())
 		for (const Action& action : actions)
 			f(action);
 }
@@ -325,7 +325,7 @@ void Actions::removeIf(std::function<bool(const Action&)> f)
 {
 	model::DataLock lock = m_model.lockData();
 
-	Map& map = m_model.getAll<Map>();
+	Map& map = m_model.getAllShared<Map>();
 	for (auto& [frame, actions] : map)
 		actions.erase(std::remove_if(actions.begin(), actions.end(), f), actions.end());
 	optimize(map);
@@ -347,6 +347,6 @@ bool Actions::exists(ID channelId, Frame frame, const MidiEvent& event, const Ma
 
 bool Actions::exists(ID channelId, Frame frame, const MidiEvent& event) const
 {
-	return exists(channelId, frame, event, m_model.getAll<Map>());
+	return exists(channelId, frame, event, m_model.getAllShared<Map>());
 }
 } // namespace giada::m

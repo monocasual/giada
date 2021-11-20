@@ -60,16 +60,15 @@ mcl::AudioBuffer::Pan calcPanning_(float pan)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Channel::Buffer::Buffer(Frame bufferSize)
-: audio(bufferSize, G_MAX_IO_CHANS)
+Channel::Shared::Shared(Frame bufferSize)
+: audioBuffer(bufferSize, G_MAX_IO_CHANS)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-Channel::Channel(ChannelType type, ID id, ID columnId, State& s, Buffer& b)
-: state(&s)
-, buffer(&b)
+Channel::Channel(ChannelType type, ID id, ID columnId, Shared& s)
+: shared(&s)
 , id(id)
 , type(type)
 , columnId(columnId)
@@ -87,7 +86,7 @@ Channel::Channel(ChannelType type, ID id, ID columnId, State& s, Buffer& b)
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		samplePlayer.emplace(&(state->resampler.value()));
+		samplePlayer.emplace(&(shared->resampler.value()));
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		audioReceiver.emplace();
@@ -95,7 +94,7 @@ Channel::Channel(ChannelType type, ID id, ID columnId, State& s, Buffer& b)
 		break;
 
 	case ChannelType::PREVIEW:
-		samplePlayer.emplace(&(state->resampler.value()));
+		samplePlayer.emplace(&(shared->resampler.value()));
 		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		break;
 
@@ -117,9 +116,8 @@ Channel::Channel(ChannelType type, ID id, ID columnId, State& s, Buffer& b)
 
 /* -------------------------------------------------------------------------- */
 
-Channel::Channel(const Patch::Channel& p, State& s, Buffer& b, float samplerateRatio, Wave* wave)
-: state(&s)
-, buffer(&b)
+Channel::Channel(const Patch::Channel& p, Shared& s, float samplerateRatio, Wave* wave)
+: shared(&s)
 , id(p.id)
 , type(p.type)
 , columnId(p.columnId)
@@ -139,13 +137,13 @@ Channel::Channel(const Patch::Channel& p, State& s, Buffer& b, float samplerateR
 , m_mute(p.mute)
 , m_solo(p.solo)
 {
-	state->readActions.store(p.readActions);
-	state->recStatus.store(p.readActions ? ChannelStatus::PLAY : ChannelStatus::OFF);
+	shared->readActions.store(p.readActions);
+	shared->recStatus.store(p.readActions ? ChannelStatus::PLAY : ChannelStatus::OFF);
 
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		samplePlayer.emplace(p, samplerateRatio, &(state->resampler.value()), wave);
+		samplePlayer.emplace(p, samplerateRatio, &(shared->resampler.value()), wave);
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		audioReceiver.emplace(p);
@@ -153,7 +151,7 @@ Channel::Channel(const Patch::Channel& p, State& s, Buffer& b, float samplerateR
 		break;
 
 	case ChannelType::PREVIEW:
-		samplePlayer.emplace(p, samplerateRatio, &(state->resampler.value()), nullptr);
+		samplePlayer.emplace(p, samplerateRatio, &(shared->resampler.value()), nullptr);
 		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
 		break;
 
@@ -188,8 +186,7 @@ Channel& Channel::operator=(const Channel& other)
 	if (this == &other)
 		return *this;
 
-	state      = other.state;
-	buffer     = other.buffer;
+	shared     = other.shared;
 	id         = other.id;
 	type       = other.type;
 	columnId   = other.columnId;
@@ -275,13 +272,13 @@ bool Channel::hasWave() const
 
 bool Channel::isPlaying() const
 {
-	ChannelStatus s = state->playStatus.load();
+	ChannelStatus s = shared->playStatus.load();
 	return s == ChannelStatus::PLAY || s == ChannelStatus::ENDING;
 }
 
 bool Channel::isReadingActions() const
 {
-	ChannelStatus s = state->recStatus.load();
+	ChannelStatus s = shared->recStatus.load();
 	return s == ChannelStatus::PLAY || s == ChannelStatus::ENDING;
 }
 
@@ -305,7 +302,7 @@ void Channel::setSolo(bool v)
 
 void Channel::initCallbacks()
 {
-	state->playStatus.onChange = [this](ChannelStatus status) {
+	shared->playStatus.onChange = [this](ChannelStatus status) {
 		midiLighter.sendStatus(status, g_engine.mixer.isChannelAudible(*this));
 	};
 
@@ -416,12 +413,12 @@ void Channel::render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible) 
 
 void Channel::renderMasterOut(mcl::AudioBuffer& out) const
 {
-	buffer->audio.set(out, /*gain=*/1.0f);
+	shared->audioBuffer.set(out, /*gain=*/1.0f);
 #ifdef WITH_VST
 	if (plugins.size() > 0)
-		g_engine.pluginHost.processStack(buffer->audio, plugins, nullptr);
+		g_engine.pluginHost.processStack(shared->audioBuffer, plugins, nullptr);
 #endif
-	out.set(buffer->audio, volume);
+	out.set(shared->audioBuffer, volume);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -440,7 +437,7 @@ void Channel::renderMasterIn(mcl::AudioBuffer& in) const
 
 void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool audible) const
 {
-	buffer->audio.clear();
+	shared->audioBuffer.clear();
 
 	if (samplePlayer)
 		samplePlayer->render(*this);
@@ -455,10 +452,10 @@ void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool au
 	if (midiReceiver)
 		midiReceiver->render(*this, g_engine.pluginHost);
 	else if (plugins.size() > 0)
-		g_engine.pluginHost.processStack(buffer->audio, plugins, nullptr);
+		g_engine.pluginHost.processStack(shared->audioBuffer, plugins, nullptr);
 #endif
 
 	if (audible)
-		out.sum(buffer->audio, volume * volume_i, calcPanning_(pan));
+		out.sum(shared->audioBuffer, volume * volume_i, calcPanning_(pan));
 }
 } // namespace giada::m

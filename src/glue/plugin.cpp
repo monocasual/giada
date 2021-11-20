@@ -141,7 +141,7 @@ std::vector<m::PluginManager::PluginInfo> getPluginsInfo()
 
 void updateWindow(ID pluginId, bool gui)
 {
-	m::Plugin* p = g_engine.model.find<m::Plugin>(pluginId);
+	m::Plugin* p = g_engine.model.findShared<m::Plugin>(pluginId);
 
 	assert(p != nullptr);
 

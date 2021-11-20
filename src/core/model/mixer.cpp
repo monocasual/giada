@@ -28,60 +28,75 @@
 
 namespace giada::m::model
 {
+Mixer::Shared& Mixer::Shared::operator=(const Mixer::Shared& o)
+{
+	if (this == &o)
+		return *this;
+	active.store(o.active.load());
+	peakOutL.store(0.0f);
+	peakOutR.store(0.0f);
+	peakInL.store(0.0f);
+	peakInR.store(0.0f);
+	inputTracker.store(0);
+	return *this;
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool Mixer::a_isActive() const
 {
-	return state->active.load() == true;
+	return shared->active.load() == true;
 }
 
 /* -------------------------------------------------------------------------- */
 
 Frame Mixer::a_getInputTracker() const
 {
-	return state->inputTracker.load();
+	return shared->inputTracker.load();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::a_setActive(bool isActive) const
 {
-	state->active.store(isActive);
+	shared->active.store(isActive);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::a_setInputTracker(Frame f) const
 {
-	state->inputTracker.store(f);
+	shared->inputTracker.store(f);
 }
 
 /* -------------------------------------------------------------------------- */
 
 Peak Mixer::a_getPeakOut() const
 {
-	return {state->peakOutL.load(), state->peakOutR.load()};
+	return {shared->peakOutL.load(), shared->peakOutR.load()};
 }
 
 Peak Mixer::a_getPeakIn() const
 {
-	return {state->peakInL.load(), state->peakInR.load()};
+	return {shared->peakInL.load(), shared->peakInR.load()};
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::a_setPeakOut(Peak p) const
 {
-	state->peakOutL.store(p.left);
-	state->peakOutR.store(p.right);
+	shared->peakOutL.store(p.left);
+	shared->peakOutR.store(p.right);
 }
 
 void Mixer::a_setPeakIn(Peak p) const
 {
-	state->peakInL.store(p.left);
-	state->peakInR.store(p.right);
+	shared->peakInL.store(p.left);
+	shared->peakInR.store(p.right);
 }
 
 /* -------------------------------------------------------------------------- */
 
-mcl::AudioBuffer& Mixer::getRecBuffer() const { return buffer->rec; }
-mcl::AudioBuffer& Mixer::getInBuffer() const { return buffer->in; }
+mcl::AudioBuffer& Mixer::getRecBuffer() const { return shared->recBuffer; }
+mcl::AudioBuffer& Mixer::getInBuffer() const { return shared->inBuffer; }
 } // namespace giada::m::model

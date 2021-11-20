@@ -103,7 +103,7 @@ void SampleActionRecorder::onKeyPress(Channel& ch) const
 	prevent	existing actions to interfere with the keypress/keyrel combo. */
 
 	if (ch.samplePlayer->mode == SamplePlayerMode::SINGLE_PRESS)
-		ch.state->readActions.store(false);
+		ch.shared->readActions.store(false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -111,11 +111,11 @@ void SampleActionRecorder::onKeyPress(Channel& ch) const
 void SampleActionRecorder::startReadActions(Channel& ch, bool treatRecsAsLoops) const
 {
 	if (treatRecsAsLoops)
-		ch.state->recStatus.store(ChannelStatus::WAIT);
+		ch.shared->recStatus.store(ChannelStatus::WAIT);
 	else
 	{
-		ch.state->recStatus.store(ChannelStatus::PLAY);
-		ch.state->readActions.store(true);
+		ch.shared->recStatus.store(ChannelStatus::PLAY);
+		ch.shared->readActions.store(true);
 	}
 }
 
@@ -130,15 +130,15 @@ void SampleActionRecorder::stopReadActions(Channel& ch, ChannelStatus curRecStat
 
 	if (!seqIsRunning || !treatRecsAsLoops)
 	{
-		ch.state->recStatus.store(ChannelStatus::OFF);
-		ch.state->readActions.store(false);
+		ch.shared->recStatus.store(ChannelStatus::OFF);
+		ch.shared->readActions.store(false);
 	}
 	else if (curRecStatus == ChannelStatus::WAIT)
-		ch.state->recStatus.store(ChannelStatus::OFF);
+		ch.shared->recStatus.store(ChannelStatus::OFF);
 	else if (curRecStatus == ChannelStatus::ENDING)
-		ch.state->recStatus.store(ChannelStatus::PLAY);
+		ch.shared->recStatus.store(ChannelStatus::PLAY);
 	else
-		ch.state->recStatus.store(ChannelStatus::ENDING);
+		ch.shared->recStatus.store(ChannelStatus::ENDING);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -146,15 +146,15 @@ void SampleActionRecorder::stopReadActions(Channel& ch, ChannelStatus curRecStat
 void SampleActionRecorder::toggleReadActions(Channel& ch, bool treatRecsAsLoops, bool seqIsRunning) const
 {
 	/* When you start reading actions while conf::treatRecsAsLoops is true, the
-	value ch.state->readActions actually is not set to true immediately, because
+	value ch.shared->readActions actually is not set to true immediately, because
 	the channel is in wait mode (REC_WAITING). readActions will become true on
 	the next first beat. So a 'stop rec' command should occur also when
 	readActions is false but the channel is in wait mode; this check will
 	handle the case of when you press 'R', the channel goes into REC_WAITING and
 	then you press 'R' again to undo the status. */
 
-	const bool          readActions = ch.state->readActions.load();
-	const ChannelStatus recStatus   = ch.state->recStatus.load();
+	const bool          readActions = ch.shared->readActions.load();
+	const ChannelStatus recStatus   = ch.shared->recStatus.load();
 
 	if (readActions || (!readActions && recStatus == ChannelStatus::WAIT))
 		stopReadActions(ch, recStatus, treatRecsAsLoops, seqIsRunning);
@@ -166,7 +166,7 @@ void SampleActionRecorder::toggleReadActions(Channel& ch, bool treatRecsAsLoops,
 
 void SampleActionRecorder::killReadActions(Channel& ch) const
 {
-	ch.state->recStatus.store(ChannelStatus::OFF);
-	ch.state->readActions.store(false);
+	ch.shared->recStatus.store(ChannelStatus::OFF);
+	ch.shared->readActions.store(false);
 }
 } // namespace giada::m

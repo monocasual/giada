@@ -167,7 +167,7 @@ void saveSample(void* data)
 		return;
 
 	ID       waveId = g_engine.model.get().getChannel(channelId).samplePlayer->getWaveId();
-	m::Wave* wave   = g_engine.model.find<m::Wave>(waveId);
+	m::Wave* wave   = g_engine.model.findShared<m::Wave>(waveId);
 
 	assert(wave != nullptr);
 

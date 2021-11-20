@@ -62,8 +62,8 @@ void ChannelManager::reset()
 
 Channel ChannelManager::create(ID channelId, ChannelType type, ID columnId, int bufferSize)
 {
-	Channel out = Channel(type, m_channelId.generate(channelId),
-	    columnId, makeState_(type), makeBuffer_(bufferSize));
+	Channel out = Channel(type, m_channelId.generate(channelId), columnId,
+	    makeShared(type, bufferSize));
 
 	if (out.audioReceiver)
 		out.audioReceiver->overdubProtection = m_conf.overdubProtectionDefaultOn;
@@ -78,8 +78,7 @@ Channel ChannelManager::create(const Channel& o, int bufferSize)
 	Channel out = Channel(o);
 
 	out.id     = m_channelId.generate();
-	out.state  = &makeState_(o.type);
-	out.buffer = &makeBuffer_(bufferSize);
+	out.shared = &makeShared(o.type, bufferSize);
 
 	return out;
 }
@@ -89,7 +88,7 @@ Channel ChannelManager::create(const Channel& o, int bufferSize)
 Channel ChannelManager::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
 {
 	m_channelId.set(pch.id);
-	return Channel(pch, makeState_(pch.type), makeBuffer_(bufferSize), samplerateRatio, m_model.find<Wave>(pch.waveId));
+	return Channel(pch, makeShared(pch.type, bufferSize), samplerateRatio, m_model.findShared<Wave>(pch.waveId));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -114,7 +113,7 @@ const Patch::Channel ChannelManager::serializeChannel(const Channel& c)
 	pc.volume            = c.volume;
 	pc.pan               = c.pan;
 	pc.hasActions        = c.hasActions;
-	pc.readActions       = c.state->readActions.load();
+	pc.readActions       = c.shared->readActions.load();
 	pc.armed             = c.armed;
 	pc.midiIn            = c.midiLearner.enabled;
 	pc.midiInFilter      = c.midiLearner.filter;
@@ -155,22 +154,14 @@ const Patch::Channel ChannelManager::serializeChannel(const Channel& c)
 
 /* -------------------------------------------------------------------------- */
 
-Channel::State& ChannelManager::makeState_(ChannelType type)
+Channel::Shared& ChannelManager::makeShared(ChannelType type, int bufferSize)
 {
-	std::unique_ptr<Channel::State> state = std::make_unique<Channel::State>();
+	std::unique_ptr<Channel::Shared> shared = std::make_unique<Channel::Shared>(bufferSize);
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
-		state->resampler = Resampler(static_cast<Resampler::Quality>(m_conf.rsmpQuality), G_MAX_IO_CHANS);
+		shared->resampler = Resampler(static_cast<Resampler::Quality>(m_conf.rsmpQuality), G_MAX_IO_CHANS);
 
-	m_model.add(std::move(state));
-	return m_model.back<Channel::State>();
-}
-
-/* -------------------------------------------------------------------------- */
-
-Channel::Buffer& ChannelManager::makeBuffer_(int bufferSize)
-{
-	m_model.add(std::make_unique<Channel::Buffer>(bufferSize));
-	return m_model.back<Channel::Buffer>();
+	m_model.addShared(std::move(shared));
+	return m_model.backShared<Channel::Shared>();
 }
 } // namespace giada::m

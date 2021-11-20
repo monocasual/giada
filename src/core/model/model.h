@@ -100,15 +100,13 @@ enum class SwapType
 using PluginPtr = std::unique_ptr<Plugin>;
 #endif
 using WavePtr          = std::unique_ptr<Wave>;
-using ChannelBufferPtr = std::unique_ptr<Channel::Buffer>;
-using ChannelStatePtr  = std::unique_ptr<Channel::State>;
+using ChannelSharedPtr = std::unique_ptr<Channel::Shared>;
 
 #ifdef WITH_VST
 using PluginPtrs = std::vector<PluginPtr>;
 #endif
 using WavePtrs          = std::vector<WavePtr>;
-using ChannelBufferPtrs = std::vector<ChannelBufferPtr>;
-using ChannelStatePtrs  = std::vector<ChannelStatePtr>;
+using ChannelSharedPtrs = std::vector<ChannelSharedPtr>;
 
 /* -------------------------------------------------------------------------- */
 
@@ -148,32 +146,33 @@ public:
 
 	void swap(SwapType t);
 
-	// TODO - are ID-based objects still necessary?
-
 	template <typename T>
-	T& getAll();
+	T& getAllShared();
 
-	/* find
-	Finds something (Plugins or Waves) given an ID. Returns nullptr if the 
+	/* findShared
+	Finds something in the shared data given an ID. Returns nullptr if the
 	object is not found. */
 
 	template <typename T>
-	T* find(ID id);
+	T* findShared(ID id);
 
-	/* add
-	Adds something (by moving it). */
-
-	template <typename T>
-	void add(T);
+	/* addShared
+	Adds some shared data (by moving it). */
 
 	template <typename T>
-	void remove(const T&);
+	void addShared(T);
 
 	template <typename T>
-	T& back();
+	void removeShared(const T&);
+
+	/* backShared
+	Returns a reference to the last added shared item. */
 
 	template <typename T>
-	void clear();
+	T& backShared();
+
+	template <typename T>
+	void clearShared();
 
 #ifdef G_DEBUG_MODE
 	void debug();
@@ -186,33 +185,22 @@ public:
 	std::function<void(SwapType)> onSwap = nullptr;
 
 private:
-	struct States
+	struct Shared
 	{
-		Sequencer::State                             sequencer;
-		Mixer::State                                 mixer;
-		Recorder::State                              recorder;
-		std::vector<std::unique_ptr<Channel::State>> channels;
-	};
+		Sequencer::Shared                             sequencerShared;
+		Mixer::Shared                                 mixerShared;
+		Recorder::Shared                              recorderShared;
+		std::vector<std::unique_ptr<Channel::Shared>> channelsShared;
 
-	struct Buffers
-	{
-		Mixer::Buffer mixer;
-	};
-
-	struct Data
-	{
-		std::vector<std::unique_ptr<Channel::Buffer>> channels;
-		std::vector<std::unique_ptr<Wave>>            waves;
-		Actions::Map                                  actions;
+		std::vector<std::unique_ptr<Wave>> waves;
+		Actions::Map                       actions;
 #ifdef WITH_VST
 		std::vector<std::unique_ptr<Plugin>> plugins;
 #endif
 	};
 
 	mcl::AtomicSwapper<Layout> m_layout;
-	States                     m_states;
-	Buffers                    m_buffers;
-	Data                       m_data;
+	Shared                     m_shared;
 };
 
 /* -------------------------------------------------------------------------- */

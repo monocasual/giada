@@ -111,8 +111,8 @@ void PluginHost::processStack(mcl::AudioBuffer& outBuf, const std::vector<Plugin
 
 const Plugin& PluginHost::addPlugin(std::unique_ptr<Plugin> p)
 {
-	m_model.add(std::move(p));
-	return m_model.back<Plugin>();
+	m_model.addShared(std::move(p));
+	return m_model.backShared<Plugin>();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -128,41 +128,41 @@ void PluginHost::swapPlugin(const m::Plugin& p1, const m::Plugin& p2, std::vecto
 
 void PluginHost::freePlugin(const m::Plugin& plugin)
 {
-	m_model.remove(plugin);
+	m_model.removeShared(plugin);
 }
 
 void PluginHost::freePlugins(const std::vector<Plugin*>& plugins)
 {
 	for (const Plugin* p : plugins)
-		m_model.remove(*p);
+		m_model.removeShared(*p);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::freeAllPlugins()
 {
-	m_model.clear<model::PluginPtrs>();
+	m_model.clearShared<model::PluginPtrs>();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::setPluginParameter(ID pluginId, int paramIndex, float value)
 {
-	m_model.find<Plugin>(pluginId)->setParameter(paramIndex, value);
+	m_model.findShared<Plugin>(pluginId)->setParameter(paramIndex, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::setPluginProgram(ID pluginId, int programIndex)
 {
-	m_model.find<Plugin>(pluginId)->setCurrentProgram(programIndex);
+	m_model.findShared<Plugin>(pluginId)->setCurrentProgram(programIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::toggleBypass(ID pluginId)
 {
-	Plugin& plugin = *m_model.find<Plugin>(pluginId);
+	Plugin& plugin = *m_model.findShared<Plugin>(pluginId);
 	plugin.setBypass(!plugin.isBypassed());
 }
 

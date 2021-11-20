@@ -113,23 +113,23 @@ void SamplePlayer::render(const Channel& ch) const
 
 	/* Make sure tracker stays within begin-end range. */
 
-	Frame tracker = std::clamp(ch.state->tracker.load(), begin, end);
+	Frame tracker = std::clamp(ch.shared->tracker.load(), begin, end);
 
 	/* If rewinding, fill the tail first, then reset the tracker to the begin
     point. The rest is performed as usual. */
 
-	if (ch.state->rewinding)
+	if (ch.shared->rewinding)
 	{
 		if (tracker < end)
 		{
 			fillBuffer(ch, tracker, 0);
 			waveReader.last();
 		}
-		ch.state->rewinding = false;
+		ch.shared->rewinding = false;
 		tracker             = begin;
 	}
 
-	WaveReader::Result res = fillBuffer(ch, tracker, ch.state->offset);
+	WaveReader::Result res = fillBuffer(ch, tracker, ch.shared->offset);
 	tracker += res.used;
 
 	/* If tracker has looped, special care is needed for the rendering. If the
@@ -143,12 +143,12 @@ void SamplePlayer::render(const Channel& ch) const
 		tracker = begin;
 		waveReader.last();
 		onLastFrame();
-		if (shouldLoop(ch) && res.generated < ch.buffer->audio.countFrames())
+		if (shouldLoop(ch) && res.generated < ch.shared->audioBuffer.countFrames())
 			tracker += fillBuffer(ch, tracker, res.generated).used;
 	}
 
-	ch.state->offset = 0;
-	ch.state->tracker.store(tracker);
+	ch.shared->offset = 0;
+	ch.shared->tracker.store(tracker);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -157,19 +157,19 @@ void SamplePlayer::loadWave(Channel& ch, Wave* w)
 {
 	waveReader.wave = w;
 
-	ch.state->tracker.store(0);
+	ch.shared->tracker.store(0);
 	shift = 0;
 	begin = 0;
 
 	if (w != nullptr)
 	{
-		ch.state->playStatus.store(ChannelStatus::OFF);
+		ch.shared->playStatus.store(ChannelStatus::OFF);
 		ch.name = w->getBasename(/*ext=*/false);
 		end     = w->getBuffer().countFrames() - 1;
 	}
 	else
 	{
-		ch.state->playStatus.store(ChannelStatus::EMPTY);
+		ch.shared->playStatus.store(ChannelStatus::EMPTY);
 		ch.name = "";
 		end     = 0;
 	}
@@ -199,8 +199,8 @@ void SamplePlayer::setWave(Wave* w, float samplerateRatio)
 
 void SamplePlayer::kickIn(Channel& ch, Frame f)
 {
-	ch.state->tracker.store(f);
-	ch.state->playStatus.store(ChannelStatus::PLAY);
+	ch.shared->tracker.store(f);
+	ch.shared->playStatus.store(ChannelStatus::PLAY);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -214,14 +214,14 @@ bool SamplePlayer::isPlaying(const Channel& ch) const
 
 WaveReader::Result SamplePlayer::fillBuffer(const Channel& ch, Frame start, Frame offset) const
 {
-	return waveReader.fill(ch.buffer->audio, start, end, offset, pitch);
+	return waveReader.fill(ch.shared->audioBuffer, start, end, offset, pitch);
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool SamplePlayer::shouldLoop(const Channel& ch) const
 {
-	const ChannelStatus playStatus = ch.state->playStatus.load();
+	const ChannelStatus playStatus = ch.shared->playStatus.load();
 
 	return (mode == SamplePlayerMode::LOOP_BASIC ||
 	           mode == SamplePlayerMode::LOOP_REPEAT ||

@@ -35,7 +35,7 @@ void SampleAdvancer::onLastFrame(const Channel& ch, bool seqIsRunning) const
 	const SamplePlayerMode mode   = ch.samplePlayer->mode;
 	const bool             isLoop = ch.samplePlayer->isAnyLoopMode();
 
-	switch (ch.state->playStatus.load())
+	switch (ch.shared->playStatus.load())
 	{
 	case ChannelStatus::PLAY:
 		/* Stop LOOP_* when the sequencer is off, or SINGLE_* except for
@@ -79,7 +79,7 @@ void SampleAdvancer::advance(const Channel& ch, const Sequencer::Event& e) const
 		break;
 
 	case Sequencer::EventType::ACTIONS:
-		if (ch.state->readActions.load() == true)
+		if (ch.shared->readActions.load() == true)
 			parseActions(ch, *e.actions, e.delta);
 		break;
 
@@ -92,38 +92,38 @@ void SampleAdvancer::advance(const Channel& ch, const Sequencer::Event& e) const
 
 void SampleAdvancer::rewind(const Channel& ch, Frame localFrame) const
 {
-	ch.state->rewinding = true;
-	ch.state->offset    = localFrame;
+	ch.shared->rewinding = true;
+	ch.shared->offset    = localFrame;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleAdvancer::stop(const Channel& ch, Frame localFrame) const
 {
-	ch.state->playStatus.store(ChannelStatus::OFF);
-	ch.state->tracker.store(ch.samplePlayer->begin);
+	ch.shared->playStatus.store(ChannelStatus::OFF);
+	ch.shared->tracker.store(ch.samplePlayer->begin);
 
 	/*  Clear data in range [localFrame, (buffer.size)) if the event occurs in
     the middle of the buffer. TODO - samplePlayer should be responsible for this*/
 
 	if (localFrame != 0)
-		ch.buffer->audio.clear(localFrame);
+		ch.shared->audioBuffer.clear(localFrame);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleAdvancer::play(const Channel& ch, Frame localFrame) const
 {
-	ch.state->playStatus.store(ChannelStatus::PLAY);
-	ch.state->offset = localFrame;
+	ch.shared->playStatus.store(ChannelStatus::PLAY);
+	ch.shared->offset = localFrame;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleAdvancer::wait(const Channel& ch) const
 {
-	ch.state->playStatus.store(ChannelStatus::WAIT);
-	ch.state->tracker.store(ch.samplePlayer->begin);
+	ch.shared->playStatus.store(ChannelStatus::WAIT);
+	ch.shared->tracker.store(ch.samplePlayer->begin);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -132,8 +132,8 @@ void SampleAdvancer::onFirstBeat(const Channel& ch, Frame localFrame) const
 {
 	G_DEBUG("onFirstBeat ch=" << ch.id << ", localFrame=" << localFrame);
 
-	const ChannelStatus playStatus = ch.state->playStatus.load();
-	const ChannelStatus recStatus  = ch.state->recStatus.load();
+	const ChannelStatus playStatus = ch.shared->playStatus.load();
+	const ChannelStatus recStatus  = ch.shared->recStatus.load();
 	const bool          isLoop     = ch.samplePlayer->isAnyLoopMode();
 
 	switch (playStatus)
@@ -159,13 +159,13 @@ void SampleAdvancer::onFirstBeat(const Channel& ch, Frame localFrame) const
 	switch (recStatus)
 	{
 	case ChannelStatus::WAIT:
-		ch.state->recStatus.store(ChannelStatus::PLAY);
-		ch.state->readActions.store(true);
+		ch.shared->recStatus.store(ChannelStatus::PLAY);
+		ch.shared->readActions.store(true);
 		break;
 
 	case ChannelStatus::ENDING:
-		ch.state->recStatus.store(ChannelStatus::OFF);
-		ch.state->readActions.store(false);
+		ch.shared->recStatus.store(ChannelStatus::OFF);
+		ch.shared->readActions.store(false);
 		break;
 
 	default:
@@ -179,7 +179,7 @@ void SampleAdvancer::onBar(const Channel& ch, Frame localFrame) const
 {
 	G_DEBUG("onBar ch=" << ch.id << ", localFrame=" << localFrame);
 
-	const ChannelStatus    playStatus = ch.state->playStatus.load();
+	const ChannelStatus    playStatus = ch.shared->playStatus.load();
 	const SamplePlayerMode mode       = ch.samplePlayer->mode;
 
 	if (playStatus == ChannelStatus::PLAY && (mode == SamplePlayerMode::LOOP_REPEAT ||
@@ -193,7 +193,7 @@ void SampleAdvancer::onBar(const Channel& ch, Frame localFrame) const
 
 void SampleAdvancer::onNoteOn(const Channel& ch, Frame localFrame) const
 {
-	switch (ch.state->playStatus.load())
+	switch (ch.shared->playStatus.load())
 	{
 	case ChannelStatus::OFF:
 		play(ch, localFrame);

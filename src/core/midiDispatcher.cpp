@@ -431,7 +431,7 @@ void MidiDispatcher::learnMaster(MidiEvent e, int param, std::function<void()> d
 void MidiDispatcher::learnPlugin(MidiEvent e, std::size_t paramIndex, ID pluginId, std::function<void()> doneCb)
 {
 	model::DataLock lock   = m_model.lockData(model::SwapType::NONE);
-	Plugin*         plugin = m_model.find<Plugin>(pluginId);
+	Plugin*         plugin = m_model.findShared<Plugin>(pluginId);
 
 	assert(plugin != nullptr);
 	assert(paramIndex < plugin->midiInParams.size());

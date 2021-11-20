@@ -46,6 +46,6 @@ void AudioReceiver::render(const Channel& ch, const mcl::AudioBuffer& in) const
 	(i.e. not plugin-processed). */
 
 	if (ch.armed && inputMonitor)
-		ch.buffer->audio.set(in, /*gain=*/1.0f); // add, don't overwrite
+		ch.shared->audioBuffer.set(in, /*gain=*/1.0f); // add, don't overwrite
 }
 } // namespace giada::m

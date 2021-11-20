@@ -76,13 +76,13 @@ public:
 	int       quantize     = G_DEFAULT_QUANTIZE;
 
 private:
-	struct State
+	struct Shared
 	{
 		WeakAtomic<Frame> currentFrame = 0;
 		WeakAtomic<Frame> currentBeat  = 0;
 	};
 
-	State* state = nullptr;
+	Shared* shared = nullptr;
 };
 } // namespace giada::m::model
 

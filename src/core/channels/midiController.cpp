@@ -36,16 +36,16 @@ void MidiController::react(Channel& ch, const EventDispatcher::Event& e) const
 	switch (e.type)
 	{
 	case EventDispatcher::EventType::KEY_PRESS:
-		ch.state->playStatus.store(press(ch));
+		ch.shared->playStatus.store(press(ch));
 		break;
 
 	case EventDispatcher::EventType::KEY_KILL:
 	case EventDispatcher::EventType::SEQUENCER_STOP:
-		ch.state->playStatus.store(ChannelStatus::OFF);
+		ch.shared->playStatus.store(ChannelStatus::OFF);
 		break;
 
 	case EventDispatcher::EventType::SEQUENCER_REWIND:
-		ch.state->playStatus.store(onFirstBeat(ch));
+		ch.shared->playStatus.store(onFirstBeat(ch));
 
 	default:
 		break;
@@ -57,14 +57,14 @@ void MidiController::react(Channel& ch, const EventDispatcher::Event& e) const
 void MidiController::advance(const Channel& ch, const Sequencer::Event& e) const
 {
 	if (e.type == Sequencer::EventType::FIRST_BEAT)
-		ch.state->playStatus.store(onFirstBeat(ch));
+		ch.shared->playStatus.store(onFirstBeat(ch));
 }
 
 /* -------------------------------------------------------------------------- */
 
 ChannelStatus MidiController::onFirstBeat(const Channel& ch) const
 {
-	ChannelStatus playStatus = ch.state->playStatus.load();
+	ChannelStatus playStatus = ch.shared->playStatus.load();
 
 	if (playStatus == ChannelStatus::ENDING)
 		playStatus = ChannelStatus::OFF;
@@ -78,7 +78,7 @@ ChannelStatus MidiController::onFirstBeat(const Channel& ch) const
 
 ChannelStatus MidiController::press(const Channel& ch) const
 {
-	ChannelStatus playStatus = ch.state->playStatus.load();
+	ChannelStatus playStatus = ch.shared->playStatus.load();
 
 	switch (playStatus)
 	{

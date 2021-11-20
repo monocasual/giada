@@ -42,13 +42,13 @@ public:
 	void a_setRecordingInput(bool) const;
 
 private:
-	struct State
+	struct Shared
 	{
 		WeakAtomic<bool> isRecordingAction = false;
 		WeakAtomic<bool> isRecordingInput  = false;
 	};
 
-	State* state = nullptr;
+	Shared* shared = nullptr;
 };
 } // namespace giada::m::model
 

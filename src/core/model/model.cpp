@@ -103,21 +103,20 @@ const Channel& Layout::getChannel(ID id) const
 Model::Model()
 : onSwap(nullptr)
 {
-	get().sequencer.state = &m_states.sequencer;
-	get().mixer.state     = &m_states.mixer;
-	get().mixer.buffer    = &m_buffers.mixer;
-	get().recorder.state  = &m_states.recorder;
-
-	swap(SwapType::NONE);
+	reset();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Model::reset()
 {
-	m_states.channels.clear();
-	m_buffers = {};
-	m_data    = {};
+	m_shared = {};
+
+	get().sequencer.shared = &m_shared.sequencerShared;
+	get().mixer.shared     = &m_shared.mixerShared;
+	get().recorder.shared  = &m_shared.recorderShared;
+
+	swap(SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -154,135 +153,126 @@ bool Model::isLocked() const
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-T& Model::getAll()
+T& Model::getAllShared()
 {
 #ifdef WITH_VST
 	if constexpr (std::is_same_v<T, PluginPtrs>)
-		return m_data.plugins;
+		return m_shared.plugins;
 #endif
 	if constexpr (std::is_same_v<T, WavePtrs>)
-		return m_data.waves;
+		return m_shared.waves;
 	if constexpr (std::is_same_v<T, Actions::Map>)
-		return m_data.actions;
-	if constexpr (std::is_same_v<T, ChannelBufferPtrs>)
-		return m_data.channels;
-	if constexpr (std::is_same_v<T, ChannelStatePtrs>)
-		return m_states.channels;
+		return m_shared.actions;
+	if constexpr (std::is_same_v<T, ChannelSharedPtrs>)
+		return m_shared.channelsShared;
 
 	assert(false);
 }
 
 #ifdef WITH_VST
-template PluginPtrs& Model::getAll<PluginPtrs>();
+template PluginPtrs& Model::getAllShared<PluginPtrs>();
 #endif
-template WavePtrs&          Model::getAll<WavePtrs>();
-template Actions::Map&      Model::getAll<Actions::Map>();
-template ChannelBufferPtrs& Model::getAll<ChannelBufferPtrs>();
-template ChannelStatePtrs&  Model::getAll<ChannelStatePtrs>();
+template WavePtrs&          Model::getAllShared<WavePtrs>();
+template Actions::Map&      Model::getAllShared<Actions::Map>();
+template ChannelSharedPtrs& Model::getAllShared<ChannelSharedPtrs>();
 
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-T* Model::find(ID id)
+T* Model::findShared(ID id)
 {
 #ifdef WITH_VST
 	if constexpr (std::is_same_v<T, Plugin>)
-		return get_(m_data.plugins, id);
+		return get_(m_shared.plugins, id);
 #endif
 	if constexpr (std::is_same_v<T, Wave>)
-		return get_(m_data.waves, id);
+		return get_(m_shared.waves, id);
 
 	assert(false);
 }
 
 #ifdef WITH_VST
-template Plugin* Model::find<Plugin>(ID id);
+template Plugin* Model::findShared<Plugin>(ID id);
 #endif
-template Wave* Model::find<Wave>(ID id);
+template Wave* Model::findShared<Wave>(ID id);
 
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-void Model::add(T obj)
+void Model::addShared(T obj)
 {
 #ifdef WITH_VST
 	if constexpr (std::is_same_v<T, PluginPtr>)
-		m_data.plugins.push_back(std::move(obj));
+		m_shared.plugins.push_back(std::move(obj));
 #endif
 	if constexpr (std::is_same_v<T, WavePtr>)
-		m_data.waves.push_back(std::move(obj));
-	if constexpr (std::is_same_v<T, ChannelBufferPtr>)
-		m_data.channels.push_back(std::move(obj));
-	if constexpr (std::is_same_v<T, ChannelStatePtr>)
-		m_states.channels.push_back(std::move(obj));
+		m_shared.waves.push_back(std::move(obj));
+	if constexpr (std::is_same_v<T, ChannelSharedPtr>)
+		m_shared.channelsShared.push_back(std::move(obj));
 }
 
 #ifdef WITH_VST
-template void Model::add<PluginPtr>(PluginPtr p);
+template void Model::addShared<PluginPtr>(PluginPtr p);
 #endif
-template void Model::add<WavePtr>(WavePtr p);
-template void Model::add<ChannelBufferPtr>(ChannelBufferPtr p);
-template void Model::add<ChannelStatePtr>(ChannelStatePtr p);
+template void Model::addShared<WavePtr>(WavePtr p);
+template void Model::addShared<ChannelSharedPtr>(ChannelSharedPtr p);
 
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-void Model::remove(const T& ref)
+void Model::removeShared(const T& ref)
 {
 #ifdef WITH_VST
 	if constexpr (std::is_same_v<T, Plugin>)
-		remove_(m_data.plugins, ref);
+		remove_(m_shared.plugins, ref);
 #endif
 	if constexpr (std::is_same_v<T, Wave>)
-		remove_(m_data.waves, ref);
+		remove_(m_shared.waves, ref);
 }
 
 #ifdef WITH_VST
-template void Model::remove<Plugin>(const Plugin& t);
+template void Model::removeShared<Plugin>(const Plugin& t);
 #endif
-template void Model::remove<Wave>(const Wave& t);
+template void Model::removeShared<Wave>(const Wave& t);
 
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-T& Model::back()
+T& Model::backShared()
 {
 #ifdef WITH_VST
 	if constexpr (std::is_same_v<T, Plugin>)
-		return *m_data.plugins.back().get();
+		return *m_shared.plugins.back().get();
 #endif
 	if constexpr (std::is_same_v<T, Wave>)
-		return *m_data.waves.back().get();
-	if constexpr (std::is_same_v<T, Channel::State>)
-		return *m_states.channels.back().get();
-	if constexpr (std::is_same_v<T, Channel::Buffer>)
-		return *m_data.channels.back().get();
+		return *m_shared.waves.back().get();
+	if constexpr (std::is_same_v<T, Channel::Shared>)
+		return *m_shared.channelsShared.back().get();
 }
 
 #ifdef WITH_VST
-template Plugin& Model::back<Plugin>();
+template Plugin& Model::backShared<Plugin>();
 #endif
-template Wave&            Model::back<Wave>();
-template Channel::State&  Model::back<Channel::State>();
-template Channel::Buffer& Model::back<Channel::Buffer>();
+template Wave&            Model::backShared<Wave>();
+template Channel::Shared& Model::backShared<Channel::Shared>();
 
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-void Model::clear()
+void Model::clearShared()
 {
 #ifdef WITH_VST
 	if constexpr (std::is_same_v<T, PluginPtrs>)
-		m_data.plugins.clear();
+		m_shared.plugins.clear();
 #endif
 	if constexpr (std::is_same_v<T, WavePtrs>)
-		m_data.waves.clear();
+		m_shared.waves.clear();
 }
 
 #ifdef WITH_VST
-template void Model::clear<PluginPtrs>();
+template void Model::clearShared<PluginPtrs>();
 #endif
-template void Model::clear<WavePtrs>();
+template void Model::clearShared<WavePtrs>();
 
 /* -------------------------------------------------------------------------- */
 
@@ -297,8 +287,8 @@ void Model::debug()
 	int i = 0;
 	for (const Channel& c : get().channels)
 	{
-		printf("\t%d) - ID=%d name='%s' type=%d columnID=%d state=%p\n",
-		    i++, c.id, c.name.c_str(), (int)c.type, c.columnId, (void*)&c.state);
+		printf("\t%d) - ID=%d name='%s' type=%d columnID=%d shared=%p\n",
+		    i++, c.id, c.name.c_str(), (int)c.type, c.columnId, (void*)&c.shared);
 #ifdef WITH_VST
 		if (c.plugins.size() > 0)
 		{
@@ -312,7 +302,7 @@ void Model::debug()
 	puts("model::state.channels");
 
 	i = 0;
-	for (const auto& c : m_states.channels)
+	for (const auto& c : m_shared.channelsShared)
 	{
 		printf("\t%d) - %p\n", i++, (void*)c.get());
 	}
@@ -320,12 +310,12 @@ void Model::debug()
 	puts("model::data.waves");
 
 	i = 0;
-	for (const auto& w : m_data.waves)
+	for (const auto& w : m_shared.waves)
 		printf("\t%d) %p - ID=%d name='%s'\n", i++, (void*)w.get(), w->id, w->getPath().c_str());
 
 	puts("model::data.actions");
 
-	for (const auto& [frame, actions] : getAll<Actions::Map>())
+	for (const auto& [frame, actions] : getAllShared<Actions::Map>())
 	{
 		printf("\tframe: %d\n", frame);
 		for (const Action& a : actions)
@@ -338,7 +328,7 @@ void Model::debug()
 	puts("model::data.plugins");
 
 	i = 0;
-	for (const auto& p : m_data.plugins)
+	for (const auto& p : m_shared.plugins)
 		printf("\t%d) %p - ID=%d\n", i++, (void*)p.get(), p->id);
 
 #endif

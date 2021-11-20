@@ -86,10 +86,10 @@ void MixerHandler::loadChannel(ID channelId, std::unique_ptr<Wave> w)
 {
 	assert(onChannelsAltered != nullptr);
 
-	m_model.add(std::move(w));
+	m_model.addShared(std::move(w));
 
 	Channel& channel = m_model.get().getChannel(channelId);
-	Wave&    wave    = m_model.back<Wave>();
+	Wave&    wave    = m_model.backShared<Wave>();
 	Wave*    old     = channel.samplePlayer->getWave();
 
 	channel.samplePlayer->loadWave(channel, &wave);
@@ -99,7 +99,7 @@ void MixerHandler::loadChannel(ID channelId, std::unique_ptr<Wave> w)
 	already processing the new layout. */
 
 	if (old != nullptr)
-		m_model.remove<Wave>(*old);
+		m_model.removeShared<Wave>(*old);
 
 	onChannelsAltered();
 }
@@ -111,9 +111,9 @@ void MixerHandler::addAndLoadChannel(ID columnId, std::unique_ptr<Wave> w, int b
 {
 	assert(onChannelsAltered != nullptr);
 
-	m_model.add(std::move(w));
+	m_model.addShared(std::move(w));
 
-	Wave&    wave    = m_model.back<Wave>();
+	Wave&    wave    = m_model.backShared<Wave>();
 	Channel& channel = addChannel(ChannelType::SAMPLE, columnId, bufferSize, channelManager);
 
 	channel.samplePlayer->loadWave(channel, &wave);
@@ -141,15 +141,15 @@ void MixerHandler::cloneChannel(ID channelId, int bufferSize, ChannelManager& ch
 	if (oldChannel.samplePlayer && oldChannel.samplePlayer->hasWave())
 	{
 		const Wave& oldWave = *oldChannel.samplePlayer->getWave();
-		m_model.add(waveManager.createFromWave(oldWave, 0, oldWave.getBuffer().countFrames()));
-		newChannel.samplePlayer->loadWave(newChannel, &m_model.back<Wave>());
+		m_model.addShared(waveManager.createFromWave(oldWave, 0, oldWave.getBuffer().countFrames()));
+		newChannel.samplePlayer->loadWave(newChannel, &m_model.backShared<Wave>());
 	}
 
 #ifdef WITH_VST
 	for (const Plugin* plugin : oldChannel.plugins)
 	{
-		m_model.add(pluginManager.makePlugin(*plugin, sampleRate, bufferSize, sequencer));
-		newChannel.plugins.push_back(&m_model.back<Plugin>());
+		m_model.addShared(pluginManager.makePlugin(*plugin, sampleRate, bufferSize, sequencer));
+		newChannel.plugins.push_back(&m_model.backShared<Plugin>());
 	}
 #endif
 
@@ -175,7 +175,7 @@ void MixerHandler::freeChannel(ID channelId)
 	m_model.swap(model::SwapType::HARD);
 
 	if (wave != nullptr)
-		m_model.remove<Wave>(*wave);
+		m_model.removeShared<Wave>(*wave);
 
 	onChannelsAltered();
 }
@@ -191,7 +191,7 @@ void MixerHandler::freeAllChannels()
 			ch.samplePlayer->loadWave(ch, nullptr);
 
 	m_model.swap(model::SwapType::HARD);
-	m_model.clear<model::WavePtrs>();
+	m_model.clearShared<model::WavePtrs>();
 
 	onChannelsAltered();
 }
@@ -214,7 +214,7 @@ void MixerHandler::deleteChannel(ID channelId)
 	m_model.swap(model::SwapType::HARD);
 
 	if (wave != nullptr)
-		m_model.remove<Wave>(*wave);
+		m_model.removeShared<Wave>(*wave);
 
 	onChannelsAltered();
 }
@@ -384,8 +384,8 @@ void MixerHandler::recordChannel(Channel& ch, Frame recordedFrames, Frame curren
 
 	/* Update channel with the new Wave. */
 
-	m_model.add(std::move(wave));
-	ch.samplePlayer->loadWave(ch, &m_model.back<Wave>());
+	m_model.addShared(std::move(wave));
+	ch.samplePlayer->loadWave(ch, &m_model.backShared<Wave>());
 	setupChannelPostRecording(ch, currentFrame);
 
 	m_model.swap(model::SwapType::HARD);

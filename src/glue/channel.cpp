@@ -102,7 +102,7 @@ SampleData::SampleData(const m::Channel& ch)
 {
 }
 
-Frame SampleData::getTracker() const { return m_channel->state->tracker.load(); }
+Frame SampleData::getTracker() const { return m_channel->shared->tracker.load(); }
 /* TODO - useless methods, turn them into member vars */
 Frame SampleData::getBegin() const { return m_channel->samplePlayer->begin; }
 Frame SampleData::getEnd() const { return m_channel->samplePlayer->end; }
@@ -144,9 +144,9 @@ Data::Data(const m::Channel& c)
 		midi = std::make_optional<MidiData>(c);
 }
 
-ChannelStatus Data::getPlayStatus() const { return m_channel.state->playStatus.load(); }
-ChannelStatus Data::getRecStatus() const { return m_channel.state->recStatus.load(); }
-bool          Data::getReadActions() const { return m_channel.state->readActions.load(); }
+ChannelStatus Data::getPlayStatus() const { return m_channel.shared->playStatus.load(); }
+ChannelStatus Data::getRecStatus() const { return m_channel.shared->recStatus.load(); }
+bool          Data::getReadActions() const { return m_channel.shared->readActions.load(); }
 bool          Data::isRecordingInput() const { return g_engine.recorder.isRecordingInput(); }
 bool          Data::isRecordingAction() const { return g_engine.recorder.isRecordingAction(); }
 /* TODO - useless methods, turn them into member vars */

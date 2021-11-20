@@ -308,9 +308,9 @@ bool Engine::store(const std::string& projectName, const std::string& projectPat
 	/* Update all existing file paths in Waves, so that they point to the project
 	folder they belong to. */
 
-	for (std::unique_ptr<Wave>& w : model.getAll<model::WavePtrs>())
+	for (std::unique_ptr<Wave>& w : model.getAllShared<model::WavePtrs>())
 	{
-		w->setPath(makeUniqueWavePath(projectPath, *w, model.getAll<model::WavePtrs>()));
+		w->setPath(makeUniqueWavePath(projectPath, *w, model.getAllShared<model::WavePtrs>()));
 		waveManager.save(*w, w->getPath()); // TODO - error checking
 	}
 

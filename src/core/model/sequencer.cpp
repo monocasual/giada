@@ -51,7 +51,7 @@ bool Sequencer::isRunning() const
 
 bool Sequencer::a_isOnBar() const
 {
-	const int currentFrame = state->currentFrame.load();
+	const int currentFrame = shared->currentFrame.load();
 
 	if (status == SeqStatus::WAITING || currentFrame == 0)
 		return false;
@@ -62,23 +62,23 @@ bool Sequencer::a_isOnBar() const
 
 bool Sequencer::a_isOnBeat() const
 {
-	return state->currentFrame.load() % framesInBeat == 0;
+	return shared->currentFrame.load() % framesInBeat == 0;
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool Sequencer::a_isOnFirstBeat() const
 {
-	return state->currentFrame.load() == 0;
+	return shared->currentFrame.load() == 0;
 }
 
 /* -------------------------------------------------------------------------- */
 
-Frame Sequencer::a_getCurrentFrame() const { return state->currentFrame.load(); }
-Frame Sequencer::a_getCurrentBeat() const { return state->currentBeat.load(); }
+Frame Sequencer::a_getCurrentFrame() const { return shared->currentFrame.load(); }
+Frame Sequencer::a_getCurrentBeat() const { return shared->currentBeat.load(); }
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::a_setCurrentFrame(Frame f) const { state->currentFrame.store(f); }
-void Sequencer::a_setCurrentBeat(Frame f) const { state->currentBeat.store(f); }
+void Sequencer::a_setCurrentFrame(Frame f) const { shared->currentFrame.store(f); }
+void Sequencer::a_setCurrentBeat(Frame f) const { shared->currentBeat.store(f); }
 } // namespace giada::m::model

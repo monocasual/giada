@@ -30,21 +30,21 @@ namespace giada::m::model
 {
 bool Recorder::a_isRecordingAction() const
 {
-	return state->isRecordingAction.load();
+	return shared->isRecordingAction.load();
 }
 
 bool Recorder::a_isRecordingInput() const
 {
-	return state->isRecordingInput.load();
+	return shared->isRecordingInput.load();
 }
 
 void Recorder::a_setRecordingAction(bool b) const
 {
-	state->isRecordingAction.store(b);
+	shared->isRecordingAction.store(b);
 }
 
 void Recorder::a_setRecordingInput(bool b) const
 {
-	state->isRecordingInput.store(b);
+	shared->isRecordingInput.store(b);
 }
 } // namespace giada::m::model

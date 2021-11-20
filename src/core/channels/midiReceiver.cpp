@@ -67,26 +67,26 @@ void MidiReceiver::advance(const Channel& ch, const Sequencer::Event& e) const
 
 void MidiReceiver::render(const Channel& ch, PluginHost& pluginHost) const
 {
-	ch.buffer->midi.clear();
+	ch.shared->midiBuffer.clear();
 
 	MidiEvent e;
-	while (ch.buffer->midiQueue.pop(e))
+	while (ch.shared->midiQueue.pop(e))
 	{
 		juce::MidiMessage message = juce::MidiMessage(
 		    e.getStatus(),
 		    e.getNote(),
 		    e.getVelocity());
-		ch.buffer->midi.addEvent(message, e.getDelta());
+		ch.shared->midiBuffer.addEvent(message, e.getDelta());
 	}
 
-	pluginHost.processStack(ch.buffer->audio, ch.plugins, &ch.buffer->midi);
+	pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, &ch.shared->midiBuffer);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void MidiReceiver::sendToPlugins(const Channel& ch, const MidiEvent& e, Frame localFrame) const
 {
-	ch.buffer->midiQueue.push(MidiEvent(e.getRaw(), localFrame));
+	ch.shared->midiQueue.push(MidiEvent(e.getRaw(), localFrame));
 }
 
 /* -------------------------------------------------------------------------- */

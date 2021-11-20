@@ -61,31 +61,29 @@ public:
 	float recTriggerLevel = 0.0f;
 
 private:
-	struct State
+	struct Shared
 	{
+		Shared& operator=(const Shared&);
+
 		std::atomic<bool> active       = false;
 		WeakAtomic<float> peakOutL     = 0.0f;
 		WeakAtomic<float> peakOutR     = 0.0f;
 		WeakAtomic<float> peakInL      = 0.0f;
 		WeakAtomic<float> peakInR      = 0.0f;
 		WeakAtomic<Frame> inputTracker = 0;
-	};
 
-	struct Buffer
-	{
-		/* rec
+		/* recBuffer
 		Working buffer for audio recording. */
 
-		mcl::AudioBuffer rec;
+		mcl::AudioBuffer recBuffer;
 
-		/* in
+		/* inBuffer
 		Working buffer for input channel. Used for the in->out bridge. */
 
-		mcl::AudioBuffer in;
+		mcl::AudioBuffer inBuffer;
 	};
 
-	State*  state  = nullptr;
-	Buffer* buffer = nullptr;
+	Shared* shared = nullptr;
 };
 } // namespace giada::m::model
 

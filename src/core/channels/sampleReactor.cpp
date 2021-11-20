@@ -47,8 +47,8 @@ SampleReactor::SampleReactor(ID channelId, Sequencer& sequencer, model::Model& m
 {
 	sequencer.quantizer.schedule(Q_ACTION_PLAY + channelId, [channelId, &model](Frame delta) {
 		Channel& ch      = model.get().getChannel(channelId);
-		ch.state->offset = delta;
-		ch.state->playStatus.store(ChannelStatus::PLAY);
+		ch.shared->offset = delta;
+		ch.shared->playStatus.store(ChannelStatus::PLAY);
 	});
 
 	sequencer.quantizer.schedule(Q_ACTION_REWIND + channelId, [this, channelId, &model](Frame delta) {
@@ -96,15 +96,15 @@ void SampleReactor::react(Channel& ch, const EventDispatcher::Event& e,
 
 void SampleReactor::rewind(Channel& ch, Frame localFrame) const
 {
-	ch.state->rewinding = true;
-	ch.state->offset    = localFrame;
+	ch.shared->rewinding = true;
+	ch.shared->offset    = localFrame;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleReactor::reset(Channel& ch) const
 {
-	ch.state->tracker.store(ch.samplePlayer->begin);
+	ch.shared->tracker.store(ch.samplePlayer->begin);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -163,7 +163,7 @@ void SampleReactor::press(Channel& ch, Sequencer& sequencer, int velocity) const
 	const SamplePlayerMode mode   = ch.samplePlayer->mode;
 	const bool             isLoop = ch.samplePlayer->isAnyLoopMode();
 
-	ChannelStatus playStatus = ch.state->playStatus.load();
+	ChannelStatus playStatus = ch.shared->playStatus.load();
 
 	switch (playStatus)
 	{
@@ -187,15 +187,15 @@ void SampleReactor::press(Channel& ch, Sequencer& sequencer, int velocity) const
 		break;
 	}
 
-	ch.state->playStatus.store(playStatus);
+	ch.shared->playStatus.store(playStatus);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleReactor::kill(Channel& ch) const
 {
-	ch.state->playStatus.store(ChannelStatus::OFF);
-	ch.state->tracker.store(ch.samplePlayer->begin);
+	ch.shared->playStatus.store(ChannelStatus::OFF);
+	ch.shared->tracker.store(ch.samplePlayer->begin);
 }
 /* -------------------------------------------------------------------------- */
 
@@ -210,7 +210,7 @@ void SampleReactor::release(Channel& ch, Sequencer& sequencer) const
 	quantization step in progress that would play the channel later on: 
 	disable it. */
 
-	if (ch.state->playStatus.load() == ChannelStatus::PLAY)
+	if (ch.shared->playStatus.load() == ChannelStatus::PLAY)
 		kill(ch);
 	else if (sequencer.quantizer.hasBeenTriggered())
 		sequencer.quantizer.clear();
@@ -222,8 +222,8 @@ void SampleReactor::onStopBySeq(Channel& ch, bool chansStopOnSeqHalt) const
 {
 	G_DEBUG("onStopBySeq ch=" << ch.id);
 
-	ChannelStatus playStatus       = ch.state->playStatus.load();
-	bool          isReadingActions = ch.state->readActions.load();
+	ChannelStatus playStatus       = ch.shared->playStatus.load();
+	bool          isReadingActions = ch.shared->readActions.load();
 	bool          isLoop           = ch.samplePlayer->isAnyLoopMode();
 
 	switch (playStatus)
@@ -232,7 +232,7 @@ void SampleReactor::onStopBySeq(Channel& ch, bool chansStopOnSeqHalt) const
 	case ChannelStatus::WAIT:
 		/* Loop-mode channels in wait status get stopped right away. */
 		if (isLoop)
-			ch.state->playStatus.store(ChannelStatus::OFF);
+			ch.shared->playStatus.store(ChannelStatus::OFF);
 		break;
 
 	case ChannelStatus::PLAY:
@@ -249,7 +249,7 @@ void SampleReactor::onStopBySeq(Channel& ch, bool chansStopOnSeqHalt) const
 
 void SampleReactor::toggleReadActions(Channel& ch, bool isSequencerRunning, bool treatRecsAsLoops) const
 {
-	if (isSequencerRunning && ch.state->recStatus.load() == ChannelStatus::PLAY && !treatRecsAsLoops)
+	if (isSequencerRunning && ch.shared->recStatus.load() == ChannelStatus::PLAY && !treatRecsAsLoops)
 		kill(ch);
 }
 } // namespace giada::m

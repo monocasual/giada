@@ -99,10 +99,10 @@ void Recorder::stopActionRec(ActionRecorder& actionRecorder)
 	for (ID id : channels)
 	{
 		Channel& ch = m_model.get().getChannel(id);
-		ch.state->readActions.store(true);
-		ch.state->recStatus.store(ChannelStatus::PLAY);
+		ch.shared->readActions.store(true);
+		ch.shared->recStatus.store(ChannelStatus::PLAY);
 		if (ch.type == ChannelType::MIDI)
-			ch.state->playStatus.store(ChannelStatus::PLAY);
+			ch.shared->playStatus.store(ChannelStatus::PLAY);
 	}
 	m_model.swap(model::SwapType::HARD);
 }

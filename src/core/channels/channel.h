@@ -60,19 +60,16 @@ class Plugin;
 class Channel final
 {
 public:
-	struct Buffer
+	struct Shared
 	{
-		Buffer(Frame bufferSize);
+		Shared(Frame bufferSize);
 
-		mcl::AudioBuffer audio;
+		mcl::AudioBuffer audioBuffer;
 #ifdef WITH_VST
-		juce::MidiBuffer     midi;
+		juce::MidiBuffer     midiBuffer;
 		Queue<MidiEvent, 32> midiQueue;
 #endif
-	};
 
-	struct State
-	{
 		WeakAtomic<Frame>         tracker     = 0;
 		WeakAtomic<ChannelStatus> playStatus  = ChannelStatus::OFF;
 		WeakAtomic<ChannelStatus> recStatus   = ChannelStatus::OFF;
@@ -88,8 +85,8 @@ public:
 		std::optional<Resampler> resampler = {};
 	};
 
-	Channel(ChannelType t, ID id, ID columnId, State& state, Buffer& buffer);
-	Channel(const Patch::Channel& p, State& state, Buffer& buffer, float samplerateRatio, Wave* w);
+	Channel(ChannelType t, ID id, ID columnId, Shared&);
+	Channel(const Patch::Channel& p, Shared&, float samplerateRatio, Wave* w);
 	Channel(const Channel& o);
 	Channel(Channel&& o) = default;
 
@@ -126,8 +123,7 @@ public:
 	void setMute(bool);
 	void setSolo(bool);
 
-	State*      state;
-	Buffer*     buffer;
+	Shared*     shared;
 	ID          id;
 	ChannelType type;
 	ID          columnId;

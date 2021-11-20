@@ -124,12 +124,12 @@ Data::Data(const m::Channel& c)
 
 ChannelStatus Data::a_getPreviewStatus() const
 {
-	return getChannel_(m::Mixer::PREVIEW_CHANNEL_ID).state->playStatus.load();
+	return getChannel_(m::Mixer::PREVIEW_CHANNEL_ID).shared->playStatus.load();
 }
 
 Frame Data::a_getPreviewTracker() const
 {
-	return getChannel_(m::Mixer::PREVIEW_CHANNEL_ID).state->tracker.load();
+	return getChannel_(m::Mixer::PREVIEW_CHANNEL_ID).shared->tracker.load();
 }
 
 const m::Wave& Data::getWaveRef() const
@@ -195,8 +195,8 @@ void setBeginEnd(ID channelId, Frame b, Frame e)
 	else if (e < b)
 		e = b + 1;
 
-	if (c.state->tracker.load() < b)
-		c.state->tracker.store(b);
+	if (c.shared->tracker.load() < b)
+		c.shared->tracker.store(b);
 
 	getSamplePlayer_(channelId).begin = b;
 	getSamplePlayer_(channelId).end   = e;
@@ -337,7 +337,7 @@ void stopPreview()
 
 void setPreviewTracker(Frame f)
 {
-	g_engine.model.get().getChannel(m::Mixer::PREVIEW_CHANNEL_ID).state->tracker.store(f);
+	g_engine.model.get().getChannel(m::Mixer::PREVIEW_CHANNEL_ID).shared->tracker.store(f);
 	g_engine.model.swap(m::model::SwapType::SOFT);
 
 	previewTracker_ = f;
