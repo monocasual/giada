@@ -30,11 +30,10 @@
 #ifdef WITH_VST
 
 #include "glue/config.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/input.h"
 #include <FL/Fl_Group.H>
-
-class geInput;
-class geButton;
-class geBox;
 
 namespace giada::v
 {
@@ -56,10 +55,10 @@ private:
 
 	c::config::PluginData m_data;
 
-	geInput*  m_folderPath;
-	geButton* m_browse;
-	geButton* m_scanButton;
-	geBox*    m_info;
+	geButton m_browse;
+	geInput  m_folderPath;
+	geButton m_scanButton;
+	geBox    m_info;
 };
 } // namespace giada::v
 
