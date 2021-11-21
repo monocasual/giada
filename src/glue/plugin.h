@@ -125,12 +125,6 @@ void setProgram(ID pluginId, int programIndex);
 void toggleBypass(ID pluginId);
 void startDispatchLoop();
 void stopDispatchLoop();
-
-/* setPluginPathCb
-Callback attached to the DirBrowser for adding new Plug-in search paths in the
-configuration window. */
-
-void setPluginPathCb(void* data);
 } // namespace giada::c::plugin
 
 #endif

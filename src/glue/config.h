@@ -128,6 +128,12 @@ void save(const MiscData&);
 #ifdef WITH_VST
 void save(const PluginData&);
 void scanPlugins(std::string dir, const std::function<void(float)>& progress);
+
+/* setPluginPathCb
+Callback attached to the DirBrowser for adding new Plug-in search paths in the
+configuration window. */
+
+void setPluginPathCb(void* data);
 #endif
 } // namespace giada::c::config
 

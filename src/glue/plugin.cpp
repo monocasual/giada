@@ -35,13 +35,10 @@
 #include "core/model/model.h"
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
-#include "gui/dialogs/browser/browserDir.h"
 #include "gui/dialogs/config.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/pluginList.h"
 #include "gui/dialogs/pluginWindow.h"
-#include "gui/dialogs/warnings.h"
-#include "gui/elems/config/tabPlugins.h"
 #include "gui/ui.h"
 #include "plugin.h"
 #include "utils/gui.h"
@@ -233,28 +230,6 @@ void startDispatchLoop()
 void stopDispatchLoop()
 {
 	g_ui.stopJuceDispatchLoop();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void setPluginPathCb(void* data)
-{
-	v::gdBrowserDir* browser = (v::gdBrowserDir*)data;
-
-	if (browser->getCurrentPath() == "")
-	{
-		v::gdAlert("Invalid path.");
-		return;
-	}
-
-	if (!g_engine.conf.data.pluginPath.empty() && g_engine.conf.data.pluginPath.back() != ';')
-		g_engine.conf.data.pluginPath += ";";
-	g_engine.conf.data.pluginPath += browser->getCurrentPath();
-
-	browser->do_callback();
-
-	v::gdConfig* configWin = static_cast<v::gdConfig*>(g_ui.getSubwindow(*g_ui.mainWindow.get(), WID_CONFIG));
-	configWin->tabPlugins->refreshVstPath(g_engine.conf.data.pluginPath);
 }
 } // namespace giada::c::plugin
 

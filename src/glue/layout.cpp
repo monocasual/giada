@@ -29,6 +29,7 @@
 #include "core/engine.h"
 #include "core/patch.h"
 #include "core/sequencer.h"
+#include "glue/config.h"
 #include "glue/storage.h"
 #include "gui/dialogs/about.h"
 #include "gui/dialogs/actionEditor/midiActionEditor.h"
@@ -196,7 +197,7 @@ void openRenameChannelWindow(const c::channel::Data& data)
 void openBrowserForPlugins(v::gdWindow& parent)
 {
 	v::gdBrowserDir* browser = new v::gdBrowserDir("Add plug-ins directory",
-	    g_engine.conf.data.patchPath, c::plugin::setPluginPathCb, g_engine.conf.data);
+	    g_engine.conf.data.patchPath, c::config::setPluginPathCb, g_engine.conf.data);
 	parent.addSubWindow(browser);
 }
 

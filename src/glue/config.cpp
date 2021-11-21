@@ -33,10 +33,16 @@
 #include "core/midiMapper.h"
 #include "core/plugins/pluginManager.h"
 #include "deps/rtaudio/RtAudio.h"
+#include "gui/dialogs/browser/browserDir.h"
+#include "gui/dialogs/config.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/elems/config/tabPlugins.h"
+#include "gui/ui.h"
 #include "utils/fs.h"
 #include "utils/vector.h"
 #include <FL/Fl_Tooltip.H>
 
+extern giada::v::Ui     g_ui;
 extern giada::m::Engine g_engine;
 
 namespace giada::c::config
@@ -299,5 +305,26 @@ void scanPlugins(std::string dir, const std::function<void(float)>& progress)
 	g_engine.pluginManager.saveList(u::fs::getHomePath() + G_SLASH + "plugins.xml");
 }
 
+/* -------------------------------------------------------------------------- */
+
+void setPluginPathCb(void* data)
+{
+	v::gdBrowserDir* browser = static_cast<v::gdBrowserDir*>(data);
+
+	if (browser->getCurrentPath() == "")
+	{
+		v::gdAlert("Invalid path.");
+		return;
+	}
+
+	if (!g_engine.conf.data.pluginPath.empty() && g_engine.conf.data.pluginPath.back() != ';')
+		g_engine.conf.data.pluginPath += ";";
+	g_engine.conf.data.pluginPath += browser->getCurrentPath();
+
+	browser->do_callback();
+
+	v::gdConfig* configWin = static_cast<v::gdConfig*>(g_ui.getSubwindow(*g_ui.mainWindow.get(), WID_CONFIG));
+	configWin->tabPlugins->refreshVstPath(g_engine.conf.data.pluginPath);
+}
 #endif
 } // namespace giada::c::config
