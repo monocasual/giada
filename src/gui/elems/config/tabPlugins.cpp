@@ -45,7 +45,7 @@
 namespace giada::v
 {
 geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
-: Fl_Group(X, Y, W, H, "Plugins")
+: Fl_Group(X, Y, W, H, "Plug-ins")
 , m_browse(x() + w() - G_GUI_UNIT, y() + 9, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm)
 , m_folderPath(m_browse.x() - 258, y() + 9, 250, G_GUI_UNIT)
 , m_scanButton(x() + w() - 150, m_folderPath.y() + m_folderPath.h() + 8, 150, G_GUI_UNIT)
@@ -58,7 +58,7 @@ geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 
 	m_info.hide();
 
-	m_folderPath.label("Plugins folder");
+	m_folderPath.label("Plug-ins folder");
 	m_folderPath.onChange = [this](const std::string& v) {
 		m_data.pluginPath = v;
 	};
