@@ -56,7 +56,7 @@ void PluginManager::reset(SortMethod sortMethod)
 int PluginManager::scanDirs(const std::string& dirs, const std::function<void(float)>& cb)
 {
 	u::log::print("[pluginManager::scanDir] requested directories: '%s'\n", dirs);
-	u::log::print("[pluginManager::scanDir] current plugins: %d\n", m_knownPluginList.getNumTypes());
+	u::log::print("[pluginManager::scanDir] current plug-in types: %d\n", m_knownPluginList.getNumTypes());
 
 	m_knownPluginList.clear(); // clear up previous plugins
 
