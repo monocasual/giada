@@ -43,15 +43,13 @@ public:
 	geTabPlugins(int x, int y, int w, int h);
 
 	void save();
-	void refreshVstPath(const std::string&);
+	void rebuild();
 
 private:
 	static void cb_scan(Fl_Widget* /*w*/, void* p);
 	static void cb_browse(Fl_Widget* /*w*/, void* p);
 	void        cb_scan();
 	void        cb_browse();
-
-	void refreshCount();
 
 	c::config::PluginData m_data;
 

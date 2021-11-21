@@ -309,7 +309,8 @@ void scanPlugins(std::string dir, const std::function<void(float)>& progress)
 
 void setPluginPathCb(void* data)
 {
-	v::gdBrowserDir* browser = static_cast<v::gdBrowserDir*>(data);
+	v::gdBrowserDir* browser    = static_cast<v::gdBrowserDir*>(data);
+	std::string&     pluginPath = g_engine.conf.data.pluginPath;
 
 	if (browser->getCurrentPath() == "")
 	{
@@ -317,14 +318,14 @@ void setPluginPathCb(void* data)
 		return;
 	}
 
-	if (!g_engine.conf.data.pluginPath.empty() && g_engine.conf.data.pluginPath.back() != ';')
-		g_engine.conf.data.pluginPath += ";";
-	g_engine.conf.data.pluginPath += browser->getCurrentPath();
+	if (!pluginPath.empty() && pluginPath.back() != ';')
+		pluginPath += ";";
+	pluginPath += browser->getCurrentPath();
 
 	browser->do_callback();
 
 	v::gdConfig* configWin = static_cast<v::gdConfig*>(g_ui.getSubwindow(*g_ui.mainWindow.get(), WID_CONFIG));
-	configWin->tabPlugins->refreshVstPath(g_engine.conf.data.pluginPath);
+	configWin->tabPlugins->rebuild();
 }
 #endif
 } // namespace giada::c::config

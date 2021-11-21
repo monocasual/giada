@@ -46,7 +46,6 @@ namespace giada::v
 {
 geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 : Fl_Group(X, Y, W, H, "Plugins")
-, m_data(c::config::getPluginData())
 , m_browse(x() + w() - G_GUI_UNIT, y() + 9, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm)
 , m_folderPath(m_browse.x() - 258, y() + 9, 250, G_GUI_UNIT)
 , m_scanButton(x() + w() - 150, m_folderPath.y() + m_folderPath.h() + 8, 150, G_GUI_UNIT)
@@ -57,25 +56,30 @@ geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 	labelsize(G_GUI_FONT_SIZE_BASE);
 	selection_color(G_COLOR_GREY_4);
 
-	m_info.label("Scan in progress. Please wait...");
 	m_info.hide();
 
-	m_folderPath.value(m_data.pluginPath.c_str());
 	m_folderPath.label("Plugins folder");
+	m_folderPath.onChange = [this](const std::string& v) {
+		m_data.pluginPath = v;
+	};
 
 	m_browse.callback(cb_browse, (void*)this);
-
 	m_scanButton.callback(cb_scan, (void*)this);
 
-	refreshCount();
+	rebuild();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geTabPlugins::refreshCount()
+void geTabPlugins::rebuild()
 {
-	std::string scanLabel = "Scan (" + std::to_string(m_data.numAvailablePlugins) + " found)";
+	m_data = c::config::getPluginData();
+
+	const std::string scanLabel = "Scan (" + std::to_string(m_data.numAvailablePlugins) + " found)";
 	m_scanButton.copy_label(scanLabel.c_str());
+
+	m_folderPath.value(m_data.pluginPath.c_str());
+	m_folderPath.redraw();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -103,7 +107,7 @@ void geTabPlugins::cb_scan()
 	m_info.show();
 	c::config::scanPlugins(m_folderPath.value(), callback);
 	m_info.hide();
-	refreshCount();
+	rebuild();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -111,16 +115,6 @@ void geTabPlugins::cb_scan()
 void geTabPlugins::save()
 {
 	c::config::save(m_data);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geTabPlugins::refreshVstPath(const std::string& path)
-{
-	m_data.pluginPath = path;
-
-	m_folderPath.value(path.c_str());
-	m_folderPath.redraw();
 }
 } // namespace giada::v
 
