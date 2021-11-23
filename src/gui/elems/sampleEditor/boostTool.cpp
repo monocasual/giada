@@ -50,7 +50,7 @@ geBoostTool::geBoostTool(int X, int Y)
 	spacing(G_GUI_INNER_MARGIN);
 
 	begin();
-	label     = new geBox(0, 0, u::gui::getStringWidth("Boost"), G_GUI_UNIT, "Boost", FL_ALIGN_RIGHT);
+	label     = new geBox(0, 0, u::gui::getStringRect("Boost").w, G_GUI_UNIT, "Boost", FL_ALIGN_RIGHT);
 	dial      = new geDial(0, 0, G_GUI_UNIT, G_GUI_UNIT);
 	input     = new geInput(0, 0, 70, G_GUI_UNIT);
 	normalize = new geButton(0, 0, 70, G_GUI_UNIT, "Normalize");

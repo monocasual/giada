@@ -28,6 +28,7 @@
 #define G_UTILS_GUI_H
 
 #include "core/types.h"
+#include "deps/geompp/src/rect.hpp"
 #include <FL/Fl_Menu_Item.H>
 #include <string>
 
@@ -45,10 +46,10 @@ Strips special chars used by FLTK to split menus into sub-menus. */
 
 std::string removeFltkChars(const std::string& s);
 
-/* getStringWidth
-Returns the width in pixels of a string 's'. */
+/* getStringRect
+Returns the bounding box in pixels of a string 's'. */
 
-int getStringWidth(const std::string& s);
+geompp::Rect<int> getStringRect(const std::string& s);
 
 /* truncate
 Adds ellipsis to a string 's' if it longer than 'width' pixels. */

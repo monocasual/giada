@@ -74,12 +74,12 @@ void setFavicon(v::gdWindow* w)
 
 /* -------------------------------------------------------------------------- */
 
-int getStringWidth(const std::string& s)
+geompp::Rect<int> getStringRect(const std::string& s)
 {
 	int w = 0;
 	int h = 0;
 	fl_measure(s.c_str(), w, h);
-	return w;
+	return {0, 0, w, h};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -97,13 +97,13 @@ std::string removeFltkChars(const std::string& s)
 
 std::string truncate(const std::string& s, Pixel width)
 {
-	if (s.empty() || getStringWidth(s) <= width)
+	if (s.empty() || getStringRect(s).w <= width)
 		return s;
 
 	std::string tmp  = s;
 	std::size_t size = tmp.size();
 
-	while (getStringWidth(tmp + "...") > width)
+	while (getStringRect(tmp + "...").w > width)
 	{
 		if (size == 0)
 			return "";
