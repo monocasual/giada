@@ -68,8 +68,6 @@ void loadProject(void* data)
 	const std::string projectPath = browser->getSelectedItem();
 	const std::string patchPath   = projectPath + G_SLASH + u::fs::stripExt(u::fs::basename(projectPath)) + ".gptc";
 
-	browser->showStatusBar();
-
 	if (int res = g_engine.load(projectPath, patchPath); res != G_PATCH_OK)
 	{
 		if (res == G_PATCH_UNREADABLE)
@@ -78,7 +76,6 @@ void loadProject(void* data)
 			v::gdAlert("This patch is not valid.");
 		else if (res == G_PATCH_UNSUPPORTED)
 			v::gdAlert("This patch format is no longer supported.");
-		browser->hideStatusBar();
 		return;
 	}
 

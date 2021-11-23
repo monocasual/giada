@@ -61,14 +61,6 @@ public:
 	ID          getChannelId() const;
 	void        fireCallback() const;
 
-	/* setStatusBar
-	Increments status bar for progress tracking. */
-
-	void setStatusBar(float v);
-
-	void showStatusBar();
-	void hideStatusBar();
-
 protected:
 	gdBrowserBase(const std::string& title, const std::string& path,
 	    std::function<void(void*)> f, ID channelId, m::Conf::Data&);
@@ -88,14 +80,13 @@ protected:
 	m::Conf::Data& m_conf;
 	ID             m_channelId;
 
-	Fl_Group*   groupTop;
-	geCheck*    hiddenFiles;
-	geBrowser*  browser;
-	geButton*   ok;
-	geButton*   cancel;
-	geInput*    where;
-	geButton*   updir;
-	geProgress* status;
+	Fl_Group*  groupTop;
+	geCheck*   hiddenFiles;
+	geBrowser* browser;
+	geButton*  ok;
+	geButton*  cancel;
+	geInput*   where;
+	geButton*  updir;
 };
 } // namespace giada::v
 

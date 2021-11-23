@@ -28,6 +28,7 @@
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/graphics.h"
+#include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/input.h"
@@ -71,11 +72,8 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 	Fl_Group* groupButtons = new Fl_Group(8, browser->y() + browser->h() + 8, w() - 16, 20);
 	ok                     = new geButton(w() - 88, groupButtons->y(), 80, 20);
 	cancel                 = new geButton(w() - ok->w() - 96, groupButtons->y(), 80, 20, "Cancel");
-	status                 = new geProgress(8, groupButtons->y(), cancel->x() - 16, 20);
-	status->minimum(0);
-	status->maximum(1);
-	status->hide(); // show the bar only if necessary
-	groupButtons->resizable(status);
+	geBox* spacer          = new geBox(8, groupButtons->y(), cancel->x() - 16, 20);
+	groupButtons->resizable(spacer);
 	groupButtons->end();
 
 	end();
@@ -128,28 +126,6 @@ void gdBrowserBase::cb_close()
 void gdBrowserBase::cb_toggleHiddenFiles()
 {
 	browser->toggleHiddenFiles();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdBrowserBase::setStatusBar(float v)
-{
-	status->value(status->value() + v);
-	Fl::wait(0);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdBrowserBase::showStatusBar()
-{
-	status->show();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdBrowserBase::hideStatusBar()
-{
-	status->hide();
 }
 
 /* -------------------------------------------------------------------------- */
