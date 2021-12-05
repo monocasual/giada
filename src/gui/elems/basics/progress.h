@@ -29,10 +29,13 @@
 
 #include <FL/Fl_Progress.H>
 
+namespace giada::v
+{
 class geProgress : public Fl_Progress
 {
 public:
 	geProgress(int x, int y, int w, int h, const char* l = 0);
 };
+} // namespace giada::v
 
 #endif
