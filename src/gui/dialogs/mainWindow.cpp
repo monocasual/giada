@@ -42,6 +42,29 @@
 
 namespace giada::v
 {
+gdMainWindow::ScopedProgress::ScopedProgress(gdProgress& p, const char* msg)
+: m_progress(p)
+{
+	m_progress.popup(msg);
+}
+
+/* -------------------------------------------------------------------------- */
+
+gdMainWindow::ScopedProgress::~ScopedProgress()
+{
+	m_progress.hide();
+}
+
+/* -------------------------------------------------------------------------- */
+
+gdProgress& gdMainWindow::ScopedProgress::get()
+{
+	return m_progress;
+}
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** argv, m::Conf::Data& c)
 : gdWindow(W, H, title)
 , m_conf(c)
@@ -151,4 +174,12 @@ void gdMainWindow::clearKeyboard()
 {
 	keyboard->init();
 }
+
+/* -------------------------------------------------------------------------- */
+
+gdMainWindow::ScopedProgress gdMainWindow::getScopedProgress(const char* msg)
+{
+	return {m_progress, msg};
+}
+
 } // namespace giada::v

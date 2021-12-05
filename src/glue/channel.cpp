@@ -176,6 +176,8 @@ std::vector<Data> getChannels()
 
 int loadChannel(ID channelId, const std::string& fname)
 {
+	auto progress = g_ui.mainWindow->getScopedProgress("Loading sample...");
+
 	m::WaveManager::Result res = g_engine.waveManager.createFromFile(fname, /*id=*/0,
 	    g_engine.kernelAudio.getSampleRate(), g_engine.conf.data.rsmpQuality);
 
@@ -190,7 +192,6 @@ int loadChannel(ID channelId, const std::string& fname)
 
 	g_engine.conf.data.samplePath = u::fs::dirname(fname);
 	g_engine.mixerHandler.loadChannel(channelId, std::move(res.wave));
-
 	return G_RES_OK;
 }
 
@@ -203,22 +204,16 @@ void addChannel(ID columnId, ChannelType type)
 
 /* -------------------------------------------------------------------------- */
 
-void addAndLoadChannel(ID columnId, const std::string& fname)
-{
-	m::WaveManager::Result res = g_engine.waveManager.createFromFile(fname, /*id=*/0,
-	    g_engine.kernelAudio.getSampleRate(), g_engine.conf.data.rsmpQuality);
-	if (res.status == G_RES_OK)
-		g_engine.mixerHandler.addAndLoadChannel(columnId, std::move(res.wave), g_engine.kernelAudio.getBufferSize(),
-		    g_engine.channelManager);
-	else
-		printLoadError_(res.status);
-}
-
 void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 {
+	auto progress = g_ui.mainWindow->getScopedProgress("Loading samples...");
+
 	bool errors = false;
+	int  i      = 0;
 	for (const std::string& f : fnames)
 	{
+		progress.get().setProgress(++i / static_cast<float>(fnames.size()));
+
 		m::WaveManager::Result res = g_engine.waveManager.createFromFile(f, /*id=*/0,
 		    g_engine.kernelAudio.getSampleRate(), g_engine.conf.data.rsmpQuality);
 		if (res.status == G_RES_OK)

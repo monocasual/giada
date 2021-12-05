@@ -68,7 +68,12 @@ void loadProject(void* data)
 	const std::string projectPath = browser->getSelectedItem();
 	const std::string patchPath   = projectPath + G_SLASH + u::fs::stripExt(u::fs::basename(projectPath)) + ".gptc";
 
-	if (int res = g_engine.load(projectPath, patchPath); res != G_PATCH_OK)
+	auto progress   = g_ui.mainWindow->getScopedProgress("Loading project...");
+	auto progressCb = [&p = progress.get()](float v) {
+		p.setProgress(v);
+	};
+
+	if (int res = g_engine.load(projectPath, patchPath, progressCb); res != G_PATCH_OK)
 	{
 		if (res == G_PATCH_UNREADABLE)
 			v::gdAlert("This patch is unreadable.");
@@ -112,9 +117,14 @@ void saveProject(void* data)
 	if (u::fs::dirExists(projectPath) && !v::gdConfirmWin("Warning", "Project exists: overwrite?"))
 		return;
 
+	auto progress   = g_ui.mainWindow->getScopedProgress("Saving project...");
+	auto progressCb = [&p = progress.get()](float v) {
+		p.setProgress(v);
+	};
+
 	g_ui.store(g_engine.patch.data);
 
-	if (!g_engine.store(projectName, projectPath, patchPath))
+	if (!g_engine.store(projectName, projectPath, patchPath, progressCb))
 	{
 		v::gdAlert("Unable to save the project!");
 		return;
@@ -133,9 +143,9 @@ void loadSample(void* data)
 	if (fullPath.empty())
 		return;
 
-	int res = c::channel::loadChannel(browser->getChannelId(), fullPath);
+	auto progress = g_ui.mainWindow->getScopedProgress("Loading sample...");
 
-	if (res == G_RES_OK)
+	if (int res = c::channel::loadChannel(browser->getChannelId(), fullPath); res == G_RES_OK)
 	{
 		g_engine.conf.data.samplePath = u::fs::dirname(fullPath);
 		browser->do_callback();

@@ -296,8 +296,10 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo)
 /* -------------------------------------------------------------------------- */
 
 bool Engine::store(const std::string& projectName, const std::string& projectPath,
-    const std::string& patchPath)
+    const std::string& patchPath, std::function<void(float)> progress)
 {
+	progress(0.0f);
+
 	if (!u::fs::mkdir(projectPath))
 	{
 		u::log::print("[Engine::store] Unable to make project directory!\n");
@@ -315,10 +317,14 @@ bool Engine::store(const std::string& projectName, const std::string& projectPat
 		waveManager.save(*w, w->getPath()); // TODO - error checking
 	}
 
+	progress(0.3f);
+
 	/* Write Model into Patch, then into file. */
 
 	patch.data.name = projectName;
 	model::store(patch.data);
+
+	progress(0.6f);
 
 	if (!patch.write(patchPath))
 		return false;
@@ -330,24 +336,33 @@ bool Engine::store(const std::string& projectName, const std::string& projectPat
 
 	u::log::print("[Engine::store] Project patch saved as %s\n", patchPath);
 
+	progress(1.0f);
+
 	return true;
 }
 
 /* -------------------------------------------------------------------------- */
 
-int Engine::load(const std::string& projectPath, const std::string& patchPath)
+int Engine::load(const std::string& projectPath, const std::string& patchPath,
+    std::function<void(float)> progress)
 {
 	u::log::print("[Engine::load] Load project from %s\n", projectPath);
+
+	progress(0.0f);
 
 	patch.reset();
 	if (int res = patch.read(patchPath, projectPath); res != G_PATCH_OK)
 		return res;
+
+	progress(0.3f);
 
 	/* Then suspend Mixer, reset and fill the model. */
 
 	mixer.disable();
 	reset();
 	m::model::load(patch.data);
+
+	progress(0.6f);
 
 	/* Prepare the engine. Recorder has to recompute the actions positions if 
 	the current samplerate != patch samplerate. Clock needs to update frames
@@ -358,6 +373,8 @@ int Engine::load(const std::string& projectPath, const std::string& patchPath)
 	sequencer.recomputeFrames(kernelAudio.getSampleRate());
 	mixer.allocRecBuffer(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()));
 
+	progress(0.9f);
+
 	/* Store the parent folder the project belongs to, in order to reuse it the 
 	next time. */
 
@@ -366,6 +383,8 @@ int Engine::load(const std::string& projectPath, const std::string& patchPath)
 	/* Mixer is ready to go back online. */
 
 	mixer.enable();
+
+	progress(1.0f);
 
 	return G_PATCH_OK;
 }

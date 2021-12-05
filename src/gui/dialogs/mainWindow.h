@@ -27,8 +27,9 @@
 #ifndef GD_MAINWINDOW_H
 #define GD_MAINWINDOW_H
 
-#include "window.h"
 #include "core/conf.h"
+#include "gui/dialogs/progress.h"
+#include "window.h"
 
 namespace giada::v
 {
@@ -40,6 +41,8 @@ class geMainTransport;
 class geMainTimer;
 class gdMainWindow : public gdWindow
 {
+	class ScopedProgress;
+
 public:
 	gdMainWindow(int w, int h, const char* title, int argc, char** argv, m::Conf::Data&);
 	~gdMainWindow();
@@ -52,6 +55,8 @@ public:
 
 	void clearKeyboard();
 
+	ScopedProgress getScopedProgress(const char* msg);
+
 	geKeyboard*      keyboard;
 	geSequencer*     sequencer;
 	geMainMenu*      mainMenu;
@@ -60,7 +65,21 @@ public:
 	geMainTransport* mainTransport;
 
 private:
+	class ScopedProgress
+	{
+	public:
+		ScopedProgress(gdProgress&, const char* msg);
+		~ScopedProgress();
+
+		gdProgress& get();
+
+	private:
+		gdProgress& m_progress;
+	};
+
 	m::Conf::Data& m_conf;
+
+	gdProgress m_progress;
 };
 } // namespace giada::v
 

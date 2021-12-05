@@ -65,13 +65,14 @@ public:
 	on success. */
 
 	bool store(const std::string& projectName, const std::string& projectPath,
-	    const std::string& patchPath);
+	    const std::string& patchPath, std::function<void(float)> progress);
 
 	/* load
 	Reads a Patch from file and then de-serialize its content into the model. 
 	Returns G_PATCH_OK on success or any G_PATCH_* on failure. */
 
-	int load(const std::string& projectPath, const std::string& patchPath);
+	int load(const std::string& projectPath, const std::string& patchPath,
+	    std::function<void(float)> progress);
 
 	/* updateMixerModel
 	Updates some values in model::Mixer data struct needed by m::Mixer for the

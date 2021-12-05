@@ -37,7 +37,6 @@ class Fl_Group;
 class geCheck;
 class geButton;
 class geInput;
-class geProgress;
 
 namespace giada::m
 {

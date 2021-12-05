@@ -133,11 +133,6 @@ Fills an existing channel with a wave. */
 
 int loadChannel(ID columnId, const std::string& fname);
 
-/* addAndLoadChannel
-Adds a new Sample Channel and fills it with a wave right away. */
-
-void addAndLoadChannel(ID columnId, const std::string& fpath);
-
 /* addAndLoadChannels
 As above, with multiple audio file paths in input. */
 
