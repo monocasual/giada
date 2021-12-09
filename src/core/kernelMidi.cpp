@@ -33,6 +33,11 @@ namespace giada::m
 {
 namespace
 {
+constexpr auto OUTPUT_NAME = "Giada MIDI output";
+constexpr auto INPUT_NAME  = "Giada MIDI input";
+
+/* -------------------------------------------------------------------------- */
+
 std::vector<unsigned char> split_(uint32_t iValue)
 {
 	return {
@@ -55,109 +60,43 @@ uint32_t join_(int b1, int b2, int b3)
 
 KernelMidi::KernelMidi()
 : onMidiReceived(nullptr)
-, m_status(false)
-, m_api(0)
-, m_numOutPorts(0)
-, m_numInPorts(0)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::setApi(int api)
+bool KernelMidi::openOutDevice(int api, int port)
 {
-	m_api = api;
-	u::log::print("[KM] using system 0x%x\n", m_api);
+	if (port == -1)
+		return false;
+
+	m_midiOut = makeDevice<RtMidiOut>(api, port, OUTPUT_NAME);
+	return m_midiOut != nullptr;
 }
 
 /* -------------------------------------------------------------------------- */
 
-int KernelMidi::openOutDevice(int port)
+bool KernelMidi::openInDevice(int api, int port)
 {
-	try
-	{
-		m_midiOut = std::make_unique<RtMidiOut>((RtMidi::Api)m_api, "Giada MIDI Output");
-		m_status  = true;
-	}
-	catch (RtMidiError& error)
-	{
-		u::log::print("[KM] MIDI out device error: %s\n", error.getMessage());
-		m_status = false;
-		return 0;
-	}
+	if (port == -1)
+		return false;
 
-	/* print output ports */
+	m_midiIn = makeDevice<RtMidiIn>(api, port, INPUT_NAME);
+	if (m_midiIn == nullptr)
+		return false;
 
-	m_numOutPorts = m_midiOut->getPortCount();
-	u::log::print("[KM] %d output MIDI ports found\n", m_numOutPorts);
-	for (unsigned i = 0; i < m_numOutPorts; i++)
-		u::log::print("  %d) %s\n", i, getOutPortName(i));
+	m_midiIn->setCallback(&s_callback, this);
+	m_midiIn->ignoreTypes(true, false, true); // Ignore all system/time msgs, for now
 
-	/* try to open a port, if enabled */
-
-	if (port != -1 && m_numOutPorts > 0)
-	{
-		try
-		{
-			m_midiOut->openPort(port, getOutPortName(port));
-			u::log::print("[KM] MIDI out port %d open\n", port);
-			return 1;
-		}
-		catch (RtMidiError& error)
-		{
-			u::log::print("[KM] unable to open MIDI out port %d: %s\n", port, error.getMessage());
-			m_status = false;
-			return 0;
-		}
-	}
-	else
-		return 2;
+	return true;
 }
 
 /* -------------------------------------------------------------------------- */
 
-int KernelMidi::openInDevice(int port)
+void KernelMidi::logPorts()
 {
-	try
-	{
-		m_midiIn = std::make_unique<RtMidiIn>((RtMidi::Api)m_api, "Giada MIDI input");
-		m_status = true;
-	}
-	catch (RtMidiError& error)
-	{
-		u::log::print("[KM] MIDI in device error: %s\n", error.getMessage());
-		m_status = false;
-		return 0;
-	}
-
-	/* print input ports */
-
-	m_numInPorts = m_midiIn->getPortCount();
-	u::log::print("[KM] %d input MIDI ports found\n", m_numInPorts);
-	for (unsigned i = 0; i < m_numInPorts; i++)
-		u::log::print("  %d) %s\n", i, getInPortName(i));
-
-	/* try to open a port, if enabled */
-
-	if (port != -1 && m_numInPorts > 0)
-	{
-		try
-		{
-			m_midiIn->setCallback(&s_callback, this);
-			m_midiIn->openPort(port, getInPortName(port));
-			m_midiIn->ignoreTypes(true, false, true); // ignore all system/time msgs, for now
-			u::log::print("[KM] MIDI in port %d open\n", port);
-			return 1;
-		}
-		catch (RtMidiError& error)
-		{
-			u::log::print("[KM] unable to open MIDI in port %d: %s\n", port, error.getMessage());
-			m_status = false;
-			return 0;
-		}
-	}
-	else
-		return 2;
+	logPorts(*m_midiOut, OUTPUT_NAME);
+	logPorts(*m_midiIn, INPUT_NAME);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -174,35 +113,14 @@ bool KernelMidi::hasAPI(int API) const
 
 /* -------------------------------------------------------------------------- */
 
-std::string KernelMidi::getOutPortName(unsigned p) const
-{
-	try
-	{
-		return m_midiOut->getPortName(p);
-	}
-	catch (RtMidiError& /*error*/)
-	{
-		return "";
-	}
-}
-
-std::string KernelMidi::getInPortName(unsigned p) const
-{
-	try
-	{
-		return m_midiIn->getPortName(p);
-	}
-	catch (RtMidiError& /*error*/)
-	{
-		return "";
-	}
-}
+std::string KernelMidi::getOutPortName(unsigned p) const { return getPortName(*m_midiOut, p); }
+std::string KernelMidi::getInPortName(unsigned p) const { return getPortName(*m_midiIn, p); }
 
 /* -------------------------------------------------------------------------- */
 
 void KernelMidi::send(uint32_t data)
 {
-	if (!m_status)
+	if (m_midiOut == nullptr)
 		return;
 
 	std::vector<unsigned char> msg = split_(data);
@@ -215,7 +133,7 @@ void KernelMidi::send(uint32_t data)
 
 void KernelMidi::send(int b1, int b2, int b3)
 {
-	if (!m_status)
+	if (m_midiOut == nullptr)
 		return;
 
 	std::vector<unsigned char> msg(1, b1);
@@ -231,9 +149,8 @@ void KernelMidi::send(int b1, int b2, int b3)
 
 /* -------------------------------------------------------------------------- */
 
-unsigned KernelMidi::countInPorts() const { return m_numInPorts; }
-unsigned KernelMidi::countOutPorts() const { return m_numOutPorts; }
-bool     KernelMidi::getStatus() const { return m_status; }
+unsigned KernelMidi::countOutPorts() const { return m_midiOut != nullptr ? m_midiOut->getPortCount() : 0; }
+unsigned KernelMidi::countInPorts() const { return m_midiIn != nullptr ? m_midiIn->getPortCount() : 0; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -255,5 +172,50 @@ void KernelMidi::callback(std::vector<unsigned char>* msg)
 	}
 
 	onMidiReceived(join_(msg->at(0), msg->at(1), msg->at(2)));
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename Device>
+std::unique_ptr<Device> KernelMidi::makeDevice(int api, int port, std::string name) const
+{
+	try
+	{
+		auto device = std::make_unique<Device>(static_cast<RtMidi::Api>(api), name);
+		if (port != -1 && device->getPortCount() > 0)
+			device->openPort(port, device->getPortName(port));
+		return device;
+	}
+	catch (RtMidiError& error)
+	{
+		u::log::print("[KM] Device '%s' error on open: %s\n", name.c_str(), error.getMessage());
+		return nullptr;
+	}
+}
+
+template std::unique_ptr<RtMidiOut> KernelMidi::makeDevice(int, int, std::string) const;
+template std::unique_ptr<RtMidiIn>  KernelMidi::makeDevice(int, int, std::string) const;
+
+/* -------------------------------------------------------------------------- */
+
+std::string KernelMidi::getPortName(RtMidi& device, int port) const
+{
+	try
+	{
+		return device.getPortName(port);
+	}
+	catch (RtMidiError& /*error*/)
+	{
+		return "";
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void KernelMidi::logPorts(RtMidi& device, std::string name) const
+{
+	u::log::print("[KM] Device '%s': %d MIDI ports found\n", name.c_str(), device.getPortCount());
+	for (unsigned i = 0; i < device.getPortCount(); i++)
+		u::log::print("  %d) %s\n", i, device.getPortName(i));
 }
 } // namespace giada::m

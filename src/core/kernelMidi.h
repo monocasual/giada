@@ -41,19 +41,14 @@ class KernelMidi final
 public:
 	KernelMidi();
 
-	/* getStatus
-    Returns current engine status. */
-
-	bool getStatus() const;
-
-	unsigned countInPorts() const;
 	unsigned countOutPorts() const;
+	unsigned countInPorts() const;
 
-	/* getIn/OutPortName
+	/* getOut/InPortName
     Returns the name of the port 'p'. */
 
-	std::string getInPortName(unsigned p) const;
 	std::string getOutPortName(unsigned p) const;
+	std::string getInPortName(unsigned p) const;
 
 	bool hasAPI(int API) const;
 
@@ -68,25 +63,25 @@ public:
 
 	void setApi(int api);
 
-	/* open/close/in/outDevice */
+	bool openOutDevice(int api, int port);
+	bool openInDevice(int api, int port);
 
-	int openOutDevice(int port);
-	int openInDevice(int port);
-	int closeInDevice();
-	int closeOutDevice();
+	void logPorts();
 
 	std::function<void(uint32_t)> onMidiReceived;
 
 private:
+	template <typename Device>
+	std::unique_ptr<Device> makeDevice(int api, int port, std::string name) const;
+
 	static void s_callback(double, std::vector<unsigned char>*, void*);
 	void        callback(std::vector<unsigned char>*);
 
+	std::string getPortName(RtMidi&, int port) const;
+	void        logPorts(RtMidi&, std::string name) const;
+
 	std::unique_ptr<RtMidiOut> m_midiOut;
 	std::unique_ptr<RtMidiIn>  m_midiIn;
-	bool                       m_status;
-	int                        m_api;
-	unsigned                   m_numOutPorts;
-	unsigned                   m_numInPorts;
 };
 } // namespace giada::m
 

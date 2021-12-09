@@ -179,9 +179,10 @@ void Engine::init()
 	mixer.enable();
 	kernelAudio.startStream();
 
-	kernelMidi.setApi(conf.data.midiSystem);
-	kernelMidi.openOutDevice(conf.data.midiPortOut);
-	kernelMidi.openInDevice(conf.data.midiPortIn);
+	kernelMidi.openOutDevice(conf.data.midiSystem, conf.data.midiPortOut);
+	kernelMidi.openInDevice(conf.data.midiSystem, conf.data.midiPortIn);
+	kernelMidi.logPorts();
+
 	midiMapper.sendInitMessages(midiMapper.currentMap);
 
 	eventDispatcher.start();
