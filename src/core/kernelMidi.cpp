@@ -95,8 +95,10 @@ bool KernelMidi::openInDevice(int api, int port)
 
 void KernelMidi::logPorts()
 {
-	logPorts(*m_midiOut, OUTPUT_NAME);
-	logPorts(*m_midiIn, INPUT_NAME);
+	if (m_midiOut != nullptr)
+		logPorts(*m_midiOut, OUTPUT_NAME);
+	if (m_midiIn != nullptr)
+		logPorts(*m_midiIn, INPUT_NAME);
 }
 
 /* -------------------------------------------------------------------------- */
