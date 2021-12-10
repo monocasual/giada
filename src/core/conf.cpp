@@ -295,5 +295,8 @@ void Conf::sanitize()
 	data.channelsOutStart = std::max(0, data.channelsOutStart);
 	data.channelsInCount  = std::max(1, data.channelsInCount);
 	data.channelsInStart  = std::max(0, data.channelsInStart);
+
+	data.midiPortOut = std::max(-1, data.midiPortOut);
+	data.midiPortIn  = std::max(-1, data.midiPortIn);
 }
 } // namespace giada::m
