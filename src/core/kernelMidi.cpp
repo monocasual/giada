@@ -184,8 +184,7 @@ std::unique_ptr<Device> KernelMidi::makeDevice(int api, int port, std::string na
 	try
 	{
 		auto device = std::make_unique<Device>(static_cast<RtMidi::Api>(api), name);
-		if (port != -1 && device->getPortCount() > 0)
-			device->openPort(port, device->getPortName(port));
+		device->openPort(port, device->getPortName(port));
 		return device;
 	}
 	catch (RtMidiError& error)
