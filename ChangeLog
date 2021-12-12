@@ -11,6 +11,24 @@
 --------------------------------------------------------------------------------
 
 
+0.19.1 --- 2021 . 12 . 14
+- Enable JUCE_DEBUG in Debug builds
+- New MidiLighter tests + compile-time dependency injection
+- Set limits to minimum zoom level in Action Editors (#425)
+- Refactoring and code cleanup for Channel class and other sub-components 
+- Update JUCE to version 6.1.2
+- Update RtAudio to version 5.2.0
+- Sanitize MIDI ports values (fixes #515)
+- MidiLighter improvements and cleanups (fixes #517)
+- Fix off-the-beat metronome (#522)
+- Fix number of plug-ins found not being updated after a scan (fix #523)
+- Fix PluginManager initialization
+- Fix pthread linking in CMake (#520)
+- Fix build info not being printed correctly on startup
+- [Linux] Fix X error messages on closing some plug-in editors
+- [Linux] Fix wrong icon file in XDG desktop file
+
+
 0.19.0 --- 2021 . 11 . 01
 - New "One-shot Pause" channel mode
 - Refactoring: new component-based architecture
