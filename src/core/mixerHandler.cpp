@@ -232,7 +232,7 @@ void MixerHandler::renameChannel(ID channelId, const std::string& name)
 void MixerHandler::updateSoloCount()
 {
 	bool hasSolos = forAnyChannel([](const Channel& ch) {
-		return ch.isSoloed();
+		return !ch.isInternal() && ch.isSoloed();
 	});
 
 	m_model.get().mixer.hasSolos = hasSolos;
