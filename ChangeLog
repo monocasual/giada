@@ -11,7 +11,7 @@
 --------------------------------------------------------------------------------
 
 
-0.19.1 --- 2021 . 12 . 14
+0.19.1 --- 2021 . 12 . 15
 - Enable JUCE_DEBUG in Debug builds
 - New MidiLighter tests + compile-time dependency injection
 - Set limits to minimum zoom level in Action Editors (#425)
