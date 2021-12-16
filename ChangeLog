@@ -11,6 +11,10 @@
 --------------------------------------------------------------------------------
 
 
+0.19.2 --- 2021 . 12 . 16
+- Fix wrong computation of soloed channels
+
+
 0.19.1 --- 2021 . 12 . 15
 - Enable JUCE_DEBUG in Debug builds
 - New MidiLighter tests + compile-time dependency injection
