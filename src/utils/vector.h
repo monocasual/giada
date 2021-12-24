@@ -34,7 +34,7 @@
 namespace giada::u::vector
 {
 template <typename T, typename P>
-std::size_t indexOf(T& v, const P& p)
+std::size_t indexOf(const T& v, const P& p)
 {
 	return std::distance(v.begin(), std::find(v.begin(), v.end(), p));
 }
@@ -42,7 +42,7 @@ std::size_t indexOf(T& v, const P& p)
 /* -------------------------------------------------------------------------- */
 
 template <typename T, typename F>
-auto findIf(T& v, F&& func)
+auto findIf(const T& v, F&& func)
 {
 	return std::find_if(v.begin(), v.end(), func);
 }
@@ -50,7 +50,7 @@ auto findIf(T& v, F&& func)
 /* -------------------------------------------------------------------------- */
 
 template <typename T, typename F>
-bool has(T& v, F&& func)
+bool has(const T& v, F&& func)
 {
 	return findIf(v, func) != v.end();
 }
