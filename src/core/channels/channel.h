@@ -142,7 +142,7 @@ public:
 	MidiLearner             midiLearner;
 	MidiLighter<KernelMidi> midiLighter;
 
-	std::optional<SamplePlayer>   samplePlayer;
+	std::optional<SamplePlayerC>  samplePlayer;
 	std::optional<SampleAdvancer> sampleAdvancer;
 	std::optional<SampleReactor>  sampleReactor;
 	std::optional<AudioReceiver>  audioReceiver;

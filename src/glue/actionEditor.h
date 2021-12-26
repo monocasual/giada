@@ -27,6 +27,7 @@
 #ifndef G_GLUE_ACTION_EDITOR_H
 #define G_GLUE_ACTION_EDITOR_H
 
+#include "core/channels/samplePlayer.h"
 #include "core/types.h"
 #include <optional>
 #include <string>
@@ -35,7 +36,6 @@
 namespace giada::m
 {
 struct Action;
-class SamplePlayer;
 class Channel;
 } // namespace giada::m
 
@@ -43,7 +43,7 @@ namespace giada::c::actionEditor
 {
 struct SampleData
 {
-	SampleData(const m::SamplePlayer&);
+	SampleData(const m::SamplePlayerC&);
 
 	SamplePlayerMode channelMode;
 	bool             isLoopMode;

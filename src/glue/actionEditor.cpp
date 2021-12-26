@@ -110,7 +110,7 @@ bool isSinglePressMode_(ID channelId)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-SampleData::SampleData(const m::SamplePlayer& s)
+SampleData::SampleData(const m::SamplePlayerC& s)
 : channelMode(s.mode)
 , isLoopMode(s.isAnyLoopMode())
 {

@@ -38,6 +38,10 @@ namespace giada::m
 {
 class Wave;
 class Resampler;
+#ifdef WITH_TESTS
+class WaveMock;
+#endif
+template <typename WaveI>
 class WaveReader final
 {
 public:
@@ -72,7 +76,7 @@ public:
 	/* wave
 	Wave object. Might be null if the channel has no sample. */
 
-	Wave* wave;
+	WaveI* wave;
 
 private:
 	Result fillResampled(mcl::AudioBuffer& out, Frame start, Frame max, Frame offset,
@@ -81,6 +85,17 @@ private:
 
 	Resampler* m_resampler;
 };
+
+/* WaveReaderC, WaveReaderM
+Aliases for the both concrete (C) and mock (M) WaveReader class. */
+
+using WaveReaderC = WaveReader<Wave>;
+using WaveReaderM = WaveReader<WaveMock>;
+
+extern template class WaveReader<Wave>;
+#ifdef WITH_TESTS
+extern template class WaveReader<WaveMock>;
+#endif
 } // namespace giada::m
 
 #endif

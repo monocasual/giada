@@ -37,10 +37,12 @@
 #define CATCH_CONFIG_RUNNER
 #include "tests/actionRecorder.cpp"
 #include "tests/midiLighter.cpp"
+//#include "tests/mocks/waveMock.h"
 #include "tests/utils.cpp"
 #include "tests/wave.cpp"
 #include "tests/waveFx.cpp"
 #include "tests/waveManager.cpp"
+#include "tests/waveReader.cpp"
 #include <catch2/catch.hpp>
 #include <string>
 #include <vector>
