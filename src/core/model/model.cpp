@@ -246,15 +246,15 @@ T& Model::backShared()
 #endif
 	if constexpr (std::is_same_v<T, Wave>)
 		return *m_shared.waves.back().get();
-	if constexpr (std::is_same_v<T, Channel::Shared>)
+	if constexpr (std::is_same_v<T, ChannelShared>)
 		return *m_shared.channelsShared.back().get();
 }
 
 #ifdef WITH_VST
 template Plugin& Model::backShared<Plugin>();
 #endif
-template Wave&            Model::backShared<Wave>();
-template Channel::Shared& Model::backShared<Channel::Shared>();
+template Wave&          Model::backShared<Wave>();
+template ChannelShared& Model::backShared<ChannelShared>();
 
 /* -------------------------------------------------------------------------- */
 

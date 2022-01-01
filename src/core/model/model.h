@@ -100,7 +100,7 @@ enum class SwapType
 using PluginPtr = std::unique_ptr<Plugin>;
 #endif
 using WavePtr          = std::unique_ptr<Wave>;
-using ChannelSharedPtr = std::unique_ptr<Channel::Shared>;
+using ChannelSharedPtr = std::unique_ptr<ChannelShared>;
 
 #ifdef WITH_VST
 using PluginPtrs = std::vector<PluginPtr>;
@@ -187,10 +187,10 @@ public:
 private:
 	struct Shared
 	{
-		Sequencer::Shared                             sequencerShared;
-		Mixer::Shared                                 mixerShared;
-		Recorder::Shared                              recorderShared;
-		std::vector<std::unique_ptr<Channel::Shared>> channelsShared;
+		Sequencer::Shared                           sequencerShared;
+		Mixer::Shared                               mixerShared;
+		Recorder::Shared                            recorderShared;
+		std::vector<std::unique_ptr<ChannelShared>> channelsShared;
 
 		std::vector<std::unique_ptr<Wave>> waves;
 		Actions::Map                       actions;

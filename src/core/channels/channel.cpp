@@ -60,14 +60,14 @@ mcl::AudioBuffer::Pan calcPanning_(float pan)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Channel::Shared::Shared(Frame bufferSize)
+ChannelShared::ChannelShared(Frame bufferSize)
 : audioBuffer(bufferSize, G_MAX_IO_CHANS)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-Channel::Channel(ChannelType type, ID id, ID columnId, Shared& s)
+Channel::Channel(ChannelType type, ID id, ID columnId, ChannelShared& s)
 : shared(&s)
 , id(id)
 , type(type)
@@ -116,7 +116,7 @@ Channel::Channel(ChannelType type, ID id, ID columnId, Shared& s)
 
 /* -------------------------------------------------------------------------- */
 
-Channel::Channel(const Patch::Channel& p, Shared& s, float samplerateRatio, Wave* wave)
+Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRatio, Wave* wave)
 : shared(&s)
 , id(p.id)
 , type(p.type)

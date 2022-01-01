@@ -57,36 +57,39 @@
 namespace giada::m
 {
 class Plugin;
-class Channel final
-{
-public:
-	struct Shared
-	{
-		Shared(Frame bufferSize);
 
-		mcl::AudioBuffer audioBuffer;
+struct ChannelShared final
+{
+	ChannelShared(Frame bufferSize);
+
+	mcl::AudioBuffer audioBuffer;
 #ifdef WITH_VST
-		juce::MidiBuffer     midiBuffer;
-		Queue<MidiEvent, 32> midiQueue;
+	juce::MidiBuffer     midiBuffer;
+	Queue<MidiEvent, 32> midiQueue;
 #endif
 
-		WeakAtomic<Frame>         tracker     = 0;
-		WeakAtomic<ChannelStatus> playStatus  = ChannelStatus::OFF;
-		WeakAtomic<ChannelStatus> recStatus   = ChannelStatus::OFF;
-		WeakAtomic<bool>          readActions = false;
-		bool                      rewinding   = false;
-		Frame                     offset      = 0;
+	WeakAtomic<Frame>         tracker     = 0;
+	WeakAtomic<ChannelStatus> playStatus  = ChannelStatus::OFF;
+	WeakAtomic<ChannelStatus> recStatus   = ChannelStatus::OFF;
+	WeakAtomic<bool>          readActions = false;
+	bool                      rewinding   = false;
+	Frame                     offset      = 0;
 
-		/* Optional resampler for sample-based channels. Unfortunately a Resampler
+	/* Optional resampler for sample-based channels. Unfortunately a Resampler
 	object (based on libsamplerate) doesn't like to get copied while rendering
 	audio, so can't live inside WaveReader object (which is copied on model 
 	changes by the Swapper mechanism). Let's put it in the shared state here. */
 
-		std::optional<Resampler> resampler = {};
-	};
+	std::optional<Resampler> resampler = {};
+};
 
-	Channel(ChannelType t, ID id, ID columnId, Shared&);
-	Channel(const Patch::Channel& p, Shared&, float samplerateRatio, Wave* w);
+/* -------------------------------------------------------------------------- */
+
+class Channel final
+{
+public:
+	Channel(ChannelType t, ID id, ID columnId, ChannelShared&);
+	Channel(const Patch::Channel& p, ChannelShared&, float samplerateRatio, Wave* w);
 	Channel(const Channel& o);
 	Channel(Channel&& o) = default;
 
@@ -123,18 +126,18 @@ public:
 	void setMute(bool);
 	void setSolo(bool);
 
-	Shared*     shared;
-	ID          id;
-	ChannelType type;
-	ID          columnId;
-	float       volume;
-	float       volume_i; // Internal volume used for velocity-drives-volume mode on Sample Channels
-	float       pan;
-	bool        armed;
-	int         key;
-	bool        hasActions;
-	std::string name;
-	Pixel       height;
+	ChannelShared* shared;
+	ID             id;
+	ChannelType    type;
+	ID             columnId;
+	float          volume;
+	float          volume_i; // Internal volume used for velocity-drives-volume mode on Sample Channels
+	float          pan;
+	bool           armed;
+	int            key;
+	bool           hasActions;
+	std::string    name;
+	Pixel          height;
 #ifdef WITH_VST
 	std::vector<Plugin*> plugins;
 #endif

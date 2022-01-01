@@ -74,7 +74,7 @@ public:
 	const Patch::Channel serializeChannel(const Channel& c);
 
 private:
-	Channel::Shared& makeShared(ChannelType type, int bufferSize);
+	ChannelShared& makeShared(ChannelType type, int bufferSize);
 
 	IdManager m_channelId;
 
