@@ -1,7 +1,7 @@
 #include "../src/core/channels/waveReader.h"
 #include "../src/core/resampler.h"
+#include "../src/core/wave.h"
 #include "../src/utils/vector.h"
-#include "mocks/waveMock.h"
 #include <catch2/catch.hpp>
 #include <memory>
 
@@ -12,9 +12,14 @@ TEST_CASE("WaveReader")
 	constexpr int BUFFER_SIZE  = 1024;
 	constexpr int NUM_CHANNELS = 2;
 
-	m::WaveMock                wave(BUFFER_SIZE, NUM_CHANNELS);
-	m::Resampler               resampler;
-	m::WaveReader<m::WaveMock> waveReader(&resampler);
+	m::Wave wave(0);
+	wave.getBuffer().alloc(BUFFER_SIZE, NUM_CHANNELS);
+	wave.getBuffer().forEachFrame([](float* f, int i) {
+		f[0] = static_cast<float>(i + 1);
+		f[1] = static_cast<float>(i + 1);
+	});
+	m::Resampler  resampler;
+	m::WaveReader waveReader(&resampler);
 
 	SECTION("Test initialization")
 	{
@@ -32,7 +37,7 @@ TEST_CASE("WaveReader")
 			waveReader.fill(out, /*start=*/0, BUFFER_SIZE, /*offset=*/0, /*pitch=*/1.0f);
 
 			bool allFilled = true;
-			out.forEachSample([&allFilled](const float& f) {
+			out.forEachSample([&allFilled](const float& f, int) {
 				if (f == 0.0f)
 					allFilled = false;
 			});
@@ -45,7 +50,7 @@ TEST_CASE("WaveReader")
 			waveReader.fill(out, /*start=*/0, BUFFER_SIZE, /*offset=*/BUFFER_SIZE / 2, /*pitch=*/1.0f);
 
 			int numFramesFilled = 0;
-			out.forEachFrame([&numFramesFilled](const float* f) {
+			out.forEachFrame([&numFramesFilled](const float* f, int) {
 				if (f[0] != 0.0f)
 					numFramesFilled++;
 			});
