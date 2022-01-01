@@ -67,7 +67,7 @@ m::Channel& getChannel_(ID channelId)
 	return g_engine.model.get().getChannel(channelId);
 }
 
-m::SamplePlayerC& getSamplePlayer_(ID channelId)
+m::SamplePlayer& getSamplePlayer_(ID channelId)
 {
 	return getChannel_(channelId).samplePlayer.value();
 }

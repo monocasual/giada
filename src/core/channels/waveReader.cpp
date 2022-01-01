@@ -33,14 +33,10 @@
 #include <algorithm>
 #include <cassert>
 #include <memory>
-#ifdef WITH_TESTS
-#include "../tests/mocks/waveMock.h"
-#endif
 
 namespace giada::m
 {
-template <typename WaveI>
-WaveReader<WaveI>::WaveReader(Resampler* r)
+WaveReader::WaveReader(Resampler* r)
 : wave(nullptr)
 , m_resampler(r)
 {
@@ -48,9 +44,7 @@ WaveReader<WaveI>::WaveReader(Resampler* r)
 
 /* -------------------------------------------------------------------------- */
 
-template <typename WaveI>
-typename WaveReader<WaveI>::Result
-WaveReader<WaveI>::fill(mcl::AudioBuffer& out, Frame start, Frame max,
+WaveReader::Result WaveReader::fill(mcl::AudioBuffer& out, Frame start, Frame max,
     Frame offset, float pitch) const
 {
 	assert(wave != nullptr);
@@ -66,12 +60,10 @@ WaveReader<WaveI>::fill(mcl::AudioBuffer& out, Frame start, Frame max,
 
 /* -------------------------------------------------------------------------- */
 
-template <typename WaveI>
-typename WaveReader<WaveI>::Result
-WaveReader<WaveI>::fillResampled(mcl::AudioBuffer& dest, Frame start,
+WaveReader::Result WaveReader::fillResampled(mcl::AudioBuffer& dest, Frame start,
     Frame max, Frame offset, float pitch) const
 {
-	auto res = m_resampler->process(
+	Resampler::Result res = m_resampler->process(
 	    /*input=*/wave->getBuffer()[0],
 	    /*inputPos=*/start,
 	    /*inputLen=*/max,
@@ -86,9 +78,7 @@ WaveReader<WaveI>::fillResampled(mcl::AudioBuffer& dest, Frame start,
 
 /* -------------------------------------------------------------------------- */
 
-template <typename WaveI>
-typename WaveReader<WaveI>::Result
-WaveReader<WaveI>::fillCopy(mcl::AudioBuffer& dest, Frame start,
+WaveReader::Result WaveReader::fillCopy(mcl::AudioBuffer& dest, Frame start,
     Frame max, Frame offset) const
 {
 	Frame used = dest.countFrames() - offset;
@@ -100,19 +90,9 @@ WaveReader<WaveI>::fillCopy(mcl::AudioBuffer& dest, Frame start,
 	return {used, used};
 }
 
-/* -------------------------------------------------------------------------- */
-
-template <typename WaveI>
-void WaveReader<WaveI>::last() const
+void WaveReader::last() const
 {
 	if (m_resampler != nullptr)
 		m_resampler->last();
 }
-
-/* -------------------------------------------------------------------------- */
-
-template class WaveReader<Wave>;
-#ifdef WITH_TESTS
-template class WaveReader<WaveMock>;
-#endif
 } // namespace giada::m

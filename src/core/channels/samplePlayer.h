@@ -38,35 +38,34 @@
 namespace giada::m
 {
 class Channel;
-template <typename WaveReaderI, typename WaveI>
 class SamplePlayer final
 {
 public:
 	SamplePlayer(Resampler* r);
-	SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resampler* r, WaveI* w);
+	SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w);
 
-	bool   hasWave() const;
-	bool   hasLogicalWave() const;
-	bool   hasEditedWave() const;
-	bool   isAnyLoopMode() const;
-	ID     getWaveId() const;
-	Frame  getWaveSize() const;
-	WaveI* getWave() const;
-	void   render(const Channel& ch) const;
+	bool  hasWave() const;
+	bool  hasLogicalWave() const;
+	bool  hasEditedWave() const;
+	bool  isAnyLoopMode() const;
+	ID    getWaveId() const;
+	Frame getWaveSize() const;
+	Wave* getWave() const;
+	void  render(const Channel& ch) const;
 
 	void react(const EventDispatcher::Event& e);
 
 	/* loadWave
 	Loads Wave 'w' into channel ch and sets it up (name, markers, ...). */
 
-	void loadWave(Channel& ch, WaveI* w);
+	void loadWave(Channel& ch, Wave* w);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The
 	ratio is used to adjust begin/end points in case of patch vs. conf sample
 	rate mismatch. If nullptr, set the wave to invalid. */
 
-	void setWave(WaveI* w, float samplerateRatio);
+	void setWave(Wave* w, float samplerateRatio);
 
 	/* kickIn
 	Starts the player right away at frame 'f'. Used when launching a loop after
@@ -80,26 +79,15 @@ public:
 	Frame            begin;
 	Frame            end;
 	bool             velocityAsVol; // Velocity drives volume
-	WaveReaderI      waveReader;
+	WaveReader       waveReader;
 
 	std::function<void()> onLastFrame;
 
 private:
-	bool                         isPlaying(const Channel& ch) const;
-	typename WaveReaderI::Result fillBuffer(const Channel& ch, Frame start, Frame offset) const;
-	bool                         shouldLoop(const Channel& ch) const;
+	bool               isPlaying(const Channel& ch) const;
+	WaveReader::Result fillBuffer(const Channel& ch, Frame start, Frame offset) const;
+	bool               shouldLoop(const Channel& ch) const;
 };
-
-/* SamplePlayerC, SamplePlayerM
-Aliases for the both concrete (C) and mock (M) SamplePlayer class. */
-
-using SamplePlayerC = SamplePlayer<WaveReaderC, Wave>;
-using SamplePlayerM = SamplePlayer<WaveReaderM, WaveMock>;
-
-extern template class SamplePlayer<WaveReaderC, Wave>;
-#ifdef WITH_TESTS
-extern template class SamplePlayer<WaveReaderM, WaveMock>;
-#endif
 } // namespace giada::m
 
 #endif
