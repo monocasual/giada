@@ -37,6 +37,7 @@
 
 namespace giada::m
 {
+struct ChannelShared;
 class Channel;
 class SamplePlayer final
 {
@@ -51,14 +52,15 @@ public:
 	ID    getWaveId() const;
 	Frame getWaveSize() const;
 	Wave* getWave() const;
-	void  render(const Channel& ch) const;
+	void  render(ChannelShared&) const;
 
 	void react(const EventDispatcher::Event& e);
 
 	/* loadWave
-	Loads Wave 'w' into channel ch and sets it up (name, markers, ...). */
+	Loads Wave and sets it up (name, markers, ...). Also updates Channel's shared
+	state accordingly. */
 
-	void loadWave(Channel& ch, Wave* w);
+	void loadWave(ChannelShared&, Wave*);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The
@@ -71,7 +73,7 @@ public:
 	Starts the player right away at frame 'f'. Used when launching a loop after
 	being live recorded. */
 
-	void kickIn(Channel& ch, Frame f);
+	void kickIn(ChannelShared&, Frame f);
 
 	float            pitch;
 	SamplePlayerMode mode;
@@ -84,9 +86,8 @@ public:
 	std::function<void()> onLastFrame;
 
 private:
-	bool               isPlaying(const Channel& ch) const;
-	WaveReader::Result fillBuffer(const Channel& ch, Frame start, Frame offset) const;
-	bool               shouldLoop(const Channel& ch) const;
+	WaveReader::Result fillBuffer(mcl::AudioBuffer&, Frame start, Frame offset) const;
+	bool               shouldLoop() const;
 };
 } // namespace giada::m
 

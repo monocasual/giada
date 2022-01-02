@@ -31,6 +31,8 @@
 #include <algorithm>
 #include <cassert>
 
+using namespace mcl;
+
 namespace giada::m
 {
 SamplePlayer::SamplePlayer(Resampler* r)
@@ -106,30 +108,30 @@ void SamplePlayer::react(const EventDispatcher::Event& e)
 
 /* -------------------------------------------------------------------------- */
 
-void SamplePlayer::render(const Channel& ch) const
+void SamplePlayer::render(ChannelShared& shared) const
 {
-	if (!isPlaying(ch))
+	if (waveReader.wave == nullptr)
 		return;
 
 	/* Make sure tracker stays within begin-end range. */
 
-	Frame tracker = std::clamp(ch.shared->tracker.load(), begin, end);
+	Frame tracker = std::clamp(shared.tracker.load(), begin, end);
 
 	/* If rewinding, fill the tail first, then reset the tracker to the begin
     point. The rest is performed as usual. */
 
-	if (ch.shared->rewinding)
+	if (shared.rewinding)
 	{
 		if (tracker < end)
 		{
-			fillBuffer(ch, tracker, 0);
+			fillBuffer(shared.audioBuffer, tracker, 0);
 			waveReader.last();
 		}
-		ch.shared->rewinding = false;
-		tracker             = begin;
+		shared.rewinding = false;
+		tracker          = begin;
 	}
 
-	WaveReader::Result res = fillBuffer(ch, tracker, ch.shared->offset);
+	WaveReader::Result res = fillBuffer(shared.audioBuffer, tracker, shared.offset);
 	tracker += res.used;
 
 	/* If tracker has looped, special care is needed for the rendering. If the
@@ -143,36 +145,25 @@ void SamplePlayer::render(const Channel& ch) const
 		tracker = begin;
 		waveReader.last();
 		onLastFrame();
-		if (shouldLoop(ch) && res.generated < ch.shared->audioBuffer.countFrames())
-			tracker += fillBuffer(ch, tracker, res.generated).used;
+		if (shouldLoop() && res.generated < shared.audioBuffer.countFrames())
+			tracker += fillBuffer(shared.audioBuffer, tracker, res.generated).used;
 	}
 
-	ch.shared->offset = 0;
-	ch.shared->tracker.store(tracker);
+	shared.offset = 0;
+	shared.tracker.store(tracker);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SamplePlayer::loadWave(Channel& ch, Wave* w)
+void SamplePlayer::loadWave(ChannelShared& shared, Wave* w)
 {
 	waveReader.wave = w;
 
-	ch.shared->tracker.store(0);
+	shared.tracker.store(0);
+	shared.playStatus.store(w != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
 	shift = 0;
 	begin = 0;
-
-	if (w != nullptr)
-	{
-		ch.shared->playStatus.store(ChannelStatus::OFF);
-		ch.name = w->getBasename(/*ext=*/false);
-		end     = w->getBuffer().countFrames() - 1;
-	}
-	else
-	{
-		ch.shared->playStatus.store(ChannelStatus::EMPTY);
-		ch.name = "";
-		end     = 0;
-	}
+	end   = w != nullptr ? w->getBuffer().countFrames() - 1 : 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -197,35 +188,25 @@ void SamplePlayer::setWave(Wave* w, float samplerateRatio)
 
 /* -------------------------------------------------------------------------- */
 
-void SamplePlayer::kickIn(Channel& ch, Frame f)
+void SamplePlayer::kickIn(ChannelShared& shared, Frame f)
 {
-	ch.shared->tracker.store(f);
-	ch.shared->playStatus.store(ChannelStatus::PLAY);
+	shared.tracker.store(f);
+	shared.playStatus.store(ChannelStatus::PLAY);
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool SamplePlayer::isPlaying(const Channel& ch) const
+WaveReader::Result SamplePlayer::fillBuffer(AudioBuffer& buf, Frame start, Frame offset) const
 {
-	return waveReader.wave != nullptr && ch.isPlaying();
+	return waveReader.fill(buf, start, end, offset, pitch);
 }
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result SamplePlayer::fillBuffer(const Channel& ch, Frame start, Frame offset) const
+bool SamplePlayer::shouldLoop() const
 {
-	return waveReader.fill(ch.shared->audioBuffer, start, end, offset, pitch);
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool SamplePlayer::shouldLoop(const Channel& ch) const
-{
-	const ChannelStatus playStatus = ch.shared->playStatus.load();
-
-	return (mode == SamplePlayerMode::LOOP_BASIC ||
-	           mode == SamplePlayerMode::LOOP_REPEAT ||
-	           mode == SamplePlayerMode::SINGLE_ENDLESS) &&
-	       playStatus == ChannelStatus::PLAY;
+	return mode == SamplePlayerMode::LOOP_BASIC ||
+	       mode == SamplePlayerMode::LOOP_REPEAT ||
+	       mode == SamplePlayerMode::SINGLE_ENDLESS;
 }
 } // namespace giada::m

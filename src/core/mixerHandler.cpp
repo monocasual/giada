@@ -92,7 +92,7 @@ void MixerHandler::loadChannel(ID channelId, std::unique_ptr<Wave> w)
 	Wave&    wave    = m_model.backShared<Wave>();
 	Wave*    old     = channel.samplePlayer->getWave();
 
-	channel.samplePlayer->loadWave(channel, &wave);
+	loadChannel(channel, &wave);
 	m_model.swap(model::SwapType::HARD);
 
 	/* Remove old wave, if any. It is safe to do it now: the audio thread is
@@ -116,7 +116,7 @@ void MixerHandler::addAndLoadChannel(ID columnId, std::unique_ptr<Wave> w, int b
 	Wave&    wave    = m_model.backShared<Wave>();
 	Channel& channel = addChannel(ChannelType::SAMPLE, columnId, bufferSize, channelManager);
 
-	channel.samplePlayer->loadWave(channel, &wave);
+	loadChannel(channel, &wave);
 	m_model.swap(model::SwapType::HARD);
 
 	onChannelsAltered();
@@ -142,7 +142,7 @@ void MixerHandler::cloneChannel(ID channelId, int bufferSize, ChannelManager& ch
 	{
 		const Wave& oldWave = *oldChannel.samplePlayer->getWave();
 		m_model.addShared(waveManager.createFromWave(oldWave, 0, oldWave.getBuffer().countFrames()));
-		newChannel.samplePlayer->loadWave(newChannel, &m_model.backShared<Wave>());
+		loadChannel(newChannel, &m_model.backShared<Wave>());
 	}
 
 #ifdef WITH_VST
@@ -171,7 +171,7 @@ void MixerHandler::freeChannel(ID channelId)
 
 	const Wave* wave = ch.samplePlayer->getWave();
 
-	ch.samplePlayer->loadWave(ch, nullptr);
+	loadChannel(ch, nullptr);
 	m_model.swap(model::SwapType::HARD);
 
 	if (wave != nullptr)
@@ -188,7 +188,7 @@ void MixerHandler::freeAllChannels()
 
 	for (Channel& ch : m_model.get().channels)
 		if (ch.samplePlayer)
-			ch.samplePlayer->loadWave(ch, nullptr);
+			loadChannel(ch, nullptr);
 
 	m_model.swap(model::SwapType::HARD);
 	m_model.clearShared<model::WavePtrs>();
@@ -337,6 +337,14 @@ bool MixerHandler::forAnyChannel(std::function<bool(const Channel&)> f) const
 
 /* -------------------------------------------------------------------------- */
 
+void MixerHandler::loadChannel(Channel& ch, Wave* w) const
+{
+	ch.samplePlayer->loadWave(*ch.shared, w);
+	ch.name = w != nullptr ? w->getBasename(/*ext=*/false) : "";
+}
+
+/* -------------------------------------------------------------------------- */
+
 std::vector<Channel*> MixerHandler::getChannelsIf(std::function<bool(const Channel&)> f)
 {
 	std::vector<Channel*> out;
@@ -362,7 +370,7 @@ void MixerHandler::setupChannelPostRecording(Channel& ch, Frame currentFrame)
 {
 	/* Start sample channels in loop mode right away. */
 	if (ch.samplePlayer->isAnyLoopMode())
-		ch.samplePlayer->kickIn(ch, currentFrame);
+		ch.samplePlayer->kickIn(*ch.shared, currentFrame);
 	/* Disable 'arm' button if overdub protection is on. */
 	if (ch.audioReceiver->overdubProtection == true)
 		ch.armed = false;
@@ -385,7 +393,7 @@ void MixerHandler::recordChannel(Channel& ch, Frame recordedFrames, Frame curren
 	/* Update channel with the new Wave. */
 
 	m_model.addShared(std::move(wave));
-	ch.samplePlayer->loadWave(ch, &m_model.backShared<Wave>());
+	loadChannel(ch, &m_model.backShared<Wave>());
 	setupChannelPostRecording(ch, currentFrame);
 
 	m_model.swap(model::SwapType::HARD);

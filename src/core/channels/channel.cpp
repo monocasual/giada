@@ -439,8 +439,8 @@ void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool au
 {
 	shared->audioBuffer.clear();
 
-	if (samplePlayer)
-		samplePlayer->render(*this);
+	if (samplePlayer && isPlaying())
+		samplePlayer->render(*shared);
 	if (audioReceiver)
 		audioReceiver->render(*this, in);
 

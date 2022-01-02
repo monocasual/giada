@@ -163,6 +163,8 @@ public:
 private:
 	bool forAnyChannel(std::function<bool(const Channel&)> f) const;
 
+	void loadChannel(Channel&, Wave*) const;
+
 	std::vector<Channel*> getChannelsIf(std::function<bool(const Channel&)> f);
 	std::vector<Channel*> getRecordableChannels();
 	std::vector<Channel*> getOverdubbableChannels();

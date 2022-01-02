@@ -155,7 +155,7 @@ Data getData(ID channelId)
 {
 	/* Prepare the preview channel first, then return Data object. */
 	m::Channel& previewChannel = getChannel_(m::Mixer::PREVIEW_CHANNEL_ID);
-	previewChannel.samplePlayer->loadWave(previewChannel, &getWave_(channelId));
+	previewChannel.samplePlayer->loadWave(*previewChannel.shared, &getWave_(channelId));
 	g_engine.model.swap(m::model::SwapType::SOFT);
 
 	return Data(getChannel_(channelId));
@@ -349,7 +349,7 @@ void cleanupPreview()
 {
 	m::Channel& channel = getChannel_(m::Mixer::PREVIEW_CHANNEL_ID);
 
-	channel.samplePlayer->loadWave(channel, nullptr);
+	channel.samplePlayer->loadWave(*channel.shared, nullptr);
 	g_engine.model.swap(m::model::SwapType::SOFT);
 }
 
