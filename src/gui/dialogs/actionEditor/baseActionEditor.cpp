@@ -218,7 +218,7 @@ void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 
 void gdBaseActionEditor::refresh()
 {
-	m_playhead = m_data.isChannelPlaying() ? currentFrameToPixel() : 0;
+	m_playhead = currentFrameToPixel();
 	redraw();
 }
 
