@@ -161,7 +161,11 @@ void SamplePlayer::render(ChannelShared& shared) const
 		waveReader.last();
 		onLastFrame();
 		if (shouldLoop() && res.generated < shared.audioBuffer.countFrames())
-			tracker += fillBuffer(shared.audioBuffer, tracker, res.generated).used;
+		{
+			res = fillBuffer(shared.audioBuffer, tracker, res.generated);
+			tracker += res.used;
+			generated += res.generated;
+		}
 	}
 
 	shared.offset = 0;
