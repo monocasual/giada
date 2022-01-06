@@ -116,18 +116,13 @@ constexpr float G_MIN_PITCH             = 0.1f;
 constexpr float G_MAX_PITCH             = 4.0f;
 constexpr float G_MAX_PAN               = 1.0f;
 constexpr float G_MAX_VOLUME            = 1.0f;
-constexpr int   G_MAX_GRID_VAL          = 64;
-constexpr int   G_MIN_BUF_SIZE          = 8;
-constexpr int   G_MAX_BUF_SIZE          = 4096;
 constexpr int   G_MIN_GUI_WIDTH         = 816;
 constexpr int   G_MIN_GUI_HEIGHT        = 510;
 constexpr int   G_MAX_IO_CHANS          = 2;
 constexpr int   G_MAX_VELOCITY          = 0x7F;
 constexpr int   G_MAX_MIDI_CHANS        = 16;
-constexpr int   G_MAX_POLYPHONY         = 32;
 constexpr int   G_MAX_DISPATCHER_EVENTS = 32;
 constexpr int   G_MAX_SEQUENCER_EVENTS  = 128; // Per block
-constexpr int   G_MAX_QUANTIZER_SIZE    = 32;
 
 /* -- kernel audio ---------------------------------------------------------- */
 constexpr int G_SYS_API_NONE   = 0;
