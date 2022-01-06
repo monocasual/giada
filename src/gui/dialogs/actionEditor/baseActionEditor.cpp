@@ -54,7 +54,6 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf, Frame 
 , m_barTop(0, 0, Direction::HORIZONTAL)
 , m_splitScroll(0, 0, 0, 0)
 , m_conf(conf)
-, m_playhead(0)
 , m_ratio(conf.actionEditorZoom)
 {
 	end();
@@ -176,7 +175,7 @@ void gdBaseActionEditor::draw()
 	gdWindow::draw();
 
 	const geompp::Rect splitBounds = m_splitScroll.getBoundsNoScrollbar();
-	const geompp::Line playhead    = splitBounds.getHeightAsLine().withX(m_playhead);
+	const geompp::Line playhead    = splitBounds.getHeightAsLine().withX(currentFrameToPixel());
 
 	if (splitBounds.contains(playhead))
 		drawLine(playhead, G_COLOR_LIGHT_2);
@@ -218,7 +217,6 @@ void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 
 void gdBaseActionEditor::refresh()
 {
-	m_playhead = currentFrameToPixel();
 	redraw();
 }
 

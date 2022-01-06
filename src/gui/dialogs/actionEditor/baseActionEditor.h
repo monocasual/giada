@@ -107,7 +107,6 @@ private:
 
 	Pixel currentFrameToPixel() const;
 
-	Pixel m_playhead;
 	float m_ratio;
 };
 } // namespace giada::v
