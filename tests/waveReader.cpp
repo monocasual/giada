@@ -34,20 +34,27 @@ TEST_CASE("WaveReader")
 
 		SECTION("Regular fill")
 		{
-			waveReader.fill(out, /*start=*/0, BUFFER_SIZE, /*offset=*/0, /*pitch=*/1.0f);
+			m::WaveReader::Result res = waveReader.fill(out,
+			    /*start=*/0, BUFFER_SIZE, /*offset=*/0, /*pitch=*/1.0f);
 
-			bool allFilled = true;
-			out.forEachSample([&allFilled](const float& f, int) {
-				if (f == 0.0f)
+			bool allFilled       = true;
+			int  numFramesFilled = 0;
+			out.forEachFrame([&allFilled, &numFramesFilled](const float* f, int) {
+				if (f[0] == 0.0f)
 					allFilled = false;
+				else
+					numFramesFilled++;
 			});
 
 			REQUIRE(allFilled);
+			REQUIRE(numFramesFilled == res.used);
+			REQUIRE(numFramesFilled == res.generated);
 		}
 
 		SECTION("Partial fill")
 		{
-			waveReader.fill(out, /*start=*/0, BUFFER_SIZE, /*offset=*/BUFFER_SIZE / 2, /*pitch=*/1.0f);
+			m::WaveReader::Result res = waveReader.fill(out,
+			    /*start=*/0, BUFFER_SIZE, /*offset=*/BUFFER_SIZE / 2, /*pitch=*/1.0f);
 
 			int numFramesFilled = 0;
 			out.forEachFrame([&numFramesFilled](const float* f, int) {
@@ -58,6 +65,8 @@ TEST_CASE("WaveReader")
 			REQUIRE(numFramesFilled == BUFFER_SIZE / 2);
 			REQUIRE(out[(BUFFER_SIZE / 2) - 1][0] == 0.0f);
 			REQUIRE(out[BUFFER_SIZE / 2][0] != 0.0f);
+			REQUIRE(numFramesFilled == res.used);
+			REQUIRE(numFramesFilled == res.generated);
 		}
 	}
 }
