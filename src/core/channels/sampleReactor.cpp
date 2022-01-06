@@ -46,7 +46,7 @@ constexpr int Q_ACTION_REWIND = 1;
 SampleReactor::SampleReactor(ID channelId, Sequencer& sequencer, model::Model& model)
 {
 	sequencer.quantizer.schedule(Q_ACTION_PLAY + channelId, [channelId, &model](Frame delta) {
-		Channel& ch      = model.get().getChannel(channelId);
+		Channel& ch       = model.get().getChannel(channelId);
 		ch.shared->offset = delta;
 		ch.shared->playStatus.store(ChannelStatus::PLAY);
 	});
@@ -196,6 +196,7 @@ void SampleReactor::kill(Channel& ch) const
 {
 	ch.shared->playStatus.store(ChannelStatus::OFF);
 	ch.shared->tracker.store(ch.samplePlayer->begin);
+	ch.shared->generated = 0; // TODO - samplePlayer should be responsible for this
 }
 /* -------------------------------------------------------------------------- */
 

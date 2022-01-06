@@ -102,6 +102,7 @@ void SampleAdvancer::stop(const Channel& ch, Frame localFrame) const
 {
 	ch.shared->playStatus.store(ChannelStatus::OFF);
 	ch.shared->tracker.store(ch.samplePlayer->begin);
+	ch.shared->generated = 0; // TODO - samplePlayer should be responsible for this
 
 	/*  Clear data in range [localFrame, (buffer.size)) if the event occurs in
     the middle of the buffer. TODO - samplePlayer should be responsible for this*/
