@@ -46,7 +46,7 @@ jobs:
         run: bash ./.github/scripts/linux/install-deps.sh
         
       - name: Generate Makefile
-        run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-Wno-class-memaccess -DWITH_VST3=ON
+        run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-Wno-class-memaccess -DWITH_VST3=ON
 
       - name: Build
         run: cmake --build build/ -j 2
