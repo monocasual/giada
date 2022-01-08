@@ -194,17 +194,24 @@ void Engine::init()
 
 void Engine::reset()
 {
+	/* Managers first, due to the internal ID numbering. */
+
+	channelManager.reset();
+	waveManager.reset();
+#ifdef WITH_VST
+	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
+#endif
+
+	/* Then all other components. */
+
 	model.reset();
 	mixerHandler.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()),
 	    kernelAudio.getBufferSize(), channelManager);
-	channelManager.reset();
-	waveManager.reset();
 	synchronizer.reset();
 	sequencer.reset(kernelAudio.getSampleRate());
 	actionRecorder.reset();
 #ifdef WITH_VST
 	pluginHost.reset(kernelAudio.getBufferSize());
-	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
 #endif
 }
 
