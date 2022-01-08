@@ -54,7 +54,7 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, m::Conf::Data& conf, Fr
 
 	m_actionType.add("Key press");
 	m_actionType.add("Key release");
-	m_actionType.add("Kill chan");
+	m_actionType.add("Stop sample");
 	m_actionType.value(0);
 	m_actionType.copy_tooltip("Action type to add");
 	if (!canChangeActionType())
