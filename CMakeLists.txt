@@ -367,7 +367,7 @@ endif()
 find_package(SampleRate CONFIG)
 if (SampleRate_FOUND)
 	list(APPEND LIBRARIES SampleRate::samplerate)
-	message("Libsndfile library found in " ${SampleRate_DIR})
+	message("Libsamplerate library found in " ${SampleRate_DIR})
 else() 
 	# Fallback to find_library mode (in case Libsamplerate is too old). 
 	find_library(LIBRARY_SAMPLERATE 
