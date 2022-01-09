@@ -216,6 +216,7 @@ void MixerHandler::deleteChannel(ID channelId)
 	if (wave != nullptr)
 		m_model.removeShared<Wave>(*wave);
 
+	updateSoloCount();
 	onChannelsAltered();
 }
 
