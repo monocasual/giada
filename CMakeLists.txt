@@ -308,8 +308,9 @@ endif()
 
 set(FLTK_SKIP_FLUID TRUE)  # Don't search for FLTK's fluid
 set(FLTK_SKIP_OPENGL TRUE) # Don't search for FLTK's OpenGL
-find_package(FLTK CONFIG REQUIRED)
-list(APPEND LIBRARIES fltk fltk_forms fltk_images)
+find_package(FLTK REQUIRED NO_MODULE)
+list(APPEND LIBRARIES fltk)
+list(APPEND INCLUDE_DIRS ${FLTK_INCLUDE_DIRS})
 message("FLTK library found in " ${FLTK_DIR})
 
 # Libsndfile
