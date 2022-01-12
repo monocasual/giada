@@ -122,13 +122,13 @@ void saveProject(void* data)
 		p.setProgress(v);
 	};
 
+	g_ui.store(g_engine.patch.data);
+
 	if (!g_engine.store(projectName, projectPath, patchPath, progressCb))
 	{
 		v::gdAlert("Unable to save the project!");
 		return;
 	}
-
-	g_ui.store(g_engine.patch.data);
 
 	browser->do_callback();
 }
