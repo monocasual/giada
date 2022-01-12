@@ -71,14 +71,16 @@ public:
 	std::function<void(uint32_t)> onMidiReceived;
 
 private:
-	template <typename Device>
-	std::unique_ptr<Device> makeDevice(int api, int port, std::string name) const;
-
 	static void s_callback(double, std::vector<unsigned char>*, void*);
 	void        callback(std::vector<unsigned char>*);
 
+	template <typename Device>
+	std::unique_ptr<Device> makeDevice(int api, std::string name) const;
+
 	std::string getPortName(RtMidi&, int port) const;
 	void        logPorts(RtMidi&, std::string name) const;
+
+	bool openPort(RtMidi&, int port);
 
 	std::unique_ptr<RtMidiOut> m_midiOut;
 	std::unique_ptr<RtMidiIn>  m_midiIn;

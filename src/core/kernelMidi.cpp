@@ -70,8 +70,13 @@ bool KernelMidi::openOutDevice(int api, int port)
 	if (port == -1)
 		return false;
 
-	m_midiOut = makeDevice<RtMidiOut>(api, port, OUTPUT_NAME);
-	return m_midiOut != nullptr;
+	u::log::print("[KM] Opening output device '%s', port=%d\n", OUTPUT_NAME, port);
+
+	m_midiOut = makeDevice<RtMidiOut>(api, OUTPUT_NAME);
+	if (m_midiOut == nullptr)
+		return false;
+
+	return openPort(*m_midiOut, port);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -81,8 +86,13 @@ bool KernelMidi::openInDevice(int api, int port)
 	if (port == -1)
 		return false;
 
-	m_midiIn = makeDevice<RtMidiIn>(api, port, INPUT_NAME);
+	u::log::print("[KM] Opening input device '%s', port=%d\n", INPUT_NAME, port);
+
+	m_midiIn = makeDevice<RtMidiIn>(api, INPUT_NAME);
 	if (m_midiIn == nullptr)
+		return false;
+
+	if (!openPort(*m_midiIn, port))
 		return false;
 
 	m_midiIn->setCallback(&s_callback, this);
@@ -179,23 +189,37 @@ void KernelMidi::callback(std::vector<unsigned char>* msg)
 /* -------------------------------------------------------------------------- */
 
 template <typename Device>
-std::unique_ptr<Device> KernelMidi::makeDevice(int api, int port, std::string name) const
+std::unique_ptr<Device> KernelMidi::makeDevice(int api, std::string name) const
 {
 	try
 	{
-		auto device = std::make_unique<Device>(static_cast<RtMidi::Api>(api), name);
-		device->openPort(port, device->getPortName(port));
-		return device;
+		return std::make_unique<Device>(static_cast<RtMidi::Api>(api), name);
 	}
 	catch (RtMidiError& error)
 	{
-		u::log::print("[KM] Device '%s' error on open: %s\n", name.c_str(), error.getMessage());
+		u::log::print("[KM] Error opening device '%s': %s\n", name.c_str(), error.getMessage());
 		return nullptr;
 	}
 }
 
-template std::unique_ptr<RtMidiOut> KernelMidi::makeDevice(int, int, std::string) const;
-template std::unique_ptr<RtMidiIn>  KernelMidi::makeDevice(int, int, std::string) const;
+template std::unique_ptr<RtMidiOut> KernelMidi::makeDevice(int, std::string) const;
+template std::unique_ptr<RtMidiIn>  KernelMidi::makeDevice(int, std::string) const;
+
+/* -------------------------------------------------------------------------- */
+
+bool KernelMidi::openPort(RtMidi& device, int port)
+{
+	try
+	{
+		device.openPort(port, device.getPortName(port));
+		return true;
+	}
+	catch (RtMidiError& error)
+	{
+		u::log::print("[KM] Error opening port %d: %s\n", port, error.getMessage());
+		return false;
+	}
+}
 
 /* -------------------------------------------------------------------------- */
 
