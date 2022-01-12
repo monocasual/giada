@@ -122,7 +122,7 @@ void saveProject(void* data)
 		p.setProgress(v);
 	};
 
-	g_ui.store(g_engine.patch.data);
+	g_ui.store(projectName, g_engine.patch.data);
 
 	if (!g_engine.store(projectName, projectPath, patchPath, progressCb))
 	{

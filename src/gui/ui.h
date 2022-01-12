@@ -61,7 +61,7 @@ public:
 	/* store
 	Writes UI information to a patch when a project needs to be saved. */
 
-	void store(m::Patch::Data& patch);
+	void store(const std::string patchName, m::Patch::Data& patch);
 
 	void init(int argc, char** argv, m::Engine&);
 	void reset();

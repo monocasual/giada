@@ -74,13 +74,13 @@ void Ui::load(const m::Patch::Data& patch)
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::store(m::Patch::Data& patch)
+void Ui::store(const std::string patchName, m::Patch::Data& patch)
 {
 	patch.columns.clear();
 	mainWindow->keyboard->forEachColumn([&](const geColumn& c) {
 		patch.columns.push_back({c.id, c.w()});
 	});
-	setMainWindowTitle(patch.name);
+	setMainWindowTitle(patchName);
 }
 
 /* -------------------------------------------------------------------------- */
