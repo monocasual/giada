@@ -308,8 +308,8 @@ void Channel::initCallbacks()
 
 	if (samplePlayer)
 	{
-		samplePlayer->onLastFrame = [this]() {
-			sampleAdvancer->onLastFrame(*this, g_engine.sequencer.isRunning());
+		samplePlayer->onLastFrame = [this](bool natural) {
+			sampleAdvancer->onLastFrame(*this, g_engine.sequencer.isRunning(), natural);
 		};
 	}
 }
@@ -440,7 +440,13 @@ void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool au
 	shared->audioBuffer.clear();
 
 	if (samplePlayer && isPlaying())
-		samplePlayer->render(*shared);
+	{
+		SamplePlayer::Render render;
+		while (shared->renderQueue->pop(render))
+			;
+		samplePlayer->render(*shared, render);
+	}
+
 	if (audioReceiver)
 		audioReceiver->render(*this, in);
 

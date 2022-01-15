@@ -48,6 +48,12 @@ sequencer stop, ... . */
 class SampleReactor final
 {
 public:
+	struct Event
+	{
+		int   type;
+		Frame offset;
+	};
+
 	SampleReactor(ID channelId, Sequencer&, model::Model&);
 
 	void react(Channel&, const EventDispatcher::Event&, Sequencer&, const Conf::Data&) const;
@@ -56,12 +62,11 @@ private:
 	void          toggleReadActions(Channel&, bool isSequencerRunning, bool treatRecsAsLoops) const;
 	void          onStopBySeq(Channel&, bool chansStopOnSeqHalt) const;
 	void          release(Channel&, Sequencer&) const;
-	void          kill(Channel&) const;
 	void          press(Channel&, Sequencer&, int velocity) const;
 	ChannelStatus pressWhilePlay(Channel&, Sequencer&, SamplePlayerMode, bool isLoop) const;
 	ChannelStatus pressWhileOff(Channel&, Sequencer&, int velocity, bool isLoop) const;
-	void          reset(Channel&) const;
 	void          rewind(Channel&, Frame localFrame) const;
+	void          stop(Channel&) const;
 };
 
 } // namespace giada::m

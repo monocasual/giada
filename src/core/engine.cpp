@@ -67,7 +67,7 @@ Engine::Engine()
 	eventDispatcher.onProcessChannels = [this](const EventDispatcher::EventBuffer& eb) {
 		for (Channel& ch : model.get().channels)
 			ch.react(eb);
-		model.swap(model::SwapType::SOFT); // TODO - is this necessary???
+		model.swap(model::SwapType::SOFT);
 	};
 	eventDispatcher.onProcessSequencer = [this](const EventDispatcher::EventBuffer& eb) {
 		sequencer.react(eb);

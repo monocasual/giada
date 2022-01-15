@@ -20,7 +20,7 @@ TEST_CASE("SamplePlayer")
 	m::Resampler     resampler(m::Resampler::Quality::LINEAR, NUM_CHANNELS);
 
 	m::SamplePlayer samplePlayer(&resampler);
-	samplePlayer.onLastFrame = [] {};
+	samplePlayer.onLastFrame = [](bool) {};
 
 	SECTION("Test initialization")
 	{
@@ -37,22 +37,19 @@ TEST_CASE("SamplePlayer")
 
 		REQUIRE(channelShared.tracker.load() == 0);
 		REQUIRE(channelShared.playStatus.load() == ChannelStatus::OFF);
-		REQUIRE(channelShared.rewinding == false);
 
-		SECTION("Pitch != 1.0")
+		for (const float pitch : {1.0f, 0.5f})
 		{
-			constexpr float PITCH = 0.5f;
+			samplePlayer.pitch = pitch;
 
-			samplePlayer.pitch = PITCH;
-
-			SECTION("Sub-range [M, N)")
+			SECTION("Sub-range [M, N), pitch == " + std::to_string(pitch))
 			{
 				constexpr int RANGE_BEGIN = 16;
 				constexpr int RANGE_END   = 48;
 
 				samplePlayer.begin = RANGE_BEGIN;
 				samplePlayer.end   = RANGE_END;
-				samplePlayer.render(channelShared);
+				samplePlayer.render(channelShared, {});
 
 				int numFramesWritten = 0;
 				channelShared.audioBuffer.forEachFrame([&numFramesWritten](float* f, int) {
@@ -60,23 +57,34 @@ TEST_CASE("SamplePlayer")
 						numFramesWritten++;
 				});
 
-				REQUIRE(numFramesWritten == (RANGE_END - RANGE_BEGIN) / PITCH);
+				REQUIRE(numFramesWritten == (RANGE_END - RANGE_BEGIN) / pitch);
 			}
 
-			SECTION("Rewinding")
+			SECTION("Rewind, pitch == " + std::to_string(pitch))
 			{
 				// Point in audio buffer where the rewind takes place
 				const int OFFSET = 256;
 
-				channelShared.rewinding = true;
-				channelShared.offset    = OFFSET;
-
-				samplePlayer.render(channelShared);
+				samplePlayer.render(channelShared, {m::SamplePlayer::Render::Mode::REWIND, OFFSET});
 
 				// Rendering should start over again at buffer[OFFSET]
 				REQUIRE(channelShared.audioBuffer[OFFSET][0] == 1.0f);
-				REQUIRE(channelShared.rewinding == false);
-				REQUIRE(channelShared.offset == 0);
+			}
+
+			SECTION("Stop, pitch == " + std::to_string(pitch))
+			{
+				// Point in audio buffer where the stop takes place
+				const int OFFSET = 256;
+
+				samplePlayer.render(channelShared, {m::SamplePlayer::Render::Mode::STOP, OFFSET});
+
+				int numFramesWritten = 0;
+				channelShared.audioBuffer.forEachFrame([&numFramesWritten](float* f, int) {
+					if (f[0] != 0.0)
+						numFramesWritten++;
+				});
+
+				REQUIRE(numFramesWritten == OFFSET);
 			}
 		}
 	}

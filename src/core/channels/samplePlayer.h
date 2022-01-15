@@ -42,6 +42,27 @@ class Channel;
 class SamplePlayer final
 {
 public:
+	/* Render
+	Determines how the render() function should behave. 
+	Mode::NORMAL - normal rendering, starting at offset 'offset';
+	Mode::REWIND - two-step rendering, used when the sample must rewind at some
+		point ('offset') in the audio buffer;
+	Mode::STOP - abort rendering. The audio buffer is silenced starting at
+	'offset'. Also triggers onLastFrame(). */
+
+	struct Render
+	{
+		enum class Mode
+		{
+			NORMAL,
+			REWIND,
+			STOP
+		};
+
+		Mode  mode   = Mode::NORMAL;
+		Frame offset = 0;
+	};
+
 	SamplePlayer(Resampler* r);
 	SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w);
 
@@ -52,7 +73,7 @@ public:
 	ID    getWaveId() const;
 	Frame getWaveSize() const;
 	Wave* getWave() const;
-	void  render(ChannelShared&) const;
+	void  render(ChannelShared&, Render) const;
 
 	void react(const EventDispatcher::Event& e);
 
@@ -83,11 +104,30 @@ public:
 	bool             velocityAsVol; // Velocity drives volume
 	WaveReader       waveReader;
 
-	std::function<void()> onLastFrame;
+	/* onLastFrame
+	Callback fired when the last frame has been reached. 'natural' == true
+	if the rendering has ended because the end of the sample has ben reached. 
+	'natural' == false if the rendering has been manually interrupted (by
+	a Render::Mode::STOP type). */
+
+	std::function<void(bool natural)> onLastFrame;
 
 private:
+	/* render
+	Renders audio into the buffer. Reads audio data from 'tracker' and copies it
+	into the audio buffer at position 'offset'. May fire 'onLastFrame' callback
+	if the sample end is reached. */
+
+	Frame render(mcl::AudioBuffer&, Frame tracker, Frame offset, ChannelStatus) const;
+
+	/* stop
+	Silences the last part of the audio buffer, starting at 'offset'. Used to
+	terminate rendering. It also fire the 'onLastFrame' callback. */
+
+	Frame stop(mcl::AudioBuffer&, Frame offset) const;
+
 	WaveReader::Result fillBuffer(mcl::AudioBuffer&, Frame start, Frame offset) const;
-	bool               shouldLoop() const;
+	bool               shouldLoop(ChannelStatus) const;
 };
 } // namespace giada::m
 

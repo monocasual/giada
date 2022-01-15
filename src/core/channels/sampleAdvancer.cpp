@@ -30,7 +30,7 @@
 
 namespace giada::m
 {
-void SampleAdvancer::onLastFrame(const Channel& ch, bool seqIsRunning) const
+void SampleAdvancer::onLastFrame(const Channel& ch, bool seqIsRunning, bool natural) const
 {
 	const SamplePlayerMode mode   = ch.samplePlayer->mode;
 	const bool             isLoop = ch.samplePlayer->isAnyLoopMode();
@@ -45,14 +45,14 @@ void SampleAdvancer::onLastFrame(const Channel& ch, bool seqIsRunning) const
 		        mode == SamplePlayerMode::SINGLE_BASIC_PAUSE ||
 		        mode == SamplePlayerMode::SINGLE_PRESS ||
 		        mode == SamplePlayerMode::SINGLE_RETRIG) ||
-		    (isLoop && !seqIsRunning))
-			stop(ch, 0);
+		    (isLoop && !seqIsRunning) || !natural)
+			ch.shared->playStatus.store(ChannelStatus::OFF);
 		else if (mode == SamplePlayerMode::LOOP_ONCE || mode == SamplePlayerMode::LOOP_ONCE_BAR)
-			wait(ch);
+			ch.shared->playStatus.store(ChannelStatus::WAIT);
 		break;
 
 	case ChannelStatus::ENDING:
-		stop(ch, 0);
+		ch.shared->playStatus.store(ChannelStatus::OFF);
 		break;
 
 	default:
@@ -75,7 +75,8 @@ void SampleAdvancer::advance(const Channel& ch, const Sequencer::Event& e) const
 		break;
 
 	case Sequencer::EventType::REWIND:
-		rewind(ch, e.delta);
+		if (ch.samplePlayer->isAnyLoopMode())
+			rewind(ch, e.delta);
 		break;
 
 	case Sequencer::EventType::ACTIONS:
@@ -92,23 +93,14 @@ void SampleAdvancer::advance(const Channel& ch, const Sequencer::Event& e) const
 
 void SampleAdvancer::rewind(const Channel& ch, Frame localFrame) const
 {
-	ch.shared->rewinding = true;
-	ch.shared->offset    = localFrame;
+	ch.shared->renderQueue->push({SamplePlayer::Render::Mode::REWIND, localFrame});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleAdvancer::stop(const Channel& ch, Frame localFrame) const
 {
-	ch.shared->playStatus.store(ChannelStatus::OFF);
-	ch.shared->tracker.store(ch.samplePlayer->begin);
-	ch.shared->generated = 0; // TODO - samplePlayer should be responsible for this
-
-	/*  Clear data in range [localFrame, (buffer.size)) if the event occurs in
-    the middle of the buffer. TODO - samplePlayer should be responsible for this*/
-
-	if (localFrame != 0)
-		ch.shared->audioBuffer.clear(localFrame);
+	ch.shared->renderQueue->push({SamplePlayer::Render::Mode::STOP, localFrame});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -116,15 +108,7 @@ void SampleAdvancer::stop(const Channel& ch, Frame localFrame) const
 void SampleAdvancer::play(const Channel& ch, Frame localFrame) const
 {
 	ch.shared->playStatus.store(ChannelStatus::PLAY);
-	ch.shared->offset = localFrame;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void SampleAdvancer::wait(const Channel& ch) const
-{
-	ch.shared->playStatus.store(ChannelStatus::WAIT);
-	ch.shared->tracker.store(ch.samplePlayer->begin);
+	ch.shared->renderQueue->push({SamplePlayer::Render::Mode::NORMAL, localFrame});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -233,7 +217,8 @@ void SampleAdvancer::parseActions(const Channel& ch,
 
 		case MidiEvent::NOTE_OFF:
 		case MidiEvent::NOTE_KILL:
-			stop(ch, localFrame);
+			if (ch.shared->playStatus.load() == ChannelStatus::PLAY)
+				stop(ch, localFrame);
 			break;
 
 		default:

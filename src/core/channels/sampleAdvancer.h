@@ -35,14 +35,13 @@ class Channel;
 class SampleAdvancer final
 {
 public:
-	void onLastFrame(const Channel& ch, bool seqIsRunning) const;
+	void onLastFrame(const Channel& ch, bool seqIsRunning, bool natural) const;
 	void advance(const Channel& ch, const Sequencer::Event& e) const;
 
 private:
 	void rewind(const Channel& ch, Frame localFrame) const;
 	void stop(const Channel& ch, Frame localFrame) const;
 	void play(const Channel& ch, Frame localFrame) const;
-	void wait(const Channel& ch) const;
 	void onFirstBeat(const Channel& ch, Frame localFrame) const;
 	void onBar(const Channel& ch, Frame localFrame) const;
 	void onNoteOn(const Channel& ch, Frame localFrame) const;

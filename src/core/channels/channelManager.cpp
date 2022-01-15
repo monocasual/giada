@@ -159,7 +159,10 @@ ChannelShared& ChannelManager::makeShared(ChannelType type, int bufferSize)
 	std::unique_ptr<ChannelShared> shared = std::make_unique<ChannelShared>(bufferSize);
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
-		shared->resampler = Resampler(static_cast<Resampler::Quality>(m_conf.rsmpQuality), G_MAX_IO_CHANS);
+	{
+		shared->resampler.emplace(static_cast<Resampler::Quality>(m_conf.rsmpQuality), G_MAX_IO_CHANS);
+		shared->renderQueue.emplace();
+	}
 
 	m_model.addShared(std::move(shared));
 	return m_model.backShared<ChannelShared>();

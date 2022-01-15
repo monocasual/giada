@@ -46,14 +46,14 @@ constexpr int Q_ACTION_REWIND = 1;
 SampleReactor::SampleReactor(ID channelId, Sequencer& sequencer, model::Model& model)
 {
 	sequencer.quantizer.schedule(Q_ACTION_PLAY + channelId, [channelId, &model](Frame delta) {
-		Channel& ch       = model.get().getChannel(channelId);
-		ch.shared->offset = delta;
+		Channel& ch = model.get().getChannel(channelId);
 		ch.shared->playStatus.store(ChannelStatus::PLAY);
+		ch.shared->renderQueue->push({SamplePlayer::Render::Mode::NORMAL, delta});
 	});
 
 	sequencer.quantizer.schedule(Q_ACTION_REWIND + channelId, [this, channelId, &model](Frame delta) {
 		Channel& ch = model.get().getChannel(channelId);
-		ch.isPlaying() ? rewind(ch, delta) : reset(ch);
+		ch.isPlaying() ? rewind(ch, delta) : stop(ch);
 	});
 }
 
@@ -76,7 +76,8 @@ void SampleReactor::react(Channel& ch, const EventDispatcher::Event& e,
 		break;
 
 	case EventDispatcher::EventType::KEY_KILL:
-		kill(ch);
+		if (ch.shared->playStatus.load() == ChannelStatus::PLAY)
+			stop(ch);
 		break;
 
 	case EventDispatcher::EventType::SEQUENCER_STOP:
@@ -96,15 +97,14 @@ void SampleReactor::react(Channel& ch, const EventDispatcher::Event& e,
 
 void SampleReactor::rewind(Channel& ch, Frame localFrame) const
 {
-	ch.shared->rewinding = true;
-	ch.shared->offset    = localFrame;
+	ch.shared->renderQueue->push({SamplePlayer::Render::Mode::REWIND, localFrame});
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleReactor::reset(Channel& ch) const
+void SampleReactor::stop(Channel& ch) const
 {
-	ch.shared->tracker.store(ch.samplePlayer->begin);
+	ch.shared->renderQueue->push({SamplePlayer::Render::Mode::STOP, 0});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -148,8 +148,8 @@ ChannelStatus SampleReactor::pressWhilePlay(Channel& ch, Sequencer& sequencer,
 		return ChannelStatus::ENDING;
 
 	case SamplePlayerMode::SINGLE_BASIC:
-		reset(ch);
-		return ChannelStatus::OFF;
+		stop(ch);
+		return ChannelStatus::PLAY; // Let SamplePlayer stop it once done
 
 	default:
 		return ChannelStatus::OFF;
@@ -192,14 +192,6 @@ void SampleReactor::press(Channel& ch, Sequencer& sequencer, int velocity) const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleReactor::kill(Channel& ch) const
-{
-	ch.shared->playStatus.store(ChannelStatus::OFF);
-	ch.shared->tracker.store(ch.samplePlayer->begin);
-	ch.shared->generated = 0; // TODO - samplePlayer should be responsible for this
-}
-/* -------------------------------------------------------------------------- */
-
 void SampleReactor::release(Channel& ch, Sequencer& sequencer) const
 {
 	/* Key release is meaningful only for SINGLE_PRESS modes. */
@@ -212,7 +204,7 @@ void SampleReactor::release(Channel& ch, Sequencer& sequencer) const
 	disable it. */
 
 	if (ch.shared->playStatus.load() == ChannelStatus::PLAY)
-		kill(ch);
+		stop(ch); // Let SamplePlayer stop it once done
 	else if (sequencer.quantizer.hasBeenTriggered())
 		sequencer.quantizer.clear();
 }
@@ -238,7 +230,7 @@ void SampleReactor::onStopBySeq(Channel& ch, bool chansStopOnSeqHalt) const
 
 	case ChannelStatus::PLAY:
 		if (chansStopOnSeqHalt && (isLoop || isReadingActions))
-			kill(ch);
+			stop(ch);
 		break;
 
 	default:
@@ -251,6 +243,6 @@ void SampleReactor::onStopBySeq(Channel& ch, bool chansStopOnSeqHalt) const
 void SampleReactor::toggleReadActions(Channel& ch, bool isSequencerRunning, bool treatRecsAsLoops) const
 {
 	if (isSequencerRunning && ch.shared->recStatus.load() == ChannelStatus::PLAY && !treatRecsAsLoops)
-		kill(ch);
+		stop(ch);
 }
 } // namespace giada::m
