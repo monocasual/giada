@@ -39,6 +39,7 @@ class Model;
 namespace giada::m
 {
 class Channel;
+class ChannelShared;
 class Sequencer;
 
 /* SampleReactor
@@ -54,19 +55,20 @@ public:
 		Frame offset;
 	};
 
-	SampleReactor(ID channelId, Sequencer&, model::Model&);
+	SampleReactor(Channel&, ID channelId);
 
 	void react(Channel&, const EventDispatcher::Event&, Sequencer&, const Conf::Data&) const;
 
 private:
 	void          toggleReadActions(Channel&, bool isSequencerRunning, bool treatRecsAsLoops) const;
 	void          onStopBySeq(Channel&, bool chansStopOnSeqHalt) const;
-	void          release(Channel&, Sequencer&) const;
+	void          release(Channel&) const;
 	void          press(Channel&, Sequencer&, int velocity) const;
 	ChannelStatus pressWhilePlay(Channel&, Sequencer&, SamplePlayerMode, bool isLoop) const;
 	ChannelStatus pressWhileOff(Channel&, Sequencer&, int velocity, bool isLoop) const;
-	void          rewind(Channel&, Frame localFrame) const;
-	void          stop(Channel&) const;
+	void          rewind(ChannelShared&, Frame localFrame) const;
+	void          play(ChannelShared&, Frame localFrame) const;
+	void          stop(ChannelShared&) const;
 };
 
 } // namespace giada::m

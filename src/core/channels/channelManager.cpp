@@ -160,8 +160,9 @@ ChannelShared& ChannelManager::makeShared(ChannelType type, int bufferSize)
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
 	{
-		shared->resampler.emplace(static_cast<Resampler::Quality>(m_conf.rsmpQuality), G_MAX_IO_CHANS);
+		shared->quantizer.emplace();
 		shared->renderQueue.emplace();
+		shared->resampler.emplace(static_cast<Resampler::Quality>(m_conf.rsmpQuality), G_MAX_IO_CHANS);
 	}
 
 	m_model.addShared(std::move(shared));

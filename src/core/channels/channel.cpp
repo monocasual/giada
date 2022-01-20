@@ -88,14 +88,14 @@ Channel::Channel(ChannelType type, ID id, ID columnId, ChannelShared& s)
 	case ChannelType::SAMPLE:
 		samplePlayer.emplace(&(shared->resampler.value()));
 		sampleAdvancer.emplace();
-		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
+		sampleReactor.emplace(*this, id);
 		audioReceiver.emplace();
 		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
 		break;
 
 	case ChannelType::PREVIEW:
 		samplePlayer.emplace(&(shared->resampler.value()));
-		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
+		sampleReactor.emplace(*this, id);
 		break;
 
 	case ChannelType::MIDI:
@@ -145,14 +145,14 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	case ChannelType::SAMPLE:
 		samplePlayer.emplace(p, samplerateRatio, &(shared->resampler.value()), wave);
 		sampleAdvancer.emplace();
-		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
+		sampleReactor.emplace(*this, id);
 		audioReceiver.emplace(p);
 		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
 		break;
 
 	case ChannelType::PREVIEW:
 		samplePlayer.emplace(p, samplerateRatio, &(shared->resampler.value()), nullptr);
-		sampleReactor.emplace(id, g_engine.sequencer, g_engine.model);
+		sampleReactor.emplace(*this, id);
 		break;
 
 	case ChannelType::MIDI:
@@ -316,8 +316,11 @@ void Channel::initCallbacks()
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::advance(const Sequencer::EventBuffer& events) const
+void Channel::advance(const Sequencer::EventBuffer& events, Range<Frame> block, Frame quantizerStep) const
 {
+	if (shared->quantizer)
+		shared->quantizer->advance(block, quantizerStep);
+
 	for (const Sequencer::Event& e : events)
 	{
 		if (midiController)

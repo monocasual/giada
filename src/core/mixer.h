@@ -129,7 +129,8 @@ public:
 	events) in the current audio block. Called by the main audio thread when the 
 	sequencer is running. */
 
-	void advanceChannels(const Sequencer::EventBuffer& events, const model::Layout&);
+	void advanceChannels(const Sequencer::EventBuffer&, const model::Layout&,
+	    Range<Frame>, Frame quantizerStep);
 
 	/* onSignalTresholdReached
 	Callback fired when audio has reached a certain threshold (record-on-signal 

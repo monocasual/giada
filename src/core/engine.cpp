@@ -287,10 +287,15 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo)
 
 	if (layout_RT.sequencer.isRunning())
 	{
-		const Sequencer::EventBuffer& events = sequencer.advance(in.countFrames(), actionRecorder);
+		const Frame        currentFrame  = sequencer.getCurrentFrame();
+		const Frame        bufferSize    = in.countFrames();
+		const Frame        quantizerStep = sequencer.getQuantizerStep();              // TODO pass this to sequencer.advance - or better, Advancer class
+		const Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to sequencer.advance - or better, Advancer class
+
+		const Sequencer::EventBuffer& events = sequencer.advance(bufferSize, actionRecorder);
 		sequencer.render(out);
 		if (!layout_RT.locked)
-			mixer.advanceChannels(events, layout_RT);
+			mixer.advanceChannels(events, layout_RT, renderRange, quantizerStep);
 	}
 
 	/* Then render Mixer: render channels, process I/O. */

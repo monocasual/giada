@@ -107,11 +107,12 @@ const mcl::AudioBuffer& Mixer::getRecBuffer()
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::advanceChannels(const Sequencer::EventBuffer& events, const model::Layout& rtLayout)
+void Mixer::advanceChannels(const Sequencer::EventBuffer& events,
+    const model::Layout& rtLayout, Range<Frame> block, Frame quantizerStep)
 {
 	for (const Channel& c : rtLayout.channels)
 		if (!c.isInternal())
-			c.advance(events);
+			c.advance(events, block, quantizerStep);
 }
 
 /* -------------------------------------------------------------------------- */

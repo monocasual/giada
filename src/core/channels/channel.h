@@ -73,6 +73,8 @@ struct ChannelShared final
 	WeakAtomic<ChannelStatus> recStatus   = ChannelStatus::OFF;
 	WeakAtomic<bool>          readActions = false;
 
+	std::optional<Quantizer> quantizer;
+
 	/* Optional render queue for sample-based channels. Used by SampleReactor
 	and SampleAdvancer to instruct SamplePlayer how to render audio. */
 
@@ -104,7 +106,7 @@ public:
 	Advances internal state by processing static events (e.g. pre-recorded 
 	actions or sequencer events) in the current block. */
 
-	void advance(const Sequencer::EventBuffer& e) const;
+	void advance(const Sequencer::EventBuffer&, Range<Frame>, Frame quantizerStep) const;
 
 	/* render
 	Renders audio data to I/O buffers. */
