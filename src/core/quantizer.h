@@ -30,6 +30,7 @@
 #include "core/const.h"
 #include "core/range.h"
 #include "core/types.h"
+#include "core/weakAtomic.h"
 #include <functional>
 #include <map>
 
@@ -69,7 +70,7 @@ public:
 
 private:
 	std::map<int, std::function<void(Frame)>> m_callbacks;
-	int                                       m_performId = -1;
+	WeakAtomic<int>                           m_performId = -1;
 };
 } // namespace giada::m
 

@@ -33,7 +33,7 @@ void Quantizer::trigger(int id)
 {
 	assert(m_callbacks.count(id) > 0); // Make sure id exists
 
-	m_performId = id;
+	m_performId.store(id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -49,10 +49,12 @@ void Quantizer::advance(Range<Frame> block, Frame quantizerStep)
 {
 	/* Nothing to do if there's no action to perform. */
 
-	if (m_performId == -1)
+	const int pid = m_performId.load();
+
+	if (pid == -1)
 		return;
 
-	assert(m_callbacks.count(m_performId) > 0);
+	assert(m_callbacks.count(pid) > 0);
 
 	for (Frame global = block.getBegin(), local = 0; global < block.getEnd(); global++, local++)
 	{
@@ -60,8 +62,8 @@ void Quantizer::advance(Range<Frame> block, Frame quantizerStep)
 		if (global % quantizerStep != 0) // Skip if it's not on a quantization unit.
 			continue;
 
-		m_callbacks.at(m_performId)(local);
-		m_performId = -1;
+		m_callbacks.at(pid)(local);
+		m_performId.store(-1);
 		return;
 	}
 }
@@ -70,13 +72,13 @@ void Quantizer::advance(Range<Frame> block, Frame quantizerStep)
 
 void Quantizer::clear()
 {
-	m_performId = -1;
+	m_performId.store(-1);
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool Quantizer::hasBeenTriggered() const
 {
-	return m_performId != -1;
+	return m_performId.load() != -1;
 }
 } // namespace giada::m
