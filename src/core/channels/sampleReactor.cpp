@@ -85,10 +85,6 @@ void SampleReactor::react(Channel& ch, const EventDispatcher::Event& e,
 		onStopBySeq(ch, conf.chansStopOnSeqHalt);
 		break;
 
-	case EventDispatcher::EventType::CHANNEL_TOGGLE_READ_ACTIONS:
-		toggleReadActions(ch, sequencer.isRunning(), conf.treatRecsAsLoops);
-		break;
-
 	default:
 		break;
 	}
@@ -245,13 +241,5 @@ void SampleReactor::onStopBySeq(Channel& ch, bool chansStopOnSeqHalt) const
 	default:
 		break;
 	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void SampleReactor::toggleReadActions(Channel& ch, bool isSequencerRunning, bool treatRecsAsLoops) const
-{
-	if (isSequencerRunning && ch.shared->recStatus.load() == ChannelStatus::PLAY && !treatRecsAsLoops)
-		stop(*ch.shared);
 }
 } // namespace giada::m
