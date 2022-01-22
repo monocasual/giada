@@ -11,6 +11,21 @@
 --------------------------------------------------------------------------------
 
 
+0.20.0 --- 2022 . 01 . 24
+- Show progress bar for long operations 
+- Improved rendering algorithm for sample channels
+- Fix wrong sample tail rendering when pitch != 1.0 
+- Always display play head in Action Editor (fix #534)
+- Fix re-initialization order of engine sub-components (fixes #533)
+- Change 'kill chan' wording to 'stop note' in Action Editor (fixes #532)
+- Update solo count when deleting a channel (fixes #540)
+- Update Main Window title saving a new project (fixes #541)
+- [Config] Don't skip MIDI device fetching if one of the ports fail to open
+- [CMake] Include FLTK as suggested in the official docs
+- Add more unit tests for some Channel components
+- Minor cleanups and refactoring
+
+
 0.19.2 --- 2021 . 12 . 16
 - Fix wrong computation of soloed channels
 
