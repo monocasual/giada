@@ -65,7 +65,7 @@ Feel free to ask anything in the [discussions area](https://github.com/monocasua
 
 ## Copyright
 
-Giada is Copyright (C) 2010-2021 by Giovanni A. Zuliani | Monocasual Laboratories
+Giada is Copyright (C) 2010-2022 by Giovanni A. Zuliani | Monocasual Laboratories
 
 Giada - Your Hardcore Loopmachine is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
