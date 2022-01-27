@@ -146,11 +146,18 @@ void MixerHandler::cloneChannel(ID channelId, int bufferSize, ChannelManager& ch
 	}
 
 #ifdef WITH_VST
+
+	/* Overwrite existing plug-ins in new channel with a new vector of plug-ins,
+	as currently new channel has cloned plug-ins from the old one (with same ID). */
+
+	std::vector<Plugin*> newPlugins;
 	for (const Plugin* plugin : oldChannel.plugins)
 	{
 		m_model.addShared(pluginManager.makePlugin(*plugin, sampleRate, bufferSize, sequencer));
-		newChannel.plugins.push_back(&m_model.backShared<Plugin>());
+		newPlugins.push_back(&m_model.backShared<Plugin>());
 	}
+	newChannel.plugins = newPlugins;
+
 #endif
 
 	/* Then push the new channel in the channels vector. */
