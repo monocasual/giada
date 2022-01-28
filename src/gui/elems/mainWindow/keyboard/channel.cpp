@@ -158,18 +158,17 @@ void geChannel::blink()
 
 void geChannel::packWidgets()
 {
-	/* Count visible widgets and resize mainButton according to how many widgets
-	are visible. */
+	/* Compute how much space is visible for the main button, then resize it
+	according to that amount. */
 
-	int visibles = 0;
+	int visible = w();
 	for (int i = 0; i < children(); i++)
 	{
-		child(i)->size(MIN_ELEM_W, child(i)->h()); // also normalize widths
-		if (child(i)->visible())
-			visibles++;
+		if (child(i)->visible() && child(i) != mainButton)
+			visible -= child(i)->w() + G_GUI_INNER_MARGIN;
 	}
-	mainButton->size(w() - ((visibles - 1) * (MIN_ELEM_W + G_GUI_INNER_MARGIN)), // -1: exclude itself
-	    mainButton->h());
+
+	mainButton->size(visible, mainButton->h());
 
 	/* Reposition everything else */
 

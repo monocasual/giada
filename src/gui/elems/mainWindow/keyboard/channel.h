@@ -93,8 +93,6 @@ protected:
 	static const int BREAK_ARM          = 168;
 #endif
 
-	static const int MIN_ELEM_W = 20;
-
 	static void cb_arm(Fl_Widget* /*w*/, void* p);
 	static void cb_mute(Fl_Widget* /*w*/, void* p);
 	static void cb_solo(Fl_Widget* /*w*/, void* p);
