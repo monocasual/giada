@@ -124,6 +124,8 @@ public:
 	Dispatcher                    dispatcher;
 
 private:
+	static constexpr int BLINK_RATE = G_GUI_FPS / 2;
+
 #ifdef WITH_VST
 	static void juceDispatchLoop(void*);
 #endif

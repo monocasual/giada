@@ -57,7 +57,7 @@ Ui::Ui(m::Recorder& recorder)
 
 bool Ui::shouldBlink() const
 {
-	return m_blinker > 6; // TODO magic numbers
+	return m_blinker > BLINK_RATE / 2;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -139,7 +139,7 @@ void Ui::refresh()
 
 	/* Compute timer for blinker. */
 
-	m_blinker = (m_blinker + 1) % 12; // TODO magic numbers
+	m_blinker = (m_blinker + 1) % BLINK_RATE;
 
 	/* Refresh Sample Editor and Action Editor for dynamic playhead. */
 
