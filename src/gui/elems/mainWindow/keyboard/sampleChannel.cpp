@@ -41,6 +41,7 @@
 #include "gui/elems/mainWindow/keyboard/channelStatus.h"
 #include "gui/elems/mainWindow/keyboard/column.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
+#include "gui/elems/mainWindow/keyboard/midiActivity.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannelButton.h"
 #include "utils/gui.h"
 
@@ -173,25 +174,20 @@ void menuCallback(Fl_Widget* w, void* v)
 geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 : geChannel(X, Y, W, H, d)
 {
-#if defined(WITH_VST)
-	constexpr int delta = 9 * (G_GUI_UNIT + G_GUI_INNER_MARGIN);
-#else
-	constexpr int delta = 8 * (G_GUI_UNIT + G_GUI_INNER_MARGIN);
-#endif
-
-	playButton  = new geStatusButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, channelStop_xpm, channelPlay_xpm);
-	arm         = new geButton(playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm, armDisabled_xpm);
-	status      = new geChannelStatus(arm->x() + arm->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, H, m_channel);
-	mainButton  = new geSampleChannelButton(status->x() + status->w() + G_GUI_INNER_MARGIN, y(), w() - delta, H, m_channel);
-	readActions = new geStatusButton(mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, readActionOff_xpm, readActionOn_xpm, readActionDisabled_xpm);
-	modeBox     = new geChannelMode(readActions->x() + readActions->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, m_channel);
-	mute        = new geStatusButton(modeBox->x() + modeBox->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
-	solo        = new geStatusButton(mute->x() + mute->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
+	playButton   = new geStatusButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, channelStop_xpm, channelPlay_xpm);
+	arm          = new geButton(playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm, armDisabled_xpm);
+	status       = new geChannelStatus(arm->x() + arm->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, h(), m_channel);
+	mainButton   = new geSampleChannelButton(status->x() + status->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, H, m_channel);
+	midiActivity = new geMidiActivity(mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), 10, h());
+	readActions  = new geStatusButton(midiActivity->x() + midiActivity->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, readActionOff_xpm, readActionOn_xpm, readActionDisabled_xpm);
+	modeBox      = new geChannelMode(readActions->x() + readActions->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, m_channel);
+	mute         = new geStatusButton(modeBox->x() + modeBox->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
+	solo         = new geStatusButton(mute->x() + mute->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
 	fx  = new geStatusButton(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
 	vol = new geDial(fx->x() + fx->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
 #else
-	vol                 = new geDial(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
+	vol = new geDial(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
 #endif
 
 	end();
@@ -357,7 +353,6 @@ void geSampleChannel::draw()
 {
 	const int ny = y() + (h() / 2) - (G_GUI_UNIT / 2);
 
-	status->resize(status->x(), ny, G_GUI_UNIT, G_GUI_UNIT);
 	modeBox->resize(modeBox->x(), ny, G_GUI_UNIT, G_GUI_UNIT);
 	readActions->resize(readActions->x(), ny, G_GUI_UNIT, G_GUI_UNIT);
 

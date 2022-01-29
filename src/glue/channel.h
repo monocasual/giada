@@ -162,6 +162,12 @@ void setName(ID channelId, const std::string& name);
 void setHeight(ID channelId, Pixel p);
 
 void setSamplePlayerMode(ID channelId, SamplePlayerMode m);
+
+/* setCallbacks
+Install callbacks to a m::Channel object in order to communicate with the UI. 
+Call this whenever you add a new channel. */
+
+void setCallbacks(m::Channel&);
 } // namespace giada::c::channel
 
 #endif

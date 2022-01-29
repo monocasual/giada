@@ -35,6 +35,7 @@
 #include "gui/elems/mainWindow/keyboard/channelButton.h"
 #include "gui/elems/mainWindow/keyboard/channelStatus.h"
 #include "gui/elems/mainWindow/keyboard/column.h"
+#include "gui/elems/mainWindow/keyboard/midiActivity.h"
 #include "gui/ui.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
@@ -96,6 +97,7 @@ void geChannel::refresh()
 		blink();
 
 	playButton->setStatus(playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING);
+	midiActivity->redraw();
 	mute->setStatus(m_channel.getMute());
 	solo->setStatus(m_channel.getSolo());
 }

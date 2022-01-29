@@ -34,6 +34,7 @@
 #include "core/plugins/plugin.h"
 #include "core/plugins/pluginHost.h"
 #include "core/wave.h"
+#include "glue/channel.h"
 #include <cassert>
 
 namespace giada::m
@@ -68,6 +69,8 @@ Channel ChannelManager::create(ID channelId, ChannelType type, ID columnId, int 
 	if (out.audioReceiver)
 		out.audioReceiver->overdubProtection = m_conf.overdubProtectionDefaultOn;
 
+	c::channel::setCallbacks(out); // UI callbacks
+
 	return out;
 }
 
@@ -80,6 +83,8 @@ Channel ChannelManager::create(const Channel& o, int bufferSize)
 	out.id     = m_channelId.generate();
 	out.shared = &makeShared(o.type, bufferSize);
 
+	c::channel::setCallbacks(out); // UI callbacks
+
 	return out;
 }
 
@@ -88,7 +93,11 @@ Channel ChannelManager::create(const Channel& o, int bufferSize)
 Channel ChannelManager::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
 {
 	m_channelId.set(pch.id);
-	return Channel(pch, makeShared(pch.type, bufferSize), samplerateRatio, m_model.findShared<Wave>(pch.waveId));
+
+	Channel out = Channel(pch, makeShared(pch.type, bufferSize), samplerateRatio, m_model.findShared<Wave>(pch.waveId));
+	c::channel::setCallbacks(out); // UI callbacks
+
+	return out;
 }
 
 /* -------------------------------------------------------------------------- */

@@ -35,6 +35,7 @@ MidiSender::MidiSender(KernelMidi& k)
 : kernelMidi(&k)
 , enabled(false)
 , filter(0)
+, onSend(nullptr)
 {
 }
 
@@ -73,8 +74,11 @@ void MidiSender::advance(const Channel& ch, const Sequencer::Event& e) const
 
 void MidiSender::send(MidiEvent e) const
 {
+	assert(onSend != nullptr);
+
 	e.setChannel(filter);
 	kernelMidi->send(e.getRaw());
+	onSend();
 }
 
 /* -------------------------------------------------------------------------- */

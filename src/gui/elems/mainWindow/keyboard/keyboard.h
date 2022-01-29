@@ -80,6 +80,8 @@ public:
 	void deleteAllColumns();
 
 	void setChannelVolume(ID channelId, float v);
+	void notifyMidiIn(ID channelId);
+	void notifyMidiOut(ID channelId);
 
 	/* init
 	Builds the default setup of empty columns. */

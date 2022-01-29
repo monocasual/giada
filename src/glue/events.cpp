@@ -68,11 +68,20 @@ void pushEvent_(m::EventDispatcher::Event e, Thread t)
 {
 	bool res = true;
 	if (t == Thread::MAIN)
+	{
 		res = g_engine.eventDispatcher.UIevents.push(e);
+	}
 	else if (t == Thread::MIDI)
+	{
 		res = g_engine.eventDispatcher.MidiEvents.push(e);
+		Fl::lock();
+		g_ui.mainWindow->keyboard->notifyMidiIn(e.channelId);
+		Fl::unlock();
+	}
 	else
+	{
 		assert(false);
+	}
 
 	if (!res)
 		G_DEBUG("[events] Queue full!\n");

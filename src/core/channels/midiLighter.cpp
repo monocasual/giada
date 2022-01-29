@@ -33,6 +33,7 @@ namespace giada::m
 template <typename KernelMidiI>
 MidiLighter<KernelMidiI>::MidiLighter(MidiMapper<KernelMidiI>& m)
 : enabled(false)
+, onSend(nullptr)
 , m_midiMapper(&m)
 {
 }
@@ -63,19 +64,19 @@ void MidiLighter<KernelMidiI>::sendStatus(ChannelStatus status, bool audible)
 	switch (status)
 	{
 	case ChannelStatus::OFF:
-		m_midiMapper->sendMidiLightning(l_playing, midiMap.stopped);
+		send(l_playing, midiMap.stopped);
 		break;
 
 	case ChannelStatus::WAIT:
-		m_midiMapper->sendMidiLightning(l_playing, midiMap.waiting);
+		send(l_playing, midiMap.waiting);
 		break;
 
 	case ChannelStatus::ENDING:
-		m_midiMapper->sendMidiLightning(l_playing, midiMap.stopping);
+		send(l_playing, midiMap.stopping);
 		break;
 
 	case ChannelStatus::PLAY:
-		m_midiMapper->sendMidiLightning(l_playing, audible ? midiMap.playing : midiMap.playingInaudible);
+		send(l_playing, audible ? midiMap.playing : midiMap.playingInaudible);
 		break;
 
 	default:
@@ -92,7 +93,7 @@ void MidiLighter<KernelMidiI>::sendMute(bool isMuted)
 	const uint32_t l_mute  = mute.getValue();
 
 	if (l_mute != 0x0)
-		m_midiMapper->sendMidiLightning(l_mute, isMuted ? midiMap.muteOn : midiMap.muteOff);
+		send(l_mute, isMuted ? midiMap.muteOn : midiMap.muteOff);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -104,7 +105,18 @@ void MidiLighter<KernelMidiI>::sendSolo(bool isSoloed)
 	const uint32_t l_solo  = solo.getValue();
 
 	if (l_solo != 0x0)
-		m_midiMapper->sendMidiLightning(l_solo, isSoloed ? midiMap.soloOn : midiMap.soloOff);
+		send(l_solo, isSoloed ? midiMap.soloOn : midiMap.soloOff);
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename KernelMidiI>
+void MidiLighter<KernelMidiI>::send(uint32_t learnt, const MidiMap::Message& msg)
+{
+	assert(onSend != nullptr);
+
+	m_midiMapper->sendMidiLightning(learnt, msg);
+	onSend();
 }
 
 /* -------------------------------------------------------------------------- */

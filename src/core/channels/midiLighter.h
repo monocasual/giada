@@ -57,7 +57,14 @@ public:
 	MidiLearnParam mute;
 	MidiLearnParam solo;
 
+	/* onSend
+	Callback fired when a MIDI signal has been sent. */
+
+	std::function<void()> onSend;
+
 private:
+	void send(uint32_t learnt, const MidiMap::Message&);
+
 	MidiMapper<KernelMidiI>* m_midiMapper;
 };
 

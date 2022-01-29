@@ -38,6 +38,7 @@
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/statusButton.h"
 #include "gui/elems/mainWindow/keyboard/column.h"
+#include "gui/elems/mainWindow/keyboard/midiActivity.h"
 #include "gui/elems/mainWindow/keyboard/midiChannelButton.h"
 #include "utils/gui.h"
 #include "utils/string.h"
@@ -108,22 +109,17 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 : geChannel(X, Y, W, H, d)
 , m_data(d)
 {
-#if defined(WITH_VST)
-	constexpr int delta = 6 * (G_GUI_UNIT + G_GUI_INNER_MARGIN);
-#else
-	constexpr int delta = 5 * (G_GUI_UNIT + G_GUI_INNER_MARGIN);
-#endif
-
-	playButton = new geStatusButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, channelStop_xpm, channelPlay_xpm);
-	arm        = new geButton(playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
-	mainButton = new geMidiChannelButton(arm->x() + arm->w() + G_GUI_INNER_MARGIN, y(), w() - delta, H, m_channel);
-	mute       = new geStatusButton(mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
-	solo       = new geStatusButton(mute->x() + mute->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
+	playButton   = new geStatusButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, channelStop_xpm, channelPlay_xpm);
+	arm          = new geButton(playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
+	mainButton   = new geMidiChannelButton(arm->x() + arm->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, H, m_channel);
+	midiActivity = new geMidiActivity(mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), 10, h());
+	mute         = new geStatusButton(midiActivity->x() + midiActivity->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
+	solo         = new geStatusButton(mute->x() + mute->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
 	fx  = new geStatusButton(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
 	vol = new geDial(fx->x() + fx->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
 #else
-	vol                 = new geDial(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
+	vol = new geDial(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
 #endif
 
 	end();

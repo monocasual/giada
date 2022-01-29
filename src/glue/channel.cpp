@@ -199,7 +199,14 @@ int loadChannel(ID channelId, const std::string& fname)
 
 void addChannel(ID columnId, ChannelType type)
 {
-	g_engine.mixerHandler.addChannel(type, columnId, g_engine.kernelAudio.getBufferSize(), g_engine.channelManager);
+	m::Channel& ch = g_engine.mixerHandler.addChannel(type, columnId,
+	    g_engine.kernelAudio.getBufferSize(), g_engine.channelManager);
+
+	auto onSendMidiCb = [channelId = ch.id]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); };
+
+	ch.midiLighter.onSend = onSendMidiCb;
+	if (ch.midiSender)
+		ch.midiSender->onSend = onSendMidiCb;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -312,5 +319,16 @@ void setHeight(ID channelId, Pixel p)
 void setName(ID channelId, const std::string& name)
 {
 	g_engine.mixerHandler.renameChannel(channelId, name);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void setCallbacks(m::Channel& ch)
+{
+	auto onSendMidiCb = [channelId = ch.id]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); };
+
+	ch.midiLighter.onSend = onSendMidiCb;
+	if (ch.midiSender)
+		ch.midiSender->onSend = onSendMidiCb;
 }
 } // namespace giada::c::channel

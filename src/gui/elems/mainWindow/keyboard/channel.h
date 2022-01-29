@@ -39,6 +39,7 @@ namespace giada::v
 class geChannelStatus;
 class geStatusButton;
 class geChannelButton;
+class geMidiActivity;
 class geChannel : public Fl_Group
 {
 public:
@@ -71,6 +72,7 @@ public:
 	geButton*        arm;
 	geChannelStatus* status;
 	geChannelButton* mainButton;
+	geMidiActivity*  midiActivity;
 	geStatusButton*  mute;
 	geStatusButton*  solo;
 	geDial*          vol;

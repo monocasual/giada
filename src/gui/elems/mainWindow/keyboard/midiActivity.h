@@ -24,47 +24,44 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_CHANNEL_MIDI_SENDER_H
-#define G_CHANNEL_MIDI_SENDER_H
+#ifndef GE_MIDI_ACTIVITY_H
+#define GE_MIDI_ACTIVITY_H
 
-#include "core/patch.h"
-#include "core/sequencer.h"
+#include "core/types.h"
+#include "gui/elems/basics/group.h"
+#include "gui/elems/basics/pack.h"
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Group.H>
 
-namespace giada::m
+namespace giada::v
 {
-class KernelMidi;
-class Channel;
-class MidiSender final
+class geMidiActivity : public Fl_Group
 {
 public:
-	MidiSender(KernelMidi&);
-	MidiSender(const Patch::Channel& p, KernelMidi&);
-	MidiSender(const MidiSender& o) = default;
+	class geLed : public Fl_Button
+	{
+	public:
+		geLed(int x, int y, int w, int h);
 
-	void react(const Channel& ch, const EventDispatcher::Event& e);
-	void advance(const Channel& ch, const Sequencer::Event& e) const;
+		void draw() override;
+		void lit();
 
-	KernelMidi* kernelMidi;
+	private:
+		int m_decay;
+	};
 
-	/* enabled
-    Tells whether MIDI output is enabled or not. */
+	geMidiActivity(int x, int y, int w, int h);
 
-	bool enabled;
+	void resize(int x, int y, int w, int h) override;
 
-	/* filter
-    Which MIDI channel data should be sent to. */
-
-	int filter;
-
-	/* onSend
-	Callback fired when a MIDI signal has been sent. */
-
-	std::function<void()> onSend;
+	geLed* out;
+	geLed* in;
 
 private:
-	void send(MidiEvent e) const;
-	void parseActions(const Channel& ch, const std::vector<Action>& as) const;
+	Fl_Group* m_top;
+	Fl_Group* m_bot;
 };
-} // namespace giada::m
+} // namespace giada::v
 
 #endif

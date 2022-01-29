@@ -24,9 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "keyboard.h"
-#include "channelButton.h"
-#include "column.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "glue/channel.h"
 #include "glue/io.h"
 #include "gui/dialogs/warnings.h"
@@ -34,8 +32,11 @@
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/resizerBar.h"
+#include "gui/elems/mainWindow/keyboard/channelButton.h"
+#include "gui/elems/mainWindow/keyboard/column.h"
+#include "gui/elems/mainWindow/keyboard/midiActivity.h"
+#include "gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "gui/ui.h"
-#include "sampleChannel.h"
 #include "utils/fs.h"
 #include "utils/log.h"
 #include "utils/string.h"
@@ -124,6 +125,18 @@ void geKeyboard::deleteAllColumns()
 void geKeyboard::setChannelVolume(ID channelId, float v)
 {
 	getChannel(channelId)->vol->value(v);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geKeyboard::notifyMidiIn(ID channelId)
+{
+	getChannel(channelId)->midiActivity->in->lit();
+}
+
+void geKeyboard::notifyMidiOut(ID channelId)
+{
+	getChannel(channelId)->midiActivity->out->lit();
 }
 
 /* -------------------------------------------------------------------------- */
