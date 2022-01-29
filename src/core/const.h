@@ -82,8 +82,8 @@ live input latency, keep it small! */
 constexpr int G_EVENT_DISPATCHER_RATE_MS = 5;
 
 /* -- GUI ------------------------------------------------------------------- */
-constexpr float G_GUI_REFRESH_RATE   = 1 / 30.0f; // 30 fps
-constexpr float G_GUI_PLUGIN_RATE    = 1 / 30.0f; // 30 fps
+constexpr int   G_GUI_FPS            = 30;
+constexpr float G_GUI_REFRESH_RATE   = 1 / static_cast<float>(G_GUI_FPS);
 constexpr int   G_GUI_FONT_SIZE_BASE = 12;
 constexpr int   G_GUI_INNER_MARGIN   = 4;
 constexpr int   G_GUI_OUTER_MARGIN   = 8;

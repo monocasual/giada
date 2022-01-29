@@ -226,7 +226,7 @@ void Ui::setMainWindowTitle(const std::string& s)
 
 void Ui::startJuceDispatchLoop()
 {
-	Fl::add_timeout(G_GUI_PLUGIN_RATE, juceDispatchLoop);
+	Fl::add_timeout(G_GUI_REFRESH_RATE, juceDispatchLoop);
 }
 
 void Ui::stopJuceDispatchLoop()
@@ -253,7 +253,7 @@ void Ui::juceDispatchLoop(void*)
 	juce::MessageManager* mm = juce::MessageManager::getInstanceWithoutCreating();
 	assert(mm != nullptr);
 	mm->runDispatchLoopUntil(1);
-	Fl::add_timeout(G_GUI_PLUGIN_RATE, juceDispatchLoop);
+	Fl::add_timeout(G_GUI_REFRESH_RATE, juceDispatchLoop);
 }
 
 #endif
