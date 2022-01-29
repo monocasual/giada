@@ -55,7 +55,7 @@ public:
 
 	void clearKeyboard();
 
-	ScopedProgress getScopedProgress(const char* msg);
+	[[nodiscard]] ScopedProgress getScopedProgress(const char* msg);
 
 	geKeyboard*      keyboard;
 	geSequencer*     sequencer;
