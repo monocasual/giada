@@ -32,6 +32,7 @@
 #include "gui/dialogs/warnings.h"
 #include "gui/dispatcher.h"
 #include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/resizerBar.h"
 #include "gui/ui.h"
 #include "sampleChannel.h"
@@ -53,6 +54,13 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 	end();
 	init();
 	rebuild();
+}
+
+/* -------------------------------------------------------------------------- */
+
+ID geKeyboard::getChannelColumnId(ID channelId) const
+{
+	return getChannel(channelId)->getColumnId();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -109,6 +117,13 @@ void geKeyboard::deleteAllColumns()
 	m_addColumnBtn = new geButton(8, y(), 200, 20, "Add new column");
 	m_addColumnBtn->callback(cb_addColumn, (void*)this);
 	add(m_addColumnBtn);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geKeyboard::setChannelVolume(ID channelId, float v)
+{
+	getChannel(channelId)->vol->value(v);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -264,7 +279,7 @@ geColumn* geKeyboard::getColumnAtCursor(Pixel px)
 
 /* -------------------------------------------------------------------------- */
 
-geChannel* geKeyboard::getChannel(ID channelId)
+const geChannel* geKeyboard::getChannel(ID channelId) const
 {
 	for (geColumn* column : m_columns)
 	{
@@ -274,6 +289,11 @@ geChannel* geKeyboard::getChannel(ID channelId)
 	}
 	assert(false);
 	return nullptr;
+}
+
+geChannel* geKeyboard::getChannel(ID channelId)
+{
+	return const_cast<geChannel*>(const_cast<const geKeyboard*>(this)->getChannel(channelId));
 }
 
 /* -------------------------------------------------------------------------- */

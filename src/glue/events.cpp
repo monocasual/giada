@@ -113,7 +113,7 @@ void setChannelVolume(ID channelId, float v, Thread t)
 	if (t != Thread::MAIN)
 	{
 		Fl::lock();
-		g_ui.mainWindow->keyboard->getChannel(channelId)->vol->value(v);
+		g_ui.mainWindow->keyboard->setChannelVolume(channelId, v);
 		Fl::unlock();
 	}
 }

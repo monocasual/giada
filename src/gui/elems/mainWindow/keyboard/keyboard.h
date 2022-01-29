@@ -54,6 +54,11 @@ public:
 	int  handle(int e) override;
 	void draw() override;
 
+	/* getChannelColumnId
+	Given a channel ID, returns the ID of the column it belongs to. */
+
+	ID getChannelColumnId(ID channelId) const;
+
 	/* rebuild
 	Rebuilds this widget from scratch. Used when the model has changed. */
 
@@ -74,10 +79,7 @@ public:
 
 	void deleteAllColumns();
 
-	/* getChannel
-	Given a channel ID returns the UI channel it belongs to. */
-
-	geChannel* getChannel(ID channelId);
+	void setChannelVolume(ID channelId, float v);
 
 	/* init
 	Builds the default setup of empty columns. */
@@ -115,6 +117,12 @@ private:
 	Returns the column below the cursor. */
 
 	geColumn* getColumnAtCursor(Pixel x);
+
+	/* getChannel
+	Given a channel ID returns the UI channel it belongs to. */
+
+	geChannel*       getChannel(ID channelId);
+	const geChannel* getChannel(ID channelId) const;
 
 	/* storeLayout
 	Stores the current column layout into the layout vector. */

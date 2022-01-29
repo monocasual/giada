@@ -54,7 +54,7 @@ public:
 	/* getColumnId
 	Returns the ID of the column this channel resides in. */
 
-	ID getColumnId();
+	ID getColumnId() const;
 
 	/* handleKey
 	Performs some UI-related operations when the bound key is pressed. Returns
