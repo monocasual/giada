@@ -178,7 +178,7 @@ void MidiMapper<KernelMidiI>::sendMidiLightning(uint32_t learnt, const MidiMap::
 
 	if (!isMessageDefined(m))
 	{
-		u::log::print("[MidiMapper::sendMidiLightning] message skipped (not defined in midiMap)");
+		u::log::print("[MidiMapper::sendMidiLightning] message skipped (not defined in midiMap)\n");
 		return;
 	}
 
