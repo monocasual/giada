@@ -85,13 +85,13 @@ geMidiActivity::geMidiActivity(int x, int y, int w, int h)
 	m_bot->resizable(in);
 	m_bot->end();
 
-	out->copy_tooltip("MIDI output activity\n\nNotifies MIDI messages sent by "
-	                  "this channel.");
-	in->copy_tooltip("MIDI input activity\n\nNotifies MIDI messages received by "
-	                 "this channel.");
+	copy_tooltip("MIDI I/O activity\n\nNotifies MIDI messages sent (top) or "
+	             "received (bottom) by this channel.");
 
 	end();
 }
+
+/* -------------------------------------------------------------------------- */
 
 void geMidiActivity::resize(int x, int y, int w, int h)
 {
@@ -100,5 +100,4 @@ void geMidiActivity::resize(int x, int y, int w, int h)
 	m_top->resize(x, y, w, h / 2);
 	m_bot->resize(x, y + (h / 2), w, h / 2);
 }
-
 } // namespace giada::v
