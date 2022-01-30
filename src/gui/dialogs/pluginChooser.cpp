@@ -65,6 +65,7 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Co
 	sortMethod->add("Name");
 	sortMethod->add("Category");
 	sortMethod->add("Manufacturer");
+	sortMethod->add("Format");
 	sortMethod->callback(cb_sort, (void*)this);
 	sortMethod->value(m_conf.pluginSortMethod);
 
