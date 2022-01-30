@@ -26,6 +26,8 @@ TEST_CASE("MidiMapper")
 	    {0, "0x000009", 0, 0x000009},   // playingInaudible
 	};
 
+	midiLighter.onSend = []() {};
+
 	midiLighter.playing = {0x000010, 0};
 	midiLighter.mute    = {0x000011, 0};
 	midiLighter.solo    = {0x000012, 0};
