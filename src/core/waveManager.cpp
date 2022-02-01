@@ -34,6 +34,7 @@
 #include "wave.h"
 #include "waveFx.h"
 #include <cmath>
+#include <memory>
 #include <samplerate.h>
 #include <sndfile.h>
 

@@ -32,6 +32,7 @@
 #include "utils/time.h"
 #include <FL/Fl.H>
 #include <cassert>
+#include <memory>
 
 namespace giada::m
 {

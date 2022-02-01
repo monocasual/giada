@@ -33,6 +33,7 @@
 #include "core/patch.h"
 #include "deps/juce-config.h"
 #include "plugin.h"
+#include <memory>
 
 namespace giada::m::patch
 {

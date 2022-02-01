@@ -32,6 +32,7 @@
 #include "core/types.h"
 #include "deps/juce-config.h"
 #include <functional>
+#include <memory>
 
 namespace mcl
 {

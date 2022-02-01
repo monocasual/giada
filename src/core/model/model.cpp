@@ -26,6 +26,7 @@
 
 #include "core/model/model.h"
 #include <cassert>
+#include <memory>
 #ifdef G_DEBUG_MODE
 #include "core/channels/channelManager.h"
 #endif

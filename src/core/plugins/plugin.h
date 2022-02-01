@@ -34,6 +34,7 @@
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginState.h"
 #include "deps/juce-config.h"
+#include <memory>
 #include <vector>
 
 namespace giada::m

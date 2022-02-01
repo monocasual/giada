@@ -54,6 +54,7 @@
 #include "utils/log.h"
 #include <FL/Fl.H>
 #include <cassert>
+#include <memory>
 
 extern giada::v::Ui     g_ui;
 extern giada::m::Engine g_engine;

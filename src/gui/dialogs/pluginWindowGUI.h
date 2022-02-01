@@ -36,6 +36,7 @@
 #include "window.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
+#include <memory>
 
 namespace giada::c::plugin
 {

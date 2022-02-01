@@ -36,6 +36,7 @@
 #include "core/waveManager.h"
 #include "src/core/actions/actionRecorder.h"
 #include <cassert>
+#include <memory>
 
 extern giada::m::Engine g_engine;
 

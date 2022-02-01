@@ -29,6 +29,7 @@
 #include "core/model/storage.h"
 #include "utils/fs.h"
 #include "utils/log.h"
+#include <memory>
 
 namespace giada::m
 {

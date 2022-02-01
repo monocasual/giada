@@ -36,6 +36,7 @@
 #include "core/wave.h"
 #include "glue/channel.h"
 #include <cassert>
+#include <memory>
 
 namespace giada::m
 {
