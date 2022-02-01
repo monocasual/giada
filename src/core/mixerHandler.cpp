@@ -39,6 +39,7 @@
 #include "utils/vector.h"
 #include <algorithm>
 #include <cassert>
+#include <memory>
 #include <vector>
 
 namespace giada::m

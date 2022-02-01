@@ -28,6 +28,7 @@
 #include "core/const.h"
 #include "utils/log.h"
 #include <cassert>
+#include <memory>
 
 namespace giada::m
 {

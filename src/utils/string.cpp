@@ -31,6 +31,7 @@
 #include <climits>
 #include <cstdarg>
 #include <iomanip>
+#include <memory>
 
 namespace giada
 {

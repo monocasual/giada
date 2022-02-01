@@ -39,6 +39,7 @@
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "src/core/actions/actions.h"
 #include "utils/vector.h"
+#include <memory>
 
 namespace giada::m::model
 {
