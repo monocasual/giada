@@ -133,7 +133,7 @@ public:
 	/* react
 	Reacts to live events coming from the EventDispatcher (human events). */
 
-	void react(const EventDispatcher::EventBuffer&);
+	void react(const EventDispatcher::EventBuffer&, int sampleRate);
 
 	/* advance
 	Parses sequencer events that might occur in a block and advances the internal 
@@ -146,22 +146,6 @@ public:
 	Renders audio coming out from the sequencer: that is, the metronome! */
 
 	void render(mcl::AudioBuffer& outBuf);
-
-	/* raw[*]
-	Raw functions to start, stop and rewind the sequencer. These functions must 
-	be called only when the JACK signal is received. Other modules should send
-	a SEQUENCER_* event to the Event Dispatcher. */
-
-	void rawStart();
-	void rawStop();
-	void rawRewind();
-
-	/* rawSetBpm
-	Raw function to set the bpm, bypassing any JACK instruction. This function 
-	must be called only by the Synchronizer when the JACK signal is received. 
-	Other modules should use the non-raw version below. */
-
-	void rawSetBpm(float v, int sampleRate);
 
 	void rewind();
 	void toggleMetronome();
@@ -190,6 +174,22 @@ private:
 	Rewinds sequencer, quantized mode. */
 
 	void rewindQ(Frame delta);
+
+	/* raw[*]
+	Raw functions to start, stop and rewind the sequencer. These functions must 
+	be called only when the JACK signal is received. Other modules should send
+	a SEQUENCER_* event to the Event Dispatcher. */
+
+	void rawStart();
+	void rawStop();
+	void rawRewind();
+
+	/* rawSetBpm
+	Raw function to set the bpm, bypassing any JACK instruction. This function 
+	must be called only by the Synchronizer when the JACK signal is received. 
+	Other modules should use the public, non-raw version setBpm(...). */
+
+	void rawSetBpm(float v, int sampleRate);
 
 	model::Model&  m_model;
 	Synchronizer&  m_synchronizer;

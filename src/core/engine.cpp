@@ -54,13 +54,18 @@ Engine::Engine()
 	kernelMidi.onMidiReceived = [this](uint32_t msg) { midiDispatcher.dispatch(msg); };
 
 #ifdef WITH_AUDIO_JACK
-	if (kernelAudio.getAPI() == G_SYS_API_JACK)
-		jackTransport.setHandle(kernelAudio.getJackHandle());
-
-	synchronizer.onJackRewind    = [this]() { sequencer.rawRewind(); };
-	synchronizer.onJackChangeBpm = [this](float bpm) { sequencer.rawSetBpm(bpm, kernelAudio.getSampleRate()); };
-	synchronizer.onJackStart     = [this]() { sequencer.rawStart(); };
-	synchronizer.onJackStop      = [this]() { sequencer.rawStop(); };
+	synchronizer.onJackRewind = [this]() {
+		eventDispatcher.pumpMidiEvent({EventDispatcher::EventType::SEQUENCER_REWIND_JACK});
+	};
+	synchronizer.onJackChangeBpm = [this](float bpm) {
+		eventDispatcher.pumpMidiEvent({EventDispatcher::EventType::SEQUENCER_BPM_JACK, 0, 0, bpm});
+	};
+	synchronizer.onJackStart = [this]() {
+		eventDispatcher.pumpMidiEvent({EventDispatcher::EventType::SEQUENCER_START_JACK});
+	};
+	synchronizer.onJackStop = [this]() {
+		eventDispatcher.pumpMidiEvent({EventDispatcher::EventType::SEQUENCER_STOP_JACK});
+	};
 #endif
 
 	eventDispatcher.onMidiLearn       = [this](const MidiEvent& e) { midiDispatcher.learn(e); };
@@ -71,7 +76,7 @@ Engine::Engine()
 		model.swap(model::SwapType::SOFT);
 	};
 	eventDispatcher.onProcessSequencer = [this](const EventDispatcher::EventBuffer& eb) {
-		sequencer.react(eb);
+		sequencer.react(eb, kernelAudio.getSampleRate());
 	};
 	eventDispatcher.onMixerSignalCallback = [this]() {
 		recorder.startInputRecOnCallback();
@@ -169,6 +174,11 @@ void Engine::init()
 	kernelAudio.openDevice(conf.data);
 	if (!kernelAudio.isReady())
 		return;
+
+#ifdef WITH_AUDIO_JACK
+	if (kernelAudio.getAPI() == G_SYS_API_JACK)
+		jackTransport.setHandle(kernelAudio.getJackHandle());
+#endif
 
 	mixerHandler.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()),
 	    kernelAudio.getBufferSize(), channelManager);

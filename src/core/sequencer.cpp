@@ -118,26 +118,46 @@ void Sequencer::reset(int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::react(const EventDispatcher::EventBuffer& events)
+void Sequencer::react(const EventDispatcher::EventBuffer& events, int sampleRate)
 {
 	for (const EventDispatcher::Event& e : events)
 	{
-		if (e.type == EventDispatcher::EventType::SEQUENCER_START)
+		switch (e.type)
 		{
+		case EventDispatcher::EventType::SEQUENCER_START:
 			if (!m_jackTransport.start())
 				rawStart();
 			break;
-		}
-		if (e.type == EventDispatcher::EventType::SEQUENCER_STOP)
-		{
+
+		case EventDispatcher::EventType::SEQUENCER_STOP:
 			if (!m_jackTransport.stop())
 				rawStop();
 			break;
-		}
-		if (e.type == EventDispatcher::EventType::SEQUENCER_REWIND)
-		{
+
+		case EventDispatcher::EventType::SEQUENCER_REWIND:
 			if (!m_jackTransport.setPosition(0))
 				rawRewind();
+			break;
+
+#ifdef WITH_AUDIO_JACK
+		case EventDispatcher::EventType::SEQUENCER_START_JACK:
+			rawStart();
+			break;
+
+		case EventDispatcher::EventType::SEQUENCER_STOP_JACK:
+			rawStop();
+			break;
+
+		case EventDispatcher::EventType::SEQUENCER_REWIND_JACK:
+			rawRewind();
+			break;
+
+		case EventDispatcher::EventType::SEQUENCER_BPM_JACK:
+			rawSetBpm(std::get<float>(e.data), sampleRate);
+			break;
+#endif
+
+		default:
 			break;
 		}
 	}
