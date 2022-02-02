@@ -118,14 +118,14 @@ AudioData getAudioData()
 	if (g_engine.kernelAudio.hasAPI(RtAudio::LINUX_ALSA))
 		audioData.apis[G_SYS_API_ALSA] = "ALSA";
 	if (g_engine.kernelAudio.hasAPI(RtAudio::UNIX_JACK))
-		audioData.apis[G_SYS_API_JACK] = "Jack";
+		audioData.apis[G_SYS_API_JACK] = "JACK";
 	if (g_engine.kernelAudio.hasAPI(RtAudio::LINUX_PULSE))
 		audioData.apis[G_SYS_API_PULSE] = "PulseAudio";
 
 #elif defined(G_OS_FREEBSD)
 
 	if (g_engine.kernelAudio.hasAPI(RtAudio::UNIX_JACK))
-		audioData.apis[G_SYS_API_JACK] = "Jack";
+		audioData.apis[G_SYS_API_JACK] = "JACK";
 	if (g_engine.kernelAudio.hasAPI(RtAudio::LINUX_PULSE))
 		audioData.apis[G_SYS_API_PULSE] = "PulseAudio";
 
