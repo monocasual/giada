@@ -171,20 +171,28 @@ void PluginHost::toggleBypass(ID pluginId)
 
 void PluginHost::giadaToJuceTempBuf(const mcl::AudioBuffer& outBuf)
 {
-	for (int i = 0; i < outBuf.countFrames(); i++)
-		for (int j = 0; j < outBuf.countChannels(); j++)
-			m_audioBuffer.setSample(j, i, outBuf[i][j]);
-}
+	assert(outBuf.countChannels() == m_audioBuffer.getNumChannels());
 
-/* juceToGiadaOutBuf
-Converts buffer from Juce to Giada. A note for the future: if we overwrite (=) 
-(as we do now) it's SEND, if we add (+) it's INSERT. */
+	using namespace juce;
+	using Format = AudioData::Format<AudioData::Float32, AudioData::BigEndian>;
+
+	AudioData::deinterleaveSamples(
+	    AudioData::InterleavedSource<Format>{outBuf[0], outBuf.countChannels()},
+	    AudioData::NonInterleavedDest<Format>{m_audioBuffer.getArrayOfWritePointers(), m_audioBuffer.getNumChannels()},
+	    outBuf.countFrames());
+}
 
 void PluginHost::juceToGiadaOutBuf(mcl::AudioBuffer& outBuf) const
 {
-	for (int i = 0; i < outBuf.countFrames(); i++)
-		for (int j = 0; j < outBuf.countChannels(); j++)
-			outBuf[i][j] = m_audioBuffer.getSample(j, i);
+	assert(outBuf.countChannels() == m_audioBuffer.getNumChannels());
+
+	using namespace juce;
+	using Format = AudioData::Format<AudioData::Float32, AudioData::BigEndian>;
+
+	AudioData::interleaveSamples(
+	    AudioData::NonInterleavedSource<Format>{m_audioBuffer.getArrayOfReadPointers(), m_audioBuffer.getNumChannels()},
+	    AudioData::InterleavedDest<Format>{outBuf[0], outBuf.countChannels()},
+	    outBuf.countFrames());
 }
 
 /* -------------------------------------------------------------------------- */
