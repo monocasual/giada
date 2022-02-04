@@ -52,7 +52,7 @@ geChannelLearnerPack::geChannelLearnerPack(int x, int y, const c::io::Channel_In
 	setCallbacks(
 	    [channelId = channel.channelId](int param) { c::io::channel_startMidiLearn(param, channelId); },
 	    [channelId = channel.channelId](int param) { c::io::channel_clearMidiLearn(param, channelId); });
-	addMidiLearner("keyPress", G_MIDI_IN_KEYPRESS);
+	addMidiLearner("key press", G_MIDI_IN_KEYPRESS);
 	addMidiLearner("key release", G_MIDI_IN_KEYREL);
 	addMidiLearner("key kill", G_MIDI_IN_KILL);
 	addMidiLearner("arm", G_MIDI_IN_ARM);
