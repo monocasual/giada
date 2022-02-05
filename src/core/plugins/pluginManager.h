@@ -114,7 +114,7 @@ public:
 	Transforms patch data into a Plugin object and vice versa. */
 
 	const Patch::Plugin     serializePlugin(const Plugin& p) const;
-	std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin& p, Patch::Version version, int sampleRate, int bufferSize, const Sequencer&);
+	std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin&, int sampleRate, int bufferSize, const Sequencer&);
 	std::vector<Plugin*>    hydratePlugins(std::vector<ID> pluginIds, model::Model& model);
 
 	void sortPlugins(SortMethod sortMethod);

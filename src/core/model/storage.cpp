@@ -129,7 +129,7 @@ void load(const Patch::Data& patch)
 	g_engine.model.getAllShared<PluginPtrs>().clear();
 	for (const Patch::Plugin& pplugin : patch.plugins)
 		g_engine.model.getAllShared<PluginPtrs>().push_back(g_engine.pluginManager.deserializePlugin(
-		    pplugin, patch.version, g_engine.kernelAudio.getSampleRate(), g_engine.kernelAudio.getBufferSize(), g_engine.sequencer));
+		    pplugin, g_engine.kernelAudio.getSampleRate(), g_engine.kernelAudio.getBufferSize(), g_engine.sequencer));
 #endif
 
 	g_engine.model.getAllShared<WavePtrs>().clear();

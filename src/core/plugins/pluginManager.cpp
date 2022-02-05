@@ -188,20 +188,14 @@ const Patch::Plugin PluginManager::serializePlugin(const Plugin& p) const
 /* -------------------------------------------------------------------------- */
 
 std::unique_ptr<Plugin> PluginManager::deserializePlugin(const Patch::Plugin& p,
-    Patch::Version version, int sampleRate, int bufferSize, const Sequencer& sequencer)
+    int sampleRate, int bufferSize, const Sequencer& sequencer)
 {
 	std::unique_ptr<Plugin> plugin = makePlugin(p.path, sampleRate, bufferSize, sequencer, p.id);
 	if (!plugin->valid)
 		return plugin; // Return invalid version
 
-	/* Fill plug-in parameters. */
 	plugin->setBypass(p.bypass);
-
-	if (version < Patch::Version{0, 17, 0}) // TODO - to be removed in 0.18.0
-		for (unsigned j = 0; j < p.params.size(); j++)
-			plugin->setParameter(j, p.params.at(j));
-	else
-		plugin->setState(PluginState(p.state));
+	plugin->setState(PluginState(p.state));
 
 	/* Fill plug-in MidiIn parameters. Don't fill Plugin::midiInParam if 
 	Patch::midiInParams are zero: it would wipe out the current default 0x0
