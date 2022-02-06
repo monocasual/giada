@@ -45,7 +45,7 @@ class Channel;
 
 namespace giada::v
 {
-class geBrowser;
+class geFileBrowser;
 class gdBrowserBase : public gdWindow
 {
 public:
@@ -81,7 +81,7 @@ protected:
 
 	Fl_Group*  groupTop;
 	geCheck*   hiddenFiles;
-	geBrowser* browser;
+	geFileBrowser* browser;
 	geButton*  ok;
 	geButton*  cancel;
 	geInput*   where;

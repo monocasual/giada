@@ -27,7 +27,7 @@
 #include "browserDir.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/input.h"
-#include "gui/elems/browser.h"
+#include "gui/elems/fileBrowser.h"
 #include "utils/fs.h"
 
 namespace giada::v

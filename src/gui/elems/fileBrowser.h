@@ -26,8 +26,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_BROWSER_H
-#define GE_BROWSER_H
+#ifndef GE_FILE_BROWSER_H
+#define GE_FILE_BROWSER_H
 
 #include <FL/Fl_File_Browser.H>
 #include <string>
@@ -36,10 +36,10 @@ namespace giada
 {
 namespace v
 {
-class geBrowser : public Fl_File_Browser
+class geFileBrowser : public Fl_File_Browser
 {
 public:
-	geBrowser(int x, int y, int w, int h);
+	geFileBrowser(int x, int y, int w, int h);
 
 	void toggleHiddenFiles();
 

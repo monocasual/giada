@@ -33,7 +33,7 @@
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/input.h"
 #include "gui/elems/basics/progress.h"
-#include "gui/elems/browser.h"
+#include "gui/elems/fileBrowser.h"
 #include "utils/fs.h"
 #include "utils/gui.h"
 
@@ -64,7 +64,7 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 	updir->callback(cb_up, (void*)this);
 
-	browser = new geBrowser(8, groupTop->y() + groupTop->h() + 8, w() - 16, h() - 101);
+	browser = new geFileBrowser(8, groupTop->y() + groupTop->h() + 8, w() - 16, h() - 101);
 	browser->loadDir(path);
 	if (path == m_conf.browserLastPath)
 		browser->preselect(m_conf.browserPosition, m_conf.browserLastValue);

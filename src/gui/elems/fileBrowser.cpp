@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "browser.h"
+#include "fileBrowser.h"
 #include "basics/boxtypes.h"
 #include "core/const.h"
 #include "gui/dialogs/browser/browserBase.h"
@@ -35,7 +35,7 @@ namespace giada
 {
 namespace v
 {
-geBrowser::geBrowser(int x, int y, int w, int h)
+geFileBrowser::geFileBrowser(int x, int y, int w, int h)
 : Fl_File_Browser(x, y, w, h)
 , m_showHiddenFiles(false)
 {
@@ -61,7 +61,7 @@ geBrowser::geBrowser(int x, int y, int w, int h)
 
 /* -------------------------------------------------------------------------- */
 
-void geBrowser::toggleHiddenFiles()
+void geFileBrowser::toggleHiddenFiles()
 {
 	m_showHiddenFiles = !m_showHiddenFiles;
 	loadDir(m_currentDir);
@@ -69,7 +69,7 @@ void geBrowser::toggleHiddenFiles()
 
 /* -------------------------------------------------------------------------- */
 
-void geBrowser::loadDir(const std::string& dir)
+void geFileBrowser::loadDir(const std::string& dir)
 {
 	m_currentDir = dir;
 	load(m_currentDir.c_str());
@@ -88,7 +88,7 @@ void geBrowser::loadDir(const std::string& dir)
 
 /* -------------------------------------------------------------------------- */
 
-int geBrowser::handle(int e)
+int geFileBrowser::handle(int e)
 {
 	int ret = Fl_File_Browser::handle(e);
 	switch (e)
@@ -131,14 +131,14 @@ int geBrowser::handle(int e)
 
 /* -------------------------------------------------------------------------- */
 
-std::string geBrowser::getCurrentDir()
+std::string geFileBrowser::getCurrentDir()
 {
 	return normalize(u::fs::getRealPath(m_currentDir));
 }
 
 /* -------------------------------------------------------------------------- */
 
-std::string geBrowser::getSelectedItem(bool fullPath)
+std::string geFileBrowser::getSelectedItem(bool fullPath)
 {
 	if (!fullPath) // no full path requested? return the selected text
 		return normalize(text(value()));
@@ -157,7 +157,7 @@ std::string geBrowser::getSelectedItem(bool fullPath)
 
 /* -------------------------------------------------------------------------- */
 
-void geBrowser::preselect(int pos, int line)
+void geFileBrowser::preselect(int pos, int line)
 {
 	position(pos);
 	select(line);
@@ -165,7 +165,7 @@ void geBrowser::preselect(int pos, int line)
 
 /* -------------------------------------------------------------------------- */
 
-std::string geBrowser::normalize(const std::string& s)
+std::string geFileBrowser::normalize(const std::string& s)
 {
 	std::string out = s;
 

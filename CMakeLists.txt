@@ -129,7 +129,7 @@ list(APPEND SOURCES
 	src/gui/dialogs/midiIO/midiInputMaster.cpp
 	src/gui/elems/midiIO/midiLearner.cpp
 	src/gui/elems/midiIO/midiLearnerPack.cpp
-	src/gui/elems/browser.cpp
+    src/gui/elems/fileBrowser.cpp
 	src/gui/elems/soundMeter.cpp
 	src/gui/elems/plugin/pluginBrowser.cpp
 	src/gui/elems/plugin/pluginParameter.cpp
