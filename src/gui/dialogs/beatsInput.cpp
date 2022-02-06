@@ -44,6 +44,7 @@ gdBeatsInput::gdBeatsInput(int beats, int bars)
 {
 	set_modal();
 
+	begin();
 	m_beats = new geInput(8, 8, 43, G_GUI_UNIT);
 	m_bars  = new geInput(m_beats->x() + m_beats->w() + 4, 8, 43, G_GUI_UNIT);
 	m_ok    = new geButton(m_bars->x() + m_bars->w() + 4, 8, 70, G_GUI_UNIT, "Ok");

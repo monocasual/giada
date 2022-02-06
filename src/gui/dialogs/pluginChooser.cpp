@@ -42,6 +42,8 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Co
 , m_conf(c)
 , m_channelId(channelId)
 {
+	begin();
+
 	/* top area */
 	Fl_Group* group_top = new Fl_Group(8, 8, w() - 16, 20);
 	sortMethod          = new geChoice(group_top->x() + 45, group_top->y(), 100, 20, "Sort by");

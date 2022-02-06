@@ -42,6 +42,8 @@ namespace giada::v
 gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
 : gdWindow(u::gui::centerWindowX(w), u::gui::centerWindowY(h), w, h, "Configuration")
 {
+	begin();
+
 	Fl_Tabs* tabs = new Fl_Tabs(8, 8, w - 16, h - 44);
 	tabs->box(G_CUSTOM_BORDER_BOX);
 	tabs->labelcolor(G_COLOR_LIGHT_2);

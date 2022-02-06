@@ -49,6 +49,8 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 {
 	set_non_modal();
 
+	begin();
+	
 	groupTop    = new Fl_Group(8, 8, w() - 16, 48);
 	hiddenFiles = new geCheck(groupTop->x(), groupTop->y(), 400, 20, "Show hidden files");
 	where       = new geInput(groupTop->x(), hiddenFiles->y() + hiddenFiles->h() + 8, 20, 20);

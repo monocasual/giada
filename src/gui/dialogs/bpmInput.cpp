@@ -45,6 +45,7 @@ gdBpmInput::gdBpmInput(const char* label)
 {
 	set_modal();
 
+	begin();
 	input_a = new geInput(8, 8, 30, G_GUI_UNIT);
 	input_b = new geInput(42, 8, 20, G_GUI_UNIT);
 	ok      = new geButton(66, 8, 70, G_GUI_UNIT, "Ok");

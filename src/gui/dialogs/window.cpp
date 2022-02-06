@@ -41,6 +41,7 @@ gdWindow::gdWindow(int x, int y, int w, int h, const char* title, int id)
 , id(id)
 , parent(nullptr)
 {
+	end();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -50,6 +51,7 @@ gdWindow::gdWindow(int w, int h, const char* title, int id)
 , id(id)
 , parent(nullptr)
 {
+	end();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -54,7 +54,6 @@ gdAbout::gdAbout()
 , vstLogo(8, 265, 324, 50)
 #endif
 {
-	end();
 	set_modal();
 
 	std::string version = G_VERSION_STR;
@@ -73,6 +72,10 @@ gdAbout::gdAbout()
 	                           "www.giadamusic.com")
 	                    .c_str());
 
+	add(logo);
+	add(text);
+	add(close);
+
 #ifdef WITH_VST
 
 	vstLogo.image(new Fl_Pixmap(vstLogo_xpm));
@@ -81,6 +84,9 @@ gdAbout::gdAbout()
 	    "VST Plug-In Technology by Steinberg\n"
 	    "VST is a trademark of Steinberg\nMedia Technologies GmbH");
 	vstText.position(vstText.x(), vstLogo.y() + vstLogo.h());
+
+	add(vstLogo);
+	add(vstText);
 
 #endif
 
