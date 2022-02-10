@@ -139,6 +139,13 @@ void gdWindow::debug() const
 
 /* -------------------------------------------------------------------------- */
 
+geompp::Rect<int> gdWindow::getContentBounds() const
+{
+	return {0, 0, w(), h()};
+}
+
+/* -------------------------------------------------------------------------- */
+
 gdWindow* gdWindow::getParent()
 {
 	return parent;

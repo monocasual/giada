@@ -27,6 +27,7 @@
 #ifndef GD_WINDOW_H
 #define GD_WINDOW_H
 
+#include "deps/geompp/src/rect.hpp"
 #include <FL/Fl_Double_Window.H>
 #include <vector>
 
@@ -61,6 +62,8 @@ public:
 
 	int  getId() const;
 	void debug() const;
+
+	geompp::Rect<int> getContentBounds() const;
 
 	void      addSubWindow(gdWindow* w);
 	void      delSubWindow(gdWindow* w);
