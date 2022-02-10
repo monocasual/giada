@@ -34,6 +34,7 @@ geBox::geBox(int x, int y, int w, int h, const char* l, Fl_Align al)
 {
 	copy_label(l);
 	box(FL_NO_BOX);
+	color(G_COLOR_GREY_1);
 	align(al | FL_ALIGN_INSIDE);
 }
 
@@ -41,7 +42,7 @@ geBox::geBox(int x, int y, int w, int h, const char* l, Fl_Align al)
 
 void geBox::draw()
 {
-	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_1); // Clear background
+	fl_rectf(x(), y(), w(), h(), color()); // Clear background
 
 	if (box() != FL_NO_BOX)
 		fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4); // Border
