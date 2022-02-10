@@ -40,6 +40,13 @@ geBox::geBox(int x, int y, int w, int h, const char* l, Fl_Align al)
 
 /* -------------------------------------------------------------------------- */
 
+geBox::geBox(const char* l, Fl_Align al)
+: geBox(0, 0, 0, 0, l, al)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geBox::draw()
 {
 	fl_rectf(x(), y(), w(), h(), color()); // Clear background

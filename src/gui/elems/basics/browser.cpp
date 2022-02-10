@@ -52,4 +52,11 @@ geBrowser::geBrowser(int x, int y, int w, int h)
 	hscrollbar.labelcolor(G_COLOR_LIGHT_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 }
+
+/* -------------------------------------------------------------------------- */
+
+geBrowser::geBrowser()
+: geBrowser(0, 0, 0, 0)
+{
+}
 } // namespace giada::v

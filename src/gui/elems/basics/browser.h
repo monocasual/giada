@@ -35,6 +35,7 @@ class geBrowser : public Fl_Browser
 {
 public:
 	geBrowser(int x, int y, int w, int h);
+	geBrowser();
 };
 } // namespace giada::v
 

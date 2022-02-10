@@ -44,6 +44,13 @@ geButton::geButton(int x, int y, int w, int h, const char* l,
 
 /* -------------------------------------------------------------------------- */
 
+geButton::geButton(const char* l, const char** imgOff, const char** imgOn, const char** imgDisabled)
+: geButton(0, 0, 0, 0, l, imgOff, imgOn, imgDisabled)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geButton::draw()
 {
 	//Fl_Button::draw();

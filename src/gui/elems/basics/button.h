@@ -39,9 +39,12 @@ public:
 	    const char** imgOff = nullptr, const char** imgOn = nullptr,
 	    const char** imgDisabled = nullptr);
 
+	geButton(const char* l = nullptr, const char** imgOff = nullptr,
+	    const char** imgOn = nullptr, const char** imgDisabled = nullptr);
+
 	void draw() override;
 
-  protected:
+protected:
 	void draw(const char** img, Fl_Color bgColor, Fl_Color textColor);
 
 	const char** imgOff;
