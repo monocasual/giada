@@ -88,6 +88,12 @@ public:
 
 	int countAvailablePlugins() const;
 
+	/* getPluginPath
+	Given a Plug-in string ID returns the path of the plug-in on disk. Returns
+	an empty string if the plug-in does not exist. */
+
+	std::string getPluginPath(const std::string& pid) const;
+
 	/* reset
 	Brings everything back to the initial state. */
 

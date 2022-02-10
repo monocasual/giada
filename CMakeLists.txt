@@ -114,6 +114,7 @@ list(APPEND SOURCES
 	src/gui/dialogs/sampleEditor.cpp
 	src/gui/dialogs/pluginWindowGUI.cpp
 	src/gui/dialogs/pluginChooser.cpp
+	src/gui/dialogs/missingAssets.cpp
 	src/gui/dialogs/actionEditor/baseActionEditor.cpp
 	src/gui/dialogs/actionEditor/sampleActionEditor.cpp
 	src/gui/dialogs/actionEditor/midiActionEditor.cpp

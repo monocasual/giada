@@ -47,6 +47,7 @@
 #include "gui/dialogs/midiIO/midiInputMaster.h"
 #include "gui/dialogs/midiIO/midiOutputMidiCh.h"
 #include "gui/dialogs/midiIO/midiOutputSampleCh.h"
+#include "gui/dialogs/missingAssets.h"
 #include "gui/dialogs/pluginChooser.h"
 #include "gui/dialogs/pluginList.h"
 #include "gui/dialogs/sampleEditor.h"
@@ -188,6 +189,14 @@ void openRenameChannelWindow(const c::channel::Data& data)
 {
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdChannelNameInput(data),
 	    WID_SAMPLE_NAME);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void openMissingAssetsWindow(const m::LoadState& state)
+{
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdMissingAssets(state),
+	    WID_MISSING_ASSETS);
 }
 
 /* -------------------------------------------------------------------------- */

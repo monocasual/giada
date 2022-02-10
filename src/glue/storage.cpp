@@ -39,6 +39,8 @@
 #include "core/sequencer.h"
 #include "core/wave.h"
 #include "core/waveManager.h"
+#include "glue/layout.h"
+#include "glue/main.h"
 #include "gui/dialogs/browser/browserLoad.h"
 #include "gui/dialogs/browser/browserSave.h"
 #include "gui/dialogs/mainWindow.h"
@@ -47,7 +49,6 @@
 #include "gui/elems/mainWindow/keyboard/column.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/ui.h"
-#include "main.h"
 #include "src/core/actions/actionRecorder.h"
 #include "storage.h"
 #include "utils/fs.h"
@@ -73,13 +74,15 @@ void loadProject(void* data)
 		p.setProgress(v);
 	};
 
-	if (int res = g_engine.load(projectPath, patchPath, progressCb); res != G_PATCH_OK)
+	m::LoadState state = g_engine.load(projectPath, patchPath, progressCb);
+
+	if (state.patch != G_PATCH_OK)
 	{
-		if (res == G_PATCH_UNREADABLE)
+		if (state.patch == G_PATCH_UNREADABLE)
 			v::gdAlert("This patch is unreadable.");
-		else if (res == G_PATCH_INVALID)
+		else if (state.patch == G_PATCH_INVALID)
 			v::gdAlert("This patch is not valid.");
-		else if (res == G_PATCH_UNSUPPORTED)
+		else if (state.patch == G_PATCH_UNSUPPORTED)
 			v::gdAlert("This patch format is no longer supported.");
 		return;
 	}
@@ -88,12 +91,8 @@ void loadProject(void* data)
 
 	g_ui.load(g_engine.patch.data);
 
-#ifdef WITH_VST
-
-	if (g_engine.pluginManager.hasMissingPlugins())
-		v::gdAlert("Some plug-ins were not loaded successfully.\nCheck the Plug-in Browser to know more.");
-
-#endif
+	if (!state.isGood())
+		layout::openMissingAssetsWindow(state);
 
 	browser->do_callback();
 }

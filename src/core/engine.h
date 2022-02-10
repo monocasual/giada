@@ -51,6 +51,15 @@
 
 namespace giada::m
 {
+struct LoadState
+{
+	bool isGood() const;
+
+	int                      patch          = G_PATCH_OK;
+	std::vector<std::string> missingWaves   = {};
+	std::vector<std::string> missingPlugins = {};
+};
+
 class Engine final
 {
 public:
@@ -69,9 +78,9 @@ public:
 
 	/* load
 	Reads a Patch from file and then de-serialize its content into the model. 
-	Returns G_PATCH_OK on success or any G_PATCH_* on failure. */
+	Returns a LoadState object. */
 
-	int load(const std::string& projectPath, const std::string& patchPath,
+	LoadState load(const std::string& projectPath, const std::string& patchPath,
 	    std::function<void(float)> progress);
 
 	/* updateMixerModel

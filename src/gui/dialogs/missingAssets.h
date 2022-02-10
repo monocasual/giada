@@ -24,11 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_GLUE_LAYOUT_H
-#define G_GLUE_LAYOUT_H
+#ifndef GD_MISSING_ASSETS_H
+#define GD_MISSING_ASSETS_H
 
-#include "core/types.h"
-#include <string>
+#include "gui/dialogs/window.h"
 
 namespace giada::m
 {
@@ -37,41 +36,11 @@ struct LoadState;
 
 namespace giada::v
 {
-class gdWindow;
-}
-
-namespace giada::c::channel
+class gdMissingAssets : public gdWindow
 {
-struct Data;
-}
-
-namespace giada::c::layout
-{
-void openBrowserForProjectLoad();
-void openBrowserForProjectSave();
-void openBrowserForSampleLoad(ID channelId);
-void openBrowserForSampleSave(ID channelId);
-void openAboutWindow();
-void openKeyGrabberWindow(const c::channel::Data&);
-void openBpmWindow(std::string bpmValue);
-void openBeatsWindow(int beats, int bars);
-void openConfigWindow();
-void openMasterMidiInputWindow();
-void openChannelMidiInputWindow(ID channelId);
-void openSampleChannelMidiOutputWindow(ID channelId);
-void openMidiChannelMidiOutputWindow(ID channelId);
-void openSampleActionEditor(ID channelId);
-void openMidiActionEditor(ID channelId);
-void openSampleEditor(ID channelId);
-void openRenameChannelWindow(const c::channel::Data&);
-void openMissingAssetsWindow(const m::LoadState&);
-#ifdef WITH_VST
-void openBrowserForPlugins(v::gdWindow& parent);
-void openChannelPluginListWindow(ID channelId);
-void openMasterInPluginListWindow();
-void openMasterOutPluginListWindow();
-void openPluginChooser(ID channelId);
-#endif
-} // namespace giada::c::layout
+public:
+	gdMissingAssets(const m::LoadState&);
+};
+} // namespace giada::v
 
 #endif

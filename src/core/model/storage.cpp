@@ -114,7 +114,7 @@ void store(Conf::Data& conf)
 
 /* -------------------------------------------------------------------------- */
 
-void load(const Patch::Data& patch)
+LoadState load(const Patch::Data& patch)
 {
 	DataLock lock = g_engine.model.lockData();
 
@@ -123,13 +123,22 @@ void load(const Patch::Data& patch)
 	g_engine.model.get().channels = {};
 	g_engine.model.getAllShared<ChannelSharedPtrs>().clear();
 
+	LoadState state;
+
 	/* Load external data first: plug-ins and waves. */
 
 #ifdef WITH_VST
 	g_engine.model.getAllShared<PluginPtrs>().clear();
 	for (const Patch::Plugin& pplugin : patch.plugins)
-		g_engine.model.getAllShared<PluginPtrs>().push_back(g_engine.pluginManager.deserializePlugin(
-		    pplugin, g_engine.kernelAudio.getSampleRate(), g_engine.kernelAudio.getBufferSize(), g_engine.sequencer));
+	{
+		std::unique_ptr<Plugin> p = g_engine.pluginManager.deserializePlugin(
+		    pplugin, g_engine.kernelAudio.getSampleRate(), g_engine.kernelAudio.getBufferSize(), g_engine.sequencer);
+
+		if (!p->valid)
+			state.missingPlugins.push_back(g_engine.pluginManager.getPluginPath(pplugin.path));
+
+		g_engine.model.getAllShared<PluginPtrs>().push_back(std::move(p));
+	}
 #endif
 
 	g_engine.model.getAllShared<WavePtrs>().clear();
@@ -139,6 +148,8 @@ void load(const Patch::Data& patch)
 		    g_engine.conf.data.rsmpQuality);
 		if (w != nullptr)
 			g_engine.model.getAllShared<WavePtrs>().push_back(std::move(w));
+		else
+			state.missingWaves.push_back(pwave.path);
 	}
 
 	/* Then load up channels, actions and global properties. */
@@ -151,6 +162,8 @@ void load(const Patch::Data& patch)
 	g_engine.model.get().sequencer.beats    = patch.beats;
 	g_engine.model.get().sequencer.bpm      = patch.bpm;
 	g_engine.model.get().sequencer.quantize = patch.quantize;
+
+	return state;
 }
 
 /* -------------------------------------------------------------------------- */

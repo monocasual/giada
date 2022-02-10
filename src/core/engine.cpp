@@ -33,6 +33,15 @@
 
 namespace giada::m
 {
+bool LoadState::isGood() const
+{
+	return patch == G_PATCH_OK && missingWaves.empty() && missingPlugins.empty();
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 Engine::Engine()
 : midiMapper(kernelMidi)
 , channelManager(conf.data, model)
@@ -366,7 +375,7 @@ bool Engine::store(const std::string& projectName, const std::string& projectPat
 
 /* -------------------------------------------------------------------------- */
 
-int Engine::load(const std::string& projectPath, const std::string& patchPath,
+LoadState Engine::load(const std::string& projectPath, const std::string& patchPath,
     std::function<void(float)> progress)
 {
 	u::log::print("[Engine::load] Load project from %s\n", projectPath);
@@ -375,7 +384,7 @@ int Engine::load(const std::string& projectPath, const std::string& patchPath,
 
 	patch.reset();
 	if (int res = patch.read(patchPath, projectPath); res != G_PATCH_OK)
-		return res;
+		return {res};
 
 	progress(0.3f);
 
@@ -383,7 +392,7 @@ int Engine::load(const std::string& projectPath, const std::string& patchPath,
 
 	mixer.disable();
 	reset();
-	m::model::load(patch.data);
+	LoadState state = m::model::load(patch.data);
 
 	progress(0.6f);
 
@@ -409,7 +418,8 @@ int Engine::load(const std::string& projectPath, const std::string& patchPath,
 
 	progress(1.0f);
 
-	return G_PATCH_OK;
+	state.patch = G_PATCH_OK;
+	return state;
 }
 
 } // namespace giada::m

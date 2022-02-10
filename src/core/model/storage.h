@@ -27,15 +27,16 @@
 #ifndef G_MODEL_STORAGE_H
 #define G_MODEL_STORAGE_H
 
-#include "core/patch.h"
 #include "core/conf.h"
+#include "core/engine.h"
+#include "core/patch.h"
 
 namespace giada::m::model
 {
-void store(Conf::Data& c);
-void store(Patch::Data& p);
-void load(const Patch::Data& p);
-void load(const Conf::Data& c);
+void      store(Conf::Data& c);
+void      store(Patch::Data& p);
+LoadState load(const Patch::Data& p);
+void      load(const Conf::Data& c);
 } // namespace giada::m::model
 
 #endif
