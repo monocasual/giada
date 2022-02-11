@@ -77,7 +77,7 @@ private:
 
 /* onRefresh --- TODO - wrong name */
 
-void onRefresh(bool gui, std::function<void(v::gdSampleEditor&)> f);
+void onRefresh(Thread, std::function<void(v::gdSampleEditor&)> f);
 
 /* getData
 Returns a Data object filled with data from a channel. */

@@ -115,7 +115,7 @@ std::vector<m::PluginManager::PluginInfo> getPluginsInfo();
 Updates the editor-less plug-in window. This is useless if the plug-in has an
 editor. */
 
-void updateWindow(ID pluginId, bool gui);
+void updateWindow(ID pluginId, Thread);
 
 void addPlugin(int pluginListIndex, ID channelId);
 void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId);

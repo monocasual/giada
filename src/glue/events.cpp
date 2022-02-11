@@ -116,7 +116,7 @@ void setChannelVolume(ID channelId, float v, Thread t)
 
 	pushEvent_({m::EventDispatcher::EventType::CHANNEL_VOLUME, 0, channelId, v}, t);
 
-	sampleEditor::onRefresh(t == Thread::MAIN, [v](v::gdSampleEditor& e) { e.volumeTool->update(v); });
+	sampleEditor::onRefresh(t, [v](v::gdSampleEditor& e) { e.volumeTool->update(v); });
 
 	if (t != Thread::MAIN)
 	{
@@ -133,7 +133,7 @@ void setChannelPitch(ID channelId, float v, Thread t)
 
 	pushEvent_({m::EventDispatcher::EventType::CHANNEL_PITCH, 0, channelId, v}, t);
 
-	sampleEditor::onRefresh(t == Thread::MAIN, [v](v::gdSampleEditor& e) { e.pitchTool->update(v); });
+	sampleEditor::onRefresh(t, [v](v::gdSampleEditor& e) { e.pitchTool->update(v); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -145,7 +145,7 @@ void sendChannelPan(ID channelId, float v)
 	/* Pan event is currently triggered only by the main thread. */
 	pushEvent_({m::EventDispatcher::EventType::CHANNEL_PAN, 0, channelId, v}, Thread::MAIN);
 
-	sampleEditor::onRefresh(/*gui=*/true, [v](v::gdSampleEditor& e) { e.panTool->update(v); });
+	sampleEditor::onRefresh(Thread::MAIN, [v](v::gdSampleEditor& e) { e.panTool->update(v); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -282,7 +282,7 @@ void setPluginParameter(ID channelId, ID pluginId, int paramIndex, float value, 
 		g_ui.mainWindow->keyboard->notifyMidiIn(channelId);
 	}
 	g_engine.pluginHost.setPluginParameter(pluginId, paramIndex, value);
-	c::plugin::updateWindow(pluginId, t == Thread::MAIN);
+	c::plugin::updateWindow(pluginId, t);
 }
 #endif
 } // namespace giada::c::events

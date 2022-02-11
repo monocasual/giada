@@ -137,7 +137,7 @@ std::vector<m::PluginManager::PluginInfo> getPluginsInfo()
 
 /* -------------------------------------------------------------------------- */
 
-void updateWindow(ID pluginId, bool gui)
+void updateWindow(ID pluginId, Thread t)
 {
 	m::Plugin* p = g_engine.model.findShared<m::Plugin>(pluginId);
 
@@ -156,9 +156,9 @@ void updateWindow(ID pluginId, bool gui)
 	if (child == nullptr)
 		return;
 
-	if (!gui)
+	if (t != Thread::MAIN)
 		u::gui::ScopedLock lock;
-	child->updateParameters(!gui);
+	child->updateParameters(t != Thread::MAIN);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -209,7 +209,7 @@ void freePlugin(const m::Plugin& plugin, ID channelId)
 void setProgram(ID pluginId, int programIndex)
 {
 	g_engine.pluginHost.setPluginProgram(pluginId, programIndex);
-	updateWindow(pluginId, /*gui=*/true);
+	updateWindow(pluginId, Thread::MAIN);
 }
 
 /* -------------------------------------------------------------------------- */

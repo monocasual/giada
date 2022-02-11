@@ -164,12 +164,12 @@ Data getData(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void onRefresh(bool gui, std::function<void(v::gdSampleEditor&)> f)
+void onRefresh(Thread t, std::function<void(v::gdSampleEditor&)> f)
 {
 	v::gdSampleEditor* se = static_cast<v::gdSampleEditor*>(g_ui.getSubwindow(*g_ui.mainWindow.get(), WID_SAMPLE_EDITOR));
 	if (se == nullptr)
 		return;
-	if (!gui)
+	if (t != Thread::MAIN)
 		u::gui::ScopedLock lock;
 	f(*se);
 }
