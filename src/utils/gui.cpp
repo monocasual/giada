@@ -84,6 +84,13 @@ geompp::Rect<int> getStringRect(const std::string& s)
 
 /* -------------------------------------------------------------------------- */
 
+geompp::Rect<int> getCenterWinBounds(int w, int h)
+{
+	return {centerWindowX(w), centerWindowY(h), w, h};
+}
+
+/* -------------------------------------------------------------------------- */
+
 std::string removeFltkChars(const std::string& s)
 {
 	std::string out = u::string::replace(s, "/", "-");
