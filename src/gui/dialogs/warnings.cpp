@@ -33,10 +33,17 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 
-namespace giada
+namespace giada::v
 {
-namespace v
+namespace
 {
+bool confirmRet_ = false;
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 void gdAlert(const char* c)
 {
 	gdWindow* modal = new gdWindow(
@@ -55,44 +62,29 @@ void gdAlert(const char* c)
 	modal->show();
 }
 
+/* -------------------------------------------------------------------------- */
+
 int gdConfirmWin(const char* title, const char* msg)
 {
-	gdWindow* win = new gdWindow(
-	    (Fl::w() / 2) - 150,
-	    (Fl::h() / 2) - 47,
-	    300, 90, title);
-	win->set_modal();
-	win->begin();
+	gdWindow win(u::gui::centerWindowX(300), u::gui::centerWindowY(90), 300, 90, title);
+	win.set_modal();
+	win.begin();
 	new geBox(10, 10, 280, 40, msg);
 	geButton* ok = new geButton(212, 62, 80, 20, "Ok");
 	geButton* ko = new geButton(124, 62, 80, 20, "Cancel");
-	win->end();
+	win.end();
+
 	ok->shortcut(FL_Enter);
-	u::gui::setFavicon(win);
-	win->show();
+	ok->onClick = [&win]() { confirmRet_ = true; win.hide(); };
 
-	/* no callbacks here. readqueue() check the event stack. */
+	ko->onClick = [&win]() { confirmRet_ = false; win.hide(); };
 
-	int r = 0;
-	while (true)
-	{
-		Fl_Widget* o = Fl::readqueue();
-		if (!o)
-			Fl::wait();
-		else if (o == ok)
-		{
-			r = 1;
-			break;
-		}
-		else if (o == ko)
-		{
-			r = 0;
-			break;
-		}
-	}
-	//delete win;
-	win->hide();
-	return r;
+	u::gui::setFavicon(&win);
+	win.show();
+
+	while (win.shown())
+		Fl::wait();
+
+	return confirmRet_;
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

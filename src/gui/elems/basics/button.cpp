@@ -32,6 +32,7 @@
 geButton::geButton(int x, int y, int w, int h, const char* l,
     const char** imgOff, const char** imgOn, const char** imgDisabled)
 : Fl_Button(x, y, w, h, l)
+, onClick(nullptr)
 , imgOff(imgOff)
 , imgOn(imgOn)
 , imgDisabled(imgDisabled)
@@ -40,6 +41,7 @@ geButton::geButton(int x, int y, int w, int h, const char* l,
 , bdColor(G_COLOR_GREY_4)
 , txtColor(G_COLOR_LIGHT_2)
 {
+	callback(cb_click);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -47,6 +49,15 @@ geButton::geButton(int x, int y, int w, int h, const char* l,
 geButton::geButton(const char* l, const char** imgOff, const char** imgOn, const char** imgDisabled)
 : geButton(0, 0, 0, 0, l, imgOff, imgOn, imgDisabled)
 {
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geButton::cb_click(Fl_Widget* w, void*)
+{
+	geButton* b = static_cast<geButton*>(w);
+	if (b->onClick != nullptr)
+		b->onClick();
 }
 
 /* -------------------------------------------------------------------------- */

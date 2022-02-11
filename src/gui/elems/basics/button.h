@@ -31,6 +31,7 @@
 #define GE_BUTTON_H
 
 #include <FL/Fl_Button.H>
+#include <functional>
 
 class geButton : public Fl_Button
 {
@@ -44,7 +45,11 @@ public:
 
 	void draw() override;
 
+	std::function<void()> onClick;
+
 protected:
+	static void cb_click(Fl_Widget*, void*);
+
 	void draw(const char** img, Fl_Color bgColor, Fl_Color textColor);
 
 	const char** imgOff;
