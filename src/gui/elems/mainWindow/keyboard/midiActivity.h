@@ -27,10 +27,6 @@
 #ifndef GE_MIDI_ACTIVITY_H
 #define GE_MIDI_ACTIVITY_H
 
-#include "core/types.h"
-#include "gui/elems/basics/group.h"
-#include "gui/elems/basics/pack.h"
-#include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Group.H>
 
@@ -42,7 +38,7 @@ public:
 	class geLed : public Fl_Button
 	{
 	public:
-		geLed(int x, int y, int w, int h);
+		geLed();
 
 		void draw() override;
 		void lit();
@@ -53,14 +49,8 @@ public:
 
 	geMidiActivity(int x, int y, int w, int h);
 
-	void resize(int x, int y, int w, int h) override;
-
 	geLed* out;
 	geLed* in;
-
-private:
-	Fl_Group* m_top;
-	Fl_Group* m_bot;
 };
 } // namespace giada::v
 
