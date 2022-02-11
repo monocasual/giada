@@ -39,6 +39,17 @@ class gdWindow;
 
 namespace giada::u::gui
 {
+/* ScopedLock
+ScopedLock for locking the main FLTK thread when the UI must be updated from a
+secondary thread. */
+
+class ScopedLock
+{
+public:
+	ScopedLock();
+	~ScopedLock();
+};
+
 void setFavicon(v::gdWindow* w);
 
 /* removeFltkChars
