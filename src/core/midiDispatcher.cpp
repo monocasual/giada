@@ -162,7 +162,8 @@ bool MidiDispatcher::isChannelMidiInAllowed(ID channelId, int c)
 
 #ifdef WITH_VST
 
-void MidiDispatcher::processPlugins(const std::vector<Plugin*>& plugins, const MidiEvent& midiEvent)
+void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& plugins,
+    const MidiEvent& midiEvent)
 {
 	uint32_t pure = midiEvent.getRawNoVelocity();
 	float    vf   = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, 1.0f);
@@ -178,7 +179,7 @@ void MidiDispatcher::processPlugins(const std::vector<Plugin*>& plugins, const M
 		{
 			if (pure != param.getValue())
 				continue;
-			c::events::setPluginParameter(p->id, param.getIndex(), vf, /*gui=*/false);
+			c::events::setPluginParameter(channelId, p->id, param.getIndex(), vf, Thread::MIDI);
 			u::log::print("  >>> [pluginId=%d paramIndex=%d] (pure=0x%X, value=%d, float=%f)\n",
 			    p->id, param.getIndex(), pure, midiEvent.getVelocity(), vf);
 		}
@@ -253,7 +254,7 @@ void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 
 #ifdef WITH_VST
 		/* Process learned plugins parameters. */
-		processPlugins(c.plugins, midiEvent);
+		processPlugins(c.id, c.plugins, midiEvent);
 #endif
 
 		/* Redirect raw MIDI message (pure + velocity) to plug-ins in armed

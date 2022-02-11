@@ -278,10 +278,16 @@ void toggleInputRecording()
 /* -------------------------------------------------------------------------- */
 
 #ifdef WITH_VST
-void setPluginParameter(ID pluginId, int paramIndex, float value, bool gui)
+void setPluginParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread t)
 {
+	if (t == Thread::MIDI)
+	{
+		Fl::lock();
+		g_ui.mainWindow->keyboard->notifyMidiIn(channelId);
+		Fl::unlock();
+	}
 	g_engine.pluginHost.setPluginParameter(pluginId, paramIndex, value);
-	c::plugin::updateWindow(pluginId, gui);
+	c::plugin::updateWindow(pluginId, t == Thread::MAIN);
 }
 #endif
 } // namespace giada::c::events

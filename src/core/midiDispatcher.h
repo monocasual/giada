@@ -89,8 +89,10 @@ private:
 	void learnMaster(MidiEvent e, int param, std::function<void()> doneCb);
 
 #ifdef WITH_VST
-	void processPlugins(const std::vector<Plugin*>& plugins, const MidiEvent& midiEvent);
-	void learnPlugin(MidiEvent e, std::size_t paramIndex, ID pluginId, std::function<void()> doneCb);
+	void processPlugins(ID channelId, const std::vector<Plugin*>& plugins,
+	    const MidiEvent& midiEvent);
+	void learnPlugin(MidiEvent e, std::size_t paramIndex, ID pluginId,
+	    std::function<void()> doneCb);
 #endif
 
 	/* cb_midiLearn
