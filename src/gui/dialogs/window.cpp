@@ -56,6 +56,13 @@ gdWindow::gdWindow(int w, int h, const char* title, int id)
 
 /* -------------------------------------------------------------------------- */
 
+gdWindow::gdWindow(geompp::Rect<int> r, const char* title, int id)
+: gdWindow(r.x, r.y, r.w, r.h, title, id)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 gdWindow::~gdWindow()
 {
 	/* delete all subwindows in order to empty the stack */

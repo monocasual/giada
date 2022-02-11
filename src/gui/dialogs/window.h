@@ -43,6 +43,7 @@ class gdWindow : public Fl_Double_Window
 public:
 	gdWindow(int x, int y, int w, int h, const char* title = 0, int id = 0);
 	gdWindow(int w, int h, const char* title = 0, int id = 0);
+	gdWindow(geompp::Rect<int>, const char* title = 0, int id = 0);
 	~gdWindow();
 
 	static void cb_closeChild(Fl_Widget* /*w*/, void* p);
