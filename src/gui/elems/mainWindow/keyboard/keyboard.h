@@ -33,10 +33,9 @@
 #include <functional>
 #include <vector>
 
-class geButton;
-
 namespace giada::v
 {
+class geButton;
 class geResizerBar;
 class geColumn;
 class geChannel;

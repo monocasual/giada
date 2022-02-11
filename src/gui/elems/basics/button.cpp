@@ -29,6 +29,8 @@
 #include "utils/gui.h"
 #include <FL/fl_draw.H>
 
+namespace giada::v
+{
 geButton::geButton(int x, int y, int w, int h, const char* l,
     const char** imgOff, const char** imgOn, const char** imgDisabled)
 : Fl_Button(x, y, w, h, l)
@@ -96,3 +98,4 @@ void geButton::draw(const char** img, Fl_Color bgColor, Fl_Color textColor)
 		fl_draw(giada::u::gui::truncate(label(), w() - 16).c_str(), x() + 2, y(), w() - 2, h(), FL_ALIGN_CENTER);
 	}
 }
+} // namespace giada::v

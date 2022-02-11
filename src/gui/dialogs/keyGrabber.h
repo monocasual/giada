@@ -31,7 +31,6 @@
 #include <FL/Fl.H>
 
 class geBox;
-class geButton;
 
 namespace giada::c::channel
 {
@@ -40,6 +39,7 @@ struct Data;
 
 namespace giada::v
 {
+class geButton;
 class gdKeyGrabber : public gdWindow
 {
 public:

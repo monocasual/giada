@@ -34,12 +34,12 @@
 #include <string>
 
 class geBox;
-class geButton;
 
 namespace giada
 {
 namespace v
 {
+class geButton;
 class geMidiLearner : public gePack
 {
 public:
@@ -57,7 +57,7 @@ public:
 	std::function<void()>         onStopLearn;
 	std::function<void(uint32_t)> onClearLearn;
 
-  protected:
+protected:
 	/* m_param
 	Parameter index to be learnt. */
 
@@ -67,7 +67,7 @@ public:
 	geButton m_valueBtn;
 	geButton m_button;
 
-  private:
+private:
 	static void cb_button(Fl_Widget* /*w*/, void* p);
 	static void cb_value(Fl_Widget* /*w*/, void* p);
 

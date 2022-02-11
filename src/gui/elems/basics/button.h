@@ -33,6 +33,8 @@
 #include <FL/Fl_Button.H>
 #include <functional>
 
+namespace giada::v
+{
 class geButton : public Fl_Button
 {
 public:
@@ -61,5 +63,6 @@ protected:
 	Fl_Color bdColor;  // border
 	Fl_Color txtColor; // text
 };
+} // namespace giada::v
 
 #endif

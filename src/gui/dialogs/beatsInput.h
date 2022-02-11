@@ -30,11 +30,11 @@
 #include "window.h"
 
 class geInput;
-class geButton;
 class geCheck;
 
 namespace giada::v
 {
+class geButton;
 class gdBeatsInput : public gdWindow
 {
 public:

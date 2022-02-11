@@ -33,7 +33,6 @@
 #include "gui/elems/midiIO/midiLearner.h"
 #include "gui/elems/midiIO/midiLearnerPack.h"
 
-class geButton;
 class geCheck;
 
 /* There's no such thing as a gdMidiOutputMaster vs gdMidiOutputChannel. MIDI
@@ -47,6 +46,7 @@ namespace giada
 {
 namespace v
 {
+class geButton;
 class geLightningLearnerPack : public geMidiLearnerPack
 {
 public:
@@ -63,7 +63,7 @@ public:
 	gdMidiOutputBase(int w, int h, ID channelId);
 	~gdMidiOutputBase();
 
-  protected:
+protected:
 	/* cb_close
 	close current window. */
 

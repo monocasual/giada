@@ -31,13 +31,13 @@
 
 class geDial;
 class geInput;
-class geButton;
 class geBox;
 
 namespace giada
 {
 namespace v
 {
+class geButton;
 class geBoostTool : public Fl_Pack
 {
 public:
@@ -45,7 +45,7 @@ public:
 
 	void rebuild();
 
-  private:
+private:
 	static void cb_setBoost(Fl_Widget* /*w*/, void* p);
 	static void cb_setBoostNum(Fl_Widget* /*w*/, void* p);
 	static void cb_normalize(Fl_Widget* /*w*/, void* p);

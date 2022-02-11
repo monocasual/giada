@@ -32,11 +32,11 @@
 #include <FL/Fl_Group.H>
 
 class geCheck;
-class geButton;
 class geInput;
 
 namespace giada::v
 {
+class geButton;
 class geTabAudio : public Fl_Group
 {
 public:

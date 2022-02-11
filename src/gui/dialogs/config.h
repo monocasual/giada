@@ -30,13 +30,13 @@
 #include "core/conf.h"
 #include "window.h"
 
-class geButton;
 class geCheck;
 class geInput;
 class geBox;
 
 namespace giada::v
 {
+class geButton;
 class geChoice;
 class geTabAudio;
 class geTabBehaviors;

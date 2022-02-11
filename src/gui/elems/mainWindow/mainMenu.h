@@ -29,8 +29,6 @@
 
 #include "gui/elems/basics/pack.h"
 
-class geButton;
-
 namespace giada::v
 {
 class geMainMenu : public gePack

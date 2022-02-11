@@ -33,10 +33,9 @@
 #include "glue/plugin.h"
 #include "window.h"
 
-class geButton;
-
 namespace giada::v
 {
+class geButton;
 class geLiquidScroll;
 class gePluginElement;
 class gdPluginList : public gdWindow

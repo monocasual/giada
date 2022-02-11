@@ -35,11 +35,9 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>
 
-class geButton;
-class geButton;
-
 namespace giada::v
 {
+class geButton;
 class geChoice;
 class gePluginBrowser;
 

@@ -27,15 +27,13 @@
 #ifndef GD_EDITOR_H
 #define GD_EDITOR_H
 
-#include "core/types.h"
 #include "core/conf.h"
+#include "core/types.h"
 #include "glue/sampleEditor.h"
 #include "window.h"
 
-class geButton;
 class geCheck;
 class geBox;
-class geButton;
 class geStatusButton;
 
 namespace giada::m
@@ -45,6 +43,7 @@ class Wave;
 
 namespace giada::v
 {
+class geButton;
 class geChoice;
 class gePack;
 class geGroup;

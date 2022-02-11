@@ -31,11 +31,11 @@
 #include "gui/dialogs/window.h"
 #include "gui/elems/midiIO/midiLearner.h"
 
-class geButton;
 class geCheck;
 
 namespace giada::v
 {
+class geButton;
 class geChoice;
 class gdMidiInputBase : public gdWindow
 {

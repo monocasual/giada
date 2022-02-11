@@ -32,10 +32,9 @@
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/pack.h"
 
-class geButton;
-
 namespace giada::v
 {
+class geButton;
 class geChoice;
 class geMainTimer : public gePack
 {
@@ -55,7 +54,7 @@ public:
 
 	void setLock(bool v);
 
-  private:
+private:
 	static void cb_bpm(Fl_Widget* /*w*/, void* p);
 	static void cb_meter(Fl_Widget* /*w*/, void* p);
 	static void cb_quantizer(Fl_Widget* /*w*/, void* p);

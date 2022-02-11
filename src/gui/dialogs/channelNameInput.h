@@ -30,20 +30,21 @@
 #include "window.h"
 
 class geInput;
-class geButton;
 
 namespace giada::c::channel
 {
 struct Data;
 }
+
 namespace giada::v
 {
+class geButton;
 class gdChannelNameInput : public gdWindow
 {
 public:
 	gdChannelNameInput(const c::channel::Data& d);
 
-  private:
+private:
 	static void cb_update(Fl_Widget* /*w*/, void* p);
 	static void cb_cancel(Fl_Widget* /*w*/, void* p);
 	void        cb_update();
