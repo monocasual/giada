@@ -30,14 +30,9 @@
 #include "core/conf.h"
 #include "window.h"
 
-class geCheck;
-class geInput;
-class geBox;
-
 namespace giada::v
 {
 class geButton;
-class geChoice;
 class geTabAudio;
 class geTabBehaviors;
 class geTabMidi;
@@ -57,14 +52,9 @@ public:
 #ifdef WITH_VST
 	geTabPlugins* tabPlugins;
 #endif
-	geButton* save;
-	geButton* cancel;
 
 private:
-	static void cb_save_config(Fl_Widget* /*w*/, void* p);
-	static void cb_cancel(Fl_Widget* /*w*/, void* p);
-	void        cb_save_config();
-	void        cb_cancel();
+	void saveConfig();
 };
 } // namespace giada::v
 
