@@ -170,10 +170,8 @@ void onRefresh(bool gui, std::function<void(v::gdSampleEditor&)> f)
 	if (se == nullptr)
 		return;
 	if (!gui)
-		Fl::lock();
+		u::gui::ScopedLock lock;
 	f(*se);
-	if (!gui)
-		Fl::unlock();
 }
 
 v::gdSampleEditor* getSampleEditorWindow()

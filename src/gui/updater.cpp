@@ -48,9 +48,8 @@ void Updater::init(m::model::Model& model)
 		/* This callback is fired by the updater thread, so it requires
 		synchronization with the main one. */
 
-		Fl::lock();
+		u::gui::ScopedLock lock;
 		type == m::model::SwapType::HARD ? m_ui.rebuild() : m_ui.refresh();
-		Fl::unlock();
 	};
 
 	Fl::add_timeout(G_GUI_REFRESH_RATE, update, this);

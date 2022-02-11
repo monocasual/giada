@@ -157,10 +157,8 @@ void updateWindow(ID pluginId, bool gui)
 		return;
 
 	if (!gui)
-		Fl::lock();
+		u::gui::ScopedLock lock;
 	child->updateParameters(!gui);
-	if (!gui)
-		Fl::unlock();
 }
 
 /* -------------------------------------------------------------------------- */

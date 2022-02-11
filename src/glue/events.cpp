@@ -74,9 +74,8 @@ void pushEvent_(m::EventDispatcher::Event e, Thread t)
 	else if (t == Thread::MIDI)
 	{
 		res = g_engine.eventDispatcher.MidiEvents.push(e);
-		Fl::lock();
+		u::gui::ScopedLock lock;
 		g_ui.mainWindow->keyboard->notifyMidiIn(e.channelId);
-		Fl::unlock();
 	}
 	else
 	{
@@ -121,9 +120,8 @@ void setChannelVolume(ID channelId, float v, Thread t)
 
 	if (t != Thread::MAIN)
 	{
-		Fl::lock();
+		u::gui::ScopedLock lock;
 		g_ui.mainWindow->keyboard->setChannelVolume(channelId, v);
-		Fl::unlock();
 	}
 }
 
@@ -201,9 +199,8 @@ void setMasterInVolume(float v, Thread t)
 
 	if (t != Thread::MAIN)
 	{
-		Fl::lock();
+		u::gui::ScopedLock lock;
 		g_ui.mainWindow->mainIO->setInVol(v);
-		Fl::unlock();
 	}
 }
 
@@ -213,9 +210,8 @@ void setMasterOutVolume(float v, Thread t)
 
 	if (t != Thread::MAIN)
 	{
-		Fl::lock();
+		u::gui::ScopedLock lock;
 		g_ui.mainWindow->mainIO->setOutVol(v);
-		Fl::unlock();
 	}
 }
 
@@ -282,9 +278,8 @@ void setPluginParameter(ID channelId, ID pluginId, int paramIndex, float value, 
 {
 	if (t == Thread::MIDI)
 	{
-		Fl::lock();
+		u::gui::ScopedLock lock;
 		g_ui.mainWindow->keyboard->notifyMidiIn(channelId);
-		Fl::unlock();
 	}
 	g_engine.pluginHost.setPluginParameter(pluginId, paramIndex, value);
 	c::plugin::updateWindow(pluginId, t == Thread::MAIN);
