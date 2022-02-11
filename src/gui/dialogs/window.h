@@ -33,11 +33,6 @@
 
 namespace giada::v
 {
-/* cb_window_closer
-Callback for closing windows. Deletes the widget (delete). */
-
-void cb_window_closer(Fl_Widget* /*w*/, void* p);
-
 class gdWindow : public Fl_Double_Window
 {
 public:

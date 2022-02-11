@@ -29,13 +29,6 @@
 
 namespace giada::v
 {
-void cb_window_closer(Fl_Widget* /*v*/, void* p)
-{
-	delete (Fl_Window*)p;
-}
-
-/* -------------------------------------------------------------------------- */
-
 gdWindow::gdWindow(int x, int y, int w, int h, const char* title, int id)
 : Fl_Double_Window(x, y, w, h, title)
 , id(id)

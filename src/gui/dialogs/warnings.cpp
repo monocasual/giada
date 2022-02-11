@@ -44,29 +44,31 @@ bool confirmRet_ = false;
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void gdAlert(const char* c)
+void gdAlert(const char* msg)
 {
-	gdWindow* modal = new gdWindow(
-	    (Fl::w() / 2) - 150,
-	    (Fl::h() / 2) - 47,
-	    300, 90, "Alert");
-	modal->set_modal();
-	modal->begin();
-	geBox*    box = new geBox(10, 10, 280, 40, c);
+	gdWindow win(u::gui::getCenterWinBounds(300, 90), "Alert");
+	win.set_modal();
+	win.begin();
+	geBox*    box = new geBox(10, 10, 280, 40, msg);
 	geButton* b   = new geButton(210, 60, 80, 20, "Close");
-	modal->end();
+	win.end();
 	box->labelsize(G_GUI_FONT_SIZE_BASE);
-	b->callback(cb_window_closer, (void*)modal);
+
 	b->shortcut(FL_Enter);
-	u::gui::setFavicon(modal);
-	modal->show();
+	b->onClick = [&win]() { win.hide(); };
+
+	u::gui::setFavicon(&win);
+	win.show();
+
+	while (win.shown())
+		Fl::wait();
 }
 
 /* -------------------------------------------------------------------------- */
 
 int gdConfirmWin(const char* title, const char* msg)
 {
-	gdWindow win(u::gui::centerWindowX(300), u::gui::centerWindowY(90), 300, 90, title);
+	gdWindow win(u::gui::getCenterWinBounds(300, 90), title);
 	win.set_modal();
 	win.begin();
 	new geBox(10, 10, 280, 40, msg);
