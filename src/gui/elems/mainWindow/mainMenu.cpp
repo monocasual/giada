@@ -38,43 +38,29 @@
 namespace giada::v
 {
 geMainMenu::geMainMenu(int x, int y)
-: gePack(x, y, Direction::HORIZONTAL)
+: gePack(x, y, Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
-	file   = new geButton(0, 0, 70, 21, "file");
-	edit   = new geButton(0, 0, 70, 21, "edit");
-	config = new geButton(0, 0, 70, 21, "config");
-	about  = new geButton(0, 0, 70, 21, "about");
+	geButton* file   = new geButton(0, 0, 70, G_GUI_UNIT, "File");
+	geButton* edit   = new geButton(0, 0, 70, G_GUI_UNIT, "Edit");
+	geButton* config = new geButton(0, 0, 70, G_GUI_UNIT, "Config");
+	geButton* about  = new geButton(0, 0, 70, G_GUI_UNIT, "About");
 	add(file);
 	add(edit);
 	add(config);
 	add(about);
 
-	resizable(nullptr); // don't resize any widget
+	resizable(nullptr);
 
-	file->callback(cb_file, (void*)this);
-	edit->callback(cb_edit, (void*)this);
-
-	about->callback([](Fl_Widget* /*w*/, void* /*v*/) {
-		c::layout::openAboutWindow();
-	});
-	config->callback([](Fl_Widget* /*w*/, void* /*v*/) {
-		c::layout::openConfigWindow();
-	});
+	file->onClick   = [this]() { cb_file(); };
+	edit->onClick   = [this]() { cb_edit(); };
+	about->onClick  = []() { c::layout::openAboutWindow(); };
+	config->onClick = []() { c::layout::openConfigWindow(); };
 }
-
-/* -------------------------------------------------------------------------- */
-
-void geMainMenu::cb_file(Fl_Widget* /*w*/, void* p) { ((geMainMenu*)p)->cb_file(); }
-void geMainMenu::cb_edit(Fl_Widget* /*w*/, void* p) { ((geMainMenu*)p)->cb_edit(); }
 
 /* -------------------------------------------------------------------------- */
 
 void geMainMenu::cb_file()
 {
-	using namespace giada::m;
-
-	/* An Fl_Menu_Button is made of many Fl_Menu_Item */
-
 	Fl_Menu_Item menu[] = {
 	    u::gui::makeMenuItem("Open project..."),
 	    u::gui::makeMenuItem("Save project..."),

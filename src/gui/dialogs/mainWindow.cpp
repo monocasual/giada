@@ -89,7 +89,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 
-	mainMenu = new v::geMainMenu(8, 0);
+	mainMenu = new v::geMainMenu(8, 8);
 #if defined(WITH_VST)
 	mainIO = new v::geMainIO(412, 8);
 #else
