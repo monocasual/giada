@@ -69,14 +69,17 @@ private:
 
 		void resize(int pos, int size);
 
+		int size;
+
 	private:
 		Fl_Widget& m_w;
 		geFlex&    m_parent;
-		int        m_size;
 		Direction  m_dir;
 	};
 
 	void resize(int x, int y, int w, int h) override;
+
+	void layWidgets(int startPos, int sizeIfLiquid = 0);
 
 	Direction         m_direction;
 	int               m_gutter;

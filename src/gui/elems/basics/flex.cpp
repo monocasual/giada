@@ -4,9 +4,9 @@
 namespace giada::v
 {
 geFlex::Elem::Elem(Fl_Widget& w, geFlex& parent, Direction d, int size)
-: m_w(w)
+: size(size)
+, m_w(w)
 , m_parent(parent)
-, m_size(size)
 , m_dir(d)
 {
 }
@@ -16,7 +16,7 @@ geFlex::Elem::Elem(Fl_Widget& w, geFlex& parent, Direction d, int size)
 int geFlex::Elem::getSize() const
 {
 	if (isFixed())
-		return m_size;
+		return size;
 	return m_dir == Direction::VERTICAL ? m_w.h() : m_w.w();
 }
 
@@ -24,17 +24,17 @@ int geFlex::Elem::getSize() const
 
 bool geFlex::Elem::isFixed() const
 {
-	return m_size != -1;
+	return size != -1;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geFlex::Elem::resize(int pos, int size)
+void geFlex::Elem::resize(int pos, int newSize)
 {
 	if (m_dir == Direction::VERTICAL)
-		m_w.resize(m_parent.x(), pos, m_parent.w(), isFixed() ? m_size : size);
+		m_w.resize(m_parent.x(), pos, m_parent.w(), newSize);
 	else
-		m_w.resize(pos, m_parent.y(), isFixed() ? m_size : size, m_parent.h());
+		m_w.resize(pos, m_parent.y(), newSize, m_parent.h());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -83,26 +83,40 @@ void geFlex::add(Fl_Widget* w, int size)
 
 void geFlex::resize(int X, int Y, int W, int H)
 {
-	Fl_Widget::resize(X, Y, W, H);
+	Fl_Group::resize(X, Y, W, H);
+
+	const size_t numAllElems    = m_elems.size();
+	const size_t numLiquidElems = numAllElems - m_numFixed;
 
 	const int pos  = m_direction == Direction::VERTICAL ? y() : x();
 	const int size = m_direction == Direction::VERTICAL ? h() : w();
 
+	/* No fancy computations if there are no liquid elements. Just lay children
+	according to their fixed size. */
+
+	if (numLiquidElems == 0)
+	{
+		layWidgets(pos);
+		return;
+	}
+
 	const int fixedElemsSize = std::accumulate(m_elems.begin(), m_elems.end(), 0, [](int acc, const Elem& e) {
 		return e.isFixed() ? acc + e.getSize() : acc;
 	});
+	const int availableSize  = size - (m_gutter * (numAllElems - 1)); // Total size - gutters
+	const int liquidElemSize = (availableSize - fixedElemsSize) / numLiquidElems;
 
-	const size_t numAllElems    = m_elems.size();
-	const size_t numLiquidElems = numAllElems - m_numFixed;
-	const int    availableSize  = size - (m_gutter * (numAllElems - 1)); // Total size - gutters
-	const int    liquidElemSize = (availableSize - fixedElemsSize) / numLiquidElems;
+	layWidgets(pos, liquidElemSize);
+}
 
-	// Set elements to remaining size.
+/* -------------------------------------------------------------------------- */
 
-	int nextElemPos = pos;
+void geFlex::layWidgets(int startPos, int sizeIfLiquid)
+{
+	int nextElemPos = startPos;
 	for (Elem& e : m_elems)
 	{
-		e.resize(nextElemPos, liquidElemSize);
+		e.resize(nextElemPos, e.isFixed() ? e.size : sizeIfLiquid);
 		nextElemPos += e.getSize() + m_gutter;
 	}
 }
