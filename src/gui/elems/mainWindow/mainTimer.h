@@ -28,8 +28,6 @@
 #define GE_MAIN_TIMER_H
 
 #include "glue/main.h"
-#include "gui/elems/basics/button.h"
-#include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/pack.h"
 
 namespace giada::v
@@ -55,24 +53,13 @@ public:
 	void setLock(bool v);
 
 private:
-	static void cb_bpm(Fl_Widget* /*w*/, void* p);
-	static void cb_meter(Fl_Widget* /*w*/, void* p);
-	static void cb_quantizer(Fl_Widget* /*w*/, void* p);
-	static void cb_multiplier(Fl_Widget* /*w*/, void* p);
-	static void cb_divider(Fl_Widget* /*w*/, void* p);
-	void        cb_bpm();
-	void        cb_meter();
-	void        cb_quantizer();
-	void        cb_multiplier();
-	void        cb_divider();
-
 	c::main::Timer m_timer;
 
-	geButton m_bpm;
-	geButton m_meter;
-	geChoice m_quantizer;
-	geButton m_multiplier;
-	geButton m_divider;
+	geButton* m_bpm;
+	geButton* m_meter;
+	geChoice* m_quantizer;
+	geButton* m_multiplier;
+	geButton* m_divider;
 };
 } // namespace giada::v
 

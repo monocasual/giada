@@ -39,82 +39,40 @@ namespace giada::v
 {
 geMainTimer::geMainTimer(int x, int y)
 : gePack(x, y, Direction::HORIZONTAL)
-, m_bpm(0, 0, 60, G_GUI_UNIT)
-, m_meter(0, 0, 60, G_GUI_UNIT)
-, m_quantizer(0, 0, 60, G_GUI_UNIT, "", false)
-, m_multiplier(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", multiplyOff_xpm, multiplyOn_xpm)
-, m_divider(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", divideOff_xpm, divideOn_xpm)
 {
-	add(&m_quantizer);
-	add(&m_bpm);
-	add(&m_meter);
-	add(&m_multiplier);
-	add(&m_divider);
+	m_bpm        = new geButton(0, 0, 60, G_GUI_UNIT);
+	m_meter      = new geButton(0, 0, 60, G_GUI_UNIT);
+	m_quantizer  = new geChoice(0, 0, 60, G_GUI_UNIT, "", false);
+	m_multiplier = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", multiplyOff_xpm, multiplyOn_xpm);
+	m_divider    = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", divideOff_xpm, divideOn_xpm);
+	add(m_quantizer);
+	add(m_bpm);
+	add(m_meter);
+	add(m_multiplier);
+	add(m_divider);
 
 	resizable(nullptr); // don't resize any widget
 
-	m_bpm.copy_tooltip("Beats per minute (BPM)");
-	m_meter.copy_tooltip("Beats and bars");
-	m_quantizer.copy_tooltip("Live quantizer");
-	m_multiplier.copy_tooltip("Beat multiplier");
-	m_divider.copy_tooltip("Beat divider");
+	m_bpm->copy_tooltip("Beats per minute (BPM)");
+	m_meter->copy_tooltip("Beats and bars");
+	m_quantizer->copy_tooltip("Live quantizer");
+	m_multiplier->copy_tooltip("Beat multiplier");
+	m_divider->copy_tooltip("Beat divider");
 
-	m_bpm.callback(cb_bpm, (void*)this);
-	m_meter.callback(cb_meter, (void*)this);
-	m_multiplier.callback(cb_multiplier, (void*)this);
-	m_divider.callback(cb_divider, (void*)this);
+	m_bpm->onClick        = [&bpm = m_bpm]() { c::layout::openBpmWindow(bpm->label()); };
+	m_meter->onClick      = [&timer = m_timer]() { c::layout::openBeatsWindow(timer.beats, timer.bars); };
+	m_multiplier->onClick = []() { c::events::multiplyBeats(); };
+	m_divider->onClick    = []() { c::events::divideBeats(); };
 
-	m_quantizer.add("off", 0, cb_quantizer, (void*)this);
-	m_quantizer.add("1\\/1", 0, cb_quantizer, (void*)this);
-	m_quantizer.add("1\\/2", 0, cb_quantizer, (void*)this);
-	m_quantizer.add("1\\/3", 0, cb_quantizer, (void*)this);
-	m_quantizer.add("1\\/4", 0, cb_quantizer, (void*)this);
-	m_quantizer.add("1\\/6", 0, cb_quantizer, (void*)this);
-	m_quantizer.add("1\\/8", 0, cb_quantizer, (void*)this);
-	m_quantizer.value(0); //  "off" by default
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geMainTimer::cb_bpm(Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_bpm(); }
-void geMainTimer::cb_meter(Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_meter(); }
-void geMainTimer::cb_quantizer(Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_quantizer(); }
-void geMainTimer::cb_multiplier(Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_multiplier(); }
-void geMainTimer::cb_divider(Fl_Widget* /*w*/, void* p) { ((geMainTimer*)p)->cb_divider(); }
-
-/* -------------------------------------------------------------------------- */
-
-void geMainTimer::cb_bpm()
-{
-	c::layout::openBpmWindow(m_bpm.label());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geMainTimer::cb_meter()
-{
-	c::layout::openBeatsWindow(m_timer.beats, m_timer.bars);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geMainTimer::cb_quantizer()
-{
-	c::main::quantize(m_quantizer.value());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geMainTimer::cb_multiplier()
-{
-	c::events::multiplyBeats();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geMainTimer::cb_divider()
-{
-	c::events::divideBeats();
+	m_quantizer->addItem("off");
+	m_quantizer->addItem("1\\/1");
+	m_quantizer->addItem("1\\/2");
+	m_quantizer->addItem("1\\/3");
+	m_quantizer->addItem("1\\/4");
+	m_quantizer->addItem("1\\/6");
+	m_quantizer->addItem("1\\/8");
+	m_quantizer->showItem(1); //  "off" by default
+	m_quantizer->onChange = [](ID value) { c::main::quantize(value); };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -125,17 +83,17 @@ void geMainTimer::refresh()
 
 	if (m_timer.isRecordingInput)
 	{
-		m_bpm.deactivate();
-		m_meter.deactivate();
-		m_multiplier.deactivate();
-		m_divider.deactivate();
+		m_bpm->deactivate();
+		m_meter->deactivate();
+		m_multiplier->deactivate();
+		m_divider->deactivate();
 	}
 	else
 	{
-		m_bpm.activate();
-		m_meter.activate();
-		m_multiplier.activate();
-		m_divider.activate();
+		m_bpm->activate();
+		m_meter->activate();
+		m_multiplier->activate();
+		m_divider->activate();
 	}
 }
 
@@ -154,12 +112,12 @@ void geMainTimer::rebuild()
 
 void geMainTimer::setBpm(const char* v)
 {
-	m_bpm.copy_label(v);
+	m_bpm->copy_label(v);
 }
 
 void geMainTimer::setBpm(float v)
 {
-	m_bpm.copy_label(u::string::fToString(v, 1).c_str()); // Only 1 decimal place (e.g. 120.0)
+	m_bpm->copy_label(u::string::fToString(v, 1).c_str()); // Only 1 decimal place (e.g. 120.0)
 }
 
 /* -------------------------------------------------------------------------- */
@@ -168,17 +126,17 @@ void geMainTimer::setLock(bool v)
 {
 	if (v)
 	{
-		m_bpm.deactivate();
-		m_meter.deactivate();
-		m_multiplier.deactivate();
-		m_divider.deactivate();
+		m_bpm->deactivate();
+		m_meter->deactivate();
+		m_multiplier->deactivate();
+		m_divider->deactivate();
 	}
 	else
 	{
-		m_bpm.activate();
-		m_meter.activate();
-		m_multiplier.activate();
-		m_divider.activate();
+		m_bpm->activate();
+		m_meter->activate();
+		m_multiplier->activate();
+		m_divider->activate();
 	}
 }
 
@@ -186,7 +144,7 @@ void geMainTimer::setLock(bool v)
 
 void geMainTimer::setQuantizer(int q)
 {
-	m_quantizer.value(q);
+	m_quantizer->value(q);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -194,6 +152,6 @@ void geMainTimer::setQuantizer(int q)
 void geMainTimer::setMeter(int beats, int bars)
 {
 	std::string s = std::to_string(beats) + "/" + std::to_string(bars);
-	m_meter.copy_label(s.c_str());
+	m_meter->copy_label(s.c_str());
 }
 } // namespace giada::v
