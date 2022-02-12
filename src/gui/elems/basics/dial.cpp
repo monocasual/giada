@@ -32,6 +32,7 @@ namespace giada::v
 {
 geDial::geDial(int x, int y, int w, int h, const char* l)
 : Fl_Dial(x, y, w, h, l)
+, onChange(nullptr)
 {
 	labelsize(G_GUI_FONT_SIZE_BASE);
 	labelcolor(G_COLOR_LIGHT_2);
@@ -40,6 +41,16 @@ geDial::geDial(int x, int y, int w, int h, const char* l)
 	angles(0, 360);
 	color(G_COLOR_GREY_2);           // background
 	selection_color(G_COLOR_GREY_4); // selection
+	callback(cb_change);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geDial::cb_change(Fl_Widget* w, void*)
+{
+	geDial* d = static_cast<geDial*>(w);
+	if (d->onChange != nullptr)
+		d->onChange(d->value());
 }
 
 /* -------------------------------------------------------------------------- */

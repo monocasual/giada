@@ -28,6 +28,7 @@
 #define GE_DIAL_H
 
 #include <FL/Fl_Dial.H>
+#include <functional>
 
 namespace giada::v
 {
@@ -36,7 +37,12 @@ class geDial : public Fl_Dial
 public:
 	geDial(int x, int y, int w, int h, const char* l = 0);
 
-	void draw();
+	void draw() override;
+
+	std::function<void(float)> onChange;
+
+private:
+	static void cb_change(Fl_Widget*, void*);
 };
 } // namespace giada::v
 
