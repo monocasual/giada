@@ -3,11 +3,12 @@
 
 namespace giada::v
 {
-geFlex::Elem::Elem(Fl_Widget& w, geFlex& parent, Direction d, int size)
+geFlex::Elem::Elem(Fl_Widget& w, geFlex& parent, Direction d, int size, geompp::Border<int> pad)
 : size(size)
 , m_w(w)
 , m_parent(parent)
 , m_dir(d)
+, m_pad(pad)
 {
 }
 
@@ -31,10 +32,14 @@ bool geFlex::Elem::isFixed() const
 
 void geFlex::Elem::resize(int pos, int newSize)
 {
+	geompp::Rect<int> bounds;
+
 	if (m_dir == Direction::VERTICAL)
-		m_w.resize(m_parent.x(), pos, m_parent.w(), newSize);
+		bounds = geompp::Rect<int>(m_parent.x(), pos, m_parent.w(), newSize).reduced(m_pad);
 	else
-		m_w.resize(pos, m_parent.y(), newSize, m_parent.h());
+		bounds = geompp::Rect<int>(pos, m_parent.y(), newSize, m_parent.h()).reduced(m_pad);
+
+	m_w.resize(bounds.x, bounds.y, bounds.w, bounds.h);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -66,17 +71,17 @@ geFlex::geFlex(Direction d, int gutter)
 
 /* -------------------------------------------------------------------------- */
 
-void geFlex::add(Fl_Widget& w, int size)
+void geFlex::add(Fl_Widget& w, int size, geompp::Border<int> pad)
 {
 	Fl_Group::add(w);
-	m_elems.push_back({w, *this, m_direction, size});
+	m_elems.push_back({w, *this, m_direction, size, pad});
 	if (size != -1)
 		m_numFixed++;
 }
 
-void geFlex::add(Fl_Widget* w, int size)
+void geFlex::add(Fl_Widget* w, int size, geompp::Border<int> pad)
 {
-	geFlex::add(*w, size);
+	geFlex::add(*w, size, pad);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -27,6 +27,7 @@
 #ifndef GE_FLEX_H
 #define GE_FLEX_H
 
+#include "deps/geompp/src/border.hpp"
 #include "deps/geompp/src/rect.hpp"
 #include "gui/types.h"
 #include <FL/Fl_Group.H>
@@ -50,8 +51,8 @@ public:
 	will be stretched to take up the available space. WARNING: like Fl_Group,
 	geFlex owns widgets! */
 
-	void add(Fl_Widget&, int size = -1);
-	void add(Fl_Widget*, int size = -1);
+	void add(Fl_Widget&, int size = -1, geompp::Border<int> pad = {});
+	void add(Fl_Widget*, int size = -1, geompp::Border<int> pad = {});
 
 	/* end
 	Finalize the Flex item. Call this when you're done add()ing widgets. */
@@ -62,7 +63,7 @@ private:
 	class Elem
 	{
 	public:
-		Elem(Fl_Widget&, geFlex& parent, Direction, int size);
+		Elem(Fl_Widget&, geFlex& parent, Direction, int size, geompp::Border<int> pad);
 
 		int  getSize() const;
 		bool isFixed() const;
@@ -72,9 +73,10 @@ private:
 		int size;
 
 	private:
-		Fl_Widget& m_w;
-		geFlex&    m_parent;
-		Direction  m_dir;
+		Fl_Widget&          m_w;
+		geFlex&             m_parent;
+		Direction           m_dir;
+		geompp::Border<int> m_pad;
 	};
 
 	void resize(int x, int y, int w, int h) override;
