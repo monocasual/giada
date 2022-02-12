@@ -38,7 +38,7 @@ namespace giada::v
 gdMissingAssets::gdMissingAssets(const m::LoadState& state)
 : gdWindow(u::gui::getCenterWinBounds(400, 300), "Warning")
 {
-	geFlex* container = new geFlex(getContentBounds().reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
 		geFlex* body = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN);
 		{

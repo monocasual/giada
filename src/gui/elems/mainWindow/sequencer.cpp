@@ -53,7 +53,7 @@ void geSequencer::refresh()
 void geSequencer::draw()
 {
 	m_background = geompp::Rect(x(), y(), w(), h());
-	m_cell       = geompp::Rect(x(), y(), w() / G_MAX_BEATS, h()).reduced(0, REC_BARS_H);
+	m_cell       = geompp::Rect(x(), y(), w() / G_MAX_BEATS, h()).reduced({0, REC_BARS_H});
 
 	/* Cleanup */
 	drawRectf(m_background, FL_BACKGROUND_COLOR);
@@ -69,7 +69,7 @@ void geSequencer::draw()
 
 void geSequencer::drawBody() const
 {
-	const geompp::Rect body = m_background.reduced(0, REC_BARS_H);
+	const geompp::Rect body = m_background.reduced({0, REC_BARS_H});
 	const geompp::Line line = m_cell.getHeightAsLine();
 
 	/* Background and borders. */
