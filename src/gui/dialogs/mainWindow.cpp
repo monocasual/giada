@@ -29,6 +29,7 @@
 #include "core/const.h"
 #include "core/init.h"
 #include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/mainIO.h"
 #include "gui/elems/mainWindow/mainMenu.h"
@@ -69,7 +70,6 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 : gdWindow(W, H, title)
 , m_conf(c)
 {
-
 	Fl::visible_focus(0);
 
 	Fl::background(25, 25, 25); // TODO use G_COLOR_GREY_1
@@ -89,12 +89,8 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 
-	mainMenu = new v::geMainMenu(8, 8);
-#if defined(WITH_VST)
-	mainIO = new v::geMainIO(412, 8);
-#else
-	mainIO = new v::geMainIO(460, 8);
-#endif
+	mainMenu      = new v::geMainMenu(0, 0);
+	mainIO        = new v::geMainIO(0, 0, 0, 0);
 	mainTransport = new v::geMainTransport(8, 39);
 	mainTimer     = new v::geMainTimer(571, 44);
 	sequencer     = new v::geSequencer(100, 78, 609, 30);
@@ -102,10 +98,12 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 
 	/* zone 1 - menus, and I/O tools */
 
-	Fl_Group* zone1 = new Fl_Group(8, 0, W - 16, 28);
-	zone1->add(mainMenu);
-	zone1->resizable(new Fl_Box(300, 8, 80, 20));
-	zone1->add(mainIO);
+	geFlex* zone1 = new geFlex(getContentBounds().reduced(G_GUI_OUTER_MARGIN).withH(G_GUI_UNIT),
+	    Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+	zone1->add(mainMenu, 300);
+	zone1->add(new Fl_Box(0, 0, 0, 0));
+	zone1->add(mainIO, 430);
+	zone1->end();
 
 	/* zone 2 - mainTransport and timing tools */
 

@@ -31,118 +31,76 @@
 #include "glue/events.h"
 #include "glue/layout.h"
 #include "glue/main.h"
+#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/statusButton.h"
 #include "gui/elems/soundMeter.h"
 #include "utils/gui.h"
+#ifdef WITH_VST
+#include "gui/elems/basics/statusButton.h"
+#endif
 
 namespace giada::v
 {
-geMainIO::geMainIO(int x, int y)
-: gePack(x, y, Direction::HORIZONTAL)
-, outMeter(0, 0, 140, G_GUI_UNIT)
-, inMeter(0, 0, 140, G_GUI_UNIT)
-, outVol(0, 0, G_GUI_UNIT, G_GUI_UNIT)
-, inVol(0, 0, G_GUI_UNIT, G_GUI_UNIT)
-, inToOut(0, 0, 12, G_GUI_UNIT, "")
-#ifdef WITH_VST
-, masterFxOut(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm)
-, masterFxIn(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm)
-#endif
+geMainIO::geMainIO(int x, int y, int w, int h)
+: geFlex(x, y, w, h, Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
+	m_outMeter = new geSoundMeter(0, 0, 0, 0);
+	m_inMeter  = new geSoundMeter(0, 0, 0, 0);
+	m_outVol   = new geDial(0, 0, 0, 0);
+	m_inVol    = new geDial(0, 0, 0, 0);
+	m_inToOut  = new geButton();
 #ifdef WITH_VST
-	add(&masterFxIn);
-#endif
-	add(&inVol);
-	add(&inMeter);
-	add(&inToOut);
-	add(&outMeter);
-	add(&outVol);
-#ifdef WITH_VST
-	add(&masterFxOut);
+	m_masterFxOut = new geStatusButton(0, 0, 0, 0, fxOff_xpm, fxOn_xpm);
+	m_masterFxIn  = new geStatusButton(0, 0, 0, 0, fxOff_xpm, fxOn_xpm);
 #endif
 
-	resizable(nullptr); // don't resize any widget
-
-	outMeter.copy_tooltip("Main output meter");
-	inMeter.copy_tooltip("Main input meter");
-	outVol.copy_tooltip("Main output volume");
-	inVol.copy_tooltip("Main input volume");
-	inToOut.copy_tooltip("Stream linker\n\nConnects input to output to enable \"hear what you're playing\" mode.");
 #ifdef WITH_VST
-	masterFxOut.copy_tooltip("Main output plug-ins");
-	masterFxIn.copy_tooltip("Main input plug-ins");
+	add(m_masterFxIn, G_GUI_UNIT);
+#endif
+	add(m_inVol, G_GUI_UNIT);
+	add(m_inMeter);
+	add(m_inToOut, 12);
+	add(m_outMeter);
+	add(m_outVol, G_GUI_UNIT);
+#ifdef WITH_VST
+	add(m_masterFxOut, G_GUI_UNIT);
+#endif
+	end();
+
+	m_outMeter->copy_tooltip("Main output meter");
+	m_inMeter->copy_tooltip("Main input meter");
+	m_outVol->copy_tooltip("Main output volume");
+	m_inVol->copy_tooltip("Main input volume");
+	m_inToOut->copy_tooltip("Stream linker\n\nConnects input to output to enable \"hear what you're playing\" mode.");
+#ifdef WITH_VST
+	m_masterFxOut->copy_tooltip("Main output plug-ins");
+	m_masterFxIn->copy_tooltip("Main input plug-ins");
 #endif
 
-	outVol.callback(cb_outVol, (void*)this);
-	inVol.callback(cb_inVol, (void*)this);
+	m_outVol->onChange = [](float v) {
+		c::events::setMasterOutVolume(v, Thread::MAIN);
+	};
 
-	inToOut.callback(cb_inToOut, (void*)this);
-	inToOut.type(FL_TOGGLE_BUTTON);
+	m_inVol->onChange = [](float v) {
+		c::events::setMasterInVolume(v, Thread::MAIN);
+	};
+
+	m_inToOut->type(FL_TOGGLE_BUTTON);
+	m_inToOut->onClick = [v = m_inToOut->value()]() {
+		c::main::setInToOut(v);
+	};
 
 #ifdef WITH_VST
-	masterFxOut.callback(cb_masterFxOut, (void*)this);
-	masterFxIn.callback(cb_masterFxIn, (void*)this);
+	m_masterFxOut->onClick = [] { c::layout::openMasterOutPluginListWindow(); };
+	m_masterFxIn->onClick  = [] { c::layout::openMasterInPluginListWindow(); };
 #endif
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geMainIO::cb_outVol(Fl_Widget* /*w*/, void* p) { ((geMainIO*)p)->cb_outVol(); }
-void geMainIO::cb_inVol(Fl_Widget* /*w*/, void* p) { ((geMainIO*)p)->cb_inVol(); }
-void geMainIO::cb_inToOut(Fl_Widget* /*w*/, void* p) { ((geMainIO*)p)->cb_inToOut(); }
-#ifdef WITH_VST
-void geMainIO::cb_masterFxOut(Fl_Widget* /*w*/, void* p)
-{
-	((geMainIO*)p)->cb_masterFxOut();
-}
-void geMainIO::cb_masterFxIn(Fl_Widget* /*w*/, void* p) { ((geMainIO*)p)->cb_masterFxIn(); }
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-void geMainIO::cb_outVol()
-{
-	c::events::setMasterOutVolume(outVol.value(), Thread::MAIN);
-}
-
-void geMainIO::cb_inVol()
-{
-	c::events::setMasterInVolume(inVol.value(), Thread::MAIN);
-}
-
-void geMainIO::cb_inToOut()
-{
-	c::main::setInToOut(inToOut.value());
-}
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef WITH_VST
-
-void geMainIO::cb_masterFxOut()
-{
-	c::layout::openMasterOutPluginListWindow();
-}
-
-void geMainIO::cb_masterFxIn()
-{
-	c::layout::openMasterInPluginListWindow();
-}
-
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-void geMainIO::setOutVol(float v)
-{
-	outVol.value(v);
-}
-
-void geMainIO::setInVol(float v)
-{
-	inVol.value(v);
-}
+void geMainIO::setOutVol(float v) { m_outVol->value(v); }
+void geMainIO::setInVol(float v) { m_inVol->value(v); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -150,12 +108,12 @@ void geMainIO::setInVol(float v)
 
 void geMainIO::setMasterFxOutFull(bool v)
 {
-	masterFxOut.setStatus(v);
+	m_masterFxOut->setStatus(v);
 }
 
 void geMainIO::setMasterFxInFull(bool v)
 {
-	masterFxIn.setStatus(v);
+	m_masterFxIn->setStatus(v);
 }
 
 #endif
@@ -164,12 +122,12 @@ void geMainIO::setMasterFxInFull(bool v)
 
 void geMainIO::refresh()
 {
-	outMeter.peak  = m_io.getMasterOutPeak();
-	outMeter.ready = m_io.isKernelReady();
-	inMeter.peak   = m_io.getMasterInPeak();
-	inMeter.ready  = m_io.isKernelReady();
-	outMeter.redraw();
-	inMeter.redraw();
+	m_outMeter->peak  = m_io.getMasterOutPeak();
+	m_outMeter->ready = m_io.isKernelReady();
+	m_inMeter->peak   = m_io.getMasterInPeak();
+	m_inMeter->ready  = m_io.isKernelReady();
+	m_outMeter->redraw();
+	m_inMeter->redraw();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -178,12 +136,12 @@ void geMainIO::rebuild()
 {
 	m_io = c::main::getIO();
 
-	outVol.value(m_io.masterOutVol);
-	inVol.value(m_io.masterInVol);
+	m_outVol->value(m_io.masterOutVol);
+	m_inVol->value(m_io.masterInVol);
 #ifdef WITH_VST
-	masterFxOut.setStatus(m_io.masterOutHasPlugins);
-	masterFxIn.setStatus(m_io.masterInHasPlugins);
-	inToOut.value(m_io.inToOut);
+	m_masterFxOut->setStatus(m_io.masterOutHasPlugins);
+	m_masterFxIn->setStatus(m_io.masterInHasPlugins);
+	m_inToOut->value(m_io.inToOut);
 #endif
 }
 } // namespace giada::v
