@@ -31,10 +31,9 @@
 #include "glue/channel.h"
 #include <FL/Fl_Group.H>
 
-class geDial;
-
 namespace giada::v
 {
+class geDial;
 class geButton;
 class geChannelStatus;
 class geStatusButton;

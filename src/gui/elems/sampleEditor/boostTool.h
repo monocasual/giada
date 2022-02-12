@@ -29,7 +29,6 @@
 
 #include <FL/Fl_Pack.H>
 
-class geDial;
 class geInput;
 class geBox;
 
@@ -37,6 +36,7 @@ namespace giada
 {
 namespace v
 {
+class geDial;
 class geButton;
 class geBoostTool : public Fl_Pack
 {

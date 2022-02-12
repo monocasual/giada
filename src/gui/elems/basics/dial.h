@@ -29,6 +29,8 @@
 
 #include <FL/Fl_Dial.H>
 
+namespace giada::v
+{
 class geDial : public Fl_Dial
 {
 public:
@@ -36,5 +38,6 @@ public:
 
 	void draw();
 };
+} // namespace giada::v
 
 #endif

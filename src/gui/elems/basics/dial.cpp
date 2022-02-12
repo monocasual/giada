@@ -24,10 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "dial.h"
-#include "../../../core/const.h"
+#include "gui/elems/basics/dial.h"
+#include "core/const.h"
 #include <FL/fl_draw.H>
 
+namespace giada::v
+{
 geDial::geDial(int x, int y, int w, int h, const char* l)
 : Fl_Dial(x, y, w, h, l)
 {
@@ -53,3 +55,4 @@ void geDial::draw()
 	fl_arc(x(), y(), w(), h(), 0, 360);
 	fl_pie(x(), y(), w(), h(), 270 - angle, 270 - angle1());
 }
+} // namespace giada::v
