@@ -162,8 +162,7 @@ void openMidiChannelMidiOutputWindow(ID channelId)
 void openSampleActionEditor(ID channelId)
 {
 	g_ui.openSubWindow(*g_ui.mainWindow.get(),
-	    new v::gdSampleActionEditor(channelId, g_engine.conf.data, g_engine.sequencer.getFramesInBeat()),
-	    WID_ACTION_EDITOR);
+	    new v::gdSampleActionEditor(channelId, g_engine.conf.data), WID_ACTION_EDITOR);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -171,8 +170,7 @@ void openSampleActionEditor(ID channelId)
 void openMidiActionEditor(ID channelId)
 {
 	g_ui.openSubWindow(*g_ui.mainWindow.get(),
-	    new v::gdMidiActionEditor(channelId, g_engine.conf.data, g_engine.sequencer.getFramesInBeat()),
-	    WID_ACTION_EDITOR);
+	    new v::gdMidiActionEditor(channelId, g_engine.conf.data), WID_ACTION_EDITOR);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -52,7 +52,7 @@ public:
 	void draw() override;
 
 	Pixel frameToPixel(Frame f) const;
-	Frame pixelToFrame(Pixel p, bool snap = true) const;
+	Frame pixelToFrame(Pixel p, Frame framesInBeat, bool snap = true) const;
 
 	ID channelId;
 
@@ -68,7 +68,7 @@ protected:
 	static constexpr float MAX_RATIO  = 40000.0f;
 	static constexpr float RATIO_STEP = 1.5f;
 
-	gdBaseActionEditor(ID channelId, m::Conf::Data&, Frame framesInBeat);
+	gdBaseActionEditor(ID channelId, m::Conf::Data&);
 
 	/* getMouseOverContent
 	Returns mouse x-position relative to the viewport content. */

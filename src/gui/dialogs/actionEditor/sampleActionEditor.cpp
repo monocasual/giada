@@ -36,8 +36,8 @@
 
 namespace giada::v
 {
-gdSampleActionEditor::gdSampleActionEditor(ID channelId, m::Conf::Data& conf, Frame framesInBeat)
-: gdBaseActionEditor(channelId, conf, framesInBeat)
+gdSampleActionEditor::gdSampleActionEditor(ID channelId, m::Conf::Data& conf)
+: gdBaseActionEditor(channelId, conf)
 , m_barPadding(0, 0, w() - 232, G_GUI_UNIT)
 , m_sampleActionEditor(0, 0, this)
 , m_envelopeEditor(0, 0, "Volume", this)

@@ -45,10 +45,10 @@
 
 namespace giada::v
 {
-gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf, Frame framesInBeat)
+gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
 : gdWindow(conf.actionEditorX, conf.actionEditorY, conf.actionEditorW, conf.actionEditorH)
 , channelId(channelId)
-, gridTool(0, 0, conf, framesInBeat)
+, gridTool(0, 0, conf)
 , zoomInBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm)
 , zoomOutBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm)
 , m_barTop(0, 0, Direction::HORIZONTAL)
@@ -116,9 +116,9 @@ Pixel gdBaseActionEditor::frameToPixel(Frame f) const
 	return f / m_ratio;
 }
 
-Frame gdBaseActionEditor::pixelToFrame(Pixel p, bool snap) const
+Frame gdBaseActionEditor::pixelToFrame(Pixel p, Frame framesInBeat, bool snap) const
 {
-	return snap ? gridTool.getSnapFrame(p * m_ratio) : p * m_ratio;
+	return snap ? gridTool.getSnapFrame(p * m_ratio, framesInBeat) : p * m_ratio;
 }
 
 /* -------------------------------------------------------------------------- */

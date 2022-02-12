@@ -33,10 +33,9 @@
 
 namespace giada::v
 {
-geGridTool::geGridTool(Pixel x, Pixel y, m::Conf::Data& c, Frame framesInBeat)
+geGridTool::geGridTool(Pixel x, Pixel y, m::Conf::Data& c)
 : Fl_Group(x, y, 80, 20)
 , m_conf(c)
-, m_framesInBeat(framesInBeat)
 {
 	gridType = new geChoice(x, y, 40, 20);
 	gridType->add("1");
@@ -115,17 +114,17 @@ int geGridTool::getValue() const
 
 /* -------------------------------------------------------------------------- */
 
-Frame geGridTool::getSnapFrame(Frame v) const
+Frame geGridTool::getSnapFrame(Frame v, Frame framesInBeat) const
 {
 	if (!isOn())
 		return v;
-	return u::math::quantize(v, getCellSize());
+	return u::math::quantize(v, getCellSize(framesInBeat));
 }
 
 /* -------------------------------------------------------------------------- */
 
-Frame geGridTool::getCellSize() const
+Frame geGridTool::getCellSize(Frame framesInBeat) const
 {
-	return m_framesInBeat / getValue();
+	return framesInBeat / getValue();
 }
 } // namespace giada::v

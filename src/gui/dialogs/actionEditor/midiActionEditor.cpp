@@ -32,8 +32,8 @@
 
 namespace giada::v
 {
-gdMidiActionEditor::gdMidiActionEditor(ID channelId, m::Conf::Data& conf, Frame framesInBeat)
-: gdBaseActionEditor(channelId, conf, framesInBeat)
+gdMidiActionEditor::gdMidiActionEditor(ID channelId, m::Conf::Data& conf)
+: gdBaseActionEditor(channelId, conf)
 , m_barPadding(0, 0, w() - 150, G_GUI_UNIT)
 , m_pianoRoll(0, 0, this)
 , m_velocityEditor(0, 0, this)

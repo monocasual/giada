@@ -77,7 +77,7 @@ void geBaseActionEditor::baseDraw(bool clear) const
 	if (m_base->gridTool.getValue() > 1)
 	{
 		fl_color(G_COLOR_GREY_3);
-		drawVerticals(m_base->gridTool.getCellSize());
+		drawVerticals(m_base->gridTool.getCellSize(m_data->framesInBeat));
 	}
 
 	fl_color(G_COLOR_GREY_4);

@@ -62,7 +62,6 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 
 	for (const m::Action& a1 : m_data->actions)
 	{
-
 		if (a1.event.getStatus() == m::MidiEvent::ENVELOPE || isNoteOffSinglePress(a1))
 			continue;
 
@@ -119,7 +118,7 @@ void geSampleActionEditor::draw()
 
 void geSampleActionEditor::onAddAction()
 {
-	Frame f = m_base->pixelToFrame(Fl::event_x() - x());
+	Frame f = m_base->pixelToFrame(Fl::event_x() - x(), m_data->framesInBeat);
 	c::actionEditor::recordSampleAction(m_data->channelId, static_cast<gdSampleActionEditor*>(m_base)->getActionType(), f);
 }
 
@@ -181,18 +180,18 @@ void geSampleActionEditor::onRefreshAction()
 
 	if (!m_action->isOnEdges())
 	{
-		f1 = m_base->pixelToFrame(p1);
-		f2 = m_base->pixelToFrame(p2, /*snap=*/false) - (m_base->pixelToFrame(p1, /*snap=*/false) - f1);
+		f1 = m_base->pixelToFrame(p1, m_data->framesInBeat);
+		f2 = m_base->pixelToFrame(p2, m_data->framesInBeat, /*snap=*/false) - (m_base->pixelToFrame(p1, m_data->framesInBeat, /*snap=*/false) - f1);
 	}
 	else if (m_action->onLeftEdge)
 	{
-		f1 = m_base->pixelToFrame(p1);
+		f1 = m_base->pixelToFrame(p1, m_data->framesInBeat);
 		f2 = m_action->a2.frame;
 	}
 	else if (m_action->onRightEdge)
 	{
 		f1 = m_action->a1.frame;
-		f2 = m_base->pixelToFrame(p2);
+		f2 = m_base->pixelToFrame(p2, m_data->framesInBeat);
 	}
 
 	ca::updateSampleAction(m_data->channelId, m_action->a1, type, f1, f2);

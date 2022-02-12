@@ -217,7 +217,7 @@ int gePianoRoll::handle(int e)
 
 void gePianoRoll::onAddAction()
 {
-	Frame frame = m_base->pixelToFrame(Fl::event_x() - x());
+	Frame frame = m_base->pixelToFrame(Fl::event_x() - x(), m_data->framesInBeat);
 	int   note  = yToNote(Fl::event_y() - y());
 	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY,
 	    frame);
@@ -298,12 +298,12 @@ void gePianoRoll::onRefreshAction()
 
 	if (!m_action->isOnEdges())
 	{
-		f1 = m_base->pixelToFrame(p1);
-		f2 = m_base->pixelToFrame(p2, /*snap=*/false) - (m_base->pixelToFrame(p1, /*snap=*/false) - f1);
+		f1 = m_base->pixelToFrame(p1, m_data->framesInBeat);
+		f2 = m_base->pixelToFrame(p2, m_data->framesInBeat, /*snap=*/false) - (m_base->pixelToFrame(p1, /*snap=*/false) - f1);
 	}
 	else if (m_action->onLeftEdge)
 	{
-		f1 = m_base->pixelToFrame(p1);
+		f1 = m_base->pixelToFrame(p1, m_data->framesInBeat);
 		f2 = m_action->a2.frame;
 		if (f1 == f2) // If snapping makes an action fall onto the other
 			f1 -= G_DEFAULT_ACTION_SIZE;
@@ -311,7 +311,7 @@ void gePianoRoll::onRefreshAction()
 	else if (m_action->onRightEdge)
 	{
 		f1 = m_action->a1.frame;
-		f2 = m_base->pixelToFrame(p2);
+		f2 = m_base->pixelToFrame(p2, m_data->framesInBeat);
 		if (f1 == f2) // If snapping makes an action fall onto the other
 			f2 += G_DEFAULT_ACTION_SIZE;
 	}

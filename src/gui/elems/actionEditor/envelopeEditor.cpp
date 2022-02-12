@@ -149,7 +149,7 @@ int geEnvelopeEditor::yToValue(Pixel pixel, Pixel offset) const
 
 void geEnvelopeEditor::onAddAction()
 {
-	Frame f = m_base->pixelToFrame(Fl::event_x() - x());
+	Frame f = m_base->pixelToFrame(Fl::event_x() - x(), m_data->framesInBeat);
 	int   v = yToValue(Fl::event_y() - y());
 
 	c::actionEditor::recordEnvelopeAction(m_data->channelId, f, v);
@@ -199,9 +199,10 @@ void geEnvelopeEditor::onMoveAction()
 
 void geEnvelopeEditor::onRefreshAction()
 {
-	Frame f = m_base->pixelToFrame((m_action->x() - x()) + geEnvelopePoint::SIDE / 2);
-	float v = yToValue(m_action->y() - y(), geEnvelopePoint::SIDE);
-	c::actionEditor::updateEnvelopeAction(m_data->channelId, m_action->a1, f, v);
+	const Frame f  = (m_action->x() - x()) + geEnvelopePoint::SIDE / 2;
+	const Frame fq = m_base->pixelToFrame(f, m_data->framesInBeat);
+	const float v  = yToValue(m_action->y() - y(), geEnvelopePoint::SIDE);
+	c::actionEditor::updateEnvelopeAction(m_data->channelId, m_action->a1, fq, v);
 
 	m_base->rebuild();
 }

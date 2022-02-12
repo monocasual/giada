@@ -39,22 +39,21 @@ class geChoice;
 class geGridTool : public Fl_Group
 {
 public:
-	geGridTool(Pixel x, Pixel y, m::Conf::Data&, Frame framesInBeat);
+	geGridTool(Pixel x, Pixel y, m::Conf::Data&);
 	~geGridTool();
 
 	int  getValue() const;
 	bool isOn() const;
 
-	Frame getSnapFrame(Frame f) const;
+	Frame getSnapFrame(Frame f, Frame framesInBeat) const;
 
 	/* getCellSize
 	Returns the size in frames of a single cell of the grid. */
 
-	Frame getCellSize() const;
+	Frame getCellSize(Frame framesInBeat) const;
 
 private:
 	m::Conf::Data& m_conf;
-	Frame          m_framesInBeat;
 
 	geChoice* gridType;
 	geCheck*  active;
