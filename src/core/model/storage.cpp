@@ -135,7 +135,7 @@ LoadState load(const Patch::Data& patch)
 		    pplugin, g_engine.kernelAudio.getSampleRate(), g_engine.kernelAudio.getBufferSize(), g_engine.sequencer);
 
 		if (!p->valid)
-			state.missingPlugins.push_back(g_engine.pluginManager.getPluginPath(pplugin.path));
+			state.missingPlugins.push_back(pplugin.path);
 
 		g_engine.model.getAllShared<PluginPtrs>().push_back(std::move(p));
 	}
@@ -146,6 +146,7 @@ LoadState load(const Patch::Data& patch)
 	{
 		std::unique_ptr<Wave> w = g_engine.waveManager.deserializeWave(pwave, g_engine.kernelAudio.getSampleRate(),
 		    g_engine.conf.data.rsmpQuality);
+
 		if (w != nullptr)
 			g_engine.model.getAllShared<WavePtrs>().push_back(std::move(w));
 		else

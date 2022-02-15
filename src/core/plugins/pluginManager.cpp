@@ -235,14 +235,6 @@ int PluginManager::countAvailablePlugins() const
 
 /* -------------------------------------------------------------------------- */
 
-std::string PluginManager::getPluginPath(const std::string& pid) const
-{
-	const std::unique_ptr<juce::PluginDescription> pd = m_knownPluginList.getTypeForIdentifierString(pid);
-	return pd != nullptr ? pd->fileOrIdentifier.toStdString() : "";
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::vector<PluginManager::PluginInfo> PluginManager::getPluginsInfo() const
 {
 	std::vector<PluginInfo> out;
