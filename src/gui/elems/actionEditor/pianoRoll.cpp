@@ -299,7 +299,7 @@ void gePianoRoll::onRefreshAction()
 	if (!m_action->isOnEdges())
 	{
 		f1 = m_base->pixelToFrame(p1, m_data->framesInBeat);
-		f2 = m_base->pixelToFrame(p2, m_data->framesInBeat, /*snap=*/false) - (m_base->pixelToFrame(p1, /*snap=*/false) - f1);
+		f2 = m_base->pixelToFrame(p2, m_data->framesInBeat, /*snap=*/false) - (m_base->pixelToFrame(p1, m_data->framesInBeat, /*snap=*/false) - f1);
 	}
 	else if (m_action->onLeftEdge)
 	{
