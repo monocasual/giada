@@ -11,6 +11,20 @@
 --------------------------------------------------------------------------------
 
 
+0.20.1 --- 2022 . 02 . 21
+- New MIDI I/O activity LEDs on channels (#143)
+- New "Missing Assets" alert window (#344)
+- Many smaller improvements and cleanups in UI code
+- Add ability to sort installed plug-ins by Format (VST, VST3, ...)
+- Update JUCE to 6.1.5
+- Update custom RtAudio submodule (now pointing to 6.0.0beta1)
+- Optimize internal buffer Giada <-> JUCE conversion
+- Remove old plug-in parameter storage used in old patches
+- Fix deadlock when using JACK transport
+- Fix Action Editor grid refresh when changing BPM while the editor window is open (#547)
+- Fix plug-in clone operation while cloning a channel (#551)
+
+
 0.20.0 --- 2022 . 01 . 24
 - Show progress bar for long operations 
 - Improved rendering algorithm for sample channels
