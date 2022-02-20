@@ -293,7 +293,12 @@ void Mixer::renderChannels(const std::vector<Channel>& channels, mcl::AudioBuffe
 
 void Mixer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
 {
+#ifdef WITH_VST
 	ch.render(nullptr, &in, true);
+#else
+	(void)ch;
+	(void)in;
+#endif
 }
 
 void Mixer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const

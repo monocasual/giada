@@ -404,10 +404,8 @@ void Channel::render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible) 
 {
 	if (id == Mixer::MASTER_OUT_CHANNEL_ID)
 		renderMasterOut(*out);
-#ifdef WITH_VST
 	else if (id == Mixer::MASTER_IN_CHANNEL_ID)
 		renderMasterIn(*in);
-#endif
 	else
 		renderChannel(*out, *in, audible);
 }
@@ -426,15 +424,15 @@ void Channel::renderMasterOut(mcl::AudioBuffer& out) const
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 void Channel::renderMasterIn(mcl::AudioBuffer& in) const
 {
+#ifdef WITH_VST
 	if (plugins.size() > 0)
 		g_engine.pluginHost.processStack(in, plugins, nullptr);
-}
-
+#else
+	(void)in;
 #endif
+}
 
 /* -------------------------------------------------------------------------- */
 
