@@ -30,6 +30,7 @@
 #include "utils/log.h"
 #include <FL/Fl_Pack.H>
 #include <cassert>
+#include <cstddef>
 #ifdef WITH_VST
 #include "core/plugins/plugin.h"
 #endif

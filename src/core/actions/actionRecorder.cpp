@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <cstddef>
 #include <unordered_map>
 
 namespace giada::m

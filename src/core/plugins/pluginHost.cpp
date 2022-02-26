@@ -36,6 +36,7 @@
 #include "utils/log.h"
 #include "utils/vector.h"
 #include <cassert>
+#include <cstddef>
 #include <memory>
 
 namespace giada::m

@@ -26,6 +26,7 @@
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+#include <cstddef>
 #include <string>
 #if defined(_WIN32)
 #include "../ext/resource.h"

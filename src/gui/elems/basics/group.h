@@ -31,6 +31,7 @@
 #define GE_GROUP_H
 
 #include <FL/Fl_Group.H>
+#include <cstddef>
 #include <vector>
 
 namespace giada

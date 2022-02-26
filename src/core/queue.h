@@ -27,6 +27,7 @@
 #ifndef G_QUEUE_H
 #define G_QUEUE_H
 
+#include <cstddef>
 #include <array>
 #include <atomic>
 

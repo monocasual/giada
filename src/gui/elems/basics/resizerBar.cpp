@@ -30,6 +30,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/fl_draw.H>
 #include <cassert>
+#include <cstddef>
 #include <vector>
 
 namespace giada::v

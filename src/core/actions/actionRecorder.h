@@ -30,6 +30,7 @@
 #include "core/actions/actions.h"
 #include "core/midiEvent.h"
 #include "core/types.h"
+#include <cstddef>
 #include <unordered_set>
 
 namespace giada::m::patch

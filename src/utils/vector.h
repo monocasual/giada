@@ -27,6 +27,7 @@
 #ifndef G_UTILS_VECTOR_H
 #define G_UTILS_VECTOR_H
 
+#include <cstddef>
 #include <algorithm>
 #include <functional>
 #include <vector>
