@@ -28,6 +28,7 @@
 
 #include "pluginState.h"
 #include "core/const.h"
+#include <cstddef>
 
 namespace giada::m
 {

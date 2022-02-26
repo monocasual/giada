@@ -28,6 +28,7 @@
 #define G_MIDI_LEARN_PARAM_H
 
 #include "core/weakAtomic.h"
+#include <cstddef>
 #include <atomic>
 
 namespace giada::m

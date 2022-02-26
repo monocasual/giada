@@ -32,6 +32,7 @@
 #include "utils/log.h"
 #include "utils/vector.h"
 #include <cassert>
+#include <cstddef>
 
 namespace giada::m
 {

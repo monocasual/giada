@@ -29,6 +29,7 @@
 
 #include "gui/elems/basics/pack.h"
 #include "gui/elems/basics/scroll.h"
+#include <cstddef>
 
 namespace giada
 {

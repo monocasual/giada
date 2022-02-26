@@ -31,6 +31,7 @@
 #include "core/midiEvent.h"
 #include "core/model/model.h"
 #include "core/types.h"
+#include <cstddef>
 #include <cstdint>
 #include <functional>
 

@@ -41,6 +41,7 @@
 #include "utils/fs.h"
 #include "utils/vector.h"
 #include <FL/Fl_Tooltip.H>
+#include <cstddef>
 
 extern giada::v::Ui     g_ui;
 extern giada::m::Engine g_engine;

@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "midiLearnParam.h"
+#include <cstddef>
 
 namespace giada::m
 {

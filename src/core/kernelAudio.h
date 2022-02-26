@@ -29,6 +29,7 @@
 
 #include "core/conf.h"
 #include "deps/rtaudio/RtAudio.h"
+#include <cstddef>
 #include <functional>
 #include <memory>
 #include <string>

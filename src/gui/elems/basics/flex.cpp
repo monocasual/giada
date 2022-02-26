@@ -1,4 +1,5 @@
 #include "flex.h"
+#include <cstddef>
 #include <numeric>
 
 namespace giada::v

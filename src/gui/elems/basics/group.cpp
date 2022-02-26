@@ -28,6 +28,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "group.h"
+#include <cstddef>
 #include <algorithm>
 
 namespace giada

@@ -27,6 +27,7 @@
 #ifndef G_RING_BUFFER_H
 #define G_RING_BUFFER_H
 
+#include <cstddef>
 #include <array>
 
 namespace giada

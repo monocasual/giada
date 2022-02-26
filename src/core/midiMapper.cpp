@@ -31,6 +31,7 @@
 #include "utils/fs.h"
 #include "utils/log.h"
 #include "utils/string.h"
+#include <cstddef>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
