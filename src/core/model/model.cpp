@@ -111,6 +111,7 @@ Model::Model()
 
 void Model::reset()
 {
+	get()    = {};
 	m_shared = {};
 
 	get().sequencer.shared = &m_shared.sequencerShared;
