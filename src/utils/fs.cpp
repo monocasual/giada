@@ -148,11 +148,11 @@ std::string getHomePath()
 
 	char buf[PATH_MAX];
 	snprintf(buf, PATH_MAX, "%s/.giada", getenv("HOME"));
+	return stdfs::path(buf).string();
 
 #elif defined(G_OS_WINDOWS)
 
-	char buf[MAX_PATH];
-	snprintf(buf, MAX_PATH, ".");
+	return stdfs::current_path().string();
 
 #elif defined(G_OS_MAC)
 
@@ -166,9 +166,9 @@ std::string getHomePath()
 	const char* home = pwd->pw_dir;
 	snprintf(buf, PATH_MAX, "%s/Library/Application Support/Giada", home);
 
-#endif
-
 	return stdfs::path(buf).string();
+
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
