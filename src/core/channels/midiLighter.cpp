@@ -121,8 +121,8 @@ void MidiLighter<KernelMidiI>::send(uint32_t learnt, const MidiMap::Message& msg
 
 /* -------------------------------------------------------------------------- */
 
-template struct MidiLighter<KernelMidi>;
+template class MidiLighter<KernelMidi>;
 #ifdef WITH_TESTS
-template struct MidiLighter<KernelMidiMock>;
+template class MidiLighter<KernelMidiMock>;
 #endif
 } // namespace giada::m

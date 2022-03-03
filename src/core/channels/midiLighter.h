@@ -68,9 +68,9 @@ private:
 	MidiMapper<KernelMidiI>* m_midiMapper;
 };
 
-extern template struct MidiLighter<KernelMidi>;
+extern template class MidiLighter<KernelMidi>;
 #ifdef WITH_TESTS
-extern template struct MidiLighter<KernelMidiMock>;
+extern template class MidiLighter<KernelMidiMock>;
 #endif
 } // namespace giada::m
 

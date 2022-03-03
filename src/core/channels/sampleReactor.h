@@ -39,7 +39,7 @@ class Model;
 namespace giada::m
 {
 class Channel;
-class ChannelShared;
+struct ChannelShared;
 class Sequencer;
 
 /* SampleReactor
