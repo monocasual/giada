@@ -112,15 +112,20 @@ public:
 	void toggleBypass(ID pluginId);
 
 private:
+	/* giadaToJuceTempBuf
+	Copies the Giada buffer 'outBuf' to the private JUCE buffer for local
+	processing. */
+
 	void giadaToJuceTempBuf(const mcl::AudioBuffer& outBuf);
 
 	/* juceToGiadaOutBuf
-	Converts buffer from Juce to Giada. A note for the future: if we overwrite (=) 
-	(as we do now) it's SEND, if we add (+) it's INSERT. */
+	Copies the private JUCE buffer to Giada buffer 'outBuf'. */
 
 	void juceToGiadaOutBuf(mcl::AudioBuffer& outBuf) const;
 
-	void processPlugins(const std::vector<Plugin*>& plugins, juce::MidiBuffer& events);
+	void processPlugins(const std::vector<Plugin*>&, juce::MidiBuffer& events);
+
+	void processPlugin(Plugin*, const juce::MidiBuffer& events);
 
 	model::Model& m_model;
 

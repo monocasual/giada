@@ -90,22 +90,16 @@ void PluginHost::processStack(mcl::AudioBuffer& outBuf, const std::vector<Plugin
 {
 	assert(outBuf.countFrames() == m_audioBuffer.getNumSamples());
 
-	/* If events are null: Audio stack processing (master in, master out or
-	sample channels. No need for MIDI events. 
-	If events are not null: MIDI stack (MIDI channels). MIDI channels must not 
-	process the current buffer: give them an empty and clean one. */
+	giadaToJuceTempBuf(outBuf);
 
 	if (events == nullptr)
 	{
-		giadaToJuceTempBuf(outBuf);
 		juce::MidiBuffer dummyEvents; // empty
 		processPlugins(plugins, dummyEvents);
 	}
 	else
-	{
-		m_audioBuffer.clear();
 		processPlugins(plugins, *events);
-	}
+
 	juceToGiadaOutBuf(outBuf);
 }
 
@@ -204,9 +198,36 @@ void PluginHost::processPlugins(const std::vector<Plugin*>& plugins, juce::MidiB
 	{
 		if (!p->valid || p->isSuspended() || p->isBypassed())
 			continue;
-		p->process(m_audioBuffer, events);
+		processPlugin(p, events);
 	}
 	events.clear();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void PluginHost::processPlugin(Plugin* p, const juce::MidiBuffer& events)
+{
+	const Plugin::Buffer& pluginBuffer = p->process(m_audioBuffer, events);
+	const bool            isInstrument = p->isInstrument();
+
+	/* Merge the plugin buffer back into the local one. Special care is needed
+	if audio channels mismatch. */
+
+	for (int i = 0, j = 0; i < m_audioBuffer.getNumChannels(); i++)
+	{
+		/* If instrument (i.e. a plug-in that accepts MIDI and produces audio 
+		out of it), SUM the local working buffer to the main one. This allows
+		multiple plug-in instruments to play simultaneously on a given set of
+		MIDI events. If it's a normal FX instead (!isInstrument), the local
+		working buffer is simply copied over the main one. */
+
+		if (isInstrument)
+			m_audioBuffer.addFrom(i, 0, pluginBuffer, j, 0, pluginBuffer.getNumSamples());
+		else
+			m_audioBuffer.copyFrom(i, 0, pluginBuffer, j, 0, pluginBuffer.getNumSamples());
+		if (i < p->countMainOutChannels() - 1)
+			j++;
+	}
 }
 } // namespace giada::m
 

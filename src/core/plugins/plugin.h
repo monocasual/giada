@@ -42,6 +42,8 @@ namespace giada::m
 class Plugin : private juce::ComponentListener
 {
 public:
+	using Buffer = juce::AudioBuffer<float>;
+
 	/* Plugin (1)
 	Constructs an invalid plug-in. */
 
@@ -73,23 +75,28 @@ public:
 	std::string                 getParameterLabel(int index) const;
 	bool                        isSuspended() const;
 	bool                        isBypassed() const;
+	bool                        isInstrument() const;
 	int                         getNumPrograms() const;
 	int                         getCurrentProgram() const;
 	std::string                 getProgramName(int index) const;
 	void                        setParameter(int index, float value) const;
 	void                        setCurrentProgram(int index) const;
-	bool                        acceptsMidi() const;
 	PluginState                 getState() const;
 	juce::AudioProcessorEditor* createEditor() const;
 
-	/* process
-	Process the plug-in with audio and MIDI data. The audio buffer is a reference:
-	it has to be altered by the plug-in itself. Conversely, the MIDI buffer must
-	be passed by copy: each plug-in must receive its own copy of the event set, so
-	that any attempt to change/clear the MIDI buffer will only modify the local 
-	copy. */
+	/* countMainOutChannels
+	Returns the current channel layout for the main output bus. */
 
-	void process(juce::AudioBuffer<float>& b, juce::MidiBuffer m);
+	int countMainOutChannels() const;
+
+	/* process
+	Process the plug-in with audio and MIDI data. The audio buffer is a 
+	reference, while the MIDI buffer must be passed by copy: each plug-in must 
+	receive its own copy of the event set, so that any attempt to change/clear 
+	the MIDI buffer will only modify the local copy. Returns a reference of the
+	local buffer filled with processed data. */
+
+	const Buffer& process(const Buffer& b, juce::MidiBuffer m);
 
 	void setState(PluginState p);
 	void setBypass(bool b);
@@ -131,14 +138,9 @@ private:
 
 	juce::AudioProcessor::Bus* getMainBus(BusType b) const;
 
-	/* countMainOutChannels
-	Returns the current channel layout for the main output bus. */
-
-	int countMainOutChannels() const;
-
 	std::unique_ptr<juce::AudioPluginInstance> m_plugin;
 	std::unique_ptr<PluginHost::Info>          m_playHead;
-	juce::AudioBuffer<float>                   m_buffer;
+	Buffer                                     m_buffer;
 
 	std::atomic<bool> m_bypass;
 

@@ -191,11 +191,11 @@ bool Plugin::isSuspended() const
 
 /* -------------------------------------------------------------------------- */
 
-bool Plugin::acceptsMidi() const
+bool Plugin::isInstrument() const
 {
 	if (!valid)
 		return false;
-	return m_plugin->acceptsMidi();
+	return m_plugin->acceptsMidi() && m_plugin->getTotalNumInputChannels() == 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -216,37 +216,15 @@ void Plugin::setBypass(bool b) { m_bypass.store(b); }
 
 /* -------------------------------------------------------------------------- */
 
-void Plugin::process(juce::AudioBuffer<float>& out, juce::MidiBuffer m)
+const Plugin::Buffer& Plugin::process(const Plugin::Buffer& out, juce::MidiBuffer m)
 {
-	/* If this is not an instrument (i.e. doesn't accept MIDI), copy the 
-	incoming buffer data into the temporary one. This way FXes will process
-	existing audio data. Conversely, if the plug-in is an instrument, it 
-	generates its own audio data inside a clean m_buffer and we can play more 
-	than one plug-in instrument in the same stack, driven by the same set of 
-	MIDI events. */
+	/* Copy the incoming buffer data into the temporary one. This way FXes will 
+	process	existing audio data on the private buffer. This is needed later on
+	when merging it back into the incoming buffer. */
 
-	const bool isInstrument = m_plugin->acceptsMidi();
-
-	if (!isInstrument)
-		m_buffer = out;
-	else
-		m_buffer.clear();
-
+	m_buffer = out;
 	m_plugin->processBlock(m_buffer, m);
-
-	/* The local buffer is now filled. Let's try to fill the 'out' one as well
-	by taking into account the bus layout - many plug-ins might have mono output
-	and we have a stereo buffer to fill. */
-
-	for (int i = 0, j = 0; i < out.getNumChannels(); i++)
-	{
-		if (isInstrument)
-			out.addFrom(i, 0, m_buffer, j, 0, m_buffer.getNumSamples());
-		else
-			out.copyFrom(i, 0, m_buffer, j, 0, m_buffer.getNumSamples());
-		if (i < countMainOutChannels() - 1)
-			j++;
-	}
+	return m_buffer;
 }
 
 /* -------------------------------------------------------------------------- */
