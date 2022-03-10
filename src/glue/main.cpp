@@ -279,8 +279,8 @@ void closeProject()
 	if (!v::gdConfirmWin("Warning", "Close project: are you sure?"))
 		return;
 	g_engine.mixer.disable();
-	g_engine.reset();
 	g_ui.reset();
+	g_engine.reset();
 	g_engine.mixer.enable();
 }
 
