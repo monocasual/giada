@@ -74,6 +74,11 @@ void loadProject(void* data)
 		p.setProgress(v);
 	};
 
+	/* Close all sub-windows first, in case there are VST editors visible. VST
+	editors must be closed before deleting their plug-in processors. */
+
+	g_ui.closeAllSubwindows();
+
 	m::LoadState state = g_engine.load(projectPath, patchPath, progressCb);
 
 	if (state.patch != G_PATCH_OK)
