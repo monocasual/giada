@@ -116,7 +116,7 @@ void store(Conf::Data& conf)
 
 LoadState load(const Patch::Data& patch)
 {
-	DataLock lock = g_engine.model.lockData();
+	DataLock lock = g_engine.model.lockData(SwapType::NONE);
 
 	/* Clear and re-initialize channels first. */
 
