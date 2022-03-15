@@ -194,6 +194,7 @@ list(APPEND SOURCES
 	src/gui/elems/basics/split.cpp
 	src/gui/elems/basics/browser.cpp
 	src/gui/elems/basics/flex.cpp
+	src/gui/elems/basics/tabs.cpp
 	src/utils/log.cpp
 	src/utils/time.cpp
 	src/utils/math.cpp
