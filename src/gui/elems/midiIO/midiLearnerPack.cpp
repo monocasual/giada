@@ -63,7 +63,7 @@ void geMidiLearnerPack::setCallbacks(std::function<void(uint32_t)> s, std::funct
 
 void geMidiLearnerPack::addMidiLearner(std::string label, int param, bool visible)
 {
-	geMidiLearner* l = new geMidiLearner(0, 0, label, param);
+	geMidiLearner* l = new geMidiLearner(0, 0, LEARNER_WIDTH, G_GUI_UNIT, label, param);
 
 	l->onStartLearn = m_onStartLearn;
 	l->onClearLearn = m_onClearLearn;

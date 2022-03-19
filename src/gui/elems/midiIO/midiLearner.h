@@ -27,23 +27,19 @@
 #ifndef GE_MIDI_LEARNER_H
 #define GE_MIDI_LEARNER_H
 
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
-#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/flex.h"
 #include <functional>
 #include <string>
 
 class geBox;
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geButton;
-class geMidiLearner : public gePack
+class geMidiLearner : public geFlex
 {
 public:
-	geMidiLearner(int x, int y, std::string l, int param);
+	geMidiLearner(int x, int y, int w, int h, std::string l, int param);
 
 	/* update
 	Updates and repaints the label widget with value 'value'. */
@@ -63,18 +59,10 @@ protected:
 
 	int m_param;
 
-	geBox    m_text;
-	geButton m_valueBtn;
-	geButton m_button;
-
-private:
-	static void cb_button(Fl_Widget* /*w*/, void* p);
-	static void cb_value(Fl_Widget* /*w*/, void* p);
-
-	void onLearn() const;
-	void onReset() const;
+	geBox*    m_text;
+	geButton* m_valueBtn;
+	geButton* m_button;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif
