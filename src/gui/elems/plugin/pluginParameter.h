@@ -33,11 +33,11 @@
 #include "glue/plugin.h"
 #include <FL/Fl_Group.H>
 
-class geBox;
 class geSlider;
 
 namespace giada::v
 {
+class geBox;
 class gePluginParameter : public Fl_Group
 {
 public:
@@ -45,7 +45,7 @@ public:
 
 	void update(const c::plugin::Param& p, bool changeSlider);
 
-  private:
+private:
 	static void cb_setValue(Fl_Widget* /*w*/, void* p);
 	void        cb_setValue();
 

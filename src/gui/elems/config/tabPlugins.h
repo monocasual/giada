@@ -37,6 +37,8 @@
 
 namespace giada::v
 {
+class geBox;
+class geButton;
 class geTabPlugins : public Fl_Group
 {
 public:

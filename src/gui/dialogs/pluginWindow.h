@@ -31,19 +31,21 @@
 
 #include "window.h"
 
-class geBox;
 class geSlider;
 
 namespace giada::c::plugin
 {
 struct Plugin;
 }
+
 namespace giada::m
 {
 class Plugin;
 }
+
 namespace giada::v
 {
+class geBox;
 class geLiquidScroll;
 class gdPluginWindow : public gdWindow
 {

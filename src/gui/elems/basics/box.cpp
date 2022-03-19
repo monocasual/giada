@@ -29,6 +29,8 @@
 #include "utils/gui.h"
 #include <FL/fl_draw.H>
 
+namespace giada::v
+{
 geBox::geBox(int x, int y, int w, int h, const char* l, Fl_Align al)
 : Fl_Box(x, y, w, h)
 {
@@ -63,3 +65,4 @@ void geBox::draw()
 		fl_draw(giada::u::gui::truncate(label(), w() - 8).c_str(), x() + 4, y(), w() - 4, h(), align());
 	}
 }
+} // namespace giada::v

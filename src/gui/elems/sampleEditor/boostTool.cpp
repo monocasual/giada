@@ -39,9 +39,7 @@
 #include "waveTools.h"
 #include <FL/Fl.H>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geBoostTool::geBoostTool(int X, int Y)
 : Fl_Pack(X, Y, 220, G_GUI_UNIT)
@@ -106,6 +104,4 @@ void geBoostTool::cb_setBoostNum()
 void geBoostTool::cb_normalize()
 {
 }
-
-} // namespace v
-} // namespace giada
+} // namespace giada::v

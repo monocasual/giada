@@ -29,6 +29,8 @@
 
 #include <FL/Fl_Box.H>
 
+namespace giada::v
+{
 class geBox : public Fl_Box
 {
 public:
@@ -37,5 +39,6 @@ public:
 
 	void draw() override;
 };
+} // namespace giada::v
 
 #endif

@@ -31,10 +31,9 @@
 #include <functional>
 #include <string>
 
-class geBox;
-
 namespace giada::v
 {
+class geBox;
 class geButton;
 class geMidiLearner : public geFlex
 {

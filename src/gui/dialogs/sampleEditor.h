@@ -33,7 +33,6 @@
 #include "window.h"
 
 class geCheck;
-class geBox;
 class geStatusButton;
 
 namespace giada::m
@@ -43,6 +42,7 @@ class Wave;
 
 namespace giada::v
 {
+class geBox;
 class geButton;
 class geChoice;
 class gePack;

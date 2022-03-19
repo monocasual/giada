@@ -30,12 +30,10 @@
 #include <FL/Fl_Pack.H>
 
 class geInput;
-class geBox;
 
-namespace giada
+namespace giada::v
 {
-namespace v
-{
+class geBox;
 class geDial;
 class geButton;
 class geBoostTool : public Fl_Pack
@@ -58,7 +56,6 @@ private:
 	geInput*  input;
 	geButton* normalize;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif
