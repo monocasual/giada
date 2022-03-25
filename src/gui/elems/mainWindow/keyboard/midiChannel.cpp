@@ -82,7 +82,9 @@ void menuCallback(Fl_Widget* w, void* v)
 		c::recorder::clearAllActions(data.id);
 		break;
 	case Menu::SETUP_KEYBOARD_INPUT:
-		c::layout::openKeyGrabberWindow(data);
+		c::layout::openKeyGrabberWindow(data.key, [channelId = data.id](int key) {
+			return c::io::channel_setKey(channelId, key);
+		});
 		break;
 	case Menu::SETUP_MIDI_INPUT:
 		c::layout::openChannelMidiInputWindow(data.id);

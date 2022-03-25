@@ -24,41 +24,60 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "keyGrabber.h"
-#include "config.h"
+#include "gui/dialogs/keyGrabber.h"
 #include "core/conf.h"
-#include "core/model/model.h"
+#include "glue/channel.h"
 #include "glue/io.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/mainWindow/keyboard/channel.h"
-#include "gui/elems/mainWindow/keyboard/channelButton.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "mainWindow.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/flex.h"
 #include "utils/gui.h"
 #include "utils/log.h"
 #include "utils/string.h"
 #include <cassert>
 
-extern giada::v::gdMainWindow* mainWin;
-
-namespace giada
+namespace giada::v
 {
-namespace v
-{
-gdKeyGrabber::gdKeyGrabber(const c::channel::Data& d)
+gdKeyGrabber::gdKeyGrabber(int key)
 : gdWindow(300, 126, "Key configuration")
-, m_data(d)
+, onSetKey(nullptr)
+, m_key(key)
 {
-	begin();
-	m_text   = new geBox(8, 8, 284, 80, "");
-	m_clear  = new geButton(w() - 88, m_text->y() + m_text->h() + 8, 80, 20, "Clear");
-	m_cancel = new geButton(m_clear->x() - 88, m_clear->y(), 80, 20, "Close");
-	end();
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		m_text = new geBox();
 
-	m_clear->callback(cb_clear, (void*)this);
-	m_cancel->callback(cb_cancel, (void*)this);
+		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			m_clear  = new geButton("Clear");
+			m_cancel = new geButton("Close");
 
-	updateText(m_data.key);
+			footer->add(new geBox()); // Spacer
+			footer->add(m_clear, 80);
+			footer->add(m_cancel, 80);
+			footer->end();
+		}
+
+		container->add(m_text);
+		container->add(footer, G_GUI_UNIT);
+		container->end();
+	}
+
+	add(container);
+
+	m_clear->onClick = [this]() {
+		assert(onSetKey != nullptr);
+
+		m_key = 0;
+		onSetKey(m_key);
+		rebuild();
+	};
+
+	m_cancel->onClick = [this]() {
+		do_callback();
+	};
+
+	rebuild();
 
 	u::gui::setFavicon(this);
 	set_modal();
@@ -69,43 +88,9 @@ gdKeyGrabber::gdKeyGrabber(const c::channel::Data& d)
 
 void gdKeyGrabber::rebuild()
 {
-	updateText(m_data.key);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdKeyGrabber::cb_clear(Fl_Widget* /*w*/, void* p) { ((gdKeyGrabber*)p)->cb_clear(); }
-void gdKeyGrabber::cb_cancel(Fl_Widget* /*w*/, void* p) { ((gdKeyGrabber*)p)->cb_cancel(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdKeyGrabber::cb_cancel()
-{
-	do_callback();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdKeyGrabber::cb_clear()
-{
-	updateText(0);
-	setButtonLabel(0);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdKeyGrabber::setButtonLabel(int key)
-{
-	c::io::channel_setKey(m_data.id, key);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdKeyGrabber::updateText(int key)
-{
 	std::string tmp = "Press a key.\n\nCurrent binding: ";
-	if (key != 0)
-		tmp += static_cast<wchar_t>(key);
+	if (m_key != 0)
+		tmp += static_cast<wchar_t>(m_key);
 	else
 		tmp += "[none]";
 	m_text->copy_label(tmp.c_str());
@@ -115,25 +100,24 @@ void gdKeyGrabber::updateText(int key)
 
 int gdKeyGrabber::handle(int e)
 {
-	int ret = Fl_Group::handle(e);
-	switch (e)
-	{
-	case FL_KEYUP:
-	{
-		int x = Fl::event_key();
-		if (strlen(Fl::event_text()) != 0 && x != FL_BackSpace && x != FL_Enter && x != FL_Delete && x != FL_Tab && x != FL_End && x != ' ')
-		{
-			u::log::print("set key '%c' (%d) for channel ID=%d\n", x, x, m_data.id);
-			setButtonLabel(x);
-			updateText(x);
-			break;
-		}
-		else
-			u::log::print("invalid key\n");
-	}
-	}
-	return (ret);
-}
+	if (e != FL_KEYUP)
+		return Fl_Group::handle(e);
 
-} // namespace v
-} // namespace giada
+	assert(onSetKey != nullptr);
+
+	const int newKey = Fl::event_key();
+
+	if (!onSetKey(newKey))
+	{
+		u::log::print("Invalid key\n");
+		return 1;
+	}
+
+	m_key = newKey;
+	rebuild();
+
+	u::log::print("Set key '%c' (%d)\n", m_key, m_key);
+
+	return 1;
+}
+} // namespace giada::v

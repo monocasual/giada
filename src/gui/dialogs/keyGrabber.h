@@ -27,8 +27,10 @@
 #ifndef GD_KEYGRABBER_H
 #define GD_KEYGRABBER_H
 
+#include "core/conf.h"
 #include "window.h"
 #include <FL/Fl.H>
+#include <functional>
 
 namespace giada::c::channel
 {
@@ -42,21 +44,19 @@ class geButton;
 class gdKeyGrabber : public gdWindow
 {
 public:
-	gdKeyGrabber(const c::channel::Data& d);
+	gdKeyGrabber(int key);
 
 	int  handle(int e) override;
 	void rebuild() override;
 
+	/* onSetKey
+	Callback fired when this widget has grabbed an event. Returns a boolean value
+	to inform the widget if the key is valid. */
+
+	std::function<bool(int key)> onSetKey;
+
 private:
-	static void cb_clear(Fl_Widget* /*w*/, void* p);
-	static void cb_cancel(Fl_Widget* /*w*/, void* p);
-	void        cb_clear();
-	void        cb_cancel();
-
-	void setButtonLabel(int key);
-	void updateText(int key);
-
-	const c::channel::Data& m_data;
+	int m_key;
 
 	geBox*    m_text;
 	geButton* m_clear;

@@ -65,6 +65,18 @@ void rebuildMidiWindows_()
 	g_ui.rebuildSubWindow(WID_MIDI_INPUT);
 	g_ui.rebuildSubWindow(WID_MIDI_OUTPUT);
 }
+
+/* -------------------------------------------------------------------------- */
+
+bool isValidKey_(int key)
+{
+	if (strlen(Fl::event_text()) == 0)
+		return false;
+	for (const auto& [_, val] : g_engine.conf.data.keyBindings)
+		if (key == val)
+			return false;
+	return true;
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -212,10 +224,13 @@ void channel_setMidiOutputFilter(ID channelId, int ch)
 
 /* -------------------------------------------------------------------------- */
 
-void channel_setKey(ID channelId, int k)
+bool channel_setKey(ID channelId, int k)
 {
+	if (!isValidKey_(k))
+		return false;
 	g_engine.model.get().getChannel(channelId).key = k;
 	g_engine.model.swap(m::model::SwapType::HARD);
+	return true;
 }
 
 /* -------------------------------------------------------------------------- */

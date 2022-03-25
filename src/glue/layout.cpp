@@ -29,7 +29,9 @@
 #include "core/engine.h"
 #include "core/patch.h"
 #include "core/sequencer.h"
+#include "glue/channel.h"
 #include "glue/config.h"
+#include "glue/io.h"
 #include "glue/storage.h"
 #include "gui/dialogs/about.h"
 #include "gui/dialogs/actionEditor/midiActionEditor.h"
@@ -101,9 +103,13 @@ void openAboutWindow()
 
 /* -------------------------------------------------------------------------- */
 
-void openKeyGrabberWindow(const c::channel::Data& data)
+void openKeyGrabberWindow(int key, std::function<bool(int)> f)
 {
-	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdKeyGrabber(data), WID_KEY_GRABBER);
+	v::gdKeyGrabber* keyGrabber = new v::gdKeyGrabber(key);
+
+	keyGrabber->onSetKey = f;
+
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), keyGrabber, WID_KEY_GRABBER);
 }
 
 /* -------------------------------------------------------------------------- */

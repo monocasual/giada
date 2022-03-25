@@ -131,9 +131,10 @@ void channel_setMidiInputFilter(ID channelId, int c);
 void channel_setMidiOutputFilter(ID channelId, int c);
 
 /* channel_setKey
-Set key 'k' to Sample Channel 'channelId'. Used for keyboard bindings. */
+Set key 'k' to Sample Channel 'channelId'. Used for keyboard bindings. Returns
+false if the key is not valid (because used for global bindings). */
 
-void channel_setKey(ID channelId, int k);
+bool channel_setKey(ID channelId, int k);
 
 /* MIDI Learning functions. */
 
