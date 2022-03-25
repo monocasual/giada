@@ -26,6 +26,7 @@
 
 #include "window.h"
 #include "utils/log.h"
+#include <FL/Fl.H>
 
 namespace giada::v
 {
@@ -72,6 +73,10 @@ gdWindow::~gdWindow()
 
 void gdWindow::cb_closeChild(Fl_Widget* w, void* /*p*/)
 {
+	/* Disable default FLTK behavior where 'escape' closes the window. */
+	if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
+		return;
+
 	gdWindow* child = (gdWindow*)w;
 	if (child->getParent() != nullptr)
 		(child->getParent())->delSubWindow(child);
