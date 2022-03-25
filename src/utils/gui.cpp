@@ -148,4 +148,109 @@ int centerWindowY(int h)
 {
 	return (Fl::h() / 2) - (h / 2);
 }
+
+/* -------------------------------------------------------------------------- */
+
+std::string keyToString(int key)
+{
+	// https://github.com/fltk/fltk/blob/570a05a33c9dc42a16caa5a1a11cf34d4df1c1f9/FL/Enumerations.H
+	// https://www.fltk.org/doc-1.3/group__fl__events.html#gafa17a5b4d8d9163631c88142e60447ed
+
+	if (key == 0)
+		return "[None]";
+
+	switch (key)
+	{
+	case ' ':
+		return "Space";
+	case FL_BackSpace:
+		return "Backspace";
+	case FL_Tab:
+		return "Tab";
+	case FL_Enter:
+		return "Enter";
+	case FL_Pause:
+		return "Pause";
+	case FL_Scroll_Lock:
+		return "Scroll lock";
+	case FL_Escape:
+		return "Escape";
+	case FL_Home:
+		return "Home";
+	case FL_Left:
+		return "Left";
+	case FL_Up:
+		return "Up";
+	case FL_Right:
+		return "Right";
+	case FL_Down:
+		return "Down";
+	case FL_Page_Up:
+		return "Page up";
+	case FL_Page_Down:
+		return "Page down";
+	case FL_End:
+		return "End";
+	case FL_Print:
+		return "Print";
+	case FL_Insert:
+		return "Insert";
+	case FL_Menu:
+		return "Menu";
+	case FL_Help:
+		return "Help";
+	case FL_Num_Lock:
+		return "Num lock";
+	case FL_KP: // TODO ?
+		return "";
+	case FL_KP_Enter:
+		return "KP Enter";
+	case FL_F + 1:
+		return "F1";
+	case FL_F + 2:
+		return "F2";
+	case FL_F + 3:
+		return "F3";
+	case FL_F + 4:
+		return "F4";
+	case FL_F + 5:
+		return "F5";
+	case FL_F + 6:
+		return "F6";
+	case FL_F + 7:
+		return "F7";
+	case FL_F + 8:
+		return "F8";
+	case FL_F + 9:
+		return "F9";
+	case FL_F + 10:
+		return "F10";
+	case FL_F + 11:
+		return "F11";
+	case FL_F + 12:
+		return "F12";
+	case FL_Shift_L:
+		return "Shift L";
+	case FL_Shift_R:
+		return "Shift R";
+	case FL_Control_L:
+		return "Control L";
+	case FL_Control_R:
+		return "Control R";
+	case FL_Caps_Lock:
+		return "Caps lock";
+	case FL_Meta_L:
+		return "Meta L";
+	case FL_Meta_R:
+		return "Meta R";
+	case FL_Alt_L:
+		return "Alt L";
+	case FL_Alt_R:
+		return "Alt R";
+	case FL_Delete:
+		return "Delete";
+	default:
+		return Fl::event_text();
+	}
+}
 } // namespace giada::u::gui

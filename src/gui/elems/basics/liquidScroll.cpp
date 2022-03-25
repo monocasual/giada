@@ -43,6 +43,13 @@ geLiquidScroll::geLiquidScroll(int x, int y, int w, int h, Direction d)
 
 /* -------------------------------------------------------------------------- */
 
+geLiquidScroll::geLiquidScroll(geompp::Rect<int> r, Direction d)
+: geLiquidScroll(r.x, r.y, r.w, r.h, d)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geLiquidScroll::resize(int X, int Y, int W, int H)
 {
 	const int nc = children() - 2; // skip hscrollbar and vscrollbar

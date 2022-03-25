@@ -38,13 +38,9 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-Dispatcher::Dispatcher()
-: m_backspace(false)
-, m_end(false)
-, m_enter(false)
-, m_space(false)
-, m_esc(false)
-, m_key(false)
+Dispatcher::Dispatcher(const m::Conf::KeyBindings& k)
+: m_keyBindings(k)
+, m_keyPressed(-1)
 {
 }
 
@@ -89,55 +85,31 @@ void Dispatcher::dispatchKey(int event)
 
 	if (event == FL_KEYDOWN)
 	{
-		if (Fl::event_key() == FL_BackSpace && !m_backspace)
-		{
-			m_backspace = true;
-			c::events::rewindSequencer(Thread::MAIN);
-		}
-		else if (Fl::event_key() == FL_End && !m_end)
-		{
-			m_end = true;
-			c::events::toggleInputRecording();
-		}
-		else if (Fl::event_key() == FL_Enter && !m_enter)
-		{
-			m_enter = true;
-			c::events::toggleActionRecording();
-		}
-		else if (Fl::event_key() == ' ' && !m_space)
-		{
-			m_space = true;
+		if (m_keyPressed == Fl::event_key()) // Avoid key retrig
+			return;
+
+		m_keyPressed = Fl::event_key();
+
+		if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_PLAY))
 			c::events::toggleSequencer(Thread::MAIN);
-		}
-		else if (Fl::event_key() == FL_Escape && !m_esc)
-		{
-			m_esc = true;
+		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_REWIND))
+			c::events::rewindSequencer(Thread::MAIN);
+		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_RECORD_ACTIONS))
+			c::events::toggleActionRecording();
+		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_RECORD_INPUT))
+			c::events::toggleInputRecording();
+		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_EXIT))
 			m::init::closeMainWindow();
-		}
-		else if (!m_key)
+		else
 		{
-			m_key = true;
 			onEventOccured();
 			dispatchChannels(event);
 		}
 	}
 	else if (event == FL_KEYUP)
 	{
-		if (Fl::event_key() == FL_BackSpace)
-			m_backspace = false;
-		else if (Fl::event_key() == FL_End)
-			m_end = false;
-		else if (Fl::event_key() == ' ')
-			m_space = false;
-		else if (Fl::event_key() == FL_Enter)
-			m_enter = false;
-		else if (Fl::event_key() == FL_Escape)
-			m_esc = false;
-		else
-		{
-			m_key = false;
-			dispatchChannels(event);
-		}
+		m_keyPressed = -1;
+		dispatchChannels(event);
 	}
 }
 

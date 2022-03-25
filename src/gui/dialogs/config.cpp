@@ -34,6 +34,7 @@
 #include "gui/elems/basics/tabs.h"
 #include "gui/elems/config/tabAudio.h"
 #include "gui/elems/config/tabBehaviors.h"
+#include "gui/elems/config/tabBindings.h"
 #include "gui/elems/config/tabMidi.h"
 #include "gui/elems/config/tabMisc.h"
 #include "gui/elems/config/tabPlugins.h"
@@ -54,6 +55,7 @@ gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
 			tabMidi      = new geTabMidi(bounds);
 			tabBehaviors = new geTabBehaviors(bounds, conf);
 			tabMisc      = new geTabMisc(bounds);
+			tabBindings  = new geTabBindings(bounds, conf);
 #ifdef WITH_VST
 			tabPlugins = new geTabPlugins(bounds);
 #endif
@@ -63,6 +65,7 @@ gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
 #ifdef WITH_VST
 			tabs->add(tabPlugins);
 #endif
+			tabs->add(tabBindings);
 			tabs->add(tabMisc);
 		}
 

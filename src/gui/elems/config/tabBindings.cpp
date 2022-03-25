@@ -2,11 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gLiquidScroll
- * custom scroll that tells children to follow scroll's width when
- * resized. Thanks to Greg Ercolano from FLTK dev team.
- * http://seriss.com/people/erco/fltk/
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2022 Giovanni A. Zuliani | Monocasual Laboratories
@@ -29,47 +24,36 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_LIQUID_SCROLL_H
-#define GE_LIQUID_SCROLL_H
-
+#include "gui/elems/config/tabBindings.h"
 #include "core/const.h"
-#include "deps/geompp/src/rect.hpp"
-#include "gui/types.h"
-#include "scroll.h"
+#include "gui/elems/basics/liquidScroll.h"
+#include "gui/elems/keyBinder.h"
+#include "utils/gui.h"
 
 namespace giada::v
 {
-class geLiquidScroll : public geScroll
+geTabBindings::geTabBindings(geompp::Rect<int> bounds, m::Conf::Data& conf)
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, "Key Bindings")
 {
-public:
-	geLiquidScroll(int x, int y, int w, int h, Direction d);
-	geLiquidScroll(geompp::Rect<int>, Direction d);
+	end();
 
-	void resize(int x, int y, int w, int h) override;
-
-	/* addWidget
-    Adds a new widget to the bottom, with proper spacing. */
-
-	template <typename T>
-	T* addWidget(T* wg)
+	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_INNER_MARGIN);
 	{
-		int numChildren = countChildren();
+		play          = new geKeyBinder("Play", conf.keyBindings.find(m::Conf::KEY_BIND_PLAY)->second);
+		rewind        = new geKeyBinder("Rewind", conf.keyBindings.find(m::Conf::KEY_BIND_REWIND)->second);
+		recordActions = new geKeyBinder("Record actions", conf.keyBindings.find(m::Conf::KEY_BIND_RECORD_ACTIONS)->second);
+		recordInput   = new geKeyBinder("Record audio", conf.keyBindings.find(m::Conf::KEY_BIND_RECORD_INPUT)->second);
+		exit          = new geKeyBinder("Exit", conf.keyBindings.find(m::Conf::KEY_BIND_EXIT)->second);
 
-		int wx = x();
-		int wy = y() - yposition() + (numChildren * (wg->h() + G_GUI_INNER_MARGIN));
-		int ww = w() - 24;
-		int wh = wg->h();
-
-		wg->resize(wx, wy, ww, wh);
-		add(wg);
-		redraw();
-
-		return wg;
+		body->add(play, G_GUI_UNIT);
+		body->add(rewind, G_GUI_UNIT);
+		body->add(recordActions, G_GUI_UNIT);
+		body->add(recordInput, G_GUI_UNIT);
+		body->add(exit, G_GUI_UNIT);
+		body->end();
 	}
 
-private:
-	Direction m_direction;
-};
+	add(body);
+	resizable(body);
+}
 } // namespace giada::v
-
-#endif

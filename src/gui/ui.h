@@ -27,6 +27,7 @@
 #ifndef G_V_UI_H
 #define G_V_UI_H
 
+#include "core/conf.h"
 #include "core/patch.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dispatcher.h"
@@ -45,7 +46,7 @@ namespace giada::v
 class Ui final
 {
 public:
-	Ui(m::Recorder&);
+	Ui(m::Recorder&, const m::Conf::Data&);
 
 	/* shouldBlink
 	Return whether is time to blink something or not. This is used to make 

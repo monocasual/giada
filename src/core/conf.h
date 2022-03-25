@@ -31,12 +31,21 @@
 #include "core/types.h"
 #include "utils/gui.h"
 #include <string>
+#include <unordered_map>
 
 namespace giada::m
 {
 class Conf final
 {
 public:
+	using KeyBindings = std::unordered_map<int, int>;
+
+	static constexpr int KEY_BIND_PLAY           = 1;
+	static constexpr int KEY_BIND_REWIND         = 2;
+	static constexpr int KEY_BIND_RECORD_ACTIONS = 3;
+	static constexpr int KEY_BIND_RECORD_INPUT   = 4;
+	static constexpr int KEY_BIND_EXIT           = 5;
+
 	struct Data
 	{
 		int  logMode          = LOG_MODE_MUTE;
@@ -133,6 +142,13 @@ public:
 		int pluginSortMethod = 0;
 
 #endif
+
+		KeyBindings keyBindings = {
+		    {KEY_BIND_PLAY, ' '},
+		    {KEY_BIND_REWIND, FL_BackSpace},
+		    {KEY_BIND_RECORD_ACTIONS, FL_Enter},
+		    {KEY_BIND_RECORD_INPUT, FL_End},
+		    {KEY_BIND_EXIT, FL_Escape}};
 	};
 
 	Conf();

@@ -37,6 +37,7 @@ class geTabAudio;
 class geTabBehaviors;
 class geTabMidi;
 class geTabMisc;
+class geTabBindings;
 #ifdef WITH_VST
 class geTabPlugins;
 #endif
@@ -49,6 +50,7 @@ public:
 	geTabBehaviors* tabBehaviors;
 	geTabMidi*      tabMidi;
 	geTabMisc*      tabMisc;
+	geTabBindings*  tabBindings;
 #ifdef WITH_VST
 	geTabPlugins* tabPlugins;
 #endif

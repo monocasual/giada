@@ -27,6 +27,7 @@
 #ifndef G_V_DISPATCHER_H
 #define G_V_DISPATCHER_H
 
+#include "core/conf.h"
 #include "core/types.h"
 #include <functional>
 
@@ -36,7 +37,7 @@ class geChannel;
 class Dispatcher final
 {
 public:
-	Dispatcher();
+	Dispatcher(const m::Conf::KeyBindings& m_keyBindings);
 
 	/* dispatchKey
     Processes a key pressed on the physical keyboard. */
@@ -62,12 +63,9 @@ private:
 
 	void dispatchChannels(int event) const;
 
-	bool m_backspace;
-	bool m_end;
-	bool m_enter;
-	bool m_space;
-	bool m_esc;
-	bool m_key;
+	const m::Conf::KeyBindings& m_keyBindings;
+
+	int m_keyPressed;
 };
 } // namespace giada::v
 

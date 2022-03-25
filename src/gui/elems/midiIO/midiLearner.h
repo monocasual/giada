@@ -45,6 +45,11 @@ public:
 
 	void update(uint32_t value);
 
+	/* update (1)
+	Just sets the label widget with a string value (no parsing done as in (1)). */
+
+	void update(const std::string&);
+
 	void activate();
 	void deactivate();
 

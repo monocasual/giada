@@ -132,6 +132,7 @@ list(APPEND SOURCES
 	src/gui/elems/midiIO/midiLearnerPack.cpp
     src/gui/elems/fileBrowser.cpp
 	src/gui/elems/soundMeter.cpp
+	src/gui/elems/keyBinder.cpp
 	src/gui/elems/plugin/pluginBrowser.cpp
 	src/gui/elems/plugin/pluginParameter.cpp
 	src/gui/elems/plugin/pluginElement.cpp
@@ -175,6 +176,7 @@ list(APPEND SOURCES
 	src/gui/elems/config/tabAudio.cpp
 	src/gui/elems/config/tabBehaviors.cpp
 	src/gui/elems/config/tabPlugins.cpp
+	src/gui/elems/config/tabBindings.cpp
 	src/gui/elems/basics/scroll.cpp
 	src/gui/elems/basics/pack.cpp
 	src/gui/elems/basics/group.cpp

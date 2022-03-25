@@ -24,16 +24,31 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/engine.h"
-#include "gui/ui.h"
+#ifndef GE_CONFIG_TAB_BINDINGS_H
+#define GE_CONFIG_TAB_BINDINGS_H
 
-giada::m::Engine g_engine;
-giada::v::Ui     g_ui(g_engine.recorder, g_engine.conf.data);
+#include "core/conf.h"
+#include "deps/geompp/src/rect.hpp"
+#include <FL/Fl_Group.H>
 
-int main(int argc, char** argv)
+class geCheck;
+class geInput;
+
+namespace giada::v
 {
-	if (int ret = giada::m::init::tests(argc, argv); ret != -1)
-		return ret;
-	giada::m::init::startup(argc, argv);
-	return giada::m::init::run();
-}
+class geKeyBinder;
+class geTabBindings : public Fl_Group
+{
+public:
+	geTabBindings(geompp::Rect<int>, m::Conf::Data&);
+
+private:
+	geKeyBinder* play;
+	geKeyBinder* rewind;
+	geKeyBinder* recordActions;
+	geKeyBinder* recordInput;
+	geKeyBinder* exit;
+};
+} // namespace giada::v
+
+#endif

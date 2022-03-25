@@ -24,16 +24,46 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/engine.h"
-#include "gui/ui.h"
+#include "gui/elems/keyBinder.h"
+#include "core/const.h"
+#include "glue/layout.h"
+#include "gui/dialogs/keyGrabber.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/basics/button.h"
+#include "utils/gui.h"
 
-giada::m::Engine g_engine;
-giada::v::Ui     g_ui(g_engine.recorder, g_engine.conf.data);
-
-int main(int argc, char** argv)
+namespace giada::v
 {
-	if (int ret = giada::m::init::tests(argc, argv); ret != -1)
-		return ret;
-	giada::m::init::startup(argc, argv);
-	return giada::m::init::run();
+geKeyBinder::geKeyBinder(const std::string& l, int& keyRef)
+: geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
+{
+	m_labelBox = new geBox(l.c_str());
+	m_keyBox   = new geBox(u::gui::keyToString(keyRef).c_str());
+	m_bindBtn  = new geButton("Bind");
+	m_clearBtn = new geButton("Clear");
+
+	add(m_labelBox);
+	add(m_keyBox, 100);
+	add(m_bindBtn, 50);
+	add(m_clearBtn, 50);
+	end();
+
+	m_labelBox->box(G_CUSTOM_BORDER_BOX);
+	m_keyBox->box(G_CUSTOM_BORDER_BOX);
+
+	m_bindBtn->onClick = [&keyRef, this]() {
+		c::layout::openKeyGrabberWindow(keyRef, [&keyRef, this](int newKey) {
+			keyRef = newKey;
+			m_keyBox->copy_label(u::gui::keyToString(keyRef).c_str());
+			return true;
+		});
+	};
+
+	m_clearBtn->onClick = [&keyRef, this]() {
+		keyRef = 0;
+		m_keyBox->copy_label(u::gui::keyToString(keyRef).c_str());
+	};
 }
+
+} // namespace giada::v

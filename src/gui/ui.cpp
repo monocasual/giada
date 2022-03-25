@@ -44,8 +44,9 @@
 
 namespace giada::v
 {
-Ui::Ui(m::Recorder& recorder)
-: m_updater(*this)
+Ui::Ui(m::Recorder& recorder, const m::Conf::Data& conf)
+: dispatcher(conf.keyBindings)
+, m_updater(*this)
 , m_blinker(0)
 {
 	dispatcher.onEventOccured = [&recorder]() {

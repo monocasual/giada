@@ -444,6 +444,11 @@ constexpr auto CONF_KEY_PLUGIN_SORT_METHOD            = "plugin_sort_method";
 constexpr auto CONF_KEY_REC_TRIGGER_MODE              = "rec_trigger_mode";
 constexpr auto CONF_KEY_REC_TRIGGER_LEVEL             = "rec_trigger_level";
 constexpr auto CONF_KEY_INPUT_REC_MODE                = "input_rec_mode";
+constexpr auto CONF_KEY_BIND_PLAY                     = "key_bind_play";
+constexpr auto CONF_KEY_BIND_REWIND                   = "key_bind_rewind";
+constexpr auto CONF_KEY_BIND_RECORD_ACTIONS           = "key_bind_record_actions";
+constexpr auto CONF_KEY_BIND_RECORD_INPUT             = "key_bind_record_input";
+constexpr auto CONF_KEY_BIND_EXIT                     = "key_bind_record_exit";
 
 /* JSON midimaps keys */
 

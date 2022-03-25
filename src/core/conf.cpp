@@ -142,6 +142,13 @@ bool Conf::read()
 	data.midiInVolumeOut            = j.value(CONF_KEY_MIDI_IN_VOLUME_OUT, data.midiInVolumeOut);
 	data.midiInBeatDouble           = j.value(CONF_KEY_MIDI_IN_BEAT_DOUBLE, data.midiInBeatDouble);
 	data.midiInBeatHalf             = j.value(CONF_KEY_MIDI_IN_BEAT_HALF, data.midiInBeatHalf);
+
+	data.keyBindings[KEY_BIND_PLAY]           = j.value(CONF_KEY_BIND_PLAY, 0);
+	data.keyBindings[KEY_BIND_REWIND]         = j.value(CONF_KEY_BIND_REWIND, 0);
+	data.keyBindings[KEY_BIND_RECORD_ACTIONS] = j.value(CONF_KEY_BIND_RECORD_ACTIONS, 0);
+	data.keyBindings[KEY_BIND_RECORD_INPUT]   = j.value(CONF_KEY_BIND_RECORD_INPUT, 0);
+	data.keyBindings[KEY_BIND_EXIT]           = j.value(CONF_KEY_BIND_EXIT, 0);
+
 #ifdef WITH_VST
 	data.pluginChooserX   = j.value(CONF_KEY_PLUGIN_CHOOSER_X, data.pluginChooserX);
 	data.pluginChooserY   = j.value(CONF_KEY_PLUGIN_CHOOSER_Y, data.pluginChooserY);
@@ -238,6 +245,13 @@ bool Conf::write() const
 	j[CONF_KEY_REC_TRIGGER_MODE]              = static_cast<int>(data.recTriggerMode);
 	j[CONF_KEY_REC_TRIGGER_LEVEL]             = data.recTriggerLevel;
 	j[CONF_KEY_INPUT_REC_MODE]                = static_cast<int>(data.inputRecMode);
+
+	j[CONF_KEY_BIND_PLAY]           = data.keyBindings.find(KEY_BIND_PLAY)->second;
+	j[CONF_KEY_BIND_REWIND]         = data.keyBindings.find(KEY_BIND_REWIND)->second;
+	j[CONF_KEY_BIND_RECORD_ACTIONS] = data.keyBindings.find(KEY_BIND_RECORD_ACTIONS)->second;
+	j[CONF_KEY_BIND_RECORD_INPUT]   = data.keyBindings.find(KEY_BIND_RECORD_INPUT)->second;
+	j[CONF_KEY_BIND_EXIT]           = data.keyBindings.find(KEY_BIND_EXIT)->second;
+
 #ifdef WITH_VST
 	j[CONF_KEY_PLUGIN_CHOOSER_X]   = data.pluginChooserX;
 	j[CONF_KEY_PLUGIN_CHOOSER_Y]   = data.pluginChooserY;

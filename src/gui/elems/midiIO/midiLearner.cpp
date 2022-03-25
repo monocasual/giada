@@ -92,6 +92,14 @@ void geMidiLearner::update(uint32_t value)
 
 /* -------------------------------------------------------------------------- */
 
+void geMidiLearner::update(const std::string& s)
+{
+	m_valueBtn->copy_label(s.c_str());
+	m_button->value(0);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geMidiLearner::activate()
 {
 	Fl_Group::activate();

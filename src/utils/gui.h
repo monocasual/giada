@@ -75,6 +75,11 @@ std::string truncate(const std::string& s, Pixel width);
 int centerWindowX(int w);
 int centerWindowY(int h);
 
+/* keyToString
+Translates an FLTK key event into a human-readable string. */
+
+std::string keyToString(int key);
+
 /* makeMenuItem
 Makes a new Fl_Menu_Item at compile time. Used to initialize pop-up menus. */
 

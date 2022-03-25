@@ -24,16 +24,27 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/engine.h"
-#include "gui/ui.h"
+#ifndef GE_KEY_BINDER_H
+#define GE_KEY_BINDER_H
 
-giada::m::Engine g_engine;
-giada::v::Ui     g_ui(g_engine.recorder, g_engine.conf.data);
+#include "gui/elems/basics/flex.h"
+#include <string>
 
-int main(int argc, char** argv)
+namespace giada::v
 {
-	if (int ret = giada::m::init::tests(argc, argv); ret != -1)
-		return ret;
-	giada::m::init::startup(argc, argv);
-	return giada::m::init::run();
-}
+class geBox;
+class geButton;
+class geKeyBinder : public geFlex
+{
+public:
+	geKeyBinder(const std::string& l, int& keyRef);
+
+private:
+	geBox*    m_labelBox;
+	geBox*    m_keyBox;
+	geButton* m_bindBtn;
+	geButton* m_clearBtn;
+};
+} // namespace giada::v
+
+#endif
