@@ -38,20 +38,22 @@ geGridTool::geGridTool(Pixel x, Pixel y, m::Conf::Data& c)
 , m_conf(c)
 {
 	gridType = new geChoice(x, y, 40, 20);
-	gridType->add("1");
-	gridType->add("2");
-	gridType->add("3");
-	gridType->add("4");
-	gridType->add("6");
-	gridType->add("8");
-	gridType->add("16");
-	gridType->add("32");
-	gridType->value(0);
-	gridType->callback(cb_changeType, (void*)this);
+	gridType->addItem("1");
+	gridType->addItem("2");
+	gridType->addItem("3");
+	gridType->addItem("4");
+	gridType->addItem("6");
+	gridType->addItem("8");
+	gridType->addItem("16");
+	gridType->addItem("32");
+	gridType->showItem(0);
+	gridType->onChange = [this](ID) {
+		window()->redraw();
+	};
 
 	active = new geCheck(gridType->x() + gridType->w() + 4, y, 20, 20);
 
-	gridType->value(m_conf.actionEditorGridVal);
+	gridType->showItem(m_conf.actionEditorGridVal);
 	active->value(m_conf.actionEditorGridOn);
 
 	end();
@@ -64,19 +66,8 @@ geGridTool::geGridTool(Pixel x, Pixel y, m::Conf::Data& c)
 
 geGridTool::~geGridTool()
 {
-	m_conf.actionEditorGridVal = gridType->value();
+	m_conf.actionEditorGridVal = gridType->getSelectedId();
 	m_conf.actionEditorGridOn  = active->value();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geGridTool::cb_changeType(Fl_Widget* /*w*/, void* p) { ((geGridTool*)p)->cb_changeType(); }
-
-/* -------------------------------------------------------------------------- */
-
-void geGridTool::cb_changeType()
-{
-	window()->redraw();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -90,7 +81,7 @@ bool geGridTool::isOn() const
 
 int geGridTool::getValue() const
 {
-	switch (gridType->value())
+	switch (gridType->getSelectedId())
 	{
 	case 0:
 		return 1;

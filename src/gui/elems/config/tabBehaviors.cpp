@@ -29,45 +29,47 @@
 #include "core/const.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
+#include "gui/elems/basics/flex.h"
 #include <FL/Fl_Pack.H>
 
 namespace giada::v
 {
-geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H, m::Conf::Data& c)
-: Fl_Group(X, Y, W, H)
-, m_container(X, Y + G_GUI_OUTER_MARGIN, Direction::VERTICAL, G_GUI_OUTER_MARGIN)
-, m_chansStopOnSeqHalt(0, 0, 280, 30, "Dynamic channels stop immediately when the sequencer\nis halted")
-, m_treatRecsAsLoops(0, 0, 280, 20, "Treat one shot channels with actions as loops")
-, m_inputMonitorDefaultOn(0, 0, 280, 20, "New sample channels have input monitor on by default")
-, m_overdubProtectionDefaultOn(0, 0, 280, 30, "New sample channels have overdub protection on\nby default")
+geTabBehaviors::geTabBehaviors(geompp::Rect<int> bounds, m::Conf::Data& c)
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, "Behaviors")
 , m_conf(c)
 {
 	end();
 
-	label("Behaviors");
-	labelsize(G_GUI_FONT_SIZE_BASE);
-	selection_color(G_COLOR_GREY_4);
+	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		m_chansStopOnSeqHalt         = new geCheck(0, 0, 0, 0, "Dynamic channels stop immediately when the sequencer\nis halted");
+		m_treatRecsAsLoops           = new geCheck(0, 0, 0, 0, "Treat one shot channels with actions as loops");
+		m_inputMonitorDefaultOn      = new geCheck(0, 0, 0, 0, "New sample channels have input monitor on by default");
+		m_overdubProtectionDefaultOn = new geCheck(0, 0, 0, 0, "New sample channels have overdub protection on\nby default");
 
-	m_container.add(&m_chansStopOnSeqHalt);
-	m_container.add(&m_treatRecsAsLoops);
-	m_container.add(&m_inputMonitorDefaultOn);
-	m_container.add(&m_overdubProtectionDefaultOn);
+		body->add(m_chansStopOnSeqHalt, 30);
+		body->add(m_treatRecsAsLoops, 20);
+		body->add(m_inputMonitorDefaultOn, 20);
+		body->add(m_overdubProtectionDefaultOn, 30);
+		body->end();
+	};
 
-	add(m_container);
+	add(body);
+	resizable(body);
 
-	m_chansStopOnSeqHalt.value(m_conf.chansStopOnSeqHalt);
-	m_treatRecsAsLoops.value(m_conf.treatRecsAsLoops);
-	m_inputMonitorDefaultOn.value(m_conf.inputMonitorDefaultOn);
-	m_overdubProtectionDefaultOn.value(m_conf.overdubProtectionDefaultOn);
+	m_chansStopOnSeqHalt->value(m_conf.chansStopOnSeqHalt);
+	m_treatRecsAsLoops->value(m_conf.treatRecsAsLoops);
+	m_inputMonitorDefaultOn->value(m_conf.inputMonitorDefaultOn);
+	m_overdubProtectionDefaultOn->value(m_conf.overdubProtectionDefaultOn);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geTabBehaviors::save()
 {
-	m_conf.chansStopOnSeqHalt         = m_chansStopOnSeqHalt.value();
-	m_conf.treatRecsAsLoops           = m_treatRecsAsLoops.value();
-	m_conf.inputMonitorDefaultOn      = m_inputMonitorDefaultOn.value();
-	m_conf.overdubProtectionDefaultOn = m_overdubProtectionDefaultOn.value();
+	m_conf.chansStopOnSeqHalt         = m_chansStopOnSeqHalt->value();
+	m_conf.treatRecsAsLoops           = m_treatRecsAsLoops->value();
+	m_conf.inputMonitorDefaultOn      = m_inputMonitorDefaultOn->value();
+	m_conf.overdubProtectionDefaultOn = m_overdubProtectionDefaultOn->value();
 }
 } // namespace giada::v

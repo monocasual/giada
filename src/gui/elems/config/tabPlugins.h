@@ -29,11 +29,12 @@
 
 #ifdef WITH_VST
 
+#include "deps/geompp/src/rect.hpp"
 #include "glue/config.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
-#include "gui/elems/basics/input.h"
 #include <FL/Fl_Group.H>
+
+class geInput;
+class geBox;
 
 namespace giada::v
 {
@@ -42,23 +43,18 @@ class geButton;
 class geTabPlugins : public Fl_Group
 {
 public:
-	geTabPlugins(int x, int y, int w, int h);
+	geTabPlugins(geompp::Rect<int>);
 
 	void save();
 	void rebuild();
 
 private:
-	static void cb_scan(Fl_Widget* /*w*/, void* p);
-	static void cb_browse(Fl_Widget* /*w*/, void* p);
-	void        cb_scan();
-	void        cb_browse();
-
 	c::config::PluginData m_data;
 
-	geButton m_browse;
-	geInput  m_folderPath;
-	geButton m_scanButton;
-	geBox    m_info;
+	geButton* m_browse;
+	geInput*  m_folderPath;
+	geButton* m_scanButton;
+	geBox*    m_info;
 };
 } // namespace giada::v
 

@@ -52,10 +52,10 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, m::Conf::Data& conf)
 	m_barTop.add(&zoomOutBtn);
 	m_barTop.resizable(m_barPadding);
 
-	m_actionType.add("Key press");
-	m_actionType.add("Key release");
-	m_actionType.add("Stop sample");
-	m_actionType.value(0);
+	m_actionType.addItem("Key press");
+	m_actionType.addItem("Key release");
+	m_actionType.addItem("Stop sample");
+	m_actionType.showItem(0);
 	m_actionType.copy_tooltip("Action type to add");
 	if (!canChangeActionType())
 		m_actionType.deactivate();
@@ -103,11 +103,11 @@ void gdSampleActionEditor::rebuild()
 
 int gdSampleActionEditor::getActionType() const
 {
-	if (m_actionType.value() == 0)
+	if (m_actionType.getSelectedId() == 0)
 		return m::MidiEvent::NOTE_ON;
-	else if (m_actionType.value() == 1)
+	else if (m_actionType.getSelectedId() == 1)
 		return m::MidiEvent::NOTE_OFF;
-	else if (m_actionType.value() == 2)
+	else if (m_actionType.getSelectedId() == 2)
 		return m::MidiEvent::NOTE_KILL;
 
 	assert(false);

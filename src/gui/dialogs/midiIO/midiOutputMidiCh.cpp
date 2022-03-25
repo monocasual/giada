@@ -33,9 +33,7 @@
 #include "utils/gui.h"
 #include <FL/Fl_Pack.H>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 : gdMidiOutputBase(300, 168, channelId)
@@ -60,25 +58,27 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 	add(m_learners);
 	add(m_close);
 
-	m_chanListOut->add("Channel 1");
-	m_chanListOut->add("Channel 2");
-	m_chanListOut->add("Channel 3");
-	m_chanListOut->add("Channel 4");
-	m_chanListOut->add("Channel 5");
-	m_chanListOut->add("Channel 6");
-	m_chanListOut->add("Channel 7");
-	m_chanListOut->add("Channel 8");
-	m_chanListOut->add("Channel 9");
-	m_chanListOut->add("Channel 10");
-	m_chanListOut->add("Channel 11");
-	m_chanListOut->add("Channel 12");
-	m_chanListOut->add("Channel 13");
-	m_chanListOut->add("Channel 14");
-	m_chanListOut->add("Channel 15");
-	m_chanListOut->add("Channel 16");
-	m_chanListOut->value(0);
+	m_chanListOut->addItem("Channel 1");
+	m_chanListOut->addItem("Channel 2");
+	m_chanListOut->addItem("Channel 3");
+	m_chanListOut->addItem("Channel 4");
+	m_chanListOut->addItem("Channel 5");
+	m_chanListOut->addItem("Channel 6");
+	m_chanListOut->addItem("Channel 7");
+	m_chanListOut->addItem("Channel 8");
+	m_chanListOut->addItem("Channel 9");
+	m_chanListOut->addItem("Channel 10");
+	m_chanListOut->addItem("Channel 11");
+	m_chanListOut->addItem("Channel 12");
+	m_chanListOut->addItem("Channel 13");
+	m_chanListOut->addItem("Channel 14");
+	m_chanListOut->addItem("Channel 15");
+	m_chanListOut->addItem("Channel 16");
+	m_chanListOut->showItem(0);
+	m_chanListOut->onChange = [this](ID id) {
+		c::io::channel_setMidiOutputFilter(m_channelId, id);
+	};
 
-	m_chanListOut->callback(cb_setChannel, (void*)this);
 	m_enableOut->callback(cb_enableOut, (void*)this);
 	m_enableLightning->callback(cb_enableLightning, (void*)this);
 	m_close->callback(cb_close, (void*)this);
@@ -99,7 +99,7 @@ void gdMidiOutputMidiCh::rebuild()
 	assert(m_data.output.has_value());
 
 	m_learners->update(m_data);
-	m_chanListOut->value(m_data.output->filter);
+	m_chanListOut->showItem(m_data.output->filter);
 	m_enableOut->value(m_data.output->enabled);
 
 	m_data.output->enabled ? m_chanListOut->activate() : m_chanListOut->deactivate();
@@ -108,7 +108,6 @@ void gdMidiOutputMidiCh::rebuild()
 /* -------------------------------------------------------------------------- */
 
 void gdMidiOutputMidiCh::cb_enableOut(Fl_Widget* /*w*/, void* p) { ((gdMidiOutputMidiCh*)p)->cb_enableOut(); }
-void gdMidiOutputMidiCh::cb_setChannel(Fl_Widget* /*w*/, void* p) { ((gdMidiOutputMidiCh*)p)->cb_setChannel(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -116,12 +115,4 @@ void gdMidiOutputMidiCh::cb_enableOut()
 {
 	c::io::channel_enableMidiOutput(m_channelId, m_enableOut->value());
 }
-
-/* -------------------------------------------------------------------------- */
-
-void gdMidiOutputMidiCh::cb_setChannel()
-{
-	c::io::channel_setMidiOutputFilter(m_channelId, m_chanListOut->value());
-}
-} // namespace v
-} // namespace giada
+} // namespace giada::v

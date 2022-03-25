@@ -31,9 +31,7 @@
 
 #include "midiOutputBase.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geChoice;
 class gdMidiOutputMidiCh : public gdMidiOutputBase
@@ -43,16 +41,13 @@ public:
 
 	void rebuild() override;
 
-  private:
+private:
 	static void cb_enableOut(Fl_Widget* /*w*/, void* p);
-	static void cb_setChannel(Fl_Widget* /*w*/, void* p);
 	void        cb_enableOut();
-	void        cb_setChannel();
 
 	geCheck*  m_enableOut;
 	geChoice* m_chanListOut;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

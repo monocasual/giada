@@ -31,11 +31,13 @@
 #include "utils/gui.h"
 #include <string>
 
+constexpr int LABEL_WIDTH = 120;
+
 namespace giada::v
 {
-geTabMidi::geMenu::geMenu(int x, int y, int w, int h, const char* l,
-    const std::vector<std::string>& data, const std::string& msgIfNotFound)
-: geChoice(x, y, w, h, l)
+geTabMidi::geMenu::geMenu(const char* l, const std::vector<std::string>& data,
+    const std::string& msgIfNotFound)
+: geChoice(l, LABEL_WIDTH)
 {
 	if (data.size() == 0)
 	{
@@ -54,24 +56,51 @@ geTabMidi::geMenu::geMenu(int x, int y, int w, int h, const char* l,
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geTabMidi::geTabMidi(int X, int Y, int W, int H)
-: Fl_Group(X, Y, W, H, "MIDI")
+geTabMidi::geTabMidi(geompp::Rect<int> bounds)
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, "MIDI")
 , m_data(c::config::getMidiData())
 , m_initialApi(m_data.api)
 {
-	begin();
-	system    = new geChoice(x() + w() - 250, y() + 9, 250, 20, "System");
-	portOut   = new geMenu(x() + w() - 250, system->y() + system->h() + 8, 234, 20, "Output port", m_data.outPorts, "-- no ports found --");
-	enableOut = new geCheck(portOut->x() + portOut->w() + 4, portOut->y(), 12, 20);
-	portIn    = new geMenu(x() + w() - 250, portOut->y() + portOut->h() + 8, 234, 20, "Input port", m_data.inPorts, "-- no ports found --");
-	enableIn  = new geCheck(portIn->x() + portIn->w() + 4, portIn->y(), 12, 20);
-	midiMap   = new geMenu(x() + w() - 250, portIn->y() + portIn->h() + 8, 250, 20, "Output Midi Map", m_data.midiMaps, "(no MIDI maps available)");
-	sync      = new geChoice(x() + w() - 250, midiMap->y() + midiMap->h() + 8, 250, 20, "Sync");
-	new geBox(x(), sync->y() + sync->h() + 8, w(), h() - 150, "Restart Giada for the changes to take effect.");
 	end();
 
-	labelsize(G_GUI_FONT_SIZE_BASE);
-	selection_color(G_COLOR_GREY_4);
+	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		system = new geChoice("System", LABEL_WIDTH);
+
+		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			portOut   = new geMenu("Output port", m_data.outPorts, "-- no ports found --");
+			enableOut = new geCheck(0, 0, 0, 0);
+
+			line1->add(portOut);
+			line1->add(enableOut, 12);
+			line1->end();
+		}
+
+		geFlex* line2 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			portIn   = new geMenu("Input port", m_data.inPorts, "-- no ports found --");
+			enableIn = new geCheck(0, 0, 0, 0);
+
+			line2->add(portIn);
+			line2->add(enableIn, 12);
+			line2->end();
+		}
+
+		midiMap = new geMenu("Output Midi Map", m_data.midiMaps, "(no MIDI maps available)");
+		sync    = new geChoice("Sync", LABEL_WIDTH);
+
+		body->add(system, 20);
+		body->add(line1, 20);
+		body->add(line2, 20);
+		body->add(midiMap, 20);
+		body->add(sync, 20);
+		body->add(new geBox("Restart Giada for the changes to take effect."));
+		body->end();
+	}
+
+	add(body);
+	resizable(body);
 
 	for (const auto& [key, value] : m_data.apis)
 		system->addItem(value.c_str(), key);
@@ -93,7 +122,7 @@ geTabMidi::geTabMidi(int X, int Y, int W, int H)
 	enableOut->onChange = [this](bool b) {
 		if (b)
 		{
-			m_data.outPort = portOut->value();
+			m_data.outPort = portOut->getSelectedId();
 			portOut->activate();
 		}
 		else
@@ -108,7 +137,7 @@ geTabMidi::geTabMidi(int X, int Y, int W, int H)
 	enableIn->onChange = [this](bool b) {
 		if (b)
 		{
-			m_data.inPort = portIn->value();
+			m_data.inPort = portIn->getSelectedId();
 			portIn->activate();
 		}
 		else

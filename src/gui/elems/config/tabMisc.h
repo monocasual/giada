@@ -27,24 +27,25 @@
 #ifndef GE_TAB_MISC_H
 #define GE_TAB_MISC_H
 
+#include "deps/geompp/src/rect.hpp"
 #include "glue/config.h"
-#include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/group.h"
+#include <FL/Fl_Group.H>
 
 namespace giada::v
 {
-class geTabMisc : public geGroup
+class geChoice;
+class geTabMisc : public Fl_Group
 {
 public:
-	geTabMisc(int x, int y, int w);
+	geTabMisc(geompp::Rect<int>);
 
 	void save();
 
 private:
 	c::config::MiscData m_data;
 
-	geChoice m_debugMsg;
-	geChoice m_tooltips;
+	geChoice* m_debugMsg;
+	geChoice* m_tooltips;
 };
 } // namespace giada::v
 

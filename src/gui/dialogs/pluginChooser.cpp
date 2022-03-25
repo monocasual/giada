@@ -46,7 +46,7 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Co
 
 	/* top area */
 	Fl_Group* group_top = new Fl_Group(8, 8, w() - 16, 20);
-	sortMethod          = new geChoice(group_top->x() + 45, group_top->y(), 100, 20, "Sort by");
+	sortMethod          = new geChoice(group_top->x(), group_top->y(), 180, 20, "Sort by", 0);
 	geBox* b1           = new geBox(sortMethod->x() + sortMethod->w(), group_top->y(), 100, 20); // spacer window border <-> menu
 	group_top->resizable(b1);
 	group_top->end();
@@ -64,12 +64,15 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Co
 
 	end();
 
-	sortMethod->add("Name");
-	sortMethod->add("Category");
-	sortMethod->add("Manufacturer");
-	sortMethod->add("Format");
-	sortMethod->callback(cb_sort, (void*)this);
-	sortMethod->value(m_conf.pluginSortMethod);
+	sortMethod->addItem("Name");
+	sortMethod->addItem("Category");
+	sortMethod->addItem("Manufacturer");
+	sortMethod->addItem("Format");
+	sortMethod->showItem(m_conf.pluginSortMethod);
+	sortMethod->onChange = [this](ID id) {
+		c::plugin::sortPlugins(static_cast<m::PluginManager::SortMethod>(id));
+		browser->refresh();
+	};
 
 	addBtn->callback(cb_add, (void*)this);
 	addBtn->shortcut(FL_Enter);
@@ -88,28 +91,19 @@ gdPluginChooser::~gdPluginChooser()
 	m_conf.pluginChooserY   = y();
 	m_conf.pluginChooserW   = w();
 	m_conf.pluginChooserH   = h();
-	m_conf.pluginSortMethod = sortMethod->value();
+	m_conf.pluginSortMethod = sortMethod->getSelectedId();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void gdPluginChooser::cb_close(Fl_Widget* /*w*/, void* p) { ((gdPluginChooser*)p)->cb_close(); }
 void gdPluginChooser::cb_add(Fl_Widget* /*w*/, void* p) { ((gdPluginChooser*)p)->cb_add(); }
-void gdPluginChooser::cb_sort(Fl_Widget* /*w*/, void* p) { ((gdPluginChooser*)p)->cb_sort(); }
 
 /* -------------------------------------------------------------------------- */
 
 void gdPluginChooser::cb_close()
 {
 	do_callback();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdPluginChooser::cb_sort()
-{
-	c::plugin::sortPlugins(static_cast<m::PluginManager::SortMethod>(sortMethod->value()));
-	browser->refresh();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -49,5 +49,6 @@ void geTabs::add(Fl_Widget* wg)
 	wg->selection_color(G_COLOR_GREY_4);
 
 	Fl_Tabs::add(wg);
+	resizable(wg);//  To keep the tab height constant during resizing
 }
 } // namespace giada::v

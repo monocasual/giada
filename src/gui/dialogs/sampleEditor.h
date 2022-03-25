@@ -96,14 +96,12 @@ private:
 	static void cb_reload(Fl_Widget* /*w*/, void* p);
 	static void cb_zoomIn(Fl_Widget* /*w*/, void* p);
 	static void cb_zoomOut(Fl_Widget* /*w*/, void* p);
-	static void cb_changeGrid(Fl_Widget* /*w*/, void* p);
 	static void cb_enableSnap(Fl_Widget* /*w*/, void* p);
 	static void cb_togglePreview(Fl_Widget* /*w*/, void* p);
 	static void cb_rewindPreview(Fl_Widget* /*w*/, void* p);
 	void        cb_reload();
 	void        cb_zoomIn();
 	void        cb_zoomOut();
-	void        cb_changeGrid();
 	void        cb_enableSnap();
 	void        cb_togglePreview();
 	void        cb_rewindPreview();

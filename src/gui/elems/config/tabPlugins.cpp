@@ -36,6 +36,7 @@
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"
 #include "utils/gui.h"
 #include "utils/string.h"
@@ -44,27 +45,59 @@
 
 namespace giada::v
 {
-geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
-: Fl_Group(X, Y, W, H, "Plug-ins")
-, m_browse(x() + w() - G_GUI_UNIT, y() + 9, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm)
-, m_folderPath(m_browse.x() - 258, y() + 9, 250, G_GUI_UNIT)
-, m_scanButton(x() + w() - 150, m_folderPath.y() + m_folderPath.h() + 8, 150, G_GUI_UNIT)
-, m_info(x(), m_scanButton.y() + m_scanButton.h() + 8, w(), 240)
+geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, "Plug-ins")
 {
 	end();
 
-	labelsize(G_GUI_FONT_SIZE_BASE);
-	selection_color(G_COLOR_GREY_4);
+	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			m_folderPath = new geInput(0, 0, 0, 0);
+			m_browse     = new geButton("", zoomInOff_xpm, zoomInOn_xpm);
 
-	m_info.hide();
+			line1->add(new geBox(), 80); // TODO - temporary hack for geInput's label
+			line1->add(m_folderPath);
+			line1->add(m_browse, 20);
+			line1->end();
+		}
 
-	m_folderPath.label("Plug-ins folder");
-	m_folderPath.onChange = [this](const std::string& v) {
+		m_scanButton = new geButton();
+		m_info       = new geBox();
+
+		body->add(line1, 20);
+		body->add(m_scanButton, 20);
+		body->add(m_info);
+		body->end();
+	}
+
+	add(body);
+	resizable(body);
+
+	m_info->hide();
+
+	m_folderPath->label("Plug-ins folder");
+	m_folderPath->onChange = [this](const std::string& v) {
 		m_data.pluginPath = v;
 	};
 
-	m_browse.callback(cb_browse, (void*)this);
-	m_scanButton.callback(cb_scan, (void*)this);
+	m_browse->onClick = [this]() {
+		c::layout::openBrowserForPlugins(*static_cast<v::gdWindow*>(top_window()));
+	};
+
+	m_scanButton->onClick = [this]() {
+		std::function<void(float)> callback = [this](float progress) {
+			std::string l = "Scan in progress (" + std::to_string((int)(progress * 100)) + "%). Please wait...";
+			m_info->label(l.c_str());
+			Fl::wait();
+		};
+
+		m_info->show();
+		c::config::scanPlugins(m_folderPath->value(), callback);
+		m_info->hide();
+		rebuild();
+	};
 
 	rebuild();
 }
@@ -76,38 +109,10 @@ void geTabPlugins::rebuild()
 	m_data = c::config::getPluginData();
 
 	const std::string scanLabel = "Scan (" + std::to_string(m_data.numAvailablePlugins) + " found)";
-	m_scanButton.copy_label(scanLabel.c_str());
+	m_scanButton->copy_label(scanLabel.c_str());
 
-	m_folderPath.value(m_data.pluginPath.c_str());
-	m_folderPath.redraw();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geTabPlugins::cb_scan(Fl_Widget* /*w*/, void* p) { ((geTabPlugins*)p)->cb_scan(); }
-void geTabPlugins::cb_browse(Fl_Widget* /*w*/, void* p) { ((geTabPlugins*)p)->cb_browse(); }
-
-/* -------------------------------------------------------------------------- */
-
-void geTabPlugins::cb_browse()
-{
-	c::layout::openBrowserForPlugins(*static_cast<v::gdWindow*>(top_window()));
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geTabPlugins::cb_scan()
-{
-	std::function<void(float)> callback = [this](float progress) {
-		std::string l = "Scan in progress (" + std::to_string((int)(progress * 100)) + "%). Please wait...";
-		m_info.label(l.c_str());
-		Fl::wait();
-	};
-
-	m_info.show();
-	c::config::scanPlugins(m_folderPath.value(), callback);
-	m_info.hide();
-	rebuild();
+	m_folderPath->value(m_data.pluginPath.c_str());
+	m_folderPath->redraw();
 }
 
 /* -------------------------------------------------------------------------- */

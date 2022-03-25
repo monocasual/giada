@@ -103,7 +103,7 @@ gdSampleEditor::~gdSampleEditor()
 	m_conf.sampleEditorY       = y();
 	m_conf.sampleEditorW       = w();
 	m_conf.sampleEditorH       = h();
-	m_conf.sampleEditorGridVal = atoi(grid->text());
+	m_conf.sampleEditorGridVal = grid->getSelectedId();
 	m_conf.sampleEditorGridOn  = snap->value();
 
 	c::sampleEditor::stopPreview();
@@ -152,22 +152,20 @@ gePack* gdSampleEditor::createUpperBar()
 
 	reload->callback(cb_reload, (void*)this);
 
-	grid->add("(off)");
-	grid->add("2");
-	grid->add("3");
-	grid->add("4");
-	grid->add("6");
-	grid->add("8");
-	grid->add("16");
-	grid->add("32");
-	grid->add("64");
+	grid->addItem("(off)");
+	grid->addItem("2");
+	grid->addItem("3");
+	grid->addItem("4");
+	grid->addItem("6");
+	grid->addItem("8");
+	grid->addItem("16");
+	grid->addItem("32");
+	grid->addItem("64");
 	grid->copy_tooltip("Grid frequency");
-
-	if (m_conf.sampleEditorGridVal == 0)
-		grid->value(0);
-	else
-		grid->value(grid->find_item(u::string::iToString(m_conf.sampleEditorGridVal).c_str()));
-	grid->callback(cb_changeGrid, (void*)this);
+	grid->showItem(m_conf.sampleEditorGridVal);
+	grid->onChange = [this](ID) {
+		waveTools->waveform->setGridLevel(std::stoi(grid->getSelectedLabel()));
+	};
 
 	snap->value(m_conf.sampleEditorGridOn);
 	snap->copy_tooltip("Snap to grid");
@@ -262,7 +260,6 @@ gePack* gdSampleEditor::createBottomBar(int x, int y, int h)
 void gdSampleEditor::cb_reload(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_reload(); }
 void gdSampleEditor::cb_zoomIn(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_zoomIn(); }
 void gdSampleEditor::cb_zoomOut(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_zoomOut(); }
-void gdSampleEditor::cb_changeGrid(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_changeGrid(); }
 void gdSampleEditor::cb_enableSnap(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_enableSnap(); }
 void gdSampleEditor::cb_togglePreview(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_togglePreview(); }
 void gdSampleEditor::cb_rewindPreview(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_rewindPreview(); }
@@ -311,13 +308,6 @@ void gdSampleEditor::cb_zoomOut()
 {
 	waveTools->waveform->setZoom(geWaveform::Zoom::OUT);
 	waveTools->redraw();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdSampleEditor::cb_changeGrid()
-{
-	waveTools->waveform->setGridLevel(atoi(grid->text()));
 }
 
 /* -------------------------------------------------------------------------- */

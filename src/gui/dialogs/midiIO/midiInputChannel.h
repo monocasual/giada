@@ -73,10 +73,8 @@ public:
 
 private:
 	static void cb_enable(Fl_Widget* /*w*/, void* p);
-	static void cb_setChannel(Fl_Widget* /*w*/, void* p);
 	static void cb_veloAsVol(Fl_Widget* /*w*/, void* p);
 	void        cb_enable();
-	void        cb_setChannel();
 	void        cb_veloAsVol();
 
 	ID m_channelId;

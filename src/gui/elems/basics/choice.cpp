@@ -24,19 +24,18 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "choice.h"
+#include "gui/elems/basics/choice.h"
 #include "core/const.h"
+#include "gui/drawing.h"
 #include "utils/gui.h"
 #include "utils/vector.h"
 #include <FL/fl_draw.H>
 #include <cassert>
-#include <string>
 
 namespace giada::v
 {
-geChoice::geChoice(int x, int y, int w, int h, const char* l, bool ang)
-: Fl_Choice(x, y, w, h, l)
-, m_angle(ang)
+geChoice::geMenu::geMenu(int x, int y, int w, int h)
+: Fl_Choice(x, y, w, h)
 {
 	labelsize(G_GUI_FONT_SIZE_BASE);
 	labelcolor(G_COLOR_LIGHT_2);
@@ -44,6 +43,45 @@ geChoice::geChoice(int x, int y, int w, int h, const char* l, bool ang)
 	textsize(G_GUI_FONT_SIZE_BASE);
 	textcolor(G_COLOR_LIGHT_2);
 	color(G_COLOR_GREY_2);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geChoice::geMenu::draw()
+{
+	geompp::Rect<int> bounds(x(), y(), w(), h());
+
+	drawRectf(bounds, G_COLOR_GREY_2);                       // background
+	drawRect(bounds, static_cast<Fl_Color>(G_COLOR_GREY_4)); // border
+	fl_polygon(x() + w() - 8, y() + h() - 1, x() + w() - 1, y() + h() - 8, x() + w() - 1, y() + h() - 1);
+	if (value() != -1)
+		drawText(text(value()), bounds, active() ? G_COLOR_LIGHT_2 : G_COLOR_GREY_4);
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+geChoice::geChoice(int x, int y, int w, int h, const char* l, int labelWidth)
+: geFlex(x, y, w, h, Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
+, m_text(nullptr)
+, m_menu(nullptr)
+{
+	if (l != nullptr)
+	{
+		m_text = new geBox(l, FL_ALIGN_RIGHT);
+		add(m_text, labelWidth != 0 ? labelWidth : u::gui::getStringRect(l).w);
+	}
+	m_menu = new geMenu(x, y, w, h);
+	add(m_menu);
+	end();
+}
+
+/* -------------------------------------------------------------------------- */
+
+geChoice::geChoice(const char* l, int labelWidth)
+: geChoice(0, 0, 0, 0, l, labelWidth)
+{
 }
 
 /* -------------------------------------------------------------------------- */
@@ -60,33 +98,16 @@ void geChoice::cb_onChange()
 
 /* -------------------------------------------------------------------------- */
 
-void geChoice::draw()
-{
-	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);                       // bg
-	fl_rect(x(), y(), w(), h(), static_cast<Fl_Color>(G_COLOR_GREY_4)); // border
-	if (m_angle)
-		fl_polygon(x() + w() - 8, y() + h() - 1, x() + w() - 1, y() + h() - 8, x() + w() - 1, y() + h() - 1);
-
-	/* pick up the text() from the selected item (value()) and print it in
-	 * the box and avoid overflows */
-
-	fl_color(!active() ? G_COLOR_GREY_4 : G_COLOR_LIGHT_2);
-	if (value() != -1)
-		fl_draw(u::gui::truncate(text(value()), w() - 16).c_str(), x(), y(), w(), h(), FL_ALIGN_CENTER);
-}
-
-/* -------------------------------------------------------------------------- */
-
 ID geChoice::getSelectedId() const
 {
-	return value() == -1 ? -1 : m_ids.at(value());
+	return m_menu->value() == -1 ? -1 : m_ids.at(m_menu->value());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geChoice::addItem(const std::string& label, ID id)
 {
-	Fl_Choice::add(label.c_str(), 0, cb_onChange, static_cast<void*>(this));
+	m_menu->add(label.c_str(), 0, cb_onChange, static_cast<void*>(this));
 
 	if (id != -1)
 		m_ids.push_back(id);
@@ -98,19 +119,51 @@ void geChoice::addItem(const std::string& label, ID id)
 
 void geChoice::showItem(const std::string& label)
 {
-	value(find_index(label.c_str()));
+	m_menu->value(m_menu->find_index(label.c_str()));
 }
 
 void geChoice::showItem(ID id)
 {
-	value(u::vector::indexOf(m_ids, id));
+	m_menu->value(u::vector::indexOf(m_ids, id));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geChoice::activate()
+{
+	geFlex::activate();
+	m_menu->activate();
+	if (m_text != nullptr)
+		m_text->activate();
+}
+
+void geChoice::deactivate()
+{
+	geFlex::deactivate();
+	m_menu->deactivate();
+	if (m_text != nullptr)
+		m_text->deactivate();
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::string geChoice::getSelectedLabel() const
+{
+	return m_menu->text();
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::size_t geChoice::countItems() const
+{
+	return m_ids.size();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geChoice::clear()
 {
-	Fl_Choice::clear();
+	m_menu->clear();
 	m_ids.clear();
 }
 

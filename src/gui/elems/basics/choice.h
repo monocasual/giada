@@ -28,6 +28,8 @@
 #define GE_CHOICE_H
 
 #include "core/types.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/flex.h"
 #include <FL/Fl_Choice.H>
 #include <functional>
 #include <string>
@@ -35,30 +37,48 @@
 
 namespace giada::v
 {
-class geChoice : public Fl_Choice
+class geChoice : public geFlex
 {
 public:
-	geChoice(int x, int y, int w, int h, const char* l = 0, bool angle = true);
-	void draw() override;
+	/* geChoice 
+	Constructors. If label is != nullptr but labelWidth is not specified, the
+	label width is automatically computed and adjusted accordingly. */
 
-	ID getSelectedId() const;
+	geChoice(int x, int y, int w, int h, const char* l = nullptr, int labelWidth = 0);
+	geChoice(const char* l = nullptr, int labelWidth = 0);
+
+	ID          getSelectedId() const;
+	std::string getSelectedLabel() const;
+	std::size_t countItems() const;
 
 	/* addItem
-	Adds a new item with a certain ID. Pass id = -1 to auto-increment it. */
+	Adds a new item with a certain ID. Pass id = -1 to auto-increment it (ID
+	starts from 0). */
 
 	void addItem(const std::string& label, ID id = -1);
 
 	void showItem(const std::string& label);
-	void showItem(ID id);
+	void showItem(ID);
+	void activate();
+	void deactivate();
+
 	void clear();
 
 	std::function<void(ID)> onChange = nullptr;
 
 private:
+	class geMenu : public Fl_Choice
+	{
+	public:
+		geMenu(int x, int y, int w, int h);
+		void draw() override;
+	};
+
 	static void cb_onChange(Fl_Widget* w, void* p);
 	void        cb_onChange();
 
-	bool            m_angle;
+	geBox*          m_text;
+	geMenu*         m_menu;
 	std::vector<ID> m_ids;
 };
 } // namespace giada::v

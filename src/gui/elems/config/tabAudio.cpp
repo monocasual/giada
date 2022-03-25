@@ -29,17 +29,19 @@
 #include "core/kernelAudio.h"
 #include "deps/rtaudio/RtAudio.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
+#include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"
 #include "utils/string.h"
 #include <string>
 
+constexpr int LABEL_WIDTH = 110;
+
 namespace giada::v
 {
-geTabAudio::geDeviceMenu::geDeviceMenu(int x, int y, int w, int h, const char* l,
-    const std::vector<c::config::AudioDeviceData>& devices)
-: geChoice(x, y, w, h, l)
+geTabAudio::geDeviceMenu::geDeviceMenu(const char* l, const std::vector<c::config::AudioDeviceData>& devices)
+: geChoice(l, LABEL_WIDTH)
 {
 	if (devices.size() == 0)
 	{
@@ -56,9 +58,8 @@ geTabAudio::geDeviceMenu::geDeviceMenu(int x, int y, int w, int h, const char* l
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geTabAudio::geChannelMenu::geChannelMenu(int x, int y, int w, int h, const char* l,
-    const c::config::AudioDeviceData& data)
-: geChoice(x, y, w, h, l)
+geTabAudio::geChannelMenu::geChannelMenu(const char* l, const c::config::AudioDeviceData& data)
+: geChoice(l, LABEL_WIDTH)
 , m_data(data)
 {
 }
@@ -111,28 +112,75 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geTabAudio::geTabAudio(int X, int Y, int W, int H)
-: Fl_Group(X, Y, W, H, "Sound System")
+geTabAudio::geTabAudio(geompp::Rect<int> bounds)
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, "Audio")
 , m_data(c::config::getAudioData())
 , m_initialApi(m_data.api)
 {
-	begin();
-	soundsys        = new geChoice(x() + 114, y() + 9, 250, 20, "System");
-	buffersize      = new geChoice(x() + 114, y() + 37, 55, 20, "Buffer size");
-	samplerate      = new geChoice(x() + 304, y() + 37, 60, 20, "Sample rate");
-	sounddevOut     = new geDeviceMenu(x() + 114, y() + 65, 250, 20, "Output device", m_data.outputDevices);
-	channelsOut     = new geChannelMenu(x() + 114, y() + 93, 55, 20, "Output channels", m_data.outputDevice);
-	limitOutput     = new geCheck(x() + 177, y() + 93, 100, 20, "Limit output");
-	sounddevIn      = new geDeviceMenu(x() + 114, y() + 121, 234, 20, "Input device", m_data.inputDevices);
-	enableIn        = new geCheck(sounddevIn->x() + sounddevIn->w() + 4, sounddevIn->y(), 12, 20);
-	channelsIn      = new geChannelMenu(x() + 114, y() + 149, 55, 20, "Input channels", m_data.inputDevice);
-	recTriggerLevel = new geInput(x() + 309, y() + 149, 55, 20, "Rec threshold (dB)");
-	rsmpQuality     = new geChoice(x() + 114, y() + 177, 250, 20, "Resampling");
-	new geBox(x(), rsmpQuality->y() + rsmpQuality->h() + 8, w(), 92, "Restart Giada for the changes to take effect.");
 	end();
 
-	labelsize(G_GUI_FONT_SIZE_BASE);
-	selection_color(G_COLOR_GREY_4);
+	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		soundsys = new geChoice("System", LABEL_WIDTH);
+
+		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			buffersize = new geChoice("Buffer size", LABEL_WIDTH);
+			samplerate = new geChoice("Sample rate", LABEL_WIDTH);
+
+			line1->add(buffersize, 180);
+			line1->add(samplerate, 180);
+			line1->end();
+		}
+
+		sounddevOut = new geDeviceMenu("Output device", m_data.outputDevices);
+
+		geFlex* line2 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			channelsOut = new geChannelMenu("Output channels", m_data.outputDevice);
+			limitOutput = new geCheck(x() + 177, y() + 93, 100, 20, "Limit output");
+
+			line2->add(channelsOut, 180);
+			line2->add(limitOutput);
+			line2->end();
+		}
+
+		geFlex* line3 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			sounddevIn = new geDeviceMenu("Input device", m_data.inputDevices);
+			enableIn   = new geCheck(0, 0, 0, 0);
+
+			line3->add(sounddevIn);
+			line3->add(enableIn, 12);
+			line3->end();
+		}
+
+		geFlex* line4 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			channelsIn      = new geChannelMenu("Input channels", m_data.inputDevice);
+			recTriggerLevel = new geInput(0, 0, 0, 0, "Rec threshold (dB)");
+
+			line4->add(channelsIn, 180);
+			line4->add(new geBox(), 132); // TODO - temporary hack for geInput's label
+			line4->add(recTriggerLevel, 40);
+			line4->end();
+		}
+
+		rsmpQuality = new geChoice("Resampling", LABEL_WIDTH);
+
+		body->add(soundsys, 20);
+		body->add(line1, 20);
+		body->add(sounddevOut, 20);
+		body->add(line2, 20);
+		body->add(line3, 20);
+		body->add(line4, 20);
+		body->add(rsmpQuality, 20);
+		body->add(new geBox("Restart Giada for the changes to take effect."));
+		body->end();
+	}
+
+	add(body);
+	resizable(body);
 
 	for (const auto& [key, value] : m_data.apis)
 		soundsys->addItem(value.c_str(), key);

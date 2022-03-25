@@ -28,8 +28,8 @@
 #define GE_TAB_BEHAVIORS_H
 
 #include "core/conf.h"
+#include "deps/geompp/src/rect.hpp"
 #include "gui/elems/basics/check.h"
-#include "gui/elems/basics/pack.h"
 #include <FL/Fl_Group.H>
 
 namespace giada::v
@@ -37,16 +37,15 @@ namespace giada::v
 class geTabBehaviors : public Fl_Group
 {
 public:
-	geTabBehaviors(int x, int y, int w, int h, m::Conf::Data&);
+	geTabBehaviors(geompp::Rect<int>, m::Conf::Data&);
 
 	void save();
 
 private:
-	gePack  m_container;
-	geCheck m_chansStopOnSeqHalt;
-	geCheck m_treatRecsAsLoops;
-	geCheck m_inputMonitorDefaultOn;
-	geCheck m_overdubProtectionDefaultOn;
+	geCheck* m_chansStopOnSeqHalt;
+	geCheck* m_treatRecsAsLoops;
+	geCheck* m_inputMonitorDefaultOn;
+	geCheck* m_overdubProtectionDefaultOn;
 
 	m::Conf::Data& m_conf;
 };

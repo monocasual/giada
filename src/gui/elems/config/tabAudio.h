@@ -27,6 +27,7 @@
 #ifndef GE_TAB_AUDIO_H
 #define GE_TAB_AUDIO_H
 
+#include "deps/geompp/src/rect.hpp"
 #include "glue/config.h"
 #include "gui/elems/basics/choice.h"
 #include <FL/Fl_Group.H>
@@ -36,18 +37,17 @@ class geInput;
 
 namespace giada::v
 {
-class geButton;
 class geTabAudio : public Fl_Group
 {
 public:
 	struct geDeviceMenu : public geChoice
 	{
-		geDeviceMenu(int x, int y, int w, int h, const char* l, const std::vector<c::config::AudioDeviceData>&);
+		geDeviceMenu(const char* l, const std::vector<c::config::AudioDeviceData>&);
 	};
 
 	struct geChannelMenu : public geChoice
 	{
-		geChannelMenu(int x, int y, int w, int h, const char* l, const c::config::AudioDeviceData&);
+		geChannelMenu(const char* l, const c::config::AudioDeviceData&);
 
 		int getChannelsCount() const;
 		int getChannelsStart() const;
@@ -60,7 +60,7 @@ public:
 		c::config::AudioDeviceData m_data;
 	};
 
-	geTabAudio(int x, int y, int w, int h);
+	geTabAudio(geompp::Rect<int>);
 
 	void save();
 

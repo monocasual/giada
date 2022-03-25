@@ -27,6 +27,7 @@
 #ifndef GE_TAB_MIDI_H
 #define GE_TAB_MIDI_H
 
+#include "deps/geompp/src/rect.hpp"
 #include "glue/config.h"
 #include "gui/elems/basics/choice.h"
 #include <FL/Fl_Group.H>
@@ -40,11 +41,10 @@ class geTabMidi : public Fl_Group
 public:
 	struct geMenu : public geChoice
 	{
-		geMenu(int x, int y, int w, int h, const char* l, const std::vector<std::string>&,
-		    const std::string& msgIfNotFound);
+		geMenu(const char* l, const std::vector<std::string>&, const std::string& msgIfNotFound);
 	};
 
-	geTabMidi(int x, int y, int w, int h);
+	geTabMidi(geompp::Rect<int>);
 
 	void save() const;
 

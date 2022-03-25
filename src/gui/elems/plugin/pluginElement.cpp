@@ -42,9 +42,7 @@
 #include <cassert>
 #include <string>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 gePluginElement::gePluginElement(int x, int y, c::plugin::Plugin data)
 : gePack(x, y, Direction::HORIZONTAL)
@@ -80,18 +78,20 @@ gePluginElement::gePluginElement(int x, int y, c::plugin::Plugin data)
 	button.copy_label(m_plugin.name.c_str());
 	button.callback(cb_openPluginWindow, (void*)this);
 
-	program.callback(cb_setProgram, (void*)this);
+	program.onChange = [pluginId = m_plugin.id](ID id) {
+		c::plugin::setProgram(pluginId, id);
+	};
 
 	for (const auto& p : m_plugin.programs)
-		program.add(u::gui::removeFltkChars(p.name).c_str());
+		program.addItem(u::gui::removeFltkChars(p.name));
 
-	if (program.size() == 0)
+	if (program.countItems() == 0)
 	{
-		program.add("-- no programs --\0");
+		program.addItem("-- no programs --\0");
 		program.deactivate();
 	}
 	else
-		program.value(m_plugin.currentProgram);
+		program.showItem(m_plugin.currentProgram);
 
 	bypass.callback(cb_setBypass, (void*)this);
 	bypass.type(FL_TOGGLE_BUTTON);
@@ -120,7 +120,6 @@ void gePluginElement::cb_openPluginWindow(Fl_Widget* /*w*/, void* p) { ((gePlugi
 void gePluginElement::cb_setBypass(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_setBypass(); }
 void gePluginElement::cb_shiftUp(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_shiftUp(); }
 void gePluginElement::cb_shiftDown(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_shiftDown(); }
-void gePluginElement::cb_setProgram(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_setProgram(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -186,14 +185,6 @@ void gePluginElement::cb_setBypass()
 {
 	c::plugin::toggleBypass(m_plugin.id);
 }
-
-/* -------------------------------------------------------------------------- */
-
-void gePluginElement::cb_setProgram()
-{
-	c::plugin::setProgram(m_plugin.id, program.value());
-}
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif // #ifdef WITH_VST

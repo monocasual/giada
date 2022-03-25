@@ -27,38 +27,44 @@
 #include "gui/dialogs/config.h"
 #include "core/conf.h"
 #include "core/const.h"
+#include "gui/elems/basics/box.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/tabs.h"
 #include "gui/elems/config/tabAudio.h"
 #include "gui/elems/config/tabBehaviors.h"
 #include "gui/elems/config/tabMidi.h"
 #include "gui/elems/config/tabMisc.h"
 #include "gui/elems/config/tabPlugins.h"
 #include "utils/gui.h"
-#include <FL/Fl_Tabs.H>
 
 namespace giada::v
 {
 gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
 : gdWindow(u::gui::getCenterWinBounds(w, h), "Configuration")
 {
-	geFlex* container = new geFlex(getContentBounds().reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	const geompp::Rect<int> bounds = getContentBounds().reduced(G_GUI_OUTER_MARGIN);
+
+	geFlex* container = new geFlex(bounds, Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		Fl_Tabs* tabs = new Fl_Tabs(8, 8, w - 16, h - 44);
-		tabs->box(G_CUSTOM_BORDER_BOX);
-		tabs->labelcolor(G_COLOR_LIGHT_2);
-		tabs->begin();
+		geTabs* tabs = new geTabs(bounds);
 		{
-			tabAudio     = new geTabAudio(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40);
-			tabMidi      = new geTabMidi(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40);
-			tabBehaviors = new geTabBehaviors(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40, conf);
-			tabMisc      = new geTabMisc(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20);
+			tabAudio     = new geTabAudio(bounds);
+			tabMidi      = new geTabMidi(bounds);
+			tabBehaviors = new geTabBehaviors(bounds, conf);
+			tabMisc      = new geTabMisc(bounds);
 #ifdef WITH_VST
-			tabPlugins = new geTabPlugins(tabs->x() + 10, tabs->y() + 20, tabs->w() - 20, tabs->h() - 40);
+			tabPlugins = new geTabPlugins(bounds);
 #endif
+			tabs->add(tabAudio);
+			tabs->add(tabMidi);
+			tabs->add(tabBehaviors);
+#ifdef WITH_VST
+			tabs->add(tabPlugins);
+#endif
+			tabs->add(tabMisc);
 		}
-		tabs->end();
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
@@ -79,6 +85,8 @@ gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
 	}
 
 	add(container);
+	resizable(container);
+	size_range(w, h);
 
 	u::gui::setFavicon(this);
 	setId(WID_CONFIG);

@@ -26,33 +26,41 @@
 
 #include "tabMisc.h"
 #include "core/const.h"
+#include "gui/elems/basics/choice.h"
+
+constexpr int LABEL_WIDTH = 120;
 
 namespace giada::v
 {
-geTabMisc::geTabMisc(int X, int Y, int W)
-: geGroup(X, Y)
+geTabMisc::geTabMisc(geompp::Rect<int> bounds)
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, "Misc")
 , m_data(c::config::getMiscData())
-, m_debugMsg(W - 230, 9, 230, 20, "Debug messages")
-, m_tooltips(W - 230, 37, 230, 20, "Tooltips")
 {
-	add(&m_debugMsg);
-	add(&m_tooltips);
+	end();
 
-	m_debugMsg.addItem("Disabled");
-	m_debugMsg.addItem("To standard output");
-	m_debugMsg.addItem("To file");
-	m_debugMsg.onChange = [this](ID id) { m_data.logMode = id; };
+	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		m_debugMsg = new geChoice("Debug messages", LABEL_WIDTH);
+		m_tooltips = new geChoice("Tooltips", LABEL_WIDTH);
 
-	m_tooltips.addItem("Disabled");
-	m_tooltips.addItem("Enabled");
-	m_tooltips.onChange = [this](ID id) { m_data.showTooltips = id; };
+		body->add(m_debugMsg, 20);
+		body->add(m_tooltips, 20);
+		body->end();
+	}
 
-	m_debugMsg.showItem(m_data.logMode);
-	m_tooltips.showItem(m_data.showTooltips);
+	add(body);
+	resizable(body);
 
-	copy_label("Misc");
-	labelsize(G_GUI_FONT_SIZE_BASE);
-	selection_color(G_COLOR_GREY_4);
+	m_debugMsg->addItem("Disabled");
+	m_debugMsg->addItem("To standard output");
+	m_debugMsg->addItem("To file");
+	m_debugMsg->showItem(m_data.logMode);
+	m_debugMsg->onChange = [this](ID id) { m_data.logMode = id; };
+
+	m_tooltips->addItem("Disabled");
+	m_tooltips->addItem("Enabled");
+	m_tooltips->showItem(m_data.showTooltips);
+	m_tooltips->onChange = [this](ID id) { m_data.showTooltips = id; };
 }
 
 /* -------------------------------------------------------------------------- */

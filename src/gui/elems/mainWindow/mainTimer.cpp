@@ -42,7 +42,7 @@ geMainTimer::geMainTimer(int x, int y)
 {
 	m_bpm        = new geButton(0, 0, 60, G_GUI_UNIT);
 	m_meter      = new geButton(0, 0, 60, G_GUI_UNIT);
-	m_quantizer  = new geChoice(0, 0, 60, G_GUI_UNIT, "", false);
+	m_quantizer  = new geChoice(0, 0, 60, G_GUI_UNIT);
 	m_multiplier = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", multiplyOff_xpm, multiplyOn_xpm);
 	m_divider    = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", divideOff_xpm, divideOn_xpm);
 	add(m_quantizer);
@@ -144,7 +144,7 @@ void geMainTimer::setLock(bool v)
 
 void geMainTimer::setQuantizer(int q)
 {
-	m_quantizer->value(q);
+	m_quantizer->showItem(q);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -156,24 +156,26 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, m::Conf::Data& c)
 	m_ok->callback(cb_close, (void*)this);
 	m_enable->callback(cb_enable, (void*)this);
 
-	m_channel->add("Channel (any)");
-	m_channel->add("Channel 1");
-	m_channel->add("Channel 2");
-	m_channel->add("Channel 3");
-	m_channel->add("Channel 4");
-	m_channel->add("Channel 5");
-	m_channel->add("Channel 6");
-	m_channel->add("Channel 7");
-	m_channel->add("Channel 8");
-	m_channel->add("Channel 9");
-	m_channel->add("Channel 10");
-	m_channel->add("Channel 11");
-	m_channel->add("Channel 12");
-	m_channel->add("Channel 13");
-	m_channel->add("Channel 14");
-	m_channel->add("Channel 15");
-	m_channel->add("Channel 16");
-	m_channel->callback(cb_setChannel, (void*)this);
+	m_channel->addItem("Channel (any)");
+	m_channel->addItem("Channel 1");
+	m_channel->addItem("Channel 2");
+	m_channel->addItem("Channel 3");
+	m_channel->addItem("Channel 4");
+	m_channel->addItem("Channel 5");
+	m_channel->addItem("Channel 6");
+	m_channel->addItem("Channel 7");
+	m_channel->addItem("Channel 8");
+	m_channel->addItem("Channel 9");
+	m_channel->addItem("Channel 10");
+	m_channel->addItem("Channel 11");
+	m_channel->addItem("Channel 12");
+	m_channel->addItem("Channel 13");
+	m_channel->addItem("Channel 14");
+	m_channel->addItem("Channel 15");
+	m_channel->addItem("Channel 16");
+	m_channel->onChange = [this](ID id) {
+		c::io::channel_setMidiInputFilter(m_data.channelId, id == 0 ? -1 : id - 1);
+	};
 
 	m_veloAsVol->callback(cb_veloAsVol, (void*)this);
 
@@ -211,7 +213,7 @@ void gdMidiInputChannel::rebuild()
 		static_cast<gePluginLearnerPack*>(m_container->getChild(i++))->update(plugin, m_data.enabled);
 #endif
 
-	m_channel->value(m_data.filter == -1 ? 0 : m_data.filter + 1);
+	m_channel->showItem(m_data.filter == -1 ? 0 : m_data.filter + 1);
 
 	if (m_data.enabled)
 	{
@@ -229,7 +231,6 @@ void gdMidiInputChannel::rebuild()
 /* -------------------------------------------------------------------------- */
 
 void gdMidiInputChannel::cb_enable(Fl_Widget* /*w*/, void* p) { ((gdMidiInputChannel*)p)->cb_enable(); }
-void gdMidiInputChannel::cb_setChannel(Fl_Widget* /*w*/, void* p) { ((gdMidiInputChannel*)p)->cb_setChannel(); }
 void gdMidiInputChannel::cb_veloAsVol(Fl_Widget* /*w*/, void* p) { ((gdMidiInputChannel*)p)->cb_veloAsVol(); }
 
 /* -------------------------------------------------------------------------- */
@@ -244,13 +245,5 @@ void gdMidiInputChannel::cb_enable()
 void gdMidiInputChannel::cb_veloAsVol()
 {
 	c::io::channel_enableVelocityAsVol(m_data.channelId, m_veloAsVol->value());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdMidiInputChannel::cb_setChannel()
-{
-	c::io::channel_setMidiInputFilter(m_data.channelId,
-	    m_channel->value() == 0 ? -1 : m_channel->value() - 1);
 }
 } // namespace giada::v

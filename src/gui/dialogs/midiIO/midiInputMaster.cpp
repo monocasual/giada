@@ -97,24 +97,26 @@ gdMidiInputMaster::gdMidiInputMaster(m::Conf::Data& c)
 	m_ok->callback(cb_close, (void*)this);
 	m_enable->callback(cb_enable, (void*)this);
 
-	m_channel->add("Channel (any)");
-	m_channel->add("Channel 1");
-	m_channel->add("Channel 2");
-	m_channel->add("Channel 3");
-	m_channel->add("Channel 4");
-	m_channel->add("Channel 5");
-	m_channel->add("Channel 6");
-	m_channel->add("Channel 7");
-	m_channel->add("Channel 8");
-	m_channel->add("Channel 9");
-	m_channel->add("Channel 10");
-	m_channel->add("Channel 11");
-	m_channel->add("Channel 12");
-	m_channel->add("Channel 13");
-	m_channel->add("Channel 14");
-	m_channel->add("Channel 15");
-	m_channel->add("Channel 16");
-	m_channel->callback(cb_setChannel, (void*)this);
+	m_channel->addItem("Channel (any)");
+	m_channel->addItem("Channel 1");
+	m_channel->addItem("Channel 2");
+	m_channel->addItem("Channel 3");
+	m_channel->addItem("Channel 4");
+	m_channel->addItem("Channel 5");
+	m_channel->addItem("Channel 6");
+	m_channel->addItem("Channel 7");
+	m_channel->addItem("Channel 8");
+	m_channel->addItem("Channel 9");
+	m_channel->addItem("Channel 10");
+	m_channel->addItem("Channel 11");
+	m_channel->addItem("Channel 12");
+	m_channel->addItem("Channel 13");
+	m_channel->addItem("Channel 14");
+	m_channel->addItem("Channel 15");
+	m_channel->addItem("Channel 16");
+	m_channel->onChange = [](ID id) {
+		c::io::master_setMidiFilter(id == 0 ? -1 : id - 1);
+	};
 
 	u::gui::setFavicon(this);
 
@@ -130,7 +132,7 @@ void gdMidiInputMaster::rebuild()
 	m_data = c::io::master_getInputData();
 
 	m_enable->value(m_data.enabled);
-	m_channel->value(m_data.filter - 1 ? 0 : m_data.filter + 1);
+	m_channel->showItem(m_data.filter - 1 ? 0 : m_data.filter + 1);
 	m_learners->update(m_data);
 
 	m_data.enabled ? m_channel->activate() : m_channel->deactivate();
@@ -139,19 +141,11 @@ void gdMidiInputMaster::rebuild()
 /* -------------------------------------------------------------------------- */
 
 void gdMidiInputMaster::cb_enable(Fl_Widget* /*w*/, void* p) { ((gdMidiInputMaster*)p)->cb_enable(); }
-void gdMidiInputMaster::cb_setChannel(Fl_Widget* /*w*/, void* p) { ((gdMidiInputMaster*)p)->cb_setChannel(); }
 
 /* -------------------------------------------------------------------------- */
 
 void gdMidiInputMaster::cb_enable()
 {
 	c::io::master_enableMidiLearn(m_enable->value());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdMidiInputMaster::cb_setChannel()
-{
-	c::io::master_setMidiFilter(m_channel->value() == 0 ? -1 : m_channel->value() - 1);
 }
 } // namespace giada::v

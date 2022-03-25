@@ -34,9 +34,7 @@
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/pack.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class gePluginElement : public gePack
 {
@@ -53,24 +51,21 @@ public:
 	geButton shiftDown;
 	geButton remove;
 
-  private:
+private:
 	static void cb_removePlugin(Fl_Widget* /*w*/, void* p);
 	static void cb_openPluginWindow(Fl_Widget* /*w*/, void* p);
 	static void cb_setBypass(Fl_Widget* /*w*/, void* p);
 	static void cb_shiftUp(Fl_Widget* /*w*/, void* p);
 	static void cb_shiftDown(Fl_Widget* /*w*/, void* p);
-	static void cb_setProgram(Fl_Widget* /*w*/, void* p);
 	void        cb_removePlugin();
 	void        cb_openPluginWindow();
 	void        cb_setBypass();
 	void        cb_shiftUp();
 	void        cb_shiftDown();
-	void        cb_setProgram();
 
 	c::plugin::Plugin m_plugin;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif
 
