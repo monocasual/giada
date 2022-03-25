@@ -29,12 +29,14 @@
 
 #include "deps/geompp/src/rect.hpp"
 #include <FL/fl_draw.H>
+#include <string>
 
 namespace giada::v
 {
-void drawRectf(geompp::Rect<int> r, Fl_Color c);
-void drawRect(geompp::Rect<int> r, Fl_Color c);
-void drawLine(geompp::Line<int> l, Fl_Color c);
+void drawRectf(geompp::Rect<int>, Fl_Color);
+void drawRect(geompp::Rect<int>, Fl_Color);
+void drawLine(geompp::Line<int>, Fl_Color);
+void drawText(const std::string&, geompp::Rect<int>, Fl_Color c, int alignment = FL_ALIGN_CENTER);
 } // namespace giada::v
 
 #endif

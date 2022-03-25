@@ -25,7 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "drawing.h"
+#include "utils/gui.h"
 #include <FL/Fl.H>
+#include <cassert>
 
 namespace giada::v
 {
@@ -47,5 +49,15 @@ void drawLine(geompp::Line<int> l, Fl_Color c)
 {
 	fl_color(c);
 	fl_line(l.x1, l.y1, l.x2, l.y2);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void drawText(const std::string& s, geompp::Rect<int> b, Fl_Color c, int alignment)
+{
+	assert(!s.empty());
+
+	fl_color(c);
+	fl_draw(u::gui::truncate(s, b.w - 16).c_str(), b.x, b.y, b.w, b.h, alignment);
 }
 } // namespace giada::v
