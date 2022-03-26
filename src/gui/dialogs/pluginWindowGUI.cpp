@@ -107,6 +107,7 @@ void gdPluginWindowGUI::openEditor()
 
 void gdPluginWindowGUI::closeEditor()
 {
+	m_plugin.setResizeCallback(nullptr);
 	m_editor.reset();
 }
 } // namespace giada::v
