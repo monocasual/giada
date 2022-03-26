@@ -88,11 +88,7 @@ gdKeyGrabber::gdKeyGrabber(int key)
 
 void gdKeyGrabber::rebuild()
 {
-	std::string tmp = "Press a key.\n\nCurrent binding: ";
-	if (m_key != 0)
-		tmp += static_cast<wchar_t>(m_key);
-	else
-		tmp += "[none]";
+	std::string tmp = "Press a key.\n\nCurrent binding: " + u::gui::keyToString(m_key);
 	m_text->copy_label(tmp.c_str());
 }
 
