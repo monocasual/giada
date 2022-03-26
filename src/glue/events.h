@@ -69,7 +69,9 @@ void startSequencer(Thread t);
 void stopSequencer(Thread t);
 void toggleSequencer(Thread t);
 void rewindSequencer(Thread t);
+void stopActionRecording();
 void toggleActionRecording();
+void stopInputRecording();
 void toggleInputRecording();
 
 /* Plug-ins. */

@@ -99,7 +99,10 @@ void Dispatcher::dispatchKey(int event)
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_RECORD_INPUT))
 			c::events::toggleInputRecording();
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_EXIT))
-			m::init::closeMainWindow();
+		{
+			c::events::stopActionRecording();
+			c::events::stopInputRecording();
+		}
 		else
 		{
 			onEventOccured();

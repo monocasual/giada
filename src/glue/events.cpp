@@ -251,6 +251,14 @@ void rewindSequencer(Thread t)
 
 /* -------------------------------------------------------------------------- */
 
+void stopActionRecording()
+{
+	if (g_engine.kernelAudio.isReady() && g_engine.recorder.isRecordingAction())
+		g_engine.recorder.stopActionRec(g_engine.actionRecorder);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void toggleActionRecording()
 {
 	if (!g_engine.kernelAudio.isReady())
@@ -260,6 +268,16 @@ void toggleActionRecording()
 	else
 		g_engine.recorder.prepareActionRec(g_engine.conf.data.recTriggerMode);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void stopInputRecording()
+{
+	if (g_engine.kernelAudio.isReady() && g_engine.recorder.isRecordingInput())
+		g_engine.recorder.stopInputRec(g_engine.conf.data.inputRecMode, g_engine.kernelAudio.getSampleRate());
+}
+
+/* -------------------------------------------------------------------------- */
 
 void toggleInputRecording()
 {
