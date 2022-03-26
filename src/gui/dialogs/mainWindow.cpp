@@ -126,7 +126,10 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 	add(zone2);
 	add(zone3);
 	add(keyboard);
+
 	callback([](Fl_Widget* /*w*/, void* /*v*/) {
+		if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
+			return; // ignore Escape
 		m::init::closeMainWindow();
 	});
 	u::gui::setFavicon(this);
