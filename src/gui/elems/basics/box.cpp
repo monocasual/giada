@@ -62,7 +62,7 @@ void geBox::draw()
 	{
 		fl_color(active() ? G_COLOR_LIGHT_2 : G_COLOR_GREY_4);
 		fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-		fl_draw(giada::u::gui::truncate(label(), w() - 8).c_str(), x() + 4, y(), w() - 4, h(), align());
+		fl_draw(giada::u::gui::truncate(label(), w()).c_str(), x(), y(), w(), h(), align());
 	}
 }
 } // namespace giada::v
