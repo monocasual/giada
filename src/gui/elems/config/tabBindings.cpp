@@ -39,11 +39,11 @@ geTabBindings::geTabBindings(geompp::Rect<int> bounds, m::Conf::Data& conf)
 
 	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_INNER_MARGIN);
 	{
-		play          = new geKeyBinder("Play", conf.keyBindings.find(m::Conf::KEY_BIND_PLAY)->second);
-		rewind        = new geKeyBinder("Rewind", conf.keyBindings.find(m::Conf::KEY_BIND_REWIND)->second);
-		recordActions = new geKeyBinder("Record actions", conf.keyBindings.find(m::Conf::KEY_BIND_RECORD_ACTIONS)->second);
-		recordInput   = new geKeyBinder("Record audio", conf.keyBindings.find(m::Conf::KEY_BIND_RECORD_INPUT)->second);
-		exit          = new geKeyBinder("Exit", conf.keyBindings.find(m::Conf::KEY_BIND_EXIT)->second);
+		play          = new geKeyBinder("Play", conf.keyBindings[m::Conf::KEY_BIND_PLAY]);
+		rewind        = new geKeyBinder("Rewind", conf.keyBindings[m::Conf::KEY_BIND_REWIND]);
+		recordActions = new geKeyBinder("Record actions", conf.keyBindings[m::Conf::KEY_BIND_RECORD_ACTIONS]);
+		recordInput   = new geKeyBinder("Record audio", conf.keyBindings[m::Conf::KEY_BIND_RECORD_INPUT]);
+		exit          = new geKeyBinder("Exit", conf.keyBindings[m::Conf::KEY_BIND_EXIT]);
 
 		body->add(play, G_GUI_UNIT);
 		body->add(rewind, G_GUI_UNIT);

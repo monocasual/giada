@@ -72,8 +72,8 @@ bool isValidKey_(int key)
 {
 	if (strlen(Fl::event_text()) == 0)
 		return false;
-	for (const auto& [_, val] : g_engine.conf.data.keyBindings)
-		if (key == val)
+	for (const int& bind : g_engine.conf.data.keyBindings)
+		if (key == bind)
 			return false;
 	return true;
 }

@@ -246,11 +246,11 @@ bool Conf::write() const
 	j[CONF_KEY_REC_TRIGGER_LEVEL]             = data.recTriggerLevel;
 	j[CONF_KEY_INPUT_REC_MODE]                = static_cast<int>(data.inputRecMode);
 
-	j[CONF_KEY_BIND_PLAY]           = data.keyBindings.find(KEY_BIND_PLAY)->second;
-	j[CONF_KEY_BIND_REWIND]         = data.keyBindings.find(KEY_BIND_REWIND)->second;
-	j[CONF_KEY_BIND_RECORD_ACTIONS] = data.keyBindings.find(KEY_BIND_RECORD_ACTIONS)->second;
-	j[CONF_KEY_BIND_RECORD_INPUT]   = data.keyBindings.find(KEY_BIND_RECORD_INPUT)->second;
-	j[CONF_KEY_BIND_EXIT]           = data.keyBindings.find(KEY_BIND_EXIT)->second;
+	j[CONF_KEY_BIND_PLAY]           = data.keyBindings[KEY_BIND_PLAY];
+	j[CONF_KEY_BIND_REWIND]         = data.keyBindings[KEY_BIND_REWIND];
+	j[CONF_KEY_BIND_RECORD_ACTIONS] = data.keyBindings[KEY_BIND_RECORD_ACTIONS];
+	j[CONF_KEY_BIND_RECORD_INPUT]   = data.keyBindings[KEY_BIND_RECORD_INPUT];
+	j[CONF_KEY_BIND_EXIT]           = data.keyBindings[KEY_BIND_EXIT];
 
 #ifdef WITH_VST
 	j[CONF_KEY_PLUGIN_CHOOSER_X]   = data.pluginChooserX;

@@ -31,20 +31,20 @@
 #include "core/types.h"
 #include "utils/gui.h"
 #include <string>
-#include <unordered_map>
+#include <vector>
 
 namespace giada::m
 {
 class Conf final
 {
 public:
-	using KeyBindings = std::unordered_map<int, int>;
+	using KeyBindings = std::vector<int>;
 
-	static constexpr int KEY_BIND_PLAY           = 1;
-	static constexpr int KEY_BIND_REWIND         = 2;
-	static constexpr int KEY_BIND_RECORD_ACTIONS = 3;
-	static constexpr int KEY_BIND_RECORD_INPUT   = 4;
-	static constexpr int KEY_BIND_EXIT           = 5;
+	static constexpr int KEY_BIND_PLAY           = 0;
+	static constexpr int KEY_BIND_REWIND         = 1;
+	static constexpr int KEY_BIND_RECORD_ACTIONS = 2;
+	static constexpr int KEY_BIND_RECORD_INPUT   = 3;
+	static constexpr int KEY_BIND_EXIT           = 4;
 
 	struct Data
 	{
@@ -144,11 +144,12 @@ public:
 #endif
 
 		KeyBindings keyBindings = {
-		    {KEY_BIND_PLAY, ' '},
-		    {KEY_BIND_REWIND, FL_BackSpace},
-		    {KEY_BIND_RECORD_ACTIONS, FL_Enter},
-		    {KEY_BIND_RECORD_INPUT, FL_End},
-		    {KEY_BIND_EXIT, FL_Escape}};
+		    ' ',          // KEY_BIND_PLAY
+		    FL_BackSpace, // KEY_BIND_REWIND
+		    FL_Enter,     // KEY_BIND_RECORD_ACTIONS
+		    FL_End,       // KEY_BIND_RECORD_INPUT
+		    FL_Escape     // KEY_BIND_EXIT
+		};
 	};
 
 	Conf();
