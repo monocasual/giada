@@ -11,6 +11,18 @@
 --------------------------------------------------------------------------------
 
 
+0.21.0 --- 2022 . 04 . 01
+- Custom keyboard mappings for global actions (#213)
+- Pressing 'Esc' key no longer closes windows
+- Resizable Configuration window
+- Shut down the main UI nicely when closing a project or loading a new one
+- Prevent crashes when loading a new project by cleaning up the data model 
+- Fix wrong plug-in processing where the local plug-in buffer was incorrectly 
+  deleted in case of instruments (#563)
+- Lots of UI code modernizations and cleanups
+- [Windows] Fix several assertions and MSVC warnings
+
+
 0.20.1 --- 2022 . 02 . 21
 - New MIDI I/O activity LEDs on channels (#143)
 - New "Missing Assets" alert window (#344)
