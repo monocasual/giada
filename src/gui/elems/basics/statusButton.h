@@ -36,9 +36,12 @@ namespace giada::v
 {
 class geStatusButton : public geButton
 {
-  public:
+public:
 	geStatusButton(int x, int y, int w, int h, const char** imgOff = nullptr,
 	    const char** imgOn = nullptr, const char** imgDisabled = nullptr);
+
+	geStatusButton(const char** imgOff = nullptr, const char** imgOn = nullptr,
+	    const char** imgDisabled = nullptr);
 
 	void draw() override;
 
@@ -46,7 +49,7 @@ class geStatusButton : public geButton
 
 	void setStatus(bool s);
 
-  private:
+private:
 	bool m_status;
 };
 } // namespace giada::v

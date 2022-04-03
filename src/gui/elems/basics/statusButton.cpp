@@ -42,6 +42,15 @@ geStatusButton::geStatusButton(int x, int y, int w, int h, const char** imgOff,
 
 /* -------------------------------------------------------------------------- */
 
+geStatusButton::geStatusButton(const char** imgOff, const char** imgOn,
+    const char** imgDisabled)
+: geButton("", imgOff, imgOn, imgDisabled)
+, m_status(false)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geStatusButton::draw()
 {
 	if (active())
