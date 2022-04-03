@@ -73,7 +73,7 @@ const std::vector<std::string>& MidiMapper<KernelMidiI>::getMapFilesFound() cons
 template <typename KernelMidiI>
 void MidiMapper<KernelMidiI>::init()
 {
-	m_mapsPath = u::fs::getHomePath() + G_SLASH + "midimaps" + G_SLASH;
+	m_mapsPath = u::fs::getMidiMapsPath();
 
 	/* scan dir of midi maps and load the filenames into m_mapFiles vector. */
 
@@ -111,7 +111,7 @@ int MidiMapper<KernelMidiI>::read(const std::string& file)
 
 	u::log::print("[MidiMapper::read] reading midiMap file '%s'\n", file);
 
-	std::ifstream ifs(m_mapsPath + file);
+	std::ifstream ifs(u::fs::join(m_mapsPath, file));
 	if (!ifs.good())
 		return MIDIMAP_UNREADABLE;
 

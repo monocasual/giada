@@ -46,6 +46,8 @@ bool        isProject(const std::string& s);
 bool        mkdir(const std::string& s);
 std::string getCurrentPath();
 std::string getHomePath();
+std::string getMidiMapsPath();
+std::string getLangMapsPath();
 
 /* getRealPath
 Expands all symbolic links and resolves references to /./, /../ and extra / 
@@ -80,6 +82,11 @@ Returns the upper directory:
 /path/to/my/directory -> /path/to/my/ */
 
 std::string getUpDir(const std::string& s);
+
+/* join
+Joins two string paths using the correct separator. */
+
+std::string join(const std::string& a, const std::string& b);
 } // namespace giada::u::fs
 
 #endif

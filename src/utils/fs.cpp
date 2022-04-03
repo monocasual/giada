@@ -173,6 +173,19 @@ std::string getHomePath()
 
 /* -------------------------------------------------------------------------- */
 
+std::string getMidiMapsPath()
+{
+	return stdfs::path(getHomePath()) / "midimaps";
+}
+
+std::string getLangMapsPath()
+{
+
+	return stdfs::path(getHomePath()) / "langmaps";
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool isRootDir(const std::string& s)
 {
 	return stdfs::current_path().root_directory() == s;
@@ -191,5 +204,12 @@ std::string getUpDir(const std::string& s)
 #endif
 
 	return stdfs::path(s).parent_path().string();
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::string join(const std::string& a, const std::string& b)
+{
+	return stdfs::path(a) / stdfs::path(b);
 }
 } // namespace giada::u::fs
