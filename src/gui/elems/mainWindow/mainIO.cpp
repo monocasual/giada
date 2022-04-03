@@ -42,8 +42,8 @@
 
 namespace giada::v
 {
-geMainIO::geMainIO(int x, int y, int w, int h)
-: geFlex(x, y, w, h, Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
+geMainIO::geMainIO()
+: geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
 	m_outMeter = new geSoundMeter(0, 0, 0, 0);
 	m_inMeter  = new geSoundMeter(0, 0, 0, 0);

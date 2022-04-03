@@ -39,7 +39,7 @@ class geStatusButton;
 class geMainIO : public geFlex
 {
 public:
-	geMainIO(int x, int y, int w, int h);
+	geMainIO();
 
 	void refresh();
 	void rebuild();
