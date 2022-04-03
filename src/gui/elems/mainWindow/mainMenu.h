@@ -27,14 +27,14 @@
 #ifndef GE_MAIN_MENU_H
 #define GE_MAIN_MENU_H
 
-#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/flex.h"
 
 namespace giada::v
 {
-class geMainMenu : public gePack
+class geMainMenu : public geFlex
 {
 public:
-	geMainMenu(int x, int y);
+	geMainMenu();
 
 private:
 	void cb_file();

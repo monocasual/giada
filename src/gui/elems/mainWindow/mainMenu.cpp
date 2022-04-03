@@ -37,19 +37,18 @@
 
 namespace giada::v
 {
-geMainMenu::geMainMenu(int x, int y)
-: gePack(x, y, Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
+geMainMenu::geMainMenu()
+: geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
-	geButton* file   = new geButton(0, 0, 70, G_GUI_UNIT, "File");
-	geButton* edit   = new geButton(0, 0, 70, G_GUI_UNIT, "Edit");
-	geButton* config = new geButton(0, 0, 70, G_GUI_UNIT, "Config");
-	geButton* about  = new geButton(0, 0, 70, G_GUI_UNIT, "About");
-	add(file);
-	add(edit);
-	add(config);
-	add(about);
-
-	resizable(nullptr);
+	geButton* file   = new geButton("File");
+	geButton* edit   = new geButton("Edit");
+	geButton* config = new geButton("Config");
+	geButton* about  = new geButton("About");
+	add(file, 80);
+	add(edit, 80);
+	add(config, 80);
+	add(about, 80);
+	end();
 
 	file->onClick   = [this]() { cb_file(); };
 	edit->onClick   = [this]() { cb_edit(); };

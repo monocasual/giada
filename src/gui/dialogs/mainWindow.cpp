@@ -89,7 +89,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 
-	mainMenu      = new v::geMainMenu(0, 0);
+	mainMenu      = new v::geMainMenu();
 	mainIO        = new v::geMainIO(0, 0, 0, 0);
 	mainTransport = new v::geMainTransport(8, 39);
 	mainTimer     = new v::geMainTimer(571, 44);
