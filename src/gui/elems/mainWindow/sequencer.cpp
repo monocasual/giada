@@ -34,8 +34,8 @@
 
 namespace giada::v
 {
-geSequencer::geSequencer(int x, int y, int w, int h)
-: Fl_Box(x, y, w, h)
+geSequencer::geSequencer()
+: geBox()
 {
 	copy_tooltip("Main sequencer");
 }

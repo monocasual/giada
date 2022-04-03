@@ -48,7 +48,7 @@ public:
 		int width;
 	};
 
-	geKeyboard(int X, int Y, int W, int H);
+	geKeyboard();
 
 	int  handle(int e) override;
 	void draw() override;

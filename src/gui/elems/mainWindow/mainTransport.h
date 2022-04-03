@@ -27,30 +27,27 @@
 #ifndef GE_MAIN_TRANSPORT_H
 #define GE_MAIN_TRANSPORT_H
 
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
-#include "gui/elems/basics/pack.h"
-#include "gui/elems/basics/statusButton.h"
+#include "gui/elems/basics/flex.h"
 
 namespace giada::v
 {
-class geMainTransport : public gePack
+class geButton;
+class geStatusButton;
+class geMainTransport : public geFlex
 {
 public:
-	geMainTransport(int x, int y);
+	geMainTransport();
 
 	void refresh();
 
 private:
-	geButton       m_rewind;
-	geStatusButton m_play;
-	geBox          m_spacer1;
-	geStatusButton m_recTriggerMode;
-	geStatusButton m_recAction;
-	geStatusButton m_recInput;
-	geStatusButton m_inputRecMode;
-	geBox          m_spacer2;
-	geStatusButton m_metronome;
+	geButton*       m_rewind;
+	geStatusButton* m_play;
+	geStatusButton* m_recTriggerMode;
+	geStatusButton* m_recAction;
+	geStatusButton* m_recInput;
+	geStatusButton* m_inputRecMode;
+	geStatusButton* m_metronome;
 };
 } // namespace giada::v
 

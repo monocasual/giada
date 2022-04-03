@@ -32,14 +32,14 @@
 #include "core/types.h"
 #include "deps/geompp/src/rect.hpp"
 #include "glue/main.h"
-#include <FL/Fl_Box.H>
+#include "gui/elems/basics/box.h"
 
 namespace giada::v
 {
-class geSequencer : public Fl_Box
+class geSequencer : public geBox
 {
 public:
-	geSequencer(int x, int y, int w, int h);
+	geSequencer();
 
 	void draw() override;
 

@@ -48,8 +48,8 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-geKeyboard::geKeyboard(int X, int Y, int W, int H)
-: geScroll(X, Y, W, H, Fl_Scroll::BOTH_ALWAYS)
+geKeyboard::geKeyboard()
+: geScroll(Fl_Scroll::BOTH_ALWAYS)
 , m_addColumnBtn(nullptr)
 {
 	end();

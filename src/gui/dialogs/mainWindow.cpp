@@ -87,45 +87,44 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 	Fl_Tooltip::size(G_GUI_FONT_SIZE_BASE);
 	Fl_Tooltip::enable(m_conf.showTooltips);
 
-	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		/* zone 1 - menus, and I/O tools */
 
-	mainMenu      = new v::geMainMenu();
-	mainIO        = new v::geMainIO();
-	mainTransport = new v::geMainTransport(8, 39);
-	mainTimer     = new v::geMainTimer(571, 44);
-	sequencer     = new v::geSequencer(100, 78, 609, 30);
-	keyboard      = new v::geKeyboard(8, 122, w() - 16, 380);
+		geFlex* zone1 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+		{
+			mainMenu = new v::geMainMenu();
+			mainIO   = new v::geMainIO();
+			zone1->add(mainMenu, 350);
+			zone1->add(new geBox());
+			zone1->add(mainIO, 430);
+			zone1->end();
+		}
 
-	/* zone 1 - menus, and I/O tools */
+		/* zone 2 - mainTransport and timing tools */
 
-	geFlex* zone1 = new geFlex(getContentBounds().reduced(G_GUI_OUTER_MARGIN).withH(G_GUI_UNIT),
-	    Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
-	zone1->add(mainMenu, 300);
-	zone1->add(new Fl_Box(0, 0, 0, 0));
-	zone1->add(mainIO, 430);
-	zone1->end();
+		geFlex* zone2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+		{
+			mainTransport = new v::geMainTransport();
+			mainTimer     = new v::geMainTimer();
+			zone2->add(mainTransport, 400);
+			zone2->add(new geBox());
+			zone2->add(mainTimer, 237, {2, 0, 3, 0});
+			zone2->end();
+		}
 
-	/* zone 2 - mainTransport and timing tools */
+		sequencer = new v::geSequencer();
+		keyboard  = new v::geKeyboard();
 
-	Fl_Group* zone2 = new Fl_Group(8, mainTransport->y(), W - 16, mainTransport->h());
-	zone2->add(mainTransport);
-	zone2->resizable(new Fl_Box(mainTransport->x() + mainTransport->w() + 4, zone2->y(), 80, 20));
-	zone2->add(mainTimer);
+		container->add(zone1, G_GUI_UNIT);
+		container->add(zone2, 30, {5, 0, 0, 0});
+		container->add(sequencer, 40, {4, 80, 4, 80});
+		container->add(keyboard);
+		container->end();
+	}
 
-	/* zone 3 - beat meter */
-
-	Fl_Group* zone3 = new Fl_Group(8, sequencer->y(), W - 16, sequencer->h());
-	zone3->add(sequencer);
-
-	/* zone 4 - the keyboard (Fl_Group is unnecessary here, keyboard is
-	 * a group by itself) */
-
-	resizable(keyboard);
-
-	add(zone1);
-	add(zone2);
-	add(zone3);
-	add(keyboard);
+	add(container);
+	resizable(container);
 
 	callback([](Fl_Widget* /*w*/, void* /*v*/) {
 		if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
@@ -134,6 +133,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 	});
 	u::gui::setFavicon(this);
 
+	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 	refresh();
 
 	show(argc, argv);

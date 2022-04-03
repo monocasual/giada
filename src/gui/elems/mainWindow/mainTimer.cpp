@@ -37,21 +37,20 @@
 
 namespace giada::v
 {
-geMainTimer::geMainTimer(int x, int y)
-: gePack(x, y, Direction::HORIZONTAL)
+geMainTimer::geMainTimer()
+: geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
-	m_bpm        = new geButton(0, 0, 60, G_GUI_UNIT);
-	m_meter      = new geButton(0, 0, 60, G_GUI_UNIT);
-	m_quantizer  = new geChoice(0, 0, 60, G_GUI_UNIT);
-	m_multiplier = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", multiplyOff_xpm, multiplyOn_xpm);
-	m_divider    = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", divideOff_xpm, divideOn_xpm);
-	add(m_quantizer);
-	add(m_bpm);
-	add(m_meter);
-	add(m_multiplier);
-	add(m_divider);
-
-	resizable(nullptr); // don't resize any widget
+	m_bpm        = new geButton();
+	m_meter      = new geButton();
+	m_quantizer  = new geChoice();
+	m_multiplier = new geButton("", multiplyOff_xpm, multiplyOn_xpm);
+	m_divider    = new geButton("", divideOff_xpm, divideOn_xpm);
+	add(m_quantizer, 60);
+	add(m_bpm, 60);
+	add(m_meter, 60);
+	add(m_multiplier, G_GUI_UNIT);
+	add(m_divider, G_GUI_UNIT);
+	end();
 
 	m_bpm->copy_tooltip("Beats per minute (BPM)");
 	m_meter->copy_tooltip("Beats and bars");

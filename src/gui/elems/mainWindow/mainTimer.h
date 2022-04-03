@@ -28,16 +28,16 @@
 #define GE_MAIN_TIMER_H
 
 #include "glue/main.h"
-#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/flex.h"
 
 namespace giada::v
 {
 class geButton;
 class geChoice;
-class geMainTimer : public gePack
+class geMainTimer : public geFlex
 {
 public:
-	geMainTimer(int x, int y);
+	geMainTimer();
 
 	void refresh();
 	void rebuild();

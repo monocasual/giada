@@ -31,9 +31,12 @@
 #include "glue/main.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/button.h"
+#include "gui/ui.h"
 #include "keyboard/keyboard.h"
 #include "utils/gui.h"
 #include <FL/Fl_Menu_Button.H>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
