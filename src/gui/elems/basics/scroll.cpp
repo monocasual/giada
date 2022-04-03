@@ -53,6 +53,13 @@ geScroll::geScroll(int x, int y, int w, int h, int t)
 
 /* -------------------------------------------------------------------------- */
 
+geScroll::geScroll(int type)
+: geScroll(0, 0, 0, 0, type)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geScroll::cb_onScrollV(Fl_Widget* w, void* p)
 {
 	geScroll*     s = static_cast<geScroll*>(w->parent());
