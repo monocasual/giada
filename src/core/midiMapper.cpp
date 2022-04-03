@@ -106,14 +106,14 @@ int MidiMapper<KernelMidiI>::read(const std::string& file)
 	if (file.empty())
 	{
 		u::log::print("[MidiMapper::read] midiMap not specified, nothing to do\n");
-		return MIDIMAP_NOT_SPECIFIED;
+		return G_FILE_NOT_SPECIFIED;
 	}
 
 	u::log::print("[MidiMapper::read] reading midiMap file '%s'\n", file);
 
 	std::ifstream ifs(u::fs::join(m_mapsPath, file));
 	if (!ifs.good())
-		return MIDIMAP_UNREADABLE;
+		return G_FILE_UNREADABLE;
 
 	nl::json j = nl::json::parse(ifs);
 
@@ -121,7 +121,7 @@ int MidiMapper<KernelMidiI>::read(const std::string& file)
 	currentMap.device = j[MIDIMAP_KEY_DEVICE];
 
 	if (!readInitCommands(currentMap, j))
-		return MIDIMAP_UNREADABLE;
+		return G_FILE_UNREADABLE;
 	if (readCommand(j, currentMap.muteOn, MIDIMAP_KEY_MUTE_ON))
 		parse(currentMap.muteOn);
 	if (readCommand(j, currentMap.muteOff, MIDIMAP_KEY_MUTE_OFF))
@@ -141,7 +141,7 @@ int MidiMapper<KernelMidiI>::read(const std::string& file)
 	if (readCommand(j, currentMap.playingInaudible, MIDIMAP_KEY_PLAYING_INAUDIBLE))
 		parse(currentMap.playingInaudible);
 
-	return MIDIMAP_READ_OK;
+	return G_FILE_OK;
 }
 
 /* -------------------------------------------------------------------------- */

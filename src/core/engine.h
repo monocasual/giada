@@ -55,7 +55,7 @@ struct LoadState
 {
 	bool isGood() const;
 
-	int                      patch          = G_PATCH_OK;
+	int                      patch          = G_FILE_OK;
 	std::vector<std::string> missingWaves   = {};
 	std::vector<std::string> missingPlugins = {};
 };

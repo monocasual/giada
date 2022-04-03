@@ -439,19 +439,19 @@ int Patch::read(const std::string& file, const std::string& basePath)
 {
 	std::ifstream ifs(file);
 	if (!ifs.good())
-		return G_PATCH_UNREADABLE;
+		return G_FILE_UNREADABLE;
 
 	nl::json j = nl::json::parse(ifs);
 
 	if (j[PATCH_KEY_HEADER] != "GIADAPTC")
-		return G_PATCH_INVALID;
+		return G_FILE_INVALID;
 
 	data.version = {
 	    static_cast<int>(j[PATCH_KEY_VERSION_MAJOR]),
 	    static_cast<int>(j[PATCH_KEY_VERSION_MINOR]),
 	    static_cast<int>(j[PATCH_KEY_VERSION_PATCH])};
 	if (data.version < Version{0, 16, 0})
-		return G_PATCH_UNSUPPORTED;
+		return G_FILE_UNSUPPORTED;
 
 	try
 	{
@@ -468,9 +468,9 @@ int Patch::read(const std::string& file, const std::string& basePath)
 	catch (nl::json::exception& e)
 	{
 		u::log::print("[patch::read] Exception thrown: %s\n", e.what());
-		return G_PATCH_INVALID;
+		return G_FILE_INVALID;
 	}
 
-	return G_PATCH_OK;
+	return G_FILE_OK;
 }
 } // namespace giada::m

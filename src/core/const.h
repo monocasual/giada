@@ -209,17 +209,12 @@ constexpr int WID_MIDI_INPUT     = -13;
 constexpr int WID_MIDI_OUTPUT    = -14;
 constexpr int WID_MISSING_ASSETS = -15;
 
-/* -- patch signals --------------------------------------------------------- */
-constexpr int G_PATCH_UNSUPPORTED = -2;
-constexpr int G_PATCH_UNREADABLE  = -1;
-constexpr int G_PATCH_INVALID     = 0;
-constexpr int G_PATCH_OK          = 1;
-
-/* -- midimap signals ------------------------------------------------------- */
-constexpr int MIDIMAP_NOT_SPECIFIED = 0x00;
-constexpr int MIDIMAP_UNREADABLE    = 0x01;
-constexpr int MIDIMAP_INVALID       = 0x02;
-constexpr int MIDIMAP_READ_OK       = 0x04;
+/* -- File signals ---------------------------------------------------------- */
+constexpr int G_FILE_NOT_SPECIFIED = -3;
+constexpr int G_FILE_UNSUPPORTED   = -2;
+constexpr int G_FILE_UNREADABLE    = -1;
+constexpr int G_FILE_INVALID       = 0;
+constexpr int G_FILE_OK            = 1;
 
 /* -- MIDI in parameters (for MIDI learning) -------------------------------- */
 constexpr int G_MIDI_IN_ENABLED      = 1;

@@ -35,7 +35,7 @@ namespace giada::m
 {
 bool LoadState::isGood() const
 {
-	return patch == G_PATCH_OK && missingWaves.empty() && missingPlugins.empty();
+	return patch == G_FILE_OK && missingWaves.empty() && missingPlugins.empty();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -174,7 +174,7 @@ void Engine::init()
 	init::printBuildInfo();
 
 	midiMapper.init();
-	if (midiMapper.read(conf.data.midiMapPath) != MIDIMAP_READ_OK)
+	if (midiMapper.read(conf.data.midiMapPath) != G_FILE_OK)
 		u::log::print("[Engine::init] MIDI map read failed!\n");
 
 	/* Initialize KernelAudio. If fails, interrupt the Engine initialization:
@@ -383,7 +383,7 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 	progress(0.0f);
 
 	patch.reset();
-	if (int res = patch.read(patchPath, projectPath); res != G_PATCH_OK)
+	if (int res = patch.read(patchPath, projectPath); res != G_FILE_OK)
 		return {res};
 
 	progress(0.3f);
@@ -418,7 +418,7 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 
 	progress(1.0f);
 
-	state.patch = G_PATCH_OK;
+	state.patch = G_FILE_OK;
 	return state;
 }
 

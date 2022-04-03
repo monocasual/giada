@@ -81,13 +81,13 @@ void loadProject(void* data)
 
 	m::LoadState state = g_engine.load(projectPath, patchPath, progressCb);
 
-	if (state.patch != G_PATCH_OK)
+	if (state.patch != G_FILE_OK)
 	{
-		if (state.patch == G_PATCH_UNREADABLE)
+		if (state.patch == G_FILE_UNREADABLE)
 			v::gdAlert("This patch is unreadable.");
-		else if (state.patch == G_PATCH_INVALID)
+		else if (state.patch == G_FILE_INVALID)
 			v::gdAlert("This patch is not valid.");
-		else if (state.patch == G_PATCH_UNSUPPORTED)
+		else if (state.patch == G_FILE_UNSUPPORTED)
 			v::gdAlert("This patch format is no longer supported.");
 		return;
 	}
