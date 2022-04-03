@@ -34,12 +34,15 @@
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/plugin/pluginBrowser.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
 gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Conf::Data& c)
-: gdWindow(X, Y, W, H, "Available plugins")
+: gdWindow(X, Y, W, H, g_ui.langMapper.get(LangMap::PLUGINCHOOSER_TITLE))
 , m_conf(c)
 , m_channelId(channelId)
 {
@@ -47,7 +50,7 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Co
 	{
 		geFlex* header = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 		{
-			sortMethod = new geChoice("Sort by", 0);
+			sortMethod = new geChoice(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY), 0);
 			header->add(sortMethod, 180);
 			header->add(new geBox());
 			header->end();
@@ -57,8 +60,8 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Co
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			addBtn    = new geButton("Add");
-			cancelBtn = new geButton("Cancel");
+			addBtn    = new geButton(g_ui.langMapper.get(LangMap::COMMON_ADD));
+			cancelBtn = new geButton(g_ui.langMapper.get(LangMap::COMMON_CANCEL));
 			footer->add(new geBox());
 			footer->add(cancelBtn, 80);
 			footer->add(addBtn, 80);
@@ -74,10 +77,10 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Co
 	add(container);
 	resizable(container);
 
-	sortMethod->addItem("Name");
-	sortMethod->addItem("Category");
-	sortMethod->addItem("Manufacturer");
-	sortMethod->addItem("Format");
+	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_NAME));
+	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_CATEGORY));
+	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_MANIFACTURER));
+	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_FORMAT));
 	sortMethod->showItem(m_conf.pluginSortMethod);
 	sortMethod->onChange = [this](ID id) {
 		c::plugin::sortPlugins(static_cast<m::PluginManager::SortMethod>(id));

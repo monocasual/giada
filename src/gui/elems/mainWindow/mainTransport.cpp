@@ -34,6 +34,9 @@
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/statusButton.h"
+#include "gui/ui.h"
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -58,18 +61,13 @@ geMainTransport::geMainTransport()
 	add(m_metronome, 15);
 	end();
 
-	m_rewind->copy_tooltip("Rewind");
-	m_play->copy_tooltip("Play/Stop");
-	m_recTriggerMode->copy_tooltip("Record-on-signal mode\n\nIf enabled, action "
-	                               "and audio recording will start only when a signal (key press or audio) "
-	                               "is detected.");
-	m_recAction->copy_tooltip("Record actions");
-	m_recInput->copy_tooltip("Record audio");
-	m_inputRecMode->copy_tooltip("Free loop-length mode\n\nIf enabled, the sequencer "
-	                             "will adjust to the length of your first audio recording. "
-	                             "Available only if there are no other audio samples in the "
-	                             "project.");
-	m_metronome->copy_tooltip("Metronome");
+	m_rewind->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_REWIND));
+	m_play->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_PLAY));
+	m_recTriggerMode->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_RECTRIGGERMODE));
+	m_recAction->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_RECACTIONS));
+	m_recInput->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_RECINPUT));
+	m_inputRecMode->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_RECINPUTMODE));
+	m_metronome->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_METRONOME));
 
 	m_rewind->callback([](Fl_Widget* /*w*/, void* /*v*/) {
 		c::events::rewindSequencer(Thread::MAIN);

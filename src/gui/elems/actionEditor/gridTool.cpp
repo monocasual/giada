@@ -28,8 +28,11 @@
 #include "core/conf.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/ui.h"
 #include "utils/math.h"
 #include <FL/Fl_Double_Window.H>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -58,8 +61,8 @@ geGridTool::geGridTool(Pixel x, Pixel y, m::Conf::Data& c)
 
 	end();
 
-	gridType->copy_tooltip("Grid resolution");
-	active->copy_tooltip("Snap to grid");
+	gridType->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_GRIDRES));
+	active->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_SNAPTOGRID));
 }
 
 /* -------------------------------------------------------------------------- */

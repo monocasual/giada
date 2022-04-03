@@ -31,7 +31,11 @@
 #include "core/plugins/pluginManager.h"
 #include "glue/plugin.h"
 #include "gui/elems/basics/boxtypes.h"
-#include <FL/fl_draw.H>
+#include "gui/ui.h"
+#include "utils/gui.h"
+#include <fmt/core.h>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -73,7 +77,7 @@ void gePluginBrowser::refresh()
 {
 	clear();
 
-	add("NAME\tMANUFACTURER\tCATEGORY\tFORMAT\tUID");
+	add(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_HEADER));
 	add("---\t---\t---\t---\t---");
 
 	for (m::PluginManager::PluginInfo pi : c::plugin::getPluginsInfo())
@@ -83,11 +87,11 @@ void gePluginBrowser::refresh()
 		{
 			std::string m = pi.exists ? "" : "@-";
 
-			s = m + pi.name + "\t" + m + pi.manufacturerName + "\t" + m +
-			    pi.category + "\t" + m + pi.format + "\t" + m + pi.uid;
+			s = fmt::format("{0}{1}\t{0}{2}\t{0}{3}\t{0}{4}\t{0}{5}",
+			    m, pi.name, pi.manufacturerName, pi.category, pi.format, pi.uid);
 		}
 		else
-			std::string s = "?\t?\t?\t?\t? " + pi.uid + " ?";
+			s = fmt::format("?\t?\t?\t?\t? {} ?", pi.uid);
 
 		add(s.c_str());
 	}
@@ -97,23 +101,19 @@ void gePluginBrowser::refresh()
 
 void gePluginBrowser::computeWidths()
 {
-	int w0, w1, w3;
+	constexpr int PADDDING = 60;
+
 	for (m::PluginManager::PluginInfo pi : c::plugin::getPluginsInfo())
 	{
-		w0 = static_cast<int>(fl_width(pi.name.c_str()));
-		w1 = static_cast<int>(fl_width(pi.manufacturerName.c_str()));
-		w3 = static_cast<int>(fl_width(pi.format.c_str()));
-		if (w0 > m_widths[0])
-			m_widths[0] = w0;
-		if (w1 > m_widths[1])
-			m_widths[1] = w1;
-		if (w3 > m_widths[3])
-			m_widths[3] = w3;
+		m_widths[0] = std::max(u::gui::getStringRect(pi.name).w, m_widths[0]);
+		m_widths[1] = std::max(u::gui::getStringRect(pi.manufacturerName).w, m_widths[1]);
+		m_widths[2] = std::max(u::gui::getStringRect(pi.category).w, m_widths[2]);
+		m_widths[3] = std::max(u::gui::getStringRect(pi.format).w, m_widths[3]);
 	}
-	m_widths[0] += 60;
-	m_widths[1] += 60;
-	m_widths[2] = static_cast<int>(fl_width("CATEGORY") + 60);
-	m_widths[3] += 60;
+	m_widths[0] += PADDDING;
+	m_widths[1] += PADDDING;
+	m_widths[2] += PADDDING;
+	m_widths[3] += PADDDING;
 	m_widths[4] = 0;
 }
 } // namespace giada::v

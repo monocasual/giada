@@ -34,6 +34,7 @@
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/scrollPack.h"
+#include "gui/ui.h"
 #include "src/core/actions/action.h"
 #include "utils/gui.h"
 #include "utils/string.h"
@@ -43,10 +44,12 @@
 #include <limits>
 #include <string>
 
+extern giada::v::Ui g_ui;
+
 namespace giada::v
 {
 gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
-: gdWindow(conf.actionEditorX, conf.actionEditorY, conf.actionEditorW, conf.actionEditorH)
+: gdWindow(conf.actionEditorX, conf.actionEditorY, conf.actionEditorW, conf.actionEditorH, g_ui.langMapper.get(LangMap::ACTIONEDITOR_TITLE))
 , channelId(channelId)
 , gridTool(0, 0, conf)
 , zoomInBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm)
@@ -67,9 +70,9 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
 	    h() - (G_GUI_OUTER_MARGIN * 3) - 20);
 
 	zoomInBtn.callback(cb_zoomIn, this);
-	zoomInBtn.copy_tooltip("Zoom in");
+	zoomInBtn.copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMIN));
 	zoomOutBtn.callback(cb_zoomOut, this);
-	zoomOutBtn.copy_tooltip("Zoom out");
+	zoomOutBtn.copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMOUT));
 
 	add(m_barTop);
 	add(m_splitScroll);
@@ -142,15 +145,8 @@ void gdBaseActionEditor::zoomOut()
 void gdBaseActionEditor::prepareWindow()
 {
 	u::gui::setFavicon(this);
-
-	std::string l = "Action Editor";
-	if (m_data.channelName != "")
-		l += " - " + m_data.channelName;
-	copy_label(l.c_str());
-
 	set_non_modal();
 	size_range(640, 284);
-
 	show();
 }
 

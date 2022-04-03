@@ -213,7 +213,8 @@ void quantize(int val)
 
 void clearAllSamples()
 {
-	if (!v::gdConfirmWin("Warning", "Free all Sample channels: are you sure?"))
+	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
+	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_FREEALLSAMPLES)))
 		return;
 	g_ui.closeSubWindow(WID_SAMPLE_EDITOR);
 	g_engine.sequencer.setStatus(SeqStatus::STOPPED);
@@ -226,7 +227,8 @@ void clearAllSamples()
 
 void clearAllActions()
 {
-	if (!v::gdConfirmWin("Warning", "Clear all actions: are you sure?"))
+	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
+	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
 		return;
 	g_ui.closeSubWindow(WID_ACTION_EDITOR);
 	g_engine.actionRecorder.clearAllActions();
@@ -276,7 +278,8 @@ void printDebugInfo()
 
 void closeProject()
 {
-	if (!v::gdConfirmWin("Warning", "Close project: are you sure?"))
+	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
+	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLOSEPROJECT)))
 		return;
 	g_engine.mixer.disable();
 	g_ui.reset();

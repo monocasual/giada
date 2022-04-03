@@ -24,41 +24,25 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_TAB_MIDI_H
-#define GE_TAB_MIDI_H
-
-#include "deps/geompp/src/rect.hpp"
-#include "glue/config.h"
-#include <FL/Fl_Group.H>
-
-class geCheck;
+#include "gui/elems/config/stringMenu.h"
+#include "utils/gui.h"
 
 namespace giada::v
 {
-class geStringMenu;
-class geChoice;
-class geTabMidi : public Fl_Group
+geStringMenu::geStringMenu(const char* l, const std::vector<std::string>& data,
+    const std::string& msgIfNotFound, int labelWidth)
+: geChoice(l, labelWidth)
 {
-public:
-	geTabMidi(geompp::Rect<int>);
-
-	void save() const;
-
-	geChoice*     system;
-	geStringMenu* portOut;
-	geStringMenu* portIn;
-	geCheck*      enableOut;
-	geCheck*      enableIn;
-	geStringMenu* midiMap;
-	geChoice*     sync;
-
-private:
-	void invalidate();
-
-	c::config::MidiData m_data;
-
-	int m_initialApi;
-};
+	if (data.size() == 0)
+	{
+		addItem(msgIfNotFound.c_str(), 0);
+		showItem(0);
+		deactivate();
+	}
+	else
+	{
+		for (const std::string& d : data)
+			addItem(u::gui::removeFltkChars(d).c_str(), -1); // -1: auto-increment ID
+	}
+}
 } // namespace giada::v
-
-#endif

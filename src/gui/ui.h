@@ -31,6 +31,7 @@
 #include "core/patch.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dispatcher.h"
+#include "gui/langMapper.h"
 #include "gui/updater.h"
 #include <memory>
 #include <string>
@@ -123,6 +124,7 @@ public:
 
 	std::unique_ptr<gdMainWindow> mainWindow;
 	Dispatcher                    dispatcher;
+	LangMapper                    langMapper;
 
 private:
 	static constexpr int BLINK_RATE = G_GUI_FPS / 2;

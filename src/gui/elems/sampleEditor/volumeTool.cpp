@@ -29,6 +29,7 @@
 #include "glue/events.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/math.h"
 #include "utils/string.h"
@@ -36,14 +37,14 @@
 #include <cmath>
 #include <cstdlib>
 
-namespace giada
-{
-namespace v
+extern giada::v::Ui g_ui;
+
+namespace giada::v
 {
 geVolumeTool::geVolumeTool(const c::sampleEditor::Data& d, int x, int y)
 : gePack(x, y, Direction::HORIZONTAL)
 , m_data(nullptr)
-, m_label(0, 0, 60, G_GUI_UNIT, "Volume", FL_ALIGN_LEFT)
+, m_label(0, 0, 60, G_GUI_UNIT, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_VOLUME), FL_ALIGN_LEFT)
 , m_dial(0, 0, G_GUI_UNIT, G_GUI_UNIT)
 , m_input(0, 0, 70, G_GUI_UNIT)
 {
@@ -99,5 +100,4 @@ void geVolumeTool::cb_setVolumeNum()
 	c::events::setChannelVolume(m_data->channelId, u::math::dBtoLinear(atof(m_input.value())),
 	    Thread::MAIN);
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

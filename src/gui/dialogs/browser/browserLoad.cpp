@@ -24,11 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "browserLoad.h"
+#include "gui/dialogs/browser/browserLoad.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/input.h"
 #include "gui/elems/fileBrowser.h"
+#include "gui/ui.h"
 #include "utils/fs.h"
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -40,7 +43,7 @@ gdBrowserLoad::gdBrowserLoad(const std::string& title, const std::string& path,
 
 	browser->callback(cb_down, (void*)this);
 
-	ok->label("Load");
+	ok->label(g_ui.langMapper.get(LangMap::COMMON_LOAD));
 	ok->callback(cb_load, (void*)this);
 	ok->shortcut(FL_ENTER);
 

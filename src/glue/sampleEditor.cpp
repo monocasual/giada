@@ -371,7 +371,7 @@ bool isWaveBufferFull()
 
 void reload(ID channelId)
 {
-	if (!v::gdConfirmWin("Warning", "Reload sample: are you sure?"))
+	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING), "Reload sample: are you sure?"))
 		return;
 
 	if (channel::loadChannel(channelId, getWave_(channelId).getPath()) != G_RES_OK)

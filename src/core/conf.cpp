@@ -71,6 +71,7 @@ bool Conf::read()
 
 	data.logMode                    = j.value(CONF_KEY_LOG_MODE, data.logMode);
 	data.showTooltips               = j.value(CONF_KEY_SHOW_TOOLTIPS, data.showTooltips);
+	data.langMap                    = j.value(CONF_KEY_LANGMAP, data.langMap);
 	data.soundSystem                = j.value(CONF_KEY_SOUND_SYSTEM, data.soundSystem);
 	data.soundDeviceOut             = j.value(CONF_KEY_SOUND_DEVICE_OUT, data.soundDeviceOut);
 	data.soundDeviceIn              = j.value(CONF_KEY_SOUND_DEVICE_IN, data.soundDeviceIn);
@@ -174,6 +175,7 @@ bool Conf::write() const
 	j[CONF_KEY_HEADER]                        = "GIADACFG";
 	j[CONF_KEY_LOG_MODE]                      = data.logMode;
 	j[CONF_KEY_SHOW_TOOLTIPS]                 = data.showTooltips;
+	j[CONF_KEY_LANGMAP]                       = data.langMap;
 	j[CONF_KEY_SOUND_SYSTEM]                  = data.soundSystem;
 	j[CONF_KEY_SOUND_DEVICE_OUT]              = data.soundDeviceOut;
 	j[CONF_KEY_SOUND_DEVICE_IN]               = data.soundDeviceIn;

@@ -24,11 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "browserDir.h"
+#include "gui/dialogs/browser/browserDir.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/input.h"
 #include "gui/elems/fileBrowser.h"
+#include "gui/ui.h"
 #include "utils/fs.h"
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -40,7 +43,7 @@ gdBrowserDir::gdBrowserDir(const std::string& title, const std::string& path,
 
 	browser->callback(cb_down, (void*)this);
 
-	ok->label("Select");
+	ok->label(g_ui.langMapper.get(LangMap::COMMON_SELECT));
 	ok->callback(cb_load, (void*)this);
 	ok->shortcut(FL_ENTER);
 

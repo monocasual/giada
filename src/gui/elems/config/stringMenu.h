@@ -24,40 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_TAB_MIDI_H
-#define GE_TAB_MIDI_H
+#ifndef GE_STRING_MENU_H
+#define GE_STRING_MENU_H
 
-#include "deps/geompp/src/rect.hpp"
-#include "glue/config.h"
-#include <FL/Fl_Group.H>
-
-class geCheck;
+#include "gui/elems/basics/choice.h"
+#include <string>
+#include <vector>
 
 namespace giada::v
 {
-class geStringMenu;
-class geChoice;
-class geTabMidi : public Fl_Group
+class geStringMenu : public geChoice
 {
 public:
-	geTabMidi(geompp::Rect<int>);
-
-	void save() const;
-
-	geChoice*     system;
-	geStringMenu* portOut;
-	geStringMenu* portIn;
-	geCheck*      enableOut;
-	geCheck*      enableIn;
-	geStringMenu* midiMap;
-	geChoice*     sync;
-
-private:
-	void invalidate();
-
-	c::config::MidiData m_data;
-
-	int m_initialApi;
+	geStringMenu(const char* l, const std::vector<std::string>& data,
+	    const std::string& msgIfNotFound, int labelWidth);
 };
 } // namespace giada::v
 

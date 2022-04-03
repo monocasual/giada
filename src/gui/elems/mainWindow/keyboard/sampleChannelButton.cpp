@@ -27,11 +27,14 @@
 #include "sampleChannelButton.h"
 #include "glue/channel.h"
 #include "gui/dialogs/mainWindow.h"
+#include "gui/ui.h"
 #include "keyboard.h"
 #include "sampleChannel.h"
 #include "utils/fs.h"
 #include "utils/string.h"
 #include <FL/Fl.H>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -42,10 +45,10 @@ geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h, const c
 	{
 	case ChannelStatus::MISSING:
 	case ChannelStatus::WRONG:
-		label("* file not found! *");
+		label(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_SAMPLENOTFOUND));
 		break;
 	default:
-		label(m_channel.sample->waveId == 0 ? "-- no sample --" : m_channel.name.c_str());
+		label(m_channel.sample->waveId == 0 ? g_ui.langMapper.get(LangMap::MAIN_CHANNEL_NOSAMPLE) : m_channel.name.c_str());
 		break;
 	}
 }

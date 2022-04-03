@@ -27,7 +27,10 @@
 #include "gui/elems/mainWindow/keyboard/midiActivity.h"
 #include "core/const.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/ui.h"
 #include <FL/fl_draw.H>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -85,7 +88,6 @@ geMidiActivity::geMidiActivity(int x, int y, int w, int h)
 	add(container);
 	resizable(container);
 
-	copy_tooltip("MIDI I/O activity\n\nNotifies MIDI messages sent (top) or "
-	             "received (bottom) by this channel.");
+	copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_MIDIACTIVITY));
 }
 } // namespace giada::v

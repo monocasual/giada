@@ -24,15 +24,16 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "column.h"
+#include "gui/elems/mainWindow/keyboard/column.h"
 #include "core/model/model.h"
 #include "glue/channel.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/resizerBar.h"
-#include "keyboard.h"
-#include "midiChannel.h"
-#include "sampleChannel.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
+#include "gui/elems/mainWindow/keyboard/midiChannel.h"
+#include "gui/elems/mainWindow/keyboard/sampleChannel.h"
+#include "gui/ui.h"
 #include "utils/fs.h"
 #include "utils/gui.h"
 #include "utils/log.h"
@@ -41,8 +42,42 @@
 #include <FL/fl_draw.H>
 #include <cassert>
 
+extern giada::v::Ui g_ui;
+
 namespace giada::v
 {
+namespace
+{
+enum class Menu
+{
+	ADD_SAMPLE_CHANNEL = 0,
+	ADD_MIDI_CHANNEL,
+	REMOVE
+};
+
+void MenuCallback(Fl_Widget* w, void* v)
+{
+	const geColumn* column = static_cast<geColumn*>(w);
+
+	switch ((Menu)(intptr_t)v)
+	{
+	case Menu::ADD_SAMPLE_CHANNEL:
+		c::channel::addChannel(column->id, ChannelType::SAMPLE);
+		break;
+	case Menu::ADD_MIDI_CHANNEL:
+		c::channel::addChannel(column->id, ChannelType::MIDI);
+		break;
+	case Menu::REMOVE:
+		static_cast<geKeyboard*>(column->parent())->deleteColumn(column->id);
+		break;
+	}
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 geColumn::geColumn(int X, int Y, int W, int H, ID id, geResizerBar* b)
 : Fl_Group(X, Y, W, H)
 , id(id)
@@ -114,16 +149,16 @@ geChannel* geColumn::addChannel(c::channel::Data d)
 
 void geColumn::cb_addChannel()
 {
-	u::log::print("[geColumn::cb_addChannel] id = %d\n", id);
+	G_DEBUG("Column id: " << id);
 
 	Fl_Menu_Item menu[] = {
-	    u::gui::makeMenuItem("Add Sample channel"),
-	    u::gui::makeMenuItem("Add MIDI channel"),
-	    u::gui::makeMenuItem("Remove"),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL), MenuCallback, (void*)Menu::ADD_SAMPLE_CHANNEL),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_COLUMN_BUTTON_ADDMIDICHANNEL), MenuCallback, (void*)Menu::ADD_MIDI_CHANNEL),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_COLUMN_BUTTON_REMOVE), MenuCallback, (void*)Menu::REMOVE),
 	    {}};
 
 	if (countChannels() > 0)
-		menu[2].deactivate();
+		menu[(int)Menu::REMOVE].deactivate();
 
 	Fl_Menu_Button b(0, 0, 100, 50);
 	b.box(G_CUSTOM_BORDER_BOX);
@@ -132,15 +167,8 @@ void geColumn::cb_addChannel()
 	b.color(G_COLOR_GREY_2);
 
 	const Fl_Menu_Item* m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, &b);
-	if (m == nullptr)
-		return;
-
-	if (strcmp(m->label(), "Add Sample channel") == 0)
-		c::channel::addChannel(id, ChannelType::SAMPLE);
-	else if (strcmp(m->label(), "Add MIDI channel") == 0)
-		c::channel::addChannel(id, ChannelType::MIDI);
-	else
-		static_cast<geKeyboard*>(parent())->deleteColumn(id);
+	if (m != nullptr)
+		m->do_callback(this, m->user_data());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -160,7 +188,7 @@ void geColumn::init()
 	Fl_Group::clear();
 	m_channels.clear();
 
-	m_addChannelBtn = new geButton(x(), y(), w(), G_GUI_UNIT, "Edit column");
+	m_addChannelBtn = new geButton(x(), y(), w(), G_GUI_UNIT, g_ui.langMapper.get(LangMap::MAIN_COLUMN_BUTTON));
 	m_addChannelBtn->callback(cb_addChannel, (void*)this);
 
 	add(m_addChannelBtn);

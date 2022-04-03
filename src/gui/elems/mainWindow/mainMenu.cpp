@@ -40,13 +40,80 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
+namespace
+{
+enum class FileMenu
+{
+	OPEN_PROJECT = 0,
+	SAVE_PROJECT,
+	CLOSE_PROJECT,
+#ifdef G_DEBUG_MODE
+	DEBUG_STATS,
+#endif
+	QUIT
+};
+
+void fileMenuCallback(Fl_Widget* /*w*/, void* v)
+{
+	switch ((FileMenu)(intptr_t)v)
+	{
+	case FileMenu::OPEN_PROJECT:
+		c::layout::openBrowserForProjectLoad();
+		break;
+	case FileMenu::SAVE_PROJECT:
+		c::layout::openBrowserForProjectSave();
+		break;
+	case FileMenu::CLOSE_PROJECT:
+		c::main::closeProject();
+		break;
+#ifdef G_DEBUG_MODE
+	case FileMenu::DEBUG_STATS:
+		c::main::printDebugInfo();
+		break;
+#endif
+	case FileMenu::QUIT:
+		c::main::quitGiada();
+		break;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+enum class EditMenu
+{
+	FREE_SAMPLE_CHANNELS = 0,
+	CLEAR_ALL_ACTIONS,
+	SETUP_MIDI_INPUT
+};
+
+void editMenuCallback(Fl_Widget* /*w*/, void* v)
+{
+	switch ((EditMenu)(intptr_t)v)
+	{
+	case EditMenu::FREE_SAMPLE_CHANNELS:
+		c::main::clearAllSamples();
+		break;
+	case EditMenu::CLEAR_ALL_ACTIONS:
+		c::main::clearAllActions();
+		break;
+	case EditMenu::SETUP_MIDI_INPUT:
+		c::layout::openMasterMidiInputWindow();
+		break;
+	}
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 geMainMenu::geMainMenu()
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
-	geButton* file   = new geButton("File");
-	geButton* edit   = new geButton("Edit");
-	geButton* config = new geButton("Config");
-	geButton* about  = new geButton("About");
+	geButton* file   = new geButton(g_ui.langMapper.get(LangMap::MAIN_MENU_FILE));
+	geButton* edit   = new geButton(g_ui.langMapper.get(LangMap::MAIN_MENU_EDIT));
+	geButton* config = new geButton(g_ui.langMapper.get(LangMap::MAIN_MENU_CONFIG));
+	geButton* about  = new geButton(g_ui.langMapper.get(LangMap::MAIN_MENU_ABOUT));
 	add(file, 80);
 	add(edit, 80);
 	add(config, 80);
@@ -64,13 +131,13 @@ geMainMenu::geMainMenu()
 void geMainMenu::cb_file()
 {
 	Fl_Menu_Item menu[] = {
-	    u::gui::makeMenuItem("Open project..."),
-	    u::gui::makeMenuItem("Save project..."),
-	    u::gui::makeMenuItem("Close project"),
-#ifndef NDEBUG
-	    u::gui::makeMenuItem("Debug stats"),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_MENU_FILE_OPENPROJECT), fileMenuCallback, (void*)FileMenu::OPEN_PROJECT),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_MENU_FILE_SAVEPROJECT), fileMenuCallback, (void*)FileMenu::SAVE_PROJECT),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_MENU_FILE_CLOSEPROJECT), fileMenuCallback, (void*)FileMenu::CLOSE_PROJECT),
+#ifdef G_DEBUG_MODE
+	    u::gui::makeMenuItem("Debug stats", fileMenuCallback, (void*)FileMenu::DEBUG_STATS),
 #endif
-	    u::gui::makeMenuItem("Quit Giada"),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_MENU_FILE_QUIT), fileMenuCallback, (void*)FileMenu::QUIT),
 	    {}};
 
 	Fl_Menu_Button b(0, 0, 100, 50);
@@ -80,31 +147,8 @@ void geMainMenu::cb_file()
 	b.color(G_COLOR_GREY_2);
 
 	const Fl_Menu_Item* m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, &b);
-	if (!m)
-		return;
-
-	if (strcmp(m->label(), "Open project...") == 0)
-	{
-		c::layout::openBrowserForProjectLoad();
-	}
-	else if (strcmp(m->label(), "Save project...") == 0)
-	{
-		c::layout::openBrowserForProjectSave();
-	}
-	else if (strcmp(m->label(), "Close project") == 0)
-	{
-		c::main::closeProject();
-	}
-#ifdef G_DEBUG_MODE
-	else if (strcmp(m->label(), "Debug stats") == 0)
-	{
-		c::main::printDebugInfo();
-	}
-#endif
-	else if (strcmp(m->label(), "Quit Giada") == 0)
-	{
-		c::main::quitGiada();
-	}
+	if (m != nullptr)
+		m->do_callback(this, m->user_data());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -114,18 +158,18 @@ void geMainMenu::cb_edit()
 	c::main::MainMenu menu = c::main::getMainMenu();
 
 	Fl_Menu_Item menuItem[] = {
-	    u::gui::makeMenuItem("Free all Sample channels"),
-	    u::gui::makeMenuItem("Clear all actions"),
-	    u::gui::makeMenuItem("Setup global MIDI input..."),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_MENU_EDIT_FREEALLSAMPLES), editMenuCallback, (void*)EditMenu::FREE_SAMPLE_CHANNELS),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_MENU_EDIT_CLEARALLACTIONS), editMenuCallback, (void*)EditMenu::CLEAR_ALL_ACTIONS),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_MENU_EDIT_SETUPMIDIINPUT), editMenuCallback, (void*)EditMenu::SETUP_MIDI_INPUT),
 	    {}};
 
-	menuItem[0].deactivate();
-	menuItem[1].deactivate();
+	menuItem[(int)EditMenu::FREE_SAMPLE_CHANNELS].deactivate();
+	menuItem[(int)EditMenu::CLEAR_ALL_ACTIONS].deactivate();
 
 	if (menu.hasAudioData)
-		menuItem[0].activate();
+		menuItem[(int)EditMenu::FREE_SAMPLE_CHANNELS].activate();
 	if (menu.hasActions)
-		menuItem[1].activate();
+		menuItem[(int)EditMenu::CLEAR_ALL_ACTIONS].activate();
 
 	Fl_Menu_Button b(0, 0, 100, 50);
 	b.box(G_CUSTOM_BORDER_BOX);
@@ -134,14 +178,7 @@ void geMainMenu::cb_edit()
 	b.color(G_COLOR_GREY_2);
 
 	const Fl_Menu_Item* m = menuItem->popup(Fl::event_x(), Fl::event_y(), 0, 0, &b);
-	if (!m)
-		return;
-
-	if (strcmp(m->label(), "Free all Sample channels") == 0)
-		c::main::clearAllSamples();
-	else if (strcmp(m->label(), "Clear all actions") == 0)
-		c::main::clearAllActions();
-	else if (strcmp(m->label(), "Setup global MIDI input...") == 0)
-		c::layout::openMasterMidiInputWindow();
+	if (m != nullptr)
+		m->do_callback(this, m->user_data());
 }
 } // namespace giada::v

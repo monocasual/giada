@@ -31,12 +31,12 @@
 #include "glue/main.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/input.h"
-#include "mainWindow.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include <cstring>
 
-extern giada::v::gdMainWindow* mainWin;
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -48,7 +48,7 @@ gdBpmInput::gdBpmInput(const char* label)
 	begin();
 	input_a = new geInput(8, 8, 30, G_GUI_UNIT);
 	input_b = new geInput(42, 8, 20, G_GUI_UNIT);
-	ok      = new geButton(66, 8, 70, G_GUI_UNIT, "Ok");
+	ok      = new geButton(66, 8, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_OK));
 	end();
 
 	std::vector<std::string> parts = u::string::split(label, ".");

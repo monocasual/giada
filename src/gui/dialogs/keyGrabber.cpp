@@ -31,15 +31,18 @@
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/log.h"
 #include "utils/string.h"
 #include <cassert>
 
+extern giada::v::Ui g_ui;
+
 namespace giada::v
 {
 gdKeyGrabber::gdKeyGrabber(int key)
-: gdWindow(300, 126, "Key configuration")
+: gdWindow(300, 126, g_ui.langMapper.get(LangMap::KEYGRABBER_TITLE))
 , onSetKey(nullptr)
 , m_key(key)
 {
@@ -49,8 +52,8 @@ gdKeyGrabber::gdKeyGrabber(int key)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_clear  = new geButton("Clear");
-			m_cancel = new geButton("Close");
+			m_clear  = new geButton(g_ui.langMapper.get(LangMap::COMMON_CLEAR));
+			m_cancel = new geButton(g_ui.langMapper.get(LangMap::COMMON_CLOSE));
 
 			footer->add(new geBox()); // Spacer
 			footer->add(m_clear, 80);
@@ -88,7 +91,7 @@ gdKeyGrabber::gdKeyGrabber(int key)
 
 void gdKeyGrabber::rebuild()
 {
-	std::string tmp = "Press a key.\n\nCurrent binding: " + u::gui::keyToString(m_key);
+	std::string tmp = g_ui.langMapper.get(LangMap::KEYGRABBER_BODY) + u::gui::keyToString(m_key);
 	m_text->copy_label(tmp.c_str());
 }
 

@@ -38,15 +38,19 @@
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include <FL/Fl.H>
+#include <fmt/core.h>
 #include <functional>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
 geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
-: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, "Plug-ins")
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.langMapper.get(LangMap::CONFIG_PLUGINS_TITLE))
 {
 	end();
 
@@ -77,7 +81,7 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 
 	m_info->hide();
 
-	m_folderPath->label("Plug-ins folder");
+	m_folderPath->label(g_ui.langMapper.get(LangMap::CONFIG_PLUGINS_FOLDER));
 	m_folderPath->onChange = [this](const std::string& v) {
 		m_data.pluginPath = v;
 	};
@@ -88,7 +92,7 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 
 	m_scanButton->onClick = [this]() {
 		std::function<void(float)> callback = [this](float progress) {
-			std::string l = "Scan in progress (" + std::to_string((int)(progress * 100)) + "%). Please wait...";
+			std::string l = fmt::format(g_ui.langMapper.get(LangMap::CONFIG_PLUGINS_SCANNING), static_cast<int>(progress * 100));
 			m_info->label(l.c_str());
 			Fl::wait();
 		};
@@ -108,7 +112,7 @@ void geTabPlugins::rebuild()
 {
 	m_data = c::config::getPluginData();
 
-	const std::string scanLabel = "Scan (" + std::to_string(m_data.numAvailablePlugins) + " found)";
+	const std::string scanLabel = fmt::format(g_ui.langMapper.get(LangMap::CONFIG_PLUGINS_SCAN), m_data.numAvailablePlugins);
 	m_scanButton->copy_label(scanLabel.c_str());
 
 	m_folderPath->value(m_data.pluginPath.c_str());

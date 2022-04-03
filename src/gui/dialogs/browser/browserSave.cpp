@@ -24,11 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "browserSave.h"
+#include "gui/dialogs/browser/browserSave.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/input.h"
 #include "gui/elems/fileBrowser.h"
+#include "gui/ui.h"
 #include "utils/fs.h"
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -45,7 +48,7 @@ gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
 
 	browser->callback(cb_down, (void*)this);
 
-	ok->label("Save");
+	ok->label(g_ui.langMapper.get(LangMap::COMMON_SAVE));
 	ok->callback(cb_save, (void*)this);
 	ok->shortcut(FL_ENTER);
 

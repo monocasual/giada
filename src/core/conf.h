@@ -48,19 +48,20 @@ public:
 
 	struct Data
 	{
-		int  logMode          = LOG_MODE_MUTE;
-		bool showTooltips     = true;
-		int  soundSystem      = G_DEFAULT_SOUNDSYS;
-		int  soundDeviceOut   = G_DEFAULT_SOUNDDEV_OUT;
-		int  soundDeviceIn    = G_DEFAULT_SOUNDDEV_IN;
-		int  channelsOutCount = G_MAX_IO_CHANS;
-		int  channelsOutStart = 0;
-		int  channelsInCount  = 1;
-		int  channelsInStart  = 0;
-		int  samplerate       = G_DEFAULT_SAMPLERATE;
-		int  buffersize       = G_DEFAULT_BUFSIZE;
-		bool limitOutput      = false;
-		int  rsmpQuality      = 0;
+		int         logMode          = LOG_MODE_MUTE;
+		bool        showTooltips     = true;
+		std::string langMap          = "";
+		int         soundSystem      = G_DEFAULT_SOUNDSYS;
+		int         soundDeviceOut   = G_DEFAULT_SOUNDDEV_OUT;
+		int         soundDeviceIn    = G_DEFAULT_SOUNDDEV_IN;
+		int         channelsOutCount = G_MAX_IO_CHANS;
+		int         channelsOutStart = 0;
+		int         channelsInCount  = 1;
+		int         channelsInStart  = 0;
+		int         samplerate       = G_DEFAULT_SAMPLERATE;
+		int         buffersize       = G_DEFAULT_BUFSIZE;
+		bool        limitOutput      = false;
+		int         rsmpQuality      = 0;
 
 		int         midiSystem  = 0;
 		int         midiPortOut = G_DEFAULT_MIDI_PORT_OUT;

@@ -69,7 +69,7 @@ void loadProject(void* data)
 	const std::string projectPath = browser->getSelectedItem();
 	const std::string patchPath   = projectPath + G_SLASH + u::fs::stripExt(u::fs::basename(projectPath)) + ".gptc";
 
-	auto progress   = g_ui.mainWindow->getScopedProgress("Loading project...");
+	auto progress   = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
 	auto progressCb = [&p = progress.get()](float v) {
 		p.setProgress(v);
 	};
@@ -84,11 +84,11 @@ void loadProject(void* data)
 	if (state.patch != G_FILE_OK)
 	{
 		if (state.patch == G_FILE_UNREADABLE)
-			v::gdAlert("This patch is unreadable.");
+			v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_PATCHUNREADABLE));
 		else if (state.patch == G_FILE_INVALID)
-			v::gdAlert("This patch is not valid.");
+			v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_PATCHINVALID));
 		else if (state.patch == G_FILE_UNSUPPORTED)
-			v::gdAlert("This patch format is no longer supported.");
+			v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_PATCHUNSUPPORTED));
 		return;
 	}
 
@@ -114,14 +114,15 @@ void saveProject(void* data)
 
 	if (projectName == "")
 	{
-		v::gdAlert("Please choose a project name.");
+		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_CHOOSEPROJECTNAME));
 		return;
 	}
 
-	if (u::fs::dirExists(projectPath) && !v::gdConfirmWin("Warning", "Project exists: overwrite?"))
+	if (u::fs::dirExists(projectPath) &&
+	    !v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING), g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_PROJECTEXISTS)))
 		return;
 
-	auto progress   = g_ui.mainWindow->getScopedProgress("Saving project...");
+	auto progress   = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECT));
 	auto progressCb = [&p = progress.get()](float v) {
 		p.setProgress(v);
 	};
@@ -130,7 +131,7 @@ void saveProject(void* data)
 
 	if (!g_engine.store(projectName, projectPath, patchPath, progressCb))
 	{
-		v::gdAlert("Unable to save the project!");
+		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECTERROR));
 		return;
 	}
 
@@ -147,7 +148,7 @@ void loadSample(void* data)
 	if (fullPath.empty())
 		return;
 
-	auto progress = g_ui.mainWindow->getScopedProgress("Loading sample...");
+	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_LOADINGSAMPLE));
 
 	if (int res = c::channel::loadChannel(browser->getChannelId(), fullPath); res == G_RES_OK)
 	{
@@ -168,13 +169,15 @@ void saveSample(void* data)
 
 	if (name == "")
 	{
-		v::gdAlert("Please choose a file name.");
+		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_CHOOSEFILENAME));
 		return;
 	}
 
 	std::string filePath = folderPath + G_SLASH + u::fs::stripExt(name) + ".wav";
 
-	if (u::fs::fileExists(filePath) && !v::gdConfirmWin("Warning", "File exists: overwrite?"))
+	if (u::fs::fileExists(filePath) &&
+	    !v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
+	        g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_FILEEXISTS)))
 		return;
 
 	ID       waveId = g_engine.model.get().getChannel(channelId).samplePlayer->getWaveId();
@@ -184,7 +187,7 @@ void saveSample(void* data)
 
 	if (!g_engine.waveManager.save(*wave, filePath))
 	{
-		v::gdAlert("Unable to save this sample!");
+		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGFILEERROR));
 		return;
 	}
 

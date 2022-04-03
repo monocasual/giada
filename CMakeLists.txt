@@ -99,6 +99,7 @@ list(APPEND SOURCES
 	src/gui/dialogs/window.cpp
 	src/gui/dispatcher.cpp
 	src/gui/updater.cpp
+	src/gui/langMapper.cpp
 	src/gui/drawing.cpp
 	src/gui/dialogs/progress.cpp
 	src/gui/dialogs/keyGrabber.cpp
@@ -176,6 +177,7 @@ list(APPEND SOURCES
 	src/gui/elems/config/tabBehaviors.cpp
 	src/gui/elems/config/tabPlugins.cpp
 	src/gui/elems/config/tabBindings.cpp
+	src/gui/elems/config/stringMenu.cpp
 	src/gui/elems/basics/scroll.cpp
 	src/gui/elems/basics/pack.cpp
 	src/gui/elems/basics/group.cpp

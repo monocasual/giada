@@ -24,16 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
+#include "gui/dialogs/midiIO/midiInputChannel.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "utils/gui.h"
-#include "utils/log.h"
-#include <FL/Fl_Pack.H>
-#include <cassert>
-#include <cstddef>
-#ifdef WITH_VST
-#include "core/plugins/plugin.h"
-#endif
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
@@ -42,26 +35,36 @@
 #include "gui/elems/basics/scrollPack.h"
 #include "gui/elems/midiIO/midiLearner.h"
 #include "gui/elems/midiIO/midiLearnerPack.h"
-#include "midiInputChannel.h"
+#include "gui/ui.h"
+#include "utils/gui.h"
+#include "utils/log.h"
 #include "utils/string.h"
+#include <FL/Fl_Pack.H>
+#include <cassert>
+#include <cstddef>
+#ifdef WITH_VST
+#include "core/plugins/plugin.h"
+#endif
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
 geChannelLearnerPack::geChannelLearnerPack(int x, int y, const c::io::Channel_InputData& channel)
-: geMidiLearnerPack(x, y, "Channel")
+: geMidiLearnerPack(x, y, g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_CHANNEL))
 {
 	setCallbacks(
 	    [channelId = channel.channelId](int param) { c::io::channel_startMidiLearn(param, channelId); },
 	    [channelId = channel.channelId](int param) { c::io::channel_clearMidiLearn(param, channelId); });
-	addMidiLearner("key press", G_MIDI_IN_KEYPRESS);
-	addMidiLearner("key release", G_MIDI_IN_KEYREL);
-	addMidiLearner("key kill", G_MIDI_IN_KILL);
-	addMidiLearner("arm", G_MIDI_IN_ARM);
-	addMidiLearner("mute", G_MIDI_IN_MUTE);
-	addMidiLearner("solo", G_MIDI_IN_SOLO);
-	addMidiLearner("volume", G_MIDI_IN_VOLUME);
-	addMidiLearner("pitch", G_MIDI_IN_PITCH, /*visible=*/channel.channelType == ChannelType::SAMPLE);
-	addMidiLearner("read actions", G_MIDI_IN_READ_ACTIONS, /*visible=*/channel.channelType == ChannelType::SAMPLE);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYPRESS), G_MIDI_IN_KEYPRESS);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYREL), G_MIDI_IN_KEYREL);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYKILL), G_MIDI_IN_KILL);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_ARM), G_MIDI_IN_ARM);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_MUTE), G_MIDI_IN_MUTE);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_SOLO), G_MIDI_IN_SOLO);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_VOLUME), G_MIDI_IN_VOLUME);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_PITCH), G_MIDI_IN_PITCH, /*visible=*/channel.channelType == ChannelType::SAMPLE);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_READACTIONS), G_MIDI_IN_READ_ACTIONS, /*visible=*/channel.channelType == ChannelType::SAMPLE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -114,21 +117,19 @@ void gePluginLearnerPack::update(const c::io::PluginData& d, bool enabled)
 /* -------------------------------------------------------------------------- */
 
 gdMidiInputChannel::gdMidiInputChannel(ID channelId, m::Conf::Data& c)
-: gdMidiInputBase(c.midiInputX, c.midiInputY, c.midiInputW, c.midiInputH, "", c)
+: gdMidiInputBase(c.midiInputX, c.midiInputY, c.midiInputW, c.midiInputH, g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_TITLE), c)
 , m_channelId(channelId)
 , m_data(c::io::channel_getInputData(channelId))
 {
 	end();
 
-	copy_label(std::string("MIDI Input Setup (channel " + std::to_string(channelId) + ")").c_str());
-
 	/* Header */
 
 	geGroup* groupHeader = new geGroup(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN);
-	m_enable             = new geCheck(0, 0, 120, G_GUI_UNIT, "Enable MIDI input");
+	m_enable             = new geCheck(0, 0, 120, G_GUI_UNIT, g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_ENABLE));
 	m_channel            = new geChoice(m_enable->x() + m_enable->w() + 44, 0, 120, G_GUI_UNIT);
 	m_veloAsVol          = new geCheck(0, m_enable->y() + m_enable->h() + G_GUI_OUTER_MARGIN, w() - 16, G_GUI_UNIT,
-        "Velocity drives volume (Sample Channels)");
+        g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_VELOCITYDRIVESVOL));
 	groupHeader->add(m_enable);
 	groupHeader->add(m_channel);
 	groupHeader->add(m_veloAsVol);
@@ -148,7 +149,7 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, m::Conf::Data& c)
 
 	geGroup* groupButtons = new geGroup(G_GUI_OUTER_MARGIN, m_container->y() + m_container->h() + G_GUI_OUTER_MARGIN);
 	geBox*   spacer       = new geBox(0, 0, w() - 80, G_GUI_UNIT); // spacer window border <-> buttons
-	m_ok                  = new geButton(w() - 96, 0, 80, G_GUI_UNIT, "Close");
+	m_ok                  = new geButton(w() - 96, 0, 80, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_CLOSE));
 	groupButtons->add(spacer);
 	groupButtons->add(m_ok);
 	groupButtons->resizable(spacer);

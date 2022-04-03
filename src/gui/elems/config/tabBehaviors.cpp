@@ -30,22 +30,25 @@
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/ui.h"
 #include <FL/Fl_Pack.H>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
 geTabBehaviors::geTabBehaviors(geompp::Rect<int> bounds, m::Conf::Data& c)
-: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, "Behaviors")
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.langMapper.get(LangMap::CONFIG_BEHAVIORS_TITLE))
 , m_conf(c)
 {
 	end();
 
 	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		m_chansStopOnSeqHalt         = new geCheck(0, 0, 0, 0, "Dynamic channels stop immediately when the sequencer\nis halted");
-		m_treatRecsAsLoops           = new geCheck(0, 0, 0, 0, "Treat one shot channels with actions as loops");
-		m_inputMonitorDefaultOn      = new geCheck(0, 0, 0, 0, "New sample channels have input monitor on by default");
-		m_overdubProtectionDefaultOn = new geCheck(0, 0, 0, 0, "New sample channels have overdub protection on\nby default");
+		m_chansStopOnSeqHalt         = new geCheck(0, 0, 0, 0, g_ui.langMapper.get(LangMap::CONFIG_BEHAVIORS_CHANSSTOPONSEQHALT));
+		m_treatRecsAsLoops           = new geCheck(0, 0, 0, 0, g_ui.langMapper.get(LangMap::CONFIG_BEHAVIORS_TREATRECSASLOOPS));
+		m_inputMonitorDefaultOn      = new geCheck(0, 0, 0, 0, g_ui.langMapper.get(LangMap::CONFIG_BEHAVIORS_INPUTMONITORDEFAULTON));
+		m_overdubProtectionDefaultOn = new geCheck(0, 0, 0, 0, g_ui.langMapper.get(LangMap::CONFIG_BEHAVIORS_OVERDUBPROTECTIONDEFAULTON));
 
 		body->add(m_chansStopOnSeqHalt, 30);
 		body->add(m_treatRecsAsLoops, 20);

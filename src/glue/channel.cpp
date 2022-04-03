@@ -77,13 +77,13 @@ namespace
 void printLoadError_(int res)
 {
 	if (res == G_RES_ERR_WRONG_DATA)
-		v::gdAlert("Multichannel samples not supported.");
+		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_MULTICHANNOTSUPPORTED));
 	else if (res == G_RES_ERR_IO)
-		v::gdAlert("Unable to read this sample.");
+		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_CANTREADSAMPLE));
 	else if (res == G_RES_ERR_PATH_TOO_LONG)
-		v::gdAlert("File path too long.");
+		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_PATHTOOLONG));
 	else if (res == G_RES_ERR_NO_DATA)
-		v::gdAlert("No file specified.");
+		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_NOFILESPECIFIED));
 }
 } // namespace
 
@@ -175,7 +175,7 @@ std::vector<Data> getChannels()
 
 int loadChannel(ID channelId, const std::string& fname)
 {
-	auto progress = g_ui.mainWindow->getScopedProgress("Loading sample...");
+	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
 
 	m::WaveManager::Result res = g_engine.waveManager.createFromFile(fname, /*id=*/0,
 	    g_engine.kernelAudio.getSampleRate(), g_engine.conf.data.rsmpQuality);
@@ -212,7 +212,7 @@ void addChannel(ID columnId, ChannelType type)
 
 void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 {
-	auto progress = g_ui.mainWindow->getScopedProgress("Loading samples...");
+	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
 
 	bool errors = false;
 	int  i      = 0;
@@ -230,14 +230,14 @@ void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 	}
 
 	if (errors)
-		v::gdAlert("Some files weren't loaded successfully.");
+		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLESERROR));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void deleteChannel(ID channelId)
 {
-	if (!v::gdConfirmWin("Warning", "Delete channel: are you sure?"))
+	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING), g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_DELETE)))
 		return;
 	g_ui.closeAllSubwindows();
 
@@ -255,7 +255,7 @@ void deleteChannel(ID channelId)
 
 void freeChannel(ID channelId)
 {
-	if (!v::gdConfirmWin("Warning", "Free channel: are you sure?"))
+	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING), g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_FREE)))
 		return;
 	g_ui.closeAllSubwindows();
 	g_engine.actionRecorder.clearChannel(channelId);

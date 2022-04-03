@@ -50,6 +50,7 @@
 #include "gui/elems/sampleEditor/volumeTool.h"
 #include "gui/elems/sampleEditor/waveTools.h"
 #include "gui/elems/sampleEditor/waveform.h"
+#include "gui/ui.h"
 #include "sampleEditor.h"
 #include "utils/gui.h"
 #include "utils/string.h"
@@ -57,16 +58,19 @@
 #include <FL/Fl_Group.H>
 #include <cassert>
 #include <cmath>
+#include <fmt/core.h>
 
 #ifdef G_OS_WINDOWS
 #undef IN
 #undef OUT
 #endif
 
+extern giada::v::Ui g_ui;
+
 namespace giada::v
 {
 gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
-: gdWindow(c.sampleEditorX, c.sampleEditorY, c.sampleEditorW, c.sampleEditorH)
+: gdWindow(c.sampleEditorX, c.sampleEditorY, c.sampleEditorW, c.sampleEditorH, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TITLE))
 , m_channelId(channelId)
 , m_conf(c)
 {
@@ -115,8 +119,6 @@ void gdSampleEditor::rebuild()
 {
 	m_data = c::sampleEditor::getData(m_channelId);
 
-	copy_label(m_data.name.c_str());
-
 	waveTools->rebuild(m_data);
 	volumeTool->rebuild(m_data);
 	panTool->rebuild(m_data);
@@ -142,16 +144,16 @@ void gdSampleEditor::refresh()
 
 gePack* gdSampleEditor::createUpperBar()
 {
-	reload  = new geButton(0, 0, 70, G_GUI_UNIT, "Reload");
+	reload  = new geButton(0, 0, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_RELOAD));
 	grid    = new geChoice(0, 0, 50, G_GUI_UNIT);
-	snap    = new geCheck(0, 0, 12, G_GUI_UNIT, "Snap");
+	snap    = new geCheck(0, 0, 12, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_SNAPTOGRID));
 	sep1    = new geBox(0, 0, w() - 208, G_GUI_UNIT);
 	zoomOut = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm);
 	zoomIn  = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm);
 
 	reload->callback(cb_reload, (void*)this);
 
-	grid->addItem("(off)");
+	grid->addItem("1");
 	grid->addItem("2");
 	grid->addItem("3");
 	grid->addItem("4");
@@ -160,22 +162,22 @@ gePack* gdSampleEditor::createUpperBar()
 	grid->addItem("16");
 	grid->addItem("32");
 	grid->addItem("64");
-	grid->copy_tooltip("Grid frequency");
+	grid->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_GRIDRES));
 	grid->showItem(m_conf.sampleEditorGridVal);
 	grid->onChange = [this](ID) {
 		waveTools->waveform->setGridLevel(std::stoi(grid->getSelectedLabel()));
 	};
 
 	snap->value(m_conf.sampleEditorGridOn);
-	snap->copy_tooltip("Snap to grid");
+	snap->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_SNAPTOGRID));
 	snap->callback(cb_enableSnap, (void*)this);
 
 	/* TODO - redraw grid if != (off) */
 
 	zoomOut->callback(cb_zoomOut, (void*)this);
-	zoomOut->copy_tooltip("Zoom out");
+	zoomOut->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMOUT));
 	zoomIn->callback(cb_zoomIn, (void*)this);
-	zoomIn->copy_tooltip("Zoom in");
+	zoomIn->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMIN));
 
 	gePack* g = new gePack(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, Direction::HORIZONTAL);
 	g->add(reload);
@@ -215,7 +217,7 @@ geGroup* gdSampleEditor::createPreviewBox(int x, int y, int h)
 {
 	rewind = new geButton(x, y + (h / 2) - 12, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
 	play   = new geStatusButton(rewind->x() + rewind->w() + 4, rewind->y(), 25, 25, play_xpm, pause_xpm);
-	loop   = new geCheck(play->x() + play->w() + 4, play->y(), 50, 25, "Loop");
+	loop   = new geCheck(play->x() + play->w() + 4, play->y(), 50, 25, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_LOOP));
 
 	play->callback(cb_togglePreview, (void*)this);
 	rewind->callback(cb_rewindPreview, (void*)this);
@@ -313,17 +315,9 @@ void gdSampleEditor::cb_zoomOut()
 
 void gdSampleEditor::updateInfo()
 {
-	std::string bitDepth = m_data.waveBits != 0 ? u::string::iToString(m_data.waveBits) : "(unknown)";
-	std::string infoText =
-	    "File: " + m_data.wavePath + "\n"
-	                                 "Size: " +
-	    u::string::iToString(m_data.waveSize) + " frames\n"
-	                                            "Duration: " +
-	    u::string::iToString(m_data.waveDuration) + " seconds\n"
-	                                                "Bit depth: " +
-	    bitDepth + "\n"
-	               "Frequency: " +
-	    u::string::iToString(m_data.waveRate) + " Hz\n";
+	std::string infoText = fmt::format(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_INFO),
+	    m_data.wavePath, m_data.waveSize, m_data.waveDuration,
+	    m_data.waveBits != 0 ? std::to_string(m_data.waveBits) : "?", m_data.waveRate);
 
 	info->copy_label(infoText.c_str());
 }

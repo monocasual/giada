@@ -43,7 +43,10 @@
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/keyboard/midiActivity.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannelButton.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -196,18 +199,17 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 
 	resizable(mainButton);
 
-	playButton->copy_tooltip("Play/stop");
-	arm->copy_tooltip("Arm for recording");
-	status->copy_tooltip("Progress bar");
-	readActions->copy_tooltip("Read actions\n\nToggles playback of pre-recorded "
-	                          "actions (key press, key release, ...).");
-	modeBox->copy_tooltip("Mode");
-	mute->copy_tooltip("Mute");
-	solo->copy_tooltip("Solo");
+	playButton->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_PLAY));
+	arm->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_ARM));
+	status->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_STATUS));
+	readActions->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_READACTIONS));
+	modeBox->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_MODEBOX));
+	mute->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_MUTE));
+	solo->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_SOLO));
 #if defined(WITH_VST)
-	fx->copy_tooltip("Plug-ins");
+	fx->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_FX));
 #endif
-	vol->copy_tooltip("Volume");
+	vol->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
 
 #ifdef WITH_VST
 	fx->setStatus(m_channel.plugins.size() > 0);
@@ -264,26 +266,26 @@ void geSampleChannel::cb_openMenu()
 		return;
 
 	Fl_Menu_Item rclick_menu[] = {
-	    u::gui::makeMenuItem("Input monitor", menuCallback, (void*)Menu::INPUT_MONITOR,
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_INPUTMONITOR), menuCallback, (void*)Menu::INPUT_MONITOR,
 	        FL_MENU_TOGGLE | (m_channel.sample->getInputMonitor() ? FL_MENU_VALUE : 0)),
-	    u::gui::makeMenuItem("Overdub protection", menuCallback, (void*)Menu::OVERDUB_PROTECTION,
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_OVERDUBPROTECTION), menuCallback, (void*)Menu::OVERDUB_PROTECTION,
 	        FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->getOverdubProtection() ? FL_MENU_VALUE : 0)),
-	    u::gui::makeMenuItem("Load new sample...", menuCallback, (void*)Menu::LOAD_SAMPLE),
-	    u::gui::makeMenuItem("Export sample to file...", menuCallback, (void*)Menu::EXPORT_SAMPLE),
-	    u::gui::makeMenuItem("Setup keyboard input...", menuCallback, (void*)Menu::SETUP_KEYBOARD_INPUT),
-	    u::gui::makeMenuItem("Setup MIDI input...", menuCallback, (void*)Menu::SETUP_MIDI_INPUT),
-	    u::gui::makeMenuItem("Setup MIDI output...", menuCallback, (void*)Menu::SETUP_MIDI_OUTPUT),
-	    u::gui::makeMenuItem("Edit sample...", menuCallback, (void*)Menu::EDIT_SAMPLE),
-	    u::gui::makeMenuItem("Edit actions...", menuCallback, (void*)Menu::EDIT_ACTIONS),
-	    u::gui::makeMenuItem("Clear actions", menuCallback, (void*)Menu::CLEAR_ACTIONS, FL_SUBMENU),
-	    u::gui::makeMenuItem("All", menuCallback, (void*)Menu::CLEAR_ACTIONS_ALL),
-	    u::gui::makeMenuItem("Volume", menuCallback, (void*)Menu::CLEAR_ACTIONS_VOLUME),
-	    u::gui::makeMenuItem("Start/Stop", menuCallback, (void*)Menu::CLEAR_ACTIONS_START_STOP),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_LOADSAMPLE), menuCallback, (void*)Menu::LOAD_SAMPLE),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EXPORTSAMPLE), menuCallback, (void*)Menu::EXPORT_SAMPLE),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT), menuCallback, (void*)Menu::SETUP_KEYBOARD_INPUT),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT), menuCallback, (void*)Menu::SETUP_MIDI_INPUT),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT), menuCallback, (void*)Menu::SETUP_MIDI_OUTPUT),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EDITSAMPLE), menuCallback, (void*)Menu::EDIT_SAMPLE),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EDITACTIONS), menuCallback, (void*)Menu::EDIT_ACTIONS),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS), menuCallback, (void*)Menu::CLEAR_ACTIONS, FL_SUBMENU),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_ALL), menuCallback, (void*)Menu::CLEAR_ACTIONS_ALL),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_VOLUME), menuCallback, (void*)Menu::CLEAR_ACTIONS_VOLUME),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_STARTSTOP), menuCallback, (void*)Menu::CLEAR_ACTIONS_START_STOP),
 	    {},
-	    u::gui::makeMenuItem("Rename", menuCallback, (void*)Menu::RENAME_CHANNEL),
-	    u::gui::makeMenuItem("Clone", menuCallback, (void*)Menu::CLONE_CHANNEL),
-	    u::gui::makeMenuItem("Free", menuCallback, (void*)Menu::FREE_CHANNEL),
-	    u::gui::makeMenuItem("Delete", menuCallback, (void*)Menu::DELETE_CHANNEL),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_RENAME), menuCallback, (void*)Menu::RENAME_CHANNEL),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLONE), menuCallback, (void*)Menu::CLONE_CHANNEL),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_FREE), menuCallback, (void*)Menu::FREE_CHANNEL),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_DELETE), menuCallback, (void*)Menu::DELETE_CHANNEL),
 	    {}};
 
 	if (m_channel.sample->waveId == 0)

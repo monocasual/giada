@@ -30,12 +30,12 @@
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/input.h"
-#include "mainWindow.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include <cstring>
 
-extern giada::v::gdMainWindow* mainWin;
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -47,7 +47,7 @@ gdBeatsInput::gdBeatsInput(int beats, int bars)
 	begin();
 	m_beats = new geInput(8, 8, 43, G_GUI_UNIT);
 	m_bars  = new geInput(m_beats->x() + m_beats->w() + 4, 8, 43, G_GUI_UNIT);
-	m_ok    = new geButton(m_bars->x() + m_bars->w() + 4, 8, 70, G_GUI_UNIT, "Ok");
+	m_ok    = new geButton(m_bars->x() + m_bars->w() + 4, 8, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_OK));
 	end();
 
 	m_beats->maximum_size(2);

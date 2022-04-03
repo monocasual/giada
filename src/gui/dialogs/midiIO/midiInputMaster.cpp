@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "midiInputMaster.h"
+#include "gui/dialogs/midiIO/midiInputMaster.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "gui/elems/basics/button.h"
@@ -33,8 +33,10 @@
 #include "gui/elems/basics/group.h"
 #include "gui/elems/basics/scrollPack.h"
 #include "gui/elems/midiIO/midiLearner.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
-#include <FL/Fl_Pack.H>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -44,15 +46,15 @@ geMasterLearnerPack::geMasterLearnerPack(int x, int y)
 	setCallbacks(
 	    [](int param) { c::io::master_startMidiLearn(param); },
 	    [](int param) { c::io::master_clearMidiLearn(param); });
-	addMidiLearner("rewind", G_MIDI_IN_REWIND);
-	addMidiLearner("play/stop", G_MIDI_IN_START_STOP);
-	addMidiLearner("action recording", G_MIDI_IN_ACTION_REC);
-	addMidiLearner("input recording", G_MIDI_IN_INPUT_REC);
-	addMidiLearner("metronome", G_MIDI_IN_METRONOME);
-	addMidiLearner("input volume", G_MIDI_IN_VOLUME_IN);
-	addMidiLearner("output volume", G_MIDI_IN_VOLUME_OUT);
-	addMidiLearner("sequencer ×2", G_MIDI_IN_BEAT_DOUBLE);
-	addMidiLearner("sequencer ÷2", G_MIDI_IN_BEAT_HALF);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_REWIND), G_MIDI_IN_REWIND);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_PLAYSTOP), G_MIDI_IN_START_STOP);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_ACTIONREC), G_MIDI_IN_ACTION_REC);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_INPUTREC), G_MIDI_IN_INPUT_REC);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_METRONOME), G_MIDI_IN_METRONOME);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_INVOLUME), G_MIDI_IN_VOLUME_IN);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_OUTVOLUME), G_MIDI_IN_VOLUME_OUT);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_SEQDOUBLE), G_MIDI_IN_BEAT_DOUBLE);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_SEQHALF), G_MIDI_IN_BEAT_HALF);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -76,19 +78,19 @@ void geMasterLearnerPack::update(const c::io::Master_InputData& d)
 /* -------------------------------------------------------------------------- */
 
 gdMidiInputMaster::gdMidiInputMaster(m::Conf::Data& c)
-: gdMidiInputBase(c.midiInputX, c.midiInputY, 300, 284, "MIDI Input Setup (global)", c)
+: gdMidiInputBase(c.midiInputX, c.midiInputY, 300, 284, g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_TITLE), c)
 {
 	end();
 
 	geGroup* groupHeader = new geGroup(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN);
-	m_enable             = new geCheck(0, 0, 120, G_GUI_UNIT, "Enable MIDI input");
+	m_enable             = new geCheck(0, 0, 120, G_GUI_UNIT, g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_ENABLE));
 	m_channel            = new geChoice(m_enable->x() + m_enable->w() + 44, 0, 120, G_GUI_UNIT);
 	groupHeader->resizable(nullptr);
 	groupHeader->add(m_enable);
 	groupHeader->add(m_channel);
 
 	m_learners = new geMasterLearnerPack(G_GUI_OUTER_MARGIN, groupHeader->y() + groupHeader->h() + G_GUI_OUTER_MARGIN);
-	m_ok       = new geButton(w() - 88, m_learners->y() + m_learners->h() + G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT, "Close");
+	m_ok       = new geButton(w() - 88, m_learners->y() + m_learners->h() + G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_CLOSE));
 
 	add(groupHeader);
 	add(m_learners);

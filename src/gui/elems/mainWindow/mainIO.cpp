@@ -35,10 +35,13 @@
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/statusButton.h"
 #include "gui/elems/soundMeter.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #ifdef WITH_VST
 #include "gui/elems/basics/statusButton.h"
 #endif
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -68,14 +71,14 @@ geMainIO::geMainIO()
 #endif
 	end();
 
-	m_outMeter->copy_tooltip("Main output meter");
-	m_inMeter->copy_tooltip("Main input meter");
-	m_outVol->copy_tooltip("Main output volume");
-	m_inVol->copy_tooltip("Main input volume");
-	m_inToOut->copy_tooltip("Stream linker\n\nConnects input to output to enable \"hear what you're playing\" mode.");
+	m_outMeter->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_IO_LABEL_OUTMETER));
+	m_inMeter->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_IO_LABEL_INMETER));
+	m_outVol->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_IO_LABEL_OUTVOL));
+	m_inVol->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_IO_LABEL_INVOL));
+	m_inToOut->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_IO_LABEL_INTOOUT));
 #ifdef WITH_VST
-	m_masterFxOut->copy_tooltip("Main output plug-ins");
-	m_masterFxIn->copy_tooltip("Main input plug-ins");
+	m_masterFxOut->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_IO_LABEL_FXOUT));
+	m_masterFxIn->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_IO_LABEL_FXIN));
 #endif
 
 	m_outVol->onChange = [](float v) {

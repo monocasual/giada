@@ -29,15 +29,18 @@
 #include "sequencer.h"
 #include "core/const.h"
 #include "gui/drawing.h"
+#include "gui/ui.h"
 #include "utils/math.h"
 #include <FL/fl_draw.H>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
 geSequencer::geSequencer()
 : geBox()
 {
-	copy_tooltip("Main sequencer");
+	copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_SEQUENCER_LABEL));
 }
 
 /* -------------------------------------------------------------------------- */

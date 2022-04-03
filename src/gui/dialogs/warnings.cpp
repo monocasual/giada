@@ -28,10 +28,13 @@
 #include "core/const.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "window.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -46,11 +49,11 @@ bool confirmRet_ = false;
 
 void gdAlert(const char* msg)
 {
-	gdWindow win(u::gui::getCenterWinBounds(300, 90), "Alert");
+	gdWindow win(u::gui::getCenterWinBounds(300, 90), g_ui.langMapper.get(LangMap::COMMON_WARNING));
 	win.set_modal();
 	win.begin();
 	geBox*    box = new geBox(10, 10, 280, 40, msg);
-	geButton* b   = new geButton(210, 60, 80, 20, "Close");
+	geButton* b   = new geButton(210, 60, 80, 20, g_ui.langMapper.get(LangMap::COMMON_CLOSE));
 	win.end();
 	box->labelsize(G_GUI_FONT_SIZE_BASE);
 
@@ -72,8 +75,8 @@ int gdConfirmWin(const char* title, const char* msg)
 	win.set_modal();
 	win.begin();
 	new geBox(10, 10, 280, 40, msg);
-	geButton* ok = new geButton(212, 62, 80, 20, "Ok");
-	geButton* ko = new geButton(124, 62, 80, 20, "Cancel");
+	geButton* ok = new geButton(212, 62, 80, 20, g_ui.langMapper.get(LangMap::COMMON_OK));
+	geButton* ko = new geButton(124, 62, 80, 20, g_ui.langMapper.get(LangMap::COMMON_CANCEL));
 	win.end();
 
 	ok->shortcut(FL_Enter);

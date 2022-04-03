@@ -38,12 +38,15 @@
 #include "gui/elems/config/tabMidi.h"
 #include "gui/elems/config/tabMisc.h"
 #include "gui/elems/config/tabPlugins.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
 gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
-: gdWindow(u::gui::getCenterWinBounds(w, h), "Configuration")
+: gdWindow(u::gui::getCenterWinBounds(w, h), g_ui.langMapper.get(LangMap::CONFIG_TITLE))
 {
 	const geompp::Rect<int> bounds = getContentBounds().reduced(G_GUI_OUTER_MARGIN);
 
@@ -71,8 +74,8 @@ gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			geButton* save   = new geButton("Save");
-			geButton* cancel = new geButton("Cancel");
+			geButton* save   = new geButton(g_ui.langMapper.get(LangMap::COMMON_SAVE));
+			geButton* cancel = new geButton(g_ui.langMapper.get(LangMap::COMMON_CANCEL));
 			save->onClick    = [this]() { saveConfig(); };
 			cancel->onClick  = [this]() { do_callback(); };
 

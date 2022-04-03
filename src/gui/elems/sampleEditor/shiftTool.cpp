@@ -30,21 +30,22 @@
 #include "glue/sampleEditor.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/dialogs/warnings.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include <cassert>
 #include <cstdlib>
 
-namespace giada
-{
-namespace v
+extern giada::v::Ui g_ui;
+
+namespace giada::v
 {
 geShiftTool::geShiftTool(const c::sampleEditor::Data& d, int x, int y)
 : gePack(x, y, Direction::HORIZONTAL)
 , m_data(nullptr)
-, m_label(0, 0, 60, G_GUI_UNIT, "Shift", FL_ALIGN_LEFT)
+, m_label(0, 0, 60, G_GUI_UNIT, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_SHIFT), FL_ALIGN_LEFT)
 , m_shift(0, 0, 70, G_GUI_UNIT)
-, m_reset(0, 0, 70, G_GUI_UNIT, "Reset")
+, m_reset(0, 0, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_RESET))
 {
 	add(&m_label);
 	add(&m_shift);
@@ -99,5 +100,4 @@ void geShiftTool::shift(int f)
 {
 	c::sampleEditor::shift(m_data->channelId, f);
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

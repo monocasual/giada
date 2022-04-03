@@ -31,15 +31,16 @@
 #include "glue/sampleEditor.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/elems/basics/boxtypes.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "waveform.h"
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Menu_Item.H>
 #include <cstdint>
 
-namespace giada
-{
-namespace v
+extern giada::v::Ui g_ui;
+
+namespace giada::v
 {
 namespace
 {
@@ -198,18 +199,18 @@ int geWaveTools::handle(int e)
 void geWaveTools::openMenu()
 {
 	Fl_Menu_Item menu[] = {
-	    u::gui::makeMenuItem("Cut", menuCallback_, (void*)Menu::CUT),
-	    u::gui::makeMenuItem("Copy", menuCallback_, (void*)Menu::COPY),
-	    u::gui::makeMenuItem("Paste", menuCallback_, (void*)Menu::PASTE),
-	    u::gui::makeMenuItem("Trim", menuCallback_, (void*)Menu::TRIM),
-	    u::gui::makeMenuItem("Silence", menuCallback_, (void*)Menu::SILENCE),
-	    u::gui::makeMenuItem("Reverse", menuCallback_, (void*)Menu::REVERSE),
-	    u::gui::makeMenuItem("Normalize", menuCallback_, (void*)Menu::NORMALIZE),
-	    u::gui::makeMenuItem("Fade in", menuCallback_, (void*)Menu::FADE_IN),
-	    u::gui::makeMenuItem("Fade out", menuCallback_, (void*)Menu::FADE_OUT),
-	    u::gui::makeMenuItem("Smooth edges", menuCallback_, (void*)Menu::SMOOTH_EDGES),
-	    u::gui::makeMenuItem("Set begin/end here", menuCallback_, (void*)Menu::SET_BEGIN_END),
-	    u::gui::makeMenuItem("Copy to new channel", menuCallback_, (void*)Menu::TO_NEW_CHANNEL),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_CUT), menuCallback_, (void*)Menu::CUT),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_COPY), menuCallback_, (void*)Menu::COPY),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_PASTE), menuCallback_, (void*)Menu::PASTE),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_TRIM), menuCallback_, (void*)Menu::TRIM),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_SILENCE), menuCallback_, (void*)Menu::SILENCE),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_REVERSE), menuCallback_, (void*)Menu::REVERSE),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_NORMALIZE), menuCallback_, (void*)Menu::NORMALIZE),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_FADE_IN), menuCallback_, (void*)Menu::FADE_IN),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_FADE_OUT), menuCallback_, (void*)Menu::FADE_OUT),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_SMOOTH_EDGES), menuCallback_, (void*)Menu::SMOOTH_EDGES),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_SET_BEGIN_END), menuCallback_, (void*)Menu::SET_BEGIN_END),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL), menuCallback_, (void*)Menu::TO_NEW_CHANNEL),
 	    {}};
 
 	if (!waveform->isSelected())
@@ -239,6 +240,4 @@ void geWaveTools::openMenu()
 
 	return;
 }
-
-} // namespace v
-} // namespace giada
+} // namespace giada::v

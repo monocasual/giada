@@ -50,7 +50,8 @@ namespace giada::c::recorder
 {
 void clearAllActions(ID channelId)
 {
-	if (!v::gdConfirmWin("Warning", "Clear all actions: are you sure?"))
+	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
+	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
 		return;
 	g_engine.actionRecorder.clearChannel(channelId);
 	updateChannel(channelId, /*updateActionEditor=*/true);
@@ -60,7 +61,8 @@ void clearAllActions(ID channelId)
 
 void clearVolumeActions(ID channelId)
 {
-	if (!v::gdConfirmWin("Warning", "Clear all volume actions: are you sure?"))
+	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
+	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLEARALLVOLUMEACTIONS)))
 		return;
 	g_engine.actionRecorder.clearActions(channelId, m::MidiEvent::ENVELOPE);
 	updateChannel(channelId, /*updateActionEditor=*/true);
@@ -70,7 +72,8 @@ void clearVolumeActions(ID channelId)
 
 void clearStartStopActions(ID channelId)
 {
-	if (!v::gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
+	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
+	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLEARALLSTARTSTOPACTIONS)))
 		return;
 	g_engine.actionRecorder.clearActions(channelId, m::MidiEvent::NOTE_ON);
 	g_engine.actionRecorder.clearActions(channelId, m::MidiEvent::NOTE_OFF);

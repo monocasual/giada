@@ -24,30 +24,31 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "midiOutputSampleCh.h"
+#include "gui/dialogs/midiIO/midiOutputSampleCh.h"
 #include "core/model/model.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/midiIO/midiLearner.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include <FL/Fl_Pack.H>
 
-namespace giada
-{
-namespace v
+extern giada::v::Ui g_ui;
+
+namespace giada::v
 {
 gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 : gdMidiOutputBase(300, 140, channelId)
 {
 	end();
-	setTitle(m_channelId);
 
-	m_enableLightning = new geCheck(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 120, 20, "Enable MIDI lightning output");
+	m_enableLightning = new geCheck(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 120, 20, g_ui.langMapper.get(LangMap::MIDIOUTPUT_CHANNEL_ENABLE_LIGHTNING));
 
 	m_learners = new geLightningLearnerPack(G_GUI_OUTER_MARGIN,
 	    m_enableLightning->y() + m_enableLightning->h() + 8, channelId);
 
-	m_close = new geButton(w() - 88, m_learners->y() + m_learners->h() + 8, 80, 20, "Close");
+	m_close = new geButton(w() - 88, m_learners->y() + m_learners->h() + 8, 80, 20,
+	    g_ui.langMapper.get(LangMap::COMMON_CLOSE));
 
 	add(m_enableLightning);
 	add(m_learners);
@@ -72,5 +73,4 @@ void gdMidiOutputSampleCh::rebuild()
 	m_enableLightning->value(m_data.lightningEnabled);
 	m_learners->update(m_data);
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

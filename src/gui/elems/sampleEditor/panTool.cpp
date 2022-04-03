@@ -30,23 +30,24 @@
 #include "core/waveFx.h"
 #include "glue/events.h"
 #include "gui/dialogs/sampleEditor.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/math.h"
 #include "utils/string.h"
 #include "waveTools.h"
 #include <FL/Fl.H>
 
-namespace giada
-{
-namespace v
+extern giada::v::Ui g_ui;
+
+namespace giada::v
 {
 gePanTool::gePanTool(const c::sampleEditor::Data& d, int x, int y)
 : gePack(x, y, Direction::HORIZONTAL)
 , m_data(nullptr)
-, m_label(0, 0, 60, G_GUI_UNIT, "Pan", FL_ALIGN_LEFT)
+, m_label(0, 0, 60, G_GUI_UNIT, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_PAN), FL_ALIGN_LEFT)
 , m_dial(0, 0, G_GUI_UNIT, G_GUI_UNIT)
 , m_input(0, 0, 70, G_GUI_UNIT)
-, m_reset(0, 0, 70, G_GUI_UNIT, "Reset")
+, m_reset(0, 0, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_RESET))
 {
 	add(&m_label);
 	add(&m_dial);
@@ -111,5 +112,4 @@ void gePanTool::cb_panReset()
 {
 	c::events::sendChannelPan(m_data->channelId, 0.5f);
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

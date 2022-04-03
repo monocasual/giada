@@ -96,6 +96,9 @@ void Ui::init(int argc, char** argv, m::Engine& engine)
 	XInitThreads();
 #endif
 
+	langMapper.init();
+	langMapper.read(engine.conf.data.langMap);
+
 	mainWindow = std::make_unique<gdMainWindow>(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT, "", argc, argv, engine.conf.data);
 	mainWindow->resize(engine.conf.data.mainWindowX, engine.conf.data.mainWindowY, engine.conf.data.mainWindowW,
 	    engine.conf.data.mainWindowH);

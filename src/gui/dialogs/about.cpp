@@ -36,9 +36,12 @@
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include <fmt/core.h>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -64,13 +67,7 @@ gdAbout::gdAbout()
 
 			geBox* text = new geBox();
 			text->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-			text->copy_label(fmt::format(
-			    "Version {} ({} build) {}\n\n"
-			    "Developed by Monocasual Laboratories\n\n"
-			    "Released under the terms of the GNU General\n"
-			    "Public License (GPL v3)\n\n"
-			    "News, infos, contacts and documentation:\n"
-			    "www.giadamusic.com",
+			text->copy_label(fmt::format(g_ui.langMapper.get(LangMap::ABOUT_BODY),
 			    G_VERSION_STR, debug ? "Debug" : "Release", BUILD_DATE)
 			                     .c_str());
 
@@ -81,9 +78,7 @@ gdAbout::gdAbout()
 
 			geBox* vstText = new geBox();
 			vstText->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-			vstText->label(
-			    "VST Plug-In Technology by Steinberg\n"
-			    "VST is a trademark of Steinberg\nMedia Technologies GmbH");
+			vstText->label(g_ui.langMapper.get(LangMap::ABOUT_BODY_VST));
 #endif
 
 			body->add(logo, 120);
@@ -97,7 +92,7 @@ gdAbout::gdAbout()
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL);
 		{
-			geButton* close = new geButton("Close");
+			geButton* close = new geButton(g_ui.langMapper.get(LangMap::COMMON_CLOSE));
 			close->onClick  = [this]() { do_callback(); };
 			footer->add(new geBox()); // Spacer
 			footer->add(close, 80);

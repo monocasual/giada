@@ -30,23 +30,24 @@
 #include "glue/channel.h"
 #include "glue/sampleEditor.h"
 #include "gui/dialogs/sampleEditor.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include "waveTools.h"
 #include <FL/Fl.H>
 #include <cassert>
 
-namespace giada
-{
-namespace v
+extern giada::v::Ui g_ui;
+
+namespace giada::v
 {
 geRangeTool::geRangeTool(const c::sampleEditor::Data& d, int x, int y)
 : gePack(x, y, Direction::HORIZONTAL)
 , m_data(nullptr)
-, m_label(0, 0, 60, G_GUI_UNIT, "Range", FL_ALIGN_LEFT)
+, m_label(0, 0, 60, G_GUI_UNIT, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_RANGE), FL_ALIGN_LEFT)
 , m_begin(0, 0, 70, G_GUI_UNIT)
 , m_end(0, 0, 70, G_GUI_UNIT)
-, m_reset(0, 0, 70, G_GUI_UNIT, "Reset")
+, m_reset(0, 0, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_RESET))
 {
 	add(&m_label);
 	add(&m_begin);
@@ -100,6 +101,4 @@ void geRangeTool::cb_resetStartEnd()
 {
 	c::sampleEditor::setBeginEnd(m_data->channelId, 0, m_data->waveSize - 1);
 }
-
-} // namespace v
-} // namespace giada
+} // namespace giada::v

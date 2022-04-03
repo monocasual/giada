@@ -24,14 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "midiOutputBase.h"
+#include "gui/dialogs/midiIO/midiOutputBase.h"
 #include "glue/io.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/midiIO/midiLearner.h"
+#include "gui/ui.h"
 
-namespace giada
-{
-namespace v
+extern giada::v::Ui g_ui;
+
+namespace giada::v
 {
 geLightningLearnerPack::geLightningLearnerPack(int x, int y, ID channelId)
 : geMidiLearnerPack(x, y)
@@ -39,9 +40,9 @@ geLightningLearnerPack::geLightningLearnerPack(int x, int y, ID channelId)
 	setCallbacks(
 	    [channelId](int param) { c::io::channel_startMidiLearn(param, channelId); },
 	    [channelId](int param) { c::io::channel_clearMidiLearn(param, channelId); });
-	addMidiLearner("playing", G_MIDI_OUT_L_PLAYING);
-	addMidiLearner("mute", G_MIDI_OUT_L_MUTE);
-	addMidiLearner("solo", G_MIDI_OUT_L_SOLO);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIOUTPUT_CHANNEL_LEARN_PLAYING), G_MIDI_OUT_L_PLAYING);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIOUTPUT_CHANNEL_LEARN_MUTE), G_MIDI_OUT_L_MUTE);
+	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIOUTPUT_CHANNEL_LEARN_SOLO), G_MIDI_OUT_L_SOLO);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -59,7 +60,7 @@ void geLightningLearnerPack::update(const c::io::Channel_OutputData& d)
 /* -------------------------------------------------------------------------- */
 
 gdMidiOutputBase::gdMidiOutputBase(int w, int h, ID channelId)
-: gdWindow(w, h, "Midi Output Setup")
+: gdWindow(w, h, g_ui.langMapper.get(LangMap::MIDIOUTPUT_CHANNEL_TITLE))
 , m_channelId(channelId)
 {
 }
@@ -89,13 +90,4 @@ void gdMidiOutputBase::cb_enableLightning()
 {
 	c::io::channel_enableMidiLightning(m_channelId, m_enableLightning->value());
 }
-
-/* -------------------------------------------------------------------------- */
-
-void gdMidiOutputBase::setTitle(ID channelId)
-{
-	std::string tmp = "MIDI Output Setup (channel " + std::to_string(channelId) + ")";
-	copy_label(tmp.c_str());
-}
-} // namespace v
-} // namespace giada
+} // namespace giada::v

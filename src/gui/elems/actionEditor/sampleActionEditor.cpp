@@ -24,12 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "sampleActionEditor.h"
+#include "gui/elems/actionEditor/sampleActionEditor.h"
 #include "core/const.h"
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "gui/dialogs/actionEditor/sampleActionEditor.h"
+#include "gui/ui.h"
 #include "sampleAction.h"
 #include "src/core/actions/action.h"
 #include "src/core/actions/actions.h"
@@ -37,6 +38,8 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <cassert>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -107,9 +110,9 @@ void geSampleActionEditor::draw()
 	fl_color(G_COLOR_GREY_4);
 	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
 	if (active())
-		fl_draw("start/stop", x() + 4, y(), w(), h(), (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+		fl_draw(g_ui.langMapper.get(LangMap::ACTIONEDITOR_STARTSTOP), x() + 4, y(), w(), h(), (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 	else
-		fl_draw("start/stop (disabled)", x() + 4, y(), w(), h(), (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+		fl_draw(g_ui.langMapper.get(LangMap::ACTIONEDITOR_STARTSTOPDISABLED), x() + 4, y(), w(), h(), (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 
 	draw_children();
 }

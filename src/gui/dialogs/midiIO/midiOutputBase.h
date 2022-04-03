@@ -73,11 +73,6 @@ protected:
 	static void cb_enableLightning(Fl_Widget* /*w*/, void* p);
 	void        cb_enableLightning();
 
-	/* setTitle
-	 * set window title. */
-
-	void setTitle(ID channelId);
-
 	ID m_channelId;
 
 	c::io::Channel_OutputData m_data;

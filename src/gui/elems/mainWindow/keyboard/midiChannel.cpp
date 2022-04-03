@@ -40,10 +40,13 @@
 #include "gui/elems/mainWindow/keyboard/column.h"
 #include "gui/elems/mainWindow/keyboard/midiActivity.h"
 #include "gui/elems/mainWindow/keyboard/midiChannelButton.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include <FL/Fl_Menu_Button.H>
 #include <cassert>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -128,14 +131,14 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 
 	resizable(mainButton);
 
-	playButton->copy_tooltip("Play/stop");
-	arm->copy_tooltip("Arm for recording");
-	mute->copy_tooltip("Mute");
-	solo->copy_tooltip("Solo");
+	playButton->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_PLAY));
+	arm->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_ARM));
+	mute->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_MUTE));
+	solo->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_SOLO));
 #if defined(WITH_VST)
-	fx->copy_tooltip("Plug-ins");
+	fx->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_FX));
 #endif
-	vol->copy_tooltip("Volume");
+	vol->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
 
 #ifdef WITH_VST
 	fx->setStatus(m_channel.plugins.size() > 0);
@@ -183,16 +186,16 @@ void geMidiChannel::cb_playButton()
 void geMidiChannel::cb_openMenu()
 {
 	Fl_Menu_Item rclick_menu[] = {
-	    u::gui::makeMenuItem("Edit actions...", menuCallback, (void*)Menu::EDIT_ACTIONS),
-	    u::gui::makeMenuItem("Clear actions", menuCallback, (void*)Menu::CLEAR_ACTIONS, FL_SUBMENU),
-	    u::gui::makeMenuItem("All", menuCallback, (void*)Menu::CLEAR_ACTIONS_ALL),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EDITACTIONS), menuCallback, (void*)Menu::EDIT_ACTIONS),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS), menuCallback, (void*)Menu::CLEAR_ACTIONS, FL_SUBMENU),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_ALL), menuCallback, (void*)Menu::CLEAR_ACTIONS_ALL),
 	    {},
-	    u::gui::makeMenuItem("Setup keyboard input...", menuCallback, (void*)Menu::SETUP_KEYBOARD_INPUT),
-	    u::gui::makeMenuItem("Setup MIDI input...", menuCallback, (void*)Menu::SETUP_MIDI_INPUT),
-	    u::gui::makeMenuItem("Setup MIDI output...", menuCallback, (void*)Menu::SETUP_MIDI_OUTPUT),
-	    u::gui::makeMenuItem("Rename", menuCallback, (void*)Menu::RENAME_CHANNEL),
-	    u::gui::makeMenuItem("Clone", menuCallback, (void*)Menu::CLONE_CHANNEL),
-	    u::gui::makeMenuItem("Delete", menuCallback, (void*)Menu::DELETE_CHANNEL),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT), menuCallback, (void*)Menu::SETUP_KEYBOARD_INPUT),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT), menuCallback, (void*)Menu::SETUP_MIDI_INPUT),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT), menuCallback, (void*)Menu::SETUP_MIDI_OUTPUT),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_RENAME), menuCallback, (void*)Menu::RENAME_CHANNEL),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLONE), menuCallback, (void*)Menu::CLONE_CHANNEL),
+	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_DELETE), menuCallback, (void*)Menu::DELETE_CHANNEL),
 	    {}};
 
 	/* No 'clear actions' if there are no actions. */

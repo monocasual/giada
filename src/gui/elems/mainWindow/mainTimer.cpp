@@ -32,8 +32,11 @@
 #include "glue/main.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -52,18 +55,18 @@ geMainTimer::geMainTimer()
 	add(m_divider, G_GUI_UNIT);
 	end();
 
-	m_bpm->copy_tooltip("Beats per minute (BPM)");
-	m_meter->copy_tooltip("Beats and bars");
-	m_quantizer->copy_tooltip("Live quantizer");
-	m_multiplier->copy_tooltip("Beat multiplier");
-	m_divider->copy_tooltip("Beat divider");
+	m_bpm->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TIMER_LABEL_BPM));
+	m_meter->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TIMER_LABEL_METER));
+	m_quantizer->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TIMER_LABEL_QUANTIZER));
+	m_multiplier->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TIMER_LABEL_MULTIPLIER));
+	m_divider->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TIMER_LABEL_DIVIDER));
 
 	m_bpm->onClick        = [&bpm = m_bpm]() { c::layout::openBpmWindow(bpm->label()); };
 	m_meter->onClick      = [&timer = m_timer]() { c::layout::openBeatsWindow(timer.beats, timer.bars); };
 	m_multiplier->onClick = []() { c::events::multiplyBeats(); };
 	m_divider->onClick    = []() { c::events::divideBeats(); };
 
-	m_quantizer->addItem("off");
+	m_quantizer->addItem(g_ui.langMapper.get(LangMap::COMMON_OFF));
 	m_quantizer->addItem("1\\/1");
 	m_quantizer->addItem("1\\/2");
 	m_quantizer->addItem("1\\/3");

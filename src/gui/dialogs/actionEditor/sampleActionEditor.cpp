@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "sampleActionEditor.h"
+#include "gui/dialogs/actionEditor/sampleActionEditor.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/midiEvent.h"
@@ -32,7 +32,10 @@
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
 #include "gui/elems/basics/box.h"
+#include "gui/ui.h"
 #include <string>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -40,7 +43,7 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, m::Conf::Data& conf)
 : gdBaseActionEditor(channelId, conf)
 , m_barPadding(0, 0, w() - 232, G_GUI_UNIT)
 , m_sampleActionEditor(0, 0, this)
-, m_envelopeEditor(0, 0, "Volume", this)
+, m_envelopeEditor(0, 0, g_ui.langMapper.get(LangMap::ACTIONEDITOR_VOLUME), this)
 , m_actionType(0, 0, 80, G_GUI_UNIT)
 {
 	end();
@@ -52,11 +55,11 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, m::Conf::Data& conf)
 	m_barTop.add(&zoomOutBtn);
 	m_barTop.resizable(m_barPadding);
 
-	m_actionType.addItem("Key press");
-	m_actionType.addItem("Key release");
-	m_actionType.addItem("Stop sample");
+	m_actionType.addItem(g_ui.langMapper.get(LangMap::ACTIONEDITOR_KEYPRESS));
+	m_actionType.addItem(g_ui.langMapper.get(LangMap::ACTIONEDITOR_KEYRELEASE));
+	m_actionType.addItem(g_ui.langMapper.get(LangMap::ACTIONEDITOR_STOPSAMPLE));
 	m_actionType.showItem(0);
-	m_actionType.copy_tooltip("Action type to add");
+	m_actionType.copy_tooltip(g_ui.langMapper.get(LangMap::ACTIONEDITOR_LABEL_ACTIONTYPE));
 	if (!canChangeActionType())
 		m_actionType.deactivate();
 

@@ -37,10 +37,13 @@
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/mainIO.h"
 #include "gui/elems/plugin/pluginElement.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include <cassert>
 #include <string>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -83,14 +86,11 @@ void gdPluginList::rebuild()
 	m_plugins = c::plugin::getPlugins(m_channelId);
 
 	if (m_plugins.channelId == m::Mixer::MASTER_OUT_CHANNEL_ID)
-		label("Master Out Plug-ins");
+		label(g_ui.langMapper.get(LangMap::PLUGINLIST_TITLE_MASTEROUT));
 	else if (m_plugins.channelId == m::Mixer::MASTER_IN_CHANNEL_ID)
-		label("Master In Plug-ins");
+		label(g_ui.langMapper.get(LangMap::PLUGINLIST_TITLE_MASTERIN));
 	else
-	{
-		std::string l = "Channel " + u::string::iToString(m_plugins.channelId) + " Plug-ins";
-		copy_label(l.c_str());
-	}
+		label(g_ui.langMapper.get(LangMap::PLUGINLIST_TITLE_CHANNEL));
 
 	/* Clear the previous list. */
 
@@ -100,7 +100,7 @@ void gdPluginList::rebuild()
 	for (m::Plugin* plugin : m_plugins.plugins)
 		list->addWidget(new gePluginElement(0, 0, c::plugin::getPlugin(*plugin, m_plugins.channelId)));
 
-	addPlugin = list->addWidget(new geButton(0, 0, 0, G_GUI_UNIT, "-- add new plugin --"));
+	addPlugin = list->addWidget(new geButton(0, 0, 0, G_GUI_UNIT, g_ui.langMapper.get(LangMap::PLUGINLIST_ADDPLUGIN)));
 
 	addPlugin->callback(cb_addPlugin, (void*)this);
 }

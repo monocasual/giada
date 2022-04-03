@@ -32,9 +32,7 @@
 #include <string>
 #include <vector>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geMidiLearnerPack : public gePack
 {
@@ -47,11 +45,10 @@ public:
 
 	std::vector<geMidiLearner*> learners;
 
-  private:
+private:
 	std::function<void(uint32_t)> m_onStartLearn;
 	std::function<void(uint32_t)> m_onClearLearn;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

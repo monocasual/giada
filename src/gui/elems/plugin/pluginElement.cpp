@@ -37,10 +37,13 @@
 #include "gui/dialogs/pluginWindowGUI.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/log.h"
 #include <cassert>
 #include <string>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -87,7 +90,8 @@ gePluginElement::gePluginElement(int x, int y, c::plugin::Plugin data)
 
 	if (program.countItems() == 0)
 	{
-		program.addItem("-- no programs --\0");
+		program.addItem(g_ui.langMapper.get(LangMap::PLUGINLIST_NOPROGRAMS));
+		program.showItem(0);
 		program.deactivate();
 	}
 	else

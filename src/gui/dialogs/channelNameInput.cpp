@@ -31,22 +31,23 @@
 #include "glue/channel.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/input.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 
-namespace giada
-{
-namespace v
+extern giada::v::Ui g_ui;
+
+namespace giada::v
 {
 gdChannelNameInput::gdChannelNameInput(const c::channel::Data& d)
-: gdWindow(u::gui::centerWindowX(400), u::gui::centerWindowY(64), 400, 64, "New channel name")
+: gdWindow(u::gui::centerWindowX(400), u::gui::centerWindowY(64), 400, 64, g_ui.langMapper.get(LangMap::CHANNELNAME_TITLE))
 , m_data(d)
 {
 	set_modal();
 
 	begin();
 	m_name   = new geInput(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w() - (G_GUI_OUTER_MARGIN * 2), G_GUI_UNIT);
-	m_ok     = new geButton(w() - 70 - G_GUI_OUTER_MARGIN, m_name->y() + m_name->h() + G_GUI_OUTER_MARGIN, 70, G_GUI_UNIT, "Ok");
-	m_cancel = new geButton(m_ok->x() - 70 - G_GUI_OUTER_MARGIN, m_ok->y(), 70, G_GUI_UNIT, "Cancel");
+	m_ok     = new geButton(w() - 70 - G_GUI_OUTER_MARGIN, m_name->y() + m_name->h() + G_GUI_OUTER_MARGIN, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_OK));
+	m_cancel = new geButton(m_ok->x() - 70 - G_GUI_OUTER_MARGIN, m_ok->y(), 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_CANCEL));
 	end();
 
 	m_name->value(m_data.name.c_str());
@@ -80,6 +81,4 @@ void gdChannelNameInput::cb_update()
 	c::channel::setName(m_data.id, m_name->value());
 	do_callback();
 }
-
-} // namespace v
-} // namespace giada
+} // namespace giada::v

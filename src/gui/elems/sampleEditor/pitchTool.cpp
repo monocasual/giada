@@ -35,23 +35,26 @@
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/input.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include <FL/Fl.H>
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
 gePitchTool::gePitchTool(const c::sampleEditor::Data& d, int x, int y)
 : gePack(x, y, Direction::HORIZONTAL)
 , m_data(nullptr)
-, m_label(0, 0, 60, G_GUI_UNIT, "Pitch", FL_ALIGN_LEFT)
+, m_label(0, 0, 60, G_GUI_UNIT, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT)
 , m_dial(0, 0, G_GUI_UNIT, G_GUI_UNIT)
 , m_input(0, 0, 70, G_GUI_UNIT)
-, m_pitchToBar(0, 0, 70, G_GUI_UNIT, "To bar")
-, m_pitchToSong(0, 0, 70, G_GUI_UNIT, "To song")
+, m_pitchToBar(0, 0, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_PITCH_TOBAR))
+, m_pitchToSong(0, 0, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_PITCH_TOSONG))
 , m_pitchHalf(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", divideOff_xpm, divideOn_xpm)
 , m_pitchDouble(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", multiplyOff_xpm, multiplyOn_xpm)
-, m_pitchReset(0, 0, 70, G_GUI_UNIT, "Reset")
+, m_pitchReset(0, 0, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_RESET))
 {
 	add(&m_label);
 	add(&m_dial);

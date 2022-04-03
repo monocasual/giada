@@ -34,6 +34,7 @@
 namespace giada::v
 {
 class geChoice;
+class geStringMenu;
 class geTabMisc : public Fl_Group
 {
 public:
@@ -44,8 +45,9 @@ public:
 private:
 	c::config::MiscData m_data;
 
-	geChoice* m_debugMsg;
-	geChoice* m_tooltips;
+	geChoice*     m_debugMsg;
+	geChoice*     m_tooltips;
+	geStringMenu* m_langMap;
 };
 } // namespace giada::v
 

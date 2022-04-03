@@ -108,8 +108,13 @@ struct PluginData
 
 struct MiscData
 {
-	int  logMode;
-	bool showTooltips;
+	int                      logMode;
+	bool                     showTooltips;
+	std::vector<std::string> langMaps;
+
+	/* Selectable values. */
+
+	std::string langMap;
 };
 
 /* get*

@@ -105,8 +105,7 @@ void startup(int argc, char** argv)
 	g_ui.init(argc, argv, g_engine);
 
 	if (!g_engine.kernelAudio.isReady())
-		v::gdAlert("Your soundcard isn't configured correctly.\n"
-		           "Check the configuration and restart Giada.");
+		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -121,7 +120,7 @@ int run()
 
 void closeMainWindow()
 {
-	if (!v::gdConfirmWin("Warning", "Quit Giada: are you sure?"))
+	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING), g_ui.langMapper.get(v::LangMap::MESSAGE_INIT_QUITGIADA)))
 		return;
 	shutdown();
 }

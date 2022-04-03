@@ -34,8 +34,11 @@
 #include "gui/elems/basics/input.h"
 #include "gui/elems/basics/progress.h"
 #include "gui/elems/fileBrowser.h"
+#include "gui/ui.h"
 #include "utils/fs.h"
 #include "utils/gui.h"
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -50,9 +53,9 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 	set_non_modal();
 
 	begin();
-	
+
 	groupTop    = new Fl_Group(8, 8, w() - 16, 48);
-	hiddenFiles = new geCheck(groupTop->x(), groupTop->y(), 400, 20, "Show hidden files");
+	hiddenFiles = new geCheck(groupTop->x(), groupTop->y(), 400, 20, g_ui.langMapper.get(LangMap::BROWSER_SHOWHIDDENFILES));
 	where       = new geInput(groupTop->x(), hiddenFiles->y() + hiddenFiles->h() + 8, 20, 20);
 	updir       = new geButton(groupTop->x() + groupTop->w() - 20, where->y(), 20, 20, "", updirOff_xpm, updirOn_xpm);
 	groupTop->end();
@@ -73,7 +76,7 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 	Fl_Group* groupButtons = new Fl_Group(8, browser->y() + browser->h() + 8, w() - 16, 20);
 	ok                     = new geButton(w() - 88, groupButtons->y(), 80, 20);
-	cancel                 = new geButton(w() - ok->w() - 96, groupButtons->y(), 80, 20, "Cancel");
+	cancel                 = new geButton(w() - ok->w() - 96, groupButtons->y(), 80, 20, g_ui.langMapper.get(LangMap::COMMON_CANCEL));
 	geBox* spacer          = new geBox(8, groupButtons->y(), cancel->x() - 16, 20);
 	groupButtons->resizable(spacer);
 	groupButtons->end();

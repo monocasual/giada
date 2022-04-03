@@ -30,9 +30,7 @@
 #include "gui/elems/basics/box.h"
 #include <cassert>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 constexpr int LEARNER_WIDTH = 284;
 
@@ -86,5 +84,4 @@ void geMidiLearnerPack::setEnabled(bool v)
 		for (auto* l : learners)
 			l->deactivate();
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v
