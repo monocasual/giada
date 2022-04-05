@@ -32,6 +32,7 @@
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/plugin/pluginBrowser.h"
 #include "utils/gui.h"
 
@@ -42,27 +43,36 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Co
 , m_conf(c)
 , m_channelId(channelId)
 {
-	begin();
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		geFlex* header = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+		{
+			sortMethod = new geChoice("Sort by", 0);
+			header->add(sortMethod, 180);
+			header->add(new geBox());
+			header->end();
+		}
 
-	/* top area */
-	Fl_Group* group_top = new Fl_Group(8, 8, w() - 16, 20);
-	sortMethod          = new geChoice(group_top->x(), group_top->y(), 180, 20, "Sort by", 0);
-	geBox* b1           = new geBox(sortMethod->x() + sortMethod->w(), group_top->y(), 100, 20); // spacer window border <-> menu
-	group_top->resizable(b1);
-	group_top->end();
+		browser = new v::gePluginBrowser(0, 0, 0, 0);
 
-	/* center browser */
-	browser = new v::gePluginBrowser(8, 36, w() - 16, h() - 70);
+		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			addBtn    = new geButton("Add");
+			cancelBtn = new geButton("Cancel");
+			footer->add(new geBox());
+			footer->add(cancelBtn, 80);
+			footer->add(addBtn, 80);
+			footer->end();
+		}
 
-	/* ok/cancel buttons */
-	Fl_Group* group_btn = new Fl_Group(8, browser->y() + browser->h() + 8, w() - 16, h() - browser->h() - 16);
-	geBox*    b2        = new geBox(8, browser->y() + browser->h(), 100, 20); // spacer window border <-> buttons
-	addBtn              = new geButton(w() - 88, group_btn->y(), 80, 20, "Add");
-	cancelBtn           = new geButton(addBtn->x() - 88, group_btn->y(), 80, 20, "Cancel");
-	group_btn->resizable(b2);
-	group_btn->end();
+		container->add(header, G_GUI_UNIT);
+		container->add(browser);
+		container->add(footer, G_GUI_UNIT);
+		container->end();
+	}
 
-	end();
+	add(container);
+	resizable(container);
 
 	sortMethod->addItem("Name");
 	sortMethod->addItem("Category");
@@ -78,7 +88,6 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Co
 	addBtn->shortcut(FL_Enter);
 	cancelBtn->callback(cb_close, (void*)this);
 
-	resizable(browser);
 	u::gui::setFavicon(this);
 	show();
 }
