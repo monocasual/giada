@@ -97,7 +97,7 @@ public:
 
 	/* reset
     Resets all sub-components to the initial state. Useful when Giada needs to
-    be brought back to the starup state. */
+    be brought back to the startup state. */
 
 	void reset();
 
