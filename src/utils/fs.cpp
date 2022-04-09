@@ -175,13 +175,14 @@ std::string getHomePath()
 
 std::string getMidiMapsPath()
 {
-	return stdfs::path(getHomePath()) / "midimaps";
+	auto out = stdfs::path(getHomePath()) / "midimaps";
+	return out.string();
 }
 
 std::string getLangMapsPath()
 {
-
-	return stdfs::path(getHomePath()) / "langmaps";
+	auto out = stdfs::path(getHomePath()) / "langmaps";
+	return out.string();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -210,6 +211,7 @@ std::string getUpDir(const std::string& s)
 
 std::string join(const std::string& a, const std::string& b)
 {
-	return stdfs::path(a) / stdfs::path(b);
+	auto out = stdfs::path(a) / stdfs::path(b);
+	return out.string();
 }
 } // namespace giada::u::fs
