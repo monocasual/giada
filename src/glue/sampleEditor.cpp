@@ -40,7 +40,6 @@
 #include "gui/elems/basics/button.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/sampleEditor/boostTool.h"
 #include "gui/elems/sampleEditor/panTool.h"
 #include "gui/elems/sampleEditor/pitchTool.h"
 #include "gui/elems/sampleEditor/rangeTool.h"

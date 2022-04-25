@@ -139,7 +139,6 @@ list(APPEND SOURCES
 	src/gui/elems/sampleEditor/waveform.cpp
 	src/gui/elems/sampleEditor/waveTools.cpp
 	src/gui/elems/sampleEditor/volumeTool.cpp
-	src/gui/elems/sampleEditor/boostTool.cpp
 	src/gui/elems/sampleEditor/panTool.cpp
 	src/gui/elems/sampleEditor/pitchTool.cpp
 	src/gui/elems/sampleEditor/rangeTool.cpp

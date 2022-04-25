@@ -51,7 +51,6 @@
 #include "gui/elems/mainWindow/keyboard/channelButton.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannel.h"
-#include "gui/elems/sampleEditor/boostTool.h"
 #include "gui/elems/sampleEditor/panTool.h"
 #include "gui/elems/sampleEditor/pitchTool.h"
 #include "gui/elems/sampleEditor/rangeTool.h"

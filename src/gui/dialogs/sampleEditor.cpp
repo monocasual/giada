@@ -43,7 +43,6 @@
 #include "gui/elems/basics/pack.h"
 #include "gui/elems/basics/statusButton.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
-#include "gui/elems/sampleEditor/boostTool.h"
 #include "gui/elems/sampleEditor/panTool.h"
 #include "gui/elems/sampleEditor/pitchTool.h"
 #include "gui/elems/sampleEditor/rangeTool.h"
