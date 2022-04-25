@@ -386,6 +386,11 @@ else()
 	message("Libsamplerate library found in " ${LIBRARY_SAMPLERATE})
 endif()
 
+# fmt
+
+find_package(fmt REQUIRED)
+list(APPEND LIBRARIES fmt::fmt)
+
 # Catch (if tests enabled)
 
 if (WITH_TESTS)
