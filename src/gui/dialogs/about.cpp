@@ -32,11 +32,13 @@
 #ifdef WITH_VST
 #include "deps/juce-config.h"
 #endif
-#include "about.h"
+#include "gui/dialogs/about.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
+#include "gui/elems/basics/flex.h"
 #include "utils/gui.h"
 #include "utils/string.h"
+#include <fmt/core.h>
 
 namespace giada::v
 {
@@ -46,64 +48,72 @@ gdAbout::gdAbout()
 #else
 : gdWindow(340, 330, "About Giada")
 #endif
-, logo(8, 20, 324, 86)
-, text(8, 120, 324, 140)
-, close(252, h() - 28, 80, 20, "Close")
-#ifdef WITH_VST
-, vstText(8, 315, 324, 46)
-, vstLogo(8, 265, 324, 50)
-#endif
 {
-	set_modal();
-
-	std::string version = G_VERSION_STR;
 #ifdef G_DEBUG_MODE
-	version += " (debug build)";
+	constexpr bool debug = true;
+#else
+	constexpr bool debug = false;
 #endif
 
-	logo.image(new Fl_Pixmap(giada_logo_xpm));
-	text.align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-	text.copy_label(std::string(
-	    "Version " + version + " (" BUILD_DATE ")\n\n"
-	                           "Developed by Monocasual Laboratories\n\n"
-	                           "Released under the terms of the GNU General\n"
-	                           "Public License (GPL v3)\n\n"
-	                           "News, infos, contacts and documentation:\n"
-	                           "www.giadamusic.com")
-	                    .c_str());
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		geFlex* body = new geFlex(Direction::VERTICAL);
+		{
+			geBox* logo = new geBox();
+			logo->image(new Fl_Pixmap(giada_logo_xpm));
 
-	add(logo);
-	add(text);
-	add(close);
+			geBox* text = new geBox();
+			text->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
+			text->copy_label(fmt::format(
+			    "Version {} ({} build) {}\n\n"
+			    "Developed by Monocasual Laboratories\n\n"
+			    "Released under the terms of the GNU General\n"
+			    "Public License (GPL v3)\n\n"
+			    "News, infos, contacts and documentation:\n"
+			    "www.giadamusic.com",
+			    G_VERSION_STR, debug ? "Debug" : "Release", BUILD_DATE)
+			                     .c_str());
 
 #ifdef WITH_VST
+			geBox* vstLogo = new geBox();
+			vstLogo->image(new Fl_Pixmap(vstLogo_xpm));
+			vstLogo->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE);
 
-	vstLogo.image(new Fl_Pixmap(vstLogo_xpm));
-	vstLogo.position(vstLogo.x(), text.y() + text.h() + 8);
-	vstText.label(
-	    "VST Plug-In Technology by Steinberg\n"
-	    "VST is a trademark of Steinberg\nMedia Technologies GmbH");
-	vstText.position(vstText.x(), vstLogo.y() + vstLogo.h());
-
-	add(vstLogo);
-	add(vstText);
-
+			geBox* vstText = new geBox();
+			vstText->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
+			vstText->label(
+			    "VST Plug-In Technology by Steinberg\n"
+			    "VST is a trademark of Steinberg\nMedia Technologies GmbH");
 #endif
 
-	close.callback(cb_close, (void*)this);
+			body->add(logo, 120);
+			body->add(text, 140);
+#ifdef WITH_VST
+			body->add(vstLogo, 60);
+			body->add(vstText);
+#endif
+			body->end();
+		}
+
+		geFlex* footer = new geFlex(Direction::HORIZONTAL);
+		{
+			geButton* close = new geButton("Close");
+			close->onClick  = [this]() { do_callback(); };
+			footer->add(new geBox()); // Spacer
+			footer->add(close, 80);
+			footer->end();
+		}
+
+		container->add(body);
+		container->add(footer, G_GUI_UNIT);
+		container->end();
+	}
+
+	add(container);
+
+	set_modal();
 	u::gui::setFavicon(this);
 	setId(WID_ABOUT);
 	show();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdAbout::cb_close(Fl_Widget* /*w*/, void* p) { ((gdAbout*)p)->cb_close(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdAbout::cb_close()
-{
-	do_callback();
 }
 } // namespace giada::v
