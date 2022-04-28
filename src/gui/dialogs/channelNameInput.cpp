@@ -24,12 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "channelNameInput.h"
+#include "gui/dialogs/channelNameInput.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/model/model.h"
 #include "glue/channel.h"
 #include "gui/elems/basics/button.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
@@ -39,46 +40,44 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdChannelNameInput::gdChannelNameInput(const c::channel::Data& d)
-: gdWindow(u::gui::centerWindowX(400), u::gui::centerWindowY(64), 400, 64, g_ui.langMapper.get(LangMap::CHANNELNAME_TITLE))
+: gdWindow(u::gui::getCenterWinBounds(400, 64), g_ui.langMapper.get(LangMap::CHANNELNAME_TITLE))
 , m_data(d)
 {
-	set_modal();
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		m_name = new geInput(0, 0, 0, 0);
 
-	begin();
-	m_name   = new geInput(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w() - (G_GUI_OUTER_MARGIN * 2), G_GUI_UNIT);
-	m_ok     = new geButton(w() - 70 - G_GUI_OUTER_MARGIN, m_name->y() + m_name->h() + G_GUI_OUTER_MARGIN, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_OK));
-	m_cancel = new geButton(m_ok->x() - 70 - G_GUI_OUTER_MARGIN, m_ok->y(), 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_CANCEL));
-	end();
+		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			m_ok     = new geButton(g_ui.langMapper.get(LangMap::COMMON_OK));
+			m_cancel = new geButton(g_ui.langMapper.get(LangMap::COMMON_CANCEL));
+			footer->add(new geBox());
+			footer->add(m_cancel, 70);
+			footer->add(m_ok, 70);
+			footer->end();
+		}
+		container->add(m_name, G_GUI_UNIT);
+		container->add(footer, G_GUI_UNIT);
+		container->end();
+	}
+
+	add(container);
 
 	m_name->value(m_data.name.c_str());
 
 	m_ok->shortcut(FL_Enter);
-	m_ok->callback(cb_update, (void*)this);
+	m_ok->onClick = [this]() {
+		c::channel::setName(m_data.id, m_name->value());
+		do_callback();
+	};
 
-	m_cancel->callback(cb_cancel, (void*)this);
+	m_cancel->onClick = [this]() {
+		do_callback();
+	};
 
+	set_modal();
 	u::gui::setFavicon(this);
 	setId(WID_SAMPLE_NAME);
 	show();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdChannelNameInput::cb_update(Fl_Widget* /*w*/, void* p) { ((gdChannelNameInput*)p)->cb_update(); }
-void gdChannelNameInput::cb_cancel(Fl_Widget* /*w*/, void* p) { ((gdChannelNameInput*)p)->cb_cancel(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdChannelNameInput::cb_cancel()
-{
-	do_callback();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdChannelNameInput::cb_update()
-{
-	c::channel::setName(m_data.id, m_name->value());
-	do_callback();
 }
 } // namespace giada::v

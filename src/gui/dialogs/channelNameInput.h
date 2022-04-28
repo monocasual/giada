@@ -45,11 +45,6 @@ public:
 	gdChannelNameInput(const c::channel::Data& d);
 
 private:
-	static void cb_update(Fl_Widget* /*w*/, void* p);
-	static void cb_cancel(Fl_Widget* /*w*/, void* p);
-	void        cb_update();
-	void        cb_cancel();
-
 	const c::channel::Data& m_data;
 
 	geInput*  m_name;
