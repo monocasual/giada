@@ -24,11 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "beatsInput.h"
+#include "gui/dialogs/beatsInput.h"
 #include "core/const.h"
 #include "glue/main.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
@@ -40,15 +41,20 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdBeatsInput::gdBeatsInput(int beats, int bars)
-: gdWindow(u::gui::centerWindowX(180), u::gui::centerWindowY(36), 180, 36, "Beats")
+: gdWindow(u::gui::getCenterWinBounds(180, 36), "Beats")
 {
-	set_modal();
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+	{
+		m_beats = new geInput(0, 0, 0, 0);
+		m_bars  = new geInput(0, 0, 0, 0);
+		m_ok    = new geButton(g_ui.langMapper.get(LangMap::COMMON_OK));
+		container->add(m_beats);
+		container->add(m_bars);
+		container->add(m_ok, 70);
+		container->end();
+	}
 
-	begin();
-	m_beats = new geInput(8, 8, 43, G_GUI_UNIT);
-	m_bars  = new geInput(m_beats->x() + m_beats->w() + 4, 8, 43, G_GUI_UNIT);
-	m_ok    = new geButton(m_bars->x() + m_bars->w() + 4, 8, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_OK));
-	end();
+	add(container);
 
 	m_beats->maximum_size(2);
 	m_beats->value(std::to_string(beats).c_str());
@@ -59,24 +65,16 @@ gdBeatsInput::gdBeatsInput(int beats, int bars)
 	m_bars->type(FL_INT_INPUT);
 
 	m_ok->shortcut(FL_Enter);
-	m_ok->callback(cb_update, (void*)this);
+	m_ok->onClick = [this]() {
+		if (!strcmp(m_beats->value(), "") || !strcmp(m_bars->value(), ""))
+			return;
+		c::main::setBeats(atoi(m_beats->value()), atoi(m_bars->value()));
+		do_callback();
+	};
 
+	set_modal();
 	u::gui::setFavicon(this);
 	setId(WID_BEATS);
 	show();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdBeatsInput::cb_update(Fl_Widget* /*w*/, void* p) { ((gdBeatsInput*)p)->cb_update(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdBeatsInput::cb_update()
-{
-	if (!strcmp(m_beats->value(), "") || !strcmp(m_bars->value(), ""))
-		return;
-	c::main::setBeats(atoi(m_beats->value()), atoi(m_bars->value()));
-	do_callback();
 }
 } // namespace giada::v

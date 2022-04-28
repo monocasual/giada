@@ -30,7 +30,6 @@
 #include "window.h"
 
 class geInput;
-class geCheck;
 
 namespace giada::v
 {
@@ -41,9 +40,6 @@ public:
 	gdBeatsInput(int beats, int bars);
 
 private:
-	static void cb_update(Fl_Widget* /*w*/, void* p);
-	void        cb_update();
-
 	geInput*  m_beats;
 	geInput*  m_bars;
 	geButton* m_ok;
