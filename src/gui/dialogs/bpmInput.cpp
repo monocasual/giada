@@ -24,12 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "bpmInput.h"
+#include "gui/dialogs/bpmInput.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/mixer.h"
 #include "glue/main.h"
 #include "gui/elems/basics/button.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
@@ -41,45 +42,42 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdBpmInput::gdBpmInput(const char* label)
-: gdWindow(u::gui::centerWindowX(144), u::gui::centerWindowY(36), 144, 36, "Bpm")
+: gdWindow(u::gui::getCenterWinBounds(180, 36), "Bpm")
 {
-	set_modal();
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+	{
+		m_input_a = new geInput(0, 0, 0, 0);
+		m_input_b = new geInput(0, 0, 0, 0);
+		m_ok      = new geButton(g_ui.langMapper.get(LangMap::COMMON_OK));
+		container->add(m_input_a);
+		container->add(m_input_b);
+		container->add(m_ok, 70);
+		container->end();
+	}
 
-	begin();
-	input_a = new geInput(8, 8, 30, G_GUI_UNIT);
-	input_b = new geInput(42, 8, 20, G_GUI_UNIT);
-	ok      = new geButton(66, 8, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_OK));
-	end();
+	add(container);
 
 	std::vector<std::string> parts = u::string::split(label, ".");
 
-	input_a->maximum_size(3);
-	input_a->type(FL_INT_INPUT);
-	input_a->value(parts[0].c_str());
+	m_input_a->maximum_size(3);
+	m_input_a->type(FL_INT_INPUT);
+	m_input_a->value(parts[0].c_str());
 
-	input_b->maximum_size(1);
-	input_b->type(FL_INT_INPUT);
-	input_b->value(parts[1].c_str());
+	m_input_b->maximum_size(1);
+	m_input_b->type(FL_INT_INPUT);
+	m_input_b->value(parts[1].c_str());
 
-	ok->shortcut(FL_Enter);
-	ok->callback(cb_update, (void*)this);
+	m_ok->shortcut(FL_Enter);
+	m_ok->onClick = [this]() {
+		if (strcmp(m_input_a->value(), "") == 0)
+			return;
+		c::main::setBpm(m_input_a->value(), m_input_b->value());
+		do_callback();
+	};
 
+	set_modal();
 	u::gui::setFavicon(this);
 	setId(WID_BPM);
 	show();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdBpmInput::cb_update(Fl_Widget* /*w*/, void* p) { ((gdBpmInput*)p)->cb_update(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdBpmInput::cb_update()
-{
-	if (strcmp(input_a->value(), "") == 0)
-		return;
-	c::main::setBpm(input_a->value(), input_b->value());
-	do_callback();
 }
 } // namespace giada::v

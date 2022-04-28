@@ -40,12 +40,9 @@ public:
 	gdBpmInput(const char* label); // pointer to mainWin->timing->bpm->label()
 
 private:
-	static void cb_update(Fl_Widget* /*w*/, void* p);
-	void        cb_update();
-
-	geInput*  input_a;
-	geInput*  input_b;
-	geButton* ok;
+	geInput*  m_input_a;
+	geInput*  m_input_b;
+	geButton* m_ok;
 };
 } // namespace giada::v
 
