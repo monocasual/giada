@@ -303,13 +303,14 @@ if (NOT RtMidi_FOUND)
 		message(FATAL_ERROR "Can't find RtMidi, aborting.")
 	endif()
 
-	# RtMidi header path may vary across OSes, so a fix is needed.
-	# TODO - Find a way to avoid this additional step
-
-	find_path(LIBRARY_RTMIDI_INCLUDE_DIR RtMidi.h PATH_SUFFIXES rtmidi)
-	list(APPEND INCLUDE_DIRS ${LIBRARY_RTMIDI_INCLUDE_DIR})
 	message("RtMidi library found in " ${RtMidi_DIR})
 endif()
+
+# RtMidi header path may vary across OSes, so a fix is needed.
+# TODO - Find a way to avoid this additional step
+
+find_path(LIBRARY_RTMIDI_INCLUDE_DIR RtMidi.h PATH_SUFFIXES rtmidi)
+list(APPEND INCLUDE_DIRS ${LIBRARY_RTMIDI_INCLUDE_DIR})
 
 # FLTK 
 
