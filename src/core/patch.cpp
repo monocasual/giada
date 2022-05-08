@@ -107,7 +107,7 @@ void readWaves_(Patch::Data& patch, const nl::json& j, const std::string& basePa
 	{
 		Patch::Wave w;
 		w.id   = jwave.value(PATCH_KEY_WAVE_ID, ++id);
-		w.path = basePath + G_SLASH + jwave.value(PATCH_KEY_WAVE_PATH, "");
+		w.path = u::fs::join(basePath, jwave.value(PATCH_KEY_WAVE_PATH, ""));
 		patch.waves.push_back(w);
 	}
 }

@@ -38,7 +38,7 @@ int init(int m)
 	stat = true;
 	if (mode == LOG_MODE_FILE)
 	{
-		std::string fpath = fs::getHomePath() + G_SLASH + "giada.log";
+		std::string fpath = u::fs::join(fs::getHomePath(), "giada.log");
 		f                 = std::fopen(fpath.c_str(), "a");
 		if (!f)
 		{

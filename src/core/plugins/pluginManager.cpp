@@ -49,7 +49,7 @@ void PluginManager::reset(SortMethod sortMethod)
 	if (m_formatManager.getNumFormats() == 0) // Must be called only once
 		m_formatManager.addDefaultFormats();
 
-	loadList(u::fs::getHomePath() + G_SLASH + "plugins.xml");
+	loadList(u::fs::join(u::fs::getHomePath(), "plugins.xml"));
 	sortPlugins(sortMethod);
 }
 

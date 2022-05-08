@@ -41,20 +41,8 @@ namespace giada::m
 {
 Conf::Conf()
 {
-	/* Initialize m_confFilePath, i.e. the configuration file. In windows it is 
-	in the same dir of the .exe, while in Linux and OS X in ~/.giada */
-
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
-
-	m_confFilePath = u::fs::getHomePath() + G_SLASH + CONF_FILENAME;
-	m_confDirPath  = u::fs::getHomePath() + G_SLASH;
-
-#elif defined(_WIN32)
-
-	m_confFilePath = CONF_FILENAME;
-	m_confDirPath  = "";
-
-#endif
+	m_confFilePath = u::fs::join(u::fs::getHomePath(), CONF_FILENAME);
+	m_confDirPath  = u::fs::getHomePath();
 }
 
 /* -------------------------------------------------------------------------- */

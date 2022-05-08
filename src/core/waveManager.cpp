@@ -65,7 +65,7 @@ int getBits_(const SF_INFO& header)
 
 std::string makeWavePath_(const std::string& base, const m::Wave& w, int k)
 {
-	return base + G_SLASH + w.getBasename(/*ext=*/false) + "-" + std::to_string(k) + w.getExtension();
+	return u::fs::join(base, w.getBasename(/*ext=*/false) + "-" + std::to_string(k) + w.getExtension());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -88,7 +88,7 @@ bool isWavePathUnique_(const m::Wave& skip, const std::string& path,
 std::string makeUniqueWavePath(const std::string& base, const m::Wave& w,
     const std::vector<std::unique_ptr<Wave>>& waves)
 {
-	std::string path = base + G_SLASH + w.getBasename(/*ext=*/true);
+	std::string path = u::fs::join(base, w.getBasename(/*ext=*/true));
 	if (isWavePathUnique_(w, path, waves))
 		return path;
 

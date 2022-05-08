@@ -66,14 +66,6 @@ constexpr int  G_VERSION_PATCH = 0;
 
 constexpr auto CONF_FILENAME = "giada.conf";
 
-#ifdef G_OS_WINDOWS
-#define G_SLASH '\\'
-#define G_SLASH_STR "\\"
-#else
-#define G_SLASH '/'
-#define G_SLASH_STR "/"
-#endif
-
 /* -- Engine ---------------------------------------------------------------- */
 /* G_EVENT_DISPATCHER_RATE_MS
 The amount of sleep between each Event Dispatcher cycle. It should be lower

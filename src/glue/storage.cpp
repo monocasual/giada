@@ -67,7 +67,7 @@ void loadProject(void* data)
 	v::gdBrowserLoad* browser = static_cast<v::gdBrowserLoad*>(data);
 
 	const std::string projectPath = browser->getSelectedItem();
-	const std::string patchPath   = projectPath + G_SLASH + u::fs::stripExt(u::fs::basename(projectPath)) + ".gptc";
+	const std::string patchPath   = u::fs::join(projectPath, u::fs::stripExt(u::fs::basename(projectPath)) + ".gptc");
 
 	auto progress   = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
 	auto progressCb = [&p = progress.get()](float v) {
@@ -109,8 +109,8 @@ void saveProject(void* data)
 	v::gdBrowserSave* browser = static_cast<v::gdBrowserSave*>(data);
 
 	const std::string projectName = u::fs::stripExt(browser->getName());
-	const std::string projectPath = browser->getCurrentPath() + G_SLASH + projectName + ".gprj";
-	const std::string patchPath   = projectPath + G_SLASH + projectName + ".gptc";
+	const std::string projectPath = u::fs::join(browser->getCurrentPath(), projectName + ".gprj");
+	const std::string patchPath   = u::fs::join(projectPath, projectName + ".gptc");
 
 	if (projectName == "")
 	{
@@ -173,7 +173,7 @@ void saveSample(void* data)
 		return;
 	}
 
-	std::string filePath = folderPath + G_SLASH + u::fs::stripExt(name) + ".wav";
+	std::string filePath = u::fs::join(folderPath, u::fs::stripExt(name) + ".wav");
 
 	if (u::fs::fileExists(filePath) &&
 	    !v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),

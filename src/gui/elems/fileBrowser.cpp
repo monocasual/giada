@@ -31,9 +31,7 @@
 #include "utils/fs.h"
 #include "utils/string.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geFileBrowser::geFileBrowser(int x, int y, int w, int h)
 : Fl_File_Browser(x, y, w, h)
@@ -133,7 +131,7 @@ int geFileBrowser::handle(int e)
 
 std::string geFileBrowser::getCurrentDir()
 {
-	return normalize(u::fs::getRealPath(m_currentDir));
+	return u::fs::getRealPath(m_currentDir);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -141,18 +139,11 @@ std::string geFileBrowser::getCurrentDir()
 std::string geFileBrowser::getSelectedItem(bool fullPath)
 {
 	if (!fullPath) // no full path requested? return the selected text
-		return normalize(text(value()));
+		return text(value());
 	else if (value() == 0) // no rows selected? return current directory
-		return normalize(m_currentDir);
+		return m_currentDir;
 	else
-	{
-#ifdef G_OS_WINDOWS
-		std::string sep = m_currentDir != "" ? G_SLASH_STR : "";
-#else
-		std::string sep = G_SLASH_STR;
-#endif
-		return normalize(u::fs::getRealPath(m_currentDir + sep + normalize(text(value()))));
-	}
+		return u::fs::getRealPath(u::fs::join(m_currentDir, text(value())));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -162,20 +153,4 @@ void geFileBrowser::preselect(int pos, int line)
 	position(pos);
 	select(line);
 }
-
-/* -------------------------------------------------------------------------- */
-
-std::string geFileBrowser::normalize(const std::string& s)
-{
-	std::string out = s;
-
-	/* If std::string ends with G_SLASH, remove it. Don't do it if is the root dir, 
-	that is '/' on Unix or '[x]:\' on Windows. */
-
-	//if (out.back() == G_SLASH && out.length() > 1)
-	if (out.back() == G_SLASH && !u::fs::isRootDir(s))
-		out = out.substr(0, out.size() - 1);
-	return out;
-}
-} // namespace v
-} // namespace giada
+} // namespace giada::v

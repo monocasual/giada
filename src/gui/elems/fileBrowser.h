@@ -32,9 +32,7 @@
 #include <FL/Fl_File_Browser.H>
 #include <string>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geFileBrowser : public Fl_File_Browser
 {
@@ -60,16 +58,10 @@ public:
 
 	int handle(int e);
 
-  private:
-	/* normalize
-	Makes sure the std::string never ends with a trailing slash. */
-
-	std::string normalize(const std::string& s);
-
+private:
 	std::string m_currentDir;
 	bool        m_showHiddenFiles;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif
