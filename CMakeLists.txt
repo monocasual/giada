@@ -33,6 +33,7 @@ project(giada LANGUAGES CXX)
 
 list(APPEND SOURCES
 	src/main.cpp
+	src/mapper.cpp
 	src/core/engine.cpp
 	src/core/worker.cpp
 	src/core/eventDispatcher.cpp

@@ -353,51 +353,28 @@ const char* LangMap::get(const std::string& key) const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void LangMapper::init()
+LangMapper::LangMapper()
 {
 	m_mapsPath = u::fs::getLangMapsPath();
+}
 
-	u::log::print("[LangMapper::init] scanning langmaps directory '%s'...\n", m_mapsPath);
+/* -------------------------------------------------------------------------- */
 
-	if (!std::filesystem::exists(m_mapsPath))
-	{
-		u::log::print("[LangMapper::init] langmaps directory not found, using default language\n");
-		return;
-	}
-
-	for (const auto& d : std::filesystem::directory_iterator(m_mapsPath))
-	{
-		// TODO - check if is a valid langMap file (verify headers)
-		if (!d.is_regular_file())
-			continue;
-		m_langFiles.push_back(d.path().filename().string());
-		u::log::print("[LangMapper::init] found langmap '%s'\n", m_langFiles.back());
-	}
-
-	u::log::print("[LangMapper::init] total langmaps found: %d\n", m_langFiles.size());
+void LangMapper::init()
+{
+	Mapper::init();
+	u::log::print("[LangMapper::init] total langmaps found: %d\n", m_mapFiles.size());
 }
 
 /* -------------------------------------------------------------------------- */
 
 int LangMapper::read(const std::string& file)
 {
-	if (file.empty())
-	{
-		u::log::print("[LangMapper::read] langmap not specified, nothing to do\n");
-		return G_FILE_NOT_SPECIFIED;
-	}
-
-	u::log::print("[LangMapper::read] reading langmap file '%s'\n", file);
-
-	std::ifstream ifs(u::fs::join(m_mapsPath, file));
-	if (!ifs.good())
+	std::optional<nl::json> res = Mapper::read(file);
+	if (!res)
 		return G_FILE_UNREADABLE;
 
-	nl::json j = nl::json::parse(ifs, nullptr, /*exceptions=*/false);
-	if (j.is_discarded())
-		return G_FILE_UNREADABLE;
-
-	m_map.m_data = j.get<LangMap::Data>();
+	m_map.m_data = res.value().get<LangMap::Data>();
 
 	return G_FILE_OK;
 }
@@ -407,12 +384,5 @@ int LangMapper::read(const std::string& file)
 const char* LangMapper::get(const std::string& s) const
 {
 	return m_map.get(s);
-}
-
-/* -------------------------------------------------------------------------- */
-
-const std::vector<std::string>& LangMapper::getMapFilesFound() const
-{
-	return m_langFiles;
 }
 } // namespace giada::v

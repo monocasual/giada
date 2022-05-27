@@ -28,6 +28,7 @@
 #define G_MIDIMAPPER_H
 
 #include "deps/json/single_include/nlohmann/json.hpp"
+#include "mapper.h"
 #include <string>
 #include <vector>
 
@@ -70,16 +71,13 @@ struct MidiMap
 	Message              playingInaudible;
 };
 
+/* -------------------------------------------------------------------------- */
+
 template <typename KernelMidiI>
-class MidiMapper final
+class MidiMapper final : public Mapper
 {
 public:
 	MidiMapper(KernelMidiI&);
-
-	/* getMapFilesFound
-	Returns a reference to the list of midimaps found. */
-
-	const std::vector<std::string>& getMapFilesFound() const;
 
 	/* init
 	Parses the midimap folders and find the available midimaps. */
@@ -126,17 +124,6 @@ private:
 
 	/* TODO - don't edit message in place! */
 	bool readCommand(const nlohmann::json& j, MidiMap::Message& m, const std::string& key) const;
-
-	/* m_mapsPath
-	Path to folder containing midimap files, different between OSes. */
-
-	std::string m_mapsPath;
-
-	/* m_mapFiles
-	The available .giadamap files. Each element of the vector represents 
-	a .giadamap file found in the midimap folder. */
-
-	std::vector<std::string> m_mapFiles;
 };
 
 extern template class MidiMapper<KernelMidi>;

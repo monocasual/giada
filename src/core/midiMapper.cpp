@@ -58,14 +58,7 @@ template <typename KernelMidiI>
 MidiMapper<KernelMidiI>::MidiMapper(KernelMidiI& k)
 : m_kernelMidi(k)
 {
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename KernelMidiI>
-const std::vector<std::string>& MidiMapper<KernelMidiI>::getMapFilesFound() const
-{
-	return m_mapFiles;
+	m_mapsPath = u::fs::getMidiMapsPath();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -73,28 +66,7 @@ const std::vector<std::string>& MidiMapper<KernelMidiI>::getMapFilesFound() cons
 template <typename KernelMidiI>
 void MidiMapper<KernelMidiI>::init()
 {
-	m_mapsPath = u::fs::getMidiMapsPath();
-
-	/* scan dir of midi maps and load the filenames into m_mapFiles vector. */
-
-	u::log::print("[MidiMapper::init] scanning midimaps directory '%s'...\n",
-	    m_mapsPath);
-
-	if (!std::filesystem::exists(m_mapsPath))
-	{
-		u::log::print("[MidiMapper::init] unable to scan midimaps directory!\n");
-		return;
-	}
-
-	for (const auto& d : std::filesystem::directory_iterator(m_mapsPath))
-	{
-		// TODO - check if is a valid midiMap file (verify headers)
-		if (!d.is_regular_file())
-			continue;
-		u::log::print("[MidiMapper::init] found midiMap '%s'\n", d.path().filename().string());
-		m_mapFiles.push_back(d.path().filename().string());
-	}
-
+	Mapper::init();
 	u::log::print("[MidiMapper::init] total midimaps found: %d\n", m_mapFiles.size());
 }
 
@@ -103,19 +75,11 @@ void MidiMapper<KernelMidiI>::init()
 template <typename KernelMidiI>
 int MidiMapper<KernelMidiI>::read(const std::string& file)
 {
-	if (file.empty())
-	{
-		u::log::print("[MidiMapper::read] midiMap not specified, nothing to do\n");
-		return G_FILE_NOT_SPECIFIED;
-	}
-
-	u::log::print("[MidiMapper::read] reading midiMap file '%s'\n", file);
-
-	std::ifstream ifs(u::fs::join(m_mapsPath, file));
-	if (!ifs.good())
+	std::optional<nl::json> res = Mapper::read(file);
+	if (!res)
 		return G_FILE_UNREADABLE;
 
-	nl::json j = nl::json::parse(ifs);
+	nl::json j = res.value();
 
 	currentMap.brand  = j[MIDIMAP_KEY_BRAND];
 	currentMap.device = j[MIDIMAP_KEY_DEVICE];

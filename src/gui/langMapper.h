@@ -28,6 +28,7 @@
 #define G_LANGMAPPER_H
 
 #include "deps/json/single_include/nlohmann/json.hpp"
+#include "mapper.h"
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -342,16 +343,13 @@ private:
 
 /* -------------------------------------------------------------------------- */
 
-class LangMapper final
+class LangMapper final : public Mapper
 {
 public:
-	/* getMapFilesFound
-	Returns a reference to the list of langmaps found. */
-
-	const std::vector<std::string>& getMapFilesFound() const;
+	LangMapper();
 
 	/* get
-	Gets a key in the currently loaded langmap file. */
+	Gets a key from the currently loaded langmap file. */
 
 	const char* get(const std::string&) const;
 
@@ -366,17 +364,6 @@ public:
 	int read(const std::string& file);
 
 private:
-	/* m_mapsPath
-	Path to folder containing langmap files, different between OSes. */
-
-	std::string m_mapsPath;
-
-	/* m_langFiles
-	The available .langmap files. Each element of the vector represents 
-	a .langmap file found in the langmap folder. */
-
-	std::vector<std::string> m_langFiles;
-
 	/* maps
 	The current langmap selected and loaded. It might be the default one (En_US) 
     if no langmaps have been found. */
