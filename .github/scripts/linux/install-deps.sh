@@ -11,6 +11,8 @@ sudo apt-get install g++-10 xvfb libasound2-dev libxpm-dev libpulse-dev libjack-
 # Install vcpkg dependencies
 
 vcpkg install libsndfile
+vcpkg install libsndfile[external-libs]
+vcpkg install libsndfile[mpeg]
 vcpkg install libsamplerate
 vcpkg install fltk
 vcpkg install rtmidi

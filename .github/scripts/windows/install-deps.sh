@@ -7,6 +7,8 @@ choco install -y visualstudio2019buildtools --package-parameters "--add Microsof
 # Install vcpkg dependencies
 
 vcpkg install libsndfile:x64-windows
+vcpkg install libsndfile:x64-windows[external-libs]
+vcpkg install libsndfile:x64-windows[mpeg]
 vcpkg install libsamplerate:x64-windows
 vcpkg install fltk:x64-windows
 vcpkg install rtmidi:x64-windows
