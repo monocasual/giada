@@ -1,0 +1,13 @@
+{
+    "name": "giada",
+    "version-string": "1.0",
+    "builtin-baseline": "af2287382b1991dbdcb7e5112d236f3323b9dd7a",
+    "dependencies": [
+        "fmt",
+        "rtmidi",
+        "fltk",
+        "catch2",
+        "libsamplerate",
+        "libsndfile"
+    ]
+}

@@ -65,9 +65,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install dependencies
-        run: bash ./.github/scripts/macos/install-deps.sh
-
       - name: Generate Makefile
         run: cmake -S . -B build/ -G "Xcode" -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_CXX_FLAGS="-x objective-c++" -DWITH_TESTS=ON
 
