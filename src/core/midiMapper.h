@@ -27,8 +27,8 @@
 #ifndef G_MIDIMAPPER_H
 #define G_MIDIMAPPER_H
 
-#include "deps/json/single_include/nlohmann/json.hpp"
 #include "mapper.h"
+#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
 

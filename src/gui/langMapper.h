@@ -27,8 +27,8 @@
 #ifndef G_LANGMAPPER_H
 #define G_LANGMAPPER_H
 
-#include "deps/json/single_include/nlohmann/json.hpp"
 #include "mapper.h"
+#include <nlohmann/json.hpp>
 #include <string>
 #include <unordered_map>
 #include <vector>

@@ -27,12 +27,12 @@
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/types.h"
-#include "deps/json/single_include/nlohmann/json.hpp"
 #include "utils/fs.h"
 #include "utils/log.h"
 #include <FL/Fl.H>
 #include <cassert>
 #include <fstream>
+#include <nlohmann/json.hpp>
 #include <string>
 
 namespace nl = nlohmann;

@@ -27,7 +27,7 @@
 #ifndef G_MAPPER_H
 #define G_MAPPER_H
 
-#include "deps/json/single_include/nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
 

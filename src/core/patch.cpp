@@ -26,10 +26,10 @@
 
 #include "patch.h"
 #include "core/mixer.h"
-#include "deps/json/single_include/nlohmann/json.hpp"
 #include "utils/log.h"
 #include "utils/math.h"
 #include <fstream>
+#include <nlohmann/json.hpp>
 
 namespace nl = nlohmann;
 
