@@ -54,7 +54,7 @@ void EventDispatcher::pumpMidiEvent(Event e) { MidiEvents.push(e); }
 
 /* -------------------------------------------------------------------------- */
 
-void EventDispatcher::processFuntions()
+void EventDispatcher::processFunctions()
 {
 	assert(onMidiLearn != nullptr);
 	assert(onMidiProcess != nullptr);
@@ -105,7 +105,7 @@ void EventDispatcher::process()
 	if (m_eventBuffer.size() == 0)
 		return;
 
-	processFuntions();
+	processFunctions();
 	onProcessChannels(m_eventBuffer);
 	onProcessSequencer(m_eventBuffer);
 }

@@ -124,7 +124,7 @@ public:
 	std::function<void()>                   onMixerEndOfRecCallback;
 
 private:
-	void processFuntions();
+	void processFunctions();
 	void process();
 
 	/* m_worker
