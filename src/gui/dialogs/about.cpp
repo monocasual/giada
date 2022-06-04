@@ -47,9 +47,9 @@ namespace giada::v
 {
 gdAbout::gdAbout()
 #ifdef WITH_VST
-: gdWindow(340, 415, "About Giada")
+: gdWindow(340, 415, g_ui.langMapper.get(LangMap::ABOUT_TITLE))
 #else
-: gdWindow(340, 330, "About Giada")
+: gdWindow(340, 330, g_ui.langMapper.get(LangMap::ABOUT_TITLE))
 #endif
 {
 #ifdef G_DEBUG_MODE
