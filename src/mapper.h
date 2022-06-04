@@ -28,6 +28,7 @@
 #define G_MAPPER_H
 
 #include <nlohmann/json.hpp>
+#include <optional>
 #include <string>
 #include <vector>
 
