@@ -60,13 +60,6 @@ mcl::AudioBuffer::Pan calcPanning_(float pan)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-ChannelShared::ChannelShared(Frame bufferSize)
-: audioBuffer(bufferSize, G_MAX_IO_CHANS)
-{
-}
-
-/* -------------------------------------------------------------------------- */
-
 Channel::Channel(ChannelType type, ID id, ID columnId, ChannelShared& s)
 : shared(&s)
 , id(id)
@@ -330,8 +323,8 @@ void Channel::advance(const Sequencer::EventBuffer& events, Range<Frame> block, 
 		if (midiSender && isPlaying() && !isMuted())
 			midiSender->advance(id, e);
 #ifdef WITH_VST
-		if (midiReceiver)
-			midiReceiver->advance(*this, e);
+		if (midiReceiver && isPlaying())
+			midiReceiver->advance(id, shared->midiQueue, e);
 #endif
 	}
 }
@@ -361,7 +354,7 @@ void Channel::react(const EventDispatcher::EventBuffer& events)
 			sampleReactor->react(*this, e, g_engine.sequencer, g_engine.conf.data);
 #ifdef WITH_VST
 		if (midiReceiver)
-			midiReceiver->react(*this, e);
+			midiReceiver->react(shared->midiQueue, e);
 #endif
 	}
 }
@@ -457,7 +450,7 @@ void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool au
 
 #ifdef WITH_VST
 	if (midiReceiver)
-		midiReceiver->render(*this, g_engine.pluginHost);
+		midiReceiver->render(*shared, plugins, g_engine.pluginHost);
 	else if (plugins.size() > 0)
 		g_engine.pluginHost.processStack(shared->audioBuffer, plugins, nullptr);
 #endif

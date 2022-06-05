@@ -24,31 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_CHANNEL_MIDI_RECEIVER_H
-#define G_CHANNEL_MIDI_RECEIVER_H
-
-#ifdef WITH_VST
-
 #include "core/channels/channelShared.h"
-#include "core/sequencer.h"
 
 namespace giada::m
 {
-class PluginHost;
-class Plugin;
-class MidiReceiver final
+ChannelShared::ChannelShared(Frame bufferSize)
+: audioBuffer(bufferSize, G_MAX_IO_CHANS)
 {
-public:
-	void react(ChannelShared::MidiQueue&, const EventDispatcher::Event&) const;
-	void advance(ID channelId, ChannelShared::MidiQueue&, const Sequencer::Event&) const;
-	void render(ChannelShared&, const std::vector<Plugin*>&, PluginHost&) const;
-
-private:
-	void sendToPlugins(ChannelShared::MidiQueue&, const MidiEvent&, Frame localFrame) const;
-	void parseMidi(ChannelShared::MidiQueue&, const MidiEvent&) const;
-};
+}
 } // namespace giada::m
-
-#endif // WITH_VST
-
-#endif

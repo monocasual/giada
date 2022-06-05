@@ -78,6 +78,7 @@ list(APPEND SOURCES
 	src/core/channels/midiSender.cpp
 	src/core/channels/midiReceiver.cpp
 	src/core/channels/channel.cpp
+	src/core/channels/channelShared.cpp
 	src/core/channels/channelManager.cpp
 	src/core/model/sequencer.cpp
 	src/core/model/mixer.cpp

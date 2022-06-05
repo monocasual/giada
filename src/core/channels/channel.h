@@ -32,6 +32,7 @@
 #include "deps/juce-config.h"
 #endif
 #include "core/channels/audioReceiver.h"
+#include "core/channels/channelShared.h"
 #include "core/channels/midiActionRecorder.h"
 #include "core/channels/midiController.h"
 #include "core/channels/midiLearner.h"
@@ -57,39 +58,6 @@
 namespace giada::m
 {
 class Plugin;
-
-struct ChannelShared final
-{
-	ChannelShared(Frame bufferSize);
-
-	mcl::AudioBuffer audioBuffer;
-#ifdef WITH_VST
-	juce::MidiBuffer     midiBuffer;
-	Queue<MidiEvent, 32> midiQueue;
-#endif
-
-	WeakAtomic<Frame>         tracker     = 0;
-	WeakAtomic<ChannelStatus> playStatus  = ChannelStatus::OFF;
-	WeakAtomic<ChannelStatus> recStatus   = ChannelStatus::OFF;
-	WeakAtomic<bool>          readActions = false;
-
-	std::optional<Quantizer> quantizer;
-
-	/* Optional render queue for sample-based channels. Used by SampleReactor
-	and SampleAdvancer to instruct SamplePlayer how to render audio. */
-
-	std::optional<Queue<SamplePlayer::Render, 2>> renderQueue = {};
-
-	/* Optional resampler for sample-based channels. Unfortunately a Resampler
-	object (based on libsamplerate) doesn't like to get copied while rendering
-	audio, so can't live inside WaveReader object (which is copied on model 
-	changes by the Swapper mechanism). Let's put it in the shared state here. */
-
-	std::optional<Resampler> resampler = {};
-};
-
-/* -------------------------------------------------------------------------- */
-
 class Channel final
 {
 public:
