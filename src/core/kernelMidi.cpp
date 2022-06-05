@@ -244,4 +244,45 @@ void KernelMidi::logPorts(RtMidi& device, std::string name) const
 	for (unsigned i = 0; i < device.getPortCount(); i++)
 		u::log::print("  %d) %s\n", i, device.getPortName(i));
 }
+
+/* -------------------------------------------------------------------------- */
+
+void KernelMidi::logCompiledAPIs()
+{
+	std::vector<RtMidi::Api> apis;
+	RtMidi::getCompiledApi(apis);
+
+	u::log::print("[KM] Compiled RtMidi APIs: %d\n", apis.size());
+
+	for (const RtMidi::Api& api : apis)
+	{
+		switch (api)
+		{
+		case RtMidi::Api::UNSPECIFIED:
+			u::log::print("  UNSPECIFIED\n");
+			break;
+		case RtMidi::Api::MACOSX_CORE:
+			u::log::print("  CoreAudio\n");
+			break;
+		case RtMidi::Api::LINUX_ALSA:
+			u::log::print("  ALSA\n");
+			break;
+		case RtMidi::Api::UNIX_JACK:
+			u::log::print("  JACK\n");
+			break;
+		case RtMidi::Api::WINDOWS_MM:
+			u::log::print("  Microsoft Multimedia MIDI API\n");
+			break;
+		case RtMidi::Api::RTMIDI_DUMMY:
+			u::log::print("  Dummy\n");
+			break;
+		case RtMidi::Api::WEB_MIDI_API:
+			u::log::print("  Web MIDI API\n");
+			break;
+		default:
+			u::log::print("  (unknown)\n");
+			break;
+		}
+	}
+}
 } // namespace giada::m

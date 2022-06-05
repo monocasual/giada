@@ -41,6 +41,8 @@ class KernelMidi final
 public:
 	KernelMidi();
 
+	static void logCompiledAPIs();
+
 	unsigned countOutPorts() const;
 	unsigned countInPorts() const;
 

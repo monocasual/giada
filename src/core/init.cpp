@@ -92,6 +92,7 @@ void printBuildInfo()
 	u::log::print("[init]   JUCE - %d.%d.%d\n", JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER);
 #endif
 	KernelAudio::logCompiledAPIs();
+	KernelMidi::logCompiledAPIs();
 }
 
 /* -------------------------------------------------------------------------- */
