@@ -90,8 +90,8 @@ geMainIO::geMainIO()
 	};
 
 	m_inToOut->type(FL_TOGGLE_BUTTON);
-	m_inToOut->onClick = [v = m_inToOut->value()]() {
-		c::main::setInToOut(v);
+	m_inToOut->onClick = [&inToOut = m_inToOut]() {
+		c::main::setInToOut(inToOut->value());
 	};
 
 #ifdef WITH_VST
