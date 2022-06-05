@@ -33,7 +33,6 @@
 namespace giada::m
 {
 class KernelMidi;
-class Channel;
 class MidiSender final
 {
 public:
@@ -41,8 +40,8 @@ public:
 	MidiSender(const Patch::Channel& p, KernelMidi&);
 	MidiSender(const MidiSender& o) = default;
 
-	void react(const Channel& ch, const EventDispatcher::Event& e);
-	void advance(const Channel& ch, const Sequencer::Event& e) const;
+	void react(const EventDispatcher::Event& e);
+	void advance(ID channelId, const Sequencer::Event& e) const;
 
 	KernelMidi* kernelMidi;
 
@@ -63,7 +62,7 @@ public:
 
 private:
 	void send(MidiEvent e) const;
-	void parseActions(const Channel& ch, const std::vector<Action>& as) const;
+	void parseActions(ID channelId, const std::vector<Action>& as) const;
 };
 } // namespace giada::m
 

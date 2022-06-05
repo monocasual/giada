@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/channels/midiSender.h"
-#include "core/channels/channel.h"
 #include "core/kernelMidi.h"
 #include "core/mixer.h"
 
@@ -50,9 +49,9 @@ MidiSender::MidiSender(const Patch::Channel& p, KernelMidi& k)
 
 /* -------------------------------------------------------------------------- */
 
-void MidiSender::react(const Channel& ch, const EventDispatcher::Event& e)
+void MidiSender::react(const EventDispatcher::Event& e)
 {
-	if (!ch.isPlaying() || !enabled || ch.isMuted())
+	if (!enabled)
 		return;
 
 	if (e.type == EventDispatcher::EventType::KEY_KILL ||
@@ -62,12 +61,12 @@ void MidiSender::react(const Channel& ch, const EventDispatcher::Event& e)
 
 /* -------------------------------------------------------------------------- */
 
-void MidiSender::advance(const Channel& ch, const Sequencer::Event& e) const
+void MidiSender::advance(ID channelId, const Sequencer::Event& e) const
 {
-	if (!ch.isPlaying() || !enabled || ch.isMuted())
+	if (!enabled)
 		return;
 	if (e.type == Sequencer::EventType::ACTIONS)
-		parseActions(ch, *e.actions);
+		parseActions(channelId, *e.actions);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -83,10 +82,10 @@ void MidiSender::send(MidiEvent e) const
 
 /* -------------------------------------------------------------------------- */
 
-void MidiSender::parseActions(const Channel& ch, const std::vector<Action>& as) const
+void MidiSender::parseActions(ID channelId, const std::vector<Action>& as) const
 {
 	for (const Action& a : as)
-		if (a.channelId == ch.id)
+		if (a.channelId == channelId)
 			send(a.event);
 }
 } // namespace giada::m

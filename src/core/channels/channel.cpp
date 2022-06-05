@@ -327,8 +327,8 @@ void Channel::advance(const Sequencer::EventBuffer& events, Range<Frame> block, 
 			midiController->advance(shared->playStatus, e);
 		if (samplePlayer)
 			sampleAdvancer->advance(*this, e);
-		if (midiSender)
-			midiSender->advance(*this, e);
+		if (midiSender && isPlaying() && !isMuted())
+			midiSender->advance(id, e);
 #ifdef WITH_VST
 		if (midiReceiver)
 			midiReceiver->advance(*this, e);
@@ -348,8 +348,8 @@ void Channel::react(const EventDispatcher::EventBuffer& events)
 		react(e);
 		if (midiController)
 			midiController->react(shared->playStatus, e);
-		if (midiSender)
-			midiSender->react(*this, e);
+		if (midiSender && isPlaying() && !isMuted())
+			midiSender->react(e);
 		if (samplePlayer)
 			samplePlayer->react(e);
 		if (midiActionRecorder)
