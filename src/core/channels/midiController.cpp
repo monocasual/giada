@@ -25,27 +25,26 @@
  * -------------------------------------------------------------------------- */
 
 #include "midiController.h"
-#include "core/channels/channel.h"
-#include "core/conf.h"
-#include <cassert>
 
 namespace giada::m
 {
-void MidiController::react(Channel& ch, const EventDispatcher::Event& e) const
+void MidiController::react(WeakAtomic<ChannelStatus>& a_playStatus, const EventDispatcher::Event& e) const
 {
+	const ChannelStatus playStatus = a_playStatus.load();
+
 	switch (e.type)
 	{
 	case EventDispatcher::EventType::KEY_PRESS:
-		ch.shared->playStatus.store(press(ch));
+		a_playStatus.store(press(playStatus));
 		break;
 
 	case EventDispatcher::EventType::KEY_KILL:
 	case EventDispatcher::EventType::SEQUENCER_STOP:
-		ch.shared->playStatus.store(ChannelStatus::OFF);
+		a_playStatus.store(ChannelStatus::OFF);
 		break;
 
 	case EventDispatcher::EventType::SEQUENCER_REWIND:
-		ch.shared->playStatus.store(onFirstBeat(ch));
+		a_playStatus.store(onFirstBeat(playStatus));
 
 	default:
 		break;
@@ -54,18 +53,17 @@ void MidiController::react(Channel& ch, const EventDispatcher::Event& e) const
 
 /* -------------------------------------------------------------------------- */
 
-void MidiController::advance(const Channel& ch, const Sequencer::Event& e) const
+void MidiController::advance(WeakAtomic<ChannelStatus>& a_playStatus, const Sequencer::Event& e) const
 {
-	if (e.type == Sequencer::EventType::FIRST_BEAT)
-		ch.shared->playStatus.store(onFirstBeat(ch));
+	if (e.type != Sequencer::EventType::FIRST_BEAT)
+		return;
+	a_playStatus.store(onFirstBeat(a_playStatus.load()));
 }
 
 /* -------------------------------------------------------------------------- */
 
-ChannelStatus MidiController::onFirstBeat(const Channel& ch) const
+ChannelStatus MidiController::onFirstBeat(ChannelStatus playStatus) const
 {
-	ChannelStatus playStatus = ch.shared->playStatus.load();
-
 	if (playStatus == ChannelStatus::ENDING)
 		playStatus = ChannelStatus::OFF;
 	else if (playStatus == ChannelStatus::WAIT)
@@ -76,10 +74,8 @@ ChannelStatus MidiController::onFirstBeat(const Channel& ch) const
 
 /* -------------------------------------------------------------------------- */
 
-ChannelStatus MidiController::press(const Channel& ch) const
+ChannelStatus MidiController::press(ChannelStatus playStatus) const
 {
-	ChannelStatus playStatus = ch.shared->playStatus.load();
-
 	switch (playStatus)
 	{
 	case ChannelStatus::PLAY:

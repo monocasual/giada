@@ -27,20 +27,20 @@
 #ifndef G_CHANNEL_MIDI_CONTROLLER_H
 #define G_CHANNEL_MIDI_CONTROLLER_H
 
+#include "core/eventDispatcher.h"
 #include "core/sequencer.h"
 
 namespace giada::m
 {
-class Channel;
 class MidiController final
 {
 public:
-	void advance(const Channel& ch, const Sequencer::Event& e) const;
-	void react(Channel& ch, const EventDispatcher::Event& e) const;
+	void advance(WeakAtomic<ChannelStatus>&, const Sequencer::Event& e) const;
+	void react(WeakAtomic<ChannelStatus>&, const EventDispatcher::Event& e) const;
 
 private:
-	ChannelStatus onFirstBeat(const Channel& ch) const;
-	ChannelStatus press(const Channel& ch) const;
+	ChannelStatus onFirstBeat(ChannelStatus) const;
+	ChannelStatus press(ChannelStatus) const;
 };
 } // namespace giada::m
 

@@ -324,7 +324,7 @@ void Channel::advance(const Sequencer::EventBuffer& events, Range<Frame> block, 
 	for (const Sequencer::Event& e : events)
 	{
 		if (midiController)
-			midiController->advance(*this, e);
+			midiController->advance(shared->playStatus, e);
 		if (samplePlayer)
 			sampleAdvancer->advance(*this, e);
 		if (midiSender)
@@ -347,7 +347,7 @@ void Channel::react(const EventDispatcher::EventBuffer& events)
 
 		react(e);
 		if (midiController)
-			midiController->react(*this, e);
+			midiController->react(shared->playStatus, e);
 		if (midiSender)
 			midiSender->react(*this, e);
 		if (samplePlayer)
