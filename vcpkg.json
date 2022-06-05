@@ -3,11 +3,32 @@
     "version-string": "1.0",
     "builtin-baseline": "af2287382b1991dbdcb7e5112d236f3323b9dd7a",
     "dependencies": [
-        "fmt",
-        "rtmidi",
-        "fltk",
-        "catch2",
-        "libsamplerate",
-        "libsndfile"
+        {
+            "name": "rtmidi",
+            "version>=": "5.0.0"
+        },
+        {
+            "name": "fmt",
+            "version>=": "8.1.1"
+        },
+        {
+            "name": "fltk",
+            "version>=": "1.3.8"
+        },
+        {
+            "name": "catch2",
+            "version>=": "2.13.8"
+        },
+        {
+            "name": "libsamplerate",
+            "version>=": "0.2.2"
+        },
+        {
+            "name": "libsndfile",
+            "version>=": "1.0.31",
+            "features": [
+                "external-libs"
+            ]
+        }
     ]
 }
