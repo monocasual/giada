@@ -29,7 +29,6 @@
 #include "core/conf.h"
 #include "core/model/model.h"
 #include "utils/math.h"
-#include <cassert>
 
 namespace giada::m
 {
@@ -61,7 +60,7 @@ SampleReactor::SampleReactor(Channel& ch, ID channelId)
 /* -------------------------------------------------------------------------- */
 
 void SampleReactor::react(Channel& ch, const EventDispatcher::Event& e,
-    Sequencer& sequencer, const Conf::Data& conf) const
+    bool chansStopOnSeqHalt, bool canQuantize) const
 {
 	if (!ch.hasWave())
 		return;
@@ -69,7 +68,7 @@ void SampleReactor::react(Channel& ch, const EventDispatcher::Event& e,
 	switch (e.type)
 	{
 	case EventDispatcher::EventType::KEY_PRESS:
-		press(ch, sequencer, std::get<int>(e.data));
+		press(ch, std::get<int>(e.data), canQuantize);
 		break;
 
 	case EventDispatcher::EventType::KEY_RELEASE:
@@ -82,7 +81,7 @@ void SampleReactor::react(Channel& ch, const EventDispatcher::Event& e,
 		break;
 
 	case EventDispatcher::EventType::SEQUENCER_STOP:
-		onStopBySeq(ch, conf.chansStopOnSeqHalt);
+		onStopBySeq(ch, chansStopOnSeqHalt);
 		break;
 
 	default:
@@ -114,8 +113,8 @@ void SampleReactor::stop(ChannelShared& shared) const
 
 /* -------------------------------------------------------------------------- */
 
-ChannelStatus SampleReactor::pressWhileOff(Channel& ch, Sequencer& sequencer,
-    int velocity, bool isLoop) const
+ChannelStatus SampleReactor::pressWhileOff(Channel& ch, int velocity, bool isLoop,
+    bool canQuantize) const
 {
 	if (isLoop)
 		return ChannelStatus::WAIT;
@@ -123,7 +122,7 @@ ChannelStatus SampleReactor::pressWhileOff(Channel& ch, Sequencer& sequencer,
 	if (ch.samplePlayer->velocityAsVol)
 		ch.volume_i = u::math::map(velocity, G_MAX_VELOCITY, G_MAX_VOLUME);
 
-	if (sequencer.canQuantize())
+	if (canQuantize)
 	{
 		ch.shared->quantizer->trigger(Q_ACTION_PLAY + ch.id);
 		return ChannelStatus::OFF;
@@ -134,8 +133,8 @@ ChannelStatus SampleReactor::pressWhileOff(Channel& ch, Sequencer& sequencer,
 
 /* -------------------------------------------------------------------------- */
 
-ChannelStatus SampleReactor::pressWhilePlay(Channel& ch, Sequencer& sequencer,
-    SamplePlayerMode mode, bool isLoop) const
+ChannelStatus SampleReactor::pressWhilePlay(Channel& ch, SamplePlayerMode mode,
+    bool isLoop, bool canQuantize) const
 {
 	if (isLoop)
 		return ChannelStatus::ENDING;
@@ -143,7 +142,7 @@ ChannelStatus SampleReactor::pressWhilePlay(Channel& ch, Sequencer& sequencer,
 	switch (mode)
 	{
 	case SamplePlayerMode::SINGLE_RETRIG:
-		if (sequencer.canQuantize())
+		if (canQuantize)
 			ch.shared->quantizer->trigger(Q_ACTION_REWIND + ch.id);
 		else
 			rewind(*ch.shared, /*localFrame=*/0);
@@ -163,7 +162,7 @@ ChannelStatus SampleReactor::pressWhilePlay(Channel& ch, Sequencer& sequencer,
 
 /* -------------------------------------------------------------------------- */
 
-void SampleReactor::press(Channel& ch, Sequencer& sequencer, int velocity) const
+void SampleReactor::press(Channel& ch, int velocity, bool canQuantize) const
 {
 	const SamplePlayerMode mode   = ch.samplePlayer->mode;
 	const bool             isLoop = ch.samplePlayer->isAnyLoopMode();
@@ -173,11 +172,11 @@ void SampleReactor::press(Channel& ch, Sequencer& sequencer, int velocity) const
 	switch (playStatus)
 	{
 	case ChannelStatus::OFF:
-		playStatus = pressWhileOff(ch, sequencer, velocity, isLoop);
+		playStatus = pressWhileOff(ch, velocity, isLoop, canQuantize);
 		break;
 
 	case ChannelStatus::PLAY:
-		playStatus = pressWhilePlay(ch, sequencer, mode, isLoop);
+		playStatus = pressWhilePlay(ch, mode, isLoop, canQuantize);
 		break;
 
 	case ChannelStatus::WAIT:

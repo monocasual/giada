@@ -351,7 +351,8 @@ void Channel::react(const EventDispatcher::EventBuffer& events)
 			sampleActionRecorder->react(*this, e, g_engine.conf.data.treatRecsAsLoops,
 			    g_engine.sequencer.isRunning(), g_engine.recorder.canRecordActions());
 		if (sampleReactor)
-			sampleReactor->react(*this, e, g_engine.sequencer, g_engine.conf.data);
+			sampleReactor->react(*this, e, g_engine.conf.data.chansStopOnSeqHalt,
+			    g_engine.sequencer.canQuantize());
 #ifdef WITH_VST
 		if (midiReceiver)
 			midiReceiver->react(shared->midiQueue, e);

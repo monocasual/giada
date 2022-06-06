@@ -29,7 +29,6 @@
 
 #include "core/conf.h"
 #include "core/eventDispatcher.h"
-#include "core/quantizer.h"
 
 namespace giada::m::model
 {
@@ -40,7 +39,6 @@ namespace giada::m
 {
 class Channel;
 struct ChannelShared;
-class Sequencer;
 
 /* SampleReactor
 Reacts to manual events sent to Sample Channels: key press, key release, 
@@ -57,14 +55,14 @@ public:
 
 	SampleReactor(Channel&, ID channelId);
 
-	void react(Channel&, const EventDispatcher::Event&, Sequencer&, const Conf::Data&) const;
+	void react(Channel&, const EventDispatcher::Event&, bool chansStopOnSeqHalt, bool canQuantize) const;
 
 private:
 	void          onStopBySeq(Channel&, bool chansStopOnSeqHalt) const;
 	void          release(Channel&) const;
-	void          press(Channel&, Sequencer&, int velocity) const;
-	ChannelStatus pressWhilePlay(Channel&, Sequencer&, SamplePlayerMode, bool isLoop) const;
-	ChannelStatus pressWhileOff(Channel&, Sequencer&, int velocity, bool isLoop) const;
+	void          press(Channel&, int velocity, bool canQuantize) const;
+	ChannelStatus pressWhilePlay(Channel&, SamplePlayerMode, bool isLoop, bool canQuantize) const;
+	ChannelStatus pressWhileOff(Channel&, int velocity, bool isLoop, bool canQuantize) const;
 	void          rewind(ChannelShared&, Frame localFrame) const;
 	void          play(ChannelShared&, Frame localFrame) const;
 	void          stop(ChannelShared&) const;
