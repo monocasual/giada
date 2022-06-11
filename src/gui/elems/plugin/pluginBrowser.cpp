@@ -105,10 +105,11 @@ void gePluginBrowser::computeWidths()
 
 	for (m::PluginManager::PluginInfo pi : c::plugin::getPluginsInfo())
 	{
-		m_widths[0] = std::max(u::gui::getStringRect(pi.name).w, m_widths[0]);
-		m_widths[1] = std::max(u::gui::getStringRect(pi.manufacturerName).w, m_widths[1]);
-		m_widths[2] = std::max(u::gui::getStringRect(pi.category).w, m_widths[2]);
-		m_widths[3] = std::max(u::gui::getStringRect(pi.format).w, m_widths[3]);
+		// Explicit type std::max<int> to fix MINMAX macro hell on Windows
+		m_widths[0] = std::max<int>(u::gui::getStringRect(pi.name).w, m_widths[0]);
+		m_widths[1] = std::max<int>(u::gui::getStringRect(pi.manufacturerName).w, m_widths[1]);
+		m_widths[2] = std::max<int>(u::gui::getStringRect(pi.category).w, m_widths[2]);
+		m_widths[3] = std::max<int>(u::gui::getStringRect(pi.format).w, m_widths[3]);
 	}
 	m_widths[0] += PADDDING;
 	m_widths[1] += PADDDING;
