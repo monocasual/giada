@@ -11,6 +11,16 @@
 --------------------------------------------------------------------------------
 
 
+0.22.0 --- 2022 . 06 .  13
+- Multi-language support via langmaps (#34)
+- Add new 'fmt' dependency
+- Add vcpkg.json manifest file
+- Log compiled RtMidi APIs on startup
+- Fix missing header with RtMidi 5.0.0
+- Fix Stream Linker button not working (#585)
+- Minor code refactoring and cleanups
+
+
 0.21.0 --- 2022 . 04 . 01
 - Custom keyboard mappings for global actions (#213)
 - Pressing 'Esc' key no longer closes windows
