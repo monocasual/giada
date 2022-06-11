@@ -20,7 +20,7 @@ jobs:
         run: bash ./.github/scripts/linux/install-deps.sh
         
       - name: Generate Makefile
-        run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON
+        run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON -DWITH_VST3=ON
 
       - name: Build
         run: cmake --build build/ -j 2
@@ -45,7 +45,7 @@ jobs:
         
       - name: Generate Makefile
         shell: bash
-        run: cmake -S . -B build/ -G "Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DWITH_TESTS=ON
+        run: cmake -S . -B build/ -G "Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DWITH_TESTS=ON -DWITH_VST3=ON
 
       - name: Build
         shell: bash
@@ -66,7 +66,7 @@ jobs:
           submodules: recursive
 
       - name: Generate Makefile
-        run: cmake -S . -B build/ -G "Xcode" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_CXX_FLAGS="-x objective-c++" -DWITH_TESTS=ON
+        run: cmake -S . -B build/ -G "Xcode" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_CXX_FLAGS="-x objective-c++" -DWITH_TESTS=ON -DWITH_VST3=ON
 
       - name: Build
         run: cmake --build build/ --config Debug -j 2
