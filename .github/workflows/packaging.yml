@@ -46,7 +46,7 @@ jobs:
         run: bash ./.github/scripts/linux/install-deps.sh
         
       - name: Generate Makefile
-        run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-Wno-class-memaccess -DWITH_VST3=ON
+        run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-Wno-class-memaccess -DWITH_VST3=ON
 
       - name: Build
         run: cmake --build build/ -j 2
@@ -87,7 +87,7 @@ jobs:
         
       - name: Generate Makefile
         shell: bash
-        run: cmake -S . -B build/ -G "Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=/c/vcpkg/scripts/buildsystems/vcpkg.cmake -DWITH_VST3=ON
+        run: cmake -S . -B build/ -G "Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DWITH_VST3=ON
 
       - name: Build
         shell: bash
@@ -123,7 +123,7 @@ jobs:
           submodules: recursive
 
       - name: Generate Makefile
-        run: cmake -S . -B build/ -G "Xcode" -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_CXX_FLAGS="-x objective-c++" -DWITH_VST3=ON
+        run: cmake -S . -B build/ -G "Xcode" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_CXX_FLAGS="-x objective-c++" -DWITH_VST3=ON
 
       - name: Build
         run: cmake --build build/ --config Release -j 2
