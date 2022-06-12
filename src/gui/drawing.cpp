@@ -58,6 +58,6 @@ void drawText(const std::string& s, geompp::Rect<int> b, Fl_Color c, int alignme
 	assert(!s.empty());
 
 	fl_color(c);
-	fl_draw(u::gui::truncate(s, b.w - 16).c_str(), b.x, b.y, b.w, b.h, alignment);
+	fl_draw(s.c_str(), b.x, b.y, b.w, b.h, alignment);
 }
 } // namespace giada::v
