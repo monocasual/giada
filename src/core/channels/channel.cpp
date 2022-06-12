@@ -83,7 +83,7 @@ Channel::Channel(ChannelType type, ID id, ID columnId, ChannelShared& s)
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(*this, id);
 		audioReceiver.emplace();
-		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
+		sampleActionRecorder.emplace(g_engine.actionRecorder);
 		break;
 
 	case ChannelType::PREVIEW:
@@ -140,7 +140,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(*this, id);
 		audioReceiver.emplace(p);
-		sampleActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
+		sampleActionRecorder.emplace(g_engine.actionRecorder);
 		break;
 
 	case ChannelType::PREVIEW:
@@ -350,9 +350,14 @@ void Channel::react(const EventDispatcher::EventBuffer& events)
 		if (midiActionRecorder && g_engine.recorder.canRecordActions())
 			midiActionRecorder->react(id, e, g_engine.sequencer.getCurrentFrameQuantized(), hasActions);
 
-		if (sampleActionRecorder)
-			sampleActionRecorder->react(*this, e, g_engine.conf.data.treatRecsAsLoops,
-			    g_engine.sequencer.isRunning(), g_engine.recorder.canRecordActions());
+		if (sampleActionRecorder && hasWave())
+			sampleActionRecorder->react(id, *shared, e,
+			    samplePlayer->mode,
+			    g_engine.sequencer.getCurrentFrameQuantized(),
+			    g_engine.conf.data.treatRecsAsLoops,
+			    g_engine.sequencer.isRunning(),
+			    g_engine.recorder.canRecordActions() && !samplePlayer->isAnyLoopMode(),
+			    hasActions);
 
 		if (sampleReactor)
 			sampleReactor->react(*this, e, g_engine.conf.data.chansStopOnSeqHalt,

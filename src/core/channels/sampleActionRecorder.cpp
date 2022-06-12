@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/channels/sampleActionRecorder.h"
-#include "core/channels/channel.h"
+#include "core/channels/channelShared.h"
 #include "core/eventDispatcher.h"
 #include "src/core/actions/action.h"
 #include "src/core/actions/actionRecorder.h"
@@ -33,51 +33,46 @@
 
 namespace giada::m
 {
-SampleActionRecorder::SampleActionRecorder(ActionRecorder& a, Sequencer& s)
+SampleActionRecorder::SampleActionRecorder(ActionRecorder& a)
 : m_actionRecorder(&a)
-, m_sequencer(&s)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleActionRecorder::react(Channel& ch, const EventDispatcher::Event& e, bool treatRecsAsLoops,
-    bool seqIsRunning, bool canRecordActions) const
+void SampleActionRecorder::react(ID channelId, ChannelShared& shared,
+    const EventDispatcher::Event& e, SamplePlayerMode mode, Frame currentFrameQuantized,
+    bool treatRecsAsLoops, bool seqIsRunning, bool canRecordActions, bool& hasActions) const
 {
-	if (!ch.hasWave())
-		return;
-
-	canRecordActions = canRecordActions && !ch.samplePlayer->isAnyLoopMode();
-
 	switch (e.type)
 	{
 	case EventDispatcher::EventType::KEY_PRESS:
 		if (canRecordActions)
-			onKeyPress(ch);
+			onKeyPress(channelId, shared, currentFrameQuantized, mode, hasActions);
 		break;
 
 	case EventDispatcher::EventType::KEY_RELEASE:
 		/* Record a stop event only if channel is SINGLE_PRESS. For any other 
 		mode the key release event is meaningless. */
-		if (canRecordActions && ch.samplePlayer->mode == SamplePlayerMode::SINGLE_PRESS)
-			record(ch, MidiEvent::NOTE_OFF);
+		if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+			record(channelId, MidiEvent::NOTE_OFF, currentFrameQuantized, hasActions);
 		break;
 
 	case EventDispatcher::EventType::KEY_KILL:
 		if (canRecordActions)
-			record(ch, MidiEvent::NOTE_KILL);
+			record(channelId, MidiEvent::NOTE_KILL, currentFrameQuantized, hasActions);
 		break;
 
 	case EventDispatcher::EventType::CHANNEL_TOGGLE_READ_ACTIONS:
-		if (ch.hasActions)
-			toggleReadActions(ch, treatRecsAsLoops, seqIsRunning);
+		if (hasActions)
+			toggleReadActions(shared, treatRecsAsLoops, seqIsRunning);
 		break;
 
 	case EventDispatcher::EventType::CHANNEL_KILL_READ_ACTIONS:
 		/* Killing Read Actions, i.e. shift + click on 'R' button is meaningful 
 		only when the conf::treatRecsAsLoops is true. */
 		if (treatRecsAsLoops)
-			killReadActions(ch);
+			killReadActions(shared);
 		break;
 
 	default:
@@ -87,41 +82,42 @@ void SampleActionRecorder::react(Channel& ch, const EventDispatcher::Event& e, b
 
 /* -------------------------------------------------------------------------- */
 
-void SampleActionRecorder::record(Channel& ch, int note) const
+void SampleActionRecorder::record(ID channelId, int note, Frame currentFrameQuantized, bool& hasActions) const
 {
-	m_actionRecorder->liveRec(ch.id, MidiEvent(note, 0, 0), m_sequencer->getCurrentFrameQuantized());
-	ch.hasActions = true;
+	m_actionRecorder->liveRec(channelId, MidiEvent(note, 0, 0), currentFrameQuantized);
+	hasActions = true;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleActionRecorder::onKeyPress(Channel& ch) const
+void SampleActionRecorder::onKeyPress(ID channelId, ChannelShared& shared,
+    Frame currentFrameQuantized, SamplePlayerMode mode, bool& hasActions) const
 {
-	record(ch, MidiEvent::NOTE_ON);
+	record(channelId, MidiEvent::NOTE_ON, currentFrameQuantized, hasActions);
 
 	/* Skip reading actions when recording on ChannelMode::SINGLE_PRESS to 
 	prevent	existing actions to interfere with the keypress/keyrel combo. */
 
-	if (ch.samplePlayer->mode == SamplePlayerMode::SINGLE_PRESS)
-		ch.shared->readActions.store(false);
+	if (mode == SamplePlayerMode::SINGLE_PRESS)
+		shared.readActions.store(false);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleActionRecorder::startReadActions(Channel& ch, bool treatRecsAsLoops) const
+void SampleActionRecorder::startReadActions(ChannelShared& shared, bool treatRecsAsLoops) const
 {
 	if (treatRecsAsLoops)
-		ch.shared->recStatus.store(ChannelStatus::WAIT);
+		shared.recStatus.store(ChannelStatus::WAIT);
 	else
 	{
-		ch.shared->recStatus.store(ChannelStatus::PLAY);
-		ch.shared->readActions.store(true);
+		shared.recStatus.store(ChannelStatus::PLAY);
+		shared.readActions.store(true);
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleActionRecorder::stopReadActions(Channel& ch, ChannelStatus curRecStatus,
+void SampleActionRecorder::stopReadActions(ChannelShared& shared, ChannelStatus curRecStatus,
     bool treatRecsAsLoops, bool seqIsRunning) const
 {
 	/* First of all, if the sequencer is not running or treatRecsAsLoops is off, 
@@ -130,20 +126,20 @@ void SampleActionRecorder::stopReadActions(Channel& ch, ChannelStatus curRecStat
 
 	if (!seqIsRunning || !treatRecsAsLoops)
 	{
-		ch.shared->recStatus.store(ChannelStatus::OFF);
-		ch.shared->readActions.store(false);
+		shared.recStatus.store(ChannelStatus::OFF);
+		shared.readActions.store(false);
 	}
 	else if (curRecStatus == ChannelStatus::WAIT)
-		ch.shared->recStatus.store(ChannelStatus::OFF);
+		shared.recStatus.store(ChannelStatus::OFF);
 	else if (curRecStatus == ChannelStatus::ENDING)
-		ch.shared->recStatus.store(ChannelStatus::PLAY);
+		shared.recStatus.store(ChannelStatus::PLAY);
 	else
-		ch.shared->recStatus.store(ChannelStatus::ENDING);
+		shared.recStatus.store(ChannelStatus::ENDING);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleActionRecorder::toggleReadActions(Channel& ch, bool treatRecsAsLoops, bool seqIsRunning) const
+void SampleActionRecorder::toggleReadActions(ChannelShared& shared, bool treatRecsAsLoops, bool seqIsRunning) const
 {
 	/* When you start reading actions while conf::treatRecsAsLoops is true, the
 	value ch.shared->readActions actually is not set to true immediately, because
@@ -153,20 +149,20 @@ void SampleActionRecorder::toggleReadActions(Channel& ch, bool treatRecsAsLoops,
 	handle the case of when you press 'R', the channel goes into REC_WAITING and
 	then you press 'R' again to undo the status. */
 
-	const bool          readActions = ch.shared->readActions.load();
-	const ChannelStatus recStatus   = ch.shared->recStatus.load();
+	const bool          readActions = shared.readActions.load();
+	const ChannelStatus recStatus   = shared.recStatus.load();
 
 	if (readActions || (!readActions && recStatus == ChannelStatus::WAIT))
-		stopReadActions(ch, recStatus, treatRecsAsLoops, seqIsRunning);
+		stopReadActions(shared, recStatus, treatRecsAsLoops, seqIsRunning);
 	else
-		startReadActions(ch, treatRecsAsLoops);
+		startReadActions(shared, treatRecsAsLoops);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleActionRecorder::killReadActions(Channel& ch) const
+void SampleActionRecorder::killReadActions(ChannelShared& shared) const
 {
-	ch.shared->recStatus.store(ChannelStatus::OFF);
-	ch.shared->readActions.store(false);
+	shared.recStatus.store(ChannelStatus::OFF);
+	shared.readActions.store(false);
 }
 } // namespace giada::m

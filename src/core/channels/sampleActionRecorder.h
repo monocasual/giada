@@ -32,26 +32,25 @@
 namespace giada::m
 {
 class ActionRecorder;
-class Sequencer;
-class Channel;
+struct ChannelShared;
 class SampleActionRecorder final
 {
 public:
-	SampleActionRecorder(ActionRecorder&, Sequencer&);
+	SampleActionRecorder(ActionRecorder&);
 
-	void react(Channel&, const EventDispatcher::Event&, bool treatRecsAsLoops,
-	    bool seqIsRunning, bool canRecordActions) const;
+	void react(ID channelId, ChannelShared&, const EventDispatcher::Event&, SamplePlayerMode,
+	    Frame currentFrameQuantized, bool treatRecsAsLoops, bool seqIsRunning,
+	    bool canRecordActions, bool& hasActions) const;
 
 private:
-	void record(Channel&, int note) const;
-	void onKeyPress(Channel&) const;
-	void startReadActions(Channel&, bool treatRecsAsLoops) const;
-	void stopReadActions(Channel&, ChannelStatus, bool treatRecsAsLoops, bool seqIsRunning) const;
-	void toggleReadActions(Channel&, bool treatRecsAsLoops, bool seqIsRunning) const;
-	void killReadActions(Channel& ch) const;
+	void record(ID channelId, int note, Frame currentFrameQuantized, bool& hasActions) const;
+	void onKeyPress(ID channelId, ChannelShared&, Frame currentFrameQuantized, SamplePlayerMode, bool& hasActions) const;
+	void startReadActions(ChannelShared&, bool treatRecsAsLoops) const;
+	void stopReadActions(ChannelShared&, ChannelStatus, bool treatRecsAsLoops, bool seqIsRunning) const;
+	void toggleReadActions(ChannelShared&, bool treatRecsAsLoops, bool seqIsRunning) const;
+	void killReadActions(ChannelShared&) const;
 
 	ActionRecorder* m_actionRecorder;
-	Sequencer*      m_sequencer;
 };
 
 } // namespace giada::m
