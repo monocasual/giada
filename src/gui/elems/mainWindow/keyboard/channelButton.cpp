@@ -24,18 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "channelButton.h"
+#include "gui/elems/mainWindow/keyboard/channelButton.h"
 #include "core/channels/channel.h"
 #include "core/const.h"
 #include "core/model/model.h"
 #include "glue/channel.h"
+#include "gui/drawing.h"
 #include "src/core/actions/actions.h"
 #include "utils/string.h"
 #include <FL/fl_draw.H>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geChannelButton::geChannelButton(int x, int y, int w, int h, const c::channel::Data& d)
 : geButton(x, y, w, h)
@@ -81,15 +80,12 @@ void geChannelButton::draw()
 	if (m_channel.key == 0)
 		return;
 
-	/* draw background */
+	/* Draw m_channel.key. */
 
-	fl_rectf(x() + 1, y() + 1, 18, h() - 2, bgColor0);
+	const geompp::Rect bounds = geompp::Rect(x(), y(), 20, h()).reduced({1});
 
-	/* draw m_key */
-
-	fl_color(G_COLOR_LIGHT_2);
-	fl_font(FL_HELVETICA, 11);
-	fl_draw(std::string(1, static_cast<wchar_t>(m_channel.key)).c_str(), x(), y(), 18, h(), FL_ALIGN_CENTER);
+	drawRectf(bounds, G_COLOR_GREY_3);
+	drawText(std::string(1, m_channel.key), bounds, G_COLOR_LIGHT_2);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -114,7 +110,7 @@ void geChannelButton::setDefaultMode(const char* l)
 	bgColor0 = G_COLOR_GREY_2;
 	bdColor  = G_COLOR_GREY_4;
 	txtColor = G_COLOR_LIGHT_2;
-	if (l)
+	if (l != nullptr)
 		label(l);
 }
 
@@ -133,5 +129,4 @@ void geChannelButton::setEndingMode()
 {
 	bgColor0 = G_COLOR_GREY_4;
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

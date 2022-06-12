@@ -29,16 +29,12 @@
 
 #include "gui/elems/basics/button.h"
 
-namespace giada
-{
-namespace c
-{
-namespace channel
+namespace giada::c::channel
 {
 struct Data;
 }
-} // namespace c
-namespace v
+
+namespace giada::v
 {
 class geChannelButton : public geButton
 {
@@ -51,14 +47,13 @@ public:
 
 	void setPlayMode();
 	void setEndingMode();
-	void setDefaultMode(const char* l = 0);
+	void setDefaultMode(const char* l = nullptr);
 	void setInputRecordMode();
 	void setActionRecordMode();
 
-  protected:
+protected:
 	const c::channel::Data& m_channel;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif
