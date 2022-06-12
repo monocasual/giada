@@ -25,31 +25,28 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/channels/midiActionRecorder.h"
-#include "core/channels/channel.h"
-#include "core/conf.h"
 #include "core/eventDispatcher.h"
-#include "core/sequencer.h"
 #include "src/core/actions/action.h"
 #include "src/core/actions/actionRecorder.h"
 
 namespace giada::m
 {
-MidiActionRecorder::MidiActionRecorder(ActionRecorder& a, Sequencer& s)
+MidiActionRecorder::MidiActionRecorder(ActionRecorder& a)
 : m_actionRecorder(&a)
-, m_sequencer(&s)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MidiActionRecorder::react(Channel& ch, const EventDispatcher::Event& e, bool canRecordActions)
+void MidiActionRecorder::react(ID channelId, const EventDispatcher::Event& e,
+    Frame currentFrameQuantized, bool& hasActions)
 {
-	if (e.type == EventDispatcher::EventType::MIDI && canRecordActions)
+	if (e.type == EventDispatcher::EventType::MIDI)
 	{
 		MidiEvent flat(std::get<Action>(e.data).event);
 		flat.setChannel(0);
-		m_actionRecorder->liveRec(ch.id, flat, m_sequencer->getCurrentFrameQuantized());
-		ch.hasActions = true;
+		m_actionRecorder->liveRec(channelId, flat, currentFrameQuantized);
+		hasActions = true;
 	}
 }
 } // namespace giada::m

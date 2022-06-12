@@ -32,18 +32,16 @@
 namespace giada::m
 {
 class ActionRecorder;
-class Sequencer;
-class Channel;
 class MidiActionRecorder final
 {
 public:
-	MidiActionRecorder(ActionRecorder&, Sequencer&);
+	MidiActionRecorder(ActionRecorder&);
 
-	void react(Channel&, const EventDispatcher::Event&, bool canRecordActions);
+	void react(ID channelId, const EventDispatcher::Event&, Frame currentFrameQuantized,
+	    bool& hasActions);
 
 private:
 	ActionRecorder* m_actionRecorder;
-	Sequencer*      m_sequencer;
 };
 
 } // namespace giada::m

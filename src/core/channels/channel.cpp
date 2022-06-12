@@ -94,7 +94,7 @@ Channel::Channel(ChannelType type, ID id, ID columnId, ChannelShared& s)
 	case ChannelType::MIDI:
 		midiController.emplace();
 		midiSender.emplace(g_engine.kernelMidi);
-		midiActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
+		midiActionRecorder.emplace(g_engine.actionRecorder);
 #ifdef WITH_VST
 		midiReceiver.emplace();
 #endif
@@ -151,7 +151,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	case ChannelType::MIDI:
 		midiController.emplace();
 		midiSender.emplace(p, g_engine.kernelMidi);
-		midiActionRecorder.emplace(g_engine.actionRecorder, g_engine.sequencer);
+		midiActionRecorder.emplace(g_engine.actionRecorder);
 #ifdef WITH_VST
 		midiReceiver.emplace();
 #endif
@@ -337,20 +337,27 @@ void Channel::react(const EventDispatcher::EventBuffer& events)
 			continue;
 
 		react(e);
+
 		if (midiController)
 			midiController->react(shared->playStatus, e);
+
 		if (midiSender && isPlaying() && !isMuted())
 			midiSender->react(e);
+
 		if (samplePlayer)
 			samplePlayer->react(e);
-		if (midiActionRecorder)
-			midiActionRecorder->react(*this, e, g_engine.recorder.canRecordActions());
+
+		if (midiActionRecorder && g_engine.recorder.canRecordActions())
+			midiActionRecorder->react(id, e, g_engine.sequencer.getCurrentFrameQuantized(), hasActions);
+
 		if (sampleActionRecorder)
 			sampleActionRecorder->react(*this, e, g_engine.conf.data.treatRecsAsLoops,
 			    g_engine.sequencer.isRunning(), g_engine.recorder.canRecordActions());
+
 		if (sampleReactor)
 			sampleReactor->react(*this, e, g_engine.conf.data.chansStopOnSeqHalt,
 			    g_engine.sequencer.canQuantize());
+
 #ifdef WITH_VST
 		if (midiReceiver)
 			midiReceiver->react(shared->midiQueue, e);
