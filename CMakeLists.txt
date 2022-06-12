@@ -252,6 +252,7 @@ endif()
 option(WITH_VST2 "Enable VST2 support." OFF)
 option(WITH_VST3 "Enable VST3 support." OFF)
 option(WITH_TESTS "Include the test suite." OFF)
+option(WITH_SYSTEM_JSON "Use a system copy of nlohmann_json." OFF)
 
 if(DEFINED OS_LINUX)
 	option(WITH_ALSA "Enable ALSA support (Linux only)." ON)
@@ -397,9 +398,18 @@ list(APPEND LIBRARIES fmt::fmt)
 
 # nlohmann_json (embedded as git submodule)
 
-set(JSON_Install OFF CACHE INTERNAL "") # No need to install it
-set(JSON_BuildTests OFF CACHE INTERNAL "") # Don't build tests
-add_subdirectory(src/deps/json)
+if (WITH_SYSTEM_JSON)
+
+	find_package(nlohmann_json REQUIRED)
+
+else()
+
+	set(JSON_Install OFF CACHE INTERNAL "") # No need to install it
+	set(JSON_BuildTests OFF CACHE INTERNAL "") # Don't build tests
+	add_subdirectory(src/deps/json)
+
+endif()
+
 list(APPEND LIBRARIES nlohmann_json::nlohmann_json)
 
 # Catch (if tests enabled)
