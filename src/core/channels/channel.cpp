@@ -441,7 +441,7 @@ void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool au
 	}
 
 	if (audioReceiver)
-		audioReceiver->render(*this, in);
+		audioReceiver->render(in, shared->audioBuffer, armed);
 
 		/* If MidiReceiver exists, let it process the plug-in stack, as it can 
 	contain plug-ins that take MIDI events (i.e. synths). Otherwise process the

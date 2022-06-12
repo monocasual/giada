@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "audioReceiver.h"
-#include "core/channels/channel.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 
 namespace giada::m
@@ -38,14 +37,14 @@ AudioReceiver::AudioReceiver(const Patch::Channel& p)
 
 /* -------------------------------------------------------------------------- */
 
-void AudioReceiver::render(const Channel& ch, const mcl::AudioBuffer& in) const
+void AudioReceiver::render(const mcl::AudioBuffer& in, mcl::AudioBuffer& out, bool armed) const
 {
 	/* If armed and input monitor is on, copy input buffer to channel buffer: 
 	this enables the input monitoring. The channel buffer will be overwritten 
 	later on by pluginHost::processStack, so that you would record "clean" audio 
 	(i.e. not plugin-processed). */
 
-	if (ch.armed && inputMonitor)
-		ch.shared->audioBuffer.set(in, /*gain=*/1.0f); // add, don't overwrite
+	if (armed && inputMonitor)
+		out.set(in, /*gain=*/1.0f); // add, don't overwrite
 }
 } // namespace giada::m

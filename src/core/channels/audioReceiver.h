@@ -36,7 +36,6 @@ class AudioBuffer;
 
 namespace giada::m
 {
-class Channel;
 class AudioReceiver final
 {
 public:
@@ -44,7 +43,7 @@ public:
 	AudioReceiver(const Patch::Channel& p);
 	AudioReceiver(const AudioReceiver& o) = default;
 
-	void render(const Channel& ch, const mcl::AudioBuffer& in) const;
+	void render(const mcl::AudioBuffer& in, mcl::AudioBuffer& out, bool armed) const;
 
 	bool inputMonitor;
 	bool overdubProtection;
