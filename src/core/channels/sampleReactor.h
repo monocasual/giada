@@ -37,7 +37,6 @@ class Model;
 
 namespace giada::m
 {
-class Channel;
 struct ChannelShared;
 
 /* SampleReactor
@@ -53,16 +52,18 @@ public:
 		Frame offset;
 	};
 
-	SampleReactor(Channel&, ID channelId);
+	SampleReactor(ChannelShared&, ID channelId);
 
-	void react(Channel&, const EventDispatcher::Event&, bool chansStopOnSeqHalt, bool canQuantize) const;
+	void react(ID channelId, ChannelShared&, const EventDispatcher::Event&, SamplePlayerMode,
+	    bool velocityAsVol, bool chansStopOnSeqHalt, bool canQuantize, bool isLoop,
+	    float& volume_i) const;
 
 private:
-	void          onStopBySeq(Channel&, bool chansStopOnSeqHalt) const;
-	void          release(Channel&) const;
-	void          press(Channel&, int velocity, bool canQuantize) const;
-	ChannelStatus pressWhilePlay(Channel&, SamplePlayerMode, bool isLoop, bool canQuantize) const;
-	ChannelStatus pressWhileOff(Channel&, int velocity, bool isLoop, bool canQuantize) const;
+	void          onStopBySeq(ChannelShared&, bool chansStopOnSeqHalt, bool isLoop) const;
+	void          release(ChannelShared&) const;
+	void          press(ID channelId, ChannelShared&, SamplePlayerMode, int velocity, bool canQuantize, bool isLoop, bool velocityAsVol, float& volume_i) const;
+	ChannelStatus pressWhilePlay(ID channelId, ChannelShared&, SamplePlayerMode, bool canQuantize) const;
+	ChannelStatus pressWhileOff(ID channelId, ChannelShared&, int velocity, bool canQuantize, bool velocityAsVol, float& volume_i) const;
 	void          rewind(ChannelShared&, Frame localFrame) const;
 	void          play(ChannelShared&, Frame localFrame) const;
 	void          stop(ChannelShared&) const;

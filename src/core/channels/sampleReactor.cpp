@@ -25,9 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/channels/sampleReactor.h"
-#include "core/channels/channel.h"
-#include "core/conf.h"
-#include "core/model/model.h"
+#include "core/channels/channelShared.h"
 #include "utils/math.h"
 
 namespace giada::m
@@ -42,46 +40,45 @@ constexpr int Q_ACTION_REWIND = 10000; // Avoid clash with Q_ACTION_PLAY + chann
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-SampleReactor::SampleReactor(Channel& ch, ID channelId)
+SampleReactor::SampleReactor(ChannelShared& shared, ID channelId)
 {
-	ch.shared->quantizer->schedule(Q_ACTION_PLAY + channelId, [this, shared = ch.shared](Frame delta) {
-		play(*shared, delta);
+	shared.quantizer->schedule(Q_ACTION_PLAY + channelId, [this, &shared](Frame delta) {
+		play(shared, delta);
 	});
 
-	ch.shared->quantizer->schedule(Q_ACTION_REWIND + channelId, [this, shared = ch.shared](Frame delta) {
-		ChannelStatus status = shared->playStatus.load();
+	shared.quantizer->schedule(Q_ACTION_REWIND + channelId, [this, &shared](Frame delta) {
+		const ChannelStatus status = shared.playStatus.load();
 		if (status == ChannelStatus::OFF)
-			play(*shared, delta);
+			play(shared, delta);
 		else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
-			rewind(*shared, delta);
+			rewind(shared, delta);
 	});
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleReactor::react(Channel& ch, const EventDispatcher::Event& e,
-    bool chansStopOnSeqHalt, bool canQuantize) const
+void SampleReactor::react(ID channelId, ChannelShared& shared, const EventDispatcher::Event& e,
+    SamplePlayerMode mode, bool velocityAsVol, bool chansStopOnSeqHalt, bool canQuantize,
+    bool isLoop, float& volume_i) const
 {
-	if (!ch.hasWave())
-		return;
-
 	switch (e.type)
 	{
 	case EventDispatcher::EventType::KEY_PRESS:
-		press(ch, std::get<int>(e.data), canQuantize);
+		press(channelId, shared, mode, std::get<int>(e.data), canQuantize, isLoop, velocityAsVol, volume_i);
 		break;
 
 	case EventDispatcher::EventType::KEY_RELEASE:
-		release(ch);
+		if (mode == SamplePlayerMode::SINGLE_PRESS) // Key release is meaningful only for SINGLE_PRESS modes
+			release(shared);
 		break;
 
 	case EventDispatcher::EventType::KEY_KILL:
-		if (ch.shared->playStatus.load() == ChannelStatus::PLAY)
-			stop(*ch.shared);
+		if (shared.playStatus.load() == ChannelStatus::PLAY)
+			stop(shared);
 		break;
 
 	case EventDispatcher::EventType::SEQUENCER_STOP:
-		onStopBySeq(ch, chansStopOnSeqHalt);
+		onStopBySeq(shared, chansStopOnSeqHalt, isLoop);
 		break;
 
 	default:
@@ -113,18 +110,15 @@ void SampleReactor::stop(ChannelShared& shared) const
 
 /* -------------------------------------------------------------------------- */
 
-ChannelStatus SampleReactor::pressWhileOff(Channel& ch, int velocity, bool isLoop,
-    bool canQuantize) const
+ChannelStatus SampleReactor::pressWhileOff(ID channelId, ChannelShared& shared,
+    int velocity, bool canQuantize, bool velocityAsVol, float& volume_i) const
 {
-	if (isLoop)
-		return ChannelStatus::WAIT;
-
-	if (ch.samplePlayer->velocityAsVol)
-		ch.volume_i = u::math::map(velocity, G_MAX_VELOCITY, G_MAX_VOLUME);
+	if (velocityAsVol)
+		volume_i = u::math::map(velocity, G_MAX_VELOCITY, G_MAX_VOLUME);
 
 	if (canQuantize)
 	{
-		ch.shared->quantizer->trigger(Q_ACTION_PLAY + ch.id);
+		shared.quantizer->trigger(Q_ACTION_PLAY + channelId);
 		return ChannelStatus::OFF;
 	}
 	else
@@ -133,26 +127,23 @@ ChannelStatus SampleReactor::pressWhileOff(Channel& ch, int velocity, bool isLoo
 
 /* -------------------------------------------------------------------------- */
 
-ChannelStatus SampleReactor::pressWhilePlay(Channel& ch, SamplePlayerMode mode,
-    bool isLoop, bool canQuantize) const
+ChannelStatus SampleReactor::pressWhilePlay(ID channelId, ChannelShared& shared,
+    SamplePlayerMode mode, bool canQuantize) const
 {
-	if (isLoop)
-		return ChannelStatus::ENDING;
-
 	switch (mode)
 	{
 	case SamplePlayerMode::SINGLE_RETRIG:
 		if (canQuantize)
-			ch.shared->quantizer->trigger(Q_ACTION_REWIND + ch.id);
+			shared.quantizer->trigger(Q_ACTION_REWIND + channelId);
 		else
-			rewind(*ch.shared, /*localFrame=*/0);
+			rewind(shared, /*localFrame=*/0);
 		return ChannelStatus::PLAY;
 
 	case SamplePlayerMode::SINGLE_ENDLESS:
 		return ChannelStatus::ENDING;
 
 	case SamplePlayerMode::SINGLE_BASIC:
-		stop(*ch.shared);
+		stop(shared);
 		return ChannelStatus::PLAY; // Let SamplePlayer stop it once done
 
 	default:
@@ -162,21 +153,25 @@ ChannelStatus SampleReactor::pressWhilePlay(Channel& ch, SamplePlayerMode mode,
 
 /* -------------------------------------------------------------------------- */
 
-void SampleReactor::press(Channel& ch, int velocity, bool canQuantize) const
+void SampleReactor::press(ID channelId, ChannelShared& shared, SamplePlayerMode mode,
+    int velocity, bool canQuantize, bool isLoop, bool velocityAsVol, float& volume_i) const
 {
-	const SamplePlayerMode mode   = ch.samplePlayer->mode;
-	const bool             isLoop = ch.samplePlayer->isAnyLoopMode();
-
-	ChannelStatus playStatus = ch.shared->playStatus.load();
+	ChannelStatus playStatus = shared.playStatus.load();
 
 	switch (playStatus)
 	{
 	case ChannelStatus::OFF:
-		playStatus = pressWhileOff(ch, velocity, isLoop, canQuantize);
+		if (isLoop)
+			playStatus = ChannelStatus::WAIT;
+		else
+			playStatus = pressWhileOff(channelId, shared, velocity, canQuantize, velocityAsVol, volume_i);
 		break;
 
 	case ChannelStatus::PLAY:
-		playStatus = pressWhilePlay(ch, mode, isLoop, canQuantize);
+		if (isLoop)
+			playStatus = ChannelStatus::ENDING;
+		else
+			playStatus = pressWhilePlay(channelId, shared, mode, canQuantize);
 		break;
 
 	case ChannelStatus::WAIT:
@@ -191,37 +186,29 @@ void SampleReactor::press(Channel& ch, int velocity, bool canQuantize) const
 		break;
 	}
 
-	ch.shared->playStatus.store(playStatus);
+	shared.playStatus.store(playStatus);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleReactor::release(Channel& ch) const
+void SampleReactor::release(ChannelShared& shared) const
 {
-	/* Key release is meaningful only for SINGLE_PRESS modes. */
-
-	if (ch.samplePlayer->mode != SamplePlayerMode::SINGLE_PRESS)
-		return;
-
 	/* Kill it if it's SINGLE_PRESS is playing. Otherwise there might be a 
 	quantization step in progress that would play the channel later on: 
 	disable it. */
 
-	if (ch.shared->playStatus.load() == ChannelStatus::PLAY)
-		stop(*ch.shared); // Let SamplePlayer stop it once done
-	else if (ch.shared->quantizer->hasBeenTriggered())
-		ch.shared->quantizer->clear();
+	if (shared.playStatus.load() == ChannelStatus::PLAY)
+		stop(shared); // Let SamplePlayer stop it once done
+	else if (shared.quantizer->hasBeenTriggered())
+		shared.quantizer->clear();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleReactor::onStopBySeq(Channel& ch, bool chansStopOnSeqHalt) const
+void SampleReactor::onStopBySeq(ChannelShared& shared, bool chansStopOnSeqHalt, bool isLoop) const
 {
-	G_DEBUG("onStopBySeq ch=" << ch.id);
-
-	ChannelStatus playStatus       = ch.shared->playStatus.load();
-	bool          isReadingActions = ch.shared->isReadingActions();
-	bool          isLoop           = ch.samplePlayer->isAnyLoopMode();
+	const ChannelStatus playStatus       = shared.playStatus.load();
+	const bool          isReadingActions = shared.isReadingActions();
 
 	switch (playStatus)
 	{
@@ -229,12 +216,12 @@ void SampleReactor::onStopBySeq(Channel& ch, bool chansStopOnSeqHalt) const
 	case ChannelStatus::WAIT:
 		/* Loop-mode channels in wait status get stopped right away. */
 		if (isLoop)
-			ch.shared->playStatus.store(ChannelStatus::OFF);
+			shared.playStatus.store(ChannelStatus::OFF);
 		break;
 
 	case ChannelStatus::PLAY:
 		if (chansStopOnSeqHalt && (isLoop || isReadingActions))
-			stop(*ch.shared);
+			stop(shared);
 		break;
 
 	default:
