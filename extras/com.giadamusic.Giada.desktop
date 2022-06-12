@@ -3,7 +3,6 @@ Version=1.0
 Type=Application
 Name=Giada
 GenericName=Drum machine and loop sequencer
-Comment=Drum machine and loop sequencer
 GenericName[de]=Drum Maschine und Loop Sequenzer
 GenericName[es]=Caja de ritmos y secuenciador de loops
 GenericName[fr]=Boîte à rythme et séquenceur de boucle
