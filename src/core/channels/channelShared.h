@@ -47,6 +47,8 @@ struct ChannelShared final
 
 	ChannelShared(Frame bufferSize);
 
+	bool isReadingActions() const;
+
 	mcl::AudioBuffer audioBuffer;
 #ifdef WITH_VST
 	juce::MidiBuffer midiBuffer;

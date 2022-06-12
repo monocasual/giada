@@ -269,12 +269,6 @@ bool Channel::isPlaying() const
 	return s == ChannelStatus::PLAY || s == ChannelStatus::ENDING;
 }
 
-bool Channel::isReadingActions() const
-{
-	ChannelStatus s = shared->recStatus.load();
-	return s == ChannelStatus::PLAY || s == ChannelStatus::ENDING;
-}
-
 /* -------------------------------------------------------------------------- */
 
 void Channel::setMute(bool v)
@@ -302,7 +296,8 @@ void Channel::initCallbacks()
 	if (samplePlayer)
 	{
 		samplePlayer->onLastFrame = [this](bool natural) {
-			sampleAdvancer->onLastFrame(*this, g_engine.sequencer.isRunning(), natural);
+			sampleAdvancer->onLastFrame(*shared, g_engine.sequencer.isRunning(),
+			    natural, samplePlayer->mode, samplePlayer->isAnyLoopMode());
 		};
 	}
 }
@@ -318,10 +313,13 @@ void Channel::advance(const Sequencer::EventBuffer& events, Range<Frame> block, 
 	{
 		if (midiController)
 			midiController->advance(shared->playStatus, e);
+
 		if (samplePlayer)
-			sampleAdvancer->advance(*this, e);
+			sampleAdvancer->advance(id, *shared, e, samplePlayer->mode, samplePlayer->isAnyLoopMode());
+
 		if (midiSender && isPlaying() && !isMuted())
 			midiSender->advance(id, e);
+
 #ifdef WITH_VST
 		if (midiReceiver && isPlaying())
 			midiReceiver->advance(id, shared->midiQueue, e);

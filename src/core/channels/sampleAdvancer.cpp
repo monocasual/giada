@@ -25,17 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/channels/sampleAdvancer.h"
-#include "core/channels/channel.h"
-#include <cassert>
+#include "core/channels/channelShared.h"
 
 namespace giada::m
 {
-void SampleAdvancer::onLastFrame(const Channel& ch, bool seqIsRunning, bool natural) const
+void SampleAdvancer::onLastFrame(ChannelShared& shared, bool seqIsRunning, bool natural,
+    SamplePlayerMode mode, bool isLoop) const
 {
-	const SamplePlayerMode mode   = ch.samplePlayer->mode;
-	const bool             isLoop = ch.samplePlayer->isAnyLoopMode();
-
-	switch (ch.shared->playStatus.load())
+	switch (shared.playStatus.load())
 	{
 	case ChannelStatus::PLAY:
 		/* Stop LOOP_* when the sequencer is off, or SINGLE_* except for
@@ -46,13 +43,13 @@ void SampleAdvancer::onLastFrame(const Channel& ch, bool seqIsRunning, bool natu
 		        mode == SamplePlayerMode::SINGLE_PRESS ||
 		        mode == SamplePlayerMode::SINGLE_RETRIG) ||
 		    (isLoop && !seqIsRunning) || !natural)
-			ch.shared->playStatus.store(ChannelStatus::OFF);
+			shared.playStatus.store(ChannelStatus::OFF);
 		else if (mode == SamplePlayerMode::LOOP_ONCE || mode == SamplePlayerMode::LOOP_ONCE_BAR)
-			ch.shared->playStatus.store(ChannelStatus::WAIT);
+			shared.playStatus.store(ChannelStatus::WAIT);
 		break;
 
 	case ChannelStatus::ENDING:
-		ch.shared->playStatus.store(ChannelStatus::OFF);
+		shared.playStatus.store(ChannelStatus::OFF);
 		break;
 
 	default:
@@ -62,26 +59,27 @@ void SampleAdvancer::onLastFrame(const Channel& ch, bool seqIsRunning, bool natu
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::advance(const Channel& ch, const Sequencer::Event& e) const
+void SampleAdvancer::advance(ID channelId, ChannelShared& shared,
+    const Sequencer::Event& e, SamplePlayerMode mode, bool isLoop) const
 {
 	switch (e.type)
 	{
 	case Sequencer::EventType::FIRST_BEAT:
-		onFirstBeat(ch, e.delta);
+		onFirstBeat(shared, e.delta, isLoop);
 		break;
 
 	case Sequencer::EventType::BAR:
-		onBar(ch, e.delta);
+		onBar(shared, e.delta, mode);
 		break;
 
 	case Sequencer::EventType::REWIND:
-		if (ch.samplePlayer->isAnyLoopMode())
-			rewind(ch, e.delta);
+		if (isLoop)
+			rewind(shared, e.delta);
 		break;
 
 	case Sequencer::EventType::ACTIONS:
-		if (ch.shared->readActions.load() == true)
-			parseActions(ch, *e.actions, e.delta);
+		if (!isLoop && shared.isReadingActions())
+			parseActions(channelId, shared, *e.actions, e.delta, mode);
 		break;
 
 	default:
@@ -91,50 +89,47 @@ void SampleAdvancer::advance(const Channel& ch, const Sequencer::Event& e) const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::rewind(const Channel& ch, Frame localFrame) const
+void SampleAdvancer::rewind(ChannelShared& shared, Frame localFrame) const
 {
-	ch.shared->renderQueue->push({SamplePlayer::Render::Mode::REWIND, localFrame});
+	shared.renderQueue->push({SamplePlayer::Render::Mode::REWIND, localFrame});
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::stop(const Channel& ch, Frame localFrame) const
+void SampleAdvancer::stop(ChannelShared& shared, Frame localFrame) const
 {
-	ch.shared->renderQueue->push({SamplePlayer::Render::Mode::STOP, localFrame});
+	shared.renderQueue->push({SamplePlayer::Render::Mode::STOP, localFrame});
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::play(const Channel& ch, Frame localFrame) const
+void SampleAdvancer::play(ChannelShared& shared, Frame localFrame) const
 {
-	ch.shared->playStatus.store(ChannelStatus::PLAY);
-	ch.shared->renderQueue->push({SamplePlayer::Render::Mode::NORMAL, localFrame});
+	shared.playStatus.store(ChannelStatus::PLAY);
+	shared.renderQueue->push({SamplePlayer::Render::Mode::NORMAL, localFrame});
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::onFirstBeat(const Channel& ch, Frame localFrame) const
+void SampleAdvancer::onFirstBeat(ChannelShared& shared, Frame localFrame, bool isLoop) const
 {
-	G_DEBUG("onFirstBeat ch=" << ch.id << ", localFrame=" << localFrame);
-
-	const ChannelStatus playStatus = ch.shared->playStatus.load();
-	const ChannelStatus recStatus  = ch.shared->recStatus.load();
-	const bool          isLoop     = ch.samplePlayer->isAnyLoopMode();
+	const ChannelStatus playStatus = shared.playStatus.load();
+	const ChannelStatus recStatus  = shared.recStatus.load();
 
 	switch (playStatus)
 	{
 	case ChannelStatus::PLAY:
 		if (isLoop)
-			rewind(ch, localFrame);
+			rewind(shared, localFrame);
 		break;
 
 	case ChannelStatus::WAIT:
-		play(ch, localFrame);
+		play(shared, localFrame);
 		break;
 
 	case ChannelStatus::ENDING:
 		if (isLoop)
-			stop(ch, localFrame);
+			stop(shared, localFrame);
 		break;
 
 	default:
@@ -144,13 +139,13 @@ void SampleAdvancer::onFirstBeat(const Channel& ch, Frame localFrame) const
 	switch (recStatus)
 	{
 	case ChannelStatus::WAIT:
-		ch.shared->recStatus.store(ChannelStatus::PLAY);
-		ch.shared->readActions.store(true);
+		shared.recStatus.store(ChannelStatus::PLAY);
+		shared.readActions.store(true);
 		break;
 
 	case ChannelStatus::ENDING:
-		ch.shared->recStatus.store(ChannelStatus::OFF);
-		ch.shared->readActions.store(false);
+		shared.recStatus.store(ChannelStatus::OFF);
+		shared.readActions.store(false);
 		break;
 
 	default:
@@ -160,35 +155,32 @@ void SampleAdvancer::onFirstBeat(const Channel& ch, Frame localFrame) const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::onBar(const Channel& ch, Frame localFrame) const
+void SampleAdvancer::onBar(ChannelShared& shared, Frame localFrame, SamplePlayerMode mode) const
 {
-	G_DEBUG("onBar ch=" << ch.id << ", localFrame=" << localFrame);
+	const ChannelStatus playStatus = shared.playStatus.load();
 
-	const ChannelStatus    playStatus = ch.shared->playStatus.load();
-	const SamplePlayerMode mode       = ch.samplePlayer->mode;
-
-	if (playStatus == ChannelStatus::PLAY && (mode == SamplePlayerMode::LOOP_REPEAT ||
-	                                             mode == SamplePlayerMode::LOOP_ONCE_BAR))
-		rewind(ch, localFrame);
+	if (playStatus == ChannelStatus::PLAY &&
+	    (mode == SamplePlayerMode::LOOP_REPEAT || mode == SamplePlayerMode::LOOP_ONCE_BAR))
+		rewind(shared, localFrame);
 	else if (playStatus == ChannelStatus::WAIT && mode == SamplePlayerMode::LOOP_ONCE_BAR)
-		play(ch, localFrame);
+		play(shared, localFrame);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::onNoteOn(const Channel& ch, Frame localFrame) const
+void SampleAdvancer::onNoteOn(ChannelShared& shared, Frame localFrame, SamplePlayerMode mode) const
 {
-	switch (ch.shared->playStatus.load())
+	switch (shared.playStatus.load())
 	{
 	case ChannelStatus::OFF:
-		play(ch, localFrame);
+		play(shared, localFrame);
 		break;
 
 	case ChannelStatus::PLAY:
-		if (ch.samplePlayer->mode == SamplePlayerMode::SINGLE_RETRIG)
-			rewind(ch, localFrame);
+		if (mode == SamplePlayerMode::SINGLE_RETRIG)
+			rewind(shared, localFrame);
 		else
-			stop(ch, localFrame);
+			stop(shared, localFrame);
 		break;
 
 	default:
@@ -198,27 +190,24 @@ void SampleAdvancer::onNoteOn(const Channel& ch, Frame localFrame) const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleAdvancer::parseActions(const Channel& ch,
-    const std::vector<Action>& as, Frame localFrame) const
+void SampleAdvancer::parseActions(ID channelId, ChannelShared& shared,
+    const std::vector<Action>& as, Frame localFrame, SamplePlayerMode mode) const
 {
-	if (ch.samplePlayer->isAnyLoopMode() || !ch.isReadingActions())
-		return;
-
 	for (const Action& a : as)
 	{
-		if (a.channelId != ch.id)
+		if (a.channelId != channelId)
 			continue;
 
 		switch (a.event.getStatus())
 		{
 		case MidiEvent::NOTE_ON:
-			onNoteOn(ch, localFrame);
+			onNoteOn(shared, localFrame, mode);
 			break;
 
 		case MidiEvent::NOTE_OFF:
 		case MidiEvent::NOTE_KILL:
-			if (ch.shared->playStatus.load() == ChannelStatus::PLAY)
-				stop(ch, localFrame);
+			if (shared.playStatus.load() == ChannelStatus::PLAY)
+				stop(shared, localFrame);
 			break;
 
 		default:

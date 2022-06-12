@@ -32,4 +32,13 @@ ChannelShared::ChannelShared(Frame bufferSize)
 : audioBuffer(bufferSize, G_MAX_IO_CHANS)
 {
 }
+
+/* -------------------------------------------------------------------------- */
+
+bool ChannelShared::isReadingActions() const
+{
+	const ChannelStatus status = recStatus.load();
+	const bool          read   = readActions.load();
+	return read && (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING);
+}
 } // namespace giada::m

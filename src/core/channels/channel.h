@@ -88,7 +88,6 @@ public:
 	void react(const EventDispatcher::EventBuffer& e);
 
 	bool isPlaying() const;
-	bool isReadingActions() const;
 	bool isInternal() const;
 	bool isMuted() const;
 	bool isSoloed() const;

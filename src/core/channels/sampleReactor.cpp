@@ -220,7 +220,7 @@ void SampleReactor::onStopBySeq(Channel& ch, bool chansStopOnSeqHalt) const
 	G_DEBUG("onStopBySeq ch=" << ch.id);
 
 	ChannelStatus playStatus       = ch.shared->playStatus.load();
-	bool          isReadingActions = ch.shared->readActions.load();
+	bool          isReadingActions = ch.shared->isReadingActions();
 	bool          isLoop           = ch.samplePlayer->isAnyLoopMode();
 
 	switch (playStatus)

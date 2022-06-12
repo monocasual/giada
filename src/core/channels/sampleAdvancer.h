@@ -31,21 +31,21 @@
 
 namespace giada::m
 {
-class Channel;
+struct ChannelShared;
 class SampleAdvancer final
 {
 public:
-	void onLastFrame(const Channel& ch, bool seqIsRunning, bool natural) const;
-	void advance(const Channel& ch, const Sequencer::Event& e) const;
+	void onLastFrame(ChannelShared&, bool seqIsRunning, bool natural, SamplePlayerMode, bool isLoop) const;
+	void advance(ID channelId, ChannelShared&, const Sequencer::Event&, SamplePlayerMode, bool isLoop) const;
 
 private:
-	void rewind(const Channel& ch, Frame localFrame) const;
-	void stop(const Channel& ch, Frame localFrame) const;
-	void play(const Channel& ch, Frame localFrame) const;
-	void onFirstBeat(const Channel& ch, Frame localFrame) const;
-	void onBar(const Channel& ch, Frame localFrame) const;
-	void onNoteOn(const Channel& ch, Frame localFrame) const;
-	void parseActions(const Channel& ch, const std::vector<Action>& as, Frame localFrame) const;
+	void rewind(ChannelShared&, Frame localFrame) const;
+	void stop(ChannelShared&, Frame localFrame) const;
+	void play(ChannelShared&, Frame localFrame) const;
+	void onFirstBeat(ChannelShared&, Frame localFrame, bool isLoop) const;
+	void onBar(ChannelShared&, Frame localFrame, SamplePlayerMode) const;
+	void onNoteOn(ChannelShared&, Frame localFrame, SamplePlayerMode) const;
+	void parseActions(ID channelId, ChannelShared&, const std::vector<Action>&, Frame localFrame, SamplePlayerMode) const;
 };
 } // namespace giada::m
 
