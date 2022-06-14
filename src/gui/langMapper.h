@@ -177,7 +177,7 @@ public:
 	static constexpr auto PLUGINCHOOSER_SORTBY              = "pluginChooser_sortBy";
 	static constexpr auto PLUGINCHOOSER_SORTBY_NAME         = "pluginChooser_sortBy_name";
 	static constexpr auto PLUGINCHOOSER_SORTBY_CATEGORY     = "pluginChooser_sortBy_category";
-	static constexpr auto PLUGINCHOOSER_SORTBY_MANIFACTURER = "pluginChooser_sortBy_manifacturer";
+	static constexpr auto PLUGINCHOOSER_SORTBY_MANUFACTURER = "pluginChooser_sortBy_manufacturer";
 	static constexpr auto PLUGINCHOOSER_SORTBY_FORMAT       = "pluginChooser_sortBy_format";
 
 	static constexpr auto PLUGINLIST_TITLE_MASTEROUT = "pluginList_title_masterOut";

@@ -79,7 +79,7 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Co
 
 	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_NAME));
 	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_CATEGORY));
-	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_MANIFACTURER));
+	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_MANUFACTURER));
 	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_FORMAT));
 	sortMethod->showItem(m_conf.pluginSortMethod);
 	sortMethod->onChange = [this](ID id) {
