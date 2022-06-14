@@ -180,7 +180,7 @@ LangMap::LangMap()
 	m_data[PLUGINCHOOSER_SORTBY]              = "Sort by";
 	m_data[PLUGINCHOOSER_SORTBY_NAME]         = "Name";
 	m_data[PLUGINCHOOSER_SORTBY_CATEGORY]     = "Category";
-	m_data[PLUGINCHOOSER_SORTBY_MANIFACTURER] = "Manifacturer";
+	m_data[PLUGINCHOOSER_SORTBY_MANUFACTURER] = "Manufacturer";
 	m_data[PLUGINCHOOSER_SORTBY_FORMAT]       = "Format";
 
 	m_data[PLUGINLIST_TITLE_MASTEROUT] = "Master Out Plug-ins";
