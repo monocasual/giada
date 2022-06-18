@@ -395,11 +395,9 @@ endif()
 find_package(fmt REQUIRED)
 list(APPEND LIBRARIES fmt::fmt)
 
-# nlohmann_json (embedded as git submodule)
+# nlohmann_json
 
-set(JSON_Install OFF CACHE INTERNAL "") # No need to install it
-set(JSON_BuildTests OFF CACHE INTERNAL "") # Don't build tests
-add_subdirectory(src/deps/json)
+find_package(nlohmann_json REQUIRED)
 list(APPEND LIBRARIES nlohmann_json::nlohmann_json)
 
 # Catch (if tests enabled)

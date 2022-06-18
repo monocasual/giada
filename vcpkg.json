@@ -24,6 +24,10 @@
             "version>=": "0.2.2"
         },
         {
+            "name": "nlohmann-json",
+            "version>=": "3.10.5"
+        },
+        {
             "name": "libsndfile",
             "version>=": "1.0.31",
             "features": [
