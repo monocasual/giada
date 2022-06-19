@@ -52,12 +52,9 @@ namespace giada::m
 {
 struct Action;
 class Channel;
-class MixerHandler;
 class Mixer
 {
 public:
-	friend MixerHandler;
-
 	static constexpr int MASTER_OUT_CHANNEL_ID = 1;
 	static constexpr int MASTER_IN_CHANNEL_ID  = 2;
 	static constexpr int PREVIEW_CHANNEL_ID    = 3;
@@ -124,6 +121,13 @@ public:
 
 	const mcl::AudioBuffer& getRecBuffer();
 
+	/* startInputRec, stopInputRec
+	Starts/stops input recording on frame 'from'. The latter returns the number 
+	of recorded frames. */
+
+	void  startInputRec(Frame from);
+	Frame stopInputRec();
+
 	/* advanceChannels
 	Processes Channels' static events (e.g. pre-recorded actions or sequencer 
 	events) in the current audio block. Called by the main audio thread when the 
@@ -131,6 +135,16 @@ public:
 
 	void advanceChannels(const Sequencer::EventBuffer&, const model::Layout&,
 	    Range<Frame>, Frame quantizerStep);
+
+	/* updateSoloCount
+    Updates the number of solo-ed channels in mixer. */
+
+	void updateSoloCount(bool hasSolos);
+
+	/* setInToOut
+	Toggles the InToOut flag, a.k.a. the 'hear-what-you're-playing' feature. */
+
+	void setInToOut(bool v);
 
 	/* onSignalTresholdReached
 	Callback fired when audio has reached a certain threshold (record-on-signal 
@@ -187,13 +201,6 @@ private:
 
 	void finalizeOutput(const model::Mixer&, mcl::AudioBuffer&, bool inToOut,
 	    bool limit, float vol) const;
-
-	/* startInputRec, stopInputRec
-	Starts/stops input recording on frame 'from'. The latter returns the number 
-	of recorded frames. */
-
-	void  startInputRec(Frame from);
-	Frame stopInputRec();
 
 	model::Model& m_model;
 

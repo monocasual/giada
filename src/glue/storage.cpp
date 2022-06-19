@@ -30,7 +30,6 @@
 #include "core/engine.h"
 #include "core/init.h"
 #include "core/mixer.h"
-#include "core/mixerHandler.h"
 #include "core/model/model.h"
 #include "core/patch.h"
 #include "core/plugins/plugin.h"

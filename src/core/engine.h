@@ -30,6 +30,7 @@
 #include "core/actions/actionRecorder.h"
 #include "core/actions/actions.h"
 #include "core/channels/channelFactory.h"
+#include "core/channels/channelManager.h"
 #include "core/conf.h"
 #include "core/eventDispatcher.h"
 #include "core/init.h"
@@ -39,7 +40,6 @@
 #include "core/midiDispatcher.h"
 #include "core/midiMapper.h"
 #include "core/mixer.h"
-#include "core/mixerHandler.h"
 #include "core/model/model.h"
 #include "core/patch.h"
 #include "core/plugins/pluginHost.h"
@@ -116,12 +116,12 @@ public:
 	EventDispatcher        eventDispatcher;
 	MidiMapper<KernelMidi> midiMapper;
 	ChannelFactory         channelFactory;
+	ChannelManager         channelManager;
 	MidiDispatcher         midiDispatcher;
 	ActionRecorder         actionRecorder;
 	Synchronizer           synchronizer;
 	Sequencer              sequencer;
 	Mixer                  mixer;
-	MixerHandler           mixerHandler;
 	Recorder               recorder;
 #ifdef WITH_VST
 	PluginHost    pluginHost;

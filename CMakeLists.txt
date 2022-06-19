@@ -44,7 +44,6 @@ list(APPEND SOURCES
 	src/core/conf.cpp
 	src/core/kernelAudio.cpp
 	src/core/jackTransport.cpp
-	src/core/mixerHandler.cpp
 	src/core/sequencer.cpp
 	src/core/metronome.cpp
 	src/core/init.cpp
@@ -65,6 +64,7 @@ list(APPEND SOURCES
 	src/core/plugins/pluginManager.cpp
 	src/core/plugins/plugin.cpp
 	src/core/plugins/pluginState.cpp
+	src/core/channels/channelManager.cpp
 	src/core/channels/sampleActionRecorder.cpp
 	src/core/channels/midiActionRecorder.cpp
 	src/core/channels/waveReader.cpp

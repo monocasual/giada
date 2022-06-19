@@ -30,7 +30,6 @@
 #include "core/conf.h"
 #include "core/engine.h"
 #include "core/midiMapper.h"
-#include "core/mixerHandler.h"
 #include "core/model/model.h"
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
@@ -399,7 +398,7 @@ void Channel::react(const EventDispatcher::Event& e)
 
 	case EventDispatcher::EventType::CHANNEL_SOLO:
 		setSolo(!isSoloed());
-		g_engine.mixerHandler.updateSoloCount();
+		g_engine.mixer.updateSoloCount(g_engine.channelManager.hasSolos());
 		break;
 
 	default:

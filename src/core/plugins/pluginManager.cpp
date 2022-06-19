@@ -229,6 +229,20 @@ std::vector<Plugin*> PluginManager::hydratePlugins(std::vector<ID> pluginIds, mo
 
 /* -------------------------------------------------------------------------- */
 
+std::vector<Plugin*> PluginManager::clonePlugins(const std::vector<Plugin*>& source,
+    int sampleRate, int bufferSize, model::Model& model, const Sequencer& sequencer)
+{
+	std::vector<Plugin*> clones;
+	for (const Plugin* plugin : source)
+	{
+		model.addShared(makePlugin(*plugin, sampleRate, bufferSize, sequencer));
+		clones.push_back(&model.backShared<Plugin>());
+	}
+	return clones;
+}
+
+/* -------------------------------------------------------------------------- */
+
 int PluginManager::countAvailablePlugins() const
 {
 	return m_knownPluginList.getNumTypes();

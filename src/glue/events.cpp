@@ -32,7 +32,6 @@
 #include "core/kernelAudio.h"
 #include "core/midiEvent.h"
 #include "core/mixer.h"
-#include "core/mixerHandler.h"
 #include "core/model/model.h"
 #include "core/plugins/pluginHost.h"
 #include "core/recorder.h"
@@ -281,7 +280,7 @@ void stopInputRecording()
 
 void toggleInputRecording()
 {
-	if (!g_engine.kernelAudio.isReady() || !g_engine.kernelAudio.isInputEnabled() || !g_engine.mixerHandler.hasInputRecordableChannels())
+	if (!g_engine.kernelAudio.isReady() || !g_engine.kernelAudio.isInputEnabled() || !g_engine.channelManager.hasInputRecordableChannels())
 		return;
 	if (g_engine.recorder.isRecordingInput())
 		g_engine.recorder.stopInputRec(g_engine.conf.data.inputRecMode, g_engine.kernelAudio.getSampleRate());

@@ -49,7 +49,7 @@ class Model;
 namespace giada::m
 {
 class Sequencer;
-class PluginManager final
+class PluginManager final /* TODO - Split PluginManager (== ChannelManager) and PluginFactory (== ChannelFactory) */
 {
 public:
 	enum class SortMethod : int
@@ -115,7 +115,14 @@ public:
 
 	const Patch::Plugin     serializePlugin(const Plugin& p) const;
 	std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin&, int sampleRate, int bufferSize, const Sequencer&);
-	std::vector<Plugin*>    hydratePlugins(std::vector<ID> pluginIds, model::Model& model);
+
+	std::vector<Plugin*> hydratePlugins(std::vector<ID> pluginIds, model::Model&);
+
+	/* clonePlugins
+	Clones all plugins in the Plugin vector passed in as a parameter. Returns a
+	new vector containing the new clones. */
+
+	std::vector<Plugin*> clonePlugins(const std::vector<Plugin*>&, int sampleRate, int bufferSize, model::Model&, const Sequencer&);
 
 	void sortPlugins(SortMethod sortMethod);
 
@@ -143,7 +150,7 @@ private:
 	If some plugins from any stack are missing. */
 
 	bool m_missingPlugins;
-};
+}; // namespace giada::m
 } // namespace giada::m
 
 #endif

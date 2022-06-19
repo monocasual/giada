@@ -27,7 +27,6 @@
 #include "core/midiDispatcher.h"
 #include "core/conf.h"
 #include "core/mixer.h"
-#include "core/mixerHandler.h"
 #include "core/model/model.h"
 #include "core/plugins/plugin.h"
 #include "core/plugins/pluginHost.h"

@@ -36,7 +36,6 @@
 #include "core/conf.h"
 #include "core/graphics.h"
 #include "core/mixer.h"
-#include "core/mixerHandler.h"
 #include "core/plugins/pluginHost.h"
 #include "core/sequencer.h"
 #include "gui.h"

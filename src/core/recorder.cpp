@@ -25,7 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/recorder.h"
-#include "core/mixerHandler.h"
+#include "core/channels/channelManager.h"
+#include "core/mixer.h"
 #include "core/model/model.h"
 #include "core/sequencer.h"
 #include "core/types.h"
@@ -34,10 +35,11 @@
 
 namespace giada::m
 {
-Recorder::Recorder(model::Model& m, Sequencer& s, MixerHandler& mh)
+Recorder::Recorder(model::Model& m, Sequencer& s, ChannelManager& cm, Mixer& mx)
 : m_model(m)
 , m_sequencer(s)
-, m_mixerHandler(mh)
+, m_channelManager(cm)
+, m_mixer(mx)
 {
 }
 
@@ -135,7 +137,7 @@ void Recorder::stopInputRec(InputRecMode recMode, int sampleRate)
 {
 	setRecordingInput(false);
 
-	Frame recordedFrames = m_mixerHandler.stopInputRec();
+	Frame recordedFrames = m_mixer.stopInputRec();
 
 	/* When recording in RIGID mode, the amount of recorded frames is always 
 	equal to the current loop length. */
@@ -156,7 +158,8 @@ void Recorder::stopInputRec(InputRecMode recMode, int sampleRate)
 
 	/* Finalize recordings. InputRecMode::FREE requires some adjustments. */
 
-	m_mixerHandler.finalizeInputRec(recordedFrames, m_sequencer.getCurrentFrame());
+	m_channelManager.finalizeInputRec(m_mixer.getRecBuffer(), recordedFrames, m_sequencer.getCurrentFrame());
+	m_mixer.clearRecBuffer();
 
 	if (recMode == InputRecMode::FREE)
 	{
@@ -168,7 +171,7 @@ void Recorder::stopInputRec(InputRecMode recMode, int sampleRate)
 /* -------------------------------------------------------------------------- */
 
 bool Recorder::canEnableRecOnSignal() const { return !m_sequencer.isRunning(); }
-bool Recorder::canEnableFreeInputRec() const { return !m_mixerHandler.hasAudioData(); }
+bool Recorder::canEnableFreeInputRec() const { return !m_channelManager.hasAudioData(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -211,7 +214,7 @@ void Recorder::startActionRecOnCallback()
 void Recorder::startInputRec()
 {
 	/* Start recording from the current frame, not the beginning. */
-	m_mixerHandler.startInputRec(m_sequencer.getCurrentFrame());
+	m_mixer.startInputRec(m_sequencer.getCurrentFrame());
 	setRecordingInput(true);
 }
 

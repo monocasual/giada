@@ -52,8 +52,7 @@ Engine::Engine()
 , synchronizer(conf.data, kernelMidi)
 , sequencer(model, synchronizer, jackTransport)
 , mixer(model)
-, mixerHandler(model, mixer)
-, recorder(model, sequencer, mixerHandler)
+, recorder(model, sequencer, channelManager, mixer)
 #ifdef WITH_VST
 , pluginHost(model)
 #endif
@@ -119,11 +118,11 @@ Engine::Engine()
 		eventDispatcher.pumpUIevent({EventDispatcher::EventType::MIXER_END_OF_REC_CALLBACK});
 	};
 
-	mixerHandler.onChannelsAltered = [this]() {
+	channelManager.onChannelsAltered = [this]() {
 		if (!recorder.canEnableFreeInputRec())
 			conf.data.inputRecMode = InputRecMode::RIGID;
 	};
-	mixerHandler.onChannelRecorded = [this](Frame recordedFrames) {
+	channelManager.onChannelRecorded = [this](Frame recordedFrames) {
 		std::string filename = fmt::format("TAKE-{}.wav", patch.data.lastTakeId++);
 		return waveFactory.createEmpty(recordedFrames, G_MAX_IO_CHANS, kernelAudio.getSampleRate(), filename);
 	};
@@ -191,13 +190,15 @@ void Engine::init()
 		jackTransport.setHandle(kernelAudio.getJackHandle());
 #endif
 
-	mixerHandler.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()),
-	    kernelAudio.getBufferSize(), channelFactory);
+	mixer.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()), kernelAudio.getBufferSize());
+	channelManager.reset(kernelAudio.getBufferSize());
 	sequencer.reset(kernelAudio.getSampleRate());
+
 #ifdef WITH_VST
 	pluginHost.reset(kernelAudio.getBufferSize());
 	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
 #endif
+
 	mixer.enable();
 	kernelAudio.startStream();
 
@@ -227,8 +228,8 @@ void Engine::reset()
 	/* Then all other components. */
 
 	model.reset();
-	mixerHandler.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()),
-	    kernelAudio.getBufferSize(), channelFactory);
+	mixer.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()), kernelAudio.getBufferSize());
+	channelManager.reset(kernelAudio.getBufferSize());
 	synchronizer.reset();
 	sequencer.reset(kernelAudio.getSampleRate());
 	actionRecorder.reset();
@@ -402,7 +403,7 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 	the current samplerate != patch samplerate. Clock needs to update frames
 	in sequencer. */
 
-	mixerHandler.updateSoloCount();
+	mixer.updateSoloCount(channelManager.hasSolos());
 	actionRecorder.updateSamplerate(kernelAudio.getSampleRate(), patch.data.samplerate);
 	sequencer.recomputeFrames(kernelAudio.getSampleRate());
 	mixer.allocRecBuffer(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()));

@@ -31,7 +31,6 @@
 #include "core/engine.h"
 #include "core/kernelAudio.h"
 #include "core/mixer.h"
-#include "core/mixerHandler.h"
 #include "core/model/model.h"
 #include "core/patch.h"
 #include "core/plugins/plugin.h"
@@ -183,7 +182,7 @@ int loadChannel(ID channelId, const std::string& fname)
 	next time. */
 
 	g_engine.conf.data.samplePath = u::fs::dirname(fname);
-	g_engine.mixerHandler.loadChannel(channelId, std::move(res.wave));
+	g_engine.channelManager.loadSampleChannel(channelId, std::move(res.wave));
 	return G_RES_OK;
 }
 
@@ -191,8 +190,7 @@ int loadChannel(ID channelId, const std::string& fname)
 
 void addChannel(ID columnId, ChannelType type)
 {
-	m::Channel& ch = g_engine.mixerHandler.addChannel(type, columnId,
-	    g_engine.kernelAudio.getBufferSize(), g_engine.channelFactory);
+	m::Channel& ch = g_engine.channelManager.addChannel(type, columnId, g_engine.kernelAudio.getBufferSize());
 
 	auto onSendMidiCb = [channelId = ch.id]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); };
 
@@ -216,8 +214,8 @@ void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 		m::WaveFactory::Result res = g_engine.waveFactory.createFromFile(f, /*id=*/0,
 		    g_engine.kernelAudio.getSampleRate(), g_engine.conf.data.rsmpQuality);
 		if (res.status == G_RES_OK)
-			g_engine.mixerHandler.addAndLoadChannel(columnId, std::move(res.wave), g_engine.kernelAudio.getBufferSize(),
-			    g_engine.channelFactory);
+			g_engine.channelManager.addAndLoadSampleChannel(g_engine.kernelAudio.getBufferSize(),
+			    std::move(res.wave), columnId);
 		else
 			errors = true;
 	}
@@ -237,7 +235,8 @@ void deleteChannel(ID channelId)
 #ifdef WITH_VST
 	const std::vector<m::Plugin*> plugins = g_engine.model.get().getChannel(channelId).plugins;
 #endif
-	g_engine.mixerHandler.deleteChannel(channelId);
+	g_engine.channelManager.deleteChannel(channelId);
+	g_engine.mixer.updateSoloCount(g_engine.channelManager.hasSolos());
 	g_engine.actionRecorder.clearChannel(channelId);
 #ifdef WITH_VST
 	g_engine.pluginHost.freePlugins(plugins);
@@ -252,7 +251,7 @@ void freeChannel(ID channelId)
 		return;
 	g_ui.closeAllSubwindows();
 	g_engine.actionRecorder.clearChannel(channelId);
-	g_engine.mixerHandler.freeChannel(channelId);
+	g_engine.channelManager.freeSampleChannel(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -279,13 +278,14 @@ void setOverdubProtection(ID channelId, bool value)
 void cloneChannel(ID channelId)
 {
 	g_engine.actionRecorder.cloneActions(channelId, g_engine.channelFactory.getNextId());
+
 #ifdef WITH_VST
-	g_engine.mixerHandler.cloneChannel(channelId, g_engine.patch.data.samplerate,
-	    g_engine.kernelAudio.getBufferSize(), g_engine.channelFactory, g_engine.waveFactory,
-	    g_engine.sequencer, g_engine.pluginManager);
+	const m::Channel&       ch      = g_engine.model.get().getChannel(channelId);
+	std::vector<m::Plugin*> plugins = g_engine.pluginManager.clonePlugins(ch.plugins, g_engine.patch.data.samplerate,
+	    g_engine.kernelAudio.getBufferSize(), g_engine.model, g_engine.sequencer);
+	g_engine.channelManager.cloneChannel(channelId, g_engine.kernelAudio.getBufferSize(), plugins);
 #else
-	g_engine.mixerHandler.cloneChannel(channelId, g_engine.kernelAudio.getBufferSize(),
-	    g_engine.channelManager, g_engine.waveManager);
+	g_engine.channelManager.cloneChannel(channelId, g_engine.kernelAudio.getBufferSize());
 #endif
 }
 
@@ -310,7 +310,7 @@ void setHeight(ID channelId, Pixel p)
 
 void setName(ID channelId, const std::string& name)
 {
-	g_engine.mixerHandler.renameChannel(channelId, name);
+	g_engine.channelManager.renameChannel(channelId, name);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -32,7 +32,6 @@
 #include "core/kernelAudio.h"
 #include "core/kernelMidi.h"
 #include "core/mixer.h"
-#include "core/mixerHandler.h"
 #include "core/model/model.h"
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
@@ -160,8 +159,8 @@ Transport getTransport()
 MainMenu getMainMenu()
 {
 	MainMenu mainMenu;
-	mainMenu.hasAudioData = g_engine.mixerHandler.hasAudioData();
-	mainMenu.hasActions   = g_engine.mixerHandler.hasActions();
+	mainMenu.hasAudioData = g_engine.channelManager.hasAudioData();
+	mainMenu.hasActions   = g_engine.channelManager.hasActions();
 	return mainMenu;
 }
 
@@ -219,7 +218,7 @@ void clearAllSamples()
 	g_ui.closeSubWindow(WID_SAMPLE_EDITOR);
 	g_engine.sequencer.setStatus(SeqStatus::STOPPED);
 	g_engine.synchronizer.sendMIDIstop();
-	g_engine.mixerHandler.freeAllChannels();
+	g_engine.channelManager.freeAllSampleChannels();
 	g_engine.actionRecorder.clearAllActions();
 }
 
@@ -238,7 +237,7 @@ void clearAllActions()
 
 void setInToOut(bool v)
 {
-	g_engine.mixerHandler.setInToOut(v);
+	g_engine.mixer.setInToOut(v);
 }
 
 /* -------------------------------------------------------------------------- */

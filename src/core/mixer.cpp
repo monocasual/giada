@@ -117,6 +117,22 @@ void Mixer::advanceChannels(const Sequencer::EventBuffer& events,
 
 /* -------------------------------------------------------------------------- */
 
+void Mixer::updateSoloCount(bool hasSolos)
+{
+	m_model.get().mixer.hasSolos = hasSolos;
+	m_model.swap(model::SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Mixer::setInToOut(bool v)
+{
+	m_model.get().mixer.inToOut = v;
+	m_model.swap(model::SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Layout& layout_RT) const
 {
 	const model::Mixer&     mixer     = layout_RT.mixer;

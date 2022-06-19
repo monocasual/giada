@@ -30,7 +30,6 @@
 #include "core/kernelAudio.h"
 #include "core/midiDispatcher.h"
 #include "core/mixer.h"
-#include "core/mixerHandler.h"
 #include "core/model/model.h"
 #include "core/recorder.h"
 #include "core/wave.h"

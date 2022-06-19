@@ -37,12 +37,13 @@ class Model;
 namespace giada::m
 {
 class ActionRecorder;
-class MixerHandler;
+class ChannelManager;
+class Mixer;
 class Sequencer;
 class Recorder final
 {
 public:
-	Recorder(model::Model&, Sequencer&, MixerHandler&);
+	Recorder(model::Model&, Sequencer&, ChannelManager&, Mixer&);
 
 	bool isRecording() const;
 	bool isRecordingAction() const;
@@ -79,9 +80,10 @@ private:
 	void setRecordingAction(bool v);
 	void setRecordingInput(bool v);
 
-	model::Model& m_model;
-	Sequencer&    m_sequencer;
-	MixerHandler& m_mixerHandler;
+	model::Model&   m_model;
+	Sequencer&      m_sequencer;
+	ChannelManager& m_channelManager;
+	Mixer&          m_mixer;
 };
 } // namespace giada::m
 

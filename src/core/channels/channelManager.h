@@ -24,15 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MIXER_HANDLER_H
-#define G_MIXER_HANDLER_H
+#ifndef G_CHANNEL_MANAGER_H
+#define G_CHANNEL_MANAGER_H
 
-#include "core/plugins/pluginManager.h"
-#include "core/waveFactory.h"
-#include "types.h"
+#include "core/types.h"
 #include <functional>
 #include <memory>
-#include <string>
+
+namespace mcl
+{
+class AudioBuffer;
+}
 
 namespace giada::m::model
 {
@@ -42,31 +44,19 @@ class Model;
 namespace giada::m
 {
 class Channel;
-class Wave;
-class Mixer;
-class Plugin;
 class ChannelFactory;
-class Sequencer;
-class MixerHandler final
+class WaveFactory;
+class Wave;
+class Plugin;
+class ChannelManager final
 {
 public:
-	MixerHandler(model::Model&, Mixer&);
+	ChannelManager(model::Model&, ChannelFactory&, WaveFactory&);
 
-	/* hasLogicalSamples
-    True if 1 or more samples are logical (memory only, such as takes). */
-
-	bool hasLogicalSamples() const;
-
-	/* hasEditedSamples
-    True if 1 or more samples have been edited via Sample Editor. */
-
-	bool hasEditedSamples() const;
-
-	/* has(Input|Action)RecordableChannels
-    Tells whether Mixer has one or more input or action recordable channels. */
+	/* hasInputRecordableChannels
+    Tells whether Mixer has one or more input-recordable channels. */
 
 	bool hasInputRecordableChannels() const;
-	bool hasActionRecordableChannels() const;
 
 	/* hasActions
     True if at least one Channel has actions recorded in it. */
@@ -78,75 +68,64 @@ public:
 
 	bool hasAudioData() const;
 
-	float getInVol() const;
-	float getOutVol() const;
-	bool  getInToOut() const;
+	/* hasSolos
+	True if there are soloed channels. */
+
+	bool hasSolos() const;
+
+	float getMasterInVol() const;
+	float getMasterOutVol() const;
+
+	/* forAnyChannel
+    Returns true if any channel satisfies the callback 'f'. */
+
+	bool forAnyChannel(std::function<bool(const Channel&)> f) const;
 
 	/* reset
-	Brings everything back to the initial state. */
+	Brings channels configuration back to the initial state: two I/O master
+    channels, one preview channel. */
 
-	void reset(Frame framesInLoop, Frame framesInBuffer, ChannelFactory&);
+	void reset(Frame framesInBuffer);
 
 	/* addChannel
-    Adds a new channel of type 'type' into the channels stack. Returns the new
-    channel ID. */
+    Adds a new channel to the stack. */
 
-	Channel& addChannel(ChannelType type, ID columnId, int bufferSize, ChannelFactory&);
+	Channel& addChannel(ChannelType, ID columnId, int bufferSize);
 
-	/* loadChannel
+	/* loadSampleChannel
     Loads a new Wave inside a Sample Channel. */
 
-	void loadChannel(ID channelId, std::unique_ptr<Wave> w);
+	void loadSampleChannel(ID channelId, std::unique_ptr<Wave>);
 
 	/* addAndLoadChannel
-    Creates a new channels, fills it with a Wave and then add it to the stack. */
+    Adds a new Sample channel into the stack and fills it with a Wave. */
 
-	void addAndLoadChannel(ID columnId, std::unique_ptr<Wave> w, int bufferSize,
-	    ChannelFactory&);
+	void addAndLoadSampleChannel(int bufferSize, std::unique_ptr<Wave>, ID columnId);
 
 	/* freeChannel
     Unloads existing Wave from a Sample Channel. */
 
-	void freeChannel(ID channelId);
-
-	/* deleteChannel
-    Completely removes a channel from the stack. */
+	void freeSampleChannel(ID channelId);
+	void freeAllSampleChannels();
 
 	void deleteChannel(ID channelId);
-
-#ifdef WITH_VST
-	void cloneChannel(ID channelId, int sampleRate, int bufferSize, ChannelFactory&,
-	    WaveFactory&, const Sequencer&, PluginManager&);
-#else
-	void cloneChannel(ID channelId, int bufferSize, ChannelManager&, WaveManager&);
-#endif
 	void renameChannel(ID channelId, const std::string& name);
-	void freeAllChannels();
 
-	void setInToOut(bool v);
+	/* cloneChannel
+	Creates a duplicate of Channel. The WITH_VST version wants a vector of already
+	cloned plug-ins. */
 
-	/* updateSoloCount
-    Updates the number of solo-ed channels in mixer. */
-
-	void updateSoloCount();
-
-	/* startInputRec
-	Initializes Mixer for input recording. */
-
-	void startInputRec(Frame currentFrame);
-
-	/* stopInputRec
-	Terminates input recording in Mixer. Returns the number of recorded frames. 
-	Call finalizeInputRec() if you really want to finish the input recording 
-	operation. */
-
-	Frame stopInputRec();
+#if WITH_VST
+	void cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>&);
+#else
+	void cloneChannel(ID channelId, int bufferSize);
+#endif
 
 	/* finalizeInputRec
-    Fills armed Sample Channels with audio data coming from an input recording
+    Fills armed Sample channel with audio data coming from an input recording
     session. */
 
-	void finalizeInputRec(Frame recordedFrames, Frame currentFrame);
+	void finalizeInputRec(const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame);
 
 	/* onChannelsAltered
 	Fired when something is done on channels (added, removed, loaded, ...). */
@@ -161,29 +140,31 @@ public:
 	std::function<std::unique_ptr<Wave>(Frame)> onChannelRecorded;
 
 private:
-	bool forAnyChannel(std::function<bool(const Channel&)> f) const;
-
-	void loadChannel(Channel&, Wave*) const;
+	void loadSampleChannel(Channel&, Wave*) const;
 
 	std::vector<Channel*> getChannelsIf(std::function<bool(const Channel&)> f);
 	std::vector<Channel*> getRecordableChannels();
 	std::vector<Channel*> getOverdubbableChannels();
 
-	void setupChannelPostRecording(Channel& ch, Frame currentFrame);
+	/* setupChannelPostRecording
+    Fnialize the Sample channel after an audio recording session. */
+
+	void setupChannelPostRecording(Channel&, Frame currentFrame);
 
 	/* recordChannel
 	Records the current Mixer audio input data into an empty channel. */
 
-	void recordChannel(Channel& ch, Frame recordedFrames, Frame currentFrame);
+	void recordChannel(Channel&, const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame);
 
 	/* overdubChannel
 	Records the current Mixer audio input data into a channel with an existing
 	Wave, overdub mode. */
 
-	void overdubChannel(Channel& ch, Frame currentFrame);
+	void overdubChannel(Channel&, const mcl::AudioBuffer&, Frame currentFrame);
 
-	model::Model& m_model;
-	Mixer&        m_mixer;
+	model::Model&   m_model;
+	ChannelFactory& m_channelFactory;
+	WaveFactory&    m_waveManager;
 };
 } // namespace giada::m
 

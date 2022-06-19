@@ -29,7 +29,6 @@
 #include "core/const.h"
 #include "core/engine.h"
 #include "core/kernelAudio.h"
-#include "core/mixerHandler.h"
 #include "core/model/model.h"
 #include "core/sequencer.h"
 #include "core/wave.h"
@@ -353,8 +352,8 @@ void cleanupPreview()
 void toNewChannel(ID channelId, Frame a, Frame b)
 {
 	ID columnId = g_ui.mainWindow->keyboard->getChannelColumnId(channelId);
-	g_engine.mixerHandler.addAndLoadChannel(columnId, g_engine.waveFactory.createFromWave(getWave_(channelId), a, b),
-	    g_engine.kernelAudio.getBufferSize(), g_engine.channelFactory);
+	g_engine.channelManager.addAndLoadSampleChannel(g_engine.kernelAudio.getBufferSize(),
+	    g_engine.waveFactory.createFromWave(getWave_(channelId), a, b), columnId);
 }
 
 /* -------------------------------------------------------------------------- */
