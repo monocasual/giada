@@ -29,6 +29,7 @@
 #include "core/model/storage.h"
 #include "utils/fs.h"
 #include "utils/log.h"
+#include <fmt/core.h>
 #include <memory>
 
 namespace giada::m
@@ -45,6 +46,7 @@ bool LoadState::isGood() const
 Engine::Engine()
 : midiMapper(kernelMidi)
 , channelFactory(conf.data, model)
+, channelManager(model, channelFactory, waveFactory)
 , midiDispatcher(model)
 , actionRecorder(model)
 , synchronizer(conf.data, kernelMidi)
@@ -122,7 +124,7 @@ Engine::Engine()
 			conf.data.inputRecMode = InputRecMode::RIGID;
 	};
 	mixerHandler.onChannelRecorded = [this](Frame recordedFrames) {
-		std::string filename = "TAKE-" + std::to_string(patch.data.lastTakeId++) + ".wav";
+		std::string filename = fmt::format("TAKE-{}.wav", patch.data.lastTakeId++);
 		return waveFactory.createEmpty(recordedFrames, G_MAX_IO_CHANS, kernelAudio.getSampleRate(), filename);
 	};
 
