@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/channels/channelManager.h"
+#include "core/channels/channelFactory.h"
 #include "core/channels/channel.h"
 #include "core/channels/samplePlayer.h"
 #include "core/conf.h"
@@ -40,7 +40,7 @@
 
 namespace giada::m
 {
-ChannelManager::ChannelManager(const Conf::Data& c, model::Model& m)
+ChannelFactory::ChannelFactory(const Conf::Data& c, model::Model& m)
 : m_conf(c)
 , m_model(m)
 {
@@ -48,21 +48,21 @@ ChannelManager::ChannelManager(const Conf::Data& c, model::Model& m)
 
 /* -------------------------------------------------------------------------- */
 
-ID ChannelManager::getNextId() const
+ID ChannelFactory::getNextId() const
 {
 	return m_channelId.getNext();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::reset()
+void ChannelFactory::reset()
 {
 	m_channelId = IdManager();
 }
 
 /* -------------------------------------------------------------------------- */
 
-Channel ChannelManager::create(ID channelId, ChannelType type, ID columnId, int bufferSize)
+Channel ChannelFactory::create(ID channelId, ChannelType type, ID columnId, int bufferSize)
 {
 	Channel out = Channel(type, m_channelId.generate(channelId), columnId,
 	    makeShared(type, bufferSize));
@@ -77,7 +77,7 @@ Channel ChannelManager::create(ID channelId, ChannelType type, ID columnId, int 
 
 /* -------------------------------------------------------------------------- */
 
-Channel ChannelManager::create(const Channel& o, int bufferSize)
+Channel ChannelFactory::create(const Channel& o, int bufferSize)
 {
 	Channel out = Channel(o);
 
@@ -91,7 +91,7 @@ Channel ChannelManager::create(const Channel& o, int bufferSize)
 
 /* -------------------------------------------------------------------------- */
 
-Channel ChannelManager::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
+Channel ChannelFactory::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
 {
 	m_channelId.set(pch.id);
 
@@ -103,7 +103,7 @@ Channel ChannelManager::deserializeChannel(const Patch::Channel& pch, float samp
 
 /* -------------------------------------------------------------------------- */
 
-const Patch::Channel ChannelManager::serializeChannel(const Channel& c)
+const Patch::Channel ChannelFactory::serializeChannel(const Channel& c)
 {
 	Patch::Channel pc;
 
@@ -164,7 +164,7 @@ const Patch::Channel ChannelManager::serializeChannel(const Channel& c)
 
 /* -------------------------------------------------------------------------- */
 
-ChannelShared& ChannelManager::makeShared(ChannelType type, int bufferSize)
+ChannelShared& ChannelFactory::makeShared(ChannelType type, int bufferSize)
 {
 	std::unique_ptr<ChannelShared> shared = std::make_unique<ChannelShared>(bufferSize);
 

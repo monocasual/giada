@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_CHANNEL_MANAGER_H
-#define G_CHANNEL_MANAGER_H
+#ifndef G_CHANNEL_FACTORY_H
+#define G_CHANNEL_FACTORY_H
 
 #include "core/channels/channel.h"
 #include "core/conf.h"
@@ -41,10 +41,10 @@ class Model;
 namespace giada::m
 {
 class KernelAudio;
-class ChannelManager final
+class ChannelFactory final
 {
 public:
-	ChannelManager(const Conf::Data&, model::Model&);
+	ChannelFactory(const Conf::Data&, model::Model&);
 
 	/* getNextId
 	Returns the next channel ID that will be assigned to a new channel. */

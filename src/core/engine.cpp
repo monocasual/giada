@@ -44,7 +44,7 @@ bool LoadState::isGood() const
 
 Engine::Engine()
 : midiMapper(kernelMidi)
-, channelManager(conf.data, model)
+, channelFactory(conf.data, model)
 , midiDispatcher(model)
 , actionRecorder(model)
 , synchronizer(conf.data, kernelMidi)
@@ -123,7 +123,7 @@ Engine::Engine()
 	};
 	mixerHandler.onChannelRecorded = [this](Frame recordedFrames) {
 		std::string filename = "TAKE-" + std::to_string(patch.data.lastTakeId++) + ".wav";
-		return waveManager.createEmpty(recordedFrames, G_MAX_IO_CHANS, kernelAudio.getSampleRate(), filename);
+		return waveFactory.createEmpty(recordedFrames, G_MAX_IO_CHANS, kernelAudio.getSampleRate(), filename);
 	};
 
 	sequencer.onAboutStart = [this](SeqStatus status) {
@@ -190,7 +190,7 @@ void Engine::init()
 #endif
 
 	mixerHandler.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()),
-	    kernelAudio.getBufferSize(), channelManager);
+	    kernelAudio.getBufferSize(), channelFactory);
 	sequencer.reset(kernelAudio.getSampleRate());
 #ifdef WITH_VST
 	pluginHost.reset(kernelAudio.getBufferSize());
@@ -216,8 +216,8 @@ void Engine::reset()
 {
 	/* Managers first, due to the internal ID numbering. */
 
-	channelManager.reset();
-	waveManager.reset();
+	channelFactory.reset();
+	waveFactory.reset();
 #ifdef WITH_VST
 	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
 #endif
@@ -226,7 +226,7 @@ void Engine::reset()
 
 	model.reset();
 	mixerHandler.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()),
-	    kernelAudio.getBufferSize(), channelManager);
+	    kernelAudio.getBufferSize(), channelFactory);
 	synchronizer.reset();
 	sequencer.reset(kernelAudio.getSampleRate());
 	actionRecorder.reset();
@@ -346,7 +346,7 @@ bool Engine::store(const std::string& projectName, const std::string& projectPat
 	for (std::unique_ptr<Wave>& w : model.getAllShared<model::WavePtrs>())
 	{
 		w->setPath(makeUniqueWavePath(projectPath, *w, model.getAllShared<model::WavePtrs>()));
-		waveManager.save(*w, w->getPath()); // TODO - error checking
+		waveFactory.save(*w, w->getPath()); // TODO - error checking
 	}
 
 	progress(0.3f);

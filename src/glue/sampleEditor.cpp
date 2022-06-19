@@ -33,7 +33,7 @@
 #include "core/model/model.h"
 #include "core/sequencer.h"
 #include "core/wave.h"
-#include "core/waveManager.h"
+#include "core/waveFactory.h"
 #include "glue/events.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/warnings.h"
@@ -218,7 +218,7 @@ void cut(ID channelId, Frame a, Frame b)
 
 void copy(ID channelId, Frame a, Frame b)
 {
-	waveBuffer_ = g_engine.waveManager.createFromWave(getWave_(channelId), a, b);
+	waveBuffer_ = g_engine.waveFactory.createFromWave(getWave_(channelId), a, b);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -356,8 +356,8 @@ void cleanupPreview()
 void toNewChannel(ID channelId, Frame a, Frame b)
 {
 	ID columnId = g_ui.mainWindow->keyboard->getChannelColumnId(channelId);
-	g_engine.mixerHandler.addAndLoadChannel(columnId, g_engine.waveManager.createFromWave(getWave_(channelId), a, b),
-	    g_engine.kernelAudio.getBufferSize(), g_engine.channelManager);
+	g_engine.mixerHandler.addAndLoadChannel(columnId, g_engine.waveFactory.createFromWave(getWave_(channelId), a, b),
+	    g_engine.kernelAudio.getBufferSize(), g_engine.channelFactory);
 }
 
 /* -------------------------------------------------------------------------- */

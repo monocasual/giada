@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/model/storage.h"
-#include "core/channels/channelManager.h"
+#include "core/channels/channelFactory.h"
 #include "core/conf.h"
 #include "core/engine.h"
 #include "core/kernelAudio.h"
@@ -33,7 +33,7 @@
 #include "core/patch.h"
 #include "core/plugins/pluginManager.h"
 #include "core/sequencer.h"
-#include "core/waveManager.h"
+#include "core/waveFactory.h"
 #include "src/core/actions/actionRecorder.h"
 #include <cassert>
 #include <memory>
@@ -50,7 +50,7 @@ void loadChannels_(const std::vector<Patch::Channel>& channels, int samplerate)
 
 	for (const Patch::Channel& pchannel : channels)
 		g_engine.model.get().channels.push_back(
-		    g_engine.channelManager.deserializeChannel(pchannel, samplerateRatio, g_engine.kernelAudio.getBufferSize()));
+		    g_engine.channelFactory.deserializeChannel(pchannel, samplerateRatio, g_engine.kernelAudio.getBufferSize()));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -86,11 +86,11 @@ void store(Patch::Data& patch)
 
 	patch.waves.clear();
 	for (const auto& w : g_engine.model.getAllShared<WavePtrs>())
-		patch.waves.push_back(g_engine.waveManager.serializeWave(*w));
+		patch.waves.push_back(g_engine.waveFactory.serializeWave(*w));
 
 	patch.channels.clear();
 	for (const Channel& c : layout.channels)
-		patch.channels.push_back(g_engine.channelManager.serializeChannel(c));
+		patch.channels.push_back(g_engine.channelFactory.serializeChannel(c));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -144,7 +144,7 @@ LoadState load(const Patch::Data& patch)
 	g_engine.model.getAllShared<WavePtrs>().clear();
 	for (const Patch::Wave& pwave : patch.waves)
 	{
-		std::unique_ptr<Wave> w = g_engine.waveManager.deserializeWave(pwave, g_engine.kernelAudio.getSampleRate(),
+		std::unique_ptr<Wave> w = g_engine.waveFactory.deserializeWave(pwave, g_engine.kernelAudio.getSampleRate(),
 		    g_engine.conf.data.rsmpQuality);
 
 		if (w != nullptr)

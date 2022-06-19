@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_WAVE_MANAGER_H
-#define G_WAVE_MANAGER_H
+#ifndef G_WAVE_FACTORY_H
+#define G_WAVE_FACTORY_H
 
 #include "core/idManager.h"
 #include "core/patch.h"
@@ -41,7 +41,7 @@ std::string makeUniqueWavePath(const std::string& base, const m::Wave& w,
 
 /* -------------------------------------------------------------------------- */
 
-class WaveManager final
+class WaveFactory final
 {
 public:
 	struct Result

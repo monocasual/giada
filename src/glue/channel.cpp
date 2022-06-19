@@ -26,7 +26,7 @@
 
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "core/actions/actionRecorder.h"
-#include "core/channels/channelManager.h"
+#include "core/channels/channelFactory.h"
 #include "core/conf.h"
 #include "core/engine.h"
 #include "core/kernelAudio.h"
@@ -39,7 +39,7 @@
 #include "core/plugins/pluginManager.h"
 #include "core/recorder.h"
 #include "core/wave.h"
-#include "core/waveManager.h"
+#include "core/waveFactory.h"
 #include "glue/channel.h"
 #include "glue/main.h"
 #include "gui/dialogs/mainWindow.h"
@@ -177,7 +177,7 @@ int loadChannel(ID channelId, const std::string& fname)
 {
 	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
 
-	m::WaveManager::Result res = g_engine.waveManager.createFromFile(fname, /*id=*/0,
+	m::WaveFactory::Result res = g_engine.waveFactory.createFromFile(fname, /*id=*/0,
 	    g_engine.kernelAudio.getSampleRate(), g_engine.conf.data.rsmpQuality);
 
 	if (res.status != G_RES_OK)
@@ -199,7 +199,7 @@ int loadChannel(ID channelId, const std::string& fname)
 void addChannel(ID columnId, ChannelType type)
 {
 	m::Channel& ch = g_engine.mixerHandler.addChannel(type, columnId,
-	    g_engine.kernelAudio.getBufferSize(), g_engine.channelManager);
+	    g_engine.kernelAudio.getBufferSize(), g_engine.channelFactory);
 
 	auto onSendMidiCb = [channelId = ch.id]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); };
 
@@ -220,11 +220,11 @@ void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 	{
 		progress.get().setProgress(++i / static_cast<float>(fnames.size()));
 
-		m::WaveManager::Result res = g_engine.waveManager.createFromFile(f, /*id=*/0,
+		m::WaveFactory::Result res = g_engine.waveFactory.createFromFile(f, /*id=*/0,
 		    g_engine.kernelAudio.getSampleRate(), g_engine.conf.data.rsmpQuality);
 		if (res.status == G_RES_OK)
 			g_engine.mixerHandler.addAndLoadChannel(columnId, std::move(res.wave), g_engine.kernelAudio.getBufferSize(),
-			    g_engine.channelManager);
+			    g_engine.channelFactory);
 		else
 			errors = true;
 	}
@@ -285,10 +285,10 @@ void setOverdubProtection(ID channelId, bool value)
 
 void cloneChannel(ID channelId)
 {
-	g_engine.actionRecorder.cloneActions(channelId, g_engine.channelManager.getNextId());
+	g_engine.actionRecorder.cloneActions(channelId, g_engine.channelFactory.getNextId());
 #ifdef WITH_VST
 	g_engine.mixerHandler.cloneChannel(channelId, g_engine.patch.data.samplerate,
-	    g_engine.kernelAudio.getBufferSize(), g_engine.channelManager, g_engine.waveManager,
+	    g_engine.kernelAudio.getBufferSize(), g_engine.channelFactory, g_engine.waveFactory,
 	    g_engine.sequencer, g_engine.pluginManager);
 #else
 	g_engine.mixerHandler.cloneChannel(channelId, g_engine.kernelAudio.getBufferSize(),

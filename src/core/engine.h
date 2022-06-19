@@ -29,7 +29,7 @@
 
 #include "core/actions/actionRecorder.h"
 #include "core/actions/actions.h"
-#include "core/channels/channelManager.h"
+#include "core/channels/channelFactory.h"
 #include "core/conf.h"
 #include "core/eventDispatcher.h"
 #include "core/init.h"
@@ -47,7 +47,7 @@
 #include "core/recorder.h"
 #include "core/sequencer.h"
 #include "core/synchronizer.h"
-#include "core/waveManager.h"
+#include "core/waveFactory.h"
 
 namespace giada::m
 {
@@ -112,10 +112,10 @@ public:
 	KernelAudio            kernelAudio;
 	KernelMidi             kernelMidi;
 	JackTransport          jackTransport;
-	WaveManager            waveManager;
+	WaveFactory            waveFactory;
 	EventDispatcher        eventDispatcher;
 	MidiMapper<KernelMidi> midiMapper;
-	ChannelManager         channelManager;
+	ChannelFactory         channelFactory;
 	MidiDispatcher         midiDispatcher;
 	ActionRecorder         actionRecorder;
 	Synchronizer           synchronizer;

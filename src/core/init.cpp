@@ -40,8 +40,8 @@
 #include "tests/samplePlayer.cpp"
 #include "tests/utils.cpp"
 #include "tests/wave.cpp"
+#include "tests/waveFactory.cpp"
 #include "tests/waveFx.cpp"
-#include "tests/waveManager.cpp"
 #include "tests/waveReader.cpp"
 #include <catch2/catch.hpp>
 #include <string>

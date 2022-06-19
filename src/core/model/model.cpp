@@ -28,7 +28,7 @@
 #include <cassert>
 #include <memory>
 #ifdef G_DEBUG_MODE
-#include "core/channels/channelManager.h"
+#include "core/channels/channelFactory.h"
 #endif
 
 using namespace mcl;

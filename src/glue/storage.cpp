@@ -38,7 +38,7 @@
 #include "core/plugins/pluginManager.h"
 #include "core/sequencer.h"
 #include "core/wave.h"
-#include "core/waveManager.h"
+#include "core/waveFactory.h"
 #include "glue/layout.h"
 #include "glue/main.h"
 #include "gui/dialogs/browser/browserLoad.h"
@@ -185,7 +185,7 @@ void saveSample(void* data)
 
 	assert(wave != nullptr);
 
-	if (!g_engine.waveManager.save(*wave, filePath))
+	if (!g_engine.waveFactory.save(*wave, filePath))
 	{
 		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGFILEERROR));
 		return;

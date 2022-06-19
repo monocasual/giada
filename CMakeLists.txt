@@ -56,9 +56,9 @@ list(APPEND SOURCES
 	src/core/actions/actionRecorder.cpp
 	src/core/actions/actions.cpp
 	src/core/mixer.cpp
-    src/core/synchronizer.cpp
-	src/core/waveManager.cpp
-    src/core/recorder.cpp
+	src/core/synchronizer.cpp
+	src/core/waveFactory.cpp
+	src/core/recorder.cpp
 	src/core/midiLearnParam.cpp
 	src/core/resampler.cpp
 	src/core/plugins/pluginHost.cpp
@@ -79,7 +79,7 @@ list(APPEND SOURCES
 	src/core/channels/midiReceiver.cpp
 	src/core/channels/channel.cpp
 	src/core/channels/channelShared.cpp
-	src/core/channels/channelManager.cpp
+	src/core/channels/channelFactory.cpp
 	src/core/model/sequencer.cpp
 	src/core/model/mixer.cpp
 	src/core/model/recorder.cpp

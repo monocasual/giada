@@ -1,6 +1,6 @@
-#include "../src/core/waveManager.h"
 #include "../src/core/const.h"
 #include "../src/core/wave.h"
+#include "../src/core/waveFactory.h"
 #include <catch2/catch.hpp>
 #include <memory>
 #include <samplerate.h>
@@ -12,16 +12,16 @@ using namespace giada::m;
 #define G_BUFFER_SIZE 4096
 #define G_CHANNELS 2
 
-TEST_CASE("waveManager")
+TEST_CASE("waveFactory")
 {
 	/* Each SECTION the TEST_CASE is executed from the start. Any code between 
 	this comment and the first SECTION macro is executed before each SECTION. */
 
-	WaveManager waveManager;
+	WaveFactory waveFactory;
 
 	SECTION("test creation")
 	{
-		WaveManager::Result res = waveManager.createFromFile(TEST_RESOURCES_DIR "test.wav",
+		WaveFactory::Result res = waveFactory.createFromFile(TEST_RESOURCES_DIR "test.wav",
 		    /*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, /*quality=*/SRC_LINEAR);
 
 		REQUIRE(res.status == G_RES_OK);
@@ -33,7 +33,7 @@ TEST_CASE("waveManager")
 
 	SECTION("test recording")
 	{
-		std::unique_ptr<Wave> wave = waveManager.createEmpty(G_BUFFER_SIZE,
+		std::unique_ptr<Wave> wave = waveFactory.createEmpty(G_BUFFER_SIZE,
 		    G_MAX_IO_CHANS, G_SAMPLE_RATE, "test.wav");
 
 		REQUIRE(wave->getRate() == G_SAMPLE_RATE);
@@ -45,11 +45,11 @@ TEST_CASE("waveManager")
 
 	SECTION("test resampling")
 	{
-		WaveManager::Result res = waveManager.createFromFile(TEST_RESOURCES_DIR "test.wav",
+		WaveFactory::Result res = waveFactory.createFromFile(TEST_RESOURCES_DIR "test.wav",
 		    /*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, /*quality=*/SRC_LINEAR);
 
 		int oldSize = res.wave->getBuffer().countFrames();
-		waveManager.resample(*res.wave.get(), 1, G_SAMPLE_RATE * 2);
+		waveFactory.resample(*res.wave.get(), 1, G_SAMPLE_RATE * 2);
 
 		REQUIRE(res.wave->getRate() == G_SAMPLE_RATE * 2);
 		REQUIRE(res.wave->getBuffer().countFrames() == oldSize * 2);

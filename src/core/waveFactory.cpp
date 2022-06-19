@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "waveManager.h"
+#include "waveFactory.h"
 #include "const.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "idManager.h"
@@ -105,14 +105,14 @@ std::string makeUniqueWavePath(const std::string& base, const m::Wave& w,
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void WaveManager::reset()
+void WaveFactory::reset()
 {
 	m_waveId = IdManager();
 }
 
 /* -------------------------------------------------------------------------- */
 
-WaveManager::Result WaveManager::createFromFile(const std::string& path, ID id,
+WaveFactory::Result WaveFactory::createFromFile(const std::string& path, ID id,
     int samplerate, int quality)
 {
 	if (path == "" || u::fs::isDir(path))
@@ -167,7 +167,7 @@ WaveManager::Result WaveManager::createFromFile(const std::string& path, ID id,
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Wave> WaveManager::createEmpty(int frames, int channels, int samplerate,
+std::unique_ptr<Wave> WaveFactory::createEmpty(int frames, int channels, int samplerate,
     const std::string& name)
 {
 	std::unique_ptr<Wave> wave = std::make_unique<Wave>(m_waveId.generate());
@@ -182,7 +182,7 @@ std::unique_ptr<Wave> WaveManager::createEmpty(int frames, int channels, int sam
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Wave> WaveManager::createFromWave(const Wave& src, int a, int b)
+std::unique_ptr<Wave> WaveFactory::createFromWave(const Wave& src, int a, int b)
 {
 	a = a == -1 ? 0 : a;
 	b = b == -1 ? src.getBuffer().countFrames() : b;
@@ -202,19 +202,19 @@ std::unique_ptr<Wave> WaveManager::createFromWave(const Wave& src, int a, int b)
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Wave> WaveManager::deserializeWave(const Patch::Wave& w, int samplerate, int quality)
+std::unique_ptr<Wave> WaveFactory::deserializeWave(const Patch::Wave& w, int samplerate, int quality)
 {
 	return createFromFile(w.path, w.id, samplerate, quality).wave;
 }
 
-const Patch::Wave WaveManager::serializeWave(const Wave& w) const
+const Patch::Wave WaveFactory::serializeWave(const Wave& w) const
 {
 	return {w.id, u::fs::basename(w.getPath())};
 }
 
 /* -------------------------------------------------------------------------- */
 
-int WaveManager::resample(Wave& w, int quality, int samplerate)
+int WaveFactory::resample(Wave& w, int quality, int samplerate)
 {
 	float ratio         = samplerate / (float)w.getRate();
 	int   newSizeFrames = static_cast<int>(ceil(w.getBuffer().countFrames() * ratio));
@@ -246,7 +246,7 @@ int WaveManager::resample(Wave& w, int quality, int samplerate)
 
 /* -------------------------------------------------------------------------- */
 
-int WaveManager::save(const Wave& w, const std::string& path)
+int WaveFactory::save(const Wave& w, const std::string& path)
 {
 	SF_INFO header;
 	header.samplerate = w.getRate();

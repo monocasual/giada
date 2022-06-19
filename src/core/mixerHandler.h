@@ -28,7 +28,7 @@
 #define G_MIXER_HANDLER_H
 
 #include "core/plugins/pluginManager.h"
-#include "core/waveManager.h"
+#include "core/waveFactory.h"
 #include "types.h"
 #include <functional>
 #include <memory>
@@ -45,7 +45,7 @@ class Channel;
 class Wave;
 class Mixer;
 class Plugin;
-class ChannelManager;
+class ChannelFactory;
 class Sequencer;
 class MixerHandler final
 {
@@ -85,13 +85,13 @@ public:
 	/* reset
 	Brings everything back to the initial state. */
 
-	void reset(Frame framesInLoop, Frame framesInBuffer, ChannelManager&);
+	void reset(Frame framesInLoop, Frame framesInBuffer, ChannelFactory&);
 
 	/* addChannel
     Adds a new channel of type 'type' into the channels stack. Returns the new
     channel ID. */
 
-	Channel& addChannel(ChannelType type, ID columnId, int bufferSize, ChannelManager&);
+	Channel& addChannel(ChannelType type, ID columnId, int bufferSize, ChannelFactory&);
 
 	/* loadChannel
     Loads a new Wave inside a Sample Channel. */
@@ -102,7 +102,7 @@ public:
     Creates a new channels, fills it with a Wave and then add it to the stack. */
 
 	void addAndLoadChannel(ID columnId, std::unique_ptr<Wave> w, int bufferSize,
-	    ChannelManager&);
+	    ChannelFactory&);
 
 	/* freeChannel
     Unloads existing Wave from a Sample Channel. */
@@ -115,8 +115,8 @@ public:
 	void deleteChannel(ID channelId);
 
 #ifdef WITH_VST
-	void cloneChannel(ID channelId, int sampleRate, int bufferSize, ChannelManager&,
-	    WaveManager&, const Sequencer&, PluginManager&);
+	void cloneChannel(ID channelId, int sampleRate, int bufferSize, ChannelFactory&,
+	    WaveFactory&, const Sequencer&, PluginManager&);
 #else
 	void cloneChannel(ID channelId, int bufferSize, ChannelManager&, WaveManager&);
 #endif
