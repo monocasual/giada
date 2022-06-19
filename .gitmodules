@@ -1,9 +1,6 @@
 [submodule "src/deps/juce"]
 	path = src/deps/juce
 	url = https://github.com/juce-framework/JUCE.git 
-[submodule "src/deps/json"]
-	path = src/deps/json
-	url = https://github.com/nlohmann/json.git
 [submodule "src/deps/vst3sdk"]
 	path = src/deps/vst3sdk
 	url = https://github.com/steinbergmedia/vst3sdk.git
