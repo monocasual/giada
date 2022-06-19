@@ -69,9 +69,10 @@ public:
 	    const std::string& name);
 
 	/* createFromWave
-	Creates a new Wave from an existing one, copying the data in range a - b. */
+	Creates a new Wave from an existing one. If specified, copying the data in 
+	range a - b. Range is [0, sr.buffer.countFrames()] otherwise. */
 
-	std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b);
+	std::unique_ptr<Wave> createFromWave(const Wave& src, int a = -1, int b = -1);
 
 	/* (de)serializeWave
 	Creates a new Wave given the patch raw data and vice versa. */

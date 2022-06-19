@@ -184,8 +184,11 @@ std::unique_ptr<Wave> WaveManager::createEmpty(int frames, int channels, int sam
 
 std::unique_ptr<Wave> WaveManager::createFromWave(const Wave& src, int a, int b)
 {
-	int channels = src.getBuffer().countChannels();
-	int frames   = b - a;
+	a = a == -1 ? 0 : a;
+	b = b == -1 ? src.getBuffer().countFrames() : b;
+
+	const int channels = src.getBuffer().countChannels();
+	const int frames   = b - a;
 
 	std::unique_ptr<Wave> wave = std::make_unique<Wave>(m_waveId.generate());
 	wave->alloc(frames, channels, src.getRate(), src.getBits(), src.getPath());

@@ -142,7 +142,7 @@ void MixerHandler::cloneChannel(ID channelId, int bufferSize, ChannelManager& ch
 	if (oldChannel.samplePlayer && oldChannel.samplePlayer->hasWave())
 	{
 		const Wave& oldWave = *oldChannel.samplePlayer->getWave();
-		m_model.addShared(waveManager.createFromWave(oldWave, 0, oldWave.getBuffer().countFrames()));
+		m_model.addShared(waveManager.createFromWave(oldWave));
 		loadChannel(newChannel, &m_model.backShared<Wave>());
 	}
 
