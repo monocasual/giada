@@ -57,7 +57,7 @@ void loadChannels_(const std::vector<Patch::Channel>& channels, int samplerate)
 
 void loadActions_(const std::vector<Patch::Action>& pactions)
 {
-	g_engine.model.getAllShared<Actions::Map>() = std::move(g_engine.actionRecorder.deserializeActions(pactions));
+	g_engine.model.getAllShared<Actions::Map>() = g_engine.actionRecorder.deserializeActions(pactions);
 }
 } // namespace
 
