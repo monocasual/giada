@@ -29,6 +29,7 @@
 #include <memory>
 #ifdef G_DEBUG_MODE
 #include "core/channels/channelFactory.h"
+#include <fmt/core.h>
 #endif
 
 using namespace mcl;
@@ -289,49 +290,50 @@ void Model::debug()
 	int i = 0;
 	for (const Channel& c : get().channels)
 	{
-		printf("\t%d) - ID=%d name='%s' type=%d columnID=%d shared=%p\n",
-		    i++, c.id, c.name.c_str(), (int)c.type, c.columnId, (void*)&c.shared);
+		fmt::print("\t{} - ID={} name='{}' type={} columnId={} position={} channelShared={}\n",
+		    i++, c.id, c.name, (int)c.type, c.columnId, c.position, (void*)&c.shared);
+
 #ifdef WITH_VST
 		if (c.plugins.size() > 0)
 		{
 			puts("\t\tplugins:");
 			for (const auto& p : c.plugins)
-				printf("\t\t\t%p - ID=%d\n", (void*)p, p->id);
+				fmt::print("\t\t\t{} - ID={}\n", (void*)p, p->id);
 		}
 #endif
 	}
 
-	puts("model::state.channels");
+	puts("model::channelsShared");
 
 	i = 0;
 	for (const auto& c : m_shared.channelsShared)
 	{
-		printf("\t%d) - %p\n", i++, (void*)c.get());
+		fmt::print("\t{}) - {}\n", i++, (void*)c.get());
 	}
 
-	puts("model::data.waves");
+	puts("model::shared.waves");
 
 	i = 0;
 	for (const auto& w : m_shared.waves)
-		printf("\t%d) %p - ID=%d name='%s'\n", i++, (void*)w.get(), w->id, w->getPath().c_str());
+		fmt::print("\t{}) {} - ID={} name='{}'\n", i++, (void*)w.get(), w->id, w->getPath());
 
-	puts("model::data.actions");
+	puts("model::shared.actions");
 
 	for (const auto& [frame, actions] : getAllShared<Actions::Map>())
 	{
-		printf("\tframe: %d\n", frame);
+		fmt::print("\tframe: {}\n", frame);
 		for (const Action& a : actions)
-			printf("\t\t(%p) - ID=%d, frame=%d, channel=%d, value=0x%X, prevId=%d, prev=%p, nextId=%d, next=%p\n",
+			fmt::print("\t\t({}) - ID={}, frame={}, channel={}, value=0x{}, prevId={}, prev={}, nextId={}, next={}\n",
 			    (void*)&a, a.id, a.frame, a.channelId, a.event.getRaw(), a.prevId, (void*)a.prev, a.nextId, (void*)a.next);
 	}
 
 #ifdef WITH_VST
 
-	puts("model::data.plugins");
+	puts("model::shared.plugins");
 
 	i = 0;
 	for (const auto& p : m_shared.plugins)
-		printf("\t%d) %p - ID=%d\n", i++, (void*)p.get(), p->id);
+		fmt::print("\t{}) {} - ID={}\n", i++, (void*)p.get(), p->id);
 
 #endif
 }
