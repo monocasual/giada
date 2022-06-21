@@ -59,6 +59,7 @@ int PluginManager::scanDirs(const std::string& dirs, const std::function<void(fl
 {
 	u::log::print("[pluginManager::scanDir] requested directories: '%s'\n", dirs);
 	u::log::print("[pluginManager::scanDir] currently known plug-ins: %d\n", m_knownPluginList.getNumTypes());
+	u::log::print("[pluginManager::scanDir] currently enabled formats: %d\n", m_formatManager.getNumFormats());
 
 	m_knownPluginList.clear(); // clear up previous plugins
 
