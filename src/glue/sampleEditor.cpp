@@ -351,9 +351,11 @@ void cleanupPreview()
 
 void toNewChannel(ID channelId, Frame a, Frame b)
 {
-	ID columnId = g_ui.mainWindow->keyboard->getChannelColumnId(channelId);
+	const ID  columnId = g_ui.mainWindow->keyboard->getChannelColumnId(channelId);
+	const int position = g_engine.channelManager.getLastChannelPosition(columnId);
+
 	g_engine.channelManager.addAndLoadSampleChannel(g_engine.kernelAudio.getBufferSize(),
-	    g_engine.waveFactory.createFromWave(getWave_(channelId), a, b), columnId);
+	    g_engine.waveFactory.createFromWave(getWave_(channelId), a, b), columnId, position);
 }
 
 /* -------------------------------------------------------------------------- */

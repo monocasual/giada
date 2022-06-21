@@ -50,11 +50,102 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
+geKeyboard::ChannelDragger::ChannelDragger(geKeyboard& k)
+: m_keyboard(k)
+, m_channelId(-1)
+, m_xoffset(0)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool geKeyboard::ChannelDragger::isDragging() const
+{
+	return m_channelId != -1;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geKeyboard::ChannelDragger::begin()
+{
+	const geColumn* column = m_keyboard.getColumnAtCursor(Fl::event_x());
+	if (column == nullptr)
+		return;
+
+	const geChannel* channel = column->getChannelAtCursor(Fl::event_y());
+	if (channel == nullptr)
+		return;
+
+	m_channelId   = channel->getData().id;
+	m_xoffset     = channel->x() - Fl::event_x();
+	m_placeholder = new Fl_Box(m_xoffset + Fl::event_x(), Fl::event_y(), channel->w(), channel->h());
+	m_placeholder->image(toImage(*channel));
+	m_keyboard.add(m_placeholder);
+	m_keyboard.redraw();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geKeyboard::ChannelDragger::drag()
+{
+	if (!isDragging())
+		return;
+
+	assert(m_keyboard.m_columns.size() > 0);
+
+	const geColumn* firstColumn = m_keyboard.m_columns[0];
+	const geColumn* lastColumn  = m_keyboard.m_columns.back();
+
+	const int minx = firstColumn->x();
+	const int maxx = lastColumn->x() + lastColumn->w() - m_placeholder->w();
+	const int miny = firstColumn->y();
+
+	// Explicit type std::min/max<int> to fix MINMAX macro hell on Windows
+	const int newx = std::min<int>(std::max<int>(minx, m_xoffset + Fl::event_x()), maxx);
+	const int newy = std::max<int>(miny, Fl::event_y());
+
+	m_placeholder->position(newx, newy);
+	m_keyboard.redraw();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geKeyboard::ChannelDragger::end()
+{
+	if (!isDragging())
+		return;
+
+	const geColumn* column = m_keyboard.getColumnAtCursor(Fl::event_x());
+	if (column == nullptr)
+	{
+		m_channelId = -1;
+		m_xoffset   = 0;
+		m_keyboard.rebuild(); // Just cleanup the UI
+		return;
+	}
+
+	const ID         targetColumnId = column->id;
+	const geChannel* targetChannel  = column->getChannelAtCursor(Fl::event_y());
+	const int        targetPosition = targetChannel == nullptr ? 0 : targetChannel->getData().position + 1;
+
+	c::channel::moveChannel(m_channelId, targetColumnId, targetPosition);
+
+	m_channelId = -1;
+	m_xoffset   = 0;
+	m_keyboard.remove(m_placeholder);
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 geKeyboard::geKeyboard()
 : geScroll(Fl_Scroll::BOTH_ALWAYS)
+, m_channelDragger(*this)
 , m_addColumnBtn(nullptr)
 {
-	end();
+	autoscroll = true;
+
 	init();
 	rebuild();
 }
@@ -152,6 +243,8 @@ void geKeyboard::cb_addColumn(Fl_Widget* /*w*/, void* p)
 
 void geKeyboard::refresh()
 {
+	if (m_channelDragger.isDragging())
+		return;
 	for (geColumn* c : m_columns)
 		c->refresh();
 }
@@ -162,40 +255,57 @@ int geKeyboard::handle(int e)
 {
 	switch (e)
 	{
+	case FL_PUSH:
+		if (Fl::event_shift())
+		{
+			m_channelDragger.begin();
+			return 1;
+		}
+		return geScroll::handle(e);
+
+	case FL_DRAG:
+		if (Fl::event_shift() && m_channelDragger.isDragging())
+			m_channelDragger.drag();
+		return geScroll::handle(e); // Let geScroll process this event anyway, to enable autoscroll
+
+	case FL_RELEASE:
+		if (Fl::event_shift())
+		{
+			m_channelDragger.end();
+			return 1;
+		}
+		return geScroll::handle(e);
+
 	case FL_FOCUS:
 	case FL_UNFOCUS:
-	{
-		return 1; // Enables receiving Keyboard events
-	}
+		return 1;
+
 	case FL_SHORTCUT: // In case widget that isn't ours has focus
 	case FL_KEYDOWN:  // Keyboard key pushed
-	case FL_KEYUP:
-	{ // Keyboard key released
+	case FL_KEYUP:    // Keyboard key released
 		g_ui.dispatcher.dispatchKey(e);
 		return 1;
-	}
+
 	case FL_DND_ENTER: // return(1) for these events to 'accept' dnd
 	case FL_DND_DRAG:
 	case FL_DND_RELEASE:
-	{
 		return 1;
-	}
-	case FL_PASTE:
-	{ // handle actual drop (paste) operation
+
+	case FL_PASTE: // handle actual drop (paste) operation
 		const geColumn* c = getColumnAtCursor(Fl::event_x());
 		if (c != nullptr)
 			c::channel::addAndLoadChannels(c->id, getDroppedFilePaths());
 		return 1;
 	}
-	}
-	return Fl_Group::handle(e); // Assume the buttons won't handle the Keyboard events
+
+	return geScroll::handle(e); // Assume the buttons won't handle the Keyboard events
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geKeyboard::draw()
 {
-	Fl_Scroll::draw();
+	geScroll::draw();
 
 	/* Paint columns background. Use a clip to draw only what's visible. */
 
@@ -211,6 +321,8 @@ void geKeyboard::draw()
 		drawRectf(bounds, G_COLOR_GREY_1_5);
 		drawRect(bounds, G_COLOR_GREY_2);
 	}
+
+	draw_children();
 
 	fl_pop_clip();
 }
@@ -287,9 +399,8 @@ geColumn* geKeyboard::getColumn(ID id)
 
 geColumn* geKeyboard::getColumnAtCursor(Pixel px)
 {
-	px += xposition();
 	for (geColumn* c : m_columns)
-		if (px > c->x() && px <= c->x() + c->w())
+		if (geompp::Range(c->x(), c->x() + c->w()).contains(px))
 			return c;
 	return nullptr;
 }
@@ -331,5 +442,4 @@ void geKeyboard::storeLayout()
 	for (const geColumn* c : m_columns)
 		layout.push_back({c->id, c->w()});
 }
-
 } // namespace giada::v

@@ -118,6 +118,7 @@ MidiData::MidiData(const m::Channel& m)
 Data::Data(const m::Channel& c)
 : id(c.id)
 , columnId(c.columnId)
+, position(c.position)
 #ifdef WITH_VST
 , plugins(c.plugins)
 #endif
@@ -160,6 +161,11 @@ std::vector<Data> getChannels()
 	for (const m::Channel& ch : g_engine.model.get().channels)
 		if (!ch.isInternal())
 			out.push_back(Data(ch));
+
+	std::sort(out.begin(), out.end(), [](const Data& a, const Data& b) {
+		return a.position < b.position;
+	});
+
 	return out;
 }
 
@@ -190,7 +196,9 @@ int loadChannel(ID channelId, const std::string& fname)
 
 void addChannel(ID columnId, ChannelType type)
 {
-	m::Channel& ch = g_engine.channelManager.addChannel(type, columnId, g_engine.kernelAudio.getBufferSize());
+	const int   position = g_engine.channelManager.getLastChannelPosition(columnId);
+	m::Channel& ch       = g_engine.channelManager.addChannel(type, columnId, position,
+        g_engine.kernelAudio.getBufferSize());
 
 	auto onSendMidiCb = [channelId = ch.id]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); };
 
@@ -205,8 +213,9 @@ void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 {
 	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
 
-	bool errors = false;
-	int  i      = 0;
+	int  position = g_engine.channelManager.getLastChannelPosition(columnId);
+	bool errors   = false;
+	int  i        = 0;
 	for (const std::string& f : fnames)
 	{
 		progress.get().setProgress(++i / static_cast<float>(fnames.size()));
@@ -215,7 +224,7 @@ void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 		    g_engine.kernelAudio.getSampleRate(), g_engine.conf.data.rsmpQuality);
 		if (res.status == G_RES_OK)
 			g_engine.channelManager.addAndLoadSampleChannel(g_engine.kernelAudio.getBufferSize(),
-			    std::move(res.wave), columnId);
+			    std::move(res.wave), columnId, position++);
 		else
 			errors = true;
 	}
@@ -258,6 +267,7 @@ void freeChannel(ID channelId)
 
 void setInputMonitor(ID channelId, bool value)
 {
+	// TODO - move to channelManager
 	g_engine.model.get().getChannel(channelId).audioReceiver->inputMonitor = value;
 	g_engine.model.swap(m::model::SwapType::HARD);
 }
@@ -266,6 +276,7 @@ void setInputMonitor(ID channelId, bool value)
 
 void setOverdubProtection(ID channelId, bool value)
 {
+	// TODO - move to channelManager
 	m::Channel& ch                      = g_engine.model.get().getChannel(channelId);
 	ch.audioReceiver->overdubProtection = value;
 	if (value == true && ch.armed)
@@ -291,8 +302,16 @@ void cloneChannel(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
+void moveChannel(ID channelId, ID columnId, int position)
+{
+	g_engine.channelManager.moveChannel(channelId, columnId, position);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
+	// TODO - move to channelManager
 	g_engine.model.get().getChannel(channelId).samplePlayer->mode = mode;
 	g_engine.model.swap(m::model::SwapType::HARD);
 	g_ui.refreshSubWindow(WID_ACTION_EDITOR);
@@ -302,6 +321,7 @@ void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 
 void setHeight(ID channelId, Pixel p)
 {
+	// TODO - move to channelManager
 	g_engine.model.get().getChannel(channelId).height = p;
 	g_engine.model.swap(m::model::SwapType::SOFT);
 }

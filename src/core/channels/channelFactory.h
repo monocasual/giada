@@ -60,7 +60,7 @@ public:
     Creates a new channel. If channelId == 0 generates a new ID, reuse the one 
     passed in otherwise. */
 
-	Channel create(ID channelId, ChannelType type, ID columnId, int bufferSize);
+	Channel create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize);
 
 	/* create (2)
     Creates a new channel given an existing one (i.e. clone). */

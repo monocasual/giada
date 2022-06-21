@@ -27,6 +27,7 @@
 #include "drawing.h"
 #include "utils/gui.h"
 #include <FL/Fl.H>
+#include <FL/Fl_Image_Surface.H>
 #include <cassert>
 
 namespace giada::v
@@ -59,5 +60,17 @@ void drawText(const std::string& s, geompp::Rect<int> b, Fl_Color c, int alignme
 
 	fl_color(c);
 	fl_draw(s.c_str(), b.x, b.y, b.w, b.h, alignment);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Fl_RGB_Image* toImage(const Fl_Widget& widget)
+{
+	Fl_Image_Surface surf(widget.w(), widget.h());
+	surf.set_current();                                 // Direct graphics requests to the image
+	surf.draw(&const_cast<Fl_Widget&>(widget));         // Draw the widget in the image
+	Fl_RGB_Image* image = surf.image();                 // Get the resulting image
+	Fl_Display_Device::display_device()->set_current(); // Direct graphics requests back to the display
+	return image;
 }
 } // namespace giada::v

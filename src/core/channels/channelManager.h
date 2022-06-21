@@ -29,6 +29,7 @@
 
 #include "core/types.h"
 #include <functional>
+#include <map>
 #include <memory>
 
 namespace mcl
@@ -76,6 +77,11 @@ public:
 	float getMasterInVol() const;
 	float getMasterOutVol() const;
 
+	/* getLastChannelPosition
+	Returns the position of the last channel located in column 'columnId'. */
+
+	int getLastChannelPosition(ID columnId) const;
+
 	/* forAnyChannel
     Returns true if any channel satisfies the callback 'f'. */
 
@@ -90,7 +96,7 @@ public:
 	/* addChannel
     Adds a new channel to the stack. */
 
-	Channel& addChannel(ChannelType, ID columnId, int bufferSize);
+	Channel& addChannel(ChannelType, ID columnId, int position, int bufferSize);
 
 	/* loadSampleChannel
     Loads a new Wave inside a Sample Channel. */
@@ -100,7 +106,7 @@ public:
 	/* addAndLoadChannel
     Adds a new Sample channel into the stack and fills it with a Wave. */
 
-	void addAndLoadSampleChannel(int bufferSize, std::unique_ptr<Wave>, ID columnId);
+	void addAndLoadSampleChannel(int bufferSize, std::unique_ptr<Wave>, ID columnId, int position);
 
 	/* freeChannel
     Unloads existing Wave from a Sample Channel. */
@@ -110,6 +116,7 @@ public:
 
 	void deleteChannel(ID channelId);
 	void renameChannel(ID channelId, const std::string& name);
+	void moveChannel(ID channelId, ID columnId, int position);
 
 	/* cloneChannel
 	Creates a duplicate of Channel. The WITH_VST version wants a vector of already
@@ -141,6 +148,11 @@ public:
 
 private:
 	void loadSampleChannel(Channel&, Wave*) const;
+
+	/* getColumn
+	Returns all channels that belongs to column 'columnId'. Read-only. */
+
+	std::vector<const Channel*> getColumn(ID columnId) const;
 
 	std::vector<Channel*> getChannelsIf(std::function<bool(const Channel&)> f);
 	std::vector<Channel*> getRecordableChannels();

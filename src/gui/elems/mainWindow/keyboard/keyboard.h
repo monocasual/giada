@@ -30,7 +30,9 @@
 #include "core/const.h"
 #include "core/idManager.h"
 #include "gui/elems/basics/scroll.h"
+#include <FL/Fl_Box.H>
 #include <functional>
+#include <memory>
 #include <vector>
 
 namespace giada::v
@@ -42,6 +44,8 @@ class geChannel;
 class geKeyboard : public geScroll
 {
 public:
+	friend class ChannelDragger;
+
 	struct ColumnLayout
 	{
 		ID  id;
@@ -98,6 +102,24 @@ public:
 private:
 	static constexpr int COLUMN_GAP = 20;
 
+	class ChannelDragger
+	{
+	public:
+		ChannelDragger(geKeyboard&);
+
+		bool isDragging() const;
+
+		void begin();
+		void drag();
+		void end();
+
+	private:
+		Fl_Box*     m_placeholder;
+		geKeyboard& m_keyboard;
+		ID          m_channelId;
+		int         m_xoffset;
+	};
+
 	static void cb_addColumn(Fl_Widget* /*w*/, void* p);
 	void        cb_addColumn();
 
@@ -131,6 +153,7 @@ private:
 	void storeLayout();
 
 	m::IdManager           m_columnId;
+	ChannelDragger         m_channelDragger;
 	std::vector<geColumn*> m_columns;
 
 	geButton* m_addColumnBtn;

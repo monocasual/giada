@@ -62,9 +62,9 @@ void ChannelFactory::reset()
 
 /* -------------------------------------------------------------------------- */
 
-Channel ChannelFactory::create(ID channelId, ChannelType type, ID columnId, int bufferSize)
+Channel ChannelFactory::create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize)
 {
-	Channel out = Channel(type, m_channelId.generate(channelId), columnId,
+	Channel out = Channel(type, m_channelId.generate(channelId), columnId, position,
 	    makeShared(type, bufferSize));
 
 	if (out.audioReceiver)
@@ -115,6 +115,7 @@ const Patch::Channel ChannelFactory::serializeChannel(const Channel& c)
 	pc.id                = c.id;
 	pc.type              = c.type;
 	pc.columnId          = c.columnId;
+	pc.position          = c.position;
 	pc.height            = c.height;
 	pc.name              = c.name;
 	pc.key               = c.key;

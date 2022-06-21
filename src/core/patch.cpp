@@ -151,6 +151,7 @@ void readChannels_(Patch::Data& patch, const nl::json& j)
 		c.height            = jchannel.value(PATCH_KEY_CHANNEL_SIZE, G_GUI_UNIT);
 		c.name              = jchannel.value(PATCH_KEY_CHANNEL_NAME, "");
 		c.columnId          = jchannel.value(PATCH_KEY_CHANNEL_COLUMN, 1);
+		c.position          = jchannel.value(PATCH_KEY_CHANNEL_POSITION, -1);
 		c.key               = jchannel.value(PATCH_KEY_CHANNEL_KEY, 0);
 		c.mute              = jchannel.value(PATCH_KEY_CHANNEL_MUTE, 0);
 		c.solo              = jchannel.value(PATCH_KEY_CHANNEL_SOLO, 0);
@@ -306,6 +307,7 @@ void writeChannels_(const Patch::Data& patch, nl::json& j)
 		jchannel[PATCH_KEY_CHANNEL_SIZE]                 = c.height;
 		jchannel[PATCH_KEY_CHANNEL_NAME]                 = c.name;
 		jchannel[PATCH_KEY_CHANNEL_COLUMN]               = c.columnId;
+		jchannel[PATCH_KEY_CHANNEL_POSITION]             = c.position;
 		jchannel[PATCH_KEY_CHANNEL_MUTE]                 = c.mute;
 		jchannel[PATCH_KEY_CHANNEL_SOLO]                 = c.solo;
 		jchannel[PATCH_KEY_CHANNEL_VOLUME]               = c.volume;
@@ -355,6 +357,7 @@ void writeChannels_(const Patch::Data& patch, nl::json& j)
 
 void modernize_(Patch::Data& patch)
 {
+	int position = 0;
 	for (Patch::Channel& c : patch.channels)
 	{
 		/* 0.16.3
@@ -377,6 +380,11 @@ void modernize_(Patch::Data& patch)
 			c.pan    = G_DEFAULT_PAN;
 			c.waveId = 0;
 		}
+
+		/* 0.23.0
+		Make sure each channel has a proper position. */
+		if (c.position == -1)
+			c.position = position++;
 	}
 }
 } // namespace

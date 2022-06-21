@@ -61,7 +61,7 @@ class Plugin;
 class Channel final
 {
 public:
-	Channel(ChannelType t, ID id, ID columnId, ChannelShared&);
+	Channel(ChannelType t, ID id, ID columnId, int position, ChannelShared&);
 	Channel(const Patch::Channel& p, ChannelShared&, float samplerateRatio, Wave* w);
 	Channel(const Channel& o);
 	Channel(Channel&& o) = default;
@@ -102,6 +102,7 @@ public:
 	ID             id;
 	ChannelType    type;
 	ID             columnId;
+	int            position;
 	float          volume;
 	float          volume_i; // Internal volume used for velocity-drives-volume mode on Sample Channels
 	float          pan;

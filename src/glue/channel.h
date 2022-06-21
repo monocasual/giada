@@ -85,8 +85,9 @@ struct Data
 	bool          isRecordingInput() const;
 	bool          isRecordingAction() const;
 
-	ID id;
-	ID columnId;
+	ID  id;
+	ID  columnId;
+	int position;
 #ifdef WITH_VST
 	std::vector<m::Plugin*> plugins;
 #endif
@@ -147,6 +148,11 @@ void freeChannel(ID channelId);
 Makes an exact copy of a channel. */
 
 void cloneChannel(ID channelId);
+
+/* moveChannel
+Moves channel with channelId to column with columnId at 'position'. */
+
+void moveChannel(ID channelId, ID columnId, int position);
 
 /* set*
 Sets several channel properties. */

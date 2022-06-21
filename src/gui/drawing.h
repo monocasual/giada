@@ -37,6 +37,11 @@ void drawRectf(geompp::Rect<int>, Fl_Color);
 void drawRect(geompp::Rect<int>, Fl_Color);
 void drawLine(geompp::Line<int>, Fl_Color);
 void drawText(const std::string&, geompp::Rect<int>, Fl_Color c, int alignment = FL_ALIGN_CENTER);
+
+/* toImage
+Rasterizes a Widget to a Fl_RGB_Image screenshot. */
+
+Fl_RGB_Image* toImage(const Fl_Widget&);
 } // namespace giada::v
 
 #endif

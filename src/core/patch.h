@@ -61,6 +61,7 @@ public:
 		int         height;
 		std::string name;
 		ID          columnId;
+		int         position;
 		int         key;
 		bool        mute;
 		bool        solo;

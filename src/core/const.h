@@ -289,6 +289,7 @@ constexpr auto PATCH_KEY_CHANNEL_ID                   = "id";
 constexpr auto PATCH_KEY_CHANNEL_SIZE                 = "size";
 constexpr auto PATCH_KEY_CHANNEL_NAME                 = "name";
 constexpr auto PATCH_KEY_CHANNEL_COLUMN               = "column";
+constexpr auto PATCH_KEY_CHANNEL_POSITION             = "position";
 constexpr auto PATCH_KEY_CHANNEL_MUTE                 = "mute";
 constexpr auto PATCH_KEY_CHANNEL_SOLO                 = "solo";
 constexpr auto PATCH_KEY_CHANNEL_VOLUME               = "volume";

@@ -59,11 +59,12 @@ mcl::AudioBuffer::Pan calcPanning_(float pan)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Channel::Channel(ChannelType type, ID id, ID columnId, ChannelShared& s)
+Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShared& s)
 : shared(&s)
 , id(id)
 , type(type)
 , columnId(columnId)
+, position(position)
 , volume(G_DEFAULT_VOL)
 , volume_i(G_DEFAULT_VOL)
 , pan(G_DEFAULT_PAN)
@@ -113,6 +114,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , id(p.id)
 , type(p.type)
 , columnId(p.columnId)
+, position(p.position)
 , volume(p.volume)
 , volume_i(G_DEFAULT_VOL)
 , pan(p.pan)
@@ -182,6 +184,7 @@ Channel& Channel::operator=(const Channel& other)
 	id         = other.id;
 	type       = other.type;
 	columnId   = other.columnId;
+	position   = other.position;
 	volume     = other.volume;
 	volume_i   = other.volume_i;
 	pan        = other.pan;

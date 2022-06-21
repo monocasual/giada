@@ -47,20 +47,20 @@ void ChannelManager::reset(Frame framesInBuffer)
 	m_model.get().channels.clear();
 
 	m_model.get().channels.push_back(m_channelFactory.create(
-	    Mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, /*columnId=*/0, framesInBuffer));
+	    Mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, /*columnId=*/0, /*position=*/0, framesInBuffer));
 	m_model.get().channels.push_back(m_channelFactory.create(
-	    Mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, /*columnId=*/0, framesInBuffer));
+	    Mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, /*columnId=*/0, /*position=*/0, framesInBuffer));
 	m_model.get().channels.push_back(m_channelFactory.create(
-	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, /*columnId=*/0, framesInBuffer));
+	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, /*columnId=*/0, /*position=*/0, framesInBuffer));
 
 	m_model.swap(model::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int bufferSize)
+Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position, int bufferSize)
 {
-	m_model.get().channels.push_back(m_channelFactory.create(/*id=*/0, type, columnId, bufferSize));
+	m_model.get().channels.push_back(m_channelFactory.create(/*id=*/0, type, columnId, position, bufferSize));
 	m_model.swap(model::SwapType::HARD);
 
 	return m_model.get().channels.back();
@@ -92,14 +92,14 @@ void ChannelManager::loadSampleChannel(ID channelId, std::unique_ptr<Wave> w)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::addAndLoadSampleChannel(int bufferSize, std::unique_ptr<Wave> w, ID columnId)
+void ChannelManager::addAndLoadSampleChannel(int bufferSize, std::unique_ptr<Wave> w, ID columnId, int position)
 {
 	assert(onChannelsAltered != nullptr);
 
 	m_model.addShared(std::move(w));
 
 	Wave&    wave    = m_model.backShared<Wave>();
-	Channel& channel = addChannel(ChannelType::SAMPLE, columnId, bufferSize);
+	Channel& channel = addChannel(ChannelType::SAMPLE, columnId, position, bufferSize);
 
 	loadSampleChannel(channel, &wave);
 	m_model.swap(model::SwapType::HARD);
@@ -203,6 +203,23 @@ void ChannelManager::renameChannel(ID channelId, const std::string& name)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelManager::moveChannel(ID channelId, ID newColumnId, int newPosition)
+{
+	/* Make room in the destination column for the new channel. */
+
+	for (Channel& ch : m_model.get().channels)
+		if (ch.columnId == newColumnId && ch.position >= newPosition)
+			ch.position++;
+
+	Channel& channel = m_model.get().getChannel(channelId);
+	channel.columnId = newColumnId;
+	channel.position = newPosition;
+
+	m_model.swap(model::SwapType::HARD);
+}
+
+/* -------------------------------------------------------------------------- */
+
 float ChannelManager::getMasterInVol() const
 {
 	return m_model.get().getChannel(Mixer::MASTER_IN_CHANNEL_ID).volume;
@@ -211,6 +228,26 @@ float ChannelManager::getMasterInVol() const
 float ChannelManager::getMasterOutVol() const
 {
 	return m_model.get().getChannel(Mixer::MASTER_OUT_CHANNEL_ID).volume;
+}
+
+/* -------------------------------------------------------------------------- */
+
+int ChannelManager::getLastChannelPosition(ID columnId) const
+{
+	std::vector<const Channel*> column = getColumn(columnId);
+	return column.empty() ? 0 : column.back()->position + 1;
+}
+/* -------------------------------------------------------------------------- */
+
+std::vector<const Channel*> ChannelManager::getColumn(ID columnId) const
+{
+	std::vector<const Channel*> column;
+
+	for (const Channel& ch : m_model.get().channels)
+		if (ch.columnId == columnId)
+			column.push_back(&ch);
+
+	return column;
 }
 
 /* -------------------------------------------------------------------------- */

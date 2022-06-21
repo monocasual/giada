@@ -44,7 +44,21 @@ class geColumn : public Fl_Group
 public:
 	geColumn(int x, int y, int w, int h, ID id, geResizerBar* b);
 
+	/* getChannel
+	Returns the channel given the ID. */
+
 	geChannel* getChannel(ID channelId) const;
+
+	/* getChannelAtCursor
+	Returns the channel below the cursor. Returns the last channel if y is 
+	greater than last channel range. */
+
+	geChannel* getChannelAtCursor(Pixel y) const;
+
+	/* countChannels
+	Returns the number of channels contained into this column. */
+
+	int countChannels() const;
 
 	/* addChannel
 	Adds a new channel in this column. */
@@ -68,7 +82,6 @@ private:
 	static void cb_addChannel(Fl_Widget* /*w*/, void* p);
 	void        cb_addChannel();
 
-	int countChannels() const;
 	int computeHeight() const;
 
 	std::vector<geChannel*> m_channels;

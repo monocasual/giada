@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/mainWindow/keyboard/column.h"
-#include "core/model/model.h"
+#include "deps/geompp/src/range.hpp"
 #include "glue/channel.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/basics/boxtypes.h"
@@ -166,6 +166,24 @@ geChannel* geColumn::getChannel(ID channelId) const
 	for (geChannel* c : m_channels)
 		if (c->getData().id == channelId)
 			return c;
+	return nullptr;
+}
+
+/* -------------------------------------------------------------------------- */
+
+geChannel* geColumn::getChannelAtCursor(Pixel y) const
+{
+	if (m_channels.empty())
+		return nullptr;
+
+	geChannel* last = m_channels.back();
+	if (y > last->y())
+		return last;
+
+	for (geChannel* c : m_channels)
+		if (geompp::Range(c->y(), c->y() + c->h()).contains(y))
+			return c;
+
 	return nullptr;
 }
 
