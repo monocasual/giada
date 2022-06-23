@@ -52,15 +52,15 @@ struct SampleData
 	SampleData(const m::Channel&);
 
 	Frame getTracker() const;
-	Frame getBegin() const;
-	Frame getEnd() const;
-	bool  getInputMonitor() const;
-	bool  getOverdubProtection() const;
 
 	ID               waveId;
 	SamplePlayerMode mode;
 	bool             isLoop;
 	float            pitch;
+	Frame            begin;
+	Frame            end;
+	bool             inputMonitor;
+	bool             overdubProtection;
 
 private:
 	const m::Channel* m_channel;
@@ -71,27 +71,19 @@ struct MidiData
 	MidiData() = delete;
 	MidiData(const m::Channel&);
 
-	bool isOutputEnabled() const;
-	int  getFilter() const;
-
-private:
-	const m::Channel* m_channel;
+	bool isOutputEnabled;
+	int  filter;
 };
 
 struct Data
 {
 	Data(const m::Channel&);
 
-	bool          getMute() const;
-	bool          getSolo() const;
 	ChannelStatus getPlayStatus() const;
 	ChannelStatus getRecStatus() const;
 	bool          getReadActions() const;
-	bool          isArmed() const;
 	bool          isRecordingInput() const;
 	bool          isRecordingAction() const;
-
-	v::Dispatcher& viewDispatcher;
 
 	ID id;
 	ID columnId;
@@ -105,12 +97,15 @@ struct Data
 	float       pan;
 	int         key;
 	bool        hasActions;
+	bool        muted;
+	bool        soloed;
+	bool        armed;
 
 	std::optional<SampleData> sample;
 	std::optional<MidiData>   midi;
 
 private:
-	const m::Channel& m_channel;
+	const m::Channel* m_channel;
 };
 
 /* getChannels

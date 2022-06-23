@@ -48,8 +48,8 @@ void geChannelStatus::draw()
 	const ChannelStatus playStatus = m_channel.getPlayStatus();
 	const ChannelStatus recStatus  = m_channel.getRecStatus();
 	const Frame         tracker    = m_channel.sample->getTracker();
-	const Frame         begin      = m_channel.sample->getBegin();
-	const Frame         end        = m_channel.sample->getEnd();
+	const Frame         begin      = m_channel.sample->begin;
+	const Frame         end        = m_channel.sample->end;
 	const Pixel         pos        = u::math::map(tracker, begin, end, 0, w());
 
 	if (playStatus == ChannelStatus::WAIT ||

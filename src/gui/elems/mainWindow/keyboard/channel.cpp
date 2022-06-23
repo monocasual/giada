@@ -98,8 +98,8 @@ void geChannel::refresh()
 
 	playButton->setStatus(playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING);
 	midiActivity->redraw();
-	mute->setStatus(m_channel.getMute());
-	solo->setStatus(m_channel.getSolo());
+	mute->setStatus(m_channel.muted);
+	solo->setStatus(m_channel.soloed);
 }
 
 /* -------------------------------------------------------------------------- */

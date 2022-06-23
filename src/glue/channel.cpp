@@ -91,39 +91,33 @@ void printLoadError_(int res)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-// TODO - just pass const Channel&
 SampleData::SampleData(const m::Channel& ch)
 : waveId(ch.samplePlayer->getWaveId())
 , mode(ch.samplePlayer->mode)
 , isLoop(ch.samplePlayer->isAnyLoopMode())
 , pitch(ch.samplePlayer->pitch)
+, begin(ch.samplePlayer->begin)
+, end(ch.samplePlayer->end)
+, inputMonitor(ch.audioReceiver->inputMonitor)
+, overdubProtection(ch.audioReceiver->overdubProtection)
 , m_channel(&ch)
 {
 }
 
 Frame SampleData::getTracker() const { return m_channel->shared->tracker.load(); }
-/* TODO - useless methods, turn them into member vars */
-Frame SampleData::getBegin() const { return m_channel->samplePlayer->begin; }
-Frame SampleData::getEnd() const { return m_channel->samplePlayer->end; }
-bool  SampleData::getInputMonitor() const { return m_channel->audioReceiver->inputMonitor; }
-bool  SampleData::getOverdubProtection() const { return m_channel->audioReceiver->overdubProtection; }
 
 /* -------------------------------------------------------------------------- */
 
 MidiData::MidiData(const m::Channel& m)
-: m_channel(&m)
+: isOutputEnabled(m.midiSender->enabled)
+, filter(m.midiSender->filter)
 {
 }
-
-/* TODO - useless methods, turn them into member vars */
-bool MidiData::isOutputEnabled() const { return m_channel->midiSender->enabled; }
-int  MidiData::getFilter() const { return m_channel->midiSender->filter; }
 
 /* -------------------------------------------------------------------------- */
 
 Data::Data(const m::Channel& c)
-: viewDispatcher(g_ui.dispatcher)
-, id(c.id)
+: id(c.id)
 , columnId(c.columnId)
 #ifdef WITH_VST
 , plugins(c.plugins)
@@ -135,7 +129,10 @@ Data::Data(const m::Channel& c)
 , pan(c.pan)
 , key(c.key)
 , hasActions(c.hasActions)
-, m_channel(c)
+, muted(c.isSoloed())
+, soloed(c.isMuted())
+, armed(c.armed)
+, m_channel(&c)
 {
 	if (c.type == ChannelType::SAMPLE)
 		sample = std::make_optional<SampleData>(c);
@@ -143,15 +140,11 @@ Data::Data(const m::Channel& c)
 		midi = std::make_optional<MidiData>(c);
 }
 
-ChannelStatus Data::getPlayStatus() const { return m_channel.shared->playStatus.load(); }
-ChannelStatus Data::getRecStatus() const { return m_channel.shared->recStatus.load(); }
-bool          Data::getReadActions() const { return m_channel.shared->readActions.load(); }
+ChannelStatus Data::getPlayStatus() const { return m_channel->shared->playStatus.load(); }
+ChannelStatus Data::getRecStatus() const { return m_channel->shared->recStatus.load(); }
+bool          Data::getReadActions() const { return m_channel->shared->readActions.load(); }
 bool          Data::isRecordingInput() const { return g_engine.recorder.isRecordingInput(); }
 bool          Data::isRecordingAction() const { return g_engine.recorder.isRecordingAction(); }
-/* TODO - useless methods, turn them into member vars */
-bool Data::getSolo() const { return m_channel.isSoloed(); }
-bool Data::getMute() const { return m_channel.isMuted(); }
-bool Data::isArmed() const { return m_channel.armed; }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -267,7 +260,7 @@ void freeChannel(ID channelId)
 void setInputMonitor(ID channelId, bool value)
 {
 	g_engine.model.get().getChannel(channelId).audioReceiver->inputMonitor = value;
-	g_engine.model.swap(m::model::SwapType::SOFT);
+	g_engine.model.swap(m::model::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -278,7 +271,7 @@ void setOverdubProtection(ID channelId, bool value)
 	ch.audioReceiver->overdubProtection = value;
 	if (value == true && ch.armed)
 		ch.armed = false;
-	g_engine.model.swap(m::model::SwapType::SOFT);
+	g_engine.model.swap(m::model::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -301,7 +294,7 @@ void cloneChannel(ID channelId)
 void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
 	g_engine.model.get().getChannel(channelId).samplePlayer->mode = mode;
-	g_engine.model.swap(m::model::SwapType::HARD); // TODO - SOFT should be enough, fix geChannel refresh method
+	g_engine.model.swap(m::model::SwapType::HARD);
 	g_ui.refreshSubWindow(WID_ACTION_EDITOR);
 }
 

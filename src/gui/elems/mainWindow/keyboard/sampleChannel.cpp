@@ -85,12 +85,12 @@ void menuCallback(Fl_Widget* w, void* v)
 	{
 	case Menu::INPUT_MONITOR:
 	{
-		c::channel::setInputMonitor(data.id, !data.sample->getInputMonitor());
+		c::channel::setInputMonitor(data.id, !data.sample->inputMonitor);
 		break;
 	}
 	case Menu::OVERDUB_PROTECTION:
 	{
-		c::channel::setOverdubProtection(data.id, !data.sample->getOverdubProtection());
+		c::channel::setOverdubProtection(data.id, !data.sample->overdubProtection);
 		break;
 	}
 	case Menu::LOAD_SAMPLE:
@@ -219,7 +219,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 	playButton->when(FL_WHEN_CHANGED); // On keypress && on keyrelease
 
 	arm->type(FL_TOGGLE_BUTTON);
-	arm->value(m_channel.isArmed());
+	arm->value(m_channel.armed);
 	arm->callback(cb_arm, (void*)this);
 
 #ifdef WITH_VST
@@ -252,7 +252,7 @@ void geSampleChannel::cb_readActions(Fl_Widget* /*w*/, void* p) { ((geSampleChan
 
 void geSampleChannel::cb_playButton()
 {
-	m_channel.viewDispatcher.dispatchTouch(*this, playButton->value());
+	g_ui.dispatcher.dispatchTouch(*this, playButton->value());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -267,9 +267,9 @@ void geSampleChannel::cb_openMenu()
 
 	Fl_Menu_Item rclick_menu[] = {
 	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_INPUTMONITOR), menuCallback, (void*)Menu::INPUT_MONITOR,
-	        FL_MENU_TOGGLE | (m_channel.sample->getInputMonitor() ? FL_MENU_VALUE : 0)),
+	        FL_MENU_TOGGLE | (m_channel.sample->inputMonitor ? FL_MENU_VALUE : 0)),
 	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_OVERDUBPROTECTION), menuCallback, (void*)Menu::OVERDUB_PROTECTION,
-	        FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->getOverdubProtection() ? FL_MENU_VALUE : 0)),
+	        FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->overdubProtection ? FL_MENU_VALUE : 0)),
 	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_LOADSAMPLE), menuCallback, (void*)Menu::LOAD_SAMPLE),
 	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EXPORTSAMPLE), menuCallback, (void*)Menu::EXPORT_SAMPLE),
 	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT), menuCallback, (void*)Menu::SETUP_KEYBOARD_INPUT),
@@ -336,7 +336,7 @@ void geSampleChannel::refresh()
 	if (m_channel.sample->waveId != 0)
 	{
 		status->redraw();
-		if (m_channel.sample->getOverdubProtection())
+		if (m_channel.sample->overdubProtection)
 			arm->deactivate();
 		else
 			arm->activate();

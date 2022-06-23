@@ -198,10 +198,7 @@ void setBeginEnd(ID channelId, Frame b, Frame e)
 
 	getSamplePlayer_(channelId).begin = b;
 	getSamplePlayer_(channelId).end   = e;
-	g_engine.model.swap(m::model::SwapType::SOFT);
-
-	/* TODO waveform widget is dumb and wants a rebuild. Refactoring needed! */
-	getSampleEditorWindow()->rebuild();
+	g_engine.model.swap(m::model::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */

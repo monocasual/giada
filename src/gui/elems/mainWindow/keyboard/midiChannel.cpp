@@ -148,7 +148,7 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 	playButton->when(FL_WHEN_CHANGED); // On keypress && on keyrelease
 
 	arm->type(FL_TOGGLE_BUTTON);
-	arm->value(m_channel.isArmed());
+	arm->value(m_channel.armed);
 	arm->callback(cb_arm, (void*)this);
 
 #ifdef WITH_VST
@@ -178,7 +178,7 @@ void geMidiChannel::cb_openMenu(Fl_Widget* /*w*/, void* p) { ((geMidiChannel*)p)
 
 void geMidiChannel::cb_playButton()
 {
-	m_channel.viewDispatcher.dispatchTouch(*this, playButton->value());
+	g_ui.dispatcher.dispatchTouch(*this, playButton->value());
 }
 
 /* -------------------------------------------------------------------------- */

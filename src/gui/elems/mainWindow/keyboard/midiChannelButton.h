@@ -29,9 +29,7 @@
 
 #include "channelButton.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geMidiChannelButton : public geChannelButton
 {
@@ -40,10 +38,9 @@ public:
 
 	void refresh() override;
 
-  private:
+private:
 	void refreshLabel();
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif
