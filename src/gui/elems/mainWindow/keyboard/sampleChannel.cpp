@@ -36,6 +36,7 @@
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/dial.h"
+#include "gui/elems/basics/menu.h"
 #include "gui/elems/basics/statusButton.h"
 #include "gui/elems/mainWindow/keyboard/channelMode.h"
 #include "gui/elems/mainWindow/keyboard/channelStatus.h"
@@ -64,112 +65,11 @@ enum class Menu
 	EDIT_SAMPLE,
 	EDIT_ACTIONS,
 	CLEAR_ACTIONS,
-	CLEAR_ACTIONS_ALL,
-	CLEAR_ACTIONS_VOLUME,
-	CLEAR_ACTIONS_START_STOP,
-	__END_CLEAR_ACTIONS_SUBMENU__,
 	RENAME_CHANNEL,
 	CLONE_CHANNEL,
 	FREE_CHANNEL,
 	DELETE_CHANNEL
 };
-
-/* -------------------------------------------------------------------------- */
-
-void menuCallback(Fl_Widget* w, void* v)
-{
-	const geSampleChannel*  gch  = static_cast<geSampleChannel*>(w);
-	const c::channel::Data& data = gch->getData();
-
-	switch ((Menu)(intptr_t)v)
-	{
-	case Menu::INPUT_MONITOR:
-	{
-		c::channel::setInputMonitor(data.id, !data.sample->inputMonitor);
-		break;
-	}
-	case Menu::OVERDUB_PROTECTION:
-	{
-		c::channel::setOverdubProtection(data.id, !data.sample->overdubProtection);
-		break;
-	}
-	case Menu::LOAD_SAMPLE:
-	{
-		c::layout::openBrowserForSampleLoad(data.id);
-		break;
-	}
-	case Menu::EXPORT_SAMPLE:
-	{
-		c::layout::openBrowserForSampleSave(data.id);
-		break;
-	}
-	case Menu::SETUP_KEYBOARD_INPUT:
-	{
-		c::layout::openKeyGrabberWindow(data.key, [channelId = data.id](int key) {
-			return c::io::channel_setKey(channelId, key);
-		});
-		break;
-	}
-	case Menu::SETUP_MIDI_INPUT:
-	{
-		c::layout::openChannelMidiInputWindow(data.id);
-		break;
-	}
-	case Menu::SETUP_MIDI_OUTPUT:
-	{
-		c::layout::openSampleChannelMidiOutputWindow(data.id);
-		break;
-	}
-	case Menu::EDIT_SAMPLE:
-	{
-		c::layout::openSampleEditor(data.id);
-		break;
-	}
-	case Menu::EDIT_ACTIONS:
-	{
-		c::layout::openSampleActionEditor(data.id);
-		break;
-	}
-	case Menu::CLEAR_ACTIONS:
-	case Menu::__END_CLEAR_ACTIONS_SUBMENU__:
-		break;
-	case Menu::CLEAR_ACTIONS_ALL:
-	{
-		c::recorder::clearAllActions(data.id);
-		break;
-	}
-	case Menu::CLEAR_ACTIONS_VOLUME:
-	{
-		c::recorder::clearVolumeActions(data.id);
-		break;
-	}
-	case Menu::CLEAR_ACTIONS_START_STOP:
-	{
-		c::recorder::clearStartStopActions(data.id);
-		break;
-	}
-	case Menu::CLONE_CHANNEL:
-	{
-		c::channel::cloneChannel(data.id);
-		break;
-	}
-	case Menu::RENAME_CHANNEL:
-	{
-		c::layout::openRenameChannelWindow(data);
-		break;
-	}
-	case Menu::FREE_CHANNEL:
-	{
-		c::channel::freeChannel(data.id);
-		break;
-	}
-	case Menu::DELETE_CHANNEL:
-	{
-		c::channel::deleteChannel(data.id);
-		break;
-	}
-	}
-}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -265,56 +165,100 @@ void geSampleChannel::cb_openMenu()
 	if (m_channel.isRecordingAction() || m_channel.isRecordingInput())
 		return;
 
-	Fl_Menu_Item rclick_menu[] = {
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_INPUTMONITOR), menuCallback, (void*)Menu::INPUT_MONITOR,
-	        FL_MENU_TOGGLE | (m_channel.sample->inputMonitor ? FL_MENU_VALUE : 0)),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_OVERDUBPROTECTION), menuCallback, (void*)Menu::OVERDUB_PROTECTION,
-	        FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->overdubProtection ? FL_MENU_VALUE : 0)),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_LOADSAMPLE), menuCallback, (void*)Menu::LOAD_SAMPLE),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EXPORTSAMPLE), menuCallback, (void*)Menu::EXPORT_SAMPLE),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT), menuCallback, (void*)Menu::SETUP_KEYBOARD_INPUT),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT), menuCallback, (void*)Menu::SETUP_MIDI_INPUT),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT), menuCallback, (void*)Menu::SETUP_MIDI_OUTPUT),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EDITSAMPLE), menuCallback, (void*)Menu::EDIT_SAMPLE),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EDITACTIONS), menuCallback, (void*)Menu::EDIT_ACTIONS),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS), menuCallback, (void*)Menu::CLEAR_ACTIONS, FL_SUBMENU),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_ALL), menuCallback, (void*)Menu::CLEAR_ACTIONS_ALL),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_VOLUME), menuCallback, (void*)Menu::CLEAR_ACTIONS_VOLUME),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_STARTSTOP), menuCallback, (void*)Menu::CLEAR_ACTIONS_START_STOP),
-	    {},
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_RENAME), menuCallback, (void*)Menu::RENAME_CHANNEL),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLONE), menuCallback, (void*)Menu::CLONE_CHANNEL),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_FREE), menuCallback, (void*)Menu::FREE_CHANNEL),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_DELETE), menuCallback, (void*)Menu::DELETE_CHANNEL),
-	    {}};
+	geMenu menu;
+
+	menu.addItem((ID)Menu::INPUT_MONITOR, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_INPUTMONITOR),
+	    FL_MENU_TOGGLE | (m_channel.sample->inputMonitor ? FL_MENU_VALUE : 0));
+	menu.addItem((ID)Menu::OVERDUB_PROTECTION, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_OVERDUBPROTECTION),
+	    FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->overdubProtection ? FL_MENU_VALUE : 0));
+	menu.addItem((ID)Menu::LOAD_SAMPLE, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_LOADSAMPLE));
+	menu.addItem((ID)Menu::EXPORT_SAMPLE, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EXPORTSAMPLE));
+	menu.addItem((ID)Menu::SETUP_KEYBOARD_INPUT, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT));
+	menu.addItem((ID)Menu::SETUP_MIDI_INPUT, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
+	menu.addItem((ID)Menu::SETUP_MIDI_OUTPUT, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT));
+	menu.addItem((ID)Menu::EDIT_SAMPLE, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EDITSAMPLE));
+	menu.addItem((ID)Menu::EDIT_ACTIONS, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EDITACTIONS));
+	menu.addItem((ID)Menu::CLEAR_ACTIONS, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS));
+	menu.addItem((ID)Menu::RENAME_CHANNEL, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_RENAME));
+	menu.addItem((ID)Menu::CLONE_CHANNEL, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLONE));
+	menu.addItem((ID)Menu::FREE_CHANNEL, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_FREE));
+	menu.addItem((ID)Menu::DELETE_CHANNEL, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_DELETE));
 
 	if (m_channel.sample->waveId == 0)
 	{
-		rclick_menu[(int)Menu::EXPORT_SAMPLE].deactivate();
-		rclick_menu[(int)Menu::EDIT_SAMPLE].deactivate();
-		rclick_menu[(int)Menu::FREE_CHANNEL].deactivate();
-		rclick_menu[(int)Menu::RENAME_CHANNEL].deactivate();
+		menu.setEnabled((ID)Menu::EXPORT_SAMPLE, false);
+		menu.setEnabled((ID)Menu::EDIT_SAMPLE, false);
+		menu.setEnabled((ID)Menu::FREE_CHANNEL, false);
+		menu.setEnabled((ID)Menu::RENAME_CHANNEL, false);
 	}
 
 	if (!m_channel.hasActions)
-		rclick_menu[(int)Menu::CLEAR_ACTIONS].deactivate();
+		menu.setEnabled((ID)Menu::CLEAR_ACTIONS, false);
 
-	/* No 'clear start/stop actions' for those channels in loop mode: they cannot
-	have start/stop actions. */
+	menu.onSelect = [&channel = m_channel](ID id) {
+		switch (static_cast<Menu>(id))
+		{
+		case Menu::INPUT_MONITOR:
+			c::channel::setInputMonitor(channel.id, !channel.sample->inputMonitor);
+			break;
 
-	if (m_channel.sample->isLoop)
-		rclick_menu[(int)Menu::CLEAR_ACTIONS_START_STOP].deactivate();
+		case Menu::OVERDUB_PROTECTION:
+			c::channel::setOverdubProtection(channel.id, !channel.sample->overdubProtection);
+			break;
 
-	Fl_Menu_Button b(0, 0, 100, 50);
-	b.box(G_CUSTOM_BORDER_BOX);
-	b.textsize(G_GUI_FONT_SIZE_BASE);
-	b.textcolor(G_COLOR_LIGHT_2);
-	b.color(G_COLOR_GREY_2);
+		case Menu::LOAD_SAMPLE:
+			c::layout::openBrowserForSampleLoad(channel.id);
+			break;
 
-	const Fl_Menu_Item* m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, &b);
-	if (m != nullptr)
-		m->do_callback(this, m->user_data());
-	return;
+		case Menu::EXPORT_SAMPLE:
+			c::layout::openBrowserForSampleSave(channel.id);
+			break;
+
+		case Menu::SETUP_KEYBOARD_INPUT:
+			c::layout::openKeyGrabberWindow(channel.key, [channelId = channel.id](int key) {
+				return c::io::channel_setKey(channelId, key);
+			});
+			break;
+
+		case Menu::SETUP_MIDI_INPUT:
+			c::layout::openChannelMidiInputWindow(channel.id);
+			break;
+
+		case Menu::SETUP_MIDI_OUTPUT:
+			c::layout::openSampleChannelMidiOutputWindow(channel.id);
+			break;
+
+		case Menu::EDIT_SAMPLE:
+			c::layout::openSampleEditor(channel.id);
+			break;
+
+		case Menu::EDIT_ACTIONS:
+			c::layout::openSampleActionEditor(channel.id);
+			break;
+
+		case Menu::CLEAR_ACTIONS:
+			c::recorder::clearAllActions(channel.id);
+			break;
+
+		case Menu::CLONE_CHANNEL:
+			c::channel::cloneChannel(channel.id);
+			break;
+
+		case Menu::RENAME_CHANNEL:
+			c::layout::openRenameChannelWindow(channel);
+			break;
+
+		case Menu::FREE_CHANNEL:
+			c::channel::freeChannel(channel.id);
+			break;
+
+		case Menu::DELETE_CHANNEL:
+			c::channel::deleteChannel(channel.id);
+			break;
+		}
+	};
+
+	menu.popup();
 }
 
 /* -------------------------------------------------------------------------- */
