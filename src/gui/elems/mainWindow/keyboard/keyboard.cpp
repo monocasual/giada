@@ -25,10 +25,12 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
+#include "deps/geompp/src/rect.hpp"
 #include "glue/channel.h"
 #include "glue/io.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/dispatcher.h"
+#include "gui/drawing.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/resizerBar.h"
@@ -197,8 +199,6 @@ void geKeyboard::draw()
 
 	/* Paint columns background. Use a clip to draw only what's visible. */
 
-	fl_color(G_COLOR_GREY_1_5);
-
 	fl_push_clip(
 	    x(),
 	    y(),
@@ -206,7 +206,11 @@ void geKeyboard::draw()
 	    h() - scrollbar_size() - (G_GUI_OUTER_MARGIN * 2));
 
 	for (const geColumn* c : m_columns)
-		fl_rectf(c->x(), c->y() + c->h(), c->w(), h() + yposition());
+	{
+		geompp::Rect bounds(c->x(), c->y() + c->h(), c->w(), h() + yposition());
+		drawRectf(bounds, G_COLOR_GREY_1_5);
+		drawRect(bounds, G_COLOR_GREY_2);
+	}
 
 	fl_pop_clip();
 }
