@@ -29,6 +29,7 @@
 #include "glue/channel.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/basics/menu.h"
 #include "gui/elems/basics/resizerBar.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/keyboard/midiChannel.h"
@@ -54,24 +55,6 @@ enum class Menu
 	ADD_MIDI_CHANNEL,
 	REMOVE
 };
-
-void MenuCallback(Fl_Widget* w, void* v)
-{
-	const geColumn* column = static_cast<geColumn*>(w);
-
-	switch ((Menu)(intptr_t)v)
-	{
-	case Menu::ADD_SAMPLE_CHANNEL:
-		c::channel::addChannel(column->id, ChannelType::SAMPLE);
-		break;
-	case Menu::ADD_MIDI_CHANNEL:
-		c::channel::addChannel(column->id, ChannelType::MIDI);
-		break;
-	case Menu::REMOVE:
-		static_cast<geKeyboard*>(column->parent())->deleteColumn(column->id);
-		break;
-	}
-}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -149,26 +132,31 @@ geChannel* geColumn::addChannel(c::channel::Data d)
 
 void geColumn::cb_addChannel()
 {
-	G_DEBUG("Column id: " << id);
+	geMenu menu;
 
-	Fl_Menu_Item menu[] = {
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL), MenuCallback, (void*)Menu::ADD_SAMPLE_CHANNEL),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_COLUMN_BUTTON_ADDMIDICHANNEL), MenuCallback, (void*)Menu::ADD_MIDI_CHANNEL),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::MAIN_COLUMN_BUTTON_REMOVE), MenuCallback, (void*)Menu::REMOVE),
-	    {}};
+	menu.addItem((ID)Menu::ADD_SAMPLE_CHANNEL, g_ui.langMapper.get(LangMap::MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL));
+	menu.addItem((ID)Menu::ADD_MIDI_CHANNEL, g_ui.langMapper.get(LangMap::MAIN_COLUMN_BUTTON_ADDMIDICHANNEL));
+	menu.addItem((ID)Menu::REMOVE, g_ui.langMapper.get(LangMap::MAIN_COLUMN_BUTTON_REMOVE));
 
 	if (countChannels() > 0)
-		menu[(int)Menu::REMOVE].deactivate();
+		menu.setEnabled((ID)Menu::REMOVE, false);
 
-	Fl_Menu_Button b(0, 0, 100, 50);
-	b.box(G_CUSTOM_BORDER_BOX);
-	b.textsize(G_GUI_FONT_SIZE_BASE);
-	b.textcolor(G_COLOR_LIGHT_2);
-	b.color(G_COLOR_GREY_2);
+	menu.onSelect = [this](ID menuId) {
+		switch (static_cast<Menu>(menuId))
+		{
+		case Menu::ADD_SAMPLE_CHANNEL:
+			c::channel::addChannel(id, ChannelType::SAMPLE);
+			break;
+		case Menu::ADD_MIDI_CHANNEL:
+			c::channel::addChannel(id, ChannelType::MIDI);
+			break;
+		case Menu::REMOVE:
+			static_cast<geKeyboard*>(parent())->deleteColumn(id);
+			break;
+		}
+	};
 
-	const Fl_Menu_Item* m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, &b);
-	if (m != nullptr)
-		m->do_callback(this, m->user_data());
+	menu.popup();
 }
 
 /* -------------------------------------------------------------------------- */
