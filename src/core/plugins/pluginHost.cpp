@@ -49,15 +49,14 @@ PluginHost::Info::Info(const Sequencer& s, int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-juce::Optional<juce::AudioPlayHead::PositionInfo> PluginHost::Info::getPosition() const
+bool PluginHost::Info::getCurrentPosition(CurrentPositionInfo& result)
 {
-	PositionInfo info;
-	info.setBpm(m_sequencer.getBpm());
-	info.setTimeInSamples(m_sequencer.getCurrentFrame());
-	info.setTimeInSeconds(m_sequencer.getCurrentSecond(m_sampleRate));
-	info.setIsPlaying(m_sequencer.isRunning());
+	result.bpm           = m_sequencer.getBpm();
+	result.timeInSamples = m_sequencer.getCurrentFrame();
+	result.timeInSeconds = m_sequencer.getCurrentSecond(m_sampleRate);
+	result.isPlaying     = m_sequencer.isRunning();
 
-	return {info};
+	return true;
 }
 
 /* -------------------------------------------------------------------------- */
