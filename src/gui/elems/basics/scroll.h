@@ -33,6 +33,8 @@
 #include <FL/Fl_Scroll.H>
 #include <functional>
 
+namespace giada::v
+{
 class geScroll : public Fl_Scroll
 {
 public:
@@ -41,14 +43,21 @@ public:
 
 	int countChildren() const;
 
+	int handle(int e) override;
+
 	std::function<void(int)> onScrollV{nullptr};
 	std::function<void(int)> onScrollH{nullptr};
+
+	bool autoscroll;
 
 private:
 	static void cb_onScrollV(Fl_Widget* w, void* p);
 	static void cb_onScrollH(Fl_Widget* w, void* p);
 	void        cb_onScrollV();
 	void        cb_onScrollH();
+
+	void doAutoscroll();
 };
+} // namespace giada::v
 
 #endif

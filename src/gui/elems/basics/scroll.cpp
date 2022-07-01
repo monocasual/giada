@@ -30,10 +30,14 @@
 #include "scroll.h"
 #include "boxtypes.h"
 #include "core/const.h"
+#include "deps/geompp/src/rect.hpp"
 #include <cassert>
 
+namespace giada::v
+{
 geScroll::geScroll(int x, int y, int w, int h, int t)
 : Fl_Scroll(x, y, w, h)
+, autoscroll(false)
 {
 	end();
 	type(t);
@@ -56,6 +60,18 @@ geScroll::geScroll(int x, int y, int w, int h, int t)
 geScroll::geScroll(int type)
 : geScroll(0, 0, 0, 0, type)
 {
+}
+
+/* -------------------------------------------------------------------------- */
+
+int geScroll::handle(int e)
+{
+	if (e == FL_DRAG && autoscroll)
+	{
+		doAutoscroll();
+		return 1;
+	}
+	return Fl_Scroll::handle(e);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -102,3 +118,22 @@ int geScroll::countChildren() const
 {
 	return children() - 2; // Exclude scrollbars
 }
+/* -------------------------------------------------------------------------- */
+
+void geScroll::doAutoscroll()
+{
+	constexpr int       BORDER = 30;
+	constexpr int       DELTA  = 10;
+	const geompp::Rect  bounds(x(), y(), w(), h());
+	const geompp::Point cursor(Fl::event_x(), Fl::event_y());
+
+	if (bounds.withTrimmedRight(w() - BORDER).contains(cursor) && xposition() > 0) // Avoid negative x
+		scroll_to(xposition() - DELTA, yposition());
+	else if (bounds.withTrimmedLeft(w() - BORDER).contains(cursor))
+		scroll_to(xposition() + DELTA, yposition());
+	else if (bounds.withTrimmedTop(h() - BORDER).contains(cursor))
+		scroll_to(xposition(), yposition() + DELTA);
+	else if (bounds.withTrimmedBottom(h() - BORDER).contains(cursor) && yposition() > 0) // Avoid negative y
+		scroll_to(xposition(), yposition() - DELTA);
+}
+} // namespace giada::v
