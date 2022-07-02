@@ -157,6 +157,7 @@ public:
 	static constexpr auto MAIN_CHANNEL_MENU_KEYBOARDINPUT          = "main_channel_menu_keyboardInput";
 	static constexpr auto MAIN_CHANNEL_MENU_MIDIINPUT              = "main_channel_menu_midiInput";
 	static constexpr auto MAIN_CHANNEL_MENU_MIDIOUTPUT             = "main_channel_menu_midiOutput";
+	static constexpr auto MAIN_CHANNEL_MENU_EDITROUTING            = "main_channel_menu_editRouting";
 	static constexpr auto MAIN_CHANNEL_MENU_EDITSAMPLE             = "main_channel_menu_editSample";
 	static constexpr auto MAIN_CHANNEL_MENU_EDITACTIONS            = "main_channel_menu_editActions";
 	static constexpr auto MAIN_CHANNEL_MENU_CLEARACTIONS           = "main_channel_menu_clearActions";
@@ -331,6 +332,8 @@ public:
 	static constexpr auto CONFIG_PLUGINS_SCANNING    = "config_plugins_scanning";
 	static constexpr auto CONFIG_PLUGINS_SCAN        = "config_plugins_scan";
 	static constexpr auto CONFIG_PLUGINS_INVALIDPATH = "config_plugins_invalidPath";
+
+	static constexpr auto CHANNELROUTING_TITLE = "channelRouting_title";
 
 	LangMap();
 

@@ -47,7 +47,7 @@ Channel-related events. */
 void pressChannel(ID channelId, int velocity, Thread t);
 void releaseChannel(ID channelId, Thread t);
 void killChannel(ID channelId, Thread t);
-void setChannelVolume(ID channelId, float v, Thread t);
+void setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi = false);
 void setChannelPitch(ID channelId, float v, Thread t);
 void sendChannelPan(ID channelId, float v); // FIXME typo: should be setChannelPan
 void toggleMuteChannel(ID channelId, Thread t);

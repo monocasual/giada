@@ -160,6 +160,7 @@ LangMap::LangMap()
 	m_data[MAIN_CHANNEL_MENU_KEYBOARDINPUT]          = "Setup keyboard input...";
 	m_data[MAIN_CHANNEL_MENU_MIDIINPUT]              = "Setup MIDI input...";
 	m_data[MAIN_CHANNEL_MENU_MIDIOUTPUT]             = "Setup MIDI output...";
+	m_data[MAIN_CHANNEL_MENU_EDITROUTING]            = "Edit routing...";
 	m_data[MAIN_CHANNEL_MENU_EDITSAMPLE]             = "Edit sample...";
 	m_data[MAIN_CHANNEL_MENU_EDITACTIONS]            = "Edit actions...";
 	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS]           = "Clear actions";
@@ -340,6 +341,8 @@ LangMap::LangMap()
 	m_data[CONFIG_PLUGINS_SCANNING]    = "Scan in progress ({}%). Please wait...";
 	m_data[CONFIG_PLUGINS_SCAN]        = "Scan ({} found)";
 	m_data[CONFIG_PLUGINS_INVALIDPATH] = "Invalid path.";
+
+	m_data[CHANNELROUTING_TITLE] = "Channel Routing";
 }
 
 const char* LangMap::get(const std::string& key) const

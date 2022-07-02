@@ -47,10 +47,8 @@ class geButton;
 class geChoice;
 class gePack;
 class geGroup;
-class geVolumeTool;
 class geWaveTools;
 class geBoostTool;
-class gePanTool;
 class gePitchTool;
 class geRangeTool;
 class geShiftTool;
@@ -73,11 +71,7 @@ public:
 
 	geWaveTools* waveTools;
 
-	geVolumeTool* volumeTool;
-	gePanTool*    panTool;
-
 	gePitchTool* pitchTool;
-
 	geRangeTool* rangeTool;
 	geShiftTool* shiftTool;
 	geButton*    reload;

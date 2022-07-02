@@ -24,26 +24,30 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_DIAL_H
-#define GE_DIAL_H
+#ifndef GE_VOLUME_TOOL_H
+#define GE_VOLUME_TOOL_H
 
-#include <FL/Fl_Dial.H>
-#include <functional>
+#include "core/types.h"
+#include "gui/elems/basics/flex.h"
 
 namespace giada::v
 {
-class geDial : public Fl_Dial
+class geDial;
+class geInput;
+class geButton;
+class geVolumeTool : public geFlex
 {
 public:
-	geDial(int x, int y, int w, int h, const char* l = 0);
-	geDial(const char* l = 0);
-
-	void draw() override;
-
-	std::function<void(float)> onChange;
+	geVolumeTool(ID channelId, float volume, int labelWidth = 0);
 
 private:
-	static void cb_change(Fl_Widget*, void*);
+	void update(float volume, bool fromDial = false);
+
+	ID m_channelId;
+
+	geInput*  m_input;
+	geDial*   m_dial;
+	geButton* m_reset;
 };
 } // namespace giada::v
 

@@ -24,34 +24,30 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_VOLUME_TOOL_H
-#define GE_VOLUME_TOOL_H
+#ifndef GD_CHANNEL_ROUTING_H
+#define GD_CHANNEL_ROUTING_H
 
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/dial.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/pack.h"
+#include "gui/dialogs/window.h"
 
-namespace giada::c::sampleEditor
+namespace giada::c::channel
 {
 struct Data;
 }
+
 namespace giada::v
 {
-class geVolumeTool : public gePack
+class geVolumeTool;
+class gePanTool;
+class geButton;
+class gdChannelRouting : public gdWindow
 {
 public:
-	geVolumeTool(const c::sampleEditor::Data& d, int x, int y);
-
-	void rebuild(const c::sampleEditor::Data& d);
-	void update(float v, bool isDial = false);
+	gdChannelRouting(const c::channel::Data& d);
 
 private:
-	const c::sampleEditor::Data* m_data;
-
-	geBox   m_label;
-	geDial  m_dial;
-	geInput m_input;
+	geVolumeTool* m_volume;
+	gePanTool*    m_pan;
+	geButton*     m_close;
 };
 } // namespace giada::v
 

@@ -24,64 +24,69 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "volumeTool.h"
+#include "src/gui/elems/panTool.h"
 #include "core/const.h"
+#include "glue/channel.h"
 #include "glue/events.h"
-#include "gui/dialogs/sampleEditor.h"
-#include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/ui.h"
+#include "src/gui/elems/basics/button.h"
+#include "src/gui/elems/basics/dial.h"
+#include "src/gui/elems/basics/input.h"
 #include "utils/gui.h"
 #include "utils/math.h"
 #include "utils/string.h"
-#include <FL/Fl_Pack.H>
-#include <cmath>
-#include <cstdlib>
+#include <FL/Fl.H>
 
 extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-geVolumeTool::geVolumeTool(const c::sampleEditor::Data& d, int x, int y)
-: gePack(x, y, Direction::HORIZONTAL)
-, m_data(nullptr)
-, m_label(0, 0, 60, G_GUI_UNIT, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_VOLUME), FL_ALIGN_LEFT)
-, m_dial(0, 0, G_GUI_UNIT, G_GUI_UNIT)
-, m_input(0, 0, 70, G_GUI_UNIT)
+gePanTool::gePanTool(ID channelId, float pan, int labelWidth)
+: geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
+, m_channelId(channelId)
 {
-	add(&m_label);
-	add(&m_dial);
-	add(&m_input);
+	m_input = new geInput(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_PAN), labelWidth);
+	m_dial  = new geDial();
+	m_reset = new geButton(g_ui.langMapper.get(LangMap::COMMON_RESET));
+	add(m_input);
+	add(m_dial, G_GUI_UNIT);
+	add(m_reset, 70);
+	end();
 
-	m_dial.range(0.0f, 1.0f);
-	m_dial.onChange = [this](float val) {
-		c::events::setChannelVolume(m_data->channelId, val, Thread::MAIN);
+	m_dial->range(0.0f, G_MAX_PAN);
+	m_dial->onChange = [this](float val) {
+		c::events::sendChannelPan(m_channelId, val);
+		update(val);
 	};
 
-	m_input.onChange = [this](const std::string& val) {
-		c::events::setChannelVolume(m_data->channelId, u::math::dBtoLinear(val == "" ? 0.0 : std::stof(val)), Thread::MAIN);
+	m_input->setReadonly(true);
+	m_input->setCursorColor(FL_WHITE);
+
+	m_reset->onClick = [this]() {
+		c::events::sendChannelPan(m_channelId, 0.5f);
+		update(0.5f);
 	};
 
-	rebuild(d);
+	update(pan);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geVolumeTool::rebuild(const c::sampleEditor::Data& d)
+void gePanTool::update(float pan)
 {
-	m_data = &d;
-	update(m_data->volume, /*isDial=*/false);
-}
+	m_dial->value(pan);
 
-/* -------------------------------------------------------------------------- */
-
-void geVolumeTool::update(float v, bool isDial)
-{
-	std::string tmp = "-inf";
-	float       dB  = u::math::linearToDB(v);
-	if (dB > -INFINITY)
-		tmp = u::string::fToString(dB, 2); // 2 digits
-	m_input.setValue(tmp);
-	if (!isDial)
-		m_dial.value(v);
+	if (pan < 0.5f)
+	{
+		std::string tmp = u::string::iToString((int)((-pan * 200.0f) + 100.0f)) + " L";
+		m_input->setValue(tmp);
+	}
+	else if (pan == 0.5)
+		m_input->setValue("C");
+	else
+	{
+		std::string tmp = u::string::iToString((int)((pan * 200.0f) - 100.0f)) + " R";
+		m_input->setValue(tmp);
+	}
 }
 } // namespace giada::v

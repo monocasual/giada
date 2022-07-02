@@ -111,6 +111,7 @@ list(APPEND SOURCES
 	src/gui/dialogs/warnings.cpp
 	src/gui/dialogs/bpmInput.cpp
 	src/gui/dialogs/channelNameInput.cpp
+	src/gui/dialogs/channelRouting.cpp
 	src/gui/dialogs/config.cpp
 	src/gui/dialogs/pluginList.cpp
 	src/gui/dialogs/pluginWindow.cpp
@@ -141,8 +142,8 @@ list(APPEND SOURCES
 	src/gui/elems/plugin/pluginElement.cpp
 	src/gui/elems/sampleEditor/waveform.cpp
 	src/gui/elems/sampleEditor/waveTools.cpp
-	src/gui/elems/sampleEditor/volumeTool.cpp
-	src/gui/elems/sampleEditor/panTool.cpp
+        src/gui/elems/volumeTool.cpp
+		src/gui/elems/panTool.cpp
 	src/gui/elems/sampleEditor/pitchTool.cpp
 	src/gui/elems/sampleEditor/rangeTool.cpp
 	src/gui/elems/sampleEditor/shiftTool.cpp

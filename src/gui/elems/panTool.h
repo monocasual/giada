@@ -27,38 +27,27 @@
 #ifndef GE_PAN_TOOL_H
 #define GE_PAN_TOOL_H
 
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
-#include "gui/elems/basics/dial.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/pack.h"
+#include "core/types.h"
+#include "gui/elems/basics/flex.h"
 
-namespace giada::c::sampleEditor
-{
-struct Data;
-}
 namespace giada::v
 {
-class gePanTool : public gePack
+class geInput;
+class geDial;
+class geButton;
+class gePanTool : public geFlex
 {
 public:
-	gePanTool(const c::sampleEditor::Data& d, int x, int y);
+	gePanTool(ID channelId, float pan, int labelWidth = 0);
 
-	void rebuild(const c::sampleEditor::Data& d);
-	void update(float v);
+private:
+	void update(float pan);
 
-  private:
-	static void cb_panning(Fl_Widget* /*w*/, void* p);
-	static void cb_panReset(Fl_Widget* /*w*/, void* p);
-	void        cb_panning();
-	void        cb_panReset();
+	ID m_channelId;
 
-	const c::sampleEditor::Data* m_data;
-
-	geBox    m_label;
-	geDial   m_dial;
-	geInput  m_input;
-	geButton m_reset;
+	geInput*  m_input;
+	geDial*   m_dial;
+	geButton* m_reset;
 };
 } // namespace giada::v
 

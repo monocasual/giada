@@ -151,9 +151,9 @@ void openChannelMidiInputWindow(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void openChannelRoutingWindow(const c::channel::Data& data)
+void openChannelRoutingWindow(ID channelId)
 {
-	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdChannelRouting(data), WID_CHANNEL_ROUTING);
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdChannelRouting(channel::getData(channelId)), WID_CHANNEL_ROUTING);
 }
 
 /* -------------------------------------------------------------------------- */

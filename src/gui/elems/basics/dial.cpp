@@ -46,6 +46,13 @@ geDial::geDial(int x, int y, int w, int h, const char* l)
 
 /* -------------------------------------------------------------------------- */
 
+geDial::geDial(const char* l)
+: geDial(0, 0, 0, 0, l)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geDial::cb_change(Fl_Widget* w, void*)
 {
 	geDial* d = static_cast<geDial*>(w);

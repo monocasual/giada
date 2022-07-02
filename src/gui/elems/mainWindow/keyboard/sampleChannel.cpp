@@ -62,6 +62,7 @@ enum class Menu
 	SETUP_KEYBOARD_INPUT,
 	SETUP_MIDI_INPUT,
 	SETUP_MIDI_OUTPUT,
+	EDIT_ROUTING,
 	EDIT_SAMPLE,
 	EDIT_ACTIONS,
 	CLEAR_ACTIONS,
@@ -176,6 +177,7 @@ void geSampleChannel::cb_openMenu()
 	menu.addItem((ID)Menu::SETUP_KEYBOARD_INPUT, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT));
 	menu.addItem((ID)Menu::SETUP_MIDI_INPUT, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
 	menu.addItem((ID)Menu::SETUP_MIDI_OUTPUT, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT));
+	menu.addItem((ID)Menu::EDIT_ROUTING, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
 	menu.addItem((ID)Menu::EDIT_SAMPLE, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EDITSAMPLE));
 	menu.addItem((ID)Menu::EDIT_ACTIONS, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EDITACTIONS));
 	menu.addItem((ID)Menu::CLEAR_ACTIONS, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS));
@@ -226,6 +228,10 @@ void geSampleChannel::cb_openMenu()
 
 		case Menu::SETUP_MIDI_OUTPUT:
 			c::layout::openSampleChannelMidiOutputWindow(channel.id);
+			break;
+
+		case Menu::EDIT_ROUTING:
+			c::layout::openChannelRoutingWindow(channel.id);
 			break;
 
 		case Menu::EDIT_SAMPLE:

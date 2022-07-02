@@ -43,11 +43,9 @@
 #include "gui/elems/basics/pack.h"
 #include "gui/elems/basics/statusButton.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
-#include "gui/elems/sampleEditor/panTool.h"
 #include "gui/elems/sampleEditor/pitchTool.h"
 #include "gui/elems/sampleEditor/rangeTool.h"
 #include "gui/elems/sampleEditor/shiftTool.h"
-#include "gui/elems/sampleEditor/volumeTool.h"
 #include "gui/elems/sampleEditor/waveTools.h"
 #include "gui/elems/sampleEditor/waveform.h"
 #include "gui/ui.h"
@@ -120,8 +118,6 @@ void gdSampleEditor::rebuild()
 	m_data = c::sampleEditor::getData(m_channelId);
 
 	waveTools->rebuild(m_data);
-	volumeTool->rebuild(m_data);
-	panTool->rebuild(m_data);
 	pitchTool->rebuild(m_data);
 	rangeTool->rebuild(m_data);
 	shiftTool->rebuild(m_data);
@@ -195,15 +191,11 @@ gePack* gdSampleEditor::createUpperBar()
 
 gePack* gdSampleEditor::createOpTools(int x, int y)
 {
-	volumeTool = new geVolumeTool(m_data, 0, 0);
-	panTool    = new gePanTool(m_data, 0, 0);
-	pitchTool  = new gePitchTool(m_data, 0, 0);
-	rangeTool  = new geRangeTool(m_data, 0, 0);
-	shiftTool  = new geShiftTool(m_data, 0, 0);
+	pitchTool = new gePitchTool(m_data, 0, 0);
+	rangeTool = new geRangeTool(m_data, 0, 0);
+	shiftTool = new geShiftTool(m_data, 0, 0);
 
 	gePack* g = new gePack(x, y, Direction::VERTICAL);
-	g->add(volumeTool);
-	g->add(panTool);
 	g->add(pitchTool);
 	g->add(rangeTool);
 	g->add(shiftTool);

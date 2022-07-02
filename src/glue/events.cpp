@@ -48,10 +48,10 @@
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/mainIO.h"
 #include "gui/elems/mainWindow/mainTimer.h"
-#include "gui/elems/sampleEditor/panTool.h"
 #include "gui/elems/sampleEditor/pitchTool.h"
-#include "gui/elems/sampleEditor/volumeTool.h"
 #include "gui/ui.h"
+#include "src/gui/elems/panTool.h"
+#include "src/gui/elems/volumeTool.h"
 #include "utils/log.h"
 #include <FL/Fl.H>
 #include <cassert>
@@ -109,15 +109,13 @@ void killChannel(ID channelId, Thread t)
 
 /* -------------------------------------------------------------------------- */
 
-void setChannelVolume(ID channelId, float v, Thread t)
+void setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
 {
 	v = std::clamp(v, 0.0f, G_MAX_VOLUME);
 
 	pushEvent_({m::EventDispatcher::EventType::CHANNEL_VOLUME, 0, channelId, v}, t);
 
-	sampleEditor::onRefresh(t, [v](v::gdSampleEditor& e) { e.volumeTool->update(v); });
-
-	if (t != Thread::MAIN)
+	if (t != Thread::MAIN || repaintMainUi)
 	{
 		u::gui::ScopedLock lock;
 		g_ui.mainWindow->keyboard->setChannelVolume(channelId, v);
@@ -143,8 +141,6 @@ void sendChannelPan(ID channelId, float v)
 
 	/* Pan event is currently triggered only by the main thread. */
 	pushEvent_({m::EventDispatcher::EventType::CHANNEL_PAN, 0, channelId, v}, Thread::MAIN);
-
-	sampleEditor::onRefresh(Thread::MAIN, [v](v::gdSampleEditor& e) { e.panTool->update(v); });
 }
 
 /* -------------------------------------------------------------------------- */

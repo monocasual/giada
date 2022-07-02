@@ -60,6 +60,7 @@ enum class Menu
 	SETUP_KEYBOARD_INPUT,
 	SETUP_MIDI_INPUT,
 	SETUP_MIDI_OUTPUT,
+	EDIT_ROUTING,
 	RENAME_CHANNEL,
 	CLONE_CHANNEL,
 	DELETE_CHANNEL
@@ -150,6 +151,7 @@ void geMidiChannel::cb_openMenu()
 	menu.addItem((ID)Menu::SETUP_KEYBOARD_INPUT, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT));
 	menu.addItem((ID)Menu::SETUP_MIDI_INPUT, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
 	menu.addItem((ID)Menu::SETUP_MIDI_OUTPUT, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT));
+	menu.addItem((ID)Menu::EDIT_ROUTING, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
 	menu.addItem((ID)Menu::RENAME_CHANNEL, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_RENAME));
 	menu.addItem((ID)Menu::CLONE_CHANNEL, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLONE));
 	menu.addItem((ID)Menu::DELETE_CHANNEL, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_DELETE));
@@ -176,6 +178,9 @@ void geMidiChannel::cb_openMenu()
 			break;
 		case Menu::SETUP_MIDI_OUTPUT:
 			c::layout::openMidiChannelMidiOutputWindow(data.id);
+			break;
+		case Menu::EDIT_ROUTING:
+			c::layout::openChannelRoutingWindow(data.id);
 			break;
 		case Menu::CLONE_CHANNEL:
 			c::channel::cloneChannel(data.id);
