@@ -35,7 +35,6 @@
 
 class Fl_Group;
 class geCheck;
-class geInput;
 
 namespace giada::m
 {
@@ -45,6 +44,7 @@ class Channel;
 namespace giada::v
 {
 class geButton;
+class geInput;
 class geFileBrowser;
 class gdBrowserBase : public gdWindow
 {

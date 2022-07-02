@@ -27,10 +27,8 @@
 #ifndef GD_BROWSER_SAVE_H
 #define GD_BROWSER_SAVE_H
 
-#include "core/conf.h"
 #include "browserBase.h"
-
-class geInput;
+#include "core/conf.h"
 
 namespace giada::m
 {
@@ -39,6 +37,7 @@ class Channel;
 
 namespace giada::v
 {
+class geInput;
 class gdBrowserSave : public gdBrowserBase
 {
 public:

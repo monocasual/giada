@@ -33,11 +33,9 @@
 #include "glue/config.h"
 #include <FL/Fl_Group.H>
 
-class geInput;
-class geBox;
-
 namespace giada::v
 {
+class geInput;
 class geBox;
 class geButton;
 class geTabPlugins : public Fl_Group

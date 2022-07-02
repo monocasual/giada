@@ -29,11 +29,10 @@
 
 #include "window.h"
 
-class geInput;
-
 namespace giada::v
 {
 class geButton;
+class geInput;
 class gdBpmInput : public gdWindow
 {
 public:

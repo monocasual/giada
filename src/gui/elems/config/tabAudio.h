@@ -33,10 +33,10 @@
 #include <FL/Fl_Group.H>
 
 class geCheck;
-class geInput;
 
 namespace giada::v
 {
+class geInput;
 class geTabAudio : public Fl_Group
 {
 public:

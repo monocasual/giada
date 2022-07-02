@@ -29,8 +29,6 @@
 
 #include "window.h"
 
-class geInput;
-
 namespace giada::c::channel
 {
 struct Data;
@@ -39,6 +37,7 @@ struct Data;
 namespace giada::v
 {
 class geButton;
+class geInput;
 class gdChannelNameInput : public gdWindow
 {
 public:

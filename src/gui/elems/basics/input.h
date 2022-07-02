@@ -31,6 +31,8 @@
 #include <functional>
 #include <string>
 
+namespace giada::v
+{
 class geInput : public Fl_Input
 {
 public:
@@ -42,5 +44,6 @@ private:
 	static void cb_onChange(Fl_Widget* w, void* p);
 	void        cb_onChange();
 };
+} // namespace giada::v
 
 #endif

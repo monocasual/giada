@@ -28,6 +28,8 @@
 #include "boxtypes.h"
 #include "core/const.h"
 
+namespace giada::v
+{
 geInput::geInput(int x, int y, int w, int h, const char* l)
 : Fl_Input(x, y, w, h, l)
 {
@@ -56,3 +58,4 @@ void geInput::cb_onChange()
 	if (onChange != nullptr)
 		onChange(value());
 }
+} // namespace giada::v
