@@ -27,25 +27,51 @@
 #include "input.h"
 #include "boxtypes.h"
 #include "core/const.h"
+#include "utils/gui.h"
 
 namespace giada::v
 {
-geInput::geInput(int x, int y, int w, int h, const char* l)
-: Fl_Input(x, y, w, h, l)
+geInput::geInput(int x, int y, int w, int h, const char* l, int labelWidth)
+: geFlex(x, y, w, h, Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
-	//Fl::set_boxtype(G_CUSTOM_BORDER_BOX, gDrawBox, 1, 1, 2, 2);
-	box(G_CUSTOM_BORDER_BOX);
-	labelsize(G_GUI_FONT_SIZE_BASE);
-	labelcolor(G_COLOR_LIGHT_2);
-	color(G_COLOR_BLACK);
-	textcolor(G_COLOR_LIGHT_2);
-	cursor_color(G_COLOR_LIGHT_2);
-	selection_color(G_COLOR_GREY_4);
-	textsize(G_GUI_FONT_SIZE_BASE);
+	if (l != nullptr)
+	{
+		m_text = new geBox(l, FL_ALIGN_RIGHT);
+		add(m_text, labelWidth != 0 ? labelWidth : u::gui::getStringRect(l).w);
+	}
+	m_input = new Fl_Input(x, y, w, h);
+	add(m_input);
+	end();
 
-	when(FL_WHEN_CHANGED);
-	callback(cb_onChange, this);
+	m_input->box(G_CUSTOM_BORDER_BOX);
+	m_input->labelsize(G_GUI_FONT_SIZE_BASE);
+	m_input->labelcolor(G_COLOR_LIGHT_2);
+	m_input->color(G_COLOR_BLACK);
+	m_input->textcolor(G_COLOR_LIGHT_2);
+	m_input->cursor_color(G_COLOR_LIGHT_2);
+	m_input->selection_color(G_COLOR_GREY_4);
+	m_input->textsize(G_GUI_FONT_SIZE_BASE);
+	m_input->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
+	m_input->shortcut(FL_Enter);
+	m_input->callback(cb_onChange, this);
 }
+
+/* -------------------------------------------------------------------------- */
+
+geInput::geInput(const char* l, int labelWidth)
+: geInput(0, 0, 0, 0, l, labelWidth)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::string geInput::getValue() const { return m_input->value(); }
+
+void geInput::setType(int t) { m_input->type(t); }
+void geInput::setValue(const std::string& s) { m_input->value(s.c_str()); }
+void geInput::setMaximumSize(int s) { m_input->maximum_size(s); };
+void geInput::setReadonly(bool v) { m_input->readonly(v); };
+void geInput::setCursorColor(int c) { m_input->cursor_color(c); };
 
 /* -------------------------------------------------------------------------- */
 
@@ -56,6 +82,6 @@ void geInput::cb_onChange(Fl_Widget* /*w*/, void* p) { (static_cast<geInput*>(p)
 void geInput::cb_onChange()
 {
 	if (onChange != nullptr)
-		onChange(value());
+		onChange(m_input->value());
 }
 } // namespace giada::v

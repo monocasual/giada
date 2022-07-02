@@ -75,6 +75,6 @@ void gdBrowserDir::cb_down()
 		return;
 
 	browser->loadDir(path);
-	where->value(browser->getCurrentDir().c_str());
+	where->setValue(browser->getCurrentDir().c_str());
 }
 } // namespace giada::v

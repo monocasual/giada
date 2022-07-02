@@ -27,22 +27,36 @@
 #ifndef GE_INPUT_H
 #define GE_INPUT_H
 
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/flex.h"
 #include <FL/Fl_Input.H>
 #include <functional>
 #include <string>
 
 namespace giada::v
 {
-class geInput : public Fl_Input
+class geInput : public geFlex
 {
 public:
-	geInput(int x, int y, int w, int h, const char* l = 0);
+	geInput(int x, int y, int w, int h, const char* l = nullptr, int labelWidth = 0);
+	geInput(const char* l = nullptr, int labelWidth = 0);
+
+	std::string getValue() const;
+
+	void setType(int);
+	void setMaximumSize(int);
+	void setReadonly(bool);
+	void setCursorColor(int);
+	void setValue(const std::string&);
 
 	std::function<void(const std::string&)> onChange = nullptr;
 
 private:
 	static void cb_onChange(Fl_Widget* w, void* p);
 	void        cb_onChange();
+
+	geBox*    m_text;
+	Fl_Input* m_input;
 };
 } // namespace giada::v
 

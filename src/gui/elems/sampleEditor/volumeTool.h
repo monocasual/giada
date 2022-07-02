@@ -46,12 +46,7 @@ public:
 	void rebuild(const c::sampleEditor::Data& d);
 	void update(float v, bool isDial = false);
 
-  private:
-	static void cb_setVolume(Fl_Widget* /*w*/, void* p);
-	static void cb_setVolumeNum(Fl_Widget* /*w*/, void* p);
-	void        cb_setVolume();
-	void        cb_setVolumeNum();
-
+private:
 	const c::sampleEditor::Data* m_data;
 
 	geBox   m_label;

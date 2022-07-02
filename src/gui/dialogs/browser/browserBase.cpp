@@ -63,9 +63,9 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 	hiddenFiles->callback(cb_toggleHiddenFiles, (void*)this);
 
-	where->readonly(true);
-	where->cursor_color(G_COLOR_BLACK);
-	where->value(path.c_str());
+	where->setReadonly(true);
+	where->setCursorColor(G_COLOR_BLACK);
+	where->setValue(path.c_str());
 
 	updir->callback(cb_up, (void*)this);
 
@@ -116,7 +116,7 @@ void gdBrowserBase::cb_toggleHiddenFiles(Fl_Widget* /*v*/, void* p) { ((gdBrowse
 void gdBrowserBase::cb_up()
 {
 	browser->loadDir(u::fs::getUpDir(browser->getCurrentDir()));
-	where->value(browser->getCurrentDir().c_str());
+	where->setValue(browser->getCurrentDir().c_str());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -137,7 +137,7 @@ void gdBrowserBase::cb_toggleHiddenFiles()
 
 std::string gdBrowserBase::getCurrentPath() const
 {
-	return where->value();
+	return where->getValue();
 }
 
 ID gdBrowserBase::getChannelId() const

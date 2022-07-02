@@ -59,6 +59,7 @@ void openBeatsWindow(int beats, int bars);
 void openConfigWindow();
 void openMasterMidiInputWindow();
 void openChannelMidiInputWindow(ID channelId);
+void openChannelRoutingWindow(const c::channel::Data&);
 void openSampleChannelMidiOutputWindow(ID channelId);
 void openMidiChannelMidiOutputWindow(ID channelId);
 void openSampleActionEditor(ID channelId);

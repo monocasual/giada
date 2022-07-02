@@ -69,9 +69,9 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d, int x, int y)
 	m_dial.callback(cb_setPitch, (void*)this);
 	m_dial.when(FL_WHEN_RELEASE);
 
-	m_input.align(FL_ALIGN_RIGHT);
-	m_input.callback(cb_setPitchNum, (void*)this);
-	m_input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
+	m_input.onChange = [this](const std::string& val) {
+		c::events::setChannelPitch(m_data->channelId, val == "" ? 0 : std::stof(val), Thread::MAIN);
+	};
 
 	m_pitchToBar.callback(cb_setPitchToBar, (void*)this);
 	m_pitchToSong.callback(cb_setPitchToSong, (void*)this);
@@ -94,7 +94,7 @@ void gePitchTool::rebuild(const c::sampleEditor::Data& d)
 
 void gePitchTool::update(float v, bool isDial)
 {
-	m_input.value(u::string::fToString(v, 4).c_str()); // 4 digits
+	m_input.setValue(u::string::fToString(v, 4)); // 4 digits
 	if (!isDial)
 		m_dial.value(v);
 }
@@ -107,20 +107,12 @@ void gePitchTool::cb_setPitchToSong(Fl_Widget* /*w*/, void* p) { ((gePitchTool*)
 void gePitchTool::cb_setPitchHalf(Fl_Widget* /*w*/, void* p) { ((gePitchTool*)p)->cb_setPitchHalf(); }
 void gePitchTool::cb_setPitchDouble(Fl_Widget* /*w*/, void* p) { ((gePitchTool*)p)->cb_setPitchDouble(); }
 void gePitchTool::cb_resetPitch(Fl_Widget* /*w*/, void* p) { ((gePitchTool*)p)->cb_resetPitch(); }
-void gePitchTool::cb_setPitchNum(Fl_Widget* /*w*/, void* p) { ((gePitchTool*)p)->cb_setPitchNum(); }
 
 /* -------------------------------------------------------------------------- */
 
 void gePitchTool::cb_setPitch()
 {
 	c::events::setChannelPitch(m_data->channelId, m_dial.value(), Thread::MAIN);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gePitchTool::cb_setPitchNum()
-{
-	c::events::setChannelPitch(m_data->channelId, atof(m_input.value()), Thread::MAIN);
 }
 
 /* -------------------------------------------------------------------------- */

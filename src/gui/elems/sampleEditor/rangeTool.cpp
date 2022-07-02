@@ -54,15 +54,21 @@ geRangeTool::geRangeTool(const c::sampleEditor::Data& d, int x, int y)
 	add(&m_end);
 	add(&m_reset);
 
-	m_begin.type(FL_INT_INPUT);
+	m_begin.setType(FL_INT_INPUT);
 	m_begin.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
-	m_begin.callback(cb_setChanPos, this);
+	m_begin.onChange = [this](const std::string& val) {
+		c::sampleEditor::setBeginEnd(m_data->channelId, val == "" ? 0 : std::stoi(val), std::stoi(m_end.getValue()));
+	};
 
-	m_end.type(FL_INT_INPUT);
+	m_end.setType(FL_INT_INPUT);
 	m_end.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
-	m_end.callback(cb_setChanPos, this);
+	m_end.onChange = [this](const std::string& val) {
+		c::sampleEditor::setBeginEnd(m_data->channelId, std::stoi(m_begin.getValue()), val == "" ? 0 : std::stoi(val));
+	};
 
-	m_reset.callback(cb_resetStartEnd, this);
+	m_reset.onClick = [this]() {
+		c::sampleEditor::setBeginEnd(m_data->channelId, 0, m_data->waveSize - 1);
+	};
 
 	rebuild(d);
 }
@@ -79,26 +85,7 @@ void geRangeTool::rebuild(const c::sampleEditor::Data& d)
 
 void geRangeTool::update(Frame begin, Frame end)
 {
-	m_begin.value(std::to_string(begin).c_str());
-	m_end.value(std::to_string(end).c_str());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geRangeTool::cb_setChanPos(Fl_Widget* /*w*/, void* p) { ((geRangeTool*)p)->cb_setChanPos(); }
-void geRangeTool::cb_resetStartEnd(Fl_Widget* /*w*/, void* p) { ((geRangeTool*)p)->cb_resetStartEnd(); }
-
-/* -------------------------------------------------------------------------- */
-
-void geRangeTool::cb_setChanPos()
-{
-	c::sampleEditor::setBeginEnd(m_data->channelId, atoi(m_begin.value()), atoi(m_end.value()));
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geRangeTool::cb_resetStartEnd()
-{
-	c::sampleEditor::setBeginEnd(m_data->channelId, 0, m_data->waveSize - 1);
+	m_begin.setValue(std::to_string(begin));
+	m_end.setValue(std::to_string(end));
 }
 } // namespace giada::v

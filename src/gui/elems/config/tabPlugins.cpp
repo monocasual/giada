@@ -58,10 +58,9 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 	{
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_folderPath = new geInput(0, 0, 0, 0);
+			m_folderPath = new geInput(g_ui.langMapper.get(LangMap::CONFIG_PLUGINS_FOLDER));
 			m_browse     = new geButton("", zoomInOff_xpm, zoomInOn_xpm);
 
-			line1->add(new geBox(), 80); // TODO - temporary hack for geInput's label
 			line1->add(m_folderPath);
 			line1->add(m_browse, 20);
 			line1->end();
@@ -81,7 +80,6 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 
 	m_info->hide();
 
-	m_folderPath->label(g_ui.langMapper.get(LangMap::CONFIG_PLUGINS_FOLDER));
 	m_folderPath->onChange = [this](const std::string& v) {
 		m_data.pluginPath = v;
 	};
@@ -98,7 +96,7 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 		};
 
 		m_info->show();
-		c::config::scanPlugins(m_folderPath->value(), callback);
+		c::config::scanPlugins(m_folderPath->getValue(), callback);
 		m_info->hide();
 		rebuild();
 	};
@@ -115,7 +113,7 @@ void geTabPlugins::rebuild()
 	const std::string scanLabel = fmt::format(g_ui.langMapper.get(LangMap::CONFIG_PLUGINS_SCAN), m_data.numAvailablePlugins);
 	m_scanButton->copy_label(scanLabel.c_str());
 
-	m_folderPath->value(m_data.pluginPath.c_str());
+	m_folderPath->setValue(m_data.pluginPath);
 	m_folderPath->redraw();
 }
 

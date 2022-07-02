@@ -161,11 +161,10 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 		geFlex* line4 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			channelsIn      = new geChannelMenu(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_INPUTCHANNELS), m_data.inputDevice);
-			recTriggerLevel = new geInput(0, 0, 0, 0, g_ui.langMapper.get(LangMap::CONFIG_AUDIO_RECTHRESHOLD));
+			recTriggerLevel = new geInput(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_RECTHRESHOLD), 120);
 
 			line4->add(channelsIn, 180);
-			line4->add(new geBox(), 132); // TODO - temporary hack for geInput's label
-			line4->add(recTriggerLevel, 40);
+			line4->add(recTriggerLevel, 180);
 			line4->end();
 		}
 
@@ -236,7 +235,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	rsmpQuality->showItem(m_data.resampleQuality);
 	rsmpQuality->onChange = [this](ID id) { m_data.resampleQuality = id; };
 
-	recTriggerLevel->value(u::string::fToString(m_data.recTriggerLevel, 1).c_str());
+	recTriggerLevel->setValue(u::string::fToString(m_data.recTriggerLevel, 1));
 	recTriggerLevel->onChange = [this](const std::string& s) { m_data.recTriggerLevel = std::stof(s); };
 
 	if (m_data.api == G_SYS_API_NONE)

@@ -59,19 +59,19 @@ gdBpmInput::gdBpmInput(const char* label)
 
 	std::vector<std::string> parts = u::string::split(label, ".");
 
-	m_input_a->maximum_size(3);
-	m_input_a->type(FL_INT_INPUT);
-	m_input_a->value(parts[0].c_str());
+	m_input_a->setMaximumSize(3);
+	m_input_a->setType(FL_INT_INPUT);
+	m_input_a->setValue(parts[0]);
 
-	m_input_b->maximum_size(1);
-	m_input_b->type(FL_INT_INPUT);
-	m_input_b->value(parts[1].c_str());
+	m_input_b->setMaximumSize(1);
+	m_input_b->setType(FL_INT_INPUT);
+	m_input_b->setValue(parts[1]);
 
 	m_ok->shortcut(FL_Enter);
 	m_ok->onClick = [this]() {
-		if (strcmp(m_input_a->value(), "") == 0)
+		if (m_input_a->getValue() == "")
 			return;
-		c::main::setBpm(m_input_a->value(), m_input_b->value());
+		c::main::setBpm(m_input_a->getValue().c_str(), m_input_b->getValue().c_str());
 		do_callback();
 	};
 

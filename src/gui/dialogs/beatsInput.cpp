@@ -56,19 +56,19 @@ gdBeatsInput::gdBeatsInput(int beats, int bars)
 
 	add(container);
 
-	m_beats->maximum_size(2);
-	m_beats->value(std::to_string(beats).c_str());
-	m_beats->type(FL_INT_INPUT);
+	m_beats->setMaximumSize(2);
+	m_beats->setValue(std::to_string(beats));
+	m_beats->setType(FL_INT_INPUT);
 
-	m_bars->maximum_size(2);
-	m_bars->value(std::to_string(bars).c_str());
-	m_bars->type(FL_INT_INPUT);
+	m_bars->setMaximumSize(2);
+	m_bars->setValue(std::to_string(bars));
+	m_bars->setType(FL_INT_INPUT);
 
 	m_ok->shortcut(FL_Enter);
 	m_ok->onClick = [this]() {
-		if (!strcmp(m_beats->value(), "") || !strcmp(m_bars->value(), ""))
+		if (m_beats->getValue() == "" || m_bars->getValue() == "")
 			return;
-		c::main::setBeats(atoi(m_beats->value()), atoi(m_bars->value()));
+		c::main::setBeats(std::stoi(m_beats->getValue()), std::stoi(m_bars->getValue()));
 		do_callback();
 	};
 

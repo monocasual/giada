@@ -47,12 +47,7 @@ public:
 	void rebuild(const c::sampleEditor::Data& d);
 	void update(Frame begin, Frame end);
 
-  private:
-	static void cb_setChanPos(Fl_Widget* /*w*/, void* p);
-	static void cb_resetStartEnd(Fl_Widget* /*w*/, void* p);
-	void        cb_setChanPos();
-	void        cb_resetStartEnd();
-
+private:
 	const c::sampleEditor::Data* m_data;
 
 	geBox    m_label;

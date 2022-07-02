@@ -42,6 +42,7 @@
 #include "gui/dialogs/browser/browserLoad.h"
 #include "gui/dialogs/browser/browserSave.h"
 #include "gui/dialogs/channelNameInput.h"
+#include "gui/dialogs/channelRouting.h"
 #include "gui/dialogs/config.h"
 #include "gui/dialogs/keyGrabber.h"
 #include "gui/dialogs/mainWindow.h"
@@ -146,6 +147,13 @@ void openChannelMidiInputWindow(ID channelId)
 {
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdMidiInputChannel(channelId, g_engine.conf.data),
 	    WID_MIDI_INPUT);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void openChannelRoutingWindow(const c::channel::Data& data)
+{
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdChannelRouting(data), WID_CHANNEL_ROUTING);
 }
 
 /* -------------------------------------------------------------------------- */

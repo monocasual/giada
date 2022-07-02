@@ -51,32 +51,17 @@ geShiftTool::geShiftTool(const c::sampleEditor::Data& d, int x, int y)
 	add(&m_shift);
 	add(&m_reset);
 
-	m_shift.type(FL_INT_INPUT);
+	m_shift.setType(FL_INT_INPUT);
 	m_shift.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
-	m_shift.callback(cb_setShift, (void*)this);
+	m_shift.onChange = [this](const std::string& val) {
+		shift(val == "" ? 0 : std::stoi(val));
+	};
 
-	m_reset.callback(cb_reset, (void*)this);
+	m_reset.onClick = [this]() {
+		shift(0);
+	};
 
 	rebuild(d);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geShiftTool::cb_setShift(Fl_Widget* /*w*/, void* p) { ((geShiftTool*)p)->cb_setShift(); }
-void geShiftTool::cb_reset(Fl_Widget* /*w*/, void* p) { ((geShiftTool*)p)->cb_reset(); }
-
-/* -------------------------------------------------------------------------- */
-
-void geShiftTool::cb_setShift()
-{
-	shift(atoi(m_shift.value()));
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geShiftTool::cb_reset()
-{
-	shift(0);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -91,7 +76,7 @@ void geShiftTool::rebuild(const c::sampleEditor::Data& d)
 
 void geShiftTool::update(Frame shift)
 {
-	m_shift.value(std::to_string(shift).c_str());
+	m_shift.setValue(std::to_string(shift));
 }
 
 /* -------------------------------------------------------------------------- */

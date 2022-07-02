@@ -57,9 +57,8 @@ gePanTool::gePanTool(const c::sampleEditor::Data& d, int x, int y)
 	m_dial.range(0.0f, G_MAX_PAN);
 	m_dial.callback(cb_panning, (void*)this);
 
-	m_input.align(FL_ALIGN_RIGHT);
-	m_input.readonly(1);
-	m_input.cursor_color(FL_WHITE);
+	m_input.setReadonly(true);
+	m_input.setCursorColor(FL_WHITE);
 
 	m_reset.callback(cb_panReset, (void*)this);
 
@@ -83,14 +82,14 @@ void gePanTool::update(float v)
 	if (v < 0.5f)
 	{
 		std::string tmp = u::string::iToString((int)((-v * 200.0f) + 100.0f)) + " L";
-		m_input.value(tmp.c_str());
+		m_input.setValue(tmp);
 	}
 	else if (v == 0.5)
-		m_input.value("C");
+		m_input.setValue("C");
 	else
 	{
 		std::string tmp = u::string::iToString((int)((v * 200.0f) - 100.0f)) + " R";
-		m_input.value(tmp.c_str());
+		m_input.setValue(tmp);
 	}
 }
 

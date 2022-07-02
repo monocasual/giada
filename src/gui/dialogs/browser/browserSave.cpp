@@ -43,7 +43,7 @@ gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
 	where->size(groupTop->w() - 236, 20);
 
 	name = new geInput(where->x() + where->w() + 8, where->y(), 200, 20);
-	name->value(name_.c_str());
+	name->setValue(name_.c_str());
 	groupTop->add(name);
 
 	browser->callback(cb_down, (void*)this);
@@ -79,17 +79,17 @@ void gdBrowserSave::cb_down()
 	if (u::fs::isDir(path))
 	{
 		browser->loadDir(path);
-		where->value(browser->getCurrentDir().c_str());
+		where->setValue(browser->getCurrentDir().c_str());
 	}
 	else
-		name->value(browser->getSelectedItem(false).c_str());
+		name->setValue(browser->getSelectedItem(false).c_str());
 }
 
 /* -------------------------------------------------------------------------- */
 
 std::string gdBrowserSave::getName() const
 {
-	return name->value();
+	return name->getValue();
 }
 
 /* -------------------------------------------------------------------------- */
