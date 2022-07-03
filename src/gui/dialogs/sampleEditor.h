@@ -30,15 +30,10 @@
 #include "core/conf.h"
 #include "core/types.h"
 #include "glue/sampleEditor.h"
-#include "window.h"
+#include "gui/dialogs/window.h"
 
 class geCheck;
 class geStatusButton;
-
-namespace giada::m
-{
-class Wave;
-}
 
 namespace giada::v
 {
@@ -65,7 +60,6 @@ public:
 
 	geChoice* grid;
 	geCheck*  snap;
-	geBox*    sep1;
 	geButton* zoomIn;
 	geButton* zoomOut;
 
@@ -82,28 +76,10 @@ public:
 	geBox*          info;
 
 private:
-	gePack*  createUpperBar();
-	gePack*  createBottomBar(int x, int y, int h);
-	geGroup* createPreviewBox(int x, int y, int h);
-	gePack*  createOpTools(int x, int y);
-
-	static void cb_reload(Fl_Widget* /*w*/, void* p);
-	static void cb_zoomIn(Fl_Widget* /*w*/, void* p);
-	static void cb_zoomOut(Fl_Widget* /*w*/, void* p);
-	static void cb_enableSnap(Fl_Widget* /*w*/, void* p);
-	static void cb_togglePreview(Fl_Widget* /*w*/, void* p);
-	static void cb_rewindPreview(Fl_Widget* /*w*/, void* p);
-	void        cb_reload();
-	void        cb_zoomIn();
-	void        cb_zoomOut();
-	void        cb_enableSnap();
-	void        cb_togglePreview();
-	void        cb_rewindPreview();
-
 	void updateInfo();
+	void togglePreview();
 
-	ID m_channelId;
-
+	ID                    m_channelId;
 	c::sampleEditor::Data m_data;
 	m::Conf::Data&        m_conf;
 };

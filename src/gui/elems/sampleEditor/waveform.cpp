@@ -319,7 +319,7 @@ int geWaveform::handle(int e)
 	case FL_KEYDOWN:
 	{
 		if (Fl::event_key() == ' ')
-			static_cast<v::gdSampleEditor*>(window())->cb_togglePreview();
+			static_cast<v::gdSampleEditor*>(window())->togglePreview();
 		else if (Fl::event_key() == FL_BackSpace)
 			c::sampleEditor::setPreviewTracker(m_data->begin);
 		return 1;

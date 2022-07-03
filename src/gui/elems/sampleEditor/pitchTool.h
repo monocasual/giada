@@ -27,11 +27,7 @@
 #ifndef GE_PITCH_TOOL_H
 #define GE_PITCH_TOOL_H
 
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
-#include "gui/elems/basics/dial.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/flex.h"
 
 namespace giada::c::sampleEditor
 {
@@ -40,40 +36,29 @@ struct Data;
 
 namespace giada::v
 {
-class gePitchTool : public gePack
+class geInput;
+class geBox;
+class geDial;
+class geButton;
+class gePitchTool : public geFlex
 {
 public:
-	gePitchTool(const c::sampleEditor::Data& d, int x, int y);
+	gePitchTool(const c::sampleEditor::Data& d);
 
 	void rebuild(const c::sampleEditor::Data& d);
 	void update(float v, bool isDial = false);
 
 private:
-	static void cb_setPitch(Fl_Widget* /*w*/, void* p);
-	static void cb_setPitchToBar(Fl_Widget* /*w*/, void* p);
-	static void cb_setPitchToSong(Fl_Widget* /*w*/, void* p);
-	static void cb_setPitchHalf(Fl_Widget* /*w*/, void* p);
-	static void cb_setPitchDouble(Fl_Widget* /*w*/, void* p);
-	static void cb_resetPitch(Fl_Widget* /*w*/, void* p);
-	static void cb_setPitchNum(Fl_Widget* /*w*/, void* p);
-	void        cb_setPitch();
-	void        cb_setPitchToBar();
-	void        cb_setPitchToSong();
-	void        cb_setPitchHalf();
-	void        cb_setPitchDouble();
-	void        cb_resetPitch();
-	void        cb_setPitchNum();
-
 	const c::sampleEditor::Data* m_data;
 
-	geBox    m_label;
-	geDial   m_dial;
-	geInput  m_input;
-	geButton m_pitchToBar;
-	geButton m_pitchToSong;
-	geButton m_pitchHalf;
-	geButton m_pitchDouble;
-	geButton m_pitchReset;
+	geBox*    m_label;
+	geDial*   m_dial;
+	geInput*  m_input;
+	geButton* m_pitchToBar;
+	geButton* m_pitchToSong;
+	geButton* m_pitchHalf;
+	geButton* m_pitchDouble;
+	geButton* m_pitchReset;
 };
 } // namespace giada::v
 

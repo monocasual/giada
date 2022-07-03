@@ -28,33 +28,32 @@
 #define GE_SHIFT_TOOL_H
 
 #include "core/types.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/flex.h"
 
 namespace giada::c::sampleEditor
 {
 struct Data;
 }
+
 namespace giada::v
 {
-class geShiftTool : public gePack
+class geInput;
+class geBox;
+class geButton;
+class geShiftTool : public geFlex
 {
 public:
-	geShiftTool(const c::sampleEditor::Data& d, int x, int y);
+	geShiftTool(const c::sampleEditor::Data& d);
 
 	void rebuild(const c::sampleEditor::Data& d);
 	void update(Frame shift);
 
 private:
-	void shift(int f);
-
 	const c::sampleEditor::Data* m_data;
 
-	geBox    m_label;
-	geInput  m_shift;
-	geButton m_reset;
+	geBox*    m_label;
+	geInput*  m_shift;
+	geButton* m_reset;
 };
 } // namespace giada::v
 

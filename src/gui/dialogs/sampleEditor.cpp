@@ -72,21 +72,116 @@ gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
 , m_channelId(channelId)
 , m_conf(c)
 {
-	end();
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		geFlex* top = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+		{
+			reload  = new geButton(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_RELOAD));
+			grid    = new geChoice();
+			snap    = new geCheck(0, 0, 0, 0, g_ui.langMapper.get(LangMap::COMMON_SNAPTOGRID));
+			zoomOut = new geButton("", zoomOutOff_xpm, zoomOutOn_xpm);
+			zoomIn  = new geButton("", zoomInOff_xpm, zoomInOn_xpm);
+			top->add(reload, 70);
+			top->add(grid, 50);
+			top->add(snap, 12);
+			top->add(new geBox());
+			top->add(zoomOut, G_GUI_UNIT);
+			top->add(zoomIn, G_GUI_UNIT);
+			top->end();
+		}
 
-	gePack* upperBar = createUpperBar();
+		waveTools = new geWaveTools(0, 0, 0, 0, m_conf.sampleEditorGridOn, m_conf.sampleEditorGridVal);
+		waveTools->rebuild(c::sampleEditor::getData(m_channelId)); // TODO - crappy temporary workaround for WaveTools
 
-	waveTools = new geWaveTools(G_GUI_OUTER_MARGIN, upperBar->y() + upperBar->h() + G_GUI_OUTER_MARGIN,
-	    w() - 16, h() - 168, m_conf.sampleEditorGridOn, m_conf.sampleEditorGridVal);
+		geFlex* bottom = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			geFlex* controls = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+			{
+				rewind = new geButton("", rewindOff_xpm, rewindOn_xpm);
+				play   = new geStatusButton(play_xpm, pause_xpm);
+				loop   = new geCheck(0, 0, 0, 0, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_LOOP));
+				controls->add(rewind, 25, {21, 0, 22, 0});
+				controls->add(play, 25, {21, 0, 22, 0});
+				controls->add(loop, -1, {21, 0, 22, 0});
+				controls->end();
+			}
 
-	gePack* bottomBar = createBottomBar(G_GUI_OUTER_MARGIN, waveTools->y() + waveTools->h() + G_GUI_OUTER_MARGIN,
-	    h() - waveTools->h() - upperBar->h() - 32);
+			geFlex* tools = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN);
+			{
+				pitchTool = new gePitchTool(m_data);
+				rangeTool = new geRangeTool(m_data);
+				shiftTool = new geShiftTool(m_data);
+				tools->add(pitchTool, G_GUI_UNIT);
+				tools->add(rangeTool, G_GUI_UNIT);
+				tools->add(shiftTool, G_GUI_UNIT);
+				tools->end();
+			}
 
-	add(upperBar);
-	add(waveTools);
-	add(bottomBar);
+			info = new geBox();
 
-	resizable(waveTools);
+			bottom->add(controls, 120);
+			bottom->add(tools, 420);
+			bottom->add(info);
+			bottom->end();
+		}
+
+		container->add(top, G_GUI_UNIT);
+		container->add(waveTools);
+		container->add(bottom, 68);
+		container->end();
+	}
+
+	add(container);
+	resizable(container);
+
+	reload->onClick = [this]() {
+		c::sampleEditor::reload(m_data.channelId);
+		redraw();
+	};
+
+	grid->addItem("1");
+	grid->addItem("2");
+	grid->addItem("3");
+	grid->addItem("4");
+	grid->addItem("6");
+	grid->addItem("8");
+	grid->addItem("16");
+	grid->addItem("32");
+	grid->addItem("64");
+	grid->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_GRIDRES));
+	grid->showItem(m_conf.sampleEditorGridVal);
+	grid->onChange = [this](ID) {
+		/* TODO - redraw grid if != (off) */
+		waveTools->waveform->setGridLevel(std::stoi(grid->getSelectedLabel()));
+	};
+
+	snap->value(m_conf.sampleEditorGridOn);
+	snap->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_SNAPTOGRID));
+	snap->onChange = [this](bool val) {
+		waveTools->waveform->setSnap(val);
+	};
+
+	zoomOut->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMOUT));
+	zoomOut->onClick = [this]() {
+		waveTools->waveform->setZoom(geWaveform::Zoom::OUT);
+		waveTools->redraw();
+	};
+
+	zoomIn->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMIN));
+	zoomIn->onClick = [this]() {
+		waveTools->waveform->setZoom(geWaveform::Zoom::IN);
+		waveTools->redraw();
+	};
+
+	play->onClick = [this]() {
+		togglePreview();
+	};
+
+	rewind->onClick = [this]() {
+		c::sampleEditor::setPreviewTracker(m_data.begin);
+	};
+
+	info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
 
 	u::gui::setFavicon(this);
 
@@ -116,7 +211,6 @@ gdSampleEditor::~gdSampleEditor()
 void gdSampleEditor::rebuild()
 {
 	m_data = c::sampleEditor::getData(m_channelId);
-
 	waveTools->rebuild(m_data);
 	pitchTool->rebuild(m_data);
 	rangeTool->rebuild(m_data);
@@ -138,173 +232,6 @@ void gdSampleEditor::refresh()
 
 /* -------------------------------------------------------------------------- */
 
-gePack* gdSampleEditor::createUpperBar()
-{
-	reload  = new geButton(0, 0, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_RELOAD));
-	grid    = new geChoice(0, 0, 50, G_GUI_UNIT);
-	snap    = new geCheck(0, 0, 12, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_SNAPTOGRID));
-	sep1    = new geBox(0, 0, w() - 208, G_GUI_UNIT);
-	zoomOut = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm);
-	zoomIn  = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm);
-
-	reload->callback(cb_reload, (void*)this);
-
-	grid->addItem("1");
-	grid->addItem("2");
-	grid->addItem("3");
-	grid->addItem("4");
-	grid->addItem("6");
-	grid->addItem("8");
-	grid->addItem("16");
-	grid->addItem("32");
-	grid->addItem("64");
-	grid->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_GRIDRES));
-	grid->showItem(m_conf.sampleEditorGridVal);
-	grid->onChange = [this](ID) {
-		waveTools->waveform->setGridLevel(std::stoi(grid->getSelectedLabel()));
-	};
-
-	snap->value(m_conf.sampleEditorGridOn);
-	snap->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_SNAPTOGRID));
-	snap->callback(cb_enableSnap, (void*)this);
-
-	/* TODO - redraw grid if != (off) */
-
-	zoomOut->callback(cb_zoomOut, (void*)this);
-	zoomOut->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMOUT));
-	zoomIn->callback(cb_zoomIn, (void*)this);
-	zoomIn->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMIN));
-
-	gePack* g = new gePack(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, Direction::HORIZONTAL);
-	g->add(reload);
-	g->add(grid);
-	g->add(snap);
-	g->add(sep1);
-	g->add(zoomOut);
-	g->add(zoomIn);
-	g->resizable(sep1);
-
-	return g;
-}
-
-/* -------------------------------------------------------------------------- */
-
-gePack* gdSampleEditor::createOpTools(int x, int y)
-{
-	pitchTool = new gePitchTool(m_data, 0, 0);
-	rangeTool = new geRangeTool(m_data, 0, 0);
-	shiftTool = new geShiftTool(m_data, 0, 0);
-
-	gePack* g = new gePack(x, y, Direction::VERTICAL);
-	g->add(pitchTool);
-	g->add(rangeTool);
-	g->add(shiftTool);
-
-	return g;
-}
-
-/* -------------------------------------------------------------------------- */
-
-geGroup* gdSampleEditor::createPreviewBox(int x, int y, int h)
-{
-	rewind = new geButton(x, y + (h / 2) - 12, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
-	play   = new geStatusButton(rewind->x() + rewind->w() + 4, rewind->y(), 25, 25, play_xpm, pause_xpm);
-	loop   = new geCheck(play->x() + play->w() + 4, play->y(), 50, 25, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_LOOP));
-
-	play->callback(cb_togglePreview, (void*)this);
-	rewind->callback(cb_rewindPreview, (void*)this);
-
-	geGroup* g = new geGroup(x, y);
-	g->add(rewind);
-	g->add(play);
-	g->add(loop);
-
-	return g;
-}
-
-/* -------------------------------------------------------------------------- */
-
-gePack* gdSampleEditor::createBottomBar(int x, int y, int h)
-{
-	geGroup*  previewBox = createPreviewBox(0, 0, h);
-	geBox*    divisor1   = new geBox(0, 0, 1, h);
-	Fl_Group* opTools    = createOpTools(0, 0);
-	geBox*    divisor2   = new geBox(0, 0, 1, h);
-	info                 = new geBox(0, 0, 400, h);
-
-	divisor1->box(FL_BORDER_BOX);
-	divisor2->box(FL_BORDER_BOX);
-
-	info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-
-	gePack* g = new gePack(x, y, Direction::HORIZONTAL, /*gutter=*/G_GUI_OUTER_MARGIN);
-	g->add(previewBox);
-	g->add(divisor1);
-	g->add(opTools);
-	g->add(divisor2);
-	g->add(info);
-	g->resizable(0);
-
-	return g;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdSampleEditor::cb_reload(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_reload(); }
-void gdSampleEditor::cb_zoomIn(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_zoomIn(); }
-void gdSampleEditor::cb_zoomOut(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_zoomOut(); }
-void gdSampleEditor::cb_enableSnap(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_enableSnap(); }
-void gdSampleEditor::cb_togglePreview(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_togglePreview(); }
-void gdSampleEditor::cb_rewindPreview(Fl_Widget* /*w*/, void* p) { ((gdSampleEditor*)p)->cb_rewindPreview(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdSampleEditor::cb_enableSnap()
-{
-	waveTools->waveform->setSnap(!waveTools->waveform->getSnap());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdSampleEditor::cb_togglePreview()
-{
-	if (!play->getStatus())
-		c::sampleEditor::playPreview(loop->value());
-	else
-		c::sampleEditor::stopPreview();
-}
-
-void gdSampleEditor::cb_rewindPreview()
-{
-	c::sampleEditor::setPreviewTracker(m_data.begin);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdSampleEditor::cb_reload()
-{
-	c::sampleEditor::reload(m_data.channelId);
-	redraw();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdSampleEditor::cb_zoomIn()
-{
-	waveTools->waveform->setZoom(geWaveform::Zoom::IN);
-	waveTools->redraw();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdSampleEditor::cb_zoomOut()
-{
-	waveTools->waveform->setZoom(geWaveform::Zoom::OUT);
-	waveTools->redraw();
-}
-
-/* -------------------------------------------------------------------------- */
-
 void gdSampleEditor::updateInfo()
 {
 	std::string infoText = fmt::format(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_INFO),
@@ -312,5 +239,14 @@ void gdSampleEditor::updateInfo()
 	    m_data.waveBits != 0 ? std::to_string(m_data.waveBits) : "?", m_data.waveRate);
 
 	info->copy_label(infoText.c_str());
+}
+/* -------------------------------------------------------------------------- */
+
+void gdSampleEditor::togglePreview()
+{
+	if (!play->getStatus())
+		c::sampleEditor::playPreview(loop->value());
+	else
+		c::sampleEditor::stopPreview();
 }
 } // namespace giada::v

@@ -24,41 +24,40 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "shiftTool.h"
+#include "gui/elems/sampleEditor/shiftTool.h"
 #include "core/const.h"
-#include "core/model/model.h"
 #include "glue/sampleEditor.h"
 #include "gui/dialogs/sampleEditor.h"
-#include "gui/dialogs/warnings.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/input.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
-#include "utils/string.h"
-#include <cassert>
-#include <cstdlib>
 
 extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-geShiftTool::geShiftTool(const c::sampleEditor::Data& d, int x, int y)
-: gePack(x, y, Direction::HORIZONTAL)
+geShiftTool::geShiftTool(const c::sampleEditor::Data& d)
+: geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , m_data(nullptr)
-, m_label(0, 0, 60, G_GUI_UNIT, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_SHIFT), FL_ALIGN_LEFT)
-, m_shift(0, 0, 70, G_GUI_UNIT)
-, m_reset(0, 0, 70, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_RESET))
 {
-	add(&m_label);
-	add(&m_shift);
-	add(&m_reset);
+	m_label = new geBox(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_SHIFT), FL_ALIGN_LEFT);
+	m_shift = new geInput();
+	m_reset = new geButton(g_ui.langMapper.get(LangMap::COMMON_RESET));
+	add(m_label, 50);
+	add(m_shift, 70);
+	add(m_reset, 70);
+	end();
 
-	m_shift.setType(FL_INT_INPUT);
-	m_shift.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
-	m_shift.onChange = [this](const std::string& val) {
-		shift(val == "" ? 0 : std::stoi(val));
+	m_shift->setType(FL_INT_INPUT);
+	m_shift->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
+	m_shift->onChange = [this](const std::string& val) {
+		c::sampleEditor::shift(m_data->channelId, val == "" ? 0 : std::stoi(val));
 	};
 
-	m_reset.onClick = [this]() {
-		shift(0);
+	m_reset->onClick = [this]() {
+		c::sampleEditor::shift(m_data->channelId, 0);
 	};
 
 	rebuild(d);
@@ -76,13 +75,6 @@ void geShiftTool::rebuild(const c::sampleEditor::Data& d)
 
 void geShiftTool::update(Frame shift)
 {
-	m_shift.setValue(std::to_string(shift));
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geShiftTool::shift(int f)
-{
-	c::sampleEditor::shift(m_data->channelId, f);
+	m_shift->setValue(std::to_string(shift));
 }
 } // namespace giada::v
