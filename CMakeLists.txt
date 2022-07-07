@@ -251,7 +251,9 @@ endif()
 # Options
 # ------------------------------------------------------------------------------
 
-option(WITH_VST2 "Enable VST2 support." OFF)
+set(VST2_SDK_PATH "" CACHE STRING "Path to VST2 SDK")
+
+option(WITH_VST2 "Enable VST2 support (requires path to VST2 SDK with -DVST2_SDK_PATH=...)." OFF)
 option(WITH_VST3 "Enable VST3 support." OFF)
 option(WITH_TESTS "Include the test suite." OFF)
 
@@ -517,42 +519,33 @@ endif()
 
 if(WITH_VST2 OR WITH_VST3)
 
-	list(APPEND SOURCES
-		src/deps/juce/modules/juce_audio_basics/juce_audio_basics.cpp
-		src/deps/juce/modules/juce_audio_processors/juce_audio_processors.cpp
-		src/deps/juce/modules/juce_core/juce_core.cpp
-		src/deps/juce/modules/juce_data_structures/juce_data_structures.cpp
-		src/deps/juce/modules/juce_events/juce_events.cpp
-		src/deps/juce/modules/juce_graphics/juce_graphics.cpp
-		src/deps/juce/modules/juce_gui_basics/juce_gui_basics.cpp
-		src/deps/juce/modules/juce_gui_extra/juce_gui_extra.cpp)
+	add_subdirectory(${CMAKE_SOURCE_DIR}/src/deps/juce)
 
-	list(APPEND INCLUDE_DIRS
-		${CMAKE_SOURCE_DIR}/src/deps/juce/modules
-		${CMAKE_SOURCE_DIR}/src/deps/vst3sdk)
-
-	if(DEFINED OS_LINUX)
-		find_package(Freetype REQUIRED)
-		list(APPEND LIBRARIES ${FREETYPE_LIBRARIES})
-		list(APPEND INCLUDE_DIRS ${FREETYPE_INCLUDE_DIRS})
-	endif()
+	list(APPEND LIBRARIES juce::juce_audio_utils)
 
 	list(APPEND PREPROCESSOR_DEFS
 		WITH_VST
 		JUCE_DEBUG=$<BOOL:$<CONFIG:Debug>>
 		JUCE_MODAL_LOOPS_PERMITTED=1
 		JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1
-		JUCE_MODULE_AVAILABLE_juce_gui_basics=1
 		JUCE_STANDALONE_APPLICATION=1
 		JUCE_PLUGINHOST_AU=0
 		JUCE_WEB_BROWSER=0
 		JUCE_USE_CURL=0)
 
 	if(WITH_VST2)
+		if(VST2_SDK_PATH STREQUAL "")
+			message(FATAL_ERROR "No VST2_SDK_PATH specified, required by WITH_VST2 option.")
+		endif()
+
 		list(APPEND PREPROCESSOR_DEFS
 			WITH_VST2
 			JUCE_PLUGINHOST_VST=1)
+		
+		list(APPEND INCLUDE_DIRS
+			${VST2_SDK_PATH})
 	endif()
+
 	if(WITH_VST3)
 		list(APPEND PREPROCESSOR_DEFS
 			WITH_VST3
