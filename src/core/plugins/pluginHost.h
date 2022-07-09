@@ -60,8 +60,8 @@ public:
 	public:
 		Info(const Sequencer&, int sampleRate);
 
-		bool getCurrentPosition(CurrentPositionInfo& result) override;
-		bool canControlTransport() override;
+		juce::Optional<juce::AudioPlayHead::PositionInfo> getPosition() const override;
+		bool                                              canControlTransport() override;
 
 	private:
 		const Sequencer& m_sequencer;
