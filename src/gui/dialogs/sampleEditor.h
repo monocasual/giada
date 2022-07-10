@@ -33,12 +33,12 @@
 #include "gui/dialogs/window.h"
 
 class geCheck;
-class geStatusButton;
 
 namespace giada::v
 {
 class geBox;
 class geButton;
+class geStatusButton;
 class geChoice;
 class gePack;
 class geGroup;
