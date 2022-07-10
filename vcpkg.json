@@ -12,10 +12,6 @@
             "version>=": "8.1.1"
         },
         {
-            "name": "fltk",
-            "version>=": "1.3.8"
-        },
-        {
             "name": "catch2",
             "version>=": "2.13.8"
         },

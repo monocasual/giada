@@ -324,12 +324,25 @@ list(APPEND INCLUDE_DIRS ${LIBRARY_RTMIDI_INCLUDE_DIR})
 
 # FLTK 
 
-set(FLTK_SKIP_FLUID TRUE)  # Don't search for FLTK's fluid
-set(FLTK_SKIP_OPENGL TRUE) # Don't search for FLTK's OpenGL
-find_package(FLTK REQUIRED NO_MODULE)
-list(APPEND LIBRARIES fltk)
-list(APPEND INCLUDE_DIRS ${FLTK_INCLUDE_DIRS})
-message("FLTK library found in " ${FLTK_DIR})
+include (ExternalProject)
+ExternalProject_Add(
+    fltk
+	SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/deps/fltk
+	INSTALL_COMMAND "" # Don't install
+	CMAKE_ARGS 
+		-DFLTK_BUILD_TEST=OFF 
+		-DFLTK_BUILD_EXAMPLES=OFF 
+		-DOPTION_BUILD_HTML_DOCUMENTATION=OFF 
+		-DOPTION_BUILD_PDF_DOCUMENTATION=OFF
+		-DOPTION_PRINT_SUPPORT=OFF
+)
+ExternalProject_Get_property(fltk BINARY_DIR)
+ExternalProject_Get_property(fltk SOURCE_DIR)
+list(APPEND INCLUDE_DIRS ${BINARY_DIR})
+list(APPEND INCLUDE_DIRS ${SOURCE_DIR})
+list(APPEND LIBRARIES ${BINARY_DIR}/lib/libfltk_images.a)
+list(APPEND LIBRARIES ${BINARY_DIR}/lib/libfltk.a)
+list(APPEND COMPILER_OPTIONS -Wno-cast-function-type)
 
 # Libsndfile
 
@@ -567,6 +580,7 @@ endif()
 # ------------------------------------------------------------------------------
 
 add_executable(giada)
+add_dependencies(giada fltk) # Wait for fltk to be ready before building Giada
 target_compile_features(giada PRIVATE ${COMPILER_FEATURES})
 target_sources(giada PRIVATE ${SOURCES})
 target_compile_definitions(giada PRIVATE ${PREPROCESSOR_DEFS})

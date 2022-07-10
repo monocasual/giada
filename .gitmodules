@@ -16,3 +16,6 @@
 [submodule "src/deps/mcl-atomic-swapper"]
 	path = src/deps/mcl-atomic-swapper
 	url = https://github.com/monocasual/mcl-atomic-swapper.git
+[submodule "src/deps/fltk"]
+	path = src/deps/fltk
+	url = https://github.com/fltk/fltk.git

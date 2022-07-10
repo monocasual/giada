@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include <FL/Fl.H>
 #include <FL/fl_draw.H>
+#include <FL/platform.H>
 #include <cstddef>
 #include <string>
 #if defined(_WIN32)
