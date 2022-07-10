@@ -234,7 +234,7 @@ void geWaveTools::openMenu()
 	b.textcolor(G_COLOR_LIGHT_2);
 	b.color(G_COLOR_GREY_2);
 
-	const Fl_Menu_Item* m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, &b);
+	const Fl_Menu_Item* m = menu->popup(Fl::event_x(), Fl::event_y(), nullptr, nullptr, &b);
 	if (m != nullptr)
 		m->do_callback(this, m->user_data());
 

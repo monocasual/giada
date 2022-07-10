@@ -74,7 +74,7 @@ void geFlex::Elem::resize(int pos, int newSize)
 /* -------------------------------------------------------------------------- */
 
 geFlex::geFlex(int x, int y, int w, int h, Direction d, int gutter)
-: Fl_Group(x, y, w, h, 0)
+: Fl_Group(x, y, w, h, nullptr)
 , m_direction(d)
 , m_gutter(gutter)
 , m_numFixed(0)

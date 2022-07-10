@@ -32,7 +32,7 @@
 class geSlider : public Fl_Slider
 {
 public:
-	geSlider(int x, int y, int w, int h, const char* l = 0);
+	geSlider(int x, int y, int w, int h, const char* l = nullptr);
 
 	int id;
 };

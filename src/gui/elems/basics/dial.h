@@ -35,8 +35,8 @@ namespace giada::v
 class geDial : public Fl_Dial
 {
 public:
-	geDial(int x, int y, int w, int h, const char* l = 0);
-	geDial(const char* l = 0);
+	geDial(int x, int y, int w, int h, const char* l = nullptr);
+	geDial(const char* l = nullptr);
 
 	void draw() override;
 
