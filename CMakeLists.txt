@@ -514,25 +514,27 @@ elseif (DEFINED OS_FREEBSD)
 endif()
 
 # ------------------------------------------------------------------------------
-# Extra parameters if compiled with VST.
+# Extra parameters for audio plug-ins support.
 # ------------------------------------------------------------------------------
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/deps/juce)
+
+list(APPEND LIBRARIES juce::juce_audio_utils)
+
+list(APPEND PREPROCESSOR_DEFS
+	JUCE_DEBUG=$<BOOL:$<CONFIG:Debug>>
+	JUCE_MODAL_LOOPS_PERMITTED=1
+	JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1
+	JUCE_STANDALONE_APPLICATION=1
+	JUCE_PLUGINHOST_LV2=1
+	JUCE_PLUGINHOST_AU=0
+	JUCE_WEB_BROWSER=0
+	JUCE_USE_CURL=0)
 
 if(WITH_VST2 OR WITH_VST3)
 
-	add_subdirectory(${CMAKE_SOURCE_DIR}/src/deps/juce)
-
-	list(APPEND LIBRARIES juce::juce_audio_utils)
-
 	list(APPEND PREPROCESSOR_DEFS
-		WITH_VST
-		JUCE_DEBUG=$<BOOL:$<CONFIG:Debug>>
-		JUCE_MODAL_LOOPS_PERMITTED=1
-		JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1
-		JUCE_STANDALONE_APPLICATION=1
-		JUCE_PLUGINHOST_LV2=1
-		JUCE_PLUGINHOST_AU=0
-		JUCE_WEB_BROWSER=0
-		JUCE_USE_CURL=0)
+		WITH_VST)
 
 	if(WITH_VST2)
 		if(VST2_SDK_PATH STREQUAL "")
