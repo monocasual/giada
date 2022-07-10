@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #ifndef G_PLUGIN_H
 #define G_PLUGIN_H
 
@@ -33,7 +31,8 @@
 #include "core/midiLearnParam.h"
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginState.h"
-#include "deps/juce-config.h"
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_gui_basics/juce_gui_basics.h>
 #include <memory>
 #include <vector>
 
@@ -158,5 +157,3 @@ private:
 } // namespace giada::m
 
 #endif
-
-#endif // #ifdef WITH_VST

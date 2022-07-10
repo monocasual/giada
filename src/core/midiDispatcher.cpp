@@ -61,14 +61,10 @@ void MidiDispatcher::startMasterLearn(int param, std::function<void()> f)
 	m_learnCb = [=](m::MidiEvent e) { learnMaster(e, param, f); };
 }
 
-#ifdef WITH_VST
-
 void MidiDispatcher::startPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f)
 {
 	m_learnCb = [=](m::MidiEvent e) { learnPlugin(e, paramIndex, pluginId, f); };
 }
-
-#endif
 
 void MidiDispatcher::stopLearn()
 {
@@ -87,14 +83,10 @@ void MidiDispatcher::clearChannelLearn(int param, ID channelId, std::function<vo
 	learnChannel(MidiEvent(), param, channelId, f); // Empty event (0x0)
 }
 
-#ifdef WITH_VST
-
 void MidiDispatcher::clearPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f)
 {
 	learnPlugin(MidiEvent(), paramIndex, pluginId, f); // Empty event (0x0)
 }
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -160,8 +152,6 @@ bool MidiDispatcher::isChannelMidiInAllowed(ID channelId, int c)
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& plugins,
     const MidiEvent& midiEvent)
 {
@@ -185,8 +175,6 @@ void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& pl
 		}
 	}
 }
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -252,10 +240,8 @@ void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 			c::events::toggleReadActionsChannel(c.id, Thread::MIDI);
 		}
 
-#ifdef WITH_VST
 		/* Process learned plugins parameters. */
 		processPlugins(c.id, c.plugins, midiEvent);
-#endif
 
 		/* Redirect raw MIDI message (pure + velocity) to plug-ins in armed
 		channels. */
@@ -427,8 +413,6 @@ void MidiDispatcher::learnMaster(MidiEvent e, int param, std::function<void()> d
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 void MidiDispatcher::learnPlugin(MidiEvent e, std::size_t paramIndex, ID pluginId, std::function<void()> doneCb)
 {
 	model::DataLock lock   = m_model.lockData(model::SwapType::NONE);
@@ -442,6 +426,4 @@ void MidiDispatcher::learnPlugin(MidiEvent e, std::size_t paramIndex, ID pluginI
 	stopLearn();
 	doneCb();
 }
-
-#endif
 } // namespace giada::m

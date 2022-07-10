@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #ifndef GE_PLUGIN_BROWSER_H
 #define GE_PLUGIN_BROWSER_H
 
@@ -46,7 +44,5 @@ private:
 	int m_widths[5];
 };
 } // namespace giada::v
-
-#endif
 
 #endif

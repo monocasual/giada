@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "tabPlugins.h"
 #include "core/conf.h"
 #include "core/const.h"
@@ -124,5 +122,3 @@ void geTabPlugins::save()
 	c::config::save(m_data);
 }
 } // namespace giada::v
-
-#endif // WITH_VST

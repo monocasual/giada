@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "pluginState.h"
 #include "core/const.h"
 #include <cstddef>
@@ -65,5 +63,3 @@ size_t PluginState::getSize() const
 	return m_data.getSize();
 }
 } // namespace giada::m
-
-#endif // #ifdef WITH_VST

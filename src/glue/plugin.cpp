@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "core/plugins/plugin.h"
 #include "core/conf.h"
 #include "core/const.h"
@@ -231,5 +229,3 @@ void stopDispatchLoop()
 	g_ui.stopJuceDispatchLoop();
 }
 } // namespace giada::c::plugin
-
-#endif

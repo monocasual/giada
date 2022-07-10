@@ -27,15 +27,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #ifndef GD_PLUGIN_WINDOW_GUI_H
 #define GD_PLUGIN_WINDOW_GUI_H
 
-#include "deps/juce-config.h"
 #include "window.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
+#include <juce_audio_processors/juce_audio_processors.h>
 #include <memory>
 
 namespace giada::c::plugin
@@ -61,5 +59,3 @@ private:
 } // namespace giada::v
 
 #endif
-
-#endif // #ifdef WITH_VST

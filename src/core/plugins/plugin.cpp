@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "core/plugins/plugin.h"
 #include "core/const.h"
 #include "utils/log.h"
@@ -300,5 +298,3 @@ std::string Plugin::getParameterLabel(int index) const
 	return m_plugin->getParameters()[index]->getLabel().toStdString();
 }
 } // namespace giada::m
-
-#endif

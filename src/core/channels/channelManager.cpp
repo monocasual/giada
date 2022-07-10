@@ -108,11 +108,8 @@ void ChannelManager::addAndLoadSampleChannel(int bufferSize, std::unique_ptr<Wav
 }
 
 /* -------------------------------------------------------------------------- */
-#if WITH_VST
+
 void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>& plugins)
-#else
-void ChannelManager::cloneChannel(ID channelId, int bufferSize)
-#endif
 {
 	const Channel& oldChannel = m_model.get().getChannel(channelId);
 	Channel        newChannel = m_channelFactory.create(oldChannel, bufferSize);
@@ -126,9 +123,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize)
 		loadSampleChannel(newChannel, &m_model.backShared<Wave>());
 	}
 
-#ifdef WITH_VST
 	newChannel.plugins = plugins;
-#endif
 
 	/* Then push the new channel in the channels vector. */
 

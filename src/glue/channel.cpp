@@ -119,9 +119,7 @@ Data::Data(const m::Channel& c)
 : id(c.id)
 , columnId(c.columnId)
 , position(c.position)
-#ifdef WITH_VST
 , plugins(c.plugins)
-#endif
 , type(c.type)
 , height(c.height)
 , name(c.name)
@@ -241,15 +239,12 @@ void deleteChannel(ID channelId)
 		return;
 	g_ui.closeAllSubwindows();
 
-#ifdef WITH_VST
 	const std::vector<m::Plugin*> plugins = g_engine.model.get().getChannel(channelId).plugins;
-#endif
+
 	g_engine.channelManager.deleteChannel(channelId);
 	g_engine.mixer.updateSoloCount(g_engine.channelManager.hasSolos());
 	g_engine.actionRecorder.clearChannel(channelId);
-#ifdef WITH_VST
 	g_engine.pluginHost.freePlugins(plugins);
-#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -290,14 +285,10 @@ void cloneChannel(ID channelId)
 {
 	g_engine.actionRecorder.cloneActions(channelId, g_engine.channelFactory.getNextId());
 
-#ifdef WITH_VST
 	const m::Channel&       ch      = g_engine.model.get().getChannel(channelId);
 	std::vector<m::Plugin*> plugins = g_engine.pluginManager.clonePlugins(ch.plugins, g_engine.patch.data.samplerate,
 	    g_engine.kernelAudio.getBufferSize(), g_engine.model, g_engine.sequencer);
 	g_engine.channelManager.cloneChannel(channelId, g_engine.kernelAudio.getBufferSize(), plugins);
-#else
-	g_engine.channelManager.cloneChannel(channelId, g_engine.kernelAudio.getBufferSize());
-#endif
 }
 
 /* -------------------------------------------------------------------------- */

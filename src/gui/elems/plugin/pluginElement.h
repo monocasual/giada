@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #ifndef GE_PLUGIN_ELEMENT_H
 #define GE_PLUGIN_ELEMENT_H
 
@@ -68,5 +66,3 @@ private:
 } // namespace giada::v
 
 #endif
-
-#endif // #ifdef WITH_VST

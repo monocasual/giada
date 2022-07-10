@@ -50,8 +50,6 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 class gePluginLearnerPack : public geMidiLearnerPack
 {
 public:
@@ -59,8 +57,6 @@ public:
 
 	void update(const c::io::PluginData&, bool enabled);
 };
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 

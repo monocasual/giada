@@ -85,22 +85,20 @@ struct Data
 	bool          isRecordingInput() const;
 	bool          isRecordingAction() const;
 
-	ID  id;
-	ID  columnId;
-	int position;
-#ifdef WITH_VST
+	ID                      id;
+	ID                      columnId;
+	int                     position;
 	std::vector<m::Plugin*> plugins;
-#endif
-	ChannelType type;
-	Pixel       height;
-	std::string name;
-	float       volume;
-	float       pan;
-	int         key;
-	bool        hasActions;
-	bool        muted;
-	bool        soloed;
-	bool        armed;
+	ChannelType             type;
+	Pixel                   height;
+	std::string             name;
+	float                   volume;
+	float                   pan;
+	int                     key;
+	bool                    hasActions;
+	bool                    muted;
+	bool                    soloed;
+	bool                    armed;
 
 	std::optional<SampleData> sample;
 	std::optional<MidiData>   midi;

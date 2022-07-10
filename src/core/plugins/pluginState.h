@@ -24,13 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #ifndef G_PLUGIN_STATE_H
 #define G_PLUGIN_STATE_H
 
-#include "deps/juce-config.h"
 #include <cstddef>
+#include <juce_core/juce_core.h>
 #include <string>
 
 namespace giada::m
@@ -52,5 +50,3 @@ private:
 } // namespace giada::m
 
 #endif
-
-#endif // #ifdef WITH_VST

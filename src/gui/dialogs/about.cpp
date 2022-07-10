@@ -24,21 +24,18 @@
  *
  * -------------------------------------------------------------------------- */
 
+#include "gui/dialogs/about.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/graphics.h"
-#include <FL/Fl_Pixmap.H>
-#include <FL/fl_draw.H>
-#ifdef WITH_VST
-#include "deps/juce-config.h"
-#endif
-#include "gui/dialogs/about.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
+#include <FL/Fl_Pixmap.H>
+#include <FL/fl_draw.H>
 #include <fmt/core.h>
 
 extern giada::v::Ui g_ui;

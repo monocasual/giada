@@ -27,8 +27,6 @@
 #ifndef GE_TAB_PLUGINS_H
 #define GE_TAB_PLUGINS_H
 
-#ifdef WITH_VST
-
 #include "deps/geompp/src/rect.hpp"
 #include "glue/config.h"
 #include <FL/Fl_Group.H>
@@ -55,7 +53,5 @@ private:
 	geBox*    m_info;
 };
 } // namespace giada::v
-
-#endif // WITH_VST
 
 #endif

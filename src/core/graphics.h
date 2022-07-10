@@ -97,7 +97,6 @@ extern const char* readActionDisabled_xpm[];
 extern const char* channelStop_xpm[];
 extern const char* channelPlay_xpm[];
 
-#ifdef WITH_VST
 extern const char* fxOff_xpm[];
 extern const char* fxOn_xpm[];
 
@@ -109,6 +108,7 @@ extern const char* fxShiftDownOff_xpm[];
 extern const char* fxRemoveOff_xpm[];
 extern const char* fxRemoveOn_xpm[];
 
+#ifdef WITH_VST
 extern const char* vstLogo_xpm[];
 #endif
 

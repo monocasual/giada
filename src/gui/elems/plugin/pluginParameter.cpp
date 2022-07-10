@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "pluginParameter.h"
 #include "core/const.h"
 #include "glue/events.h"
@@ -34,9 +32,7 @@
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/slider.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 gePluginParameter::gePluginParameter(int X, int Y, int W, int labelWidth, const c::plugin::Param p)
 : Fl_Group(X, Y, W, G_GUI_UNIT)
@@ -84,7 +80,4 @@ void gePluginParameter::update(const c::plugin::Param& p, bool changeSlider)
 	if (changeSlider)
 		m_slider->value(p.value);
 }
-} // namespace v
-} // namespace giada
-
-#endif // #ifdef WITH_VST
+} // namespace giada::v

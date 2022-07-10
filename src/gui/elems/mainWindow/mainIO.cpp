@@ -37,9 +37,6 @@
 #include "gui/elems/soundMeter.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
-#ifdef WITH_VST
-#include "gui/elems/basics/statusButton.h"
-#endif
 
 extern giada::v::Ui g_ui;
 
@@ -48,27 +45,21 @@ namespace giada::v
 geMainIO::geMainIO()
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
-	m_outMeter = new geSoundMeter(0, 0, 0, 0);
-	m_inMeter  = new geSoundMeter(0, 0, 0, 0);
-	m_outVol   = new geDial(0, 0, 0, 0);
-	m_inVol    = new geDial(0, 0, 0, 0);
-	m_inToOut  = new geButton();
-#ifdef WITH_VST
+	m_outMeter    = new geSoundMeter(0, 0, 0, 0);
+	m_inMeter     = new geSoundMeter(0, 0, 0, 0);
+	m_outVol      = new geDial(0, 0, 0, 0);
+	m_inVol       = new geDial(0, 0, 0, 0);
+	m_inToOut     = new geButton();
 	m_masterFxOut = new geStatusButton(0, 0, 0, 0, fxOff_xpm, fxOn_xpm);
 	m_masterFxIn  = new geStatusButton(0, 0, 0, 0, fxOff_xpm, fxOn_xpm);
-#endif
 
-#ifdef WITH_VST
 	add(m_masterFxIn, G_GUI_UNIT);
-#endif
 	add(m_inVol, G_GUI_UNIT);
 	add(m_inMeter);
 	add(m_inToOut, 12);
 	add(m_outMeter);
 	add(m_outVol, G_GUI_UNIT);
-#ifdef WITH_VST
 	add(m_masterFxOut, G_GUI_UNIT);
-#endif
 	end();
 
 	m_outMeter->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_IO_LABEL_OUTMETER));
@@ -76,10 +67,8 @@ geMainIO::geMainIO()
 	m_outVol->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_IO_LABEL_OUTVOL));
 	m_inVol->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_IO_LABEL_INVOL));
 	m_inToOut->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_IO_LABEL_INTOOUT));
-#ifdef WITH_VST
 	m_masterFxOut->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_IO_LABEL_FXOUT));
 	m_masterFxIn->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_IO_LABEL_FXIN));
-#endif
 
 	m_outVol->onChange = [](float v) {
 		c::events::setMasterOutVolume(v, Thread::MAIN);
@@ -94,10 +83,8 @@ geMainIO::geMainIO()
 		c::main::setInToOut(inToOut->value());
 	};
 
-#ifdef WITH_VST
 	m_masterFxOut->onClick = [] { c::layout::openMasterOutPluginListWindow(); };
 	m_masterFxIn->onClick  = [] { c::layout::openMasterInPluginListWindow(); };
-#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -106,8 +93,6 @@ void geMainIO::setOutVol(float v) { m_outVol->value(v); }
 void geMainIO::setInVol(float v) { m_inVol->value(v); }
 
 /* -------------------------------------------------------------------------- */
-
-#ifdef WITH_VST
 
 void geMainIO::setMasterFxOutFull(bool v)
 {
@@ -118,8 +103,6 @@ void geMainIO::setMasterFxInFull(bool v)
 {
 	m_masterFxIn->setStatus(v);
 }
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -141,10 +124,8 @@ void geMainIO::rebuild()
 
 	m_outVol->value(m_io.masterOutVol);
 	m_inVol->value(m_io.masterInVol);
-#ifdef WITH_VST
 	m_masterFxOut->setStatus(m_io.masterOutHasPlugins);
 	m_masterFxIn->setStatus(m_io.masterInHasPlugins);
 	m_inToOut->value(m_io.inToOut);
-#endif
 }
 } // namespace giada::v

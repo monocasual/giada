@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #ifndef GD_PLUGIN_WINDOW_H
 #define GD_PLUGIN_WINDOW_H
 
@@ -62,5 +60,3 @@ private:
 } // namespace giada::v
 
 #endif
-
-#endif // #ifdef WITH_VST

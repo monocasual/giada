@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "midiReceiver.h"
 #include "core/eventDispatcher.h"
 #include "core/plugins/pluginHost.h"
@@ -101,5 +99,3 @@ void MidiReceiver::parseMidi(ChannelShared::MidiQueue& midiQueue, const MidiEven
 	sendToPlugins(midiQueue, flat, /*delta=*/0);
 }
 } // namespace giada::m
-
-#endif // WITH_VST

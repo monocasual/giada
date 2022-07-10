@@ -213,8 +213,6 @@ void openMissingAssetsWindow(const m::LoadState& state)
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 void openBrowserForPlugins(v::gdWindow& parent)
 {
 	v::gdBrowserDir* browser = new v::gdBrowserDir(g_ui.langMapper.get(v::LangMap::BROWSER_OPENPLUGINSDIR),
@@ -256,6 +254,4 @@ void openPluginChooser(ID channelId)
 	        g_engine.conf.data.pluginChooserH, channelId, g_engine.conf.data),
 	    WID_FX_CHOOSER);
 }
-
-#endif
 } // namespace giada::c::layout

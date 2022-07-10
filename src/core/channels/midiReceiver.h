@@ -27,8 +27,6 @@
 #ifndef G_CHANNEL_MIDI_RECEIVER_H
 #define G_CHANNEL_MIDI_RECEIVER_H
 
-#ifdef WITH_VST
-
 #include "core/channels/channelShared.h"
 #include "core/sequencer.h"
 
@@ -48,7 +46,5 @@ private:
 	void parseMidi(ChannelShared::MidiQueue&, const MidiEvent&) const;
 };
 } // namespace giada::m
-
-#endif // WITH_VST
 
 #endif

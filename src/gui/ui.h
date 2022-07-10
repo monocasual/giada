@@ -110,8 +110,6 @@ public:
 
 	void setMainWindowTitle(const std::string&);
 
-#ifdef WITH_VST
-
 	/* [start|stop]JuceDispatchLoop
 	Starts and stops the JUCE dispatch loop from its MessageManager component.
 	This is needed for plugin-ins to wake up their UI editor and let it react
@@ -120,8 +118,6 @@ public:
 	void startJuceDispatchLoop();
 	void stopJuceDispatchLoop();
 
-#endif
-
 	std::unique_ptr<gdMainWindow> mainWindow;
 	Dispatcher                    dispatcher;
 	LangMapper                    langMapper;
@@ -129,9 +125,7 @@ public:
 private:
 	static constexpr int BLINK_RATE = G_GUI_FPS / 2;
 
-#ifdef WITH_VST
 	static void juceDispatchLoop(void*);
-#endif
 
 	/* rebuildStaticWidgets
     Updates attributes of static widgets, i.e. those elements that don't get

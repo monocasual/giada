@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "pluginChooser.h"
 #include "core/conf.h"
 #include "glue/plugin.h"
@@ -129,5 +127,3 @@ void gdPluginChooser::cb_add()
 	do_callback();
 }
 } // namespace giada::v
-
-#endif // #ifdef WITH_VST

@@ -97,15 +97,11 @@ enum class SwapType
 	NONE
 };
 
-#ifdef WITH_VST
-using PluginPtr = std::unique_ptr<Plugin>;
-#endif
+using PluginPtr        = std::unique_ptr<Plugin>;
 using WavePtr          = std::unique_ptr<Wave>;
 using ChannelSharedPtr = std::unique_ptr<ChannelShared>;
 
-#ifdef WITH_VST
-using PluginPtrs = std::vector<PluginPtr>;
-#endif
+using PluginPtrs        = std::vector<PluginPtr>;
 using WavePtrs          = std::vector<WavePtr>;
 using ChannelSharedPtrs = std::vector<ChannelSharedPtr>;
 
@@ -193,11 +189,9 @@ private:
 		Recorder::Shared                            recorderShared;
 		std::vector<std::unique_ptr<ChannelShared>> channelsShared;
 
-		std::vector<std::unique_ptr<Wave>> waves;
-		Actions::Map                       actions;
-#ifdef WITH_VST
+		std::vector<std::unique_ptr<Wave>>   waves;
+		Actions::Map                         actions;
 		std::vector<std::unique_ptr<Plugin>> plugins;
-#endif
 	};
 
 	mcl::AtomicSwapper<Layout> m_layout;

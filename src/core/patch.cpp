@@ -65,8 +65,6 @@ void readColumns_(Patch::Data& patch, const nl::json& j)
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 void readPlugins_(Patch::Data& patch, const nl::json& j)
 {
 	if (!j.contains(PATCH_KEY_PLUGINS))
@@ -92,8 +90,6 @@ void readPlugins_(Patch::Data& patch, const nl::json& j)
 		patch.plugins.push_back(p);
 	}
 }
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -186,19 +182,15 @@ void readChannels_(Patch::Data& patch, const nl::json& j)
 		c.midiOut           = jchannel.value(PATCH_KEY_CHANNEL_MIDI_OUT, 0);
 		c.midiOutChan       = jchannel.value(PATCH_KEY_CHANNEL_MIDI_OUT_CHAN, 0);
 
-#ifdef WITH_VST
 		if (jchannel.contains(PATCH_KEY_CHANNEL_PLUGINS))
 			for (const auto& jplugin : jchannel[PATCH_KEY_CHANNEL_PLUGINS])
 				c.pluginIds.push_back(jplugin);
-#endif
 
 		patch.channels.push_back(c);
 	}
 }
 
 /* -------------------------------------------------------------------------- */
-
-#ifdef WITH_VST
 
 void writePlugins_(const Patch::Data& patch, nl::json& j)
 {
@@ -221,8 +213,6 @@ void writePlugins_(const Patch::Data& patch, nl::json& j)
 		j[PATCH_KEY_PLUGINS].push_back(jplugin);
 	}
 }
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -343,11 +333,9 @@ void writeChannels_(const Patch::Data& patch, nl::json& j)
 		jchannel[PATCH_KEY_CHANNEL_MIDI_OUT]             = c.midiOut;
 		jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_CHAN]        = c.midiOutChan;
 
-#ifdef WITH_VST
 		jchannel[PATCH_KEY_CHANNEL_PLUGINS] = nl::json::array();
 		for (ID pid : c.pluginIds)
 			jchannel[PATCH_KEY_CHANNEL_PLUGINS].push_back(pid);
-#endif
 
 		j[PATCH_KEY_CHANNELS].push_back(jchannel);
 	}
@@ -429,9 +417,7 @@ bool Patch::write(const std::string& file) const
 	writeChannels_(data, j);
 	writeActions_(data, j);
 	writeWaves_(data, j);
-#ifdef WITH_VST
 	writePlugins_(data, j);
-#endif
 
 	std::ofstream ofs(file);
 	if (!ofs.good())
@@ -465,9 +451,7 @@ int Patch::read(const std::string& file, const std::string& basePath)
 	{
 		readCommons_(data, j);
 		readColumns_(data, j);
-#ifdef WITH_VST
 		readPlugins_(data, j);
-#endif
 		readWaves_(data, j, basePath);
 		readActions_(data, j);
 		readChannels_(data, j);

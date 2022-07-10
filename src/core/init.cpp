@@ -88,9 +88,8 @@ void printBuildInfo()
 	u::log::print("[init]   Libsndfile - %s\n", u::ver::getLibsndfileVersion());
 	u::log::print("[init]   JSON for modern C++ - %d.%d.%d\n",
 	    NLOHMANN_JSON_VERSION_MAJOR, NLOHMANN_JSON_VERSION_MINOR, NLOHMANN_JSON_VERSION_PATCH);
-#ifdef WITH_VST
 	u::log::print("[init]   JUCE - %d.%d.%d\n", JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER);
-#endif
+
 	KernelAudio::logCompiledAPIs();
 	KernelMidi::logCompiledAPIs();
 }
@@ -99,9 +98,7 @@ void printBuildInfo()
 
 void startup(int argc, char** argv)
 {
-#ifdef WITH_VST
 	juce::initialiseJuce_GUI();
-#endif
 	g_engine.init();
 	g_ui.init(argc, argv, g_engine);
 
@@ -132,9 +129,7 @@ void shutdown()
 {
 	g_ui.shutdown();
 	g_engine.shutdown();
-#ifdef WITH_VST
 	juce::shutdownJuce_GUI();
-#endif
 	u::log::print("[init] Giada %s closed\n\n", G_VERSION_STR);
 }
 } // namespace giada::m::init

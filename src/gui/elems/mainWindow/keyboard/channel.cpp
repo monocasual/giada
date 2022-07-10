@@ -61,9 +61,7 @@ void geChannel::draw()
 	mute->resize(mute->x(), ny, G_GUI_UNIT, G_GUI_UNIT);
 	solo->resize(solo->x(), ny, G_GUI_UNIT, G_GUI_UNIT);
 	vol->resize(vol->x(), ny, G_GUI_UNIT, G_GUI_UNIT);
-#ifdef WITH_VST
 	fx->resize(fx->x(), ny, G_GUI_UNIT, G_GUI_UNIT);
-#endif
 
 	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_1_5);
 
@@ -76,12 +74,7 @@ void geChannel::cb_arm(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_arm(); }
 void geChannel::cb_mute(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_mute(); }
 void geChannel::cb_solo(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_solo(); }
 void geChannel::cb_changeVol(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_changeVol(); }
-#ifdef WITH_VST
-void geChannel::cb_openFxWindow(Fl_Widget* /*w*/, void* p)
-{
-	((geChannel*)p)->cb_openFxWindow();
-}
-#endif
+void geChannel::cb_openFxWindow(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_openFxWindow(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -132,12 +125,10 @@ void geChannel::cb_changeVol()
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
 void geChannel::cb_openFxWindow()
 {
 	c::layout::openChannelPluginListWindow(m_channel.id);
 }
-#endif
 
 /* -------------------------------------------------------------------------- */
 

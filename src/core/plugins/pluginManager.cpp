@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "core/plugins/pluginManager.h"
 #include "core/const.h"
 #include "core/model/model.h"
@@ -320,5 +318,3 @@ std::unique_ptr<Plugin> PluginManager::makeInvalidPlugin(const std::string& pid,
 	return std::make_unique<Plugin>(m_pluginId.generate(id), pid); // Invalid plug-in
 }
 } // namespace giada::m
-
-#endif // #ifdef WITH_VST

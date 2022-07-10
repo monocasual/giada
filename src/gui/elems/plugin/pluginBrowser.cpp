@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "gui/elems/plugin/pluginBrowser.h"
 #include "core/const.h"
 #include "core/plugins/pluginManager.h"
@@ -118,5 +116,3 @@ void gePluginBrowser::computeWidths()
 	m_widths[4] = 0;
 }
 } // namespace giada::v
-
-#endif

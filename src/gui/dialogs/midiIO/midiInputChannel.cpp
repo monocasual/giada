@@ -27,6 +27,7 @@
 #include "gui/dialogs/midiIO/midiInputChannel.h"
 #include "core/conf.h"
 #include "core/const.h"
+#include "core/plugins/plugin.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
@@ -42,9 +43,6 @@
 #include <FL/Fl_Pack.H>
 #include <cassert>
 #include <cstddef>
-#ifdef WITH_VST
-#include "core/plugins/plugin.h"
-#endif
 
 extern giada::v::Ui g_ui;
 
@@ -87,8 +85,6 @@ void geChannelLearnerPack::update(const c::io::Channel_InputData& d)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 gePluginLearnerPack::gePluginLearnerPack(int x, int y, const c::io::PluginData& plugin)
 : geMidiLearnerPack(x, y, plugin.name)
 {
@@ -109,8 +105,6 @@ void gePluginLearnerPack::update(const c::io::PluginData& d, bool enabled)
 		learners[i++]->update(param.value);
 	setEnabled(enabled);
 }
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -140,10 +134,9 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, m::Conf::Data& c)
 	m_container = new geScrollPack(G_GUI_OUTER_MARGIN, groupHeader->y() + groupHeader->h() + G_GUI_OUTER_MARGIN,
 	    w() - 16, h() - groupHeader->h() - 52);
 	m_container->add(new geChannelLearnerPack(0, 0, m_data));
-#ifdef WITH_VST
+
 	for (c::io::PluginData& plugin : m_data.plugins)
 		m_container->add(new gePluginLearnerPack(0, 0, plugin));
-#endif
 
 	/* Footer buttons. */
 
@@ -209,10 +202,9 @@ void gdMidiInputChannel::rebuild()
 
 	int i = 0;
 	static_cast<geChannelLearnerPack*>(m_container->getChild(i++))->update(m_data);
-#ifdef WITH_VST
+
 	for (c::io::PluginData& plugin : m_data.plugins)
 		static_cast<gePluginLearnerPack*>(m_container->getChild(i++))->update(plugin, m_data.enabled);
-#endif
 
 	m_channel->showItem(m_data.filter == -1 ? 0 : m_data.filter + 1);
 

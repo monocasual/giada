@@ -119,14 +119,9 @@ public:
 	void moveChannel(ID channelId, ID columnId, int position);
 
 	/* cloneChannel
-	Creates a duplicate of Channel. The WITH_VST version wants a vector of already
-	cloned plug-ins. */
+	Creates a duplicate of Channel. Wants a vector of already cloned plug-ins. */
 
-#if WITH_VST
 	void cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>&);
-#else
-	void cloneChannel(ID channelId, int bufferSize);
-#endif
 
 	/* finalizeInputRec
     Fills armed Sample channel with audio data coming from an input recording

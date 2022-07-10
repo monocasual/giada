@@ -98,7 +98,6 @@ Channel_InputData::Channel_InputData(const m::Channel& c)
 , pitch(c.midiLearner.pitch.getValue())
 , readActions(c.midiLearner.readActions.getValue())
 {
-#ifdef WITH_VST
 	for (const m::Plugin* p : c.plugins)
 	{
 		PluginData pd;
@@ -108,7 +107,6 @@ Channel_InputData::Channel_InputData(const m::Channel& c)
 			pd.params.push_back({i, p->getParameterName(i), p->midiInParams.at(i).getValue()});
 		plugins.push_back(pd);
 	}
-#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -244,14 +242,10 @@ void master_startMidiLearn(int param)
 	g_engine.midiDispatcher.startMasterLearn(param, rebuildMidiWindows_);
 }
 
-#ifdef WITH_VST
-
 void plugin_startMidiLearn(int paramIndex, ID pluginId)
 {
 	g_engine.midiDispatcher.startPluginLearn(paramIndex, pluginId, rebuildMidiWindows_);
 }
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -273,14 +267,10 @@ void master_clearMidiLearn(int param)
 	g_engine.midiDispatcher.clearMasterLearn(param, rebuildMidiWindows_);
 }
 
-#ifdef WITH_VST
-
 void plugin_clearMidiLearn(int param, ID pluginId)
 {
 	g_engine.midiDispatcher.clearPluginLearn(param, pluginId, rebuildMidiWindows_);
 }
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 

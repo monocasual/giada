@@ -27,8 +27,6 @@
 #ifndef G_GLUE_PLUGIN_H
 #define G_GLUE_PLUGIN_H
 
-#ifdef WITH_VST
-
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
 #include "core/types.h"
@@ -126,7 +124,5 @@ void toggleBypass(ID pluginId);
 void startDispatchLoop();
 void stopDispatchLoop();
 } // namespace giada::c::plugin
-
-#endif
 
 #endif

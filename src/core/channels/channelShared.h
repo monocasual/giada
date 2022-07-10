@@ -27,16 +27,14 @@
 #ifndef G_CHANNELSHARED_H
 #define G_CHANNELSHARED_H
 
-#include <optional>
-#ifdef WITH_VST
-#include "deps/juce-config.h"
-#endif
 #include "core/channels/samplePlayer.h"
 #include "core/const.h"
 #include "core/midiEvent.h"
 #include "core/queue.h"
 #include "core/resampler.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include <juce_audio_basics/juce_audio_basics.h>
+#include <optional>
 
 namespace giada::m
 {
@@ -50,10 +48,8 @@ struct ChannelShared final
 	bool isReadingActions() const;
 
 	mcl::AudioBuffer audioBuffer;
-#ifdef WITH_VST
 	juce::MidiBuffer midiBuffer;
 	MidiQueue        midiQueue;
-#endif
 
 	WeakAtomic<Frame>         tracker     = 0;
 	WeakAtomic<ChannelStatus> playStatus  = ChannelStatus::OFF;

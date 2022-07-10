@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "core/plugins/pluginHost.h"
 #include "core/channels/channel.h"
 #include "core/const.h"
@@ -232,5 +230,3 @@ void PluginHost::processPlugin(Plugin* p, const juce::MidiBuffer& events)
 	}
 }
 } // namespace giada::m
-
-#endif // #ifdef WITH_VST

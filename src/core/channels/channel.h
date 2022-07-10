@@ -27,16 +27,13 @@
 #ifndef G_CHANNEL_H
 #define G_CHANNEL_H
 
-#include <optional>
-#ifdef WITH_VST
-#include "deps/juce-config.h"
-#endif
 #include "core/channels/audioReceiver.h"
 #include "core/channels/channelShared.h"
 #include "core/channels/midiActionRecorder.h"
 #include "core/channels/midiController.h"
 #include "core/channels/midiLearner.h"
 #include "core/channels/midiLighter.h"
+#include "core/channels/midiReceiver.h"
 #include "core/channels/midiSender.h"
 #include "core/channels/sampleActionRecorder.h"
 #include "core/channels/sampleAdvancer.h"
@@ -51,9 +48,7 @@
 #include "core/resampler.h"
 #include "core/sequencer.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
-#ifdef WITH_VST
-#include "core/channels/midiReceiver.h"
-#endif
+#include <optional>
 
 namespace giada::m
 {
@@ -98,34 +93,30 @@ public:
 	void setMute(bool);
 	void setSolo(bool);
 
-	ChannelShared* shared;
-	ID             id;
-	ChannelType    type;
-	ID             columnId;
-	int            position;
-	float          volume;
-	float          volume_i; // Internal volume used for velocity-drives-volume mode on Sample Channels
-	float          pan;
-	bool           armed;
-	int            key;
-	bool           hasActions;
-	std::string    name;
-	Pixel          height;
-#ifdef WITH_VST
+	ChannelShared*       shared;
+	ID                   id;
+	ChannelType          type;
+	ID                   columnId;
+	int                  position;
+	float                volume;
+	float                volume_i; // Internal volume used for velocity-drives-volume mode on Sample Channels
+	float                pan;
+	bool                 armed;
+	int                  key;
+	bool                 hasActions;
+	std::string          name;
+	Pixel                height;
 	std::vector<Plugin*> plugins;
-#endif
 
 	MidiLearner             midiLearner;
 	MidiLighter<KernelMidi> midiLighter;
 
-	std::optional<SamplePlayer>   samplePlayer;
-	std::optional<SampleAdvancer> sampleAdvancer;
-	std::optional<SampleReactor>  sampleReactor;
-	std::optional<AudioReceiver>  audioReceiver;
-	std::optional<MidiController> midiController;
-#ifdef WITH_VST
-	std::optional<MidiReceiver> midiReceiver;
-#endif
+	std::optional<SamplePlayer>         samplePlayer;
+	std::optional<SampleAdvancer>       sampleAdvancer;
+	std::optional<SampleReactor>        sampleReactor;
+	std::optional<AudioReceiver>        audioReceiver;
+	std::optional<MidiController>       midiController;
+	std::optional<MidiReceiver>         midiReceiver;
 	std::optional<MidiSender>           midiSender;
 	std::optional<SampleActionRecorder> sampleActionRecorder;
 	std::optional<MidiActionRecorder>   midiActionRecorder;

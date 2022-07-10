@@ -1388,8 +1388,6 @@ const char* soloOff_xpm[] = {
     "                  ",
     "                  "};
 
-#ifdef WITH_VST
-
 const char* fxOff_xpm[] = {
     "18 18 8 1",
     " 	c #242523",
@@ -1556,6 +1554,8 @@ const char* fxShiftDownOn_xpm[] = {
     "                  ",
     "                  "};
 
+#ifdef WITH_VST
+
 const char* vstLogo_xpm[] = {
     "65 38 8 1",
     " 	c #161715",
@@ -1604,6 +1604,8 @@ const char* vstLogo_xpm[] = {
     "                   ........       @@@@@@@@@@.                    ",
     "                    ...........  .@@@@@@@@@                      ",
     "                     ..........  .@@@@@@@@                       "};
+
+#endif // #ifdef WITH_VST
 
 const char* fxRemoveOff_xpm[] = {
     "18 18 9 1",
@@ -1664,7 +1666,6 @@ const char* fxRemoveOn_xpm[] = {
     "..................",
     "..................",
     ".................."};
-#endif // #ifdef WITH_VST
 
 const char* divideOn_xpm[] = {
     "18 18 7 1",

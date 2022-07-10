@@ -158,10 +158,8 @@ bool Model::isLocked() const
 template <typename T>
 T& Model::getAllShared()
 {
-#ifdef WITH_VST
 	if constexpr (std::is_same_v<T, PluginPtrs>)
 		return m_shared.plugins;
-#endif
 	if constexpr (std::is_same_v<T, WavePtrs>)
 		return m_shared.waves;
 	if constexpr (std::is_same_v<T, Actions::Map>)
@@ -172,9 +170,7 @@ T& Model::getAllShared()
 	assert(false);
 }
 
-#ifdef WITH_VST
-template PluginPtrs& Model::getAllShared<PluginPtrs>();
-#endif
+template PluginPtrs&        Model::getAllShared<PluginPtrs>();
 template WavePtrs&          Model::getAllShared<WavePtrs>();
 template Actions::Map&      Model::getAllShared<Actions::Map>();
 template ChannelSharedPtrs& Model::getAllShared<ChannelSharedPtrs>();
@@ -184,39 +180,31 @@ template ChannelSharedPtrs& Model::getAllShared<ChannelSharedPtrs>();
 template <typename T>
 T* Model::findShared(ID id)
 {
-#ifdef WITH_VST
 	if constexpr (std::is_same_v<T, Plugin>)
 		return get_(m_shared.plugins, id);
-#endif
 	if constexpr (std::is_same_v<T, Wave>)
 		return get_(m_shared.waves, id);
 
 	assert(false);
 }
 
-#ifdef WITH_VST
 template Plugin* Model::findShared<Plugin>(ID id);
-#endif
-template Wave* Model::findShared<Wave>(ID id);
+template Wave*   Model::findShared<Wave>(ID id);
 
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
 void Model::addShared(T obj)
 {
-#ifdef WITH_VST
 	if constexpr (std::is_same_v<T, PluginPtr>)
 		m_shared.plugins.push_back(std::move(obj));
-#endif
 	if constexpr (std::is_same_v<T, WavePtr>)
 		m_shared.waves.push_back(std::move(obj));
 	if constexpr (std::is_same_v<T, ChannelSharedPtr>)
 		m_shared.channelsShared.push_back(std::move(obj));
 }
 
-#ifdef WITH_VST
 template void Model::addShared<PluginPtr>(PluginPtr p);
-#endif
 template void Model::addShared<WavePtr>(WavePtr p);
 template void Model::addShared<ChannelSharedPtr>(ChannelSharedPtr p);
 
@@ -225,17 +213,13 @@ template void Model::addShared<ChannelSharedPtr>(ChannelSharedPtr p);
 template <typename T>
 void Model::removeShared(const T& ref)
 {
-#ifdef WITH_VST
 	if constexpr (std::is_same_v<T, Plugin>)
 		remove_(m_shared.plugins, ref);
-#endif
 	if constexpr (std::is_same_v<T, Wave>)
 		remove_(m_shared.waves, ref);
 }
 
-#ifdef WITH_VST
 template void Model::removeShared<Plugin>(const Plugin& t);
-#endif
 template void Model::removeShared<Wave>(const Wave& t);
 
 /* -------------------------------------------------------------------------- */
@@ -243,19 +227,15 @@ template void Model::removeShared<Wave>(const Wave& t);
 template <typename T>
 T& Model::backShared()
 {
-#ifdef WITH_VST
 	if constexpr (std::is_same_v<T, Plugin>)
 		return *m_shared.plugins.back().get();
-#endif
 	if constexpr (std::is_same_v<T, Wave>)
 		return *m_shared.waves.back().get();
 	if constexpr (std::is_same_v<T, ChannelShared>)
 		return *m_shared.channelsShared.back().get();
 }
 
-#ifdef WITH_VST
-template Plugin& Model::backShared<Plugin>();
-#endif
+template Plugin&        Model::backShared<Plugin>();
 template Wave&          Model::backShared<Wave>();
 template ChannelShared& Model::backShared<ChannelShared>();
 
@@ -264,17 +244,13 @@ template ChannelShared& Model::backShared<ChannelShared>();
 template <typename T>
 void Model::clearShared()
 {
-#ifdef WITH_VST
 	if constexpr (std::is_same_v<T, PluginPtrs>)
 		m_shared.plugins.clear();
-#endif
 	if constexpr (std::is_same_v<T, WavePtrs>)
 		m_shared.waves.clear();
 }
 
-#ifdef WITH_VST
 template void Model::clearShared<PluginPtrs>();
-#endif
 template void Model::clearShared<WavePtrs>();
 
 /* -------------------------------------------------------------------------- */
@@ -293,14 +269,12 @@ void Model::debug()
 		fmt::print("\t{} - ID={} name='{}' type={} columnId={} position={} channelShared={}\n",
 		    i++, c.id, c.name, (int)c.type, c.columnId, c.position, (void*)&c.shared);
 
-#ifdef WITH_VST
 		if (c.plugins.size() > 0)
 		{
 			puts("\t\tplugins:");
 			for (const auto& p : c.plugins)
 				fmt::print("\t\t\t{} - ID={}\n", (void*)p, p->id);
 		}
-#endif
 	}
 
 	puts("model::channelsShared");
@@ -327,15 +301,11 @@ void Model::debug()
 			    (void*)&a, a.id, a.frame, a.channelId, a.event.getRaw(), a.prevId, (void*)a.prev, a.nextId, (void*)a.next);
 	}
 
-#ifdef WITH_VST
-
 	puts("model::shared.plugins");
 
 	i = 0;
 	for (const auto& p : m_shared.plugins)
 		fmt::print("\t{}) {} - ID={}\n", i++, (void*)p.get(), p->id);
-
-#endif
 }
 
 #endif // G_DEBUG_MODE

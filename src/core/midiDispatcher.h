@@ -47,10 +47,8 @@ public:
 	void stopLearn();
 	void clearMasterLearn(int param, std::function<void()> f);
 	void clearChannelLearn(int param, ID channelId, std::function<void()> f);
-#ifdef WITH_VST
 	void startPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f);
 	void clearPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f);
-#endif
 
 	/* dispatch
     Main callback invoked by kernelMidi whenever a new MIDI data comes in. */
@@ -89,12 +87,10 @@ private:
 	void learnChannel(MidiEvent e, int param, ID channelId, std::function<void()> doneCb);
 	void learnMaster(MidiEvent e, int param, std::function<void()> doneCb);
 
-#ifdef WITH_VST
 	void processPlugins(ID channelId, const std::vector<Plugin*>& plugins,
 	    const MidiEvent& midiEvent);
 	void learnPlugin(MidiEvent e, std::size_t paramIndex, ID pluginId,
 	    std::function<void()> doneCb);
-#endif
 
 	/* cb_midiLearn
     Callback prepared by the gdMidiGrabber window and called by midiDispatcher. 

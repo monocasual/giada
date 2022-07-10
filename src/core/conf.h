@@ -134,15 +134,11 @@ public:
 		uint32_t midiInBeatDouble = 0x0;
 		uint32_t midiInBeatHalf   = 0x0;
 
-#ifdef WITH_VST
-
 		int pluginChooserX;
 		int pluginChooserY;
 		int pluginChooserW   = G_DEFAULT_SUBWINDOW_W;
 		int pluginChooserH   = G_DEFAULT_SUBWINDOW_H;
 		int pluginSortMethod = 0;
-
-#endif
 
 		KeyBindings keyBindings = {
 		    ' ',          // KEY_BIND_PLAY

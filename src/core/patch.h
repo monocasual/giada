@@ -96,11 +96,9 @@ public:
 		uint32_t         midiInReadActions;
 		uint32_t         midiInPitch;
 		// midi channel
-		bool midiOut;
-		int  midiOutChan;
-#ifdef WITH_VST
+		bool            midiOut;
+		int             midiOutChan;
 		std::vector<ID> pluginIds;
-#endif
 	};
 
 	struct Action
@@ -119,7 +117,6 @@ public:
 		std::string path;
 	};
 
-#ifdef WITH_VST
 	struct Plugin
 	{
 		ID                    id;
@@ -129,7 +126,6 @@ public:
 		std::string           state;
 		std::vector<uint32_t> midiInParams;
 	};
-#endif
 
 	struct Data
 	{
@@ -147,9 +143,7 @@ public:
 		std::vector<Channel> channels;
 		std::vector<Action>  actions;
 		std::vector<Wave>    waves;
-#ifdef WITH_VST
-		std::vector<Plugin> plugins;
-#endif
+		std::vector<Plugin>  plugins;
 	};
 
 	/* write

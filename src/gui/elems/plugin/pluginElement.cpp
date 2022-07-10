@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "pluginElement.h"
 #include "core/graphics.h"
 #include "core/plugins/plugin.h"
@@ -190,5 +188,3 @@ void gePluginElement::cb_setBypass()
 	c::plugin::toggleBypass(m_plugin.id);
 }
 } // namespace giada::v
-
-#endif // #ifdef WITH_VST

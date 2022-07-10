@@ -138,13 +138,11 @@ bool Conf::read()
 	data.keyBindings[KEY_BIND_RECORD_INPUT]   = j.value(CONF_KEY_BIND_RECORD_INPUT, 0);
 	data.keyBindings[KEY_BIND_EXIT]           = j.value(CONF_KEY_BIND_EXIT, 0);
 
-#ifdef WITH_VST
 	data.pluginChooserX   = j.value(CONF_KEY_PLUGIN_CHOOSER_X, data.pluginChooserX);
 	data.pluginChooserY   = j.value(CONF_KEY_PLUGIN_CHOOSER_Y, data.pluginChooserY);
 	data.pluginChooserW   = j.value(CONF_KEY_PLUGIN_CHOOSER_W, data.pluginChooserW);
 	data.pluginChooserH   = j.value(CONF_KEY_PLUGIN_CHOOSER_H, data.pluginChooserH);
 	data.pluginSortMethod = j.value(CONF_KEY_PLUGIN_SORT_METHOD, data.pluginSortMethod);
-#endif
 
 	sanitize();
 
@@ -242,13 +240,11 @@ bool Conf::write() const
 	j[CONF_KEY_BIND_RECORD_INPUT]   = data.keyBindings[KEY_BIND_RECORD_INPUT];
 	j[CONF_KEY_BIND_EXIT]           = data.keyBindings[KEY_BIND_EXIT];
 
-#ifdef WITH_VST
 	j[CONF_KEY_PLUGIN_CHOOSER_X]   = data.pluginChooserX;
 	j[CONF_KEY_PLUGIN_CHOOSER_Y]   = data.pluginChooserY;
 	j[CONF_KEY_PLUGIN_CHOOSER_W]   = data.pluginChooserW;
 	j[CONF_KEY_PLUGIN_CHOOSER_H]   = data.pluginChooserH;
 	j[CONF_KEY_PLUGIN_SORT_METHOD] = data.pluginSortMethod;
-#endif
 
 	std::ofstream ofs(m_confFilePath);
 	if (!ofs.good())

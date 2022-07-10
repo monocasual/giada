@@ -95,9 +95,7 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 		midiController.emplace();
 		midiSender.emplace(g_engine.kernelMidi);
 		midiActionRecorder.emplace(g_engine.actionRecorder);
-#ifdef WITH_VST
 		midiReceiver.emplace();
-#endif
 		break;
 
 	default:
@@ -123,9 +121,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , hasActions(p.hasActions)
 , name(p.name)
 , height(p.height)
-#ifdef WITH_VST
 , plugins(g_engine.pluginManager.hydratePlugins(p.pluginIds, g_engine.model)) // TODO move outside, as constructor parameter
-#endif
 , midiLearner(p)
 , midiLighter(g_engine.midiMapper, p)
 , m_mute(p.mute)
@@ -153,9 +149,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 		midiController.emplace();
 		midiSender.emplace(p, g_engine.kernelMidi);
 		midiActionRecorder.emplace(g_engine.actionRecorder);
-#ifdef WITH_VST
 		midiReceiver.emplace();
-#endif
 		break;
 
 	default:
@@ -195,20 +189,16 @@ Channel& Channel::operator=(const Channel& other)
 	hasActions = other.hasActions;
 	name       = other.name;
 	height     = other.height;
-#ifdef WITH_VST
-	plugins = other.plugins;
-#endif
+	plugins    = other.plugins;
 
-	midiLearner    = other.midiLearner;
-	midiLighter    = other.midiLighter;
-	samplePlayer   = other.samplePlayer;
-	sampleAdvancer = other.sampleAdvancer;
-	sampleReactor  = other.sampleReactor;
-	audioReceiver  = other.audioReceiver;
-	midiController = other.midiController;
-#ifdef WITH_VST
-	midiReceiver = other.midiReceiver;
-#endif
+	midiLearner          = other.midiLearner;
+	midiLighter          = other.midiLighter;
+	samplePlayer         = other.samplePlayer;
+	sampleAdvancer       = other.sampleAdvancer;
+	sampleReactor        = other.sampleReactor;
+	audioReceiver        = other.audioReceiver;
+	midiController       = other.midiController;
+	midiReceiver         = other.midiReceiver;
 	midiSender           = other.midiSender;
 	sampleActionRecorder = other.sampleActionRecorder;
 	midiActionRecorder   = other.midiActionRecorder;
@@ -322,10 +312,8 @@ void Channel::advance(const Sequencer::EventBuffer& events, Range<Frame> block, 
 		if (midiSender && isPlaying() && !isMuted())
 			midiSender->advance(id, e);
 
-#ifdef WITH_VST
 		if (midiReceiver && isPlaying())
 			midiReceiver->advance(id, shared->midiQueue, e);
-#endif
 	}
 }
 
@@ -370,10 +358,8 @@ void Channel::react(const EventDispatcher::EventBuffer& events)
 			    samplePlayer->isAnyLoopMode(),
 			    volume_i);
 
-#ifdef WITH_VST
 		if (midiReceiver)
 			midiReceiver->react(shared->midiQueue, e);
-#endif
 	}
 }
 
@@ -426,10 +412,8 @@ void Channel::render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible) 
 void Channel::renderMasterOut(mcl::AudioBuffer& out) const
 {
 	shared->audioBuffer.set(out, /*gain=*/1.0f);
-#ifdef WITH_VST
 	if (plugins.size() > 0)
 		g_engine.pluginHost.processStack(shared->audioBuffer, plugins, nullptr);
-#endif
 	out.set(shared->audioBuffer, volume);
 }
 
@@ -437,12 +421,8 @@ void Channel::renderMasterOut(mcl::AudioBuffer& out) const
 
 void Channel::renderMasterIn(mcl::AudioBuffer& in) const
 {
-#ifdef WITH_VST
 	if (plugins.size() > 0)
 		g_engine.pluginHost.processStack(in, plugins, nullptr);
-#else
-	(void)in;
-#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -462,16 +442,14 @@ void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool au
 	if (audioReceiver)
 		audioReceiver->render(in, shared->audioBuffer, armed);
 
-		/* If MidiReceiver exists, let it process the plug-in stack, as it can 
+	/* If MidiReceiver exists, let it process the plug-in stack, as it can 
 	contain plug-ins that take MIDI events (i.e. synths). Otherwise process the
 	plug-in stack internally with no MIDI events. */
 
-#ifdef WITH_VST
 	if (midiReceiver)
 		midiReceiver->render(*shared, plugins, g_engine.pluginHost);
 	else if (plugins.size() > 0)
 		g_engine.pluginHost.processStack(shared->audioBuffer, plugins, nullptr);
-#endif
 
 	if (audible)
 		out.sum(shared->audioBuffer, volume * volume_i, calcPanning_(pan));

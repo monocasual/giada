@@ -59,15 +59,12 @@ gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
 			tabBehaviors = new geTabBehaviors(bounds, conf);
 			tabMisc      = new geTabMisc(bounds);
 			tabBindings  = new geTabBindings(bounds, conf);
-#ifdef WITH_VST
-			tabPlugins = new geTabPlugins(bounds);
-#endif
+			tabPlugins   = new geTabPlugins(bounds);
+
 			tabs->add(tabAudio);
 			tabs->add(tabMidi);
 			tabs->add(tabBehaviors);
-#ifdef WITH_VST
 			tabs->add(tabPlugins);
-#endif
 			tabs->add(tabBindings);
 			tabs->add(tabMisc);
 		}
@@ -107,9 +104,7 @@ void gdConfig::saveConfig()
 	tabBehaviors->save();
 	tabMidi->save();
 	tabMisc->save();
-#ifdef WITH_VST
 	tabPlugins->save();
-#endif
 	do_callback();
 }
 } // namespace giada::v

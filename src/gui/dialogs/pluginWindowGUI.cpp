@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "gui/dialogs/pluginWindowGUI.h"
 #include "core/const.h"
 #include "glue/plugin.h"
@@ -111,5 +109,3 @@ void gdPluginWindowGUI::closeEditor()
 	m_editor.reset();
 }
 } // namespace giada::v
-
-#endif // #ifdef WITH_VST

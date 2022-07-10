@@ -76,10 +76,8 @@ Timer::Timer(const m::model::Sequencer& c)
 IO::IO(const m::Channel& out, const m::Channel& in, const m::model::Mixer& m)
 : masterOutVol(out.volume)
 , masterInVol(in.volume)
-#ifdef WITH_VST
 , masterOutHasPlugins(out.plugins.size() > 0)
 , masterInHasPlugins(in.plugins.size() > 0)
-#endif
 , inToOut(m.inToOut)
 {
 }

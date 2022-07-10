@@ -107,10 +107,8 @@ const Patch::Channel ChannelFactory::serializeChannel(const Channel& c)
 {
 	Patch::Channel pc;
 
-#ifdef WITH_VST
 	for (const Plugin* p : c.plugins)
 		pc.pluginIds.push_back(p->id);
-#endif
 
 	pc.id                = c.id;
 	pc.type              = c.type;

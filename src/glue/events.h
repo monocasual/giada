@@ -76,9 +76,7 @@ void toggleInputRecording();
 
 /* Plug-ins. */
 
-#ifdef WITH_VST
 void setPluginParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread);
-#endif
 } // namespace giada::c::events
 
 #endif

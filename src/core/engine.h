@@ -123,10 +123,8 @@ public:
 	Sequencer              sequencer;
 	Mixer                  mixer;
 	Recorder               recorder;
-#ifdef WITH_VST
-	PluginHost    pluginHost;
-	PluginManager pluginManager;
-#endif
+	PluginHost             pluginHost;
+	PluginManager          pluginManager;
 
 private:
 	int audioCallback(KernelAudio::CallbackInfo);

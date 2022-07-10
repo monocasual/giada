@@ -75,39 +75,28 @@ public:
 	geStatusButton*  mute;
 	geStatusButton*  solo;
 	geDial*          vol;
-#ifdef WITH_VST
-	geStatusButton* fx;
-#endif
+	geStatusButton*  fx;
 
 protected:
 	/* Define some breakpoints for dynamic resize. BREAK_DELTA: base amount of
 	pixels to shrink sampleButton. */
 
-#ifdef WITH_VST
 	static const int BREAK_READ_ACTIONS = 240;
 	static const int BREAK_MODE_BOX     = 216;
 	static const int BREAK_FX           = 192;
 	static const int BREAK_ARM          = 168;
-#else
-	static const int BREAK_READ_ACTIONS = 216;
-	static const int BREAK_MODE_BOX     = 192;
-	static const int BREAK_ARM          = 168;
-#endif
 
 	static void cb_arm(Fl_Widget* /*w*/, void* p);
 	static void cb_mute(Fl_Widget* /*w*/, void* p);
 	static void cb_solo(Fl_Widget* /*w*/, void* p);
 	static void cb_changeVol(Fl_Widget* /*w*/, void* p);
-#ifdef WITH_VST
 	static void cb_openFxWindow(Fl_Widget* /*w*/, void* p);
-#endif
-	void cb_mute();
-	void cb_arm();
-	void cb_solo();
-	void cb_changeVol();
-#ifdef WITH_VST
+	void        cb_mute();
+	void        cb_arm();
+	void        cb_solo();
+	void        cb_changeVol();
+
 	void cb_openFxWindow();
-#endif
 
 	/* blink
 	Blinks button when channel is in wait/ending status. */

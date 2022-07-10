@@ -24,14 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #ifndef G_PLUGIN_HOST_H
 #define G_PLUGIN_HOST_H
 
 #include "core/types.h"
-#include "deps/juce-config.h"
 #include <functional>
+#include <juce_audio_basics/juce_audio_basics.h>
+#include <juce_gui_basics/juce_gui_basics.h>
 #include <memory>
 
 namespace mcl
@@ -134,5 +133,3 @@ private:
 } // namespace giada::m
 
 #endif
-
-#endif // #ifdef WITH_VST

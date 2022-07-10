@@ -76,11 +76,9 @@ void store(Patch::Data& patch)
 	patch.metronome  = g_engine.sequencer.isMetronomeOn(); // TODO - addShared bool metronome to Layout
 	patch.samplerate = g_engine.kernelAudio.getSampleRate();
 
-#ifdef WITH_VST
 	patch.plugins.clear();
 	for (const auto& p : g_engine.model.getAllShared<PluginPtrs>())
 		patch.plugins.push_back(g_engine.pluginManager.serializePlugin(*p));
-#endif
 
 	patch.actions = g_engine.actionRecorder.serializeActions(g_engine.model.getAllShared<Actions::Map>());
 
@@ -127,7 +125,6 @@ LoadState load(const Patch::Data& patch)
 
 	/* Load external data first: plug-ins and waves. */
 
-#ifdef WITH_VST
 	g_engine.model.getAllShared<PluginPtrs>().clear();
 	for (const Patch::Plugin& pplugin : patch.plugins)
 	{
@@ -139,7 +136,6 @@ LoadState load(const Patch::Data& patch)
 
 		g_engine.model.getAllShared<PluginPtrs>().push_back(std::move(p));
 	}
-#endif
 
 	g_engine.model.getAllShared<WavePtrs>().clear();
 	for (const Patch::Wave& pwave : patch.waves)

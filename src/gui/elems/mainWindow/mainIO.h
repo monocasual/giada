@@ -46,23 +46,19 @@ public:
 
 	void setOutVol(float v);
 	void setInVol(float v);
-#ifdef WITH_VST
 	void setMasterFxOutFull(bool v);
 	void setMasterFxInFull(bool v);
-#endif
 
 private:
 	c::main::IO m_io;
 
-	geSoundMeter* m_outMeter;
-	geSoundMeter* m_inMeter;
-	geDial*       m_outVol;
-	geDial*       m_inVol;
-	geButton*     m_inToOut;
-#ifdef WITH_VST
+	geSoundMeter*   m_outMeter;
+	geSoundMeter*   m_inMeter;
+	geDial*         m_outVol;
+	geDial*         m_inVol;
+	geButton*       m_inToOut;
 	geStatusButton* m_masterFxOut;
 	geStatusButton* m_masterFxIn;
-#endif
 };
 } // namespace giada::v
 

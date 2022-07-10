@@ -24,14 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #ifndef G_PLUGIN_MANAGER_H
 #define G_PLUGIN_MANAGER_H
 
 #include "core/idManager.h"
 #include "core/patch.h"
-#include "deps/juce-config.h"
 #include "plugin.h"
 #include <memory>
 
@@ -150,9 +147,7 @@ private:
 	If some plugins from any stack are missing. */
 
 	bool m_missingPlugins;
-}; // namespace giada::m
+};
 } // namespace giada::m
 
 #endif
-
-#endif // #ifdef WITH_VST

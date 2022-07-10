@@ -96,15 +96,11 @@ struct MidiData
 	int inPort;
 };
 
-#ifdef WITH_VST
-
 struct PluginData
 {
 	int         numAvailablePlugins;
 	std::string pluginPath;
 };
-
-#endif
 
 struct MiscData
 {
@@ -120,17 +116,14 @@ struct MiscData
 /* get*
 Return viewModel objects filled with data. */
 
-AudioData getAudioData();
-MidiData  getMidiData();
-MiscData  getMiscData();
-#ifdef WITH_VST
+AudioData  getAudioData();
+MidiData   getMidiData();
+MiscData   getMiscData();
 PluginData getPluginData();
-#endif
 
 void save(const AudioData&);
 void save(const MidiData&);
 void save(const MiscData&);
-#ifdef WITH_VST
 void save(const PluginData&);
 void scanPlugins(std::string dir, const std::function<void(float)>& progress);
 
@@ -139,7 +132,7 @@ Callback attached to the DirBrowser for adding new Plug-in search paths in the
 configuration window. */
 
 void setPluginPathCb(void* data);
-#endif
+
 } // namespace giada::c::config
 
 #endif

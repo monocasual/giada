@@ -143,10 +143,8 @@ void channel_clearMidiLearn(int param, ID channelId);
 void master_clearMidiLearn(int param);
 void master_startMidiLearn(int param);
 void stopMidiLearn();
-#ifdef WITH_VST
 void plugin_startMidiLearn(int paramIndex, ID pluginId);
 void plugin_clearMidiLearn(int param, ID pluginId);
-#endif
 
 /* Master functions. */
 

@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "pluginWindow.h"
 #include "core/const.h"
 #include "glue/plugin.h"
@@ -78,5 +76,3 @@ void gdPluginWindow::updateParameters(bool changeSlider)
 		static_cast<v::gePluginParameter*>(m_list->child(index))->update(c::plugin::getParam(index, m_plugin.getPluginRef(), m_plugin.channelId), changeSlider);
 }
 } // namespace giada::v
-
-#endif // #ifdef WITH_VST

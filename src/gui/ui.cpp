@@ -35,11 +35,9 @@
 #include "gui/updater.h"
 #include "utils/gui.h"
 #include "utils/log.h"
-#ifdef WITH_VST
 #include <FL/Fl.H>
 #if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 #include <X11/Xlib.h> // For XInitThreads
-#endif
 #endif
 
 namespace giada::v
@@ -92,7 +90,7 @@ void Ui::init(int argc, char** argv, m::Engine& engine)
 	plug-ins go nuts and crash hard. It seems that some plug-ins on our Juce-based
 	PluginHost use Xlib concurrently. */
 
-#if (defined(G_OS_LINUX) || defined(G_OS_FREEBSD)) && defined(WITH_VST)
+#if (defined(G_OS_LINUX) || defined(G_OS_FREEBSD))
 	XInitThreads();
 #endif
 
@@ -226,8 +224,6 @@ void Ui::setMainWindowTitle(const std::string& s)
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 void Ui::startJuceDispatchLoop()
 {
 	Fl::add_timeout(G_GUI_REFRESH_RATE, juceDispatchLoop);
@@ -237,8 +233,6 @@ void Ui::stopJuceDispatchLoop()
 {
 	Fl::remove_timeout(juceDispatchLoop);
 }
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -250,8 +244,6 @@ void Ui::rebuildStaticWidgets()
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 void Ui::juceDispatchLoop(void*)
 {
 	juce::MessageManager* mm = juce::MessageManager::getInstanceWithoutCreating();
@@ -259,6 +251,4 @@ void Ui::juceDispatchLoop(void*)
 	mm->runDispatchLoopUntil(1);
 	Fl::add_timeout(G_GUI_REFRESH_RATE, juceDispatchLoop);
 }
-
-#endif
 } // namespace giada::v

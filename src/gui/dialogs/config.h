@@ -38,9 +38,7 @@ class geTabBehaviors;
 class geTabMidi;
 class geTabMisc;
 class geTabBindings;
-#ifdef WITH_VST
 class geTabPlugins;
-#endif
 class gdConfig : public gdWindow
 {
 public:
@@ -51,9 +49,7 @@ public:
 	geTabMidi*      tabMidi;
 	geTabMisc*      tabMisc;
 	geTabBindings*  tabBindings;
-#ifdef WITH_VST
-	geTabPlugins* tabPlugins;
-#endif
+	geTabPlugins*   tabPlugins;
 
 private:
 	void saveConfig();

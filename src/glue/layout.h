@@ -67,13 +67,11 @@ void openMidiActionEditor(ID channelId);
 void openSampleEditor(ID channelId);
 void openRenameChannelWindow(const c::channel::Data&);
 void openMissingAssetsWindow(const m::LoadState&);
-#ifdef WITH_VST
 void openBrowserForPlugins(v::gdWindow& parent);
 void openChannelPluginListWindow(ID channelId);
 void openMasterInPluginListWindow();
 void openMasterOutPluginListWindow();
 void openPluginChooser(ID channelId);
-#endif
 } // namespace giada::c::layout
 
 #endif

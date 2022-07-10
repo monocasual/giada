@@ -53,9 +53,7 @@ Engine::Engine()
 , sequencer(model, synchronizer, jackTransport)
 , mixer(model)
 , recorder(model, sequencer, channelManager, mixer)
-#ifdef WITH_VST
 , pluginHost(model)
-#endif
 {
 	kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -193,11 +191,8 @@ void Engine::init()
 	mixer.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()), kernelAudio.getBufferSize());
 	channelManager.reset(kernelAudio.getBufferSize());
 	sequencer.reset(kernelAudio.getSampleRate());
-
-#ifdef WITH_VST
 	pluginHost.reset(kernelAudio.getBufferSize());
 	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
-#endif
 
 	mixer.enable();
 	kernelAudio.startStream();
@@ -221,9 +216,7 @@ void Engine::reset()
 
 	channelFactory.reset();
 	waveFactory.reset();
-#ifdef WITH_VST
 	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
-#endif
 
 	/* Then all other components. */
 
@@ -233,9 +226,7 @@ void Engine::reset()
 	synchronizer.reset();
 	sequencer.reset(kernelAudio.getSampleRate());
 	actionRecorder.reset();
-#ifdef WITH_VST
 	pluginHost.reset(kernelAudio.getBufferSize());
-#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -258,14 +249,12 @@ void Engine::shutdown()
 
 	u::log::close();
 
-#ifdef WITH_VST
 	/* Currently the Engine is global/static, and so are all of its sub-components, 
 	Model included. Some plug-ins (JUCE-based ones) crash hard on destructor when 
 	deleted as a result of returning from main, so it's better to free them all first.
 	TODO - investigate this! */
 
 	pluginHost.freeAllPlugins();
-#endif
 }
 
 /* -------------------------------------------------------------------------- */

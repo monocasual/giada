@@ -79,12 +79,8 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 	midiActivity = new geMidiActivity(mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), 10, h());
 	mute         = new geStatusButton(midiActivity->x() + midiActivity->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
 	solo         = new geStatusButton(mute->x() + mute->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
-#if defined(WITH_VST)
-	fx  = new geStatusButton(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
-	vol = new geDial(fx->x() + fx->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
-#else
-	vol = new geDial(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
-#endif
+	fx           = new geStatusButton(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
+	vol          = new geDial(fx->x() + fx->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
 
 	end();
 
@@ -94,14 +90,10 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 	arm->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_ARM));
 	mute->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_MUTE));
 	solo->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_SOLO));
-#if defined(WITH_VST)
 	fx->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_FX));
-#endif
 	vol->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
 
-#ifdef WITH_VST
 	fx->setStatus(m_channel.plugins.size() > 0);
-#endif
 
 	playButton->callback(cb_playButton, (void*)this);
 	playButton->when(FL_WHEN_CHANGED); // On keypress && on keyrelease
@@ -110,9 +102,7 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 	arm->value(m_channel.armed);
 	arm->callback(cb_arm, (void*)this);
 
-#ifdef WITH_VST
 	fx->callback(cb_openFxWindow, (void*)this);
-#endif
 
 	mute->type(FL_TOGGLE_BUTTON);
 	mute->callback(cb_mute, (void*)this);
@@ -204,16 +194,12 @@ void geMidiChannel::resize(int X, int Y, int W, int H)
 	geChannel::resize(X, Y, W, H);
 
 	arm->hide();
-#ifdef WITH_VST
 	fx->hide();
-#endif
 
 	if (w() > BREAK_ARM)
 		arm->show();
-#ifdef WITH_VST
 	if (w() > BREAK_FX)
 		fx->show();
-#endif
 
 	packWidgets();
 }

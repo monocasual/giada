@@ -24,8 +24,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
 #include "gui/dialogs/pluginList.h"
 #include "core/conf.h"
 #include "core/const.h"
@@ -132,5 +130,3 @@ const gePluginElement& gdPluginList::getPrevElement(const gePluginElement& currE
 	return *static_cast<gePluginElement*>(list->child(prev));
 }
 } // namespace giada::v
-
-#endif // #ifdef WITH_VST
