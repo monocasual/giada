@@ -241,10 +241,13 @@ endif()
 # Compiler warnings
 # ------------------------------------------------------------------------------
 
-if(DEFINED OS_WINDOWS)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	list(APPEND COMPILER_OPTIONS /W4 /bigobj /external:anglebrackets /external:W0)
 else()
-	list(APPEND COMPILER_OPTIONS -Wall -Wextra -Wpedantic)
+	list(APPEND COMPILER_OPTIONS 
+		-Wall -Wextra -Wpedantic -Wunreachable-code -Wcast-align
+		-Wno-implicit-fallthrough -Wno-ignored-qualifiers -Wredundant-decls
+		-Woverloaded-virtual -Wreorder)
 endif()
 
 # ------------------------------------------------------------------------------
