@@ -519,7 +519,10 @@ endif()
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/deps/juce)
 
-list(APPEND LIBRARIES juce::juce_audio_utils)
+list(APPEND LIBRARIES 
+	juce::juce_audio_utils
+	juce::juce_recommended_config_flags
+	juce::juce_recommended_lto_flags)
 
 list(APPEND PREPROCESSOR_DEFS
 	JUCE_DEBUG=$<BOOL:$<CONFIG:Debug>>
