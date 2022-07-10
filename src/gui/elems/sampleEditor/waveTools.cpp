@@ -31,11 +31,10 @@
 #include "glue/sampleEditor.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/basics/menu.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "waveform.h"
-#include <FL/Fl_Menu_Button.H>
-#include <FL/Fl_Menu_Item.H>
 #include <cstdint>
 
 extern giada::v::Ui g_ui;
@@ -59,59 +58,6 @@ enum class Menu
 	SET_BEGIN_END,
 	TO_NEW_CHANNEL
 };
-
-/* -------------------------------------------------------------------------- */
-
-void menuCallback_(Fl_Widget* w, void* v)
-{
-	const geWaveTools* wt = static_cast<geWaveTools*>(w);
-
-	ID   channelId    = wt->getChannelData().channelId;
-	Menu selectedItem = (Menu)(intptr_t)v;
-
-	Frame a = wt->waveform->getSelectionA();
-	Frame b = wt->waveform->getSelectionB();
-
-	switch (selectedItem)
-	{
-	case Menu::CUT:
-		c::sampleEditor::cut(channelId, a, b);
-		break;
-	case Menu::COPY:
-		c::sampleEditor::copy(channelId, a, b);
-		break;
-	case Menu::PASTE:
-		c::sampleEditor::paste(channelId, a);
-		break;
-	case Menu::TRIM:
-		c::sampleEditor::trim(channelId, a, b);
-		break;
-	case Menu::SILENCE:
-		c::sampleEditor::silence(channelId, a, b);
-		break;
-	case Menu::REVERSE:
-		c::sampleEditor::reverse(channelId, a, b);
-		break;
-	case Menu::NORMALIZE:
-		c::sampleEditor::normalize(channelId, a, b);
-		break;
-	case Menu::FADE_IN:
-		c::sampleEditor::fade(channelId, a, b, m::wfx::Fade::IN);
-		break;
-	case Menu::FADE_OUT:
-		c::sampleEditor::fade(channelId, a, b, m::wfx::Fade::OUT);
-		break;
-	case Menu::SMOOTH_EDGES:
-		c::sampleEditor::smoothEdges(channelId, a, b);
-		break;
-	case Menu::SET_BEGIN_END:
-		c::sampleEditor::setBeginEnd(channelId, a, b);
-		break;
-	case Menu::TO_NEW_CHANNEL:
-		c::sampleEditor::toNewChannel(channelId, a, b);
-		break;
-	}
-}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -198,46 +144,80 @@ int geWaveTools::handle(int e)
 
 void geWaveTools::openMenu()
 {
-	Fl_Menu_Item menu[] = {
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_CUT), menuCallback_, (void*)Menu::CUT),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_COPY), menuCallback_, (void*)Menu::COPY),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_PASTE), menuCallback_, (void*)Menu::PASTE),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_TRIM), menuCallback_, (void*)Menu::TRIM),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_SILENCE), menuCallback_, (void*)Menu::SILENCE),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_REVERSE), menuCallback_, (void*)Menu::REVERSE),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_NORMALIZE), menuCallback_, (void*)Menu::NORMALIZE),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_FADE_IN), menuCallback_, (void*)Menu::FADE_IN),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_FADE_OUT), menuCallback_, (void*)Menu::FADE_OUT),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_SMOOTH_EDGES), menuCallback_, (void*)Menu::SMOOTH_EDGES),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_SET_BEGIN_END), menuCallback_, (void*)Menu::SET_BEGIN_END),
-	    u::gui::makeMenuItem(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL), menuCallback_, (void*)Menu::TO_NEW_CHANNEL),
-	    {}};
+	geMenu menu;
+
+	menu.addItem((ID)Menu::CUT, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_CUT));
+	menu.addItem((ID)Menu::COPY, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_COPY));
+	menu.addItem((ID)Menu::PASTE, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_PASTE));
+	menu.addItem((ID)Menu::TRIM, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_TRIM));
+	menu.addItem((ID)Menu::SILENCE, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_SILENCE));
+	menu.addItem((ID)Menu::REVERSE, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_REVERSE));
+	menu.addItem((ID)Menu::NORMALIZE, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_NORMALIZE));
+	menu.addItem((ID)Menu::FADE_IN, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_FADE_IN));
+	menu.addItem((ID)Menu::FADE_OUT, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_FADE_OUT));
+	menu.addItem((ID)Menu::SMOOTH_EDGES, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_SMOOTH_EDGES));
+	menu.addItem((ID)Menu::SET_BEGIN_END, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_SET_BEGIN_END));
+	menu.addItem((ID)Menu::TO_NEW_CHANNEL, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL));
 
 	if (!waveform->isSelected())
 	{
-		menu[(int)Menu::CUT].deactivate();
-		menu[(int)Menu::COPY].deactivate();
-		menu[(int)Menu::TRIM].deactivate();
-		menu[(int)Menu::SILENCE].deactivate();
-		menu[(int)Menu::REVERSE].deactivate();
-		menu[(int)Menu::NORMALIZE].deactivate();
-		menu[(int)Menu::FADE_IN].deactivate();
-		menu[(int)Menu::FADE_OUT].deactivate();
-		menu[(int)Menu::SMOOTH_EDGES].deactivate();
-		menu[(int)Menu::SET_BEGIN_END].deactivate();
-		menu[(int)Menu::TO_NEW_CHANNEL].deactivate();
+		menu.setEnabled((ID)Menu::CUT, false);
+		menu.setEnabled((ID)Menu::COPY, false);
+		menu.setEnabled((ID)Menu::TRIM, false);
+		menu.setEnabled((ID)Menu::SILENCE, false);
+		menu.setEnabled((ID)Menu::REVERSE, false);
+		menu.setEnabled((ID)Menu::NORMALIZE, false);
+		menu.setEnabled((ID)Menu::FADE_IN, false);
+		menu.setEnabled((ID)Menu::FADE_OUT, false);
+		menu.setEnabled((ID)Menu::SMOOTH_EDGES, false);
+		menu.setEnabled((ID)Menu::SET_BEGIN_END, false);
+		menu.setEnabled((ID)Menu::TO_NEW_CHANNEL, false);
 	}
 
-	Fl_Menu_Button b(0, 0, 100, 50);
-	b.box(G_CUSTOM_BORDER_BOX);
-	b.textsize(G_GUI_FONT_SIZE_BASE);
-	b.textcolor(G_COLOR_LIGHT_2);
-	b.color(G_COLOR_GREY_2);
+	menu.onSelect = [channelId = m_data->channelId,
+	                    a      = waveform->getSelectionA(),
+	                    b      = waveform->getSelectionB()](ID id) {
+		switch (static_cast<Menu>(id))
+		{
+		case Menu::CUT:
+			c::sampleEditor::cut(channelId, a, b);
+			break;
+		case Menu::COPY:
+			c::sampleEditor::copy(channelId, a, b);
+			break;
+		case Menu::PASTE:
+			c::sampleEditor::paste(channelId, a);
+			break;
+		case Menu::TRIM:
+			c::sampleEditor::trim(channelId, a, b);
+			break;
+		case Menu::SILENCE:
+			c::sampleEditor::silence(channelId, a, b);
+			break;
+		case Menu::REVERSE:
+			c::sampleEditor::reverse(channelId, a, b);
+			break;
+		case Menu::NORMALIZE:
+			c::sampleEditor::normalize(channelId, a, b);
+			break;
+		case Menu::FADE_IN:
+			c::sampleEditor::fade(channelId, a, b, m::wfx::Fade::IN);
+			break;
+		case Menu::FADE_OUT:
+			c::sampleEditor::fade(channelId, a, b, m::wfx::Fade::OUT);
+			break;
+		case Menu::SMOOTH_EDGES:
+			c::sampleEditor::smoothEdges(channelId, a, b);
+			break;
+		case Menu::SET_BEGIN_END:
+			c::sampleEditor::setBeginEnd(channelId, a, b);
+			break;
+		case Menu::TO_NEW_CHANNEL:
+			c::sampleEditor::toNewChannel(channelId, a, b);
+			break;
+		}
+	};
 
-	const Fl_Menu_Item* m = menu->popup(Fl::event_x(), Fl::event_y(), nullptr, nullptr, &b);
-	if (m != nullptr)
-		m->do_callback(this, m->user_data());
-
-	return;
+	menu.popup();
 }
 } // namespace giada::v
