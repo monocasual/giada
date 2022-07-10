@@ -70,9 +70,9 @@ std::string geInput::getValue() const { return m_input->value(); }
 void geInput::setType(int t) { m_input->type(t); }
 void geInput::setLabelAlign(Fl_Align a) { m_text->align(a); }
 void geInput::setValue(const std::string& s) { m_input->value(s.c_str()); }
-void geInput::setMaximumSize(int s) { m_input->maximum_size(s); };
-void geInput::setReadonly(bool v) { m_input->readonly(v); };
-void geInput::setCursorColor(int c) { m_input->cursor_color(c); };
+void geInput::setMaximumSize(int s) { m_input->maximum_size(s); }
+void geInput::setReadonly(bool v) { m_input->readonly(v); }
+void geInput::setCursorColor(int c) { m_input->cursor_color(c); }
 
 /* -------------------------------------------------------------------------- */
 
