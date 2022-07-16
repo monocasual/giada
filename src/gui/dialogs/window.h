@@ -59,7 +59,15 @@ public:
 	int  getId() const;
 	void debug() const;
 
+	/* getContentBounds
+	Returns {0, 0, w(), h()}. */
+
 	geompp::Rect<int> getContentBounds() const;
+
+	/* getBounds
+	Returns {x(), y(), w(), h()}. */
+
+	geompp::Rect<int> getBounds() const;
 
 	void      addSubWindow(gdWindow* w);
 	void      delSubWindow(gdWindow* w);

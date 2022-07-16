@@ -40,7 +40,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdChannelNameInput::gdChannelNameInput(const c::channel::Data& d)
-: gdWindow(u::gui::getCenterWinBounds(400, 64), g_ui.langMapper.get(LangMap::CHANNELNAME_TITLE))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 400, 64}), g_ui.langMapper.get(LangMap::CHANNELNAME_TITLE))
 , m_data(d)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);

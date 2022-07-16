@@ -49,7 +49,7 @@ bool confirmRet_ = false;
 
 void gdAlert(const char* msg)
 {
-	gdWindow win(u::gui::getCenterWinBounds(300, 90), g_ui.langMapper.get(LangMap::COMMON_WARNING));
+	gdWindow win(u::gui::getCenterWinBounds({-1, -1, 300, 90}), g_ui.langMapper.get(LangMap::COMMON_WARNING));
 	win.set_modal();
 	win.begin();
 	geBox*    box = new geBox(10, 10, 280, 40, msg);
@@ -71,7 +71,7 @@ void gdAlert(const char* msg)
 
 int gdConfirmWin(const char* title, const char* msg)
 {
-	gdWindow win(u::gui::getCenterWinBounds(300, 90), title);
+	gdWindow win(u::gui::getCenterWinBounds({-1, -1, 300, 90}), title);
 	win.set_modal();
 	win.begin();
 	new geBox(10, 10, 280, 40, msg);

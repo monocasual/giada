@@ -248,10 +248,7 @@ void openMasterOutPluginListWindow()
 
 void openPluginChooser(ID channelId)
 {
-	g_ui.openSubWindow(*g_ui.mainWindow.get(),
-	    new v::gdPluginChooser(g_engine.conf.data.pluginChooserX,
-	        g_engine.conf.data.pluginChooserY, g_engine.conf.data.pluginChooserW,
-	        g_engine.conf.data.pluginChooserH, channelId, g_engine.conf.data),
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdPluginChooser(channelId, g_engine.conf.data),
 	    WID_FX_CHOOSER);
 }
 } // namespace giada::c::layout

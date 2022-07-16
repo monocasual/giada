@@ -63,9 +63,10 @@ Returns the bounding box in pixels of a string 's'. */
 geompp::Rect<int> getStringRect(const std::string& s);
 
 /* getCenterWinBounds
-Returns the bounding box to be used for a centered window. */
+Returns the bounding box to be used for a centered window if x or y == -1 (the
+default/unspecified value). Just returns the bounding box in input otherwise. */
 
-geompp::Rect<int> getCenterWinBounds(int w, int h);
+geompp::Rect<int> getCenterWinBounds(geompp::Rect<int>);
 
 /* truncate
 Adds ellipsis to a string 's' if it longer than 'width' pixels. */

@@ -41,7 +41,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdBeatsInput::gdBeatsInput(int beats, int bars)
-: gdWindow(u::gui::getCenterWinBounds(180, 36), "Beats")
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 180, 36}), "Beats")
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{

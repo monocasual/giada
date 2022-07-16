@@ -59,9 +59,9 @@
 
 /* -- version --------------------------------------------------------------- */
 constexpr auto G_APP_NAME      = "Giada";
-constexpr auto G_VERSION_STR   = "0.22.0";
+constexpr auto G_VERSION_STR   = "0.23.0";
 constexpr int  G_VERSION_MAJOR = 0;
-constexpr int  G_VERSION_MINOR = 22;
+constexpr int  G_VERSION_MINOR = 23;
 constexpr int  G_VERSION_PATCH = 0;
 
 constexpr auto CONF_FILENAME = "giada.conf";
@@ -422,6 +422,8 @@ constexpr auto CONF_KEY_SAMPLE_EDITOR_GRID_ON         = "sample_editor_grid_on";
 constexpr auto CONF_KEY_ACTION_EDITOR_PIANO_ROLL_Y    = "piano_roll_y";
 constexpr auto CONF_KEY_PLUGIN_LIST_X                 = "plugin_list_x";
 constexpr auto CONF_KEY_PLUGIN_LIST_Y                 = "plugin_list_y";
+constexpr auto CONF_KEY_PLUGIN_LIST_W                 = "plugin_list_w";
+constexpr auto CONF_KEY_PLUGIN_LIST_H                 = "plugin_list_h";
 constexpr auto CONF_KEY_PLUGIN_CHOOSER_X              = "plugin_chooser_x";
 constexpr auto CONF_KEY_PLUGIN_CHOOSER_Y              = "plugin_chooser_y";
 constexpr auto CONF_KEY_PLUGIN_CHOOSER_W              = "plugin_chooser_w";

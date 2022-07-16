@@ -66,8 +66,8 @@ gdProgress& gdMainWindow::ScopedProgress::get()
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** argv, m::Conf::Data& c)
-: gdWindow(W, H, title)
+gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, char** argv, m::Conf::Data& c)
+: gdWindow(r, title)
 , m_conf(c)
 {
 	Fl::visible_focus(0);
@@ -143,10 +143,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 
 gdMainWindow::~gdMainWindow()
 {
-	m_conf.mainWindowX = x();
-	m_conf.mainWindowY = y();
-	m_conf.mainWindowW = w();
-	m_conf.mainWindowH = h();
+	m_conf.mainWindowBounds = getBounds();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -149,6 +149,11 @@ geompp::Rect<int> gdWindow::getContentBounds() const
 	return {0, 0, w(), h()};
 }
 
+geompp::Rect<int> gdWindow::getBounds() const
+{
+	return {x(), y(), w(), h()};
+}
+
 /* -------------------------------------------------------------------------- */
 
 gdWindow* gdWindow::getParent()

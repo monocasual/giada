@@ -97,17 +97,14 @@ void Ui::init(int argc, char** argv, m::Engine& engine)
 	langMapper.init();
 	langMapper.read(engine.conf.data.langMap);
 
-	mainWindow = std::make_unique<gdMainWindow>(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT, "", argc, argv, engine.conf.data);
-	mainWindow->resize(engine.conf.data.mainWindowX, engine.conf.data.mainWindowY, engine.conf.data.mainWindowW,
-	    engine.conf.data.mainWindowH);
-
+	mainWindow = std::make_unique<gdMainWindow>(u::gui::getCenterWinBounds(engine.conf.data.mainWindowBounds), "", argc, argv, engine.conf.data);
 	setMainWindowTitle(engine.patch.data.name == "" ? G_DEFAULT_PATCH_NAME : engine.patch.data.name);
 
 	m_updater.init(engine.model);
 
 	if (engine.kernelAudio.isReady())
 		rebuildStaticWidgets();
-}
+} // namespace giada::v
 
 /* -------------------------------------------------------------------------- */
 

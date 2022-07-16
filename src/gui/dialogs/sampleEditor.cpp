@@ -68,7 +68,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
-: gdWindow(c.sampleEditorX, c.sampleEditorY, c.sampleEditorW, c.sampleEditorH, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TITLE))
+: gdWindow(u::gui::getCenterWinBounds(c.sampleEditorBounds), g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TITLE))
 , m_channelId(channelId)
 , m_conf(c)
 {
@@ -195,10 +195,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
 
 gdSampleEditor::~gdSampleEditor()
 {
-	m_conf.sampleEditorX       = x();
-	m_conf.sampleEditorY       = y();
-	m_conf.sampleEditorW       = w();
-	m_conf.sampleEditorH       = h();
+	m_conf.sampleEditorBounds  = getBounds();
 	m_conf.sampleEditorGridVal = grid->getSelectedId();
 	m_conf.sampleEditorGridOn  = snap->value();
 

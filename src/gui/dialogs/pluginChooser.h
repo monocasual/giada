@@ -30,19 +30,16 @@
 #include "core/conf.h"
 #include "core/types.h"
 #include "window.h"
-#include <FL/Fl.H>
-#include <FL/Fl_Scroll.H>
 
 namespace giada::v
 {
 class geButton;
 class geChoice;
 class gePluginBrowser;
-
 class gdPluginChooser : public gdWindow
 {
 public:
-	gdPluginChooser(int x, int y, int w, int h, ID channelId, m::Conf::Data&);
+	gdPluginChooser(ID channelId, m::Conf::Data&);
 	~gdPluginChooser();
 
 private:

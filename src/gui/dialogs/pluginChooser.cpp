@@ -39,8 +39,8 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Conf::Data& c)
-: gdWindow(X, Y, W, H, g_ui.langMapper.get(LangMap::PLUGINCHOOSER_TITLE))
+gdPluginChooser::gdPluginChooser(ID channelId, m::Conf::Data& c)
+: gdWindow(u::gui::getCenterWinBounds(c.pluginChooserBounds), g_ui.langMapper.get(LangMap::PLUGINCHOOSER_TITLE))
 , m_conf(c)
 , m_channelId(channelId)
 {
@@ -97,11 +97,8 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID channelId, m::Co
 
 gdPluginChooser::~gdPluginChooser()
 {
-	m_conf.pluginChooserX   = x();
-	m_conf.pluginChooserY   = y();
-	m_conf.pluginChooserW   = w();
-	m_conf.pluginChooserH   = h();
-	m_conf.pluginSortMethod = sortMethod->getSelectedId();
+	m_conf.pluginChooserBounds = getBounds();
+	m_conf.pluginSortMethod    = sortMethod->getSelectedId();
 }
 
 /* -------------------------------------------------------------------------- */

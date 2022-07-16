@@ -42,7 +42,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdChannelRouting::gdChannelRouting(const c::channel::Data& d)
-: gdWindow(u::gui::getCenterWinBounds(260, 90), g_ui.langMapper.get(LangMap::CHANNELROUTING_TITLE))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 260, 90}), g_ui.langMapper.get(LangMap::CHANNELROUTING_TITLE))
 {
 	constexpr int LABEL_WIDTH = 70;
 

@@ -49,7 +49,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
-: gdWindow(conf.actionEditorX, conf.actionEditorY, conf.actionEditorW, conf.actionEditorH, g_ui.langMapper.get(LangMap::ACTIONEDITOR_TITLE))
+: gdWindow(u::gui::getCenterWinBounds(conf.actionEditorBounds), g_ui.langMapper.get(LangMap::ACTIONEDITOR_TITLE))
 , channelId(channelId)
 , gridTool(0, 0, conf)
 , zoomInBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm)
@@ -82,12 +82,7 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
 
 gdBaseActionEditor::~gdBaseActionEditor()
 {
-	using namespace giada::m;
-
-	m_conf.actionEditorX      = x();
-	m_conf.actionEditorY      = y();
-	m_conf.actionEditorW      = w();
-	m_conf.actionEditorH      = h();
+	m_conf.actionEditorBounds = getBounds();
 	m_conf.actionEditorSplitH = m_splitScroll.getTopContentH();
 	m_conf.actionEditorZoom   = m_ratio;
 }

@@ -43,7 +43,7 @@ public:
 	virtual ~gdMidiInputBase();
 
 protected:
-	gdMidiInputBase(int x, int y, int w, int h, const char* title, m::Conf::Data&);
+	gdMidiInputBase(const char* title, m::Conf::Data&);
 
 	static void cb_close(Fl_Widget* /*w*/, void* p);
 	void        cb_close();

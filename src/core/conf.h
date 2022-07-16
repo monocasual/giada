@@ -29,7 +29,8 @@
 
 #include "core/const.h"
 #include "core/types.h"
-#include "utils/gui.h"
+#include "deps/geompp/src/rect.hpp"
+#include <FL/Enumerations.H>
 #include <string>
 #include <vector>
 
@@ -80,43 +81,26 @@ public:
 		std::string patchPath;
 		std::string samplePath;
 
-		int mainWindowX = u::gui::centerWindowX(G_MIN_GUI_WIDTH);
-		int mainWindowY = u::gui::centerWindowY(G_MIN_GUI_HEIGHT);
-		int mainWindowW = G_MIN_GUI_WIDTH;
-		int mainWindowH = G_MIN_GUI_HEIGHT;
+		geompp::Rect<int> mainWindowBounds = {-1, -1, G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT};
 
-		int         browserX = u::gui::centerWindowX(G_DEFAULT_SUBWINDOW_W);
-		int         browserY = u::gui::centerWindowY(G_DEFAULT_SUBWINDOW_H);
-		int         browserW = G_DEFAULT_SUBWINDOW_W;
-		int         browserH = G_DEFAULT_SUBWINDOW_H;
-		int         browserPosition;
-		int         browserLastValue;
-		std::string browserLastPath;
+		geompp::Rect<int> browserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+		int               browserPosition;
+		int               browserLastValue;
+		std::string       browserLastPath;
 
-		int actionEditorY          = u::gui::centerWindowY(G_DEFAULT_SUBWINDOW_H);
-		int actionEditorX          = u::gui::centerWindowX(G_DEFAULT_SUBWINDOW_W);
-		int actionEditorW          = G_DEFAULT_SUBWINDOW_W;
-		int actionEditorH          = G_DEFAULT_SUBWINDOW_H;
-		int actionEditorZoom       = G_DEFAULT_ZOOM_RATIO;
-		int actionEditorSplitH     = -1;
-		int actionEditorGridVal    = 0;
-		int actionEditorGridOn     = false;
-		int actionEditorPianoRollY = -1;
+		geompp::Rect<int> actionEditorBounds     = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+		int               actionEditorZoom       = G_DEFAULT_ZOOM_RATIO;
+		int               actionEditorSplitH     = -1;
+		int               actionEditorGridVal    = 0;
+		int               actionEditorGridOn     = false;
+		int               actionEditorPianoRollY = -1;
 
-		int sampleEditorX;
-		int sampleEditorY;
-		int sampleEditorW       = G_DEFAULT_SUBWINDOW_W;
-		int sampleEditorH       = G_DEFAULT_SUBWINDOW_H;
-		int sampleEditorGridVal = 0;
-		int sampleEditorGridOn  = false;
+		geompp::Rect<int> sampleEditorBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+		int               sampleEditorGridVal = 0;
+		int               sampleEditorGridOn  = false;
 
-		int midiInputX;
-		int midiInputY;
-		int midiInputW = G_DEFAULT_SUBWINDOW_W;
-		int midiInputH = G_DEFAULT_SUBWINDOW_H;
-
-		int pluginListX;
-		int pluginListY;
+		geompp::Rect<int> midiInputBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+		geompp::Rect<int> pluginListBounds = {-1, -1, 468, 204};
 
 		RecTriggerMode recTriggerMode  = RecTriggerMode::NORMAL;
 		float          recTriggerLevel = G_DEFAULT_REC_TRIGGER_LEVEL;
@@ -134,11 +118,8 @@ public:
 		uint32_t midiInBeatDouble = 0x0;
 		uint32_t midiInBeatHalf   = 0x0;
 
-		int pluginChooserX;
-		int pluginChooserY;
-		int pluginChooserW   = G_DEFAULT_SUBWINDOW_W;
-		int pluginChooserH   = G_DEFAULT_SUBWINDOW_H;
-		int pluginSortMethod = 0;
+		geompp::Rect<int> pluginChooserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+		int               pluginSortMethod    = 0;
 
 		KeyBindings keyBindings = {
 		    ' ',          // KEY_BIND_PLAY

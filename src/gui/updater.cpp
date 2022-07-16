@@ -28,6 +28,7 @@
 #include "core/const.h"
 #include "core/model/model.h"
 #include "gui/ui.h"
+#include "utils/gui.h"
 #include <FL/Fl.H>
 
 namespace giada::v

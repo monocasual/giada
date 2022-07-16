@@ -100,9 +100,11 @@ geompp::Rect<int> getStringRect(const std::string& s)
 
 /* -------------------------------------------------------------------------- */
 
-geompp::Rect<int> getCenterWinBounds(int w, int h)
+geompp::Rect<int> getCenterWinBounds(geompp::Rect<int> r)
 {
-	return {centerWindowX(w), centerWindowY(h), w, h};
+	if (r.x == -1 || r.y == -1)
+		return {centerWindowX(r.w), centerWindowY(r.h), r.w, r.h};
+	return r;
 }
 
 /* -------------------------------------------------------------------------- */

@@ -52,6 +52,7 @@
 #include "gui/ui.h"
 #include "src/gui/elems/panTool.h"
 #include "src/gui/elems/volumeTool.h"
+#include "utils/gui.h"
 #include "utils/log.h"
 #include <FL/Fl.H>
 #include <cassert>
