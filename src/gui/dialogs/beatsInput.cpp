@@ -27,10 +27,10 @@
 #include "gui/dialogs/beatsInput.h"
 #include "core/const.h"
 #include "glue/main.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
@@ -47,7 +47,7 @@ gdBeatsInput::gdBeatsInput(int beats, int bars)
 	{
 		m_beats = new geInput(0, 0, 0, 0);
 		m_bars  = new geInput(0, 0, 0, 0);
-		m_ok    = new geButton(g_ui.langMapper.get(LangMap::COMMON_OK));
+		m_ok    = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_OK));
 		container->add(m_beats);
 		container->add(m_bars);
 		container->add(m_ok, 70);
@@ -73,7 +73,6 @@ gdBeatsInput::gdBeatsInput(int beats, int bars)
 	};
 
 	set_modal();
-	u::gui::setFavicon(this);
 	setId(WID_BEATS);
 	show();
 }

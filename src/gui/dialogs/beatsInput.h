@@ -31,7 +31,7 @@
 
 namespace giada::v
 {
-class geButton;
+class geTextButton;
 class geInput;
 class gdBeatsInput : public gdWindow
 {
@@ -39,9 +39,9 @@ public:
 	gdBeatsInput(int beats, int bars);
 
 private:
-	geInput*  m_beats;
-	geInput*  m_bars;
-	geButton* m_ok;
+	geInput*      m_beats;
+	geInput*      m_bars;
+	geTextButton* m_ok;
 };
 } // namespace giada::v
 

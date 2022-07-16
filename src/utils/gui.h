@@ -32,11 +32,6 @@
 #include <FL/Fl_Menu_Item.H>
 #include <string>
 
-namespace giada::v
-{
-class gdWindow;
-}
-
 namespace giada::u::gui
 {
 /* ScopedLock
@@ -49,8 +44,6 @@ public:
 	ScopedLock();
 	~ScopedLock();
 };
-
-void setFavicon(v::gdWindow* w);
 
 /* removeFltkChars
 Strips special chars used by FLTK to split menus into sub-menus. */

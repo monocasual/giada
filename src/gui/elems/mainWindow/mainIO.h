@@ -34,8 +34,8 @@ namespace giada::v
 {
 class geDial;
 class geSoundMeter;
-class geButton;
-class geStatusButton;
+class geTextButton;
+class geImageButton;
 class geMainIO : public geFlex
 {
 public:
@@ -52,13 +52,13 @@ public:
 private:
 	c::main::IO m_io;
 
-	geSoundMeter*   m_outMeter;
-	geSoundMeter*   m_inMeter;
-	geDial*         m_outVol;
-	geDial*         m_inVol;
-	geButton*       m_inToOut;
-	geStatusButton* m_masterFxOut;
-	geStatusButton* m_masterFxIn;
+	geSoundMeter*  m_outMeter;
+	geSoundMeter*  m_inMeter;
+	geDial*        m_outVol;
+	geDial*        m_inVol;
+	geTextButton*  m_inToOut;
+	geImageButton* m_masterFxOut;
+	geImageButton* m_masterFxIn;
 };
 } // namespace giada::v
 

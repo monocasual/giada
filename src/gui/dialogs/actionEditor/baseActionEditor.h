@@ -32,7 +32,7 @@
 #include "gui/dialogs/window.h"
 #include "gui/elems/actionEditor/gridTool.h"
 #include "gui/elems/actionEditor/splitScroll.h"
-#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/pack.h"
 
 namespace giada::m
@@ -56,9 +56,9 @@ public:
 
 	ID channelId;
 
-	geGridTool gridTool;
-	geButton   zoomInBtn;
-	geButton   zoomOutBtn;
+	geGridTool    gridTool;
+	geImageButton zoomInBtn;
+	geImageButton zoomOutBtn;
 
 	Pixel fullWidth; // Full widgets width, i.e. scaled-down full sequencer
 	Pixel loopWidth; // Loop width, i.e. scaled-down sequencer range
@@ -75,10 +75,8 @@ protected:
 
 	int getMouseOverContent() const;
 
-	static void cb_zoomIn(Fl_Widget* w, void* p);
-	static void cb_zoomOut(Fl_Widget* w, void* p);
-	void        zoomIn();
-	void        zoomOut();
+	void zoomIn();
+	void zoomOut();
 
 	/* computeWidth
 	Computes total width, in pixel. */

@@ -26,12 +26,13 @@
 
 #include "mainTimer.h"
 #include "core/const.h"
-#include "core/graphics.h"
 #include "glue/events.h"
 #include "glue/layout.h"
 #include "glue/main.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/imageButton.h"
+#include "gui/elems/basics/textButton.h"
+#include "gui/graphics.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
@@ -43,11 +44,11 @@ namespace giada::v
 geMainTimer::geMainTimer()
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
-	m_bpm        = new geButton();
-	m_meter      = new geButton();
+	m_bpm        = new geTextButton("");
+	m_meter      = new geTextButton("");
 	m_quantizer  = new geChoice();
-	m_multiplier = new geButton("", multiplyOff_xpm, multiplyOn_xpm);
-	m_divider    = new geButton("", divideOff_xpm, divideOn_xpm);
+	m_multiplier = new geImageButton(graphics::multiplyOff, graphics::multiplyOn);
+	m_divider    = new geImageButton(graphics::divideOff, graphics::divideOn);
 	add(m_quantizer, 60);
 	add(m_bpm, 60);
 	add(m_meter, 60);

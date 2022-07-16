@@ -33,17 +33,17 @@
 namespace giada::v
 {
 class geBox;
-class geButton;
+class geTextButton;
 class geKeyBinder : public geFlex
 {
 public:
 	geKeyBinder(const std::string& l, int& keyRef);
 
 private:
-	geBox*    m_labelBox;
-	geBox*    m_keyBox;
-	geButton* m_bindBtn;
-	geButton* m_clearBtn;
+	geBox*        m_labelBox;
+	geBox*        m_keyBox;
+	geTextButton* m_bindBtn;
+	geTextButton* m_clearBtn;
 };
 } // namespace giada::v
 

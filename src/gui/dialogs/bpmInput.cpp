@@ -29,9 +29,9 @@
 #include "core/const.h"
 #include "core/mixer.h"
 #include "glue/main.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
@@ -48,7 +48,7 @@ gdBpmInput::gdBpmInput(const char* label)
 	{
 		m_input_a = new geInput(0, 0, 0, 0);
 		m_input_b = new geInput(0, 0, 0, 0);
-		m_ok      = new geButton(g_ui.langMapper.get(LangMap::COMMON_OK));
+		m_ok      = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_OK));
 		container->add(m_input_a);
 		container->add(m_input_b);
 		container->add(m_ok, 70);
@@ -76,7 +76,6 @@ gdBpmInput::gdBpmInput(const char* label)
 	};
 
 	set_modal();
-	u::gui::setFavicon(this);
 	setId(WID_BPM);
 	show();
 }

@@ -28,9 +28,10 @@
 #define GE_PLUGIN_ELEMENT_H
 
 #include "glue/plugin.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/textButton.h"
 
 namespace giada::v
 {
@@ -42,24 +43,18 @@ public:
 	ID               getPluginId() const;
 	const m::Plugin& getPluginRef() const;
 
-	geButton button;
-	geChoice program;
-	geButton bypass;
-	geButton shiftUp;
-	geButton shiftDown;
-	geButton remove;
+	geTextButton  button;
+	geChoice      program;
+	geTextButton  bypass;
+	geImageButton shiftUpBtn;
+	geImageButton shiftDownBtn;
+	geImageButton remove;
 
 private:
-	static void cb_removePlugin(Fl_Widget* /*w*/, void* p);
-	static void cb_openPluginWindow(Fl_Widget* /*w*/, void* p);
-	static void cb_setBypass(Fl_Widget* /*w*/, void* p);
-	static void cb_shiftUp(Fl_Widget* /*w*/, void* p);
-	static void cb_shiftDown(Fl_Widget* /*w*/, void* p);
-	void        cb_removePlugin();
-	void        cb_openPluginWindow();
-	void        cb_setBypass();
-	void        cb_shiftUp();
-	void        cb_shiftDown();
+	void openPluginWindow();
+	void removePlugin();
+	void shiftUp();
+	void shiftDown();
 
 	c::plugin::Plugin m_plugin;
 };

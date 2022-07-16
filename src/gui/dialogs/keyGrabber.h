@@ -40,7 +40,7 @@ struct Data;
 namespace giada::v
 {
 class geBox;
-class geButton;
+class geTextButton;
 class gdKeyGrabber : public gdWindow
 {
 public:
@@ -58,9 +58,9 @@ public:
 private:
 	int m_key;
 
-	geBox*    m_text;
-	geButton* m_clear;
-	geButton* m_cancel;
+	geBox*        m_text;
+	geTextButton* m_clear;
+	geTextButton* m_cancel;
 };
 } // namespace giada::v
 

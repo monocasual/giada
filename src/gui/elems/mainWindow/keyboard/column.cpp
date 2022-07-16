@@ -31,6 +31,7 @@
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/menu.h"
 #include "gui/elems/basics/resizerBar.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/keyboard/midiChannel.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannel.h"
@@ -39,8 +40,6 @@
 #include "utils/gui.h"
 #include "utils/log.h"
 #include "utils/string.h"
-#include <FL/Fl_Menu_Button.H>
-#include <FL/fl_draw.H>
 #include <cassert>
 
 extern giada::v::Ui g_ui;
@@ -77,10 +76,6 @@ void geColumn::refresh()
 	for (geChannel* c : m_channels)
 		c->refresh();
 }
-
-/* -------------------------------------------------------------------------- */
-
-void geColumn::cb_addChannel(Fl_Widget* /*w*/, void* p) { ((geColumn*)p)->cb_addChannel(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -130,7 +125,7 @@ geChannel* geColumn::addChannel(c::channel::Data d)
 
 /* -------------------------------------------------------------------------- */
 
-void geColumn::cb_addChannel()
+void geColumn::addChannel()
 {
 	geMenu menu;
 
@@ -194,8 +189,8 @@ void geColumn::init()
 	Fl_Group::clear();
 	m_channels.clear();
 
-	m_addChannelBtn = new geButton(x(), y(), w(), G_GUI_UNIT, g_ui.langMapper.get(LangMap::MAIN_COLUMN_BUTTON));
-	m_addChannelBtn->callback(cb_addChannel, (void*)this);
+	m_addChannelBtn          = new geTextButton(x(), y(), w(), G_GUI_UNIT, g_ui.langMapper.get(LangMap::MAIN_COLUMN_BUTTON));
+	m_addChannelBtn->onClick = [this]() { addChannel(); };
 
 	add(m_addChannelBtn);
 }

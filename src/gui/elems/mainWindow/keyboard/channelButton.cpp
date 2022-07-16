@@ -37,7 +37,7 @@
 namespace giada::v
 {
 geChannelButton::geChannelButton(int x, int y, int w, int h, const c::channel::Data& d)
-: geButton(x, y, w, h)
+: geTextButton(x, y, w, h, "")
 , m_channel(d)
 {
 }
@@ -75,7 +75,7 @@ void geChannelButton::refresh()
 
 void geChannelButton::draw()
 {
-	geButton::draw();
+	geTextButton::draw();
 
 	if (m_channel.key == 0)
 		return;
@@ -85,31 +85,31 @@ void geChannelButton::draw()
 	const geompp::Rect bounds = geompp::Rect(x(), y(), 20, h()).reduced({1});
 
 	drawRectf(bounds, G_COLOR_GREY_3);
-	drawText(std::string(1, m_channel.key), bounds, G_COLOR_LIGHT_2);
+	drawText(std::string(1, m_channel.key), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_LIGHT_2);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geChannelButton::setInputRecordMode()
 {
-	bgColor0 = G_COLOR_RED;
+	m_backgroundColorOff = G_COLOR_RED;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geChannelButton::setActionRecordMode()
 {
-	bgColor0 = G_COLOR_BLUE;
-	txtColor = G_COLOR_LIGHT_2;
+	m_backgroundColorOff = G_COLOR_BLUE;
+	m_textColor          = G_COLOR_LIGHT_2;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geChannelButton::setDefaultMode(const char* l)
 {
-	bgColor0 = G_COLOR_GREY_2;
-	bdColor  = G_COLOR_GREY_4;
-	txtColor = G_COLOR_LIGHT_2;
+	m_backgroundColorOff = G_COLOR_GREY_2;
+	m_borderColor        = G_COLOR_GREY_4;
+	m_textColor          = G_COLOR_LIGHT_2;
 	if (l != nullptr)
 		label(l);
 }
@@ -118,15 +118,15 @@ void geChannelButton::setDefaultMode(const char* l)
 
 void geChannelButton::setPlayMode()
 {
-	bgColor0 = G_COLOR_LIGHT_1;
-	bdColor  = G_COLOR_LIGHT_1;
-	txtColor = G_COLOR_GREY_1;
+	m_backgroundColorOff = G_COLOR_LIGHT_1;
+	m_borderColor        = G_COLOR_LIGHT_1;
+	m_textColor          = G_COLOR_GREY_1;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geChannelButton::setEndingMode()
 {
-	bgColor0 = G_COLOR_GREY_4;
+	m_backgroundColorOff = G_COLOR_GREY_4;
 }
 } // namespace giada::v

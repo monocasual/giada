@@ -34,6 +34,7 @@
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/resizerBar.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/mainWindow/keyboard/channelButton.h"
 #include "gui/elems/mainWindow/keyboard/column.h"
 #include "gui/elems/mainWindow/keyboard/midiActivity.h"
@@ -208,8 +209,12 @@ void geKeyboard::deleteAllColumns()
 	Fl_Scroll::clear();
 	m_columns.clear();
 
-	m_addColumnBtn = new geButton(8, y(), 200, 20, "Add new column");
-	m_addColumnBtn->callback(cb_addColumn, (void*)this);
+	m_addColumnBtn          = new geTextButton(8, y(), 200, 20, "Add new column");
+	m_addColumnBtn->onClick = [this]() {
+		addColumn();
+		storeLayout();
+	};
+
 	add(m_addColumnBtn);
 }
 
@@ -230,13 +235,6 @@ void geKeyboard::notifyMidiIn(ID channelId)
 void geKeyboard::notifyMidiOut(ID channelId)
 {
 	getChannel(channelId)->midiActivity->out->lit();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geKeyboard::cb_addColumn(Fl_Widget* /*w*/, void* p)
-{
-	((geKeyboard*)p)->cb_addColumn();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -322,14 +320,6 @@ void geKeyboard::draw()
 	draw_children();
 
 	fl_pop_clip();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geKeyboard::cb_addColumn()
-{
-	addColumn();
-	storeLayout();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -33,7 +33,7 @@
 namespace giada::v
 {
 gdProgress::gdProgress()
-: gdWindow(300, 58)
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 388, 58}))
 , m_text(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w() - (G_GUI_OUTER_MARGIN * 2), 30, "", FL_ALIGN_CENTER)
 , m_progress(G_GUI_OUTER_MARGIN, 40, w() - (G_GUI_OUTER_MARGIN * 2), 10)
 {

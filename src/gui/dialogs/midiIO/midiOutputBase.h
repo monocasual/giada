@@ -46,7 +46,7 @@ namespace giada
 {
 namespace v
 {
-class geButton;
+class geTextButton;
 class geLightningLearnerPack : public geMidiLearnerPack
 {
 public:
@@ -64,12 +64,6 @@ public:
 	~gdMidiOutputBase();
 
 protected:
-	/* cb_close
-	close current window. */
-
-	static void cb_close(Fl_Widget* /*w*/, void* p);
-	void        cb_close();
-
 	static void cb_enableLightning(Fl_Widget* /*w*/, void* p);
 	void        cb_enableLightning();
 
@@ -78,7 +72,7 @@ protected:
 	c::io::Channel_OutputData m_data;
 
 	geLightningLearnerPack* m_learners;
-	geButton*               m_close;
+	geTextButton*           m_close;
 	geCheck*                m_enableLightning;
 };
 } // namespace v

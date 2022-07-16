@@ -29,11 +29,11 @@
 #include "core/const.h"
 #include "core/plugins/plugin.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/group.h"
 #include "gui/elems/basics/scrollPack.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/midiIO/midiLearner.h"
 #include "gui/elems/midiIO/midiLearnerPack.h"
 #include "gui/ui.h"
@@ -142,12 +142,12 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, m::Conf::Data& c)
 
 	geGroup* groupButtons = new geGroup(G_GUI_OUTER_MARGIN, m_container->y() + m_container->h() + G_GUI_OUTER_MARGIN);
 	geBox*   spacer       = new geBox(0, 0, w() - 80, G_GUI_UNIT); // spacer window border <-> buttons
-	m_ok                  = new geButton(w() - 96, 0, 80, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_CLOSE));
+	m_ok                  = new geTextButton(w() - 96, 0, 80, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_CLOSE));
 	groupButtons->add(spacer);
 	groupButtons->add(m_ok);
 	groupButtons->resizable(spacer);
 
-	m_ok->callback(cb_close, (void*)this);
+	m_ok->onClick = [this]() { do_callback(); };
 	m_enable->callback(cb_enable, (void*)this);
 
 	m_channel->addItem("Channel (any)");
@@ -178,7 +178,6 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, m::Conf::Data& c)
 	add(groupButtons);
 	resizable(m_container);
 
-	u::gui::setFavicon(this);
 	set_modal();
 	rebuild();
 	show();

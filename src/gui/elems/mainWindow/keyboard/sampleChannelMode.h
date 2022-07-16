@@ -26,10 +26,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_CHANNEL_MODE_H
-#define GE_CHANNEL_MODE_H
+#ifndef GE_SAMPLE_CHANNEL_MODE_H
+#define GE_SAMPLE_CHANNEL_MODE_H
 
-#include <FL/Fl_Menu_Button.H>
+#include "gui/elems/basics/imageButton.h"
 
 namespace giada::c::channel
 {
@@ -38,16 +38,14 @@ struct Data;
 
 namespace giada::v
 {
-class geChannelMode : public Fl_Menu_Button
+class geSampleChannelMode : public geImageButton
 {
 public:
-	geChannelMode(int x, int y, int w, int h, c::channel::Data& d);
-
-	void draw() override;
+	geSampleChannelMode(int x, int y, int w, int h, c::channel::Data& d);
 
 private:
-	static void cb_changeMode(Fl_Widget* /*w*/, void* p);
-	void        cb_changeMode(int mode);
+	void refresh();
+	void openMenu();
 
 	c::channel::Data& m_channel;
 };

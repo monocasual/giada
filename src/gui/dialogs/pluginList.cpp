@@ -29,9 +29,8 @@
 #include "core/const.h"
 #include "glue/layout.h"
 #include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/liquidScroll.h"
-#include "gui/elems/basics/statusButton.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/mainIO.h"
 #include "gui/elems/plugin/pluginElement.h"
@@ -59,7 +58,6 @@ gdPluginList::gdPluginList(ID channelId, m::Conf::Data& c)
 	add(list);
 	resizable(list);
 
-	u::gui::setFavicon(this);
 	set_non_modal();
 	rebuild();
 	show();
@@ -71,10 +69,6 @@ gdPluginList::~gdPluginList()
 {
 	m_conf.pluginListBounds = getBounds();
 }
-
-/* -------------------------------------------------------------------------- */
-
-void gdPluginList::cb_addPlugin(Fl_Widget* /*v*/, void* p) { ((gdPluginList*)p)->cb_addPlugin(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -97,16 +91,11 @@ void gdPluginList::rebuild()
 	for (m::Plugin* plugin : m_plugins.plugins)
 		list->addWidget(new gePluginElement(0, 0, c::plugin::getPlugin(*plugin, m_plugins.channelId)));
 
-	addPlugin = list->addWidget(new geButton(0, 0, 0, G_GUI_UNIT, g_ui.langMapper.get(LangMap::PLUGINLIST_ADDPLUGIN)));
+	addPlugin = list->addWidget(new geTextButton(0, 0, 0, G_GUI_UNIT, g_ui.langMapper.get(LangMap::PLUGINLIST_ADDPLUGIN)));
 
-	addPlugin->callback(cb_addPlugin, (void*)this);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdPluginList::cb_addPlugin()
-{
-	c::layout::openPluginChooser(m_plugins.channelId);
+	addPlugin->onClick = [this]() {
+		c::layout::openPluginChooser(m_plugins.channelId);
+	};
 }
 
 /* -------------------------------------------------------------------------- */

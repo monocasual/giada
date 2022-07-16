@@ -29,6 +29,7 @@
 
 #include "deps/geompp/src/rect.hpp"
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_SVG_Image.H>
 #include <vector>
 
 namespace giada::v
@@ -37,7 +38,6 @@ class gdWindow : public Fl_Double_Window
 {
 public:
 	gdWindow(int x, int y, int w, int h, const char* title = nullptr, int id = 0);
-	gdWindow(int w, int h, const char* title = nullptr, int id = 0);
 	gdWindow(geompp::Rect<int>, const char* title = nullptr, int id = 0);
 	~gdWindow();
 
@@ -81,6 +81,9 @@ protected:
 	std::vector<gdWindow*> subWindows;
 	int                    id;
 	gdWindow*              parent;
+
+private:
+	Fl_SVG_Image m_icon;
 };
 } // namespace giada::v
 

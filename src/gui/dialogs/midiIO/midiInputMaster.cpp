@@ -27,11 +27,11 @@
 #include "gui/dialogs/midiIO/midiInputMaster.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/group.h"
 #include "gui/elems/basics/scrollPack.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/midiIO/midiLearner.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
@@ -90,13 +90,13 @@ gdMidiInputMaster::gdMidiInputMaster(m::Conf::Data& c)
 	groupHeader->add(m_channel);
 
 	m_learners = new geMasterLearnerPack(G_GUI_OUTER_MARGIN, groupHeader->y() + groupHeader->h() + G_GUI_OUTER_MARGIN);
-	m_ok       = new geButton(w() - 88, m_learners->y() + m_learners->h() + G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_CLOSE));
+	m_ok       = new geTextButton(w() - 88, m_learners->y() + m_learners->h() + G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_CLOSE));
 
 	add(groupHeader);
 	add(m_learners);
 	add(m_ok);
 
-	m_ok->callback(cb_close, (void*)this);
+	m_ok->onClick = [this]() { do_callback(); };
 	m_enable->callback(cb_enable, (void*)this);
 
 	m_channel->addItem("Channel (any)");
@@ -119,8 +119,6 @@ gdMidiInputMaster::gdMidiInputMaster(m::Conf::Data& c)
 	m_channel->onChange = [](ID id) {
 		c::io::master_setMidiFilter(id == 0 ? -1 : id - 1);
 	};
-
-	u::gui::setFavicon(this);
 
 	set_modal();
 	rebuild();

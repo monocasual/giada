@@ -34,7 +34,7 @@
 namespace giada::v
 {
 class geBox;
-class geButton;
+class geTextButton;
 class geMidiLearner : public geFlex
 {
 public:
@@ -63,9 +63,9 @@ protected:
 
 	int m_param;
 
-	geBox*    m_text;
-	geButton* m_valueBtn;
-	geButton* m_button;
+	geBox*        m_text;
+	geTextButton* m_valueBtn;
+	geTextButton* m_button;
 };
 } // namespace giada::v
 

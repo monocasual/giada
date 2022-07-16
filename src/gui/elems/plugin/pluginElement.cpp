@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "pluginElement.h"
-#include "core/graphics.h"
 #include "core/plugins/plugin.h"
 #include "core/plugins/pluginHost.h"
 #include "glue/plugin.h"
@@ -33,8 +32,8 @@
 #include "gui/dialogs/pluginList.h"
 #include "gui/dialogs/pluginWindow.h"
 #include "gui/dialogs/pluginWindowGUI.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/graphics.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/log.h"
@@ -47,37 +46,37 @@ namespace giada::v
 {
 gePluginElement::gePluginElement(int x, int y, c::plugin::Plugin data)
 : gePack(x, y, Direction::HORIZONTAL)
-, button(0, 0, 196, G_GUI_UNIT)
+, button(0, 0, 196, G_GUI_UNIT, "")
 , program(0, 0, 132, G_GUI_UNIT)
-, bypass(0, 0, G_GUI_UNIT, G_GUI_UNIT)
-, shiftUp(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm)
-, shiftDown(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm)
-, remove(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxRemoveOff_xpm, fxRemoveOn_xpm)
+, bypass(0, 0, G_GUI_UNIT, G_GUI_UNIT, "")
+, shiftUpBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, graphics::upOff, graphics::upOn)
+, shiftDownBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, graphics::downOff, graphics::downOn)
+, remove(0, 0, G_GUI_UNIT, G_GUI_UNIT, graphics::removeOff, graphics::removeOn)
 , m_plugin(data)
 {
 	add(&button);
 	add(&program);
 	add(&bypass);
-	add(&shiftUp);
-	add(&shiftDown);
+	add(&shiftUpBtn);
+	add(&shiftDownBtn);
 	add(&remove);
 
 	resizable(button);
 
-	remove.callback(cb_removePlugin, (void*)this);
+	remove.onClick = [this]() { removePlugin(); };
 
 	if (!m_plugin.valid)
 	{
 		button.copy_label(m_plugin.uniqueId.c_str());
 		button.deactivate();
 		bypass.deactivate();
-		shiftUp.deactivate();
-		shiftDown.deactivate();
+		shiftUpBtn.deactivate();
+		shiftDownBtn.deactivate();
 		return;
 	}
 
 	button.copy_label(m_plugin.name.c_str());
-	button.callback(cb_openPluginWindow, (void*)this);
+	button.onClick = [this]() { openPluginWindow(); };
 
 	program.onChange = [pluginId = m_plugin.id](ID id) {
 		c::plugin::setProgram(pluginId, id);
@@ -95,12 +94,14 @@ gePluginElement::gePluginElement(int x, int y, c::plugin::Plugin data)
 	else
 		program.showItem(m_plugin.currentProgram);
 
-	bypass.callback(cb_setBypass, (void*)this);
-	bypass.type(FL_TOGGLE_BUTTON);
-	bypass.value(m_plugin.isBypassed ? 0 : 1);
+	bypass.setToggleable(true);
+	bypass.setValue(!m_plugin.isBypassed);
+	bypass.onClick = [this]() {
+		c::plugin::toggleBypass(m_plugin.id);
+	};
 
-	shiftUp.callback(cb_shiftUp, (void*)this);
-	shiftDown.callback(cb_shiftDown, (void*)this);
+	shiftUpBtn.onClick   = [this]() { shiftUp(); };
+	shiftDownBtn.onClick = [this]() { shiftDown(); };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -117,15 +118,7 @@ const m::Plugin& gePluginElement::getPluginRef() const
 
 /* -------------------------------------------------------------------------- */
 
-void gePluginElement::cb_removePlugin(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_removePlugin(); }
-void gePluginElement::cb_openPluginWindow(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_openPluginWindow(); }
-void gePluginElement::cb_setBypass(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_setBypass(); }
-void gePluginElement::cb_shiftUp(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_shiftUp(); }
-void gePluginElement::cb_shiftDown(Fl_Widget* /*w*/, void* p) { ((gePluginElement*)p)->cb_shiftDown(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gePluginElement::cb_shiftUp()
+void gePluginElement::shiftUp()
 {
 	const gdPluginList* parent = static_cast<const gdPluginList*>(window());
 
@@ -134,7 +127,7 @@ void gePluginElement::cb_shiftUp()
 
 /* -------------------------------------------------------------------------- */
 
-void gePluginElement::cb_shiftDown()
+void gePluginElement::shiftDown()
 {
 	const gdPluginList* parent = static_cast<const gdPluginList*>(window());
 
@@ -143,7 +136,7 @@ void gePluginElement::cb_shiftDown()
 
 /* -------------------------------------------------------------------------- */
 
-void gePluginElement::cb_removePlugin()
+void gePluginElement::removePlugin()
 {
 	/* Any subwindow linked to the plugin must be destroyed first. The 
 	pluginWindow has id = id_plugin + 1, because id=0 is reserved for the parent 
@@ -155,7 +148,7 @@ void gePluginElement::cb_removePlugin()
 
 /* -------------------------------------------------------------------------- */
 
-void gePluginElement::cb_openPluginWindow()
+void gePluginElement::openPluginWindow()
 {
 	/* The new pluginWindow has id = id_plugin + 1, because id=0 is reserved for 
 	the parent window 'add plugin'. */
@@ -179,12 +172,5 @@ void gePluginElement::cb_openPluginWindow()
 		child = new gdPluginWindow(m_plugin);
 	child->setId(pwid);
 	parent->addSubWindow(child);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gePluginElement::cb_setBypass()
-{
-	c::plugin::toggleBypass(m_plugin.id);
 }
 } // namespace giada::v

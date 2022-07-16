@@ -28,8 +28,8 @@
 #include "core/engine.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/browser.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include <FL/Fl_Group.H>
@@ -72,8 +72,8 @@ gdMissingAssets::gdMissingAssets(const m::LoadState& state)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL);
 		{
-			geButton* close = new geButton(g_ui.langMapper.get(LangMap::COMMON_CLOSE));
-			close->onClick  = [this]() { do_callback(); };
+			geTextButton* close = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CLOSE));
+			close->onClick      = [this]() { do_callback(); };
 			footer->add(new geBox()); // Spacer
 			footer->add(close, 80);
 			footer->end();
@@ -88,7 +88,6 @@ gdMissingAssets::gdMissingAssets(const m::LoadState& state)
 	resizable(container);
 
 	set_modal();
-	u::gui::setFavicon(this);
 	show();
 }
 } // namespace giada::v

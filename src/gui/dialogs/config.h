@@ -32,7 +32,6 @@
 
 namespace giada::v
 {
-class geButton;
 class geTabAudio;
 class geTabBehaviors;
 class geTabMidi;

@@ -36,7 +36,12 @@ namespace giada::v
 void drawRectf(geompp::Rect<int>, Fl_Color);
 void drawRect(geompp::Rect<int>, Fl_Color);
 void drawLine(geompp::Line<int>, Fl_Color);
-void drawText(const std::string&, geompp::Rect<int>, Fl_Color c, int alignment = FL_ALIGN_CENTER);
+void drawText(const std::string&, geompp::Rect<int>, Fl_Font, Fl_Fontsize, Fl_Color, int alignment = FL_ALIGN_CENTER);
+
+/* drawImage
+Draws image into a rectangle, truncating overflow. */
+
+void drawImage(Fl_Image&, geompp::Rect<int>);
 
 /* toImage
 Rasterizes a Widget to a Fl_RGB_Image screenshot. */

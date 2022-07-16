@@ -33,7 +33,7 @@
 
 namespace giada::v
 {
-class geButton;
+class geTextButton;
 class geChoice;
 class gePluginBrowser;
 class gdPluginChooser : public gdWindow
@@ -43,16 +43,11 @@ public:
 	~gdPluginChooser();
 
 private:
-	static void cb_close(Fl_Widget* /*w*/, void* p);
-	static void cb_add(Fl_Widget* /*w*/, void* p);
-	void        cb_close();
-	void        cb_add();
-
 	m::Conf::Data& m_conf;
 
 	geChoice*        sortMethod;
-	geButton*        addBtn;
-	geButton*        cancelBtn;
+	geTextButton*    addBtn;
+	geTextButton*    cancelBtn;
 	gePluginBrowser* browser;
 
 	ID m_channelId;

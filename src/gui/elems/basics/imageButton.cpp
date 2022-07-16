@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * geStatusButton
- * Simple geButton with a boolean 'status' parameter.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2022 Giovanni A. Zuliani | Monocasual Laboratories
@@ -27,51 +24,46 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "statusButton.h"
+#include "gui/elems/basics/imageButton.h"
 #include "core/const.h"
-#include <FL/fl_draw.H>
+#include "gui/drawing.h"
 
 namespace giada::v
 {
-geStatusButton::geStatusButton(int x, int y, int w, int h, const char** imgOff,
-    const char** imgOn, const char** imgDisabled)
-: geButton(x, y, w, h, "", imgOff, imgOn, imgDisabled)
-, m_status(false)
+geImageButton::geImageButton(int x, int y, int w, int h, const char* imgOff, const char* imgOn, const char* imgDisabled)
+: geButton(x, y, w, h, nullptr)
+, m_imgOff(imgOff != nullptr ? std::make_unique<Fl_SVG_Image>(nullptr, imgOff) : nullptr)
+, m_imgOn(imgOn != nullptr ? std::make_unique<Fl_SVG_Image>(nullptr, imgOn) : nullptr)
+, m_imgDisabled(imgDisabled != nullptr ? std::make_unique<Fl_SVG_Image>(nullptr, imgDisabled) : nullptr)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-geStatusButton::geStatusButton(const char** imgOff, const char** imgOn,
-    const char** imgDisabled)
-: geButton("", imgOff, imgOn, imgDisabled)
-, m_status(false)
+geImageButton::geImageButton(const char* imgOff, const char* imgOn, const char* imgDisabled)
+: geImageButton(0, 0, 0, 0, imgOff, imgOn, imgDisabled)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geStatusButton::draw()
+void geImageButton::draw()
 {
 	if (active())
-		if (m_status)
-			geButton::draw(imgOn, bgColor1, txtColor);
-		else
-			geButton::draw(imgOff, bgColor0, txtColor);
+		draw(getValue() ? m_imgOn.get() : m_imgOff.get());
 	else
-		geButton::draw(imgDisabled, bgColor0, bdColor);
+		draw(m_imgDisabled.get());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geStatusButton::setStatus(bool s)
+void geImageButton::draw(Fl_SVG_Image* img)
 {
-	m_status = s;
-	redraw();
-}
+	const geompp::Rect<int> bounds = getBounds();
 
-bool geStatusButton::getStatus() const
-{
-	return m_status;
+	drawRect(bounds, G_COLOR_GREY_4); // draw border
+
+	if (img != nullptr)
+		drawImage(*img, bounds.reduced(1));
 }
 } // namespace giada::v

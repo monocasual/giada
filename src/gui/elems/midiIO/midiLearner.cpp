@@ -28,7 +28,7 @@
 #include "core/const.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
 #include "utils/string.h"
 #include <cassert>
@@ -45,8 +45,8 @@ geMidiLearner::geMidiLearner(int x, int y, int w, int h, std::string l, int para
 , m_param(param)
 {
 	m_text     = new geBox(l.c_str());
-	m_valueBtn = new geButton();
-	m_button   = new geButton(g_ui.langMapper.get(LangMap::COMMON_LEARN));
+	m_valueBtn = new geTextButton("");
+	m_button   = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_LEARN));
 
 	add(m_text);
 	add(m_valueBtn, 80);
@@ -69,7 +69,7 @@ geMidiLearner::geMidiLearner(int x, int y, int w, int h, std::string l, int para
 		assert(onStartLearn != nullptr);
 		assert(onStopLearn != nullptr);
 
-		if (m_button->value() == 1)
+		if (m_button->getValue() == 1)
 			onStartLearn(m_param);
 		else
 			onStopLearn();
@@ -90,7 +90,7 @@ void geMidiLearner::update(uint32_t value)
 	}
 
 	m_valueBtn->copy_label(tmp.c_str());
-	m_button->value(0);
+	m_button->setValue(0);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -98,7 +98,7 @@ void geMidiLearner::update(uint32_t value)
 void geMidiLearner::update(const std::string& s)
 {
 	m_valueBtn->copy_label(s.c_str());
-	m_button->value(0);
+	m_button->setValue(0);
 }
 
 /* -------------------------------------------------------------------------- */

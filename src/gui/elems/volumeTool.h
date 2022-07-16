@@ -34,7 +34,7 @@ namespace giada::v
 {
 class geDial;
 class geInput;
-class geButton;
+class geTextButton;
 class geVolumeTool : public geFlex
 {
 public:
@@ -45,9 +45,9 @@ private:
 
 	ID m_channelId;
 
-	geInput*  m_input;
-	geDial*   m_dial;
-	geButton* m_reset;
+	geInput*      m_input;
+	geDial*       m_dial;
+	geTextButton* m_reset;
 };
 } // namespace giada::v
 

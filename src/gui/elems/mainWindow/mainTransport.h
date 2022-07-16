@@ -31,8 +31,7 @@
 
 namespace giada::v
 {
-class geButton;
-class geStatusButton;
+class geImageButton;
 class geMainTransport : public geFlex
 {
 public:
@@ -41,13 +40,13 @@ public:
 	void refresh();
 
 private:
-	geButton*       m_rewind;
-	geStatusButton* m_play;
-	geStatusButton* m_recTriggerMode;
-	geStatusButton* m_recAction;
-	geStatusButton* m_recInput;
-	geStatusButton* m_inputRecMode;
-	geStatusButton* m_metronome;
+	geImageButton* m_rewind;
+	geImageButton* m_play;
+	geImageButton* m_recTriggerMode;
+	geImageButton* m_recAction;
+	geImageButton* m_recInput;
+	geImageButton* m_inputRecMode;
+	geImageButton* m_metronome;
 };
 } // namespace giada::v
 

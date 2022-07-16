@@ -39,7 +39,8 @@ namespace giada::v
 class geInput;
 class geBox;
 class geDial;
-class geButton;
+class geTextButton;
+class geImageButton;
 class gePitchTool : public geFlex
 {
 public:
@@ -51,14 +52,14 @@ public:
 private:
 	const c::sampleEditor::Data* m_data;
 
-	geBox*    m_label;
-	geDial*   m_dial;
-	geInput*  m_input;
-	geButton* m_pitchToBar;
-	geButton* m_pitchToSong;
-	geButton* m_pitchHalf;
-	geButton* m_pitchDouble;
-	geButton* m_pitchReset;
+	geBox*         m_label;
+	geDial*        m_dial;
+	geInput*       m_input;
+	geTextButton*  m_pitchToBar;
+	geTextButton*  m_pitchToSong;
+	geImageButton* m_pitchHalf;
+	geImageButton* m_pitchDouble;
+	geTextButton*  m_pitchReset;
 };
 } // namespace giada::v
 

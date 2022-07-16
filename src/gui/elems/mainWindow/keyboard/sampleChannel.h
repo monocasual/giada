@@ -32,8 +32,8 @@
 
 namespace giada::v
 {
-class geStatusButton;
-class geChannelMode;
+class geImageButton;
+class geSampleChannelMode;
 class geSampleChannel : public geChannel
 {
 public:
@@ -44,16 +44,12 @@ public:
 
 	void refresh() override;
 
-	geChannelMode*  modeBox;
-	geStatusButton* readActions;
+	geSampleChannelMode* modeBox;
+	geImageButton*       readActionsBtn;
 
 private:
-	static void cb_playButton(Fl_Widget* /*w*/, void* p);
-	static void cb_openMenu(Fl_Widget* /*w*/, void* p);
-	static void cb_readActions(Fl_Widget* /*w*/, void* p);
-	void        cb_playButton();
-	void        cb_openMenu();
-	void        cb_readActions();
+	void openMenu();
+	void readActions();
 };
 } // namespace giada::v
 

@@ -27,7 +27,7 @@
 #include "warnings.h"
 #include "core/const.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "window.h"
@@ -52,15 +52,14 @@ void gdAlert(const char* msg)
 	gdWindow win(u::gui::getCenterWinBounds({-1, -1, 300, 90}), g_ui.langMapper.get(LangMap::COMMON_WARNING));
 	win.set_modal();
 	win.begin();
-	geBox*    box = new geBox(10, 10, 280, 40, msg);
-	geButton* b   = new geButton(210, 60, 80, 20, g_ui.langMapper.get(LangMap::COMMON_CLOSE));
+	geBox*        box = new geBox(10, 10, 280, 40, msg);
+	geTextButton* b   = new geTextButton(210, 60, 80, 20, g_ui.langMapper.get(LangMap::COMMON_CLOSE));
 	win.end();
 	box->labelsize(G_GUI_FONT_SIZE_BASE);
 
 	b->shortcut(FL_Enter);
 	b->onClick = [&win]() { win.hide(); };
 
-	u::gui::setFavicon(&win);
 	win.show();
 
 	while (win.shown())
@@ -75,8 +74,8 @@ int gdConfirmWin(const char* title, const char* msg)
 	win.set_modal();
 	win.begin();
 	new geBox(10, 10, 280, 40, msg);
-	geButton* ok = new geButton(212, 62, 80, 20, g_ui.langMapper.get(LangMap::COMMON_OK));
-	geButton* ko = new geButton(124, 62, 80, 20, g_ui.langMapper.get(LangMap::COMMON_CANCEL));
+	geTextButton* ok = new geTextButton(212, 62, 80, 20, g_ui.langMapper.get(LangMap::COMMON_OK));
+	geTextButton* ko = new geTextButton(124, 62, 80, 20, g_ui.langMapper.get(LangMap::COMMON_CANCEL));
 	win.end();
 
 	ok->shortcut(FL_Enter);
@@ -84,7 +83,6 @@ int gdConfirmWin(const char* title, const char* msg)
 
 	ko->onClick = [&win]() { confirmRet_ = false; win.hide(); };
 
-	u::gui::setFavicon(&win);
 	win.show();
 
 	while (win.shown())

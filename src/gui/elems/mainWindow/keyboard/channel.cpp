@@ -25,12 +25,10 @@
  * -------------------------------------------------------------------------- */
 
 #include "glue/channel.h"
-#include "core/graphics.h"
 #include "glue/events.h"
 #include "glue/layout.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/dial.h"
-#include "gui/elems/basics/statusButton.h"
+#include "gui/elems/basics/imageButton.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/channelButton.h"
 #include "gui/elems/mainWindow/keyboard/channelStatus.h"
@@ -70,11 +68,7 @@ void geChannel::draw()
 
 /* -------------------------------------------------------------------------- */
 
-void geChannel::cb_arm(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_arm(); }
-void geChannel::cb_mute(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_mute(); }
-void geChannel::cb_solo(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_solo(); }
 void geChannel::cb_changeVol(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_changeVol(); }
-void geChannel::cb_openFxWindow(Fl_Widget* /*w*/, void* p) { ((geChannel*)p)->cb_openFxWindow(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -89,31 +83,11 @@ void geChannel::refresh()
 	if (recStatus == ChannelStatus::WAIT || playStatus == ChannelStatus::WAIT)
 		blink();
 
-	playButton->setStatus(playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING);
+	playButton->setValue(playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING);
 	midiActivity->redraw();
-	mute->setStatus(m_channel.muted);
-	solo->setStatus(m_channel.soloed);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geChannel::cb_arm()
-{
-	c::events::toggleArmChannel(m_channel.id, Thread::MAIN);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geChannel::cb_mute()
-{
-	c::events::toggleMuteChannel(m_channel.id, Thread::MAIN);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geChannel::cb_solo()
-{
-	c::events::toggleSoloChannel(m_channel.id, Thread::MAIN);
+	arm->setValue(m_channel.isArmed());
+	mute->setValue(m_channel.isMuted());
+	solo->setValue(m_channel.isSoloed());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -121,13 +95,6 @@ void geChannel::cb_solo()
 void geChannel::cb_changeVol()
 {
 	c::events::setChannelVolume(m_channel.id, vol->value(), Thread::MAIN);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geChannel::cb_openFxWindow()
-{
-	c::layout::openChannelPluginListWindow(m_channel.id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -188,16 +155,16 @@ bool geChannel::handleKey(int e)
 	if (Fl::event_key() != m_channel.key)
 		return false;
 
-	if (e == FL_KEYDOWN && !playButton->value())
+	if (e == FL_KEYDOWN && !playButton->getValue())
 	{                             // Key not already pressed
 		playButton->take_focus(); // Move focus to this playButton
-		playButton->value(1);
+		playButton->setValue(true);
 		return true;
 	}
 
 	if (e == FL_KEYUP)
 	{
-		playButton->value(0);
+		playButton->setValue(true);
 		return true;
 	}
 

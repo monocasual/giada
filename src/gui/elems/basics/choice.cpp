@@ -55,7 +55,8 @@ void geChoice::geMenu::draw()
 	drawRect(bounds, static_cast<Fl_Color>(G_COLOR_GREY_4)); // border
 	fl_polygon(x() + w() - 8, y() + h() - 1, x() + w() - 1, y() + h() - 8, x() + w() - 1, y() + h() - 1);
 	if (value() != -1)
-		drawText(u::gui::truncate(text(value()), bounds.w - 16), bounds, active() ? G_COLOR_LIGHT_2 : G_COLOR_GREY_4);
+		drawText(u::gui::truncate(text(value()), bounds.w - 16), bounds, FL_HELVETICA,
+		    G_GUI_FONT_SIZE_BASE, active() ? G_COLOR_LIGHT_2 : G_COLOR_GREY_4);
 }
 
 /* -------------------------------------------------------------------------- */

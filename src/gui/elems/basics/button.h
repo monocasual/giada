@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * geButton
- * A regular button.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2022 Giovanni A. Zuliani | Monocasual Laboratories
@@ -30,38 +27,53 @@
 #ifndef GE_BUTTON_H
 #define GE_BUTTON_H
 
+#include "deps/geompp/src/rect.hpp"
 #include <FL/Fl_Button.H>
 #include <functional>
 
 namespace giada::v
 {
+/* geButton
+A base class for any other button in Giada. It doesn't use the traditional
+Fl_Button::value() method, allowing for a better 'toggleable' logic. Set or get
+the button value with setValue() and getValue() instead. */
+
 class geButton : public Fl_Button
 {
 public:
-	geButton(int x, int y, int w, int h, const char* l = nullptr,
-	    const char** imgOff = nullptr, const char** imgOn = nullptr,
-	    const char** imgDisabled = nullptr);
+	int  value() const                 = delete;
+	void value(int)                    = delete;
+	void callback(Fl_Callback*)        = delete;
+	void callback(Fl_Callback*, void*) = delete;
 
-	geButton(const char* l = nullptr, const char** imgOff = nullptr,
-	    const char** imgOn = nullptr, const char** imgDisabled = nullptr);
+	int handle(int e) override;
 
-	void draw() override;
+	bool              getValue() const;
+	geompp::Rect<int> getBounds() const;
+
+	void setToggleable(bool);
+
+	/* setValue
+	Sets the button into a particular graphical state. The state will change 
+	when the button is pressed or released. No callback fired. */
+
+	void setValue(bool);
+
+	/* forceValue
+	Forces the button into a particular graphical state. The state will never
+	change. No callback fired. */
+
+	void forceValue(bool);
 
 	std::function<void()> onClick;
 
 protected:
-	static void cb_click(Fl_Widget*, void*);
+	geButton(int x, int y, int w, int h, const char* l);
+	geButton(const char* l);
 
-	void draw(const char** img, Fl_Color bgColor, Fl_Color textColor);
-
-	const char** imgOff;
-	const char** imgOn;
-	const char** imgDisabled;
-
-	Fl_Color bgColor0; // background not clicked
-	Fl_Color bgColor1; // background clicked
-	Fl_Color bdColor;  // border
-	Fl_Color txtColor; // text
+	bool m_value;
+	bool m_toggleable;
+	bool m_forced;
 };
 } // namespace giada::v
 

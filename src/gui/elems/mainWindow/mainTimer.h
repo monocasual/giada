@@ -32,7 +32,8 @@
 
 namespace giada::v
 {
-class geButton;
+class geImageButton;
+class geTextButton;
 class geChoice;
 class geMainTimer : public geFlex
 {
@@ -55,11 +56,11 @@ public:
 private:
 	c::main::Timer m_timer;
 
-	geButton* m_bpm;
-	geButton* m_meter;
-	geChoice* m_quantizer;
-	geButton* m_multiplier;
-	geButton* m_divider;
+	geTextButton*  m_bpm;
+	geTextButton*  m_meter;
+	geChoice*      m_quantizer;
+	geImageButton* m_multiplier;
+	geImageButton* m_divider;
 };
 } // namespace giada::v
 

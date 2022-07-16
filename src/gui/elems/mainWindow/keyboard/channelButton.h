@@ -27,7 +27,7 @@
 #ifndef GE_CHANNEL_BUTTON_H
 #define GE_CHANNEL_BUTTON_H
 
-#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/textButton.h"
 
 namespace giada::c::channel
 {
@@ -36,7 +36,7 @@ struct Data;
 
 namespace giada::v
 {
-class geChannelButton : public geButton
+class geChannelButton : public geTextButton
 {
 public:
 	geChannelButton(int x, int y, int w, int h, const c::channel::Data& d);

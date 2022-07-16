@@ -37,7 +37,7 @@
 
 namespace giada::v
 {
-class geButton;
+class geTextButton;
 class geResizerBar;
 class geColumn;
 class geChannel;
@@ -120,9 +120,6 @@ private:
 		int         m_xoffset;
 	};
 
-	static void cb_addColumn(Fl_Widget* /*w*/, void* p);
-	void        cb_addColumn();
-
 	void addColumn(int width = G_DEFAULT_COLUMN_WIDTH, ID id = 0);
 
 	/* getDroppedFilePaths
@@ -156,7 +153,7 @@ private:
 	ChannelDragger         m_channelDragger;
 	std::vector<geColumn*> m_columns;
 
-	geButton* m_addColumnBtn;
+	geTextButton* m_addColumnBtn;
 };
 } // namespace giada::v
 

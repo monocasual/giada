@@ -50,7 +50,6 @@ list(APPEND SOURCES
 	src/core/wave.cpp
 	src/core/waveFx.cpp
 	src/core/kernelMidi.cpp
-	src/core/graphics.cpp
 	src/core/patch.cpp
 	src/core/actions/actionRecorder.cpp
 	src/core/actions/actions.cpp
@@ -142,8 +141,8 @@ list(APPEND SOURCES
 	src/gui/elems/plugin/pluginElement.cpp
 	src/gui/elems/sampleEditor/waveform.cpp
 	src/gui/elems/sampleEditor/waveTools.cpp
-        src/gui/elems/volumeTool.cpp
-		src/gui/elems/panTool.cpp
+    src/gui/elems/volumeTool.cpp
+	src/gui/elems/panTool.cpp
 	src/gui/elems/sampleEditor/pitchTool.cpp
 	src/gui/elems/sampleEditor/rangeTool.cpp
 	src/gui/elems/sampleEditor/shiftTool.cpp
@@ -163,7 +162,7 @@ list(APPEND SOURCES
 	src/gui/elems/mainWindow/mainTimer.cpp
 	src/gui/elems/mainWindow/mainTransport.cpp
 	src/gui/elems/mainWindow/sequencer.cpp
-	src/gui/elems/mainWindow/keyboard/channelMode.cpp
+	src/gui/elems/mainWindow/keyboard/sampleChannelMode.cpp
 	src/gui/elems/mainWindow/keyboard/channelButton.cpp
 	src/gui/elems/mainWindow/keyboard/channelStatus.cpp
 	src/gui/elems/mainWindow/keyboard/keyboard.cpp
@@ -181,13 +180,14 @@ list(APPEND SOURCES
 	src/gui/elems/config/tabPlugins.cpp
 	src/gui/elems/config/tabBindings.cpp
 	src/gui/elems/config/stringMenu.cpp
+	src/gui/elems/basics/button.cpp
+	src/gui/elems/basics/imageButton.cpp
+	src/gui/elems/basics/textButton.cpp
 	src/gui/elems/basics/scroll.cpp
 	src/gui/elems/basics/pack.cpp
 	src/gui/elems/basics/group.cpp
 	src/gui/elems/basics/scrollPack.cpp
 	src/gui/elems/basics/boxtypes.cpp
-	src/gui/elems/basics/statusButton.cpp
-	src/gui/elems/basics/button.cpp
 	src/gui/elems/basics/resizerBar.cpp
 	src/gui/elems/basics/input.cpp
 	src/gui/elems/basics/liquidScroll.cpp

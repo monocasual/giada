@@ -35,7 +35,7 @@ class geCheck;
 
 namespace giada::v
 {
-class geButton;
+class geTextButton;
 class geChoice;
 class gdMidiInputBase : public gdWindow
 {
@@ -45,14 +45,11 @@ public:
 protected:
 	gdMidiInputBase(const char* title, m::Conf::Data&);
 
-	static void cb_close(Fl_Widget* /*w*/, void* p);
-	void        cb_close();
-
 	m::Conf::Data& m_conf;
 
-	geButton* m_ok;
-	geCheck*  m_enable;
-	geChoice* m_channel;
+	geTextButton* m_ok;
+	geCheck*      m_enable;
+	geChoice*     m_channel;
 };
 } // namespace giada::v
 

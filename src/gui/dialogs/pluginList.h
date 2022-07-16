@@ -33,7 +33,7 @@
 
 namespace giada::v
 {
-class geButton;
+class geTextButton;
 class geLiquidScroll;
 class gePluginElement;
 class gdPluginList : public gdWindow
@@ -48,12 +48,9 @@ public:
 	const gePluginElement& getPrevElement(const gePluginElement& curr) const;
 
 private:
-	static void cb_addPlugin(Fl_Widget* /*w*/, void* p);
-	void        cb_addPlugin();
-
 	m::Conf::Data& m_conf;
 
-	geButton*       addPlugin;
+	geTextButton*   addPlugin;
 	geLiquidScroll* list;
 
 	ID                 m_channelId;

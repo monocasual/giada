@@ -25,13 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/channelRouting.h"
-/*
-#include "core/conf.h"
-#include "core/const.h"
-#include "core/model/model.h"*/
 #include "glue/channel.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/panTool.h"
 #include "gui/elems/volumeTool.h"
 #include "gui/ui.h"
@@ -59,7 +55,7 @@ gdChannelRouting::gdChannelRouting(const c::channel::Data& d)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_close = new geButton(g_ui.langMapper.get(LangMap::COMMON_CLOSE));
+			m_close = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CLOSE));
 			footer->add(new geBox());
 			footer->add(m_close, 70);
 			footer->end();
@@ -75,7 +71,6 @@ gdChannelRouting::gdChannelRouting(const c::channel::Data& d)
 	m_close->onClick = [this]() { do_callback(); };
 
 	set_modal();
-	u::gui::setFavicon(this);
 	show();
 }
 } // namespace giada::v

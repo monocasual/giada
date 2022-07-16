@@ -26,8 +26,8 @@
 
 #include "gui/dialogs/midiIO/midiOutputSampleCh.h"
 #include "core/model/model.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/midiIO/midiLearner.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
@@ -47,17 +47,16 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 	m_learners = new geLightningLearnerPack(G_GUI_OUTER_MARGIN,
 	    m_enableLightning->y() + m_enableLightning->h() + 8, channelId);
 
-	m_close = new geButton(w() - 88, m_learners->y() + m_learners->h() + 8, 80, 20,
+	m_close = new geTextButton(w() - 88, m_learners->y() + m_learners->h() + 8, 80, 20,
 	    g_ui.langMapper.get(LangMap::COMMON_CLOSE));
 
 	add(m_enableLightning);
 	add(m_learners);
 	add(m_close);
 
-	m_close->callback(cb_close, (void*)this);
-	m_enableLightning->callback(cb_enableLightning, (void*)this);
+	m_close->onClick = [this]() { do_callback(); };
 
-	u::gui::setFavicon(this);
+	m_enableLightning->callback(cb_enableLightning, (void*)this);
 
 	set_modal();
 	rebuild();

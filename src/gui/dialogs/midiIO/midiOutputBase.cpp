@@ -29,6 +29,7 @@
 #include "gui/elems/basics/check.h"
 #include "gui/elems/midiIO/midiLearner.h"
 #include "gui/ui.h"
+#include "utils/gui.h"
 
 extern giada::v::Ui g_ui;
 
@@ -60,7 +61,7 @@ void geLightningLearnerPack::update(const c::io::Channel_OutputData& d)
 /* -------------------------------------------------------------------------- */
 
 gdMidiOutputBase::gdMidiOutputBase(int w, int h, ID channelId)
-: gdWindow(w, h, g_ui.langMapper.get(LangMap::MIDIOUTPUT_CHANNEL_TITLE))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, w, h}), g_ui.langMapper.get(LangMap::MIDIOUTPUT_CHANNEL_TITLE))
 , m_channelId(channelId)
 {
 }
@@ -74,15 +75,7 @@ gdMidiOutputBase::~gdMidiOutputBase()
 
 /* -------------------------------------------------------------------------- */
 
-void gdMidiOutputBase::cb_close(Fl_Widget* /*w*/, void* p) { ((gdMidiOutputBase*)p)->cb_close(); }
 void gdMidiOutputBase::cb_enableLightning(Fl_Widget* /*w*/, void* p) { ((gdMidiOutputBase*)p)->cb_enableLightning(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdMidiOutputBase::cb_close()
-{
-	do_callback();
-}
 
 /* -------------------------------------------------------------------------- */
 

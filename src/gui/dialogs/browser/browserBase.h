@@ -43,7 +43,8 @@ class Channel;
 
 namespace giada::v
 {
-class geButton;
+class geImageButton;
+class geTextButton;
 class geInput;
 class geFileBrowser;
 class gdBrowserBase : public gdWindow
@@ -64,11 +65,7 @@ protected:
 	gdBrowserBase(const std::string& title, const std::string& path,
 	    std::function<void(void*)> f, ID channelId, m::Conf::Data&);
 
-	static void cb_up(Fl_Widget* /*w*/, void* p);
-	static void cb_close(Fl_Widget* /*w*/, void* p);
 	static void cb_toggleHiddenFiles(Fl_Widget* /*w*/, void* p);
-	void        cb_up();
-	void        cb_close();
 	void        cb_toggleHiddenFiles();
 
 	/* m_callback
@@ -82,10 +79,10 @@ protected:
 	Fl_Group*      groupTop;
 	geCheck*       hiddenFiles;
 	geFileBrowser* browser;
-	geButton*      ok;
-	geButton*      cancel;
+	geTextButton*  ok;
+	geTextButton*  cancel;
 	geInput*       where;
-	geButton*      updir;
+	geImageButton* updir;
 };
 } // namespace giada::v
 

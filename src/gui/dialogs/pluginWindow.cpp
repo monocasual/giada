@@ -35,7 +35,7 @@
 namespace giada::v
 {
 gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin)
-: gdWindow(450, 156)
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 450, 156}))
 , m_plugin(plugin)
 {
 	set_non_modal();
@@ -64,7 +64,6 @@ gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin)
 	size_range(450, (G_GUI_UNIT + (G_GUI_OUTER_MARGIN * 2)));
 	resizable(m_list);
 
-	u::gui::setFavicon(this);
 	show();
 }
 

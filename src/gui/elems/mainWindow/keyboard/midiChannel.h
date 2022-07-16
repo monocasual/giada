@@ -30,9 +30,7 @@
 #include "channel.h"
 #include "channelButton.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geMidiChannel : public geChannel
 {
@@ -41,15 +39,11 @@ public:
 
 	void resize(int x, int y, int w, int h) override;
 
-  private:
-	static void cb_playButton(Fl_Widget* /*w*/, void* p);
-	static void cb_openMenu(Fl_Widget* /*w*/, void* p);
-	void        cb_playButton();
-	void        cb_openMenu();
+private:
+	void openMenu();
 
 	c::channel::Data m_data;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

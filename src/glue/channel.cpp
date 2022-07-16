@@ -127,9 +127,6 @@ Data::Data(const m::Channel& c)
 , pan(c.pan)
 , key(c.key)
 , hasActions(c.hasActions)
-, muted(c.isSoloed())
-, soloed(c.isMuted())
-, armed(c.armed)
 , m_channel(&c)
 {
 	if (c.type == ChannelType::SAMPLE)
@@ -143,6 +140,9 @@ ChannelStatus Data::getRecStatus() const { return m_channel->shared->recStatus.l
 bool          Data::getReadActions() const { return m_channel->shared->readActions.load(); }
 bool          Data::isRecordingInput() const { return g_engine.recorder.isRecordingInput(); }
 bool          Data::isRecordingAction() const { return g_engine.recorder.isRecordingAction(); }
+bool          Data::isMuted() const { return m_channel->isMuted(); }
+bool          Data::isSoloed() const { return m_channel->isSoloed(); }
+bool          Data::isArmed() const { return m_channel->armed; }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */

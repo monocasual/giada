@@ -25,15 +25,13 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/mainWindow/mainTransport.h"
-#include "core/conf.h"
 #include "core/const.h"
-#include "core/graphics.h"
 #include "glue/events.h"
 #include "glue/main.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/statusButton.h"
+#include "gui/elems/basics/imageButton.h"
+#include "gui/graphics.h"
 #include "gui/ui.h"
 
 extern giada::v::Ui g_ui;
@@ -43,13 +41,13 @@ namespace giada::v
 geMainTransport::geMainTransport()
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
-	m_rewind         = new geButton("", rewindOff_xpm, rewindOn_xpm);
-	m_play           = new geStatusButton(play_xpm, pause_xpm);
-	m_recTriggerMode = new geStatusButton(recTriggerModeOff_xpm, recTriggerModeOn_xpm);
-	m_recAction      = new geStatusButton(recOff_xpm, recOn_xpm);
-	m_recInput       = new geStatusButton(inputRecOff_xpm, inputRecOn_xpm);
-	m_inputRecMode   = new geStatusButton(freeInputRecOff_xpm, freeInputRecOn_xpm);
-	m_metronome      = new geStatusButton(metronomeOff_xpm, metronomeOn_xpm);
+	m_rewind         = new geImageButton(graphics::rewindOff, graphics::rewindOn);
+	m_play           = new geImageButton(graphics::playOff, graphics::playOn);
+	m_recTriggerMode = new geImageButton(graphics::recTriggerModeOff, graphics::recTriggerModeOn);
+	m_recAction      = new geImageButton(graphics::actionRecOff, graphics::actionRecOn);
+	m_recInput       = new geImageButton(graphics::inputRecOff, graphics::inputRecOn);
+	m_inputRecMode   = new geImageButton(graphics::freeInputRecOff, graphics::freeInputRecOn);
+	m_metronome      = new geImageButton(graphics::metronomeOff, graphics::metronomeOn);
 	add(m_rewind, 25);
 	add(m_play, 25);
 	add(new geBox(), 10);
@@ -69,34 +67,39 @@ geMainTransport::geMainTransport()
 	m_inputRecMode->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_RECINPUTMODE));
 	m_metronome->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_METRONOME));
 
-	m_rewind->callback([](Fl_Widget* /*w*/, void* /*v*/) {
+	m_rewind->onClick = []() {
 		c::events::rewindSequencer(Thread::MAIN);
-	});
+	};
 
-	m_play->callback([](Fl_Widget* /*w*/, void* /*v*/) {
+	m_play->setToggleable(true);
+	m_play->onClick = []() {
 		c::events::toggleSequencer(Thread::MAIN);
-	});
+	};
 
-	m_recAction->callback([](Fl_Widget* /*w*/, void* /*v*/) {
+	m_recAction->setToggleable(true);
+	m_recAction->onClick = []() {
 		c::events::toggleActionRecording();
-	});
+	};
 
-	m_recInput->callback([](Fl_Widget* /*w*/, void* /*v*/) {
+	m_recInput->setToggleable(true);
+	m_recInput->onClick = []() {
 		c::events::toggleInputRecording();
-	});
+	};
 
-	m_recTriggerMode->callback([](Fl_Widget* /*w*/, void* /*v*/) {
+	m_recTriggerMode->setToggleable(true);
+	m_recTriggerMode->onClick = []() {
 		c::main::toggleRecOnSignal();
-	});
+	};
 
-	m_inputRecMode->callback([](Fl_Widget* /*w*/, void* /*v*/) {
+	m_inputRecMode->setToggleable(true);
+	m_inputRecMode->onClick = []() {
 		c::main::toggleFreeInputRec();
-	});
+	};
 
-	m_metronome->type(FL_TOGGLE_BUTTON);
-	m_metronome->callback([](Fl_Widget* /*w*/, void* /*v*/) {
+	m_metronome->setToggleable(true);
+	m_metronome->onClick = []() {
 		c::events::toggleMetronome();
-	});
+	};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -105,11 +108,11 @@ void geMainTransport::refresh()
 {
 	c::main::Transport transport = c::main::getTransport();
 
-	m_play->setStatus(transport.isRunning);
-	m_recAction->setStatus(transport.isRecordingAction);
-	m_recInput->setStatus(transport.isRecordingInput);
-	m_metronome->setStatus(transport.isMetronomeOn);
-	m_recTriggerMode->setStatus(transport.recTriggerMode == RecTriggerMode::SIGNAL);
-	m_inputRecMode->setStatus(transport.inputRecMode == InputRecMode::FREE);
+	m_play->setValue(transport.isRunning);
+	m_recAction->setValue(transport.isRecordingAction);
+	m_recInput->setValue(transport.isRecordingInput);
+	m_metronome->setValue(transport.isMetronomeOn);
+	m_recTriggerMode->setValue(transport.recTriggerMode == RecTriggerMode::SIGNAL);
+	m_inputRecMode->setValue(transport.inputRecMode == InputRecMode::FREE);
 }
 } // namespace giada::v

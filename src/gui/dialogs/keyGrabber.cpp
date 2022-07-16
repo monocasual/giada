@@ -29,8 +29,8 @@
 #include "glue/channel.h"
 #include "glue/io.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/log.h"
@@ -42,7 +42,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdKeyGrabber::gdKeyGrabber(int key)
-: gdWindow(300, 126, g_ui.langMapper.get(LangMap::KEYGRABBER_TITLE))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 300, 126}), g_ui.langMapper.get(LangMap::KEYGRABBER_TITLE))
 , onSetKey(nullptr)
 , m_key(key)
 {
@@ -52,8 +52,8 @@ gdKeyGrabber::gdKeyGrabber(int key)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_clear  = new geButton(g_ui.langMapper.get(LangMap::COMMON_CLEAR));
-			m_cancel = new geButton(g_ui.langMapper.get(LangMap::COMMON_CLOSE));
+			m_clear  = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CLEAR));
+			m_cancel = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CLOSE));
 
 			footer->add(new geBox()); // Spacer
 			footer->add(m_clear, 80);
@@ -82,7 +82,6 @@ gdKeyGrabber::gdKeyGrabber(int key)
 
 	rebuild();
 
-	u::gui::setFavicon(this);
 	set_modal();
 	show();
 }

@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/browser/browserSave.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/input.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/fileBrowser.h"
 #include "gui/ui.h"
 #include "utils/fs.h"
@@ -49,8 +49,8 @@ gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
 	browser->callback(cb_down, (void*)this);
 
 	ok->label(g_ui.langMapper.get(LangMap::COMMON_SAVE));
-	ok->callback(cb_save, (void*)this);
 	ok->shortcut(FL_ENTER);
+	ok->onClick = [this]() { fireCallback(); };
 
 	/* On OS X the 'where' and 'name' inputs don't get resized properly on startup. 
 	Let's force them. */
@@ -61,7 +61,6 @@ gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
 
 /* -------------------------------------------------------------------------- */
 
-void gdBrowserSave::cb_save(Fl_Widget* /*v*/, void* p) { ((gdBrowserSave*)p)->cb_save(); }
 void gdBrowserSave::cb_down(Fl_Widget* /*v*/, void* p) { ((gdBrowserSave*)p)->cb_down(); }
 
 /* -------------------------------------------------------------------------- */
@@ -90,12 +89,5 @@ void gdBrowserSave::cb_down()
 std::string gdBrowserSave::getName() const
 {
 	return name->getValue();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdBrowserSave::cb_save()
-{
-	fireCallback();
 }
 } // namespace giada::v

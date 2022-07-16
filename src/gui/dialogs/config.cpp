@@ -29,9 +29,9 @@
 #include "core/const.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/tabs.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/config/tabAudio.h"
 #include "gui/elems/config/tabBehaviors.h"
 #include "gui/elems/config/tabBindings.h"
@@ -71,10 +71,10 @@ gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			geButton* save   = new geButton(g_ui.langMapper.get(LangMap::COMMON_SAVE));
-			geButton* cancel = new geButton(g_ui.langMapper.get(LangMap::COMMON_CANCEL));
-			save->onClick    = [this]() { saveConfig(); };
-			cancel->onClick  = [this]() { do_callback(); };
+			geTextButton* save   = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_SAVE));
+			geTextButton* cancel = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CANCEL));
+			save->onClick        = [this]() { saveConfig(); };
+			cancel->onClick      = [this]() { do_callback(); };
 
 			footer->add(new geBox()); // Spacer
 			footer->add(cancel, 80);
@@ -91,7 +91,6 @@ gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
 	resizable(container);
 	size_range(w, h);
 
-	u::gui::setFavicon(this);
 	setId(WID_CONFIG);
 	show();
 }

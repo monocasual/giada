@@ -26,15 +26,15 @@
 
 #include "gui/elems/mainWindow/mainIO.h"
 #include "core/const.h"
-#include "core/graphics.h"
 #include "glue/channel.h"
 #include "glue/events.h"
 #include "glue/layout.h"
 #include "glue/main.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/dial.h"
-#include "gui/elems/basics/statusButton.h"
+#include "gui/elems/basics/imageButton.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/soundMeter.h"
+#include "gui/graphics.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 
@@ -49,9 +49,9 @@ geMainIO::geMainIO()
 	m_inMeter     = new geSoundMeter(0, 0, 0, 0);
 	m_outVol      = new geDial(0, 0, 0, 0);
 	m_inVol       = new geDial(0, 0, 0, 0);
-	m_inToOut     = new geButton();
-	m_masterFxOut = new geStatusButton(0, 0, 0, 0, fxOff_xpm, fxOn_xpm);
-	m_masterFxIn  = new geStatusButton(0, 0, 0, 0, fxOff_xpm, fxOn_xpm);
+	m_inToOut     = new geTextButton("");
+	m_masterFxOut = new geImageButton(graphics::fxOff, graphics::fxOn);
+	m_masterFxIn  = new geImageButton(graphics::fxOff, graphics::fxOn);
 
 	add(m_masterFxIn, G_GUI_UNIT);
 	add(m_inVol, G_GUI_UNIT);
@@ -78,13 +78,14 @@ geMainIO::geMainIO()
 		c::events::setMasterInVolume(v, Thread::MAIN);
 	};
 
-	m_inToOut->type(FL_TOGGLE_BUTTON);
+	m_inToOut->setToggleable(true);
 	m_inToOut->onClick = [&inToOut = m_inToOut]() {
-		c::main::setInToOut(inToOut->value());
+		c::main::setInToOut(inToOut->getValue());
 	};
 
 	m_masterFxOut->onClick = [] { c::layout::openMasterOutPluginListWindow(); };
-	m_masterFxIn->onClick  = [] { c::layout::openMasterInPluginListWindow(); };
+
+	m_masterFxIn->onClick = [] { c::layout::openMasterInPluginListWindow(); };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -96,12 +97,12 @@ void geMainIO::setInVol(float v) { m_inVol->value(v); }
 
 void geMainIO::setMasterFxOutFull(bool v)
 {
-	m_masterFxOut->setStatus(v);
+	m_masterFxOut->forceValue(v);
 }
 
 void geMainIO::setMasterFxInFull(bool v)
 {
-	m_masterFxIn->setStatus(v);
+	m_masterFxIn->forceValue(v);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -124,8 +125,8 @@ void geMainIO::rebuild()
 
 	m_outVol->value(m_io.masterOutVol);
 	m_inVol->value(m_io.masterInVol);
-	m_masterFxOut->setStatus(m_io.masterOutHasPlugins);
-	m_masterFxIn->setStatus(m_io.masterInHasPlugins);
-	m_inToOut->value(m_io.inToOut);
+	m_masterFxOut->setValue(m_io.masterOutHasPlugins);
+	m_masterFxIn->setValue(m_io.masterInHasPlugins);
+	m_inToOut->setValue(m_io.inToOut);
 }
 } // namespace giada::v

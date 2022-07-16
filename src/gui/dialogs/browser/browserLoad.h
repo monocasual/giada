@@ -44,9 +44,7 @@ public:
 	    std::function<void(void*)> cb, ID channelId, m::Conf::Data&);
 
 private:
-	static void cb_load(Fl_Widget* /*w*/, void* p);
 	static void cb_down(Fl_Widget* /*w*/, void* p);
-	void        cb_load();
 	void        cb_down();
 };
 } // namespace giada::v

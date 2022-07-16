@@ -25,8 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/browser/browserLoad.h"
-#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/input.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/fileBrowser.h"
 #include "gui/ui.h"
 #include "utils/fs.h"
@@ -44,8 +45,8 @@ gdBrowserLoad::gdBrowserLoad(const std::string& title, const std::string& path,
 	browser->callback(cb_down, (void*)this);
 
 	ok->label(g_ui.langMapper.get(LangMap::COMMON_LOAD));
-	ok->callback(cb_load, (void*)this);
 	ok->shortcut(FL_ENTER);
+	ok->onClick = [this]() { fireCallback(); };
 
 	/* On OS X the 'where' input doesn't get resized properly on startup. Let's 
 	force it. */
@@ -55,15 +56,7 @@ gdBrowserLoad::gdBrowserLoad(const std::string& title, const std::string& path,
 
 /* -------------------------------------------------------------------------- */
 
-void gdBrowserLoad::cb_load(Fl_Widget* /*v*/, void* p) { ((gdBrowserLoad*)p)->cb_load(); }
 void gdBrowserLoad::cb_down(Fl_Widget* /*v*/, void* p) { ((gdBrowserLoad*)p)->cb_down(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdBrowserLoad::cb_load()
-{
-	fireCallback();
-}
 
 /* -------------------------------------------------------------------------- */
 

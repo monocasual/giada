@@ -31,7 +31,7 @@
 
 namespace giada::v
 {
-class geButton;
+class geTextButton;
 class geInput;
 class gdBpmInput : public gdWindow
 {
@@ -39,9 +39,9 @@ public:
 	gdBpmInput(const char* label); // pointer to mainWin->timing->bpm->label()
 
 private:
-	geInput*  m_input_a;
-	geInput*  m_input_b;
-	geButton* m_ok;
+	geInput*      m_input_a;
+	geInput*      m_input_b;
+	geTextButton* m_ok;
 };
 } // namespace giada::v
 

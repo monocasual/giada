@@ -29,9 +29,9 @@
 #include "core/const.h"
 #include "core/model/model.h"
 #include "glue/channel.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 
@@ -49,8 +49,8 @@ gdChannelNameInput::gdChannelNameInput(const c::channel::Data& d)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_ok     = new geButton(g_ui.langMapper.get(LangMap::COMMON_OK));
-			m_cancel = new geButton(g_ui.langMapper.get(LangMap::COMMON_CANCEL));
+			m_ok     = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_OK));
+			m_cancel = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CANCEL));
 			footer->add(new geBox());
 			footer->add(m_cancel, 70);
 			footer->add(m_ok, 70);
@@ -76,7 +76,6 @@ gdChannelNameInput::gdChannelNameInput(const c::channel::Data& d)
 	};
 
 	set_modal();
-	u::gui::setFavicon(this);
 	setId(WID_SAMPLE_NAME);
 	show();
 }

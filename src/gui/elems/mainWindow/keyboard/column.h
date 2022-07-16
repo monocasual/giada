@@ -35,7 +35,7 @@
 
 namespace giada::v
 {
-class geButton;
+class geTextButton;
 class geResizerBar;
 class geKeyboard;
 class geChannel;
@@ -79,14 +79,13 @@ public:
 	geResizerBar* resizerBar;
 
 private:
-	static void cb_addChannel(Fl_Widget* /*w*/, void* p);
-	void        cb_addChannel();
-
 	int computeHeight() const;
+
+	void addChannel();
 
 	std::vector<geChannel*> m_channels;
 
-	geButton* m_addChannelBtn;
+	geTextButton* m_addChannelBtn;
 };
 } // namespace giada::v
 

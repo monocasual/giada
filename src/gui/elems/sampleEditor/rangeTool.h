@@ -39,7 +39,7 @@ namespace giada::v
 {
 class geInput;
 class geBox;
-class geButton;
+class geTextButton;
 class geRangeTool : public geFlex
 {
 public:
@@ -51,10 +51,10 @@ public:
 private:
 	const c::sampleEditor::Data* m_data;
 
-	geBox*    m_label;
-	geInput*  m_begin;
-	geInput*  m_end;
-	geButton* m_reset;
+	geBox*        m_label;
+	geInput*      m_begin;
+	geInput*      m_end;
+	geTextButton* m_reset;
 };
 } // namespace giada::v
 

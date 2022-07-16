@@ -54,12 +54,21 @@ void drawLine(geompp::Line<int> l, Fl_Color c)
 
 /* -------------------------------------------------------------------------- */
 
-void drawText(const std::string& s, geompp::Rect<int> b, Fl_Color c, int alignment)
+void drawText(const std::string& txt, geompp::Rect<int> b, Fl_Font f, Fl_Fontsize s, Fl_Color c, int alignment)
 {
-	assert(!s.empty());
+	if (txt.empty())
+		return;
 
 	fl_color(c);
-	fl_draw(s.c_str(), b.x, b.y, b.w, b.h, alignment);
+	fl_font(f, s);
+	fl_draw(txt.c_str(), b.x, b.y, b.w, b.h, alignment);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void drawImage(Fl_Image& img, geompp::Rect<int> b)
+{
+	img.draw(b.x, b.y, b.w, b.h);
 }
 
 /* -------------------------------------------------------------------------- */

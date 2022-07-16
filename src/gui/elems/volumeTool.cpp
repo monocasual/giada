@@ -28,9 +28,9 @@
 #include "core/const.h"
 #include "glue/channel.h"
 #include "glue/events.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/input.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/math.h"
@@ -46,7 +46,7 @@ geVolumeTool::geVolumeTool(ID channelId, float volume, int labelWidth)
 {
 	m_input = new geInput(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_VOLUME), labelWidth);
 	m_dial  = new geDial();
-	m_reset = new geButton(g_ui.langMapper.get(LangMap::COMMON_RESET));
+	m_reset = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_RESET));
 	add(m_input);
 	add(m_dial, G_GUI_UNIT);
 	add(m_reset, 70);

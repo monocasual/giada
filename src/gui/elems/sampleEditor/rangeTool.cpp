@@ -29,9 +29,9 @@
 #include "glue/sampleEditor.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/input.h"
 #include "gui/elems/basics/pack.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
 
 extern giada::v::Ui g_ui;
@@ -45,7 +45,7 @@ geRangeTool::geRangeTool(const c::sampleEditor::Data& d)
 	m_label = new geBox(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_RANGE), FL_ALIGN_LEFT);
 	m_begin = new geInput();
 	m_end   = new geInput();
-	m_reset = new geButton(g_ui.langMapper.get(LangMap::COMMON_RESET));
+	m_reset = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_RESET));
 	add(m_label, 50);
 	add(m_begin, 70);
 	add(m_end, 70);

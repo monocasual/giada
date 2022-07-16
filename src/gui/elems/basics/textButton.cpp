@@ -24,62 +24,41 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GD_EDITOR_H
-#define GD_EDITOR_H
-
-#include "core/conf.h"
-#include "core/types.h"
-#include "glue/sampleEditor.h"
-#include "gui/dialogs/window.h"
-
-class geCheck;
+#include "gui/elems/basics/textButton.h"
+#include "core/const.h"
+#include "gui/drawing.h"
+#include "utils/gui.h"
 
 namespace giada::v
 {
-class geBox;
-class geTextButton;
-class geImageButton;
-class geChoice;
-class geWaveTools;
-class gePitchTool;
-class geRangeTool;
-class geShiftTool;
-class gdSampleEditor : public gdWindow
+geTextButton::geTextButton(int x, int y, int w, int h, const char* l)
+: geButton(x, y, w, h, l)
+, m_backgroundColorOff(G_COLOR_GREY_2)
+, m_backgroundColorOn(G_COLOR_GREY_4)
+, m_borderColor(G_COLOR_GREY_4)
+, m_textColor(G_COLOR_LIGHT_2)
 {
-	friend class geWaveform;
+}
 
-public:
-	gdSampleEditor(ID channelId, m::Conf::Data&);
-	~gdSampleEditor();
+/* -------------------------------------------------------------------------- */
 
-	void rebuild() override;
-	void refresh() override;
+geTextButton::geTextButton(const char* l)
+: geTextButton(0, 0, 0, 0, l)
+{
+}
 
-	geChoice*      grid;
-	geCheck*       snap;
-	geImageButton* zoomIn;
-	geImageButton* zoomOut;
+/* -------------------------------------------------------------------------- */
 
-	geWaveTools* waveTools;
+void geTextButton::draw()
+{
+	const Fl_Color          textColor = active() ? m_textColor : G_COLOR_GREY_4;
+	const Fl_Color          bgColor   = getValue() ? m_backgroundColorOn : m_backgroundColorOff;
+	const geompp::Rect<int> bounds    = getBounds();
 
-	gePitchTool*  pitchTool;
-	geRangeTool*  rangeTool;
-	geShiftTool*  shiftTool;
-	geTextButton* reload;
+	drawRectf(bounds, bgColor);      // draw background
+	drawRect(bounds, m_borderColor); // draw border
 
-	geImageButton* play;
-	geImageButton* rewind;
-	geCheck*       loop;
-	geBox*         info;
-
-private:
-	void updateInfo();
-	void togglePreview();
-
-	ID                    m_channelId;
-	c::sampleEditor::Data m_data;
-	m::Conf::Data&        m_conf;
-};
+	if (label() != nullptr)
+		drawText(u::gui::truncate(label(), w() - 16), bounds.reduced(1), FL_HELVETICA, G_GUI_FONT_SIZE_BASE, textColor);
+}
 } // namespace giada::v
-
-#endif

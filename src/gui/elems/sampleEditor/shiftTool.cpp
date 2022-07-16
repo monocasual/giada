@@ -29,8 +29,8 @@
 #include "glue/sampleEditor.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/input.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 
@@ -44,7 +44,7 @@ geShiftTool::geShiftTool(const c::sampleEditor::Data& d)
 {
 	m_label = new geBox(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_SHIFT), FL_ALIGN_LEFT);
 	m_shift = new geInput();
-	m_reset = new geButton(g_ui.langMapper.get(LangMap::COMMON_RESET));
+	m_reset = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_RESET));
 	add(m_label, 50);
 	add(m_shift, 70);
 	add(m_reset, 70);

@@ -24,7 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "window.h"
+#include "gui/dialogs/window.h"
+#include "gui/graphics.h"
+#include "utils/gui.h"
 #include "utils/log.h"
 #include <FL/Fl.H>
 
@@ -34,18 +36,10 @@ gdWindow::gdWindow(int x, int y, int w, int h, const char* title, int id)
 : Fl_Double_Window(x, y, w, h, title)
 , id(id)
 , parent(nullptr)
+, m_icon(nullptr, graphics::giadaIcon)
 {
 	end();
-}
-
-/* -------------------------------------------------------------------------- */
-
-gdWindow::gdWindow(int w, int h, const char* title, int id)
-: Fl_Double_Window(w, h, title)
-, id(id)
-, parent(nullptr)
-{
-	end();
+	icon(&m_icon);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -30,8 +30,8 @@
 #include "glue/layout.h"
 #include "glue/main.h"
 #include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/menu.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
 #include "keyboard/keyboard.h"
 #include "utils/gui.h"
@@ -68,10 +68,10 @@ enum class EditMenu
 geMainMenu::geMainMenu()
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
-	geButton* file   = new geButton(g_ui.langMapper.get(LangMap::MAIN_MENU_FILE));
-	geButton* edit   = new geButton(g_ui.langMapper.get(LangMap::MAIN_MENU_EDIT));
-	geButton* config = new geButton(g_ui.langMapper.get(LangMap::MAIN_MENU_CONFIG));
-	geButton* about  = new geButton(g_ui.langMapper.get(LangMap::MAIN_MENU_ABOUT));
+	geTextButton* file   = new geTextButton(g_ui.langMapper.get(LangMap::MAIN_MENU_FILE));
+	geTextButton* edit   = new geTextButton(g_ui.langMapper.get(LangMap::MAIN_MENU_EDIT));
+	geTextButton* config = new geTextButton(g_ui.langMapper.get(LangMap::MAIN_MENU_CONFIG));
+	geTextButton* about  = new geTextButton(g_ui.langMapper.get(LangMap::MAIN_MENU_ABOUT));
 	add(file, 80);
 	add(edit, 80);
 	add(config, 80);

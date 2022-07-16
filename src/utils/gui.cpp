@@ -24,21 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include <FL/fl_draw.H>
-#include <FL/platform.H>
-#include <cstddef>
-#include <string>
-#if defined(_WIN32)
-#include "../ext/resource.h"
-#elif defined(__linux__) || defined(__FreeBSD__)
-#include <X11/xpm.h>
-#endif
+#include "gui.h"
 #include "core/conf.h"
-#include "core/graphics.h"
 #include "core/mixer.h"
 #include "core/plugins/pluginHost.h"
 #include "core/sequencer.h"
-#include "gui.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/dialogs/warnings.h"
@@ -52,6 +42,10 @@
 #include "gui/elems/sampleEditor/waveTools.h"
 #include "log.h"
 #include "string.h"
+#include <FL/fl_draw.H>
+#include <FL/platform.H>
+#include <cstddef>
+#include <string>
 
 namespace giada::u::gui
 {
@@ -69,25 +63,6 @@ ScopedLock::~ScopedLock()
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-void setFavicon(v::gdWindow* w)
-{
-#if defined(__linux__) || defined(__FreeBSD__)
-
-	fl_open_display();
-	Pixmap p, mask;
-	XpmCreatePixmapFromData(fl_display, DefaultRootWindow(fl_display),
-	    (char**)giada_icon, &p, &mask, nullptr);
-	w->icon((char*)p);
-
-#elif defined(_WIN32)
-
-	w->icon((char*)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON1)));
-
-#endif
-}
-
 /* -------------------------------------------------------------------------- */
 
 geompp::Rect<int> getStringRect(const std::string& s)

@@ -26,9 +26,9 @@
 
 #include "gui/dialogs/midiIO/midiOutputMidiCh.h"
 #include "glue/io.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/midiIO/midiLearner.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
@@ -52,7 +52,7 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 	m_learners = new geLightningLearnerPack(G_GUI_OUTER_MARGIN,
 	    m_enableLightning->y() + m_enableLightning->h() + G_GUI_OUTER_MARGIN, channelId);
 
-	m_close = new geButton(w() - 88, m_learners->y() + m_learners->h() + G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT,
+	m_close = new geTextButton(w() - 88, m_learners->y() + m_learners->h() + G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT,
 	    g_ui.langMapper.get(LangMap::COMMON_CLOSE));
 
 	add(m_enableOut);
@@ -83,10 +83,10 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 	};
 
 	m_enableOut->callback(cb_enableOut, (void*)this);
-	m_enableLightning->callback(cb_enableLightning, (void*)this);
-	m_close->callback(cb_close, (void*)this);
 
-	u::gui::setFavicon(this);
+	m_enableLightning->callback(cb_enableLightning, (void*)this);
+
+	m_close->onClick = [this]() { do_callback(); };
 
 	set_modal();
 	rebuild();

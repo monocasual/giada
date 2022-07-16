@@ -29,9 +29,9 @@
 #include "glue/channel.h"
 #include "glue/events.h"
 #include "gui/ui.h"
-#include "src/gui/elems/basics/button.h"
 #include "src/gui/elems/basics/dial.h"
 #include "src/gui/elems/basics/input.h"
+#include "src/gui/elems/basics/textButton.h"
 #include "utils/gui.h"
 #include "utils/math.h"
 #include "utils/string.h"
@@ -47,7 +47,7 @@ gePanTool::gePanTool(ID channelId, float pan, int labelWidth)
 {
 	m_input = new geInput(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_PAN), labelWidth);
 	m_dial  = new geDial();
-	m_reset = new geButton(g_ui.langMapper.get(LangMap::COMMON_RESET));
+	m_reset = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_RESET));
 	add(m_input);
 	add(m_dial, G_GUI_UNIT);
 	add(m_reset, 70);

@@ -27,27 +27,27 @@
 #include "glue/sampleEditor.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "core/graphics.h"
 #include "core/mixer.h"
 #include "core/wave.h"
 #include "core/waveFx.h"
 #include "glue/channel.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/group.h"
+#include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/input.h"
 #include "gui/elems/basics/pack.h"
-#include "gui/elems/basics/statusButton.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/sampleEditor/pitchTool.h"
 #include "gui/elems/sampleEditor/rangeTool.h"
 #include "gui/elems/sampleEditor/shiftTool.h"
 #include "gui/elems/sampleEditor/waveTools.h"
 #include "gui/elems/sampleEditor/waveform.h"
+#include "gui/graphics.h"
 #include "gui/ui.h"
 #include "sampleEditor.h"
 #include "utils/gui.h"
@@ -76,11 +76,11 @@ gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
 	{
 		geFlex* top = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 		{
-			reload  = new geButton(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_RELOAD));
+			reload  = new geTextButton(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_RELOAD));
 			grid    = new geChoice();
 			snap    = new geCheck(0, 0, 0, 0, g_ui.langMapper.get(LangMap::COMMON_SNAPTOGRID));
-			zoomOut = new geButton("", zoomOutOff_xpm, zoomOutOn_xpm);
-			zoomIn  = new geButton("", zoomInOff_xpm, zoomInOn_xpm);
+			zoomOut = new geImageButton(graphics::minusOff, graphics::minusOn);
+			zoomIn  = new geImageButton(graphics::plusOff, graphics::plusOn);
 			top->add(reload, 70);
 			top->add(grid, 50);
 			top->add(snap, 12);
@@ -97,8 +97,8 @@ gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
 		{
 			geFlex* controls = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 			{
-				rewind = new geButton("", rewindOff_xpm, rewindOn_xpm);
-				play   = new geStatusButton(play_xpm, pause_xpm);
+				rewind = new geImageButton(graphics::rewindOff, graphics::rewindOn);
+				play   = new geImageButton(graphics::playOff, graphics::playOn);
 				loop   = new geCheck(0, 0, 0, 0, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_LOOP));
 				controls->add(rewind, 25, {21, 0, 22, 0});
 				controls->add(play, 25, {21, 0, 22, 0});
@@ -173,17 +173,14 @@ gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
 		waveTools->redraw();
 	};
 
-	play->onClick = [this]() {
-		togglePreview();
-	};
+	play->setToggleable(true);
+	play->onClick = [this]() { togglePreview(); };
 
 	rewind->onClick = [this]() {
 		c::sampleEditor::setPreviewTracker(m_data.begin);
 	};
 
 	info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-
-	u::gui::setFavicon(this);
 
 	size_range(720, 480);
 	set_non_modal();
@@ -224,7 +221,7 @@ void gdSampleEditor::rebuild()
 void gdSampleEditor::refresh()
 {
 	waveTools->refresh();
-	play->setStatus(m_data.a_getPreviewStatus() == ChannelStatus::PLAY);
+	play->setValue(m_data.a_getPreviewStatus() == ChannelStatus::PLAY);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -241,9 +238,6 @@ void gdSampleEditor::updateInfo()
 
 void gdSampleEditor::togglePreview()
 {
-	if (!play->getStatus())
-		c::sampleEditor::playPreview(loop->value());
-	else
-		c::sampleEditor::stopPreview();
+	c::sampleEditor::togglePreview(loop->value());
 }
 } // namespace giada::v

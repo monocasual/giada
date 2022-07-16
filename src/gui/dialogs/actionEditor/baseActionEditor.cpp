@@ -27,13 +27,13 @@
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "core/graphics.h"
 #include "glue/channel.h"
 #include "gui/drawing.h"
 #include "gui/elems/actionEditor/gridTool.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/scrollPack.h"
+#include "gui/graphics.h"
 #include "gui/ui.h"
 #include "src/core/actions/action.h"
 #include "utils/gui.h"
@@ -52,8 +52,8 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
 : gdWindow(u::gui::getCenterWinBounds(conf.actionEditorBounds), g_ui.langMapper.get(LangMap::ACTIONEDITOR_TITLE))
 , channelId(channelId)
 , gridTool(0, 0, conf)
-, zoomInBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm)
-, zoomOutBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm)
+, zoomInBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, graphics::plusOff, graphics::plusOn)
+, zoomOutBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, graphics::minusOff, graphics::minusOn)
 , m_barTop(0, 0, Direction::HORIZONTAL)
 , m_splitScroll(0, 0, 0, 0)
 , m_conf(conf)
@@ -69,9 +69,10 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
 	    w() - G_GUI_OUTER_MARGIN * 2,
 	    h() - (G_GUI_OUTER_MARGIN * 3) - 20);
 
-	zoomInBtn.callback(cb_zoomIn, this);
+	zoomInBtn.onClick = [this]() { zoomIn(); };
 	zoomInBtn.copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMIN));
-	zoomOutBtn.callback(cb_zoomOut, this);
+
+	zoomOutBtn.onClick = [this]() { zoomOut(); };
 	zoomOutBtn.copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMOUT));
 
 	add(m_barTop);
@@ -93,11 +94,6 @@ int gdBaseActionEditor::getMouseOverContent() const
 {
 	return m_splitScroll.getScrollX() + (Fl::event_x() - G_GUI_OUTER_MARGIN);
 }
-
-/* -------------------------------------------------------------------------- */
-
-void gdBaseActionEditor::cb_zoomIn(Fl_Widget* /*w*/, void* p) { ((gdBaseActionEditor*)p)->zoomIn(); }
-void gdBaseActionEditor::cb_zoomOut(Fl_Widget* /*w*/, void* p) { ((gdBaseActionEditor*)p)->zoomOut(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -139,7 +135,6 @@ void gdBaseActionEditor::zoomOut()
 
 void gdBaseActionEditor::prepareWindow()
 {
-	u::gui::setFavicon(this);
 	set_non_modal();
 	size_range(640, 284);
 	show();

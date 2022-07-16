@@ -59,7 +59,7 @@ void geSampleChannelButton::refresh()
 {
 	geChannelButton::refresh();
 
-	if (m_channel.isRecordingInput() && m_channel.armed)
+	if (m_channel.isRecordingInput() && m_channel.isArmed())
 		setInputRecordMode();
 	else if (m_channel.isRecordingAction() && m_channel.sample->waveId != 0 && !m_channel.sample->isLoop)
 		setActionRecordMode();
@@ -71,7 +71,7 @@ void geSampleChannelButton::refresh()
 
 int geSampleChannelButton::handle(int e)
 {
-	int ret = geButton::handle(e);
+	int ret = geTextButton::handle(e);
 	switch (e)
 	{
 	case FL_DND_ENTER:

@@ -2,6 +2,9 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
+ * geButton
+ * A regular button.
+ *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2022 Giovanni A. Zuliani | Monocasual Laboratories
@@ -24,61 +27,26 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GD_EDITOR_H
-#define GD_EDITOR_H
+#ifndef GE_TEXT_BUTTON_H
+#define GE_TEXT_BUTTON_H
 
-#include "core/conf.h"
-#include "core/types.h"
-#include "glue/sampleEditor.h"
-#include "gui/dialogs/window.h"
-
-class geCheck;
+#include "gui/elems/basics/button.h"
 
 namespace giada::v
 {
-class geBox;
-class geTextButton;
-class geImageButton;
-class geChoice;
-class geWaveTools;
-class gePitchTool;
-class geRangeTool;
-class geShiftTool;
-class gdSampleEditor : public gdWindow
+class geTextButton : public geButton
 {
-	friend class geWaveform;
-
 public:
-	gdSampleEditor(ID channelId, m::Conf::Data&);
-	~gdSampleEditor();
+	geTextButton(int x, int y, int w, int h, const char* l);
+	geTextButton(const char* l);
 
-	void rebuild() override;
-	void refresh() override;
+	void draw() override;
 
-	geChoice*      grid;
-	geCheck*       snap;
-	geImageButton* zoomIn;
-	geImageButton* zoomOut;
-
-	geWaveTools* waveTools;
-
-	gePitchTool*  pitchTool;
-	geRangeTool*  rangeTool;
-	geShiftTool*  shiftTool;
-	geTextButton* reload;
-
-	geImageButton* play;
-	geImageButton* rewind;
-	geCheck*       loop;
-	geBox*         info;
-
-private:
-	void updateInfo();
-	void togglePreview();
-
-	ID                    m_channelId;
-	c::sampleEditor::Data m_data;
-	m::Conf::Data&        m_conf;
+protected:
+	Fl_Color m_backgroundColorOff;
+	Fl_Color m_backgroundColorOn;
+	Fl_Color m_borderColor;
+	Fl_Color m_textColor;
 };
 } // namespace giada::v
 

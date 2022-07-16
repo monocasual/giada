@@ -27,15 +27,13 @@
 #include "gui/dialogs/about.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "core/graphics.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/textButton.h"
+#include "gui/graphics.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
-#include <FL/Fl_Pixmap.H>
-#include <FL/fl_draw.H>
 #include <fmt/core.h>
 
 extern giada::v::Ui g_ui;
@@ -44,9 +42,9 @@ namespace giada::v
 {
 gdAbout::gdAbout()
 #ifdef WITH_VST
-: gdWindow(340, 415, g_ui.langMapper.get(LangMap::ABOUT_TITLE))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 340, 415}), g_ui.langMapper.get(LangMap::ABOUT_TITLE))
 #else
-: gdWindow(340, 330, g_ui.langMapper.get(LangMap::ABOUT_TITLE))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 340, 330}), g_ui.langMapper.get(LangMap::ABOUT_TITLE))
 #endif
 {
 #ifdef G_DEBUG_MODE
@@ -60,7 +58,7 @@ gdAbout::gdAbout()
 		geFlex* body = new geFlex(Direction::VERTICAL);
 		{
 			geBox* logo = new geBox();
-			logo->image(new Fl_Pixmap(giada_logo_xpm));
+			logo->setSvgImage(graphics::giadaLogo);
 
 			geBox* text = new geBox();
 			text->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
@@ -70,8 +68,7 @@ gdAbout::gdAbout()
 
 #ifdef WITH_VST
 			geBox* vstLogo = new geBox();
-			vstLogo->image(new Fl_Pixmap(vstLogo_xpm));
-			vstLogo->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE);
+			vstLogo->setSvgImage(graphics::vstLogo);
 
 			geBox* vstText = new geBox();
 			vstText->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
@@ -89,8 +86,8 @@ gdAbout::gdAbout()
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL);
 		{
-			geButton* close = new geButton(g_ui.langMapper.get(LangMap::COMMON_CLOSE));
-			close->onClick  = [this]() { do_callback(); };
+			geTextButton* close = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CLOSE));
+			close->onClick      = [this]() { do_callback(); };
 			footer->add(new geBox()); // Spacer
 			footer->add(close, 80);
 			footer->end();
@@ -104,7 +101,6 @@ gdAbout::gdAbout()
 	add(container);
 
 	set_modal();
-	u::gui::setFavicon(this);
 	setId(WID_ABOUT);
 	show();
 }

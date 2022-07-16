@@ -104,6 +104,7 @@ void reload(ID channelId);
 
 bool isWaveBufferFull();
 
+void togglePreview(bool loop);
 void playPreview(bool loop);
 void stopPreview();
 void setPreviewTracker(Frame f);

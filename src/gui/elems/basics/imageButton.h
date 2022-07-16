@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * geStatusButton
- * Simple geButton with a boolean 'status' parameter.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2022 Giovanni A. Zuliani | Monocasual Laboratories
@@ -27,30 +24,29 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_STATUS_BUTTON_H
-#define GE_STATUS_BUTTON_H
+#ifndef GE_IMAGE_BUTTON_H
+#define GE_IMAGE_BUTTON_H
 
-#include "button.h"
+#include "gui/elems/basics/button.h"
+#include <FL/Fl_SVG_Image.H>
+#include <memory>
 
 namespace giada::v
 {
-class geStatusButton : public geButton
+class geImageButton : public geButton
 {
 public:
-	geStatusButton(int x, int y, int w, int h, const char** imgOff = nullptr,
-	    const char** imgOn = nullptr, const char** imgDisabled = nullptr);
-
-	geStatusButton(const char** imgOff = nullptr, const char** imgOn = nullptr,
-	    const char** imgDisabled = nullptr);
+	geImageButton(int x, int y, int w, int h, const char* imgOff, const char* imgOn, const char* imgDisabled = nullptr);
+	geImageButton(const char* imgOff, const char* imgOn, const char* imgDisabled = nullptr);
 
 	void draw() override;
 
-	bool getStatus() const;
+protected:
+	void draw(Fl_SVG_Image*);
 
-	void setStatus(bool s);
-
-private:
-	bool m_status;
+	std::unique_ptr<Fl_SVG_Image> m_imgOff;
+	std::unique_ptr<Fl_SVG_Image> m_imgOn;
+	std::unique_ptr<Fl_SVG_Image> m_imgDisabled;
 };
 } // namespace giada::v
 

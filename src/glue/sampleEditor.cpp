@@ -36,7 +36,6 @@
 #include "glue/events.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/warnings.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/sampleEditor/pitchTool.h"
@@ -328,6 +327,14 @@ void stopPreview()
 	getSampleEditorWindow()->refresh();
 	events::killChannel(m::Mixer::PREVIEW_CHANNEL_ID, Thread::MAIN);
 }
+
+void togglePreview(bool shouldLoop)
+{
+	const bool isPlaying = g_engine.model.get().getChannel(m::Mixer::PREVIEW_CHANNEL_ID).isPlaying();
+	isPlaying ? stopPreview() : playPreview(shouldLoop);
+}
+
+/* -------------------------------------------------------------------------- */
 
 void setPreviewTracker(Frame f)
 {

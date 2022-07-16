@@ -84,6 +84,9 @@ struct Data
 	bool          getReadActions() const;
 	bool          isRecordingInput() const;
 	bool          isRecordingAction() const;
+	bool          isMuted() const;
+	bool          isSoloed() const;
+	bool          isArmed() const;
 
 	ID                      id;
 	ID                      columnId;
@@ -96,9 +99,6 @@ struct Data
 	float                   pan;
 	int                     key;
 	bool                    hasActions;
-	bool                    muted;
-	bool                    soloed;
-	bool                    armed;
 
 	std::optional<SampleData> sample;
 	std::optional<MidiData>   midi;

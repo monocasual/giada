@@ -24,78 +24,95 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "button.h"
-#include "core/const.h"
-#include "utils/gui.h"
-#include <FL/fl_draw.H>
+#include "gui/elems/basics/button.h"
 
 namespace giada::v
 {
-geButton::geButton(int x, int y, int w, int h, const char* l,
-    const char** imgOff, const char** imgOn, const char** imgDisabled)
+geButton::geButton(int x, int y, int w, int h, const char* l)
 : Fl_Button(x, y, w, h, l)
 , onClick(nullptr)
-, imgOff(imgOff)
-, imgOn(imgOn)
-, imgDisabled(imgDisabled)
-, bgColor0(G_COLOR_GREY_2)
-, bgColor1(G_COLOR_GREY_4)
-, bdColor(G_COLOR_GREY_4)
-, txtColor(G_COLOR_LIGHT_2)
-{
-	callback(cb_click);
-}
-
-/* -------------------------------------------------------------------------- */
-
-geButton::geButton(const char* l, const char** imgOff, const char** imgOn, const char** imgDisabled)
-: geButton(0, 0, 0, 0, l, imgOff, imgOn, imgDisabled)
+, m_value(false)
+, m_toggleable(false)
+, m_forced(false)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geButton::cb_click(Fl_Widget* w, void*)
+geButton::geButton(const char* l)
+: geButton(0, 0, 0, 0, l)
 {
-	geButton* b = static_cast<geButton*>(w);
-	if (b->onClick != nullptr)
-		b->onClick();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geButton::draw()
+int geButton::handle(int e)
 {
-	//Fl_Button::draw();
-
-	if (active())
-		if (value())
-			draw(imgOn, bgColor1, txtColor);
-		else
-			draw(imgOff, bgColor0, txtColor);
-	else
-		draw(imgDisabled, bgColor0, bdColor);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geButton::draw(const char** img, Fl_Color bgColor, Fl_Color textColor)
-{
-	fl_rect(x(), y(), w(), h(), bdColor); // draw border
-
-	if (img != nullptr)
+	switch (e)
 	{
-		fl_draw_pixmap(img, x() + 1, y() + 1);
-		return;
-	}
+	case FL_PUSH:
+		take_focus();
+		if (!m_toggleable && !m_forced)
+			m_value = true;
+		redraw();
+		if (when() == FL_WHEN_CHANGED && onClick != nullptr)
+			onClick();
+		return 1;
 
-	fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2, bgColor); // draw background
-	fl_color(textColor);
+	case FL_RELEASE:
+		if (!m_forced)
+			m_value = m_toggleable ? !m_value : false;
+		redraw();
+		if (onClick != nullptr)
+			onClick();
+		return 1;
 
-	if (label() != nullptr)
-	{
-		fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-		fl_draw(giada::u::gui::truncate(label(), w() - 16).c_str(), x() + 2, y(), w() - 2, h(), FL_ALIGN_CENTER);
+	case FL_SHORTCUT:
+		if (!(shortcut() ? Fl::test_shortcut(shortcut()) : test_shortcut()))
+			return 0;
+		if (onClick != nullptr)
+			onClick();
+		return 1;
+
+	default:
+		return Fl_Button::handle(e);
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+geompp::Rect<int> geButton::getBounds() const
+{
+	return {x(), y(), w(), h()};
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geButton::setToggleable(bool v)
+{
+	m_toggleable = v;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geButton::setValue(bool v)
+{
+	m_value = v;
+	redraw();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geButton::forceValue(bool v)
+{
+	setValue(v);
+	m_forced = true;
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool geButton::getValue() const
+{
+	return m_value;
 }
 } // namespace giada::v

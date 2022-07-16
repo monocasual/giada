@@ -27,15 +27,16 @@
 #include "tabPlugins.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "core/graphics.h"
 #include "glue/layout.h"
 #include "glue/plugin.h"
 #include "gui/dialogs/window.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/input.h"
+#include "gui/elems/basics/textButton.h"
+#include "gui/graphics.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
@@ -57,14 +58,14 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			m_folderPath = new geInput(g_ui.langMapper.get(LangMap::CONFIG_PLUGINS_FOLDER));
-			m_browse     = new geButton("", zoomInOff_xpm, zoomInOn_xpm);
+			m_browse     = new geImageButton(graphics::plusOff, graphics::plusOn);
 
 			line1->add(m_folderPath);
 			line1->add(m_browse, 20);
 			line1->end();
 		}
 
-		m_scanButton = new geButton();
+		m_scanButton = new geTextButton("");
 		m_info       = new geBox();
 
 		body->add(line1, 20);

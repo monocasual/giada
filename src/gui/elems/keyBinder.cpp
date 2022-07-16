@@ -30,7 +30,7 @@
 #include "gui/dialogs/keyGrabber.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 
@@ -43,8 +43,8 @@ geKeyBinder::geKeyBinder(const std::string& l, int& keyRef)
 {
 	m_labelBox = new geBox(l.c_str());
 	m_keyBox   = new geBox(u::gui::keyToString(keyRef).c_str());
-	m_bindBtn  = new geButton(g_ui.langMapper.get(LangMap::COMMON_BIND));
-	m_clearBtn = new geButton(g_ui.langMapper.get(LangMap::COMMON_CLEAR));
+	m_bindBtn  = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_BIND));
+	m_clearBtn = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CLEAR));
 
 	add(m_labelBox);
 	add(m_keyBox, 100);

@@ -38,7 +38,6 @@
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/midiIO/midiInputBase.h"
 #include "gui/dialogs/warnings.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/channelButton.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"

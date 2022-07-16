@@ -34,9 +34,8 @@
 namespace giada::v
 {
 class geDial;
-class geButton;
+class geImageButton;
 class geChannelStatus;
-class geStatusButton;
 class geChannelButton;
 class geMidiActivity;
 class geChannel : public Fl_Group
@@ -67,15 +66,15 @@ public:
 
 	const c::channel::Data& getData() const;
 
-	geStatusButton*  playButton;
-	geButton*        arm;
+	geImageButton*   playButton;
+	geImageButton*   arm;
 	geChannelStatus* status;
 	geChannelButton* mainButton;
 	geMidiActivity*  midiActivity;
-	geStatusButton*  mute;
-	geStatusButton*  solo;
+	geImageButton*   mute;
+	geImageButton*   solo;
 	geDial*          vol;
-	geStatusButton*  fx;
+	geImageButton*   fx;
 
 protected:
 	/* Define some breakpoints for dynamic resize. BREAK_DELTA: base amount of
@@ -86,17 +85,8 @@ protected:
 	static const int BREAK_FX           = 192;
 	static const int BREAK_ARM          = 168;
 
-	static void cb_arm(Fl_Widget* /*w*/, void* p);
-	static void cb_mute(Fl_Widget* /*w*/, void* p);
-	static void cb_solo(Fl_Widget* /*w*/, void* p);
 	static void cb_changeVol(Fl_Widget* /*w*/, void* p);
-	static void cb_openFxWindow(Fl_Widget* /*w*/, void* p);
-	void        cb_mute();
-	void        cb_arm();
-	void        cb_solo();
 	void        cb_changeVol();
-
-	void cb_openFxWindow();
 
 	/* blink
 	Blinks button when channel is in wait/ending status. */

@@ -28,9 +28,9 @@
 #include "core/conf.h"
 #include "glue/plugin.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/elems/plugin/pluginBrowser.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
@@ -58,8 +58,8 @@ gdPluginChooser::gdPluginChooser(ID channelId, m::Conf::Data& c)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			addBtn    = new geButton(g_ui.langMapper.get(LangMap::COMMON_ADD));
-			cancelBtn = new geButton(g_ui.langMapper.get(LangMap::COMMON_CANCEL));
+			addBtn    = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_ADD));
+			cancelBtn = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CANCEL));
 			footer->add(new geBox());
 			footer->add(cancelBtn, 80);
 			footer->add(addBtn, 80);
@@ -85,11 +85,19 @@ gdPluginChooser::gdPluginChooser(ID channelId, m::Conf::Data& c)
 		browser->refresh();
 	};
 
-	addBtn->callback(cb_add, (void*)this);
+	addBtn->onClick = [this]() {
+		int pluginIndex = browser->value() - 3; // subtract header lines
+		if (pluginIndex < 0)
+			return;
+		c::plugin::addPlugin(pluginIndex, m_channelId);
+		do_callback();
+	};
 	addBtn->shortcut(FL_Enter);
-	cancelBtn->callback(cb_close, (void*)this);
 
-	u::gui::setFavicon(this);
+	cancelBtn->onClick = [this]() {
+		do_callback();
+	};
+
 	show();
 }
 
@@ -99,28 +107,5 @@ gdPluginChooser::~gdPluginChooser()
 {
 	m_conf.pluginChooserBounds = getBounds();
 	m_conf.pluginSortMethod    = sortMethod->getSelectedId();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdPluginChooser::cb_close(Fl_Widget* /*w*/, void* p) { ((gdPluginChooser*)p)->cb_close(); }
-void gdPluginChooser::cb_add(Fl_Widget* /*w*/, void* p) { ((gdPluginChooser*)p)->cb_add(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdPluginChooser::cb_close()
-{
-	do_callback();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdPluginChooser::cb_add()
-{
-	int pluginIndex = browser->value() - 3; // subtract header lines
-	if (pluginIndex < 0)
-		return;
-	c::plugin::addPlugin(pluginIndex, m_channelId);
-	do_callback();
 }
 } // namespace giada::v

@@ -27,13 +27,14 @@
 
 #include "gui/elems/sampleEditor/pitchTool.h"
 #include "core/const.h"
-#include "core/graphics.h"
 #include "glue/events.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/elems/basics/box.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/dial.h"
+#include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/input.h"
+#include "gui/elems/basics/textButton.h"
+#include "gui/graphics.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
@@ -49,11 +50,11 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	m_label       = new geBox(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT);
 	m_dial        = new geDial();
 	m_input       = new geInput();
-	m_pitchToBar  = new geButton(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_PITCH_TOBAR));
-	m_pitchToSong = new geButton(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_PITCH_TOSONG));
-	m_pitchHalf   = new geButton("", divideOff_xpm, divideOn_xpm);
-	m_pitchDouble = new geButton("", multiplyOff_xpm, multiplyOn_xpm);
-	m_pitchReset  = new geButton(g_ui.langMapper.get(LangMap::COMMON_RESET));
+	m_pitchToBar  = new geTextButton(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_PITCH_TOBAR));
+	m_pitchToSong = new geTextButton(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_PITCH_TOSONG));
+	m_pitchHalf   = new geImageButton(graphics::divideOff, graphics::divideOn);
+	m_pitchDouble = new geImageButton(graphics::multiplyOff, graphics::multiplyOn);
+	m_pitchReset  = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_RESET));
 	add(m_label, 50);
 	add(m_dial, G_GUI_UNIT);
 	add(m_input, 70);

@@ -26,21 +26,21 @@
 
 #include "gui/elems/mainWindow/keyboard/midiChannel.h"
 #include "core/const.h"
-#include "core/graphics.h"
 #include "glue/channel.h"
+#include "glue/events.h"
 #include "glue/io.h"
 #include "glue/layout.h"
 #include "glue/recorder.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/dispatcher.h"
 #include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/button.h"
 #include "gui/elems/basics/dial.h"
+#include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/menu.h"
-#include "gui/elems/basics/statusButton.h"
 #include "gui/elems/mainWindow/keyboard/column.h"
 #include "gui/elems/mainWindow/keyboard/midiActivity.h"
 #include "gui/elems/mainWindow/keyboard/midiChannelButton.h"
+#include "gui/graphics.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
@@ -73,13 +73,13 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 : geChannel(X, Y, W, H, d)
 , m_data(d)
 {
-	playButton   = new geStatusButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, channelStop_xpm, channelPlay_xpm);
-	arm          = new geButton(playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
+	playButton   = new geImageButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, graphics::channelPlayOff, graphics::channelPlayOn);
+	arm          = new geImageButton(playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, graphics::armOff, graphics::armOn);
 	mainButton   = new geMidiChannelButton(arm->x() + arm->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, H, m_channel);
 	midiActivity = new geMidiActivity(mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), 10, h());
-	mute         = new geStatusButton(midiActivity->x() + midiActivity->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
-	solo         = new geStatusButton(mute->x() + mute->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
-	fx           = new geStatusButton(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
+	mute         = new geImageButton(midiActivity->x() + midiActivity->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, graphics::muteOff, graphics::muteOn);
+	solo         = new geImageButton(mute->x() + mute->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, graphics::soloOff, graphics::soloOn);
+	fx           = new geImageButton(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, graphics::fxOff, graphics::fxOn);
 	vol          = new geDial(fx->x() + fx->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
 
 	end();
@@ -93,24 +93,32 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 	fx->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_FX));
 	vol->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
 
-	fx->setStatus(m_channel.plugins.size() > 0);
+	fx->setValue(m_channel.plugins.size() > 0);
+	fx->onClick = [this]() {
+		c::layout::openChannelPluginListWindow(m_channel.id);
+	};
 
-	playButton->callback(cb_playButton, (void*)this);
 	playButton->when(FL_WHEN_CHANGED); // On keypress && on keyrelease
+	playButton->onClick = [this]() {
+		g_ui.dispatcher.dispatchTouch(*this, playButton->getValue());
+	};
 
-	arm->type(FL_TOGGLE_BUTTON);
-	arm->value(m_channel.armed);
-	arm->callback(cb_arm, (void*)this);
+	arm->setToggleable(true);
+	arm->onClick = [this]() {
+		c::events::toggleArmChannel(m_channel.id, Thread::MAIN);
+	};
 
-	fx->callback(cb_openFxWindow, (void*)this);
+	mute->setToggleable(true);
+	mute->onClick = [this]() {
+		c::events::toggleMuteChannel(m_channel.id, Thread::MAIN);
+	};
 
-	mute->type(FL_TOGGLE_BUTTON);
-	mute->callback(cb_mute, (void*)this);
+	solo->setToggleable(true);
+	solo->onClick = [this]() {
+		c::events::toggleSoloChannel(m_channel.id, Thread::MAIN);
+	};
 
-	solo->type(FL_TOGGLE_BUTTON);
-	solo->callback(cb_solo, (void*)this);
-
-	mainButton->callback(cb_openMenu, (void*)this);
+	mainButton->onClick = [this]() { openMenu(); };
 
 	vol->value(m_channel.volume);
 	vol->callback(cb_changeVol, (void*)this);
@@ -120,19 +128,7 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 
 /* -------------------------------------------------------------------------- */
 
-void geMidiChannel::cb_playButton(Fl_Widget* /*w*/, void* p) { ((geMidiChannel*)p)->cb_playButton(); }
-void geMidiChannel::cb_openMenu(Fl_Widget* /*w*/, void* p) { ((geMidiChannel*)p)->cb_openMenu(); }
-
-/* -------------------------------------------------------------------------- */
-
-void geMidiChannel::cb_playButton()
-{
-	g_ui.dispatcher.dispatchTouch(*this, playButton->value());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geMidiChannel::cb_openMenu()
+void geMidiChannel::openMenu()
 {
 	geMenu menu;
 
