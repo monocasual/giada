@@ -68,7 +68,7 @@ void Ui::load(const m::Patch::Data& patch)
 	for (const m::Patch::Column& col : patch.columns)
 		mainWindow->keyboard->layout.push_back({col.id, col.width});
 	mainWindow->keyboard->rebuild();
-	setMainWindowTitle(patch.name);
+	mainWindow->setTitle(patch.name);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -79,7 +79,7 @@ void Ui::store(const std::string patchName, m::Patch::Data& patch)
 	mainWindow->keyboard->forEachColumn([&](const geColumn& c) {
 		patch.columns.push_back({c.id, c.w()});
 	});
-	setMainWindowTitle(patchName);
+	mainWindow->setTitle(patchName);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -98,19 +98,19 @@ void Ui::init(int argc, char** argv, m::Engine& engine)
 	langMapper.read(engine.conf.data.langMap);
 
 	mainWindow = std::make_unique<gdMainWindow>(u::gui::getCenterWinBounds(engine.conf.data.mainWindowBounds), "", argc, argv, engine.conf.data);
-	setMainWindowTitle(engine.patch.data.name == "" ? G_DEFAULT_PATCH_NAME : engine.patch.data.name);
+	mainWindow->setTitle(engine.patch.data.name == "" ? G_DEFAULT_PATCH_NAME : engine.patch.data.name);
 
 	m_updater.init(engine.model);
 
 	if (engine.kernelAudio.isReady())
 		rebuildStaticWidgets();
-} // namespace giada::v
+}
 
 /* -------------------------------------------------------------------------- */
 
 void Ui::reset()
 {
-	setMainWindowTitle(G_DEFAULT_PATCH_NAME);
+	mainWindow->setTitle(G_DEFAULT_PATCH_NAME);
 	rebuildStaticWidgets();
 	closeAllSubwindows();
 	mainWindow->clearKeyboard();
@@ -209,14 +209,6 @@ void Ui::closeAllSubwindows()
 	mainWindow->delSubWindow(WID_SAMPLE_EDITOR);
 	mainWindow->delSubWindow(WID_FX_LIST);
 	mainWindow->delSubWindow(WID_FX);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Ui::setMainWindowTitle(const std::string& s)
-{
-	std::string out = std::string(G_APP_NAME) + " - " + s;
-	mainWindow->copy_label(out.c_str());
 }
 
 /* -------------------------------------------------------------------------- */

@@ -40,6 +40,7 @@
 #include "warnings.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Tooltip.H>
+#include <fmt/core.h>
 
 namespace giada::v
 {
@@ -171,6 +172,13 @@ void gdMainWindow::rebuild()
 void gdMainWindow::clearKeyboard()
 {
 	keyboard->init();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdMainWindow::setTitle(const std::string& title)
+{
+	copy_label(fmt::format("{} - {}", G_APP_NAME, title).c_str());
 }
 
 /* -------------------------------------------------------------------------- */

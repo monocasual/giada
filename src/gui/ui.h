@@ -105,11 +105,6 @@ public:
 
 	void closeAllSubwindows();
 
-	/* setMainWindowTitle
-    Updates the title of the main window, usually visible on top of it. */
-
-	void setMainWindowTitle(const std::string&);
-
 	/* [start|stop]JuceDispatchLoop
 	Starts and stops the JUCE dispatch loop from its MessageManager component.
 	This is needed for plugin-ins to wake up their UI editor and let it react

@@ -55,6 +55,11 @@ public:
 
 	void clearKeyboard();
 
+	/* setTitle
+	Sets a new window title, prefixed by "Giada - [title]". */
+
+	void setTitle(const std::string&);
+
 	[[nodiscard]] ScopedProgress getScopedProgress(const char* msg);
 
 	geKeyboard*      keyboard;
