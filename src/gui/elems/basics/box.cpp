@@ -24,10 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "box.h"
+#include "gui/elems/basics/box.h"
 #include "core/const.h"
 #include "utils/gui.h"
 #include <FL/fl_draw.H>
+#include <cassert>
 
 namespace giada::v
 {
@@ -57,12 +58,24 @@ void geBox::draw()
 		fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4); // Border
 
 	if (image() != nullptr)
+	{
+		if (m_image != nullptr)
+			m_image->scale(w(), h());
 		draw_label(); // draw_label also paints image, if any
+	}
 	else if (label() != nullptr)
 	{
 		fl_color(active() ? G_COLOR_LIGHT_2 : G_COLOR_GREY_4);
 		fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
 		fl_draw(giada::u::gui::truncate(label(), w()).c_str(), x(), y(), w(), h(), align());
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geBox::setSvgImage(const char* svg)
+{
+	m_image = std::make_unique<Fl_SVG_Image>(nullptr, svg);
+	image(m_image.get());
 }
 } // namespace giada::v

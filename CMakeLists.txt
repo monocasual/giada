@@ -335,6 +335,7 @@ ExternalProject_Add(
 		-DOPTION_BUILD_HTML_DOCUMENTATION=OFF 
 		-DOPTION_BUILD_PDF_DOCUMENTATION=OFF
 		-DOPTION_PRINT_SUPPORT=OFF
+		-DOPTION_USE_SYSTEM_ZLIB=OFF
 )
 ExternalProject_Get_property(fltk BINARY_DIR)
 ExternalProject_Get_property(fltk SOURCE_DIR)
@@ -342,6 +343,7 @@ list(APPEND INCLUDE_DIRS ${BINARY_DIR})
 list(APPEND INCLUDE_DIRS ${SOURCE_DIR})
 list(APPEND LIBRARIES ${BINARY_DIR}/lib/libfltk_images.a)
 list(APPEND LIBRARIES ${BINARY_DIR}/lib/libfltk.a)
+list(APPEND LIBRARIES ${BINARY_DIR}/lib/libfltk_z.a)
 list(APPEND COMPILER_OPTIONS -Wno-cast-function-type)
 
 # Libsndfile

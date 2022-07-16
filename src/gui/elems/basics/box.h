@@ -28,6 +28,8 @@
 #define GE_BOX_H
 
 #include <FL/Fl_Box.H>
+#include <FL/Fl_SVG_Image.H>
+#include <memory>
 
 namespace giada::v
 {
@@ -38,6 +40,11 @@ public:
 	geBox(const char* l = nullptr, Fl_Align al = FL_ALIGN_CENTER);
 
 	void draw() override;
+
+	void setSvgImage(const char*);
+
+private:
+	std::unique_ptr<Fl_SVG_Image> m_image;
 };
 } // namespace giada::v
 
