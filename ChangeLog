@@ -11,6 +11,12 @@
 --------------------------------------------------------------------------------
 
 
+0.23.0 ---
+- Add LV2 plug-ins support, thanks to JUCE v7.0.1
+- Add High DPI support, thanks to FLTK 1.4.0
+- Store Plug-in List Window width and height in configuration file
+
+
 0.22.0 --- 2022 . 06 .  13
 - Multi-language support via langmaps (#34)
 - Add new 'fmt' dependency
