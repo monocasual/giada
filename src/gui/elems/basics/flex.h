@@ -46,6 +46,8 @@ public:
 	geFlex(geompp::Rect<int>, Direction d, int gutter = 0);
 	geFlex(Direction d, int gutter = 0);
 
+	void resize(int x, int y, int w, int h) override;
+
 	/* add
 	Adds an existing widget to the Flex layout. If 'size' == -1, the widget
 	will be stretched to take up the available space. WARNING: like Fl_Group,
@@ -78,8 +80,6 @@ private:
 		Direction           m_dir;
 		geompp::Border<int> m_pad;
 	};
-
-	void resize(int x, int y, int w, int h) override;
 
 	void layWidgets(int startPos, int sizeIfLiquid = 0);
 

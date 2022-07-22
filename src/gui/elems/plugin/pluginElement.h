@@ -28,27 +28,28 @@
 #define GE_PLUGIN_ELEMENT_H
 
 #include "glue/plugin.h"
-#include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/imageButton.h"
-#include "gui/elems/basics/pack.h"
-#include "gui/elems/basics/textButton.h"
+
+#include "gui/elems/basics/flex.h"
 
 namespace giada::v
 {
-class gePluginElement : public gePack
+class geChoice;
+class geTextButton;
+class geImageButton;
+class gePluginElement : public geFlex
 {
 public:
-	gePluginElement(int x, int y, c::plugin::Plugin);
+	gePluginElement(int x, int y, int w, int h, c::plugin::Plugin);
 
 	ID               getPluginId() const;
 	const m::Plugin& getPluginRef() const;
 
-	geTextButton  button;
-	geChoice      program;
-	geTextButton  bypass;
-	geImageButton shiftUpBtn;
-	geImageButton shiftDownBtn;
-	geImageButton remove;
+	geTextButton*  button;
+	geChoice*      program;
+	geTextButton*  bypass;
+	geImageButton* shiftUpBtn;
+	geImageButton* shiftDownBtn;
+	geImageButton* remove;
 
 private:
 	void openPluginWindow();
