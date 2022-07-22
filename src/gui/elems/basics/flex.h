@@ -86,7 +86,6 @@ private:
 	Direction         m_direction;
 	int               m_gutter;
 	std::vector<Elem> m_elems;
-	int               m_numFixed;
 };
 } // namespace giada::v
 
