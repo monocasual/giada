@@ -49,10 +49,12 @@ public:
 	gdPluginWindowGUI(c::plugin::Plugin&);
 	~gdPluginWindowGUI();
 
-	void openEditor();
-	void closeEditor();
-
 private:
+	void createEditor();
+	void showEditor();
+	void closeEditor();
+	void adjustSize();
+
 	c::plugin::Plugin&                          m_plugin;
 	std::unique_ptr<juce::AudioProcessorEditor> m_editor;
 };

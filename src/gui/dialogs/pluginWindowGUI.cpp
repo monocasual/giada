@@ -30,6 +30,7 @@
 #include "utils/gui.h"
 #include "utils/log.h"
 #include <FL/x.H>
+#include <cassert>
 #ifdef G_OS_MAC
 #import "utils/cocoa.h" // objective-c
 #endif
@@ -44,13 +45,20 @@ gdPluginWindowGUI::gdPluginWindowGUI(c::plugin::Plugin& p)
 #endif
 , m_plugin(p)
 {
-	/* Make sure to wait_for_expose() before opening the editor: the window must
+	copy_label(m_plugin.name.c_str());
+
+	createEditor();
+	if (m_editor == nullptr)
+		return;
+
+	/* Make sure to wait_for_expose() before showing the editor: the window must
 	be exposed and visible first. Don't fuck with multithreading! */
 
-	copy_label(m_plugin.name.c_str());
+	adjustSize();
 	show();
 	wait_for_expose();
-	openEditor();
+	showEditor();
+
 	Fl::flush();
 }
 
@@ -58,17 +66,27 @@ gdPluginWindowGUI::gdPluginWindowGUI(c::plugin::Plugin& p)
 
 gdPluginWindowGUI::~gdPluginWindowGUI()
 {
-	c::plugin::stopDispatchLoop();
 	closeEditor();
 	u::log::print("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*)this);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void gdPluginWindowGUI::openEditor()
+void gdPluginWindowGUI::adjustSize()
 {
-	u::log::print("[gdPluginWindowGUI] Opening editor, this=%p, xid=%p\n",
-	    this, reinterpret_cast<void*>(fl_xid(this)));
+	assert(m_editor != nullptr);
+
+	const int pluginW = m_editor->getWidth();
+	const int pluginH = m_editor->getHeight();
+
+	resize(u::gui::centerWindowX(pluginW), u::gui::centerWindowY(pluginH), pluginW, pluginH);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdPluginWindowGUI::createEditor()
+{
+	u::log::print("[gdPluginWindowGUI] Opening editor\n");
 
 	m_editor.reset(m_plugin.createEditor());
 	if (m_editor == nullptr)
@@ -76,6 +94,18 @@ void gdPluginWindowGUI::openEditor()
 		u::log::print("[gdPluginWindowGUI::openEditor] unable to create editor!\n");
 		return;
 	}
+
+	m_plugin.setResizeCallback([this](int w, int h) {
+		resize(x(), y(), w, h);
+	});
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdPluginWindowGUI::showEditor()
+{
+	assert(m_editor != nullptr);
+
 	m_editor->setOpaque(true);
 
 #ifdef G_OS_MAC
@@ -89,15 +119,6 @@ void gdPluginWindowGUI::openEditor()
 
 #endif
 
-	const int pluginW = m_editor->getWidth();
-	const int pluginH = m_editor->getHeight();
-
-	resize((Fl::w() - pluginW) / 2, (Fl::h() - pluginH) / 2, pluginW, pluginH);
-
-	m_plugin.setResizeCallback([this](int w, int h) {
-		resize(x(), y(), w, h);
-	});
-
 	c::plugin::startDispatchLoop();
 }
 
@@ -105,6 +126,9 @@ void gdPluginWindowGUI::openEditor()
 
 void gdPluginWindowGUI::closeEditor()
 {
+	assert(m_editor != nullptr);
+
+	c::plugin::stopDispatchLoop();
 	m_plugin.setResizeCallback(nullptr);
 	m_editor.reset();
 }
