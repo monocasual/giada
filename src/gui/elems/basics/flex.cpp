@@ -58,6 +58,13 @@ bool geFlex::Elem::isFixed() const
 
 /* -------------------------------------------------------------------------- */
 
+bool geFlex::Elem::isVisible() const
+{
+	return m_w.visible();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geFlex::Elem::resize(int pos, int newSize)
 {
 	geompp::Rect<int> bounds;
@@ -115,8 +122,8 @@ void geFlex::resize(int X, int Y, int W, int H)
 {
 	Fl_Group::resize(X, Y, W, H);
 
-	const size_t numAllElems    = m_elems.size();
-	const size_t numFixedElems  = std::count_if(m_elems.begin(), m_elems.end(), [](const Elem& e) { return e.isFixed(); });
+	const size_t numAllElems    = std::count_if(m_elems.begin(), m_elems.end(), [](const Elem& e) { return e.isVisible(); });
+	const size_t numFixedElems  = std::count_if(m_elems.begin(), m_elems.end(), [](const Elem& e) { return e.isFixed() && e.isVisible(); });
 	const size_t numLiquidElems = numAllElems - numFixedElems;
 
 	const int pos  = m_direction == Direction::VERTICAL ? y() : x();
@@ -132,7 +139,7 @@ void geFlex::resize(int X, int Y, int W, int H)
 	}
 
 	const int fixedElemsSize = std::accumulate(m_elems.begin(), m_elems.end(), 0, [](int acc, const Elem& e) {
-		return e.isFixed() ? acc + e.getSize() : acc;
+		return e.isVisible() && e.isFixed() ? acc + e.getSize() : acc;
 	});
 	const int availableSize  = size - (m_gutter * (numAllElems - 1)); // Total size - gutters
 	const int liquidElemSize = (availableSize - fixedElemsSize) / numLiquidElems;
@@ -147,6 +154,8 @@ void geFlex::layWidgets(int startPos, int sizeIfLiquid)
 	int nextElemPos = startPos;
 	for (Elem& e : m_elems)
 	{
+		if (!e.isVisible())
+			continue;
 		e.resize(nextElemPos, e.isFixed() ? e.size : sizeIfLiquid);
 		nextElemPos += e.getSize() + m_gutter;
 	}

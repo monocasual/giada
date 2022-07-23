@@ -69,6 +69,7 @@ private:
 
 		int  getSize() const;
 		bool isFixed() const;
+		bool isVisible() const;
 
 		void resize(int pos, int size);
 
