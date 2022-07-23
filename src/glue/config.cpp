@@ -40,7 +40,6 @@
 #include "gui/ui.h"
 #include "utils/fs.h"
 #include "utils/vector.h"
-#include <FL/Fl_Tooltip.H>
 #include <cstddef>
 
 extern giada::v::Ui     g_ui;
@@ -241,6 +240,7 @@ MiscData getMiscData()
 	miscData.showTooltips = g_engine.conf.data.showTooltips;
 	miscData.langMaps     = g_ui.langMapper.getMapFilesFound();
 	miscData.langMap      = g_engine.conf.data.langMap;
+	miscData.uiScaling    = g_engine.conf.data.uiScaling;
 	return miscData;
 }
 /* -------------------------------------------------------------------------- */
@@ -288,7 +288,7 @@ void save(const MiscData& data)
 	g_engine.conf.data.logMode      = data.logMode;
 	g_engine.conf.data.showTooltips = data.showTooltips;
 	g_engine.conf.data.langMap      = data.langMap;
-	Fl_Tooltip::enable(g_engine.conf.data.showTooltips); // TODO - move this to UI init
+	g_engine.conf.data.uiScaling    = std::clamp(data.uiScaling, G_MIN_UI_SCALING, G_MAX_UI_SCALING);
 }
 
 /* -------------------------------------------------------------------------- */

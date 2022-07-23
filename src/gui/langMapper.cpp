@@ -335,6 +335,7 @@ LangMap::LangMap()
 	m_data[CONFIG_MISC_TOOLTIPS_ENABLED]       = "Enabled";
 	m_data[CONFIG_MISC_LANGUAGE]               = "Language file";
 	m_data[CONFIG_MISC_NOLANGUAGESFOUND]       = "-- no language files found --";
+	m_data[CONFIG_MISC_UISCALING]              = "UI scaling";
 
 	m_data[CONFIG_PLUGINS_TITLE]       = "Plug-ins";
 	m_data[CONFIG_PLUGINS_FOLDER]      = "Plug-ins folder";

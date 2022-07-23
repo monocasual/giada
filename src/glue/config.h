@@ -107,6 +107,7 @@ struct MiscData
 	int                      logMode;
 	bool                     showTooltips;
 	std::vector<std::string> langMaps;
+	float                    uiScaling;
 
 	/* Selectable values. */
 

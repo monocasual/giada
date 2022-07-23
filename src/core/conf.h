@@ -128,6 +128,8 @@ public:
 		    FL_End,       // KEY_BIND_RECORD_INPUT
 		    FL_Escape     // KEY_BIND_EXIT
 		};
+
+		float uiScaling = G_DEFAULT_UI_SCALING;
 	};
 
 	Conf();

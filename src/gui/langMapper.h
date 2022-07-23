@@ -326,6 +326,7 @@ public:
 	static constexpr auto CONFIG_MISC_TOOLTIPS_ENABLED       = "config_misc_tooltips_enabled";
 	static constexpr auto CONFIG_MISC_LANGUAGE               = "config_misc_language";
 	static constexpr auto CONFIG_MISC_NOLANGUAGESFOUND       = "config_misc_noLanguagesFound";
+	static constexpr auto CONFIG_MISC_UISCALING              = "config_misc_uiScaling";
 
 	static constexpr auto CONFIG_PLUGINS_TITLE       = "config_plugins_title";
 	static constexpr auto CONFIG_PLUGINS_FOLDER      = "config_plugins_folder";

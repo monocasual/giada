@@ -135,12 +135,6 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, cha
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 	refresh();
-
-	/* TODO */
-	/* TODO */
-	/* TODO */
-	Fl::screen_scale(screen_num(), 1);
-
 	show(argc, argv);
 }
 

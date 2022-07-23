@@ -115,6 +115,8 @@ constexpr int   G_MAX_VELOCITY          = 0x7F;
 constexpr int   G_MAX_MIDI_CHANS        = 16;
 constexpr int   G_MAX_DISPATCHER_EVENTS = 32;
 constexpr int   G_MAX_SEQUENCER_EVENTS  = 128; // Per block
+constexpr float G_MIN_UI_SCALING        = 0.5f;
+constexpr float G_MAX_UI_SCALING        = 4.0f;
 
 /* -- kernel audio ---------------------------------------------------------- */
 constexpr int G_SYS_API_NONE   = 0;
@@ -167,6 +169,7 @@ constexpr float G_DEFAULT_REC_TRIGGER_LEVEL   = -10.0f;
 constexpr int   G_DEFAULT_SUBWINDOW_W         = 640;
 constexpr int   G_DEFAULT_SUBWINDOW_H         = 480;
 constexpr int   G_DEFAULT_VST_MIDIBUFFER_SIZE = 1024; // TODO - not 100% sure about this size
+constexpr float G_DEFAULT_UI_SCALING          = 1.0f;
 
 /* -- responses and return codes -------------------------------------------- */
 constexpr int G_RES_ERR_PROCESSING    = -6;
@@ -441,6 +444,7 @@ constexpr auto CONF_KEY_BIND_REWIND                   = "key_bind_rewind";
 constexpr auto CONF_KEY_BIND_RECORD_ACTIONS           = "key_bind_record_actions";
 constexpr auto CONF_KEY_BIND_RECORD_INPUT             = "key_bind_record_input";
 constexpr auto CONF_KEY_BIND_EXIT                     = "key_bind_record_exit";
+constexpr auto CONF_KEY_UI_SCALING                    = "ui_scaling";
 
 /* JSON midimaps keys */
 

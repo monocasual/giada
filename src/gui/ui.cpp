@@ -36,6 +36,7 @@
 #include "utils/gui.h"
 #include "utils/log.h"
 #include <FL/Fl.H>
+#include <FL/Fl_Tooltip.H>
 #if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 #include <X11/Xlib.h> // For XInitThreads
 #endif
@@ -44,6 +45,7 @@ namespace giada::v
 {
 Ui::Ui(m::Recorder& recorder, const m::Conf::Data& conf)
 : dispatcher(conf.keyBindings)
+, m_conf(conf)
 , m_updater(*this)
 , m_blinker(0)
 {
@@ -99,6 +101,9 @@ void Ui::init(int argc, char** argv, m::Engine& engine)
 
 	mainWindow = std::make_unique<gdMainWindow>(u::gui::getCenterWinBounds(engine.conf.data.mainWindowBounds), "", argc, argv, engine.conf.data);
 	mainWindow->setTitle(engine.patch.data.name == "" ? G_DEFAULT_PATCH_NAME : engine.patch.data.name);
+
+	Fl::screen_scale(mainWindow->screen_num(), m_conf.uiScaling);
+	Fl_Tooltip::enable(m_conf.showTooltips);
 
 	m_updater.init(engine.model);
 

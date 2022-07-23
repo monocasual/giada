@@ -129,6 +129,8 @@ private:
 
 	void rebuildStaticWidgets();
 
+	const m::Conf::Data& m_conf;
+
 	Updater m_updater;
 	int     m_blinker;
 };

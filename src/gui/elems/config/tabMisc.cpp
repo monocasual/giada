@@ -27,8 +27,10 @@
 #include "tabMisc.h"
 #include "core/const.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/input.h"
 #include "gui/elems/config/stringMenu.h"
 #include "gui/ui.h"
+#include <fmt/core.h>
 
 constexpr int LABEL_WIDTH = 120;
 
@@ -44,14 +46,17 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 
 	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		m_debugMsg = new geChoice(g_ui.langMapper.get(LangMap::CONFIG_MISC_DEBUGMESSAGES), LABEL_WIDTH);
-		m_tooltips = new geChoice(g_ui.langMapper.get(LangMap::CONFIG_MISC_TOOLTIPS), LABEL_WIDTH);
-		m_langMap  = new geStringMenu(g_ui.langMapper.get(LangMap::CONFIG_MISC_LANGUAGE),
+		m_debugMsg  = new geChoice(g_ui.langMapper.get(LangMap::CONFIG_MISC_DEBUGMESSAGES), LABEL_WIDTH);
+		m_tooltips  = new geChoice(g_ui.langMapper.get(LangMap::CONFIG_MISC_TOOLTIPS), LABEL_WIDTH);
+		m_langMap   = new geStringMenu(g_ui.langMapper.get(LangMap::CONFIG_MISC_LANGUAGE),
             m_data.langMaps, g_ui.langMapper.get(LangMap::CONFIG_MISC_NOLANGUAGESFOUND), LABEL_WIDTH);
+		m_uiScaling = new geInput(g_ui.langMapper.get(LangMap::CONFIG_MISC_UISCALING), LABEL_WIDTH);
 
-		body->add(m_debugMsg, 20);
-		body->add(m_tooltips, 20);
-		body->add(m_langMap, 20);
+		body->add(m_debugMsg, G_GUI_UNIT);
+		body->add(m_tooltips, G_GUI_UNIT);
+		body->add(m_langMap, G_GUI_UNIT);
+		body->add(m_uiScaling, G_GUI_UNIT);
+		body->add(new geBox(g_ui.langMapper.get(LangMap::CONFIG_RESTARTGIADA)));
 		body->end();
 	}
 
@@ -75,6 +80,10 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 	else
 		m_langMap->showItem(m_data.langMap);
 	m_langMap->onChange = [this](ID /*id*/) { m_data.langMap = m_langMap->getSelectedLabel(); };
+
+	m_uiScaling->setType(FL_FLOAT_INPUT);
+	m_uiScaling->setValue(fmt::format("{:.1f}", m_data.uiScaling));
+	m_uiScaling->onChange = [this](const std::string& s) { if (s != "") m_data.uiScaling = std::stof(s); };
 }
 
 /* -------------------------------------------------------------------------- */

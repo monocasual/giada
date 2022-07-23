@@ -146,6 +146,8 @@ bool Conf::read()
 	data.pluginChooserBounds.h = j.value(CONF_KEY_PLUGIN_CHOOSER_H, data.pluginChooserBounds.h);
 	data.pluginSortMethod      = j.value(CONF_KEY_PLUGIN_SORT_METHOD, data.pluginSortMethod);
 
+	data.uiScaling = j.value(CONF_KEY_UI_SCALING, data.uiScaling);
+
 	sanitize();
 
 	return true;
@@ -250,6 +252,8 @@ bool Conf::write() const
 	j[CONF_KEY_PLUGIN_CHOOSER_H]   = data.pluginChooserBounds.h;
 	j[CONF_KEY_PLUGIN_SORT_METHOD] = data.pluginSortMethod;
 
+	j[CONF_KEY_UI_SCALING] = data.uiScaling;
+
 	std::ofstream ofs(m_confFilePath);
 	if (!ofs.good())
 	{
@@ -302,5 +306,7 @@ void Conf::sanitize()
 
 	data.midiPortOut = std::max(-1, data.midiPortOut);
 	data.midiPortIn  = std::max(-1, data.midiPortIn);
+
+	data.uiScaling = std::clamp(data.uiScaling, G_MIN_UI_SCALING, G_MAX_UI_SCALING);
 }
 } // namespace giada::m
