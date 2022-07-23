@@ -40,18 +40,13 @@ gdBrowserDir::gdBrowserDir(const std::string& title, const std::string& path,
     std::function<void(void*)> cb, m::Conf::Data& conf)
 : gdBrowserBase(title, path, cb, 0, conf)
 {
-	where->size(groupTop->w() - updir->w() - 8, 20);
+	hidePathName();
 
 	browser->callback(cb_down, (void*)this);
 
 	ok->label(g_ui.langMapper.get(LangMap::COMMON_SELECT));
 	ok->shortcut(FL_ENTER);
 	ok->onClick = [this]() { fireCallback(); };
-
-	/* On OS X the 'where' input doesn't get resized properly on startup. Let's 
-	force it. */
-
-	where->redraw();
 }
 
 /* -------------------------------------------------------------------------- */

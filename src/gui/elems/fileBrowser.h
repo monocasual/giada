@@ -30,6 +30,7 @@
 #define GE_FILE_BROWSER_H
 
 #include <FL/Fl_File_Browser.H>
+#include <functional>
 #include <string>
 
 namespace giada::v
@@ -37,9 +38,9 @@ namespace giada::v
 class geFileBrowser : public Fl_File_Browser
 {
 public:
-	geFileBrowser(int x, int y, int w, int h);
+	geFileBrowser();
 
-	void toggleHiddenFiles();
+	int handle(int e) override;
 
 	/* init
 	Initializes browser and show 'dir' as initial directory. */
@@ -53,10 +54,14 @@ public:
 	std::string getSelectedItem(bool fullPath = true);
 
 	std::string getCurrentDir();
+	void        toggleHiddenFiles();
+	void        preselect(int position, int line);
 
-	void preselect(int position, int line);
+	/* onSelectedElement
+	Callback fired when an element has been selected by pressing Enter or
+	double-clicking on it. */
 
-	int handle(int e);
+	std::function<void()> onSelectedElement;
 
 private:
 	std::string m_currentDir;

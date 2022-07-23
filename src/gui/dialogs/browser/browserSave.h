@@ -48,8 +48,6 @@ public:
 	std::string getName() const;
 
 private:
-	geInput* name;
-
 	static void cb_down(Fl_Widget* /*w*/, void* p);
 	void        cb_down();
 };

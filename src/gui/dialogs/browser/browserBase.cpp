@@ -29,6 +29,7 @@
 #include "core/const.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/input.h"
 #include "gui/elems/basics/progress.h"
@@ -50,16 +51,48 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 , m_conf(c)
 , m_channelId(channelId)
 {
-	set_non_modal();
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		geFlex* header = new geFlex(Direction::HORIZONTAL);
+		{
+			hiddenFiles = new geCheck(0, 0, 0, 0, g_ui.langMapper.get(LangMap::BROWSER_SHOWHIDDENFILES));
+			header->add(hiddenFiles, 180);
+			header->add(new geBox());
+			header->end();
+		}
 
-	begin();
+		pathArea = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+		{
+			where = new geInput();
+			name  = new geInput();
+			updir = new geImageButton(graphics::upOff, graphics::upOn);
+			pathArea->add(where);
+			pathArea->add(name);
+			pathArea->add(updir, G_GUI_UNIT);
+			pathArea->end();
+		}
 
-	groupTop    = new Fl_Group(8, 8, w() - 16, 48);
-	hiddenFiles = new geCheck(groupTop->x(), groupTop->y(), 400, 20, g_ui.langMapper.get(LangMap::BROWSER_SHOWHIDDENFILES));
-	where       = new geInput(groupTop->x(), hiddenFiles->y() + hiddenFiles->h() + 8, 20, 20);
-	updir       = new geImageButton(groupTop->x() + groupTop->w() - 20, where->y(), 20, 20, graphics::upOff, graphics::upOn);
-	groupTop->end();
-	groupTop->resizable(where);
+		browser = new geFileBrowser();
+
+		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			ok     = new geTextButton("");
+			cancel = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CANCEL));
+			footer->add(new geBox());
+			footer->add(cancel, 80);
+			footer->add(ok, 80);
+			footer->end();
+		}
+
+		container->add(header, G_GUI_UNIT);
+		container->add(pathArea, G_GUI_UNIT);
+		container->add(browser);
+		container->add(footer, G_GUI_UNIT);
+		container->end();
+	}
+
+	add(container);
+	resizable(container);
 
 	hiddenFiles->callback(cb_toggleHiddenFiles, (void*)this);
 
@@ -72,25 +105,15 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 		where->setValue(browser->getCurrentDir().c_str());
 	};
 
-	browser = new geFileBrowser(8, groupTop->y() + groupTop->h() + 8, w() - 16, h() - 101);
+	browser->onSelectedElement = [this]() { fireCallback(); };
 	browser->loadDir(path);
 	if (path == m_conf.browserLastPath)
 		browser->preselect(m_conf.browserPosition, m_conf.browserLastValue);
 
-	Fl_Group* groupButtons = new Fl_Group(8, browser->y() + browser->h() + 8, w() - 16, 20);
-	ok                     = new geTextButton(w() - 88, groupButtons->y(), 80, 20, "");
-	cancel                 = new geTextButton(w() - ok->w() - 96, groupButtons->y(), 80, 20, g_ui.langMapper.get(LangMap::COMMON_CANCEL));
-	geBox* spacer          = new geBox(8, groupButtons->y(), cancel->x() - 16, 20);
-	groupButtons->resizable(spacer);
-	groupButtons->end();
-
-	end();
-
 	cancel->onClick = [this]() { do_callback(); };
 
-	resizable(browser);
+	set_non_modal();
 	size_range(320, 200);
-
 	show();
 }
 
@@ -113,6 +136,14 @@ void gdBrowserBase::cb_toggleHiddenFiles(Fl_Widget* /*v*/, void* p) { ((gdBrowse
 void gdBrowserBase::cb_toggleHiddenFiles()
 {
 	browser->toggleHiddenFiles();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdBrowserBase::hidePathName()
+{
+	name->hide();
+	pathArea->end();
 }
 
 /* -------------------------------------------------------------------------- */

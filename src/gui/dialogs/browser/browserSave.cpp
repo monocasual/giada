@@ -40,23 +40,13 @@ gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
     m::Conf::Data& conf)
 : gdBrowserBase(title, path, cb, channelId, conf)
 {
-	where->size(groupTop->w() - 236, 20);
-
-	name = new geInput(where->x() + where->w() + 8, where->y(), 200, 20);
 	name->setValue(name_.c_str());
-	groupTop->add(name);
 
 	browser->callback(cb_down, (void*)this);
 
 	ok->label(g_ui.langMapper.get(LangMap::COMMON_SAVE));
 	ok->shortcut(FL_ENTER);
 	ok->onClick = [this]() { fireCallback(); };
-
-	/* On OS X the 'where' and 'name' inputs don't get resized properly on startup. 
-	Let's force them. */
-
-	where->redraw();
-	name->redraw();
 }
 
 /* -------------------------------------------------------------------------- */

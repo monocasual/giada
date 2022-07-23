@@ -33,8 +33,9 @@
 
 namespace giada::v
 {
-geFileBrowser::geFileBrowser(int x, int y, int w, int h)
-: Fl_File_Browser(x, y, w, h)
+geFileBrowser::geFileBrowser()
+: Fl_File_Browser(0, 0, 0, 0)
+, onSelectedElement(nullptr)
 , m_showHiddenFiles(false)
 {
 	box(G_CUSTOM_BORDER_BOX);
@@ -100,13 +101,13 @@ int geFileBrowser::handle(int e)
 			select(value() + 1);
 		else if (Fl::event_key(FL_Up))
 			select(value() - 1);
-		else if (Fl::event_key(FL_Enter))
-			static_cast<v::gdBrowserBase*>(parent())->fireCallback();
+		else if (Fl::event_key(FL_Enter) && onSelectedElement != nullptr)
+			onSelectedElement();
 		ret = 1;
 		break;
-	case FL_PUSH:                   // mouse
-		if (Fl::event_clicks() > 0) // double click
-			static_cast<v::gdBrowserBase*>(parent())->fireCallback();
+	case FL_PUSH:                                                   // mouse
+		if (Fl::event_clicks() > 0 && onSelectedElement != nullptr) // double click
+			onSelectedElement();
 		ret = 1;
 		break;
 	case FL_RELEASE: // mouse

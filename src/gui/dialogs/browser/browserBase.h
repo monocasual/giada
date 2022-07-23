@@ -47,6 +47,7 @@ class geImageButton;
 class geTextButton;
 class geInput;
 class geFileBrowser;
+class geFlex;
 class gdBrowserBase : public gdWindow
 {
 public:
@@ -68,6 +69,8 @@ protected:
 	static void cb_toggleHiddenFiles(Fl_Widget* /*w*/, void* p);
 	void        cb_toggleHiddenFiles();
 
+	void hidePathName();
+
 	/* m_callback
 	Fired when the save/load button is pressed. */
 
@@ -76,12 +79,13 @@ protected:
 	m::Conf::Data& m_conf;
 	ID             m_channelId;
 
-	Fl_Group*      groupTop;
 	geCheck*       hiddenFiles;
 	geFileBrowser* browser;
 	geTextButton*  ok;
 	geTextButton*  cancel;
+	geFlex*        pathArea;
 	geInput*       where;
+	geInput*       name;
 	geImageButton* updir;
 };
 } // namespace giada::v
