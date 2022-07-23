@@ -51,7 +51,7 @@ geShiftTool::geShiftTool(const c::sampleEditor::Data& d)
 	end();
 
 	m_shift->setType(FL_INT_INPUT);
-	m_shift->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
+	m_shift->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_shift->onChange = [this](const std::string& val) {
 		c::sampleEditor::shift(m_data->channelId, val == "" ? 0 : std::stoi(val));
 	};

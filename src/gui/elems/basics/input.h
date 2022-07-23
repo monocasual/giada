@@ -44,6 +44,7 @@ public:
 	std::string getValue() const;
 
 	void setType(int);
+	void setWhen(int);
 	void setLabelAlign(Fl_Align);
 	void setMaximumSize(int);
 	void setReadonly(bool);

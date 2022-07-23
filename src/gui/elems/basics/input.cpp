@@ -51,7 +51,7 @@ geInput::geInput(int x, int y, int w, int h, const char* l, int labelWidth)
 	m_input->cursor_color(G_COLOR_LIGHT_2);
 	m_input->selection_color(G_COLOR_GREY_4);
 	m_input->textsize(G_GUI_FONT_SIZE_BASE);
-	m_input->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
+	m_input->when(FL_WHEN_CHANGED);
 	m_input->shortcut(FL_Enter);
 	m_input->callback(cb_onChange, this);
 }
@@ -68,6 +68,7 @@ geInput::geInput(const char* l, int labelWidth)
 std::string geInput::getValue() const { return m_input->value(); }
 
 void geInput::setType(int t) { m_input->type(t); }
+void geInput::setWhen(int when) { m_input->when(when); }
 void geInput::setLabelAlign(Fl_Align a) { m_text->align(a); }
 void geInput::setValue(const std::string& s) { m_input->value(s.c_str()); }
 void geInput::setMaximumSize(int s) { m_input->maximum_size(s); }
