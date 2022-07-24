@@ -76,10 +76,11 @@ void gdPluginWindowGUI::adjustSize()
 {
 	assert(m_editor != nullptr);
 
-	const int pluginW = m_editor->getWidth();
-	const int pluginH = m_editor->getHeight();
+	const int               pluginW   = m_editor->getWidth();
+	const int               pluginH   = m_editor->getHeight();
+	const geompp::Rect<int> newBounds = getBounds().withSize(pluginW, pluginH).scaled(1 / m_plugin.uiScaling);
 
-	resize(u::gui::centerWindowX(pluginW), u::gui::centerWindowY(pluginH), pluginW, pluginH);
+	setBounds(u::gui::getCenterWinBounds(newBounds.withPosition({-1, -1})));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -95,8 +96,10 @@ void gdPluginWindowGUI::createEditor()
 		return;
 	}
 
+	m_editor->setScaleFactor(m_plugin.uiScaling);
+
 	m_plugin.setResizeCallback([this](int w, int h) {
-		resize(x(), y(), w, h);
+		setBounds(getBounds().withSize(w, h));
 	});
 }
 

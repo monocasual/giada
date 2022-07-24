@@ -179,4 +179,11 @@ gdWindow* gdWindow::getChild(int wid)
 			return subWindows.at(j);
 	return nullptr;
 }
+
+/* -------------------------------------------------------------------------- */
+
+void gdWindow::setBounds(geompp::Rect<int> r)
+{
+	resize(r.x, r.y, r.w, r.h);
+}
 } // namespace giada::v

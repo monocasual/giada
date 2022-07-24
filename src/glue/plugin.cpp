@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/plugins/plugin.h"
-#include "core/conf.h"
 #include "core/const.h"
 #include "core/engine.h"
 #include "core/kernelAudio.h"
@@ -64,7 +63,7 @@ Param::Param(const m::Plugin& p, int index, ID channelId)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Plugin::Plugin(m::Plugin& p, ID channelId)
+Plugin::Plugin(m::Plugin& p, const m::Conf::Data& conf, ID channelId)
 : id(p.id)
 , channelId(channelId)
 , valid(p.valid)
@@ -73,6 +72,7 @@ Plugin::Plugin(m::Plugin& p, ID channelId)
 , name(p.getName())
 , uniqueId(p.getUniqueId())
 , currentProgram(p.getCurrentProgram())
+, uiScaling(conf.uiScaling)
 , m_plugin(p)
 {
 	for (int i = 0; i < p.getNumPrograms(); i++)
@@ -118,9 +118,9 @@ Plugins getPlugins(ID channelId)
 	return Plugins(g_engine.model.get().getChannel(channelId));
 }
 
-Plugin getPlugin(m::Plugin& plugin, ID channelId)
+Plugin getPlugin(m::Plugin& plugin, const m::Conf::Data& conf, ID channelId)
 {
-	return Plugin(plugin, channelId);
+	return Plugin(plugin, conf, channelId);
 }
 
 Param getParam(int index, const m::Plugin& plugin, ID channelId)

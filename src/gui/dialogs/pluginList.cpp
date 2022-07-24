@@ -89,7 +89,7 @@ void gdPluginList::rebuild()
 	list->scroll_to(0, 0);
 
 	for (m::Plugin* plugin : m_plugins.plugins)
-		list->addWidget(new gePluginElement(0, 0, w(), G_GUI_UNIT, c::plugin::getPlugin(*plugin, m_plugins.channelId)));
+		list->addWidget(new gePluginElement(0, 0, w(), G_GUI_UNIT, c::plugin::getPlugin(*plugin, m_conf, m_plugins.channelId)));
 
 	addPlugin = list->addWidget(new geTextButton(0, 0, 0, G_GUI_UNIT, g_ui.langMapper.get(LangMap::PLUGINLIST_ADDPLUGIN)));
 

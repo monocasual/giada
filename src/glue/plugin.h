@@ -27,6 +27,7 @@
 #ifndef G_GLUE_PLUGIN_H
 #define G_GLUE_PLUGIN_H
 
+#include "core/conf.h"
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
 #include "core/types.h"
@@ -68,7 +69,7 @@ struct Param
 
 struct Plugin
 {
-	Plugin(m::Plugin&, ID channelId);
+	Plugin(m::Plugin&, const m::Conf::Data&, ID channelId);
 
 	juce::AudioProcessorEditor* createEditor() const;
 	const m::Plugin&            getPluginRef() const;
@@ -83,6 +84,7 @@ struct Plugin
 	std::string name;
 	std::string uniqueId;
 	int         currentProgram;
+	float       uiScaling;
 
 	std::vector<Program> programs;
 	std::vector<int>     paramIndexes;
@@ -104,7 +106,7 @@ struct Plugins
 Returns ViewModel objects. */
 
 Plugins getPlugins(ID channelId);
-Plugin  getPlugin(m::Plugin& plugin, ID channelId);
+Plugin  getPlugin(m::Plugin&, const m::Conf::Data&, ID channelId);
 Param   getParam(int index, const m::Plugin& plugin, ID channelId);
 
 std::vector<m::PluginManager::PluginInfo> getPluginsInfo();

@@ -77,6 +77,8 @@ public:
 	gdWindow* getParent();
 	gdWindow* getChild(int id);
 
+	void setBounds(geompp::Rect<int>);
+
 protected:
 	std::vector<gdWindow*> subWindows;
 	int                    id;
