@@ -27,6 +27,7 @@
 #include "gui/elems/mainWindow/keyboard/channelStatus.h"
 #include "core/const.h"
 #include "glue/channel.h"
+#include "gui/drawing.h"
 #include "utils/math.h"
 #include <FL/fl_draw.H>
 
@@ -42,32 +43,27 @@ geChannelStatus::geChannelStatus(int x, int y, int w, int h, c::channel::Data& d
 
 void geChannelStatus::draw()
 {
-	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);                  // reset border
-	fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2, G_COLOR_GREY_2); // reset background
-
 	const ChannelStatus playStatus = m_channel.getPlayStatus();
-	const ChannelStatus recStatus  = m_channel.getRecStatus();
 	const Frame         tracker    = m_channel.sample->getTracker();
 	const Frame         begin      = m_channel.sample->begin;
 	const Frame         end        = m_channel.sample->end;
 	const Pixel         pos        = u::math::map(tracker, begin, end, 0, w());
 
-	if (playStatus == ChannelStatus::WAIT ||
-	    playStatus == ChannelStatus::ENDING ||
-	    recStatus == ChannelStatus::WAIT ||
-	    recStatus == ChannelStatus::ENDING)
+	const geompp::Rect<int> bounds(x(), y(), w(), h());
+
+	drawRectf(bounds, G_COLOR_GREY_2); // reset background
+
+	if (playStatus == ChannelStatus::PLAY ||
+	    playStatus == ChannelStatus::WAIT ||
+	    playStatus == ChannelStatus::ENDING)
 	{
-		fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
-	}
-	else if (playStatus == ChannelStatus::PLAY)
-	{
-		fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
-		fl_rectf(x() + 1, y() + 1, pos, h() - 2, G_COLOR_LIGHT_1);
+		drawRectf(bounds.withW(pos), G_COLOR_LIGHT_1);
+		drawRect(bounds, G_COLOR_LIGHT_1);
 	}
 	else
 	{
-		fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2, G_COLOR_GREY_2); // status empty
-		fl_rectf(x() + 1, y() + 1, pos, h() - 2, G_COLOR_GREY_4);
+		drawRectf(bounds.withW(pos), G_COLOR_GREY_4);
+		drawRect(bounds, G_COLOR_GREY_4);
 	}
 }
 } // namespace giada::v
