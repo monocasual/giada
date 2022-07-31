@@ -64,23 +64,28 @@ void SampleReactor::react(ID channelId, ChannelShared& shared, const EventDispat
 	switch (e.type)
 	{
 	case EventDispatcher::EventType::KEY_PRESS:
+	{
 		press(channelId, shared, mode, std::get<int>(e.data), canQuantize, isLoop, velocityAsVol, volume_i);
 		break;
-
+	}
 	case EventDispatcher::EventType::KEY_RELEASE:
+	{
 		if (mode == SamplePlayerMode::SINGLE_PRESS) // Key release is meaningful only for SINGLE_PRESS modes
 			release(shared);
 		break;
-
+	}
 	case EventDispatcher::EventType::KEY_KILL:
-		if (shared.playStatus.load() == ChannelStatus::PLAY)
+	{
+		const ChannelStatus playStatus = shared.playStatus.load();
+		if (playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING)
 			stop(shared);
 		break;
-
+	}
 	case EventDispatcher::EventType::SEQUENCER_STOP:
+	{
 		onStopBySeq(shared, chansStopOnSeqHalt, isLoop);
 		break;
-
+	}
 	default:
 		break;
 	}
