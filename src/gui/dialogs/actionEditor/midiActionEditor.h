@@ -28,12 +28,11 @@
 #define GD_MIDI_ACTION_EDITOR_H
 
 #include "baseActionEditor.h"
-#include "gui/elems/actionEditor/pianoRoll.h"
-#include "gui/elems/actionEditor/velocityEditor.h"
-#include "gui/elems/basics/box.h"
 
 namespace giada::v
 {
+class gePianoRoll;
+class geVelocityEditor;
 class gdMidiActionEditor : public gdBaseActionEditor
 {
 public:
@@ -43,9 +42,8 @@ public:
 	void rebuild() override;
 
 private:
-	geBox            m_barPadding;
-	gePianoRoll      m_pianoRoll;
-	geVelocityEditor m_velocityEditor;
+	gePianoRoll*      m_pianoRoll;
+	geVelocityEditor* m_velocityEditor;
 };
 } // namespace giada::v
 

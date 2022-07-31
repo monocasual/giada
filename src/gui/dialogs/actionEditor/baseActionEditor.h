@@ -30,10 +30,7 @@
 #include "core/conf.h"
 #include "glue/actionEditor.h"
 #include "gui/dialogs/window.h"
-#include "gui/elems/actionEditor/gridTool.h"
-#include "gui/elems/actionEditor/splitScroll.h"
-#include "gui/elems/basics/imageButton.h"
-#include "gui/elems/basics/pack.h"
+#include <functional>
 
 namespace giada::m
 {
@@ -43,6 +40,9 @@ struct Action;
 
 namespace giada::v
 {
+class geGridTool;
+class geImageButton;
+class geSplitScroll;
 class gdBaseActionEditor : public gdWindow
 {
 public:
@@ -56,7 +56,7 @@ public:
 
 	ID channelId;
 
-	geGridTool gridTool;
+	geGridTool* gridTool;
 
 	Pixel fullWidth; // Full widgets width, i.e. scaled-down full sequencer
 	Pixel loopWidth; // Loop width, i.e. scaled-down sequencer range
@@ -86,10 +86,9 @@ protected:
 
 	void prepareWindow();
 
-	gePack        m_barTop;
-	geImageButton m_zoomInBtn;
-	geImageButton m_zoomOutBtn;
-	geSplitScroll m_splitScroll;
+	geImageButton* m_zoomInBtn;
+	geImageButton* m_zoomOutBtn;
+	geSplitScroll* m_splitScroll;
 
 	c::actionEditor::Data m_data;
 	m::Conf::Data&        m_conf;

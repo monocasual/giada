@@ -28,30 +28,48 @@
 #include "core/conf.h"
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
+#include "gui/elems/actionEditor/gridTool.h"
+#include "gui/elems/actionEditor/pianoRoll.h"
+#include "gui/elems/actionEditor/splitScroll.h"
+#include "gui/elems/actionEditor/velocityEditor.h"
 #include "gui/elems/basics/box.h"
+#include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/imageButton.h"
+#include "gui/graphics.h"
+#include "gui/ui.h"
+
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
 gdMidiActionEditor::gdMidiActionEditor(ID channelId, m::Conf::Data& conf)
 : gdBaseActionEditor(channelId, conf)
-, m_barPadding(0, 0, w() - 150, G_GUI_UNIT)
-, m_pianoRoll(0, 0, this)
-, m_velocityEditor(0, 0, this)
 {
-	end();
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		geFlex* header = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+		{
+			header->add(gridTool, 80);
+			header->add(new geBox());
+			header->add(m_zoomInBtn, G_GUI_UNIT);
+			header->add(m_zoomOutBtn, G_GUI_UNIT);
+			header->end();
+		}
 
-	m_barTop.add(&gridTool);
-	m_barTop.add(&m_barPadding);
-	m_barTop.add(&m_zoomInBtn);
-	m_barTop.add(&m_zoomOutBtn);
-	m_barTop.resizable(m_barPadding);
+		container->add(header, G_GUI_UNIT);
+		container->add(m_splitScroll);
+		container->end();
+	}
 
-	m_splitScroll.addWidgets(m_pianoRoll, m_velocityEditor, conf.actionEditorSplitH);
+	add(container);
+	resizable(container);
+
+	m_pianoRoll      = new gePianoRoll(0, 0, this);
+	m_velocityEditor = new geVelocityEditor(0, 0, this);
+	m_splitScroll->addWidgets(*m_pianoRoll, *m_velocityEditor, conf.actionEditorSplitH);
 
 	if (conf.actionEditorPianoRollY != -1)
-		m_splitScroll.setScrollY(conf.actionEditorPianoRollY);
-
-	resizable(m_splitScroll); // Make it resizable only once filled with widgets
+		m_splitScroll->setScrollY(conf.actionEditorPianoRollY);
 
 	prepareWindow();
 	rebuild();
@@ -61,10 +79,7 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, m::Conf::Data& conf)
 
 gdMidiActionEditor::~gdMidiActionEditor()
 {
-	m_conf.actionEditorPianoRollY = m_splitScroll.getScrollY();
-	m_barTop.remove(gridTool);
-	m_barTop.remove(m_zoomInBtn);
-	m_barTop.remove(m_zoomOutBtn);
+	m_conf.actionEditorPianoRollY = m_splitScroll->getScrollY();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -75,7 +90,7 @@ void gdMidiActionEditor::rebuild()
 
 	computeWidth(m_data.framesInSeq, m_data.framesInLoop);
 
-	m_pianoRoll.rebuild(m_data);
-	m_velocityEditor.rebuild(m_data);
+	m_pianoRoll->rebuild(m_data);
+	m_velocityEditor->rebuild(m_data);
 }
 } // namespace giada::v

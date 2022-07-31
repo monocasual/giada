@@ -30,12 +30,13 @@
 #include "glue/channel.h"
 #include "gui/drawing.h"
 #include "gui/elems/actionEditor/gridTool.h"
+#include "gui/elems/actionEditor/splitScroll.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/scrollPack.h"
 #include "gui/graphics.h"
 #include "gui/ui.h"
-#include "src/core/actions/action.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include <FL/Fl.H>
@@ -51,32 +52,18 @@ namespace giada::v
 gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
 : gdWindow(u::gui::getCenterWinBounds(conf.actionEditorBounds), g_ui.langMapper.get(LangMap::ACTIONEDITOR_TITLE))
 , channelId(channelId)
-, gridTool(0, 0, conf)
-, m_barTop(0, 0, Direction::HORIZONTAL)
-, m_zoomInBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, graphics::plusOff, graphics::plusOn)
-, m_zoomOutBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, graphics::minusOff, graphics::minusOn)
-, m_splitScroll(0, 0, 0, 0)
+, gridTool(new geGridTool(0, 0, conf))
+, m_zoomInBtn(new geImageButton(graphics::plusOff, graphics::plusOn))
+, m_zoomOutBtn(new geImageButton(graphics::minusOff, graphics::minusOn))
+, m_splitScroll(new geSplitScroll(0, 0, 0, 0))
 , m_conf(conf)
 , m_ratio(conf.actionEditorZoom)
 {
-	end();
+	m_zoomInBtn->onClick = [this]() { zoomIn(); };
+	m_zoomInBtn->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMIN));
 
-	m_barTop.position(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN);
-
-	m_splitScroll.resize(
-	    G_GUI_OUTER_MARGIN,
-	    (G_GUI_OUTER_MARGIN * 2) + 20,
-	    w() - G_GUI_OUTER_MARGIN * 2,
-	    h() - (G_GUI_OUTER_MARGIN * 3) - 20);
-
-	m_zoomInBtn.onClick = [this]() { zoomIn(); };
-	m_zoomInBtn.copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMIN));
-
-	m_zoomOutBtn.onClick = [this]() { zoomOut(); };
-	m_zoomOutBtn.copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMOUT));
-
-	add(m_barTop);
-	add(m_splitScroll);
+	m_zoomOutBtn->onClick = [this]() { zoomOut(); };
+	m_zoomOutBtn->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMOUT));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -84,7 +71,7 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
 gdBaseActionEditor::~gdBaseActionEditor()
 {
 	m_conf.actionEditorBounds = getBounds();
-	m_conf.actionEditorSplitH = m_splitScroll.getTopContentH();
+	m_conf.actionEditorSplitH = m_splitScroll->getTopContentH();
 	m_conf.actionEditorZoom   = m_ratio;
 }
 
@@ -92,7 +79,7 @@ gdBaseActionEditor::~gdBaseActionEditor()
 
 int gdBaseActionEditor::getMouseOverContent() const
 {
-	return m_splitScroll.getScrollX() + (Fl::event_x() - G_GUI_OUTER_MARGIN);
+	return m_splitScroll->getScrollX() + (Fl::event_x() - G_GUI_OUTER_MARGIN);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -112,7 +99,7 @@ Pixel gdBaseActionEditor::frameToPixel(Frame f) const
 
 Frame gdBaseActionEditor::pixelToFrame(Pixel p, Frame framesInBeat, bool snap) const
 {
-	return snap ? gridTool.getSnapFrame(p * m_ratio, framesInBeat) : p * m_ratio;
+	return snap ? gridTool->getSnapFrame(p * m_ratio, framesInBeat) : p * m_ratio;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -160,7 +147,7 @@ void gdBaseActionEditor::draw()
 {
 	gdWindow::draw();
 
-	const geompp::Rect splitBounds = m_splitScroll.getBoundsNoScrollbar();
+	const geompp::Rect splitBounds = m_splitScroll->getBoundsNoScrollbar();
 	const geompp::Line playhead    = splitBounds.getHeightAsLine().withX(currentFrameToPixel());
 
 	if (splitBounds.contains(playhead))
@@ -182,7 +169,7 @@ void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 	if (frameToPixel(m_data.framesInSeq) < minWidth)
 	{
 		m_ratio = m_data.framesInSeq / static_cast<float>(minWidth);
-		m_splitScroll.setScrollX(0);
+		m_splitScroll->setScrollX(0);
 	}
 
 	/* 1. Store the current x-position, then the new x-position affected by the
@@ -195,7 +182,7 @@ void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 	the x-position. This effectively centers the view on the mouse cursor. */
 
 	rebuild();
-	m_splitScroll.setScrollX(m_splitScroll.getScrollX() + (mnow - mpre));
+	m_splitScroll->setScrollX(m_splitScroll->getScrollX() + (mnow - mpre));
 	redraw();
 }
 
@@ -210,6 +197,6 @@ void gdBaseActionEditor::refresh()
 
 Pixel gdBaseActionEditor::currentFrameToPixel() const
 {
-	return (frameToPixel(m_data.getCurrentFrame()) + m_splitScroll.x()) - m_splitScroll.getScrollX();
+	return (frameToPixel(m_data.getCurrentFrame()) + m_splitScroll->x()) - m_splitScroll->getScrollX();
 }
 } // namespace giada::v
