@@ -12,9 +12,13 @@
 
 
 0.23.0 ---
+- Moveable channels between columns
 - Add LV2 plug-ins support, thanks to JUCE v7.0.1
-- Add High DPI support, thanks to FLTK 1.4.0
+- Add high DPI screens support + SVG icons, thanks to FLTK 1.4.0
 - Store Plug-in List Window width and height in configuration file
+- Set JSON for Modern C++ as an external dependency
+- Lots of code refactoring in Channel class and sub-components
+- Code clean-ups for many UI widgets 
 
 
 0.22.0 --- 2022 . 06 .  13
