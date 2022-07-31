@@ -52,9 +52,9 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
 : gdWindow(u::gui::getCenterWinBounds(conf.actionEditorBounds), g_ui.langMapper.get(LangMap::ACTIONEDITOR_TITLE))
 , channelId(channelId)
 , gridTool(0, 0, conf)
-, zoomInBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, graphics::plusOff, graphics::plusOn)
-, zoomOutBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, graphics::minusOff, graphics::minusOn)
 , m_barTop(0, 0, Direction::HORIZONTAL)
+, m_zoomInBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, graphics::plusOff, graphics::plusOn)
+, m_zoomOutBtn(0, 0, G_GUI_UNIT, G_GUI_UNIT, graphics::minusOff, graphics::minusOn)
 , m_splitScroll(0, 0, 0, 0)
 , m_conf(conf)
 , m_ratio(conf.actionEditorZoom)
@@ -69,11 +69,11 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
 	    w() - G_GUI_OUTER_MARGIN * 2,
 	    h() - (G_GUI_OUTER_MARGIN * 3) - 20);
 
-	zoomInBtn.onClick = [this]() { zoomIn(); };
-	zoomInBtn.copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMIN));
+	m_zoomInBtn.onClick = [this]() { zoomIn(); };
+	m_zoomInBtn.copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMIN));
 
-	zoomOutBtn.onClick = [this]() { zoomOut(); };
-	zoomOutBtn.copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMOUT));
+	m_zoomOutBtn.onClick = [this]() { zoomOut(); };
+	m_zoomOutBtn.copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMOUT));
 
 	add(m_barTop);
 	add(m_splitScroll);

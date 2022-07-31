@@ -56,9 +56,7 @@ public:
 
 	ID channelId;
 
-	geGridTool    gridTool;
-	geImageButton zoomInBtn;
-	geImageButton zoomOutBtn;
+	geGridTool gridTool;
 
 	Pixel fullWidth; // Full widgets width, i.e. scaled-down full sequencer
 	Pixel loopWidth; // Loop width, i.e. scaled-down sequencer range
@@ -89,6 +87,8 @@ protected:
 	void prepareWindow();
 
 	gePack        m_barTop;
+	geImageButton m_zoomInBtn;
+	geImageButton m_zoomOutBtn;
 	geSplitScroll m_splitScroll;
 
 	c::actionEditor::Data m_data;

@@ -42,8 +42,8 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, m::Conf::Data& conf)
 
 	m_barTop.add(&gridTool);
 	m_barTop.add(&m_barPadding);
-	m_barTop.add(&zoomInBtn);
-	m_barTop.add(&zoomOutBtn);
+	m_barTop.add(&m_zoomInBtn);
+	m_barTop.add(&m_zoomOutBtn);
 	m_barTop.resizable(m_barPadding);
 
 	m_splitScroll.addWidgets(m_pianoRoll, m_velocityEditor, conf.actionEditorSplitH);
@@ -63,8 +63,8 @@ gdMidiActionEditor::~gdMidiActionEditor()
 {
 	m_conf.actionEditorPianoRollY = m_splitScroll.getScrollY();
 	m_barTop.remove(gridTool);
-	m_barTop.remove(zoomInBtn);
-	m_barTop.remove(zoomOutBtn);
+	m_barTop.remove(m_zoomInBtn);
+	m_barTop.remove(m_zoomOutBtn);
 }
 
 /* -------------------------------------------------------------------------- */

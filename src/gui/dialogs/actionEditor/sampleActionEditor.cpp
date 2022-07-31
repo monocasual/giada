@@ -51,8 +51,8 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, m::Conf::Data& conf)
 	m_barTop.add(&m_actionType);
 	m_barTop.add(&gridTool);
 	m_barTop.add(&m_barPadding);
-	m_barTop.add(&zoomInBtn);
-	m_barTop.add(&zoomOutBtn);
+	m_barTop.add(&m_zoomInBtn);
+	m_barTop.add(&m_zoomOutBtn);
 	m_barTop.resizable(m_barPadding);
 
 	m_actionType.addItem(g_ui.langMapper.get(LangMap::ACTIONEDITOR_KEYPRESS));
@@ -77,8 +77,8 @@ gdSampleActionEditor::~gdSampleActionEditor()
 {
 	m_barTop.remove(m_actionType);
 	m_barTop.remove(gridTool);
-	m_barTop.remove(zoomInBtn);
-	m_barTop.remove(zoomOutBtn);
+	m_barTop.remove(m_zoomInBtn);
+	m_barTop.remove(m_zoomOutBtn);
 }
 
 /* -------------------------------------------------------------------------- */
