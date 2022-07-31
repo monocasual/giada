@@ -71,6 +71,7 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 		c::events::setChannelPitch(m_data->channelId, val, Thread::MAIN);
 	};
 
+	m_input->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_input->onChange = [this](const std::string& val) {
 		c::events::setChannelPitch(m_data->channelId, val == "" ? 0 : std::stof(val), Thread::MAIN);
 	};
