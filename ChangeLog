@@ -17,8 +17,9 @@
 - Add high DPI screens support + SVG icons, thanks to FLTK 1.4.0
 - Store Plug-in List Window width and height in configuration file
 - Set JSON for Modern C++ as an external dependency
-- Lots of code refactoring in Channel class and sub-components
-- Code clean-ups for many UI widgets 
+- Fix Sample Channels that couldn't be killed while in ENDING status
+- Lots of code refactoring in Channel class and related components
+- Code clean-ups for many UI widgets
 
 
 0.22.0 --- 2022 . 06 .  13
