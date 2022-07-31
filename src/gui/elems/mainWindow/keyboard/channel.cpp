@@ -42,8 +42,8 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-geChannel::geChannel(int X, int Y, int W, int H, c::channel::Data d)
-: Fl_Group(X, Y, W, H)
+geChannel::geChannel(int x, int y, int w, int h, c::channel::Data d)
+: geFlex(x, y, w, h, Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , m_channel(d)
 {
 }
@@ -63,7 +63,7 @@ void geChannel::draw()
 
 	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_1_5);
 
-	Fl_Group::draw();
+	geFlex::draw();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -112,40 +112,6 @@ void geChannel::blink()
 		mainButton->setPlayMode();
 	else
 		mainButton->setDefaultMode();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geChannel::packWidgets()
-{
-	/* Compute how much space is visible for the main button, then resize it
-	according to that amount. */
-
-	int visible = w();
-	for (int i = 0; i < children(); i++)
-	{
-		if (child(i)->visible() && child(i) != mainButton)
-			visible -= child(i)->w() + G_GUI_INNER_MARGIN;
-	}
-
-	mainButton->size(visible, mainButton->h());
-
-	/* Reposition everything else */
-
-	for (int i = 1, p = 0; i < children(); i++)
-	{
-		if (!child(i)->visible())
-			continue;
-		for (int k = i - 1; k >= 0; k--) // Get the first visible item prior to i
-			if (child(k)->visible())
-			{
-				p = k;
-				break;
-			}
-		child(i)->position(child(p)->x() + child(p)->w() + G_GUI_INNER_MARGIN, child(i)->y());
-	}
-
-	init_sizes(); // Resets the internal array of widget sizes and positions
 }
 
 /* -------------------------------------------------------------------------- */

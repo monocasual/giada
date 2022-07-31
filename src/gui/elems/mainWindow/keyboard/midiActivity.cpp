@@ -26,7 +26,6 @@
 
 #include "gui/elems/mainWindow/keyboard/midiActivity.h"
 #include "core/const.h"
-#include "gui/elems/basics/flex.h"
 #include "gui/ui.h"
 #include <FL/fl_draw.H>
 
@@ -70,23 +69,14 @@ void geMidiActivity::geLed::lit()
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geMidiActivity::geMidiActivity(int x, int y, int w, int h)
-: Fl_Group(x, y, w, h)
+geMidiActivity::geMidiActivity()
+: geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN)
 {
+	out = new geLed();
+	in  = new geLed();
+	add(out);
+	add(in);
 	end();
-
-	geFlex* container = new geFlex(x, y, w, h, Direction::VERTICAL, G_GUI_INNER_MARGIN);
-	{
-		out = new geLed();
-		in  = new geLed();
-
-		container->add(out);
-		container->add(in);
-		container->end();
-	}
-
-	add(container);
-	resizable(container);
 
 	copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_MIDIACTIVITY));
 }

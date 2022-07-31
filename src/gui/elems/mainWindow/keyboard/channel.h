@@ -29,7 +29,7 @@
 
 #include "core/types.h"
 #include "glue/channel.h"
-#include <FL/Fl_Group.H>
+#include "gui/elems/basics/flex.h"
 
 namespace giada::v
 {
@@ -38,7 +38,7 @@ class geImageButton;
 class geChannelStatus;
 class geChannelButton;
 class geMidiActivity;
-class geChannel : public Fl_Group
+class geChannel : public geFlex
 {
 public:
 	geChannel(int x, int y, int w, int h, c::channel::Data d);
@@ -92,11 +92,6 @@ protected:
 	Blinks button when channel is in wait/ending status. */
 
 	void blink();
-
-	/* packWidgets
-	Spread widgets across available space. */
-
-	void packWidgets();
 
 	/* m_channel
 	Channel's data. */

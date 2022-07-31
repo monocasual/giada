@@ -27,12 +27,12 @@
 #ifndef GE_MIDI_ACTIVITY_H
 #define GE_MIDI_ACTIVITY_H
 
+#include "gui/elems/basics/flex.h"
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Group.H>
 
 namespace giada::v
 {
-class geMidiActivity : public Fl_Group
+class geMidiActivity : public geFlex
 {
 public:
 	class geLed : public Fl_Button
@@ -47,7 +47,7 @@ public:
 		int m_decay;
 	};
 
-	geMidiActivity(int x, int y, int w, int h);
+	geMidiActivity();
 
 	geLed* out;
 	geLed* in;

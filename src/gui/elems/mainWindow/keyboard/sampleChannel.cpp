@@ -79,21 +79,30 @@ enum class Menu
 geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 : geChannel(X, Y, W, H, d)
 {
-	playButton     = new geImageButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, graphics::channelPlayOff, graphics::channelPlayOn);
-	arm            = new geImageButton(playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, graphics::armOff, graphics::armOn, graphics::armDisabled);
-	status         = new geChannelStatus(arm->x() + arm->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, h(), m_channel);
-	mainButton     = new geSampleChannelButton(status->x() + status->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, H, m_channel);
-	midiActivity   = new geMidiActivity(mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), 10, h());
-	readActionsBtn = new geImageButton(midiActivity->x() + midiActivity->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, graphics::readActionOff, graphics::readActionOn, graphics::readActionDisabled);
-	modeBox        = new geSampleChannelMode(readActionsBtn->x() + readActionsBtn->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, m_channel);
-	mute           = new geImageButton(modeBox->x() + modeBox->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, graphics::muteOff, graphics::muteOn);
-	solo           = new geImageButton(mute->x() + mute->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, graphics::soloOff, graphics::soloOn);
-	fx             = new geImageButton(solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, graphics::fxOff, graphics::fxOn);
-	vol            = new geDial(fx->x() + fx->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
+	playButton     = new geImageButton(graphics::channelPlayOff, graphics::channelPlayOn);
+	arm            = new geImageButton(graphics::armOff, graphics::armOn, graphics::armDisabled);
+	status         = new geChannelStatus(0, 0, 0, 0, m_channel);
+	mainButton     = new geSampleChannelButton(0, 0, 0, 0, m_channel);
+	midiActivity   = new geMidiActivity();
+	readActionsBtn = new geImageButton(graphics::readActionOff, graphics::readActionOn, graphics::readActionDisabled);
+	modeBox        = new geSampleChannelMode(0, 0, 0, 0, m_channel);
+	mute           = new geImageButton(graphics::muteOff, graphics::muteOn);
+	solo           = new geImageButton(graphics::soloOff, graphics::soloOn);
+	fx             = new geImageButton(graphics::fxOff, graphics::fxOn);
+	vol            = new geDial(0, 0, 0, 0);
 
+	add(playButton, G_GUI_UNIT);
+	add(arm, G_GUI_UNIT);
+	add(status, G_GUI_UNIT);
+	add(mainButton);
+	add(midiActivity, 10);
+	add(readActionsBtn, G_GUI_UNIT);
+	add(modeBox, G_GUI_UNIT);
+	add(mute, G_GUI_UNIT);
+	add(solo, G_GUI_UNIT);
+	add(fx, G_GUI_UNIT);
+	add(vol, G_GUI_UNIT);
 	end();
-
-	resizable(mainButton);
 
 	playButton->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_PLAY));
 	arm->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_ARM));
@@ -317,7 +326,5 @@ void geSampleChannel::resize(int X, int Y, int W, int H)
 		modeBox->show();
 	if (w() > BREAK_READ_ACTIONS)
 		readActionsBtn->show();
-
-	packWidgets();
 }
 } // namespace giada::v
