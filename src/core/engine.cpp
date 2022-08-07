@@ -49,8 +49,8 @@ Engine::Engine()
 , channelManager(model, channelFactory, waveFactory)
 , midiDispatcher(model)
 , actionRecorder(model)
-, synchronizer(conf.data, kernelMidi)
-, sequencer(model, synchronizer, jackTransport)
+, midiSynchronizer(conf.data, kernelMidi)
+, sequencer(model, midiSynchronizer, jackTransport)
 , mixer(model)
 , recorder(model, sequencer, channelManager, mixer)
 , pluginHost(model)
@@ -62,16 +62,16 @@ Engine::Engine()
 	kernelMidi.onMidiReceived = [this](uint32_t msg) { midiDispatcher.dispatch(msg); };
 
 #ifdef WITH_AUDIO_JACK
-	synchronizer.onJackRewind = [this]() {
+	jackSynchronizer.onJackRewind = [this]() {
 		eventDispatcher.pumpMidiEvent({EventDispatcher::EventType::SEQUENCER_REWIND_JACK});
 	};
-	synchronizer.onJackChangeBpm = [this](float bpm) {
+	jackSynchronizer.onJackChangeBpm = [this](float bpm) {
 		eventDispatcher.pumpMidiEvent({EventDispatcher::EventType::SEQUENCER_BPM_JACK, 0, 0, bpm});
 	};
-	synchronizer.onJackStart = [this]() {
+	jackSynchronizer.onJackStart = [this]() {
 		eventDispatcher.pumpMidiEvent({EventDispatcher::EventType::SEQUENCER_START_JACK});
 	};
-	synchronizer.onJackStop = [this]() {
+	jackSynchronizer.onJackStop = [this]() {
 		eventDispatcher.pumpMidiEvent({EventDispatcher::EventType::SEQUENCER_STOP_JACK});
 	};
 #endif
@@ -223,7 +223,7 @@ void Engine::reset()
 	model.reset();
 	mixer.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()), kernelAudio.getBufferSize());
 	channelManager.reset(kernelAudio.getBufferSize());
-	synchronizer.reset();
+	midiSynchronizer.reset();
 	sequencer.reset(kernelAudio.getSampleRate());
 	actionRecorder.reset();
 	pluginHost.reset(kernelAudio.getBufferSize());
@@ -289,7 +289,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo)
 
 #ifdef WITH_AUDIO_JACK
 	if (kernelInfo.withJack)
-		synchronizer.recvJackSync(jackTransport.getState());
+		jackSynchronizer.recvJackSync(jackTransport.getState());
 #endif
 
 	/* If the sequencer is running, advance it first (i.e. parse it for events). 

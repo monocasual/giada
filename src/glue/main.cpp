@@ -37,7 +37,6 @@
 #include "core/plugins/pluginManager.h"
 #include "core/recorder.h"
 #include "core/sequencer.h"
-#include "core/synchronizer.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
@@ -217,7 +216,7 @@ void clearAllSamples()
 		return;
 	g_ui.closeSubWindow(WID_SAMPLE_EDITOR);
 	g_engine.sequencer.setStatus(SeqStatus::STOPPED);
-	g_engine.synchronizer.sendMIDIstop();
+	g_engine.midiSynchronizer.sendMIDIstop();
 	g_engine.channelManager.freeAllSampleChannels();
 	g_engine.actionRecorder.clearAllActions();
 }

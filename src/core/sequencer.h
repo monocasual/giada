@@ -46,7 +46,7 @@ namespace giada::m
 {
 class JackTransport;
 class ActionRecorder;
-class Synchronizer;
+class MidiSynchronizer;
 class Sequencer final
 {
 public:
@@ -69,7 +69,7 @@ public:
 
 	using EventBuffer = RingBuffer<Event, G_MAX_SEQUENCER_EVENTS>;
 
-	Sequencer(model::Model&, Synchronizer&, JackTransport&);
+	Sequencer(model::Model&, MidiSynchronizer&, JackTransport&);
 
 	/* canQuantize
     Tells whether the quantizer value is > 0 and the sequencer is running. */
@@ -191,9 +191,9 @@ private:
 
 	void rawSetBpm(float v, int sampleRate);
 
-	model::Model&  m_model;
-	Synchronizer&  m_synchronizer;
-	JackTransport& m_jackTransport;
+	model::Model&     m_model;
+	MidiSynchronizer& m_midiSynchronizer;
+	JackTransport&    m_jackTransport;
 
 	/* m_eventBuffer
 	Buffer of events found in each block sent to channels for event parsing. 

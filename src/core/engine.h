@@ -39,6 +39,7 @@
 #include "core/kernelMidi.h"
 #include "core/midiDispatcher.h"
 #include "core/midiMapper.h"
+#include "core/midiSynchronizer.h"
 #include "core/mixer.h"
 #include "core/model/model.h"
 #include "core/patch.h"
@@ -46,8 +47,10 @@
 #include "core/plugins/pluginManager.h"
 #include "core/recorder.h"
 #include "core/sequencer.h"
-#include "core/synchronizer.h"
 #include "core/waveFactory.h"
+#ifdef WITH_AUDIO_JACK
+#include "core/jackSynchronizer.h"
+#endif
 
 namespace giada::m
 {
@@ -119,12 +122,15 @@ public:
 	ChannelManager         channelManager;
 	MidiDispatcher         midiDispatcher;
 	ActionRecorder         actionRecorder;
-	Synchronizer           synchronizer;
+	MidiSynchronizer       midiSynchronizer;
 	Sequencer              sequencer;
 	Mixer                  mixer;
 	Recorder               recorder;
 	PluginHost             pluginHost;
 	PluginManager          pluginManager;
+#ifdef WITH_AUDIO_JACK
+	JackSynchronizer jackSynchronizer;
+#endif
 
 private:
 	int audioCallback(KernelAudio::CallbackInfo);

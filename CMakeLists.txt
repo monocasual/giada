@@ -54,7 +54,8 @@ list(APPEND SOURCES
 	src/core/actions/actionRecorder.cpp
 	src/core/actions/actions.cpp
 	src/core/mixer.cpp
-	src/core/synchronizer.cpp
+	src/core/jackSynchronizer.cpp
+	src/core/midiSynchronizer.cpp
 	src/core/waveFactory.cpp
 	src/core/recorder.cpp
 	src/core/midiLearnParam.cpp

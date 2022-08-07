@@ -24,40 +24,30 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/synchronizer.h"
+#include "core/midiSynchronizer.h"
 #include "core/conf.h"
-#include "core/kernelAudio.h"
 #include "core/kernelMidi.h"
-#include "core/model/model.h"
+#include "core/model/sequencer.h"
 
 namespace giada::m
 {
-Synchronizer::Synchronizer(const Conf::Data& c, KernelMidi& k)
-#ifdef WITH_AUDIO_JACK
-: onJackRewind(nullptr)
-, onJackChangeBpm(nullptr)
-, onJackStart(nullptr)
-, onJackStop(nullptr)
-, m_kernelMidi(k)
-, m_conf(c)
-#else
+MidiSynchronizer::MidiSynchronizer(const Conf::Data& c, KernelMidi& k)
 : m_kernelMidi(k)
 , m_conf(c)
-#endif
 {
 	reset();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Synchronizer::reset()
+void MidiSynchronizer::reset()
 {
 	m_midiTCrate = static_cast<int>((m_conf.samplerate / m_conf.midiTCfps) * G_MAX_IO_CHANS); // stereo values
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Synchronizer::sendMIDIsync(const model::Sequencer& sequencer)
+void MidiSynchronizer::sendMIDIsync(const model::Sequencer& sequencer)
 {
 	/* Sending MIDI sync while waiting is meaningless. */
 
@@ -138,7 +128,7 @@ void Synchronizer::sendMIDIsync(const model::Sequencer& sequencer)
 
 /* -------------------------------------------------------------------------- */
 
-void Synchronizer::sendMIDIrewind()
+void MidiSynchronizer::sendMIDIrewind()
 {
 	m_midiTCframes  = 0;
 	m_midiTCseconds = 0;
@@ -162,7 +152,7 @@ void Synchronizer::sendMIDIrewind()
 
 /* -------------------------------------------------------------------------- */
 
-void Synchronizer::sendMIDIstart()
+void MidiSynchronizer::sendMIDIstart()
 {
 	if (m_conf.midiSync == G_MIDI_SYNC_CLOCK_M)
 	{
@@ -173,49 +163,9 @@ void Synchronizer::sendMIDIstart()
 
 /* -------------------------------------------------------------------------- */
 
-void Synchronizer::sendMIDIstop()
+void MidiSynchronizer::sendMIDIstop()
 {
 	if (m_conf.midiSync == G_MIDI_SYNC_CLOCK_M)
 		m_kernelMidi.send(MIDI_STOP, -1, -1);
 }
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef WITH_AUDIO_JACK
-
-void Synchronizer::recvJackSync(const JackTransport::State& state)
-{
-	assert(onJackRewind != nullptr);
-	assert(onJackChangeBpm != nullptr);
-	assert(onJackStart != nullptr);
-	assert(onJackStop != nullptr);
-
-	JackTransport::State jackStateCurr = state;
-
-	if (jackStateCurr != m_jackStatePrev)
-	{
-		if (jackStateCurr.frame != m_jackStatePrev.frame && jackStateCurr.frame == 0)
-		{
-			G_DEBUG("JackState received - rewind to frame 0");
-			onJackRewind();
-		}
-
-		// jackStateCurr.bpm == 0 if JACK doesn't send that info
-		if (jackStateCurr.bpm != m_jackStatePrev.bpm && jackStateCurr.bpm > 1.0f)
-		{
-			G_DEBUG("JackState received - bpm=" << jackStateCurr.bpm);
-			onJackChangeBpm(jackStateCurr.bpm);
-		}
-
-		if (jackStateCurr.running != m_jackStatePrev.running)
-		{
-			G_DEBUG("JackState received - running=" << jackStateCurr.running);
-			jackStateCurr.running ? onJackStart() : onJackStop();
-		}
-	}
-
-	m_jackStatePrev = jackStateCurr;
-}
-
-#endif
 } // namespace giada::m

@@ -29,9 +29,9 @@
 #include "core/jackTransport.h"
 #include "core/kernelAudio.h"
 #include "core/metronome.h"
+#include "core/midiSynchronizer.h"
 #include "core/model/model.h"
 #include "core/quantizer.h"
-#include "core/synchronizer.h"
 #include "utils/log.h"
 #include "utils/math.h"
 
@@ -46,11 +46,11 @@ constexpr int Q_ACTION_REWIND = 0;
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Sequencer::Sequencer(model::Model& m, Synchronizer& s, JackTransport& j)
+Sequencer::Sequencer(model::Model& m, MidiSynchronizer& s, JackTransport& j)
 : onAboutStart(nullptr)
 , onAboutStop(nullptr)
 , m_model(m)
-, m_synchronizer(s)
+, m_midiSynchronizer(s)
 , m_jackTransport(j)
 , m_quantizerStep(1)
 {
@@ -372,13 +372,13 @@ void Sequencer::setStatus(SeqStatus s)
 	{
 	case SeqStatus::WAITING:
 		rewind();
-		m_synchronizer.sendMIDIrewind();
+		m_midiSynchronizer.sendMIDIrewind();
 		break;
 	case SeqStatus::STOPPED:
-		m_synchronizer.sendMIDIstop();
+		m_midiSynchronizer.sendMIDIstop();
 		break;
 	case SeqStatus::RUNNING:
-		m_synchronizer.sendMIDIstart();
+		m_midiSynchronizer.sendMIDIstart();
 		break;
 	default:
 		break;
