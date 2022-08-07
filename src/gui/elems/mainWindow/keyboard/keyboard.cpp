@@ -269,7 +269,7 @@ int geKeyboard::handle(int e)
 	case FL_RELEASE:
 		if (m_channelDragger.isDragging())
 			m_channelDragger.end();
-		return geScroll::handle(e);
+		return 1;
 
 	case FL_FOCUS:
 	case FL_UNFOCUS:
