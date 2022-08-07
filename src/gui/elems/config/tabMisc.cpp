@@ -30,6 +30,7 @@
 #include "gui/elems/basics/input.h"
 #include "gui/elems/config/stringMenu.h"
 #include "gui/ui.h"
+#include "utils/gui.h"
 #include <fmt/core.h>
 
 constexpr int LABEL_WIDTH = 120;
@@ -83,7 +84,7 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 
 	m_uiScaling->setType(FL_FLOAT_INPUT);
 	m_uiScaling->setValue(fmt::format("{:.1f}", m_data.uiScaling));
-	m_uiScaling->onChange = [this](const std::string& s) { if (s != "") m_data.uiScaling = std::stof(s); };
+	m_uiScaling->onChange = [this](const std::string& s) { m_data.uiScaling = u::gui::toFloat(s); };
 }
 
 /* -------------------------------------------------------------------------- */

@@ -102,14 +102,16 @@ void Ui::init(int argc, char** argv, m::Engine& engine)
 	mainWindow = std::make_unique<gdMainWindow>(u::gui::getCenterWinBounds(engine.conf.data.mainWindowBounds), "", argc, argv, engine.conf.data);
 	mainWindow->setTitle(engine.patch.data.name == "" ? G_DEFAULT_PATCH_NAME : engine.patch.data.name);
 
-	Fl::screen_scale(mainWindow->screen_num(), m_conf.uiScaling);
+	if (Fl::screen_scaling_supported() && m_conf.uiScaling != G_DEFAULT_UI_SCALING)
+		Fl::screen_scale(mainWindow->screen_num(), m_conf.uiScaling);
+
 	Fl_Tooltip::enable(m_conf.showTooltips);
 
 	m_updater.init(engine.model);
 
 	if (engine.kernelAudio.isReady())
 		rebuildStaticWidgets();
-}
+} // namespace giada::v
 
 /* -------------------------------------------------------------------------- */
 
