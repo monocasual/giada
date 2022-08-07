@@ -44,18 +44,18 @@ namespace giada::c::events
 /* Channel*
 Channel-related events. */
 
-void pressChannel(ID channelId, int velocity, Thread t);
-void releaseChannel(ID channelId, Thread t);
-void killChannel(ID channelId, Thread t);
-void setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi = false);
-void setChannelPitch(ID channelId, float v, Thread t);
-void sendChannelPan(ID channelId, float v); // FIXME typo: should be setChannelPan
-void toggleMuteChannel(ID channelId, Thread t);
-void toggleSoloChannel(ID channelId, Thread t);
-void toggleArmChannel(ID channelId, Thread t);
-void toggleReadActionsChannel(ID channelId, Thread t);
-void killReadActionsChannel(ID channelId, Thread t);
-void sendMidiToChannel(ID channelId, m::MidiEvent e, Thread t);
+void  pressChannel(ID channelId, int velocity, Thread t);
+void  releaseChannel(ID channelId, Thread t);
+void  killChannel(ID channelId, Thread t);
+float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi = false);
+float setChannelPitch(ID channelId, float v, Thread t);
+float sendChannelPan(ID channelId, float v); // FIXME typo: should be setChannelPan
+void  toggleMuteChannel(ID channelId, Thread t);
+void  toggleSoloChannel(ID channelId, Thread t);
+void  toggleArmChannel(ID channelId, Thread t);
+void  toggleReadActionsChannel(ID channelId, Thread t);
+void  killReadActionsChannel(ID channelId, Thread t);
+void  sendMidiToChannel(ID channelId, m::MidiEvent e, Thread t);
 
 /* Main*
 Master I/O, transport and other engine-related events. */

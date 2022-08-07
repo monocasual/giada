@@ -229,4 +229,32 @@ std::string keyToString(int key)
 		return Fl::event_text();
 	}
 }
+
+/* -------------------------------------------------------------------------- */
+
+float toFloat(const std::string& s)
+{
+	try
+	{
+		return std::stof(s);
+	}
+	catch (const std::exception&)
+	{
+		return 0.0f;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+int toInt(const std::string& s)
+{
+	try
+	{
+		return std::stoi(s);
+	}
+	catch (const std::exception&)
+	{
+		return 0;
+	}
+}
 } // namespace giada::u::gui

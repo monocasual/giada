@@ -110,7 +110,7 @@ void killChannel(ID channelId, Thread t)
 
 /* -------------------------------------------------------------------------- */
 
-void setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
+float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
 {
 	v = std::clamp(v, 0.0f, G_MAX_VOLUME);
 
@@ -121,27 +121,33 @@ void setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
 		u::gui::ScopedLock lock;
 		g_ui.mainWindow->keyboard->setChannelVolume(channelId, v);
 	}
+
+	return v;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void setChannelPitch(ID channelId, float v, Thread t)
+float setChannelPitch(ID channelId, float v, Thread t)
 {
 	v = std::clamp(v, G_MIN_PITCH, G_MAX_PITCH);
 
 	pushEvent_({m::EventDispatcher::EventType::CHANNEL_PITCH, 0, channelId, v}, t);
 
 	sampleEditor::onRefresh(t, [v](v::gdSampleEditor& e) { e.pitchTool->update(v); });
+
+	return v;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void sendChannelPan(ID channelId, float v)
+float sendChannelPan(ID channelId, float v)
 {
 	v = std::clamp(v, 0.0f, G_MAX_PAN);
 
 	/* Pan event is currently triggered only by the main thread. */
 	pushEvent_({m::EventDispatcher::EventType::CHANNEL_PAN, 0, channelId, v}, Thread::MAIN);
+
+	return v;
 }
 
 /* -------------------------------------------------------------------------- */

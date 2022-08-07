@@ -58,9 +58,12 @@ geVolumeTool::geVolumeTool(ID channelId, float volume, int labelWidth)
 		update(val, /*fromDial=*/true);
 	};
 
+	m_input->setType(FL_FLOAT_INPUT);
+	m_input->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_input->onChange = [this](const std::string& val) {
-		const float valf = u::math::dBtoLinear(val == "" ? 0.0 : std::stof(val));
-		c::events::setChannelVolume(m_channelId, valf, Thread::MAIN, /*repaintMainUi=*/true);
+		const float valf = c::events::setChannelVolume(m_channelId, u::math::dBtoLinear(u::gui::toFloat(val)),
+		    Thread::MAIN, /*repaintMainUi=*/true);
+		update(valf, /*fromDial=*/false);
 	};
 
 	m_reset->onClick = [this]() {
