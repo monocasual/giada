@@ -354,7 +354,6 @@ else() # Linux and FreeBSD
 	list(APPEND LIBRARIES "${BINARY_DIR}/lib/libfltk_images.a")
 	list(APPEND LIBRARIES "${BINARY_DIR}/lib/libfltk.a")
 	list(APPEND LIBRARIES "${BINARY_DIR}/lib/libfltk_z.a")
-	list(APPEND COMPILER_OPTIONS -Wno-cast-function-type)
 endif()
 
 # Libsndfile
