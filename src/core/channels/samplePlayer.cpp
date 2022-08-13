@@ -31,8 +31,6 @@
 #include <algorithm>
 #include <cassert>
 
-using namespace mcl;
-
 namespace giada::m
 {
 SamplePlayer::SamplePlayer(Resampler* r)
@@ -113,7 +111,7 @@ void SamplePlayer::render(ChannelShared& shared, Render renderInfo) const
 	if (waveReader.wave == nullptr)
 		return;
 
-	AudioBuffer&        buf     = shared.audioBuffer;
+	mcl::AudioBuffer&   buf     = shared.audioBuffer;
 	Frame               tracker = std::clamp(shared.tracker.load(), begin, end); /* Make sure tracker stays within begin-end range. */
 	const ChannelStatus status  = shared.playStatus.load();
 
@@ -146,7 +144,7 @@ void SamplePlayer::render(ChannelShared& shared, Render renderInfo) const
 
 /* -------------------------------------------------------------------------- */
 
-Frame SamplePlayer::render(AudioBuffer& buf, Frame tracker, Frame offset, ChannelStatus status) const
+Frame SamplePlayer::render(mcl::AudioBuffer& buf, Frame tracker, Frame offset, ChannelStatus status) const
 {
 	/* First pass rendering. */
 
@@ -174,7 +172,7 @@ Frame SamplePlayer::render(AudioBuffer& buf, Frame tracker, Frame offset, Channe
 
 /* -------------------------------------------------------------------------- */
 
-Frame SamplePlayer::stop(AudioBuffer& buf, Frame offset) const
+Frame SamplePlayer::stop(mcl::AudioBuffer& buf, Frame offset) const
 {
 	assert(onLastFrame != nullptr);
 
@@ -229,7 +227,7 @@ void SamplePlayer::kickIn(ChannelShared& shared, Frame f)
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result SamplePlayer::fillBuffer(AudioBuffer& buf, Frame start, Frame offset) const
+WaveReader::Result SamplePlayer::fillBuffer(mcl::AudioBuffer& buf, Frame start, Frame offset) const
 {
 	return waveReader.fill(buf, start, end, offset, pitch);
 }
