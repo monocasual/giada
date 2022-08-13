@@ -102,8 +102,7 @@ void MidiDispatcher::dispatch(uint32_t msg)
 	MidiEvent midiEvent(msg);
 	midiEvent.fixVelocityZero();
 
-	u::log::print("[midiDispatcher] MIDI received - 0x%X (chan %d)\n", midiEvent.getRaw(),
-	    midiEvent.getChannel());
+	G_DEBUG("MIDI received - 0x{:0X} (chan {})", midiEvent.getRaw(), midiEvent.getChannel());
 
 	/* Start dispatcher. Don't parse channels if MIDI learn is ON, just learn 
 	the incoming MIDI signal. The action is not invoked directly, but scheduled 
@@ -170,7 +169,7 @@ void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& pl
 			if (pure != param.getValue())
 				continue;
 			c::events::setPluginParameter(channelId, p->id, param.getIndex(), vf, Thread::MIDI);
-			u::log::print("  >>> [pluginId=%d paramIndex=%d] (pure=0x%X, value=%d, float=%f)\n",
+			G_DEBUG("   [pluginId={} paramIndex={}] (pure=0x{:0X}, value={}, float={})",
 			    p->id, param.getIndex(), pure, midiEvent.getVelocity(), vf);
 		}
 	}
@@ -192,51 +191,51 @@ void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 
 		if (pure == c.midiLearner.keyPress.getValue())
 		{
-			u::log::print("  >>> keyPress, ch=%d (pure=0x%X)\n", c.id, pure);
+			G_DEBUG("   keyPress, ch={} (pure=0x{:0X})", c.id, pure);
 			c::events::pressChannel(c.id, midiEvent.getVelocity(), Thread::MIDI);
 		}
 		else if (pure == c.midiLearner.keyRelease.getValue())
 		{
-			u::log::print("  >>> keyRel ch=%d (pure=0x%X)\n", c.id, pure);
+			G_DEBUG("   keyRel ch={} (pure=0x{:0X})", c.id, pure);
 			c::events::releaseChannel(c.id, Thread::MIDI);
 		}
 		else if (pure == c.midiLearner.mute.getValue())
 		{
-			u::log::print("  >>> mute ch=%d (pure=0x%X)\n", c.id, pure);
+			G_DEBUG("   mute ch={} (pure=0x{:0X})", c.id, pure);
 			c::events::toggleMuteChannel(c.id, Thread::MIDI);
 		}
 		else if (pure == c.midiLearner.kill.getValue())
 		{
-			u::log::print("  >>> kill ch=%d (pure=0x%X)\n", c.id, pure);
+			G_DEBUG("   kill ch={} (pure=0x{:0X})", c.id, pure);
 			c::events::killChannel(c.id, Thread::MIDI);
 		}
 		else if (pure == c.midiLearner.arm.getValue())
 		{
-			u::log::print("  >>> arm ch=%d (pure=0x%X)\n", c.id, pure);
+			G_DEBUG("   arm ch={} (pure=0x{:0X})", c.id, pure);
 			c::events::toggleArmChannel(c.id, Thread::MIDI);
 		}
 		else if (pure == c.midiLearner.solo.getValue())
 		{
-			u::log::print("  >>> solo ch=%d (pure=0x%X)\n", c.id, pure);
+			G_DEBUG("   solo ch={} (pure=0x{:0X})", c.id, pure);
 			c::events::toggleSoloChannel(c.id, Thread::MIDI);
 		}
 		else if (pure == c.midiLearner.volume.getValue())
 		{
 			float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME);
-			u::log::print("  >>> volume ch=%d (pure=0x%X, value=%d, float=%f)\n",
+			G_DEBUG("   volume ch={} (pure=0x{:0X}, value=%d, float=%f)",
 			    c.id, pure, midiEvent.getVelocity(), vf);
 			c::events::setChannelVolume(c.id, vf, Thread::MIDI);
 		}
 		else if (pure == c.midiLearner.pitch.getValue())
 		{
 			float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_PITCH);
-			u::log::print("  >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)\n",
+			G_DEBUG("   pitch ch={} (pure=0x{:0X}, value=%d, float=%f)",
 			    c.id, pure, midiEvent.getVelocity(), vf);
 			c::events::setChannelPitch(c.id, vf, Thread::MIDI);
 		}
 		else if (pure == c.midiLearner.readActions.getValue())
 		{
-			u::log::print("  >>> toggle read actions ch=%d (pure=0x%X)\n", c.id, pure);
+			G_DEBUG("   toggle read actions ch={} (pure=0x{:0X})", c.id, pure);
 			c::events::toggleReadActionsChannel(c.id, Thread::MIDI);
 		}
 
@@ -260,51 +259,51 @@ void MidiDispatcher::processMaster(const MidiEvent& midiEvent)
 	if (pure == midiIn.rewind)
 	{
 		c::events::rewindSequencer(Thread::MIDI);
-		u::log::print("  >>> rewind (master) (pure=0x%X)\n", pure);
+		G_DEBUG("   rewind (master) (pure=0x{:0X})", pure);
 	}
 	else if (pure == midiIn.startStop)
 	{
 		c::events::toggleSequencer(Thread::MIDI);
-		u::log::print("  >>> startStop (master) (pure=0x%X)\n", pure);
+		G_DEBUG("   startStop (master) (pure=0x{:0X})", pure);
 	}
 	else if (pure == midiIn.actionRec)
 	{
 		c::events::toggleActionRecording();
-		u::log::print("  >>> actionRec (master) (pure=0x%X)\n", pure);
+		G_DEBUG("   actionRec (master) (pure=0x{:0X})", pure);
 	}
 	else if (pure == midiIn.inputRec)
 	{
 		c::events::toggleInputRecording();
-		u::log::print("  >>> inputRec (master) (pure=0x%X)\n", pure);
+		G_DEBUG("   inputRec (master) (pure=0x{:0X})", pure);
 	}
 	else if (pure == midiIn.metronome)
 	{
 		c::events::toggleMetronome();
-		u::log::print("  >>> metronome (master) (pure=0x%X)\n", pure);
+		G_DEBUG("   metronome (master) (pure=0x{:0X})", pure);
 	}
 	else if (pure == midiIn.volumeIn)
 	{
 		float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME);
 		c::events::setMasterInVolume(vf, Thread::MIDI);
-		u::log::print("  >>> input volume (master) (pure=0x%X, value=%d, float=%f)\n",
+		G_DEBUG("   input volume (master) (pure=0x{:0X}, value={}, float={})",
 		    pure, midiEvent.getVelocity(), vf);
 	}
 	else if (pure == midiIn.volumeOut)
 	{
 		float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME);
 		c::events::setMasterOutVolume(vf, Thread::MIDI);
-		u::log::print("  >>> output volume (master) (pure=0x%X, value=%d, float=%f)\n",
+		G_DEBUG("   output volume (master) (pure=0x{:0X}, value={}, float={})",
 		    pure, midiEvent.getVelocity(), vf);
 	}
 	else if (pure == midiIn.beatDouble)
 	{
 		c::events::multiplyBeats();
-		u::log::print("  >>> sequencer x2 (master) (pure=0x%X)\n", pure);
+		G_DEBUG("   sequencer x2 (master) (pure=0x{:0X})", pure);
 	}
 	else if (pure == midiIn.beatHalf)
 	{
 		c::events::divideBeats();
-		u::log::print("  >>> sequencer /2 (master) (pure=0x%X)\n", pure);
+		G_DEBUG("   sequencer /2 (master) (pure=0x{:0X})", pure);
 	}
 }
 
