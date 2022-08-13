@@ -30,6 +30,7 @@
 #include "core/model/model.h"
 #include "core/waveFactory.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "utils/log.h"
 
 namespace giada::m
 {

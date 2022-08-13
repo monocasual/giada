@@ -31,6 +31,7 @@
 #include "core/kernelAudio.h"
 #include "core/kernelMidi.h"
 #include "core/model/model.h"
+#include "utils/log.h"
 
 namespace giada::m
 {

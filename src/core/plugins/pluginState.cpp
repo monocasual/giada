@@ -26,6 +26,7 @@
 
 #include "pluginState.h"
 #include "core/const.h"
+#include "utils/log.h"
 #include <cstddef>
 
 namespace giada::m

@@ -36,6 +36,15 @@
 #include <type_traits>
 #include <utility>
 
+#ifdef G_DEBUG_MODE
+#define G_DEBUG(x) std::cerr << __FILE__ << "::" << __func__ << "() - " << x << "\n";
+#else
+#define G_DEBUG(x) \
+	do             \
+	{              \
+	} while (0)
+#endif
+
 namespace giada::u::log
 {
 inline FILE* f;

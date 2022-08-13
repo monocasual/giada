@@ -32,6 +32,7 @@
 #include "core/types.h"
 #include "src/core/actions/actionRecorder.h"
 #include "src/core/actions/actions.h"
+#include "utils/log.h"
 
 namespace giada::m
 {

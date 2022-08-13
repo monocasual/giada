@@ -29,20 +29,6 @@
 
 #include "deps/rtaudio/RtAudio.h"
 #include <RtMidi.h>
-#include <cstdint>
-#include <iostream>
-
-/* -- debug ----------------------------------------------------------------- */
-#ifndef NDEBUG
-#define G_DEBUG_MODE
-// TODO - move G_DEBUG macro definition to u::log
-#define G_DEBUG(x) std::cerr << __FILE__ << "::" << __func__ << "() - " << x << "\n";
-#else
-#define G_DEBUG(x) \
-	do             \
-	{              \
-	} while (0)
-#endif
 
 /* -- environment ----------------------------------------------------------- */
 #if defined(_WIN32)
@@ -53,6 +39,10 @@
 #define G_OS_LINUX
 #elif defined(__FreeBSD__)
 #define G_OS_FREEBSD
+#endif
+
+#ifndef NDEBUG
+#define G_DEBUG_MODE
 #endif
 
 #ifndef BUILD_DATE
