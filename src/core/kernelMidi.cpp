@@ -28,7 +28,6 @@
 #include "core/const.h"
 #include "utils/log.h"
 #include <cassert>
-#include <fmt/core.h>
 #include <memory>
 
 namespace giada::m
@@ -141,7 +140,7 @@ void KernelMidi::send(uint32_t data)
 
 	m_midiOut->sendMessage(&msg);
 
-	G_DEBUG(fmt::format("Send MIDI msg=0x{:0X} ({:0X} {:0X} {:0X})", data, msg[0], msg[1], msg[2]));
+	G_DEBUG("Send MIDI msg=0x{:0X} ({:0X} {:0X} {:0X})", data, msg[0], msg[1], msg[2]);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -160,7 +159,7 @@ void KernelMidi::send(int b1, int b2, int b3)
 
 	m_midiOut->sendMessage(&msg);
 
-	G_DEBUG(fmt::format("Send MIDI msg=({:0X} {:0X} {:0X})", b1, b2, b3));
+	G_DEBUG("Send MIDI msg=({:0X} {:0X} {:0X})", b1, b2, b3);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -183,7 +182,7 @@ void KernelMidi::callback(std::vector<unsigned char>* msg)
 
 	if (msg->size() < 3)
 	{
-		G_DEBUG("Received unknown MIDI signal - bytes=" << msg->size());
+		G_DEBUG("Received unknown MIDI signal - bytes={}", msg->size());
 		return;
 	}
 

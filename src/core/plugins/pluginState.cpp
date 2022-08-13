@@ -42,7 +42,7 @@ PluginState::PluginState(const std::string& base64)
 {
 	bool res = m_data.fromBase64Encoding(base64);
 	if (!res)
-		G_DEBUG("Error while loading plug-in state!");
+		G_DEBUG("Error while loading plug-in state!", );
 }
 
 /* -------------------------------------------------------------------------- */

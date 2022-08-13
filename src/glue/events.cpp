@@ -83,7 +83,7 @@ void pushEvent_(m::EventDispatcher::Event e, Thread t)
 	}
 
 	if (!res)
-		G_DEBUG("[events] Queue full!\n");
+		G_DEBUG("[events] Queue full!", );
 }
 } // namespace
 

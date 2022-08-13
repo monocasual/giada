@@ -283,7 +283,7 @@ void Mixer::processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inB
 	{
 		m_signalCbFired = true;
 		onSignalTresholdReached();
-		G_DEBUG("Signal > threshold!");
+		G_DEBUG("Signal > threshold!", );
 	}
 
 	mixer.a_setPeakIn(peak);

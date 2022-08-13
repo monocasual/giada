@@ -69,12 +69,12 @@ void Recorder::prepareActionRec(RecTriggerMode mode)
 	{
 		startActionRec();
 		m_sequencer.setStatus(SeqStatus::RUNNING);
-		G_DEBUG("Start action rec, NORMAL mode");
+		G_DEBUG("Start action rec, NORMAL mode", );
 	}
 	else
 	{ // RecTriggerMode::SIGNAL
 		m_sequencer.setStatus(SeqStatus::WAITING);
-		G_DEBUG("Start action rec, SIGNAL mode (waiting for signal from Midi Dispatcher...)");
+		G_DEBUG("Start action rec, SIGNAL mode (waiting for signal from Midi Dispatcher...)", );
 	}
 }
 
@@ -121,12 +121,12 @@ bool Recorder::prepareInputRec(RecTriggerMode triggerMode, InputRecMode inputMod
 	{
 		startInputRec();
 		m_sequencer.setStatus(SeqStatus::RUNNING);
-		G_DEBUG("Start input rec, NORMAL mode");
+		G_DEBUG("Start input rec, NORMAL mode", );
 	}
 	else
 	{
 		m_sequencer.setStatus(SeqStatus::WAITING);
-		G_DEBUG("Start input rec, SIGNAL mode (waiting for signal from Mixer...)");
+		G_DEBUG("Start input rec, SIGNAL mode (waiting for signal from Mixer...)", );
 	}
 
 	return true;
@@ -146,7 +146,7 @@ void Recorder::stopInputRec(InputRecMode recMode, int sampleRate)
 	if (recMode == InputRecMode::RIGID)
 		recordedFrames = m_sequencer.getFramesInLoop();
 
-	G_DEBUG("Stop input rec, recordedFrames=" << recordedFrames);
+	G_DEBUG("Stop input rec, recordedFrames={}", recordedFrames);
 
 	/* If you stop the Input Recorder in SIGNAL mode before any actual 
 	recording: just clean up everything and return. */

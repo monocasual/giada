@@ -58,20 +58,20 @@ void JackSynchronizer::recvJackSync(const JackTransport::State& state)
 	{
 		if (jackStateCurr.frame != m_jackStatePrev.frame && jackStateCurr.frame == 0)
 		{
-			G_DEBUG("JackState received - rewind to frame 0");
+			G_DEBUG("JackState received - rewind to frame 0", );
 			onJackRewind();
 		}
 
 		// jackStateCurr.bpm == 0 if JACK doesn't send that info
 		if (jackStateCurr.bpm != m_jackStatePrev.bpm && jackStateCurr.bpm > 1.0f)
 		{
-			G_DEBUG("JackState received - bpm=" << jackStateCurr.bpm);
+			G_DEBUG("JackState received - bpm={}", jackStateCurr.bpm);
 			onJackChangeBpm(jackStateCurr.bpm);
 		}
 
 		if (jackStateCurr.running != m_jackStatePrev.running)
 		{
-			G_DEBUG("JackState received - running=" << jackStateCurr.running);
+			G_DEBUG("JackState received - running={}", jackStateCurr.running);
 			jackStateCurr.running ? onJackStart() : onJackStop();
 		}
 	}

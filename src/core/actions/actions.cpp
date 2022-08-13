@@ -102,12 +102,12 @@ void Actions::updateKeyFrames(std::function<Frame(Frame old)> f)
 			copy.frame  = newFrame;
 			temp[newFrame].push_back(copy);
 		}
-		G_DEBUG(oldFrame << " -> " << newFrame);
+		G_DEBUG("{} -> {}", oldFrame, newFrame);
 	}
 
 	updateMapPointers(temp);
 
-	model::DataLock lock  = m_model.lockData();
+	model::DataLock lock        = m_model.lockData();
 	m_model.getAllShared<Map>() = std::move(temp);
 }
 

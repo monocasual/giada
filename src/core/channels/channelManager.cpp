@@ -345,7 +345,7 @@ void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, 
 
 	std::unique_ptr<Wave> wave = onChannelRecorded(recordedFrames);
 
-	G_DEBUG("Created new Wave, size=" << wave->getBuffer().countFrames());
+	G_DEBUG("Created new Wave, size={}", wave->getBuffer().countFrames());
 
 	/* Copy up to wave.getSize() from the mixer's input buffer into wave's. */
 

@@ -32,16 +32,18 @@
 #include "core/const.h"
 #include "utils/fs.h"
 #include <cstdio>
+#include <fmt/core.h>
 #include <string>
 #include <type_traits>
 #include <utility>
 
 #ifdef G_DEBUG_MODE
-#define G_DEBUG(x) std::cerr << __FILE__ << "::" << __func__ << "() - " << x << "\n";
+#define G_DEBUG(f, ...) \
+	std::cerr << __FILE__ << "::" << __func__ << "() - " << fmt::format(f __VA_OPT__(, ) __VA_ARGS__) << "\n";
 #else
-#define G_DEBUG(x) \
-	do             \
-	{              \
+#define G_DEBUG(f, ...) \
+	do                  \
+	{                   \
 	} while (0)
 #endif
 
