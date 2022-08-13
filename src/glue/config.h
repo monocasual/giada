@@ -64,13 +64,13 @@ struct AudioData
 	void setOutputDevice(int index);
 	void setInputDevice(int index);
 
-	std::map<int, std::string>   apis;
-	std::vector<AudioDeviceData> outputDevices;
-	std::vector<AudioDeviceData> inputDevices;
+	std::map<RtAudio::Api, std::string> apis;
+	std::vector<AudioDeviceData>        outputDevices;
+	std::vector<AudioDeviceData>        inputDevices;
 
 	/* Selectable values. */
 
-	int             api;
+	RtAudio::Api    api;
 	AudioDeviceData outputDevice;
 	AudioDeviceData inputDevice;
 	int             bufferSize;

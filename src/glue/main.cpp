@@ -64,7 +64,7 @@ Timer::Timer(const m::model::Sequencer& c)
 , beats(c.beats)
 , bars(c.bars)
 , quantize(c.quantize)
-, isUsingJack(g_engine.kernelAudio.getAPI() == G_SYS_API_JACK)
+, isUsingJack(g_engine.kernelAudio.getAPI() == RtAudio::Api::UNIX_JACK)
 , isRecordingInput(g_engine.recorder.isRecordingInput())
 {
 }

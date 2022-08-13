@@ -187,7 +187,10 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	for (const auto& [key, value] : m_data.apis)
 		soundsys->addItem(value.c_str(), key);
 	soundsys->showItem(m_data.api);
-	soundsys->onChange = [this](ID id) { m_data.api = id; invalidate(); };
+	soundsys->onChange = [this](ID id) {
+		m_data.api = static_cast<RtAudio::Api>(id);
+		invalidate();
+	};
 
 	samplerate->onChange = [this](ID id) { m_data.sampleRate = id; };
 
@@ -238,7 +241,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	recTriggerLevel->setValue(u::string::fToString(m_data.recTriggerLevel, 1));
 	recTriggerLevel->onChange = [this](const std::string& s) { m_data.recTriggerLevel = std::stof(s); };
 
-	if (m_data.api == G_SYS_API_NONE)
+	if (m_data.api == RtAudio::Api::RTAUDIO_DUMMY)
 		deactivateAll();
 	else
 		fetch();
@@ -250,7 +253,7 @@ void geTabAudio::invalidate()
 {
 	/* If the user changes sound system (e.g. ALSA->JACK), deactivate all widgets. */
 
-	if (m_initialApi == m_data.api && m_initialApi != -1 && m_data.api != G_SYS_API_NONE)
+	if (m_initialApi == m_data.api && m_initialApi != -1 && m_data.api != RtAudio::Api::RTAUDIO_DUMMY)
 		activateAll();
 	else
 		deactivateAll();
@@ -268,7 +271,7 @@ void geTabAudio::fetch()
 	m_data.outputDevice.channelsCount = channelsOut->getChannelsCount();
 	m_data.outputDevice.channelsStart = channelsOut->getChannelsStart();
 
-	if (m_data.api == G_SYS_API_JACK)
+	if (m_data.api == RtAudio::Api::UNIX_JACK)
 		buffersize->deactivate();
 	else
 		buffersize->activate();

@@ -44,7 +44,6 @@ KernelAudio::KernelAudio()
 , m_realSampleRate(0)
 , m_channelsOutCount(0)
 , m_channelsInCount(0)
-, m_api(0)
 {
 }
 
@@ -54,46 +53,10 @@ int KernelAudio::openDevice(const Conf::Data& conf)
 {
 	assert(onAudioCallback != nullptr);
 
-	m_api = conf.soundSystem;
-	u::log::print("[KA] using system 0x%x\n", m_api);
+	u::log::print("[KA] using API %d\n", conf.soundSystem);
 
-#if defined(__linux__) || defined(__FreeBSD__)
-
-	if (m_api == G_SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
-		m_rtAudio = std::make_unique<RtAudio>(RtAudio::UNIX_JACK);
-	else if (m_api == G_SYS_API_ALSA && hasAPI(RtAudio::LINUX_ALSA))
-		m_rtAudio = std::make_unique<RtAudio>(RtAudio::LINUX_ALSA);
-	else if (m_api == G_SYS_API_PULSE && hasAPI(RtAudio::LINUX_PULSE))
-		m_rtAudio = std::make_unique<RtAudio>(RtAudio::LINUX_PULSE);
-
-#elif defined(__FreeBSD__)
-
-	if (m_api == G_SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
-		m_rtAudio = std::make_unique<RtAudio>(RtAudio::UNIX_JACK);
-	else if (m_api == G_SYS_API_PULSE && hasAPI(RtAudio::LINUX_PULSE))
-		m_rtAudio = std::make_unique<RtAudio>(RtAudio::LINUX_PULSE);
-
-#elif defined(_WIN32)
-
-	if (m_api == G_SYS_API_DS && hasAPI(RtAudio::WINDOWS_DS))
-		m_rtAudio = std::make_unique<RtAudio>(RtAudio::WINDOWS_DS);
-	else if (m_api == G_SYS_API_ASIO && hasAPI(RtAudio::WINDOWS_ASIO))
-		m_rtAudio = std::make_unique<RtAudio>(RtAudio::WINDOWS_ASIO);
-	else if (m_api == G_SYS_API_WASAPI && hasAPI(RtAudio::WINDOWS_WASAPI))
-		m_rtAudio = std::make_unique<RtAudio>(RtAudio::WINDOWS_WASAPI);
-
-#elif defined(__APPLE__)
-
-	if (m_api == G_SYS_API_CORE && hasAPI(RtAudio::MACOSX_CORE))
-		m_rtAudio = std::make_unique<RtAudio>(RtAudio::MACOSX_CORE);
-
-#endif
-
-	else
-	{
-		u::log::print("[KA] No API available, nothing to do!\n");
-		return 0;
-	}
+	m_api     = conf.soundSystem;
+	m_rtAudio = std::make_unique<RtAudio>(m_api);
 
 	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg) {
 		u::log::print("[KA] RtAudio error %d: %s\n", type, msg.c_str());
@@ -148,7 +111,7 @@ int KernelAudio::openDevice(const Conf::Data& conf)
 	/* If JACK, use its own sample rate, not the one coming from the conf
 	object. */
 
-	if (m_api == G_SYS_API_JACK)
+	if (m_api == RtAudio::Api::UNIX_JACK)
 	{
 		assert(m_devices.size() > 0);
 		assert(m_devices[0].sampleRates.size() > 0);
@@ -162,7 +125,7 @@ int KernelAudio::openDevice(const Conf::Data& conf)
 	m_callbackInfo = {
 	    /* kernelAudio      = */ this,
 	    /* ready            = */ true,
-	    /* withJack         = */ getAPI() == G_SYS_API_JACK,
+	    /* withJack         = */ getAPI() == RtAudio::Api::UNIX_JACK,
 	    /* outBuf           = */ nullptr, // filled later on in audio callback
 	    /* inBuf            = */ nullptr, // filled later on in audio callback
 	    /* bufferSize       = */ 0,       // filled later on in audio callback
@@ -279,7 +242,7 @@ bool KernelAudio::hasAPI(int API) const
 	return false;
 }
 
-int KernelAudio::getAPI() const { return m_api; }
+RtAudio::Api KernelAudio::getAPI() const { return m_api; }
 
 /* -------------------------------------------------------------------------- */
 

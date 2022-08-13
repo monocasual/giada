@@ -111,39 +111,21 @@ AudioData getAudioData()
 {
 	AudioData audioData;
 
-	audioData.apis[G_SYS_API_NONE] = "(none)";
-
-#if defined(G_OS_LINUX)
-
-	if (g_engine.kernelAudio.hasAPI(RtAudio::LINUX_ALSA))
-		audioData.apis[G_SYS_API_ALSA] = "ALSA";
-	if (g_engine.kernelAudio.hasAPI(RtAudio::UNIX_JACK))
-		audioData.apis[G_SYS_API_JACK] = "JACK";
-	if (g_engine.kernelAudio.hasAPI(RtAudio::LINUX_PULSE))
-		audioData.apis[G_SYS_API_PULSE] = "PulseAudio";
-
-#elif defined(G_OS_FREEBSD)
-
-	if (g_engine.kernelAudio.hasAPI(RtAudio::UNIX_JACK))
-		audioData.apis[G_SYS_API_JACK] = "JACK";
-	if (g_engine.kernelAudio.hasAPI(RtAudio::LINUX_PULSE))
-		audioData.apis[G_SYS_API_PULSE] = "PulseAudio";
-
-#elif defined(G_OS_WINDOWS)
-
-	if (g_engine.kernelAudio.hasAPI(RtAudio::WINDOWS_DS))
-		audioData.apis[G_SYS_API_DS] = "DirectSound";
-	if (g_engine.kernelAudio.hasAPI(RtAudio::WINDOWS_ASIO))
-		audioData.apis[G_SYS_API_ASIO] = "ASIO";
-	if (g_engine.kernelAudio.hasAPI(RtAudio::WINDOWS_WASAPI))
-		audioData.apis[G_SYS_API_WASAPI] = "WASAPI";
-
-#elif defined(G_OS_MAC)
-
-	if (g_engine.kernelAudio.hasAPI(RtAudio::MACOSX_CORE))
-		audioData.apis[G_SYS_API_CORE] = "CoreAudio";
-
-#endif
+	audioData.apis[RtAudio::Api::RTAUDIO_DUMMY] = "(Dummy)";
+	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::LINUX_ALSA))
+		audioData.apis[RtAudio::Api::LINUX_ALSA] = "ALSA";
+	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::UNIX_JACK))
+		audioData.apis[RtAudio::Api::UNIX_JACK] = "JACK";
+	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::LINUX_PULSE))
+		audioData.apis[RtAudio::Api::LINUX_PULSE] = "PulseAudio";
+	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::WINDOWS_DS))
+		audioData.apis[RtAudio::Api::WINDOWS_DS] = "DirectSound";
+	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::WINDOWS_ASIO))
+		audioData.apis[RtAudio::Api::WINDOWS_ASIO] = "ASIO";
+	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::WINDOWS_WASAPI))
+		audioData.apis[RtAudio::Api::WINDOWS_WASAPI] = "WASAPI";
+	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::MACOSX_CORE))
+		audioData.apis[RtAudio::Api::MACOSX_CORE] = "CoreAudio";
 
 	std::vector<m::KernelAudio::Device> devices = g_engine.kernelAudio.getDevices();
 

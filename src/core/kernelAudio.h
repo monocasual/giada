@@ -84,7 +84,7 @@ public:
 	int                        getChannelsOutCount() const;
 	int                        getChannelsInCount() const;
 	bool                       hasAPI(int API) const;
-	int                        getAPI() const;
+	RtAudio::Api               getAPI() const;
 	Device                     getDevice(const char* name) const;
 	const std::vector<Device>& getDevices() const;
 #ifdef WITH_AUDIO_JACK
@@ -115,7 +115,7 @@ private:
 	int                      m_realSampleRate; // Sample rate might differ if JACK in use
 	int                      m_channelsOutCount;
 	int                      m_channelsInCount;
-	int                      m_api;
+	RtAudio::Api             m_api;
 };
 } // namespace giada::m
 

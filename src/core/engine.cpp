@@ -184,7 +184,7 @@ void Engine::init()
 		return;
 
 #ifdef WITH_AUDIO_JACK
-	if (kernelAudio.getAPI() == G_SYS_API_JACK)
+	if (kernelAudio.getAPI() == RtAudio::Api::UNIX_JACK)
 		jackTransport.setHandle(kernelAudio.getJackHandle());
 #endif
 
