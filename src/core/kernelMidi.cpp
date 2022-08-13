@@ -28,6 +28,7 @@
 #include "core/const.h"
 #include "utils/log.h"
 #include <cassert>
+#include <fmt/core.h>
 #include <memory>
 
 namespace giada::m
@@ -139,7 +140,8 @@ void KernelMidi::send(uint32_t data)
 	std::vector<unsigned char> msg = split_(data);
 
 	m_midiOut->sendMessage(&msg);
-	u::log::print("[KM::send] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
+
+	G_DEBUG(fmt::format("Send MIDI msg=0x{:0X} ({:0X} {:0X} {:0X})", data, msg[0], msg[1], msg[2]));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -157,7 +159,8 @@ void KernelMidi::send(int b1, int b2, int b3)
 		msg.push_back(b3);
 
 	m_midiOut->sendMessage(&msg);
-	u::log::print("[KM::send] send msg=(%X %X %X)\n", b1, b2, b3);
+
+	G_DEBUG(fmt::format("Send MIDI msg=({:0X} {:0X} {:0X})", b1, b2, b3));
 }
 
 /* -------------------------------------------------------------------------- */
