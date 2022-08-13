@@ -33,6 +33,12 @@
 #include <cassert>
 #include <cmath>
 
+/* Windows fix */
+#ifdef _WIN32
+#undef IN
+#undef OUT
+#endif
+
 namespace giada::m::wfx
 {
 namespace
