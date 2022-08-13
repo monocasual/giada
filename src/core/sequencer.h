@@ -160,11 +160,6 @@ public:
 
 	void recomputeFrames(int sampleRate);
 
-	/* quantizer
-	Used by the sequencer itself and each sample channel. */
-
-	Quantizer quantizer;
-
 	std::function<void(SeqStatus)>         onAboutStart;
 	std::function<void()>                  onAboutStop;
 	std::function<void(float, float, int)> onBpmChange;
@@ -202,6 +197,7 @@ private:
 	EventBuffer m_eventBuffer;
 
 	Metronome m_metronome;
+	Quantizer m_quantizer;
 
 	/* m_quantizerStep
     Tells how many frames to wait to perform a quantized action. */

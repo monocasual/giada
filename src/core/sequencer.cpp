@@ -54,7 +54,7 @@ Sequencer::Sequencer(model::Model& m, MidiSynchronizer& s, JackTransport& j)
 , m_jackTransport(j)
 , m_quantizerStep(1)
 {
-	quantizer.schedule(Q_ACTION_REWIND, [this](Frame delta) { rewindQ(delta); });
+	m_quantizer.schedule(Q_ACTION_REWIND, [this](Frame delta) { rewindQ(delta); });
 }
 /* -------------------------------------------------------------------------- */
 
@@ -210,7 +210,7 @@ const Sequencer::EventBuffer& Sequencer::advance(Frame bufferSize, const ActionR
 
 	sequencer.a_setCurrentFrame(nextFrame);
 	sequencer.a_setCurrentBeat(nextBeat);
-	quantizer.advance(Range<Frame>(start, end), getQuantizerStep());
+	m_quantizer.advance(Range<Frame>(start, end), getQuantizerStep());
 
 	return m_eventBuffer;
 }
@@ -261,7 +261,7 @@ void Sequencer::rawStop()
 void Sequencer::rawRewind()
 {
 	if (canQuantize())
-		quantizer.trigger(Q_ACTION_REWIND);
+		m_quantizer.trigger(Q_ACTION_REWIND);
 	else
 		rewindQ(/*delta=*/0);
 }
