@@ -29,6 +29,7 @@
 
 #include "core/kernelAudio.h"
 #include "core/types.h"
+#include <RtMidi.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -81,19 +82,19 @@ struct AudioData
 
 struct MidiData
 {
-	std::map<int, std::string> apis;
-	std::map<int, std::string> syncModes;
-	std::vector<std::string>   midiMaps;
-	std::vector<std::string>   outPorts;
-	std::vector<std::string>   inPorts;
+	std::map<RtMidi::Api, std::string> apis;
+	std::map<int, std::string>         syncModes;
+	std::vector<std::string>           midiMaps;
+	std::vector<std::string>           outPorts;
+	std::vector<std::string>           inPorts;
 
 	/* Selectable values. */
 
-	int api;
-	int syncMode;
-	int midiMap;
-	int outPort;
-	int inPort;
+	RtMidi::Api api;
+	int         syncMode;
+	int         midiMap;
+	int         outPort;
+	int         inPort;
 };
 
 struct PluginData

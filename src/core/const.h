@@ -27,6 +27,7 @@
 #ifndef G_CONST_H
 #define G_CONST_H
 
+#include <RtMidi.h>
 #include <cstdint>
 #include <iostream>
 
@@ -128,12 +129,6 @@ constexpr int G_SYS_API_CORE   = 5;
 constexpr int G_SYS_API_PULSE  = 6;
 constexpr int G_SYS_API_WASAPI = 7;
 
-/* -- kernel midi ----------------------------------------------------------- */
-constexpr int G_MIDI_API_JACK = 1;
-constexpr int G_MIDI_API_ALSA = 2;
-constexpr int G_MIDI_API_MM   = 3;
-constexpr int G_MIDI_API_CORE = 4;
-
 /* -- default system -------------------------------------------------------- */
 #if defined(G_OS_LINUX)
 constexpr int G_DEFAULT_SOUNDSYS = G_SYS_API_NONE;
@@ -145,31 +140,31 @@ constexpr int G_DEFAULT_SOUNDSYS = G_SYS_API_DS;
 constexpr int G_DEFAULT_SOUNDSYS = G_SYS_API_CORE;
 #endif
 
-constexpr int   G_DEFAULT_SOUNDDEV_OUT        = -1; // disabled by default
-constexpr int   G_DEFAULT_SOUNDDEV_IN         = -1; // disabled by default
-constexpr int   G_DEFAULT_MIDI_SYSTEM         = 0;
-constexpr int   G_DEFAULT_MIDI_PORT_IN        = -1;
-constexpr int   G_DEFAULT_MIDI_PORT_OUT       = -1;
-constexpr int   G_DEFAULT_SAMPLERATE          = 44100;
-constexpr int   G_DEFAULT_BUFSIZE             = 1024;
-constexpr int   G_DEFAULT_BIT_DEPTH           = 32;
-constexpr float G_DEFAULT_VOL                 = 1.0f;
-constexpr float G_DEFAULT_PAN                 = 0.5f;
-constexpr float G_DEFAULT_PITCH               = 1.0f;
-constexpr float G_DEFAULT_BPM                 = 120.0f;
-constexpr int   G_DEFAULT_BEATS               = 4;
-constexpr int   G_DEFAULT_BARS                = 1;
-constexpr int   G_DEFAULT_QUANTIZE            = 0;     // quantizer off
-constexpr float G_DEFAULT_FADEOUT_STEP        = 0.01f; // micro-fadeout speed
-constexpr int   G_DEFAULT_COLUMN_WIDTH        = 380;
-constexpr auto  G_DEFAULT_PATCH_NAME          = "(default patch)";
-constexpr int   G_DEFAULT_ACTION_SIZE         = 8192; // frames
-constexpr int   G_DEFAULT_ZOOM_RATIO          = 128;
-constexpr float G_DEFAULT_REC_TRIGGER_LEVEL   = -10.0f;
-constexpr int   G_DEFAULT_SUBWINDOW_W         = 640;
-constexpr int   G_DEFAULT_SUBWINDOW_H         = 480;
-constexpr int   G_DEFAULT_VST_MIDIBUFFER_SIZE = 1024; // TODO - not 100% sure about this size
-constexpr float G_DEFAULT_UI_SCALING          = G_MIN_UI_SCALING;
+constexpr int         G_DEFAULT_SOUNDDEV_OUT        = -1; // disabled by default
+constexpr int         G_DEFAULT_SOUNDDEV_IN         = -1; // disabled by default
+constexpr RtMidi::Api G_DEFAULT_MIDI_SYSTEM         = RtMidi::Api::RTMIDI_DUMMY;
+constexpr int         G_DEFAULT_MIDI_PORT_IN        = -1;
+constexpr int         G_DEFAULT_MIDI_PORT_OUT       = -1;
+constexpr int         G_DEFAULT_SAMPLERATE          = 44100;
+constexpr int         G_DEFAULT_BUFSIZE             = 1024;
+constexpr int         G_DEFAULT_BIT_DEPTH           = 32;
+constexpr float       G_DEFAULT_VOL                 = 1.0f;
+constexpr float       G_DEFAULT_PAN                 = 0.5f;
+constexpr float       G_DEFAULT_PITCH               = 1.0f;
+constexpr float       G_DEFAULT_BPM                 = 120.0f;
+constexpr int         G_DEFAULT_BEATS               = 4;
+constexpr int         G_DEFAULT_BARS                = 1;
+constexpr int         G_DEFAULT_QUANTIZE            = 0;     // quantizer off
+constexpr float       G_DEFAULT_FADEOUT_STEP        = 0.01f; // micro-fadeout speed
+constexpr int         G_DEFAULT_COLUMN_WIDTH        = 380;
+constexpr auto        G_DEFAULT_PATCH_NAME          = "(default patch)";
+constexpr int         G_DEFAULT_ACTION_SIZE         = 8192; // frames
+constexpr int         G_DEFAULT_ZOOM_RATIO          = 128;
+constexpr float       G_DEFAULT_REC_TRIGGER_LEVEL   = -10.0f;
+constexpr int         G_DEFAULT_SUBWINDOW_W         = 640;
+constexpr int         G_DEFAULT_SUBWINDOW_H         = 480;
+constexpr int         G_DEFAULT_VST_MIDIBUFFER_SIZE = 1024; // TODO - not 100% sure about this size
+constexpr float       G_DEFAULT_UI_SCALING          = G_MIN_UI_SCALING;
 
 /* -- responses and return codes -------------------------------------------- */
 constexpr int G_RES_ERR_PROCESSING    = -6;

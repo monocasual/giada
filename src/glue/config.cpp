@@ -177,29 +177,15 @@ MidiData getMidiData()
 {
 	MidiData midiData;
 
-#if defined(G_OS_LINUX)
-
-	if (g_engine.kernelMidi.hasAPI(RtMidi::LINUX_ALSA))
-		midiData.apis[G_MIDI_API_ALSA] = "ALSA";
-	if (g_engine.kernelMidi.hasAPI(RtMidi::UNIX_JACK))
-		midiData.apis[G_MIDI_API_JACK] = "JACK";
-
-#elif defined(G_OS_FREEBSD)
-
-	if (g_engine.kernelMidi.hasAPI(RtMidi::UNIX_JACK))
-		midiData.apis[G_MIDI_API_JACK] = "JACK";
-
-#elif defined(G_OS_WINDOWS)
-
-	if (g_engine.kernelMidi.hasAPI(RtMidi::WINDOWS_MM))
-		midiData.apis[G_MIDI_API_MM] = "Multimedia MIDI";
-
-#elif defined(G_OS_MAC)
-
-	if (g_engine.kernelMidi.hasAPI(RtMidi::MACOSX_CORE))
-		midiData.apis[G_MIDI_API_CORE] = "OSX Core MIDI";
-
-#endif
+	midiData.apis[RtMidi::Api::RTMIDI_DUMMY] = "(Dummy)";
+	if (g_engine.kernelMidi.hasAPI(RtMidi::Api::LINUX_ALSA))
+		midiData.apis[RtMidi::Api::LINUX_ALSA] = "ALSA";
+	if (g_engine.kernelMidi.hasAPI(RtMidi::Api::UNIX_JACK))
+		midiData.apis[RtMidi::Api::UNIX_JACK] = "JACK";
+	if (g_engine.kernelMidi.hasAPI(RtMidi::Api::WINDOWS_MM))
+		midiData.apis[RtMidi::Api::WINDOWS_MM] = "Multimedia MIDI";
+	if (g_engine.kernelMidi.hasAPI(RtMidi::Api::MACOSX_CORE))
+		midiData.apis[RtMidi::Api::MACOSX_CORE] = "OSX Core MIDI";
 
 	midiData.syncModes[G_MIDI_SYNC_NONE]    = "(disabled)";
 	midiData.syncModes[G_MIDI_SYNC_CLOCK_M] = "MIDI Clock (master)";

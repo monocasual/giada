@@ -64,7 +64,7 @@ public:
 		bool        limitOutput      = false;
 		int         rsmpQuality      = 0;
 
-		int         midiSystem  = 0;
+		RtMidi::Api midiSystem  = G_DEFAULT_MIDI_SYSTEM;
 		int         midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
 		int         midiPortIn  = G_DEFAULT_MIDI_PORT_IN;
 		std::string midiMapPath = "";

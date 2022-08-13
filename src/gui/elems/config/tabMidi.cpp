@@ -92,7 +92,10 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 	for (const auto& [key, value] : m_data.apis)
 		system->addItem(value.c_str(), key);
 	system->showItem(m_data.api);
-	system->onChange = [this](ID id) { m_data.api = id; invalidate(); };
+	system->onChange = [this](ID id) {
+		m_data.api = static_cast<RtMidi::Api>(id);
+		invalidate();
+	};
 
 	portOut->showItem(m_data.outPort);
 	portOut->onChange = [this](ID id) { m_data.outPort = id; };
