@@ -253,9 +253,9 @@ void KernelAudio::logCompiledAPIs()
 
 	u::log::print("[KA] Compiled RtAudio APIs: %d\n", APIs.size());
 
-	for (const RtAudio::Api& m_api : APIs)
+	for (const RtAudio::Api& api : APIs)
 	{
-		switch (m_api)
+		switch (api)
 		{
 		case RtAudio::Api::LINUX_ALSA:
 			u::log::print("  ALSA\n");
