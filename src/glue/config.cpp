@@ -169,9 +169,8 @@ MidiData getMidiData()
 	if (g_engine.kernelMidi.hasAPI(RtMidi::Api::MACOSX_CORE))
 		midiData.apis[RtMidi::Api::MACOSX_CORE] = "OSX Core MIDI";
 
-	midiData.syncModes[G_MIDI_SYNC_NONE]    = "(disabled)";
-	midiData.syncModes[G_MIDI_SYNC_CLOCK_M] = "MIDI Clock (master)";
-	midiData.syncModes[G_MIDI_SYNC_MTC_M]   = "MTC (master)";
+	midiData.syncModes[G_MIDI_SYNC_NONE]         = "(disabled)";
+	midiData.syncModes[G_MIDI_SYNC_CLOCK_MASTER] = "MIDI Clock (master)";
 
 	midiData.midiMaps = g_engine.midiMapper.getMapFilesFound();
 	midiData.midiMap  = u::vector::indexOf(midiData.midiMaps, g_engine.conf.data.midiMapPath);

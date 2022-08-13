@@ -215,24 +215,11 @@ it drives knobs, volume, faders and such. */
 constexpr uint32_t G_MIDI_CONTROLLER    = static_cast<uint32_t>(0xB0 << 24);
 constexpr uint32_t G_MIDI_ALL_NOTES_OFF = (G_MIDI_CONTROLLER) | (0x7B << 16);
 
-/* system common / real-time messages. Single bytes */
+/* MIDI sync constants */
 
-constexpr int MIDI_SYSEX        = 0xF0;
-constexpr int MIDI_MTC_QUARTER  = 0xF1;
-constexpr int MIDI_POSITION_PTR = 0xF2;
-constexpr int MIDI_CLOCK        = 0xF8;
-constexpr int MIDI_START        = 0xFA;
-constexpr int MIDI_CONTINUE     = 0xFB;
-constexpr int MIDI_STOP         = 0xFC;
-constexpr int MIDI_EOX          = 0xF7; // end of sysex
-
-/* midi sync constants */
-
-constexpr int G_MIDI_SYNC_NONE    = 0;
-constexpr int G_MIDI_SYNC_CLOCK_M = 1; // master
-constexpr int G_MIDI_SYNC_CLOCK_S = 2; // slave
-constexpr int G_MIDI_SYNC_MTC_M   = 3; // master
-constexpr int G_MIDI_SYNC_MTC_S   = 4; // slave
+constexpr int G_MIDI_SYNC_NONE         = 0;
+constexpr int G_MIDI_SYNC_CLOCK_MASTER = 1;
+constexpr int G_MIDI_SYNC_CLOCK_SLAVE  = 2;
 
 /* JSON patch keys */
 

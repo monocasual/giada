@@ -211,6 +211,7 @@ const Sequencer::EventBuffer& Sequencer::advance(Frame bufferSize, const ActionR
 	sequencer.a_setCurrentFrame(nextFrame);
 	sequencer.a_setCurrentBeat(nextBeat);
 	m_quantizer.advance(Range<Frame>(start, end), getQuantizerStep());
+	m_midiSynchronizer.advance(geompp::Range<Frame>(start, end), sequencer.framesInBeat);
 
 	return m_eventBuffer;
 }
@@ -372,13 +373,13 @@ void Sequencer::setStatus(SeqStatus s)
 	{
 	case SeqStatus::WAITING:
 		rewind();
-		m_midiSynchronizer.sendMIDIrewind();
+		m_midiSynchronizer.sendRewind();
 		break;
 	case SeqStatus::STOPPED:
-		m_midiSynchronizer.sendMIDIstop();
+		m_midiSynchronizer.sendStop();
 		break;
 	case SeqStatus::RUNNING:
-		m_midiSynchronizer.sendMIDIstart();
+		m_midiSynchronizer.sendStart();
 		break;
 	default:
 		break;

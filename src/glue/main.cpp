@@ -216,7 +216,7 @@ void clearAllSamples()
 		return;
 	g_ui.closeSubWindow(WID_SAMPLE_EDITOR);
 	g_engine.sequencer.setStatus(SeqStatus::STOPPED);
-	g_engine.midiSynchronizer.sendMIDIstop();
+	g_engine.midiSynchronizer.sendStop();
 	g_engine.channelManager.freeAllSampleChannels();
 	g_engine.actionRecorder.clearAllActions();
 }

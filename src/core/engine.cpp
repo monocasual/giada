@@ -223,7 +223,6 @@ void Engine::reset()
 	model.reset();
 	mixer.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()), kernelAudio.getBufferSize());
 	channelManager.reset(kernelAudio.getBufferSize());
-	midiSynchronizer.reset();
 	sequencer.reset(kernelAudio.getSampleRate());
 	actionRecorder.reset();
 	pluginHost.reset(kernelAudio.getBufferSize());

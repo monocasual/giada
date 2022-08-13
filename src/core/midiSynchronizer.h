@@ -29,6 +29,7 @@
 
 #include "core/conf.h"
 #include "core/types.h"
+#include "deps/geompp/src/range.hpp"
 
 namespace giada::m::model
 {
@@ -43,33 +44,20 @@ class MidiSynchronizer final
 public:
 	MidiSynchronizer(const Conf::Data&, KernelMidi&);
 
-	/* reset
-	Brings everything back to the initial state. */
+	/* advance
+    Generates MIDI sync output data when needed. Call this on each audio block. */
 
-	void reset();
+	void advance(geompp::Range<Frame>, int framesInBeat);
 
-	/* sendMIDIsync
-    Generates MIDI sync output data. */
-
-	void sendMIDIsync(const model::Sequencer& clock);
-
-	/* sendMIDIrewind
-    Rewinds timecode to beat 0 and also send a MTC full frame to cue the slave. */
-
-	void sendMIDIrewind();
-
-	void sendMIDIstart();
-	void sendMIDIstop();
+	void sendRewind();
+	void sendStart();
+	void sendStop();
 
 private:
-	/* midiTC*
-    MIDI timecode variables. */
-
-	int m_midiTCrate    = 0; // Send MTC data every m_midiTCrate frames
-	int m_midiTCframes  = 0;
-	int m_midiTCseconds = 0;
-	int m_midiTCminutes = 0;
-	int m_midiTChours   = 0;
+	static constexpr int MIDI_POSITION_PTR = 0xF2;
+	static constexpr int MIDI_CLOCK        = 0xF8;
+	static constexpr int MIDI_START        = 0xFA;
+	static constexpr int MIDI_STOP         = 0xFC;
 
 	KernelMidi&       m_kernelMidi;
 	const Conf::Data& m_conf;
