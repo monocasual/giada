@@ -65,12 +65,12 @@ public:
 	/* MidiEvent (2)
 	Creates a MIDI event from raw data. */
 
-	MidiEvent(uint32_t raw, int delta = 0);
+	MidiEvent(uint32_t raw);
 
 	/* MidiEvent (3)
 	Creates a MIDI event from three separate bytes. */
 
-	MidiEvent(int byte1, int byte2, int byte3, int delta = 0);
+	MidiEvent(uint8_t byte1, uint8_t byte2, uint8_t byte3);
 
 	Type  getType() const;
 	int   getStatus() const;

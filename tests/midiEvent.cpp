@@ -18,18 +18,4 @@ TEST_CASE("MidiEvent")
 		REQUIRE(e.getNote() == 44);
 		REQUIRE(e.getVelocity() == 80);
 	}
-
-	SECTION("Test Channel message with float velocity")
-	{
-		MidiEvent e(0.5f, 0);
-
-		REQUIRE(e.getRaw() == 0xB0000000);
-		REQUIRE(e.getRawNoVelocity() == 0xB0000000);
-		REQUIRE(e.getType() == MidiEvent::Type::CHANNEL);
-		REQUIRE(e.getStatus() == 0xB0);
-		REQUIRE(e.getChannel() == 0);
-		REQUIRE(e.getNote() == 0);
-		REQUIRE(e.getVelocity() == 0);
-		REQUIRE(e.getVelocityFloat() == 0.5f);
-	}
 }

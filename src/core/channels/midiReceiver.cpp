@@ -83,7 +83,9 @@ void MidiReceiver::render(ChannelShared& shared, const std::vector<Plugin*>& plu
 
 void MidiReceiver::sendToPlugins(ChannelShared::MidiQueue& midiQueue, const MidiEvent& e, Frame localFrame) const
 {
-	midiQueue.push(MidiEvent(e.getRaw(), localFrame));
+	MidiEvent eWithDelta(e);
+	eWithDelta.setDelta(localFrame);
+	midiQueue.push(eWithDelta);
 }
 
 /* -------------------------------------------------------------------------- */

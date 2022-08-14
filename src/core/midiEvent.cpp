@@ -40,18 +40,17 @@ MidiEvent::MidiEvent()
 
 /* -------------------------------------------------------------------------- */
 
-MidiEvent::MidiEvent(uint32_t raw, int delta)
+MidiEvent::MidiEvent(uint32_t raw)
 : m_raw(raw)
-, m_delta(delta)
+, m_delta(0)
 , m_velocity(0.0f)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-/* static_cast to avoid ambiguity with MidiEvent(float). */
-MidiEvent::MidiEvent(int byte1, int byte2, int byte3, int delta)
-: MidiEvent(static_cast<uint32_t>((byte1 << 24) | (byte2 << 16) | (byte3 << 8) | (0x00)), delta)
+MidiEvent::MidiEvent(uint8_t byte1, uint8_t byte2, uint8_t byte3)
+: MidiEvent((byte1 << 24) | (byte2 << 16) | (byte3 << 8) | 0x00)
 {
 }
 
