@@ -46,13 +46,6 @@ std::vector<unsigned char> split_(uint32_t iValue)
 	    static_cast<unsigned char>((iValue >> 16) & 0xFF),
 	    static_cast<unsigned char>((iValue >> 8) & 0xFF)};
 }
-
-/* -------------------------------------------------------------------------- */
-
-uint32_t join_(int b1, int b2, int b3)
-{
-	return (b1 << 24) | (b2 << 16) | (b3 << 8) | (0x00);
-}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -180,13 +173,12 @@ void KernelMidi::callback(std::vector<unsigned char>* msg)
 {
 	assert(onMidiReceived != nullptr);
 
-	if (msg->size() < 3)
-	{
-		G_DEBUG("Received unknown MIDI signal - bytes={}", msg->size());
-		return;
-	}
+	const unsigned char b1  = (*msg)[0];
+	const unsigned char b2  = msg->size() > 1 ? (*msg)[1] : 0;
+	const unsigned char b3  = msg->size() > 2 ? (*msg)[2] : 0;
+	const uint32_t      raw = (b1 << 24) | (b2 << 16) | (b3 << 8) | (0x00);
 
-	onMidiReceived(join_(msg->at(0), msg->at(1), msg->at(2)));
+	onMidiReceived(raw);
 }
 
 /* -------------------------------------------------------------------------- */
