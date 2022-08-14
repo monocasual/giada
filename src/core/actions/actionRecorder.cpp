@@ -261,8 +261,8 @@ const Action* ActionRecorder::getActionPtrById(int id, const Actions::Map& sourc
 
 bool ActionRecorder::areComposite(const Action& a1, const Action& a2) const
 {
-	return a1.event.getStatus() == MidiEvent::NOTE_ON &&
-	       a2.event.getStatus() == MidiEvent::NOTE_OFF &&
+	return a1.event.getStatus() == MidiEvent::CHANNEL_NOTE_ON &&
+	       a2.event.getStatus() == MidiEvent::CHANNEL_NOTE_OFF &&
 	       a1.event.getNote() == a2.event.getNote() &&
 	       a1.channelId == a2.channelId;
 }

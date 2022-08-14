@@ -21,8 +21,8 @@ TEST_CASE("ActionRecorder")
 		const int       ch = 0;
 		const Frame     f1 = 10;
 		const Frame     f2 = 70;
-		const MidiEvent e1 = MidiEvent(MidiEvent::NOTE_ON, 0x00, 0x00);
-		const MidiEvent e2 = MidiEvent(MidiEvent::NOTE_OFF, 0x00, 0x00);
+		const MidiEvent e1 = MidiEvent(MidiEvent::CHANNEL_NOTE_ON, 0x00, 0x00);
+		const MidiEvent e2 = MidiEvent(MidiEvent::CHANNEL_NOTE_OFF, 0x00, 0x00);
 
 		const Action a1 = ar.rec(ch, f1, e1);
 		const Action a2 = ar.rec(ch, f2, e2);
@@ -40,8 +40,8 @@ TEST_CASE("ActionRecorder")
 			const int       ch = 1;
 			const Frame     f1 = 100;
 			const Frame     f2 = 200;
-			const MidiEvent e1 = MidiEvent(MidiEvent::NOTE_ON, 0x00, 0x00);
-			const MidiEvent e2 = MidiEvent(MidiEvent::NOTE_OFF, 0x00, 0x00);
+			const MidiEvent e1 = MidiEvent(MidiEvent::CHANNEL_NOTE_ON, 0x00, 0x00);
+			const MidiEvent e2 = MidiEvent(MidiEvent::CHANNEL_NOTE_OFF, 0x00, 0x00);
 
 			ar.rec(ch, f1, e1);
 			ar.rec(ch, f2, e2);
@@ -54,8 +54,8 @@ TEST_CASE("ActionRecorder")
 
 		SECTION("Test clear actions by type")
 		{
-			ar.clearActions(/*channel=*/0, MidiEvent::NOTE_ON);
-			ar.clearActions(/*channel=*/0, MidiEvent::NOTE_OFF);
+			ar.clearActions(/*channel=*/0, MidiEvent::CHANNEL_NOTE_ON);
+			ar.clearActions(/*channel=*/0, MidiEvent::CHANNEL_NOTE_OFF);
 
 			REQUIRE(ar.hasActions(/*channel=*/0) == false);
 		}

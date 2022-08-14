@@ -106,7 +106,7 @@ void geEnvelopeEditor::rebuild(c::actionEditor::Data& d)
 
 	for (const m::Action& a : m_data->actions)
 	{
-		if (a.event.getStatus() != m::MidiEvent::ENVELOPE)
+		if (a.event.getStatus() != m::MidiEvent::CHANNEL_CC)
 			continue;
 		add(new geEnvelopePoint(frameToX(a.frame), valueToY(a.event.getVelocity()), a));
 	}

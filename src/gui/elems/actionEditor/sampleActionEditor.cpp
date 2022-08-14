@@ -65,7 +65,7 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 
 	for (const m::Action& a1 : m_data->actions)
 	{
-		if (a1.event.getStatus() == m::MidiEvent::ENVELOPE || isNoteOffSinglePress(a1))
+		if (a1.event.getStatus() == m::MidiEvent::CHANNEL_CC || isNoteOffSinglePress(a1))
 			continue;
 
 		const m::Action& a2 = a1.next != nullptr ? *a1.next : m::Action{};
@@ -207,6 +207,6 @@ void geSampleActionEditor::onRefreshAction()
 bool geSampleActionEditor::isNoteOffSinglePress(const m::Action& a)
 {
 	return m_data->sample->channelMode == SamplePlayerMode::SINGLE_PRESS &&
-	       a.event.getStatus() == m::MidiEvent::NOTE_OFF;
+	       a.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF;
 }
 } // namespace giada::v

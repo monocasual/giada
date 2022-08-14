@@ -29,25 +29,21 @@
 #include "utils/math.h"
 #include <cassert>
 
-namespace giada
+namespace giada::m
 {
-namespace m
+MidiEvent::MidiEvent()
+: m_raw(0x0)
+, m_delta(0)
+, m_velocity(0.0f)
 {
-namespace
-{
-constexpr int FLOAT_FACTOR = 10000;
-} // namespace
+}
 
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 MidiEvent::MidiEvent(uint32_t raw, int delta)
-: m_status((raw & 0xF0000000) >> 24)
-, m_channel((raw & 0x0F000000) >> 24)
-, m_note((raw & 0x00FF0000) >> 16)
-, m_velocity((raw & 0x0000FF00) >> 8)
+: m_raw(raw)
 , m_delta(delta)
+, m_velocity(0.0f)
 {
 }
 
@@ -62,9 +58,9 @@ MidiEvent::MidiEvent(int byte1, int byte2, int byte3, int delta)
 /* -------------------------------------------------------------------------- */
 
 MidiEvent::MidiEvent(float v, int delta)
-: MidiEvent(ENVELOPE, 0, 0, delta)
+: MidiEvent(CHANNEL_CC, 0, 0, delta)
 {
-	m_velocity = static_cast<int>(v * FLOAT_FACTOR);
+	m_velocity = v;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -79,53 +75,68 @@ void MidiEvent::setDelta(int d)
 void MidiEvent::setChannel(int c)
 {
 	assert(c >= 0 && c < G_MAX_MIDI_CHANS);
-	m_channel = c;
+	m_raw |= c << 24;
 }
 
 void MidiEvent::setVelocity(int v)
 {
 	assert(v >= 0 && v <= G_MAX_VELOCITY);
-	m_velocity = v;
+	m_raw |= v << 8;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void MidiEvent::fixVelocityZero()
 {
-	if (m_status == NOTE_ON && m_velocity == 0)
-		m_status = NOTE_OFF;
+	if (getStatus() == CHANNEL_NOTE_ON && getVelocity() == 0)
+		m_raw |= CHANNEL_NOTE_OFF << 24;
+}
+
+/* -------------------------------------------------------------------------- */
+
+MidiEvent::Type MidiEvent::getType() const
+{
+	/* Status byte from 0x80 to 0xE0 means musical command (CHANNEL), while
+	0xF is non-musical (SYSTEM). */
+
+	const int status = getStatus();
+	if (status == 0x00)
+		return Type::INVALID;
+	if (status < 0xF0)
+		return Type::CHANNEL;
+	return Type::SYSTEM;
 }
 
 /* -------------------------------------------------------------------------- */
 
 int MidiEvent::getStatus() const
 {
-	return m_status;
+	return (m_raw & 0xF0000000) >> 24;
 }
 
 int MidiEvent::getChannel() const
 {
-	return m_channel;
+	return (m_raw & 0x0F000000) >> 24;
 }
 
 int MidiEvent::getNote() const
 {
-	return m_note;
+	return (m_raw & 0x00FF0000) >> 16;
 }
 
 int MidiEvent::getVelocity() const
 {
-	return m_velocity;
+	return (m_raw & 0x0000FF00) >> 8;
 }
 
 float MidiEvent::getVelocityFloat() const
 {
-	return m_velocity / static_cast<float>(FLOAT_FACTOR);
+	return m_velocity;
 }
 
 bool MidiEvent::isNoteOnOff() const
 {
-	return m_status == NOTE_ON || m_status == NOTE_OFF;
+	return getStatus() == CHANNEL_NOTE_ON || getStatus() == CHANNEL_NOTE_OFF;
 }
 
 int MidiEvent::getDelta() const
@@ -137,13 +148,11 @@ int MidiEvent::getDelta() const
 
 uint32_t MidiEvent::getRaw() const
 {
-	return (m_status << 24) | (m_channel << 24) | (m_note << 16) | (m_velocity << 8) | (0x00);
+	return m_raw;
 }
 
 uint32_t MidiEvent::getRawNoVelocity() const
 {
-	return (m_status << 24) | (m_channel << 24) | (m_note << 16) | (0x00 << 8) | (0x00);
+	return m_raw & 0xFFFF0000;
 }
-
-} // namespace m
-} // namespace giada
+} // namespace giada::m

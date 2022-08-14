@@ -29,32 +29,51 @@
 
 #include <cstdint>
 
-namespace giada
-{
-namespace m
+namespace giada::m
 {
 class MidiEvent
 {
 public:
-	static const int NOTE_ON   = 0x90;
-	static const int NOTE_OFF  = 0x80;
-	static const int NOTE_KILL = 0x70;
-	static const int ENVELOPE  = 0xB0;
+	enum class Type
+	{
+		INVALID,
+		CHANNEL,
+		SYSTEM
+	};
+
+	/* CHANNEL_*
+	List of common status bytes for Channel type. */
+
+	static constexpr int CHANNEL_NOTE_KILL = 0x70; // Giada's special Status bye
+	static constexpr int CHANNEL_NOTE_OFF  = 0x80;
+	static constexpr int CHANNEL_NOTE_ON   = 0x90;
+	static constexpr int CHANNEL_CC        = 0xB0; // Control Change (knobs, envelopes, ...)
+
+	/* SYSTEM_*
+	List of common status bytes for System type. */
+
+	static constexpr int SYSTEM_SPP   = 0xF2; // Song Position Pointer
+	static constexpr int SYSTEM_CLOCK = 0xF8;
+	static constexpr int SYSTEM_START = 0xFA;
+	static constexpr int SYSTEM_STOP  = 0xFC;
 
 	/* MidiEvent (1)
 	Creates and empty and invalid MIDI event. */
 
-	MidiEvent() = default;
+	MidiEvent();
 
 	MidiEvent(uint32_t raw, int delta = 0);
 	MidiEvent(int byte1, int byte2, int byte3, int delta = 0);
 
 	/* MidiEvent (4)
 	A constructor that takes a float parameter. Useful to build ENVELOPE events 
-	for automations, volume and pitch. */
+	for automations, volume and pitch. This will store the velocity value in
+	a high-resolution float variable, instead of the limited 7-bit MIDI one.
+	Use getVelocityFloat() method to retrieve it. */
 
 	MidiEvent(float v, int delta = 0);
 
+	Type  getType() const;
 	int   getStatus() const;
 	int   getChannel() const;
 	int   getNote() const;
@@ -84,13 +103,10 @@ public:
 	void fixVelocityZero();
 
 private:
-	int m_status;
-	int m_channel;
-	int m_note;
-	int m_velocity;
-	int m_delta;
+	uint32_t m_raw;
+	int      m_delta;
+	float    m_velocity;
 };
-} // namespace m
-} // namespace giada
+} // namespace giada::m
 
 #endif

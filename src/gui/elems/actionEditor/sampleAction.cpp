@@ -52,14 +52,14 @@ void geSampleAction::draw()
 	}
 	else
 	{
-		if (a1.event.getStatus() == m::MidiEvent::NOTE_KILL)
+		if (a1.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_KILL)
 			fl_rect(x(), y(), MIN_WIDTH, h(), color);
 		else
 		{
 			fl_rectf(x(), y(), MIN_WIDTH, h(), color);
-			if (a1.event.getStatus() == m::MidiEvent::NOTE_ON)
+			if (a1.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_ON)
 				fl_rectf(x() + 3, y() + h() - 11, w() - 6, 8, G_COLOR_GREY_4);
-			else if (a1.event.getStatus() == m::MidiEvent::NOTE_OFF)
+			else if (a1.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF)
 				fl_rectf(x() + 3, y() + 3, w() - 6, 8, G_COLOR_GREY_4);
 		}
 	}

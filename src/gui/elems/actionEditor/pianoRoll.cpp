@@ -368,7 +368,7 @@ void gePianoRoll::rebuild(c::actionEditor::Data& d)
 
 	for (const m::Action& a1 : m_data->actions)
 	{
-		if (a1.event.getStatus() == m::MidiEvent::NOTE_OFF)
+		if (a1.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF)
 			continue;
 
 		assert(a1.isValid()); // a2 might be null if orphaned

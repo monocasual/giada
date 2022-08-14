@@ -111,11 +111,11 @@ void gdSampleActionEditor::rebuild()
 int gdSampleActionEditor::getActionType() const
 {
 	if (m_actionType->getSelectedId() == 0)
-		return m::MidiEvent::NOTE_ON;
+		return m::MidiEvent::CHANNEL_NOTE_ON;
 	else if (m_actionType->getSelectedId() == 1)
-		return m::MidiEvent::NOTE_OFF;
+		return m::MidiEvent::CHANNEL_NOTE_OFF;
 	else if (m_actionType->getSelectedId() == 2)
-		return m::MidiEvent::NOTE_KILL;
+		return m::MidiEvent::CHANNEL_NOTE_KILL;
 
 	assert(false);
 	return -1;

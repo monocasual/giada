@@ -61,8 +61,8 @@ First action ever? Add actions at boundaries. */
 void recordFirstEnvelopeAction_(ID channelId, Frame frame, int value)
 {
 	// TODO - use MidiEvent(float)
-	m::MidiEvent    e1 = m::MidiEvent(m::MidiEvent::ENVELOPE, 0, G_MAX_VELOCITY);
-	m::MidiEvent    e2 = m::MidiEvent(m::MidiEvent::ENVELOPE, 0, value);
+	m::MidiEvent    e1 = m::MidiEvent(m::MidiEvent::CHANNEL_CC, 0, G_MAX_VELOCITY);
+	m::MidiEvent    e2 = m::MidiEvent(m::MidiEvent::CHANNEL_CC, 0, value);
 	const m::Action a1 = g_engine.actionRecorder.rec(channelId, 0, e1);
 	const m::Action a2 = g_engine.actionRecorder.rec(channelId, frame, e2);
 	const m::Action a3 = g_engine.actionRecorder.rec(channelId, g_engine.sequencer.getFramesInLoop() - 1, e1);
@@ -80,7 +80,7 @@ Vertical envelope points are forbidden. */
 
 void recordNonFirstEnvelopeAction_(ID channelId, Frame frame, int value)
 {
-	const m::Action a1 = g_engine.actionRecorder.getClosestAction(channelId, frame, m::MidiEvent::ENVELOPE);
+	const m::Action a1 = g_engine.actionRecorder.getClosestAction(channelId, frame, m::MidiEvent::CHANNEL_CC);
 	const m::Action a3 = a1.next != nullptr ? *a1.next : m::Action{};
 
 	assert(a1.isValid());
@@ -91,7 +91,7 @@ void recordNonFirstEnvelopeAction_(ID channelId, Frame frame, int value)
 		return;
 
 	// TODO - use MidiEvent(float)
-	m::MidiEvent    e2 = m::MidiEvent(m::MidiEvent::ENVELOPE, 0, value);
+	m::MidiEvent    e2 = m::MidiEvent(m::MidiEvent::CHANNEL_CC, 0, value);
 	const m::Action a2 = g_engine.actionRecorder.rec(channelId, frame, e2);
 
 	g_engine.actionRecorder.updateSiblings(a2.id, a1.id, a3.id);
@@ -170,8 +170,8 @@ void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2)
 		f1 -= overflow;
 	}
 
-	m::MidiEvent e1 = m::MidiEvent(m::MidiEvent::NOTE_ON, note, velocity);
-	m::MidiEvent e2 = m::MidiEvent(m::MidiEvent::NOTE_OFF, note, velocity);
+	m::MidiEvent e1 = m::MidiEvent(m::MidiEvent::CHANNEL_NOTE_ON, note, velocity);
+	m::MidiEvent e2 = m::MidiEvent(m::MidiEvent::CHANNEL_NOTE_OFF, note, velocity);
 
 	g_engine.actionRecorder.rec(channelId, f1, f2, e1, e2);
 
@@ -183,7 +183,7 @@ void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2)
 void deleteMidiAction(ID channelId, const m::Action& a)
 {
 	assert(a.isValid());
-	assert(a.event.getStatus() == m::MidiEvent::NOTE_ON);
+	assert(a.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_ON);
 
 	/* Send a note-off first in case we are deleting it in a middle of a 
 	key_on/key_off sequence. Check if 'next' exist first: could be orphaned. */
@@ -216,8 +216,8 @@ void recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
 	{
 		if (f2 == 0)
 			f2 = f1 + G_DEFAULT_ACTION_SIZE;
-		m::MidiEvent e1 = m::MidiEvent(m::MidiEvent::NOTE_ON, 0, 0);
-		m::MidiEvent e2 = m::MidiEvent(m::MidiEvent::NOTE_OFF, 0, 0);
+		m::MidiEvent e1 = m::MidiEvent(m::MidiEvent::CHANNEL_NOTE_ON, 0, 0);
+		m::MidiEvent e2 = m::MidiEvent(m::MidiEvent::CHANNEL_NOTE_OFF, 0, 0);
 		g_engine.actionRecorder.rec(channelId, f1, f2, e1, e2);
 	}
 	else
@@ -264,7 +264,7 @@ void recordEnvelopeAction(ID channelId, Frame f, int value)
 	before frame 'f' and inject a new action in there. Vertical envelope points 
 	are forbidden for now. */
 
-	if (!g_engine.actionRecorder.hasActions(channelId, m::MidiEvent::ENVELOPE))
+	if (!g_engine.actionRecorder.hasActions(channelId, m::MidiEvent::CHANNEL_CC))
 		recordFirstEnvelopeAction_(channelId, f, value);
 	else
 		recordNonFirstEnvelopeAction_(channelId, f, value);
@@ -320,7 +320,7 @@ void updateEnvelopeAction(ID channelId, const m::Action& a, Frame f, int value)
 	previous one and record a new action. */
 
 	if (g_engine.actionRecorder.isBoundaryEnvelopeAction(a))
-		g_engine.actionRecorder.updateEvent(a.id, m::MidiEvent(m::MidiEvent::ENVELOPE, 0, value));
+		g_engine.actionRecorder.updateEvent(a.id, m::MidiEvent(m::MidiEvent::CHANNEL_CC, 0, value));
 	else
 	{
 		deleteEnvelopeAction(channelId, a);

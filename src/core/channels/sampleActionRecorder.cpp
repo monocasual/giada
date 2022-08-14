@@ -55,12 +55,12 @@ void SampleActionRecorder::react(ID channelId, ChannelShared& shared,
 		/* Record a stop event only if channel is SINGLE_PRESS. For any other 
 		mode the key release event is meaningless. */
 		if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
-			record(channelId, MidiEvent::NOTE_OFF, currentFrameQuantized, hasActions);
+			record(channelId, MidiEvent::CHANNEL_NOTE_OFF, currentFrameQuantized, hasActions);
 		break;
 
 	case EventDispatcher::EventType::KEY_KILL:
 		if (canRecordActions)
-			record(channelId, MidiEvent::NOTE_KILL, currentFrameQuantized, hasActions);
+			record(channelId, MidiEvent::CHANNEL_NOTE_KILL, currentFrameQuantized, hasActions);
 		break;
 
 	case EventDispatcher::EventType::CHANNEL_TOGGLE_READ_ACTIONS:
@@ -93,7 +93,7 @@ void SampleActionRecorder::record(ID channelId, int note, Frame currentFrameQuan
 void SampleActionRecorder::onKeyPress(ID channelId, ChannelShared& shared,
     Frame currentFrameQuantized, SamplePlayerMode mode, bool& hasActions) const
 {
-	record(channelId, MidiEvent::NOTE_ON, currentFrameQuantized, hasActions);
+	record(channelId, MidiEvent::CHANNEL_NOTE_ON, currentFrameQuantized, hasActions);
 
 	/* Skip reading actions when recording on ChannelMode::SINGLE_PRESS to 
 	prevent	existing actions to interfere with the keypress/keyrel combo. */

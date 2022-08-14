@@ -53,7 +53,7 @@ struct Action
 
 	bool isVolumeEnvelope() const
 	{
-		return event.getStatus() == MidiEvent::ENVELOPE && pluginId == -1;
+		return event.getStatus() == MidiEvent::CHANNEL_CC && pluginId == -1;
 	}
 };
 } // namespace giada::m

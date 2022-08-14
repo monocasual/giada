@@ -54,11 +54,6 @@ public:
 	void sendStop();
 
 private:
-	static constexpr int MIDI_POSITION_PTR = 0xF2;
-	static constexpr int MIDI_CLOCK        = 0xF8;
-	static constexpr int MIDI_START        = 0xFA;
-	static constexpr int MIDI_STOP         = 0xFC;
-
 	KernelMidi&       m_kernelMidi;
 	const Conf::Data& m_conf;
 };

@@ -200,12 +200,12 @@ void SampleAdvancer::parseActions(ID channelId, ChannelShared& shared,
 
 		switch (a.event.getStatus())
 		{
-		case MidiEvent::NOTE_ON:
+		case MidiEvent::CHANNEL_NOTE_ON:
 			onNoteOn(shared, localFrame, mode);
 			break;
 
-		case MidiEvent::NOTE_OFF:
-		case MidiEvent::NOTE_KILL:
+		case MidiEvent::CHANNEL_NOTE_OFF:
+		case MidiEvent::CHANNEL_NOTE_KILL:
 			if (shared.playStatus.load() == ChannelStatus::PLAY)
 				stop(shared, localFrame);
 			break;

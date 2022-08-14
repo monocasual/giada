@@ -109,7 +109,7 @@ void geVelocityEditor::rebuild(c::actionEditor::Data& d)
 	for (const m::Action& action : m_data->actions)
 	{
 
-		if (action.event.getStatus() == m::MidiEvent::NOTE_OFF)
+		if (action.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF)
 			continue;
 
 		Pixel px = x() + m_base->frameToPixel(action.frame);

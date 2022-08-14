@@ -64,7 +64,7 @@ void clearVolumeActions(ID channelId)
 	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
 	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLEARALLVOLUMEACTIONS)))
 		return;
-	g_engine.actionRecorder.clearActions(channelId, m::MidiEvent::ENVELOPE);
+	g_engine.actionRecorder.clearActions(channelId, m::MidiEvent::CHANNEL_CC);
 	updateChannel(channelId, /*updateActionEditor=*/true);
 }
 
@@ -75,9 +75,9 @@ void clearStartStopActions(ID channelId)
 	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
 	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLEARALLSTARTSTOPACTIONS)))
 		return;
-	g_engine.actionRecorder.clearActions(channelId, m::MidiEvent::NOTE_ON);
-	g_engine.actionRecorder.clearActions(channelId, m::MidiEvent::NOTE_OFF);
-	g_engine.actionRecorder.clearActions(channelId, m::MidiEvent::NOTE_KILL);
+	g_engine.actionRecorder.clearActions(channelId, m::MidiEvent::CHANNEL_NOTE_ON);
+	g_engine.actionRecorder.clearActions(channelId, m::MidiEvent::CHANNEL_NOTE_OFF);
+	g_engine.actionRecorder.clearActions(channelId, m::MidiEvent::CHANNEL_NOTE_KILL);
 	updateChannel(channelId, /*updateActionEditor=*/true);
 }
 

@@ -27,6 +27,7 @@
 #include "core/midiSynchronizer.h"
 #include "core/conf.h"
 #include "core/kernelMidi.h"
+#include "core/midiEvent.h"
 #include "core/model/sequencer.h"
 
 namespace giada::m
@@ -53,7 +54,7 @@ void MidiSynchronizer::advance(geompp::Range<Frame> block, int framesInBeat)
 	for (Frame frame = block.a; frame < block.b; frame++)
 	{
 		if (frame % rate == 0)
-			m_kernelMidi.send(MIDI_CLOCK, -1, -1);
+			m_kernelMidi.send(MidiEvent::SYSTEM_CLOCK, -1, -1);
 	}
 }
 
@@ -63,7 +64,7 @@ void MidiSynchronizer::sendRewind()
 {
 	if (m_conf.midiSync == G_MIDI_SYNC_NONE)
 		return;
-	m_kernelMidi.send(MIDI_POSITION_PTR, 0, 0);
+	m_kernelMidi.send(MidiEvent::SYSTEM_SPP, 0, 0);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -72,8 +73,8 @@ void MidiSynchronizer::sendStart()
 {
 	if (m_conf.midiSync == G_MIDI_SYNC_NONE)
 		return;
-	m_kernelMidi.send(MIDI_START, -1, -1);
-	m_kernelMidi.send(MIDI_POSITION_PTR, 0, 0);
+	m_kernelMidi.send(MidiEvent::SYSTEM_START, -1, -1);
+	m_kernelMidi.send(MidiEvent::SYSTEM_SPP, 0, 0);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -82,6 +83,6 @@ void MidiSynchronizer::sendStop()
 {
 	if (m_conf.midiSync == G_MIDI_SYNC_NONE)
 		return;
-	m_kernelMidi.send(MIDI_STOP, -1, -1);
+	m_kernelMidi.send(MidiEvent::SYSTEM_STOP, -1, -1);
 }
 } // namespace giada::m
