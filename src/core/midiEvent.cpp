@@ -57,14 +57,6 @@ MidiEvent::MidiEvent(int byte1, int byte2, int byte3, int delta)
 
 /* -------------------------------------------------------------------------- */
 
-MidiEvent::MidiEvent(float v, int delta)
-: MidiEvent(CHANNEL_CC, 0, 0, delta)
-{
-	m_velocity = v;
-}
-
-/* -------------------------------------------------------------------------- */
-
 void MidiEvent::setDelta(int d)
 {
 	m_delta = d;
@@ -82,6 +74,11 @@ void MidiEvent::setVelocity(int v)
 {
 	assert(v >= 0 && v <= G_MAX_VELOCITY);
 	m_raw |= v << 8;
+}
+
+void MidiEvent::setVelocityFloat(float f)
+{
+	m_velocity = f;
 }
 
 /* -------------------------------------------------------------------------- */

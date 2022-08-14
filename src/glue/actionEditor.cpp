@@ -60,7 +60,7 @@ First action ever? Add actions at boundaries. */
 
 void recordFirstEnvelopeAction_(ID channelId, Frame frame, int value)
 {
-	// TODO - use MidiEvent(float)
+	// TODO - use MidiEvent::setVelocityFloat
 	m::MidiEvent    e1 = m::MidiEvent(m::MidiEvent::CHANNEL_CC, 0, G_MAX_VELOCITY);
 	m::MidiEvent    e2 = m::MidiEvent(m::MidiEvent::CHANNEL_CC, 0, value);
 	const m::Action a1 = g_engine.actionRecorder.rec(channelId, 0, e1);
@@ -90,7 +90,7 @@ void recordNonFirstEnvelopeAction_(ID channelId, Frame frame, int value)
 	if (frame == -1) // Vertical points, nothing to do here
 		return;
 
-	// TODO - use MidiEvent(float)
+	// TODO - use MidiEvent::setVelocityFloat
 	m::MidiEvent    e2 = m::MidiEvent(m::MidiEvent::CHANNEL_CC, 0, value);
 	const m::Action a2 = g_engine.actionRecorder.rec(channelId, frame, e2);
 

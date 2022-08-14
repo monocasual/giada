@@ -62,16 +62,15 @@ public:
 
 	MidiEvent();
 
+	/* MidiEvent (2)
+	Creates a MIDI event from raw data. */
+
 	MidiEvent(uint32_t raw, int delta = 0);
+
+	/* MidiEvent (3)
+	Creates a MIDI event from three separate bytes. */
+
 	MidiEvent(int byte1, int byte2, int byte3, int delta = 0);
-
-	/* MidiEvent (4)
-	A constructor that takes a float parameter. Useful to build ENVELOPE events 
-	for automations, volume and pitch. This will store the velocity value in
-	a high-resolution float variable, instead of the limited 7-bit MIDI one.
-	Use getVelocityFloat() method to retrieve it. */
-
-	MidiEvent(float v, int delta = 0);
 
 	Type  getType() const;
 	int   getStatus() const;
@@ -92,6 +91,12 @@ public:
 	void setDelta(int d);
 	void setChannel(int c);
 	void setVelocity(int v);
+
+	/* setVelocityFloat
+	Stores the velocity value in a high-resolution float variable, instead of 
+	using the limited 7-bit MIDI one that comes with a CHANNEL type. */
+
+	void setVelocityFloat(float);
 
 	/* fixVelocityZero()
 	According to the MIDI standard, there is a special case if the velocity is 
