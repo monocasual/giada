@@ -36,6 +36,7 @@
 #ifdef WITH_TESTS
 #define CATCH_CONFIG_RUNNER
 #include "tests/actionRecorder.cpp"
+#include "tests/midiEvent.cpp"
 #include "tests/midiLighter.cpp"
 #include "tests/samplePlayer.cpp"
 #include "tests/utils.cpp"
