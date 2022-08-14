@@ -90,7 +90,7 @@ void MidiDispatcher::clearPluginLearn(std::size_t paramIndex, ID pluginId, std::
 
 /* -------------------------------------------------------------------------- */
 
-void MidiDispatcher::dispatch(uint32_t msg)
+void MidiDispatcher::dispatch(const MidiEvent& e)
 {
 	assert(onDispatch != nullptr);
 
@@ -99,19 +99,13 @@ void MidiDispatcher::dispatch(uint32_t msg)
 	We must also fix the velocity zero issue for those devices that sends NOTE
 	OFF events as NOTE ON + velocity zero. Let's make it a real NOTE OFF event. */
 
-	MidiEvent midiEvent = MidiEvent::makeFromRaw(msg, /*numBytes=*/3);
-	midiEvent.fixVelocityZero();
+	MidiEvent eFixed = e;
+	eFixed.fixVelocityZero();
 
-	G_DEBUG("MIDI received - 0x{:0X} (chan {})", midiEvent.getRaw(), midiEvent.getChannel());
+	Action action    = {0, 0, 0, eFixed};
+	auto   eventType = m_learnCb != nullptr ? EventDispatcher::EventType::MIDI_DISPATCHER_LEARN : EventDispatcher::EventType::MIDI_DISPATCHER_PROCESS;
 
-	/* Start dispatcher. Don't parse channels if MIDI learn is ON, just learn 
-	the incoming MIDI signal. The action is not invoked directly, but scheduled 
-	to be performed by the Event Dispatcher. */
-
-	Action action = {0, 0, 0, midiEvent};
-	auto   event  = m_learnCb != nullptr ? EventDispatcher::EventType::MIDI_DISPATCHER_LEARN : EventDispatcher::EventType::MIDI_DISPATCHER_PROCESS;
-
-	onDispatch(event, action);
+	onDispatch(eventType, action);
 }
 
 /* -------------------------------------------------------------------------- */

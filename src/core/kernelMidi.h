@@ -36,6 +36,7 @@
 
 namespace giada::m
 {
+class MidiEvent;
 class KernelMidi final
 {
 public:
@@ -55,17 +56,16 @@ public:
 	bool hasAPI(RtMidi::Api API) const;
 
 	/* send
-    Sends a MIDI message 's' as uint32_t or as separate bytes. */
+    Sends a MIDI message to the outside world. */
 
-	void send(uint32_t s);
-	void send(int b1, int b2 = -1, int b3 = -1);
+	void send(const MidiEvent&);
 
 	bool openOutDevice(RtMidi::Api api, int port);
 	bool openInDevice(RtMidi::Api api, int port);
 
 	void logPorts();
 
-	std::function<void(uint32_t)> onMidiReceived;
+	std::function<void(const MidiEvent&)> onMidiReceived;
 
 private:
 	static void s_callback(double, std::vector<unsigned char>*, void*);

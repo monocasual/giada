@@ -1,17 +1,19 @@
 #ifndef G_TESTS_KERNELMIDI_MOCK_H
 #define G_TESTS_KERNELMIDI_MOCK_H
 
+#include "../../src/core/midiEvent.h"
+
 namespace giada::m
 {
 class KernelMidiMock
 {
 public:
-	void send(uint32_t s)
+	void send(const MidiEvent& e)
 	{
-		sent.push_back(s);
+		sent.push_back(e);
 	}
 
-	std::vector<uint32_t> sent;
+	std::vector<MidiEvent> sent;
 };
 } // namespace giada::m
 

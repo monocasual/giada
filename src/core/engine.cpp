@@ -59,7 +59,7 @@ Engine::Engine()
 		return audioCallback(info);
 	};
 
-	kernelMidi.onMidiReceived = [this](uint32_t msg) { midiDispatcher.dispatch(msg); };
+	kernelMidi.onMidiReceived = [this](const MidiEvent& e) { midiDispatcher.dispatch(e); };
 
 #ifdef WITH_AUDIO_JACK
 	jackSynchronizer.onJackRewind = [this]() {

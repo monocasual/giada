@@ -26,6 +26,7 @@
 
 #include "core/kernelMidi.h"
 #include "core/const.h"
+#include "core/midiEvent.h"
 #include "utils/log.h"
 #include <cassert>
 #include <memory>
@@ -36,16 +37,6 @@ namespace
 {
 constexpr auto OUTPUT_NAME = "Giada MIDI output";
 constexpr auto INPUT_NAME  = "Giada MIDI input";
-
-/* -------------------------------------------------------------------------- */
-
-std::vector<unsigned char> split_(uint32_t iValue)
-{
-	return {
-	    static_cast<unsigned char>((iValue >> 24) & 0xFF),
-	    static_cast<unsigned char>((iValue >> 16) & 0xFF),
-	    static_cast<unsigned char>((iValue >> 8) & 0xFF)};
-}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -124,35 +115,24 @@ std::string KernelMidi::getInPortName(unsigned p) const { return getPortName(*m_
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::send(uint32_t data)
+void KernelMidi::send(const MidiEvent& event)
 {
 	if (m_midiOut == nullptr)
 		return;
 
-	std::vector<unsigned char> msg = split_(data);
+	assert(event.getNumBytes() > 0);
+
+	std::vector<unsigned char> msg;
+	if (event.getNumBytes() == 1)
+		msg = {event.getByte1()};
+	else if (event.getNumBytes() == 2)
+		msg = {event.getByte1(), event.getByte2()};
+	else
+		msg = {event.getByte1(), event.getByte2(), event.getByte3()};
 
 	m_midiOut->sendMessage(&msg);
 
-	G_DEBUG("Send MIDI msg=0x{:0X} ({:0X} {:0X} {:0X})", data, msg[0], msg[1], msg[2]);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void KernelMidi::send(int b1, int b2, int b3)
-{
-	if (m_midiOut == nullptr)
-		return;
-
-	std::vector<unsigned char> msg(1, b1);
-
-	if (b2 != -1)
-		msg.push_back(b2);
-	if (b3 != -1)
-		msg.push_back(b3);
-
-	m_midiOut->sendMessage(&msg);
-
-	G_DEBUG("Send MIDI msg=({:0X} {:0X} {:0X})", b1, b2, b3);
+	G_DEBUG("Send MIDI msg=0x{:0X}", event.getRaw());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -172,13 +152,21 @@ void KernelMidi::s_callback(double /*t*/, std::vector<unsigned char>* msg, void*
 void KernelMidi::callback(std::vector<unsigned char>* msg)
 {
 	assert(onMidiReceived != nullptr);
+	assert(msg->size() > 0);
 
-	const unsigned char b1  = (*msg)[0];
-	const unsigned char b2  = msg->size() > 1 ? (*msg)[1] : 0;
-	const unsigned char b3  = msg->size() > 2 ? (*msg)[2] : 0;
-	const uint32_t      raw = (b1 << 24) | (b2 << 16) | (b3 << 8) | (0x00);
+	MidiEvent event;
+	if (msg->size() == 1)
+		event = MidiEvent::makeFromBytes((*msg)[0]);
+	else if (msg->size() == 2)
+		event = MidiEvent::makeFromBytes((*msg)[0], (*msg)[1]);
+	else if (msg->size() == 3)
+		event = MidiEvent::makeFromBytes((*msg)[0], (*msg)[1], (*msg)[2]);
+	else
+		assert(false); // MIDI messages longer than 3 bytes are not supported
 
-	onMidiReceived(raw);
+	onMidiReceived(event);
+
+	G_DEBUG("Recv MIDI msg=0x{:0X} (channel={})", event.getRaw(), event.getChannel());
 }
 
 /* -------------------------------------------------------------------------- */

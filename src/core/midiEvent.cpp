@@ -164,6 +164,12 @@ int MidiEvent::getNumBytes() const
 
 /* -------------------------------------------------------------------------- */
 
+uint8_t MidiEvent::getByte1() const { return (m_raw & 0xFF000000) >> 24; }
+uint8_t MidiEvent::getByte2() const { return (m_raw & 0x00FF0000) >> 16; }
+uint8_t MidiEvent::getByte3() const { return (m_raw & 0x0000FF00) >> 8; }
+
+/* -------------------------------------------------------------------------- */
+
 uint32_t MidiEvent::getRaw() const
 {
 	return m_raw;

@@ -76,7 +76,7 @@ void MidiSender::send(MidiEvent e) const
 	assert(onSend != nullptr);
 
 	e.setChannel(filter);
-	kernelMidi->send(e.getRaw());
+	kernelMidi->send(e);
 	onSend();
 }
 

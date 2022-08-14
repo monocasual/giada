@@ -18,5 +18,8 @@ TEST_CASE("MidiEvent")
 		REQUIRE(e.getChannel() == 1);
 		REQUIRE(e.getNote() == 44);
 		REQUIRE(e.getVelocity() == 80);
+		REQUIRE(e.getByte1() == 0x91);
+		REQUIRE(e.getByte2() == 0x2C);
+		REQUIRE(e.getByte3() == 0x50);
 	}
 }

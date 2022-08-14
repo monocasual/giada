@@ -130,7 +130,7 @@ void MidiMapper<KernelMidiI>::sendInitMessages(const MidiMap& midiMap)
 			continue;
 		MidiEvent e = MidiEvent::makeFromRaw(m.value, /*numBytes=*/3);
 		e.setChannel(m.channel);
-		m_kernelMidi.send(e.getRaw());
+		m_kernelMidi.send(e);
 	}
 }
 
@@ -159,7 +159,8 @@ void MidiMapper<KernelMidiI>::sendMidiLightning(uint32_t learnt, const MidiMap::
 	it. */
 
 	out |= m.value | (m.channel << 24);
-	m_kernelMidi.send(out);
+
+	m_kernelMidi.send(MidiEvent::makeFromRaw(out, /*numBytes=*/3));
 }
 
 /* -------------------------------------------------------------------------- */

@@ -40,45 +40,45 @@ TEST_CASE("MidiMapper")
 	SECTION("Test send OFF status")
 	{
 		midiLighter.sendStatus(ChannelStatus::OFF, /*audible=*/true);
-		REQUIRE(kernelMidi.sent.back() == 0x000008); // Stopped
+		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000008); // Stopped
 	}
 
 	SECTION("Test send WAIT status")
 	{
 		midiLighter.sendStatus(ChannelStatus::WAIT, /*audible=*/true);
-		REQUIRE(kernelMidi.sent.back() == 0x000005); // Waiting
+		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000005); // Waiting
 	}
 
 	SECTION("Test send ENDING status")
 	{
 		midiLighter.sendStatus(ChannelStatus::ENDING, /*audible=*/true);
-		REQUIRE(kernelMidi.sent.back() == 0x000007); // Stopping
+		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000007); // Stopping
 	}
 
 	SECTION("Test send PLAY status")
 	{
 		midiLighter.sendStatus(ChannelStatus::PLAY, /*audible=*/true);
-		REQUIRE(kernelMidi.sent.back() == 0x000006); // Playing
+		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000006); // Playing
 
 		midiLighter.sendStatus(ChannelStatus::PLAY, /*audible=*/false);
-		REQUIRE(kernelMidi.sent.back() == 0x000009); // Playing inaudible
+		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000009); // Playing inaudible
 	}
 
 	SECTION("Test send mute")
 	{
 		midiLighter.sendMute(/*isMuted=*/true);
-		REQUIRE(kernelMidi.sent.back() == 0x000001); // Mute on
+		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000001); // Mute on
 
 		midiLighter.sendMute(/*isMuted=*/false);
-		REQUIRE(kernelMidi.sent.back() == 0x000002); // Mute off
+		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000002); // Mute off
 	}
 
 	SECTION("Test send solo")
 	{
 		midiLighter.sendSolo(/*isSoloed=*/true);
-		REQUIRE(kernelMidi.sent.back() == 0x000003); // Solo on
+		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000003); // Solo on
 
 		midiLighter.sendSolo(/*isSoloed=*/false);
-		REQUIRE(kernelMidi.sent.back() == 0x000004); // Solo off
+		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000004); // Solo off
 	}
 }

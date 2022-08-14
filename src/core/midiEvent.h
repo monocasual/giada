@@ -74,15 +74,18 @@ public:
 
 	MidiEvent();
 
-	Type  getType() const;
-	int   getStatus() const;
-	int   getChannel() const;
-	int   getNote() const;
-	int   getVelocity() const;
-	float getVelocityFloat() const;
-	bool  isNoteOnOff() const;
-	int   getDelta() const;
-	int   getNumBytes() const;
+	Type    getType() const;
+	int     getStatus() const;
+	int     getChannel() const;
+	int     getNote() const;
+	int     getVelocity() const;
+	float   getVelocityFloat() const;
+	bool    isNoteOnOff() const;
+	int     getDelta() const;
+	int     getNumBytes() const;
+	uint8_t getByte1() const;
+	uint8_t getByte2() const;
+	uint8_t getByte3() const;
 
 	/* getRaw(), getRawNoVelocity()
 	Returns the raw MIDI message. If getRawNoVelocity(), the velocity value is
