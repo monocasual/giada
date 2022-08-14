@@ -41,7 +41,7 @@ void MidiReceiver::react(ChannelShared::MidiQueue& midiQueue, const EventDispatc
 	case EventDispatcher::EventType::KEY_KILL:
 	case EventDispatcher::EventType::SEQUENCER_STOP:
 	case EventDispatcher::EventType::SEQUENCER_REWIND:
-		sendToPlugins(midiQueue, MidiEvent(G_MIDI_ALL_NOTES_OFF), 0);
+		sendToPlugins(midiQueue, MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), 0);
 		break;
 
 	default:

@@ -170,8 +170,8 @@ Action Actions::makeAction(ID id, ID channelId, Frame frame, MidiEvent e)
 Action Actions::makeAction(const Patch::Action& a)
 {
 	m_actionId.set(a.id);
-	return Action{a.id, a.channelId, a.frame, a.event, -1, -1, a.prevId,
-	    a.nextId};
+	return Action{a.id, a.channelId, a.frame, MidiEvent::makeFromRaw(a.event, /*numBytes=*/3), -1, -1,
+	    a.prevId, a.nextId};
 }
 
 /* -------------------------------------------------------------------------- */

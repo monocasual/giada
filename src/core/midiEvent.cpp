@@ -33,6 +33,7 @@ namespace giada::m
 {
 MidiEvent::MidiEvent()
 : m_raw(0x0)
+, m_numBytes(0)
 , m_delta(0)
 , m_velocity(0.0f)
 {
@@ -40,8 +41,9 @@ MidiEvent::MidiEvent()
 
 /* -------------------------------------------------------------------------- */
 
-MidiEvent::MidiEvent(uint32_t raw)
+MidiEvent::MidiEvent(uint32_t raw, int numBytes)
 : m_raw(raw)
+, m_numBytes(numBytes)
 , m_delta(0)
 , m_velocity(0.0f)
 {
@@ -49,9 +51,24 @@ MidiEvent::MidiEvent(uint32_t raw)
 
 /* -------------------------------------------------------------------------- */
 
-MidiEvent::MidiEvent(uint8_t byte1, uint8_t byte2, uint8_t byte3)
-: MidiEvent((byte1 << 24) | (byte2 << 16) | (byte3 << 8) | 0x00)
+MidiEvent MidiEvent::makeFromRaw(uint32_t raw, int numBytes)
 {
+	return MidiEvent(raw, numBytes);
+}
+
+MidiEvent MidiEvent::makeFrom3Bytes(uint8_t byte1, uint8_t byte2, uint8_t byte3)
+{
+	return MidiEvent((byte1 << 24) | (byte2 << 16) | (byte3 << 8) | 0x00, /*numBytes=*/3);
+}
+
+MidiEvent MidiEvent::makeFrom2Bytes(uint8_t byte1, uint8_t byte2)
+{
+	return MidiEvent((byte1 << 24) | (byte2 << 16) | 0x00 | 0x00, /*numBytes=*/2);
+}
+
+MidiEvent MidiEvent::makeFrom1Byte(uint8_t byte1)
+{
+	return MidiEvent((byte1 << 24) | 0x00 | 0x00 | 0x00, /*numBytes=*/1);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -138,6 +155,11 @@ bool MidiEvent::isNoteOnOff() const
 int MidiEvent::getDelta() const
 {
 	return m_delta;
+}
+
+int MidiEvent::getNumBytes() const
+{
+	return m_numBytes;
 }
 
 /* -------------------------------------------------------------------------- */

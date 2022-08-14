@@ -84,7 +84,7 @@ void SampleActionRecorder::react(ID channelId, ChannelShared& shared,
 
 void SampleActionRecorder::record(ID channelId, int note, Frame currentFrameQuantized, bool& hasActions) const
 {
-	m_actionRecorder->liveRec(channelId, MidiEvent(note, 0, 0), currentFrameQuantized);
+	m_actionRecorder->liveRec(channelId, MidiEvent::makeFrom3Bytes(note, 0, 0), currentFrameQuantized);
 	hasActions = true;
 }
 

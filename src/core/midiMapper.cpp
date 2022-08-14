@@ -128,7 +128,7 @@ void MidiMapper<KernelMidiI>::sendInitMessages(const MidiMap& midiMap)
 	{
 		if (m.value == 0x0 || m.channel == -1)
 			continue;
-		MidiEvent e(m.value);
+		MidiEvent e = MidiEvent::makeFromRaw(m.value, /*numBytes=*/3);
 		e.setChannel(m.channel);
 		m_kernelMidi.send(e.getRaw());
 	}

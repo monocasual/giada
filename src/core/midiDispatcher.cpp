@@ -99,7 +99,7 @@ void MidiDispatcher::dispatch(uint32_t msg)
 	We must also fix the velocity zero issue for those devices that sends NOTE
 	OFF events as NOTE ON + velocity zero. Let's make it a real NOTE OFF event. */
 
-	MidiEvent midiEvent(msg);
+	MidiEvent midiEvent = MidiEvent::makeFromRaw(msg, /*numBytes=*/3);
 	midiEvent.fixVelocityZero();
 
 	G_DEBUG("MIDI received - 0x{:0X} (chan {})", midiEvent.getRaw(), midiEvent.getChannel());

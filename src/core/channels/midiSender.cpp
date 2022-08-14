@@ -56,7 +56,7 @@ void MidiSender::react(const EventDispatcher::Event& e)
 
 	if (e.type == EventDispatcher::EventType::KEY_KILL ||
 	    e.type == EventDispatcher::EventType::SEQUENCER_STOP)
-		send(MidiEvent(G_MIDI_ALL_NOTES_OFF));
+		send(MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3));
 }
 
 /* -------------------------------------------------------------------------- */

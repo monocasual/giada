@@ -57,20 +57,22 @@ public:
 	static constexpr int SYSTEM_START = 0xFA;
 	static constexpr int SYSTEM_STOP  = 0xFC;
 
-	/* MidiEvent (1)
+	/* makeFromRaw (named ctor)
+	Makes a new MidiEvent from a raw MIDI message. */
+
+	static MidiEvent makeFromRaw(uint32_t raw, int numBytes);
+
+	/* makeFrom3Bytes (named ctor)
+	Makes a new MidiEvent from separate bytes. */
+
+	static MidiEvent makeFrom3Bytes(uint8_t byte1, uint8_t byte2, uint8_t byte3);
+	static MidiEvent makeFrom2Bytes(uint8_t byte1, uint8_t byte2);
+	static MidiEvent makeFrom1Byte(uint8_t byte1);
+
+	/* MidiEvent 
 	Creates and empty and invalid MIDI event. */
 
 	MidiEvent();
-
-	/* MidiEvent (2)
-	Creates a MIDI event from raw data. */
-
-	MidiEvent(uint32_t raw);
-
-	/* MidiEvent (3)
-	Creates a MIDI event from three separate bytes. */
-
-	MidiEvent(uint8_t byte1, uint8_t byte2, uint8_t byte3);
 
 	Type  getType() const;
 	int   getStatus() const;
@@ -80,6 +82,7 @@ public:
 	float getVelocityFloat() const;
 	bool  isNoteOnOff() const;
 	int   getDelta() const;
+	int   getNumBytes() const;
 
 	/* getRaw(), getRawNoVelocity()
 	Returns the raw MIDI message. If getRawNoVelocity(), the velocity value is
@@ -108,7 +111,13 @@ public:
 	void fixVelocityZero();
 
 private:
+	/* MidiEvent
+	Creates a MIDI event from raw data. */
+
+	MidiEvent(uint32_t raw, int numBytes);
+
 	uint32_t m_raw;
+	int      m_numBytes;
 	int      m_delta;
 	float    m_velocity;
 };

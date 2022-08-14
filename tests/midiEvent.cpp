@@ -8,11 +8,12 @@ TEST_CASE("MidiEvent")
 	SECTION("Test Channel message")
 	{
 		const uint32_t raw = 0x912C5000; // Note on, channel 1, key 44 (0x2C), velocity 80 (0x50)
-		MidiEvent      e(raw);
+		MidiEvent      e   = MidiEvent::makeFromRaw(raw, /*numBytes=*/3);
 
 		REQUIRE(e.getRaw() == raw);
 		REQUIRE(e.getRawNoVelocity() == 0x912C0000);
 		REQUIRE(e.getType() == MidiEvent::Type::CHANNEL);
+		REQUIRE(e.getNumBytes() == 3);
 		REQUIRE(e.getStatus() == 0x90);
 		REQUIRE(e.getChannel() == 1);
 		REQUIRE(e.getNote() == 44);
