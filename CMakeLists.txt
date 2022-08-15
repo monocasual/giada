@@ -415,8 +415,7 @@ if (SampleRate_FOUND)
 else() 
 	# Fallback to find_library mode (in case Libsamplerate is too old). 
 	find_library(LIBRARY_SAMPLERATE 
-	    NAMES samplerate libsamplerate libsamplerate-0 liblibsamplerate-0
-	    PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}
+	    NAMES samplerate libsamplerate libsamplerate-0 libsamplerate0 liblibsamplerate-0
 		REQUIRED)
 	list(APPEND LIBRARIES ${LIBRARY_SAMPLERATE})
 	message("Libsamplerate library found in " ${LIBRARY_SAMPLERATE})
