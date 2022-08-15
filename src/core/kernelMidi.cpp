@@ -166,7 +166,7 @@ void KernelMidi::callback(std::vector<unsigned char>* msg)
 
 	onMidiReceived(event);
 
-	G_DEBUG("Recv MIDI msg=0x{:0X} (channel={})", event.getRaw(), event.getChannel());
+	G_DEBUG("Recv MIDI msg=0x{:0X}", event.getRaw());
 }
 
 /* -------------------------------------------------------------------------- */
