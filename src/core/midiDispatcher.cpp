@@ -148,8 +148,8 @@ bool MidiDispatcher::isChannelMidiInAllowed(ID channelId, int c)
 void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& plugins,
     const MidiEvent& midiEvent)
 {
-	uint32_t pure = midiEvent.getRawNoVelocity();
-	float    vf   = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, 1.0f);
+	const uint32_t pure = midiEvent.getRawNoVelocity();
+	const float    vf   = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, 1.0f);
 
 	/* Plugins' parameters layout reflects the structure of the matrix
 	Channel::midiInPlugins. It is safe to assume then that Plugin 'p' and 
@@ -173,13 +173,13 @@ void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& pl
 
 void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 {
-	uint32_t pure = midiEvent.getRawNoVelocity();
+	const uint32_t pure = midiEvent.getRawNoVelocity();
 
 	for (const Channel& c : m_model.get().channels)
 	{
-
 		/* Do nothing on this channel if MIDI in is disabled or filtered out for
 		the current MIDI channel. */
+
 		if (!c.midiLearner.isAllowed(midiEvent.getChannel()))
 			continue;
 
@@ -308,7 +308,7 @@ void MidiDispatcher::learnChannel(MidiEvent e, int param, ID channelId, std::fun
 	if (!isChannelMidiInAllowed(channelId, e.getChannel()))
 		return;
 
-	uint32_t raw = e.getRawNoVelocity();
+	const uint32_t raw = e.getRawNoVelocity();
 
 	Channel& ch = m_model.get().getChannel(channelId);
 
@@ -365,7 +365,7 @@ void MidiDispatcher::learnMaster(MidiEvent e, int param, std::function<void()> d
 	if (!isMasterMidiInAllowed(e.getChannel()))
 		return;
 
-	uint32_t raw = e.getRawNoVelocity();
+	const uint32_t raw = e.getRawNoVelocity();
 
 	switch (param)
 	{
