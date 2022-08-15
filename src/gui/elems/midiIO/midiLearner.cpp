@@ -64,7 +64,7 @@ geMidiLearner::geMidiLearner(int x, int y, int w, int h, std::string l, int para
 			onClearLearn(m_param);
 	};
 
-	m_button->type(FL_TOGGLE_BUTTON);
+	m_button->setToggleable(true);
 	m_button->onClick = [this]() {
 		assert(onStartLearn != nullptr);
 		assert(onStopLearn != nullptr);
