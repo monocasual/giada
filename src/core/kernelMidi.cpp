@@ -66,12 +66,12 @@ KernelMidi::KernelMidi()
 
 /* -------------------------------------------------------------------------- */
 
-bool KernelMidi::openOutDevice(int api, int port)
+bool KernelMidi::openOutDevice(RtMidi::Api api, int port)
 {
 	if (port == -1)
 		return false;
 
-	u::log::print("[KM] Opening output device '%s', port=%d\n", OUTPUT_NAME, port);
+	u::log::print("[KM] Opening output - API=%d, port=%d, device='%s'\n", api, port, OUTPUT_NAME);
 
 	m_midiOut = makeDevice<RtMidiOut>(api, OUTPUT_NAME);
 	if (m_midiOut == nullptr)
@@ -82,12 +82,12 @@ bool KernelMidi::openOutDevice(int api, int port)
 
 /* -------------------------------------------------------------------------- */
 
-bool KernelMidi::openInDevice(int api, int port)
+bool KernelMidi::openInDevice(RtMidi::Api api, int port)
 {
 	if (port == -1)
 		return false;
 
-	u::log::print("[KM] Opening input device '%s', port=%d\n", INPUT_NAME, port);
+	u::log::print("[KM] Opening input - API=%d, port=%d, device '%s'\n", api, port, INPUT_NAME);
 
 	m_midiIn = makeDevice<RtMidiIn>(api, INPUT_NAME);
 	if (m_midiIn == nullptr)
@@ -114,7 +114,7 @@ void KernelMidi::logPorts()
 
 /* -------------------------------------------------------------------------- */
 
-bool KernelMidi::hasAPI(int API) const
+bool KernelMidi::hasAPI(RtMidi::Api API) const
 {
 	std::vector<RtMidi::Api> APIs;
 	RtMidi::getCompiledApi(APIs);
@@ -190,7 +190,7 @@ void KernelMidi::callback(std::vector<unsigned char>* msg)
 /* -------------------------------------------------------------------------- */
 
 template <typename Device>
-std::unique_ptr<Device> KernelMidi::makeDevice(int api, std::string name) const
+std::unique_ptr<Device> KernelMidi::makeDevice(RtMidi::Api api, std::string name) const
 {
 	try
 	{
@@ -203,8 +203,8 @@ std::unique_ptr<Device> KernelMidi::makeDevice(int api, std::string name) const
 	}
 }
 
-template std::unique_ptr<RtMidiOut> KernelMidi::makeDevice(int, std::string) const;
-template std::unique_ptr<RtMidiIn>  KernelMidi::makeDevice(int, std::string) const;
+template std::unique_ptr<RtMidiOut> KernelMidi::makeDevice(RtMidi::Api, std::string) const;
+template std::unique_ptr<RtMidiIn>  KernelMidi::makeDevice(RtMidi::Api, std::string) const;
 
 /* -------------------------------------------------------------------------- */
 

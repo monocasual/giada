@@ -52,7 +52,7 @@ public:
 	std::string getOutPortName(unsigned p) const;
 	std::string getInPortName(unsigned p) const;
 
-	bool hasAPI(int API) const;
+	bool hasAPI(RtMidi::Api API) const;
 
 	/* send
     Sends a MIDI message 's' as uint32_t or as separate bytes. */
@@ -60,13 +60,8 @@ public:
 	void send(uint32_t s);
 	void send(int b1, int b2 = -1, int b3 = -1);
 
-	/* setApi
-    Sets the Api in use for both in & out messages. */
-
-	void setApi(int api);
-
-	bool openOutDevice(int api, int port);
-	bool openInDevice(int api, int port);
+	bool openOutDevice(RtMidi::Api api, int port);
+	bool openInDevice(RtMidi::Api api, int port);
 
 	void logPorts();
 
@@ -77,7 +72,7 @@ private:
 	void        callback(std::vector<unsigned char>*);
 
 	template <typename Device>
-	std::unique_ptr<Device> makeDevice(int api, std::string name) const;
+	std::unique_ptr<Device> makeDevice(RtMidi::Api api, std::string name) const;
 
 	std::string getPortName(RtMidi&, int port) const;
 	void        logPorts(RtMidi&, std::string name) const;
