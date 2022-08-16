@@ -171,20 +171,15 @@ private:
 	void rewindQ(Frame delta);
 
 	/* raw[*]
-	Raw functions to start, stop and rewind the sequencer. These functions must 
-	be called only when the JACK signal is received. Other modules should send
-	a SEQUENCER_* event to the Event Dispatcher. */
+	Raw functions to start, stop and rewind the sequencer or change other 
+	properties. These functions must be called only internally. Other modules
+	should send a SEQUENCER_* event to the Event Dispatcher. */
 
 	void rawStart();
 	void rawStop();
 	void rawRewind();
-
-	/* rawSetBpm
-	Raw function to set the bpm, bypassing any JACK instruction. This function 
-	must be called only by the Synchronizer when the JACK signal is received. 
-	Other modules should use the public, non-raw version setBpm(...). */
-
 	void rawSetBpm(float v, int sampleRate);
+	void rawGoToBeat(int beat, int sampleRate);
 
 	model::Model&     m_model;
 	MidiSynchronizer& m_midiSynchronizer;

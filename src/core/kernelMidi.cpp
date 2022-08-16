@@ -47,6 +47,7 @@ constexpr auto INPUT_NAME  = "Giada MIDI input";
 
 KernelMidi::KernelMidi()
 : onMidiReceived(nullptr)
+, m_elpsedTime(0.0)
 {
 }
 
@@ -83,7 +84,7 @@ bool KernelMidi::openInDevice(RtMidi::Api api, int port)
 		return false;
 
 	m_midiIn->setCallback(&s_callback, this);
-	m_midiIn->ignoreTypes(true, false, true); // Ignore all system/time msgs, for now
+	m_midiIn->ignoreTypes(true, /*midiTime=*/false, true); // Don't ignore time msgs
 
 	return true;
 }
@@ -156,19 +157,21 @@ void KernelMidi::callback(double deltatime, std::vector<unsigned char>* msg)
 	assert(onMidiReceived != nullptr);
 	assert(msg->size() > 0);
 
+	m_elpsedTime += deltatime;
+
 	MidiEvent event;
 	if (msg->size() == 1)
-		event = MidiEvent::makeFrom1Byte((*msg)[0], deltatime);
+		event = MidiEvent::makeFrom1Byte((*msg)[0], m_elpsedTime);
 	else if (msg->size() == 2)
-		event = MidiEvent::makeFrom2Bytes((*msg)[0], (*msg)[1], deltatime);
+		event = MidiEvent::makeFrom2Bytes((*msg)[0], (*msg)[1], m_elpsedTime);
 	else if (msg->size() == 3)
-		event = MidiEvent::makeFrom3Bytes((*msg)[0], (*msg)[1], (*msg)[2], deltatime);
+		event = MidiEvent::makeFrom3Bytes((*msg)[0], (*msg)[1], (*msg)[2], m_elpsedTime);
 	else
 		assert(false); // MIDI messages longer than 3 bytes are not supported
 
 	onMidiReceived(event);
 
-	G_DEBUG("Recv MIDI msg=0x{:0X}, delta={}", event.getRaw(), deltatime);
+	G_DEBUG("Recv MIDI msg=0x{:0X}, timestamp={}", event.getRaw(), m_elpsedTime);
 }
 
 /* -------------------------------------------------------------------------- */

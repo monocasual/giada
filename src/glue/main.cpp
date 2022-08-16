@@ -163,31 +163,6 @@ MainMenu getMainMenu()
 
 /* -------------------------------------------------------------------------- */
 
-void setBpm(const char* i, const char* f)
-{
-	/* Never change this stuff while recording audio. */
-
-	if (g_engine.recorder.isRecordingInput())
-		return;
-
-	g_engine.sequencer.setBpm(std::atof(i) + (std::atof(f) / 10.0f), g_engine.kernelAudio.getSampleRate());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void setBpm(float f)
-{
-	/* Never change this stuff while recording audio. */
-
-	if (g_engine.recorder.isRecordingInput())
-		return;
-
-	g_engine.sequencer.setBpm(f, g_engine.kernelAudio.getSampleRate());
-	g_engine.updateMixerModel();
-}
-
-/* -------------------------------------------------------------------------- */
-
 void setBeats(int beats, int bars)
 {
 	/* Never change this stuff while recording audio. */

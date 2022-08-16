@@ -39,10 +39,13 @@ class Sequencer;
 namespace giada::m
 {
 class KernelMidi;
+class MidiEvent;
 class MidiSynchronizer final
 {
 public:
 	MidiSynchronizer(const Conf::Data&, KernelMidi&);
+
+	void receive(const MidiEvent&, int numBeatsInLoop);
 
 	/* advance
     Generates MIDI sync output data when needed. Call this on each audio block. */
@@ -54,8 +57,21 @@ public:
 	void sendStop();
 
 private:
+	/* computeClock
+	Computes the current bpm value and sends the corresponding event to the
+	engine when necessary. */
+
+	void computeClock(double timestamp);
+
+	void computePosition(int sppPosition, int numBeatsInLoop);
+
 	KernelMidi&       m_kernelMidi;
 	const Conf::Data& m_conf;
+
+	double m_timeElapsed;
+	double m_lastTimestamp;
+	double m_lastDelta;
+	double m_lastBpm;
 };
 } // namespace giada::m
 

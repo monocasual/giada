@@ -94,13 +94,14 @@ void MidiDispatcher::dispatch(const MidiEvent& e)
 {
 	assert(onDispatch != nullptr);
 
-	/* Here we want to catch two things: a) note on/note off from a MIDI keyboard 
-	and b) knob/wheel/slider movements from a MIDI controller. 
-	We must also fix the velocity zero issue for those devices that sends NOTE
-	OFF events as NOTE ON + velocity zero. Let's make it a real NOTE OFF event. */
+	/* Fix the velocity zero issue for those devices that sends NOTE OFF events 
+	as NOTE ON + velocity zero. Let's make it a real NOTE OFF event. */
 
 	MidiEvent eFixed = e;
 	eFixed.fixVelocityZero();
+
+	/* If learn callback is set, a MIDI learn session is in progress. Otherwise
+	is just normal dispatching. */
 
 	Action action    = {0, 0, 0, eFixed};
 	auto   eventType = m_learnCb != nullptr ? EventDispatcher::EventType::MIDI_DISPATCHER_LEARN : EventDispatcher::EventType::MIDI_DISPATCHER_PROCESS;
@@ -121,6 +122,14 @@ void MidiDispatcher::learn(const MidiEvent& e)
 void MidiDispatcher::process(const MidiEvent& e)
 {
 	assert(onEventReceived != nullptr);
+	assert(e.getType() != MidiEvent::Type::INVALID);
+
+	/* Here we are interested only in CHANNEL events, that is note on/note off 
+	from a MIDI keyboard, knob/wheel/slider movements from a MIDI controller,
+	and so on. SYSTEM events (MIDI Clock, ...) are ignored. */
+
+	if (e.getType() != MidiEvent::Type::CHANNEL)
+		return;
 
 	processMaster(e);
 	processChannels(e);

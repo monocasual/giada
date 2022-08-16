@@ -107,16 +107,6 @@ Sequencer getSequencer();
 Transport getTransport();
 MainMenu  getMainMenu();
 
-/* setBpm (1)
-Sets bpm value from string to float. */
-
-void setBpm(const char* v1, const char* v2);
-
-/* setBpm (2)
-Sets bpm value. Usually called from the Jack callback or non-UI components. */
-
-void setBpm(float v);
-
 void setBeats(int beats, int bars);
 void quantize(int val);
 void clearAllSamples();

@@ -88,6 +88,12 @@ public:
 	uint8_t getByte3() const;
 	double  getTimestamp() const;
 
+	/* getSppPosition
+	Returns the number of MIDI beats from the song-position-pointer data 
+	(byte1 + byte2). */
+
+	int getSppPosition() const;
+
 	/* getRaw(), getRawNoVelocity()
 	Returns the raw MIDI message. If getRawNoVelocity(), the velocity value is
 	stripped off (i.e. velocity == 0). */

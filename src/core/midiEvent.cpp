@@ -169,6 +169,16 @@ double MidiEvent::getTimestamp() const
 	return m_timestamp;
 }
 
+int MidiEvent::getSppPosition() const
+{
+	assert(getType() == MidiEvent::Type::SYSTEM && getByte1() == SYSTEM_SPP);
+
+	/* Song position: the two 7-bit data bytes (least significant byte first) 
+	forming a 14-bit value which specifies the number of "MIDI beats". */
+
+	return getByte2() | (getByte3() << 7);
+}
+
 /* -------------------------------------------------------------------------- */
 
 uint8_t MidiEvent::getByte1() const { return (m_raw & 0xFF000000) >> 24; }

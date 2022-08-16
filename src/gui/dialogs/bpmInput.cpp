@@ -28,7 +28,7 @@
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/mixer.h"
-#include "glue/main.h"
+#include "glue/events.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"
 #include "gui/elems/basics/textButton.h"
@@ -71,7 +71,10 @@ gdBpmInput::gdBpmInput(const char* label)
 	m_ok->onClick = [this]() {
 		if (m_input_a->getValue() == "")
 			return;
-		c::main::setBpm(m_input_a->getValue().c_str(), m_input_b->getValue().c_str());
+		const std::string a   = m_input_a->getValue();
+		const std::string b   = m_input_b->getValue();
+		const float       bpm = u::gui::toFloat(a) + (u::gui::toFloat(b) / 10.0f);
+		c::events::setBpm(bpm, Thread::MAIN);
 		do_callback();
 	};
 

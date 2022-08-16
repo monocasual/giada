@@ -59,7 +59,10 @@ Engine::Engine()
 		return audioCallback(info);
 	};
 
-	kernelMidi.onMidiReceived = [this](const MidiEvent& e) { midiDispatcher.dispatch(e); };
+	kernelMidi.onMidiReceived = [this](const MidiEvent& e) {
+		midiDispatcher.dispatch(e);
+		midiSynchronizer.receive(e, sequencer.getBeats());
+	};
 
 #ifdef WITH_AUDIO_JACK
 	jackSynchronizer.onJackRewind = [this]() {

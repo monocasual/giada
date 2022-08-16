@@ -63,8 +63,10 @@ Master I/O, transport and other engine-related events. */
 void toggleMetronome();
 void setMasterInVolume(float v, Thread t);
 void setMasterOutVolume(float v, Thread t);
+void setBpm(float, Thread t);
 void multiplyBeats();
 void divideBeats();
+void goToBeat(int, Thread t);
 void startSequencer(Thread t);
 void stopSequencer(Thread t);
 void toggleSequencer(Thread t);

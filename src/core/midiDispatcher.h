@@ -72,8 +72,7 @@ public:
 	std::function<void(EventDispatcher::EventType, Action)> onDispatch;
 
 	/* onEventReceived
-	Callback fired when a MIDI event has been received (passed in by the Event
-	Dispatcher). */
+	Callback fired when a MIDI event of type CHANNEL has been received. */
 
 	std::function<void()> onEventReceived;
 
@@ -81,8 +80,8 @@ private:
 	bool isMasterMidiInAllowed(int c);
 	bool isChannelMidiInAllowed(ID channelId, int c);
 
-	void processChannels(const MidiEvent& midiEvent);
-	void processMaster(const MidiEvent& midiEvent);
+	void processChannels(const MidiEvent&);
+	void processMaster(const MidiEvent&);
 
 	void learnChannel(MidiEvent e, int param, ID channelId, std::function<void()> doneCb);
 	void learnMaster(MidiEvent e, int param, std::function<void()> doneCb);

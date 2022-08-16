@@ -75,7 +75,8 @@ void pushEvent_(m::EventDispatcher::Event e, Thread t)
 	{
 		res = g_engine.eventDispatcher.MidiEvents.push(e);
 		u::gui::ScopedLock lock;
-		g_ui.mainWindow->keyboard->notifyMidiIn(e.channelId);
+		if (e.channelId != 0)
+			g_ui.mainWindow->keyboard->notifyMidiIn(e.channelId);
 	}
 	else
 	{
@@ -219,6 +220,15 @@ void setMasterOutVolume(float v, Thread t)
 
 /* -------------------------------------------------------------------------- */
 
+void setBpm(float v, Thread t)
+{
+	if (g_engine.recorder.isRecordingInput())
+		return;
+	pushEvent_({m::EventDispatcher::EventType::SEQUENCER_BPM, 0, 0, v}, t);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void multiplyBeats()
 {
 	main::setBeats(g_engine.sequencer.getBeats() * 2, g_engine.sequencer.getBars());
@@ -227,6 +237,13 @@ void multiplyBeats()
 void divideBeats()
 {
 	main::setBeats(g_engine.sequencer.getBeats() / 2, g_engine.sequencer.getBars());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void goToBeat(int beat, Thread t)
+{
+	pushEvent_({m::EventDispatcher::EventType::SEQUENCER_GO_TO_BEAT, 0, 0, beat}, t);
 }
 
 /* -------------------------------------------------------------------------- */

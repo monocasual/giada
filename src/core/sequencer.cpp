@@ -140,6 +140,22 @@ void Sequencer::react(const EventDispatcher::EventBuffer& events, int sampleRate
 				rawRewind();
 			break;
 
+		case EventDispatcher::EventType::SEQUENCER_GO_TO_BEAT:
+		{
+			const float bpm   = m_model.get().sequencer.bpm;
+			const int   beat  = std::get<int>(e.data);
+			const Frame frame = u::time::beatToFrame(beat, sampleRate, bpm);
+			if (!m_jackTransport.setPosition(frame))
+				rawGoToBeat(beat, sampleRate);
+			break;
+		}
+		case EventDispatcher::EventType::SEQUENCER_BPM:
+		{
+			const float bpm = std::get<float>(e.data);
+			if (!m_jackTransport.setBpm(bpm))
+				rawSetBpm(bpm, sampleRate);
+			break;
+		}
 #ifdef WITH_AUDIO_JACK
 		case EventDispatcher::EventType::SEQUENCER_START_JACK:
 			rawStart();
@@ -324,7 +340,7 @@ void Sequencer::rawSetBpm(float v, int sampleRate)
 	assert(onBpmChange != nullptr);
 
 	const float oldVal = m_model.get().sequencer.bpm;
-	const float newVal = v;
+	const float newVal = std::clamp(v, G_MIN_BPM, G_MAX_BPM);
 
 	m_model.get().sequencer.bpm = newVal;
 	recomputeFrames(sampleRate);
@@ -346,6 +362,14 @@ void Sequencer::setBeats(int newBeats, int newBars, int sampleRate)
 	recomputeFrames(sampleRate);
 
 	m_model.swap(model::SwapType::HARD);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::rawGoToBeat(int beat, int sampleRate)
+{
+	m_model.get().sequencer.a_setCurrentBeat(beat, sampleRate);
+	m_model.swap(model::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */

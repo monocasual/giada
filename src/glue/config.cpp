@@ -171,6 +171,7 @@ MidiData getMidiData()
 
 	midiData.syncModes[G_MIDI_SYNC_NONE]         = "(disabled)";
 	midiData.syncModes[G_MIDI_SYNC_CLOCK_MASTER] = "MIDI Clock (master)";
+	midiData.syncModes[G_MIDI_SYNC_CLOCK_SLAVE]  = "MIDI Clock (slave)";
 
 	midiData.midiMaps = g_engine.midiMapper.getMapFilesFound();
 	midiData.midiMap  = u::vector::indexOf(midiData.midiMaps, g_engine.conf.data.midiMapPath);

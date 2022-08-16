@@ -81,6 +81,12 @@ private:
 
 	std::unique_ptr<RtMidiOut> m_midiOut;
 	std::unique_ptr<RtMidiIn>  m_midiIn;
+
+	/* m_elpsedTime
+	Time elapsed on received MIDI events. Used to compute the absolute timestamp
+	to pass to MidiEvent class. */
+
+	double m_elpsedTime;
 };
 } // namespace giada::m
 
