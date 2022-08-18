@@ -168,7 +168,7 @@ void KernelMidi::callback(double deltatime, std::vector<unsigned char>* msg)
 
 	onMidiReceived(event);
 
-	G_DEBUG("Recv MIDI msg=0x{:0X}", event.getRaw());
+	G_DEBUG("Recv MIDI msg=0x{:0X}, delta={}", event.getRaw(), deltatime);
 }
 
 /* -------------------------------------------------------------------------- */
