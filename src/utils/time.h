@@ -29,15 +29,9 @@
 #ifndef G_UTILS_TIME_H
 #define G_UTILS_TIME_H
 
-namespace giada
-{
-namespace u
-{
-namespace time
+namespace giada::u::time
 {
 void sleep(int millisecs);
-}
-} // namespace u
-} // namespace giada
+} // namespace giada::u::time
 
 #endif
