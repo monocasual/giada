@@ -60,14 +60,14 @@ public:
 	/* makeFromRaw (named ctor)
 	Makes a new MidiEvent from a raw MIDI message. */
 
-	static MidiEvent makeFromRaw(uint32_t raw, int numBytes);
+	static MidiEvent makeFromRaw(uint32_t raw, int numBytes, double timestamp = 0.0);
 
 	/* makeFrom3Bytes (named ctor)
 	Makes a new MidiEvent from separate bytes. */
 
-	static MidiEvent makeFrom3Bytes(uint8_t byte1, uint8_t byte2, uint8_t byte3);
-	static MidiEvent makeFrom2Bytes(uint8_t byte1, uint8_t byte2);
-	static MidiEvent makeFrom1Byte(uint8_t byte1);
+	static MidiEvent makeFrom3Bytes(uint8_t byte1, uint8_t byte2, uint8_t byte3, double timestamp = 0.0);
+	static MidiEvent makeFrom2Bytes(uint8_t byte1, uint8_t byte2, double timestamp = 0.0);
+	static MidiEvent makeFrom1Byte(uint8_t byte1, double timestamp = 0.0);
 
 	/* MidiEvent 
 	Creates and empty and invalid MIDI event. */
@@ -86,6 +86,7 @@ public:
 	uint8_t getByte1() const;
 	uint8_t getByte2() const;
 	uint8_t getByte3() const;
+	double  getTimestamp() const;
 
 	/* getRaw(), getRawNoVelocity()
 	Returns the raw MIDI message. If getRawNoVelocity(), the velocity value is
@@ -117,12 +118,13 @@ private:
 	/* MidiEvent
 	Creates a MIDI event from raw data. */
 
-	MidiEvent(uint32_t raw, int numBytes);
+	MidiEvent(uint32_t raw, int numBytes, double timestamp);
 
 	uint32_t m_raw;
 	int      m_numBytes;
 	int      m_delta;
 	float    m_velocity;
+	double   m_timestamp;
 };
 } // namespace giada::m
 

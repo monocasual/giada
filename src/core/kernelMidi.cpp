@@ -28,7 +28,9 @@
 #include "core/const.h"
 #include "core/midiEvent.h"
 #include "utils/log.h"
+#include <algorithm>
 #include <cassert>
+#include <chrono>
 #include <memory>
 
 namespace giada::m
@@ -142,25 +144,25 @@ unsigned KernelMidi::countInPorts() const { return m_midiIn != nullptr ? m_midiI
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::s_callback(double /*t*/, std::vector<unsigned char>* msg, void* data)
+void KernelMidi::s_callback(double deltatime, std::vector<unsigned char>* msg, void* data)
 {
-	static_cast<KernelMidi*>(data)->callback(msg);
+	static_cast<KernelMidi*>(data)->callback(deltatime, msg);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::callback(std::vector<unsigned char>* msg)
+void KernelMidi::callback(double deltatime, std::vector<unsigned char>* msg)
 {
 	assert(onMidiReceived != nullptr);
 	assert(msg->size() > 0);
 
 	MidiEvent event;
 	if (msg->size() == 1)
-		event = MidiEvent::makeFromBytes((*msg)[0]);
+		event = MidiEvent::makeFrom1Byte((*msg)[0], deltatime);
 	else if (msg->size() == 2)
-		event = MidiEvent::makeFromBytes((*msg)[0], (*msg)[1]);
+		event = MidiEvent::makeFrom2Bytes((*msg)[0], (*msg)[1], deltatime);
 	else if (msg->size() == 3)
-		event = MidiEvent::makeFromBytes((*msg)[0], (*msg)[1], (*msg)[2]);
+		event = MidiEvent::makeFrom3Bytes((*msg)[0], (*msg)[1], (*msg)[2], deltatime);
 	else
 		assert(false); // MIDI messages longer than 3 bytes are not supported
 

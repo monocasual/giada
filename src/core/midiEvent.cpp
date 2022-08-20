@@ -36,39 +36,41 @@ MidiEvent::MidiEvent()
 , m_numBytes(0)
 , m_delta(0)
 , m_velocity(0.0f)
+, m_timestamp(0)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-MidiEvent::MidiEvent(uint32_t raw, int numBytes)
+MidiEvent::MidiEvent(uint32_t raw, int numBytes, double timestamp)
 : m_raw(raw)
 , m_numBytes(numBytes)
 , m_delta(0)
 , m_velocity(0.0f)
+, m_timestamp(timestamp)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-MidiEvent MidiEvent::makeFromRaw(uint32_t raw, int numBytes)
+MidiEvent MidiEvent::makeFromRaw(uint32_t raw, int numBytes, double timestamp)
 {
-	return MidiEvent(raw, numBytes);
+	return MidiEvent(raw, numBytes, timestamp);
 }
 
-MidiEvent MidiEvent::makeFrom3Bytes(uint8_t byte1, uint8_t byte2, uint8_t byte3)
+MidiEvent MidiEvent::makeFrom3Bytes(uint8_t byte1, uint8_t byte2, uint8_t byte3, double timestamp)
 {
-	return MidiEvent((byte1 << 24) | (byte2 << 16) | (byte3 << 8) | 0x00, /*numBytes=*/3);
+	return MidiEvent((byte1 << 24) | (byte2 << 16) | (byte3 << 8) | 0x00, /*numBytes=*/3, timestamp);
 }
 
-MidiEvent MidiEvent::makeFrom2Bytes(uint8_t byte1, uint8_t byte2)
+MidiEvent MidiEvent::makeFrom2Bytes(uint8_t byte1, uint8_t byte2, double timestamp)
 {
-	return MidiEvent((byte1 << 24) | (byte2 << 16) | 0x00 | 0x00, /*numBytes=*/2);
+	return MidiEvent((byte1 << 24) | (byte2 << 16) | 0x00 | 0x00, /*numBytes=*/2, timestamp);
 }
 
-MidiEvent MidiEvent::makeFrom1Byte(uint8_t byte1)
+MidiEvent MidiEvent::makeFrom1Byte(uint8_t byte1, double timestamp)
 {
-	return MidiEvent((byte1 << 24) | 0x00 | 0x00 | 0x00, /*numBytes=*/1);
+	return MidiEvent((byte1 << 24) | 0x00 | 0x00 | 0x00, /*numBytes=*/1, timestamp);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -160,6 +162,11 @@ int MidiEvent::getDelta() const
 int MidiEvent::getNumBytes() const
 {
 	return m_numBytes;
+}
+
+double MidiEvent::getTimestamp() const
+{
+	return m_timestamp;
 }
 
 /* -------------------------------------------------------------------------- */

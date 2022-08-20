@@ -222,7 +222,7 @@ void recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
 	}
 	else
 	{
-		m::MidiEvent e1 = m::MidiEvent::make3FromBytes(type, 0, 0);
+		m::MidiEvent e1 = m::MidiEvent::makeFrom3Bytes(type, 0, 0);
 		g_engine.actionRecorder.rec(channelId, f1, e1);
 	}
 

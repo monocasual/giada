@@ -69,7 +69,7 @@ public:
 
 private:
 	static void s_callback(double, std::vector<unsigned char>*, void*);
-	void        callback(std::vector<unsigned char>*);
+	void        callback(double, std::vector<unsigned char>*);
 
 	template <typename Device>
 	std::unique_ptr<Device> makeDevice(RtMidi::Api api, std::string name) const;
