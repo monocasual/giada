@@ -34,6 +34,7 @@
 #include "core/quantizer.h"
 #include "utils/log.h"
 #include "utils/math.h"
+#include "utils/time.h"
 
 namespace giada::m
 {
@@ -165,7 +166,7 @@ void Sequencer::react(const EventDispatcher::EventBuffer& events, int sampleRate
 
 /* -------------------------------------------------------------------------- */
 
-const Sequencer::EventBuffer& Sequencer::advance(Frame bufferSize, const ActionRecorder& actionRecorder)
+const Sequencer::EventBuffer& Sequencer::advance(Frame bufferSize, int sampleRate, const ActionRecorder& actionRecorder)
 {
 	m_eventBuffer.clear();
 
@@ -177,7 +178,6 @@ const Sequencer::EventBuffer& Sequencer::advance(Frame bufferSize, const ActionR
 	const Frame framesInBar  = sequencer.framesInBar;
 	const Frame framesInBeat = sequencer.framesInBeat;
 	const Frame nextFrame    = end % framesInLoop;
-	const int   nextBeat     = nextFrame / framesInBeat;
 
 	/* Process events in the current block. */
 
@@ -208,8 +208,7 @@ const Sequencer::EventBuffer& Sequencer::advance(Frame bufferSize, const ActionR
 
 	/* Advance this and quantizer after the event parsing. */
 
-	sequencer.a_setCurrentFrame(nextFrame);
-	sequencer.a_setCurrentBeat(nextBeat);
+	sequencer.a_setCurrentFrame(nextFrame, sampleRate);
 	m_quantizer.advance(Range<Frame>(start, end), getQuantizerStep());
 	m_midiSynchronizer.advance(geompp::Range<Frame>(start, end), sequencer.framesInBeat);
 
@@ -273,8 +272,7 @@ void Sequencer::rewind()
 {
 	const model::Sequencer& c = m_model.get().sequencer;
 
-	c.a_setCurrentFrame(0);
-	c.a_setCurrentBeat(0);
+	c.a_setCurrentFrame(0, /*sampleRate=*/0); // No need for sampleRate, it's just 0
 }
 
 /* -------------------------------------------------------------------------- */
@@ -297,9 +295,9 @@ void Sequencer::recomputeFrames(int sampleRate)
 {
 	model::Sequencer& s = m_model.get().sequencer;
 
-	s.framesInLoop = static_cast<int>((sampleRate * (60.0f / s.bpm)) * s.beats);
-	s.framesInBar  = static_cast<int>(s.framesInLoop / (float)s.bars);
-	s.framesInBeat = static_cast<int>(s.framesInLoop / (float)s.beats);
+	s.framesInBeat = u::time::beatToFrame(1, sampleRate, s.bpm);
+	s.framesInBar  = s.framesInBeat * s.bars;
+	s.framesInLoop = s.framesInBeat * s.beats;
 	s.framesInSeq  = s.framesInBeat * G_MAX_BEATS;
 
 	if (s.quantize != 0)

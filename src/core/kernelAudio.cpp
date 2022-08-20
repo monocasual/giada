@@ -129,6 +129,7 @@ int KernelAudio::openDevice(const Conf::Data& conf)
 	    /* outBuf           = */ nullptr, // filled later on in audio callback
 	    /* inBuf            = */ nullptr, // filled later on in audio callback
 	    /* bufferSize       = */ 0,       // filled later on in audio callback
+	    /* sampleRate       = */ m_realSampleRate,
 	    /* channelsOutCount = */ m_channelsOutCount,
 	    /* channelsInCount  = */ m_channelsInCount};
 

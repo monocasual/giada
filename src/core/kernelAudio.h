@@ -64,6 +64,7 @@ public:
 		void*        outBuf;
 		void*        inBuf;
 		int          bufferSize;
+		int          sampleRate;
 		int          channelsOutCount;
 		int          channelsInCount;
 	};

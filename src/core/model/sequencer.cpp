@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/model/sequencer.h"
+#include "utils/time.h"
 
 namespace giada::m::model
 {
@@ -79,6 +80,17 @@ Frame Sequencer::a_getCurrentBeat() const { return shared->currentBeat.load(); }
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::a_setCurrentFrame(Frame f) const { shared->currentFrame.store(f); }
-void Sequencer::a_setCurrentBeat(Frame f) const { shared->currentBeat.store(f); }
+void Sequencer::a_setCurrentFrame(Frame f, int sampleRate) const
+{
+	shared->currentFrame.store(f);
+	shared->currentBeat.store(u::time::frameToBeat(f, sampleRate, bpm));
+}
+
+void Sequencer::a_setCurrentBeat(int b, int sampleRate) const
+{
+	const Frame currentFrame = u::time::beatToFrame(b, sampleRate, bpm);
+
+	shared->currentFrame.store(currentFrame);
+	shared->currentBeat.store(b);
+}
 } // namespace giada::m::model

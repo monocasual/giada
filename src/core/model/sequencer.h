@@ -62,8 +62,8 @@ public:
 	Frame a_getCurrentFrame() const;
 	Frame a_getCurrentBeat() const;
 
-	void a_setCurrentFrame(Frame) const;
-	void a_setCurrentBeat(Frame) const;
+	void a_setCurrentFrame(Frame f, int sampleRate) const;
+	void a_setCurrentBeat(int b, int sampleRate) const;
 
 	SeqStatus status       = SeqStatus::STOPPED;
 	int       framesInLoop = 0;
@@ -79,7 +79,7 @@ private:
 	struct Shared
 	{
 		WeakAtomic<Frame> currentFrame = 0;
-		WeakAtomic<Frame> currentBeat  = 0;
+		WeakAtomic<int>   currentBeat  = 0;
 	};
 
 	Shared* shared = nullptr;

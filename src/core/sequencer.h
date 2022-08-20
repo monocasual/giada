@@ -140,7 +140,7 @@ public:
 	quantizer. Returns a reference to the internal EventBuffer filled with events
 	(if any). Call this on each new audio block. */
 
-	const EventBuffer& advance(Frame bufferSize, const ActionRecorder&);
+	const EventBuffer& advance(Frame bufferSize, int sampleRate, const ActionRecorder&);
 
 	/* render
 	Renders audio coming out from the sequencer: that is, the metronome! */

@@ -303,7 +303,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo)
 		const Frame        quantizerStep = sequencer.getQuantizerStep();              // TODO pass this to sequencer.advance - or better, Advancer class
 		const Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to sequencer.advance - or better, Advancer class
 
-		const Sequencer::EventBuffer& events = sequencer.advance(bufferSize, actionRecorder);
+		const Sequencer::EventBuffer& events = sequencer.advance(bufferSize, kernelInfo.sampleRate, actionRecorder);
 		sequencer.render(out);
 		if (!layout_RT.locked)
 			mixer.advanceChannels(events, layout_RT, renderRange, quantizerStep);

@@ -29,9 +29,21 @@
 #ifndef G_UTILS_TIME_H
 #define G_UTILS_TIME_H
 
+#include "core/types.h"
+
 namespace giada::u::time
 {
 void sleep(int millisecs);
+
+/* beatToFrame
+Returns the frame a beat corresponds to. */
+
+Frame beatToFrame(int beat, int sampleRate, float bpm);
+
+/* frameToBeat
+Returns the beat a frame corresponds to. */
+
+int frameToBeat(Frame frame, int sampleRate, float bpm);
 } // namespace giada::u::time
 
 #endif
