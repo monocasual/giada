@@ -43,7 +43,7 @@ void MidiActionRecorder::react(ID channelId, const EventDispatcher::Event& e,
 {
 	if (e.type == EventDispatcher::EventType::MIDI)
 	{
-		MidiEvent flat(std::get<Action>(e.data).event);
+		MidiEvent flat(std::any_cast<Action>(e.data).event);
 		flat.setChannel(0);
 		m_actionRecorder->liveRec(channelId, flat, currentFrameQuantized);
 		hasActions = true;

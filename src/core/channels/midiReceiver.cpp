@@ -35,7 +35,7 @@ void MidiReceiver::react(ChannelShared::MidiQueue& midiQueue, const EventDispatc
 	switch (e.type)
 	{
 	case EventDispatcher::EventType::MIDI:
-		parseMidi(midiQueue, std::get<Action>(e.data).event);
+		parseMidi(midiQueue, std::any_cast<Action>(e.data).event);
 		break;
 
 	case EventDispatcher::EventType::KEY_KILL:

@@ -373,11 +373,11 @@ void Channel::react(const EventDispatcher::Event& e)
 	switch (e.type)
 	{
 	case EventDispatcher::EventType::CHANNEL_VOLUME:
-		volume = std::get<float>(e.data);
+		volume = std::any_cast<float>(e.data);
 		break;
 
 	case EventDispatcher::EventType::CHANNEL_PAN:
-		pan = std::get<float>(e.data);
+		pan = std::any_cast<float>(e.data);
 		break;
 
 	case EventDispatcher::EventType::CHANNEL_MUTE:

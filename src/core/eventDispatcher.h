@@ -33,10 +33,10 @@
 #include "core/types.h"
 #include "core/worker.h"
 #include "src/core/actions/action.h"
+#include <any>
 #include <atomic>
 #include <functional>
 #include <thread>
-#include <variant>
 
 /* giada::m::EventDispatcher
 Takes events from the two queues (MIDI and UI) filled by c::events and turns 
@@ -58,6 +58,10 @@ public:
 		SEQUENCER_REWIND,
 		SEQUENCER_BPM,
 		SEQUENCER_GO_TO_BEAT,
+		RECORDER_PREPARE_ACTION_REC,
+		RECORDER_PREPARE_INPUT_REC,
+		RECORDER_STOP_ACTION_REC,
+		RECORDER_STOP_INPUT_REC,
 #ifdef WITH_AUDIO_JACK
 		SEQUENCER_START_JACK,
 		SEQUENCER_STOP_JACK,
@@ -81,12 +85,10 @@ public:
 
 	struct Event
 	{
-		using EventData = std::variant<int, float, Action>;
-
 		EventType type;
 		Frame     delta     = 0;
 		ID        channelId = 0;
-		EventData data      = {};
+		std::any  data      = {};
 	};
 
 	/* EventBuffer

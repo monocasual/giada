@@ -143,7 +143,7 @@ void Sequencer::react(const EventDispatcher::EventBuffer& events, int sampleRate
 		case EventDispatcher::EventType::SEQUENCER_GO_TO_BEAT:
 		{
 			const float bpm   = m_model.get().sequencer.bpm;
-			const int   beat  = std::get<int>(e.data);
+			const int   beat  = std::any_cast<int>(e.data);
 			const Frame frame = u::time::beatToFrame(beat, sampleRate, bpm);
 			if (!m_jackTransport.setPosition(frame))
 				rawGoToBeat(beat, sampleRate);
@@ -151,7 +151,7 @@ void Sequencer::react(const EventDispatcher::EventBuffer& events, int sampleRate
 		}
 		case EventDispatcher::EventType::SEQUENCER_BPM:
 		{
-			const float bpm = std::get<float>(e.data);
+			const float bpm = std::any_cast<float>(e.data);
 			if (!m_jackTransport.setBpm(bpm))
 				rawSetBpm(bpm, sampleRate);
 			break;
@@ -170,7 +170,7 @@ void Sequencer::react(const EventDispatcher::EventBuffer& events, int sampleRate
 			break;
 
 		case EventDispatcher::EventType::SEQUENCER_BPM_JACK:
-			rawSetBpm(std::get<float>(e.data), sampleRate);
+			rawSetBpm(std::any_cast<float>(e.data), sampleRate);
 			break;
 #endif
 

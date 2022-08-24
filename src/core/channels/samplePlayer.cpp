@@ -101,7 +101,7 @@ Frame SamplePlayer::getWaveSize() const
 void SamplePlayer::react(const EventDispatcher::Event& e)
 {
 	if (e.type == EventDispatcher::EventType::CHANNEL_PITCH)
-		pitch = std::get<float>(e.data);
+		pitch = std::any_cast<float>(e.data);
 }
 
 /* -------------------------------------------------------------------------- */

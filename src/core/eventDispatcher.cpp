@@ -66,11 +66,11 @@ void EventDispatcher::processFunctions()
 		switch (e.type)
 		{
 		case EventType::MIDI_DISPATCHER_LEARN:
-			onMidiLearn(std::get<Action>(e.data).event);
+			onMidiLearn(std::any_cast<Action>(e.data).event);
 			break;
 
 		case EventType::MIDI_DISPATCHER_PROCESS:
-			onMidiProcess(std::get<Action>(e.data).event);
+			onMidiProcess(std::any_cast<Action>(e.data).event);
 			break;
 
 		case EventType::MIXER_SIGNAL_CALLBACK:

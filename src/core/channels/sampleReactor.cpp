@@ -65,7 +65,7 @@ void SampleReactor::react(ID channelId, ChannelShared& shared, const EventDispat
 	{
 	case EventDispatcher::EventType::KEY_PRESS:
 	{
-		press(channelId, shared, mode, std::get<int>(e.data), canQuantize, isLoop, velocityAsVol, volume_i);
+		press(channelId, shared, mode, std::any_cast<int>(e.data), canQuantize, isLoop, velocityAsVol, volume_i);
 		break;
 	}
 	case EventDispatcher::EventType::KEY_RELEASE:
