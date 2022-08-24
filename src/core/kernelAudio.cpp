@@ -92,10 +92,10 @@ int KernelAudio::openDevice(const Conf::Data& conf)
 		inParams.deviceId     = conf.soundDeviceIn;
 		inParams.nChannels    = conf.channelsInCount;
 		inParams.firstChannel = conf.channelsInStart;
-		m_inputEnabled        = true;
+		m_inputEnabled.store(true);
 	}
 	else
-		m_inputEnabled = false;
+		m_inputEnabled.store(false);
 
 	RtAudio::StreamOptions options;
 	options.streamName      = G_APP_NAME;
@@ -145,7 +145,7 @@ int KernelAudio::openDevice(const Conf::Data& conf)
 
 	if (res == RtAudioErrorType::RTAUDIO_NO_ERROR)
 	{
-		m_ready = true;
+		m_ready.store(true);
 		return 1;
 	}
 	else
@@ -194,7 +194,7 @@ void KernelAudio::closeDevice()
 
 bool KernelAudio::isReady() const
 {
-	return m_ready;
+	return m_ready.load();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -203,7 +203,7 @@ int  KernelAudio::getBufferSize() const { return static_cast<int>(m_realBufferSi
 int  KernelAudio::getSampleRate() const { return m_realSampleRate; }
 int  KernelAudio::getChannelsOutCount() const { return m_channelsOutCount; }
 int  KernelAudio::getChannelsInCount() const { return m_channelsInCount; }
-bool KernelAudio::isInputEnabled() const { return m_inputEnabled; }
+bool KernelAudio::isInputEnabled() const { return m_inputEnabled.load(); }
 
 /* -------------------------------------------------------------------------- */
 

@@ -92,7 +92,7 @@ public:
 	/* render
 	Core rendering function. */
 
-	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Layout&) const;
+	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Layout&, bool isRecordingInput) const;
 
 	/* reset
 	Brings everything back to the initial state. */

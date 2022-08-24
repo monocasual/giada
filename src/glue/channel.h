@@ -83,7 +83,7 @@ struct Data
 	ChannelStatus getRecStatus() const;
 	bool          getReadActions() const;
 	bool          isRecordingInput() const;
-	bool          isRecordingAction() const;
+	bool          isRecordingActions() const;
 	bool          isMuted() const;
 	bool          isSoloed() const;
 	bool          isArmed() const;

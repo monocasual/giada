@@ -157,7 +157,7 @@ void geSampleChannel::openMenu()
 	/* If you're recording (input or actions) no menu is allowed; you can't do
 	anything, especially deallocate the channel. */
 
-	if (m_channel.isRecordingAction() || m_channel.isRecordingInput())
+	if (m_channel.isRecordingActions() || m_channel.isRecordingInput())
 		return;
 
 	geMenu menu;

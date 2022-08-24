@@ -82,7 +82,6 @@ list(APPEND SOURCES
 	src/core/channels/channelFactory.cpp
 	src/core/model/sequencer.cpp
 	src/core/model/mixer.cpp
-	src/core/model/recorder.cpp
 	src/core/model/model.cpp
 	src/core/model/storage.cpp
 	src/core/idManager.cpp

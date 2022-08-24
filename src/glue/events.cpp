@@ -270,42 +270,52 @@ void rewindSequencer(Thread t)
 
 /* -------------------------------------------------------------------------- */
 
-void stopActionRecording()
+void prepareActionRecording(Thread t)
 {
-	if (g_engine.kernelAudio.isReady() && g_engine.recorder.isRecordingAction())
-		g_engine.recorder.stopActionRec(g_engine.actionRecorder);
+	pushEvent_({m::EventDispatcher::EventType::RECORDER_PREPARE_ACTION_REC, 0, 0, {g_engine.conf.data.recTriggerMode}}, t);
+}
+
+void stopActionRecording(Thread t)
+{
+	pushEvent_({m::EventDispatcher::EventType::RECORDER_STOP_ACTION_REC, 0, 0, {}}, t);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void toggleActionRecording()
+void prepareInputRecording(Thread t)
 {
-	if (!g_engine.kernelAudio.isReady())
-		return;
-	if (g_engine.recorder.isRecordingAction())
-		g_engine.recorder.stopActionRec(g_engine.actionRecorder);
+	const m::Recorder::InputRecData data = {
+	    g_engine.conf.data.recTriggerMode,
+	    g_engine.conf.data.inputRecMode};
+
+	pushEvent_({m::EventDispatcher::EventType::RECORDER_PREPARE_INPUT_REC, 0, 0, {data}}, t);
+}
+
+void stopInputRecording(Thread t)
+{
+	pushEvent_({m::EventDispatcher::EventType::RECORDER_STOP_INPUT_REC, 0, 0, {g_engine.conf.data.inputRecMode}}, t);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void toggleActionRecording(Thread t)
+{
+	if (g_engine.recorder.isRecordingActions())
+		stopActionRecording(t);
 	else
-		g_engine.recorder.prepareActionRec(g_engine.conf.data.recTriggerMode);
+		prepareActionRecording(t);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void stopInputRecording()
+void toggleInputRecording(Thread t)
 {
-	if (g_engine.kernelAudio.isReady() && g_engine.recorder.isRecordingInput())
-		g_engine.recorder.stopInputRec(g_engine.conf.data.inputRecMode, g_engine.kernelAudio.getSampleRate());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void toggleInputRecording()
-{
-	if (!g_engine.kernelAudio.isReady() || !g_engine.kernelAudio.isInputEnabled() || !g_engine.channelManager.hasInputRecordableChannels())
+	if (!g_engine.kernelAudio.isInputEnabled() || !g_engine.channelManager.hasInputRecordableChannels())
 		return;
 	if (g_engine.recorder.isRecordingInput())
-		g_engine.recorder.stopInputRec(g_engine.conf.data.inputRecMode, g_engine.kernelAudio.getSampleRate());
+		stopInputRecording(t);
 	else
-		g_engine.recorder.prepareInputRec(g_engine.conf.data.recTriggerMode, g_engine.conf.data.inputRecMode);
+		prepareInputRecording(t);
 }
 
 /* -------------------------------------------------------------------------- */

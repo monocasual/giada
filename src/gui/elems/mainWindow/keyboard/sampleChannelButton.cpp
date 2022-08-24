@@ -61,7 +61,7 @@ void geSampleChannelButton::refresh()
 
 	if (m_channel.isRecordingInput() && m_channel.isArmed())
 		setInputRecordMode();
-	else if (m_channel.isRecordingAction() && m_channel.sample->waveId != 0 && !m_channel.sample->isLoop)
+	else if (m_channel.isRecordingActions() && m_channel.sample->waveId != 0 && !m_channel.sample->isLoop)
 		setActionRecordMode();
 
 	redraw();

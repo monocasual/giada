@@ -133,11 +133,11 @@ void Mixer::setInToOut(bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Layout& layout_RT) const
+void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in,
+    const model::Layout& layout_RT, bool isRecordingInput) const
 {
 	const model::Mixer&     mixer     = layout_RT.mixer;
 	const model::Sequencer& sequencer = layout_RT.sequencer;
-	const model::Recorder&  recorder  = layout_RT.recorder;
 
 	const Channel& masterOutCh = layout_RT.getChannel(Mixer::MASTER_OUT_CHANNEL_ID);
 	const Channel& masterInCh  = layout_RT.getChannel(Mixer::MASTER_IN_CHANNEL_ID);
@@ -146,7 +146,7 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const mode
 	const bool  hasInput        = in.isAllocd();
 	const bool  inToOut         = mixer.inToOut;
 	const bool  isSeqActive     = sequencer.isActive();
-	const bool  shouldLineInRec = isSeqActive && recorder.a_isRecordingInput() && hasInput;
+	const bool  shouldLineInRec = isSeqActive && isRecordingInput && hasInput;
 	const float recTriggerLevel = mixer.recTriggerLevel;
 	const Frame maxFramesToRec  = mixer.maxFramesToRec;
 	const bool  allowsOverdub   = mixer.allowsOverdub;

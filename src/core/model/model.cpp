@@ -117,7 +117,6 @@ void Model::reset()
 
 	get().sequencer.shared = &m_shared.sequencerShared;
 	get().mixer.shared     = &m_shared.mixerShared;
-	get().recorder.shared  = &m_shared.recorderShared;
 
 	swap(SwapType::NONE);
 }

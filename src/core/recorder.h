@@ -27,7 +27,9 @@
 #ifndef G_REC_MANAGER_H
 #define G_REC_MANAGER_H
 
+#include "core/eventDispatcher.h"
 #include "core/types.h"
+#include "core/weakAtomic.h"
 
 namespace giada::m::model
 {
@@ -43,10 +45,15 @@ class Sequencer;
 class Recorder final
 {
 public:
-	Recorder(model::Model&, Sequencer&, ChannelManager&, Mixer&);
+	struct InputRecData
+	{
+		RecTriggerMode recTriggerMode;
+		InputRecMode   inputMode;
+	};
 
-	bool isRecording() const;
-	bool isRecordingAction() const;
+	Recorder(model::Model&, Sequencer&, ChannelManager&, Mixer&, ActionRecorder&);
+
+	bool isRecordingActions() const;
 	bool isRecordingInput() const;
 
 	/* canEnableRecOnSignal
@@ -66,10 +73,14 @@ public:
 
 	bool canRecordActions() const;
 
+	/* react
+	Reacts to live events coming from the EventDispatcher (human events). */
+
+	void react(const EventDispatcher::EventBuffer&, int sampleRate);
+
 	void prepareActionRec(RecTriggerMode);
-	void startActionRec();
 	void startActionRecOnCallback();
-	void stopActionRec(ActionRecorder&);
+	void stopActionRec();
 
 	bool prepareInputRec(RecTriggerMode, InputRecMode);
 	void startInputRec();
@@ -77,13 +88,14 @@ public:
 	void stopInputRec(InputRecMode, int sampleRate);
 
 private:
-	void setRecordingAction(bool v);
-	void setRecordingInput(bool v);
-
 	model::Model&   m_model;
 	Sequencer&      m_sequencer;
 	ChannelManager& m_channelManager;
 	Mixer&          m_mixer;
+	ActionRecorder& m_actionRecorder;
+
+	WeakAtomic<bool> m_isRecordingActions;
+	WeakAtomic<bool> m_isRecordingInput;
 };
 } // namespace giada::m
 

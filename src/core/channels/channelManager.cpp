@@ -38,6 +38,7 @@ ChannelManager::ChannelManager(model::Model& model, ChannelFactory& cm, WaveFact
 : m_model(model)
 , m_channelFactory(cm)
 , m_waveManager(wm)
+, m_hasInputRecordableChannels(false)
 {
 }
 
@@ -71,8 +72,6 @@ Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position,
 
 void ChannelManager::loadSampleChannel(ID channelId, std::unique_ptr<Wave> w)
 {
-	assert(onChannelsAltered != nullptr);
-
 	m_model.addShared(std::move(w));
 
 	Channel& channel = m_model.get().getChannel(channelId);
@@ -88,15 +87,13 @@ void ChannelManager::loadSampleChannel(ID channelId, std::unique_ptr<Wave> w)
 	if (oldWave != nullptr)
 		m_model.removeShared<Wave>(*oldWave);
 
-	onChannelsAltered();
+	triggerOnChannelsAltered();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::addAndLoadSampleChannel(int bufferSize, std::unique_ptr<Wave> w, ID columnId, int position)
 {
-	assert(onChannelsAltered != nullptr);
-
 	m_model.addShared(std::move(w));
 
 	Wave&    wave    = m_model.backShared<Wave>();
@@ -105,7 +102,7 @@ void ChannelManager::addAndLoadSampleChannel(int bufferSize, std::unique_ptr<Wav
 	loadSampleChannel(channel, &wave);
 	m_model.swap(model::SwapType::HARD);
 
-	onChannelsAltered();
+	triggerOnChannelsAltered();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -139,8 +136,6 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 
 void ChannelManager::freeSampleChannel(ID channelId)
 {
-	assert(onChannelsAltered != nullptr);
-
 	Channel& ch = m_model.get().getChannel(channelId);
 
 	assert(ch.samplePlayer);
@@ -153,15 +148,13 @@ void ChannelManager::freeSampleChannel(ID channelId)
 	if (wave != nullptr)
 		m_model.removeShared<Wave>(*wave);
 
-	onChannelsAltered();
+	triggerOnChannelsAltered();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::freeAllSampleChannels()
 {
-	assert(onChannelsAltered != nullptr);
-
 	for (Channel& ch : m_model.get().channels)
 		if (ch.samplePlayer)
 			loadSampleChannel(ch, nullptr);
@@ -169,15 +162,13 @@ void ChannelManager::freeAllSampleChannels()
 	m_model.swap(model::SwapType::HARD);
 	m_model.clearShared<model::WavePtrs>();
 
-	onChannelsAltered();
+	triggerOnChannelsAltered();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::deleteChannel(ID channelId)
 {
-	assert(onChannelsAltered != nullptr);
-
 	const Channel& ch   = m_model.get().getChannel(channelId);
 	const Wave*    wave = ch.samplePlayer ? ch.samplePlayer->getWave() : nullptr;
 
@@ -189,7 +180,7 @@ void ChannelManager::deleteChannel(ID channelId)
 	if (wave != nullptr)
 		m_model.removeShared<Wave>(*wave);
 
-	onChannelsAltered();
+	triggerOnChannelsAltered();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -253,21 +244,62 @@ std::vector<const Channel*> ChannelManager::getColumn(ID columnId) const
 
 void ChannelManager::finalizeInputRec(const mcl::AudioBuffer& buffer, Frame recordedFrames, Frame currentFrame)
 {
-	assert(onChannelsAltered != nullptr);
-
 	for (Channel* ch : getRecordableChannels())
 		recordChannel(*ch, buffer, recordedFrames, currentFrame);
 	for (Channel* ch : getOverdubbableChannels())
 		overdubChannel(*ch, buffer, currentFrame);
 
-	onChannelsAltered();
+	triggerOnChannelsAltered();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelManager::setInputMonitor(ID channelId, bool value)
+{
+	m_model.get().getChannel(channelId).audioReceiver->inputMonitor = value;
+	m_model.swap(model::SwapType::HARD);
+
+	triggerOnChannelsAltered();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelManager::setOverdubProtection(ID channelId, bool value)
+{
+	m::Channel& ch                      = m_model.get().getChannel(channelId);
+	ch.audioReceiver->overdubProtection = value;
+	if (value == true && ch.armed)
+		ch.armed = false;
+	m_model.swap(model::SwapType::HARD);
+
+	triggerOnChannelsAltered();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelManager::setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
+{
+	m_model.get().getChannel(channelId).samplePlayer->mode = mode;
+	m_model.swap(model::SwapType::HARD);
+
+	triggerOnChannelsAltered();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelManager::setHeight(ID channelId, Pixel height)
+{
+	m_model.get().getChannel(channelId).height = height;
+	m_model.swap(model::SwapType::SOFT);
+
+	triggerOnChannelsAltered();
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool ChannelManager::hasInputRecordableChannels() const
 {
-	return forAnyChannel([](const Channel& ch) { return ch.canInputRec(); });
+	return m_hasInputRecordableChannels.load();
 }
 
 bool ChannelManager::hasActions() const
@@ -375,5 +407,15 @@ void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer,
 	wave->setLogical(true);
 
 	setupChannelPostRecording(ch, currentFrame);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelManager::triggerOnChannelsAltered()
+{
+	assert(onChannelsAltered != nullptr);
+
+	m_hasInputRecordableChannels.store(forAnyChannel([](const Channel& ch) { return ch.canInputRec(); }));
+	onChannelsAltered();
 }
 } // namespace giada::m

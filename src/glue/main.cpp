@@ -143,7 +143,7 @@ Transport getTransport()
 {
 	Transport transport;
 	transport.isRunning         = g_engine.sequencer.isRunning();
-	transport.isRecordingAction = g_engine.recorder.isRecordingAction();
+	transport.isRecordingAction = g_engine.recorder.isRecordingActions();
 	transport.isRecordingInput  = g_engine.recorder.isRecordingInput();
 	transport.isMetronomeOn     = g_engine.sequencer.isMetronomeOn();
 	transport.recTriggerMode    = g_engine.conf.data.recTriggerMode;

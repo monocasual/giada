@@ -32,7 +32,8 @@
 /* giada::c::events
 Functions that take care of live event dispatching. Every live gesture that 
 comes from the UI, MIDI thread or keyboard interaction and wants to change the
-internal engine state must call these functions. */
+internal engine state must call these functions. In other words: all these
+functions are thread-safe. */
 
 namespace giada::m
 {
@@ -71,10 +72,10 @@ void startSequencer(Thread t);
 void stopSequencer(Thread t);
 void toggleSequencer(Thread t);
 void rewindSequencer(Thread t);
-void stopActionRecording();
-void toggleActionRecording();
-void stopInputRecording();
-void toggleInputRecording();
+void stopActionRecording(Thread);
+void toggleActionRecording(Thread);
+void stopInputRecording(Thread);
+void toggleInputRecording(Thread);
 
 /* Plug-ins. */
 

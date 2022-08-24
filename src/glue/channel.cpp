@@ -139,7 +139,7 @@ ChannelStatus Data::getPlayStatus() const { return m_channel->shared->playStatus
 ChannelStatus Data::getRecStatus() const { return m_channel->shared->recStatus.load(); }
 bool          Data::getReadActions() const { return m_channel->shared->readActions.load(); }
 bool          Data::isRecordingInput() const { return g_engine.recorder.isRecordingInput(); }
-bool          Data::isRecordingAction() const { return g_engine.recorder.isRecordingAction(); }
+bool          Data::isRecordingActions() const { return g_engine.recorder.isRecordingActions(); }
 bool          Data::isMuted() const { return m_channel->isMuted(); }
 bool          Data::isSoloed() const { return m_channel->isSoloed(); }
 bool          Data::isArmed() const { return m_channel->armed; }
@@ -262,21 +262,14 @@ void freeChannel(ID channelId)
 
 void setInputMonitor(ID channelId, bool value)
 {
-	// TODO - move to channelManager
-	g_engine.model.get().getChannel(channelId).audioReceiver->inputMonitor = value;
-	g_engine.model.swap(m::model::SwapType::HARD);
+	g_engine.channelManager.setInputMonitor(channelId, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setOverdubProtection(ID channelId, bool value)
 {
-	// TODO - move to channelManager
-	m::Channel& ch                      = g_engine.model.get().getChannel(channelId);
-	ch.audioReceiver->overdubProtection = value;
-	if (value == true && ch.armed)
-		ch.armed = false;
-	g_engine.model.swap(m::model::SwapType::HARD);
+	g_engine.channelManager.setOverdubProtection(channelId, value);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -302,9 +295,7 @@ void moveChannel(ID channelId, ID columnId, int position)
 
 void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
-	// TODO - move to channelManager
-	g_engine.model.get().getChannel(channelId).samplePlayer->mode = mode;
-	g_engine.model.swap(m::model::SwapType::HARD);
+	g_engine.channelManager.setSamplePlayerMode(channelId, mode);
 	g_ui.refreshSubWindow(WID_ACTION_EDITOR);
 }
 
@@ -312,9 +303,7 @@ void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 
 void setHeight(ID channelId, Pixel p)
 {
-	// TODO - move to channelManager
-	g_engine.model.get().getChannel(channelId).height = p;
-	g_engine.model.swap(m::model::SwapType::SOFT);
+	g_engine.channelManager.setHeight(channelId, p);
 }
 
 /* -------------------------------------------------------------------------- */

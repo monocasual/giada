@@ -28,6 +28,7 @@
 #define G_CHANNEL_MANAGER_H
 
 #include "core/types.h"
+#include "core/weakAtomic.h"
 #include <functional>
 #include <map>
 #include <memory>
@@ -129,6 +130,11 @@ public:
 
 	void finalizeInputRec(const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame);
 
+	void setInputMonitor(ID channelId, bool value);
+	void setOverdubProtection(ID channelId, bool value);
+	void setSamplePlayerMode(ID channelId, SamplePlayerMode);
+	void setHeight(ID channelId, Pixel height);
+
 	/* onChannelsAltered
 	Fired when something is done on channels (added, removed, loaded, ...). */
 
@@ -169,9 +175,13 @@ private:
 
 	void overdubChannel(Channel&, const mcl::AudioBuffer&, Frame currentFrame);
 
+	void triggerOnChannelsAltered();
+
 	model::Model&   m_model;
 	ChannelFactory& m_channelFactory;
 	WaveFactory&    m_waveManager;
+
+	WeakAtomic<bool> m_hasInputRecordableChannels;
 };
 } // namespace giada::m
 

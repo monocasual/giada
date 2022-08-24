@@ -78,12 +78,12 @@ geMainTransport::geMainTransport()
 
 	m_recAction->setToggleable(true);
 	m_recAction->onClick = []() {
-		c::events::toggleActionRecording();
+		c::events::toggleActionRecording(Thread::MAIN);
 	};
 
 	m_recInput->setToggleable(true);
 	m_recInput->onClick = []() {
-		c::events::toggleInputRecording();
+		c::events::toggleInputRecording(Thread::MAIN);
 	};
 
 	m_recTriggerMode->setToggleable(true);

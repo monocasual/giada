@@ -28,6 +28,7 @@
 #define G_KERNELAUDIO_H
 
 #include "core/conf.h"
+#include "core/weakAtomic.h"
 #include "deps/rtaudio/RtAudio.h"
 #include <cstddef>
 #include <functional>
@@ -110,8 +111,8 @@ private:
 	std::vector<Device>      m_devices;
 	std::unique_ptr<RtAudio> m_rtAudio;
 	CallbackInfo             m_callbackInfo;
-	bool                     m_ready;
-	bool                     m_inputEnabled;
+	WeakAtomic<bool>         m_ready;
+	WeakAtomic<bool>         m_inputEnabled;
 	unsigned                 m_realBufferSize; // Real buffer size from the soundcard
 	int                      m_realSampleRate; // Sample rate might differ if JACK in use
 	int                      m_channelsOutCount;

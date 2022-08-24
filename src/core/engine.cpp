@@ -52,7 +52,7 @@ Engine::Engine()
 , midiSynchronizer(conf.data, kernelMidi)
 , sequencer(model, midiSynchronizer, jackTransport)
 , mixer(model)
-, recorder(model, sequencer, channelManager, mixer)
+, recorder(model, sequencer, channelManager, mixer, actionRecorder)
 , pluginHost(model)
 {
 	kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
@@ -131,7 +131,7 @@ Engine::Engine()
 	sequencer.onAboutStart = [this](SeqStatus status) {
 		/* TODO move this logic to Recorder */
 		if (status == SeqStatus::WAITING)
-			recorder.stopActionRec(actionRecorder);
+			recorder.stopActionRec();
 		conf.data.recTriggerMode = RecTriggerMode::NORMAL;
 	};
 
@@ -139,8 +139,8 @@ Engine::Engine()
 		/* If recordings (both input and action) are active deactivate them, but 
 	store the takes. RecManager takes care of it. */
 		/* TODO move this logic to Recorder */
-		if (recorder.isRecordingAction())
-			recorder.stopActionRec(actionRecorder);
+		if (recorder.isRecordingActions())
+			recorder.stopActionRec();
 		else if (recorder.isRecordingInput())
 			recorder.stopInputRec(conf.data.inputRecMode, kernelAudio.getSampleRate());
 	};
@@ -314,7 +314,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo)
 
 	/* Then render Mixer: render channels, process I/O. */
 
-	mixer.render(out, in, layout_RT);
+	mixer.render(out, in, layout_RT, recorder.isRecordingInput());
 
 	return 0;
 }

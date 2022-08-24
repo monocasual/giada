@@ -271,12 +271,12 @@ void MidiDispatcher::processMaster(const MidiEvent& midiEvent)
 	}
 	else if (pure == midiIn.actionRec)
 	{
-		c::events::toggleActionRecording();
+		c::events::toggleActionRecording(Thread::MIDI);
 		G_DEBUG("   actionRec (master) (pure=0x{:0X})", pure);
 	}
 	else if (pure == midiIn.inputRec)
 	{
-		c::events::toggleInputRecording();
+		c::events::toggleInputRecording(Thread::MIDI);
 		G_DEBUG("   inputRec (master) (pure=0x{:0X})", pure);
 	}
 	else if (pure == midiIn.metronome)

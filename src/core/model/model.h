@@ -30,10 +30,8 @@
 #include "core/channels/channel.h"
 #include "core/const.h"
 #include "core/model/mixer.h"
-#include "core/model/recorder.h"
 #include "core/model/sequencer.h"
 #include "core/plugins/plugin.h"
-#include "core/recorder.h"
 #include "core/wave.h"
 #include "deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
@@ -65,7 +63,6 @@ struct Layout
 
 	Sequencer            sequencer;
 	Mixer                mixer;
-	Recorder             recorder;
 	MidiIn               midiIn;
 	std::vector<Channel> channels;
 
@@ -186,7 +183,6 @@ private:
 	{
 		Sequencer::Shared                           sequencerShared;
 		Mixer::Shared                               mixerShared;
-		Recorder::Shared                            recorderShared;
 		std::vector<std::unique_ptr<ChannelShared>> channelsShared;
 
 		std::vector<std::unique_ptr<Wave>>   waves;

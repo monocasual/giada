@@ -95,13 +95,13 @@ void Dispatcher::dispatchKey(int event)
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_REWIND))
 			c::events::rewindSequencer(Thread::MAIN);
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_RECORD_ACTIONS))
-			c::events::toggleActionRecording();
+			c::events::toggleActionRecording(Thread::MAIN);
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_RECORD_INPUT))
-			c::events::toggleInputRecording();
+			c::events::toggleInputRecording(Thread::MAIN);
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_EXIT))
 		{
-			c::events::stopActionRecording();
-			c::events::stopInputRecording();
+			c::events::stopActionRecording(Thread::MAIN);
+			c::events::stopInputRecording(Thread::MAIN);
 		}
 		else
 		{
