@@ -66,16 +66,16 @@ Engine::Engine()
 
 #ifdef WITH_AUDIO_JACK
 	jackSynchronizer.onJackRewind = [this]() {
-		eventDispatcher.pumpMidiEvent({EventDispatcher::EventType::SEQUENCER_REWIND_JACK});
+		eventDispatcher.pumpEvent({EventDispatcher::EventType::SEQUENCER_REWIND_JACK});
 	};
 	jackSynchronizer.onJackChangeBpm = [this](float bpm) {
-		eventDispatcher.pumpMidiEvent({EventDispatcher::EventType::SEQUENCER_BPM_JACK, 0, 0, bpm});
+		eventDispatcher.pumpEvent({EventDispatcher::EventType::SEQUENCER_BPM_JACK, 0, 0, bpm});
 	};
 	jackSynchronizer.onJackStart = [this]() {
-		eventDispatcher.pumpMidiEvent({EventDispatcher::EventType::SEQUENCER_START_JACK});
+		eventDispatcher.pumpEvent({EventDispatcher::EventType::SEQUENCER_START_JACK});
 	};
 	jackSynchronizer.onJackStop = [this]() {
-		eventDispatcher.pumpMidiEvent({EventDispatcher::EventType::SEQUENCER_STOP_JACK});
+		eventDispatcher.pumpEvent({EventDispatcher::EventType::SEQUENCER_STOP_JACK});
 	};
 #endif
 
@@ -99,7 +99,7 @@ Engine::Engine()
 
 	midiDispatcher.onDispatch = [this](EventDispatcher::EventType event, Action action) {
 		/* Notify Event Dispatcher when a MIDI signal is received. */
-		eventDispatcher.pumpMidiEvent({event, 0, 0, action});
+		eventDispatcher.pumpEvent({event, 0, 0, action});
 	};
 
 	midiDispatcher.onEventReceived = [this]() {
@@ -111,12 +111,12 @@ Engine::Engine()
         event to the Event Dispatcher, rather than invoking the callback directly.
         This is done on purpose: the callback might (and surely will) contain 
         blocking stuff from model:: that the realtime thread cannot perform directly. */
-		eventDispatcher.pumpUIevent({EventDispatcher::EventType::MIXER_SIGNAL_CALLBACK});
+		eventDispatcher.pumpEvent({EventDispatcher::EventType::MIXER_SIGNAL_CALLBACK});
 	};
 
 	mixer.onEndOfRecording = [this]() {
 		/* Same rationale as above, for the end-of-recording callback. */
-		eventDispatcher.pumpUIevent({EventDispatcher::EventType::MIXER_END_OF_REC_CALLBACK});
+		eventDispatcher.pumpEvent({EventDispatcher::EventType::MIXER_END_OF_REC_CALLBACK});
 	};
 
 	channelManager.onChannelsAltered = [this]() {

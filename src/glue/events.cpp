@@ -66,21 +66,13 @@ namespace
 {
 void pushEvent_(m::EventDispatcher::Event e, Thread t)
 {
-	bool res = true;
-	if (t == Thread::MAIN)
+	const bool res = g_engine.eventDispatcher.pumpEvent(e);
+
+	if (t == Thread::MIDI)
 	{
-		res = g_engine.eventDispatcher.UIevents.push(e);
-	}
-	else if (t == Thread::MIDI)
-	{
-		res = g_engine.eventDispatcher.MidiEvents.push(e);
 		u::gui::ScopedLock lock;
 		if (e.channelId != 0)
 			g_ui.mainWindow->keyboard->notifyMidiIn(e.channelId);
-	}
-	else
-	{
-		assert(false);
 	}
 
 	if (!res)

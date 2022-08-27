@@ -27,21 +27,21 @@
 #ifndef G_EVENT_DISPATCHER_H
 #define G_EVENT_DISPATCHER_H
 
+#include "core/actions/action.h"
 #include "core/const.h"
-#include "core/queue.h"
 #include "core/ringBuffer.h"
 #include "core/types.h"
 #include "core/worker.h"
-#include "src/core/actions/action.h"
+#include "deps/concurrentqueue/concurrentqueue.h"
 #include <any>
 #include <atomic>
 #include <functional>
 #include <thread>
 
 /* giada::m::EventDispatcher
-Takes events from the two queues (MIDI and UI) filled by c::events and turns 
-them into actual changes in the data model. The EventDispatcher runs in a
-separate worker thread. */
+Takes events from the a lock-free queue filled by c::events and turns them into 
+actual changes in the data model. The EventDispatcher runs in a separate worker 
+thread. */
 
 namespace giada::m
 {
@@ -92,11 +92,9 @@ public:
 	};
 
 	/* EventBuffer
-	Alias for a RingBuffer containing events to be sent to engine. The double 
-	size is due to the presence of two distinct Queues for collecting events 
-	coming from other threads. See below. */
+	Alias for a RingBuffer containing events to be sent to engine. */
 
-	using EventBuffer = RingBuffer<Event, G_MAX_DISPATCHER_EVENTS * 2>;
+	using EventBuffer = RingBuffer<Event, G_MAX_DISPATCHER_EVENTS>;
 
 	EventDispatcher();
 
@@ -105,17 +103,10 @@ public:
 
 	void start();
 
-	void pumpUIevent(Event e);
-	void pumpMidiEvent(Event e);
+	/* pumpEvent
+	Inserts a new event in the event queue. Returns false if the queue is full. */
 
-	/* Event queues
-	Collect events coming from the UI or MIDI devices. Our poor man's Queue is a 
-	single-producer/single-consumer one, so we need two queues for two writers. 
-	TODO - let's add a multi-producer queue sooner or later! */
-	/*TODO - make them private*/
-
-	Queue<Event, G_MAX_DISPATCHER_EVENTS> UIevents;
-	Queue<Event, G_MAX_DISPATCHER_EVENTS> MidiEvents;
+	bool pumpEvent(const Event&);
 
 	/* on[...]
 	Callbacks fired when something happens in the Event Dispatcher. */
@@ -138,9 +129,14 @@ private:
 
 	/* m_eventBuffer
 	Buffer of events sent to channels for event parsing. This is filled with 
-	Events coming from the two event queues.*/
+	Events coming from the event queue.*/
 
 	EventBuffer m_eventBuffer;
+
+	/* m_eventQueue
+	Collects events coming from the UI or MIDI devices. */
+
+	moodycamel::ConcurrentQueue<Event> m_eventQueue;
 };
 } // namespace giada::m
 

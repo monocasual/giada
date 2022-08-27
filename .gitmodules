@@ -19,3 +19,6 @@
 [submodule "src/deps/fltk"]
 	path = src/deps/fltk
 	url = https://github.com/fltk/fltk.git
+[submodule "src/deps/concurrentqueue"]
+	path = src/deps/concurrentqueue
+	url = https://github.com/cameron314/concurrentqueue.git

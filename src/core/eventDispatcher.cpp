@@ -37,6 +37,7 @@ EventDispatcher::EventDispatcher()
 , onProcessSequencer(nullptr)
 , onMixerSignalCallback(nullptr)
 , onMixerEndOfRecCallback(nullptr)
+, m_eventQueue(G_MAX_DISPATCHER_EVENTS)
 {
 }
 
@@ -49,8 +50,10 @@ void EventDispatcher::start()
 
 /* -------------------------------------------------------------------------- */
 
-void EventDispatcher::pumpUIevent(Event e) { UIevents.push(e); }
-void EventDispatcher::pumpMidiEvent(Event e) { MidiEvents.push(e); }
+bool EventDispatcher::pumpEvent(const Event& e)
+{
+	return m_eventQueue.try_enqueue(e);
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -97,9 +100,7 @@ void EventDispatcher::process()
 	m_eventBuffer.clear();
 
 	Event e;
-	while (UIevents.pop(e))
-		m_eventBuffer.push_back(e);
-	while (MidiEvents.pop(e))
+	while (m_eventQueue.try_dequeue(e))
 		m_eventBuffer.push_back(e);
 
 	if (m_eventBuffer.size() == 0)
