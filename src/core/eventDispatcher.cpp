@@ -31,13 +31,7 @@
 namespace giada::m
 {
 EventDispatcher::EventDispatcher()
-: onMidiLearn(nullptr)
-, onMidiProcess(nullptr)
-, onProcessChannels(nullptr)
-, onProcessSequencer(nullptr)
-, onMixerSignalCallback(nullptr)
-, onMixerEndOfRecCallback(nullptr)
-, m_eventQueue(G_MAX_DISPATCHER_EVENTS)
+: m_eventQueue(G_MAX_DISPATCHER_EVENTS)
 {
 }
 
@@ -50,64 +44,17 @@ void EventDispatcher::start()
 
 /* -------------------------------------------------------------------------- */
 
-bool EventDispatcher::pumpEvent(const Event& e)
+bool EventDispatcher::pumpEvent(const std::function<void()>& f)
 {
-	return m_eventQueue.try_enqueue(e);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void EventDispatcher::processFunctions()
-{
-	assert(onMidiLearn != nullptr);
-	assert(onMidiProcess != nullptr);
-	assert(onMixerSignalCallback != nullptr);
-	assert(onMixerEndOfRecCallback != nullptr);
-
-	for (const Event& e : m_eventBuffer)
-	{
-		switch (e.type)
-		{
-		case EventType::MIDI_DISPATCHER_LEARN:
-			onMidiLearn(std::any_cast<Action>(e.data).event);
-			break;
-
-		case EventType::MIDI_DISPATCHER_PROCESS:
-			onMidiProcess(std::any_cast<Action>(e.data).event);
-			break;
-
-		case EventType::MIXER_SIGNAL_CALLBACK:
-			onMixerSignalCallback();
-			break;
-
-		case EventType::MIXER_END_OF_REC_CALLBACK:
-			onMixerEndOfRecCallback();
-			break;
-
-		default:
-			break;
-		}
-	}
+	return m_eventQueue.try_enqueue(f);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void EventDispatcher::process()
 {
-	assert(onProcessChannels != nullptr);
-	assert(onProcessSequencer != nullptr);
-
-	m_eventBuffer.clear();
-
 	Event e;
 	while (m_eventQueue.try_dequeue(e))
-		m_eventBuffer.push_back(e);
-
-	if (m_eventBuffer.size() == 0)
-		return;
-
-	processFunctions();
-	onProcessChannels(m_eventBuffer);
-	onProcessSequencer(m_eventBuffer);
+		e();
 }
 } // namespace giada::m

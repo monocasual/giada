@@ -32,8 +32,8 @@
 /* giada::c::events
 Functions that take care of live event dispatching. Every live gesture that 
 comes from the UI, MIDI thread or keyboard interaction and wants to change the
-internal engine state must call these functions. In other words: all these
-functions are thread-safe. */
+internal engine state must call these functions. Any thread can call these,
+except for the real-time one of course. */
 
 namespace giada::m
 {
@@ -64,18 +64,18 @@ Master I/O, transport and other engine-related events. */
 void toggleMetronome();
 void setMasterInVolume(float v, Thread t);
 void setMasterOutVolume(float v, Thread t);
-void setBpm(float, Thread t);
+void setBpm(float);
 void multiplyBeats();
 void divideBeats();
-void goToBeat(int, Thread t);
-void startSequencer(Thread t);
-void stopSequencer(Thread t);
-void toggleSequencer(Thread t);
-void rewindSequencer(Thread t);
-void stopActionRecording(Thread);
-void toggleActionRecording(Thread);
-void stopInputRecording(Thread);
-void toggleInputRecording(Thread);
+void goToBeat(int);
+void startSequencer();
+void stopSequencer();
+void toggleSequencer();
+void rewindSequencer();
+void stopActionRecording();
+void toggleActionRecording();
+void stopInputRecording();
+void toggleInputRecording();
 
 /* Plug-ins. */
 

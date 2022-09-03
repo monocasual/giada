@@ -39,6 +39,9 @@ class SamplePlayer;
 class Channel;
 } // namespace giada::m
 
+/* giada::c::actionEditor
+Functions to interact with the Action Editor. Only the main thread can use these! */
+
 namespace giada::c::actionEditor
 {
 struct SampleData

@@ -29,7 +29,6 @@
 #include "core/model/model.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
-#include <FL/Fl.H>
 
 namespace giada::v
 {
@@ -42,18 +41,38 @@ Updater::Updater(Ui& ui)
 
 void Updater::init(m::model::Model& model)
 {
+	/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap
+	callback might be performed by a non-main thread, which must talk to the 
+	UI (main thread) through the UI queue by pumping an event in it. */
+
 	model.onSwap = [this](m::model::SwapType type) {
-		if (type == m::model::SwapType::NONE)
-			return;
-
-		/* This callback is fired by the updater thread, so it requires
-		synchronization with the main one. */
-
-		u::gui::ScopedLock lock;
-		type == m::model::SwapType::HARD ? m_ui.rebuild() : m_ui.refresh();
+		m_ui.pumpEvent([this, type]() {
+			if (type == m::model::SwapType::NONE)
+				return;
+			type == m::model::SwapType::HARD ? m_ui.rebuild() : m_ui.refresh();
+		});
 	};
 
-	Fl::add_timeout(G_GUI_REFRESH_RATE, update, this);
+	start();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Updater::run()
+{
+	while (Fl::wait() > 0)
+	{
+		Event e;
+		while (m_eventQueue.try_dequeue(e))
+			e();
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Updater::pumpEvent(const Event& e)
+{
+	return m_eventQueue.try_enqueue(e);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -65,12 +84,17 @@ void Updater::update(void* p) { static_cast<Updater*>(p)->update(); }
 void Updater::update()
 {
 	m_ui.refresh();
-	Fl::add_timeout(G_GUI_REFRESH_RATE, update, this);
+	Fl::add_timeout(G_GUI_REFRESH_RATE, update, this); // Repeat
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Updater::close()
+void Updater::start()
+{
+	Fl::add_timeout(G_GUI_REFRESH_RATE, update, this);
+}
+
+void Updater::stop()
 {
 	Fl::remove_timeout(update);
 }

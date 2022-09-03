@@ -40,8 +40,9 @@ public:
 	MidiSender(const Patch::Channel& p, KernelMidi&);
 	MidiSender(const MidiSender& o) = default;
 
-	void react(const EventDispatcher::Event& e);
 	void advance(ID channelId, const Sequencer::Event& e) const;
+
+	void stop();
 
 	KernelMidi* kernelMidi;
 

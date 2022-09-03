@@ -41,11 +41,11 @@ struct Version;
 namespace giada::m::model
 {
 class Model;
-}
+class Sequencer;
+} // namespace giada::m::model
 
 namespace giada::m
 {
-class Sequencer;
 class PluginManager final /* TODO - Split PluginManager (== ChannelManager) and PluginFactory (== ChannelFactory) */
 {
 public:
@@ -103,15 +103,15 @@ public:
 	bool saveList(const std::string& path) const;
 	bool loadList(const std::string& path);
 
-	std::unique_ptr<Plugin> makePlugin(const std::string& pid, int sampleRate, int bufferSize, const Sequencer&, ID id = 0);
-	std::unique_ptr<Plugin> makePlugin(int index, int sampleRate, int bufferSize, const Sequencer&);
-	std::unique_ptr<Plugin> makePlugin(const Plugin& other, int sampleRate, int bufferSize, const Sequencer&);
+	std::unique_ptr<Plugin> makePlugin(const std::string& pid, int sampleRate, int bufferSize, const model::Sequencer&, ID id = 0);
+	std::unique_ptr<Plugin> makePlugin(int index, int sampleRate, int bufferSize, const model::Sequencer&);
+	std::unique_ptr<Plugin> makePlugin(const Plugin& other, int sampleRate, int bufferSize, const model::Sequencer&);
 
 	/* (de)serializePlugin
 	Transforms patch data into a Plugin object and vice versa. */
 
 	const Patch::Plugin     serializePlugin(const Plugin& p) const;
-	std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin&, int sampleRate, int bufferSize, const Sequencer&);
+	std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin&, int sampleRate, int bufferSize, const model::Sequencer&);
 
 	std::vector<Plugin*> hydratePlugins(std::vector<ID> pluginIds, model::Model&);
 
@@ -119,7 +119,7 @@ public:
 	Clones all plugins in the Plugin vector passed in as a parameter. Returns a
 	new vector containing the new clones. */
 
-	std::vector<Plugin*> clonePlugins(const std::vector<Plugin*>&, int sampleRate, int bufferSize, model::Model&, const Sequencer&);
+	std::vector<Plugin*> clonePlugins(const std::vector<Plugin*>&, int sampleRate, int bufferSize, model::Model&);
 
 	void sortPlugins(SortMethod sortMethod);
 

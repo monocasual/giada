@@ -29,12 +29,6 @@
 
 #include "core/eventDispatcher.h"
 #include "core/types.h"
-#include "core/weakAtomic.h"
-
-namespace giada::m::model
-{
-class Model;
-}
 
 namespace giada::m
 {
@@ -45,16 +39,7 @@ class Sequencer;
 class Recorder final
 {
 public:
-	struct InputRecData
-	{
-		RecTriggerMode recTriggerMode;
-		InputRecMode   inputMode;
-	};
-
-	Recorder(model::Model&, Sequencer&, ChannelManager&, Mixer&, ActionRecorder&);
-
-	bool isRecordingActions() const;
-	bool isRecordingInput() const;
+	Recorder(Sequencer&, ChannelManager&, Mixer&, ActionRecorder&);
 
 	/* canEnableRecOnSignal
     True if rec-on-signal can be enabled: can't set it while sequencer is 
@@ -73,11 +58,6 @@ public:
 
 	bool canRecordActions() const;
 
-	/* react
-	Reacts to live events coming from the EventDispatcher (human events). */
-
-	void react(const EventDispatcher::EventBuffer&, int sampleRate);
-
 	void prepareActionRec(RecTriggerMode);
 	void startActionRecOnCallback();
 	void stopActionRec();
@@ -88,14 +68,10 @@ public:
 	void stopInputRec(InputRecMode, int sampleRate);
 
 private:
-	model::Model&   m_model;
 	Sequencer&      m_sequencer;
 	ChannelManager& m_channelManager;
 	Mixer&          m_mixer;
 	ActionRecorder& m_actionRecorder;
-
-	WeakAtomic<bool> m_isRecordingActions;
-	WeakAtomic<bool> m_isRecordingInput;
 };
 } // namespace giada::m
 

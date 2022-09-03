@@ -31,6 +31,9 @@
 #include "core/model/model.h"
 #include "core/types.h"
 
+/* giada::c::io
+Functions to interact with the MIDI I/O. Only the main thread can use these! */
+
 namespace giada::m
 {
 class Channel;

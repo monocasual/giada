@@ -39,7 +39,7 @@
 
 namespace giada::m
 {
-PluginHost::Info::Info(const Sequencer& s, int sampleRate)
+PluginHost::Info::Info(const model::Sequencer& s, int sampleRate)
 : m_sequencer(s)
 , m_sampleRate(sampleRate)
 {
@@ -51,9 +51,9 @@ juce::Optional<juce::AudioPlayHead::PositionInfo> PluginHost::Info::getPosition(
 {
 	juce::AudioPlayHead::PositionInfo info;
 
-	info.setBpm(m_sequencer.getBpm());
-	info.setTimeInSamples(m_sequencer.getCurrentFrame());
-	info.setTimeInSeconds(m_sequencer.getCurrentSecond(m_sampleRate));
+	info.setBpm(m_sequencer.bpm);
+	info.setTimeInSamples(m_sequencer.a_getCurrentFrame());
+	info.setTimeInSeconds(m_sequencer.a_getCurrentSecond(m_sampleRate));
 	info.setIsPlaying(m_sequencer.isRunning());
 
 	return {info};

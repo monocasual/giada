@@ -118,7 +118,7 @@ std::string KernelMidi::getInPortName(unsigned p) const { return getPortName(*m_
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::send(const MidiEvent& event)
+void KernelMidi::send(const MidiEvent& event) const
 {
 	if (m_midiOut == nullptr)
 		return;
@@ -133,7 +133,7 @@ void KernelMidi::send(const MidiEvent& event)
 	else
 		msg = {event.getByte1(), event.getByte2(), event.getByte3()};
 
-	m_midiOut->sendMessage(&msg);
+	const_cast<KernelMidi*>(this)->m_midiOut->sendMessage(&msg);
 
 	G_DEBUG("Send MIDI msg=0x{:0X}", event.getRaw());
 }

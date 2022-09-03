@@ -40,7 +40,7 @@ namespace giada::m
 {
 struct ChannelShared final
 {
-	using MidiQueue   = Queue<MidiEvent, 32>;
+	using MidiQueue   = Queue<MidiEvent, 32>; // TODO - must be multi-producer (multiple midi threads)
 	using RenderQueue = Queue<SamplePlayer::Render, 2>;
 
 	ChannelShared(Frame bufferSize);

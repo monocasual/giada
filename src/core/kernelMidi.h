@@ -58,7 +58,7 @@ public:
 	/* send
     Sends a MIDI message to the outside world. */
 
-	void send(const MidiEvent&);
+	void send(const MidiEvent&) const;
 
 	bool openOutDevice(RtMidi::Api api, int port);
 	bool openInDevice(RtMidi::Api api, int port);

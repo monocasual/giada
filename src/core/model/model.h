@@ -63,7 +63,8 @@ struct Layout
 Alias for a REALTIME scoped lock provided by the Swapper class. Use this in the
 real-time thread to lock the Layout. */
 
-using LayoutLock = mcl::AtomicSwapper<Layout>::RtLock;
+using AtomicSwapper = mcl::AtomicSwapper<Layout, /*size=*/6>;
+using LayoutLock    = AtomicSwapper::RtLock;
 
 /* SwapType
 Type of Layout change. 
@@ -109,17 +110,18 @@ public:
 
 	void reset();
 
+	bool registerThread(Thread, bool realtime) const;
+
 	/* get_RT
 	Returns a LayoutLock object for REALTIME processing. Access layout by 
 	calling LayoutLock::get() method (returns ready-only Layout). */
 
-	LayoutLock get_RT();
+	LayoutLock get_RT() const;
 
 	/* get
 	Returns a reference to the NON-REALTIME layout structure. */
 
-	Layout&       get();
-	const Layout& get() const;
+	Layout& get();
 
 	/* swap
 	Swap non-rt layout with the rt one. See 'SwapType' notes above. */
@@ -159,10 +161,10 @@ public:
 #endif
 
 	/* onSwap
-	Optional callback fired when the layout has been swapped. Useful for 
-	listening to model changes. */
+	Callbacks fired when the layout has been swapped. Useful for listening to 
+	model changes. */
 
-	std::function<void(SwapType)> onSwap = nullptr;
+	std::function<void(SwapType)> onSwap;
 
 private:
 	struct Shared
@@ -176,8 +178,8 @@ private:
 		std::vector<std::unique_ptr<Plugin>> plugins;
 	};
 
-	mcl::AtomicSwapper<Layout> m_layout;
-	Shared                     m_shared;
+	AtomicSwapper m_layout;
+	Shared        m_shared;
 };
 
 /* -------------------------------------------------------------------------- */

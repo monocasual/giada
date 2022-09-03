@@ -45,6 +45,9 @@ class MidiSynchronizer final
 public:
 	MidiSynchronizer(const Conf::Data&, KernelMidi&);
 
+	/* receive
+	Receives a MidiEvent and reacts accordingly. Valid only when in SLAVE mode. */
+
 	void receive(const MidiEvent&, int numBeatsInLoop);
 
 	/* advance
@@ -62,6 +65,9 @@ private:
 	engine when necessary. */
 
 	void computeClock(double timestamp);
+
+	/* computePosition 
+	Given a SPP (Song Position Pointer), it jumps to the right beat. */
 
 	void computePosition(int sppPosition, int numBeatsInLoop);
 

@@ -92,12 +92,12 @@ public:
 	/* sendInitMessages
 	Sends initialization messages from the midimap to the connected MIDI devices. */
 
-	void sendInitMessages(const MidiMap& midiMap);
+	void sendInitMessages(const MidiMap& midiMap) const;
 
 	/* sendMidiLightning
 	Sends a MIDI lightning message defined by 'msg'. */
 
-	void sendMidiLightning(uint32_t learnt, const MidiMap::Message& msg);
+	void sendMidiLightning(uint32_t learnt, const MidiMap::Message& msg) const;
 
 	/* currentMap
 	The current MidiMap selected and loaded. It might be invalid if no midimaps

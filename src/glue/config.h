@@ -34,6 +34,10 @@
 #include <string>
 #include <vector>
 
+/* giada::c::config
+Functions to interact with the Configuration panel. Only the main thread can use 
+these! */
+
 namespace giada::c::config
 {
 enum class DeviceType

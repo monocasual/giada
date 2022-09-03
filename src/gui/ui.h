@@ -72,7 +72,11 @@ public:
 
 	void init(int argc, char** argv, m::Engine&);
 	void reset();
+	void run();
 	void shutdown();
+	void stopUpdater();
+	void startUpdater();
+	bool pumpEvent(const Updater::Event&);
 
 	/* refresh
 	Repaints dynamic GUI elements. */

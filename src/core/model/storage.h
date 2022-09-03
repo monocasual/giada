@@ -33,10 +33,11 @@
 
 namespace giada::m::model
 {
-void      store(Conf::Data& c);
-void      store(Patch::Data& p);
-LoadState load(const Patch::Data& p);
-void      load(const Conf::Data& c);
+void store(Patch::Data& p, Engine&);
+void store(Conf::Data& c, Engine&);
+
+LoadState load(const Patch::Data&, Engine&);
+void      load(const Conf::Data& c, Engine&);
 } // namespace giada::m::model
 
 #endif

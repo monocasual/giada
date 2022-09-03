@@ -28,22 +28,22 @@
 #define G_CHANNEL_MIDI_ACTION_RECORDER_H
 
 #include "core/eventDispatcher.h"
+#include "core/types.h"
 
 namespace giada::m
 {
+class MidiEvent;
 class ActionRecorder;
 class MidiActionRecorder final
 {
 public:
 	MidiActionRecorder(ActionRecorder&);
 
-	void react(ID channelId, const EventDispatcher::Event&, Frame currentFrameQuantized,
-	    bool& hasActions);
+	void record(ID channelId, const MidiEvent&, Frame currentFrameQuantized, bool& hasActions);
 
 private:
 	ActionRecorder* m_actionRecorder;
 };
-
 } // namespace giada::m
 
 #endif

@@ -48,7 +48,7 @@ public:
 	/* recvJackSync
     Receives a new JACK state. Called by Kernel Audio on each audio block. */
 
-	void recvJackSync(const JackTransport::State&);
+	void recvJackSync(const JackTransport::State&) const;
 
 	/* onJack[...]
     Callbacks called when something happens in the JACK state. */
@@ -59,7 +59,7 @@ public:
 	std::function<void()>      onJackStop;
 
 private:
-	JackTransport::State m_jackStatePrev;
+	mutable JackTransport::State m_jackStatePrev;
 };
 } // namespace giada::m
 

@@ -40,48 +40,6 @@ SampleActionRecorder::SampleActionRecorder(ActionRecorder& a)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleActionRecorder::react(ID channelId, ChannelShared& shared,
-    const EventDispatcher::Event& e, SamplePlayerMode mode, Frame currentFrameQuantized,
-    bool treatRecsAsLoops, bool seqIsRunning, bool canRecordActions, bool& hasActions) const
-{
-	switch (e.type)
-	{
-	case EventDispatcher::EventType::KEY_PRESS:
-		if (canRecordActions)
-			onKeyPress(channelId, shared, currentFrameQuantized, mode, hasActions);
-		break;
-
-	case EventDispatcher::EventType::KEY_RELEASE:
-		/* Record a stop event only if channel is SINGLE_PRESS. For any other 
-		mode the key release event is meaningless. */
-		if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
-			record(channelId, MidiEvent::CHANNEL_NOTE_OFF, currentFrameQuantized, hasActions);
-		break;
-
-	case EventDispatcher::EventType::KEY_KILL:
-		if (canRecordActions)
-			record(channelId, MidiEvent::CHANNEL_NOTE_KILL, currentFrameQuantized, hasActions);
-		break;
-
-	case EventDispatcher::EventType::CHANNEL_TOGGLE_READ_ACTIONS:
-		if (hasActions)
-			toggleReadActions(shared, treatRecsAsLoops, seqIsRunning);
-		break;
-
-	case EventDispatcher::EventType::CHANNEL_KILL_READ_ACTIONS:
-		/* Killing Read Actions, i.e. shift + click on 'R' button is meaningful 
-		only when the conf::treatRecsAsLoops is true. */
-		if (treatRecsAsLoops)
-			killReadActions(shared);
-		break;
-
-	default:
-		break;
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
 void SampleActionRecorder::record(ID channelId, int note, Frame currentFrameQuantized, bool& hasActions) const
 {
 	m_actionRecorder->liveRec(channelId, MidiEvent::makeFrom3Bytes(note, 0, 0), currentFrameQuantized);
@@ -90,7 +48,7 @@ void SampleActionRecorder::record(ID channelId, int note, Frame currentFrameQuan
 
 /* -------------------------------------------------------------------------- */
 
-void SampleActionRecorder::onKeyPress(ID channelId, ChannelShared& shared,
+void SampleActionRecorder::keyPress(ID channelId, ChannelShared& shared,
     Frame currentFrameQuantized, SamplePlayerMode mode, bool& hasActions) const
 {
 	record(channelId, MidiEvent::CHANNEL_NOTE_ON, currentFrameQuantized, hasActions);
@@ -100,6 +58,28 @@ void SampleActionRecorder::onKeyPress(ID channelId, ChannelShared& shared,
 
 	if (mode == SamplePlayerMode::SINGLE_PRESS)
 		shared.readActions.store(false);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleActionRecorder::keyRelease(ID channelId, bool canRecordActions, Frame currentFrameQuantized, SamplePlayerMode mode, bool& hasActions) const
+{
+	/* Record a stop event only if channel is SINGLE_PRESS. For any other mode 
+	the key release event is meaningless. */
+
+	if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+		record(channelId, MidiEvent::CHANNEL_NOTE_OFF, currentFrameQuantized, hasActions);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleActionRecorder::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQuantized, SamplePlayerMode mode, bool& hasActions) const
+{
+	/* Record a stop event only if channel is SINGLE_PRESS. For any other mode 
+	the key release event is meaningless. */
+
+	if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+		record(channelId, MidiEvent::CHANNEL_NOTE_KILL, currentFrameQuantized, hasActions);
 }
 
 /* -------------------------------------------------------------------------- */

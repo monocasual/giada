@@ -107,7 +107,7 @@ bool PluginManager::loadList(const std::string& filepath)
 /* -------------------------------------------------------------------------- */
 
 std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& pid,
-    int sampleRate, int bufferSize, const Sequencer& sequencer, ID id)
+    int sampleRate, int bufferSize, const model::Sequencer& sequencer, ID id)
 {
 	/* Plug-in ID generator is updated anyway, as we store Plugin objects also
 	if they are in an invalid state. */
@@ -142,7 +142,7 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& pid,
 /* -------------------------------------------------------------------------- */
 
 std::unique_ptr<Plugin> PluginManager::makePlugin(int index, int sampleRate,
-    int bufferSize, const Sequencer& sequencer)
+    int bufferSize, const model::Sequencer& sequencer)
 {
 	juce::PluginDescription pd = m_knownPluginList.getTypes()[index];
 
@@ -158,7 +158,7 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(int index, int sampleRate,
 /* -------------------------------------------------------------------------- */
 
 std::unique_ptr<Plugin> PluginManager::makePlugin(const Plugin& src, int sampleRate,
-    int bufferSize, const Sequencer& sequencer)
+    int bufferSize, const model::Sequencer& sequencer)
 {
 	std::unique_ptr<Plugin> p = makePlugin(src.getUniqueId(), sampleRate, bufferSize, sequencer);
 
@@ -187,7 +187,7 @@ const Patch::Plugin PluginManager::serializePlugin(const Plugin& p) const
 /* -------------------------------------------------------------------------- */
 
 std::unique_ptr<Plugin> PluginManager::deserializePlugin(const Patch::Plugin& p,
-    int sampleRate, int bufferSize, const Sequencer& sequencer)
+    int sampleRate, int bufferSize, const model::Sequencer& sequencer)
 {
 	std::unique_ptr<Plugin> plugin = makePlugin(p.path, sampleRate, bufferSize, sequencer, p.id);
 	if (!plugin->valid)
@@ -228,12 +228,12 @@ std::vector<Plugin*> PluginManager::hydratePlugins(std::vector<ID> pluginIds, mo
 /* -------------------------------------------------------------------------- */
 
 std::vector<Plugin*> PluginManager::clonePlugins(const std::vector<Plugin*>& source,
-    int sampleRate, int bufferSize, model::Model& model, const Sequencer& sequencer)
+    int sampleRate, int bufferSize, model::Model& model)
 {
 	std::vector<Plugin*> clones;
 	for (const Plugin* plugin : source)
 	{
-		model.addShared(makePlugin(*plugin, sampleRate, bufferSize, sequencer));
+		model.addShared(makePlugin(*plugin, sampleRate, bufferSize, model.get().sequencer));
 		clones.push_back(&model.backShared<Plugin>());
 	}
 	return clones;

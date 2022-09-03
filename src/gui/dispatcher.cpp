@@ -91,17 +91,17 @@ void Dispatcher::dispatchKey(int event)
 		m_keyPressed = Fl::event_key();
 
 		if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_PLAY))
-			c::events::toggleSequencer(Thread::MAIN);
+			c::events::toggleSequencer();
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_REWIND))
-			c::events::rewindSequencer(Thread::MAIN);
+			c::events::rewindSequencer();
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_RECORD_ACTIONS))
-			c::events::toggleActionRecording(Thread::MAIN);
+			c::events::toggleActionRecording();
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_RECORD_INPUT))
-			c::events::toggleInputRecording(Thread::MAIN);
+			c::events::toggleInputRecording();
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_EXIT))
 		{
-			c::events::stopActionRecording(Thread::MAIN);
-			c::events::stopInputRecording(Thread::MAIN);
+			c::events::stopActionRecording();
+			c::events::stopInputRecording();
 		}
 		else
 		{

@@ -27,7 +27,7 @@
 #include "mainWindow.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "core/init.h"
+#include "glue/main.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
@@ -59,10 +59,11 @@ gdMainWindow::ScopedProgress::~ScopedProgress()
 
 /* -------------------------------------------------------------------------- */
 
-gdProgress& gdMainWindow::ScopedProgress::get()
+void gdMainWindow::ScopedProgress::setProgress(float v)
 {
-	return m_progress;
+	m_progress.setProgress(v);
 }
+
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -130,7 +131,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, cha
 	callback([](Fl_Widget* /*w*/, void* /*v*/) {
 		if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
 			return; // ignore Escape
-		m::init::closeMainWindow();
+		c::main::quitGiada();
 	});
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
@@ -185,5 +186,4 @@ gdMainWindow::ScopedProgress gdMainWindow::getScopedProgress(const char* msg)
 {
 	return {m_progress, msg};
 }
-
 } // namespace giada::v

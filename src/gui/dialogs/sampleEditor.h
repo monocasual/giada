@@ -74,7 +74,6 @@ public:
 
 private:
 	void updateInfo();
-	void togglePreview();
 
 	ID                    m_channelId;
 	c::sampleEditor::Data m_data;

@@ -31,6 +31,10 @@
 #include <functional>
 #include <string>
 
+/* giada::c::layout
+Functions to interact with the windowing system. Only the main thread can use 
+these! */
+
 namespace giada::m
 {
 struct LoadState;

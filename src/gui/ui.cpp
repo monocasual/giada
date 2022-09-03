@@ -134,12 +134,32 @@ void Ui::reset()
 
 /* -------------------------------------------------------------------------- */
 
+void Ui::run()
+{
+	Fl::lock(); // Enable multithreading in FLTK
+	m_updater.run();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Ui::shutdown()
 {
 	mainWindow.reset();
-	m_updater.close();
+	m_updater.stop();
 
 	u::log::print("[ui] All windows closed\n");
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::stopUpdater() { m_updater.stop(); }
+void Ui::startUpdater() { m_updater.start(); }
+
+/* -------------------------------------------------------------------------- */
+
+bool Ui::pumpEvent(const Updater::Event& e)
+{
+	return m_updater.pumpEvent(e);
 }
 
 /* -------------------------------------------------------------------------- */

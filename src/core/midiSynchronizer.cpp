@@ -50,6 +50,14 @@ MidiSynchronizer::MidiSynchronizer(const Conf::Data& c, KernelMidi& k)
 
 void MidiSynchronizer::receive(const MidiEvent& e, int numBeatsInLoop)
 {
+	/* MidiSynchronizer, if working in SLAVE mode, can receive SYSTEM_* MIDI 
+	types. More specifically:
+		* SYSTEM_CLOCK - when another MIDI device sends CLOCK data to perform
+		  synchronization;
+		* SYSTEM_START - when another MIDI device is about to start;
+		* SYSTEM_STOP - when another MIDI device is about to stop;
+		* SYSTEM_SPP - when another MIDI device has changed song position. */
+
 	if (m_conf.midiSync != G_MIDI_SYNC_CLOCK_SLAVE || e.getType() != MidiEvent::Type::SYSTEM)
 		return;
 
@@ -60,11 +68,11 @@ void MidiSynchronizer::receive(const MidiEvent& e, int numBeatsInLoop)
 		break;
 
 	case MidiEvent::SYSTEM_START:
-		c::events::startSequencer(Thread::MIDI);
+		c::events::startSequencer();
 		break;
 
 	case MidiEvent::SYSTEM_STOP:
-		c::events::stopSequencer(Thread::MIDI);
+		c::events::stopSequencer();
 		break;
 
 	case MidiEvent::SYSTEM_SPP:
@@ -127,6 +135,12 @@ void MidiSynchronizer::sendStop()
 
 void MidiSynchronizer::computeClock(double timestamp)
 {
+	/* A MIDI clock event (SYSTEM_CLOCK) is sent 24 times per quarter note, that 
+	is 24 times per beat. This is tempo-relative, since the tempo defines the 
+	length of a quarter note (aka frames in beat) and so the duration of each 
+	pulse. Faster tempo -> faster SYSTEM_CLOCK events stream. Here we are
+	interpreting that rate and converting into a BPM value. */
+
 	/* SMOOTHNESS
 	Smooth factor for delta and bpm. The smaller the value, the stronger the
 	effect. SMOOTHNESS == 1.0 means no smooth effect. */
@@ -166,7 +180,7 @@ void MidiSynchronizer::computeClock(double timestamp)
 
 	if (m_timeElapsed > BPM_CHANGE_FREQ)
 	{
-		c::events::setBpm(m_lastBpm, Thread::MIDI);
+		c::events::setBpm(m_lastBpm);
 		m_timeElapsed = 0;
 	}
 }
@@ -183,6 +197,6 @@ void MidiSynchronizer::computePosition(int sppPosition, int numBeatsInLoop)
 
 	const int beat = (sppPosition / 4) % numBeatsInLoop;
 
-	c::events::goToBeat(beat, Thread::MIDI);
+	c::events::goToBeat(beat);
 }
 } // namespace giada::m

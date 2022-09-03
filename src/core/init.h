@@ -37,8 +37,7 @@ int tests(int argc, char** argv);
 
 void printBuildInfo();
 void startup(int argc, char** argv);
-int  run();
-void closeMainWindow();
+void run();
 void shutdown();
 } // namespace giada::m::init
 

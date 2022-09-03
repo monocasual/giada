@@ -28,35 +28,37 @@
 
 namespace giada::m
 {
-void MidiController::react(WeakAtomic<ChannelStatus>& a_playStatus, const EventDispatcher::Event& e) const
+void MidiController::advance(WeakAtomic<ChannelStatus>& a_playStatus, const Sequencer::Event& e) const
 {
-	const ChannelStatus playStatus = a_playStatus.load();
-
-	switch (e.type)
-	{
-	case EventDispatcher::EventType::KEY_PRESS:
-		a_playStatus.store(press(playStatus));
-		break;
-
-	case EventDispatcher::EventType::KEY_KILL:
-	case EventDispatcher::EventType::SEQUENCER_STOP:
-		a_playStatus.store(ChannelStatus::OFF);
-		break;
-
-	case EventDispatcher::EventType::SEQUENCER_REWIND:
-		a_playStatus.store(onFirstBeat(playStatus));
-
-	default:
-		break;
-	}
+	if (e.type == Sequencer::EventType::FIRST_BEAT)
+		rewind(a_playStatus);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MidiController::advance(WeakAtomic<ChannelStatus>& a_playStatus, const Sequencer::Event& e) const
+void MidiController::keyPress(WeakAtomic<ChannelStatus>& a_playStatus) const
 {
-	if (e.type != Sequencer::EventType::FIRST_BEAT)
-		return;
+	a_playStatus.store(press(a_playStatus.load()));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MidiController::keyKill(WeakAtomic<ChannelStatus>& a_playStatus) const
+{
+	stop(a_playStatus);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MidiController::stop(WeakAtomic<ChannelStatus>& a_playStatus) const
+{
+	a_playStatus.store(ChannelStatus::OFF);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MidiController::rewind(WeakAtomic<ChannelStatus>& a_playStatus) const
+{
 	a_playStatus.store(onFirstBeat(a_playStatus.load()));
 }
 

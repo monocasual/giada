@@ -45,7 +45,7 @@ void Quantizer::schedule(int id, std::function<void(Frame delta)> f)
 
 /* -------------------------------------------------------------------------- */
 
-void Quantizer::advance(Range<Frame> block, Frame quantizerStep)
+void Quantizer::advance(Range<Frame> block, Frame quantizerStep) const
 {
 	/* Nothing to do if there's no action to perform. */
 

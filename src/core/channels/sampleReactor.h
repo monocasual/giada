@@ -54,14 +54,12 @@ public:
 
 	SampleReactor(ChannelShared&, ID channelId);
 
-	void react(ID channelId, ChannelShared&, const EventDispatcher::Event&, SamplePlayerMode,
-	    bool velocityAsVol, bool chansStopOnSeqHalt, bool canQuantize, bool isLoop,
-	    float& volume_i) const;
+	void stopBySeq(ChannelShared&, bool chansStopOnSeqHalt, bool isLoop) const;
+	void keyPress(ID channelId, ChannelShared&, SamplePlayerMode, int velocity, bool canQuantize, bool isLoop, bool velocityAsVol, float& volume_i) const;
+	void keyRelease(ChannelShared&, SamplePlayerMode) const;
+	void keyKill(ChannelShared&, SamplePlayerMode) const;
 
 private:
-	void          onStopBySeq(ChannelShared&, bool chansStopOnSeqHalt, bool isLoop) const;
-	void          release(ChannelShared&) const;
-	void          press(ID channelId, ChannelShared&, SamplePlayerMode, int velocity, bool canQuantize, bool isLoop, bool velocityAsVol, float& volume_i) const;
 	ChannelStatus pressWhilePlay(ID channelId, ChannelShared&, SamplePlayerMode, bool canQuantize) const;
 	ChannelStatus pressWhileOff(ID channelId, ChannelShared&, int velocity, bool canQuantize, bool velocityAsVol, float& volume_i) const;
 	void          rewind(ChannelShared&, Frame localFrame) const;

@@ -38,15 +38,11 @@ MidiActionRecorder::MidiActionRecorder(ActionRecorder& a)
 
 /* -------------------------------------------------------------------------- */
 
-void MidiActionRecorder::react(ID channelId, const EventDispatcher::Event& e,
-    Frame currentFrameQuantized, bool& hasActions)
+void MidiActionRecorder::record(ID channelId, const MidiEvent& e, Frame currentFrameQuantized, bool& hasActions)
 {
-	if (e.type == EventDispatcher::EventType::MIDI)
-	{
-		MidiEvent flat(std::any_cast<Action>(e.data).event);
-		flat.setChannel(0);
-		m_actionRecorder->liveRec(channelId, flat, currentFrameQuantized);
-		hasActions = true;
-	}
+	MidiEvent flat(e);
+	flat.setChannel(0);
+	m_actionRecorder->liveRec(channelId, flat, currentFrameQuantized);
+	hasActions = true;
 }
 } // namespace giada::m

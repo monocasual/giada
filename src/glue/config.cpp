@@ -244,7 +244,6 @@ void save(const MidiData& data)
 	g_engine.conf.data.midiSystem  = data.api;
 	g_engine.conf.data.midiPortOut = data.outPort;
 	g_engine.conf.data.midiPortIn  = data.inPort;
-	//g_engine.conf.data.midiMapPath = data.midiMap >= 0 && data.midiMap < (int)data.midiMaps.size() ? data.midiMaps[data.midiMap] : "";
 	g_engine.conf.data.midiMapPath = u::vector::atOr(data.midiMaps, data.midiMap, "");
 	g_engine.conf.data.midiSync    = data.syncMode;
 }

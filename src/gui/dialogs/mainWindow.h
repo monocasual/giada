@@ -76,7 +76,7 @@ private:
 		ScopedProgress(gdProgress&, const char* msg);
 		~ScopedProgress();
 
-		gdProgress& get();
+		void setProgress(float);
 
 	private:
 		gdProgress& m_progress;

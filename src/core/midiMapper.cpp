@@ -119,7 +119,7 @@ bool MidiMapper<KernelMidiI>::isMessageDefined(const MidiMap::Message& m) const
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-void MidiMapper<KernelMidiI>::sendInitMessages(const MidiMap& midiMap)
+void MidiMapper<KernelMidiI>::sendInitMessages(const MidiMap& midiMap) const
 {
 	if (!midiMap.isValid())
 		return;
@@ -137,7 +137,7 @@ void MidiMapper<KernelMidiI>::sendInitMessages(const MidiMap& midiMap)
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-void MidiMapper<KernelMidiI>::sendMidiLightning(uint32_t learnt, const MidiMap::Message& m)
+void MidiMapper<KernelMidiI>::sendMidiLightning(uint32_t learnt, const MidiMap::Message& m) const
 {
 	// Skip lightning message if not defined in midi map
 

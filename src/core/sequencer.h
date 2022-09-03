@@ -27,9 +27,11 @@
 #ifndef G_SEQUENCER_H
 #define G_SEQUENCER_H
 
+#include "core/actions/action.h"
 #include "core/eventDispatcher.h"
 #include "core/metronome.h"
 #include "core/quantizer.h"
+#include "core/ringBuffer.h"
 #include <vector>
 
 namespace mcl
@@ -40,7 +42,8 @@ class AudioBuffer;
 namespace giada::m::model
 {
 class Model;
-}
+class Sequencer;
+} // namespace giada::m::model
 
 namespace giada::m
 {
@@ -130,30 +133,36 @@ public:
 
 	void reset(int sampleRate);
 
-	/* react
-	Reacts to live events coming from the EventDispatcher (human events). */
-
-	void react(const EventDispatcher::EventBuffer&, int sampleRate);
-
 	/* advance
 	Parses sequencer events that might occur in a block and advances the internal 
 	quantizer. Returns a reference to the internal EventBuffer filled with events
 	(if any). Call this on each new audio block. */
 
-	const EventBuffer& advance(Frame bufferSize, int sampleRate, const ActionRecorder&);
+	const EventBuffer& advance(const model::Sequencer&, Frame bufferSize, int sampleRate, const ActionRecorder&) const;
 
 	/* render
 	Renders audio coming out from the sequencer: that is, the metronome! */
 
-	void render(mcl::AudioBuffer& outBuf);
+	void render(mcl::AudioBuffer& outBuf) const;
 
+	void rewindForced();
 	void rewind();
+	void start();
+	void stop();
 	void toggleMetronome();
 	void setMetronome(bool v);
 	void setBpm(float b, int sampleRate);
 	void setBeats(int beats, int bars, int sampleRate);
 	void setQuantize(int q, int sampleRate);
 	void setStatus(SeqStatus);
+	void goToBeat(int beat, int sampleRate);
+
+#ifdef WITH_AUDIO_JACK
+	void jack_start();
+	void jack_stop();
+	void jack_rewind();
+	void jack_setBpm(float b, int sampleRate);
+#endif
 
 	/* recomputeFrames
     Updates bpm, frames, beats and so on. */
@@ -165,11 +174,6 @@ public:
 	std::function<void(float, float, int)> onBpmChange;
 
 private:
-	/* rewindQ
-	Rewinds sequencer, quantized mode. */
-
-	void rewindQ(Frame delta);
-
 	/* raw[*]
 	Raw functions to start, stop and rewind the sequencer or change other 
 	properties. These functions must be called only internally. Other modules
@@ -177,7 +181,7 @@ private:
 
 	void rawStart();
 	void rawStop();
-	void rawRewind();
+	void rawRewind(Frame delta);
 	void rawSetBpm(float v, int sampleRate);
 	void rawGoToBeat(int beat, int sampleRate);
 
@@ -189,7 +193,7 @@ private:
 	Buffer of events found in each block sent to channels for event parsing. 
 	This is filled during react(). */
 
-	EventBuffer m_eventBuffer;
+	mutable EventBuffer m_eventBuffer;
 
 	Metronome m_metronome;
 	Quantizer m_quantizer;

@@ -37,13 +37,14 @@ class Plugin;
 class MidiReceiver final
 {
 public:
-	void react(ChannelShared::MidiQueue&, const EventDispatcher::Event&) const;
 	void advance(ID channelId, ChannelShared::MidiQueue&, const Sequencer::Event&) const;
 	void render(ChannelShared&, const std::vector<Plugin*>&, PluginHost&) const;
 
+	void parseMidi(ChannelShared::MidiQueue&, const MidiEvent&) const;
+	void stop(ChannelShared::MidiQueue&) const;
+
 private:
 	void sendToPlugins(ChannelShared::MidiQueue&, const MidiEvent&, Frame localFrame) const;
-	void parseMidi(ChannelShared::MidiQueue&, const MidiEvent&) const;
 };
 } // namespace giada::m
 

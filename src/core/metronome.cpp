@@ -29,7 +29,7 @@
 
 namespace giada::m
 {
-void Metronome::trigger(Click c, Frame o)
+void Metronome::trigger(Click c, Frame o) const
 {
 	m_rendering = true;
 	m_click     = c;
@@ -38,7 +38,7 @@ void Metronome::trigger(Click c, Frame o)
 
 /* -------------------------------------------------------------------------- */
 
-void Metronome::render(mcl::AudioBuffer& outBuf)
+void Metronome::render(mcl::AudioBuffer& outBuf) const
 {
 	const float* data = m_click == Click::BEAT ? beat : bar;
 	for (Frame f = m_offset; f < outBuf.countFrames() && m_rendering; f++)

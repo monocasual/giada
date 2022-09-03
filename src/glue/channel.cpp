@@ -138,8 +138,8 @@ Data::Data(const m::Channel& c)
 ChannelStatus Data::getPlayStatus() const { return m_channel->shared->playStatus.load(); }
 ChannelStatus Data::getRecStatus() const { return m_channel->shared->recStatus.load(); }
 bool          Data::getReadActions() const { return m_channel->shared->readActions.load(); }
-bool          Data::isRecordingInput() const { return g_engine.recorder.isRecordingInput(); }
-bool          Data::isRecordingActions() const { return g_engine.recorder.isRecordingActions(); }
+bool          Data::isRecordingInput() const { return g_engine.mixer.isRecordingInput(); }
+bool          Data::isRecordingActions() const { return g_engine.mixer.isRecordingActions(); }
 bool          Data::isMuted() const { return m_channel->isMuted(); }
 bool          Data::isSoloed() const { return m_channel->isSoloed(); }
 bool          Data::isArmed() const { return m_channel->armed; }
@@ -169,40 +169,28 @@ std::vector<Data> getChannels()
 
 /* -------------------------------------------------------------------------- */
 
-int loadChannel(ID channelId, const std::string& fname)
+void loadChannel(ID channelId, const std::string& fname)
 {
 	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
 
-	m::WaveFactory::Result res = g_engine.waveFactory.createFromFile(fname, /*id=*/0,
-	    g_engine.kernelAudio.getSampleRate(), g_engine.conf.data.rsmpQuality);
+	const int sampleRate  = g_engine.kernelAudio.getSampleRate();
+	const int rsmpQuality = g_engine.conf.data.rsmpQuality;
 
-	if (res.status != G_RES_OK)
-	{
-		printLoadError_(res.status);
-		return res.status;
-	}
+	int res = g_engine.channelManager.loadSampleChannel(channelId, fname, sampleRate, rsmpQuality);
+	if (res != G_RES_OK)
+		printLoadError_(res);
 
-	/* Save the patch and take the last browser's dir in order to re-use it the 
-	next time. */
-
-	g_engine.conf.data.samplePath = u::fs::dirname(fname);
-	g_engine.channelManager.loadSampleChannel(channelId, std::move(res.wave));
-	return G_RES_OK;
+	if (auto* w = sampleEditor::getWindow(); w != nullptr)
+		w->rebuild();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void addChannel(ID columnId, ChannelType type)
 {
-	const int   position = g_engine.channelManager.getLastChannelPosition(columnId);
-	m::Channel& ch       = g_engine.channelManager.addChannel(type, columnId, position,
-        g_engine.kernelAudio.getBufferSize());
-
-	auto onSendMidiCb = [channelId = ch.id]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); };
-
-	ch.midiLighter.onSend = onSendMidiCb;
-	if (ch.midiSender)
-		ch.midiSender->onSend = onSendMidiCb;
+	const int position   = g_engine.channelManager.getLastChannelPosition(columnId);
+	const int bufferSize = g_engine.kernelAudio.getBufferSize();
+	g_engine.channelManager.addChannel(type, columnId, position, bufferSize);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -211,19 +199,19 @@ void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 {
 	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
 
-	int  position = g_engine.channelManager.getLastChannelPosition(columnId);
-	bool errors   = false;
-	int  i        = 0;
+	int  i      = 0;
+	bool errors = false;
 	for (const std::string& f : fnames)
 	{
-		progress.get().setProgress(++i / static_cast<float>(fnames.size()));
+		const float progressVal = ++i / static_cast<float>(fnames.size());
+		const int   bufferSize  = g_engine.kernelAudio.getBufferSize();
+		const int   sampleRate  = g_engine.kernelAudio.getSampleRate();
+		const int   rsmpQuality = g_engine.conf.data.rsmpQuality;
 
-		m::WaveFactory::Result res = g_engine.waveFactory.createFromFile(f, /*id=*/0,
-		    g_engine.kernelAudio.getSampleRate(), g_engine.conf.data.rsmpQuality);
-		if (res.status == G_RES_OK)
-			g_engine.channelManager.addAndLoadSampleChannel(g_engine.kernelAudio.getBufferSize(),
-			    std::move(res.wave), columnId, position++);
-		else
+		progress.setProgress(progressVal);
+
+		int res = g_engine.channelManager.addAndLoadSampleChannel(f, sampleRate, rsmpQuality, bufferSize, columnId);
+		if (res != G_RES_OK)
 			errors = true;
 	}
 
@@ -239,11 +227,16 @@ void deleteChannel(ID channelId)
 		return;
 	g_ui.closeAllSubwindows();
 
-	const std::vector<m::Plugin*> plugins = g_engine.model.get().getChannel(channelId).plugins;
+	const std::vector<m::Plugin*> plugins  = g_engine.model.get().getChannel(channelId).plugins;
+	const bool                    hasSolos = g_engine.channelManager.hasSolos();
 
-	g_engine.channelManager.deleteChannel(channelId);
-	g_engine.mixer.updateSoloCount(g_engine.channelManager.hasSolos());
 	g_engine.actionRecorder.clearChannel(channelId);
+	g_engine.channelManager.deleteChannel(channelId);
+	g_engine.mixer.updateSoloCount(hasSolos);
+
+	/* Plug-in destruction must be done in the main thread, due to JUCE and 
+		VST3 internal workings. */
+
 	g_engine.pluginHost.freePlugins(plugins);
 }
 
@@ -254,6 +247,7 @@ void freeChannel(ID channelId)
 	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING), g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_FREE)))
 		return;
 	g_ui.closeAllSubwindows();
+
 	g_engine.actionRecorder.clearChannel(channelId);
 	g_engine.channelManager.freeSampleChannel(channelId);
 }
@@ -276,12 +270,17 @@ void setOverdubProtection(ID channelId, bool value)
 
 void cloneChannel(ID channelId)
 {
-	g_engine.actionRecorder.cloneActions(channelId, g_engine.channelFactory.getNextId());
+	/* Plug-in cloning must be done in the main thread, due to JUCE and VST3 
+	internal workings. */
 
-	const m::Channel&       ch      = g_engine.model.get().getChannel(channelId);
-	std::vector<m::Plugin*> plugins = g_engine.pluginManager.clonePlugins(ch.plugins, g_engine.patch.data.samplerate,
-	    g_engine.kernelAudio.getBufferSize(), g_engine.model, g_engine.sequencer);
-	g_engine.channelManager.cloneChannel(channelId, g_engine.kernelAudio.getBufferSize(), plugins);
+	const m::Channel&             ch              = g_engine.model.get().getChannel(channelId);
+	const int                     bufferSize      = g_engine.kernelAudio.getBufferSize();
+	const int                     patchSampleRate = g_engine.patch.data.samplerate;
+	const std::vector<m::Plugin*> plugins         = g_engine.pluginManager.clonePlugins(ch.plugins, patchSampleRate, bufferSize, g_engine.model);
+	const ID                      nextChannelId   = g_engine.channelFactory.getNextId();
+
+	g_engine.channelManager.cloneChannel(channelId, bufferSize, plugins);
+	g_engine.actionRecorder.cloneActions(channelId, nextChannelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -315,36 +314,23 @@ void setName(ID channelId, const std::string& name)
 
 /* -------------------------------------------------------------------------- */
 
-void updateHasActions(ID channelId, bool updateActionEditor)
-{
-	g_engine.eventDispatcher.pumpFunctionEvent([channelId]() {
-		g_engine.model.get().getChannel(channelId).hasActions = g_engine.actionRecorder.hasActions(channelId);
-		g_engine.model.swap(m::model::SwapType::HARD);
-		g_ui.refreshSubWindow(WID_ACTION_EDITOR);
-	});
-}
-
-/* -------------------------------------------------------------------------- */
-
 void clearAllActions(ID channelId)
 {
 	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
 	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
 		return;
 
-	g_engine.eventDispatcher.pumpFunctionEvent([channelId]() {
-		g_engine.actionRecorder.clearChannel(channelId);
-		g_engine.model.get().getChannel(channelId).hasActions = g_engine.actionRecorder.hasActions(channelId);
-		g_engine.model.swap(m::model::SwapType::HARD);
-		g_ui.refreshSubWindow(WID_ACTION_EDITOR);
-	});
+	g_engine.actionRecorder.clearChannel(channelId);
+	g_ui.refreshSubWindow(WID_ACTION_EDITOR);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setCallbacks(m::Channel& ch)
 {
-	auto onSendMidiCb = [channelId = ch.id]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); };
+	auto onSendMidiCb = [channelId = ch.id]() {
+		g_ui.pumpEvent([channelId]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); });
+	};
 
 	ch.midiLighter.onSend = onSendMidiCb;
 	if (ch.midiSender)

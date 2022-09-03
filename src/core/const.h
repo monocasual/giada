@@ -87,9 +87,7 @@ constexpr int   G_GUI_ZOOM_FACTOR    = 2;
 
 /* -- MIN/MAX values -------------------------------------------------------- */
 constexpr float G_MIN_BPM               = 20.0f;
-constexpr auto  G_MIN_BPM_STR           = "20.0";
 constexpr float G_MAX_BPM               = 999.0f;
-constexpr auto  G_MAX_BPM_STR           = "999.0";
 constexpr int   G_MAX_BEATS             = 32;
 constexpr int   G_MAX_BARS              = 32;
 constexpr int   G_MAX_QUANTIZE          = 8;

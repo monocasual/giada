@@ -74,13 +74,7 @@ public:
 	/* render
 	Renders audio data to I/O buffers. */
 
-	void render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible) const;
-
-	/* react
-	Reacts to live events coming from the EventDispatcher (human events) and
-	updates itself accordingly. */
-
-	void react(const EventDispatcher::EventBuffer& e);
+	void render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool mixerHasSolos, bool seqIsRunning) const;
 
 	bool isPlaying() const;
 	bool isInternal() const;
@@ -89,6 +83,12 @@ public:
 	bool canInputRec() const;
 	bool canActionRec() const;
 	bool hasWave() const;
+
+	/* isAudible
+	True if this channel is currently audible: not muted or not included in a 
+	solo session. */
+
+	bool isAudible(bool mixerHasSolos) const;
 
 	void setMute(bool);
 	void setSolo(bool);
@@ -124,10 +124,9 @@ public:
 private:
 	void renderMasterOut(mcl::AudioBuffer&) const;
 	void renderMasterIn(mcl::AudioBuffer&) const;
-	void renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool audible) const;
+	void renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const;
 
 	void initCallbacks();
-	void react(const EventDispatcher::Event&);
 
 	bool m_mute;
 	bool m_solo;

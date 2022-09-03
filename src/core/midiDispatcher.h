@@ -53,23 +53,7 @@ public:
 	/* dispatch
     Main callback invoked by kernelMidi whenever a new MIDI data comes in. */
 
-	void dispatch(const MidiEvent& e);
-
-	/* learn
-    Learns event 'e'. Called by the Event Dispatcher. */
-
-	void learn(const MidiEvent& e);
-
-	/* process
-    Sends event 'e' to channels (masters and keyboard). Called by the Event 
-    Dispatcher. */
-
-	void process(const MidiEvent& e);
-
-	/* onDispatch
-	Callback fired when the dispatch() method is invoked by KernelMidi. */
-
-	std::function<void(EventDispatcher::EventType, Action)> onDispatch;
+	void dispatch(const MidiEvent&);
 
 	/* onEventReceived
 	Callback fired when a MIDI event of type CHANNEL has been received. */
@@ -77,19 +61,28 @@ public:
 	std::function<void()> onEventReceived;
 
 private:
+	/* learn
+    Learns event 'e'. Called by the Event Dispatcher. */
+
+	void learn(const MidiEvent&);
+
+	/* process
+    Sends event 'e' to channels (masters and keyboard). Called by the Event 
+    Dispatcher. */
+
+	void process(const MidiEvent&);
+
 	bool isMasterMidiInAllowed(int c);
 	bool isChannelMidiInAllowed(ID channelId, int c);
 
 	void processChannels(const MidiEvent&);
 	void processMaster(const MidiEvent&);
 
-	void learnChannel(MidiEvent e, int param, ID channelId, std::function<void()> doneCb);
-	void learnMaster(MidiEvent e, int param, std::function<void()> doneCb);
+	void learnChannel(MidiEvent, int param, ID channelId, std::function<void()> doneCb);
+	void learnMaster(MidiEvent, int param, std::function<void()> doneCb);
 
-	void processPlugins(ID channelId, const std::vector<Plugin*>& plugins,
-	    const MidiEvent& midiEvent);
-	void learnPlugin(MidiEvent e, std::size_t paramIndex, ID pluginId,
-	    std::function<void()> doneCb);
+	void processPlugins(ID channelId, const std::vector<Plugin*>& plugins, const MidiEvent&);
+	void learnPlugin(MidiEvent, std::size_t paramIndex, ID pluginId, std::function<void()> doneCb);
 
 	/* cb_midiLearn
     Callback prepared by the gdMidiGrabber window and called by midiDispatcher. 

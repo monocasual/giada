@@ -44,8 +44,8 @@ public:
 		BAR
 	};
 
-	void render(mcl::AudioBuffer& outBuf);
-	void trigger(Click c, Frame o);
+	void render(mcl::AudioBuffer& outBuf) const;
+	void trigger(Click c, Frame o) const;
 
 	bool running = false;
 
@@ -70,10 +70,10 @@ private:
 	    0.293425f, 0.288307f, 0.262252f, 0.220811f, 0.170435f, 0.117887f,
 	    0.069639f, 0.031320f};
 
-	Frame m_tracker   = 0;
-	Frame m_offset    = 0;
-	bool  m_rendering = false;
-	Click m_click     = Click::BEAT;
+	mutable Frame m_tracker   = 0;
+	mutable Frame m_offset    = 0;
+	mutable bool  m_rendering = false;
+	mutable Click m_click     = Click::BEAT;
 };
 } // namespace giada::m
 

@@ -64,7 +64,7 @@ Timer::Timer(const m::model::Sequencer& c)
 , bars(c.bars)
 , quantize(c.quantize)
 , isUsingJack(g_engine.kernelAudio.getAPI() == RtAudio::Api::UNIX_JACK)
-, isRecordingInput(g_engine.recorder.isRecordingInput())
+, isRecordingInput(g_engine.mixer.isRecordingInput())
 {
 }
 
@@ -126,7 +126,7 @@ Sequencer getSequencer()
 
 	m::Mixer::RecordInfo recInfo = g_engine.mixer.getRecordInfo();
 
-	out.isFreeModeInputRec = g_engine.recorder.isRecordingInput() && g_engine.conf.data.inputRecMode == InputRecMode::FREE;
+	out.isFreeModeInputRec = g_engine.mixer.isRecordingInput() && g_engine.conf.data.inputRecMode == InputRecMode::FREE;
 	out.shouldBlink        = g_ui.shouldBlink() && (g_engine.sequencer.getStatus() == SeqStatus::WAITING || out.isFreeModeInputRec);
 	out.beats              = g_engine.sequencer.getBeats();
 	out.bars               = g_engine.sequencer.getBars();
@@ -143,8 +143,8 @@ Transport getTransport()
 {
 	Transport transport;
 	transport.isRunning         = g_engine.sequencer.isRunning();
-	transport.isRecordingAction = g_engine.recorder.isRecordingActions();
-	transport.isRecordingInput  = g_engine.recorder.isRecordingInput();
+	transport.isRecordingAction = g_engine.mixer.isRecordingActions();
+	transport.isRecordingInput  = g_engine.mixer.isRecordingInput();
 	transport.isMetronomeOn     = g_engine.sequencer.isMetronomeOn();
 	transport.recTriggerMode    = g_engine.conf.data.recTriggerMode;
 	transport.inputRecMode      = g_engine.conf.data.inputRecMode;
@@ -165,13 +165,14 @@ MainMenu getMainMenu()
 
 void setBeats(int beats, int bars)
 {
-	/* Never change this stuff while recording audio. */
-
-	if (g_engine.recorder.isRecordingInput())
+	if (g_engine.mixer.isRecordingInput())
 		return;
 
-	g_engine.sequencer.setBeats(beats, bars, g_engine.kernelAudio.getSampleRate());
-	g_engine.mixer.allocRecBuffer(g_engine.sequencer.getMaxFramesInLoop(g_engine.kernelAudio.getSampleRate()));
+	const int sampleRate      = g_engine.kernelAudio.getSampleRate();
+	const int maxFramesInLoop = g_engine.sequencer.getMaxFramesInLoop(sampleRate);
+
+	g_engine.sequencer.setBeats(beats, bars, sampleRate);
+	g_engine.mixer.allocRecBuffer(maxFramesInLoop);
 	g_engine.updateMixerModel();
 }
 
@@ -189,6 +190,7 @@ void clearAllSamples()
 	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
 	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_FREEALLSAMPLES)))
 		return;
+
 	g_ui.closeSubWindow(WID_SAMPLE_EDITOR);
 	g_engine.sequencer.setStatus(SeqStatus::STOPPED);
 	g_engine.midiSynchronizer.sendStop();
@@ -203,6 +205,7 @@ void clearAllActions()
 	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
 	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
 		return;
+
 	g_ui.closeSubWindow(WID_ACTION_EDITOR);
 	g_engine.actionRecorder.clearAllActions();
 }
@@ -254,16 +257,26 @@ void closeProject()
 	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
 	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLOSEPROJECT)))
 		return;
+
+	/* Engine::reset() involves plug-in destruction, which must be done in the 
+	main thread, due to JUCE and VST3 internal workings. */
+
+	g_ui.stopUpdater();
 	g_engine.mixer.disable();
-	g_ui.reset();
 	g_engine.reset();
+	g_ui.reset();
 	g_engine.mixer.enable();
+	g_ui.startUpdater();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void quitGiada()
 {
-	m::init::closeMainWindow();
+	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
+	        g_ui.langMapper.get(v::LangMap::MESSAGE_INIT_QUITGIADA)))
+		return;
+
+	m::init::shutdown();
 }
 } // namespace giada::c::main

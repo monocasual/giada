@@ -55,46 +55,6 @@ SampleReactor::SampleReactor(ChannelShared& shared, ID channelId)
 	});
 }
 
-/* -------------------------------------------------------------------------- */
-
-void SampleReactor::react(ID channelId, ChannelShared& shared, const EventDispatcher::Event& e,
-    SamplePlayerMode mode, bool velocityAsVol, bool chansStopOnSeqHalt, bool canQuantize,
-    bool isLoop, float& volume_i) const
-{
-	switch (e.type)
-	{
-	case EventDispatcher::EventType::KEY_PRESS:
-	{
-		press(channelId, shared, mode, std::any_cast<int>(e.data), canQuantize, isLoop, velocityAsVol, volume_i);
-		break;
-	}
-	case EventDispatcher::EventType::KEY_RELEASE:
-	{
-		if (mode == SamplePlayerMode::SINGLE_PRESS) // Key release is meaningful only for SINGLE_PRESS modes
-			release(shared);
-		break;
-	}
-	case EventDispatcher::EventType::KEY_KILL:
-	{
-		const ChannelStatus playStatus = shared.playStatus.load();
-		if (playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING)
-			stop(shared);
-		if (mode == SamplePlayerMode::SINGLE_BASIC_PAUSE)
-			shared.tracker.store(0); // Hard rewind
-		break;
-	}
-	case EventDispatcher::EventType::SEQUENCER_STOP:
-	{
-		onStopBySeq(shared, chansStopOnSeqHalt, isLoop);
-		break;
-	}
-	default:
-		break;
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
 void SampleReactor::rewind(ChannelShared& shared, Frame localFrame) const
 {
 	shared.renderQueue->push({SamplePlayer::Render::Mode::REWIND, localFrame});
@@ -160,7 +120,7 @@ ChannelStatus SampleReactor::pressWhilePlay(ID channelId, ChannelShared& shared,
 
 /* -------------------------------------------------------------------------- */
 
-void SampleReactor::press(ID channelId, ChannelShared& shared, SamplePlayerMode mode,
+void SampleReactor::keyPress(ID channelId, ChannelShared& shared, SamplePlayerMode mode,
     int velocity, bool canQuantize, bool isLoop, bool velocityAsVol, float& volume_i) const
 {
 	ChannelStatus playStatus = shared.playStatus.load();
@@ -198,8 +158,24 @@ void SampleReactor::press(ID channelId, ChannelShared& shared, SamplePlayerMode 
 
 /* -------------------------------------------------------------------------- */
 
-void SampleReactor::release(ChannelShared& shared) const
+void SampleReactor::keyKill(ChannelShared& shared, SamplePlayerMode mode) const
 {
+	const ChannelStatus playStatus = shared.playStatus.load();
+	if (playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING)
+		stop(shared);
+	if (mode == SamplePlayerMode::SINGLE_BASIC_PAUSE)
+		shared.tracker.store(0); // Hard rewind
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleReactor::keyRelease(ChannelShared& shared, SamplePlayerMode mode) const
+{
+	/* Key release is meaningful only for SINGLE_PRESS modes. */
+
+	if (mode != SamplePlayerMode::SINGLE_PRESS)
+		return;
+
 	/* Kill it if it's SINGLE_PRESS is playing. Otherwise there might be a 
 	quantization step in progress that would play the channel later on: 
 	disable it. */
@@ -212,7 +188,7 @@ void SampleReactor::release(ChannelShared& shared) const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleReactor::onStopBySeq(ChannelShared& shared, bool chansStopOnSeqHalt, bool isLoop) const
+void SampleReactor::stopBySeq(ChannelShared& shared, bool chansStopOnSeqHalt, bool isLoop) const
 {
 	const ChannelStatus playStatus       = shared.playStatus.load();
 	const bool          isReadingActions = shared.isReadingActions();

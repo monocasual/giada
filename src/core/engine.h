@@ -133,7 +133,7 @@ public:
 #endif
 
 private:
-	int audioCallback(KernelAudio::CallbackInfo);
+	int audioCallback(KernelAudio::CallbackInfo) const;
 };
 } // namespace giada::m
 

@@ -45,7 +45,7 @@ JackSynchronizer::JackSynchronizer()
 
 /* -------------------------------------------------------------------------- */
 
-void JackSynchronizer::recvJackSync(const JackTransport::State& state)
+void JackSynchronizer::recvJackSync(const JackTransport::State& state) const
 {
 	assert(onJackRewind != nullptr);
 	assert(onJackChangeBpm != nullptr);

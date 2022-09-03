@@ -27,7 +27,6 @@
 #include "core/model/storage.h"
 #include "core/channels/channelFactory.h"
 #include "core/conf.h"
-#include "core/engine.h"
 #include "core/kernelAudio.h"
 #include "core/model/model.h"
 #include "core/patch.h"
@@ -38,64 +37,39 @@
 #include <cassert>
 #include <memory>
 
-extern giada::m::Engine g_engine;
-
 namespace giada::m::model
 {
-namespace
+void store(Patch::Data& patch, Engine& engine)
 {
-void loadChannels_(const std::vector<Patch::Channel>& channels, int samplerate)
-{
-	float samplerateRatio = g_engine.kernelAudio.getSampleRate() / static_cast<float>(samplerate);
-
-	for (const Patch::Channel& pchannel : channels)
-		g_engine.model.get().channels.push_back(
-		    g_engine.channelFactory.deserializeChannel(pchannel, samplerateRatio, g_engine.kernelAudio.getBufferSize()));
-}
-
-/* -------------------------------------------------------------------------- */
-
-void loadActions_(const std::vector<Patch::Action>& pactions)
-{
-	g_engine.model.getAllShared<Actions::Map>() = g_engine.actionRecorder.deserializeActions(pactions);
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-void store(Patch::Data& patch)
-{
-	const Layout& layout = g_engine.model.get();
+	const Layout& layout = engine.model.get();
 
 	patch.bars       = layout.sequencer.bars;
 	patch.beats      = layout.sequencer.beats;
 	patch.bpm        = layout.sequencer.bpm;
 	patch.quantize   = layout.sequencer.quantize;
-	patch.metronome  = g_engine.sequencer.isMetronomeOn(); // TODO - addShared bool metronome to Layout
-	patch.samplerate = g_engine.kernelAudio.getSampleRate();
+	patch.metronome  = engine.sequencer.isMetronomeOn(); // TODO - addShared bool metronome to Layout
+	patch.samplerate = engine.kernelAudio.getSampleRate();
 
 	patch.plugins.clear();
-	for (const auto& p : g_engine.model.getAllShared<PluginPtrs>())
-		patch.plugins.push_back(g_engine.pluginManager.serializePlugin(*p));
+	for (const auto& p : engine.model.getAllShared<PluginPtrs>())
+		patch.plugins.push_back(engine.pluginManager.serializePlugin(*p));
 
-	patch.actions = g_engine.actionRecorder.serializeActions(g_engine.model.getAllShared<Actions::Map>());
+	patch.actions = engine.actionRecorder.serializeActions(engine.model.getAllShared<Actions::Map>());
 
 	patch.waves.clear();
-	for (const auto& w : g_engine.model.getAllShared<WavePtrs>())
-		patch.waves.push_back(g_engine.waveFactory.serializeWave(*w));
+	for (const auto& w : engine.model.getAllShared<WavePtrs>())
+		patch.waves.push_back(engine.waveFactory.serializeWave(*w));
 
 	patch.channels.clear();
 	for (const Channel& c : layout.channels)
-		patch.channels.push_back(g_engine.channelFactory.serializeChannel(c));
+		patch.channels.push_back(engine.channelFactory.serializeChannel(c));
 }
 
 /* -------------------------------------------------------------------------- */
 
-void store(Conf::Data& conf)
+void store(Conf::Data& conf, Engine& engine)
 {
-	const Layout& layout = g_engine.model.get();
+	const Layout& layout = engine.model.get();
 
 	conf.midiInEnabled    = layout.midiIn.enabled;
 	conf.midiInFilter     = layout.midiIn.filter;
@@ -112,73 +86,74 @@ void store(Conf::Data& conf)
 
 /* -------------------------------------------------------------------------- */
 
-LoadState load(const Patch::Data& patch)
+LoadState load(const Patch::Data& patch, Engine& engine)
 {
-	DataLock lock = g_engine.model.lockData(SwapType::NONE);
+	const int   sampleRate      = engine.kernelAudio.getSampleRate();
+	const int   bufferSize      = engine.kernelAudio.getBufferSize();
+	const float sampleRateRatio = sampleRate / static_cast<float>(patch.samplerate);
+
+	DataLock lock = engine.model.lockData(SwapType::NONE);
 
 	/* Clear and re-initialize channels first. */
 
-	g_engine.model.get().channels = {};
-	g_engine.model.getAllShared<ChannelSharedPtrs>().clear();
+	engine.model.get().channels = {};
+	engine.model.getAllShared<ChannelSharedPtrs>().clear();
 
 	LoadState state;
 
 	/* Load external data first: plug-ins and waves. */
 
-	g_engine.model.getAllShared<PluginPtrs>().clear();
+	engine.model.getAllShared<PluginPtrs>().clear();
 	for (const Patch::Plugin& pplugin : patch.plugins)
 	{
-		std::unique_ptr<Plugin> p = g_engine.pluginManager.deserializePlugin(
-		    pplugin, g_engine.kernelAudio.getSampleRate(), g_engine.kernelAudio.getBufferSize(), g_engine.sequencer);
-
+		std::unique_ptr<Plugin> p = engine.pluginManager.deserializePlugin(pplugin, sampleRate, bufferSize, engine.model.get().sequencer);
 		if (!p->valid)
 			state.missingPlugins.push_back(pplugin.path);
-
-		g_engine.model.getAllShared<PluginPtrs>().push_back(std::move(p));
+		engine.model.getAllShared<PluginPtrs>().push_back(std::move(p));
 	}
 
-	g_engine.model.getAllShared<WavePtrs>().clear();
+	engine.model.getAllShared<WavePtrs>().clear();
 	for (const Patch::Wave& pwave : patch.waves)
 	{
-		std::unique_ptr<Wave> w = g_engine.waveFactory.deserializeWave(pwave, g_engine.kernelAudio.getSampleRate(),
-		    g_engine.conf.data.rsmpQuality);
-
+		std::unique_ptr<Wave> w = engine.waveFactory.deserializeWave(pwave, sampleRate, engine.conf.data.rsmpQuality);
 		if (w != nullptr)
-			g_engine.model.getAllShared<WavePtrs>().push_back(std::move(w));
+			engine.model.getAllShared<WavePtrs>().push_back(std::move(w));
 		else
 			state.missingWaves.push_back(pwave.path);
 	}
 
 	/* Then load up channels, actions and global properties. */
 
-	loadChannels_(patch.channels, g_engine.patch.data.samplerate);
-	loadActions_(patch.actions);
+	for (const Patch::Channel& pchannel : patch.channels)
+		engine.model.get().channels.push_back(engine.channelFactory.deserializeChannel(pchannel, sampleRateRatio, bufferSize));
 
-	g_engine.model.get().sequencer.status   = SeqStatus::STOPPED;
-	g_engine.model.get().sequencer.bars     = patch.bars;
-	g_engine.model.get().sequencer.beats    = patch.beats;
-	g_engine.model.get().sequencer.bpm      = patch.bpm;
-	g_engine.model.get().sequencer.quantize = patch.quantize;
+	engine.model.getAllShared<Actions::Map>() = engine.actionRecorder.deserializeActions(patch.actions);
+
+	engine.model.get().sequencer.status   = SeqStatus::STOPPED;
+	engine.model.get().sequencer.bars     = patch.bars;
+	engine.model.get().sequencer.beats    = patch.beats;
+	engine.model.get().sequencer.bpm      = patch.bpm;
+	engine.model.get().sequencer.quantize = patch.quantize;
 
 	return state;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void load(const Conf::Data& c)
+void load(const Conf::Data& c, Engine& engine)
 {
-	g_engine.model.get().midiIn.enabled    = c.midiInEnabled;
-	g_engine.model.get().midiIn.filter     = c.midiInFilter;
-	g_engine.model.get().midiIn.rewind     = c.midiInRewind;
-	g_engine.model.get().midiIn.startStop  = c.midiInStartStop;
-	g_engine.model.get().midiIn.actionRec  = c.midiInActionRec;
-	g_engine.model.get().midiIn.inputRec   = c.midiInInputRec;
-	g_engine.model.get().midiIn.volumeIn   = c.midiInVolumeIn;
-	g_engine.model.get().midiIn.volumeOut  = c.midiInVolumeOut;
-	g_engine.model.get().midiIn.beatDouble = c.midiInBeatDouble;
-	g_engine.model.get().midiIn.beatHalf   = c.midiInBeatHalf;
-	g_engine.model.get().midiIn.metronome  = c.midiInMetronome;
+	engine.model.get().midiIn.enabled    = c.midiInEnabled;
+	engine.model.get().midiIn.filter     = c.midiInFilter;
+	engine.model.get().midiIn.rewind     = c.midiInRewind;
+	engine.model.get().midiIn.startStop  = c.midiInStartStop;
+	engine.model.get().midiIn.actionRec  = c.midiInActionRec;
+	engine.model.get().midiIn.inputRec   = c.midiInInputRec;
+	engine.model.get().midiIn.volumeIn   = c.midiInVolumeIn;
+	engine.model.get().midiIn.volumeOut  = c.midiInVolumeOut;
+	engine.model.get().midiIn.beatDouble = c.midiInBeatDouble;
+	engine.model.get().midiIn.beatHalf   = c.midiInBeatHalf;
+	engine.model.get().midiIn.metronome  = c.midiInMetronome;
 
-	g_engine.model.swap(SwapType::NONE);
+	engine.model.swap(SwapType::NONE);
 }
 } // namespace giada::m::model

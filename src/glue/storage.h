@@ -27,6 +27,9 @@
 #ifndef G_GLUE_STORAGE_H
 #define G_GLUE_STORAGE_H
 
+/* giada::c::storage
+Persistence functions. Only the main thread can use these! */
+
 namespace giada::c::storage
 {
 void loadProject(void* data);

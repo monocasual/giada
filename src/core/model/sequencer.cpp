@@ -80,10 +80,17 @@ Frame Sequencer::a_getCurrentBeat() const { return shared->currentBeat.load(); }
 
 /* -------------------------------------------------------------------------- */
 
+float Sequencer::a_getCurrentSecond(int sampleRate) const
+{
+	return a_getCurrentFrame() / static_cast<float>(sampleRate);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Sequencer::a_setCurrentFrame(Frame f, int sampleRate) const
 {
 	shared->currentFrame.store(f);
-	shared->currentBeat.store(u::time::frameToBeat(f, sampleRate, bpm));
+	shared->currentBeat.store(f == 0 ? 0 : u::time::frameToBeat(f, sampleRate, bpm));
 }
 
 void Sequencer::a_setCurrentBeat(int b, int sampleRate) const

@@ -49,24 +49,20 @@ MidiSender::MidiSender(const Patch::Channel& p, KernelMidi& k)
 
 /* -------------------------------------------------------------------------- */
 
-void MidiSender::react(const EventDispatcher::Event& e)
-{
-	if (!enabled)
-		return;
-
-	if (e.type == EventDispatcher::EventType::KEY_KILL ||
-	    e.type == EventDispatcher::EventType::SEQUENCER_STOP)
-		send(MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3));
-}
-
-/* -------------------------------------------------------------------------- */
-
 void MidiSender::advance(ID channelId, const Sequencer::Event& e) const
 {
 	if (!enabled)
 		return;
 	if (e.type == Sequencer::EventType::ACTIONS)
 		parseActions(channelId, *e.actions);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MidiSender::stop()
+{
+	if (enabled)
+		send(MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3));
 }
 
 /* -------------------------------------------------------------------------- */

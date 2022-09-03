@@ -43,8 +43,7 @@
 namespace giada::m
 {
 MidiDispatcher::MidiDispatcher(model::Model& m)
-: onDispatch(nullptr)
-, m_learnCb(nullptr)
+: m_learnCb(nullptr)
 , m_model(m)
 {
 }
@@ -53,17 +52,17 @@ MidiDispatcher::MidiDispatcher(model::Model& m)
 
 void MidiDispatcher::startChannelLearn(int param, ID channelId, std::function<void()> f)
 {
-	m_learnCb = [=](m::MidiEvent e) { learnChannel(e, param, channelId, f); };
+	m_learnCb = [this, param, channelId, f](MidiEvent e) { learnChannel(e, param, channelId, f); };
 }
 
 void MidiDispatcher::startMasterLearn(int param, std::function<void()> f)
 {
-	m_learnCb = [=](m::MidiEvent e) { learnMaster(e, param, f); };
+	m_learnCb = [this, param, f](MidiEvent e) { learnMaster(e, param, f); };
 }
 
 void MidiDispatcher::startPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f)
 {
-	m_learnCb = [=](m::MidiEvent e) { learnPlugin(e, paramIndex, pluginId, f); };
+	m_learnCb = [this, paramIndex, pluginId, f](MidiEvent e) { learnPlugin(e, paramIndex, pluginId, f); };
 }
 
 void MidiDispatcher::stopLearn()
@@ -92,8 +91,6 @@ void MidiDispatcher::clearPluginLearn(std::size_t paramIndex, ID pluginId, std::
 
 void MidiDispatcher::dispatch(const MidiEvent& e)
 {
-	assert(onDispatch != nullptr);
-
 	/* Fix the velocity zero issue for those devices that sends NOTE OFF events 
 	as NOTE ON + velocity zero. Let's make it a real NOTE OFF event. */
 
@@ -103,10 +100,10 @@ void MidiDispatcher::dispatch(const MidiEvent& e)
 	/* If learn callback is set, a MIDI learn session is in progress. Otherwise
 	is just normal dispatching. */
 
-	Action action    = {0, 0, 0, eFixed};
-	auto   eventType = m_learnCb != nullptr ? EventDispatcher::EventType::MIDI_DISPATCHER_LEARN : EventDispatcher::EventType::MIDI_DISPATCHER_PROCESS;
-
-	onDispatch(eventType, action);
+	if (m_learnCb != nullptr)
+		learn(eFixed);
+	else
+		process(eFixed);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -261,22 +258,22 @@ void MidiDispatcher::processMaster(const MidiEvent& midiEvent)
 
 	if (pure == midiIn.rewind)
 	{
-		c::events::rewindSequencer(Thread::MIDI);
+		c::events::rewindSequencer();
 		G_DEBUG("   rewind (master) (pure=0x{:0X})", pure);
 	}
 	else if (pure == midiIn.startStop)
 	{
-		c::events::toggleSequencer(Thread::MIDI);
+		c::events::toggleSequencer();
 		G_DEBUG("   startStop (master) (pure=0x{:0X})", pure);
 	}
 	else if (pure == midiIn.actionRec)
 	{
-		c::events::toggleActionRecording(Thread::MIDI);
+		c::events::toggleActionRecording();
 		G_DEBUG("   actionRec (master) (pure=0x{:0X})", pure);
 	}
 	else if (pure == midiIn.inputRec)
 	{
-		c::events::toggleInputRecording(Thread::MIDI);
+		c::events::toggleInputRecording();
 		G_DEBUG("   inputRec (master) (pure=0x{:0X})", pure);
 	}
 	else if (pure == midiIn.metronome)

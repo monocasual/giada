@@ -28,6 +28,7 @@
 #define G_CHANNEL_SAMPLE_ACTION_RECORDER_H
 
 #include "core/eventDispatcher.h"
+#include "core/types.h"
 
 namespace giada::m
 {
@@ -38,17 +39,16 @@ class SampleActionRecorder final
 public:
 	SampleActionRecorder(ActionRecorder&);
 
-	void react(ID channelId, ChannelShared&, const EventDispatcher::Event&, SamplePlayerMode,
-	    Frame currentFrameQuantized, bool treatRecsAsLoops, bool seqIsRunning,
-	    bool canRecordActions, bool& hasActions) const;
+	void killReadActions(ChannelShared&) const;
+	void toggleReadActions(ChannelShared&, bool treatRecsAsLoops, bool seqIsRunning) const;
+	void keyPress(ID channelId, ChannelShared&, Frame currentFrameQuantized, SamplePlayerMode, bool& hasActions) const;
+	void keyRelease(ID channelId, bool canRecordActions, Frame currentFrameQuantized, SamplePlayerMode, bool& hasActions) const;
+	void keyKill(ID channelId, bool canRecordActions, Frame currentFrameQuantized, SamplePlayerMode, bool& hasActions) const;
 
 private:
 	void record(ID channelId, int note, Frame currentFrameQuantized, bool& hasActions) const;
-	void onKeyPress(ID channelId, ChannelShared&, Frame currentFrameQuantized, SamplePlayerMode, bool& hasActions) const;
 	void startReadActions(ChannelShared&, bool treatRecsAsLoops) const;
 	void stopReadActions(ChannelShared&, ChannelStatus, bool treatRecsAsLoops, bool seqIsRunning) const;
-	void toggleReadActions(ChannelShared&, bool treatRecsAsLoops, bool seqIsRunning) const;
-	void killReadActions(ChannelShared&) const;
 
 	ActionRecorder* m_actionRecorder;
 };

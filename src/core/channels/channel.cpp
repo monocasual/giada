@@ -236,6 +236,15 @@ bool Channel::isSoloed() const
 	return m_solo;
 }
 
+bool Channel::isAudible(bool mixerHasSolos) const
+{
+	if (isInternal())
+		return true;
+	if (isMuted())
+		return false;
+	return !mixerHasSolos || (mixerHasSolos && isSoloed());
+}
+
 bool Channel::canInputRec() const
 {
 	if (type != ChannelType::SAMPLE)
@@ -285,14 +294,14 @@ void Channel::setSolo(bool v)
 void Channel::initCallbacks()
 {
 	shared->playStatus.onChange = [this](ChannelStatus status) {
-		midiLighter.sendStatus(status, g_engine.mixer.isChannelAudible(*this));
+		midiLighter.sendStatus(status, isAudible(/*mixerHasSolos = TODO!*/ false));
 	};
 
 	if (samplePlayer)
 	{
-		samplePlayer->onLastFrame = [this](bool natural) {
-			sampleAdvancer->onLastFrame(*shared, g_engine.sequencer.isRunning(),
-			    natural, samplePlayer->mode, samplePlayer->isAnyLoopMode());
+		samplePlayer->onLastFrame = [this](bool natural, bool seqIsRunning) {
+			sampleAdvancer->onLastFrame(*shared, seqIsRunning, natural, samplePlayer->mode,
+			    samplePlayer->isAnyLoopMode());
 		};
 	}
 }
@@ -322,92 +331,14 @@ void Channel::advance(const Sequencer::EventBuffer& events, Range<Frame> block, 
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::react(const EventDispatcher::EventBuffer& events)
-{
-	for (const EventDispatcher::Event& e : events)
-	{
-		if (e.channelId > 0 && e.channelId != id)
-			continue;
-
-		react(e);
-
-		if (midiController)
-			midiController->react(shared->playStatus, e);
-
-		if (midiSender && isPlaying() && !isMuted())
-			midiSender->react(e);
-
-		if (samplePlayer)
-			samplePlayer->react(e);
-
-		if (midiActionRecorder && g_engine.recorder.canRecordActions())
-			midiActionRecorder->react(id, e, g_engine.sequencer.getCurrentFrameQuantized(), hasActions);
-
-		if (sampleActionRecorder && hasWave())
-			sampleActionRecorder->react(id, *shared, e,
-			    samplePlayer->mode,
-			    g_engine.sequencer.getCurrentFrameQuantized(),
-			    g_engine.conf.data.treatRecsAsLoops,
-			    g_engine.sequencer.isRunning(),
-			    g_engine.recorder.canRecordActions() && !samplePlayer->isAnyLoopMode(),
-			    hasActions);
-
-		if (sampleReactor && hasWave())
-			sampleReactor->react(id, *shared, e,
-			    samplePlayer->mode,
-			    samplePlayer->velocityAsVol,
-			    g_engine.conf.data.chansStopOnSeqHalt,
-			    g_engine.sequencer.canQuantize(),
-			    samplePlayer->isAnyLoopMode(),
-			    volume_i);
-
-		if (midiReceiver)
-			midiReceiver->react(shared->midiQueue, e);
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Channel::react(const EventDispatcher::Event& e)
-{
-	switch (e.type)
-	{
-	case EventDispatcher::EventType::CHANNEL_VOLUME:
-		volume = std::any_cast<float>(e.data);
-		break;
-
-	case EventDispatcher::EventType::CHANNEL_PAN:
-		pan = std::any_cast<float>(e.data);
-		break;
-
-	case EventDispatcher::EventType::CHANNEL_MUTE:
-		setMute(!isMuted());
-		break;
-
-	case EventDispatcher::EventType::CHANNEL_TOGGLE_ARM:
-		armed = !armed;
-		break;
-
-	case EventDispatcher::EventType::CHANNEL_SOLO:
-		setSolo(!isSoloed());
-		g_engine.mixer.updateSoloCount(g_engine.channelManager.hasSolos());
-		break;
-
-	default:
-		break;
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Channel::render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool audible) const
+void Channel::render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool mixerHasSolos, bool seqIsRunning) const
 {
 	if (id == Mixer::MASTER_OUT_CHANNEL_ID)
 		renderMasterOut(*out);
 	else if (id == Mixer::MASTER_IN_CHANNEL_ID)
 		renderMasterIn(*in);
 	else
-		renderChannel(*out, *in, audible);
+		renderChannel(*out, *in, mixerHasSolos, seqIsRunning);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -430,7 +361,7 @@ void Channel::renderMasterIn(mcl::AudioBuffer& in) const
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool audible) const
+void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const
 {
 	shared->audioBuffer.clear();
 
@@ -439,7 +370,7 @@ void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool au
 		SamplePlayer::Render render;
 		while (shared->renderQueue->pop(render))
 			;
-		samplePlayer->render(*shared, render);
+		samplePlayer->render(*shared, render, seqIsRunning);
 	}
 
 	if (audioReceiver)
@@ -454,7 +385,7 @@ void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool au
 	else if (plugins.size() > 0)
 		g_engine.pluginHost.processStack(shared->audioBuffer, plugins, nullptr);
 
-	if (audible)
+	if (isAudible(mixerHasSolos))
 		out.sum(shared->audioBuffer, volume * volume_i, calcPanning_(pan));
 }
 } // namespace giada::m

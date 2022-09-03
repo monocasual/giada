@@ -56,7 +56,7 @@ public:
 	currentFrame + bufferSize) and a quantization step. Call this function
 	on each block. */
 
-	void advance(Range<Frame> block, Frame quantizerStep);
+	void advance(Range<Frame> block, Frame quantizerStep) const;
 
 	/* clear
 	Disables quantized operations in progress, if any. */
@@ -70,7 +70,7 @@ public:
 
 private:
 	std::map<int, std::function<void(Frame)>> m_callbacks;
-	WeakAtomic<int>                           m_performId = -1;
+	mutable WeakAtomic<int>                   m_performId = -1;
 };
 } // namespace giada::m
 

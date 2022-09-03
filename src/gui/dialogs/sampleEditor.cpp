@@ -174,11 +174,13 @@ gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
 	};
 
 	play->setToggleable(true);
-	play->onClick = [this]() { togglePreview(); };
+	play->onClick = []() { c::sampleEditor::togglePreview(); };
 
 	rewind->onClick = [this]() {
 		c::sampleEditor::setPreviewTracker(m_data.begin);
 	};
+
+	loop->onChange = [](bool shouldLoop) { c::sampleEditor::setLoop(shouldLoop); };
 
 	info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
 
@@ -233,11 +235,5 @@ void gdSampleEditor::updateInfo()
 	    m_data.waveBits != 0 ? std::to_string(m_data.waveBits) : "?", m_data.waveRate);
 
 	info->copy_label(infoText.c_str());
-}
-/* -------------------------------------------------------------------------- */
-
-void gdSampleEditor::togglePreview()
-{
-	c::sampleEditor::togglePreview(loop->value());
 }
 } // namespace giada::v

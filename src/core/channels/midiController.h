@@ -36,7 +36,11 @@ class MidiController final
 {
 public:
 	void advance(WeakAtomic<ChannelStatus>&, const Sequencer::Event& e) const;
-	void react(WeakAtomic<ChannelStatus>&, const EventDispatcher::Event& e) const;
+
+	void keyPress(WeakAtomic<ChannelStatus>&) const;
+	void keyKill(WeakAtomic<ChannelStatus>&) const;
+	void stop(WeakAtomic<ChannelStatus>&) const;
+	void rewind(WeakAtomic<ChannelStatus>&) const;
 
 private:
 	ChannelStatus onFirstBeat(ChannelStatus) const;

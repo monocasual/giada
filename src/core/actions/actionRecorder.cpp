@@ -144,6 +144,9 @@ bool ActionRecorder::cloneActions(ID channelId, ID newChannelId)
 
 	m_actions.rec(actions);
 
+	m_model.get().getChannel(newChannelId).hasActions = true;
+	m_model.swap(model::SwapType::HARD);
+
 	return cloned;
 }
 
@@ -158,6 +161,172 @@ void ActionRecorder::liveRec(ID channelId, MidiEvent e, Frame globalFrame)
 		m_liveActions.reserve(m_liveActions.size() + MAX_LIVE_RECS_CHUNK);
 
 	m_liveActions.push_back(m_actions.makeAction(m_actions.getNewActionId(), channelId, globalFrame, e));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ActionRecorder::recordEnvelopeAction(ID channelId, Frame frame, int value, Frame lastFrameInLoop)
+{
+	assert(value >= 0 && value <= G_MAX_VELOCITY);
+
+	/* First action ever? Add actions at boundaries. Else, find action right
+	before frame 'f' and inject a new action in there. Vertical envelope points 
+	are forbidden for now. */
+
+	if (!hasActions(channelId, MidiEvent::CHANNEL_CC))
+		recordFirstEnvelopeAction(channelId, frame, value, lastFrameInLoop);
+	else
+		recordNonFirstEnvelopeAction(channelId, frame, value);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ActionRecorder::recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2, Frame framesInLoop)
+{
+	if (f2 == 0)
+		f2 = f1 + G_DEFAULT_ACTION_SIZE;
+
+	/* Avoid frame overflow. */
+
+	Frame overflow = f2 - framesInLoop;
+	if (overflow > 0)
+	{
+		f2 -= overflow;
+		f1 -= overflow;
+	}
+
+	MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, note, velocity);
+	MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, note, velocity);
+
+	rec(channelId, f1, f2, e1, e2);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ActionRecorder::recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
+{
+	if (isSinglePressMode(channelId))
+	{
+		if (f2 == 0)
+			f2 = f1 + G_DEFAULT_ACTION_SIZE;
+		MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0, 0);
+		MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0, 0);
+		rec(channelId, f1, f2, e1, e2);
+	}
+	else
+	{
+		MidiEvent e1 = MidiEvent::makeFrom3Bytes(type, 0, 0);
+		rec(channelId, f1, e1);
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ActionRecorder::deleteMidiAction(ID channelId, const Action& a)
+{
+	assert(a.isValid());
+	assert(a.event.getStatus() == MidiEvent::CHANNEL_NOTE_ON);
+
+	/* Check if 'next' exist first: could be orphaned. */
+
+	if (a.next != nullptr)
+		deleteAction(channelId, a.id, a.next->id);
+	else
+		deleteAction(channelId, a.id);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ActionRecorder::deleteSampleAction(ID channelId, const Action& a)
+{
+	if (a.next != nullptr) // For ChannelMode::SINGLE_PRESS combo
+		deleteAction(channelId, a.id, a.next->id);
+	else
+		deleteAction(channelId, a.id);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ActionRecorder::deleteEnvelopeAction(ID channelId, const Action& a)
+{
+	/* Deleting a boundary action wipes out everything. */
+	/* TODO - FIX*/
+
+	if (isBoundaryEnvelopeAction(a))
+	{
+		if (a.isVolumeEnvelope())
+		{
+			// TODO reset all channel's volume vars to 1.0
+		}
+		clearActions(channelId, a.event.getStatus());
+	}
+	else
+	{
+		assert(a.prev != nullptr);
+		assert(a.next != nullptr);
+
+		const Action a1     = *a.prev;
+		const Action a1prev = *a1.prev;
+		const Action a3     = *a.next;
+		const Action a3next = *a3.next;
+
+		/* Original status:   a1--->a--->a3
+		   Modified status:   a1-------->a3 
+		Order is important, here: first update siblings, then delete the action.
+		Otherwise ActionRecorder::deleteAction() would complain of missing 
+		prevId/nextId no longer found. */
+
+		updateSiblings(a1.id, a1prev.id, a3.id);
+		updateSiblings(a3.id, a1.id, a3next.id);
+		deleteAction(channelId, a.id);
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ActionRecorder::updateMidiAction(ID channelId, const Action& a, int note, int velocity,
+    Frame f1, Frame f2, Frame framesInLoop)
+{
+	deleteAction(channelId, a.id, a.next->id);
+	recordMidiAction(channelId, note, velocity, f1, f2, framesInLoop);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ActionRecorder::updateSampleAction(ID channelId, const Action& a, int type, Frame f1, Frame f2)
+{
+	if (isSinglePressMode(channelId))
+		deleteAction(channelId, a.id, a.next->id);
+	else
+		deleteAction(channelId, a.id);
+
+	recordSampleAction(channelId, type, f1, f2);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ActionRecorder::updateEnvelopeAction(ID channelId, const Action& a, Frame f, int value, Frame lastFrameInLoop)
+{
+	/* Update the action directly if it is a boundary one. Else, delete the
+	previous one and record a new action. */
+
+	if (isBoundaryEnvelopeAction(a))
+		updateEvent(a.id, MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_CC, 0, value));
+	else
+	{
+		deleteEnvelopeAction(channelId, a);
+		recordEnvelopeAction(channelId, f, value, lastFrameInLoop);
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ActionRecorder::updateVelocity(const Action& a, int value)
+{
+	MidiEvent event(a.event);
+	event.setVelocity(value);
+
+	updateEvent(a.id, event);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -269,6 +438,26 @@ bool ActionRecorder::areComposite(const Action& a1, const Action& a2) const
 
 /* -------------------------------------------------------------------------- */
 
+Frame ActionRecorder::fixVerticalEnvActions(Frame f, const Action& a1, const Action& a2) const
+{
+	if (a1.frame == f)
+		f += 1;
+	else if (a2.frame == f)
+		f -= 1;
+	if (a1.frame == f || a2.frame == f)
+		return -1;
+	return f;
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool ActionRecorder::isSinglePressMode(ID channelId) const
+{
+	return m_model.get().getChannel(channelId).samplePlayer->mode == SamplePlayerMode::SINGLE_PRESS;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ActionRecorder::consolidate(const Action& a1, std::size_t i)
 {
 	/* This algorithm must start searching from the element next to 'a1': since 
@@ -289,6 +478,44 @@ void ActionRecorder::consolidate(const Action& a1, std::size_t i)
 
 		break;
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ActionRecorder::recordFirstEnvelopeAction(ID channelId, Frame frame, int value, Frame lastFrameInLoop)
+{
+	// TODO - use MidiEvent's float velocity
+	const MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_CC, 0, G_MAX_VELOCITY);
+	const MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_CC, 0, value);
+
+	const Action a1 = rec(channelId, 0, e1);
+	const Action a2 = rec(channelId, frame, e2);
+	const Action a3 = rec(channelId, lastFrameInLoop, e1);
+
+	updateSiblings(a1.id, /*prev=*/a3.id, /*next=*/a2.id); // Circular loop (begin)
+	updateSiblings(a2.id, /*prev=*/a1.id, /*next=*/a3.id);
+	updateSiblings(a3.id, /*prev=*/a2.id, /*next=*/a1.id); // Circular loop (end)
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ActionRecorder::recordNonFirstEnvelopeAction(ID channelId, Frame frame, int value)
+{
+	const Action a1 = getClosestAction(channelId, frame, MidiEvent::CHANNEL_CC);
+	const Action a3 = a1.next != nullptr ? *a1.next : Action{};
+
+	assert(a1.isValid());
+	assert(a3.isValid());
+
+	frame = fixVerticalEnvActions(frame, a1, a3);
+	if (frame == -1) // Vertical points, nothing to do here
+		return;
+
+	// TODO - use MidiEvent's float velocity
+	MidiEvent    e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_CC, 0, value);
+	const Action a2 = rec(channelId, frame, e2);
+
+	updateSiblings(a2.id, a1.id, a3.id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -315,21 +542,27 @@ std::vector<Action> ActionRecorder::getActionsOnChannel(ID channelId) const
 
 void ActionRecorder::clearChannel(ID channelId)
 {
+	m_model.get().getChannel(channelId).hasActions = false;
 	m_actions.clearChannel(channelId);
 }
 
 void ActionRecorder::clearActions(ID channelId, int type)
 {
 	m_actions.clearActions(channelId, type);
+
+	m_model.get().getChannel(channelId).hasActions = hasActions(channelId);
+	m_model.swap(model::SwapType::HARD);
 }
 
 Action ActionRecorder::rec(ID channelId, Frame frame, MidiEvent e)
 {
+	m_model.get().getChannel(channelId).hasActions = true;
 	return m_actions.rec(channelId, frame, e);
 }
 
 void ActionRecorder::rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
+	m_model.get().getChannel(channelId).hasActions = true;
 	return m_actions.rec(channelId, f1, f2, e1, e2);
 }
 
@@ -338,14 +571,20 @@ void ActionRecorder::updateSiblings(ID id, ID prevId, ID nextId)
 	m_actions.updateSiblings(id, prevId, nextId);
 }
 
-void ActionRecorder::deleteAction(ID id)
+void ActionRecorder::deleteAction(ID channelId, ID id)
 {
 	m_actions.deleteAction(id);
+
+	m_model.get().getChannel(channelId).hasActions = hasActions(channelId);
+	m_model.swap(model::SwapType::HARD);
 }
 
-void ActionRecorder::deleteAction(ID currId, ID nextId)
+void ActionRecorder::deleteAction(ID channelId, ID currId, ID nextId)
 {
 	m_actions.deleteAction(currId, nextId);
+
+	m_model.get().getChannel(channelId).hasActions = hasActions(channelId);
+	m_model.swap(model::SwapType::HARD);
 }
 
 void ActionRecorder::updateEvent(ID id, MidiEvent e)

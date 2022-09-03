@@ -34,6 +34,9 @@
 #include <string>
 #include <vector>
 
+/* giada::c::plugin
+Functions to interact with plug-ins. Only the main thread can use these! */
+
 namespace juce
 {
 class AudioProcessorEditor;
@@ -69,7 +72,7 @@ struct Param
 
 struct Plugin
 {
-	Plugin(m::Plugin&, const m::Conf::Data&, ID channelId);
+	Plugin(m::Plugin&, ID channelId);
 
 	juce::AudioProcessorEditor* createEditor() const;
 	const m::Plugin&            getPluginRef() const;
@@ -106,7 +109,7 @@ struct Plugins
 Returns ViewModel objects. */
 
 Plugins getPlugins(ID channelId);
-Plugin  getPlugin(m::Plugin&, const m::Conf::Data&, ID channelId);
+Plugin  getPlugin(m::Plugin&, ID channelId);
 Param   getParam(int index, const m::Plugin& plugin, ID channelId);
 
 std::vector<m::PluginManager::PluginInfo> getPluginsInfo();
@@ -117,7 +120,11 @@ editor. */
 
 void updateWindow(ID pluginId, Thread);
 
+/* addPlugin
+Add a new Plugin to channel 'channelId'. */
+
 void addPlugin(int pluginListIndex, ID channelId);
+
 void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId);
 void sortPlugins(m::PluginManager::SortMethod);
 void freePlugin(const m::Plugin& plugin, ID channelId);

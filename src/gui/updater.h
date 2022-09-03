@@ -27,6 +27,10 @@
 #ifndef G_V_UPDATER_H
 #define G_V_UPDATER_H
 
+#include "deps/concurrentqueue/concurrentqueue.h"
+#include <FL/Fl.H>
+#include <functional>
+
 namespace giada::m::model
 {
 class Model;
@@ -38,16 +42,23 @@ class Ui;
 class Updater final
 {
 public:
+	using Event = std::function<void()>;
+
 	Updater(Ui& ui);
 
 	void init(m::model::Model&);
-	void close();
+	void start();
+	void stop();
+	void run();
+	bool pumpEvent(const Event&);
 
 private:
 	static void update(void*);
 	void        update();
 
 	Ui& m_ui;
+
+	moodycamel::ConcurrentQueue<Event> m_eventQueue;
 };
 } // namespace giada::v
 

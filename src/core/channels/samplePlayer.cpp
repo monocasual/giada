@@ -98,15 +98,7 @@ Frame SamplePlayer::getWaveSize() const
 
 /* -------------------------------------------------------------------------- */
 
-void SamplePlayer::react(const EventDispatcher::Event& e)
-{
-	if (e.type == EventDispatcher::EventType::CHANNEL_PITCH)
-		pitch = std::any_cast<float>(e.data);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void SamplePlayer::render(ChannelShared& shared, Render renderInfo) const
+void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRunning) const
 {
 	if (waveReader.wave == nullptr)
 		return;
@@ -117,7 +109,7 @@ void SamplePlayer::render(ChannelShared& shared, Render renderInfo) const
 
 	if (renderInfo.mode == Render::Mode::NORMAL)
 	{
-		tracker = render(buf, tracker, renderInfo.offset, status);
+		tracker = render(buf, tracker, renderInfo.offset, status, seqIsRunning);
 	}
 	else
 	{
@@ -134,9 +126,9 @@ void SamplePlayer::render(ChannelShared& shared, Render renderInfo) const
 		   Mode::STOP:   2nd = [abcdefghi|--------] */
 
 		if (renderInfo.mode == Render::Mode::REWIND)
-			tracker = render(buf, begin, renderInfo.offset, status);
+			tracker = render(buf, begin, renderInfo.offset, status, seqIsRunning);
 		else
-			tracker = stop(buf, renderInfo.offset);
+			tracker = stop(buf, renderInfo.offset, seqIsRunning);
 	}
 
 	shared.tracker.store(tracker);
@@ -144,7 +136,7 @@ void SamplePlayer::render(ChannelShared& shared, Render renderInfo) const
 
 /* -------------------------------------------------------------------------- */
 
-Frame SamplePlayer::render(mcl::AudioBuffer& buf, Frame tracker, Frame offset, ChannelStatus status) const
+Frame SamplePlayer::render(mcl::AudioBuffer& buf, Frame tracker, Frame offset, ChannelStatus status, bool seqIsRunning) const
 {
 	/* First pass rendering. */
 
@@ -161,7 +153,7 @@ Frame SamplePlayer::render(mcl::AudioBuffer& buf, Frame tracker, Frame offset, C
 
 		tracker = begin;
 		waveReader.last();
-		onLastFrame(/*natural=*/true);
+		onLastFrame(/*natural=*/true, seqIsRunning);
 
 		if (shouldLoop(status) && res.generated < buf.countFrames())
 			tracker += fillBuffer(buf, tracker, res.generated).used;
@@ -172,11 +164,11 @@ Frame SamplePlayer::render(mcl::AudioBuffer& buf, Frame tracker, Frame offset, C
 
 /* -------------------------------------------------------------------------- */
 
-Frame SamplePlayer::stop(mcl::AudioBuffer& buf, Frame offset) const
+Frame SamplePlayer::stop(mcl::AudioBuffer& buf, Frame offset, bool seqIsRunning) const
 {
 	assert(onLastFrame != nullptr);
 
-	onLastFrame(/*natural=*/false);
+	onLastFrame(/*natural=*/false, seqIsRunning);
 
 	if (offset != 0)
 		buf.clear(offset);

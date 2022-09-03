@@ -32,6 +32,9 @@
 #include <functional>
 #include <string>
 
+/* giada::c::sampleEditor
+Functions to interact with the Sample Editor. Only the main thread can use these! */
+
 namespace giada::m
 {
 class Wave;
@@ -75,14 +78,15 @@ private:
 	const m::Channel* m_channel;
 };
 
-/* onRefresh --- TODO - wrong name */
-
-void onRefresh(Thread, std::function<void(v::gdSampleEditor&)> f);
-
 /* getData
 Returns a Data object filled with data from a channel. */
 
 Data getData(ID channelId);
+
+/* getWindow
+Returns a pointer to the Sample Editor window. Null if window is not visible. */
+
+v::gdSampleEditor* getWindow();
 
 /* setBeginEnd
 Sets start/end points in the sample editor. */
@@ -104,8 +108,9 @@ void reload(ID channelId);
 
 bool isWaveBufferFull();
 
-void togglePreview(bool loop);
-void playPreview(bool loop);
+void setLoop(bool);
+void togglePreview();
+void playPreview();
 void stopPreview();
 void setPreviewTracker(Frame f);
 void cleanupPreview();

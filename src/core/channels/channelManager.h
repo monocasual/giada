@@ -27,11 +27,12 @@
 #ifndef G_CHANNEL_MANAGER_H
 #define G_CHANNEL_MANAGER_H
 
+#include "core/conf.h"
 #include "core/types.h"
-#include "core/weakAtomic.h"
 #include <functional>
 #include <map>
 #include <memory>
+#include <unordered_set>
 
 namespace mcl
 {
@@ -50,10 +51,11 @@ class ChannelFactory;
 class WaveFactory;
 class Wave;
 class Plugin;
+class MidiEvent;
 class ChannelManager final
 {
 public:
-	ChannelManager(model::Model&, ChannelFactory&, WaveFactory&);
+	ChannelManager(const Conf::Data&, model::Model&, ChannelFactory&, WaveFactory&);
 
 	/* hasInputRecordableChannels
     Tells whether Mixer has one or more input-recordable channels. */
@@ -88,6 +90,8 @@ public:
 
 	bool forAnyChannel(std::function<bool(const Channel&)> f) const;
 
+	const Wave* getWaveInSampleChannel(ID channelId) const;
+
 	/* reset
 	Brings channels configuration back to the initial state: two I/O master
     channels, one preview channel. */
@@ -100,14 +104,20 @@ public:
 	Channel& addChannel(ChannelType, ID columnId, int position, int bufferSize);
 
 	/* loadSampleChannel
-    Loads a new Wave inside a Sample Channel. */
+    Creates a new Wave from a file path and loads it inside a Sample Channel. */
 
-	void loadSampleChannel(ID channelId, std::unique_ptr<Wave>);
+	int loadSampleChannel(ID channelId, const std::string&, int sampleRate, int rsmpQuality);
 
-	/* addAndLoadChannel
-    Adds a new Sample channel into the stack and fills it with a Wave. */
+	/* addAndLoadChannel (1)
+    Adds a new Sample channel into the stack and fills it with a Wave, previously
+	created form a file path. */
 
-	void addAndLoadSampleChannel(int bufferSize, std::unique_ptr<Wave>, ID columnId, int position);
+	int addAndLoadSampleChannel(const std::string&, int sampleRate, int rsmpQuality, int bufferSize, ID columnId);
+
+	/* addAndLoadChannel (2)
+    Adds a new Sample channel into the stack and fills it with an existing Wave. */
+
+	void addAndLoadSampleChannel(Wave&, int bufferSize, ID columnId);
 
 	/* freeChannel
     Unloads existing Wave from a Sample Channel. */
@@ -130,10 +140,38 @@ public:
 
 	void finalizeInputRec(const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame);
 
+	void keyPress(ID channelId, int velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized);
+	void keyRelease(ID channelId, bool canRecordActions, Frame currentFrameQuantized);
+	void keyKill(ID channelId, bool canRecordActions, Frame currentFrameQuantized);
+	void processMidiEvent(ID channelId, const MidiEvent&, bool canRecordActions, Frame currentFrameQuantized);
 	void setInputMonitor(ID channelId, bool value);
+	void setVolume(ID channelId, float value);
+	void setPitch(ID channelId, float value);
+	void setPan(ID channelId, float value);
+	void setBeginEnd(ID channelId, Frame b, Frame e);
+	void resetBeginEnd(ID channelId);
+	void toggleMute(ID channelId);
+	void toggleSolo(ID channelId);
+	void toggleArm(ID channelId);
+	void toggleReadActions(ID channelId, bool seqIsRunning);
+	void killReadActions(ID channelId);
 	void setOverdubProtection(ID channelId, bool value);
 	void setSamplePlayerMode(ID channelId, SamplePlayerMode);
 	void setHeight(ID channelId, Pixel height);
+	void loadWaveInPreviewChannel(ID sourceChannelId);
+	void freeWaveInPreviewChannel();
+	void setPreviewTracker(Frame f);
+	void stopAll();
+	void rewindAll();
+	bool saveSample(ID channelId, const std::string& filePath);
+
+	/* consolidateChannels
+	Enable reading actions for Channels that have just been filled with actions
+	after an action recording session. This will start reading actions right 
+	away, without checking whether conf::treatRecsAsLoops is enabled or not.
+	Same thing for MIDI channels.  */
+
+	void consolidateChannels(const std::unordered_set<ID>&);
 
 	/* onChannelsAltered
 	Fired when something is done on channels (added, removed, loaded, ...). */
@@ -177,11 +215,10 @@ private:
 
 	void triggerOnChannelsAltered();
 
-	model::Model&   m_model;
-	ChannelFactory& m_channelFactory;
-	WaveFactory&    m_waveManager;
-
-	WeakAtomic<bool> m_hasInputRecordableChannels;
+	const Conf::Data& m_conf;
+	model::Model&     m_model;
+	ChannelFactory&   m_channelFactory;
+	WaveFactory&      m_waveFactory;
 };
 } // namespace giada::m
 

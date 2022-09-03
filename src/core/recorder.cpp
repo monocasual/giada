@@ -36,9 +36,8 @@
 
 namespace giada::m
 {
-Recorder::Recorder(model::Model& m, Sequencer& s, ChannelManager& cm, Mixer& mx, ActionRecorder& a)
-: m_model(m)
-, m_sequencer(s)
+Recorder::Recorder(Sequencer& s, ChannelManager& cm, Mixer& mx, ActionRecorder& a)
+: m_sequencer(s)
 , m_channelManager(cm)
 , m_mixer(mx)
 , m_actionRecorder(a)
@@ -47,63 +46,11 @@ Recorder::Recorder(model::Model& m, Sequencer& s, ChannelManager& cm, Mixer& mx,
 
 /* -------------------------------------------------------------------------- */
 
-bool Recorder::isRecordingActions() const
-{
-	return m_isRecordingActions.load();
-}
-
-bool Recorder::isRecordingInput() const
-{
-	return m_isRecordingInput.load();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Recorder::react(const EventDispatcher::EventBuffer& events, int sampleRate)
-{
-	for (const EventDispatcher::Event& e : events)
-	{
-		switch (e.type)
-		{
-		case EventDispatcher::EventType::RECORDER_PREPARE_ACTION_REC:
-		{
-			const RecTriggerMode mode = std::any_cast<RecTriggerMode>(e.data);
-			prepareActionRec(mode);
-			break;
-		}
-		case EventDispatcher::EventType::RECORDER_PREPARE_INPUT_REC:
-		{
-			const InputRecData data = std::any_cast<InputRecData>(e.data);
-			prepareInputRec(data.recTriggerMode, data.inputMode);
-			break;
-		}
-		case EventDispatcher::EventType::RECORDER_STOP_ACTION_REC:
-		{
-			if (isRecordingActions())
-				stopActionRec();
-			break;
-		}
-		case EventDispatcher::EventType::RECORDER_STOP_INPUT_REC:
-		{
-			if (!isRecordingInput())
-				return;
-			const InputRecMode mode = std::any_cast<InputRecMode>(e.data);
-			stopInputRec(mode, sampleRate);
-			break;
-		}
-		default:
-			break;
-		}
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Recorder::prepareActionRec(RecTriggerMode mode)
 {
 	if (mode == RecTriggerMode::NORMAL)
 	{
-		m_isRecordingActions.store(true);
+		m_mixer.startActionRec();
 		m_sequencer.setStatus(SeqStatus::RUNNING);
 		G_DEBUG("Start action rec, NORMAL mode", );
 	}
@@ -118,7 +65,7 @@ void Recorder::prepareActionRec(RecTriggerMode mode)
 
 void Recorder::stopActionRec()
 {
-	m_isRecordingActions.store(false);
+	m_mixer.stopActionRec();
 
 	/* If you stop the Action Recorder in SIGNAL mode before any actual 
 	recording: just clean up everything and return. */
@@ -129,21 +76,11 @@ void Recorder::stopActionRec()
 		return;
 	}
 
-	std::unordered_set<ID> channels = m_actionRecorder.consolidate();
-
 	/* Enable reading actions for Channels that have just been filled with 
-	actions. Start reading right away, without checking whether 
+	actions. This will start reading right away, without checking whether 
 	conf::treatRecsAsLoops is enabled or not. Same thing for MIDI channels.  */
 
-	for (ID id : channels)
-	{
-		Channel& ch = m_model.get().getChannel(id);
-		ch.shared->readActions.store(true);
-		ch.shared->recStatus.store(ChannelStatus::PLAY);
-		if (ch.type == ChannelType::MIDI)
-			ch.shared->playStatus.store(ChannelStatus::PLAY);
-	}
-	m_model.swap(model::SwapType::HARD);
+	m_channelManager.consolidateChannels(m_actionRecorder.consolidate());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -151,7 +88,7 @@ void Recorder::stopActionRec()
 bool Recorder::prepareInputRec(RecTriggerMode triggerMode, InputRecMode inputMode)
 {
 	if (inputMode == InputRecMode::FREE)
-		m_sequencer.rewind();
+		m_sequencer.rewindForced();
 
 	if (triggerMode == RecTriggerMode::NORMAL)
 	{
@@ -172,8 +109,6 @@ bool Recorder::prepareInputRec(RecTriggerMode triggerMode, InputRecMode inputMod
 
 void Recorder::stopInputRec(InputRecMode recMode, int sampleRate)
 {
-	m_isRecordingInput.store(false);
-
 	Frame recordedFrames = m_mixer.stopInputRec();
 
 	/* When recording in RIGID mode, the amount of recorded frames is always 
@@ -200,7 +135,7 @@ void Recorder::stopInputRec(InputRecMode recMode, int sampleRate)
 
 	if (recMode == InputRecMode::FREE)
 	{
-		m_sequencer.rewind();
+		m_sequencer.rewindForced();
 		m_sequencer.setBpm(m_sequencer.calcBpmFromRec(recordedFrames, sampleRate), sampleRate);
 	}
 }
@@ -214,7 +149,7 @@ bool Recorder::canEnableFreeInputRec() const { return !m_channelManager.hasAudio
 
 bool Recorder::canRecordActions() const
 {
-	return isRecordingActions() && m_sequencer.isRunning() && !isRecordingInput();
+	return m_mixer.isRecordingActions() && m_sequencer.isRunning() && !m_mixer.isRecordingInput();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -223,7 +158,7 @@ void Recorder::startActionRecOnCallback()
 {
 	if (m_sequencer.getStatus() != SeqStatus::WAITING)
 		return;
-	m_isRecordingActions.store(true);
+	m_mixer.startActionRec();
 	m_sequencer.setStatus(SeqStatus::RUNNING);
 }
 
@@ -233,7 +168,6 @@ void Recorder::startInputRec()
 {
 	/* Start recording from the current frame, not the beginning. */
 	m_mixer.startInputRec(m_sequencer.getCurrentFrame());
-	m_isRecordingInput.store(true);
 }
 
 /* -------------------------------------------------------------------------- */

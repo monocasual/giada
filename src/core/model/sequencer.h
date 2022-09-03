@@ -61,6 +61,7 @@ public:
 
 	Frame a_getCurrentFrame() const;
 	Frame a_getCurrentBeat() const;
+	float a_getCurrentSecond(int sampleRate) const;
 
 	void a_setCurrentFrame(Frame f, int sampleRate) const;
 	void a_setCurrentBeat(int b, int sampleRate) const;

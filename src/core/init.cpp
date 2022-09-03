@@ -109,20 +109,7 @@ void startup(int argc, char** argv)
 
 /* -------------------------------------------------------------------------- */
 
-int run()
-{
-	Fl::lock(); // Enable multithreading in FLTK
-	return Fl::run();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void closeMainWindow()
-{
-	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING), g_ui.langMapper.get(v::LangMap::MESSAGE_INIT_QUITGIADA)))
-		return;
-	shutdown();
-}
+void run() { g_ui.run(); }
 
 /* -------------------------------------------------------------------------- */
 

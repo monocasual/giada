@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "events.h"
+#include "core/channels/channelManager.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/engine.h"
@@ -64,19 +65,10 @@ namespace giada::c::events
 {
 namespace
 {
-void pushEvent_(m::EventDispatcher::Event e, Thread t)
+void notifyChannelForMidiIn_(Thread t, ID channelId)
 {
-	const bool res = g_engine.eventDispatcher.pumpEvent(e);
-
 	if (t == Thread::MIDI)
-	{
-		u::gui::ScopedLock lock;
-		if (e.channelId != 0)
-			g_ui.mainWindow->keyboard->notifyMidiIn(e.channelId);
-	}
-
-	if (!res)
-		G_DEBUG("[events] Queue full!", );
+		g_ui.pumpEvent([channelId]() { g_ui.mainWindow->keyboard->notifyMidiIn(channelId); });
 }
 } // namespace
 
@@ -86,34 +78,38 @@ void pushEvent_(m::EventDispatcher::Event e, Thread t)
 
 void pressChannel(ID channelId, int velocity, Thread t)
 {
-	m::MidiEvent e;
-	e.setVelocity(velocity);
-	pushEvent_({m::EventDispatcher::EventType::KEY_PRESS, 0, channelId, velocity}, t);
+	const bool  canRecordActions = g_engine.recorder.canRecordActions();
+	const bool  canQuantize      = g_engine.sequencer.canQuantize();
+	const Frame currentFrameQ    = g_engine.sequencer.getCurrentFrameQuantized();
+	g_engine.channelManager.keyPress(channelId, velocity, canRecordActions, canQuantize, currentFrameQ);
+	notifyChannelForMidiIn_(t, channelId);
 }
 
 void releaseChannel(ID channelId, Thread t)
 {
-	pushEvent_({m::EventDispatcher::EventType::KEY_RELEASE, 0, channelId, {}}, t);
+	const bool  canRecordActions = g_engine.recorder.canRecordActions();
+	const Frame currentFrameQ    = g_engine.sequencer.getCurrentFrameQuantized();
+	g_engine.channelManager.keyRelease(channelId, canRecordActions, currentFrameQ);
+	notifyChannelForMidiIn_(t, channelId);
 }
 
 void killChannel(ID channelId, Thread t)
 {
-	pushEvent_({m::EventDispatcher::EventType::KEY_KILL, 0, channelId, {}}, t);
+	const bool  canRecordActions = g_engine.recorder.canRecordActions();
+	const Frame currentFrameQ    = g_engine.sequencer.getCurrentFrameQuantized();
+	g_engine.channelManager.keyKill(channelId, canRecordActions, currentFrameQ);
+	notifyChannelForMidiIn_(t, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
 {
-	v = std::clamp(v, 0.0f, G_MAX_VOLUME);
-
-	pushEvent_({m::EventDispatcher::EventType::CHANNEL_VOLUME, 0, channelId, v}, t);
+	g_engine.channelManager.setVolume(channelId, v);
+	notifyChannelForMidiIn_(t, channelId);
 
 	if (t != Thread::MAIN || repaintMainUi)
-	{
-		u::gui::ScopedLock lock;
-		g_ui.mainWindow->keyboard->setChannelVolume(channelId, v);
-	}
+		g_ui.pumpEvent([channelId, v]() { g_ui.mainWindow->keyboard->setChannelVolume(channelId, v); });
 
 	return v;
 }
@@ -122,12 +118,12 @@ float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
 
 float setChannelPitch(ID channelId, float v, Thread t)
 {
-	v = std::clamp(v, G_MIN_PITCH, G_MAX_PITCH);
-
-	pushEvent_({m::EventDispatcher::EventType::CHANNEL_PITCH, 0, channelId, v}, t);
-
-	sampleEditor::onRefresh(t, [v](v::gdSampleEditor& e) { e.pitchTool->update(v); });
-
+	g_engine.channelManager.setPitch(channelId, v);
+	g_ui.pumpEvent([v]() {
+		if (auto* w = sampleEditor::getWindow(); w != nullptr)
+			w->pitchTool->update(v);
+	});
+	notifyChannelForMidiIn_(t, channelId);
 	return v;
 }
 
@@ -135,11 +131,8 @@ float setChannelPitch(ID channelId, float v, Thread t)
 
 float sendChannelPan(ID channelId, float v)
 {
-	v = std::clamp(v, 0.0f, G_MAX_PAN);
-
-	/* Pan event is currently triggered only by the main thread. */
-	pushEvent_({m::EventDispatcher::EventType::CHANNEL_PAN, 0, channelId, v}, Thread::MAIN);
-
+	g_engine.channelManager.setPan(channelId, v);
+	notifyChannelForMidiIn_(Thread::MAIN, channelId); // Currently triggered only by the main thread
 	return v;
 }
 
@@ -147,36 +140,46 @@ float sendChannelPan(ID channelId, float v)
 
 void toggleMuteChannel(ID channelId, Thread t)
 {
-	pushEvent_({m::EventDispatcher::EventType::CHANNEL_MUTE, 0, channelId, {}}, t);
+	g_engine.channelManager.toggleMute(channelId);
+	notifyChannelForMidiIn_(t, channelId);
 }
 
 void toggleSoloChannel(ID channelId, Thread t)
 {
-	pushEvent_({m::EventDispatcher::EventType::CHANNEL_SOLO, 0, channelId, {}}, t);
+	g_engine.channelManager.toggleSolo(channelId);
+	g_engine.mixer.updateSoloCount(g_engine.channelManager.hasSolos()); // TOD - move to channelManager
+	notifyChannelForMidiIn_(t, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void toggleArmChannel(ID channelId, Thread t)
 {
-	pushEvent_({m::EventDispatcher::EventType::CHANNEL_TOGGLE_ARM, 0, channelId, {}}, t);
+	g_engine.channelManager.toggleArm(channelId);
+	notifyChannelForMidiIn_(t, channelId);
 }
 
 void toggleReadActionsChannel(ID channelId, Thread t)
 {
-	pushEvent_({m::EventDispatcher::EventType::CHANNEL_TOGGLE_READ_ACTIONS, 0, channelId, {}}, t);
+	g_engine.channelManager.toggleReadActions(channelId, g_engine.sequencer.isRunning());
+	notifyChannelForMidiIn_(t, channelId);
 }
 
 void killReadActionsChannel(ID channelId, Thread t)
 {
-	pushEvent_({m::EventDispatcher::EventType::CHANNEL_KILL_READ_ACTIONS, 0, channelId, {}}, t);
+
+	g_engine.channelManager.killReadActions(channelId);
+	notifyChannelForMidiIn_(t, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void sendMidiToChannel(ID channelId, m::MidiEvent e, Thread t)
 {
-	pushEvent_({m::EventDispatcher::EventType::MIDI, 0, channelId, m::Action{0, channelId, 0, e}}, t);
+	const bool  canRecordActions = g_engine.recorder.canRecordActions();
+	const Frame currentFrameQ    = g_engine.sequencer.getCurrentFrameQuantized();
+	g_engine.channelManager.processMidiEvent(channelId, e, canRecordActions, currentFrameQ);
+	notifyChannelForMidiIn_(t, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -190,33 +193,28 @@ void toggleMetronome()
 
 void setMasterInVolume(float v, Thread t)
 {
-	pushEvent_({m::EventDispatcher::EventType::CHANNEL_VOLUME, 0, m::Mixer::MASTER_IN_CHANNEL_ID, v}, t);
+	g_engine.channelManager.setVolume(m::Mixer::MASTER_IN_CHANNEL_ID, v);
 
 	if (t != Thread::MAIN)
-	{
-		u::gui::ScopedLock lock;
-		g_ui.mainWindow->mainIO->setInVol(v);
-	}
+		g_ui.pumpEvent([v]() { g_ui.mainWindow->mainIO->setInVol(v); });
 }
 
 void setMasterOutVolume(float v, Thread t)
 {
-	pushEvent_({m::EventDispatcher::EventType::CHANNEL_VOLUME, 0, m::Mixer::MASTER_OUT_CHANNEL_ID, v}, t);
+	g_engine.channelManager.setVolume(m::Mixer::MASTER_OUT_CHANNEL_ID, v);
 
 	if (t != Thread::MAIN)
-	{
-		u::gui::ScopedLock lock;
-		g_ui.mainWindow->mainIO->setOutVol(v);
-	}
+		g_ui.pumpEvent([v]() { g_ui.mainWindow->mainIO->setOutVol(v); });
 }
 
 /* -------------------------------------------------------------------------- */
 
-void setBpm(float v, Thread t)
+void setBpm(float v)
 {
-	if (g_engine.recorder.isRecordingInput())
+	if (g_engine.mixer.isRecordingInput())
 		return;
-	pushEvent_({m::EventDispatcher::EventType::SEQUENCER_BPM, 0, 0, v}, t);
+	g_engine.sequencer.setBpm(v, g_engine.kernelAudio.getSampleRate());
+	g_engine.updateMixerModel();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -233,93 +231,90 @@ void divideBeats()
 
 /* -------------------------------------------------------------------------- */
 
-void goToBeat(int beat, Thread t)
+void goToBeat(int beat)
 {
-	pushEvent_({m::EventDispatcher::EventType::SEQUENCER_GO_TO_BEAT, 0, 0, beat}, t);
+	g_engine.sequencer.goToBeat(beat, g_engine.kernelAudio.getSampleRate());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void startSequencer(Thread t)
+void startSequencer()
 {
-	pushEvent_({m::EventDispatcher::EventType::SEQUENCER_START, 0, 0, {}}, t);
+	g_engine.sequencer.start();
 }
 
-void stopSequencer(Thread t)
+void stopSequencer()
 {
-	pushEvent_({m::EventDispatcher::EventType::SEQUENCER_STOP, 0, 0, {}}, t);
+	g_engine.sequencer.stop();
+	g_engine.channelManager.stopAll(); // TODO - call it in sequencer.onStop
 }
 
-void toggleSequencer(Thread t)
+void toggleSequencer()
 {
-	g_engine.sequencer.isRunning() ? stopSequencer(t) : startSequencer(t);
+	g_engine.sequencer.isRunning() ? stopSequencer() : startSequencer();
 }
 
-void rewindSequencer(Thread t)
+void rewindSequencer()
 {
-	pushEvent_({m::EventDispatcher::EventType::SEQUENCER_REWIND, 0, 0, {}}, t);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void prepareActionRecording(Thread t)
-{
-	pushEvent_({m::EventDispatcher::EventType::RECORDER_PREPARE_ACTION_REC, 0, 0, {g_engine.conf.data.recTriggerMode}}, t);
-}
-
-void stopActionRecording(Thread t)
-{
-	pushEvent_({m::EventDispatcher::EventType::RECORDER_STOP_ACTION_REC, 0, 0, {}}, t);
+	g_engine.sequencer.rewind();
+	g_engine.channelManager.rewindAll(); // TODO - call it in sequencer.onStop
 }
 
 /* -------------------------------------------------------------------------- */
 
-void prepareInputRecording(Thread t)
+void prepareActionRecording()
 {
-	const m::Recorder::InputRecData data = {
-	    g_engine.conf.data.recTriggerMode,
-	    g_engine.conf.data.inputRecMode};
-
-	pushEvent_({m::EventDispatcher::EventType::RECORDER_PREPARE_INPUT_REC, 0, 0, {data}}, t);
+	g_engine.recorder.prepareActionRec(g_engine.conf.data.recTriggerMode);
 }
 
-void stopInputRecording(Thread t)
+void stopActionRecording()
 {
-	pushEvent_({m::EventDispatcher::EventType::RECORDER_STOP_INPUT_REC, 0, 0, {g_engine.conf.data.inputRecMode}}, t);
+	if (g_engine.mixer.isRecordingActions())
+		g_engine.recorder.stopActionRec();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void toggleActionRecording(Thread t)
+void prepareInputRecording()
 {
-	if (g_engine.recorder.isRecordingActions())
-		stopActionRecording(t);
+	g_engine.recorder.prepareInputRec(g_engine.conf.data.recTriggerMode, g_engine.conf.data.inputRecMode);
+}
+
+void stopInputRecording()
+{
+	if (g_engine.mixer.isRecordingInput())
+		g_engine.recorder.stopInputRec(g_engine.conf.data.inputRecMode, g_engine.kernelAudio.getSampleRate());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void toggleActionRecording()
+{
+	if (g_engine.mixer.isRecordingActions())
+		g_engine.recorder.stopActionRec();
 	else
-		prepareActionRecording(t);
+		g_engine.recorder.prepareActionRec(g_engine.conf.data.recTriggerMode);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void toggleInputRecording(Thread t)
+void toggleInputRecording()
 {
 	if (!g_engine.kernelAudio.isInputEnabled() || !g_engine.channelManager.hasInputRecordableChannels())
 		return;
-	if (g_engine.recorder.isRecordingInput())
-		stopInputRecording(t);
+	if (g_engine.mixer.isRecordingInput())
+		g_engine.recorder.stopInputRec(g_engine.conf.data.inputRecMode, g_engine.kernelAudio.getSampleRate());
 	else
-		prepareInputRecording(t);
+		g_engine.recorder.prepareInputRec(g_engine.conf.data.recTriggerMode, g_engine.conf.data.inputRecMode);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setPluginParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread t)
 {
-	if (t == Thread::MIDI)
-	{
-		u::gui::ScopedLock lock;
-		g_ui.mainWindow->keyboard->notifyMidiIn(channelId);
-	}
 	g_engine.pluginHost.setPluginParameter(pluginId, paramIndex, value);
-	c::plugin::updateWindow(pluginId, t);
+	notifyChannelForMidiIn_(t, channelId);
+
+	g_ui.pumpEvent([pluginId, t]() { c::plugin::updateWindow(pluginId, t); });
 }
 } // namespace giada::c::events

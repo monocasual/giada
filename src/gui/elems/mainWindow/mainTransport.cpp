@@ -68,22 +68,22 @@ geMainTransport::geMainTransport()
 	m_metronome->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_METRONOME));
 
 	m_rewind->onClick = []() {
-		c::events::rewindSequencer(Thread::MAIN);
+		c::events::rewindSequencer();
 	};
 
 	m_play->setToggleable(true);
 	m_play->onClick = []() {
-		c::events::toggleSequencer(Thread::MAIN);
+		c::events::toggleSequencer();
 	};
 
 	m_recAction->setToggleable(true);
 	m_recAction->onClick = []() {
-		c::events::toggleActionRecording(Thread::MAIN);
+		c::events::toggleActionRecording();
 	};
 
 	m_recInput->setToggleable(true);
 	m_recInput->onClick = []() {
-		c::events::toggleInputRecording(Thread::MAIN);
+		c::events::toggleInputRecording();
 	};
 
 	m_recTriggerMode->setToggleable(true);

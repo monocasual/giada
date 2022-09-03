@@ -33,7 +33,7 @@
 #include <cstddef>
 #include <unordered_set>
 
-namespace giada::m::patch
+namespace giada::patch
 {
 struct Action;
 }
@@ -51,7 +51,7 @@ public:
 
 	void reset();
 
-	bool isBoundaryEnvelopeAction(const Action& a) const;
+	bool isBoundaryEnvelopeAction(const Action&) const;
 
 	/* updateBpm
     Changes actions position by calculating the new bpm value. */
@@ -75,6 +75,25 @@ public:
     Records a user-generated action. NOTE_ON or NOTE_OFF only for now. */
 
 	void liveRec(ID channelId, MidiEvent e, Frame global);
+
+	/* record*Action */
+
+	void recordEnvelopeAction(ID channelId, Frame frame, int value, Frame lastFrameInLoop);
+	void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2, Frame framesInLoop);
+	void recordSampleAction(ID channelId, int type, Frame f1, Frame f2);
+
+	/* delete*Action */
+
+	void deleteMidiAction(ID channelId, const Action&);
+	void deleteSampleAction(ID channelId, const Action&);
+	void deleteEnvelopeAction(ID channelId, const Action&);
+
+	/* update*Action */
+
+	void updateMidiAction(ID channelId, const Action&, int note, int velocity, Frame f1, Frame f2, Frame framesInLoop);
+	void updateSampleAction(ID channelId, const Action&, int type, Frame f1, Frame f2);
+	void updateEnvelopeAction(ID channelId, const Action&, Frame f, int value, Frame lastFrameInLoop);
+	void updateVelocity(const Action&, int value);
 
 	/* consolidate
     Records all live actions. Returns a set of channels IDs that have been 
@@ -104,8 +123,8 @@ public:
 	Action                     rec(ID channelId, Frame frame, MidiEvent e);
 	void                       rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 	void                       updateSiblings(ID id, ID prevId, ID nextId);
-	void                       deleteAction(ID id);
-	void                       deleteAction(ID currId, ID nextId);
+	void                       deleteAction(ID channelId, ID id);
+	void                       deleteAction(ID channelId, ID currId, ID nextId);
 	void                       updateEvent(ID id, MidiEvent e);
 
 private:
@@ -114,7 +133,22 @@ private:
 
 	bool areComposite(const Action& a1, const Action& a2) const;
 
+	Frame fixVerticalEnvActions(Frame f, const Action& a1, const Action& a2) const;
+
+	bool isSinglePressMode(ID channelId) const;
+
 	const Action* getActionPtrById(int id, const Actions::Map& source);
+
+	/* recordFirstEnvelopeAction
+	First action ever? Add actions at boundaries. */
+
+	void recordFirstEnvelopeAction(ID channelId, Frame frame, int value, Frame lastFrameInLoop);
+
+	/* recordNonFirstEnvelopeAction
+	Find action right before frame 'frame' and inject a new action in there. 
+	Vertical envelope points are forbidden. */
+
+	void recordNonFirstEnvelopeAction(ID channelId, Frame frame, int value);
 
 	/* consolidate
     Given an action 'a1' tries to find the matching NOTE_OFF and updates the

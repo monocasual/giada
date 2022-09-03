@@ -30,27 +30,6 @@
 
 namespace giada::m
 {
-void MidiReceiver::react(ChannelShared::MidiQueue& midiQueue, const EventDispatcher::Event& e) const
-{
-	switch (e.type)
-	{
-	case EventDispatcher::EventType::MIDI:
-		parseMidi(midiQueue, std::any_cast<Action>(e.data).event);
-		break;
-
-	case EventDispatcher::EventType::KEY_KILL:
-	case EventDispatcher::EventType::SEQUENCER_STOP:
-	case EventDispatcher::EventType::SEQUENCER_REWIND:
-		sendToPlugins(midiQueue, MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), 0);
-		break;
-
-	default:
-		break;
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
 void MidiReceiver::advance(ID channelId, ChannelShared::MidiQueue& midiQueue, const Sequencer::Event& e) const
 {
 	if (e.type != Sequencer::EventType::ACTIONS)
@@ -77,6 +56,13 @@ void MidiReceiver::render(ChannelShared& shared, const std::vector<Plugin*>& plu
 	}
 
 	pluginHost.processStack(shared.audioBuffer, plugins, &shared.midiBuffer);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MidiReceiver::stop(ChannelShared::MidiQueue& midiQueue) const
+{
+	sendToPlugins(midiQueue, MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), 0);
 }
 
 /* -------------------------------------------------------------------------- */

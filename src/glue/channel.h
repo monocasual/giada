@@ -34,6 +34,9 @@
 #include <string>
 #include <vector>
 
+/* giada::c::channel
+Functions to interact with channels. Only the main thread can use these! */
+
 namespace giada::m
 {
 class Plugin;
@@ -125,7 +128,7 @@ void addChannel(ID columnId, ChannelType type);
 /* loadChannel
 Fills an existing channel with a wave. */
 
-int loadChannel(ID columnId, const std::string& fname);
+void loadChannel(ID columnId, const std::string& fname);
 
 /* addAndLoadChannels
 As above, with multiple audio file paths in input. */
@@ -159,12 +162,6 @@ void setInputMonitor(ID channelId, bool value);
 void setOverdubProtection(ID channelId, bool value);
 void setName(ID channelId, const std::string& name);
 void setHeight(ID channelId, Pixel p);
-
-/* updateHasActions
-Updates the 'hasActions' field in 'channelId' according to the current engine
-state. */
-
-void updateHasActions(ID channelId, bool updateActionEditor);
 
 /* clearAllActions
 Deletes all recorded actions on channel 'channelId'. */

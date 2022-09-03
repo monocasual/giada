@@ -70,10 +70,6 @@ void Mixer::reset(Frame maxFramesInLoop, Frame framesInBuffer)
 
 /* -------------------------------------------------------------------------- */
 
-bool Mixer::isActive() const { return m_model.get().mixer.a_isActive(); }
-
-/* -------------------------------------------------------------------------- */
-
 void Mixer::enable()
 {
 	m_model.get().mixer.a_setActive(true);
@@ -108,7 +104,7 @@ const mcl::AudioBuffer& Mixer::getRecBuffer()
 /* -------------------------------------------------------------------------- */
 
 void Mixer::advanceChannels(const Sequencer::EventBuffer& events,
-    const model::Layout& rtLayout, Range<Frame> block, Frame quantizerStep)
+    const model::Layout& rtLayout, Range<Frame> block, Frame quantizerStep) const
 {
 	for (const Channel& c : rtLayout.channels)
 		if (!c.isInternal())
@@ -133,8 +129,7 @@ void Mixer::setInToOut(bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in,
-    const model::Layout& layout_RT, bool isRecordingInput) const
+void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Layout& layout_RT) const
 {
 	const model::Mixer&     mixer     = layout_RT.mixer;
 	const model::Sequencer& sequencer = layout_RT.sequencer;
@@ -145,8 +140,10 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in,
 
 	const bool  hasInput        = in.isAllocd();
 	const bool  inToOut         = mixer.inToOut;
-	const bool  isSeqActive     = sequencer.isActive();
-	const bool  shouldLineInRec = isSeqActive && isRecordingInput && hasInput;
+	const bool  seqIsActive     = sequencer.isActive();
+	const bool  seqIsRunning    = sequencer.isRunning();
+	const bool  hasSolos        = mixer.hasSolos;
+	const bool  shouldLineInRec = seqIsActive && mixer.isRecordingInput && hasInput;
 	const float recTriggerLevel = mixer.recTriggerLevel;
 	const Frame maxFramesToRec  = mixer.maxFramesToRec;
 	const bool  allowsOverdub   = mixer.allowsOverdub;
@@ -161,8 +158,8 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in,
 
 	if (hasInput)
 	{
-		processLineIn(mixer, in, masterInCh.volume, recTriggerLevel, isSeqActive);
-		renderMasterIn(masterInCh, mixer.getInBuffer());
+		processLineIn(mixer, in, masterInCh.volume, recTriggerLevel, seqIsActive);
+		renderMasterIn(masterInCh, mixer.getInBuffer(), seqIsRunning);
 	}
 
 	if (shouldLineInRec)
@@ -177,12 +174,12 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in,
 	changing data (e.g. Plugins or Waves). */
 
 	if (!layout_RT.locked)
-		renderChannels(layout_RT.channels, out, mixer.getInBuffer());
+		renderChannels(layout_RT.channels, out, mixer.getInBuffer(), hasSolos, seqIsRunning);
 
 	/* Render remaining internal channels. */
 
-	renderMasterOut(masterOutCh, out);
-	renderPreview(previewCh, out);
+	renderMasterOut(masterOutCh, out, seqIsRunning);
+	renderPreview(previewCh, out, seqIsRunning);
 
 	/* Post processing. */
 
@@ -194,12 +191,16 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in,
 void Mixer::startInputRec(Frame from)
 {
 	m_model.get().mixer.a_setInputTracker(from);
+	m_model.get().mixer.isRecordingInput = true;
+	m_model.swap(model::SwapType::NONE);
 }
 
 Frame Mixer::stopInputRec()
 {
 	const Frame ret = m_model.get().mixer.a_getInputTracker();
 	m_model.get().mixer.a_setInputTracker(0);
+	m_model.get().mixer.isRecordingInput = false;
+	m_model.swap(model::SwapType::NONE);
 	m_signalCbFired   = false;
 	m_endOfRecCbFired = false;
 	return ret;
@@ -207,14 +208,16 @@ Frame Mixer::stopInputRec()
 
 /* -------------------------------------------------------------------------- */
 
-bool Mixer::isChannelAudible(const Channel& c) const
+void Mixer::startActionRec()
 {
-	if (c.isInternal())
-		return true;
-	if (c.isMuted())
-		return false;
-	const bool hasSolos = m_model.get().mixer.hasSolos;
-	return !hasSolos || (hasSolos && c.isSoloed());
+	m_model.get().mixer.isRecordingActions = true;
+	m_model.swap(model::SwapType::NONE);
+}
+
+void Mixer::stopActionRec()
+{
+	m_model.get().mixer.isRecordingActions = false;
+	m_model.swap(model::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -229,6 +232,18 @@ Mixer::RecordInfo Mixer::getRecordInfo() const
 	return {
 	    m_model.get().mixer.a_getInputTracker(),
 	    m_model.get().mixer.getRecBuffer().countFrames()};
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Mixer::isRecordingActions() const
+{
+	return m_model.get().mixer.isRecordingActions;
+}
+
+bool Mixer::isRecordingInput() const
+{
+	return m_model.get().mixer.isRecordingInput;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -298,28 +313,29 @@ void Mixer::processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inB
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::renderChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out, mcl::AudioBuffer& in) const
+void Mixer::renderChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
+    mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const
 {
 	for (const Channel& c : channels)
 		if (!c.isInternal())
-			c.render(&out, &in, isChannelAudible(c));
+			c.render(&out, &in, hasSolos, seqIsRunning);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
+void Mixer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in, bool seqIsRunning) const
 {
-	ch.render(nullptr, &in, true);
+	ch.render(nullptr, &in, true, seqIsRunning);
 }
 
-void Mixer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const
+void Mixer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out, bool seqIsRunning) const
 {
-	ch.render(&out, nullptr, true);
+	ch.render(&out, nullptr, true, seqIsRunning);
 }
 
-void Mixer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
+void Mixer::renderPreview(const Channel& ch, mcl::AudioBuffer& out, bool seqIsRunning) const
 {
-	ch.render(&out, nullptr, true);
+	ch.render(&out, nullptr, true, seqIsRunning);
 }
 
 /* -------------------------------------------------------------------------- */

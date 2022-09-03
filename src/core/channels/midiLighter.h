@@ -42,9 +42,9 @@ public:
 	MidiLighter(MidiMapper<KernelMidiI>&, const Patch::Channel&);
 	MidiLighter(const MidiLighter& o) = default;
 
-	void sendStatus(ChannelStatus, bool audible);
-	void sendMute(bool isMuted);
-	void sendSolo(bool isSoloed);
+	void sendStatus(ChannelStatus, bool audible) const;
+	void sendMute(bool isMuted) const;
+	void sendSolo(bool isSoloed) const;
 
 	/* enabled
     Tells whether MIDI lighting is enabled or not. */
@@ -63,7 +63,7 @@ public:
 	std::function<void()> onSend;
 
 private:
-	void send(uint32_t learnt, const MidiMap::Message&);
+	void send(uint32_t learnt, const MidiMap::Message&) const;
 
 	MidiMapper<KernelMidiI>* m_midiMapper;
 };

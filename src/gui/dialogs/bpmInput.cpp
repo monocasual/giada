@@ -74,7 +74,7 @@ gdBpmInput::gdBpmInput(const char* label)
 		const std::string a   = m_input_a->getValue();
 		const std::string b   = m_input_b->getValue();
 		const float       bpm = u::gui::toFloat(a) + (u::gui::toFloat(b) / 10.0f);
-		c::events::setBpm(bpm, Thread::MAIN);
+		c::events::setBpm(bpm);
 		do_callback();
 	};
 

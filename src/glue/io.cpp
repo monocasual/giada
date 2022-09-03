@@ -224,6 +224,7 @@ bool channel_setKey(ID channelId, int k)
 {
 	if (!isValidKey_(k))
 		return false;
+
 	g_engine.model.get().getChannel(channelId).key = k;
 	g_engine.model.swap(m::model::SwapType::HARD);
 	return true;
@@ -233,17 +234,23 @@ bool channel_setKey(ID channelId, int k)
 
 void channel_startMidiLearn(int param, ID channelId)
 {
-	g_engine.midiDispatcher.startChannelLearn(param, channelId, rebuildMidiWindows_);
+	g_engine.midiDispatcher.startChannelLearn(param, channelId, []() {
+		g_ui.pumpEvent([]() { rebuildMidiWindows_(); });
+	});
 }
 
 void master_startMidiLearn(int param)
 {
-	g_engine.midiDispatcher.startMasterLearn(param, rebuildMidiWindows_);
+	g_engine.midiDispatcher.startMasterLearn(param, []() {
+		g_ui.pumpEvent([]() { rebuildMidiWindows_(); });
+	});
 }
 
 void plugin_startMidiLearn(int paramIndex, ID pluginId)
 {
-	g_engine.midiDispatcher.startPluginLearn(paramIndex, pluginId, rebuildMidiWindows_);
+	g_engine.midiDispatcher.startPluginLearn(paramIndex, pluginId, []() {
+		g_ui.pumpEvent([]() { rebuildMidiWindows_(); });
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -251,24 +258,30 @@ void plugin_startMidiLearn(int paramIndex, ID pluginId)
 void stopMidiLearn()
 {
 	g_engine.midiDispatcher.stopLearn();
-	rebuildMidiWindows_();
+	g_ui.pumpEvent([]() { rebuildMidiWindows_(); });
 }
 
 /* -------------------------------------------------------------------------- */
 
 void channel_clearMidiLearn(int param, ID channelId)
 {
-	g_engine.midiDispatcher.clearChannelLearn(param, channelId, rebuildMidiWindows_);
+	g_engine.midiDispatcher.clearChannelLearn(param, channelId, []() {
+		g_ui.pumpEvent([]() { rebuildMidiWindows_(); });
+	});
 }
 
 void master_clearMidiLearn(int param)
 {
-	g_engine.midiDispatcher.clearMasterLearn(param, rebuildMidiWindows_);
+	g_engine.midiDispatcher.clearMasterLearn(param, []() {
+		g_ui.pumpEvent([]() { rebuildMidiWindows_(); });
+	});
 }
 
 void plugin_clearMidiLearn(int param, ID pluginId)
 {
-	g_engine.midiDispatcher.clearPluginLearn(param, pluginId, rebuildMidiWindows_);
+	g_engine.midiDispatcher.clearPluginLearn(param, pluginId, []() {
+		g_ui.pumpEvent([]() { rebuildMidiWindows_(); });
+	});
 }
 
 /* -------------------------------------------------------------------------- */

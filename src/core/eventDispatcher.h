@@ -27,74 +27,24 @@
 #ifndef G_EVENT_DISPATCHER_H
 #define G_EVENT_DISPATCHER_H
 
-#include "core/actions/action.h"
-#include "core/const.h"
-#include "core/ringBuffer.h"
-#include "core/types.h"
 #include "core/worker.h"
 #include "deps/concurrentqueue/concurrentqueue.h"
-#include <any>
-#include <atomic>
 #include <functional>
-#include <thread>
 
 /* giada::m::EventDispatcher
-Takes events from the a lock-free queue filled by c::events and turns them into 
-actual changes in the data model. The EventDispatcher runs in a separate worker 
-thread. */
+Performs Events (a.k.a. function callbacks) in a separate worker thread. Used by
+the realtime thread (via Engine) to talk to other non-realtime threads. */
 
 namespace giada::m
 {
 class EventDispatcher
 {
 public:
-	enum class EventType
-	{
-		KEY_PRESS,
-		KEY_RELEASE,
-		KEY_KILL,
-		SEQUENCER_START,
-		SEQUENCER_STOP,
-		SEQUENCER_REWIND,
-		SEQUENCER_BPM,
-		SEQUENCER_GO_TO_BEAT,
-		RECORDER_PREPARE_ACTION_REC,
-		RECORDER_PREPARE_INPUT_REC,
-		RECORDER_STOP_ACTION_REC,
-		RECORDER_STOP_INPUT_REC,
-#ifdef WITH_AUDIO_JACK
-		SEQUENCER_START_JACK,
-		SEQUENCER_STOP_JACK,
-		SEQUENCER_REWIND_JACK,
-		SEQUENCER_BPM_JACK,
-#endif
-		MIDI,
-		MIDI_DISPATCHER_LEARN,
-		MIDI_DISPATCHER_PROCESS,
-		MIXER_SIGNAL_CALLBACK,
-		MIXER_END_OF_REC_CALLBACK,
-		CHANNEL_TOGGLE_READ_ACTIONS,
-		CHANNEL_KILL_READ_ACTIONS,
-		CHANNEL_TOGGLE_ARM,
-		CHANNEL_MUTE,
-		CHANNEL_SOLO,
-		CHANNEL_VOLUME,
-		CHANNEL_PITCH,
-		CHANNEL_PAN
-	};
+	/* Event
+	Alias for a std::function type. All events are just functions to be performed
+	by the EventDispatcher. */
 
-	struct Event
-	{
-		EventType type;
-		Frame     delta     = 0;
-		ID        channelId = 0;
-		std::any  data      = {};
-	};
-
-	/* EventBuffer
-	Alias for a RingBuffer containing events to be sent to engine. */
-
-	using EventBuffer = RingBuffer<Event, G_MAX_DISPATCHER_EVENTS>;
+	using Event = std::function<void()>;
 
 	EventDispatcher();
 
@@ -108,30 +58,13 @@ public:
 
 	bool pumpEvent(const Event&);
 
-	/* on[...]
-	Callbacks fired when something happens in the Event Dispatcher. */
-
-	std::function<void(const MidiEvent& e)> onMidiLearn;
-	std::function<void(const MidiEvent& e)> onMidiProcess;
-	std::function<void(const EventBuffer&)> onProcessChannels;
-	std::function<void(const EventBuffer&)> onProcessSequencer;
-	std::function<void()>                   onMixerSignalCallback;
-	std::function<void()>                   onMixerEndOfRecCallback;
-
 private:
-	void processFunctions();
 	void process();
 
 	/* m_worker
 	A separate thread responsible for the event processing. */
 
 	Worker m_worker;
-
-	/* m_eventBuffer
-	Buffer of events sent to channels for event parsing. This is filled with 
-	Events coming from the event queue.*/
-
-	EventBuffer m_eventBuffer;
 
 	/* m_eventQueue
 	Collects events coming from the UI or MIDI devices. */

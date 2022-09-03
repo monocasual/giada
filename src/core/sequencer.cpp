@@ -55,7 +55,7 @@ Sequencer::Sequencer(model::Model& m, MidiSynchronizer& s, JackTransport& j)
 , m_jackTransport(j)
 , m_quantizerStep(1)
 {
-	m_quantizer.schedule(Q_ACTION_REWIND, [this](Frame delta) { rewindQ(delta); });
+	m_quantizer.schedule(Q_ACTION_REWIND, [this](Frame delta) { rawRewind(delta); });
 }
 /* -------------------------------------------------------------------------- */
 
@@ -119,74 +119,10 @@ void Sequencer::reset(int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::react(const EventDispatcher::EventBuffer& events, int sampleRate)
-{
-	for (const EventDispatcher::Event& e : events)
-	{
-		switch (e.type)
-		{
-		case EventDispatcher::EventType::SEQUENCER_START:
-			if (!m_jackTransport.start())
-				rawStart();
-			break;
-
-		case EventDispatcher::EventType::SEQUENCER_STOP:
-			if (!m_jackTransport.stop())
-				rawStop();
-			break;
-
-		case EventDispatcher::EventType::SEQUENCER_REWIND:
-			if (!m_jackTransport.setPosition(0))
-				rawRewind();
-			break;
-
-		case EventDispatcher::EventType::SEQUENCER_GO_TO_BEAT:
-		{
-			const float bpm   = m_model.get().sequencer.bpm;
-			const int   beat  = std::any_cast<int>(e.data);
-			const Frame frame = u::time::beatToFrame(beat, sampleRate, bpm);
-			if (!m_jackTransport.setPosition(frame))
-				rawGoToBeat(beat, sampleRate);
-			break;
-		}
-		case EventDispatcher::EventType::SEQUENCER_BPM:
-		{
-			const float bpm = std::any_cast<float>(e.data);
-			if (!m_jackTransport.setBpm(bpm))
-				rawSetBpm(bpm, sampleRate);
-			break;
-		}
-#ifdef WITH_AUDIO_JACK
-		case EventDispatcher::EventType::SEQUENCER_START_JACK:
-			rawStart();
-			break;
-
-		case EventDispatcher::EventType::SEQUENCER_STOP_JACK:
-			rawStop();
-			break;
-
-		case EventDispatcher::EventType::SEQUENCER_REWIND_JACK:
-			rawRewind();
-			break;
-
-		case EventDispatcher::EventType::SEQUENCER_BPM_JACK:
-			rawSetBpm(std::any_cast<float>(e.data), sampleRate);
-			break;
-#endif
-
-		default:
-			break;
-		}
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-const Sequencer::EventBuffer& Sequencer::advance(Frame bufferSize, int sampleRate, const ActionRecorder& actionRecorder)
+const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequencer,
+    Frame bufferSize, int sampleRate, const ActionRecorder& actionRecorder) const
 {
 	m_eventBuffer.clear();
-
-	const model::Sequencer& sequencer = m_model.get().sequencer;
 
 	const Frame start        = sequencer.a_getCurrentFrame();
 	const Frame end          = start + bufferSize;
@@ -233,7 +169,7 @@ const Sequencer::EventBuffer& Sequencer::advance(Frame bufferSize, int sampleRat
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::render(mcl::AudioBuffer& outBuf)
+void Sequencer::render(mcl::AudioBuffer& outBuf) const
 {
 	if (m_metronome.running)
 		m_metronome.render(outBuf);
@@ -274,21 +210,43 @@ void Sequencer::rawStop()
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::rawRewind()
+void Sequencer::rawRewind(Frame delta)
 {
-	if (canQuantize())
-		m_quantizer.trigger(Q_ACTION_REWIND);
-	else
-		rewindQ(/*delta=*/0);
+	rewindForced();
+	m_eventBuffer.push_back({EventType::REWIND, 0, delta});
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::rewindForced()
+{
+	m_model.get().sequencer.a_setCurrentFrame(0, /*sampleRate=*/0); // No need for sampleRate, it's just 0
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Sequencer::rewind()
 {
-	const model::Sequencer& c = m_model.get().sequencer;
+	if (canQuantize())
+		m_quantizer.trigger(Q_ACTION_REWIND);
+	else if (!m_jackTransport.setPosition(0))
+		rawRewind(0);
+}
 
-	c.a_setCurrentFrame(0, /*sampleRate=*/0); // No need for sampleRate, it's just 0
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::start()
+{
+	if (!m_jackTransport.start())
+		rawStart();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::stop()
+{
+	if (!m_jackTransport.stop())
+		rawStop();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -299,21 +257,13 @@ void Sequencer::setMetronome(bool v) { m_metronome.running = v; }
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::rewindQ(Frame delta)
-{
-	rewind();
-	m_eventBuffer.push_back({EventType::REWIND, 0, delta});
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Sequencer::recomputeFrames(int sampleRate)
 {
 	model::Sequencer& s = m_model.get().sequencer;
 
 	s.framesInBeat = u::time::beatToFrame(1, sampleRate, s.bpm);
-	s.framesInBar  = s.framesInBeat * s.bars;
 	s.framesInLoop = s.framesInBeat * s.beats;
+	s.framesInBar  = s.framesInLoop / (float)s.bars;
 	s.framesInSeq  = s.framesInBeat * G_MAX_BEATS;
 
 	if (s.quantize != 0)
@@ -343,13 +293,15 @@ void Sequencer::rawSetBpm(float v, int sampleRate)
 	const float newVal = std::clamp(v, G_MIN_BPM, G_MAX_BPM);
 
 	m_model.get().sequencer.bpm = newVal;
-	recomputeFrames(sampleRate);
 	m_model.swap(model::SwapType::HARD);
+
+	recomputeFrames(sampleRate);
 
 	onBpmChange(oldVal, newVal, m_quantizerStep);
 
 	u::log::print("[clock::rawSetBpm] Bpm changed to %f\n", newVal);
 }
+
 /* -------------------------------------------------------------------------- */
 
 void Sequencer::setBeats(int newBeats, int newBars, int sampleRate)
@@ -359,9 +311,9 @@ void Sequencer::setBeats(int newBeats, int newBars, int sampleRate)
 
 	m_model.get().sequencer.beats = newBeats;
 	m_model.get().sequencer.bars  = newBars;
-	recomputeFrames(sampleRate);
-
 	m_model.swap(model::SwapType::HARD);
+
+	recomputeFrames(sampleRate);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -377,9 +329,9 @@ void Sequencer::rawGoToBeat(int beat, int sampleRate)
 void Sequencer::setQuantize(int q, int sampleRate)
 {
 	m_model.get().sequencer.quantize = q;
-	recomputeFrames(sampleRate);
-
 	m_model.swap(model::SwapType::HARD);
+
+	recomputeFrames(sampleRate);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -407,4 +359,29 @@ void Sequencer::setStatus(SeqStatus s)
 		break;
 	}
 }
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::goToBeat(int beat, int sampleRate)
+{
+	const float bpm   = m_model.get().sequencer.bpm;
+	const Frame frame = u::time::beatToFrame(beat, sampleRate, bpm);
+	if (!m_jackTransport.setPosition(frame))
+		rawGoToBeat(beat, sampleRate);
+}
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef WITH_AUDIO_JACK
+
+void Sequencer::jack_start()
+{
+	rawStart();
+}
+
+void Sequencer::jack_stop() { rawStop(); }
+void Sequencer::jack_rewind() { rawRewind(0); }
+void Sequencer::jack_setBpm(float b, int sampleRate) { rawSetBpm(b, sampleRate); }
+
+#endif
 } // namespace giada::m

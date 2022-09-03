@@ -46,13 +46,13 @@ bool LoadState::isGood() const
 Engine::Engine()
 : midiMapper(kernelMidi)
 , channelFactory(conf.data, model)
-, channelManager(model, channelFactory, waveFactory)
+, channelManager(conf.data, model, channelFactory, waveFactory)
 , midiDispatcher(model)
 , actionRecorder(model)
 , midiSynchronizer(conf.data, kernelMidi)
 , sequencer(model, midiSynchronizer, jackTransport)
 , mixer(model)
-, recorder(model, sequencer, channelManager, mixer, actionRecorder)
+, recorder(sequencer, channelManager, mixer, actionRecorder)
 , pluginHost(model)
 {
 	kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
@@ -60,63 +60,46 @@ Engine::Engine()
 	};
 
 	kernelMidi.onMidiReceived = [this](const MidiEvent& e) {
+		if (!model.registerThread(Thread::MIDI, /*realtime=*/false))
+		{
+			u::log::print("[Engine::kernelMidi.onMidiReceived] Can't register MIDI thread!\n");
+			return;
+		}
 		midiDispatcher.dispatch(e);
 		midiSynchronizer.receive(e, sequencer.getBeats());
-	};
-
-#ifdef WITH_AUDIO_JACK
-	jackSynchronizer.onJackRewind = [this]() {
-		eventDispatcher.pumpEvent({EventDispatcher::EventType::SEQUENCER_REWIND_JACK});
-	};
-	jackSynchronizer.onJackChangeBpm = [this](float bpm) {
-		eventDispatcher.pumpEvent({EventDispatcher::EventType::SEQUENCER_BPM_JACK, 0, 0, bpm});
-	};
-	jackSynchronizer.onJackStart = [this]() {
-		eventDispatcher.pumpEvent({EventDispatcher::EventType::SEQUENCER_START_JACK});
-	};
-	jackSynchronizer.onJackStop = [this]() {
-		eventDispatcher.pumpEvent({EventDispatcher::EventType::SEQUENCER_STOP_JACK});
-	};
-#endif
-
-	eventDispatcher.onMidiLearn       = [this](const MidiEvent& e) { midiDispatcher.learn(e); };
-	eventDispatcher.onMidiProcess     = [this](const MidiEvent& e) { midiDispatcher.process(e); };
-	eventDispatcher.onProcessChannels = [this](const EventDispatcher::EventBuffer& eb) {
-		for (Channel& ch : model.get().channels)
-			ch.react(eb);
-		model.swap(model::SwapType::SOFT);
-	};
-	eventDispatcher.onProcessSequencer = [this](const EventDispatcher::EventBuffer& eb) {
-		sequencer.react(eb, kernelAudio.getSampleRate());
-	};
-	eventDispatcher.onMixerSignalCallback = [this]() {
-		recorder.startInputRecOnCallback();
-	};
-	eventDispatcher.onMixerEndOfRecCallback = [this]() {
-		if (recorder.isRecordingInput())
-			recorder.stopInputRec(conf.data.inputRecMode, kernelAudio.getSampleRate());
-	};
-
-	midiDispatcher.onDispatch = [this](EventDispatcher::EventType event, Action action) {
-		/* Notify Event Dispatcher when a MIDI signal is received. */
-		eventDispatcher.pumpEvent({event, 0, 0, action});
 	};
 
 	midiDispatcher.onEventReceived = [this]() {
 		recorder.startActionRecOnCallback();
 	};
 
-	mixer.onSignalTresholdReached = [this]() {
-		/* Invokes the signal callback. This is done by pumping a MIXER_SIGNAL_CALLBACK
-        event to the Event Dispatcher, rather than invoking the callback directly.
-        This is done on purpose: the callback might (and surely will) contain 
-        blocking stuff from model:: that the realtime thread cannot perform directly. */
-		eventDispatcher.pumpEvent({EventDispatcher::EventType::MIXER_SIGNAL_CALLBACK});
-	};
+	/* The following JackSynchronizer and Mixer callbacks are all fired by the
+	realtime thread, so the actions are performed by pumping events into the 
+	Event Dispatcher, rather than invoking them directly. This is done on 
+	purpose: the callback might (and surely will) contain non-const operations
+	on the model that the realtime thread cannot perform directly. */
 
+#ifdef WITH_AUDIO_JACK
+	jackSynchronizer.onJackRewind = [this]() {
+		eventDispatcher.pumpEvent([this]() { sequencer.jack_rewind(); });
+	};
+	jackSynchronizer.onJackChangeBpm = [this](float bpm) {
+		eventDispatcher.pumpEvent([this, bpm]() { sequencer.jack_setBpm(bpm, kernelAudio.getSampleRate()); });
+	};
+	jackSynchronizer.onJackStart = [this]() {
+		eventDispatcher.pumpEvent([this]() { sequencer.jack_start(); });
+	};
+	jackSynchronizer.onJackStop = [this]() {
+		eventDispatcher.pumpEvent([this]() { sequencer.jack_stop(); });
+	};
+#endif
+
+	mixer.onSignalTresholdReached = [this]() {
+		eventDispatcher.pumpEvent([this]() { recorder.startInputRecOnCallback(); });
+	};
 	mixer.onEndOfRecording = [this]() {
-		/* Same rationale as above, for the end-of-recording callback. */
-		eventDispatcher.pumpEvent({EventDispatcher::EventType::MIXER_END_OF_REC_CALLBACK});
+		if (mixer.isRecordingInput())
+			eventDispatcher.pumpEvent([this]() { recorder.stopInputRec(conf.data.inputRecMode, kernelAudio.getSampleRate()); });
 	};
 
 	channelManager.onChannelsAltered = [this]() {
@@ -134,17 +117,15 @@ Engine::Engine()
 			recorder.stopActionRec();
 		conf.data.recTriggerMode = RecTriggerMode::NORMAL;
 	};
-
 	sequencer.onAboutStop = [this]() {
 		/* If recordings (both input and action) are active deactivate them, but 
 	store the takes. RecManager takes care of it. */
 		/* TODO move this logic to Recorder */
-		if (recorder.isRecordingActions())
+		if (mixer.isRecordingActions())
 			recorder.stopActionRec();
-		else if (recorder.isRecordingInput())
+		else if (mixer.isRecordingInput())
 			recorder.stopInputRec(conf.data.inputRecMode, kernelAudio.getSampleRate());
 	};
-
 	sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep) {
 		actionRecorder.updateBpm(oldVal / newVal, quantizerStep);
 	};
@@ -165,10 +146,18 @@ void Engine::updateMixerModel()
 
 void Engine::init()
 {
+	if (!model.registerThread(Thread::MAIN, /*realtime=*/false))
+	{
+		u::log::print("[Engine::init] Can't register main thread!\n");
+		return;
+	}
+
+	model.reset();
+
 	if (!conf.read())
 		u::log::print("[Engine::init] Can't read configuration file! Using default values\n");
 
-	model::load(conf.data);
+	model::load(conf.data, *this);
 
 	if (!u::log::init(conf.data.logMode))
 		u::log::print("[Engine::init] log init failed! Using default stdout\n");
@@ -243,7 +232,7 @@ void Engine::shutdown()
 		u::log::print("[Engine::shutdown] Mixer closed\n");
 	}
 
-	model::store(conf.data);
+	model::store(conf.data, *this);
 	if (!conf.write())
 		u::log::print("[Engine::shutdown] error while saving configuration file!\n");
 	else
@@ -261,8 +250,14 @@ void Engine::shutdown()
 
 /* -------------------------------------------------------------------------- */
 
-int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo)
+int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 {
+	if (!model.registerThread(Thread::AUDIO, /*realtime=*/true))
+	{
+		u::log::print("[Engine::audioCallback] can't register realtime thread!\n");
+		return 0;
+	}
+
 	mcl::AudioBuffer out(static_cast<float*>(kernelInfo.outBuf), kernelInfo.bufferSize, kernelInfo.channelsOutCount);
 	mcl::AudioBuffer in;
 	if (kernelInfo.channelsInCount > 0)
@@ -301,12 +296,12 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo)
 
 	if (layout_RT.sequencer.isRunning())
 	{
-		const Frame        currentFrame  = sequencer.getCurrentFrame();
+		const Frame        currentFrame  = layout_RT.sequencer.a_getCurrentFrame();
 		const Frame        bufferSize    = in.countFrames();
 		const Frame        quantizerStep = sequencer.getQuantizerStep();              // TODO pass this to sequencer.advance - or better, Advancer class
 		const Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to sequencer.advance - or better, Advancer class
 
-		const Sequencer::EventBuffer& events = sequencer.advance(bufferSize, kernelInfo.sampleRate, actionRecorder);
+		const Sequencer::EventBuffer& events = sequencer.advance(layout_RT.sequencer, bufferSize, kernelInfo.sampleRate, actionRecorder);
 		sequencer.render(out);
 		if (!layout_RT.locked)
 			mixer.advanceChannels(events, layout_RT, renderRange, quantizerStep);
@@ -314,7 +309,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo)
 
 	/* Then render Mixer: render channels, process I/O. */
 
-	mixer.render(out, in, layout_RT, recorder.isRecordingInput());
+	mixer.render(out, in, layout_RT);
 
 	return 0;
 }
@@ -348,7 +343,7 @@ bool Engine::store(const std::string& projectName, const std::string& projectPat
 	/* Write Model into Patch, then into file. */
 
 	patch.data.name = projectName;
-	model::store(patch.data);
+	model::store(patch.data, *this);
 
 	progress(0.6f);
 
@@ -386,7 +381,7 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 
 	mixer.disable();
 	reset();
-	LoadState state = m::model::load(patch.data);
+	LoadState state = m::model::load(patch.data, *this);
 
 	progress(0.6f);
 

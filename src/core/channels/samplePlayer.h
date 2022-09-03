@@ -29,7 +29,6 @@
 
 #include "core/channels/waveReader.h"
 #include "core/const.h"
-#include "core/eventDispatcher.h"
 #include "core/patch.h"
 #include "core/sequencer.h"
 #include "core/types.h"
@@ -73,9 +72,7 @@ public:
 	ID    getWaveId() const;
 	Frame getWaveSize() const;
 	Wave* getWave() const;
-	void  render(ChannelShared&, Render) const;
-
-	void react(const EventDispatcher::Event& e);
+	void  render(ChannelShared&, Render, bool seqIsRunning) const;
 
 	/* loadWave
 	Loads Wave and sets it up (name, markers, ...). Also updates Channel's shared
@@ -110,7 +107,7 @@ public:
 	'natural' == false if the rendering has been manually interrupted (by
 	a Render::Mode::STOP type). */
 
-	std::function<void(bool natural)> onLastFrame;
+	std::function<void(bool natural, bool seqIsRunning)> onLastFrame;
 
 private:
 	/* render
@@ -118,13 +115,13 @@ private:
 	into the audio buffer at position 'offset'. May fire 'onLastFrame' callback
 	if the sample end is reached. */
 
-	Frame render(mcl::AudioBuffer&, Frame tracker, Frame offset, ChannelStatus) const;
+	Frame render(mcl::AudioBuffer&, Frame tracker, Frame offset, ChannelStatus, bool seqIsRunning) const;
 
 	/* stop
 	Silences the last part of the audio buffer, starting at 'offset'. Used to
 	terminate rendering. It also fire the 'onLastFrame' callback. */
 
-	Frame stop(mcl::AudioBuffer&, Frame offset) const;
+	Frame stop(mcl::AudioBuffer&, Frame offset, bool seqIsRunning) const;
 
 	WaveReader::Result fillBuffer(mcl::AudioBuffer&, Frame start, Frame offset) const;
 	bool               shouldLoop(ChannelStatus) const;
