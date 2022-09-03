@@ -51,7 +51,7 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 		m_tooltips  = new geChoice(g_ui.langMapper.get(LangMap::CONFIG_MISC_TOOLTIPS), LABEL_WIDTH);
 		m_langMap   = new geStringMenu(g_ui.langMapper.get(LangMap::CONFIG_MISC_LANGUAGE),
             m_data.langMaps, g_ui.langMapper.get(LangMap::CONFIG_MISC_NOLANGUAGESFOUND), LABEL_WIDTH);
-		m_uiScaling = new geInput(g_ui.langMapper.get(LangMap::CONFIG_MISC_UISCALING), LABEL_WIDTH);
+		m_uiScaling = new geChoice(g_ui.langMapper.get(LangMap::CONFIG_MISC_UISCALING), LABEL_WIDTH);
 
 		body->add(m_debugMsg, G_GUI_UNIT);
 		body->add(m_tooltips, G_GUI_UNIT);
@@ -82,9 +82,14 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 		m_langMap->showItem(m_data.langMap);
 	m_langMap->onChange = [this](ID /*id*/) { m_data.langMap = m_langMap->getSelectedLabel(); };
 
-	m_uiScaling->setType(FL_FLOAT_INPUT);
-	m_uiScaling->setValue(fmt::format("{:.1f}", m_data.uiScaling));
-	m_uiScaling->onChange = [this](const std::string& s) { m_data.uiScaling = u::gui::toFloat(s); };
+	m_uiScaling->addItem("Auto", 0);
+	m_uiScaling->addItem("100%", 100);
+	m_uiScaling->addItem("150%", 150);
+	m_uiScaling->addItem("200%", 200);
+	m_uiScaling->addItem("250%", 250);
+	m_uiScaling->addItem("300%", 300);
+	m_uiScaling->showItem(static_cast<int>(m_data.uiScaling * 100));
+	m_uiScaling->onChange = [this](ID id) { m_data.uiScaling = id / 100.0f; };
 }
 
 /* -------------------------------------------------------------------------- */
