@@ -72,7 +72,7 @@ Plugin::Plugin(m::Plugin& p, const m::Conf::Data& conf, ID channelId)
 , name(p.getName())
 , uniqueId(p.getUniqueId())
 , currentProgram(p.getCurrentProgram())
-, uiScaling(conf.uiScaling)
+, uiScaling(g_ui.getScaling())
 , m_plugin(p)
 {
 	for (int i = 0; i < p.getNumPrograms(); i++)

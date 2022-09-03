@@ -63,6 +63,14 @@ bool Ui::shouldBlink() const
 
 /* -------------------------------------------------------------------------- */
 
+float Ui::getScaling() const
+{
+	//return 1.0;
+	return Fl::screen_scale(mainWindow->screen_num());
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Ui::load(const m::Patch::Data& patch)
 {
 	reset();

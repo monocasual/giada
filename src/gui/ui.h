@@ -55,6 +55,11 @@ public:
 
 	bool shouldBlink() const;
 
+	/* getScaling
+	Returns the current value for UI scaling. */
+
+	float getScaling() const;
+
 	/* load
 	Reads UI information from a Patch when a new project has been loaded. */
 
