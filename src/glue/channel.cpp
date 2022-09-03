@@ -315,6 +315,33 @@ void setName(ID channelId, const std::string& name)
 
 /* -------------------------------------------------------------------------- */
 
+void updateHasActions(ID channelId, bool updateActionEditor)
+{
+	g_engine.eventDispatcher.pumpFunctionEvent([channelId]() {
+		g_engine.model.get().getChannel(channelId).hasActions = g_engine.actionRecorder.hasActions(channelId);
+		g_engine.model.swap(m::model::SwapType::HARD);
+		g_ui.refreshSubWindow(WID_ACTION_EDITOR);
+	});
+}
+
+/* -------------------------------------------------------------------------- */
+
+void clearAllActions(ID channelId)
+{
+	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
+	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
+		return;
+
+	g_engine.eventDispatcher.pumpFunctionEvent([channelId]() {
+		g_engine.actionRecorder.clearChannel(channelId);
+		g_engine.model.get().getChannel(channelId).hasActions = g_engine.actionRecorder.hasActions(channelId);
+		g_engine.model.swap(m::model::SwapType::HARD);
+		g_ui.refreshSubWindow(WID_ACTION_EDITOR);
+	});
+}
+
+/* -------------------------------------------------------------------------- */
+
 void setCallbacks(m::Channel& ch)
 {
 	auto onSendMidiCb = [channelId = ch.id]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); };

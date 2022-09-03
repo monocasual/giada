@@ -29,7 +29,6 @@
 #include "glue/events.h"
 #include "glue/io.h"
 #include "glue/layout.h"
-#include "glue/recorder.h"
 #include "glue/storage.h"
 #include "gui/dispatcher.h"
 #include "gui/elems/basics/boxtypes.h"
@@ -237,7 +236,7 @@ void geSampleChannel::openMenu()
 			break;
 
 		case Menu::CLEAR_ACTIONS:
-			c::recorder::clearAllActions(channel.id);
+			c::channel::clearAllActions(channel.id);
 			break;
 
 		case Menu::CLONE_CHANNEL:

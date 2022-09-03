@@ -30,7 +30,6 @@
 #include "glue/events.h"
 #include "glue/io.h"
 #include "glue/layout.h"
-#include "glue/recorder.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/dispatcher.h"
 #include "gui/elems/basics/boxtypes.h"
@@ -158,7 +157,7 @@ void geMidiChannel::openMenu()
 			c::layout::openMidiActionEditor(data.id);
 			break;
 		case Menu::CLEAR_ACTIONS:
-			c::recorder::clearAllActions(data.id);
+			c::channel::clearAllActions(data.id);
 			break;
 		case Menu::SETUP_KEYBOARD_INPUT:
 			c::layout::openKeyGrabberWindow(data.key, [channelId = data.id](int key) {

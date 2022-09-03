@@ -32,8 +32,8 @@
 #include "core/engine.h"
 #include "core/model/model.h"
 #include "core/sequencer.h"
+#include "glue/channel.h"
 #include "glue/events.h"
-#include "glue/recorder.h"
 #include <cassert>
 
 extern giada::m::Engine g_engine;
@@ -175,7 +175,7 @@ void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2)
 
 	g_engine.actionRecorder.rec(channelId, f1, f2, e1, e2);
 
-	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
+	channel::updateHasActions(channelId, /*updateActionEditor=*/false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -196,7 +196,7 @@ void deleteMidiAction(ID channelId, const m::Action& a)
 	else
 		g_engine.actionRecorder.deleteAction(a.id);
 
-	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
+	channel::updateHasActions(channelId, /*updateActionEditor=*/false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -226,7 +226,7 @@ void recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
 		g_engine.actionRecorder.rec(channelId, f1, e1);
 	}
 
-	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
+	channel::updateHasActions(channelId, /*updateActionEditor=*/false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -251,7 +251,7 @@ void deleteSampleAction(ID channelId, const m::Action& a)
 	else
 		g_engine.actionRecorder.deleteAction(a.id);
 
-	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
+	channel::updateHasActions(channelId, /*updateActionEditor=*/false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -269,7 +269,7 @@ void recordEnvelopeAction(ID channelId, Frame f, int value)
 	else
 		recordNonFirstEnvelopeAction_(channelId, f, value);
 
-	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
+	channel::updateHasActions(channelId, /*updateActionEditor=*/false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -309,7 +309,7 @@ void deleteEnvelopeAction(ID channelId, const m::Action& a)
 		g_engine.actionRecorder.deleteAction(a.id);
 	}
 
-	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
+	channel::updateHasActions(channelId, /*updateActionEditor=*/false);
 }
 
 /* -------------------------------------------------------------------------- */

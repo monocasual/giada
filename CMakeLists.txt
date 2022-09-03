@@ -91,7 +91,6 @@ list(APPEND SOURCES
 	src/glue/storage.cpp
 	src/glue/channel.cpp
 	src/glue/plugin.cpp
-	src/glue/recorder.cpp
 	src/glue/sampleEditor.cpp
 	src/glue/actionEditor.cpp
 	src/glue/config.cpp

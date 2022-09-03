@@ -160,6 +160,17 @@ void setOverdubProtection(ID channelId, bool value);
 void setName(ID channelId, const std::string& name);
 void setHeight(ID channelId, Pixel p);
 
+/* updateHasActions
+Updates the 'hasActions' field in 'channelId' according to the current engine
+state. */
+
+void updateHasActions(ID channelId, bool updateActionEditor);
+
+/* clearAllActions
+Deletes all recorded actions on channel 'channelId'. */
+
+void clearAllActions(ID channelId);
+
 void setSamplePlayerMode(ID channelId, SamplePlayerMode m);
 
 /* setCallbacks
