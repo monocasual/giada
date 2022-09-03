@@ -29,6 +29,7 @@
 
 #include "core/channels/channel.h"
 #include "core/const.h"
+#include "core/model/midiIn.h"
 #include "core/model/mixer.h"
 #include "core/model/sequencer.h"
 #include "core/plugins/plugin.h"
@@ -41,21 +42,6 @@
 
 namespace giada::m::model
 {
-struct MidiIn
-{
-	bool     enabled    = false;
-	int      filter     = -1;
-	uint32_t rewind     = 0x0;
-	uint32_t startStop  = 0x0;
-	uint32_t actionRec  = 0x0;
-	uint32_t inputRec   = 0x0;
-	uint32_t volumeIn   = 0x0;
-	uint32_t volumeOut  = 0x0;
-	uint32_t beatDouble = 0x0;
-	uint32_t beatHalf   = 0x0;
-	uint32_t metronome  = 0x0;
-};
-
 struct Layout
 {
 	Channel&       getChannel(ID id);
