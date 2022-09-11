@@ -198,8 +198,6 @@ void geSampleActionEditor::onRefreshAction()
 	}
 
 	ca::updateSampleAction(m_data->channelId, m_action->a1, type, f1, f2);
-
-	m_base->rebuild();
 }
 
 /* -------------------------------------------------------------------------- */

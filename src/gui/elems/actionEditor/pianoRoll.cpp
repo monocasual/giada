@@ -221,8 +221,6 @@ void gePianoRoll::onAddAction()
 	int   note  = yToNote(Fl::event_y() - y());
 	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY,
 	    frame);
-
-	m_base->rebuild(); // Rebuild velocityEditor as well
 }
 
 /* -------------------------------------------------------------------------- */
@@ -230,8 +228,6 @@ void gePianoRoll::onAddAction()
 void gePianoRoll::onDeleteAction()
 {
 	c::actionEditor::deleteMidiAction(m_data->channelId, m_action->a1);
-
-	m_base->rebuild(); // Rebuild velocityEditor as well
 }
 
 /* -------------------------------------------------------------------------- */
@@ -322,8 +318,6 @@ void gePianoRoll::onRefreshAction()
 	int velocity = m_action->a1.event.getVelocity();
 
 	ca::updateMidiAction(m_data->channelId, m_action->a1, note, velocity, f1, f2);
-
-	m_base->rebuild(); // Rebuild velocityEditor as well
 }
 
 /* -------------------------------------------------------------------------- */
