@@ -186,7 +186,7 @@ Frame SamplePlayer::stop(mcl::AudioBuffer& buf, Frame offset) const
 
 /* -------------------------------------------------------------------------- */
 
-void SamplePlayer::loadWave(ChannelShared& shared, Wave* w)
+void SamplePlayer::loadWave(ChannelShared& shared, Wave* w, Frame newBegin, Frame newEnd, Frame newShift)
 {
 	waveReader.wave = w;
 
@@ -194,7 +194,14 @@ void SamplePlayer::loadWave(ChannelShared& shared, Wave* w)
 	shared.playStatus.store(w != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
 	shift = 0;
 	begin = 0;
-	end   = w != nullptr ? w->getBuffer().countFrames() - 1 : 0;
+	end   = 0;
+
+	if (w != nullptr)
+	{
+		shift = newShift == -1 ? 0 : newShift;
+		begin = newBegin == -1 ? 0 : newBegin;
+		end   = newEnd == -1 ? w->getBuffer().countFrames() - 1 : newEnd;
+	}
 }
 
 /* -------------------------------------------------------------------------- */

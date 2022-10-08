@@ -118,9 +118,12 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 
 	if (oldChannel.samplePlayer && oldChannel.samplePlayer->hasWave())
 	{
-		const Wave& oldWave = *oldChannel.samplePlayer->getWave();
+		const Wave& oldWave  = *oldChannel.samplePlayer->getWave();
+		const Frame oldShift = oldChannel.samplePlayer->shift;
+		const Frame oldBegin = oldChannel.samplePlayer->begin;
+		const Frame oldEnd   = oldChannel.samplePlayer->end;
 		m_model.addShared(m_waveManager.createFromWave(oldWave));
-		loadSampleChannel(newChannel, &m_model.backShared<Wave>());
+		loadSampleChannel(newChannel, &m_model.backShared<Wave>(), oldBegin, oldEnd, oldShift);
 	}
 
 	newChannel.plugins = plugins;
@@ -294,9 +297,9 @@ bool ChannelManager::forAnyChannel(std::function<bool(const Channel&)> f) const
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::loadSampleChannel(Channel& ch, Wave* w) const
+void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, Frame begin, Frame end, Frame shift) const
 {
-	ch.samplePlayer->loadWave(*ch.shared, w);
+	ch.samplePlayer->loadWave(*ch.shared, w, begin, end, shift);
 	ch.name = w != nullptr ? w->getBasename(/*ext=*/false) : "";
 }
 

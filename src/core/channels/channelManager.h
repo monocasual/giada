@@ -142,7 +142,7 @@ public:
 	std::function<std::unique_ptr<Wave>(Frame)> onChannelRecorded;
 
 private:
-	void loadSampleChannel(Channel&, Wave*) const;
+	void loadSampleChannel(Channel&, Wave*, Frame begin = -1, Frame end = -1, Frame shift = -1) const;
 
 	/* getColumn
 	Returns all channels that belongs to column 'columnId'. Read-only. */

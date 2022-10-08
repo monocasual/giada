@@ -79,9 +79,9 @@ public:
 
 	/* loadWave
 	Loads Wave and sets it up (name, markers, ...). Also updates Channel's shared
-	state accordingly. */
+	state accordingly. Resets begin/end points shift if not specified. */
 
-	void loadWave(ChannelShared&, Wave*);
+	void loadWave(ChannelShared&, Wave*, Frame begin = -1, Frame end = -1, Frame shift = -1);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The
