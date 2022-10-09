@@ -83,6 +83,9 @@ ChannelStatus MidiController::press(ChannelStatus playStatus) const
 		break;
 
 	case ChannelStatus::ENDING:
+		playStatus = ChannelStatus::PLAY;
+		break;
+
 	case ChannelStatus::WAIT:
 		playStatus = ChannelStatus::OFF;
 		break;
