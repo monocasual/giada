@@ -79,6 +79,8 @@ void SampleReactor::react(ID channelId, ChannelShared& shared, const EventDispat
 		const ChannelStatus playStatus = shared.playStatus.load();
 		if (playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING)
 			stop(shared);
+		if (mode == SamplePlayerMode::SINGLE_BASIC_PAUSE)
+			shared.tracker.store(0); // Hard rewind
 		break;
 	}
 	case EventDispatcher::EventType::SEQUENCER_STOP:
