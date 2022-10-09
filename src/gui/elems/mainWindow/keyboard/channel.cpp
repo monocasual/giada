@@ -121,18 +121,14 @@ bool geChannel::handleKey(int e)
 	if (Fl::event_key() != m_channel.key)
 		return false;
 
-	if (e == FL_KEYDOWN && !playButton->getValue())
-	{                             // Key not already pressed
-		playButton->take_focus(); // Move focus to this playButton
-		playButton->setValue(true);
+	if (e == FL_KEYDOWN)
+	{
+		playButton->take_focus(); // Move focus to this button
 		return true;
 	}
 
 	if (e == FL_KEYUP)
-	{
-		playButton->setValue(true);
 		return true;
-	}
 
 	return false;
 }
