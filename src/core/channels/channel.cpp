@@ -203,6 +203,9 @@ Channel& Channel::operator=(const Channel& other)
 	sampleActionRecorder = other.sampleActionRecorder;
 	midiActionRecorder   = other.midiActionRecorder;
 
+	if (samplePlayer)
+		samplePlayer->waveReader.setResampler(&shared->resampler.value());
+
 	initCallbacks();
 
 	return *this;

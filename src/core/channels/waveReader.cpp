@@ -95,4 +95,11 @@ void WaveReader::last() const
 	if (m_resampler != nullptr)
 		m_resampler->last();
 }
+
+/* -------------------------------------------------------------------------- */
+
+void WaveReader::setResampler(Resampler* r)
+{
+	m_resampler = r;
+}
 } // namespace giada::m

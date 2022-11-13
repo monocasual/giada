@@ -69,6 +69,12 @@ public:
 
 	void last() const;
 
+	/* setResampler
+	Sets a pointer to another Resampler object. Might be needed when copy-assigning
+	objects containing this class. */
+
+	void setResampler(Resampler*);
+
 	/* wave
 	Wave object. Might be null if the channel has no sample. */
 
