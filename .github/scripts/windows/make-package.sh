@@ -2,6 +2,13 @@
 
 set -e
 
+if [ -z "$1" ]; then
+    echo "Usage: make-package.sh [release-version]"
+    exit 1
+fi
+
+RELEASE_VERSION=$1
+
 echo "Create working dirs"
 
 mkdir dist
@@ -12,8 +19,5 @@ echo "Copy binary and dll files to temp/"
 cp build/Release/giada.exe build/Release/*.dll temp/
 
 echo "Make zip archive, save it to to dist/"
-
-# Note: $RELEASE_VERSION is an environment variable set in the
-# packaging.yml script.
 
 7z a -tzip dist/giada-$RELEASE_VERSION-x86_64-windows.zip ./temp/*

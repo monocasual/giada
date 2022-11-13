@@ -2,6 +2,13 @@
 
 set -e
 
+if [ -z "$1" ]; then
+    echo "Usage: make-package.sh [release-version]"
+    exit 1
+fi
+
+RELEASE_VERSION=$1
+
 echo "Create working dirs"
 
 mkdir dist
@@ -55,9 +62,6 @@ echo "Copy icon (.icns)"
 cp extras/giada.icns temp/giada.app/Contents/Resources/
 
 echo "Copy final bundle to dist/, zip it and clean it up"
-
-# Note: $RELEASE_VERSION is an environment variable set in the
-# packaging.yml script.
 
 cp -r temp/giada.app dist/
 cd dist

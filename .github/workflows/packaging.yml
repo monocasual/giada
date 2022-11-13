@@ -34,9 +34,6 @@ jobs:
     timeout-minutes: 60
     needs: create-release
     steps:
-      - name: Prepare RELEASE_VERSION env variable
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-
       - name: Download repository
         uses: actions/checkout@v2
         with:
@@ -52,7 +49,7 @@ jobs:
         run: cmake --build build/ -j 2
 
       - name: Make package
-        run: bash ./.github/scripts/linux/make-package.sh
+        run: bash ./.github/scripts/linux/make-package.sh ${{ github.ref_name }}
 
       - name: Upload release
         id: upload-release-asset
@@ -61,8 +58,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: dist/Giada-${{ env.RELEASE_VERSION }}-x86_64.AppImage
-          asset_name: Giada-${{ env.RELEASE_VERSION }}-x86_64.AppImage
+          asset_path: dist/Giada-${{ github.ref_name }}-x86_64.AppImage
+          asset_name: Giada-${{ github.ref_name }}-x86_64.AppImage
           asset_content_type: application/x-executable
 
   # Windows --------------------------------------------------------------------
@@ -72,10 +69,6 @@ jobs:
     timeout-minutes: 60
     needs: create-release
     steps:
-      - name: Prepare RELEASE_VERSION env variable
-        shell: bash
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-
       - name: Download repository
         uses: actions/checkout@v2
         with:
@@ -94,7 +87,7 @@ jobs:
         run: cmake --build build/ --config Release -j 2
 
       - name: Make package
-        run: bash ./.github/scripts/windows/make-package.sh
+        run: bash ./.github/scripts/windows/make-package.sh ${{ github.ref_name }}
 
       - name: Upload release
         id: upload-release-asset
@@ -103,8 +96,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: dist/giada-${{ env.RELEASE_VERSION }}-x86_64-windows.zip
-          asset_name: giada-${{ env.RELEASE_VERSION }}-x86_64-windows.zip
+          asset_path: dist/giada-${{ github.ref_name }}-x86_64-windows.zip
+          asset_name: giada-${{ github.ref_name }}-x86_64-windows.zip
           asset_content_type: application/zip
 
   # macOS ----------------------------------------------------------------------
@@ -114,9 +107,6 @@ jobs:
     timeout-minutes: 60
     needs: create-release
     steps:
-      - name: Prepare RELEASE_VERSION env variable
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-
       - name: Download repository
         uses: actions/checkout@v2
         with:
@@ -129,7 +119,7 @@ jobs:
         run: cmake --build build/ --config Release -j 2
 
       - name: Make package
-        run: bash ./.github/scripts/macos/make-package.sh
+        run: bash ./.github/scripts/macos/make-package.sh ${{ github.ref_name }}
 
       - name: Upload release
         id: upload-release-asset
@@ -138,6 +128,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: dist/giada-${{ env.RELEASE_VERSION }}-x86_64-macos.zip
-          asset_name: giada-${{ env.RELEASE_VERSION }}-x86_64-macos.zip
+          asset_path: dist/giada-${{ github.ref_name }}-x86_64-macos.zip
+          asset_name: giada-${{ github.ref_name }}-x86_64-macos.zip
           asset_content_type: application/zip

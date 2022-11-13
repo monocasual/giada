@@ -2,6 +2,13 @@
 
 set -e
 
+if [ -z "$1" ]; then
+    echo "Usage: make-package.sh [release-version]"
+    exit 1
+fi
+
+RELEASE_VERSION=$1
+
 echo "Create working dirs"
 
 mkdir dist
@@ -34,8 +41,7 @@ mv extras/giada-logo.svg temp/giada.svg
 
 # Run linuxdeploy to make the AppImage, then move it to dist/ dir. 
 # For some reason linuxdeploy uses the commit hash in the filename, so
-# rename it first. Note: $RELEASE_VERSION is an environment variable set in the
-# packaging.yml script.
+# rename it first.
 
 ./linuxdeploy-x86_64.AppImage -e temp/giada -d temp/giada.desktop -i temp/giada.svg --output appimage --appdir temp/
 mv Giada-*-x86_64.AppImage Giada-$RELEASE_VERSION-x86_64.AppImage 
