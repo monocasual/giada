@@ -184,6 +184,7 @@ void setBpm(float f)
 		return;
 
 	g_engine.sequencer.setBpm(f, g_engine.kernelAudio.getSampleRate());
+	g_engine.updateMixerModel();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -197,6 +198,7 @@ void setBeats(int beats, int bars)
 
 	g_engine.sequencer.setBeats(beats, bars, g_engine.kernelAudio.getSampleRate());
 	g_engine.mixer.allocRecBuffer(g_engine.sequencer.getMaxFramesInLoop(g_engine.kernelAudio.getSampleRate()));
+	g_engine.updateMixerModel();
 }
 
 /* -------------------------------------------------------------------------- */
