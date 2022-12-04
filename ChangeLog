@@ -11,7 +11,7 @@
 --------------------------------------------------------------------------------
 
 
-0.23.1 --- 2022 . 12 . 05
+0.23.2 --- 2022 . 12 . 05
 - 'Kill channel' action now rewinds channels in SINGLE_BASIC_PAUSE mode (#599)
 - Update FLTK to latest commit available
 - Fix audio recording always getting trimmed to 4 beats (#613)
