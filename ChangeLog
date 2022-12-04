@@ -11,6 +11,16 @@
 --------------------------------------------------------------------------------
 
 
+0.23.1 --- 2022 . 12 . 05
+- 'Kill channel' action now rewinds channels in SINGLE_BASIC_PAUSE mode (#599)
+- Update FLTK to latest commit available
+- Fix audio recording always getting trimmed to 4 beats (#613)
+- Fix weird noise when playing two cloned Sample Channels with altered pitch (#602)
+- Fix MIDI channel behavior when key is pressed and channel has ENDING state
+- Fix channel's keyboard triggering not working
+- Fix missing begin/end points and shift value when cloning Sample channels (#601)
+
+
 0.23.0 --- 2022 . 09 . 18
 - Moveable channels between columns
 - Initial LV2 plug-ins support, thanks to JUCE v7.0.1
