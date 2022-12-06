@@ -36,15 +36,17 @@ namespace giada
 class Worker
 {
 public:
-	Worker();
+	Worker(int sleep);
 	~Worker();
 
-	void start(std::function<void()> f, int sleep);
+	void start(std::function<void()>);
 	void stop();
+	void setSleep(int sleep);
 
-  private:
+private:
 	std::thread       m_thread;
 	std::atomic<bool> m_running;
+	int               m_sleep;
 };
 } // namespace giada
 

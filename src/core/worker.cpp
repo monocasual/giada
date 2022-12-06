@@ -29,8 +29,9 @@
 
 namespace giada
 {
-Worker::Worker()
+Worker::Worker(int sleep)
 : m_running(false)
+, m_sleep(sleep)
 {
 }
 
@@ -43,14 +44,14 @@ Worker::~Worker()
 
 /* -------------------------------------------------------------------------- */
 
-void Worker::start(std::function<void()> f, int sleep)
+void Worker::start(std::function<void()> f)
 {
 	m_running.store(true);
-	m_thread = std::thread([this, f, sleep]() {
+	m_thread = std::thread([this, f]() {
 		while (m_running.load() == true)
 		{
 			f();
-			u::time::sleep(sleep);
+			u::time::sleep(m_sleep);
 		}
 	});
 }
@@ -62,5 +63,12 @@ void Worker::stop()
 	m_running.store(false);
 	if (m_thread.joinable())
 		m_thread.join();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Worker::setSleep(int sleep)
+{
+	m_sleep = sleep;
 }
 } // namespace giada

@@ -31,7 +31,8 @@
 namespace giada::m
 {
 EventDispatcher::EventDispatcher()
-: m_eventQueue(G_MAX_DISPATCHER_EVENTS)
+: m_worker(G_EVENT_DISPATCHER_RATE_MS)
+, m_eventQueue(G_MAX_DISPATCHER_EVENTS)
 {
 }
 
@@ -39,7 +40,7 @@ EventDispatcher::EventDispatcher()
 
 void EventDispatcher::start()
 {
-	m_worker.start([this]() { process(); }, /*sleep=*/G_EVENT_DISPATCHER_RATE_MS);
+	m_worker.start([this]() { process(); });
 }
 
 /* -------------------------------------------------------------------------- */
