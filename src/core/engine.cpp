@@ -196,6 +196,7 @@ void Engine::init()
 	midiMapper.sendInitMessages(midiMapper.currentMap);
 
 	eventDispatcher.start();
+	kernelMidi.start();
 
 	updateMixerModel();
 }

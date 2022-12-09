@@ -37,8 +37,9 @@ namespace giada::m
 {
 namespace
 {
-constexpr auto OUTPUT_NAME = "Giada MIDI output";
-constexpr auto INPUT_NAME  = "Giada MIDI input";
+constexpr auto OUTPUT_NAME       = "Giada MIDI output";
+constexpr auto INPUT_NAME        = "Giada MIDI input";
+constexpr int  MAX_RTMIDI_EVENTS = 32;
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -47,8 +48,23 @@ constexpr auto INPUT_NAME  = "Giada MIDI input";
 
 KernelMidi::KernelMidi()
 : onMidiReceived(nullptr)
+, m_worker(G_KERNEL_MIDI_OUTPUT_RATE_MS)
+, m_midiQueue(MAX_RTMIDI_EVENTS)
 , m_elpsedTime(0.0)
 {
+}
+
+/* -------------------------------------------------------------------------- */
+
+void KernelMidi::start()
+{
+	if (m_midiOut == nullptr)
+		return;
+	m_worker.start([this]() {
+		RtMidiMessage msg;
+		while (m_midiQueue.try_dequeue(msg))
+			m_midiOut->sendMessage(&msg);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -118,14 +134,14 @@ std::string KernelMidi::getInPortName(unsigned p) const { return getPortName(*m_
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::send(const MidiEvent& event) const
+bool KernelMidi::send(const MidiEvent& event) const
 {
 	if (m_midiOut == nullptr)
-		return;
+		return false;
 
-	assert(event.getNumBytes() > 0);
+	assert(event.getNumBytes() > 0 && event.getNumBytes() <= 3);
 
-	std::vector<unsigned char> msg;
+	RtMidiMessage msg;
 	if (event.getNumBytes() == 1)
 		msg = {event.getByte1()};
 	else if (event.getNumBytes() == 2)
@@ -133,9 +149,9 @@ void KernelMidi::send(const MidiEvent& event) const
 	else
 		msg = {event.getByte1(), event.getByte2(), event.getByte3()};
 
-	const_cast<KernelMidi*>(this)->m_midiOut->sendMessage(&msg);
-
 	G_DEBUG("Send MIDI msg=0x{:0X}", event.getRaw());
+
+	return m_midiQueue.try_enqueue(msg);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -145,14 +161,14 @@ unsigned KernelMidi::countInPorts() const { return m_midiIn != nullptr ? m_midiI
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::s_callback(double deltatime, std::vector<unsigned char>* msg, void* data)
+void KernelMidi::s_callback(double deltatime, RtMidiMessage* msg, void* data)
 {
 	static_cast<KernelMidi*>(data)->callback(deltatime, msg);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::callback(double deltatime, std::vector<unsigned char>* msg)
+void KernelMidi::callback(double deltatime, RtMidiMessage* msg)
 {
 	assert(onMidiReceived != nullptr);
 	assert(msg->size() > 0);

@@ -27,6 +27,8 @@
 #ifndef G_KERNELMIDI_H
 #define G_KERNELMIDI_H
 
+#include "core/worker.h"
+#include "deps/concurrentqueue/concurrentqueue.h"
 #include "midiMapper.h"
 #include <RtMidi.h>
 #include <cstdint>
@@ -56,9 +58,15 @@ public:
 	bool hasAPI(RtMidi::Api API) const;
 
 	/* send
-    Sends a MIDI message to the outside world. */
+    Sends a MIDI message to the outside world. Returns false if MIDI out is not
+	enabled or the internal queue is full. */
 
-	void send(const MidiEvent&) const;
+	bool send(const MidiEvent&) const;
+
+	/* start
+	Starts the internal worker on a separate thread. Call this on startup. */
+
+	void start();
 
 	bool openOutDevice(RtMidi::Api api, int port);
 	bool openInDevice(RtMidi::Api api, int port);
@@ -68,8 +76,10 @@ public:
 	std::function<void(const MidiEvent&)> onMidiReceived;
 
 private:
-	static void s_callback(double, std::vector<unsigned char>*, void*);
-	void        callback(double, std::vector<unsigned char>*);
+	using RtMidiMessage = std::vector<unsigned char>;
+
+	static void s_callback(double, RtMidiMessage*, void*);
+	void        callback(double, RtMidiMessage*);
 
 	template <typename Device>
 	std::unique_ptr<Device> makeDevice(RtMidi::Api api, std::string name) const;
@@ -81,6 +91,17 @@ private:
 
 	std::unique_ptr<RtMidiOut> m_midiOut;
 	std::unique_ptr<RtMidiIn>  m_midiIn;
+
+	/* m_worker
+	A separate thread responsible for the MIDI output, so that multiple threads
+	can access the output device simultaneously. */
+
+	Worker m_worker;
+
+	/* m_midiQueue
+	Collects MIDI messages to be sent to the outside world. */
+
+	mutable moodycamel::ConcurrentQueue<RtMidiMessage> m_midiQueue;
 
 	/* m_elpsedTime
 	Time elapsed on received MIDI events. Used to compute the absolute timestamp
