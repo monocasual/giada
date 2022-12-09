@@ -39,14 +39,14 @@ public:
 	Worker(int sleep);
 	~Worker();
 
-	void start(std::function<void()>);
-	void stop();
+	void start(std::function<void()>) const;
+	void stop() const;
 	void setSleep(int sleep);
 
 private:
-	std::thread       m_thread;
-	std::atomic<bool> m_running;
-	int               m_sleep;
+	mutable std::thread       m_thread;
+	mutable std::atomic<bool> m_running;
+	int                       m_sleep;
 };
 } // namespace giada
 

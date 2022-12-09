@@ -44,7 +44,7 @@ Worker::~Worker()
 
 /* -------------------------------------------------------------------------- */
 
-void Worker::start(std::function<void()> f)
+void Worker::start(std::function<void()> f) const
 {
 	m_running.store(true);
 	m_thread = std::thread([this, f]() {
@@ -58,7 +58,7 @@ void Worker::start(std::function<void()> f)
 
 /* -------------------------------------------------------------------------- */
 
-void Worker::stop()
+void Worker::stop() const
 {
 	m_running.store(false);
 	if (m_thread.joinable())
