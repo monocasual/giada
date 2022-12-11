@@ -192,11 +192,11 @@ void Engine::init()
 	kernelMidi.openOutDevice(conf.data.midiSystem, conf.data.midiPortOut);
 	kernelMidi.openInDevice(conf.data.midiSystem, conf.data.midiPortIn);
 	kernelMidi.logPorts();
+	kernelMidi.start();
 
 	midiMapper.sendInitMessages(midiMapper.currentMap);
-
 	eventDispatcher.start();
-	kernelMidi.start();
+	midiSynchronizer.startSendClock(G_DEFAULT_BPM);
 
 	updateMixerModel();
 }
@@ -372,6 +372,12 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 
 	progress(0.0f);
 
+	/* Suspend MIDI clock output (if enabled). */
+
+	midiSynchronizer.stopSendClock();
+
+	/* Read the selected project's patch. */
+
 	patch.reset();
 	if (int res = patch.read(patchPath, projectPath); res != G_FILE_OK)
 		return {res};
@@ -405,6 +411,10 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 	/* Mixer is ready to go back online. */
 
 	mixer.enable();
+
+	/* Restore MIDI clock output. */
+
+	midiSynchronizer.startSendClock(model.get().sequencer.bpm);
 
 	progress(1.0f);
 

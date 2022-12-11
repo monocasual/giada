@@ -214,6 +214,7 @@ void setBpm(float v)
 	if (g_engine.mixer.isRecordingInput())
 		return;
 	g_engine.sequencer.setBpm(v, g_engine.kernelAudio.getSampleRate());
+	g_engine.midiSynchronizer.setClockBpm(v);
 	g_engine.updateMixerModel();
 }
 

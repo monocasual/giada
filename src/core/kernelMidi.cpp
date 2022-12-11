@@ -39,7 +39,7 @@ namespace
 {
 constexpr auto OUTPUT_NAME       = "Giada MIDI output";
 constexpr auto INPUT_NAME        = "Giada MIDI input";
-constexpr int  MAX_RTMIDI_EVENTS = 32;
+constexpr int  MAX_RTMIDI_EVENTS = 64;
 } // namespace
 
 /* -------------------------------------------------------------------------- */

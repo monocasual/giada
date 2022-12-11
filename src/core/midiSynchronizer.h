@@ -29,6 +29,7 @@
 
 #include "core/conf.h"
 #include "core/types.h"
+#include "core/worker.h"
 #include "deps/geompp/src/range.hpp"
 
 namespace giada::m::model
@@ -50,14 +51,18 @@ public:
 
 	void receive(const MidiEvent&, int numBeatsInLoop);
 
-	/* advance
-    Generates MIDI sync output data when needed. Call this on each audio block. */
+	/* startSendClock, stopSendClock
+	Sends MIDI clock data for synchronization with other MIDI devices. Valid only
+	when in MASTER mode. */
 
-	void advance(geompp::Range<Frame>, int framesInBeat);
+	void startSendClock(float bpm);
+	void stopSendClock() const;
 
 	void sendRewind();
 	void sendStart();
 	void sendStop();
+
+	void setClockBpm(float);
 
 private:
 	/* computeClock
@@ -73,6 +78,11 @@ private:
 
 	KernelMidi&       m_kernelMidi;
 	const Conf::Data& m_conf;
+
+	/* m_worker
+	A separate thread responsible for the MIDI Clock output. */
+
+	Worker m_worker;
 
 	double m_timeElapsed;
 	double m_lastTimestamp;

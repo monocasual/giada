@@ -39,6 +39,7 @@ namespace giada::m
 MidiSynchronizer::MidiSynchronizer(const Conf::Data& c, KernelMidi& k)
 : m_kernelMidi(k)
 , m_conf(c)
+, m_worker(1000) // Default sleep time, will be reset anyway on startSendClock()
 , m_timeElapsed(0.0)
 , m_lastTimestamp(0.0)
 , m_lastDelta(0.0)
@@ -86,22 +87,33 @@ void MidiSynchronizer::receive(const MidiEvent& e, int numBeatsInLoop)
 
 /* -------------------------------------------------------------------------- */
 
-void MidiSynchronizer::advance(geompp::Range<Frame> block, int framesInBeat)
+void MidiSynchronizer::startSendClock(float bpm)
 {
 	if (m_conf.midiSync != G_MIDI_SYNC_CLOCK_MASTER)
 		return;
 
-	/* A MIDI clock event (MIDI_CLOCK) is sent 24 times per quarter note, that 
-	is 24 times per beat. This is tempo-relative, since the tempo defines the 
-	length of a quarter note (aka frames in beat) and so the duration of each 
-	pulse. Faster tempo -> faster MIDI_CLOCK events stream. */
+	setClockBpm(bpm);
+	const MidiEvent clockEvent = MidiEvent::makeFrom1Byte(MidiEvent::SYSTEM_CLOCK);
 
-	const int rate = framesInBeat / 24.0;
-	for (Frame frame = block.a; frame < block.b; frame++)
-	{
-		if (frame % rate == 0)
-			m_kernelMidi.send(MidiEvent::makeFrom1Byte(MidiEvent::SYSTEM_CLOCK));
-	}
+	m_worker.start([this, clockEvent]() {
+		if (!m_kernelMidi.send(clockEvent))
+			G_DEBUG("KernelMidi queue full!");
+	});
+}
+
+void MidiSynchronizer::stopSendClock() const
+{
+	if (m_conf.midiSync != G_MIDI_SYNC_CLOCK_MASTER)
+		return;
+	m_worker.stop();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MidiSynchronizer::setClockBpm(float bpm)
+{
+	const float rateMs = 60000.0 / (24.0 * bpm);
+	m_worker.setSleep(rateMs);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -162,7 +162,6 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	sequencer.a_setCurrentFrame(nextFrame, sampleRate);
 	m_quantizer.advance(Range<Frame>(start, end), getQuantizerStep());
-	m_midiSynchronizer.advance(geompp::Range<Frame>(start, end), sequencer.framesInBeat);
 
 	return m_eventBuffer;
 }
