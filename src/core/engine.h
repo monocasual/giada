@@ -31,6 +31,7 @@
 #include "core/actions/actions.h"
 #include "core/channels/channelFactory.h"
 #include "core/channels/channelManager.h"
+#include "core/channelsEngine.h"
 #include "core/conf.h"
 #include "core/eventDispatcher.h"
 #include "core/init.h"
@@ -115,6 +116,11 @@ public:
 
 	MainEngine& getMainEngine();
 
+	/* getChannelsEngine
+	Return a reference to ChannelsEngine, responsible for the channels API. */
+
+	ChannelsEngine& getChannelsEngine();
+
 	model::Model           model;
 	Conf                   conf;
 	Patch                  patch;
@@ -141,7 +147,8 @@ public:
 private:
 	int audioCallback(KernelAudio::CallbackInfo) const;
 
-	MainEngine m_mainEngine;
+	MainEngine     m_mainEngine;
+	ChannelsEngine m_channelsEngine;
 };
 } // namespace giada::m
 
