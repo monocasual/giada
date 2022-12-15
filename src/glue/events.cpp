@@ -186,14 +186,14 @@ void sendMidiToChannel(ID channelId, m::MidiEvent e, Thread t)
 
 void toggleMetronome()
 {
-	g_engine.sequencer.toggleMetronome();
+	g_engine.getMainEngine().toggleMetronome();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setMasterInVolume(float v, Thread t)
 {
-	g_engine.channelManager.setVolume(m::Mixer::MASTER_IN_CHANNEL_ID, v);
+	g_engine.getMainEngine().setMasterInVolume(v);
 
 	if (t != Thread::MAIN)
 		g_ui.pumpEvent([v]() { g_ui.mainWindow->mainIO->setInVol(v); });
@@ -201,7 +201,7 @@ void setMasterInVolume(float v, Thread t)
 
 void setMasterOutVolume(float v, Thread t)
 {
-	g_engine.channelManager.setVolume(m::Mixer::MASTER_OUT_CHANNEL_ID, v);
+	g_engine.getMainEngine().setMasterOutVolume(v);
 
 	if (t != Thread::MAIN)
 		g_ui.pumpEvent([v]() { g_ui.mainWindow->mainIO->setOutVol(v); });
@@ -209,84 +209,30 @@ void setMasterOutVolume(float v, Thread t)
 
 /* -------------------------------------------------------------------------- */
 
-void setBpm(float v)
-{
-	g_engine.setBpm(v);
-}
+void setBpm(float v) { g_engine.getMainEngine().setBpm(v); }
 
 /* -------------------------------------------------------------------------- */
 
-void multiplyBeats()
-{
-	main::setBeats(g_engine.sequencer.getBeats() * 2, g_engine.sequencer.getBars());
-}
-
-void divideBeats()
-{
-	main::setBeats(g_engine.sequencer.getBeats() / 2, g_engine.sequencer.getBars());
-}
+void multiplyBeats() { g_engine.getMainEngine().multiplyBeats(); }
+void divideBeats() { g_engine.getMainEngine().divideBeats(); }
 
 /* -------------------------------------------------------------------------- */
 
-void goToBeat(int beat)
-{
-	g_engine.goToBeat(beat);
-}
+void goToBeat(int beat) { g_engine.getMainEngine().goToBeat(beat); }
 
 /* -------------------------------------------------------------------------- */
 
-void startSequencer() { g_engine.startSequencer(); }
-void stopSequencer() { g_engine.stopSequencer(); }
-void toggleSequencer() { g_engine.toggleSequencer(); }
-void rewindSequencer() { g_engine.rewindSequencer(); }
+void startSequencer() { g_engine.getMainEngine().startSequencer(); }
+void stopSequencer() { g_engine.getMainEngine().stopSequencer(); }
+void toggleSequencer() { g_engine.getMainEngine().toggleSequencer(); }
+void rewindSequencer() { g_engine.getMainEngine().rewindSequencer(); }
 
 /* -------------------------------------------------------------------------- */
 
-void prepareActionRecording()
-{
-	g_engine.recorder.prepareActionRec(g_engine.conf.data.recTriggerMode);
-}
-
-void stopActionRecording()
-{
-	if (g_engine.mixer.isRecordingActions())
-		g_engine.recorder.stopActionRec();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void prepareInputRecording()
-{
-	g_engine.recorder.prepareInputRec(g_engine.conf.data.recTriggerMode, g_engine.conf.data.inputRecMode);
-}
-
-void stopInputRecording()
-{
-	if (g_engine.mixer.isRecordingInput())
-		g_engine.recorder.stopInputRec(g_engine.conf.data.inputRecMode, g_engine.kernelAudio.getSampleRate());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void toggleActionRecording()
-{
-	if (g_engine.mixer.isRecordingActions())
-		g_engine.recorder.stopActionRec();
-	else
-		g_engine.recorder.prepareActionRec(g_engine.conf.data.recTriggerMode);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void toggleInputRecording()
-{
-	if (!g_engine.kernelAudio.isInputEnabled() || !g_engine.channelManager.hasInputRecordableChannels())
-		return;
-	if (g_engine.mixer.isRecordingInput())
-		g_engine.recorder.stopInputRec(g_engine.conf.data.inputRecMode, g_engine.kernelAudio.getSampleRate());
-	else
-		g_engine.recorder.prepareInputRec(g_engine.conf.data.recTriggerMode, g_engine.conf.data.inputRecMode);
-}
+void stopActionRecording() { g_engine.getMainEngine().stopActionRecording(); }
+void stopInputRecording() { g_engine.getMainEngine().stopInputRecording(); }
+void toggleActionRecording() { g_engine.getMainEngine().toggleActionRecording(); }
+void toggleInputRecording() { g_engine.getMainEngine().toggleInputRecording(); }
 
 /* -------------------------------------------------------------------------- */
 

@@ -165,22 +165,14 @@ MainMenu getMainMenu()
 
 void setBeats(int beats, int bars)
 {
-	if (g_engine.mixer.isRecordingInput())
-		return;
-
-	const int sampleRate      = g_engine.kernelAudio.getSampleRate();
-	const int maxFramesInLoop = g_engine.sequencer.getMaxFramesInLoop(sampleRate);
-
-	g_engine.sequencer.setBeats(beats, bars, sampleRate);
-	g_engine.mixer.allocRecBuffer(maxFramesInLoop);
-	g_engine.updateMixerModel();
+	g_engine.getMainEngine().setBeats(beats, bars);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void quantize(int val)
 {
-	g_engine.sequencer.setQuantize(val, g_engine.kernelAudio.getSampleRate());
+	g_engine.getMainEngine().setQuantize(val);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -214,29 +206,21 @@ void clearAllActions()
 
 void setInToOut(bool v)
 {
-	g_engine.mixer.setInToOut(v);
+	g_engine.getMainEngine().setInToOut(v);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void toggleRecOnSignal()
 {
-	if (!g_engine.recorder.canEnableRecOnSignal())
-		g_engine.conf.data.recTriggerMode = RecTriggerMode::NORMAL;
-	else
-		g_engine.conf.data.recTriggerMode = g_engine.conf.data.recTriggerMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
-	g_engine.updateMixerModel();
+	g_engine.getMainEngine().toggleRecOnSignal();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void toggleFreeInputRec()
 {
-	if (!g_engine.recorder.canEnableFreeInputRec())
-		g_engine.conf.data.inputRecMode = InputRecMode::RIGID;
-	else
-		g_engine.conf.data.inputRecMode = g_engine.conf.data.inputRecMode == InputRecMode::FREE ? InputRecMode::RIGID : InputRecMode::FREE;
-	g_engine.updateMixerModel();
+	g_engine.getMainEngine().toggleFreeInputRec();
 }
 
 /* -------------------------------------------------------------------------- */

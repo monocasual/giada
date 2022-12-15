@@ -35,6 +35,7 @@ list(APPEND SOURCES
 	src/main.cpp
 	src/mapper.cpp
 	src/core/engine.cpp
+	src/core/mainEngine.cpp
 	src/core/worker.cpp
 	src/core/eventDispatcher.cpp
 	src/core/midiDispatcher.cpp

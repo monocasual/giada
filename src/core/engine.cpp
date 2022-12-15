@@ -54,6 +54,7 @@ Engine::Engine()
 , mixer(model)
 , recorder(sequencer, channelManager, mixer, actionRecorder)
 , pluginHost(model)
+, m_mainEngine(*this, kernelAudio, mixer, sequencer, midiSynchronizer, channelManager, recorder)
 {
 	kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -74,16 +75,16 @@ Engine::Engine()
 	};
 
 	midiSynchronizer.onChangePosition = [this](int beat) {
-		goToBeat(beat);
+		m_mainEngine.goToBeat(beat);
 	};
 	midiSynchronizer.onChangeBpm = [this](float bpm) {
-		setBpm(bpm);
+		m_mainEngine.setBpm(bpm);
 	};
 	midiSynchronizer.onStart = [this]() {
-		startSequencer();
+		m_mainEngine.startSequencer();
 	};
 	midiSynchronizer.onStop = [this]() {
-		stopSequencer();
+		m_mainEngine.stopSequencer();
 	};
 
 	/* The following JackSynchronizer and Mixer callbacks are all fired by the
@@ -437,43 +438,5 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 
 /* -------------------------------------------------------------------------- */
 
-void Engine::setBpm(float bpm)
-{
-	if (mixer.isRecordingInput())
-		return;
-	sequencer.setBpm(bpm, kernelAudio.getSampleRate());
-	midiSynchronizer.setClockBpm(bpm);
-	updateMixerModel();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Engine::goToBeat(int beat)
-{
-	sequencer.goToBeat(beat, kernelAudio.getSampleRate());
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Engine::startSequencer()
-{
-	sequencer.start();
-}
-
-void Engine::stopSequencer()
-{
-	sequencer.stop();
-	channelManager.stopAll();
-}
-
-void Engine::toggleSequencer()
-{
-	sequencer.isRunning() ? stopSequencer() : startSequencer();
-}
-
-void Engine::rewindSequencer()
-{
-	sequencer.rewind();
-	channelManager.rewindAll();
-}
+MainEngine& Engine::getMainEngine() { return m_mainEngine; }
 } // namespace giada::m

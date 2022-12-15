@@ -37,6 +37,7 @@
 #include "core/jackTransport.h"
 #include "core/kernelAudio.h"
 #include "core/kernelMidi.h"
+#include "core/mainEngine.h"
 #include "core/midiDispatcher.h"
 #include "core/midiMapper.h"
 #include "core/midiSynchronizer.h"
@@ -109,12 +110,10 @@ public:
 
 	void shutdown();
 
-	void setBpm(float);
-	void goToBeat(int);
-	void startSequencer();
-	void stopSequencer();
-	void toggleSequencer();
-	void rewindSequencer();
+	/* getMainEngine
+	Return a reference to MainEngine, responsible for the central component	API. */
+
+	MainEngine& getMainEngine();
 
 	model::Model           model;
 	Conf                   conf;
@@ -141,6 +140,8 @@ public:
 
 private:
 	int audioCallback(KernelAudio::CallbackInfo) const;
+
+	MainEngine m_mainEngine;
 };
 } // namespace giada::m
 
