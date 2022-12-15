@@ -64,6 +64,11 @@ public:
 
 	void setClockBpm(float);
 
+	std::function<void(int)>   onChangePosition;
+	std::function<void(float)> onChangeBpm;
+	std::function<void()>      onStart;
+	std::function<void()>      onStop;
+
 private:
 	/* computeClock
 	Computes the current bpm value and sends the corresponding event to the

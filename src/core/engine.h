@@ -109,6 +109,13 @@ public:
 
 	void shutdown();
 
+	void setBpm(float);
+	void goToBeat(int);
+	void startSequencer();
+	void stopSequencer();
+	void toggleSequencer();
+	void rewindSequencer();
+
 	model::Model           model;
 	Conf                   conf;
 	Patch                  patch;

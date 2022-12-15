@@ -211,11 +211,7 @@ void setMasterOutVolume(float v, Thread t)
 
 void setBpm(float v)
 {
-	if (g_engine.mixer.isRecordingInput())
-		return;
-	g_engine.sequencer.setBpm(v, g_engine.kernelAudio.getSampleRate());
-	g_engine.midiSynchronizer.setClockBpm(v);
-	g_engine.updateMixerModel();
+	g_engine.setBpm(v);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -234,32 +230,15 @@ void divideBeats()
 
 void goToBeat(int beat)
 {
-	g_engine.sequencer.goToBeat(beat, g_engine.kernelAudio.getSampleRate());
+	g_engine.goToBeat(beat);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void startSequencer()
-{
-	g_engine.sequencer.start();
-}
-
-void stopSequencer()
-{
-	g_engine.sequencer.stop();
-	g_engine.channelManager.stopAll(); // TODO - call it in sequencer.onStop
-}
-
-void toggleSequencer()
-{
-	g_engine.sequencer.isRunning() ? stopSequencer() : startSequencer();
-}
-
-void rewindSequencer()
-{
-	g_engine.sequencer.rewind();
-	g_engine.channelManager.rewindAll(); // TODO - call it in sequencer.onStop
-}
+void startSequencer() { g_engine.startSequencer(); }
+void stopSequencer() { g_engine.stopSequencer(); }
+void toggleSequencer() { g_engine.toggleSequencer(); }
+void rewindSequencer() { g_engine.rewindSequencer(); }
 
 /* -------------------------------------------------------------------------- */
 

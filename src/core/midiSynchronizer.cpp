@@ -29,7 +29,6 @@
 #include "core/kernelMidi.h"
 #include "core/midiEvent.h"
 #include "core/model/sequencer.h"
-#include "glue/events.h"
 #include "utils/log.h"
 #include "utils/time.h"
 #include <numeric>
@@ -37,7 +36,11 @@
 namespace giada::m
 {
 MidiSynchronizer::MidiSynchronizer(const Conf::Data& c, KernelMidi& k)
-: m_kernelMidi(k)
+: onChangePosition(nullptr)
+, onChangeBpm(nullptr)
+, onStart(nullptr)
+, onStop(nullptr)
+, m_kernelMidi(k)
 , m_conf(c)
 , m_worker(1000) // Default sleep time, will be reset anyway on startSendClock()
 , m_timeElapsed(0.0)
@@ -51,6 +54,9 @@ MidiSynchronizer::MidiSynchronizer(const Conf::Data& c, KernelMidi& k)
 
 void MidiSynchronizer::receive(const MidiEvent& e, int numBeatsInLoop)
 {
+	assert(onStart != nullptr);
+	assert(onStop != nullptr);
+
 	/* MidiSynchronizer, if working in SLAVE mode, can receive SYSTEM_* MIDI 
 	types. More specifically:
 		* SYSTEM_CLOCK - when another MIDI device sends CLOCK data to perform
@@ -69,11 +75,11 @@ void MidiSynchronizer::receive(const MidiEvent& e, int numBeatsInLoop)
 		break;
 
 	case MidiEvent::SYSTEM_START:
-		c::events::startSequencer();
+		onStart();
 		break;
 
 	case MidiEvent::SYSTEM_STOP:
-		c::events::stopSequencer();
+		onStop();
 		break;
 
 	case MidiEvent::SYSTEM_SPP:
@@ -147,6 +153,8 @@ void MidiSynchronizer::sendStop()
 
 void MidiSynchronizer::computeClock(double timestamp)
 {
+	assert(onChangeBpm != nullptr);
+
 	/* A MIDI clock event (SYSTEM_CLOCK) is sent 24 times per quarter note, that 
 	is 24 times per beat. This is tempo-relative, since the tempo defines the 
 	length of a quarter note (aka frames in beat) and so the duration of each 
@@ -192,7 +200,7 @@ void MidiSynchronizer::computeClock(double timestamp)
 
 	if (m_timeElapsed > BPM_CHANGE_FREQ)
 	{
-		c::events::setBpm(m_lastBpm);
+		onChangeBpm(m_lastBpm);
 		m_timeElapsed = 0;
 	}
 }
@@ -201,6 +209,8 @@ void MidiSynchronizer::computeClock(double timestamp)
 
 void MidiSynchronizer::computePosition(int sppPosition, int numBeatsInLoop)
 {
+	assert(onChangePosition != nullptr);
+
 	/* Each MIDI Beat spans 6 MIDI Clocks. In other words, each MIDI Beat is a 
 	16th note (since there are 24 MIDI Clocks in a quarter note).
 
@@ -209,6 +219,6 @@ void MidiSynchronizer::computePosition(int sppPosition, int numBeatsInLoop)
 
 	const int beat = (sppPosition / 4) % numBeatsInLoop;
 
-	c::events::goToBeat(beat);
+	onChangePosition(beat);
 }
 } // namespace giada::m

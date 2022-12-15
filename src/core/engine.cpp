@@ -73,6 +73,19 @@ Engine::Engine()
 		recorder.startActionRecOnCallback();
 	};
 
+	midiSynchronizer.onChangePosition = [this](int beat) {
+		goToBeat(beat);
+	};
+	midiSynchronizer.onChangeBpm = [this](float bpm) {
+		setBpm(bpm);
+	};
+	midiSynchronizer.onStart = [this]() {
+		startSequencer();
+	};
+	midiSynchronizer.onStop = [this]() {
+		stopSequencer();
+	};
+
 	/* The following JackSynchronizer and Mixer callbacks are all fired by the
 	realtime thread, so the actions are performed by pumping events into the 
 	Event Dispatcher, rather than invoking them directly. This is done on 
@@ -422,4 +435,45 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 	return state;
 }
 
+/* -------------------------------------------------------------------------- */
+
+void Engine::setBpm(float bpm)
+{
+	if (mixer.isRecordingInput())
+		return;
+	sequencer.setBpm(bpm, kernelAudio.getSampleRate());
+	midiSynchronizer.setClockBpm(bpm);
+	updateMixerModel();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Engine::goToBeat(int beat)
+{
+	sequencer.goToBeat(beat, kernelAudio.getSampleRate());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Engine::startSequencer()
+{
+	sequencer.start();
+}
+
+void Engine::stopSequencer()
+{
+	sequencer.stop();
+	channelManager.stopAll();
+}
+
+void Engine::toggleSequencer()
+{
+	sequencer.isRunning() ? stopSequencer() : startSequencer();
+}
+
+void Engine::rewindSequencer()
+{
+	sequencer.rewind();
+	channelManager.rewindAll();
+}
 } // namespace giada::m
