@@ -47,6 +47,7 @@
 #include "core/patch.h"
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
+#include "core/pluginsEngine.h"
 #include "core/recorder.h"
 #include "core/sequencer.h"
 #include "core/waveFactory.h"
@@ -121,6 +122,11 @@ public:
 
 	ChannelsEngine& getChannelsEngine();
 
+	/* getPluginsEngine
+	Return a reference to ChannelsEngine, responsible for the plug-ins API. */
+
+	PluginsEngine& getPluginsEngine();
+
 	model::Model           model;
 	Conf                   conf;
 	Patch                  patch;
@@ -149,6 +155,7 @@ private:
 
 	MainEngine     m_mainEngine;
 	ChannelsEngine m_channelsEngine;
+	PluginsEngine  m_pluginsEngine;
 };
 } // namespace giada::m
 

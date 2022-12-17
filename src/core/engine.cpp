@@ -56,6 +56,7 @@ Engine::Engine()
 , pluginHost(model)
 , m_mainEngine(*this, kernelAudio, mixer, sequencer, midiSynchronizer, channelManager, recorder)
 , m_channelsEngine(*this, kernelAudio, mixer, sequencer, midiSynchronizer, channelManager, recorder)
+, m_pluginsEngine(kernelAudio, channelManager, pluginManager, pluginHost, model)
 {
 	kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -441,4 +442,5 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 
 MainEngine&     Engine::getMainEngine() { return m_mainEngine; }
 ChannelsEngine& Engine::getChannelsEngine() { return m_channelsEngine; }
+PluginsEngine&  Engine::getPluginsEngine() { return m_pluginsEngine; }
 } // namespace giada::m

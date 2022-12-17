@@ -130,14 +130,14 @@ Param getParam(int index, const m::Plugin& plugin, ID channelId)
 
 std::vector<m::PluginManager::PluginInfo> getPluginsInfo()
 {
-	return g_engine.pluginManager.getPluginsInfo();
+	return g_engine.getPluginsEngine().getInfo();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void updateWindow(ID pluginId, Thread t)
 {
-	const m::Plugin* p = g_engine.model.findShared<m::Plugin>(pluginId);
+	const m::Plugin* p = g_engine.getPluginsEngine().get(pluginId);
 
 	assert(p != nullptr);
 
@@ -161,59 +161,35 @@ void updateWindow(ID pluginId, Thread t)
 
 void addPlugin(int pluginListIndex, ID channelId)
 {
-	/* Plug-in creation must be done in the main thread, due to JUCE and VST3
-	internal workings. */
-
-	if (pluginListIndex >= g_engine.pluginManager.countAvailablePlugins())
-		return;
-
-	const int sampleRate = g_engine.kernelAudio.getSampleRate();
-	const int bufferSize = g_engine.kernelAudio.getBufferSize();
-
-	std::unique_ptr<m::Plugin> plugin    = g_engine.pluginManager.makePlugin(pluginListIndex, sampleRate, bufferSize, g_engine.model.get().sequencer);
-	const m::Plugin*           pluginPtr = plugin.get();
-	if (plugin != nullptr)
-		g_engine.pluginHost.addPlugin(std::move(plugin));
-
-	/* TODO - unfortunately JUCE wants mutable plugin objects due to the 
-		presence of the non-const processBlock() method. Why not const_casting
-		only in the Plugin class? */
-	g_engine.model.get().getChannel(channelId).plugins.push_back(const_cast<m::Plugin*>(pluginPtr));
-	g_engine.model.swap(m::model::SwapType::HARD);
+	g_engine.getPluginsEngine().add(pluginListIndex, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId)
 {
-	g_engine.pluginHost.swapPlugin(p1, p2, g_engine.model.get().getChannel(channelId).plugins);
-	g_engine.model.swap(m::model::SwapType::HARD);
+	g_engine.getPluginsEngine().swap(p1, p2, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void sortPlugins(m::PluginManager::SortMethod method)
 {
-	g_engine.pluginManager.sortPlugins(method);
+	g_engine.getPluginsEngine().sort(method);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void freePlugin(const m::Plugin& plugin, ID channelId)
 {
-	/* Plug-in destruction must be done in the main thread, due to JUCE and 
-	VST3 internal workings. */
-
-	u::vector::remove(g_engine.model.get().getChannel(channelId).plugins, &plugin);
-	g_engine.model.swap(m::model::SwapType::HARD);
-	g_engine.pluginHost.freePlugin(plugin);
+	g_engine.getPluginsEngine().free(plugin, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setProgram(ID pluginId, int programIndex)
 {
-	g_engine.pluginHost.setPluginProgram(pluginId, programIndex);
+	g_engine.getPluginsEngine().setProgram(pluginId, programIndex);
 	updateWindow(pluginId, Thread::MAIN); // Only Main thread so far
 }
 
@@ -221,7 +197,7 @@ void setProgram(ID pluginId, int programIndex)
 
 void toggleBypass(ID pluginId)
 {
-	g_engine.pluginHost.toggleBypass(pluginId);
+	g_engine.getPluginsEngine().toggleBypass(pluginId);
 }
 
 /* -------------------------------------------------------------------------- */

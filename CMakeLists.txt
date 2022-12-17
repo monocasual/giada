@@ -37,6 +37,7 @@ list(APPEND SOURCES
 	src/core/engine.cpp
 	src/core/mainEngine.cpp
 	src/core/channelsEngine.cpp
+	src/core/pluginsEngine.cpp
 	src/core/worker.cpp
 	src/core/eventDispatcher.cpp
 	src/core/midiDispatcher.cpp

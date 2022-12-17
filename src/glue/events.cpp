@@ -210,7 +210,7 @@ void toggleInputRecording() { g_engine.getMainEngine().toggleInputRecording(); }
 
 void setPluginParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread t)
 {
-	g_engine.pluginHost.setPluginParameter(pluginId, paramIndex, value);
+	g_engine.getPluginsEngine().setParameter(pluginId, paramIndex, value);
 	notifyChannelForMidiIn_(t, channelId);
 
 	g_ui.pumpEvent([pluginId, t]() { c::plugin::updateWindow(pluginId, t); });
