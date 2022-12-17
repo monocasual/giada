@@ -33,12 +33,10 @@
 
 namespace giada::m
 {
-ChannelsEngine::ChannelsEngine(Engine& e, KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms, ChannelManager& cm, Recorder& r)
+ChannelsEngine::ChannelsEngine(Engine& e, Mixer& m, Sequencer& s, ChannelManager& cm, Recorder& r)
 : m_engine(e)
-, m_kernelAudio(ka)
 , m_mixer(m)
 , m_sequencer(s)
-, m_midiSynchronizer(ms)
 , m_channelManager(cm)
 , m_recorder(r)
 {

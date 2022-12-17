@@ -55,7 +55,7 @@ Engine::Engine()
 , recorder(sequencer, channelManager, mixer, actionRecorder)
 , pluginHost(model)
 , m_mainEngine(*this, kernelAudio, mixer, sequencer, midiSynchronizer, channelManager, recorder)
-, m_channelsEngine(*this, kernelAudio, mixer, sequencer, midiSynchronizer, channelManager, recorder)
+, m_channelsEngine(*this, mixer, sequencer, channelManager, recorder)
 , m_pluginsEngine(kernelAudio, channelManager, pluginManager, pluginHost, model)
 {
 	kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {

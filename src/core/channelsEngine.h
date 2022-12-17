@@ -33,16 +33,14 @@ namespace giada::m
 {
 class MidiEvent;
 class Engine;
-class KernelAudio;
 class Mixer;
 class Sequencer;
-class MidiSynchronizer;
 class ChannelManager;
 class Recorder;
 class ChannelsEngine
 {
 public:
-	ChannelsEngine(Engine&, KernelAudio&, Mixer&, Sequencer&, MidiSynchronizer&, ChannelManager&, Recorder&);
+	ChannelsEngine(Engine&, Mixer&, Sequencer&, ChannelManager&, Recorder&);
 
 	void press(ID, int velocity);
 	void release(ID);
@@ -58,13 +56,11 @@ public:
 	void sendMidi(ID, MidiEvent);
 
 private:
-	Engine&           m_engine;
-	KernelAudio&      m_kernelAudio;
-	Mixer&            m_mixer;
-	Sequencer&        m_sequencer;
-	MidiSynchronizer& m_midiSynchronizer;
-	ChannelManager&   m_channelManager;
-	Recorder&         m_recorder;
+	Engine&         m_engine;
+	Mixer&          m_mixer;
+	Sequencer&      m_sequencer;
+	ChannelManager& m_channelManager;
+	Recorder&       m_recorder;
 };
 } // namespace giada::m
 
