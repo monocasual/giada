@@ -150,13 +150,13 @@ bool          Data::isArmed() const { return m_channel->armed; }
 
 Data getData(ID channelId)
 {
-	return Data(g_engine.model.get().getChannel(channelId));
+	return Data(g_engine.getChannelsEngine().get(channelId));
 }
 
 std::vector<Data> getChannels()
 {
 	std::vector<Data> out;
-	for (const m::Channel& ch : g_engine.model.get().channels)
+	for (const m::Channel& ch : g_engine.getChannelsEngine().getAll())
 		if (!ch.isInternal())
 			out.push_back(Data(ch));
 
@@ -173,10 +173,7 @@ void loadChannel(ID channelId, const std::string& fname)
 {
 	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
 
-	const int sampleRate  = g_engine.kernelAudio.getSampleRate();
-	const int rsmpQuality = g_engine.conf.data.rsmpQuality;
-
-	int res = g_engine.channelManager.loadSampleChannel(channelId, fname, sampleRate, rsmpQuality);
+	int res = g_engine.getChannelsEngine().loadSampleChannel(channelId, fname);
 	if (res != G_RES_OK)
 		printLoadError_(res);
 
@@ -188,9 +185,7 @@ void loadChannel(ID channelId, const std::string& fname)
 
 void addChannel(ID columnId, ChannelType type)
 {
-	const int position   = g_engine.channelManager.getLastChannelPosition(columnId);
-	const int bufferSize = g_engine.kernelAudio.getBufferSize();
-	g_engine.channelManager.addChannel(type, columnId, position, bufferSize);
+	g_engine.getChannelsEngine().add(columnId, type);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -203,14 +198,9 @@ void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 	bool errors = false;
 	for (const std::string& f : fnames)
 	{
-		const float progressVal = ++i / static_cast<float>(fnames.size());
-		const int   bufferSize  = g_engine.kernelAudio.getBufferSize();
-		const int   sampleRate  = g_engine.kernelAudio.getSampleRate();
-		const int   rsmpQuality = g_engine.conf.data.rsmpQuality;
+		progress.setProgress(++i / static_cast<float>(fnames.size()));
 
-		progress.setProgress(progressVal);
-
-		int res = g_engine.channelManager.addAndLoadSampleChannel(f, sampleRate, rsmpQuality, bufferSize, columnId);
+		int res = g_engine.getChannelsEngine().addAndLoadSampleChannel(f, columnId);
 		if (res != G_RES_OK)
 			errors = true;
 	}
@@ -226,18 +216,7 @@ void deleteChannel(ID channelId)
 	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING), g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_DELETE)))
 		return;
 	g_ui.closeAllSubwindows();
-
-	const std::vector<m::Plugin*> plugins  = g_engine.model.get().getChannel(channelId).plugins;
-	const bool                    hasSolos = g_engine.channelManager.hasSolos();
-
-	g_engine.actionRecorder.clearChannel(channelId);
-	g_engine.channelManager.deleteChannel(channelId);
-	g_engine.mixer.updateSoloCount(hasSolos);
-
-	/* Plug-in destruction must be done in the main thread, due to JUCE and 
-		VST3 internal workings. */
-
-	g_engine.pluginHost.freePlugins(plugins);
+	g_engine.getChannelsEngine().remove(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -247,54 +226,42 @@ void freeChannel(ID channelId)
 	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING), g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_FREE)))
 		return;
 	g_ui.closeAllSubwindows();
-
-	g_engine.actionRecorder.clearChannel(channelId);
-	g_engine.channelManager.freeSampleChannel(channelId);
+	g_engine.getChannelsEngine().freeSampleChannel(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setInputMonitor(ID channelId, bool value)
 {
-	g_engine.channelManager.setInputMonitor(channelId, value);
+	g_engine.getChannelsEngine().setInputMonitor(channelId, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setOverdubProtection(ID channelId, bool value)
 {
-	g_engine.channelManager.setOverdubProtection(channelId, value);
+	g_engine.getChannelsEngine().setOverdubProtection(channelId, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void cloneChannel(ID channelId)
 {
-	/* Plug-in cloning must be done in the main thread, due to JUCE and VST3 
-	internal workings. */
-
-	const m::Channel&             ch              = g_engine.model.get().getChannel(channelId);
-	const int                     bufferSize      = g_engine.kernelAudio.getBufferSize();
-	const int                     patchSampleRate = g_engine.patch.data.samplerate;
-	const std::vector<m::Plugin*> plugins         = g_engine.pluginManager.clonePlugins(ch.plugins, patchSampleRate, bufferSize, g_engine.model);
-	const ID                      nextChannelId   = g_engine.channelFactory.getNextId();
-
-	g_engine.channelManager.cloneChannel(channelId, bufferSize, plugins);
-	g_engine.actionRecorder.cloneActions(channelId, nextChannelId);
+	g_engine.getChannelsEngine().clone(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void moveChannel(ID channelId, ID columnId, int position)
 {
-	g_engine.channelManager.moveChannel(channelId, columnId, position);
+	g_engine.getChannelsEngine().move(channelId, columnId, position);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
-	g_engine.channelManager.setSamplePlayerMode(channelId, mode);
+	g_engine.getChannelsEngine().setSamplePlayerMode(channelId, mode);
 	g_ui.refreshSubWindow(WID_ACTION_EDITOR);
 }
 
@@ -302,14 +269,14 @@ void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 
 void setHeight(ID channelId, Pixel p)
 {
-	g_engine.channelManager.setHeight(channelId, p);
+	g_engine.getChannelsEngine().setHeight(channelId, p);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setName(ID channelId, const std::string& name)
 {
-	g_engine.channelManager.renameChannel(channelId, name);
+	g_engine.getChannelsEngine().setName(channelId, name);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -320,7 +287,7 @@ void clearAllActions(ID channelId)
 	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
 		return;
 
-	g_engine.actionRecorder.clearChannel(channelId);
+	g_engine.getChannelsEngine().clearAllActions(channelId);
 	g_ui.refreshSubWindow(WID_ACTION_EDITOR);
 }
 

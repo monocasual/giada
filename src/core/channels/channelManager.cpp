@@ -45,6 +45,18 @@ ChannelManager::ChannelManager(const Conf::Data& c, model::Model& model, Channel
 
 /* -------------------------------------------------------------------------- */
 
+Channel& ChannelManager::getChannel(ID channelId)
+{
+	return m_model.get().getChannel(channelId);
+}
+
+std::vector<Channel>& ChannelManager::getAllChannels()
+{
+	return m_model.get().channels;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelManager::reset(Frame framesInBuffer)
 {
 	m_model.get().channels.clear();

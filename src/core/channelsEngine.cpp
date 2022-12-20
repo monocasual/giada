@@ -33,13 +33,103 @@
 
 namespace giada::m
 {
-ChannelsEngine::ChannelsEngine(Engine& e, Mixer& m, Sequencer& s, ChannelManager& cm, Recorder& r)
+ChannelsEngine::ChannelsEngine(Engine& e, KernelAudio& k, Mixer& m, Sequencer& s, ChannelManager& cm, ChannelFactory& cf, Recorder& r, ActionRecorder& ar, PluginHost& ph, PluginManager& pm)
 : m_engine(e)
+, m_kernelAudio(k)
 , m_mixer(m)
 , m_sequencer(s)
 , m_channelManager(cm)
+, m_channelFactory(cf)
 , m_recorder(r)
+, m_actionRecorder(ar)
+, m_pluginHost(ph)
+, m_pluginManager(pm)
 {
+}
+
+/* -------------------------------------------------------------------------- */
+
+Channel& ChannelsEngine::get(ID channelId)
+{
+	return m_channelManager.getChannel(channelId);
+}
+
+std::vector<Channel>& ChannelsEngine::getAll()
+{
+	return m_channelManager.getAllChannels();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsEngine::add(ID columnId, ChannelType type)
+{
+	const int position   = m_channelManager.getLastChannelPosition(columnId);
+	const int bufferSize = m_kernelAudio.getBufferSize();
+	m_channelManager.addChannel(type, columnId, position, bufferSize);
+}
+
+int ChannelsEngine::loadSampleChannel(ID channelId, const std::string& filePath)
+{
+	const int sampleRate  = m_kernelAudio.getSampleRate();
+	const int rsmpQuality = m_engine.conf.data.rsmpQuality;
+	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality);
+}
+
+int ChannelsEngine::addAndLoadSampleChannel(const std::string& filePath, ID columnId)
+{
+	const int bufferSize  = m_kernelAudio.getBufferSize();
+	const int sampleRate  = m_kernelAudio.getSampleRate();
+	const int rsmpQuality = m_engine.conf.data.rsmpQuality;
+	return m_channelManager.addAndLoadSampleChannel(filePath, sampleRate, rsmpQuality, bufferSize, columnId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsEngine::remove(ID channelId)
+{
+	const std::vector<Plugin*> plugins  = m_channelManager.getChannel(channelId).plugins;
+	const bool                 hasSolos = m_channelManager.hasSolos();
+
+	m_actionRecorder.clearChannel(channelId);
+	m_channelManager.deleteChannel(channelId);
+	m_mixer.updateSoloCount(hasSolos);
+
+	/* Plug-in destruction must be done in the main thread, due to JUCE and 
+	VST3 internal workings. */
+
+	m_pluginHost.freePlugins(plugins);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsEngine::freeSampleChannel(ID channelId)
+{
+	m_actionRecorder.clearChannel(channelId);
+	m_channelManager.freeSampleChannel(channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsEngine::clone(ID channelId)
+{
+	/* Plug-in cloning must be done in the main thread, due to JUCE and VST3 
+	internal workings. */
+
+	const Channel&             ch              = m_channelManager.getChannel(channelId);
+	const int                  bufferSize      = m_kernelAudio.getBufferSize();
+	const int                  patchSampleRate = m_engine.patch.data.samplerate;
+	const std::vector<Plugin*> plugins         = m_pluginManager.clonePlugins(ch.plugins, patchSampleRate, bufferSize, m_engine.model);
+	const ID                   nextChannelId   = m_channelFactory.getNextId();
+
+	m_channelManager.cloneChannel(channelId, bufferSize, plugins);
+	m_actionRecorder.cloneActions(channelId, nextChannelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsEngine::move(ID channelId, ID columnId, int position)
+{
+	m_channelManager.moveChannel(channelId, columnId, position);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -121,6 +211,48 @@ void ChannelsEngine::toggleReadActions(ID channelId)
 void ChannelsEngine::killReadActions(ID channelId)
 {
 	m_channelManager.killReadActions(channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsEngine::setInputMonitor(ID channelId, bool value)
+{
+	m_channelManager.setInputMonitor(channelId, value);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsEngine::setOverdubProtection(ID channelId, bool value)
+{
+	m_channelManager.setOverdubProtection(channelId, value);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsEngine::setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
+{
+	m_channelManager.setSamplePlayerMode(channelId, mode);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsEngine::setHeight(ID channelId, int h)
+{
+	m_channelManager.setHeight(channelId, h);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsEngine::setName(ID channelId, const std::string& name)
+{
+	m_channelManager.renameChannel(channelId, name);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsEngine::clearAllActions(ID channelId)
+{
+	m_actionRecorder.clearChannel(channelId);
 }
 
 /* -------------------------------------------------------------------------- */

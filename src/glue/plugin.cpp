@@ -115,7 +115,7 @@ Plugins::Plugins(const m::Channel& c)
 
 Plugins getPlugins(ID channelId)
 {
-	return Plugins(g_engine.model.get().getChannel(channelId));
+	return Plugins(g_engine.getChannelsEngine().get(channelId));
 }
 
 Plugin getPlugin(m::Plugin& plugin, ID channelId)

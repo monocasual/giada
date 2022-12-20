@@ -28,19 +28,38 @@
 #define G_CHANNELS_ENGINE_H
 
 #include "core/types.h"
+#include <string>
+#include <vector>
 
 namespace giada::m
 {
 class MidiEvent;
 class Engine;
+class KernelAudio;
 class Mixer;
 class Sequencer;
 class ChannelManager;
+class ChannelFactory;
+class Channel;
 class Recorder;
+class ActionRecorder;
+class PluginHost;
+class PluginManager;
 class ChannelsEngine
 {
 public:
-	ChannelsEngine(Engine&, Mixer&, Sequencer&, ChannelManager&, Recorder&);
+	ChannelsEngine(Engine&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&, ChannelFactory&, Recorder&, ActionRecorder&, PluginHost&, PluginManager&);
+
+	Channel&              get(ID);
+	std::vector<Channel>& getAll();
+
+	void add(ID columnId, ChannelType);
+	int  loadSampleChannel(ID channelId, const std::string& filePath);
+	int  addAndLoadSampleChannel(const std::string& filePath, ID columnId);
+	void remove(ID);
+	void freeSampleChannel(ID);
+	void clone(ID);
+	void move(ID channelId, ID columnId, int position);
 
 	void press(ID, int velocity);
 	void release(ID);
@@ -53,14 +72,25 @@ public:
 	void toggleArm(ID);
 	void toggleReadActions(ID);
 	void killReadActions(ID);
+	void setInputMonitor(ID, bool value);
+	void setOverdubProtection(ID, bool value);
+	void setSamplePlayerMode(ID, SamplePlayerMode);
+	void setHeight(ID, int);
+	void setName(ID, const std::string&);
+	void clearAllActions(ID);
 	void sendMidi(ID, MidiEvent);
 
 private:
 	Engine&         m_engine;
+	KernelAudio&    m_kernelAudio;
 	Mixer&          m_mixer;
 	Sequencer&      m_sequencer;
 	ChannelManager& m_channelManager;
+	ChannelFactory& m_channelFactory;
 	Recorder&       m_recorder;
+	ActionRecorder& m_actionRecorder;
+	PluginHost&     m_pluginHost;
+	PluginManager&  m_pluginManager;
 };
 } // namespace giada::m
 
