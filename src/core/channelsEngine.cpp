@@ -49,6 +49,18 @@ ChannelsEngine::ChannelsEngine(Engine& e, KernelAudio& k, Mixer& m, Sequencer& s
 
 /* -------------------------------------------------------------------------- */
 
+bool ChannelsEngine::hasChannelsWithAudioData() const
+{
+	return m_channelManager.hasAudioData();
+}
+
+bool ChannelsEngine::hasChannelsWithActions() const
+{
+	return m_channelManager.hasActions();
+}
+
+/* -------------------------------------------------------------------------- */
+
 Channel& ChannelsEngine::get(ID channelId)
 {
 	return m_channelManager.getChannel(channelId);
@@ -253,6 +265,18 @@ void ChannelsEngine::setName(ID channelId, const std::string& name)
 void ChannelsEngine::clearAllActions(ID channelId)
 {
 	m_actionRecorder.clearChannel(channelId);
+}
+
+void ChannelsEngine::clearAllActions()
+{
+	m_actionRecorder.clearAllActions();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsEngine::freeAllSampleChannels()
+{
+	m_channelManager.freeAllSampleChannels();
 }
 
 /* -------------------------------------------------------------------------- */

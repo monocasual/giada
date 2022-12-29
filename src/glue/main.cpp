@@ -113,8 +113,8 @@ Timer getTimer()
 
 IO getIO()
 {
-	return IO(g_engine.model.get().getChannel(m::Mixer::MASTER_OUT_CHANNEL_ID),
-	    g_engine.model.get().getChannel(m::Mixer::MASTER_IN_CHANNEL_ID),
+	return IO(g_engine.getChannelsEngine().get(m::Mixer::MASTER_OUT_CHANNEL_ID),
+	    g_engine.getChannelsEngine().get(m::Mixer::MASTER_IN_CHANNEL_ID),
 	    g_engine.model.get().mixer);
 }
 
@@ -156,8 +156,8 @@ Transport getTransport()
 MainMenu getMainMenu()
 {
 	MainMenu mainMenu;
-	mainMenu.hasAudioData = g_engine.channelManager.hasAudioData();
-	mainMenu.hasActions   = g_engine.channelManager.hasActions();
+	mainMenu.hasAudioData = g_engine.getChannelsEngine().hasChannelsWithAudioData();
+	mainMenu.hasActions   = g_engine.getChannelsEngine().hasChannelsWithActions();
 	return mainMenu;
 }
 
@@ -184,10 +184,7 @@ void clearAllSamples()
 		return;
 
 	g_ui.closeSubWindow(WID_SAMPLE_EDITOR);
-	g_engine.sequencer.setStatus(SeqStatus::STOPPED);
-	g_engine.midiSynchronizer.sendStop();
-	g_engine.channelManager.freeAllSampleChannels();
-	g_engine.actionRecorder.clearAllActions();
+	g_engine.getChannelsEngine().freeAllSampleChannels();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -199,7 +196,7 @@ void clearAllActions()
 		return;
 
 	g_ui.closeSubWindow(WID_ACTION_EDITOR);
-	g_engine.actionRecorder.clearAllActions();
+	g_engine.getChannelsEngine().clearAllActions();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -50,6 +50,9 @@ class ChannelsEngine
 public:
 	ChannelsEngine(Engine&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&, ChannelFactory&, Recorder&, ActionRecorder&, PluginHost&, PluginManager&);
 
+	bool hasChannelsWithAudioData() const;
+	bool hasChannelsWithActions() const;
+
 	Channel&              get(ID);
 	std::vector<Channel>& getAll();
 
@@ -78,6 +81,8 @@ public:
 	void setHeight(ID, int);
 	void setName(ID, const std::string&);
 	void clearAllActions(ID);
+	void clearAllActions();
+	void freeAllSampleChannels();
 	void sendMidi(ID, MidiEvent);
 
 private:
