@@ -46,7 +46,6 @@ public:
 	bool              isRecordingActions() const;
 	bool              isSequencerRunning() const;
 	bool              isMetronomeOn() const;
-	bool              isKernelAudioReady() const;
 	Peak              getPeakOut() const;
 	Peak              getPeakIn() const;
 	Mixer::RecordInfo getRecordInfo() const;
@@ -54,7 +53,6 @@ public:
 	int               getBars() const;
 	int               getCurrentBeat() const;
 	SeqStatus         getSequencerStatus() const;
-	RtAudio::Api      getKernelAudioAPI() const;
 
 	void toggleMetronome();
 	void setMasterInVolume(float);

@@ -103,7 +103,7 @@ void startup(int argc, char** argv)
 	g_engine.init();
 	g_ui.init(argc, argv, g_engine);
 
-	if (!g_engine.kernelAudio.isReady())
+	if (!g_engine.isAudioReady())
 		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
 }
 

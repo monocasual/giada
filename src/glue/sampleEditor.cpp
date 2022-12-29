@@ -299,7 +299,7 @@ void cleanupPreview()
 void toNewChannel(ID channelId, Frame a, Frame b)
 {
 	const ID  columnId   = g_ui.mainWindow->keyboard->getChannelColumnId(channelId);
-	const int bufferSize = g_engine.kernelAudio.getBufferSize();
+	const int bufferSize = g_engine.getBufferSize();
 
 	std::unique_ptr<m::Wave> wavePtr = g_engine.waveFactory.createFromWave(getWave_(channelId), a, b);
 	g_engine.model.addShared(std::move(wavePtr));

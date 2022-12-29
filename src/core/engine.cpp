@@ -54,11 +54,11 @@ Engine::Engine()
 , pluginHost(model)
 , m_mixer(model)
 , m_recorder(sequencer, channelManager, m_mixer, actionRecorder)
-, m_mainEngine(*this, kernelAudio, m_mixer, sequencer, midiSynchronizer, channelManager, m_recorder)
-, m_channelsEngine(*this, kernelAudio, m_mixer, sequencer, channelManager, channelFactory, m_recorder, actionRecorder, pluginHost, pluginManager)
-, m_pluginsEngine(kernelAudio, channelManager, pluginManager, pluginHost, model)
+, m_mainEngine(*this, m_kernelAudio, m_mixer, sequencer, midiSynchronizer, channelManager, m_recorder)
+, m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, channelManager, channelFactory, m_recorder, actionRecorder, pluginHost, pluginManager)
+, m_pluginsEngine(m_kernelAudio, channelManager, pluginManager, pluginHost, model)
 {
-	kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
+	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
 	};
 
@@ -100,7 +100,7 @@ Engine::Engine()
 		eventDispatcher.pumpEvent([this]() { sequencer.jack_rewind(); });
 	};
 	jackSynchronizer.onJackChangeBpm = [this](float bpm) {
-		eventDispatcher.pumpEvent([this, bpm]() { sequencer.jack_setBpm(bpm, kernelAudio.getSampleRate()); });
+		eventDispatcher.pumpEvent([this, bpm]() { sequencer.jack_setBpm(bpm, m_kernelAudio.getSampleRate()); });
 	};
 	jackSynchronizer.onJackStart = [this]() {
 		eventDispatcher.pumpEvent([this]() { sequencer.jack_start(); });
@@ -115,7 +115,7 @@ Engine::Engine()
 	};
 	m_mixer.onEndOfRecording = [this]() {
 		if (m_mixer.isRecordingInput())
-			eventDispatcher.pumpEvent([this]() { m_recorder.stopInputRec(conf.data.inputRecMode, kernelAudio.getSampleRate()); });
+			eventDispatcher.pumpEvent([this]() { m_recorder.stopInputRec(conf.data.inputRecMode, m_kernelAudio.getSampleRate()); });
 	};
 
 	channelManager.onChannelsAltered = [this]() {
@@ -124,7 +124,7 @@ Engine::Engine()
 	};
 	channelManager.onChannelRecorded = [this](Frame recordedFrames) {
 		std::string filename = fmt::format("TAKE-{}.wav", patch.data.lastTakeId++);
-		return waveFactory.createEmpty(recordedFrames, G_MAX_IO_CHANS, kernelAudio.getSampleRate(), filename);
+		return waveFactory.createEmpty(recordedFrames, G_MAX_IO_CHANS, m_kernelAudio.getSampleRate(), filename);
 	};
 
 	sequencer.onAboutStart = [this](SeqStatus status) {
@@ -140,7 +140,7 @@ Engine::Engine()
 		if (m_mixer.isRecordingActions())
 			m_recorder.stopActionRec();
 		else if (m_mixer.isRecordingInput())
-			m_recorder.stopInputRec(conf.data.inputRecMode, kernelAudio.getSampleRate());
+			m_recorder.stopInputRec(conf.data.inputRecMode, m_kernelAudio.getSampleRate());
 	};
 	sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep) {
 		actionRecorder.updateBpm(oldVal / newVal, quantizerStep);
@@ -149,11 +149,51 @@ Engine::Engine()
 
 /* -------------------------------------------------------------------------- */
 
+bool Engine::isAudioReady() const
+{
+	return m_kernelAudio.isReady();
+}
+
+/* -------------------------------------------------------------------------- */
+
+RtAudio::Api Engine::getAudioAPI() const
+{
+	return m_kernelAudio.getAPI();
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Engine::hasAudioAPI(RtAudio::Api api) const
+{
+	return m_kernelAudio.hasAPI(api);
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::vector<KernelAudio::Device> Engine::getAudioDevices() const
+{
+	return m_kernelAudio.getDevices();
+}
+
+/* -------------------------------------------------------------------------- */
+
+int Engine::getSampleRate() const
+{
+	return m_kernelAudio.getSampleRate();
+}
+
+int Engine::getBufferSize() const
+{
+	return m_kernelAudio.getBufferSize();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Engine::updateMixerModel()
 {
 	model.get().mixer.limitOutput     = conf.data.limitOutput;
 	model.get().mixer.allowsOverdub   = conf.data.inputRecMode == InputRecMode::RIGID;
-	model.get().mixer.maxFramesToRec  = conf.data.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()) : sequencer.getFramesInLoop();
+	model.get().mixer.maxFramesToRec  = conf.data.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()) : sequencer.getFramesInLoop();
 	model.get().mixer.recTriggerLevel = conf.data.recTriggerLevel;
 	model.swap(model::SwapType::NONE);
 }
@@ -187,23 +227,23 @@ void Engine::init()
 	/* Initialize KernelAudio. If fails, interrupt the Engine initialization:
     Giada can't work without a functional KernelAudio. */
 
-	kernelAudio.openDevice(conf.data);
-	if (!kernelAudio.isReady())
+	m_kernelAudio.openDevice(conf.data);
+	if (!m_kernelAudio.isReady())
 		return;
 
 #ifdef WITH_AUDIO_JACK
-	if (kernelAudio.getAPI() == RtAudio::Api::UNIX_JACK)
-		jackTransport.setHandle(kernelAudio.getJackHandle());
+	if (m_kernelAudio.getAPI() == RtAudio::Api::UNIX_JACK)
+		jackTransport.setHandle(m_kernelAudio.getJackHandle());
 #endif
 
-	m_mixer.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()), kernelAudio.getBufferSize());
-	channelManager.reset(kernelAudio.getBufferSize());
-	sequencer.reset(kernelAudio.getSampleRate());
-	pluginHost.reset(kernelAudio.getBufferSize());
+	m_mixer.reset(sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
+	channelManager.reset(m_kernelAudio.getBufferSize());
+	sequencer.reset(m_kernelAudio.getSampleRate());
+	pluginHost.reset(m_kernelAudio.getBufferSize());
 	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
 
 	m_mixer.enable();
-	kernelAudio.startStream();
+	m_kernelAudio.startStream();
 
 	kernelMidi.openOutDevice(conf.data.midiSystem, conf.data.midiPortOut);
 	kernelMidi.openInDevice(conf.data.midiSystem, conf.data.midiPortIn);
@@ -230,20 +270,20 @@ void Engine::reset()
 	/* Then all other components. */
 
 	model.reset();
-	m_mixer.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()), kernelAudio.getBufferSize());
-	channelManager.reset(kernelAudio.getBufferSize());
-	sequencer.reset(kernelAudio.getSampleRate());
+	m_mixer.reset(sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
+	channelManager.reset(m_kernelAudio.getBufferSize());
+	sequencer.reset(m_kernelAudio.getSampleRate());
 	actionRecorder.reset();
-	pluginHost.reset(kernelAudio.getBufferSize());
+	pluginHost.reset(m_kernelAudio.getBufferSize());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Engine::shutdown()
 {
-	if (kernelAudio.isReady())
+	if (m_kernelAudio.isReady())
 	{
-		kernelAudio.closeDevice();
+		m_kernelAudio.closeDevice();
 		u::log::print("[Engine::shutdown] KernelAudio closed\n");
 		m_mixer.disable();
 		u::log::print("[Engine::shutdown] Mixer closed\n");
@@ -413,9 +453,9 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 	in sequencer. */
 
 	m_mixer.updateSoloCount(channelManager.hasSolos());
-	actionRecorder.updateSamplerate(kernelAudio.getSampleRate(), patch.data.samplerate);
-	sequencer.recomputeFrames(kernelAudio.getSampleRate());
-	m_mixer.allocRecBuffer(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()));
+	actionRecorder.updateSamplerate(m_kernelAudio.getSampleRate(), patch.data.samplerate);
+	sequencer.recomputeFrames(m_kernelAudio.getSampleRate());
+	m_mixer.allocRecBuffer(sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()));
 
 	progress(0.9f);
 

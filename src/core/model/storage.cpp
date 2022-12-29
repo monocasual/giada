@@ -48,7 +48,7 @@ void store(Patch::Data& patch, Engine& engine)
 	patch.bpm        = layout.sequencer.bpm;
 	patch.quantize   = layout.sequencer.quantize;
 	patch.metronome  = engine.sequencer.isMetronomeOn(); // TODO - addShared bool metronome to Layout
-	patch.samplerate = engine.kernelAudio.getSampleRate();
+	patch.samplerate = engine.getSampleRate();
 
 	patch.plugins.clear();
 	for (const auto& p : engine.model.getAllShared<PluginPtrs>())
@@ -88,8 +88,8 @@ void store(Conf::Data& conf, Engine& engine)
 
 LoadState load(const Patch::Data& patch, Engine& engine)
 {
-	const int   sampleRate      = engine.kernelAudio.getSampleRate();
-	const int   bufferSize      = engine.kernelAudio.getBufferSize();
+	const int   sampleRate      = engine.getSampleRate();
+	const int   bufferSize      = engine.getBufferSize();
 	const float sampleRateRatio = sampleRate / static_cast<float>(patch.samplerate);
 
 	DataLock lock = engine.model.lockData(SwapType::NONE);

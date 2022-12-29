@@ -74,13 +74,6 @@ bool MainEngine::isMetronomeOn() const
 
 /* -------------------------------------------------------------------------- */
 
-bool MainEngine::isKernelAudioReady() const
-{
-	return m_kernelAudio.isReady();
-}
-
-/* -------------------------------------------------------------------------- */
-
 Peak MainEngine::getPeakOut() const { return m_mixer.getPeakOut(); }
 Peak MainEngine::getPeakIn() const { return m_mixer.getPeakIn(); }
 
@@ -113,13 +106,6 @@ int MainEngine::getCurrentBeat() const
 SeqStatus MainEngine::getSequencerStatus() const
 {
 	return m_sequencer.getStatus();
-}
-
-/* -------------------------------------------------------------------------- */
-
-RtAudio::Api MainEngine::getKernelAudioAPI() const
-{
-	return m_kernelAudio.getAPI();
 }
 
 /* -------------------------------------------------------------------------- */

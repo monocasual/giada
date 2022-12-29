@@ -51,7 +51,7 @@ namespace
 {
 AudioDeviceData getAudioDeviceData_(DeviceType type, size_t index, int channelsCount, int channelsStart)
 {
-	for (const m::KernelAudio::Device& device : g_engine.kernelAudio.getDevices())
+	for (const m::KernelAudio::Device& device : g_engine.getAudioDevices())
 		if (device.index == index)
 			return AudioDeviceData(type, device, channelsCount, channelsStart);
 	return AudioDeviceData();
@@ -112,24 +112,22 @@ AudioData getAudioData()
 	AudioData audioData;
 
 	audioData.apis[RtAudio::Api::RTAUDIO_DUMMY] = "(Dummy)";
-	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::LINUX_ALSA))
+	if (g_engine.hasAudioAPI(RtAudio::Api::LINUX_ALSA))
 		audioData.apis[RtAudio::Api::LINUX_ALSA] = "ALSA";
-	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::UNIX_JACK))
+	if (g_engine.hasAudioAPI(RtAudio::Api::UNIX_JACK))
 		audioData.apis[RtAudio::Api::UNIX_JACK] = "JACK";
-	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::LINUX_PULSE))
+	if (g_engine.hasAudioAPI(RtAudio::Api::LINUX_PULSE))
 		audioData.apis[RtAudio::Api::LINUX_PULSE] = "PulseAudio";
-	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::WINDOWS_DS))
+	if (g_engine.hasAudioAPI(RtAudio::Api::WINDOWS_DS))
 		audioData.apis[RtAudio::Api::WINDOWS_DS] = "DirectSound";
-	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::WINDOWS_ASIO))
+	if (g_engine.hasAudioAPI(RtAudio::Api::WINDOWS_ASIO))
 		audioData.apis[RtAudio::Api::WINDOWS_ASIO] = "ASIO";
-	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::WINDOWS_WASAPI))
+	if (g_engine.hasAudioAPI(RtAudio::Api::WINDOWS_WASAPI))
 		audioData.apis[RtAudio::Api::WINDOWS_WASAPI] = "WASAPI";
-	if (g_engine.kernelAudio.hasAPI(RtAudio::Api::MACOSX_CORE))
+	if (g_engine.hasAudioAPI(RtAudio::Api::MACOSX_CORE))
 		audioData.apis[RtAudio::Api::MACOSX_CORE] = "CoreAudio";
 
-	std::vector<m::KernelAudio::Device> devices = g_engine.kernelAudio.getDevices();
-
-	for (const m::KernelAudio::Device& device : devices)
+	for (const m::KernelAudio::Device& device : g_engine.getAudioDevices())
 	{
 		if (device.maxOutputChannels > 0)
 			audioData.outputDevices.push_back(AudioDeviceData(DeviceType::OUTPUT, device, G_MAX_IO_CHANS, 0));

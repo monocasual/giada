@@ -75,6 +75,13 @@ public:
 
 	Engine();
 
+	bool                             isAudioReady() const;
+	bool                             hasAudioAPI(RtAudio::Api) const;
+	RtAudio::Api                     getAudioAPI() const;
+	std::vector<KernelAudio::Device> getAudioDevices() const;
+	int                              getSampleRate() const;
+	int                              getBufferSize() const;
+
 	/* store
 	Saves the current state to a Patch, then saves it to file. Returns true
 	on success. */
@@ -136,7 +143,6 @@ public:
 	model::Model           model;
 	Conf                   conf;
 	Patch                  patch;
-	KernelAudio            kernelAudio;
 	KernelMidi             kernelMidi;
 	JackTransport          jackTransport;
 	WaveFactory            waveFactory;
@@ -157,8 +163,9 @@ public:
 private:
 	int audioCallback(KernelAudio::CallbackInfo) const;
 
-	Mixer    m_mixer;
-	Recorder m_recorder;
+	KernelAudio m_kernelAudio;
+	Mixer       m_mixer;
+	Recorder    m_recorder;
 
 	MainEngine     m_mainEngine;
 	ChannelsEngine m_channelsEngine;

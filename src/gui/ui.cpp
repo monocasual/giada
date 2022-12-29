@@ -113,7 +113,7 @@ void Ui::init(int argc, char** argv, m::Engine& engine)
 
 	m_updater.init(engine.model);
 
-	if (engine.kernelAudio.isReady())
+	if (engine.isAudioReady())
 		rebuildStaticWidgets();
 } // namespace giada::v
 

@@ -63,7 +63,7 @@ Timer::Timer(const m::model::Sequencer& c)
 , beats(c.beats)
 , bars(c.bars)
 , quantize(c.quantize)
-, isUsingJack(g_engine.getMainEngine().getKernelAudioAPI() == RtAudio::Api::UNIX_JACK)
+, isUsingJack(g_engine.getAudioAPI() == RtAudio::Api::UNIX_JACK)
 , isRecordingInput(g_engine.getMainEngine().isRecordingInput())
 {
 }
@@ -97,7 +97,7 @@ Peak IO::getMasterInPeak()
 
 bool IO::isKernelReady()
 {
-	return g_engine.getMainEngine().isKernelAudioReady();
+	return g_engine.isAudioReady();
 }
 
 /* -------------------------------------------------------------------------- */
