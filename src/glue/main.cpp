@@ -239,14 +239,11 @@ void closeProject()
 	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLOSEPROJECT)))
 		return;
 
-	/* Engine::reset() involves plug-in destruction, which must be done in the 
-	main thread, due to JUCE and VST3 internal workings. */
-
 	g_ui.stopUpdater();
-	g_engine.mixer.disable();
+	g_engine.suspend();
 	g_engine.reset();
 	g_ui.reset();
-	g_engine.mixer.enable();
+	g_engine.resume();
 	g_ui.startUpdater();
 }
 

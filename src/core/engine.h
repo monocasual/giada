@@ -112,6 +112,12 @@ public:
 
 	void shutdown();
 
+	/* suspend, resume
+	Toggles Mixer's rendering operation. */
+
+	void suspend();
+	void resume();
+
 	/* getMainEngine
 	Return a reference to MainEngine, responsible for the central component	API. */
 
@@ -142,8 +148,6 @@ public:
 	ActionRecorder         actionRecorder;
 	MidiSynchronizer       midiSynchronizer;
 	Sequencer              sequencer;
-	Mixer                  mixer;
-	Recorder               recorder;
 	PluginHost             pluginHost;
 	PluginManager          pluginManager;
 #ifdef WITH_AUDIO_JACK
@@ -152,6 +156,9 @@ public:
 
 private:
 	int audioCallback(KernelAudio::CallbackInfo) const;
+
+	Mixer    m_mixer;
+	Recorder m_recorder;
 
 	MainEngine     m_mainEngine;
 	ChannelsEngine m_channelsEngine;

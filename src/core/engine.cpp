@@ -51,11 +51,11 @@ Engine::Engine()
 , actionRecorder(model)
 , midiSynchronizer(conf.data, kernelMidi)
 , sequencer(model, midiSynchronizer, jackTransport)
-, mixer(model)
-, recorder(sequencer, channelManager, mixer, actionRecorder)
 , pluginHost(model)
-, m_mainEngine(*this, kernelAudio, mixer, sequencer, midiSynchronizer, channelManager, recorder)
-, m_channelsEngine(*this, kernelAudio, mixer, sequencer, channelManager, channelFactory, recorder, actionRecorder, pluginHost, pluginManager)
+, m_mixer(model)
+, m_recorder(sequencer, channelManager, m_mixer, actionRecorder)
+, m_mainEngine(*this, kernelAudio, m_mixer, sequencer, midiSynchronizer, channelManager, m_recorder)
+, m_channelsEngine(*this, kernelAudio, m_mixer, sequencer, channelManager, channelFactory, m_recorder, actionRecorder, pluginHost, pluginManager)
 , m_pluginsEngine(kernelAudio, channelManager, pluginManager, pluginHost, model)
 {
 	kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
@@ -73,7 +73,7 @@ Engine::Engine()
 	};
 
 	midiDispatcher.onEventReceived = [this]() {
-		recorder.startActionRecOnCallback();
+		m_recorder.startActionRecOnCallback();
 	};
 
 	midiSynchronizer.onChangePosition = [this](int beat) {
@@ -110,16 +110,16 @@ Engine::Engine()
 	};
 #endif
 
-	mixer.onSignalTresholdReached = [this]() {
-		eventDispatcher.pumpEvent([this]() { recorder.startInputRecOnCallback(); });
+	m_mixer.onSignalTresholdReached = [this]() {
+		eventDispatcher.pumpEvent([this]() { m_recorder.startInputRecOnCallback(); });
 	};
-	mixer.onEndOfRecording = [this]() {
-		if (mixer.isRecordingInput())
-			eventDispatcher.pumpEvent([this]() { recorder.stopInputRec(conf.data.inputRecMode, kernelAudio.getSampleRate()); });
+	m_mixer.onEndOfRecording = [this]() {
+		if (m_mixer.isRecordingInput())
+			eventDispatcher.pumpEvent([this]() { m_recorder.stopInputRec(conf.data.inputRecMode, kernelAudio.getSampleRate()); });
 	};
 
 	channelManager.onChannelsAltered = [this]() {
-		if (!recorder.canEnableFreeInputRec())
+		if (!m_recorder.canEnableFreeInputRec())
 			conf.data.inputRecMode = InputRecMode::RIGID;
 	};
 	channelManager.onChannelRecorded = [this](Frame recordedFrames) {
@@ -130,17 +130,17 @@ Engine::Engine()
 	sequencer.onAboutStart = [this](SeqStatus status) {
 		/* TODO move this logic to Recorder */
 		if (status == SeqStatus::WAITING)
-			recorder.stopActionRec();
+			m_recorder.stopActionRec();
 		conf.data.recTriggerMode = RecTriggerMode::NORMAL;
 	};
 	sequencer.onAboutStop = [this]() {
 		/* If recordings (both input and action) are active deactivate them, but 
 	store the takes. RecManager takes care of it. */
 		/* TODO move this logic to Recorder */
-		if (mixer.isRecordingActions())
-			recorder.stopActionRec();
-		else if (mixer.isRecordingInput())
-			recorder.stopInputRec(conf.data.inputRecMode, kernelAudio.getSampleRate());
+		if (m_mixer.isRecordingActions())
+			m_recorder.stopActionRec();
+		else if (m_mixer.isRecordingInput())
+			m_recorder.stopInputRec(conf.data.inputRecMode, kernelAudio.getSampleRate());
 	};
 	sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep) {
 		actionRecorder.updateBpm(oldVal / newVal, quantizerStep);
@@ -196,13 +196,13 @@ void Engine::init()
 		jackTransport.setHandle(kernelAudio.getJackHandle());
 #endif
 
-	mixer.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()), kernelAudio.getBufferSize());
+	m_mixer.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()), kernelAudio.getBufferSize());
 	channelManager.reset(kernelAudio.getBufferSize());
 	sequencer.reset(kernelAudio.getSampleRate());
 	pluginHost.reset(kernelAudio.getBufferSize());
 	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
 
-	mixer.enable();
+	m_mixer.enable();
 	kernelAudio.startStream();
 
 	kernelMidi.openOutDevice(conf.data.midiSystem, conf.data.midiPortOut);
@@ -230,7 +230,7 @@ void Engine::reset()
 	/* Then all other components. */
 
 	model.reset();
-	mixer.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()), kernelAudio.getBufferSize());
+	m_mixer.reset(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()), kernelAudio.getBufferSize());
 	channelManager.reset(kernelAudio.getBufferSize());
 	sequencer.reset(kernelAudio.getSampleRate());
 	actionRecorder.reset();
@@ -245,7 +245,7 @@ void Engine::shutdown()
 	{
 		kernelAudio.closeDevice();
 		u::log::print("[Engine::shutdown] KernelAudio closed\n");
-		mixer.disable();
+		m_mixer.disable();
 		u::log::print("[Engine::shutdown] Mixer closed\n");
 	}
 
@@ -321,12 +321,12 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 		const Sequencer::EventBuffer& events = sequencer.advance(layout_RT.sequencer, bufferSize, kernelInfo.sampleRate, actionRecorder);
 		sequencer.render(out);
 		if (!layout_RT.locked)
-			mixer.advanceChannels(events, layout_RT, renderRange, quantizerStep);
+			m_mixer.advanceChannels(events, layout_RT, renderRange, quantizerStep);
 	}
 
 	/* Then render Mixer: render channels, process I/O. */
 
-	mixer.render(out, in, layout_RT);
+	m_mixer.render(out, in, layout_RT);
 
 	return 0;
 }
@@ -402,7 +402,7 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 
 	/* Then suspend Mixer, reset and fill the model. */
 
-	mixer.disable();
+	m_mixer.disable();
 	reset();
 	LoadState state = m::model::load(patch.data, *this);
 
@@ -412,10 +412,10 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 	the current samplerate != patch samplerate. Clock needs to update frames
 	in sequencer. */
 
-	mixer.updateSoloCount(channelManager.hasSolos());
+	m_mixer.updateSoloCount(channelManager.hasSolos());
 	actionRecorder.updateSamplerate(kernelAudio.getSampleRate(), patch.data.samplerate);
 	sequencer.recomputeFrames(kernelAudio.getSampleRate());
-	mixer.allocRecBuffer(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()));
+	m_mixer.allocRecBuffer(sequencer.getMaxFramesInLoop(kernelAudio.getSampleRate()));
 
 	progress(0.9f);
 
@@ -426,7 +426,7 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 
 	/* Mixer is ready to go back online. */
 
-	mixer.enable();
+	m_mixer.enable();
 
 	/* Restore MIDI clock output. */
 
@@ -436,6 +436,18 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 
 	state.patch = G_FILE_OK;
 	return state;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Engine::suspend()
+{
+	m_mixer.disable();
+}
+
+void Engine::resume()
+{
+	m_mixer.enable();
 }
 
 /* -------------------------------------------------------------------------- */

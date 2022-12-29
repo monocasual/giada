@@ -38,7 +38,6 @@
 
 namespace giada::m
 {
-class Recorder;
 class Engine;
 } // namespace giada::m
 
@@ -47,7 +46,7 @@ namespace giada::v
 class Ui final
 {
 public:
-	Ui(m::Recorder&, const m::Conf::Data&);
+	Ui(const m::Conf::Data&);
 
 	/* shouldBlink
 	Return whether is time to blink something or not. This is used to make 

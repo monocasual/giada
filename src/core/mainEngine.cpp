@@ -278,4 +278,11 @@ void MainEngine::toggleInputRecording()
 	else
 		m_recorder.prepareInputRec(m_engine.conf.data.recTriggerMode, m_engine.conf.data.inputRecMode);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void MainEngine::startActionRecOnCallback()
+{
+	m_recorder.startActionRecOnCallback();
+}
 } // namespace giada::m

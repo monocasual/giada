@@ -76,6 +76,7 @@ public:
 	void toggleActionRecording();
 	void stopInputRecording();
 	void toggleInputRecording();
+	void startActionRecOnCallback();
 
 private:
 	Engine&           m_engine;

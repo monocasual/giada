@@ -27,7 +27,6 @@
 #include "gui/ui.h"
 #include "core/const.h"
 #include "core/engine.h"
-#include "core/recorder.h"
 #include "gui/elems/mainWindow/keyboard/column.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/mainIO.h"
@@ -43,15 +42,12 @@
 
 namespace giada::v
 {
-Ui::Ui(m::Recorder& recorder, const m::Conf::Data& conf)
+Ui::Ui(const m::Conf::Data& conf)
 : dispatcher(conf.keyBindings)
 , m_conf(conf)
 , m_updater(*this)
 , m_blinker(0)
 {
-	dispatcher.onEventOccured = [&recorder]() {
-		recorder.startActionRecOnCallback();
-	};
 }
 
 /* -------------------------------------------------------------------------- */

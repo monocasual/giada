@@ -28,12 +28,16 @@
 #include "gui/ui.h"
 
 giada::m::Engine g_engine;
-giada::v::Ui     g_ui(g_engine.recorder, g_engine.conf.data);
+giada::v::Ui     g_ui(g_engine.conf.data);
 
 int main(int argc, char** argv)
 {
 	if (int ret = giada::m::init::tests(argc, argv); ret != -1)
 		return ret;
+
+	g_ui.dispatcher.onEventOccured = []() {
+		g_engine.getMainEngine().startActionRecOnCallback();
+	};
 
 	giada::m::init::startup(argc, argv);
 	giada::m::init::run();
