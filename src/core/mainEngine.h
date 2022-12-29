@@ -27,11 +27,12 @@
 #ifndef G_MAIN_ENGINE_H
 #define G_MAIN_ENGINE_H
 
+#include "core/mixer.h"
+
 namespace giada::m
 {
 class Engine;
 class KernelAudio;
-class Mixer;
 class Sequencer;
 class MidiSynchronizer;
 class ChannelManager;
@@ -40,6 +41,20 @@ class MainEngine
 {
 public:
 	MainEngine(Engine&, KernelAudio&, Mixer&, Sequencer&, MidiSynchronizer&, ChannelManager&, Recorder&);
+
+	bool              isRecordingInput() const;
+	bool              isRecordingActions() const;
+	bool              isSequencerRunning() const;
+	bool              isMetronomeOn() const;
+	bool              isKernelAudioReady() const;
+	Peak              getPeakOut() const;
+	Peak              getPeakIn() const;
+	Mixer::RecordInfo getRecordInfo() const;
+	int               getBeats() const;
+	int               getBars() const;
+	int               getCurrentBeat() const;
+	SeqStatus         getSequencerStatus() const;
+	RtAudio::Api      getKernelAudioAPI() const;
 
 	void toggleMetronome();
 	void setMasterInVolume(float);

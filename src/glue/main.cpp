@@ -63,8 +63,8 @@ Timer::Timer(const m::model::Sequencer& c)
 , beats(c.beats)
 , bars(c.bars)
 , quantize(c.quantize)
-, isUsingJack(g_engine.kernelAudio.getAPI() == RtAudio::Api::UNIX_JACK)
-, isRecordingInput(g_engine.mixer.isRecordingInput())
+, isUsingJack(g_engine.getMainEngine().getKernelAudioAPI() == RtAudio::Api::UNIX_JACK)
+, isRecordingInput(g_engine.getMainEngine().isRecordingInput())
 {
 }
 
@@ -85,19 +85,19 @@ IO::IO(const m::Channel& out, const m::Channel& in, const m::model::Mixer& m)
 
 Peak IO::getMasterOutPeak()
 {
-	return g_engine.mixer.getPeakOut();
+	return g_engine.getMainEngine().getPeakOut();
 }
 
 Peak IO::getMasterInPeak()
 {
-	return g_engine.mixer.getPeakIn();
+	return g_engine.getMainEngine().getPeakIn();
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool IO::isKernelReady()
 {
-	return g_engine.kernelAudio.isReady();
+	return g_engine.getMainEngine().isKernelAudioReady();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -124,13 +124,13 @@ Sequencer getSequencer()
 {
 	Sequencer out;
 
-	m::Mixer::RecordInfo recInfo = g_engine.mixer.getRecordInfo();
+	const m::Mixer::RecordInfo recInfo = g_engine.getMainEngine().getRecordInfo();
 
-	out.isFreeModeInputRec = g_engine.mixer.isRecordingInput() && g_engine.conf.data.inputRecMode == InputRecMode::FREE;
-	out.shouldBlink        = g_ui.shouldBlink() && (g_engine.sequencer.getStatus() == SeqStatus::WAITING || out.isFreeModeInputRec);
-	out.beats              = g_engine.sequencer.getBeats();
-	out.bars               = g_engine.sequencer.getBars();
-	out.currentBeat        = g_engine.sequencer.getCurrentBeat();
+	out.isFreeModeInputRec = g_engine.getMainEngine().isRecordingInput() && g_engine.conf.data.inputRecMode == InputRecMode::FREE;
+	out.shouldBlink        = g_ui.shouldBlink() && (g_engine.getMainEngine().getSequencerStatus() == SeqStatus::WAITING || out.isFreeModeInputRec);
+	out.beats              = g_engine.getMainEngine().getBeats();
+	out.bars               = g_engine.getMainEngine().getBars();
+	out.currentBeat        = g_engine.getMainEngine().getCurrentBeat();
 	out.recPosition        = recInfo.position;
 	out.recMaxLength       = recInfo.maxLength;
 
@@ -142,10 +142,10 @@ Sequencer getSequencer()
 Transport getTransport()
 {
 	Transport transport;
-	transport.isRunning         = g_engine.sequencer.isRunning();
-	transport.isRecordingAction = g_engine.mixer.isRecordingActions();
-	transport.isRecordingInput  = g_engine.mixer.isRecordingInput();
-	transport.isMetronomeOn     = g_engine.sequencer.isMetronomeOn();
+	transport.isRunning         = g_engine.getMainEngine().isSequencerRunning();
+	transport.isRecordingAction = g_engine.getMainEngine().isRecordingActions();
+	transport.isRecordingInput  = g_engine.getMainEngine().isRecordingInput();
+	transport.isMetronomeOn     = g_engine.getMainEngine().isMetronomeOn();
 	transport.recTriggerMode    = g_engine.conf.data.recTriggerMode;
 	transport.inputRecMode      = g_engine.conf.data.inputRecMode;
 	return transport;

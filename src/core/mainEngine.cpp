@@ -46,6 +46,84 @@ MainEngine::MainEngine(Engine& e, KernelAudio& ka, Mixer& m, Sequencer& s, MidiS
 
 /* -------------------------------------------------------------------------- */
 
+bool MainEngine::isRecordingInput() const
+{
+	return m_mixer.isRecordingInput();
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool MainEngine::isRecordingActions() const
+{
+	return m_mixer.isRecordingActions();
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool MainEngine::isSequencerRunning() const
+{
+	return m_sequencer.isRunning();
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool MainEngine::isMetronomeOn() const
+{
+	return m_sequencer.isMetronomeOn();
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool MainEngine::isKernelAudioReady() const
+{
+	return m_kernelAudio.isReady();
+}
+
+/* -------------------------------------------------------------------------- */
+
+Peak MainEngine::getPeakOut() const { return m_mixer.getPeakOut(); }
+Peak MainEngine::getPeakIn() const { return m_mixer.getPeakIn(); }
+
+/* -------------------------------------------------------------------------- */
+
+Mixer::RecordInfo MainEngine::getRecordInfo() const
+{
+	return m_mixer.getRecordInfo();
+}
+
+/* -------------------------------------------------------------------------- */
+
+int MainEngine::getBeats() const
+{
+	return m_sequencer.getBeats();
+}
+
+int MainEngine::getBars() const
+{
+	return m_sequencer.getBars();
+}
+
+int MainEngine::getCurrentBeat() const
+{
+	return m_sequencer.getCurrentBeat();
+}
+
+/* -------------------------------------------------------------------------- */
+
+SeqStatus MainEngine::getSequencerStatus() const
+{
+	return m_sequencer.getStatus();
+}
+
+/* -------------------------------------------------------------------------- */
+
+RtAudio::Api MainEngine::getKernelAudioAPI() const
+{
+	return m_kernelAudio.getAPI();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void MainEngine::toggleMetronome()
 {
 	m_sequencer.toggleMetronome();
