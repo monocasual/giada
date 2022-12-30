@@ -35,11 +35,10 @@
 
 namespace giada::m
 {
-ChannelManager::ChannelManager(const Conf::Data& c, model::Model& model, ChannelFactory& cm, WaveFactory& wm)
+ChannelManager::ChannelManager(const Conf::Data& c, model::Model& model, ChannelFactory& cm)
 : m_conf(c)
 , m_model(model)
 , m_channelFactory(cm)
-, m_waveFactory(wm)
 {
 }
 
@@ -87,7 +86,7 @@ Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position,
 
 int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, int sampleRate, int rsmpQuality)
 {
-	WaveFactory::Result res = m_waveFactory.createFromFile(fname, /*id=*/0, sampleRate, rsmpQuality);
+	WaveFactory::Result res = WaveFactory::createFromFile(fname, /*id=*/0, sampleRate, rsmpQuality);
 	if (res.status != G_RES_OK)
 		return res.status;
 
@@ -148,7 +147,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 		const Frame oldShift = oldChannel.samplePlayer->shift;
 		const Frame oldBegin = oldChannel.samplePlayer->begin;
 		const Frame oldEnd   = oldChannel.samplePlayer->end;
-		m_model.addShared(m_waveFactory.createFromWave(oldWave));
+		m_model.addShared(WaveFactory::createFromWave(oldWave));
 		loadSampleChannel(newChannel, &m_model.backShared<Wave>(), oldBegin, oldEnd, oldShift);
 	}
 
@@ -565,7 +564,7 @@ bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
 
 	assert(wave != nullptr);
 
-	if (!m_waveFactory.save(*wave, filePath))
+	if (!WaveFactory::save(*wave, filePath))
 		return false;
 
 	u::log::print("[saveSample] sample saved to %s\n", filePath);

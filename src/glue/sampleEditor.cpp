@@ -171,7 +171,7 @@ void cut(ID channelId, Frame a, Frame b)
 
 void copy(ID channelId, Frame a, Frame b)
 {
-	waveBuffer_ = g_engine.waveFactory.createFromWave(getWave_(channelId), a, b);
+	waveBuffer_ = m::WaveFactory::createFromWave(getWave_(channelId), a, b);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -301,7 +301,7 @@ void toNewChannel(ID channelId, Frame a, Frame b)
 	const ID  columnId   = g_ui.mainWindow->keyboard->getChannelColumnId(channelId);
 	const int bufferSize = g_engine.getBufferSize();
 
-	std::unique_ptr<m::Wave> wavePtr = g_engine.waveFactory.createFromWave(getWave_(channelId), a, b);
+	std::unique_ptr<m::Wave> wavePtr = m::WaveFactory::createFromWave(getWave_(channelId), a, b);
 	g_engine.model.addShared(std::move(wavePtr));
 	m::Wave& wave = g_engine.model.backShared<m::Wave>();
 

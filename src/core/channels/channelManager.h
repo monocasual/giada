@@ -48,14 +48,13 @@ namespace giada::m
 {
 class Channel;
 class ChannelFactory;
-class WaveFactory;
 class Wave;
 class Plugin;
 class MidiEvent;
 class ChannelManager final
 {
 public:
-	ChannelManager(const Conf::Data&, model::Model&, ChannelFactory&, WaveFactory&);
+	ChannelManager(const Conf::Data&, model::Model&, ChannelFactory&);
 
 	/* getChannel
 	Returns channel object by ID. */
@@ -228,7 +227,6 @@ private:
 	const Conf::Data& m_conf;
 	model::Model&     m_model;
 	ChannelFactory&   m_channelFactory;
-	WaveFactory&      m_waveFactory;
 };
 } // namespace giada::m
 

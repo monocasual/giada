@@ -145,7 +145,6 @@ public:
 	Patch                  patch;
 	KernelMidi             kernelMidi;
 	JackTransport          jackTransport;
-	WaveFactory            waveFactory;
 	EventDispatcher        eventDispatcher;
 	MidiMapper<KernelMidi> midiMapper;
 	ChannelFactory         channelFactory;

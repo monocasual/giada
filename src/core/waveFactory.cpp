@@ -105,6 +105,10 @@ std::string makeUniqueWavePath(const std::string& base, const m::Wave& w,
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+IdManager WaveFactory::m_waveId = {};
+
+/* -------------------------------------------------------------------------- */
+
 void WaveFactory::reset()
 {
 	m_waveId = IdManager();
@@ -207,7 +211,7 @@ std::unique_ptr<Wave> WaveFactory::deserializeWave(const Patch::Wave& w, int sam
 	return createFromFile(w.path, w.id, samplerate, quality).wave;
 }
 
-const Patch::Wave WaveFactory::serializeWave(const Wave& w) const
+const Patch::Wave WaveFactory::serializeWave(const Wave& w)
 {
 	return {w.id, u::fs::basename(w.getPath())};
 }

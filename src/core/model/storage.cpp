@@ -58,7 +58,7 @@ void store(Patch::Data& patch, Engine& engine)
 
 	patch.waves.clear();
 	for (const auto& w : engine.model.getAllShared<WavePtrs>())
-		patch.waves.push_back(engine.waveFactory.serializeWave(*w));
+		patch.waves.push_back(WaveFactory::serializeWave(*w));
 
 	patch.channels.clear();
 	for (const Channel& c : layout.channels)
@@ -115,7 +115,7 @@ LoadState load(const Patch::Data& patch, Engine& engine)
 	engine.model.getAllShared<WavePtrs>().clear();
 	for (const Patch::Wave& pwave : patch.waves)
 	{
-		std::unique_ptr<Wave> w = engine.waveFactory.deserializeWave(pwave, sampleRate, engine.conf.data.rsmpQuality);
+		std::unique_ptr<Wave> w = WaveFactory::deserializeWave(pwave, sampleRate, engine.conf.data.rsmpQuality);
 		if (w != nullptr)
 			engine.model.getAllShared<WavePtrs>().push_back(std::move(w));
 		else
