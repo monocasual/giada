@@ -192,7 +192,8 @@ void addChannel(ID columnId, ChannelType type)
 
 void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 {
-	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
+	auto progress      = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
+	auto channelEngine = g_engine.getChannelsEngine();
 
 	int  i      = 0;
 	bool errors = false;
@@ -200,7 +201,8 @@ void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 	{
 		progress.setProgress(++i / static_cast<float>(fnames.size()));
 
-		int res = g_engine.getChannelsEngine().addAndLoadSampleChannel(f, columnId);
+		const m::Channel& ch  = channelEngine.add(columnId, ChannelType::SAMPLE);
+		const int         res = channelEngine.loadSampleChannel(ch.id, f);
 		if (res != G_RES_OK)
 			errors = true;
 	}

@@ -111,16 +111,6 @@ int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, in
 
 /* -------------------------------------------------------------------------- */
 
-int ChannelManager::addAndLoadSampleChannel(const std::string& fname, int sampleRate, int rsmpQuality, int bufferSize, ID columnId)
-{
-	const int position  = getLastChannelPosition(columnId);
-	const ID  channelId = addChannel(ChannelType::SAMPLE, columnId, position, bufferSize).id;
-
-	triggerOnChannelsAltered();
-
-	return loadSampleChannel(channelId, fname, sampleRate, rsmpQuality);
-}
-
 void ChannelManager::addAndLoadSampleChannel(Wave& wave, int bufferSize, ID columnId)
 {
 	const int position = getLastChannelPosition(columnId);

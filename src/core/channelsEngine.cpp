@@ -73,11 +73,11 @@ std::vector<Channel>& ChannelsEngine::getAll()
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::add(ID columnId, ChannelType type)
+Channel& ChannelsEngine::add(ID columnId, ChannelType type)
 {
 	const int position   = m_channelManager.getLastChannelPosition(columnId);
 	const int bufferSize = m_kernelAudio.getBufferSize();
-	m_channelManager.addChannel(type, columnId, position, bufferSize);
+	return m_channelManager.addChannel(type, columnId, position, bufferSize);
 }
 
 int ChannelsEngine::loadSampleChannel(ID channelId, const std::string& filePath)
@@ -85,14 +85,6 @@ int ChannelsEngine::loadSampleChannel(ID channelId, const std::string& filePath)
 	const int sampleRate  = m_kernelAudio.getSampleRate();
 	const int rsmpQuality = m_engine.conf.data.rsmpQuality;
 	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality);
-}
-
-int ChannelsEngine::addAndLoadSampleChannel(const std::string& filePath, ID columnId)
-{
-	const int bufferSize  = m_kernelAudio.getBufferSize();
-	const int sampleRate  = m_kernelAudio.getSampleRate();
-	const int rsmpQuality = m_engine.conf.data.rsmpQuality;
-	return m_channelManager.addAndLoadSampleChannel(filePath, sampleRate, rsmpQuality, bufferSize, columnId);
 }
 
 /* -------------------------------------------------------------------------- */

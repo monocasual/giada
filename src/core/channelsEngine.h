@@ -56,13 +56,12 @@ public:
 	Channel&              get(ID);
 	std::vector<Channel>& getAll();
 
-	void add(ID columnId, ChannelType);
-	int  loadSampleChannel(ID channelId, const std::string& filePath);
-	int  addAndLoadSampleChannel(const std::string& filePath, ID columnId);
-	void remove(ID);
-	void freeSampleChannel(ID);
-	void clone(ID);
-	void move(ID channelId, ID columnId, int position);
+	Channel& add(ID columnId, ChannelType);
+	int      loadSampleChannel(ID channelId, const std::string& filePath);
+	void     remove(ID);
+	void     freeSampleChannel(ID);
+	void     clone(ID);
+	void     move(ID channelId, ID columnId, int position);
 
 	void press(ID, int velocity);
 	void release(ID);
