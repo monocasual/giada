@@ -298,6 +298,8 @@ void cleanupPreview()
 
 void toNewChannel(ID channelId, Frame a, Frame b)
 {
+	auto channelEngine = g_engine.getChannelsEngine();
+
 	const ID  columnId   = g_ui.mainWindow->keyboard->getChannelColumnId(channelId);
 	const int bufferSize = g_engine.getBufferSize();
 
@@ -305,7 +307,8 @@ void toNewChannel(ID channelId, Frame a, Frame b)
 	g_engine.model.addShared(std::move(wavePtr));
 	m::Wave& wave = g_engine.model.backShared<m::Wave>();
 
-	g_engine.channelManager.addAndLoadSampleChannel(wave, bufferSize, columnId);
+	const m::Channel& ch = channelEngine.add(columnId, ChannelType::SAMPLE);
+	channelEngine.loadSampleChannel(ch.id, wave);
 }
 
 /* -------------------------------------------------------------------------- */

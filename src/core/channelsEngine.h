@@ -45,6 +45,7 @@ class Recorder;
 class ActionRecorder;
 class PluginHost;
 class PluginManager;
+class Wave;
 class ChannelsEngine
 {
 public:
@@ -58,6 +59,7 @@ public:
 
 	Channel& add(ID columnId, ChannelType);
 	int      loadSampleChannel(ID channelId, const std::string& filePath);
+	void     loadSampleChannel(ID channelId, Wave&);
 	void     remove(ID);
 	void     freeSampleChannel(ID);
 	void     clone(ID);

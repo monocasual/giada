@@ -91,33 +91,26 @@ int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, in
 		return res.status;
 
 	m_model.addShared(std::move(res.wave));
-
-	Wave&       newWave = m_model.backShared<Wave>();
-	const Wave* oldWave = getWaveInSampleChannel(channelId);
-
-	loadSampleChannel(m_model.get().getChannel(channelId), &newWave);
-	m_model.swap(model::SwapType::HARD);
-
-	triggerOnChannelsAltered();
-
-	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is 
-	already processing the new layout. */
-
-	if (oldWave != nullptr)
-		m_model.removeShared<Wave>(*oldWave);
+	loadSampleChannel(channelId, m_model.backShared<Wave>());
 
 	return G_RES_OK;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::addAndLoadSampleChannel(Wave& wave, int bufferSize, ID columnId)
+void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 {
-	const int position = getLastChannelPosition(columnId);
-	Channel&  ch       = addChannel(ChannelType::SAMPLE, columnId, position, bufferSize);
+	Wave&       newWave = wave;
+	const Wave* oldWave = getWaveInSampleChannel(channelId);
 
-	loadSampleChannel(ch, &wave);
+	loadSampleChannel(m_model.get().getChannel(channelId), &newWave);
 	m_model.swap(model::SwapType::HARD);
+
+	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is 
+	already processing the new layout. */
+
+	if (oldWave != nullptr)
+		m_model.removeShared<Wave>(*oldWave);
 
 	triggerOnChannelsAltered();
 }

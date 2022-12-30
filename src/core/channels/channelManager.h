@@ -112,15 +112,15 @@ public:
 
 	Channel& addChannel(ChannelType, ID columnId, int position, int bufferSize);
 
-	/* loadSampleChannel
+	/* loadSampleChannel (1)
     Creates a new Wave from a file path and loads it inside a Sample Channel. */
 
 	int loadSampleChannel(ID channelId, const std::string&, int sampleRate, int rsmpQuality);
 
-	/* addAndLoadSampleChannel 
-    Adds a new Sample channel into the stack and fills it with an existing Wave. */
+	/* loadSampleChannel (2)
+    Loads an existing Wave inside a Sample Channel. */
 
-	void addAndLoadSampleChannel(Wave&, int bufferSize, ID columnId);
+	void loadSampleChannel(ID channelId, Wave&);
 
 	/* freeChannel
     Unloads existing Wave from a Sample Channel. */

@@ -87,6 +87,11 @@ int ChannelsEngine::loadSampleChannel(ID channelId, const std::string& filePath)
 	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality);
 }
 
+void ChannelsEngine::loadSampleChannel(ID channelId, Wave& wave)
+{
+	m_channelManager.loadSampleChannel(channelId, wave);
+}
+
 /* -------------------------------------------------------------------------- */
 
 void ChannelsEngine::remove(ID channelId)
