@@ -300,8 +300,7 @@ void toNewChannel(ID channelId, Frame a, Frame b)
 {
 	auto channelEngine = g_engine.getChannelsEngine();
 
-	const ID  columnId   = g_ui.mainWindow->keyboard->getChannelColumnId(channelId);
-	const int bufferSize = g_engine.getBufferSize();
+	const ID columnId = g_ui.mainWindow->keyboard->getChannelColumnId(channelId);
 
 	std::unique_ptr<m::Wave> wavePtr = m::WaveFactory::createFromWave(getWave_(channelId), a, b);
 	g_engine.model.addShared(std::move(wavePtr));
