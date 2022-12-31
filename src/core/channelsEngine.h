@@ -60,8 +60,10 @@ public:
 	Channel& add(ID columnId, ChannelType);
 	int      loadSampleChannel(ID channelId, const std::string& filePath);
 	void     loadSampleChannel(ID channelId, Wave&);
+	void     loadPreviewChannel(ID sourceChannelId);
 	void     remove(ID);
 	void     freeSampleChannel(ID);
+	void     freePreviewChannel();
 	void     clone(ID);
 	void     move(ID channelId, ID columnId, int position);
 
@@ -81,10 +83,12 @@ public:
 	void setSamplePlayerMode(ID, SamplePlayerMode);
 	void setHeight(ID, int);
 	void setName(ID, const std::string&);
+	void setPreviewTracker(Frame);
 	void clearAllActions(ID);
 	void clearAllActions();
 	void freeAllSampleChannels();
 	void sendMidi(ID, MidiEvent);
+	bool saveSample(ID, const std::string& filePath);
 
 private:
 	Engine&         m_engine;

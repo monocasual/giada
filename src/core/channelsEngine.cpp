@@ -30,6 +30,7 @@
 #include "core/kernelAudio.h"
 #include "core/midiSynchronizer.h"
 #include "core/mixer.h"
+#include "utils/fs.h"
 
 namespace giada::m
 {
@@ -92,6 +93,11 @@ void ChannelsEngine::loadSampleChannel(ID channelId, Wave& wave)
 	m_channelManager.loadSampleChannel(channelId, wave);
 }
 
+void ChannelsEngine::loadPreviewChannel(ID sourceChannelId)
+{
+	m_channelManager.loadWaveInPreviewChannel(sourceChannelId);
+}
+
 /* -------------------------------------------------------------------------- */
 
 void ChannelsEngine::remove(ID channelId)
@@ -115,6 +121,11 @@ void ChannelsEngine::freeSampleChannel(ID channelId)
 {
 	m_actionRecorder.clearChannel(channelId);
 	m_channelManager.freeSampleChannel(channelId);
+}
+
+void ChannelsEngine::freePreviewChannel()
+{
+	m_channelManager.freeWaveInPreviewChannel();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -259,6 +270,13 @@ void ChannelsEngine::setName(ID channelId, const std::string& name)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelsEngine::setPreviewTracker(Frame f)
+{
+	m_channelManager.setPreviewTracker(f);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelsEngine::clearAllActions(ID channelId)
 {
 	m_actionRecorder.clearChannel(channelId);
@@ -283,5 +301,15 @@ void ChannelsEngine::sendMidi(ID channelId, MidiEvent e)
 	const bool  canRecordActions = m_recorder.canRecordActions();
 	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
 	m_channelManager.processMidiEvent(channelId, e, canRecordActions, currentFrameQ);
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool ChannelsEngine::saveSample(ID channelId, const std::string& filePath)
+{
+	if (!m_channelManager.saveSample(channelId, filePath))
+		return false;
+	m_engine.conf.data.samplePath = u::fs::dirname(filePath);
+	return true;
 }
 } // namespace giada::m

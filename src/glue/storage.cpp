@@ -177,9 +177,7 @@ void saveSample(void* data)
 	        g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_FILEEXISTS)))
 		return;
 
-	if (g_engine.channelManager.saveSample(channelId, filePath))
-		g_engine.conf.data.samplePath = u::fs::dirname(filePath);
-	else
+	if (!g_engine.getChannelsEngine().saveSample(channelId, filePath))
 		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGFILEERROR));
 
 	browser->do_callback();

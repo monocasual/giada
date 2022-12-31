@@ -139,7 +139,7 @@ Data getData(ID channelId)
 {
 	/* Prepare the preview channel first, then return Data object. */
 
-	g_engine.channelManager.loadWaveInPreviewChannel(channelId);
+	g_engine.getChannelsEngine().loadPreviewChannel(channelId);
 	return Data(getChannel_(channelId));
 }
 
@@ -285,13 +285,13 @@ void togglePreview()
 
 void setPreviewTracker(Frame f)
 {
-	g_engine.channelManager.setPreviewTracker(f);
+	g_engine.getChannelsEngine().setPreviewTracker(f);
 	getWindow()->refresh();
 }
 
 void cleanupPreview()
 {
-	g_engine.channelManager.freeWaveInPreviewChannel();
+	g_engine.getChannelsEngine().freePreviewChannel();
 }
 
 /* -------------------------------------------------------------------------- */
