@@ -154,7 +154,7 @@ v::gdSampleEditor* getWindow()
 
 void setBeginEnd(ID channelId, Frame b, Frame e)
 {
-	g_engine.channelManager.setBeginEnd(channelId, b, e);
+	g_engine.getSampleEditorEngine().setBeginEnd(channelId, b, e);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -164,7 +164,7 @@ void cut(ID channelId, Frame a, Frame b)
 	copy(channelId, a, b);
 	m::model::DataLock lock = g_engine.model.lockData();
 	m::wfx::cut(getWave_(channelId), a, b);
-	g_engine.channelManager.resetBeginEnd(channelId);
+	g_engine.getSampleEditorEngine().resetBeginEnd(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -203,7 +203,7 @@ void paste(ID channelId, Frame a)
 
 	/* Just brutally restore begin/end points. */
 
-	g_engine.channelManager.resetBeginEnd(channelId);
+	g_engine.getSampleEditorEngine().resetBeginEnd(channelId);
 
 	getWindow()->rebuild();
 }
@@ -254,7 +254,7 @@ void trim(ID channelId, int a, int b)
 {
 	m::model::DataLock lock = g_engine.model.lockData();
 	m::wfx::trim(getWave_(channelId), a, b);
-	g_engine.channelManager.resetBeginEnd(channelId);
+	g_engine.getSampleEditorEngine().resetBeginEnd(channelId);
 }
 
 /* -------------------------------------------------------------------------- */

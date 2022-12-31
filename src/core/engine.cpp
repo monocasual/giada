@@ -46,17 +46,18 @@ bool LoadState::isGood() const
 Engine::Engine()
 : midiMapper(kernelMidi)
 , channelFactory(conf.data, model)
-, channelManager(conf.data, model, channelFactory)
 , midiDispatcher(model)
 , actionRecorder(model)
 , midiSynchronizer(conf.data, kernelMidi)
 , sequencer(model, midiSynchronizer, jackTransport)
 , pluginHost(model)
 , m_mixer(model)
-, m_recorder(sequencer, channelManager, m_mixer, actionRecorder)
-, m_mainEngine(*this, m_kernelAudio, m_mixer, sequencer, midiSynchronizer, channelManager, m_recorder)
-, m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, channelManager, channelFactory, m_recorder, actionRecorder, pluginHost, pluginManager)
-, m_pluginsEngine(m_kernelAudio, channelManager, pluginManager, pluginHost, model)
+, m_channelManager(conf.data, model, channelFactory)
+, m_recorder(sequencer, m_channelManager, m_mixer, actionRecorder)
+, m_mainEngine(*this, m_kernelAudio, m_mixer, sequencer, midiSynchronizer, m_channelManager, m_recorder)
+, m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, m_channelManager, channelFactory, m_recorder, actionRecorder, pluginHost, pluginManager)
+, m_pluginsEngine(m_kernelAudio, m_channelManager, pluginManager, pluginHost, model)
+, m_sampleEditorEngine(*this, m_channelManager)
 {
 	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -118,11 +119,11 @@ Engine::Engine()
 			eventDispatcher.pumpEvent([this]() { m_recorder.stopInputRec(conf.data.inputRecMode, m_kernelAudio.getSampleRate()); });
 	};
 
-	channelManager.onChannelsAltered = [this]() {
+	m_channelManager.onChannelsAltered = [this]() {
 		if (!m_recorder.canEnableFreeInputRec())
 			conf.data.inputRecMode = InputRecMode::RIGID;
 	};
-	channelManager.onChannelRecorded = [this](Frame recordedFrames) {
+	m_channelManager.onChannelRecorded = [this](Frame recordedFrames) {
 		std::string filename = fmt::format("TAKE-{}.wav", patch.data.lastTakeId++);
 		return WaveFactory::createEmpty(recordedFrames, G_MAX_IO_CHANS, m_kernelAudio.getSampleRate(), filename);
 	};
@@ -237,7 +238,7 @@ void Engine::init()
 #endif
 
 	m_mixer.reset(sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
-	channelManager.reset(m_kernelAudio.getBufferSize());
+	m_channelManager.reset(m_kernelAudio.getBufferSize());
 	sequencer.reset(m_kernelAudio.getSampleRate());
 	pluginHost.reset(m_kernelAudio.getBufferSize());
 	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
@@ -271,7 +272,7 @@ void Engine::reset()
 
 	model.reset();
 	m_mixer.reset(sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
-	channelManager.reset(m_kernelAudio.getBufferSize());
+	m_channelManager.reset(m_kernelAudio.getBufferSize());
 	sequencer.reset(m_kernelAudio.getSampleRate());
 	actionRecorder.reset();
 	pluginHost.reset(m_kernelAudio.getBufferSize());
@@ -452,7 +453,7 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 	the current samplerate != patch samplerate. Clock needs to update frames
 	in sequencer. */
 
-	m_mixer.updateSoloCount(channelManager.hasSolos());
+	m_mixer.updateSoloCount(m_channelManager.hasSolos());
 	actionRecorder.updateSamplerate(m_kernelAudio.getSampleRate(), patch.data.samplerate);
 	sequencer.recomputeFrames(m_kernelAudio.getSampleRate());
 	m_mixer.allocRecBuffer(sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()));
@@ -492,7 +493,8 @@ void Engine::resume()
 
 /* -------------------------------------------------------------------------- */
 
-MainEngine&     Engine::getMainEngine() { return m_mainEngine; }
-ChannelsEngine& Engine::getChannelsEngine() { return m_channelsEngine; }
-PluginsEngine&  Engine::getPluginsEngine() { return m_pluginsEngine; }
+MainEngine&         Engine::getMainEngine() { return m_mainEngine; }
+ChannelsEngine&     Engine::getChannelsEngine() { return m_channelsEngine; }
+PluginsEngine&      Engine::getPluginsEngine() { return m_pluginsEngine; }
+SampleEditorEngine& Engine::getSampleEditorEngine() { return m_sampleEditorEngine; }
 } // namespace giada::m

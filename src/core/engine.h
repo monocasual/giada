@@ -49,6 +49,7 @@
 #include "core/plugins/pluginManager.h"
 #include "core/pluginsEngine.h"
 #include "core/recorder.h"
+#include "core/sampleEditorEngine.h"
 #include "core/sequencer.h"
 #include "core/waveFactory.h"
 #ifdef WITH_AUDIO_JACK
@@ -140,6 +141,12 @@ public:
 
 	PluginsEngine& getPluginsEngine();
 
+	/* getSampleEditorEngine
+	Return a reference to SampleEditorEngine, responsible for the Sample Editor 
+	API. */
+
+	SampleEditorEngine& getSampleEditorEngine();
+
 	model::Model           model;
 	Conf                   conf;
 	Patch                  patch;
@@ -148,7 +155,6 @@ public:
 	EventDispatcher        eventDispatcher;
 	MidiMapper<KernelMidi> midiMapper;
 	ChannelFactory         channelFactory;
-	ChannelManager         channelManager;
 	MidiDispatcher         midiDispatcher;
 	ActionRecorder         actionRecorder;
 	MidiSynchronizer       midiSynchronizer;
@@ -162,13 +168,15 @@ public:
 private:
 	int audioCallback(KernelAudio::CallbackInfo) const;
 
-	KernelAudio m_kernelAudio;
-	Mixer       m_mixer;
-	Recorder    m_recorder;
+	KernelAudio    m_kernelAudio;
+	Mixer          m_mixer;
+	ChannelManager m_channelManager;
+	Recorder       m_recorder;
 
-	MainEngine     m_mainEngine;
-	ChannelsEngine m_channelsEngine;
-	PluginsEngine  m_pluginsEngine;
+	MainEngine         m_mainEngine;
+	ChannelsEngine     m_channelsEngine;
+	PluginsEngine      m_pluginsEngine;
+	SampleEditorEngine m_sampleEditorEngine;
 };
 } // namespace giada::m
 
