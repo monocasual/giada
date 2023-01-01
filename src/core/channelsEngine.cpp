@@ -320,7 +320,7 @@ Patch::Channel ChannelsEngine::serializeChannel(const Channel& ch)
 	return m_channelFactory.serializeChannel(ch);
 }
 
-Channel ChannelsEngine::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
+ChannelFactory::Data ChannelsEngine::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
 {
 	return m_channelFactory.deserializeChannel(pch, samplerateRatio, bufferSize);
 }

@@ -62,24 +62,22 @@ void ChannelFactory::reset()
 
 /* -------------------------------------------------------------------------- */
 
-Channel ChannelFactory::create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize)
+ChannelFactory::Data ChannelFactory::create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize)
 {
 	std::unique_ptr<ChannelShared> shared = makeShared(type, bufferSize, m_conf.rsmpQuality);
 	Channel                        ch     = Channel(type, m_channelId.generate(channelId), columnId, position, *shared.get());
-
-	m_model.addShared(std::move(shared));
 
 	if (ch.audioReceiver)
 		ch.audioReceiver->overdubProtection = m_conf.overdubProtectionDefaultOn;
 
 	c::channel::setCallbacks(ch); // UI callbacks
 
-	return ch;
+	return {ch, std::move(shared)};
 }
 
 /* -------------------------------------------------------------------------- */
 
-Channel ChannelFactory::create(const Channel& o, int bufferSize)
+ChannelFactory::Data ChannelFactory::create(const Channel& o, int bufferSize)
 {
 	std::unique_ptr<ChannelShared> shared = makeShared(o.type, bufferSize, m_conf.rsmpQuality);
 	Channel                        ch     = Channel(o);
@@ -87,27 +85,23 @@ Channel ChannelFactory::create(const Channel& o, int bufferSize)
 	ch.id     = m_channelId.generate();
 	ch.shared = shared.get();
 
-	m_model.addShared(std::move(shared));
-
 	c::channel::setCallbacks(ch); // UI callbacks
 
-	return ch;
+	return {ch, std::move(shared)};
 }
 
 /* -------------------------------------------------------------------------- */
 
-Channel ChannelFactory::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
+ChannelFactory::Data ChannelFactory::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
 {
 	m_channelId.set(pch.id);
 
 	std::unique_ptr<ChannelShared> shared = makeShared(pch.type, bufferSize, m_conf.rsmpQuality);
 	Channel                        ch     = Channel(pch, *shared.get(), samplerateRatio, m_model.findShared<Wave>(pch.waveId));
 
-	m_model.addShared(std::move(shared));
-
 	c::channel::setCallbacks(ch); // UI callbacks
 
-	return ch;
+	return {ch, std::move(shared)};
 }
 
 /* -------------------------------------------------------------------------- */

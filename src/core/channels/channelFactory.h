@@ -44,6 +44,12 @@ class KernelAudio;
 class ChannelFactory final
 {
 public:
+	struct Data
+	{
+		Channel                        channel;
+		std::unique_ptr<ChannelShared> shared;
+	};
+
 	ChannelFactory(const Conf::Data&, model::Model&);
 
 	/* getNextId
@@ -60,17 +66,17 @@ public:
     Creates a new channel. If channelId == 0 generates a new ID, reuse the one 
     passed in otherwise. */
 
-	Channel create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize);
+	Data create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize);
 
 	/* create (2)
     Creates a new channel given an existing one (i.e. clone). */
 
-	Channel create(const Channel& ch, int bufferSize);
+	Data create(const Channel& ch, int bufferSize);
 
 	/* (de)serializeWave
     Creates a new channel given the patch raw data and vice versa. */
 
-	Channel              deserializeChannel(const Patch::Channel& c, float samplerateRatio, int bufferSize);
+	Data                 deserializeChannel(const Patch::Channel& c, float samplerateRatio, int bufferSize);
 	const Patch::Channel serializeChannel(const Channel& c);
 
 private:

@@ -13,8 +13,8 @@ TEST_CASE("ActionRecorder")
 	using namespace giada;
 	using namespace giada::m;
 
-	const ID channel1 = 1;
-	const ID channel2 = 2;
+	const ID channelID1 = 1;
+	const ID channelID2 = 2;
 
 	Conf::Data     conf;
 	model::Model   model;
@@ -22,14 +22,18 @@ TEST_CASE("ActionRecorder")
 
 	model.registerThread(Thread::MAIN, /*realtime=*/false);
 	model.reset();
-	model.get().channels = {
-	    channelFactory.create(channel1, ChannelType::SAMPLE, 0, 0, 1024),
-	    channelFactory.create(channel2, ChannelType::SAMPLE, 0, 0, 1024)};
+
+	ChannelFactory::Data channel1 = channelFactory.create(channelID1, ChannelType::SAMPLE, 0, 0, 1024);
+	ChannelFactory::Data channel2 = channelFactory.create(channelID2, ChannelType::SAMPLE, 0, 0, 1024);
+
+	model.get().channels = {channel1.channel, channel2.channel};
+	model.addShared(std::move(channel1.shared));
+	model.addShared(std::move(channel2.shared));
 	model.swap(model::SwapType::NONE);
 
 	ActionRecorder ar(model);
 
-	REQUIRE(ar.hasActions(channel1) == false);
+	REQUIRE(ar.hasActions(channelID1) == false);
 
 	SECTION("Test record")
 	{
@@ -38,10 +42,10 @@ TEST_CASE("ActionRecorder")
 		const MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0x00, 0x00, 0);
 		const MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0x00, 0x00, 0);
 
-		const Action a1 = ar.rec(channel1, f1, e1);
-		const Action a2 = ar.rec(channel1, f2, e2);
+		const Action a1 = ar.rec(channelID1, f1, e1);
+		const Action a2 = ar.rec(channelID1, f2, e2);
 
-		REQUIRE(ar.hasActions(channel1) == true);
+		REQUIRE(ar.hasActions(channelID1) == true);
 		REQUIRE(a1.frame == f1);
 		REQUIRE(a2.frame == f2);
 		REQUIRE(a1.prevId == 0);
@@ -56,27 +60,27 @@ TEST_CASE("ActionRecorder")
 			const MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0x00, 0x00, 0);
 			const MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0x00, 0x00, 0);
 
-			ar.rec(channel2, f1, e1);
-			ar.rec(channel2, f2, e2);
+			ar.rec(channelID2, f1, e1);
+			ar.rec(channelID2, f2, e2);
 
-			ar.clearChannel(channel1);
+			ar.clearChannel(channelID1);
 
-			REQUIRE(ar.hasActions(channel1) == false);
-			REQUIRE(ar.hasActions(channel2) == true);
+			REQUIRE(ar.hasActions(channelID1) == false);
+			REQUIRE(ar.hasActions(channelID2) == true);
 		}
 
 		SECTION("Test clear actions by type")
 		{
-			ar.clearActions(channel1, MidiEvent::CHANNEL_NOTE_ON);
-			ar.clearActions(channel1, MidiEvent::CHANNEL_NOTE_OFF);
+			ar.clearActions(channelID1, MidiEvent::CHANNEL_NOTE_ON);
+			ar.clearActions(channelID1, MidiEvent::CHANNEL_NOTE_OFF);
 
-			REQUIRE(ar.hasActions(channel1) == false);
+			REQUIRE(ar.hasActions(channelID1) == false);
 		}
 
 		SECTION("Test clear all")
 		{
 			ar.clearAllActions();
-			REQUIRE(ar.hasActions(channel1) == false);
+			REQUIRE(ar.hasActions(channelID1) == false);
 		}
 	}
 }
