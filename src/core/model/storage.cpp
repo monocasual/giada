@@ -62,7 +62,7 @@ void store(Patch::Data& patch, Engine& engine)
 
 	patch.channels.clear();
 	for (const Channel& c : layout.channels)
-		patch.channels.push_back(engine.channelFactory.serializeChannel(c));
+		patch.channels.push_back(engine.getChannelsEngine().serializeChannel(c));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -125,7 +125,7 @@ LoadState load(const Patch::Data& patch, Engine& engine)
 	/* Then load up channels, actions and global properties. */
 
 	for (const Patch::Channel& pchannel : patch.channels)
-		engine.model.get().channels.push_back(engine.channelFactory.deserializeChannel(pchannel, sampleRateRatio, bufferSize));
+		engine.model.get().channels.push_back(engine.getChannelsEngine().deserializeChannel(pchannel, sampleRateRatio, bufferSize));
 
 	engine.model.getAllShared<Actions::Map>() = engine.actionRecorder.deserializeActions(patch.actions);
 

@@ -27,6 +27,7 @@
 #ifndef G_CHANNELS_ENGINE_H
 #define G_CHANNELS_ENGINE_H
 
+#include "core/patch.h"
 #include "core/types.h"
 #include <string>
 #include <vector>
@@ -89,6 +90,9 @@ public:
 	void freeAllSampleChannels();
 	void sendMidi(ID, MidiEvent);
 	bool saveSample(ID, const std::string& filePath);
+
+	Patch::Channel serializeChannel(const Channel&);
+	Channel        deserializeChannel(const Patch::Channel&, float samplerateRatio, int bufferSize);
 
 private:
 	Engine&         m_engine;

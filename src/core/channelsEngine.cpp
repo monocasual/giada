@@ -312,4 +312,16 @@ bool ChannelsEngine::saveSample(ID channelId, const std::string& filePath)
 	m_engine.conf.data.samplePath = u::fs::dirname(filePath);
 	return true;
 }
+
+/* -------------------------------------------------------------------------- */
+
+Patch::Channel ChannelsEngine::serializeChannel(const Channel& ch)
+{
+	return m_channelFactory.serializeChannel(ch);
+}
+
+Channel ChannelsEngine::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
+{
+	return m_channelFactory.deserializeChannel(pch, samplerateRatio, bufferSize);
+}
 } // namespace giada::m
