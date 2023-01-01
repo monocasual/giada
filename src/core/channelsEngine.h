@@ -27,6 +27,7 @@
 #ifndef G_CHANNELS_ENGINE_H
 #define G_CHANNELS_ENGINE_H
 
+#include "core/channels/channelFactory.h"
 #include "core/patch.h"
 #include "core/types.h"
 #include <string>
@@ -40,7 +41,6 @@ class KernelAudio;
 class Mixer;
 class Sequencer;
 class ChannelManager;
-class ChannelFactory;
 class Channel;
 class Recorder;
 class ActionRecorder;
@@ -50,7 +50,7 @@ class Wave;
 class ChannelsEngine
 {
 public:
-	ChannelsEngine(Engine&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&, ChannelFactory&, Recorder&, ActionRecorder&, PluginHost&, PluginManager&);
+	ChannelsEngine(Engine&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&, Recorder&, ActionRecorder&, PluginHost&, PluginManager&);
 
 	bool hasChannelsWithAudioData() const;
 	bool hasChannelsWithActions() const;
@@ -91,8 +91,8 @@ public:
 	void sendMidi(ID, MidiEvent);
 	bool saveSample(ID, const std::string& filePath);
 
-	Patch::Channel serializeChannel(const Channel&);
-	Channel        deserializeChannel(const Patch::Channel&, float samplerateRatio, int bufferSize);
+	Patch::Channel       serializeChannel(const Channel&);
+	ChannelFactory::Data deserializeChannel(const Patch::Channel&, float samplerateRatio, int bufferSize);
 
 private:
 	Engine&         m_engine;
@@ -100,7 +100,6 @@ private:
 	Mixer&          m_mixer;
 	Sequencer&      m_sequencer;
 	ChannelManager& m_channelManager;
-	ChannelFactory& m_channelFactory;
 	Recorder&       m_recorder;
 	ActionRecorder& m_actionRecorder;
 	PluginHost&     m_pluginHost;

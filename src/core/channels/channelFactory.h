@@ -28,58 +28,53 @@
 #define G_CHANNEL_FACTORY_H
 
 #include "core/channels/channel.h"
-#include "core/conf.h"
 #include "core/idManager.h"
 #include "core/patch.h"
 #include "core/types.h"
 
-namespace giada::m::model
-{
-class Model;
-}
-
 namespace giada::m
 {
-class KernelAudio;
+class Wave;
 class ChannelFactory final
 {
 public:
-	ChannelFactory(const Conf::Data&, model::Model&);
+	struct Data
+	{
+		Channel                        channel;
+		std::unique_ptr<ChannelShared> shared;
+	};
 
 	/* getNextId
 	Returns the next channel ID that will be assigned to a new channel. */
 
-	ID getNextId() const;
+	static ID getNextId();
 
 	/* reset
     Resets internal ID generator. */
 
-	void reset();
+	static void reset();
 
 	/* create (1)
     Creates a new channel. If channelId == 0 generates a new ID, reuse the one 
     passed in otherwise. */
 
-	Channel create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize);
+	static Data create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize, Resampler::Quality, bool overdubProtection);
 
 	/* create (2)
     Creates a new channel given an existing one (i.e. clone). */
 
-	Channel create(const Channel& ch, int bufferSize);
+	static Data create(const Channel& ch, int bufferSize, Resampler::Quality);
 
 	/* (de)serializeWave
     Creates a new channel given the patch raw data and vice versa. */
 
-	Channel              deserializeChannel(const Patch::Channel& c, float samplerateRatio, int bufferSize);
-	const Patch::Channel serializeChannel(const Channel& c);
+	static Data                 deserializeChannel(const Patch::Channel& c, float samplerateRatio, int bufferSize, Resampler::Quality, Wave*);
+	static const Patch::Channel serializeChannel(const Channel& c);
 
 private:
-	std::unique_ptr<ChannelShared> makeShared(ChannelType type, int bufferSize, Resampler::Quality) const;
+	static std::unique_ptr<ChannelShared> makeShared(ChannelType type, int bufferSize, Resampler::Quality);
 
-	IdManager m_channelId;
-
-	const Conf::Data& m_conf;
-	model::Model&     m_model;
+	static IdManager m_channelId;
 };
 } // namespace giada::m
 

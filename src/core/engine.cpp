@@ -45,17 +45,16 @@ bool LoadState::isGood() const
 
 Engine::Engine()
 : midiMapper(kernelMidi)
-, channelFactory(conf.data, model)
 , midiDispatcher(model)
 , actionRecorder(model)
 , midiSynchronizer(conf.data, kernelMidi)
 , sequencer(model, midiSynchronizer, jackTransport)
 , pluginHost(model)
 , m_mixer(model)
-, m_channelManager(conf.data, model, channelFactory)
+, m_channelManager(conf.data, model)
 , m_recorder(sequencer, m_channelManager, m_mixer, actionRecorder)
 , m_mainEngine(*this, m_kernelAudio, m_mixer, sequencer, midiSynchronizer, m_channelManager, m_recorder)
-, m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, m_channelManager, channelFactory, m_recorder, actionRecorder, pluginHost, pluginManager)
+, m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, m_channelManager, m_recorder, actionRecorder, pluginHost, pluginManager)
 , m_pluginsEngine(m_kernelAudio, m_channelManager, pluginManager, pluginHost, model)
 , m_sampleEditorEngine(*this, m_channelManager)
 {
@@ -264,7 +263,7 @@ void Engine::reset()
 {
 	/* Managers first, due to the internal ID numbering. */
 
-	channelFactory.reset();
+	ChannelFactory::reset();
 	WaveFactory::reset();
 	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
 

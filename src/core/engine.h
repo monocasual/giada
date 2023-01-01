@@ -154,7 +154,6 @@ public:
 	JackTransport          jackTransport;
 	EventDispatcher        eventDispatcher;
 	MidiMapper<KernelMidi> midiMapper;
-	ChannelFactory         channelFactory;
 	MidiDispatcher         midiDispatcher;
 	ActionRecorder         actionRecorder;
 	MidiSynchronizer       midiSynchronizer;
