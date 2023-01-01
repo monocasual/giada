@@ -74,7 +74,7 @@ public:
 	const Patch::Channel serializeChannel(const Channel& c);
 
 private:
-	ChannelShared& makeShared(ChannelType type, int bufferSize);
+	std::unique_ptr<ChannelShared> makeShared(ChannelType type, int bufferSize, Resampler::Quality) const;
 
 	IdManager m_channelId;
 
