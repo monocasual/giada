@@ -115,7 +115,7 @@ public:
 	/* loadSampleChannel (1)
     Creates a new Wave from a file path and loads it inside a Sample Channel. */
 
-	int loadSampleChannel(ID channelId, const std::string&, int sampleRate, int rsmpQuality);
+	int loadSampleChannel(ID channelId, const std::string&, int sampleRate, Resampler::Quality);
 
 	/* loadSampleChannel (2)
     Loads an existing Wave inside a Sample Channel. */

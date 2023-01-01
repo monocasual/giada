@@ -29,6 +29,7 @@
 
 #include "core/idManager.h"
 #include "core/patch.h"
+#include "core/resampler.h"
 #include "core/types.h"
 #include "core/wave.h"
 #include <memory>
@@ -60,7 +61,7 @@ public:
 	auto-generate it. The function converts the Wave sample rate if it doesn't 
 	match the desired one as specified in 'samplerate'. */
 
-	static Result createFromFile(const std::string& path, ID id, int samplerate, int quality);
+	static Result createFromFile(const std::string& path, ID id, int samplerate, Resampler::Quality);
 
 	/* createEmpty
 	Creates a new silent Wave object. */
@@ -77,14 +78,14 @@ public:
 	/* (de)serializeWave
 	Creates a new Wave given the patch raw data and vice versa. */
 
-	static std::unique_ptr<Wave> deserializeWave(const Patch::Wave& w, int samplerate, int quality);
+	static std::unique_ptr<Wave> deserializeWave(const Patch::Wave& w, int samplerate, Resampler::Quality);
 	static const Patch::Wave     serializeWave(const Wave& w);
 
 	/* resample
 	Change sample rate of 'w' to the desider value. The 'quality' parameter sets 
 	the algorithm to use for the conversion. */
 
-	static int resample(Wave& w, int quality, int samplerate);
+	static int resample(Wave&, Resampler::Quality, int samplerate);
 
 	/* save
 	Writes Wave data to file 'path'. Only 'wav' format is supported for now. */

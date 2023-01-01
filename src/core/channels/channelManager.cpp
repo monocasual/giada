@@ -84,9 +84,9 @@ Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position,
 
 /* -------------------------------------------------------------------------- */
 
-int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, int sampleRate, int rsmpQuality)
+int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, int sampleRate, Resampler::Quality quality)
 {
-	WaveFactory::Result res = WaveFactory::createFromFile(fname, /*id=*/0, sampleRate, rsmpQuality);
+	WaveFactory::Result res = WaveFactory::createFromFile(fname, /*id=*/0, sampleRate, quality);
 	if (res.status != G_RES_OK)
 		return res.status;
 

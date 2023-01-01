@@ -140,7 +140,7 @@ AudioData getAudioData()
 	audioData.sampleRate      = g_engine.conf.data.samplerate;
 	audioData.limitOutput     = g_engine.conf.data.limitOutput;
 	audioData.recTriggerLevel = g_engine.conf.data.recTriggerLevel;
-	audioData.resampleQuality = g_engine.conf.data.rsmpQuality;
+	audioData.resampleQuality = static_cast<int>(g_engine.conf.data.rsmpQuality);
 	audioData.outputDevice    = getAudioDeviceData_(DeviceType::OUTPUT,
         g_engine.conf.data.soundDeviceOut, g_engine.conf.data.channelsOutCount,
         g_engine.conf.data.channelsOutStart);
@@ -221,7 +221,7 @@ void save(const AudioData& data)
 	g_engine.conf.data.channelsInCount  = data.inputDevice.channelsCount;
 	g_engine.conf.data.channelsInStart  = data.inputDevice.channelsStart;
 	g_engine.conf.data.limitOutput      = data.limitOutput;
-	g_engine.conf.data.rsmpQuality      = data.resampleQuality;
+	g_engine.conf.data.rsmpQuality      = static_cast<m::Resampler::Quality>(data.resampleQuality);
 	g_engine.conf.data.buffersize       = data.bufferSize;
 	g_engine.conf.data.recTriggerLevel  = data.recTriggerLevel;
 	g_engine.conf.data.samplerate       = data.sampleRate;

@@ -117,7 +117,7 @@ void WaveFactory::reset()
 /* -------------------------------------------------------------------------- */
 
 WaveFactory::Result WaveFactory::createFromFile(const std::string& path, ID id,
-    int samplerate, int quality)
+    int samplerate, Resampler::Quality quality)
 {
 	if (path == "" || u::fs::isDir(path))
 	{
@@ -206,7 +206,7 @@ std::unique_ptr<Wave> WaveFactory::createFromWave(const Wave& src, int a, int b)
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Wave> WaveFactory::deserializeWave(const Patch::Wave& w, int samplerate, int quality)
+std::unique_ptr<Wave> WaveFactory::deserializeWave(const Patch::Wave& w, int samplerate, Resampler::Quality quality)
 {
 	return createFromFile(w.path, w.id, samplerate, quality).wave;
 }
@@ -218,7 +218,7 @@ const Patch::Wave WaveFactory::serializeWave(const Wave& w)
 
 /* -------------------------------------------------------------------------- */
 
-int WaveFactory::resample(Wave& w, int quality, int samplerate)
+int WaveFactory::resample(Wave& w, Resampler::Quality quality, int samplerate)
 {
 	float ratio         = samplerate / (float)w.getRate();
 	int   newSizeFrames = static_cast<int>(ceil(w.getBuffer().countFrames() * ratio));
@@ -235,7 +235,7 @@ int WaveFactory::resample(Wave& w, int quality, int samplerate)
 
 	u::log::print("[waveManager::resample] resampling: new size=%d frames\n", newSizeFrames);
 
-	int ret = src_simple(&src_data, quality, w.getBuffer().countChannels());
+	int ret = src_simple(&src_data, static_cast<int>(quality), w.getBuffer().countChannels());
 	if (ret != 0)
 	{
 		u::log::print("[waveManager::resample] resampling error: %s\n", src_strerror(ret));

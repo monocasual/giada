@@ -1,5 +1,6 @@
 #include "../src/core/waveFactory.h"
 #include "../src/core/const.h"
+#include "../src/core/resampler.h"
 #include "../src/core/wave.h"
 #include <catch2/catch.hpp>
 #include <memory>
@@ -20,7 +21,7 @@ TEST_CASE("waveFactory")
 	SECTION("test creation")
 	{
 		WaveFactory::Result res = WaveFactory::createFromFile(TEST_RESOURCES_DIR "test.wav",
-		    /*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, /*quality=*/SRC_LINEAR);
+		    /*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, Resampler::Quality::LINEAR);
 
 		REQUIRE(res.status == G_RES_OK);
 		REQUIRE(res.wave->getRate() == G_SAMPLE_RATE);
@@ -44,10 +45,10 @@ TEST_CASE("waveFactory")
 	SECTION("test resampling")
 	{
 		WaveFactory::Result res = WaveFactory::createFromFile(TEST_RESOURCES_DIR "test.wav",
-		    /*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, /*quality=*/SRC_LINEAR);
+		    /*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, Resampler::Quality::LINEAR);
 
 		int oldSize = res.wave->getBuffer().countFrames();
-		WaveFactory::resample(*res.wave.get(), 1, G_SAMPLE_RATE * 2);
+		WaveFactory::resample(*res.wave.get(), Resampler::Quality::LINEAR, G_SAMPLE_RATE * 2);
 
 		REQUIRE(res.wave->getRate() == G_SAMPLE_RATE * 2);
 		REQUIRE(res.wave->getBuffer().countFrames() == oldSize * 2);

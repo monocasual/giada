@@ -83,8 +83,8 @@ Channel& ChannelsEngine::add(ID columnId, ChannelType type)
 
 int ChannelsEngine::loadSampleChannel(ID channelId, const std::string& filePath)
 {
-	const int sampleRate  = m_kernelAudio.getSampleRate();
-	const int rsmpQuality = m_engine.conf.data.rsmpQuality;
+	const int                sampleRate  = m_kernelAudio.getSampleRate();
+	const Resampler::Quality rsmpQuality = m_engine.conf.data.rsmpQuality;
 	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality);
 }
 
