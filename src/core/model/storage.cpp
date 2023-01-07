@@ -125,11 +125,7 @@ LoadState load(const Patch::Data& patch, Engine& engine)
 	/* Then load up channels, actions and global properties. */
 
 	for (const Patch::Channel& pchannel : patch.channels)
-	{
-		ChannelFactory::Data data = engine.getChannelsEngine().deserializeChannel(pchannel, sampleRateRatio, bufferSize);
-		engine.model.get().channels.push_back(data.channel);
-		engine.model.addShared(std::move(data.shared));
-	}
+		engine.model.get().channels.push_back(engine.getChannelsEngine().deserializeChannel(pchannel, sampleRateRatio, bufferSize));
 
 	engine.model.getAllShared<Actions::Map>() = engine.actionRecorder.deserializeActions(patch.actions);
 

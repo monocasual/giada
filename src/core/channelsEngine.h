@@ -27,7 +27,6 @@
 #ifndef G_CHANNELS_ENGINE_H
 #define G_CHANNELS_ENGINE_H
 
-#include "core/channels/channelFactory.h"
 #include "core/patch.h"
 #include "core/types.h"
 #include <string>
@@ -41,6 +40,7 @@ class KernelAudio;
 class Mixer;
 class Sequencer;
 class ChannelManager;
+class ChannelFactory;
 class Channel;
 class Recorder;
 class ActionRecorder;
@@ -91,8 +91,8 @@ public:
 	void sendMidi(ID, MidiEvent);
 	bool saveSample(ID, const std::string& filePath);
 
-	Patch::Channel       serializeChannel(const Channel&);
-	ChannelFactory::Data deserializeChannel(const Patch::Channel&, float samplerateRatio, int bufferSize);
+	Patch::Channel serializeChannel(const Channel&);
+	Channel        deserializeChannel(const Patch::Channel&, float samplerateRatio, int bufferSize);
 
 private:
 	Engine&         m_engine;

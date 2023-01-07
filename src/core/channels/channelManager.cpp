@@ -60,20 +60,12 @@ void ChannelManager::reset(Frame framesInBuffer)
 {
 	m_model.get().channels.clear();
 
-	const ID  columnId = 0;
-	const int position = 0;
-
-	ChannelFactory::Data masterOutData = m_channelFactory.create(Mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, columnId, position, framesInBuffer);
-	ChannelFactory::Data masterInData  = m_channelFactory.create(Mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, columnId, position, framesInBuffer);
-	ChannelFactory::Data previewData   = m_channelFactory.create(Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, columnId, position, framesInBuffer);
-
-	m_model.get().channels.push_back(masterOutData.channel);
-	m_model.get().channels.push_back(masterInData.channel);
-	m_model.get().channels.push_back(previewData.channel);
-
-	m_model.addShared(std::move(masterOutData.shared));
-	m_model.addShared(std::move(masterInData.shared));
-	m_model.addShared(std::move(previewData.shared));
+	m_model.get().channels.push_back(m_channelFactory.create(
+	    Mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, /*columnId=*/0, /*position=*/0, framesInBuffer));
+	m_model.get().channels.push_back(m_channelFactory.create(
+	    Mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, /*columnId=*/0, /*position=*/0, framesInBuffer));
+	m_model.get().channels.push_back(m_channelFactory.create(
+	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, /*columnId=*/0, /*position=*/0, framesInBuffer));
 
 	m_model.swap(model::SwapType::NONE);
 }
@@ -82,10 +74,7 @@ void ChannelManager::reset(Frame framesInBuffer)
 
 Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position, int bufferSize)
 {
-	ChannelFactory::Data data = m_channelFactory.create(/*id=*/0, type, columnId, position, bufferSize);
-
-	m_model.get().channels.push_back(data.channel);
-	m_model.addShared(std::move(data.shared));
+	m_model.get().channels.push_back(m_channelFactory.create(/*id=*/0, type, columnId, position, bufferSize));
 	m_model.swap(model::SwapType::HARD);
 
 	triggerOnChannelsAltered();
@@ -130,8 +119,8 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 
 void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>& plugins)
 {
-	const Channel&       oldChannel     = m_model.get().getChannel(channelId);
-	ChannelFactory::Data newChannelData = m_channelFactory.create(oldChannel, bufferSize);
+	const Channel& oldChannel = m_model.get().getChannel(channelId);
+	Channel        newChannel = m_channelFactory.create(oldChannel, bufferSize);
 
 	/* Clone Wave first, if any. */
 
@@ -142,15 +131,14 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 		const Frame oldBegin = oldChannel.samplePlayer->begin;
 		const Frame oldEnd   = oldChannel.samplePlayer->end;
 		m_model.addShared(WaveFactory::createFromWave(oldWave));
-		loadSampleChannel(newChannelData.channel, &m_model.backShared<Wave>(), oldBegin, oldEnd, oldShift);
+		loadSampleChannel(newChannel, &m_model.backShared<Wave>(), oldBegin, oldEnd, oldShift);
 	}
 
-	newChannelData.channel.plugins = plugins;
+	newChannel.plugins = plugins;
 
 	/* Then push the new channel in the channels vector. */
 
-	m_model.get().channels.push_back(newChannelData.channel);
-	m_model.addShared(std::move(newChannelData.shared));
+	m_model.get().channels.push_back(newChannel);
 	m_model.swap(model::SwapType::HARD);
 }
 
