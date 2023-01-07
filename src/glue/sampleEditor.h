@@ -106,8 +106,6 @@ void smoothEdges(ID channelId, Frame a, Frame b);
 void shift(ID channelId, Frame offset);
 void reload(ID channelId);
 
-bool isWaveBufferFull();
-
 void setLoop(bool);
 void togglePreview();
 void playPreview();

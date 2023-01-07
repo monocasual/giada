@@ -28,22 +28,44 @@
 #define G_SAMPLE_EDITOR_ENGINE_H
 
 #include "core/types.h"
+#include "core/waveFx.h"
+#include <memory>
 
 namespace giada::m
 {
 class Engine;
 class ChannelManager;
+class Wave;
 class SampleEditorEngine
 {
 public:
 	SampleEditorEngine(Engine&, ChannelManager&);
 
+	void cut(ID channelId, Frame a, Frame b);
+	void copy(ID channelId, Frame a, Frame b);
+	void paste(ID channelId, Frame a);
+	void silence(ID channelId, Frame a, Frame b);
+	void fade(ID channelId, Frame a, Frame b, wfx::Fade);
+	void smoothEdges(ID channelId, Frame a, Frame b);
+	void reverse(ID channelId, Frame a, Frame b);
+	void normalize(ID channelId, Frame a, Frame b);
+	void trim(ID channelId, Frame a, Frame b);
+	void shift(ID channelId, Frame offset);
+	void toNewChannel(ID channelId, ID columnId, Frame a, Frame b);
 	void setBeginEnd(ID channelId, Frame b, Frame e);
 	void resetBeginEnd(ID channelId);
+	void reload(ID channelId);
 
 private:
+	Wave& getWave(ID channelId) const;
+
 	Engine&         m_engine;
 	ChannelManager& m_channelManager;
+
+	/* waveBuffer
+	A Wave used during cut/copy/paste operations. */
+
+	std::unique_ptr<m::Wave> m_waveBuffer;
 };
 } // namespace giada::m
 

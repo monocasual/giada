@@ -26,6 +26,9 @@
 
 #include "core/sampleEditorEngine.h"
 #include "core/engine.h"
+#include "core/waveFactory.h"
+#include "core/waveFx.h"
+#include "utils/log.h"
 
 namespace giada::m
 {
@@ -33,6 +36,132 @@ SampleEditorEngine::SampleEditorEngine(Engine& e, ChannelManager& cm)
 : m_engine(e)
 , m_channelManager(cm)
 {
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorEngine::cut(ID channelId, Frame a, Frame b)
+{
+	copy(channelId, a, b);
+	model::DataLock lock = m_engine.model.lockData();
+	wfx::cut(getWave(channelId), a, b);
+	resetBeginEnd(channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorEngine::copy(ID channelId, Frame a, Frame b)
+{
+	m_waveBuffer = waveFactory::createFromWave(getWave(channelId), a, b);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorEngine::paste(ID channelId, Frame a)
+{
+	if (m_waveBuffer == nullptr)
+	{
+		u::log::print("[sampleEditor::paste] Buffer is empty, nothing to paste\n");
+		return;
+	}
+
+	/* Get the existing wave in channel. */
+
+	Wave& wave = getWave(channelId);
+
+	/* Temporary disable wave reading in channel. From now on, the audio 
+		thread won't be reading any wave, so editing it is safe.  */
+
+	model::DataLock lock = m_engine.model.lockData();
+
+	/* Paste copied data to destination wave. */
+
+	wfx::paste(*m_waveBuffer, wave, a);
+
+	/* Pass the old wave that contains the pasted data to channel. */
+
+	m_channelManager.getChannel(channelId).samplePlayer->setWave(&wave, 1.0f);
+
+	/* Just brutally restore begin/end points. */
+
+	resetBeginEnd(channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorEngine::silence(ID channelId, Frame a, Frame b)
+{
+	model::DataLock lock = m_engine.model.lockData();
+	wfx::silence(getWave(channelId), a, b);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorEngine::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
+{
+	model::DataLock lock = m_engine.model.lockData();
+	wfx::fade(getWave(channelId), a, b, type);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorEngine::smoothEdges(ID channelId, Frame a, Frame b)
+{
+	model::DataLock lock = m_engine.model.lockData();
+	wfx::smooth(getWave(channelId), a, b);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorEngine::reverse(ID channelId, Frame a, Frame b)
+{
+	model::DataLock lock = m_engine.model.lockData();
+	wfx::reverse(getWave(channelId), a, b);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorEngine::normalize(ID channelId, Frame a, Frame b)
+{
+	model::DataLock lock = m_engine.model.lockData();
+	wfx::normalize(getWave(channelId), a, b);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorEngine::trim(ID channelId, Frame a, Frame b)
+{
+	model::DataLock lock = m_engine.model.lockData();
+	wfx::trim(getWave(channelId), a, b);
+	resetBeginEnd(channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorEngine::shift(ID channelId, Frame offset)
+{
+	const Channel&      ch           = m_channelManager.getChannel(channelId);
+	const SamplePlayer& samplePlayer = ch.samplePlayer.value();
+	const Frame         oldShift     = samplePlayer.shift;
+
+	m::model::DataLock lock = m_engine.model.lockData();
+	m::wfx::shift(getWave(channelId), offset - oldShift);
+	// Model has been swapped by DataLock constructor, needs to get Channel again
+	m_channelManager.getChannel(channelId).samplePlayer->shift = offset;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorEngine::toNewChannel(ID channelId, ID columnId, Frame a, Frame b)
+{
+	const int position   = m_channelManager.getLastChannelPosition(columnId);
+	const int bufferSize = m_engine.getBufferSize();
+
+	m_engine.model.addShared(waveFactory::createFromWave(getWave(channelId), a, b));
+	Wave& wave = m_engine.model.backShared<Wave>();
+
+	const Channel& ch = m_channelManager.addChannel(ChannelType::SAMPLE, columnId, position, bufferSize);
+	m_channelManager.loadSampleChannel(ch.id, wave);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -45,5 +174,25 @@ void SampleEditorEngine::setBeginEnd(ID channelId, Frame b, Frame e)
 void SampleEditorEngine::resetBeginEnd(ID channelId)
 {
 	m_channelManager.resetBeginEnd(channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorEngine::reload(ID channelId)
+{
+	const int                sampleRate  = m_engine.getSampleRate();
+	const Resampler::Quality rsmpQuality = m_engine.conf.data.rsmpQuality;
+	// TODO - error checking
+	m_channelManager.loadSampleChannel(channelId, getWave(channelId).getPath(), sampleRate, rsmpQuality);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Wave& SampleEditorEngine::getWave(ID channelId) const
+{
+	Channel&      ch           = m_channelManager.getChannel(channelId);
+	SamplePlayer& samplePlayer = ch.samplePlayer.value();
+
+	return *samplePlayer.getWave();
 }
 } // namespace giada::m
