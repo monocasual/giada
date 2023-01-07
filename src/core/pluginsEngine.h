@@ -46,10 +46,11 @@ class Plugin;
 class PluginsEngine
 {
 public:
-	PluginsEngine(KernelAudio&, ChannelManager&, PluginManager&, PluginHost&, model::Model&);
+	PluginsEngine(Engine&, KernelAudio&, ChannelManager&, PluginManager&, PluginHost&, model::Model&);
 
 	const Plugin*                          get(ID pluginId) const;
 	std::vector<PluginManager::PluginInfo> getInfo() const;
+	int                                    countAvailablePlugins() const;
 
 	void add(int pluginListIndex, ID channelId);
 	void swap(const Plugin&, const Plugin&, ID channelId);
@@ -59,7 +60,13 @@ public:
 	void toggleBypass(ID pluginId);
 	void setParameter(ID pluginId, int paramIndex, float value);
 
+	void scan(const std::string& dir, const std::function<void(float)>& progress);
+
+	const Patch::Plugin     serialize(const Plugin&) const;
+	std::unique_ptr<Plugin> deserialize(const Patch::Plugin&);
+
 private:
+	Engine&         m_engine;
 	KernelAudio&    m_kernelAudio;
 	ChannelManager& m_channelManager;
 	PluginManager&  m_pluginManager;

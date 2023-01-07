@@ -29,11 +29,13 @@
 #include "core/engine.h"
 #include "core/kernelAudio.h"
 #include "core/mixer.h"
+#include "utils/fs.h"
 
 namespace giada::m
 {
-PluginsEngine::PluginsEngine(KernelAudio& ka, ChannelManager& cm, PluginManager& pm, PluginHost& ph, model::Model& m)
-: m_kernelAudio(ka)
+PluginsEngine::PluginsEngine(Engine& e, KernelAudio& ka, ChannelManager& cm, PluginManager& pm, PluginHost& ph, model::Model& m)
+: m_engine(e)
+, m_kernelAudio(ka)
 , m_channelManager(cm)
 , m_pluginManager(pm)
 , m_pluginHost(ph)
@@ -53,6 +55,13 @@ const Plugin* PluginsEngine::get(ID pluginId) const
 std::vector<PluginManager::PluginInfo> PluginsEngine::getInfo() const
 {
 	return m_pluginManager.getPluginsInfo();
+}
+
+/* -------------------------------------------------------------------------- */
+
+int PluginsEngine::countAvailablePlugins() const
+{
+	return m_pluginManager.countAvailablePlugins();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -123,5 +132,28 @@ void PluginsEngine::toggleBypass(ID pluginId)
 void PluginsEngine::setParameter(ID pluginId, int paramIndex, float value)
 {
 	m_pluginHost.setPluginParameter(pluginId, paramIndex, value);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void PluginsEngine::scan(const std::string& dir, const std::function<void(float)>& progress)
+{
+	m_pluginManager.scanDirs(dir, progress);
+	m_pluginManager.saveList(u::fs::join(u::fs::getHomePath(), "plugins.xml"));
+}
+
+/* -------------------------------------------------------------------------- */
+
+const Patch::Plugin PluginsEngine::serialize(const Plugin& p) const
+{
+	return m_pluginManager.serializePlugin(p);
+}
+
+std::unique_ptr<Plugin> PluginsEngine::deserialize(const Patch::Plugin& pplugin)
+{
+	const int sampleRate = m_engine.getSampleRate();
+	const int bufferSize = m_engine.getBufferSize();
+
+	return m_pluginManager.deserializePlugin(pplugin, sampleRate, bufferSize, m_model.get().sequencer);
 }
 } // namespace giada::m

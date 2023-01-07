@@ -188,7 +188,7 @@ MidiData getMidiData()
 PluginData getPluginData()
 {
 	PluginData pluginData;
-	pluginData.numAvailablePlugins = g_engine.pluginManager.countAvailablePlugins();
+	pluginData.numAvailablePlugins = g_engine.getPluginsEngine().countAvailablePlugins();
 	pluginData.pluginPath          = g_engine.conf.data.pluginPath;
 	return pluginData;
 }
@@ -256,8 +256,7 @@ void save(const MiscData& data)
 
 void scanPlugins(std::string dir, const std::function<void(float)>& progress)
 {
-	g_engine.pluginManager.scanDirs(dir, progress);
-	g_engine.pluginManager.saveList(u::fs::join(u::fs::getHomePath(), "plugins.xml"));
+	g_engine.getPluginsEngine().scan(dir, progress);
 }
 
 /* -------------------------------------------------------------------------- */

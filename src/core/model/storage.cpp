@@ -52,7 +52,7 @@ void store(Patch::Data& patch, Engine& engine)
 
 	patch.plugins.clear();
 	for (const auto& p : engine.model.getAllShared<PluginPtrs>())
-		patch.plugins.push_back(engine.pluginManager.serializePlugin(*p));
+		patch.plugins.push_back(engine.getPluginsEngine().serialize(*p));
 
 	patch.actions = engine.actionRecorder.serializeActions(engine.model.getAllShared<Actions::Map>());
 
@@ -106,7 +106,7 @@ LoadState load(const Patch::Data& patch, Engine& engine)
 	engine.model.getAllShared<PluginPtrs>().clear();
 	for (const Patch::Plugin& pplugin : patch.plugins)
 	{
-		std::unique_ptr<Plugin> p = engine.pluginManager.deserializePlugin(pplugin, sampleRate, bufferSize, engine.model.get().sequencer);
+		std::unique_ptr<Plugin> p = engine.getPluginsEngine().deserialize(pplugin);
 		if (!p->valid)
 			state.missingPlugins.push_back(pplugin.path);
 		engine.model.getAllShared<PluginPtrs>().push_back(std::move(p));

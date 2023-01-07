@@ -107,7 +107,7 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 
 /* -------------------------------------------------------------------------- */
 
-Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRatio, Wave* wave)
+Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRatio, Wave* wave, std::vector<Plugin*> plugins)
 : shared(&s)
 , id(p.id)
 , type(p.type)
@@ -121,7 +121,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , hasActions(p.hasActions)
 , name(p.name)
 , height(p.height)
-, plugins(g_engine.pluginManager.hydratePlugins(p.pluginIds, g_engine.model)) // TODO move outside, as constructor parameter
+, plugins(plugins)
 , midiLearner(p)
 , midiLighter(g_engine.midiMapper, p)
 , m_mute(p.mute)

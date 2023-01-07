@@ -54,8 +54,8 @@ Engine::Engine()
 , m_channelManager(conf.data, model)
 , m_recorder(sequencer, m_channelManager, m_mixer, actionRecorder)
 , m_mainEngine(*this, m_kernelAudio, m_mixer, sequencer, midiSynchronizer, m_channelManager, m_recorder)
-, m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, m_channelManager, m_recorder, actionRecorder, pluginHost, pluginManager)
-, m_pluginsEngine(m_kernelAudio, m_channelManager, pluginManager, pluginHost, model)
+, m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, m_channelManager, m_recorder, actionRecorder, pluginHost, m_pluginManager)
+, m_pluginsEngine(*this, m_kernelAudio, m_channelManager, m_pluginManager, pluginHost, model)
 , m_sampleEditorEngine(*this, m_channelManager)
 {
 	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
@@ -259,7 +259,7 @@ void Engine::init()
 	m_channelManager.reset(m_kernelAudio.getBufferSize());
 	sequencer.reset(m_kernelAudio.getSampleRate());
 	pluginHost.reset(m_kernelAudio.getBufferSize());
-	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
+	m_pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
 
 	m_mixer.enable();
 	m_kernelAudio.startStream();
@@ -284,7 +284,7 @@ void Engine::reset()
 
 	channelFactory::reset();
 	waveFactory::reset();
-	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
+	m_pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
 
 	/* Then all other components. */
 

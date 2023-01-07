@@ -109,12 +109,12 @@ Data create(const Channel& o, int bufferSize, Resampler::Quality quality)
 
 /* -------------------------------------------------------------------------- */
 
-Data deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize, Resampler::Quality quality, Wave* wave)
+Data deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize, Resampler::Quality quality, Wave* wave, std::vector<Plugin*> plugins)
 {
 	channelId_.set(pch.id);
 
 	std::unique_ptr<ChannelShared> shared = makeShared_(pch.type, bufferSize, quality);
-	Channel                        ch     = Channel(pch, *shared.get(), samplerateRatio, wave);
+	Channel                        ch     = Channel(pch, *shared.get(), samplerateRatio, wave, plugins);
 
 	c::channel::setCallbacks(ch); // UI callbacks
 

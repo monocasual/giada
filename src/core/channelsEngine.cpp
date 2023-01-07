@@ -321,6 +321,9 @@ Patch::Channel ChannelsEngine::serializeChannel(const Channel& ch)
 
 channelFactory::Data ChannelsEngine::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
 {
-	return channelFactory::deserializeChannel(pch, samplerateRatio, bufferSize, m_engine.conf.data.rsmpQuality, m_engine.model.findShared<Wave>(pch.waveId));
+	const Resampler::Quality rsmpQuality = m_engine.conf.data.rsmpQuality;
+	Wave*                    wave        = m_engine.model.findShared<Wave>(pch.waveId);
+	std::vector<Plugin*>     plugins     = m_pluginManager.hydratePlugins(pch.pluginIds, m_engine.model);
+	return channelFactory::deserializeChannel(pch, samplerateRatio, bufferSize, rsmpQuality, wave, plugins);
 }
 } // namespace giada::m

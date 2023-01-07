@@ -167,7 +167,6 @@ public:
 	MidiSynchronizer       midiSynchronizer;
 	Sequencer              sequencer;
 	PluginHost             pluginHost;
-	PluginManager          pluginManager;
 #ifdef WITH_AUDIO_JACK
 	JackSynchronizer jackSynchronizer;
 #endif
@@ -180,6 +179,7 @@ private:
 	Mixer          m_mixer;
 	ChannelManager m_channelManager;
 	Recorder       m_recorder;
+	PluginManager  m_pluginManager;
 
 	MainEngine         m_mainEngine;
 	ChannelsEngine     m_channelsEngine;

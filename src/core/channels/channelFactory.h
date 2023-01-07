@@ -70,7 +70,7 @@ Data create(const Channel& ch, int bufferSize, Resampler::Quality);
 /* (de)serializeWave
     Creates a new channel given the patch raw data and vice versa. */
 
-Data                 deserializeChannel(const Patch::Channel& c, float samplerateRatio, int bufferSize, Resampler::Quality, Wave*);
+Data                 deserializeChannel(const Patch::Channel& c, float samplerateRatio, int bufferSize, Resampler::Quality, Wave*, std::vector<Plugin*>);
 const Patch::Channel serializeChannel(const Channel& c);
 } // namespace giada::m::channelFactory
 

@@ -57,7 +57,7 @@ class Channel final
 {
 public:
 	Channel(ChannelType t, ID id, ID columnId, int position, ChannelShared&);
-	Channel(const Patch::Channel& p, ChannelShared&, float samplerateRatio, Wave* w);
+	Channel(const Patch::Channel&, ChannelShared&, float samplerateRatio, Wave*, std::vector<Plugin*>);
 	Channel(const Channel& o);
 	Channel(Channel&& o) = default;
 
