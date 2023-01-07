@@ -44,10 +44,10 @@ bool LoadState::isGood() const
 /* -------------------------------------------------------------------------- */
 
 Engine::Engine()
-: midiMapper(kernelMidi)
+: midiMapper(m_kernelMidi)
 , midiDispatcher(model)
 , actionRecorder(model)
-, midiSynchronizer(conf.data, kernelMidi)
+, midiSynchronizer(conf.data, m_kernelMidi)
 , sequencer(model, midiSynchronizer, jackTransport)
 , pluginHost(model)
 , m_mixer(model)
@@ -62,10 +62,10 @@ Engine::Engine()
 		return audioCallback(info);
 	};
 
-	kernelMidi.onMidiReceived = [this](const MidiEvent& e) {
+	m_kernelMidi.onMidiReceived = [this](const MidiEvent& e) {
 		if (!model.registerThread(Thread::MIDI, /*realtime=*/false))
 		{
-			u::log::print("[Engine::kernelMidi.onMidiReceived] Can't register MIDI thread!\n");
+			u::log::print("[Engine::m_kernelMidi.onMidiReceived] Can't register MIDI thread!\n");
 			return;
 		}
 		midiDispatcher.dispatch(e);
@@ -170,9 +170,28 @@ bool Engine::hasAudioAPI(RtAudio::Api api) const
 
 /* -------------------------------------------------------------------------- */
 
+bool Engine::hasMidiAPI(RtMidi::Api api) const
+{
+	return m_kernelMidi.hasAPI(api);
+}
+
+/* -------------------------------------------------------------------------- */
+
 std::vector<KernelAudio::Device> Engine::getAudioDevices() const
 {
 	return m_kernelAudio.getDevices();
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::vector<std::string> Engine::getMidiOutPorts() const
+{
+	return m_kernelMidi.getOutPorts();
+}
+
+std::vector<std::string> Engine::getMidiInPorts() const
+{
+	return m_kernelMidi.getInPorts();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -245,10 +264,10 @@ void Engine::init()
 	m_mixer.enable();
 	m_kernelAudio.startStream();
 
-	kernelMidi.openOutDevice(conf.data.midiSystem, conf.data.midiPortOut);
-	kernelMidi.openInDevice(conf.data.midiSystem, conf.data.midiPortIn);
-	kernelMidi.logPorts();
-	kernelMidi.start();
+	m_kernelMidi.openOutDevice(conf.data.midiSystem, conf.data.midiPortOut);
+	m_kernelMidi.openInDevice(conf.data.midiSystem, conf.data.midiPortIn);
+	m_kernelMidi.logPorts();
+	m_kernelMidi.start();
 
 	midiMapper.sendInitMessages(midiMapper.currentMap);
 	eventDispatcher.start();
@@ -496,4 +515,5 @@ MainEngine&         Engine::getMainEngine() { return m_mainEngine; }
 ChannelsEngine&     Engine::getChannelsEngine() { return m_channelsEngine; }
 PluginsEngine&      Engine::getPluginsEngine() { return m_pluginsEngine; }
 SampleEditorEngine& Engine::getSampleEditorEngine() { return m_sampleEditorEngine; }
+KernelMidi&         Engine::getKernelMidi() { return m_kernelMidi; }
 } // namespace giada::m

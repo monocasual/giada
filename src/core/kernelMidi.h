@@ -46,14 +46,11 @@ public:
 
 	static void logCompiledAPIs();
 
-	unsigned countOutPorts() const;
-	unsigned countInPorts() const;
+	/* getOutPorts, getOutPorts
+    Returns a vector of port names. */
 
-	/* getOut/InPortName
-    Returns the name of the port 'p'. */
-
-	std::string getOutPortName(unsigned p) const;
-	std::string getInPortName(unsigned p) const;
+	std::vector<std::string> getOutPorts() const;
+	std::vector<std::string> getInPorts() const;
 
 	bool hasAPI(RtMidi::Api API) const;
 
@@ -84,6 +81,8 @@ private:
 	template <typename Device>
 	std::unique_ptr<Device> makeDevice(RtMidi::Api api, std::string name) const;
 
+	unsigned    countOutPorts() const;
+	unsigned    countInPorts() const;
 	std::string getPortName(RtMidi&, int port) const;
 	void        logPorts(RtMidi&, std::string name) const;
 

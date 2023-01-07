@@ -32,6 +32,7 @@
 #include <cassert>
 #include <chrono>
 #include <memory>
+#include <ranges>
 
 namespace giada::m
 {
@@ -129,8 +130,21 @@ bool KernelMidi::hasAPI(RtMidi::Api API) const
 
 /* -------------------------------------------------------------------------- */
 
-std::string KernelMidi::getOutPortName(unsigned p) const { return getPortName(*m_midiOut, p); }
-std::string KernelMidi::getInPortName(unsigned p) const { return getPortName(*m_midiIn, p); }
+std::vector<std::string> KernelMidi::getOutPorts() const
+{
+	std::vector<std::string> out;
+	for (unsigned i : std::ranges::views::iota(0u, countOutPorts()))
+		out.push_back(getPortName(*m_midiOut, i));
+	return out;
+}
+
+std::vector<std::string> KernelMidi::getInPorts() const
+{
+	std::vector<std::string> out;
+	for (unsigned i : std::ranges::views::iota(0u, countInPorts()))
+		out.push_back(getPortName(*m_midiIn, i));
+	return out;
+}
 
 /* -------------------------------------------------------------------------- */
 

@@ -78,8 +78,11 @@ public:
 
 	bool                             isAudioReady() const;
 	bool                             hasAudioAPI(RtAudio::Api) const;
+	bool                             hasMidiAPI(RtMidi::Api) const;
 	RtAudio::Api                     getAudioAPI() const;
 	std::vector<KernelAudio::Device> getAudioDevices() const;
+	std::vector<std::string>         getMidiOutPorts() const;
+	std::vector<std::string>         getMidiInPorts() const;
 	int                              getSampleRate() const;
 	int                              getBufferSize() const;
 
@@ -147,10 +150,15 @@ public:
 
 	SampleEditorEngine& getSampleEditorEngine();
 
+	/* getKernelMidi
+	Returns a reference to the internal KernelMidi. TODO - will be removed with
+	new Channel rendering architecture */
+
+	KernelMidi& getKernelMidi();
+
 	model::Model           model;
 	Conf                   conf;
 	Patch                  patch;
-	KernelMidi             kernelMidi;
 	JackTransport          jackTransport;
 	EventDispatcher        eventDispatcher;
 	MidiMapper<KernelMidi> midiMapper;
@@ -168,6 +176,7 @@ private:
 	int audioCallback(KernelAudio::CallbackInfo) const;
 
 	KernelAudio    m_kernelAudio;
+	KernelMidi     m_kernelMidi;
 	Mixer          m_mixer;
 	ChannelManager m_channelManager;
 	Recorder       m_recorder;

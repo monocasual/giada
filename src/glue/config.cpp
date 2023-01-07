@@ -158,13 +158,13 @@ MidiData getMidiData()
 	MidiData midiData;
 
 	midiData.apis[RtMidi::Api::RTMIDI_DUMMY] = "(Dummy)";
-	if (g_engine.kernelMidi.hasAPI(RtMidi::Api::LINUX_ALSA))
+	if (g_engine.hasMidiAPI(RtMidi::Api::LINUX_ALSA))
 		midiData.apis[RtMidi::Api::LINUX_ALSA] = "ALSA";
-	if (g_engine.kernelMidi.hasAPI(RtMidi::Api::UNIX_JACK))
+	if (g_engine.hasMidiAPI(RtMidi::Api::UNIX_JACK))
 		midiData.apis[RtMidi::Api::UNIX_JACK] = "JACK";
-	if (g_engine.kernelMidi.hasAPI(RtMidi::Api::WINDOWS_MM))
+	if (g_engine.hasMidiAPI(RtMidi::Api::WINDOWS_MM))
 		midiData.apis[RtMidi::Api::WINDOWS_MM] = "Multimedia MIDI";
-	if (g_engine.kernelMidi.hasAPI(RtMidi::Api::MACOSX_CORE))
+	if (g_engine.hasMidiAPI(RtMidi::Api::MACOSX_CORE))
 		midiData.apis[RtMidi::Api::MACOSX_CORE] = "OSX Core MIDI";
 
 	midiData.syncModes[G_MIDI_SYNC_NONE]         = "(disabled)";
@@ -173,12 +173,8 @@ MidiData getMidiData()
 
 	midiData.midiMaps = g_engine.midiMapper.getMapFilesFound();
 	midiData.midiMap  = u::vector::indexOf(midiData.midiMaps, g_engine.conf.data.midiMapPath);
-
-	for (unsigned i = 0; i < g_engine.kernelMidi.countOutPorts(); i++)
-		midiData.outPorts.push_back(g_engine.kernelMidi.getOutPortName(i));
-	for (unsigned i = 0; i < g_engine.kernelMidi.countInPorts(); i++)
-		midiData.inPorts.push_back(g_engine.kernelMidi.getInPortName(i));
-
+	midiData.outPorts = g_engine.getMidiOutPorts();
+	midiData.inPorts  = g_engine.getMidiInPorts();
 	midiData.api      = g_engine.conf.data.midiSystem;
 	midiData.syncMode = g_engine.conf.data.midiSync;
 	midiData.outPort  = g_engine.conf.data.midiPortOut;
