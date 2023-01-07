@@ -28,6 +28,7 @@
 #define G_CONF_H
 
 #include "core/const.h"
+#include "core/plugins/pluginManager.h"
 #include "core/resampler.h"
 #include "core/types.h"
 #include "deps/geompp/src/rect.hpp"
@@ -119,8 +120,8 @@ public:
 		uint32_t midiInBeatDouble = 0x0;
 		uint32_t midiInBeatHalf   = 0x0;
 
-		geompp::Rect<int> pluginChooserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
-		int               pluginSortMethod    = 0;
+		geompp::Rect<int>         pluginChooserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+		PluginManager::SortMethod pluginSortMethod    = PluginManager::SortMethod::NAME;
 
 		KeyBindings keyBindings = {
 		    ' ',          // KEY_BIND_PLAY

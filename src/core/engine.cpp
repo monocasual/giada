@@ -259,7 +259,7 @@ void Engine::init()
 	m_channelManager.reset(m_kernelAudio.getBufferSize());
 	sequencer.reset(m_kernelAudio.getSampleRate());
 	pluginHost.reset(m_kernelAudio.getBufferSize());
-	m_pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
+	m_pluginManager.reset(conf.data.pluginSortMethod);
 
 	m_mixer.enable();
 	m_kernelAudio.startStream();
@@ -284,7 +284,7 @@ void Engine::reset()
 
 	channelFactory::reset();
 	waveFactory::reset();
-	m_pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
+	m_pluginManager.reset(conf.data.pluginSortMethod);
 
 	/* Then all other components. */
 

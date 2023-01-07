@@ -79,7 +79,7 @@ gdPluginChooser::gdPluginChooser(ID channelId, m::Conf::Data& c)
 	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_CATEGORY));
 	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_MANUFACTURER));
 	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_FORMAT));
-	sortMethod->showItem(m_conf.pluginSortMethod);
+	sortMethod->showItem(static_cast<int>(m_conf.pluginSortMethod));
 	sortMethod->onChange = [this](ID id) {
 		c::plugin::sortPlugins(static_cast<m::PluginManager::SortMethod>(id));
 		browser->refresh();
@@ -106,6 +106,6 @@ gdPluginChooser::gdPluginChooser(ID channelId, m::Conf::Data& c)
 gdPluginChooser::~gdPluginChooser()
 {
 	m_conf.pluginChooserBounds = getBounds();
-	m_conf.pluginSortMethod    = sortMethod->getSelectedId();
+	m_conf.pluginSortMethod    = static_cast<m::PluginManager::SortMethod>(sortMethod->getSelectedId());
 }
 } // namespace giada::v
