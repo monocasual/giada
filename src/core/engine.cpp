@@ -124,7 +124,7 @@ Engine::Engine()
 	};
 	m_channelManager.onChannelRecorded = [this](Frame recordedFrames) {
 		std::string filename = fmt::format("TAKE-{}.wav", patch.data.lastTakeId++);
-		return WaveFactory::createEmpty(recordedFrames, G_MAX_IO_CHANS, m_kernelAudio.getSampleRate(), filename);
+		return waveFactory::createEmpty(recordedFrames, G_MAX_IO_CHANS, m_kernelAudio.getSampleRate(), filename);
 	};
 
 	sequencer.onAboutStart = [this](SeqStatus status) {
@@ -264,7 +264,7 @@ void Engine::reset()
 	/* Managers first, due to the internal ID numbering. */
 
 	channelFactory::reset();
-	WaveFactory::reset();
+	waveFactory::reset();
 	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
 
 	/* Then all other components. */
@@ -391,8 +391,8 @@ bool Engine::store(const std::string& projectName, const std::string& projectPat
 
 	for (std::unique_ptr<Wave>& w : model.getAllShared<model::WavePtrs>())
 	{
-		w->setPath(makeUniqueWavePath(projectPath, *w, model.getAllShared<model::WavePtrs>()));
-		WaveFactory::save(*w, w->getPath()); // TODO - error checking
+		w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, model.getAllShared<model::WavePtrs>()));
+		waveFactory::save(*w, w->getPath()); // TODO - error checking
 	}
 
 	progress(0.3f);

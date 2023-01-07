@@ -20,7 +20,7 @@ TEST_CASE("waveFactory")
 
 	SECTION("test creation")
 	{
-		WaveFactory::Result res = WaveFactory::createFromFile(TEST_RESOURCES_DIR "test.wav",
+		waveFactory::Result res = waveFactory::createFromFile(TEST_RESOURCES_DIR "test.wav",
 		    /*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, Resampler::Quality::LINEAR);
 
 		REQUIRE(res.status == G_RES_OK);
@@ -32,7 +32,7 @@ TEST_CASE("waveFactory")
 
 	SECTION("test recording")
 	{
-		std::unique_ptr<Wave> wave = WaveFactory::createEmpty(G_BUFFER_SIZE,
+		std::unique_ptr<Wave> wave = waveFactory::createEmpty(G_BUFFER_SIZE,
 		    G_MAX_IO_CHANS, G_SAMPLE_RATE, "test.wav");
 
 		REQUIRE(wave->getRate() == G_SAMPLE_RATE);
@@ -44,11 +44,11 @@ TEST_CASE("waveFactory")
 
 	SECTION("test resampling")
 	{
-		WaveFactory::Result res = WaveFactory::createFromFile(TEST_RESOURCES_DIR "test.wav",
+		waveFactory::Result res = waveFactory::createFromFile(TEST_RESOURCES_DIR "test.wav",
 		    /*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, Resampler::Quality::LINEAR);
 
 		int oldSize = res.wave->getBuffer().countFrames();
-		WaveFactory::resample(*res.wave.get(), Resampler::Quality::LINEAR, G_SAMPLE_RATE * 2);
+		waveFactory::resample(*res.wave.get(), Resampler::Quality::LINEAR, G_SAMPLE_RATE * 2);
 
 		REQUIRE(res.wave->getRate() == G_SAMPLE_RATE * 2);
 		REQUIRE(res.wave->getBuffer().countFrames() == oldSize * 2);

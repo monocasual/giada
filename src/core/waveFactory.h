@@ -35,66 +35,57 @@
 #include <memory>
 #include <string>
 
-namespace giada::m
+namespace giada::m::waveFactory
 {
-std::string makeUniqueWavePath(const std::string& base, const m::Wave& w,
-    const std::vector<std::unique_ptr<Wave>>& waves);
-
-/* -------------------------------------------------------------------------- */
-
-class WaveFactory final
+struct Result
 {
-public:
-	struct Result
-	{
-		int                   status;
-		std::unique_ptr<Wave> wave = nullptr;
-	};
+	int                   status;
+	std::unique_ptr<Wave> wave = nullptr;
+};
 
-	/* reset
+/* reset
     Resets internal ID generator. */
 
-	static void reset();
+void reset();
 
-	/* create
+/* create
 	Creates a new Wave object with data read from file 'path'. Pass id = 0 to 
 	auto-generate it. The function converts the Wave sample rate if it doesn't 
 	match the desired one as specified in 'samplerate'. */
 
-	static Result createFromFile(const std::string& path, ID id, int samplerate, Resampler::Quality);
+Result createFromFile(const std::string& path, ID id, int samplerate, Resampler::Quality);
 
-	/* createEmpty
+/* createEmpty
 	Creates a new silent Wave object. */
 
-	static std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
-	    const std::string& name);
+std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
+    const std::string& name);
 
-	/* createFromWave
+/* createFromWave
 	Creates a new Wave from an existing one. If specified, copying the data in 
 	range a - b. Range is [0, sr.buffer.countFrames()] otherwise. */
 
-	static std::unique_ptr<Wave> createFromWave(const Wave& src, int a = -1, int b = -1);
+std::unique_ptr<Wave> createFromWave(const Wave& src, int a = -1, int b = -1);
 
-	/* (de)serializeWave
+/* (de)serializeWave
 	Creates a new Wave given the patch raw data and vice versa. */
 
-	static std::unique_ptr<Wave> deserializeWave(const Patch::Wave& w, int samplerate, Resampler::Quality);
-	static const Patch::Wave     serializeWave(const Wave& w);
+std::unique_ptr<Wave> deserializeWave(const Patch::Wave& w, int samplerate, Resampler::Quality);
+const Patch::Wave     serializeWave(const Wave& w);
 
-	/* resample
+/* resample
 	Change sample rate of 'w' to the desider value. The 'quality' parameter sets 
 	the algorithm to use for the conversion. */
 
-	static int resample(Wave&, Resampler::Quality, int samplerate);
+int resample(Wave&, Resampler::Quality, int samplerate);
 
-	/* save
+/* save
 	Writes Wave data to file 'path'. Only 'wav' format is supported for now. */
 
-	static int save(const Wave& w, const std::string& path);
+int save(const Wave& w, const std::string& path);
 
-private:
-	static IdManager m_waveId;
-};
-} // namespace giada::m
+std::string makeUniqueWavePath(const std::string& base, const m::Wave& w,
+    const std::vector<std::unique_ptr<Wave>>& waves);
+} // namespace giada::m::waveFactory
 
 #endif

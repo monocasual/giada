@@ -38,10 +38,14 @@
 #include <samplerate.h>
 #include <sndfile.h>
 
-namespace giada::m
+namespace giada::m::waveFactory
 {
 namespace
 {
+IdManager waveId_;
+
+/* -------------------------------------------------------------------------- */
+
 int getBits_(const SF_INFO& header)
 {
 	if (header.format & SF_FORMAT_PCM_S8)
@@ -78,7 +82,6 @@ bool isWavePathUnique_(const m::Wave& skip, const std::string& path,
 			return false;
 	return true;
 }
-
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -105,19 +108,14 @@ std::string makeUniqueWavePath(const std::string& base, const m::Wave& w,
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-IdManager WaveFactory::m_waveId = {};
-
-/* -------------------------------------------------------------------------- */
-
-void WaveFactory::reset()
+void reset()
 {
-	m_waveId = IdManager();
+	waveId_ = IdManager();
 }
 
 /* -------------------------------------------------------------------------- */
 
-WaveFactory::Result WaveFactory::createFromFile(const std::string& path, ID id,
-    int samplerate, Resampler::Quality quality)
+Result createFromFile(const std::string& path, ID id, int samplerate, Resampler::Quality quality)
 {
 	if (path == "" || u::fs::isDir(path))
 	{
@@ -143,9 +141,9 @@ WaveFactory::Result WaveFactory::createFromFile(const std::string& path, ID id,
 		return {G_RES_ERR_WRONG_DATA};
 	}
 
-	m_waveId.set(id);
+	waveId_.set(id);
 
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>(m_waveId.generate(id));
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.generate(id));
 	wave->alloc(header.frames, header.channels, header.samplerate, getBits_(header), path);
 
 	if (sf_readf_float(fileIn, wave->getBuffer()[0], header.frames) != header.frames)
@@ -171,10 +169,10 @@ WaveFactory::Result WaveFactory::createFromFile(const std::string& path, ID id,
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Wave> WaveFactory::createEmpty(int frames, int channels, int samplerate,
+std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
     const std::string& name)
 {
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>(m_waveId.generate());
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.generate());
 	wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, name);
 	wave->setLogical(true);
 
@@ -186,7 +184,7 @@ std::unique_ptr<Wave> WaveFactory::createEmpty(int frames, int channels, int sam
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Wave> WaveFactory::createFromWave(const Wave& src, int a, int b)
+std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 {
 	a = a == -1 ? 0 : a;
 	b = b == -1 ? src.getBuffer().countFrames() : b;
@@ -194,7 +192,7 @@ std::unique_ptr<Wave> WaveFactory::createFromWave(const Wave& src, int a, int b)
 	const int channels = src.getBuffer().countChannels();
 	const int frames   = b - a;
 
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>(m_waveId.generate());
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.generate());
 	wave->alloc(frames, channels, src.getRate(), src.getBits(), src.getPath());
 	wave->getBuffer().set(src.getBuffer(), frames);
 	wave->setLogical(true);
@@ -206,19 +204,19 @@ std::unique_ptr<Wave> WaveFactory::createFromWave(const Wave& src, int a, int b)
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Wave> WaveFactory::deserializeWave(const Patch::Wave& w, int samplerate, Resampler::Quality quality)
+std::unique_ptr<Wave> deserializeWave(const Patch::Wave& w, int samplerate, Resampler::Quality quality)
 {
 	return createFromFile(w.path, w.id, samplerate, quality).wave;
 }
 
-const Patch::Wave WaveFactory::serializeWave(const Wave& w)
+const Patch::Wave serializeWave(const Wave& w)
 {
 	return {w.id, u::fs::basename(w.getPath())};
 }
 
 /* -------------------------------------------------------------------------- */
 
-int WaveFactory::resample(Wave& w, Resampler::Quality quality, int samplerate)
+int resample(Wave& w, Resampler::Quality quality, int samplerate)
 {
 	float ratio         = samplerate / (float)w.getRate();
 	int   newSizeFrames = static_cast<int>(ceil(w.getBuffer().countFrames() * ratio));
@@ -250,7 +248,7 @@ int WaveFactory::resample(Wave& w, Resampler::Quality quality, int samplerate)
 
 /* -------------------------------------------------------------------------- */
 
-int WaveFactory::save(const Wave& w, const std::string& path)
+int save(const Wave& w, const std::string& path)
 {
 	SF_INFO header;
 	header.samplerate = w.getRate();
@@ -272,4 +270,4 @@ int WaveFactory::save(const Wave& w, const std::string& path)
 
 	return G_RES_OK;
 }
-} // namespace giada::m
+} // namespace giada::m::waveFactory

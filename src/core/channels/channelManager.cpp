@@ -100,7 +100,7 @@ Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position,
 
 int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, int sampleRate, Resampler::Quality quality)
 {
-	WaveFactory::Result res = WaveFactory::createFromFile(fname, /*id=*/0, sampleRate, quality);
+	waveFactory::Result res = waveFactory::createFromFile(fname, /*id=*/0, sampleRate, quality);
 	if (res.status != G_RES_OK)
 		return res.status;
 
@@ -144,7 +144,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 		const Frame oldShift = oldChannel.samplePlayer->shift;
 		const Frame oldBegin = oldChannel.samplePlayer->begin;
 		const Frame oldEnd   = oldChannel.samplePlayer->end;
-		m_model.addShared(WaveFactory::createFromWave(oldWave));
+		m_model.addShared(waveFactory::createFromWave(oldWave));
 		loadSampleChannel(newChannelData.channel, &m_model.backShared<Wave>(), oldBegin, oldEnd, oldShift);
 	}
 
@@ -562,7 +562,7 @@ bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
 
 	assert(wave != nullptr);
 
-	if (!WaveFactory::save(*wave, filePath))
+	if (!waveFactory::save(*wave, filePath))
 		return false;
 
 	u::log::print("[saveSample] sample saved to %s\n", filePath);
