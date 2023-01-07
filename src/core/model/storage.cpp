@@ -126,7 +126,7 @@ LoadState load(const Patch::Data& patch, Engine& engine)
 
 	for (const Patch::Channel& pchannel : patch.channels)
 	{
-		ChannelFactory::Data data = engine.getChannelsEngine().deserializeChannel(pchannel, sampleRateRatio, bufferSize);
+		channelFactory::Data data = engine.getChannelsEngine().deserializeChannel(pchannel, sampleRateRatio, bufferSize);
 		engine.model.get().channels.push_back(data.channel);
 		engine.model.addShared(std::move(data.shared));
 	}

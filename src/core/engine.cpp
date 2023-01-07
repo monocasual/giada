@@ -263,7 +263,7 @@ void Engine::reset()
 {
 	/* Managers first, due to the internal ID numbering. */
 
-	ChannelFactory::reset();
+	channelFactory::reset();
 	WaveFactory::reset();
 	pluginManager.reset(static_cast<PluginManager::SortMethod>(conf.data.pluginSortMethod));
 

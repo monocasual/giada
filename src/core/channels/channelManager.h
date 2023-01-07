@@ -47,7 +47,6 @@ class Model;
 namespace giada::m
 {
 class Channel;
-class ChannelFactory;
 class Wave;
 class Plugin;
 class MidiEvent;

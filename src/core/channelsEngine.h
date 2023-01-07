@@ -92,7 +92,7 @@ public:
 	bool saveSample(ID, const std::string& filePath);
 
 	Patch::Channel       serializeChannel(const Channel&);
-	ChannelFactory::Data deserializeChannel(const Patch::Channel&, float samplerateRatio, int bufferSize);
+	channelFactory::Data deserializeChannel(const Patch::Channel&, float samplerateRatio, int bufferSize);
 
 private:
 	Engine&         m_engine;

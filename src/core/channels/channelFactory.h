@@ -35,47 +35,43 @@
 namespace giada::m
 {
 class Wave;
-class ChannelFactory final
-{
-public:
-	struct Data
-	{
-		Channel                        channel;
-		std::unique_ptr<ChannelShared> shared;
-	};
+class Channel;
+} // namespace giada::m
 
-	/* getNextId
+namespace giada::m::channelFactory
+{
+struct Data
+{
+	Channel                        channel;
+	std::unique_ptr<ChannelShared> shared;
+};
+
+/* getNextId
 	Returns the next channel ID that will be assigned to a new channel. */
 
-	static ID getNextId();
+ID getNextId();
 
-	/* reset
+/* reset
     Resets internal ID generator. */
 
-	static void reset();
+void reset();
 
-	/* create (1)
+/* create (1)
     Creates a new channel. If channelId == 0 generates a new ID, reuse the one 
     passed in otherwise. */
 
-	static Data create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize, Resampler::Quality, bool overdubProtection);
+Data create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize, Resampler::Quality, bool overdubProtection);
 
-	/* create (2)
+/* create (2)
     Creates a new channel given an existing one (i.e. clone). */
 
-	static Data create(const Channel& ch, int bufferSize, Resampler::Quality);
+Data create(const Channel& ch, int bufferSize, Resampler::Quality);
 
-	/* (de)serializeWave
+/* (de)serializeWave
     Creates a new channel given the patch raw data and vice versa. */
 
-	static Data                 deserializeChannel(const Patch::Channel& c, float samplerateRatio, int bufferSize, Resampler::Quality, Wave*);
-	static const Patch::Channel serializeChannel(const Channel& c);
-
-private:
-	static std::unique_ptr<ChannelShared> makeShared(ChannelType type, int bufferSize, Resampler::Quality);
-
-	static IdManager m_channelId;
-};
-} // namespace giada::m
+Data                 deserializeChannel(const Patch::Channel& c, float samplerateRatio, int bufferSize, Resampler::Quality, Wave*);
+const Patch::Channel serializeChannel(const Channel& c);
+} // namespace giada::m::channelFactory
 
 #endif

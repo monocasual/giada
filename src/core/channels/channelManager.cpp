@@ -63,11 +63,11 @@ void ChannelManager::reset(Frame framesInBuffer)
 	const int  position          = 0;
 	const bool overdubProtection = false;
 
-	ChannelFactory::Data masterOutData = ChannelFactory::create(
+	channelFactory::Data masterOutData = channelFactory::create(
 	    Mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, columnId, position, framesInBuffer, m_conf.rsmpQuality, overdubProtection);
-	ChannelFactory::Data masterInData = ChannelFactory::create(
+	channelFactory::Data masterInData = channelFactory::create(
 	    Mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, columnId, position, framesInBuffer, m_conf.rsmpQuality, overdubProtection);
-	ChannelFactory::Data previewData = ChannelFactory::create(
+	channelFactory::Data previewData = channelFactory::create(
 	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, columnId, position, framesInBuffer, m_conf.rsmpQuality, overdubProtection);
 
 	m_model.get().channels.push_back(masterOutData.channel);
@@ -85,7 +85,7 @@ void ChannelManager::reset(Frame framesInBuffer)
 
 Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position, int bufferSize)
 {
-	ChannelFactory::Data data = ChannelFactory::create(/*id=*/0, type, columnId, position, bufferSize, m_conf.rsmpQuality, m_conf.overdubProtectionDefaultOn);
+	channelFactory::Data data = channelFactory::create(/*id=*/0, type, columnId, position, bufferSize, m_conf.rsmpQuality, m_conf.overdubProtectionDefaultOn);
 
 	m_model.get().channels.push_back(data.channel);
 	m_model.addShared(std::move(data.shared));
@@ -134,7 +134,7 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>& plugins)
 {
 	const Channel&       oldChannel     = m_model.get().getChannel(channelId);
-	ChannelFactory::Data newChannelData = ChannelFactory::create(oldChannel, bufferSize, m_conf.rsmpQuality);
+	channelFactory::Data newChannelData = channelFactory::create(oldChannel, bufferSize, m_conf.rsmpQuality);
 
 	/* Clone Wave first, if any. */
 

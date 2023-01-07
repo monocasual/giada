@@ -38,30 +38,51 @@
 #include <cassert>
 #include <memory>
 
-namespace giada::m
+namespace giada::m::channelFactory
 {
-IdManager ChannelFactory::m_channelId = {};
+namespace
+{
+IdManager channelId_;
 
 /* -------------------------------------------------------------------------- */
 
-ID ChannelFactory::getNextId()
+std::unique_ptr<ChannelShared> makeShared_(ChannelType type, int bufferSize, Resampler::Quality quality)
 {
-	return m_channelId.getNext();
+	std::unique_ptr<ChannelShared> shared = std::make_unique<ChannelShared>(bufferSize);
+
+	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
+	{
+		shared->quantizer.emplace();
+		shared->renderQueue.emplace();
+		shared->resampler.emplace(quality, G_MAX_IO_CHANS);
+	}
+
+	return shared;
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+ID getNextId()
+{
+	return channelId_.getNext();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelFactory::reset()
+void reset()
 {
-	m_channelId = IdManager();
+	channelId_ = IdManager();
 }
 
 /* -------------------------------------------------------------------------- */
 
-ChannelFactory::Data ChannelFactory::create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize, Resampler::Quality quality, bool overdubProtection)
+Data create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize, Resampler::Quality quality, bool overdubProtection)
 {
-	std::unique_ptr<ChannelShared> shared = makeShared(type, bufferSize, quality);
-	Channel                        ch     = Channel(type, m_channelId.generate(channelId), columnId, position, *shared.get());
+	std::unique_ptr<ChannelShared> shared = makeShared_(type, bufferSize, quality);
+	Channel                        ch     = Channel(type, channelId_.generate(channelId), columnId, position, *shared.get());
 
 	if (ch.audioReceiver)
 		ch.audioReceiver->overdubProtection = overdubProtection;
@@ -73,12 +94,12 @@ ChannelFactory::Data ChannelFactory::create(ID channelId, ChannelType type, ID c
 
 /* -------------------------------------------------------------------------- */
 
-ChannelFactory::Data ChannelFactory::create(const Channel& o, int bufferSize, Resampler::Quality quality)
+Data create(const Channel& o, int bufferSize, Resampler::Quality quality)
 {
-	std::unique_ptr<ChannelShared> shared = makeShared(o.type, bufferSize, quality);
+	std::unique_ptr<ChannelShared> shared = makeShared_(o.type, bufferSize, quality);
 	Channel                        ch     = Channel(o);
 
-	ch.id     = m_channelId.generate();
+	ch.id     = channelId_.generate();
 	ch.shared = shared.get();
 
 	c::channel::setCallbacks(ch); // UI callbacks
@@ -88,13 +109,12 @@ ChannelFactory::Data ChannelFactory::create(const Channel& o, int bufferSize, Re
 
 /* -------------------------------------------------------------------------- */
 
-ChannelFactory::Data ChannelFactory::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize, Resampler::Quality quality, Wave* wave)
+Data deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize, Resampler::Quality quality, Wave* wave)
 {
-	m_channelId.set(pch.id);
+	channelId_.set(pch.id);
 
-	std::unique_ptr<ChannelShared> shared = makeShared(pch.type, bufferSize, quality);
+	std::unique_ptr<ChannelShared> shared = makeShared_(pch.type, bufferSize, quality);
 	Channel                        ch     = Channel(pch, *shared.get(), samplerateRatio, wave);
-	//Channel                        ch     = Channel(pch, *shared.get(), samplerateRatio, m_model.findShared<Wave>(pch.waveId));
 
 	c::channel::setCallbacks(ch); // UI callbacks
 
@@ -103,7 +123,7 @@ ChannelFactory::Data ChannelFactory::deserializeChannel(const Patch::Channel& pc
 
 /* -------------------------------------------------------------------------- */
 
-const Patch::Channel ChannelFactory::serializeChannel(const Channel& c)
+const Patch::Channel serializeChannel(const Channel& c)
 {
 	Patch::Channel pc;
 
@@ -160,20 +180,4 @@ const Patch::Channel ChannelFactory::serializeChannel(const Channel& c)
 
 	return pc;
 }
-
-/* -------------------------------------------------------------------------- */
-
-std::unique_ptr<ChannelShared> ChannelFactory::makeShared(ChannelType type, int bufferSize, Resampler::Quality quality)
-{
-	std::unique_ptr<ChannelShared> shared = std::make_unique<ChannelShared>(bufferSize);
-
-	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
-	{
-		shared->quantizer.emplace();
-		shared->renderQueue.emplace();
-		shared->resampler.emplace(quality, G_MAX_IO_CHANS);
-	}
-
-	return shared;
-}
-} // namespace giada::m
+} // namespace giada::m::channelFactory
