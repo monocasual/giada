@@ -57,6 +57,7 @@ Engine::Engine()
 , m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, m_channelManager, m_recorder, actionRecorder, pluginHost, m_pluginManager)
 , m_pluginsEngine(*this, m_kernelAudio, m_channelManager, m_pluginManager, pluginHost, model)
 , m_sampleEditorEngine(*this, m_channelManager)
+, m_actionEditorEngine(*this, sequencer, actionRecorder)
 {
 	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -515,5 +516,6 @@ MainEngine&         Engine::getMainEngine() { return m_mainEngine; }
 ChannelsEngine&     Engine::getChannelsEngine() { return m_channelsEngine; }
 PluginsEngine&      Engine::getPluginsEngine() { return m_pluginsEngine; }
 SampleEditorEngine& Engine::getSampleEditorEngine() { return m_sampleEditorEngine; }
+ActionEditorEngine& Engine::getActionEditorEngine() { return m_actionEditorEngine; }
 KernelMidi&         Engine::getKernelMidi() { return m_kernelMidi; }
 } // namespace giada::m

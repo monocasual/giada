@@ -55,7 +55,7 @@ Data::Data(const m::Channel& c)
 , framesInBeat(g_engine.sequencer.getFramesInBeat())
 , framesInBar(g_engine.sequencer.getFramesInBar())
 , framesInLoop(g_engine.sequencer.getFramesInLoop())
-, actions(g_engine.actionRecorder.getActionsOnChannel(c.id))
+, actions(g_engine.getActionEditorEngine().getActionsOnChannel(c.id))
 {
 	if (c.type == ChannelType::SAMPLE)
 		sample = std::make_optional<SampleData>(c.samplePlayer.value());
@@ -72,7 +72,7 @@ Frame Data::getCurrentFrame() const
 
 bool Data::isChannelPlaying() const
 {
-	return g_engine.model.get().getChannel(channelId).isPlaying();
+	return g_engine.getChannelsEngine().get(channelId).isPlaying();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -81,26 +81,21 @@ bool Data::isChannelPlaying() const
 
 Data getData(ID channelId)
 {
-	return Data(g_engine.model.get().getChannel(channelId));
+	return Data(g_engine.getChannelsEngine().get(channelId));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2)
 {
-	g_engine.actionRecorder.recordMidiAction(channelId, note, velocity, f1, f2, g_engine.sequencer.getFramesInLoop());
+	g_engine.getActionEditorEngine().recordMidiAction(channelId, note, velocity, f1, f2);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void deleteMidiAction(ID channelId, const m::Action& a)
 {
-	/* Send a note-off first in case we are deleting it in a middle of a 
-	key_on/key_off sequence. */
-
-	events::sendMidiToChannel(channelId, a.next->event, Thread::MAIN);
-
-	g_engine.actionRecorder.deleteMidiAction(channelId, a);
+	g_engine.getActionEditorEngine().deleteMidiAction(channelId, a);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -108,55 +103,55 @@ void deleteMidiAction(ID channelId, const m::Action& a)
 void updateMidiAction(ID channelId, const m::Action& a, int note, int velocity,
     Frame f1, Frame f2)
 {
-	g_engine.actionRecorder.updateMidiAction(channelId, a, note, velocity, f1, f2, g_engine.sequencer.getFramesInLoop());
+	g_engine.getActionEditorEngine().updateMidiAction(channelId, a, note, velocity, f1, f2);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
 {
-	g_engine.actionRecorder.recordSampleAction(channelId, type, f1, f2);
+	g_engine.getActionEditorEngine().recordSampleAction(channelId, type, f1, f2);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void updateSampleAction(ID channelId, const m::Action& a, int type, Frame f1, Frame f2)
 {
-	g_engine.actionRecorder.updateSampleAction(channelId, a, type, f1, f2);
+	g_engine.getActionEditorEngine().updateSampleAction(channelId, a, type, f1, f2);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void deleteSampleAction(ID channelId, const m::Action& a)
 {
-	g_engine.actionRecorder.deleteSampleAction(channelId, a);
+	g_engine.getActionEditorEngine().deleteSampleAction(channelId, a);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void recordEnvelopeAction(ID channelId, Frame f, int value)
 {
-	g_engine.actionRecorder.recordEnvelopeAction(channelId, f, value, g_engine.sequencer.getFramesInLoop() - 1);
+	g_engine.getActionEditorEngine().recordEnvelopeAction(channelId, f, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void deleteEnvelopeAction(ID channelId, const m::Action& a)
 {
-	g_engine.actionRecorder.deleteEnvelopeAction(channelId, a);
+	g_engine.getActionEditorEngine().deleteEnvelopeAction(channelId, a);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void updateEnvelopeAction(ID channelId, const m::Action& a, Frame f, int value)
 {
-	g_engine.actionRecorder.updateEnvelopeAction(channelId, a, f, value, g_engine.sequencer.getFramesInLoop() - 1);
+	g_engine.getActionEditorEngine().updateEnvelopeAction(channelId, a, f, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void updateVelocity(const m::Action& a, int value)
 {
-	g_engine.actionRecorder.updateVelocity(a, value);
+	g_engine.getActionEditorEngine().updateVelocity(a, value);
 }
 } // namespace giada::c::actionEditor

@@ -27,6 +27,7 @@
 #ifndef G_ENGINE_H
 #define G_ENGINE_H
 
+#include "core/actionEditorEngine.h"
 #include "core/actions/actionRecorder.h"
 #include "core/actions/actions.h"
 #include "core/channels/channelFactory.h"
@@ -150,6 +151,12 @@ public:
 
 	SampleEditorEngine& getSampleEditorEngine();
 
+	/* getActionEditorEngine
+	Return a reference to ActionEditorEngine, responsible for the Action Editor 
+	API. */
+
+	ActionEditorEngine& getActionEditorEngine();
+
 	/* getKernelMidi
 	Returns a reference to the internal KernelMidi. TODO - will be removed with
 	new Channel rendering architecture */
@@ -185,6 +192,7 @@ private:
 	ChannelsEngine     m_channelsEngine;
 	PluginsEngine      m_pluginsEngine;
 	SampleEditorEngine m_sampleEditorEngine;
+	ActionEditorEngine m_actionEditorEngine;
 };
 } // namespace giada::m
 
