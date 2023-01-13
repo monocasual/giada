@@ -48,14 +48,14 @@ Engine::Engine()
 , midiDispatcher(model)
 , midiSynchronizer(conf.data, m_kernelMidi)
 , sequencer(model, midiSynchronizer, jackTransport)
-, pluginHost(model)
+, m_pluginHost(model)
 , m_mixer(model)
 , m_channelManager(conf.data, model)
 , m_actionRecorder(model)
 , m_recorder(sequencer, m_channelManager, m_mixer, m_actionRecorder)
 , m_mainEngine(*this, m_kernelAudio, m_mixer, sequencer, midiSynchronizer, m_channelManager, m_recorder)
-, m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, m_channelManager, m_recorder, m_actionRecorder, pluginHost, m_pluginManager)
-, m_pluginsEngine(*this, m_kernelAudio, m_channelManager, m_pluginManager, pluginHost, model)
+, m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager)
+, m_pluginsEngine(*this, m_kernelAudio, m_channelManager, m_pluginManager, m_pluginHost, model)
 , m_sampleEditorEngine(*this, m_channelManager)
 , m_actionEditorEngine(*this, sequencer, m_actionRecorder)
 {
@@ -259,7 +259,7 @@ void Engine::init()
 	m_mixer.reset(sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
 	m_channelManager.reset(m_kernelAudio.getBufferSize());
 	sequencer.reset(m_kernelAudio.getSampleRate());
-	pluginHost.reset(m_kernelAudio.getBufferSize());
+	m_pluginHost.reset(m_kernelAudio.getBufferSize());
 	m_pluginManager.reset(conf.data.pluginSortMethod);
 
 	m_mixer.enable();
@@ -294,7 +294,7 @@ void Engine::reset()
 	m_channelManager.reset(m_kernelAudio.getBufferSize());
 	sequencer.reset(m_kernelAudio.getSampleRate());
 	m_actionRecorder.reset();
-	pluginHost.reset(m_kernelAudio.getBufferSize());
+	m_pluginHost.reset(m_kernelAudio.getBufferSize());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -322,7 +322,7 @@ void Engine::shutdown()
 	deleted as a result of returning from main, so it's better to free them all first.
 	TODO - investigate this! */
 
-	pluginHost.freeAllPlugins();
+	m_pluginHost.freeAllPlugins();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -522,5 +522,5 @@ ActionEditorEngine& Engine::getActionEditorEngine() { return m_actionEditorEngin
 
 KernelMidi&     Engine::getKernelMidi() { return m_kernelMidi; }
 ActionRecorder& Engine::getActionRecorder() { return m_actionRecorder; }
-
+PluginHost&     Engine::getPluginHost() { return m_pluginHost; }
 } // namespace giada::m

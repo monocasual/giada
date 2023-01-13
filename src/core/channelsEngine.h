@@ -54,7 +54,7 @@ public:
 
 	bool hasChannelsWithAudioData() const;
 	bool hasChannelsWithActions() const;
-
+	
 	Channel&              get(ID);
 	std::vector<Channel>& getAll();
 

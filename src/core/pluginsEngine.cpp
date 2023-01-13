@@ -144,6 +144,13 @@ void PluginsEngine::scan(const std::string& dir, const std::function<void(float)
 
 /* -------------------------------------------------------------------------- */
 
+void PluginsEngine::process(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>& plugins, juce::MidiBuffer* events)
+{
+	m_pluginHost.processStack(outBuf, plugins, events);
+}
+
+/* -------------------------------------------------------------------------- */
+
 const Patch::Plugin PluginsEngine::serialize(const Plugin& p) const
 {
 	return m_pluginManager.serializePlugin(p);

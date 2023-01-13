@@ -347,7 +347,7 @@ void Channel::renderMasterOut(mcl::AudioBuffer& out) const
 {
 	shared->audioBuffer.set(out, /*gain=*/1.0f);
 	if (plugins.size() > 0)
-		g_engine.pluginHost.processStack(shared->audioBuffer, plugins, nullptr);
+		g_engine.getPluginsEngine().process(shared->audioBuffer, plugins, nullptr);
 	out.set(shared->audioBuffer, volume);
 }
 
@@ -356,7 +356,7 @@ void Channel::renderMasterOut(mcl::AudioBuffer& out) const
 void Channel::renderMasterIn(mcl::AudioBuffer& in) const
 {
 	if (plugins.size() > 0)
-		g_engine.pluginHost.processStack(in, plugins, nullptr);
+		g_engine.getPluginsEngine().process(in, plugins, nullptr);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -381,9 +381,9 @@ void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool mi
 	plug-in stack internally with no MIDI events. */
 
 	if (midiReceiver)
-		midiReceiver->render(*shared, plugins, g_engine.pluginHost);
+		midiReceiver->render(*shared, plugins, g_engine.getPluginHost());
 	else if (plugins.size() > 0)
-		g_engine.pluginHost.processStack(shared->audioBuffer, plugins, nullptr);
+		g_engine.getPluginsEngine().process(shared->audioBuffer, plugins, nullptr);
 
 	if (isAudible(mixerHasSolos))
 		out.sum(shared->audioBuffer, volume * volume_i, calcPanning_(pan));

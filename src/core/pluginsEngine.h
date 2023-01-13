@@ -61,6 +61,7 @@ public:
 	void setParameter(ID pluginId, int paramIndex, float value);
 
 	void scan(const std::string& dir, const std::function<void(float)>& progress);
+	void process(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>&, juce::MidiBuffer* events = nullptr);
 
 	const Patch::Plugin     serialize(const Plugin&) const;
 	std::unique_ptr<Plugin> deserialize(const Patch::Plugin&);

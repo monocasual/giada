@@ -163,6 +163,7 @@ public:
 
 	KernelMidi&     getKernelMidi();
 	ActionRecorder& getActionRecorder();
+	PluginHost&     getPluginHost();
 
 	model::Model           model;
 	Conf                   conf;
@@ -173,7 +174,6 @@ public:
 	MidiDispatcher         midiDispatcher;
 	MidiSynchronizer       midiSynchronizer;
 	Sequencer              sequencer;
-	PluginHost             pluginHost;
 #ifdef WITH_AUDIO_JACK
 	JackSynchronizer jackSynchronizer;
 #endif
@@ -183,6 +183,7 @@ private:
 
 	KernelAudio    m_kernelAudio;
 	KernelMidi     m_kernelMidi;
+	PluginHost     m_pluginHost;
 	Mixer          m_mixer;
 	ChannelManager m_channelManager;
 	ActionRecorder m_actionRecorder;
