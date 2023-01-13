@@ -169,7 +169,6 @@ public:
 	Conf                   conf;
 	Patch                  patch;
 	JackTransport          jackTransport;
-	EventDispatcher        eventDispatcher;
 	MidiMapper<KernelMidi> midiMapper;
 	MidiDispatcher         midiDispatcher;
 	MidiSynchronizer       midiSynchronizer;
@@ -181,14 +180,15 @@ public:
 private:
 	int audioCallback(KernelAudio::CallbackInfo) const;
 
-	KernelAudio    m_kernelAudio;
-	KernelMidi     m_kernelMidi;
-	PluginHost     m_pluginHost;
-	Mixer          m_mixer;
-	ChannelManager m_channelManager;
-	ActionRecorder m_actionRecorder;
-	Recorder       m_recorder;
-	PluginManager  m_pluginManager;
+	KernelAudio     m_kernelAudio;
+	KernelMidi      m_kernelMidi;
+	PluginHost      m_pluginHost;
+	Mixer           m_mixer;
+	ChannelManager  m_channelManager;
+	ActionRecorder  m_actionRecorder;
+	Recorder        m_recorder;
+	PluginManager   m_pluginManager;
+	EventDispatcher m_eventDispatcher;
 
 	MainEngine         m_mainEngine;
 	ChannelsEngine     m_channelsEngine;

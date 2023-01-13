@@ -98,25 +98,25 @@ Engine::Engine()
 
 #ifdef WITH_AUDIO_JACK
 	jackSynchronizer.onJackRewind = [this]() {
-		eventDispatcher.pumpEvent([this]() { sequencer.jack_rewind(); });
+		m_eventDispatcher.pumpEvent([this]() { sequencer.jack_rewind(); });
 	};
 	jackSynchronizer.onJackChangeBpm = [this](float bpm) {
-		eventDispatcher.pumpEvent([this, bpm]() { sequencer.jack_setBpm(bpm, m_kernelAudio.getSampleRate()); });
+		m_eventDispatcher.pumpEvent([this, bpm]() { sequencer.jack_setBpm(bpm, m_kernelAudio.getSampleRate()); });
 	};
 	jackSynchronizer.onJackStart = [this]() {
-		eventDispatcher.pumpEvent([this]() { sequencer.jack_start(); });
+		m_eventDispatcher.pumpEvent([this]() { sequencer.jack_start(); });
 	};
 	jackSynchronizer.onJackStop = [this]() {
-		eventDispatcher.pumpEvent([this]() { sequencer.jack_stop(); });
+		m_eventDispatcher.pumpEvent([this]() { sequencer.jack_stop(); });
 	};
 #endif
 
 	m_mixer.onSignalTresholdReached = [this]() {
-		eventDispatcher.pumpEvent([this]() { m_recorder.startInputRecOnCallback(); });
+		m_eventDispatcher.pumpEvent([this]() { m_recorder.startInputRecOnCallback(); });
 	};
 	m_mixer.onEndOfRecording = [this]() {
 		if (m_mixer.isRecordingInput())
-			eventDispatcher.pumpEvent([this]() { m_recorder.stopInputRec(conf.data.inputRecMode, m_kernelAudio.getSampleRate()); });
+			m_eventDispatcher.pumpEvent([this]() { m_recorder.stopInputRec(conf.data.inputRecMode, m_kernelAudio.getSampleRate()); });
 	};
 
 	m_channelManager.onChannelsAltered = [this]() {
@@ -271,7 +271,7 @@ void Engine::init()
 	m_kernelMidi.start();
 
 	midiMapper.sendInitMessages(midiMapper.currentMap);
-	eventDispatcher.start();
+	m_eventDispatcher.start();
 	midiSynchronizer.startSendClock(G_DEFAULT_BPM);
 
 	updateMixerModel();
