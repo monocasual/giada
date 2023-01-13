@@ -27,6 +27,7 @@
 #ifndef G_ENGINE_H
 #define G_ENGINE_H
 
+#include "core/IOEngine.h"
 #include "core/actionEditorEngine.h"
 #include "core/actions/actionRecorder.h"
 #include "core/actions/actions.h"
@@ -157,6 +158,11 @@ public:
 
 	ActionEditorEngine& getActionEditorEngine();
 
+	/* getIOEngine
+	Return a reference to IOEngine, responsible for the MIDI I/O API. */
+
+	IOEngine& getIOEngine();
+
 	/* get[... component ...]
 	Returns a reference to an internal. TODO - these methods will be removed with
 	new Channel rendering architecture */
@@ -195,6 +201,7 @@ private:
 	PluginsEngine      m_pluginsEngine;
 	SampleEditorEngine m_sampleEditorEngine;
 	ActionEditorEngine m_actionEditorEngine;
+	IOEngine           m_ioEngine;
 };
 } // namespace giada::m
 

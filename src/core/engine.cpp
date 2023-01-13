@@ -58,6 +58,7 @@ Engine::Engine()
 , m_pluginsEngine(*this, m_kernelAudio, m_channelManager, m_pluginManager, m_pluginHost, model)
 , m_sampleEditorEngine(*this, m_channelManager)
 , m_actionEditorEngine(*this, sequencer, m_actionRecorder)
+, m_ioEngine(model, midiDispatcher, conf.data)
 {
 	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -517,6 +518,7 @@ ChannelsEngine&     Engine::getChannelsEngine() { return m_channelsEngine; }
 PluginsEngine&      Engine::getPluginsEngine() { return m_pluginsEngine; }
 SampleEditorEngine& Engine::getSampleEditorEngine() { return m_sampleEditorEngine; }
 ActionEditorEngine& Engine::getActionEditorEngine() { return m_actionEditorEngine; }
+IOEngine&           Engine::getIOEngine() { return m_ioEngine; }
 
 /* -------------------------------------------------------------------------- */
 

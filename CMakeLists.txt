@@ -40,6 +40,7 @@ list(APPEND SOURCES
 	src/core/sampleEditorEngine.cpp
 	src/core/actionEditorEngine.cpp
 	src/core/pluginsEngine.cpp
+	src/core/IOEngine.cpp
 	src/core/worker.cpp
 	src/core/eventDispatcher.cpp
 	src/core/midiDispatcher.cpp
