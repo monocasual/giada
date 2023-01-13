@@ -27,7 +27,10 @@
 #ifndef G_ACTION_EDITOR_ENGINE_H
 #define G_ACTION_EDITOR_ENGINE_H
 
+#include "core/actions/actions.h"
+#include "core/patch.h"
 #include "core/types.h"
+#include <vector>
 
 namespace giada::m
 {
@@ -40,7 +43,9 @@ class ActionEditorEngine
 public:
 	ActionEditorEngine(Engine&, Sequencer&, ActionRecorder&);
 
-	std::vector<Action> getActionsOnChannel(ID channelId) const;
+	std::vector<Action>        getActionsOnChannel(ID channelId) const;
+	std::vector<Patch::Action> serializeActions() const;
+	Actions::Map               deserializeActions(const std::vector<Patch::Action>& as) const;
 
 	void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2);
 	void deleteMidiAction(ID channelId, const Action&);

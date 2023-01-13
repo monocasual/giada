@@ -157,11 +157,12 @@ public:
 
 	ActionEditorEngine& getActionEditorEngine();
 
-	/* getKernelMidi
-	Returns a reference to the internal KernelMidi. TODO - will be removed with
+	/* get[... component ...]
+	Returns a reference to an internal. TODO - these methods will be removed with
 	new Channel rendering architecture */
 
-	KernelMidi& getKernelMidi();
+	KernelMidi&     getKernelMidi();
+	ActionRecorder& getActionRecorder();
 
 	model::Model           model;
 	Conf                   conf;
@@ -170,7 +171,6 @@ public:
 	EventDispatcher        eventDispatcher;
 	MidiMapper<KernelMidi> midiMapper;
 	MidiDispatcher         midiDispatcher;
-	ActionRecorder         actionRecorder;
 	MidiSynchronizer       midiSynchronizer;
 	Sequencer              sequencer;
 	PluginHost             pluginHost;
@@ -185,6 +185,7 @@ private:
 	KernelMidi     m_kernelMidi;
 	Mixer          m_mixer;
 	ChannelManager m_channelManager;
+	ActionRecorder m_actionRecorder;
 	Recorder       m_recorder;
 	PluginManager  m_pluginManager;
 

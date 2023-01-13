@@ -83,7 +83,7 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(*shared, id);
 		audioReceiver.emplace();
-		sampleActionRecorder.emplace(g_engine.actionRecorder);
+		sampleActionRecorder.emplace(g_engine.getActionRecorder());
 		break;
 
 	case ChannelType::PREVIEW:
@@ -94,7 +94,7 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 	case ChannelType::MIDI:
 		midiController.emplace();
 		midiSender.emplace(g_engine.getKernelMidi());
-		midiActionRecorder.emplace(g_engine.actionRecorder);
+		midiActionRecorder.emplace(g_engine.getActionRecorder());
 		midiReceiver.emplace();
 		break;
 
@@ -137,7 +137,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(*shared, id);
 		audioReceiver.emplace(p);
-		sampleActionRecorder.emplace(g_engine.actionRecorder);
+		sampleActionRecorder.emplace(g_engine.getActionRecorder());
 		break;
 
 	case ChannelType::PREVIEW:
@@ -148,7 +148,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	case ChannelType::MIDI:
 		midiController.emplace();
 		midiSender.emplace(p, g_engine.getKernelMidi());
-		midiActionRecorder.emplace(g_engine.actionRecorder);
+		midiActionRecorder.emplace(g_engine.getActionRecorder());
 		midiReceiver.emplace();
 		break;
 

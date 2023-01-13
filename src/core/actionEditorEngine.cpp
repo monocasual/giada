@@ -46,6 +46,18 @@ std::vector<Action> ActionEditorEngine::getActionsOnChannel(ID channelId) const
 
 /* -------------------------------------------------------------------------- */
 
+std::vector<Patch::Action> ActionEditorEngine::serializeActions() const
+{
+	return m_actionRecorder.serializeActions(m_engine.model.getAllShared<Actions::Map>());
+}
+
+Actions::Map ActionEditorEngine::deserializeActions(const std::vector<Patch::Action>& as) const
+{
+	return m_actionRecorder.deserializeActions(as);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ActionEditorEngine::recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2)
 {
 	m_actionRecorder.recordMidiAction(channelId, note, velocity, f1, f2, m_sequencer.getFramesInLoop());

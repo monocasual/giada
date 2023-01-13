@@ -54,7 +54,7 @@ void store(Patch::Data& patch, Engine& engine)
 	for (const auto& p : engine.model.getAllShared<PluginPtrs>())
 		patch.plugins.push_back(engine.getPluginsEngine().serialize(*p));
 
-	patch.actions = engine.actionRecorder.serializeActions(engine.model.getAllShared<Actions::Map>());
+	patch.actions = engine.getActionEditorEngine().serializeActions();
 
 	patch.waves.clear();
 	for (const auto& w : engine.model.getAllShared<WavePtrs>())
@@ -131,7 +131,7 @@ LoadState load(const Patch::Data& patch, Engine& engine)
 		engine.model.addShared(std::move(data.shared));
 	}
 
-	engine.model.getAllShared<Actions::Map>() = engine.actionRecorder.deserializeActions(patch.actions);
+	engine.model.getAllShared<Actions::Map>() = engine.getActionEditorEngine().deserializeActions(patch.actions);
 
 	engine.model.get().sequencer.status   = SeqStatus::STOPPED;
 	engine.model.get().sequencer.bars     = patch.bars;

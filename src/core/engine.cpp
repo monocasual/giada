@@ -46,18 +46,18 @@ bool LoadState::isGood() const
 Engine::Engine()
 : midiMapper(m_kernelMidi)
 , midiDispatcher(model)
-, actionRecorder(model)
 , midiSynchronizer(conf.data, m_kernelMidi)
 , sequencer(model, midiSynchronizer, jackTransport)
 , pluginHost(model)
 , m_mixer(model)
 , m_channelManager(conf.data, model)
-, m_recorder(sequencer, m_channelManager, m_mixer, actionRecorder)
+, m_actionRecorder(model)
+, m_recorder(sequencer, m_channelManager, m_mixer, m_actionRecorder)
 , m_mainEngine(*this, m_kernelAudio, m_mixer, sequencer, midiSynchronizer, m_channelManager, m_recorder)
-, m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, m_channelManager, m_recorder, actionRecorder, pluginHost, m_pluginManager)
+, m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, m_channelManager, m_recorder, m_actionRecorder, pluginHost, m_pluginManager)
 , m_pluginsEngine(*this, m_kernelAudio, m_channelManager, m_pluginManager, pluginHost, model)
 , m_sampleEditorEngine(*this, m_channelManager)
-, m_actionEditorEngine(*this, sequencer, actionRecorder)
+, m_actionEditorEngine(*this, sequencer, m_actionRecorder)
 {
 	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -144,7 +144,7 @@ Engine::Engine()
 			m_recorder.stopInputRec(conf.data.inputRecMode, m_kernelAudio.getSampleRate());
 	};
 	sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep) {
-		actionRecorder.updateBpm(oldVal / newVal, quantizerStep);
+		m_actionRecorder.updateBpm(oldVal / newVal, quantizerStep);
 	};
 }
 
@@ -293,7 +293,7 @@ void Engine::reset()
 	m_mixer.reset(sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
 	m_channelManager.reset(m_kernelAudio.getBufferSize());
 	sequencer.reset(m_kernelAudio.getSampleRate());
-	actionRecorder.reset();
+	m_actionRecorder.reset();
 	pluginHost.reset(m_kernelAudio.getBufferSize());
 }
 
@@ -378,7 +378,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 		const Frame        quantizerStep = sequencer.getQuantizerStep();              // TODO pass this to sequencer.advance - or better, Advancer class
 		const Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to sequencer.advance - or better, Advancer class
 
-		const Sequencer::EventBuffer& events = sequencer.advance(layout_RT.sequencer, bufferSize, kernelInfo.sampleRate, actionRecorder);
+		const Sequencer::EventBuffer& events = sequencer.advance(layout_RT.sequencer, bufferSize, kernelInfo.sampleRate, m_actionRecorder);
 		sequencer.render(out);
 		if (!layout_RT.locked)
 			m_mixer.advanceChannels(events, layout_RT, renderRange, quantizerStep);
@@ -473,7 +473,7 @@ LoadState Engine::load(const std::string& projectPath, const std::string& patchP
 	in sequencer. */
 
 	m_mixer.updateSoloCount(m_channelManager.hasSolos());
-	actionRecorder.updateSamplerate(m_kernelAudio.getSampleRate(), patch.data.samplerate);
+	m_actionRecorder.updateSamplerate(m_kernelAudio.getSampleRate(), patch.data.samplerate);
 	sequencer.recomputeFrames(m_kernelAudio.getSampleRate());
 	m_mixer.allocRecBuffer(sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()));
 
@@ -517,5 +517,10 @@ ChannelsEngine&     Engine::getChannelsEngine() { return m_channelsEngine; }
 PluginsEngine&      Engine::getPluginsEngine() { return m_pluginsEngine; }
 SampleEditorEngine& Engine::getSampleEditorEngine() { return m_sampleEditorEngine; }
 ActionEditorEngine& Engine::getActionEditorEngine() { return m_actionEditorEngine; }
-KernelMidi&         Engine::getKernelMidi() { return m_kernelMidi; }
+
+/* -------------------------------------------------------------------------- */
+
+KernelMidi&     Engine::getKernelMidi() { return m_kernelMidi; }
+ActionRecorder& Engine::getActionRecorder() { return m_actionRecorder; }
+
 } // namespace giada::m
