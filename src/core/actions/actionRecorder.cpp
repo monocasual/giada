@@ -26,6 +26,7 @@
 
 #include "core/actions/actionRecorder.h"
 #include "core/actions/action.h"
+#include "core/actions/actionFactory.h"
 #include "core/actions/actions.h"
 #include "core/const.h"
 #include "core/model/model.h"
@@ -61,7 +62,8 @@ ActionRecorder::ActionRecorder(model::Model& m)
 void ActionRecorder::reset()
 {
 	m_liveActions.clear();
-	m_actions.reset();
+	actionFactory::reset();
+	m_actions.clearAll();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -120,7 +122,7 @@ bool ActionRecorder::cloneActions(ID channelId, ID newChannelId)
 		if (a.channelId != channelId)
 			return;
 
-		ID newActionId = m_actions.getNewActionId();
+		ID newActionId = actionFactory::getNewActionId();
 
 		map.insert({a.id, newActionId});
 
@@ -160,7 +162,7 @@ void ActionRecorder::liveRec(ID channelId, MidiEvent e, Frame globalFrame)
 	if (m_liveActions.size() >= m_liveActions.capacity())
 		m_liveActions.reserve(m_liveActions.size() + MAX_LIVE_RECS_CHUNK);
 
-	m_liveActions.push_back(m_actions.makeAction(m_actions.getNewActionId(), channelId, globalFrame, e));
+	m_liveActions.push_back(actionFactory::makeAction(actionFactory::getNewActionId(), channelId, globalFrame, e));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -355,75 +357,6 @@ void ActionRecorder::clearAllActions()
 	m_model.swap(model::SwapType::HARD);
 
 	m_actions.clearAll();
-}
-
-/* -------------------------------------------------------------------------- */
-
-Actions::Map ActionRecorder::deserializeActions(const std::vector<Patch::Action>& pactions)
-{
-	Actions::Map out;
-
-	/* First pass: add actions with no relationship, that is with no prev/next
-	pointers filled in. */
-
-	for (const Patch::Action& paction : pactions)
-		out[paction.frame].push_back(m_actions.makeAction(paction));
-
-	/* Second pass: fill in previous and next actions, if any. Is this the
-	fastest/smartest way to do it? Maybe not. Optimizations are welcome. */
-
-	for (const Patch::Action& paction : pactions)
-	{
-		if (paction.nextId == 0 && paction.prevId == 0)
-			continue;
-		Action* curr = const_cast<Action*>(getActionPtrById(paction.id, out));
-		assert(curr != nullptr);
-		if (paction.nextId != 0)
-		{
-			curr->next = getActionPtrById(paction.nextId, out);
-			assert(curr->next != nullptr);
-		}
-		if (paction.prevId != 0)
-		{
-			curr->prev = getActionPtrById(paction.prevId, out);
-			assert(curr->prev != nullptr);
-		}
-	}
-
-	return out;
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::vector<Patch::Action> ActionRecorder::serializeActions(const Actions::Map& actions)
-{
-	std::vector<Patch::Action> out;
-	for (const auto& kv : actions)
-	{
-		for (const Action& a : kv.second)
-		{
-			out.push_back({
-			    a.id,
-			    a.channelId,
-			    a.frame,
-			    a.event.getRaw(),
-			    a.prevId,
-			    a.nextId,
-			});
-		}
-	}
-	return out;
-}
-
-/* -------------------------------------------------------------------------- */
-
-const Action* ActionRecorder::getActionPtrById(int id, const Actions::Map& source)
-{
-	for (const auto& [_, actions] : source)
-		for (const Action& action : actions)
-			if (action.id == id)
-				return &action;
-	return nullptr;
 }
 
 /* -------------------------------------------------------------------------- */

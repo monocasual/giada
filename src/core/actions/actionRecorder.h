@@ -106,12 +106,6 @@ public:
 
 	void clearAllActions();
 
-	/* (de)serializeActions
-    Creates new Actions given the patch raw data and vice versa. */
-
-	Actions::Map               deserializeActions(const std::vector<Patch::Action>& as);
-	std::vector<Patch::Action> serializeActions(const Actions::Map& as);
-
 	/* Pass-thru functions. See Actions.h */
 
 	const std::vector<Action>* getActionsOnFrame(Frame f) const;
@@ -134,10 +128,7 @@ private:
 	bool areComposite(const Action& a1, const Action& a2) const;
 
 	Frame fixVerticalEnvActions(Frame f, const Action& a1, const Action& a2) const;
-
-	bool isSinglePressMode(ID channelId) const;
-
-	const Action* getActionPtrById(int id, const Actions::Map& source);
+	bool  isSinglePressMode(ID channelId) const;
 
 	/* recordFirstEnvelopeAction
 	First action ever? Add actions at boundaries. */

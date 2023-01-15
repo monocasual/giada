@@ -24,8 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "actions.h"
-#include "action.h"
+#include "core/actions/actions.h"
+#include "core/actions/action.h"
+#include "core/actions/actionFactory.h"
 #include "core/idManager.h"
 #include "core/model/model.h"
 #include "utils/log.h"
@@ -38,14 +39,6 @@ namespace giada::m
 Actions::Actions(model::Model& model)
 : m_model(model)
 {
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Actions::reset()
-{
-	m_actionId = IdManager();
-	clearAll();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -160,23 +153,6 @@ bool Actions::hasActions(ID channelId, int type) const
 
 /* -------------------------------------------------------------------------- */
 
-Action Actions::makeAction(ID id, ID channelId, Frame frame, MidiEvent e)
-{
-	Action out{m_actionId.generate(id), channelId, frame, e, -1, -1};
-	m_actionId.set(id);
-	return out;
-}
-
-Action Actions::makeAction(const Patch::Action& a)
-{
-	m_actionId.set(a.id);
-	return Action{a.id, a.channelId, a.frame,
-	    MidiEvent::makeFromRaw(a.event, /*numBytes=*/3), -1, -1,
-	    a.prevId, a.nextId};
-}
-
-/* -------------------------------------------------------------------------- */
-
 Action Actions::rec(ID channelId, Frame frame, MidiEvent event)
 {
 	/* Skip duplicates. */
@@ -184,7 +160,7 @@ Action Actions::rec(ID channelId, Frame frame, MidiEvent event)
 	if (exists(channelId, frame, event))
 		return {};
 
-	Action a = makeAction(0, channelId, frame, event);
+	Action a = actionFactory::makeAction(0, channelId, frame, event);
 
 	/* If key frame doesn't exist yet, the [] operator in std::map is smart 
 	enough to insert a new item first. No plug-in data for now. */
@@ -222,8 +198,8 @@ void Actions::rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 
 	Map& map = m_model.getAllShared<Map>();
 
-	map[f1].push_back(makeAction(0, channelId, f1, e1));
-	map[f2].push_back(makeAction(0, channelId, f2, e2));
+	map[f1].push_back(actionFactory::makeAction(0, channelId, f1, e1));
+	map[f2].push_back(actionFactory::makeAction(0, channelId, f2, e2));
 
 	Action* a1 = findAction(map, map[f1].back().id);
 	Action* a2 = findAction(map, map[f2].back().id);
@@ -275,13 +251,6 @@ void Actions::forEachAction(std::function<void(const Action&)> f) const
 	for (auto& [_, actions] : m_model.getAllShared<Map>())
 		for (const Action& action : actions)
 			f(action);
-}
-
-/* -------------------------------------------------------------------------- */
-
-ID Actions::getNewActionId()
-{
-	return m_actionId.generate();
 }
 
 /* -------------------------------------------------------------------------- */

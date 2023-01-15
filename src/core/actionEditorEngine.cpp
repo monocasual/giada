@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/actionEditorEngine.h"
+#include "core/actions/actionFactory.h"
 #include "core/engine.h"
 #include "core/sequencer.h"
 
@@ -48,12 +49,12 @@ std::vector<Action> ActionEditorEngine::getActionsOnChannel(ID channelId) const
 
 std::vector<Patch::Action> ActionEditorEngine::serializeActions() const
 {
-	return m_actionRecorder.serializeActions(m_engine.model.getAllShared<Actions::Map>());
+	return actionFactory::serializeActions(m_engine.model.getAllShared<Actions::Map>());
 }
 
 Actions::Map ActionEditorEngine::deserializeActions(const std::vector<Patch::Action>& as) const
 {
-	return m_actionRecorder.deserializeActions(as);
+	return actionFactory::deserializeActions(as);
 }
 
 /* -------------------------------------------------------------------------- */

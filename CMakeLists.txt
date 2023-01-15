@@ -57,6 +57,7 @@ list(APPEND SOURCES
 	src/core/waveFx.cpp
 	src/core/kernelMidi.cpp
 	src/core/patch.cpp
+	src/core/actions/actionFactory.cpp
 	src/core/actions/actionRecorder.cpp
 	src/core/actions/actions.cpp
 	src/core/mixer.cpp

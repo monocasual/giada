@@ -78,18 +78,6 @@ public:
 
 	bool hasActions(ID channelId, int type = 0) const;
 
-	/* makeAction
-    Makes a new action given some data. */
-	//TODO - move to actionManager
-
-	Action makeAction(ID id, ID channelId, Frame frame, MidiEvent e);
-	Action makeAction(const Patch::Action& a);
-
-	/* reset
-	Brings everything back to the initial state. */
-
-	void reset();
-
 	/* clearAll
     Deletes all recorded actions. */
 
@@ -149,12 +137,6 @@ public:
 
 	void rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 
-	/* getNewActionId
-    Returns a new action ID, internally generated. */
-	//TODO - move to actionManager
-
-	ID getNewActionId();
-
 private:
 	bool exists(ID channelId, Frame frame, const MidiEvent& event, const Map& target) const;
 	bool exists(ID channelId, Frame frame, const MidiEvent& event) const;
@@ -176,9 +158,6 @@ private:
 	void removeIf(std::function<bool(const Action&)> f);
 
 	model::Model& m_model;
-
-	//TODO - move to actionManager
-	IdManager m_actionId;
 };
 } // namespace giada::m
 
