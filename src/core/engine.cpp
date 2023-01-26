@@ -26,7 +26,6 @@
 
 #include "core/engine.h"
 #include "core/model/model.h"
-#include "core/model/storage.h"
 #include "utils/fs.h"
 #include "utils/log.h"
 #include <fmt/core.h>
@@ -34,15 +33,6 @@
 
 namespace giada::m
 {
-bool LoadState::isGood() const
-{
-	return patch == G_FILE_OK && missingWaves.empty() && missingPlugins.empty();
-}
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 Engine::Engine()
 : midiMapper(m_kernelMidi)
 , midiDispatcher(model)
@@ -59,6 +49,7 @@ Engine::Engine()
 , m_sampleEditorEngine(*this, m_channelManager)
 , m_actionEditorEngine(*this, sequencer, m_actionRecorder)
 , m_ioEngine(model, midiDispatcher, conf.data)
+, m_storageEngine(*this, model, conf, patch, m_pluginManager, midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, sequencer, m_actionRecorder)
 {
 	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -234,7 +225,7 @@ void Engine::init()
 	if (!conf.read())
 		u::log::print("[Engine::init] Can't read configuration file! Using default values\n");
 
-	model::load(conf.data, *this);
+	loadConfig();
 
 	if (!u::log::init(conf.data.logMode))
 		u::log::print("[Engine::init] log init failed! Using default stdout\n");
@@ -310,7 +301,8 @@ void Engine::shutdown()
 		u::log::print("[Engine::shutdown] Mixer closed\n");
 	}
 
-	model::store(conf.data, *this);
+	storeConfig();
+
 	if (!conf.write())
 		u::log::print("[Engine::shutdown] error while saving configuration file!\n");
 	else
@@ -394,113 +386,6 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 
 /* -------------------------------------------------------------------------- */
 
-bool Engine::store(const std::string& projectName, const std::string& projectPath,
-    const std::string& patchPath, std::function<void(float)> progress)
-{
-	progress(0.0f);
-
-	if (!u::fs::mkdir(projectPath))
-	{
-		u::log::print("[Engine::store] Unable to make project directory!\n");
-		return false;
-	}
-
-	u::log::print("[Engine::store] Project dir created: %s\n", projectPath);
-
-	/* Update all existing file paths in Waves, so that they point to the project
-	folder they belong to. */
-
-	for (std::unique_ptr<Wave>& w : model.getAllShared<model::WavePtrs>())
-	{
-		w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, model.getAllShared<model::WavePtrs>()));
-		waveFactory::save(*w, w->getPath()); // TODO - error checking
-	}
-
-	progress(0.3f);
-
-	/* Write Model into Patch, then into file. */
-
-	patch.data.name = projectName;
-	model::store(patch.data, *this);
-
-	progress(0.6f);
-
-	if (!patch.write(patchPath))
-		return false;
-
-	/* Store the parent folder the project belongs to, in order to reuse it the 
-	next time. */
-
-	conf.data.patchPath = u::fs::getUpDir(u::fs::getUpDir(patchPath));
-
-	u::log::print("[Engine::store] Project patch saved as %s\n", patchPath);
-
-	progress(1.0f);
-
-	return true;
-}
-
-/* -------------------------------------------------------------------------- */
-
-LoadState Engine::load(const std::string& projectPath, const std::string& patchPath,
-    std::function<void(float)> progress)
-{
-	u::log::print("[Engine::load] Load project from %s\n", projectPath);
-
-	progress(0.0f);
-
-	/* Suspend MIDI clock output (if enabled). */
-
-	midiSynchronizer.stopSendClock();
-
-	/* Read the selected project's patch. */
-
-	patch.reset();
-	if (int res = patch.read(patchPath, projectPath); res != G_FILE_OK)
-		return {res};
-
-	progress(0.3f);
-
-	/* Then suspend Mixer, reset and fill the model. */
-
-	m_mixer.disable();
-	reset();
-	LoadState state = m::model::load(patch.data, *this);
-
-	progress(0.6f);
-
-	/* Prepare the engine. Recorder has to recompute the actions positions if 
-	the current samplerate != patch samplerate. Clock needs to update frames
-	in sequencer. */
-
-	m_mixer.updateSoloCount(m_channelManager.hasSolos());
-	m_actionRecorder.updateSamplerate(m_kernelAudio.getSampleRate(), patch.data.samplerate);
-	sequencer.recomputeFrames(m_kernelAudio.getSampleRate());
-	m_mixer.allocRecBuffer(sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()));
-
-	progress(0.9f);
-
-	/* Store the parent folder the project belongs to, in order to reuse it the 
-	next time. */
-
-	conf.data.patchPath = u::fs::getUpDir(projectPath);
-
-	/* Mixer is ready to go back online. */
-
-	m_mixer.enable();
-
-	/* Restore MIDI clock output. */
-
-	midiSynchronizer.startSendClock(model.get().sequencer.bpm);
-
-	progress(1.0f);
-
-	state.patch = G_FILE_OK;
-	return state;
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Engine::suspend()
 {
 	m_mixer.disable();
@@ -513,12 +398,49 @@ void Engine::resume()
 
 /* -------------------------------------------------------------------------- */
 
+void Engine::storeConfig()
+{
+	conf.data.midiInEnabled    = model.get().midiIn.enabled;
+	conf.data.midiInFilter     = model.get().midiIn.filter;
+	conf.data.midiInRewind     = model.get().midiIn.rewind;
+	conf.data.midiInStartStop  = model.get().midiIn.startStop;
+	conf.data.midiInActionRec  = model.get().midiIn.actionRec;
+	conf.data.midiInInputRec   = model.get().midiIn.inputRec;
+	conf.data.midiInMetronome  = model.get().midiIn.metronome;
+	conf.data.midiInVolumeIn   = model.get().midiIn.volumeIn;
+	conf.data.midiInVolumeOut  = model.get().midiIn.volumeOut;
+	conf.data.midiInBeatDouble = model.get().midiIn.beatDouble;
+	conf.data.midiInBeatHalf   = model.get().midiIn.beatHalf;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Engine::loadConfig()
+{
+	model.get().midiIn.enabled    = conf.data.midiInEnabled;
+	model.get().midiIn.filter     = conf.data.midiInFilter;
+	model.get().midiIn.rewind     = conf.data.midiInRewind;
+	model.get().midiIn.startStop  = conf.data.midiInStartStop;
+	model.get().midiIn.actionRec  = conf.data.midiInActionRec;
+	model.get().midiIn.inputRec   = conf.data.midiInInputRec;
+	model.get().midiIn.metronome  = conf.data.midiInMetronome;
+	model.get().midiIn.volumeIn   = conf.data.midiInVolumeIn;
+	model.get().midiIn.volumeOut  = conf.data.midiInVolumeOut;
+	model.get().midiIn.beatDouble = conf.data.midiInBeatDouble;
+	model.get().midiIn.beatHalf   = conf.data.midiInBeatHalf;
+
+	model.swap(model::SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
+
 MainEngine&         Engine::getMainEngine() { return m_mainEngine; }
 ChannelsEngine&     Engine::getChannelsEngine() { return m_channelsEngine; }
 PluginsEngine&      Engine::getPluginsEngine() { return m_pluginsEngine; }
 SampleEditorEngine& Engine::getSampleEditorEngine() { return m_sampleEditorEngine; }
 ActionEditorEngine& Engine::getActionEditorEngine() { return m_actionEditorEngine; }
 IOEngine&           Engine::getIOEngine() { return m_ioEngine; }
+StorageEngine&      Engine::getStorageEngine() { return m_storageEngine; }
 
 /* -------------------------------------------------------------------------- */
 

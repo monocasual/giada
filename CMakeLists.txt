@@ -40,6 +40,7 @@ list(APPEND SOURCES
 	src/core/sampleEditorEngine.cpp
 	src/core/actionEditorEngine.cpp
 	src/core/pluginsEngine.cpp
+	src/core/storageEngine.cpp
 	src/core/IOEngine.cpp
 	src/core/worker.cpp
 	src/core/eventDispatcher.cpp
@@ -90,7 +91,6 @@ list(APPEND SOURCES
 	src/core/model/sequencer.cpp
 	src/core/model/mixer.cpp
 	src/core/model/model.cpp
-	src/core/model/storage.cpp
 	src/core/idManager.cpp
 	src/glue/events.cpp
 	src/glue/main.cpp

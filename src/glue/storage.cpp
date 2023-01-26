@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/model/storage.h"
+#include "storage.h"
 #include "channel.h"
 #include "core/conf.h"
 #include "core/engine.h"
@@ -49,7 +49,6 @@
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/ui.h"
 #include "src/core/actions/actionRecorder.h"
-#include "storage.h"
 #include "utils/fs.h"
 #include "utils/gui.h"
 #include "utils/log.h"
@@ -92,7 +91,9 @@ void loadProject(void* data)
 
 	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
 
-	m::LoadState state = g_engine.load(projectPath, patchPath, [&progress](float v) { progress.setProgress(v); });
+	m::StorageEngine::LoadState state = g_engine.getStorageEngine().loadProject(projectPath, patchPath,
+	    [&progress](float v) { progress.setProgress(v); });
+
 	if (state.patch != G_FILE_OK)
 	{
 		printLoadError_(state.patch);
@@ -132,7 +133,7 @@ void saveProject(void* data)
 
 	g_ui.store(projectName, g_engine.patch.data);
 
-	if (!g_engine.store(projectName, projectPath, patchPath, [&progress](float v) { progress.setProgress(v); }))
+	if (!g_engine.getStorageEngine().storeProject(projectName, projectPath, patchPath, [&progress](float v) { progress.setProgress(v); }))
 		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECTERROR));
 
 	browser->do_callback();

@@ -53,6 +53,7 @@
 #include "core/recorder.h"
 #include "core/sampleEditorEngine.h"
 #include "core/sequencer.h"
+#include "core/storageEngine.h"
 #include "core/waveFactory.h"
 #ifdef WITH_AUDIO_JACK
 #include "core/jackSynchronizer.h"
@@ -60,15 +61,6 @@
 
 namespace giada::m
 {
-struct LoadState
-{
-	bool isGood() const;
-
-	int                      patch          = G_FILE_OK;
-	std::vector<std::string> missingWaves   = {};
-	std::vector<std::string> missingPlugins = {};
-};
-
 class Engine final
 {
 public:
@@ -87,20 +79,6 @@ public:
 	std::vector<std::string>         getMidiInPorts() const;
 	int                              getSampleRate() const;
 	int                              getBufferSize() const;
-
-	/* store
-	Saves the current state to a Patch, then saves it to file. Returns true
-	on success. */
-
-	bool store(const std::string& projectName, const std::string& projectPath,
-	    const std::string& patchPath, std::function<void(float)> progress);
-
-	/* load
-	Reads a Patch from file and then de-serialize its content into the model. 
-	Returns a LoadState object. */
-
-	LoadState load(const std::string& projectPath, const std::string& patchPath,
-	    std::function<void(float)> progress);
 
 	/* updateMixerModel
 	Updates some values in model::Mixer data struct needed by m::Mixer for the
@@ -163,6 +141,11 @@ public:
 
 	IOEngine& getIOEngine();
 
+	/* getIOEngine
+	Return a reference to StorageEngine, responsible for persistence. */
+
+	StorageEngine& getStorageEngine();
+
 	/* get[... component ...]
 	Returns a reference to an internal. TODO - these methods will be removed with
 	new Channel rendering architecture */
@@ -186,6 +169,9 @@ public:
 private:
 	int audioCallback(KernelAudio::CallbackInfo) const;
 
+	void storeConfig();
+	void loadConfig();
+
 	KernelAudio     m_kernelAudio;
 	KernelMidi      m_kernelMidi;
 	PluginHost      m_pluginHost;
@@ -202,6 +188,7 @@ private:
 	SampleEditorEngine m_sampleEditorEngine;
 	ActionEditorEngine m_actionEditorEngine;
 	IOEngine           m_ioEngine;
+	StorageEngine      m_storageEngine;
 };
 } // namespace giada::m
 

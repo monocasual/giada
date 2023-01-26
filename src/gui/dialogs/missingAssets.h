@@ -27,19 +27,15 @@
 #ifndef GD_MISSING_ASSETS_H
 #define GD_MISSING_ASSETS_H
 
+#include "core/storageEngine.h"
 #include "gui/dialogs/window.h"
-
-namespace giada::m
-{
-struct LoadState;
-}
 
 namespace giada::v
 {
 class gdMissingAssets : public gdWindow
 {
 public:
-	gdMissingAssets(const m::LoadState&);
+	gdMissingAssets(const m::StorageEngine::LoadState&);
 };
 } // namespace giada::v
 
