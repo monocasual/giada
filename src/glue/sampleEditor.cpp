@@ -94,12 +94,12 @@ const m::Wave& Data::getWaveRef() const
 
 Frame Data::getFramesInBar() const
 {
-	return g_engine.sequencer.getFramesInBar();
+	return g_engine.getMainEngine().getFramesInBar();
 }
 
 Frame Data::getFramesInLoop() const
 {
-	return g_engine.sequencer.getFramesInLoop();
+	return g_engine.getMainEngine().getFramesInLoop();
 }
 
 /* -------------------------------------------------------------------------- */

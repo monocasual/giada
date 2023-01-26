@@ -52,6 +52,11 @@ public:
 	int               getBeats() const;
 	int               getBars() const;
 	int               getCurrentBeat() const;
+	Frame             getCurrentFrame() const;
+	int               getFramesInBar() const;
+	int               getFramesInLoop() const;
+	int               getFramesInSeq() const;
+	int               getFramesInBeat() const;
 	SeqStatus         getSequencerStatus() const;
 
 	void toggleMetronome();

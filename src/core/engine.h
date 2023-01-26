@@ -160,7 +160,6 @@ public:
 	JackTransport          jackTransport;
 	MidiMapper<KernelMidi> midiMapper;
 	MidiSynchronizer       midiSynchronizer;
-	Sequencer              sequencer;
 
 private:
 	int audioCallback(KernelAudio::CallbackInfo) const;
@@ -171,6 +170,7 @@ private:
 	KernelAudio     m_kernelAudio;
 	KernelMidi      m_kernelMidi;
 	PluginHost      m_pluginHost;
+	Sequencer       m_sequencer;
 	Mixer           m_mixer;
 	ChannelManager  m_channelManager;
 	ActionRecorder  m_actionRecorder;

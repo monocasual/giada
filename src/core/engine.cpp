@@ -36,20 +36,20 @@ namespace giada::m
 Engine::Engine()
 : midiMapper(m_kernelMidi)
 , midiSynchronizer(conf.data, m_kernelMidi)
-, sequencer(model, midiSynchronizer, jackTransport)
 , m_pluginHost(model)
+, m_sequencer(model, midiSynchronizer, jackTransport)
 , m_mixer(model)
 , m_channelManager(conf.data, model)
 , m_actionRecorder(model)
-, m_recorder(sequencer, m_channelManager, m_mixer, m_actionRecorder)
+, m_recorder(m_sequencer, m_channelManager, m_mixer, m_actionRecorder)
 , m_midiDispatcher(model)
-, m_mainEngine(*this, m_kernelAudio, m_mixer, sequencer, midiSynchronizer, m_channelManager, m_recorder)
-, m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager)
+, m_mainEngine(*this, m_kernelAudio, m_mixer, m_sequencer, midiSynchronizer, m_channelManager, m_recorder)
+, m_channelsEngine(*this, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager)
 , m_pluginsEngine(*this, m_kernelAudio, m_channelManager, m_pluginManager, m_pluginHost, model)
 , m_sampleEditorEngine(*this, m_channelManager)
-, m_actionEditorEngine(*this, sequencer, m_actionRecorder)
+, m_actionEditorEngine(*this, m_sequencer, m_actionRecorder)
 , m_ioEngine(model, m_midiDispatcher, conf.data)
-, m_storageEngine(*this, model, conf, patch, m_pluginManager, midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, sequencer, m_actionRecorder)
+, m_storageEngine(*this, model, conf, patch, m_pluginManager, midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
 {
 	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -62,7 +62,7 @@ Engine::Engine()
 			return;
 		}
 		m_midiDispatcher.dispatch(e);
-		midiSynchronizer.receive(e, sequencer.getBeats());
+		midiSynchronizer.receive(e, m_sequencer.getBeats());
 	};
 
 	m_midiDispatcher.onEventReceived = [this]() {
@@ -90,16 +90,16 @@ Engine::Engine()
 
 #ifdef WITH_AUDIO_JACK
 	m_jackSynchronizer.onJackRewind = [this]() {
-		m_eventDispatcher.pumpEvent([this]() { sequencer.jack_rewind(); });
+		m_eventDispatcher.pumpEvent([this]() { m_sequencer.jack_rewind(); });
 	};
 	m_jackSynchronizer.onJackChangeBpm = [this](float bpm) {
-		m_eventDispatcher.pumpEvent([this, bpm]() { sequencer.jack_setBpm(bpm, m_kernelAudio.getSampleRate()); });
+		m_eventDispatcher.pumpEvent([this, bpm]() { m_sequencer.jack_setBpm(bpm, m_kernelAudio.getSampleRate()); });
 	};
 	m_jackSynchronizer.onJackStart = [this]() {
-		m_eventDispatcher.pumpEvent([this]() { sequencer.jack_start(); });
+		m_eventDispatcher.pumpEvent([this]() { m_sequencer.jack_start(); });
 	};
 	m_jackSynchronizer.onJackStop = [this]() {
-		m_eventDispatcher.pumpEvent([this]() { sequencer.jack_stop(); });
+		m_eventDispatcher.pumpEvent([this]() { m_sequencer.jack_stop(); });
 	};
 #endif
 
@@ -120,13 +120,13 @@ Engine::Engine()
 		return waveFactory::createEmpty(recordedFrames, G_MAX_IO_CHANS, m_kernelAudio.getSampleRate(), filename);
 	};
 
-	sequencer.onAboutStart = [this](SeqStatus status) {
+	m_sequencer.onAboutStart = [this](SeqStatus status) {
 		/* TODO move this logic to Recorder */
 		if (status == SeqStatus::WAITING)
 			m_recorder.stopActionRec();
 		conf.data.recTriggerMode = RecTriggerMode::NORMAL;
 	};
-	sequencer.onAboutStop = [this]() {
+	m_sequencer.onAboutStop = [this]() {
 		/* If recordings (both input and action) are active deactivate them, but 
 	store the takes. RecManager takes care of it. */
 		/* TODO move this logic to Recorder */
@@ -135,7 +135,7 @@ Engine::Engine()
 		else if (m_mixer.isRecordingInput())
 			m_recorder.stopInputRec(conf.data.inputRecMode, m_kernelAudio.getSampleRate());
 	};
-	sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep) {
+	m_sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep) {
 		m_actionRecorder.updateBpm(oldVal / newVal, quantizerStep);
 	};
 }
@@ -205,7 +205,7 @@ void Engine::updateMixerModel()
 {
 	model.get().mixer.limitOutput     = conf.data.limitOutput;
 	model.get().mixer.allowsOverdub   = conf.data.inputRecMode == InputRecMode::RIGID;
-	model.get().mixer.maxFramesToRec  = conf.data.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()) : sequencer.getFramesInLoop();
+	model.get().mixer.maxFramesToRec  = conf.data.inputRecMode == InputRecMode::FREE ? m_sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()) : m_sequencer.getFramesInLoop();
 	model.get().mixer.recTriggerLevel = conf.data.recTriggerLevel;
 	model.swap(model::SwapType::NONE);
 }
@@ -248,9 +248,9 @@ void Engine::init()
 		jackTransport.setHandle(m_kernelAudio.getJackHandle());
 #endif
 
-	m_mixer.reset(sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
+	m_mixer.reset(m_sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
 	m_channelManager.reset(m_kernelAudio.getBufferSize());
-	sequencer.reset(m_kernelAudio.getSampleRate());
+	m_sequencer.reset(m_kernelAudio.getSampleRate());
 	m_pluginHost.reset(m_kernelAudio.getBufferSize());
 	m_pluginManager.reset(conf.data.pluginSortMethod);
 
@@ -282,9 +282,9 @@ void Engine::reset()
 	/* Then all other components. */
 
 	model.reset();
-	m_mixer.reset(sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
+	m_mixer.reset(m_sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
 	m_channelManager.reset(m_kernelAudio.getBufferSize());
-	sequencer.reset(m_kernelAudio.getSampleRate());
+	m_sequencer.reset(m_kernelAudio.getSampleRate());
 	m_actionRecorder.reset();
 	m_pluginHost.reset(m_kernelAudio.getBufferSize());
 }
@@ -359,8 +359,8 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 		m_jackSynchronizer.recvJackSync(jackTransport.getState());
 #endif
 
-	/* If the sequencer is running, advance it first (i.e. parse it for events). 
-	Also advance channels (i.e. let them react to sequencer events), only if the 
+	/* If the m_sequencer is running, advance it first (i.e. parse it for events). 
+	Also advance channels (i.e. let them react to m_sequencer events), only if the 
 	layout is not locked: another thread might altering channel's data in the 
 	meantime (e.g. Plugins or Waves). */
 
@@ -368,11 +368,11 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 	{
 		const Frame        currentFrame  = layout_RT.sequencer.a_getCurrentFrame();
 		const Frame        bufferSize    = in.countFrames();
-		const Frame        quantizerStep = sequencer.getQuantizerStep();              // TODO pass this to sequencer.advance - or better, Advancer class
-		const Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to sequencer.advance - or better, Advancer class
+		const Frame        quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
+		const Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
-		const Sequencer::EventBuffer& events = sequencer.advance(layout_RT.sequencer, bufferSize, kernelInfo.sampleRate, m_actionRecorder);
-		sequencer.render(out);
+		const Sequencer::EventBuffer& events = m_sequencer.advance(layout_RT.sequencer, bufferSize, kernelInfo.sampleRate, m_actionRecorder);
+		m_sequencer.render(out);
 		if (!layout_RT.locked)
 			m_mixer.advanceChannels(events, layout_RT, renderRange, quantizerStep);
 	}

@@ -101,6 +101,31 @@ int MainEngine::getCurrentBeat() const
 	return m_sequencer.getCurrentBeat();
 }
 
+Frame MainEngine::getCurrentFrame() const
+{
+	return m_sequencer.getCurrentFrame();
+}
+
+int MainEngine::getFramesInBar() const
+{
+	return m_sequencer.getFramesInBar();
+}
+
+int MainEngine::getFramesInLoop() const
+{
+	return m_sequencer.getFramesInLoop();
+}
+
+int MainEngine::getFramesInSeq() const
+{
+	return m_sequencer.getFramesInSeq();
+}
+
+int MainEngine::getFramesInBeat() const
+{
+	return m_sequencer.getFramesInBeat();
+}
+
 /* -------------------------------------------------------------------------- */
 
 SeqStatus MainEngine::getSequencerStatus() const

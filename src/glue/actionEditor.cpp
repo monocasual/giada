@@ -51,10 +51,10 @@ SampleData::SampleData(const m::SamplePlayer& s)
 Data::Data(const m::Channel& c)
 : channelId(c.id)
 , channelName(c.name)
-, framesInSeq(g_engine.sequencer.getFramesInSeq())
-, framesInBeat(g_engine.sequencer.getFramesInBeat())
-, framesInBar(g_engine.sequencer.getFramesInBar())
-, framesInLoop(g_engine.sequencer.getFramesInLoop())
+, framesInSeq(g_engine.getMainEngine().getFramesInSeq())
+, framesInBeat(g_engine.getMainEngine().getFramesInBeat())
+, framesInBar(g_engine.getMainEngine().getFramesInBar())
+, framesInLoop(g_engine.getMainEngine().getFramesInLoop())
 , actions(g_engine.getActionEditorEngine().getActionsOnChannel(c.id))
 {
 	if (c.type == ChannelType::SAMPLE)
@@ -65,7 +65,7 @@ Data::Data(const m::Channel& c)
 
 Frame Data::getCurrentFrame() const
 {
-	return g_engine.sequencer.getCurrentFrame();
+	return g_engine.getMainEngine().getCurrentFrame();
 }
 
 /* -------------------------------------------------------------------------- */
