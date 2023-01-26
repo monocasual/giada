@@ -157,9 +157,7 @@ public:
 	model::Model           model;
 	Conf                   conf;
 	Patch                  patch;
-	JackTransport          jackTransport;
 	MidiMapper<KernelMidi> midiMapper;
-	MidiSynchronizer       midiSynchronizer;
 
 private:
 	int audioCallback(KernelAudio::CallbackInfo) const;
@@ -167,17 +165,19 @@ private:
 	void storeConfig();
 	void loadConfig();
 
-	KernelAudio     m_kernelAudio;
-	KernelMidi      m_kernelMidi;
-	PluginHost      m_pluginHost;
-	Sequencer       m_sequencer;
-	Mixer           m_mixer;
-	ChannelManager  m_channelManager;
-	ActionRecorder  m_actionRecorder;
-	Recorder        m_recorder;
-	PluginManager   m_pluginManager;
-	EventDispatcher m_eventDispatcher;
-	MidiDispatcher  m_midiDispatcher;
+	KernelAudio      m_kernelAudio;
+	KernelMidi       m_kernelMidi;
+	PluginHost       m_pluginHost;
+	JackTransport    m_jackTransport;
+	MidiSynchronizer m_midiSynchronizer;
+	Sequencer        m_sequencer;
+	Mixer            m_mixer;
+	ChannelManager   m_channelManager;
+	ActionRecorder   m_actionRecorder;
+	Recorder         m_recorder;
+	PluginManager    m_pluginManager;
+	EventDispatcher  m_eventDispatcher;
+	MidiDispatcher   m_midiDispatcher;
 #ifdef WITH_AUDIO_JACK
 	JackSynchronizer m_jackSynchronizer;
 #endif

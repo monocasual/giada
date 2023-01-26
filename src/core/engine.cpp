@@ -35,21 +35,21 @@ namespace giada::m
 {
 Engine::Engine()
 : midiMapper(m_kernelMidi)
-, midiSynchronizer(conf.data, m_kernelMidi)
 , m_pluginHost(model)
-, m_sequencer(model, midiSynchronizer, jackTransport)
+, m_midiSynchronizer(conf.data, m_kernelMidi)
+, m_sequencer(model, m_midiSynchronizer, m_jackTransport)
 , m_mixer(model)
 , m_channelManager(conf.data, model)
 , m_actionRecorder(model)
 , m_recorder(m_sequencer, m_channelManager, m_mixer, m_actionRecorder)
 , m_midiDispatcher(model)
-, m_mainEngine(*this, m_kernelAudio, m_mixer, m_sequencer, midiSynchronizer, m_channelManager, m_recorder)
+, m_mainEngine(*this, m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder)
 , m_channelsEngine(*this, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager)
 , m_pluginsEngine(*this, m_kernelAudio, m_channelManager, m_pluginManager, m_pluginHost, model)
 , m_sampleEditorEngine(*this, m_channelManager)
 , m_actionEditorEngine(*this, m_sequencer, m_actionRecorder)
 , m_ioEngine(model, m_midiDispatcher, conf.data)
-, m_storageEngine(*this, model, conf, patch, m_pluginManager, midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
+, m_storageEngine(*this, model, conf, patch, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
 {
 	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -62,23 +62,23 @@ Engine::Engine()
 			return;
 		}
 		m_midiDispatcher.dispatch(e);
-		midiSynchronizer.receive(e, m_sequencer.getBeats());
+		m_midiSynchronizer.receive(e, m_sequencer.getBeats());
 	};
 
 	m_midiDispatcher.onEventReceived = [this]() {
 		m_recorder.startActionRecOnCallback();
 	};
 
-	midiSynchronizer.onChangePosition = [this](int beat) {
+	m_midiSynchronizer.onChangePosition = [this](int beat) {
 		m_mainEngine.goToBeat(beat);
 	};
-	midiSynchronizer.onChangeBpm = [this](float bpm) {
+	m_midiSynchronizer.onChangeBpm = [this](float bpm) {
 		m_mainEngine.setBpm(bpm);
 	};
-	midiSynchronizer.onStart = [this]() {
+	m_midiSynchronizer.onStart = [this]() {
 		m_mainEngine.startSequencer();
 	};
-	midiSynchronizer.onStop = [this]() {
+	m_midiSynchronizer.onStop = [this]() {
 		m_mainEngine.stopSequencer();
 	};
 
@@ -245,7 +245,7 @@ void Engine::init()
 
 #ifdef WITH_AUDIO_JACK
 	if (m_kernelAudio.getAPI() == RtAudio::Api::UNIX_JACK)
-		jackTransport.setHandle(m_kernelAudio.getJackHandle());
+		m_jackTransport.setHandle(m_kernelAudio.getJackHandle());
 #endif
 
 	m_mixer.reset(m_sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
@@ -264,7 +264,7 @@ void Engine::init()
 
 	midiMapper.sendInitMessages(midiMapper.currentMap);
 	m_eventDispatcher.start();
-	midiSynchronizer.startSendClock(G_DEFAULT_BPM);
+	m_midiSynchronizer.startSendClock(G_DEFAULT_BPM);
 
 	updateMixerModel();
 }
@@ -356,7 +356,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 
 #ifdef WITH_AUDIO_JACK
 	if (kernelInfo.withJack)
-		m_jackSynchronizer.recvJackSync(jackTransport.getState());
+		m_jackSynchronizer.recvJackSync(m_jackTransport.getState());
 #endif
 
 	/* If the m_sequencer is running, advance it first (i.e. parse it for events). 
