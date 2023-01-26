@@ -89,16 +89,16 @@ Engine::Engine()
 	on the model that the realtime thread cannot perform directly. */
 
 #ifdef WITH_AUDIO_JACK
-	jackSynchronizer.onJackRewind = [this]() {
+	m_jackSynchronizer.onJackRewind = [this]() {
 		m_eventDispatcher.pumpEvent([this]() { sequencer.jack_rewind(); });
 	};
-	jackSynchronizer.onJackChangeBpm = [this](float bpm) {
+	m_jackSynchronizer.onJackChangeBpm = [this](float bpm) {
 		m_eventDispatcher.pumpEvent([this, bpm]() { sequencer.jack_setBpm(bpm, m_kernelAudio.getSampleRate()); });
 	};
-	jackSynchronizer.onJackStart = [this]() {
+	m_jackSynchronizer.onJackStart = [this]() {
 		m_eventDispatcher.pumpEvent([this]() { sequencer.jack_start(); });
 	};
-	jackSynchronizer.onJackStop = [this]() {
+	m_jackSynchronizer.onJackStop = [this]() {
 		m_eventDispatcher.pumpEvent([this]() { sequencer.jack_stop(); });
 	};
 #endif
@@ -356,7 +356,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 
 #ifdef WITH_AUDIO_JACK
 	if (kernelInfo.withJack)
-		jackSynchronizer.recvJackSync(jackTransport.getState());
+		m_jackSynchronizer.recvJackSync(jackTransport.getState());
 #endif
 
 	/* If the sequencer is running, advance it first (i.e. parse it for events). 

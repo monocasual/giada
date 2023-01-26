@@ -161,9 +161,6 @@ public:
 	MidiMapper<KernelMidi> midiMapper;
 	MidiSynchronizer       midiSynchronizer;
 	Sequencer              sequencer;
-#ifdef WITH_AUDIO_JACK
-	JackSynchronizer jackSynchronizer;
-#endif
 
 private:
 	int audioCallback(KernelAudio::CallbackInfo) const;
@@ -181,6 +178,9 @@ private:
 	PluginManager   m_pluginManager;
 	EventDispatcher m_eventDispatcher;
 	MidiDispatcher  m_midiDispatcher;
+#ifdef WITH_AUDIO_JACK
+	JackSynchronizer m_jackSynchronizer;
+#endif
 
 	MainEngine         m_mainEngine;
 	ChannelsEngine     m_channelsEngine;
