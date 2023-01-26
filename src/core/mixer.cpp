@@ -227,6 +227,10 @@ Peak Mixer::getPeakIn() const { return m_model.get().mixer.a_getPeakIn(); }
 
 /* -------------------------------------------------------------------------- */
 
+bool Mixer::getInToOut() const { return m_model.get().mixer.inToOut; }
+
+/* -------------------------------------------------------------------------- */
+
 Mixer::RecordInfo Mixer::getRecordInfo() const
 {
 	return {

@@ -111,7 +111,7 @@ void Ui::init(int argc, char** argv, m::Engine& engine)
 
 	Fl_Tooltip::enable(m_conf.showTooltips);
 
-	m_updater.init(engine.model);
+	m_updater.start();
 
 	if (engine.isAudioReady())
 		rebuildStaticWidgets();

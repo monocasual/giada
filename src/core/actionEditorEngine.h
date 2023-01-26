@@ -41,7 +41,7 @@ class ActionRecorder;
 class ActionEditorEngine
 {
 public:
-	ActionEditorEngine(Engine&, Sequencer&, ActionRecorder&);
+	ActionEditorEngine(Engine&, model::Model&, Sequencer&, ActionRecorder&);
 
 	std::vector<Action>        getActionsOnChannel(ID channelId) const;
 	std::vector<Patch::Action> serializeActions() const;
@@ -60,6 +60,7 @@ public:
 
 private:
 	Engine&         m_engine;
+	model::Model&   m_model;
 	Sequencer&      m_sequencer;
 	ActionRecorder& m_actionRecorder;
 };

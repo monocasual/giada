@@ -109,6 +109,15 @@ public:
 	void suspend();
 	void resume();
 
+#ifdef G_DEBUG_MODE
+	void debug();
+#endif
+
+	/* setOnModelSwapCb
+	Sets callback to fire when the model gets swapped. */
+
+	void setOnModelSwapCb(std::function<void(model::SwapType)>);
+
 	/* getMainEngine
 	Return a reference to MainEngine, responsible for the central component	API. */
 
@@ -154,7 +163,6 @@ public:
 	ActionRecorder& getActionRecorder();
 	PluginHost&     getPluginHost();
 
-	model::Model           model;
 	Conf                   conf;
 	Patch                  patch;
 	MidiMapper<KernelMidi> midiMapper;
@@ -165,6 +173,7 @@ private:
 	void storeConfig();
 	void loadConfig();
 
+	model::Model     m_model;
 	KernelAudio      m_kernelAudio;
 	KernelMidi       m_kernelMidi;
 	PluginHost       m_pluginHost;

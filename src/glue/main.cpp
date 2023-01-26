@@ -58,11 +58,11 @@ extern giada::m::Engine g_engine;
 
 namespace giada::c::main
 {
-Timer::Timer(const m::model::Sequencer& c)
-: bpm(c.bpm)
-, beats(c.beats)
-, bars(c.bars)
-, quantize(c.quantize)
+Timer::Timer()
+: bpm(g_engine.getMainEngine().getBpm())
+, beats(g_engine.getMainEngine().getBeats())
+, bars(g_engine.getMainEngine().getBars())
+, quantize(g_engine.getMainEngine().getQuantizerValue())
 , isUsingJack(g_engine.getAudioAPI() == RtAudio::Api::UNIX_JACK)
 , isRecordingInput(g_engine.getMainEngine().isRecordingInput())
 {
@@ -72,12 +72,12 @@ Timer::Timer(const m::model::Sequencer& c)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-IO::IO(const m::Channel& out, const m::Channel& in, const m::model::Mixer& m)
+IO::IO(const m::Channel& out, const m::Channel& in)
 : masterOutVol(out.volume)
 , masterInVol(in.volume)
 , masterOutHasPlugins(out.plugins.size() > 0)
 , masterInHasPlugins(in.plugins.size() > 0)
-, inToOut(m.inToOut)
+, inToOut(g_engine.getMainEngine().getInToOut())
 {
 }
 
@@ -106,7 +106,7 @@ bool IO::isKernelReady()
 
 Timer getTimer()
 {
-	return Timer(g_engine.model.get().sequencer);
+	return Timer();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -114,8 +114,7 @@ Timer getTimer()
 IO getIO()
 {
 	return IO(g_engine.getChannelsEngine().get(m::Mixer::MASTER_OUT_CHANNEL_ID),
-	    g_engine.getChannelsEngine().get(m::Mixer::MASTER_IN_CHANNEL_ID),
-	    g_engine.model.get().mixer);
+	    g_engine.getChannelsEngine().get(m::Mixer::MASTER_IN_CHANNEL_ID));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -226,7 +225,7 @@ void toggleFreeInputRec()
 
 void printDebugInfo()
 {
-	g_engine.model.debug();
+	g_engine.debug();
 }
 
 #endif

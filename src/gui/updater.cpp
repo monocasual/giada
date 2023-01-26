@@ -39,25 +39,6 @@ Updater::Updater(Ui& ui)
 
 /* -------------------------------------------------------------------------- */
 
-void Updater::init(m::model::Model& model)
-{
-	/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap
-	callback might be performed by a non-main thread, which must talk to the 
-	UI (main thread) through the UI queue by pumping an event in it. */
-
-	model.onSwap = [this](m::model::SwapType type) {
-		m_ui.pumpEvent([this, type]() {
-			if (type == m::model::SwapType::NONE)
-				return;
-			type == m::model::SwapType::HARD ? m_ui.rebuild() : m_ui.refresh();
-		});
-	};
-
-	start();
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Updater::run()
 {
 	while (Fl::wait() > 0)

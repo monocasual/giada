@@ -103,13 +103,28 @@ void startup(int argc, char** argv)
 	g_engine.init();
 	g_ui.init(argc, argv, g_engine);
 
+	/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap
+	callback might be performed by a non-main thread, which must talk to the 
+	UI (main thread) through the UI queue by pumping an event in it. */
+
+	g_engine.setOnModelSwapCb([](model::SwapType type) {
+		g_ui.pumpEvent([type]() {
+			if (type == model::SwapType::NONE)
+				return;
+			type == model::SwapType::HARD ? g_ui.rebuild() : g_ui.refresh();
+		});
+	});
+
 	if (!g_engine.isAudioReady())
 		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
 }
 
 /* -------------------------------------------------------------------------- */
 
-void run() { g_ui.run(); }
+void run()
+{
+	g_ui.run();
+}
 
 /* -------------------------------------------------------------------------- */
 

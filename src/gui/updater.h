@@ -31,11 +31,6 @@
 #include <FL/Fl.H>
 #include <functional>
 
-namespace giada::m::model
-{
-class Model;
-}
-
 namespace giada::v
 {
 class Ui;
@@ -46,7 +41,6 @@ public:
 
 	Updater(Ui& ui);
 
-	void init(m::model::Model&);
 	void start();
 	void stop();
 	void run();

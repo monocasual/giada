@@ -74,6 +74,13 @@ bool MainEngine::isMetronomeOn() const
 
 /* -------------------------------------------------------------------------- */
 
+bool MainEngine::getInToOut() const
+{
+	return m_mixer.getInToOut();
+}
+
+/* -------------------------------------------------------------------------- */
+
 Peak MainEngine::getPeakOut() const { return m_mixer.getPeakOut(); }
 Peak MainEngine::getPeakIn() const { return m_mixer.getPeakIn(); }
 
@@ -94,6 +101,16 @@ int MainEngine::getBeats() const
 int MainEngine::getBars() const
 {
 	return m_sequencer.getBars();
+}
+
+float MainEngine::getBpm() const
+{
+	return m_sequencer.getBpm();
+}
+
+int MainEngine::getQuantizerValue() const
+{
+	return m_sequencer.getQuantizerValue();
 }
 
 int MainEngine::getCurrentBeat() const

@@ -31,8 +31,9 @@
 
 namespace giada::m
 {
-ActionEditorEngine::ActionEditorEngine(Engine& e, Sequencer& s, ActionRecorder& ar)
+ActionEditorEngine::ActionEditorEngine(Engine& e, model::Model& m, Sequencer& s, ActionRecorder& ar)
 : m_engine(e)
+, m_model(m)
 , m_sequencer(s)
 , m_actionRecorder(ar)
 {
@@ -49,7 +50,7 @@ std::vector<Action> ActionEditorEngine::getActionsOnChannel(ID channelId) const
 
 std::vector<Patch::Action> ActionEditorEngine::serializeActions() const
 {
-	return actionFactory::serializeActions(m_engine.model.getAllShared<Actions::Map>());
+	return actionFactory::serializeActions(m_model.getAllShared<Actions::Map>());
 }
 
 Actions::Map ActionEditorEngine::deserializeActions(const std::vector<Patch::Action>& as) const

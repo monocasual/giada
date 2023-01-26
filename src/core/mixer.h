@@ -72,6 +72,7 @@ public:
 
 	Peak getPeakOut() const;
 	Peak getPeakIn() const;
+	bool getInToOut() const;
 
 	/* getRecordInfo
 	Returns information on the ongoing input recording. */

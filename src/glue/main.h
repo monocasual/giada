@@ -48,8 +48,7 @@ namespace giada::c::main
 {
 struct Timer
 {
-	Timer() = default;
-	Timer(const m::model::Sequencer& c);
+	Timer();
 
 	float bpm;
 	int   beats;
@@ -62,7 +61,7 @@ struct Timer
 struct IO
 {
 	IO() = default;
-	IO(const m::Channel& out, const m::Channel& in, const m::model::Mixer& m);
+	IO(const m::Channel& out, const m::Channel& in);
 
 	float masterOutVol;
 	float masterInVol;

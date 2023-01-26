@@ -50,11 +50,12 @@ class Wave;
 class ChannelsEngine
 {
 public:
-	ChannelsEngine(Engine&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&, Recorder&, ActionRecorder&, PluginHost&, PluginManager&);
+	ChannelsEngine(Engine&, model::Model&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
+	    Recorder&, ActionRecorder&, PluginHost&, PluginManager&);
 
 	bool hasChannelsWithAudioData() const;
 	bool hasChannelsWithActions() const;
-	
+
 	Channel&              get(ID);
 	std::vector<Channel>& getAll();
 
@@ -96,6 +97,7 @@ public:
 
 private:
 	Engine&         m_engine;
+	model::Model&   m_model;
 	KernelAudio&    m_kernelAudio;
 	Mixer&          m_mixer;
 	Sequencer&      m_sequencer;

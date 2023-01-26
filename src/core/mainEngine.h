@@ -46,11 +46,14 @@ public:
 	bool              isRecordingActions() const;
 	bool              isSequencerRunning() const;
 	bool              isMetronomeOn() const;
+	bool              getInToOut() const;
 	Peak              getPeakOut() const;
 	Peak              getPeakIn() const;
 	Mixer::RecordInfo getRecordInfo() const;
 	int               getBeats() const;
 	int               getBars() const;
+	float             getBpm() const;
+	int               getQuantizerValue() const;
 	int               getCurrentBeat() const;
 	Frame             getCurrentFrame() const;
 	int               getFramesInBar() const;

@@ -27,6 +27,7 @@
 #ifndef G_SAMPLE_EDITOR_ENGINE_H
 #define G_SAMPLE_EDITOR_ENGINE_H
 
+#include "core/model/model.h"
 #include "core/types.h"
 #include "core/waveFx.h"
 #include <memory>
@@ -39,7 +40,7 @@ class Wave;
 class SampleEditorEngine
 {
 public:
-	SampleEditorEngine(Engine&, ChannelManager&);
+	SampleEditorEngine(Engine&, model::Model&, ChannelManager&);
 
 	void cut(ID channelId, Frame a, Frame b);
 	void copy(ID channelId, Frame a, Frame b);
@@ -60,6 +61,7 @@ private:
 	Wave& getWave(ID channelId) const;
 
 	Engine&         m_engine;
+	model::Model&   m_model;
 	ChannelManager& m_channelManager;
 
 	/* waveBuffer

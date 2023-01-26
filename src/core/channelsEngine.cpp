@@ -34,10 +34,12 @@
 
 namespace giada::m
 {
-ChannelsEngine::ChannelsEngine(Engine& e, KernelAudio& k, Mixer& m, Sequencer& s, ChannelManager& cm, Recorder& r, ActionRecorder& ar, PluginHost& ph, PluginManager& pm)
+ChannelsEngine::ChannelsEngine(Engine& e, model::Model& m, KernelAudio& k, Mixer& mx, Sequencer& s,
+    ChannelManager& cm, Recorder& r, ActionRecorder& ar, PluginHost& ph, PluginManager& pm)
 : m_engine(e)
+, m_model(m)
 , m_kernelAudio(k)
-, m_mixer(m)
+, m_mixer(mx)
 , m_sequencer(s)
 , m_channelManager(cm)
 , m_recorder(r)
@@ -137,7 +139,7 @@ void ChannelsEngine::clone(ID channelId)
 	const Channel&             ch              = m_channelManager.getChannel(channelId);
 	const int                  bufferSize      = m_kernelAudio.getBufferSize();
 	const int                  patchSampleRate = m_engine.patch.data.samplerate;
-	const std::vector<Plugin*> plugins         = m_pluginManager.clonePlugins(ch.plugins, patchSampleRate, bufferSize, m_engine.model);
+	const std::vector<Plugin*> plugins         = m_pluginManager.clonePlugins(ch.plugins, patchSampleRate, bufferSize, m_model);
 	const ID                   nextChannelId   = channelFactory::getNextId();
 
 	m_channelManager.cloneChannel(channelId, bufferSize, plugins);
@@ -322,8 +324,8 @@ Patch::Channel ChannelsEngine::serializeChannel(const Channel& ch)
 channelFactory::Data ChannelsEngine::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
 {
 	const Resampler::Quality rsmpQuality = m_engine.conf.data.rsmpQuality;
-	Wave*                    wave        = m_engine.model.findShared<Wave>(pch.waveId);
-	std::vector<Plugin*>     plugins     = m_pluginManager.hydratePlugins(pch.pluginIds, m_engine.model);
+	Wave*                    wave        = m_model.findShared<Wave>(pch.waveId);
+	std::vector<Plugin*>     plugins     = m_pluginManager.hydratePlugins(pch.pluginIds, m_model);
 	return channelFactory::deserializeChannel(pch, samplerateRatio, bufferSize, rsmpQuality, wave, plugins);
 }
 } // namespace giada::m

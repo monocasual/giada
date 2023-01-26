@@ -32,8 +32,9 @@
 
 namespace giada::m
 {
-SampleEditorEngine::SampleEditorEngine(Engine& e, ChannelManager& cm)
+SampleEditorEngine::SampleEditorEngine(Engine& e, model::Model& m, ChannelManager& cm)
 : m_engine(e)
+, m_model(m)
 , m_channelManager(cm)
 {
 }
@@ -43,7 +44,7 @@ SampleEditorEngine::SampleEditorEngine(Engine& e, ChannelManager& cm)
 void SampleEditorEngine::cut(ID channelId, Frame a, Frame b)
 {
 	copy(channelId, a, b);
-	model::DataLock lock = m_engine.model.lockData();
+	model::DataLock lock = m_model.lockData();
 	wfx::cut(getWave(channelId), a, b);
 	resetBeginEnd(channelId);
 }
@@ -72,7 +73,7 @@ void SampleEditorEngine::paste(ID channelId, Frame a)
 	/* Temporary disable wave reading in channel. From now on, the audio 
 		thread won't be reading any wave, so editing it is safe.  */
 
-	model::DataLock lock = m_engine.model.lockData();
+	model::DataLock lock = m_model.lockData();
 
 	/* Paste copied data to destination wave. */
 
@@ -91,7 +92,7 @@ void SampleEditorEngine::paste(ID channelId, Frame a)
 
 void SampleEditorEngine::silence(ID channelId, Frame a, Frame b)
 {
-	model::DataLock lock = m_engine.model.lockData();
+	model::DataLock lock = m_model.lockData();
 	wfx::silence(getWave(channelId), a, b);
 }
 
@@ -99,7 +100,7 @@ void SampleEditorEngine::silence(ID channelId, Frame a, Frame b)
 
 void SampleEditorEngine::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
 {
-	model::DataLock lock = m_engine.model.lockData();
+	model::DataLock lock = m_model.lockData();
 	wfx::fade(getWave(channelId), a, b, type);
 }
 
@@ -107,7 +108,7 @@ void SampleEditorEngine::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
 
 void SampleEditorEngine::smoothEdges(ID channelId, Frame a, Frame b)
 {
-	model::DataLock lock = m_engine.model.lockData();
+	model::DataLock lock = m_model.lockData();
 	wfx::smooth(getWave(channelId), a, b);
 }
 
@@ -115,7 +116,7 @@ void SampleEditorEngine::smoothEdges(ID channelId, Frame a, Frame b)
 
 void SampleEditorEngine::reverse(ID channelId, Frame a, Frame b)
 {
-	model::DataLock lock = m_engine.model.lockData();
+	model::DataLock lock = m_model.lockData();
 	wfx::reverse(getWave(channelId), a, b);
 }
 
@@ -123,7 +124,7 @@ void SampleEditorEngine::reverse(ID channelId, Frame a, Frame b)
 
 void SampleEditorEngine::normalize(ID channelId, Frame a, Frame b)
 {
-	model::DataLock lock = m_engine.model.lockData();
+	model::DataLock lock = m_model.lockData();
 	wfx::normalize(getWave(channelId), a, b);
 }
 
@@ -131,7 +132,7 @@ void SampleEditorEngine::normalize(ID channelId, Frame a, Frame b)
 
 void SampleEditorEngine::trim(ID channelId, Frame a, Frame b)
 {
-	model::DataLock lock = m_engine.model.lockData();
+	model::DataLock lock = m_model.lockData();
 	wfx::trim(getWave(channelId), a, b);
 	resetBeginEnd(channelId);
 }
@@ -144,7 +145,7 @@ void SampleEditorEngine::shift(ID channelId, Frame offset)
 	const SamplePlayer& samplePlayer = ch.samplePlayer.value();
 	const Frame         oldShift     = samplePlayer.shift;
 
-	m::model::DataLock lock = m_engine.model.lockData();
+	m::model::DataLock lock = m_model.lockData();
 	m::wfx::shift(getWave(channelId), offset - oldShift);
 	// Model has been swapped by DataLock constructor, needs to get Channel again
 	m_channelManager.getChannel(channelId).samplePlayer->shift = offset;
@@ -157,8 +158,8 @@ void SampleEditorEngine::toNewChannel(ID channelId, ID columnId, Frame a, Frame 
 	const int position   = m_channelManager.getLastChannelPosition(columnId);
 	const int bufferSize = m_engine.getBufferSize();
 
-	m_engine.model.addShared(waveFactory::createFromWave(getWave(channelId), a, b));
-	Wave& wave = m_engine.model.backShared<Wave>();
+	m_model.addShared(waveFactory::createFromWave(getWave(channelId), a, b));
+	Wave& wave = m_model.backShared<Wave>();
 
 	const Channel& ch = m_channelManager.addChannel(ChannelType::SAMPLE, columnId, position, bufferSize);
 	m_channelManager.loadSampleChannel(ch.id, wave);
