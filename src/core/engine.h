@@ -159,7 +159,6 @@ public:
 	Patch                  patch;
 	JackTransport          jackTransport;
 	MidiMapper<KernelMidi> midiMapper;
-	MidiDispatcher         midiDispatcher;
 	MidiSynchronizer       midiSynchronizer;
 	Sequencer              sequencer;
 #ifdef WITH_AUDIO_JACK
@@ -181,6 +180,7 @@ private:
 	Recorder        m_recorder;
 	PluginManager   m_pluginManager;
 	EventDispatcher m_eventDispatcher;
+	MidiDispatcher  m_midiDispatcher;
 
 	MainEngine         m_mainEngine;
 	ChannelsEngine     m_channelsEngine;

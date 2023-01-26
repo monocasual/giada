@@ -35,7 +35,6 @@ namespace giada::m
 {
 Engine::Engine()
 : midiMapper(m_kernelMidi)
-, midiDispatcher(model)
 , midiSynchronizer(conf.data, m_kernelMidi)
 , sequencer(model, midiSynchronizer, jackTransport)
 , m_pluginHost(model)
@@ -43,12 +42,13 @@ Engine::Engine()
 , m_channelManager(conf.data, model)
 , m_actionRecorder(model)
 , m_recorder(sequencer, m_channelManager, m_mixer, m_actionRecorder)
+, m_midiDispatcher(model)
 , m_mainEngine(*this, m_kernelAudio, m_mixer, sequencer, midiSynchronizer, m_channelManager, m_recorder)
 , m_channelsEngine(*this, m_kernelAudio, m_mixer, sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager)
 , m_pluginsEngine(*this, m_kernelAudio, m_channelManager, m_pluginManager, m_pluginHost, model)
 , m_sampleEditorEngine(*this, m_channelManager)
 , m_actionEditorEngine(*this, sequencer, m_actionRecorder)
-, m_ioEngine(model, midiDispatcher, conf.data)
+, m_ioEngine(model, m_midiDispatcher, conf.data)
 , m_storageEngine(*this, model, conf, patch, m_pluginManager, midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, sequencer, m_actionRecorder)
 {
 	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
@@ -61,11 +61,11 @@ Engine::Engine()
 			u::log::print("[Engine::m_kernelMidi.onMidiReceived] Can't register MIDI thread!\n");
 			return;
 		}
-		midiDispatcher.dispatch(e);
+		m_midiDispatcher.dispatch(e);
 		midiSynchronizer.receive(e, sequencer.getBeats());
 	};
 
-	midiDispatcher.onEventReceived = [this]() {
+	m_midiDispatcher.onEventReceived = [this]() {
 		m_recorder.startActionRecOnCallback();
 	};
 
