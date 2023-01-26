@@ -26,7 +26,7 @@
 
 #include "gui/ui.h"
 #include "core/const.h"
-#include "core/engine.h"
+#include "gui/dialogs/warnings.h"
 #include "gui/elems/mainWindow/keyboard/column.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/mainIO.h"
@@ -42,7 +42,7 @@
 
 namespace giada::v
 {
-Ui::Ui(const m::Conf::Data& conf)
+Ui::Ui(m::Conf::Data& conf)
 : dispatcher(conf.keyBindings)
 , m_conf(conf)
 , m_updater(*this)
@@ -90,7 +90,7 @@ void Ui::store(const std::string patchName, m::Patch::Data& patch)
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::init(int argc, char** argv, m::Engine& engine)
+void Ui::init(int argc, char** argv, const std::string& patchName, bool isAudioReady)
 {
 	/* This is of paramount importance on Linux with VST enabled, otherwise many
 	plug-ins go nuts and crash hard. It seems that some plug-ins on our Juce-based
@@ -101,10 +101,10 @@ void Ui::init(int argc, char** argv, m::Engine& engine)
 #endif
 
 	langMapper.init();
-	langMapper.read(engine.conf.data.langMap);
+	langMapper.read(m_conf.langMap);
 
-	mainWindow = std::make_unique<gdMainWindow>(u::gui::getCenterWinBounds(engine.conf.data.mainWindowBounds), "", argc, argv, engine.conf.data);
-	mainWindow->setTitle(engine.patch.data.name == "" ? G_DEFAULT_PATCH_NAME : engine.patch.data.name);
+	mainWindow = std::make_unique<gdMainWindow>(u::gui::getCenterWinBounds(m_conf.mainWindowBounds), "", argc, argv, m_conf);
+	mainWindow->setTitle(patchName == "" ? G_DEFAULT_PATCH_NAME : patchName);
 
 	if (Fl::screen_scaling_supported() && m_conf.uiScaling != G_DEFAULT_UI_SCALING)
 		Fl::screen_scale(mainWindow->screen_num(), m_conf.uiScaling);
@@ -113,9 +113,11 @@ void Ui::init(int argc, char** argv, m::Engine& engine)
 
 	m_updater.start();
 
-	if (engine.isAudioReady())
+	if (isAudioReady)
 		rebuildStaticWidgets();
-} // namespace giada::v
+	else
+		v::gdAlert(langMapper.get(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
+}
 
 /* -------------------------------------------------------------------------- */
 

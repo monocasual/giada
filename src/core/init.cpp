@@ -28,7 +28,6 @@
 #include <pwd.h>
 #endif
 #include "core/engine.h"
-#include "gui/dialogs/warnings.h"
 #include "gui/ui.h"
 #include "gui/updater.h"
 #include "utils/log.h"
@@ -101,7 +100,7 @@ void startup(int argc, char** argv)
 {
 	juce::initialiseJuce_GUI();
 	g_engine.init();
-	g_ui.init(argc, argv, g_engine);
+	g_ui.init(argc, argv, g_engine.patch.data.name, g_engine.isAudioReady());
 
 	/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap
 	callback might be performed by a non-main thread, which must talk to the 
@@ -114,9 +113,6 @@ void startup(int argc, char** argv)
 			type == model::SwapType::HARD ? g_ui.rebuild() : g_ui.refresh();
 		});
 	});
-
-	if (!g_engine.isAudioReady())
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
 }
 
 /* -------------------------------------------------------------------------- */

@@ -36,17 +36,12 @@
 #include <memory>
 #include <string>
 
-namespace giada::m
-{
-class Engine;
-} // namespace giada::m
-
 namespace giada::v
 {
 class Ui final
 {
 public:
-	Ui(const m::Conf::Data&);
+	Ui(m::Conf::Data&);
 
 	/* shouldBlink
 	Return whether is time to blink something or not. This is used to make 
@@ -69,7 +64,7 @@ public:
 
 	void store(const std::string patchName, m::Patch::Data& patch);
 
-	void init(int argc, char** argv, m::Engine&);
+	void init(int argc, char** argv, const std::string& patchName, bool isAudioReady);
 	void reset();
 	void run();
 	void shutdown();
@@ -137,7 +132,7 @@ private:
 
 	void rebuildStaticWidgets();
 
-	const m::Conf::Data& m_conf;
+	m::Conf::Data& m_conf;
 
 	Updater m_updater;
 	int     m_blinker;
