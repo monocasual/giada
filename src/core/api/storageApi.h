@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_STORAGE_ENGINE_H
-#define G_STORAGE_ENGINE_H
+#ifndef G_STORAGE_API_H
+#define G_STORAGE_API_H
 
 #include "core/conf.h"
 #include "core/model/model.h"
@@ -44,7 +44,7 @@ class ChannelManager;
 class KernelAudio;
 class Sequencer;
 class ActionRecorder;
-class StorageEngine
+class StorageApi
 {
 public:
 	struct LoadState
@@ -56,11 +56,11 @@ public:
 		std::vector<std::string> missingPlugins = {};
 	};
 
-	StorageEngine(Engine&, model::Model&, Conf&, Patch&, PluginManager&, MidiSynchronizer&,
+	StorageApi(Engine&, model::Model&, Conf&, Patch&, PluginManager&, MidiSynchronizer&,
 	    Mixer&, ChannelManager&, KernelAudio&, Sequencer&, ActionRecorder&);
 
 	/* storeProject
-    Saves the current project. Returns true on success. */
+	Saves the current project. Returns true on success. */
 
 	bool storeProject(const std::string& projectName, const std::string& projectPath, const v::Ui::State&,
 	    std::function<void(float)> progress);

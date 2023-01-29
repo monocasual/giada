@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/channelsEngine.h"
+#include "channelsApi.h"
 #include "core/channels/channelManager.h"
 #include "core/engine.h"
 #include "core/kernelAudio.h"
@@ -34,7 +34,7 @@
 
 namespace giada::m
 {
-ChannelsEngine::ChannelsEngine(Engine& e, model::Model& m, KernelAudio& k, Mixer& mx, Sequencer& s,
+ChannelsApi::ChannelsApi(Engine& e, model::Model& m, KernelAudio& k, Mixer& mx, Sequencer& s,
     ChannelManager& cm, Recorder& r, ActionRecorder& ar, PluginHost& ph, PluginManager& pm)
 : m_engine(e)
 , m_model(m)
@@ -51,57 +51,57 @@ ChannelsEngine::ChannelsEngine(Engine& e, model::Model& m, KernelAudio& k, Mixer
 
 /* -------------------------------------------------------------------------- */
 
-bool ChannelsEngine::hasChannelsWithAudioData() const
+bool ChannelsApi::hasChannelsWithAudioData() const
 {
 	return m_channelManager.hasAudioData();
 }
 
-bool ChannelsEngine::hasChannelsWithActions() const
+bool ChannelsApi::hasChannelsWithActions() const
 {
 	return m_channelManager.hasActions();
 }
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelsEngine::get(ID channelId)
+Channel& ChannelsApi::get(ID channelId)
 {
 	return m_channelManager.getChannel(channelId);
 }
 
-std::vector<Channel>& ChannelsEngine::getAll()
+std::vector<Channel>& ChannelsApi::getAll()
 {
 	return m_channelManager.getAllChannels();
 }
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelsEngine::add(ID columnId, ChannelType type)
+Channel& ChannelsApi::add(ID columnId, ChannelType type)
 {
 	const int position   = m_channelManager.getLastChannelPosition(columnId);
 	const int bufferSize = m_kernelAudio.getBufferSize();
 	return m_channelManager.addChannel(type, columnId, position, bufferSize);
 }
 
-int ChannelsEngine::loadSampleChannel(ID channelId, const std::string& filePath)
+int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)
 {
 	const int                sampleRate  = m_kernelAudio.getSampleRate();
 	const Resampler::Quality rsmpQuality = m_engine.getConf().rsmpQuality;
 	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality);
 }
 
-void ChannelsEngine::loadSampleChannel(ID channelId, Wave& wave)
+void ChannelsApi::loadSampleChannel(ID channelId, Wave& wave)
 {
 	m_channelManager.loadSampleChannel(channelId, wave);
 }
 
-void ChannelsEngine::loadPreviewChannel(ID sourceChannelId)
+void ChannelsApi::loadPreviewChannel(ID sourceChannelId)
 {
 	m_channelManager.loadWaveInPreviewChannel(sourceChannelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::remove(ID channelId)
+void ChannelsApi::remove(ID channelId)
 {
 	const std::vector<Plugin*> plugins  = m_channelManager.getChannel(channelId).plugins;
 	const bool                 hasSolos = m_channelManager.hasSolos();
@@ -110,7 +110,7 @@ void ChannelsEngine::remove(ID channelId)
 	m_channelManager.deleteChannel(channelId);
 	m_mixer.updateSoloCount(hasSolos);
 
-	/* Plug-in destruction must be done in the main thread, due to JUCE and 
+	/* Plug-in destruction must be done in the main thread, due to JUCE and
 	VST3 internal workings. */
 
 	m_pluginHost.freePlugins(plugins);
@@ -118,22 +118,22 @@ void ChannelsEngine::remove(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::freeSampleChannel(ID channelId)
+void ChannelsApi::freeSampleChannel(ID channelId)
 {
 	m_actionRecorder.clearChannel(channelId);
 	m_channelManager.freeSampleChannel(channelId);
 }
 
-void ChannelsEngine::freePreviewChannel()
+void ChannelsApi::freePreviewChannel()
 {
 	m_channelManager.freeWaveInPreviewChannel();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::clone(ID channelId)
+void ChannelsApi::clone(ID channelId)
 {
-	/* Plug-in cloning must be done in the main thread, due to JUCE and VST3 
+	/* Plug-in cloning must be done in the main thread, due to JUCE and VST3
 	internal workings. */
 
 	const Channel&             ch              = m_channelManager.getChannel(channelId);
@@ -148,14 +148,14 @@ void ChannelsEngine::clone(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::move(ID channelId, ID columnId, int position)
+void ChannelsApi::move(ID channelId, ID columnId, int position)
 {
 	m_channelManager.moveChannel(channelId, columnId, position);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::press(ID channelId, int velocity)
+void ChannelsApi::press(ID channelId, int velocity)
 {
 	const bool  canRecordActions = m_recorder.canRecordActions();
 	const bool  canQuantize      = m_sequencer.canQuantize();
@@ -163,14 +163,14 @@ void ChannelsEngine::press(ID channelId, int velocity)
 	m_channelManager.keyPress(channelId, velocity, canRecordActions, canQuantize, currentFrameQ);
 }
 
-void ChannelsEngine::release(ID channelId)
+void ChannelsApi::release(ID channelId)
 {
 	const bool  canRecordActions = m_recorder.canRecordActions();
 	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
 	m_channelManager.keyRelease(channelId, canRecordActions, currentFrameQ);
 }
 
-void ChannelsEngine::kill(ID channelId)
+void ChannelsApi::kill(ID channelId)
 {
 	const bool  canRecordActions = m_recorder.canRecordActions();
 	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
@@ -179,35 +179,35 @@ void ChannelsEngine::kill(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::setVolume(ID channelId, float v)
+void ChannelsApi::setVolume(ID channelId, float v)
 {
 	m_channelManager.setVolume(channelId, v);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::setPitch(ID channelId, float v)
+void ChannelsApi::setPitch(ID channelId, float v)
 {
 	m_channelManager.setPitch(channelId, v);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::setPan(ID channelId, float v)
+void ChannelsApi::setPan(ID channelId, float v)
 {
 	m_channelManager.setPan(channelId, v);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::toggleMute(ID channelId)
+void ChannelsApi::toggleMute(ID channelId)
 {
 	m_channelManager.toggleMute(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::toggleSolo(ID channelId)
+void ChannelsApi::toggleSolo(ID channelId)
 {
 	m_channelManager.toggleSolo(channelId);
 	m_mixer.updateSoloCount(m_channelManager.hasSolos());
@@ -215,89 +215,89 @@ void ChannelsEngine::toggleSolo(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::toggleArm(ID channelId)
+void ChannelsApi::toggleArm(ID channelId)
 {
 	m_channelManager.toggleArm(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::toggleReadActions(ID channelId)
+void ChannelsApi::toggleReadActions(ID channelId)
 {
 	m_channelManager.toggleReadActions(channelId, m_sequencer.isRunning());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::killReadActions(ID channelId)
+void ChannelsApi::killReadActions(ID channelId)
 {
 	m_channelManager.killReadActions(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::setInputMonitor(ID channelId, bool value)
+void ChannelsApi::setInputMonitor(ID channelId, bool value)
 {
 	m_channelManager.setInputMonitor(channelId, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::setOverdubProtection(ID channelId, bool value)
+void ChannelsApi::setOverdubProtection(ID channelId, bool value)
 {
 	m_channelManager.setOverdubProtection(channelId, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
+void ChannelsApi::setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
 	m_channelManager.setSamplePlayerMode(channelId, mode);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::setHeight(ID channelId, int h)
+void ChannelsApi::setHeight(ID channelId, int h)
 {
 	m_channelManager.setHeight(channelId, h);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::setName(ID channelId, const std::string& name)
+void ChannelsApi::setName(ID channelId, const std::string& name)
 {
 	m_channelManager.renameChannel(channelId, name);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::setPreviewTracker(Frame f)
+void ChannelsApi::setPreviewTracker(Frame f)
 {
 	m_channelManager.setPreviewTracker(f);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::clearAllActions(ID channelId)
+void ChannelsApi::clearAllActions(ID channelId)
 {
 	m_actionRecorder.clearChannel(channelId);
 }
 
-void ChannelsEngine::clearAllActions()
+void ChannelsApi::clearAllActions()
 {
 	m_actionRecorder.clearAllActions();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::freeAllSampleChannels()
+void ChannelsApi::freeAllSampleChannels()
 {
 	m_channelManager.freeAllSampleChannels();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsEngine::sendMidi(ID channelId, MidiEvent e)
+void ChannelsApi::sendMidi(ID channelId, MidiEvent e)
 {
 	const bool  canRecordActions = m_recorder.canRecordActions();
 	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
@@ -306,7 +306,7 @@ void ChannelsEngine::sendMidi(ID channelId, MidiEvent e)
 
 /* -------------------------------------------------------------------------- */
 
-bool ChannelsEngine::saveSample(ID channelId, const std::string& filePath)
+bool ChannelsApi::saveSample(ID channelId, const std::string& filePath)
 {
 	if (!m_channelManager.saveSample(channelId, filePath))
 		return false;
@@ -316,12 +316,12 @@ bool ChannelsEngine::saveSample(ID channelId, const std::string& filePath)
 
 /* -------------------------------------------------------------------------- */
 
-Patch::Channel ChannelsEngine::serializeChannel(const Channel& ch)
+Patch::Channel ChannelsApi::serializeChannel(const Channel& ch)
 {
 	return channelFactory::serializeChannel(ch);
 }
 
-channelFactory::Data ChannelsEngine::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
+channelFactory::Data ChannelsApi::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
 {
 	const Resampler::Quality rsmpQuality = m_engine.getConf().rsmpQuality;
 	Wave*                    wave        = m_model.findShared<Wave>(pch.waveId);

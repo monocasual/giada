@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/sampleEditorEngine.h"
+#include "sampleEditorApi.h"
 #include "core/engine.h"
 #include "core/waveFactory.h"
 #include "core/waveFx.h"
@@ -32,7 +32,7 @@
 
 namespace giada::m
 {
-SampleEditorEngine::SampleEditorEngine(Engine& e, model::Model& m, ChannelManager& cm)
+SampleEditorApi::SampleEditorApi(Engine& e, model::Model& m, ChannelManager& cm)
 : m_engine(e)
 , m_model(m)
 , m_channelManager(cm)
@@ -41,7 +41,7 @@ SampleEditorEngine::SampleEditorEngine(Engine& e, model::Model& m, ChannelManage
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorEngine::cut(ID channelId, Frame a, Frame b)
+void SampleEditorApi::cut(ID channelId, Frame a, Frame b)
 {
 	copy(channelId, a, b);
 	model::DataLock lock = m_model.lockData();
@@ -51,14 +51,14 @@ void SampleEditorEngine::cut(ID channelId, Frame a, Frame b)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorEngine::copy(ID channelId, Frame a, Frame b)
+void SampleEditorApi::copy(ID channelId, Frame a, Frame b)
 {
 	m_waveBuffer = waveFactory::createFromWave(getWave(channelId), a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorEngine::paste(ID channelId, Frame a)
+void SampleEditorApi::paste(ID channelId, Frame a)
 {
 	if (m_waveBuffer == nullptr)
 	{
@@ -70,8 +70,8 @@ void SampleEditorEngine::paste(ID channelId, Frame a)
 
 	Wave& wave = getWave(channelId);
 
-	/* Temporary disable wave reading in channel. From now on, the audio 
-		thread won't be reading any wave, so editing it is safe.  */
+	/* Temporary disable wave reading in channel. From now on, the audio
+	    thread won't be reading any wave, so editing it is safe.  */
 
 	model::DataLock lock = m_model.lockData();
 
@@ -90,7 +90,7 @@ void SampleEditorEngine::paste(ID channelId, Frame a)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorEngine::silence(ID channelId, Frame a, Frame b)
+void SampleEditorApi::silence(ID channelId, Frame a, Frame b)
 {
 	model::DataLock lock = m_model.lockData();
 	wfx::silence(getWave(channelId), a, b);
@@ -98,7 +98,7 @@ void SampleEditorEngine::silence(ID channelId, Frame a, Frame b)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorEngine::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
+void SampleEditorApi::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
 {
 	model::DataLock lock = m_model.lockData();
 	wfx::fade(getWave(channelId), a, b, type);
@@ -106,7 +106,7 @@ void SampleEditorEngine::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorEngine::smoothEdges(ID channelId, Frame a, Frame b)
+void SampleEditorApi::smoothEdges(ID channelId, Frame a, Frame b)
 {
 	model::DataLock lock = m_model.lockData();
 	wfx::smooth(getWave(channelId), a, b);
@@ -114,7 +114,7 @@ void SampleEditorEngine::smoothEdges(ID channelId, Frame a, Frame b)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorEngine::reverse(ID channelId, Frame a, Frame b)
+void SampleEditorApi::reverse(ID channelId, Frame a, Frame b)
 {
 	model::DataLock lock = m_model.lockData();
 	wfx::reverse(getWave(channelId), a, b);
@@ -122,7 +122,7 @@ void SampleEditorEngine::reverse(ID channelId, Frame a, Frame b)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorEngine::normalize(ID channelId, Frame a, Frame b)
+void SampleEditorApi::normalize(ID channelId, Frame a, Frame b)
 {
 	model::DataLock lock = m_model.lockData();
 	wfx::normalize(getWave(channelId), a, b);
@@ -130,7 +130,7 @@ void SampleEditorEngine::normalize(ID channelId, Frame a, Frame b)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorEngine::trim(ID channelId, Frame a, Frame b)
+void SampleEditorApi::trim(ID channelId, Frame a, Frame b)
 {
 	model::DataLock lock = m_model.lockData();
 	wfx::trim(getWave(channelId), a, b);
@@ -139,7 +139,7 @@ void SampleEditorEngine::trim(ID channelId, Frame a, Frame b)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorEngine::shift(ID channelId, Frame offset)
+void SampleEditorApi::shift(ID channelId, Frame offset)
 {
 	const Channel&      ch           = m_channelManager.getChannel(channelId);
 	const SamplePlayer& samplePlayer = ch.samplePlayer.value();
@@ -153,7 +153,7 @@ void SampleEditorEngine::shift(ID channelId, Frame offset)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorEngine::toNewChannel(ID channelId, ID columnId, Frame a, Frame b)
+void SampleEditorApi::toNewChannel(ID channelId, ID columnId, Frame a, Frame b)
 {
 	const int position   = m_channelManager.getLastChannelPosition(columnId);
 	const int bufferSize = m_engine.getBufferSize();
@@ -167,19 +167,19 @@ void SampleEditorEngine::toNewChannel(ID channelId, ID columnId, Frame a, Frame 
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorEngine::setBeginEnd(ID channelId, Frame b, Frame e)
+void SampleEditorApi::setBeginEnd(ID channelId, Frame b, Frame e)
 {
 	m_channelManager.setBeginEnd(channelId, b, e);
 }
 
-void SampleEditorEngine::resetBeginEnd(ID channelId)
+void SampleEditorApi::resetBeginEnd(ID channelId)
 {
 	m_channelManager.resetBeginEnd(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorEngine::reload(ID channelId)
+void SampleEditorApi::reload(ID channelId)
 {
 	const int                sampleRate  = m_engine.getSampleRate();
 	const Resampler::Quality rsmpQuality = m_engine.getConf().rsmpQuality;
@@ -189,7 +189,7 @@ void SampleEditorEngine::reload(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-Wave& SampleEditorEngine::getWave(ID channelId) const
+Wave& SampleEditorApi::getWave(ID channelId) const
 {
 	Channel&      ch           = m_channelManager.getChannel(channelId);
 	SamplePlayer& samplePlayer = ch.samplePlayer.value();

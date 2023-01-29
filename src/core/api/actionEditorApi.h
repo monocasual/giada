@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_ACTION_EDITOR_ENGINE_H
-#define G_ACTION_EDITOR_ENGINE_H
+#ifndef G_ACTION_EDITOR_API_H
+#define G_ACTION_EDITOR_API_H
 
 #include "core/actions/actions.h"
 #include "core/patch.h"
@@ -38,10 +38,10 @@ class Action;
 class Engine;
 class Sequencer;
 class ActionRecorder;
-class ActionEditorEngine
+class ActionEditorApi
 {
 public:
-	ActionEditorEngine(Engine&, model::Model&, Sequencer&, ActionRecorder&);
+	ActionEditorApi(Engine&, model::Model&, Sequencer&, ActionRecorder&);
 
 	std::vector<Action>        getActionsOnChannel(ID channelId) const;
 	std::vector<Patch::Action> serializeActions() const;

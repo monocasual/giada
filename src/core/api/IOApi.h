@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_IO_ENGINE_H
-#define G_IO_ENGINE_H
+#ifndef G_IO_API_H
+#define G_IO_API_H
 
 #include "core/conf.h"
 #include "core/model/model.h"
@@ -35,10 +35,10 @@
 namespace giada::m
 {
 class MidiDispatcher;
-class IOEngine
+class IOApi
 {
 public:
-	IOEngine(model::Model&, MidiDispatcher&, Conf::Data&);
+	IOApi(model::Model&, MidiDispatcher&, Conf::Data&);
 
 	const model::MidiIn& getModelMidiIn() const;
 

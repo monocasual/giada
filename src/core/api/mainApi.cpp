@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/mainEngine.h"
+#include "mainApi.h"
 #include "core/channels/channelManager.h"
 #include "core/engine.h"
 #include "core/kernelAudio.h"
@@ -33,7 +33,7 @@
 
 namespace giada::m
 {
-MainEngine::MainEngine(Engine& e, KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms, ChannelManager& cm, Recorder& r)
+MainApi::MainApi(Engine& e, KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms, ChannelManager& cm, Recorder& r)
 : m_engine(e)
 , m_kernelAudio(ka)
 , m_mixer(m)
@@ -46,144 +46,144 @@ MainEngine::MainEngine(Engine& e, KernelAudio& ka, Mixer& m, Sequencer& s, MidiS
 
 /* -------------------------------------------------------------------------- */
 
-bool MainEngine::isRecordingInput() const
+bool MainApi::isRecordingInput() const
 {
 	return m_mixer.isRecordingInput();
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool MainEngine::isRecordingActions() const
+bool MainApi::isRecordingActions() const
 {
 	return m_mixer.isRecordingActions();
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool MainEngine::isSequencerRunning() const
+bool MainApi::isSequencerRunning() const
 {
 	return m_sequencer.isRunning();
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool MainEngine::isMetronomeOn() const
+bool MainApi::isMetronomeOn() const
 {
 	return m_sequencer.isMetronomeOn();
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool MainEngine::getInToOut() const
+bool MainApi::getInToOut() const
 {
 	return m_mixer.getInToOut();
 }
 
 /* -------------------------------------------------------------------------- */
 
-Peak MainEngine::getPeakOut() const { return m_mixer.getPeakOut(); }
-Peak MainEngine::getPeakIn() const { return m_mixer.getPeakIn(); }
+Peak MainApi::getPeakOut() const { return m_mixer.getPeakOut(); }
+Peak MainApi::getPeakIn() const { return m_mixer.getPeakIn(); }
 
 /* -------------------------------------------------------------------------- */
 
-Mixer::RecordInfo MainEngine::getRecordInfo() const
+Mixer::RecordInfo MainApi::getRecordInfo() const
 {
 	return m_mixer.getRecordInfo();
 }
 
 /* -------------------------------------------------------------------------- */
 
-int MainEngine::getBeats() const
+int MainApi::getBeats() const
 {
 	return m_sequencer.getBeats();
 }
 
-int MainEngine::getBars() const
+int MainApi::getBars() const
 {
 	return m_sequencer.getBars();
 }
 
-float MainEngine::getBpm() const
+float MainApi::getBpm() const
 {
 	return m_sequencer.getBpm();
 }
 
-int MainEngine::getQuantizerValue() const
+int MainApi::getQuantizerValue() const
 {
 	return m_sequencer.getQuantizerValue();
 }
 
-int MainEngine::getCurrentBeat() const
+int MainApi::getCurrentBeat() const
 {
 	return m_sequencer.getCurrentBeat();
 }
 
-Frame MainEngine::getCurrentFrame() const
+Frame MainApi::getCurrentFrame() const
 {
 	return m_sequencer.getCurrentFrame();
 }
 
-int MainEngine::getFramesInBar() const
+int MainApi::getFramesInBar() const
 {
 	return m_sequencer.getFramesInBar();
 }
 
-int MainEngine::getFramesInLoop() const
+int MainApi::getFramesInLoop() const
 {
 	return m_sequencer.getFramesInLoop();
 }
 
-int MainEngine::getFramesInSeq() const
+int MainApi::getFramesInSeq() const
 {
 	return m_sequencer.getFramesInSeq();
 }
 
-int MainEngine::getFramesInBeat() const
+int MainApi::getFramesInBeat() const
 {
 	return m_sequencer.getFramesInBeat();
 }
 
 /* -------------------------------------------------------------------------- */
 
-SeqStatus MainEngine::getSequencerStatus() const
+SeqStatus MainApi::getSequencerStatus() const
 {
 	return m_sequencer.getStatus();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::toggleMetronome()
+void MainApi::toggleMetronome()
 {
 	m_sequencer.toggleMetronome();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::setMasterInVolume(float v)
+void MainApi::setMasterInVolume(float v)
 {
 	m_channelManager.setVolume(Mixer::MASTER_IN_CHANNEL_ID, v);
 }
 
-void MainEngine::setMasterOutVolume(float v)
+void MainApi::setMasterOutVolume(float v)
 {
 	m_channelManager.setVolume(Mixer::MASTER_OUT_CHANNEL_ID, v);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::multiplyBeats()
+void MainApi::multiplyBeats()
 {
 	setBeats(m_sequencer.getBeats() * 2, m_sequencer.getBars());
 }
 
-void MainEngine::divideBeats()
+void MainApi::divideBeats()
 {
 	setBeats(m_sequencer.getBeats() / 2, m_sequencer.getBars());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::setBpm(float bpm)
+void MainApi::setBpm(float bpm)
 {
 	if (m_mixer.isRecordingInput())
 		return;
@@ -194,7 +194,7 @@ void MainEngine::setBpm(float bpm)
 
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::setBeats(int beats, int bars)
+void MainApi::setBeats(int beats, int bars)
 {
 	if (m_mixer.isRecordingInput())
 		return;
@@ -209,30 +209,30 @@ void MainEngine::setBeats(int beats, int bars)
 
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::goToBeat(int beat)
+void MainApi::goToBeat(int beat)
 {
 	m_sequencer.goToBeat(beat, m_kernelAudio.getSampleRate());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::startSequencer()
+void MainApi::startSequencer()
 {
 	m_sequencer.start();
 }
 
-void MainEngine::stopSequencer()
+void MainApi::stopSequencer()
 {
 	m_sequencer.stop();
 	m_channelManager.stopAll();
 }
 
-void MainEngine::toggleSequencer()
+void MainApi::toggleSequencer()
 {
 	m_sequencer.isRunning() ? stopSequencer() : startSequencer();
 }
 
-void MainEngine::rewindSequencer()
+void MainApi::rewindSequencer()
 {
 	m_sequencer.rewind();
 	m_channelManager.rewindAll();
@@ -240,20 +240,20 @@ void MainEngine::rewindSequencer()
 
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::setQuantize(int v)
+void MainApi::setQuantize(int v)
 {
 	m_sequencer.setQuantize(v, m_kernelAudio.getSampleRate());
 }
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::setInToOut(bool v)
+void MainApi::setInToOut(bool v)
 {
 	m_mixer.setInToOut(v);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::toggleRecOnSignal()
+void MainApi::toggleRecOnSignal()
 {
 	if (!m_recorder.canEnableRecOnSignal())
 		m_engine.getConf().recTriggerMode = RecTriggerMode::NORMAL;
@@ -264,7 +264,7 @@ void MainEngine::toggleRecOnSignal()
 
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::toggleFreeInputRec()
+void MainApi::toggleFreeInputRec()
 {
 	if (!m_recorder.canEnableFreeInputRec())
 		m_engine.getConf().inputRecMode = InputRecMode::RIGID;
@@ -275,13 +275,13 @@ void MainEngine::toggleFreeInputRec()
 
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::stopActionRecording()
+void MainApi::stopActionRecording()
 {
 	if (m_mixer.isRecordingActions())
 		m_recorder.stopActionRec();
 }
 
-void MainEngine::toggleActionRecording()
+void MainApi::toggleActionRecording()
 {
 	if (m_mixer.isRecordingActions())
 		m_recorder.stopActionRec();
@@ -291,13 +291,13 @@ void MainEngine::toggleActionRecording()
 
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::stopInputRecording()
+void MainApi::stopInputRecording()
 {
 	if (m_mixer.isRecordingInput())
 		m_recorder.stopInputRec(m_engine.getConf().inputRecMode, m_kernelAudio.getSampleRate());
 }
 
-void MainEngine::toggleInputRecording()
+void MainApi::toggleInputRecording()
 {
 	if (!m_kernelAudio.isInputEnabled() || !m_channelManager.hasInputRecordableChannels())
 		return;
@@ -309,7 +309,7 @@ void MainEngine::toggleInputRecording()
 
 /* -------------------------------------------------------------------------- */
 
-void MainEngine::startActionRecOnCallback()
+void MainApi::startActionRecOnCallback()
 {
 	m_recorder.startActionRecOnCallback();
 }

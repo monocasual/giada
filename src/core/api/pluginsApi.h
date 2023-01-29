@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_PLUGINS_ENGINE_H
-#define G_PLUGINS_ENGINE_H
+#ifndef G_PLUGINS_API_H
+#define G_PLUGINS_API_H
 
 #include "core/plugins/pluginManager.h"
 #include "core/types.h"
@@ -43,10 +43,10 @@ class KernelAudio;
 class ChannelManager;
 class PluginHost;
 class Plugin;
-class PluginsEngine
+class PluginsApi
 {
 public:
-	PluginsEngine(Engine&, KernelAudio&, ChannelManager&, PluginManager&, PluginHost&, model::Model&);
+	PluginsApi(Engine&, KernelAudio&, ChannelManager&, PluginManager&, PluginHost&, model::Model&);
 
 	const Plugin*                          get(ID pluginId) const;
 	std::vector<PluginManager::PluginInfo> getInfo() const;

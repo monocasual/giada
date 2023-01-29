@@ -293,13 +293,15 @@ void Channel::setSolo(bool v)
 
 void Channel::initCallbacks()
 {
-	shared->playStatus.onChange = [this](ChannelStatus status) {
+	shared->playStatus.onChange = [this](ChannelStatus status)
+	{
 		midiLighter.sendStatus(status, isAudible(/*mixerHasSolos = TODO!*/ false));
 	};
 
 	if (samplePlayer)
 	{
-		samplePlayer->onLastFrame = [this](bool natural, bool seqIsRunning) {
+		samplePlayer->onLastFrame = [this](bool natural, bool seqIsRunning)
+		{
 			sampleAdvancer->onLastFrame(*shared, seqIsRunning, natural, samplePlayer->mode,
 			    samplePlayer->isAnyLoopMode());
 		};
@@ -347,7 +349,7 @@ void Channel::renderMasterOut(mcl::AudioBuffer& out) const
 {
 	shared->audioBuffer.set(out, /*gain=*/1.0f);
 	if (plugins.size() > 0)
-		g_engine.getPluginsEngine().process(shared->audioBuffer, plugins, nullptr);
+		g_engine.getPluginsApi().process(shared->audioBuffer, plugins, nullptr);
 	out.set(shared->audioBuffer, volume);
 }
 
@@ -356,7 +358,7 @@ void Channel::renderMasterOut(mcl::AudioBuffer& out) const
 void Channel::renderMasterIn(mcl::AudioBuffer& in) const
 {
 	if (plugins.size() > 0)
-		g_engine.getPluginsEngine().process(in, plugins, nullptr);
+		g_engine.getPluginsApi().process(in, plugins, nullptr);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -376,14 +378,14 @@ void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool mi
 	if (audioReceiver)
 		audioReceiver->render(in, shared->audioBuffer, armed);
 
-	/* If MidiReceiver exists, let it process the plug-in stack, as it can 
+	/* If MidiReceiver exists, let it process the plug-in stack, as it can
 	contain plug-ins that take MIDI events (i.e. synths). Otherwise process the
 	plug-in stack internally with no MIDI events. */
 
 	if (midiReceiver)
 		midiReceiver->render(*shared, plugins, g_engine.getPluginHost());
 	else if (plugins.size() > 0)
-		g_engine.getPluginsEngine().process(shared->audioBuffer, plugins, nullptr);
+		g_engine.getPluginsApi().process(shared->audioBuffer, plugins, nullptr);
 
 	if (isAudible(mixerHasSolos))
 		out.sum(shared->audioBuffer, volume * volume_i, calcPanning_(pan));

@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_CHANNELS_ENGINE_H
-#define G_CHANNELS_ENGINE_H
+#ifndef G_CHANNELS_API_H
+#define G_CHANNELS_API_H
 
 #include "core/channels/channelFactory.h"
 #include "core/patch.h"
@@ -47,10 +47,10 @@ class ActionRecorder;
 class PluginHost;
 class PluginManager;
 class Wave;
-class ChannelsEngine
+class ChannelsApi
 {
 public:
-	ChannelsEngine(Engine&, model::Model&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
+	ChannelsApi(Engine&, model::Model&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
 	    Recorder&, ActionRecorder&, PluginHost&, PluginManager&);
 
 	bool hasChannelsWithAudioData() const;

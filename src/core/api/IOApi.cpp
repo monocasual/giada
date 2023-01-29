@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/IOEngine.h"
+#include "core/api/IOApi.h"
 #include "core/midiDispatcher.h"
 #include "core/model/model.h"
 
 namespace giada::m
 {
-IOEngine::IOEngine(model::Model& m, MidiDispatcher& md, Conf::Data& c)
+IOApi::IOApi(model::Model& m, MidiDispatcher& md, Conf::Data& c)
 : m_model(m)
 , m_midiDispatcher(md)
 , m_conf(c)
@@ -39,14 +39,14 @@ IOEngine::IOEngine(model::Model& m, MidiDispatcher& md, Conf::Data& c)
 
 /* -------------------------------------------------------------------------- */
 
-const model::MidiIn& IOEngine::getModelMidiIn() const
+const model::MidiIn& IOApi::getModelMidiIn() const
 {
 	return m_model.get().midiIn;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void IOEngine::channel_enableMidiLearn(ID channelId, bool v)
+void IOApi::channel_enableMidiLearn(ID channelId, bool v)
 {
 	m_model.get().getChannel(channelId).midiLearner.enabled = v;
 	m_model.swap(m::model::SwapType::NONE);
@@ -54,7 +54,7 @@ void IOEngine::channel_enableMidiLearn(ID channelId, bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void IOEngine::channel_enableMidiLightning(ID channelId, bool v)
+void IOApi::channel_enableMidiLightning(ID channelId, bool v)
 {
 	m_model.get().getChannel(channelId).midiLighter.enabled = v;
 	m_model.swap(m::model::SwapType::NONE);
@@ -62,7 +62,7 @@ void IOEngine::channel_enableMidiLightning(ID channelId, bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void IOEngine::channel_enableMidiOutput(ID channelId, bool v)
+void IOApi::channel_enableMidiOutput(ID channelId, bool v)
 {
 	m_model.get().getChannel(channelId).midiSender->enabled = v;
 	m_model.swap(m::model::SwapType::NONE);
@@ -70,7 +70,7 @@ void IOEngine::channel_enableMidiOutput(ID channelId, bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void IOEngine::channel_enableVelocityAsVol(ID channelId, bool v)
+void IOApi::channel_enableVelocityAsVol(ID channelId, bool v)
 {
 	m_model.get().getChannel(channelId).samplePlayer->velocityAsVol = v;
 	m_model.swap(m::model::SwapType::NONE);
@@ -78,13 +78,13 @@ void IOEngine::channel_enableVelocityAsVol(ID channelId, bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void IOEngine::channel_setMidiInputFilter(ID channelId, int ch)
+void IOApi::channel_setMidiInputFilter(ID channelId, int ch)
 {
 	m_model.get().getChannel(channelId).midiLearner.filter = ch;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
-void IOEngine::channel_setMidiOutputFilter(ID channelId, int ch)
+void IOApi::channel_setMidiOutputFilter(ID channelId, int ch)
 {
 	m_model.get().getChannel(channelId).midiSender->filter = ch;
 	m_model.swap(m::model::SwapType::NONE);
@@ -92,7 +92,7 @@ void IOEngine::channel_setMidiOutputFilter(ID channelId, int ch)
 
 /* -------------------------------------------------------------------------- */
 
-bool IOEngine::channel_setKey(ID channelId, int k)
+bool IOApi::channel_setKey(ID channelId, int k)
 {
 	if (!isValidKey(k))
 		return false;
@@ -103,48 +103,48 @@ bool IOEngine::channel_setKey(ID channelId, int k)
 
 /* -------------------------------------------------------------------------- */
 
-void IOEngine::channel_startMidiLearn(int param, ID channelId, std::function<void()> doneCb)
+void IOApi::channel_startMidiLearn(int param, ID channelId, std::function<void()> doneCb)
 {
 	m_midiDispatcher.startChannelLearn(param, channelId, doneCb);
 }
 
-void IOEngine::master_startMidiLearn(int param, std::function<void()> doneCb)
+void IOApi::master_startMidiLearn(int param, std::function<void()> doneCb)
 {
 	m_midiDispatcher.startMasterLearn(param, doneCb);
 }
 
-void IOEngine::plugin_startMidiLearn(int paramIndex, ID pluginId, std::function<void()> doneCb)
+void IOApi::plugin_startMidiLearn(int paramIndex, ID pluginId, std::function<void()> doneCb)
 {
 	m_midiDispatcher.startPluginLearn(paramIndex, pluginId, doneCb);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void IOEngine::stopMidiLearn()
+void IOApi::stopMidiLearn()
 {
 	m_midiDispatcher.stopLearn();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void IOEngine::channel_clearMidiLearn(int param, ID channelId, std::function<void()> doneCb)
+void IOApi::channel_clearMidiLearn(int param, ID channelId, std::function<void()> doneCb)
 {
 	m_midiDispatcher.clearChannelLearn(param, channelId, doneCb);
 }
 
-void IOEngine::master_clearMidiLearn(int param, std::function<void()> doneCb)
+void IOApi::master_clearMidiLearn(int param, std::function<void()> doneCb)
 {
 	m_midiDispatcher.clearMasterLearn(param, doneCb);
 }
 
-void IOEngine::plugin_clearMidiLearn(int param, ID pluginId, std::function<void()> doneCb)
+void IOApi::plugin_clearMidiLearn(int param, ID pluginId, std::function<void()> doneCb)
 {
 	m_midiDispatcher.clearPluginLearn(param, pluginId, doneCb);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void IOEngine::master_enableMidiLearn(bool v)
+void IOApi::master_enableMidiLearn(bool v)
 {
 	m_model.get().midiIn.enabled = v;
 	m_model.swap(m::model::SwapType::NONE);
@@ -152,7 +152,7 @@ void IOEngine::master_enableMidiLearn(bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void IOEngine::master_setMidiFilter(int c)
+void IOApi::master_setMidiFilter(int c)
 {
 	m_model.get().midiIn.filter = c;
 	m_model.swap(m::model::SwapType::NONE);
@@ -160,7 +160,7 @@ void IOEngine::master_setMidiFilter(int c)
 
 /* -------------------------------------------------------------------------- */
 
-bool IOEngine::isValidKey(int key) const
+bool IOApi::isValidKey(int key) const
 {
 	for (const int& bind : m_conf.keyBindings)
 		if (key == bind)

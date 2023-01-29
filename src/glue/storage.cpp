@@ -89,9 +89,10 @@ void loadProject(void* data)
 	g_ui.closeAllSubwindows();
 
 	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
-	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
+	auto engineProgress = [&uiProgress](float v)
+	{ uiProgress.setProgress(v); };
 
-	m::StorageEngine::LoadState state = g_engine.getStorageEngine().loadProject(projectPath, engineProgress);
+	m::StorageApi::LoadState state = g_engine.getStorageApi().loadProject(projectPath, engineProgress);
 
 	if (state.patch != G_FILE_OK)
 	{
@@ -128,9 +129,10 @@ void saveProject(void* data)
 		return;
 
 	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECT));
-	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
+	auto engineProgress = [&uiProgress](float v)
+	{ uiProgress.setProgress(v); };
 
-	if (g_engine.getStorageEngine().storeProject(projectName, projectPath, g_ui.getState(), engineProgress))
+	if (g_engine.getStorageApi().storeProject(projectName, projectPath, g_ui.getState(), engineProgress))
 	{
 		g_ui.setMainWindowTitle(projectName);
 		browser->do_callback();
@@ -178,7 +180,7 @@ void saveSample(void* data)
 	        g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_FILEEXISTS)))
 		return;
 
-	if (!g_engine.getChannelsEngine().saveSample(channelId, filePath))
+	if (!g_engine.getChannelsApi().saveSample(channelId, filePath))
 		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGFILEERROR));
 
 	browser->do_callback();

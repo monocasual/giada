@@ -27,7 +27,7 @@
 #ifndef GD_MISSING_ASSETS_H
 #define GD_MISSING_ASSETS_H
 
-#include "core/storageEngine.h"
+#include "core/api/storageApi.h"
 #include "gui/dialogs/window.h"
 
 namespace giada::v
@@ -35,7 +35,7 @@ namespace giada::v
 class gdMissingAssets : public gdWindow
 {
 public:
-	gdMissingAssets(const m::StorageEngine::LoadState&);
+	gdMissingAssets(const m::StorageApi::LoadState&);
 };
 } // namespace giada::v
 

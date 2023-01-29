@@ -43,13 +43,13 @@ Engine::Engine()
 , m_actionRecorder(m_model)
 , m_recorder(m_sequencer, m_channelManager, m_mixer, m_actionRecorder)
 , m_midiDispatcher(m_model)
-, m_mainEngine(*this, m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder)
-, m_channelsEngine(*this, m_model, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager)
-, m_pluginsEngine(*this, m_kernelAudio, m_channelManager, m_pluginManager, m_pluginHost, m_model)
-, m_sampleEditorEngine(*this, m_model, m_channelManager)
-, m_actionEditorEngine(*this, m_model, m_sequencer, m_actionRecorder)
-, m_ioEngine(m_model, m_midiDispatcher, m_conf.data)
-, m_storageEngine(*this, m_model, m_conf, m_patch, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
+, m_mainApi(*this, m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder)
+, m_channelsApi(*this, m_model, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager)
+, m_pluginsApi(*this, m_kernelAudio, m_channelManager, m_pluginManager, m_pluginHost, m_model)
+, m_sampleEditorApi(*this, m_model, m_channelManager)
+, m_actionEditorApi(*this, m_model, m_sequencer, m_actionRecorder)
+, m_ioApi(m_model, m_midiDispatcher, m_conf.data)
+, m_storageApi(*this, m_model, m_conf, m_patch, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
 {
 	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -70,21 +70,21 @@ Engine::Engine()
 	};
 
 	m_midiSynchronizer.onChangePosition = [this](int beat) {
-		m_mainEngine.goToBeat(beat);
+		m_mainApi.goToBeat(beat);
 	};
 	m_midiSynchronizer.onChangeBpm = [this](float bpm) {
-		m_mainEngine.setBpm(bpm);
+		m_mainApi.setBpm(bpm);
 	};
 	m_midiSynchronizer.onStart = [this]() {
-		m_mainEngine.startSequencer();
+		m_mainApi.startSequencer();
 	};
 	m_midiSynchronizer.onStop = [this]() {
-		m_mainEngine.stopSequencer();
+		m_mainApi.stopSequencer();
 	};
 
 	/* The following JackSynchronizer and Mixer callbacks are all fired by the
-	realtime thread, so the actions are performed by pumping events into the 
-	Event Dispatcher, rather than invoking them directly. This is done on 
+	realtime thread, so the actions are performed by pumping events into the
+	Event Dispatcher, rather than invoking them directly. This is done on
 	purpose: the callback might (and surely will) contain non-const operations
 	on the m_model that the realtime thread cannot perform directly. */
 
@@ -127,7 +127,7 @@ Engine::Engine()
 		m_conf.data.recTriggerMode = RecTriggerMode::NORMAL;
 	};
 	m_sequencer.onAboutStop = [this]() {
-		/* If recordings (both input and action) are active deactivate them, but 
+		/* If recordings (both input and action) are active deactivate them, but
 	store the takes. RecManager takes care of it. */
 		/* TODO move this logic to Recorder */
 		if (m_mixer.isRecordingActions())
@@ -256,7 +256,7 @@ void Engine::init()
 		u::log::print("[Engine::init] MIDI map read failed!\n");
 
 	/* Initialize KernelAudio. If fails, interrupt the Engine initialization:
-    Giada can't work without a functional KernelAudio. */
+	Giada can't work without a functional KernelAudio. */
 
 	m_kernelAudio.openDevice(m_conf.data);
 	if (!m_kernelAudio.isReady())
@@ -329,8 +329,8 @@ void Engine::shutdown()
 
 	u::log::close();
 
-	/* Currently the Engine is global/static, and so are all of its sub-components, 
-	Model included. Some plug-ins (JUCE-based ones) crash hard on destructor when 
+	/* Currently the Engine is global/static, and so are all of its sub-components,
+	Model included. Some plug-ins (JUCE-based ones) crash hard on destructor when
 	deleted as a result of returning from main, so it's better to free them all first.
 	TODO - investigate this! */
 
@@ -361,8 +361,8 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 	if (!kernelInfo.ready)
 		return 0;
 
-	/* Prepare the LayoutLock. From this point on (until out of scope) the 
-	Layout is locked for realtime rendering by the audio thread. Rendering 
+	/* Prepare the LayoutLock. From this point on (until out of scope) the
+	Layout is locked for realtime rendering by the audio thread. Rendering
 	functions must access the realtime layout coming from layoutLock.get(). */
 
 	const model::LayoutLock layoutLock = m_model.get_RT();
@@ -378,9 +378,9 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 		m_jackSynchronizer.recvJackSync(m_jackTransport.getState());
 #endif
 
-	/* If the m_sequencer is running, advance it first (i.e. parse it for events). 
-	Also advance channels (i.e. let them react to m_sequencer events), only if the 
-	layout is not locked: another thread might altering channel's data in the 
+	/* If the m_sequencer is running, advance it first (i.e. parse it for events).
+	Also advance channels (i.e. let them react to m_sequencer events), only if the
+	layout is not locked: another thread might altering channel's data in the
 	meantime (e.g. Plugins or Waves). */
 
 	if (layout_RT.sequencer.isRunning())
@@ -469,13 +469,13 @@ void Engine::loadConfig()
 
 /* -------------------------------------------------------------------------- */
 
-MainEngine&         Engine::getMainEngine() { return m_mainEngine; }
-ChannelsEngine&     Engine::getChannelsEngine() { return m_channelsEngine; }
-PluginsEngine&      Engine::getPluginsEngine() { return m_pluginsEngine; }
-SampleEditorEngine& Engine::getSampleEditorEngine() { return m_sampleEditorEngine; }
-ActionEditorEngine& Engine::getActionEditorEngine() { return m_actionEditorEngine; }
-IOEngine&           Engine::getIOEngine() { return m_ioEngine; }
-StorageEngine&      Engine::getStorageEngine() { return m_storageEngine; }
+MainApi&         Engine::getMainApi() { return m_mainApi; }
+ChannelsApi&     Engine::getChannelsApi() { return m_channelsApi; }
+PluginsApi&      Engine::getPluginsApi() { return m_pluginsApi; }
+SampleEditorApi& Engine::getSampleEditorApi() { return m_sampleEditorApi; }
+ActionEditorApi& Engine::getActionEditorApi() { return m_actionEditorApi; }
+IOApi&           Engine::getIOApi() { return m_ioApi; }
+StorageApi&      Engine::getStorageApi() { return m_storageApi; }
 
 /* -------------------------------------------------------------------------- */
 

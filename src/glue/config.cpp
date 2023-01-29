@@ -142,11 +142,11 @@ AudioData getAudioData()
 	audioData.recTriggerLevel = g_engine.getConf().recTriggerLevel;
 	audioData.resampleQuality = static_cast<int>(g_engine.getConf().rsmpQuality);
 	audioData.outputDevice    = getAudioDeviceData_(DeviceType::OUTPUT,
-        g_engine.getConf().soundDeviceOut, g_engine.getConf().channelsOutCount,
-        g_engine.getConf().channelsOutStart);
+	       g_engine.getConf().soundDeviceOut, g_engine.getConf().channelsOutCount,
+	       g_engine.getConf().channelsOutStart);
 	audioData.inputDevice     = getAudioDeviceData_(DeviceType::INPUT,
-        g_engine.getConf().soundDeviceIn, g_engine.getConf().channelsInCount,
-        g_engine.getConf().channelsInStart);
+	        g_engine.getConf().soundDeviceIn, g_engine.getConf().channelsInCount,
+	        g_engine.getConf().channelsInStart);
 
 	return audioData;
 }
@@ -188,7 +188,7 @@ MidiData getMidiData()
 PluginData getPluginData()
 {
 	PluginData pluginData;
-	pluginData.numAvailablePlugins = g_engine.getPluginsEngine().countAvailablePlugins();
+	pluginData.numAvailablePlugins = g_engine.getPluginsApi().countAvailablePlugins();
 	pluginData.pluginPath          = g_engine.getConf().pluginPath;
 	return pluginData;
 }
@@ -256,7 +256,7 @@ void save(const MiscData& data)
 
 void scanPlugins(std::string dir, const std::function<void(float)>& progress)
 {
-	g_engine.getPluginsEngine().scan(dir, progress);
+	g_engine.getPluginsApi().scan(dir, progress);
 }
 
 /* -------------------------------------------------------------------------- */

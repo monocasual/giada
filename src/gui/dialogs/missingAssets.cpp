@@ -38,7 +38,7 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdMissingAssets::gdMissingAssets(const m::StorageEngine::LoadState& state)
+gdMissingAssets::gdMissingAssets(const m::StorageApi::LoadState& state)
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, 400, 300}), g_ui.langMapper.get(LangMap::COMMON_WARNING))
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
@@ -73,7 +73,8 @@ gdMissingAssets::gdMissingAssets(const m::StorageEngine::LoadState& state)
 		geFlex* footer = new geFlex(Direction::HORIZONTAL);
 		{
 			geTextButton* close = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CLOSE));
-			close->onClick      = [this]() { do_callback(); };
+			close->onClick      = [this]()
+			{ do_callback(); };
 			footer->add(new geBox()); // Spacer
 			footer->add(close, 80);
 			footer->end();

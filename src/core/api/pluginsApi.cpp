@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/pluginsEngine.h"
+#include "pluginsApi.h"
 #include "core/channels/channelManager.h"
 #include "core/engine.h"
 #include "core/kernelAudio.h"
@@ -33,7 +33,7 @@
 
 namespace giada::m
 {
-PluginsEngine::PluginsEngine(Engine& e, KernelAudio& ka, ChannelManager& cm, PluginManager& pm, PluginHost& ph, model::Model& m)
+PluginsApi::PluginsApi(Engine& e, KernelAudio& ka, ChannelManager& cm, PluginManager& pm, PluginHost& ph, model::Model& m)
 : m_engine(e)
 , m_kernelAudio(ka)
 , m_channelManager(cm)
@@ -45,28 +45,28 @@ PluginsEngine::PluginsEngine(Engine& e, KernelAudio& ka, ChannelManager& cm, Plu
 
 /* -------------------------------------------------------------------------- */
 
-const Plugin* PluginsEngine::get(ID pluginId) const
+const Plugin* PluginsApi::get(ID pluginId) const
 {
 	return m_model.findShared<Plugin>(pluginId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<PluginManager::PluginInfo> PluginsEngine::getInfo() const
+std::vector<PluginManager::PluginInfo> PluginsApi::getInfo() const
 {
 	return m_pluginManager.getPluginsInfo();
 }
 
 /* -------------------------------------------------------------------------- */
 
-int PluginsEngine::countAvailablePlugins() const
+int PluginsApi::countAvailablePlugins() const
 {
 	return m_pluginManager.countAvailablePlugins();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void PluginsEngine::add(int pluginListIndex, ID channelId)
+void PluginsApi::add(int pluginListIndex, ID channelId)
 {
 	/* Plug-in creation must be done in the main thread, due to JUCE and VST3
 	internal workings. */
@@ -82,16 +82,16 @@ void PluginsEngine::add(int pluginListIndex, ID channelId)
 	if (plugin != nullptr)
 		m_pluginHost.addPlugin(std::move(plugin));
 
-	/* TODO - unfortunately JUCE wants mutable plugin objects due to the 
-		presence of the non-const processBlock() method. Why not const_casting
-		only in the Plugin class? */
+	/* TODO - unfortunately JUCE wants mutable plugin objects due to the
+	    presence of the non-const processBlock() method. Why not const_casting
+	    only in the Plugin class? */
 	m_model.get().getChannel(channelId).plugins.push_back(const_cast<Plugin*>(pluginPtr));
 	m_model.swap(model::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void PluginsEngine::swap(const Plugin& p1, const Plugin& p2, ID channelId)
+void PluginsApi::swap(const Plugin& p1, const Plugin& p2, ID channelId)
 {
 	m_pluginHost.swapPlugin(p1, p2, m_model.get().getChannel(channelId).plugins);
 	m_model.swap(model::SwapType::HARD);
@@ -99,14 +99,14 @@ void PluginsEngine::swap(const Plugin& p1, const Plugin& p2, ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void PluginsEngine::sort(PluginManager::SortMethod method)
+void PluginsApi::sort(PluginManager::SortMethod method)
 {
 	m_pluginManager.sortPlugins(method);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void PluginsEngine::free(const Plugin& plugin, ID channelId)
+void PluginsApi::free(const Plugin& plugin, ID channelId)
 {
 	u::vector::remove(m_model.get().getChannel(channelId).plugins, &plugin);
 	m_model.swap(model::SwapType::HARD);
@@ -115,28 +115,28 @@ void PluginsEngine::free(const Plugin& plugin, ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void PluginsEngine::setProgram(ID pluginId, int programIndex)
+void PluginsApi::setProgram(ID pluginId, int programIndex)
 {
 	m_pluginHost.setPluginProgram(pluginId, programIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void PluginsEngine::toggleBypass(ID pluginId)
+void PluginsApi::toggleBypass(ID pluginId)
 {
 	m_pluginHost.toggleBypass(pluginId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void PluginsEngine::setParameter(ID pluginId, int paramIndex, float value)
+void PluginsApi::setParameter(ID pluginId, int paramIndex, float value)
 {
 	m_pluginHost.setPluginParameter(pluginId, paramIndex, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void PluginsEngine::scan(const std::string& dir, const std::function<void(float)>& progress)
+void PluginsApi::scan(const std::string& dir, const std::function<void(float)>& progress)
 {
 	m_pluginManager.scanDirs(dir, progress);
 	m_pluginManager.saveList(u::fs::join(u::fs::getHomePath(), "plugins.xml"));
@@ -144,19 +144,19 @@ void PluginsEngine::scan(const std::string& dir, const std::function<void(float)
 
 /* -------------------------------------------------------------------------- */
 
-void PluginsEngine::process(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>& plugins, juce::MidiBuffer* events)
+void PluginsApi::process(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>& plugins, juce::MidiBuffer* events)
 {
 	m_pluginHost.processStack(outBuf, plugins, events);
 }
 
 /* -------------------------------------------------------------------------- */
 
-const Patch::Plugin PluginsEngine::serialize(const Plugin& p) const
+const Patch::Plugin PluginsApi::serialize(const Plugin& p) const
 {
 	return m_pluginManager.serializePlugin(p);
 }
 
-std::unique_ptr<Plugin> PluginsEngine::deserialize(const Patch::Plugin& pplugin)
+std::unique_ptr<Plugin> PluginsApi::deserialize(const Patch::Plugin& pplugin)
 {
 	const int sampleRate = m_engine.getSampleRate();
 	const int bufferSize = m_engine.getBufferSize();

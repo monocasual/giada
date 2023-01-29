@@ -59,12 +59,12 @@ extern giada::m::Engine g_engine;
 namespace giada::c::main
 {
 Timer::Timer()
-: bpm(g_engine.getMainEngine().getBpm())
-, beats(g_engine.getMainEngine().getBeats())
-, bars(g_engine.getMainEngine().getBars())
-, quantize(g_engine.getMainEngine().getQuantizerValue())
+: bpm(g_engine.getMainApi().getBpm())
+, beats(g_engine.getMainApi().getBeats())
+, bars(g_engine.getMainApi().getBars())
+, quantize(g_engine.getMainApi().getQuantizerValue())
 , isUsingJack(g_engine.getAudioAPI() == RtAudio::Api::UNIX_JACK)
-, isRecordingInput(g_engine.getMainEngine().isRecordingInput())
+, isRecordingInput(g_engine.getMainApi().isRecordingInput())
 {
 }
 
@@ -77,7 +77,7 @@ IO::IO(const m::Channel& out, const m::Channel& in)
 , masterInVol(in.volume)
 , masterOutHasPlugins(out.plugins.size() > 0)
 , masterInHasPlugins(in.plugins.size() > 0)
-, inToOut(g_engine.getMainEngine().getInToOut())
+, inToOut(g_engine.getMainApi().getInToOut())
 {
 }
 
@@ -85,12 +85,12 @@ IO::IO(const m::Channel& out, const m::Channel& in)
 
 Peak IO::getMasterOutPeak()
 {
-	return g_engine.getMainEngine().getPeakOut();
+	return g_engine.getMainApi().getPeakOut();
 }
 
 Peak IO::getMasterInPeak()
 {
-	return g_engine.getMainEngine().getPeakIn();
+	return g_engine.getMainApi().getPeakIn();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -113,8 +113,8 @@ Timer getTimer()
 
 IO getIO()
 {
-	return IO(g_engine.getChannelsEngine().get(m::Mixer::MASTER_OUT_CHANNEL_ID),
-	    g_engine.getChannelsEngine().get(m::Mixer::MASTER_IN_CHANNEL_ID));
+	return IO(g_engine.getChannelsApi().get(m::Mixer::MASTER_OUT_CHANNEL_ID),
+	    g_engine.getChannelsApi().get(m::Mixer::MASTER_IN_CHANNEL_ID));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -123,13 +123,13 @@ Sequencer getSequencer()
 {
 	Sequencer out;
 
-	const m::Mixer::RecordInfo recInfo = g_engine.getMainEngine().getRecordInfo();
+	const m::Mixer::RecordInfo recInfo = g_engine.getMainApi().getRecordInfo();
 
-	out.isFreeModeInputRec = g_engine.getMainEngine().isRecordingInput() && g_engine.getConf().inputRecMode == InputRecMode::FREE;
-	out.shouldBlink        = g_ui.shouldBlink() && (g_engine.getMainEngine().getSequencerStatus() == SeqStatus::WAITING || out.isFreeModeInputRec);
-	out.beats              = g_engine.getMainEngine().getBeats();
-	out.bars               = g_engine.getMainEngine().getBars();
-	out.currentBeat        = g_engine.getMainEngine().getCurrentBeat();
+	out.isFreeModeInputRec = g_engine.getMainApi().isRecordingInput() && g_engine.getConf().inputRecMode == InputRecMode::FREE;
+	out.shouldBlink        = g_ui.shouldBlink() && (g_engine.getMainApi().getSequencerStatus() == SeqStatus::WAITING || out.isFreeModeInputRec);
+	out.beats              = g_engine.getMainApi().getBeats();
+	out.bars               = g_engine.getMainApi().getBars();
+	out.currentBeat        = g_engine.getMainApi().getCurrentBeat();
 	out.recPosition        = recInfo.position;
 	out.recMaxLength       = recInfo.maxLength;
 
@@ -141,10 +141,10 @@ Sequencer getSequencer()
 Transport getTransport()
 {
 	Transport transport;
-	transport.isRunning         = g_engine.getMainEngine().isSequencerRunning();
-	transport.isRecordingAction = g_engine.getMainEngine().isRecordingActions();
-	transport.isRecordingInput  = g_engine.getMainEngine().isRecordingInput();
-	transport.isMetronomeOn     = g_engine.getMainEngine().isMetronomeOn();
+	transport.isRunning         = g_engine.getMainApi().isSequencerRunning();
+	transport.isRecordingAction = g_engine.getMainApi().isRecordingActions();
+	transport.isRecordingInput  = g_engine.getMainApi().isRecordingInput();
+	transport.isMetronomeOn     = g_engine.getMainApi().isMetronomeOn();
 	transport.recTriggerMode    = g_engine.getConf().recTriggerMode;
 	transport.inputRecMode      = g_engine.getConf().inputRecMode;
 	return transport;
@@ -155,8 +155,8 @@ Transport getTransport()
 MainMenu getMainMenu()
 {
 	MainMenu mainMenu;
-	mainMenu.hasAudioData = g_engine.getChannelsEngine().hasChannelsWithAudioData();
-	mainMenu.hasActions   = g_engine.getChannelsEngine().hasChannelsWithActions();
+	mainMenu.hasAudioData = g_engine.getChannelsApi().hasChannelsWithAudioData();
+	mainMenu.hasActions   = g_engine.getChannelsApi().hasChannelsWithActions();
 	return mainMenu;
 }
 
@@ -164,14 +164,14 @@ MainMenu getMainMenu()
 
 void setBeats(int beats, int bars)
 {
-	g_engine.getMainEngine().setBeats(beats, bars);
+	g_engine.getMainApi().setBeats(beats, bars);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void quantize(int val)
 {
-	g_engine.getMainEngine().setQuantize(val);
+	g_engine.getMainApi().setQuantize(val);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -183,7 +183,7 @@ void clearAllSamples()
 		return;
 
 	g_ui.closeSubWindow(WID_SAMPLE_EDITOR);
-	g_engine.getChannelsEngine().freeAllSampleChannels();
+	g_engine.getChannelsApi().freeAllSampleChannels();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -195,28 +195,28 @@ void clearAllActions()
 		return;
 
 	g_ui.closeSubWindow(WID_ACTION_EDITOR);
-	g_engine.getChannelsEngine().clearAllActions();
+	g_engine.getChannelsApi().clearAllActions();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setInToOut(bool v)
 {
-	g_engine.getMainEngine().setInToOut(v);
+	g_engine.getMainApi().setInToOut(v);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void toggleRecOnSignal()
 {
-	g_engine.getMainEngine().toggleRecOnSignal();
+	g_engine.getMainApi().toggleRecOnSignal();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void toggleFreeInputRec()
 {
-	g_engine.getMainEngine().toggleFreeInputRec();
+	g_engine.getMainApi().toggleFreeInputRec();
 }
 
 /* -------------------------------------------------------------------------- */

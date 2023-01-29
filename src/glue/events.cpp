@@ -51,7 +51,8 @@ namespace
 void notifyChannelForMidiIn_(Thread t, ID channelId)
 {
 	if (t == Thread::MIDI)
-		g_ui.pumpEvent([channelId]() { g_ui.mainWindow->keyboard->notifyMidiIn(channelId); });
+		g_ui.pumpEvent([channelId]()
+		    { g_ui.mainWindow->keyboard->notifyMidiIn(channelId); });
 }
 } // namespace
 
@@ -61,19 +62,19 @@ void notifyChannelForMidiIn_(Thread t, ID channelId)
 
 void pressChannel(ID channelId, int velocity, Thread t)
 {
-	g_engine.getChannelsEngine().press(channelId, velocity);
+	g_engine.getChannelsApi().press(channelId, velocity);
 	notifyChannelForMidiIn_(t, channelId);
 }
 
 void releaseChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsEngine().release(channelId);
+	g_engine.getChannelsApi().release(channelId);
 	notifyChannelForMidiIn_(t, channelId);
 }
 
 void killChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsEngine().kill(channelId);
+	g_engine.getChannelsApi().kill(channelId);
 	notifyChannelForMidiIn_(t, channelId);
 }
 
@@ -81,11 +82,12 @@ void killChannel(ID channelId, Thread t)
 
 float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
 {
-	g_engine.getChannelsEngine().setVolume(channelId, v);
+	g_engine.getChannelsApi().setVolume(channelId, v);
 	notifyChannelForMidiIn_(t, channelId);
 
 	if (t != Thread::MAIN || repaintMainUi)
-		g_ui.pumpEvent([channelId, v]() { g_ui.mainWindow->keyboard->setChannelVolume(channelId, v); });
+		g_ui.pumpEvent([channelId, v]()
+		    { g_ui.mainWindow->keyboard->setChannelVolume(channelId, v); });
 
 	return v;
 }
@@ -94,11 +96,11 @@ float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
 
 float setChannelPitch(ID channelId, float v, Thread t)
 {
-	g_engine.getChannelsEngine().setPitch(channelId, v);
-	g_ui.pumpEvent([v]() {
+	g_engine.getChannelsApi().setPitch(channelId, v);
+	g_ui.pumpEvent([v]()
+	    {
 		if (auto* w = sampleEditor::getWindow(); w != nullptr)
-			w->pitchTool->update(v);
-	});
+			w->pitchTool->update(v); });
 	notifyChannelForMidiIn_(t, channelId);
 	return v;
 }
@@ -107,7 +109,7 @@ float setChannelPitch(ID channelId, float v, Thread t)
 
 float sendChannelPan(ID channelId, float v)
 {
-	g_engine.getChannelsEngine().setPan(channelId, v);
+	g_engine.getChannelsApi().setPan(channelId, v);
 	notifyChannelForMidiIn_(Thread::MAIN, channelId); // Currently triggered only by the main thread
 	return v;
 }
@@ -116,13 +118,13 @@ float sendChannelPan(ID channelId, float v)
 
 void toggleMuteChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsEngine().toggleMute(channelId);
+	g_engine.getChannelsApi().toggleMute(channelId);
 	notifyChannelForMidiIn_(t, channelId);
 }
 
 void toggleSoloChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsEngine().toggleSolo(channelId);
+	g_engine.getChannelsApi().toggleSolo(channelId);
 	notifyChannelForMidiIn_(t, channelId);
 }
 
@@ -130,19 +132,19 @@ void toggleSoloChannel(ID channelId, Thread t)
 
 void toggleArmChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsEngine().toggleArm(channelId);
+	g_engine.getChannelsApi().toggleArm(channelId);
 	notifyChannelForMidiIn_(t, channelId);
 }
 
 void toggleReadActionsChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsEngine().toggleReadActions(channelId);
+	g_engine.getChannelsApi().toggleReadActions(channelId);
 	notifyChannelForMidiIn_(t, channelId);
 }
 
 void killReadActionsChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsEngine().killReadActions(channelId);
+	g_engine.getChannelsApi().killReadActions(channelId);
 	notifyChannelForMidiIn_(t, channelId);
 }
 
@@ -150,7 +152,7 @@ void killReadActionsChannel(ID channelId, Thread t)
 
 void sendMidiToChannel(ID channelId, m::MidiEvent e, Thread t)
 {
-	g_engine.getChannelsEngine().sendMidi(channelId, e);
+	g_engine.getChannelsApi().sendMidi(channelId, e);
 	notifyChannelForMidiIn_(t, channelId);
 }
 
@@ -158,61 +160,64 @@ void sendMidiToChannel(ID channelId, m::MidiEvent e, Thread t)
 
 void toggleMetronome()
 {
-	g_engine.getMainEngine().toggleMetronome();
+	g_engine.getMainApi().toggleMetronome();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setMasterInVolume(float v, Thread t)
 {
-	g_engine.getMainEngine().setMasterInVolume(v);
+	g_engine.getMainApi().setMasterInVolume(v);
 
 	if (t != Thread::MAIN)
-		g_ui.pumpEvent([v]() { g_ui.mainWindow->mainIO->setInVol(v); });
+		g_ui.pumpEvent([v]()
+		    { g_ui.mainWindow->mainIO->setInVol(v); });
 }
 
 void setMasterOutVolume(float v, Thread t)
 {
-	g_engine.getMainEngine().setMasterOutVolume(v);
+	g_engine.getMainApi().setMasterOutVolume(v);
 
 	if (t != Thread::MAIN)
-		g_ui.pumpEvent([v]() { g_ui.mainWindow->mainIO->setOutVol(v); });
+		g_ui.pumpEvent([v]()
+		    { g_ui.mainWindow->mainIO->setOutVol(v); });
 }
 
 /* -------------------------------------------------------------------------- */
 
-void setBpm(float v) { g_engine.getMainEngine().setBpm(v); }
+void setBpm(float v) { g_engine.getMainApi().setBpm(v); }
 
 /* -------------------------------------------------------------------------- */
 
-void multiplyBeats() { g_engine.getMainEngine().multiplyBeats(); }
-void divideBeats() { g_engine.getMainEngine().divideBeats(); }
+void multiplyBeats() { g_engine.getMainApi().multiplyBeats(); }
+void divideBeats() { g_engine.getMainApi().divideBeats(); }
 
 /* -------------------------------------------------------------------------- */
 
-void goToBeat(int beat) { g_engine.getMainEngine().goToBeat(beat); }
+void goToBeat(int beat) { g_engine.getMainApi().goToBeat(beat); }
 
 /* -------------------------------------------------------------------------- */
 
-void startSequencer() { g_engine.getMainEngine().startSequencer(); }
-void stopSequencer() { g_engine.getMainEngine().stopSequencer(); }
-void toggleSequencer() { g_engine.getMainEngine().toggleSequencer(); }
-void rewindSequencer() { g_engine.getMainEngine().rewindSequencer(); }
+void startSequencer() { g_engine.getMainApi().startSequencer(); }
+void stopSequencer() { g_engine.getMainApi().stopSequencer(); }
+void toggleSequencer() { g_engine.getMainApi().toggleSequencer(); }
+void rewindSequencer() { g_engine.getMainApi().rewindSequencer(); }
 
 /* -------------------------------------------------------------------------- */
 
-void stopActionRecording() { g_engine.getMainEngine().stopActionRecording(); }
-void stopInputRecording() { g_engine.getMainEngine().stopInputRecording(); }
-void toggleActionRecording() { g_engine.getMainEngine().toggleActionRecording(); }
-void toggleInputRecording() { g_engine.getMainEngine().toggleInputRecording(); }
+void stopActionRecording() { g_engine.getMainApi().stopActionRecording(); }
+void stopInputRecording() { g_engine.getMainApi().stopInputRecording(); }
+void toggleActionRecording() { g_engine.getMainApi().toggleActionRecording(); }
+void toggleInputRecording() { g_engine.getMainApi().toggleInputRecording(); }
 
 /* -------------------------------------------------------------------------- */
 
 void setPluginParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread t)
 {
-	g_engine.getPluginsEngine().setParameter(pluginId, paramIndex, value);
+	g_engine.getPluginsApi().setParameter(pluginId, paramIndex, value);
 	notifyChannelForMidiIn_(t, channelId);
 
-	g_ui.pumpEvent([pluginId, t]() { c::plugin::updateWindow(pluginId, t); });
+	g_ui.pumpEvent([pluginId, t]()
+	    { c::plugin::updateWindow(pluginId, t); });
 }
 } // namespace giada::c::events

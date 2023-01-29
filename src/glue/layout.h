@@ -27,13 +27,13 @@
 #ifndef G_GLUE_LAYOUT_H
 #define G_GLUE_LAYOUT_H
 
-#include "core/storageEngine.h"
+#include "core/api/storageApi.h"
 #include "core/types.h"
 #include <functional>
 #include <string>
 
 /* giada::c::layout
-Functions to interact with the windowing system. Only the main thread can use 
+Functions to interact with the windowing system. Only the main thread can use
 these! */
 
 namespace giada::v
@@ -66,7 +66,7 @@ void openSampleActionEditor(ID channelId);
 void openMidiActionEditor(ID channelId);
 void openSampleEditor(ID channelId);
 void openRenameChannelWindow(const c::channel::Data&);
-void openMissingAssetsWindow(const m::StorageEngine::LoadState&);
+void openMissingAssetsWindow(const m::StorageApi::LoadState&);
 void openBrowserForPlugins(v::gdWindow& parent);
 void openChannelPluginListWindow(ID channelId);
 void openMasterInPluginListWindow();

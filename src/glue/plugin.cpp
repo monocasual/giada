@@ -115,7 +115,7 @@ Plugins::Plugins(const m::Channel& c)
 
 Plugins getPlugins(ID channelId)
 {
-	return Plugins(g_engine.getChannelsEngine().get(channelId));
+	return Plugins(g_engine.getChannelsApi().get(channelId));
 }
 
 Plugin getPlugin(m::Plugin& plugin, ID channelId)
@@ -130,14 +130,14 @@ Param getParam(int index, const m::Plugin& plugin, ID channelId)
 
 std::vector<m::PluginManager::PluginInfo> getPluginsInfo()
 {
-	return g_engine.getPluginsEngine().getInfo();
+	return g_engine.getPluginsApi().getInfo();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void updateWindow(ID pluginId, Thread t)
 {
-	const m::Plugin* p = g_engine.getPluginsEngine().get(pluginId);
+	const m::Plugin* p = g_engine.getPluginsApi().get(pluginId);
 
 	assert(p != nullptr);
 
@@ -145,7 +145,7 @@ void updateWindow(ID pluginId, Thread t)
 		return;
 
 	/* Get the parent window first: the plug-in list. Then, if it exists, get
-    the child window - the actual pluginWindow. */
+	the child window - the actual pluginWindow. */
 
 	v::gdPluginList* parent = static_cast<v::gdPluginList*>(g_ui.getSubwindow(*g_ui.mainWindow.get(), WID_FX_LIST));
 	if (parent == nullptr)
@@ -161,35 +161,35 @@ void updateWindow(ID pluginId, Thread t)
 
 void addPlugin(int pluginListIndex, ID channelId)
 {
-	g_engine.getPluginsEngine().add(pluginListIndex, channelId);
+	g_engine.getPluginsApi().add(pluginListIndex, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId)
 {
-	g_engine.getPluginsEngine().swap(p1, p2, channelId);
+	g_engine.getPluginsApi().swap(p1, p2, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void sortPlugins(m::PluginManager::SortMethod method)
 {
-	g_engine.getPluginsEngine().sort(method);
+	g_engine.getPluginsApi().sort(method);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void freePlugin(const m::Plugin& plugin, ID channelId)
 {
-	g_engine.getPluginsEngine().free(plugin, channelId);
+	g_engine.getPluginsApi().free(plugin, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setProgram(ID pluginId, int programIndex)
 {
-	g_engine.getPluginsEngine().setProgram(pluginId, programIndex);
+	g_engine.getPluginsApi().setProgram(pluginId, programIndex);
 	updateWindow(pluginId, Thread::MAIN); // Only Main thread so far
 }
 
@@ -197,7 +197,7 @@ void setProgram(ID pluginId, int programIndex)
 
 void toggleBypass(ID pluginId)
 {
-	g_engine.getPluginsEngine().toggleBypass(pluginId);
+	g_engine.getPluginsApi().toggleBypass(pluginId);
 }
 
 /* -------------------------------------------------------------------------- */

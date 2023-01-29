@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MAIN_ENGINE_H
-#define G_MAIN_ENGINE_H
+#ifndef G_MAIN_API_H
+#define G_MAIN_API_H
 
 #include "core/mixer.h"
 
@@ -37,10 +37,10 @@ class Sequencer;
 class MidiSynchronizer;
 class ChannelManager;
 class Recorder;
-class MainEngine
+class MainApi
 {
 public:
-	MainEngine(Engine&, KernelAudio&, Mixer&, Sequencer&, MidiSynchronizer&, ChannelManager&, Recorder&);
+	MainApi(Engine&, KernelAudio&, Mixer&, Sequencer&, MidiSynchronizer&, ChannelManager&, Recorder&);
 
 	bool              isRecordingInput() const;
 	bool              isRecordingActions() const;

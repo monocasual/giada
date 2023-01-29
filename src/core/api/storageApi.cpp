@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/storageEngine.h"
+#include "storageApi.h"
 #include "core/actions/actionFactory.h"
 #include "core/channels/channelFactory.h"
 #include "core/engine.h"
@@ -36,7 +36,7 @@
 
 namespace giada::m
 {
-bool StorageEngine::LoadState::isGood() const
+bool StorageApi::LoadState::isGood() const
 {
 	return patch == G_FILE_OK && missingWaves.empty() && missingPlugins.empty();
 }
@@ -45,7 +45,7 @@ bool StorageEngine::LoadState::isGood() const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-StorageEngine::StorageEngine(Engine& e, model::Model& m, Conf& c, Patch& p, PluginManager& pm,
+StorageApi::StorageApi(Engine& e, model::Model& m, Conf& c, Patch& p, PluginManager& pm,
     MidiSynchronizer& ms, Mixer& mx, ChannelManager& cm, KernelAudio& ka, Sequencer& s,
     ActionRecorder& ar)
 : m_engine(e)
@@ -64,7 +64,7 @@ StorageEngine::StorageEngine(Engine& e, model::Model& m, Conf& c, Patch& p, Plug
 
 /* -------------------------------------------------------------------------- */
 
-bool StorageEngine::storeProject(const std::string& projectName, const std::string& projectPath,
+bool StorageApi::storeProject(const std::string& projectName, const std::string& projectPath,
     const v::Ui::State& uiState, std::function<void(float)> progress)
 {
 	progress(0.0f);
@@ -99,7 +99,7 @@ bool StorageEngine::storeProject(const std::string& projectName, const std::stri
 	if (!m_patch.write(patchPath))
 		return false;
 
-	/* Store the parent folder the project belongs to, in order to reuse it the 
+	/* Store the parent folder the project belongs to, in order to reuse it the
 	next time. */
 
 	m_conf.data.patchPath = u::fs::getUpDir(u::fs::getUpDir(patchPath));
@@ -113,7 +113,7 @@ bool StorageEngine::storeProject(const std::string& projectName, const std::stri
 
 /* -------------------------------------------------------------------------- */
 
-StorageEngine::LoadState StorageEngine::loadProject(const std::string& projectPath, std::function<void(float)> progress)
+StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, std::function<void(float)> progress)
 {
 	u::log::print("[StorageEngine::loadProject] Load project from %s\n", projectPath);
 
@@ -141,7 +141,7 @@ StorageEngine::LoadState StorageEngine::loadProject(const std::string& projectPa
 
 	progress(0.6f);
 
-	/* Prepare the engine. Recorder has to recompute the actions positions if 
+	/* Prepare the engine. Recorder has to recompute the actions positions if
 	the current samplerate != patch samplerate. Clock needs to update frames
 	in sequencer. */
 
@@ -156,7 +156,7 @@ StorageEngine::LoadState StorageEngine::loadProject(const std::string& projectPa
 
 	progress(0.9f);
 
-	/* Store the parent folder the project belongs to, in order to reuse it the 
+	/* Store the parent folder the project belongs to, in order to reuse it the
 	next time. */
 
 	m_conf.data.patchPath = u::fs::getUpDir(projectPath);
@@ -177,7 +177,7 @@ StorageEngine::LoadState StorageEngine::loadProject(const std::string& projectPa
 
 /* -------------------------------------------------------------------------- */
 
-void StorageEngine::storePatch(const std::string& projectName, const v::Ui::State& uiState)
+void StorageApi::storePatch(const std::string& projectName, const v::Ui::State& uiState)
 {
 	m_patch.data.columns.clear();
 	for (auto const& [id, width] : uiState.columns)
@@ -210,13 +210,13 @@ void StorageEngine::storePatch(const std::string& projectName, const v::Ui::Stat
 
 /* -------------------------------------------------------------------------- */
 
-StorageEngine::LoadState StorageEngine::loadPatch()
+StorageApi::LoadState StorageApi::loadPatch()
 {
 	const int   sampleRate      = m_engine.getSampleRate();
 	const int   bufferSize      = m_engine.getBufferSize();
 	const float sampleRateRatio = sampleRate / static_cast<float>(m_patch.data.samplerate);
 
-	/* Lock the model's data. Real-time thread can't read from it until this method 
+	/* Lock the model's data. Real-time thread can't read from it until this method
 	goes out of scope. */
 
 	model::DataLock lock = m_model.lockData(model::SwapType::NONE);
@@ -233,7 +233,7 @@ StorageEngine::LoadState StorageEngine::loadPatch()
 	m_model.getAllShared<model::PluginPtrs>().clear();
 	for (const Patch::Plugin& pplugin : m_patch.data.plugins)
 	{
-		std::unique_ptr<Plugin> p = m_engine.getPluginsEngine().deserialize(pplugin);
+		std::unique_ptr<Plugin> p = m_engine.getPluginsApi().deserialize(pplugin);
 		if (!p->valid)
 			state.missingPlugins.push_back(pplugin.path);
 		m_model.getAllShared<model::PluginPtrs>().push_back(std::move(p));
@@ -253,12 +253,12 @@ StorageEngine::LoadState StorageEngine::loadPatch()
 
 	for (const Patch::Channel& pchannel : m_patch.data.channels)
 	{
-		channelFactory::Data data = m_engine.getChannelsEngine().deserializeChannel(pchannel, sampleRateRatio, bufferSize);
+		channelFactory::Data data = m_engine.getChannelsApi().deserializeChannel(pchannel, sampleRateRatio, bufferSize);
 		m_model.get().channels.push_back(data.channel);
 		m_model.addShared(std::move(data.shared));
 	}
 
-	m_model.getAllShared<Actions::Map>() = m_engine.getActionEditorEngine().deserializeActions(m_patch.data.actions);
+	m_model.getAllShared<Actions::Map>() = m_engine.getActionEditorApi().deserializeActions(m_patch.data.actions);
 
 	m_model.get().sequencer.status   = SeqStatus::STOPPED;
 	m_model.get().sequencer.bars     = m_patch.data.bars;

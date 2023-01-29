@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_SAMPLE_EDITOR_ENGINE_H
-#define G_SAMPLE_EDITOR_ENGINE_H
+#ifndef G_SAMPLE_EDITOR_API_H
+#define G_SAMPLE_EDITOR_API_H
 
 #include "core/model/model.h"
 #include "core/types.h"
@@ -37,10 +37,10 @@ namespace giada::m
 class Engine;
 class ChannelManager;
 class Wave;
-class SampleEditorEngine
+class SampleEditorApi
 {
 public:
-	SampleEditorEngine(Engine&, model::Model&, ChannelManager&);
+	SampleEditorApi(Engine&, model::Model&, ChannelManager&);
 
 	void cut(ID channelId, Frame a, Frame b);
 	void copy(ID channelId, Frame a, Frame b);

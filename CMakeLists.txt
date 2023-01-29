@@ -35,13 +35,13 @@ list(APPEND SOURCES
 	src/main.cpp
 	src/mapper.cpp
 	src/core/engine.cpp
-	src/core/mainEngine.cpp
-	src/core/channelsEngine.cpp
-	src/core/sampleEditorEngine.cpp
-	src/core/actionEditorEngine.cpp
-	src/core/pluginsEngine.cpp
-	src/core/storageEngine.cpp
-	src/core/IOEngine.cpp
+	src/core/api/mainApi.cpp
+	src/core/api/channelsApi.cpp
+	src/core/api/sampleEditorApi.cpp
+	src/core/api/actionEditorApi.cpp
+	src/core/api/pluginsApi.cpp
+	src/core/api/storageApi.cpp
+	src/core/api/IOApi.cpp
 	src/core/worker.cpp
 	src/core/eventDispatcher.cpp
 	src/core/midiDispatcher.cpp
