@@ -182,7 +182,7 @@ void SampleEditorEngine::resetBeginEnd(ID channelId)
 void SampleEditorEngine::reload(ID channelId)
 {
 	const int                sampleRate  = m_engine.getSampleRate();
-	const Resampler::Quality rsmpQuality = m_engine.conf.data.rsmpQuality;
+	const Resampler::Quality rsmpQuality = m_engine.getConf().rsmpQuality;
 	// TODO - error checking
 	m_channelManager.loadSampleChannel(channelId, getWave(channelId).getPath(), sampleRate, rsmpQuality);
 }

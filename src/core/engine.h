@@ -85,6 +85,11 @@ public:
 
 	const Patch::Data& getPatch() const;
 
+	/* getConf
+	Returns a reference to the current loaded Conf. */
+
+	Conf::Data& getConf();
+
 	/* updateMixerModel
 	Updates some values in model::Mixer data struct needed by m::Mixer for the
 	audio rendering. Call this whenever the audio configuration changes. */
@@ -168,7 +173,6 @@ public:
 	ActionRecorder& getActionRecorder();
 	PluginHost&     getPluginHost();
 
-	Conf                   conf;
 	MidiMapper<KernelMidi> midiMapper;
 
 private:
@@ -177,6 +181,7 @@ private:
 	void storeConfig();
 	void loadConfig();
 
+	Conf             m_conf;
 	Patch            m_patch;
 	model::Model     m_model;
 	KernelAudio      m_kernelAudio;

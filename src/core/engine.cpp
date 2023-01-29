@@ -36,10 +36,10 @@ namespace giada::m
 Engine::Engine()
 : midiMapper(m_kernelMidi)
 , m_pluginHost(m_model)
-, m_midiSynchronizer(conf.data, m_kernelMidi)
+, m_midiSynchronizer(m_conf.data, m_kernelMidi)
 , m_sequencer(m_model, m_midiSynchronizer, m_jackTransport)
 , m_mixer(m_model)
-, m_channelManager(conf.data, m_model)
+, m_channelManager(m_conf.data, m_model)
 , m_actionRecorder(m_model)
 , m_recorder(m_sequencer, m_channelManager, m_mixer, m_actionRecorder)
 , m_midiDispatcher(m_model)
@@ -48,8 +48,8 @@ Engine::Engine()
 , m_pluginsEngine(*this, m_kernelAudio, m_channelManager, m_pluginManager, m_pluginHost, m_model)
 , m_sampleEditorEngine(*this, m_model, m_channelManager)
 , m_actionEditorEngine(*this, m_model, m_sequencer, m_actionRecorder)
-, m_ioEngine(m_model, m_midiDispatcher, conf.data)
-, m_storageEngine(*this, m_model, conf, m_patch, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
+, m_ioEngine(m_model, m_midiDispatcher, m_conf.data)
+, m_storageEngine(*this, m_model, m_conf, m_patch, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
 {
 	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -108,12 +108,12 @@ Engine::Engine()
 	};
 	m_mixer.onEndOfRecording = [this]() {
 		if (m_mixer.isRecordingInput())
-			m_eventDispatcher.pumpEvent([this]() { m_recorder.stopInputRec(conf.data.inputRecMode, m_kernelAudio.getSampleRate()); });
+			m_eventDispatcher.pumpEvent([this]() { m_recorder.stopInputRec(m_conf.data.inputRecMode, m_kernelAudio.getSampleRate()); });
 	};
 
 	m_channelManager.onChannelsAltered = [this]() {
 		if (!m_recorder.canEnableFreeInputRec())
-			conf.data.inputRecMode = InputRecMode::RIGID;
+			m_conf.data.inputRecMode = InputRecMode::RIGID;
 	};
 	m_channelManager.onChannelRecorded = [this](Frame recordedFrames) {
 		std::string filename = fmt::format("TAKE-{}.wav", m_patch.data.lastTakeId++);
@@ -124,7 +124,7 @@ Engine::Engine()
 		/* TODO move this logic to Recorder */
 		if (status == SeqStatus::WAITING)
 			m_recorder.stopActionRec();
-		conf.data.recTriggerMode = RecTriggerMode::NORMAL;
+		m_conf.data.recTriggerMode = RecTriggerMode::NORMAL;
 	};
 	m_sequencer.onAboutStop = [this]() {
 		/* If recordings (both input and action) are active deactivate them, but 
@@ -133,7 +133,7 @@ Engine::Engine()
 		if (m_mixer.isRecordingActions())
 			m_recorder.stopActionRec();
 		else if (m_mixer.isRecordingInput())
-			m_recorder.stopInputRec(conf.data.inputRecMode, m_kernelAudio.getSampleRate());
+			m_recorder.stopInputRec(m_conf.data.inputRecMode, m_kernelAudio.getSampleRate());
 	};
 	m_sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep) {
 		m_actionRecorder.updateBpm(oldVal / newVal, quantizerStep);
@@ -206,14 +206,19 @@ const Patch::Data& Engine::getPatch() const
 	return m_patch.data;
 }
 
+Conf::Data& Engine::getConf()
+{
+	return m_conf.data;
+}
+
 /* -------------------------------------------------------------------------- */
 
 void Engine::updateMixerModel()
 {
-	m_model.get().mixer.limitOutput     = conf.data.limitOutput;
-	m_model.get().mixer.allowsOverdub   = conf.data.inputRecMode == InputRecMode::RIGID;
-	m_model.get().mixer.maxFramesToRec  = conf.data.inputRecMode == InputRecMode::FREE ? m_sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()) : m_sequencer.getFramesInLoop();
-	m_model.get().mixer.recTriggerLevel = conf.data.recTriggerLevel;
+	m_model.get().mixer.limitOutput     = m_conf.data.limitOutput;
+	m_model.get().mixer.allowsOverdub   = m_conf.data.inputRecMode == InputRecMode::RIGID;
+	m_model.get().mixer.maxFramesToRec  = m_conf.data.inputRecMode == InputRecMode::FREE ? m_sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()) : m_sequencer.getFramesInLoop();
+	m_model.get().mixer.recTriggerLevel = m_conf.data.recTriggerLevel;
 	m_model.swap(model::SwapType::NONE);
 }
 
@@ -229,24 +234,24 @@ void Engine::init()
 
 	m_model.reset();
 
-	if (!conf.read())
+	if (!m_conf.read())
 		u::log::print("[Engine::init] Can't read configuration file! Using default values\n");
 
 	loadConfig();
 
-	if (!u::log::init(conf.data.logMode))
+	if (!u::log::init(m_conf.data.logMode))
 		u::log::print("[Engine::init] log init failed! Using default stdout\n");
 
 	init::printBuildInfo();
 
 	midiMapper.init();
-	if (midiMapper.read(conf.data.midiMapPath) != G_FILE_OK)
+	if (midiMapper.read(m_conf.data.midiMapPath) != G_FILE_OK)
 		u::log::print("[Engine::init] MIDI map read failed!\n");
 
 	/* Initialize KernelAudio. If fails, interrupt the Engine initialization:
     Giada can't work without a functional KernelAudio. */
 
-	m_kernelAudio.openDevice(conf.data);
+	m_kernelAudio.openDevice(m_conf.data);
 	if (!m_kernelAudio.isReady())
 		return;
 
@@ -259,13 +264,13 @@ void Engine::init()
 	m_channelManager.reset(m_kernelAudio.getBufferSize());
 	m_sequencer.reset(m_kernelAudio.getSampleRate());
 	m_pluginHost.reset(m_kernelAudio.getBufferSize());
-	m_pluginManager.reset(conf.data.pluginSortMethod);
+	m_pluginManager.reset(m_conf.data.pluginSortMethod);
 
 	m_mixer.enable();
 	m_kernelAudio.startStream();
 
-	m_kernelMidi.openOutDevice(conf.data.midiSystem, conf.data.midiPortOut);
-	m_kernelMidi.openInDevice(conf.data.midiSystem, conf.data.midiPortIn);
+	m_kernelMidi.openOutDevice(m_conf.data.midiSystem, m_conf.data.midiPortOut);
+	m_kernelMidi.openInDevice(m_conf.data.midiSystem, m_conf.data.midiPortIn);
 	m_kernelMidi.logPorts();
 	m_kernelMidi.start();
 
@@ -284,7 +289,7 @@ void Engine::reset()
 
 	channelFactory::reset();
 	waveFactory::reset();
-	m_pluginManager.reset(conf.data.pluginSortMethod);
+	m_pluginManager.reset(m_conf.data.pluginSortMethod);
 
 	/* Then all other components. */
 
@@ -310,7 +315,7 @@ void Engine::shutdown()
 
 	storeConfig();
 
-	if (!conf.write())
+	if (!m_conf.write())
 		u::log::print("[Engine::shutdown] error while saving configuration file!\n");
 	else
 		u::log::print("[Engine::shutdown] configuration saved\n");
@@ -423,34 +428,34 @@ void Engine::setOnModelSwapCb(std::function<void(m::model::SwapType)> f)
 
 void Engine::storeConfig()
 {
-	conf.data.midiInEnabled    = m_model.get().midiIn.enabled;
-	conf.data.midiInFilter     = m_model.get().midiIn.filter;
-	conf.data.midiInRewind     = m_model.get().midiIn.rewind;
-	conf.data.midiInStartStop  = m_model.get().midiIn.startStop;
-	conf.data.midiInActionRec  = m_model.get().midiIn.actionRec;
-	conf.data.midiInInputRec   = m_model.get().midiIn.inputRec;
-	conf.data.midiInMetronome  = m_model.get().midiIn.metronome;
-	conf.data.midiInVolumeIn   = m_model.get().midiIn.volumeIn;
-	conf.data.midiInVolumeOut  = m_model.get().midiIn.volumeOut;
-	conf.data.midiInBeatDouble = m_model.get().midiIn.beatDouble;
-	conf.data.midiInBeatHalf   = m_model.get().midiIn.beatHalf;
+	m_conf.data.midiInEnabled    = m_model.get().midiIn.enabled;
+	m_conf.data.midiInFilter     = m_model.get().midiIn.filter;
+	m_conf.data.midiInRewind     = m_model.get().midiIn.rewind;
+	m_conf.data.midiInStartStop  = m_model.get().midiIn.startStop;
+	m_conf.data.midiInActionRec  = m_model.get().midiIn.actionRec;
+	m_conf.data.midiInInputRec   = m_model.get().midiIn.inputRec;
+	m_conf.data.midiInMetronome  = m_model.get().midiIn.metronome;
+	m_conf.data.midiInVolumeIn   = m_model.get().midiIn.volumeIn;
+	m_conf.data.midiInVolumeOut  = m_model.get().midiIn.volumeOut;
+	m_conf.data.midiInBeatDouble = m_model.get().midiIn.beatDouble;
+	m_conf.data.midiInBeatHalf   = m_model.get().midiIn.beatHalf;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Engine::loadConfig()
 {
-	m_model.get().midiIn.enabled    = conf.data.midiInEnabled;
-	m_model.get().midiIn.filter     = conf.data.midiInFilter;
-	m_model.get().midiIn.rewind     = conf.data.midiInRewind;
-	m_model.get().midiIn.startStop  = conf.data.midiInStartStop;
-	m_model.get().midiIn.actionRec  = conf.data.midiInActionRec;
-	m_model.get().midiIn.inputRec   = conf.data.midiInInputRec;
-	m_model.get().midiIn.metronome  = conf.data.midiInMetronome;
-	m_model.get().midiIn.volumeIn   = conf.data.midiInVolumeIn;
-	m_model.get().midiIn.volumeOut  = conf.data.midiInVolumeOut;
-	m_model.get().midiIn.beatDouble = conf.data.midiInBeatDouble;
-	m_model.get().midiIn.beatHalf   = conf.data.midiInBeatHalf;
+	m_model.get().midiIn.enabled    = m_conf.data.midiInEnabled;
+	m_model.get().midiIn.filter     = m_conf.data.midiInFilter;
+	m_model.get().midiIn.rewind     = m_conf.data.midiInRewind;
+	m_model.get().midiIn.startStop  = m_conf.data.midiInStartStop;
+	m_model.get().midiIn.actionRec  = m_conf.data.midiInActionRec;
+	m_model.get().midiIn.inputRec   = m_conf.data.midiInInputRec;
+	m_model.get().midiIn.metronome  = m_conf.data.midiInMetronome;
+	m_model.get().midiIn.volumeIn   = m_conf.data.midiInVolumeIn;
+	m_model.get().midiIn.volumeOut  = m_conf.data.midiInVolumeOut;
+	m_model.get().midiIn.beatDouble = m_conf.data.midiInBeatDouble;
+	m_model.get().midiIn.beatHalf   = m_conf.data.midiInBeatHalf;
 
 	m_model.swap(model::SwapType::NONE);
 }

@@ -135,18 +135,18 @@ AudioData getAudioData()
 			audioData.inputDevices.push_back(AudioDeviceData(DeviceType::INPUT, device, 1, 0));
 	}
 
-	audioData.api             = g_engine.conf.data.soundSystem;
-	audioData.bufferSize      = g_engine.conf.data.buffersize;
-	audioData.sampleRate      = g_engine.conf.data.samplerate;
-	audioData.limitOutput     = g_engine.conf.data.limitOutput;
-	audioData.recTriggerLevel = g_engine.conf.data.recTriggerLevel;
-	audioData.resampleQuality = static_cast<int>(g_engine.conf.data.rsmpQuality);
+	audioData.api             = g_engine.getConf().soundSystem;
+	audioData.bufferSize      = g_engine.getConf().buffersize;
+	audioData.sampleRate      = g_engine.getConf().samplerate;
+	audioData.limitOutput     = g_engine.getConf().limitOutput;
+	audioData.recTriggerLevel = g_engine.getConf().recTriggerLevel;
+	audioData.resampleQuality = static_cast<int>(g_engine.getConf().rsmpQuality);
 	audioData.outputDevice    = getAudioDeviceData_(DeviceType::OUTPUT,
-        g_engine.conf.data.soundDeviceOut, g_engine.conf.data.channelsOutCount,
-        g_engine.conf.data.channelsOutStart);
+        g_engine.getConf().soundDeviceOut, g_engine.getConf().channelsOutCount,
+        g_engine.getConf().channelsOutStart);
 	audioData.inputDevice     = getAudioDeviceData_(DeviceType::INPUT,
-        g_engine.conf.data.soundDeviceIn, g_engine.conf.data.channelsInCount,
-        g_engine.conf.data.channelsInStart);
+        g_engine.getConf().soundDeviceIn, g_engine.getConf().channelsInCount,
+        g_engine.getConf().channelsInStart);
 
 	return audioData;
 }
@@ -172,13 +172,13 @@ MidiData getMidiData()
 	midiData.syncModes[G_MIDI_SYNC_CLOCK_SLAVE]  = "MIDI Clock (slave)";
 
 	midiData.midiMaps = g_engine.midiMapper.getMapFilesFound();
-	midiData.midiMap  = u::vector::indexOf(midiData.midiMaps, g_engine.conf.data.midiMapPath);
+	midiData.midiMap  = u::vector::indexOf(midiData.midiMaps, g_engine.getConf().midiMapPath);
 	midiData.outPorts = g_engine.getMidiOutPorts();
 	midiData.inPorts  = g_engine.getMidiInPorts();
-	midiData.api      = g_engine.conf.data.midiSystem;
-	midiData.syncMode = g_engine.conf.data.midiSync;
-	midiData.outPort  = g_engine.conf.data.midiPortOut;
-	midiData.inPort   = g_engine.conf.data.midiPortIn;
+	midiData.api      = g_engine.getConf().midiSystem;
+	midiData.syncMode = g_engine.getConf().midiSync;
+	midiData.outPort  = g_engine.getConf().midiPortOut;
+	midiData.inPort   = g_engine.getConf().midiPortIn;
 
 	return midiData;
 }
@@ -189,7 +189,7 @@ PluginData getPluginData()
 {
 	PluginData pluginData;
 	pluginData.numAvailablePlugins = g_engine.getPluginsEngine().countAvailablePlugins();
-	pluginData.pluginPath          = g_engine.conf.data.pluginPath;
+	pluginData.pluginPath          = g_engine.getConf().pluginPath;
 	return pluginData;
 }
 
@@ -198,29 +198,29 @@ PluginData getPluginData()
 MiscData getMiscData()
 {
 	MiscData miscData;
-	miscData.logMode      = g_engine.conf.data.logMode;
-	miscData.showTooltips = g_engine.conf.data.showTooltips;
+	miscData.logMode      = g_engine.getConf().logMode;
+	miscData.showTooltips = g_engine.getConf().showTooltips;
 	miscData.langMaps     = g_ui.langMapper.getMapFilesFound();
-	miscData.langMap      = g_engine.conf.data.langMap;
-	miscData.uiScaling    = g_engine.conf.data.uiScaling;
+	miscData.langMap      = g_engine.getConf().langMap;
+	miscData.uiScaling    = g_engine.getConf().uiScaling;
 	return miscData;
 }
 /* -------------------------------------------------------------------------- */
 
 void save(const AudioData& data)
 {
-	g_engine.conf.data.soundSystem      = data.api;
-	g_engine.conf.data.soundDeviceOut   = data.outputDevice.index;
-	g_engine.conf.data.soundDeviceIn    = data.inputDevice.index;
-	g_engine.conf.data.channelsOutCount = data.outputDevice.channelsCount;
-	g_engine.conf.data.channelsOutStart = data.outputDevice.channelsStart;
-	g_engine.conf.data.channelsInCount  = data.inputDevice.channelsCount;
-	g_engine.conf.data.channelsInStart  = data.inputDevice.channelsStart;
-	g_engine.conf.data.limitOutput      = data.limitOutput;
-	g_engine.conf.data.rsmpQuality      = static_cast<m::Resampler::Quality>(data.resampleQuality);
-	g_engine.conf.data.buffersize       = data.bufferSize;
-	g_engine.conf.data.recTriggerLevel  = data.recTriggerLevel;
-	g_engine.conf.data.samplerate       = data.sampleRate;
+	g_engine.getConf().soundSystem      = data.api;
+	g_engine.getConf().soundDeviceOut   = data.outputDevice.index;
+	g_engine.getConf().soundDeviceIn    = data.inputDevice.index;
+	g_engine.getConf().channelsOutCount = data.outputDevice.channelsCount;
+	g_engine.getConf().channelsOutStart = data.outputDevice.channelsStart;
+	g_engine.getConf().channelsInCount  = data.inputDevice.channelsCount;
+	g_engine.getConf().channelsInStart  = data.inputDevice.channelsStart;
+	g_engine.getConf().limitOutput      = data.limitOutput;
+	g_engine.getConf().rsmpQuality      = static_cast<m::Resampler::Quality>(data.resampleQuality);
+	g_engine.getConf().buffersize       = data.bufferSize;
+	g_engine.getConf().recTriggerLevel  = data.recTriggerLevel;
+	g_engine.getConf().samplerate       = data.sampleRate;
 	g_engine.updateMixerModel();
 }
 
@@ -228,28 +228,28 @@ void save(const AudioData& data)
 
 void save(const PluginData& data)
 {
-	g_engine.conf.data.pluginPath = data.pluginPath;
+	g_engine.getConf().pluginPath = data.pluginPath;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void save(const MidiData& data)
 {
-	g_engine.conf.data.midiSystem  = data.api;
-	g_engine.conf.data.midiPortOut = data.outPort;
-	g_engine.conf.data.midiPortIn  = data.inPort;
-	g_engine.conf.data.midiMapPath = u::vector::atOr(data.midiMaps, data.midiMap, "");
-	g_engine.conf.data.midiSync    = data.syncMode;
+	g_engine.getConf().midiSystem  = data.api;
+	g_engine.getConf().midiPortOut = data.outPort;
+	g_engine.getConf().midiPortIn  = data.inPort;
+	g_engine.getConf().midiMapPath = u::vector::atOr(data.midiMaps, data.midiMap, "");
+	g_engine.getConf().midiSync    = data.syncMode;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void save(const MiscData& data)
 {
-	g_engine.conf.data.logMode      = data.logMode;
-	g_engine.conf.data.showTooltips = data.showTooltips;
-	g_engine.conf.data.langMap      = data.langMap;
-	g_engine.conf.data.uiScaling    = std::clamp(data.uiScaling, G_MIN_UI_SCALING, G_MAX_UI_SCALING);
+	g_engine.getConf().logMode      = data.logMode;
+	g_engine.getConf().showTooltips = data.showTooltips;
+	g_engine.getConf().langMap      = data.langMap;
+	g_engine.getConf().uiScaling    = std::clamp(data.uiScaling, G_MIN_UI_SCALING, G_MAX_UI_SCALING);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -264,7 +264,7 @@ void scanPlugins(std::string dir, const std::function<void(float)>& progress)
 void setPluginPathCb(void* data)
 {
 	v::gdBrowserDir* browser    = static_cast<v::gdBrowserDir*>(data);
-	std::string&     pluginPath = g_engine.conf.data.pluginPath;
+	std::string&     pluginPath = g_engine.getConf().pluginPath;
 
 	if (browser->getCurrentPath() == "")
 	{

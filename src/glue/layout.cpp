@@ -64,7 +64,7 @@ namespace giada::c::layout
 void openBrowserForProjectLoad()
 {
 	v::gdWindow* childWin = new v::gdBrowserLoad(g_ui.langMapper.get(v::LangMap::BROWSER_OPENPROJECT),
-	    g_engine.conf.data.patchPath, c::storage::loadProject, 0, g_engine.conf.data);
+	    g_engine.getConf().patchPath, c::storage::loadProject, 0, g_engine.getConf());
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), childWin, WID_FILE_BROWSER);
 }
 
@@ -73,7 +73,7 @@ void openBrowserForProjectLoad()
 void openBrowserForProjectSave()
 {
 	v::gdWindow* childWin = new v::gdBrowserSave(g_ui.langMapper.get(v::LangMap::BROWSER_SAVEPROJECT),
-	    g_engine.conf.data.patchPath, g_engine.getPatch().name, c::storage::saveProject, 0, g_engine.conf.data);
+	    g_engine.getConf().patchPath, g_engine.getPatch().name, c::storage::saveProject, 0, g_engine.getConf());
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), childWin, WID_FILE_BROWSER);
 }
 
@@ -82,7 +82,7 @@ void openBrowserForProjectSave()
 void openBrowserForSampleLoad(ID channelId)
 {
 	v::gdWindow* w = new v::gdBrowserLoad(g_ui.langMapper.get(v::LangMap::BROWSER_OPENSAMPLE),
-	    g_engine.conf.data.samplePath.c_str(), c::storage::loadSample, channelId, g_engine.conf.data);
+	    g_engine.getConf().samplePath.c_str(), c::storage::loadSample, channelId, g_engine.getConf());
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), w, WID_FILE_BROWSER);
 }
 
@@ -91,7 +91,7 @@ void openBrowserForSampleLoad(ID channelId)
 void openBrowserForSampleSave(ID channelId)
 {
 	v::gdWindow* w = new v::gdBrowserSave(g_ui.langMapper.get(v::LangMap::BROWSER_SAVESAMPLE),
-	    g_engine.conf.data.samplePath.c_str(), "", c::storage::saveSample, channelId, g_engine.conf.data);
+	    g_engine.getConf().samplePath.c_str(), "", c::storage::saveSample, channelId, g_engine.getConf());
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), w, WID_FILE_BROWSER);
 }
 
@@ -131,21 +131,21 @@ void openBeatsWindow(int beats, int bars)
 
 void openConfigWindow()
 {
-	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdConfig(400, 370, g_engine.conf.data), WID_CONFIG);
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdConfig(400, 370, g_engine.getConf()), WID_CONFIG);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMasterMidiInputWindow()
 {
-	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdMidiInputMaster(g_engine.conf.data), WID_MIDI_INPUT);
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdMidiInputMaster(g_engine.getConf()), WID_MIDI_INPUT);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openChannelMidiInputWindow(ID channelId)
 {
-	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdMidiInputChannel(channelId, g_engine.conf.data),
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdMidiInputChannel(channelId, g_engine.getConf()),
 	    WID_MIDI_INPUT);
 }
 
@@ -176,7 +176,7 @@ void openMidiChannelMidiOutputWindow(ID channelId)
 void openSampleActionEditor(ID channelId)
 {
 	g_ui.openSubWindow(*g_ui.mainWindow.get(),
-	    new v::gdSampleActionEditor(channelId, g_engine.conf.data), WID_ACTION_EDITOR);
+	    new v::gdSampleActionEditor(channelId, g_engine.getConf()), WID_ACTION_EDITOR);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -184,14 +184,14 @@ void openSampleActionEditor(ID channelId)
 void openMidiActionEditor(ID channelId)
 {
 	g_ui.openSubWindow(*g_ui.mainWindow.get(),
-	    new v::gdMidiActionEditor(channelId, g_engine.conf.data), WID_ACTION_EDITOR);
+	    new v::gdMidiActionEditor(channelId, g_engine.getConf()), WID_ACTION_EDITOR);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openSampleEditor(ID channelId)
 {
-	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdSampleEditor(channelId, g_engine.conf.data),
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdSampleEditor(channelId, g_engine.getConf()),
 	    WID_SAMPLE_EDITOR);
 }
 
@@ -216,7 +216,7 @@ void openMissingAssetsWindow(const m::StorageEngine::LoadState& state)
 void openBrowserForPlugins(v::gdWindow& parent)
 {
 	v::gdBrowserDir* browser = new v::gdBrowserDir(g_ui.langMapper.get(v::LangMap::BROWSER_OPENPLUGINSDIR),
-	    g_engine.conf.data.patchPath, c::config::setPluginPathCb, g_engine.conf.data);
+	    g_engine.getConf().patchPath, c::config::setPluginPathCb, g_engine.getConf());
 	parent.addSubWindow(browser);
 }
 
@@ -224,7 +224,7 @@ void openBrowserForPlugins(v::gdWindow& parent)
 
 void openChannelPluginListWindow(ID channelId)
 {
-	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdPluginList(channelId, g_engine.conf.data),
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdPluginList(channelId, g_engine.getConf()),
 	    WID_FX_LIST);
 }
 
@@ -232,7 +232,7 @@ void openChannelPluginListWindow(ID channelId)
 
 void openMasterInPluginListWindow()
 {
-	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdPluginList(m::Mixer::MASTER_IN_CHANNEL_ID, g_engine.conf.data),
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdPluginList(m::Mixer::MASTER_IN_CHANNEL_ID, g_engine.getConf()),
 	    WID_FX_LIST);
 }
 
@@ -240,7 +240,7 @@ void openMasterInPluginListWindow()
 
 void openMasterOutPluginListWindow()
 {
-	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdPluginList(m::Mixer::MASTER_OUT_CHANNEL_ID, g_engine.conf.data),
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdPluginList(m::Mixer::MASTER_OUT_CHANNEL_ID, g_engine.getConf()),
 	    WID_FX_LIST);
 }
 
@@ -248,7 +248,7 @@ void openMasterOutPluginListWindow()
 
 void openPluginChooser(ID channelId)
 {
-	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdPluginChooser(channelId, g_engine.conf.data),
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdPluginChooser(channelId, g_engine.getConf()),
 	    WID_FX_CHOOSER);
 }
 } // namespace giada::c::layout

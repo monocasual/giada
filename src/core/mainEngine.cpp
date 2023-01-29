@@ -256,9 +256,9 @@ void MainEngine::setInToOut(bool v)
 void MainEngine::toggleRecOnSignal()
 {
 	if (!m_recorder.canEnableRecOnSignal())
-		m_engine.conf.data.recTriggerMode = RecTriggerMode::NORMAL;
+		m_engine.getConf().recTriggerMode = RecTriggerMode::NORMAL;
 	else
-		m_engine.conf.data.recTriggerMode = m_engine.conf.data.recTriggerMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
+		m_engine.getConf().recTriggerMode = m_engine.getConf().recTriggerMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
 	m_engine.updateMixerModel();
 }
 
@@ -267,9 +267,9 @@ void MainEngine::toggleRecOnSignal()
 void MainEngine::toggleFreeInputRec()
 {
 	if (!m_recorder.canEnableFreeInputRec())
-		m_engine.conf.data.inputRecMode = InputRecMode::RIGID;
+		m_engine.getConf().inputRecMode = InputRecMode::RIGID;
 	else
-		m_engine.conf.data.inputRecMode = m_engine.conf.data.inputRecMode == InputRecMode::FREE ? InputRecMode::RIGID : InputRecMode::FREE;
+		m_engine.getConf().inputRecMode = m_engine.getConf().inputRecMode == InputRecMode::FREE ? InputRecMode::RIGID : InputRecMode::FREE;
 	m_engine.updateMixerModel();
 }
 
@@ -286,7 +286,7 @@ void MainEngine::toggleActionRecording()
 	if (m_mixer.isRecordingActions())
 		m_recorder.stopActionRec();
 	else
-		m_recorder.prepareActionRec(m_engine.conf.data.recTriggerMode);
+		m_recorder.prepareActionRec(m_engine.getConf().recTriggerMode);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -294,7 +294,7 @@ void MainEngine::toggleActionRecording()
 void MainEngine::stopInputRecording()
 {
 	if (m_mixer.isRecordingInput())
-		m_recorder.stopInputRec(m_engine.conf.data.inputRecMode, m_kernelAudio.getSampleRate());
+		m_recorder.stopInputRec(m_engine.getConf().inputRecMode, m_kernelAudio.getSampleRate());
 }
 
 void MainEngine::toggleInputRecording()
@@ -302,9 +302,9 @@ void MainEngine::toggleInputRecording()
 	if (!m_kernelAudio.isInputEnabled() || !m_channelManager.hasInputRecordableChannels())
 		return;
 	if (m_mixer.isRecordingInput())
-		m_recorder.stopInputRec(m_engine.conf.data.inputRecMode, m_kernelAudio.getSampleRate());
+		m_recorder.stopInputRec(m_engine.getConf().inputRecMode, m_kernelAudio.getSampleRate());
 	else
-		m_recorder.prepareInputRec(m_engine.conf.data.recTriggerMode, m_engine.conf.data.inputRecMode);
+		m_recorder.prepareInputRec(m_engine.getConf().recTriggerMode, m_engine.getConf().inputRecMode);
 }
 
 /* -------------------------------------------------------------------------- */

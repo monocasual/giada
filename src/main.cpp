@@ -28,7 +28,7 @@
 #include "gui/ui.h"
 
 giada::m::Engine g_engine;
-giada::v::Ui     g_ui(g_engine.conf.data);
+giada::v::Ui     g_ui(g_engine.getConf());
 
 int main(int argc, char** argv)
 {

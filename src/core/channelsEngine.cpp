@@ -85,7 +85,7 @@ Channel& ChannelsEngine::add(ID columnId, ChannelType type)
 int ChannelsEngine::loadSampleChannel(ID channelId, const std::string& filePath)
 {
 	const int                sampleRate  = m_kernelAudio.getSampleRate();
-	const Resampler::Quality rsmpQuality = m_engine.conf.data.rsmpQuality;
+	const Resampler::Quality rsmpQuality = m_engine.getConf().rsmpQuality;
 	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality);
 }
 
@@ -310,7 +310,7 @@ bool ChannelsEngine::saveSample(ID channelId, const std::string& filePath)
 {
 	if (!m_channelManager.saveSample(channelId, filePath))
 		return false;
-	m_engine.conf.data.samplePath = u::fs::dirname(filePath);
+	m_engine.getConf().samplePath = u::fs::dirname(filePath);
 	return true;
 }
 
@@ -323,7 +323,7 @@ Patch::Channel ChannelsEngine::serializeChannel(const Channel& ch)
 
 channelFactory::Data ChannelsEngine::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
 {
-	const Resampler::Quality rsmpQuality = m_engine.conf.data.rsmpQuality;
+	const Resampler::Quality rsmpQuality = m_engine.getConf().rsmpQuality;
 	Wave*                    wave        = m_model.findShared<Wave>(pch.waveId);
 	std::vector<Plugin*>     plugins     = m_pluginManager.hydratePlugins(pch.pluginIds, m_model);
 	return channelFactory::deserializeChannel(pch, samplerateRatio, bufferSize, rsmpQuality, wave, plugins);
