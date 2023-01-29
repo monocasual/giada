@@ -30,6 +30,7 @@
 #include "core/conf.h"
 #include "core/model/model.h"
 #include "core/types.h"
+#include "gui/ui.h"
 #include <functional>
 #include <string>
 #include <vector>
@@ -62,7 +63,7 @@ public:
     Saves the current project. Returns true on success. */
 
 	bool storeProject(const std::string& projectName, const std::string& projectPath,
-	    const std::string& patchPath, std::function<void(float)> progress);
+	    const std::string& patchPath, const v::Ui::State&, std::function<void(float)> progress);
 
 	/* loadProject
 	Loads a new project. Returns a LoadState object containing the operation
@@ -72,7 +73,7 @@ public:
 	    std::function<void(float)> progress);
 
 private:
-	void      storePatch(const std::string& projectName);
+	void      storePatch(const std::string& projectName, const v::Ui::State&);
 	LoadState loadPatch();
 
 	Engine&           m_engine;

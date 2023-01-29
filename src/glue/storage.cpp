@@ -129,14 +129,16 @@ void saveProject(void* data)
 	        g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_PROJECTEXISTS)))
 		return;
 
-	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECT));
+	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECT));
+	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
-	g_ui.store(projectName, g_engine.patch.data);
-
-	if (!g_engine.getStorageEngine().storeProject(projectName, projectPath, patchPath, [&progress](float v) { progress.setProgress(v); }))
+	if (g_engine.getStorageEngine().storeProject(projectName, projectPath, patchPath, g_ui.getState(), engineProgress))
+	{
+		g_ui.setMainWindowTitle(projectName);
+		browser->do_callback();
+	}
+	else
 		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECTERROR));
-
-	browser->do_callback();
 }
 
 /* -------------------------------------------------------------------------- */

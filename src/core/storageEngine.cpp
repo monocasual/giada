@@ -65,7 +65,7 @@ StorageEngine::StorageEngine(Engine& e, model::Model& m, Conf& c, Patch& p, Plug
 /* -------------------------------------------------------------------------- */
 
 bool StorageEngine::storeProject(const std::string& projectName, const std::string& projectPath,
-    const std::string& patchPath, std::function<void(float)> progress)
+    const std::string& patchPath, const v::Ui::State& uiState, std::function<void(float)> progress)
 {
 	progress(0.0f);
 
@@ -90,7 +90,7 @@ bool StorageEngine::storeProject(const std::string& projectName, const std::stri
 
 	/* Write Model into Patch, then into file. */
 
-	storePatch(projectName);
+	storePatch(projectName, uiState);
 
 	progress(0.6f);
 
@@ -174,8 +174,11 @@ StorageEngine::LoadState StorageEngine::loadProject(const std::string& projectPa
 
 /* -------------------------------------------------------------------------- */
 
-void StorageEngine::storePatch(const std::string& projectName)
+void StorageEngine::storePatch(const std::string& projectName, const v::Ui::State& uiState)
 {
+	for (auto const& [id, width] : uiState.columns)
+		m_patch.data.columns.push_back({id, width});
+
 	const model::Layout& layout = m_model.get();
 
 	m_patch.data.name       = projectName;

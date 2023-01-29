@@ -79,13 +79,13 @@ void Ui::load(const m::Patch::Data& patch)
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::store(const std::string patchName, m::Patch::Data& patch)
+Ui::State Ui::getState()
 {
-	patch.columns.clear();
+	State state;
 	mainWindow->keyboard->forEachColumn([&](const geColumn& c) {
-		patch.columns.push_back({c.id, c.w()});
+		state.columns.insert({c.id, c.w()});
 	});
-	mainWindow->setTitle(patchName);
+	return state;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -242,6 +242,13 @@ void Ui::closeAllSubwindows()
 	mainWindow->delSubWindow(WID_SAMPLE_EDITOR);
 	mainWindow->delSubWindow(WID_FX_LIST);
 	mainWindow->delSubWindow(WID_FX);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Ui::setMainWindowTitle(const std::string& title)
+{
+	mainWindow->setTitle(title);
 }
 
 /* -------------------------------------------------------------------------- */

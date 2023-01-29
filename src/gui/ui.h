@@ -41,6 +41,14 @@ namespace giada::v
 class Ui final
 {
 public:
+	/* State
+	Struct used while saving UI state to Patch. */
+
+	struct State
+	{
+		std::unordered_map<ID, int> columns;
+	};
+
 	Ui(m::Conf::Data&);
 
 	/* shouldBlink
@@ -59,10 +67,10 @@ public:
 
 	void load(const m::Patch::Data&);
 
-	/* store
-	Writes UI information to a patch when a project needs to be saved. */
+	/* getState
+	Returns the current UI state. Use this for persistence. */
 
-	void store(const std::string patchName, m::Patch::Data& patch);
+	State getState();
 
 	void init(int argc, char** argv, const std::string& patchName, bool isAudioReady);
 	void reset();
@@ -107,6 +115,11 @@ public:
 	Closes all subwindows attached to the main one. */
 
 	void closeAllSubwindows();
+
+	/* setMainWindowTitle 
+	Changes Main Window title. */
+
+	void setMainWindowTitle(const std::string&);
 
 	/* [start|stop]JuceDispatchLoop
 	Starts and stops the JUCE dispatch loop from its MessageManager component.
