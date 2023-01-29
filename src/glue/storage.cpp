@@ -82,7 +82,6 @@ void loadProject(void* data)
 	v::gdBrowserLoad* browser = static_cast<v::gdBrowserLoad*>(data);
 
 	const std::string projectPath = browser->getSelectedItem();
-	const std::string patchPath   = u::fs::join(projectPath, u::fs::stripExt(u::fs::basename(projectPath)) + ".gptc");
 
 	/* Close all sub-windows first, in case there are VST editors visible. VST
 	editors must be closed before deleting their plug-in processors. */
@@ -91,7 +90,7 @@ void loadProject(void* data)
 
 	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
 
-	m::StorageEngine::LoadState state = g_engine.getStorageEngine().loadProject(projectPath, patchPath,
+	m::StorageEngine::LoadState state = g_engine.getStorageEngine().loadProject(projectPath,
 	    [&progress](float v) { progress.setProgress(v); });
 
 	if (state.patch != G_FILE_OK)
@@ -116,7 +115,6 @@ void saveProject(void* data)
 
 	const std::string projectName = u::fs::stripExt(browser->getName());
 	const std::string projectPath = u::fs::join(browser->getCurrentPath(), projectName + ".gprj");
-	const std::string patchPath   = u::fs::join(projectPath, projectName + ".gptc");
 
 	if (projectName == "")
 	{
@@ -132,7 +130,7 @@ void saveProject(void* data)
 	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECT));
 	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
-	if (g_engine.getStorageEngine().storeProject(projectName, projectPath, patchPath, g_ui.getState(), engineProgress))
+	if (g_engine.getStorageEngine().storeProject(projectName, projectPath, g_ui.getState(), engineProgress))
 	{
 		g_ui.setMainWindowTitle(projectName);
 		browser->do_callback();

@@ -62,15 +62,14 @@ public:
 	/* storeProject
     Saves the current project. Returns true on success. */
 
-	bool storeProject(const std::string& projectName, const std::string& projectPath,
-	    const std::string& patchPath, const v::Ui::State&, std::function<void(float)> progress);
+	bool storeProject(const std::string& projectName, const std::string& projectPath, const v::Ui::State&,
+	    std::function<void(float)> progress);
 
 	/* loadProject
 	Loads a new project. Returns a LoadState object containing the operation
 	state. */
 
-	LoadState loadProject(const std::string& projectPath, const std::string& patchPath,
-	    std::function<void(float)> progress);
+	LoadState loadProject(const std::string& projectPath, std::function<void(float)> progress);
 
 private:
 	void      storePatch(const std::string& projectName, const v::Ui::State&);

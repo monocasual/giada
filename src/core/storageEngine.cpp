@@ -65,7 +65,7 @@ StorageEngine::StorageEngine(Engine& e, model::Model& m, Conf& c, Patch& p, Plug
 /* -------------------------------------------------------------------------- */
 
 bool StorageEngine::storeProject(const std::string& projectName, const std::string& projectPath,
-    const std::string& patchPath, const v::Ui::State& uiState, std::function<void(float)> progress)
+    const v::Ui::State& uiState, std::function<void(float)> progress)
 {
 	progress(0.0f);
 
@@ -94,6 +94,8 @@ bool StorageEngine::storeProject(const std::string& projectName, const std::stri
 
 	progress(0.6f);
 
+	const std::string patchPath = u::fs::join(projectPath, projectName + ".gptc");
+
 	if (!m_patch.write(patchPath))
 		return false;
 
@@ -111,8 +113,7 @@ bool StorageEngine::storeProject(const std::string& projectName, const std::stri
 
 /* -------------------------------------------------------------------------- */
 
-StorageEngine::LoadState StorageEngine::loadProject(const std::string& projectPath, const std::string& patchPath,
-    std::function<void(float)> progress)
+StorageEngine::LoadState StorageEngine::loadProject(const std::string& projectPath, std::function<void(float)> progress)
 {
 	u::log::print("[StorageEngine::loadProject] Load project from %s\n", projectPath);
 
@@ -123,6 +124,8 @@ StorageEngine::LoadState StorageEngine::loadProject(const std::string& projectPa
 	m_midiSynchronizer.stopSendClock();
 
 	/* Read the selected project's m_patch.data. */
+
+	const std::string patchPath = u::fs::join(projectPath, u::fs::stripExt(u::fs::basename(projectPath)) + ".gptc");
 
 	m_patch.reset();
 	if (int res = m_patch.read(patchPath, projectPath); res != G_FILE_OK)
@@ -176,6 +179,7 @@ StorageEngine::LoadState StorageEngine::loadProject(const std::string& projectPa
 
 void StorageEngine::storePatch(const std::string& projectName, const v::Ui::State& uiState)
 {
+	m_patch.data.columns.clear();
 	for (auto const& [id, width] : uiState.columns)
 		m_patch.data.columns.push_back({id, width});
 
