@@ -138,7 +138,7 @@ void ChannelsEngine::clone(ID channelId)
 
 	const Channel&             ch              = m_channelManager.getChannel(channelId);
 	const int                  bufferSize      = m_kernelAudio.getBufferSize();
-	const int                  patchSampleRate = m_engine.patch.data.samplerate;
+	const int                  patchSampleRate = m_engine.getPatch().samplerate;
 	const std::vector<Plugin*> plugins         = m_pluginManager.clonePlugins(ch.plugins, patchSampleRate, bufferSize, m_model);
 	const ID                   nextChannelId   = channelFactory::getNextId();
 

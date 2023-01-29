@@ -80,6 +80,11 @@ public:
 	int                              getSampleRate() const;
 	int                              getBufferSize() const;
 
+	/* getPatch
+	Returns a read-only reference to the current loaded Patch. */
+
+	const Patch::Data& getPatch() const;
+
 	/* updateMixerModel
 	Updates some values in model::Mixer data struct needed by m::Mixer for the
 	audio rendering. Call this whenever the audio configuration changes. */
@@ -164,7 +169,6 @@ public:
 	PluginHost&     getPluginHost();
 
 	Conf                   conf;
-	Patch                  patch;
 	MidiMapper<KernelMidi> midiMapper;
 
 private:
@@ -173,6 +177,7 @@ private:
 	void storeConfig();
 	void loadConfig();
 
+	Patch            m_patch;
 	model::Model     m_model;
 	KernelAudio      m_kernelAudio;
 	KernelMidi       m_kernelMidi;

@@ -100,7 +100,7 @@ void startup(int argc, char** argv)
 {
 	juce::initialiseJuce_GUI();
 	g_engine.init();
-	g_ui.init(argc, argv, g_engine.patch.data.name, g_engine.isAudioReady());
+	g_ui.init(argc, argv, g_engine.getPatch().name, g_engine.isAudioReady());
 
 	/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap
 	callback might be performed by a non-main thread, which must talk to the 

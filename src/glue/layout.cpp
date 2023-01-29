@@ -73,7 +73,7 @@ void openBrowserForProjectLoad()
 void openBrowserForProjectSave()
 {
 	v::gdWindow* childWin = new v::gdBrowserSave(g_ui.langMapper.get(v::LangMap::BROWSER_SAVEPROJECT),
-	    g_engine.conf.data.patchPath, g_engine.patch.data.name, c::storage::saveProject, 0, g_engine.conf.data);
+	    g_engine.conf.data.patchPath, g_engine.getPatch().name, c::storage::saveProject, 0, g_engine.conf.data);
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), childWin, WID_FILE_BROWSER);
 }
 

@@ -102,7 +102,7 @@ void loadProject(void* data)
 	if (!state.isGood())
 		layout::openMissingAssetsWindow(state);
 
-	g_ui.load(g_engine.patch.data);
+	g_ui.load(g_engine.getPatch());
 
 	browser->do_callback();
 }

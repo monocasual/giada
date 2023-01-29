@@ -49,7 +49,7 @@ Engine::Engine()
 , m_sampleEditorEngine(*this, m_model, m_channelManager)
 , m_actionEditorEngine(*this, m_model, m_sequencer, m_actionRecorder)
 , m_ioEngine(m_model, m_midiDispatcher, conf.data)
-, m_storageEngine(*this, m_model, conf, patch, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
+, m_storageEngine(*this, m_model, conf, m_patch, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
 {
 	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -116,7 +116,7 @@ Engine::Engine()
 			conf.data.inputRecMode = InputRecMode::RIGID;
 	};
 	m_channelManager.onChannelRecorded = [this](Frame recordedFrames) {
-		std::string filename = fmt::format("TAKE-{}.wav", patch.data.lastTakeId++);
+		std::string filename = fmt::format("TAKE-{}.wav", m_patch.data.lastTakeId++);
 		return waveFactory::createEmpty(recordedFrames, G_MAX_IO_CHANS, m_kernelAudio.getSampleRate(), filename);
 	};
 
@@ -197,6 +197,13 @@ int Engine::getSampleRate() const
 int Engine::getBufferSize() const
 {
 	return m_kernelAudio.getBufferSize();
+}
+
+/* -------------------------------------------------------------------------- */
+
+const Patch::Data& Engine::getPatch() const
+{
+	return m_patch.data;
 }
 
 /* -------------------------------------------------------------------------- */
