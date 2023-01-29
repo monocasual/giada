@@ -127,7 +127,7 @@ std::string stripExt(const std::string& s)
 bool isProject(const std::string& s)
 {
 	/** TODO - checks too weak. */
-	return getExt(s) == ".gprj";
+	return getExt(s) == G_PROJECT_EXT;
 }
 
 /* -------------------------------------------------------------------------- */

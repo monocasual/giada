@@ -182,6 +182,10 @@ constexpr int G_FILE_UNREADABLE    = -1;
 constexpr int G_FILE_INVALID       = 0;
 constexpr int G_FILE_OK            = 1;
 
+/* -- File system ----------------------------------------------------------- */
+constexpr auto G_PATCH_EXT   = ".gptc";
+constexpr auto G_PROJECT_EXT = ".gprj";
+
 /* -- MIDI in parameters (for MIDI learning) -------------------------------- */
 constexpr int G_MIDI_IN_ENABLED      = 1;
 constexpr int G_MIDI_IN_FILTER       = 2;

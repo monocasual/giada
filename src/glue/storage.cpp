@@ -114,7 +114,7 @@ void saveProject(void* data)
 	v::gdBrowserSave* browser = static_cast<v::gdBrowserSave*>(data);
 
 	const std::string projectName = u::fs::stripExt(browser->getName());
-	const std::string projectPath = u::fs::join(browser->getCurrentPath(), projectName + ".gprj");
+	const std::string projectPath = u::fs::join(browser->getCurrentPath(), projectName + G_PROJECT_EXT);
 
 	if (projectName == "")
 	{

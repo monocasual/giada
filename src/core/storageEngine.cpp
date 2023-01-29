@@ -94,7 +94,7 @@ bool StorageEngine::storeProject(const std::string& projectName, const std::stri
 
 	progress(0.6f);
 
-	const std::string patchPath = u::fs::join(projectPath, projectName + ".gptc");
+	const std::string patchPath = u::fs::join(projectPath, projectName + G_PATCH_EXT);
 
 	if (!m_patch.write(patchPath))
 		return false;
@@ -125,7 +125,7 @@ StorageEngine::LoadState StorageEngine::loadProject(const std::string& projectPa
 
 	/* Read the selected project's m_patch.data. */
 
-	const std::string patchPath = u::fs::join(projectPath, u::fs::stripExt(u::fs::basename(projectPath)) + ".gptc");
+	const std::string patchPath = u::fs::join(projectPath, u::fs::stripExt(u::fs::basename(projectPath)) + G_PATCH_EXT);
 
 	m_patch.reset();
 	if (int res = m_patch.read(patchPath, projectPath); res != G_FILE_OK)
