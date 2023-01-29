@@ -72,7 +72,7 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 , key(0)
 , hasActions(false)
 , height(G_GUI_UNIT)
-, midiLighter(g_engine.midiMapper)
+, midiLighter(g_engine.getMidiMapper())
 , m_mute(false)
 , m_solo(false)
 {
@@ -123,7 +123,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , height(p.height)
 , plugins(plugins)
 , midiLearner(p)
-, midiLighter(g_engine.midiMapper, p)
+, midiLighter(g_engine.getMidiMapper(), p)
 , m_mute(p.mute)
 , m_solo(p.solo)
 {
@@ -162,7 +162,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 /* -------------------------------------------------------------------------- */
 
 Channel::Channel(const Channel& other)
-: midiLighter(g_engine.midiMapper)
+: midiLighter(g_engine.getMidiMapper())
 {
 	*this = other;
 }

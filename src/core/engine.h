@@ -79,6 +79,7 @@ public:
 	std::vector<std::string>         getMidiInPorts() const;
 	int                              getSampleRate() const;
 	int                              getBufferSize() const;
+	const std::vector<std::string>&  getMidiMapFilesFound() const;
 
 	/* getPatch
 	Returns a read-only reference to the current loaded Patch. */
@@ -169,11 +170,10 @@ public:
 	Returns a reference to an internal. TODO - these methods will be removed with
 	new Channel rendering architecture */
 
-	KernelMidi&     getKernelMidi();
-	ActionRecorder& getActionRecorder();
-	PluginHost&     getPluginHost();
-
-	MidiMapper<KernelMidi> midiMapper;
+	KernelMidi&             getKernelMidi();
+	ActionRecorder&         getActionRecorder();
+	PluginHost&             getPluginHost();
+	MidiMapper<KernelMidi>& getMidiMapper();
 
 private:
 	int audioCallback(KernelAudio::CallbackInfo) const;
@@ -181,22 +181,23 @@ private:
 	void storeConfig();
 	void loadConfig();
 
-	Conf             m_conf;
-	Patch            m_patch;
-	model::Model     m_model;
-	KernelAudio      m_kernelAudio;
-	KernelMidi       m_kernelMidi;
-	PluginHost       m_pluginHost;
-	JackTransport    m_jackTransport;
-	MidiSynchronizer m_midiSynchronizer;
-	Sequencer        m_sequencer;
-	Mixer            m_mixer;
-	ChannelManager   m_channelManager;
-	ActionRecorder   m_actionRecorder;
-	Recorder         m_recorder;
-	PluginManager    m_pluginManager;
-	EventDispatcher  m_eventDispatcher;
-	MidiDispatcher   m_midiDispatcher;
+	Conf                   m_conf;
+	Patch                  m_patch;
+	model::Model           m_model;
+	KernelAudio            m_kernelAudio;
+	KernelMidi             m_kernelMidi;
+	MidiMapper<KernelMidi> m_midiMapper;
+	PluginHost             m_pluginHost;
+	JackTransport          m_jackTransport;
+	MidiSynchronizer       m_midiSynchronizer;
+	Sequencer              m_sequencer;
+	Mixer                  m_mixer;
+	ChannelManager         m_channelManager;
+	ActionRecorder         m_actionRecorder;
+	Recorder               m_recorder;
+	PluginManager          m_pluginManager;
+	EventDispatcher        m_eventDispatcher;
+	MidiDispatcher         m_midiDispatcher;
 #ifdef WITH_AUDIO_JACK
 	JackSynchronizer m_jackSynchronizer;
 #endif

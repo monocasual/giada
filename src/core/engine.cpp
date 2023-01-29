@@ -34,7 +34,7 @@
 namespace giada::m
 {
 Engine::Engine()
-: midiMapper(m_kernelMidi)
+: m_midiMapper(m_kernelMidi)
 , m_pluginHost(m_model)
 , m_midiSynchronizer(m_conf.data, m_kernelMidi)
 , m_sequencer(m_model, m_midiSynchronizer, m_jackTransport)
@@ -201,6 +201,13 @@ int Engine::getBufferSize() const
 
 /* -------------------------------------------------------------------------- */
 
+const std::vector<std::string>& Engine::getMidiMapFilesFound() const
+{
+	return m_midiMapper.getMapFilesFound();
+}
+
+/* -------------------------------------------------------------------------- */
+
 const Patch::Data& Engine::getPatch() const
 {
 	return m_patch.data;
@@ -244,8 +251,8 @@ void Engine::init()
 
 	init::printBuildInfo();
 
-	midiMapper.init();
-	if (midiMapper.read(m_conf.data.midiMapPath) != G_FILE_OK)
+	m_midiMapper.init();
+	if (m_midiMapper.read(m_conf.data.midiMapPath) != G_FILE_OK)
 		u::log::print("[Engine::init] MIDI map read failed!\n");
 
 	/* Initialize KernelAudio. If fails, interrupt the Engine initialization:
@@ -274,7 +281,7 @@ void Engine::init()
 	m_kernelMidi.logPorts();
 	m_kernelMidi.start();
 
-	midiMapper.sendInitMessages(midiMapper.currentMap);
+	m_midiMapper.sendInitMessages(m_midiMapper.currentMap);
 	m_eventDispatcher.start();
 	m_midiSynchronizer.startSendClock(G_DEFAULT_BPM);
 
@@ -472,7 +479,8 @@ StorageEngine&      Engine::getStorageEngine() { return m_storageEngine; }
 
 /* -------------------------------------------------------------------------- */
 
-KernelMidi&     Engine::getKernelMidi() { return m_kernelMidi; }
-ActionRecorder& Engine::getActionRecorder() { return m_actionRecorder; }
-PluginHost&     Engine::getPluginHost() { return m_pluginHost; }
+KernelMidi&             Engine::getKernelMidi() { return m_kernelMidi; }
+ActionRecorder&         Engine::getActionRecorder() { return m_actionRecorder; }
+PluginHost&             Engine::getPluginHost() { return m_pluginHost; }
+MidiMapper<KernelMidi>& Engine::getMidiMapper() { return m_midiMapper; }
 } // namespace giada::m
