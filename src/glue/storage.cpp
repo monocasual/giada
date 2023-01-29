@@ -88,10 +88,10 @@ void loadProject(void* data)
 
 	g_ui.closeAllSubwindows();
 
-	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
+	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
+	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
-	m::StorageEngine::LoadState state = g_engine.getStorageEngine().loadProject(projectPath,
-	    [&progress](float v) { progress.setProgress(v); });
+	m::StorageEngine::LoadState state = g_engine.getStorageEngine().loadProject(projectPath, engineProgress);
 
 	if (state.patch != G_FILE_OK)
 	{
