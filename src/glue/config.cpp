@@ -142,11 +142,11 @@ AudioData getAudioData()
 	audioData.recTriggerLevel = g_engine.getConf().recTriggerLevel;
 	audioData.resampleQuality = static_cast<int>(g_engine.getConf().rsmpQuality);
 	audioData.outputDevice    = getAudioDeviceData_(DeviceType::OUTPUT,
-	       g_engine.getConf().soundDeviceOut, g_engine.getConf().channelsOutCount,
-	       g_engine.getConf().channelsOutStart);
+        g_engine.getConf().soundDeviceOut, g_engine.getConf().channelsOutCount,
+        g_engine.getConf().channelsOutStart);
 	audioData.inputDevice     = getAudioDeviceData_(DeviceType::INPUT,
-	        g_engine.getConf().soundDeviceIn, g_engine.getConf().channelsInCount,
-	        g_engine.getConf().channelsInStart);
+        g_engine.getConf().soundDeviceIn, g_engine.getConf().channelsInCount,
+        g_engine.getConf().channelsInStart);
 
 	return audioData;
 }
@@ -200,7 +200,7 @@ MiscData getMiscData()
 	MiscData miscData;
 	miscData.logMode      = g_engine.getConf().logMode;
 	miscData.showTooltips = g_engine.getConf().showTooltips;
-	miscData.langMaps     = g_ui.langMapper.getMapFilesFound();
+	miscData.langMaps     = g_ui.getLangMapFilesFound();
 	miscData.langMap      = g_engine.getConf().langMap;
 	miscData.uiScaling    = g_engine.getConf().uiScaling;
 	return miscData;
@@ -268,7 +268,7 @@ void setPluginPathCb(void* data)
 
 	if (browser->getCurrentPath() == "")
 	{
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::CONFIG_PLUGINS_INVALIDPATH));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::CONFIG_PLUGINS_INVALIDPATH));
 		return;
 	}
 

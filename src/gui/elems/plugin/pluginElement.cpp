@@ -86,7 +86,7 @@ gePluginElement::gePluginElement(int x, int y, int w, int h, c::plugin::Plugin d
 
 	if (program->countItems() == 0)
 	{
-		program->addItem(g_ui.langMapper.get(LangMap::PLUGINLIST_NOPROGRAMS));
+		program->addItem(g_ui.getI18Text(LangMap::PLUGINLIST_NOPROGRAMS));
 		program->showItem(0);
 		program->deactivate();
 	}

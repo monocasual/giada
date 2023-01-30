@@ -91,12 +91,12 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 	add(vol, G_GUI_UNIT);
 	end();
 
-	playButton->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_PLAY));
-	arm->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_ARM));
-	mute->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_MUTE));
-	solo->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_SOLO));
-	fx->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_FX));
-	vol->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
+	playButton->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_PLAY));
+	arm->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_ARM));
+	mute->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_MUTE));
+	solo->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_SOLO));
+	fx->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_FX));
+	vol->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
 
 	fx->setValue(m_channel.plugins.size() > 0);
 	fx->onClick = [this]() {
@@ -137,15 +137,15 @@ void geMidiChannel::openMenu()
 {
 	geMenu menu;
 
-	menu.addItem((ID)Menu::EDIT_ACTIONS, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EDITACTIONS));
-	menu.addItem((ID)Menu::CLEAR_ACTIONS, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS));
-	menu.addItem((ID)Menu::SETUP_KEYBOARD_INPUT, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT));
-	menu.addItem((ID)Menu::SETUP_MIDI_INPUT, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
-	menu.addItem((ID)Menu::SETUP_MIDI_OUTPUT, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT));
-	menu.addItem((ID)Menu::EDIT_ROUTING, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
-	menu.addItem((ID)Menu::RENAME_CHANNEL, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_RENAME));
-	menu.addItem((ID)Menu::CLONE_CHANNEL, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_CLONE));
-	menu.addItem((ID)Menu::DELETE_CHANNEL, g_ui.langMapper.get(LangMap::MAIN_CHANNEL_MENU_DELETE));
+	menu.addItem((ID)Menu::EDIT_ACTIONS, g_ui.getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITACTIONS));
+	menu.addItem((ID)Menu::CLEAR_ACTIONS, g_ui.getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS));
+	menu.addItem((ID)Menu::SETUP_KEYBOARD_INPUT, g_ui.getI18Text(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT));
+	menu.addItem((ID)Menu::SETUP_MIDI_INPUT, g_ui.getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
+	menu.addItem((ID)Menu::SETUP_MIDI_OUTPUT, g_ui.getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT));
+	menu.addItem((ID)Menu::EDIT_ROUTING, g_ui.getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
+	menu.addItem((ID)Menu::RENAME_CHANNEL, g_ui.getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME));
+	menu.addItem((ID)Menu::CLONE_CHANNEL, g_ui.getI18Text(LangMap::MAIN_CHANNEL_MENU_CLONE));
+	menu.addItem((ID)Menu::DELETE_CHANNEL, g_ui.getI18Text(LangMap::MAIN_CHANNEL_MENU_DELETE));
 
 	if (!m_data.hasActions)
 		menu.setEnabled((ID)Menu::CLEAR_ACTIONS, false);

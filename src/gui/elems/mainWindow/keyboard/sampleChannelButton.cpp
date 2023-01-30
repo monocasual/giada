@@ -45,10 +45,10 @@ geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h, const c
 	{
 	case ChannelStatus::MISSING:
 	case ChannelStatus::WRONG:
-		label(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_SAMPLENOTFOUND));
+		label(g_ui.getI18Text(LangMap::MAIN_CHANNEL_SAMPLENOTFOUND));
 		break;
 	default:
-		label(m_channel.sample->waveId == 0 ? g_ui.langMapper.get(LangMap::MAIN_CHANNEL_NOSAMPLE) : m_channel.name.c_str());
+		label(m_channel.sample->waveId == 0 ? g_ui.getI18Text(LangMap::MAIN_CHANNEL_NOSAMPLE) : m_channel.name.c_str());
 		break;
 	}
 }

@@ -41,9 +41,9 @@ geLightningLearnerPack::geLightningLearnerPack(int x, int y, ID channelId)
 	setCallbacks(
 	    [channelId](int param) { c::io::channel_startMidiLearn(param, channelId); },
 	    [channelId](int param) { c::io::channel_clearMidiLearn(param, channelId); });
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIOUTPUT_CHANNEL_LEARN_PLAYING), G_MIDI_OUT_L_PLAYING);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIOUTPUT_CHANNEL_LEARN_MUTE), G_MIDI_OUT_L_MUTE);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIOUTPUT_CHANNEL_LEARN_SOLO), G_MIDI_OUT_L_SOLO);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_LEARN_PLAYING), G_MIDI_OUT_L_PLAYING);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_LEARN_MUTE), G_MIDI_OUT_L_MUTE);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_LEARN_SOLO), G_MIDI_OUT_L_SOLO);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -61,7 +61,7 @@ void geLightningLearnerPack::update(const c::io::Channel_OutputData& d)
 /* -------------------------------------------------------------------------- */
 
 gdMidiOutputBase::gdMidiOutputBase(int w, int h, ID channelId)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, w, h}), g_ui.langMapper.get(LangMap::MIDIOUTPUT_CHANNEL_TITLE))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, w, h}), g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_TITLE))
 , m_channelId(channelId)
 {
 }

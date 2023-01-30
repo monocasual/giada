@@ -68,10 +68,10 @@ enum class EditMenu
 geMainMenu::geMainMenu()
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
-	geTextButton* file   = new geTextButton(g_ui.langMapper.get(LangMap::MAIN_MENU_FILE));
-	geTextButton* edit   = new geTextButton(g_ui.langMapper.get(LangMap::MAIN_MENU_EDIT));
-	geTextButton* config = new geTextButton(g_ui.langMapper.get(LangMap::MAIN_MENU_CONFIG));
-	geTextButton* about  = new geTextButton(g_ui.langMapper.get(LangMap::MAIN_MENU_ABOUT));
+	geTextButton* file   = new geTextButton(g_ui.getI18Text(LangMap::MAIN_MENU_FILE));
+	geTextButton* edit   = new geTextButton(g_ui.getI18Text(LangMap::MAIN_MENU_EDIT));
+	geTextButton* config = new geTextButton(g_ui.getI18Text(LangMap::MAIN_MENU_CONFIG));
+	geTextButton* about  = new geTextButton(g_ui.getI18Text(LangMap::MAIN_MENU_ABOUT));
 	add(file, 80);
 	add(edit, 80);
 	add(config, 80);
@@ -90,13 +90,13 @@ void geMainMenu::cb_file()
 {
 	geMenu menu;
 
-	menu.addItem((ID)FileMenu::OPEN_PROJECT, g_ui.langMapper.get(LangMap::MAIN_MENU_FILE_OPENPROJECT));
-	menu.addItem((ID)FileMenu::SAVE_PROJECT, g_ui.langMapper.get(LangMap::MAIN_MENU_FILE_SAVEPROJECT));
-	menu.addItem((ID)FileMenu::CLOSE_PROJECT, g_ui.langMapper.get(LangMap::MAIN_MENU_FILE_CLOSEPROJECT));
+	menu.addItem((ID)FileMenu::OPEN_PROJECT, g_ui.getI18Text(LangMap::MAIN_MENU_FILE_OPENPROJECT));
+	menu.addItem((ID)FileMenu::SAVE_PROJECT, g_ui.getI18Text(LangMap::MAIN_MENU_FILE_SAVEPROJECT));
+	menu.addItem((ID)FileMenu::CLOSE_PROJECT, g_ui.getI18Text(LangMap::MAIN_MENU_FILE_CLOSEPROJECT));
 #ifdef G_DEBUG_MODE
 	menu.addItem((ID)FileMenu::DEBUG_STATS, "Debug stats");
 #endif
-	menu.addItem((ID)FileMenu::QUIT, g_ui.langMapper.get(LangMap::MAIN_MENU_FILE_QUIT));
+	menu.addItem((ID)FileMenu::QUIT, g_ui.getI18Text(LangMap::MAIN_MENU_FILE_QUIT));
 
 	menu.onSelect = [](ID id) {
 		switch (static_cast<FileMenu>(id))
@@ -131,9 +131,9 @@ void geMainMenu::cb_edit()
 	c::main::MainMenu menuData = c::main::getMainMenu();
 	geMenu            menu;
 
-	menu.addItem((ID)EditMenu::FREE_SAMPLE_CHANNELS, g_ui.langMapper.get(LangMap::MAIN_MENU_EDIT_FREEALLSAMPLES));
-	menu.addItem((ID)EditMenu::CLEAR_ALL_ACTIONS, g_ui.langMapper.get(LangMap::MAIN_MENU_EDIT_CLEARALLACTIONS));
-	menu.addItem((ID)EditMenu::SETUP_MIDI_INPUT, g_ui.langMapper.get(LangMap::MAIN_MENU_EDIT_SETUPMIDIINPUT));
+	menu.addItem((ID)EditMenu::FREE_SAMPLE_CHANNELS, g_ui.getI18Text(LangMap::MAIN_MENU_EDIT_FREEALLSAMPLES));
+	menu.addItem((ID)EditMenu::CLEAR_ALL_ACTIONS, g_ui.getI18Text(LangMap::MAIN_MENU_EDIT_CLEARALLACTIONS));
+	menu.addItem((ID)EditMenu::SETUP_MIDI_INPUT, g_ui.getI18Text(LangMap::MAIN_MENU_EDIT_SETUPMIDIINPUT));
 
 	menu.setEnabled((ID)EditMenu::FREE_SAMPLE_CHANNELS, menuData.hasAudioData);
 	menu.setEnabled((ID)EditMenu::CLEAR_ALL_ACTIONS, menuData.hasActions);

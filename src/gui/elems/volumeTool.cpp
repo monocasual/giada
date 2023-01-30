@@ -44,9 +44,9 @@ geVolumeTool::geVolumeTool(ID channelId, float volume, int labelWidth)
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , m_channelId(channelId)
 {
-	m_input = new geInput(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_VOLUME), labelWidth);
+	m_input = new geInput(g_ui.getI18Text(LangMap::SAMPLEEDITOR_VOLUME), labelWidth);
 	m_dial  = new geDial();
-	m_reset = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_RESET));
+	m_reset = new geTextButton(g_ui.getI18Text(LangMap::COMMON_RESET));
 	add(m_input);
 	add(m_dial, G_GUI_UNIT);
 	add(m_reset, 70);

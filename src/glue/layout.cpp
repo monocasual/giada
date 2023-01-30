@@ -63,7 +63,7 @@ namespace giada::c::layout
 {
 void openBrowserForProjectLoad()
 {
-	v::gdWindow* childWin = new v::gdBrowserLoad(g_ui.langMapper.get(v::LangMap::BROWSER_OPENPROJECT),
+	v::gdWindow* childWin = new v::gdBrowserLoad(g_ui.getI18Text(v::LangMap::BROWSER_OPENPROJECT),
 	    g_engine.getConf().patchPath, c::storage::loadProject, 0, g_engine.getConf());
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), childWin, WID_FILE_BROWSER);
 }
@@ -72,7 +72,7 @@ void openBrowserForProjectLoad()
 
 void openBrowserForProjectSave()
 {
-	v::gdWindow* childWin = new v::gdBrowserSave(g_ui.langMapper.get(v::LangMap::BROWSER_SAVEPROJECT),
+	v::gdWindow* childWin = new v::gdBrowserSave(g_ui.getI18Text(v::LangMap::BROWSER_SAVEPROJECT),
 	    g_engine.getConf().patchPath, g_engine.getPatch().name, c::storage::saveProject, 0, g_engine.getConf());
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), childWin, WID_FILE_BROWSER);
 }
@@ -81,7 +81,7 @@ void openBrowserForProjectSave()
 
 void openBrowserForSampleLoad(ID channelId)
 {
-	v::gdWindow* w = new v::gdBrowserLoad(g_ui.langMapper.get(v::LangMap::BROWSER_OPENSAMPLE),
+	v::gdWindow* w = new v::gdBrowserLoad(g_ui.getI18Text(v::LangMap::BROWSER_OPENSAMPLE),
 	    g_engine.getConf().samplePath.c_str(), c::storage::loadSample, channelId, g_engine.getConf());
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), w, WID_FILE_BROWSER);
 }
@@ -90,7 +90,7 @@ void openBrowserForSampleLoad(ID channelId)
 
 void openBrowserForSampleSave(ID channelId)
 {
-	v::gdWindow* w = new v::gdBrowserSave(g_ui.langMapper.get(v::LangMap::BROWSER_SAVESAMPLE),
+	v::gdWindow* w = new v::gdBrowserSave(g_ui.getI18Text(v::LangMap::BROWSER_SAVESAMPLE),
 	    g_engine.getConf().samplePath.c_str(), "", c::storage::saveSample, channelId, g_engine.getConf());
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), w, WID_FILE_BROWSER);
 }
@@ -215,7 +215,7 @@ void openMissingAssetsWindow(const m::StorageApi::LoadState& state)
 
 void openBrowserForPlugins(v::gdWindow& parent)
 {
-	v::gdBrowserDir* browser = new v::gdBrowserDir(g_ui.langMapper.get(v::LangMap::BROWSER_OPENPLUGINSDIR),
+	v::gdBrowserDir* browser = new v::gdBrowserDir(g_ui.getI18Text(v::LangMap::BROWSER_OPENPLUGINSDIR),
 	    g_engine.getConf().patchPath, c::config::setPluginPathCb, g_engine.getConf());
 	parent.addSubWindow(browser);
 }

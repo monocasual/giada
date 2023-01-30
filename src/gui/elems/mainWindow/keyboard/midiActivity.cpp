@@ -78,6 +78,6 @@ geMidiActivity::geMidiActivity()
 	add(in);
 	end();
 
-	copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_CHANNEL_LABEL_MIDIACTIVITY));
+	copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_MIDIACTIVITY));
 }
 } // namespace giada::v

@@ -76,13 +76,13 @@ namespace
 void printLoadError_(int res)
 {
 	if (res == G_RES_ERR_WRONG_DATA)
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_MULTICHANNOTSUPPORTED));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_CHANNEL_MULTICHANNOTSUPPORTED));
 	else if (res == G_RES_ERR_IO)
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_CANTREADSAMPLE));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_CHANNEL_CANTREADSAMPLE));
 	else if (res == G_RES_ERR_PATH_TOO_LONG)
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_PATHTOOLONG));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_CHANNEL_PATHTOOLONG));
 	else if (res == G_RES_ERR_NO_DATA)
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_NOFILESPECIFIED));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_CHANNEL_NOFILESPECIFIED));
 }
 } // namespace
 
@@ -160,8 +160,7 @@ std::vector<Data> getChannels()
 		if (!ch.isInternal())
 			out.push_back(Data(ch));
 
-	std::sort(out.begin(), out.end(), [](const Data& a, const Data& b)
-	    { return a.position < b.position; });
+	std::sort(out.begin(), out.end(), [](const Data& a, const Data& b) { return a.position < b.position; });
 
 	return out;
 }
@@ -170,7 +169,7 @@ std::vector<Data> getChannels()
 
 void loadChannel(ID channelId, const std::string& fname)
 {
-	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
+	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.getI18Text(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
 
 	int res = g_engine.getChannelsApi().loadSampleChannel(channelId, fname);
 	if (res != G_RES_OK)
@@ -191,7 +190,7 @@ void addChannel(ID columnId, ChannelType type)
 
 void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 {
-	auto progress      = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
+	auto progress      = g_ui.mainWindow->getScopedProgress(g_ui.getI18Text(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
 	auto channelEngine = g_engine.getChannelsApi();
 
 	int  i      = 0;
@@ -207,14 +206,14 @@ void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 	}
 
 	if (errors)
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLESERROR));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLESERROR));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void deleteChannel(ID channelId)
 {
-	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING), g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_DELETE)))
+	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING), g_ui.getI18Text(v::LangMap::MESSAGE_CHANNEL_DELETE)))
 		return;
 	g_ui.closeAllSubwindows();
 	g_engine.getChannelsApi().remove(channelId);
@@ -224,7 +223,7 @@ void deleteChannel(ID channelId)
 
 void freeChannel(ID channelId)
 {
-	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING), g_ui.langMapper.get(v::LangMap::MESSAGE_CHANNEL_FREE)))
+	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING), g_ui.getI18Text(v::LangMap::MESSAGE_CHANNEL_FREE)))
 		return;
 	g_ui.closeAllSubwindows();
 	g_engine.getChannelsApi().freeSampleChannel(channelId);
@@ -284,8 +283,8 @@ void setName(ID channelId, const std::string& name)
 
 void clearAllActions(ID channelId)
 {
-	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
-	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
+	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
+	        g_ui.getI18Text(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
 		return;
 
 	g_engine.getChannelsApi().clearAllActions(channelId);
@@ -296,10 +295,8 @@ void clearAllActions(ID channelId)
 
 void setCallbacks(m::Channel& ch)
 {
-	auto onSendMidiCb = [channelId = ch.id]()
-	{
-		g_ui.pumpEvent([channelId]()
-		    { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); });
+	auto onSendMidiCb = [channelId = ch.id]() {
+		g_ui.pumpEvent([channelId]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); });
 	};
 
 	ch.midiLighter.onSend = onSendMidiCb;

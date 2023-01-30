@@ -62,6 +62,16 @@ public:
 
 	float getScaling() const;
 
+	/* getI18Text
+	Returns the localized string, given a langmap key. */
+
+	const char* getI18Text(const std::string&) const;
+
+	/* getLangMapFilesFound
+	Returns a list of all langmaps found in the system. */
+
+	const std::vector<std::string>& getLangMapFilesFound() const;
+
 	/* load
 	Reads UI information from a Patch when a new project has been loaded. */
 
@@ -131,7 +141,6 @@ public:
 
 	std::unique_ptr<gdMainWindow> mainWindow;
 	Dispatcher                    dispatcher;
-	LangMapper                    langMapper;
 
 private:
 	static constexpr int BLINK_RATE = G_GUI_FPS / 2;
@@ -147,8 +156,9 @@ private:
 
 	m::Conf::Data& m_conf;
 
-	Updater m_updater;
-	int     m_blinker;
+	LangMapper m_langMapper;
+	Updater    m_updater;
+	int        m_blinker;
 };
 } // namespace giada::v
 

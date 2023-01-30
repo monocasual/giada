@@ -48,7 +48,7 @@ geTabAudio::geDeviceMenu::geDeviceMenu(const char* l, const std::vector<c::confi
 {
 	if (devices.size() == 0)
 	{
-		addItem(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_NODEVICESFOUND), 0);
+		addItem(g_ui.getI18Text(LangMap::CONFIG_AUDIO_NODEVICESFOUND), 0);
 		showItem(0);
 		return;
 	}
@@ -91,7 +91,7 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 
 	if (m_data.index == -1)
 	{
-		addItem(g_ui.langMapper.get(LangMap::COMMON_NONE), 0);
+		addItem(g_ui.getI18Text(LangMap::COMMON_NONE), 0);
 		showItem(0);
 		return;
 	}
@@ -116,7 +116,7 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 /* -------------------------------------------------------------------------- */
 
 geTabAudio::geTabAudio(geompp::Rect<int> bounds)
-: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.langMapper.get(LangMap::CONFIG_AUDIO_TITLE))
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.getI18Text(LangMap::CONFIG_AUDIO_TITLE))
 , m_data(c::config::getAudioData())
 , m_initialApi(m_data.api)
 {
@@ -124,24 +124,24 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		soundsys = new geChoice(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_SYSTEM), LABEL_WIDTH);
+		soundsys = new geChoice(g_ui.getI18Text(LangMap::CONFIG_AUDIO_SYSTEM), LABEL_WIDTH);
 
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			buffersize = new geChoice(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_BUFFERSIZE), LABEL_WIDTH);
-			samplerate = new geChoice(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_SAMPLERATE), LABEL_WIDTH);
+			buffersize = new geChoice(g_ui.getI18Text(LangMap::CONFIG_AUDIO_BUFFERSIZE), LABEL_WIDTH);
+			samplerate = new geChoice(g_ui.getI18Text(LangMap::CONFIG_AUDIO_SAMPLERATE), LABEL_WIDTH);
 
 			line1->add(buffersize, 180);
 			line1->add(samplerate, 180);
 			line1->end();
 		}
 
-		sounddevOut = new geDeviceMenu(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_OUTPUTDEVICE), m_data.outputDevices);
+		sounddevOut = new geDeviceMenu(g_ui.getI18Text(LangMap::CONFIG_AUDIO_OUTPUTDEVICE), m_data.outputDevices);
 
 		geFlex* line2 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			channelsOut = new geChannelMenu(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_OUTPUTCHANNELS), m_data.outputDevice);
-			limitOutput = new geCheck(x() + 177, y() + 93, 100, 20, g_ui.langMapper.get(LangMap::CONFIG_AUDIO_LIMITOUTPUT));
+			channelsOut = new geChannelMenu(g_ui.getI18Text(LangMap::CONFIG_AUDIO_OUTPUTCHANNELS), m_data.outputDevice);
+			limitOutput = new geCheck(x() + 177, y() + 93, 100, 20, g_ui.getI18Text(LangMap::CONFIG_AUDIO_LIMITOUTPUT));
 
 			line2->add(channelsOut, 180);
 			line2->add(limitOutput);
@@ -150,7 +150,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 		geFlex* line3 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			sounddevIn = new geDeviceMenu(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_INPUTDEVICE), m_data.inputDevices);
+			sounddevIn = new geDeviceMenu(g_ui.getI18Text(LangMap::CONFIG_AUDIO_INPUTDEVICE), m_data.inputDevices);
 			enableIn   = new geCheck(0, 0, 0, 0);
 
 			line3->add(sounddevIn);
@@ -160,15 +160,15 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 		geFlex* line4 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			channelsIn      = new geChannelMenu(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_INPUTCHANNELS), m_data.inputDevice);
-			recTriggerLevel = new geInput(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_RECTHRESHOLD), 120);
+			channelsIn      = new geChannelMenu(g_ui.getI18Text(LangMap::CONFIG_AUDIO_INPUTCHANNELS), m_data.inputDevice);
+			recTriggerLevel = new geInput(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RECTHRESHOLD), 120);
 
 			line4->add(channelsIn, 180);
 			line4->add(recTriggerLevel, 180);
 			line4->end();
 		}
 
-		rsmpQuality = new geChoice(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_RESAMPLING), LABEL_WIDTH);
+		rsmpQuality = new geChoice(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING), LABEL_WIDTH);
 
 		body->add(soundsys, 20);
 		body->add(line1, 20);
@@ -177,7 +177,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 		body->add(line3, 20);
 		body->add(line4, 20);
 		body->add(rsmpQuality, 20);
-		body->add(new geBox(g_ui.langMapper.get(LangMap::CONFIG_RESTARTGIADA)));
+		body->add(new geBox(g_ui.getI18Text(LangMap::CONFIG_RESTARTGIADA)));
 		body->end();
 	}
 
@@ -200,7 +200,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	sounddevIn->showItem(m_data.inputDevice.index);
 	sounddevIn->onChange = [this](ID id) { m_data.setInputDevice(id); fetch(); };
 
-	enableIn->copy_tooltip(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_ENABLEINPUT));
+	enableIn->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_AUDIO_ENABLEINPUT));
 	enableIn->value(m_data.inputDevice.index != -1);
 	enableIn->onChange = [this](bool b) { m_data.setInputDevice(b ? 0 : -1); fetch(); };
 
@@ -230,11 +230,11 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	buffersize->showItem(m_data.bufferSize);
 	buffersize->onChange = [this](ID id) { m_data.bufferSize = id; };
 
-	rsmpQuality->addItem(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_RESAMPLING_SINCBEST), 0);
-	rsmpQuality->addItem(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_RESAMPLING_SINCMEDIUM), 1);
-	rsmpQuality->addItem(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_RESAMPLING_SINCBASIC), 2);
-	rsmpQuality->addItem(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_RESAMPLING_ZEROORDER), 3);
-	rsmpQuality->addItem(g_ui.langMapper.get(LangMap::CONFIG_AUDIO_RESAMPLING_LINEAR), 4);
+	rsmpQuality->addItem(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCBEST), 0);
+	rsmpQuality->addItem(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCMEDIUM), 1);
+	rsmpQuality->addItem(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCBASIC), 2);
+	rsmpQuality->addItem(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_ZEROORDER), 3);
+	rsmpQuality->addItem(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_LINEAR), 4);
 	rsmpQuality->showItem(m_data.resampleQuality);
 	rsmpQuality->onChange = [this](ID id) { m_data.resampleQuality = id; };
 

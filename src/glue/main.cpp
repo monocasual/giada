@@ -178,8 +178,8 @@ void quantize(int val)
 
 void clearAllSamples()
 {
-	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
-	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_FREEALLSAMPLES)))
+	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
+	        g_ui.getI18Text(v::LangMap::MESSAGE_MAIN_FREEALLSAMPLES)))
 		return;
 
 	g_ui.closeSubWindow(WID_SAMPLE_EDITOR);
@@ -190,8 +190,8 @@ void clearAllSamples()
 
 void clearAllActions()
 {
-	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
-	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
+	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
+	        g_ui.getI18Text(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
 		return;
 
 	g_ui.closeSubWindow(WID_ACTION_EDITOR);
@@ -234,8 +234,8 @@ void printDebugInfo()
 
 void closeProject()
 {
-	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
-	        g_ui.langMapper.get(v::LangMap::MESSAGE_MAIN_CLOSEPROJECT)))
+	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
+	        g_ui.getI18Text(v::LangMap::MESSAGE_MAIN_CLOSEPROJECT)))
 		return;
 
 	g_ui.stopUpdater();
@@ -250,8 +250,8 @@ void closeProject()
 
 void quitGiada()
 {
-	if (!v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
-	        g_ui.langMapper.get(v::LangMap::MESSAGE_INIT_QUITGIADA)))
+	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
+	        g_ui.getI18Text(v::LangMap::MESSAGE_INIT_QUITGIADA)))
 		return;
 
 	m::init::shutdown();

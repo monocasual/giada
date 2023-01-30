@@ -49,7 +49,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
-: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.langMapper.get(LangMap::CONFIG_PLUGINS_TITLE))
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.getI18Text(LangMap::CONFIG_PLUGINS_TITLE))
 {
 	end();
 
@@ -57,7 +57,7 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 	{
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_folderPath = new geInput(g_ui.langMapper.get(LangMap::CONFIG_PLUGINS_FOLDER));
+			m_folderPath = new geInput(g_ui.getI18Text(LangMap::CONFIG_PLUGINS_FOLDER));
 			m_browse     = new geImageButton(graphics::plusOff, graphics::plusOn);
 
 			line1->add(m_folderPath);
@@ -89,7 +89,7 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 
 	m_scanButton->onClick = [this]() {
 		std::function<void(float)> callback = [this](float progress) {
-			std::string l = fmt::format(g_ui.langMapper.get(LangMap::CONFIG_PLUGINS_SCANNING), static_cast<int>(progress * 100));
+			std::string l = fmt::format(g_ui.getI18Text(LangMap::CONFIG_PLUGINS_SCANNING), static_cast<int>(progress * 100));
 			m_info->label(l.c_str());
 			Fl::wait();
 		};
@@ -109,7 +109,7 @@ void geTabPlugins::rebuild()
 {
 	m_data = c::config::getPluginData();
 
-	const std::string scanLabel = fmt::format(g_ui.langMapper.get(LangMap::CONFIG_PLUGINS_SCAN), m_data.numAvailablePlugins);
+	const std::string scanLabel = fmt::format(g_ui.getI18Text(LangMap::CONFIG_PLUGINS_SCAN), m_data.numAvailablePlugins);
 	m_scanButton->copy_label(scanLabel.c_str());
 
 	m_folderPath->setValue(m_data.pluginPath);

@@ -40,7 +40,7 @@ namespace giada::v
 geSequencer::geSequencer()
 : geBox()
 {
-	copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_SEQUENCER_LABEL));
+	copy_tooltip(g_ui.getI18Text(LangMap::MAIN_SEQUENCER_LABEL));
 }
 
 /* -------------------------------------------------------------------------- */

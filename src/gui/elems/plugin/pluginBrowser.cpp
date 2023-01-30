@@ -75,7 +75,7 @@ void gePluginBrowser::refresh()
 {
 	clear();
 
-	add(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_HEADER));
+	add(g_ui.getI18Text(LangMap::PLUGINCHOOSER_HEADER));
 	add("---\t---\t---\t---\t---");
 
 	for (m::PluginManager::PluginInfo pi : c::plugin::getPluginsInfo())

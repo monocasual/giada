@@ -60,7 +60,7 @@ void geVelocityEditor::draw()
 
 	fl_color(G_COLOR_GREY_4);
 	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-	fl_draw(g_ui.langMapper.get(LangMap::ACTIONEDITOR_VELOCITY), x() + 4, y(), w(), h(), FL_ALIGN_LEFT);
+	fl_draw(g_ui.getI18Text(LangMap::ACTIONEDITOR_VELOCITY), x() + 4, y(), w(), h(), FL_ALIGN_LEFT);
 
 	if (children() == 0)
 		return;

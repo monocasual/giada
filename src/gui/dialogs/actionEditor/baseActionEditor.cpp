@@ -50,7 +50,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
-: gdWindow(u::gui::getCenterWinBounds(conf.actionEditorBounds), g_ui.langMapper.get(LangMap::ACTIONEDITOR_TITLE))
+: gdWindow(u::gui::getCenterWinBounds(conf.actionEditorBounds), g_ui.getI18Text(LangMap::ACTIONEDITOR_TITLE))
 , channelId(channelId)
 , gridTool(new geGridTool(0, 0, conf))
 , m_zoomInBtn(new geImageButton(graphics::plusOff, graphics::plusOn))
@@ -60,10 +60,10 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
 , m_ratio(conf.actionEditorZoom)
 {
 	m_zoomInBtn->onClick = [this]() { zoomIn(); };
-	m_zoomInBtn->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMIN));
+	m_zoomInBtn->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_ZOOMIN));
 
 	m_zoomOutBtn->onClick = [this]() { zoomOut(); };
-	m_zoomOutBtn->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMOUT));
+	m_zoomOutBtn->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_ZOOMOUT));
 }
 
 /* -------------------------------------------------------------------------- */

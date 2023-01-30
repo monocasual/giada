@@ -68,7 +68,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
-: gdWindow(u::gui::getCenterWinBounds(c.sampleEditorBounds), g_ui.langMapper.get(LangMap::SAMPLEEDITOR_TITLE))
+: gdWindow(u::gui::getCenterWinBounds(c.sampleEditorBounds), g_ui.getI18Text(LangMap::SAMPLEEDITOR_TITLE))
 , m_channelId(channelId)
 , m_conf(c)
 {
@@ -76,9 +76,9 @@ gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
 	{
 		geFlex* top = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 		{
-			reload  = new geTextButton(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_RELOAD));
+			reload  = new geTextButton(g_ui.getI18Text(LangMap::SAMPLEEDITOR_RELOAD));
 			grid    = new geChoice();
-			snap    = new geCheck(0, 0, 0, 0, g_ui.langMapper.get(LangMap::COMMON_SNAPTOGRID));
+			snap    = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::COMMON_SNAPTOGRID));
 			zoomOut = new geImageButton(graphics::minusOff, graphics::minusOn);
 			zoomIn  = new geImageButton(graphics::plusOff, graphics::plusOn);
 			top->add(reload, 70);
@@ -99,7 +99,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
 			{
 				rewind = new geImageButton(graphics::rewindOff, graphics::rewindOn);
 				play   = new geImageButton(graphics::playOff, graphics::playOn);
-				loop   = new geCheck(0, 0, 0, 0, g_ui.langMapper.get(LangMap::SAMPLEEDITOR_LOOP));
+				loop   = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::SAMPLEEDITOR_LOOP));
 				controls->add(rewind, 25, {21, 0, 22, 0});
 				controls->add(play, 25, {21, 0, 22, 0});
 				controls->add(loop, -1, {21, 0, 22, 0});
@@ -148,7 +148,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
 	grid->addItem("16");
 	grid->addItem("32");
 	grid->addItem("64");
-	grid->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_GRIDRES));
+	grid->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_GRIDRES));
 	grid->showItem(m_conf.sampleEditorGridVal);
 	grid->onChange = [this](ID) {
 		/* TODO - redraw grid if != (off) */
@@ -156,18 +156,18 @@ gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
 	};
 
 	snap->value(m_conf.sampleEditorGridOn);
-	snap->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_SNAPTOGRID));
+	snap->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_SNAPTOGRID));
 	snap->onChange = [this](bool val) {
 		waveTools->waveform->setSnap(val);
 	};
 
-	zoomOut->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMOUT));
+	zoomOut->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_ZOOMOUT));
 	zoomOut->onClick = [this]() {
 		waveTools->waveform->setZoom(geWaveform::Zoom::OUT);
 		waveTools->redraw();
 	};
 
-	zoomIn->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_ZOOMIN));
+	zoomIn->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_ZOOMIN));
 	zoomIn->onClick = [this]() {
 		waveTools->waveform->setZoom(geWaveform::Zoom::IN);
 		waveTools->redraw();
@@ -230,7 +230,7 @@ void gdSampleEditor::refresh()
 
 void gdSampleEditor::updateInfo()
 {
-	std::string infoText = fmt::format(g_ui.langMapper.get(LangMap::SAMPLEEDITOR_INFO),
+	std::string infoText = fmt::format(g_ui.getI18Text(LangMap::SAMPLEEDITOR_INFO),
 	    m_data.wavePath, m_data.waveSize, m_data.waveDuration,
 	    m_data.waveBits != 0 ? std::to_string(m_data.waveBits) : "?", m_data.waveRate);
 

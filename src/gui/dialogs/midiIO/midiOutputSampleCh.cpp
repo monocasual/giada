@@ -42,13 +42,13 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 {
 	end();
 
-	m_enableLightning = new geCheck(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 120, 20, g_ui.langMapper.get(LangMap::MIDIOUTPUT_CHANNEL_ENABLE_LIGHTNING));
+	m_enableLightning = new geCheck(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 120, 20, g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_ENABLE_LIGHTNING));
 
 	m_learners = new geLightningLearnerPack(G_GUI_OUTER_MARGIN,
 	    m_enableLightning->y() + m_enableLightning->h() + 8, channelId);
 
 	m_close = new geTextButton(w() - 88, m_learners->y() + m_learners->h() + 8, 80, 20,
-	    g_ui.langMapper.get(LangMap::COMMON_CLOSE));
+	    g_ui.getI18Text(LangMap::COMMON_CLOSE));
 
 	add(m_enableLightning);
 	add(m_learners);

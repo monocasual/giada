@@ -56,18 +56,18 @@ geMainTimer::geMainTimer()
 	add(m_divider, G_GUI_UNIT);
 	end();
 
-	m_bpm->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TIMER_LABEL_BPM));
-	m_meter->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TIMER_LABEL_METER));
-	m_quantizer->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TIMER_LABEL_QUANTIZER));
-	m_multiplier->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TIMER_LABEL_MULTIPLIER));
-	m_divider->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TIMER_LABEL_DIVIDER));
+	m_bpm->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TIMER_LABEL_BPM));
+	m_meter->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TIMER_LABEL_METER));
+	m_quantizer->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TIMER_LABEL_QUANTIZER));
+	m_multiplier->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TIMER_LABEL_MULTIPLIER));
+	m_divider->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TIMER_LABEL_DIVIDER));
 
 	m_bpm->onClick        = [&bpm = m_bpm]() { c::layout::openBpmWindow(bpm->label()); };
 	m_meter->onClick      = [&timer = m_timer]() { c::layout::openBeatsWindow(timer.beats, timer.bars); };
 	m_multiplier->onClick = []() { c::events::multiplyBeats(); };
 	m_divider->onClick    = []() { c::events::divideBeats(); };
 
-	m_quantizer->addItem(g_ui.langMapper.get(LangMap::COMMON_OFF));
+	m_quantizer->addItem(g_ui.getI18Text(LangMap::COMMON_OFF));
 	m_quantizer->addItem("1\\/1");
 	m_quantizer->addItem("1\\/2");
 	m_quantizer->addItem("1\\/3");

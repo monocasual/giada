@@ -55,7 +55,7 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 	{
 		geFlex* header = new geFlex(Direction::HORIZONTAL);
 		{
-			hiddenFiles = new geCheck(0, 0, 0, 0, g_ui.langMapper.get(LangMap::BROWSER_SHOWHIDDENFILES));
+			hiddenFiles = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::BROWSER_SHOWHIDDENFILES));
 			header->add(hiddenFiles, 180);
 			header->add(new geBox());
 			header->end();
@@ -77,7 +77,7 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			ok     = new geTextButton("");
-			cancel = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CANCEL));
+			cancel = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CANCEL));
 			footer->add(new geBox());
 			footer->add(cancel, 80);
 			footer->add(ok, 80);

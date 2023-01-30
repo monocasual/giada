@@ -46,15 +46,15 @@ geMasterLearnerPack::geMasterLearnerPack(int x, int y)
 	setCallbacks(
 	    [](int param) { c::io::master_startMidiLearn(param); },
 	    [](int param) { c::io::master_clearMidiLearn(param); });
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_REWIND), G_MIDI_IN_REWIND);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_PLAYSTOP), G_MIDI_IN_START_STOP);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_ACTIONREC), G_MIDI_IN_ACTION_REC);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_INPUTREC), G_MIDI_IN_INPUT_REC);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_METRONOME), G_MIDI_IN_METRONOME);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_INVOLUME), G_MIDI_IN_VOLUME_IN);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_OUTVOLUME), G_MIDI_IN_VOLUME_OUT);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_SEQDOUBLE), G_MIDI_IN_BEAT_DOUBLE);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_LEARN_SEQHALF), G_MIDI_IN_BEAT_HALF);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_REWIND), G_MIDI_IN_REWIND);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_PLAYSTOP), G_MIDI_IN_START_STOP);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_ACTIONREC), G_MIDI_IN_ACTION_REC);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_INPUTREC), G_MIDI_IN_INPUT_REC);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_METRONOME), G_MIDI_IN_METRONOME);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_INVOLUME), G_MIDI_IN_VOLUME_IN);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_OUTVOLUME), G_MIDI_IN_VOLUME_OUT);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_SEQDOUBLE), G_MIDI_IN_BEAT_DOUBLE);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_SEQHALF), G_MIDI_IN_BEAT_HALF);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -78,19 +78,19 @@ void geMasterLearnerPack::update(const c::io::Master_InputData& d)
 /* -------------------------------------------------------------------------- */
 
 gdMidiInputMaster::gdMidiInputMaster(m::Conf::Data& c)
-: gdMidiInputBase(g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_TITLE), c)
+: gdMidiInputBase(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_TITLE), c)
 {
 	end();
 
 	geGroup* groupHeader = new geGroup(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN);
-	m_enable             = new geCheck(0, 0, 120, G_GUI_UNIT, g_ui.langMapper.get(LangMap::MIDIINPUT_MASTER_ENABLE));
+	m_enable             = new geCheck(0, 0, 120, G_GUI_UNIT, g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_ENABLE));
 	m_channel            = new geChoice(m_enable->x() + m_enable->w() + 44, 0, 120, G_GUI_UNIT);
 	groupHeader->resizable(nullptr);
 	groupHeader->add(m_enable);
 	groupHeader->add(m_channel);
 
 	m_learners = new geMasterLearnerPack(G_GUI_OUTER_MARGIN, groupHeader->y() + groupHeader->h() + G_GUI_OUTER_MARGIN);
-	m_ok       = new geTextButton(w() - 88, m_learners->y() + m_learners->h() + G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_CLOSE));
+	m_ok       = new geTextButton(w() - 88, m_learners->y() + m_learners->h() + G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT, g_ui.getI18Text(LangMap::COMMON_CLOSE));
 
 	add(groupHeader);
 	add(m_learners);

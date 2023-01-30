@@ -65,11 +65,11 @@ namespace
 void printLoadError_(int res)
 {
 	if (res == G_FILE_UNREADABLE)
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_PATCHUNREADABLE));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_PATCHUNREADABLE));
 	else if (res == G_FILE_INVALID)
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_PATCHINVALID));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_PATCHINVALID));
 	else if (res == G_FILE_UNSUPPORTED)
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_PATCHUNSUPPORTED));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_PATCHUNSUPPORTED));
 }
 } // namespace
 
@@ -88,9 +88,8 @@ void loadProject(void* data)
 
 	g_ui.closeAllSubwindows();
 
-	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
-	auto engineProgress = [&uiProgress](float v)
-	{ uiProgress.setProgress(v); };
+	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
+	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
 	m::StorageApi::LoadState state = g_engine.getStorageApi().loadProject(projectPath, engineProgress);
 
@@ -119,18 +118,17 @@ void saveProject(void* data)
 
 	if (projectName == "")
 	{
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_CHOOSEPROJECTNAME));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_CHOOSEPROJECTNAME));
 		return;
 	}
 
 	if (u::fs::dirExists(projectPath) &&
-	    !v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
-	        g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_PROJECTEXISTS)))
+	    !v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
+	        g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_PROJECTEXISTS)))
 		return;
 
-	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECT));
-	auto engineProgress = [&uiProgress](float v)
-	{ uiProgress.setProgress(v); };
+	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECT));
+	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
 	if (g_engine.getStorageApi().storeProject(projectName, projectPath, g_ui.getState(), engineProgress))
 	{
@@ -138,7 +136,7 @@ void saveProject(void* data)
 		browser->do_callback();
 	}
 	else
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECTERROR));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECTERROR));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -169,19 +167,19 @@ void saveSample(void* data)
 
 	if (name == "")
 	{
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_CHOOSEFILENAME));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_CHOOSEFILENAME));
 		return;
 	}
 
 	const std::string filePath = u::fs::join(folderPath, u::fs::stripExt(name) + ".wav");
 
 	if (u::fs::fileExists(filePath) &&
-	    !v::gdConfirmWin(g_ui.langMapper.get(v::LangMap::COMMON_WARNING),
-	        g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_FILEEXISTS)))
+	    !v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
+	        g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_FILEEXISTS)))
 		return;
 
 	if (!g_engine.getChannelsApi().saveSample(channelId, filePath))
-		v::gdAlert(g_ui.langMapper.get(v::LangMap::MESSAGE_STORAGE_SAVINGFILEERROR));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGFILEERROR));
 
 	browser->do_callback();
 }

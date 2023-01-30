@@ -49,20 +49,20 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 geChannelLearnerPack::geChannelLearnerPack(int x, int y, const c::io::Channel_InputData& channel)
-: geMidiLearnerPack(x, y, g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_CHANNEL))
+: geMidiLearnerPack(x, y, g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_CHANNEL))
 {
 	setCallbacks(
 	    [channelId = channel.channelId](int param) { c::io::channel_startMidiLearn(param, channelId); },
 	    [channelId = channel.channelId](int param) { c::io::channel_clearMidiLearn(param, channelId); });
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYPRESS), G_MIDI_IN_KEYPRESS);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYREL), G_MIDI_IN_KEYREL);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYKILL), G_MIDI_IN_KILL);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_ARM), G_MIDI_IN_ARM);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_MUTE), G_MIDI_IN_MUTE);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_SOLO), G_MIDI_IN_SOLO);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_VOLUME), G_MIDI_IN_VOLUME);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_PITCH), G_MIDI_IN_PITCH, /*visible=*/channel.channelType == ChannelType::SAMPLE);
-	addMidiLearner(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_LEARN_READACTIONS), G_MIDI_IN_READ_ACTIONS, /*visible=*/channel.channelType == ChannelType::SAMPLE);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYPRESS), G_MIDI_IN_KEYPRESS);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYREL), G_MIDI_IN_KEYREL);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYKILL), G_MIDI_IN_KILL);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_ARM), G_MIDI_IN_ARM);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_MUTE), G_MIDI_IN_MUTE);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_SOLO), G_MIDI_IN_SOLO);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_VOLUME), G_MIDI_IN_VOLUME);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_PITCH), G_MIDI_IN_PITCH, /*visible=*/channel.channelType == ChannelType::SAMPLE);
+	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_READACTIONS), G_MIDI_IN_READ_ACTIONS, /*visible=*/channel.channelType == ChannelType::SAMPLE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -111,7 +111,7 @@ void gePluginLearnerPack::update(const c::io::PluginData& d, bool enabled)
 /* -------------------------------------------------------------------------- */
 
 gdMidiInputChannel::gdMidiInputChannel(ID channelId, m::Conf::Data& c)
-: gdMidiInputBase(g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_TITLE), c)
+: gdMidiInputBase(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_TITLE), c)
 , m_channelId(channelId)
 , m_data(c::io::channel_getInputData(channelId))
 {
@@ -120,10 +120,10 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, m::Conf::Data& c)
 	/* Header */
 
 	geGroup* groupHeader = new geGroup(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN);
-	m_enable             = new geCheck(0, 0, 120, G_GUI_UNIT, g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_ENABLE));
+	m_enable             = new geCheck(0, 0, 120, G_GUI_UNIT, g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_ENABLE));
 	m_channel            = new geChoice(m_enable->x() + m_enable->w() + 44, 0, 120, G_GUI_UNIT);
 	m_veloAsVol          = new geCheck(0, m_enable->y() + m_enable->h() + G_GUI_OUTER_MARGIN, w() - 16, G_GUI_UNIT,
-        g_ui.langMapper.get(LangMap::MIDIINPUT_CHANNEL_VELOCITYDRIVESVOL));
+        g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_VELOCITYDRIVESVOL));
 	groupHeader->add(m_enable);
 	groupHeader->add(m_channel);
 	groupHeader->add(m_veloAsVol);
@@ -142,7 +142,7 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, m::Conf::Data& c)
 
 	geGroup* groupButtons = new geGroup(G_GUI_OUTER_MARGIN, m_container->y() + m_container->h() + G_GUI_OUTER_MARGIN);
 	geBox*   spacer       = new geBox(0, 0, w() - 80, G_GUI_UNIT); // spacer window border <-> buttons
-	m_ok                  = new geTextButton(w() - 96, 0, 80, G_GUI_UNIT, g_ui.langMapper.get(LangMap::COMMON_CLOSE));
+	m_ok                  = new geTextButton(w() - 96, 0, 80, G_GUI_UNIT, g_ui.getI18Text(LangMap::COMMON_CLOSE));
 	groupButtons->add(spacer);
 	groupButtons->add(m_ok);
 	groupButtons->resizable(spacer);

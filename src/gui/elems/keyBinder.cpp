@@ -43,8 +43,8 @@ geKeyBinder::geKeyBinder(const std::string& l, int& keyRef)
 {
 	m_labelBox = new geBox(l.c_str());
 	m_keyBox   = new geBox(u::gui::keyToString(keyRef).c_str());
-	m_bindBtn  = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_BIND));
-	m_clearBtn = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CLEAR));
+	m_bindBtn  = new geTextButton(g_ui.getI18Text(LangMap::COMMON_BIND));
+	m_clearBtn = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLEAR));
 
 	add(m_labelBox);
 	add(m_keyBox, 100);

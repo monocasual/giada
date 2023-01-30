@@ -67,6 +67,20 @@ float Ui::getScaling() const
 
 /* -------------------------------------------------------------------------- */
 
+const char* Ui::getI18Text(const std::string& key) const
+{
+	return m_langMapper.get(key);
+}
+
+/* -------------------------------------------------------------------------- */
+
+const std::vector<std::string>& Ui::getLangMapFilesFound() const
+{
+	return m_langMapper.getMapFilesFound();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Ui::load(const m::Patch::Data& patch)
 {
 	reset();
@@ -100,8 +114,8 @@ void Ui::init(int argc, char** argv, const std::string& patchName, bool isAudioR
 	XInitThreads();
 #endif
 
-	langMapper.init();
-	langMapper.read(m_conf.langMap);
+	m_langMapper.init();
+	m_langMapper.read(m_conf.langMap);
 
 	mainWindow = std::make_unique<gdMainWindow>(u::gui::getCenterWinBounds(m_conf.mainWindowBounds), "", argc, argv, m_conf);
 	mainWindow->setTitle(patchName == "" ? G_DEFAULT_PATCH_NAME : patchName);
@@ -116,7 +130,7 @@ void Ui::init(int argc, char** argv, const std::string& patchName, bool isAudioR
 	if (isAudioReady)
 		rebuildStaticWidgets();
 	else
-		v::gdAlert(langMapper.get(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
+		v::gdAlert(m_langMapper.get(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
 }
 
 /* -------------------------------------------------------------------------- */

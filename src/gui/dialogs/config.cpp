@@ -46,7 +46,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, w, h}), g_ui.langMapper.get(LangMap::CONFIG_TITLE))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, w, h}), g_ui.getI18Text(LangMap::CONFIG_TITLE))
 {
 	const geompp::Rect<int> bounds = getContentBounds().reduced(G_GUI_OUTER_MARGIN);
 
@@ -71,8 +71,8 @@ gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			geTextButton* save   = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_SAVE));
-			geTextButton* cancel = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CANCEL));
+			geTextButton* save   = new geTextButton(g_ui.getI18Text(LangMap::COMMON_SAVE));
+			geTextButton* cancel = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CANCEL));
 			save->onClick        = [this]() { saveConfig(); };
 			cancel->onClick      = [this]() { do_callback(); };
 

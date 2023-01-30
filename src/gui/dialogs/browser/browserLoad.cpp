@@ -44,7 +44,7 @@ gdBrowserLoad::gdBrowserLoad(const std::string& title, const std::string& path,
 
 	browser->callback(cb_down, (void*)this);
 
-	ok->label(g_ui.langMapper.get(LangMap::COMMON_LOAD));
+	ok->label(g_ui.getI18Text(LangMap::COMMON_LOAD));
 	ok->shortcut(FL_ENTER);
 	ok->onClick = [this]() { fireCallback(); };
 }

@@ -36,17 +36,17 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 geTabBindings::geTabBindings(geompp::Rect<int> bounds, m::Conf::Data& conf)
-: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.langMapper.get(LangMap::CONFIG_BINDINGS_TITLE))
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.getI18Text(LangMap::CONFIG_BINDINGS_TITLE))
 {
 	end();
 
 	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_INNER_MARGIN);
 	{
-		play          = new geKeyBinder(g_ui.langMapper.get(LangMap::CONFIG_BINDINGS_PLAY), conf.keyBindings[m::Conf::KEY_BIND_PLAY]);
-		rewind        = new geKeyBinder(g_ui.langMapper.get(LangMap::CONFIG_BINDINGS_REWIND), conf.keyBindings[m::Conf::KEY_BIND_REWIND]);
-		recordActions = new geKeyBinder(g_ui.langMapper.get(LangMap::CONFIG_BINDINGS_RECORDACTIONS), conf.keyBindings[m::Conf::KEY_BIND_RECORD_ACTIONS]);
-		recordInput   = new geKeyBinder(g_ui.langMapper.get(LangMap::CONFIG_BINDINGS_RECORDAUDIO), conf.keyBindings[m::Conf::KEY_BIND_RECORD_INPUT]);
-		exit          = new geKeyBinder(g_ui.langMapper.get(LangMap::CONFIG_BINDINGS_EXIT), conf.keyBindings[m::Conf::KEY_BIND_EXIT]);
+		play          = new geKeyBinder(g_ui.getI18Text(LangMap::CONFIG_BINDINGS_PLAY), conf.keyBindings[m::Conf::KEY_BIND_PLAY]);
+		rewind        = new geKeyBinder(g_ui.getI18Text(LangMap::CONFIG_BINDINGS_REWIND), conf.keyBindings[m::Conf::KEY_BIND_REWIND]);
+		recordActions = new geKeyBinder(g_ui.getI18Text(LangMap::CONFIG_BINDINGS_RECORDACTIONS), conf.keyBindings[m::Conf::KEY_BIND_RECORD_ACTIONS]);
+		recordInput   = new geKeyBinder(g_ui.getI18Text(LangMap::CONFIG_BINDINGS_RECORDAUDIO), conf.keyBindings[m::Conf::KEY_BIND_RECORD_INPUT]);
+		exit          = new geKeyBinder(g_ui.getI18Text(LangMap::CONFIG_BINDINGS_EXIT), conf.keyBindings[m::Conf::KEY_BIND_EXIT]);
 
 		body->add(play, G_GUI_UNIT);
 		body->add(rewind, G_GUI_UNIT);

@@ -61,8 +61,8 @@ geGridTool::geGridTool(Pixel x, Pixel y, m::Conf::Data& c)
 
 	end();
 
-	gridType->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_GRIDRES));
-	active->copy_tooltip(g_ui.langMapper.get(LangMap::COMMON_SNAPTOGRID));
+	gridType->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_GRIDRES));
+	active->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_SNAPTOGRID));
 }
 
 /* -------------------------------------------------------------------------- */

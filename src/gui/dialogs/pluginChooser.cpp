@@ -40,7 +40,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdPluginChooser::gdPluginChooser(ID channelId, m::Conf::Data& c)
-: gdWindow(u::gui::getCenterWinBounds(c.pluginChooserBounds), g_ui.langMapper.get(LangMap::PLUGINCHOOSER_TITLE))
+: gdWindow(u::gui::getCenterWinBounds(c.pluginChooserBounds), g_ui.getI18Text(LangMap::PLUGINCHOOSER_TITLE))
 , m_conf(c)
 , m_channelId(channelId)
 {
@@ -48,7 +48,7 @@ gdPluginChooser::gdPluginChooser(ID channelId, m::Conf::Data& c)
 	{
 		geFlex* header = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 		{
-			sortMethod = new geChoice(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY), 0);
+			sortMethod = new geChoice(g_ui.getI18Text(LangMap::PLUGINCHOOSER_SORTBY), 0);
 			header->add(sortMethod, 180);
 			header->add(new geBox());
 			header->end();
@@ -58,8 +58,8 @@ gdPluginChooser::gdPluginChooser(ID channelId, m::Conf::Data& c)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			addBtn    = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_ADD));
-			cancelBtn = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_CANCEL));
+			addBtn    = new geTextButton(g_ui.getI18Text(LangMap::COMMON_ADD));
+			cancelBtn = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CANCEL));
 			footer->add(new geBox());
 			footer->add(cancelBtn, 80);
 			footer->add(addBtn, 80);
@@ -75,10 +75,10 @@ gdPluginChooser::gdPluginChooser(ID channelId, m::Conf::Data& c)
 	add(container);
 	resizable(container);
 
-	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_NAME));
-	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_CATEGORY));
-	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_MANUFACTURER));
-	sortMethod->addItem(g_ui.langMapper.get(LangMap::PLUGINCHOOSER_SORTBY_FORMAT));
+	sortMethod->addItem(g_ui.getI18Text(LangMap::PLUGINCHOOSER_SORTBY_NAME));
+	sortMethod->addItem(g_ui.getI18Text(LangMap::PLUGINCHOOSER_SORTBY_CATEGORY));
+	sortMethod->addItem(g_ui.getI18Text(LangMap::PLUGINCHOOSER_SORTBY_MANUFACTURER));
+	sortMethod->addItem(g_ui.getI18Text(LangMap::PLUGINCHOOSER_SORTBY_FORMAT));
 	sortMethod->showItem(static_cast<int>(m_conf.pluginSortMethod));
 	sortMethod->onChange = [this](ID id) {
 		c::plugin::sortPlugins(static_cast<m::PluginManager::SortMethod>(id));

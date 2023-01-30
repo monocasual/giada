@@ -48,7 +48,7 @@ gdBpmInput::gdBpmInput(const char* label)
 	{
 		m_input_a = new geInput(0, 0, 0, 0);
 		m_input_b = new geInput(0, 0, 0, 0);
-		m_ok      = new geTextButton(g_ui.langMapper.get(LangMap::COMMON_OK));
+		m_ok      = new geTextButton(g_ui.getI18Text(LangMap::COMMON_OK));
 		container->add(m_input_a);
 		container->add(m_input_b);
 		container->add(m_ok, 70);

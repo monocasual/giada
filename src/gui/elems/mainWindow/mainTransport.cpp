@@ -59,13 +59,13 @@ geMainTransport::geMainTransport()
 	add(m_metronome, 15);
 	end();
 
-	m_rewind->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_REWIND));
-	m_play->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_PLAY));
-	m_recTriggerMode->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_RECTRIGGERMODE));
-	m_recAction->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_RECACTIONS));
-	m_recInput->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_RECINPUT));
-	m_inputRecMode->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_RECINPUTMODE));
-	m_metronome->copy_tooltip(g_ui.langMapper.get(LangMap::MAIN_TRANSPORT_LABEL_METRONOME));
+	m_rewind->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TRANSPORT_LABEL_REWIND));
+	m_play->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TRANSPORT_LABEL_PLAY));
+	m_recTriggerMode->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TRANSPORT_LABEL_RECTRIGGERMODE));
+	m_recAction->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TRANSPORT_LABEL_RECACTIONS));
+	m_recInput->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TRANSPORT_LABEL_RECINPUT));
+	m_inputRecMode->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TRANSPORT_LABEL_RECINPUTMODE));
+	m_metronome->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TRANSPORT_LABEL_METRONOME));
 
 	m_rewind->onClick = []() {
 		c::events::rewindSequencer();
