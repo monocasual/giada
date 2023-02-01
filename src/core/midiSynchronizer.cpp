@@ -35,7 +35,7 @@
 
 namespace giada::m
 {
-MidiSynchronizer::MidiSynchronizer(const Conf::Data& c, KernelMidi& k)
+MidiSynchronizer::MidiSynchronizer(const Conf& c, KernelMidi& k)
 : onChangePosition(nullptr)
 , onChangeBpm(nullptr)
 , onStart(nullptr)

@@ -49,7 +49,7 @@ KernelAudio::KernelAudio()
 
 /* -------------------------------------------------------------------------- */
 
-int KernelAudio::openDevice(const Conf::Data& conf)
+int KernelAudio::openDevice(const Conf& conf)
 {
 	assert(onAudioCallback != nullptr);
 

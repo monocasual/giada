@@ -39,7 +39,7 @@ class geChoice;
 class geGridTool : public Fl_Group
 {
 public:
-	geGridTool(Pixel x, Pixel y, m::Conf::Data&);
+	geGridTool(Pixel x, Pixel y, m::Conf&);
 	~geGridTool();
 
 	int  getValue() const;
@@ -53,7 +53,7 @@ public:
 	Frame getCellSize(Frame framesInBeat) const;
 
 private:
-	m::Conf::Data& m_conf;
+	m::Conf& m_conf;
 
 	geChoice* gridType;
 	geCheck*  active;

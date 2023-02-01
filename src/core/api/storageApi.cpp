@@ -102,7 +102,7 @@ bool StorageApi::storeProject(const std::string& projectName, const std::string&
 	/* Store the parent folder the project belongs to, in order to reuse it the
 	next time. */
 
-	m_conf.data.patchPath = u::fs::getUpDir(u::fs::getUpDir(patchPath));
+	m_conf.patchPath = u::fs::getUpDir(u::fs::getUpDir(patchPath));
 
 	u::log::print("[StorageEngine::storeProject] Project patch saved as %s\n", patchPath);
 
@@ -159,7 +159,7 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, st
 	/* Store the parent folder the project belongs to, in order to reuse it the
 	next time. */
 
-	m_conf.data.patchPath = u::fs::getUpDir(projectPath);
+	m_conf.patchPath = u::fs::getUpDir(projectPath);
 
 	/* Mixer is ready to go back online. */
 
@@ -242,7 +242,7 @@ StorageApi::LoadState StorageApi::loadPatch()
 	m_model.getAllShared<model::WavePtrs>().clear();
 	for (const Patch::Wave& pwave : m_patch.data.waves)
 	{
-		std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, m_conf.data.rsmpQuality);
+		std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, m_conf.rsmpQuality);
 		if (w != nullptr)
 			m_model.getAllShared<model::WavePtrs>().push_back(std::move(w));
 		else

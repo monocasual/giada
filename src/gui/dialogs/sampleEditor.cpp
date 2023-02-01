@@ -67,7 +67,7 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdSampleEditor::gdSampleEditor(ID channelId, m::Conf::Data& c)
+gdSampleEditor::gdSampleEditor(ID channelId, m::Conf& c)
 : gdWindow(u::gui::getCenterWinBounds(c.sampleEditorBounds), g_ui.getI18Text(LangMap::SAMPLEEDITOR_TITLE))
 , m_channelId(channelId)
 , m_conf(c)

@@ -44,7 +44,7 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdPluginList::gdPluginList(ID channelId, m::Conf::Data& c)
+gdPluginList::gdPluginList(ID channelId, m::Conf& c)
 : gdWindow(u::gui::getCenterWinBounds(c.pluginListBounds))
 , m_conf(c)
 , m_channelId(channelId)

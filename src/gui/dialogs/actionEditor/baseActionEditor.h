@@ -66,7 +66,7 @@ protected:
 	static constexpr float MAX_RATIO  = 40000.0f;
 	static constexpr float RATIO_STEP = 1.5f;
 
-	gdBaseActionEditor(ID channelId, m::Conf::Data&);
+	gdBaseActionEditor(ID channelId, m::Conf&);
 
 	/* getMouseOverContent
 	Returns mouse x-position relative to the viewport content. */
@@ -91,7 +91,7 @@ protected:
 	geSplitScroll* m_splitScroll;
 
 	c::actionEditor::Data m_data;
-	m::Conf::Data&        m_conf;
+	m::Conf&              m_conf;
 
 private:
 	void refresh() override;

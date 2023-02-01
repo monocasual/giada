@@ -42,7 +42,7 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdMidiActionEditor::gdMidiActionEditor(ID channelId, m::Conf::Data& conf)
+gdMidiActionEditor::gdMidiActionEditor(ID channelId, m::Conf& conf)
 : gdBaseActionEditor(channelId, conf)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);

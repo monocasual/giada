@@ -27,8 +27,8 @@
 #ifndef GD_BROWSER_DIR_H
 #define GD_BROWSER_DIR_H
 
-#include "core/conf.h"
 #include "browserBase.h"
+#include "core/conf.h"
 
 namespace giada::v
 {
@@ -36,7 +36,7 @@ class gdBrowserDir : public gdBrowserBase
 {
 public:
 	gdBrowserDir(const std::string& title, const std::string& path,
-	    std::function<void(void*)> cb, m::Conf::Data&);
+	    std::function<void(void*)> cb, m::Conf&);
 
 private:
 	static void cb_load(Fl_Widget* /*w*/, void* p);

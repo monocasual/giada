@@ -45,7 +45,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
-    std::function<void(void*)> callback, ID channelId, m::Conf::Data& c)
+    std::function<void(void*)> callback, ID channelId, m::Conf& c)
 : gdWindow(u::gui::getCenterWinBounds(c.browserBounds), title.c_str())
 , m_callback(callback)
 , m_conf(c)

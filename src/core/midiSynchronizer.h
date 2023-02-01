@@ -44,7 +44,7 @@ class MidiEvent;
 class MidiSynchronizer final
 {
 public:
-	MidiSynchronizer(const Conf::Data&, KernelMidi&);
+	MidiSynchronizer(const Conf&, KernelMidi&);
 
 	/* receive
 	Receives a MidiEvent and reacts accordingly. Valid only when in SLAVE mode. */
@@ -81,8 +81,8 @@ private:
 
 	void computePosition(int sppPosition, int numBeatsInLoop);
 
-	KernelMidi&       m_kernelMidi;
-	const Conf::Data& m_conf;
+	KernelMidi& m_kernelMidi;
+	const Conf& m_conf;
 
 	/* m_worker
 	A separate thread responsible for the MIDI Clock output. */

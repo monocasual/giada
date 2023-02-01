@@ -35,7 +35,7 @@
 
 namespace giada::m
 {
-ChannelManager::ChannelManager(const Conf::Data& c, model::Model& model)
+ChannelManager::ChannelManager(const Conf& c, model::Model& model)
 : m_conf(c)
 , m_model(model)
 {

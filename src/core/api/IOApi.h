@@ -38,7 +38,7 @@ class MidiDispatcher;
 class IOApi
 {
 public:
-	IOApi(model::Model&, MidiDispatcher&, Conf::Data&);
+	IOApi(model::Model&, MidiDispatcher&, Conf&);
 
 	const model::MidiIn& getModelMidiIn() const;
 
@@ -67,7 +67,7 @@ private:
 
 	model::Model&   m_model;
 	MidiDispatcher& m_midiDispatcher;
-	Conf::Data&     m_conf;
+	Conf&           m_conf;
 };
 } // namespace giada::m
 

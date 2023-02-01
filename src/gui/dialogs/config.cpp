@@ -45,7 +45,7 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdConfig::gdConfig(int w, int h, m::Conf::Data& conf)
+gdConfig::gdConfig(int w, int h, m::Conf& conf)
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, w, h}), g_ui.getI18Text(LangMap::CONFIG_TITLE))
 {
 	const geompp::Rect<int> bounds = getContentBounds().reduced(G_GUI_OUTER_MARGIN);

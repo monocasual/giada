@@ -36,7 +36,7 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-geGridTool::geGridTool(Pixel x, Pixel y, m::Conf::Data& c)
+geGridTool::geGridTool(Pixel x, Pixel y, m::Conf& c)
 : Fl_Group(x, y, 80, 20)
 , m_conf(c)
 {

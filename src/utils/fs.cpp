@@ -187,6 +187,44 @@ std::string getLangMapsPath()
 
 /* -------------------------------------------------------------------------- */
 
+bool createConfigFolder()
+{
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
+
+	const std::string confDirPath = getHomePath();
+
+	if (u::fs::dirExists(confDirPath))
+		return true;
+
+	u::log::print("[fs::createConfigFolder] .giada folder not present. Updating...\n");
+
+	if (u::fs::mkdir(confDirPath))
+	{
+		u::log::print("[fs::createConfigFolder] status: ok\n");
+		return true;
+	}
+	else
+	{
+		u::log::print("[fs::createConfigFolder] status: error!\n");
+		return false;
+	}
+
+#else // Windows: nothing to do
+
+	return true;
+
+#endif
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::string getConfigFilePath()
+{
+	return join(getHomePath(), G_CONF_FILENAME);
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool isRootDir(const std::string& s)
 {
 	return stdfs::current_path().root_directory() == s;

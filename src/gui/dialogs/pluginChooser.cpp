@@ -39,7 +39,7 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdPluginChooser::gdPluginChooser(ID channelId, m::Conf::Data& c)
+gdPluginChooser::gdPluginChooser(ID channelId, m::Conf& c)
 : gdWindow(u::gui::getCenterWinBounds(c.pluginChooserBounds), g_ui.getI18Text(LangMap::PLUGINCHOOSER_TITLE))
 , m_conf(c)
 , m_channelId(channelId)

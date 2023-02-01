@@ -24,33 +24,22 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GD_BROWSER_SAVE_H
-#define GD_BROWSER_SAVE_H
+#ifndef G_CONF_FACTORY_H
+#define G_CONF_FACTORY_H
 
-#include "browserBase.h"
 #include "core/conf.h"
 
-namespace giada::m
+namespace giada::m::confFactory
 {
-class Channel;
-}
+/* serialize 
+Writes Conf to disk. */
 
-namespace giada::v
-{
-class geInput;
-class gdBrowserSave : public gdBrowserBase
-{
-public:
-	gdBrowserSave(const std::string& title, const std::string& path,
-	    const std::string& name, std::function<void(void*)> cb,
-	    ID channelId, m::Conf&);
+bool serialize(const Conf&);
 
-	std::string getName() const;
+/* deserialize 
+Reads data from disk into a new Conf object. */
 
-private:
-	static void cb_down(Fl_Widget* /*w*/, void* p);
-	void        cb_down();
-};
-} // namespace giada::v
+Conf deserialize();
+} // namespace giada::m::confFactory
 
 #endif

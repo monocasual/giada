@@ -56,7 +56,7 @@ constexpr int  G_VERSION_MAJOR = 0;
 constexpr int  G_VERSION_MINOR = 23;
 constexpr int  G_VERSION_PATCH = 2;
 
-constexpr auto CONF_FILENAME = "giada.conf";
+constexpr auto G_CONF_FILENAME = "giada.conf";
 
 /* -- Engine ---------------------------------------------------------------- */
 /* G_EVENT_DISPATCHER_RATE_MS

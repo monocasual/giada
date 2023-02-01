@@ -37,7 +37,7 @@ namespace giada::v
 class geTabBehaviors : public Fl_Group
 {
 public:
-	geTabBehaviors(geompp::Rect<int>, m::Conf::Data&);
+	geTabBehaviors(geompp::Rect<int>, m::Conf&);
 
 	void save();
 
@@ -47,7 +47,7 @@ private:
 	geCheck* m_inputMonitorDefaultOn;
 	geCheck* m_overdubProtectionDefaultOn;
 
-	m::Conf::Data& m_conf;
+	m::Conf& m_conf;
 };
 } // namespace giada::v
 

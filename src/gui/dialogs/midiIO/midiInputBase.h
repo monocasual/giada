@@ -43,9 +43,9 @@ public:
 	virtual ~gdMidiInputBase();
 
 protected:
-	gdMidiInputBase(const char* title, m::Conf::Data&);
+	gdMidiInputBase(const char* title, m::Conf&);
 
-	m::Conf::Data& m_conf;
+	m::Conf& m_conf;
 
 	geTextButton* m_ok;
 	geCheck*      m_enable;

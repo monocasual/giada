@@ -68,7 +68,7 @@ void gdMainWindow::ScopedProgress::setProgress(float v)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, char** argv, m::Conf::Data& c)
+gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, char** argv, m::Conf& c)
 : gdWindow(r, title)
 , m_conf(c)
 {

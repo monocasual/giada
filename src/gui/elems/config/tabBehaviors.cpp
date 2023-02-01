@@ -37,7 +37,7 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-geTabBehaviors::geTabBehaviors(geompp::Rect<int> bounds, m::Conf::Data& c)
+geTabBehaviors::geTabBehaviors(geompp::Rect<int> bounds, m::Conf& c)
 : Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.getI18Text(LangMap::CONFIG_BEHAVIORS_TITLE))
 , m_conf(c)
 {

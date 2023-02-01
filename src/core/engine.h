@@ -89,7 +89,7 @@ public:
 	/* getConf
 	Returns a reference to the current loaded Conf. */
 
-	Conf::Data& getConf();
+	Conf& getConf();
 
 	/* updateMixerModel
 	Updates some values in model::Mixer data struct needed by m::Mixer for the

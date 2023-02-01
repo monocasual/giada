@@ -38,9 +38,8 @@
 
 namespace giada::m
 {
-class Conf final
+struct Conf final
 {
-public:
 	using KeyBindings = std::vector<int>;
 
 	static constexpr int KEY_BIND_PLAY           = 0;
@@ -49,109 +48,88 @@ public:
 	static constexpr int KEY_BIND_RECORD_INPUT   = 3;
 	static constexpr int KEY_BIND_EXIT           = 4;
 
-	struct Data
-	{
-		int                logMode          = LOG_MODE_MUTE;
-		bool               showTooltips     = true;
-		std::string        langMap          = "";
-		RtAudio::Api       soundSystem      = G_DEFAULT_SOUNDSYS;
-		int                soundDeviceOut   = G_DEFAULT_SOUNDDEV_OUT;
-		int                soundDeviceIn    = G_DEFAULT_SOUNDDEV_IN;
-		int                channelsOutCount = G_MAX_IO_CHANS;
-		int                channelsOutStart = 0;
-		int                channelsInCount  = 1;
-		int                channelsInStart  = 0;
-		int                samplerate       = G_DEFAULT_SAMPLERATE;
-		int                buffersize       = G_DEFAULT_BUFSIZE;
-		bool               limitOutput      = false;
-		Resampler::Quality rsmpQuality      = Resampler::Quality::SINC_BEST;
+	bool               valid            = false;
+	int                logMode          = LOG_MODE_MUTE;
+	bool               showTooltips     = true;
+	std::string        langMap          = "";
+	RtAudio::Api       soundSystem      = G_DEFAULT_SOUNDSYS;
+	int                soundDeviceOut   = G_DEFAULT_SOUNDDEV_OUT;
+	int                soundDeviceIn    = G_DEFAULT_SOUNDDEV_IN;
+	int                channelsOutCount = G_MAX_IO_CHANS;
+	int                channelsOutStart = 0;
+	int                channelsInCount  = 1;
+	int                channelsInStart  = 0;
+	int                samplerate       = G_DEFAULT_SAMPLERATE;
+	int                buffersize       = G_DEFAULT_BUFSIZE;
+	bool               limitOutput      = false;
+	Resampler::Quality rsmpQuality      = Resampler::Quality::SINC_BEST;
 
-		RtMidi::Api midiSystem  = G_DEFAULT_MIDI_SYSTEM;
-		int         midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
-		int         midiPortIn  = G_DEFAULT_MIDI_PORT_IN;
-		std::string midiMapPath = "";
-		std::string lastFileMap = "";
-		int         midiSync    = G_MIDI_SYNC_NONE;
-		float       midiTCfps   = 25.0f;
+	RtMidi::Api midiSystem  = G_DEFAULT_MIDI_SYSTEM;
+	int         midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
+	int         midiPortIn  = G_DEFAULT_MIDI_PORT_IN;
+	std::string midiMapPath = "";
+	std::string lastFileMap = "";
+	int         midiSync    = G_MIDI_SYNC_NONE;
+	float       midiTCfps   = 25.0f;
 
-		bool chansStopOnSeqHalt         = false;
-		bool treatRecsAsLoops           = false;
-		bool inputMonitorDefaultOn      = false;
-		bool overdubProtectionDefaultOn = false;
+	bool chansStopOnSeqHalt         = false;
+	bool treatRecsAsLoops           = false;
+	bool inputMonitorDefaultOn      = false;
+	bool overdubProtectionDefaultOn = false;
 
-		std::string pluginPath;
-		std::string patchPath;
-		std::string samplePath;
+	std::string pluginPath;
+	std::string patchPath;
+	std::string samplePath;
 
-		geompp::Rect<int> mainWindowBounds = {-1, -1, G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT};
+	geompp::Rect<int> mainWindowBounds = {-1, -1, G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT};
 
-		geompp::Rect<int> browserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
-		int               browserPosition;
-		int               browserLastValue;
-		std::string       browserLastPath;
+	geompp::Rect<int> browserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	int               browserPosition;
+	int               browserLastValue;
+	std::string       browserLastPath;
 
-		geompp::Rect<int> actionEditorBounds     = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
-		int               actionEditorZoom       = G_DEFAULT_ZOOM_RATIO;
-		int               actionEditorSplitH     = -1;
-		int               actionEditorGridVal    = 0;
-		int               actionEditorGridOn     = false;
-		int               actionEditorPianoRollY = -1;
+	geompp::Rect<int> actionEditorBounds     = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	int               actionEditorZoom       = G_DEFAULT_ZOOM_RATIO;
+	int               actionEditorSplitH     = -1;
+	int               actionEditorGridVal    = 0;
+	int               actionEditorGridOn     = false;
+	int               actionEditorPianoRollY = -1;
 
-		geompp::Rect<int> sampleEditorBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
-		int               sampleEditorGridVal = 0;
-		int               sampleEditorGridOn  = false;
+	geompp::Rect<int> sampleEditorBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	int               sampleEditorGridVal = 0;
+	int               sampleEditorGridOn  = false;
 
-		geompp::Rect<int> midiInputBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
-		geompp::Rect<int> pluginListBounds = {-1, -1, 468, 204};
+	geompp::Rect<int> midiInputBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	geompp::Rect<int> pluginListBounds = {-1, -1, 468, 204};
 
-		RecTriggerMode recTriggerMode  = RecTriggerMode::NORMAL;
-		float          recTriggerLevel = G_DEFAULT_REC_TRIGGER_LEVEL;
-		InputRecMode   inputRecMode    = InputRecMode::FREE;
+	RecTriggerMode recTriggerMode  = RecTriggerMode::NORMAL;
+	float          recTriggerLevel = G_DEFAULT_REC_TRIGGER_LEVEL;
+	InputRecMode   inputRecMode    = InputRecMode::FREE;
 
-		bool     midiInEnabled    = false;
-		int      midiInFilter     = -1;
-		uint32_t midiInRewind     = 0x0;
-		uint32_t midiInStartStop  = 0x0;
-		uint32_t midiInActionRec  = 0x0;
-		uint32_t midiInInputRec   = 0x0;
-		uint32_t midiInMetronome  = 0x0;
-		uint32_t midiInVolumeIn   = 0x0;
-		uint32_t midiInVolumeOut  = 0x0;
-		uint32_t midiInBeatDouble = 0x0;
-		uint32_t midiInBeatHalf   = 0x0;
+	bool     midiInEnabled    = false;
+	int      midiInFilter     = -1;
+	uint32_t midiInRewind     = 0x0;
+	uint32_t midiInStartStop  = 0x0;
+	uint32_t midiInActionRec  = 0x0;
+	uint32_t midiInInputRec   = 0x0;
+	uint32_t midiInMetronome  = 0x0;
+	uint32_t midiInVolumeIn   = 0x0;
+	uint32_t midiInVolumeOut  = 0x0;
+	uint32_t midiInBeatDouble = 0x0;
+	uint32_t midiInBeatHalf   = 0x0;
 
-		geompp::Rect<int>         pluginChooserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
-		PluginManager::SortMethod pluginSortMethod    = PluginManager::SortMethod::NAME;
+	geompp::Rect<int>         pluginChooserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	PluginManager::SortMethod pluginSortMethod    = PluginManager::SortMethod::NAME;
 
-		KeyBindings keyBindings = {
-		    ' ',          // KEY_BIND_PLAY
-		    FL_BackSpace, // KEY_BIND_REWIND
-		    FL_Enter,     // KEY_BIND_RECORD_ACTIONS
-		    FL_End,       // KEY_BIND_RECORD_INPUT
-		    FL_Escape     // KEY_BIND_EXIT
-		};
-
-		float uiScaling = G_DEFAULT_UI_SCALING;
+	KeyBindings keyBindings = {
+	    ' ',          // KEY_BIND_PLAY
+	    FL_BackSpace, // KEY_BIND_REWIND
+	    FL_Enter,     // KEY_BIND_RECORD_ACTIONS
+	    FL_End,       // KEY_BIND_RECORD_INPUT
+	    FL_Escape     // KEY_BIND_EXIT
 	};
 
-	Conf();
-
-	bool read();
-	bool write() const;
-
-	Data data;
-
-private:
-	/* createConfigFolder
-	Creates local folder where to put the configuration file. Path differs from 
-	OS to OS. */
-
-	bool createConfigFolder() const;
-
-	void sanitize();
-
-	std::string m_confFilePath;
-	std::string m_confDirPath;
+	float uiScaling = G_DEFAULT_UI_SCALING;
 };
 } // namespace giada::m
 

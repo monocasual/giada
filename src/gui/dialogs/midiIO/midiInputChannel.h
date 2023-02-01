@@ -63,7 +63,7 @@ public:
 class gdMidiInputChannel : public gdMidiInputBase
 {
 public:
-	gdMidiInputChannel(ID channelId, m::Conf::Data&);
+	gdMidiInputChannel(ID channelId, m::Conf&);
 
 	void rebuild() override;
 

@@ -35,7 +35,7 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-geTabBindings::geTabBindings(geompp::Rect<int> bounds, m::Conf::Data& conf)
+geTabBindings::geTabBindings(geompp::Rect<int> bounds, m::Conf& conf)
 : Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.getI18Text(LangMap::CONFIG_BINDINGS_TITLE))
 {
 	end();

@@ -53,7 +53,7 @@ class MidiEvent;
 class ChannelManager final
 {
 public:
-	ChannelManager(const Conf::Data&, model::Model&);
+	ChannelManager(const Conf&, model::Model&);
 
 	/* getChannel
 	Returns channel object by ID. */
@@ -217,8 +217,8 @@ private:
 
 	void triggerOnChannelsAltered();
 
-	const Conf::Data& m_conf;
-	model::Model&     m_model;
+	const Conf&   m_conf;
+	model::Model& m_model;
 };
 } // namespace giada::m
 

@@ -37,7 +37,7 @@ namespace giada::v
 {
 gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
     const std::string& name_, std::function<void(void*)> cb, ID channelId,
-    m::Conf::Data& conf)
+    m::Conf& conf)
 : gdBrowserBase(title, path, cb, channelId, conf)
 {
 	name->setValue(name_.c_str());

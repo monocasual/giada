@@ -31,7 +31,7 @@
 
 namespace giada::v
 {
-gdMidiInputBase::gdMidiInputBase(const char* title, m::Conf::Data& c)
+gdMidiInputBase::gdMidiInputBase(const char* title, m::Conf& c)
 : gdWindow(u::gui::getCenterWinBounds(c.midiInputBounds), title)
 , m_conf(c)
 {

@@ -74,7 +74,7 @@ public:
 
 	static void logCompiledAPIs();
 
-	int  openDevice(const Conf::Data& conf);
+	int  openDevice(const Conf& conf);
 	void closeDevice();
 	int  startStream();
 	int  stopStream();

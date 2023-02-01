@@ -30,7 +30,7 @@
 
 namespace giada::m
 {
-IOApi::IOApi(model::Model& m, MidiDispatcher& md, Conf::Data& c)
+IOApi::IOApi(model::Model& m, MidiDispatcher& md, Conf& c)
 : m_model(m)
 , m_midiDispatcher(md)
 , m_conf(c)

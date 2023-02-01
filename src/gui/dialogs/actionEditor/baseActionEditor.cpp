@@ -49,7 +49,7 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf::Data& conf)
+gdBaseActionEditor::gdBaseActionEditor(ID channelId, m::Conf& conf)
 : gdWindow(u::gui::getCenterWinBounds(conf.actionEditorBounds), g_ui.getI18Text(LangMap::ACTIONEDITOR_TITLE))
 , channelId(channelId)
 , gridTool(new geGridTool(0, 0, conf))

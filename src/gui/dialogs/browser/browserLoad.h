@@ -41,7 +41,7 @@ class gdBrowserLoad : public gdBrowserBase
 {
 public:
 	gdBrowserLoad(const std::string& title, const std::string& path,
-	    std::function<void(void*)> cb, ID channelId, m::Conf::Data&);
+	    std::function<void(void*)> cb, ID channelId, m::Conf&);
 
 private:
 	static void cb_down(Fl_Widget* /*w*/, void* p);

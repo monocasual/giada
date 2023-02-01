@@ -42,7 +42,7 @@
 
 namespace giada::v
 {
-Ui::Ui(m::Conf::Data& conf)
+Ui::Ui(m::Conf& conf)
 : dispatcher(conf.keyBindings)
 , m_conf(conf)
 , m_updater(*this)

@@ -41,7 +41,7 @@ class geTabPlugins;
 class gdConfig : public gdWindow
 {
 public:
-	gdConfig(int w, int h, m::Conf::Data&);
+	gdConfig(int w, int h, m::Conf&);
 
 	geTabAudio*     tabAudio;
 	geTabBehaviors* tabBehaviors;
