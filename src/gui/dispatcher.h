@@ -34,10 +34,16 @@
 namespace giada::v
 {
 class geChannel;
+class gdMainWindow;
 class Dispatcher final
 {
 public:
-	Dispatcher(const m::Conf::KeyBindings& m_keyBindings);
+	Dispatcher(const m::Conf::KeyBindings&);
+
+	/* init 
+	Initializes internal reference to gdMainWindow. */
+
+	void init(gdMainWindow&);
 
 	/* dispatchKey
     Processes a key pressed on the physical keyboard. */
@@ -64,6 +70,7 @@ private:
 	void dispatchChannels(int event) const;
 
 	const m::Conf::KeyBindings& m_keyBindings;
+	gdMainWindow*               m_mainWindow;
 
 	int m_keyPressed;
 };

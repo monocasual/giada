@@ -125,6 +125,7 @@ void Ui::init(int argc, char** argv, const std::string& patchName, bool isAudioR
 
 	Fl_Tooltip::enable(m_conf.showTooltips);
 
+	dispatcher.init(*mainWindow);
 	m_updater.start();
 
 	if (isAudioReady)

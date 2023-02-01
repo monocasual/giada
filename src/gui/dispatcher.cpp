@@ -34,14 +34,19 @@
 #include <FL/Fl.H>
 #include <cassert>
 
-extern giada::v::Ui g_ui;
-
 namespace giada::v
 {
 Dispatcher::Dispatcher(const m::Conf::KeyBindings& k)
 : m_keyBindings(k)
 , m_keyPressed(-1)
 {
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Dispatcher::init(gdMainWindow& mw)
+{
+	m_mainWindow = &mw;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -68,7 +73,7 @@ found, trigger the key-press/key-release function. */
 
 void Dispatcher::dispatchChannels(int event) const
 {
-	g_ui.mainWindow->keyboard->forEachChannel([=](geChannel& c) {
+	m_mainWindow->keyboard->forEachChannel([=](geChannel& c) {
 		if (c.handleKey(event))
 			perform(c.getData().id, event);
 	});
