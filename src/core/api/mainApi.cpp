@@ -33,8 +33,9 @@
 
 namespace giada::m
 {
-MainApi::MainApi(Engine& e, KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms, ChannelManager& cm, Recorder& r)
+MainApi::MainApi(Engine& e, Conf& c, KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms, ChannelManager& cm, Recorder& r)
 : m_engine(e)
+, m_conf(c)
 , m_kernelAudio(ka)
 , m_mixer(m)
 , m_sequencer(s)
@@ -256,9 +257,9 @@ void MainApi::setInToOut(bool v)
 void MainApi::toggleRecOnSignal()
 {
 	if (!m_recorder.canEnableRecOnSignal())
-		m_engine.getConf().recTriggerMode = RecTriggerMode::NORMAL;
+		m_conf.recTriggerMode = RecTriggerMode::NORMAL;
 	else
-		m_engine.getConf().recTriggerMode = m_engine.getConf().recTriggerMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
+		m_conf.recTriggerMode = m_conf.recTriggerMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
 	m_engine.updateMixerModel();
 }
 
@@ -267,9 +268,9 @@ void MainApi::toggleRecOnSignal()
 void MainApi::toggleFreeInputRec()
 {
 	if (!m_recorder.canEnableFreeInputRec())
-		m_engine.getConf().inputRecMode = InputRecMode::RIGID;
+		m_conf.inputRecMode = InputRecMode::RIGID;
 	else
-		m_engine.getConf().inputRecMode = m_engine.getConf().inputRecMode == InputRecMode::FREE ? InputRecMode::RIGID : InputRecMode::FREE;
+		m_conf.inputRecMode = m_conf.inputRecMode == InputRecMode::FREE ? InputRecMode::RIGID : InputRecMode::FREE;
 	m_engine.updateMixerModel();
 }
 
@@ -286,7 +287,7 @@ void MainApi::toggleActionRecording()
 	if (m_mixer.isRecordingActions())
 		m_recorder.stopActionRec();
 	else
-		m_recorder.prepareActionRec(m_engine.getConf().recTriggerMode);
+		m_recorder.prepareActionRec(m_conf.recTriggerMode);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -294,7 +295,7 @@ void MainApi::toggleActionRecording()
 void MainApi::stopInputRecording()
 {
 	if (m_mixer.isRecordingInput())
-		m_recorder.stopInputRec(m_engine.getConf().inputRecMode, m_kernelAudio.getSampleRate());
+		m_recorder.stopInputRec(m_conf.inputRecMode, m_kernelAudio.getSampleRate());
 }
 
 void MainApi::toggleInputRecording()
@@ -302,9 +303,9 @@ void MainApi::toggleInputRecording()
 	if (!m_kernelAudio.isInputEnabled() || !m_channelManager.hasInputRecordableChannels())
 		return;
 	if (m_mixer.isRecordingInput())
-		m_recorder.stopInputRec(m_engine.getConf().inputRecMode, m_kernelAudio.getSampleRate());
+		m_recorder.stopInputRec(m_conf.inputRecMode, m_kernelAudio.getSampleRate());
 	else
-		m_recorder.prepareInputRec(m_engine.getConf().recTriggerMode, m_engine.getConf().inputRecMode);
+		m_recorder.prepareInputRec(m_conf.recTriggerMode, m_conf.inputRecMode);
 }
 
 /* -------------------------------------------------------------------------- */
