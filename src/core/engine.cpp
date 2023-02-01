@@ -117,7 +117,7 @@ Engine::Engine()
 			m_conf.inputRecMode = InputRecMode::RIGID;
 	};
 	m_channelManager.onChannelRecorded = [this](Frame recordedFrames) {
-		std::string filename = fmt::format("TAKE-{}.wav", m_patch.data.lastTakeId++);
+		std::string filename = fmt::format("TAKE-{}.wav", m_patch.lastTakeId++);
 		return waveFactory::createEmpty(recordedFrames, G_MAX_IO_CHANS, m_kernelAudio.getSampleRate(), filename);
 	};
 
@@ -209,9 +209,9 @@ const std::vector<std::string>& Engine::getMidiMapFilesFound() const
 
 /* -------------------------------------------------------------------------- */
 
-const Patch::Data& Engine::getPatch() const
+const Patch& Engine::getPatch() const
 {
-	return m_patch.data;
+	return m_patch;
 }
 
 Conf& Engine::getConf()

@@ -75,7 +75,7 @@ public:
 	/* load
 	Reads UI information from a Patch when a new project has been loaded. */
 
-	void load(const m::Patch::Data&);
+	void load(const m::Patch&);
 
 	/* getState
 	Returns the current UI state. Use this for persistence. */

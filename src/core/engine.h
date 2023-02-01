@@ -84,7 +84,7 @@ public:
 	/* getPatch
 	Returns a read-only reference to the current loaded Patch. */
 
-	const Patch::Data& getPatch() const;
+	const Patch& getPatch() const;
 
 	/* getConf
 	Returns a reference to the current loaded Conf. */

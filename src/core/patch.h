@@ -35,9 +35,8 @@
 
 namespace giada::m
 {
-class Patch
+struct Patch
 {
-public:
 	struct Version
 	{
 		int major = G_VERSION_MAJOR;
@@ -127,41 +126,22 @@ public:
 		std::vector<uint32_t> midiInParams;
 	};
 
-	struct Data
-	{
-		Version     version;
-		std::string name       = G_DEFAULT_PATCH_NAME;
-		int         bars       = G_DEFAULT_BARS;
-		int         beats      = G_DEFAULT_BEATS;
-		float       bpm        = G_DEFAULT_BPM;
-		bool        quantize   = G_DEFAULT_QUANTIZE;
-		int         lastTakeId = 0;
-		int         samplerate = G_DEFAULT_SAMPLERATE;
-		bool        metronome  = false;
+	Version     version;
+	int         status     = G_FILE_INVALID;
+	std::string name       = G_DEFAULT_PATCH_NAME;
+	int         bars       = G_DEFAULT_BARS;
+	int         beats      = G_DEFAULT_BEATS;
+	float       bpm        = G_DEFAULT_BPM;
+	bool        quantize   = G_DEFAULT_QUANTIZE;
+	int         lastTakeId = 0;
+	int         samplerate = G_DEFAULT_SAMPLERATE;
+	bool        metronome  = false;
 
-		std::vector<Column>  columns;
-		std::vector<Channel> channels;
-		std::vector<Action>  actions;
-		std::vector<Wave>    waves;
-		std::vector<Plugin>  plugins;
-	};
-
-	/* write
-	Writes patch to file. */
-
-	bool write(const std::string& file) const;
-
-	/* reset
-	Initializes the patch with default values. */
-
-	void reset();
-
-	/* read
-	Reads patch from file. It takes 'basePath' as parameter for Wave reading. */
-
-	int read(const std::string& file, const std::string& basePath);
-
-	Data data;
+	std::vector<Column>  columns;
+	std::vector<Channel> channels;
+	std::vector<Action>  actions;
+	std::vector<Wave>    waves;
+	std::vector<Plugin>  plugins;
 };
 } // namespace giada::m
 

@@ -49,6 +49,7 @@ list(APPEND SOURCES
 	src/core/midiEvent.cpp
 	src/core/quantizer.cpp
 	src/core/confFactory.cpp
+	src/core/patchFactory.cpp
 	src/core/kernelAudio.cpp
 	src/core/jackTransport.cpp
 	src/core/sequencer.cpp

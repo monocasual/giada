@@ -24,23 +24,23 @@
  *
  * -------------------------------------------------------------------------- */
 
+#ifndef G_PATCH_FACTORY_H
+#define G_PATCH_FACTORY_H
+
 #include "core/patch.h"
 
-namespace giada::m
+namespace giada::m::patchFactory
 {
-bool Patch::Version::operator==(const Version& o) const
-{
-	return major == o.major && minor == o.minor && patch == o.patch;
-}
+/* serialize 
+Writes Patch to disk. The 'filePath' parameter refers to the .gptc file. */
 
-bool Patch::Version::operator<(const Version& o) const
-{
-	if (major < o.major)
-		return true;
-	if (minor < o.minor)
-		return true;
-	if (patch < o.patch)
-		return true;
-	return false;
-}
-} // namespace giada::m
+bool serialize(const Patch&, const std::string& filePath);
+
+/* deserialize 
+Reads data from disk into a new Patch object. The 'filePath' parameter refers to
+the .gptc file. */
+
+Patch deserialize(const std::string& filePath);
+} // namespace giada::m::patchFactory
+
+#endif

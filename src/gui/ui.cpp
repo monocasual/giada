@@ -81,7 +81,7 @@ const std::vector<std::string>& Ui::getLangMapFilesFound() const
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::load(const m::Patch::Data& patch)
+void Ui::load(const m::Patch& patch)
 {
 	reset();
 	mainWindow->keyboard->layout.clear();

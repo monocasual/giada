@@ -30,6 +30,7 @@
 #include "core/engine.h"
 #include "core/midiSynchronizer.h"
 #include "core/model/model.h"
+#include "core/patchFactory.h"
 #include "core/waveFactory.h"
 #include "utils/fs.h"
 #include "utils/log.h"
@@ -96,7 +97,7 @@ bool StorageApi::storeProject(const std::string& projectName, const std::string&
 
 	const std::string patchPath = u::fs::join(projectPath, projectName + G_PATCH_EXT);
 
-	if (!m_patch.write(patchPath))
+	if (!patchFactory::serialize(m_patch, patchPath))
 		return false;
 
 	/* Store the parent folder the project belongs to, in order to reuse it the
@@ -123,13 +124,13 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, st
 
 	m_midiSynchronizer.stopSendClock();
 
-	/* Read the selected project's m_patch.data. */
+	/* Read the selected project's patch */
 
 	const std::string patchPath = u::fs::join(projectPath, u::fs::stripExt(u::fs::basename(projectPath)) + G_PATCH_EXT);
 
-	m_patch.reset();
-	if (int res = m_patch.read(patchPath, projectPath); res != G_FILE_OK)
-		return {res};
+	m_patch = patchFactory::deserialize(patchPath);
+	if (m_patch.status != G_FILE_OK)
+		return {m_patch.status};
 
 	progress(0.3f);
 
@@ -150,7 +151,7 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, st
 	const bool hasSolos        = m_channelManager.hasSolos();
 
 	m_mixer.updateSoloCount(hasSolos);
-	m_actionRecorder.updateSamplerate(sampleRate, m_patch.data.samplerate);
+	m_actionRecorder.updateSamplerate(sampleRate, m_patch.samplerate);
 	m_sequencer.recomputeFrames(sampleRate);
 	m_mixer.allocRecBuffer(maxFramesInLoop);
 
@@ -179,33 +180,33 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, st
 
 void StorageApi::storePatch(const std::string& projectName, const v::Ui::State& uiState)
 {
-	m_patch.data.columns.clear();
+	m_patch.columns.clear();
 	for (auto const& [id, width] : uiState.columns)
-		m_patch.data.columns.push_back({id, width});
+		m_patch.columns.push_back({id, width});
 
 	const model::Layout& layout = m_model.get();
 
-	m_patch.data.name       = projectName;
-	m_patch.data.bars       = layout.sequencer.bars;
-	m_patch.data.beats      = layout.sequencer.beats;
-	m_patch.data.bpm        = layout.sequencer.bpm;
-	m_patch.data.quantize   = layout.sequencer.quantize;
-	m_patch.data.metronome  = m_sequencer.isMetronomeOn(); // TODO - addShared bool metronome to Layout
-	m_patch.data.samplerate = m_kernelAudio.getSampleRate();
+	m_patch.name       = projectName;
+	m_patch.bars       = layout.sequencer.bars;
+	m_patch.beats      = layout.sequencer.beats;
+	m_patch.bpm        = layout.sequencer.bpm;
+	m_patch.quantize   = layout.sequencer.quantize;
+	m_patch.metronome  = m_sequencer.isMetronomeOn(); // TODO - addShared bool metronome to Layout
+	m_patch.samplerate = m_kernelAudio.getSampleRate();
 
-	m_patch.data.plugins.clear();
+	m_patch.plugins.clear();
 	for (const auto& p : m_model.getAllShared<model::PluginPtrs>())
-		m_patch.data.plugins.push_back(m_pluginManager.serializePlugin(*p));
+		m_patch.plugins.push_back(m_pluginManager.serializePlugin(*p));
 
-	m_patch.data.actions = actionFactory::serializeActions(m_model.getAllShared<Actions::Map>());
+	m_patch.actions = actionFactory::serializeActions(m_model.getAllShared<Actions::Map>());
 
-	m_patch.data.waves.clear();
+	m_patch.waves.clear();
 	for (const auto& w : m_model.getAllShared<model::WavePtrs>())
-		m_patch.data.waves.push_back(waveFactory::serializeWave(*w));
+		m_patch.waves.push_back(waveFactory::serializeWave(*w));
 
-	m_patch.data.channels.clear();
+	m_patch.channels.clear();
 	for (const Channel& c : layout.channels)
-		m_patch.data.channels.push_back(channelFactory::serializeChannel(c));
+		m_patch.channels.push_back(channelFactory::serializeChannel(c));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -214,7 +215,7 @@ StorageApi::LoadState StorageApi::loadPatch()
 {
 	const int   sampleRate      = m_engine.getSampleRate();
 	const int   bufferSize      = m_engine.getBufferSize();
-	const float sampleRateRatio = sampleRate / static_cast<float>(m_patch.data.samplerate);
+	const float sampleRateRatio = sampleRate / static_cast<float>(m_patch.samplerate);
 
 	/* Lock the model's data. Real-time thread can't read from it until this method
 	goes out of scope. */
@@ -231,7 +232,7 @@ StorageApi::LoadState StorageApi::loadPatch()
 	/* Load external data first: plug-ins and waves. */
 
 	m_model.getAllShared<model::PluginPtrs>().clear();
-	for (const Patch::Plugin& pplugin : m_patch.data.plugins)
+	for (const Patch::Plugin& pplugin : m_patch.plugins)
 	{
 		std::unique_ptr<Plugin> p = m_engine.getPluginsApi().deserialize(pplugin);
 		if (!p->valid)
@@ -240,7 +241,7 @@ StorageApi::LoadState StorageApi::loadPatch()
 	}
 
 	m_model.getAllShared<model::WavePtrs>().clear();
-	for (const Patch::Wave& pwave : m_patch.data.waves)
+	for (const Patch::Wave& pwave : m_patch.waves)
 	{
 		std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, m_conf.rsmpQuality);
 		if (w != nullptr)
@@ -251,20 +252,20 @@ StorageApi::LoadState StorageApi::loadPatch()
 
 	/* Then load up channels, actions and global properties. */
 
-	for (const Patch::Channel& pchannel : m_patch.data.channels)
+	for (const Patch::Channel& pchannel : m_patch.channels)
 	{
 		channelFactory::Data data = m_engine.getChannelsApi().deserializeChannel(pchannel, sampleRateRatio, bufferSize);
 		m_model.get().channels.push_back(data.channel);
 		m_model.addShared(std::move(data.shared));
 	}
 
-	m_model.getAllShared<Actions::Map>() = m_engine.getActionEditorApi().deserializeActions(m_patch.data.actions);
+	m_model.getAllShared<Actions::Map>() = m_engine.getActionEditorApi().deserializeActions(m_patch.actions);
 
 	m_model.get().sequencer.status   = SeqStatus::STOPPED;
-	m_model.get().sequencer.bars     = m_patch.data.bars;
-	m_model.get().sequencer.beats    = m_patch.data.beats;
-	m_model.get().sequencer.bpm      = m_patch.data.bpm;
-	m_model.get().sequencer.quantize = m_patch.data.quantize;
+	m_model.get().sequencer.bars     = m_patch.bars;
+	m_model.get().sequencer.beats    = m_patch.beats;
+	m_model.get().sequencer.bpm      = m_patch.bpm;
+	m_model.get().sequencer.quantize = m_patch.quantize;
 
 	return state;
 }
