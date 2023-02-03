@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 #include "glue/channel.h"
-#include "glue/events.h"
 #include "glue/layout.h"
+#include "glue/main.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/imageButton.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
@@ -94,7 +94,7 @@ void geChannel::refresh()
 
 void geChannel::cb_changeVol()
 {
-	c::events::setChannelVolume(m_channel.id, vol->value(), Thread::MAIN);
+	c::channel::setChannelVolume(m_channel.id, vol->value(), Thread::MAIN);
 }
 
 /* -------------------------------------------------------------------------- */

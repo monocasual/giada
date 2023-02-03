@@ -26,7 +26,8 @@
 
 #include "dispatcher.h"
 #include "core/init.h"
-#include "glue/events.h"
+#include "glue/channel.h"
+#include "glue/main.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
@@ -56,14 +57,14 @@ void Dispatcher::perform(ID channelId, int event) const
 	if (event == FL_KEYDOWN)
 	{
 		if (Fl::event_ctrl())
-			c::events::toggleMuteChannel(channelId, Thread::MAIN);
+			c::channel::toggleMuteChannel(channelId, Thread::MAIN);
 		else if (Fl::event_shift())
-			c::events::killChannel(channelId, Thread::MAIN);
+			c::channel::killChannel(channelId, Thread::MAIN);
 		else
-			c::events::pressChannel(channelId, G_MAX_VELOCITY, Thread::MAIN);
+			c::channel::pressChannel(channelId, G_MAX_VELOCITY, Thread::MAIN);
 	}
 	else if (event == FL_KEYUP)
-		c::events::releaseChannel(channelId, Thread::MAIN);
+		c::channel::releaseChannel(channelId, Thread::MAIN);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -96,17 +97,17 @@ void Dispatcher::dispatchKey(int event)
 		m_keyPressed = Fl::event_key();
 
 		if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_PLAY))
-			c::events::toggleSequencer();
+			c::main::toggleSequencer();
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_REWIND))
-			c::events::rewindSequencer();
+			c::main::rewindSequencer();
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_RECORD_ACTIONS))
-			c::events::toggleActionRecording();
+			c::main::toggleActionRecording();
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_RECORD_INPUT))
-			c::events::toggleInputRecording();
+			c::main::toggleInputRecording();
 		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_EXIT))
 		{
-			c::events::stopActionRecording();
-			c::events::stopInputRecording();
+			c::main::stopActionRecording();
+			c::main::stopInputRecording();
 		}
 		else
 		{

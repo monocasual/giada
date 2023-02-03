@@ -26,9 +26,9 @@
 
 #include "gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "glue/channel.h"
-#include "glue/events.h"
 #include "glue/io.h"
 #include "glue/layout.h"
+#include "glue/main.h"
 #include "glue/storage.h"
 #include "gui/dispatcher.h"
 #include "gui/elems/basics/boxtypes.h"
@@ -125,17 +125,17 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 
 	arm->setToggleable(true);
 	arm->onClick = [this]() {
-		c::events::toggleArmChannel(m_channel.id, Thread::MAIN);
+		c::channel::toggleArmChannel(m_channel.id, Thread::MAIN);
 	};
 
 	mute->setToggleable(true);
 	mute->onClick = [this]() {
-		c::events::toggleMuteChannel(m_channel.id, Thread::MAIN);
+		c::channel::toggleMuteChannel(m_channel.id, Thread::MAIN);
 	};
 
 	solo->setToggleable(true);
 	solo->onClick = [this]() {
-		c::events::toggleSoloChannel(m_channel.id, Thread::MAIN);
+		c::channel::toggleSoloChannel(m_channel.id, Thread::MAIN);
 	};
 
 	mainButton->onClick = [this]() { openMenu(); };
@@ -265,9 +265,9 @@ void geSampleChannel::openMenu()
 void geSampleChannel::readActions()
 {
 	if (Fl::event_shift())
-		c::events::killReadActionsChannel(m_channel.id, Thread::MAIN);
+		c::channel::killReadActionsChannel(m_channel.id, Thread::MAIN);
 	else
-		c::events::toggleReadActionsChannel(m_channel.id, Thread::MAIN);
+		c::channel::toggleReadActionsChannel(m_channel.id, Thread::MAIN);
 }
 
 /* -------------------------------------------------------------------------- */

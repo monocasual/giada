@@ -122,6 +122,22 @@ void setInToOut(bool v);
 
 void toggleRecOnSignal();
 void toggleFreeInputRec();
+void toggleMetronome();
+void setMasterInVolume(float v, Thread t);
+void setMasterOutVolume(float v, Thread t);
+void setBpm(float);
+void multiplyBeats();
+void divideBeats();
+void goToBeat(int);
+void startSequencer();
+void stopSequencer();
+void toggleSequencer();
+void rewindSequencer();
+void stopActionRecording();
+void toggleActionRecording();
+void stopInputRecording();
+void toggleInputRecording();
+
 #ifdef G_DEBUG_MODE
 void printDebugInfo();
 #endif

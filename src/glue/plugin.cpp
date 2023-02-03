@@ -32,12 +32,13 @@
 #include "core/model/model.h"
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
+#include "glue/channel.h"
+#include "glue/plugin.h"
 #include "gui/dialogs/config.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/pluginList.h"
 #include "gui/dialogs/pluginWindow.h"
 #include "gui/ui.h"
-#include "plugin.h"
 #include "utils/gui.h"
 #include <FL/Fl.H>
 #include <cassert>
@@ -191,6 +192,16 @@ void setProgram(ID pluginId, int programIndex)
 {
 	g_engine.getPluginsApi().setProgram(pluginId, programIndex);
 	updateWindow(pluginId, Thread::MAIN); // Only Main thread so far
+}
+
+/* -------------------------------------------------------------------------- */
+
+void setParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread t)
+{
+	g_engine.getPluginsApi().setParameter(pluginId, paramIndex, value);
+	channel::notifyChannelForMidiIn(t, channelId);
+
+	g_ui.pumpEvent([pluginId, t]() { c::plugin::updateWindow(pluginId, t); });
 }
 
 /* -------------------------------------------------------------------------- */

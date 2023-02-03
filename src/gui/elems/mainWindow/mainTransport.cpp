@@ -26,7 +26,6 @@
 
 #include "gui/elems/mainWindow/mainTransport.h"
 #include "core/const.h"
-#include "glue/events.h"
 #include "glue/main.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/flex.h"
@@ -68,22 +67,22 @@ geMainTransport::geMainTransport()
 	m_metronome->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TRANSPORT_LABEL_METRONOME));
 
 	m_rewind->onClick = []() {
-		c::events::rewindSequencer();
+		c::main::rewindSequencer();
 	};
 
 	m_play->setToggleable(true);
 	m_play->onClick = []() {
-		c::events::toggleSequencer();
+		c::main::toggleSequencer();
 	};
 
 	m_recAction->setToggleable(true);
 	m_recAction->onClick = []() {
-		c::events::toggleActionRecording();
+		c::main::toggleActionRecording();
 	};
 
 	m_recInput->setToggleable(true);
 	m_recInput->onClick = []() {
-		c::events::toggleInputRecording();
+		c::main::toggleInputRecording();
 	};
 
 	m_recTriggerMode->setToggleable(true);
@@ -98,7 +97,7 @@ geMainTransport::geMainTransport()
 
 	m_metronome->setToggleable(true);
 	m_metronome->onClick = []() {
-		c::events::toggleMetronome();
+		c::main::toggleMetronome();
 	};
 }
 

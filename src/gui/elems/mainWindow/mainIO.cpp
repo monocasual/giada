@@ -27,7 +27,6 @@
 #include "gui/elems/mainWindow/mainIO.h"
 #include "core/const.h"
 #include "glue/channel.h"
-#include "glue/events.h"
 #include "glue/layout.h"
 #include "glue/main.h"
 #include "gui/elems/basics/dial.h"
@@ -71,11 +70,11 @@ geMainIO::geMainIO()
 	m_masterFxIn->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_FXIN));
 
 	m_outVol->onChange = [](float v) {
-		c::events::setMasterOutVolume(v, Thread::MAIN);
+		c::main::setMasterOutVolume(v, Thread::MAIN);
 	};
 
 	m_inVol->onChange = [](float v) {
-		c::events::setMasterInVolume(v, Thread::MAIN);
+		c::main::setMasterInVolume(v, Thread::MAIN);
 	};
 
 	m_inToOut->setToggleable(true);

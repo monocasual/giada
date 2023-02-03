@@ -26,7 +26,6 @@
 
 #include "mainTimer.h"
 #include "core/const.h"
-#include "glue/events.h"
 #include "glue/layout.h"
 #include "glue/main.h"
 #include "gui/elems/basics/choice.h"
@@ -64,8 +63,8 @@ geMainTimer::geMainTimer()
 
 	m_bpm->onClick        = [&bpm = m_bpm]() { c::layout::openBpmWindow(bpm->label()); };
 	m_meter->onClick      = [&timer = m_timer]() { c::layout::openBeatsWindow(timer.beats, timer.bars); };
-	m_multiplier->onClick = []() { c::events::multiplyBeats(); };
-	m_divider->onClick    = []() { c::events::divideBeats(); };
+	m_multiplier->onClick = []() { c::main::multiplyBeats(); };
+	m_divider->onClick    = []() { c::main::divideBeats(); };
 
 	m_quantizer->addItem(g_ui.getI18Text(LangMap::COMMON_OFF));
 	m_quantizer->addItem("1\\/1");

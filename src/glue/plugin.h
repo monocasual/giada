@@ -129,6 +129,7 @@ void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId);
 void sortPlugins(m::PluginManager::SortMethod);
 void freePlugin(const m::Plugin& plugin, ID channelId);
 void setProgram(ID pluginId, int programIndex);
+void setParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread);
 void toggleBypass(ID pluginId);
 void startDispatchLoop();
 void stopDispatchLoop();

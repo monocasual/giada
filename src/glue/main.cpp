@@ -221,6 +221,58 @@ void toggleFreeInputRec()
 
 /* -------------------------------------------------------------------------- */
 
+void toggleMetronome()
+{
+	g_engine.getMainApi().toggleMetronome();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void setMasterInVolume(float v, Thread t)
+{
+	g_engine.getMainApi().setMasterInVolume(v);
+
+	if (t != Thread::MAIN)
+		g_ui.pumpEvent([v]() { g_ui.mainWindow->mainIO->setInVol(v); });
+}
+
+void setMasterOutVolume(float v, Thread t)
+{
+	g_engine.getMainApi().setMasterOutVolume(v);
+
+	if (t != Thread::MAIN)
+		g_ui.pumpEvent([v]() { g_ui.mainWindow->mainIO->setOutVol(v); });
+}
+
+/* -------------------------------------------------------------------------- */
+
+void setBpm(float v) { g_engine.getMainApi().setBpm(v); }
+
+/* -------------------------------------------------------------------------- */
+
+void multiplyBeats() { g_engine.getMainApi().multiplyBeats(); }
+void divideBeats() { g_engine.getMainApi().divideBeats(); }
+
+/* -------------------------------------------------------------------------- */
+
+void goToBeat(int beat) { g_engine.getMainApi().goToBeat(beat); }
+
+/* -------------------------------------------------------------------------- */
+
+void startSequencer() { g_engine.getMainApi().startSequencer(); }
+void stopSequencer() { g_engine.getMainApi().stopSequencer(); }
+void toggleSequencer() { g_engine.getMainApi().toggleSequencer(); }
+void rewindSequencer() { g_engine.getMainApi().rewindSequencer(); }
+
+/* -------------------------------------------------------------------------- */
+
+void stopActionRecording() { g_engine.getMainApi().stopActionRecording(); }
+void stopInputRecording() { g_engine.getMainApi().stopInputRecording(); }
+void toggleActionRecording() { g_engine.getMainApi().toggleActionRecording(); }
+void toggleInputRecording() { g_engine.getMainApi().toggleInputRecording(); }
+
+/* -------------------------------------------------------------------------- */
+
 #ifdef G_DEBUG_MODE
 
 void printDebugInfo()

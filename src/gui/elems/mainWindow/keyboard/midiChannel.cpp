@@ -27,9 +27,9 @@
 #include "gui/elems/mainWindow/keyboard/midiChannel.h"
 #include "core/const.h"
 #include "glue/channel.h"
-#include "glue/events.h"
 #include "glue/io.h"
 #include "glue/layout.h"
+#include "glue/main.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/dispatcher.h"
 #include "gui/elems/basics/boxtypes.h"
@@ -110,17 +110,17 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 
 	arm->setToggleable(true);
 	arm->onClick = [this]() {
-		c::events::toggleArmChannel(m_channel.id, Thread::MAIN);
+		c::channel::toggleArmChannel(m_channel.id, Thread::MAIN);
 	};
 
 	mute->setToggleable(true);
 	mute->onClick = [this]() {
-		c::events::toggleMuteChannel(m_channel.id, Thread::MAIN);
+		c::channel::toggleMuteChannel(m_channel.id, Thread::MAIN);
 	};
 
 	solo->setToggleable(true);
 	solo->onClick = [this]() {
-		c::events::toggleSoloChannel(m_channel.id, Thread::MAIN);
+		c::channel::toggleSoloChannel(m_channel.id, Thread::MAIN);
 	};
 
 	mainButton->onClick = [this]() { openMenu(); };

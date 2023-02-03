@@ -33,7 +33,7 @@
 #include "core/model/model.h"
 #include "core/sequencer.h"
 #include "glue/channel.h"
-#include "glue/events.h"
+#include "glue/main.h"
 #include <cassert>
 
 extern giada::m::Engine g_engine;

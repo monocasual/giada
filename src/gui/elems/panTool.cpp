@@ -27,7 +27,6 @@
 #include "src/gui/elems/panTool.h"
 #include "core/const.h"
 #include "glue/channel.h"
-#include "glue/events.h"
 #include "gui/ui.h"
 #include "src/gui/elems/basics/dial.h"
 #include "src/gui/elems/basics/input.h"
@@ -55,7 +54,7 @@ gePanTool::gePanTool(ID channelId, float pan, int labelWidth)
 
 	m_dial->range(0.0f, G_MAX_PAN);
 	m_dial->onChange = [this](float val) {
-		c::events::sendChannelPan(m_channelId, val);
+		c::channel::sendChannelPan(m_channelId, val);
 		update(val);
 	};
 
@@ -63,7 +62,7 @@ gePanTool::gePanTool(ID channelId, float pan, int labelWidth)
 	m_input->setCursorColor(FL_WHITE);
 
 	m_reset->onClick = [this]() {
-		c::events::sendChannelPan(m_channelId, 0.5f);
+		c::channel::sendChannelPan(m_channelId, 0.5f);
 		update(0.5f);
 	};
 

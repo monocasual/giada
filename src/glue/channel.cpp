@@ -303,4 +303,109 @@ void setCallbacks(m::Channel& ch)
 	if (ch.midiSender)
 		ch.midiSender->onSend = onSendMidiCb;
 }
+
+/* -------------------------------------------------------------------------- */
+
+void pressChannel(ID channelId, int velocity, Thread t)
+{
+	g_engine.getChannelsApi().press(channelId, velocity);
+	notifyChannelForMidiIn(t, channelId);
+}
+
+void releaseChannel(ID channelId, Thread t)
+{
+	g_engine.getChannelsApi().release(channelId);
+	notifyChannelForMidiIn(t, channelId);
+}
+
+void killChannel(ID channelId, Thread t)
+{
+	g_engine.getChannelsApi().kill(channelId);
+	notifyChannelForMidiIn(t, channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
+{
+	g_engine.getChannelsApi().setVolume(channelId, v);
+	notifyChannelForMidiIn(t, channelId);
+
+	if (t != Thread::MAIN || repaintMainUi)
+		g_ui.pumpEvent([channelId, v]() { g_ui.mainWindow->keyboard->setChannelVolume(channelId, v); });
+
+	return v;
+}
+
+/* -------------------------------------------------------------------------- */
+
+float setChannelPitch(ID channelId, float v, Thread t)
+{
+	g_engine.getChannelsApi().setPitch(channelId, v);
+	g_ui.pumpEvent([v]() {
+		if (auto* w = sampleEditor::getWindow(); w != nullptr)
+			w->pitchTool->update(v); });
+	notifyChannelForMidiIn(t, channelId);
+	return v;
+}
+
+/* -------------------------------------------------------------------------- */
+
+float sendChannelPan(ID channelId, float v)
+{
+	g_engine.getChannelsApi().setPan(channelId, v);
+	notifyChannelForMidiIn(Thread::MAIN, channelId); // Currently triggered only by the main thread
+	return v;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void toggleMuteChannel(ID channelId, Thread t)
+{
+	g_engine.getChannelsApi().toggleMute(channelId);
+	notifyChannelForMidiIn(t, channelId);
+}
+
+void toggleSoloChannel(ID channelId, Thread t)
+{
+	g_engine.getChannelsApi().toggleSolo(channelId);
+	notifyChannelForMidiIn(t, channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void toggleArmChannel(ID channelId, Thread t)
+{
+	g_engine.getChannelsApi().toggleArm(channelId);
+	notifyChannelForMidiIn(t, channelId);
+}
+
+void toggleReadActionsChannel(ID channelId, Thread t)
+{
+	g_engine.getChannelsApi().toggleReadActions(channelId);
+	notifyChannelForMidiIn(t, channelId);
+}
+
+void killReadActionsChannel(ID channelId, Thread t)
+{
+	g_engine.getChannelsApi().killReadActions(channelId);
+	notifyChannelForMidiIn(t, channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void sendMidiToChannel(ID channelId, m::MidiEvent e, Thread t)
+{
+	g_engine.getChannelsApi().sendMidi(channelId, e);
+	notifyChannelForMidiIn(t, channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void notifyChannelForMidiIn(Thread t, ID channelId)
+{
+	if (t == Thread::MIDI)
+		g_ui.pumpEvent([channelId]() { g_ui.mainWindow->keyboard->notifyMidiIn(channelId); });
+}
+
 } // namespace giada::c::channel

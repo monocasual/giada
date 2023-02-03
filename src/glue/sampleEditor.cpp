@@ -33,7 +33,7 @@
 #include "core/sequencer.h"
 #include "core/wave.h"
 #include "core/waveFactory.h"
-#include "glue/events.h"
+#include "glue/main.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
@@ -201,7 +201,7 @@ void setLoop(bool shouldLoop)
 
 void playPreview()
 {
-	events::pressChannel(m::Mixer::PREVIEW_CHANNEL_ID, G_MAX_VELOCITY, Thread::MAIN);
+	channel::pressChannel(m::Mixer::PREVIEW_CHANNEL_ID, G_MAX_VELOCITY, Thread::MAIN);
 }
 
 void stopPreview()
@@ -209,7 +209,7 @@ void stopPreview()
 	/* Let the Sample Editor show the final tracker position, then kill the
 	channel. */
 	getWindow()->refresh();
-	events::killChannel(m::Mixer::PREVIEW_CHANNEL_ID, Thread::MAIN);
+	channel::killChannel(m::Mixer::PREVIEW_CHANNEL_ID, Thread::MAIN);
 }
 
 void togglePreview()

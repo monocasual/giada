@@ -93,7 +93,6 @@ list(APPEND SOURCES
 	src/core/model/mixer.cpp
 	src/core/model/model.cpp
 	src/core/idManager.cpp
-	src/glue/events.cpp
 	src/glue/main.cpp
 	src/glue/io.cpp
 	src/glue/storage.cpp

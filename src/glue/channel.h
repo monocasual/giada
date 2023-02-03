@@ -175,6 +175,24 @@ Install callbacks to a m::Channel object in order to communicate with the UI.
 Call this whenever you add a new channel. */
 
 void setCallbacks(m::Channel&);
+
+void  pressChannel(ID channelId, int velocity, Thread t);
+void  releaseChannel(ID channelId, Thread t);
+void  killChannel(ID channelId, Thread t);
+float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi = false);
+float setChannelPitch(ID channelId, float v, Thread t);
+float sendChannelPan(ID channelId, float v); // FIXME typo: should be setChannelPan
+void  toggleMuteChannel(ID channelId, Thread t);
+void  toggleSoloChannel(ID channelId, Thread t);
+void  toggleArmChannel(ID channelId, Thread t);
+void  toggleReadActionsChannel(ID channelId, Thread t);
+void  killReadActionsChannel(ID channelId, Thread t);
+void  sendMidiToChannel(ID channelId, m::MidiEvent e, Thread t);
+
+/* notifyChannelForMidiIn
+Tells Channel with ID that a MIDI event has been received. */
+
+void notifyChannelForMidiIn(Thread, ID channelId);
 } // namespace giada::c::channel
 
 #endif

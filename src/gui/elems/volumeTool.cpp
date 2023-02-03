@@ -27,7 +27,6 @@
 #include "src/gui/elems/volumeTool.h"
 #include "core/const.h"
 #include "glue/channel.h"
-#include "glue/events.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/input.h"
 #include "gui/elems/basics/textButton.h"
@@ -54,20 +53,20 @@ geVolumeTool::geVolumeTool(ID channelId, float volume, int labelWidth)
 
 	m_dial->range(0.0f, 1.0f);
 	m_dial->onChange = [this](float val) {
-		c::events::setChannelVolume(m_channelId, val, Thread::MAIN, /*repaintMainUi=*/true);
+		c::channel::setChannelVolume(m_channelId, val, Thread::MAIN, /*repaintMainUi=*/true);
 		update(val, /*fromDial=*/true);
 	};
 
 	m_input->setType(FL_FLOAT_INPUT);
 	m_input->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_input->onChange = [this](const std::string& val) {
-		const float valf = c::events::setChannelVolume(m_channelId, u::math::dBtoLinear(u::gui::toFloat(val)),
+		const float valf = c::channel::setChannelVolume(m_channelId, u::math::dBtoLinear(u::gui::toFloat(val)),
 		    Thread::MAIN, /*repaintMainUi=*/true);
 		update(valf, /*fromDial=*/false);
 	};
 
 	m_reset->onClick = [this]() {
-		c::events::setChannelVolume(m_channelId, G_DEFAULT_VOL, Thread::MAIN, /*repaintMainUi=*/true);
+		c::channel::setChannelVolume(m_channelId, G_DEFAULT_VOL, Thread::MAIN, /*repaintMainUi=*/true);
 		update(G_DEFAULT_VOL, /*fromDial=*/false);
 	};
 
