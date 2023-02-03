@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2022 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2023 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -27,8 +27,8 @@
 #ifndef G_UTILS_VECTOR_H
 #define G_UTILS_VECTOR_H
 
-#include <cstddef>
 #include <algorithm>
+#include <cstddef>
 #include <functional>
 #include <vector>
 

@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2022 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2023 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -35,8 +35,7 @@ int main(int argc, char** argv)
 	if (int ret = giada::m::init::tests(argc, argv); ret != -1)
 		return ret;
 
-	g_ui.dispatcher.onEventOccured = []()
-	{
+	g_ui.dispatcher.onEventOccured = []() {
 		g_engine.getMainApi().startActionRecOnCallback();
 	};
 

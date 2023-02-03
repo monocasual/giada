@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2022 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2023 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -28,8 +28,8 @@
 #define G_MIDI_LEARN_PARAM_H
 
 #include "core/weakAtomic.h"
-#include <cstddef>
 #include <atomic>
+#include <cstddef>
 
 namespace giada::m
 {
@@ -44,7 +44,7 @@ public:
 	std::size_t getIndex() const;
 	void        setValue(uint32_t v);
 
-  private:
+private:
 	WeakAtomic<uint32_t> m_param;
 	std::size_t          m_index;
 };

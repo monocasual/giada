@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2022 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2023 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -293,15 +293,13 @@ void Channel::setSolo(bool v)
 
 void Channel::initCallbacks()
 {
-	shared->playStatus.onChange = [this](ChannelStatus status)
-	{
+	shared->playStatus.onChange = [this](ChannelStatus status) {
 		midiLighter.sendStatus(status, isAudible(/*mixerHasSolos = TODO!*/ false));
 	};
 
 	if (samplePlayer)
 	{
-		samplePlayer->onLastFrame = [this](bool natural, bool seqIsRunning)
-		{
+		samplePlayer->onLastFrame = [this](bool natural, bool seqIsRunning) {
 			sampleAdvancer->onLastFrame(*shared, seqIsRunning, natural, samplePlayer->mode,
 			    samplePlayer->isAnyLoopMode());
 		};

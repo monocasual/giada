@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2022 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2023 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -54,7 +54,7 @@ public:
 	Fl_Widget* getChild(std::size_t i);
 	Fl_Widget* getLastChild();
 
-  private:
+private:
 	/* m_widgets 
     The internal Fl_Scroll::array_ is unreliable when inspected with the child()
     method. Let's keep track of widgets that belong to this group manually. */

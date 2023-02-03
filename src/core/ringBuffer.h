@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2022 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2023 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -27,8 +27,8 @@
 #ifndef G_RING_BUFFER_H
 #define G_RING_BUFFER_H
 
-#include <cstddef>
 #include <array>
+#include <cstddef>
 
 namespace giada
 {
@@ -69,7 +69,7 @@ public:
 		return m_end;
 	}
 
-  private:
+private:
 	std::array<T, S> m_data;
 	std::size_t      m_index = 0;
 	std::size_t      m_end   = 0;

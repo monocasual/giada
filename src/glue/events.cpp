@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2022 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2023 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -51,8 +51,7 @@ namespace
 void notifyChannelForMidiIn_(Thread t, ID channelId)
 {
 	if (t == Thread::MIDI)
-		g_ui.pumpEvent([channelId]()
-		    { g_ui.mainWindow->keyboard->notifyMidiIn(channelId); });
+		g_ui.pumpEvent([channelId]() { g_ui.mainWindow->keyboard->notifyMidiIn(channelId); });
 }
 } // namespace
 
@@ -86,8 +85,7 @@ float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
 	notifyChannelForMidiIn_(t, channelId);
 
 	if (t != Thread::MAIN || repaintMainUi)
-		g_ui.pumpEvent([channelId, v]()
-		    { g_ui.mainWindow->keyboard->setChannelVolume(channelId, v); });
+		g_ui.pumpEvent([channelId, v]() { g_ui.mainWindow->keyboard->setChannelVolume(channelId, v); });
 
 	return v;
 }
@@ -97,8 +95,7 @@ float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
 float setChannelPitch(ID channelId, float v, Thread t)
 {
 	g_engine.getChannelsApi().setPitch(channelId, v);
-	g_ui.pumpEvent([v]()
-	    {
+	g_ui.pumpEvent([v]() {
 		if (auto* w = sampleEditor::getWindow(); w != nullptr)
 			w->pitchTool->update(v); });
 	notifyChannelForMidiIn_(t, channelId);
@@ -170,8 +167,7 @@ void setMasterInVolume(float v, Thread t)
 	g_engine.getMainApi().setMasterInVolume(v);
 
 	if (t != Thread::MAIN)
-		g_ui.pumpEvent([v]()
-		    { g_ui.mainWindow->mainIO->setInVol(v); });
+		g_ui.pumpEvent([v]() { g_ui.mainWindow->mainIO->setInVol(v); });
 }
 
 void setMasterOutVolume(float v, Thread t)
@@ -179,8 +175,7 @@ void setMasterOutVolume(float v, Thread t)
 	g_engine.getMainApi().setMasterOutVolume(v);
 
 	if (t != Thread::MAIN)
-		g_ui.pumpEvent([v]()
-		    { g_ui.mainWindow->mainIO->setOutVol(v); });
+		g_ui.pumpEvent([v]() { g_ui.mainWindow->mainIO->setOutVol(v); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -217,7 +212,6 @@ void setPluginParameter(ID channelId, ID pluginId, int paramIndex, float value, 
 	g_engine.getPluginsApi().setParameter(pluginId, paramIndex, value);
 	notifyChannelForMidiIn_(t, channelId);
 
-	g_ui.pumpEvent([pluginId, t]()
-	    { c::plugin::updateWindow(pluginId, t); });
+	g_ui.pumpEvent([pluginId, t]() { c::plugin::updateWindow(pluginId, t); });
 }
 } // namespace giada::c::events

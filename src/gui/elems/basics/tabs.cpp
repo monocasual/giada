@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2022 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2023 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -49,6 +49,6 @@ void geTabs::add(Fl_Widget* wg)
 	wg->selection_color(G_COLOR_GREY_4);
 
 	Fl_Tabs::add(wg);
-	resizable(wg);//  To keep the tab height constant during resizing
+	resizable(wg); //  To keep the tab height constant during resizing
 }
 } // namespace giada::v
