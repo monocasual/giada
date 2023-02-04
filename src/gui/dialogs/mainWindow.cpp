@@ -98,8 +98,8 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, cha
 			mainMenu = new v::geMainMenu();
 			mainIO   = new v::geMainIO();
 			zone1->add(mainMenu, 350);
-			zone1->add(new geBox());
-			zone1->add(mainIO, 430);
+			zone1->add(new geBox(), 80);
+			zone1->add(mainIO);
 			zone1->end();
 		}
 
