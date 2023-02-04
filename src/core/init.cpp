@@ -102,6 +102,10 @@ void startup(int argc, char** argv)
 	g_engine.init();
 	g_ui.init(argc, argv, g_engine.getPatch().name, g_engine.isAudioReady());
 
+	g_ui.dispatcher.onEventOccured = []() {
+		g_engine.getMainApi().startActionRecOnCallback();
+	};
+
 	/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap
 	callback might be performed by a non-main thread, which must talk to the 
 	UI (main thread) through the UI queue by pumping an event in it. */

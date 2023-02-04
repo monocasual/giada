@@ -35,10 +35,6 @@ int main(int argc, char** argv)
 	if (int ret = giada::m::init::tests(argc, argv); ret != -1)
 		return ret;
 
-	g_ui.dispatcher.onEventOccured = []() {
-		g_engine.getMainApi().startActionRecOnCallback();
-	};
-
 	giada::m::init::startup(argc, argv);
 	giada::m::init::run();
 
