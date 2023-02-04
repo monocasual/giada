@@ -106,6 +106,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 	playButton->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_PLAY));
 	arm->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_ARM));
 	status->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_STATUS));
+	midiActivity->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_MIDIACTIVITY));
 	readActionsBtn->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_READACTIONS));
 	modeBox->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_MODEBOX));
 	mute->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_MUTE));

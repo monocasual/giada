@@ -93,6 +93,7 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 
 	playButton->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_PLAY));
 	arm->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_ARM));
+	midiActivity->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_MIDIACTIVITY));
 	mute->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_MUTE));
 	solo->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_SOLO));
 	fx->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_CHANNEL_LABEL_FX));
