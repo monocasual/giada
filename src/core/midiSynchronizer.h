@@ -30,12 +30,6 @@
 #include "core/conf.h"
 #include "core/types.h"
 #include "core/worker.h"
-#include "deps/geompp/src/range.hpp"
-
-namespace giada::m::model
-{
-class Sequencer;
-}
 
 namespace giada::m
 {
