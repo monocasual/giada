@@ -149,6 +149,7 @@ list(APPEND SOURCES
 	src/gui/elems/sampleEditor/waveTools.cpp
     src/gui/elems/volumeTool.cpp
 	src/gui/elems/panTool.cpp
+	src/gui/elems/midiActivity.cpp
 	src/gui/elems/sampleEditor/pitchTool.cpp
 	src/gui/elems/sampleEditor/rangeTool.cpp
 	src/gui/elems/sampleEditor/shiftTool.cpp
@@ -178,7 +179,6 @@ list(APPEND SOURCES
 	src/gui/elems/mainWindow/keyboard/channel.cpp
 	src/gui/elems/mainWindow/keyboard/sampleChannelButton.cpp
 	src/gui/elems/mainWindow/keyboard/midiChannelButton.cpp
-	src/gui/elems/mainWindow/keyboard/midiActivity.cpp
 	src/gui/elems/config/tabMisc.cpp
 	src/gui/elems/config/tabMidi.cpp
 	src/gui/elems/config/tabAudio.cpp

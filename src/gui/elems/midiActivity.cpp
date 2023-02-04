@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/mainWindow/keyboard/midiActivity.h"
+#include "gui/elems/midiActivity.h"
 #include "core/const.h"
 #include "gui/ui.h"
 #include <FL/fl_draw.H>

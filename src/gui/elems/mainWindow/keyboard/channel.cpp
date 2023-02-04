@@ -33,7 +33,7 @@
 #include "gui/elems/mainWindow/keyboard/channelButton.h"
 #include "gui/elems/mainWindow/keyboard/channelStatus.h"
 #include "gui/elems/mainWindow/keyboard/column.h"
-#include "gui/elems/mainWindow/keyboard/midiActivity.h"
+#include "gui/elems/midiActivity.h"
 #include "gui/ui.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
