@@ -40,7 +40,8 @@ namespace
 {
 constexpr auto OUTPUT_NAME       = "Giada MIDI output";
 constexpr auto INPUT_NAME        = "Giada MIDI input";
-constexpr int  MAX_RTMIDI_EVENTS = 64;
+constexpr int  MAX_RTMIDI_EVENTS = 8;
+constexpr int  MAX_NUM_PRODUCERS = 2; // Real-time thread and MIDI sync thread
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -51,7 +52,7 @@ KernelMidi::KernelMidi()
 : onMidiReceived(nullptr)
 , onMidiSent(nullptr)
 , m_worker(G_KERNEL_MIDI_OUTPUT_RATE_MS)
-, m_midiQueue(MAX_RTMIDI_EVENTS)
+, m_midiQueue(MAX_RTMIDI_EVENTS, 0, MAX_NUM_PRODUCERS) // See https://github.com/cameron314/concurrentqueue#preallocation-correctly-using-try_enqueue
 , m_elpsedTime(0.0)
 {
 }
