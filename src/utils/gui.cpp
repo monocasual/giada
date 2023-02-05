@@ -257,4 +257,23 @@ int toInt(const std::string& s)
 		return 0;
 	}
 }
+
+/* -------------------------------------------------------------------------- */
+
+std::string toString(Thread t)
+{
+	switch (t)
+	{
+	case Thread::MAIN:
+		return "MAIN";
+	case Thread::MIDI:
+		return "MIDI";
+	case Thread::AUDIO:
+		return "AUDIO (rt)";
+	case Thread::EVENTS:
+		return "EVENTS";
+	default:
+		return "(unknown)";
+	}
+}
 } // namespace giada::u::gui

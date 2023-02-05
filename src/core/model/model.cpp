@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/model/model.h"
+#include "utils/gui.h"
 #include "utils/log.h"
 #include <cassert>
 #include <memory>
@@ -128,28 +129,7 @@ void Model::reset()
 
 bool Model::registerThread(Thread t, bool realtime) const
 {
-	std::string name;
-
-	switch (t)
-	{
-	case Thread::MAIN:
-		name = "MAIN";
-		break;
-	case Thread::MIDI:
-		name = "MIDI";
-		break;
-	case Thread::AUDIO:
-		name = "AUDIO (rt)";
-		break;
-	case Thread::EVENTS:
-		name = "EVENTS";
-		break;
-	default:
-		name = "(unknown)";
-		break;
-	}
-
-	return m_layout.registerThread(name, realtime);
+	return m_layout.registerThread(u::gui::toString(t), realtime);
 }
 
 /* -------------------------------------------------------------------------- */
