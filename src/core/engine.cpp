@@ -28,6 +28,7 @@
 #include "core/confFactory.h"
 #include "core/model/model.h"
 #include "utils/fs.h"
+#include "utils/gui.h"
 #include "utils/log.h"
 #include <fmt/core.h>
 #include <memory>
@@ -62,11 +63,7 @@ Engine::Engine()
 	m_kernelMidi.onMidiReceived = [this](const MidiEvent& e) {
 		assert(onMidiReceived != nullptr);
 
-		if (!m_model.registerThread(Thread::MIDI, /*realtime=*/false))
-		{
-			u::log::print("[Engine::m_kernelMidi.onMidiReceived] Can't register MIDI thread!\n");
-			return;
-		}
+		registerThread(Thread::MIDI, /*realtime=*/false);
 		m_midiDispatcher.dispatch(e);
 		m_midiSynchronizer.receive(e, m_sequencer.getBeats());
 		onMidiReceived();
@@ -249,11 +246,7 @@ void Engine::updateMixerModel()
 
 void Engine::init()
 {
-	if (!m_model.registerThread(Thread::MAIN, /*realtime=*/false))
-	{
-		u::log::print("[Engine::init] Can't register main thread!\n");
-		return;
-	}
+	registerThread(Thread::MAIN, /*realtime=*/false);
 
 	m_model.reset();
 
@@ -357,11 +350,7 @@ void Engine::shutdown()
 
 int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 {
-	if (!m_model.registerThread(Thread::AUDIO, /*realtime=*/true))
-	{
-		u::log::print("[Engine::audioCallback] can't register realtime thread!\n");
-		return 0;
-	}
+	registerThread(Thread::AUDIO, /*realtime=*/true);
 
 	mcl::AudioBuffer out(static_cast<float*>(kernelInfo.outBuf), kernelInfo.bufferSize, kernelInfo.channelsOutCount);
 	mcl::AudioBuffer in;
@@ -474,6 +463,17 @@ void Engine::loadConfig()
 	m_model.get().midiIn.beatHalf   = m_conf.midiInBeatHalf;
 
 	m_model.swap(model::SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Engine::registerThread(Thread t, bool isRealtime) const
+{
+	if (!m_model.registerThread(t, isRealtime))
+	{
+		u::log::print("[Engine::registerThread] Can't register thread %s! Aborting\n", u::gui::toString(t).c_str());
+		std::abort();
+	}
 }
 
 /* -------------------------------------------------------------------------- */

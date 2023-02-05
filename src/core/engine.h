@@ -153,7 +153,8 @@ public:
 	std::function<void(model::SwapType)> onModelSwap;
 
 private:
-	int audioCallback(KernelAudio::CallbackInfo) const;
+	int  audioCallback(KernelAudio::CallbackInfo) const;
+	void registerThread(Thread, bool isRealtime) const;
 
 	void storeConfig();
 	void loadConfig();
