@@ -37,6 +37,7 @@ namespace giada::m
 Engine::Engine()
 : onMidiReceived(nullptr)
 , onMidiSent(nullptr)
+, onModelSwap(nullptr)
 , m_midiMapper(m_kernelMidi)
 , m_pluginHost(m_model)
 , m_midiSynchronizer(m_conf, m_kernelMidi)
@@ -147,6 +148,11 @@ Engine::Engine()
 	};
 	m_sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep) {
 		m_actionRecorder.updateBpm(oldVal / newVal, quantizerStep);
+	};
+
+	m_model.onSwap = [this](model::SwapType t) {
+		assert(onModelSwap != nullptr);
+		onModelSwap(t);
 	};
 }
 
@@ -433,13 +439,6 @@ void Engine::debug()
 	m_model.debug();
 }
 #endif
-
-/* -------------------------------------------------------------------------- */
-
-void Engine::setOnModelSwapCb(std::function<void(m::model::SwapType)> f)
-{
-	m_model.onSwap = f;
-}
 
 /* -------------------------------------------------------------------------- */
 

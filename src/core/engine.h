@@ -124,11 +124,6 @@ public:
 	void debug();
 #endif
 
-	/* setOnModelSwapCb
-	Sets callback to fire when the model gets swapped. */
-
-	void setOnModelSwapCb(std::function<void(model::SwapType)>);
-
 	MainApi&         getMainApi();
 	ChannelsApi&     getChannelsApi();
 	PluginsApi&      getPluginsApi();
@@ -151,6 +146,11 @@ public:
 
 	std::function<void()> onMidiReceived;
 	std::function<void()> onMidiSent;
+
+	/* onModelSwap
+	Callback fired when the model gets swapped. */
+
+	std::function<void(model::SwapType)> onModelSwap;
 
 private:
 	int audioCallback(KernelAudio::CallbackInfo) const;

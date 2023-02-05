@@ -99,10 +99,6 @@ void printBuildInfo()
 
 void startup(int argc, char** argv)
 {
-	juce::initialiseJuce_GUI();
-	g_engine.init();
-	g_ui.init(argc, argv, g_engine.getPatch().name, g_engine.isAudioReady());
-
 	g_ui.dispatcher.onEventOccured = []() {
 		g_engine.getMainApi().startActionRecOnCallback();
 	};
@@ -115,17 +111,20 @@ void startup(int argc, char** argv)
 		g_ui.mainWindow->mainIO->setMidiOutActivity();
 	};
 
-	/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap
-	callback might be performed by a non-main thread, which must talk to the 
-	UI (main thread) through the UI queue by pumping an event in it. */
-
-	g_engine.setOnModelSwapCb([](model::SwapType type) {
+	g_engine.onModelSwap = [](model::SwapType type) {
+		/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap
+		callback might be performed by a non-main thread, which must talk to the 
+		UI (main thread) through the UI queue by pumping an event in it. */
 		g_ui.pumpEvent([type]() {
 			if (type == model::SwapType::NONE)
 				return;
 			type == model::SwapType::HARD ? g_ui.rebuild() : g_ui.refresh();
 		});
-	});
+	};
+
+	juce::initialiseJuce_GUI();
+	g_engine.init();
+	g_ui.init(argc, argv, g_engine.getPatch().name, g_engine.isAudioReady());
 }
 
 /* -------------------------------------------------------------------------- */
