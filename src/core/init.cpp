@@ -104,11 +104,11 @@ void startup(int argc, char** argv)
 	};
 
 	g_engine.onMidiReceived = []() {
-		g_ui.mainWindow->mainIO->setMidiInActivity();
+		g_ui.pumpEvent([] { g_ui.mainWindow->mainIO->setMidiInActivity(); });
 	};
 
 	g_engine.onMidiSent = []() {
-		g_ui.mainWindow->mainIO->setMidiOutActivity();
+		g_ui.pumpEvent([] { g_ui.mainWindow->mainIO->setMidiOutActivity(); });
 	};
 
 	g_engine.onModelSwap = [](model::SwapType type) {
