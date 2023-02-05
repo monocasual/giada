@@ -35,7 +35,9 @@
 namespace giada::m
 {
 Engine::Engine()
-: m_midiMapper(m_kernelMidi)
+: onMidiReceived(nullptr)
+, onMidiSent(nullptr)
+, m_midiMapper(m_kernelMidi)
 , m_pluginHost(m_model)
 , m_midiSynchronizer(m_conf, m_kernelMidi)
 , m_sequencer(m_model, m_midiSynchronizer, m_jackTransport)
@@ -57,6 +59,8 @@ Engine::Engine()
 	};
 
 	m_kernelMidi.onMidiReceived = [this](const MidiEvent& e) {
+		assert(onMidiReceived != nullptr);
+
 		if (!m_model.registerThread(Thread::MIDI, /*realtime=*/false))
 		{
 			u::log::print("[Engine::m_kernelMidi.onMidiReceived] Can't register MIDI thread!\n");
@@ -64,6 +68,11 @@ Engine::Engine()
 		}
 		m_midiDispatcher.dispatch(e);
 		m_midiSynchronizer.receive(e, m_sequencer.getBeats());
+		onMidiReceived();
+	};
+	m_kernelMidi.onMidiSent = [this]() {
+		assert(onMidiSent != nullptr);
+		onMidiSent();
 	};
 
 	m_midiDispatcher.onEventReceived = [this]() {

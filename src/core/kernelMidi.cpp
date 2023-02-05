@@ -49,6 +49,7 @@ constexpr int  MAX_RTMIDI_EVENTS = 64;
 
 KernelMidi::KernelMidi()
 : onMidiReceived(nullptr)
+, onMidiSent(nullptr)
 , m_worker(G_KERNEL_MIDI_OUTPUT_RATE_MS)
 , m_midiQueue(MAX_RTMIDI_EVENTS)
 , m_elpsedTime(0.0)
@@ -154,6 +155,7 @@ bool KernelMidi::send(const MidiEvent& event) const
 		return false;
 
 	assert(event.getNumBytes() > 0 && event.getNumBytes() <= 3);
+	assert(onMidiSent != nullptr);
 
 	RtMidiMessage msg;
 	if (event.getNumBytes() == 1)
@@ -164,6 +166,8 @@ bool KernelMidi::send(const MidiEvent& event) const
 		msg = {event.getByte1(), event.getByte2(), event.getByte3()};
 
 	G_DEBUG("Send MIDI msg=0x{:0X}", event.getRaw());
+
+	onMidiSent();
 
 	return m_midiQueue.try_enqueue(msg);
 }

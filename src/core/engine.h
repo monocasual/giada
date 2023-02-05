@@ -146,6 +146,12 @@ public:
 	PluginHost&             getPluginHost();
 	MidiMapper<KernelMidi>& getMidiMapper();
 
+	/* onMidi[Received|Sent]
+	Callback fired when the engine has received or sent a MIDI event. */
+
+	std::function<void()> onMidiReceived;
+	std::function<void()> onMidiSent;
+
 private:
 	int audioCallback(KernelAudio::CallbackInfo) const;
 

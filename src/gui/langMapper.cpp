@@ -104,13 +104,15 @@ LangMap::LangMap()
 	m_data[MAIN_MENU_CONFIG]               = "Config";
 	m_data[MAIN_MENU_ABOUT]                = "About";
 
-	m_data[MAIN_IO_LABEL_OUTMETER] = "Main output meter";
-	m_data[MAIN_IO_LABEL_INMETER]  = "Main input meter";
-	m_data[MAIN_IO_LABEL_OUTVOL]   = "Main output volume";
-	m_data[MAIN_IO_LABEL_INVOL]    = "Main input volume";
-	m_data[MAIN_IO_LABEL_INTOOUT]  = "Stream linker\n\nConnects input to output to enable \"hear what you're playing\" mode.";
-	m_data[MAIN_IO_LABEL_FXOUT]    = "Main output plug-ins";
-	m_data[MAIN_IO_LABEL_FXIN]     = "Main input plug-ins";
+	m_data[MAIN_IO_LABEL_OUTMETER]     = "Main output meter";
+	m_data[MAIN_IO_LABEL_INMETER]      = "Main input meter";
+	m_data[MAIN_IO_LABEL_OUTVOL]       = "Main output volume";
+	m_data[MAIN_IO_LABEL_INVOL]        = "Main input volume";
+	m_data[MAIN_IO_LABEL_INTOOUT]      = "Stream linker\n\nConnects input to output to enable \"hear what you're playing\" mode.";
+	m_data[MAIN_IO_LABEL_FXOUT]        = "Main output plug-ins";
+	m_data[MAIN_IO_LABEL_FXIN]         = "Main input plug-ins";
+	m_data[MAIN_IO_LABEL_MIDIACTIVITY] = "Master MIDI I/O activity\n\nNotifies MIDI messages sent (top) or "
+	                                     "received (bottom) globally.";
 
 	m_data[MAIN_TIMER_LABEL_BPM]        = "Beats per minute (BPM)";
 	m_data[MAIN_TIMER_LABEL_METER]      = "Beats and bars";

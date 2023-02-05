@@ -28,6 +28,7 @@
 #include <pwd.h>
 #endif
 #include "core/engine.h"
+#include "gui/elems/mainWindow/mainIO.h"
 #include "gui/ui.h"
 #include "gui/updater.h"
 #include "utils/log.h"
@@ -104,6 +105,14 @@ void startup(int argc, char** argv)
 
 	g_ui.dispatcher.onEventOccured = []() {
 		g_engine.getMainApi().startActionRecOnCallback();
+	};
+
+	g_engine.onMidiReceived = []() {
+		g_ui.mainWindow->mainIO->setMidiInActivity();
+	};
+
+	g_engine.onMidiSent = []() {
+		g_ui.mainWindow->mainIO->setMidiOutActivity();
 	};
 
 	/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap

@@ -71,6 +71,7 @@ public:
 	void logPorts();
 
 	std::function<void(const MidiEvent&)> onMidiReceived;
+	std::function<void()>                 onMidiSent;
 
 private:
 	using RtMidiMessage = std::vector<unsigned char>;

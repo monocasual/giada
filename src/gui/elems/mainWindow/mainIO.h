@@ -36,6 +36,7 @@ class geDial;
 class geSoundMeter;
 class geTextButton;
 class geImageButton;
+class geMidiActivity;
 class geMainIO : public geFlex
 {
 public:
@@ -48,17 +49,20 @@ public:
 	void setInVol(float v);
 	void setMasterFxOutFull(bool v);
 	void setMasterFxInFull(bool v);
+	void setMidiOutActivity();
+	void setMidiInActivity();
 
 private:
 	c::main::IO m_io;
 
-	geSoundMeter*  m_outMeter;
-	geSoundMeter*  m_inMeter;
-	geDial*        m_outVol;
-	geDial*        m_inVol;
-	geTextButton*  m_inToOut;
-	geImageButton* m_masterFxOut;
-	geImageButton* m_masterFxIn;
+	geSoundMeter*   m_outMeter;
+	geSoundMeter*   m_inMeter;
+	geDial*         m_outVol;
+	geDial*         m_inVol;
+	geTextButton*   m_inToOut;
+	geImageButton*  m_masterFxOut;
+	geImageButton*  m_masterFxIn;
+	geMidiActivity* m_midiActivity;
 };
 } // namespace giada::v
 

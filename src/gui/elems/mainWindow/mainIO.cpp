@@ -32,6 +32,7 @@
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/textButton.h"
+#include "gui/elems/midiActivity.h"
 #include "gui/elems/soundMeter.h"
 #include "gui/graphics.h"
 #include "gui/ui.h"
@@ -44,13 +45,14 @@ namespace giada::v
 geMainIO::geMainIO()
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
-	m_outMeter    = new geSoundMeter(0, 0, 0, 0);
-	m_inMeter     = new geSoundMeter(0, 0, 0, 0);
-	m_outVol      = new geDial(0, 0, 0, 0);
-	m_inVol       = new geDial(0, 0, 0, 0);
-	m_inToOut     = new geTextButton("");
-	m_masterFxOut = new geImageButton(graphics::fxOff, graphics::fxOn);
-	m_masterFxIn  = new geImageButton(graphics::fxOff, graphics::fxOn);
+	m_outMeter     = new geSoundMeter(0, 0, 0, 0);
+	m_inMeter      = new geSoundMeter(0, 0, 0, 0);
+	m_outVol       = new geDial(0, 0, 0, 0);
+	m_inVol        = new geDial(0, 0, 0, 0);
+	m_inToOut      = new geTextButton("");
+	m_masterFxOut  = new geImageButton(graphics::fxOff, graphics::fxOn);
+	m_masterFxIn   = new geImageButton(graphics::fxOff, graphics::fxOn);
+	m_midiActivity = new geMidiActivity();
 
 	add(m_masterFxIn, G_GUI_UNIT);
 	add(m_inVol, G_GUI_UNIT);
@@ -59,6 +61,7 @@ geMainIO::geMainIO()
 	add(m_outMeter);
 	add(m_outVol, G_GUI_UNIT);
 	add(m_masterFxOut, G_GUI_UNIT);
+	add(m_midiActivity, 10);
 	end();
 
 	m_outMeter->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_OUTMETER));
@@ -68,6 +71,7 @@ geMainIO::geMainIO()
 	m_inToOut->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_INTOOUT));
 	m_masterFxOut->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_FXOUT));
 	m_masterFxIn->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_FXIN));
+	m_midiActivity->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_MIDIACTIVITY));
 
 	m_outVol->onChange = [](float v) {
 		c::main::setMasterOutVolume(v, Thread::MAIN);
@@ -114,6 +118,7 @@ void geMainIO::refresh()
 	m_inMeter->ready  = m_io.isKernelReady();
 	m_outMeter->redraw();
 	m_inMeter->redraw();
+	m_midiActivity->redraw();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -128,4 +133,9 @@ void geMainIO::rebuild()
 	m_masterFxIn->setValue(m_io.masterInHasPlugins);
 	m_inToOut->setValue(m_io.inToOut);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void geMainIO::setMidiOutActivity() { m_midiActivity->out->lit(); }
+void geMainIO::setMidiInActivity() { m_midiActivity->in->lit(); }
 } // namespace giada::v
