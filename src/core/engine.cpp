@@ -98,25 +98,43 @@ Engine::Engine()
 
 #ifdef WITH_AUDIO_JACK
 	m_jackSynchronizer.onJackRewind = [this]() {
-		m_eventDispatcher.pumpEvent([this]() { m_sequencer.jack_rewind(); });
+		m_eventDispatcher.pumpEvent([this]() {
+			registerThread(Thread::EVENTS, /*realtime=*/false);
+			m_sequencer.jack_rewind();
+		});
 	};
 	m_jackSynchronizer.onJackChangeBpm = [this](float bpm) {
-		m_eventDispatcher.pumpEvent([this, bpm]() { m_sequencer.jack_setBpm(bpm, m_kernelAudio.getSampleRate()); });
+		m_eventDispatcher.pumpEvent([this, bpm]() {
+			registerThread(Thread::EVENTS, /*realtime=*/false);
+			m_sequencer.jack_setBpm(bpm, m_kernelAudio.getSampleRate());
+		});
 	};
 	m_jackSynchronizer.onJackStart = [this]() {
-		m_eventDispatcher.pumpEvent([this]() { m_sequencer.jack_start(); });
+		m_eventDispatcher.pumpEvent([this]() {
+			registerThread(Thread::EVENTS, /*realtime=*/false);
+			m_sequencer.jack_start();
+		});
 	};
 	m_jackSynchronizer.onJackStop = [this]() {
-		m_eventDispatcher.pumpEvent([this]() { m_sequencer.jack_stop(); });
+		m_eventDispatcher.pumpEvent([this]() {
+			registerThread(Thread::EVENTS, /*realtime=*/false);
+			m_sequencer.jack_stop();
+		});
 	};
 #endif
 
 	m_mixer.onSignalTresholdReached = [this]() {
-		m_eventDispatcher.pumpEvent([this]() { m_recorder.startInputRecOnCallback(); });
+		m_eventDispatcher.pumpEvent([this]() {
+			registerThread(Thread::EVENTS, /*realtime=*/false);
+			m_recorder.startInputRecOnCallback();
+		});
 	};
 	m_mixer.onEndOfRecording = [this]() {
 		if (m_mixer.isRecordingInput())
-			m_eventDispatcher.pumpEvent([this]() { m_recorder.stopInputRec(m_conf.inputRecMode, m_kernelAudio.getSampleRate()); });
+			m_eventDispatcher.pumpEvent([this]() {
+				registerThread(Thread::EVENTS, /*realtime=*/false);
+				m_recorder.stopInputRec(m_conf.inputRecMode, m_kernelAudio.getSampleRate());
+			});
 	};
 
 	m_channelManager.onChannelsAltered = [this]() {
