@@ -298,7 +298,7 @@ void Sequencer::rawSetBpm(float v, int sampleRate)
 
 	onBpmChange(oldVal, newVal, m_quantizerStep);
 
-	u::log::print("[clock::rawSetBpm] Bpm changed to %f\n", newVal);
+	u::log::print("[sequencer::rawSetBpm] Bpm changed to %f\n", newVal);
 }
 
 /* -------------------------------------------------------------------------- */
