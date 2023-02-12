@@ -33,8 +33,9 @@
 
 namespace giada::m
 {
-MainApi::MainApi(Engine& e, Conf& c, KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms, ChannelManager& cm, Recorder& r)
+MainApi::MainApi(Engine& e, model::Model& md, Conf& c, KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms, ChannelManager& cm, Recorder& r)
 : m_engine(e)
+, m_model(md)
 , m_conf(c)
 , m_kernelAudio(ka)
 , m_mixer(m)
@@ -190,7 +191,6 @@ void MainApi::setBpm(float bpm)
 		return;
 	m_sequencer.setBpm(bpm, m_kernelAudio.getSampleRate());
 	m_midiSynchronizer.setClockBpm(bpm);
-	m_engine.updateMixerModel();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -205,7 +205,6 @@ void MainApi::setBeats(int beats, int bars)
 
 	m_sequencer.setBeats(beats, bars, sampleRate);
 	m_mixer.allocRecBuffer(maxFramesInLoop);
-	m_engine.updateMixerModel();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -256,22 +255,32 @@ void MainApi::setInToOut(bool v)
 
 void MainApi::toggleRecOnSignal()
 {
+	/* TODO - move to Recorder */
+
+	model::Mixer& mixer = m_model.get().mixer;
+
 	if (!m_recorder.canEnableRecOnSignal())
-		m_conf.recTriggerMode = RecTriggerMode::NORMAL;
+		mixer.recTriggerMode = RecTriggerMode::NORMAL;
 	else
-		m_conf.recTriggerMode = m_conf.recTriggerMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
-	m_engine.updateMixerModel();
+		mixer.recTriggerMode = mixer.recTriggerMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
+
+	m_model.swap(model::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void MainApi::toggleFreeInputRec()
 {
+	/* TODO - move to Recorder */
+
+	model::Mixer& mixer = m_model.get().mixer;
+
 	if (!m_recorder.canEnableFreeInputRec())
-		m_conf.inputRecMode = InputRecMode::RIGID;
+		mixer.inputRecMode = InputRecMode::RIGID;
 	else
-		m_conf.inputRecMode = m_conf.inputRecMode == InputRecMode::FREE ? InputRecMode::RIGID : InputRecMode::FREE;
-	m_engine.updateMixerModel();
+		mixer.inputRecMode = mixer.inputRecMode == InputRecMode::FREE ? InputRecMode::RIGID : InputRecMode::FREE;
+
+	m_model.swap(model::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */

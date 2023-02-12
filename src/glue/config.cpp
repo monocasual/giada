@@ -221,7 +221,7 @@ void save(const AudioData& data)
 	g_engine.getConf().buffersize       = data.bufferSize;
 	g_engine.getConf().recTriggerLevel  = data.recTriggerLevel;
 	g_engine.getConf().samplerate       = data.sampleRate;
-	g_engine.updateMixerModel();
+	g_engine.loadConfig();
 }
 
 /* -------------------------------------------------------------------------- */

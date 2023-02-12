@@ -91,12 +91,6 @@ public:
 
 	Conf& getConf();
 
-	/* updateMixerModel
-	Updates some values in model::Mixer data struct needed by m::Mixer for the
-	audio rendering. Call this whenever the audio configuration changes. */
-
-	void updateMixerModel();
-
 	/* init
 	Initializes all sub-components. If KernelAudio fails to start, the process
 	interrupts and Giada is put in an invalid state. */
@@ -123,6 +117,9 @@ public:
 #ifdef G_DEBUG_MODE
 	void debug();
 #endif
+
+	void storeConfig();
+	void loadConfig();
 
 	MainApi&         getMainApi();
 	ChannelsApi&     getChannelsApi();
@@ -155,9 +152,6 @@ public:
 private:
 	int  audioCallback(KernelAudio::CallbackInfo) const;
 	void registerThread(Thread, bool isRealtime) const;
-
-	void storeConfig();
-	void loadConfig();
 
 	Conf                   m_conf;
 	Patch                  m_patch;

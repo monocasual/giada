@@ -85,7 +85,8 @@ public:
 	/* render
 	Core rendering function. */
 
-	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Layout&) const;
+	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Layout&,
+	    int maxFramesToRec) const;
 
 	/* reset
 	Brings everything back to the initial state. */

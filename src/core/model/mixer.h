@@ -53,14 +53,14 @@ public:
 	mcl::AudioBuffer& getRecBuffer() const;
 	mcl::AudioBuffer& getInBuffer() const;
 
-	bool  hasSolos           = false;
-	bool  isRecordingActions = false;
-	bool  isRecordingInput   = false;
-	bool  inToOut            = false;
-	bool  limitOutput        = false;
-	bool  allowsOverdub      = false;
-	Frame maxFramesToRec     = 0;
-	float recTriggerLevel    = 0.0f;
+	bool           hasSolos           = false;
+	bool           isRecordingActions = false;
+	bool           isRecordingInput   = false;
+	bool           inToOut            = false;
+	bool           limitOutput        = false;
+	InputRecMode   inputRecMode       = InputRecMode::RIGID;
+	RecTriggerMode recTriggerMode     = RecTriggerMode::NORMAL;
+	float          recTriggerLevel    = 0.0f;
 
 private:
 	struct Shared

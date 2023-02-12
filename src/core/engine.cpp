@@ -48,7 +48,7 @@ Engine::Engine()
 , m_actionRecorder(m_model)
 , m_recorder(m_sequencer, m_channelManager, m_mixer, m_actionRecorder)
 , m_midiDispatcher(m_model)
-, m_mainApi(*this, m_conf, m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder)
+, m_mainApi(*this, m_model, m_conf, m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder)
 , m_channelsApi(*this, m_model, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager)
 , m_pluginsApi(*this, m_kernelAudio, m_channelManager, m_pluginManager, m_pluginHost, m_model)
 , m_sampleEditorApi(*this, m_model, m_channelManager)
@@ -251,17 +251,6 @@ Conf& Engine::getConf()
 
 /* -------------------------------------------------------------------------- */
 
-void Engine::updateMixerModel()
-{
-	m_model.get().mixer.limitOutput     = m_conf.limitOutput;
-	m_model.get().mixer.allowsOverdub   = m_conf.inputRecMode == InputRecMode::RIGID;
-	m_model.get().mixer.maxFramesToRec  = m_conf.inputRecMode == InputRecMode::FREE ? m_sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()) : m_sequencer.getFramesInLoop();
-	m_model.get().mixer.recTriggerLevel = m_conf.recTriggerLevel;
-	m_model.swap(model::SwapType::NONE);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Engine::init()
 {
 	registerThread(Thread::MAIN, /*realtime=*/false);
@@ -311,8 +300,6 @@ void Engine::init()
 	m_midiMapper.sendInitMessages(m_midiMapper.currentMap);
 	m_eventDispatcher.start();
 	m_midiSynchronizer.startSendClock(G_DEFAULT_BPM);
-
-	updateMixerModel();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -421,7 +408,8 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 
 	/* Then render Mixer: render channels, process I/O. */
 
-	m_mixer.render(out, in, layout_RT);
+	const Frame maxFramesToRec = layout_RT.mixer.inputRecMode == InputRecMode::FREE ? m_sequencer.getMaxFramesInLoop(kernelInfo.sampleRate) : m_sequencer.getFramesInLoop();
+	m_mixer.render(out, in, layout_RT, maxFramesToRec);
 
 	return 0;
 }
@@ -451,6 +439,10 @@ void Engine::debug()
 
 void Engine::storeConfig()
 {
+	m_conf.limitOutput      = m_model.get().mixer.limitOutput;
+	m_conf.inputRecMode     = m_model.get().mixer.inputRecMode;
+	m_conf.recTriggerMode   = m_model.get().mixer.recTriggerMode;
+	m_conf.recTriggerLevel  = m_model.get().mixer.recTriggerLevel;
 	m_conf.midiInEnabled    = m_model.get().midiIn.enabled;
 	m_conf.midiInFilter     = m_model.get().midiIn.filter;
 	m_conf.midiInRewind     = m_model.get().midiIn.rewind;
@@ -468,17 +460,21 @@ void Engine::storeConfig()
 
 void Engine::loadConfig()
 {
-	m_model.get().midiIn.enabled    = m_conf.midiInEnabled;
-	m_model.get().midiIn.filter     = m_conf.midiInFilter;
-	m_model.get().midiIn.rewind     = m_conf.midiInRewind;
-	m_model.get().midiIn.startStop  = m_conf.midiInStartStop;
-	m_model.get().midiIn.actionRec  = m_conf.midiInActionRec;
-	m_model.get().midiIn.inputRec   = m_conf.midiInInputRec;
-	m_model.get().midiIn.metronome  = m_conf.midiInMetronome;
-	m_model.get().midiIn.volumeIn   = m_conf.midiInVolumeIn;
-	m_model.get().midiIn.volumeOut  = m_conf.midiInVolumeOut;
-	m_model.get().midiIn.beatDouble = m_conf.midiInBeatDouble;
-	m_model.get().midiIn.beatHalf   = m_conf.midiInBeatHalf;
+	m_model.get().mixer.limitOutput     = m_conf.limitOutput;
+	m_model.get().mixer.inputRecMode    = m_conf.inputRecMode;
+	m_model.get().mixer.recTriggerMode  = m_conf.recTriggerMode;
+	m_model.get().mixer.recTriggerLevel = m_conf.recTriggerLevel;
+	m_model.get().midiIn.enabled        = m_conf.midiInEnabled;
+	m_model.get().midiIn.filter         = m_conf.midiInFilter;
+	m_model.get().midiIn.rewind         = m_conf.midiInRewind;
+	m_model.get().midiIn.startStop      = m_conf.midiInStartStop;
+	m_model.get().midiIn.actionRec      = m_conf.midiInActionRec;
+	m_model.get().midiIn.inputRec       = m_conf.midiInInputRec;
+	m_model.get().midiIn.metronome      = m_conf.midiInMetronome;
+	m_model.get().midiIn.volumeIn       = m_conf.midiInVolumeIn;
+	m_model.get().midiIn.volumeOut      = m_conf.midiInVolumeOut;
+	m_model.get().midiIn.beatDouble     = m_conf.midiInBeatDouble;
+	m_model.get().midiIn.beatHalf       = m_conf.midiInBeatHalf;
 
 	m_model.swap(model::SwapType::NONE);
 }
