@@ -129,6 +129,20 @@ void Mixer::setInToOut(bool v)
 
 /* -------------------------------------------------------------------------- */
 
+void Mixer::setRecTriggerMode(RecTriggerMode m)
+{
+	m_model.get().mixer.recTriggerMode = m;
+	m_model.swap(model::SwapType::NONE);
+}
+
+void Mixer::setInputRecMode(InputRecMode m)
+{
+	m_model.get().mixer.inputRecMode = m;
+	m_model.swap(model::SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Layout& layout_RT, int maxFramesToRec) const
 {
 	const model::Mixer&     mixer     = layout_RT.mixer;
@@ -247,6 +261,18 @@ bool Mixer::isRecordingActions() const
 bool Mixer::isRecordingInput() const
 {
 	return m_model.get().mixer.isRecordingInput;
+}
+
+/* -------------------------------------------------------------------------- */
+
+RecTriggerMode Mixer::getRecTriggerMode() const
+{
+	return m_model.get().mixer.recTriggerMode;
+}
+
+InputRecMode Mixer::getInputRecMode() const
+{
+	return m_model.get().mixer.inputRecMode;
 }
 
 /* -------------------------------------------------------------------------- */

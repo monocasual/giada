@@ -67,6 +67,9 @@ public:
 	void startInputRecOnCallback();
 	void stopInputRec(InputRecMode, int sampleRate);
 
+	void toggleRecOnSignal();
+	void toggleFreeInputRec();
+
 private:
 	Sequencer&      m_sequencer;
 	ChannelManager& m_channelManager;

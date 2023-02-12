@@ -142,6 +142,32 @@ void Recorder::stopInputRec(InputRecMode recMode, int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
+void Recorder::toggleRecOnSignal()
+{
+	const RecTriggerMode currentMode = m_mixer.getRecTriggerMode();
+	RecTriggerMode       newMode     = currentMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
+
+	if (!canEnableRecOnSignal())
+		newMode = RecTriggerMode::NORMAL;
+
+	m_mixer.setRecTriggerMode(newMode);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Recorder::toggleFreeInputRec()
+{
+	const InputRecMode currentMode = m_mixer.getInputRecMode();
+	InputRecMode       newMode     = currentMode == InputRecMode::RIGID ? InputRecMode::FREE : InputRecMode::RIGID;
+
+	if (!canEnableFreeInputRec())
+		newMode = InputRecMode::RIGID;
+
+	m_mixer.setInputRecMode(newMode);
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool Recorder::canEnableRecOnSignal() const { return !m_sequencer.isRunning(); }
 bool Recorder::canEnableFreeInputRec() const { return !m_channelManager.hasAudioData(); }
 

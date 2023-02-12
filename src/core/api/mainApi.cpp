@@ -33,9 +33,8 @@
 
 namespace giada::m
 {
-MainApi::MainApi(Engine& e, model::Model& md, Conf& c, KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms, ChannelManager& cm, Recorder& r)
+MainApi::MainApi(Engine& e, Conf& c, KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms, ChannelManager& cm, Recorder& r)
 : m_engine(e)
-, m_model(md)
 , m_conf(c)
 , m_kernelAudio(ka)
 , m_mixer(m)
@@ -253,35 +252,8 @@ void MainApi::setInToOut(bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void MainApi::toggleRecOnSignal()
-{
-	/* TODO - move to Recorder */
-
-	model::Mixer& mixer = m_model.get().mixer;
-
-	if (!m_recorder.canEnableRecOnSignal())
-		mixer.recTriggerMode = RecTriggerMode::NORMAL;
-	else
-		mixer.recTriggerMode = mixer.recTriggerMode == RecTriggerMode::NORMAL ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
-
-	m_model.swap(model::SwapType::SOFT);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void MainApi::toggleFreeInputRec()
-{
-	/* TODO - move to Recorder */
-
-	model::Mixer& mixer = m_model.get().mixer;
-
-	if (!m_recorder.canEnableFreeInputRec())
-		mixer.inputRecMode = InputRecMode::RIGID;
-	else
-		mixer.inputRecMode = mixer.inputRecMode == InputRecMode::FREE ? InputRecMode::RIGID : InputRecMode::FREE;
-
-	m_model.swap(model::SwapType::SOFT);
-}
+void MainApi::toggleRecOnSignal() { m_recorder.toggleRecOnSignal(); }
+void MainApi::toggleFreeInputRec() { m_recorder.toggleFreeInputRec(); }
 
 /* -------------------------------------------------------------------------- */
 

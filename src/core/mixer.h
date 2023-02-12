@@ -82,6 +82,9 @@ public:
 	bool isRecordingActions() const;
 	bool isRecordingInput() const;
 
+	RecTriggerMode getRecTriggerMode() const;
+	InputRecMode   getInputRecMode() const;
+
 	/* render
 	Core rendering function. */
 
@@ -142,6 +145,9 @@ public:
 	Toggles the InToOut flag, a.k.a. the 'hear-what-you're-playing' feature. */
 
 	void setInToOut(bool v);
+
+	void setRecTriggerMode(RecTriggerMode);
+	void setInputRecMode(InputRecMode);
 
 	/* onSignalTresholdReached
 	Callback fired when audio has reached a certain threshold (record-on-signal 
