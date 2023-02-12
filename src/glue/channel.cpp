@@ -99,11 +99,11 @@ SampleData::SampleData(const m::Channel& ch)
 , end(ch.samplePlayer->end)
 , inputMonitor(ch.audioReceiver->inputMonitor)
 , overdubProtection(ch.audioReceiver->overdubProtection)
-, m_channel(&ch)
+, m_tracker(&ch.shared->tracker)
 {
 }
 
-Frame SampleData::getTracker() const { return m_channel->shared->tracker.load(); }
+Frame SampleData::getTracker() const { return m_tracker->load(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -127,7 +127,9 @@ Data::Data(const m::Channel& c)
 , pan(c.pan)
 , key(c.key)
 , hasActions(c.hasActions)
-, m_channel(&c)
+, m_playStatus(&c.shared->playStatus)
+, m_recStatus(&c.shared->recStatus)
+, m_readActions(&c.shared->readActions)
 {
 	if (c.type == ChannelType::SAMPLE)
 		sample = std::make_optional<SampleData>(c);
@@ -135,14 +137,14 @@ Data::Data(const m::Channel& c)
 		midi = std::make_optional<MidiData>(c);
 }
 
-ChannelStatus Data::getPlayStatus() const { return m_channel->shared->playStatus.load(); }
-ChannelStatus Data::getRecStatus() const { return m_channel->shared->recStatus.load(); }
-bool          Data::getReadActions() const { return m_channel->shared->readActions.load(); }
+ChannelStatus Data::getPlayStatus() const { return m_playStatus->load(); }
+ChannelStatus Data::getRecStatus() const { return m_recStatus->load(); }
+bool          Data::getReadActions() const { return m_readActions->load(); }
 bool          Data::isRecordingInput() const { return g_engine.getMainApi().isRecordingInput(); }
 bool          Data::isRecordingActions() const { return g_engine.getMainApi().isRecordingActions(); }
-bool          Data::isMuted() const { return m_channel->isMuted(); }
-bool          Data::isSoloed() const { return m_channel->isSoloed(); }
-bool          Data::isArmed() const { return m_channel->armed; }
+bool          Data::isMuted() const { return g_engine.getChannelsApi().get(id).isMuted(); }
+bool          Data::isSoloed() const { return g_engine.getChannelsApi().get(id).isSoloed(); }
+bool          Data::isArmed() const { return g_engine.getChannelsApi().get(id).armed; }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */

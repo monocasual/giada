@@ -29,6 +29,7 @@
 
 #include "core/model/model.h"
 #include "core/types.h"
+#include "core/weakAtomic.h"
 #include <atomic>
 #include <optional>
 #include <string>
@@ -66,7 +67,7 @@ struct SampleData
 	bool             overdubProtection;
 
 private:
-	const m::Channel* m_channel;
+	WeakAtomic<Frame>* m_tracker;
 };
 
 struct MidiData
@@ -107,7 +108,9 @@ struct Data
 	std::optional<MidiData>   midi;
 
 private:
-	const m::Channel* m_channel;
+	WeakAtomic<ChannelStatus>* m_playStatus;
+	WeakAtomic<ChannelStatus>* m_recStatus;
+	WeakAtomic<bool>*          m_readActions;
 };
 
 /* getChannels
