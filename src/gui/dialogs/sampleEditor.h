@@ -49,7 +49,7 @@ class gdSampleEditor : public gdWindow
 	friend class geWaveform;
 
 public:
-	gdSampleEditor(ID channelId, m::Conf&);
+	gdSampleEditor(ID channelId, const m::Conf&);
 	~gdSampleEditor();
 
 	void rebuild() override;
@@ -77,7 +77,6 @@ private:
 
 	ID                    m_channelId;
 	c::sampleEditor::Data m_data;
-	m::Conf&              m_conf;
 };
 } // namespace giada::v
 

@@ -27,6 +27,7 @@
 #include "gui/dialogs/browser/browserBase.h"
 #include "core/conf.h"
 #include "core/const.h"
+#include "core/engine.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/flex.h"
@@ -40,15 +41,15 @@
 #include "utils/fs.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui     g_ui;
+extern giada::m::Engine g_engine;
 
 namespace giada::v
 {
 gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
-    std::function<void(void*)> callback, ID channelId, m::Conf& c)
-: gdWindow(u::gui::getCenterWinBounds(c.browserBounds), title.c_str())
+    std::function<void(void*)> callback, ID channelId, const m::Conf& conf)
+: gdWindow(u::gui::getCenterWinBounds(conf.browserBounds), title.c_str())
 , m_callback(callback)
-, m_conf(c)
 , m_channelId(channelId)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
@@ -107,8 +108,8 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 	browser->onSelectedElement = [this]() { fireCallback(); };
 	browser->loadDir(path);
-	if (path == m_conf.browserLastPath)
-		browser->preselect(m_conf.browserPosition, m_conf.browserLastValue);
+	if (path == conf.browserLastPath)
+		browser->preselect(conf.browserPosition, conf.browserLastValue);
 
 	cancel->onClick = [this]() { do_callback(); };
 
@@ -121,10 +122,12 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 gdBrowserBase::~gdBrowserBase()
 {
-	m_conf.browserBounds    = getBounds();
-	m_conf.browserPosition  = browser->position();
-	m_conf.browserLastPath  = browser->getCurrentDir();
-	m_conf.browserLastValue = browser->value();
+	m::Conf conf          = g_engine.getConf();
+	conf.browserBounds    = getBounds();
+	conf.browserPosition  = browser->position();
+	conf.browserLastPath  = browser->getCurrentDir();
+	conf.browserLastValue = browser->value();
+	g_engine.setConf(conf);
 }
 
 /* -------------------------------------------------------------------------- */

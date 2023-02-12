@@ -40,7 +40,9 @@ class geKeyBinder;
 class geTabBindings : public Fl_Group
 {
 public:
-	geTabBindings(geompp::Rect<int>, m::Conf&);
+	geTabBindings(geompp::Rect<int>, const m::Conf&);
+
+	void save() const;
 
 private:
 	geKeyBinder* play;

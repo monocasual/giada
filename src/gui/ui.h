@@ -49,7 +49,7 @@ public:
 		std::unordered_map<ID, int> columns;
 	};
 
-	Ui(m::Conf&);
+	Ui(const m::Conf&);
 
 	/* shouldBlink
 	Return whether is time to blink something or not. This is used to make 
@@ -154,7 +154,7 @@ private:
 
 	void rebuildStaticWidgets();
 
-	m::Conf& m_conf;
+	const m::Conf& m_conf;
 
 	LangMapper m_langMapper;
 	Updater    m_updater;

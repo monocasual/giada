@@ -77,8 +77,8 @@ void geMasterLearnerPack::update(const c::io::Master_InputData& d)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-gdMidiInputMaster::gdMidiInputMaster(m::Conf& c)
-: gdMidiInputBase(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_TITLE), c)
+gdMidiInputMaster::gdMidiInputMaster(const m::Conf& conf)
+: gdMidiInputBase(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_TITLE), conf)
 {
 	end();
 

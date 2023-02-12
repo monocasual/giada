@@ -27,6 +27,7 @@
 #include "mainWindow.h"
 #include "core/conf.h"
 #include "core/const.h"
+#include "core/engine.h"
 #include "glue/main.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/flex.h"
@@ -41,6 +42,8 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Tooltip.H>
 #include <fmt/core.h>
+
+extern giada::m::Engine g_engine;
 
 namespace giada::v
 {
@@ -68,9 +71,8 @@ void gdMainWindow::ScopedProgress::setProgress(float v)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, char** argv, m::Conf& c)
+gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, char** argv, const m::Conf& conf)
 : gdWindow(r, title)
-, m_conf(c)
 {
 	Fl::visible_focus(0);
 
@@ -87,7 +89,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, cha
 	Fl_Tooltip::color(G_COLOR_GREY_1);
 	Fl_Tooltip::textcolor(G_COLOR_LIGHT_2);
 	Fl_Tooltip::size(G_GUI_FONT_SIZE_BASE);
-	Fl_Tooltip::enable(m_conf.showTooltips);
+	Fl_Tooltip::enable(conf.showTooltips);
 
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
@@ -143,7 +145,9 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, cha
 
 gdMainWindow::~gdMainWindow()
 {
-	m_conf.mainWindowBounds = getBounds();
+	m::Conf conf          = g_engine.getConf();
+	conf.mainWindowBounds = getBounds();
+	g_engine.setConf(conf);
 }
 
 /* -------------------------------------------------------------------------- */

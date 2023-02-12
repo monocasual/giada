@@ -37,7 +37,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdBrowserLoad::gdBrowserLoad(const std::string& title, const std::string& path,
-    std::function<void(void*)> cb, ID channelId, m::Conf& conf)
+    std::function<void(void*)> cb, ID channelId, const m::Conf& conf)
 : gdBrowserBase(title, path, cb, channelId, conf)
 {
 	hidePathName();

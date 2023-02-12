@@ -39,12 +39,10 @@ class gePluginBrowser;
 class gdPluginChooser : public gdWindow
 {
 public:
-	gdPluginChooser(ID channelId, m::Conf&);
+	gdPluginChooser(ID channelId, const m::Conf&);
 	~gdPluginChooser();
 
 private:
-	m::Conf& m_conf;
-
 	geChoice*        sortMethod;
 	geTextButton*    addBtn;
 	geTextButton*    cancelBtn;

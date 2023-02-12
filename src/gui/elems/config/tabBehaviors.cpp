@@ -27,19 +27,20 @@
 #include "tabBehaviors.h"
 #include "core/conf.h"
 #include "core/const.h"
+#include "core/engine.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/ui.h"
 #include <FL/Fl_Pack.H>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui     g_ui;
+extern giada::m::Engine g_engine;
 
 namespace giada::v
 {
-geTabBehaviors::geTabBehaviors(geompp::Rect<int> bounds, m::Conf& c)
+geTabBehaviors::geTabBehaviors(geompp::Rect<int> bounds, const m::Conf& conf)
 : Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.getI18Text(LangMap::CONFIG_BEHAVIORS_TITLE))
-, m_conf(c)
 {
 	end();
 
@@ -60,19 +61,21 @@ geTabBehaviors::geTabBehaviors(geompp::Rect<int> bounds, m::Conf& c)
 	add(body);
 	resizable(body);
 
-	m_chansStopOnSeqHalt->value(m_conf.chansStopOnSeqHalt);
-	m_treatRecsAsLoops->value(m_conf.treatRecsAsLoops);
-	m_inputMonitorDefaultOn->value(m_conf.inputMonitorDefaultOn);
-	m_overdubProtectionDefaultOn->value(m_conf.overdubProtectionDefaultOn);
+	m_chansStopOnSeqHalt->value(conf.chansStopOnSeqHalt);
+	m_treatRecsAsLoops->value(conf.treatRecsAsLoops);
+	m_inputMonitorDefaultOn->value(conf.inputMonitorDefaultOn);
+	m_overdubProtectionDefaultOn->value(conf.overdubProtectionDefaultOn);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geTabBehaviors::save()
 {
-	m_conf.chansStopOnSeqHalt         = m_chansStopOnSeqHalt->value();
-	m_conf.treatRecsAsLoops           = m_treatRecsAsLoops->value();
-	m_conf.inputMonitorDefaultOn      = m_inputMonitorDefaultOn->value();
-	m_conf.overdubProtectionDefaultOn = m_overdubProtectionDefaultOn->value();
+	m::Conf conf                    = g_engine.getConf();
+	conf.chansStopOnSeqHalt         = m_chansStopOnSeqHalt->value();
+	conf.treatRecsAsLoops           = m_treatRecsAsLoops->value();
+	conf.inputMonitorDefaultOn      = m_inputMonitorDefaultOn->value();
+	conf.overdubProtectionDefaultOn = m_overdubProtectionDefaultOn->value();
+	g_engine.setConf(conf);
 }
 } // namespace giada::v

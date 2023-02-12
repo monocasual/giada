@@ -50,7 +50,7 @@ public:
 class gdMidiInputMaster : public gdMidiInputBase
 {
 public:
-	gdMidiInputMaster(m::Conf&);
+	gdMidiInputMaster(const m::Conf&);
 
 	void rebuild() override;
 

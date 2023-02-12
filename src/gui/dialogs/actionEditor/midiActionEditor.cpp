@@ -26,6 +26,7 @@
 
 #include "midiActionEditor.h"
 #include "core/conf.h"
+#include "core/engine.h"
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
 #include "gui/elems/actionEditor/gridTool.h"
@@ -38,11 +39,12 @@
 #include "gui/graphics.h"
 #include "gui/ui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui     g_ui;
+extern giada::m::Engine g_engine;
 
 namespace giada::v
 {
-gdMidiActionEditor::gdMidiActionEditor(ID channelId, m::Conf& conf)
+gdMidiActionEditor::gdMidiActionEditor(ID channelId, const m::Conf& conf)
 : gdBaseActionEditor(channelId, conf)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
@@ -79,7 +81,9 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, m::Conf& conf)
 
 gdMidiActionEditor::~gdMidiActionEditor()
 {
-	m_conf.actionEditorPianoRollY = m_splitScroll->getScrollY();
+	m::Conf conf                = g_engine.getConf();
+	conf.actionEditorPianoRollY = m_splitScroll->getScrollY();
+	g_engine.setConf(conf);
 }
 
 /* -------------------------------------------------------------------------- */

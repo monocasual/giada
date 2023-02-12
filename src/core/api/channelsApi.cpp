@@ -310,7 +310,11 @@ bool ChannelsApi::saveSample(ID channelId, const std::string& filePath)
 {
 	if (!m_channelManager.saveSample(channelId, filePath))
 		return false;
-	m_engine.getConf().samplePath = u::fs::dirname(filePath);
+
+	Conf conf       = m_engine.getConf();
+	conf.samplePath = u::fs::dirname(filePath);
+	m_engine.setConf(conf);
+
 	return true;
 }
 

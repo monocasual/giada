@@ -151,7 +151,9 @@ void loadSample(void* data)
 
 	browser->do_callback();
 
-	g_engine.getConf().samplePath = u::fs::dirname(fullPath);
+	m::Conf conf    = g_engine.getConf();
+	conf.samplePath = u::fs::dirname(fullPath);
+	g_engine.setConf(conf);
 
 	c::channel::loadChannel(browser->getChannelId(), fullPath);
 }

@@ -27,6 +27,7 @@
 #include "gui/dialogs/config.h"
 #include "core/conf.h"
 #include "core/const.h"
+#include "core/engine.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/flex.h"
@@ -41,11 +42,12 @@
 #include "gui/ui.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui     g_ui;
+extern giada::m::Engine g_engine;
 
 namespace giada::v
 {
-gdConfig::gdConfig(int w, int h, m::Conf& conf)
+gdConfig::gdConfig(int w, int h, const m::Conf& conf)
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, w, h}), g_ui.getI18Text(LangMap::CONFIG_TITLE))
 {
 	const geompp::Rect<int> bounds = getContentBounds().reduced(G_GUI_OUTER_MARGIN);

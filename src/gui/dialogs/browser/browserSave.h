@@ -30,11 +30,6 @@
 #include "browserBase.h"
 #include "core/conf.h"
 
-namespace giada::m
-{
-class Channel;
-}
-
 namespace giada::v
 {
 class geInput;
@@ -43,7 +38,7 @@ class gdBrowserSave : public gdBrowserBase
 public:
 	gdBrowserSave(const std::string& title, const std::string& path,
 	    const std::string& name, std::function<void(void*)> cb,
-	    ID channelId, m::Conf&);
+	    ID channelId, const m::Conf&);
 
 	std::string getName() const;
 

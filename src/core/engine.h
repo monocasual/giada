@@ -87,9 +87,14 @@ public:
 	const Patch& getPatch() const;
 
 	/* getConf
-	Returns a reference to the current loaded Conf. */
+	Returns a read-only reference to the current loaded Conf. */
 
-	Conf& getConf();
+	const Conf& getConf() const;
+
+	/* setConf
+	Updates current Conf file with a new one. */
+
+	void setConf(const Conf&);
 
 	/* init
 	Initializes all sub-components. If KernelAudio fails to start, the process
@@ -117,9 +122,6 @@ public:
 #ifdef G_DEBUG_MODE
 	void debug();
 #endif
-
-	void storeConfig();
-	void loadConfig();
 
 	MainApi&         getMainApi();
 	ChannelsApi&     getChannelsApi();
@@ -152,6 +154,16 @@ public:
 private:
 	int  audioCallback(KernelAudio::CallbackInfo) const;
 	void registerThread(Thread, bool isRealtime) const;
+
+	/* storeConfig 
+	Stores the model information into the Conf file. */
+
+	void storeConfig();
+
+	/* loadConfig
+	Reads the Conf file and stores the information into the model. */
+
+	void loadConfig();
 
 	Conf                   m_conf;
 	Patch                  m_patch;

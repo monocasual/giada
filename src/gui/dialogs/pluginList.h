@@ -39,7 +39,7 @@ class gePluginElement;
 class gdPluginList : public gdWindow
 {
 public:
-	gdPluginList(ID channelId, m::Conf&);
+	gdPluginList(ID channelId, const m::Conf&);
 	~gdPluginList();
 
 	void rebuild() override;
@@ -48,8 +48,6 @@ public:
 	const gePluginElement& getPrevElement(const gePluginElement& curr) const;
 
 private:
-	m::Conf& m_conf;
-
 	geTextButton*   addPlugin;
 	geLiquidScroll* list;
 

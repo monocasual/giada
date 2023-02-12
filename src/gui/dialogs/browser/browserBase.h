@@ -64,7 +64,7 @@ public:
 
 protected:
 	gdBrowserBase(const std::string& title, const std::string& path,
-	    std::function<void(void*)> f, ID channelId, m::Conf&);
+	    std::function<void(void*)> f, ID channelId, const m::Conf&);
 
 	static void cb_toggleHiddenFiles(Fl_Widget* /*w*/, void* p);
 	void        cb_toggleHiddenFiles();
@@ -76,8 +76,7 @@ protected:
 
 	std::function<void(void*)> m_callback;
 
-	m::Conf& m_conf;
-	ID       m_channelId;
+	ID m_channelId;
 
 	geCheck*       hiddenFiles;
 	geFileBrowser* browser;

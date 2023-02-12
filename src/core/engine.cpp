@@ -244,9 +244,15 @@ const Patch& Engine::getPatch() const
 	return m_patch;
 }
 
-Conf& Engine::getConf()
+const Conf& Engine::getConf() const
 {
 	return m_conf;
+}
+
+void Engine::setConf(const Conf& c)
+{
+	m_conf = c;
+	loadConfig();
 }
 
 /* -------------------------------------------------------------------------- */

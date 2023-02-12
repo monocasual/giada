@@ -27,6 +27,7 @@
 #include "glue/sampleEditor.h"
 #include "core/conf.h"
 #include "core/const.h"
+#include "core/engine.h"
 #include "core/mixer.h"
 #include "core/wave.h"
 #include "core/waveFx.h"
@@ -63,14 +64,14 @@
 #undef OUT
 #endif
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui     g_ui;
+extern giada::m::Engine g_engine;
 
 namespace giada::v
 {
-gdSampleEditor::gdSampleEditor(ID channelId, m::Conf& c)
-: gdWindow(u::gui::getCenterWinBounds(c.sampleEditorBounds), g_ui.getI18Text(LangMap::SAMPLEEDITOR_TITLE))
+gdSampleEditor::gdSampleEditor(ID channelId, const m::Conf& conf)
+: gdWindow(u::gui::getCenterWinBounds(conf.sampleEditorBounds), g_ui.getI18Text(LangMap::SAMPLEEDITOR_TITLE))
 , m_channelId(channelId)
-, m_conf(c)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
@@ -90,7 +91,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, m::Conf& c)
 			top->end();
 		}
 
-		waveTools = new geWaveTools(0, 0, 0, 0, m_conf.sampleEditorGridOn, m_conf.sampleEditorGridVal);
+		waveTools = new geWaveTools(0, 0, 0, 0, conf.sampleEditorGridOn, conf.sampleEditorGridVal);
 		waveTools->rebuild(c::sampleEditor::getData(m_channelId)); // TODO - crappy temporary workaround for WaveTools
 
 		geFlex* bottom = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
@@ -149,13 +150,13 @@ gdSampleEditor::gdSampleEditor(ID channelId, m::Conf& c)
 	grid->addItem("32");
 	grid->addItem("64");
 	grid->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_GRIDRES));
-	grid->showItem(m_conf.sampleEditorGridVal);
+	grid->showItem(conf.sampleEditorGridVal);
 	grid->onChange = [this](ID) {
 		/* TODO - redraw grid if != (off) */
 		waveTools->waveform->setGridLevel(std::stoi(grid->getSelectedLabel()));
 	};
 
-	snap->value(m_conf.sampleEditorGridOn);
+	snap->value(conf.sampleEditorGridOn);
 	snap->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_SNAPTOGRID));
 	snap->onChange = [this](bool val) {
 		waveTools->waveform->setSnap(val);
@@ -194,9 +195,11 @@ gdSampleEditor::gdSampleEditor(ID channelId, m::Conf& c)
 
 gdSampleEditor::~gdSampleEditor()
 {
-	m_conf.sampleEditorBounds  = getBounds();
-	m_conf.sampleEditorGridVal = grid->getSelectedId();
-	m_conf.sampleEditorGridOn  = snap->value();
+	m::Conf conf             = g_engine.getConf();
+	conf.sampleEditorBounds  = getBounds();
+	conf.sampleEditorGridVal = grid->getSelectedId();
+	conf.sampleEditorGridOn  = snap->value();
+	g_engine.setConf(conf);
 
 	c::sampleEditor::stopPreview();
 	c::sampleEditor::cleanupPreview();

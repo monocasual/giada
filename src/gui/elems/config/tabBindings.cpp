@@ -26,16 +26,18 @@
 
 #include "gui/elems/config/tabBindings.h"
 #include "core/const.h"
+#include "core/engine.h"
 #include "gui/elems/basics/liquidScroll.h"
 #include "gui/elems/keyBinder.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui     g_ui;
+extern giada::m::Engine g_engine;
 
 namespace giada::v
 {
-geTabBindings::geTabBindings(geompp::Rect<int> bounds, m::Conf& conf)
+geTabBindings::geTabBindings(geompp::Rect<int> bounds, const m::Conf& conf)
 : Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.getI18Text(LangMap::CONFIG_BINDINGS_TITLE))
 {
 	end();
@@ -58,5 +60,18 @@ geTabBindings::geTabBindings(geompp::Rect<int> bounds, m::Conf& conf)
 
 	add(body);
 	resizable(body);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geTabBindings::save() const
+{
+	m::Conf conf                                       = g_engine.getConf();
+	conf.keyBindings[m::Conf::KEY_BIND_PLAY]           = play->getKey();
+	conf.keyBindings[m::Conf::KEY_BIND_REWIND]         = rewind->getKey();
+	conf.keyBindings[m::Conf::KEY_BIND_RECORD_ACTIONS] = recordActions->getKey();
+	conf.keyBindings[m::Conf::KEY_BIND_RECORD_INPUT]   = recordInput->getKey();
+	conf.keyBindings[m::Conf::KEY_BIND_EXIT]           = exit->getKey();
+	g_engine.setConf(conf);
 }
 } // namespace giada::v

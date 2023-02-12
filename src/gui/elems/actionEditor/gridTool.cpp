@@ -26,19 +26,20 @@
 
 #include "gui/elems/actionEditor/gridTool.h"
 #include "core/conf.h"
+#include "core/engine.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/ui.h"
 #include "utils/math.h"
 #include <FL/Fl_Double_Window.H>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui     g_ui;
+extern giada::m::Engine g_engine;
 
 namespace giada::v
 {
-geGridTool::geGridTool(Pixel x, Pixel y, m::Conf& c)
+geGridTool::geGridTool(Pixel x, Pixel y, const m::Conf& conf)
 : Fl_Group(x, y, 80, 20)
-, m_conf(c)
 {
 	gridType = new geChoice(x, y, 40, 20);
 	gridType->addItem("1");
@@ -56,8 +57,8 @@ geGridTool::geGridTool(Pixel x, Pixel y, m::Conf& c)
 
 	active = new geCheck(gridType->x() + gridType->w() + 4, y, 20, 20);
 
-	gridType->showItem(m_conf.actionEditorGridVal);
-	active->value(m_conf.actionEditorGridOn);
+	gridType->showItem(conf.actionEditorGridVal);
+	active->value(conf.actionEditorGridOn);
 
 	end();
 
@@ -69,8 +70,10 @@ geGridTool::geGridTool(Pixel x, Pixel y, m::Conf& c)
 
 geGridTool::~geGridTool()
 {
-	m_conf.actionEditorGridVal = gridType->getSelectedId();
-	m_conf.actionEditorGridOn  = active->value();
+	m::Conf conf             = g_engine.getConf();
+	conf.actionEditorGridVal = gridType->getSelectedId();
+	conf.actionEditorGridOn  = active->value();
+	g_engine.setConf(conf);
 }
 
 /* -------------------------------------------------------------------------- */

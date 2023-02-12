@@ -38,11 +38,12 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-geKeyBinder::geKeyBinder(const std::string& l, int& keyRef)
+geKeyBinder::geKeyBinder(const std::string& l, int key)
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
+, m_key(key)
 {
 	m_labelBox = new geBox(l.c_str());
-	m_keyBox   = new geBox(u::gui::keyToString(keyRef).c_str());
+	m_keyBox   = new geBox(u::gui::keyToString(key).c_str());
 	m_bindBtn  = new geTextButton(g_ui.getI18Text(LangMap::COMMON_BIND));
 	m_clearBtn = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLEAR));
 
@@ -55,18 +56,21 @@ geKeyBinder::geKeyBinder(const std::string& l, int& keyRef)
 	m_labelBox->box(G_CUSTOM_BORDER_BOX);
 	m_keyBox->box(G_CUSTOM_BORDER_BOX);
 
-	m_bindBtn->onClick = [&keyRef, this]() {
-		c::layout::openKeyGrabberWindow(keyRef, [&keyRef, this](int newKey) {
-			keyRef = newKey;
-			m_keyBox->copy_label(u::gui::keyToString(keyRef).c_str());
+	m_bindBtn->onClick = [key, this]() {
+		c::layout::openKeyGrabberWindow(key, [key, this](int newKey) {
+			m_key = newKey;
+			m_keyBox->copy_label(u::gui::keyToString(m_key).c_str());
 			return true;
 		});
 	};
 
-	m_clearBtn->onClick = [&keyRef, this]() {
-		keyRef = 0;
-		m_keyBox->copy_label(u::gui::keyToString(keyRef).c_str());
+	m_clearBtn->onClick = [key, this]() {
+		m_key = 0;
+		m_keyBox->copy_label(u::gui::keyToString(key).c_str());
 	};
 }
 
+/* -------------------------------------------------------------------------- */
+
+int geKeyBinder::getKey() const { return m_key; }
 } // namespace giada::v

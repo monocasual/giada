@@ -37,9 +37,12 @@ class geTextButton;
 class geKeyBinder : public geFlex
 {
 public:
-	geKeyBinder(const std::string& l, int& keyRef);
+	geKeyBinder(const std::string& l, int key);
+
+	int getKey() const;
 
 private:
+	int           m_key;
 	geBox*        m_labelBox;
 	geBox*        m_keyBox;
 	geTextButton* m_bindBtn;

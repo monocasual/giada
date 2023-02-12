@@ -110,8 +110,8 @@ void gePluginLearnerPack::update(const c::io::PluginData& d, bool enabled)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-gdMidiInputChannel::gdMidiInputChannel(ID channelId, m::Conf& c)
-: gdMidiInputBase(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_TITLE), c)
+gdMidiInputChannel::gdMidiInputChannel(ID channelId, const m::Conf& conf)
+: gdMidiInputBase(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_TITLE), conf)
 , m_channelId(channelId)
 , m_data(c::io::channel_getInputData(channelId))
 {

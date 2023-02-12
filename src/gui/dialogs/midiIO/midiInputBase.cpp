@@ -26,14 +26,16 @@
 
 #include "gui/dialogs/midiIO/midiInputBase.h"
 #include "core/conf.h"
+#include "core/engine.h"
 #include "glue/io.h"
 #include "utils/gui.h"
 
+extern giada::m::Engine g_engine;
+
 namespace giada::v
 {
-gdMidiInputBase::gdMidiInputBase(const char* title, m::Conf& c)
-: gdWindow(u::gui::getCenterWinBounds(c.midiInputBounds), title)
-, m_conf(c)
+gdMidiInputBase::gdMidiInputBase(const char* title, const m::Conf& conf)
+: gdWindow(u::gui::getCenterWinBounds(conf.midiInputBounds), title)
 {
 }
 
@@ -43,6 +45,8 @@ gdMidiInputBase::~gdMidiInputBase()
 {
 	c::io::stopMidiLearn();
 
-	m_conf.midiInputBounds = getBounds();
+	m::Conf conf         = g_engine.getConf();
+	conf.midiInputBounds = getBounds();
+	g_engine.setConf(conf);
 }
 } // namespace giada::v

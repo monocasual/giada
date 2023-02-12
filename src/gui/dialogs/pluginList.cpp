@@ -27,6 +27,7 @@
 #include "gui/dialogs/pluginList.h"
 #include "core/conf.h"
 #include "core/const.h"
+#include "core/engine.h"
 #include "glue/layout.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/liquidScroll.h"
@@ -40,13 +41,13 @@
 #include <cassert>
 #include <string>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui     g_ui;
+extern giada::m::Engine g_engine;
 
 namespace giada::v
 {
-gdPluginList::gdPluginList(ID channelId, m::Conf& c)
-: gdWindow(u::gui::getCenterWinBounds(c.pluginListBounds))
-, m_conf(c)
+gdPluginList::gdPluginList(ID channelId, const m::Conf& conf)
+: gdWindow(u::gui::getCenterWinBounds(conf.pluginListBounds))
 , m_channelId(channelId)
 {
 	end();
@@ -67,7 +68,9 @@ gdPluginList::gdPluginList(ID channelId, m::Conf& c)
 
 gdPluginList::~gdPluginList()
 {
-	m_conf.pluginListBounds = getBounds();
+	m::Conf conf          = g_engine.getConf();
+	conf.pluginListBounds = getBounds();
+	g_engine.setConf(conf);
 }
 
 /* -------------------------------------------------------------------------- */

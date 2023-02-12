@@ -30,18 +30,13 @@
 #include "browserBase.h"
 #include "core/conf.h"
 
-namespace giada::m
-{
-class Channel;
-}
-
 namespace giada::v
 {
 class gdBrowserLoad : public gdBrowserBase
 {
 public:
 	gdBrowserLoad(const std::string& title, const std::string& path,
-	    std::function<void(void*)> cb, ID channelId, m::Conf&);
+	    std::function<void(void*)> cb, ID channelId, const m::Conf&);
 
 private:
 	static void cb_down(Fl_Widget* /*w*/, void* p);
