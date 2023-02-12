@@ -383,10 +383,12 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 
 	const model::LayoutLock layoutLock = m_model.get_RT();
 	const model::Layout&    layout_RT  = layoutLock.get();
+	const model::Mixer&     mixer      = layout_RT.mixer;
+	const model::Sequencer& sequencer  = layout_RT.sequencer;
 
 	/* Mixer disabled, nothing to do here. */
 
-	if (!layout_RT.mixer.a_isActive())
+	if (!mixer.a_isActive())
 		return 0;
 
 #ifdef WITH_AUDIO_JACK
@@ -399,14 +401,14 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 	layout is not locked: another thread might altering channel's data in the
 	meantime (e.g. Plugins or Waves). */
 
-	if (layout_RT.sequencer.isRunning())
+	if (sequencer.isRunning())
 	{
-		const Frame        currentFrame  = layout_RT.sequencer.a_getCurrentFrame();
+		const Frame        currentFrame  = sequencer.a_getCurrentFrame();
 		const Frame        bufferSize    = in.countFrames();
 		const Frame        quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
 		const Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
-		const Sequencer::EventBuffer& events = m_sequencer.advance(layout_RT.sequencer, bufferSize, kernelInfo.sampleRate, m_actionRecorder);
+		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelInfo.sampleRate, m_actionRecorder);
 		m_sequencer.render(out);
 		if (!layout_RT.locked)
 			m_mixer.advanceChannels(events, layout_RT, renderRange, quantizerStep);
@@ -414,7 +416,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 
 	/* Then render Mixer: render channels, process I/O. */
 
-	const Frame maxFramesToRec = layout_RT.mixer.inputRecMode == InputRecMode::FREE ? m_sequencer.getMaxFramesInLoop(kernelInfo.sampleRate) : m_sequencer.getFramesInLoop();
+	const Frame maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.a_getMaxFramesInLoop(kernelInfo.sampleRate) : sequencer.framesInLoop;
 	m_mixer.render(out, in, layout_RT, maxFramesToRec);
 
 	return 0;

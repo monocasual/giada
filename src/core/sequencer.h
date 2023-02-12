@@ -109,13 +109,7 @@ public:
 	int       getQuantizerValue() const;
 	int       getQuantizerStep() const;
 	SeqStatus getStatus() const;
-
-	/* getMaxFramesInLoop
-    Returns how many frames the current loop length might contain at the slowest
-    speed possible (G_MIN_BPM). Call this whenever you change the number or 
-    beats. */
-
-	Frame getMaxFramesInLoop(int sampleRate) const;
+	int       getMaxFramesInLoop(int sampleRate) const;
 
 	/* calcBpmFromRec
     Given the amount of recorded frames, returns the speed of the current 

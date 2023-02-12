@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/model/sequencer.h"
+#include "core/const.h"
 #include "utils/time.h"
 
 namespace giada::m::model
@@ -83,6 +84,13 @@ Frame Sequencer::a_getCurrentBeat() const { return shared->currentBeat.load(); }
 float Sequencer::a_getCurrentSecond(int sampleRate) const
 {
 	return a_getCurrentFrame() / static_cast<float>(sampleRate);
+}
+
+/* -------------------------------------------------------------------------- */
+
+int Sequencer::a_getMaxFramesInLoop(int sampleRate) const
+{
+	return (sampleRate * (60.0f / G_MIN_BPM)) * beats;
 }
 
 /* -------------------------------------------------------------------------- */
