@@ -133,13 +133,13 @@ Engine::Engine()
 		if (m_mixer.isRecordingInput())
 			m_eventDispatcher.pumpEvent([this]() {
 				registerThread(Thread::EVENTS, /*realtime=*/false);
-				m_recorder.stopInputRec(m_conf.inputRecMode, m_kernelAudio.getSampleRate());
+				m_recorder.stopInputRec(m_mixer.getInputRecMode(), m_kernelAudio.getSampleRate());
 			});
 	};
 
 	m_channelManager.onChannelsAltered = [this]() {
 		if (!m_recorder.canEnableFreeInputRec())
-			m_conf.inputRecMode = InputRecMode::RIGID;
+			m_mixer.setInputRecMode(InputRecMode::RIGID);
 	};
 	m_channelManager.onChannelRecorded = [this](Frame recordedFrames) {
 		std::string filename = fmt::format("TAKE-{}.wav", m_patch.lastTakeId++);
@@ -159,7 +159,7 @@ Engine::Engine()
 		if (m_mixer.isRecordingActions())
 			m_recorder.stopActionRec();
 		else if (m_mixer.isRecordingInput())
-			m_recorder.stopInputRec(m_conf.inputRecMode, m_kernelAudio.getSampleRate());
+			m_recorder.stopInputRec(m_mixer.getInputRecMode(), m_kernelAudio.getSampleRate());
 	};
 	m_sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep) {
 		m_actionRecorder.updateBpm(oldVal / newVal, quantizerStep);

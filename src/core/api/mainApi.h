@@ -46,6 +46,8 @@ public:
 	bool              isRecordingInput() const;
 	bool              isRecordingActions() const;
 	bool              isSequencerRunning() const;
+	RecTriggerMode    getRecTriggerMode() const;
+	InputRecMode      getInputRecMode() const;
 	bool              isMetronomeOn() const;
 	bool              getInToOut() const;
 	Peak              getPeakOut() const;

@@ -125,7 +125,7 @@ Sequencer getSequencer()
 
 	const m::Mixer::RecordInfo recInfo = g_engine.getMainApi().getRecordInfo();
 
-	out.isFreeModeInputRec = g_engine.getMainApi().isRecordingInput() && g_engine.getConf().inputRecMode == InputRecMode::FREE;
+	out.isFreeModeInputRec = g_engine.getMainApi().isRecordingInput() && g_engine.getMainApi().getInputRecMode() == InputRecMode::FREE;
 	out.shouldBlink        = g_ui.shouldBlink() && (g_engine.getMainApi().getSequencerStatus() == SeqStatus::WAITING || out.isFreeModeInputRec);
 	out.beats              = g_engine.getMainApi().getBeats();
 	out.bars               = g_engine.getMainApi().getBars();
@@ -145,8 +145,8 @@ Transport getTransport()
 	transport.isRecordingAction = g_engine.getMainApi().isRecordingActions();
 	transport.isRecordingInput  = g_engine.getMainApi().isRecordingInput();
 	transport.isMetronomeOn     = g_engine.getMainApi().isMetronomeOn();
-	transport.recTriggerMode    = g_engine.getConf().recTriggerMode;
-	transport.inputRecMode      = g_engine.getConf().inputRecMode;
+	transport.recTriggerMode    = g_engine.getMainApi().getRecTriggerMode();
+	transport.inputRecMode      = g_engine.getMainApi().getInputRecMode();
 	return transport;
 }
 

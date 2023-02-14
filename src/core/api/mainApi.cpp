@@ -68,6 +68,20 @@ bool MainApi::isSequencerRunning() const
 
 /* -------------------------------------------------------------------------- */
 
+RecTriggerMode MainApi::getRecTriggerMode() const
+{
+	return m_mixer.getRecTriggerMode();
+}
+
+/* -------------------------------------------------------------------------- */
+
+InputRecMode MainApi::getInputRecMode() const
+{
+	return m_mixer.getInputRecMode();
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool MainApi::isMetronomeOn() const
 {
 	return m_sequencer.isMetronomeOn();
@@ -268,7 +282,7 @@ void MainApi::toggleActionRecording()
 	if (m_mixer.isRecordingActions())
 		m_recorder.stopActionRec();
 	else
-		m_recorder.prepareActionRec(m_conf.recTriggerMode);
+		m_recorder.prepareActionRec(m_mixer.getRecTriggerMode());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -276,7 +290,7 @@ void MainApi::toggleActionRecording()
 void MainApi::stopInputRecording()
 {
 	if (m_mixer.isRecordingInput())
-		m_recorder.stopInputRec(m_conf.inputRecMode, m_kernelAudio.getSampleRate());
+		m_recorder.stopInputRec(m_mixer.getInputRecMode(), m_kernelAudio.getSampleRate());
 }
 
 void MainApi::toggleInputRecording()
@@ -284,9 +298,9 @@ void MainApi::toggleInputRecording()
 	if (!m_kernelAudio.isInputEnabled() || !m_channelManager.hasInputRecordableChannels())
 		return;
 	if (m_mixer.isRecordingInput())
-		m_recorder.stopInputRec(m_conf.inputRecMode, m_kernelAudio.getSampleRate());
+		m_recorder.stopInputRec(m_mixer.getInputRecMode(), m_kernelAudio.getSampleRate());
 	else
-		m_recorder.prepareInputRec(m_conf.recTriggerMode, m_conf.inputRecMode);
+		m_recorder.prepareInputRec(m_mixer.getRecTriggerMode(), m_mixer.getInputRecMode());
 }
 
 /* -------------------------------------------------------------------------- */
