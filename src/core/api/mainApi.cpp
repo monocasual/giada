@@ -273,34 +273,26 @@ void MainApi::toggleFreeInputRec() { m_recorder.toggleFreeInputRec(); }
 
 void MainApi::stopActionRecording()
 {
-	if (m_mixer.isRecordingActions())
-		m_recorder.stopActionRec();
+	m_recorder.stopActionRec();
 }
 
 void MainApi::toggleActionRecording()
 {
-	if (m_mixer.isRecordingActions())
-		m_recorder.stopActionRec();
-	else
-		m_recorder.prepareActionRec(m_mixer.getRecTriggerMode());
+	m_recorder.toggleActionRec();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void MainApi::stopInputRecording()
 {
-	if (m_mixer.isRecordingInput())
-		m_recorder.stopInputRec(m_mixer.getInputRecMode(), m_kernelAudio.getSampleRate());
+	m_recorder.stopInputRec(m_kernelAudio.getSampleRate());
 }
 
 void MainApi::toggleInputRecording()
 {
-	if (!m_kernelAudio.isInputEnabled() || !m_channelManager.hasInputRecordableChannels())
+	if (!m_kernelAudio.isInputEnabled())
 		return;
-	if (m_mixer.isRecordingInput())
-		m_recorder.stopInputRec(m_mixer.getInputRecMode(), m_kernelAudio.getSampleRate());
-	else
-		m_recorder.prepareInputRec(m_mixer.getRecTriggerMode(), m_mixer.getInputRecMode());
+	m_recorder.toggleInputRec(m_kernelAudio.getSampleRate());
 }
 
 /* -------------------------------------------------------------------------- */

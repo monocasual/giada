@@ -65,6 +65,9 @@ void Recorder::prepareActionRec(RecTriggerMode mode)
 
 void Recorder::stopActionRec()
 {
+	if (!m_mixer.isRecordingActions())
+		return;
+
 	m_mixer.stopActionRec();
 
 	/* If you stop the Action Recorder in SIGNAL mode before any actual 
@@ -81,6 +84,16 @@ void Recorder::stopActionRec()
 	conf::treatRecsAsLoops is enabled or not. Same thing for MIDI channels.  */
 
 	m_channelManager.consolidateChannels(m_actionRecorder.consolidate());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Recorder::toggleActionRec()
+{
+	if (m_mixer.isRecordingActions())
+		stopActionRec();
+	else
+		prepareActionRec(m_mixer.getRecTriggerMode());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -107,9 +120,13 @@ bool Recorder::prepareInputRec(RecTriggerMode triggerMode, InputRecMode inputMod
 
 /* -------------------------------------------------------------------------- */
 
-void Recorder::stopInputRec(InputRecMode recMode, int sampleRate)
+void Recorder::stopInputRec(int sampleRate)
 {
-	Frame recordedFrames = m_mixer.stopInputRec();
+	if (!m_mixer.isRecordingInput())
+		return;
+
+	const InputRecMode recMode        = m_mixer.getInputRecMode();
+	Frame              recordedFrames = m_mixer.stopInputRec();
 
 	/* When recording in RIGID mode, the amount of recorded frames is always 
 	equal to the current loop length. */
@@ -138,6 +155,18 @@ void Recorder::stopInputRec(InputRecMode recMode, int sampleRate)
 		m_sequencer.rewindForced();
 		m_sequencer.setBpm(m_sequencer.calcBpmFromRec(recordedFrames, sampleRate), sampleRate);
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Recorder::toggleInputRec(int sampleRate)
+{
+	if (!m_channelManager.hasInputRecordableChannels())
+		return;
+	if (m_mixer.isRecordingInput())
+		stopInputRec(sampleRate);
+	else
+		prepareInputRec(m_mixer.getRecTriggerMode(), m_mixer.getInputRecMode());
 }
 
 /* -------------------------------------------------------------------------- */

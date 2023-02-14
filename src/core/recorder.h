@@ -24,10 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_REC_MANAGER_H
-#define G_REC_MANAGER_H
+#ifndef G_RECORDER_H
+#define G_RECORDER_H
 
-#include "core/eventDispatcher.h"
 #include "core/types.h"
 
 namespace giada::m
@@ -61,11 +60,13 @@ public:
 	void prepareActionRec(RecTriggerMode);
 	void startActionRecOnCallback();
 	void stopActionRec();
+	void toggleActionRec();
 
 	bool prepareInputRec(RecTriggerMode, InputRecMode);
 	void startInputRec();
 	void startInputRecOnCallback();
-	void stopInputRec(InputRecMode, int sampleRate);
+	void stopInputRec(int sampleRate);
+	void toggleInputRec(int sampleRate);
 
 	void toggleRecOnSignal();
 	void toggleFreeInputRec();
