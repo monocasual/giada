@@ -258,6 +258,7 @@ void Model::debug()
 	fmt::print("thread.registered={}\n", m_layout.thread.registered);
 	fmt::print("thread.realtime={}\n", m_layout.thread.realtime);
 
+	get().mixer.debug();
 	get().channels.debug();
 
 	puts("model::channelsShared");
