@@ -100,12 +100,6 @@ enum class InputRecMode : int
 	FREE
 };
 
-enum class EventType : int
-{
-	AUTO = 0,
-	MANUAL
-};
-
 /* Peak
 Audio peak information for two In/Out channels. */
 
