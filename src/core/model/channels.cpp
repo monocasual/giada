@@ -126,13 +126,6 @@ void Channels::remove(ID id)
 
 /* -------------------------------------------------------------------------- */
 
-void Channels::clear()
-{
-	m_channels.clear();
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Channels::add(const Channel& ch)
 {
 	m_channels.push_back(ch);

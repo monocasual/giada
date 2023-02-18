@@ -34,8 +34,6 @@ namespace giada::m::model
 {
 class Channels
 {
-	friend class Model;
-
 public:
 	const Channel&              get(ID) const;
 	const std::vector<Channel>& getAll() const;
@@ -60,7 +58,6 @@ public:
 	std::vector<Channel*> getIf(std::function<bool(const Channel&)> f);
 	void                  add(const Channel&);
 	void                  remove(ID);
-	void                  clear();
 
 private:
 	std::vector<Channel> m_channels;
