@@ -104,9 +104,9 @@ const mcl::AudioBuffer& Mixer::getRecBuffer()
 /* -------------------------------------------------------------------------- */
 
 void Mixer::advanceChannels(const Sequencer::EventBuffer& events,
-    const model::Layout& rtLayout, Range<Frame> block, Frame quantizerStep) const
+    const model::Channels& channels, Range<Frame> block, Frame quantizerStep) const
 {
-	for (const Channel& c : rtLayout.channels)
+	for (const Channel& c : channels.getAll())
 		if (!c.isInternal())
 			c.advance(events, block, quantizerStep);
 }
@@ -147,10 +147,11 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const mode
 {
 	const model::Mixer&     mixer     = layout_RT.mixer;
 	const model::Sequencer& sequencer = layout_RT.sequencer;
+	const model::Channels&  channels  = layout_RT.channels;
 
-	const Channel& masterOutCh = layout_RT.getChannel(Mixer::MASTER_OUT_CHANNEL_ID);
-	const Channel& masterInCh  = layout_RT.getChannel(Mixer::MASTER_IN_CHANNEL_ID);
-	const Channel& previewCh   = layout_RT.getChannel(Mixer::PREVIEW_CHANNEL_ID);
+	const Channel& masterOutCh = channels.get(Mixer::MASTER_OUT_CHANNEL_ID);
+	const Channel& masterInCh  = channels.get(Mixer::MASTER_IN_CHANNEL_ID);
+	const Channel& previewCh   = channels.get(Mixer::PREVIEW_CHANNEL_ID);
 
 	const bool  hasInput        = in.isAllocd();
 	const bool  inToOut         = mixer.inToOut;
@@ -187,7 +188,7 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const mode
 	changing data (e.g. Plugins or Waves). */
 
 	if (!layout_RT.locked)
-		renderChannels(layout_RT.channels, out, mixer.getInBuffer(), hasSolos, seqIsRunning);
+		renderChannels(channels.getAll(), out, mixer.getInBuffer(), hasSolos, seqIsRunning);
 
 	/* Render remaining internal channels. */
 

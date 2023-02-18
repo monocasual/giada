@@ -205,7 +205,7 @@ void StorageApi::storePatch(const std::string& projectName, const v::Ui::State& 
 		m_patch.waves.push_back(waveFactory::serializeWave(*w));
 
 	m_patch.channels.clear();
-	for (const Channel& c : layout.channels)
+	for (const Channel& c : layout.channels.getAll())
 		m_patch.channels.push_back(channelFactory::serializeChannel(c));
 }
 
@@ -255,7 +255,7 @@ StorageApi::LoadState StorageApi::loadPatch()
 	for (const Patch::Channel& pchannel : m_patch.channels)
 	{
 		channelFactory::Data data = m_engine.getChannelsApi().deserializeChannel(pchannel, sampleRateRatio, bufferSize);
-		m_model.get().channels.push_back(data.channel);
+		m_model.get().channels.add(data.channel);
 		m_model.addShared(std::move(data.shared));
 	}
 

@@ -45,6 +45,7 @@ class AudioBuffer;
 namespace giada::m::model
 {
 class Mixer;
+class Channels;
 struct Layout;
 } // namespace giada::m::model
 
@@ -133,7 +134,7 @@ public:
 	events) in the current audio block. Called by the main audio thread when the 
 	sequencer is running. */
 
-	void advanceChannels(const Sequencer::EventBuffer&, const model::Layout&,
+	void advanceChannels(const Sequencer::EventBuffer&, const model::Channels&,
 	    Range<Frame>, Frame quantizerStep) const;
 
 	/* updateSoloCount

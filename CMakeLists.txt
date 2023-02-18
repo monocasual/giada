@@ -92,6 +92,7 @@ list(APPEND SOURCES
 	src/core/model/sequencer.cpp
 	src/core/model/mixer.cpp
 	src/core/model/model.cpp
+	src/core/model/channels.cpp
 	src/core/idManager.cpp
 	src/glue/main.cpp
 	src/glue/io.cpp

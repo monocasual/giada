@@ -93,13 +93,6 @@ public:
 
 	int getLastChannelPosition(ID columnId) const;
 
-	/* forAnyChannel
-    Returns true if any channel satisfies the callback 'f'. */
-
-	bool forAnyChannel(std::function<bool(const Channel&)> f) const;
-
-	const Wave* getWaveInSampleChannel(ID channelId) const;
-
 	/* reset
 	Brings channels configuration back to the initial state: two I/O master
     channels, one preview channel. */
@@ -190,12 +183,6 @@ public:
 private:
 	void loadSampleChannel(Channel&, Wave*, Frame begin = -1, Frame end = -1, Frame shift = -1) const;
 
-	/* getColumn
-	Returns all channels that belongs to column 'columnId'. Read-only. */
-
-	std::vector<const Channel*> getColumn(ID columnId) const;
-
-	std::vector<Channel*> getChannelsIf(std::function<bool(const Channel&)> f);
 	std::vector<Channel*> getRecordableChannels();
 	std::vector<Channel*> getOverdubbableChannels();
 

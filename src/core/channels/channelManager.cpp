@@ -45,19 +45,19 @@ ChannelManager::ChannelManager(const Conf& c, model::Model& model)
 
 Channel& ChannelManager::getChannel(ID channelId)
 {
-	return m_model.get().getChannel(channelId);
+	return m_model.get().channels.get(channelId);
 }
 
 std::vector<Channel>& ChannelManager::getAllChannels()
 {
-	return m_model.get().channels;
+	return m_model.get().channels.getAll();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::reset(Frame framesInBuffer)
 {
-	m_model.get().channels.clear();
+	m_model.get().channels = {};
 
 	const ID   columnId          = 0;
 	const int  position          = 0;
@@ -70,9 +70,9 @@ void ChannelManager::reset(Frame framesInBuffer)
 	channelFactory::Data previewData = channelFactory::create(
 	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, columnId, position, framesInBuffer, m_conf.rsmpQuality, overdubProtection);
 
-	m_model.get().channels.push_back(masterOutData.channel);
-	m_model.get().channels.push_back(masterInData.channel);
-	m_model.get().channels.push_back(previewData.channel);
+	m_model.get().channels.add(masterOutData.channel);
+	m_model.get().channels.add(masterInData.channel);
+	m_model.get().channels.add(previewData.channel);
 
 	m_model.addShared(std::move(masterOutData.shared));
 	m_model.addShared(std::move(masterInData.shared));
@@ -87,13 +87,13 @@ Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position,
 {
 	channelFactory::Data data = channelFactory::create(/*id=*/0, type, columnId, position, bufferSize, m_conf.rsmpQuality, m_conf.overdubProtectionDefaultOn);
 
-	m_model.get().channels.push_back(data.channel);
+	m_model.get().channels.add(data.channel);
 	m_model.addShared(std::move(data.shared));
 	m_model.swap(model::SwapType::HARD);
 
 	triggerOnChannelsAltered();
 
-	return m_model.get().channels.back();
+	return m_model.get().channels.getLast();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -114,10 +114,11 @@ int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, in
 
 void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 {
+	Channel&    channel = m_model.get().channels.get(channelId);
 	Wave&       newWave = wave;
-	const Wave* oldWave = getWaveInSampleChannel(channelId);
+	const Wave* oldWave = channel.samplePlayer->getWave();
 
-	loadSampleChannel(m_model.get().getChannel(channelId), &newWave);
+	loadSampleChannel(channel, &newWave);
 	m_model.swap(model::SwapType::HARD);
 
 	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is 
@@ -133,7 +134,7 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 
 void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>& plugins)
 {
-	const Channel&       oldChannel     = m_model.get().getChannel(channelId);
+	const Channel&       oldChannel     = m_model.get().channels.get(channelId);
 	channelFactory::Data newChannelData = channelFactory::create(oldChannel, bufferSize, m_conf.rsmpQuality);
 
 	/* Clone Wave first, if any. */
@@ -152,7 +153,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 
 	/* Then push the new channel in the channels vector. */
 
-	m_model.get().channels.push_back(newChannelData.channel);
+	m_model.get().channels.add(newChannelData.channel);
 	m_model.addShared(std::move(newChannelData.shared));
 	m_model.swap(model::SwapType::HARD);
 }
@@ -161,7 +162,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 
 void ChannelManager::freeSampleChannel(ID channelId)
 {
-	Channel& ch = m_model.get().getChannel(channelId);
+	Channel& ch = m_model.get().channels.get(channelId);
 
 	assert(ch.samplePlayer);
 
@@ -180,7 +181,7 @@ void ChannelManager::freeSampleChannel(ID channelId)
 
 void ChannelManager::freeAllSampleChannels()
 {
-	for (Channel& ch : m_model.get().channels)
+	for (Channel& ch : m_model.get().channels.getAll())
 		if (ch.samplePlayer)
 			loadSampleChannel(ch, nullptr);
 
@@ -194,12 +195,10 @@ void ChannelManager::freeAllSampleChannels()
 
 void ChannelManager::deleteChannel(ID channelId)
 {
-	const Channel& ch   = m_model.get().getChannel(channelId);
+	const Channel& ch   = m_model.get().channels.get(channelId);
 	const Wave*    wave = ch.samplePlayer ? ch.samplePlayer->getWave() : nullptr;
 
-	u::vector::removeIf(m_model.get().channels, [channelId](const Channel& c) {
-		return c.id == channelId;
-	});
+	m_model.get().channels.remove(channelId);
 	m_model.swap(model::SwapType::HARD);
 
 	if (wave != nullptr)
@@ -212,7 +211,7 @@ void ChannelManager::deleteChannel(ID channelId)
 
 void ChannelManager::renameChannel(ID channelId, const std::string& name)
 {
-	m_model.get().getChannel(channelId).name = name;
+	m_model.get().channels.get(channelId).name = name;
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -220,13 +219,15 @@ void ChannelManager::renameChannel(ID channelId, const std::string& name)
 
 void ChannelManager::moveChannel(ID channelId, ID newColumnId, int newPosition)
 {
+	model::Channels& channels = m_model.get().channels;
+
 	/* Make room in the destination column for the new channel. */
 
-	for (Channel& ch : m_model.get().channels)
+	for (Channel& ch : channels.getAll())
 		if (ch.columnId == newColumnId && ch.position >= newPosition)
 			ch.position++;
 
-	Channel& channel = m_model.get().getChannel(channelId);
+	Channel& channel = channels.get(channelId);
 	channel.columnId = newColumnId;
 	channel.position = newPosition;
 
@@ -237,32 +238,20 @@ void ChannelManager::moveChannel(ID channelId, ID newColumnId, int newPosition)
 
 float ChannelManager::getMasterInVol() const
 {
-	return m_model.get().getChannel(Mixer::MASTER_IN_CHANNEL_ID).volume;
+	return m_model.get().channels.get(Mixer::MASTER_IN_CHANNEL_ID).volume;
 }
 
 float ChannelManager::getMasterOutVol() const
 {
-	return m_model.get().getChannel(Mixer::MASTER_OUT_CHANNEL_ID).volume;
+	return m_model.get().channels.get(Mixer::MASTER_OUT_CHANNEL_ID).volume;
 }
 
 /* -------------------------------------------------------------------------- */
 
 int ChannelManager::getLastChannelPosition(ID columnId) const
 {
-	std::vector<const Channel*> column = getColumn(columnId);
+	std::vector<const Channel*> column = m_model.get().channels.getColumn(columnId);
 	return column.empty() ? 0 : column.back()->position + 1;
-}
-/* -------------------------------------------------------------------------- */
-
-std::vector<const Channel*> ChannelManager::getColumn(ID columnId) const
-{
-	std::vector<const Channel*> column;
-
-	for (const Channel& ch : m_model.get().channels)
-		if (ch.columnId == columnId)
-			column.push_back(&ch);
-
-	return column;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -281,7 +270,7 @@ void ChannelManager::finalizeInputRec(const mcl::AudioBuffer& buffer, Frame reco
 
 void ChannelManager::keyPress(ID channelId, int velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized)
 {
-	Channel& ch = m_model.get().getChannel(channelId);
+	Channel& ch = m_model.get().channels.get(channelId);
 
 	if (ch.midiController)
 		ch.midiController->keyPress(ch.shared->playStatus);
@@ -297,7 +286,7 @@ void ChannelManager::keyPress(ID channelId, int velocity, bool canRecordActions,
 
 void ChannelManager::keyRelease(ID channelId, bool canRecordActions, Frame currentFrameQuantized)
 {
-	Channel& ch = m_model.get().getChannel(channelId);
+	Channel& ch = m_model.get().channels.get(channelId);
 
 	if (ch.sampleActionRecorder && ch.hasWave() && canRecordActions && !ch.samplePlayer->isAnyLoopMode())
 		ch.sampleActionRecorder->keyRelease(channelId, canRecordActions, currentFrameQuantized, ch.samplePlayer->mode, ch.hasActions);
@@ -311,7 +300,7 @@ void ChannelManager::keyRelease(ID channelId, bool canRecordActions, Frame curre
 
 void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQuantized)
 {
-	Channel& ch = m_model.get().getChannel(channelId);
+	Channel& ch = m_model.get().channels.get(channelId);
 
 	if (ch.midiController)
 		ch.midiController->keyKill(ch.shared->playStatus);
@@ -331,7 +320,7 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 
 void ChannelManager::processMidiEvent(ID channelId, const MidiEvent& e, bool canRecordActions, Frame currentFrameQuantized)
 {
-	Channel& ch = m_model.get().getChannel(channelId);
+	Channel& ch = m_model.get().channels.get(channelId);
 
 	if (ch.midiActionRecorder && canRecordActions)
 		ch.midiActionRecorder->record(channelId, e, currentFrameQuantized, ch.hasActions);
@@ -343,7 +332,7 @@ void ChannelManager::processMidiEvent(ID channelId, const MidiEvent& e, bool can
 
 void ChannelManager::setInputMonitor(ID channelId, bool value)
 {
-	m_model.get().getChannel(channelId).audioReceiver->inputMonitor = value;
+	m_model.get().channels.get(channelId).audioReceiver->inputMonitor = value;
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -351,7 +340,7 @@ void ChannelManager::setInputMonitor(ID channelId, bool value)
 
 void ChannelManager::setVolume(ID channelId, float value)
 {
-	m_model.get().getChannel(channelId).volume = std::clamp(value, 0.0f, G_MAX_VOLUME);
+	m_model.get().channels.get(channelId).volume = std::clamp(value, 0.0f, G_MAX_VOLUME);
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -359,9 +348,9 @@ void ChannelManager::setVolume(ID channelId, float value)
 
 void ChannelManager::setPitch(ID channelId, float value)
 {
-	assert(m_model.get().getChannel(channelId).samplePlayer);
+	assert(m_model.get().channels.get(channelId).samplePlayer);
 
-	m_model.get().getChannel(channelId).samplePlayer->pitch = std::clamp(value, G_MIN_PITCH, G_MAX_PITCH);
+	m_model.get().channels.get(channelId).samplePlayer->pitch = std::clamp(value, G_MIN_PITCH, G_MAX_PITCH);
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -369,7 +358,7 @@ void ChannelManager::setPitch(ID channelId, float value)
 
 void ChannelManager::setPan(ID channelId, float value)
 {
-	m_model.get().getChannel(channelId).pan = std::clamp(value, 0.0f, G_MAX_PAN);
+	m_model.get().channels.get(channelId).pan = std::clamp(value, 0.0f, G_MAX_PAN);
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -377,7 +366,7 @@ void ChannelManager::setPan(ID channelId, float value)
 
 void ChannelManager::setBeginEnd(ID channelId, Frame b, Frame e)
 {
-	Channel& c = m_model.get().getChannel(channelId);
+	Channel& c = m_model.get().channels.get(channelId);
 
 	assert(c.samplePlayer);
 
@@ -398,7 +387,7 @@ void ChannelManager::setBeginEnd(ID channelId, Frame b, Frame e)
 
 void ChannelManager::resetBeginEnd(ID channelId)
 {
-	Channel& c = m_model.get().getChannel(channelId);
+	Channel& c = m_model.get().channels.get(channelId);
 
 	assert(c.samplePlayer);
 
@@ -411,7 +400,7 @@ void ChannelManager::resetBeginEnd(ID channelId)
 
 void ChannelManager::toggleMute(ID channelId)
 {
-	Channel& ch = m_model.get().getChannel(channelId);
+	Channel& ch = m_model.get().channels.get(channelId);
 	ch.setMute(!ch.isMuted());
 
 	m_model.swap(model::SwapType::SOFT);
@@ -421,7 +410,7 @@ void ChannelManager::toggleMute(ID channelId)
 
 void ChannelManager::toggleSolo(ID channelId)
 {
-	Channel& ch = m_model.get().getChannel(channelId);
+	Channel& ch = m_model.get().channels.get(channelId);
 	ch.setSolo(!ch.isSoloed());
 
 	m_model.swap(model::SwapType::SOFT);
@@ -431,7 +420,7 @@ void ChannelManager::toggleSolo(ID channelId)
 
 void ChannelManager::toggleArm(ID channelId)
 {
-	Channel& ch = m_model.get().getChannel(channelId);
+	Channel& ch = m_model.get().channels.get(channelId);
 	ch.armed    = !ch.armed;
 
 	m_model.swap(model::SwapType::SOFT);
@@ -441,9 +430,9 @@ void ChannelManager::toggleArm(ID channelId)
 
 void ChannelManager::toggleReadActions(ID channelId, bool seqIsRunning)
 {
-	assert(m_model.get().getChannel(channelId).sampleActionRecorder);
+	assert(m_model.get().channels.get(channelId).sampleActionRecorder);
 
-	Channel& ch = m_model.get().getChannel(channelId);
+	Channel& ch = m_model.get().channels.get(channelId);
 	if (!ch.hasActions)
 		return;
 	ch.sampleActionRecorder->toggleReadActions(*ch.shared, m_conf.treatRecsAsLoops, seqIsRunning);
@@ -453,14 +442,14 @@ void ChannelManager::toggleReadActions(ID channelId, bool seqIsRunning)
 
 void ChannelManager::killReadActions(ID channelId)
 {
-	assert(m_model.get().getChannel(channelId).sampleActionRecorder);
+	assert(m_model.get().channels.get(channelId).sampleActionRecorder);
 
 	/* Killing Read Actions, i.e. shift + click on 'R' button is meaningful 
 	only when the conf::treatRecsAsLoops is true. */
 
 	if (!m_conf.treatRecsAsLoops)
 		return;
-	Channel& ch = m_model.get().getChannel(channelId);
+	Channel& ch = m_model.get().channels.get(channelId);
 	ch.sampleActionRecorder->killReadActions(*ch.shared);
 }
 
@@ -468,7 +457,7 @@ void ChannelManager::killReadActions(ID channelId)
 
 void ChannelManager::setOverdubProtection(ID channelId, bool value)
 {
-	Channel& ch                         = m_model.get().getChannel(channelId);
+	Channel& ch                         = m_model.get().channels.get(channelId);
 	ch.audioReceiver->overdubProtection = value;
 	if (value == true && ch.armed)
 		ch.armed = false;
@@ -479,7 +468,7 @@ void ChannelManager::setOverdubProtection(ID channelId, bool value)
 
 void ChannelManager::setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
-	m_model.get().getChannel(channelId).samplePlayer->mode = mode;
+	m_model.get().channels.get(channelId).samplePlayer->mode = mode;
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -487,7 +476,7 @@ void ChannelManager::setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 
 void ChannelManager::setHeight(ID channelId, Pixel height)
 {
-	m_model.get().getChannel(channelId).height = height;
+	m_model.get().channels.get(channelId).height = height;
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -495,8 +484,8 @@ void ChannelManager::setHeight(ID channelId, Pixel height)
 
 void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 {
-	Channel& previewCh = m_model.get().getChannel(Mixer::PREVIEW_CHANNEL_ID);
-	Channel& sourceCh  = m_model.get().getChannel(channelId);
+	Channel& previewCh = m_model.get().channels.get(Mixer::PREVIEW_CHANNEL_ID);
+	Channel& sourceCh  = m_model.get().channels.get(channelId);
 
 	assert(previewCh.samplePlayer);
 	assert(sourceCh.samplePlayer);
@@ -509,7 +498,7 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 
 void ChannelManager::freeWaveInPreviewChannel()
 {
-	Channel& previewCh = m_model.get().getChannel(Mixer::PREVIEW_CHANNEL_ID);
+	Channel& previewCh = m_model.get().channels.get(Mixer::PREVIEW_CHANNEL_ID);
 
 	previewCh.samplePlayer->loadWave(*previewCh.shared, nullptr);
 	m_model.swap(model::SwapType::SOFT);
@@ -519,14 +508,14 @@ void ChannelManager::freeWaveInPreviewChannel()
 
 void ChannelManager::setPreviewTracker(Frame f)
 {
-	m_model.get().getChannel(m::Mixer::PREVIEW_CHANNEL_ID).shared->tracker.store(f);
+	m_model.get().channels.get(m::Mixer::PREVIEW_CHANNEL_ID).shared->tracker.store(f);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::stopAll()
 {
-	for (Channel& ch : m_model.get().channels)
+	for (Channel& ch : m_model.get().channels.getAll())
 	{
 		if (ch.midiController)
 			ch.midiController->stop(ch.shared->playStatus);
@@ -544,7 +533,7 @@ void ChannelManager::stopAll()
 
 void ChannelManager::rewindAll()
 {
-	for (Channel& ch : m_model.get().channels)
+	for (Channel& ch : m_model.get().channels.getAll())
 		if (ch.midiController)
 			ch.midiController->rewind(ch.shared->playStatus);
 	m_model.swap(model::SwapType::SOFT);
@@ -554,7 +543,7 @@ void ChannelManager::rewindAll()
 
 bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
 {
-	Channel& ch = m_model.get().getChannel(channelId);
+	Channel& ch = m_model.get().channels.get(channelId);
 
 	assert(ch.samplePlayer);
 
@@ -582,7 +571,7 @@ void ChannelManager::consolidateChannels(const std::unordered_set<ID>& ids)
 {
 	for (ID id : ids)
 	{
-		Channel& ch = m_model.get().getChannel(id);
+		Channel& ch = m_model.get().channels.get(id);
 		ch.shared->readActions.store(true);
 		ch.shared->recStatus.store(ChannelStatus::PLAY);
 		if (ch.type == ChannelType::MIDI)
@@ -595,40 +584,26 @@ void ChannelManager::consolidateChannels(const std::unordered_set<ID>& ids)
 
 bool ChannelManager::hasInputRecordableChannels() const
 {
-	return forAnyChannel([](const Channel& ch) { return ch.canInputRec(); });
+	return m_model.get().channels.anyOf([](const Channel& ch) { return ch.canInputRec(); });
 }
 
 bool ChannelManager::hasActions() const
 {
-	return forAnyChannel([](const Channel& ch) { return ch.hasActions; });
+	return m_model.get().channels.anyOf([](const Channel& ch) { return ch.hasActions; });
 }
 
 bool ChannelManager::hasAudioData() const
 {
-	return forAnyChannel([](const Channel& ch) {
+	return m_model.get().channels.anyOf([](const Channel& ch) {
 		return ch.samplePlayer && ch.samplePlayer->hasWave();
 	});
 }
 
 bool ChannelManager::hasSolos() const
 {
-	return forAnyChannel([](const Channel& ch) {
+	return m_model.get().channels.anyOf([](const Channel& ch) {
 		return !ch.isInternal() && ch.isSoloed();
 	});
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool ChannelManager::forAnyChannel(std::function<bool(const Channel&)> f) const
-{
-	return std::any_of(m_model.get().channels.begin(), m_model.get().channels.end(), f);
-}
-
-/* -------------------------------------------------------------------------- */
-
-const Wave* ChannelManager::getWaveInSampleChannel(ID channelId) const
-{
-	return m_model.get().getChannel(channelId).samplePlayer->getWave();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -641,23 +616,14 @@ void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, Frame begin, Frame 
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Channel*> ChannelManager::getChannelsIf(std::function<bool(const Channel&)> f)
-{
-	std::vector<Channel*> out;
-	for (Channel& ch : m_model.get().channels)
-		if (f(ch))
-			out.push_back(&ch);
-	return out;
-}
-
 std::vector<Channel*> ChannelManager::getRecordableChannels()
 {
-	return getChannelsIf([](const Channel& c) { return c.canInputRec() && !c.hasWave(); });
+	return m_model.get().channels.getIf([](const Channel& c) { return c.canInputRec() && !c.hasWave(); });
 }
 
 std::vector<Channel*> ChannelManager::getOverdubbableChannels()
 {
-	return getChannelsIf([](const Channel& c) { return c.canInputRec() && c.hasWave(); });
+	return m_model.get().channels.getIf([](const Channel& c) { return c.canInputRec() && c.hasWave(); });
 }
 
 /* -------------------------------------------------------------------------- */

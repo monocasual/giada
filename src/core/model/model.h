@@ -29,6 +29,7 @@
 
 #include "core/channels/channel.h"
 #include "core/const.h"
+#include "core/model/channels.h"
 #include "core/model/midiIn.h"
 #include "core/model/mixer.h"
 #include "core/model/sequencer.h"
@@ -44,13 +45,10 @@ namespace giada::m::model
 {
 struct Layout
 {
-	Channel&       getChannel(ID id);
-	const Channel& getChannel(ID id) const;
-
-	Sequencer            sequencer;
-	Mixer                mixer;
-	MidiIn               midiIn;
-	std::vector<Channel> channels;
+	Sequencer sequencer;
+	Mixer     mixer;
+	MidiIn    midiIn;
+	Channels  channels;
 
 	/* locked
 	If locked, Mixer won't process channels. This is used to allow editing the 

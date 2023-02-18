@@ -87,24 +87,6 @@ DataLock::~DataLock()
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Channel& Layout::getChannel(ID id)
-{
-	return const_cast<Channel&>(const_cast<const Layout*>(this)->getChannel(id));
-}
-
-const Channel& Layout::getChannel(ID id) const
-{
-	auto it = std::find_if(channels.begin(), channels.end(), [id](const Channel& c) {
-		return c.id == id;
-	});
-	assert(it != channels.end());
-	return *it;
-}
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 Model::Model()
 : onSwap(nullptr)
 {
@@ -276,34 +258,18 @@ void Model::debug()
 	fmt::print("thread.registered={}\n", m_layout.thread.registered);
 	fmt::print("thread.realtime={}\n", m_layout.thread.realtime);
 
-	puts("model::layout.channels");
-
-	int i = 0;
-	for (const Channel& c : get().channels)
-	{
-		fmt::print("\t{} - ID={} name='{}' type={} columnId={} position={} channelShared={}\n",
-		    i++, c.id, c.name, (int)c.type, c.columnId, c.position, (void*)&c.shared);
-
-		if (c.plugins.size() > 0)
-		{
-			puts("\t\tplugins:");
-			for (const auto& p : c.plugins)
-				fmt::print("\t\t\t{} - ID={}\n", (void*)p, p->id);
-		}
-	}
+	get().channels.debug();
 
 	puts("model::channelsShared");
 
-	i = 0;
-	for (const auto& c : m_shared.channelsShared)
+	for (int i = 0; const auto& c : m_shared.channelsShared)
 	{
 		fmt::print("\t{}) - {}\n", i++, (void*)c.get());
 	}
 
 	puts("model::shared.waves");
 
-	i = 0;
-	for (const auto& w : m_shared.waves)
+	for (int i = 0; const auto& w : m_shared.waves)
 		fmt::print("\t{}) {} - ID={} name='{}'\n", i++, (void*)w.get(), w->id, w->getPath());
 
 	puts("model::shared.actions");
@@ -318,8 +284,7 @@ void Model::debug()
 
 	puts("model::shared.plugins");
 
-	i = 0;
-	for (const auto& p : m_shared.plugins)
+	for (int i = 0; const auto& p : m_shared.plugins)
 		fmt::print("\t{}) {} - ID={}\n", i++, (void*)p.get(), p->id);
 }
 

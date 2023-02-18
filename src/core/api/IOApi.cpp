@@ -48,7 +48,7 @@ const model::MidiIn& IOApi::getModelMidiIn() const
 
 void IOApi::channel_enableMidiLearn(ID channelId, bool v)
 {
-	m_model.get().getChannel(channelId).midiLearner.enabled = v;
+	m_model.get().channels.get(channelId).midiLearner.enabled = v;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
@@ -56,7 +56,7 @@ void IOApi::channel_enableMidiLearn(ID channelId, bool v)
 
 void IOApi::channel_enableMidiLightning(ID channelId, bool v)
 {
-	m_model.get().getChannel(channelId).midiLighter.enabled = v;
+	m_model.get().channels.get(channelId).midiLighter.enabled = v;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
@@ -64,7 +64,7 @@ void IOApi::channel_enableMidiLightning(ID channelId, bool v)
 
 void IOApi::channel_enableMidiOutput(ID channelId, bool v)
 {
-	m_model.get().getChannel(channelId).midiSender->enabled = v;
+	m_model.get().channels.get(channelId).midiSender->enabled = v;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
@@ -72,7 +72,7 @@ void IOApi::channel_enableMidiOutput(ID channelId, bool v)
 
 void IOApi::channel_enableVelocityAsVol(ID channelId, bool v)
 {
-	m_model.get().getChannel(channelId).samplePlayer->velocityAsVol = v;
+	m_model.get().channels.get(channelId).samplePlayer->velocityAsVol = v;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
@@ -80,13 +80,13 @@ void IOApi::channel_enableVelocityAsVol(ID channelId, bool v)
 
 void IOApi::channel_setMidiInputFilter(ID channelId, int ch)
 {
-	m_model.get().getChannel(channelId).midiLearner.filter = ch;
+	m_model.get().channels.get(channelId).midiLearner.filter = ch;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
 void IOApi::channel_setMidiOutputFilter(ID channelId, int ch)
 {
-	m_model.get().getChannel(channelId).midiSender->filter = ch;
+	m_model.get().channels.get(channelId).midiSender->filter = ch;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
@@ -96,7 +96,7 @@ bool IOApi::channel_setKey(ID channelId, int k)
 {
 	if (!isValidKey(k))
 		return false;
-	m_model.get().getChannel(channelId).key = k;
+	m_model.get().channels.get(channelId).key = k;
 	m_model.swap(m::model::SwapType::HARD);
 	return true;
 }

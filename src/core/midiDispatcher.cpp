@@ -147,7 +147,7 @@ bool MidiDispatcher::isMasterMidiInAllowed(int c)
 
 bool MidiDispatcher::isChannelMidiInAllowed(ID channelId, int c)
 {
-	return m_model.get().getChannel(channelId).midiLearner.isAllowed(c);
+	return m_model.get().channels.get(channelId).midiLearner.isAllowed(c);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -182,7 +182,7 @@ void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 {
 	const uint32_t pure = midiEvent.getRawNoVelocity();
 
-	for (const Channel& c : m_model.get().channels)
+	for (const Channel& c : m_model.get().channels.getAll())
 	{
 		/* Do nothing on this channel if MIDI in is disabled or filtered out for
 		the current MIDI channel. */
@@ -317,7 +317,7 @@ void MidiDispatcher::learnChannel(MidiEvent e, int param, ID channelId, std::fun
 
 	const uint32_t raw = e.getRawNoVelocity();
 
-	Channel& ch = m_model.get().getChannel(channelId);
+	Channel& ch = m_model.get().channels.get(channelId);
 
 	switch (param)
 	{

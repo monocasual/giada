@@ -385,6 +385,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 	const model::Layout&    layout_RT  = layoutLock.get();
 	const model::Mixer&     mixer      = layout_RT.mixer;
 	const model::Sequencer& sequencer  = layout_RT.sequencer;
+	const model::Channels&  channels   = layout_RT.channels;
 
 	/* Mixer disabled, nothing to do here. */
 
@@ -411,7 +412,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelInfo.sampleRate, m_actionRecorder);
 		m_sequencer.render(out);
 		if (!layout_RT.locked)
-			m_mixer.advanceChannels(events, layout_RT, renderRange, quantizerStep);
+			m_mixer.advanceChannels(events, channels, renderRange, quantizerStep);
 	}
 
 	/* Then render Mixer: render channels, process I/O. */
