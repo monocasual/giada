@@ -25,6 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/model/mixer.h"
+#ifdef G_DEBUG_MODE
+#include <fmt/core.h>
+#endif
 
 namespace giada::m::model
 {
@@ -99,4 +102,23 @@ void Mixer::a_setPeakIn(Peak p) const
 
 mcl::AudioBuffer& Mixer::getRecBuffer() const { return shared->recBuffer; }
 mcl::AudioBuffer& Mixer::getInBuffer() const { return shared->inBuffer; }
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef G_DEBUG_MODE
+
+void Mixer::debug() const
+{
+	puts("model::mixer");
+	fmt::print("\thasSolos={}\n", hasSolos);
+	fmt::print("\tisRecordingActions={}\n", isRecordingActions);
+	fmt::print("\tisRecordingInput={}\n", isRecordingInput);
+	fmt::print("\tinToOut={}\n", inToOut);
+	fmt::print("\tlimitOutput={}\n", limitOutput);
+	fmt::print("\tinputRecMode={}\n", (int)inputRecMode);
+	fmt::print("\trecTriggerMode={}\n", (int)recTriggerMode);
+	fmt::print("\trecTriggerLevel={}\n", recTriggerLevel);
+}
+
+#endif
 } // namespace giada::m::model
