@@ -448,42 +448,46 @@ void Engine::debug()
 
 void Engine::storeConfig()
 {
-	m_conf.limitOutput      = m_model.get().mixer.limitOutput;
-	m_conf.inputRecMode     = m_model.get().mixer.inputRecMode;
-	m_conf.recTriggerMode   = m_model.get().mixer.recTriggerMode;
-	m_conf.recTriggerLevel  = m_model.get().mixer.recTriggerLevel;
-	m_conf.midiInEnabled    = m_model.get().midiIn.enabled;
-	m_conf.midiInFilter     = m_model.get().midiIn.filter;
-	m_conf.midiInRewind     = m_model.get().midiIn.rewind;
-	m_conf.midiInStartStop  = m_model.get().midiIn.startStop;
-	m_conf.midiInActionRec  = m_model.get().midiIn.actionRec;
-	m_conf.midiInInputRec   = m_model.get().midiIn.inputRec;
-	m_conf.midiInMetronome  = m_model.get().midiIn.metronome;
-	m_conf.midiInVolumeIn   = m_model.get().midiIn.volumeIn;
-	m_conf.midiInVolumeOut  = m_model.get().midiIn.volumeOut;
-	m_conf.midiInBeatDouble = m_model.get().midiIn.beatDouble;
-	m_conf.midiInBeatHalf   = m_model.get().midiIn.beatHalf;
+	const model::Layout& layout = m_model.get();
+
+	m_conf.limitOutput      = layout.mixer.limitOutput;
+	m_conf.inputRecMode     = layout.mixer.inputRecMode;
+	m_conf.recTriggerMode   = layout.mixer.recTriggerMode;
+	m_conf.recTriggerLevel  = layout.mixer.recTriggerLevel;
+	m_conf.midiInEnabled    = layout.midiIn.enabled;
+	m_conf.midiInFilter     = layout.midiIn.filter;
+	m_conf.midiInRewind     = layout.midiIn.rewind;
+	m_conf.midiInStartStop  = layout.midiIn.startStop;
+	m_conf.midiInActionRec  = layout.midiIn.actionRec;
+	m_conf.midiInInputRec   = layout.midiIn.inputRec;
+	m_conf.midiInMetronome  = layout.midiIn.metronome;
+	m_conf.midiInVolumeIn   = layout.midiIn.volumeIn;
+	m_conf.midiInVolumeOut  = layout.midiIn.volumeOut;
+	m_conf.midiInBeatDouble = layout.midiIn.beatDouble;
+	m_conf.midiInBeatHalf   = layout.midiIn.beatHalf;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Engine::loadConfig()
 {
-	m_model.get().mixer.limitOutput     = m_conf.limitOutput;
-	m_model.get().mixer.inputRecMode    = m_conf.inputRecMode;
-	m_model.get().mixer.recTriggerMode  = m_conf.recTriggerMode;
-	m_model.get().mixer.recTriggerLevel = m_conf.recTriggerLevel;
-	m_model.get().midiIn.enabled        = m_conf.midiInEnabled;
-	m_model.get().midiIn.filter         = m_conf.midiInFilter;
-	m_model.get().midiIn.rewind         = m_conf.midiInRewind;
-	m_model.get().midiIn.startStop      = m_conf.midiInStartStop;
-	m_model.get().midiIn.actionRec      = m_conf.midiInActionRec;
-	m_model.get().midiIn.inputRec       = m_conf.midiInInputRec;
-	m_model.get().midiIn.metronome      = m_conf.midiInMetronome;
-	m_model.get().midiIn.volumeIn       = m_conf.midiInVolumeIn;
-	m_model.get().midiIn.volumeOut      = m_conf.midiInVolumeOut;
-	m_model.get().midiIn.beatDouble     = m_conf.midiInBeatDouble;
-	m_model.get().midiIn.beatHalf       = m_conf.midiInBeatHalf;
+	model::Layout& layout = m_model.get();
+
+	layout.mixer.limitOutput     = m_conf.limitOutput;
+	layout.mixer.inputRecMode    = m_conf.inputRecMode;
+	layout.mixer.recTriggerMode  = m_conf.recTriggerMode;
+	layout.mixer.recTriggerLevel = m_conf.recTriggerLevel;
+	layout.midiIn.enabled        = m_conf.midiInEnabled;
+	layout.midiIn.filter         = m_conf.midiInFilter;
+	layout.midiIn.rewind         = m_conf.midiInRewind;
+	layout.midiIn.startStop      = m_conf.midiInStartStop;
+	layout.midiIn.actionRec      = m_conf.midiInActionRec;
+	layout.midiIn.inputRec       = m_conf.midiInInputRec;
+	layout.midiIn.metronome      = m_conf.midiInMetronome;
+	layout.midiIn.volumeIn       = m_conf.midiInVolumeIn;
+	layout.midiIn.volumeOut      = m_conf.midiInVolumeOut;
+	layout.midiIn.beatDouble     = m_conf.midiInBeatDouble;
+	layout.midiIn.beatHalf       = m_conf.midiInBeatHalf;
 
 	m_model.swap(model::SwapType::NONE);
 }
