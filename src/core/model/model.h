@@ -45,6 +45,10 @@ namespace giada::m::model
 {
 struct Layout
 {
+#ifdef G_DEBUG_MODE
+	void debug() const;
+#endif
+
 	Sequencer sequencer;
 	Mixer     mixer;
 	MidiIn    midiIn;
