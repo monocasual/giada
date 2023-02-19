@@ -176,7 +176,7 @@ private:
 		std::vector<std::unique_ptr<Plugin>> plugins;
 	};
 
-	AtomicSwapper m_layout;
+	AtomicSwapper m_swapper;
 	Shared        m_shared;
 };
 

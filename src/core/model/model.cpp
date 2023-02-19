@@ -98,7 +98,7 @@ void Model::reset()
 {
 	m_shared = {};
 
-	m_layout.forEachData([this](Layout& layout) {
+	m_swapper.forEachData([this](Layout& layout) {
 		layout                  = {};
 		layout.sequencer.shared = &m_shared.sequencerShared;
 		layout.mixer.shared     = &m_shared.mixerShared;
@@ -111,17 +111,17 @@ void Model::reset()
 
 bool Model::registerThread(Thread t, bool realtime) const
 {
-	return m_layout.registerThread(u::gui::toString(t), realtime);
+	return m_swapper.registerThread(u::gui::toString(t), realtime);
 }
 
 /* -------------------------------------------------------------------------- */
 
-Layout&    Model::get() { return m_layout.get(); }
-LayoutLock Model::get_RT() const { return LayoutLock(m_layout); }
+Layout&    Model::get() { return m_swapper.get(); }
+LayoutLock Model::get_RT() const { return LayoutLock(m_swapper); }
 
 void Model::swap(SwapType t)
 {
-	m_layout.swap();
+	m_swapper.swap();
 	if (onSwap != nullptr)
 		onSwap(t);
 }
@@ -137,7 +137,7 @@ DataLock Model::lockData(SwapType t)
 
 bool Model::isLocked() const
 {
-	return m_layout.isRtLocked();
+	return m_swapper.isRtLocked();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -249,14 +249,14 @@ void Model::debug()
 	puts("======== SYSTEM STATUS ========");
 
 	puts("-------------------------------");
-	m_layout.debug();
+	m_swapper.debug();
 	puts("-------------------------------");
 
-	fmt::print("thread.name={}\n", m_layout.thread.name);
-	fmt::print("thread.index={}\n", m_layout.thread.index);
-	fmt::print("thread.revision={}\n", m_layout.thread.revision);
-	fmt::print("thread.registered={}\n", m_layout.thread.registered);
-	fmt::print("thread.realtime={}\n", m_layout.thread.realtime);
+	fmt::print("thread.name={}\n", m_swapper.thread.name);
+	fmt::print("thread.index={}\n", m_swapper.thread.index);
+	fmt::print("thread.revision={}\n", m_swapper.thread.revision);
+	fmt::print("thread.registered={}\n", m_swapper.thread.registered);
+	fmt::print("thread.realtime={}\n", m_swapper.thread.realtime);
 
 	get().mixer.debug();
 	get().channels.debug();
