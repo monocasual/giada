@@ -252,12 +252,6 @@ void Model::debug()
 	m_swapper.debug();
 	puts("-------------------------------");
 
-	fmt::print("thread.name={}\n", m_swapper.thread.name);
-	fmt::print("thread.index={}\n", m_swapper.thread.index);
-	fmt::print("thread.revision={}\n", m_swapper.thread.revision);
-	fmt::print("thread.registered={}\n", m_swapper.thread.registered);
-	fmt::print("thread.realtime={}\n", m_swapper.thread.realtime);
-
 	get().mixer.debug();
 	get().channels.debug();
 
