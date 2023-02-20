@@ -27,7 +27,6 @@
 #ifndef GD_MAINWINDOW_H
 #define GD_MAINWINDOW_H
 
-#include "core/conf.h"
 #include "gui/dialogs/progress.h"
 #include "window.h"
 
@@ -44,7 +43,7 @@ class gdMainWindow : public gdWindow
 	class ScopedProgress;
 
 public:
-	gdMainWindow(geompp::Rect<int>, const char* title, int argc, char** argv, const m::Conf&);
+	gdMainWindow(geompp::Rect<int>, const char* title, int argc, char** argv);
 	~gdMainWindow();
 
 	void refresh() override;

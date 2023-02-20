@@ -27,8 +27,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/kernelAudio.h"
-#include "core/conf.h"
 #include "core/const.h"
+#include "core/model/kernelAudio.h"
+#include "core/model/model.h"
 #include "utils/log.h"
 #include "utils/vector.h"
 #include <cassert>
@@ -49,13 +50,13 @@ KernelAudio::KernelAudio()
 
 /* -------------------------------------------------------------------------- */
 
-int KernelAudio::openDevice(const Conf& conf)
+int KernelAudio::openDevice(const model::KernelAudio& model)
 {
 	assert(onAudioCallback != nullptr);
 
-	u::log::print("[KA] using API %d\n", conf.soundSystem);
+	u::log::print("[KA] using API %d\n", model.soundSystem);
 
-	m_api     = conf.soundSystem;
+	m_api     = model.soundSystem;
 	m_rtAudio = std::make_unique<RtAudio>(m_api);
 
 	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg) {
@@ -63,7 +64,7 @@ int KernelAudio::openDevice(const Conf& conf)
 	});
 
 	u::log::print("[KA] Opening device out=%d, in=%d, samplerate=%d\n",
-	    conf.soundDeviceOut, conf.soundDeviceIn, conf.samplerate);
+	    model.soundDeviceOut, model.soundDeviceIn, model.samplerate);
 
 	m_devices = fetchDevices();
 	printDevices(m_devices);
@@ -79,19 +80,19 @@ int KernelAudio::openDevice(const Conf& conf)
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
 
-	outParams.deviceId     = conf.soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT ? m_rtAudio->getDefaultOutputDevice() : conf.soundDeviceOut;
-	outParams.nChannels    = conf.channelsOutCount;
-	outParams.firstChannel = conf.channelsOutStart;
+	outParams.deviceId     = model.soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT ? m_rtAudio->getDefaultOutputDevice() : model.soundDeviceOut;
+	outParams.nChannels    = model.channelsOutCount;
+	outParams.firstChannel = model.channelsOutStart;
 
 	/* Input device can be disabled. Unlike the output, here we are using all
 	channels and let the user choose which one to record from in the configuration
 	panel. */
 
-	if (conf.soundDeviceIn != -1)
+	if (model.soundDeviceIn != -1)
 	{
-		inParams.deviceId     = conf.soundDeviceIn;
-		inParams.nChannels    = conf.channelsInCount;
-		inParams.firstChannel = conf.channelsInStart;
+		inParams.deviceId     = model.soundDeviceIn;
+		inParams.nChannels    = model.channelsInCount;
+		inParams.firstChannel = model.channelsInStart;
 		m_inputEnabled.store(true);
 	}
 	else
@@ -101,10 +102,10 @@ int KernelAudio::openDevice(const Conf& conf)
 	options.streamName      = G_APP_NAME;
 	options.numberOfBuffers = 4; // TODO - wtf?
 
-	m_realBufferSize   = conf.buffersize;
-	m_realSampleRate   = conf.samplerate;
-	m_channelsOutCount = conf.channelsOutCount;
-	m_channelsInCount  = conf.channelsInCount;
+	m_realBufferSize   = model.buffersize;
+	m_realSampleRate   = model.samplerate;
+	m_channelsOutCount = model.channelsOutCount;
+	m_channelsInCount  = model.channelsInCount;
 
 #ifdef WITH_AUDIO_JACK
 
@@ -134,13 +135,13 @@ int KernelAudio::openDevice(const Conf& conf)
 	    /* channelsInCount  = */ m_channelsInCount};
 
 	RtAudioErrorType res = m_rtAudio->openStream(
-	    &outParams,                                     // output params
-	    conf.soundDeviceIn != -1 ? &inParams : nullptr, // input params if inDevice is selected
-	    RTAUDIO_FLOAT32,                                // audio format
-	    m_realSampleRate,                               // sample rate
-	    &m_realBufferSize,                              // buffer size in byte
-	    &audioCallback,                                 // audio callback
-	    &m_callbackInfo,                                // user data passed to callback
+	    &outParams,                                      // output params
+	    model.soundDeviceIn != -1 ? &inParams : nullptr, // input params if inDevice is selected
+	    RTAUDIO_FLOAT32,                                 // audio format
+	    m_realSampleRate,                                // sample rate
+	    &m_realBufferSize,                               // buffer size in byte
+	    &audioCallback,                                  // audio callback
+	    &m_callbackInfo,                                 // user data passed to callback
 	    &options);
 
 	if (res == RtAudioErrorType::RTAUDIO_NO_ERROR)

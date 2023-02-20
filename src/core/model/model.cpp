@@ -108,17 +108,126 @@ Model::Model()
 
 /* -------------------------------------------------------------------------- */
 
+void Model::init()
+{
+	m_shared = {};
+
+	Layout& layout          = get();
+	layout                  = {};
+	layout.sequencer.shared = &m_shared.sequencerShared;
+	layout.mixer.shared     = &m_shared.mixerShared;
+
+	swap(SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Model::reset()
 {
 	m_shared = {};
 
-	m_swapper.forEachData([this](Layout& layout) {
-		layout                  = {};
-		layout.sequencer.shared = &m_shared.sequencerShared;
-		layout.mixer.shared     = &m_shared.mixerShared;
-	});
+	Layout& layout          = get();
+	layout.sequencer        = {};
+	layout.sequencer.shared = &m_shared.sequencerShared;
+	layout.mixer            = {};
+	layout.mixer.shared     = &m_shared.mixerShared;
+	layout.channels         = {};
 
 	swap(SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::load(const Conf& conf)
+{
+	Layout& layout = get();
+
+	layout.kernelAudio.soundSystem      = conf.soundSystem;
+	layout.kernelAudio.soundDeviceOut   = conf.soundDeviceOut;
+	layout.kernelAudio.soundDeviceIn    = conf.soundDeviceIn;
+	layout.kernelAudio.channelsOutCount = conf.channelsOutCount;
+	layout.kernelAudio.channelsOutStart = conf.channelsOutStart;
+	layout.kernelAudio.channelsInCount  = conf.channelsInCount;
+	layout.kernelAudio.channelsInStart  = conf.channelsInStart;
+	layout.kernelAudio.samplerate       = conf.samplerate;
+	layout.kernelAudio.buffersize       = conf.buffersize;
+	layout.kernelAudio.limitOutput      = conf.limitOutput;
+	layout.kernelAudio.rsmpQuality      = conf.rsmpQuality;
+	layout.kernelAudio.recTriggerLevel  = conf.recTriggerLevel;
+
+	layout.kernelMidi.system      = conf.midiSystem;
+	layout.kernelMidi.portOut     = conf.midiPortOut;
+	layout.kernelMidi.portIn      = conf.midiPortIn;
+	layout.kernelMidi.midiMapPath = conf.midiMapPath;
+	layout.kernelMidi.sync        = conf.midiSync;
+
+	layout.mixer.inputRecMode   = conf.inputRecMode;
+	layout.mixer.recTriggerMode = conf.recTriggerMode;
+
+	layout.midiIn.enabled    = conf.midiInEnabled;
+	layout.midiIn.filter     = conf.midiInFilter;
+	layout.midiIn.rewind     = conf.midiInRewind;
+	layout.midiIn.startStop  = conf.midiInStartStop;
+	layout.midiIn.actionRec  = conf.midiInActionRec;
+	layout.midiIn.inputRec   = conf.midiInInputRec;
+	layout.midiIn.metronome  = conf.midiInMetronome;
+	layout.midiIn.volumeIn   = conf.midiInVolumeIn;
+	layout.midiIn.volumeOut  = conf.midiInVolumeOut;
+	layout.midiIn.beatDouble = conf.midiInBeatDouble;
+	layout.midiIn.beatHalf   = conf.midiInBeatHalf;
+
+	layout.chansStopOnSeqHalt         = conf.chansStopOnSeqHalt;
+	layout.treatRecsAsLoops           = conf.treatRecsAsLoops;
+	layout.inputMonitorDefaultOn      = conf.inputMonitorDefaultOn;
+	layout.overdubProtectionDefaultOn = conf.overdubProtectionDefaultOn;
+
+	swap(model::SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::store(Conf& conf) const
+{
+	const Layout& layout = get();
+
+	conf.soundSystem      = layout.kernelAudio.soundSystem;
+	conf.soundDeviceOut   = layout.kernelAudio.soundDeviceOut;
+	conf.soundDeviceIn    = layout.kernelAudio.soundDeviceIn;
+	conf.channelsOutCount = layout.kernelAudio.channelsOutCount;
+	conf.channelsOutStart = layout.kernelAudio.channelsOutStart;
+	conf.channelsInCount  = layout.kernelAudio.channelsInCount;
+	conf.channelsInStart  = layout.kernelAudio.channelsInStart;
+	conf.samplerate       = layout.kernelAudio.samplerate;
+	conf.buffersize       = layout.kernelAudio.buffersize;
+	conf.limitOutput      = layout.kernelAudio.limitOutput;
+	conf.rsmpQuality      = layout.kernelAudio.rsmpQuality;
+	conf.recTriggerLevel  = layout.kernelAudio.recTriggerLevel;
+
+	conf.midiSystem  = layout.kernelMidi.system;
+	conf.midiPortOut = layout.kernelMidi.portOut;
+	conf.midiPortIn  = layout.kernelMidi.portIn;
+	conf.midiMapPath = layout.kernelMidi.midiMapPath;
+	conf.midiSync    = layout.kernelMidi.sync;
+
+	conf.inputRecMode   = layout.mixer.inputRecMode;
+	conf.recTriggerMode = layout.mixer.recTriggerMode;
+
+	conf.midiInEnabled    = layout.midiIn.enabled;
+	conf.midiInFilter     = layout.midiIn.filter;
+	conf.midiInRewind     = layout.midiIn.rewind;
+	conf.midiInStartStop  = layout.midiIn.startStop;
+	conf.midiInActionRec  = layout.midiIn.actionRec;
+	conf.midiInInputRec   = layout.midiIn.inputRec;
+	conf.midiInMetronome  = layout.midiIn.metronome;
+	conf.midiInVolumeIn   = layout.midiIn.volumeIn;
+	conf.midiInVolumeOut  = layout.midiIn.volumeOut;
+	conf.midiInBeatDouble = layout.midiIn.beatDouble;
+	conf.midiInBeatHalf   = layout.midiIn.beatHalf;
+
+	conf.chansStopOnSeqHalt         = layout.chansStopOnSeqHalt;
+	conf.treatRecsAsLoops           = layout.treatRecsAsLoops;
+	conf.inputMonitorDefaultOn      = layout.inputMonitorDefaultOn;
+	conf.overdubProtectionDefaultOn = layout.overdubProtectionDefaultOn;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -130,8 +239,19 @@ bool Model::registerThread(Thread t, bool realtime) const
 
 /* -------------------------------------------------------------------------- */
 
-Layout&    Model::get() { return m_swapper.get(); }
-LayoutLock Model::get_RT() const { return LayoutLock(m_swapper); }
+Layout&       Model::get() { return m_swapper.get(); }
+const Layout& Model::get() const { return m_swapper.get(); }
+LayoutLock    Model::get_RT() const { return LayoutLock(m_swapper); }
+
+/* -------------------------------------------------------------------------- */
+
+void Model::set(const Layout& layout)
+{
+	get() = layout;
+	swap(model::SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
 
 void Model::swap(SwapType t)
 {
@@ -266,7 +386,7 @@ void Model::debug()
 	m_swapper.debug();
 	puts("-------------------------------");
 
-	//get().debug();
+	get().debug();
 
 	puts("model::channelsShared");
 

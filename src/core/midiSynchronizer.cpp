@@ -35,13 +35,13 @@
 
 namespace giada::m
 {
-MidiSynchronizer::MidiSynchronizer(const Conf& c, KernelMidi& k)
+MidiSynchronizer::MidiSynchronizer(const model::Model& m, KernelMidi& k)
 : onChangePosition(nullptr)
 , onChangeBpm(nullptr)
 , onStart(nullptr)
 , onStop(nullptr)
 , m_kernelMidi(k)
-, m_conf(c)
+, m_model(m)
 , m_worker(1000) // Default sleep time, will be reset anyway on startSendClock()
 , m_timeElapsed(0.0)
 , m_lastTimestamp(0.0)
@@ -65,7 +65,7 @@ void MidiSynchronizer::receive(const MidiEvent& e, int numBeatsInLoop)
 		* SYSTEM_STOP - when another MIDI device is about to stop;
 		* SYSTEM_SPP - when another MIDI device has changed song position. */
 
-	if (m_conf.midiSync != G_MIDI_SYNC_CLOCK_SLAVE || e.getType() != MidiEvent::Type::SYSTEM)
+	if (m_model.get().kernelMidi.sync != G_MIDI_SYNC_CLOCK_SLAVE || e.getType() != MidiEvent::Type::SYSTEM)
 		return;
 
 	switch (e.getByte1())
@@ -95,7 +95,7 @@ void MidiSynchronizer::receive(const MidiEvent& e, int numBeatsInLoop)
 
 void MidiSynchronizer::startSendClock(float bpm)
 {
-	if (m_conf.midiSync != G_MIDI_SYNC_CLOCK_MASTER)
+	if (m_model.get().kernelMidi.sync != G_MIDI_SYNC_CLOCK_MASTER)
 		return;
 
 	setClockBpm(bpm);
@@ -109,7 +109,7 @@ void MidiSynchronizer::startSendClock(float bpm)
 
 void MidiSynchronizer::stopSendClock() const
 {
-	if (m_conf.midiSync != G_MIDI_SYNC_CLOCK_MASTER)
+	if (m_model.get().kernelMidi.sync != G_MIDI_SYNC_CLOCK_MASTER)
 		return;
 	m_worker.stop();
 }
@@ -126,7 +126,7 @@ void MidiSynchronizer::setClockBpm(float bpm)
 
 void MidiSynchronizer::sendRewind()
 {
-	if (m_conf.midiSync != G_MIDI_SYNC_CLOCK_MASTER)
+	if (m_model.get().kernelMidi.sync != G_MIDI_SYNC_CLOCK_MASTER)
 		return;
 	m_kernelMidi.send(MidiEvent::makeFrom3Bytes(MidiEvent::SYSTEM_SPP, 0, 0));
 }
@@ -135,7 +135,7 @@ void MidiSynchronizer::sendRewind()
 
 void MidiSynchronizer::sendStart()
 {
-	if (m_conf.midiSync != G_MIDI_SYNC_CLOCK_MASTER)
+	if (m_model.get().kernelMidi.sync != G_MIDI_SYNC_CLOCK_MASTER)
 		return;
 	m_kernelMidi.send(MidiEvent::makeFrom1Byte(MidiEvent::SYSTEM_START));
 }
@@ -144,7 +144,7 @@ void MidiSynchronizer::sendStart()
 
 void MidiSynchronizer::sendStop()
 {
-	if (m_conf.midiSync != G_MIDI_SYNC_CLOCK_MASTER)
+	if (m_model.get().kernelMidi.sync != G_MIDI_SYNC_CLOCK_MASTER)
 		return;
 	m_kernelMidi.send(MidiEvent::makeFrom1Byte(MidiEvent::SYSTEM_STOP));
 }

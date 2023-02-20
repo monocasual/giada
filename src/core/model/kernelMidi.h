@@ -24,23 +24,22 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GD_BROWSER_LOAD_H
-#define GD_BROWSER_LOAD_H
+#ifndef G_MODEL_KERNEL_MIDI_H
+#define G_MODEL_KERNEL_MIDI_H
 
-#include "gui/dialogs/browser/browserBase.h"
+#include "core/kernelMidi.h"
+#include "core/types.h"
 
-namespace giada::v
+namespace giada::m::model
 {
-class gdBrowserLoad : public gdBrowserBase
+struct KernelMidi
 {
-public:
-	gdBrowserLoad(const std::string& title, const std::string& path,
-	    std::function<void(void*)> cb, ID channelId, const Model&);
-
-private:
-	static void cb_down(Fl_Widget* /*w*/, void* p);
-	void        cb_down();
+	RtMidi::Api system      = G_DEFAULT_MIDI_SYSTEM;
+	int         portOut     = G_DEFAULT_MIDI_PORT_OUT;
+	int         portIn      = G_DEFAULT_MIDI_PORT_IN;
+	std::string midiMapPath = "";
+	int         sync        = G_MIDI_SYNC_NONE;
 };
-} // namespace giada::v
+} // namespace giada::m::model
 
 #endif

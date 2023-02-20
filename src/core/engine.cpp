@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/engine.h"
+#include "core/conf.h"
 #include "core/confFactory.h"
 #include "core/model/model.h"
 #include "utils/fs.h"
@@ -41,20 +42,20 @@ Engine::Engine()
 , onModelSwap(nullptr)
 , m_midiMapper(m_kernelMidi)
 , m_pluginHost(m_model)
-, m_midiSynchronizer(m_conf, m_kernelMidi)
+, m_midiSynchronizer(m_model, m_kernelMidi)
 , m_sequencer(m_model, m_midiSynchronizer, m_jackTransport)
 , m_mixer(m_model)
-, m_channelManager(m_conf, m_model)
+, m_channelManager(m_model)
 , m_actionRecorder(m_model)
 , m_recorder(m_sequencer, m_channelManager, m_mixer, m_actionRecorder)
 , m_midiDispatcher(m_model)
-, m_mainApi(*this, m_conf, m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder)
+, m_mainApi(*this, m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder)
 , m_channelsApi(*this, m_model, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager)
 , m_pluginsApi(*this, m_kernelAudio, m_channelManager, m_pluginManager, m_pluginHost, m_model)
 , m_sampleEditorApi(*this, m_model, m_channelManager)
 , m_actionEditorApi(*this, m_model, m_sequencer, m_actionRecorder)
-, m_ioApi(m_model, m_midiDispatcher, m_conf)
-, m_storageApi(*this, m_model, m_conf, m_patch, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
+, m_ioApi(m_model, m_midiDispatcher)
+, m_storageApi(*this, m_model, m_patch, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
 {
 	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
 		return audioCallback(info);
@@ -150,7 +151,7 @@ Engine::Engine()
 		/* TODO move this logic to Recorder */
 		if (status == SeqStatus::WAITING)
 			m_recorder.stopActionRec();
-		m_conf.recTriggerMode = RecTriggerMode::NORMAL;
+		m_model.get().mixer.recTriggerMode = RecTriggerMode::NORMAL;
 	};
 	m_sequencer.onAboutStop = [this]() {
 		/* If recordings (both input and action) are active deactivate them, but
@@ -244,41 +245,35 @@ const Patch& Engine::getPatch() const
 	return m_patch;
 }
 
-const Conf& Engine::getConf() const
+const model::Layout& Engine::getLayout() const
 {
-	return m_conf;
+	return m_model.get();
 }
 
-void Engine::setConf(const Conf& c)
+void Engine::setLayout(const model::Layout& layout)
 {
-	m_conf = c;
-	loadConfig();
+	m_model.set(layout);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Engine::init()
+void Engine::init(const Conf& conf)
 {
 	registerThread(Thread::MAIN, /*realtime=*/false);
 
-	m_model.reset();
+	m_model.init();
+	m_model.load(conf);
 
-	m_conf = confFactory::deserialize();
-	if (!m_conf.valid)
-		u::log::print("[Engine::init] Can't read configuration file! Using default values\n");
-
-	loadConfig();
-	if (!u::log::init(m_conf.logMode))
-		u::log::print("[Engine::init] log init failed! Using default stdout\n");
+	const model::Layout& layout = m_model.get();
 
 	m_midiMapper.init();
-	if (m_midiMapper.read(m_conf.midiMapPath) != G_FILE_OK)
+	if (m_midiMapper.read(layout.kernelMidi.midiMapPath) != G_FILE_OK)
 		u::log::print("[Engine::init] MIDI map read failed!\n");
 
 	/* Initialize KernelAudio. If fails, interrupt the Engine initialization:
-	Giada can't work without a functional KernelAudio. */
+	Giada can't work without a working KernelAudio. */
 
-	m_kernelAudio.openDevice(m_conf);
+	m_kernelAudio.openDevice(layout.kernelAudio);
 	if (!m_kernelAudio.isReady())
 		return;
 
@@ -291,13 +286,13 @@ void Engine::init()
 	m_channelManager.reset(m_kernelAudio.getBufferSize());
 	m_sequencer.reset(m_kernelAudio.getSampleRate());
 	m_pluginHost.reset(m_kernelAudio.getBufferSize());
-	m_pluginManager.reset(m_conf.pluginSortMethod);
+	m_pluginManager.reset(conf.pluginSortMethod);
 
 	m_mixer.enable();
 	m_kernelAudio.startStream();
 
-	m_kernelMidi.openOutDevice(m_conf.midiSystem, m_conf.midiPortOut);
-	m_kernelMidi.openInDevice(m_conf.midiSystem, m_conf.midiPortIn);
+	m_kernelMidi.openOutDevice(layout.kernelMidi.system, layout.kernelMidi.portOut);
+	m_kernelMidi.openInDevice(layout.kernelMidi.system, layout.kernelMidi.portIn);
 	m_kernelMidi.logPorts();
 	m_kernelMidi.start();
 
@@ -308,27 +303,30 @@ void Engine::init()
 
 /* -------------------------------------------------------------------------- */
 
-void Engine::reset()
+void Engine::reset(PluginManager::SortMethod pluginSortMethod)
 {
 	/* Managers first, due to the internal ID numbering. */
 
 	channelFactory::reset();
 	waveFactory::reset();
-	m_pluginManager.reset(m_conf.pluginSortMethod);
+	m_pluginManager.reset(pluginSortMethod);
 
 	/* Then all other components. */
 
+	const int sampleRate = m_kernelAudio.getSampleRate();
+	const int bufferSize = m_kernelAudio.getBufferSize();
+
 	m_model.reset();
-	m_mixer.reset(m_sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
-	m_channelManager.reset(m_kernelAudio.getBufferSize());
-	m_sequencer.reset(m_kernelAudio.getSampleRate());
+	m_mixer.reset(m_sequencer.getMaxFramesInLoop(sampleRate), bufferSize);
+	m_channelManager.reset(bufferSize);
+	m_sequencer.reset(sampleRate);
 	m_actionRecorder.reset();
-	m_pluginHost.reset(m_kernelAudio.getBufferSize());
+	m_pluginHost.reset(bufferSize);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Engine::shutdown()
+void Engine::shutdown(Conf& conf)
 {
 	if (m_kernelAudio.isReady())
 	{
@@ -338,14 +336,7 @@ void Engine::shutdown()
 		u::log::print("[Engine::shutdown] Mixer closed\n");
 	}
 
-	storeConfig();
-
-	if (!confFactory::serialize(m_conf))
-		u::log::print("[Engine::shutdown] error while saving configuration file!\n");
-	else
-		u::log::print("[Engine::shutdown] configuration saved\n");
-
-	u::log::close();
+	m_model.store(conf);
 
 	/* Currently the Engine is global/static, and so are all of its sub-components,
 	Model included. Some plug-ins (JUCE-based ones) crash hard on destructor when
@@ -441,54 +432,6 @@ void Engine::debug()
 	m_model.debug();
 }
 #endif
-
-/* -------------------------------------------------------------------------- */
-
-void Engine::storeConfig()
-{
-	const model::Layout& layout = m_model.get();
-
-	m_conf.limitOutput      = layout.mixer.limitOutput;
-	m_conf.inputRecMode     = layout.mixer.inputRecMode;
-	m_conf.recTriggerMode   = layout.mixer.recTriggerMode;
-	m_conf.recTriggerLevel  = layout.mixer.recTriggerLevel;
-	m_conf.midiInEnabled    = layout.midiIn.enabled;
-	m_conf.midiInFilter     = layout.midiIn.filter;
-	m_conf.midiInRewind     = layout.midiIn.rewind;
-	m_conf.midiInStartStop  = layout.midiIn.startStop;
-	m_conf.midiInActionRec  = layout.midiIn.actionRec;
-	m_conf.midiInInputRec   = layout.midiIn.inputRec;
-	m_conf.midiInMetronome  = layout.midiIn.metronome;
-	m_conf.midiInVolumeIn   = layout.midiIn.volumeIn;
-	m_conf.midiInVolumeOut  = layout.midiIn.volumeOut;
-	m_conf.midiInBeatDouble = layout.midiIn.beatDouble;
-	m_conf.midiInBeatHalf   = layout.midiIn.beatHalf;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Engine::loadConfig()
-{
-	model::Layout& layout = m_model.get();
-
-	layout.mixer.limitOutput     = m_conf.limitOutput;
-	layout.mixer.inputRecMode    = m_conf.inputRecMode;
-	layout.mixer.recTriggerMode  = m_conf.recTriggerMode;
-	layout.mixer.recTriggerLevel = m_conf.recTriggerLevel;
-	layout.midiIn.enabled        = m_conf.midiInEnabled;
-	layout.midiIn.filter         = m_conf.midiInFilter;
-	layout.midiIn.rewind         = m_conf.midiInRewind;
-	layout.midiIn.startStop      = m_conf.midiInStartStop;
-	layout.midiIn.actionRec      = m_conf.midiInActionRec;
-	layout.midiIn.inputRec       = m_conf.midiInInputRec;
-	layout.midiIn.metronome      = m_conf.midiInMetronome;
-	layout.midiIn.volumeIn       = m_conf.midiInVolumeIn;
-	layout.midiIn.volumeOut      = m_conf.midiInVolumeOut;
-	layout.midiIn.beatDouble     = m_conf.midiInBeatDouble;
-	layout.midiIn.beatHalf       = m_conf.midiInBeatHalf;
-
-	m_model.swap(model::SwapType::NONE);
-}
 
 /* -------------------------------------------------------------------------- */
 

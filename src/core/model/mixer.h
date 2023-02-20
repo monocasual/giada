@@ -61,10 +61,8 @@ public:
 	bool           isRecordingActions = false;
 	bool           isRecordingInput   = false;
 	bool           inToOut            = false;
-	bool           limitOutput        = false;
 	InputRecMode   inputRecMode       = InputRecMode::RIGID;
 	RecTriggerMode recTriggerMode     = RecTriggerMode::NORMAL;
-	float          recTriggerLevel    = 0.0f;
 
 private:
 	struct Shared

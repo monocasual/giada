@@ -26,8 +26,6 @@
 
 #include "gui/dialogs/config.h"
 #include "core/conf.h"
-#include "core/const.h"
-#include "core/engine.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/flex.h"
@@ -42,12 +40,11 @@
 #include "gui/ui.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui     g_ui;
-extern giada::m::Engine g_engine;
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdConfig::gdConfig(int w, int h, const m::Conf& conf)
+gdConfig::gdConfig(int w, int h, const Model& model)
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, w, h}), g_ui.getI18Text(LangMap::CONFIG_TITLE))
 {
 	const geompp::Rect<int> bounds = getContentBounds().reduced(G_GUI_OUTER_MARGIN);
@@ -58,9 +55,9 @@ gdConfig::gdConfig(int w, int h, const m::Conf& conf)
 		{
 			tabAudio     = new geTabAudio(bounds);
 			tabMidi      = new geTabMidi(bounds);
-			tabBehaviors = new geTabBehaviors(bounds, conf);
+			tabBehaviors = new geTabBehaviors(bounds);
 			tabMisc      = new geTabMisc(bounds);
-			tabBindings  = new geTabBindings(bounds, conf);
+			tabBindings  = new geTabBindings(bounds, model);
 			tabPlugins   = new geTabPlugins(bounds);
 
 			tabs->add(tabAudio);
@@ -102,9 +99,10 @@ gdConfig::gdConfig(int w, int h, const m::Conf& conf)
 void gdConfig::saveConfig()
 {
 	tabAudio->save();
-	tabBehaviors->save();
 	tabMidi->save();
+	tabBehaviors->save();
 	tabMisc->save();
+	tabBindings->save();
 	tabPlugins->save();
 	do_callback();
 }

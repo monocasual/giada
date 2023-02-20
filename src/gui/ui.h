@@ -32,6 +32,7 @@
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dispatcher.h"
 #include "gui/langMapper.h"
+#include "gui/model.h"
 #include "gui/updater.h"
 #include <memory>
 #include <string>
@@ -41,15 +42,7 @@ namespace giada::v
 class Ui final
 {
 public:
-	/* State
-	Struct used while saving UI state to Patch. */
-
-	struct State
-	{
-		std::unordered_map<ID, int> columns;
-	};
-
-	Ui(const m::Conf&);
+	Ui();
 
 	/* shouldBlink
 	Return whether is time to blink something or not. This is used to make 
@@ -77,15 +70,10 @@ public:
 
 	void load(const m::Patch&);
 
-	/* getState
-	Returns the current UI state. Use this for persistence. */
-
-	State getState();
-
-	void init(int argc, char** argv, const std::string& patchName, bool isAudioReady);
+	void init(int argc, char** argv, const m::Conf&, const std::string& patchName, bool isAudioReady);
 	void reset();
 	void run();
-	void shutdown();
+	void shutdown(m::Conf&);
 	void stopUpdater();
 	void startUpdater();
 	bool pumpEvent(const Updater::Event&);
@@ -141,6 +129,7 @@ public:
 
 	std::unique_ptr<gdMainWindow> mainWindow;
 	Dispatcher                    dispatcher;
+	Model                         model;
 
 private:
 	static constexpr int BLINK_RATE = G_GUI_FPS / 2;
@@ -153,8 +142,6 @@ private:
     patch. */
 
 	void rebuildStaticWidgets();
-
-	const m::Conf& m_conf;
 
 	LangMapper m_langMapper;
 	Updater    m_updater;

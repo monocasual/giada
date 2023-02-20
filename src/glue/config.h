@@ -119,18 +119,28 @@ struct MiscData
 	std::string langMap;
 };
 
+struct BehaviorsData
+{
+	bool chansStopOnSeqHalt;
+	bool treatRecsAsLoops;
+	bool inputMonitorDefaultOn;
+	bool overdubProtectionDefaultOn;
+};
+
 /* get*
 Return viewModel objects filled with data. */
 
-AudioData  getAudioData();
-MidiData   getMidiData();
-MiscData   getMiscData();
-PluginData getPluginData();
+AudioData     getAudioData();
+MidiData      getMidiData();
+PluginData    getPluginData();
+MiscData      getMiscData();
+BehaviorsData getBehaviorsData();
 
 void save(const AudioData&);
 void save(const MidiData&);
 void save(const MiscData&);
 void save(const PluginData&);
+void save(const BehaviorsData&);
 void scanPlugins(std::string dir, const std::function<void(float)>& progress);
 
 /* setPluginPathCb

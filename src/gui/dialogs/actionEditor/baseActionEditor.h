@@ -27,9 +27,9 @@
 #ifndef GD_BASE_ACTION_EDITOR_H
 #define GD_BASE_ACTION_EDITOR_H
 
-#include "core/conf.h"
 #include "glue/actionEditor.h"
 #include "gui/dialogs/window.h"
+#include "gui/model.h"
 #include <functional>
 
 namespace giada::m
@@ -66,7 +66,7 @@ protected:
 	static constexpr float MAX_RATIO  = 40000.0f;
 	static constexpr float RATIO_STEP = 1.5f;
 
-	gdBaseActionEditor(ID channelId, const m::Conf&);
+	gdBaseActionEditor(ID channelId, const Model&);
 
 	/* getMouseOverContent
 	Returns mouse x-position relative to the viewport content. */

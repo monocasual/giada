@@ -46,12 +46,11 @@ bool StorageApi::LoadState::isGood() const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-StorageApi::StorageApi(Engine& e, model::Model& m, Conf& c, Patch& p, PluginManager& pm,
+StorageApi::StorageApi(Engine& e, model::Model& m, Patch& p, PluginManager& pm,
     MidiSynchronizer& ms, Mixer& mx, ChannelManager& cm, KernelAudio& ka, Sequencer& s,
     ActionRecorder& ar)
 : m_engine(e)
 , m_model(m)
-, m_conf(c)
 , m_patch(p)
 , m_pluginManager(pm)
 , m_midiSynchronizer(ms)
@@ -66,17 +65,17 @@ StorageApi::StorageApi(Engine& e, model::Model& m, Conf& c, Patch& p, PluginMana
 /* -------------------------------------------------------------------------- */
 
 bool StorageApi::storeProject(const std::string& projectName, const std::string& projectPath,
-    const v::Ui::State& uiState, std::function<void(float)> progress)
+    const v::Model& uiModel, std::function<void(float)> progress)
 {
 	progress(0.0f);
 
 	if (!u::fs::mkdir(projectPath))
 	{
-		u::log::print("[StorageEngine::storeProject] Unable to make project directory!\n");
+		u::log::print("[StorageApi::storeProject] Unable to make project directory!\n");
 		return false;
 	}
 
-	u::log::print("[StorageEngine::storeProject] Project dir created: %s\n", projectPath);
+	u::log::print("[StorageApi::storeProject] Project dir created: %s\n", projectPath);
 
 	/* Update all existing file paths in Waves, so that they point to the project
 	folder they belong to. */
@@ -91,7 +90,7 @@ bool StorageApi::storeProject(const std::string& projectName, const std::string&
 
 	/* Write Model into Patch, then into file. */
 
-	storePatch(projectName, uiState);
+	storePatch(projectName, uiModel);
 
 	progress(0.6f);
 
@@ -100,12 +99,7 @@ bool StorageApi::storeProject(const std::string& projectName, const std::string&
 	if (!patchFactory::serialize(m_patch, patchPath))
 		return false;
 
-	/* Store the parent folder the project belongs to, in order to reuse it the
-	next time. */
-
-	m_conf.patchPath = u::fs::getUpDir(u::fs::getUpDir(patchPath));
-
-	u::log::print("[StorageEngine::storeProject] Project patch saved as %s\n", patchPath);
+	u::log::print("[StorageApi::storeProject] Project patch saved as %s\n", patchPath);
 
 	progress(1.0f);
 
@@ -114,9 +108,10 @@ bool StorageApi::storeProject(const std::string& projectName, const std::string&
 
 /* -------------------------------------------------------------------------- */
 
-StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, std::function<void(float)> progress)
+StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, PluginManager::SortMethod pluginSortMethod,
+    std::function<void(float)> progress)
 {
-	u::log::print("[StorageEngine::loadProject] Load project from %s\n", projectPath);
+	u::log::print("[StorageApi::loadProject] Load project from %s\n", projectPath);
 
 	progress(0.0f);
 
@@ -137,7 +132,7 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, st
 	/* Then suspend Mixer, reset and fill the model. */
 
 	m_mixer.disable();
-	m_engine.reset();
+	m_engine.reset(pluginSortMethod);
 	LoadState state = loadPatch();
 
 	progress(0.6f);
@@ -157,11 +152,6 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, st
 
 	progress(0.9f);
 
-	/* Store the parent folder the project belongs to, in order to reuse it the
-	next time. */
-
-	m_conf.patchPath = u::fs::getUpDir(projectPath);
-
 	/* Mixer is ready to go back online. */
 
 	m_mixer.enable();
@@ -178,11 +168,11 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, st
 
 /* -------------------------------------------------------------------------- */
 
-void StorageApi::storePatch(const std::string& projectName, const v::Ui::State& uiState)
+void StorageApi::storePatch(const std::string& projectName, const v::Model& uiModel)
 {
 	m_patch.columns.clear();
-	for (auto const& [id, width] : uiState.columns)
-		m_patch.columns.push_back({id, width});
+	for (const v::Model::Column& column : uiModel.columns)
+		m_patch.columns.push_back({column.id, column.width});
 
 	const model::Layout& layout = m_model.get();
 
@@ -243,7 +233,7 @@ StorageApi::LoadState StorageApi::loadPatch()
 	m_model.getAllShared<model::WavePtrs>().clear();
 	for (const Patch::Wave& pwave : m_patch.waves)
 	{
-		std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, m_conf.rsmpQuality);
+		std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, m_model.get().kernelAudio.rsmpQuality);
 		if (w != nullptr)
 			m_model.getAllShared<model::WavePtrs>().push_back(std::move(w));
 		else

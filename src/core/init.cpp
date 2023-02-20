@@ -27,6 +27,7 @@
 #ifdef __APPLE__
 #include <pwd.h>
 #endif
+#include "core/confFactory.h"
 #include "core/engine.h"
 #include "gui/elems/mainWindow/mainIO.h"
 #include "gui/ui.h"
@@ -127,9 +128,17 @@ void startup(int argc, char** argv)
 		});
 	};
 
+	Conf conf = confFactory::deserialize();
+
+	if (!conf.valid)
+		u::log::print("[init::startup] Can't read configuration file! Using default values\n");
+
+	if (!u::log::init(conf.logMode))
+		u::log::print("[init::startup] log init failed! Using default stdout\n");
+
 	juce::initialiseJuce_GUI();
-	g_engine.init();
-	g_ui.init(argc, argv, g_engine.getPatch().name, g_engine.isAudioReady());
+	g_engine.init(conf);
+	g_ui.init(argc, argv, conf, G_DEFAULT_PATCH_NAME, g_engine.isAudioReady());
 
 	printBuildInfo_();
 }
@@ -145,9 +154,18 @@ void run()
 
 void shutdown()
 {
-	g_ui.shutdown();
-	g_engine.shutdown();
+	Conf conf;
+
+	g_ui.shutdown(conf);
+	g_engine.shutdown(conf);
 	juce::shutdownJuce_GUI();
+
+	if (!confFactory::serialize(conf))
+		u::log::print("[init::shutdown] error while saving configuration file!\n");
+	else
+		u::log::print("[init::shutdown] configuration saved\n");
+
 	u::log::print("[init] Giada %s closed\n\n", G_VERSION_STR);
+	u::log::close();
 }
 } // namespace giada::m::init

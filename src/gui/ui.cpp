@@ -42,10 +42,8 @@
 
 namespace giada::v
 {
-Ui::Ui(const m::Conf& conf)
-: dispatcher(conf.keyBindings)
-, m_conf(conf)
-, m_updater(*this)
+Ui::Ui()
+: m_updater(*this)
 , m_blinker(0)
 {
 }
@@ -84,28 +82,21 @@ const std::vector<std::string>& Ui::getLangMapFilesFound() const
 void Ui::load(const m::Patch& patch)
 {
 	reset();
-	mainWindow->keyboard->layout.clear();
+
+	model.columns.clear();
 	for (const m::Patch::Column& col : patch.columns)
-		mainWindow->keyboard->layout.push_back({col.id, col.width});
+		model.columns.push_back({col.id, col.width});
 	mainWindow->keyboard->rebuild();
+
 	mainWindow->setTitle(patch.name);
 }
 
 /* -------------------------------------------------------------------------- */
 
-Ui::State Ui::getState()
+void Ui::init(int argc, char** argv, const m::Conf& conf, const std::string& patchName, bool isAudioReady)
 {
-	State state;
-	mainWindow->keyboard->forEachColumn([&](const geColumn& c) {
-		state.columns.insert({c.id, c.w()});
-	});
-	return state;
-}
+	model.load(conf);
 
-/* -------------------------------------------------------------------------- */
-
-void Ui::init(int argc, char** argv, const std::string& patchName, bool isAudioReady)
-{
 	/* This is of paramount importance on Linux with VST enabled, otherwise many
 	plug-ins go nuts and crash hard. It seems that some plug-ins on our Juce-based
 	PluginHost use Xlib concurrently. */
@@ -115,17 +106,20 @@ void Ui::init(int argc, char** argv, const std::string& patchName, bool isAudioR
 #endif
 
 	m_langMapper.init();
-	m_langMapper.read(m_conf.langMap);
+	m_langMapper.read(model.langMap);
 
-	mainWindow = std::make_unique<gdMainWindow>(u::gui::getCenterWinBounds(m_conf.mainWindowBounds), "", argc, argv, m_conf);
+	mainWindow = std::make_unique<gdMainWindow>(u::gui::getCenterWinBounds(model.mainWindowBounds), "", argc, argv);
 	mainWindow->setTitle(patchName == "" ? G_DEFAULT_PATCH_NAME : patchName);
 
-	if (Fl::screen_scaling_supported() && m_conf.uiScaling != G_DEFAULT_UI_SCALING)
-		Fl::screen_scale(mainWindow->screen_num(), m_conf.uiScaling);
+	if (Fl::screen_scaling_supported() && model.uiScaling != G_DEFAULT_UI_SCALING)
+		Fl::screen_scale(mainWindow->screen_num(), model.uiScaling);
 
-	Fl_Tooltip::enable(m_conf.showTooltips);
+	Fl_Tooltip::color(G_COLOR_GREY_1);
+	Fl_Tooltip::textcolor(G_COLOR_LIGHT_2);
+	Fl_Tooltip::size(G_GUI_FONT_SIZE_BASE);
+	Fl_Tooltip::enable(conf.showTooltips);
 
-	dispatcher.init(*mainWindow);
+	dispatcher.init(*mainWindow, model.keyBindings);
 	m_updater.start();
 
 	if (isAudioReady)
@@ -155,8 +149,10 @@ void Ui::run()
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::shutdown()
+void Ui::shutdown(m::Conf& conf)
 {
+	model.store(conf);
+
 	mainWindow.reset();
 	m_updater.stop();
 

@@ -27,10 +27,9 @@
 #ifndef G_STORAGE_API_H
 #define G_STORAGE_API_H
 
-#include "core/conf.h"
 #include "core/model/model.h"
 #include "core/types.h"
-#include "gui/ui.h"
+#include "gui/model.h"
 #include <functional>
 #include <string>
 #include <vector>
@@ -56,28 +55,27 @@ public:
 		std::vector<std::string> missingPlugins = {};
 	};
 
-	StorageApi(Engine&, model::Model&, Conf&, Patch&, PluginManager&, MidiSynchronizer&,
+	StorageApi(Engine&, model::Model&, Patch&, PluginManager&, MidiSynchronizer&,
 	    Mixer&, ChannelManager&, KernelAudio&, Sequencer&, ActionRecorder&);
 
 	/* storeProject
 	Saves the current project. Returns true on success. */
 
-	bool storeProject(const std::string& projectName, const std::string& projectPath, const v::Ui::State&,
+	bool storeProject(const std::string& projectName, const std::string& projectPath, const v::Model&,
 	    std::function<void(float)> progress);
 
 	/* loadProject
 	Loads a new project. Returns a LoadState object containing the operation
 	state. */
 
-	LoadState loadProject(const std::string& projectPath, std::function<void(float)> progress);
+	LoadState loadProject(const std::string& projectPath, PluginManager::SortMethod, std::function<void(float)> progress);
 
 private:
-	void      storePatch(const std::string& projectName, const v::Ui::State&);
+	void      storePatch(const std::string& projectName, const v::Model&);
 	LoadState loadPatch();
 
 	Engine&           m_engine;
 	model::Model&     m_model;
-	Conf&             m_conf;
 	Patch&            m_patch;
 	PluginManager&    m_pluginManager;
 	MidiSynchronizer& m_midiSynchronizer;

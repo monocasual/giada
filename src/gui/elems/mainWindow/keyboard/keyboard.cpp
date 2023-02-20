@@ -168,24 +168,24 @@ void geKeyboard::init()
 
 	/* Add 6 empty columns as initial layout. */
 
-	layout.clear();
-	layout.push_back({1, G_DEFAULT_COLUMN_WIDTH});
-	layout.push_back({2, G_DEFAULT_COLUMN_WIDTH});
-	layout.push_back({3, G_DEFAULT_COLUMN_WIDTH});
-	layout.push_back({4, G_DEFAULT_COLUMN_WIDTH});
-	layout.push_back({5, G_DEFAULT_COLUMN_WIDTH});
-	layout.push_back({6, G_DEFAULT_COLUMN_WIDTH});
+	g_ui.model.columns.clear();
+	g_ui.model.columns.push_back({1, G_DEFAULT_COLUMN_WIDTH});
+	g_ui.model.columns.push_back({2, G_DEFAULT_COLUMN_WIDTH});
+	g_ui.model.columns.push_back({3, G_DEFAULT_COLUMN_WIDTH});
+	g_ui.model.columns.push_back({4, G_DEFAULT_COLUMN_WIDTH});
+	g_ui.model.columns.push_back({5, G_DEFAULT_COLUMN_WIDTH});
+	g_ui.model.columns.push_back({6, G_DEFAULT_COLUMN_WIDTH});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geKeyboard::rebuild()
 {
-	/* Wipe out all columns and add them according to the current layout. */
+	/* Wipe out all columns and add them according to the current layout in model. */
 
 	deleteAllColumns();
 
-	for (ColumnLayout c : layout)
+	for (const Model::Column& c : g_ui.model.columns)
 		addColumn(c.width, c.id);
 
 	for (const c::channel::Data& ch : c::channel::getChannels())
@@ -198,7 +198,7 @@ void geKeyboard::rebuild()
 
 void geKeyboard::deleteColumn(ID id)
 {
-	u::vector::removeIf(layout, [=](const ColumnLayout& c) { return c.id == id; });
+	u::vector::removeIf(g_ui.model.columns, [=](const Model::Column& c) { return c.id == id; });
 	rebuild();
 }
 
@@ -342,11 +342,9 @@ void geKeyboard::addColumn(int width, ID id)
 	geResizerBar* bar    = new geResizerBar(colx + width, y(), COLUMN_GAP, h(), G_MIN_COLUMN_WIDTH, geResizerBar::Direction::HORIZONTAL);
 	geColumn*     column = new geColumn(colx, y(), width, G_GUI_UNIT, m_columnId.generate(id), bar);
 
-	/* Store the column width in layout when the resizer bar is released. */
+	/* Store the column width in the model when the resizer bar is released. */
 
-	bar->onRelease = [=](const Fl_Widget& /*w*/) {
-		storeLayout();
-	};
+	bar->onRelease = [this](const Fl_Widget& /*w*/) { storeLayout(); };
 
 	add(column);
 	add(bar);
@@ -425,8 +423,8 @@ std::vector<std::string> geKeyboard::getDroppedFilePaths() const
 
 void geKeyboard::storeLayout()
 {
-	layout.clear();
+	g_ui.model.columns.clear();
 	for (const geColumn* c : m_columns)
-		layout.push_back({c->id, c->w()});
+		g_ui.model.columns.push_back({c->id, c->w()});
 }
 } // namespace giada::v

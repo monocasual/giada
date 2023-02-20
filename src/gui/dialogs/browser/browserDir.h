@@ -36,7 +36,7 @@ class gdBrowserDir : public gdBrowserBase
 {
 public:
 	gdBrowserDir(const std::string& title, const std::string& path,
-	    std::function<void(void*)> cb, const m::Conf&);
+	    std::function<void(void*)> cb, const Model&);
 
 private:
 	static void cb_load(Fl_Widget* /*w*/, void* p);

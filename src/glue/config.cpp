@@ -135,18 +135,20 @@ AudioData getAudioData()
 			audioData.inputDevices.push_back(AudioDeviceData(DeviceType::INPUT, device, 1, 0));
 	}
 
-	audioData.api             = g_engine.getConf().soundSystem;
-	audioData.bufferSize      = g_engine.getConf().buffersize;
-	audioData.sampleRate      = g_engine.getConf().samplerate;
-	audioData.limitOutput     = g_engine.getConf().limitOutput;
-	audioData.recTriggerLevel = g_engine.getConf().recTriggerLevel;
-	audioData.resampleQuality = static_cast<int>(g_engine.getConf().rsmpQuality);
+	const m::model::Layout& layout = g_engine.getLayout();
+
+	audioData.api             = layout.kernelAudio.soundSystem;
+	audioData.bufferSize      = layout.kernelAudio.buffersize;
+	audioData.sampleRate      = layout.kernelAudio.samplerate;
+	audioData.limitOutput     = layout.kernelAudio.limitOutput;
+	audioData.recTriggerLevel = layout.kernelAudio.recTriggerLevel;
+	audioData.resampleQuality = static_cast<int>(layout.kernelAudio.rsmpQuality);
 	audioData.outputDevice    = getAudioDeviceData_(DeviceType::OUTPUT,
-        g_engine.getConf().soundDeviceOut, g_engine.getConf().channelsOutCount,
-        g_engine.getConf().channelsOutStart);
+        layout.kernelAudio.soundDeviceOut, layout.kernelAudio.channelsOutCount,
+        layout.kernelAudio.channelsOutStart);
 	audioData.inputDevice     = getAudioDeviceData_(DeviceType::INPUT,
-        g_engine.getConf().soundDeviceIn, g_engine.getConf().channelsInCount,
-        g_engine.getConf().channelsInStart);
+        layout.kernelAudio.soundDeviceIn, layout.kernelAudio.channelsInCount,
+        layout.kernelAudio.channelsInStart);
 
 	return audioData;
 }
@@ -171,14 +173,16 @@ MidiData getMidiData()
 	midiData.syncModes[G_MIDI_SYNC_CLOCK_MASTER] = "MIDI Clock (master)";
 	midiData.syncModes[G_MIDI_SYNC_CLOCK_SLAVE]  = "MIDI Clock (slave)";
 
+	const m::model::Layout& layout = g_engine.getLayout();
+
 	midiData.midiMaps = g_engine.getMidiMapFilesFound();
-	midiData.midiMap  = u::vector::indexOf(midiData.midiMaps, g_engine.getConf().midiMapPath);
+	midiData.midiMap  = u::vector::indexOf(midiData.midiMaps, g_ui.model.midiMapPath);
 	midiData.outPorts = g_engine.getMidiOutPorts();
 	midiData.inPorts  = g_engine.getMidiInPorts();
-	midiData.api      = g_engine.getConf().midiSystem;
-	midiData.syncMode = g_engine.getConf().midiSync;
-	midiData.outPort  = g_engine.getConf().midiPortOut;
-	midiData.inPort   = g_engine.getConf().midiPortIn;
+	midiData.api      = layout.kernelMidi.system;
+	midiData.syncMode = layout.kernelMidi.sync;
+	midiData.outPort  = layout.kernelMidi.portOut;
+	midiData.inPort   = layout.kernelMidi.portIn;
 
 	return midiData;
 }
@@ -189,7 +193,7 @@ PluginData getPluginData()
 {
 	PluginData pluginData;
 	pluginData.numAvailablePlugins = g_engine.getPluginsApi().countAvailablePlugins();
-	pluginData.pluginPath          = g_engine.getConf().pluginPath;
+	pluginData.pluginPath          = g_ui.model.pluginPath;
 	return pluginData;
 }
 
@@ -198,65 +202,88 @@ PluginData getPluginData()
 MiscData getMiscData()
 {
 	MiscData miscData;
-	miscData.logMode      = g_engine.getConf().logMode;
-	miscData.showTooltips = g_engine.getConf().showTooltips;
+	miscData.logMode      = g_ui.model.logMode;
+	miscData.showTooltips = g_ui.model.showTooltips;
 	miscData.langMaps     = g_ui.getLangMapFilesFound();
-	miscData.langMap      = g_engine.getConf().langMap;
-	miscData.uiScaling    = g_engine.getConf().uiScaling;
+	miscData.langMap      = g_ui.model.langMap;
+	miscData.uiScaling    = g_ui.model.uiScaling;
 	return miscData;
 }
 /* -------------------------------------------------------------------------- */
 
+BehaviorsData getBehaviorsData()
+{
+	const m::model::Layout& layout = g_engine.getLayout();
+
+	BehaviorsData behaviorsData;
+	behaviorsData.chansStopOnSeqHalt         = layout.chansStopOnSeqHalt;
+	behaviorsData.treatRecsAsLoops           = layout.treatRecsAsLoops;
+	behaviorsData.inputMonitorDefaultOn      = layout.inputMonitorDefaultOn;
+	behaviorsData.overdubProtectionDefaultOn = layout.overdubProtectionDefaultOn;
+	return behaviorsData;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void save(const AudioData& data)
 {
-	m::Conf conf          = g_engine.getConf();
-	conf.soundSystem      = data.api;
-	conf.soundDeviceOut   = data.outputDevice.index;
-	conf.soundDeviceIn    = data.inputDevice.index;
-	conf.channelsOutCount = data.outputDevice.channelsCount;
-	conf.channelsOutStart = data.outputDevice.channelsStart;
-	conf.channelsInCount  = data.inputDevice.channelsCount;
-	conf.channelsInStart  = data.inputDevice.channelsStart;
-	conf.limitOutput      = data.limitOutput;
-	conf.rsmpQuality      = static_cast<m::Resampler::Quality>(data.resampleQuality);
-	conf.buffersize       = data.bufferSize;
-	conf.recTriggerLevel  = data.recTriggerLevel;
-	conf.samplerate       = data.sampleRate;
-	g_engine.setConf(conf);
+	m::model::Layout layout             = g_engine.getLayout();
+	layout.kernelAudio.soundSystem      = data.api;
+	layout.kernelAudio.soundDeviceOut   = data.outputDevice.index;
+	layout.kernelAudio.soundDeviceIn    = data.inputDevice.index;
+	layout.kernelAudio.channelsOutCount = data.outputDevice.channelsCount;
+	layout.kernelAudio.channelsOutStart = data.outputDevice.channelsStart;
+	layout.kernelAudio.channelsInCount  = data.inputDevice.channelsCount;
+	layout.kernelAudio.channelsInStart  = data.inputDevice.channelsStart;
+	layout.kernelAudio.limitOutput      = data.limitOutput;
+	layout.kernelAudio.rsmpQuality      = static_cast<m::Resampler::Quality>(data.resampleQuality);
+	layout.kernelAudio.buffersize       = data.bufferSize;
+	layout.kernelAudio.samplerate       = data.sampleRate;
+	layout.kernelAudio.recTriggerLevel  = data.recTriggerLevel;
+	g_engine.setLayout(layout);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void save(const PluginData& data)
 {
-	m::Conf conf    = g_engine.getConf();
-	conf.pluginPath = data.pluginPath;
-	g_engine.setConf(conf);
+	g_ui.model.pluginPath = data.pluginPath;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void save(const MidiData& data)
 {
-	m::Conf conf     = g_engine.getConf();
-	conf.midiSystem  = data.api;
-	conf.midiPortOut = data.outPort;
-	conf.midiPortIn  = data.inPort;
-	conf.midiMapPath = u::vector::atOr(data.midiMaps, data.midiMap, "");
-	conf.midiSync    = data.syncMode;
-	g_engine.setConf(conf);
+	m::model::Layout layout   = g_engine.getLayout();
+	layout.kernelMidi.system  = data.api;
+	layout.kernelMidi.portOut = data.outPort;
+	layout.kernelMidi.portIn  = data.inPort;
+	layout.kernelMidi.sync    = data.syncMode;
+	g_engine.setLayout(layout);
+
+	g_ui.model.midiMapPath = u::vector::atOr(data.midiMaps, data.midiMap, "");
 }
 
 /* -------------------------------------------------------------------------- */
 
 void save(const MiscData& data)
 {
-	m::Conf conf      = g_engine.getConf();
-	conf.logMode      = data.logMode;
-	conf.showTooltips = data.showTooltips;
-	conf.langMap      = data.langMap;
-	conf.uiScaling    = std::clamp(data.uiScaling, G_MIN_UI_SCALING, G_MAX_UI_SCALING);
-	g_engine.setConf(conf);
+	g_ui.model.logMode      = data.logMode;
+	g_ui.model.showTooltips = data.showTooltips;
+	g_ui.model.langMap      = data.langMap;
+	g_ui.model.uiScaling    = std::clamp(data.uiScaling, G_MIN_UI_SCALING, G_MAX_UI_SCALING);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void save(const BehaviorsData& data)
+{
+	m::model::Layout layout           = g_engine.getLayout();
+	layout.chansStopOnSeqHalt         = data.chansStopOnSeqHalt;
+	layout.treatRecsAsLoops           = data.treatRecsAsLoops;
+	layout.inputMonitorDefaultOn      = data.inputMonitorDefaultOn;
+	layout.overdubProtectionDefaultOn = data.overdubProtectionDefaultOn;
+	g_engine.setLayout(layout);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -271,7 +298,7 @@ void scanPlugins(std::string dir, const std::function<void(float)>& progress)
 void setPluginPathCb(void* data)
 {
 	v::gdBrowserDir* browser    = static_cast<v::gdBrowserDir*>(data);
-	std::string      pluginPath = g_engine.getConf().pluginPath;
+	std::string      pluginPath = g_ui.model.pluginPath;
 
 	if (browser->getCurrentPath() == "")
 	{
@@ -283,9 +310,7 @@ void setPluginPathCb(void* data)
 		pluginPath += ";";
 	pluginPath += browser->getCurrentPath();
 
-	m::Conf conf    = g_engine.getConf();
-	conf.pluginPath = pluginPath;
-	g_engine.setConf(conf);
+	g_ui.model.pluginPath = pluginPath;
 
 	browser->do_callback();
 

@@ -27,9 +27,9 @@
 #ifndef GD_MIDI_INPUT_MASTER_H
 #define GD_MIDI_INPUT_MASTER_H
 
-#include "core/conf.h"
 #include "glue/io.h"
 #include "gui/elems/midiIO/midiLearnerPack.h"
+#include "gui/model.h"
 #include "midiInputBase.h"
 
 class geCheck;
@@ -50,7 +50,7 @@ public:
 class gdMidiInputMaster : public gdMidiInputBase
 {
 public:
-	gdMidiInputMaster(const m::Conf&);
+	gdMidiInputMaster(const Model&);
 
 	void rebuild() override;
 

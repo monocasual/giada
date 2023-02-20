@@ -30,10 +30,9 @@
 
 namespace giada::m
 {
-IOApi::IOApi(model::Model& m, MidiDispatcher& md, Conf& c)
+IOApi::IOApi(model::Model& m, MidiDispatcher& md)
 : m_model(m)
 , m_midiDispatcher(md)
-, m_conf(c)
 {
 }
 
@@ -94,8 +93,6 @@ void IOApi::channel_setMidiOutputFilter(ID channelId, int ch)
 
 bool IOApi::channel_setKey(ID channelId, int k)
 {
-	if (!isValidKey(k))
-		return false;
 	m_model.get().channels.get(channelId).key = k;
 	m_model.swap(m::model::SwapType::HARD);
 	return true;
@@ -156,15 +153,5 @@ void IOApi::master_setMidiFilter(int c)
 {
 	m_model.get().midiIn.filter = c;
 	m_model.swap(m::model::SwapType::NONE);
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool IOApi::isValidKey(int key) const
-{
-	for (const int& bind : m_conf.keyBindings)
-		if (key == bind)
-			return false;
-	return true;
 }
 } // namespace giada::m

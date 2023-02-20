@@ -38,7 +38,7 @@ class gdBrowserSave : public gdBrowserBase
 public:
 	gdBrowserSave(const std::string& title, const std::string& path,
 	    const std::string& name, std::function<void(void*)> cb,
-	    ID channelId, const m::Conf&);
+	    ID channelId, const Model&);
 
 	std::string getName() const;
 

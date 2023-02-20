@@ -30,6 +30,7 @@
 #include "core/conf.h"
 #include "core/types.h"
 #include "gui/dialogs/window.h"
+#include "gui/model.h"
 #include <functional>
 #include <string>
 
@@ -64,7 +65,7 @@ public:
 
 protected:
 	gdBrowserBase(const std::string& title, const std::string& path,
-	    std::function<void(void*)> f, ID channelId, const m::Conf&);
+	    std::function<void(void*)> f, ID channelId, const Model&);
 
 	static void cb_toggleHiddenFiles(Fl_Widget* /*w*/, void* p);
 	void        cb_toggleHiddenFiles();

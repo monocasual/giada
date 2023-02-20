@@ -27,8 +27,8 @@
 #ifndef GE_CONFIG_TAB_BINDINGS_H
 #define GE_CONFIG_TAB_BINDINGS_H
 
-#include "core/conf.h"
 #include "deps/geompp/src/rect.hpp"
+#include "gui/model.h"
 #include <FL/Fl_Group.H>
 
 class geCheck;
@@ -40,7 +40,7 @@ class geKeyBinder;
 class geTabBindings : public Fl_Group
 {
 public:
-	geTabBindings(geompp::Rect<int>, const m::Conf&);
+	geTabBindings(geompp::Rect<int>, const Model&);
 
 	void save() const;
 

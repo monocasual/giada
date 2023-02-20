@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GD_EDITOR_H
-#define GD_EDITOR_H
+#ifndef GD_SAMPLE_EDITOR_H
+#define GD_SAMPLE_EDITOR_H
 
-#include "core/conf.h"
 #include "core/types.h"
 #include "glue/sampleEditor.h"
 #include "gui/dialogs/window.h"
+#include "gui/model.h"
 
 class geCheck;
 
@@ -49,7 +49,7 @@ class gdSampleEditor : public gdWindow
 	friend class geWaveform;
 
 public:
-	gdSampleEditor(ID channelId, const m::Conf&);
+	gdSampleEditor(ID channelId, const Model&);
 	~gdSampleEditor();
 
 	void rebuild() override;

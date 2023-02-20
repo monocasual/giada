@@ -24,22 +24,27 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_CONF_H
-#define G_CONF_H
+#ifndef G_V_MODEL_H
+#define G_V_MODEL_H
 
+#include "core/conf.h"
 #include "core/const.h"
 #include "core/plugins/pluginManager.h"
-#include "core/resampler.h"
-#include "core/types.h"
 #include "deps/geompp/src/rect.hpp"
 #include <FL/Enumerations.H>
 #include <string>
 #include <vector>
 
-namespace giada::m
+namespace giada::v
 {
-struct Conf final
+struct Model
 {
+	struct Column
+	{
+		ID  id;
+		int width;
+	};
+
 	using KeyBindings = std::vector<int>;
 
 	static constexpr int KEY_BIND_PLAY           = 0;
@@ -48,37 +53,17 @@ struct Conf final
 	static constexpr int KEY_BIND_RECORD_INPUT   = 3;
 	static constexpr int KEY_BIND_EXIT           = 4;
 
-	bool               valid            = false;
-	int                logMode          = LOG_MODE_MUTE;
-	bool               showTooltips     = true;
-	std::string        langMap          = "";
-	RtAudio::Api       soundSystem      = G_DEFAULT_SOUNDSYS;
-	int                soundDeviceOut   = G_DEFAULT_SOUNDDEV_OUT;
-	int                soundDeviceIn    = G_DEFAULT_SOUNDDEV_IN;
-	int                channelsOutCount = G_MAX_IO_CHANS;
-	int                channelsOutStart = 0;
-	int                channelsInCount  = 1;
-	int                channelsInStart  = 0;
-	int                samplerate       = G_DEFAULT_SAMPLERATE;
-	int                buffersize       = G_DEFAULT_BUFSIZE;
-	bool               limitOutput      = false;
-	Resampler::Quality rsmpQuality      = Resampler::Quality::SINC_BEST;
+	void store(m::Conf&) const;
 
-	RtMidi::Api midiSystem  = G_DEFAULT_MIDI_SYSTEM;
-	int         midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
-	int         midiPortIn  = G_DEFAULT_MIDI_PORT_IN;
-	std::string midiMapPath = "";
-	int         midiSync    = G_MIDI_SYNC_NONE;
-	float       midiTCfps   = 25.0f;
+	void load(const m::Conf&);
 
-	bool chansStopOnSeqHalt         = false;
-	bool treatRecsAsLoops           = false;
-	bool inputMonitorDefaultOn      = false;
-	bool overdubProtectionDefaultOn = false;
-
-	std::string pluginPath;
-	std::string patchPath;
-	std::string samplePath;
+	int         logMode      = LOG_MODE_MUTE;
+	bool        showTooltips = true;
+	std::string langMap      = "";
+	std::string midiMapPath  = "";
+	std::string pluginPath   = "";
+	std::string patchPath    = "";
+	std::string samplePath   = "";
 
 	geompp::Rect<int> mainWindowBounds = {-1, -1, G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT};
 
@@ -101,24 +86,8 @@ struct Conf final
 	geompp::Rect<int> midiInputBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
 	geompp::Rect<int> pluginListBounds = {-1, -1, 468, 204};
 
-	RecTriggerMode recTriggerMode  = RecTriggerMode::NORMAL;
-	float          recTriggerLevel = G_DEFAULT_REC_TRIGGER_LEVEL;
-	InputRecMode   inputRecMode    = InputRecMode::FREE;
-
-	bool     midiInEnabled    = false;
-	int      midiInFilter     = -1;
-	uint32_t midiInRewind     = 0x0;
-	uint32_t midiInStartStop  = 0x0;
-	uint32_t midiInActionRec  = 0x0;
-	uint32_t midiInInputRec   = 0x0;
-	uint32_t midiInMetronome  = 0x0;
-	uint32_t midiInVolumeIn   = 0x0;
-	uint32_t midiInVolumeOut  = 0x0;
-	uint32_t midiInBeatDouble = 0x0;
-	uint32_t midiInBeatHalf   = 0x0;
-
-	geompp::Rect<int>         pluginChooserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
-	PluginManager::SortMethod pluginSortMethod    = PluginManager::SortMethod::NAME;
+	geompp::Rect<int>            pluginChooserBounds     = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	m::PluginManager::SortMethod pluginChooserSortMethod = m::PluginManager::SortMethod::NAME;
 
 	KeyBindings keyBindings = {
 	    ' ',          // KEY_BIND_PLAY
@@ -129,7 +98,9 @@ struct Conf final
 	};
 
 	float uiScaling = G_DEFAULT_UI_SCALING;
+
+	std::vector<Column> columns;
 };
-} // namespace giada::m
+} // namespace giada::v
 
 #endif

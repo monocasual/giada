@@ -27,7 +27,6 @@
 #include "gui/dialogs/browser/browserBase.h"
 #include "core/conf.h"
 #include "core/const.h"
-#include "core/engine.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/flex.h"
@@ -41,14 +40,13 @@
 #include "utils/fs.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui     g_ui;
-extern giada::m::Engine g_engine;
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
 gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
-    std::function<void(void*)> callback, ID channelId, const m::Conf& conf)
-: gdWindow(u::gui::getCenterWinBounds(conf.browserBounds), title.c_str())
+    std::function<void(void*)> callback, ID channelId, const Model& model)
+: gdWindow(u::gui::getCenterWinBounds(model.browserBounds), title.c_str())
 , m_callback(callback)
 , m_channelId(channelId)
 {
@@ -108,8 +106,8 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 	browser->onSelectedElement = [this]() { fireCallback(); };
 	browser->loadDir(path);
-	if (path == conf.browserLastPath)
-		browser->preselect(conf.browserPosition, conf.browserLastValue);
+	if (path == model.browserLastPath)
+		browser->preselect(model.browserPosition, model.browserLastValue);
 
 	cancel->onClick = [this]() { do_callback(); };
 
@@ -122,12 +120,10 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 gdBrowserBase::~gdBrowserBase()
 {
-	m::Conf conf          = g_engine.getConf();
-	conf.browserBounds    = getBounds();
-	conf.browserPosition  = browser->position();
-	conf.browserLastPath  = browser->getCurrentDir();
-	conf.browserLastValue = browser->value();
-	g_engine.setConf(conf);
+	g_ui.model.browserBounds    = getBounds();
+	g_ui.model.browserPosition  = browser->position();
+	g_ui.model.browserLastValue = browser->value();
+	g_ui.model.browserLastPath  = browser->getCurrentDir();
 }
 
 /* -------------------------------------------------------------------------- */

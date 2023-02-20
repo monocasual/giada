@@ -45,8 +45,8 @@ extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdSampleActionEditor::gdSampleActionEditor(ID channelId, const m::Conf& conf)
-: gdBaseActionEditor(channelId, conf)
+gdSampleActionEditor::gdSampleActionEditor(ID channelId, const Model& model)
+: gdBaseActionEditor(channelId, model)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
@@ -79,7 +79,7 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, const m::Conf& conf)
 
 	m_sampleActionEditor = new geSampleActionEditor(0, 0, this);
 	m_envelopeEditor     = new geEnvelopeEditor(0, 0, g_ui.getI18Text(LangMap::ACTIONEDITOR_VOLUME), this);
-	m_splitScroll->addWidgets(*m_sampleActionEditor, *m_envelopeEditor, conf.actionEditorSplitH);
+	m_splitScroll->addWidgets(*m_sampleActionEditor, *m_envelopeEditor, model.actionEditorSplitH);
 
 	prepareWindow();
 	rebuild();

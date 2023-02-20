@@ -25,8 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "pluginChooser.h"
-#include "core/conf.h"
-#include "core/engine.h"
 #include "glue/plugin.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/choice.h"
@@ -36,13 +34,12 @@
 #include "gui/ui.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui     g_ui;
-extern giada::m::Engine g_engine;
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdPluginChooser::gdPluginChooser(ID channelId, const m::Conf& conf)
-: gdWindow(u::gui::getCenterWinBounds(conf.pluginChooserBounds), g_ui.getI18Text(LangMap::PLUGINCHOOSER_TITLE))
+gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
+: gdWindow(u::gui::getCenterWinBounds(model.pluginChooserBounds), g_ui.getI18Text(LangMap::PLUGINCHOOSER_TITLE))
 , m_channelId(channelId)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
@@ -80,7 +77,7 @@ gdPluginChooser::gdPluginChooser(ID channelId, const m::Conf& conf)
 	sortMethod->addItem(g_ui.getI18Text(LangMap::PLUGINCHOOSER_SORTBY_CATEGORY));
 	sortMethod->addItem(g_ui.getI18Text(LangMap::PLUGINCHOOSER_SORTBY_MANUFACTURER));
 	sortMethod->addItem(g_ui.getI18Text(LangMap::PLUGINCHOOSER_SORTBY_FORMAT));
-	sortMethod->showItem(static_cast<int>(conf.pluginSortMethod));
+	sortMethod->showItem(static_cast<int>(model.pluginChooserSortMethod));
 	sortMethod->onChange = [this](ID id) {
 		c::plugin::sortPlugins(static_cast<m::PluginManager::SortMethod>(id));
 		browser->refresh();
@@ -106,9 +103,7 @@ gdPluginChooser::gdPluginChooser(ID channelId, const m::Conf& conf)
 
 gdPluginChooser::~gdPluginChooser()
 {
-	m::Conf conf             = g_engine.getConf();
-	conf.pluginChooserBounds = getBounds();
-	conf.pluginSortMethod    = static_cast<m::PluginManager::SortMethod>(sortMethod->getSelectedId());
-	g_engine.setConf(conf);
+	g_ui.model.pluginChooserBounds     = getBounds();
+	g_ui.model.pluginChooserSortMethod = static_cast<m::PluginManager::SortMethod>(sortMethod->getSelectedId());
 }
 } // namespace giada::v

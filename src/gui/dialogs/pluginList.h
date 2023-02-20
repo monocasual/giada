@@ -39,7 +39,7 @@ class gePluginElement;
 class gdPluginList : public gdWindow
 {
 public:
-	gdPluginList(ID channelId, const m::Conf&);
+	gdPluginList(ID channelId, geompp::Rect<int> bounds);
 	~gdPluginList();
 
 	void rebuild() override;

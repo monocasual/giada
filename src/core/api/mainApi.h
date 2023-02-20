@@ -32,7 +32,6 @@
 namespace giada::m
 {
 class Engine;
-class Conf;
 class KernelAudio;
 class Sequencer;
 class MidiSynchronizer;
@@ -41,7 +40,7 @@ class Recorder;
 class MainApi
 {
 public:
-	MainApi(Engine&, Conf&, KernelAudio&, Mixer&, Sequencer&, MidiSynchronizer&, ChannelManager&, Recorder&);
+	MainApi(Engine&, KernelAudio&, Mixer&, Sequencer&, MidiSynchronizer&, ChannelManager&, Recorder&);
 
 	bool              isRecordingInput() const;
 	bool              isRecordingActions() const;
@@ -89,7 +88,6 @@ public:
 
 private:
 	Engine&           m_engine;
-	Conf&             m_conf;
 	KernelAudio&      m_kernelAudio;
 	Mixer&            m_mixer;
 	Sequencer&        m_sequencer;

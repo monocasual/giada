@@ -24,23 +24,30 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GD_BROWSER_LOAD_H
-#define GD_BROWSER_LOAD_H
+#ifndef G_MODEL_KERNEL_AUDIO_H
+#define G_MODEL_KERNEL_AUDIO_H
 
-#include "gui/dialogs/browser/browserBase.h"
+#include "core/resampler.h"
+#include "core/types.h"
+#include "deps/rtaudio/RtAudio.h"
 
-namespace giada::v
+namespace giada::m::model
 {
-class gdBrowserLoad : public gdBrowserBase
+struct KernelAudio
 {
-public:
-	gdBrowserLoad(const std::string& title, const std::string& path,
-	    std::function<void(void*)> cb, ID channelId, const Model&);
-
-private:
-	static void cb_down(Fl_Widget* /*w*/, void* p);
-	void        cb_down();
+	RtAudio::Api       soundSystem      = G_DEFAULT_SOUNDSYS;
+	int                soundDeviceOut   = G_DEFAULT_SOUNDDEV_OUT;
+	int                soundDeviceIn    = G_DEFAULT_SOUNDDEV_IN;
+	int                channelsOutCount = G_MAX_IO_CHANS;
+	int                channelsOutStart = 0;
+	int                channelsInCount  = 1;
+	int                channelsInStart  = 0;
+	int                samplerate       = G_DEFAULT_SAMPLERATE;
+	int                buffersize       = G_DEFAULT_BUFSIZE;
+	bool               limitOutput      = false;
+	Resampler::Quality rsmpQuality      = Resampler::Quality::SINC_BEST;
+	float              recTriggerLevel  = 0.0f;
 };
-} // namespace giada::v
+} // namespace giada::m::model
 
 #endif

@@ -27,7 +27,6 @@
 #ifndef G_IO_API_H
 #define G_IO_API_H
 
-#include "core/conf.h"
 #include "core/model/model.h"
 #include "core/types.h"
 #include <functional>
@@ -38,7 +37,7 @@ class MidiDispatcher;
 class IOApi
 {
 public:
-	IOApi(model::Model&, MidiDispatcher&, Conf&);
+	IOApi(model::Model&, MidiDispatcher&);
 
 	const model::MidiIn& getModelMidiIn() const;
 
@@ -63,11 +62,8 @@ public:
 	void stopMidiLearn();
 
 private:
-	bool isValidKey(int) const;
-
 	model::Model&   m_model;
 	MidiDispatcher& m_midiDispatcher;
-	Conf&           m_conf;
 };
 } // namespace giada::m
 

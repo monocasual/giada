@@ -46,12 +46,6 @@ class geKeyboard : public geScroll
 public:
 	friend class ChannelDragger;
 
-	struct ColumnLayout
-	{
-		ID  id;
-		int width;
-	};
-
 	geKeyboard();
 
 	int  handle(int e) override;
@@ -93,11 +87,6 @@ public:
 
 	void forEachChannel(std::function<void(geChannel& c)> f) const;
 	void forEachColumn(std::function<void(const geColumn& c)> f) const;
-
-	/* layout
-	The column layout. Each element is a column with a specific width. */
-
-	std::vector<ColumnLayout> layout;
 
 private:
 	static constexpr int COLUMN_GAP = 20;

@@ -27,8 +27,8 @@
 #ifndef GE_TAB_BEHAVIORS_H
 #define GE_TAB_BEHAVIORS_H
 
-#include "core/conf.h"
 #include "deps/geompp/src/rect.hpp"
+#include "glue/config.h"
 #include "gui/elems/basics/check.h"
 #include <FL/Fl_Group.H>
 
@@ -37,11 +37,13 @@ namespace giada::v
 class geTabBehaviors : public Fl_Group
 {
 public:
-	geTabBehaviors(geompp::Rect<int>, const m::Conf&);
+	geTabBehaviors(geompp::Rect<int>);
 
 	void save();
 
 private:
+	c::config::BehaviorsData m_data;
+
 	geCheck* m_chansStopOnSeqHalt;
 	geCheck* m_treatRecsAsLoops;
 	geCheck* m_inputMonitorDefaultOn;

@@ -25,8 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/midiIO/midiInputMaster.h"
-#include "core/conf.h"
-#include "core/const.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/group.h"
@@ -77,8 +75,8 @@ void geMasterLearnerPack::update(const c::io::Master_InputData& d)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-gdMidiInputMaster::gdMidiInputMaster(const m::Conf& conf)
-: gdMidiInputBase(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_TITLE), conf)
+gdMidiInputMaster::gdMidiInputMaster(const Model& model)
+: gdMidiInputBase(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_TITLE), model)
 {
 	end();
 

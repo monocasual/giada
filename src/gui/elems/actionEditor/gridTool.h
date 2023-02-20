@@ -27,8 +27,8 @@
 #ifndef GE_GRID_TOOL_H
 #define GE_GRID_TOOL_H
 
-#include "core/conf.h"
 #include "core/types.h"
+#include "gui/model.h"
 #include <FL/Fl_Group.H>
 
 class geCheck;
@@ -39,7 +39,7 @@ class geChoice;
 class geGridTool : public Fl_Group
 {
 public:
-	geGridTool(Pixel x, Pixel y, const m::Conf&);
+	geGridTool(Pixel x, Pixel y, const Model&);
 	~geGridTool();
 
 	int  getValue() const;

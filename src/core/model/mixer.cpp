@@ -114,10 +114,8 @@ void Mixer::debug() const
 	fmt::print("\tisRecordingActions={}\n", isRecordingActions);
 	fmt::print("\tisRecordingInput={}\n", isRecordingInput);
 	fmt::print("\tinToOut={}\n", inToOut);
-	fmt::print("\tlimitOutput={}\n", limitOutput);
 	fmt::print("\tinputRecMode={}\n", (int)inputRecMode);
 	fmt::print("\trecTriggerMode={}\n", (int)recTriggerMode);
-	fmt::print("\trecTriggerLevel={}\n", recTriggerLevel);
 }
 
 #endif

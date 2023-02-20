@@ -46,8 +46,8 @@ extern giada::m::Engine g_engine;
 
 namespace giada::v
 {
-gdPluginList::gdPluginList(ID channelId, const m::Conf& conf)
-: gdWindow(u::gui::getCenterWinBounds(conf.pluginListBounds))
+gdPluginList::gdPluginList(ID channelId, geompp::Rect<int> bounds)
+: gdWindow(u::gui::getCenterWinBounds(bounds))
 , m_channelId(channelId)
 {
 	end();
@@ -68,9 +68,7 @@ gdPluginList::gdPluginList(ID channelId, const m::Conf& conf)
 
 gdPluginList::~gdPluginList()
 {
-	m::Conf conf          = g_engine.getConf();
-	conf.pluginListBounds = getBounds();
-	g_engine.setConf(conf);
+	g_ui.model.pluginListBounds = getBounds();
 }
 
 /* -------------------------------------------------------------------------- */

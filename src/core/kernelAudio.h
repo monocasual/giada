@@ -27,7 +27,6 @@
 #ifndef G_KERNELAUDIO_H
 #define G_KERNELAUDIO_H
 
-#include "core/conf.h"
 #include "core/weakAtomic.h"
 #include "deps/rtaudio/RtAudio.h"
 #include <cstddef>
@@ -38,6 +37,11 @@
 #ifdef WITH_AUDIO_JACK
 #include "core/jackTransport.h"
 #endif
+
+namespace giada::m::model
+{
+struct KernelAudio;
+}
 
 namespace giada::m
 {
@@ -74,7 +78,7 @@ public:
 
 	static void logCompiledAPIs();
 
-	int  openDevice(const Conf& conf);
+	int  openDevice(const model::KernelAudio&);
 	void closeDevice();
 	int  startStream();
 	int  stopStream();

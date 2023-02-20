@@ -292,7 +292,7 @@ void closeProject()
 
 	g_ui.stopUpdater();
 	g_engine.suspend();
-	g_engine.reset();
+	g_engine.reset(g_ui.model.pluginChooserSortMethod);
 	g_ui.reset();
 	g_engine.resume();
 	g_ui.startUpdater();

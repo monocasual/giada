@@ -29,7 +29,6 @@
 #ifndef GD_MIDI_INPUT_CHANNEL_H
 #define GD_MIDI_INPUT_CHANNEL_H
 
-#include "core/conf.h"
 #include "glue/io.h"
 #include "gui/elems/midiIO/midiLearnerPack.h"
 #include "midiInputBase.h"
@@ -63,7 +62,7 @@ public:
 class gdMidiInputChannel : public gdMidiInputBase
 {
 public:
-	gdMidiInputChannel(ID channelId, const m::Conf&);
+	gdMidiInputChannel(ID channelId, const Model&);
 
 	void rebuild() override;
 

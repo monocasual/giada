@@ -26,8 +26,6 @@
 
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "core/conf.h"
-#include "core/const.h"
-#include "core/engine.h"
 #include "glue/channel.h"
 #include "gui/drawing.h"
 #include "gui/elems/actionEditor/gridTool.h"
@@ -46,19 +44,18 @@
 #include <limits>
 #include <string>
 
-extern giada::v::Ui     g_ui;
-extern giada::m::Engine g_engine;
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdBaseActionEditor::gdBaseActionEditor(ID channelId, const m::Conf& conf)
-: gdWindow(u::gui::getCenterWinBounds(conf.actionEditorBounds), g_ui.getI18Text(LangMap::ACTIONEDITOR_TITLE))
+gdBaseActionEditor::gdBaseActionEditor(ID channelId, const Model& model)
+: gdWindow(u::gui::getCenterWinBounds(model.actionEditorBounds), g_ui.getI18Text(LangMap::ACTIONEDITOR_TITLE))
 , channelId(channelId)
-, gridTool(new geGridTool(0, 0, conf))
+, gridTool(new geGridTool(0, 0, model))
 , m_zoomInBtn(new geImageButton(graphics::plusOff, graphics::plusOn))
 , m_zoomOutBtn(new geImageButton(graphics::minusOff, graphics::minusOn))
 , m_splitScroll(new geSplitScroll(0, 0, 0, 0))
-, m_ratio(conf.actionEditorZoom)
+, m_ratio(model.actionEditorZoom)
 {
 	m_zoomInBtn->onClick = [this]() { zoomIn(); };
 	m_zoomInBtn->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_ZOOMIN));
@@ -71,11 +68,9 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, const m::Conf& conf)
 
 gdBaseActionEditor::~gdBaseActionEditor()
 {
-	m::Conf conf            = g_engine.getConf();
-	conf.actionEditorBounds = getBounds();
-	conf.actionEditorSplitH = m_splitScroll->getTopContentH();
-	conf.actionEditorZoom   = m_ratio;
-	g_engine.setConf(conf);
+	g_ui.model.actionEditorBounds = getBounds();
+	g_ui.model.actionEditorSplitH = m_splitScroll->getTopContentH();
+	g_ui.model.actionEditorZoom   = m_ratio;
 }
 
 /* -------------------------------------------------------------------------- */

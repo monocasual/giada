@@ -27,8 +27,8 @@
 #ifndef GD_PLUGIN_CHOOSER_H
 #define GD_PLUGIN_CHOOSER_H
 
-#include "core/conf.h"
 #include "core/types.h"
+#include "gui/model.h"
 #include "window.h"
 
 namespace giada::v
@@ -39,7 +39,7 @@ class gePluginBrowser;
 class gdPluginChooser : public gdWindow
 {
 public:
-	gdPluginChooser(ID channelId, const m::Conf&);
+	gdPluginChooser(ID channelId, const Model&);
 	~gdPluginChooser();
 
 private:

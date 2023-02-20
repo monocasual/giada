@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/midiIO/midiInputChannel.h"
-#include "core/conf.h"
 #include "core/const.h"
 #include "core/plugins/plugin.h"
 #include "gui/elems/basics/box.h"
@@ -110,8 +109,8 @@ void gePluginLearnerPack::update(const c::io::PluginData& d, bool enabled)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-gdMidiInputChannel::gdMidiInputChannel(ID channelId, const m::Conf& conf)
-: gdMidiInputBase(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_TITLE), conf)
+gdMidiInputChannel::gdMidiInputChannel(ID channelId, const Model& model)
+: gdMidiInputBase(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_TITLE), model)
 , m_channelId(channelId)
 , m_data(c::io::channel_getInputData(channelId))
 {

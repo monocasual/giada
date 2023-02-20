@@ -27,8 +27,8 @@
 #ifndef G_V_DISPATCHER_H
 #define G_V_DISPATCHER_H
 
-#include "core/conf.h"
 #include "core/types.h"
+#include "gui/model.h"
 #include <functional>
 
 namespace giada::v
@@ -38,12 +38,12 @@ class gdMainWindow;
 class Dispatcher final
 {
 public:
-	Dispatcher(const m::Conf::KeyBindings&);
+	Dispatcher();
 
 	/* init 
 	Initializes internal reference to gdMainWindow. */
 
-	void init(gdMainWindow&);
+	void init(gdMainWindow&, const Model::KeyBindings&);
 
 	/* dispatchKey
     Processes a key pressed on the physical keyboard. */
@@ -69,8 +69,8 @@ private:
 
 	void dispatchChannels(int event) const;
 
-	const m::Conf::KeyBindings& m_keyBindings;
-	gdMainWindow*               m_mainWindow;
+	const Model::KeyBindings* m_keyBindings;
+	gdMainWindow*             m_mainWindow;
 
 	int m_keyPressed;
 };

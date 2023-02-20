@@ -27,7 +27,7 @@
 #ifndef GD_CONFIG_H
 #define GD_CONFIG_H
 
-#include "core/conf.h"
+#include "gui/model.h"
 #include "window.h"
 
 namespace giada::v
@@ -41,7 +41,7 @@ class geTabPlugins;
 class gdConfig : public gdWindow
 {
 public:
-	gdConfig(int w, int h, const m::Conf&);
+	gdConfig(int w, int h, const Model&);
 
 	geTabAudio*     tabAudio;
 	geTabBehaviors* tabBehaviors;

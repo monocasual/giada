@@ -37,17 +37,18 @@
 
 namespace giada::v
 {
-Dispatcher::Dispatcher(const m::Conf::KeyBindings& k)
-: m_keyBindings(k)
+Dispatcher::Dispatcher()
+: m_keyBindings(nullptr)
 , m_keyPressed(-1)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Dispatcher::init(gdMainWindow& mw)
+void Dispatcher::init(gdMainWindow& mw, const Model::KeyBindings& keyBindings)
 {
-	m_mainWindow = &mw;
+	m_mainWindow  = &mw;
+	m_keyBindings = &keyBindings;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -85,6 +86,7 @@ void Dispatcher::dispatchChannels(int event) const
 void Dispatcher::dispatchKey(int event)
 {
 	assert(onEventOccured != nullptr);
+	assert(m_keyBindings != nullptr);
 
 	/* These events come from the keyboard, not from a direct interaction on the 
 	UI with the mouse/touch. */
@@ -96,15 +98,15 @@ void Dispatcher::dispatchKey(int event)
 
 		m_keyPressed = Fl::event_key();
 
-		if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_PLAY))
+		if (m_keyPressed == m_keyBindings->at(Model::KEY_BIND_PLAY))
 			c::main::toggleSequencer();
-		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_REWIND))
+		else if (m_keyPressed == m_keyBindings->at(Model::KEY_BIND_REWIND))
 			c::main::rewindSequencer();
-		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_RECORD_ACTIONS))
+		else if (m_keyPressed == m_keyBindings->at(Model::KEY_BIND_RECORD_ACTIONS))
 			c::main::toggleActionRecording();
-		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_RECORD_INPUT))
+		else if (m_keyPressed == m_keyBindings->at(Model::KEY_BIND_RECORD_INPUT))
 			c::main::toggleInputRecording();
-		else if (m_keyPressed == m_keyBindings.at(m::Conf::KEY_BIND_EXIT))
+		else if (m_keyPressed == m_keyBindings->at(Model::KEY_BIND_EXIT))
 		{
 			c::main::stopActionRecording();
 			c::main::stopInputRecording();

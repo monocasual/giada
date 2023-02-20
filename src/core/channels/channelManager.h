@@ -27,7 +27,7 @@
 #ifndef G_CHANNEL_MANAGER_H
 #define G_CHANNEL_MANAGER_H
 
-#include "core/conf.h"
+#include "core/resampler.h"
 #include "core/types.h"
 #include <functional>
 #include <map>
@@ -53,7 +53,7 @@ class MidiEvent;
 class ChannelManager final
 {
 public:
-	ChannelManager(const Conf&, model::Model&);
+	ChannelManager(model::Model&);
 
 	/* getChannel
 	Returns channel object by ID. */
@@ -204,7 +204,6 @@ private:
 
 	void triggerOnChannelsAltered();
 
-	const Conf&   m_conf;
 	model::Model& m_model;
 };
 } // namespace giada::m

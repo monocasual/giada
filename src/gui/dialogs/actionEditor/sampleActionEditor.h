@@ -37,7 +37,7 @@ class geChoice;
 class gdSampleActionEditor : public gdBaseActionEditor
 {
 public:
-	gdSampleActionEditor(ID channelId, const m::Conf&);
+	gdSampleActionEditor(ID channelId, const Model&);
 
 	void rebuild() override;
 

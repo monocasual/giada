@@ -25,13 +25,12 @@
  * -------------------------------------------------------------------------- */
 
 #include "glue/sampleEditor.h"
-#include "core/conf.h"
-#include "core/const.h"
 #include "core/engine.h"
 #include "core/mixer.h"
 #include "core/wave.h"
 #include "core/waveFx.h"
 #include "glue/channel.h"
+#include "gui/dialogs/sampleEditor.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
@@ -50,7 +49,6 @@
 #include "gui/elems/sampleEditor/waveform.h"
 #include "gui/graphics.h"
 #include "gui/ui.h"
-#include "sampleEditor.h"
 #include "utils/gui.h"
 #include "utils/string.h"
 #include <FL/Fl.H>
@@ -64,13 +62,12 @@
 #undef OUT
 #endif
 
-extern giada::v::Ui     g_ui;
-extern giada::m::Engine g_engine;
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdSampleEditor::gdSampleEditor(ID channelId, const m::Conf& conf)
-: gdWindow(u::gui::getCenterWinBounds(conf.sampleEditorBounds), g_ui.getI18Text(LangMap::SAMPLEEDITOR_TITLE))
+gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
+: gdWindow(u::gui::getCenterWinBounds(model.sampleEditorBounds), g_ui.getI18Text(LangMap::SAMPLEEDITOR_TITLE))
 , m_channelId(channelId)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
@@ -91,7 +88,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const m::Conf& conf)
 			top->end();
 		}
 
-		waveTools = new geWaveTools(0, 0, 0, 0, conf.sampleEditorGridOn, conf.sampleEditorGridVal);
+		waveTools = new geWaveTools(0, 0, 0, 0, model.sampleEditorGridOn, model.sampleEditorGridVal);
 		waveTools->rebuild(c::sampleEditor::getData(m_channelId)); // TODO - crappy temporary workaround for WaveTools
 
 		geFlex* bottom = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
@@ -150,13 +147,13 @@ gdSampleEditor::gdSampleEditor(ID channelId, const m::Conf& conf)
 	grid->addItem("32");
 	grid->addItem("64");
 	grid->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_GRIDRES));
-	grid->showItem(conf.sampleEditorGridVal);
+	grid->showItem(model.sampleEditorGridVal);
 	grid->onChange = [this](ID) {
 		/* TODO - redraw grid if != (off) */
 		waveTools->waveform->setGridLevel(std::stoi(grid->getSelectedLabel()));
 	};
 
-	snap->value(conf.sampleEditorGridOn);
+	snap->value(model.sampleEditorGridOn);
 	snap->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_SNAPTOGRID));
 	snap->onChange = [this](bool val) {
 		waveTools->waveform->setSnap(val);
@@ -195,11 +192,9 @@ gdSampleEditor::gdSampleEditor(ID channelId, const m::Conf& conf)
 
 gdSampleEditor::~gdSampleEditor()
 {
-	m::Conf conf             = g_engine.getConf();
-	conf.sampleEditorBounds  = getBounds();
-	conf.sampleEditorGridVal = grid->getSelectedId();
-	conf.sampleEditorGridOn  = snap->value();
-	g_engine.setConf(conf);
+	g_ui.model.sampleEditorBounds  = getBounds();
+	g_ui.model.sampleEditorGridVal = grid->getSelectedId();
+	g_ui.model.sampleEditorGridOn  = snap->value();
 
 	c::sampleEditor::stopPreview();
 	c::sampleEditor::cleanupPreview();

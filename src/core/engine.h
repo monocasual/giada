@@ -38,7 +38,6 @@
 #include "core/api/storageApi.h"
 #include "core/channels/channelFactory.h"
 #include "core/channels/channelManager.h"
-#include "core/conf.h"
 #include "core/eventDispatcher.h"
 #include "core/init.h"
 #include "core/jackTransport.h"
@@ -61,6 +60,7 @@
 
 namespace giada::m
 {
+struct Conf;
 class Engine final
 {
 public:
@@ -86,32 +86,26 @@ public:
 
 	const Patch& getPatch() const;
 
-	/* getConf
-	Returns a read-only reference to the current loaded Conf. */
+	const model::Layout& getLayout() const;
 
-	const Conf& getConf() const;
-
-	/* setConf
-	Updates current Conf file with a new one. */
-
-	void setConf(const Conf&);
+	void setLayout(const model::Layout&);
 
 	/* init
 	Initializes all sub-components. If KernelAudio fails to start, the process
 	interrupts and Giada is put in an invalid state. */
 
-	void init();
+	void init(const Conf&);
 
 	/* reset
 	Resets all sub-components to the initial state. Useful when Giada needs to
 	be brought back to the startup state. */
 
-	void reset();
+	void reset(PluginManager::SortMethod);
 
 	/* shutdown
 	Closes the current audio device. */
 
-	void shutdown();
+	void shutdown(Conf&);
 
 	/* suspend, resume
 	Toggles Mixer's rendering operation. */
@@ -155,17 +149,6 @@ private:
 	int  audioCallback(KernelAudio::CallbackInfo) const;
 	void registerThread(Thread, bool isRealtime) const;
 
-	/* storeConfig 
-	Stores the model information into the Conf file. */
-
-	void storeConfig();
-
-	/* loadConfig
-	Reads the Conf file and stores the information into the model. */
-
-	void loadConfig();
-
-	Conf                   m_conf;
 	Patch                  m_patch;
 	model::Model           m_model;
 	KernelAudio            m_kernelAudio;

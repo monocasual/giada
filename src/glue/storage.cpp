@@ -81,7 +81,8 @@ void loadProject(void* data)
 {
 	v::gdBrowserLoad* browser = static_cast<v::gdBrowserLoad*>(data);
 
-	const std::string projectPath = browser->getSelectedItem();
+	const std::string                  projectPath       = browser->getSelectedItem();
+	const m::PluginManager::SortMethod pluginsSortMethod = g_ui.model.pluginChooserSortMethod;
 
 	/* Close all sub-windows first, in case there are VST editors visible. VST
 	editors must be closed before deleting their plug-in processors. */
@@ -91,13 +92,15 @@ void loadProject(void* data)
 	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
 	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
-	m::StorageApi::LoadState state = g_engine.getStorageApi().loadProject(projectPath, engineProgress);
+	m::StorageApi::LoadState state = g_engine.getStorageApi().loadProject(projectPath, pluginsSortMethod, engineProgress);
 
 	if (state.patch != G_FILE_OK)
 	{
 		printLoadError_(state.patch);
 		return;
 	}
+
+	g_ui.model.patchPath = u::fs::getUpDir(projectPath);
 
 	if (!state.isGood())
 		layout::openMissingAssetsWindow(state);
@@ -130,9 +133,10 @@ void saveProject(void* data)
 	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECT));
 	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
-	if (g_engine.getStorageApi().storeProject(projectName, projectPath, g_ui.getState(), engineProgress))
+	if (g_engine.getStorageApi().storeProject(projectName, projectPath, g_ui.model, engineProgress))
 	{
 		g_ui.setMainWindowTitle(projectName);
+		g_ui.model.patchPath = u::fs::getUpDir(u::fs::getUpDir(projectPath));
 		browser->do_callback();
 	}
 	else
@@ -151,9 +155,7 @@ void loadSample(void* data)
 
 	browser->do_callback();
 
-	m::Conf conf    = g_engine.getConf();
-	conf.samplePath = u::fs::dirname(fullPath);
-	g_engine.setConf(conf);
+	g_ui.model.samplePath = u::fs::dirname(fullPath);
 
 	c::channel::loadChannel(browser->getChannelId(), fullPath);
 }
@@ -182,6 +184,10 @@ void saveSample(void* data)
 
 	if (!g_engine.getChannelsApi().saveSample(channelId, filePath))
 		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGFILEERROR));
+	else
+	{
+		g_ui.model.samplePath = u::fs::dirname(filePath);
+	}
 
 	browser->do_callback();
 }

@@ -145,9 +145,10 @@ void Mixer::setInputRecMode(InputRecMode m)
 
 void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Layout& layout_RT, int maxFramesToRec) const
 {
-	const model::Mixer&     mixer     = layout_RT.mixer;
-	const model::Sequencer& sequencer = layout_RT.sequencer;
-	const model::Channels&  channels  = layout_RT.channels;
+	const model::Mixer&       mixer       = layout_RT.mixer;
+	const model::Sequencer&   sequencer   = layout_RT.sequencer;
+	const model::Channels&    channels    = layout_RT.channels;
+	const model::KernelAudio& kernelAudio = layout_RT.kernelAudio;
 
 	const Channel& masterOutCh = channels.get(Mixer::MASTER_OUT_CHANNEL_ID);
 	const Channel& masterInCh  = channels.get(Mixer::MASTER_IN_CHANNEL_ID);
@@ -159,9 +160,9 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const mode
 	const bool  seqIsRunning    = sequencer.isRunning();
 	const bool  hasSolos        = mixer.hasSolos;
 	const bool  shouldLineInRec = seqIsActive && mixer.isRecordingInput && hasInput;
-	const float recTriggerLevel = mixer.recTriggerLevel;
+	const float recTriggerLevel = kernelAudio.recTriggerLevel;
 	const bool  allowsOverdub   = mixer.inputRecMode == InputRecMode::RIGID;
-	const bool  limitOutput     = mixer.limitOutput;
+	const bool  limitOutput     = kernelAudio.limitOutput;
 
 	mixer.getInBuffer().clear();
 

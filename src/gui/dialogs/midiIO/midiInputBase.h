@@ -27,9 +27,9 @@
 #ifndef GD_MIDI_INPUT_BASE_H
 #define GD_MIDI_INPUT_BASE_H
 
-#include "core/conf.h"
 #include "gui/dialogs/window.h"
 #include "gui/elems/midiIO/midiLearner.h"
+#include "gui/model.h"
 
 class geCheck;
 
@@ -43,7 +43,7 @@ public:
 	virtual ~gdMidiInputBase();
 
 protected:
-	gdMidiInputBase(const char* title, const m::Conf&);
+	gdMidiInputBase(const char* title, const Model&);
 
 	geTextButton* m_ok;
 	geCheck*      m_enable;

@@ -66,9 +66,14 @@ void rebuildMidiWindows_()
 
 /* -------------------------------------------------------------------------- */
 
-bool isValidKey_()
+bool isValidKey_(int key)
 {
-	return strlen(Fl::event_text()) != 0;
+	if (strlen(Fl::event_text()) == 0)
+		return false;
+	for (const int& bind : g_ui.model.keyBindings)
+		if (key == bind)
+			return false;
+	return true;
 }
 } // namespace
 
@@ -211,7 +216,10 @@ void channel_setMidiOutputFilter(ID channelId, int ch)
 
 bool channel_setKey(ID channelId, int k)
 {
-	return isValidKey_() && g_engine.getIOApi().channel_setKey(channelId, k);
+	if (!isValidKey_(k))
+		return false;
+	g_engine.getIOApi().channel_setKey(channelId, k);
+	return true;
 }
 
 /* -------------------------------------------------------------------------- */

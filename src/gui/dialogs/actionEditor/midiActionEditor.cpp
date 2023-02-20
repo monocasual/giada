@@ -25,8 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "midiActionEditor.h"
-#include "core/conf.h"
-#include "core/engine.h"
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
 #include "gui/elems/actionEditor/gridTool.h"
@@ -39,13 +37,12 @@
 #include "gui/graphics.h"
 #include "gui/ui.h"
 
-extern giada::v::Ui     g_ui;
-extern giada::m::Engine g_engine;
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdMidiActionEditor::gdMidiActionEditor(ID channelId, const m::Conf& conf)
-: gdBaseActionEditor(channelId, conf)
+gdMidiActionEditor::gdMidiActionEditor(ID channelId, const Model& model)
+: gdBaseActionEditor(channelId, model)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
@@ -68,10 +65,10 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, const m::Conf& conf)
 
 	m_pianoRoll      = new gePianoRoll(0, 0, this);
 	m_velocityEditor = new geVelocityEditor(0, 0, this);
-	m_splitScroll->addWidgets(*m_pianoRoll, *m_velocityEditor, conf.actionEditorSplitH);
+	m_splitScroll->addWidgets(*m_pianoRoll, *m_velocityEditor, model.actionEditorSplitH);
 
-	if (conf.actionEditorPianoRollY != -1)
-		m_splitScroll->setScrollY(conf.actionEditorPianoRollY);
+	if (model.actionEditorPianoRollY != -1)
+		m_splitScroll->setScrollY(model.actionEditorPianoRollY);
 
 	prepareWindow();
 	rebuild();
@@ -81,9 +78,7 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, const m::Conf& conf)
 
 gdMidiActionEditor::~gdMidiActionEditor()
 {
-	m::Conf conf                = g_engine.getConf();
-	conf.actionEditorPianoRollY = m_splitScroll->getScrollY();
-	g_engine.setConf(conf);
+	g_ui.model.actionEditorPianoRollY = m_splitScroll->getScrollY();
 }
 
 /* -------------------------------------------------------------------------- */

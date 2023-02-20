@@ -24,10 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "mainWindow.h"
-#include "core/conf.h"
+#include "gui/dialogs/mainWindow.h"
 #include "core/const.h"
-#include "core/engine.h"
 #include "glue/main.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/flex.h"
@@ -37,13 +35,14 @@
 #include "gui/elems/mainWindow/mainTimer.h"
 #include "gui/elems/mainWindow/mainTransport.h"
 #include "gui/elems/mainWindow/sequencer.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include "warnings.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Tooltip.H>
 #include <fmt/core.h>
 
-extern giada::m::Engine g_engine;
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
@@ -71,7 +70,7 @@ void gdMainWindow::ScopedProgress::setProgress(float v)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, char** argv, const m::Conf& conf)
+gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, char** argv)
 : gdWindow(r, title)
 {
 	Fl::visible_focus(0);
@@ -85,11 +84,6 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, cha
 	Fl::set_boxtype(FL_BORDER_BOX, G_CUSTOM_BORDER_BOX);
 	Fl::set_boxtype(FL_UP_BOX, G_CUSTOM_UP_BOX);
 	Fl::set_boxtype(FL_DOWN_BOX, G_CUSTOM_DOWN_BOX);
-
-	Fl_Tooltip::color(G_COLOR_GREY_1);
-	Fl_Tooltip::textcolor(G_COLOR_LIGHT_2);
-	Fl_Tooltip::size(G_GUI_FONT_SIZE_BASE);
-	Fl_Tooltip::enable(conf.showTooltips);
 
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
@@ -145,9 +139,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, cha
 
 gdMainWindow::~gdMainWindow()
 {
-	m::Conf conf          = g_engine.getConf();
-	conf.mainWindowBounds = getBounds();
-	g_engine.setConf(conf);
+	g_ui.model.mainWindowBounds = getBounds();
 }
 
 /* -------------------------------------------------------------------------- */

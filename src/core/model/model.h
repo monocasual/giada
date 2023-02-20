@@ -30,6 +30,8 @@
 #include "core/channels/channel.h"
 #include "core/const.h"
 #include "core/model/channels.h"
+#include "core/model/kernelAudio.h"
+#include "core/model/kernelMidi.h"
 #include "core/model/midiIn.h"
 #include "core/model/mixer.h"
 #include "core/model/sequencer.h"
@@ -49,16 +51,23 @@ struct Layout
 	void debug() const;
 #endif
 
-	Sequencer sequencer;
-	Mixer     mixer;
-	MidiIn    midiIn;
-	Channels  channels;
-
 	/* locked
 	If locked, Mixer won't process channels. This is used to allow editing the 
-	data (e.g. Actions or Plugins) a channel points to without data races. */
+	shared data (e.g. Plugins, Waves) by the rendering engine without data races. */
 
 	bool locked = false;
+
+	KernelAudio kernelAudio;
+	KernelMidi  kernelMidi;
+	Sequencer   sequencer;
+	Mixer       mixer;
+	MidiIn      midiIn;
+	Channels    channels;
+
+	bool chansStopOnSeqHalt         = false;
+	bool treatRecsAsLoops           = false;
+	bool inputMonitorDefaultOn      = false;
+	bool overdubProtectionDefaultOn = false;
 };
 
 /* LayoutLock
@@ -107,10 +116,26 @@ public:
 
 	[[nodiscard]] DataLock lockData(SwapType t = SwapType::HARD);
 
-	/* reser
-	Resets the internal layout to default. */
+	/* init
+	Initializes the internal layout. All values go back to default. */
+
+	void init();
+
+	/* reset
+	Resets the internal layout to default. Configuration data (e.g. KernelAudio)
+	are left untouched.  */
 
 	void reset();
+
+	/* load
+	Loads data from a Conf object. */
+
+	void load(const Conf&);
+
+	/* store
+	Stores data into a Conf object. */
+
+	void store(Conf&) const;
 
 	bool registerThread(Thread, bool realtime) const;
 
@@ -123,7 +148,10 @@ public:
 	/* get
 	Returns a reference to the NON-REALTIME layout structure. */
 
-	Layout& get();
+	Layout&       get();
+	const Layout& get() const;
+
+	void set(const Layout&);
 
 	/* swap
 	Swap non-rt layout with the rt one. See 'SwapType' notes above. */
