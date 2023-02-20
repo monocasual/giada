@@ -271,8 +271,6 @@ void Engine::init()
 	if (!u::log::init(m_conf.logMode))
 		u::log::print("[Engine::init] log init failed! Using default stdout\n");
 
-	init::printBuildInfo();
-
 	m_midiMapper.init();
 	if (m_midiMapper.read(m_conf.midiMapPath) != G_FILE_OK)
 		u::log::print("[Engine::init] MIDI map read failed!\n");
