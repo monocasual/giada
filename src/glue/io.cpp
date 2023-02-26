@@ -70,9 +70,12 @@ bool isValidKey_(int key)
 {
 	if (strlen(Fl::event_text()) == 0)
 		return false;
-	for (const int& bind : g_ui.model.keyBindings)
-		if (key == bind)
-			return false;
+	if (key == g_ui.model.keyBindPlay ||
+	    key == g_ui.model.keyBindRewind ||
+	    key == g_ui.model.keyBindRecordActions ||
+	    key == g_ui.model.keyBindRecordInput ||
+	    key == g_ui.model.keyBindExit)
+		return false;
 	return true;
 }
 } // namespace

@@ -63,8 +63,13 @@ void Model::store(m::Conf& conf) const
 	conf.pluginChooserBounds = pluginChooserBounds;
 	conf.pluginSortMethod    = pluginChooserSortMethod;
 
-	conf.keyBindings = keyBindings;
-	conf.uiScaling   = uiScaling;
+	conf.keyBindPlay          = keyBindPlay;
+	conf.keyBindRewind        = keyBindRewind;
+	conf.keyBindRecordActions = keyBindRecordActions;
+	conf.keyBindRecordInput   = keyBindRecordInput;
+	conf.keyBindExit          = keyBindExit;
+
+	conf.uiScaling = uiScaling;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -102,7 +107,12 @@ void Model::load(const m::Conf& conf)
 	pluginChooserBounds     = conf.pluginChooserBounds;
 	pluginChooserSortMethod = conf.pluginSortMethod;
 
-	keyBindings = conf.keyBindings;
-	uiScaling   = conf.uiScaling;
+	keyBindPlay          = conf.keyBindPlay;
+	keyBindRewind        = conf.keyBindRewind;
+	keyBindRecordActions = conf.keyBindRecordActions;
+	keyBindRecordInput   = conf.keyBindRecordInput;
+	keyBindExit          = conf.keyBindExit;
+
+	uiScaling = conf.uiScaling;
 }
 } // namespace giada::v

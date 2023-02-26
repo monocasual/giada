@@ -45,14 +45,6 @@ struct Model
 		int width;
 	};
 
-	using KeyBindings = std::vector<int>;
-
-	static constexpr int KEY_BIND_PLAY           = 0;
-	static constexpr int KEY_BIND_REWIND         = 1;
-	static constexpr int KEY_BIND_RECORD_ACTIONS = 2;
-	static constexpr int KEY_BIND_RECORD_INPUT   = 3;
-	static constexpr int KEY_BIND_EXIT           = 4;
-
 	void store(m::Conf&) const;
 
 	void load(const m::Conf&);
@@ -89,13 +81,11 @@ struct Model
 	geompp::Rect<int>            pluginChooserBounds     = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
 	m::PluginManager::SortMethod pluginChooserSortMethod = m::PluginManager::SortMethod::NAME;
 
-	KeyBindings keyBindings = {
-	    ' ',          // KEY_BIND_PLAY
-	    FL_BackSpace, // KEY_BIND_REWIND
-	    FL_Enter,     // KEY_BIND_RECORD_ACTIONS
-	    FL_End,       // KEY_BIND_RECORD_INPUT
-	    FL_Escape     // KEY_BIND_EXIT
-	};
+	int keyBindPlay          = ' ';
+	int keyBindRewind        = FL_BackSpace;
+	int keyBindRecordActions = FL_Enter;
+	int keyBindRecordInput   = FL_End;
+	int keyBindExit          = FL_Escape;
 
 	float uiScaling = G_DEFAULT_UI_SCALING;
 

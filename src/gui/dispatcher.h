@@ -43,7 +43,7 @@ public:
 	/* init 
 	Initializes internal reference to gdMainWindow. */
 
-	void init(gdMainWindow&, const Model::KeyBindings&);
+	void init(gdMainWindow&, const Model&);
 
 	/* dispatchKey
     Processes a key pressed on the physical keyboard. */
@@ -69,8 +69,8 @@ private:
 
 	void dispatchChannels(int event) const;
 
-	const Model::KeyBindings* m_keyBindings;
-	gdMainWindow*             m_mainWindow;
+	const Model*  m_model;
+	gdMainWindow* m_mainWindow;
 
 	int m_keyPressed;
 };

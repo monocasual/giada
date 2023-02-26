@@ -40,14 +40,6 @@ namespace giada::m
 {
 struct Conf final
 {
-	using KeyBindings = std::vector<int>;
-
-	static constexpr int KEY_BIND_PLAY           = 0;
-	static constexpr int KEY_BIND_REWIND         = 1;
-	static constexpr int KEY_BIND_RECORD_ACTIONS = 2;
-	static constexpr int KEY_BIND_RECORD_INPUT   = 3;
-	static constexpr int KEY_BIND_EXIT           = 4;
-
 	bool               valid            = false;
 	int                logMode          = LOG_MODE_MUTE;
 	bool               showTooltips     = true;
@@ -120,13 +112,11 @@ struct Conf final
 	geompp::Rect<int>         pluginChooserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
 	PluginManager::SortMethod pluginSortMethod    = PluginManager::SortMethod::NAME;
 
-	KeyBindings keyBindings = {
-	    ' ',          // KEY_BIND_PLAY
-	    FL_BackSpace, // KEY_BIND_REWIND
-	    FL_Enter,     // KEY_BIND_RECORD_ACTIONS
-	    FL_End,       // KEY_BIND_RECORD_INPUT
-	    FL_Escape     // KEY_BIND_EXIT
-	};
+	int keyBindPlay          = ' ';
+	int keyBindRewind        = FL_BackSpace;
+	int keyBindRecordActions = FL_Enter;
+	int keyBindRecordInput   = FL_End;
+	int keyBindExit          = FL_Escape;
 
 	float uiScaling = G_DEFAULT_UI_SCALING;
 };

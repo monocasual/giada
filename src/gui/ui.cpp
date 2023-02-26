@@ -119,7 +119,7 @@ void Ui::init(int argc, char** argv, const m::Conf& conf, const std::string& pat
 	Fl_Tooltip::size(G_GUI_FONT_SIZE_BASE);
 	Fl_Tooltip::enable(conf.showTooltips);
 
-	dispatcher.init(*mainWindow, model.keyBindings);
+	dispatcher.init(*mainWindow, model);
 	m_updater.start();
 
 	if (isAudioReady)

@@ -138,11 +138,11 @@ bool serialize(const Conf& conf)
 	j[CONF_KEY_REC_TRIGGER_LEVEL]             = conf.recTriggerLevel;
 	j[CONF_KEY_INPUT_REC_MODE]                = static_cast<int>(conf.inputRecMode);
 
-	j[CONF_KEY_BIND_PLAY]           = conf.keyBindings[Conf::KEY_BIND_PLAY];
-	j[CONF_KEY_BIND_REWIND]         = conf.keyBindings[Conf::KEY_BIND_REWIND];
-	j[CONF_KEY_BIND_RECORD_ACTIONS] = conf.keyBindings[Conf::KEY_BIND_RECORD_ACTIONS];
-	j[CONF_KEY_BIND_RECORD_INPUT]   = conf.keyBindings[Conf::KEY_BIND_RECORD_INPUT];
-	j[CONF_KEY_BIND_EXIT]           = conf.keyBindings[Conf::KEY_BIND_EXIT];
+	j[CONF_KEY_BIND_PLAY]           = conf.keyBindPlay;
+	j[CONF_KEY_BIND_REWIND]         = conf.keyBindRewind;
+	j[CONF_KEY_BIND_RECORD_ACTIONS] = conf.keyBindRecordActions;
+	j[CONF_KEY_BIND_RECORD_INPUT]   = conf.keyBindRecordInput;
+	j[CONF_KEY_BIND_EXIT]           = conf.keyBindExit;
 
 	j[CONF_KEY_PLUGIN_CHOOSER_X]   = conf.pluginChooserBounds.x;
 	j[CONF_KEY_PLUGIN_CHOOSER_Y]   = conf.pluginChooserBounds.y;
@@ -252,11 +252,11 @@ Conf deserialize()
 	conf.midiInBeatDouble           = j.value(CONF_KEY_MIDI_IN_BEAT_DOUBLE, conf.midiInBeatDouble);
 	conf.midiInBeatHalf             = j.value(CONF_KEY_MIDI_IN_BEAT_HALF, conf.midiInBeatHalf);
 
-	conf.keyBindings[Conf::KEY_BIND_PLAY]           = j.value(CONF_KEY_BIND_PLAY, 0);
-	conf.keyBindings[Conf::KEY_BIND_REWIND]         = j.value(CONF_KEY_BIND_REWIND, 0);
-	conf.keyBindings[Conf::KEY_BIND_RECORD_ACTIONS] = j.value(CONF_KEY_BIND_RECORD_ACTIONS, 0);
-	conf.keyBindings[Conf::KEY_BIND_RECORD_INPUT]   = j.value(CONF_KEY_BIND_RECORD_INPUT, 0);
-	conf.keyBindings[Conf::KEY_BIND_EXIT]           = j.value(CONF_KEY_BIND_EXIT, 0);
+	conf.keyBindPlay          = j.value(CONF_KEY_BIND_PLAY, 0);
+	conf.keyBindRewind        = j.value(CONF_KEY_BIND_REWIND, 0);
+	conf.keyBindRecordActions = j.value(CONF_KEY_BIND_RECORD_ACTIONS, 0);
+	conf.keyBindRecordInput   = j.value(CONF_KEY_BIND_RECORD_INPUT, 0);
+	conf.keyBindExit          = j.value(CONF_KEY_BIND_EXIT, 0);
 
 	conf.pluginChooserBounds.x = j.value(CONF_KEY_PLUGIN_CHOOSER_X, conf.pluginChooserBounds.x);
 	conf.pluginChooserBounds.y = j.value(CONF_KEY_PLUGIN_CHOOSER_Y, conf.pluginChooserBounds.y);
