@@ -35,7 +35,6 @@
 #include "src/core/actions/action.h"
 #include "utils/log.h"
 #include "utils/math.h"
-#include "utils/string.h"
 #include <FL/Fl.H>
 #include <cassert>
 
@@ -68,7 +67,7 @@ void gePianoRoll::drawSurfaceY()
 	{
 		/* print key note label. C C# D D# E F F# G G# A A# B */
 
-		std::string note = u::string::iToString(octave);
+		std::string note = std::to_string(octave);
 		switch (i % KEYS)
 		{
 		case (int)Notes::G:

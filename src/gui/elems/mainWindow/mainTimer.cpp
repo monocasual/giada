@@ -34,7 +34,7 @@
 #include "gui/graphics.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
-#include "utils/string.h"
+#include <fmt/core.h>
 
 extern giada::v::Ui g_ui;
 
@@ -119,7 +119,7 @@ void geMainTimer::setBpm(const char* v)
 
 void geMainTimer::setBpm(float v)
 {
-	m_bpm->copy_label(u::string::fToString(v, 1).c_str()); // Only 1 decimal place (e.g. 120.0)
+	m_bpm->copy_label(fmt::format("{:.1f}", v).c_str()); // Only 1 decimal place (e.g. 120.0)
 }
 
 /* -------------------------------------------------------------------------- */

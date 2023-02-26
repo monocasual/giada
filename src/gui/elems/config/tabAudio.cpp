@@ -34,7 +34,7 @@
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"
 #include "gui/ui.h"
-#include "utils/string.h"
+#include <fmt/core.h>
 #include <string>
 
 constexpr int LABEL_WIDTH = 110;
@@ -238,7 +238,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	rsmpQuality->showItem(m_data.resampleQuality);
 	rsmpQuality->onChange = [this](ID id) { m_data.resampleQuality = id; };
 
-	recTriggerLevel->setValue(u::string::fToString(m_data.recTriggerLevel, 1));
+	recTriggerLevel->setValue(fmt::format("{:.1f}", m_data.recTriggerLevel));
 	recTriggerLevel->onChange = [this](const std::string& s) { m_data.recTriggerLevel = std::stof(s); };
 
 	if (m_data.api == RtAudio::Api::RTAUDIO_DUMMY)

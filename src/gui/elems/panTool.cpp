@@ -35,6 +35,7 @@
 #include "utils/math.h"
 #include "utils/string.h"
 #include <FL/Fl.H>
+#include <fmt/core.h>
 
 extern giada::v::Ui g_ui;
 
@@ -77,15 +78,15 @@ void gePanTool::update(float pan)
 
 	if (pan < 0.5f)
 	{
-		std::string tmp = u::string::iToString((int)((-pan * 200.0f) + 100.0f)) + " L";
-		m_input->setValue(tmp);
+		const int value = (-pan * 200.0f) + 100.0f;
+		m_input->setValue(fmt::format("{} L", value));
 	}
 	else if (pan == 0.5)
 		m_input->setValue("C");
 	else
 	{
-		std::string tmp = u::string::iToString((int)((pan * 200.0f) - 100.0f)) + " R";
-		m_input->setValue(tmp);
+		const int value = (pan * 200.0f) - 100.0f;
+		m_input->setValue(fmt::format("{} R", value));
 	}
 }
 } // namespace giada::v

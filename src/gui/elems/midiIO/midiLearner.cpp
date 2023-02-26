@@ -30,8 +30,8 @@
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
-#include "utils/string.h"
 #include <cassert>
+#include <fmt/core.h>
 
 extern giada::v::Ui g_ui;
 
@@ -84,7 +84,7 @@ void geMidiLearner::update(uint32_t value)
 
 	if (value != 0x0)
 	{
-		tmp = "0x" + u::string::iToString(value, /*hex=*/true);
+		tmp = fmt::format("{:#x}", value);
 		tmp.pop_back(); // Remove last two digits, useless in MIDI messages
 		tmp.pop_back(); // Remove last two digits, useless in MIDI messages
 	}

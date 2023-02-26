@@ -36,27 +36,12 @@
 
 namespace giada::u::string
 {
-// TODO - useless, use fmt lib
-template <typename T>
-std::string iToString(T t, bool hex = false)
-{
-	std::stringstream out;
-	if (hex)
-		out << std::hex << std::uppercase << t;
-	else
-		out << t;
-	return out.str();
-}
-
 std::string replace(std::string in, const std::string& search,
     const std::string& replace);
 
 std::string trim(const std::string& s);
 
 std::vector<std::string> split(std::string in, std::string sep);
-
-// TODO - useless, use fmt lib
-std::string fToString(float f, int precision);
 
 std::string format(const char* format, ...);
 

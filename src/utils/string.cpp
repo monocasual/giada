@@ -35,17 +35,6 @@
 
 namespace giada::u::string
 {
-/* TODO - use std::to_string() */
-
-std::string fToString(float f, int precision)
-{
-	std::stringstream out;
-	out << std::fixed << std::setprecision(precision) << f;
-	return out.str();
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::string trim(const std::string& s)
 {
 	std::size_t first = s.find_first_not_of(" \n\t");

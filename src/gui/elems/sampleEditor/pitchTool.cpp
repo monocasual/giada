@@ -38,6 +38,7 @@
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include "utils/string.h"
+#include <fmt/core.h>
 
 extern giada::v::Ui g_ui;
 
@@ -114,7 +115,7 @@ void gePitchTool::rebuild(const c::sampleEditor::Data& d)
 
 void gePitchTool::update(float v, bool isDial)
 {
-	m_input->setValue(u::string::fToString(v, 4)); // 4 digits
+	m_input->setValue(fmt::format("{:.4f}", v)); // 4 digits
 	if (!isDial)
 		m_dial->value(v);
 }
