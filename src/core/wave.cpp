@@ -27,9 +27,8 @@
 #include "wave.h"
 #include "const.h"
 #include "utils/fs.h"
-#include "utils/log.h"
-#include "utils/string.h"
 #include <cassert>
+#include <fmt/core.h>
 
 namespace giada::m
 {
@@ -112,7 +111,7 @@ void Wave::setPath(const std::string& p, int wid)
 	if (wid == -1)
 		m_path = p;
 	else
-		m_path = u::fs::stripExt(p) + "-" + std::to_string(wid) + u::fs::getExt(p);
+		m_path = fmt::format("{}-{}{}", u::fs::stripExt(p), wid, u::fs::getExt(p));
 }
 
 /* -------------------------------------------------------------------------- */

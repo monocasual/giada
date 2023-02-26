@@ -103,7 +103,7 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 	/* Dirty trick for stereo channels: they start at STEREO_OFFSET. */
 
 	for (int i = 0; i < m_data.channelsMax; i += 2)
-		addItem(std::to_string(i + 1) + "-" + std::to_string(i + 2), i + STEREO_OFFSET);
+		addItem(fmt::format("{}-{}", i + 1, i + 2), i + STEREO_OFFSET);
 
 	if (m_data.channelsCount == 1)
 		showItem(m_data.channelsStart);

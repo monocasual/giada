@@ -34,6 +34,7 @@
 #include "wave.h"
 #include "waveFx.h"
 #include <cmath>
+#include <fmt/core.h>
 #include <memory>
 #include <samplerate.h>
 #include <sndfile.h>
@@ -69,7 +70,7 @@ int getBits_(const SF_INFO& header)
 
 std::string makeWavePath_(const std::string& base, const m::Wave& w, int k)
 {
-	return u::fs::join(base, w.getBasename(/*ext=*/false) + "-" + std::to_string(k) + w.getExtension());
+	return u::fs::join(base, fmt::format("{}-{}{}", w.getBasename(/*ext=*/false), k, w.getExtension()));
 }
 
 /* -------------------------------------------------------------------------- */

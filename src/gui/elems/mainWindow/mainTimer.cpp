@@ -153,7 +153,6 @@ void geMainTimer::setQuantizer(int q)
 
 void geMainTimer::setMeter(int beats, int bars)
 {
-	std::string s = std::to_string(beats) + "/" + std::to_string(bars);
-	m_meter->copy_label(s.c_str());
+	m_meter->copy_label(fmt::format("{}/{}", beats, bars).c_str());
 }
 } // namespace giada::v
