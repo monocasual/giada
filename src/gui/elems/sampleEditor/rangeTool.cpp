@@ -33,7 +33,7 @@
 #include "gui/elems/basics/pack.h"
 #include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
-#include "utils/gui.h"
+#include "utils/string.h"
 
 extern giada::v::Ui g_ui;
 
@@ -56,13 +56,13 @@ geRangeTool::geRangeTool(const c::sampleEditor::Data& d)
 	m_begin->setType(FL_INT_INPUT);
 	m_begin->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_begin->onChange = [this](const std::string& val) {
-		c::sampleEditor::setBeginEnd(m_data->channelId, u::gui::toInt(val), u::gui::toInt(m_end->getValue()));
+		c::sampleEditor::setBeginEnd(m_data->channelId, u::string::toInt(val), u::string::toInt(m_end->getValue()));
 	};
 
 	m_end->setType(FL_INT_INPUT);
 	m_end->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_end->onChange = [this](const std::string& val) {
-		c::sampleEditor::setBeginEnd(m_data->channelId, u::gui::toInt(m_begin->getValue()), u::gui::toInt(val));
+		c::sampleEditor::setBeginEnd(m_data->channelId, u::string::toInt(m_begin->getValue()), u::string::toInt(val));
 	};
 
 	m_reset->onClick = [this]() {

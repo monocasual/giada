@@ -31,8 +31,8 @@
 #include "gui/elems/basics/input.h"
 #include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
-#include "utils/gui.h"
 #include "utils/math.h"
+#include "utils/string.h"
 #include <fmt/core.h>
 
 extern giada::v::Ui g_ui;
@@ -60,7 +60,7 @@ geVolumeTool::geVolumeTool(ID channelId, float volume, int labelWidth)
 	m_input->setType(FL_FLOAT_INPUT);
 	m_input->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_input->onChange = [this](const std::string& val) {
-		const float valf = c::channel::setChannelVolume(m_channelId, u::math::dBtoLinear(u::gui::toFloat(val)),
+		const float valf = c::channel::setChannelVolume(m_channelId, u::math::dBtoLinear(u::string::toFloat(val)),
 		    Thread::MAIN, /*repaintMainUi=*/true);
 		update(valf, /*fromDial=*/false);
 	};

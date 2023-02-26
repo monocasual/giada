@@ -29,16 +29,14 @@
 #ifndef G_UTILS_STRING_H
 #define G_UTILS_STRING_H
 
+#include "core/types.h"
 #include <sstream>
 #include <string>
 #include <vector>
 
-namespace giada
+namespace giada::u::string
 {
-namespace u
-{
-namespace string
-{
+// TODO - useless, use fmt lib
 template <typename T>
 std::string iToString(T t, bool hex = false)
 {
@@ -57,12 +55,18 @@ std::string trim(const std::string& s);
 
 std::vector<std::string> split(std::string in, std::string sep);
 
+// TODO - useless, use fmt lib
 std::string fToString(float f, int precision);
 
 std::string format(const char* format, ...);
 
-} // namespace string
-} // namespace u
-} // namespace giada
+std::string toString(Thread);
+
+/* toFloat, toInt
+Convert a string to numbers. Like std::stof, std::stoi, just safer. */
+
+float toFloat(const std::string&);
+int   toInt(const std::string&);
+} // namespace giada::u::string
 
 #endif

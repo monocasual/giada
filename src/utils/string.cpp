@@ -26,19 +26,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "string.h"
-#include "core/const.h"
+#include "utils/string.h"
 #include <climits>
 #include <cstdarg>
 #include <cstddef>
 #include <iomanip>
 #include <memory>
 
-namespace giada
-{
-namespace u
-{
-namespace string
+namespace giada::u::string
 {
 /* TODO - use std::to_string() */
 
@@ -117,6 +112,50 @@ std::vector<std::string> split(std::string in, std::string sep)
 	return out;
 }
 
-} // namespace string
-} // namespace u
-} // namespace giada
+/* -------------------------------------------------------------------------- */
+
+std::string toString(Thread t)
+{
+	switch (t)
+	{
+	case Thread::MAIN:
+		return "MAIN";
+	case Thread::MIDI:
+		return "MIDI";
+	case Thread::AUDIO:
+		return "AUDIO (rt)";
+	case Thread::EVENTS:
+		return "EVENTS";
+	default:
+		return "(unknown)";
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+float toFloat(const std::string& s)
+{
+	try
+	{
+		return std::stof(s);
+	}
+	catch (const std::exception&)
+	{
+		return 0.0f;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+int toInt(const std::string& s)
+{
+	try
+	{
+		return std::stoi(s);
+	}
+	catch (const std::exception&)
+	{
+		return 0;
+	}
+}
+} // namespace giada::u::string

@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/model/model.h"
-#include "utils/gui.h"
 #include "utils/log.h"
+#include "utils/string.h"
 #include <cassert>
 #include <memory>
 #ifdef G_DEBUG_MODE
@@ -234,7 +234,7 @@ void Model::store(Conf& conf) const
 
 bool Model::registerThread(Thread t, bool realtime) const
 {
-	return m_swapper.registerThread(u::gui::toString(t), realtime);
+	return m_swapper.registerThread(u::string::toString(t), realtime);
 }
 
 /* -------------------------------------------------------------------------- */

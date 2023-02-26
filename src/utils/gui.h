@@ -74,13 +74,6 @@ Translates an FLTK key event into a human-readable string. */
 
 std::string keyToString(int key);
 
-/* toFloat, toInt
-Convert a string to numbers. Like std::stof, std::stoi, just safer. */
-
-float toFloat(const std::string&);
-int   toInt(const std::string&);
-
-std::string toString(Thread);
 } // namespace giada::u::gui
 
 #endif

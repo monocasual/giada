@@ -29,8 +29,8 @@
 #include "core/confFactory.h"
 #include "core/model/model.h"
 #include "utils/fs.h"
-#include "utils/gui.h"
 #include "utils/log.h"
+#include "utils/string.h"
 #include <fmt/core.h>
 #include <memory>
 
@@ -439,7 +439,7 @@ void Engine::registerThread(Thread t, bool isRealtime) const
 {
 	if (!m_model.registerThread(t, isRealtime))
 	{
-		u::log::print("[Engine::registerThread] Can't register thread %s! Aborting\n", u::gui::toString(t).c_str());
+		u::log::print("[Engine::registerThread] Can't register thread %s! Aborting\n", u::string::toString(t).c_str());
 		std::abort();
 	}
 }
