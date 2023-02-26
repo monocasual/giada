@@ -121,11 +121,9 @@ void startup(int argc, char** argv)
 		/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap
 		callback might be performed by a non-main thread, which must talk to the 
 		UI (main thread) through the UI queue by pumping an event in it. */
-		g_ui.pumpEvent([type]() {
-			if (type == model::SwapType::NONE)
-				return;
-			type == model::SwapType::HARD ? g_ui.rebuild() : g_ui.refresh();
-		});
+		if (type == model::SwapType::NONE)
+			return;
+		g_ui.pumpEvent([type]() { type == model::SwapType::HARD ? g_ui.rebuild() : g_ui.refresh(); });
 	};
 
 	Conf conf = confFactory::deserialize();
