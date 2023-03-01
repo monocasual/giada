@@ -35,7 +35,7 @@ namespace giada::m::model
 {
 Channel& Channels::get(ID id)
 {
-	return const_cast<Channel&>(const_cast<const Channels*>(this)->get(id));
+	return const_cast<Channel&>(std::as_const(*this).get(id));
 }
 
 const Channel& Channels::get(ID id) const
@@ -56,7 +56,7 @@ Channel& Channels::getLast()
 
 std::vector<Channel>& Channels::getAll()
 {
-	return const_cast<std::vector<Channel>&>(const_cast<const Channels*>(this)->getAll());
+	return m_channels;
 }
 
 const std::vector<Channel>& Channels::getAll() const
@@ -66,7 +66,7 @@ const std::vector<Channel>& Channels::getAll() const
 
 /* -------------------------------------------------------------------------- */
 
-const std::vector<const Channel*> Channels::getColumn(ID columnId) const
+std::vector<const Channel*> Channels::getColumn(ID columnId) const
 {
 	std::vector<const Channel*> out;
 	for (const Channel& ch : m_channels)
