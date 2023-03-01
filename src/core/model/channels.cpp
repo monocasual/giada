@@ -49,7 +49,7 @@ const Channel& Channels::get(ID id) const
 
 Channel& Channels::getLast()
 {
-	m_channels.back();
+	return m_channels.back();
 }
 
 /* -------------------------------------------------------------------------- */
