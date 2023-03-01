@@ -151,7 +151,7 @@ std::string geFileBrowser::getSelectedItem(bool fullPath)
 
 void geFileBrowser::preselect(int pos, int line)
 {
-	position(pos);
+	vposition(pos);
 	select(line);
 }
 } // namespace giada::v
