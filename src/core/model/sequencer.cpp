@@ -88,7 +88,7 @@ float Sequencer::a_getCurrentSecond(int sampleRate) const
 
 /* -------------------------------------------------------------------------- */
 
-int Sequencer::a_getMaxFramesInLoop(int sampleRate) const
+int Sequencer::getMaxFramesInLoop(int sampleRate) const
 {
 	return (sampleRate * (60.0f / G_MIN_BPM)) * beats;
 }

@@ -406,7 +406,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 
 	/* Then render Mixer: render channels, process I/O. */
 
-	const Frame maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.a_getMaxFramesInLoop(kernelInfo.sampleRate) : sequencer.framesInLoop;
+	const Frame maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelInfo.sampleRate) : sequencer.framesInLoop;
 	m_mixer.render(out, in, layout_RT, maxFramesToRec);
 
 	return 0;

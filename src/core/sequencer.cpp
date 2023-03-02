@@ -79,7 +79,7 @@ Frame     Sequencer::getFramesInSeq() const { return m_model.get().sequencer.fra
 int       Sequencer::getQuantizerValue() const { return m_model.get().sequencer.quantize; }
 int       Sequencer::getQuantizerStep() const { return m_quantizerStep; }
 SeqStatus Sequencer::getStatus() const { return m_model.get().sequencer.status; }
-int       Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model.get().sequencer.a_getMaxFramesInLoop(sampleRate); }
+int       Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model.get().sequencer.getMaxFramesInLoop(sampleRate); }
 
 /* -------------------------------------------------------------------------- */
 
