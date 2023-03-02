@@ -56,7 +56,7 @@ Mixer::Mixer(model::Model& m)
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::reset(Frame maxFramesInLoop, Frame framesInBuffer)
+void Mixer::reset(int maxFramesInLoop, int framesInBuffer)
 {
 	/* Allocate working buffers. rec buffer has variable size: it depends on how
 	many frames there are in the current loop. */
@@ -86,7 +86,7 @@ void Mixer::disable()
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::allocRecBuffer(Frame frames)
+void Mixer::allocRecBuffer(int frames)
 {
 	m_model.get().mixer.getRecBuffer().alloc(frames, G_MAX_IO_CHANS);
 }
@@ -104,7 +104,7 @@ const mcl::AudioBuffer& Mixer::getRecBuffer()
 /* -------------------------------------------------------------------------- */
 
 void Mixer::advanceChannels(const Sequencer::EventBuffer& events,
-    const model::Channels& channels, Range<Frame> block, Frame quantizerStep) const
+    const model::Channels& channels, Range<Frame> block, int quantizerStep) const
 {
 	for (const Channel& c : channels.getAll())
 		if (!c.isInternal())
@@ -296,8 +296,8 @@ Peak Mixer::makePeak(const mcl::AudioBuffer& b) const
 
 /* -------------------------------------------------------------------------- */
 
-Frame Mixer::lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf, Frame inputTracker,
-    Frame maxFrames, float inVol, bool allowsOverdub) const
+int Mixer::lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf, Frame inputTracker,
+    int maxFrames, float inVol, bool allowsOverdub) const
 {
 	assert(maxFrames > 0 && maxFrames <= recBuf.countFrames());
 	assert(onEndOfRecording != nullptr);
@@ -309,7 +309,7 @@ Frame Mixer::lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf, 
 		return 0;
 	}
 
-	const Frame framesToCopy = -1; // copy everything
+	const int   framesToCopy = -1; // copy everything
 	const Frame srcOffset    = 0;
 	const Frame destOffset   = inputTracker % maxFrames; // loop over at maxFrames
 

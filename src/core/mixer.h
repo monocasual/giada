@@ -66,7 +66,7 @@ public:
 	struct RecordInfo
 	{
 		Frame position;
-		Frame maxLength;
+		int   maxLength;
 	};
 
 	Mixer(model::Model&);
@@ -95,7 +95,7 @@ public:
 	/* reset
 	Brings everything back to the initial state. */
 
-	void reset(Frame framesInLoop, Frame framesInBuffer);
+	void reset(int framesInLoop, int framesInBuffer);
 
 	/* enable, disable
 	Toggles master callback processing. Useful to suspend the rendering. */
@@ -106,7 +106,7 @@ public:
 	/* allocRecBuffer
 	Allocates new memory for the virtual input channel. */
 
-	void allocRecBuffer(Frame frames);
+	void allocRecBuffer(int frames);
 
 	/* clearRecBuffer
 	Clears internal virtual channel. */
@@ -120,8 +120,8 @@ public:
 	const mcl::AudioBuffer& getRecBuffer();
 
 	/* startInputRec, stopInputRec
-	Starts/stops input recording on frame 'from'. The latter returns the number 
-	of recorded frames. */
+	Starts/stops input recording on frame 'from'. The latter returns the frame
+	where the recording ended. */
 
 	void  startInputRec(Frame from);
 	Frame stopInputRec();
@@ -135,7 +135,7 @@ public:
 	sequencer is running. */
 
 	void advanceChannels(const Sequencer::EventBuffer&, const model::Channels&,
-	    Range<Frame>, Frame quantizerStep) const;
+	    Range<Frame>, int quantizerStep) const;
 
 	/* updateSoloCount
     Updates the number of solo-ed channels in mixer. */
@@ -179,8 +179,8 @@ private:
 	before the internal tracker loops over. The value changes whether you are 
 	recording in RIGID or FREE mode. Returns the number of recorded frames. */
 
-	Frame lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf,
-	    Frame inputTracker, Frame maxFrames, float inVol, bool allowsOverdub) const;
+	int lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf,
+	    Frame inputTracker, int maxFrames, float inVol, bool allowsOverdub) const;
 
 	/* processLineIn
 	Computes line in peaks and prepares the internal working buffer for input

@@ -394,8 +394,8 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 	if (sequencer.isRunning())
 	{
 		const Frame        currentFrame  = sequencer.a_getCurrentFrame();
-		const Frame        bufferSize    = in.countFrames();
-		const Frame        quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
+		const int          bufferSize    = in.countFrames();
+		const int          quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
 		const Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
 		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelInfo.sampleRate, m_actionRecorder);
@@ -406,7 +406,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 
 	/* Then render Mixer: render channels, process I/O. */
 
-	const Frame maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelInfo.sampleRate) : sequencer.framesInLoop;
+	const int maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelInfo.sampleRate) : sequencer.framesInLoop;
 	m_mixer.render(out, in, layout_RT, maxFramesToRec);
 
 	return 0;
