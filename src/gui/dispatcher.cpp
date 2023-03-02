@@ -75,7 +75,7 @@ found, trigger the key-press/key-release function. */
 
 void Dispatcher::dispatchChannels(int event) const
 {
-	m_mainWindow->keyboard->forEachChannel([=](geChannel& c) {
+	m_mainWindow->keyboard->forEachChannel([this, event](geChannel& c) {
 		if (c.handleKey(event))
 			perform(c.getData().id, event);
 	});
