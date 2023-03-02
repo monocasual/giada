@@ -280,7 +280,7 @@ void ChannelManager::keyPress(ID channelId, int velocity, bool canRecordActions,
 		ch.midiController->keyPress(ch.shared->playStatus);
 	if (ch.sampleActionRecorder && ch.hasWave() && canRecordActions && !ch.samplePlayer->isAnyLoopMode())
 		ch.sampleActionRecorder->keyPress(channelId, *ch.shared, currentFrameQuantized, ch.samplePlayer->mode, ch.hasActions);
-	if (ch.sampleReactor)
+	if (ch.sampleReactor && ch.hasWave())
 		ch.sampleReactor->keyPress(channelId, *ch.shared, ch.samplePlayer->mode, velocity, canQuantize, ch.samplePlayer->isAnyLoopMode(), ch.samplePlayer->velocityAsVol, ch.volume_i);
 
 	m_model.swap(model::SwapType::SOFT);
@@ -294,7 +294,7 @@ void ChannelManager::keyRelease(ID channelId, bool canRecordActions, Frame curre
 
 	if (ch.sampleActionRecorder && ch.hasWave() && canRecordActions && !ch.samplePlayer->isAnyLoopMode())
 		ch.sampleActionRecorder->keyRelease(channelId, canRecordActions, currentFrameQuantized, ch.samplePlayer->mode, ch.hasActions);
-	if (ch.sampleReactor)
+	if (ch.sampleReactor && ch.hasWave())
 		ch.sampleReactor->keyRelease(*ch.shared, ch.samplePlayer->mode);
 
 	m_model.swap(model::SwapType::SOFT);
