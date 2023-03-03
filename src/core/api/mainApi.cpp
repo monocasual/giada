@@ -212,10 +212,10 @@ void MainApi::setBeats(int beats, int bars)
 	if (m_mixer.isRecordingInput())
 		return;
 
-	const int sampleRate      = m_kernelAudio.getSampleRate();
-	const int maxFramesInLoop = m_sequencer.getMaxFramesInLoop(sampleRate);
-
+	const int sampleRate = m_kernelAudio.getSampleRate();
 	m_sequencer.setBeats(beats, bars, sampleRate);
+
+	const int maxFramesInLoop = m_sequencer.getMaxFramesInLoop(sampleRate);
 	m_mixer.allocRecBuffer(maxFramesInLoop);
 }
 
