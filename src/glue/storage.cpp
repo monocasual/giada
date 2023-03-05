@@ -136,7 +136,7 @@ void saveProject(void* data)
 	if (g_engine.getStorageApi().storeProject(projectName, projectPath, g_ui.model, engineProgress))
 	{
 		g_ui.setMainWindowTitle(projectName);
-		g_ui.model.patchPath = u::fs::getUpDir(u::fs::getUpDir(projectPath));
+		g_ui.model.patchPath = u::fs::getUpDir(projectPath);
 		browser->do_callback();
 	}
 	else
