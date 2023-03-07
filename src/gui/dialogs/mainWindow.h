@@ -29,6 +29,7 @@
 
 #include "gui/dialogs/progress.h"
 #include "window.h"
+#include <string>
 
 namespace giada::v
 {
