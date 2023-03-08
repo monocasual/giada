@@ -143,7 +143,8 @@ void ChannelsApi::clone(ID channelId)
 	const ID                   nextChannelId   = channelFactory::getNextId();
 
 	m_channelManager.cloneChannel(channelId, bufferSize, plugins);
-	m_actionRecorder.cloneActions(channelId, nextChannelId);
+	if (ch.hasActions)
+		m_actionRecorder.cloneActions(channelId, nextChannelId);
 }
 
 /* -------------------------------------------------------------------------- */
