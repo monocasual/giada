@@ -45,24 +45,19 @@ geMidiLearner::geMidiLearner(int x, int y, int w, int h, std::string l, int para
 , m_param(param)
 {
 	m_text     = new geBox(l.c_str());
-	m_valueBtn = new geTextButton("");
+	m_value    = new geBox("");
 	m_learnBtn = new geTextButton(g_ui.getI18Text(LangMap::COMMON_LEARN));
+	m_clearBtn = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLEAR));
 
 	add(m_text);
-	add(m_valueBtn, 80);
+	add(m_value, 80);
 	add(m_learnBtn, 50);
+	add(m_clearBtn, 50);
 	end();
 
 	m_text->box(G_CUSTOM_BORDER_BOX);
 
-	m_valueBtn->box(G_CUSTOM_BORDER_BOX);
-	m_valueBtn->when(FL_WHEN_RELEASE);
-	m_valueBtn->onClick = [this]() {
-		assert(onClearLearn != nullptr);
-
-		if (Fl::event_button() == FL_RIGHT_MOUSE)
-			onClearLearn(m_param);
-	};
+	m_value->box(G_CUSTOM_BORDER_BOX);
 
 	m_learnBtn->setToggleable(true);
 	m_learnBtn->onClick = [this]() {
@@ -73,6 +68,10 @@ geMidiLearner::geMidiLearner(int x, int y, int w, int h, std::string l, int para
 			onStartLearn(m_param);
 		else
 			onStopLearn();
+	};
+
+	m_clearBtn->onClick = [this]() {
+		onClearLearn(m_param);
 	};
 }
 
@@ -89,7 +88,7 @@ void geMidiLearner::update(uint32_t value)
 		tmp.pop_back(); // Remove last two digits, useless in MIDI messages
 	}
 
-	m_valueBtn->copy_label(tmp.c_str());
+	m_value->copy_label(tmp.c_str());
 	m_learnBtn->setValue(0);
 }
 
@@ -97,7 +96,7 @@ void geMidiLearner::update(uint32_t value)
 
 void geMidiLearner::update(const std::string& s)
 {
-	m_valueBtn->copy_label(s.c_str());
+	m_value->copy_label(s.c_str());
 	m_learnBtn->setValue(0);
 }
 
@@ -106,14 +105,16 @@ void geMidiLearner::update(const std::string& s)
 void geMidiLearner::activate()
 {
 	Fl_Group::activate();
-	m_valueBtn->activate();
+	m_value->activate();
 	m_learnBtn->activate();
+	m_clearBtn->activate();
 }
 
 void geMidiLearner::deactivate()
 {
 	Fl_Group::deactivate();
-	m_valueBtn->deactivate();
+	m_value->deactivate();
 	m_learnBtn->deactivate();
+	m_clearBtn->deactivate();
 }
 } // namespace giada::v
