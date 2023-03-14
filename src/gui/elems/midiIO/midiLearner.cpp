@@ -105,6 +105,7 @@ void geMidiLearner::update(const std::string& s)
 void geMidiLearner::activate()
 {
 	Fl_Group::activate();
+	m_text->activate();
 	m_value->activate();
 	m_learnBtn->activate();
 	m_clearBtn->activate();
@@ -113,6 +114,7 @@ void geMidiLearner::activate()
 void geMidiLearner::deactivate()
 {
 	Fl_Group::deactivate();
+	m_text->deactivate();
 	m_value->deactivate();
 	m_learnBtn->deactivate();
 	m_clearBtn->deactivate();
