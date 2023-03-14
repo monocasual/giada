@@ -466,7 +466,7 @@ if(DEFINED OS_LINUX)
 		${X11_LIBRARIES} ${X11_Xrender_LIB} ${X11_Xft_LIB} ${X11_Xfixes_LIB}
 		${X11_Xinerama_LIB} ${X11_Xcursor_LIB} ${X11_Xpm_LIB} ${LIBRARY_PULSE}
 		${LIBRARY_PULSE_SIMPLE} ${LIBRARY_FONTCONFIG} ${JACK_LDFLAGS}
-		${CMAKE_DL_LIBS} asound pthread stdc++fs)
+		${CMAKE_DL_LIBS} ${ALSA_LIBRARIES} pthread stdc++fs)
 
 	if (WITH_ALSA)
 		list(APPEND PREPROCESSOR_DEFS __LINUX_ALSA__)
