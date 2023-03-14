@@ -32,7 +32,7 @@
 
 namespace giada::v
 {
-constexpr int LEARNER_WIDTH = 284;
+constexpr int LEARNER_WIDTH = 334;
 
 /* -------------------------------------------------------------------------- */
 
