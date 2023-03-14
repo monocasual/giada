@@ -65,7 +65,7 @@ protected:
 
 	geBox*        m_text;
 	geTextButton* m_valueBtn;
-	geTextButton* m_button;
+	geTextButton* m_learnBtn;
 };
 } // namespace giada::v
 
