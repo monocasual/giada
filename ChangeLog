@@ -11,6 +11,18 @@
 --------------------------------------------------------------------------------
 
 
+0.24.0 --- 2023 . 03 . 15
+- Revamped MIDI sync Clock support
+- MIDI engine refactoring, featuring multi-threading support
+- UI: Resizable vu-meters
+- UI: New global MIDI activity leds  
+- More core classes and functions refactoring
+- More robust persistence mechanism for project and configuration files
+- Add new tests suites for MidiEvent and ChannelFactory
+- Set C++ version to C++20
+- Update FLTK to latest commit available
+
+
 0.23.2 --- 2022 . 12 . 05
 - 'Kill channel' action now rewinds channels in SINGLE_BASIC_PAUSE mode (#599)
 - Update FLTK to latest commit available
