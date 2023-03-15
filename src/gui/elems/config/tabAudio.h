@@ -64,18 +64,6 @@ public:
 
 	void save();
 
-	geChoice*      soundsys;
-	geChoice*      buffersize;
-	geChoice*      samplerate;
-	geDeviceMenu*  sounddevOut;
-	geChannelMenu* channelsOut;
-	geCheck*       limitOutput;
-	geDeviceMenu*  sounddevIn;
-	geCheck*       enableIn;
-	geChannelMenu* channelsIn;
-	geInput*       recTriggerLevel;
-	geChoice*      rsmpQuality;
-
 private:
 	void invalidate();
 	void fetch();
@@ -83,6 +71,18 @@ private:
 	void activateAll();
 
 	c::config::AudioData m_data;
+
+	geChoice*      m_api;
+	geChoice*      m_bufferSize;
+	geChoice*      m_sampleRate;
+	geDeviceMenu*  m_sounddevOut;
+	geChannelMenu* m_channelsOut;
+	geCheck*       m_limitOutput;
+	geDeviceMenu*  m_sounddevIn;
+	geCheck*       m_enableIn;
+	geChannelMenu* m_channelsIn;
+	geInput*       m_recTriggerLevel;
+	geChoice*      m_rsmpQuality;
 
 	int m_initialApi;
 };
