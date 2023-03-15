@@ -50,18 +50,27 @@ KernelAudio::KernelAudio()
 
 /* -------------------------------------------------------------------------- */
 
-int KernelAudio::openDevice(const model::KernelAudio& model)
+void KernelAudio::init(RtAudio::Api api)
 {
-	assert(onAudioCallback != nullptr);
+	u::log::print("[KA] using API %d\n", api);
 
-	u::log::print("[KA] using API %d\n", model.soundSystem);
+	if (m_rtAudio != nullptr)
+		closeDevice();
 
-	m_api     = model.soundSystem;
+	m_api     = api;
 	m_rtAudio = std::make_unique<RtAudio>(m_api);
 
 	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg) {
 		u::log::print("[KA] RtAudio error %d: %s\n", type, msg.c_str());
 	});
+}
+
+/* -------------------------------------------------------------------------- */
+
+int KernelAudio::openDevice(const model::KernelAudio& model)
+{
+	assert(onAudioCallback != nullptr);
+	assert(m_rtAudio != nullptr);
 
 	u::log::print("[KA] Opening device out=%d, in=%d, samplerate=%d\n",
 	    model.soundDeviceOut, model.soundDeviceIn, model.samplerate);

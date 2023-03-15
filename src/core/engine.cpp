@@ -273,6 +273,7 @@ void Engine::init(const Conf& conf)
 	/* Initialize KernelAudio. If fails, interrupt the Engine initialization:
 	Giada can't work without a working KernelAudio. */
 
+	m_kernelAudio.init(layout.kernelAudio.soundSystem);
 	m_kernelAudio.openDevice(layout.kernelAudio);
 	if (!m_kernelAudio.isReady())
 		return;

@@ -78,6 +78,12 @@ public:
 
 	static void logCompiledAPIs();
 
+	/* init
+	Initializes the RtAudio object with a given API. Closes any existing and
+	running streams. */
+
+	void init(RtAudio::Api);
+
 	int  openDevice(const model::KernelAudio&);
 	void closeDevice();
 	int  startStream();
