@@ -38,7 +38,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
-: gdMidiOutputBase(300, 140, channelId)
+: gdMidiOutputBase(350, 140, channelId)
 {
 	end();
 
