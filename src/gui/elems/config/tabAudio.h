@@ -42,12 +42,14 @@ class geTabAudio : public Fl_Group
 public:
 	struct geDeviceMenu : public geChoice
 	{
-		geDeviceMenu(const char* l, const std::vector<c::config::AudioDeviceData>&);
+		geDeviceMenu(const char* l);
+
+		void rebuild(const std::vector<c::config::AudioDeviceData>&);
 	};
 
 	struct geChannelMenu : public geChoice
 	{
-		geChannelMenu(const char* l, const c::config::AudioDeviceData&);
+		geChannelMenu(const char* l);
 
 		int getChannelsCount() const;
 		int getChannelsStart() const;
@@ -56,8 +58,6 @@ public:
 
 	private:
 		static constexpr int STEREO_OFFSET = 1000;
-
-		c::config::AudioDeviceData m_data;
 	};
 
 	geTabAudio(geompp::Rect<int>);
@@ -65,8 +65,9 @@ public:
 	void save();
 
 private:
-	void invalidate();
-	void fetch();
+	void rebuild(const c::config::AudioData&);
+	void refreshDevOutProperties();
+	void refreshDevInProperties();
 	void deactivateAll();
 	void activateAll();
 
@@ -83,8 +84,6 @@ private:
 	geChannelMenu* m_channelsIn;
 	geInput*       m_recTriggerLevel;
 	geChoice*      m_rsmpQuality;
-
-	int m_initialApi;
 };
 } // namespace giada::v
 
