@@ -40,6 +40,7 @@ Engine::Engine()
 : onMidiReceived(nullptr)
 , onMidiSent(nullptr)
 , onModelSwap(nullptr)
+, m_kernelAudio(m_model)
 , m_midiMapper(m_kernelMidi)
 , m_pluginHost(m_model)
 , m_midiSynchronizer(m_model, m_kernelMidi)
@@ -273,8 +274,8 @@ void Engine::init(const Conf& conf)
 	/* Initialize KernelAudio. If fails, interrupt the Engine initialization:
 	Giada can't work without a working KernelAudio. */
 
-	m_kernelAudio.init(layout.kernelAudio.soundSystem);
-	m_kernelAudio.openDevice(layout.kernelAudio);
+	m_kernelAudio.init();
+	m_kernelAudio.openDevice();
 	if (!m_kernelAudio.isReady())
 		return;
 

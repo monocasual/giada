@@ -35,6 +35,7 @@ namespace giada::m::model
 {
 struct KernelAudio
 {
+	bool               ready            = false;
 	RtAudio::Api       soundSystem      = G_DEFAULT_SOUNDSYS;
 	int                soundDeviceOut   = G_DEFAULT_SOUNDDEV_OUT;
 	int                soundDeviceIn    = G_DEFAULT_SOUNDDEV_IN;
@@ -43,7 +44,7 @@ struct KernelAudio
 	int                channelsInCount  = 1;
 	int                channelsInStart  = 0;
 	int                samplerate       = G_DEFAULT_SAMPLERATE;
-	int                buffersize       = G_DEFAULT_BUFSIZE;
+	unsigned int       buffersize       = G_DEFAULT_BUFSIZE;
 	bool               limitOutput      = false;
 	Resampler::Quality rsmpQuality      = Resampler::Quality::LINEAR;
 	float              recTriggerLevel  = 0.0f;

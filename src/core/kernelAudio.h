@@ -27,6 +27,7 @@
 #ifndef G_KERNELAUDIO_H
 #define G_KERNELAUDIO_H
 
+#include "core/model/model.h"
 #include "core/weakAtomic.h"
 #include "deps/rtaudio/RtAudio.h"
 #include <cstddef>
@@ -74,24 +75,23 @@ public:
 		int          channelsInCount;
 	};
 
-	KernelAudio();
+	KernelAudio(model::Model&);
 
 	static void logCompiledAPIs();
 
 	/* init
-	Initializes the RtAudio object with a given API. Closes any existing and
-	running streams. */
+	Initializes the RtAudio object. Closes any existing and	running streams. */
 
-	void init(RtAudio::Api);
+	void init();
 
-	int  openDevice(const model::KernelAudio&);
+	int  openDevice();
 	void closeDevice();
 	int  startStream();
 	int  stopStream();
 
 	bool                       isReady() const;
 	bool                       isInputEnabled() const;
-	int                        getBufferSize() const;
+	unsigned int               getBufferSize() const;
 	int                        getSampleRate() const;
 	int                        getChannelsOutCount() const;
 	int                        getChannelsInCount() const;
@@ -120,13 +120,8 @@ private:
 	std::vector<Device>      m_devices;
 	std::unique_ptr<RtAudio> m_rtAudio;
 	CallbackInfo             m_callbackInfo;
-	WeakAtomic<bool>         m_ready;
-	WeakAtomic<bool>         m_inputEnabled;
-	unsigned                 m_realBufferSize; // Real buffer size from the soundcard
-	int                      m_realSampleRate; // Sample rate might differ if JACK in use
-	int                      m_channelsOutCount;
-	int                      m_channelsInCount;
-	RtAudio::Api             m_api;
+
+	model::Model& m_model;
 };
 } // namespace giada::m
 
