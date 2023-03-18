@@ -51,11 +51,11 @@ struct AudioDeviceData
 	AudioDeviceData() = default;
 	AudioDeviceData(DeviceType t, const m::KernelAudio::Device&, int channelsCount, int channelsStart);
 
-	DeviceType       type        = DeviceType::OUTPUT;
-	int              index       = -1;
-	std::string      name        = "";
-	int              channelsMax = 0;
-	std::vector<int> sampleRates = {};
+	DeviceType                type        = DeviceType::OUTPUT;
+	int                       index       = -1;
+	std::string               name        = "";
+	int                       channelsMax = 0;
+	std::vector<unsigned int> sampleRates = {};
 
 	/* Selectable values. */
 

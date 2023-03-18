@@ -51,15 +51,15 @@ class KernelAudio final
 public:
 	struct Device
 	{
-		size_t           index             = 0;
-		bool             probed            = false;
-		std::string      name              = "";
-		int              maxOutputChannels = 0;
-		int              maxInputChannels  = 0;
-		int              maxDuplexChannels = 0;
-		bool             isDefaultOut      = false;
-		bool             isDefaultIn       = false;
-		std::vector<int> sampleRates       = {};
+		size_t                    index             = 0;
+		bool                      probed            = false;
+		std::string               name              = "";
+		int                       maxOutputChannels = 0;
+		int                       maxInputChannels  = 0;
+		int                       maxDuplexChannels = 0;
+		bool                      isDefaultOut      = false;
+		bool                      isDefaultIn       = false;
+		std::vector<unsigned int> sampleRates       = {};
 	};
 
 	struct CallbackInfo

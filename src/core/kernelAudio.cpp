@@ -300,7 +300,7 @@ m::KernelAudio::Device KernelAudio::fetchDevice(size_t deviceIndex) const
 	    static_cast<int>(info.duplexChannels),
 	    info.isDefaultOutput,
 	    info.isDefaultInput,
-	    u::vector::cast<int>(info.sampleRates)};
+	    info.sampleRates};
 }
 
 /* -------------------------------------------------------------------------- */

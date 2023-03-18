@@ -263,7 +263,7 @@ void geTabAudio::invalidate()
 
 void geTabAudio::fetch()
 {
-	for (int sampleRate : m_data.outputDevice.sampleRates)
+	for (unsigned int sampleRate : m_data.outputDevice.sampleRates)
 		m_sampleRate->addItem(std::to_string(sampleRate), sampleRate);
 	m_sampleRate->showItem(m_data.sampleRate);
 
