@@ -208,16 +208,6 @@ bool KernelAudio::isInputEnabled() const { return m_inputEnabled.load(); }
 
 /* -------------------------------------------------------------------------- */
 
-m::KernelAudio::Device KernelAudio::getDevice(const char* name) const
-{
-	for (Device device : m_devices)
-		if (name == device.name)
-			return device;
-	return {0, false};
-}
-
-/* -------------------------------------------------------------------------- */
-
 const std::vector<m::KernelAudio::Device>& KernelAudio::getDevices() const
 {
 	return m_devices;

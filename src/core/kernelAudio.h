@@ -91,7 +91,6 @@ public:
 	int                        getChannelsInCount() const;
 	bool                       hasAPI(int API) const;
 	RtAudio::Api               getAPI() const;
-	Device                     getDevice(const char* name) const;
 	const std::vector<Device>& getDevices() const;
 #ifdef WITH_AUDIO_JACK
 	jack_client_t* getJackHandle() const;
