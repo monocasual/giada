@@ -84,10 +84,10 @@ public:
 
 	void init();
 
-	int  openStream();
+	bool openStream();
 	bool startStream();
-	int  stopStream();
-	int  shutdown();
+	bool stopStream();
+	void shutdown();
 
 	bool                isReady() const;
 	bool                isInputEnabled() const;

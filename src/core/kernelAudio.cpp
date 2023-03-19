@@ -65,7 +65,7 @@ void KernelAudio::init()
 
 /* -------------------------------------------------------------------------- */
 
-int KernelAudio::openStream()
+bool KernelAudio::openStream()
 {
 	assert(onAudioCallback != nullptr);
 	assert(m_rtAudio != nullptr);
@@ -81,7 +81,7 @@ int KernelAudio::openStream()
 	/* Abort here if devices found are zero. */
 
 	if (m_rtAudio->getDeviceCount() == 0)
-		return 0;
+		return false;
 
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
@@ -147,40 +147,38 @@ int KernelAudio::openStream()
 	    &m_callbackInfo,                                       // user data passed to callback
 	    &options);
 
-	if (res == RtAudioErrorType::RTAUDIO_NO_ERROR)
-	{
-		kernelAudio.ready = true;
+	if (res != RtAudioErrorType::RTAUDIO_NO_ERROR)
+		return false;
 
-		m_model.get().kernelAudio = kernelAudio;
-		m_model.swap(model::SwapType::NONE);
-		return 1;
-	}
-	else
-		return 0;
+	kernelAudio.ready = true;
+
+	m_model.get().kernelAudio = kernelAudio;
+	m_model.swap(model::SwapType::NONE);
+	return true;
 }
 
 /* -------------------------------------------------------------------------- */
 
-int KernelAudio::startStream()
+bool KernelAudio::startStream()
 {
 	if (m_rtAudio->startStream() == RtAudioErrorType::RTAUDIO_NO_ERROR)
 	{
 		u::log::print("[KA] Start stream - latency = %lu\n", m_rtAudio->getStreamLatency());
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
 /* -------------------------------------------------------------------------- */
 
-int KernelAudio::stopStream()
+bool KernelAudio::stopStream()
 {
 	if (m_rtAudio->stopStream() == RtAudioErrorType::RTAUDIO_NO_ERROR)
 	{
 		u::log::print("[KA] Stop stream\n");
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
 /* -------------------------------------------------------------------------- */
