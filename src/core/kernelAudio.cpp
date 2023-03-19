@@ -156,10 +156,7 @@ int KernelAudio::openStream()
 		return 1;
 	}
 	else
-	{
-		closeStream();
 		return 0;
-	}
 }
 
 /* -------------------------------------------------------------------------- */
