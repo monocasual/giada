@@ -43,7 +43,7 @@ struct KernelAudio
 	int                channelsOutStart = 0;
 	int                channelsInCount  = 1;
 	int                channelsInStart  = 0;
-	int                samplerate       = G_DEFAULT_SAMPLERATE;
+	unsigned int       samplerate       = G_DEFAULT_SAMPLERATE;
 	unsigned int       buffersize       = G_DEFAULT_BUFSIZE;
 	bool               limitOutput      = false;
 	Resampler::Quality rsmpQuality      = Resampler::Quality::LINEAR;
