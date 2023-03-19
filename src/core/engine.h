@@ -146,7 +146,7 @@ public:
 	std::function<void(model::SwapType)> onModelSwap;
 
 private:
-	int  audioCallback(KernelAudio::CallbackInfo) const;
+	int  audioCallback(mcl::AudioBuffer& out, const mcl::AudioBuffer& in) const;
 	void registerThread(Thread, bool isRealtime) const;
 
 	Patch                  m_patch;

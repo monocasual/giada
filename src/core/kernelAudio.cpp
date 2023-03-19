@@ -30,6 +30,7 @@
 #include "core/const.h"
 #include "core/model/kernelAudio.h"
 #include "core/model/model.h"
+#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "utils/log.h"
 #include "utils/vector.h"
 #include <cassert>
@@ -70,10 +71,10 @@ bool KernelAudio::openStream()
 	assert(onAudioCallback != nullptr);
 	assert(m_rtAudio != nullptr);
 
-	/* Make a local copy of model::KernelAudio data: the model will be updated 
+	/* Take a mutable ref of model::KernelAudio data: the model will be updated 
 	later on with some changes, if the stream has been opened successfully. */
 
-	model::KernelAudio kernelAudio = m_model.get().kernelAudio;
+	model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
 	u::log::print("[KA] Opening device out=%d, in=%d, samplerate=%d\n",
 	    kernelAudio.soundDeviceOut, kernelAudio.soundDeviceIn, kernelAudio.samplerate);
@@ -107,8 +108,7 @@ bool KernelAudio::openStream()
 
 #ifdef WITH_AUDIO_JACK
 
-	/* If JACK, use its own sample rate, not the one coming from the conf
-	object. */
+	/* If JACK, use its own sample rate. */
 
 	if (kernelAudio.soundSystem == RtAudio::Api::UNIX_JACK)
 	{
@@ -124,18 +124,12 @@ bool KernelAudio::openStream()
 		kernelAudio.samplerate = jackSampleRate;
 	}
 
-#endif
-
 	m_callbackInfo = {
-	    /* kernelAudio      = */ this,
-	    /* ready            = */ true,
-	    /* withJack         = */ getAPI() == RtAudio::Api::UNIX_JACK,
-	    /* outBuf           = */ nullptr, // filled later on in audio callback
-	    /* inBuf            = */ nullptr, // filled later on in audio callback
-	    /* bufferSize       = */ 0,       // filled later on in audio callback
-	    /* sampleRate       = */ kernelAudio.samplerate,
-	    /* channelsOutCount = */ kernelAudio.channelsOutCount,
-	    /* channelsInCount  = */ kernelAudio.channelsInCount};
+	    /* rtAudio */ this,
+	    /* channelsOutCount */ kernelAudio.channelsOutCount,
+	    /* channelsInCount */ kernelAudio.channelsInCount};
+
+#endif
 
 	RtAudioErrorType res = m_rtAudio->openStream(
 	    &outParams,                                            // output params
@@ -324,10 +318,13 @@ void KernelAudio::printDevices(const std::vector<m::KernelAudio::Device>& device
 int KernelAudio::audioCallback(void* outBuf, void* inBuf, unsigned bufferSize,
     double /*streamTime*/, RtAudioStreamStatus /*status*/, void*   data)
 {
-	CallbackInfo info = *static_cast<CallbackInfo*>(data);
-	info.outBuf       = outBuf;
-	info.inBuf        = inBuf;
-	info.bufferSize   = bufferSize;
-	return info.kernelAudio->onAudioCallback(info);
+	const CallbackInfo& info = *static_cast<CallbackInfo*>(data);
+
+	mcl::AudioBuffer out(static_cast<float*>(outBuf), bufferSize, info.channelsOutCount);
+	mcl::AudioBuffer in;
+	if (info.channelsInCount > 0)
+		in = mcl::AudioBuffer(static_cast<float*>(inBuf), bufferSize, info.channelsInCount);
+
+	return info.kernelAudio->onAudioCallback(out, in);
 }
 } // namespace giada::m

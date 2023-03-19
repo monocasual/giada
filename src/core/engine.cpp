@@ -58,8 +58,8 @@ Engine::Engine()
 , m_ioApi(m_model, m_midiDispatcher)
 , m_storageApi(*this, m_model, m_patch, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
 {
-	m_kernelAudio.onAudioCallback = [this](KernelAudio::CallbackInfo info) {
-		return audioCallback(info);
+	m_kernelAudio.onAudioCallback = [this](mcl::AudioBuffer& out, const mcl::AudioBuffer& in) {
+		return audioCallback(out, in);
 	};
 
 	m_kernelMidi.onMidiReceived = [this](const MidiEvent& e) {
@@ -350,14 +350,9 @@ void Engine::shutdown(Conf& conf)
 
 /* -------------------------------------------------------------------------- */
 
-int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
+int Engine::audioCallback(mcl::AudioBuffer& out, const mcl::AudioBuffer& in) const
 {
 	registerThread(Thread::AUDIO, /*realtime=*/true);
-
-	mcl::AudioBuffer out(static_cast<float*>(kernelInfo.outBuf), kernelInfo.bufferSize, kernelInfo.channelsOutCount);
-	mcl::AudioBuffer in;
-	if (kernelInfo.channelsInCount > 0)
-		in = mcl::AudioBuffer(static_cast<float*>(kernelInfo.inBuf), kernelInfo.bufferSize, kernelInfo.channelsInCount);
 
 	/* Clean up output buffer before any rendering. Do this even if mixer is
 	disabled to avoid audio leftovers during a temporary suspension (e.g. when
@@ -365,26 +360,24 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 
 	out.clear();
 
-	if (!kernelInfo.ready)
-		return 0;
-
 	/* Prepare the LayoutLock. From this point on (until out of scope) the
 	Layout is locked for realtime rendering by the audio thread. Rendering
 	functions must access the realtime layout coming from layoutLock.get(). */
 
-	const model::LayoutLock layoutLock = m_model.get_RT();
-	const model::Layout&    layout_RT  = layoutLock.get();
-	const model::Mixer&     mixer      = layout_RT.mixer;
-	const model::Sequencer& sequencer  = layout_RT.sequencer;
-	const model::Channels&  channels   = layout_RT.channels;
+	const model::LayoutLock   layoutLock  = m_model.get_RT();
+	const model::Layout&      layout_RT   = layoutLock.get();
+	const model::KernelAudio& kernelAudio = layout_RT.kernelAudio;
+	const model::Mixer&       mixer       = layout_RT.mixer;
+	const model::Sequencer&   sequencer   = layout_RT.sequencer;
+	const model::Channels&    channels    = layout_RT.channels;
 
-	/* Mixer disabled, nothing to do here. */
+	/* Mixer disabled or Kernel Audio not ready: nothing to do here. */
 
-	if (!mixer.a_isActive())
+	if (!mixer.a_isActive() || !kernelAudio.ready)
 		return 0;
 
 #ifdef WITH_AUDIO_JACK
-	if (kernelInfo.withJack)
+	if (kernelAudio.soundSystem == RtAudio::Api::UNIX_JACK)
 		m_jackSynchronizer.recvJackSync(m_jackTransport.getState());
 #endif
 
@@ -400,7 +393,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 		const int          quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
 		const Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
-		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelInfo.sampleRate, m_actionRecorder);
+		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, m_actionRecorder);
 		m_sequencer.render(out);
 		if (!layout_RT.locked)
 			m_mixer.advanceChannels(events, channels, renderRange, quantizerStep);
@@ -408,7 +401,7 @@ int Engine::audioCallback(KernelAudio::CallbackInfo kernelInfo) const
 
 	/* Then render Mixer: render channels, process I/O. */
 
-	const int maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelInfo.sampleRate) : sequencer.framesInLoop;
+	const int maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
 	m_mixer.render(out, in, layout_RT, maxFramesToRec);
 
 	return 0;

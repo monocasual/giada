@@ -39,6 +39,11 @@
 #include "core/jackTransport.h"
 #endif
 
+namespace mcl
+{
+class AudioBuffer;
+}
+
 namespace giada::m::model
 {
 struct KernelAudio;
@@ -60,19 +65,6 @@ public:
 		bool                      isDefaultOut      = false;
 		bool                      isDefaultIn       = false;
 		std::vector<unsigned int> sampleRates       = {};
-	};
-
-	struct CallbackInfo
-	{
-		KernelAudio* kernelAudio;
-		bool         ready;
-		bool         withJack;
-		void*        outBuf;
-		void*        inBuf;
-		int          bufferSize;
-		int          sampleRate;
-		int          channelsOutCount;
-		int          channelsInCount;
 	};
 
 	KernelAudio(model::Model&);
@@ -105,9 +97,16 @@ public:
 	/* onAudioCallback
 	Main callback invoked on each audio block. */
 
-	std::function<int(CallbackInfo)> onAudioCallback;
+	std::function<int(mcl::AudioBuffer& out, const mcl::AudioBuffer& in)> onAudioCallback;
 
 private:
+	struct CallbackInfo
+	{
+		KernelAudio* kernelAudio      = nullptr;
+		int          channelsOutCount = 0;
+		int          channelsInCount  = 0;
+	};
+
 	static int audioCallback(void*, void*, unsigned, double, RtAudioStreamStatus, void*);
 
 	Device fetchDevice(size_t deviceIndex) const;
@@ -118,8 +117,7 @@ private:
 #endif
 	std::unique_ptr<RtAudio> m_rtAudio;
 	CallbackInfo             m_callbackInfo;
-
-	model::Model& m_model;
+	model::Model&            m_model;
 };
 } // namespace giada::m
 
