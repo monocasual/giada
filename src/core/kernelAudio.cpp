@@ -179,10 +179,10 @@ bool KernelAudio::stopStream()
 
 void KernelAudio::shutdown()
 {
-	if (!m_rtAudio->isStreamOpen())
-		return;
-	m_rtAudio->stopStream();
-	m_rtAudio->closeStream();
+	if (m_rtAudio->isStreamRunning())
+		m_rtAudio->stopStream();
+	if (m_rtAudio->isStreamOpen())
+		m_rtAudio->closeStream();
 	m_rtAudio.reset(nullptr);
 }
 
