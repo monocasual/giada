@@ -30,6 +30,7 @@
 #define G_UTILS_STRING_H
 
 #include "core/types.h"
+#include "deps/rtaudio/RtAudio.h"
 #include <sstream>
 #include <string>
 #include <vector>
@@ -46,6 +47,7 @@ std::vector<std::string> split(std::string in, std::string sep);
 std::string format(const char* format, ...);
 
 std::string toString(Thread);
+std::string toString(RtAudio::Api);
 
 /* toFloat, toInt
 Convert a string to numbers. Like std::stof, std::stoi, just safer. */

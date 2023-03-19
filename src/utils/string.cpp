@@ -122,6 +122,33 @@ std::string toString(Thread t)
 
 /* -------------------------------------------------------------------------- */
 
+std::string toString(RtAudio::Api api)
+{
+	switch (api)
+	{
+	case RtAudio::Api::LINUX_ALSA:
+		return "ALSA";
+	case RtAudio::Api::LINUX_PULSE:
+		return "PulseAudio";
+	case RtAudio::Api::UNIX_JACK:
+		return "JACK";
+	case RtAudio::Api::MACOSX_CORE:
+		return "CoreAudio";
+	case RtAudio::Api::WINDOWS_WASAPI:
+		return "WASAPI";
+	case RtAudio::Api::WINDOWS_ASIO:
+		return "ASIO";
+	case RtAudio::Api::WINDOWS_DS:
+		return "DirectSound";
+	case RtAudio::Api::RTAUDIO_DUMMY:
+		return "Dummy";
+	default:
+		return "(unknown)";
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
 float toFloat(const std::string& s)
 {
 	try

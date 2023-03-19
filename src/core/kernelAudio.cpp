@@ -32,6 +32,7 @@
 #include "core/model/model.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "utils/log.h"
+#include "utils/string.h"
 #include "utils/vector.h"
 #include <cassert>
 #include <cstddef>
@@ -50,7 +51,7 @@ void KernelAudio::init()
 {
 	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
-	u::log::print("[KA] using API %d\n", kernelAudio.soundSystem);
+	u::log::print("[KA] using API %s\n", u::string::toString(kernelAudio.soundSystem).c_str());
 
 	if (m_rtAudio != nullptr)
 		shutdown();
@@ -238,38 +239,7 @@ void KernelAudio::logCompiledAPIs()
 	u::log::print("[KA] Compiled RtAudio APIs: %d\n", APIs.size());
 
 	for (const RtAudio::Api& api : APIs)
-	{
-		switch (api)
-		{
-		case RtAudio::Api::LINUX_ALSA:
-			u::log::print("  ALSA\n");
-			break;
-		case RtAudio::Api::LINUX_PULSE:
-			u::log::print("  PulseAudio\n");
-			break;
-		case RtAudio::Api::UNIX_JACK:
-			u::log::print("  JACK\n");
-			break;
-		case RtAudio::Api::MACOSX_CORE:
-			u::log::print("  CoreAudio\n");
-			break;
-		case RtAudio::Api::WINDOWS_WASAPI:
-			u::log::print("  WASAPI\n");
-			break;
-		case RtAudio::Api::WINDOWS_ASIO:
-			u::log::print("  ASIO\n");
-			break;
-		case RtAudio::Api::WINDOWS_DS:
-			u::log::print("  DirectSound\n");
-			break;
-		case RtAudio::Api::RTAUDIO_DUMMY:
-			u::log::print("  Dummy\n");
-			break;
-		default:
-			u::log::print("  (unknown)\n");
-			break;
-		}
-	}
+		u::log::print("  %s\n", u::string::toString(api).c_str());
 }
 
 /* -------------------------------------------------------------------------- */
