@@ -74,7 +74,7 @@ public:
 	/* init
 	Initializes the RtAudio object. Closes any existing and	running streams. */
 
-	void init();
+	void init(RtAudio::Api api);
 
 	bool openStream();
 	bool startStream();

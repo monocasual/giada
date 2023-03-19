@@ -47,22 +47,23 @@ KernelAudio::KernelAudio(model::Model& model)
 
 /* -------------------------------------------------------------------------- */
 
-void KernelAudio::init()
+void KernelAudio::init(RtAudio::Api api)
 {
-	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
-
-	u::log::print("[KA] using API %s\n", u::string::toString(kernelAudio.soundSystem).c_str());
+	u::log::print("[KA] using API %s\n", u::string::toString(api).c_str());
 
 	if (m_rtAudio != nullptr)
 		shutdown();
 
-	m_rtAudio = std::make_unique<RtAudio>(kernelAudio.soundSystem);
+	m_rtAudio = std::make_unique<RtAudio>(api);
 
 	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg) {
 		u::log::print("[KA] RtAudio error %d: %s\n", type, msg.c_str());
 	});
 
-	printDevices(getDevices());
+	m_model.get().kernelAudio.soundSystem = api;
+	m_model.swap(model::SwapType::NONE);
+
+	printDevices(getAvailableDevices());
 }
 
 /* -------------------------------------------------------------------------- */
