@@ -67,6 +67,18 @@ public:
 		std::vector<unsigned int> sampleRates       = {};
 	};
 
+	struct StreamInfo
+	{
+		int          deviceOut        = G_DEFAULT_SOUNDDEV_OUT;
+		int          channelsOutCount = 0;
+		int          channelsOutStart = 0;
+		int          deviceIn         = G_DEFAULT_SOUNDDEV_IN;
+		int          channelsInCount  = 0;
+		int          channelsInStart  = 0;
+		unsigned int sampleRate       = G_DEFAULT_SAMPLERATE;
+		unsigned int bufferSize       = G_DEFAULT_BUFSIZE;
+	};
+
 	KernelAudio(model::Model&);
 
 	static void logCompiledAPIs();
@@ -76,7 +88,7 @@ public:
 
 	void init(RtAudio::Api api);
 
-	bool openStream();
+	bool openStream(const StreamInfo&);
 	bool startStream();
 	bool stopStream();
 	void shutdown();

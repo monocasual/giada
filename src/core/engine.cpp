@@ -275,7 +275,15 @@ void Engine::init(const Conf& conf)
 	Giada can't work without a working KernelAudio. */
 
 	m_kernelAudio.init(layout.kernelAudio.soundSystem);
-	m_kernelAudio.openStream();
+	m_kernelAudio.openStream({layout.kernelAudio.soundDeviceOut,
+	    layout.kernelAudio.channelsOutCount,
+	    layout.kernelAudio.channelsOutStart,
+	    layout.kernelAudio.soundDeviceIn,
+	    layout.kernelAudio.channelsInCount,
+	    layout.kernelAudio.channelsInStart,
+	    layout.kernelAudio.samplerate,
+	    layout.kernelAudio.buffersize});
+
 	if (!m_kernelAudio.isReady())
 		return;
 
