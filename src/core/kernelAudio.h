@@ -64,6 +64,8 @@ public:
 		int                       maxDuplexChannels = 0;
 		bool                      isDefaultOut      = false;
 		bool                      isDefaultIn       = false;
+		int                       channelsCount     = 0;
+		int                       channelsStart     = 0;
 		std::vector<unsigned int> sampleRates       = {};
 	};
 
@@ -95,6 +97,9 @@ public:
 
 	bool                isReady() const;
 	bool                isInputEnabled() const;
+	bool                isLimitOutput() const;
+	float               getRecTriggerLevel() const;
+	Resampler::Quality  getResamplerQuality() const;
 	unsigned int        getBufferSize() const;
 	int                 getSampleRate() const;
 	int                 getChannelsOutCount() const;
@@ -102,6 +107,8 @@ public:
 	bool                hasAPI(int API) const;
 	RtAudio::Api        getAPI() const;
 	std::vector<Device> getAvailableDevices() const;
+	Device              getCurrentOutDevice() const;
+	Device              getCurrentInDevice() const;
 #ifdef WITH_AUDIO_JACK
 	jack_client_t* getJackHandle() const;
 #endif

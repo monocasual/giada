@@ -49,7 +49,7 @@ enum class DeviceType
 struct AudioDeviceData
 {
 	AudioDeviceData() = default;
-	AudioDeviceData(DeviceType t, const m::KernelAudio::Device&, int channelsCount, int channelsStart);
+	AudioDeviceData(DeviceType t, const m::KernelAudio::Device&);
 
 	DeviceType                type        = DeviceType::OUTPUT;
 	int                       index       = -1;

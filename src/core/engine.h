@@ -75,6 +75,11 @@ public:
 	bool                             hasMidiAPI(RtMidi::Api) const;
 	RtAudio::Api                     getAudioAPI() const;
 	std::vector<KernelAudio::Device> getAvailableAudioDevices() const;
+	KernelAudio::Device              getCurrentAudioOutDevice() const;
+	KernelAudio::Device              getCurrentAudioInDevice() const;
+	bool                             isLimitOutput() const;
+	float                            getRecTriggerLevel() const;
+	Resampler::Quality               getResamplerQuality() const;
 	std::vector<std::string>         getMidiOutPorts() const;
 	std::vector<std::string>         getMidiInPorts() const;
 	int                              getSampleRate() const;

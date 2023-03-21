@@ -47,30 +47,14 @@ extern giada::m::Engine g_engine;
 
 namespace giada::c::config
 {
-namespace
-{
-AudioDeviceData getAudioDeviceData_(DeviceType type, size_t index, int channelsCount, int channelsStart)
-{
-	for (const m::KernelAudio::Device& device : g_engine.getAvailableAudioDevices())
-		if (device.index == index)
-			return AudioDeviceData(type, device, channelsCount, channelsStart);
-	return AudioDeviceData();
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-AudioDeviceData::AudioDeviceData(DeviceType type, const m::KernelAudio::Device& device,
-    int channelsCount, int channelsStart)
+AudioDeviceData::AudioDeviceData(DeviceType type, const m::KernelAudio::Device& device)
 : type(type)
 , index(device.index)
 , name(device.name)
 , channelsMax(type == DeviceType::OUTPUT ? device.maxOutputChannels : device.maxInputChannels)
 , sampleRates(device.sampleRates)
-, channelsCount(channelsCount)
-, channelsStart(channelsStart)
+, channelsCount(device.channelsCount)
+, channelsStart(device.channelsStart)
 {
 }
 
@@ -130,25 +114,19 @@ AudioData getAudioData()
 	for (const m::KernelAudio::Device& device : g_engine.getAvailableAudioDevices())
 	{
 		if (device.maxOutputChannels > 0)
-			audioData.outputDevices.push_back(AudioDeviceData(DeviceType::OUTPUT, device, G_MAX_IO_CHANS, 0));
+			audioData.outputDevices.push_back(AudioDeviceData(DeviceType::OUTPUT, device));
 		if (device.maxInputChannels > 0)
-			audioData.inputDevices.push_back(AudioDeviceData(DeviceType::INPUT, device, 1, 0));
+			audioData.inputDevices.push_back(AudioDeviceData(DeviceType::INPUT, device));
 	}
 
-	const m::model::Layout& layout = g_engine.getLayout();
-
-	audioData.api             = layout.kernelAudio.soundSystem;
-	audioData.bufferSize      = layout.kernelAudio.buffersize;
-	audioData.sampleRate      = layout.kernelAudio.samplerate;
-	audioData.limitOutput     = layout.kernelAudio.limitOutput;
-	audioData.recTriggerLevel = layout.kernelAudio.recTriggerLevel;
-	audioData.resampleQuality = static_cast<int>(layout.kernelAudio.rsmpQuality);
-	audioData.outputDevice    = getAudioDeviceData_(DeviceType::OUTPUT,
-        layout.kernelAudio.soundDeviceOut, layout.kernelAudio.channelsOutCount,
-        layout.kernelAudio.channelsOutStart);
-	audioData.inputDevice     = getAudioDeviceData_(DeviceType::INPUT,
-        layout.kernelAudio.soundDeviceIn, layout.kernelAudio.channelsInCount,
-        layout.kernelAudio.channelsInStart);
+	audioData.api             = g_engine.getAudioAPI();
+	audioData.bufferSize      = g_engine.getBufferSize();
+	audioData.sampleRate      = g_engine.getSampleRate();
+	audioData.limitOutput     = g_engine.isLimitOutput();
+	audioData.recTriggerLevel = g_engine.getRecTriggerLevel();
+	audioData.resampleQuality = static_cast<int>(g_engine.getResamplerQuality());
+	audioData.outputDevice    = AudioDeviceData(DeviceType::OUTPUT, g_engine.getCurrentAudioOutDevice());
+	audioData.inputDevice     = AudioDeviceData(DeviceType::INPUT, g_engine.getCurrentAudioInDevice());
 
 	return audioData;
 }

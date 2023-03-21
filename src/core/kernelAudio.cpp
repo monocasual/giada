@@ -138,7 +138,7 @@ bool KernelAudio::openStream(const StreamInfo& info)
 
 	RtAudioErrorType res = m_rtAudio->openStream(
 	    &outParams,                                // output params
-	    info.deviceIn != -1 ? &inParams : nullptr, // input params if inDevice is selected
+	    info.deviceIn != -1 ? &inParams : nullptr, // input params if inDevice i selected
 	    RTAUDIO_FLOAT32,                           // audio format
 	    actualSampleRate,                          // sample rate
 	    &actualBufferSize,                         // buffer size in bytes. Might be changed to the actual value used by the soundcard
@@ -201,12 +201,15 @@ void KernelAudio::shutdown()
 
 /* -------------------------------------------------------------------------- */
 
-bool         KernelAudio::isReady() const { return m_model.get().kernelAudio.ready; }
-unsigned int KernelAudio::getBufferSize() const { return m_model.get().kernelAudio.buffersize; }
-int          KernelAudio::getSampleRate() const { return m_model.get().kernelAudio.samplerate; }
-int          KernelAudio::getChannelsOutCount() const { return m_model.get().kernelAudio.channelsOutCount; }
-int          KernelAudio::getChannelsInCount() const { return m_model.get().kernelAudio.channelsInCount; }
-bool         KernelAudio::isInputEnabled() const { return m_model.get().kernelAudio.soundDeviceIn != -1; }
+bool               KernelAudio::isReady() const { return m_model.get().kernelAudio.ready; }
+unsigned int       KernelAudio::getBufferSize() const { return m_model.get().kernelAudio.buffersize; }
+int                KernelAudio::getSampleRate() const { return m_model.get().kernelAudio.samplerate; }
+int                KernelAudio::getChannelsOutCount() const { return m_model.get().kernelAudio.channelsOutCount; }
+int                KernelAudio::getChannelsInCount() const { return m_model.get().kernelAudio.channelsInCount; }
+bool               KernelAudio::isInputEnabled() const { return m_model.get().kernelAudio.soundDeviceIn != -1; }
+bool               KernelAudio::isLimitOutput() const { return m_model.get().kernelAudio.limitOutput; }
+float              KernelAudio::getRecTriggerLevel() const { return m_model.get().kernelAudio.recTriggerLevel; }
+Resampler::Quality KernelAudio::getResamplerQuality() const { return m_model.get().kernelAudio.rsmpQuality; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -216,6 +219,30 @@ std::vector<m::KernelAudio::Device> KernelAudio::getAvailableDevices() const
 	for (unsigned i = 0; i < m_rtAudio->getDeviceCount(); i++)
 		out.push_back(fetchDevice(i));
 	return out;
+}
+
+/* -------------------------------------------------------------------------- */
+
+KernelAudio::Device KernelAudio::getCurrentOutDevice() const
+{
+	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+
+	Device d        = fetchDevice(kernelAudio.soundDeviceOut);
+	d.channelsCount = kernelAudio.channelsOutCount;
+	d.channelsStart = kernelAudio.channelsOutStart;
+
+	return d;
+}
+
+KernelAudio::Device KernelAudio::getCurrentInDevice() const
+{
+	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+
+	Device d        = fetchDevice(kernelAudio.soundDeviceIn);
+	d.channelsCount = kernelAudio.channelsInCount;
+	d.channelsStart = kernelAudio.channelsInStart;
+
+	return d;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -275,6 +302,8 @@ m::KernelAudio::Device KernelAudio::fetchDevice(size_t deviceIndex) const
 	    static_cast<int>(info.duplexChannels),
 	    info.isDefaultOutput,
 	    info.isDefaultInput,
+	    0,
+	    0,
 	    info.sampleRates};
 }
 

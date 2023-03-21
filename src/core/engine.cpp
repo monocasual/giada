@@ -210,6 +210,24 @@ std::vector<KernelAudio::Device> Engine::getAvailableAudioDevices() const
 
 /* -------------------------------------------------------------------------- */
 
+KernelAudio::Device Engine::getCurrentAudioOutDevice() const
+{
+	return m_kernelAudio.getCurrentOutDevice();
+}
+
+KernelAudio::Device Engine::getCurrentAudioInDevice() const
+{
+	return m_kernelAudio.getCurrentInDevice();
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool               Engine::isLimitOutput() const { return m_kernelAudio.isLimitOutput(); }
+float              Engine::getRecTriggerLevel() const { return m_kernelAudio.getRecTriggerLevel(); }
+Resampler::Quality Engine::getResamplerQuality() const { return m_kernelAudio.getResamplerQuality(); }
+
+/* -------------------------------------------------------------------------- */
+
 std::vector<std::string> Engine::getMidiOutPorts() const
 {
 	return m_kernelMidi.getOutPorts();
