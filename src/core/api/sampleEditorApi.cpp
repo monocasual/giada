@@ -25,15 +25,16 @@
  * -------------------------------------------------------------------------- */
 
 #include "sampleEditorApi.h"
-#include "core/engine.h"
+#include "core/channels/channelManager.h"
+#include "core/kernelAudio.h"
 #include "core/waveFactory.h"
 #include "core/waveFx.h"
 #include "utils/log.h"
 
 namespace giada::m
 {
-SampleEditorApi::SampleEditorApi(Engine& e, model::Model& m, ChannelManager& cm)
-: m_engine(e)
+SampleEditorApi::SampleEditorApi(KernelAudio& k, model::Model& m, ChannelManager& cm)
+: m_kernelAudio(k)
 , m_model(m)
 , m_channelManager(cm)
 {
@@ -156,7 +157,7 @@ void SampleEditorApi::shift(ID channelId, Frame offset)
 void SampleEditorApi::toNewChannel(ID channelId, ID columnId, Frame a, Frame b)
 {
 	const int position   = m_channelManager.getLastChannelPosition(columnId);
-	const int bufferSize = m_engine.getBufferSize();
+	const int bufferSize = m_kernelAudio.getBufferSize();
 
 	m_model.addShared(waveFactory::createFromWave(getWave(channelId), a, b));
 	Wave& wave = m_model.backShared<Wave>();
@@ -181,7 +182,7 @@ void SampleEditorApi::resetBeginEnd(ID channelId)
 
 void SampleEditorApi::reload(ID channelId)
 {
-	const int                sampleRate  = m_engine.getSampleRate();
+	const int                sampleRate  = m_kernelAudio.getSampleRate();
 	const Resampler::Quality rsmpQuality = m_model.get().kernelAudio.rsmpQuality;
 	// TODO - error checking
 	m_channelManager.loadSampleChannel(channelId, getWave(channelId).getPath(), sampleRate, rsmpQuality);

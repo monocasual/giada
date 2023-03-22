@@ -34,13 +34,13 @@
 
 namespace giada::m
 {
-class Engine;
+class KernelAudio;
 class ChannelManager;
 class Wave;
 class SampleEditorApi
 {
 public:
-	SampleEditorApi(Engine&, model::Model&, ChannelManager&);
+	SampleEditorApi(KernelAudio&, model::Model&, ChannelManager&);
 
 	void cut(ID channelId, Frame a, Frame b);
 	void copy(ID channelId, Frame a, Frame b);
@@ -60,7 +60,7 @@ public:
 private:
 	Wave& getWave(ID channelId) const;
 
-	Engine&         m_engine;
+	KernelAudio&    m_kernelAudio;
 	model::Model&   m_model;
 	ChannelManager& m_channelManager;
 
