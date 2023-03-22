@@ -203,8 +203,8 @@ void StorageApi::storePatch(const std::string& projectName, const v::Model& uiMo
 
 StorageApi::LoadState StorageApi::loadPatch()
 {
-	const int   sampleRate      = m_engine.getSampleRate();
-	const int   bufferSize      = m_engine.getBufferSize();
+	const int   sampleRate      = m_kernelAudio.getSampleRate();
+	const int   bufferSize      = m_kernelAudio.getBufferSize();
 	const float sampleRateRatio = sampleRate / static_cast<float>(m_patch.samplerate);
 
 	/* Lock the model's data. Real-time thread can't read from it until this method

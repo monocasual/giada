@@ -96,22 +96,22 @@ AudioData getAudioData()
 	AudioData audioData;
 
 	audioData.apis[RtAudio::Api::RTAUDIO_DUMMY] = "(Dummy)";
-	if (g_engine.hasAudioAPI(RtAudio::Api::LINUX_ALSA))
+	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::LINUX_ALSA))
 		audioData.apis[RtAudio::Api::LINUX_ALSA] = "ALSA";
-	if (g_engine.hasAudioAPI(RtAudio::Api::UNIX_JACK))
+	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::UNIX_JACK))
 		audioData.apis[RtAudio::Api::UNIX_JACK] = "JACK";
-	if (g_engine.hasAudioAPI(RtAudio::Api::LINUX_PULSE))
+	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::LINUX_PULSE))
 		audioData.apis[RtAudio::Api::LINUX_PULSE] = "PulseAudio";
-	if (g_engine.hasAudioAPI(RtAudio::Api::WINDOWS_DS))
+	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::WINDOWS_DS))
 		audioData.apis[RtAudio::Api::WINDOWS_DS] = "DirectSound";
-	if (g_engine.hasAudioAPI(RtAudio::Api::WINDOWS_ASIO))
+	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::WINDOWS_ASIO))
 		audioData.apis[RtAudio::Api::WINDOWS_ASIO] = "ASIO";
-	if (g_engine.hasAudioAPI(RtAudio::Api::WINDOWS_WASAPI))
+	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::WINDOWS_WASAPI))
 		audioData.apis[RtAudio::Api::WINDOWS_WASAPI] = "WASAPI";
-	if (g_engine.hasAudioAPI(RtAudio::Api::MACOSX_CORE))
+	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::MACOSX_CORE))
 		audioData.apis[RtAudio::Api::MACOSX_CORE] = "CoreAudio";
 
-	for (const m::KernelAudio::Device& device : g_engine.getAvailableAudioDevices())
+	for (const m::KernelAudio::Device& device : g_engine.getConfigApi().audio_getAvailableDevices())
 	{
 		if (device.maxOutputChannels > 0)
 			audioData.outputDevices.push_back(AudioDeviceData(DeviceType::OUTPUT, device));
@@ -119,14 +119,14 @@ AudioData getAudioData()
 			audioData.inputDevices.push_back(AudioDeviceData(DeviceType::INPUT, device));
 	}
 
-	audioData.api             = g_engine.getAudioAPI();
-	audioData.bufferSize      = g_engine.getBufferSize();
-	audioData.sampleRate      = g_engine.getSampleRate();
-	audioData.limitOutput     = g_engine.isLimitOutput();
-	audioData.recTriggerLevel = g_engine.getRecTriggerLevel();
-	audioData.resampleQuality = static_cast<int>(g_engine.getResamplerQuality());
-	audioData.outputDevice    = AudioDeviceData(DeviceType::OUTPUT, g_engine.getCurrentAudioOutDevice());
-	audioData.inputDevice     = AudioDeviceData(DeviceType::INPUT, g_engine.getCurrentAudioInDevice());
+	audioData.api             = g_engine.getConfigApi().audio_getAPI();
+	audioData.bufferSize      = g_engine.getConfigApi().audio_getBufferSize();
+	audioData.sampleRate      = g_engine.getConfigApi().audio_getSampleRate();
+	audioData.limitOutput     = g_engine.getConfigApi().audio_isLimitOutput();
+	audioData.recTriggerLevel = g_engine.getConfigApi().audio_getRecTriggerLevel();
+	audioData.resampleQuality = static_cast<int>(g_engine.getConfigApi().audio_getResamplerQuality());
+	audioData.outputDevice    = AudioDeviceData(DeviceType::OUTPUT, g_engine.getConfigApi().audio_getCurrentOutDevice());
+	audioData.inputDevice     = AudioDeviceData(DeviceType::INPUT, g_engine.getConfigApi().audio_getCurrentInDevice());
 
 	return audioData;
 }

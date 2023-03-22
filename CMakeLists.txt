@@ -42,6 +42,7 @@ list(APPEND SOURCES
 	src/core/api/pluginsApi.cpp
 	src/core/api/storageApi.cpp
 	src/core/api/IOApi.cpp
+	src/core/api/configApi.cpp
 	src/core/worker.cpp
 	src/core/eventDispatcher.cpp
 	src/core/midiDispatcher.cpp

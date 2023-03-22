@@ -63,7 +63,7 @@ Timer::Timer()
 , beats(g_engine.getMainApi().getBeats())
 , bars(g_engine.getMainApi().getBars())
 , quantize(g_engine.getMainApi().getQuantizerValue())
-, isUsingJack(g_engine.getAudioAPI() == RtAudio::Api::UNIX_JACK)
+, isUsingJack(g_engine.getConfigApi().audio_getAPI() == RtAudio::Api::UNIX_JACK)
 , isRecordingInput(g_engine.getMainApi().isRecordingInput())
 {
 }

@@ -57,6 +57,7 @@ Engine::Engine()
 , m_actionEditorApi(*this, m_model, m_sequencer, m_actionRecorder)
 , m_ioApi(m_model, m_midiDispatcher)
 , m_storageApi(*this, m_model, m_patch, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
+, m_configApi(m_model, m_kernelAudio)
 {
 	m_kernelAudio.onAudioCallback = [this](mcl::AudioBuffer& out, const mcl::AudioBuffer& in) {
 		return audioCallback(out, in);
@@ -182,49 +183,10 @@ bool Engine::isAudioReady() const
 
 /* -------------------------------------------------------------------------- */
 
-RtAudio::Api Engine::getAudioAPI() const
-{
-	return m_kernelAudio.getAPI();
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool Engine::hasAudioAPI(RtAudio::Api api) const
-{
-	return m_kernelAudio.hasAPI(api);
-}
-
-/* -------------------------------------------------------------------------- */
-
 bool Engine::hasMidiAPI(RtMidi::Api api) const
 {
 	return m_kernelMidi.hasAPI(api);
 }
-
-/* -------------------------------------------------------------------------- */
-
-std::vector<KernelAudio::Device> Engine::getAvailableAudioDevices() const
-{
-	return m_kernelAudio.getAvailableDevices();
-}
-
-/* -------------------------------------------------------------------------- */
-
-KernelAudio::Device Engine::getCurrentAudioOutDevice() const
-{
-	return m_kernelAudio.getCurrentOutDevice();
-}
-
-KernelAudio::Device Engine::getCurrentAudioInDevice() const
-{
-	return m_kernelAudio.getCurrentInDevice();
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool               Engine::isLimitOutput() const { return m_kernelAudio.isLimitOutput(); }
-float              Engine::getRecTriggerLevel() const { return m_kernelAudio.getRecTriggerLevel(); }
-Resampler::Quality Engine::getResamplerQuality() const { return m_kernelAudio.getResamplerQuality(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -236,18 +198,6 @@ std::vector<std::string> Engine::getMidiOutPorts() const
 std::vector<std::string> Engine::getMidiInPorts() const
 {
 	return m_kernelMidi.getInPorts();
-}
-
-/* -------------------------------------------------------------------------- */
-
-int Engine::getSampleRate() const
-{
-	return m_kernelAudio.getSampleRate();
-}
-
-int Engine::getBufferSize() const
-{
-	return m_kernelAudio.getBufferSize();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -474,6 +424,7 @@ SampleEditorApi& Engine::getSampleEditorApi() { return m_sampleEditorApi; }
 ActionEditorApi& Engine::getActionEditorApi() { return m_actionEditorApi; }
 IOApi&           Engine::getIOApi() { return m_ioApi; }
 StorageApi&      Engine::getStorageApi() { return m_storageApi; }
+ConfigApi&       Engine::getConfigApi() { return m_configApi; }
 
 /* -------------------------------------------------------------------------- */
 

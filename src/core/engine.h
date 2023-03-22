@@ -32,6 +32,7 @@
 #include "core/api/IOApi.h"
 #include "core/api/actionEditorApi.h"
 #include "core/api/channelsApi.h"
+#include "core/api/configApi.h"
 #include "core/api/mainApi.h"
 #include "core/api/pluginsApi.h"
 #include "core/api/sampleEditorApi.h"
@@ -70,21 +71,11 @@ public:
 
 	Engine();
 
-	bool                             isAudioReady() const;
-	bool                             hasAudioAPI(RtAudio::Api) const;
-	bool                             hasMidiAPI(RtMidi::Api) const;
-	RtAudio::Api                     getAudioAPI() const;
-	std::vector<KernelAudio::Device> getAvailableAudioDevices() const;
-	KernelAudio::Device              getCurrentAudioOutDevice() const;
-	KernelAudio::Device              getCurrentAudioInDevice() const;
-	bool                             isLimitOutput() const;
-	float                            getRecTriggerLevel() const;
-	Resampler::Quality               getResamplerQuality() const;
-	std::vector<std::string>         getMidiOutPorts() const;
-	std::vector<std::string>         getMidiInPorts() const;
-	int                              getSampleRate() const;
-	int                              getBufferSize() const;
-	const std::vector<std::string>&  getMidiMapFilesFound() const;
+	bool                            isAudioReady() const;
+	bool                            hasMidiAPI(RtMidi::Api) const;
+	std::vector<std::string>        getMidiOutPorts() const;
+	std::vector<std::string>        getMidiInPorts() const;
+	const std::vector<std::string>& getMidiMapFilesFound() const;
 
 	/* getPatch
 	Returns a read-only reference to the current loaded Patch. */
@@ -129,6 +120,7 @@ public:
 	ActionEditorApi& getActionEditorApi();
 	IOApi&           getIOApi();
 	StorageApi&      getStorageApi();
+	ConfigApi&       getConfigApi();
 
 	/* get[... component ...]
 	Returns a reference to an internal. TODO - these methods will be removed with
@@ -181,6 +173,7 @@ private:
 	ActionEditorApi m_actionEditorApi;
 	IOApi           m_ioApi;
 	StorageApi      m_storageApi;
+	ConfigApi       m_configApi;
 };
 } // namespace giada::m
 
