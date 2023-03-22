@@ -33,9 +33,8 @@
 
 namespace giada::m
 {
-PluginsApi::PluginsApi(Engine& e, KernelAudio& ka, ChannelManager& cm, PluginManager& pm, PluginHost& ph, model::Model& m)
-: m_engine(e)
-, m_kernelAudio(ka)
+PluginsApi::PluginsApi(KernelAudio& ka, ChannelManager& cm, PluginManager& pm, PluginHost& ph, model::Model& m)
+: m_kernelAudio(ka)
 , m_channelManager(cm)
 , m_pluginManager(pm)
 , m_pluginHost(ph)
@@ -158,8 +157,8 @@ const Patch::Plugin PluginsApi::serialize(const Plugin& p) const
 
 std::unique_ptr<Plugin> PluginsApi::deserialize(const Patch::Plugin& pplugin)
 {
-	const int sampleRate = m_engine.getSampleRate();
-	const int bufferSize = m_engine.getBufferSize();
+	const int sampleRate = m_kernelAudio.getSampleRate();
+	const int bufferSize = m_kernelAudio.getBufferSize();
 
 	return m_pluginManager.deserializePlugin(pplugin, sampleRate, bufferSize, m_model.get().sequencer);
 }

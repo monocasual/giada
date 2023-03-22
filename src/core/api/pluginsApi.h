@@ -38,7 +38,7 @@ class Model;
 namespace giada::m
 {
 class MidiEvent;
-class Engine;
+
 class KernelAudio;
 class ChannelManager;
 class PluginHost;
@@ -46,7 +46,7 @@ class Plugin;
 class PluginsApi
 {
 public:
-	PluginsApi(Engine&, KernelAudio&, ChannelManager&, PluginManager&, PluginHost&, model::Model&);
+	PluginsApi(KernelAudio&, ChannelManager&, PluginManager&, PluginHost&, model::Model&);
 
 	const Plugin*                          get(ID pluginId) const;
 	std::vector<PluginManager::PluginInfo> getInfo() const;
@@ -67,7 +67,6 @@ public:
 	std::unique_ptr<Plugin> deserialize(const Patch::Plugin&);
 
 private:
-	Engine&         m_engine;
 	KernelAudio&    m_kernelAudio;
 	ChannelManager& m_channelManager;
 	PluginManager&  m_pluginManager;
