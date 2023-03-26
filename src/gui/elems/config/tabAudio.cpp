@@ -186,7 +186,13 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	add(body);
 	resizable(body);
 
-	m_api->onChange = [this](ID id) { m_data.api = static_cast<RtAudio::Api>(id); };
+	m_api->onChange = [this](ID id) {
+		m_data.api = static_cast<RtAudio::Api>(id);
+		deactivateAll();
+		c::config::changeAudioAPI(static_cast<RtAudio::Api>(id));
+		rebuild(c::config::getAudioData());
+		activateAll();
+	};
 
 	m_sampleRate->onChange = [this](ID id) { m_data.sampleRate = id; };
 

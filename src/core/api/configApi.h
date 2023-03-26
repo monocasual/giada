@@ -53,6 +53,8 @@ public:
 	int                              audio_getSampleRate() const;
 	int                              audio_getBufferSize() const;
 
+	void audio_setAPI(RtAudio::Api);
+
 private:
 	model::Model& m_model;
 	KernelAudio&  m_kernelAudio;

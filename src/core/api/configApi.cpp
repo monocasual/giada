@@ -78,4 +78,11 @@ float              ConfigApi::audio_getRecTriggerLevel() const { return m_kernel
 Resampler::Quality ConfigApi::audio_getResamplerQuality() const { return m_kernelAudio.getResamplerQuality(); }
 int                ConfigApi::audio_getSampleRate() const { return m_kernelAudio.getSampleRate(); }
 int                ConfigApi::audio_getBufferSize() const { return m_kernelAudio.getBufferSize(); }
+
+/* -------------------------------------------------------------------------- */
+
+void ConfigApi::audio_setAPI(RtAudio::Api api)
+{
+	m_kernelAudio.init(api);
+}
 } // namespace giada::m

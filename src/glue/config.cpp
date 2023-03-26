@@ -203,6 +203,13 @@ BehaviorsData getBehaviorsData()
 
 /* -------------------------------------------------------------------------- */
 
+void changeAudioAPI(RtAudio::Api api)
+{
+	g_engine.getConfigApi().audio_setAPI(api);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void save(const AudioData& data)
 {
 	m::model::Layout layout             = g_engine.getLayout();

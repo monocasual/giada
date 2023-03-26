@@ -136,6 +136,8 @@ PluginData    getPluginData();
 MiscData      getMiscData();
 BehaviorsData getBehaviorsData();
 
+void changeAudioAPI(RtAudio::Api);
+
 void save(const AudioData&);
 void save(const MidiData&);
 void save(const MiscData&);
