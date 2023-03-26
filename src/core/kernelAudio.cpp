@@ -81,6 +81,12 @@ bool KernelAudio::openStream(const StreamInfo& info)
 	if (m_rtAudio->getDeviceCount() == 0)
 		return false;
 
+	/* Close stream before opening another one. Closing a stream frees any 
+	associated stream memory. */
+
+	if (m_rtAudio->isStreamOpen())
+		m_rtAudio->closeStream();
+
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
 
