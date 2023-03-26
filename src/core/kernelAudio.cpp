@@ -225,9 +225,11 @@ std::vector<m::KernelAudio::Device> KernelAudio::getAvailableDevices() const
 
 KernelAudio::Device KernelAudio::getCurrentOutDevice() const
 {
+	assert(m_rtAudio != nullptr);
+
 	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
-	Device d        = fetchDevice(kernelAudio.soundDeviceOut);
+	Device d        = fetchDevice(m_rtAudio->isStreamOpen() ? kernelAudio.deviceOut.index : m_rtAudio->getDefaultOutputDevice());
 	d.channelsCount = kernelAudio.channelsOutCount;
 	d.channelsStart = kernelAudio.channelsOutStart;
 
@@ -236,9 +238,11 @@ KernelAudio::Device KernelAudio::getCurrentOutDevice() const
 
 KernelAudio::Device KernelAudio::getCurrentInDevice() const
 {
+	assert(m_rtAudio != nullptr);
+
 	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
-	Device d        = fetchDevice(kernelAudio.soundDeviceIn);
+	Device d        = fetchDevice(m_rtAudio->isStreamOpen() ? kernelAudio.deviceIn.index : m_rtAudio->getDefaultInputDevice());
 	d.channelsCount = kernelAudio.channelsInCount;
 	d.channelsStart = kernelAudio.channelsInStart;
 
