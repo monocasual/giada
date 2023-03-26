@@ -242,17 +242,7 @@ void Engine::init(const Conf& conf)
 	/* Initialize KernelAudio. If fails, interrupt the Engine initialization:
 	Giada can't work without a working KernelAudio. */
 
-	m_kernelAudio.init(layout.kernelAudio.soundSystem);
-	m_kernelAudio.openStream({layout.kernelAudio.soundDeviceOut,
-	    layout.kernelAudio.channelsOutCount,
-	    layout.kernelAudio.channelsOutStart,
-	    layout.kernelAudio.soundDeviceIn,
-	    layout.kernelAudio.channelsInCount,
-	    layout.kernelAudio.channelsInStart,
-	    layout.kernelAudio.samplerate,
-	    layout.kernelAudio.buffersize});
-
-	if (!m_kernelAudio.isReady())
+	if (!m_kernelAudio.init())
 		return;
 
 #ifdef WITH_AUDIO_JACK
@@ -349,7 +339,7 @@ int Engine::audioCallback(mcl::AudioBuffer& out, const mcl::AudioBuffer& in) con
 
 	/* Mixer disabled or Kernel Audio not ready: nothing to do here. */
 
-	if (!mixer.a_isActive() || !kernelAudio.ready)
+	if (!mixer.a_isActive())
 		return 0;
 
 #ifdef WITH_AUDIO_JACK

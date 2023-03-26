@@ -83,6 +83,6 @@ int                ConfigApi::audio_getBufferSize() const { return m_kernelAudio
 
 void ConfigApi::audio_setAPI(RtAudio::Api api)
 {
-	m_kernelAudio.init(api);
+	m_kernelAudio.setAPI(api);
 }
 } // namespace giada::m

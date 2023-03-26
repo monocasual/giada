@@ -86,11 +86,21 @@ public:
 	static void logCompiledAPIs();
 
 	/* init
-	Initializes the RtAudio object. Closes any existing and	running streams. */
+	Initializes the audio engine given the current model::KernelAudio data. Closes 
+	any existing and running streams and return false on failure. */
 
-	void init(RtAudio::Api api);
+	bool init();
+
+	/* setAPI
+	Sets new RtAudio API. Also resets all model::KernelAudio data. */
+
+	void setAPI(RtAudio::Api);
+
+	/* openStream
+	Opens a new stream. Also updates model::KernelAudio data if successful. */
 
 	bool openStream(const StreamInfo&);
+
 	bool startStream();
 	bool stopStream();
 	void shutdown();
@@ -125,6 +135,16 @@ private:
 		int          channelsOutCount = 0;
 		int          channelsInCount  = 0;
 	};
+
+	struct OpenStreamResult
+	{
+		bool         success          = false;
+		unsigned int actualSampleRate = 0;
+		unsigned int actualBufferSize = 0;
+	};
+
+	void             setAPI_(RtAudio::Api);
+	OpenStreamResult openStream_(const StreamInfo&);
 
 	static int audioCallback(void*, void*, unsigned, double, RtAudioStreamStatus, void*);
 

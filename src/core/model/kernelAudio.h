@@ -35,7 +35,6 @@ namespace giada::m::model
 {
 struct KernelAudio
 {
-	bool               ready            = false;
 	RtAudio::Api       soundSystem      = G_DEFAULT_SOUNDSYS;
 	int                soundDeviceOut   = G_DEFAULT_SOUNDDEV_OUT;
 	int                soundDeviceIn    = G_DEFAULT_SOUNDDEV_IN;

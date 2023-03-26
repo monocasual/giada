@@ -47,19 +47,31 @@ KernelAudio::KernelAudio(model::Model& model)
 
 /* -------------------------------------------------------------------------- */
 
-void KernelAudio::init(RtAudio::Api api)
+bool KernelAudio::init()
 {
-	u::log::print("[KA] using API %s\n", u::string::toString(api).c_str());
+	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
-	if (m_rtAudio != nullptr)
-		shutdown();
+	setAPI_(kernelAudio.soundSystem);
 
-	m_rtAudio = std::make_unique<RtAudio>(api);
+	OpenStreamResult result = openStream_({kernelAudio.soundDeviceOut,
+	    kernelAudio.channelsOutCount,
+	    kernelAudio.channelsOutStart,
+	    kernelAudio.soundDeviceIn,
+	    kernelAudio.channelsInCount,
+	    kernelAudio.channelsInStart,
+	    kernelAudio.samplerate,
+	    kernelAudio.buffersize});
 
-	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg) {
-		u::log::print("[KA] RtAudio error %d: %s\n", type, msg.c_str());
-	});
+	return result.success;
+}
 
+/* -------------------------------------------------------------------------- */
+
+void KernelAudio::setAPI(RtAudio::Api api)
+{
+	setAPI_(api);
+
+	m_model.get().kernelAudio             = {};
 	m_model.get().kernelAudio.soundSystem = api;
 	m_model.swap(model::SwapType::NONE);
 
@@ -70,103 +82,22 @@ void KernelAudio::init(RtAudio::Api api)
 
 bool KernelAudio::openStream(const StreamInfo& info)
 {
-	assert(onAudioCallback != nullptr);
-	assert(m_rtAudio != nullptr);
-
-	u::log::print("[KA] Opening device out=%d, in=%d, samplerate=%d\n",
-	    info.deviceOut, info.deviceIn, info.sampleRate);
-
-	/* Abort here if devices found are zero. */
-
-	if (m_rtAudio->getDeviceCount() == 0)
+	OpenStreamResult result = openStream_(info);
+	if (!result.success)
 		return false;
-
-	/* Close stream before opening another one. Closing a stream frees any 
-	associated stream memory. */
-
-	if (m_rtAudio->isStreamOpen())
-		m_rtAudio->closeStream();
-
-	RtAudio::StreamParameters outParams;
-	RtAudio::StreamParameters inParams;
-
-	outParams.deviceId     = info.deviceOut == G_DEFAULT_SOUNDDEV_OUT ? m_rtAudio->getDefaultOutputDevice() : info.deviceOut;
-	outParams.nChannels    = info.channelsOutCount;
-	outParams.firstChannel = info.channelsOutStart;
-
-	/* Input device can be disabled. Unlike the output, here we are using all
-	channels and let the user choose which one to record from in the configuration
-	panel. */
-
-	if (info.deviceIn != -1)
-	{
-		inParams.deviceId     = info.deviceIn;
-		inParams.nChannels    = info.channelsInCount;
-		inParams.firstChannel = info.channelsInStart;
-	}
-
-	RtAudio::StreamOptions options;
-	options.streamName      = G_APP_NAME;
-	options.numberOfBuffers = 4; // TODO - wtf?
-
-	unsigned int actualSampleRate = info.sampleRate;
-	unsigned int actualBufferSize = info.bufferSize;
-
-	/* Take a mutable ref of model::KernelAudio data: the model will be updated 
-	later on with some changes, if the stream has been opened successfully. */
 
 	model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
-#ifdef WITH_AUDIO_JACK
-
-	/* If JACK, use its own sample rate. */
-
-	if (kernelAudio.soundSystem == RtAudio::Api::UNIX_JACK)
-	{
-		const Device jackDevice = fetchDevice(0); // JACK has only one device
-
-		assert(jackDevice.probed);
-		assert(jackDevice.sampleRates.size() > 0);
-
-		const unsigned int jackSampleRate = jackDevice.sampleRates[0];
-
-		u::log::print("[KA] JACK in use, samplerate=%d\n", jackSampleRate);
-
-		actualSampleRate = jackSampleRate;
-	}
-
-	m_callbackInfo = {
-	    /* rtAudio */ this,
-	    /* channelsOutCount */ info.channelsOutCount,
-	    /* channelsInCount */ info.channelsInCount};
-
-#endif
-
-	RtAudioErrorType res = m_rtAudio->openStream(
-	    &outParams,                                // output params
-	    info.deviceIn != -1 ? &inParams : nullptr, // input params if inDevice i selected
-	    RTAUDIO_FLOAT32,                           // audio format
-	    actualSampleRate,                          // sample rate
-	    &actualBufferSize,                         // buffer size in bytes. Might be changed to the actual value used by the soundcard
-	    &audioCallback,                            // audio callback
-	    &m_callbackInfo,                           // user data passed to callback
-	    &options);
-
-	if (res != RtAudioErrorType::RTAUDIO_NO_ERROR)
-		return false;
-
-	kernelAudio.ready            = true;
 	kernelAudio.soundDeviceOut   = info.deviceOut;
 	kernelAudio.soundDeviceIn    = info.deviceIn;
 	kernelAudio.channelsOutCount = info.channelsOutCount;
 	kernelAudio.channelsOutStart = info.channelsOutStart;
 	kernelAudio.channelsInCount  = info.channelsInCount;
 	kernelAudio.channelsInStart  = info.channelsInStart;
-	kernelAudio.samplerate       = actualSampleRate;
-	kernelAudio.buffersize       = actualBufferSize;
-
-	m_model.get().kernelAudio = kernelAudio;
+	kernelAudio.samplerate       = result.actualSampleRate;
+	kernelAudio.buffersize       = result.actualBufferSize;
 	m_model.swap(model::SwapType::NONE);
+
 	return true;
 }
 
@@ -207,7 +138,13 @@ void KernelAudio::shutdown()
 
 /* -------------------------------------------------------------------------- */
 
-bool               KernelAudio::isReady() const { return m_model.get().kernelAudio.ready; }
+bool KernelAudio::isReady() const
+{
+	return m_rtAudio != nullptr && m_rtAudio->isStreamOpen() && m_rtAudio->isStreamRunning();
+}
+
+/* -------------------------------------------------------------------------- */
+
 unsigned int       KernelAudio::getBufferSize() const { return m_model.get().kernelAudio.buffersize; }
 int                KernelAudio::getSampleRate() const { return m_model.get().kernelAudio.samplerate; }
 int                KernelAudio::getChannelsOutCount() const { return m_model.get().kernelAudio.channelsOutCount; }
@@ -332,6 +269,111 @@ void KernelAudio::printDevices(const std::vector<m::KernelAudio::Device>& device
 			u::log::print("%d ", s);
 		u::log::print("\n");
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void KernelAudio::setAPI_(RtAudio::Api api)
+{
+	u::log::print("[KA] using API %s\n", u::string::toString(api).c_str());
+
+	if (m_rtAudio != nullptr)
+		shutdown();
+
+	m_rtAudio = std::make_unique<RtAudio>(api);
+
+	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg) {
+		u::log::print("[KA] RtAudio error %d: %s\n", type, msg.c_str());
+	});
+}
+
+/* -------------------------------------------------------------------------- */
+
+KernelAudio::OpenStreamResult KernelAudio::openStream_(const StreamInfo& info)
+{
+	assert(onAudioCallback != nullptr);
+	assert(m_rtAudio != nullptr);
+
+	u::log::print("[KA] Opening device out=%d, in=%d, samplerate=%d\n",
+	    info.deviceOut, info.deviceIn, info.sampleRate);
+
+	/* Abort here if devices found are zero. */
+
+	if (m_rtAudio->getDeviceCount() == 0)
+		return {};
+
+	/* Close stream before opening another one. Closing a stream frees any 
+	associated stream memory. */
+
+	if (m_rtAudio->isStreamOpen())
+		m_rtAudio->closeStream();
+
+	RtAudio::StreamParameters outParams;
+	RtAudio::StreamParameters inParams;
+
+	outParams.deviceId     = info.deviceOut == G_DEFAULT_SOUNDDEV_OUT ? m_rtAudio->getDefaultOutputDevice() : info.deviceOut;
+	outParams.nChannels    = info.channelsOutCount;
+	outParams.firstChannel = info.channelsOutStart;
+
+	/* Input device can be disabled. Unlike the output, here we are using all
+	channels and let the user choose which one to record from in the configuration
+	panel. */
+
+	if (info.deviceIn != -1)
+	{
+		inParams.deviceId     = info.deviceIn;
+		inParams.nChannels    = info.channelsInCount;
+		inParams.firstChannel = info.channelsInStart;
+	}
+
+	RtAudio::StreamOptions options;
+	options.streamName      = G_APP_NAME;
+	options.numberOfBuffers = 4; // TODO - wtf?
+
+	unsigned int actualSampleRate = info.sampleRate;
+	unsigned int actualBufferSize = info.bufferSize;
+
+#ifdef WITH_AUDIO_JACK
+
+	/* If JACK, use its own sample rate. */
+
+	if (m_model.get().kernelAudio.soundSystem == RtAudio::Api::UNIX_JACK)
+	{
+		const Device jackDevice = fetchDevice(0); // JACK has only one device
+
+		assert(jackDevice.probed);
+		assert(jackDevice.sampleRates.size() > 0);
+
+		const unsigned int jackSampleRate = jackDevice.sampleRates[0];
+
+		u::log::print("[KA] JACK in use, samplerate=%d\n", jackSampleRate);
+
+		actualSampleRate = jackSampleRate;
+	}
+
+	m_callbackInfo = {
+	    /* rtAudio */ this,
+	    /* channelsOutCount */ info.channelsOutCount,
+	    /* channelsInCount */ info.channelsInCount};
+
+#endif
+
+	RtAudioErrorType res = m_rtAudio->openStream(
+	    &outParams,                                // output params
+	    info.deviceIn != -1 ? &inParams : nullptr, // input params if inDevice is selected
+	    RTAUDIO_FLOAT32,                           // audio format
+	    actualSampleRate,                          // sample rate
+	    &actualBufferSize,                         // buffer size in bytes. Might be changed to the actual value used by the soundcard
+	    &audioCallback,                            // audio callback
+	    &m_callbackInfo,                           // user data passed to callback
+	    &options);
+
+	if (res != RtAudioErrorType::RTAUDIO_NO_ERROR)
+		return {};
+
+	u::log::print("[KA] Device opened successfully\n");
+
+	return {true, actualSampleRate, actualBufferSize};
 }
 
 /* -------------------------------------------------------------------------- */
