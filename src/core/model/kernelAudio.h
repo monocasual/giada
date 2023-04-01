@@ -35,18 +35,21 @@ namespace giada::m::model
 {
 struct KernelAudio
 {
-	RtAudio::Api       soundSystem      = G_DEFAULT_SOUNDSYS;
-	int                soundDeviceOut   = G_DEFAULT_SOUNDDEV_OUT;
-	int                soundDeviceIn    = G_DEFAULT_SOUNDDEV_IN;
-	int                channelsOutCount = G_MAX_IO_CHANS;
-	int                channelsOutStart = 0;
-	int                channelsInCount  = 1;
-	int                channelsInStart  = 0;
-	unsigned int       samplerate       = G_DEFAULT_SAMPLERATE;
-	unsigned int       buffersize       = G_DEFAULT_BUFSIZE;
-	bool               limitOutput      = false;
-	Resampler::Quality rsmpQuality      = Resampler::Quality::LINEAR;
-	float              recTriggerLevel  = 0.0f;
+	struct Device
+	{
+		int index;
+		int channelsCount;
+		int channelsStart;
+	};
+
+	RtAudio::Api       api             = G_DEFAULT_SOUNDSYS;
+	Device             deviceOut       = {G_DEFAULT_SOUNDDEV_OUT, G_MAX_IO_CHANS, 0};
+	Device             deviceIn        = {G_DEFAULT_SOUNDDEV_IN, 1, 0};
+	unsigned int       samplerate      = G_DEFAULT_SAMPLERATE;
+	unsigned int       buffersize      = G_DEFAULT_BUFSIZE;
+	bool               limitOutput     = false;
+	Resampler::Quality rsmpQuality     = Resampler::Quality::LINEAR;
+	float              recTriggerLevel = 0.0f;
 };
 } // namespace giada::m::model
 

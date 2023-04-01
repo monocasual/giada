@@ -99,7 +99,11 @@ public:
 	/* openStream
 	Opens a new stream. Also updates model::KernelAudio data if successful. */
 
-	bool openStream(const StreamInfo&);
+	bool openStream(
+	    const model::KernelAudio::Device& out,
+	    const model::KernelAudio::Device& in,
+	    unsigned int                      sampleRate,
+	    unsigned int                      bufferSize);
 
 	bool startStream();
 	bool stopStream();
@@ -143,8 +147,13 @@ private:
 		unsigned int actualBufferSize = 0;
 	};
 
-	void             setAPI_(RtAudio::Api);
-	OpenStreamResult openStream_(const StreamInfo&);
+	void setAPI_(RtAudio::Api);
+
+	OpenStreamResult openStream_(
+	    const model::KernelAudio::Device& out,
+	    const model::KernelAudio::Device& in,
+	    unsigned int                      sampleRate,
+	    unsigned int                      bufferSize);
 
 	static int audioCallback(void*, void*, unsigned, double, RtAudioStreamStatus, void*);
 

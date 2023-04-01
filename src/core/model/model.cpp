@@ -142,18 +142,18 @@ void Model::load(const Conf& conf)
 {
 	Layout& layout = get();
 
-	layout.kernelAudio.soundSystem      = conf.soundSystem;
-	layout.kernelAudio.soundDeviceOut   = conf.soundDeviceOut;
-	layout.kernelAudio.soundDeviceIn    = conf.soundDeviceIn;
-	layout.kernelAudio.channelsOutCount = conf.channelsOutCount;
-	layout.kernelAudio.channelsOutStart = conf.channelsOutStart;
-	layout.kernelAudio.channelsInCount  = conf.channelsInCount;
-	layout.kernelAudio.channelsInStart  = conf.channelsInStart;
-	layout.kernelAudio.samplerate       = conf.samplerate;
-	layout.kernelAudio.buffersize       = conf.buffersize;
-	layout.kernelAudio.limitOutput      = conf.limitOutput;
-	layout.kernelAudio.rsmpQuality      = conf.rsmpQuality;
-	layout.kernelAudio.recTriggerLevel  = conf.recTriggerLevel;
+	layout.kernelAudio.api                     = conf.soundSystem;
+	layout.kernelAudio.deviceOut.index         = conf.soundDeviceOut;
+	layout.kernelAudio.deviceOut.channelsCount = conf.channelsOutCount;
+	layout.kernelAudio.deviceOut.channelsStart = conf.channelsOutStart;
+	layout.kernelAudio.deviceIn.index          = conf.soundDeviceIn;
+	layout.kernelAudio.deviceIn.channelsCount  = conf.channelsInCount;
+	layout.kernelAudio.deviceIn.channelsStart  = conf.channelsInStart;
+	layout.kernelAudio.samplerate              = conf.samplerate;
+	layout.kernelAudio.buffersize              = conf.buffersize;
+	layout.kernelAudio.limitOutput             = conf.limitOutput;
+	layout.kernelAudio.rsmpQuality             = conf.rsmpQuality;
+	layout.kernelAudio.recTriggerLevel         = conf.recTriggerLevel;
 
 	layout.kernelMidi.system      = conf.midiSystem;
 	layout.kernelMidi.portOut     = conf.midiPortOut;
@@ -190,13 +190,13 @@ void Model::store(Conf& conf) const
 {
 	const Layout& layout = get();
 
-	conf.soundSystem      = layout.kernelAudio.soundSystem;
-	conf.soundDeviceOut   = layout.kernelAudio.soundDeviceOut;
-	conf.soundDeviceIn    = layout.kernelAudio.soundDeviceIn;
-	conf.channelsOutCount = layout.kernelAudio.channelsOutCount;
-	conf.channelsOutStart = layout.kernelAudio.channelsOutStart;
-	conf.channelsInCount  = layout.kernelAudio.channelsInCount;
-	conf.channelsInStart  = layout.kernelAudio.channelsInStart;
+	conf.soundSystem      = layout.kernelAudio.api;
+	conf.soundDeviceOut   = layout.kernelAudio.deviceOut.index;
+	conf.channelsOutCount = layout.kernelAudio.deviceOut.channelsCount;
+	conf.channelsOutStart = layout.kernelAudio.deviceOut.channelsStart;
+	conf.soundDeviceIn    = layout.kernelAudio.deviceIn.index;
+	conf.channelsInCount  = layout.kernelAudio.deviceIn.channelsCount;
+	conf.channelsInStart  = layout.kernelAudio.deviceIn.channelsStart;
 	conf.samplerate       = layout.kernelAudio.samplerate;
 	conf.buffersize       = layout.kernelAudio.buffersize;
 	conf.limitOutput      = layout.kernelAudio.limitOutput;

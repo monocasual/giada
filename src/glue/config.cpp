@@ -212,8 +212,9 @@ void changeAudioAPI(RtAudio::Api api)
 
 void save(const AudioData& data)
 {
-	m::model::Layout layout             = g_engine.getLayout();
-	layout.kernelAudio.soundSystem      = data.api;
+	m::model::Layout layout = g_engine.getLayout();
+	/*
+	layout.kernelAudio.api              = data.api;
 	layout.kernelAudio.soundDeviceOut   = data.outputDevice.index;
 	layout.kernelAudio.soundDeviceIn    = data.inputDevice.index;
 	layout.kernelAudio.channelsOutCount = data.outputDevice.channelsCount;
@@ -224,7 +225,7 @@ void save(const AudioData& data)
 	layout.kernelAudio.rsmpQuality      = static_cast<m::Resampler::Quality>(data.resampleQuality);
 	layout.kernelAudio.buffersize       = data.bufferSize;
 	layout.kernelAudio.samplerate       = data.sampleRate;
-	layout.kernelAudio.recTriggerLevel  = data.recTriggerLevel;
+	layout.kernelAudio.recTriggerLevel  = data.recTriggerLevel;*/
 	g_engine.setLayout(layout);
 }
 

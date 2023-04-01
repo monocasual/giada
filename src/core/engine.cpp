@@ -343,7 +343,7 @@ int Engine::audioCallback(mcl::AudioBuffer& out, const mcl::AudioBuffer& in) con
 		return 0;
 
 #ifdef WITH_AUDIO_JACK
-	if (kernelAudio.soundSystem == RtAudio::Api::UNIX_JACK)
+	if (kernelAudio.api == RtAudio::Api::UNIX_JACK)
 		m_jackSynchronizer.recvJackSync(m_jackTransport.getState());
 #endif
 
