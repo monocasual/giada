@@ -255,7 +255,7 @@ m::KernelAudio::Device KernelAudio::fetchDevice(size_t deviceIndex) const
 
 void KernelAudio::printDevices(const std::vector<m::KernelAudio::Device>& devices) const
 {
-	u::log::print("[KA] %d device(s) found\n", devices.size());
+	u::log::print("[KA] %d device(s) found with API %s\n", devices.size(), u::string::toString(m_rtAudio->getCurrentApi()).c_str());
 	for (const m::KernelAudio::Device& d : devices)
 	{
 		u::log::print("  %d) %s\n", d.index, d.name);
@@ -294,8 +294,11 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 	assert(onAudioCallback != nullptr);
 	assert(m_rtAudio != nullptr);
 
-	u::log::print("[KA] Opening device out=%d, in=%d, samplerate=%d\n",
-	    out.index, in.index, sampleRate);
+	u::log::print("[KA] Opening stream\n");
+	u::log::print("     Out device: index=%d channelsCount=%d channelsStart=%d\n", out.index, out.channelsCount, out.channelsStart);
+	u::log::print("     In device: index=%d channelsCount=%d channelsStart=%d\n", in.index, in.channelsCount, in.channelsStart);
+	u::log::print("     SampleRate=%d\n", sampleRate);
+	u::log::print("     BufferSize=%d\n", bufferSize);
 
 	/* Abort here if devices found are zero. */
 
