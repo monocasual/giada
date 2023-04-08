@@ -55,6 +55,14 @@ public:
 
 	void audio_setAPI(RtAudio::Api);
 
+	bool audio_openStream(
+	    const model::KernelAudio::Device& out,
+	    const model::KernelAudio::Device& in,
+	    unsigned int                      sampleRate,
+	    unsigned int                      bufferSize);
+
+	void audio_storeData(bool limitOutput, Resampler::Quality, float recTriggerLevel);
+
 private:
 	model::Model& m_model;
 	KernelAudio&  m_kernelAudio;

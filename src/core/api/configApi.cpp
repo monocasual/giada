@@ -85,4 +85,32 @@ void ConfigApi::audio_setAPI(RtAudio::Api api)
 {
 	m_kernelAudio.setAPI(api);
 }
+
+/* -------------------------------------------------------------------------- */
+
+bool ConfigApi::audio_openStream(
+    const model::KernelAudio::Device& out,
+    const model::KernelAudio::Device& in,
+    unsigned int                      sampleRate,
+    unsigned int                      bufferSize)
+{
+	bool res = m_kernelAudio.openStream(out, in, sampleRate, bufferSize);
+	if (!res)
+		return false;
+	m_kernelAudio.startStream();
+	return true;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ConfigApi::audio_storeData(bool limitOutput, Resampler::Quality rsmpQuality, float recTriggerLevel)
+{
+	model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+
+	kernelAudio.limitOutput     = limitOutput;
+	kernelAudio.rsmpQuality     = rsmpQuality;
+	kernelAudio.recTriggerLevel = recTriggerLevel;
+
+	m_model.swap(model::SwapType::NONE);
+}
 } // namespace giada::m

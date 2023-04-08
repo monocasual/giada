@@ -212,21 +212,27 @@ void changeAudioAPI(RtAudio::Api api)
 
 void save(const AudioData& data)
 {
-	m::model::Layout layout = g_engine.getLayout();
-	/*
-	layout.kernelAudio.api              = data.api;
-	layout.kernelAudio.soundDeviceOut   = data.outputDevice.index;
-	layout.kernelAudio.soundDeviceIn    = data.inputDevice.index;
-	layout.kernelAudio.channelsOutCount = data.outputDevice.channelsCount;
-	layout.kernelAudio.channelsOutStart = data.outputDevice.channelsStart;
-	layout.kernelAudio.channelsInCount  = data.inputDevice.channelsCount;
-	layout.kernelAudio.channelsInStart  = data.inputDevice.channelsStart;
-	layout.kernelAudio.limitOutput      = data.limitOutput;
-	layout.kernelAudio.rsmpQuality      = static_cast<m::Resampler::Quality>(data.resampleQuality);
-	layout.kernelAudio.buffersize       = data.bufferSize;
-	layout.kernelAudio.samplerate       = data.sampleRate;
-	layout.kernelAudio.recTriggerLevel  = data.recTriggerLevel;*/
-	g_engine.setLayout(layout);
+	bool res = g_engine.getConfigApi().audio_openStream(
+	    {
+	        data.outputDevice.index,
+	        data.outputDevice.channelsCount,
+	        data.outputDevice.channelsStart,
+	    },
+	    {
+	        data.inputDevice.index,
+	        data.inputDevice.channelsCount,
+	        data.inputDevice.channelsStart,
+	    },
+	    data.sampleRate, data.bufferSize);
+
+	if (!res)
+	{
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
+		return;
+	}
+
+	g_engine.getConfigApi().audio_storeData(data.limitOutput,
+	    static_cast<m::Resampler::Quality>(data.resampleQuality), data.recTriggerLevel);
 }
 
 /* -------------------------------------------------------------------------- */
