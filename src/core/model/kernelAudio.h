@@ -45,7 +45,7 @@ struct KernelAudio
 	int                samplerate       = G_DEFAULT_SAMPLERATE;
 	int                buffersize       = G_DEFAULT_BUFSIZE;
 	bool               limitOutput      = false;
-	Resampler::Quality rsmpQuality      = Resampler::Quality::SINC_BEST;
+	Resampler::Quality rsmpQuality      = Resampler::Quality::LINEAR;
 	float              recTriggerLevel  = 0.0f;
 };
 } // namespace giada::m::model
