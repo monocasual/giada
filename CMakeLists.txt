@@ -221,7 +221,8 @@ list(APPEND SOURCES
 	src/deps/rtaudio/RtAudio.cpp
 	src/deps/mcl-audio-buffer/src/audioBuffer.cpp)
 
-list(APPEND PREPROCESSOR_DEFS)
+list(APPEND PREPROCESSOR_DEFS 
+	__RTAUDIO_DUMMY__)
 list(APPEND INCLUDE_DIRS
 	${CMAKE_SOURCE_DIR}
 	${CMAKE_SOURCE_DIR}/src)
