@@ -300,9 +300,12 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 	u::log::print("     SampleRate=%d\n", sampleRate);
 	u::log::print("     BufferSize=%d\n", bufferSize);
 
-	/* Abort here if devices found are zero. */
+	const RtAudio::Api api = m_model.get().kernelAudio.api;
 
-	if (m_rtAudio->getDeviceCount() == 0)
+	/* Abort here if devices found are zero, both devices are disabled or 
+	current API is dummy. */
+
+	if (m_rtAudio->getDeviceCount() == 0 || (in.index == -1 && out.index == -1) || api == RtAudio::Api::RTAUDIO_DUMMY)
 		return {};
 
 	/* Close stream before opening another one. Closing a stream frees any
@@ -340,7 +343,7 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 
 	/* If JACK, use its own sample rate. */
 
-	if (m_model.get().kernelAudio.api == RtAudio::Api::UNIX_JACK)
+	if (api == RtAudio::Api::UNIX_JACK)
 	{
 		const Device jackDevice = fetchDevice(0); // JACK has only one device
 
