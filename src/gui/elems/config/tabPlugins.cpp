@@ -89,7 +89,7 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 
 	m_scanButton->onClick = [this]() {
 		std::function<void(float)> callback = [this](float progress) {
-			std::string l = fmt::format(g_ui.getI18Text(LangMap::CONFIG_PLUGINS_SCANNING), static_cast<int>(progress * 100));
+                  std::string l = fmt::format(fmt::runtime(g_ui.getI18Text(LangMap::CONFIG_PLUGINS_SCANNING)), static_cast<int>(progress * 100));
 			m_info->label(l.c_str());
 			Fl::wait();
 		};
@@ -109,7 +109,7 @@ void geTabPlugins::rebuild()
 {
 	m_data = c::config::getPluginData();
 
-	const std::string scanLabel = fmt::format(g_ui.getI18Text(LangMap::CONFIG_PLUGINS_SCAN), m_data.numAvailablePlugins);
+	const std::string scanLabel = fmt::format(fmt::runtime(g_ui.getI18Text(LangMap::CONFIG_PLUGINS_SCAN)), m_data.numAvailablePlugins);
 	m_scanButton->copy_label(scanLabel.c_str());
 
 	m_folderPath->setValue(m_data.pluginPath);

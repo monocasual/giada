@@ -228,7 +228,7 @@ void gdSampleEditor::refresh()
 
 void gdSampleEditor::updateInfo()
 {
-	std::string infoText = fmt::format(g_ui.getI18Text(LangMap::SAMPLEEDITOR_INFO),
+	std::string infoText = fmt::format(fmt::runtime(g_ui.getI18Text(LangMap::SAMPLEEDITOR_INFO)),
 	    m_data.wavePath, m_data.waveSize, m_data.waveDuration,
 	    m_data.waveBits != 0 ? std::to_string(m_data.waveBits) : "?", m_data.waveRate);
 
