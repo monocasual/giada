@@ -89,15 +89,15 @@ public:
 	int  startStream();
 	int  stopStream();
 
-	bool                       isReady() const;
-	bool                       isInputEnabled() const;
-	unsigned int               getBufferSize() const;
-	int                        getSampleRate() const;
-	int                        getChannelsOutCount() const;
-	int                        getChannelsInCount() const;
-	bool                       hasAPI(int API) const;
-	RtAudio::Api               getAPI() const;
-	const std::vector<Device>& getDevices() const;
+	bool                isReady() const;
+	bool                isInputEnabled() const;
+	unsigned int        getBufferSize() const;
+	int                 getSampleRate() const;
+	int                 getChannelsOutCount() const;
+	int                 getChannelsInCount() const;
+	bool                hasAPI(int API) const;
+	RtAudio::Api        getAPI() const;
+	std::vector<Device> getDevices() const;
 #ifdef WITH_AUDIO_JACK
 	jack_client_t* getJackHandle() const;
 #endif
@@ -110,9 +110,8 @@ public:
 private:
 	static int audioCallback(void*, void*, unsigned, double, RtAudioStreamStatus, void*);
 
-	Device              fetchDevice(size_t deviceIndex) const;
-	std::vector<Device> fetchDevices() const;
-	void                printDevices(const std::vector<Device>& devices) const;
+	Device fetchDevice(size_t deviceIndex) const;
+	void   printDevices(const std::vector<Device>& devices) const;
 
 #ifdef WITH_AUDIO_JACK
 	JackTransport m_jackTransport;

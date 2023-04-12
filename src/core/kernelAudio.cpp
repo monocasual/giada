@@ -76,7 +76,7 @@ int KernelAudio::openDevice()
 	u::log::print("[KA] Opening device out=%d, in=%d, samplerate=%d\n",
 	    kernelAudio.soundDeviceOut, kernelAudio.soundDeviceIn, kernelAudio.samplerate);
 
-	m_devices = fetchDevices();
+	m_devices = getDevices();
 	printDevices(m_devices);
 
 	/* Abort here if devices found are zero. */
@@ -207,9 +207,12 @@ bool         KernelAudio::isInputEnabled() const { return m_model.get().kernelAu
 
 /* -------------------------------------------------------------------------- */
 
-const std::vector<m::KernelAudio::Device>& KernelAudio::getDevices() const
+std::vector<m::KernelAudio::Device> KernelAudio::getDevices() const
 {
-	return m_devices;
+	std::vector<Device> out;
+	for (unsigned i = 0; i < m_rtAudio->getDeviceCount(); i++)
+		out.push_back(fetchDevice(i));
+	return out;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -301,16 +304,6 @@ m::KernelAudio::Device KernelAudio::fetchDevice(size_t deviceIndex) const
 	    info.isDefaultOutput,
 	    info.isDefaultInput,
 	    info.sampleRates};
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::vector<m::KernelAudio::Device> KernelAudio::fetchDevices() const
-{
-	std::vector<Device> out;
-	for (unsigned i = 0; i < m_rtAudio->getDeviceCount(); i++)
-		out.push_back(fetchDevice(i));
-	return out;
 }
 
 /* -------------------------------------------------------------------------- */
