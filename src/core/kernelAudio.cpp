@@ -59,6 +59,8 @@ void KernelAudio::init()
 	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg) {
 		u::log::print("[KA] RtAudio error %d: %s\n", type, msg.c_str());
 	});
+
+	printDevices(getDevices());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -76,16 +78,10 @@ int KernelAudio::openStream()
 	u::log::print("[KA] Opening device out=%d, in=%d, samplerate=%d\n",
 	    kernelAudio.soundDeviceOut, kernelAudio.soundDeviceIn, kernelAudio.samplerate);
 
-	m_devices = getDevices();
-	printDevices(m_devices);
-
 	/* Abort here if devices found are zero. */
 
-	if (m_devices.size() == 0)
-	{
-		closeStream();
+	if (m_rtAudio->getDeviceCount() == 0)
 		return 0;
-	}
 
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
@@ -116,11 +112,16 @@ int KernelAudio::openStream()
 
 	if (kernelAudio.soundSystem == RtAudio::Api::UNIX_JACK)
 	{
-		assert(m_devices.size() > 0);
-		assert(m_devices[0].sampleRates.size() > 0);
+		const Device jackDevice = fetchDevice(0); // JACK has only one device
 
-		kernelAudio.samplerate = m_devices[0].sampleRates[0];
-		u::log::print("[KA] JACK in use, samplerate=%d\n", kernelAudio.samplerate);
+		assert(jackDevice.probed);
+		assert(jackDevice.sampleRates.size() > 0);
+
+		const unsigned int jackSampleRate = jackDevice.sampleRates[0];
+
+		u::log::print("[KA] JACK in use, samplerate=%d\n", jackSampleRate);
+
+		kernelAudio.samplerate = jackSampleRate;
 	}
 
 #endif

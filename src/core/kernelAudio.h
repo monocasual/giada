@@ -116,7 +116,6 @@ private:
 #ifdef WITH_AUDIO_JACK
 	JackTransport m_jackTransport;
 #endif
-	std::vector<Device>      m_devices;
 	std::unique_ptr<RtAudio> m_rtAudio;
 	CallbackInfo             m_callbackInfo;
 
