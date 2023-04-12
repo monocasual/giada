@@ -51,7 +51,7 @@ namespace
 {
 AudioDeviceData getAudioDeviceData_(DeviceType type, size_t index, int channelsCount, int channelsStart)
 {
-	for (const m::KernelAudio::Device& device : g_engine.getAudioDevices())
+	for (const m::KernelAudio::Device& device : g_engine.getAvailableAudioDevices())
 		if (device.index == index)
 			return AudioDeviceData(type, device, channelsCount, channelsStart);
 	return AudioDeviceData();
@@ -127,7 +127,7 @@ AudioData getAudioData()
 	if (g_engine.hasAudioAPI(RtAudio::Api::MACOSX_CORE))
 		audioData.apis[RtAudio::Api::MACOSX_CORE] = "CoreAudio";
 
-	for (const m::KernelAudio::Device& device : g_engine.getAudioDevices())
+	for (const m::KernelAudio::Device& device : g_engine.getAvailableAudioDevices())
 	{
 		if (device.maxOutputChannels > 0)
 			audioData.outputDevices.push_back(AudioDeviceData(DeviceType::OUTPUT, device, G_MAX_IO_CHANS, 0));

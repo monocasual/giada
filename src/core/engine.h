@@ -74,7 +74,7 @@ public:
 	bool                             hasAudioAPI(RtAudio::Api) const;
 	bool                             hasMidiAPI(RtMidi::Api) const;
 	RtAudio::Api                     getAudioAPI() const;
-	std::vector<KernelAudio::Device> getAudioDevices() const;
+	std::vector<KernelAudio::Device> getAvailableAudioDevices() const;
 	std::vector<std::string>         getMidiOutPorts() const;
 	std::vector<std::string>         getMidiInPorts() const;
 	int                              getSampleRate() const;

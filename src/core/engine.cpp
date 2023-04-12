@@ -203,9 +203,9 @@ bool Engine::hasMidiAPI(RtMidi::Api api) const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<KernelAudio::Device> Engine::getAudioDevices() const
+std::vector<KernelAudio::Device> Engine::getAvailableAudioDevices() const
 {
-	return m_kernelAudio.getDevices();
+	return m_kernelAudio.getAvailableDevices();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -275,7 +275,7 @@ void Engine::init(const Conf& conf)
 	Giada can't work without a working KernelAudio. */
 
 	m_kernelAudio.init();
-	m_kernelAudio.openDevice();
+	m_kernelAudio.openStream();
 	if (!m_kernelAudio.isReady())
 		return;
 
@@ -332,7 +332,7 @@ void Engine::shutdown(Conf& conf)
 {
 	if (m_kernelAudio.isReady())
 	{
-		m_kernelAudio.closeDevice();
+		m_kernelAudio.shutdown();
 		u::log::print("[Engine::shutdown] KernelAudio closed\n");
 		m_mixer.disable();
 		u::log::print("[Engine::shutdown] Mixer closed\n");

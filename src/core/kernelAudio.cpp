@@ -52,7 +52,7 @@ void KernelAudio::init()
 	u::log::print("[KA] using API %d\n", kernelAudio.soundSystem);
 
 	if (m_rtAudio != nullptr)
-		closeDevice();
+		shutdown();
 
 	m_rtAudio = std::make_unique<RtAudio>(kernelAudio.soundSystem);
 
@@ -63,7 +63,7 @@ void KernelAudio::init()
 
 /* -------------------------------------------------------------------------- */
 
-int KernelAudio::openDevice()
+int KernelAudio::openStream()
 {
 	assert(onAudioCallback != nullptr);
 	assert(m_rtAudio != nullptr);
@@ -83,7 +83,7 @@ int KernelAudio::openDevice()
 
 	if (m_devices.size() == 0)
 	{
-		closeDevice();
+		closeStream();
 		return 0;
 	}
 
@@ -156,7 +156,7 @@ int KernelAudio::openDevice()
 	}
 	else
 	{
-		closeDevice();
+		closeStream();
 		return 0;
 	}
 }
@@ -187,7 +187,7 @@ int KernelAudio::stopStream()
 
 /* -------------------------------------------------------------------------- */
 
-void KernelAudio::closeDevice()
+void KernelAudio::shutdown()
 {
 	if (!m_rtAudio->isStreamOpen())
 		return;
@@ -207,7 +207,7 @@ bool         KernelAudio::isInputEnabled() const { return m_model.get().kernelAu
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<m::KernelAudio::Device> KernelAudio::getDevices() const
+std::vector<m::KernelAudio::Device> KernelAudio::getAvailableDevices() const
 {
 	std::vector<Device> out;
 	for (unsigned i = 0; i < m_rtAudio->getDeviceCount(); i++)

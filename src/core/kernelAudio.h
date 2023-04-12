@@ -84,10 +84,10 @@ public:
 
 	void init();
 
-	int  openDevice();
-	void closeDevice();
-	int  startStream();
+	int  openStream();
+	bool startStream();
 	int  stopStream();
+	int  shutdown();
 
 	bool                isReady() const;
 	bool                isInputEnabled() const;
@@ -97,7 +97,7 @@ public:
 	int                 getChannelsInCount() const;
 	bool                hasAPI(int API) const;
 	RtAudio::Api        getAPI() const;
-	std::vector<Device> getDevices() const;
+	std::vector<Device> getAvailableDevices() const;
 #ifdef WITH_AUDIO_JACK
 	jack_client_t* getJackHandle() const;
 #endif
