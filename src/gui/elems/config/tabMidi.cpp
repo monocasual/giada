@@ -43,7 +43,6 @@ namespace giada::v
 geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 : Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.getI18Text(LangMap::CONFIG_MIDI_TITLE))
 , m_data(c::config::getMidiData())
-, m_initialApi(m_data.api)
 {
 	end();
 
@@ -89,26 +88,15 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 	add(body);
 	resizable(body);
 
-	for (const auto& [key, value] : m_data.apis)
-		system->addItem(value.c_str(), key);
-	system->showItem(m_data.api);
 	system->onChange = [this](ID id) {
 		m_data.api = static_cast<RtMidi::Api>(id);
-		invalidate();
 	};
 
-	portOut->showItem(m_data.outPort);
 	portOut->onChange = [this](ID id) { m_data.outPort = id; };
-	if (m_data.outPort == -1)
-		portOut->deactivate();
 
-	portIn->showItem(m_data.inPort);
 	portIn->onChange = [this](ID id) { m_data.inPort = id; };
-	if (m_data.inPort == -1)
-		portIn->deactivate();
 
 	enableOut->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEOUT));
-	enableOut->value(m_data.outPort != -1);
 	enableOut->onChange = [this](bool b) {
 		if (b)
 		{
@@ -123,7 +111,6 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 	};
 
 	enableIn->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEIN));
-	enableIn->value(m_data.inPort != -1);
 	enableIn->onChange = [this](bool b) {
 		if (b)
 		{
@@ -137,42 +124,40 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		}
 	};
 
-	midiMap->showItem(m_data.midiMap);
 	midiMap->onChange = [this](ID id) { m_data.midiMap = id; };
 
-	for (const auto& [key, value] : m_data.syncModes)
-		sync->addItem(value.c_str(), key);
-	sync->showItem(m_data.syncMode);
 	sync->onChange = [this](ID id) { m_data.syncMode = id; };
+
+	rebuild(c::config::getMidiData());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geTabMidi::invalidate()
+void geTabMidi::rebuild(const c::config::MidiData& data)
 {
-	/* If the user changes MIDI device (eg ALSA->JACK) device menu deactivates. 
-	If it returns to the original system, we re-fill the list by re-using
-	previous data. */
+	m_data = data;
 
-	if (m_initialApi == m_data.api && m_initialApi != -1)
-	{
-		portOut->activate();
-		portIn->activate();
-		enableOut->activate();
-		enableIn->activate();
-		if (m_data.midiMaps.size() > 0)
-			midiMap->activate();
-		sync->activate();
-	}
-	else
-	{
+	for (const auto& [key, value] : m_data.apis)
+		system->addItem(value.c_str(), key);
+	system->showItem(m_data.api);
+
+	portOut->showItem(m_data.outPort);
+	if (m_data.outPort == -1)
 		portOut->deactivate();
+
+	portIn->showItem(m_data.inPort);
+	if (m_data.inPort == -1)
 		portIn->deactivate();
-		enableOut->deactivate();
-		enableIn->deactivate();
-		midiMap->deactivate();
-		sync->deactivate();
-	}
+
+	enableOut->value(m_data.outPort != -1);
+
+	enableIn->value(m_data.inPort != -1);
+
+	midiMap->showItem(m_data.midiMap);
+
+	for (const auto& [key, value] : m_data.syncModes)
+		sync->addItem(value.c_str(), key);
+	sync->showItem(m_data.syncMode);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -53,11 +53,9 @@ public:
 	geChoice*     sync;
 
 private:
-	void invalidate();
+	void rebuild(const c::config::MidiData&);
 
 	c::config::MidiData m_data;
-
-	int m_initialApi;
 };
 } // namespace giada::v
 
