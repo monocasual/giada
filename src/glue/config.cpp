@@ -138,13 +138,13 @@ MidiData getMidiData()
 	MidiData midiData;
 
 	midiData.apis[RtMidi::Api::RTMIDI_DUMMY] = "(Dummy)";
-	if (g_engine.hasMidiAPI(RtMidi::Api::LINUX_ALSA))
+	if (g_engine.getConfigApi().midi_hasAPI(RtMidi::Api::LINUX_ALSA))
 		midiData.apis[RtMidi::Api::LINUX_ALSA] = "ALSA";
-	if (g_engine.hasMidiAPI(RtMidi::Api::UNIX_JACK))
+	if (g_engine.getConfigApi().midi_hasAPI(RtMidi::Api::UNIX_JACK))
 		midiData.apis[RtMidi::Api::UNIX_JACK] = "JACK";
-	if (g_engine.hasMidiAPI(RtMidi::Api::WINDOWS_MM))
+	if (g_engine.getConfigApi().midi_hasAPI(RtMidi::Api::WINDOWS_MM))
 		midiData.apis[RtMidi::Api::WINDOWS_MM] = "Multimedia MIDI";
-	if (g_engine.hasMidiAPI(RtMidi::Api::MACOSX_CORE))
+	if (g_engine.getConfigApi().midi_hasAPI(RtMidi::Api::MACOSX_CORE))
 		midiData.apis[RtMidi::Api::MACOSX_CORE] = "OSX Core MIDI";
 
 	midiData.syncModes[G_MIDI_SYNC_NONE]         = "(disabled)";
@@ -153,10 +153,10 @@ MidiData getMidiData()
 
 	const m::model::Layout& layout = g_engine.getLayout();
 
-	midiData.midiMaps = g_engine.getMidiMapFilesFound();
+	midiData.midiMaps = g_engine.getConfigApi().midi_getMidiMapFilesFound();
 	midiData.midiMap  = u::vector::indexOf(midiData.midiMaps, g_ui.model.midiMapPath);
-	midiData.outPorts = g_engine.getMidiOutPorts();
-	midiData.inPorts  = g_engine.getMidiInPorts();
+	midiData.outPorts = g_engine.getConfigApi().midi_getOutPorts();
+	midiData.inPorts  = g_engine.getConfigApi().midi_getInPorts();
 	midiData.api      = layout.kernelMidi.system;
 	midiData.syncMode = layout.kernelMidi.sync;
 	midiData.outPort  = layout.kernelMidi.portOut;

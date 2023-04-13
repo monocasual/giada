@@ -71,11 +71,7 @@ public:
 
 	Engine();
 
-	bool                            isAudioReady() const;
-	bool                            hasMidiAPI(RtMidi::Api) const;
-	std::vector<std::string>        getMidiOutPorts() const;
-	std::vector<std::string>        getMidiInPorts() const;
-	const std::vector<std::string>& getMidiMapFilesFound() const;
+	bool isAudioReady() const;
 
 	/* getPatch
 	Returns a read-only reference to the current loaded Patch. */

@@ -40,7 +40,7 @@ namespace giada::m
 class ConfigApi
 {
 public:
-	ConfigApi(model::Model&, KernelAudio&);
+	ConfigApi(model::Model&, KernelAudio&, KernelMidi&, MidiMapper<KernelMidi>&);
 
 	bool                             audio_hasAPI(RtAudio::Api) const;
 	RtAudio::Api                     audio_getAPI() const;
@@ -63,9 +63,16 @@ public:
 
 	void audio_storeData(bool limitOutput, Resampler::Quality, float recTriggerLevel);
 
+	bool                            midi_hasAPI(RtMidi::Api) const;
+	std::vector<std::string>        midi_getOutPorts() const;
+	std::vector<std::string>        midi_getInPorts() const;
+	const std::vector<std::string>& midi_getMidiMapFilesFound() const;
+
 private:
-	model::Model& m_model;
-	KernelAudio&  m_kernelAudio;
+	model::Model&           m_model;
+	KernelAudio&            m_kernelAudio;
+	KernelMidi&             m_kernelMidi;
+	MidiMapper<KernelMidi>& m_midiMapper;
 };
 } // namespace giada::m
 

@@ -57,7 +57,7 @@ Engine::Engine()
 , m_actionEditorApi(*this, m_model, m_sequencer, m_actionRecorder)
 , m_ioApi(m_model, m_midiDispatcher)
 , m_storageApi(*this, m_model, m_patch, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
-, m_configApi(m_model, m_kernelAudio)
+, m_configApi(m_model, m_kernelAudio, m_kernelMidi, m_midiMapper)
 {
 	m_kernelAudio.onAudioCallback = [this](mcl::AudioBuffer& out, const mcl::AudioBuffer& in) {
 		return audioCallback(out, in);
@@ -195,32 +195,6 @@ Engine::Engine()
 bool Engine::isAudioReady() const
 {
 	return m_kernelAudio.isReady();
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool Engine::hasMidiAPI(RtMidi::Api api) const
-{
-	return m_kernelMidi.hasAPI(api);
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::vector<std::string> Engine::getMidiOutPorts() const
-{
-	return m_kernelMidi.getOutPorts();
-}
-
-std::vector<std::string> Engine::getMidiInPorts() const
-{
-	return m_kernelMidi.getInPorts();
-}
-
-/* -------------------------------------------------------------------------- */
-
-const std::vector<std::string>& Engine::getMidiMapFilesFound() const
-{
-	return m_midiMapper.getMapFilesFound();
 }
 
 /* -------------------------------------------------------------------------- */

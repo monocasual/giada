@@ -30,9 +30,11 @@
 
 namespace giada::m
 {
-ConfigApi::ConfigApi(model::Model& m, KernelAudio& k)
+ConfigApi::ConfigApi(model::Model& m, KernelAudio& ka, KernelMidi& km, MidiMapper<KernelMidi>& mm)
 : m_model(m)
-, m_kernelAudio(k)
+, m_kernelAudio(ka)
+, m_kernelMidi(km)
+, m_midiMapper(mm)
 {
 }
 
@@ -113,4 +115,31 @@ void ConfigApi::audio_storeData(bool limitOutput, Resampler::Quality rsmpQuality
 
 	m_model.swap(model::SwapType::NONE);
 }
+
+/* -------------------------------------------------------------------------- */
+
+bool ConfigApi::midi_hasAPI(RtMidi::Api api) const
+{
+	return m_kernelMidi.hasAPI(api);
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::vector<std::string> ConfigApi::midi_getOutPorts() const
+{
+	return m_kernelMidi.getOutPorts();
+}
+
+std::vector<std::string> ConfigApi::midi_getInPorts() const
+{
+	return m_kernelMidi.getInPorts();
+}
+
+/* -------------------------------------------------------------------------- */
+
+const std::vector<std::string>& ConfigApi::midi_getMidiMapFilesFound() const
+{
+	return m_midiMapper.getMapFilesFound();
+}
+
 } // namespace giada::m
