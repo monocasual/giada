@@ -41,6 +41,7 @@ Engine::Engine()
 , onMidiSent(nullptr)
 , onModelSwap(nullptr)
 , m_kernelAudio(m_model)
+, m_kernelMidi(m_model)
 , m_midiMapper(m_kernelMidi)
 , m_pluginHost(m_model)
 , m_midiSynchronizer(m_model, m_kernelMidi)
@@ -240,8 +241,7 @@ void Engine::init(const Conf& conf)
 	m_mixer.enable();
 	m_kernelAudio.startStream();
 
-	m_kernelMidi.openOutDevice(layout.kernelMidi.system, layout.kernelMidi.portOut);
-	m_kernelMidi.openInDevice(layout.kernelMidi.system, layout.kernelMidi.portIn);
+	m_kernelMidi.init();
 	m_kernelMidi.logPorts();
 	m_kernelMidi.start();
 

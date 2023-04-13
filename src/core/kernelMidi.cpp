@@ -27,6 +27,7 @@
 #include "core/kernelMidi.h"
 #include "core/const.h"
 #include "core/midiEvent.h"
+#include "core/model/kernelAudio.h"
 #include "utils/log.h"
 #include <algorithm>
 #include <cassert>
@@ -47,13 +48,26 @@ constexpr int  MAX_NUM_PRODUCERS = 2; // Real-time thread and MIDI sync thread
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-KernelMidi::KernelMidi()
+KernelMidi::KernelMidi(model::Model& m)
 : onMidiReceived(nullptr)
 , onMidiSent(nullptr)
+, m_model(m)
 , m_worker(G_KERNEL_MIDI_OUTPUT_RATE_MS)
 , m_midiQueue(MAX_RTMIDI_EVENTS, 0, MAX_NUM_PRODUCERS) // See https://github.com/cameron314/concurrentqueue#preallocation-correctly-using-try_enqueue
 , m_elpsedTime(0.0)
 {
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool KernelMidi::init()
+{
+	const model::KernelMidi& kernelMidi = m_model.get().kernelMidi;
+
+	openOutDevice(kernelMidi.system, kernelMidi.portOut);
+	openInDevice(kernelMidi.system, kernelMidi.portIn);
+
+	return true; // TODO
 }
 
 /* -------------------------------------------------------------------------- */

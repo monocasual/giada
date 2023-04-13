@@ -27,6 +27,7 @@
 #ifndef G_KERNELMIDI_H
 #define G_KERNELMIDI_H
 
+#include "core/model/model.h"
 #include "core/worker.h"
 #include "deps/concurrentqueue/concurrentqueue.h"
 #include "midiMapper.h"
@@ -42,9 +43,14 @@ class MidiEvent;
 class KernelMidi final
 {
 public:
-	KernelMidi();
+	KernelMidi(model::Model&);
 
 	static void logCompiledAPIs();
+
+	/* init
+	Initializes the MIDI engine given the current model::KernelMidi data. */
+
+	bool init();
 
 	/* getOutPorts, getOutPorts
     Returns a vector of port names. */
@@ -65,9 +71,6 @@ public:
 
 	void start();
 
-	bool openOutDevice(RtMidi::Api api, int port);
-	bool openInDevice(RtMidi::Api api, int port);
-
 	void logPorts();
 
 	std::function<void(const MidiEvent&)> onMidiReceived;
@@ -87,8 +90,11 @@ private:
 	std::string getPortName(RtMidi&, int port) const;
 	void        logPorts(RtMidi&, std::string name) const;
 
+	bool openOutDevice(RtMidi::Api api, int port);
+	bool openInDevice(RtMidi::Api api, int port);
 	bool openPort(RtMidi&, int port);
 
+	model::Model&              m_model;
 	std::unique_ptr<RtMidiOut> m_midiOut;
 	std::unique_ptr<RtMidiIn>  m_midiIn;
 
