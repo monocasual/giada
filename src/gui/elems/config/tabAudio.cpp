@@ -179,7 +179,6 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 		body->add(line3, 20);
 		body->add(line4, 20);
 		body->add(m_rsmpQuality, 20);
-		body->add(new geBox(g_ui.getI18Text(LangMap::CONFIG_RESTARTGIADA)));
 		body->end();
 	}
 
