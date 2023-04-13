@@ -126,7 +126,6 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 
 geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 : Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.getI18Text(LangMap::CONFIG_AUDIO_TITLE))
-, m_data(c::config::getAudioData())
 {
 	end();
 
