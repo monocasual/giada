@@ -100,14 +100,19 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 		return;
 	}
 
+	/* Single channel choice (mono) is available only for input devices. Output
+	devices are always stereo. */
+
 	if (data.type == c::config::DeviceType::INPUT)
 		for (int i = 0; i < data.channelsMax; i++)
 			addItem(std::to_string(i + 1), i);
 
-	/* Dirty trick for stereo channels: they start at STEREO_OFFSET. */
+	/* Dirty trick for stereo channels: they start at STEREO_OFFSET. Also,
+	what if channelsMax > 2? Only channel pairs are allowed at the moment. */
 
-	for (int i = 0; i < data.channelsMax; i += 2)
-		addItem(fmt::format("{}-{}", i + 1, i + 2), i + STEREO_OFFSET);
+	if (data.channelsMax > 1)
+		for (int i = 0; i < data.channelsMax; i += 2)
+			addItem(fmt::format("{}-{}", i + 1, i + 2), i + STEREO_OFFSET);
 
 	if (data.channelsCount == 1)
 		showItem(data.channelsStart);
