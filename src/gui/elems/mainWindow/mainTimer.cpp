@@ -61,7 +61,7 @@ geMainTimer::geMainTimer()
 	m_multiplier->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TIMER_LABEL_MULTIPLIER));
 	m_divider->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_TIMER_LABEL_DIVIDER));
 
-	m_bpm->onClick        = [&bpm = m_bpm]() { c::layout::openBpmWindow(bpm->label()); };
+	m_bpm->onClick        = [&timer = m_timer]() { c::layout::openBpmWindow(timer.bpm); };
 	m_meter->onClick      = [&timer = m_timer]() { c::layout::openBeatsWindow(timer.beats, timer.bars); };
 	m_multiplier->onClick = []() { c::main::multiplyBeats(); };
 	m_divider->onClick    = []() { c::main::divideBeats(); };

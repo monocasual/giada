@@ -36,45 +36,36 @@
 #include "utils/gui.h"
 #include "utils/string.h"
 #include <cstring>
+#include <fmt/core.h>
 
 extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
-gdBpmInput::gdBpmInput(const char* label)
+gdBpmInput::gdBpmInput(float value)
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, 180, 36}), "Bpm")
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{
-		m_input_a = new geInput(0, 0, 0, 0);
-		m_input_b = new geInput(0, 0, 0, 0);
-		m_ok      = new geTextButton(g_ui.getI18Text(LangMap::COMMON_OK));
-		container->add(m_input_a);
-		container->add(m_input_b);
+		m_value = new geInput(0, 0, 0, 0);
+		m_ok    = new geTextButton(g_ui.getI18Text(LangMap::COMMON_OK));
+		container->add(m_value);
 		container->add(m_ok, 70);
 		container->end();
 	}
 
 	add(container);
 
-	std::vector<std::string> parts = u::string::split(label, ".");
-
-	m_input_a->setMaximumSize(3);
-	m_input_a->setType(FL_INT_INPUT);
-	m_input_a->setValue(parts[0]);
-
-	m_input_b->setMaximumSize(1);
-	m_input_b->setType(FL_INT_INPUT);
-	m_input_b->setValue(parts[1]);
+	m_value->setMaximumSize(5);
+	m_value->setType(FL_FLOAT_INPUT);
+	m_value->setValue(fmt::format("{:.1f}", value));
 
 	m_ok->shortcut(FL_Enter);
 	m_ok->onClick = [this]() {
-		if (m_input_a->getValue() == "")
+		std::string value = m_value->getValue();
+		if (value == "")
 			return;
-		const std::string a   = m_input_a->getValue();
-		const std::string b   = m_input_b->getValue();
-		const float       bpm = u::string::toFloat(a) + (u::string::toFloat(b) / 10.0f);
-		c::main::setBpm(bpm);
+		c::main::setBpm(u::string::toFloat(value));
 		do_callback();
 	};
 

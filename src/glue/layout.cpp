@@ -115,9 +115,9 @@ void openKeyGrabberWindow(int key, std::function<bool(int)> f)
 
 /* -------------------------------------------------------------------------- */
 
-void openBpmWindow(std::string bpmValue)
+void openBpmWindow(float bpm)
 {
-	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdBpmInput(bpmValue.c_str()), WID_BPM);
+	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdBpmInput(bpm), WID_BPM);
 }
 
 /* -------------------------------------------------------------------------- */

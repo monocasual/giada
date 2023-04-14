@@ -36,11 +36,10 @@ class geInput;
 class gdBpmInput : public gdWindow
 {
 public:
-	gdBpmInput(const char* label); // pointer to mainWin->timing->bpm->label()
+	gdBpmInput(float value);
 
 private:
-	geInput*      m_input_a;
-	geInput*      m_input_b;
+	geInput*      m_value;
 	geTextButton* m_ok;
 };
 } // namespace giada::v

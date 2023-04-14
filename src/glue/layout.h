@@ -54,7 +54,7 @@ void openBrowserForSampleLoad(ID channelId);
 void openBrowserForSampleSave(ID channelId);
 void openAboutWindow();
 void openKeyGrabberWindow(int key, std::function<bool(int)>);
-void openBpmWindow(std::string bpmValue);
+void openBpmWindow(float bpm);
 void openBeatsWindow(int beats, int bars);
 void openConfigWindow();
 void openMasterMidiInputWindow();
