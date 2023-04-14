@@ -74,6 +74,12 @@ public:
 
 	void reset(int bufferSize);
 
+	/* setBufferSize
+	Sets a new buffer size value for the internal audio buffer. Must be called 
+	only when mixer is disabled. */
+
+	void setBufferSize(int);
+
 	/* addPlugin
 	Loads a new plugin into memory. Returns a reference to the newly created
 	object. */

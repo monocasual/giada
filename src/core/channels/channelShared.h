@@ -47,6 +47,11 @@ struct ChannelShared final
 
 	bool isReadingActions() const;
 
+	/* setBufferSize 
+	Sets a new size for the internal audio buffer. */
+
+	void setBufferSize(int);
+
 	mcl::AudioBuffer audioBuffer;
 	juce::MidiBuffer midiBuffer;
 	MidiQueue        midiQueue;

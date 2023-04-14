@@ -127,6 +127,12 @@ public:
 
 	void reset(int sampleRate);
 
+	/* setSampleRate
+	Sets a new sample rate value for the internal beat computation. Must be 
+	called only when mixer is disabled.*/
+
+	void setSampleRate(int);
+
 	/* advance
 	Parses sequencer events that might occur in a block and advances the internal 
 	quantizer. Returns a reference to the internal EventBuffer filled with events

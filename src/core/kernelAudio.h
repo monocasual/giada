@@ -132,6 +132,16 @@ public:
 
 	std::function<int(mcl::AudioBuffer& out, const mcl::AudioBuffer& in)> onAudioCallback;
 
+	/* onStreamAboutToOpen
+	Callback fired before opening a new stream. */
+
+	std::function<void()> onStreamAboutToOpen;
+
+	/* onStreamOpened
+	Callback fired when a stream has been opened successfully. */
+
+	std::function<void()> onStreamOpened;
+
 private:
 	struct CallbackInfo
 	{

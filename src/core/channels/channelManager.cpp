@@ -83,6 +83,14 @@ void ChannelManager::reset(Frame framesInBuffer)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelManager::setBufferSize(int bufferSize)
+{
+	for (auto& channelShared : m_model.getAllShared<model::ChannelSharedPtrs>())
+		channelShared->setBufferSize(bufferSize);
+}
+
+/* -------------------------------------------------------------------------- */
+
 Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position, int bufferSize)
 {
 	const bool               overdubProtectionDefaultOn = m_model.get().overdubProtectionDefaultOn;

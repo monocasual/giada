@@ -41,4 +41,11 @@ bool ChannelShared::isReadingActions() const
 	const bool          read   = readActions.load();
 	return read && (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelShared::setBufferSize(int bufferSize)
+{
+	audioBuffer.alloc(bufferSize, audioBuffer.countChannels());
+}
 } // namespace giada::m

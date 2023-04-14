@@ -93,7 +93,8 @@ public:
 	    int maxFramesToRec) const;
 
 	/* reset
-	Brings everything back to the initial state. */
+	Brings everything back to the initial state. Must be called only when mixer
+	is disabled.*/
 
 	void reset(int framesInLoop, int framesInBuffer);
 

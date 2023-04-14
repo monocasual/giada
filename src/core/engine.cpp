@@ -62,6 +62,22 @@ Engine::Engine()
 	m_kernelAudio.onAudioCallback = [this](mcl::AudioBuffer& out, const mcl::AudioBuffer& in) {
 		return audioCallback(out, in);
 	};
+	m_kernelAudio.onStreamAboutToOpen = [this]() {
+		m_mixer.disable();
+	};
+	m_kernelAudio.onStreamOpened = [this]() {
+#ifdef WITH_AUDIO_JACK
+		if (m_kernelAudio.getAPI() == RtAudio::Api::UNIX_JACK)
+			m_jackTransport.setHandle(m_kernelAudio.getJackHandle());
+#endif
+		const int sampleRate = m_kernelAudio.getSampleRate();
+		const int bufferSize = m_kernelAudio.getBufferSize();
+		m_mixer.reset(m_sequencer.getMaxFramesInLoop(sampleRate), bufferSize);
+		m_channelManager.setBufferSize(bufferSize);
+		m_sequencer.setSampleRate(sampleRate);
+		m_pluginHost.setBufferSize(bufferSize);
+		m_mixer.enable();
+	};
 
 	m_kernelMidi.onMidiReceived = [this](const MidiEvent& e) {
 		assert(onMidiReceived != nullptr);
@@ -240,11 +256,6 @@ void Engine::init(const Conf& conf)
 		u::log::print("[Engine::init] MIDI map read failed!\n");
 
 	m_kernelAudio.init();
-
-#ifdef WITH_AUDIO_JACK
-	if (m_kernelAudio.getAPI() == RtAudio::Api::UNIX_JACK)
-		m_jackTransport.setHandle(m_kernelAudio.getJackHandle());
-#endif
 
 	m_mixer.reset(m_sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
 	m_channelManager.reset(m_kernelAudio.getBufferSize());

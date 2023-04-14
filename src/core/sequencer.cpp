@@ -113,6 +113,13 @@ void Sequencer::reset(int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
+void Sequencer::setSampleRate(int sampleRate)
+{
+	recomputeFrames(sampleRate);
+}
+
+/* -------------------------------------------------------------------------- */
+
 const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequencer,
     Frame bufferSize, int sampleRate, const ActionRecorder& actionRecorder) const
 {

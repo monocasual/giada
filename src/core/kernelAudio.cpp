@@ -41,6 +41,8 @@ namespace giada::m
 {
 KernelAudio::KernelAudio(model::Model& model)
 : onAudioCallback(nullptr)
+, onStreamAboutToOpen(nullptr)
+, onStreamOpened(nullptr)
 , m_model(model)
 {
 }
@@ -83,6 +85,11 @@ bool KernelAudio::openStream(
     unsigned int                      sampleRate,
     unsigned int                      bufferSize)
 {
+	assert(onStreamOpened != nullptr);
+	assert(onStreamAboutToOpen != nullptr);
+
+	onStreamAboutToOpen();
+
 	OpenStreamResult result = openStream_(out, in, sampleRate, bufferSize);
 	if (!result.success)
 		return false;
@@ -94,6 +101,8 @@ bool KernelAudio::openStream(
 	kernelAudio.samplerate = result.actualSampleRate;
 	kernelAudio.buffersize = result.actualBufferSize;
 	m_model.swap(model::SwapType::NONE);
+
+	onStreamOpened();
 
 	return true;
 }

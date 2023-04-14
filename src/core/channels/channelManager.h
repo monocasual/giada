@@ -99,6 +99,12 @@ public:
 
 	void reset(Frame framesInBuffer);
 
+	/* setBufferSize
+	Sets a new buffer size value to all channels. Must be called only when
+	mixer is disabled. */
+
+	void setBufferSize(int);
+
 	/* addChannel
     Adds a new channel to the stack. */
 

@@ -80,6 +80,13 @@ PluginHost::PluginHost(model::Model& m)
 void PluginHost::reset(int bufferSize)
 {
 	freeAllPlugins();
+	setBufferSize(bufferSize);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void PluginHost::setBufferSize(int bufferSize)
+{
 	m_audioBuffer.setSize(G_MAX_IO_CHANS, bufferSize);
 }
 
