@@ -359,12 +359,12 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 		actualSampleRate = jackSampleRate;
 	}
 
+#endif
+
 	m_callbackInfo = {
 	    /* rtAudio */ this,
 	    /* channelsOutCount */ out.channelsCount,
 	    /* channelsInCount */ in.channelsCount};
-
-#endif
 
 	RtAudioErrorType res = m_rtAudio->openStream(
 	    &outParams,                           // output params
