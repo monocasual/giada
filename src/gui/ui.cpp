@@ -122,9 +122,9 @@ void Ui::init(int argc, char** argv, const m::Conf& conf, const std::string& pat
 	dispatcher.init(*mainWindow, model);
 	m_updater.start();
 
-	if (isAudioReady)
-		rebuildStaticWidgets();
-	else
+	rebuildStaticWidgets();
+
+	if (!isAudioReady)
 		v::gdAlert(m_langMapper.get(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
 }
 

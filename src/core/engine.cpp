@@ -239,11 +239,7 @@ void Engine::init(const Conf& conf)
 	if (m_midiMapper.read(layout.kernelMidi.midiMapPath) != G_FILE_OK)
 		u::log::print("[Engine::init] MIDI map read failed!\n");
 
-	/* Initialize KernelAudio. If fails, interrupt the Engine initialization:
-	Giada can't work without a working KernelAudio. */
-
-	if (!m_kernelAudio.init())
-		return;
+	m_kernelAudio.init();
 
 #ifdef WITH_AUDIO_JACK
 	if (m_kernelAudio.getAPI() == RtAudio::Api::UNIX_JACK)
