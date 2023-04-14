@@ -34,6 +34,7 @@
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"
 #include "gui/ui.h"
+#include "utils/gui.h"
 #include <fmt/core.h>
 #include <string>
 
@@ -62,7 +63,7 @@ void geTabAudio::geDeviceMenu::rebuild(const std::vector<c::config::AudioDeviceD
 	}
 
 	for (const c::config::AudioDeviceData& device : devices)
-		addItem(device.name, device.index);
+		addItem(u::gui::removeFltkChars(device.name), device.index);
 }
 
 /* -------------------------------------------------------------------------- */
