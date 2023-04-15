@@ -125,6 +125,32 @@ bool ConfigApi::midi_hasAPI(RtMidi::Api api) const
 
 /* -------------------------------------------------------------------------- */
 
+RtMidi::Api ConfigApi::midi_getAPI() const
+{
+	return m_kernelMidi.getAPI();
+}
+
+/* -------------------------------------------------------------------------- */
+
+int ConfigApi::midi_getSyncMode() const
+{
+	return m_kernelMidi.getSyncMode();
+}
+
+/* -------------------------------------------------------------------------- */
+
+int ConfigApi::midi_getCurrentOutPort() const
+{
+	return m_kernelMidi.getCurrentOutPort();
+}
+
+int ConfigApi::midi_getCurrentInPort() const
+{
+	return m_kernelMidi.getCurrentInPort();
+}
+
+/* -------------------------------------------------------------------------- */
+
 std::vector<std::string> ConfigApi::midi_getOutPorts() const
 {
 	return m_kernelMidi.getOutPorts();

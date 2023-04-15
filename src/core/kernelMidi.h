@@ -58,7 +58,11 @@ public:
 	std::vector<std::string> getOutPorts() const;
 	std::vector<std::string> getInPorts() const;
 
-	bool hasAPI(RtMidi::Api API) const;
+	bool        hasAPI(RtMidi::Api API) const;
+	RtMidi::Api getAPI() const;
+	int         getSyncMode() const;
+	int         getCurrentOutPort() const;
+	int         getCurrentInPort() const;
 
 	/* send
     Sends a MIDI message to the outside world. Returns false if MIDI out is not

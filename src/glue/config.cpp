@@ -151,16 +151,14 @@ MidiData getMidiData()
 	midiData.syncModes[G_MIDI_SYNC_CLOCK_MASTER] = "MIDI Clock (master)";
 	midiData.syncModes[G_MIDI_SYNC_CLOCK_SLAVE]  = "MIDI Clock (slave)";
 
-	const m::model::Layout& layout = g_engine.getLayout();
-
 	midiData.midiMaps = g_engine.getConfigApi().midi_getMidiMapFilesFound();
 	midiData.midiMap  = u::vector::indexOf(midiData.midiMaps, g_ui.model.midiMapPath);
 	midiData.outPorts = g_engine.getConfigApi().midi_getOutPorts();
 	midiData.inPorts  = g_engine.getConfigApi().midi_getInPorts();
-	midiData.api      = layout.kernelMidi.system;
-	midiData.syncMode = layout.kernelMidi.sync;
-	midiData.outPort  = layout.kernelMidi.portOut;
-	midiData.inPort   = layout.kernelMidi.portIn;
+	midiData.api      = g_engine.getConfigApi().midi_getAPI();
+	midiData.syncMode = g_engine.getConfigApi().midi_getSyncMode();
+	midiData.outPort  = g_engine.getConfigApi().midi_getCurrentOutPort();
+	midiData.inPort   = g_engine.getConfigApi().midi_getCurrentInPort();
 
 	return midiData;
 }
