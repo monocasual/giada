@@ -168,4 +168,21 @@ const std::vector<std::string>& ConfigApi::midi_getMidiMapFilesFound() const
 	return m_midiMapper.getMapFilesFound();
 }
 
+/* -------------------------------------------------------------------------- */
+
+bool ConfigApi::midi_setAPI(RtMidi::Api api)
+{
+	return m_kernelMidi.setAPI(api);
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool ConfigApi::midi_openPorts(int out, int in)
+{
+	bool outRes = m_kernelMidi.openOutPort(out);
+	bool inRes  = m_kernelMidi.openInPort(in);
+
+	return outRes && inRes;
+}
+
 } // namespace giada::m

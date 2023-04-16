@@ -137,7 +137,8 @@ MidiData getMidiData()
 {
 	MidiData midiData;
 
-	midiData.apis[RtMidi::Api::RTMIDI_DUMMY] = "(Dummy)";
+	if (g_engine.getConfigApi().midi_hasAPI(RtMidi::Api::RTMIDI_DUMMY))
+		midiData.apis[RtMidi::Api::RTMIDI_DUMMY] = "(Dummy)";
 	if (g_engine.getConfigApi().midi_hasAPI(RtMidi::Api::LINUX_ALSA))
 		midiData.apis[RtMidi::Api::LINUX_ALSA] = "ALSA";
 	if (g_engine.getConfigApi().midi_hasAPI(RtMidi::Api::UNIX_JACK))
@@ -204,6 +205,13 @@ BehaviorsData getBehaviorsData()
 void changeAudioAPI(RtAudio::Api api)
 {
 	g_engine.getConfigApi().audio_setAPI(api);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void changeMidiAPI(RtMidi::Api api)
+{
+	g_engine.getConfigApi().midi_setAPI(api);
 }
 
 /* -------------------------------------------------------------------------- */

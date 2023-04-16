@@ -52,6 +52,17 @@ public:
 
 	bool init();
 
+	/* setAPI
+	Sets new RtMidi API. Also resets all model::KernelMidi data. */
+
+	bool setAPI(RtMidi::Api API);
+
+	/* open[I/0]port
+	Opens a new I/O port. Also updates model::KernelMidi data if successful. */
+
+	bool openOutPort(int port);
+	bool openInPort(int port);
+
 	/* getOutPorts, getOutPorts
     Returns a vector of port names. */
 
@@ -75,8 +86,6 @@ public:
 
 	void start();
 
-	void logPorts();
-
 	std::function<void(const MidiEvent&)> onMidiReceived;
 	std::function<void()>                 onMidiSent;
 
@@ -93,9 +102,11 @@ private:
 	unsigned    countInPorts() const;
 	std::string getPortName(RtMidi&, int port) const;
 	void        logPorts(RtMidi&, std::string name) const;
+	void        logPorts() const;
 
-	bool openOutDevice(RtMidi::Api api, int port);
-	bool openInDevice(RtMidi::Api api, int port);
+	bool setAPI_(RtMidi::Api);
+	bool openOutPort_(int port);
+	bool openInPort_(int port);
 	bool openPort(RtMidi&, int port);
 
 	model::Model&              m_model;

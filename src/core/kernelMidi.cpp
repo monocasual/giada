@@ -64,10 +64,53 @@ bool KernelMidi::init()
 {
 	const model::KernelMidi& kernelMidi = m_model.get().kernelMidi;
 
-	openOutDevice(kernelMidi.system, kernelMidi.portOut);
-	openInDevice(kernelMidi.system, kernelMidi.portIn);
+	if (!setAPI_(kernelMidi.system))
+		return false;
+	if (!openOutPort_(kernelMidi.portOut))
+		return false;
+	if (!openInPort_(kernelMidi.portIn))
+		return false;
 
-	return true; // TODO
+	return true;
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool KernelMidi::setAPI(RtMidi::Api api)
+{
+	if (!setAPI_(api))
+		return false;
+
+	m_model.get().kernelMidi.system  = api;
+	m_model.get().kernelMidi.portOut = G_DEFAULT_MIDI_PORT_OUT;
+	m_model.get().kernelMidi.portIn  = G_DEFAULT_MIDI_PORT_IN;
+	m_model.swap(model::SwapType::NONE);
+
+	return true;
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool KernelMidi::openOutPort(int port)
+{
+	if (!openOutPort_(port))
+		return false;
+
+	m_model.get().kernelMidi.portOut = port;
+	m_model.swap(model::SwapType::NONE);
+
+	return true;
+}
+
+bool KernelMidi::openInPort(int port)
+{
+	if (!openInPort_(port))
+		return false;
+
+	m_model.get().kernelMidi.portIn = port;
+	m_model.swap(model::SwapType::NONE);
+
+	return true;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -85,45 +128,34 @@ void KernelMidi::start()
 
 /* -------------------------------------------------------------------------- */
 
-bool KernelMidi::openOutDevice(RtMidi::Api api, int port)
+bool KernelMidi::setAPI_(RtMidi::Api api)
 {
-	if (port == -1)
-		return false;
-
-	u::log::print("[KM] Opening output - API=%d, port=%d, device='%s'\n", api, port, OUTPUT_NAME);
-
 	m_midiOut = makeDevice<RtMidiOut>(api, OUTPUT_NAME);
-	if (m_midiOut == nullptr)
+	m_midiIn  = makeDevice<RtMidiIn>(api, INPUT_NAME);
+
+	if (m_midiIn == nullptr || m_midiOut == nullptr)
 		return false;
 
-	return openPort(*m_midiOut, port);
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool KernelMidi::openInDevice(RtMidi::Api api, int port)
-{
-	if (port == -1)
-		return false;
-
-	u::log::print("[KM] Opening input - API=%d, port=%d, device '%s'\n", api, port, INPUT_NAME);
-
-	m_midiIn = makeDevice<RtMidiIn>(api, INPUT_NAME);
-	if (m_midiIn == nullptr)
-		return false;
-
-	if (!openPort(*m_midiIn, port))
-		return false;
-
-	m_midiIn->setCallback(&s_callback, this);
-	m_midiIn->ignoreTypes(true, /*midiTime=*/false, true); // Don't ignore time msgs
+	logPorts();
 
 	return true;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::logPorts()
+bool KernelMidi::openOutPort_(int port)
+{
+	return openPort(*m_midiOut, port);
+}
+
+bool KernelMidi::openInPort_(int port)
+{
+	return openPort(*m_midiIn, port);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void KernelMidi::logPorts() const
 {
 	if (m_midiOut != nullptr)
 		logPorts(*m_midiOut, OUTPUT_NAME);

@@ -72,6 +72,9 @@ public:
 	std::vector<std::string>        midi_getInPorts() const;
 	const std::vector<std::string>& midi_getMidiMapFilesFound() const;
 
+	bool midi_setAPI(RtMidi::Api);
+	bool midi_openPorts(int out, int in);
+
 private:
 	model::Model&           m_model;
 	KernelAudio&            m_kernelAudio;

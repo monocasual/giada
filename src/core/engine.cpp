@@ -242,7 +242,6 @@ void Engine::init(const Conf& conf)
 	m_kernelAudio.startStream();
 
 	m_kernelMidi.init();
-	m_kernelMidi.logPorts();
 	m_kernelMidi.start();
 
 	m_midiMapper.sendInitMessages(m_midiMapper.currentMap);

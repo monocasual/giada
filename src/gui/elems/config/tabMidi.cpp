@@ -89,7 +89,10 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 	resizable(body);
 
 	m_system->onChange = [this](ID id) {
-		m_data.api = static_cast<RtMidi::Api>(id);
+		m_data.api            = static_cast<RtMidi::Api>(id);
+		const RtMidi::Api api = static_cast<RtMidi::Api>(id);
+		c::config::changeMidiAPI(api);
+		rebuild(c::config::getMidiData());
 	};
 
 	m_portOut->onChange = [this](ID id) { m_data.outPort = id; };
@@ -137,6 +140,7 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 {
 	m_data = data;
 
+	m_system->clear();
 	for (const auto& [key, value] : m_data.apis)
 		m_system->addItem(value.c_str(), key);
 	m_system->showItem(m_data.api);
@@ -158,6 +162,7 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 	m_midiMap->rebuild(m_data.midiMaps);
 	m_midiMap->showItem(m_data.midiMap);
 
+	m_sync->clear();
 	for (const auto& [key, value] : m_data.syncModes)
 		m_sync->addItem(value.c_str(), key);
 	m_sync->showItem(m_data.syncMode);

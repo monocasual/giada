@@ -137,6 +137,7 @@ MiscData      getMiscData();
 BehaviorsData getBehaviorsData();
 
 void changeAudioAPI(RtAudio::Api);
+void changeMidiAPI(RtMidi::Api);
 
 void save(const AudioData&);
 void save(const MidiData&);
