@@ -89,9 +89,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 	resizable(body);
 
 	m_system->onChange = [this](ID id) {
-		m_data.api            = static_cast<RtMidi::Api>(id);
-		const RtMidi::Api api = static_cast<RtMidi::Api>(id);
-		c::config::changeMidiAPI(api);
+		c::config::changeMidiAPI(static_cast<RtMidi::Api>(id));
 		rebuild(c::config::getMidiData());
 	};
 
