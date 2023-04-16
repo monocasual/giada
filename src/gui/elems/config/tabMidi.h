@@ -44,18 +44,18 @@ public:
 
 	void save() const;
 
-	geChoice*     system;
-	geStringMenu* portOut;
-	geStringMenu* portIn;
-	geCheck*      enableOut;
-	geCheck*      enableIn;
-	geStringMenu* midiMap;
-	geChoice*     sync;
-
 private:
 	void rebuild(const c::config::MidiData&);
 
 	c::config::MidiData m_data;
+
+	geChoice*     m_system;
+	geStringMenu* m_portOut;
+	geStringMenu* m_portIn;
+	geCheck*      m_enableOut;
+	geCheck*      m_enableIn;
+	geStringMenu* m_midiMap;
+	geChoice*     m_sync;
 };
 } // namespace giada::v
 

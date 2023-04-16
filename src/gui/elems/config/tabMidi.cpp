@@ -48,39 +48,39 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 
 	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		system = new geChoice(g_ui.getI18Text(LangMap::CONFIG_MIDI_SYSTEM), LABEL_WIDTH);
+		m_system = new geChoice(g_ui.getI18Text(LangMap::CONFIG_MIDI_SYSTEM), LABEL_WIDTH);
 
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			portOut   = new geStringMenu(g_ui.getI18Text(LangMap::CONFIG_MIDI_OUTPUTPORT),
+			m_portOut   = new geStringMenu(g_ui.getI18Text(LangMap::CONFIG_MIDI_OUTPUTPORT),
                 m_data.outPorts, g_ui.getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
-			enableOut = new geCheck(0, 0, 0, 0);
+			m_enableOut = new geCheck(0, 0, 0, 0);
 
-			line1->add(portOut);
-			line1->add(enableOut, 12);
+			line1->add(m_portOut);
+			line1->add(m_enableOut, 12);
 			line1->end();
 		}
 
 		geFlex* line2 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			portIn   = new geStringMenu(g_ui.getI18Text(LangMap::CONFIG_MIDI_INPUTPORT),
+			m_portIn   = new geStringMenu(g_ui.getI18Text(LangMap::CONFIG_MIDI_INPUTPORT),
                 m_data.inPorts, g_ui.getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
-			enableIn = new geCheck(0, 0, 0, 0);
+			m_enableIn = new geCheck(0, 0, 0, 0);
 
-			line2->add(portIn);
-			line2->add(enableIn, 12);
+			line2->add(m_portIn);
+			line2->add(m_enableIn, 12);
 			line2->end();
 		}
 
-		midiMap = new geStringMenu(g_ui.getI18Text(LangMap::CONFIG_MIDI_OUTPUTMIDIMAP),
+		m_midiMap = new geStringMenu(g_ui.getI18Text(LangMap::CONFIG_MIDI_OUTPUTMIDIMAP),
 		    m_data.midiMaps, g_ui.getI18Text(LangMap::CONFIG_MIDI_NOMIDIMAPSFOUND), LABEL_WIDTH);
-		sync    = new geChoice(g_ui.getI18Text(LangMap::CONFIG_MIDI_SYNC), LABEL_WIDTH);
+		m_sync    = new geChoice(g_ui.getI18Text(LangMap::CONFIG_MIDI_SYNC), LABEL_WIDTH);
 
-		body->add(system, 20);
+		body->add(m_system, 20);
 		body->add(line1, 20);
 		body->add(line2, 20);
-		body->add(midiMap, 20);
-		body->add(sync, 20);
+		body->add(m_midiMap, 20);
+		body->add(m_sync, 20);
 		body->add(new geBox(g_ui.getI18Text(LangMap::CONFIG_RESTARTGIADA)));
 		body->end();
 	}
@@ -88,45 +88,45 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 	add(body);
 	resizable(body);
 
-	system->onChange = [this](ID id) {
+	m_system->onChange = [this](ID id) {
 		m_data.api = static_cast<RtMidi::Api>(id);
 	};
 
-	portOut->onChange = [this](ID id) { m_data.outPort = id; };
+	m_portOut->onChange = [this](ID id) { m_data.outPort = id; };
 
-	portIn->onChange = [this](ID id) { m_data.inPort = id; };
+	m_portIn->onChange = [this](ID id) { m_data.inPort = id; };
 
-	enableOut->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEOUT));
-	enableOut->onChange = [this](bool b) {
+	m_enableOut->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEOUT));
+	m_enableOut->onChange = [this](bool b) {
 		if (b)
 		{
-			m_data.outPort = portOut->getSelectedId();
-			portOut->activate();
+			m_data.outPort = m_portOut->getSelectedId();
+			m_portOut->activate();
 		}
 		else
 		{
 			m_data.outPort = -1;
-			portOut->deactivate();
+			m_portOut->deactivate();
 		}
 	};
 
-	enableIn->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEIN));
-	enableIn->onChange = [this](bool b) {
+	m_enableIn->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEIN));
+	m_enableIn->onChange = [this](bool b) {
 		if (b)
 		{
-			m_data.inPort = portIn->getSelectedId();
-			portIn->activate();
+			m_data.inPort = m_portIn->getSelectedId();
+			m_portIn->activate();
 		}
 		else
 		{
 			m_data.inPort = -1;
-			portIn->deactivate();
+			m_portIn->deactivate();
 		}
 	};
 
-	midiMap->onChange = [this](ID id) { m_data.midiMap = id; };
+	m_midiMap->onChange = [this](ID id) { m_data.midiMap = id; };
 
-	sync->onChange = [this](ID id) { m_data.syncMode = id; };
+	m_sync->onChange = [this](ID id) { m_data.syncMode = id; };
 
 	rebuild(c::config::getMidiData());
 }
@@ -138,26 +138,26 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 	m_data = data;
 
 	for (const auto& [key, value] : m_data.apis)
-		system->addItem(value.c_str(), key);
-	system->showItem(m_data.api);
+		m_system->addItem(value.c_str(), key);
+	m_system->showItem(m_data.api);
 
-	portOut->showItem(m_data.outPort);
+	m_portOut->showItem(m_data.outPort);
 	if (m_data.outPort == -1)
-		portOut->deactivate();
+		m_portOut->deactivate();
 
-	portIn->showItem(m_data.inPort);
+	m_portIn->showItem(m_data.inPort);
 	if (m_data.inPort == -1)
-		portIn->deactivate();
+		m_portIn->deactivate();
 
-	enableOut->value(m_data.outPort != -1);
+	m_enableOut->value(m_data.outPort != -1);
 
-	enableIn->value(m_data.inPort != -1);
+	m_enableIn->value(m_data.inPort != -1);
 
-	midiMap->showItem(m_data.midiMap);
+	m_midiMap->showItem(m_data.midiMap);
 
 	for (const auto& [key, value] : m_data.syncModes)
-		sync->addItem(value.c_str(), key);
-	sync->showItem(m_data.syncMode);
+		m_sync->addItem(value.c_str(), key);
+	m_sync->showItem(m_data.syncMode);
 }
 
 /* -------------------------------------------------------------------------- */
