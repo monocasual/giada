@@ -53,7 +53,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			m_portOut   = new geStringMenu(g_ui.getI18Text(LangMap::CONFIG_MIDI_OUTPUTPORT),
-                m_data.outPorts, g_ui.getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
+                g_ui.getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
 			m_enableOut = new geCheck(0, 0, 0, 0);
 
 			line1->add(m_portOut);
@@ -64,7 +64,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		geFlex* line2 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			m_portIn   = new geStringMenu(g_ui.getI18Text(LangMap::CONFIG_MIDI_INPUTPORT),
-                m_data.inPorts, g_ui.getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
+                g_ui.getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
 			m_enableIn = new geCheck(0, 0, 0, 0);
 
 			line2->add(m_portIn);
@@ -73,7 +73,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		}
 
 		m_midiMap = new geStringMenu(g_ui.getI18Text(LangMap::CONFIG_MIDI_OUTPUTMIDIMAP),
-		    m_data.midiMaps, g_ui.getI18Text(LangMap::CONFIG_MIDI_NOMIDIMAPSFOUND), LABEL_WIDTH);
+		    g_ui.getI18Text(LangMap::CONFIG_MIDI_NOMIDIMAPSFOUND), LABEL_WIDTH);
 		m_sync    = new geChoice(g_ui.getI18Text(LangMap::CONFIG_MIDI_SYNC), LABEL_WIDTH);
 
 		body->add(m_system, 20);
@@ -141,10 +141,12 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 		m_system->addItem(value.c_str(), key);
 	m_system->showItem(m_data.api);
 
+	m_portOut->rebuild(m_data.outPorts);
 	m_portOut->showItem(m_data.outPort);
 	if (m_data.outPort == -1)
 		m_portOut->deactivate();
 
+	m_portIn->rebuild(m_data.inPorts);
 	m_portIn->showItem(m_data.inPort);
 	if (m_data.inPort == -1)
 		m_portIn->deactivate();
@@ -153,6 +155,7 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 
 	m_enableIn->value(m_data.inPort != -1);
 
+	m_midiMap->rebuild(m_data.midiMaps);
 	m_midiMap->showItem(m_data.midiMap);
 
 	for (const auto& [key, value] : m_data.syncModes)

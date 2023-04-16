@@ -29,13 +29,21 @@
 
 namespace giada::v
 {
-geStringMenu::geStringMenu(const char* l, const std::vector<std::string>& data,
-    const std::string& msgIfNotFound, int labelWidth)
+geStringMenu::geStringMenu(const char* l, const std::string& msgIfNotFound, int labelWidth)
 : geChoice(l, labelWidth)
+, m_msgIfNotFound(msgIfNotFound)
 {
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geStringMenu::rebuild(const std::vector<std::string>& data)
+{
+	clear();
+
 	if (data.size() == 0)
 	{
-		addItem(msgIfNotFound.c_str(), 0);
+		addItem(m_msgIfNotFound.c_str(), 0);
 		showItem(0);
 		deactivate();
 	}

@@ -50,7 +50,7 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 		m_debugMsg  = new geChoice(g_ui.getI18Text(LangMap::CONFIG_MISC_DEBUGMESSAGES), LABEL_WIDTH);
 		m_tooltips  = new geChoice(g_ui.getI18Text(LangMap::CONFIG_MISC_TOOLTIPS), LABEL_WIDTH);
 		m_langMap   = new geStringMenu(g_ui.getI18Text(LangMap::CONFIG_MISC_LANGUAGE),
-            m_data.langMaps, g_ui.getI18Text(LangMap::CONFIG_MISC_NOLANGUAGESFOUND), LABEL_WIDTH);
+            g_ui.getI18Text(LangMap::CONFIG_MISC_NOLANGUAGESFOUND), LABEL_WIDTH);
 		m_uiScaling = new geChoice(g_ui.getI18Text(LangMap::CONFIG_MISC_UISCALING), LABEL_WIDTH);
 
 		body->add(m_debugMsg, G_GUI_UNIT);
@@ -75,6 +75,7 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 	m_tooltips->showItem(m_data.showTooltips);
 	m_tooltips->onChange = [this](ID id) { m_data.showTooltips = id; };
 
+	m_langMap->rebuild(m_data.langMaps);
 	m_langMap->addItem("English (default)");
 	if (m_data.langMap == "")
 		m_langMap->showItem(0);

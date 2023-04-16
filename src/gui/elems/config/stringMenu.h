@@ -36,8 +36,12 @@ namespace giada::v
 class geStringMenu : public geChoice
 {
 public:
-	geStringMenu(const char* l, const std::vector<std::string>& data,
-	    const std::string& msgIfNotFound, int labelWidth);
+	geStringMenu(const char* l, const std::string& msgIfNotFound, int labelWidth);
+
+	void rebuild(const std::vector<std::string>& data);
+
+private:
+	std::string m_msgIfNotFound;
 };
 } // namespace giada::v
 
