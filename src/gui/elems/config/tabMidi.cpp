@@ -81,7 +81,6 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		body->add(line2, 20);
 		body->add(m_midiMap, 20);
 		body->add(m_sync, 20);
-		body->add(new geBox(g_ui.getI18Text(LangMap::CONFIG_RESTARTGIADA)));
 		body->end();
 	}
 
