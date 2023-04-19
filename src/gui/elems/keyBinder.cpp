@@ -57,7 +57,7 @@ geKeyBinder::geKeyBinder(const std::string& l, int key)
 	m_keyBox->box(G_CUSTOM_BORDER_BOX);
 
 	m_bindBtn->onClick = [key, this]() {
-		c::layout::openKeyGrabberWindow(key, [key, this](int newKey) {
+		c::layout::openKeyGrabberWindow(key, [this](int newKey) {
 			m_key = newKey;
 			m_keyBox->copy_label(u::gui::keyToString(m_key).c_str());
 			return true;
