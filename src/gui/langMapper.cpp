@@ -66,9 +66,8 @@ LangMap::LangMap()
 	m_data[MESSAGE_MAIN_CLEARALLSTARTSTOPACTIONS] = "Clear all start/stop actions: are you sure?";
 	m_data[MESSAGE_MAIN_CLOSEPROJECT]             = "Close project: are you sure?";
 
-	m_data[MESSAGE_INIT_WRONGSYSTEM] = "Your soundcard isn't configured correctly.\n"
-	                                   "Check the configuration and restart Giada.";
-	m_data[MESSAGE_INIT_QUITGIADA] = "Quit Giada: are you sure?";
+	m_data[MESSAGE_INIT_WRONGSYSTEM] = "Your soundcard isn't configured correctly!";
+	m_data[MESSAGE_INIT_QUITGIADA]   = "Quit Giada: are you sure?";
 
 	m_data[MESSAGE_CHANNEL_MULTICHANNOTSUPPORTED] = "Multichannel samples not supported.";
 	m_data[MESSAGE_CHANNEL_CANTREADSAMPLE]        = "Unable to read this sample.";
