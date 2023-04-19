@@ -155,7 +155,7 @@ void Model::load(const Conf& conf)
 	layout.kernelAudio.rsmpQuality             = conf.rsmpQuality;
 	layout.kernelAudio.recTriggerLevel         = conf.recTriggerLevel;
 
-	layout.kernelMidi.system      = conf.midiSystem;
+	layout.kernelMidi.api         = conf.midiSystem;
 	layout.kernelMidi.portOut     = conf.midiPortOut;
 	layout.kernelMidi.portIn      = conf.midiPortIn;
 	layout.kernelMidi.midiMapPath = conf.midiMapPath;
@@ -203,7 +203,7 @@ void Model::store(Conf& conf) const
 	conf.rsmpQuality      = layout.kernelAudio.rsmpQuality;
 	conf.recTriggerLevel  = layout.kernelAudio.recTriggerLevel;
 
-	conf.midiSystem  = layout.kernelMidi.system;
+	conf.midiSystem  = layout.kernelMidi.api;
 	conf.midiPortOut = layout.kernelMidi.portOut;
 	conf.midiPortIn  = layout.kernelMidi.portIn;
 	conf.midiMapPath = layout.kernelMidi.midiMapPath;

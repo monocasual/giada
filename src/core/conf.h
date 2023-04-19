@@ -56,7 +56,7 @@ struct Conf final
 	bool               limitOutput      = false;
 	Resampler::Quality rsmpQuality      = Resampler::Quality::SINC_BEST;
 
-	RtMidi::Api midiSystem  = G_DEFAULT_MIDI_SYSTEM;
+	RtMidi::Api midiSystem  = G_DEFAULT_MIDI_API;
 	int         midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
 	int         midiPortIn  = G_DEFAULT_MIDI_PORT_IN;
 	std::string midiMapPath = "";

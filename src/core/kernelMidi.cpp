@@ -64,7 +64,7 @@ bool KernelMidi::init()
 {
 	const model::KernelMidi& kernelMidi = m_model.get().kernelMidi;
 
-	if (!setAPI_(kernelMidi.system))
+	if (!setAPI_(kernelMidi.api))
 		return false;
 	if (!openOutPort_(kernelMidi.portOut))
 		return false;
@@ -81,7 +81,7 @@ bool KernelMidi::setAPI(RtMidi::Api api)
 	if (!setAPI_(api))
 		return false;
 
-	m_model.get().kernelMidi.system  = api;
+	m_model.get().kernelMidi.api     = api;
 	m_model.get().kernelMidi.portOut = G_DEFAULT_MIDI_PORT_OUT;
 	m_model.get().kernelMidi.portIn  = G_DEFAULT_MIDI_PORT_IN;
 	m_model.swap(model::SwapType::NONE);
@@ -177,7 +177,7 @@ bool KernelMidi::hasAPI(RtMidi::Api API) const
 
 /* -------------------------------------------------------------------------- */
 
-RtMidi::Api KernelMidi::getAPI() const { return m_model.get().kernelMidi.system; }
+RtMidi::Api KernelMidi::getAPI() const { return m_model.get().kernelMidi.api; }
 int         KernelMidi::getSyncMode() const { return m_model.get().kernelMidi.sync; }
 int         KernelMidi::getCurrentOutPort() const { return m_model.get().kernelMidi.portOut; }
 int         KernelMidi::getCurrentInPort() const { return m_model.get().kernelMidi.portIn; }
