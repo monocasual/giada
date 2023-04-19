@@ -34,7 +34,7 @@
 
 namespace giada::m
 {
-class Action;
+struct Action;
 class Engine;
 class Sequencer;
 class ActionRecorder;
