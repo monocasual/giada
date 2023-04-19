@@ -40,7 +40,7 @@ class Recorder;
 class MainApi
 {
 public:
-	MainApi(Engine&, KernelAudio&, Mixer&, Sequencer&, MidiSynchronizer&, ChannelManager&, Recorder&);
+	MainApi(KernelAudio&, Mixer&, Sequencer&, MidiSynchronizer&, ChannelManager&, Recorder&);
 
 	bool              isRecordingInput() const;
 	bool              isRecordingActions() const;
@@ -87,7 +87,6 @@ public:
 	void startActionRecOnCallback();
 
 private:
-	Engine&           m_engine;
 	KernelAudio&      m_kernelAudio;
 	Mixer&            m_mixer;
 	Sequencer&        m_sequencer;

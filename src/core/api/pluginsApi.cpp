@@ -33,9 +33,8 @@
 
 namespace giada::m
 {
-PluginsApi::PluginsApi(KernelAudio& ka, ChannelManager& cm, PluginManager& pm, PluginHost& ph, model::Model& m)
+PluginsApi::PluginsApi(KernelAudio& ka, PluginManager& pm, PluginHost& ph, model::Model& m)
 : m_kernelAudio(ka)
-, m_channelManager(cm)
 , m_pluginManager(pm)
 , m_pluginHost(ph)
 , m_model(m)

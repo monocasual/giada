@@ -33,9 +33,8 @@
 
 namespace giada::m
 {
-MainApi::MainApi(Engine& e, KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms, ChannelManager& cm, Recorder& r)
-: m_engine(e)
-, m_kernelAudio(ka)
+MainApi::MainApi(KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms, ChannelManager& cm, Recorder& r)
+: m_kernelAudio(ka)
 , m_mixer(m)
 , m_sequencer(s)
 , m_midiSynchronizer(ms)
