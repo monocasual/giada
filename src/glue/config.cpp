@@ -250,16 +250,14 @@ void save(const PluginData& data)
 
 /* -------------------------------------------------------------------------- */
 
-void save(const MidiData& data)
+bool save(const MidiData& data)
 {
-	m::model::Layout layout   = g_engine.getLayout();
-	layout.kernelMidi.system  = data.api;
-	layout.kernelMidi.portOut = data.outPort;
-	layout.kernelMidi.portIn  = data.inPort;
-	layout.kernelMidi.sync    = data.syncMode;
-	g_engine.setLayout(layout);
+	g_engine.getConfigApi().midi_openPorts(data.outPort, data.inPort);
 
 	g_ui.model.midiMapPath = u::vector::atOr(data.midiMaps, data.midiMap, "");
+	g_engine.getConfigApi().midi_storeData(data.syncMode);
+
+	return true;
 }
 
 /* -------------------------------------------------------------------------- */

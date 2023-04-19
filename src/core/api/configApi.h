@@ -75,6 +75,8 @@ public:
 	bool midi_setAPI(RtMidi::Api);
 	bool midi_openPorts(int out, int in);
 
+	void midi_storeData(int syncMode);
+
 private:
 	model::Model&           m_model;
 	KernelAudio&            m_kernelAudio;

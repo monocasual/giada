@@ -185,4 +185,11 @@ bool ConfigApi::midi_openPorts(int out, int in)
 	return outRes && inRes;
 }
 
+/* -------------------------------------------------------------------------- */
+
+void ConfigApi::midi_storeData(int syncMode)
+{
+	m_model.get().kernelMidi.sync = syncMode;
+	m_model.swap(model::SwapType::NONE);
+}
 } // namespace giada::m
