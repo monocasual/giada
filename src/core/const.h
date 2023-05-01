@@ -51,9 +51,9 @@
 
 /* -- version --------------------------------------------------------------- */
 constexpr auto G_APP_NAME      = "Giada";
-constexpr auto G_VERSION_STR   = "0.24.0";
+constexpr auto G_VERSION_STR   = "0.25.0";
 constexpr int  G_VERSION_MAJOR = 0;
-constexpr int  G_VERSION_MINOR = 24;
+constexpr int  G_VERSION_MINOR = 25;
 constexpr int  G_VERSION_PATCH = 0;
 
 constexpr auto G_CONF_FILENAME = "giada.conf";
