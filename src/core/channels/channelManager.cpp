@@ -93,7 +93,7 @@ void ChannelManager::setBufferSize(int bufferSize)
 
 Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position, int bufferSize)
 {
-	const bool               overdubProtectionDefaultOn = m_model.get().overdubProtectionDefaultOn;
+	const bool               overdubProtectionDefaultOn = m_model.get().behaviors.overdubProtectionDefaultOn;
 	const Resampler::Quality rsmpQuality                = m_model.get().kernelAudio.rsmpQuality;
 
 	channelFactory::Data data = channelFactory::create(/*id=*/0, type, columnId, position, bufferSize, rsmpQuality, overdubProtectionDefaultOn);
@@ -447,7 +447,7 @@ void ChannelManager::toggleReadActions(ID channelId, bool seqIsRunning)
 	Channel& ch = m_model.get().channels.get(channelId);
 	if (!ch.hasActions)
 		return;
-	ch.sampleActionRecorder->toggleReadActions(*ch.shared, m_model.get().treatRecsAsLoops, seqIsRunning);
+	ch.sampleActionRecorder->toggleReadActions(*ch.shared, m_model.get().behaviors.treatRecsAsLoops, seqIsRunning);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -459,7 +459,7 @@ void ChannelManager::killReadActions(ID channelId)
 	/* Killing Read Actions, i.e. shift + click on 'R' button is meaningful 
 	only when the treatRecsAsLoops flag is true. */
 
-	if (!m_model.get().treatRecsAsLoops)
+	if (!m_model.get().behaviors.treatRecsAsLoops)
 		return;
 	Channel& ch = m_model.get().channels.get(channelId);
 	ch.sampleActionRecorder->killReadActions(*ch.shared);
@@ -532,7 +532,7 @@ void ChannelManager::stopAll()
 		if (ch.midiController)
 			ch.midiController->stop(ch.shared->playStatus);
 		if (ch.sampleReactor && ch.samplePlayer)
-			ch.sampleReactor->stopBySeq(*ch.shared, m_model.get().chansStopOnSeqHalt, ch.samplePlayer->isAnyLoopMode());
+			ch.sampleReactor->stopBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.samplePlayer->isAnyLoopMode());
 		if (ch.midiSender && ch.isPlaying() && !ch.isMuted())
 			ch.midiSender->stop();
 		if (ch.midiReceiver)

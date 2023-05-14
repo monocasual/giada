@@ -29,6 +29,7 @@
 
 #include "core/channels/channel.h"
 #include "core/const.h"
+#include "core/model/behaviors.h"
 #include "core/model/channels.h"
 #include "core/model/kernelAudio.h"
 #include "core/model/kernelMidi.h"
@@ -63,11 +64,7 @@ struct Layout
 	Mixer       mixer;
 	MidiIn      midiIn;
 	Channels    channels;
-
-	bool chansStopOnSeqHalt         = false;
-	bool treatRecsAsLoops           = false;
-	bool inputMonitorDefaultOn      = false;
-	bool overdubProtectionDefaultOn = false;
+	Behaviors   behaviors;
 };
 
 /* LayoutLock

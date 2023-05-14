@@ -176,10 +176,10 @@ void Model::load(const Conf& conf)
 	layout.midiIn.beatDouble = conf.midiInBeatDouble;
 	layout.midiIn.beatHalf   = conf.midiInBeatHalf;
 
-	layout.chansStopOnSeqHalt         = conf.chansStopOnSeqHalt;
-	layout.treatRecsAsLoops           = conf.treatRecsAsLoops;
-	layout.inputMonitorDefaultOn      = conf.inputMonitorDefaultOn;
-	layout.overdubProtectionDefaultOn = conf.overdubProtectionDefaultOn;
+	layout.behaviors.chansStopOnSeqHalt         = conf.chansStopOnSeqHalt;
+	layout.behaviors.treatRecsAsLoops           = conf.treatRecsAsLoops;
+	layout.behaviors.inputMonitorDefaultOn      = conf.inputMonitorDefaultOn;
+	layout.behaviors.overdubProtectionDefaultOn = conf.overdubProtectionDefaultOn;
 
 	swap(model::SwapType::NONE);
 }
@@ -224,10 +224,10 @@ void Model::store(Conf& conf) const
 	conf.midiInBeatDouble = layout.midiIn.beatDouble;
 	conf.midiInBeatHalf   = layout.midiIn.beatHalf;
 
-	conf.chansStopOnSeqHalt         = layout.chansStopOnSeqHalt;
-	conf.treatRecsAsLoops           = layout.treatRecsAsLoops;
-	conf.inputMonitorDefaultOn      = layout.inputMonitorDefaultOn;
-	conf.overdubProtectionDefaultOn = layout.overdubProtectionDefaultOn;
+	conf.chansStopOnSeqHalt         = layout.behaviors.chansStopOnSeqHalt;
+	conf.treatRecsAsLoops           = layout.behaviors.treatRecsAsLoops;
+	conf.inputMonitorDefaultOn      = layout.behaviors.inputMonitorDefaultOn;
+	conf.overdubProtectionDefaultOn = layout.behaviors.overdubProtectionDefaultOn;
 }
 
 /* -------------------------------------------------------------------------- */

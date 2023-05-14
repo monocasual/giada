@@ -193,10 +193,10 @@ BehaviorsData getBehaviorsData()
 	const m::model::Layout& layout = g_engine.getLayout();
 
 	BehaviorsData behaviorsData;
-	behaviorsData.chansStopOnSeqHalt         = layout.chansStopOnSeqHalt;
-	behaviorsData.treatRecsAsLoops           = layout.treatRecsAsLoops;
-	behaviorsData.inputMonitorDefaultOn      = layout.inputMonitorDefaultOn;
-	behaviorsData.overdubProtectionDefaultOn = layout.overdubProtectionDefaultOn;
+	behaviorsData.chansStopOnSeqHalt         = layout.behaviors.chansStopOnSeqHalt;
+	behaviorsData.treatRecsAsLoops           = layout.behaviors.treatRecsAsLoops;
+	behaviorsData.inputMonitorDefaultOn      = layout.behaviors.inputMonitorDefaultOn;
+	behaviorsData.overdubProtectionDefaultOn = layout.behaviors.overdubProtectionDefaultOn;
 	return behaviorsData;
 }
 
@@ -274,11 +274,11 @@ void save(const MiscData& data)
 
 void save(const BehaviorsData& data)
 {
-	m::model::Layout layout           = g_engine.getLayout();
-	layout.chansStopOnSeqHalt         = data.chansStopOnSeqHalt;
-	layout.treatRecsAsLoops           = data.treatRecsAsLoops;
-	layout.inputMonitorDefaultOn      = data.inputMonitorDefaultOn;
-	layout.overdubProtectionDefaultOn = data.overdubProtectionDefaultOn;
+	m::model::Layout layout                     = g_engine.getLayout();
+	layout.behaviors.chansStopOnSeqHalt         = data.chansStopOnSeqHalt;
+	layout.behaviors.treatRecsAsLoops           = data.treatRecsAsLoops;
+	layout.behaviors.inputMonitorDefaultOn      = data.inputMonitorDefaultOn;
+	layout.behaviors.overdubProtectionDefaultOn = data.overdubProtectionDefaultOn;
 	g_engine.setLayout(layout);
 }
 
