@@ -78,10 +78,6 @@ public:
 
 	const Patch& getPatch() const;
 
-	const model::Layout& getLayout() const;
-
-	void setLayout(const model::Layout&);
-
 	/* init
 	Initializes all sub-components. If KernelAudio fails to start, the process
 	interrupts and Giada is put in an invalid state. */

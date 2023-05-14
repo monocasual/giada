@@ -205,16 +205,6 @@ const Patch& Engine::getPatch() const
 	return m_patch;
 }
 
-const model::Layout& Engine::getLayout() const
-{
-	return m_model.get();
-}
-
-void Engine::setLayout(const model::Layout& layout)
-{
-	m_model.set(layout);
-}
-
 /* -------------------------------------------------------------------------- */
 
 void Engine::init(const Conf& conf)
