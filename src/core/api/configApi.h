@@ -77,6 +77,10 @@ public:
 
 	void midi_storeData(int syncMode);
 
+	const model::Behaviors& behaviors_getData() const;
+
+	void behaviors_storeData(const model::Behaviors&);
+
 private:
 	model::Model&           m_model;
 	KernelAudio&            m_kernelAudio;

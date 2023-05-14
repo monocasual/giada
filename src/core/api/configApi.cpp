@@ -192,4 +192,19 @@ void ConfigApi::midi_storeData(int syncMode)
 	m_model.get().kernelMidi.sync = syncMode;
 	m_model.swap(model::SwapType::NONE);
 }
+
+/* -------------------------------------------------------------------------- */
+
+const model::Behaviors& ConfigApi::behaviors_getData() const
+{
+	return m_model.get().behaviors;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ConfigApi::behaviors_storeData(const model::Behaviors& data)
+{
+	m_model.get().behaviors = data;
+	m_model.swap(model::SwapType::NONE);
+}
 } // namespace giada::m
