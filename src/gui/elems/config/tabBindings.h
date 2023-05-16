@@ -42,8 +42,6 @@ class geTabBindings : public Fl_Group
 public:
 	geTabBindings(geompp::Rect<int>, const Model&);
 
-	void save() const;
-
 private:
 	geKeyBinder* play;
 	geKeyBinder* rewind;

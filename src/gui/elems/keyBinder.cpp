@@ -40,6 +40,7 @@ namespace giada::v
 {
 geKeyBinder::geKeyBinder(const std::string& l, int key)
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
+, onKeyBound(nullptr)
 , m_key(key)
 {
 	m_labelBox = new geBox(l.c_str());
@@ -57,9 +58,11 @@ geKeyBinder::geKeyBinder(const std::string& l, int key)
 	m_keyBox->box(G_CUSTOM_BORDER_BOX);
 
 	m_bindBtn->onClick = [key, this]() {
+		assert(onKeyBound != nullptr);
 		c::layout::openKeyGrabberWindow(key, [this](int newKey) {
 			m_key = newKey;
 			m_keyBox->copy_label(u::gui::keyToString(m_key).c_str());
+			onKeyBound(newKey);
 			return true;
 		});
 	};

@@ -28,6 +28,7 @@
 #define GE_KEY_BINDER_H
 
 #include "gui/elems/basics/flex.h"
+#include <functional>
 #include <string>
 
 namespace giada::v
@@ -40,6 +41,8 @@ public:
 	geKeyBinder(const std::string& l, int key);
 
 	int getKey() const;
+
+	std::function<void(int key)> onKeyBound;
 
 private:
 	int           m_key;
