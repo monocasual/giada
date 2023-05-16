@@ -26,6 +26,7 @@
 
 #include "tabMisc.h"
 #include "core/const.h"
+#include "glue/config.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/input.h"
 #include "gui/elems/config/stringMenu.h"
@@ -68,12 +69,18 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 	m_debugMsg->addItem(g_ui.getI18Text(LangMap::CONFIG_MISC_DEBUGMESSAGES_TOSTDOUT));
 	m_debugMsg->addItem(g_ui.getI18Text(LangMap::CONFIG_MISC_DEBUGMESSAGES_TOFILE));
 	m_debugMsg->showItem(m_data.logMode);
-	m_debugMsg->onChange = [this](ID id) { m_data.logMode = id; };
+	m_debugMsg->onChange = [this](ID id) {
+		m_data.logMode = id;
+		c::config::save(m_data);
+	};
 
 	m_tooltips->addItem(g_ui.getI18Text(LangMap::CONFIG_MISC_TOOLTIPS_DISABLED));
 	m_tooltips->addItem(g_ui.getI18Text(LangMap::CONFIG_MISC_TOOLTIPS_ENABLED));
 	m_tooltips->showItem(m_data.showTooltips);
-	m_tooltips->onChange = [this](ID id) { m_data.showTooltips = id; };
+	m_tooltips->onChange = [this](ID id) {
+		m_data.showTooltips = id;
+		c::config::save(m_data);
+	};
 
 	m_langMap->rebuild(m_data.langMaps);
 	m_langMap->addItem("English (default)");
@@ -81,7 +88,10 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 		m_langMap->showItem(0);
 	else
 		m_langMap->showItem(m_data.langMap);
-	m_langMap->onChange = [this](ID /*id*/) { m_data.langMap = m_langMap->getSelectedLabel(); };
+	m_langMap->onChange = [this](ID /*id*/) {
+		m_data.langMap = m_langMap->getSelectedLabel();
+		c::config::save(m_data);
+	};
 
 	m_uiScaling->addItem("Auto", 0);
 	m_uiScaling->addItem("100%", 100);
@@ -90,13 +100,9 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 	m_uiScaling->addItem("250%", 250);
 	m_uiScaling->addItem("300%", 300);
 	m_uiScaling->showItem(static_cast<int>(m_data.uiScaling * 100));
-	m_uiScaling->onChange = [this](ID id) { m_data.uiScaling = id / 100.0f; };
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geTabMisc::save()
-{
-	c::config::save(m_data);
+	m_uiScaling->onChange = [this](ID id) {
+		m_data.uiScaling = id / 100.0f;
+		c::config::save(m_data);
+	};
 }
 } // namespace giada::v
