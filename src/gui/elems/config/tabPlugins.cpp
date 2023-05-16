@@ -81,6 +81,7 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 
 	m_folderPath->onChange = [this](const std::string& v) {
 		m_data.pluginPath = v;
+		c::config::save(m_data);
 	};
 
 	m_browse->onClick = [this]() {
@@ -114,12 +115,5 @@ void geTabPlugins::rebuild()
 
 	m_folderPath->setValue(m_data.pluginPath);
 	m_folderPath->redraw();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geTabPlugins::save()
-{
-	c::config::save(m_data);
 }
 } // namespace giada::v

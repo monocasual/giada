@@ -100,7 +100,6 @@ void gdConfig::saveConfig()
 {
 	tabAudio->save();
 	tabMidi->save();
-	tabPlugins->save();
 	do_callback();
 }
 } // namespace giada::v
