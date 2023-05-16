@@ -40,6 +40,8 @@ public:
 	geTabBehaviors(geompp::Rect<int>);
 
 private:
+	c::config::BehaviorsData m_data;
+
 	geCheck* m_chansStopOnSeqHalt;
 	geCheck* m_treatRecsAsLoops;
 	geCheck* m_inputMonitorDefaultOn;
