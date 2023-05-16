@@ -39,11 +39,7 @@ class geTabBehaviors : public Fl_Group
 public:
 	geTabBehaviors(geompp::Rect<int>);
 
-	void save();
-
 private:
-	c::config::BehaviorsData m_data;
-
 	geCheck* m_chansStopOnSeqHalt;
 	geCheck* m_treatRecsAsLoops;
 	geCheck* m_inputMonitorDefaultOn;

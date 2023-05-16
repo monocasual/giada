@@ -38,7 +38,6 @@ namespace giada::v
 {
 geTabBehaviors::geTabBehaviors(geompp::Rect<int> bounds)
 : Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.getI18Text(LangMap::CONFIG_BEHAVIORS_TITLE))
-, m_data(c::config::getBehaviorsData())
 {
 	end();
 
@@ -59,23 +58,30 @@ geTabBehaviors::geTabBehaviors(geompp::Rect<int> bounds)
 	add(body);
 	resizable(body);
 
-	m_chansStopOnSeqHalt->value(m_data.chansStopOnSeqHalt);
-	m_chansStopOnSeqHalt->onChange = [this](bool v) { m_data.chansStopOnSeqHalt = v; };
+	c::config::BehaviorsData data = c::config::getBehaviorsData();
 
-	m_treatRecsAsLoops->value(m_data.treatRecsAsLoops);
-	m_treatRecsAsLoops->onChange = [this](bool v) { m_data.treatRecsAsLoops = v; };
+	m_chansStopOnSeqHalt->value(data.chansStopOnSeqHalt);
+	m_chansStopOnSeqHalt->onChange = [&data](bool v) {
+		data.chansStopOnSeqHalt = v;
+		c::config::save(data);
+	};
 
-	m_inputMonitorDefaultOn->value(m_data.inputMonitorDefaultOn);
-	m_inputMonitorDefaultOn->onChange = [this](bool v) { m_data.inputMonitorDefaultOn = v; };
+	m_treatRecsAsLoops->value(data.treatRecsAsLoops);
+	m_treatRecsAsLoops->onChange = [&data](bool v) {
+		data.treatRecsAsLoops = v;
+		c::config::save(data);
+	};
 
-	m_overdubProtectionDefaultOn->value(m_data.overdubProtectionDefaultOn);
-	m_overdubProtectionDefaultOn->onChange = [this](bool v) { m_data.overdubProtectionDefaultOn = v; };
-}
+	m_inputMonitorDefaultOn->value(data.inputMonitorDefaultOn);
+	m_inputMonitorDefaultOn->onChange = [&data](bool v) {
+		data.inputMonitorDefaultOn = v;
+		c::config::save(data);
+	};
 
-/* -------------------------------------------------------------------------- */
-
-void geTabBehaviors::save()
-{
-	c::config::save(m_data);
+	m_overdubProtectionDefaultOn->value(data.overdubProtectionDefaultOn);
+	m_overdubProtectionDefaultOn->onChange = [&data](bool v) {
+		data.overdubProtectionDefaultOn = v;
+		c::config::save(data);
+	};
 }
 } // namespace giada::v

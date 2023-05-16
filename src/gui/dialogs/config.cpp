@@ -100,7 +100,6 @@ void gdConfig::saveConfig()
 {
 	tabAudio->save();
 	tabMidi->save();
-	tabBehaviors->save();
 	tabMisc->save();
 	tabBindings->save();
 	tabPlugins->save();
