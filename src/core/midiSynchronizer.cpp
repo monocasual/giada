@@ -35,13 +35,12 @@
 
 namespace giada::m
 {
-MidiSynchronizer::MidiSynchronizer(const model::Model& m, KernelMidi& k)
+MidiSynchronizer::MidiSynchronizer(KernelMidi& k)
 : onChangePosition(nullptr)
 , onChangeBpm(nullptr)
 , onStart(nullptr)
 , onStop(nullptr)
 , m_kernelMidi(k)
-, m_model(m)
 , m_worker(1000) // Default sleep time, will be reset anyway on startSendClock()
 , m_timeElapsed(0.0)
 , m_lastTimestamp(0.0)

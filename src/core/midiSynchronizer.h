@@ -27,7 +27,6 @@
 #ifndef G_MIDI_SYNCHRONIZER_H
 #define G_MIDI_SYNCHRONIZER_H
 
-#include "core/model/model.h"
 #include "core/types.h"
 #include "core/worker.h"
 
@@ -38,7 +37,7 @@ class MidiEvent;
 class MidiSynchronizer final
 {
 public:
-	MidiSynchronizer(const model::Model&, KernelMidi&);
+	MidiSynchronizer(KernelMidi&);
 
 	/* receive
 	Receives a MidiEvent and reacts accordingly. Valid only when in SLAVE mode. */
@@ -75,8 +74,7 @@ private:
 
 	void computePosition(int sppPosition, int numBeatsInLoop);
 
-	KernelMidi&         m_kernelMidi;
-	const model::Model& m_model;
+	KernelMidi& m_kernelMidi;
 
 	/* m_worker
 	A separate thread responsible for the MIDI Clock output. */
