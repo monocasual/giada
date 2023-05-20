@@ -150,7 +150,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 
 	m_sync->onChange = [this](ID id) { m_data.syncMode = id; };
 
-	m_applyBtn->onClick = [this]() { c::config::save(m_data); };
+	m_applyBtn->onClick = [this]() { c::config::apply(m_data); };
 
 	rebuild(c::config::getMidiData());
 }

@@ -260,6 +260,12 @@ bool save(const MidiData& data)
 	return true;
 }
 
+void apply(const MidiData& data)
+{
+	if (!g_engine.getConfigApi().midi_openPorts(data.outPort, data.inPort))
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
+}
+
 /* -------------------------------------------------------------------------- */
 
 void save(const MiscData& data)
