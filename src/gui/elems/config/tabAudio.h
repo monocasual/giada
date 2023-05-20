@@ -37,6 +37,7 @@ class geCheck;
 namespace giada::v
 {
 class geInput;
+class geTextButton;
 class geTabAudio : public Fl_Group
 {
 public:
@@ -84,6 +85,7 @@ private:
 	geChannelMenu* m_channelsIn;
 	geInput*       m_recTriggerLevel;
 	geChoice*      m_rsmpQuality;
+	geTextButton*  m_applyBtn;
 };
 } // namespace giada::v
 

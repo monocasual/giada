@@ -33,6 +33,7 @@
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"
+#include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include <fmt/core.h>
@@ -175,6 +176,24 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 			line4->end();
 		}
 
+		geFlex* col1 = new geFlex(Direction::VERTICAL);
+		{
+			geFlex* line5 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+			{
+				m_applyBtn = new geTextButton(g_ui.getI18Text(LangMap::COMMON_APPLY));
+
+				line5->add(new geBox());
+				line5->add(m_applyBtn, 80);
+				line5->add(new geBox());
+				line5->end();
+			}
+
+			col1->add(new geBox());
+			col1->add(line5, G_GUI_UNIT);
+			col1->add(new geBox());
+			col1->end();
+		}
+
 		m_rsmpQuality = new geChoice(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING), LABEL_WIDTH);
 
 		body->add(m_api, 20);
@@ -184,6 +203,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 		body->add(line3, 20);
 		body->add(line4, 20);
 		body->add(m_rsmpQuality, 20);
+		body->add(col1);
 		body->end();
 	}
 
@@ -252,6 +272,8 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	m_rsmpQuality->onChange = [this](ID id) { m_data.resampleQuality = id; };
 
 	m_recTriggerLevel->onChange = [this](const std::string& s) { m_data.recTriggerLevel = std::stof(s); };
+
+	m_applyBtn->onClick = [this]() { c::config::save(m_data); };
 
 	rebuild(c::config::getAudioData());
 }
