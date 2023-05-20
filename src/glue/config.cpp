@@ -217,7 +217,7 @@ void changeMidiAPI(RtMidi::Api api)
 
 /* -------------------------------------------------------------------------- */
 
-void save(const AudioData& data)
+void apply(const AudioData& data)
 {
 	bool res = g_engine.getConfigApi().audio_openStream(
 	    {

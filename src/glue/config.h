@@ -139,7 +139,7 @@ BehaviorsData getBehaviorsData();
 void changeAudioAPI(RtAudio::Api);
 void changeMidiAPI(RtMidi::Api);
 
-void save(const AudioData&);
+void apply(const AudioData&);
 void save(const MidiData&);
 void apply(const MidiData&);
 void save(const MiscData&);

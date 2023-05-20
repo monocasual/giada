@@ -273,7 +273,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 	m_recTriggerLevel->onChange = [this](const std::string& s) { m_data.recTriggerLevel = std::stof(s); };
 
-	m_applyBtn->onClick = [this]() { c::config::save(m_data); };
+	m_applyBtn->onClick = [this]() { c::config::apply(m_data); };
 
 	rebuild(c::config::getAudioData());
 }
