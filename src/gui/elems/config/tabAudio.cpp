@@ -339,6 +339,7 @@ void geTabAudio::refreshDevInProperties()
 	else
 	{
 		m_sounddevIn->deactivate();
+		m_sounddevIn->showItem(0);
 		m_channelsIn->deactivate();
 		m_recTriggerLevel->deactivate();
 	}
