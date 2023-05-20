@@ -59,6 +59,7 @@ LangMap::LangMap()
 	m_data[COMMON_LEARN]      = "Learn";
 	m_data[COMMON_NOTSET]     = "(not set)";
 	m_data[COMMON_NONE]       = "None";
+	m_data[COMMON_APPLY]      = "Apply";
 
 	m_data[MESSAGE_MAIN_FREEALLSAMPLES]           = "Free all Sample channels: are you sure?";
 	m_data[MESSAGE_MAIN_CLEARALLACTIONS]          = "Clear all actions: are you sure?";

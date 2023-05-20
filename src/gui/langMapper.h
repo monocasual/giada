@@ -64,6 +64,7 @@ public:
 	static constexpr auto COMMON_LEARN      = "common_learn";
 	static constexpr auto COMMON_NOTSET     = "common_notSet";
 	static constexpr auto COMMON_NONE       = "common_none";
+	static constexpr auto COMMON_APPLY      = "common_apply";
 
 	static constexpr auto MESSAGE_MAIN_FREEALLSAMPLES           = "message_main_freeAllSamples";
 	static constexpr auto MESSAGE_MAIN_CLEARALLACTIONS          = "message_main_clearAllActions";
