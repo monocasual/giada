@@ -288,10 +288,14 @@ template std::unique_ptr<RtMidiIn>  KernelMidi::makeDevice(RtMidi::Api, std::str
 
 KernelMidi::Result KernelMidi::openPort(RtMidi& device, int port)
 {
-	const std::string deviceStr = &device == m_midiOut.get() ? "out" : "in";
-
 	if (device.isPortOpen())
 		device.closePort();
+
+	if (port == -1)
+		return {true, ""};
+
+	const std::string deviceStr = &device == m_midiOut.get() ? "out" : "in";
+
 	try
 	{
 		device.openPort(port, device.getPortName(port));
