@@ -29,7 +29,7 @@
 
 namespace giada::v
 {
-void gdAlert(const char* c);
+void gdAlert(const char* c, bool resizable = false);
 int  gdConfirmWin(const char* title, const char* msg);
 } // namespace giada::v
 

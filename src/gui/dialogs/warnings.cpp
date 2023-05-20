@@ -47,7 +47,7 @@ bool confirmRet_ = false;
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void gdAlert(const char* msg)
+void gdAlert(const char* msg, bool resizable)
 {
 	gdWindow win(u::gui::getCenterWinBounds({-1, -1, 300, 90}), g_ui.getI18Text(LangMap::COMMON_WARNING));
 	win.set_modal();
@@ -59,6 +59,9 @@ void gdAlert(const char* msg)
 
 	b->shortcut(FL_Enter);
 	b->onClick = [&win]() { win.hide(); };
+
+	if (resizable)
+		win.resizable(box);
 
 	win.show();
 
