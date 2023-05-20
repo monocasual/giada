@@ -186,11 +186,4 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 		m_sync->addItem(value.c_str(), key);
 	m_sync->showItem(m_data.syncMode);
 }
-
-/* -------------------------------------------------------------------------- */
-
-void geTabMidi::save() const
-{
-	c::config::save(m_data);
-}
 } // namespace giada::v

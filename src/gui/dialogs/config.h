@@ -49,9 +49,6 @@ public:
 	geTabMisc*      tabMisc;
 	geTabBindings*  tabBindings;
 	geTabPlugins*   tabPlugins;
-
-private:
-	void saveConfig();
 };
 } // namespace giada::v
 

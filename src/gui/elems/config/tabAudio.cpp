@@ -373,11 +373,4 @@ void geTabAudio::activateAll()
 	m_recTriggerLevel->activate();
 	m_rsmpQuality->activate();
 }
-
-/* -------------------------------------------------------------------------- */
-
-void geTabAudio::save()
-{
-	c::config::save(m_data);
-}
 } // namespace giada::v

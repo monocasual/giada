@@ -63,8 +63,6 @@ public:
 
 	geTabAudio(geompp::Rect<int>);
 
-	void save();
-
 private:
 	void rebuild(const c::config::AudioData&);
 	void refreshDevOutProperties();

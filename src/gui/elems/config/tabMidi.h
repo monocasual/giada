@@ -43,8 +43,6 @@ class geTabMidi : public Fl_Group
 public:
 	geTabMidi(geompp::Rect<int>);
 
-	void save() const;
-
 private:
 	void rebuild(const c::config::MidiData&);
 

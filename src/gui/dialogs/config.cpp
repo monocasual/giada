@@ -70,14 +70,11 @@ gdConfig::gdConfig(int w, int h, const Model& model)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			geTextButton* save   = new geTextButton(g_ui.getI18Text(LangMap::COMMON_SAVE));
-			geTextButton* cancel = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CANCEL));
-			save->onClick        = [this]() { saveConfig(); };
-			cancel->onClick      = [this]() { do_callback(); };
+			geTextButton* closeBtn = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLOSE));
+			closeBtn->onClick      = [this]() { do_callback(); };
 
 			footer->add(new geBox()); // Spacer
-			footer->add(cancel, 80);
-			footer->add(save, 80);
+			footer->add(closeBtn, 80);
 			footer->end();
 		}
 
@@ -92,14 +89,5 @@ gdConfig::gdConfig(int w, int h, const Model& model)
 
 	setId(WID_CONFIG);
 	show();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdConfig::saveConfig()
-{
-	tabAudio->save();
-	tabMidi->save();
-	do_callback();
 }
 } // namespace giada::v
