@@ -258,7 +258,10 @@ void save(const MidiData& data)
 
 void apply(const MidiData& data)
 {
-	if (!g_engine.getConfigApi().midi_openPorts(data.outPort, data.inPort))
+	const bool outRes = g_engine.getConfigApi().midi_openOutPort(data.outPort);
+	const bool inRes  = g_engine.getConfigApi().midi_openInPort(data.inPort);
+
+	if (!outRes || !inRes)
 		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
 }
 
