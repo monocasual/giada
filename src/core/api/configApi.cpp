@@ -177,12 +177,12 @@ bool ConfigApi::midi_setAPI(RtMidi::Api api)
 
 /* -------------------------------------------------------------------------- */
 
-bool ConfigApi::midi_openOutPort(int out)
+KernelMidi::Result ConfigApi::midi_openOutPort(int out)
 {
 	return m_kernelMidi.openOutPort(out);
 }
 
-bool ConfigApi::midi_openInPort(int in)
+KernelMidi::Result ConfigApi::midi_openInPort(int in)
 {
 	return m_kernelMidi.openInPort(in);
 }

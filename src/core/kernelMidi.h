@@ -43,6 +43,16 @@ class MidiEvent;
 class KernelMidi final
 {
 public:
+	/* Result
+	Data returned when opening a port. The 'message' variable will be filled
+	in case of failure with the error message. */
+
+	struct Result
+	{
+		bool        success = false;
+		std::string message;
+	};
+
 	KernelMidi(model::Model&);
 
 	static void logCompiledAPIs();
@@ -60,8 +70,8 @@ public:
 	/* open[I/0]port
 	Opens a new I/O port. Also updates model::KernelMidi data if successful. */
 
-	bool openOutPort(int port);
-	bool openInPort(int port);
+	Result openOutPort(int port);
+	Result openInPort(int port);
 
 	/* getOutPorts, getOutPorts
     Returns a vector of port names. */
@@ -104,10 +114,10 @@ private:
 	void        logPorts(RtMidi&, std::string name) const;
 	void        logPorts() const;
 
-	bool setAPI_(RtMidi::Api);
-	bool openOutPort_(int port);
-	bool openInPort_(int port);
-	bool openPort(RtMidi&, int port);
+	bool   setAPI_(RtMidi::Api);
+	Result openOutPort_(int port);
+	Result openInPort_(int port);
+	Result openPort(RtMidi&, int port);
 
 	model::Model&              m_model;
 	std::unique_ptr<RtMidiOut> m_midiOut;

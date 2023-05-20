@@ -72,9 +72,9 @@ public:
 	std::vector<std::string>        midi_getInPorts() const;
 	const std::vector<std::string>& midi_getMidiMapFilesFound() const;
 
-	bool midi_setAPI(RtMidi::Api);
-	bool midi_openOutPort(int);
-	bool midi_openInPort(int);
+	bool               midi_setAPI(RtMidi::Api);
+	KernelMidi::Result midi_openOutPort(int);
+	KernelMidi::Result midi_openInPort(int);
 
 	void midi_storeData(int syncMode);
 

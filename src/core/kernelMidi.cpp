@@ -66,9 +66,9 @@ bool KernelMidi::init()
 
 	if (!setAPI_(kernelMidi.api))
 		return false;
-	if (!openOutPort_(kernelMidi.portOut))
+	if (!openOutPort_(kernelMidi.portOut).success)
 		return false;
-	if (!openInPort_(kernelMidi.portIn))
+	if (!openInPort_(kernelMidi.portIn).success)
 		return false;
 
 	return true;
@@ -91,26 +91,30 @@ bool KernelMidi::setAPI(RtMidi::Api api)
 
 /* -------------------------------------------------------------------------- */
 
-bool KernelMidi::openOutPort(int port)
+KernelMidi::Result KernelMidi::openOutPort(int port)
 {
-	if (!openOutPort_(port))
-		return false;
+	Result res = openOutPort_(port);
+
+	if (!res.success)
+		return res;
 
 	m_model.get().kernelMidi.portOut = port;
 	m_model.swap(model::SwapType::NONE);
 
-	return true;
+	return res;
 }
 
-bool KernelMidi::openInPort(int port)
+KernelMidi::Result KernelMidi::openInPort(int port)
 {
-	if (!openInPort_(port))
-		return false;
+	Result res = openInPort_(port);
+
+	if (!res.success)
+		return res;
 
 	m_model.get().kernelMidi.portIn = port;
 	m_model.swap(model::SwapType::NONE);
 
-	return true;
+	return res;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -143,12 +147,12 @@ bool KernelMidi::setAPI_(RtMidi::Api api)
 
 /* -------------------------------------------------------------------------- */
 
-bool KernelMidi::openOutPort_(int port)
+KernelMidi::Result KernelMidi::openOutPort_(int port)
 {
 	return openPort(*m_midiOut, port);
 }
 
-bool KernelMidi::openInPort_(int port)
+KernelMidi::Result KernelMidi::openInPort_(int port)
 {
 	return openPort(*m_midiIn, port);
 }
@@ -282,7 +286,7 @@ template std::unique_ptr<RtMidiIn>  KernelMidi::makeDevice(RtMidi::Api, std::str
 
 /* -------------------------------------------------------------------------- */
 
-bool KernelMidi::openPort(RtMidi& device, int port)
+KernelMidi::Result KernelMidi::openPort(RtMidi& device, int port)
 {
 	const std::string deviceStr = &device == m_midiOut.get() ? "out" : "in";
 
@@ -292,12 +296,12 @@ bool KernelMidi::openPort(RtMidi& device, int port)
 	{
 		device.openPort(port, device.getPortName(port));
 		u::log::print("[KM] MIDI %s port %d opened successfully\n", deviceStr.c_str(), port);
-		return true;
+		return {true, ""};
 	}
 	catch (RtMidiError& error)
 	{
 		u::log::print("[KM] Error opening %s port %d: %s\n", deviceStr.c_str(), port, error.getMessage());
-		return false;
+		return {false, error.getMessage()};
 	}
 }
 

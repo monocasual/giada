@@ -41,6 +41,7 @@
 #include "utils/fs.h"
 #include "utils/vector.h"
 #include <cstddef>
+#include <fmt/core.h>
 
 extern giada::v::Ui     g_ui;
 extern giada::m::Engine g_engine;
@@ -258,11 +259,18 @@ void save(const MidiData& data)
 
 void apply(const MidiData& data)
 {
-	const bool outRes = g_engine.getConfigApi().midi_openOutPort(data.outPort);
-	const bool inRes  = g_engine.getConfigApi().midi_openInPort(data.inPort);
+	const m::KernelMidi::Result outRes = g_engine.getConfigApi().midi_openOutPort(data.outPort);
+	const m::KernelMidi::Result inRes  = g_engine.getConfigApi().midi_openInPort(data.inPort);
 
-	if (!outRes || !inRes)
-		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
+	if (outRes.success && inRes.success)
+		return;
+
+	const std::string message = fmt::format("{}\n\n{}\n{}",
+	    g_ui.getI18Text(v::LangMap::MESSAGE_INIT_WRONGSYSTEM),
+	    outRes.message,
+	    inRes.message);
+
+	v::gdAlert(message.c_str());
 }
 
 /* -------------------------------------------------------------------------- */
