@@ -266,7 +266,7 @@ void apply(const MidiData& data)
 		return;
 
 	const std::string message = fmt::format("{}\n\n{}\n{}",
-	    g_ui.getI18Text(v::LangMap::MESSAGE_INIT_WRONGSYSTEM),
+	    g_ui.getI18Text(v::LangMap::CONFIG_MIDI_LABEL_WRONGMIDI),
 	    outRes.message,
 	    inRes.message);
 

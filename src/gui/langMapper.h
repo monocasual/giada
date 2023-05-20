@@ -304,6 +304,7 @@ public:
 	static constexpr auto CONFIG_MIDI_SYNC            = "config_midi_sync";
 	static constexpr auto CONFIG_MIDI_LABEL_ENABLEOUT = "config_midi_label_enableOut";
 	static constexpr auto CONFIG_MIDI_LABEL_ENABLEIN  = "config_midi_label_enableIn";
+	static constexpr auto CONFIG_MIDI_LABEL_WRONGMIDI = "config_midi_label_wrongMidi";
 
 	static constexpr auto CONFIG_BEHAVIORS_TITLE                      = "config_behaviors_title";
 	static constexpr auto CONFIG_BEHAVIORS_CHANSSTOPONSEQHALT         = "config_behaviors_chansStopOnSeqHalt";

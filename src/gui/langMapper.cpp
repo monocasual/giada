@@ -313,6 +313,7 @@ LangMap::LangMap()
 	m_data[CONFIG_MIDI_SYNC]            = "Sync";
 	m_data[CONFIG_MIDI_LABEL_ENABLEOUT] = "Enable Output port";
 	m_data[CONFIG_MIDI_LABEL_ENABLEIN]  = "Enable Input port";
+	m_data[CONFIG_MIDI_LABEL_WRONGMIDI] = "Could not apply MIDI configuration. Error:";
 
 	m_data[CONFIG_BEHAVIORS_TITLE]                      = "Behaviors";
 	m_data[CONFIG_BEHAVIORS_CHANSSTOPONSEQHALT]         = "Dynamic channels stop immediately when the sequencer is halted";
