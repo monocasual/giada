@@ -255,7 +255,6 @@ bool save(const MidiData& data)
 {
 	g_engine.getConfigApi().midi_openPorts(data.outPort, data.inPort);
 
-	g_ui.model.midiMapPath = u::vector::atOr(data.midiMaps, data.midiMap, "");
 	g_engine.getConfigApi().midi_storeData(data.syncMode);
 
 	return true;
