@@ -140,7 +140,7 @@ void changeAudioAPI(RtAudio::Api);
 void changeMidiAPI(RtMidi::Api);
 
 void save(const AudioData&);
-bool save(const MidiData&);
+void save(const MidiData&);
 void apply(const MidiData&);
 void save(const MiscData&);
 void save(const PluginData&);

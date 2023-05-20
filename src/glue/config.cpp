@@ -251,13 +251,9 @@ void save(const PluginData& data)
 
 /* -------------------------------------------------------------------------- */
 
-bool save(const MidiData& data)
+void save(const MidiData& data)
 {
-	g_engine.getConfigApi().midi_openPorts(data.outPort, data.inPort);
-
 	g_engine.getConfigApi().midi_storeData(data.syncMode);
-
-	return true;
 }
 
 void apply(const MidiData& data)

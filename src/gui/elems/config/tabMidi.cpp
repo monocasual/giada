@@ -148,7 +148,10 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		g_ui.model.midiMapPath = u::vector::atOr(m_data.midiMaps, id, "");
 	};
 
-	m_sync->onChange = [this](ID id) { m_data.syncMode = id; };
+	m_sync->onChange = [this](ID id) {
+		m_data.syncMode = id;
+		c::config::save(m_data);
+	};
 
 	m_applyBtn->onClick = [this]() { c::config::apply(m_data); };
 
