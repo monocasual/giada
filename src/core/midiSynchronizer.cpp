@@ -103,7 +103,7 @@ void MidiSynchronizer::startSendClock(float bpm)
 
 	m_worker.start([this, clockEvent]() {
 		if (!m_kernelMidi.send(clockEvent))
-			G_DEBUG("KernelMidi queue full!", );
+			G_DEBUG("Can't send MIDI out message!", );
 	});
 }
 
