@@ -284,16 +284,19 @@ template std::unique_ptr<RtMidiIn>  KernelMidi::makeDevice(RtMidi::Api, std::str
 
 bool KernelMidi::openPort(RtMidi& device, int port)
 {
+	const std::string deviceStr = &device == m_midiOut.get() ? "out" : "in";
+
 	if (device.isPortOpen())
 		device.closePort();
 	try
 	{
 		device.openPort(port, device.getPortName(port));
+		u::log::print("[KM] MIDI %s port %d opened successfully\n", deviceStr.c_str(), port);
 		return true;
 	}
 	catch (RtMidiError& error)
 	{
-		u::log::print("[KM] Error opening port %d: %s\n", port, error.getMessage());
+		u::log::print("[KM] Error opening %s port %d: %s\n", deviceStr.c_str(), port, error.getMessage());
 		return false;
 	}
 }
