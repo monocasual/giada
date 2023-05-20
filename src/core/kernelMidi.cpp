@@ -208,7 +208,7 @@ std::vector<std::string> KernelMidi::getInPorts() const
 
 bool KernelMidi::send(const MidiEvent& event) const
 {
-	if (m_midiOut == nullptr)
+	if (m_midiOut == nullptr || !m_midiOut->isPortOpen())
 		return false;
 
 	assert(event.getNumBytes() > 0 && event.getNumBytes() <= 3);
