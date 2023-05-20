@@ -39,7 +39,7 @@
 #include <fmt/core.h>
 #include <string>
 
-constexpr int LABEL_WIDTH = 110;
+constexpr int LABEL_WIDTH = 120;
 
 extern giada::v::Ui g_ui;
 
