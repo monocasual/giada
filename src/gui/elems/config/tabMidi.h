@@ -37,6 +37,7 @@ namespace giada::v
 {
 class geStringMenu;
 class geChoice;
+class geTextButton;
 class geTabMidi : public Fl_Group
 {
 public:
@@ -56,6 +57,7 @@ private:
 	geCheck*      m_enableIn;
 	geStringMenu* m_midiMap;
 	geChoice*     m_sync;
+	geTextButton* m_applyBtn;
 };
 } // namespace giada::v
 
