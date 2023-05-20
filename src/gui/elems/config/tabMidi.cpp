@@ -145,6 +145,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 	};
 
 	m_midiMap->onChange = [this](ID id) {
+		m_data.midiMap         = id;
 		g_ui.model.midiMapPath = u::vector::atOr(m_data.midiMaps, id, "");
 	};
 
