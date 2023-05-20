@@ -270,7 +270,7 @@ void apply(const MidiData& data)
 	    outRes.message,
 	    inRes.message);
 
-	v::gdAlert(message.c_str());
+	v::gdAlert(message.c_str(), /*resizable=*/true);
 }
 
 /* -------------------------------------------------------------------------- */
