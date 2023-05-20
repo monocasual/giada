@@ -85,6 +85,20 @@ public:
 	int         getCurrentOutPort() const;
 	int         getCurrentInPort() const;
 
+	/* canSend, canReceive
+	Return true if KernelMidi is capable of sending/receiving MIDI messages, 
+	given the current configuration. */
+
+	bool canSend() const;
+	bool canReceive() const;
+
+	/* canSyncMaster, canSyncSlave 
+	Return true if KernelMidi has MIDI sync enabled, master or slave, given the
+	current configuration. */
+
+	bool canSyncMaster() const;
+	bool canSyncSlave() const;
+
 	/* send
     Sends a MIDI message to the outside world. Returns false if MIDI out is not
 	enabled or the internal queue is full. */

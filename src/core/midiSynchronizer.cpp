@@ -65,7 +65,7 @@ void MidiSynchronizer::receive(const MidiEvent& e, int numBeatsInLoop)
 		* SYSTEM_STOP - when another MIDI device is about to stop;
 		* SYSTEM_SPP - when another MIDI device has changed song position. */
 
-	if (m_model.get().kernelMidi.sync != G_MIDI_SYNC_CLOCK_SLAVE || e.getType() != MidiEvent::Type::SYSTEM)
+	if (!m_kernelMidi.canSyncSlave() || e.getType() != MidiEvent::Type::SYSTEM)
 		return;
 
 	switch (e.getByte1())
@@ -95,7 +95,7 @@ void MidiSynchronizer::receive(const MidiEvent& e, int numBeatsInLoop)
 
 void MidiSynchronizer::startSendClock(float bpm)
 {
-	if (m_model.get().kernelMidi.sync != G_MIDI_SYNC_CLOCK_MASTER)
+	if (!m_kernelMidi.canSyncMaster())
 		return;
 
 	setClockBpm(bpm);
@@ -109,9 +109,8 @@ void MidiSynchronizer::startSendClock(float bpm)
 
 void MidiSynchronizer::stopSendClock() const
 {
-	if (m_model.get().kernelMidi.sync != G_MIDI_SYNC_CLOCK_MASTER)
-		return;
-	m_worker.stop();
+	if (m_kernelMidi.canSyncMaster())
+		m_worker.stop();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -126,27 +125,24 @@ void MidiSynchronizer::setClockBpm(float bpm)
 
 void MidiSynchronizer::sendRewind()
 {
-	if (m_model.get().kernelMidi.sync != G_MIDI_SYNC_CLOCK_MASTER)
-		return;
-	m_kernelMidi.send(MidiEvent::makeFrom3Bytes(MidiEvent::SYSTEM_SPP, 0, 0));
+	if (m_kernelMidi.canSyncMaster())
+		m_kernelMidi.send(MidiEvent::makeFrom3Bytes(MidiEvent::SYSTEM_SPP, 0, 0));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void MidiSynchronizer::sendStart()
 {
-	if (m_model.get().kernelMidi.sync != G_MIDI_SYNC_CLOCK_MASTER)
-		return;
-	m_kernelMidi.send(MidiEvent::makeFrom1Byte(MidiEvent::SYSTEM_START));
+	if (m_kernelMidi.canSyncMaster())
+		m_kernelMidi.send(MidiEvent::makeFrom1Byte(MidiEvent::SYSTEM_START));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void MidiSynchronizer::sendStop()
 {
-	if (m_model.get().kernelMidi.sync != G_MIDI_SYNC_CLOCK_MASTER)
-		return;
-	m_kernelMidi.send(MidiEvent::makeFrom1Byte(MidiEvent::SYSTEM_STOP));
+	if (m_kernelMidi.canSyncMaster())
+		m_kernelMidi.send(MidiEvent::makeFrom1Byte(MidiEvent::SYSTEM_STOP));
 }
 
 /* -------------------------------------------------------------------------- */

@@ -188,6 +188,30 @@ int         KernelMidi::getCurrentInPort() const { return m_model.get().kernelMi
 
 /* -------------------------------------------------------------------------- */
 
+bool KernelMidi::canSend() const
+{
+	return m_midiOut && m_midiOut->isPortOpen();
+}
+
+bool KernelMidi::canReceive() const
+{
+	return m_midiIn && m_midiIn->isPortOpen();
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool KernelMidi::canSyncMaster() const
+{
+	return canSend() && m_model.get().kernelMidi.sync == G_MIDI_SYNC_CLOCK_MASTER;
+}
+
+bool KernelMidi::canSyncSlave() const
+{
+	return canReceive() && m_model.get().kernelMidi.sync == G_MIDI_SYNC_CLOCK_SLAVE;
+}
+
+/* -------------------------------------------------------------------------- */
+
 std::vector<std::string> KernelMidi::getOutPorts() const
 {
 	std::vector<std::string> out;
@@ -208,7 +232,7 @@ std::vector<std::string> KernelMidi::getInPorts() const
 
 bool KernelMidi::send(const MidiEvent& event) const
 {
-	if (m_midiOut == nullptr || !m_midiOut->isPortOpen())
+	if (!canSend())
 		return false;
 
 	assert(event.getNumBytes() > 0 && event.getNumBytes() <= 3);
