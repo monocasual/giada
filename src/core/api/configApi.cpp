@@ -26,6 +26,7 @@
 
 #include "core/api/configApi.h"
 #include "core/kernelAudio.h"
+#include "core/midiSynchronizer.h"
 #include "core/model/model.h"
 
 namespace giada::m
@@ -193,8 +194,13 @@ KernelMidi::Result ConfigApi::midi_openInPort(int in)
 
 void ConfigApi::midi_storeData(int syncMode)
 {
+	const float currentBpm = m_model.get().sequencer.bpm;
+
 	m_model.get().kernelMidi.sync = syncMode;
 	m_model.swap(model::SwapType::NONE);
+
+	m_midiSynchronizer.stopSendClock();
+	m_midiSynchronizer.startSendClock(currentBpm);
 }
 
 /* -------------------------------------------------------------------------- */
