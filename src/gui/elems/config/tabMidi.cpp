@@ -118,6 +118,8 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 
 	m_enableOut->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEOUT));
 	m_enableOut->onChange = [this](bool b) {
+		if (m_data.outPorts.empty())
+			return;
 		if (b)
 		{
 			m_data.outPort = m_portOut->getSelectedId();
@@ -132,6 +134,8 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 
 	m_enableIn->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEIN));
 	m_enableIn->onChange = [this](bool b) {
+		if (m_data.inPorts.empty())
+			return;
 		if (b)
 		{
 			m_data.inPort = m_portIn->getSelectedId();
