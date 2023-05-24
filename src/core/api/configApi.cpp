@@ -30,11 +30,13 @@
 
 namespace giada::m
 {
-ConfigApi::ConfigApi(model::Model& m, KernelAudio& ka, KernelMidi& km, MidiMapper<KernelMidi>& mm)
+ConfigApi::ConfigApi(model::Model& m, KernelAudio& ka, KernelMidi& km, MidiMapper<KernelMidi>& mm,
+    MidiSynchronizer& ms)
 : m_model(m)
 , m_kernelAudio(ka)
 , m_kernelMidi(km)
 , m_midiMapper(mm)
+, m_midiSynchronizer(ms)
 {
 }
 

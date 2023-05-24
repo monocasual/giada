@@ -58,7 +58,7 @@ Engine::Engine()
 , m_actionEditorApi(*this, m_model, m_sequencer, m_actionRecorder)
 , m_ioApi(m_model, m_midiDispatcher)
 , m_storageApi(*this, m_model, m_patch, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
-, m_configApi(m_model, m_kernelAudio, m_kernelMidi, m_midiMapper)
+, m_configApi(m_model, m_kernelAudio, m_kernelMidi, m_midiMapper, m_midiSynchronizer)
 {
 	m_kernelAudio.onAudioCallback = [this](mcl::AudioBuffer& out, const mcl::AudioBuffer& in) {
 		return audioCallback(out, in);

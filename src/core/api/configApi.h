@@ -40,7 +40,7 @@ namespace giada::m
 class ConfigApi
 {
 public:
-	ConfigApi(model::Model&, KernelAudio&, KernelMidi&, MidiMapper<KernelMidi>&);
+	ConfigApi(model::Model&, KernelAudio&, KernelMidi&, MidiMapper<KernelMidi>&, MidiSynchronizer&);
 
 	bool                             audio_hasAPI(RtAudio::Api) const;
 	RtAudio::Api                     audio_getAPI() const;
@@ -87,6 +87,7 @@ private:
 	KernelAudio&            m_kernelAudio;
 	KernelMidi&             m_kernelMidi;
 	MidiMapper<KernelMidi>& m_midiMapper;
+	MidiSynchronizer&       m_midiSynchronizer;
 };
 } // namespace giada::m
 
