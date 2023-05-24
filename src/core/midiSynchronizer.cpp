@@ -108,8 +108,7 @@ void MidiSynchronizer::startSendClock(float bpm)
 
 void MidiSynchronizer::stopSendClock() const
 {
-	if (m_kernelMidi.canSyncMaster())
-		m_worker.stop();
+	m_worker.stop();
 }
 
 /* -------------------------------------------------------------------------- */
