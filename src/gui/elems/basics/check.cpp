@@ -26,6 +26,7 @@
 
 #include "check.h"
 #include "core/const.h"
+#include "utils/gui.h"
 #include <FL/fl_draw.H>
 #include <cstring>
 
@@ -59,6 +60,7 @@ void geCheck::draw()
 	const int      textColor = !active() ? FL_INACTIVE_COLOR : G_COLOR_LIGHT_2;
 	const Fl_Align textAlign = hasMultilineText() ? FL_ALIGN_LEFT | FL_ALIGN_TOP : FL_ALIGN_LEFT | FL_ALIGN_CENTER;
 	const int      checkboxW = 12;
+	const int      textW     = w() - (checkboxW + G_GUI_UNIT);
 
 	if (value())
 		fl_rectf(x(), y(), checkboxW, h(), boxColor);
@@ -70,7 +72,7 @@ void geCheck::draw()
 
 	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
 	fl_color(textColor);
-	fl_draw(label(), x() + G_GUI_UNIT, y(), w(), h(), textAlign);
+	fl_draw(u::gui::truncate(label(), textW).c_str(), x() + G_GUI_UNIT, y(), w(), h(), textAlign);
 }
 
 /* -------------------------------------------------------------------------- */
