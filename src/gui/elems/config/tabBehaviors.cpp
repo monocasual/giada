@@ -49,10 +49,10 @@ geTabBehaviors::geTabBehaviors(geompp::Rect<int> bounds)
 		m_inputMonitorDefaultOn      = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::CONFIG_BEHAVIORS_INPUTMONITORDEFAULTON));
 		m_overdubProtectionDefaultOn = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::CONFIG_BEHAVIORS_OVERDUBPROTECTIONDEFAULTON));
 
-		body->add(m_chansStopOnSeqHalt, 30);
+		body->add(m_chansStopOnSeqHalt, 20);
 		body->add(m_treatRecsAsLoops, 20);
 		body->add(m_inputMonitorDefaultOn, 20);
-		body->add(m_overdubProtectionDefaultOn, 30);
+		body->add(m_overdubProtectionDefaultOn, 20);
 		body->end();
 	};
 
