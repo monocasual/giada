@@ -58,7 +58,7 @@ void geCheck::draw()
 
 	const Fl_Color boxColor  = !active() ? FL_INACTIVE_COLOR : G_COLOR_GREY_4;
 	const int      textColor = !active() ? FL_INACTIVE_COLOR : G_COLOR_LIGHT_2;
-	const Fl_Align textAlign = hasMultilineText() ? FL_ALIGN_LEFT | FL_ALIGN_TOP : FL_ALIGN_LEFT | FL_ALIGN_CENTER;
+	const Fl_Align textAlign = FL_ALIGN_LEFT | FL_ALIGN_CENTER;
 	const int      checkboxW = 12;
 	const int      textW     = w() - (checkboxW + G_GUI_UNIT);
 
@@ -73,12 +73,5 @@ void geCheck::draw()
 	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
 	fl_color(textColor);
 	fl_draw(u::gui::truncate(label(), textW).c_str(), x() + G_GUI_UNIT, y(), w(), h(), textAlign);
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool geCheck::hasMultilineText() const
-{
-	return label() == nullptr ? false : std::strchr(label(), '\n') != nullptr;
 }
 } // namespace giada::v
