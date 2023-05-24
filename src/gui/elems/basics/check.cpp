@@ -65,6 +65,9 @@ void geCheck::draw()
 	else
 		fl_rect(x(), y(), checkboxW, h(), boxColor);
 
+	if (label() == nullptr)
+		return;
+
 	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
 	fl_color(textColor);
 	fl_draw(label(), x() + G_GUI_UNIT, y(), w(), h(), textAlign);
