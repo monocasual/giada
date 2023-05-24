@@ -197,16 +197,23 @@ KernelMidi::Result ConfigApi::midi_openInPort(int in)
 
 /* -------------------------------------------------------------------------- */
 
-void ConfigApi::midi_storeData(int syncMode, const std::string& midiMapPath)
+void ConfigApi::midi_setSyncMode(int syncMode)
 {
 	const float currentBpm = m_model.get().sequencer.bpm;
 
-	m_model.get().kernelMidi.sync        = syncMode;
-	m_model.get().kernelMidi.midiMapPath = midiMapPath;
+	m_model.get().kernelMidi.sync = syncMode;
 	m_model.swap(model::SwapType::NONE);
 
 	m_midiSynchronizer.stopSendClock();
 	m_midiSynchronizer.startSendClock(currentBpm);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ConfigApi::midi_setMidiMapPath(const std::string& midiMapPath)
+{
+	m_model.get().kernelMidi.midiMapPath = midiMapPath;
+	m_model.swap(model::SwapType::NONE);
 
 	m_midiMapper.read(midiMapPath);
 	m_midiMapper.sendInitMessages();

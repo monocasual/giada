@@ -218,6 +218,20 @@ void changeMidiAPI(RtMidi::Api api)
 
 /* -------------------------------------------------------------------------- */
 
+void setMidiMapPath(const std::string& midiMapPath)
+{
+	g_engine.getConfigApi().midi_setMidiMapPath(midiMapPath);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void setMidiSyncMode(int syncMode)
+{
+	g_engine.getConfigApi().midi_setSyncMode(syncMode);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void apply(const AudioData& data)
 {
 	bool res = g_engine.getConfigApi().audio_openStream(
@@ -251,11 +265,6 @@ void save(const PluginData& data)
 }
 
 /* -------------------------------------------------------------------------- */
-
-void save(const MidiData& data)
-{
-	g_engine.getConfigApi().midi_storeData(data.syncMode, u::vector::atOr(data.midiMaps, data.midiMap, ""));
-}
 
 void apply(const MidiData& data)
 {

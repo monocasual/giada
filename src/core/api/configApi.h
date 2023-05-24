@@ -77,7 +77,8 @@ public:
 	KernelMidi::Result midi_openOutPort(int);
 	KernelMidi::Result midi_openInPort(int);
 
-	void midi_storeData(int syncMode, const std::string& midiMapPath);
+	void midi_setSyncMode(int syncMode);
+	void midi_setMidiMapPath(const std::string& midiMapPath);
 
 	const model::Behaviors& behaviors_getData() const;
 
