@@ -77,7 +77,10 @@ int MidiMapper<KernelMidiI>::read(const std::string& file)
 {
 	std::optional<nl::json> res = Mapper::read(file);
 	if (!res)
+	{
+		u::log::print("[MidiMapper::read] MIDI map read failed!\n");
 		return G_FILE_UNREADABLE;
+	}
 
 	nl::json j = res.value();
 

@@ -217,8 +217,7 @@ void Engine::init(const Conf& conf)
 	const model::Layout& layout = m_model.get();
 
 	m_midiMapper.init();
-	if (m_midiMapper.read(layout.kernelMidi.midiMapPath) != G_FILE_OK)
-		u::log::print("[Engine::init] MIDI map read failed!\n");
+	m_midiMapper.read(layout.kernelMidi.midiMapPath);
 
 	m_kernelAudio.init();
 
