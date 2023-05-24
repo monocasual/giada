@@ -216,9 +216,6 @@ void Engine::init(const Conf& conf)
 
 	const model::Layout& layout = m_model.get();
 
-	m_midiMapper.init();
-	m_midiMapper.read(layout.kernelMidi.midiMapPath);
-
 	m_kernelAudio.init();
 
 	m_mixer.reset(m_sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
@@ -233,7 +230,10 @@ void Engine::init(const Conf& conf)
 	m_kernelMidi.init();
 	m_kernelMidi.start();
 
+	m_midiMapper.init();
+	m_midiMapper.read(layout.kernelMidi.midiMapPath);
 	m_midiMapper.sendInitMessages(m_midiMapper.currentMap);
+
 	m_eventDispatcher.start();
 	m_midiSynchronizer.startSendClock(G_DEFAULT_BPM);
 }
