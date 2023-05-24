@@ -207,6 +207,9 @@ void ConfigApi::midi_storeData(int syncMode, const std::string& midiMapPath)
 
 	m_midiSynchronizer.stopSendClock();
 	m_midiSynchronizer.startSendClock(currentBpm);
+
+	m_midiMapper.read(midiMapPath);
+	m_midiMapper.sendInitMessages();
 }
 
 /* -------------------------------------------------------------------------- */
