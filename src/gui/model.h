@@ -52,7 +52,6 @@ struct Model
 	int         logMode      = LOG_MODE_MUTE;
 	bool        showTooltips = true;
 	std::string langMap      = "";
-	std::string midiMapPath  = "";
 	std::string pluginPath   = "";
 	std::string patchPath    = "";
 	std::string samplePath   = "";

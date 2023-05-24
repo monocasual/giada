@@ -33,7 +33,6 @@ void Model::store(m::Conf& conf) const
 	conf.logMode      = logMode;
 	conf.showTooltips = showTooltips;
 	conf.langMap      = langMap;
-	conf.midiMapPath  = midiMapPath;
 	conf.pluginPath   = pluginPath;
 	conf.patchPath    = patchPath;
 	conf.samplePath   = samplePath;
@@ -79,7 +78,6 @@ void Model::load(const m::Conf& conf)
 	logMode          = conf.logMode;
 	showTooltips     = conf.showTooltips;
 	langMap          = conf.langMap;
-	midiMapPath      = conf.midiMapPath;
 	pluginPath       = conf.pluginPath;
 	patchPath        = conf.patchPath;
 	samplePath       = conf.samplePath;

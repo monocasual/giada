@@ -71,12 +71,13 @@ public:
 	std::vector<std::string>        midi_getOutPorts() const;
 	std::vector<std::string>        midi_getInPorts() const;
 	const std::vector<std::string>& midi_getMidiMapFilesFound() const;
+	std::string                     midi_getCurrentMidiMapPath() const;
 
 	bool               midi_setAPI(RtMidi::Api);
 	KernelMidi::Result midi_openOutPort(int);
 	KernelMidi::Result midi_openInPort(int);
 
-	void midi_storeData(int syncMode);
+	void midi_storeData(int syncMode, const std::string& midiMapPath);
 
 	const model::Behaviors& behaviors_getData() const;
 

@@ -154,7 +154,7 @@ MidiData getMidiData()
 	midiData.syncModes[G_MIDI_SYNC_CLOCK_SLAVE]  = "MIDI Clock (slave)";
 
 	midiData.midiMaps = g_engine.getConfigApi().midi_getMidiMapFilesFound();
-	midiData.midiMap  = u::vector::indexOf(midiData.midiMaps, g_ui.model.midiMapPath);
+	midiData.midiMap  = u::vector::indexOf(midiData.midiMaps, g_engine.getConfigApi().midi_getCurrentMidiMapPath());
 	midiData.outPorts = g_engine.getConfigApi().midi_getOutPorts();
 	midiData.inPorts  = g_engine.getConfigApi().midi_getInPorts();
 	midiData.api      = g_engine.getConfigApi().midi_getAPI();
@@ -254,7 +254,7 @@ void save(const PluginData& data)
 
 void save(const MidiData& data)
 {
-	g_engine.getConfigApi().midi_storeData(data.syncMode);
+	g_engine.getConfigApi().midi_storeData(data.syncMode, u::vector::atOr(data.midiMaps, data.midiMap, ""));
 }
 
 void apply(const MidiData& data)

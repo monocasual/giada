@@ -171,6 +171,11 @@ const std::vector<std::string>& ConfigApi::midi_getMidiMapFilesFound() const
 	return m_midiMapper.getMapFilesFound();
 }
 
+std::string ConfigApi::midi_getCurrentMidiMapPath() const
+{
+	return m_model.get().kernelMidi.midiMapPath;
+}
+
 /* -------------------------------------------------------------------------- */
 
 bool ConfigApi::midi_setAPI(RtMidi::Api api)
@@ -192,11 +197,12 @@ KernelMidi::Result ConfigApi::midi_openInPort(int in)
 
 /* -------------------------------------------------------------------------- */
 
-void ConfigApi::midi_storeData(int syncMode)
+void ConfigApi::midi_storeData(int syncMode, const std::string& midiMapPath)
 {
 	const float currentBpm = m_model.get().sequencer.bpm;
 
-	m_model.get().kernelMidi.sync = syncMode;
+	m_model.get().kernelMidi.sync        = syncMode;
+	m_model.get().kernelMidi.midiMapPath = midiMapPath;
 	m_model.swap(model::SwapType::NONE);
 
 	m_midiSynchronizer.stopSendClock();
