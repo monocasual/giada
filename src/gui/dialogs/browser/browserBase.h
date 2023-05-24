@@ -35,7 +35,6 @@
 #include <string>
 
 class Fl_Group;
-class geCheck;
 
 namespace giada::m
 {
@@ -44,6 +43,7 @@ class Channel;
 
 namespace giada::v
 {
+class geCheck;
 class geImageButton;
 class geTextButton;
 class geInput;

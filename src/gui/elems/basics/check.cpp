@@ -29,6 +29,8 @@
 #include <FL/fl_draw.H>
 #include <cstring>
 
+namespace giada::v
+{
 geCheck::geCheck(int x, int y, int w, int h, const char* l)
 : Fl_Check_Button(x, y, w, h, l)
 {
@@ -73,3 +75,4 @@ bool geCheck::hasMultilineText() const
 {
 	return label() == nullptr ? false : std::strchr(label(), '\n') != nullptr;
 }
+} // namespace giada::v

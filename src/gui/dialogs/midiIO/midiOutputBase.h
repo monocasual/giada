@@ -33,8 +33,6 @@
 #include "gui/elems/midiIO/midiLearner.h"
 #include "gui/elems/midiIO/midiLearnerPack.h"
 
-class geCheck;
-
 /* There's no such thing as a gdMidiOutputMaster vs gdMidiOutputChannel. MIDI
 output master is managed by the configuration window, hence gdMidiOutput deals
 only with channels.
@@ -46,6 +44,7 @@ namespace giada
 {
 namespace v
 {
+class geCheck;
 class geTextButton;
 class geLightningLearnerPack : public geMidiLearnerPack
 {

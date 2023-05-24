@@ -31,10 +31,9 @@
 #include "glue/config.h"
 #include <FL/Fl_Group.H>
 
-class geCheck;
-
 namespace giada::v
 {
+class geCheck;
 class geStringMenu;
 class geChoice;
 class geTextButton;

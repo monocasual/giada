@@ -31,10 +31,9 @@
 #include "gui/model.h"
 #include <FL/Fl_Group.H>
 
-class geCheck;
-
 namespace giada::v
 {
+class geCheck;
 class geInput;
 class geKeyBinder;
 class geTabBindings : public Fl_Group

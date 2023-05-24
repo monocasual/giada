@@ -31,10 +31,9 @@
 #include "gui/elems/midiIO/midiLearner.h"
 #include "gui/model.h"
 
-class geCheck;
-
 namespace giada::v
 {
+class geCheck;
 class geTextButton;
 class geChoice;
 class gdMidiInputBase : public gdWindow

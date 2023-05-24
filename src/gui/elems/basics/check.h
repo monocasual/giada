@@ -30,6 +30,8 @@
 #include <FL/Fl_Check_Button.H>
 #include <functional>
 
+namespace giada::v
+{
 class geCheck : public Fl_Check_Button
 {
 public:
@@ -45,5 +47,6 @@ private:
 
 	bool hasMultilineText() const;
 };
+} // namespace giada::v
 
 #endif

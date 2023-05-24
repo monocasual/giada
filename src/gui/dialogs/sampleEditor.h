@@ -32,10 +32,9 @@
 #include "gui/dialogs/window.h"
 #include "gui/model.h"
 
-class geCheck;
-
 namespace giada::v
 {
+class geCheck;
 class geBox;
 class geTextButton;
 class geImageButton;

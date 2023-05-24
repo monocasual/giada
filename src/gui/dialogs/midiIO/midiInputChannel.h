@@ -33,10 +33,9 @@
 #include "gui/elems/midiIO/midiLearnerPack.h"
 #include "midiInputBase.h"
 
-class geCheck;
-
 namespace giada::v
 {
+class geCheck;
 class geChoice;
 class geScrollPack;
 class geChannelLearnerPack : public geMidiLearnerPack

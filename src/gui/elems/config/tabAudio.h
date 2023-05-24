@@ -32,10 +32,9 @@
 #include "gui/elems/basics/choice.h"
 #include <FL/Fl_Group.H>
 
-class geCheck;
-
 namespace giada::v
 {
+class geCheck;
 class geInput;
 class geTextButton;
 class geTabAudio : public Fl_Group
