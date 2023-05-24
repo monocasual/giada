@@ -86,6 +86,8 @@ struct AudioData
 
 struct MidiData
 {
+	std::string getMidiMapByIndex(int);
+
 	std::map<RtMidi::Api, std::string> apis;
 	std::map<int, std::string>         syncModes;
 	std::vector<std::string>           midiMaps;

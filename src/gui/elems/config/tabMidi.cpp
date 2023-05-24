@@ -150,7 +150,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 
 	m_midiMap->onChange = [this](ID id) {
 		m_data.midiMap = id;
-		c::config::setMidiMapPath(u::vector::atOr(m_data.midiMaps, id, ""));
+		c::config::setMidiMapPath(m_data.getMidiMapByIndex(id));
 	};
 
 	m_sync->onChange = [this](ID id) {
