@@ -232,7 +232,7 @@ void Engine::init(const Conf& conf)
 
 	m_midiMapper.init();
 	m_midiMapper.read(layout.kernelMidi.midiMapPath);
-	m_midiMapper.sendInitMessages(m_midiMapper.currentMap);
+	m_midiMapper.sendInitMessages();
 
 	m_eventDispatcher.start();
 	m_midiSynchronizer.startSendClock(G_DEFAULT_BPM);

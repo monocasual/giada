@@ -122,12 +122,12 @@ bool MidiMapper<KernelMidiI>::isMessageDefined(const MidiMap::Message& m) const
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-void MidiMapper<KernelMidiI>::sendInitMessages(const MidiMap& midiMap) const
+void MidiMapper<KernelMidiI>::sendInitMessages() const
 {
-	if (!midiMap.isValid())
+	if (!currentMap.isValid())
 		return;
 
-	for (const MidiMap::Message& m : midiMap.initCommands)
+	for (const MidiMap::Message& m : currentMap.initCommands)
 	{
 		if (m.value == 0x0 || m.channel == -1)
 			continue;

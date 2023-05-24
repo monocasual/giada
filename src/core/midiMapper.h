@@ -90,9 +90,10 @@ public:
 	int read(const std::string& file);
 
 	/* sendInitMessages
-	Sends initialization messages from the midimap to the connected MIDI devices. */
+	Sends initialization messages from the currently loaded midimap to the 
+	connected MIDI devices. */
 
-	void sendInitMessages(const MidiMap& midiMap) const;
+	void sendInitMessages() const;
 
 	/* sendMidiLightning
 	Sends a MIDI lightning message defined by 'msg'. */
