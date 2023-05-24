@@ -58,15 +58,16 @@ void geCheck::draw()
 	const Fl_Color boxColor  = !active() ? FL_INACTIVE_COLOR : G_COLOR_GREY_4;
 	const int      textColor = !active() ? FL_INACTIVE_COLOR : G_COLOR_LIGHT_2;
 	const Fl_Align textAlign = hasMultilineText() ? FL_ALIGN_LEFT | FL_ALIGN_TOP : FL_ALIGN_LEFT | FL_ALIGN_CENTER;
+	const int      checkboxW = 12;
 
 	if (value())
-		fl_rectf(x(), y(), 12, h(), boxColor);
+		fl_rectf(x(), y(), checkboxW, h(), boxColor);
 	else
-		fl_rect(x(), y(), 12, h(), boxColor);
+		fl_rect(x(), y(), checkboxW, h(), boxColor);
 
 	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
 	fl_color(textColor);
-	fl_draw(label(), x() + 20, y(), w(), h(), textAlign);
+	fl_draw(label(), x() + G_GUI_UNIT, y(), w(), h(), textAlign);
 }
 
 /* -------------------------------------------------------------------------- */
