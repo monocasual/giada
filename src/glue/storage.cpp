@@ -153,11 +153,11 @@ void loadSample(void* data)
 	if (fullPath.empty())
 		return;
 
-	browser->do_callback();
-
 	g_ui.model.samplePath = u::fs::dirname(fullPath);
 
 	c::channel::loadChannel(browser->getChannelId(), fullPath);
+
+	browser->do_callback();
 }
 
 /* -------------------------------------------------------------------------- */
