@@ -115,10 +115,14 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 		for (int i = 0; i < data.channelsMax; i += 2)
 			addItem(fmt::format("{}-{}", i + 1, i + 2), i + STEREO_OFFSET);
 
-	if (data.channelsCount == 1)
+	if (data.channelsCount == 0) // First time you choose a device, so no channels selected yet: just show first item
+		showItem(0);
+	else if (data.channelsCount == 1)
 		showItem(data.channelsStart);
-	else
+	else if (data.channelsCount == 2)
 		showItem(data.channelsStart + STEREO_OFFSET);
+	else
+		assert(false);
 }
 
 /* -------------------------------------------------------------------------- */
