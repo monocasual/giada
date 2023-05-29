@@ -28,11 +28,11 @@
 #include "glue/io.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/textButton.h"
 #include "gui/elems/midiIO/midiLearner.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
-#include <FL/Fl_Pack.H>
 
 extern giada::v::Ui g_ui;
 
@@ -41,25 +41,46 @@ namespace giada::v
 gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 : gdMidiOutputBase(350, 168, channelId)
 {
-	end();
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		geFlex* body = new geFlex(Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+		{
+			geFlex* enableOutGroup = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+			{
+				m_enableOut   = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_ENABLE));
+				m_chanListOut = new geChoice();
 
-	m_enableOut   = new geCheck(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 150, G_GUI_UNIT, g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_ENABLE));
-	m_chanListOut = new geChoice(w() - 108, G_GUI_OUTER_MARGIN, 100, G_GUI_UNIT);
+				enableOutGroup->add(m_enableOut, 150);
+				enableOutGroup->add(new geBox()); // Spacer
+				enableOutGroup->add(m_chanListOut);
+				enableOutGroup->end();
+			}
 
-	m_enableLightning = new geCheck(G_GUI_OUTER_MARGIN, m_chanListOut->y() + m_chanListOut->h() + G_GUI_OUTER_MARGIN,
-	    w(), G_GUI_UNIT, g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_ENABLE_LIGHTNING));
+			m_enableLightning = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_ENABLE_LIGHTNING));
+			m_learners        = new geLightningLearnerPack(0, 0, channelId);
 
-	m_learners = new geLightningLearnerPack(G_GUI_OUTER_MARGIN,
-	    m_enableLightning->y() + m_enableLightning->h() + G_GUI_OUTER_MARGIN, channelId);
+			body->add(enableOutGroup, G_GUI_UNIT);
+			body->add(m_enableLightning, G_GUI_UNIT);
+			body->add(m_learners);
+			body->end();
+		}
 
-	m_close = new geTextButton(w() - 88, m_learners->y() + m_learners->h() + G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT,
-	    g_ui.getI18Text(LangMap::COMMON_CLOSE));
+		geFlex* footer = new geFlex(Direction::HORIZONTAL);
+		{
+			m_close = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLOSE));
 
-	add(m_enableOut);
-	add(m_chanListOut);
-	add(m_enableLightning);
-	add(m_learners);
-	add(m_close);
+			footer->add(new geBox()); // Spacer
+			footer->add(m_close, 80);
+			footer->end();
+		}
+
+		container->add(body);
+		container->add(footer, G_GUI_UNIT);
+		container->end();
+	}
+
+	add(container);
+	resizable(nullptr);
 
 	m_chanListOut->addItem("Channel 1");
 	m_chanListOut->addItem("Channel 2");
