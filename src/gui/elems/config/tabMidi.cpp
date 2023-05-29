@@ -191,8 +191,16 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 	}
 
 	m_enableOut->value(m_data.outPort != -1);
+	if (m_data.outPorts.empty())
+		m_enableOut->deactivate();
+	else
+		m_enableOut->activate();
 
 	m_enableIn->value(m_data.inPort != -1);
+	if (m_data.inPorts.empty())
+		m_enableIn->deactivate();
+	else
+		m_enableIn->activate();
 
 	m_midiMap->rebuild(m_data.midiMaps);
 	m_midiMap->showItem(m_data.midiMap);
