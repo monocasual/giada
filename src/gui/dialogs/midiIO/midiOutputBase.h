@@ -61,9 +61,6 @@ public:
 	~gdMidiOutputBase();
 
 protected:
-	static void cb_enableLightning(Fl_Widget* /*w*/, void* p);
-	void        cb_enableLightning();
-
 	ID m_channelId;
 
 	c::io::Channel_OutputData m_data;

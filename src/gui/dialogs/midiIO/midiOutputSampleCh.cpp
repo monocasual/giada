@@ -56,7 +56,9 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 
 	m_close->onClick = [this]() { do_callback(); };
 
-	m_enableLightning->callback(cb_enableLightning, (void*)this);
+	m_enableLightning->onChange = [this](bool value) {
+		c::io::channel_enableMidiLightning(m_channelId, value);
+	};
 
 	set_modal();
 	rebuild();

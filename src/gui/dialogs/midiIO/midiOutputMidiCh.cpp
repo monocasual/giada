@@ -86,7 +86,9 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 		c::io::channel_enableMidiOutput(m_channelId, value);
 	};
 
-	m_enableLightning->callback(cb_enableLightning, (void*)this);
+	m_enableLightning->onChange = [this](bool value) {
+		c::io::channel_enableMidiLightning(m_channelId, value);
+	};
 
 	m_close->onClick = [this]() { do_callback(); };
 

@@ -72,15 +72,4 @@ gdMidiOutputBase::~gdMidiOutputBase()
 {
 	c::io::stopMidiLearn();
 }
-
-/* -------------------------------------------------------------------------- */
-
-void gdMidiOutputBase::cb_enableLightning(Fl_Widget* /*w*/, void* p) { ((gdMidiOutputBase*)p)->cb_enableLightning(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdMidiOutputBase::cb_enableLightning()
-{
-	c::io::channel_enableMidiLightning(m_channelId, m_enableLightning->value());
-}
 } // namespace giada::v
