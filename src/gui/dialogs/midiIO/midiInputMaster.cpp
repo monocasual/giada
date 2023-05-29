@@ -81,7 +81,7 @@ gdMidiInputMaster::gdMidiInputMaster(const Model& model)
 	end();
 
 	geGroup* groupHeader = new geGroup(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN);
-	m_enable             = new geCheck(0, 0, 120, G_GUI_UNIT, g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_ENABLE));
+	m_enable             = new geCheck(0, 0, w() - 180, G_GUI_UNIT, g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_ENABLE));
 	m_channel            = new geChoice(m_enable->x() + m_enable->w() + 44, 0, 120, G_GUI_UNIT);
 	groupHeader->resizable(nullptr);
 	groupHeader->add(m_enable);

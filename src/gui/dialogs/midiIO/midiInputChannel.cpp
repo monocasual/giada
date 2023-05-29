@@ -119,7 +119,7 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, const Model& model)
 	/* Header */
 
 	geGroup* groupHeader = new geGroup(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN);
-	m_enable             = new geCheck(0, 0, 120, G_GUI_UNIT, g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_ENABLE));
+	m_enable             = new geCheck(0, 0, w() - 180, G_GUI_UNIT, g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_ENABLE));
 	m_channel            = new geChoice(m_enable->x() + m_enable->w() + 44, 0, 120, G_GUI_UNIT);
 	m_veloAsVol          = new geCheck(0, m_enable->y() + m_enable->h() + G_GUI_OUTER_MARGIN, w() - 16, G_GUI_UNIT,
         g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_VELOCITYDRIVESVOL));
