@@ -27,11 +27,11 @@
 #include "gui/dialogs/midiIO/midiOutputSampleCh.h"
 #include "core/model/model.h"
 #include "gui/elems/basics/check.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/textButton.h"
 #include "gui/elems/midiIO/midiLearner.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
-#include <FL/Fl_Pack.H>
 
 extern giada::v::Ui g_ui;
 
@@ -40,19 +40,34 @@ namespace giada::v
 gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 : gdMidiOutputBase(350, 140, channelId)
 {
-	end();
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		geFlex* body = new geFlex(Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+		{
+			m_enableLightning = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_ENABLE_LIGHTNING));
+			m_learners        = new geLightningLearnerPack(0, 0, channelId);
 
-	m_enableLightning = new geCheck(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w(), 20, g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_ENABLE_LIGHTNING));
+			body->add(m_enableLightning, G_GUI_UNIT);
+			body->add(m_learners);
+			body->end();
+		}
 
-	m_learners = new geLightningLearnerPack(G_GUI_OUTER_MARGIN,
-	    m_enableLightning->y() + m_enableLightning->h() + 8, channelId);
+		geFlex* footer = new geFlex(Direction::HORIZONTAL);
+		{
+			m_close = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLOSE));
 
-	m_close = new geTextButton(w() - 88, m_learners->y() + m_learners->h() + 8, 80, 20,
-	    g_ui.getI18Text(LangMap::COMMON_CLOSE));
+			footer->add(new geBox()); // Spacer
+			footer->add(m_close, 80);
+			footer->end();
+		}
 
-	add(m_enableLightning);
-	add(m_learners);
-	add(m_close);
+		container->add(body);
+		container->add(footer, G_GUI_UNIT);
+		container->end();
+	}
+
+	add(container);
+	resizable(nullptr);
 
 	m_close->onClick = [this]() { do_callback(); };
 
