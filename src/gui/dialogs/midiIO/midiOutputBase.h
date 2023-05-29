@@ -63,8 +63,6 @@ public:
 protected:
 	ID m_channelId;
 
-	c::io::Channel_OutputData m_data;
-
 	geLightningLearnerPack* m_learners;
 	geTextButton*           m_close;
 	geCheck*                m_enableLightning;

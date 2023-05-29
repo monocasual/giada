@@ -84,9 +84,9 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 
 void gdMidiOutputSampleCh::rebuild()
 {
-	m_data = c::io::channel_getOutputData(m_channelId);
+	c::io::Channel_OutputData data = c::io::channel_getOutputData(m_channelId);
 
-	m_enableLightning->value(m_data.lightningEnabled);
-	m_learners->update(m_data);
+	m_enableLightning->value(data.lightningEnabled);
+	m_learners->update(data);
 }
 } // namespace giada::v

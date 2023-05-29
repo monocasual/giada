@@ -122,14 +122,14 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 
 void gdMidiOutputMidiCh::rebuild()
 {
-	m_data = c::io::channel_getOutputData(m_channelId);
+	c::io::Channel_OutputData data = c::io::channel_getOutputData(m_channelId);
 
-	assert(m_data.output.has_value());
+	assert(data.output.has_value());
 
-	m_learners->update(m_data);
-	m_chanListOut->showItem(m_data.output->filter);
-	m_enableOut->value(m_data.output->enabled);
+	m_learners->update(data);
+	m_chanListOut->showItem(data.output->filter);
+	m_enableOut->value(data.output->enabled);
 
-	m_data.output->enabled ? m_chanListOut->activate() : m_chanListOut->deactivate();
+	data.output->enabled ? m_chanListOut->activate() : m_chanListOut->deactivate();
 }
 } // namespace giada::v
