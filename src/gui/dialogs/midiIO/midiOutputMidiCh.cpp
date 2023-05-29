@@ -82,7 +82,9 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 		c::io::channel_setMidiOutputFilter(m_channelId, id);
 	};
 
-	m_enableOut->callback(cb_enableOut, (void*)this);
+	m_enableOut->onChange = [this](bool value) {
+		c::io::channel_enableMidiOutput(m_channelId, value);
+	};
 
 	m_enableLightning->callback(cb_enableLightning, (void*)this);
 
@@ -106,16 +108,5 @@ void gdMidiOutputMidiCh::rebuild()
 	m_enableOut->value(m_data.output->enabled);
 
 	m_data.output->enabled ? m_chanListOut->activate() : m_chanListOut->deactivate();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdMidiOutputMidiCh::cb_enableOut(Fl_Widget* /*w*/, void* p) { ((gdMidiOutputMidiCh*)p)->cb_enableOut(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdMidiOutputMidiCh::cb_enableOut()
-{
-	c::io::channel_enableMidiOutput(m_channelId, m_enableOut->value());
 }
 } // namespace giada::v

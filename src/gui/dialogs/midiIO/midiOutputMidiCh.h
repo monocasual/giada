@@ -42,9 +42,6 @@ public:
 	void rebuild() override;
 
 private:
-	static void cb_enableOut(Fl_Widget* /*w*/, void* p);
-	void        cb_enableOut();
-
 	geCheck*  m_enableOut;
 	geChoice* m_chanListOut;
 };
