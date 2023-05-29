@@ -40,9 +40,7 @@ only with channels.
 Both MidiOutputMidiCh and MidiOutputSampleCh have the MIDI lighting widget set.
 In addition MidiOutputMidiCh has the MIDI message output box. */
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class geCheck;
 class geTextButton;
@@ -74,7 +72,6 @@ protected:
 	geTextButton*           m_close;
 	geCheck*                m_enableLightning;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

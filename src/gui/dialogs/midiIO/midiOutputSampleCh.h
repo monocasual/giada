@@ -29,9 +29,7 @@
 
 #include "midiOutputBase.h"
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 class gdMidiOutputSampleCh : public gdMidiOutputBase
 {
@@ -40,7 +38,6 @@ public:
 
 	void rebuild() override;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif
