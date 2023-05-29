@@ -47,7 +47,7 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 	m_chanListOut = new geChoice(w() - 108, G_GUI_OUTER_MARGIN, 100, G_GUI_UNIT);
 
 	m_enableLightning = new geCheck(G_GUI_OUTER_MARGIN, m_chanListOut->y() + m_chanListOut->h() + G_GUI_OUTER_MARGIN,
-	    120, G_GUI_UNIT, g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_ENABLE_LIGHTNING));
+	    w(), G_GUI_UNIT, g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_ENABLE_LIGHTNING));
 
 	m_learners = new geLightningLearnerPack(G_GUI_OUTER_MARGIN,
 	    m_enableLightning->y() + m_enableLightning->h() + G_GUI_OUTER_MARGIN, channelId);
