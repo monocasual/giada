@@ -32,10 +32,6 @@
 
 namespace giada::v
 {
-constexpr int LEARNER_WIDTH = 334;
-
-/* -------------------------------------------------------------------------- */
-
 geMidiLearnerPack::geMidiLearnerPack(int X, int Y, std::string title)
 : gePack(X, Y, Direction::VERTICAL)
 {

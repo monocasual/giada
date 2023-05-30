@@ -37,6 +37,8 @@ namespace giada::v
 class geMidiLearnerPack : public gePack
 {
 public:
+	static constexpr int LEARNER_WIDTH = 334;
+
 	geMidiLearnerPack(int x, int y, std::string title = "");
 
 	void setCallbacks(std::function<void(uint32_t)>, std::function<void(uint32_t)>);
