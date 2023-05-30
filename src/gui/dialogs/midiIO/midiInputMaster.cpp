@@ -27,6 +27,7 @@
 #include "gui/dialogs/midiIO/midiInputMaster.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/group.h"
 #include "gui/elems/basics/scrollPack.h"
 #include "gui/elems/basics/textButton.h"
@@ -78,21 +79,42 @@ void geMasterLearnerPack::update(const c::io::Master_InputData& d)
 gdMidiInputMaster::gdMidiInputMaster(const Model& model)
 : gdMidiInputBase(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_TITLE), model)
 {
-	end();
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		geFlex* enableGroup = new geFlex(Direction::HORIZONTAL);
+		{
+			m_enable  = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_ENABLE));
+			m_channel = new geChoice();
 
-	geGroup* groupHeader = new geGroup(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN);
-	m_enable             = new geCheck(0, 0, w() - 180, G_GUI_UNIT, g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_ENABLE));
-	m_channel            = new geChoice(m_enable->x() + m_enable->w() + 44, 0, 120, G_GUI_UNIT);
-	groupHeader->resizable(nullptr);
-	groupHeader->add(m_enable);
-	groupHeader->add(m_channel);
+			enableGroup->add(m_enable, geMidiLearnerPack::LEARNER_WIDTH - 120);
+			enableGroup->add(m_channel, 120);
+			enableGroup->end();
+		}
 
-	m_learners = new geMasterLearnerPack(G_GUI_OUTER_MARGIN, groupHeader->y() + groupHeader->h() + G_GUI_OUTER_MARGIN);
-	m_ok       = new geTextButton(w() - 88, m_learners->y() + m_learners->h() + G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT, g_ui.getI18Text(LangMap::COMMON_CLOSE));
+		geScrollPack* scrollPack = new geScrollPack(0, 0, 0, 0);
+		{
+			m_learners = new geMasterLearnerPack(0, 0);
 
-	add(groupHeader);
-	add(m_learners);
-	add(m_ok);
+			scrollPack->add(m_learners);
+		}
+
+		geFlex* footer = new geFlex(Direction::HORIZONTAL);
+		{
+			m_ok = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLOSE));
+
+			footer->add(new geBox()); // Spacer
+			footer->add(m_ok, 80);
+			footer->end();
+		}
+
+		container->add(enableGroup, G_GUI_UNIT);
+		container->add(scrollPack);
+		container->add(footer, G_GUI_UNIT);
+		container->end();
+	}
+
+	add(container);
+	resizable(container);
 
 	m_ok->onClick = [this]() { do_callback(); };
 	m_enable->callback(cb_enable, (void*)this);
