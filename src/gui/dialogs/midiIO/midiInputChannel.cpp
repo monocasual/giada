@@ -30,6 +30,7 @@
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/group.h"
 #include "gui/elems/basics/scrollPack.h"
 #include "gui/elems/basics/textButton.h"
@@ -39,7 +40,6 @@
 #include "utils/gui.h"
 #include "utils/log.h"
 #include "utils/string.h"
-#include <FL/Fl_Pack.H>
 #include <cassert>
 #include <cstddef>
 
@@ -114,37 +114,43 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, const Model& model)
 , m_channelId(channelId)
 , m_data(c::io::channel_getInputData(channelId))
 {
-	end();
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		geFlex* enableGroup = new geFlex(Direction::HORIZONTAL);
+		{
+			m_enable  = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_ENABLE));
+			m_channel = new geChoice();
 
-	/* Header */
+			enableGroup->add(m_enable, geMidiLearnerPack::LEARNER_WIDTH - 120);
+			enableGroup->add(m_channel, 120);
+			enableGroup->end();
+		}
 
-	geGroup* groupHeader = new geGroup(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN);
-	m_enable             = new geCheck(0, 0, w() - 180, G_GUI_UNIT, g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_ENABLE));
-	m_channel            = new geChoice(m_enable->x() + m_enable->w() + 44, 0, 120, G_GUI_UNIT);
-	m_veloAsVol          = new geCheck(0, m_enable->y() + m_enable->h() + G_GUI_OUTER_MARGIN, w() - 16, G_GUI_UNIT,
-        g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_VELOCITYDRIVESVOL));
-	groupHeader->add(m_enable);
-	groupHeader->add(m_channel);
-	groupHeader->add(m_veloAsVol);
-	groupHeader->resizable(nullptr);
+		m_veloAsVol = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_VELOCITYDRIVESVOL));
 
-	/* Main scrollable content. */
+		m_container = new geScrollPack(0, 0, 0, 0);
+		m_container->add(new geChannelLearnerPack(0, 0, m_data));
+		for (c::io::PluginData& plugin : m_data.plugins)
+			m_container->add(new gePluginLearnerPack(0, 0, plugin));
 
-	m_container = new geScrollPack(G_GUI_OUTER_MARGIN, groupHeader->y() + groupHeader->h() + G_GUI_OUTER_MARGIN,
-	    w() - 16, h() - groupHeader->h() - 52);
-	m_container->add(new geChannelLearnerPack(0, 0, m_data));
+		geFlex* footer = new geFlex(Direction::HORIZONTAL);
+		{
+			m_ok = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLOSE));
 
-	for (c::io::PluginData& plugin : m_data.plugins)
-		m_container->add(new gePluginLearnerPack(0, 0, plugin));
+			footer->add(new geBox()); // Spacer
+			footer->add(m_ok, 80);
+			footer->end();
+		}
 
-	/* Footer buttons. */
+		container->add(enableGroup, G_GUI_UNIT);
+		container->add(m_veloAsVol, G_GUI_UNIT);
+		container->add(m_container);
+		container->add(footer, G_GUI_UNIT);
+		container->end();
+	}
 
-	geGroup* groupButtons = new geGroup(G_GUI_OUTER_MARGIN, m_container->y() + m_container->h() + G_GUI_OUTER_MARGIN);
-	geBox*   spacer       = new geBox(0, 0, w() - 80, G_GUI_UNIT); // spacer window border <-> buttons
-	m_ok                  = new geTextButton(w() - 96, 0, 80, G_GUI_UNIT, g_ui.getI18Text(LangMap::COMMON_CLOSE));
-	groupButtons->add(spacer);
-	groupButtons->add(m_ok);
-	groupButtons->resizable(spacer);
+	add(container);
+	resizable(container);
 
 	m_ok->onClick = [this]() { do_callback(); };
 	m_enable->callback(cb_enable, (void*)this);
@@ -171,11 +177,6 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, const Model& model)
 	};
 
 	m_veloAsVol->callback(cb_veloAsVol, (void*)this);
-
-	add(groupHeader);
-	add(m_container);
-	add(groupButtons);
-	resizable(m_container);
 
 	set_modal();
 	rebuild();
