@@ -150,12 +150,12 @@ gdMidiInputMaster::gdMidiInputMaster(const Model& model)
 
 void gdMidiInputMaster::rebuild()
 {
-	m_data = c::io::master_getInputData();
+	c::io::Master_InputData data = c::io::master_getInputData();
 
-	m_enable->value(m_data.enabled);
-	m_channel->showItem(m_data.filter - 1 ? 0 : m_data.filter + 1);
-	m_learners->update(m_data);
+	m_enable->value(data.enabled);
+	m_channel->showItem(data.filter - 1 ? 0 : data.filter + 1);
+	m_learners->update(data);
 
-	m_data.enabled ? m_channel->activate() : m_channel->deactivate();
+	data.enabled ? m_channel->activate() : m_channel->deactivate();
 }
 } // namespace giada::v

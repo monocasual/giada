@@ -54,8 +54,6 @@ public:
 	void rebuild() override;
 
 private:
-	c::io::Master_InputData m_data;
-
 	geMasterLearnerPack* m_learners;
 };
 } // namespace giada::v
