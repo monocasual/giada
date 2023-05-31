@@ -140,6 +140,12 @@ bool KernelMidi::setAPI_(RtMidi::Api api)
 	if (m_midiIn == nullptr || m_midiOut == nullptr)
 		return false;
 
+	if (m_midiIn != nullptr)
+	{
+		m_midiIn->setCallback(&s_callback, this);
+		m_midiIn->ignoreTypes(/*midiSysex=*/true, /*midiTime=*/false, /*midiSense=*/true); // Don't ignore time msgs
+	}
+
 	logPorts();
 
 	return true;
