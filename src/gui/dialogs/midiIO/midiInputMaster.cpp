@@ -117,7 +117,8 @@ gdMidiInputMaster::gdMidiInputMaster(const Model& model)
 	resizable(container);
 
 	m_ok->onClick = [this]() { do_callback(); };
-	m_enable->callback(cb_enable, (void*)this);
+
+	m_enable->onChange = [](bool value) { c::io::master_enableMidiLearn(value); };
 
 	m_channel->addItem("Channel (any)");
 	m_channel->addItem("Channel 1");
@@ -156,16 +157,5 @@ void gdMidiInputMaster::rebuild()
 	m_learners->update(m_data);
 
 	m_data.enabled ? m_channel->activate() : m_channel->deactivate();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdMidiInputMaster::cb_enable(Fl_Widget* /*w*/, void* p) { ((gdMidiInputMaster*)p)->cb_enable(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdMidiInputMaster::cb_enable()
-{
-	c::io::master_enableMidiLearn(m_enable->value());
 }
 } // namespace giada::v

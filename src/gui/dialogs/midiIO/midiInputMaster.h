@@ -54,9 +54,6 @@ public:
 	void rebuild() override;
 
 private:
-	static void cb_enable(Fl_Widget* /*w*/, void* p);
-	void        cb_enable();
-
 	c::io::Master_InputData m_data;
 
 	geMasterLearnerPack* m_learners;
