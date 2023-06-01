@@ -85,7 +85,7 @@ void MidiEvent::setDelta(int d)
 void MidiEvent::setChannel(int c)
 {
 	assert(c >= 0 && c < G_MAX_MIDI_CHANS);
-	m_raw |= c << 24;
+	m_raw = (m_raw & ~(0xFF << 24)) | (c << 24);
 }
 
 void MidiEvent::setVelocity(int v)
