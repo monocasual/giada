@@ -91,7 +91,7 @@ void MidiEvent::setChannel(int c)
 void MidiEvent::setVelocity(int v)
 {
 	assert(v >= 0 && v <= G_MAX_VELOCITY);
-	m_raw |= v << 8;
+	m_raw = (m_raw & ~(0xFF << 8)) | (v << 8);
 }
 
 void MidiEvent::setVelocityFloat(float f)
