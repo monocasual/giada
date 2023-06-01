@@ -49,7 +49,7 @@ public:
 	/* CHANNEL_*
 	List of common status bytes for Channel type. */
 
-	static constexpr int CHANNEL_NOTE_KILL = 0x70; // Giada's special Status bye
+	static constexpr int CHANNEL_NOTE_KILL = 0x70; // Giada's special Status byte
 	static constexpr int CHANNEL_NOTE_OFF  = 0x80;
 	static constexpr int CHANNEL_NOTE_ON   = 0x90;
 	static constexpr int CHANNEL_CC        = 0xB0; // Control Change (knobs, envelopes, ...)
