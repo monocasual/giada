@@ -5,10 +5,11 @@ TEST_CASE("MidiEvent")
 {
 	using namespace giada::m;
 
+	constexpr uint32_t raw = 0x912C5000; // Note on, channel 1, key 44 (0x2C), velocity 80 (0x50)
+
 	SECTION("Test Channel message")
 	{
-		const uint32_t raw = 0x912C5000; // Note on, channel 1, key 44 (0x2C), velocity 80 (0x50)
-		MidiEvent      e   = MidiEvent::makeFromRaw(raw, /*numBytes=*/3, /*timestamp=*/0.0);
+		MidiEvent e = MidiEvent::makeFromRaw(raw, /*numBytes=*/3, /*timestamp=*/0.0);
 
 		REQUIRE(e.getRaw() == raw);
 		REQUIRE(e.getRawNoVelocity() == 0x912C0000);
@@ -21,5 +22,22 @@ TEST_CASE("MidiEvent")
 		REQUIRE(e.getByte1() == 0x91);
 		REQUIRE(e.getByte2() == 0x2C);
 		REQUIRE(e.getByte3() == 0x50);
+	}
+
+	SECTION("Test get/set properties")
+	{
+		MidiEvent e = MidiEvent::makeFromRaw(raw, /*numBytes=*/3, /*timestamp=*/0.0);
+
+		SECTION("Test velocity")
+		{
+			e.setVelocity(0x42);
+			REQUIRE(e.getVelocity() == 0x42);
+		}
+
+		SECTION("Test channel")
+		{
+			e.setChannel(4);
+			REQUIRE(e.getChannel() == 4);
+		}
 	}
 }
