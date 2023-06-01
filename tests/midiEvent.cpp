@@ -31,6 +31,8 @@ TEST_CASE("MidiEvent")
 		SECTION("Test velocity")
 		{
 			e.setVelocity(0x42);
+			REQUIRE(e.getChannel() == 1);
+			REQUIRE(e.getNote() == 44);
 			REQUIRE(e.getVelocity() == 0x42);
 		}
 
@@ -38,6 +40,8 @@ TEST_CASE("MidiEvent")
 		{
 			e.setChannel(4);
 			REQUIRE(e.getChannel() == 4);
+			REQUIRE(e.getNote() == 44);
+			REQUIRE(e.getVelocity() == 80);
 		}
 	}
 }
