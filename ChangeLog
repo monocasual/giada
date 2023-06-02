@@ -11,6 +11,20 @@
 --------------------------------------------------------------------------------
 
 
+0.25.0 --- 2023 . 06 . 05
+- Ability to change audio and MIDI engines on the fly — no need to restart Giada 
+  anymore when the audio and/or MIDI devices change. No need to restart also
+  when changing several properties in the Configuration Window;
+- Add new "Clear" button next to all MIDI learning widgets to easily clear the
+  MIDI binding (#486);
+- Set default resampler quality to "Linear" (the fastest one);
+- Update FLTK to latest commit available;
+- Update JUCE to version 7.0.5;
+- Fix Velocity parameter not being usable in Action Editor;
+- Fix MIDI Channel parameter not being usable in MIDI input configuration;
+- Code refactoring and other architectural improvements.
+
+
 0.24.0 --- 2023 . 03 . 15
 - Revamped MIDI sync Clock support
 - MIDI engine refactoring, featuring multi-threading support
