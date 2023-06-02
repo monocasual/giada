@@ -241,7 +241,13 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	};
 
 	m_enableIn->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_AUDIO_ENABLEINPUT));
-	m_enableIn->onChange = [this](bool b) { m_data.setInputDevice(b ? 0 : -1); refreshDevInProperties(); };
+	m_enableIn->onChange = [this](bool b) {
+		m_data.setInputDevice(b ? 0 : -1);
+		refreshDevInProperties();
+		// Also refresh channels in info
+		m_data.inputDevice.channelsCount = m_channelsIn->getChannelsCount();
+		m_data.inputDevice.channelsStart = m_channelsIn->getChannelsStart();
+	};
 
 	m_channelsOut->onChange = [this](ID) {
 		m_data.outputDevice.channelsCount = m_channelsOut->getChannelsCount();
