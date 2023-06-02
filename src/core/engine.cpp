@@ -324,7 +324,7 @@ int Engine::audioCallback(mcl::AudioBuffer& out, const mcl::AudioBuffer& in) con
 	if (sequencer.isRunning())
 	{
 		const Frame        currentFrame  = sequencer.a_getCurrentFrame();
-		const int          bufferSize    = in.countFrames();
+		const int          bufferSize    = out.countFrames();
 		const int          quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
 		const Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
