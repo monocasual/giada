@@ -323,7 +323,14 @@ int Mixer::lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf, Fr
 void Mixer::processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inBuf,
     float inVol, float recTriggerLevel, bool isSeqActive) const
 {
-	const Peak peak = makePeak(inBuf);
+	/* Prepare the working buffer for input stream, which will be processed 
+	later on by the Master Input Channel with plug-ins. */
+
+	assert(inBuf.countChannels() <= mixer.getInBuffer().countChannels());
+
+	mixer.getInBuffer().set(inBuf, inVol);
+
+	const Peak peak = makePeak(mixer.getInBuffer());
 
 	if (thresholdReached(peak, recTriggerLevel) && !m_signalCbFired && isSeqActive)
 	{
@@ -333,13 +340,6 @@ void Mixer::processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inB
 	}
 
 	mixer.a_setPeakIn(peak);
-
-	/* Prepare the working buffer for input stream, which will be processed 
-	later on by the Master Input Channel with plug-ins. */
-
-	assert(inBuf.countChannels() <= mixer.getInBuffer().countChannels());
-
-	mixer.getInBuffer().set(inBuf, inVol);
 }
 
 /* -------------------------------------------------------------------------- */
