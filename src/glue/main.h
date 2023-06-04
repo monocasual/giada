@@ -30,8 +30,7 @@
 #include "core/types.h"
 
 /* giada::c::main
-Functions to interact with the tools in the main window. Only the main thread 
-can use these! */
+Functions to interact with the tools in the main window. */
 
 namespace giada::m
 {
