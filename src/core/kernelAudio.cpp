@@ -39,6 +39,21 @@
 
 namespace giada::m
 {
+namespace
+{
+/* RTAUDIO_MAX_PRIORITY
+The maximum priority level when instructing RtAudio to work in real-time mode
+(with RTAUDIO_SCHEDULE_REALTIME flag). This is actually the maximum value allowed
+on Unix, however RtAudio has some magic hardcoded values when it comes to Windows
+implementation, so we can safely pass this value below in the options struct.*/
+
+constexpr int RTAUDIO_MAX_PRIORITY = 99;
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 KernelAudio::KernelAudio(model::Model& model)
 : onAudioCallback(nullptr)
 , onStreamAboutToOpen(nullptr)
@@ -344,6 +359,8 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 	}
 
 	RtAudio::StreamOptions options;
+	options.flags           = RTAUDIO_SCHEDULE_REALTIME;
+	options.priority        = RTAUDIO_MAX_PRIORITY;
 	options.streamName      = G_APP_NAME;
 	options.numberOfBuffers = 4; // TODO - wtf?
 
