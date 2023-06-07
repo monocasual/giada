@@ -92,7 +92,6 @@ public:
 	static constexpr auto MESSAGE_STORAGE_LOADINGSAMPLE      = "message_storage_loadingSample";
 	static constexpr auto MESSAGE_STORAGE_SAVINGPROJECT      = "message_storage_savingProject";
 	static constexpr auto MESSAGE_STORAGE_SAVINGPROJECTERROR = "message_storage_savingProjectError";
-	static constexpr auto MESSAGE_STORAGE_CHOOSEPROJECTNAME  = "message_storage_chooseProjectName";
 	static constexpr auto MESSAGE_STORAGE_CHOOSEFILENAME     = "message_storage_chooseFileName";
 	static constexpr auto MESSAGE_STORAGE_FILEEXISTS         = "message_storage_fileExists";
 	static constexpr auto MESSAGE_STORAGE_SAVINGFILEERROR    = "message_storage_savingFileError";

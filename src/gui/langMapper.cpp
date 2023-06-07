@@ -87,7 +87,6 @@ LangMap::LangMap()
 	m_data[MESSAGE_STORAGE_LOADINGSAMPLE]      = "Loading sample...";
 	m_data[MESSAGE_STORAGE_SAVINGPROJECT]      = "Saving project...";
 	m_data[MESSAGE_STORAGE_SAVINGPROJECTERROR] = "Unable to save the project!";
-	m_data[MESSAGE_STORAGE_CHOOSEPROJECTNAME]  = "Please choose a project name.";
 	m_data[MESSAGE_STORAGE_CHOOSEFILENAME]     = "Please choose a file name.";
 	m_data[MESSAGE_STORAGE_FILEEXISTS]         = "File exists: overwrite?";
 	m_data[MESSAGE_STORAGE_SAVINGFILEERROR]    = "Unable to save this sample!";

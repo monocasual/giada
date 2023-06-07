@@ -121,7 +121,7 @@ void saveProject(void* data)
 
 	if (projectName == "")
 	{
-		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_CHOOSEPROJECTNAME));
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_CHOOSEFILENAME));
 		return;
 	}
 
