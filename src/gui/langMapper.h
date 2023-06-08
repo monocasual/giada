@@ -84,17 +84,18 @@ public:
 	static constexpr auto MESSAGE_CHANNEL_DELETE                = "message_channel_delete";
 	static constexpr auto MESSAGE_CHANNEL_FREE                  = "message_channel_free";
 
-	static constexpr auto MESSAGE_STORAGE_PATCHUNREADABLE    = "message_storage_patchUnreadable";
-	static constexpr auto MESSAGE_STORAGE_PATCHINVALID       = "message_storage_patchInvalid";
-	static constexpr auto MESSAGE_STORAGE_PATCHUNSUPPORTED   = "message_storage_patchUnsupported";
-	static constexpr auto MESSAGE_STORAGE_PROJECTEXISTS      = "message_storage_projectExists";
-	static constexpr auto MESSAGE_STORAGE_LOADINGPROJECT     = "message_storage_loadingProject";
-	static constexpr auto MESSAGE_STORAGE_LOADINGSAMPLE      = "message_storage_loadingSample";
-	static constexpr auto MESSAGE_STORAGE_SAVINGPROJECT      = "message_storage_savingProject";
-	static constexpr auto MESSAGE_STORAGE_SAVINGPROJECTERROR = "message_storage_savingProjectError";
-	static constexpr auto MESSAGE_STORAGE_CHOOSEFILENAME     = "message_storage_chooseFileName";
-	static constexpr auto MESSAGE_STORAGE_FILEEXISTS         = "message_storage_fileExists";
-	static constexpr auto MESSAGE_STORAGE_SAVINGFILEERROR    = "message_storage_savingFileError";
+	static constexpr auto MESSAGE_STORAGE_PATCHUNREADABLE     = "message_storage_patchUnreadable";
+	static constexpr auto MESSAGE_STORAGE_PATCHINVALID        = "message_storage_patchInvalid";
+	static constexpr auto MESSAGE_STORAGE_PATCHUNSUPPORTED    = "message_storage_patchUnsupported";
+	static constexpr auto MESSAGE_STORAGE_PROJECTEXISTS       = "message_storage_projectExists";
+	static constexpr auto MESSAGE_STORAGE_LOADINGPROJECT      = "message_storage_loadingProject";
+	static constexpr auto MESSAGE_STORAGE_LOADINGSAMPLE       = "message_storage_loadingSample";
+	static constexpr auto MESSAGE_STORAGE_SAVINGPROJECT       = "message_storage_savingProject";
+	static constexpr auto MESSAGE_STORAGE_SAVINGPROJECTERROR  = "message_storage_savingProjectError";
+	static constexpr auto MESSAGE_STORAGE_CHOOSEFILENAME      = "message_storage_chooseFileName";
+	static constexpr auto MESSAGE_STORAGE_FILEHASINVALIDCHARS = "message_storage_fileHasInvalidChars";
+	static constexpr auto MESSAGE_STORAGE_FILEEXISTS          = "message_storage_fileExists";
+	static constexpr auto MESSAGE_STORAGE_SAVINGFILEERROR     = "message_storage_savingFileError";
 
 	static constexpr auto MAIN_MENU_FILE                 = "main_menu_file";
 	static constexpr auto MAIN_MENU_FILE_OPENPROJECT     = "main_menu_file_openProject";

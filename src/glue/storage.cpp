@@ -71,6 +71,23 @@ void printLoadError_(int res)
 	else if (res == G_FILE_UNSUPPORTED)
 		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_PATCHUNSUPPORTED));
 }
+
+/* -------------------------------------------------------------------------- */
+
+bool validateFileName_(const std::string& name)
+{
+	if (name == "")
+	{
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_CHOOSEFILENAME));
+		return false;
+	}
+	if (!u::fs::isValidFileName(name))
+	{
+		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_FILEHASINVALIDCHARS));
+		return false;
+	}
+	return true;
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -119,11 +136,8 @@ void saveProject(void* data)
 	const std::string projectName = u::fs::stripExt(browser->getName());
 	const std::string projectPath = u::fs::join(browser->getCurrentPath(), projectName + G_PROJECT_EXT);
 
-	if (projectName == "")
-	{
-		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_CHOOSEFILENAME));
+	if (!validateFileName_(projectName))
 		return;
-	}
 
 	if (u::fs::dirExists(projectPath) &&
 	    !v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
@@ -169,11 +183,8 @@ void saveSample(void* data)
 	const std::string folderPath = browser->getCurrentPath();
 	const ID          channelId  = browser->getChannelId();
 
-	if (name == "")
-	{
-		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_CHOOSEFILENAME));
+	if (!validateFileName_(name))
 		return;
-	}
 
 	const std::string filePath = u::fs::join(folderPath, u::fs::stripExt(name) + ".wav");
 

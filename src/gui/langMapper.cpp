@@ -79,17 +79,18 @@ LangMap::LangMap()
 	m_data[MESSAGE_CHANNEL_DELETE]                = "Delete channel: are you sure?";
 	m_data[MESSAGE_CHANNEL_FREE]                  = "Free channel: are you sure?";
 
-	m_data[MESSAGE_STORAGE_PATCHUNREADABLE]    = "This patch is unreadable.";
-	m_data[MESSAGE_STORAGE_PATCHINVALID]       = "This patch is not valid.";
-	m_data[MESSAGE_STORAGE_PATCHUNSUPPORTED]   = "This patch format is no longer supported.";
-	m_data[MESSAGE_STORAGE_PROJECTEXISTS]      = "Project exists: overwrite?";
-	m_data[MESSAGE_STORAGE_LOADINGPROJECT]     = "Loading project...";
-	m_data[MESSAGE_STORAGE_LOADINGSAMPLE]      = "Loading sample...";
-	m_data[MESSAGE_STORAGE_SAVINGPROJECT]      = "Saving project...";
-	m_data[MESSAGE_STORAGE_SAVINGPROJECTERROR] = "Unable to save the project!";
-	m_data[MESSAGE_STORAGE_CHOOSEFILENAME]     = "Please choose a file name.";
-	m_data[MESSAGE_STORAGE_FILEEXISTS]         = "File exists: overwrite?";
-	m_data[MESSAGE_STORAGE_SAVINGFILEERROR]    = "Unable to save this sample!";
+	m_data[MESSAGE_STORAGE_PATCHUNREADABLE]     = "This patch is unreadable.";
+	m_data[MESSAGE_STORAGE_PATCHINVALID]        = "This patch is not valid.";
+	m_data[MESSAGE_STORAGE_PATCHUNSUPPORTED]    = "This patch format is no longer supported.";
+	m_data[MESSAGE_STORAGE_PROJECTEXISTS]       = "Project exists: overwrite?";
+	m_data[MESSAGE_STORAGE_LOADINGPROJECT]      = "Loading project...";
+	m_data[MESSAGE_STORAGE_LOADINGSAMPLE]       = "Loading sample...";
+	m_data[MESSAGE_STORAGE_SAVINGPROJECT]       = "Saving project...";
+	m_data[MESSAGE_STORAGE_SAVINGPROJECTERROR]  = "Unable to save the project!";
+	m_data[MESSAGE_STORAGE_CHOOSEFILENAME]      = "Please choose a file name.";
+	m_data[MESSAGE_STORAGE_FILEHASINVALIDCHARS] = "The file name contains invalid characters.";
+	m_data[MESSAGE_STORAGE_FILEEXISTS]          = "File exists: overwrite?";
+	m_data[MESSAGE_STORAGE_SAVINGFILEERROR]     = "Unable to save this sample!";
 
 	m_data[MAIN_MENU_FILE]                 = "File";
 	m_data[MAIN_MENU_FILE_OPENPROJECT]     = "Open project...";
