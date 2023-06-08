@@ -32,7 +32,7 @@
 
 namespace giada::u::log
 {
-int init(int m)
+bool init(int m)
 {
 	mode = m;
 	if (mode == LOG_MODE_FILE)
@@ -40,9 +40,9 @@ int init(int m)
 		std::string fpath = u::fs::join(fs::getHomePath(), "giada.log");
 		file.open(fpath, std::fstream::out | std::fstream::app);
 		if (!file.is_open())
-			return 0;
+			return false;
 	}
-	return 1;
+	return true;
 }
 
 /* -------------------------------------------------------------------------- */

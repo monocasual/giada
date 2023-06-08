@@ -56,7 +56,7 @@ inline int           mode;
 Initializes logger. Mode defines where to write the output: LOG_MODE_STDOUT,
 LOG_MODE_FILE and LOG_MODE_MUTE. */
 
-int init(int mode);
+bool init(int mode);
 
 void close();
 
