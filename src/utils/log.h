@@ -51,7 +51,6 @@ namespace giada::u::log
 {
 inline std::ofstream file;
 inline int           mode;
-inline bool          stat;
 
 /* init
 Initializes logger. Mode defines where to write the output: LOG_MODE_STDOUT,
@@ -89,7 +88,7 @@ static void print(const char* format, Args&&... args)
 	if (mode == LOG_MODE_MUTE)
 		return;
 
-	if (mode == LOG_MODE_FILE && stat == true)
+	if (mode == LOG_MODE_FILE && file.is_open())
 	{
 		// Ugly temporary workaround. Will be fixed in later commits when moving to fmt
 
