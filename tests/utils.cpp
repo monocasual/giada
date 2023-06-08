@@ -38,7 +38,6 @@ TEST_CASE("u::string")
 
 	REQUIRE(u::string::replace("Giada is cool", "cool", "hot") == "Giada is hot");
 	REQUIRE(u::string::trim("   Giada is cool       ") == "Giada is cool");
-	REQUIRE(u::string::format("I see %d men with %s hats", 5, "strange") == "I see 5 men with strange hats");
 
 	std::vector<std::string> v = u::string::split("Giada is cool", " ");
 	REQUIRE(v.size() == 3);

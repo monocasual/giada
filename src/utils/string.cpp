@@ -64,32 +64,6 @@ bool contains(const std::string& s, char c)
 
 /* -------------------------------------------------------------------------- */
 
-std::string format(const char* format, ...)
-{
-	va_list args;
-
-	/* Compute the size of the new expanded std::string (i.e. with replacement taken
-	into account). */
-
-	va_start(args, format);
-	std::size_t size = vsnprintf(nullptr, 0, format, args) + 1;
-	va_end(args);
-
-	/* Create a new temporary char array to hold the new expanded std::string. */
-
-	std::unique_ptr<char[]> tmp(new char[size]);
-
-	/* Fill the temporary std::string with the formatted data. */
-
-	va_start(args, format);
-	vsprintf(tmp.get(), format, args);
-	va_end(args);
-
-	return std::string(tmp.get(), tmp.get() + size - 1);
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::vector<std::string> split(std::string in, std::string sep)
 {
 	std::vector<std::string> out;

@@ -49,8 +49,6 @@ Returns true if the string in input contains the specified character. */
 
 bool contains(const std::string&, char);
 
-std::string format(const char* format, ...);
-
 std::string toString(Thread);
 std::string toString(RtAudio::Api);
 
