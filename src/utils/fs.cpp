@@ -252,4 +252,19 @@ std::string join(const std::string& a, const std::string& b)
 	auto out = stdfs::path(a) / stdfs::path(b);
 	return out.string();
 }
+
+/* -------------------------------------------------------------------------- */
+
+bool isValidFileName(const std::string& f)
+{
+#ifdef G_OS_WINDOWS
+	const std::vector<char> forbidden = {'<', '>', ':', '"', '/', '\\', '|', '?', '*'};
+#else
+	const std::vector<char> forbidden = {'/', ':'}; // ':' not supported in macOS
+#endif
+	for (const char c : forbidden)
+		if (u::string::contains(f, c))
+			return false;
+	return true;
+}
 } // namespace giada::u::fs
