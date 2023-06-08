@@ -31,8 +31,8 @@
 
 #include "core/const.h"
 #include "utils/fs.h"
-#include <cstdio>
 #include <fmt/core.h>
+#include <fstream>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -49,9 +49,9 @@
 
 namespace giada::u::log
 {
-inline FILE* f;
-inline int   mode;
-inline bool  stat;
+inline std::ofstream file;
+inline int           mode;
+inline bool          stat;
 
 /* init
 Initializes logger. Mode defines where to write the output: LOG_MODE_STDOUT,
@@ -91,8 +91,17 @@ static void print(const char* format, Args&&... args)
 
 	if (mode == LOG_MODE_FILE && stat == true)
 	{
-		// Replace any std::string in the arguments by its C-string
-		std::fprintf(f, format, string_to_c_str(std::forward<Args>(args))...);
+		// Ugly temporary workaround. Will be fixed in later commits when moving to fmt
+
+		// Compute size first for the holding vector<char>
+		const int         size = std::snprintf(nullptr, 0, format, string_to_c_str(std::forward<Args>(args))...);
+		std::vector<char> buf(size + 1); // Note +1 for null terminator
+
+		// Write to temp buffer
+		std::sprintf(&buf[0], format, string_to_c_str(std::forward<Args>(args))...);
+
+		// Write temp buffer to fstream
+		file.write(&buf[0], buf.size() - 1);
 #ifdef _WIN32
 		fflush(f);
 #endif
