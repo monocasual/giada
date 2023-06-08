@@ -44,6 +44,11 @@ std::string trim(const std::string& s);
 
 std::vector<std::string> split(std::string in, std::string sep);
 
+/* contains
+Returns true if the string in input contains the specified character. */
+
+bool contains(const std::string&, char);
+
 std::string format(const char* format, ...);
 
 std::string toString(Thread);

@@ -57,6 +57,13 @@ std::string replace(std::string in, const std::string& search, const std::string
 
 /* -------------------------------------------------------------------------- */
 
+bool contains(const std::string& s, char c)
+{
+	return s.find(c) != std::string::npos;
+}
+
+/* -------------------------------------------------------------------------- */
+
 std::string format(const char* format, ...)
 {
 	va_list args;
