@@ -75,7 +75,7 @@ bool StorageApi::storeProject(const std::string& projectName, const std::string&
 		return false;
 	}
 
-	u::log::print("[StorageApi::storeProject] Project dir created: %s\n", projectPath);
+	u::log::print("[StorageApi::storeProject] Project dir created: {}\n", projectPath);
 
 	/* Update all existing file paths in Waves, so that they point to the project
 	folder they belong to. */
@@ -99,7 +99,7 @@ bool StorageApi::storeProject(const std::string& projectName, const std::string&
 	if (!patchFactory::serialize(m_patch, patchPath))
 		return false;
 
-	u::log::print("[StorageApi::storeProject] Project patch saved as %s\n", patchPath);
+	u::log::print("[StorageApi::storeProject] Project patch saved as {}\n", patchPath);
 
 	progress(1.0f);
 
@@ -111,7 +111,7 @@ bool StorageApi::storeProject(const std::string& projectName, const std::string&
 StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, PluginManager::SortMethod pluginSortMethod,
     std::function<void(float)> progress)
 {
-	u::log::print("[StorageApi::loadProject] Load project from %s\n", projectPath);
+	u::log::print("[StorageApi::loadProject] Load project from {}\n", projectPath);
 
 	progress(0.0f);
 

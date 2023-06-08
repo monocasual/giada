@@ -370,7 +370,7 @@ LangMapper::LangMapper()
 void LangMapper::init()
 {
 	Mapper::init();
-	u::log::print("[LangMapper::init] total langmaps found: %d\n", m_mapFiles.size());
+	u::log::print("[LangMapper::init] total langmaps found: {}\n", m_mapFiles.size());
 }
 
 /* -------------------------------------------------------------------------- */

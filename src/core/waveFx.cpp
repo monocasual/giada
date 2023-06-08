@@ -109,7 +109,7 @@ int monoToStereo(Wave& w)
 
 void silence(Wave& w, int a, int b)
 {
-	u::log::print("[wfx::silence] silencing from %d to %d\n", a, b);
+	u::log::print("[wfx::silence] silencing from {} to {}\n", a, b);
 
 	for (int i = a; i < b; i++)
 		for (int j = 0; j < w.getBuffer().countChannels(); j++)
@@ -134,7 +134,7 @@ void cut(Wave& w, int a, int b)
 	mcl::AudioBuffer newData;
 	newData.alloc(newSize, w.getBuffer().countChannels());
 
-	u::log::print("[wfx::cut] cutting from %d to %d\n", a, b);
+	u::log::print("[wfx::cut] cutting from {} to {}\n", a, b);
 
 	for (int i = 0, k = 0; i < w.getBuffer().countFrames(); i++)
 	{
@@ -164,7 +164,7 @@ void trim(Wave& w, Frame a, Frame b)
 	mcl::AudioBuffer newData;
 	newData.alloc(newSize, w.getBuffer().countChannels());
 
-	u::log::print("[wfx::trim] trimming from %d to %d (area = %d)\n", a, b, b - a);
+	u::log::print("[wfx::trim] trimming from {} to {} (area = {})\n", a, b, b - a);
 
 	for (int i = 0; i < newData.countFrames(); i++)
 		for (int j = 0; j < newData.countChannels(); j++)
@@ -198,7 +198,7 @@ void paste(const Wave& src, Wave& des, Frame a)
 
 void fade(Wave& w, int a, int b, Fade type)
 {
-	u::log::print("[wfx::fade] fade from %d to %d (range = %d)\n", a, b, b - a);
+	u::log::print("[wfx::fade] fade from {} to {} (range = {})\n", a, b, b - a);
 
 	float m = 0.0f;
 	float d = 1.0f / (float)(b - a);

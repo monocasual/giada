@@ -32,6 +32,7 @@
 #include "core/const.h"
 #include "utils/fs.h"
 #include <fmt/core.h>
+#include <fmt/ostream.h>
 #include <fstream>
 #include <string>
 #include <type_traits>
@@ -60,28 +61,6 @@ bool init(int mode);
 
 void close();
 
-/* string_to_c_str
-Internal utility function for string transformation. Uses forwarding references
-(&&) to avoid useless string copy. */
-
-static constexpr auto string_to_c_str = [](auto&& s) {
-	/* Remove any reference and const-ness, since the function can handle 
-	l-value and r-value, const or not. TODO - Use std::remove_cvref instead, 
-	when switching to C++20. */
-	if constexpr (std::is_same_v<std::remove_const_t<std::remove_reference_t<
-	                                 decltype(s)>>,
-	                  std::string>)
-		// If the argument is a std::string return an old-style C-string
-		return s.c_str();
-	else
-		// Return the argument unchanged otherwise
-		return s;
-};
-
-/* print
-A variadic printf-like logging function. Any `std::string` argument will be 
-automatically transformed into a C-string. */
-
 template <typename... Args>
 static void print(const char* format, Args&&... args)
 {
@@ -90,23 +69,13 @@ static void print(const char* format, Args&&... args)
 
 	if (mode == LOG_MODE_FILE && file.is_open())
 	{
-		// Ugly temporary workaround. Will be fixed in later commits when moving to fmt
-
-		// Compute size first for the holding vector<char>
-		const int         size = std::snprintf(nullptr, 0, format, string_to_c_str(std::forward<Args>(args))...);
-		std::vector<char> buf(size + 1); // Note +1 for null terminator
-
-		// Write to temp buffer
-		std::sprintf(&buf[0], format, string_to_c_str(std::forward<Args>(args))...);
-
-		// Write temp buffer to fstream
-		file.write(&buf[0], buf.size() - 1);
+		fmt::print(file, format, args...);
 #ifdef _WIN32
 		fflush(f);
 #endif
 	}
 	else
-		std::printf(format, string_to_c_str(std::forward<Args>(args))...);
+		fmt::print(format, args...);
 }
 } // namespace giada::u::log
 

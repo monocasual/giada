@@ -128,7 +128,7 @@ bool KernelAudio::startStream()
 {
 	if (m_rtAudio->startStream() == RtAudioErrorType::RTAUDIO_NO_ERROR)
 	{
-		u::log::print("[KA] Start stream - latency = %lu\n", m_rtAudio->getStreamLatency());
+		u::log::print("[KA] Start stream - latency = {}\n", m_rtAudio->getStreamLatency());
 		return true;
 	}
 	return false;
@@ -243,10 +243,10 @@ void KernelAudio::logCompiledAPIs()
 	std::vector<RtAudio::Api> APIs;
 	RtAudio::getCompiledApi(APIs);
 
-	u::log::print("[KA] Compiled RtAudio APIs: %d\n", APIs.size());
+	u::log::print("[KA] Compiled RtAudio APIs: {}\n", APIs.size());
 
 	for (const RtAudio::Api& api : APIs)
-		u::log::print("  %s\n", u::string::toString(api).c_str());
+		u::log::print("  {}\n", u::string::toString(api));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -257,7 +257,7 @@ m::KernelAudio::Device KernelAudio::fetchDevice(size_t deviceIndex) const
 
 	if (!info.probed)
 	{
-		u::log::print("[KA] Can't probe device %d\n", deviceIndex);
+		u::log::print("[KA] Can't probe device {}\n", deviceIndex);
 		return {deviceIndex};
 	}
 
@@ -279,15 +279,15 @@ m::KernelAudio::Device KernelAudio::fetchDevice(size_t deviceIndex) const
 
 void KernelAudio::printDevices(const std::vector<m::KernelAudio::Device>& devices) const
 {
-	u::log::print("[KA] %d device(s) found with API %s\n", devices.size(), u::string::toString(m_rtAudio->getCurrentApi()).c_str());
+	u::log::print("[KA] {} device(s) found with API {}\n", devices.size(), u::string::toString(m_rtAudio->getCurrentApi()));
 	for (const m::KernelAudio::Device& d : devices)
 	{
-		u::log::print("  %d) %s\n", d.index, d.name);
-		u::log::print("      ins=%d outs=%d duplex=%d\n", d.maxInputChannels, d.maxOutputChannels, d.maxDuplexChannels);
-		u::log::print("      isDefaultOut=%d isDefaultIn=%d\n", d.isDefaultOut, d.isDefaultIn);
+		u::log::print("  {}) {}\n", d.index, d.name);
+		u::log::print("      ins={} outs={} duplex={}\n", d.maxInputChannels, d.maxOutputChannels, d.maxDuplexChannels);
+		u::log::print("      isDefaultOut={} isDefaultIn={}\n", d.isDefaultOut, d.isDefaultIn);
 		u::log::print("      sampleRates:\n\t");
 		for (int s : d.sampleRates)
-			u::log::print("%d ", s);
+			u::log::print("{} ", s);
 		u::log::print("\n");
 	}
 }
@@ -296,7 +296,7 @@ void KernelAudio::printDevices(const std::vector<m::KernelAudio::Device>& device
 
 void KernelAudio::setAPI_(RtAudio::Api api)
 {
-	u::log::print("[KA] using API %s\n", u::string::toString(api).c_str());
+	u::log::print("[KA] using API {}\n", u::string::toString(api));
 
 	if (m_rtAudio != nullptr)
 		shutdown();
@@ -304,7 +304,7 @@ void KernelAudio::setAPI_(RtAudio::Api api)
 	m_rtAudio = std::make_unique<RtAudio>(api);
 
 	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg) {
-		u::log::print("[KA] RtAudio error %d: %s\n", type, msg.c_str());
+		u::log::print("[KA] RtAudio error {}: {}\n", type, msg);
 	});
 }
 
@@ -321,10 +321,10 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 	assert(m_rtAudio != nullptr);
 
 	u::log::print("[KA] Opening stream\n");
-	u::log::print("     Out device: index=%d channelsCount=%d channelsStart=%d\n", out.index, out.channelsCount, out.channelsStart);
-	u::log::print("     In device: index=%d channelsCount=%d channelsStart=%d\n", in.index, in.channelsCount, in.channelsStart);
-	u::log::print("     SampleRate=%d\n", sampleRate);
-	u::log::print("     BufferSize=%d\n", bufferSize);
+	u::log::print("     Out device: index={} channelsCount={} channelsStart={}\n", out.index, out.channelsCount, out.channelsStart);
+	u::log::print("     In device: index={} channelsCount={} channelsStart={}\n", in.index, in.channelsCount, in.channelsStart);
+	u::log::print("     SampleRate={}\n", sampleRate);
+	u::log::print("     BufferSize={}\n", bufferSize);
 
 	const RtAudio::Api api = m_model.get().kernelAudio.api;
 
@@ -380,7 +380,7 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 
 		const unsigned int jackSampleRate = jackDevice.sampleRates[0];
 
-		u::log::print("[KA] JACK in use, samplerate=%d\n", jackSampleRate);
+		u::log::print("[KA] JACK in use, samplerate={}\n", jackSampleRate);
 
 		actualSampleRate = jackSampleRate;
 	}

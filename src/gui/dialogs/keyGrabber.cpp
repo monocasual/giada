@@ -114,7 +114,7 @@ int gdKeyGrabber::handle(int e)
 	m_key = newKey;
 	rebuild();
 
-	u::log::print("Set key '%c' (%d)\n", m_key, m_key);
+	u::log::print("Set key '{}' ({})\n", m_key, m_key);
 
 	return 1;
 }

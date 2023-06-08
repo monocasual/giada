@@ -67,7 +67,7 @@ template <typename KernelMidiI>
 void MidiMapper<KernelMidiI>::init()
 {
 	Mapper::init();
-	u::log::print("[MidiMapper::init] total midimaps found: %d\n", m_mapFiles.size());
+	u::log::print("[MidiMapper::init] total midimaps found: {}\n", m_mapFiles.size());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -150,7 +150,7 @@ void MidiMapper<KernelMidiI>::sendMidiLightning(uint32_t learnt, const MidiMap::
 		return;
 	}
 
-	u::log::print("[MidiMapper::sendMidiLightning] learnt=0x%X, chan=%d, msg=0x%X, offset=%d\n",
+	u::log::print("[MidiMapper::sendMidiLightning] learnt={:#x}, chan={}, msg={:#x}, offset={}\n",
 	    learnt, m.channel, m.value, m.offset);
 
 	/* Isolate 'channel' from learnt message and offset it as requested by 'nn' in 
@@ -200,7 +200,7 @@ void MidiMapper<KernelMidiI>::parse(MidiMap::Message& message) const
 
 	message.value = strtoul(output.c_str(), nullptr, 16);
 
-	u::log::print("[MidiMapper::parse] parsed chan=%d valueStr=%s value=%#x, offset=%d\n",
+	u::log::print("[MidiMapper::parse] parsed chan={} valueStr={} value={:#x}, offset={}\n",
 	    message.channel, message.valueStr, message.value, message.offset);
 }
 

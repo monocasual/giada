@@ -82,7 +82,7 @@ Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin,
 
 	m_plugin->prepareToPlay(samplerate, buffersize);
 
-	u::log::print("[Plugin] plugin initialized and ready. MIDI input params: %lu\n",
+	u::log::print("[Plugin] plugin initialized and ready. MIDI input params: {}\n",
 	    midiInParams.size());
 }
 

@@ -306,7 +306,7 @@ std::unique_ptr<Device> KernelMidi::makeDevice(RtMidi::Api api, std::string name
 	}
 	catch (RtMidiError& error)
 	{
-		u::log::print("[KM] Error opening device '%s': %s\n", name.c_str(), error.getMessage());
+		u::log::print("[KM] Error opening device '{}': {}\n", name, error.getMessage());
 		return nullptr;
 	}
 }
@@ -329,12 +329,12 @@ KernelMidi::Result KernelMidi::openPort(RtMidi& device, int port)
 	try
 	{
 		device.openPort(port, device.getPortName(port));
-		u::log::print("[KM] MIDI %s port %d opened successfully\n", deviceStr.c_str(), port);
+		u::log::print("[KM] MIDI {} port {} opened successfully\n", deviceStr, port);
 		return {true, ""};
 	}
 	catch (RtMidiError& error)
 	{
-		u::log::print("[KM] Error opening %s port %d: %s\n", deviceStr.c_str(), port, error.getMessage());
+		u::log::print("[KM] Error opening {} port {}: {}\n", deviceStr, port, error.getMessage());
 		return {false, error.getMessage()};
 	}
 }
@@ -357,9 +357,9 @@ std::string KernelMidi::getPortName(RtMidi& device, int port) const
 
 void KernelMidi::logPorts(RtMidi& device, std::string name) const
 {
-	u::log::print("[KM] Device '%s': %d MIDI ports found\n", name.c_str(), device.getPortCount());
+	u::log::print("[KM] Device '{}': {} MIDI ports found\n", name, device.getPortCount());
 	for (unsigned i = 0; i < device.getPortCount(); i++)
-		u::log::print("  %d) %s\n", i, device.getPortName(i));
+		u::log::print("  {}) {}\n", i, device.getPortName(i));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -369,7 +369,7 @@ void KernelMidi::logCompiledAPIs()
 	std::vector<RtMidi::Api> apis;
 	RtMidi::getCompiledApi(apis);
 
-	u::log::print("[KM] Compiled RtMidi APIs: %d\n", apis.size());
+	u::log::print("[KM] Compiled RtMidi APIs: {}\n", apis.size());
 
 	for (const RtMidi::Api& api : apis)
 	{

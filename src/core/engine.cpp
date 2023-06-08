@@ -369,7 +369,7 @@ void Engine::registerThread(Thread t, bool isRealtime) const
 {
 	if (!m_model.registerThread(t, isRealtime))
 	{
-		u::log::print("[Engine::registerThread] Can't register thread %s! Aborting\n", u::string::toString(t).c_str());
+		u::log::print("[Engine::registerThread] Can't register thread {}! Aborting\n", u::string::toString(t));
 		std::abort();
 	}
 }

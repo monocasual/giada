@@ -566,7 +566,7 @@ bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
 	if (!waveFactory::save(*wave, filePath))
 		return false;
 
-	u::log::print("[saveSample] sample saved to %s\n", filePath);
+	u::log::print("[saveSample] sample saved to {}\n", filePath);
 
 	/* Reset logical and edited states in Wave. */
 

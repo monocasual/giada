@@ -223,14 +223,14 @@ void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 		else if (pure == c.midiLearner.volume.getValue())
 		{
 			float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME);
-			G_DEBUG("   volume ch={} (pure=0x{:0X}, value=%d, float=%f)",
+			G_DEBUG("   volume ch={} (pure=0x{:0X}, value={}, float={})",
 			    c.id, pure, midiEvent.getVelocity(), vf);
 			c::channel::setChannelVolume(c.id, vf, Thread::MIDI);
 		}
 		else if (pure == c.midiLearner.pitch.getValue())
 		{
 			float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_PITCH);
-			G_DEBUG("   pitch ch={} (pure=0x{:0X}, value=%d, float=%f)",
+			G_DEBUG("   pitch ch={} (pure=0x{:0X}, value={}, float={})",
 			    c.id, pure, midiEvent.getVelocity(), vf);
 			c::channel::setChannelPitch(c.id, vf, Thread::MIDI);
 		}

@@ -129,9 +129,9 @@ void gdWindow::setId(int wid)
 void gdWindow::debug() const
 {
 	/* TODO - use G_DEBUG
-	u::log::print("---- window stack (id=%d): ----\n", getId());
+	u::log::print("---- window stack (id={}): ----\n", getId());
 	for (unsigned i=0; i<subWindows.size(); i++)
-		u::log::print("[gdWindow] %p (id=%d)\n", (void*)subWindows.at(i), subWindows.at(i)->getId());
+		u::log::print("[gdWindow] %p (id={})\n", (void*)subWindows.at(i), subWindows.at(i)->getId());
 	u::log::print("----\n");
 	*/
 }

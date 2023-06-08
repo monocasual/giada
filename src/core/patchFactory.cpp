@@ -441,7 +441,7 @@ Patch deserialize(const std::string& filePath)
 	}
 	catch (nlohmann::json::exception& e)
 	{
-		u::log::print("[patchFactory::deserialize] Exception thrown: %s\n", e.what());
+		u::log::print("[patchFactory::deserialize] Exception thrown: {}\n", e.what());
 		patch.status = G_FILE_INVALID;
 		return patch;
 	}

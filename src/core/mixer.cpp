@@ -64,7 +64,7 @@ void Mixer::reset(int maxFramesInLoop, int framesInBuffer)
 	m_model.get().mixer.getRecBuffer().alloc(maxFramesInLoop, G_MAX_IO_CHANS);
 	m_model.get().mixer.getInBuffer().alloc(framesInBuffer, G_MAX_IO_CHANS);
 
-	u::log::print("[mixer::reset] buffers ready - maxFramesInLoop=%d, framesInBuffer=%d\n",
+	u::log::print("[mixer::reset] buffers ready - maxFramesInLoop={}, framesInBuffer={}\n",
 	    maxFramesInLoop, framesInBuffer);
 }
 

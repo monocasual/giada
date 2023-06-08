@@ -61,7 +61,7 @@ namespace
 {
 void printBuildInfo_()
 {
-	u::log::print("[init] Giada %s\n", G_VERSION_STR);
+	u::log::print("[init] Giada {}\n", G_VERSION_STR);
 	u::log::print("[init] Build date: " BUILD_DATE "\n");
 #ifdef G_DEBUG_MODE
 	u::log::print("[init] Debug build\n");
@@ -69,14 +69,14 @@ void printBuildInfo_()
 	u::log::print("[init] Release build\n");
 #endif
 	u::log::print("[init] Dependencies:\n");
-	u::log::print("[init]   FLTK - %d.%d.%d\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
-	u::log::print("[init]   RtAudio - %s\n", u::ver::getRtAudioVersion());
-	u::log::print("[init]   RtMidi - %s\n", u::ver::getRtMidiVersion());
+	u::log::print("[init]   FLTK - {}.{}.{}\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
+	u::log::print("[init]   RtAudio - {}\n", u::ver::getRtAudioVersion());
+	u::log::print("[init]   RtMidi - {}\n", u::ver::getRtMidiVersion());
 	u::log::print("[init]   Libsamplerate\n"); // TODO - print version
-	u::log::print("[init]   Libsndfile - %s\n", u::ver::getLibsndfileVersion());
-	u::log::print("[init]   JSON for modern C++ - %d.%d.%d\n",
+	u::log::print("[init]   Libsndfile - {}\n", u::ver::getLibsndfileVersion());
+	u::log::print("[init]   JSON for modern C++ - {}.{}.{}\n",
 	    NLOHMANN_JSON_VERSION_MAJOR, NLOHMANN_JSON_VERSION_MINOR, NLOHMANN_JSON_VERSION_PATCH);
-	u::log::print("[init]   JUCE - %d.%d.%d\n", JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER);
+	u::log::print("[init]   JUCE - {}.{}.{}\n", JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER);
 
 	KernelAudio::logCompiledAPIs();
 	KernelMidi::logCompiledAPIs();
@@ -164,7 +164,7 @@ void shutdown()
 	else
 		u::log::print("[init::shutdown] configuration saved\n");
 
-	u::log::print("[init] Giada %s closed\n\n", G_VERSION_STR);
+	u::log::print("[init] Giada {} closed\n\n", G_VERSION_STR);
 	u::log::close();
 }
 } // namespace giada::m::init
