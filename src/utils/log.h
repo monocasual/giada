@@ -66,14 +66,8 @@ static void print(const char* format, Args&&... args)
 {
 	if (mode == LOG_MODE_MUTE)
 		return;
-
 	if (mode == LOG_MODE_FILE && file.is_open())
-	{
 		fmt::print(file, format, args...);
-#ifdef _WIN32
-		fflush(f);
-#endif
-	}
 	else
 		fmt::print(format, args...);
 }
