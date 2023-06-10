@@ -121,7 +121,7 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 gdBrowserBase::~gdBrowserBase()
 {
 	g_ui.model.browserBounds    = getBounds();
-	g_ui.model.browserPosition  = browser->position();
+	g_ui.model.browserPosition  = browser->vposition();
 	g_ui.model.browserLastValue = browser->value();
 	g_ui.model.browserLastPath  = browser->getCurrentDir();
 }
