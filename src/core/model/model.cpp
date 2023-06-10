@@ -276,13 +276,12 @@ bool Model::isLocked() const
 
 /* -------------------------------------------------------------------------- */
 
-Actions::Map& Model::getAllActions() { return m_shared.actions; }
+std::vector<std::unique_ptr<Plugin>>& Model::getAllPlugins() { return m_shared.plugins; }
+Actions::Map&                         Model::getAllActions() { return m_shared.actions; }
 
 template <typename T>
 T& Model::getAllShared()
 {
-	if constexpr (std::is_same_v<T, PluginPtrs>)
-		return m_shared.plugins;
 	if constexpr (std::is_same_v<T, WavePtrs>)
 		return m_shared.waves;
 	if constexpr (std::is_same_v<T, ChannelSharedPtrs>)
@@ -291,7 +290,6 @@ T& Model::getAllShared()
 	assert(false);
 }
 
-template PluginPtrs&        Model::getAllShared<PluginPtrs>();
 template WavePtrs&          Model::getAllShared<WavePtrs>();
 template ChannelSharedPtrs& Model::getAllShared<ChannelSharedPtrs>();
 

@@ -157,7 +157,8 @@ public:
 
 	/* getAll[*] */
 
-	Actions::Map& getAllActions();
+	std::vector<std::unique_ptr<Plugin>>& getAllPlugins();
+	Actions::Map&                         getAllActions();
 
 	template <typename T>
 	T& getAllShared();

@@ -185,7 +185,7 @@ void StorageApi::storePatch(const std::string& projectName, const v::Model& uiMo
 	m_patch.samplerate = m_kernelAudio.getSampleRate();
 
 	m_patch.plugins.clear();
-	for (const auto& p : m_model.getAllShared<model::PluginPtrs>())
+	for (const auto& p : m_model.getAllPlugins())
 		m_patch.plugins.push_back(m_pluginManager.serializePlugin(*p));
 
 	m_patch.actions = actionFactory::serializeActions(m_model.getAllActions());
@@ -221,13 +221,13 @@ StorageApi::LoadState StorageApi::loadPatch()
 
 	/* Load external data first: plug-ins and waves. */
 
-	m_model.getAllShared<model::PluginPtrs>().clear();
+	m_model.getAllPlugins().clear();
 	for (const Patch::Plugin& pplugin : m_patch.plugins)
 	{
 		std::unique_ptr<Plugin> p = m_engine.getPluginsApi().deserialize(pplugin);
 		if (!p->valid)
 			state.missingPlugins.push_back(pplugin.path);
-		m_model.getAllShared<model::PluginPtrs>().push_back(std::move(p));
+		m_model.getAllPlugins().push_back(std::move(p));
 	}
 
 	m_model.getAllShared<model::WavePtrs>().clear();
