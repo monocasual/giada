@@ -50,7 +50,7 @@ std::vector<Action> ActionEditorApi::getActionsOnChannel(ID channelId) const
 
 std::vector<Patch::Action> ActionEditorApi::serializeActions() const
 {
-	return actionFactory::serializeActions(m_model.getAllShared<Actions::Map>());
+	return actionFactory::serializeActions(m_model.getAllActions());
 }
 
 Actions::Map ActionEditorApi::deserializeActions(const std::vector<Patch::Action>& as) const

@@ -155,6 +155,10 @@ public:
 
 	void swap(SwapType t);
 
+	/* getAll[*] */
+
+	Actions::Map& getAllActions();
+
 	template <typename T>
 	T& getAllShared();
 

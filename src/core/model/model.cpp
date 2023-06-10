@@ -276,6 +276,8 @@ bool Model::isLocked() const
 
 /* -------------------------------------------------------------------------- */
 
+Actions::Map& Model::getAllActions() { return m_shared.actions; }
+
 template <typename T>
 T& Model::getAllShared()
 {
@@ -283,8 +285,6 @@ T& Model::getAllShared()
 		return m_shared.plugins;
 	if constexpr (std::is_same_v<T, WavePtrs>)
 		return m_shared.waves;
-	if constexpr (std::is_same_v<T, Actions::Map>)
-		return m_shared.actions;
 	if constexpr (std::is_same_v<T, ChannelSharedPtrs>)
 		return m_shared.channelsShared;
 
@@ -293,7 +293,6 @@ T& Model::getAllShared()
 
 template PluginPtrs&        Model::getAllShared<PluginPtrs>();
 template WavePtrs&          Model::getAllShared<WavePtrs>();
-template Actions::Map&      Model::getAllShared<Actions::Map>();
 template ChannelSharedPtrs& Model::getAllShared<ChannelSharedPtrs>();
 
 /* -------------------------------------------------------------------------- */
@@ -394,7 +393,7 @@ void Model::debug()
 
 	puts("model::shared.actions");
 
-	for (const auto& [frame, actions] : getAllShared<Actions::Map>())
+	for (const auto& [frame, actions] : getAllActions())
 	{
 		fmt::print("\tframe: {}\n", frame);
 		for (const Action& a : actions)

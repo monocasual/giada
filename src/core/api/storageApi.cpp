@@ -188,7 +188,7 @@ void StorageApi::storePatch(const std::string& projectName, const v::Model& uiMo
 	for (const auto& p : m_model.getAllShared<model::PluginPtrs>())
 		m_patch.plugins.push_back(m_pluginManager.serializePlugin(*p));
 
-	m_patch.actions = actionFactory::serializeActions(m_model.getAllShared<Actions::Map>());
+	m_patch.actions = actionFactory::serializeActions(m_model.getAllActions());
 
 	m_patch.waves.clear();
 	for (const auto& w : m_model.getAllShared<model::WavePtrs>())
@@ -249,7 +249,7 @@ StorageApi::LoadState StorageApi::loadPatch()
 		m_model.addShared(std::move(data.shared));
 	}
 
-	m_model.getAllShared<Actions::Map>() = m_engine.getActionEditorApi().deserializeActions(m_patch.actions);
+	m_model.getAllActions() = m_engine.getActionEditorApi().deserializeActions(m_patch.actions);
 
 	m_model.get().sequencer.status   = SeqStatus::STOPPED;
 	m_model.get().sequencer.bars     = m_patch.bars;
