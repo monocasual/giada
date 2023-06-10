@@ -315,19 +315,28 @@ template Wave*   Model::findShared<Wave>(ID id);
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-void Model::addShared(T obj)
+typename T::element_type& Model::addShared(T obj)
 {
 	if constexpr (std::is_same_v<T, PluginPtr>)
+	{
 		m_shared.plugins.push_back(std::move(obj));
+		return *m_shared.plugins.back().get();
+	}
 	if constexpr (std::is_same_v<T, WavePtr>)
+	{
 		m_shared.waves.push_back(std::move(obj));
+		return *m_shared.waves.back().get();
+	}
 	if constexpr (std::is_same_v<T, ChannelSharedPtr>)
+	{
 		m_shared.channelsShared.push_back(std::move(obj));
+		return *m_shared.channelsShared.back().get();
+	}
 }
 
-template void Model::addShared<PluginPtr>(PluginPtr p);
-template void Model::addShared<WavePtr>(WavePtr p);
-template void Model::addShared<ChannelSharedPtr>(ChannelSharedPtr p);
+template Plugin&        Model::addShared<PluginPtr>(PluginPtr p);
+template Wave&          Model::addShared<WavePtr>(WavePtr p);
+template ChannelShared& Model::addShared<ChannelSharedPtr>(ChannelSharedPtr p);
 
 /* -------------------------------------------------------------------------- */
 

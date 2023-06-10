@@ -166,10 +166,11 @@ public:
 	T* findShared(ID id);
 
 	/* addShared
-	Adds some shared data (by moving it). */
+	Adds some shared data (by moving it). Returns a reference to the last added 
+	shared item. */
 
 	template <typename T>
-	void addShared(T);
+	typename T::element_type& addShared(T);
 
 	template <typename T>
 	void removeShared(const T&);
