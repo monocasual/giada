@@ -558,7 +558,7 @@ bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
 
 	assert(ch.samplePlayer);
 
-	Wave* wave = m_model.findShared<Wave>(ch.samplePlayer->getWaveId());
+	Wave* wave = ch.samplePlayer->getWave();
 
 	assert(wave != nullptr);
 
