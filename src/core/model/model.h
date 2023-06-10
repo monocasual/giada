@@ -175,12 +175,6 @@ public:
 	template <typename T>
 	void removeShared(const T&);
 
-	/* backShared
-	Returns a reference to the last added shared item. */
-
-	template <typename T>
-	T& backShared();
-
 	template <typename T>
 	void clearShared();
 

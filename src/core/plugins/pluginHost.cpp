@@ -114,8 +114,7 @@ void PluginHost::processStack(mcl::AudioBuffer& outBuf, const std::vector<Plugin
 
 const Plugin& PluginHost::addPlugin(std::unique_ptr<Plugin> p)
 {
-	m_model.addShared(std::move(p));
-	return m_model.backShared<Plugin>();
+	return m_model.addShared(std::move(p));
 }
 
 /* -------------------------------------------------------------------------- */

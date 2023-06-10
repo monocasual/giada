@@ -355,23 +355,6 @@ template void Model::removeShared<Wave>(const Wave& t);
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-T& Model::backShared()
-{
-	if constexpr (std::is_same_v<T, Plugin>)
-		return *m_shared.plugins.back().get();
-	if constexpr (std::is_same_v<T, Wave>)
-		return *m_shared.waves.back().get();
-	if constexpr (std::is_same_v<T, ChannelShared>)
-		return *m_shared.channelsShared.back().get();
-}
-
-template Plugin&        Model::backShared<Plugin>();
-template Wave&          Model::backShared<Wave>();
-template ChannelShared& Model::backShared<ChannelShared>();
-
-/* -------------------------------------------------------------------------- */
-
-template <typename T>
 void Model::clearShared()
 {
 	if constexpr (std::is_same_v<T, PluginPtrs>)

@@ -115,8 +115,7 @@ int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, in
 	if (res.status != G_RES_OK)
 		return res.status;
 
-	m_model.addShared(std::move(res.wave));
-	loadSampleChannel(channelId, m_model.backShared<Wave>());
+	loadSampleChannel(channelId, m_model.addShared(std::move(res.wave)));
 
 	return G_RES_OK;
 }
@@ -157,8 +156,8 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 		const Frame oldShift = oldChannel.samplePlayer->shift;
 		const Frame oldBegin = oldChannel.samplePlayer->begin;
 		const Frame oldEnd   = oldChannel.samplePlayer->end;
-		m_model.addShared(waveFactory::createFromWave(oldWave));
-		loadSampleChannel(newChannelData.channel, &m_model.backShared<Wave>(), oldBegin, oldEnd, oldShift);
+		Wave&       wave     = m_model.addShared(waveFactory::createFromWave(oldWave));
+		loadSampleChannel(newChannelData.channel, &wave, oldBegin, oldEnd, oldShift);
 	}
 
 	newChannelData.channel.plugins = plugins;
@@ -666,8 +665,7 @@ void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, 
 
 	/* Update channel with the new Wave. */
 
-	m_model.addShared(std::move(wave));
-	loadSampleChannel(ch, &m_model.backShared<Wave>());
+	loadSampleChannel(ch, &m_model.addShared(std::move(wave)));
 	setupChannelPostRecording(ch, currentFrame);
 
 	m_model.swap(model::SwapType::HARD);

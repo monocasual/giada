@@ -232,10 +232,8 @@ std::vector<Plugin*> PluginManager::clonePlugins(const std::vector<Plugin*>& sou
 {
 	std::vector<Plugin*> clones;
 	for (const Plugin* plugin : source)
-	{
-		model.addShared(makePlugin(*plugin, sampleRate, bufferSize, model.get().sequencer));
-		clones.push_back(&model.backShared<Plugin>());
-	}
+		clones.push_back(&model.addShared(makePlugin(*plugin, sampleRate, bufferSize, model.get().sequencer)));
+
 	return clones;
 }
 
