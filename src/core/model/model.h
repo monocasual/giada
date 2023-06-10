@@ -157,6 +157,7 @@ public:
 
 	/* getAll[*] */
 
+	std::vector<std::unique_ptr<Wave>>&   getAllWaves();
 	std::vector<std::unique_ptr<Plugin>>& getAllPlugins();
 	Actions::Map&                         getAllActions();
 

@@ -80,9 +80,9 @@ bool StorageApi::storeProject(const std::string& projectName, const std::string&
 	/* Update all existing file paths in Waves, so that they point to the project
 	folder they belong to. */
 
-	for (std::unique_ptr<Wave>& w : m_model.getAllShared<model::WavePtrs>())
+	for (std::unique_ptr<Wave>& w : m_model.getAllWaves())
 	{
-		w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, m_model.getAllShared<model::WavePtrs>()));
+		w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, m_model.getAllWaves()));
 		waveFactory::save(*w, w->getPath()); // TODO - error checking
 	}
 
@@ -191,7 +191,7 @@ void StorageApi::storePatch(const std::string& projectName, const v::Model& uiMo
 	m_patch.actions = actionFactory::serializeActions(m_model.getAllActions());
 
 	m_patch.waves.clear();
-	for (const auto& w : m_model.getAllShared<model::WavePtrs>())
+	for (const auto& w : m_model.getAllWaves())
 		m_patch.waves.push_back(waveFactory::serializeWave(*w));
 
 	m_patch.channels.clear();
@@ -230,12 +230,12 @@ StorageApi::LoadState StorageApi::loadPatch()
 		m_model.getAllPlugins().push_back(std::move(p));
 	}
 
-	m_model.getAllShared<model::WavePtrs>().clear();
+	m_model.getAllWaves().clear();
 	for (const Patch::Wave& pwave : m_patch.waves)
 	{
 		std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, m_model.get().kernelAudio.rsmpQuality);
 		if (w != nullptr)
-			m_model.getAllShared<model::WavePtrs>().push_back(std::move(w));
+			m_model.getAllWaves().push_back(std::move(w));
 		else
 			state.missingWaves.push_back(pwave.path);
 	}
