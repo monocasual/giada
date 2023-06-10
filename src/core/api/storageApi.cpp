@@ -215,7 +215,7 @@ StorageApi::LoadState StorageApi::loadPatch()
 	/* Clear and re-initialize channels first. */
 
 	m_model.get().channels = {};
-	m_model.getAllShared<model::ChannelSharedPtrs>().clear();
+	m_model.getAllChannelsShared().clear();
 
 	LoadState state;
 

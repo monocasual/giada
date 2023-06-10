@@ -157,12 +157,10 @@ public:
 
 	/* getAll[*] */
 
-	std::vector<std::unique_ptr<Wave>>&   getAllWaves();
-	std::vector<std::unique_ptr<Plugin>>& getAllPlugins();
-	Actions::Map&                         getAllActions();
-
-	template <typename T>
-	T& getAllShared();
+	std::vector<std::unique_ptr<Wave>>&          getAllWaves();
+	std::vector<std::unique_ptr<Plugin>>&        getAllPlugins();
+	Actions::Map&                                getAllActions();
+	std::vector<std::unique_ptr<ChannelShared>>& getAllChannelsShared();
 
 	/* findShared
 	Finds something in the shared data given an ID. Returns nullptr if the

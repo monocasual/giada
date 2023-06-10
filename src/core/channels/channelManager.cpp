@@ -85,7 +85,7 @@ void ChannelManager::reset(Frame framesInBuffer)
 
 void ChannelManager::setBufferSize(int bufferSize)
 {
-	for (auto& channelShared : m_model.getAllShared<model::ChannelSharedPtrs>())
+	for (auto& channelShared : m_model.getAllChannelsShared())
 		channelShared->setBufferSize(bufferSize);
 }
 
