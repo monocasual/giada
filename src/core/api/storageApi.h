@@ -72,7 +72,7 @@ public:
 
 private:
 	void      storePatch(const v::Model&);
-	LoadState loadPatch();
+	LoadState loadPatch(const Patch&);
 
 	Engine&           m_engine;
 	model::Model&     m_model;

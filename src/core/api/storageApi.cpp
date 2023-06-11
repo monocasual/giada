@@ -133,7 +133,7 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 	m_mixer.disable();
 	m_engine.reset(pluginSortMethod);
-	LoadState state = loadPatch();
+	LoadState state = loadPatch(m_patch);
 
 	progress(0.6f);
 
@@ -201,11 +201,11 @@ void StorageApi::storePatch(const v::Model& uiModel)
 
 /* -------------------------------------------------------------------------- */
 
-StorageApi::LoadState StorageApi::loadPatch()
+StorageApi::LoadState StorageApi::loadPatch(const Patch& patch)
 {
 	const int   sampleRate      = m_kernelAudio.getSampleRate();
 	const int   bufferSize      = m_kernelAudio.getBufferSize();
-	const float sampleRateRatio = sampleRate / static_cast<float>(m_patch.samplerate);
+	const float sampleRateRatio = sampleRate / static_cast<float>(patch.samplerate);
 
 	/* Lock the model's data. Real-time thread can't read from it until this method
 	goes out of scope. */
@@ -222,7 +222,7 @@ StorageApi::LoadState StorageApi::loadPatch()
 	/* Load external data first: plug-ins and waves. */
 
 	m_model.getAllPlugins().clear();
-	for (const Patch::Plugin& pplugin : m_patch.plugins)
+	for (const Patch::Plugin& pplugin : patch.plugins)
 	{
 		std::unique_ptr<Plugin> p = m_engine.getPluginsApi().deserialize(pplugin);
 		if (!p->valid)
@@ -231,7 +231,7 @@ StorageApi::LoadState StorageApi::loadPatch()
 	}
 
 	m_model.getAllWaves().clear();
-	for (const Patch::Wave& pwave : m_patch.waves)
+	for (const Patch::Wave& pwave : patch.waves)
 	{
 		std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, m_model.get().kernelAudio.rsmpQuality);
 		if (w != nullptr)
@@ -242,20 +242,20 @@ StorageApi::LoadState StorageApi::loadPatch()
 
 	/* Then load up channels, actions and global properties. */
 
-	for (const Patch::Channel& pchannel : m_patch.channels)
+	for (const Patch::Channel& pchannel : patch.channels)
 	{
 		channelFactory::Data data = m_engine.getChannelsApi().deserializeChannel(pchannel, sampleRateRatio, bufferSize);
 		m_model.get().channels.add(data.channel);
 		m_model.addShared(std::move(data.shared));
 	}
 
-	m_model.getAllActions() = m_engine.getActionEditorApi().deserializeActions(m_patch.actions);
+	m_model.getAllActions() = m_engine.getActionEditorApi().deserializeActions(patch.actions);
 
 	m_model.get().sequencer.status   = SeqStatus::STOPPED;
-	m_model.get().sequencer.bars     = m_patch.bars;
-	m_model.get().sequencer.beats    = m_patch.beats;
-	m_model.get().sequencer.bpm      = m_patch.bpm;
-	m_model.get().sequencer.quantize = m_patch.quantize;
+	m_model.get().sequencer.bars     = patch.bars;
+	m_model.get().sequencer.beats    = patch.beats;
+	m_model.get().sequencer.bpm      = patch.bpm;
+	m_model.get().sequencer.quantize = patch.quantize;
 
 	return state;
 }
