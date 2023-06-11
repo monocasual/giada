@@ -25,12 +25,16 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/model/model.h"
+#include "core/actions/actionFactory.h"
+#include "core/channels/channelFactory.h"
+#include "core/plugins/pluginFactory.h"
+#include "core/plugins/pluginManager.h"
+#include "core/waveFactory.h"
 #include "utils/log.h"
 #include "utils/string.h"
 #include <cassert>
 #include <memory>
 #ifdef G_DEBUG_MODE
-#include "core/channels/channelFactory.h"
 #include <fmt/core.h>
 #endif
 #include <fmt/ostream.h>
@@ -182,6 +186,70 @@ void Model::load(const Conf& conf)
 	layout.behaviors.overdubProtectionDefaultOn = conf.overdubProtectionDefaultOn;
 
 	swap(model::SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Model::LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int sampleRate, int bufferSize, Resampler::Quality rsmpQuality)
+{
+	const float sampleRateRatio = sampleRate / static_cast<float>(patch.samplerate);
+
+	/* Lock the shared data. Real-time thread can't read from it until this method
+	goes out of scope. */
+
+	DataLock  lock   = lockData(SwapType::NONE);
+	Layout&   layout = get();
+	LoadState state;
+
+	/* Clear and re-initialize stuff first. */
+
+	layout.channels = {};
+	getAllChannelsShared().clear();
+	getAllPlugins().clear();
+	getAllWaves().clear();
+
+	/* Load external data first: plug-ins and waves. */
+
+	for (const Patch::Plugin& pplugin : patch.plugins)
+	{
+		std::unique_ptr<juce::AudioPluginInstance> pi = pluginManager.makeJucePlugin(pplugin.path, sampleRate, bufferSize);
+		std::unique_ptr<Plugin>                    p  = pluginFactory::deserializePlugin(pplugin, std::move(pi), layout.sequencer, sampleRate, bufferSize);
+		if (!p->valid)
+			state.missingPlugins.push_back(pplugin.path);
+		getAllPlugins().push_back(std::move(p));
+	}
+
+	for (const Patch::Wave& pwave : patch.waves)
+	{
+		std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, rsmpQuality);
+		if (w != nullptr)
+			getAllWaves().push_back(std::move(w));
+		else
+			state.missingWaves.push_back(pwave.path);
+	}
+
+	/* Then load up channels, actions and global properties. */
+
+	for (const Patch::Channel& pchannel : patch.channels)
+	{
+		Wave*                wave    = findShared<Wave>(pchannel.waveId);
+		std::vector<Plugin*> plugins = findPlugins(pchannel.pluginIds);
+		channelFactory::Data data    = channelFactory::deserializeChannel(pchannel, sampleRateRatio, bufferSize, rsmpQuality, wave, plugins);
+		layout.channels.add(data.channel);
+		addShared(std::move(data.shared));
+	}
+
+	getAllActions() = actionFactory::deserializeActions(patch.actions);
+
+	layout.sequencer.status   = SeqStatus::STOPPED;
+	layout.sequencer.bars     = patch.bars;
+	layout.sequencer.beats    = patch.beats;
+	layout.sequencer.bpm      = patch.bpm;
+	layout.sequencer.quantize = patch.quantize;
+
+	return state;
+
+	// Swap is performed when 'lock' goes out of scope
 }
 
 /* -------------------------------------------------------------------------- */
@@ -350,6 +418,20 @@ void Model::clearShared()
 
 template void Model::clearShared<PluginPtrs>();
 template void Model::clearShared<WavePtrs>();
+
+/* -------------------------------------------------------------------------- */
+
+std::vector<Plugin*> Model::findPlugins(std::vector<ID> pluginIds)
+{
+	std::vector<Plugin*> out;
+	for (ID id : pluginIds)
+	{
+		Plugin* plugin = findShared<Plugin>(id);
+		if (plugin != nullptr)
+			out.push_back(plugin);
+	}
+	return out;
+}
 
 /* -------------------------------------------------------------------------- */
 

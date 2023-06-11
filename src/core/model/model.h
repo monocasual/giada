@@ -103,6 +103,12 @@ class DataLock;
 class Model
 {
 public:
+	struct LoadState
+	{
+		std::vector<std::string> missingWaves   = {};
+		std::vector<std::string> missingPlugins = {};
+	};
+
 	Model();
 
 	bool isLocked() const;
@@ -124,10 +130,15 @@ public:
 
 	void reset();
 
-	/* load
+	/* load (1)
 	Loads data from a Conf object. */
 
 	void load(const Conf&);
+
+	/* load (2) 
+	Loads data from a Patch object. */
+
+	LoadState load(const Patch&, PluginManager&, int sampleRate, int bufferSize, Resampler::Quality);
 
 	/* store
 	Stores data into a Conf object. */
@@ -203,6 +214,8 @@ private:
 		Actions::Map                         actions;
 		std::vector<std::unique_ptr<Plugin>> plugins;
 	};
+
+	std::vector<Plugin*> findPlugins(std::vector<ID> pluginIds);
 
 	AtomicSwapper m_swapper;
 	Shared        m_shared;
