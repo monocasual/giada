@@ -114,23 +114,9 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& pid,
 
 	m_pluginId.set(id);
 
-	const std::unique_ptr<juce::PluginDescription> pd = m_knownPluginList.getTypeForIdentifierString(pid);
-	if (pd == nullptr)
-	{
-		u::log::print("[pluginManager::makePlugin] no plugin found with pid={}!\n", pid);
-		return makeInvalidPlugin(pid, id);
-	}
-
-	juce::String                               error;
-	std::unique_ptr<juce::AudioPluginInstance> pi = m_formatManager.createPluginInstance(*pd, sampleRate, bufferSize, error);
+	std::unique_ptr<juce::AudioPluginInstance> pi = makeJucePlugin(pid, sampleRate, bufferSize);
 	if (pi == nullptr)
-	{
-		u::log::print("[pluginManager::makePlugin] unable to create instance with pid={}! Error: {}\n",
-		    pid, error.toStdString());
 		return makeInvalidPlugin(pid, id);
-	}
-
-	u::log::print("[pluginManager::makePlugin] plugin instance with pid={} created\n", pid);
 
 	return std::make_unique<Plugin>(
 	    m_pluginId.generate(id),
@@ -291,6 +277,31 @@ void PluginManager::sortPlugins(SortMethod method)
 		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByFormat, true);
 		break;
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::unique_ptr<juce::AudioPluginInstance> PluginManager::makeJucePlugin(const std::string& pid, int sampleRate, int bufferSize)
+{
+	const std::unique_ptr<juce::PluginDescription> pd = m_knownPluginList.getTypeForIdentifierString(pid);
+	if (pd == nullptr)
+	{
+		u::log::print("[pluginManager::makeJucePlugin] no plugin found with pid={}!\n", pid);
+		return nullptr;
+	}
+
+	juce::String                               error;
+	std::unique_ptr<juce::AudioPluginInstance> pi = m_formatManager.createPluginInstance(*pd, sampleRate, bufferSize, error);
+	if (pi == nullptr)
+	{
+		u::log::print("[pluginManager::makeJucePlugin] unable to create instance with pid={}! Error: {}\n",
+		    pid, error.toStdString());
+		return nullptr;
+	}
+
+	u::log::print("[pluginManager::makeJucePlugin] plugin instance with pid={} created\n", pid);
+
+	return pi;
 }
 
 /* -------------------------------------------------------------------------- */
