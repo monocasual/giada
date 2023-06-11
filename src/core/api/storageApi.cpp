@@ -228,7 +228,7 @@ StorageApi::LoadState StorageApi::loadPatch(const Patch& patch)
 	m_model.getAllWaves().clear();
 	for (const Patch::Wave& pwave : patch.waves)
 	{
-		std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, m_model.get().kernelAudio.rsmpQuality);
+		std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, rsmpQuality);
 		if (w != nullptr)
 			m_model.getAllWaves().push_back(std::move(w));
 		else
