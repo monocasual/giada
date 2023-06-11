@@ -95,4 +95,20 @@ std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin& pplugin, std::uni
 
 	return plugin;
 }
+
+/* -------------------------------------------------------------------------- */
+
+Patch::Plugin serializePlugin(const Plugin& p)
+{
+	Patch::Plugin pp;
+	pp.id     = p.id;
+	pp.path   = p.getUniqueId();
+	pp.bypass = p.isBypassed();
+	pp.state  = p.getState().asBase64();
+
+	for (const MidiLearnParam& param : p.midiInParams)
+		pp.midiInParams.push_back(param.getValue());
+
+	return pp;
+}
 } // namespace giada::m::pluginFactory

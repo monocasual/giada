@@ -146,16 +146,7 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(const Plugin& src, int sampleR
 
 const Patch::Plugin PluginManager::serializePlugin(const Plugin& p) const
 {
-	Patch::Plugin pp;
-	pp.id     = p.id;
-	pp.path   = p.getUniqueId();
-	pp.bypass = p.isBypassed();
-	pp.state  = p.getState().asBase64();
-
-	for (const MidiLearnParam& param : p.midiInParams)
-		pp.midiInParams.push_back(param.getValue());
-
-	return pp;
+	return pluginFactory::serializePlugin(p);
 }
 
 /* -------------------------------------------------------------------------- */
