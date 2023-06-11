@@ -43,9 +43,7 @@ class ActionEditorApi
 public:
 	ActionEditorApi(Engine&, model::Model&, Sequencer&, ActionRecorder&);
 
-	std::vector<Action>        getActionsOnChannel(ID channelId) const;
-	std::vector<Patch::Action> serializeActions() const;
-	Actions::Map               deserializeActions(const std::vector<Patch::Action>& as) const;
+	std::vector<Action> getActionsOnChannel(ID channelId) const;
 
 	void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2);
 	void deleteMidiAction(ID channelId, const Action&);

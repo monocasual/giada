@@ -246,7 +246,7 @@ StorageApi::LoadState StorageApi::loadPatch(const Patch& patch)
 		m_model.addShared(std::move(data.shared));
 	}
 
-	m_model.getAllActions() = m_engine.getActionEditorApi().deserializeActions(patch.actions);
+	m_model.getAllActions() = actionFactory::deserializeActions(patch.actions);
 
 	m_model.get().sequencer.status   = SeqStatus::STOPPED;
 	m_model.get().sequencer.bars     = patch.bars;
