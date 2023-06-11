@@ -45,7 +45,7 @@ class Sequencer;
 
 namespace giada::m
 {
-class PluginManager final /* TODO - Split PluginManager (== ChannelManager) and PluginFactory (== ChannelFactory) */
+class PluginManager final
 {
 public:
 	enum class SortMethod : int
@@ -111,6 +111,7 @@ public:
 	/* clonePlugins
 	Clones all plugins in the Plugin vector passed in as a parameter. Returns a
 	new vector containing the new clones. */
+	// TODO - move to pluginFactory
 
 	std::vector<Plugin*> clonePlugins(const std::vector<Plugin*>&, int sampleRate, int bufferSize, model::Model&);
 
