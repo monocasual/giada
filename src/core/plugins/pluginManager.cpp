@@ -29,6 +29,7 @@
 #include "core/model/model.h"
 #include "core/patch.h"
 #include "core/plugins/plugin.h"
+#include "core/plugins/pluginFactory.h"
 #include "utils/fs.h"
 #include "utils/log.h"
 #include "utils/string.h"
@@ -310,6 +311,6 @@ std::unique_ptr<Plugin> PluginManager::makeInvalidPlugin(const std::string& pid,
 {
 	m_missingPlugins = true;
 	m_unknownPluginList.push_back(pid);
-	return std::make_unique<Plugin>(m_pluginId.generate(id), pid); // Invalid plug-in
+	return pluginFactory::createInvalid(pid, id);
 }
 } // namespace giada::m

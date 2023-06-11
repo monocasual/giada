@@ -74,6 +74,7 @@ list(APPEND SOURCES
 	src/core/plugins/pluginManager.cpp
 	src/core/plugins/plugin.cpp
 	src/core/plugins/pluginState.cpp
+	src/core/plugins/pluginFactory.cpp
 	src/core/channels/channelManager.cpp
 	src/core/channels/sampleActionRecorder.cpp
 	src/core/channels/midiActionRecorder.cpp
