@@ -197,79 +197,17 @@ Patch StorageApi::storePatch(const v::Model& uiModel, const std::string& project
 
 StorageApi::LoadState StorageApi::loadPatch(const Patch& patch)
 {
-	const int                sampleRate      = m_kernelAudio.getSampleRate();
-	const int                bufferSize      = m_kernelAudio.getBufferSize();
-	const Resampler::Quality rsmpQuality     = m_kernelAudio.getResamplerQuality();
-	const float              sampleRateRatio = sampleRate / static_cast<float>(patch.samplerate);
+	const int                sampleRate  = m_kernelAudio.getSampleRate();
+	const int                bufferSize  = m_kernelAudio.getBufferSize();
+	const Resampler::Quality rsmpQuality = m_kernelAudio.getResamplerQuality();
 
-	/* Lock the model's data. Real-time thread can't read from it until this method
-	goes out of scope. */
+	const model::Model::LoadState modelState = m_model.load(patch, m_pluginManager, sampleRate, bufferSize, rsmpQuality);
+	LoadState                     storageState;
 
-	model::DataLock lock = m_model.lockData(model::SwapType::NONE);
+	storageState.patch          = patch;
+	storageState.missingWaves   = modelState.missingWaves;
+	storageState.missingPlugins = modelState.missingPlugins;
 
-	/* Clear and re-initialize channels first. */
-
-	m_model.get().channels = {};
-	m_model.getAllChannelsShared().clear();
-
-	LoadState state;
-	state.patch = patch;
-
-	/* Load external data first: plug-ins and waves. */
-
-	m_model.getAllPlugins().clear();
-	for (const Patch::Plugin& pplugin : patch.plugins)
-	{
-		std::unique_ptr<juce::AudioPluginInstance> pi = m_pluginManager.makeJucePlugin(pplugin.path, sampleRate, bufferSize);
-		std::unique_ptr<Plugin>                    p  = pluginFactory::deserializePlugin(pplugin, std::move(pi), m_model.get().sequencer, sampleRate, bufferSize);
-		if (!p->valid)
-			state.missingPlugins.push_back(pplugin.path);
-		m_model.getAllPlugins().push_back(std::move(p));
-	}
-
-	m_model.getAllWaves().clear();
-	for (const Patch::Wave& pwave : patch.waves)
-	{
-		std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, rsmpQuality);
-		if (w != nullptr)
-			m_model.getAllWaves().push_back(std::move(w));
-		else
-			state.missingWaves.push_back(pwave.path);
-	}
-
-	/* Then load up channels, actions and global properties. */
-
-	for (const Patch::Channel& pchannel : patch.channels)
-	{
-		Wave*                wave    = m_model.findShared<Wave>(pchannel.waveId);
-		std::vector<Plugin*> plugins = findPlugins(pchannel.pluginIds);
-		channelFactory::Data data    = channelFactory::deserializeChannel(pchannel, sampleRateRatio, bufferSize, rsmpQuality, wave, plugins);
-		m_model.get().channels.add(data.channel);
-		m_model.addShared(std::move(data.shared));
-	}
-
-	m_model.getAllActions() = actionFactory::deserializeActions(patch.actions);
-
-	m_model.get().sequencer.status   = SeqStatus::STOPPED;
-	m_model.get().sequencer.bars     = patch.bars;
-	m_model.get().sequencer.beats    = patch.beats;
-	m_model.get().sequencer.bpm      = patch.bpm;
-	m_model.get().sequencer.quantize = patch.quantize;
-
-	return state;
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::vector<Plugin*> StorageApi::findPlugins(std::vector<ID> pluginIds)
-{
-	std::vector<Plugin*> out;
-	for (ID id : pluginIds)
-	{
-		Plugin* plugin = m_model.findShared<Plugin>(id);
-		if (plugin != nullptr)
-			out.push_back(plugin);
-	}
-	return out;
+	return storageState;
 }
 } // namespace giada::m
