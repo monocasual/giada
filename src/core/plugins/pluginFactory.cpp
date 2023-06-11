@@ -47,7 +47,7 @@ void reset()
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Plugin> createInvalid(const std::string& pid, ID id)
+std::unique_ptr<Plugin> createInvalid(ID id, const std::string& pid)
 {
 	return std::make_unique<Plugin>(pluginId_.generate(id), pid);
 }
@@ -62,7 +62,7 @@ std::unique_ptr<Plugin> create(ID id, const std::string& pid, std::unique_ptr<ju
     plug-ins. */
 
 	if (pi == nullptr)
-		return pluginFactory::createInvalid(pid, id);
+		return pluginFactory::createInvalid(id, pid);
 
 	return std::make_unique<Plugin>(
 	    pluginId_.generate(id),
