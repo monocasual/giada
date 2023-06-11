@@ -110,10 +110,7 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& pid,
     int sampleRate, int bufferSize, const model::Sequencer& sequencer, ID id)
 {
 	std::unique_ptr<juce::AudioPluginInstance> pi = makeJucePlugin(pid, sampleRate, bufferSize);
-	if (pi == nullptr)
-		return pluginFactory::createInvalid(pid, id);
-
-	return pluginFactory::create(id, std::move(pi), sequencer, sampleRate, bufferSize);
+	return pluginFactory::create(id, pid, std::move(pi), sequencer, sampleRate, bufferSize);
 }
 
 /* -------------------------------------------------------------------------- */

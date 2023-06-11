@@ -51,8 +51,8 @@ Resets internal ID generator. */
 void reset();
 
 std::unique_ptr<Plugin> createInvalid(const std::string& pid, ID id);
-std::unique_ptr<Plugin> create(ID id, std::unique_ptr<juce::AudioPluginInstance>, const model::Sequencer&,
-    int sampleRate, int bufferSize);
+std::unique_ptr<Plugin> create(ID id, const std::string& pid, std::unique_ptr<juce::AudioPluginInstance>,
+    const model::Sequencer&, int sampleRate, int bufferSize);
 
 std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin&, std::unique_ptr<juce::AudioPluginInstance>,
     const model::Sequencer&, int sampleRate, int bufferSize);
