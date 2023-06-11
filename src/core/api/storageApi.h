@@ -50,7 +50,7 @@ public:
 	{
 		bool isGood() const;
 
-		int                      patch          = G_FILE_OK;
+		Patch                    patch;
 		std::vector<std::string> missingWaves   = {};
 		std::vector<std::string> missingPlugins = {};
 	};

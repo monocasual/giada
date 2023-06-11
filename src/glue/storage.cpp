@@ -111,9 +111,9 @@ void loadProject(void* data)
 
 	m::StorageApi::LoadState state = g_engine.getStorageApi().loadProject(projectPath, pluginsSortMethod, engineProgress);
 
-	if (state.patch != G_FILE_OK)
+	if (state.patch.status != G_FILE_OK)
 	{
-		printLoadError_(state.patch);
+		printLoadError_(state.patch.status);
 		return;
 	}
 
@@ -122,7 +122,7 @@ void loadProject(void* data)
 	if (!state.isGood())
 		layout::openMissingAssetsWindow(state);
 
-	g_ui.load(g_engine.getPatch());
+	g_ui.load(state.patch);
 
 	browser->do_callback();
 }

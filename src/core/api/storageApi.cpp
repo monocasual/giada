@@ -39,7 +39,7 @@ namespace giada::m
 {
 bool StorageApi::LoadState::isGood() const
 {
-	return patch == G_FILE_OK && missingWaves.empty() && missingPlugins.empty();
+	return patch.status == G_FILE_OK && missingWaves.empty() && missingPlugins.empty();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -125,7 +125,7 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 	m_patch = patchFactory::deserialize(patchPath);
 	if (m_patch.status != G_FILE_OK)
-		return {m_patch.status};
+		return {};
 
 	progress(0.3f);
 
@@ -162,7 +162,6 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 	progress(1.0f);
 
-	state.patch = G_FILE_OK;
 	return state;
 }
 
@@ -218,6 +217,7 @@ StorageApi::LoadState StorageApi::loadPatch(const Patch& patch)
 	m_model.getAllChannelsShared().clear();
 
 	LoadState state;
+	state.patch = patch;
 
 	/* Load external data first: plug-ins and waves. */
 
