@@ -49,7 +49,6 @@
 #include "core/midiSynchronizer.h"
 #include "core/mixer.h"
 #include "core/model/model.h"
-#include "core/patch.h"
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
 #include "core/recorder.h"
@@ -133,7 +132,6 @@ private:
 	int  audioCallback(mcl::AudioBuffer& out, const mcl::AudioBuffer& in) const;
 	void registerThread(Thread, bool isRealtime) const;
 
-	Patch                  m_patch;
 	model::Model           m_model;
 	KernelAudio            m_kernelAudio;
 	KernelMidi             m_kernelMidi;
