@@ -106,6 +106,8 @@ public:
 	std::unique_ptr<Plugin> makePlugin(int index, int sampleRate, int bufferSize, const model::Sequencer&);
 	std::unique_ptr<Plugin> makePlugin(const Plugin& other, int sampleRate, int bufferSize, const model::Sequencer&);
 
+	std::unique_ptr<juce::AudioPluginInstance> makeJucePlugin(const std::string& pid, int sampleRate, int bufferSize);
+
 	/* (de)serializePlugin
 	Transforms patch data into a Plugin object and vice versa. */
 
@@ -121,8 +123,6 @@ public:
 	void sortPlugins(SortMethod sortMethod);
 
 private:
-	std::unique_ptr<juce::AudioPluginInstance> makeJucePlugin(const std::string& pid, int sampleRate, int bufferSize);
-
 	/* formatManager
 	Plugin format manager. */
 
