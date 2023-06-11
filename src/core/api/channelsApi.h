@@ -50,7 +50,7 @@ class Wave;
 class ChannelsApi
 {
 public:
-	ChannelsApi(Engine&, model::Model&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
+	ChannelsApi(model::Model&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
 	    Recorder&, ActionRecorder&, PluginHost&, PluginManager&);
 
 	bool hasChannelsWithAudioData() const;
@@ -96,7 +96,6 @@ public:
 	channelFactory::Data deserializeChannel(const Patch::Channel&, float samplerateRatio, int bufferSize);
 
 private:
-	Engine&         m_engine;
 	model::Model&   m_model;
 	KernelAudio&    m_kernelAudio;
 	Mixer&          m_mixer;

@@ -34,10 +34,9 @@
 
 namespace giada::m
 {
-ChannelsApi::ChannelsApi(Engine& e, model::Model& m, KernelAudio& k, Mixer& mx, Sequencer& s,
+ChannelsApi::ChannelsApi(model::Model& m, KernelAudio& k, Mixer& mx, Sequencer& s,
     ChannelManager& cm, Recorder& r, ActionRecorder& ar, PluginHost& ph, PluginManager& pm)
-: m_engine(e)
-, m_model(m)
+: m_model(m)
 , m_kernelAudio(k)
 , m_mixer(mx)
 , m_sequencer(s)
