@@ -65,7 +65,7 @@ StorageApi::StorageApi(Engine& e, model::Model& m, Patch& p, PluginManager& pm,
 /* -------------------------------------------------------------------------- */
 
 bool StorageApi::storeProject(const std::string& projectPath, const v::Model& uiModel,
-    std::function<void(float)> progress)
+    std::function<void(float)> progress) const
 {
 	progress(0.0f);
 
@@ -81,13 +81,13 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 
 	/* Write Model into Patch, then into file. */
 
-	storePatch(uiModel, projectPath);
+	Patch patch = storePatch(uiModel, projectPath);
 
 	progress(0.6f);
 
 	const std::string patchPath = u::fs::join(projectPath, uiModel.projectName + G_PATCH_EXT);
 
-	if (!patchFactory::serialize(m_patch, patchPath))
+	if (!patchFactory::serialize(patch, patchPath))
 		return false;
 
 	u::log::print("[StorageApi::storeProject] Project patch saved as {}\n", patchPath);
@@ -158,29 +158,28 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 /* -------------------------------------------------------------------------- */
 
-void StorageApi::storePatch(const v::Model& uiModel, const std::string& projectPath)
+Patch StorageApi::storePatch(const v::Model& uiModel, const std::string& projectPath) const
 {
-	m_patch.columns.clear();
+	Patch patch;
+
 	for (const v::Model::Column& column : uiModel.columns)
-		m_patch.columns.push_back({column.id, column.width});
+		patch.columns.push_back({column.id, column.width});
 
 	const model::Layout& layout = m_model.get();
 
-	m_patch.name       = uiModel.projectName;
-	m_patch.bars       = layout.sequencer.bars;
-	m_patch.beats      = layout.sequencer.beats;
-	m_patch.bpm        = layout.sequencer.bpm;
-	m_patch.quantize   = layout.sequencer.quantize;
-	m_patch.metronome  = m_sequencer.isMetronomeOn(); // TODO - addShared bool metronome to Layout
-	m_patch.samplerate = m_kernelAudio.getSampleRate();
+	patch.name       = uiModel.projectName;
+	patch.bars       = layout.sequencer.bars;
+	patch.beats      = layout.sequencer.beats;
+	patch.bpm        = layout.sequencer.bpm;
+	patch.quantize   = layout.sequencer.quantize;
+	patch.metronome  = m_sequencer.isMetronomeOn(); // TODO - addShared bool metronome to Layout
+	patch.samplerate = m_kernelAudio.getSampleRate();
 
-	m_patch.plugins.clear();
 	for (const auto& p : m_model.getAllPlugins())
-		m_patch.plugins.push_back(m_pluginManager.serializePlugin(*p));
+		patch.plugins.push_back(m_pluginManager.serializePlugin(*p));
 
-	m_patch.actions = actionFactory::serializeActions(m_model.getAllActions());
+	patch.actions = actionFactory::serializeActions(m_model.getAllActions());
 
-	m_patch.waves.clear();
 	for (auto& w : m_model.getAllWaves())
 	{
 		/* Update all existing file paths in Waves, so that they point to the 
@@ -189,12 +188,13 @@ void StorageApi::storePatch(const v::Model& uiModel, const std::string& projectP
 		w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, m_model.getAllWaves()));
 		waveFactory::save(*w, w->getPath()); // TODO - error checking
 
-		m_patch.waves.push_back(waveFactory::serializeWave(*w));
+		patch.waves.push_back(waveFactory::serializeWave(*w));
 	}
 
-	m_patch.channels.clear();
 	for (const Channel& c : layout.channels.getAll())
-		m_patch.channels.push_back(channelFactory::serializeChannel(c));
+		patch.channels.push_back(channelFactory::serializeChannel(c));
+
+	return patch;
 }
 
 /* -------------------------------------------------------------------------- */

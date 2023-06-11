@@ -62,7 +62,7 @@ public:
 	Saves the current project. Returns true on success. */
 
 	bool storeProject(const std::string& projectPath, const v::Model&,
-	    std::function<void(float)>       progress);
+	    std::function<void(float)>       progress) const;
 
 	/* loadProject
 	Loads a new project. Returns a LoadState object containing the operation
@@ -71,7 +71,7 @@ public:
 	LoadState loadProject(const std::string& projectPath, PluginManager::SortMethod, std::function<void(float)> progress);
 
 private:
-	void      storePatch(const v::Model&, const std::string& projectPath);
+	Patch     storePatch(const v::Model&, const std::string& projectPath) const;
 	LoadState loadPatch(const Patch&);
 
 	Engine&           m_engine;
