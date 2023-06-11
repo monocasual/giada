@@ -28,12 +28,18 @@
 #define G_PLUGIN_FACTORY_H
 
 #include "core/types.h"
+#include <juce_audio_processors/juce_audio_processors.h>
 #include <memory>
 #include <string>
 
 namespace giada::m
 {
 class Plugin;
+}
+
+namespace giada::m::model
+{
+class Sequencer;
 }
 
 namespace giada::m::pluginFactory
@@ -44,6 +50,8 @@ Resets internal ID generator. */
 void reset();
 
 std::unique_ptr<Plugin> createInvalid(const std::string& pid, ID id);
+std::unique_ptr<Plugin> create(ID id, std::unique_ptr<juce::AudioPluginInstance>, const model::Sequencer&,
+    int sampleRate, int bufferSize);
 } // namespace giada::m::pluginFactory
 
 #endif

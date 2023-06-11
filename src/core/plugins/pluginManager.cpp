@@ -123,11 +123,7 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& pid,
 		return pluginFactory::createInvalid(pid, id);
 	}
 
-	return std::make_unique<Plugin>(
-	    m_pluginId.generate(id),
-	    std::move(pi),
-	    std::make_unique<PluginHost::Info>(sequencer, sampleRate),
-	    sampleRate, bufferSize);
+	return pluginFactory::create(id, std::move(pi), sequencer, sampleRate, bufferSize);
 }
 
 /* -------------------------------------------------------------------------- */

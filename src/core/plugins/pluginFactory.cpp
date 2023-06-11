@@ -27,6 +27,7 @@
 #include "core/plugins/pluginFactory.h"
 #include "core/idManager.h"
 #include "core/plugins/plugin.h"
+#include "core/plugins/pluginHost.h"
 
 namespace giada::m::pluginFactory
 {
@@ -49,5 +50,17 @@ void reset()
 std::unique_ptr<Plugin> createInvalid(const std::string& pid, ID id)
 {
 	return std::make_unique<Plugin>(pluginId_.generate(id), pid);
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::unique_ptr<Plugin> create(ID id, std::unique_ptr<juce::AudioPluginInstance> pi, const model::Sequencer& sequencer,
+    int sampleRate, int bufferSize)
+{
+	return std::make_unique<Plugin>(
+	    pluginId_.generate(id),
+	    std::move(pi),
+	    std::make_unique<PluginHost::Info>(sequencer, sampleRate),
+	    sampleRate, bufferSize);
 }
 } // namespace giada::m::pluginFactory
