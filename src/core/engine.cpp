@@ -199,13 +199,6 @@ bool Engine::isAudioReady() const
 
 /* -------------------------------------------------------------------------- */
 
-const Patch& Engine::getPatch() const
-{
-	return m_patch;
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Engine::init(const Conf& conf)
 {
 	registerThread(Thread::MAIN, /*realtime=*/false);

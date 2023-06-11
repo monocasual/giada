@@ -73,11 +73,6 @@ public:
 
 	bool isAudioReady() const;
 
-	/* getPatch
-	Returns a read-only reference to the current loaded Patch. */
-
-	const Patch& getPatch() const;
-
 	/* init
 	Initializes all sub-components. If KernelAudio fails to start, the process
 	interrupts and Giada is put in an invalid state. */
