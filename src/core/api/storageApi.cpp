@@ -113,9 +113,9 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 	/* Read the selected project's patch */
 
 	const std::string patchPath = u::fs::join(projectPath, u::fs::stripExt(u::fs::basename(projectPath)) + G_PATCH_EXT);
+	const Patch       patch     = patchFactory::deserialize(patchPath);
 
-	m_patch = patchFactory::deserialize(patchPath);
-	if (m_patch.status != G_FILE_OK)
+	if (patch.status != G_FILE_OK)
 		return {};
 
 	progress(0.3f);
@@ -124,7 +124,7 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 	m_mixer.disable();
 	m_engine.reset(pluginSortMethod);
-	LoadState state = loadPatch(m_patch);
+	LoadState state = loadPatch(patch);
 
 	progress(0.6f);
 
@@ -137,7 +137,7 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 	const bool hasSolos        = m_channelManager.hasSolos();
 
 	m_mixer.updateSoloCount(hasSolos);
-	m_actionRecorder.updateSamplerate(sampleRate, m_patch.samplerate);
+	m_actionRecorder.updateSamplerate(sampleRate, patch.samplerate);
 	m_sequencer.recomputeFrames(sampleRate);
 	m_mixer.allocRecBuffer(maxFramesInLoop);
 
