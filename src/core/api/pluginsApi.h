@@ -63,8 +63,6 @@ public:
 	void scan(const std::string& dir, const std::function<void(float)>& progress);
 	void process(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>&, juce::MidiBuffer* events = nullptr);
 
-	const Patch::Plugin serialize(const Plugin&) const;
-
 private:
 	KernelAudio&   m_kernelAudio;
 	PluginManager& m_pluginManager;

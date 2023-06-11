@@ -172,7 +172,7 @@ Patch StorageApi::storePatch(const v::Model& uiModel, const std::string& project
 	patch.samplerate = m_kernelAudio.getSampleRate();
 
 	for (const auto& p : m_model.getAllPlugins())
-		patch.plugins.push_back(m_pluginManager.serializePlugin(*p));
+		patch.plugins.push_back(pluginFactory::serializePlugin(*p));
 
 	patch.actions = actionFactory::serializeActions(m_model.getAllActions());
 

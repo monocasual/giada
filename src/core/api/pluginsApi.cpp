@@ -147,11 +147,4 @@ void PluginsApi::process(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>& p
 {
 	m_pluginHost.processStack(outBuf, plugins, events);
 }
-
-/* -------------------------------------------------------------------------- */
-
-const Patch::Plugin PluginsApi::serialize(const Plugin& p) const
-{
-	return m_pluginManager.serializePlugin(p);
-}
 } // namespace giada::m

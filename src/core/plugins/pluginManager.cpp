@@ -144,13 +144,6 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(const Plugin& src, int sampleR
 
 /* -------------------------------------------------------------------------- */
 
-const Patch::Plugin PluginManager::serializePlugin(const Plugin& p) const
-{
-	return pluginFactory::serializePlugin(p);
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::vector<Plugin*> PluginManager::clonePlugins(const std::vector<Plugin*>& source,
     int sampleRate, int bufferSize, model::Model& model)
 {
