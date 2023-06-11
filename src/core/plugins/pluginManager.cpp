@@ -166,26 +166,8 @@ const Patch::Plugin PluginManager::serializePlugin(const Plugin& p) const
 std::unique_ptr<Plugin> PluginManager::deserializePlugin(const Patch::Plugin& p,
     int sampleRate, int bufferSize, const model::Sequencer& sequencer)
 {
-	std::unique_ptr<Plugin> plugin = makePlugin(p.path, sampleRate, bufferSize, sequencer, p.id);
-	if (!plugin->valid)
-		return plugin; // Return invalid version
-
-	plugin->setBypass(p.bypass);
-	plugin->setState(PluginState(p.state));
-
-	/* Fill plug-in MidiIn parameters. Don't fill Plugin::midiInParam if 
-	Patch::midiInParams are zero: it would wipe out the current default 0x0
-	values. */
-
-	if (!p.midiInParams.empty())
-	{
-		plugin->midiInParams.clear();
-		std::size_t paramIndex = 0;
-		for (uint32_t midiInParam : p.midiInParams)
-			plugin->midiInParams.emplace_back(midiInParam, paramIndex++);
-	}
-
-	return plugin;
+	std::unique_ptr<juce::AudioPluginInstance> pi = makeJucePlugin(p.path, sampleRate, bufferSize);
+	return pluginFactory::deserializePlugin(p, std::move(pi), sequencer, sampleRate, bufferSize);
 }
 
 /* -------------------------------------------------------------------------- */

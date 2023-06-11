@@ -27,6 +27,7 @@
 #ifndef G_PLUGIN_FACTORY_H
 #define G_PLUGIN_FACTORY_H
 
+#include "core/patch.h"
 #include "core/types.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <memory>
@@ -52,6 +53,9 @@ void reset();
 std::unique_ptr<Plugin> createInvalid(const std::string& pid, ID id);
 std::unique_ptr<Plugin> create(ID id, std::unique_ptr<juce::AudioPluginInstance>, const model::Sequencer&,
     int sampleRate, int bufferSize);
+
+std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin&, std::unique_ptr<juce::AudioPluginInstance>,
+    const model::Sequencer&, int sampleRate, int bufferSize);
 } // namespace giada::m::pluginFactory
 
 #endif

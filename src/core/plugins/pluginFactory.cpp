@@ -63,4 +63,36 @@ std::unique_ptr<Plugin> create(ID id, std::unique_ptr<juce::AudioPluginInstance>
 	    std::make_unique<PluginHost::Info>(sequencer, sampleRate),
 	    sampleRate, bufferSize);
 }
+
+/* -------------------------------------------------------------------------- */
+
+std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin& pplugin, std::unique_ptr<juce::AudioPluginInstance> pi,
+    const model::Sequencer& sequencer, int sampleRate, int bufferSize)
+{
+	/* If the original juce::AudioPluginInstance is invalid, just return an
+    invalid giada::m::Plugin object. This way we can keep track of invalid
+    plug-ins. */
+
+	if (pi == nullptr)
+		return pluginFactory::createInvalid(pplugin.path, pplugin.id);
+
+	std::unique_ptr<Plugin> plugin = create(pplugin.id, std::move(pi), sequencer, sampleRate, bufferSize);
+
+	plugin->setBypass(pplugin.bypass);
+	plugin->setState(PluginState(pplugin.state));
+
+	/* Fill plug-in MidiIn parameters. Don't fill Plugin::midiInParam if 
+	Patch::midiInParams are zero: it would wipe out the current default 0x0
+	values. */
+
+	if (!pplugin.midiInParams.empty())
+	{
+		plugin->midiInParams.clear();
+		std::size_t paramIndex = 0;
+		for (uint32_t midiInParam : pplugin.midiInParams)
+			plugin->midiInParams.emplace_back(midiInParam, paramIndex++);
+	}
+
+	return plugin;
+}
 } // namespace giada::m::pluginFactory
