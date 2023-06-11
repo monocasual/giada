@@ -55,7 +55,7 @@ public:
 		std::vector<std::string> missingPlugins = {};
 	};
 
-	StorageApi(Engine&, model::Model&, Patch&, PluginManager&, MidiSynchronizer&,
+	StorageApi(Engine&, model::Model&, PluginManager&, MidiSynchronizer&,
 	    Mixer&, ChannelManager&, KernelAudio&, Sequencer&, ActionRecorder&);
 
 	/* storeProject
@@ -76,7 +76,6 @@ private:
 
 	Engine&           m_engine;
 	model::Model&     m_model;
-	Patch&            m_patch;
 	PluginManager&    m_pluginManager;
 	MidiSynchronizer& m_midiSynchronizer;
 	Mixer&            m_mixer;

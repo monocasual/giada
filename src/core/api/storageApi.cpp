@@ -46,12 +46,10 @@ bool StorageApi::LoadState::isGood() const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-StorageApi::StorageApi(Engine& e, model::Model& m, Patch& p, PluginManager& pm,
-    MidiSynchronizer& ms, Mixer& mx, ChannelManager& cm, KernelAudio& ka, Sequencer& s,
-    ActionRecorder& ar)
+StorageApi::StorageApi(Engine& e, model::Model& m, PluginManager& pm, MidiSynchronizer& ms,
+    Mixer& mx, ChannelManager& cm, KernelAudio& ka, Sequencer& s, ActionRecorder& ar)
 : m_engine(e)
 , m_model(m)
-, m_patch(p)
 , m_pluginManager(pm)
 , m_midiSynchronizer(ms)
 , m_mixer(mx)
