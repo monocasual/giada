@@ -26,7 +26,6 @@
 
 #include "glue/layout.h"
 #include "core/conf.h"
-#include "core/engine.h"
 #include "core/patch.h"
 #include "core/sequencer.h"
 #include "glue/channel.h"
@@ -56,8 +55,7 @@
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/ui.h"
 
-extern giada::v::Ui     g_ui;
-extern giada::m::Engine g_engine;
+extern giada::v::Ui g_ui;
 
 namespace giada::c::layout
 {
@@ -73,7 +71,7 @@ void openBrowserForProjectLoad()
 void openBrowserForProjectSave()
 {
 	v::gdWindow* childWin = new v::gdBrowserSave(g_ui.getI18Text(v::LangMap::BROWSER_SAVEPROJECT),
-	    g_ui.model.patchPath, g_engine.getPatch().name, c::storage::saveProject, 0, g_ui.model);
+	    g_ui.model.patchPath, g_ui.model.projectName, c::storage::saveProject, 0, g_ui.model);
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), childWin, WID_FILE_BROWSER);
 }
 

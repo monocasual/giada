@@ -147,7 +147,9 @@ void saveProject(void* data)
 	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECT));
 	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
-	if (g_engine.getStorageApi().storeProject(projectName, projectPath, g_ui.model, engineProgress))
+	g_ui.model.projectName = projectName;
+
+	if (g_engine.getStorageApi().storeProject(projectPath, g_ui.model, engineProgress))
 	{
 		g_ui.setMainWindowTitle(projectName);
 		g_ui.model.patchPath = u::fs::getUpDir(projectPath);

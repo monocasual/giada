@@ -55,6 +55,7 @@ struct Model
 	std::string pluginPath   = "";
 	std::string patchPath    = "";
 	std::string samplePath   = "";
+	std::string projectName  = "";
 
 	geompp::Rect<int> mainWindowBounds = {-1, -1, G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT};
 

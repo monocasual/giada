@@ -86,8 +86,10 @@ void Ui::load(const m::Patch& patch)
 	model.columns.clear();
 	for (const m::Patch::Column& col : patch.columns)
 		model.columns.push_back({col.id, col.width});
-	mainWindow->keyboard->rebuild();
 
+	model.projectName = patch.name;
+
+	mainWindow->keyboard->rebuild();
 	mainWindow->setTitle(patch.name);
 }
 

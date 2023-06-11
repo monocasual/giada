@@ -64,8 +64,8 @@ StorageApi::StorageApi(Engine& e, model::Model& m, Patch& p, PluginManager& pm,
 
 /* -------------------------------------------------------------------------- */
 
-bool StorageApi::storeProject(const std::string& projectName, const std::string& projectPath,
-    const v::Model& uiModel, std::function<void(float)> progress)
+bool StorageApi::storeProject(const std::string& projectPath, const v::Model& uiModel,
+    std::function<void(float)> progress)
 {
 	progress(0.0f);
 
@@ -90,11 +90,11 @@ bool StorageApi::storeProject(const std::string& projectName, const std::string&
 
 	/* Write Model into Patch, then into file. */
 
-	storePatch(projectName, uiModel);
+	storePatch(uiModel);
 
 	progress(0.6f);
 
-	const std::string patchPath = u::fs::join(projectPath, projectName + G_PATCH_EXT);
+	const std::string patchPath = u::fs::join(projectPath, uiModel.projectName + G_PATCH_EXT);
 
 	if (!patchFactory::serialize(m_patch, patchPath))
 		return false;
@@ -168,7 +168,7 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 /* -------------------------------------------------------------------------- */
 
-void StorageApi::storePatch(const std::string& projectName, const v::Model& uiModel)
+void StorageApi::storePatch(const v::Model& uiModel)
 {
 	m_patch.columns.clear();
 	for (const v::Model::Column& column : uiModel.columns)
@@ -176,7 +176,7 @@ void StorageApi::storePatch(const std::string& projectName, const v::Model& uiMo
 
 	const model::Layout& layout = m_model.get();
 
-	m_patch.name       = projectName;
+	m_patch.name       = uiModel.projectName;
 	m_patch.bars       = layout.sequencer.bars;
 	m_patch.beats      = layout.sequencer.beats;
 	m_patch.bpm        = layout.sequencer.bpm;
