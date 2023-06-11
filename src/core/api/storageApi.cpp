@@ -77,20 +77,11 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 
 	u::log::print("[StorageApi::storeProject] Project dir created: {}\n", projectPath);
 
-	/* Update all existing file paths in Waves, so that they point to the project
-	folder they belong to. */
-
-	for (std::unique_ptr<Wave>& w : m_model.getAllWaves())
-	{
-		w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, m_model.getAllWaves()));
-		waveFactory::save(*w, w->getPath()); // TODO - error checking
-	}
-
 	progress(0.3f);
 
 	/* Write Model into Patch, then into file. */
 
-	storePatch(uiModel);
+	storePatch(uiModel, projectPath);
 
 	progress(0.6f);
 
@@ -167,7 +158,7 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 /* -------------------------------------------------------------------------- */
 
-void StorageApi::storePatch(const v::Model& uiModel)
+void StorageApi::storePatch(const v::Model& uiModel, const std::string& projectPath)
 {
 	m_patch.columns.clear();
 	for (const v::Model::Column& column : uiModel.columns)
@@ -190,8 +181,16 @@ void StorageApi::storePatch(const v::Model& uiModel)
 	m_patch.actions = actionFactory::serializeActions(m_model.getAllActions());
 
 	m_patch.waves.clear();
-	for (const auto& w : m_model.getAllWaves())
+	for (auto& w : m_model.getAllWaves())
+	{
+		/* Update all existing file paths in Waves, so that they point to the 
+		project folder they belong to. */
+
+		w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, m_model.getAllWaves()));
+		waveFactory::save(*w, w->getPath()); // TODO - error checking
+
 		m_patch.waves.push_back(waveFactory::serializeWave(*w));
+	}
 
 	m_patch.channels.clear();
 	for (const Channel& c : layout.channels.getAll())
