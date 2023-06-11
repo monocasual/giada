@@ -41,7 +41,7 @@ namespace giada::m
 {
 void PluginManager::reset(SortMethod sortMethod)
 {
-	m_pluginId       = IdManager();
+	pluginFactory::reset();
 	m_missingPlugins = false;
 
 	m_unknownPluginList.clear();
@@ -110,11 +110,6 @@ bool PluginManager::loadList(const std::string& filepath)
 std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& pid,
     int sampleRate, int bufferSize, const model::Sequencer& sequencer, ID id)
 {
-	/* Plug-in ID generator is updated anyway, as we store Plugin objects also
-	if they are in an invalid state. */
-
-	m_pluginId.set(id);
-
 	std::unique_ptr<juce::AudioPluginInstance> pi = makeJucePlugin(pid, sampleRate, bufferSize);
 	if (pi == nullptr)
 	{

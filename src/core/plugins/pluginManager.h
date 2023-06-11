@@ -27,7 +27,6 @@
 #ifndef G_PLUGIN_MANAGER_H
 #define G_PLUGIN_MANAGER_H
 
-#include "core/idManager.h"
 #include "core/patch.h"
 #include "plugin.h"
 #include <memory>
@@ -123,8 +122,6 @@ public:
 
 private:
 	std::unique_ptr<juce::AudioPluginInstance> makeJucePlugin(const std::string& pid, int sampleRate, int bufferSize);
-
-	IdManager m_pluginId;
 
 	/* formatManager
 	Plugin format manager. */
