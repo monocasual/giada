@@ -162,8 +162,7 @@ Engine::Engine()
 			m_mixer.setInputRecMode(InputRecMode::RIGID);
 	};
 	m_channelManager.onChannelRecorded = [this](Frame recordedFrames) {
-		std::string filename = fmt::format("TAKE-{}.wav", m_patch.lastTakeId++);
-		return waveFactory::createEmpty(recordedFrames, G_MAX_IO_CHANS, m_kernelAudio.getSampleRate(), filename);
+		return waveFactory::createEmpty(recordedFrames, G_MAX_IO_CHANS, m_kernelAudio.getSampleRate(), "TAKE");
 	};
 
 	m_sequencer.onAboutStart = [this](SeqStatus status) {

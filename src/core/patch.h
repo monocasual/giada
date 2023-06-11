@@ -133,7 +133,6 @@ struct Patch
 	int         beats      = G_DEFAULT_BEATS;
 	float       bpm        = G_DEFAULT_BPM;
 	bool        quantize   = G_DEFAULT_QUANTIZE;
-	int         lastTakeId = 0;
 	int         samplerate = G_DEFAULT_SAMPLERATE;
 	bool        metronome  = false;
 

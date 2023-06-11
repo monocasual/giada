@@ -43,7 +43,6 @@ void readCommons_(Patch& patch, const nlohmann::json& j)
 	patch.beats      = j.value(PATCH_KEY_BEATS, G_DEFAULT_BEATS);
 	patch.bpm        = j.value(PATCH_KEY_BPM, G_DEFAULT_BPM);
 	patch.quantize   = j.value(PATCH_KEY_QUANTIZE, G_DEFAULT_QUANTIZE);
-	patch.lastTakeId = j.value(PATCH_KEY_LAST_TAKE_ID, 0);
 	patch.samplerate = j.value(PATCH_KEY_SAMPLERATE, G_DEFAULT_SAMPLERATE);
 	patch.metronome  = j.value(PATCH_KEY_METRONOME, false);
 }
@@ -275,7 +274,6 @@ void writeCommons_(const Patch& patch, nlohmann::json& j)
 	j[PATCH_KEY_BEATS]         = patch.beats;
 	j[PATCH_KEY_BPM]           = patch.bpm;
 	j[PATCH_KEY_QUANTIZE]      = patch.quantize;
-	j[PATCH_KEY_LAST_TAKE_ID]  = patch.lastTakeId;
 	j[PATCH_KEY_SAMPLERATE]    = patch.samplerate;
 	j[PATCH_KEY_METRONOME]     = patch.metronome;
 }

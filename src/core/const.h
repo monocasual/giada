@@ -242,7 +242,6 @@ constexpr auto PATCH_KEY_QUANTIZE                     = "quantize";
 constexpr auto PATCH_KEY_MASTER_VOL_IN                = "master_vol_in";
 constexpr auto PATCH_KEY_MASTER_VOL_OUT               = "master_vol_out";
 constexpr auto PATCH_KEY_METRONOME                    = "metronome";
-constexpr auto PATCH_KEY_LAST_TAKE_ID                 = "last_take_id";
 constexpr auto PATCH_KEY_SAMPLERATE                   = "samplerate";
 constexpr auto PATCH_KEY_COLUMNS                      = "columns";
 constexpr auto PATCH_KEY_PLUGINS                      = "plugins";
