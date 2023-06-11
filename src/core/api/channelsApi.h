@@ -92,7 +92,6 @@ public:
 	void sendMidi(ID, MidiEvent);
 	bool saveSample(ID, const std::string& filePath);
 
-	Patch::Channel       serializeChannel(const Channel&);
 	channelFactory::Data deserializeChannel(const Patch::Channel&, float samplerateRatio, int bufferSize);
 
 private:

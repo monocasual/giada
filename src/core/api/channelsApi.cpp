@@ -313,11 +313,6 @@ bool ChannelsApi::saveSample(ID channelId, const std::string& filePath)
 
 /* -------------------------------------------------------------------------- */
 
-Patch::Channel ChannelsApi::serializeChannel(const Channel& ch)
-{
-	return channelFactory::serializeChannel(ch);
-}
-
 channelFactory::Data ChannelsApi::deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize)
 {
 	const Resampler::Quality rsmpQuality = m_model.get().kernelAudio.rsmpQuality;
