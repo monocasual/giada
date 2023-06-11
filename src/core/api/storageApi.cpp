@@ -104,10 +104,6 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 	progress(0.0f);
 
-	/* Suspend MIDI clock output (if enabled). */
-
-	m_midiSynchronizer.stopSendClock();
-
 	/* Read the selected project's patch */
 
 	const std::string patchPath = u::fs::join(projectPath, u::fs::stripExt(u::fs::basename(projectPath)) + G_PATCH_EXT);
@@ -118,8 +114,9 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 	progress(0.3f);
 
-	/* Then suspend Mixer, reset and fill the model. */
+	/* Then suspend Mixer, MIDI synch, reset and fill the model. */
 
+	m_midiSynchronizer.stopSendClock();
 	m_mixer.disable();
 	m_engine.reset(pluginSortMethod);
 	LoadState state = loadPatch(patch);
