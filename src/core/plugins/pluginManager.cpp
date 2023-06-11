@@ -111,10 +111,7 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& pid,
 {
 	std::unique_ptr<juce::AudioPluginInstance> pi = makeJucePlugin(pid, sampleRate, bufferSize);
 	if (pi == nullptr)
-	{
-		m_unknownPluginList.push_back(pid);
 		return pluginFactory::createInvalid(pid, id);
-	}
 
 	return pluginFactory::create(id, std::move(pi), sequencer, sampleRate, bufferSize);
 }
@@ -281,6 +278,7 @@ std::unique_ptr<juce::AudioPluginInstance> PluginManager::makeJucePlugin(const s
 	if (pd == nullptr)
 	{
 		u::log::print("[pluginManager::makeJucePlugin] no plugin found with pid={}!\n", pid);
+		m_unknownPluginList.push_back(pid);
 		return nullptr;
 	}
 
@@ -290,6 +288,7 @@ std::unique_ptr<juce::AudioPluginInstance> PluginManager::makeJucePlugin(const s
 	{
 		u::log::print("[pluginManager::makeJucePlugin] unable to create instance with pid={}! Error: {}\n",
 		    pid, error.toStdString());
+		m_unknownPluginList.push_back(pid);
 		return nullptr;
 	}
 
