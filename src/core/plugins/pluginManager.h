@@ -137,11 +137,6 @@ private:
 	List of unrecognized plugins found in a patch. */
 
 	std::vector<std::string> m_unknownPluginList;
-
-	/* missingPlugins
-	If some plugins from any stack are missing. */
-
-	bool m_missingPlugins;
 };
 } // namespace giada::m
 

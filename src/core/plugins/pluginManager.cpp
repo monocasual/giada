@@ -42,7 +42,6 @@ namespace giada::m
 void PluginManager::reset(SortMethod sortMethod)
 {
 	pluginFactory::reset();
-	m_missingPlugins = false;
 
 	m_unknownPluginList.clear();
 	if (m_formatManager.getNumFormats() == 0) // Must be called only once
@@ -113,7 +112,6 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& pid,
 	std::unique_ptr<juce::AudioPluginInstance> pi = makeJucePlugin(pid, sampleRate, bufferSize);
 	if (pi == nullptr)
 	{
-		m_missingPlugins = true;
 		m_unknownPluginList.push_back(pid);
 		return pluginFactory::createInvalid(pid, id);
 	}
@@ -251,7 +249,7 @@ std::vector<PluginManager::PluginInfo> PluginManager::getPluginsInfo() const
 
 bool PluginManager::hasMissingPlugins() const
 {
-	return m_missingPlugins;
+	return !m_unknownPluginList.empty();
 }
 
 /* -------------------------------------------------------------------------- */
