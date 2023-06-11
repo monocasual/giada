@@ -41,7 +41,7 @@ class ActionRecorder;
 class ActionEditorApi
 {
 public:
-	ActionEditorApi(Engine&, model::Model&, Sequencer&, ActionRecorder&);
+	ActionEditorApi(Engine&, Sequencer&, ActionRecorder&);
 
 	std::vector<Action> getActionsOnChannel(ID channelId) const;
 
@@ -58,7 +58,6 @@ public:
 
 private:
 	Engine&         m_engine;
-	model::Model&   m_model;
 	Sequencer&      m_sequencer;
 	ActionRecorder& m_actionRecorder;
 };

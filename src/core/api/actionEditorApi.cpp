@@ -31,9 +31,8 @@
 
 namespace giada::m
 {
-ActionEditorApi::ActionEditorApi(Engine& e, model::Model& m, Sequencer& s, ActionRecorder& ar)
+ActionEditorApi::ActionEditorApi(Engine& e, Sequencer& s, ActionRecorder& ar)
 : m_engine(e)
-, m_model(m)
 , m_sequencer(s)
 , m_actionRecorder(ar)
 {
