@@ -74,6 +74,8 @@ private:
 	Patch     storePatch(const v::Model&, const std::string& projectPath) const;
 	LoadState loadPatch(const Patch&);
 
+	std::vector<Plugin*> findPlugins(std::vector<ID> pluginIds);
+
 	Engine&           m_engine;
 	model::Model&     m_model;
 	PluginManager&    m_pluginManager;

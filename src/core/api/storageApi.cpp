@@ -196,9 +196,10 @@ Patch StorageApi::storePatch(const v::Model& uiModel, const std::string& project
 
 StorageApi::LoadState StorageApi::loadPatch(const Patch& patch)
 {
-	const int   sampleRate      = m_kernelAudio.getSampleRate();
-	const int   bufferSize      = m_kernelAudio.getBufferSize();
-	const float sampleRateRatio = sampleRate / static_cast<float>(patch.samplerate);
+	const int                sampleRate      = m_kernelAudio.getSampleRate();
+	const int                bufferSize      = m_kernelAudio.getBufferSize();
+	const Resampler::Quality rsmpQuality     = m_kernelAudio.getResamplerQuality();
+	const float              sampleRateRatio = sampleRate / static_cast<float>(patch.samplerate);
 
 	/* Lock the model's data. Real-time thread can't read from it until this method
 	goes out of scope. */
@@ -238,7 +239,9 @@ StorageApi::LoadState StorageApi::loadPatch(const Patch& patch)
 
 	for (const Patch::Channel& pchannel : patch.channels)
 	{
-		channelFactory::Data data = m_engine.getChannelsApi().deserializeChannel(pchannel, sampleRateRatio, bufferSize);
+		Wave*                wave    = m_model.findShared<Wave>(pchannel.waveId);
+		std::vector<Plugin*> plugins = findPlugins(pchannel.pluginIds);
+		channelFactory::Data data    = channelFactory::deserializeChannel(pchannel, sampleRateRatio, bufferSize, rsmpQuality, wave, plugins);
 		m_model.get().channels.add(data.channel);
 		m_model.addShared(std::move(data.shared));
 	}
@@ -252,5 +255,19 @@ StorageApi::LoadState StorageApi::loadPatch(const Patch& patch)
 	m_model.get().sequencer.quantize = patch.quantize;
 
 	return state;
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::vector<Plugin*> StorageApi::findPlugins(std::vector<ID> pluginIds)
+{
+	std::vector<Plugin*> out;
+	for (ID id : pluginIds)
+	{
+		Plugin* plugin = m_model.findShared<Plugin>(id);
+		if (plugin != nullptr)
+			out.push_back(plugin);
+	}
+	return out;
 }
 } // namespace giada::m
