@@ -108,11 +108,10 @@ public:
 
 	std::unique_ptr<juce::AudioPluginInstance> makeJucePlugin(const std::string& pid, int sampleRate, int bufferSize);
 
-	/* (de)serializePlugin
+	/* serializePlugin
 	Transforms patch data into a Plugin object and vice versa. */
 
-	const Patch::Plugin     serializePlugin(const Plugin& p) const;
-	std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin&, int sampleRate, int bufferSize, const model::Sequencer&);
+	const Patch::Plugin serializePlugin(const Plugin& p) const;
 
 	/* clonePlugins
 	Clones all plugins in the Plugin vector passed in as a parameter. Returns a

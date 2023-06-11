@@ -29,6 +29,7 @@
 #include "core/engine.h"
 #include "core/kernelAudio.h"
 #include "core/mixer.h"
+#include "core/plugins/pluginFactory.h"
 #include "utils/fs.h"
 
 namespace giada::m
@@ -159,6 +160,7 @@ std::unique_ptr<Plugin> PluginsApi::deserialize(const Patch::Plugin& pplugin)
 	const int sampleRate = m_kernelAudio.getSampleRate();
 	const int bufferSize = m_kernelAudio.getBufferSize();
 
-	return m_pluginManager.deserializePlugin(pplugin, sampleRate, bufferSize, m_model.get().sequencer);
+	std::unique_ptr<juce::AudioPluginInstance> pi = m_pluginManager.makeJucePlugin(pplugin.path, sampleRate, bufferSize);
+	return pluginFactory::deserializePlugin(pplugin, std::move(pi), m_model.get().sequencer, sampleRate, bufferSize);
 }
 } // namespace giada::m

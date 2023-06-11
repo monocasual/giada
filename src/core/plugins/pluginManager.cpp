@@ -163,15 +163,6 @@ const Patch::Plugin PluginManager::serializePlugin(const Plugin& p) const
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Plugin> PluginManager::deserializePlugin(const Patch::Plugin& p,
-    int sampleRate, int bufferSize, const model::Sequencer& sequencer)
-{
-	std::unique_ptr<juce::AudioPluginInstance> pi = makeJucePlugin(p.path, sampleRate, bufferSize);
-	return pluginFactory::deserializePlugin(p, std::move(pi), sequencer, sampleRate, bufferSize);
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::vector<Plugin*> PluginManager::clonePlugins(const std::vector<Plugin*>& source,
     int sampleRate, int bufferSize, model::Model& model)
 {
