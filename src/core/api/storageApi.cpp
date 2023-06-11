@@ -31,6 +31,7 @@
 #include "core/midiSynchronizer.h"
 #include "core/model/model.h"
 #include "core/patchFactory.h"
+#include "core/plugins/pluginFactory.h"
 #include "core/waveFactory.h"
 #include "utils/fs.h"
 #include "utils/log.h"
@@ -219,7 +220,8 @@ StorageApi::LoadState StorageApi::loadPatch(const Patch& patch)
 	m_model.getAllPlugins().clear();
 	for (const Patch::Plugin& pplugin : patch.plugins)
 	{
-		std::unique_ptr<Plugin> p = m_engine.getPluginsApi().deserialize(pplugin);
+		std::unique_ptr<juce::AudioPluginInstance> pi = m_pluginManager.makeJucePlugin(pplugin.path, sampleRate, bufferSize);
+		std::unique_ptr<Plugin>                    p  = pluginFactory::deserializePlugin(pplugin, std::move(pi), m_model.get().sequencer, sampleRate, bufferSize);
 		if (!p->valid)
 			state.missingPlugins.push_back(pplugin.path);
 		m_model.getAllPlugins().push_back(std::move(p));

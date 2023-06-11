@@ -154,13 +154,4 @@ const Patch::Plugin PluginsApi::serialize(const Plugin& p) const
 {
 	return m_pluginManager.serializePlugin(p);
 }
-
-std::unique_ptr<Plugin> PluginsApi::deserialize(const Patch::Plugin& pplugin)
-{
-	const int sampleRate = m_kernelAudio.getSampleRate();
-	const int bufferSize = m_kernelAudio.getBufferSize();
-
-	std::unique_ptr<juce::AudioPluginInstance> pi = m_pluginManager.makeJucePlugin(pplugin.path, sampleRate, bufferSize);
-	return pluginFactory::deserializePlugin(pplugin, std::move(pi), m_model.get().sequencer, sampleRate, bufferSize);
-}
 } // namespace giada::m
