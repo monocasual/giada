@@ -113,8 +113,6 @@ public:
 	const Patch::Plugin     serializePlugin(const Plugin& p) const;
 	std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin&, int sampleRate, int bufferSize, const model::Sequencer&);
 
-	std::vector<Plugin*> hydratePlugins(std::vector<ID> pluginIds, model::Model&);
-
 	/* clonePlugins
 	Clones all plugins in the Plugin vector passed in as a parameter. Returns a
 	new vector containing the new clones. */

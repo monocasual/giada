@@ -317,7 +317,21 @@ channelFactory::Data ChannelsApi::deserializeChannel(const Patch::Channel& pch, 
 {
 	const Resampler::Quality rsmpQuality = m_model.get().kernelAudio.rsmpQuality;
 	Wave*                    wave        = m_model.findShared<Wave>(pch.waveId);
-	std::vector<Plugin*>     plugins     = m_pluginManager.hydratePlugins(pch.pluginIds, m_model);
+	std::vector<Plugin*>     plugins     = findPlugins(pch.pluginIds);
 	return channelFactory::deserializeChannel(pch, samplerateRatio, bufferSize, rsmpQuality, wave, plugins);
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::vector<Plugin*> ChannelsApi::findPlugins(std::vector<ID> pluginIds)
+{
+	std::vector<Plugin*> out;
+	for (ID id : pluginIds)
+	{
+		Plugin* plugin = m_model.findShared<Plugin>(id);
+		if (plugin != nullptr)
+			out.push_back(plugin);
+	}
+	return out;
 }
 } // namespace giada::m

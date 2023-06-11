@@ -95,6 +95,8 @@ public:
 	channelFactory::Data deserializeChannel(const Patch::Channel&, float samplerateRatio, int bufferSize);
 
 private:
+	std::vector<Plugin*> findPlugins(std::vector<ID> pluginIds);
+
 	model::Model&   m_model;
 	KernelAudio&    m_kernelAudio;
 	Mixer&          m_mixer;

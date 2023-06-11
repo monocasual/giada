@@ -213,20 +213,6 @@ std::unique_ptr<Plugin> PluginManager::deserializePlugin(const Patch::Plugin& p,
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Plugin*> PluginManager::hydratePlugins(std::vector<ID> pluginIds, model::Model& model)
-{
-	std::vector<Plugin*> out;
-	for (ID id : pluginIds)
-	{
-		Plugin* plugin = model.findShared<Plugin>(id);
-		if (plugin != nullptr)
-			out.push_back(plugin);
-	}
-	return out;
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::vector<Plugin*> PluginManager::clonePlugins(const std::vector<Plugin*>& source,
     int sampleRate, int bufferSize, model::Model& model)
 {
