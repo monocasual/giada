@@ -117,7 +117,11 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& pid,
 
 	std::unique_ptr<juce::AudioPluginInstance> pi = makeJucePlugin(pid, sampleRate, bufferSize);
 	if (pi == nullptr)
-		return makeInvalidPlugin(pid, id);
+	{
+		m_missingPlugins = true;
+		m_unknownPluginList.push_back(pid);
+		return pluginFactory::createInvalid(pid, id);
+	}
 
 	return std::make_unique<Plugin>(
 	    m_pluginId.generate(id),
@@ -303,14 +307,5 @@ std::unique_ptr<juce::AudioPluginInstance> PluginManager::makeJucePlugin(const s
 	u::log::print("[pluginManager::makeJucePlugin] plugin instance with pid={} created\n", pid);
 
 	return pi;
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::unique_ptr<Plugin> PluginManager::makeInvalidPlugin(const std::string& pid, ID id)
-{
-	m_missingPlugins = true;
-	m_unknownPluginList.push_back(pid);
-	return pluginFactory::createInvalid(pid, id);
 }
 } // namespace giada::m

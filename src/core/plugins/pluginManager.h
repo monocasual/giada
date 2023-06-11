@@ -122,7 +122,6 @@ public:
 	void sortPlugins(SortMethod sortMethod);
 
 private:
-	std::unique_ptr<Plugin>                    makeInvalidPlugin(const std::string& pid, ID id);
 	std::unique_ptr<juce::AudioPluginInstance> makeJucePlugin(const std::string& pid, int sampleRate, int bufferSize);
 
 	IdManager m_pluginId;
