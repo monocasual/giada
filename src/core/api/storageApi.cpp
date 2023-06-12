@@ -154,34 +154,11 @@ Patch StorageApi::storePatch(const v::Model& uiModel, const std::string& project
 	for (const v::Model::Column& column : uiModel.columns)
 		patch.columns.push_back({column.id, column.width});
 
-	const model::Layout& layout = m_model.get();
-
 	patch.name       = uiModel.projectName;
-	patch.bars       = layout.sequencer.bars;
-	patch.beats      = layout.sequencer.beats;
-	patch.bpm        = layout.sequencer.bpm;
-	patch.quantize   = layout.sequencer.quantize;
 	patch.metronome  = m_sequencer.isMetronomeOn(); // TODO - addShared bool metronome to Layout
 	patch.samplerate = m_kernelAudio.getSampleRate();
 
-	for (const auto& p : m_model.getAllPlugins())
-		patch.plugins.push_back(pluginFactory::serializePlugin(*p));
-
-	patch.actions = actionFactory::serializeActions(m_model.getAllActions());
-
-	for (auto& w : m_model.getAllWaves())
-	{
-		/* Update all existing file paths in Waves, so that they point to the 
-		project folder they belong to. */
-
-		w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, m_model.getAllWaves()));
-		waveFactory::save(*w, w->getPath()); // TODO - error checking
-
-		patch.waves.push_back(waveFactory::serializeWave(*w));
-	}
-
-	for (const Channel& c : layout.channels.getAll())
-		patch.channels.push_back(channelFactory::serializeChannel(c));
+	m_model.store(patch, projectPath);
 
 	return patch;
 }

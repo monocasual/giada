@@ -309,6 +309,43 @@ void Model::store(Conf& conf) const
 
 /* -------------------------------------------------------------------------- */
 
+void Model::store(Patch& patch, const std::string& projectPath)
+{
+	/* Lock the shared data. Real-time thread can't read from it until this method
+	goes out of scope. Even if it's mostly a read-only operation, some Wave
+	objects need to be updated at some point. */
+
+	DataLock lock = lockData(SwapType::NONE);
+
+	const Layout& layout = get();
+
+	patch.bars     = layout.sequencer.bars;
+	patch.beats    = layout.sequencer.beats;
+	patch.bpm      = layout.sequencer.bpm;
+	patch.quantize = layout.sequencer.quantize;
+
+	for (const auto& p : getAllPlugins())
+		patch.plugins.push_back(pluginFactory::serializePlugin(*p));
+
+	patch.actions = actionFactory::serializeActions(getAllActions());
+
+	for (auto& w : getAllWaves())
+	{
+		/* Update all existing file paths in Waves, so that they point to the 
+		project folder they belong to. */
+
+		w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, getAllWaves()));
+		waveFactory::save(*w, w->getPath()); // TODO - error checking
+
+		patch.waves.push_back(waveFactory::serializeWave(*w));
+	}
+
+	for (const Channel& c : layout.channels.getAll())
+		patch.channels.push_back(channelFactory::serializeChannel(c));
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool Model::registerThread(Thread t, bool realtime) const
 {
 	return m_swapper.registerThread(u::string::toString(t), realtime);

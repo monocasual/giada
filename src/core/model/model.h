@@ -153,6 +153,11 @@ public:
 
 	void store(Conf&) const;
 
+	/* store
+	Stores data into a Patch object. */
+
+	void store(Patch&, const std::string& projectPath);
+
 	bool registerThread(Thread, bool realtime) const;
 
 	/* get_RT
