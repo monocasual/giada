@@ -204,6 +204,8 @@ public:
 	template <typename T>
 	void removeShared(const T&);
 
+	void removePlugin(const Plugin&);
+
 	template <typename T>
 	void clearShared();
 

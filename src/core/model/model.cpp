@@ -418,16 +418,15 @@ ChannelShared& Model::addChannelShared(std::unique_ptr<ChannelShared> cs) { retu
 
 /* -------------------------------------------------------------------------- */
 
+void Model::removePlugin(const Plugin& p) { remove_(m_shared.plugins, p); }
+
 template <typename T>
 void Model::removeShared(const T& ref)
 {
-	if constexpr (std::is_same_v<T, Plugin>)
-		remove_(m_shared.plugins, ref);
 	if constexpr (std::is_same_v<T, Wave>)
 		remove_(m_shared.waves, ref);
 }
 
-template void Model::removeShared<Plugin>(const Plugin& t);
 template void Model::removeShared<Wave>(const Wave& t);
 
 /* -------------------------------------------------------------------------- */

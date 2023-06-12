@@ -130,13 +130,13 @@ void PluginHost::swapPlugin(const m::Plugin& p1, const m::Plugin& p2, std::vecto
 
 void PluginHost::freePlugin(const m::Plugin& plugin)
 {
-	m_model.removeShared(plugin);
+	m_model.removePlugin(plugin);
 }
 
 void PluginHost::freePlugins(const std::vector<Plugin*>& plugins)
 {
 	for (const Plugin* p : plugins)
-		m_model.removeShared(*p);
+		m_model.removePlugin(*p);
 }
 
 /* -------------------------------------------------------------------------- */
