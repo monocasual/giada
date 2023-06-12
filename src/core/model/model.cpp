@@ -78,6 +78,15 @@ void remove_(D& dest, T& ref, Model& model)
 	DataLock lock = model.lockData(SwapType::NONE);
 	u::vector::removeIf(dest, [&ref](const auto& other) { return other.get() == &ref; });
 }
+
+/* -------------------------------------------------------------------------- */
+
+template <typename T>
+void clear_(std::vector<T>& dest, Model& model)
+{
+	DataLock lock = model.lockData(SwapType::NONE);
+	dest.clear();
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -424,16 +433,15 @@ void Model::removeWave(const Wave& w) { remove_(m_shared.waves, w, *this); }
 
 /* -------------------------------------------------------------------------- */
 
+void Model::clearPlugins() { clear_(m_shared.plugins, *this); }
+
 template <typename T>
 void Model::clearShared()
 {
-	if constexpr (std::is_same_v<T, PluginPtrs>)
-		m_shared.plugins.clear();
 	if constexpr (std::is_same_v<T, WavePtrs>)
 		m_shared.waves.clear();
 }
 
-template void Model::clearShared<PluginPtrs>();
 template void Model::clearShared<WavePtrs>();
 
 /* -------------------------------------------------------------------------- */

@@ -207,6 +207,8 @@ public:
 	template <typename T>
 	void clearShared();
 
+	void clearPlugins();
+
 #ifdef G_DEBUG_MODE
 	void debug();
 #endif

@@ -143,7 +143,7 @@ void PluginHost::freePlugins(const std::vector<Plugin*>& plugins)
 
 void PluginHost::freeAllPlugins()
 {
-	m_model.clearShared<model::PluginPtrs>();
+	m_model.clearPlugins();
 }
 
 /* -------------------------------------------------------------------------- */
