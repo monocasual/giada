@@ -434,15 +434,7 @@ void Model::removeWave(const Wave& w) { remove_(m_shared.waves, w, *this); }
 /* -------------------------------------------------------------------------- */
 
 void Model::clearPlugins() { clear_(m_shared.plugins, *this); }
-
-template <typename T>
-void Model::clearShared()
-{
-	if constexpr (std::is_same_v<T, WavePtrs>)
-		m_shared.waves.clear();
-}
-
-template void Model::clearShared<WavePtrs>();
+void Model::clearWaves() { clear_(m_shared.waves, *this); }
 
 /* -------------------------------------------------------------------------- */
 

@@ -197,7 +197,7 @@ void ChannelManager::freeAllSampleChannels()
 			loadSampleChannel(ch, nullptr);
 
 	m_model.swap(model::SwapType::HARD);
-	m_model.clearShared<model::WavePtrs>();
+	m_model.clearWaves();
 
 	triggerOnChannelsAltered();
 }

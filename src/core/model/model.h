@@ -204,10 +204,8 @@ public:
 	void removePlugin(const Plugin&);
 	void removeWave(const Wave&);
 
-	template <typename T>
-	void clearShared();
-
 	void clearPlugins();
+	void clearWaves();
 
 #ifdef G_DEBUG_MODE
 	void debug();
