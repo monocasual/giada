@@ -164,8 +164,6 @@ public:
 	Layout&       get();
 	const Layout& get() const;
 
-	void set(const Layout&);
-
 	/* swap
 	Swap non-rt layout with the rt one. See 'SwapType' notes above. */
 

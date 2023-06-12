@@ -379,14 +379,6 @@ LayoutLock    Model::get_RT() const { return LayoutLock(m_swapper); }
 
 /* -------------------------------------------------------------------------- */
 
-void Model::set(const Layout& layout)
-{
-	get() = layout;
-	swap(model::SwapType::NONE);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Model::swap(SwapType t)
 {
 	m_swapper.swap();
