@@ -200,6 +200,8 @@ public:
 	template <typename T>
 	typename T::element_type& addShared(T);
 
+	Wave& addWave(std::unique_ptr<Wave>);
+
 	template <typename T>
 	void removeShared(const T&);
 

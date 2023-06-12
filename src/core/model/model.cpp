@@ -62,6 +62,15 @@ auto* get_(S& source, ID id)
 
 /* -------------------------------------------------------------------------- */
 
+template <typename T>
+typename T::element_type& add_(std::vector<T>& dest, T obj)
+{
+	dest.push_back(std::move(obj));
+	return *dest.back().get();
+}
+
+/* -------------------------------------------------------------------------- */
+
 template <typename D, typename T>
 void remove_(D& dest, T& ref)
 {
@@ -402,6 +411,12 @@ Wave*   Model::findWave(ID id) { return get_(m_shared.waves, id); }
 
 /* -------------------------------------------------------------------------- */
 
+Wave& Model::addWave(std::unique_ptr<Wave> w)
+{
+	DataLock lock = lockData(SwapType::NONE);
+	return add_(m_shared.waves, std::move(w));
+}
+
 template <typename T>
 typename T::element_type& Model::addShared(T obj)
 {
@@ -409,11 +424,6 @@ typename T::element_type& Model::addShared(T obj)
 	{
 		m_shared.plugins.push_back(std::move(obj));
 		return *m_shared.plugins.back().get();
-	}
-	if constexpr (std::is_same_v<T, WavePtr>)
-	{
-		m_shared.waves.push_back(std::move(obj));
-		return *m_shared.waves.back().get();
 	}
 	if constexpr (std::is_same_v<T, ChannelSharedPtr>)
 	{
@@ -423,7 +433,6 @@ typename T::element_type& Model::addShared(T obj)
 }
 
 template Plugin&        Model::addShared<PluginPtr>(PluginPtr p);
-template Wave&          Model::addShared<WavePtr>(WavePtr p);
 template ChannelShared& Model::addShared<ChannelSharedPtr>(ChannelSharedPtr p);
 
 /* -------------------------------------------------------------------------- */
