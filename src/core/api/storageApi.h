@@ -62,8 +62,6 @@ public:
 	model::LoadState loadProject(const std::string& projectPath, PluginManager::SortMethod, std::function<void(float)> progress);
 
 private:
-	Patch storePatch(const v::Model&, const std::string& projectPath) const;
-
 	Engine&           m_engine;
 	model::Model&     m_model;
 	PluginManager&    m_pluginManager;

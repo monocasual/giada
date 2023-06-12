@@ -71,11 +71,20 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 
 	/* Write Model into Patch, then into file. */
 
-	Patch patch = storePatch(uiModel, projectPath);
+	Patch patch;
+
+	for (const v::Model::Column& column : uiModel.columns)
+		patch.columns.push_back({column.id, column.width});
+
+	patch.name       = uiModel.projectName;
+	patch.metronome  = m_sequencer.isMetronomeOn(); // TODO - addShared bool metronome to Layout
+	patch.samplerate = m_kernelAudio.getSampleRate();
+
+	m_model.store(patch, projectPath);
 
 	progress(0.6f);
 
-	const std::string patchPath = u::fs::join(projectPath, uiModel.projectName + G_PATCH_EXT);
+	const std::string patchPath = u::fs::join(projectPath, patch.name + G_PATCH_EXT);
 
 	if (!patchFactory::serialize(patch, patchPath))
 		return false;
@@ -143,23 +152,5 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, PluginM
 	progress(1.0f);
 
 	return state;
-}
-
-/* -------------------------------------------------------------------------- */
-
-Patch StorageApi::storePatch(const v::Model& uiModel, const std::string& projectPath) const
-{
-	Patch patch;
-
-	for (const v::Model::Column& column : uiModel.columns)
-		patch.columns.push_back({column.id, column.width});
-
-	patch.name       = uiModel.projectName;
-	patch.metronome  = m_sequencer.isMetronomeOn(); // TODO - addShared bool metronome to Layout
-	patch.samplerate = m_kernelAudio.getSampleRate();
-
-	m_model.store(patch, projectPath);
-
-	return patch;
 }
 } // namespace giada::m
