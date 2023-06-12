@@ -201,10 +201,8 @@ public:
 	Plugin&        addPlugin(std::unique_ptr<Plugin>);
 	ChannelShared& addChannelShared(std::unique_ptr<ChannelShared>);
 
-	template <typename T>
-	void removeShared(const T&);
-
 	void removePlugin(const Plugin&);
+	void removeWave(const Wave&);
 
 	template <typename T>
 	void clearShared();

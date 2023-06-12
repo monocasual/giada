@@ -135,7 +135,7 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 	already processing the new layout. */
 
 	if (oldWave != nullptr)
-		m_model.removeShared<Wave>(*oldWave);
+		m_model.removeWave(*oldWave);
 
 	triggerOnChannelsAltered();
 }
@@ -183,7 +183,7 @@ void ChannelManager::freeSampleChannel(ID channelId)
 	m_model.swap(model::SwapType::HARD);
 
 	if (wave != nullptr)
-		m_model.removeShared<Wave>(*wave);
+		m_model.removeWave(*wave);
 
 	triggerOnChannelsAltered();
 }
@@ -213,7 +213,7 @@ void ChannelManager::deleteChannel(ID channelId)
 	m_model.swap(model::SwapType::HARD);
 
 	if (wave != nullptr)
-		m_model.removeShared<Wave>(*wave);
+		m_model.removeWave(*wave);
 
 	triggerOnChannelsAltered();
 }
