@@ -417,14 +417,15 @@ Wave& Model::addWave(std::unique_ptr<Wave> w)
 	return add_(m_shared.waves, std::move(w));
 }
 
+Plugin& Model::addPlugin(std::unique_ptr<Plugin> p)
+{
+	DataLock lock = lockData(SwapType::NONE);
+	return add_(m_shared.plugins, std::move(p));
+}
+
 template <typename T>
 typename T::element_type& Model::addShared(T obj)
 {
-	if constexpr (std::is_same_v<T, PluginPtr>)
-	{
-		m_shared.plugins.push_back(std::move(obj));
-		return *m_shared.plugins.back().get();
-	}
 	if constexpr (std::is_same_v<T, ChannelSharedPtr>)
 	{
 		m_shared.channelsShared.push_back(std::move(obj));
@@ -432,7 +433,6 @@ typename T::element_type& Model::addShared(T obj)
 	}
 }
 
-template Plugin&        Model::addShared<PluginPtr>(PluginPtr p);
 template ChannelShared& Model::addShared<ChannelSharedPtr>(ChannelSharedPtr p);
 
 /* -------------------------------------------------------------------------- */
