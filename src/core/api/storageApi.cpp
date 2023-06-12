@@ -120,7 +120,18 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 	m_midiSynchronizer.stopSendClock();
 	m_mixer.disable();
 	m_engine.reset(pluginSortMethod);
-	LoadState state = loadPatch(patch);
+
+	/* Load the patch into Model. */
+
+	const int                     sampleRate  = m_kernelAudio.getSampleRate();
+	const int                     bufferSize  = m_kernelAudio.getBufferSize();
+	const Resampler::Quality      rsmpQuality = m_kernelAudio.getResamplerQuality();
+	const model::Model::LoadState modelState  = m_model.load(patch, m_pluginManager, sampleRate, bufferSize, rsmpQuality);
+	LoadState                     storageState;
+
+	storageState.patch          = patch;
+	storageState.missingWaves   = modelState.missingWaves;
+	storageState.missingPlugins = modelState.missingPlugins;
 
 	progress(0.6f);
 
@@ -128,7 +139,6 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 	the current samplerate != patch samplerate. Clock needs to update frames
 	in sequencer. */
 
-	const int  sampleRate      = m_kernelAudio.getSampleRate();
 	const int  maxFramesInLoop = m_sequencer.getMaxFramesInLoop(sampleRate);
 	const bool hasSolos        = m_channelManager.hasSolos();
 
@@ -149,7 +159,7 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 	progress(1.0f);
 
-	return state;
+	return storageState;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -191,23 +201,5 @@ Patch StorageApi::storePatch(const v::Model& uiModel, const std::string& project
 		patch.channels.push_back(channelFactory::serializeChannel(c));
 
 	return patch;
-}
-
-/* -------------------------------------------------------------------------- */
-
-StorageApi::LoadState StorageApi::loadPatch(const Patch& patch)
-{
-	const int                sampleRate  = m_kernelAudio.getSampleRate();
-	const int                bufferSize  = m_kernelAudio.getBufferSize();
-	const Resampler::Quality rsmpQuality = m_kernelAudio.getResamplerQuality();
-
-	const model::Model::LoadState modelState = m_model.load(patch, m_pluginManager, sampleRate, bufferSize, rsmpQuality);
-	LoadState                     storageState;
-
-	storageState.patch          = patch;
-	storageState.missingWaves   = modelState.missingWaves;
-	storageState.missingPlugins = modelState.missingPlugins;
-
-	return storageState;
 }
 } // namespace giada::m
