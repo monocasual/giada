@@ -63,8 +63,9 @@ auto* get_(S& source, ID id)
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
-typename T::element_type& add_(std::vector<T>& dest, T obj)
+typename T::element_type& add_(std::vector<T>& dest, T obj, Model& model)
 {
+	DataLock lock = model.lockData(SwapType::NONE);
 	dest.push_back(std::move(obj));
 	return *dest.back().get();
 }
@@ -411,23 +412,9 @@ Wave*   Model::findWave(ID id) { return get_(m_shared.waves, id); }
 
 /* -------------------------------------------------------------------------- */
 
-Wave& Model::addWave(std::unique_ptr<Wave> w)
-{
-	DataLock lock = lockData(SwapType::NONE);
-	return add_(m_shared.waves, std::move(w));
-}
-
-Plugin& Model::addPlugin(std::unique_ptr<Plugin> p)
-{
-	DataLock lock = lockData(SwapType::NONE);
-	return add_(m_shared.plugins, std::move(p));
-}
-
-ChannelShared& Model::addChannelShared(std::unique_ptr<ChannelShared> cs)
-{
-	DataLock lock = lockData(SwapType::NONE);
-	return add_(m_shared.channelsShared, std::move(cs));
-}
+Wave&          Model::addWave(std::unique_ptr<Wave> w) { return add_(m_shared.waves, std::move(w), *this); }
+Plugin&        Model::addPlugin(std::unique_ptr<Plugin> p) { return add_(m_shared.plugins, std::move(p), *this); }
+ChannelShared& Model::addChannelShared(std::unique_ptr<ChannelShared> cs) { return add_(m_shared.channelsShared, std::move(cs), *this); }
 
 /* -------------------------------------------------------------------------- */
 
