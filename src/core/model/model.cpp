@@ -73,8 +73,9 @@ typename T::element_type& add_(std::vector<T>& dest, T obj, Model& model)
 /* -------------------------------------------------------------------------- */
 
 template <typename D, typename T>
-void remove_(D& dest, T& ref)
+void remove_(D& dest, T& ref, Model& model)
 {
+	DataLock lock = model.lockData(SwapType::NONE);
 	u::vector::removeIf(dest, [&ref](const auto& other) { return other.get() == &ref; });
 }
 } // namespace
@@ -418,8 +419,8 @@ ChannelShared& Model::addChannelShared(std::unique_ptr<ChannelShared> cs) { retu
 
 /* -------------------------------------------------------------------------- */
 
-void Model::removePlugin(const Plugin& p) { remove_(m_shared.plugins, p); }
-void Model::removeWave(const Wave& w) { remove_(m_shared.waves, w); }
+void Model::removePlugin(const Plugin& p) { remove_(m_shared.plugins, p, *this); }
+void Model::removeWave(const Wave& w) { remove_(m_shared.waves, w, *this); }
 
 /* -------------------------------------------------------------------------- */
 
