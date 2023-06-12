@@ -105,7 +105,7 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 	progress(0.0f);
 
-	/* Read the selected project's patch */
+	/* Read the selected project's patch. */
 
 	const std::string patchPath = u::fs::join(projectPath, u::fs::stripExt(u::fs::basename(projectPath)) + G_PATCH_EXT);
 	const Patch       patch     = patchFactory::deserialize(patchPath);
@@ -115,7 +115,7 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 	progress(0.3f);
 
-	/* Then suspend Mixer, MIDI synch, reset and fill the model. */
+	/* Then suspend Mixer, MIDI synch and reset the engine. */
 
 	m_midiSynchronizer.stopSendClock();
 	m_mixer.disable();
@@ -149,12 +149,9 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 	progress(0.9f);
 
-	/* Mixer is ready to go back online. */
+	/* Bring everything back online. */
 
 	m_mixer.enable();
-
-	/* Restore MIDI clock output. */
-
 	m_midiSynchronizer.startSendClock(m_model.get().sequencer.bpm);
 
 	progress(1.0f);
