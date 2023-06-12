@@ -89,14 +89,6 @@ enum class SwapType
 	NONE
 };
 
-using PluginPtr        = std::unique_ptr<Plugin>;
-using WavePtr          = std::unique_ptr<Wave>;
-using ChannelSharedPtr = std::unique_ptr<ChannelShared>;
-
-using PluginPtrs        = std::vector<PluginPtr>;
-using WavePtrs          = std::vector<WavePtr>;
-using ChannelSharedPtrs = std::vector<ChannelSharedPtr>;
-
 /* -------------------------------------------------------------------------- */
 
 /* LoadState
