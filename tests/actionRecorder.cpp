@@ -24,8 +24,8 @@ TEST_CASE("ActionRecorder")
 	channelFactory::Data channel2 = channelFactory::create(channelID2, ChannelType::SAMPLE, 0, 0, 1024, Resampler::Quality::LINEAR, false);
 
 	model.get().channels.getAll() = {channel1.channel, channel2.channel};
-	model.addShared(std::move(channel1.shared));
-	model.addShared(std::move(channel2.shared));
+	model.addChannelShared(std::move(channel1.shared));
+	model.addChannelShared(std::move(channel2.shared));
 	model.swap(model::SwapType::NONE);
 
 	ActionRecorder ar(model);

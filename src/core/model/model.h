@@ -193,15 +193,13 @@ public:
 	Plugin* findPlugin(ID);
 	Wave*   findWave(ID);
 
-	/* addShared
+	/* add[*]
 	Adds some shared data (by moving it). Returns a reference to the last added 
 	shared item. */
 
-	template <typename T>
-	typename T::element_type& addShared(T);
-
-	Wave&   addWave(std::unique_ptr<Wave>);
-	Plugin& addPlugin(std::unique_ptr<Plugin>);
+	Wave&          addWave(std::unique_ptr<Wave>);
+	Plugin&        addPlugin(std::unique_ptr<Plugin>);
+	ChannelShared& addChannelShared(std::unique_ptr<ChannelShared>);
 
 	template <typename T>
 	void removeShared(const T&);

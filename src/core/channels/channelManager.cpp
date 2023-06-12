@@ -74,9 +74,9 @@ void ChannelManager::reset(Frame framesInBuffer)
 	m_model.get().channels.add(masterInData.channel);
 	m_model.get().channels.add(previewData.channel);
 
-	m_model.addShared(std::move(masterOutData.shared));
-	m_model.addShared(std::move(masterInData.shared));
-	m_model.addShared(std::move(previewData.shared));
+	m_model.addChannelShared(std::move(masterOutData.shared));
+	m_model.addChannelShared(std::move(masterInData.shared));
+	m_model.addChannelShared(std::move(previewData.shared));
 
 	m_model.swap(model::SwapType::NONE);
 }
@@ -99,7 +99,7 @@ Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position,
 	channelFactory::Data data = channelFactory::create(/*id=*/0, type, columnId, position, bufferSize, rsmpQuality, overdubProtectionDefaultOn);
 
 	m_model.get().channels.add(data.channel);
-	m_model.addShared(std::move(data.shared));
+	m_model.addChannelShared(std::move(data.shared));
 	m_model.swap(model::SwapType::HARD);
 
 	triggerOnChannelsAltered();
@@ -165,7 +165,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 	/* Then push the new channel in the channels vector. */
 
 	m_model.get().channels.add(newChannelData.channel);
-	m_model.addShared(std::move(newChannelData.shared));
+	m_model.addChannelShared(std::move(newChannelData.shared));
 	m_model.swap(model::SwapType::HARD);
 }
 

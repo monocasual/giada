@@ -254,7 +254,7 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 		std::vector<Plugin*> plugins = findPlugins(pchannel.pluginIds);
 		channelFactory::Data data    = channelFactory::deserializeChannel(pchannel, sampleRateRatio, bufferSize, rsmpQuality, wave, plugins);
 		layout.channels.add(data.channel);
-		addShared(std::move(data.shared));
+		getAllChannelsShared().push_back(std::move(data.shared));
 	}
 
 	getAllActions() = actionFactory::deserializeActions(patch.actions);
@@ -423,17 +423,11 @@ Plugin& Model::addPlugin(std::unique_ptr<Plugin> p)
 	return add_(m_shared.plugins, std::move(p));
 }
 
-template <typename T>
-typename T::element_type& Model::addShared(T obj)
+ChannelShared& Model::addChannelShared(std::unique_ptr<ChannelShared> cs)
 {
-	if constexpr (std::is_same_v<T, ChannelSharedPtr>)
-	{
-		m_shared.channelsShared.push_back(std::move(obj));
-		return *m_shared.channelsShared.back().get();
-	}
+	DataLock lock = lockData(SwapType::NONE);
+	return add_(m_shared.channelsShared, std::move(cs));
 }
-
-template ChannelShared& Model::addShared<ChannelSharedPtr>(ChannelSharedPtr p);
 
 /* -------------------------------------------------------------------------- */
 
