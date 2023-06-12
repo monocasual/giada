@@ -397,19 +397,18 @@ std::vector<std::unique_ptr<ChannelShared>>& Model::getAllChannelsShared() { ret
 
 /* -------------------------------------------------------------------------- */
 
+Plugin* Model::findPlugin(ID id) { return get_(m_shared.plugins, id); }
+
 template <typename T>
 T* Model::findShared(ID id)
 {
-	if constexpr (std::is_same_v<T, Plugin>)
-		return get_(m_shared.plugins, id);
 	if constexpr (std::is_same_v<T, Wave>)
 		return get_(m_shared.waves, id);
 
 	assert(false);
 }
 
-template Plugin* Model::findShared<Plugin>(ID id);
-template Wave*   Model::findShared<Wave>(ID id);
+template Wave* Model::findShared<Wave>(ID id);
 
 /* -------------------------------------------------------------------------- */
 
@@ -472,7 +471,7 @@ std::vector<Plugin*> Model::findPlugins(std::vector<ID> pluginIds)
 	std::vector<Plugin*> out;
 	for (ID id : pluginIds)
 	{
-		Plugin* plugin = findShared<Plugin>(id);
+		Plugin* plugin = findPlugin(id);
 		if (plugin != nullptr)
 			out.push_back(plugin);
 	}

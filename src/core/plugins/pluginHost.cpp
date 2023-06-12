@@ -150,21 +150,21 @@ void PluginHost::freeAllPlugins()
 
 void PluginHost::setPluginParameter(ID pluginId, int paramIndex, float value)
 {
-	m_model.findShared<Plugin>(pluginId)->setParameter(paramIndex, value);
+	m_model.findPlugin(pluginId)->setParameter(paramIndex, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::setPluginProgram(ID pluginId, int programIndex)
 {
-	m_model.findShared<Plugin>(pluginId)->setCurrentProgram(programIndex);
+	m_model.findPlugin(pluginId)->setCurrentProgram(programIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::toggleBypass(ID pluginId)
 {
-	Plugin& plugin = *m_model.findShared<Plugin>(pluginId);
+	Plugin& plugin = *m_model.findPlugin(pluginId);
 	plugin.setBypass(!plugin.isBypassed());
 }
 

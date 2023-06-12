@@ -46,7 +46,7 @@ PluginsApi::PluginsApi(KernelAudio& ka, PluginManager& pm, PluginHost& ph, model
 
 const Plugin* PluginsApi::get(ID pluginId) const
 {
-	return m_model.findShared<Plugin>(pluginId);
+	return m_model.findPlugin(pluginId);
 }
 
 /* -------------------------------------------------------------------------- */

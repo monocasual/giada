@@ -193,6 +193,8 @@ public:
 	template <typename T>
 	T* findShared(ID id);
 
+	Plugin* findPlugin(ID);
+
 	/* addShared
 	Adds some shared data (by moving it). Returns a reference to the last added 
 	shared item. */
