@@ -241,7 +241,7 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 
 	for (const Patch::Channel& pchannel : patch.channels)
 	{
-		Wave*                wave    = findShared<Wave>(pchannel.waveId);
+		Wave*                wave    = findWave(pchannel.waveId);
 		std::vector<Plugin*> plugins = findPlugins(pchannel.pluginIds);
 		channelFactory::Data data    = channelFactory::deserializeChannel(pchannel, sampleRateRatio, bufferSize, rsmpQuality, wave, plugins);
 		layout.channels.add(data.channel);
@@ -398,17 +398,7 @@ std::vector<std::unique_ptr<ChannelShared>>& Model::getAllChannelsShared() { ret
 /* -------------------------------------------------------------------------- */
 
 Plugin* Model::findPlugin(ID id) { return get_(m_shared.plugins, id); }
-
-template <typename T>
-T* Model::findShared(ID id)
-{
-	if constexpr (std::is_same_v<T, Wave>)
-		return get_(m_shared.waves, id);
-
-	assert(false);
-}
-
-template Wave* Model::findShared<Wave>(ID id);
+Wave*   Model::findWave(ID id) { return get_(m_shared.waves, id); }
 
 /* -------------------------------------------------------------------------- */
 

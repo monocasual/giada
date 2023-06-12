@@ -186,14 +186,12 @@ public:
 	Actions::Map&                                getAllActions();
 	std::vector<std::unique_ptr<ChannelShared>>& getAllChannelsShared();
 
-	/* findShared
+	/* find[*]
 	Finds something in the shared data given an ID. Returns nullptr if the
 	object is not found. */
 
-	template <typename T>
-	T* findShared(ID id);
-
 	Plugin* findPlugin(ID);
+	Wave*   findWave(ID);
 
 	/* addShared
 	Adds some shared data (by moving it). Returns a reference to the last added 
