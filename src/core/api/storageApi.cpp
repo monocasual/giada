@@ -38,15 +38,6 @@
 
 namespace giada::m
 {
-bool StorageApi::LoadState::isGood() const
-{
-	return patch.status == G_FILE_OK && missingWaves.empty() && missingPlugins.empty();
-}
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 StorageApi::StorageApi(Engine& e, model::Model& m, PluginManager& pm, MidiSynchronizer& ms,
     Mixer& mx, ChannelManager& cm, KernelAudio& ka, Sequencer& s, ActionRecorder& ar)
 : m_engine(e)
@@ -98,7 +89,7 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 
 /* -------------------------------------------------------------------------- */
 
-StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, PluginManager::SortMethod pluginSortMethod,
+model::LoadState StorageApi::loadProject(const std::string& projectPath, PluginManager::SortMethod pluginSortMethod,
     std::function<void(float)> progress)
 {
 	u::log::print("[StorageApi::loadProject] Load project from {}\n", projectPath);
@@ -123,15 +114,10 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 	/* Load the patch into Model. */
 
-	const int                     sampleRate  = m_kernelAudio.getSampleRate();
-	const int                     bufferSize  = m_kernelAudio.getBufferSize();
-	const Resampler::Quality      rsmpQuality = m_kernelAudio.getResamplerQuality();
-	const model::Model::LoadState modelState  = m_model.load(patch, m_pluginManager, sampleRate, bufferSize, rsmpQuality);
-	LoadState                     storageState;
-
-	storageState.patch          = patch;
-	storageState.missingWaves   = modelState.missingWaves;
-	storageState.missingPlugins = modelState.missingPlugins;
+	const int                sampleRate  = m_kernelAudio.getSampleRate();
+	const int                bufferSize  = m_kernelAudio.getBufferSize();
+	const Resampler::Quality rsmpQuality = m_kernelAudio.getResamplerQuality();
+	const model::LoadState   state       = m_model.load(patch, m_pluginManager, sampleRate, bufferSize, rsmpQuality);
 
 	progress(0.6f);
 
@@ -156,7 +142,7 @@ StorageApi::LoadState StorageApi::loadProject(const std::string& projectPath, Pl
 
 	progress(1.0f);
 
-	return storageState;
+	return state;
 }
 
 /* -------------------------------------------------------------------------- */

@@ -99,16 +99,24 @@ using ChannelSharedPtrs = std::vector<ChannelSharedPtr>;
 
 /* -------------------------------------------------------------------------- */
 
+/* LoadState
+Contains information about the model state after a patch has been loaded. */
+
+struct LoadState
+{
+	bool isGood() const;
+
+	Patch                    patch;
+	std::vector<std::string> missingWaves   = {};
+	std::vector<std::string> missingPlugins = {};
+};
+
+/* -------------------------------------------------------------------------- */
+
 class DataLock;
 class Model
 {
 public:
-	struct LoadState
-	{
-		std::vector<std::string> missingWaves   = {};
-		std::vector<std::string> missingPlugins = {};
-	};
-
 	Model();
 
 	bool isLocked() const;

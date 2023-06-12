@@ -46,15 +46,6 @@ class ActionRecorder;
 class StorageApi
 {
 public:
-	struct LoadState
-	{
-		bool isGood() const;
-
-		Patch                    patch;
-		std::vector<std::string> missingWaves   = {};
-		std::vector<std::string> missingPlugins = {};
-	};
-
 	StorageApi(Engine&, model::Model&, PluginManager&, MidiSynchronizer&,
 	    Mixer&, ChannelManager&, KernelAudio&, Sequencer&, ActionRecorder&);
 
@@ -65,10 +56,10 @@ public:
 	    std::function<void(float)>       progress) const;
 
 	/* loadProject
-	Loads a new project. Returns a LoadState object containing the operation
-	state. */
+	Loads a new project. Returns a model::LoadState object containing the 
+	operation state. */
 
-	LoadState loadProject(const std::string& projectPath, PluginManager::SortMethod, std::function<void(float)> progress);
+	model::LoadState loadProject(const std::string& projectPath, PluginManager::SortMethod, std::function<void(float)> progress);
 
 private:
 	Patch storePatch(const v::Model&, const std::string& projectPath) const;

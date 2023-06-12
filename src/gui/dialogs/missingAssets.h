@@ -35,7 +35,7 @@ namespace giada::v
 class gdMissingAssets : public gdWindow
 {
 public:
-	gdMissingAssets(const m::StorageApi::LoadState&);
+	gdMissingAssets(const m::model::LoadState&);
 };
 } // namespace giada::v
 

@@ -109,7 +109,7 @@ void loadProject(void* data)
 	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
 	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
-	m::StorageApi::LoadState state = g_engine.getStorageApi().loadProject(projectPath, pluginsSortMethod, engineProgress);
+	m::model::LoadState state = g_engine.getStorageApi().loadProject(projectPath, pluginsSortMethod, engineProgress);
 
 	if (state.patch.status != G_FILE_OK)
 	{

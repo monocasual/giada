@@ -105,6 +105,15 @@ DataLock::~DataLock()
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+bool LoadState::isGood() const
+{
+	return patch.status == G_FILE_OK && missingWaves.empty() && missingPlugins.empty();
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 Model::Model()
 : onSwap(nullptr)
 {
@@ -190,7 +199,7 @@ void Model::load(const Conf& conf)
 
 /* -------------------------------------------------------------------------- */
 
-Model::LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int sampleRate, int bufferSize, Resampler::Quality rsmpQuality)
+LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int sampleRate, int bufferSize, Resampler::Quality rsmpQuality)
 {
 	const float sampleRateRatio = sampleRate / static_cast<float>(patch.samplerate);
 
@@ -199,7 +208,7 @@ Model::LoadState Model::load(const Patch& patch, PluginManager& pluginManager, i
 
 	DataLock  lock   = lockData(SwapType::NONE);
 	Layout&   layout = get();
-	LoadState state;
+	LoadState state{patch};
 
 	/* Clear and re-initialize stuff first. */
 

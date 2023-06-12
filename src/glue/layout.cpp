@@ -203,7 +203,7 @@ void openRenameChannelWindow(const c::channel::Data& data)
 
 /* -------------------------------------------------------------------------- */
 
-void openMissingAssetsWindow(const m::StorageApi::LoadState& state)
+void openMissingAssetsWindow(const m::model::LoadState& state)
 {
 	g_ui.openSubWindow(*g_ui.mainWindow.get(), new v::gdMissingAssets(state),
 	    WID_MISSING_ASSETS);
