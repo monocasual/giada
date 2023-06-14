@@ -29,6 +29,7 @@
 
 #include "core/channels/channel.h"
 #include "core/const.h"
+#include "core/model/actions.h"
 #include "core/model/behaviors.h"
 #include "core/model/channels.h"
 #include "core/model/kernelAudio.h"
@@ -40,7 +41,6 @@
 #include "core/wave.h"
 #include "deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
-#include "src/core/actions/actions.h"
 #include "utils/vector.h"
 #include <memory>
 
@@ -64,6 +64,7 @@ struct Layout
 	Mixer       mixer;
 	MidiIn      midiIn;
 	Channels    channels;
+	Actions     actions;
 	Behaviors   behaviors;
 };
 
@@ -173,7 +174,6 @@ public:
 
 	std::vector<std::unique_ptr<Wave>>&          getAllWaves();
 	std::vector<std::unique_ptr<Plugin>>&        getAllPlugins();
-	Actions::Map&                                getAllActions();
 	std::vector<std::unique_ptr<ChannelShared>>& getAllChannelsShared();
 
 	/* find[*]
@@ -215,7 +215,6 @@ private:
 		std::vector<std::unique_ptr<ChannelShared>> channelsShared;
 
 		std::vector<std::unique_ptr<Wave>>   waves;
-		Actions::Map                         actions;
 		std::vector<std::unique_ptr<Plugin>> plugins;
 	};
 

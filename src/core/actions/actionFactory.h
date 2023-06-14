@@ -28,8 +28,8 @@
 #define G_ACTION_FACTORY_H
 
 #include "core/actions/action.h"
-#include "core/actions/actions.h"
 #include "core/idManager.h"
+#include "core/model/actions.h"
 #include "core/patch.h"
 
 namespace giada::m::actionFactory
@@ -53,8 +53,8 @@ ID getNewActionId();
 /* (de)serializeActions
 Creates new Actions given the patch raw data and vice versa. */
 
-Actions::Map               deserializeActions(const std::vector<Patch::Action>&);
-std::vector<Patch::Action> serializeActions(const Actions::Map&);
+model::Actions::Map        deserializeActions(const std::vector<Patch::Action>&);
+std::vector<Patch::Action> serializeActions(const model::Actions::Map&);
 } // namespace giada::m::actionFactory
 
 #endif

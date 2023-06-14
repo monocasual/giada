@@ -1,8 +1,8 @@
 #include "src/core/actions/actionRecorder.h"
 #include "src/core/actions/action.h"
-#include "src/core/actions/actions.h"
 #include "src/core/channels/channelFactory.h"
 #include "src/core/const.h"
+#include "src/core/model/actions.h"
 #include "src/core/model/model.h"
 #include "src/core/types.h"
 #include <catch2/catch.hpp>

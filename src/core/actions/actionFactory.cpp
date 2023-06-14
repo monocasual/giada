@@ -36,7 +36,7 @@ IdManager actionId_;
 
 /* -------------------------------------------------------------------------- */
 
-const Action* getActionPtrById_(int id, const Actions::Map& source)
+const Action* getActionPtrById_(int id, const model::Actions::Map& source)
 {
 	for (const auto& [_, actions] : source)
 		for (const Action& action : actions)
@@ -81,9 +81,9 @@ ID getNewActionId()
 
 /* -------------------------------------------------------------------------- */
 
-Actions::Map deserializeActions(const std::vector<Patch::Action>& pactions)
+model::Actions::Map deserializeActions(const std::vector<Patch::Action>& pactions)
 {
-	Actions::Map out;
+	model::Actions::Map out;
 
 	/* First pass: add actions with no relationship, that is with no prev/next
 	pointers filled in. */
@@ -117,7 +117,7 @@ Actions::Map deserializeActions(const std::vector<Patch::Action>& pactions)
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Patch::Action> serializeActions(const Actions::Map& actions)
+std::vector<Patch::Action> serializeActions(const model::Actions::Map& actions)
 {
 	std::vector<Patch::Action> out;
 	for (const auto& kv : actions) // TODO - const auto& [_, actionsInFrame]

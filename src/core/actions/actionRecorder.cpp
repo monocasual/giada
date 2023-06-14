@@ -27,8 +27,8 @@
 #include "core/actions/actionRecorder.h"
 #include "core/actions/action.h"
 #include "core/actions/actionFactory.h"
-#include "core/actions/actions.h"
 #include "core/const.h"
+#include "core/model/actions.h"
 #include "core/model/model.h"
 #include "core/patch.h"
 #include "utils/log.h"
@@ -52,7 +52,6 @@ constexpr int MAX_LIVE_RECS_CHUNK = 128;
 
 ActionRecorder::ActionRecorder(model::Model& m)
 : m_model(m)
-, m_actions(m)
 {
 	m_liveActions.reserve(MAX_LIVE_RECS_CHUNK);
 }
@@ -63,7 +62,8 @@ void ActionRecorder::reset()
 {
 	m_liveActions.clear();
 	actionFactory::reset();
-	m_actions.clearAll();
+	m_model.get().actions.clearAll();
+	m_model.swap(model::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -82,7 +82,7 @@ void ActionRecorder::updateBpm(float ratio, int quantizerStep)
 	if (ratio == 1.0f)
 		return;
 
-	m_actions.updateKeyFrames([=](Frame old) {
+	m_model.get().actions.updateKeyFrames([=](Frame old) {
 		/* The division here cannot be precise. A new frame can be 44099 and the 
 		quantizer set to 44100. That would mean two recs completely useless. So we 
 		compute a reject value ('delta'): if it's lower than 6 frames the new frame 
@@ -96,6 +96,8 @@ void ActionRecorder::updateBpm(float ratio, int quantizerStep)
 		}
 		return frame;
 	});
+
+	m_model.swap(model::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -107,7 +109,8 @@ void ActionRecorder::updateSamplerate(int systemRate, int patchRate)
 
 	float ratio = systemRate / (float)patchRate;
 
-	m_actions.updateKeyFrames([=](Frame old) { return floorf(old * ratio); });
+	m_model.get().actions.updateKeyFrames([=](Frame old) { return floorf(old * ratio); });
+	m_model.swap(model::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -118,7 +121,7 @@ bool ActionRecorder::cloneActions(ID channelId, ID newChannelId)
 	std::vector<Action>        actions;
 	std::unordered_map<ID, ID> map; // Action ID mapper, old -> new
 
-	m_actions.forEachAction([&](const Action& a) {
+	m_model.get().actions.forEachAction([&](const Action& a) {
 		if (a.channelId != channelId)
 			return;
 
@@ -144,8 +147,7 @@ bool ActionRecorder::cloneActions(ID channelId, ID newChannelId)
 			a.nextId = map.at(a.nextId);
 	}
 
-	m_actions.rec(actions);
-
+	m_model.get().actions.rec(actions);
 	m_model.get().channels.get(newChannelId).hasActions = true;
 	m_model.swap(model::SwapType::HARD);
 
@@ -282,6 +284,8 @@ void ActionRecorder::deleteEnvelopeAction(ID channelId, const Action& a)
 		updateSiblings(a3.id, a1.id, a3next.id);
 		deleteAction(channelId, a.id);
 	}
+
+	m_model.swap(model::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -319,6 +323,8 @@ void ActionRecorder::updateEnvelopeAction(ID channelId, const Action& a, Frame f
 		deleteEnvelopeAction(channelId, a);
 		recordEnvelopeAction(channelId, f, value, lastFrameInLoop);
 	}
+
+	m_model.swap(model::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -327,7 +333,6 @@ void ActionRecorder::updateVelocity(const Action& a, int value)
 {
 	MidiEvent event(a.event);
 	event.setVelocity(value);
-
 	updateEvent(a.id, event);
 }
 
@@ -338,7 +343,8 @@ std::unordered_set<ID> ActionRecorder::consolidate()
 	for (auto it = m_liveActions.begin(); it != m_liveActions.end(); ++it)
 		consolidate(*it, it - m_liveActions.begin()); // Pass current index
 
-	m_actions.rec(m_liveActions);
+	m_model.get().actions.rec(m_liveActions);
+	m_model.swap(model::SwapType::SOFT);
 
 	std::unordered_set<ID> out;
 	for (const Action& action : m_liveActions)
@@ -356,7 +362,7 @@ void ActionRecorder::clearAllActions()
 		ch.hasActions = false;
 	m_model.swap(model::SwapType::HARD);
 
-	m_actions.clearAll();
+	m_model.get().actions.clearAll();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -455,73 +461,76 @@ void ActionRecorder::recordNonFirstEnvelopeAction(ID channelId, Frame frame, int
 
 const std::vector<Action>* ActionRecorder::getActionsOnFrame(Frame f) const
 {
-	return m_actions.getActionsOnFrame(f);
+	return m_model.get().actions.getActionsOnFrame(f);
 }
 
 bool ActionRecorder::hasActions(ID channelId, int type) const
 {
-	return m_actions.hasActions(channelId, type);
+	return m_model.get().actions.hasActions(channelId, type);
 }
 
 Action ActionRecorder::getClosestAction(ID channelId, Frame f, int type) const
 {
-	return m_actions.getClosestAction(channelId, f, type);
+	return m_model.get().actions.getClosestAction(channelId, f, type);
 }
 
 std::vector<Action> ActionRecorder::getActionsOnChannel(ID channelId) const
 {
-	return m_actions.getActionsOnChannel(channelId);
+	return m_model.get().actions.getActionsOnChannel(channelId);
 }
 
 void ActionRecorder::clearChannel(ID channelId)
 {
 	m_model.get().channels.get(channelId).hasActions = false;
-	m_actions.clearChannel(channelId);
+	m_model.get().actions.clearChannel(channelId);
 }
 
 void ActionRecorder::clearActions(ID channelId, int type)
 {
-	m_actions.clearActions(channelId, type);
-
+	m_model.get().actions.clearActions(channelId, type);
 	m_model.get().channels.get(channelId).hasActions = hasActions(channelId);
 	m_model.swap(model::SwapType::HARD);
 }
 
 Action ActionRecorder::rec(ID channelId, Frame frame, MidiEvent e)
 {
+	Action action = m_model.get().actions.rec(channelId, frame, e);
+
 	m_model.get().channels.get(channelId).hasActions = true;
-	return m_actions.rec(channelId, frame, e);
+	m_model.swap(model::SwapType::HARD);
+	return action;
 }
 
 void ActionRecorder::rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
 	m_model.get().channels.get(channelId).hasActions = true;
-	return m_actions.rec(channelId, f1, f2, e1, e2);
+	m_model.get().actions.rec(channelId, f1, f2, e1, e2);
+	m_model.swap(model::SwapType::HARD);
 }
 
 void ActionRecorder::updateSiblings(ID id, ID prevId, ID nextId)
 {
-	m_actions.updateSiblings(id, prevId, nextId);
+	m_model.get().actions.updateSiblings(id, prevId, nextId);
+	m_model.swap(model::SwapType::HARD);
 }
 
 void ActionRecorder::deleteAction(ID channelId, ID id)
 {
-	m_actions.deleteAction(id);
-
+	m_model.get().actions.deleteAction(id);
 	m_model.get().channels.get(channelId).hasActions = hasActions(channelId);
 	m_model.swap(model::SwapType::HARD);
 }
 
 void ActionRecorder::deleteAction(ID channelId, ID currId, ID nextId)
 {
-	m_actions.deleteAction(currId, nextId);
-
+	m_model.get().actions.deleteAction(currId, nextId);
 	m_model.get().channels.get(channelId).hasActions = hasActions(channelId);
 	m_model.swap(model::SwapType::HARD);
 }
 
 void ActionRecorder::updateEvent(ID id, MidiEvent e)
 {
-	m_actions.updateEvent(id, e);
+	m_model.get().actions.updateEvent(id, e);
+	m_model.swap(model::SwapType::HARD);
 }
 } // namespace giada::m

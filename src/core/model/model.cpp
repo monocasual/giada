@@ -268,7 +268,7 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 		getAllChannelsShared().push_back(std::move(data.shared));
 	}
 
-	getAllActions() = actionFactory::deserializeActions(patch.actions);
+	layout.actions.getAll() = actionFactory::deserializeActions(patch.actions);
 
 	layout.sequencer.status   = SeqStatus::STOPPED;
 	layout.sequencer.bars     = patch.bars;
@@ -347,7 +347,7 @@ void Model::store(Patch& patch, const std::string& projectPath)
 	for (const auto& p : getAllPlugins())
 		patch.plugins.push_back(pluginFactory::serializePlugin(*p));
 
-	patch.actions = actionFactory::serializeActions(getAllActions());
+	patch.actions = actionFactory::serializeActions(layout.actions.getAll());
 
 	for (auto& w : getAllWaves())
 	{
@@ -404,7 +404,6 @@ bool Model::isLocked() const
 
 std::vector<std::unique_ptr<Wave>>&          Model::getAllWaves() { return m_shared.waves; };
 std::vector<std::unique_ptr<Plugin>>&        Model::getAllPlugins() { return m_shared.plugins; }
-Actions::Map&                                Model::getAllActions() { return m_shared.actions; }
 std::vector<std::unique_ptr<ChannelShared>>& Model::getAllChannelsShared() { return m_shared.channelsShared; }
 
 /* -------------------------------------------------------------------------- */
@@ -470,7 +469,7 @@ void Model::debug()
 
 	puts("model::shared.actions");
 
-	for (const auto& [frame, actions] : getAllActions())
+	for (const auto& [frame, actions] : get().actions.getAll())
 	{
 		fmt::print("\tframe: {}\n", frame);
 		for (const Action& a : actions)

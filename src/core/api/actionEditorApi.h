@@ -27,14 +27,13 @@
 #ifndef G_ACTION_EDITOR_API_H
 #define G_ACTION_EDITOR_API_H
 
-#include "core/actions/actions.h"
+#include "core/model/actions.h"
 #include "core/patch.h"
 #include "core/types.h"
 #include <vector>
 
 namespace giada::m
 {
-struct Action;
 class Engine;
 class Sequencer;
 class ActionRecorder;

@@ -69,6 +69,12 @@ public:
 
 	bool hasActions(ID channelId, int type = 0) const;
 
+	/* getAll
+    Returns a reference to the internal map. */
+
+	Map&       getAll();
+	const Map& getAll() const;
+
 	/* clearAll
     Deletes all recorded actions. */
 

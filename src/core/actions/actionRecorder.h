@@ -27,8 +27,8 @@
 #ifndef G_ACTION_RECORDER_H
 #define G_ACTION_RECORDER_H
 
-#include "core/actions/actions.h"
 #include "core/midiEvent.h"
+#include "core/model/model.h"
 #include "core/types.h"
 #include <cstddef>
 #include <unordered_set>
@@ -148,7 +148,6 @@ private:
 	void consolidate(const Action& a1, std::size_t i);
 
 	model::Model&       m_model;
-	Actions             m_actions;
 	std::vector<Action> m_liveActions;
 };
 } // namespace giada::m

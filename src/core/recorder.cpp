@@ -31,7 +31,7 @@
 #include "core/sequencer.h"
 #include "core/types.h"
 #include "src/core/actions/actionRecorder.h"
-#include "src/core/actions/actions.h"
+#include "src/core/model/actions.h"
 #include "utils/log.h"
 
 namespace giada::m

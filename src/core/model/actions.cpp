@@ -137,6 +137,11 @@ bool Actions::hasActions(ID channelId, int type) const
 
 /* -------------------------------------------------------------------------- */
 
+Actions::Map&       Actions::getAll() { return m_actions; }
+const Actions::Map& Actions::getAll() const { return m_actions; }
+
+/* -------------------------------------------------------------------------- */
+
 Action Actions::rec(ID channelId, Frame frame, MidiEvent event)
 {
 	/* Skip duplicates. */
