@@ -62,7 +62,6 @@ list(APPEND SOURCES
 	src/core/patch.cpp
 	src/core/actions/actionFactory.cpp
 	src/core/actions/actionRecorder.cpp
-	src/core/actions/actions.cpp
 	src/core/mixer.cpp
 	src/core/jackSynchronizer.cpp
 	src/core/midiSynchronizer.cpp
