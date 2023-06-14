@@ -30,6 +30,9 @@
 #include <algorithm>
 #include <cassert>
 #include <memory>
+#ifdef G_DEBUG_MODE
+#include <fmt/core.h>
+#endif
 
 namespace giada::m::model
 {
@@ -139,6 +142,25 @@ bool Actions::hasActions(ID channelId, int type) const
 
 Actions::Map&       Actions::getAll() { return m_actions; }
 const Actions::Map& Actions::getAll() const { return m_actions; }
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef G_DEBUG_MODE
+
+void Actions::debug() const
+{
+	puts("model::actions");
+
+	for (const auto& [frame, actions] : m_actions)
+	{
+		fmt::print("\tframe: {}\n", frame);
+		for (const Action& a : actions)
+			fmt::print("\t\t({}) - ID={}, frame={}, channel={}, value=0x{}, prevId={}, prev={}, nextId={}, next={}\n",
+			    (void*)&a, a.id, a.frame, a.channelId, a.event.getRaw(), a.prevId, (void*)a.prev, a.nextId, (void*)a.next);
+	}
+}
+
+#endif
 
 /* -------------------------------------------------------------------------- */
 

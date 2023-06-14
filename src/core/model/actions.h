@@ -75,6 +75,10 @@ public:
 	Map&       getAll();
 	const Map& getAll() const;
 
+#ifdef G_DEBUG_MODE
+	void debug() const;
+#endif
+
 	/* clearAll
     Deletes all recorded actions. */
 

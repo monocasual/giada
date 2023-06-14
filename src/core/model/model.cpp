@@ -99,6 +99,7 @@ void Layout::debug() const
 {
 	mixer.debug();
 	channels.debug();
+	actions.debug();
 }
 
 #endif
@@ -466,16 +467,6 @@ void Model::debug()
 
 	for (int i = 0; const auto& w : m_shared.waves)
 		fmt::print("\t{}) {} - ID={} name='{}'\n", i++, (void*)w.get(), w->id, w->getPath());
-
-	puts("model::shared.actions");
-
-	for (const auto& [frame, actions] : get().actions.getAll())
-	{
-		fmt::print("\tframe: {}\n", frame);
-		for (const Action& a : actions)
-			fmt::print("\t\t({}) - ID={}, frame={}, channel={}, value=0x{}, prevId={}, prev={}, nextId={}, next={}\n",
-			    (void*)&a, a.id, a.frame, a.channelId, a.event.getRaw(), a.prevId, (void*)a.prev, a.nextId, (void*)a.next);
-	}
 
 	puts("model::shared.plugins");
 
