@@ -51,8 +51,6 @@ public:
 
 	void reset();
 
-	bool isBoundaryEnvelopeAction(const Action&) const;
-
 	/* updateBpm
     Changes actions position by calculating the new bpm value. */
 
@@ -145,6 +143,8 @@ private:
     action accordingly. */
 
 	void consolidate(const Action& a1, std::size_t i);
+
+	bool isBoundaryEnvelopeAction(const Action&) const;
 
 	model::Model&       m_model;
 	std::vector<Action> m_liveActions;
