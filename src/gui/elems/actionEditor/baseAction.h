@@ -28,7 +28,7 @@
 #define GE_BASE_ACTION_H
 
 #include "core/types.h"
-#include "src/core/actions/actions.h"
+#include "src/core/actions/action.h"
 #include <FL/Fl_Box.H>
 
 namespace giada::m

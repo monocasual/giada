@@ -45,8 +45,6 @@
 #include "gui/elems/mainWindow/mainTimer.h"
 #include "gui/elems/mainWindow/mainTransport.h"
 #include "gui/ui.h"
-#include "src/core/actions/actionRecorder.h"
-#include "src/core/actions/actions.h"
 #include "utils/log.h"
 #include "utils/math.h"
 #include <FL/Fl.H>

@@ -25,9 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "glue/actionEditor.h"
-#include "core/actions/action.h"
-#include "core/actions/actionRecorder.h"
-#include "core/actions/actions.h"
 #include "core/const.h"
 #include "core/engine.h"
 #include "core/model/model.h"

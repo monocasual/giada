@@ -33,7 +33,6 @@
 #include "gui/ui.h"
 #include "sampleAction.h"
 #include "src/core/actions/action.h"
-#include "src/core/actions/actions.h"
 #include "utils/log.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>

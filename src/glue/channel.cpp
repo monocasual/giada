@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/mainWindow/keyboard/channel.h"
-#include "core/actions/actionRecorder.h"
 #include "core/channels/channelFactory.h"
 #include "core/conf.h"
 #include "core/engine.h"
@@ -55,7 +54,6 @@
 #include "gui/elems/sampleEditor/waveTools.h"
 #include "gui/elems/sampleEditor/waveform.h"
 #include "gui/ui.h"
-#include "src/core/actions/actions.h"
 #include "src/gui/elems/panTool.h"
 #include "src/gui/elems/volumeTool.h"
 #include "utils/fs.h"

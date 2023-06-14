@@ -30,7 +30,6 @@
 #include "core/model/model.h"
 #include "glue/channel.h"
 #include "gui/drawing.h"
-#include "src/core/actions/actions.h"
 #include "utils/string.h"
 #include <FL/fl_draw.H>
 
