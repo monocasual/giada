@@ -440,7 +440,7 @@ void ActionRecorder::recordFirstEnvelopeAction(ID channelId, Frame frame, int va
 
 void ActionRecorder::recordNonFirstEnvelopeAction(ID channelId, Frame frame, int value)
 {
-	const Action a1 = getClosestAction(channelId, frame, MidiEvent::CHANNEL_CC);
+	const Action a1 = m_model.get().actions.getClosestAction(channelId, frame, MidiEvent::CHANNEL_CC);
 	const Action a3 = a1.next != nullptr ? *a1.next : Action{};
 
 	assert(a1.isValid());
@@ -467,11 +467,6 @@ const std::vector<Action>* ActionRecorder::getActionsOnFrame(Frame f) const
 bool ActionRecorder::hasActions(ID channelId, int type) const
 {
 	return m_model.get().actions.hasActions(channelId, type);
-}
-
-Action ActionRecorder::getClosestAction(ID channelId, Frame f, int type) const
-{
-	return m_model.get().actions.getClosestAction(channelId, f, type);
 }
 
 std::vector<Action> ActionRecorder::getActionsOnChannel(ID channelId) const

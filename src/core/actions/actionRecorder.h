@@ -110,7 +110,6 @@ public:
 
 	const std::vector<Action>* getActionsOnFrame(Frame f) const;
 	bool                       hasActions(ID channelId, int type = 0) const;
-	Action                     getClosestAction(ID channelId, Frame f, int type) const;
 	std::vector<Action>        getActionsOnChannel(ID channelId) const;
 	void                       clearChannel(ID channelId);
 	void                       clearActions(ID channelId, int type);
