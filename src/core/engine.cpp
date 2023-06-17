@@ -297,6 +297,7 @@ int Engine::audioCallback(mcl::AudioBuffer& out, const mcl::AudioBuffer& in) con
 	const model::Mixer&       mixer       = layout_RT.mixer;
 	const model::Sequencer&   sequencer   = layout_RT.sequencer;
 	const model::Channels&    channels    = layout_RT.channels;
+	const model::Actions&     actions     = layout_RT.actions;
 
 	/* Mixer disabled or Kernel Audio not ready: nothing to do here. */
 
@@ -320,7 +321,7 @@ int Engine::audioCallback(mcl::AudioBuffer& out, const mcl::AudioBuffer& in) con
 		const int          quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
 		const Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
-		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, m_actionRecorder);
+		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, actions);
 		m_sequencer.render(out);
 		if (!layout_RT.locked)
 			m_mixer.advanceChannels(events, channels, renderRange, quantizerStep);

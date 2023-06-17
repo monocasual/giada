@@ -106,17 +106,16 @@ public:
 
 	/* Pass-thru functions. See Actions.h */
 
-	const std::vector<Action>* getActionsOnFrame(Frame f) const;
-	bool                       hasActions(ID channelId, int type = 0) const;
-	std::vector<Action>        getActionsOnChannel(ID channelId) const;
-	void                       clearChannel(ID channelId);
-	void                       clearActions(ID channelId, int type);
-	Action                     rec(ID channelId, Frame frame, MidiEvent e);
-	void                       rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
-	void                       updateSiblings(ID id, ID prevId, ID nextId);
-	void                       deleteAction(ID channelId, ID id);
-	void                       deleteAction(ID channelId, ID currId, ID nextId);
-	void                       updateEvent(ID id, MidiEvent e);
+	bool                hasActions(ID channelId, int type = 0) const;
+	std::vector<Action> getActionsOnChannel(ID channelId) const;
+	void                clearChannel(ID channelId);
+	void                clearActions(ID channelId, int type);
+	Action              rec(ID channelId, Frame frame, MidiEvent e);
+	void                rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
+	void                updateSiblings(ID id, ID prevId, ID nextId);
+	void                deleteAction(ID channelId, ID id);
+	void                deleteAction(ID channelId, ID currId, ID nextId);
+	void                updateEvent(ID id, MidiEvent e);
 
 private:
 	/* areComposite

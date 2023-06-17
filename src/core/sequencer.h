@@ -43,6 +43,7 @@ namespace giada::m::model
 {
 class Model;
 class Sequencer;
+class Actions;
 } // namespace giada::m::model
 
 namespace giada::m
@@ -138,7 +139,8 @@ public:
 	quantizer. Returns a reference to the internal EventBuffer filled with events
 	(if any). Call this on each new audio block. */
 
-	const EventBuffer& advance(const model::Sequencer&, Frame bufferSize, int sampleRate, const ActionRecorder&) const;
+	const EventBuffer& advance(const model::Sequencer&, Frame bufferSize, int sampleRate,
+	    const model::Actions&) const;
 
 	/* render
 	Renders audio coming out from the sequencer: that is, the metronome! */

@@ -459,11 +459,6 @@ void ActionRecorder::recordNonFirstEnvelopeAction(ID channelId, Frame frame, int
 
 /* -------------------------------------------------------------------------- */
 
-const std::vector<Action>* ActionRecorder::getActionsOnFrame(Frame f) const
-{
-	return m_model.get().actions.getActionsOnFrame(f);
-}
-
 bool ActionRecorder::hasActions(ID channelId, int type) const
 {
 	return m_model.get().actions.hasActions(channelId, type);

@@ -121,7 +121,7 @@ void Sequencer::setSampleRate(int sampleRate)
 /* -------------------------------------------------------------------------- */
 
 const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequencer,
-    Frame bufferSize, int sampleRate, const ActionRecorder& actionRecorder) const
+    Frame bufferSize, int sampleRate, const model::Actions& actions) const
 {
 	m_eventBuffer.clear();
 
@@ -154,7 +154,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 			m_metronome.trigger(Metronome::Click::BEAT, local);
 		}
 
-		const std::vector<Action>* as = actionRecorder.getActionsOnFrame(global);
+		const std::vector<Action>* as = actions.getActionsOnFrame(global);
 		if (as != nullptr)
 			m_eventBuffer.push_back({EventType::ACTIONS, global, local, as});
 	}
