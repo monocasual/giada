@@ -473,6 +473,7 @@ void ActionRecorder::clearChannel(ID channelId)
 {
 	m_model.get().channels.get(channelId).hasActions = false;
 	m_model.get().actions.clearChannel(channelId);
+	m_model.swap(model::SwapType::HARD);
 }
 
 void ActionRecorder::clearActions(ID channelId, int type)
