@@ -77,8 +77,6 @@ void ChannelManager::reset(Frame framesInBuffer)
 	m_model.addChannelShared(std::move(masterOutData.shared));
 	m_model.addChannelShared(std::move(masterInData.shared));
 	m_model.addChannelShared(std::move(previewData.shared));
-
-	m_model.swap(model::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
