@@ -360,9 +360,8 @@ void ActionRecorder::clearAllActions()
 {
 	for (Channel& ch : m_model.get().channels.getAll())
 		ch.hasActions = false;
-	m_model.swap(model::SwapType::HARD);
-
 	m_model.get().actions.clearAll();
+	m_model.swap(model::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
