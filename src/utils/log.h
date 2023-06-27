@@ -67,9 +67,9 @@ static void print(const char* format, Args&&... args)
 	if (mode == LOG_MODE_MUTE)
 		return;
 	if (mode == LOG_MODE_FILE && file.is_open())
-		fmt::print(file, format, args...);
+		fmt::print(file, fmt::runtime(format), args...);
 	else
-		fmt::print(format, args...);
+		fmt::print(fmt::runtime(format), args...);
 }
 } // namespace giada::u::log
 
