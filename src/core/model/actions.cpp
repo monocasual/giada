@@ -263,6 +263,8 @@ void Actions::forEachAction(std::function<void(const Action&)> f) const
 
 Action* Actions::findAction(Map& src, ID id)
 {
+	if (id == 0)
+		return nullptr;
 	for (auto& [frame, actions] : src)
 		for (Action& a : actions)
 			if (a.id == id)
