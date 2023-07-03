@@ -1,7 +1,7 @@
 {
     "name": "giada",
     "version-string": "1.0",
-    "builtin-baseline": "af2287382b1991dbdcb7e5112d236f3323b9dd7a",
+    "builtin-baseline": "f6a5d4e8eb7476b8d7fc12a56dff300c1c986131",
     "dependencies": [
         {
             "name": "rtmidi",
@@ -38,6 +38,20 @@
             "features": [
                 "external-libs"
             ]
+        }
+    ],
+    "overrides": [
+        {
+            "name": "catch2",
+            "version": "2.13.8"
+        },
+        {
+            "name": "libsamplerate",
+            "version": "0.2.2"
+        },
+        {
+            "name": "libsndfile",
+            "version": "1.0.31"
         }
     ]
 }
