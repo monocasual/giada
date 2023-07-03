@@ -304,7 +304,7 @@ void KernelAudio::setAPI_(RtAudio::Api api)
 	m_rtAudio = std::make_unique<RtAudio>(api);
 
 	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg) {
-		u::log::print("[KA] RtAudio error {}: {}\n", type, msg);
+		u::log::print("[KA] RtAudio error {}: {}\n", static_cast<int>(type), msg);
 	});
 }
 
