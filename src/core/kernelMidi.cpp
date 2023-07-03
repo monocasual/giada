@@ -155,11 +155,15 @@ bool KernelMidi::setAPI_(RtMidi::Api api)
 
 KernelMidi::Result KernelMidi::openOutPort_(int port)
 {
+	assert(m_midiOut != nullptr);
+
 	return openPort(*m_midiOut, port);
 }
 
 KernelMidi::Result KernelMidi::openInPort_(int port)
 {
+	assert(m_midiIn != nullptr);
+
 	return openPort(*m_midiIn, port);
 }
 
