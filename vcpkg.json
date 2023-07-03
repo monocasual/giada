@@ -34,7 +34,7 @@
         },
         {
             "name": "libsndfile",
-            "version>=": "1.0.31",
+            "version>=": "1.2.0",
             "features": [
                 "external-libs"
             ]
@@ -51,7 +51,7 @@
         },
         {
             "name": "libsndfile",
-            "version": "1.0.31"
+            "version": "1.2.0"
         }
     ]
 }
