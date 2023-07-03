@@ -30,7 +30,7 @@
         },
         {
             "name": "nlohmann-json",
-            "version>=": "3.10.5"
+            "version>=": "3.11.2"
         },
         {
             "name": "libsndfile",
@@ -48,6 +48,10 @@
         {
             "name": "libsamplerate",
             "version": "0.2.2"
+        },
+        {
+            "name": "nlohmann-json",
+            "version": "3.11.2"
         },
         {
             "name": "libsndfile",
