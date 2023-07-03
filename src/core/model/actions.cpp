@@ -36,6 +36,12 @@
 
 namespace giada::m::model
 {
+void Actions::set(model::Actions::Map&& actions)
+{
+	m_actions = std::move(actions);
+	updateMapPointers(m_actions);
+}
+
 void Actions::clearAll()
 {
 	m_actions.clear();
@@ -140,7 +146,6 @@ bool Actions::hasActions(ID channelId, int type) const
 
 /* -------------------------------------------------------------------------- */
 
-Actions::Map&       Actions::getAll() { return m_actions; }
 const Actions::Map& Actions::getAll() const { return m_actions; }
 
 /* -------------------------------------------------------------------------- */

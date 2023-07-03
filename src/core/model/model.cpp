@@ -269,7 +269,7 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 		getAllChannelsShared().push_back(std::move(data.shared));
 	}
 
-	layout.actions.getAll() = actionFactory::deserializeActions(patch.actions);
+	layout.actions.set(actionFactory::deserializeActions(patch.actions));
 
 	layout.sequencer.status   = SeqStatus::STOPPED;
 	layout.sequencer.bars     = patch.bars;

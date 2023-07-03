@@ -72,12 +72,16 @@ public:
 	/* getAll
     Returns a reference to the internal map. */
 
-	Map&       getAll();
 	const Map& getAll() const;
 
 #ifdef G_DEBUG_MODE
 	void debug() const;
 #endif
+
+	/* set
+	Sets a new whole map of actions. Use this when deserializing stuff. */
+
+	void set(model::Actions::Map&&);
 
 	/* clearAll
     Deletes all recorded actions. */
