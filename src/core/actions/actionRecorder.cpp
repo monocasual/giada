@@ -471,6 +471,11 @@ void ActionRecorder::recordNonFirstEnvelopeAction(ID channelId, Frame frame, int
 
 /* -------------------------------------------------------------------------- */
 
+const Action* ActionRecorder::findAction(ID id) const
+{
+	return m_model.get().actions.findAction(id);
+}
+
 bool ActionRecorder::hasActions(ID channelId, int type) const
 {
 	return m_model.get().actions.hasActions(channelId, type);

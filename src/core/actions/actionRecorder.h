@@ -106,6 +106,7 @@ public:
 
 	/* Pass-thru functions. See Actions.h */
 
+	const Action*       findAction(ID) const;
 	bool                hasActions(ID channelId, int type = 0) const;
 	std::vector<Action> getActionsOnChannel(ID channelId) const;
 	void                clearChannel(ID channelId);

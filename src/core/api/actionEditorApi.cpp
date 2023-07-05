@@ -47,6 +47,13 @@ std::vector<Action> ActionEditorApi::getActionsOnChannel(ID channelId) const
 
 /* -------------------------------------------------------------------------- */
 
+const Action* ActionEditorApi::findAction(ID id) const
+{
+	return m_actionRecorder.findAction(id);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ActionEditorApi::recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2)
 {
 	m_actionRecorder.recordMidiAction(channelId, note, velocity, f1, f2, m_sequencer.getFramesInLoop());

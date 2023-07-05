@@ -74,6 +74,11 @@ public:
 
 	const Map& getAll() const;
 
+	/* findAction
+	Finds action given ID. Returns nullptr if not found. */
+
+	const Action* findAction(ID) const;
+
 #ifdef G_DEBUG_MODE
 	void debug() const;
 #endif
@@ -146,7 +151,8 @@ private:
 	bool exists(ID channelId, Frame frame, const MidiEvent& event, const Map& target) const;
 	bool exists(ID channelId, Frame frame, const MidiEvent& event) const;
 
-	Action* findAction(Map& src, ID id);
+	Action*       findAction(Map& src, ID id);
+	const Action* findAction(const Map& src, ID id) const;
 
 	/* updateMapPointers
     Updates all prev/next actions pointers into the action map. This is required

@@ -43,6 +43,7 @@ public:
 	ActionEditorApi(Engine&, Sequencer&, ActionRecorder&);
 
 	std::vector<Action> getActionsOnChannel(ID channelId) const;
+	const Action*       findAction(ID) const;
 
 	void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2);
 	void deleteMidiAction(ID channelId, const Action&);

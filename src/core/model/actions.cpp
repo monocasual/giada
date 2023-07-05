@@ -150,6 +150,10 @@ const Actions::Map& Actions::getAll() const { return m_actions; }
 
 /* -------------------------------------------------------------------------- */
 
+const Action* Actions::findAction(ID id) const { return findAction(m_actions, id); }
+
+/* -------------------------------------------------------------------------- */
+
 #ifdef G_DEBUG_MODE
 
 void Actions::debug() const
@@ -261,16 +265,21 @@ void Actions::forEachAction(std::function<void(const Action&)> f) const
 
 /* -------------------------------------------------------------------------- */
 
-Action* Actions::findAction(Map& src, ID id)
+const Action* Actions::findAction(const Map& src, ID id) const
 {
 	if (id == 0)
 		return nullptr;
-	for (auto& [frame, actions] : src)
-		for (Action& a : actions)
+	for (const auto& [frame, actions] : src)
+		for (const Action& a : actions)
 			if (a.id == id)
 				return &a;
 	assert(false);
 	return nullptr;
+}
+
+Action* Actions::findAction(Map& src, ID id)
+{
+	return const_cast<Action*>(std::as_const(*this).findAction(src, id));
 }
 
 /* -------------------------------------------------------------------------- */
