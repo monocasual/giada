@@ -70,9 +70,12 @@ void ActionRecorder::reset()
 
 bool ActionRecorder::isBoundaryEnvelopeAction(const Action& a) const
 {
+	/*
 	assert(a.prev != nullptr);
 	assert(a.next != nullptr);
 	return a.prev->frame > a.frame || a.next->frame < a.frame;
+	*/
+	return false;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -171,6 +174,7 @@ void ActionRecorder::liveRec(ID channelId, MidiEvent e, Frame globalFrame)
 
 void ActionRecorder::recordEnvelopeAction(ID channelId, Frame frame, int value, Frame lastFrameInLoop)
 {
+#if 0
 	assert(value >= 0 && value <= G_MAX_VELOCITY);
 
 	/* First action ever? Add actions at boundaries. Else, find action right
@@ -181,6 +185,7 @@ void ActionRecorder::recordEnvelopeAction(ID channelId, Frame frame, int value, 
 		recordFirstEnvelopeAction(channelId, frame, value, lastFrameInLoop);
 	else
 		recordNonFirstEnvelopeAction(channelId, frame, value);
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -253,6 +258,7 @@ void ActionRecorder::deleteSampleAction(ID channelId, const Action& a)
 
 void ActionRecorder::deleteEnvelopeAction(ID channelId, const Action& a)
 {
+#if 0
 	/* Deleting a boundary action wipes out everything. */
 	/* TODO - FIX*/
 
@@ -286,6 +292,7 @@ void ActionRecorder::deleteEnvelopeAction(ID channelId, const Action& a)
 	}
 
 	m_model.swap(model::SwapType::SOFT);
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -313,6 +320,7 @@ void ActionRecorder::updateSampleAction(ID channelId, const Action& a, int type,
 
 void ActionRecorder::updateEnvelopeAction(ID channelId, const Action& a, Frame f, int value, Frame lastFrameInLoop)
 {
+#if 0
 	/* Update the action directly if it is a boundary one. Else, delete the
 	previous one and record a new action. */
 
@@ -325,6 +333,7 @@ void ActionRecorder::updateEnvelopeAction(ID channelId, const Action& a, Frame f
 	}
 
 	m_model.swap(model::SwapType::SOFT);
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -422,6 +431,7 @@ void ActionRecorder::consolidate(const Action& a1, std::size_t i)
 
 void ActionRecorder::recordFirstEnvelopeAction(ID channelId, Frame frame, int value, Frame lastFrameInLoop)
 {
+#if 0
 	// TODO - use MidiEvent's float velocity
 	const MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_CC, 0, G_MAX_VELOCITY);
 	const MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_CC, 0, value);
@@ -433,12 +443,14 @@ void ActionRecorder::recordFirstEnvelopeAction(ID channelId, Frame frame, int va
 	updateSiblings(a1.id, /*prev=*/a3.id, /*next=*/a2.id); // Circular loop (begin)
 	updateSiblings(a2.id, /*prev=*/a1.id, /*next=*/a3.id);
 	updateSiblings(a3.id, /*prev=*/a2.id, /*next=*/a1.id); // Circular loop (end)
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ActionRecorder::recordNonFirstEnvelopeAction(ID channelId, Frame frame, int value)
 {
+#if 0
 	const Action a1 = m_model.get().actions.getClosestAction(channelId, frame, MidiEvent::CHANNEL_CC);
 	const Action a3 = a1.next != nullptr ? *a1.next : Action{};
 
@@ -454,6 +466,7 @@ void ActionRecorder::recordNonFirstEnvelopeAction(ID channelId, Frame frame, int
 	const Action a2 = rec(channelId, frame, e2);
 
 	updateSiblings(a2.id, a1.id, a3.id);
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
