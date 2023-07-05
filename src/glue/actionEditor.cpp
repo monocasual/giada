@@ -83,6 +83,13 @@ Data getData(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
+const m::Action* findAction(ID id)
+{
+	return g_engine.getActionEditorApi().findAction(id);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2)
 {
 	g_engine.getActionEditorApi().recordMidiAction(channelId, note, velocity, f1, f2);

@@ -33,18 +33,6 @@ namespace giada::m::actionFactory
 namespace
 {
 IdManager actionId_;
-
-/* -------------------------------------------------------------------------- */
-
-const Action* getActionPtrById_(int id, const model::Actions::Map& source)
-{
-	for (const auto& [_, actions] : source)
-		for (const Action& action : actions)
-			if (action.id == id)
-				return &action;
-	return nullptr;
-}
-
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -84,34 +72,8 @@ ID getNewActionId()
 model::Actions::Map deserializeActions(const std::vector<Patch::Action>& pactions)
 {
 	model::Actions::Map out;
-
-	/* First pass: add actions with no relationship, that is with no prev/next
-	pointers filled in. */
-
 	for (const Patch::Action& paction : pactions)
 		out[paction.frame].push_back(makeAction(paction));
-
-	/* Second pass: fill in previous and next actions, if any. Is this the
-	fastest/smartest way to do it? Maybe not. Optimizations are welcome. */
-
-	for (const Patch::Action& paction : pactions)
-	{
-		if (paction.nextId == 0 && paction.prevId == 0)
-			continue;
-		Action* curr = const_cast<Action*>(getActionPtrById_(paction.id, out));
-		assert(curr != nullptr);
-		if (paction.nextId != 0)
-		{
-			curr->next = getActionPtrById_(paction.nextId, out);
-			assert(curr->next != nullptr);
-		}
-		if (paction.prevId != 0)
-		{
-			curr->prev = getActionPtrById_(paction.prevId, out);
-			assert(curr->prev != nullptr);
-		}
-	}
-
 	return out;
 }
 

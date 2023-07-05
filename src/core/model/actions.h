@@ -154,13 +154,6 @@ private:
 	Action*       findAction(Map& src, ID id);
 	const Action* findAction(const Map& src, ID id) const;
 
-	/* updateMapPointers
-    Updates all prev/next actions pointers into the action map. This is required
-    after an action has been recorded, since pushing back new actions in a Action 
-    vector makes it reallocating the existing ones. */
-
-	void updateMapPointers(Map& src);
-
 	/* optimize
     Removes frames without actions. */
 

@@ -39,7 +39,6 @@ namespace giada::m::model
 void Actions::set(model::Actions::Map&& actions)
 {
 	m_actions = std::move(actions);
-	updateMapPointers(m_actions);
 }
 
 void Actions::clearAll()
@@ -96,8 +95,6 @@ void Actions::updateKeyFrames(std::function<Frame(Frame old)> f)
 		G_DEBUG("{} -> {}", oldFrame, newFrame);
 	}
 
-	updateMapPointers(temp);
-
 	m_actions = std::move(temp);
 }
 
@@ -116,19 +113,15 @@ void Actions::updateSiblings(ID id, ID prevId, ID nextId)
 	Action* pprev = findAction(m_actions, prevId);
 	Action* pnext = findAction(m_actions, nextId);
 
-	pcurr->prev   = pprev;
 	pcurr->prevId = pprev->id;
-	pcurr->next   = pnext;
 	pcurr->nextId = pnext->id;
 
-	if (pprev != nullptr)
+	if (pprev->id != 0)
 	{
-		pprev->next   = pcurr;
 		pprev->nextId = pcurr->id;
 	}
-	if (pnext != nullptr)
+	if (pnext->id != 0)
 	{
-		pnext->prev   = pcurr;
 		pnext->prevId = pcurr->id;
 	}
 }
@@ -164,8 +157,8 @@ void Actions::debug() const
 	{
 		fmt::print("\tframe: {}\n", frame);
 		for (const Action& a : actions)
-			fmt::print("\t\t({}) - ID={}, frame={}, channel={}, value=0x{}, prevId={}, prev={}, nextId={}, next={}\n",
-			    (void*)&a, a.id, a.frame, a.channelId, a.event.getRaw(), a.prevId, (void*)a.prev, a.nextId, (void*)a.next);
+			fmt::print("\t\t({}) - ID={}, frame={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
+			    (void*)&a, a.id, a.frame, a.channelId, a.event.getRaw(), a.prevId, a.nextId);
 	}
 }
 
@@ -186,7 +179,6 @@ Action Actions::rec(ID channelId, Frame frame, MidiEvent event)
 	enough to insert a new item first. No plug-in data for now. */
 
 	m_actions[frame].push_back(a);
-	updateMapPointers(m_actions);
 
 	return a;
 }
@@ -201,7 +193,6 @@ void Actions::rec(std::vector<Action>& actions)
 	for (const Action& a : actions)
 		if (!exists(a.channelId, a.frame, a.event, m_actions))
 			m_actions[a.frame].push_back(a);
-	updateMapPointers(m_actions);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -215,8 +206,6 @@ void Actions::rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 	Action* a2 = findAction(m_actions, m_actions[f2].back().id);
 	a1->nextId = a2->id;
 	a2->prevId = a1->id;
-
-	updateMapPointers(m_actions);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -283,22 +272,6 @@ Action* Actions::findAction(Map& src, ID id)
 
 /* -------------------------------------------------------------------------- */
 
-void Actions::updateMapPointers(Map& src)
-{
-	for (auto& kv : src)
-	{
-		for (Action& action : kv.second)
-		{
-			if (action.nextId != 0)
-				action.next = findAction(src, action.nextId);
-			if (action.prevId != 0)
-				action.prev = findAction(src, action.prevId);
-		}
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Actions::optimize(Map& map)
 {
 	for (auto it = map.cbegin(); it != map.cend();)
@@ -312,7 +285,6 @@ void Actions::removeIf(std::function<bool(const Action&)> f)
 	for (auto& [frame, actions] : m_actions)
 		actions.erase(std::remove_if(actions.begin(), actions.end(), f), actions.end());
 	optimize(m_actions);
-	updateMapPointers(m_actions);
 }
 
 /* -------------------------------------------------------------------------- */

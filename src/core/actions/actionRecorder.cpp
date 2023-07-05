@@ -238,8 +238,10 @@ void ActionRecorder::deleteMidiAction(ID channelId, const Action& a)
 
 	/* Check if 'next' exist first: could be orphaned. */
 
-	if (a.next != nullptr)
-		deleteAction(channelId, a.id, a.next->id);
+	const Action* next = m_model.get().actions.findAction(a.nextId);
+
+	if (next != nullptr)
+		deleteAction(channelId, a.id, next->id);
 	else
 		deleteAction(channelId, a.id);
 }
@@ -248,8 +250,10 @@ void ActionRecorder::deleteMidiAction(ID channelId, const Action& a)
 
 void ActionRecorder::deleteSampleAction(ID channelId, const Action& a)
 {
-	if (a.next != nullptr) // For ChannelMode::SINGLE_PRESS combo
-		deleteAction(channelId, a.id, a.next->id);
+	const Action* next = m_model.get().actions.findAction(a.nextId);
+
+	if (next != nullptr) // For ChannelMode::SINGLE_PRESS combo
+		deleteAction(channelId, a.id, next->id);
 	else
 		deleteAction(channelId, a.id);
 }
@@ -300,7 +304,7 @@ void ActionRecorder::deleteEnvelopeAction(ID channelId, const Action& a)
 void ActionRecorder::updateMidiAction(ID channelId, const Action& a, int note, int velocity,
     Frame f1, Frame f2, Frame framesInLoop)
 {
-	deleteAction(channelId, a.id, a.next->id);
+	deleteAction(channelId, a.id, a.nextId);
 	recordMidiAction(channelId, note, velocity, f1, f2, framesInLoop);
 }
 
@@ -309,7 +313,7 @@ void ActionRecorder::updateMidiAction(ID channelId, const Action& a, int note, i
 void ActionRecorder::updateSampleAction(ID channelId, const Action& a, int type, Frame f1, Frame f2)
 {
 	if (isSinglePressMode(channelId))
-		deleteAction(channelId, a.id, a.next->id);
+		deleteAction(channelId, a.id, a.nextId);
 	else
 		deleteAction(channelId, a.id);
 

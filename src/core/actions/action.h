@@ -43,9 +43,6 @@ struct Action
 	ID        prevId      = 0;
 	ID        nextId      = 0;
 
-	const Action* prev = nullptr;
-	const Action* next = nullptr;
-
 	bool isValid() const
 	{
 		return id != 0;

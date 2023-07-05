@@ -73,6 +73,8 @@ struct Data
 
 Data getData(ID channelId);
 
+const m::Action* findAction(ID);
+
 /* MIDI actions.  */
 
 void recordMidiAction(ID channelId, int note, int velocity, Frame f1,
