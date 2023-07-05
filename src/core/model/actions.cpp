@@ -273,7 +273,6 @@ const Action* Actions::findAction(const Map& src, ID id) const
 		for (const Action& a : actions)
 			if (a.id == id)
 				return &a;
-	assert(false);
 	return nullptr;
 }
 
