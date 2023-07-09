@@ -83,7 +83,6 @@ void gdWindow::addSubWindow(gdWindow* w)
 	w->setParent(this);
 	w->callback(cb_closeChild); // you can pass params: w->callback(cb_closeChild, (void*)params)
 	subWindows.push_back(w);
-	//debug();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -122,18 +121,6 @@ int gdWindow::getId() const
 void gdWindow::setId(int wid)
 {
 	id = wid;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdWindow::debug() const
-{
-	/* TODO - use G_DEBUG
-	u::log::print("---- window stack (id={}): ----\n", getId());
-	for (unsigned i=0; i<subWindows.size(); i++)
-		u::log::print("[gdWindow] %p (id={})\n", (void*)subWindows.at(i), subWindows.at(i)->getId());
-	u::log::print("----\n");
-	*/
 }
 
 /* -------------------------------------------------------------------------- */

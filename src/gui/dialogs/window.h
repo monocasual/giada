@@ -56,8 +56,7 @@ public:
 
 	bool hasWindow(int id) const;
 
-	int  getId() const;
-	void debug() const;
+	int getId() const;
 
 	/* getContentBounds
 	Returns {0, 0, w(), h()}. */
