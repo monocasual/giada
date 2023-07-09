@@ -71,7 +71,7 @@ void gdWindow::cb_closeChild(Fl_Widget* w, void* /*p*/)
 	if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
 		return;
 
-	gdWindow* child = (gdWindow*)w;
+	gdWindow* child = static_cast<gdWindow*>(w);
 	if (child->getParent() != nullptr)
 		(child->getParent())->delChild(child);
 }
