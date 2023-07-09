@@ -31,6 +31,8 @@
 #include <RtMidi.h>
 #include <cstdint>
 
+namespace giada
+{
 /* -- environment ----------------------------------------------------------- */
 #if defined(_WIN32)
 #define G_OS_WINDOWS
@@ -423,5 +425,6 @@ constexpr auto MIDIMAP_KEY_STOPPING          = "stopping";
 constexpr auto MIDIMAP_KEY_STOPPED           = "stopped";
 constexpr auto MIDIMAP_KEY_CHANNEL           = "channel";
 constexpr auto MIDIMAP_KEY_MESSAGE           = "message";
+} // namespace giada
 
 #endif
