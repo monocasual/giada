@@ -229,9 +229,9 @@ v::gdWindow* Ui::getSubwindow(v::gdWindow& parent, ID wid)
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::openSubWindow(v::gdWindow& parent, v::gdWindow* child, int wid)
+void Ui::openSubWindow(v::gdWindow* child, int wid)
 {
-	parent.addChild(child, wid);
+	mainWindow->addChild(child, wid);
 }
 
 /* -------------------------------------------------------------------------- */
