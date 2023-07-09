@@ -142,10 +142,8 @@ std::string geFileBrowser::getSelectedItem(bool fullPath)
 {
 	if (value() == 0) // no rows selected? return current directory
 		return m_currentDir;
-	if (!fullPath) // no full path requested? return the selected text
-		return text(value());
-	else
-		return u::fs::getRealPath(u::fs::join(m_currentDir, text(value())));
+	const std::string path = u::fs::getRealPath(u::fs::join(m_currentDir, text(value())));
+	return fullPath ? path : u::fs::basename(path);
 }
 
 /* -------------------------------------------------------------------------- */
