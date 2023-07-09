@@ -233,7 +233,7 @@ void Ui::openSubWindow(v::gdWindow& parent, v::gdWindow* child, int wid)
 {
 	if (parent.hasChild(wid))
 	{
-		u::log::print("[GU] parent has subwindow with id={}, deleting\n", wid);
+		G_DEBUG("Parent has subwindow with id={}, deleting", wid);
 		parent.delChild(wid);
 	}
 	child->setId(wid);
