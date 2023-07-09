@@ -215,7 +215,7 @@ void openBrowserForPlugins(v::gdWindow& parent)
 {
 	v::gdBrowserDir* browser = new v::gdBrowserDir(g_ui.getI18Text(v::LangMap::BROWSER_OPENPLUGINSDIR),
 	    g_ui.model.patchPath, c::config::setPluginPathCb, g_ui.model);
-	parent.addChild(browser);
+	parent.addChild(browser, WID_FILE_BROWSER);
 }
 
 /* -------------------------------------------------------------------------- */

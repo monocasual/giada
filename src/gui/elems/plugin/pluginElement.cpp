@@ -169,7 +169,7 @@ void gePluginElement::openPluginWindow()
 		child = new gdPluginWindowGUI(m_plugin);
 	else
 		child = new gdPluginWindow(m_plugin);
-	child->setId(pwid);
-	parent->addChild(child);
+
+	parent->addChild(child, pwid);
 }
 } // namespace giada::v

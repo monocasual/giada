@@ -78,8 +78,14 @@ void gdWindow::cb_closeChild(Fl_Widget* w, void* /*p*/)
 
 /* -------------------------------------------------------------------------- */
 
-void gdWindow::addChild(gdWindow* w)
+void gdWindow::addChild(gdWindow* w, ID wid)
 {
+	if (hasChild(wid))
+	{
+		G_DEBUG("Parent has subwindow with id={}, deleting", wid);
+		delChild(wid);
+	}
+	w->setId(wid);
 	w->setParent(this);
 	w->callback(cb_closeChild); // you can pass params: w->callback(cb_closeChild, (void*)params)
 	m_children.push_back(w);
