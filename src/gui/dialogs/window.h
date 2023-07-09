@@ -27,6 +27,7 @@
 #ifndef GD_WINDOW_H
 #define GD_WINDOW_H
 
+#include "core/types.h"
 #include "deps/geompp/src/rect.hpp"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_SVG_Image.H>
@@ -37,8 +38,8 @@ namespace giada::v
 class gdWindow : public Fl_Double_Window
 {
 public:
-	gdWindow(int x, int y, int w, int h, const char* title = nullptr, int id = 0);
-	gdWindow(geompp::Rect<int>, const char* title = nullptr, int id = 0);
+	gdWindow(int x, int y, int w, int h, const char* title = nullptr, ID id = 0);
+	gdWindow(geompp::Rect<int>, const char* title = nullptr, ID id = 0);
 	~gdWindow();
 
 	static void cb_closeChild(Fl_Widget* /*w*/, void* p);
@@ -54,9 +55,9 @@ public:
 	/* hasChild
 	True if the window with id 'id' exists in the stack. */
 
-	bool hasChild(int id) const;
+	bool hasChild(ID) const;
 
-	int getId() const;
+	ID getId() const;
 
 	/* getContentBounds
 	Returns {0, 0, w(), h()}. */
@@ -70,11 +71,11 @@ public:
 
 	void      addChild(gdWindow* w);
 	void      delChild(gdWindow* w);
-	void      delChild(int id);
-	void      setId(int id);
+	void      delChild(ID);
+	void      setId(ID);
 	void      setParent(gdWindow* w);
 	gdWindow* getParent();
-	gdWindow* getChild(int id);
+	gdWindow* getChild(ID);
 
 	void setBounds(geompp::Rect<int>);
 

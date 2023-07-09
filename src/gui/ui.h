@@ -91,13 +91,13 @@ public:
 	/* [rebuild|refresh]SubWindow 
 	Rebuilds or refreshes subwindow with ID 'wid' if it exists, i.e. if it's open. */
 
-	void rebuildSubWindow(int wid);
-	void refreshSubWindow(int wid);
+	void rebuildSubWindow(ID wid);
+	void refreshSubWindow(ID wid);
 
 	/* getSubwindow
 	Returns a pointer to an open subwindow, otherwise nullptr. */
 
-	v::gdWindow* getSubwindow(v::gdWindow& parent, int wid);
+	v::gdWindow* getSubwindow(v::gdWindow& parent, ID wid);
 
 	/* openSubWindow
 	Opens a new sub-window as a child of parent and assigns 'wid' to child. */
@@ -107,7 +107,7 @@ public:
 	/* closeSubWindow
 	Closes a sun-window currently attached to the main one. */
 
-	void closeSubWindow(int wid);
+	void closeSubWindow(ID wid);
 
 	/* closeAllSubwindows
 	Closes all subwindows attached to the main one. */

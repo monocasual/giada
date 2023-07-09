@@ -32,7 +32,7 @@
 
 namespace giada::v
 {
-gdWindow::gdWindow(int x, int y, int w, int h, const char* title, int id)
+gdWindow::gdWindow(int x, int y, int w, int h, const char* title, ID id)
 : Fl_Double_Window(x, y, w, h, title)
 , m_id(id)
 , m_parent(nullptr)
@@ -44,7 +44,7 @@ gdWindow::gdWindow(int x, int y, int w, int h, const char* title, int id)
 
 /* -------------------------------------------------------------------------- */
 
-gdWindow::gdWindow(geompp::Rect<int> r, const char* title, int id)
+gdWindow::gdWindow(geompp::Rect<int> r, const char* title, ID id)
 : gdWindow(r.x, r.y, r.w, r.h, title, id)
 {
 }
@@ -100,7 +100,7 @@ void gdWindow::delChild(gdWindow* w)
 
 /* -------------------------------------------------------------------------- */
 
-void gdWindow::delChild(int wid)
+void gdWindow::delChild(ID wid)
 {
 	for (unsigned j = 0; j < m_children.size(); j++)
 		if (m_children.at(j)->getId() == wid)
@@ -113,12 +113,12 @@ void gdWindow::delChild(int wid)
 
 /* -------------------------------------------------------------------------- */
 
-int gdWindow::getId() const
+ID gdWindow::getId() const
 {
 	return m_id;
 }
 
-void gdWindow::setId(int wid)
+void gdWindow::setId(ID wid)
 {
 	m_id = wid;
 }
@@ -149,7 +149,7 @@ void gdWindow::setParent(gdWindow* w)
 
 /* -------------------------------------------------------------------------- */
 
-bool gdWindow::hasChild(int wid) const
+bool gdWindow::hasChild(ID wid) const
 {
 	for (unsigned j = 0; j < m_children.size(); j++)
 		if (wid == m_children.at(j)->getId())
@@ -159,7 +159,7 @@ bool gdWindow::hasChild(int wid) const
 
 /* -------------------------------------------------------------------------- */
 
-gdWindow* gdWindow::getChild(int wid)
+gdWindow* gdWindow::getChild(ID wid)
 {
 	for (unsigned j = 0; j < m_children.size(); j++)
 		if (wid == m_children.at(j)->getId())

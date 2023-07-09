@@ -27,6 +27,7 @@
 #ifndef G_CONST_H
 #define G_CONST_H
 
+#include "core/types.h"
 #include "deps/rtaudio/RtAudio.h"
 #include <RtMidi.h>
 #include <cstdint>
@@ -161,22 +162,22 @@ constexpr int LOG_MODE_FILE   = 2;
 
 /* -- unique IDs of mainWin's subwindows ------------------------------------ */
 /* -- wid > 0 are reserved by gg_keyboard ----------------------------------- */
-constexpr int WID_BEATS           = -1;
-constexpr int WID_BPM             = -2;
-constexpr int WID_ABOUT           = -3;
-constexpr int WID_FILE_BROWSER    = -4;
-constexpr int WID_CONFIG          = -5;
-constexpr int WID_FX_LIST         = -6;
-constexpr int WID_ACTION_EDITOR   = -7;
-constexpr int WID_SAMPLE_EDITOR   = -8;
-constexpr int WID_FX              = -9;
-constexpr int WID_KEY_GRABBER     = -10;
-constexpr int WID_SAMPLE_NAME     = -11;
-constexpr int WID_FX_CHOOSER      = -12;
-constexpr int WID_MIDI_INPUT      = -13;
-constexpr int WID_MIDI_OUTPUT     = -14;
-constexpr int WID_MISSING_ASSETS  = -15;
-constexpr int WID_CHANNEL_ROUTING = -16;
+constexpr ID WID_BEATS           = -1;
+constexpr ID WID_BPM             = -2;
+constexpr ID WID_ABOUT           = -3;
+constexpr ID WID_FILE_BROWSER    = -4;
+constexpr ID WID_CONFIG          = -5;
+constexpr ID WID_FX_LIST         = -6;
+constexpr ID WID_ACTION_EDITOR   = -7;
+constexpr ID WID_SAMPLE_EDITOR   = -8;
+constexpr ID WID_FX              = -9;
+constexpr ID WID_KEY_GRABBER     = -10;
+constexpr ID WID_SAMPLE_NAME     = -11;
+constexpr ID WID_FX_CHOOSER      = -12;
+constexpr ID WID_MIDI_INPUT      = -13;
+constexpr ID WID_MIDI_OUTPUT     = -14;
+constexpr ID WID_MISSING_ASSETS  = -15;
+constexpr ID WID_CHANNEL_ROUTING = -16;
 
 /* -- File signals ---------------------------------------------------------- */
 constexpr int G_FILE_NOT_SPECIFIED = -3;

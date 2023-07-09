@@ -204,7 +204,7 @@ void Ui::rebuild()
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::rebuildSubWindow(int wid)
+void Ui::rebuildSubWindow(ID wid)
 {
 	v::gdWindow* w = getSubwindow(*mainWindow.get(), wid);
 	if (w != nullptr) // If its open
@@ -213,7 +213,7 @@ void Ui::rebuildSubWindow(int wid)
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::refreshSubWindow(int wid)
+void Ui::refreshSubWindow(ID wid)
 {
 	v::gdWindow* w = getSubwindow(*mainWindow.get(), wid);
 	if (w != nullptr) // If its open
@@ -222,7 +222,7 @@ void Ui::refreshSubWindow(int wid)
 
 /* -------------------------------------------------------------------------- */
 
-v::gdWindow* Ui::getSubwindow(v::gdWindow& parent, int wid)
+v::gdWindow* Ui::getSubwindow(v::gdWindow& parent, ID wid)
 {
 	return parent.hasChild(wid) ? parent.getChild(wid) : nullptr;
 }
@@ -242,7 +242,7 @@ void Ui::openSubWindow(v::gdWindow& parent, v::gdWindow* child, int wid)
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::closeSubWindow(int wid)
+void Ui::closeSubWindow(ID wid)
 {
 	mainWindow->delChild(wid);
 }
