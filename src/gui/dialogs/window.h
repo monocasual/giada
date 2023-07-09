@@ -78,13 +78,11 @@ public:
 
 	void setBounds(geompp::Rect<int>);
 
-protected:
+private:
 	std::vector<gdWindow*> m_subWindows;
 	int                    m_id;
 	gdWindow*              m_parent;
-
-private:
-	Fl_SVG_Image m_icon;
+	Fl_SVG_Image           m_icon;
 };
 } // namespace giada::v
 
