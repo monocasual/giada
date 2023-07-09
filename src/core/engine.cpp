@@ -322,7 +322,7 @@ int Engine::audioCallback(mcl::AudioBuffer& out, const mcl::AudioBuffer& in) con
 		const Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
 		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, actions);
-		m_sequencer.render(out);
+		m_sequencer.render(out, layout_RT);
 		if (!layout_RT.locked)
 			m_mixer.advanceChannels(events, channels, renderRange, quantizerStep);
 	}

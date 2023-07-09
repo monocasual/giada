@@ -81,6 +81,7 @@ public:
 	int       beats        = G_DEFAULT_BEATS;
 	float     bpm          = G_DEFAULT_BPM;
 	int       quantize     = G_DEFAULT_QUANTIZE;
+	bool      metronome    = false;
 
 private:
 	struct Shared

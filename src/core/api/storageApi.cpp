@@ -77,7 +77,6 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 		patch.columns.push_back({column.id, column.width});
 
 	patch.name       = uiModel.projectName;
-	patch.metronome  = m_sequencer.isMetronomeOn(); // TODO - addShared bool metronome to Layout
 	patch.samplerate = m_kernelAudio.getSampleRate();
 
 	m_model.store(patch, projectPath);

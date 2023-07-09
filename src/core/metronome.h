@@ -47,8 +47,6 @@ public:
 	void render(mcl::AudioBuffer& outBuf) const;
 	void trigger(Click c, Frame o) const;
 
-	bool running = false;
-
 private:
 	static constexpr Frame CLICK_SIZE = 38;
 

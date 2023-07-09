@@ -271,11 +271,12 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 
 	layout.actions.set(actionFactory::deserializeActions(patch.actions));
 
-	layout.sequencer.status   = SeqStatus::STOPPED;
-	layout.sequencer.bars     = patch.bars;
-	layout.sequencer.beats    = patch.beats;
-	layout.sequencer.bpm      = patch.bpm;
-	layout.sequencer.quantize = patch.quantize;
+	layout.sequencer.status    = SeqStatus::STOPPED;
+	layout.sequencer.bars      = patch.bars;
+	layout.sequencer.beats     = patch.beats;
+	layout.sequencer.bpm       = patch.bpm;
+	layout.sequencer.quantize  = patch.quantize;
+	layout.sequencer.metronome = patch.metronome;
 
 	return state;
 
@@ -340,10 +341,11 @@ void Model::store(Patch& patch, const std::string& projectPath)
 
 	const Layout& layout = get();
 
-	patch.bars     = layout.sequencer.bars;
-	patch.beats    = layout.sequencer.beats;
-	patch.bpm      = layout.sequencer.bpm;
-	patch.quantize = layout.sequencer.quantize;
+	patch.bars      = layout.sequencer.bars;
+	patch.beats     = layout.sequencer.beats;
+	patch.bpm       = layout.sequencer.bpm;
+	patch.quantize  = layout.sequencer.quantize;
+	patch.metronome = layout.sequencer.metronome;
 
 	for (const auto& p : getAllPlugins())
 		patch.plugins.push_back(pluginFactory::serializePlugin(*p));

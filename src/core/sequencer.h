@@ -44,6 +44,7 @@ namespace giada::m::model
 class Model;
 class Sequencer;
 class Actions;
+struct Layout;
 } // namespace giada::m::model
 
 namespace giada::m
@@ -145,7 +146,7 @@ public:
 	/* render
 	Renders audio coming out from the sequencer: that is, the metronome! */
 
-	void render(mcl::AudioBuffer& outBuf) const;
+	void render(mcl::AudioBuffer& outBuf, const model::Layout&) const;
 
 	void rewindForced();
 	void rewind();

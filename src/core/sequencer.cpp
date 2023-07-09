@@ -169,9 +169,9 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::render(mcl::AudioBuffer& outBuf) const
+void Sequencer::render(mcl::AudioBuffer& outBuf, const model::Layout& layout_RT) const
 {
-	if (m_metronome.running)
+	if (layout_RT.sequencer.metronome)
 		m_metronome.render(outBuf);
 }
 
@@ -251,9 +251,15 @@ void Sequencer::stop()
 
 /* -------------------------------------------------------------------------- */
 
-bool Sequencer::isMetronomeOn() const { return m_metronome.running; }
-void Sequencer::toggleMetronome() { m_metronome.running = !m_metronome.running; }
-void Sequencer::setMetronome(bool v) { m_metronome.running = v; }
+bool Sequencer::isMetronomeOn() const { return m_model.get().sequencer.metronome; }
+
+void Sequencer::toggleMetronome() { setMetronome(!isMetronomeOn()); }
+
+void Sequencer::setMetronome(bool v)
+{
+	m_model.get().sequencer.metronome = v;
+	m_model.swap(model::SwapType::SOFT);
+}
 
 /* -------------------------------------------------------------------------- */
 
