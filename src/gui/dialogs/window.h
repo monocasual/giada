@@ -79,9 +79,9 @@ public:
 	void setBounds(geompp::Rect<int>);
 
 protected:
-	std::vector<gdWindow*> subWindows;
-	int                    id;
-	gdWindow*              parent;
+	std::vector<gdWindow*> m_subWindows;
+	int                    m_id;
+	gdWindow*              m_parent;
 
 private:
 	Fl_SVG_Image m_icon;

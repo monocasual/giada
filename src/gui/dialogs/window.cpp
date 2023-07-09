@@ -34,8 +34,8 @@ namespace giada::v
 {
 gdWindow::gdWindow(int x, int y, int w, int h, const char* title, int id)
 : Fl_Double_Window(x, y, w, h, title)
-, id(id)
-, parent(nullptr)
+, m_id(id)
+, m_parent(nullptr)
 , m_icon(nullptr, graphics::giadaIcon)
 {
 	end();
@@ -55,9 +55,9 @@ gdWindow::~gdWindow()
 {
 	/* delete all subwindows in order to empty the stack */
 
-	for (unsigned j = 0; j < subWindows.size(); j++)
-		delete subWindows.at(j);
-	subWindows.clear();
+	for (unsigned j = 0; j < m_subWindows.size(); j++)
+		delete m_subWindows.at(j);
+	m_subWindows.clear();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -82,18 +82,18 @@ void gdWindow::addSubWindow(gdWindow* w)
 {
 	w->setParent(this);
 	w->callback(cb_closeChild); // you can pass params: w->callback(cb_closeChild, (void*)params)
-	subWindows.push_back(w);
+	m_subWindows.push_back(w);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void gdWindow::delSubWindow(gdWindow* w)
 {
-	for (unsigned j = 0; j < subWindows.size(); j++)
-		if (w->getId() == subWindows.at(j)->getId())
+	for (unsigned j = 0; j < m_subWindows.size(); j++)
+		if (w->getId() == m_subWindows.at(j)->getId())
 		{
-			delete subWindows.at(j);
-			subWindows.erase(subWindows.begin() + j);
+			delete m_subWindows.at(j);
+			m_subWindows.erase(m_subWindows.begin() + j);
 			return;
 		}
 }
@@ -102,11 +102,11 @@ void gdWindow::delSubWindow(gdWindow* w)
 
 void gdWindow::delSubWindow(int wid)
 {
-	for (unsigned j = 0; j < subWindows.size(); j++)
-		if (subWindows.at(j)->getId() == wid)
+	for (unsigned j = 0; j < m_subWindows.size(); j++)
+		if (m_subWindows.at(j)->getId() == wid)
 		{
-			delete subWindows.at(j);
-			subWindows.erase(subWindows.begin() + j);
+			delete m_subWindows.at(j);
+			m_subWindows.erase(m_subWindows.begin() + j);
 			return;
 		}
 }
@@ -115,12 +115,12 @@ void gdWindow::delSubWindow(int wid)
 
 int gdWindow::getId() const
 {
-	return id;
+	return m_id;
 }
 
 void gdWindow::setId(int wid)
 {
-	id = wid;
+	m_id = wid;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -139,20 +139,20 @@ geompp::Rect<int> gdWindow::getBounds() const
 
 gdWindow* gdWindow::getParent()
 {
-	return parent;
+	return m_parent;
 }
 
 void gdWindow::setParent(gdWindow* w)
 {
-	parent = w;
+	m_parent = w;
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool gdWindow::hasWindow(int wid) const
 {
-	for (unsigned j = 0; j < subWindows.size(); j++)
-		if (wid == subWindows.at(j)->getId())
+	for (unsigned j = 0; j < m_subWindows.size(); j++)
+		if (wid == m_subWindows.at(j)->getId())
 			return true;
 	return false;
 }
@@ -161,9 +161,9 @@ bool gdWindow::hasWindow(int wid) const
 
 gdWindow* gdWindow::getChild(int wid)
 {
-	for (unsigned j = 0; j < subWindows.size(); j++)
-		if (wid == subWindows.at(j)->getId())
-			return subWindows.at(j);
+	for (unsigned j = 0; j < m_subWindows.size(); j++)
+		if (wid == m_subWindows.at(j)->getId())
+			return m_subWindows.at(j);
 	return nullptr;
 }
 
