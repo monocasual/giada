@@ -224,37 +224,37 @@ void Ui::refreshSubWindow(int wid)
 
 v::gdWindow* Ui::getSubwindow(v::gdWindow& parent, int wid)
 {
-	return parent.hasWindow(wid) ? parent.getChild(wid) : nullptr;
+	return parent.hasChild(wid) ? parent.getChild(wid) : nullptr;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Ui::openSubWindow(v::gdWindow& parent, v::gdWindow* child, int wid)
 {
-	if (parent.hasWindow(wid))
+	if (parent.hasChild(wid))
 	{
 		u::log::print("[GU] parent has subwindow with id={}, deleting\n", wid);
-		parent.delSubWindow(wid);
+		parent.delChild(wid);
 	}
 	child->setId(wid);
-	parent.addSubWindow(child);
+	parent.addChild(child);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Ui::closeSubWindow(int wid)
 {
-	mainWindow->delSubWindow(wid);
+	mainWindow->delChild(wid);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Ui::closeAllSubwindows()
 {
-	mainWindow->delSubWindow(WID_ACTION_EDITOR);
-	mainWindow->delSubWindow(WID_SAMPLE_EDITOR);
-	mainWindow->delSubWindow(WID_FX_LIST);
-	mainWindow->delSubWindow(WID_FX);
+	mainWindow->delChild(WID_ACTION_EDITOR);
+	mainWindow->delChild(WID_SAMPLE_EDITOR);
+	mainWindow->delChild(WID_FX_LIST);
+	mainWindow->delChild(WID_FX);
 }
 
 /* -------------------------------------------------------------------------- */

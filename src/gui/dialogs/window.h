@@ -51,10 +51,10 @@ public:
 	virtual void rebuild(){};
 	virtual void refresh(){};
 
-	/* hasWindow
+	/* hasChild
 	True if the window with id 'id' exists in the stack. */
 
-	bool hasWindow(int id) const;
+	bool hasChild(int id) const;
 
 	int getId() const;
 
@@ -68,9 +68,9 @@ public:
 
 	geompp::Rect<int> getBounds() const;
 
-	void      addSubWindow(gdWindow* w);
-	void      delSubWindow(gdWindow* w);
-	void      delSubWindow(int id);
+	void      addChild(gdWindow* w);
+	void      delChild(gdWindow* w);
+	void      delChild(int id);
 	void      setId(int id);
 	void      setParent(gdWindow* w);
 	gdWindow* getParent();
@@ -79,7 +79,7 @@ public:
 	void setBounds(geompp::Rect<int>);
 
 private:
-	std::vector<gdWindow*> m_subWindows;
+	std::vector<gdWindow*> m_children;
 	int                    m_id;
 	gdWindow*              m_parent;
 	Fl_SVG_Image           m_icon;
