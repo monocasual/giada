@@ -80,7 +80,8 @@ void geFileBrowser::loadDir(const std::string& dir)
 	{
 		if (text(i) == nullptr)
 			continue;
-		if (strcmp(text(i), "../") == 0 || (!m_showHiddenFiles && strncmp(text(i), ".", 1) == 0))
+		const std::string_view el = text(i);
+		if (el == "../" || (!m_showHiddenFiles && el[0] == '.'))
 			remove(i);
 	}
 }
