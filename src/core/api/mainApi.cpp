@@ -291,6 +291,9 @@ void MainApi::toggleInputRecording()
 	if (!m_kernelAudio.isInputEnabled())
 		return;
 	m_recorder.toggleInputRec(m_kernelAudio.getSampleRate());
+
+	if (m_mixer.isRecordingInput() && m_mixer.getInputRecMode() == InputRecMode::FREE && m_sequencer.isMetronomeOn())
+		m_sequencer.setMetronome(false);
 }
 
 /* -------------------------------------------------------------------------- */
