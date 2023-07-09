@@ -28,6 +28,8 @@
 #include "../../../core/const.h"
 #include "boxtypes.h"
 
+namespace giada::v
+{
 geSlider::geSlider(int x, int y, int w, int h, const char* l)
 : Fl_Slider(x, y, w, h, l)
 {
@@ -41,3 +43,4 @@ geSlider::geSlider(int x, int y, int w, int h, const char* l)
 	color(G_COLOR_GREY_2);
 	selection_color(G_COLOR_GREY_4);
 }
+} // namespace giada::v

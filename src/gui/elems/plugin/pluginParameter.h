@@ -31,10 +31,9 @@
 #include "glue/plugin.h"
 #include <FL/Fl_Group.H>
 
-class geSlider;
-
 namespace giada::v
 {
+class geSlider;
 class geBox;
 class gePluginParameter : public Fl_Group
 {

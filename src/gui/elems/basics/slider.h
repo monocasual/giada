@@ -29,6 +29,8 @@
 
 #include <FL/Fl_Slider.H>
 
+namespace giada::v
+{
 class geSlider : public Fl_Slider
 {
 public:
@@ -36,5 +38,6 @@ public:
 
 	int id;
 };
+} // namespace giada::v
 
 #endif
