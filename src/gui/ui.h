@@ -100,9 +100,9 @@ public:
 	v::gdWindow* getSubwindow(v::gdWindow& parent, ID wid);
 
 	/* openSubWindow
-	Opens a new sub-window as a child of the main window and assigns 'wid' to child. */
+	Opens a new sub-window as a child of the main window. */
 
-	void openSubWindow(v::gdWindow* child, int wid);
+	void openSubWindow(v::gdWindow* child);
 
 	/* closeSubWindow
 	Closes a sun-window currently attached to the main one. */

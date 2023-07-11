@@ -170,6 +170,6 @@ void gePluginElement::openPluginWindow()
 	else
 		child = new gdPluginWindow(m_plugin, pwid);
 
-	parent->addChild(child, pwid);
+	parent->addChild(child);
 }
 } // namespace giada::v

@@ -69,7 +69,7 @@ public:
 
 	geompp::Rect<int> getBounds() const;
 
-	void      addChild(gdWindow* w, ID);
+	void      addChild(gdWindow* w);
 	void      delChild(gdWindow* w);
 	void      delChild(ID);
 	void      setId(ID);
