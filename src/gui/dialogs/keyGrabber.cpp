@@ -42,7 +42,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdKeyGrabber::gdKeyGrabber(int key)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, 300, 126}), g_ui.getI18Text(LangMap::KEYGRABBER_TITLE))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 300, 126}), g_ui.getI18Text(LangMap::KEYGRABBER_TITLE), WID_KEY_GRABBER)
 , onSetKey(nullptr)
 , m_key(key)
 {

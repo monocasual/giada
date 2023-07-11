@@ -43,7 +43,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdBpmInput::gdBpmInput(float value)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, 180, 36}), "Bpm")
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 180, 36}), "Bpm", WID_BPM)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{
@@ -70,7 +70,6 @@ gdBpmInput::gdBpmInput(float value)
 	};
 
 	set_modal();
-	setId(WID_BPM);
 	show();
 }
 } // namespace giada::v

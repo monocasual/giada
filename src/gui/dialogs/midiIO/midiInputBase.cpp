@@ -34,7 +34,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdMidiInputBase::gdMidiInputBase(const char* title, const Model& model)
-: gdWindow(u::gui::getCenterWinBounds(model.midiInputBounds), title)
+: gdWindow(u::gui::getCenterWinBounds(model.midiInputBounds), title, WID_MIDI_INPUT)
 {
 }
 

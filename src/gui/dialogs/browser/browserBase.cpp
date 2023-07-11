@@ -46,7 +46,7 @@ namespace giada::v
 {
 gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
     std::function<void(void*)> callback, ID channelId, const Model& model)
-: gdWindow(u::gui::getCenterWinBounds(model.browserBounds), title.c_str())
+: gdWindow(u::gui::getCenterWinBounds(model.browserBounds), title.c_str(), WID_FILE_BROWSER)
 , m_callback(callback)
 , m_channelId(channelId)
 {

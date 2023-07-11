@@ -42,9 +42,9 @@ namespace giada::v
 {
 gdAbout::gdAbout()
 #ifdef WITH_VST
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, 340, 415}), g_ui.getI18Text(LangMap::ABOUT_TITLE))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 340, 415}), g_ui.getI18Text(LangMap::ABOUT_TITLE), WID_ABOUT)
 #else
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, 340, 330}), g_ui.getI18Text(LangMap::ABOUT_TITLE))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 340, 330}), g_ui.getI18Text(LangMap::ABOUT_TITLE), WID_ABOUT)
 #endif
 {
 #ifdef G_DEBUG_MODE
@@ -101,7 +101,6 @@ gdAbout::gdAbout()
 	add(container);
 
 	set_modal();
-	setId(WID_ABOUT);
 	show();
 }
 } // namespace giada::v

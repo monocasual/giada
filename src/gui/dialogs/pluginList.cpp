@@ -47,7 +47,7 @@ extern giada::m::Engine g_engine;
 namespace giada::v
 {
 gdPluginList::gdPluginList(ID channelId, geompp::Rect<int> bounds)
-: gdWindow(u::gui::getCenterWinBounds(bounds))
+: gdWindow(u::gui::getCenterWinBounds(bounds), "", WID_FX_LIST)
 , m_channelId(channelId)
 {
 	end();

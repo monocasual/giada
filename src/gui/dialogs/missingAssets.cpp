@@ -39,7 +39,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdMissingAssets::gdMissingAssets(const m::model::LoadState& state)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, 400, 300}), g_ui.getI18Text(LangMap::COMMON_WARNING))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 400, 300}), g_ui.getI18Text(LangMap::COMMON_WARNING), WID_MISSING_ASSETS)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{

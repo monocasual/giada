@@ -49,7 +49,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdBaseActionEditor::gdBaseActionEditor(ID channelId, const Model& model)
-: gdWindow(u::gui::getCenterWinBounds(model.actionEditorBounds), g_ui.getI18Text(LangMap::ACTIONEDITOR_TITLE))
+: gdWindow(u::gui::getCenterWinBounds(model.actionEditorBounds), g_ui.getI18Text(LangMap::ACTIONEDITOR_TITLE), WID_ACTION_EDITOR)
 , channelId(channelId)
 , gridTool(new geGridTool(0, 0, model))
 , m_zoomInBtn(new geImageButton(graphics::plusOff, graphics::plusOn))

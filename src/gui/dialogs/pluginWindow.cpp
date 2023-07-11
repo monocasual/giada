@@ -35,7 +35,7 @@
 namespace giada::v
 {
 gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, 450, 156}))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 450, 156}), "", WID_FX)
 , m_plugin(plugin)
 {
 	set_non_modal();

@@ -39,9 +39,9 @@ namespace giada::v
 {
 gdPluginWindowGUI::gdPluginWindowGUI(c::plugin::Plugin& p)
 #ifdef G_OS_MAC
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, Fl::w(), Fl::h()}))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, Fl::w(), Fl::h()}), "", WID_FX)
 #else
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, 320, 200}))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 320, 200}), "", WID_FX)
 #endif
 , m_plugin(p)
 {

@@ -61,7 +61,7 @@ void geLightningLearnerPack::update(const c::io::Channel_OutputData& d)
 /* -------------------------------------------------------------------------- */
 
 gdMidiOutputBase::gdMidiOutputBase(int w, int h, ID channelId)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, w, h}), g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_TITLE))
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, w, h}), g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_TITLE), WID_MIDI_OUTPUT)
 , m_channelId(channelId)
 {
 }

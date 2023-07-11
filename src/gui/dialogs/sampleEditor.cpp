@@ -67,7 +67,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
-: gdWindow(u::gui::getCenterWinBounds(model.sampleEditorBounds), g_ui.getI18Text(LangMap::SAMPLEEDITOR_TITLE))
+: gdWindow(u::gui::getCenterWinBounds(model.sampleEditorBounds), g_ui.getI18Text(LangMap::SAMPLEEDITOR_TITLE), WID_SAMPLE_EDITOR)
 , m_channelId(channelId)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);

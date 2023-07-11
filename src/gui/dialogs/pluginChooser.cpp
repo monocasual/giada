@@ -39,7 +39,7 @@ extern giada::v::Ui g_ui;
 namespace giada::v
 {
 gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
-: gdWindow(u::gui::getCenterWinBounds(model.pluginChooserBounds), g_ui.getI18Text(LangMap::PLUGINCHOOSER_TITLE))
+: gdWindow(u::gui::getCenterWinBounds(model.pluginChooserBounds), g_ui.getI18Text(LangMap::PLUGINCHOOSER_TITLE), WID_FX_CHOOSER)
 , m_channelId(channelId)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
