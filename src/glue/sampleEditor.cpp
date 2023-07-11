@@ -118,7 +118,7 @@ Data getData(ID channelId)
 
 v::gdSampleEditor* getWindow()
 {
-	return static_cast<v::gdSampleEditor*>(g_ui.getSubwindow(*g_ui.mainWindow.get(), WID_SAMPLE_EDITOR));
+	return static_cast<v::gdSampleEditor*>(g_ui.getSubwindow(WID_SAMPLE_EDITOR));
 }
 
 /* -------------------------------------------------------------------------- */

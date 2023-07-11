@@ -145,7 +145,7 @@ void updateWindow(ID pluginId, Thread t)
 	if (p->hasEditor())
 		return;
 
-	v::gdPluginWindow* child = static_cast<v::gdPluginWindow*>(g_ui.getSubwindow(*g_ui.mainWindow.get(), pluginId + 1));
+	v::gdPluginWindow* child = static_cast<v::gdPluginWindow*>(g_ui.getSubwindow(pluginId + 1));
 	if (child == nullptr)
 		return;
 

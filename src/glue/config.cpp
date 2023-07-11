@@ -339,7 +339,7 @@ void setPluginPathCb(void* data)
 
 	browser->do_callback();
 
-	v::gdConfig* configWin = static_cast<v::gdConfig*>(g_ui.getSubwindow(*g_ui.mainWindow.get(), WID_CONFIG));
+	v::gdConfig* configWin = static_cast<v::gdConfig*>(g_ui.getSubwindow(WID_CONFIG));
 	configWin->tabPlugins->rebuild();
 }
 } // namespace giada::c::config

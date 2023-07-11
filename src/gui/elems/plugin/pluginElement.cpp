@@ -154,7 +154,7 @@ void gePluginElement::openPluginWindow()
 
 	const int pwid = m_plugin.id + 1;
 
-	gdWindow* child = g_ui.getSubwindow(*g_ui.mainWindow.get(), pwid);
+	gdWindow* child = g_ui.getSubwindow(pwid);
 
 	/* If Plug-in window is already opened, just raise it on top and quit. */
 

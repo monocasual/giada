@@ -97,7 +97,7 @@ public:
 	/* getSubwindow
 	Returns a pointer to an open subwindow, otherwise nullptr. */
 
-	v::gdWindow* getSubwindow(v::gdWindow& parent, ID wid);
+	v::gdWindow* getSubwindow(ID wid);
 
 	/* openSubWindow
 	Opens a new sub-window as a child of the main window. */
