@@ -30,23 +30,19 @@
 #ifndef GD_PLUGIN_WINDOW_GUI_H
 #define GD_PLUGIN_WINDOW_GUI_H
 
+#include "glue/plugin.h"
 #include "window.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <memory>
 
-namespace giada::c::plugin
-{
-struct Plugin;
-}
-
 namespace giada::v
 {
 class gdPluginWindowGUI : public gdWindow
 {
 public:
-	gdPluginWindowGUI(c::plugin::Plugin&, ID wid);
+	gdPluginWindowGUI(const c::plugin::Plugin&, ID wid);
 	~gdPluginWindowGUI();
 
 private:
@@ -55,7 +51,7 @@ private:
 	void closeEditor();
 	void adjustSize();
 
-	c::plugin::Plugin&                          m_plugin;
+	c::plugin::Plugin                           m_plugin;
 	std::unique_ptr<juce::AudioProcessorEditor> m_editor;
 };
 } // namespace giada::v
