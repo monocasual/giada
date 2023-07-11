@@ -141,7 +141,7 @@ void gePluginElement::removePlugin()
 	pluginWindow has id = id_plugin + 1, because id=0 is reserved for the parent 
 	window 'add plugin'.*/
 
-	static_cast<gdWindow*>(window())->delChild(m_plugin.id + 1);
+	g_ui.closeSubWindow(m_plugin.id + 1);
 	c::plugin::freePlugin(m_plugin.getPluginRef(), m_plugin.channelId);
 }
 
@@ -154,8 +154,7 @@ void gePluginElement::openPluginWindow()
 
 	const int pwid = m_plugin.id + 1;
 
-	gdWindow* parent = static_cast<gdWindow*>(window());
-	gdWindow* child  = parent->getChild(pwid);
+	gdWindow* child = g_ui.getSubwindow(*g_ui.mainWindow.get(), pwid);
 
 	/* If Plug-in window is already opened, just raise it on top and quit. */
 
@@ -170,6 +169,6 @@ void gePluginElement::openPluginWindow()
 	else
 		child = new gdPluginWindow(m_plugin, pwid);
 
-	parent->addChild(child);
+	g_ui.openSubWindow(child);
 }
 } // namespace giada::v

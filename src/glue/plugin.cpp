@@ -145,13 +145,7 @@ void updateWindow(ID pluginId, Thread t)
 	if (p->hasEditor())
 		return;
 
-	/* Get the parent window first: the plug-in list. Then, if it exists, get
-	the child window - the actual pluginWindow. */
-
-	v::gdPluginList* parent = static_cast<v::gdPluginList*>(g_ui.getSubwindow(*g_ui.mainWindow.get(), WID_FX_LIST));
-	if (parent == nullptr)
-		return;
-	v::gdPluginWindow* child = static_cast<v::gdPluginWindow*>(g_ui.getSubwindow(*parent, pluginId + 1));
+	v::gdPluginWindow* child = static_cast<v::gdPluginWindow*>(g_ui.getSubwindow(*g_ui.mainWindow.get(), pluginId + 1));
 	if (child == nullptr)
 		return;
 
