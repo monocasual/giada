@@ -41,8 +41,7 @@
 #include <cassert>
 #include <string>
 
-extern giada::v::Ui     g_ui;
-extern giada::m::Engine g_engine;
+extern giada::v::Ui g_ui;
 
 namespace giada::v
 {
