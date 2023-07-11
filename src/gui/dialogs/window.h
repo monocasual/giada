@@ -72,7 +72,6 @@ public:
 	void      addChild(gdWindow* w);
 	void      delChild(gdWindow* w);
 	void      delChild(ID);
-	void      setId(ID);
 	void      setParent(gdWindow* w);
 	gdWindow* getParent();
 	gdWindow* getChild(ID);

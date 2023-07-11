@@ -123,11 +123,6 @@ ID gdWindow::getId() const
 	return m_id;
 }
 
-void gdWindow::setId(ID wid)
-{
-	m_id = wid;
-}
-
 /* -------------------------------------------------------------------------- */
 
 geompp::Rect<int> gdWindow::getContentBounds() const
