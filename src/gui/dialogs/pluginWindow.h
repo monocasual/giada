@@ -48,7 +48,7 @@ class geLiquidScroll;
 class gdPluginWindow : public gdWindow
 {
 public:
-	gdPluginWindow(const c::plugin::Plugin&);
+	gdPluginWindow(const c::plugin::Plugin&, ID wid);
 
 	void updateParameters(bool changeSlider = false);
 

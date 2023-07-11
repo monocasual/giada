@@ -166,9 +166,9 @@ void gePluginElement::openPluginWindow()
 	}
 
 	if (m_plugin.hasEditor)
-		child = new gdPluginWindowGUI(m_plugin);
+		child = new gdPluginWindowGUI(m_plugin, pwid);
 	else
-		child = new gdPluginWindow(m_plugin);
+		child = new gdPluginWindow(m_plugin, pwid);
 
 	parent->addChild(child, pwid);
 }

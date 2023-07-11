@@ -46,7 +46,7 @@ namespace giada::v
 class gdPluginWindowGUI : public gdWindow
 {
 public:
-	gdPluginWindowGUI(c::plugin::Plugin&);
+	gdPluginWindowGUI(c::plugin::Plugin&, ID wid);
 	~gdPluginWindowGUI();
 
 private:
