@@ -27,14 +27,10 @@
 #ifndef GD_PLUGIN_WINDOW_H
 #define GD_PLUGIN_WINDOW_H
 
+#include "glue/plugin.h"
 #include "window.h"
 
 class geSlider;
-
-namespace giada::c::plugin
-{
-struct Plugin;
-}
 
 namespace giada::m
 {
@@ -53,7 +49,7 @@ public:
 	void updateParameters(bool changeSlider = false);
 
 private:
-	const c::plugin::Plugin& m_plugin;
+	c::plugin::Plugin m_plugin;
 
 	geLiquidScroll* m_list;
 };
