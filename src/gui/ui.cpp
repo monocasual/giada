@@ -42,6 +42,13 @@
 
 namespace giada::v
 {
+ID Ui::getPluginWindowId(ID pluginId)
+{
+	return WID_FX + pluginId;
+}
+
+/* -------------------------------------------------------------------------- */
+
 Ui::Ui()
 : m_updater(*this)
 , m_blinker(0)

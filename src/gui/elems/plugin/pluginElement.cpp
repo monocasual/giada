@@ -137,11 +137,9 @@ void gePluginElement::shiftDown()
 
 void gePluginElement::removePlugin()
 {
-	/* Any subwindow linked to the plugin must be destroyed first. The 
-	pluginWindow has id = id_plugin + 1, because id=0 is reserved for the parent 
-	window 'add plugin'.*/
+	/* Any subwindow linked to the plugin must be destroyed first. */
 
-	g_ui.closeSubWindow(WID_FX + m_plugin.id);
+	g_ui.closeSubWindow(Ui::getPluginWindowId(m_plugin.id));
 	c::plugin::freePlugin(m_plugin.getPluginRef(), m_plugin.channelId);
 }
 
@@ -149,7 +147,7 @@ void gePluginElement::removePlugin()
 
 void gePluginElement::openPluginWindow()
 {
-	const int pwid = WID_FX + m_plugin.id;
+	const int pwid = Ui::getPluginWindowId(m_plugin.id);
 
 	gdWindow* pluginWindow = g_ui.getSubwindow(pwid);
 

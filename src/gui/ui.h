@@ -42,6 +42,8 @@ namespace giada::v
 class Ui final
 {
 public:
+	static ID getPluginWindowId(ID pluginId);
+
 	Ui();
 
 	/* shouldBlink
