@@ -170,7 +170,6 @@ constexpr ID WID_CONFIG          = -5;
 constexpr ID WID_FX_LIST         = -6;
 constexpr ID WID_ACTION_EDITOR   = -7;
 constexpr ID WID_SAMPLE_EDITOR   = -8;
-constexpr ID WID_FX              = -9;
 constexpr ID WID_KEY_GRABBER     = -10;
 constexpr ID WID_SAMPLE_NAME     = -11;
 constexpr ID WID_FX_CHOOSER      = -12;
@@ -178,6 +177,7 @@ constexpr ID WID_MIDI_INPUT      = -13;
 constexpr ID WID_MIDI_OUTPUT     = -14;
 constexpr ID WID_MISSING_ASSETS  = -15;
 constexpr ID WID_CHANNEL_ROUTING = -16;
+constexpr ID WID_FX              = 1000; // Plug-in windows have ID == WID_FX + [pluginId]
 
 /* -- File signals ---------------------------------------------------------- */
 constexpr int G_FILE_NOT_SPECIFIED = -3;
