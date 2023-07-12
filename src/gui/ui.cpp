@@ -248,7 +248,6 @@ void Ui::closeAllSubwindows()
 	mainWindow->delChild(WID_ACTION_EDITOR);
 	mainWindow->delChild(WID_SAMPLE_EDITOR);
 	mainWindow->delChild(WID_FX_LIST);
-	mainWindow->delChild(WID_FX);
 }
 
 /* -------------------------------------------------------------------------- */
