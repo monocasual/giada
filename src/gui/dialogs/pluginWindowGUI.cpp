@@ -67,7 +67,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(const c::plugin::Plugin& p, ID wid)
 gdPluginWindowGUI::~gdPluginWindowGUI()
 {
 	closeEditor();
-	u::log::print("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*)this);
+	u::log::print("[gdPluginWindowGUI::__cb_close] GUI closed, this={}\n", (void*)this);
 }
 
 /* -------------------------------------------------------------------------- */
