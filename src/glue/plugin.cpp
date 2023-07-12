@@ -145,11 +145,11 @@ void updateWindow(ID pluginId, Thread t)
 	if (p->hasEditor())
 		return;
 
-	v::gdPluginWindow* child = static_cast<v::gdPluginWindow*>(g_ui.getSubwindow(v::Ui::getPluginWindowId(pluginId)));
-	if (child == nullptr)
+	v::gdPluginWindow* pluginWindow = static_cast<v::gdPluginWindow*>(g_ui.getSubwindow(v::Ui::getPluginWindowId(pluginId)));
+	if (pluginWindow == nullptr)
 		return;
 
-	child->updateParameters(t != Thread::MAIN);
+	pluginWindow->updateParameters(t != Thread::MAIN);
 }
 
 /* -------------------------------------------------------------------------- */
