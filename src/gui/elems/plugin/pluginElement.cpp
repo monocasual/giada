@@ -154,21 +154,21 @@ void gePluginElement::openPluginWindow()
 
 	const int pwid = m_plugin.id + 1;
 
-	gdWindow* child = g_ui.getSubwindow(pwid);
+	gdWindow* pluginWindow = g_ui.getSubwindow(pwid);
 
 	/* If Plug-in window is already opened, just raise it on top and quit. */
 
-	if (child != nullptr)
+	if (pluginWindow != nullptr)
 	{
-		child->show();
+		pluginWindow->show();
 		return;
 	}
 
 	if (m_plugin.hasEditor)
-		child = new gdPluginWindowGUI(m_plugin, pwid);
+		pluginWindow = new gdPluginWindowGUI(m_plugin, pwid);
 	else
-		child = new gdPluginWindow(m_plugin, pwid);
+		pluginWindow = new gdPluginWindow(m_plugin, pwid);
 
-	g_ui.openSubWindow(child);
+	g_ui.openSubWindow(pluginWindow);
 }
 } // namespace giada::v
