@@ -103,7 +103,7 @@ if [ ${#@} -gt 0 ]; then
                 signature=1
                 ;;
             v) version=$OPTARG
-                output_version="${version//v}"
+                output_version="${version}"
                 ;;
             *)
                 echo "Error! Try '${0} -h'."

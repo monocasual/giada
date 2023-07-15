@@ -131,3 +131,27 @@ jobs:
           asset_path: dist/giada-${{ github.ref_name }}-x86_64-macos.zip
           asset_name: giada-${{ github.ref_name }}-x86_64-macos.zip
           asset_content_type: application/zip
+
+  # source ---------------------------------------------------------------------
+  source:
+    name: Source
+    runs-on: ubuntu-20.04
+    timeout-minutes: 60
+    needs: create-release
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v2
+
+      - name: Make source package
+        run: python3 ./.github/scripts/make-src.py ${{ github.ref_name }}
+
+      - name: Upload release
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/giada-${{ github.ref_name }}-src.tar.gz
+          asset_name: giada-${{ github.ref_name }}-src.tar.gz
+          asset_content_type: application/gzip
