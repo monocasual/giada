@@ -16,7 +16,7 @@ mkdir temp
 
 echo "Strip binary and move it to temp/"
 
-strip ./build/giada
+strip --strip-all ./build/giada
 mv ./build/giada temp/
 
 echo "Create .desktop file"
