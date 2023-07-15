@@ -48,7 +48,7 @@ clean_sources() {
 
 compress_sources() {
     cd "${working_dir}"
-    tar cvfz "${output_name}.tar.gz" "${output_name}"
+    tar cfz "${output_name}.tar.gz" "${output_name}"
 }
 
 move_sources() {
