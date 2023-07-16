@@ -34,6 +34,10 @@
 
 namespace giada::u::vector
 {
+/* indexOf
+Returns the index of element p in container/view 'v'. Returns v.size() if
+element is not found. */
+
 template <typename T, typename P>
 std::ptrdiff_t indexOf(const T& v, const P& p)
 {
