@@ -59,7 +59,7 @@ void geTabAudio::geDeviceMenu::rebuild(const std::vector<c::config::AudioDeviceD
 	if (devices.size() == 0)
 	{
 		addItem(g_ui.getI18Text(LangMap::CONFIG_AUDIO_NODEVICESFOUND), 0);
-		showItem(0);
+		showFirstItem();
 		return;
 	}
 
@@ -97,7 +97,7 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 	if (data.index == -1)
 	{
 		addItem(g_ui.getI18Text(LangMap::COMMON_NONE), 0);
-		showItem(0);
+		showFirstItem();
 		return;
 	}
 
@@ -116,7 +116,7 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 			addItem(fmt::format("{}-{}", i + 1, i + 2), i + STEREO_OFFSET);
 
 	if (data.channelsCount == 0) // First time you choose a device, so no channels selected yet: just show first item
-		showItem(0);
+		showFirstItem();
 	else if (data.channelsCount == 1)
 		showItem(data.channelsStart);
 	else if (data.channelsCount == 2)
@@ -350,7 +350,7 @@ void geTabAudio::refreshDevInProperties()
 	else
 	{
 		m_sounddevIn->deactivate();
-		m_sounddevIn->showItem(0);
+		m_sounddevIn->showFirstItem();
 		m_channelsIn->deactivate();
 		m_recTriggerLevel->deactivate();
 	}
