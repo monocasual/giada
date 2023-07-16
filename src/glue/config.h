@@ -98,7 +98,7 @@ struct MidiData
 
 	RtMidi::Api api;
 	int         syncMode;
-	int         midiMap;
+	std::string midiMap;
 	int         outPort;
 	int         inPort;
 };
