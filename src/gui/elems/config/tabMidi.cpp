@@ -205,7 +205,9 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 		m_enableIn->activate();
 
 	m_midiMap->rebuild(m_data.midiMaps);
-	m_midiMap->showItem(u::vector::indexOf(m_data.midiMaps, m_data.midiMap));
+	const std::size_t midiMapIndex = u::vector::indexOf(m_data.midiMaps, m_data.midiMap);
+	if (midiMapIndex < m_data.midiMaps.size())
+		m_midiMap->showItem(midiMapIndex);
 
 	m_sync->clear();
 	for (const auto& [key, value] : m_data.syncModes)
