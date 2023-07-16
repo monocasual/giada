@@ -319,6 +319,10 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 {
 	assert(onAudioCallback != nullptr);
 	assert(m_rtAudio != nullptr);
+    assert(out.channelsCount >= 0);
+    assert(out.channelsStart >= 0);
+    assert(in.channelsCount >= 0);
+    assert(in.channelsStart >= 0);
 
 	u::log::print("[KA] Opening stream\n");
 	u::log::print("     Out device: index={} channelsCount={} channelsStart={}\n", out.index, out.channelsCount, out.channelsStart);
