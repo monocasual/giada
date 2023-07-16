@@ -57,6 +57,11 @@ public:
 
 	void addItem(const std::string& label, ID id = -1);
 
+	/* showFirstItem
+	Shows the first, default item. */
+
+	void showFirstItem();
+
 	void showItem(const std::string& label);
 	void showItem(ID);
 	void activate();

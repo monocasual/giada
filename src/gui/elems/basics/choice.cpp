@@ -118,17 +118,22 @@ void geChoice::addItem(const std::string& label, ID id)
 
 /* -------------------------------------------------------------------------- */
 
+void geChoice::showFirstItem()
+{
+	m_menu->value(0);
+}
+
 void geChoice::showItem(const std::string& label)
 {
-    const int index = m_menu->find_index(label.c_str());
-    assert(index != -1);
+	const int index = m_menu->find_index(label.c_str());
+	assert(index != -1);
 	m_menu->value(index);
 }
 
 void geChoice::showItem(ID id)
 {
-    const std::size_t index = u::vector::indexOf(m_ids, id);
-    assert(index < m_ids.size());
+	const std::size_t index = u::vector::indexOf(m_ids, id);
+	assert(index < m_ids.size());
 	m_menu->value(index);
 }
 
