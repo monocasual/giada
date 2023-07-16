@@ -329,9 +329,21 @@ void geTabAudio::rebuild(const c::config::AudioData& data)
 
 void geTabAudio::refreshDevOutProperties()
 {
-	for (unsigned int sampleRate : m_data.outputDevice.sampleRates)
-		m_sampleRate->addItem(std::to_string(sampleRate), sampleRate);
-	m_sampleRate->showItem(m_data.sampleRate);
+	m_sampleRate->clear();
+
+	if (m_data.outputDevice.sampleRates.size() == 0)
+	{
+		m_sampleRate->addItem(g_ui.getI18Text(LangMap::COMMON_NONE), 0);
+		m_sampleRate->showFirstItem();
+		m_sampleRate->deactivate();
+	}
+	else
+	{
+		for (unsigned int sampleRate : m_data.outputDevice.sampleRates)
+			m_sampleRate->addItem(std::to_string(sampleRate), sampleRate);
+		m_sampleRate->showItem(m_data.sampleRate);
+		m_sampleRate->activate();
+	}
 
 	m_channelsOut->rebuild(m_data.outputDevice);
 }
