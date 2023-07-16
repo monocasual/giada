@@ -94,7 +94,7 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 {
 	clear();
 
-	if (data.index == -1)
+	if (data.index == -1 || data.channelsMax == 0)
 	{
 		addItem(g_ui.getI18Text(LangMap::COMMON_NONE), 0);
 		showFirstItem();
