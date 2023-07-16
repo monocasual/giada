@@ -310,7 +310,8 @@ void geTabAudio::rebuild(const c::config::AudioData& data)
 	m_sounddevOut->showItem(m_data.outputDevice.index);
 
 	m_sounddevIn->rebuild(m_data.inputDevices);
-	m_sounddevIn->showItem(m_data.inputDevice.index);
+	if (m_data.inputDevice.index != -1)
+		m_sounddevIn->showItem(m_data.inputDevice.index);
 
 	m_enableIn->value(m_data.inputDevice.index != -1);
 
