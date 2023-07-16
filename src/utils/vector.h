@@ -35,7 +35,7 @@
 namespace giada::u::vector
 {
 template <typename T, typename P>
-std::size_t indexOf(const T& v, const P& p)
+std::ptrdiff_t indexOf(const T& v, const P& p)
 {
 	return std::distance(std::cbegin(v), std::find(std::cbegin(v), std::cend(v), p));
 }
