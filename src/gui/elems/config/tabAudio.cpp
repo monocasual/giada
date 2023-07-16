@@ -227,26 +227,17 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	m_sounddevOut->onChange = [this](ID id) {
 		m_data.setOutputDevice(id);
 		refreshDevOutProperties();
-		// Also refresh channels out info
-		m_data.outputDevice.channelsCount = m_channelsOut->getChannelsCount();
-		m_data.outputDevice.channelsStart = m_channelsOut->getChannelsStart();
 	};
 
 	m_sounddevIn->onChange = [this](ID id) {
 		m_data.setInputDevice(id);
 		refreshDevInProperties();
-		// Also refresh channels in info
-		m_data.inputDevice.channelsCount = m_channelsIn->getChannelsCount();
-		m_data.inputDevice.channelsStart = m_channelsIn->getChannelsStart();
 	};
 
 	m_enableIn->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_AUDIO_ENABLEINPUT));
 	m_enableIn->onChange = [this](bool b) {
 		m_data.setInputDevice(b ? 0 : -1);
 		refreshDevInProperties();
-		// Also refresh channels in info
-		m_data.inputDevice.channelsCount = m_channelsIn->getChannelsCount();
-		m_data.inputDevice.channelsStart = m_channelsIn->getChannelsStart();
 	};
 
 	m_channelsOut->onChange = [this](ID) {
@@ -346,6 +337,10 @@ void geTabAudio::refreshDevOutProperties()
 	}
 
 	m_channelsOut->rebuild(m_data.outputDevice);
+
+	// Also refresh channels out info
+	m_data.outputDevice.channelsCount = m_channelsOut->getChannelsCount();
+	m_data.outputDevice.channelsStart = m_channelsOut->getChannelsStart();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -366,6 +361,10 @@ void geTabAudio::refreshDevInProperties()
 		m_channelsIn->deactivate();
 		m_recTriggerLevel->deactivate();
 	}
+
+	// Also refresh channels in info
+	m_data.inputDevice.channelsCount = m_channelsIn->getChannelsCount();
+	m_data.inputDevice.channelsStart = m_channelsIn->getChannelsStart();
 }
 
 /* -------------------------------------------------------------------------- */
