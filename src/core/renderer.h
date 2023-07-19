@@ -27,6 +27,16 @@
 #ifndef G_RENDERER_H
 #define G_RENDERER_H
 
+namespace mcl
+{
+class AudioBuffer;
+}
+
+namespace giada::m::model
+{
+class Model;
+}
+
 namespace giada::m
 {
 class Sequencer;
@@ -43,6 +53,8 @@ public:
 #else
 	Renderer(Sequencer&, Mixer&);
 #endif
+
+	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Model&) const;
 
 private:
 	Sequencer& m_sequencer;
