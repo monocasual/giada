@@ -51,6 +51,7 @@
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
 #include "core/recorder.h"
+#include "core/renderer.h"
 #include "core/sequencer.h"
 #include "core/waveFactory.h"
 #ifdef WITH_AUDIO_JACK
@@ -149,6 +150,7 @@ private:
 #ifdef WITH_AUDIO_JACK
 	JackSynchronizer m_jackSynchronizer;
 #endif
+	Renderer m_renderer;
 
 	MainApi         m_mainApi;
 	ChannelsApi     m_channelsApi;

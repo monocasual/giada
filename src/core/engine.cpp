@@ -51,6 +51,11 @@ Engine::Engine()
 , m_actionRecorder(m_model)
 , m_recorder(m_sequencer, m_channelManager, m_mixer, m_actionRecorder)
 , m_midiDispatcher(m_model)
+#ifdef WITH_AUDIO_JACK
+, m_renderer(m_sequencer, m_mixer, m_jackSynchronizer, m_jackTransport)
+#else
+, m_renderer(m_sequencer, m_mixer)
+#endif
 , m_mainApi(m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder)
 , m_channelsApi(m_model, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager)
 , m_pluginsApi(m_kernelAudio, m_pluginManager, m_pluginHost, m_model)
