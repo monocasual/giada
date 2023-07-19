@@ -25,7 +25,24 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/renderer.h"
+#ifdef WITH_AUDIO_JACK
+#include "core/jackSynchronizer.h"
+#include "core/jackTransport.h"
+#endif
 
 namespace giada::m
 {
+#ifdef WITH_AUDIO_JACK
+Renderer::Renderer(Sequencer& s, Mixer& m, JackSynchronizer& js, JackTransport& jt)
+#else
+Renderer::Renderer(Sequencer& s, Mixer& m)
+#endif
+: m_sequencer(s)
+, m_mixer(m)
+#ifdef WITH_AUDIO_JACK
+, m_jackSynchronizer(js)
+, m_jackTransport(jt)
+#endif
+{
+}
 } // namespace giada::m

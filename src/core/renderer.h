@@ -29,8 +29,28 @@
 
 namespace giada::m
 {
+class Sequencer;
+class Mixer;
+#ifdef WITH_AUDIO_JACK
+class JackSynchronizer;
+class JackTransport;
+#endif
 class Renderer
 {
+public:
+#ifdef WITH_AUDIO_JACK
+	Renderer(Sequencer&, Mixer&, JackSynchronizer&, JackTransport&);
+#else
+	Renderer(Sequencer&, Mixer&);
+#endif
+
+private:
+	Sequencer& m_sequencer;
+	Mixer&     m_mixer;
+#ifdef WITH_AUDIO_JACK
+	JackSynchronizer& m_jackSynchronizer;
+	JackTransport&    m_jackTransport;
+#endif
 };
 } // namespace giada::m
 
