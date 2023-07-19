@@ -129,7 +129,6 @@ public:
 	std::function<void(model::SwapType)> onModelSwap;
 
 private:
-	int  audioCallback(mcl::AudioBuffer& out, const mcl::AudioBuffer& in) const;
 	void registerThread(Thread, bool isRealtime) const;
 
 	model::Model           m_model;
