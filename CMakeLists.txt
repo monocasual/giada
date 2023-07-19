@@ -35,6 +35,7 @@ list(APPEND SOURCES
 	src/main.cpp
 	src/mapper.cpp
 	src/core/engine.cpp
+	src/core/renderer.cpp
 	src/core/api/mainApi.cpp
 	src/core/api/channelsApi.cpp
 	src/core/api/sampleEditorApi.cpp
