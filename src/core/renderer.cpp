@@ -33,6 +33,22 @@
 
 namespace giada::m
 {
+mcl::AudioBuffer::Pan calcPanning_(float pan)
+{
+	/* TODO - precompute the AudioBuffer::Pan when pan value changes instead of
+	building it on the fly. */
+
+	/* Center pan (0.5f)? Pass-through. */
+
+	if (pan == 0.5f)
+		return {1.0f, 1.0f};
+	return {1.0f - pan, pan};
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 #ifdef WITH_AUDIO_JACK
 Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, JackSynchronizer& js, JackTransport& jt)
 #else
@@ -114,7 +130,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		renderNormalChannels(channels.getAll(), out, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
 
 	renderMasterOut(masterOutCh, out);
-	renderPreview(previewCh, out, sequencer.isRunning());
+	renderPreview(previewCh, out);
 
 	/* Post processing. */
 
@@ -145,8 +161,20 @@ void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const
 	out.set(ch.shared->audioBuffer, ch.volume);
 }
 
-void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out, bool seqIsRunning) const
+void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 {
-	ch.render(&out, nullptr, true, seqIsRunning);
+	assert(ch.samplePlayer);
+
+	ch.shared->audioBuffer.clear();
+
+	if (ch.isPlaying())
+	{
+		SamplePlayer::Render render;
+		while (ch.shared->renderQueue->pop(render))
+			;
+		ch.samplePlayer->render(*ch.shared, render, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
+	}
+
+	out.sum(ch.shared->audioBuffer, ch.volume, calcPanning_(ch.pan));
 }
 } // namespace giada::m

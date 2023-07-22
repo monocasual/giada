@@ -65,7 +65,7 @@ private:
 	    mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const;
 	void renderMasterIn(const Channel&, mcl::AudioBuffer& in) const;
 	void renderMasterOut(const Channel&, mcl::AudioBuffer& out) const;
-	void renderPreview(const Channel&, mcl::AudioBuffer& out, bool seqIsRunning) const;
+	void renderPreview(const Channel&, mcl::AudioBuffer& out) const;
 
 	Sequencer&  m_sequencer;
 	Mixer&      m_mixer;
