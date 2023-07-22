@@ -67,8 +67,6 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	const model::Channels&    channels    = layout_RT.channels;
 	const model::Actions&     actions     = layout_RT.actions;
 
-	const Channel& masterOutCh = channels.get(Mixer::MASTER_OUT_CHANNEL_ID);
-
 	/* Mixer disabled or Kernel Audio not ready: nothing to do here. */
 
 	if (!mixer.a_isActive())
@@ -97,10 +95,25 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 			m_mixer.advanceChannels(events, channels, renderRange, quantizerStep);
 	}
 
-	/* Then render Mixer: render channels, process I/O. */
+	/* Then render Mixer, channels and finalize output. */
 
-	const int maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
+	const int      maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
+	const bool     hasSolos       = mixer.hasSolos;
+	const bool     hasInput       = in.isAllocd();
+	const Channel& masterOutCh    = channels.get(Mixer::MASTER_OUT_CHANNEL_ID);
+	const Channel& masterInCh     = channels.get(Mixer::MASTER_IN_CHANNEL_ID);
+	const Channel& previewCh      = channels.get(Mixer::PREVIEW_CHANNEL_ID);
+
 	m_mixer.render(out, in, layout_RT, maxFramesToRec);
+
+	if (hasInput)
+		renderMasterIn(masterInCh, mixer.getInBuffer(), sequencer.isRunning());
+
+	if (!layout_RT.locked)
+		renderNormalChannels(channels.getAll(), out, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
+
+	renderMasterOut(masterOutCh, out, sequencer.isRunning());
+	renderPreview(previewCh, out, sequencer.isRunning());
 
 	/* Post processing. */
 

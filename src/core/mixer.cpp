@@ -150,14 +150,10 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const mode
 	const model::Channels&    channels    = layout_RT.channels;
 	const model::KernelAudio& kernelAudio = layout_RT.kernelAudio;
 
-	const Channel& masterOutCh = channels.get(Mixer::MASTER_OUT_CHANNEL_ID);
-	const Channel& masterInCh  = channels.get(Mixer::MASTER_IN_CHANNEL_ID);
-	const Channel& previewCh   = channels.get(Mixer::PREVIEW_CHANNEL_ID);
+	const Channel& masterInCh = channels.get(Mixer::MASTER_IN_CHANNEL_ID);
 
 	const bool  hasInput        = in.isAllocd();
 	const bool  seqIsActive     = sequencer.isActive();
-	const bool  seqIsRunning    = sequencer.isRunning();
-	const bool  hasSolos        = mixer.hasSolos;
 	const bool  shouldLineInRec = seqIsActive && mixer.isRecordingInput && hasInput;
 	const float recTriggerLevel = kernelAudio.recTriggerLevel;
 	const bool  allowsOverdub   = mixer.inputRecMode == InputRecMode::RIGID;
@@ -170,10 +166,7 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const mode
 	mixer.a_setPeakIn({0.0f, 0.0f});
 
 	if (hasInput)
-	{
 		processLineIn(mixer, in, masterInCh.volume, recTriggerLevel, seqIsActive);
-		renderMasterIn(masterInCh, mixer.getInBuffer(), seqIsRunning);
-	}
 
 	if (shouldLineInRec)
 	{
@@ -182,17 +175,6 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const mode
 		    allowsOverdub);
 		mixer.a_setInputTracker(newTrackerPos);
 	}
-
-	/* Channel processing. Don't do it if layout is locked: another thread is 
-	changing data (e.g. Plugins or Waves). */
-
-	if (!layout_RT.locked)
-		renderChannels(channels.getAll(), out, mixer.getInBuffer(), hasSolos, seqIsRunning);
-
-	/* Render remaining internal channels. */
-
-	renderMasterOut(masterOutCh, out, seqIsRunning);
-	renderPreview(previewCh, out, seqIsRunning);
 }
 
 /* -------------------------------------------------------------------------- */
