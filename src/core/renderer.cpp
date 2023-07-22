@@ -108,7 +108,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	m_mixer.render(out, in, layout_RT, maxFramesToRec);
 
 	if (hasInput)
-		renderMasterIn(masterInCh, mixer.getInBuffer(), sequencer.isRunning());
+		renderMasterIn(masterInCh, mixer.getInBuffer());
 
 	if (!layout_RT.locked)
 		renderNormalChannels(channels.getAll(), out, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
@@ -131,9 +131,10 @@ void Renderer::renderNormalChannels(const std::vector<Channel>& channels, mcl::A
 			c.render(&out, &in, hasSolos, seqIsRunning);
 }
 
-void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in, bool seqIsRunning) const
+void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
 {
-	ch.render(nullptr, &in, true, seqIsRunning);
+	if (ch.plugins.size() > 0)
+		m_pluginHost.processStack(in, ch.plugins, nullptr);
 }
 
 void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const

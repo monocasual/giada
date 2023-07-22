@@ -122,7 +122,6 @@ public:
 	std::optional<MidiActionRecorder>   midiActionRecorder;
 
 private:
-	void renderMasterIn(mcl::AudioBuffer&) const;
 	void renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const;
 
 	void initCallbacks();
