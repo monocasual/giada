@@ -333,22 +333,10 @@ void Channel::advance(const Sequencer::EventBuffer& events, Range<Frame> block, 
 
 void Channel::render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool mixerHasSolos, bool seqIsRunning) const
 {
-	if (id == Mixer::MASTER_OUT_CHANNEL_ID)
-		renderMasterOut(*out);
-	else if (id == Mixer::MASTER_IN_CHANNEL_ID)
+	if (id == Mixer::MASTER_IN_CHANNEL_ID)
 		renderMasterIn(*in);
 	else
 		renderChannel(*out, *in, mixerHasSolos, seqIsRunning);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Channel::renderMasterOut(mcl::AudioBuffer& out) const
-{
-	shared->audioBuffer.set(out, /*gain=*/1.0f);
-	if (plugins.size() > 0)
-		g_engine.getPluginsApi().process(shared->audioBuffer, plugins, nullptr);
-	out.set(shared->audioBuffer, volume);
 }
 
 /* -------------------------------------------------------------------------- */

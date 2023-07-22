@@ -113,7 +113,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	if (!layout_RT.locked)
 		renderNormalChannels(channels.getAll(), out, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
 
-	renderMasterOut(masterOutCh, out, sequencer.isRunning());
+	renderMasterOut(masterOutCh, out);
 	renderPreview(previewCh, out, sequencer.isRunning());
 
 	/* Post processing. */
@@ -136,9 +136,12 @@ void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in, bool seqI
 	ch.render(nullptr, &in, true, seqIsRunning);
 }
 
-void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out, bool seqIsRunning) const
+void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const
 {
-	ch.render(&out, nullptr, true, seqIsRunning);
+	ch.shared->audioBuffer.set(out, /*gain=*/1.0f);
+	if (ch.plugins.size() > 0)
+		m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
+	out.set(ch.shared->audioBuffer, ch.volume);
 }
 
 void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out, bool seqIsRunning) const
