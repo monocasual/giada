@@ -60,7 +60,7 @@ public:
 	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Model&) const;
 
 private:
-	void renderChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
+	void renderNormalChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
 	    mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const;
 	void renderMasterIn(const Channel&, mcl::AudioBuffer& in, bool seqIsRunning) const;
 	void renderMasterOut(const Channel&, mcl::AudioBuffer& out, bool seqIsRunning) const;

@@ -109,7 +109,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
+void Renderer::renderNormalChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
     mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const
 {
 	for (const Channel& c : channels)
