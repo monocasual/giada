@@ -100,4 +100,29 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	const int maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
 	m_mixer.render(out, in, layout_RT, maxFramesToRec);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void Renderer::renderChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
+    mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const
+{
+	for (const Channel& c : channels)
+		if (!c.isInternal())
+			c.render(&out, &in, hasSolos, seqIsRunning);
+}
+
+void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in, bool seqIsRunning) const
+{
+	ch.render(nullptr, &in, true, seqIsRunning);
+}
+
+void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out, bool seqIsRunning) const
+{
+	ch.render(&out, nullptr, true, seqIsRunning);
+}
+
+void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out, bool seqIsRunning) const
+{
+	ch.render(&out, nullptr, true, seqIsRunning);
+}
 } // namespace giada::m

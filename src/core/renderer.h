@@ -27,6 +27,8 @@
 #ifndef G_RENDERER_H
 #define G_RENDERER_H
 
+#include <vector>
+
 namespace mcl
 {
 class AudioBuffer;
@@ -41,6 +43,7 @@ namespace giada::m
 {
 class Sequencer;
 class Mixer;
+class Channel;
 #ifdef WITH_AUDIO_JACK
 class JackSynchronizer;
 class JackTransport;
@@ -57,6 +60,12 @@ public:
 	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Model&) const;
 
 private:
+	void renderChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
+	    mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const;
+	void renderMasterIn(const Channel&, mcl::AudioBuffer& in, bool seqIsRunning) const;
+	void renderMasterOut(const Channel&, mcl::AudioBuffer& out, bool seqIsRunning) const;
+	void renderPreview(const Channel&, mcl::AudioBuffer& out, bool seqIsRunning) const;
+
 	Sequencer& m_sequencer;
 	Mixer&     m_mixer;
 #ifdef WITH_AUDIO_JACK
