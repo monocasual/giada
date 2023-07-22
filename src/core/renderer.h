@@ -44,6 +44,7 @@ namespace giada::m
 class Sequencer;
 class Mixer;
 class Channel;
+class PluginHost;
 #ifdef WITH_AUDIO_JACK
 class JackSynchronizer;
 class JackTransport;
@@ -52,9 +53,9 @@ class Renderer
 {
 public:
 #ifdef WITH_AUDIO_JACK
-	Renderer(Sequencer&, Mixer&, JackSynchronizer&, JackTransport&);
+	Renderer(Sequencer&, Mixer&, PluginHost&, JackSynchronizer&, JackTransport&);
 #else
-	Renderer(Sequencer&, Mixer&);
+	Renderer(Sequencer&, Mixer&, PluginHost&);
 #endif
 
 	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Model&) const;
@@ -66,8 +67,9 @@ private:
 	void renderMasterOut(const Channel&, mcl::AudioBuffer& out, bool seqIsRunning) const;
 	void renderPreview(const Channel&, mcl::AudioBuffer& out, bool seqIsRunning) const;
 
-	Sequencer& m_sequencer;
-	Mixer&     m_mixer;
+	Sequencer&  m_sequencer;
+	Mixer&      m_mixer;
+	PluginHost& m_pluginHost;
 #ifdef WITH_AUDIO_JACK
 	JackSynchronizer& m_jackSynchronizer;
 	JackTransport&    m_jackTransport;

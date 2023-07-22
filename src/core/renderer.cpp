@@ -34,12 +34,13 @@
 namespace giada::m
 {
 #ifdef WITH_AUDIO_JACK
-Renderer::Renderer(Sequencer& s, Mixer& m, JackSynchronizer& js, JackTransport& jt)
+Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, JackSynchronizer& js, JackTransport& jt)
 #else
-Renderer::Renderer(Sequencer& s, Mixer& m)
+Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph)
 #endif
 : m_sequencer(s)
 , m_mixer(m)
+, m_pluginHost(ph)
 #ifdef WITH_AUDIO_JACK
 , m_jackSynchronizer(js)
 , m_jackTransport(jt)
