@@ -64,6 +64,8 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph)
 {
 }
 
+/* -------------------------------------------------------------------------- */
+
 void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Model& model) const
 {
 	/* Clean up output buffer before any rendering. Do this even if mixer is
@@ -147,11 +149,15 @@ void Renderer::renderNormalChannels(const std::vector<Channel>& channels, mcl::A
 			c.render(&out, &in, hasSolos, seqIsRunning);
 }
 
+/* -------------------------------------------------------------------------- */
+
 void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
 {
 	if (ch.plugins.size() > 0)
 		m_pluginHost.processStack(in, ch.plugins, nullptr);
 }
+
+/* -------------------------------------------------------------------------- */
 
 void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const
 {
@@ -160,6 +166,8 @@ void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const
 		m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
 	out.set(ch.shared->audioBuffer, ch.volume);
 }
+
+/* -------------------------------------------------------------------------- */
 
 void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 {
