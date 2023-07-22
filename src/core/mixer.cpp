@@ -155,14 +155,12 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const mode
 	const Channel& previewCh   = channels.get(Mixer::PREVIEW_CHANNEL_ID);
 
 	const bool  hasInput        = in.isAllocd();
-	const bool  inToOut         = mixer.inToOut;
 	const bool  seqIsActive     = sequencer.isActive();
 	const bool  seqIsRunning    = sequencer.isRunning();
 	const bool  hasSolos        = mixer.hasSolos;
 	const bool  shouldLineInRec = seqIsActive && mixer.isRecordingInput && hasInput;
 	const float recTriggerLevel = kernelAudio.recTriggerLevel;
 	const bool  allowsOverdub   = mixer.inputRecMode == InputRecMode::RIGID;
-	const bool  limitOutput     = kernelAudio.limitOutput;
 
 	mixer.getInBuffer().clear();
 
@@ -195,10 +193,6 @@ void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const mode
 
 	renderMasterOut(masterOutCh, out, seqIsRunning);
 	renderPreview(previewCh, out, seqIsRunning);
-
-	/* Post processing. */
-
-	finalizeOutput(mixer, out, inToOut, limitOutput, masterOutCh.volume);
 }
 
 /* -------------------------------------------------------------------------- */

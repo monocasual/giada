@@ -147,6 +147,13 @@ public:
 
 	void setInToOut(bool v);
 
+	/* finalizeOutput
+	Last touches after the output has been rendered: apply inToOut if any, apply
+	output volume, compute peak. */
+
+	void finalizeOutput(const model::Mixer&, mcl::AudioBuffer&, bool inToOut,
+	    bool limit, float vol) const;
+
 	void setRecTriggerMode(RecTriggerMode);
 	void setInputRecMode(InputRecMode);
 
@@ -199,13 +206,6 @@ private:
 	Applies a very dumb hard limiter. */
 
 	void limit(mcl::AudioBuffer& outBuf) const;
-
-	/* finalizeOutput
-	Last touches after the output has been rendered: apply inToOut if any, apply
-	output volume, compute peak. */
-
-	void finalizeOutput(const model::Mixer&, mcl::AudioBuffer&, bool inToOut,
-	    bool limit, float vol) const;
 
 	model::Model& m_model;
 
