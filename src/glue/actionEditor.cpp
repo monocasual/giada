@@ -37,7 +37,7 @@ extern giada::m::Engine g_engine;
 
 namespace giada::c::actionEditor
 {
-SampleData::SampleData(const m::SamplePlayer& s)
+SampleData::SampleData(const m::SampleChannel& s)
 : channelMode(s.mode)
 , isLoopMode(s.isAnyLoopMode())
 {
@@ -55,7 +55,7 @@ Data::Data(const m::Channel& c)
 , actions(g_engine.getActionEditorApi().getActionsOnChannel(c.id))
 {
 	if (c.type == ChannelType::SAMPLE)
-		sample = std::make_optional<SampleData>(c.samplePlayer.value());
+		sample = std::make_optional<SampleData>(c.sampleChannel.value());
 }
 
 /* -------------------------------------------------------------------------- */

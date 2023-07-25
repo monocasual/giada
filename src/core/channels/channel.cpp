@@ -242,7 +242,7 @@ bool Channel::canInputRec() const
 
 bool Channel::canActionRec() const
 {
-	return hasWave() && !samplePlayer->isAnyLoopMode();
+	return hasWave() && !sampleChannel->isAnyLoopMode();
 }
 
 bool Channel::hasWave() const
@@ -283,8 +283,8 @@ void Channel::initCallbacks()
 	if (samplePlayer)
 	{
 		samplePlayer->onLastFrame = [this](bool natural, bool seqIsRunning) {
-			sampleAdvancer->onLastFrame(*shared, seqIsRunning, natural, samplePlayer->mode,
-			    samplePlayer->isAnyLoopMode());
+			sampleAdvancer->onLastFrame(*shared, seqIsRunning, natural, sampleChannel->mode,
+			    sampleChannel->isAnyLoopMode());
 		};
 	}
 }
@@ -302,7 +302,7 @@ void Channel::advance(const Sequencer::EventBuffer& events, Range<Frame> block, 
 			midiController->advance(shared->playStatus, e);
 
 		if (samplePlayer)
-			sampleAdvancer->advance(id, *shared, e, samplePlayer->mode, samplePlayer->isAnyLoopMode());
+			sampleAdvancer->advance(id, *shared, e, sampleChannel->mode, sampleChannel->isAnyLoopMode());
 
 		if (midiSender && isPlaying() && !isMuted())
 			midiSender->advance(id, e);

@@ -283,10 +283,10 @@ void ChannelManager::keyPress(ID channelId, int velocity, bool canRecordActions,
 
 	if (ch.midiController)
 		ch.midiController->keyPress(ch.shared->playStatus);
-	if (ch.sampleActionRecorder && ch.hasWave() && canRecordActions && !ch.samplePlayer->isAnyLoopMode())
-		ch.sampleActionRecorder->keyPress(channelId, *ch.shared, currentFrameQuantized, ch.samplePlayer->mode, ch.hasActions);
+	if (ch.sampleActionRecorder && ch.hasWave() && canRecordActions && !ch.sampleChannel->isAnyLoopMode())
+		ch.sampleActionRecorder->keyPress(channelId, *ch.shared, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
 	if (ch.sampleReactor && ch.hasWave())
-		ch.sampleReactor->keyPress(channelId, *ch.shared, ch.samplePlayer->mode, velocity, canQuantize, ch.samplePlayer->isAnyLoopMode(), ch.samplePlayer->velocityAsVol, ch.volume_i);
+		ch.sampleReactor->keyPress(channelId, *ch.shared, ch.sampleChannel->mode, velocity, canQuantize, ch.sampleChannel->isAnyLoopMode(), ch.samplePlayer->velocityAsVol, ch.volume_i);
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -297,10 +297,10 @@ void ChannelManager::keyRelease(ID channelId, bool canRecordActions, Frame curre
 {
 	Channel& ch = m_model.get().channels.get(channelId);
 
-	if (ch.sampleActionRecorder && ch.hasWave() && canRecordActions && !ch.samplePlayer->isAnyLoopMode())
-		ch.sampleActionRecorder->keyRelease(channelId, canRecordActions, currentFrameQuantized, ch.samplePlayer->mode, ch.hasActions);
+	if (ch.sampleActionRecorder && ch.hasWave() && canRecordActions && !ch.sampleChannel->isAnyLoopMode())
+		ch.sampleActionRecorder->keyRelease(channelId, canRecordActions, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
 	if (ch.sampleReactor && ch.hasWave())
-		ch.sampleReactor->keyRelease(*ch.shared, ch.samplePlayer->mode);
+		ch.sampleReactor->keyRelease(*ch.shared, ch.sampleChannel->mode);
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -318,9 +318,9 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 	if (ch.midiSender && ch.isPlaying() && !ch.isMuted())
 		ch.midiSender->stop();
 	if (ch.sampleActionRecorder && ch.hasWave() && canRecordActions)
-		ch.sampleActionRecorder->keyKill(channelId, canRecordActions, currentFrameQuantized, ch.samplePlayer->mode, ch.hasActions);
+		ch.sampleActionRecorder->keyKill(channelId, canRecordActions, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
 	if (ch.sampleReactor)
-		ch.sampleReactor->keyKill(*ch.shared, ch.samplePlayer->mode);
+		ch.sampleReactor->keyKill(*ch.shared, ch.sampleChannel->mode);
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -477,7 +477,7 @@ void ChannelManager::setOverdubProtection(ID channelId, bool value)
 
 void ChannelManager::setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
-	m_model.get().channels.get(channelId).samplePlayer->mode = mode;
+	m_model.get().channels.get(channelId).sampleChannel->mode = mode;
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -529,7 +529,7 @@ void ChannelManager::stopAll()
 		if (ch.midiController)
 			ch.midiController->stop(ch.shared->playStatus);
 		if (ch.sampleReactor && ch.samplePlayer)
-			ch.sampleReactor->stopBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.samplePlayer->isAnyLoopMode());
+			ch.sampleReactor->stopBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
 		if (ch.midiSender && ch.isPlaying() && !ch.isMuted())
 			ch.midiSender->stop();
 		if (ch.midiReceiver)
@@ -640,7 +640,7 @@ std::vector<Channel*> ChannelManager::getOverdubbableChannels()
 void ChannelManager::setupChannelPostRecording(Channel& ch, Frame currentFrame)
 {
 	/* Start sample channels in loop mode right away. */
-	if (ch.samplePlayer->isAnyLoopMode())
+	if (ch.sampleChannel->isAnyLoopMode())
 		ch.samplePlayer->kickIn(*ch.shared, currentFrame);
 	/* Disable 'arm' button if overdub protection is on. */
 	if (ch.sampleChannel->overdubProtection == true)

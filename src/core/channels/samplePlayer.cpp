@@ -34,8 +34,7 @@
 namespace giada::m
 {
 SamplePlayer::SamplePlayer(Resampler* r)
-: mode(SamplePlayerMode::SINGLE_BASIC)
-, shift(0)
+: shift(0)
 , begin(0)
 , end(0)
 , velocityAsVol(false)
@@ -47,8 +46,7 @@ SamplePlayer::SamplePlayer(Resampler* r)
 /* -------------------------------------------------------------------------- */
 
 SamplePlayer::SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w)
-: mode(p.mode)
-, shift(p.shift)
+: shift(p.shift)
 , begin(p.begin)
 , end(p.end)
 , velocityAsVol(p.midiInVeloAsVol)
@@ -63,16 +61,6 @@ SamplePlayer::SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resam
 bool SamplePlayer::hasWave() const { return wave != nullptr; }
 bool SamplePlayer::hasLogicalWave() const { return hasWave() && wave->isLogical(); }
 bool SamplePlayer::hasEditedWave() const { return hasWave() && wave->isEdited(); }
-
-/* -------------------------------------------------------------------------- */
-
-bool SamplePlayer::isAnyLoopMode() const
-{
-	return mode == SamplePlayerMode::LOOP_BASIC ||
-	       mode == SamplePlayerMode::LOOP_ONCE ||
-	       mode == SamplePlayerMode::LOOP_REPEAT ||
-	       mode == SamplePlayerMode::LOOP_ONCE_BAR;
-}
 
 /* -------------------------------------------------------------------------- */
 
@@ -97,7 +85,7 @@ Frame SamplePlayer::getWaveSize() const
 
 /* -------------------------------------------------------------------------- */
 
-void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRunning, float pitch) const
+void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRunning, float pitch, SamplePlayerMode mode) const
 {
 	if (wave == nullptr)
 		return;
@@ -108,7 +96,7 @@ void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRu
 
 	if (renderInfo.mode == Render::Mode::NORMAL)
 	{
-		tracker = render(buf, tracker, renderInfo.offset, status, seqIsRunning, pitch);
+		tracker = render(buf, tracker, renderInfo.offset, status, seqIsRunning, pitch, mode);
 	}
 	else
 	{
@@ -125,7 +113,7 @@ void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRu
 		   Mode::STOP:   2nd = [abcdefghi|--------] */
 
 		if (renderInfo.mode == Render::Mode::REWIND)
-			tracker = render(buf, begin, renderInfo.offset, status, seqIsRunning, pitch);
+			tracker = render(buf, begin, renderInfo.offset, status, seqIsRunning, pitch, mode);
 		else
 			tracker = stop(buf, renderInfo.offset, seqIsRunning);
 	}
@@ -135,7 +123,7 @@ void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRu
 
 /* -------------------------------------------------------------------------- */
 
-Frame SamplePlayer::render(mcl::AudioBuffer& buf, Frame tracker, Frame offset, ChannelStatus status, bool seqIsRunning, float pitch) const
+Frame SamplePlayer::render(mcl::AudioBuffer& buf, Frame tracker, Frame offset, ChannelStatus status, bool seqIsRunning, float pitch, SamplePlayerMode mode) const
 {
 	/* First pass rendering. */
 
@@ -154,7 +142,7 @@ Frame SamplePlayer::render(mcl::AudioBuffer& buf, Frame tracker, Frame offset, C
 		waveReader.last();
 		onLastFrame(/*natural=*/true, seqIsRunning);
 
-		if (shouldLoop(status) && res.generated < buf.countFrames())
+		if (shouldLoop(mode, status) && res.generated < buf.countFrames())
 			tracker += fillBuffer(buf, tracker, res.generated, pitch).used;
 	}
 
@@ -234,7 +222,7 @@ WaveReader::Result SamplePlayer::fillBuffer(mcl::AudioBuffer& buf, Frame start, 
 
 /* -------------------------------------------------------------------------- */
 
-bool SamplePlayer::shouldLoop(ChannelStatus status) const
+bool SamplePlayer::shouldLoop(SamplePlayerMode mode, ChannelStatus status) const
 {
 	return (mode == SamplePlayerMode::LOOP_BASIC ||
 	           mode == SamplePlayerMode::LOOP_REPEAT ||

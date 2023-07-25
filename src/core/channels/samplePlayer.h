@@ -68,11 +68,10 @@ public:
 	bool  hasWave() const;
 	bool  hasLogicalWave() const;
 	bool  hasEditedWave() const;
-	bool  isAnyLoopMode() const;
 	ID    getWaveId() const;
 	Frame getWaveSize() const;
 	Wave* getWave() const;
-	void  render(ChannelShared&, Render, bool seqIsRunning, float pitch) const;
+	void  render(ChannelShared&, Render, bool seqIsRunning, float pitch, SamplePlayerMode) const;
 
 	/* loadWave
 	Loads Wave and sets it up (name, markers, ...). Also updates Channel's shared
@@ -93,12 +92,11 @@ public:
 
 	void kickIn(ChannelShared&, Frame f);
 
-	SamplePlayerMode mode;
-	Frame            shift;
-	Frame            begin;
-	Frame            end;
-	bool             velocityAsVol; // Velocity drives volume
-	WaveReader       waveReader;
+	Frame      shift;
+	Frame      begin;
+	Frame      end;
+	bool       velocityAsVol; // Velocity drives volume
+	WaveReader waveReader;
 
 	/* wave
 	Wave object. Might be null if the channel has no sample. */
@@ -119,7 +117,7 @@ private:
 	into the audio buffer at position 'offset'. May fire 'onLastFrame' callback
 	if the sample end is reached. */
 
-	Frame render(mcl::AudioBuffer&, Frame tracker, Frame offset, ChannelStatus, bool seqIsRunning, float pitch) const;
+	Frame render(mcl::AudioBuffer&, Frame tracker, Frame offset, ChannelStatus, bool seqIsRunning, float pitch, SamplePlayerMode) const;
 
 	/* stop
 	Silences the last part of the audio buffer, starting at 'offset'. Used to
@@ -128,7 +126,7 @@ private:
 	Frame stop(mcl::AudioBuffer&, Frame offset, bool seqIsRunning) const;
 
 	WaveReader::Result fillBuffer(mcl::AudioBuffer&, Frame start, Frame offset, float pitch) const;
-	bool               shouldLoop(ChannelStatus) const;
+	bool               shouldLoop(SamplePlayerMode, ChannelStatus) const;
 };
 } // namespace giada::m
 

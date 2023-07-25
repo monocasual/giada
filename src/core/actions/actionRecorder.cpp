@@ -404,7 +404,7 @@ Frame ActionRecorder::fixVerticalEnvActions(Frame f, const Action& a1, const Act
 
 bool ActionRecorder::isSinglePressMode(ID channelId) const
 {
-	return m_model.get().channels.get(channelId).samplePlayer->mode == SamplePlayerMode::SINGLE_PRESS;
+	return m_model.get().channels.get(channelId).sampleChannel->mode == SamplePlayerMode::SINGLE_PRESS;
 }
 
 /* -------------------------------------------------------------------------- */

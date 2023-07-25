@@ -32,6 +32,7 @@ namespace giada::m
 SampleChannel::SampleChannel()
 : inputMonitor(false)
 , overdubProtection(false)
+, mode(SamplePlayerMode::SINGLE_BASIC)
 , pitch(G_DEFAULT_PITCH)
 {
 }
@@ -41,7 +42,18 @@ SampleChannel::SampleChannel()
 SampleChannel::SampleChannel(const Patch::Channel& p)
 : inputMonitor(p.inputMonitor)
 , overdubProtection(p.overdubProtection)
+, mode(p.mode)
 , pitch(p.pitch)
 {
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool SampleChannel::isAnyLoopMode() const
+{
+	return mode == SamplePlayerMode::LOOP_BASIC ||
+	       mode == SamplePlayerMode::LOOP_ONCE ||
+	       mode == SamplePlayerMode::LOOP_REPEAT ||
+	       mode == SamplePlayerMode::LOOP_ONCE_BAR;
 }
 } // namespace giada::m

@@ -37,9 +37,12 @@ public:
 	SampleChannel();
 	SampleChannel(const Patch::Channel&);
 
-	bool  inputMonitor;
-	bool  overdubProtection;
-	float pitch;
+	bool isAnyLoopMode() const;
+
+	bool             inputMonitor;
+	bool             overdubProtection;
+	SamplePlayerMode mode;
+	float            pitch;
 };
 } // namespace giada::m
 

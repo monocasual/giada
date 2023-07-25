@@ -163,7 +163,7 @@ const Patch::Channel serializeChannel(const Channel& c)
 	if (c.type == ChannelType::SAMPLE)
 	{
 		pc.waveId            = c.samplePlayer->getWaveId();
-		pc.mode              = c.samplePlayer->mode;
+		pc.mode              = c.sampleChannel->mode;
 		pc.begin             = c.samplePlayer->begin;
 		pc.end               = c.samplePlayer->end;
 		pc.pitch             = c.sampleChannel->pitch;
