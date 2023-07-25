@@ -341,7 +341,7 @@ void ChannelManager::processMidiEvent(ID channelId, const MidiEvent& e, bool can
 
 void ChannelManager::setInputMonitor(ID channelId, bool value)
 {
-	m_model.get().channels.get(channelId).audioReceiver->inputMonitor = value;
+	m_model.get().channels.get(channelId).sampleChannel->inputMonitor = value;
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -467,7 +467,7 @@ void ChannelManager::killReadActions(ID channelId)
 void ChannelManager::setOverdubProtection(ID channelId, bool value)
 {
 	Channel& ch                         = m_model.get().channels.get(channelId);
-	ch.audioReceiver->overdubProtection = value;
+	ch.sampleChannel->overdubProtection = value;
 	if (value == true && ch.armed)
 		ch.armed = false;
 	m_model.swap(model::SwapType::HARD);
@@ -643,7 +643,7 @@ void ChannelManager::setupChannelPostRecording(Channel& ch, Frame currentFrame)
 	if (ch.samplePlayer->isAnyLoopMode())
 		ch.samplePlayer->kickIn(*ch.shared, currentFrame);
 	/* Disable 'arm' button if overdub protection is on. */
-	if (ch.audioReceiver->overdubProtection == true)
+	if (ch.sampleChannel->overdubProtection == true)
 		ch.armed = false;
 }
 

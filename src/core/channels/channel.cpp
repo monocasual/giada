@@ -63,7 +63,6 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 		samplePlayer.emplace(&(shared->resampler.value()));
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(*shared, id);
-		audioReceiver.emplace();
 		sampleActionRecorder.emplace(g_engine.getActionRecorder());
 		sampleChannel.emplace();
 		break;
@@ -119,7 +118,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 		samplePlayer.emplace(p, samplerateRatio, &(shared->resampler.value()), wave);
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(*shared, id);
-		audioReceiver.emplace(p);
 		sampleActionRecorder.emplace(g_engine.getActionRecorder());
 		sampleChannel.emplace(p);
 		break;
@@ -237,7 +235,7 @@ bool Channel::canInputRec() const
 		return false;
 
 	bool hasWave     = samplePlayer->hasWave();
-	bool isProtected = audioReceiver->overdubProtection;
+	bool isProtected = sampleChannel->overdubProtection;
 	bool canOverdub  = !hasWave || (hasWave && !isProtected);
 
 	return armed && canOverdub;

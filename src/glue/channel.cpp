@@ -95,8 +95,8 @@ SampleData::SampleData(const m::Channel& ch)
 , pitch(ch.samplePlayer->pitch)
 , begin(ch.samplePlayer->begin)
 , end(ch.samplePlayer->end)
-, inputMonitor(ch.audioReceiver->inputMonitor)
-, overdubProtection(ch.audioReceiver->overdubProtection)
+, inputMonitor(ch.sampleChannel->inputMonitor)
+, overdubProtection(ch.sampleChannel->overdubProtection)
 , m_tracker(&ch.shared->tracker)
 {
 }

@@ -84,8 +84,8 @@ Data create(ID channelId, ChannelType type, ID columnId, int position, int buffe
 	std::unique_ptr<ChannelShared> shared = makeShared_(type, bufferSize, quality);
 	Channel                        ch     = Channel(type, channelId_.generate(channelId), columnId, position, *shared.get());
 
-	if (ch.audioReceiver)
-		ch.audioReceiver->overdubProtection = overdubProtection;
+	if (ch.sampleChannel)
+		ch.sampleChannel->overdubProtection = overdubProtection;
 
 	c::channel::setCallbacks(ch); // UI callbacks
 
@@ -169,8 +169,8 @@ const Patch::Channel serializeChannel(const Channel& c)
 		pc.pitch             = c.samplePlayer->pitch;
 		pc.shift             = c.samplePlayer->shift;
 		pc.midiInVeloAsVol   = c.samplePlayer->velocityAsVol;
-		pc.inputMonitor      = c.audioReceiver->inputMonitor;
-		pc.overdubProtection = c.audioReceiver->overdubProtection;
+		pc.inputMonitor      = c.sampleChannel->inputMonitor;
+		pc.overdubProtection = c.sampleChannel->overdubProtection;
 	}
 	else if (c.type == ChannelType::MIDI)
 	{

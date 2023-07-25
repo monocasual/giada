@@ -27,8 +27,6 @@
 #ifndef G_CHANNEL_AUDIO_RECEIVER_H
 #define G_CHANNEL_AUDIO_RECEIVER_H
 
-#include "core/patch.h"
-
 namespace mcl
 {
 class AudioBuffer;
@@ -36,17 +34,11 @@ class AudioBuffer;
 
 namespace giada::m
 {
+class Channel;
 class AudioReceiver final
 {
 public:
-	AudioReceiver() = default;
-	AudioReceiver(const Patch::Channel& p);
-	AudioReceiver(const AudioReceiver& o) = default;
-
-	void render(const mcl::AudioBuffer& in, mcl::AudioBuffer& out, bool armed) const;
-
-	bool inputMonitor;
-	bool overdubProtection;
+	void render(const Channel&, const mcl::AudioBuffer& in, mcl::AudioBuffer& out) const;
 };
 } // namespace giada::m
 
