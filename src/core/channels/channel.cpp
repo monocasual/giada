@@ -40,25 +40,6 @@ extern giada::m::Engine g_engine;
 
 namespace giada::m
 {
-namespace
-{
-mcl::AudioBuffer::Pan calcPanning_(float pan)
-{
-	/* TODO - precompute the AudioBuffer::Pan when pan value changes instead of
-	building it on the fly. */
-
-	/* Center pan (0.5f)? Pass-through. */
-
-	if (pan == 0.5f)
-		return {1.0f, 1.0f};
-	return {1.0f - pan, pan};
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShared& s)
 : shared(&s)
 , id(id)
