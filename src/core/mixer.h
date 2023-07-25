@@ -196,12 +196,6 @@ private:
 	void processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inBuf,
 	    float inVol, float recTriggerLevel, bool isSeqActive) const;
 
-	void renderChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
-	    mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const;
-	void renderMasterIn(const Channel&, mcl::AudioBuffer& in, bool seqIsRunning) const;
-	void renderMasterOut(const Channel&, mcl::AudioBuffer& out, bool seqIsRunning) const;
-	void renderPreview(const Channel&, mcl::AudioBuffer& out, bool seqIsRunning) const;
-
 	/* limit
 	Applies a very dumb hard limiter. */
 

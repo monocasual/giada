@@ -320,33 +320,6 @@ void Mixer::processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inB
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::renderChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
-    mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const
-{
-	for (const Channel& c : channels)
-		if (!c.isInternal())
-			c.render(&out, &in, hasSolos, seqIsRunning);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Mixer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in, bool seqIsRunning) const
-{
-	ch.render(nullptr, &in, true, seqIsRunning);
-}
-
-void Mixer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out, bool seqIsRunning) const
-{
-	ch.render(&out, nullptr, true, seqIsRunning);
-}
-
-void Mixer::renderPreview(const Channel& ch, mcl::AudioBuffer& out, bool seqIsRunning) const
-{
-	ch.render(&out, nullptr, true, seqIsRunning);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Mixer::limit(mcl::AudioBuffer& outBuf) const
 {
 	for (int i = 0; i < outBuf.countFrames(); i++)

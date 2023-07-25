@@ -146,7 +146,37 @@ void Renderer::renderNormalChannels(const std::vector<Channel>& channels, mcl::A
 {
 	for (const Channel& c : channels)
 		if (!c.isInternal())
-			c.render(&out, &in, hasSolos, seqIsRunning);
+			renderNormalChannel(c, out, in, hasSolos, seqIsRunning);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const
+{
+	ch.shared->audioBuffer.clear();
+
+	if (ch.samplePlayer && ch.isPlaying())
+	{
+		SamplePlayer::Render render;
+		while (ch.shared->renderQueue->pop(render))
+			;
+		ch.samplePlayer->render(*ch.shared, render, seqIsRunning);
+	}
+
+	if (ch.audioReceiver)
+		ch.audioReceiver->render(in, ch.shared->audioBuffer, ch.armed);
+
+	/* If MidiReceiver exists, let it process the plug-in stack, as it can
+	contain plug-ins that take MIDI events (i.e. synths). Otherwise process the
+	plug-in stack internally with no MIDI events. */
+
+	if (ch.midiReceiver)
+		ch.midiReceiver->render(*ch.shared, ch.plugins, m_pluginHost);
+	else if (ch.plugins.size() > 0)
+		m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
+
+	if (ch.isAudible(mixerHasSolos))
+		out.sum(ch.shared->audioBuffer, ch.volume * ch.volume_i, calcPanning_(ch.pan));
 }
 
 /* -------------------------------------------------------------------------- */

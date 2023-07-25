@@ -71,11 +71,6 @@ public:
 
 	void advance(const Sequencer::EventBuffer&, Range<Frame>, Frame quantizerStep) const;
 
-	/* render
-	Renders audio data to I/O buffers. */
-
-	void render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool mixerHasSolos, bool seqIsRunning) const;
-
 	bool isPlaying() const;
 	bool isInternal() const;
 	bool isMuted() const;
@@ -122,8 +117,6 @@ public:
 	std::optional<MidiActionRecorder>   midiActionRecorder;
 
 private:
-	void renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const;
-
 	void initCallbacks();
 
 	bool m_mute;

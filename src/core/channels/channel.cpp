@@ -328,41 +328,4 @@ void Channel::advance(const Sequencer::EventBuffer& events, Range<Frame> block, 
 			midiReceiver->advance(id, shared->midiQueue, e);
 	}
 }
-
-/* -------------------------------------------------------------------------- */
-
-void Channel::render(mcl::AudioBuffer* out, mcl::AudioBuffer* in, bool mixerHasSolos, bool seqIsRunning) const
-{
-	renderChannel(*out, *in, mixerHasSolos, seqIsRunning);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Channel::renderChannel(mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const
-{
-	shared->audioBuffer.clear();
-
-	if (samplePlayer && isPlaying())
-	{
-		SamplePlayer::Render render;
-		while (shared->renderQueue->pop(render))
-			;
-		samplePlayer->render(*shared, render, seqIsRunning);
-	}
-
-	if (audioReceiver)
-		audioReceiver->render(in, shared->audioBuffer, armed);
-
-	/* If MidiReceiver exists, let it process the plug-in stack, as it can
-	contain plug-ins that take MIDI events (i.e. synths). Otherwise process the
-	plug-in stack internally with no MIDI events. */
-
-	if (midiReceiver)
-		midiReceiver->render(*shared, plugins, g_engine.getPluginHost());
-	else if (plugins.size() > 0)
-		g_engine.getPluginsApi().process(shared->audioBuffer, plugins, nullptr);
-
-	if (isAudible(mixerHasSolos))
-		out.sum(shared->audioBuffer, volume * volume_i, calcPanning_(pan));
-}
 } // namespace giada::m
