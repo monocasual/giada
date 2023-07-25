@@ -38,7 +38,7 @@ class Channel;
 class AudioReceiver final
 {
 public:
-	void render(const Channel&, const mcl::AudioBuffer& in, mcl::AudioBuffer& out) const;
+	void render(const Channel&, const mcl::AudioBuffer& in) const;
 };
 } // namespace giada::m
 

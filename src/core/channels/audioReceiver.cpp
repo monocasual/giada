@@ -31,7 +31,7 @@
 
 namespace giada::m
 {
-void AudioReceiver::render(const Channel& ch, const mcl::AudioBuffer& in, mcl::AudioBuffer& out) const
+void AudioReceiver::render(const Channel& ch, const mcl::AudioBuffer& in) const
 {
 	assert(ch.sampleChannel);
 
@@ -41,6 +41,6 @@ void AudioReceiver::render(const Channel& ch, const mcl::AudioBuffer& in, mcl::A
 	(i.e. not plugin-processed). */
 
 	if (ch.armed && ch.sampleChannel->inputMonitor)
-		out.set(in, /*gain=*/1.0f); // add, don't overwrite
+		ch.shared->audioBuffer.set(in, /*gain=*/1.0f); // add, don't overwrite
 }
 } // namespace giada::m

@@ -164,7 +164,7 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl
 	}
 
 	if (ch.type == ChannelType::SAMPLE)
-		m_audioReceiver.render(ch, in, ch.shared->audioBuffer);
+		m_audioReceiver.render(ch, in);
 
 	/* If MidiReceiver exists, let it process the plug-in stack, as it can
 	contain plug-ins that take MIDI events (i.e. synths). Otherwise process the
