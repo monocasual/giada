@@ -37,6 +37,7 @@
 #include "core/channels/midiSender.h"
 #include "core/channels/sampleActionRecorder.h"
 #include "core/channels/sampleAdvancer.h"
+#include "core/channels/sampleChannel.h"
 #include "core/channels/samplePlayer.h"
 #include "core/channels/sampleReactor.h"
 #include "core/const.h"
@@ -115,6 +116,7 @@ public:
 	std::optional<MidiSender>           midiSender;
 	std::optional<SampleActionRecorder> sampleActionRecorder;
 	std::optional<MidiActionRecorder>   midiActionRecorder;
+	std::optional<SampleChannel>        sampleChannel;
 
 private:
 	void initCallbacks();

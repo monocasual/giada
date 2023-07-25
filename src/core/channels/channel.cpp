@@ -65,11 +65,13 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 		sampleReactor.emplace(*shared, id);
 		audioReceiver.emplace();
 		sampleActionRecorder.emplace(g_engine.getActionRecorder());
+		sampleChannel.emplace();
 		break;
 
 	case ChannelType::PREVIEW:
 		samplePlayer.emplace(&(shared->resampler.value()));
 		sampleReactor.emplace(*shared, id);
+		sampleChannel.emplace();
 		break;
 
 	case ChannelType::MIDI:
@@ -119,11 +121,13 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 		sampleReactor.emplace(*shared, id);
 		audioReceiver.emplace(p);
 		sampleActionRecorder.emplace(g_engine.getActionRecorder());
+		sampleChannel.emplace(p);
 		break;
 
 	case ChannelType::PREVIEW:
 		samplePlayer.emplace(p, samplerateRatio, &(shared->resampler.value()), nullptr);
 		sampleReactor.emplace(*shared, id);
+		sampleChannel.emplace(p);
 		break;
 
 	case ChannelType::MIDI:
@@ -183,6 +187,7 @@ Channel& Channel::operator=(const Channel& other)
 	midiSender           = other.midiSender;
 	sampleActionRecorder = other.sampleActionRecorder;
 	midiActionRecorder   = other.midiActionRecorder;
+	sampleChannel        = other.sampleChannel;
 
 	if (samplePlayer)
 		samplePlayer->waveReader.setResampler(&shared->resampler.value());
