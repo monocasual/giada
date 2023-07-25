@@ -41,6 +41,7 @@ SamplePlayer::SamplePlayer(Resampler* r)
 , end(0)
 , velocityAsVol(false)
 , waveReader(r)
+, wave(nullptr)
 {
 }
 
@@ -61,9 +62,9 @@ SamplePlayer::SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resam
 
 /* -------------------------------------------------------------------------- */
 
-bool SamplePlayer::hasWave() const { return waveReader.wave != nullptr; }
-bool SamplePlayer::hasLogicalWave() const { return hasWave() && waveReader.wave->isLogical(); }
-bool SamplePlayer::hasEditedWave() const { return hasWave() && waveReader.wave->isEdited(); }
+bool SamplePlayer::hasWave() const { return wave != nullptr; }
+bool SamplePlayer::hasLogicalWave() const { return hasWave() && wave->isLogical(); }
+bool SamplePlayer::hasEditedWave() const { return hasWave() && wave->isEdited(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -79,13 +80,13 @@ bool SamplePlayer::isAnyLoopMode() const
 
 Wave* SamplePlayer::getWave() const
 {
-	return waveReader.wave;
+	return wave;
 }
 
 ID SamplePlayer::getWaveId() const
 {
 	if (hasWave())
-		return waveReader.wave->id;
+		return wave->id;
 	return 0;
 }
 
@@ -93,14 +94,14 @@ ID SamplePlayer::getWaveId() const
 
 Frame SamplePlayer::getWaveSize() const
 {
-	return hasWave() ? waveReader.wave->getBuffer().countFrames() : 0;
+	return hasWave() ? wave->getBuffer().countFrames() : 0;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRunning) const
 {
-	if (waveReader.wave == nullptr)
+	if (wave == nullptr)
 		return;
 
 	mcl::AudioBuffer&   buf     = shared.audioBuffer;
@@ -180,7 +181,7 @@ Frame SamplePlayer::stop(mcl::AudioBuffer& buf, Frame offset, bool seqIsRunning)
 
 void SamplePlayer::loadWave(ChannelShared& shared, Wave* w, Frame newBegin, Frame newEnd, Frame newShift)
 {
-	waveReader.wave = w;
+	wave = w;
 
 	shared.tracker.store(0);
 	shared.playStatus.store(w != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
@@ -202,11 +203,11 @@ void SamplePlayer::setWave(Wave* w, float samplerateRatio)
 {
 	if (w == nullptr)
 	{
-		waveReader.wave = nullptr;
+		wave = nullptr;
 		return;
 	}
 
-	waveReader.wave = w;
+	wave = w;
 
 	if (samplerateRatio != 1.0f)
 	{
@@ -228,7 +229,9 @@ void SamplePlayer::kickIn(ChannelShared& shared, Frame f)
 
 WaveReader::Result SamplePlayer::fillBuffer(mcl::AudioBuffer& buf, Frame start, Frame offset) const
 {
-	return waveReader.fill(buf, start, end, offset, pitch);
+	assert(wave != nullptr);
+
+	return waveReader.fill(*wave, buf, start, end, offset, pitch);
 }
 
 /* -------------------------------------------------------------------------- */

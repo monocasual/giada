@@ -60,7 +60,7 @@ public:
 	Fills audio buffer 'out' with data coming from Wave, copying it from 'start'
 	frame up to 'max'. The buffer is filled starting at 'offset'. */
 
-	Result fill(mcl::AudioBuffer& out, Frame start, Frame max, Frame offset,
+	Result fill(const Wave&, mcl::AudioBuffer& out, Frame start, Frame max, Frame offset,
 	    float pitch) const;
 
 	/* last
@@ -75,15 +75,10 @@ public:
 
 	void setResampler(Resampler*);
 
-	/* wave
-	Wave object. Might be null if the channel has no sample. */
-
-	Wave* wave;
-
 private:
-	Result fillResampled(mcl::AudioBuffer& out, Frame start, Frame max, Frame offset,
+	Result fillResampled(const Wave&, mcl::AudioBuffer& out, Frame start, Frame max, Frame offset,
 	    float pitch) const;
-	Result fillCopy(mcl::AudioBuffer& out, Frame start, Frame max, Frame offset) const;
+	Result fillCopy(const Wave&, mcl::AudioBuffer& out, Frame start, Frame max, Frame offset) const;
 
 	Resampler* m_resampler;
 };

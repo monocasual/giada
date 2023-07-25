@@ -101,6 +101,11 @@ public:
 	bool             velocityAsVol; // Velocity drives volume
 	WaveReader       waveReader;
 
+	/* wave
+	Wave object. Might be null if the channel has no sample. */
+
+	Wave* wave;
+
 	/* onLastFrame
 	Callback fired when the last frame has been reached. 'natural' == true
 	if the rendering has ended because the end of the sample has ben reached. 

@@ -21,20 +21,13 @@ TEST_CASE("WaveReader")
 	m::Resampler  resampler;
 	m::WaveReader waveReader(&resampler);
 
-	SECTION("Test initialization")
-	{
-		REQUIRE(waveReader.wave == nullptr);
-	}
-
-	waveReader.wave = &wave;
-
 	SECTION("Test fill, pitch 1.0")
 	{
 		mcl::AudioBuffer out(BUFFER_SIZE, NUM_CHANNELS);
 
 		SECTION("Regular fill")
 		{
-			m::WaveReader::Result res = waveReader.fill(out,
+			m::WaveReader::Result res = waveReader.fill(wave, out,
 			    /*start=*/0, BUFFER_SIZE, /*offset=*/0, /*pitch=*/1.0f);
 
 			bool allFilled       = true;
@@ -53,7 +46,7 @@ TEST_CASE("WaveReader")
 
 		SECTION("Partial fill")
 		{
-			m::WaveReader::Result res = waveReader.fill(out,
+			m::WaveReader::Result res = waveReader.fill(wave, out,
 			    /*start=*/0, BUFFER_SIZE, /*offset=*/BUFFER_SIZE / 2, /*pitch=*/1.0f);
 
 			int numFramesFilled = 0;

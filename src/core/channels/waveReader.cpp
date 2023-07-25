@@ -37,34 +37,32 @@
 namespace giada::m
 {
 WaveReader::WaveReader(Resampler* r)
-: wave(nullptr)
-, m_resampler(r)
+: m_resampler(r)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result WaveReader::fill(mcl::AudioBuffer& out, Frame start, Frame max,
+WaveReader::Result WaveReader::fill(const Wave& wave, mcl::AudioBuffer& out, Frame start, Frame max,
     Frame offset, float pitch) const
 {
-	assert(wave != nullptr);
 	assert(start >= 0);
-	assert(max <= wave->getBuffer().countFrames());
+	assert(max <= wave.getBuffer().countFrames());
 	assert(offset < out.countFrames());
 
 	if (pitch == 1.0f)
-		return fillCopy(out, start, max, offset);
+		return fillCopy(wave, out, start, max, offset);
 	else
-		return fillResampled(out, start, max, offset, pitch);
+		return fillResampled(wave, out, start, max, offset, pitch);
 }
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result WaveReader::fillResampled(mcl::AudioBuffer& dest, Frame start,
+WaveReader::Result WaveReader::fillResampled(const Wave& wave, mcl::AudioBuffer& dest, Frame start,
     Frame max, Frame offset, float pitch) const
 {
 	Resampler::Result res = m_resampler->process(
-	    /*input=*/wave->getBuffer()[0],
+	    /*input=*/wave.getBuffer()[0],
 	    /*inputPos=*/start,
 	    /*inputLen=*/max,
 	    /*output=*/dest[offset],
@@ -78,14 +76,14 @@ WaveReader::Result WaveReader::fillResampled(mcl::AudioBuffer& dest, Frame start
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result WaveReader::fillCopy(mcl::AudioBuffer& dest, Frame start,
+WaveReader::Result WaveReader::fillCopy(const Wave& wave, mcl::AudioBuffer& dest, Frame start,
     Frame max, Frame offset) const
 {
 	Frame used = dest.countFrames() - offset;
 	if (used > max - start)
 		used = max - start;
 
-	dest.set(wave->getBuffer(), used, start, offset);
+	dest.set(wave.getBuffer(), used, start, offset);
 
 	return {used, used};
 }
