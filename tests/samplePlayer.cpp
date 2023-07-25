@@ -40,8 +40,6 @@ TEST_CASE("SamplePlayer")
 
 		for (const float pitch : {1.0f, 0.5f})
 		{
-			samplePlayer.pitch = pitch;
-
 			SECTION("Sub-range [M, N), pitch == " + std::to_string(pitch))
 			{
 				constexpr int RANGE_BEGIN = 16;
@@ -49,7 +47,7 @@ TEST_CASE("SamplePlayer")
 
 				samplePlayer.begin = RANGE_BEGIN;
 				samplePlayer.end   = RANGE_END;
-				samplePlayer.render(channelShared, {}, /*seqIsRunning=*/false);
+				samplePlayer.render(channelShared, {}, /*seqIsRunning=*/false, pitch);
 
 				int numFramesWritten = 0;
 				channelShared.audioBuffer.forEachFrame([&numFramesWritten](float* f, int) {
@@ -65,7 +63,7 @@ TEST_CASE("SamplePlayer")
 				// Point in audio buffer where the rewind takes place
 				const int OFFSET = 256;
 
-				samplePlayer.render(channelShared, {m::SamplePlayer::Render::Mode::REWIND, OFFSET}, /*seqIsRunning=*/false);
+				samplePlayer.render(channelShared, {m::SamplePlayer::Render::Mode::REWIND, OFFSET}, /*seqIsRunning=*/false, pitch);
 
 				// Rendering should start over again at buffer[OFFSET]
 				REQUIRE(channelShared.audioBuffer[OFFSET][0] == 1.0f);
@@ -76,7 +74,7 @@ TEST_CASE("SamplePlayer")
 				// Point in audio buffer where the stop takes place
 				const int OFFSET = 256;
 
-				samplePlayer.render(channelShared, {m::SamplePlayer::Render::Mode::STOP, OFFSET}, /*seqIsRunning=*/false);
+				samplePlayer.render(channelShared, {m::SamplePlayer::Render::Mode::STOP, OFFSET}, /*seqIsRunning=*/false, pitch);
 
 				int numFramesWritten = 0;
 				channelShared.audioBuffer.forEachFrame([&numFramesWritten](float* f, int) {

@@ -166,7 +166,7 @@ const Patch::Channel serializeChannel(const Channel& c)
 		pc.mode              = c.samplePlayer->mode;
 		pc.begin             = c.samplePlayer->begin;
 		pc.end               = c.samplePlayer->end;
-		pc.pitch             = c.samplePlayer->pitch;
+		pc.pitch             = c.sampleChannel->pitch;
 		pc.shift             = c.samplePlayer->shift;
 		pc.midiInVeloAsVol   = c.samplePlayer->velocityAsVol;
 		pc.inputMonitor      = c.sampleChannel->inputMonitor;

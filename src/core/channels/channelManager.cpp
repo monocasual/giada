@@ -357,9 +357,9 @@ void ChannelManager::setVolume(ID channelId, float value)
 
 void ChannelManager::setPitch(ID channelId, float value)
 {
-	assert(m_model.get().channels.get(channelId).samplePlayer);
+	assert(m_model.get().channels.get(channelId).sampleChannel);
 
-	m_model.get().channels.get(channelId).samplePlayer->pitch = std::clamp(value, G_MIN_PITCH, G_MAX_PITCH);
+	m_model.get().channels.get(channelId).sampleChannel->pitch = std::clamp(value, G_MIN_PITCH, G_MAX_PITCH);
 	m_model.swap(model::SwapType::SOFT);
 }
 

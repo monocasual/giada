@@ -25,12 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/channels/sampleChannel.h"
+#include "core/const.h"
 
 namespace giada::m
 {
 SampleChannel::SampleChannel()
 : inputMonitor(false)
 , overdubProtection(false)
+, pitch(G_DEFAULT_PITCH)
 {
 }
 
@@ -39,6 +41,7 @@ SampleChannel::SampleChannel()
 SampleChannel::SampleChannel(const Patch::Channel& p)
 : inputMonitor(p.inputMonitor)
 , overdubProtection(p.overdubProtection)
+, pitch(p.pitch)
 {
 }
 } // namespace giada::m

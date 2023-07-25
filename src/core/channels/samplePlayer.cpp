@@ -34,8 +34,7 @@
 namespace giada::m
 {
 SamplePlayer::SamplePlayer(Resampler* r)
-: pitch(G_DEFAULT_PITCH)
-, mode(SamplePlayerMode::SINGLE_BASIC)
+: mode(SamplePlayerMode::SINGLE_BASIC)
 , shift(0)
 , begin(0)
 , end(0)
@@ -48,8 +47,7 @@ SamplePlayer::SamplePlayer(Resampler* r)
 /* -------------------------------------------------------------------------- */
 
 SamplePlayer::SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w)
-: pitch(p.pitch)
-, mode(p.mode)
+: mode(p.mode)
 , shift(p.shift)
 , begin(p.begin)
 , end(p.end)
@@ -99,7 +97,7 @@ Frame SamplePlayer::getWaveSize() const
 
 /* -------------------------------------------------------------------------- */
 
-void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRunning) const
+void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRunning, float pitch) const
 {
 	if (wave == nullptr)
 		return;
@@ -110,7 +108,7 @@ void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRu
 
 	if (renderInfo.mode == Render::Mode::NORMAL)
 	{
-		tracker = render(buf, tracker, renderInfo.offset, status, seqIsRunning);
+		tracker = render(buf, tracker, renderInfo.offset, status, seqIsRunning, pitch);
 	}
 	else
 	{
@@ -120,14 +118,14 @@ void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRu
 		might stop the rendering): fillBuffer() is just enough. Just notify 
 		waveReader this is the last read before rewind. */
 
-		tracker = fillBuffer(buf, tracker, 0).used;
+		tracker = fillBuffer(buf, tracker, 0, pitch).used;
 		waveReader.last();
 
 		/* Mode::REWIND: 2nd = [abcdefghi|abcdfefg]
 		   Mode::STOP:   2nd = [abcdefghi|--------] */
 
 		if (renderInfo.mode == Render::Mode::REWIND)
-			tracker = render(buf, begin, renderInfo.offset, status, seqIsRunning);
+			tracker = render(buf, begin, renderInfo.offset, status, seqIsRunning, pitch);
 		else
 			tracker = stop(buf, renderInfo.offset, seqIsRunning);
 	}
@@ -137,11 +135,11 @@ void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRu
 
 /* -------------------------------------------------------------------------- */
 
-Frame SamplePlayer::render(mcl::AudioBuffer& buf, Frame tracker, Frame offset, ChannelStatus status, bool seqIsRunning) const
+Frame SamplePlayer::render(mcl::AudioBuffer& buf, Frame tracker, Frame offset, ChannelStatus status, bool seqIsRunning, float pitch) const
 {
 	/* First pass rendering. */
 
-	WaveReader::Result res = fillBuffer(buf, tracker, offset);
+	WaveReader::Result res = fillBuffer(buf, tracker, offset, pitch);
 	tracker += res.used;
 
 	/* Second pass rendering: if tracker has looped, special care is needed. If 
@@ -157,7 +155,7 @@ Frame SamplePlayer::render(mcl::AudioBuffer& buf, Frame tracker, Frame offset, C
 		onLastFrame(/*natural=*/true, seqIsRunning);
 
 		if (shouldLoop(status) && res.generated < buf.countFrames())
-			tracker += fillBuffer(buf, tracker, res.generated).used;
+			tracker += fillBuffer(buf, tracker, res.generated, pitch).used;
 	}
 
 	return tracker;
@@ -227,7 +225,7 @@ void SamplePlayer::kickIn(ChannelShared& shared, Frame f)
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result SamplePlayer::fillBuffer(mcl::AudioBuffer& buf, Frame start, Frame offset) const
+WaveReader::Result SamplePlayer::fillBuffer(mcl::AudioBuffer& buf, Frame start, Frame offset, float pitch) const
 {
 	assert(wave != nullptr);
 
