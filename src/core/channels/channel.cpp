@@ -179,7 +179,6 @@ Channel& Channel::operator=(const Channel& other)
 	samplePlayer         = other.samplePlayer;
 	sampleAdvancer       = other.sampleAdvancer;
 	sampleReactor        = other.sampleReactor;
-	audioReceiver        = other.audioReceiver;
 	midiController       = other.midiController;
 	midiReceiver         = other.midiReceiver;
 	midiSender           = other.midiSender;

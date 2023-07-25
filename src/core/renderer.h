@@ -27,6 +27,7 @@
 #ifndef G_RENDERER_H
 #define G_RENDERER_H
 
+#include "core/channels/audioReceiver.h"
 #include <vector>
 
 namespace mcl
@@ -75,6 +76,8 @@ private:
 	JackSynchronizer& m_jackSynchronizer;
 	JackTransport&    m_jackTransport;
 #endif
+
+	AudioReceiver m_audioReceiver;
 };
 } // namespace giada::m
 

@@ -27,7 +27,6 @@
 #ifndef G_CHANNEL_H
 #define G_CHANNEL_H
 
-#include "core/channels/audioReceiver.h"
 #include "core/channels/channelShared.h"
 #include "core/channels/midiActionRecorder.h"
 #include "core/channels/midiController.h"
@@ -110,7 +109,6 @@ public:
 	std::optional<SamplePlayer>         samplePlayer;
 	std::optional<SampleAdvancer>       sampleAdvancer;
 	std::optional<SampleReactor>        sampleReactor;
-	std::optional<AudioReceiver>        audioReceiver;
 	std::optional<MidiController>       midiController;
 	std::optional<MidiReceiver>         midiReceiver;
 	std::optional<MidiSender>           midiSender;
