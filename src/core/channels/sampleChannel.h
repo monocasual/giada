@@ -31,18 +31,48 @@
 
 namespace giada::m
 {
+class Wave;
 class SampleChannel final
 {
 public:
 	SampleChannel();
-	SampleChannel(const Patch::Channel&);
+	SampleChannel(const Patch::Channel&, Wave*, float samplerateRatio);
 
-	bool isAnyLoopMode() const;
+	bool  isAnyLoopMode() const;
+	bool  hasWave() const;
+	bool  hasLogicalWave() const;
+	bool  hasEditedWave() const;
+	ID    getWaveId() const;
+	Frame getWaveSize() const;
+	Wave* getWave() const;
+
+	/* loadWave
+	Loads Wave and sets it up (name, markers, ...). Resets begin/end points 
+	and shift if not specified. */
+
+	void loadWave(Wave*, Frame begin = -1, Frame end = -1, Frame shift = -1);
+
+	/* setWave
+	Just sets the pointer to a Wave object. Used during de-serialization. The
+	ratio is used to adjust begin/end points in case of patch vs. conf sample
+	rate mismatch. If nullptr, set the wave to invalid. */
+
+	void setWave(Wave* w, float samplerateRatio);
 
 	bool             inputMonitor;
 	bool             overdubProtection;
 	SamplePlayerMode mode;
 	float            pitch;
+	Frame            shift;
+	Frame            begin;
+	Frame            end;
+	bool             velocityAsVol; // Velocity drives volume
+
+private:
+	/* wave
+	Wave object. Might be null if the channel has no sample. */
+
+	Wave* m_wave;
 };
 } // namespace giada::m
 

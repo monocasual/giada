@@ -119,13 +119,13 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(*shared, id);
 		sampleActionRecorder.emplace(g_engine.getActionRecorder());
-		sampleChannel.emplace(p);
+		sampleChannel.emplace(p, wave, samplerateRatio);
 		break;
 
 	case ChannelType::PREVIEW:
 		samplePlayer.emplace(p, samplerateRatio, &(shared->resampler.value()));
 		sampleReactor.emplace(*shared, id);
-		sampleChannel.emplace(p);
+		sampleChannel.emplace(p, wave, samplerateRatio);
 		break;
 
 	case ChannelType::MIDI:
@@ -291,6 +291,8 @@ void Channel::loadWave(Wave* w, Frame newBegin, Frame newEnd, Frame newShift)
 		samplePlayer->begin = newBegin == -1 ? 0 : newBegin;
 		samplePlayer->end   = newEnd == -1 ? w->getBuffer().countFrames() - 1 : newEnd;
 	}
+
+	sampleChannel->loadWave(w, newBegin, newEnd, newShift);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -311,6 +313,8 @@ void Channel::setWave(Wave* w, float samplerateRatio)
 		samplePlayer->end *= samplerateRatio;
 		samplePlayer->shift *= samplerateRatio;
 	}
+
+	sampleChannel->setWave(w, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */

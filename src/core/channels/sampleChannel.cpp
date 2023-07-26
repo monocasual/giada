@@ -26,6 +26,7 @@
 
 #include "core/channels/sampleChannel.h"
 #include "core/const.h"
+#include "core/wave.h"
 
 namespace giada::m
 {
@@ -34,17 +35,27 @@ SampleChannel::SampleChannel()
 , overdubProtection(false)
 , mode(SamplePlayerMode::SINGLE_BASIC)
 , pitch(G_DEFAULT_PITCH)
+, shift(0)
+, begin(0)
+, end(0)
+, velocityAsVol(false)
+, m_wave(nullptr)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-SampleChannel::SampleChannel(const Patch::Channel& p)
+SampleChannel::SampleChannel(const Patch::Channel& p, Wave* w, float samplerateRatio)
 : inputMonitor(p.inputMonitor)
 , overdubProtection(p.overdubProtection)
 , mode(p.mode)
 , pitch(p.pitch)
+, shift(p.shift)
+, begin(p.begin)
+, end(p.end)
+, velocityAsVol(p.midiInVeloAsVol)
 {
+	setWave(w, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -56,4 +67,70 @@ bool SampleChannel::isAnyLoopMode() const
 	       mode == SamplePlayerMode::LOOP_REPEAT ||
 	       mode == SamplePlayerMode::LOOP_ONCE_BAR;
 }
+
+/* -------------------------------------------------------------------------- */
+
+bool SampleChannel::hasWave() const { return m_wave != nullptr; }
+bool SampleChannel::hasLogicalWave() const { return hasWave() && m_wave->isLogical(); }
+bool SampleChannel::hasEditedWave() const { return hasWave() && m_wave->isEdited(); }
+
+/* -------------------------------------------------------------------------- */
+
+Wave* SampleChannel::getWave() const
+{
+	return m_wave;
+}
+
+ID SampleChannel::getWaveId() const
+{
+	if (hasWave())
+		return m_wave->id;
+	return 0;
+}
+
+/* -------------------------------------------------------------------------- */
+
+Frame SampleChannel::getWaveSize() const
+{
+	return hasWave() ? m_wave->getBuffer().countFrames() : 0;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleChannel::loadWave(Wave* w, Frame newBegin, Frame newEnd, Frame newShift)
+{
+	m_wave = w;
+
+	shift = 0;
+	begin = 0;
+	end   = 0;
+
+	if (w != nullptr)
+	{
+		shift = newShift == -1 ? 0 : newShift;
+		begin = newBegin == -1 ? 0 : newBegin;
+		end   = newEnd == -1 ? w->getBuffer().countFrames() - 1 : newEnd;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleChannel::setWave(Wave* w, float samplerateRatio)
+{
+	if (w == nullptr)
+	{
+		m_wave = nullptr;
+		return;
+	}
+
+	m_wave = w;
+
+	if (samplerateRatio != 1.0f)
+	{
+		begin *= samplerateRatio;
+		end *= samplerateRatio;
+		shift *= samplerateRatio;
+	}
+}
+
 } // namespace giada::m
