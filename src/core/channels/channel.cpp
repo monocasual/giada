@@ -115,7 +115,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		samplePlayer.emplace(p, samplerateRatio, &(shared->resampler.value()));
+		samplePlayer.emplace(&(shared->resampler.value()));
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(*shared, id);
 		sampleActionRecorder.emplace(g_engine.getActionRecorder());
@@ -123,7 +123,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 		break;
 
 	case ChannelType::PREVIEW:
-		samplePlayer.emplace(p, samplerateRatio, &(shared->resampler.value()));
+		samplePlayer.emplace(&(shared->resampler.value()));
 		sampleReactor.emplace(*shared, id);
 		sampleChannel.emplace(p, wave, samplerateRatio);
 		break;
@@ -234,7 +234,7 @@ bool Channel::canInputRec() const
 	if (type != ChannelType::SAMPLE)
 		return false;
 
-	bool hasWave     = samplePlayer->hasWave();
+	bool hasWave     = sampleChannel->hasWave();
 	bool isProtected = sampleChannel->overdubProtection;
 	bool canOverdub  = !hasWave || (hasWave && !isProtected);
 
@@ -248,7 +248,7 @@ bool Channel::canActionRec() const
 
 bool Channel::hasWave() const
 {
-	return samplePlayer && samplePlayer->hasWave();
+	return sampleChannel && sampleChannel->hasWave();
 }
 
 bool Channel::isPlaying() const
@@ -277,20 +277,8 @@ void Channel::setSolo(bool v)
 
 void Channel::loadWave(Wave* w, Frame newBegin, Frame newEnd, Frame newShift)
 {
-	samplePlayer->wave = w;
-
 	shared->tracker.store(0);
 	shared->playStatus.store(w != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
-	samplePlayer->shift = 0;
-	samplePlayer->begin = 0;
-	samplePlayer->end   = 0;
-
-	if (w != nullptr)
-	{
-		samplePlayer->shift = newShift == -1 ? 0 : newShift;
-		samplePlayer->begin = newBegin == -1 ? 0 : newBegin;
-		samplePlayer->end   = newEnd == -1 ? w->getBuffer().countFrames() - 1 : newEnd;
-	}
 
 	sampleChannel->loadWave(w, newBegin, newEnd, newShift);
 }
@@ -299,21 +287,6 @@ void Channel::loadWave(Wave* w, Frame newBegin, Frame newEnd, Frame newShift)
 
 void Channel::setWave(Wave* w, float samplerateRatio)
 {
-	if (w == nullptr)
-	{
-		samplePlayer->wave = nullptr;
-		return;
-	}
-
-	samplePlayer->wave = w;
-
-	if (samplerateRatio != 1.0f)
-	{
-		samplePlayer->begin *= samplerateRatio;
-		samplePlayer->end *= samplerateRatio;
-		samplePlayer->shift *= samplerateRatio;
-	}
-
 	sampleChannel->setWave(w, samplerateRatio);
 }
 

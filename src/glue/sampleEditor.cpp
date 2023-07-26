@@ -64,15 +64,15 @@ Data::Data(const m::Channel& c)
 , volume(c.volume)
 , pan(c.pan)
 , pitch(c.sampleChannel->pitch)
-, begin(c.samplePlayer->begin)
-, end(c.samplePlayer->end)
-, shift(c.samplePlayer->shift)
-, waveSize(c.samplePlayer->getWave()->getBuffer().countFrames())
-, waveBits(c.samplePlayer->getWave()->getBits())
-, waveDuration(c.samplePlayer->getWave()->getDuration())
-, waveRate(c.samplePlayer->getWave()->getRate())
-, wavePath(c.samplePlayer->getWave()->getPath())
-, isLogical(c.samplePlayer->getWave()->isLogical())
+, begin(c.sampleChannel->begin)
+, end(c.sampleChannel->end)
+, shift(c.sampleChannel->shift)
+, waveSize(c.sampleChannel->getWave()->getBuffer().countFrames())
+, waveBits(c.sampleChannel->getWave()->getBits())
+, waveDuration(c.sampleChannel->getWave()->getDuration())
+, waveRate(c.sampleChannel->getWave()->getRate())
+, wavePath(c.sampleChannel->getWave()->getPath())
+, isLogical(c.sampleChannel->getWave()->isLogical())
 , m_channel(&c)
 {
 }
@@ -89,7 +89,7 @@ Frame Data::a_getPreviewTracker() const
 
 const m::Wave& Data::getWaveRef() const
 {
-	return *m_channel->samplePlayer->getWave();
+	return *m_channel->sampleChannel->getWave();
 }
 
 Frame Data::getFramesInBar() const

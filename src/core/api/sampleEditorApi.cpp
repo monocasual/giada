@@ -142,14 +142,13 @@ void SampleEditorApi::trim(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::shift(ID channelId, Frame offset)
 {
-	const Channel&      ch           = m_channelManager.getChannel(channelId);
-	const SamplePlayer& samplePlayer = ch.samplePlayer.value();
-	const Frame         oldShift     = samplePlayer.shift;
+	const Channel& ch       = m_channelManager.getChannel(channelId);
+	const Frame    oldShift = ch.sampleChannel->shift;
 
 	m::model::DataLock lock = m_model.lockData();
 	m::wfx::shift(getWave(channelId), offset - oldShift);
 	// Model has been swapped by DataLock constructor, needs to get Channel again
-	m_channelManager.getChannel(channelId).samplePlayer->shift = offset;
+	m_channelManager.getChannel(channelId).sampleChannel->shift = offset;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -191,9 +190,6 @@ void SampleEditorApi::reload(ID channelId)
 
 Wave& SampleEditorApi::getWave(ID channelId) const
 {
-	Channel&      ch           = m_channelManager.getChannel(channelId);
-	SamplePlayer& samplePlayer = ch.samplePlayer.value();
-
-	return *samplePlayer.getWave();
+	return *m_channelManager.getChannel(channelId).sampleChannel->getWave();
 }
 } // namespace giada::m

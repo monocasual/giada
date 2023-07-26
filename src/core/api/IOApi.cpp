@@ -71,7 +71,7 @@ void IOApi::channel_enableMidiOutput(ID channelId, bool v)
 
 void IOApi::channel_enableVelocityAsVol(ID channelId, bool v)
 {
-	m_model.get().channels.get(channelId).samplePlayer->velocityAsVol = v;
+	m_model.get().channels.get(channelId).sampleChannel->velocityAsVol = v;
 	m_model.swap(m::model::SwapType::NONE);
 }
 

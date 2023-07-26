@@ -34,63 +34,17 @@
 namespace giada::m
 {
 SamplePlayer::SamplePlayer(Resampler* r)
-: shift(0)
-, begin(0)
-, end(0)
-, velocityAsVol(false)
-, waveReader(r)
-, wave(nullptr)
-{
-}
-
-/* -------------------------------------------------------------------------- */
-
-SamplePlayer::SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resampler* r)
-: shift(p.shift)
-, begin(p.begin)
-, end(p.end)
-, velocityAsVol(p.midiInVeloAsVol)
-, waveReader(r)
+: waveReader(r)
 , onLastFrame(nullptr)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool SamplePlayer::hasWave() const { return wave != nullptr; }
-bool SamplePlayer::hasLogicalWave() const { return hasWave() && wave->isLogical(); }
-bool SamplePlayer::hasEditedWave() const { return hasWave() && wave->isEdited(); }
-
-/* -------------------------------------------------------------------------- */
-
-Wave* SamplePlayer::getWave() const
-{
-	return wave;
-}
-
-ID SamplePlayer::getWaveId() const
-{
-	if (hasWave())
-		return wave->id;
-	return 0;
-}
-
-/* -------------------------------------------------------------------------- */
-
-Frame SamplePlayer::getWaveSize() const
-{
-	return hasWave() ? wave->getBuffer().countFrames() : 0;
-}
-
-/* -------------------------------------------------------------------------- */
-
 void SamplePlayer::render(const Channel& ch, Render renderInfo, bool seqIsRunning) const
 {
-	if (wave == nullptr)
-		return;
-
 	mcl::AudioBuffer& buf     = ch.shared->audioBuffer;
-	Frame             tracker = std::clamp(ch.shared->tracker.load(), begin, end); /* Make sure tracker stays within begin-end range. */
+	Frame             tracker = std::clamp(ch.shared->tracker.load(), ch.sampleChannel->begin, ch.sampleChannel->end); /* Make sure tracker stays within begin-end range. */
 
 	if (renderInfo.mode == Render::Mode::NORMAL)
 	{
@@ -104,18 +58,18 @@ void SamplePlayer::render(const Channel& ch, Render renderInfo, bool seqIsRunnin
 		might stop the rendering): fillBuffer() is just enough. Just notify 
 		waveReader this is the last read before rewind. */
 
-		tracker = fillBuffer(buf, tracker, end, 0, ch.sampleChannel->pitch).used;
+		tracker = fillBuffer(*ch.sampleChannel->getWave(), buf, tracker, ch.sampleChannel->end, 0, ch.sampleChannel->pitch).used;
 		waveReader.last();
 
 		/* Mode::REWIND: 2nd = [abcdefghi|abcdfefg]
 		   Mode::STOP:   2nd = [abcdefghi|--------] */
 
 		if (renderInfo.mode == Render::Mode::REWIND)
-			tracker = render(ch, buf, begin, renderInfo.offset, seqIsRunning);
+			tracker = render(ch, buf, ch.sampleChannel->begin, renderInfo.offset, seqIsRunning);
 		else
 		{
 			stop(buf, renderInfo.offset, seqIsRunning);
-			tracker = begin;
+			tracker = ch.sampleChannel->begin;
 		}
 	}
 
@@ -130,23 +84,23 @@ Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame track
 
 	/* First pass rendering. */
 
-	WaveReader::Result res = fillBuffer(buf, tracker, end, offset, ch.sampleChannel->pitch);
+	WaveReader::Result res = fillBuffer(*ch.sampleChannel->getWave(), buf, tracker, ch.sampleChannel->end, offset, ch.sampleChannel->pitch);
 	tracker += res.used;
 
 	/* Second pass rendering: if tracker has looped, special care is needed. If 
 	the	channel is in loop mode, fill the second part of the buffer with data
 	coming from the sample's head, starting at 'res.generated' offset. */
 
-	if (tracker >= end)
+	if (tracker >= ch.sampleChannel->end)
 	{
 		assert(onLastFrame != nullptr);
 
-		tracker = begin;
+		tracker = ch.sampleChannel->begin;
 		waveReader.last();
 		onLastFrame(/*natural=*/true, seqIsRunning);
 
 		if (shouldLoop(ch.sampleChannel->mode, status) && res.generated < buf.countFrames())
-			tracker += fillBuffer(buf, tracker, end, res.generated, ch.sampleChannel->pitch).used;
+			tracker += fillBuffer(*ch.sampleChannel->getWave(), buf, tracker, ch.sampleChannel->end, res.generated, ch.sampleChannel->pitch).used;
 	}
 
 	return tracker;
@@ -174,11 +128,9 @@ void SamplePlayer::kickIn(ChannelShared& shared, Frame f)
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result SamplePlayer::fillBuffer(mcl::AudioBuffer& buf, Frame start, Frame end, Frame offset, float pitch) const
+WaveReader::Result SamplePlayer::fillBuffer(const Wave& wave, mcl::AudioBuffer& buf, Frame start, Frame end, Frame offset, float pitch) const
 {
-	assert(wave != nullptr);
-
-	return waveReader.fill(*wave, buf, start, end, offset, pitch);
+	return waveReader.fill(wave, buf, start, end, offset, pitch);
 }
 
 /* -------------------------------------------------------------------------- */

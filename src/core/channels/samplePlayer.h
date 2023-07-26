@@ -63,15 +63,8 @@ public:
 	};
 
 	SamplePlayer(Resampler* r);
-	SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resampler* r);
 
-	bool  hasWave() const;
-	bool  hasLogicalWave() const;
-	bool  hasEditedWave() const;
-	ID    getWaveId() const;
-	Frame getWaveSize() const;
-	Wave* getWave() const;
-	void  render(const Channel&, Render, bool seqIsRunning) const;
+	void render(const Channel&, Render, bool seqIsRunning) const;
 
 	/* kickIn
 	Starts the player right away at frame 'f'. Used when launching a loop after
@@ -79,16 +72,7 @@ public:
 
 	void kickIn(ChannelShared&, Frame f);
 
-	Frame      shift;
-	Frame      begin;
-	Frame      end;
-	bool       velocityAsVol; // Velocity drives volume
 	WaveReader waveReader;
-
-	/* wave
-	Wave object. Might be null if the channel has no sample. */
-
-	Wave* wave;
 
 	/* onLastFrame
 	Callback fired when the last frame has been reached. 'natural' == true
@@ -112,7 +96,7 @@ private:
 
 	void stop(mcl::AudioBuffer&, Frame offset, bool seqIsRunning) const;
 
-	WaveReader::Result fillBuffer(mcl::AudioBuffer&, Frame start, Frame end, Frame offset, float pitch) const;
+	WaveReader::Result fillBuffer(const Wave&, mcl::AudioBuffer&, Frame start, Frame end, Frame offset, float pitch) const;
 	bool               shouldLoop(SamplePlayerMode, ChannelStatus) const;
 };
 } // namespace giada::m

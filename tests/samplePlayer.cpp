@@ -26,16 +26,16 @@ TEST_CASE("SamplePlayer")
 
 	SECTION("Test initialization")
 	{
-		REQUIRE(samplePlayer.hasWave() == false);
+		REQUIRE(channel.sampleChannel->hasWave() == false);
 	}
 
 	SECTION("Test rendering")
 	{
 		channel.loadWave(&wave);
 
-		REQUIRE(samplePlayer.hasWave() == true);
-		REQUIRE(samplePlayer.begin == 0);
-		REQUIRE(samplePlayer.end == wave.getBuffer().countFrames() - 1);
+		REQUIRE(channel.sampleChannel->hasWave() == true);
+		REQUIRE(channel.sampleChannel->begin == 0);
+		REQUIRE(channel.sampleChannel->end == wave.getBuffer().countFrames() - 1);
 
 		REQUIRE(channelShared.tracker.load() == 0);
 		REQUIRE(channelShared.playStatus.load() == ChannelStatus::OFF);
@@ -49,8 +49,8 @@ TEST_CASE("SamplePlayer")
 				constexpr int RANGE_BEGIN = 16;
 				constexpr int RANGE_END   = 48;
 
-				samplePlayer.begin = RANGE_BEGIN;
-				samplePlayer.end   = RANGE_END;
+				channel.sampleChannel->begin = RANGE_BEGIN;
+				channel.sampleChannel->end   = RANGE_END;
 				samplePlayer.render(channel, {}, /*seqIsRunning=*/false);
 
 				int numFramesWritten = 0;

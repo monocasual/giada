@@ -124,7 +124,7 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 {
 	Channel&    channel = m_model.get().channels.get(channelId);
 	Wave&       newWave = wave;
-	const Wave* oldWave = channel.samplePlayer->getWave();
+	const Wave* oldWave = channel.sampleChannel->getWave();
 
 	loadSampleChannel(channel, &newWave);
 	m_model.swap(model::SwapType::HARD);
@@ -148,12 +148,12 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 
 	/* Clone Wave first, if any. */
 
-	if (oldChannel.samplePlayer && oldChannel.samplePlayer->hasWave())
+	if (oldChannel.sampleChannel && oldChannel.sampleChannel->hasWave())
 	{
-		const Wave& oldWave  = *oldChannel.samplePlayer->getWave();
-		const Frame oldShift = oldChannel.samplePlayer->shift;
-		const Frame oldBegin = oldChannel.samplePlayer->begin;
-		const Frame oldEnd   = oldChannel.samplePlayer->end;
+		const Wave& oldWave  = *oldChannel.sampleChannel->getWave();
+		const Frame oldShift = oldChannel.sampleChannel->shift;
+		const Frame oldBegin = oldChannel.sampleChannel->begin;
+		const Frame oldEnd   = oldChannel.sampleChannel->end;
 		Wave&       wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
 		loadSampleChannel(newChannelData.channel, &wave, oldBegin, oldEnd, oldShift);
 	}
@@ -173,9 +173,9 @@ void ChannelManager::freeSampleChannel(ID channelId)
 {
 	Channel& ch = m_model.get().channels.get(channelId);
 
-	assert(ch.samplePlayer);
+	assert(ch.sampleChannel);
 
-	const Wave* wave = ch.samplePlayer->getWave();
+	const Wave* wave = ch.sampleChannel->getWave();
 
 	loadSampleChannel(ch, nullptr);
 	m_model.swap(model::SwapType::HARD);
@@ -191,7 +191,7 @@ void ChannelManager::freeSampleChannel(ID channelId)
 void ChannelManager::freeAllSampleChannels()
 {
 	for (Channel& ch : m_model.get().channels.getAll())
-		if (ch.samplePlayer)
+		if (ch.sampleChannel)
 			loadSampleChannel(ch, nullptr);
 
 	m_model.swap(model::SwapType::HARD);
@@ -205,7 +205,7 @@ void ChannelManager::freeAllSampleChannels()
 void ChannelManager::deleteChannel(ID channelId)
 {
 	const Channel& ch   = m_model.get().channels.get(channelId);
-	const Wave*    wave = ch.samplePlayer ? ch.samplePlayer->getWave() : nullptr;
+	const Wave*    wave = ch.sampleChannel ? ch.sampleChannel->getWave() : nullptr;
 
 	m_model.get().channels.remove(channelId);
 	m_model.swap(model::SwapType::HARD);
@@ -286,7 +286,7 @@ void ChannelManager::keyPress(ID channelId, int velocity, bool canRecordActions,
 	if (ch.sampleActionRecorder && ch.hasWave() && canRecordActions && !ch.sampleChannel->isAnyLoopMode())
 		ch.sampleActionRecorder->keyPress(channelId, *ch.shared, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
 	if (ch.sampleReactor && ch.hasWave())
-		ch.sampleReactor->keyPress(channelId, *ch.shared, ch.sampleChannel->mode, velocity, canQuantize, ch.sampleChannel->isAnyLoopMode(), ch.samplePlayer->velocityAsVol, ch.volume_i);
+		ch.sampleReactor->keyPress(channelId, *ch.shared, ch.sampleChannel->mode, velocity, canQuantize, ch.sampleChannel->isAnyLoopMode(), ch.sampleChannel->velocityAsVol, ch.volume_i);
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -377,10 +377,10 @@ void ChannelManager::setBeginEnd(ID channelId, Frame b, Frame e)
 {
 	Channel& c = m_model.get().channels.get(channelId);
 
-	assert(c.samplePlayer);
+	assert(c.sampleChannel);
 
-	b = std::clamp(b, 0, c.samplePlayer->getWaveSize() - 1);
-	e = std::clamp(e, 1, c.samplePlayer->getWaveSize() - 1);
+	b = std::clamp(b, 0, c.sampleChannel->getWaveSize() - 1);
+	e = std::clamp(e, 1, c.sampleChannel->getWaveSize() - 1);
 	if (b >= e)
 		b = e - 1;
 	else if (e < b)
@@ -389,8 +389,8 @@ void ChannelManager::setBeginEnd(ID channelId, Frame b, Frame e)
 	if (c.shared->tracker.load() < b)
 		c.shared->tracker.store(b);
 
-	c.samplePlayer->begin = b;
-	c.samplePlayer->end   = e;
+	c.sampleChannel->begin = b;
+	c.sampleChannel->end   = e;
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -398,10 +398,10 @@ void ChannelManager::resetBeginEnd(ID channelId)
 {
 	Channel& c = m_model.get().channels.get(channelId);
 
-	assert(c.samplePlayer);
+	assert(c.sampleChannel);
 
-	c.samplePlayer->begin = 0;
-	c.samplePlayer->end   = c.samplePlayer->getWaveSize();
+	c.sampleChannel->begin = 0;
+	c.sampleChannel->end   = c.sampleChannel->getWaveSize();
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -496,10 +496,10 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 	Channel& previewCh = m_model.get().channels.get(Mixer::PREVIEW_CHANNEL_ID);
 	Channel& sourceCh  = m_model.get().channels.get(channelId);
 
-	assert(previewCh.samplePlayer);
-	assert(sourceCh.samplePlayer);
+	assert(previewCh.sampleChannel);
+	assert(sourceCh.sampleChannel);
 
-	previewCh.loadWave(sourceCh.samplePlayer->getWave());
+	previewCh.loadWave(sourceCh.sampleChannel->getWave());
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -528,7 +528,7 @@ void ChannelManager::stopAll()
 	{
 		if (ch.midiController)
 			ch.midiController->stop(ch.shared->playStatus);
-		if (ch.sampleReactor && ch.samplePlayer)
+		if (ch.sampleReactor && ch.sampleChannel)
 			ch.sampleReactor->stopBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
 		if (ch.midiSender && ch.isPlaying() && !ch.isMuted())
 			ch.midiSender->stop();
@@ -554,9 +554,9 @@ bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
 {
 	Channel& ch = m_model.get().channels.get(channelId);
 
-	assert(ch.samplePlayer);
+	assert(ch.sampleChannel);
 
-	Wave* wave = ch.samplePlayer->getWave();
+	Wave* wave = ch.sampleChannel->getWave();
 
 	assert(wave != nullptr);
 
@@ -604,7 +604,7 @@ bool ChannelManager::hasActions() const
 bool ChannelManager::hasAudioData() const
 {
 	return m_model.get().channels.anyOf([](const Channel& ch) {
-		return ch.samplePlayer && ch.samplePlayer->hasWave();
+		return ch.sampleChannel && ch.sampleChannel->hasWave();
 	});
 }
 
@@ -673,7 +673,7 @@ void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, 
 
 void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer, Frame currentFrame)
 {
-	Wave* wave = ch.samplePlayer->getWave();
+	Wave* wave = ch.sampleChannel->getWave();
 
 	/* Need model::DataLock here, as data might be being read by the audio
 	thread at the same time. */

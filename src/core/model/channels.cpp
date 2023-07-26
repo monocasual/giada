@@ -92,7 +92,7 @@ void Channels::debug() const
 
 	for (int i = 0; const Channel& c : m_channels)
 	{
-		const Wave* wave = c.samplePlayer ? c.samplePlayer->getWave() : nullptr;
+		const Wave* wave = c.sampleChannel ? c.sampleChannel->getWave() : nullptr;
 
 		fmt::print("\t{} - ID={} name='{}' type={} columnId={} position={} channelShared={} wave={}\n",
 		    i++, c.id, c.name, (int)c.type, c.columnId, c.position, (void*)&c.shared, (void*)wave);

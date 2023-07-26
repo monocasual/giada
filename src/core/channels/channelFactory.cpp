@@ -162,13 +162,13 @@ const Patch::Channel serializeChannel(const Channel& c)
 
 	if (c.type == ChannelType::SAMPLE)
 	{
-		pc.waveId            = c.samplePlayer->getWaveId();
+		pc.waveId            = c.sampleChannel->getWaveId();
 		pc.mode              = c.sampleChannel->mode;
-		pc.begin             = c.samplePlayer->begin;
-		pc.end               = c.samplePlayer->end;
+		pc.begin             = c.sampleChannel->begin;
+		pc.end               = c.sampleChannel->end;
 		pc.pitch             = c.sampleChannel->pitch;
-		pc.shift             = c.samplePlayer->shift;
-		pc.midiInVeloAsVol   = c.samplePlayer->velocityAsVol;
+		pc.shift             = c.sampleChannel->shift;
+		pc.midiInVeloAsVol   = c.sampleChannel->velocityAsVol;
 		pc.inputMonitor      = c.sampleChannel->inputMonitor;
 		pc.overdubProtection = c.sampleChannel->overdubProtection;
 	}
