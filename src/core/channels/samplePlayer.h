@@ -71,7 +71,7 @@ public:
 	ID    getWaveId() const;
 	Frame getWaveSize() const;
 	Wave* getWave() const;
-	void  render(ChannelShared&, Render, bool seqIsRunning, float pitch, SamplePlayerMode) const;
+	void  render(const Channel&, Render, bool seqIsRunning) const;
 
 	/* loadWave
 	Loads Wave and sets it up (name, markers, ...). Also updates Channel's shared

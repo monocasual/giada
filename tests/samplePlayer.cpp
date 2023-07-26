@@ -1,4 +1,5 @@
 #include "../src/core/channels/samplePlayer.h"
+#include "../src/core/channels/channel.h"
 #include <catch2/catch.hpp>
 
 TEST_CASE("SamplePlayer")
@@ -17,6 +18,7 @@ TEST_CASE("SamplePlayer")
 	});
 
 	m::ChannelShared channelShared(BUFFER_SIZE);
+	m::Channel       channel(ChannelType::SAMPLE, 1, 1, 0, channelShared);
 	m::Resampler     resampler(m::Resampler::Quality::LINEAR, NUM_CHANNELS);
 
 	m::SamplePlayer samplePlayer(&resampler);
@@ -40,6 +42,8 @@ TEST_CASE("SamplePlayer")
 
 		for (const float pitch : {1.0f, 0.5f})
 		{
+			channel.sampleChannel->pitch = pitch;
+
 			SECTION("Sub-range [M, N), pitch == " + std::to_string(pitch))
 			{
 				constexpr int RANGE_BEGIN = 16;
@@ -47,7 +51,7 @@ TEST_CASE("SamplePlayer")
 
 				samplePlayer.begin = RANGE_BEGIN;
 				samplePlayer.end   = RANGE_END;
-				samplePlayer.render(channelShared, {}, /*seqIsRunning=*/false, pitch, SamplePlayerMode::SINGLE_BASIC);
+				samplePlayer.render(channel, {}, /*seqIsRunning=*/false);
 
 				int numFramesWritten = 0;
 				channelShared.audioBuffer.forEachFrame([&numFramesWritten](float* f, int) {
@@ -63,7 +67,7 @@ TEST_CASE("SamplePlayer")
 				// Point in audio buffer where the rewind takes place
 				const int OFFSET = 256;
 
-				samplePlayer.render(channelShared, {m::SamplePlayer::Render::Mode::REWIND, OFFSET}, /*seqIsRunning=*/false, pitch, SamplePlayerMode::SINGLE_BASIC);
+				samplePlayer.render(channel, {m::SamplePlayer::Render::Mode::REWIND, OFFSET}, /*seqIsRunning=*/false);
 
 				// Rendering should start over again at buffer[OFFSET]
 				REQUIRE(channelShared.audioBuffer[OFFSET][0] == 1.0f);
@@ -74,7 +78,7 @@ TEST_CASE("SamplePlayer")
 				// Point in audio buffer where the stop takes place
 				const int OFFSET = 256;
 
-				samplePlayer.render(channelShared, {m::SamplePlayer::Render::Mode::STOP, OFFSET}, /*seqIsRunning=*/false, pitch, SamplePlayerMode::SINGLE_BASIC);
+				samplePlayer.render(channel, {m::SamplePlayer::Render::Mode::STOP, OFFSET}, /*seqIsRunning=*/false);
 
 				int numFramesWritten = 0;
 				channelShared.audioBuffer.forEachFrame([&numFramesWritten](float* f, int) {

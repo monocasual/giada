@@ -85,18 +85,18 @@ Frame SamplePlayer::getWaveSize() const
 
 /* -------------------------------------------------------------------------- */
 
-void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRunning, float pitch, SamplePlayerMode mode) const
+void SamplePlayer::render(const Channel& ch, Render renderInfo, bool seqIsRunning) const
 {
 	if (wave == nullptr)
 		return;
 
-	mcl::AudioBuffer&   buf     = shared.audioBuffer;
-	Frame               tracker = std::clamp(shared.tracker.load(), begin, end); /* Make sure tracker stays within begin-end range. */
-	const ChannelStatus status  = shared.playStatus.load();
+	mcl::AudioBuffer&   buf     = ch.shared->audioBuffer;
+	Frame               tracker = std::clamp(ch.shared->tracker.load(), begin, end); /* Make sure tracker stays within begin-end range. */
+	const ChannelStatus status  = ch.shared->playStatus.load();
 
 	if (renderInfo.mode == Render::Mode::NORMAL)
 	{
-		tracker = render(buf, tracker, renderInfo.offset, status, seqIsRunning, pitch, mode);
+		tracker = render(buf, tracker, renderInfo.offset, status, seqIsRunning, ch.sampleChannel->pitch, ch.sampleChannel->mode);
 	}
 	else
 	{
@@ -106,19 +106,19 @@ void SamplePlayer::render(ChannelShared& shared, Render renderInfo, bool seqIsRu
 		might stop the rendering): fillBuffer() is just enough. Just notify 
 		waveReader this is the last read before rewind. */
 
-		tracker = fillBuffer(buf, tracker, 0, pitch).used;
+		tracker = fillBuffer(buf, tracker, 0, ch.sampleChannel->pitch).used;
 		waveReader.last();
 
 		/* Mode::REWIND: 2nd = [abcdefghi|abcdfefg]
 		   Mode::STOP:   2nd = [abcdefghi|--------] */
 
 		if (renderInfo.mode == Render::Mode::REWIND)
-			tracker = render(buf, begin, renderInfo.offset, status, seqIsRunning, pitch, mode);
+			tracker = render(buf, begin, renderInfo.offset, status, seqIsRunning, ch.sampleChannel->pitch, ch.sampleChannel->mode);
 		else
 			tracker = stop(buf, renderInfo.offset, seqIsRunning);
 	}
 
-	shared.tracker.store(tracker);
+	ch.shared->tracker.store(tracker);
 }
 
 /* -------------------------------------------------------------------------- */

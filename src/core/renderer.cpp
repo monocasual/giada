@@ -160,7 +160,7 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl
 		SamplePlayer::Render render;
 		while (ch.shared->renderQueue->pop(render))
 			;
-		ch.samplePlayer->render(*ch.shared, render, seqIsRunning, ch.sampleChannel->pitch, ch.sampleChannel->mode);
+		ch.samplePlayer->render(ch, render, seqIsRunning);
 	}
 
 	if (ch.type == ChannelType::SAMPLE)
@@ -210,7 +210,7 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 		SamplePlayer::Render render;
 		while (ch.shared->renderQueue->pop(render))
 			;
-		ch.samplePlayer->render(*ch.shared, render, /*seqIsRunning=*/false, ch.sampleChannel->pitch, ch.sampleChannel->mode); // Sequencer status is irrelevant here
+		ch.samplePlayer->render(ch, render, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
 	}
 
 	out.sum(ch.shared->audioBuffer, ch.volume, calcPanning_(ch.pan));
