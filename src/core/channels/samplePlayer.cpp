@@ -90,13 +90,12 @@ void SamplePlayer::render(const Channel& ch, Render renderInfo, bool seqIsRunnin
 	if (wave == nullptr)
 		return;
 
-	mcl::AudioBuffer&   buf     = ch.shared->audioBuffer;
-	Frame               tracker = std::clamp(ch.shared->tracker.load(), begin, end); /* Make sure tracker stays within begin-end range. */
-	const ChannelStatus status  = ch.shared->playStatus.load();
+	mcl::AudioBuffer& buf     = ch.shared->audioBuffer;
+	Frame             tracker = std::clamp(ch.shared->tracker.load(), begin, end); /* Make sure tracker stays within begin-end range. */
 
 	if (renderInfo.mode == Render::Mode::NORMAL)
 	{
-		tracker = render(buf, tracker, renderInfo.offset, status, seqIsRunning, ch.sampleChannel->pitch, ch.sampleChannel->mode);
+		tracker = render(ch, buf, tracker, renderInfo.offset, seqIsRunning);
 	}
 	else
 	{
@@ -113,7 +112,7 @@ void SamplePlayer::render(const Channel& ch, Render renderInfo, bool seqIsRunnin
 		   Mode::STOP:   2nd = [abcdefghi|--------] */
 
 		if (renderInfo.mode == Render::Mode::REWIND)
-			tracker = render(buf, begin, renderInfo.offset, status, seqIsRunning, ch.sampleChannel->pitch, ch.sampleChannel->mode);
+			tracker = render(ch, buf, begin, renderInfo.offset, seqIsRunning);
 		else
 			tracker = stop(buf, renderInfo.offset, seqIsRunning);
 	}
@@ -123,11 +122,13 @@ void SamplePlayer::render(const Channel& ch, Render renderInfo, bool seqIsRunnin
 
 /* -------------------------------------------------------------------------- */
 
-Frame SamplePlayer::render(mcl::AudioBuffer& buf, Frame tracker, Frame offset, ChannelStatus status, bool seqIsRunning, float pitch, SamplePlayerMode mode) const
+Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame offset, bool seqIsRunning) const
 {
+	const ChannelStatus status = ch.shared->playStatus.load();
+
 	/* First pass rendering. */
 
-	WaveReader::Result res = fillBuffer(buf, tracker, offset, pitch);
+	WaveReader::Result res = fillBuffer(buf, tracker, offset, ch.sampleChannel->pitch);
 	tracker += res.used;
 
 	/* Second pass rendering: if tracker has looped, special care is needed. If 
@@ -142,8 +143,8 @@ Frame SamplePlayer::render(mcl::AudioBuffer& buf, Frame tracker, Frame offset, C
 		waveReader.last();
 		onLastFrame(/*natural=*/true, seqIsRunning);
 
-		if (shouldLoop(mode, status) && res.generated < buf.countFrames())
-			tracker += fillBuffer(buf, tracker, res.generated, pitch).used;
+		if (shouldLoop(ch.sampleChannel->mode, status) && res.generated < buf.countFrames())
+			tracker += fillBuffer(buf, tracker, res.generated, ch.sampleChannel->pitch).used;
 	}
 
 	return tracker;

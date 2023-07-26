@@ -117,7 +117,7 @@ private:
 	into the audio buffer at position 'offset'. May fire 'onLastFrame' callback
 	if the sample end is reached. */
 
-	Frame render(mcl::AudioBuffer&, Frame tracker, Frame offset, ChannelStatus, bool seqIsRunning, float pitch, SamplePlayerMode) const;
+	Frame render(const Channel&, mcl::AudioBuffer&, Frame tracker, Frame offset, bool seqIsRunning) const;
 
 	/* stop
 	Silences the last part of the audio buffer, starting at 'offset'. Used to
