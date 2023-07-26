@@ -68,7 +68,7 @@ void SamplePlayer::render(const Channel& ch, Render renderInfo, bool seqIsRunnin
 			tracker = render(ch, buf, ch.sampleChannel->begin, renderInfo.offset, seqIsRunning);
 		else
 		{
-			stop(buf, renderInfo.offset, seqIsRunning);
+			stop(ch, buf, renderInfo.offset, seqIsRunning);
 			tracker = ch.sampleChannel->begin;
 		}
 	}
@@ -97,7 +97,7 @@ Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame track
 
 		tracker = ch.sampleChannel->begin;
 		waveReader.last();
-		onLastFrame(/*natural=*/true, seqIsRunning);
+		onLastFrame(ch, /*natural=*/true, seqIsRunning);
 
 		if (shouldLoop(ch.sampleChannel->mode, status) && res.generated < buf.countFrames())
 			tracker += fillBuffer(*ch.sampleChannel->getWave(), buf, tracker, ch.sampleChannel->end, res.generated, ch.sampleChannel->pitch).used;
@@ -108,11 +108,11 @@ Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame track
 
 /* -------------------------------------------------------------------------- */
 
-void SamplePlayer::stop(mcl::AudioBuffer& buf, Frame offset, bool seqIsRunning) const
+void SamplePlayer::stop(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, bool seqIsRunning) const
 {
 	assert(onLastFrame != nullptr);
 
-	onLastFrame(/*natural=*/false, seqIsRunning);
+	onLastFrame(ch, /*natural=*/false, seqIsRunning);
 
 	if (offset != 0)
 		buf.clear(offset);

@@ -300,9 +300,9 @@ void Channel::initCallbacks()
 
 	if (samplePlayer)
 	{
-		samplePlayer->onLastFrame = [this](bool natural, bool seqIsRunning) {
-			sampleAdvancer->onLastFrame(*shared, seqIsRunning, natural, sampleChannel->mode,
-			    sampleChannel->isAnyLoopMode());
+		samplePlayer->onLastFrame = [this](const Channel& ch, bool natural, bool seqIsRunning) {
+			sampleAdvancer->onLastFrame(*ch.shared, seqIsRunning, natural, ch.sampleChannel->mode,
+			    ch.sampleChannel->isAnyLoopMode());
 		};
 	}
 }

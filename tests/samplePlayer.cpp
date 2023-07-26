@@ -22,7 +22,7 @@ TEST_CASE("SamplePlayer")
 	m::Resampler     resampler(m::Resampler::Quality::LINEAR, NUM_CHANNELS);
 
 	m::SamplePlayer samplePlayer(&resampler);
-	samplePlayer.onLastFrame = [](bool, bool) {};
+	samplePlayer.onLastFrame = [](const m::Channel&, bool, bool) {};
 
 	SECTION("Test initialization")
 	{
