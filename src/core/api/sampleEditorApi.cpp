@@ -82,7 +82,7 @@ void SampleEditorApi::paste(ID channelId, Frame a)
 
 	/* Pass the old wave that contains the pasted data to channel. */
 
-	m_channelManager.getChannel(channelId).samplePlayer->setWave(&wave, 1.0f);
+	m_channelManager.getChannel(channelId).setWave(&wave, 1.0f);
 
 	/* Just brutally restore begin/end points. */
 

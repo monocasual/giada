@@ -63,7 +63,7 @@ public:
 	};
 
 	SamplePlayer(Resampler* r);
-	SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w);
+	SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resampler* r);
 
 	bool  hasWave() const;
 	bool  hasLogicalWave() const;
@@ -72,19 +72,6 @@ public:
 	Frame getWaveSize() const;
 	Wave* getWave() const;
 	void  render(const Channel&, Render, bool seqIsRunning) const;
-
-	/* loadWave
-	Loads Wave and sets it up (name, markers, ...). Also updates Channel's shared
-	state accordingly. Resets begin/end points shift if not specified. */
-
-	void loadWave(Channel&, Wave*, Frame begin = -1, Frame end = -1, Frame shift = -1);
-
-	/* setWave
-	Just sets the pointer to a Wave object. Used during de-serialization. The
-	ratio is used to adjust begin/end points in case of patch vs. conf sample
-	rate mismatch. If nullptr, set the wave to invalid. */
-
-	void setWave(Wave* w, float samplerateRatio);
 
 	/* kickIn
 	Starts the player right away at frame 'f'. Used when launching a loop after

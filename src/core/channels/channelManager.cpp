@@ -499,7 +499,7 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 	assert(previewCh.samplePlayer);
 	assert(sourceCh.samplePlayer);
 
-	previewCh.samplePlayer->loadWave(previewCh, sourceCh.samplePlayer->getWave());
+	previewCh.loadWave(sourceCh.samplePlayer->getWave());
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -509,7 +509,7 @@ void ChannelManager::freeWaveInPreviewChannel()
 {
 	Channel& previewCh = m_model.get().channels.get(Mixer::PREVIEW_CHANNEL_ID);
 
-	previewCh.samplePlayer->loadWave(previewCh, nullptr);
+	previewCh.loadWave(nullptr);
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -619,7 +619,7 @@ bool ChannelManager::hasSolos() const
 
 void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, Frame begin, Frame end, Frame shift) const
 {
-	ch.samplePlayer->loadWave(ch, w, begin, end, shift);
+	ch.loadWave(w, begin, end, shift);
 	ch.name = w != nullptr ? w->getBasename(/*ext=*/false) : "";
 }
 

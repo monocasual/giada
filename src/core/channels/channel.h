@@ -88,6 +88,19 @@ public:
 	void setMute(bool);
 	void setSolo(bool);
 
+	/* loadWave
+	Loads Wave and sets it up (name, markers, ...). Also updates Channel's shared
+	state accordingly. Resets begin/end points shift if not specified. */
+
+	void loadWave(Wave*, Frame begin = -1, Frame end = -1, Frame shift = -1);
+
+	/* setWave
+	Just sets the pointer to a Wave object. Used during de-serialization. The
+	ratio is used to adjust begin/end points in case of patch vs. conf sample
+	rate mismatch. If nullptr, set the wave to invalid. */
+
+	void setWave(Wave* w, float samplerateRatio);
+
 	ChannelShared*       shared;
 	ID                   id;
 	ChannelType          type;

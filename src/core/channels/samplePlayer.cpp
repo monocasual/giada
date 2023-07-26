@@ -45,7 +45,7 @@ SamplePlayer::SamplePlayer(Resampler* r)
 
 /* -------------------------------------------------------------------------- */
 
-SamplePlayer::SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resampler* r, Wave* w)
+SamplePlayer::SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resampler* r)
 : shift(p.shift)
 , begin(p.begin)
 , end(p.end)
@@ -53,7 +53,6 @@ SamplePlayer::SamplePlayer(const Patch::Channel& p, float samplerateRatio, Resam
 , waveReader(r)
 , onLastFrame(nullptr)
 {
-	setWave(w, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -162,46 +161,6 @@ Frame SamplePlayer::stop(mcl::AudioBuffer& buf, Frame offset, bool seqIsRunning)
 		buf.clear(offset);
 
 	return begin;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void SamplePlayer::loadWave(Channel& channel, Wave* w, Frame newBegin, Frame newEnd, Frame newShift)
-{
-	wave = w;
-
-	channel.shared->tracker.store(0);
-	channel.shared->playStatus.store(w != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
-	shift = 0;
-	begin = 0;
-	end   = 0;
-
-	if (w != nullptr)
-	{
-		shift = newShift == -1 ? 0 : newShift;
-		begin = newBegin == -1 ? 0 : newBegin;
-		end   = newEnd == -1 ? w->getBuffer().countFrames() - 1 : newEnd;
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void SamplePlayer::setWave(Wave* w, float samplerateRatio)
-{
-	if (w == nullptr)
-	{
-		wave = nullptr;
-		return;
-	}
-
-	wave = w;
-
-	if (samplerateRatio != 1.0f)
-	{
-		begin *= samplerateRatio;
-		end *= samplerateRatio;
-		shift *= samplerateRatio;
-	}
 }
 
 /* -------------------------------------------------------------------------- */

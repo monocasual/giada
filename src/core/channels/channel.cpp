@@ -115,7 +115,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		samplePlayer.emplace(p, samplerateRatio, &(shared->resampler.value()), wave);
+		samplePlayer.emplace(p, samplerateRatio, &(shared->resampler.value()));
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(*shared, id);
 		sampleActionRecorder.emplace(g_engine.getActionRecorder());
@@ -123,7 +123,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 		break;
 
 	case ChannelType::PREVIEW:
-		samplePlayer.emplace(p, samplerateRatio, &(shared->resampler.value()), nullptr);
+		samplePlayer.emplace(p, samplerateRatio, &(shared->resampler.value()));
 		sampleReactor.emplace(*shared, id);
 		sampleChannel.emplace(p);
 		break;
@@ -139,6 +139,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 		break;
 	}
 
+	setWave(wave, samplerateRatio);
 	initCallbacks();
 }
 
@@ -270,6 +271,46 @@ void Channel::setSolo(bool v)
 	if (m_solo != v)
 		midiLighter.sendSolo(v);
 	m_solo = v;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Channel::loadWave(Wave* w, Frame newBegin, Frame newEnd, Frame newShift)
+{
+	samplePlayer->wave = w;
+
+	shared->tracker.store(0);
+	shared->playStatus.store(w != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
+	samplePlayer->shift = 0;
+	samplePlayer->begin = 0;
+	samplePlayer->end   = 0;
+
+	if (w != nullptr)
+	{
+		samplePlayer->shift = newShift == -1 ? 0 : newShift;
+		samplePlayer->begin = newBegin == -1 ? 0 : newBegin;
+		samplePlayer->end   = newEnd == -1 ? w->getBuffer().countFrames() - 1 : newEnd;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Channel::setWave(Wave* w, float samplerateRatio)
+{
+	if (w == nullptr)
+	{
+		samplePlayer->wave = nullptr;
+		return;
+	}
+
+	samplePlayer->wave = w;
+
+	if (samplerateRatio != 1.0f)
+	{
+		samplePlayer->begin *= samplerateRatio;
+		samplePlayer->end *= samplerateRatio;
+		samplePlayer->shift *= samplerateRatio;
+	}
 }
 
 /* -------------------------------------------------------------------------- */
