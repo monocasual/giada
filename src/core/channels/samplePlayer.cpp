@@ -166,12 +166,12 @@ Frame SamplePlayer::stop(mcl::AudioBuffer& buf, Frame offset, bool seqIsRunning)
 
 /* -------------------------------------------------------------------------- */
 
-void SamplePlayer::loadWave(ChannelShared& shared, Wave* w, Frame newBegin, Frame newEnd, Frame newShift)
+void SamplePlayer::loadWave(Channel& channel, Wave* w, Frame newBegin, Frame newEnd, Frame newShift)
 {
 	wave = w;
 
-	shared.tracker.store(0);
-	shared.playStatus.store(w != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
+	channel.shared->tracker.store(0);
+	channel.shared->playStatus.store(w != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
 	shift = 0;
 	begin = 0;
 	end   = 0;

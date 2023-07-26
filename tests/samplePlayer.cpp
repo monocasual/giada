@@ -31,7 +31,7 @@ TEST_CASE("SamplePlayer")
 
 	SECTION("Test rendering")
 	{
-		samplePlayer.loadWave(channelShared, &wave);
+		samplePlayer.loadWave(channel, &wave);
 
 		REQUIRE(samplePlayer.hasWave() == true);
 		REQUIRE(samplePlayer.begin == 0);
