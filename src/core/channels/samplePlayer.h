@@ -112,7 +112,7 @@ private:
 
 	Frame stop(mcl::AudioBuffer&, Frame offset, bool seqIsRunning) const;
 
-	WaveReader::Result fillBuffer(mcl::AudioBuffer&, Frame start, Frame offset, float pitch) const;
+	WaveReader::Result fillBuffer(mcl::AudioBuffer&, Frame start, Frame end, Frame offset, float pitch) const;
 	bool               shouldLoop(SamplePlayerMode, ChannelStatus) const;
 };
 } // namespace giada::m

@@ -104,7 +104,7 @@ void SamplePlayer::render(const Channel& ch, Render renderInfo, bool seqIsRunnin
 		might stop the rendering): fillBuffer() is just enough. Just notify 
 		waveReader this is the last read before rewind. */
 
-		tracker = fillBuffer(buf, tracker, 0, ch.sampleChannel->pitch).used;
+		tracker = fillBuffer(buf, tracker, end, 0, ch.sampleChannel->pitch).used;
 		waveReader.last();
 
 		/* Mode::REWIND: 2nd = [abcdefghi|abcdfefg]
@@ -127,7 +127,7 @@ Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame track
 
 	/* First pass rendering. */
 
-	WaveReader::Result res = fillBuffer(buf, tracker, offset, ch.sampleChannel->pitch);
+	WaveReader::Result res = fillBuffer(buf, tracker, end, offset, ch.sampleChannel->pitch);
 	tracker += res.used;
 
 	/* Second pass rendering: if tracker has looped, special care is needed. If 
@@ -143,7 +143,7 @@ Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame track
 		onLastFrame(/*natural=*/true, seqIsRunning);
 
 		if (shouldLoop(ch.sampleChannel->mode, status) && res.generated < buf.countFrames())
-			tracker += fillBuffer(buf, tracker, res.generated, ch.sampleChannel->pitch).used;
+			tracker += fillBuffer(buf, tracker, end, res.generated, ch.sampleChannel->pitch).used;
 	}
 
 	return tracker;
@@ -173,7 +173,7 @@ void SamplePlayer::kickIn(ChannelShared& shared, Frame f)
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result SamplePlayer::fillBuffer(mcl::AudioBuffer& buf, Frame start, Frame offset, float pitch) const
+WaveReader::Result SamplePlayer::fillBuffer(mcl::AudioBuffer& buf, Frame start, Frame end, Frame offset, float pitch) const
 {
 	assert(wave != nullptr);
 
