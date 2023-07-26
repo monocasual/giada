@@ -110,7 +110,7 @@ private:
 	Silences the last part of the audio buffer, starting at 'offset'. Used to
 	terminate rendering. It also fire the 'onLastFrame' callback. */
 
-	Frame stop(mcl::AudioBuffer&, Frame offset, bool seqIsRunning) const;
+	void stop(mcl::AudioBuffer&, Frame offset, bool seqIsRunning) const;
 
 	WaveReader::Result fillBuffer(mcl::AudioBuffer&, Frame start, Frame end, Frame offset, float pitch) const;
 	bool               shouldLoop(SamplePlayerMode, ChannelStatus) const;

@@ -113,7 +113,10 @@ void SamplePlayer::render(const Channel& ch, Render renderInfo, bool seqIsRunnin
 		if (renderInfo.mode == Render::Mode::REWIND)
 			tracker = render(ch, buf, begin, renderInfo.offset, seqIsRunning);
 		else
-			tracker = stop(buf, renderInfo.offset, seqIsRunning);
+		{
+			stop(buf, renderInfo.offset, seqIsRunning);
+			tracker = begin;
+		}
 	}
 
 	ch.shared->tracker.store(tracker);
@@ -151,7 +154,7 @@ Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame track
 
 /* -------------------------------------------------------------------------- */
 
-Frame SamplePlayer::stop(mcl::AudioBuffer& buf, Frame offset, bool seqIsRunning) const
+void SamplePlayer::stop(mcl::AudioBuffer& buf, Frame offset, bool seqIsRunning) const
 {
 	assert(onLastFrame != nullptr);
 
@@ -159,8 +162,6 @@ Frame SamplePlayer::stop(mcl::AudioBuffer& buf, Frame offset, bool seqIsRunning)
 
 	if (offset != 0)
 		buf.clear(offset);
-
-	return begin;
 }
 
 /* -------------------------------------------------------------------------- */
