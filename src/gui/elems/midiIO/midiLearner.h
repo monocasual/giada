@@ -30,6 +30,7 @@
 #include "gui/elems/basics/flex.h"
 #include <functional>
 #include <string>
+#include <cstdint>
 
 namespace giada::v
 {

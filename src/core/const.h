@@ -29,6 +29,7 @@
 
 #include "deps/rtaudio/RtAudio.h"
 #include <RtMidi.h>
+#include <cstdint>
 
 /* -- environment ----------------------------------------------------------- */
 #if defined(_WIN32)
