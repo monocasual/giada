@@ -59,10 +59,10 @@ void SamplePlayer::render(const Channel& ch, Render renderInfo, bool seqIsRunnin
 		/* Both modes: 1st = [abcdefghijklmnopq] 
 		No need for fancy render() here. You don't want the chance to trigger 
 		onLastFrame() at this point which would invalidate the rewind (a listener
-		might stop the rendering): fillBuffer() is just enough. Just notify 
+		might stop the rendering): waveReader.fill() is just enough. Just notify 
 		waveReader this is the last read before rewind. */
 
-		tracker = fillBuffer(*ch.sampleChannel->getWave(), buf, tracker, end, 0, pitch, resampler).used;
+		tracker = waveReader.fill(*ch.sampleChannel->getWave(), buf, tracker, end, 0, pitch, resampler).used;
 		resampler.last();
 
 		/* Mode::REWIND: 2nd = [abcdefghi|abcdfefg]
@@ -94,7 +94,7 @@ Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame track
 
 	/* First pass rendering. */
 
-	WaveReader::Result res = fillBuffer(wave, buf, tracker, end, offset, pitch, resampler);
+	WaveReader::Result res = waveReader.fill(wave, buf, tracker, end, offset, pitch, resampler);
 	tracker += res.used;
 
 	/* Second pass rendering: if tracker has looped, special care is needed. If 
@@ -110,7 +110,7 @@ Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame track
 		onLastFrame(ch, /*natural=*/true, seqIsRunning);
 
 		if (shouldLoop(mode, status) && res.generated < buf.countFrames())
-			tracker += fillBuffer(wave, buf, tracker, end, res.generated, pitch, resampler).used;
+			tracker += waveReader.fill(wave, buf, tracker, end, res.generated, pitch, resampler).used;
 	}
 
 	return tracker;
@@ -126,13 +126,6 @@ void SamplePlayer::stop(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, 
 
 	if (offset != 0)
 		buf.clear(offset);
-}
-
-/* -------------------------------------------------------------------------- */
-
-WaveReader::Result SamplePlayer::fillBuffer(const Wave& wave, mcl::AudioBuffer& buf, Frame start, Frame end, Frame offset, float pitch, const Resampler& resampler) const
-{
-	return waveReader.fill(wave, buf, start, end, offset, pitch, resampler);
 }
 
 /* -------------------------------------------------------------------------- */
