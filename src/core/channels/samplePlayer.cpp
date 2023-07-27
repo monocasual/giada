@@ -84,27 +84,33 @@ void SamplePlayer::render(const Channel& ch, Render renderInfo, bool seqIsRunnin
 
 Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame offset, bool seqIsRunning) const
 {
-	const ChannelStatus status = ch.shared->playStatus.load();
+	const ChannelStatus    status    = ch.shared->playStatus.load();
+	const Frame            begin     = ch.sampleChannel->begin;
+	const Frame            end       = ch.sampleChannel->end;
+	const float            pitch     = ch.sampleChannel->pitch;
+	const SamplePlayerMode mode      = ch.sampleChannel->mode;
+	const Wave&            wave      = *ch.sampleChannel->getWave();
+	const Resampler&       resampler = ch.shared->resampler.value();
 
 	/* First pass rendering. */
 
-	WaveReader::Result res = fillBuffer(*ch.sampleChannel->getWave(), buf, tracker, ch.sampleChannel->end, offset, ch.sampleChannel->pitch, ch.shared->resampler.value());
+	WaveReader::Result res = fillBuffer(wave, buf, tracker, end, offset, pitch, resampler);
 	tracker += res.used;
 
 	/* Second pass rendering: if tracker has looped, special care is needed. If 
 	the	channel is in loop mode, fill the second part of the buffer with data
 	coming from the sample's head, starting at 'res.generated' offset. */
 
-	if (tracker >= ch.sampleChannel->end)
+	if (tracker >= end)
 	{
 		assert(onLastFrame != nullptr);
 
-		tracker = ch.sampleChannel->begin;
+		tracker = begin;
 		ch.shared->resampler->last();
 		onLastFrame(ch, /*natural=*/true, seqIsRunning);
 
-		if (shouldLoop(ch.sampleChannel->mode, status) && res.generated < buf.countFrames())
-			tracker += fillBuffer(*ch.sampleChannel->getWave(), buf, tracker, ch.sampleChannel->end, res.generated, ch.sampleChannel->pitch, ch.shared->resampler.value()).used;
+		if (shouldLoop(mode, status) && res.generated < buf.countFrames())
+			tracker += fillBuffer(wave, buf, tracker, end, res.generated, pitch, resampler).used;
 	}
 
 	return tracker;
