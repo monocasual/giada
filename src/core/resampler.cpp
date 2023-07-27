@@ -62,31 +62,7 @@ Resampler::Resampler(const Resampler& o)
 
 /* -------------------------------------------------------------------------- */
 
-/* This is a fake move constructor that makes a copy instead. The SRC_STATE
-object has a callback that, if moved, would still point to the original object.
-TODO: maybe delete the move constructor? */
-
-Resampler::Resampler(Resampler&& o)
-: Resampler()
-{
-	*this = o;
-}
-
-/* -------------------------------------------------------------------------- */
-
 Resampler& Resampler::operator=(const Resampler& o)
-{
-	if (this == &o)
-		return *this;
-	alloc(o.m_quality, o.m_channels);
-	return *this;
-}
-
-/* -------------------------------------------------------------------------- */
-
-/* This is a fake move operator: see notes above. */
-
-Resampler& Resampler::operator=(Resampler&& o)
 {
 	if (this == &o)
 		return *this;
