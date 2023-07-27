@@ -169,7 +169,7 @@ Resampler::Result Resampler::process(float* input, long inputPos, long inputLeng
 
 /* -------------------------------------------------------------------------- */
 
-void Resampler::last()
+void Resampler::last() const
 {
 	src_reset(m_state);
 }

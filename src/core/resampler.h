@@ -71,7 +71,7 @@ public:
 	/* last
 	Call this when you are about to process the last chunk of data. */
 
-	void last();
+	void last() const;
 
 private:
 	static long callback(void* self, float** audio);
