@@ -66,12 +66,6 @@ public:
 
 	void render(const Channel&, Render, bool seqIsRunning) const;
 
-	/* kickIn
-	Starts the player right away at frame 'f'. Used when launching a loop after
-	being live recorded. */
-
-	void kickIn(ChannelShared&, Frame f);
-
 	WaveReader waveReader;
 
 	/* onLastFrame

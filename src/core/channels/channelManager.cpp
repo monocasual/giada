@@ -641,7 +641,7 @@ void ChannelManager::setupChannelPostRecording(Channel& ch, Frame currentFrame)
 {
 	/* Start sample channels in loop mode right away. */
 	if (ch.sampleChannel->isAnyLoopMode())
-		ch.samplePlayer->kickIn(*ch.shared, currentFrame);
+		ch.kickIn(currentFrame);
 	/* Disable 'arm' button if overdub protection is on. */
 	if (ch.sampleChannel->overdubProtection == true)
 		ch.armed = false;

@@ -292,6 +292,14 @@ void Channel::setWave(Wave* w, float samplerateRatio)
 
 /* -------------------------------------------------------------------------- */
 
+void Channel::kickIn(Frame f)
+{
+	shared->tracker.store(f);
+	shared->playStatus.store(ChannelStatus::PLAY);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Channel::initCallbacks()
 {
 	shared->playStatus.onChange = [this](ChannelStatus status) {

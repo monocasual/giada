@@ -120,14 +120,6 @@ void SamplePlayer::stop(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, 
 
 /* -------------------------------------------------------------------------- */
 
-void SamplePlayer::kickIn(ChannelShared& shared, Frame f)
-{
-	shared.tracker.store(f);
-	shared.playStatus.store(ChannelStatus::PLAY);
-}
-
-/* -------------------------------------------------------------------------- */
-
 WaveReader::Result SamplePlayer::fillBuffer(const Wave& wave, mcl::AudioBuffer& buf, Frame start, Frame end, Frame offset, float pitch) const
 {
 	return waveReader.fill(wave, buf, start, end, offset, pitch);

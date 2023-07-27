@@ -101,6 +101,12 @@ public:
 
 	void setWave(Wave* w, float samplerateRatio);
 
+	/* kickIn
+	Starts the player right away at frame 'f'. Used when launching a loop after
+	being live recorded. */
+
+	void kickIn(Frame f);
+
 	ChannelShared*       shared;
 	ID                   id;
 	ChannelType          type;
