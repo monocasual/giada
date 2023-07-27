@@ -19,7 +19,7 @@ TEST_CASE("WaveReader")
 		f[1] = static_cast<float>(i + 1);
 	});
 	m::Resampler  resampler;
-	m::WaveReader waveReader(&resampler);
+	m::WaveReader waveReader;
 
 	SECTION("Test fill, pitch 1.0")
 	{
@@ -28,7 +28,7 @@ TEST_CASE("WaveReader")
 		SECTION("Regular fill")
 		{
 			m::WaveReader::Result res = waveReader.fill(wave, out,
-			    /*start=*/0, BUFFER_SIZE, /*offset=*/0, /*pitch=*/1.0f);
+			    /*start=*/0, BUFFER_SIZE, /*offset=*/0, /*pitch=*/1.0f, resampler);
 
 			bool allFilled       = true;
 			int  numFramesFilled = 0;
@@ -47,7 +47,7 @@ TEST_CASE("WaveReader")
 		SECTION("Partial fill")
 		{
 			m::WaveReader::Result res = waveReader.fill(wave, out,
-			    /*start=*/0, BUFFER_SIZE, /*offset=*/BUFFER_SIZE / 2, /*pitch=*/1.0f);
+			    /*start=*/0, BUFFER_SIZE, /*offset=*/BUFFER_SIZE / 2, /*pitch=*/1.0f, resampler);
 
 			int numFramesFilled = 0;
 			out.forEachFrame([&numFramesFilled](const float* f, int) {

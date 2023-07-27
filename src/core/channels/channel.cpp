@@ -60,7 +60,7 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		samplePlayer.emplace(&(shared->resampler.value()));
+		samplePlayer.emplace();
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(*shared, id);
 		sampleActionRecorder.emplace(g_engine.getActionRecorder());
@@ -68,7 +68,7 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 		break;
 
 	case ChannelType::PREVIEW:
-		samplePlayer.emplace(&(shared->resampler.value()));
+		samplePlayer.emplace();
 		sampleReactor.emplace(*shared, id);
 		sampleChannel.emplace();
 		break;
@@ -115,7 +115,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		samplePlayer.emplace(&(shared->resampler.value()));
+		samplePlayer.emplace();
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(*shared, id);
 		sampleActionRecorder.emplace(g_engine.getActionRecorder());
@@ -123,7 +123,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 		break;
 
 	case ChannelType::PREVIEW:
-		samplePlayer.emplace(&(shared->resampler.value()));
+		samplePlayer.emplace();
 		sampleReactor.emplace(*shared, id);
 		sampleChannel.emplace(p, wave, samplerateRatio);
 		break;
@@ -186,9 +186,6 @@ Channel& Channel::operator=(const Channel& other)
 	sampleActionRecorder = other.sampleActionRecorder;
 	midiActionRecorder   = other.midiActionRecorder;
 	sampleChannel        = other.sampleChannel;
-
-	if (samplePlayer)
-		samplePlayer->waveReader.setResampler(&shared->resampler.value());
 
 	initCallbacks();
 

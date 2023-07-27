@@ -53,34 +53,17 @@ public:
 		Frame used, generated;
 	};
 
-	WaveReader() = delete;
-	WaveReader(Resampler* r);
-
 	/* fill
 	Fills audio buffer 'out' with data coming from Wave, copying it from 'start'
 	frame up to 'max'. The buffer is filled starting at 'offset'. */
 
 	Result fill(const Wave&, mcl::AudioBuffer& out, Frame start, Frame max, Frame offset,
-	    float pitch) const;
-
-	/* last
-	Call this when you are about to process the last chunk of pitched data. 
-	Ignored if pitch == 1.0. */
-
-	void last() const;
-
-	/* setResampler
-	Sets a pointer to another Resampler object. Might be needed when copy-assigning
-	objects containing this class. */
-
-	void setResampler(Resampler*);
+	    float pitch, const Resampler&) const;
 
 private:
 	Result fillResampled(const Wave&, mcl::AudioBuffer& out, Frame start, Frame max, Frame offset,
-	    float pitch) const;
+	    float pitch, const Resampler&) const;
 	Result fillCopy(const Wave&, mcl::AudioBuffer& out, Frame start, Frame max, Frame offset) const;
-
-	Resampler* m_resampler;
 };
 } // namespace giada::m
 

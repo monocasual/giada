@@ -19,9 +19,7 @@ TEST_CASE("SamplePlayer")
 
 	m::ChannelShared channelShared(BUFFER_SIZE);
 	m::Channel       channel(ChannelType::SAMPLE, 1, 1, 0, channelShared);
-	m::Resampler     resampler(m::Resampler::Quality::LINEAR, NUM_CHANNELS);
-
-	m::SamplePlayer samplePlayer(&resampler);
+	m::SamplePlayer  samplePlayer;
 	samplePlayer.onLastFrame = [](const m::Channel&, bool, bool) {};
 
 	SECTION("Test initialization")

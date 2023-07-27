@@ -62,7 +62,7 @@ public:
 		Frame offset = 0;
 	};
 
-	SamplePlayer(Resampler* r);
+	SamplePlayer();
 
 	void render(const Channel&, Render, bool seqIsRunning) const;
 
@@ -90,7 +90,7 @@ private:
 
 	void stop(const Channel&, mcl::AudioBuffer&, Frame offset, bool seqIsRunning) const;
 
-	WaveReader::Result fillBuffer(const Wave&, mcl::AudioBuffer&, Frame start, Frame end, Frame offset, float pitch) const;
+	WaveReader::Result fillBuffer(const Wave&, mcl::AudioBuffer&, Frame start, Frame end, Frame offset, float pitch, const Resampler&) const;
 	bool               shouldLoop(SamplePlayerMode, ChannelStatus) const;
 };
 } // namespace giada::m

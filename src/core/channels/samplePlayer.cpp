@@ -33,9 +33,8 @@
 
 namespace giada::m
 {
-SamplePlayer::SamplePlayer(Resampler* r)
-: waveReader(r)
-, onLastFrame(nullptr)
+SamplePlayer::SamplePlayer()
+: onLastFrame(nullptr)
 {
 }
 
@@ -58,8 +57,8 @@ void SamplePlayer::render(const Channel& ch, Render renderInfo, bool seqIsRunnin
 		might stop the rendering): fillBuffer() is just enough. Just notify 
 		waveReader this is the last read before rewind. */
 
-		tracker = fillBuffer(*ch.sampleChannel->getWave(), buf, tracker, ch.sampleChannel->end, 0, ch.sampleChannel->pitch).used;
-		waveReader.last();
+		tracker = fillBuffer(*ch.sampleChannel->getWave(), buf, tracker, ch.sampleChannel->end, 0, ch.sampleChannel->pitch, ch.shared->resampler.value()).used;
+		ch.shared->resampler->last();
 
 		/* Mode::REWIND: 2nd = [abcdefghi|abcdfefg]
 		   Mode::STOP:   2nd = [abcdefghi|--------] */
@@ -84,7 +83,7 @@ Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame track
 
 	/* First pass rendering. */
 
-	WaveReader::Result res = fillBuffer(*ch.sampleChannel->getWave(), buf, tracker, ch.sampleChannel->end, offset, ch.sampleChannel->pitch);
+	WaveReader::Result res = fillBuffer(*ch.sampleChannel->getWave(), buf, tracker, ch.sampleChannel->end, offset, ch.sampleChannel->pitch, ch.shared->resampler.value());
 	tracker += res.used;
 
 	/* Second pass rendering: if tracker has looped, special care is needed. If 
@@ -96,11 +95,11 @@ Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame track
 		assert(onLastFrame != nullptr);
 
 		tracker = ch.sampleChannel->begin;
-		waveReader.last();
+		ch.shared->resampler->last();
 		onLastFrame(ch, /*natural=*/true, seqIsRunning);
 
 		if (shouldLoop(ch.sampleChannel->mode, status) && res.generated < buf.countFrames())
-			tracker += fillBuffer(*ch.sampleChannel->getWave(), buf, tracker, ch.sampleChannel->end, res.generated, ch.sampleChannel->pitch).used;
+			tracker += fillBuffer(*ch.sampleChannel->getWave(), buf, tracker, ch.sampleChannel->end, res.generated, ch.sampleChannel->pitch, ch.shared->resampler.value()).used;
 	}
 
 	return tracker;
@@ -120,9 +119,9 @@ void SamplePlayer::stop(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, 
 
 /* -------------------------------------------------------------------------- */
 
-WaveReader::Result SamplePlayer::fillBuffer(const Wave& wave, mcl::AudioBuffer& buf, Frame start, Frame end, Frame offset, float pitch) const
+WaveReader::Result SamplePlayer::fillBuffer(const Wave& wave, mcl::AudioBuffer& buf, Frame start, Frame end, Frame offset, float pitch, const Resampler& resampler) const
 {
-	return waveReader.fill(wave, buf, start, end, offset, pitch);
+	return waveReader.fill(wave, buf, start, end, offset, pitch, resampler);
 }
 
 /* -------------------------------------------------------------------------- */
