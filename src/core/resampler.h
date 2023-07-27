@@ -66,7 +66,7 @@ public:
 	puts the result into 'output'. */
 
 	Result process(float* input, long inputPos, long inputLength, float* output,
-	    long outputLength, float ratio);
+	    long outputLength, float ratio) const;
 
 	/* last
 	Call this when you are about to process the last chunk of data. */
@@ -84,13 +84,13 @@ private:
 
 	static constexpr int CHUNK_LEN = 256;
 
-	SRC_STATE* m_state;
-	Quality    m_quality;
-	float*     m_input;       // Pointer to input data
-	long       m_inputPos;    // Where to read from input
-	long       m_inputLength; // Total number of frames in input data
-	int        m_channels;    // Number of channels
-	long       m_usedFrames;  // How many frames have been read from input with a process() call
+	SRC_STATE*     m_state;
+	Quality        m_quality;
+	mutable float* m_input;       // Pointer to input data
+	mutable long   m_inputPos;    // Where to read from input
+	mutable long   m_inputLength; // Total number of frames in input data
+	int            m_channels;    // Number of channels
+	mutable long   m_usedFrames;  // How many frames have been read from input with a process() call
 };
 } // namespace giada::m
 

@@ -153,7 +153,7 @@ void Resampler::alloc(Quality quality, int channels)
 /* -------------------------------------------------------------------------- */
 
 Resampler::Result Resampler::process(float* input, long inputPos, long inputLength,
-    float* output, long outputLength, float ratio)
+    float* output, long outputLength, float ratio) const
 {
 	assert(m_state != nullptr); // Must be initialized first!
 
