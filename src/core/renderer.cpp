@@ -62,6 +62,10 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph)
 , m_jackTransport(jt)
 #endif
 {
+	m_samplePlayer.onLastFrame = [](const Channel& ch, bool natural, bool seqIsRunning) {
+		ch.sampleAdvancer->onLastFrame(*ch.shared, seqIsRunning, natural, ch.sampleChannel->mode,
+		    ch.sampleChannel->isAnyLoopMode());
+	};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -155,12 +159,12 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl
 {
 	ch.shared->audioBuffer.clear();
 
-	if (ch.samplePlayer && ch.isPlaying())
+	if (ch.type == ChannelType::SAMPLE && ch.isPlaying())
 	{
 		SamplePlayer::Render render;
 		while (ch.shared->renderQueue->pop(render))
 			;
-		ch.samplePlayer->render(ch, render, seqIsRunning);
+		m_samplePlayer.render(ch, render, seqIsRunning);
 	}
 
 	if (ch.type == ChannelType::SAMPLE)
@@ -201,8 +205,6 @@ void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const
 
 void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 {
-	assert(ch.samplePlayer);
-
 	ch.shared->audioBuffer.clear();
 
 	if (ch.isPlaying())
@@ -210,7 +212,7 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 		SamplePlayer::Render render;
 		while (ch.shared->renderQueue->pop(render))
 			;
-		ch.samplePlayer->render(ch, render, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
+		m_samplePlayer.render(ch, render, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
 	}
 
 	out.sum(ch.shared->audioBuffer, ch.volume, calcPanning_(ch.pan));

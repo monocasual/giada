@@ -28,6 +28,7 @@
 #define G_RENDERER_H
 
 #include "core/channels/audioReceiver.h"
+#include "core/channels/samplePlayer.h"
 #include <vector>
 
 namespace mcl
@@ -78,6 +79,7 @@ private:
 #endif
 
 	AudioReceiver m_audioReceiver;
+	SamplePlayer  m_samplePlayer;
 };
 } // namespace giada::m
 

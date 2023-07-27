@@ -60,7 +60,6 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		samplePlayer.emplace();
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(*shared, id);
 		sampleActionRecorder.emplace(g_engine.getActionRecorder());
@@ -68,7 +67,6 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 		break;
 
 	case ChannelType::PREVIEW:
-		samplePlayer.emplace();
 		sampleReactor.emplace(*shared, id);
 		sampleChannel.emplace();
 		break;
@@ -115,7 +113,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		samplePlayer.emplace();
 		sampleAdvancer.emplace();
 		sampleReactor.emplace(*shared, id);
 		sampleActionRecorder.emplace(g_engine.getActionRecorder());
@@ -123,7 +120,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 		break;
 
 	case ChannelType::PREVIEW:
-		samplePlayer.emplace();
 		sampleReactor.emplace(*shared, id);
 		sampleChannel.emplace(p, wave, samplerateRatio);
 		break;
@@ -177,7 +173,6 @@ Channel& Channel::operator=(const Channel& other)
 
 	midiLearner          = other.midiLearner;
 	midiLighter          = other.midiLighter;
-	samplePlayer         = other.samplePlayer;
 	sampleAdvancer       = other.sampleAdvancer;
 	sampleReactor        = other.sampleReactor;
 	midiController       = other.midiController;
@@ -302,14 +297,6 @@ void Channel::initCallbacks()
 	shared->playStatus.onChange = [this](ChannelStatus status) {
 		midiLighter.sendStatus(status, isAudible(/*mixerHasSolos = TODO!*/ false));
 	};
-
-	if (samplePlayer)
-	{
-		samplePlayer->onLastFrame = [this](const Channel& ch, bool natural, bool seqIsRunning) {
-			sampleAdvancer->onLastFrame(*ch.shared, seqIsRunning, natural, ch.sampleChannel->mode,
-			    ch.sampleChannel->isAnyLoopMode());
-		};
-	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -324,7 +311,7 @@ void Channel::advance(const Sequencer::EventBuffer& events, Range<Frame> block, 
 		if (midiController)
 			midiController->advance(shared->playStatus, e);
 
-		if (samplePlayer)
+		if (sampleAdvancer)
 			sampleAdvancer->advance(id, *shared, e, sampleChannel->mode, sampleChannel->isAnyLoopMode());
 
 		if (midiSender && isPlaying() && !isMuted())
