@@ -62,8 +62,8 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph)
 , m_jackTransport(jt)
 #endif
 {
-	m_samplePlayer.onLastFrame = [](const Channel& ch, bool natural, bool seqIsRunning) {
-		ch.sampleAdvancer->onLastFrame(*ch.shared, seqIsRunning, natural, ch.sampleChannel->mode,
+	m_samplePlayer.onLastFrame = [this](const Channel& ch, bool natural, bool seqIsRunning) {
+		m_sampleAdvancer.onLastFrame(*ch.shared, seqIsRunning, natural, ch.sampleChannel->mode,
 		    ch.sampleChannel->isAnyLoopMode());
 	};
 }
@@ -165,8 +165,8 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 		if (ch.midiController)
 			ch.midiController->advance(ch.shared->playStatus, e);
 
-		if (ch.sampleAdvancer)
-			ch.sampleAdvancer->advance(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());
+		if (ch.type == ChannelType::SAMPLE)
+			m_sampleAdvancer.advance(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());
 
 		if (ch.midiSender && ch.isPlaying() && !ch.isMuted())
 			ch.midiSender->advance(ch.id, e);

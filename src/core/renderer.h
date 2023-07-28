@@ -28,6 +28,7 @@
 #define G_RENDERER_H
 
 #include "core/channels/audioReceiver.h"
+#include "core/channels/sampleAdvancer.h"
 #include "core/channels/samplePlayer.h"
 #include <vector>
 
@@ -88,8 +89,9 @@ private:
 	JackTransport&    m_jackTransport;
 #endif
 
-	AudioReceiver m_audioReceiver;
-	SamplePlayer  m_samplePlayer;
+	AudioReceiver  m_audioReceiver;
+	SamplePlayer   m_samplePlayer;
+	SampleAdvancer m_sampleAdvancer;
 };
 } // namespace giada::m
 

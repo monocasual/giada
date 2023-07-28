@@ -26,7 +26,6 @@
 
 #include "core/channels/channel.h"
 #include "core/actions/actionRecorder.h"
-#include "core/channels/sampleAdvancer.h"
 #include "core/conf.h"
 #include "core/engine.h"
 #include "core/midiMapper.h"
@@ -60,7 +59,6 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		sampleAdvancer.emplace();
 		sampleReactor.emplace(*shared, id);
 		sampleActionRecorder.emplace(g_engine.getActionRecorder());
 		sampleChannel.emplace();
@@ -113,7 +111,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		sampleAdvancer.emplace();
 		sampleReactor.emplace(*shared, id);
 		sampleActionRecorder.emplace(g_engine.getActionRecorder());
 		sampleChannel.emplace(p, wave, samplerateRatio);
@@ -173,7 +170,6 @@ Channel& Channel::operator=(const Channel& other)
 
 	midiLearner          = other.midiLearner;
 	midiLighter          = other.midiLighter;
-	sampleAdvancer       = other.sampleAdvancer;
 	sampleReactor        = other.sampleReactor;
 	midiController       = other.midiController;
 	midiReceiver         = other.midiReceiver;
