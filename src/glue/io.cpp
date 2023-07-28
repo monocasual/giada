@@ -122,9 +122,9 @@ MidiChannel_OutputData::MidiChannel_OutputData(const m::MidiSender& s)
 Channel_OutputData::Channel_OutputData(const m::Channel& c)
 : channelId(c.id)
 , lightningEnabled(c.midiLightning.enabled)
-, lightningPlaying(c.midiLighter.playing.getValue())
-, lightningMute(c.midiLighter.mute.getValue())
-, lightningSolo(c.midiLighter.solo.getValue())
+, lightningPlaying(c.midiLightning.playing.getValue())
+, lightningMute(c.midiLightning.mute.getValue())
+, lightningSolo(c.midiLightning.solo.getValue())
 {
 	if (c.type == ChannelType::MIDI)
 		output = std::make_optional<MidiChannel_OutputData>(*c.midiSender);

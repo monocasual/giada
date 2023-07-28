@@ -349,13 +349,13 @@ void MidiDispatcher::learnChannel(MidiEvent e, int param, ID channelId, std::fun
 		ch.midiLearn.readActions.setValue(raw);
 		break;
 	case G_MIDI_OUT_L_PLAYING:
-		ch.midiLighter.playing.setValue(raw);
+		ch.midiLightning.playing.setValue(raw);
 		break;
 	case G_MIDI_OUT_L_MUTE:
-		ch.midiLighter.mute.setValue(raw);
+		ch.midiLightning.mute.setValue(raw);
 		break;
 	case G_MIDI_OUT_L_SOLO:
-		ch.midiLighter.solo.setValue(raw);
+		ch.midiLightning.solo.setValue(raw);
 		break;
 	}
 

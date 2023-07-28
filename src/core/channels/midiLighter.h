@@ -34,6 +34,7 @@
 
 namespace giada::m
 {
+class MidiLightning;
 template <typename KernelMidiI>
 class MidiLighter final
 {
@@ -41,15 +42,9 @@ public:
 	MidiLighter(MidiMapper<KernelMidiI>&);
 	MidiLighter(MidiMapper<KernelMidiI>&, const Patch::Channel&);
 
-	void sendStatus(ChannelStatus, bool audible) const;
-	void sendMute(bool isMuted) const;
-	void sendSolo(bool isSoloed) const;
-
-	/* MIDI learning fields for MIDI lighting. */
-
-	MidiLearnParam playing;
-	MidiLearnParam mute;
-	MidiLearnParam solo;
+	void sendStatus(const MidiLightning&, ChannelStatus, bool audible) const;
+	void sendMute(const MidiLightning&, bool isMuted) const;
+	void sendSolo(const MidiLightning&, bool isSoloed) const;
 
 	/* onSend
 	Callback fired when a MIDI signal has been sent. */

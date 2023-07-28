@@ -169,7 +169,7 @@ Channel& Channel::operator=(const Channel& other)
 	height     = other.height;
 	plugins    = other.plugins;
 
-	midiLearn          = other.midiLearn;
+	midiLearn            = other.midiLearn;
 	midiLighter          = other.midiLighter;
 	sampleReactor        = other.sampleReactor;
 	midiController       = other.midiController;
@@ -251,14 +251,14 @@ bool Channel::isPlaying() const
 void Channel::setMute(bool v)
 {
 	if (m_mute != v)
-		midiLighter.sendMute(v);
+		midiLighter.sendMute(midiLightning, v);
 	m_mute = v;
 }
 
 void Channel::setSolo(bool v)
 {
 	if (m_solo != v)
-		midiLighter.sendSolo(v);
+		midiLighter.sendSolo(midiLightning, v);
 	m_solo = v;
 }
 
@@ -292,7 +292,7 @@ void Channel::kickIn(Frame f)
 void Channel::initCallbacks()
 {
 	shared->playStatus.onChange = [this](ChannelStatus status) {
-		midiLighter.sendStatus(status, isAudible(/*mixerHasSolos = TODO!*/ false));
+		midiLighter.sendStatus(midiLightning, status, isAudible(/*mixerHasSolos = TODO!*/ false));
 	};
 }
 } // namespace giada::m

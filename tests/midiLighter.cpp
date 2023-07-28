@@ -30,9 +30,9 @@ TEST_CASE("MidiMapper")
 
 	midiLighter.onSend = []() {};
 
-	midiLighter.playing = {0x000010, 0};
-	midiLighter.mute    = {0x000011, 0};
-	midiLighter.solo    = {0x000012, 0};
+	midiLightning.playing = {0x000010, 0};
+	midiLightning.mute    = {0x000011, 0};
+	midiLightning.solo    = {0x000012, 0};
 
 	SECTION("Test initialization")
 	{
@@ -41,46 +41,46 @@ TEST_CASE("MidiMapper")
 
 	SECTION("Test send OFF status")
 	{
-		midiLighter.sendStatus(ChannelStatus::OFF, /*audible=*/true);
+		midiLighter.sendStatus(midiLightning, ChannelStatus::OFF, /*audible=*/true);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000008); // Stopped
 	}
 
 	SECTION("Test send WAIT status")
 	{
-		midiLighter.sendStatus(ChannelStatus::WAIT, /*audible=*/true);
+		midiLighter.sendStatus(midiLightning, ChannelStatus::WAIT, /*audible=*/true);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000005); // Waiting
 	}
 
 	SECTION("Test send ENDING status")
 	{
-		midiLighter.sendStatus(ChannelStatus::ENDING, /*audible=*/true);
+		midiLighter.sendStatus(midiLightning, ChannelStatus::ENDING, /*audible=*/true);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000007); // Stopping
 	}
 
 	SECTION("Test send PLAY status")
 	{
-		midiLighter.sendStatus(ChannelStatus::PLAY, /*audible=*/true);
+		midiLighter.sendStatus(midiLightning, ChannelStatus::PLAY, /*audible=*/true);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000006); // Playing
 
-		midiLighter.sendStatus(ChannelStatus::PLAY, /*audible=*/false);
+		midiLighter.sendStatus(midiLightning, ChannelStatus::PLAY, /*audible=*/false);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000009); // Playing inaudible
 	}
 
 	SECTION("Test send mute")
 	{
-		midiLighter.sendMute(/*isMuted=*/true);
+		midiLighter.sendMute(midiLightning, /*isMuted=*/true);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000001); // Mute on
 
-		midiLighter.sendMute(/*isMuted=*/false);
+		midiLighter.sendMute(midiLightning, /*isMuted=*/false);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000002); // Mute off
 	}
 
 	SECTION("Test send solo")
 	{
-		midiLighter.sendSolo(/*isSoloed=*/true);
+		midiLighter.sendSolo(midiLightning, /*isSoloed=*/true);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000003); // Solo on
 
-		midiLighter.sendSolo(/*isSoloed=*/false);
+		midiLighter.sendSolo(midiLightning, /*isSoloed=*/false);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000004); // Solo off
 	}
 }

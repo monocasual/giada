@@ -41,20 +41,17 @@ MidiLighter<KernelMidiI>::MidiLighter(MidiMapper<KernelMidiI>& m)
 
 template <typename KernelMidiI>
 MidiLighter<KernelMidiI>::MidiLighter(MidiMapper<KernelMidiI>& m, const Patch::Channel& p)
-: playing(p.midiOutLplaying)
-, mute(p.midiOutLmute)
-, solo(p.midiOutLsolo)
-, m_midiMapper(&m)
+: m_midiMapper(&m)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-void MidiLighter<KernelMidiI>::sendStatus(ChannelStatus status, bool audible) const
+void MidiLighter<KernelMidiI>::sendStatus(const MidiLightning& m, ChannelStatus status, bool audible) const
 {
 	const MidiMap& midiMap   = m_midiMapper->currentMap;
-	const uint32_t l_playing = playing.getValue();
+	const uint32_t l_playing = m.playing.getValue();
 
 	if (l_playing == 0x0)
 		return;
@@ -85,10 +82,10 @@ void MidiLighter<KernelMidiI>::sendStatus(ChannelStatus status, bool audible) co
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-void MidiLighter<KernelMidiI>::sendMute(bool isMuted) const
+void MidiLighter<KernelMidiI>::sendMute(const MidiLightning& m, bool isMuted) const
 {
 	const MidiMap& midiMap = m_midiMapper->currentMap;
-	const uint32_t l_mute  = mute.getValue();
+	const uint32_t l_mute  = m.mute.getValue();
 
 	if (l_mute != 0x0)
 		send(l_mute, isMuted ? midiMap.muteOn : midiMap.muteOff);
@@ -97,10 +94,10 @@ void MidiLighter<KernelMidiI>::sendMute(bool isMuted) const
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-void MidiLighter<KernelMidiI>::sendSolo(bool isSoloed) const
+void MidiLighter<KernelMidiI>::sendSolo(const MidiLightning& m, bool isSoloed) const
 {
 	const MidiMap& midiMap = m_midiMapper->currentMap;
-	const uint32_t l_solo  = solo.getValue();
+	const uint32_t l_solo  = m.solo.getValue();
 
 	if (l_solo != 0x0)
 		send(l_solo, isSoloed ? midiMap.soloOn : midiMap.soloOff);
