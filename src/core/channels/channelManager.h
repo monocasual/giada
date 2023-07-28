@@ -27,6 +27,7 @@
 #ifndef G_CHANNEL_MANAGER_H
 #define G_CHANNEL_MANAGER_H
 
+#include "core/channels/midiLighter.h"
 #include "core/resampler.h"
 #include "core/types.h"
 #include <functional>
@@ -53,7 +54,7 @@ class MidiEvent;
 class ChannelManager final
 {
 public:
-	ChannelManager(model::Model&);
+	ChannelManager(model::Model&, MidiMapper<KernelMidi>&);
 
 	/* getChannel
 	Returns channel object by ID. */
@@ -210,7 +211,8 @@ private:
 
 	void triggerOnChannelsAltered();
 
-	model::Model& m_model;
+	model::Model&           m_model;
+	MidiLighter<KernelMidi> m_midiLighter;
 };
 } // namespace giada::m
 
