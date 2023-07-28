@@ -127,7 +127,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	const Channel& masterInCh     = channels.get(Mixer::MASTER_IN_CHANNEL_ID);
 	const Channel& previewCh      = channels.get(Mixer::PREVIEW_CHANNEL_ID);
 
-	m_mixer.render(out, in, layout_RT, maxFramesToRec);
+	m_mixer.render(in, layout_RT, maxFramesToRec);
 
 	if (hasInput)
 		renderMasterIn(masterInCh, mixer.getInBuffer());

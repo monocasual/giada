@@ -133,7 +133,7 @@ void Mixer::setInputRecMode(InputRecMode m)
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Layout& layout_RT, int maxFramesToRec) const
+void Mixer::render(const mcl::AudioBuffer& in, const model::Layout& layout_RT, int maxFramesToRec) const
 {
 	const model::Mixer&       mixer       = layout_RT.mixer;
 	const model::Sequencer&   sequencer   = layout_RT.sequencer;
