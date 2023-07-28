@@ -24,12 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "midiLearner.h"
+#include "midiLearn.h"
 #include "core/patch.h"
 
 namespace giada::m
 {
-MidiLearner::MidiLearner()
+MidiLearn::MidiLearn()
 : enabled(false)
 , filter(-1)
 {
@@ -37,7 +37,7 @@ MidiLearner::MidiLearner()
 
 /* -------------------------------------------------------------------------- */
 
-MidiLearner::MidiLearner(const Patch::Channel& p)
+MidiLearn::MidiLearn(const Patch::Channel& p)
 : enabled(p.midiIn)
 , filter(p.midiInFilter)
 , keyPress(p.midiInKeyPress)
@@ -54,7 +54,7 @@ MidiLearner::MidiLearner(const Patch::Channel& p)
 
 /* -------------------------------------------------------------------------- */
 
-bool MidiLearner::isAllowed(int c) const
+bool MidiLearn::isAllowed(int c) const
 {
 	return enabled && (filter == -1 || filter == c);
 }

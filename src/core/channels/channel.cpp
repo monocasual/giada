@@ -100,7 +100,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , name(p.name)
 , height(p.height)
 , plugins(plugins)
-, midiLearner(p)
+, midiLearn(p)
 , midiLighter(g_engine.getMidiMapper(), p)
 , m_mute(p.mute)
 , m_solo(p.solo)
@@ -168,7 +168,7 @@ Channel& Channel::operator=(const Channel& other)
 	height     = other.height;
 	plugins    = other.plugins;
 
-	midiLearner          = other.midiLearner;
+	midiLearn          = other.midiLearn;
 	midiLighter          = other.midiLighter;
 	sampleReactor        = other.sampleReactor;
 	midiController       = other.midiController;

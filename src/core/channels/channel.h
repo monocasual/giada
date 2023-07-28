@@ -30,7 +30,7 @@
 #include "core/channels/channelShared.h"
 #include "core/channels/midiActionRecorder.h"
 #include "core/channels/midiController.h"
-#include "core/channels/midiLearner.h"
+#include "core/channels/midiLearn.h"
 #include "core/channels/midiLighter.h"
 #include "core/channels/midiReceiver.h"
 #include "core/channels/midiSender.h"
@@ -115,7 +115,7 @@ public:
 	Pixel                height;
 	std::vector<Plugin*> plugins;
 
-	MidiLearner             midiLearner;
+	MidiLearn               midiLearn;
 	MidiLighter<KernelMidi> midiLighter;
 
 	std::optional<SampleReactor>        sampleReactor;
