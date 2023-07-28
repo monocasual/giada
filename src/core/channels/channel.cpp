@@ -102,6 +102,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , plugins(plugins)
 , midiLearn(p)
 , midiLighter(g_engine.getMidiMapper(), p)
+, midiLightning(p)
 , m_mute(p.mute)
 , m_solo(p.solo)
 {

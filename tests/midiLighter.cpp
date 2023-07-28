@@ -1,4 +1,5 @@
 #include "../src/core/channels/midiLighter.h"
+#include "../src/core/channels/midiLightning.h"
 #include "mocks/kernelMidiMock.h"
 #include <catch2/catch.hpp>
 #include <memory>
@@ -10,6 +11,7 @@ TEST_CASE("MidiMapper")
 	m::KernelMidiMock                kernelMidi;
 	m::MidiMapper<m::KernelMidiMock> midiMapper(kernelMidi);
 	m::MidiLighter                   midiLighter(midiMapper);
+	m::MidiLightning                 midiLightning;
 
 	midiMapper.currentMap = {
 	    "test-brand",
@@ -34,7 +36,7 @@ TEST_CASE("MidiMapper")
 
 	SECTION("Test initialization")
 	{
-		REQUIRE(midiLighter.enabled == false);
+		REQUIRE(midiLightning.enabled == false);
 	}
 
 	SECTION("Test send OFF status")

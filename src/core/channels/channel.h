@@ -32,6 +32,7 @@
 #include "core/channels/midiController.h"
 #include "core/channels/midiLearn.h"
 #include "core/channels/midiLighter.h"
+#include "core/channels/midiLightning.h"
 #include "core/channels/midiReceiver.h"
 #include "core/channels/midiSender.h"
 #include "core/channels/sampleActionRecorder.h"
@@ -117,6 +118,7 @@ public:
 
 	MidiLearn               midiLearn;
 	MidiLighter<KernelMidi> midiLighter;
+	MidiLightning           midiLightning;
 
 	std::optional<SampleReactor>        sampleReactor;
 	std::optional<MidiController>       midiController;

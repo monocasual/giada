@@ -55,7 +55,7 @@ void IOApi::channel_enableMidiLearn(ID channelId, bool v)
 
 void IOApi::channel_enableMidiLightning(ID channelId, bool v)
 {
-	m_model.get().channels.get(channelId).midiLighter.enabled = v;
+	m_model.get().channels.get(channelId).midiLightning.enabled = v;
 	m_model.swap(m::model::SwapType::NONE);
 }
 

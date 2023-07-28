@@ -121,7 +121,7 @@ MidiChannel_OutputData::MidiChannel_OutputData(const m::MidiSender& s)
 
 Channel_OutputData::Channel_OutputData(const m::Channel& c)
 : channelId(c.id)
-, lightningEnabled(c.midiLighter.enabled)
+, lightningEnabled(c.midiLightning.enabled)
 , lightningPlaying(c.midiLighter.playing.getValue())
 , lightningMute(c.midiLighter.mute.getValue())
 , lightningSolo(c.midiLighter.solo.getValue())

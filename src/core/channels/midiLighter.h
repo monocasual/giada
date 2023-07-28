@@ -46,11 +46,6 @@ public:
 	void sendMute(bool isMuted) const;
 	void sendSolo(bool isSoloed) const;
 
-	/* enabled
-    Tells whether MIDI lighting is enabled or not. */
-
-	bool enabled;
-
 	/* MIDI learning fields for MIDI lighting. */
 
 	MidiLearnParam playing;

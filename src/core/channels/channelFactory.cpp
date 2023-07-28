@@ -155,7 +155,7 @@ const Patch::Channel serializeChannel(const Channel& c)
 	pc.midiInSolo        = c.midiLearn.solo.getValue();
 	pc.midiInReadActions = c.midiLearn.readActions.getValue();
 	pc.midiInPitch       = c.midiLearn.pitch.getValue();
-	pc.midiOutL          = c.midiLighter.enabled;
+	pc.midiOutL          = c.midiLightning.enabled;
 	pc.midiOutLplaying   = c.midiLighter.playing.getValue();
 	pc.midiOutLmute      = c.midiLighter.mute.getValue();
 	pc.midiOutLsolo      = c.midiLighter.solo.getValue();

@@ -32,8 +32,7 @@ namespace giada::m
 {
 template <typename KernelMidiI>
 MidiLighter<KernelMidiI>::MidiLighter(MidiMapper<KernelMidiI>& m)
-: enabled(false)
-, onSend(nullptr)
+: onSend(nullptr)
 , m_midiMapper(&m)
 {
 }
@@ -42,8 +41,7 @@ MidiLighter<KernelMidiI>::MidiLighter(MidiMapper<KernelMidiI>& m)
 
 template <typename KernelMidiI>
 MidiLighter<KernelMidiI>::MidiLighter(MidiMapper<KernelMidiI>& m, const Patch::Channel& p)
-: enabled(p.midiOutL)
-, playing(p.midiOutLplaying)
+: playing(p.midiOutLplaying)
 , mute(p.midiOutLmute)
 , solo(p.midiOutLsolo)
 , m_midiMapper(&m)
