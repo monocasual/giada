@@ -129,14 +129,6 @@ public:
 	void startActionRec();
 	void stopActionRec();
 
-	/* advanceChannels
-	Processes Channels' static events (e.g. pre-recorded actions or sequencer 
-	events) in the current audio block. Called by the main audio thread when the 
-	sequencer is running. */
-
-	void advanceChannels(const Sequencer::EventBuffer&, const model::Channels&,
-	    Range<Frame>, int quantizerStep) const;
-
 	/* updateSoloCount
     Updates the number of solo-ed channels in mixer. */
 

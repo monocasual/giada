@@ -115,7 +115,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, actions);
 		m_sequencer.render(out, layout_RT);
 		if (!layout_RT.locked)
-			m_mixer.advanceChannels(events, channels, renderRange, quantizerStep);
+			advanceChannels(events, channels, renderRange, quantizerStep);
 	}
 
 	/* Then render Mixer, channels and finalize output. */
@@ -141,6 +141,39 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	/* Post processing. */
 
 	m_mixer.finalizeOutput(mixer, out, mixer.inToOut, kernelAudio.limitOutput, masterOutCh.volume);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Renderer::advanceChannels(const Sequencer::EventBuffer& events,
+    const model::Channels& channels, Range<Frame> block, int quantizerStep) const
+{
+	for (const Channel& c : channels.getAll())
+		if (!c.isInternal())
+			advanceChannel(c, events, block, quantizerStep);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& events, Range<Frame> block, Frame quantizerStep) const
+{
+	if (ch.shared->quantizer)
+		ch.shared->quantizer->advance(block, quantizerStep);
+
+	for (const Sequencer::Event& e : events)
+	{
+		if (ch.midiController)
+			ch.midiController->advance(ch.shared->playStatus, e);
+
+		if (ch.sampleAdvancer)
+			ch.sampleAdvancer->advance(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());
+
+		if (ch.midiSender && ch.isPlaying() && !ch.isMuted())
+			ch.midiSender->advance(ch.id, e);
+
+		if (ch.midiReceiver && ch.isPlaying())
+			ch.midiReceiver->advance(ch.id, ch.shared->midiQueue, e);
+	}
 }
 
 /* -------------------------------------------------------------------------- */

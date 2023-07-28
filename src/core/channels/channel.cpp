@@ -298,27 +298,4 @@ void Channel::initCallbacks()
 		midiLighter.sendStatus(status, isAudible(/*mixerHasSolos = TODO!*/ false));
 	};
 }
-
-/* -------------------------------------------------------------------------- */
-
-void Channel::advance(const Sequencer::EventBuffer& events, Range<Frame> block, Frame quantizerStep) const
-{
-	if (shared->quantizer)
-		shared->quantizer->advance(block, quantizerStep);
-
-	for (const Sequencer::Event& e : events)
-	{
-		if (midiController)
-			midiController->advance(shared->playStatus, e);
-
-		if (sampleAdvancer)
-			sampleAdvancer->advance(id, *shared, e, sampleChannel->mode, sampleChannel->isAnyLoopMode());
-
-		if (midiSender && isPlaying() && !isMuted())
-			midiSender->advance(id, e);
-
-		if (midiReceiver && isPlaying())
-			midiReceiver->advance(id, shared->midiQueue, e);
-	}
-}
 } // namespace giada::m

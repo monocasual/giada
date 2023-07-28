@@ -64,12 +64,6 @@ public:
 	Channel& operator=(Channel&&) = default;
 	bool     operator==(const Channel&);
 
-	/* advance
-	Advances internal state by processing static events (e.g. pre-recorded 
-	actions or sequencer events) in the current block. */
-
-	void advance(const Sequencer::EventBuffer&, Range<Frame>, Frame quantizerStep) const;
-
 	bool isPlaying() const;
 	bool isInternal() const;
 	bool isMuted() const;

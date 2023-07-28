@@ -103,16 +103,6 @@ const mcl::AudioBuffer& Mixer::getRecBuffer()
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::advanceChannels(const Sequencer::EventBuffer& events,
-    const model::Channels& channels, Range<Frame> block, int quantizerStep) const
-{
-	for (const Channel& c : channels.getAll())
-		if (!c.isInternal())
-			c.advance(events, block, quantizerStep);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Mixer::updateSoloCount(bool hasSolos)
 {
 	m_model.get().mixer.hasSolos = hasSolos;
