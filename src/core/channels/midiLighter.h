@@ -40,7 +40,6 @@ class MidiLighter final
 public:
 	MidiLighter(MidiMapper<KernelMidiI>&);
 	MidiLighter(MidiMapper<KernelMidiI>&, const Patch::Channel&);
-	MidiLighter(const MidiLighter& o) = default;
 
 	void sendStatus(ChannelStatus, bool audible) const;
 	void sendMute(bool isMuted) const;
