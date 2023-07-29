@@ -45,7 +45,8 @@ public:
 	}
 
 	WeakAtomic(const WeakAtomic& o)
-	: m_atomic(o.load())
+	: onChange(o.onChange)
+	, m_atomic(o.load())
 	, m_value(o.m_value)
 	{
 	}
@@ -56,6 +57,7 @@ public:
 	{
 		if (this == &o)
 			return *this;
+		onChange = o.onChange;
 		store(o.load());
 		m_value = o.m_value;
 		return *this;
