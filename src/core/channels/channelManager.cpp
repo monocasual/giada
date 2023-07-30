@@ -359,7 +359,7 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 		ch.midiController->keyKill(ch.shared->playStatus);
 	if (ch.midiReceiver)
 		ch.midiReceiver->stop(ch.shared->midiQueue);
-	if (ch.midiSender && ch.isPlaying() && !ch.isMuted())
+	if (ch.midiSender && ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
 		ch.midiSender->stop(ch.midiChannel->outputFilter);
 	if (ch.type == ChannelType::SAMPLE && ch.hasWave() && canRecordActions)
 		m_sampleActionRecorder.keyKill(channelId, canRecordActions, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
@@ -576,7 +576,7 @@ void ChannelManager::stopAll()
 			ch.midiController->stop(ch.shared->playStatus);
 		if (ch.type == ChannelType::SAMPLE)
 			m_sampleReactor.stopBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
-		if (ch.midiSender && ch.isPlaying() && !ch.isMuted())
+		if (ch.midiSender && ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
 			ch.midiSender->stop(ch.midiChannel->outputFilter);
 		if (ch.midiReceiver)
 			ch.midiReceiver->stop(ch.shared->midiQueue);

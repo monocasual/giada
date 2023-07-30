@@ -45,11 +45,6 @@ public:
 
 	KernelMidi* kernelMidi;
 
-	/* enabled
-    Tells whether MIDI output is enabled or not. */
-
-	bool enabled;
-
 	/* onSend
 	Callback fired when a MIDI signal has been sent. */
 

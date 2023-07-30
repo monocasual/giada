@@ -112,7 +112,7 @@ Channel_InputData::Channel_InputData(const m::Channel& c)
 /* -------------------------------------------------------------------------- */
 
 MidiChannel_OutputData::MidiChannel_OutputData(const m::Channel& c)
-: enabled(c.midiSender->enabled)
+: enabled(c.midiChannel->outputEnabled)
 , filter(c.midiChannel->outputFilter)
 {
 }

@@ -63,7 +63,7 @@ void IOApi::channel_enableMidiLightning(ID channelId, bool v)
 
 void IOApi::channel_enableMidiOutput(ID channelId, bool v)
 {
-	m_model.get().channels.get(channelId).midiSender->enabled = v;
+	m_model.get().channels.get(channelId).midiChannel->outputEnabled = v;
 	m_model.swap(m::model::SwapType::NONE);
 }
 

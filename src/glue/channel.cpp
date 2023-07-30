@@ -106,7 +106,7 @@ Frame SampleData::getTracker() const { return m_tracker->load(); }
 /* -------------------------------------------------------------------------- */
 
 MidiData::MidiData(const m::Channel& m)
-: isOutputEnabled(m.midiSender->enabled)
+: isOutputEnabled(m.midiChannel->outputEnabled)
 , filter(m.midiChannel->outputFilter)
 {
 }

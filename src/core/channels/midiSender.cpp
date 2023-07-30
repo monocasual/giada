@@ -32,7 +32,6 @@ namespace giada::m
 {
 MidiSender::MidiSender(KernelMidi& k)
 : kernelMidi(&k)
-, enabled(false)
 , onSend(nullptr)
 {
 }
@@ -41,7 +40,6 @@ MidiSender::MidiSender(KernelMidi& k)
 
 MidiSender::MidiSender(const Patch::Channel& p, KernelMidi& k)
 : kernelMidi(&k)
-, enabled(p.midiOut)
 {
 }
 
@@ -49,8 +47,6 @@ MidiSender::MidiSender(const Patch::Channel& p, KernelMidi& k)
 
 void MidiSender::advance(ID channelId, const Sequencer::Event& e, int outputFilter) const
 {
-	if (!enabled)
-		return;
 	if (e.type == Sequencer::EventType::ACTIONS)
 		parseActions(channelId, *e.actions, outputFilter);
 }
@@ -59,8 +55,7 @@ void MidiSender::advance(ID channelId, const Sequencer::Event& e, int outputFilt
 
 void MidiSender::stop(int outputFilter)
 {
-	if (enabled)
-		send(MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), outputFilter);
+	send(MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), outputFilter);
 }
 
 /* -------------------------------------------------------------------------- */

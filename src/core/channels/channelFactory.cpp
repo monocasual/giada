@@ -174,7 +174,7 @@ const Patch::Channel serializeChannel(const Channel& c)
 	}
 	else if (c.type == ChannelType::MIDI)
 	{
-		pc.midiOut     = c.midiSender->enabled;
+		pc.midiOut     = c.midiChannel->outputEnabled;
 		pc.midiOutChan = c.midiChannel->outputFilter;
 	}
 
