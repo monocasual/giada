@@ -147,8 +147,8 @@ private:
 	MidiSynchronizer       m_midiSynchronizer;
 	Sequencer              m_sequencer;
 	Mixer                  m_mixer;
-	ChannelManager         m_channelManager;
 	ActionRecorder         m_actionRecorder;
+	ChannelManager         m_channelManager;
 	Recorder               m_recorder;
 	PluginManager          m_pluginManager;
 	EventDispatcher        m_eventDispatcher;

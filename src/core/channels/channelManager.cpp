@@ -35,9 +35,10 @@
 
 namespace giada::m
 {
-ChannelManager::ChannelManager(model::Model& model, MidiMapper<KernelMidi>& m)
+ChannelManager::ChannelManager(model::Model& model, MidiMapper<KernelMidi>& m, ActionRecorder& a)
 : m_model(model)
 , m_midiLighter(m)
+, m_sampleActionRecorder(a)
 {
 }
 

@@ -28,6 +28,7 @@
 #define G_CHANNEL_MANAGER_H
 
 #include "core/channels/midiLighter.h"
+#include "core/channels/sampleActionRecorder.h"
 #include "core/resampler.h"
 #include "core/types.h"
 #include <functional>
@@ -52,12 +53,13 @@ class Wave;
 class Plugin;
 class MidiEvent;
 class Engine;
+class ActionRecorder;
 class ChannelManager final
 {
 public:
 	friend Engine;
 
-	ChannelManager(model::Model&, MidiMapper<KernelMidi>&);
+	ChannelManager(model::Model&, MidiMapper<KernelMidi>&, ActionRecorder&);
 
 	/* getChannel
 	Returns channel object by ID. */
@@ -216,6 +218,7 @@ private:
 
 	model::Model&           m_model;
 	MidiLighter<KernelMidi> m_midiLighter;
+	SampleActionRecorder    m_sampleActionRecorder;
 };
 } // namespace giada::m
 
