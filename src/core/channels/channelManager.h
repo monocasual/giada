@@ -29,6 +29,7 @@
 
 #include "core/channels/midiLighter.h"
 #include "core/channels/sampleActionRecorder.h"
+#include "core/channels/sampleReactor.h"
 #include "core/resampler.h"
 #include "core/types.h"
 #include <functional>
@@ -219,6 +220,7 @@ private:
 	model::Model&           m_model;
 	MidiLighter<KernelMidi> m_midiLighter;
 	SampleActionRecorder    m_sampleActionRecorder;
+	SampleReactor           m_sampleReactor;
 };
 } // namespace giada::m
 

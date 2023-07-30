@@ -35,6 +35,16 @@
 
 namespace giada::m
 {
+namespace
+{
+constexpr int Q_ACTION_PLAY   = 0;
+constexpr int Q_ACTION_REWIND = 10000; // Avoid clash with Q_ACTION_PLAY + channelId
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 ChannelManager::ChannelManager(model::Model& model, MidiMapper<KernelMidi>& m, ActionRecorder& a)
 : m_model(model)
 , m_midiLighter(m)
@@ -101,6 +111,18 @@ Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position,
 	data.shared->playStatus.onChange = [this, midiLightning = data.channel.midiLightning](ChannelStatus status) {
 		m_midiLighter.sendStatus(midiLightning, status, /*isAudible=*/true /* TODO!!! */);
 	};
+	data.shared->quantizer->schedule(Q_ACTION_PLAY + data.channel.id, [this, id = data.channel.id](Frame delta) {
+		Channel& ch = m_model.get().channels.get(id);
+		m_sampleReactor.play(*ch.shared, delta);
+	});
+	data.shared->quantizer->schedule(Q_ACTION_REWIND + data.channel.id, [this, id = data.channel.id](Frame delta) {
+		Channel&            ch     = m_model.get().channels.get(id);
+		const ChannelStatus status = ch.shared->playStatus.load();
+		if (status == ChannelStatus::OFF)
+			m_sampleReactor.play(*ch.shared, delta);
+		else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
+			m_sampleReactor.rewind(*ch.shared, delta);
+	});
 
 	m_model.get().channels.add(data.channel);
 	m_model.addChannelShared(std::move(data.shared));
@@ -155,6 +177,18 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 	newChannelData.shared->playStatus.onChange = [this, midiLightning = newChannelData.channel.midiLightning](ChannelStatus status) {
 		m_midiLighter.sendStatus(midiLightning, status, /*isAudible=*/true /* TODO!!! */);
 	};
+	newChannelData.shared->quantizer->schedule(Q_ACTION_PLAY + newChannelData.channel.id, [this, id = newChannelData.channel.id](Frame delta) {
+		Channel& ch = m_model.get().channels.get(id);
+		m_sampleReactor.play(*ch.shared, delta);
+	});
+	newChannelData.shared->quantizer->schedule(Q_ACTION_REWIND + newChannelData.channel.id, [this, id = newChannelData.channel.id](Frame delta) {
+		Channel&            ch     = m_model.get().channels.get(id);
+		const ChannelStatus status = ch.shared->playStatus.load();
+		if (status == ChannelStatus::OFF)
+			m_sampleReactor.play(*ch.shared, delta);
+		else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
+			m_sampleReactor.rewind(*ch.shared, delta);
+	});
 
 	/* Clone Wave first, if any. */
 
@@ -295,8 +329,8 @@ void ChannelManager::keyPress(ID channelId, int velocity, bool canRecordActions,
 		ch.midiController->keyPress(ch.shared->playStatus);
 	if (ch.type == ChannelType::SAMPLE && ch.hasWave() && canRecordActions && !ch.sampleChannel->isAnyLoopMode())
 		m_sampleActionRecorder.keyPress(channelId, *ch.shared, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
-	if (ch.sampleReactor && ch.hasWave())
-		ch.sampleReactor->keyPress(channelId, *ch.shared, ch.sampleChannel->mode, velocity, canQuantize, ch.sampleChannel->isAnyLoopMode(), ch.sampleChannel->velocityAsVol, ch.volume_i);
+	if (ch.type == ChannelType::SAMPLE && ch.hasWave())
+		m_sampleReactor.keyPress(channelId, *ch.shared, ch.sampleChannel->mode, velocity, canQuantize, ch.sampleChannel->isAnyLoopMode(), ch.sampleChannel->velocityAsVol, ch.volume_i);
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -309,8 +343,8 @@ void ChannelManager::keyRelease(ID channelId, bool canRecordActions, Frame curre
 
 	if (ch.type == ChannelType::SAMPLE && ch.hasWave() && canRecordActions && !ch.sampleChannel->isAnyLoopMode())
 		m_sampleActionRecorder.keyRelease(channelId, canRecordActions, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
-	if (ch.sampleReactor && ch.hasWave())
-		ch.sampleReactor->keyRelease(*ch.shared, ch.sampleChannel->mode);
+	if (ch.type == ChannelType::SAMPLE && ch.hasWave())
+		m_sampleReactor.keyRelease(*ch.shared, ch.sampleChannel->mode);
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -329,8 +363,8 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 		ch.midiSender->stop();
 	if (ch.type == ChannelType::SAMPLE && ch.hasWave() && canRecordActions)
 		m_sampleActionRecorder.keyKill(channelId, canRecordActions, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
-	if (ch.sampleReactor)
-		ch.sampleReactor->keyKill(*ch.shared, ch.sampleChannel->mode);
+	if (ch.type == ChannelType::SAMPLE)
+		m_sampleReactor.keyKill(*ch.shared, ch.sampleChannel->mode);
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -540,8 +574,8 @@ void ChannelManager::stopAll()
 	{
 		if (ch.midiController)
 			ch.midiController->stop(ch.shared->playStatus);
-		if (ch.sampleReactor && ch.sampleChannel)
-			ch.sampleReactor->stopBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
+		if (ch.type == ChannelType::SAMPLE)
+			m_sampleReactor.stopBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
 		if (ch.midiSender && ch.isPlaying() && !ch.isMuted())
 			ch.midiSender->stop();
 		if (ch.midiReceiver)

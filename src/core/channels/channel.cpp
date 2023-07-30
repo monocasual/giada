@@ -58,12 +58,10 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		sampleReactor.emplace(*shared, id);
 		sampleChannel.emplace();
 		break;
 
 	case ChannelType::PREVIEW:
-		sampleReactor.emplace(*shared, id);
 		sampleChannel.emplace();
 		break;
 
@@ -107,12 +105,10 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	switch (type)
 	{
 	case ChannelType::SAMPLE:
-		sampleReactor.emplace(*shared, id);
 		sampleChannel.emplace(p, wave, samplerateRatio);
 		break;
 
 	case ChannelType::PREVIEW:
-		sampleReactor.emplace(*shared, id);
 		sampleChannel.emplace(p, wave, samplerateRatio);
 		break;
 

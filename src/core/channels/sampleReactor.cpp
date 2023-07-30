@@ -40,21 +40,6 @@ constexpr int Q_ACTION_REWIND = 10000; // Avoid clash with Q_ACTION_PLAY + chann
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-SampleReactor::SampleReactor(ChannelShared& shared, ID channelId)
-{
-	shared.quantizer->schedule(Q_ACTION_PLAY + channelId, [this, &shared](Frame delta) {
-		play(shared, delta);
-	});
-
-	shared.quantizer->schedule(Q_ACTION_REWIND + channelId, [this, &shared](Frame delta) {
-		const ChannelStatus status = shared.playStatus.load();
-		if (status == ChannelStatus::OFF)
-			play(shared, delta);
-		else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
-			rewind(shared, delta);
-	});
-}
-
 void SampleReactor::rewind(ChannelShared& shared, Frame localFrame) const
 {
 	shared.renderQueue->push({SamplePlayer::Render::Mode::REWIND, localFrame});

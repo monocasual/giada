@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/model/channels.h"
+#include "core/plugins/plugin.h"
 #include "utils/vector.h"
 #include <cassert>
 #ifdef G_DEBUG_MODE
