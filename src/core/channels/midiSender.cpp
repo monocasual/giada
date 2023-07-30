@@ -33,7 +33,6 @@ namespace giada::m
 MidiSender::MidiSender(KernelMidi& k)
 : kernelMidi(&k)
 , enabled(false)
-, filter(0)
 , onSend(nullptr)
 {
 }
@@ -43,7 +42,6 @@ MidiSender::MidiSender(KernelMidi& k)
 MidiSender::MidiSender(const Patch::Channel& p, KernelMidi& k)
 : kernelMidi(&k)
 , enabled(p.midiOut)
-, filter(p.midiOutChan)
 {
 }
 

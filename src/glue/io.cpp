@@ -111,9 +111,9 @@ Channel_InputData::Channel_InputData(const m::Channel& c)
 
 /* -------------------------------------------------------------------------- */
 
-MidiChannel_OutputData::MidiChannel_OutputData(const m::MidiSender& s)
-: enabled(s.enabled)
-, filter(s.filter)
+MidiChannel_OutputData::MidiChannel_OutputData(const m::Channel& c)
+: enabled(c.midiSender->enabled)
+, filter(c.midiChannel->outputFilter)
 {
 }
 
@@ -127,7 +127,7 @@ Channel_OutputData::Channel_OutputData(const m::Channel& c)
 , lightningSolo(c.midiLightning.solo.getValue())
 {
 	if (c.type == ChannelType::MIDI)
-		output = std::make_optional<MidiChannel_OutputData>(*c.midiSender);
+		output = std::make_optional<MidiChannel_OutputData>(c);
 }
 
 /* -------------------------------------------------------------------------- */

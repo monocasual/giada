@@ -50,11 +50,6 @@ public:
 
 	bool enabled;
 
-	/* filter
-    Which MIDI channel data should be sent to. */
-
-	int filter;
-
 	/* onSend
 	Callback fired when a MIDI signal has been sent. */
 

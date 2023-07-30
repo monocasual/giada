@@ -169,7 +169,7 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 			m_sampleAdvancer.advance(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());
 
 		if (ch.midiSender && ch.isPlaying() && !ch.isMuted())
-			ch.midiSender->advance(ch.id, e, ch.midiSender->filter);
+			ch.midiSender->advance(ch.id, e, ch.midiChannel->outputFilter);
 
 		if (ch.midiReceiver && ch.isPlaying())
 			ch.midiReceiver->advance(ch.id, ch.shared->midiQueue, e);

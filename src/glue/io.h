@@ -100,7 +100,7 @@ struct Master_InputData
 
 struct MidiChannel_OutputData
 {
-	MidiChannel_OutputData(const m::MidiSender&);
+	MidiChannel_OutputData(const m::Channel&);
 
 	bool enabled;
 	int  filter;

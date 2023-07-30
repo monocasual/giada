@@ -85,7 +85,7 @@ void IOApi::channel_setMidiInputFilter(ID channelId, int ch)
 
 void IOApi::channel_setMidiOutputFilter(ID channelId, int ch)
 {
-	m_model.get().channels.get(channelId).midiSender->filter = ch;
+	m_model.get().channels.get(channelId).midiChannel->outputFilter = ch;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
