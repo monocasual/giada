@@ -95,6 +95,13 @@ public:
 	void suspend();
 	void resume();
 
+	/* setMidiCallback
+	Registers callback 'f' to MIDI events happening in the model. The callback
+	is defined in the UI layer to lit the interface when a MIDI signal is
+	sent/received. */
+
+	void setMidiCallback(std::function<void()>);
+
 #ifdef G_DEBUG_MODE
 	void debug();
 #endif

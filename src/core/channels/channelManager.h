@@ -51,9 +51,12 @@ class Channel;
 class Wave;
 class Plugin;
 class MidiEvent;
+class Engine;
 class ChannelManager final
 {
 public:
+	friend Engine;
+
 	ChannelManager(model::Model&, MidiMapper<KernelMidi>&);
 
 	/* getChannel

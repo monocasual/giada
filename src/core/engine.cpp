@@ -296,6 +296,13 @@ void Engine::resume()
 
 /* -------------------------------------------------------------------------- */
 
+void Engine::setMidiCallback(std::function<void()> f)
+{
+	m_channelManager.m_midiLighter.onSend = f;
+}
+
+/* -------------------------------------------------------------------------- */
+
 #ifdef G_DEBUG_MODE
 void Engine::debug()
 {
