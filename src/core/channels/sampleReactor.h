@@ -52,18 +52,16 @@ public:
 		Frame offset;
 	};
 
-	SampleReactor(ChannelShared&, ID channelId);
-
 	void stopBySeq(ChannelShared&, bool chansStopOnSeqHalt, bool isLoop) const;
 	void keyPress(ID channelId, ChannelShared&, SamplePlayerMode, int velocity, bool canQuantize, bool isLoop, bool velocityAsVol, float& volume_i) const;
 	void keyRelease(ChannelShared&, SamplePlayerMode) const;
 	void keyKill(ChannelShared&, SamplePlayerMode) const;
+	void rewind(ChannelShared&, Frame localFrame) const;
+	void play(ChannelShared&, Frame localFrame) const;
 
 private:
 	ChannelStatus pressWhilePlay(ID channelId, ChannelShared&, SamplePlayerMode, bool canQuantize) const;
 	ChannelStatus pressWhileOff(ID channelId, ChannelShared&, int velocity, bool canQuantize, bool velocityAsVol, float& volume_i) const;
-	void          rewind(ChannelShared&, Frame localFrame) const;
-	void          play(ChannelShared&, Frame localFrame) const;
 	void          stop(ChannelShared&) const;
 };
 
