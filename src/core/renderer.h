@@ -28,6 +28,7 @@
 #define G_RENDERER_H
 
 #include "core/channels/audioReceiver.h"
+#include "core/channels/midiSender.h"
 #include "core/channels/sampleAdvancer.h"
 #include "core/channels/samplePlayer.h"
 #include <vector>
@@ -57,9 +58,9 @@ class Renderer
 {
 public:
 #ifdef WITH_AUDIO_JACK
-	Renderer(Sequencer&, Mixer&, PluginHost&, JackSynchronizer&, JackTransport&);
+	Renderer(Sequencer&, Mixer&, PluginHost&, JackSynchronizer&, JackTransport&, KernelMidi&);
 #else
-	Renderer(Sequencer&, Mixer&, PluginHost&);
+	Renderer(Sequencer&, Mixer&, PluginHost&, KernelMidi&);
 #endif
 
 	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Model&) const;
@@ -92,6 +93,7 @@ private:
 	AudioReceiver  m_audioReceiver;
 	SamplePlayer   m_samplePlayer;
 	SampleAdvancer m_sampleAdvancer;
+	MidiSender     m_midiSender;
 };
 } // namespace giada::m
 

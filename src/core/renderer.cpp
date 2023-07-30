@@ -50,9 +50,9 @@ mcl::AudioBuffer::Pan calcPanning_(float pan)
 /* -------------------------------------------------------------------------- */
 
 #ifdef WITH_AUDIO_JACK
-Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, JackSynchronizer& js, JackTransport& jt)
+Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, JackSynchronizer& js, JackTransport& jt, KernelMidi& km)
 #else
-Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph)
+Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, KernelMidi& km)
 #endif
 : m_sequencer(s)
 , m_mixer(m)
@@ -61,6 +61,7 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph)
 , m_jackSynchronizer(js)
 , m_jackTransport(jt)
 #endif
+, m_midiSender(km)
 {
 	m_samplePlayer.onLastFrame = [this](const Channel& ch, bool natural, bool seqIsRunning) {
 		m_sampleAdvancer.onLastFrame(*ch.shared, seqIsRunning, natural, ch.sampleChannel->mode,
@@ -169,7 +170,7 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 			m_sampleAdvancer.advance(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());
 
 		if (ch.type == ChannelType::MIDI && ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
-			ch.midiSender->advance(ch.id, e, ch.midiChannel->outputFilter);
+			m_midiSender.advance(ch.id, e, ch.midiChannel->outputFilter);
 
 		if (ch.midiReceiver && ch.isPlaying())
 			ch.midiReceiver->advance(ch.id, ch.shared->midiQueue, e);
