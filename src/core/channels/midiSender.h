@@ -39,9 +39,9 @@ public:
 	MidiSender(KernelMidi&);
 	MidiSender(const Patch::Channel& p, KernelMidi&);
 
-	void advance(ID channelId, const Sequencer::Event& e) const;
+	void advance(ID channelId, const Sequencer::Event& e, int outputFilter) const;
 
-	void stop();
+	void stop(int outputFilter);
 
 	KernelMidi* kernelMidi;
 
@@ -61,8 +61,8 @@ public:
 	std::function<void()> onSend;
 
 private:
-	void send(MidiEvent e) const;
-	void parseActions(ID channelId, const std::vector<Action>& as) const;
+	void send(MidiEvent e, int outputFilter) const;
+	void parseActions(ID channelId, const std::vector<Action>& as, int outputFilter) const;
 };
 } // namespace giada::m
 

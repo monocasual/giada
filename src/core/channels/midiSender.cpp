@@ -49,39 +49,39 @@ MidiSender::MidiSender(const Patch::Channel& p, KernelMidi& k)
 
 /* -------------------------------------------------------------------------- */
 
-void MidiSender::advance(ID channelId, const Sequencer::Event& e) const
+void MidiSender::advance(ID channelId, const Sequencer::Event& e, int outputFilter) const
 {
 	if (!enabled)
 		return;
 	if (e.type == Sequencer::EventType::ACTIONS)
-		parseActions(channelId, *e.actions);
+		parseActions(channelId, *e.actions, outputFilter);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MidiSender::stop()
+void MidiSender::stop(int outputFilter)
 {
 	if (enabled)
-		send(MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3));
+		send(MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), outputFilter);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MidiSender::send(MidiEvent e) const
+void MidiSender::send(MidiEvent e, int outputFilter) const
 {
 	assert(onSend != nullptr);
 
-	e.setChannel(filter);
+	e.setChannel(outputFilter);
 	kernelMidi->send(e);
 	onSend();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MidiSender::parseActions(ID channelId, const std::vector<Action>& as) const
+void MidiSender::parseActions(ID channelId, const std::vector<Action>& as, int outputFilter) const
 {
 	for (const Action& a : as)
 		if (a.channelId == channelId)
-			send(a.event);
+			send(a.event, outputFilter);
 }
 } // namespace giada::m
