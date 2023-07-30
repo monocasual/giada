@@ -132,48 +132,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 
 /* -------------------------------------------------------------------------- */
 
-Channel::Channel(const Channel& other)
-{
-	*this = other;
-}
-
-/* -------------------------------------------------------------------------- */
-
-Channel& Channel::operator=(const Channel& other)
-{
-	if (this == &other)
-		return *this;
-
-	shared     = other.shared;
-	id         = other.id;
-	type       = other.type;
-	columnId   = other.columnId;
-	position   = other.position;
-	volume     = other.volume;
-	volume_i   = other.volume_i;
-	pan        = other.pan;
-	m_mute     = other.m_mute;
-	m_solo     = other.m_solo;
-	armed      = other.armed;
-	key        = other.key;
-	hasActions = other.hasActions;
-	name       = other.name;
-	height     = other.height;
-	plugins    = other.plugins;
-
-	midiLearn          = other.midiLearn;
-	sampleReactor      = other.sampleReactor;
-	midiController     = other.midiController;
-	midiReceiver       = other.midiReceiver;
-	midiSender         = other.midiSender;
-	midiActionRecorder = other.midiActionRecorder;
-	sampleChannel      = other.sampleChannel;
-
-	return *this;
-}
-
-/* -------------------------------------------------------------------------- */
-
 bool Channel::operator==(const Channel& other)
 {
 	return id == other.id;

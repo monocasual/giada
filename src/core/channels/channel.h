@@ -56,12 +56,8 @@ class Channel final
 public:
 	Channel(ChannelType t, ID id, ID columnId, int position, ChannelShared&);
 	Channel(const Patch::Channel&, ChannelShared&, float samplerateRatio, Wave*, std::vector<Plugin*>);
-	Channel(const Channel& o);
-	Channel(Channel&& o) = default;
 
-	Channel& operator=(const Channel&);
-	Channel& operator=(Channel&&) = default;
-	bool     operator==(const Channel&);
+	bool operator==(const Channel&);
 
 	bool isPlaying() const;
 	bool isInternal() const;
