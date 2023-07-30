@@ -38,7 +38,6 @@ class MidiLearnParam
 public:
 	MidiLearnParam();
 	MidiLearnParam(uint32_t v, std::size_t index = 0);
-	MidiLearnParam(const MidiLearnParam& o) = default;
 
 	uint32_t    getValue() const;
 	std::size_t getIndex() const;
