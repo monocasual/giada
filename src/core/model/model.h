@@ -28,6 +28,7 @@
 #define G_MODEL_H
 
 #include "core/channels/channel.h"
+#include "core/conf.h"
 #include "core/const.h"
 #include "core/model/actions.h"
 #include "core/model/behaviors.h"
