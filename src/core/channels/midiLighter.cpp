@@ -40,14 +40,6 @@ MidiLighter<KernelMidiI>::MidiLighter(MidiMapper<KernelMidiI>& m)
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-MidiLighter<KernelMidiI>::MidiLighter(MidiMapper<KernelMidiI>& m, const Patch::Channel& p)
-: m_midiMapper(&m)
-{
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename KernelMidiI>
 void MidiLighter<KernelMidiI>::sendStatus(const MidiLightning& m, ChannelStatus status, bool audible) const
 {
 	const MidiMap& midiMap   = m_midiMapper->currentMap;
