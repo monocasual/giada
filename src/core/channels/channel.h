@@ -34,7 +34,6 @@
 #include "core/channels/midiLightning.h"
 #include "core/channels/midiReceiver.h"
 #include "core/channels/midiSender.h"
-#include "core/channels/sampleActionRecorder.h"
 #include "core/channels/sampleAdvancer.h"
 #include "core/channels/sampleChannel.h"
 #include "core/channels/sampleReactor.h"
@@ -118,13 +117,12 @@ public:
 	MidiLearn     midiLearn;
 	MidiLightning midiLightning;
 
-	std::optional<SampleReactor>        sampleReactor;
-	std::optional<MidiController>       midiController;
-	std::optional<MidiReceiver>         midiReceiver;
-	std::optional<MidiSender>           midiSender;
-	std::optional<SampleActionRecorder> sampleActionRecorder;
-	std::optional<MidiActionRecorder>   midiActionRecorder;
-	std::optional<SampleChannel>        sampleChannel;
+	std::optional<SampleReactor>      sampleReactor;
+	std::optional<MidiController>     midiController;
+	std::optional<MidiReceiver>       midiReceiver;
+	std::optional<MidiSender>         midiSender;
+	std::optional<MidiActionRecorder> midiActionRecorder;
+	std::optional<SampleChannel>      sampleChannel;
 
 private:
 	bool m_mute;

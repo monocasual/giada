@@ -59,7 +59,6 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 	{
 	case ChannelType::SAMPLE:
 		sampleReactor.emplace(*shared, id);
-		sampleActionRecorder.emplace(g_engine.getActionRecorder());
 		sampleChannel.emplace();
 		break;
 
@@ -109,7 +108,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	{
 	case ChannelType::SAMPLE:
 		sampleReactor.emplace(*shared, id);
-		sampleActionRecorder.emplace(g_engine.getActionRecorder());
 		sampleChannel.emplace(p, wave, samplerateRatio);
 		break;
 
@@ -163,14 +161,13 @@ Channel& Channel::operator=(const Channel& other)
 	height     = other.height;
 	plugins    = other.plugins;
 
-	midiLearn            = other.midiLearn;
-	sampleReactor        = other.sampleReactor;
-	midiController       = other.midiController;
-	midiReceiver         = other.midiReceiver;
-	midiSender           = other.midiSender;
-	sampleActionRecorder = other.sampleActionRecorder;
-	midiActionRecorder   = other.midiActionRecorder;
-	sampleChannel        = other.sampleChannel;
+	midiLearn          = other.midiLearn;
+	sampleReactor      = other.sampleReactor;
+	midiController     = other.midiController;
+	midiReceiver       = other.midiReceiver;
+	midiSender         = other.midiSender;
+	midiActionRecorder = other.midiActionRecorder;
+	sampleChannel      = other.sampleChannel;
 
 	return *this;
 }

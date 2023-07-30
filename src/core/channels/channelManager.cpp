@@ -293,8 +293,8 @@ void ChannelManager::keyPress(ID channelId, int velocity, bool canRecordActions,
 
 	if (ch.midiController)
 		ch.midiController->keyPress(ch.shared->playStatus);
-	if (ch.sampleActionRecorder && ch.hasWave() && canRecordActions && !ch.sampleChannel->isAnyLoopMode())
-		ch.sampleActionRecorder->keyPress(channelId, *ch.shared, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
+	if (ch.type == ChannelType::SAMPLE && ch.hasWave() && canRecordActions && !ch.sampleChannel->isAnyLoopMode())
+		m_sampleActionRecorder.keyPress(channelId, *ch.shared, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
 	if (ch.sampleReactor && ch.hasWave())
 		ch.sampleReactor->keyPress(channelId, *ch.shared, ch.sampleChannel->mode, velocity, canQuantize, ch.sampleChannel->isAnyLoopMode(), ch.sampleChannel->velocityAsVol, ch.volume_i);
 
@@ -307,8 +307,8 @@ void ChannelManager::keyRelease(ID channelId, bool canRecordActions, Frame curre
 {
 	Channel& ch = m_model.get().channels.get(channelId);
 
-	if (ch.sampleActionRecorder && ch.hasWave() && canRecordActions && !ch.sampleChannel->isAnyLoopMode())
-		ch.sampleActionRecorder->keyRelease(channelId, canRecordActions, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
+	if (ch.type == ChannelType::SAMPLE && ch.hasWave() && canRecordActions && !ch.sampleChannel->isAnyLoopMode())
+		m_sampleActionRecorder.keyRelease(channelId, canRecordActions, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
 	if (ch.sampleReactor && ch.hasWave())
 		ch.sampleReactor->keyRelease(*ch.shared, ch.sampleChannel->mode);
 
@@ -327,8 +327,8 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 		ch.midiReceiver->stop(ch.shared->midiQueue);
 	if (ch.midiSender && ch.isPlaying() && !ch.isMuted())
 		ch.midiSender->stop();
-	if (ch.sampleActionRecorder && ch.hasWave() && canRecordActions)
-		ch.sampleActionRecorder->keyKill(channelId, canRecordActions, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
+	if (ch.type == ChannelType::SAMPLE && ch.hasWave() && canRecordActions)
+		m_sampleActionRecorder.keyKill(channelId, canRecordActions, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
 	if (ch.sampleReactor)
 		ch.sampleReactor->keyKill(*ch.shared, ch.sampleChannel->mode);
 
@@ -455,27 +455,23 @@ void ChannelManager::toggleArm(ID channelId)
 
 void ChannelManager::toggleReadActions(ID channelId, bool seqIsRunning)
 {
-	assert(m_model.get().channels.get(channelId).sampleActionRecorder);
-
 	Channel& ch = m_model.get().channels.get(channelId);
 	if (!ch.hasActions)
 		return;
-	ch.sampleActionRecorder->toggleReadActions(*ch.shared, m_model.get().behaviors.treatRecsAsLoops, seqIsRunning);
+	m_sampleActionRecorder.toggleReadActions(*ch.shared, m_model.get().behaviors.treatRecsAsLoops, seqIsRunning);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::killReadActions(ID channelId)
 {
-	assert(m_model.get().channels.get(channelId).sampleActionRecorder);
-
 	/* Killing Read Actions, i.e. shift + click on 'R' button is meaningful 
 	only when the treatRecsAsLoops flag is true. */
 
 	if (!m_model.get().behaviors.treatRecsAsLoops)
 		return;
 	Channel& ch = m_model.get().channels.get(channelId);
-	ch.sampleActionRecorder->killReadActions(*ch.shared);
+	m_sampleActionRecorder.killReadActions(*ch.shared);
 }
 
 /* -------------------------------------------------------------------------- */
