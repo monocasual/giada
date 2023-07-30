@@ -52,7 +52,6 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 , key(0)
 , hasActions(false)
 , height(G_GUI_UNIT)
-, midiLighter(g_engine.getMidiMapper())
 , m_mute(false)
 , m_solo(false)
 {
@@ -79,8 +78,6 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 	default:
 		break;
 	}
-
-	initCallbacks();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -101,7 +98,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , height(p.height)
 , plugins(plugins)
 , midiLearn(p)
-, midiLighter(g_engine.getMidiMapper(), p)
 , midiLightning(p)
 , m_mute(p.mute)
 , m_solo(p.solo)
@@ -134,13 +130,11 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	}
 
 	setWave(wave, samplerateRatio);
-	initCallbacks();
 }
 
 /* -------------------------------------------------------------------------- */
 
 Channel::Channel(const Channel& other)
-: midiLighter(g_engine.getMidiMapper())
 {
 	*this = other;
 }
@@ -170,7 +164,6 @@ Channel& Channel::operator=(const Channel& other)
 	plugins    = other.plugins;
 
 	midiLearn            = other.midiLearn;
-	midiLighter          = other.midiLighter;
 	sampleReactor        = other.sampleReactor;
 	midiController       = other.midiController;
 	midiReceiver         = other.midiReceiver;
@@ -178,8 +171,6 @@ Channel& Channel::operator=(const Channel& other)
 	sampleActionRecorder = other.sampleActionRecorder;
 	midiActionRecorder   = other.midiActionRecorder;
 	sampleChannel        = other.sampleChannel;
-
-	initCallbacks();
 
 	return *this;
 }
@@ -250,15 +241,11 @@ bool Channel::isPlaying() const
 
 void Channel::setMute(bool v)
 {
-	if (m_mute != v)
-		midiLighter.sendMute(midiLightning, v);
 	m_mute = v;
 }
 
 void Channel::setSolo(bool v)
 {
-	if (m_solo != v)
-		midiLighter.sendSolo(midiLightning, v);
 	m_solo = v;
 }
 
@@ -285,14 +272,5 @@ void Channel::kickIn(Frame f)
 {
 	shared->tracker.store(f);
 	shared->playStatus.store(ChannelStatus::PLAY);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Channel::initCallbacks()
-{
-	shared->playStatus.onChange = [this](ChannelStatus status) {
-		midiLighter.sendStatus(midiLightning, status, isAudible(/*mixerHasSolos = TODO!*/ false));
-	};
 }
 } // namespace giada::m

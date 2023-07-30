@@ -97,6 +97,10 @@ Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position,
 
 	channelFactory::Data data = channelFactory::create(/*id=*/0, type, columnId, position, bufferSize, rsmpQuality, overdubProtectionDefaultOn);
 
+	data.shared->playStatus.onChange = [this, midiLightning = data.channel.midiLightning](ChannelStatus status) {
+		m_midiLighter.sendStatus(midiLightning, status, /*isAudible=*/true /* TODO!!! */);
+	};
+
 	m_model.get().channels.add(data.channel);
 	m_model.addChannelShared(std::move(data.shared));
 	m_model.swap(model::SwapType::HARD);
@@ -146,6 +150,10 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 	const Channel&           oldChannel     = m_model.get().channels.get(channelId);
 	const Resampler::Quality rsmpQuality    = m_model.get().kernelAudio.rsmpQuality;
 	channelFactory::Data     newChannelData = channelFactory::create(oldChannel, bufferSize, rsmpQuality);
+
+	newChannelData.shared->playStatus.onChange = [this, midiLightning = newChannelData.channel.midiLightning](ChannelStatus status) {
+		m_midiLighter.sendStatus(midiLightning, status, /*isAudible=*/true /* TODO!!! */);
+	};
 
 	/* Clone Wave first, if any. */
 
@@ -410,20 +418,26 @@ void ChannelManager::resetBeginEnd(ID channelId)
 
 void ChannelManager::toggleMute(ID channelId)
 {
-	Channel& ch = m_model.get().channels.get(channelId);
-	ch.setMute(!ch.isMuted());
+	Channel&   ch      = m_model.get().channels.get(channelId);
+	const bool newMute = !ch.isMuted();
+
+	ch.setMute(newMute);
 
 	m_model.swap(model::SwapType::SOFT);
+	m_midiLighter.sendMute(ch.midiLightning, newMute);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::toggleSolo(ID channelId)
 {
-	Channel& ch = m_model.get().channels.get(channelId);
-	ch.setSolo(!ch.isSoloed());
+	Channel&   ch      = m_model.get().channels.get(channelId);
+	const bool newSolo = !ch.isSoloed();
+
+	ch.setSolo(newSolo);
 
 	m_model.swap(model::SwapType::SOFT);
+	m_midiLighter.sendSolo(ch.midiLightning, newSolo);
 }
 
 /* -------------------------------------------------------------------------- */

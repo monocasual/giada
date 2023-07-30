@@ -299,7 +299,7 @@ void setCallbacks(m::Channel& ch)
 		g_ui.pumpEvent([channelId]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); });
 	};
 
-	ch.midiLighter.onSend = onSendMidiCb;
+	g_engine.setMidiCallback(onSendMidiCb);
 	if (ch.midiSender)
 		ch.midiSender->onSend = onSendMidiCb;
 }
