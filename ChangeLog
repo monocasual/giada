@@ -11,6 +11,20 @@
 --------------------------------------------------------------------------------
 
 
+0.25.1 --- 2023 . 08 . 03
+- Enabled realtime scheduling in audio callback (#68)
+- Input audio meter is now affected by the current input volume value (#239)
+- Improved file name validation when saving projects and samples (#641)
+- Fix compilation with format-security compiler flags (#447)
+- Disable metronome when recording in free-loop-length mode (#514)
+- Improved robustness of audio channel selection when changing audio devices in
+  the configuration panel
+- Upgrade libsndfile library to version 1.2.0
+- Upgrade nlohmann-json library to version 3.11.2
+- Upgrade fmt library to version 10.0.0
+- Lots of code refactoring and internal cleanup
+
+
 0.25.0 --- 2023 . 06 . 05
 - Ability to change audio and MIDI engines on the fly — no need to restart Giada 
   anymore when the audio and/or MIDI devices change. No need to restart also
