@@ -40,7 +40,8 @@ jobs:
           submodules: recursive
 
       - name: Install dependencies
-        run: bash ./.github/scripts/linux/install-deps.sh
+        run: ./.github/scripts/linux/install-deps.sh
+        shell: bash
         
       - name: Generate Makefile
         run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-Wno-class-memaccess -DWITH_VST3=ON
@@ -49,7 +50,8 @@ jobs:
         run: cmake --build build/ -j 2
 
       - name: Make package
-        run: bash ./.github/scripts/linux/make-package.sh ${{ github.ref_name }}
+        run: ./.github/scripts/linux/make-package.sh ${{ github.ref_name }}
+        shell: bash
 
       - name: Upload release
         id: upload-release-asset
