@@ -17,7 +17,7 @@ mkdir temp
 echo "Strip binary and move it to temp/"
 
 strip --strip-all ./build/giada
-mv ./build/giada temp/
+cp ./build/giada temp/
 
 echo "Create .desktop file"
 
@@ -37,7 +37,7 @@ EOF
 
 echo "Prepare logo"
 
-mv extras/giada-logo.svg temp/giada.svg
+cp extras/giada-logo.svg temp/giada.svg
 
 # Run linuxdeploy to make the AppImage, then move it to dist/ dir. 
 # For some reason linuxdeploy uses the commit hash in the filename, so
