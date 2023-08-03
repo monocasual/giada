@@ -14,5 +14,5 @@ sudo ln -f -s /usr/bin/g++-10 /usr/bin/g++
 
 # Download linuxdeploy for building AppImages
 
-wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+wget https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20230713-1/linuxdeploy-x86_64.AppImage
 chmod a+x linuxdeploy-x86_64.AppImage
