@@ -28,7 +28,6 @@
 #define G_CHANNEL_H
 
 #include "core/channels/channelShared.h"
-#include "core/channels/midiActionRecorder.h"
 #include "core/channels/midiChannel.h"
 #include "core/channels/midiController.h"
 #include "core/channels/midiLearn.h"
@@ -113,12 +112,11 @@ public:
 	MidiLearn     midiLearn;
 	MidiLightning midiLightning;
 
-	std::optional<MidiController>     midiController;
-	std::optional<MidiReceiver>       midiReceiver;
-	std::optional<MidiSender>         midiSender;
-	std::optional<MidiActionRecorder> midiActionRecorder;
-	std::optional<SampleChannel>      sampleChannel;
-	std::optional<MidiChannel>        midiChannel;
+	std::optional<MidiController> midiController;
+	std::optional<MidiReceiver>   midiReceiver;
+	std::optional<MidiSender>     midiSender;
+	std::optional<SampleChannel>  sampleChannel;
+	std::optional<MidiChannel>    midiChannel;
 
 private:
 	bool m_mute;

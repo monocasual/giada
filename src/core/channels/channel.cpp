@@ -68,7 +68,6 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 	case ChannelType::MIDI:
 		midiController.emplace();
 		midiSender.emplace(g_engine.getKernelMidi());
-		midiActionRecorder.emplace(g_engine.getActionRecorder());
 		midiReceiver.emplace();
 		midiChannel.emplace();
 		break;
@@ -116,7 +115,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	case ChannelType::MIDI:
 		midiController.emplace();
 		midiSender.emplace(p, g_engine.getKernelMidi());
-		midiActionRecorder.emplace(g_engine.getActionRecorder());
 		midiReceiver.emplace();
 		midiChannel.emplace(p);
 		break;
