@@ -29,6 +29,7 @@
 
 #include "core/channels/midiActionRecorder.h"
 #include "core/channels/midiLighter.h"
+#include "core/channels/midiSender.h"
 #include "core/channels/sampleActionRecorder.h"
 #include "core/channels/sampleReactor.h"
 #include "core/resampler.h"
@@ -56,12 +57,13 @@ class Plugin;
 class MidiEvent;
 class Engine;
 class ActionRecorder;
+class KernelMidi;
 class ChannelManager final
 {
 public:
 	friend Engine;
 
-	ChannelManager(model::Model&, MidiMapper<KernelMidi>&, ActionRecorder&);
+	ChannelManager(model::Model&, MidiMapper<KernelMidi>&, ActionRecorder&, KernelMidi&);
 
 	/* getChannel
 	Returns channel object by ID. */
@@ -220,6 +222,7 @@ private:
 
 	model::Model&           m_model;
 	MidiLighter<KernelMidi> m_midiLighter;
+	MidiSender              m_midiSender;
 	MidiActionRecorder      m_midiActionRecorder;
 	SampleActionRecorder    m_sampleActionRecorder;
 	SampleReactor           m_sampleReactor;

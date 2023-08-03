@@ -33,7 +33,6 @@
 #include "core/channels/midiLearn.h"
 #include "core/channels/midiLightning.h"
 #include "core/channels/midiReceiver.h"
-#include "core/channels/midiSender.h"
 #include "core/channels/sampleAdvancer.h"
 #include "core/channels/sampleChannel.h"
 #include "core/const.h"
@@ -114,7 +113,6 @@ public:
 
 	std::optional<MidiController> midiController;
 	std::optional<MidiReceiver>   midiReceiver;
-	std::optional<MidiSender>     midiSender;
 	std::optional<SampleChannel>  sampleChannel;
 	std::optional<MidiChannel>    midiChannel;
 

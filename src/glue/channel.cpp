@@ -300,8 +300,6 @@ void setCallbacks(m::Channel& ch)
 	};
 
 	g_engine.setMidiCallback(onSendMidiCb);
-	if (ch.midiSender)
-		ch.midiSender->onSend = onSendMidiCb;
 }
 
 /* -------------------------------------------------------------------------- */

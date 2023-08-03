@@ -48,7 +48,7 @@ Engine::Engine()
 , m_sequencer(m_model, m_midiSynchronizer, m_jackTransport)
 , m_mixer(m_model)
 , m_actionRecorder(m_model)
-, m_channelManager(m_model, m_midiMapper, m_actionRecorder)
+, m_channelManager(m_model, m_midiMapper, m_actionRecorder, m_kernelMidi)
 , m_recorder(m_sequencer, m_channelManager, m_mixer, m_actionRecorder)
 , m_midiDispatcher(m_model)
 #ifdef WITH_AUDIO_JACK
@@ -299,6 +299,7 @@ void Engine::resume()
 void Engine::setMidiCallback(std::function<void()> f)
 {
 	m_channelManager.m_midiLighter.onSend = f;
+	m_channelManager.m_midiSender.onSend  = f;
 }
 
 /* -------------------------------------------------------------------------- */

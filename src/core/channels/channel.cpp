@@ -27,15 +27,12 @@
 #include "core/channels/channel.h"
 #include "core/actions/actionRecorder.h"
 #include "core/conf.h"
-#include "core/engine.h"
 #include "core/midiMapper.h"
 #include "core/model/model.h"
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
 #include "core/recorder.h"
 #include <cassert>
-
-extern giada::m::Engine g_engine;
 
 namespace giada::m
 {
@@ -67,7 +64,6 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 
 	case ChannelType::MIDI:
 		midiController.emplace();
-		midiSender.emplace(g_engine.getKernelMidi());
 		midiReceiver.emplace();
 		midiChannel.emplace();
 		break;
@@ -114,7 +110,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 
 	case ChannelType::MIDI:
 		midiController.emplace();
-		midiSender.emplace(p, g_engine.getKernelMidi());
 		midiReceiver.emplace();
 		midiChannel.emplace(p);
 		break;
