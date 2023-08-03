@@ -39,6 +39,8 @@ echo "Prepare logo"
 
 cp extras/giada-logo.svg temp/giada.svg
 
+echo "Generate AppImage file"
+
 # Run linuxdeploy to make the AppImage, then move it to dist/ dir. 
 # For some reason linuxdeploy uses the commit hash in the filename, so
 # rename it first.
