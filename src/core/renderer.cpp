@@ -213,7 +213,7 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl
 
 	if (ch.type == ChannelType::MIDI)
 		m_midiReceiver.render(*ch.shared, ch.plugins, m_pluginHost);
-	else if (ch.plugins.size() > 0)
+	else
 		m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
 
 	if (ch.isAudible(mixerHasSolos))
@@ -224,8 +224,7 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl
 
 void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
 {
-	if (ch.plugins.size() > 0)
-		m_pluginHost.processStack(in, ch.plugins, nullptr);
+	m_pluginHost.processStack(in, ch.plugins, nullptr);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -233,8 +232,7 @@ void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
 void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const
 {
 	ch.shared->audioBuffer.set(out, /*gain=*/1.0f);
-	if (ch.plugins.size() > 0)
-		m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
+	m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
 	out.set(ch.shared->audioBuffer, ch.volume);
 }
 

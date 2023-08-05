@@ -97,6 +97,9 @@ void PluginHost::processStack(mcl::AudioBuffer& outBuf, const std::vector<Plugin
 {
 	assert(outBuf.countFrames() == m_audioBuffer.getNumSamples());
 
+	if (plugins.empty())
+		return;
+
 	giadaToJuceTempBuf(outBuf);
 
 	if (events == nullptr)
