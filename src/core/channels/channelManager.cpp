@@ -110,21 +110,7 @@ Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position,
 
 	channelFactory::Data data = channelFactory::create(/*id=*/0, type, columnId, position, bufferSize, rsmpQuality, overdubProtectionDefaultOn);
 
-	data.shared->playStatus.onChange = [this, midiLightning = data.channel.midiLightning](ChannelStatus status) {
-		m_midiLighter.sendStatus(midiLightning, status, /*isAudible=*/true /* TODO!!! */);
-	};
-	data.shared->quantizer->schedule(Q_ACTION_PLAY + data.channel.id, [this, id = data.channel.id](Frame delta) {
-		Channel& ch = m_model.get().channels.get(id);
-		m_sampleReactor.play(*ch.shared, delta);
-	});
-	data.shared->quantizer->schedule(Q_ACTION_REWIND + data.channel.id, [this, id = data.channel.id](Frame delta) {
-		Channel&            ch     = m_model.get().channels.get(id);
-		const ChannelStatus status = ch.shared->playStatus.load();
-		if (status == ChannelStatus::OFF)
-			m_sampleReactor.play(*ch.shared, delta);
-		else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
-			m_sampleReactor.rewind(*ch.shared, delta);
-	});
+	setupChannelCallbacks(data.channel, *data.shared);
 
 	m_model.get().channels.add(data.channel);
 	m_model.addChannelShared(std::move(data.shared));
@@ -176,21 +162,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 	const Resampler::Quality rsmpQuality    = m_model.get().kernelAudio.rsmpQuality;
 	channelFactory::Data     newChannelData = channelFactory::create(oldChannel, bufferSize, rsmpQuality);
 
-	newChannelData.shared->playStatus.onChange = [this, midiLightning = newChannelData.channel.midiLightning](ChannelStatus status) {
-		m_midiLighter.sendStatus(midiLightning, status, /*isAudible=*/true /* TODO!!! */);
-	};
-	newChannelData.shared->quantizer->schedule(Q_ACTION_PLAY + newChannelData.channel.id, [this, id = newChannelData.channel.id](Frame delta) {
-		Channel& ch = m_model.get().channels.get(id);
-		m_sampleReactor.play(*ch.shared, delta);
-	});
-	newChannelData.shared->quantizer->schedule(Q_ACTION_REWIND + newChannelData.channel.id, [this, id = newChannelData.channel.id](Frame delta) {
-		Channel&            ch     = m_model.get().channels.get(id);
-		const ChannelStatus status = ch.shared->playStatus.load();
-		if (status == ChannelStatus::OFF)
-			m_sampleReactor.play(*ch.shared, delta);
-		else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
-			m_sampleReactor.rewind(*ch.shared, delta);
-	});
+	setupChannelCallbacks(newChannelData.channel, *newChannelData.shared);
 
 	/* Clone Wave first, if any. */
 
@@ -697,6 +669,27 @@ void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, Frame begin, Frame 
 {
 	ch.loadWave(w, begin, end, shift);
 	ch.name = w != nullptr ? w->getBasename(/*ext=*/false) : "";
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& shared) const
+{
+	shared.playStatus.onChange = [this, midiLightning = ch.midiLightning](ChannelStatus status) {
+		m_midiLighter.sendStatus(midiLightning, status, /*isAudible=*/true /* TODO!!! */);
+	};
+	shared.quantizer->schedule(Q_ACTION_PLAY + ch.id, [this, channelId = ch.id](Frame delta) {
+		Channel& ch = m_model.get().channels.get(channelId);
+		m_sampleReactor.play(*ch.shared, delta);
+	});
+	shared.quantizer->schedule(Q_ACTION_REWIND + ch.id, [this, channelId = ch.id](Frame delta) {
+		Channel&            ch     = m_model.get().channels.get(channelId);
+		const ChannelStatus status = ch.shared->playStatus.load();
+		if (status == ChannelStatus::OFF)
+			m_sampleReactor.play(*ch.shared, delta);
+		else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
+			m_sampleReactor.rewind(*ch.shared, delta);
+	});
 }
 
 /* -------------------------------------------------------------------------- */

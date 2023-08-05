@@ -201,6 +201,12 @@ public:
 private:
 	void loadSampleChannel(Channel&, Wave*, Frame begin = -1, Frame end = -1, Frame shift = -1) const;
 
+	/* setupChannelCallbacks
+    Prepares the channel with the necessary callbacks. Call this whenever a 
+	new channel is created. */
+
+	void setupChannelCallbacks(const Channel&, ChannelShared&) const;
+
 	std::vector<Channel*> getRecordableChannels();
 	std::vector<Channel*> getOverdubbableChannels();
 
