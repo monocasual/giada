@@ -352,10 +352,16 @@ void ChannelManager::keyRelease(ID channelId, bool canRecordActions, Frame curre
 {
 	Channel& ch = m_model.get().channels.get(channelId);
 
-	if (ch.type == ChannelType::SAMPLE && ch.hasWave() && canRecordActions && !ch.sampleChannel->isAnyLoopMode())
-		m_sampleActionRecorder.keyRelease(channelId, canRecordActions, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
-	if (ch.type == ChannelType::SAMPLE && ch.hasWave())
-		m_sampleReactor.keyRelease(*ch.shared, ch.sampleChannel->mode);
+	if (ch.type != ChannelType::SAMPLE || !ch.hasWave())
+		return;
+
+	const bool             isAnyLoopMode = ch.sampleChannel->isAnyLoopMode();
+	const SamplePlayerMode mode          = ch.sampleChannel->mode;
+
+	if (canRecordActions && !isAnyLoopMode)
+		m_sampleActionRecorder.keyRelease(channelId, canRecordActions, currentFrameQuantized, mode, ch.hasActions);
+
+	m_sampleReactor.keyRelease(*ch.shared, mode);
 
 	m_model.swap(model::SwapType::SOFT);
 }
