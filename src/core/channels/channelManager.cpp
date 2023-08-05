@@ -327,8 +327,8 @@ void ChannelManager::keyPress(ID channelId, int velocity, bool canRecordActions,
 {
 	Channel& ch = m_model.get().channels.get(channelId);
 
-	if (ch.midiController)
-		ch.midiController->keyPress(ch.shared->playStatus);
+	if (ch.type == ChannelType::MIDI)
+		m_midiController.keyPress(ch.shared->playStatus);
 	if (ch.type == ChannelType::SAMPLE && ch.hasWave() && canRecordActions && !ch.sampleChannel->isAnyLoopMode())
 		m_sampleActionRecorder.keyPress(channelId, *ch.shared, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
 	if (ch.type == ChannelType::SAMPLE && ch.hasWave())
@@ -357,8 +357,8 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 {
 	Channel& ch = m_model.get().channels.get(channelId);
 
-	if (ch.midiController)
-		ch.midiController->keyKill(ch.shared->playStatus);
+	if (ch.type == ChannelType::MIDI)
+		m_midiController.keyKill(ch.shared->playStatus);
 	if (ch.type == ChannelType::MIDI)
 		m_midiReceiver.stop(ch.shared->midiQueue);
 	if (ch.type == ChannelType::MIDI && ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
@@ -574,8 +574,8 @@ void ChannelManager::stopAll()
 {
 	for (Channel& ch : m_model.get().channels.getAll())
 	{
-		if (ch.midiController)
-			ch.midiController->stop(ch.shared->playStatus);
+		if (ch.type == ChannelType::MIDI)
+			m_midiController.stop(ch.shared->playStatus);
 		if (ch.type == ChannelType::SAMPLE)
 			m_sampleReactor.stopBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
 		if (ch.type == ChannelType::MIDI && ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
@@ -591,8 +591,8 @@ void ChannelManager::stopAll()
 void ChannelManager::rewindAll()
 {
 	for (Channel& ch : m_model.get().channels.getAll())
-		if (ch.midiController)
-			ch.midiController->rewind(ch.shared->playStatus);
+		if (ch.type == ChannelType::MIDI)
+			m_midiController.rewind(ch.shared->playStatus);
 	m_model.swap(model::SwapType::SOFT);
 }
 

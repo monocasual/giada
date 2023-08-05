@@ -28,6 +28,7 @@
 #define G_CHANNEL_MANAGER_H
 
 #include "core/channels/midiActionRecorder.h"
+#include "core/channels/midiController.h"
 #include "core/channels/midiLighter.h"
 #include "core/channels/midiReceiver.h"
 #include "core/channels/midiSender.h"
@@ -228,6 +229,7 @@ private:
 	MidiActionRecorder      m_midiActionRecorder;
 	SampleActionRecorder    m_sampleActionRecorder;
 	SampleReactor           m_sampleReactor;
+	MidiController          m_midiController;
 };
 } // namespace giada::m
 

@@ -163,8 +163,8 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 
 	for (const Sequencer::Event& e : events)
 	{
-		if (ch.midiController)
-			ch.midiController->advance(ch.shared->playStatus, e);
+		if (ch.type == ChannelType::MIDI)
+			m_midiController.advance(ch.shared->playStatus, e);
 
 		if (ch.type == ChannelType::SAMPLE)
 			m_sampleAdvancer.advance(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());

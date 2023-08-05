@@ -29,7 +29,6 @@
 
 #include "core/channels/channelShared.h"
 #include "core/channels/midiChannel.h"
-#include "core/channels/midiController.h"
 #include "core/channels/midiLearn.h"
 #include "core/channels/midiLightning.h"
 #include "core/channels/sampleAdvancer.h"
@@ -110,9 +109,8 @@ public:
 	MidiLearn     midiLearn;
 	MidiLightning midiLightning;
 
-	std::optional<MidiController> midiController;
-	std::optional<SampleChannel>  sampleChannel;
-	std::optional<MidiChannel>    midiChannel;
+	std::optional<SampleChannel> sampleChannel;
+	std::optional<MidiChannel>   midiChannel;
 
 private:
 	bool m_mute;
