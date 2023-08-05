@@ -37,7 +37,6 @@ class MidiSender final
 {
 public:
 	MidiSender(KernelMidi&);
-	MidiSender(const Patch::Channel& p, KernelMidi&);
 
 	void advance(ID channelId, const Sequencer::Event& e, int outputFilter) const;
 

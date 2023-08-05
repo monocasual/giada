@@ -38,13 +38,6 @@ MidiSender::MidiSender(KernelMidi& k)
 
 /* -------------------------------------------------------------------------- */
 
-MidiSender::MidiSender(const Patch::Channel& p, KernelMidi& k)
-: kernelMidi(&k)
-{
-}
-
-/* -------------------------------------------------------------------------- */
-
 void MidiSender::advance(ID channelId, const Sequencer::Event& e, int outputFilter) const
 {
 	if (e.type == Sequencer::EventType::ACTIONS)
