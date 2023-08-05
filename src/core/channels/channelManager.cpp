@@ -328,11 +328,20 @@ void ChannelManager::keyPress(ID channelId, int velocity, bool canRecordActions,
 	Channel& ch = m_model.get().channels.get(channelId);
 
 	if (ch.type == ChannelType::MIDI)
+	{
 		m_midiController.keyPress(ch.shared->playStatus);
-	if (ch.type == ChannelType::SAMPLE && ch.hasWave() && canRecordActions && !ch.sampleChannel->isAnyLoopMode())
-		m_sampleActionRecorder.keyPress(channelId, *ch.shared, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
-	if (ch.type == ChannelType::SAMPLE && ch.hasWave())
-		m_sampleReactor.keyPress(channelId, *ch.shared, ch.sampleChannel->mode, velocity, canQuantize, ch.sampleChannel->isAnyLoopMode(), ch.sampleChannel->velocityAsVol, ch.volume_i);
+	}
+	else if (ch.type == ChannelType::SAMPLE && ch.hasWave())
+	{
+		const bool             isAnyLoopMode = ch.sampleChannel->isAnyLoopMode();
+		const bool             velocityAsVol = ch.sampleChannel->velocityAsVol;
+		const SamplePlayerMode mode          = ch.sampleChannel->mode;
+
+		if (canRecordActions && !isAnyLoopMode)
+			m_sampleActionRecorder.keyPress(channelId, *ch.shared, currentFrameQuantized, mode, ch.hasActions);
+
+		m_sampleReactor.keyPress(channelId, *ch.shared, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol, ch.volume_i);
+	}
 
 	m_model.swap(model::SwapType::SOFT);
 }
