@@ -164,16 +164,19 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 	for (const Sequencer::Event& e : events)
 	{
 		if (ch.type == ChannelType::MIDI)
+		{
 			m_midiController.advance(ch.shared->playStatus, e);
 
-		if (ch.type == ChannelType::SAMPLE)
-			m_sampleAdvancer.advance(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());
+			if (!ch.isPlaying())
+				continue;
 
-		if (ch.type == ChannelType::MIDI && ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
-			m_midiSender.advance(ch.id, e, ch.midiChannel->outputFilter);
-
-		if (ch.type == ChannelType::MIDI && ch.isPlaying())
 			m_midiReceiver.advance(ch.id, ch.shared->midiQueue, e);
+
+			if (!ch.isMuted() && ch.midiChannel->outputEnabled)
+				m_midiSender.advance(ch.id, e, ch.midiChannel->outputFilter);
+		}
+		else if (ch.type == ChannelType::SAMPLE)
+			m_sampleAdvancer.advance(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());
 	}
 }
 
