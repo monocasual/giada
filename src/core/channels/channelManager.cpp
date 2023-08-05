@@ -399,10 +399,12 @@ void ChannelManager::processMidiEvent(ID channelId, const MidiEvent& e, bool can
 {
 	Channel& ch = m_model.get().channels.get(channelId);
 
-	if (ch.type == ChannelType::MIDI && canRecordActions)
+	assert(ch.type == ChannelType::MIDI);
+
+	if (canRecordActions)
 		m_midiActionRecorder.record(channelId, e, currentFrameQuantized, ch.hasActions);
-	if (ch.type == ChannelType::MIDI)
-		m_midiReceiver.parseMidi(ch.shared->midiQueue, e);
+
+	m_midiReceiver.parseMidi(ch.shared->midiQueue, e);
 }
 
 /* -------------------------------------------------------------------------- */
