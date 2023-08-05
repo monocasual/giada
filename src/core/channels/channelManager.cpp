@@ -678,18 +678,22 @@ void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& sha
 	shared.playStatus.onChange = [this, midiLightning = ch.midiLightning](ChannelStatus status) {
 		m_midiLighter.sendStatus(midiLightning, status, /*isAudible=*/true /* TODO!!! */);
 	};
-	shared.quantizer->schedule(Q_ACTION_PLAY + ch.id, [this, channelId = ch.id](Frame delta) {
-		Channel& ch = m_model.get().channels.get(channelId);
-		m_sampleReactor.play(*ch.shared, delta);
-	});
-	shared.quantizer->schedule(Q_ACTION_REWIND + ch.id, [this, channelId = ch.id](Frame delta) {
-		Channel&            ch     = m_model.get().channels.get(channelId);
-		const ChannelStatus status = ch.shared->playStatus.load();
-		if (status == ChannelStatus::OFF)
+
+	if (ch.type == ChannelType ::SAMPLE)
+	{
+		shared.quantizer->schedule(Q_ACTION_PLAY + ch.id, [this, channelId = ch.id](Frame delta) {
+			Channel& ch = m_model.get().channels.get(channelId);
 			m_sampleReactor.play(*ch.shared, delta);
-		else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
-			m_sampleReactor.rewind(*ch.shared, delta);
-	});
+		});
+		shared.quantizer->schedule(Q_ACTION_REWIND + ch.id, [this, channelId = ch.id](Frame delta) {
+			Channel&            ch     = m_model.get().channels.get(channelId);
+			const ChannelStatus status = ch.shared->playStatus.load();
+			if (status == ChannelStatus::OFF)
+				m_sampleReactor.play(*ch.shared, delta);
+			else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
+				m_sampleReactor.rewind(*ch.shared, delta);
+		});
+	}
 }
 
 /* -------------------------------------------------------------------------- */
