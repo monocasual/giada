@@ -196,25 +196,25 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl
 {
 	ch.shared->audioBuffer.clear();
 
-	if (ch.type == ChannelType::SAMPLE && ch.isPlaying())
-	{
-		SamplePlayer::Render render;
-		while (ch.shared->renderQueue->pop(render))
-			;
-		m_samplePlayer.render(ch, render, seqIsRunning);
-	}
-
 	if (ch.type == ChannelType::SAMPLE)
+	{
+		if (ch.isPlaying())
+		{
+			SamplePlayer::Render render;
+			while (ch.shared->renderQueue->pop(render))
+				;
+			m_samplePlayer.render(ch, render, seqIsRunning);
+		}
 		m_audioReceiver.render(ch, in);
-
-	/* If is MIDI channel, let it process the plug-in stack, as it can
-	contain plug-ins that take MIDI events (i.e. synths). Otherwise process the
-	plug-in stack internally with no MIDI events. */
-
-	if (ch.type == ChannelType::MIDI)
-		m_midiReceiver.render(*ch.shared, ch.plugins, m_pluginHost);
-	else
 		m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
+	}
+	else if (ch.type == ChannelType::MIDI)
+	{
+		/* If is MIDI channel, let MidiReceiver process the plug-in stack, as it 
+		might contain plug-ins that take MIDI events (i.e. synths). */
+
+		m_midiReceiver.render(*ch.shared, ch.plugins, m_pluginHost);
+	}
 
 	if (ch.isAudible(mixerHasSolos))
 		out.sum(ch.shared->audioBuffer, ch.volume * ch.volume_i, calcPanning_(ch.pan));
