@@ -64,7 +64,6 @@ Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShar
 
 	case ChannelType::MIDI:
 		midiController.emplace();
-		midiReceiver.emplace();
 		midiChannel.emplace();
 		break;
 
@@ -110,7 +109,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 
 	case ChannelType::MIDI:
 		midiController.emplace();
-		midiReceiver.emplace();
 		midiChannel.emplace(p);
 		break;
 

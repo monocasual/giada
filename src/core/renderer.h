@@ -28,6 +28,7 @@
 #define G_RENDERER_H
 
 #include "core/channels/audioReceiver.h"
+#include "core/channels/midiReceiver.h"
 #include "core/channels/midiSender.h"
 #include "core/channels/sampleAdvancer.h"
 #include "core/channels/samplePlayer.h"
@@ -94,6 +95,7 @@ private:
 	SamplePlayer   m_samplePlayer;
 	SampleAdvancer m_sampleAdvancer;
 	MidiSender     m_midiSender;
+	MidiReceiver   m_midiReceiver;
 };
 } // namespace giada::m
 

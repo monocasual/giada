@@ -172,8 +172,8 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 		if (ch.type == ChannelType::MIDI && ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
 			m_midiSender.advance(ch.id, e, ch.midiChannel->outputFilter);
 
-		if (ch.midiReceiver && ch.isPlaying())
-			ch.midiReceiver->advance(ch.id, ch.shared->midiQueue, e);
+		if (ch.type == ChannelType::MIDI && ch.isPlaying())
+			m_midiReceiver.advance(ch.id, ch.shared->midiQueue, e);
 	}
 }
 
@@ -204,12 +204,12 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl
 	if (ch.type == ChannelType::SAMPLE)
 		m_audioReceiver.render(ch, in);
 
-	/* If MidiReceiver exists, let it process the plug-in stack, as it can
+	/* If is MIDI channel, let it process the plug-in stack, as it can
 	contain plug-ins that take MIDI events (i.e. synths). Otherwise process the
 	plug-in stack internally with no MIDI events. */
 
-	if (ch.midiReceiver)
-		ch.midiReceiver->render(*ch.shared, ch.plugins, m_pluginHost);
+	if (ch.type == ChannelType::MIDI)
+		m_midiReceiver.render(*ch.shared, ch.plugins, m_pluginHost);
 	else if (ch.plugins.size() > 0)
 		m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
 
