@@ -48,6 +48,7 @@ class Channels;
 
 namespace giada::m
 {
+class Engine;
 class Sequencer;
 class Mixer;
 class Channel;
@@ -59,6 +60,8 @@ class JackTransport;
 class Renderer
 {
 public:
+	friend Engine;
+
 #ifdef WITH_AUDIO_JACK
 	Renderer(Sequencer&, Mixer&, PluginHost&, JackSynchronizer&, JackTransport&, KernelMidi&);
 #else
