@@ -373,15 +373,22 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 	Channel& ch = m_model.get().channels.get(channelId);
 
 	if (ch.type == ChannelType::MIDI)
+	{
 		m_midiController.keyKill(ch.shared->playStatus);
-	if (ch.type == ChannelType::MIDI)
 		m_midiReceiver.stop(ch.shared->midiQueue);
-	if (ch.type == ChannelType::MIDI && ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
-		m_midiSender.stop(ch.midiChannel->outputFilter);
-	if (ch.type == ChannelType::SAMPLE && ch.hasWave() && canRecordActions)
-		m_sampleActionRecorder.keyKill(channelId, canRecordActions, currentFrameQuantized, ch.sampleChannel->mode, ch.hasActions);
-	if (ch.type == ChannelType::SAMPLE)
-		m_sampleReactor.keyKill(*ch.shared, ch.sampleChannel->mode);
+
+		if (ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
+			m_midiSender.stop(ch.midiChannel->outputFilter);
+	}
+	else if (ch.type == ChannelType::SAMPLE)
+	{
+		const SamplePlayerMode mode = ch.sampleChannel->mode;
+
+		if (ch.hasWave() && canRecordActions)
+			m_sampleActionRecorder.keyKill(channelId, canRecordActions, currentFrameQuantized, mode, ch.hasActions);
+
+		m_sampleReactor.keyKill(*ch.shared, mode);
+	}
 
 	m_model.swap(model::SwapType::SOFT);
 }
