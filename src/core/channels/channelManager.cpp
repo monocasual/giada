@@ -599,13 +599,17 @@ void ChannelManager::stopAll()
 	for (Channel& ch : m_model.get().channels.getAll())
 	{
 		if (ch.type == ChannelType::MIDI)
+		{
 			m_midiController.stop(ch.shared->playStatus);
-		if (ch.type == ChannelType::SAMPLE)
-			m_sampleReactor.stopBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
-		if (ch.type == ChannelType::MIDI && ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
-			m_midiSender.stop(ch.midiChannel->outputFilter);
-		if (ch.type == ChannelType::MIDI)
 			m_midiReceiver.stop(ch.shared->midiQueue);
+
+			if (ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
+				m_midiSender.stop(ch.midiChannel->outputFilter);
+		}
+		else if (ch.type == ChannelType::SAMPLE)
+		{
+			m_sampleReactor.stopBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
+		}
 	}
 	m_model.swap(model::SwapType::SOFT);
 }
