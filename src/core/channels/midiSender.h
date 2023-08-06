@@ -51,7 +51,6 @@ public:
 
 private:
 	void send(MidiEvent e, int outputFilter) const;
-	void parseActions(ID channelId, const std::vector<Action>& as, int outputFilter) const;
 };
 } // namespace giada::m
 

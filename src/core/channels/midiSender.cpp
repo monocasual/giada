@@ -40,8 +40,11 @@ MidiSender::MidiSender(KernelMidi& k)
 
 void MidiSender::advance(ID channelId, const Sequencer::Event& e, int outputFilter) const
 {
-	if (e.type == Sequencer::EventType::ACTIONS)
-		parseActions(channelId, *e.actions, outputFilter);
+	if (e.type != Sequencer::EventType::ACTIONS)
+		return;
+	for (const Action& a : *e.actions)
+		if (a.channelId == channelId)
+			send(a.event, outputFilter);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -60,14 +63,5 @@ void MidiSender::send(MidiEvent e, int outputFilter) const
 	e.setChannel(outputFilter);
 	kernelMidi->send(e);
 	onSend();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void MidiSender::parseActions(ID channelId, const std::vector<Action>& as, int outputFilter) const
-{
-	for (const Action& a : as)
-		if (a.channelId == channelId)
-			send(a.event, outputFilter);
 }
 } // namespace giada::m
