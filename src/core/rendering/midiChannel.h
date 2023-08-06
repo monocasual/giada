@@ -37,10 +37,10 @@ class KernelMidi;
 
 namespace giada::m::rendering
 {
-/* registerOnSendCb
+/* registerOnSendMidiCb
 Callback fired when a MIDI signal has been sent. */
 
-void registerOnSendCb(std::function<void()>);
+void registerOnSendMidiCb(std::function<void()>);
 
 /* sendMidiFromActions
 Sends a corresponding MIDI event for each action in the action vector. */

@@ -301,7 +301,7 @@ void Engine::setMidiCallback(std::function<void()> f)
 {
 	m_channelManager.m_midiLighter.onSend = f;
 	m_channelManager.m_midiSender.onSend  = f;
-	rendering::registerOnSendCb(f);
+	rendering::registerOnSendMidiCb(f);
 }
 
 /* -------------------------------------------------------------------------- */

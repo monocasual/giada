@@ -50,7 +50,7 @@ void sendMidi_(MidiEvent e, int outputFilter, KernelMidi& kernelMidi)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void registerOnSendCb(std::function<void()> f)
+void registerOnSendMidiCb(std::function<void()> f)
 {
 	onSend_ = f;
 }
