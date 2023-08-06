@@ -303,7 +303,7 @@ void ChannelManager::keyPress(ID channelId, int velocity, bool canRecordActions,
 
 	if (ch.type == ChannelType::MIDI)
 	{
-		m_midiController.keyPress(ch.shared->playStatus);
+		rendering::playMidiChannel(ch.shared->playStatus);
 	}
 	else if (ch.type == ChannelType::SAMPLE && ch.hasWave())
 	{
@@ -350,7 +350,7 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 	{
 		if (ch.isPlaying())
 		{
-			m_midiController.keyKill(ch.shared->playStatus);
+			rendering::stopMidiChannel(ch.shared->playStatus);
 			rendering::sendMidiAllNotesOff(ch, m_kernelMidi);
 		}
 	}
@@ -576,9 +576,7 @@ void ChannelManager::stopAll()
 		{
 			if (!ch.isPlaying())
 				continue;
-
-			m_midiController.stop(ch.shared->playStatus);
-
+			rendering::stopMidiChannel(ch.shared->playStatus);
 			rendering::sendMidiAllNotesOff(ch, m_kernelMidi);
 		}
 		else if (ch.type == ChannelType::SAMPLE)
@@ -595,7 +593,7 @@ void ChannelManager::rewindAll()
 {
 	for (Channel& ch : m_model.get().channels.getAll())
 		if (ch.type == ChannelType::MIDI)
-			m_midiController.rewind(ch.shared->playStatus);
+			rendering::rewindMidiChannel(ch.shared->playStatus);
 	m_model.swap(model::SwapType::SOFT);
 }
 
