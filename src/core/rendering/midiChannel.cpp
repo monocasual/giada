@@ -120,4 +120,56 @@ const juce::MidiBuffer& prepareMidiBuffer(ChannelShared& shared)
 
 	return shared.midiBuffer;
 }
+
+/* -------------------------------------------------------------------------- */
+
+void playMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
+{
+	ChannelStatus playStatus = a_playStatus.load();
+
+	switch (playStatus)
+	{
+	case ChannelStatus::PLAY:
+		playStatus = ChannelStatus::ENDING;
+		break;
+
+	case ChannelStatus::ENDING:
+		playStatus = ChannelStatus::PLAY;
+		break;
+
+	case ChannelStatus::WAIT:
+		playStatus = ChannelStatus::OFF;
+		break;
+
+	case ChannelStatus::OFF:
+		playStatus = ChannelStatus::WAIT;
+		break;
+
+	default:
+		break;
+	}
+
+	a_playStatus.store(playStatus);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void stopMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
+{
+	a_playStatus.store(ChannelStatus::OFF);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void rewindMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
+{
+	ChannelStatus playStatus = a_playStatus.load();
+
+	if (playStatus == ChannelStatus::ENDING)
+		playStatus = ChannelStatus::OFF;
+	else if (playStatus == ChannelStatus::WAIT)
+		playStatus = ChannelStatus::PLAY;
+
+	a_playStatus.store(playStatus);
+}
 } // namespace giada::m::rendering

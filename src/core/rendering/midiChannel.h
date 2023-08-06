@@ -29,6 +29,7 @@
 
 #include "core/channels/channelShared.h"
 #include "core/midiEvent.h"
+#include "core/weakAtomic.h"
 
 namespace giada::m
 {
@@ -64,6 +65,13 @@ Fills the JUCE MIDI buffer with events previously enqueued in the MidiQueue.
 Returns a reference to the JUCE MIDI buffer for convenience. */
 
 const juce::MidiBuffer& prepareMidiBuffer(ChannelShared&);
+
+/* [play|stop|rewind]MidiChannel
+Actions manually performed on a MIDI channel. */
+
+void playMidiChannel(WeakAtomic<ChannelStatus>&);
+void stopMidiChannel(WeakAtomic<ChannelStatus>&);
+void rewindMidiChannel(WeakAtomic<ChannelStatus>&);
 } // namespace giada::m::rendering
 
 #endif
