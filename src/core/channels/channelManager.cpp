@@ -351,7 +351,7 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 		m_midiController.keyKill(ch.shared->playStatus);
 		m_midiReceiver.stop(ch.shared->midiQueue);
 
-		if (ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
+		if (ch.isPlaying() && ch.canSendMidi())
 			rendering::sendMidiAllNotesOff(ch.midiChannel->outputFilter, m_kernelMidi);
 	}
 	else if (ch.type == ChannelType::SAMPLE)
@@ -577,7 +577,7 @@ void ChannelManager::stopAll()
 			m_midiController.stop(ch.shared->playStatus);
 			m_midiReceiver.stop(ch.shared->midiQueue);
 
-			if (ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
+			if (ch.isPlaying() && ch.canSendMidi())
 				rendering::sendMidiAllNotesOff(ch.midiChannel->outputFilter, m_kernelMidi);
 		}
 		else if (ch.type == ChannelType::SAMPLE)
