@@ -51,7 +51,7 @@
 #include "core/plugins/pluginHost.h"
 #include "core/plugins/pluginManager.h"
 #include "core/recorder.h"
-#include "core/renderer.h"
+#include "src/core/rendering/renderer.h"
 #include "core/sequencer.h"
 #include "core/waveFactory.h"
 #ifdef WITH_AUDIO_JACK
