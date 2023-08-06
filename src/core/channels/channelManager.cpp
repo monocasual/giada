@@ -30,6 +30,7 @@
 #include "core/midiEvent.h"
 #include "core/mixer.h"
 #include "core/model/model.h"
+#include "core/rendering/midiChannel.h"
 #include "core/waveFactory.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "utils/log.h"
@@ -48,8 +49,8 @@ constexpr int Q_ACTION_REWIND = 10000; // Avoid clash with Q_ACTION_PLAY + chann
 
 ChannelManager::ChannelManager(model::Model& model, MidiMapper<KernelMidi>& m, ActionRecorder& a, KernelMidi& km)
 : m_model(model)
+, m_kernelMidi(km)
 , m_midiLighter(m)
-, m_midiSender(km)
 , m_midiActionRecorder(a)
 , m_sampleActionRecorder(a)
 {
@@ -351,7 +352,7 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 		m_midiReceiver.stop(ch.shared->midiQueue);
 
 		if (ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
-			m_midiSender.stop(ch.midiChannel->outputFilter);
+			rendering::sendMidiAllNotesOff(ch.midiChannel->outputFilter, m_kernelMidi);
 	}
 	else if (ch.type == ChannelType::SAMPLE)
 	{
@@ -577,7 +578,7 @@ void ChannelManager::stopAll()
 			m_midiReceiver.stop(ch.shared->midiQueue);
 
 			if (ch.isPlaying() && !ch.isMuted() && ch.midiChannel->outputEnabled)
-				m_midiSender.stop(ch.midiChannel->outputFilter);
+				rendering::sendMidiAllNotesOff(ch.midiChannel->outputFilter, m_kernelMidi);
 		}
 		else if (ch.type == ChannelType::SAMPLE)
 		{
