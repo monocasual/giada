@@ -37,6 +37,7 @@
 namespace giada::m
 {
 class Engine;
+class Mixer;
 class MidiDispatcher;
 class MidiSynchronizer;
 class ChannelManager;

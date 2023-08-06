@@ -26,6 +26,7 @@
 
 #include "glue/layout.h"
 #include "core/conf.h"
+#include "core/mixer.h"
 #include "core/patch.h"
 #include "core/sequencer.h"
 #include "glue/channel.h"

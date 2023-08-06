@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/renderer.h"
+#include "core/mixer.h"
 #include "core/model/model.h"
 #ifdef WITH_AUDIO_JACK
 #include "core/jackSynchronizer.h"

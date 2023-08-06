@@ -28,6 +28,7 @@
 #include "core/channels/channel.h"
 #include "core/channels/channelFactory.h"
 #include "core/midiEvent.h"
+#include "core/mixer.h"
 #include "core/model/model.h"
 #include "core/waveFactory.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
