@@ -50,8 +50,8 @@ constexpr int Q_ACTION_REWIND = 10000; // Avoid clash with Q_ACTION_PLAY + chann
 ChannelManager::ChannelManager(model::Model& model, MidiMapper<KernelMidi>& m, ActionRecorder& a, KernelMidi& km)
 : m_model(model)
 , m_kernelMidi(km)
+, m_actionRecorder(a)
 , m_midiLighter(m)
-, m_midiActionRecorder(a)
 , m_sampleActionRecorder(a)
 {
 }
@@ -376,8 +376,11 @@ void ChannelManager::processMidiEvent(ID channelId, const MidiEvent& e, bool can
 	assert(ch.type == ChannelType::MIDI);
 
 	if (canRecordActions)
-		m_midiActionRecorder.record(channelId, e, currentFrameQuantized, ch.hasActions);
-
+	{
+		rendering::recordMidiAction(channelId, e, currentFrameQuantized, m_actionRecorder);
+		ch.hasActions = true;
+		m_model.swap(model::SwapType::HARD);
+	}
 	rendering::sendMidiEventToPlugins(ch.shared->midiQueue, e);
 }
 

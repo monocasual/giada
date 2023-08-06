@@ -27,7 +27,6 @@
 #ifndef G_CHANNEL_MANAGER_H
 #define G_CHANNEL_MANAGER_H
 
-#include "core/channels/midiActionRecorder.h"
 #include "core/channels/midiLighter.h"
 #include "core/channels/sampleActionRecorder.h"
 #include "core/channels/sampleReactor.h"
@@ -227,8 +226,8 @@ private:
 
 	model::Model&           m_model;
 	KernelMidi&             m_kernelMidi;
+	ActionRecorder&         m_actionRecorder;
 	MidiLighter<KernelMidi> m_midiLighter;
-	MidiActionRecorder      m_midiActionRecorder;
 	SampleActionRecorder    m_sampleActionRecorder;
 	SampleReactor           m_sampleReactor;
 };
