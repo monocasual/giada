@@ -48,6 +48,16 @@ void sendMidiToOut_(MidiEvent e, int outputFilter, KernelMidi& kernelMidi)
 
 /* -------------------------------------------------------------------------- */
 
+void sendMidiLightning_(uint32_t learnt, const MidiMap::Message& msg, MidiMapper<KernelMidi>& midiMapper)
+{
+	assert(onSend_ != nullptr);
+
+	midiMapper.sendMidiLightning(learnt, msg);
+	onSend_();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void sendMidiToPlugins_(ChannelShared::MidiQueue& midiQueue, const MidiEvent& e, Frame localFrame)
 {
 	MidiEvent eWithDelta(e);
@@ -181,5 +191,60 @@ void recordMidiAction(ID channelId, const MidiEvent& event, Frame currentFrameQu
 	MidiEvent flat(event);
 	flat.setChannel(0);
 	actionRecorder.liveRec(channelId, flat, currentFrameQuantized);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void sendMidiLightningStatus(const MidiLightning& m, ChannelStatus status, bool audible, MidiMapper<KernelMidi>& midiMapper)
+{
+	const MidiMap& midiMap   = midiMapper.currentMap;
+	const uint32_t l_playing = m.playing.getValue();
+
+	if (l_playing == 0x0)
+		return;
+
+	switch (status)
+	{
+	case ChannelStatus::OFF:
+		sendMidiLightning_(l_playing, midiMap.stopped, midiMapper);
+		break;
+
+	case ChannelStatus::WAIT:
+		sendMidiLightning_(l_playing, midiMap.waiting, midiMapper);
+		break;
+
+	case ChannelStatus::ENDING:
+		sendMidiLightning_(l_playing, midiMap.stopping, midiMapper);
+		break;
+
+	case ChannelStatus::PLAY:
+		sendMidiLightning_(l_playing, audible ? midiMap.playing : midiMap.playingInaudible, midiMapper);
+		break;
+
+	default:
+		break;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void sendMidiLightningMute(const MidiLightning& m, bool isMuted, MidiMapper<KernelMidi>& midiMapper)
+{
+	const MidiMap& midiMap = midiMapper.currentMap;
+	const uint32_t l_mute  = m.mute.getValue();
+
+	if (l_mute != 0x0)
+		sendMidiLightning_(l_mute, isMuted ? midiMap.muteOn : midiMap.muteOff, midiMapper);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void sendMidiLightningSolo(const MidiLightning& m, bool isSoloed, MidiMapper<KernelMidi>& midiMapper)
+{
+	const MidiMap& midiMap = midiMapper.currentMap;
+	const uint32_t l_solo  = m.solo.getValue();
+
+	if (l_solo != 0x0)
+		sendMidiLightning_(l_solo, isSoloed ? midiMap.soloOn : midiMap.soloOff, midiMapper);
 }
 } // namespace giada::m::rendering

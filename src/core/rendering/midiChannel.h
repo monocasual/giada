@@ -29,6 +29,7 @@
 
 #include "core/channels/channelShared.h"
 #include "core/midiEvent.h"
+#include "core/midiMapper.h"
 #include "core/weakAtomic.h"
 
 namespace giada::m
@@ -36,6 +37,7 @@ namespace giada::m
 struct Action;
 class KernelMidi;
 class ActionRecorder;
+class MidiLightning;
 } // namespace giada::m
 
 namespace giada::m::rendering
@@ -78,6 +80,13 @@ void rewindMidiChannel(WeakAtomic<ChannelStatus>&);
 Records a new Action for a MIDI channel. */
 
 void recordMidiAction(ID channelId, const MidiEvent&, Frame currentFrameQuantized, ActionRecorder&);
+
+/* sendMidiLightning[...]
+Sends MIDI lightning messages to the outside world. */
+
+void sendMidiLightningStatus(const MidiLightning&, ChannelStatus, bool audible, MidiMapper<KernelMidi>&);
+void sendMidiLightningMute(const MidiLightning&, bool isMuted, MidiMapper<KernelMidi>&);
+void sendMidiLightningSolo(const MidiLightning&, bool isSoloed, MidiMapper<KernelMidi>&);
 } // namespace giada::m::rendering
 
 #endif
