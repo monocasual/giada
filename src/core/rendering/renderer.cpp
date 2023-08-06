@@ -169,13 +169,8 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 		{
 			m_midiController.advance(ch.shared->playStatus, e);
 
-			if (!ch.isPlaying())
-				continue;
-
-			m_midiReceiver.advance(ch.id, ch.shared->midiQueue, e);
-
-			if (ch.canSendMidi() && e.type == Sequencer::EventType::ACTIONS)
-				sendMidiFromActions(ch.id, *e.actions, ch.midiChannel->outputFilter, m_kernelMidi);
+			if (ch.isPlaying() && e.type == Sequencer::EventType::ACTIONS)
+				sendMidiFromActions(ch, *e.actions, e.delta, m_kernelMidi);
 		}
 		else if (ch.type == ChannelType::SAMPLE)
 			m_sampleAdvancer.advance(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());

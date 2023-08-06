@@ -66,11 +66,16 @@ void registerOnSendMidiCb(std::function<void()> f)
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiFromActions(ID channelId, const std::vector<Action>& actions, int outputFilter, KernelMidi& kernelMidi)
+void sendMidiFromActions(const Channel& ch, const std::vector<Action>& actions, Frame delta, KernelMidi& kernelMidi)
 {
-	for (const Action& a : actions)
-		if (a.channelId == channelId)
-			sendMidiToOut_(a.event, outputFilter, kernelMidi);
+	for (const Action& action : actions)
+	{
+		if (action.channelId != ch.id)
+			continue;
+		sendMidiToPlugins_(ch.shared->midiQueue, action.event, delta);
+		if (ch.canSendMidi())
+			sendMidiToOut_(action.event, ch.midiChannel->outputFilter, kernelMidi);
+	}
 }
 
 /* -------------------------------------------------------------------------- */
