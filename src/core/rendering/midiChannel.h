@@ -35,6 +35,7 @@ namespace giada::m
 {
 struct Action;
 class KernelMidi;
+class ActionRecorder;
 } // namespace giada::m
 
 namespace giada::m::rendering
@@ -72,6 +73,11 @@ Actions manually performed on a MIDI channel. */
 void playMidiChannel(WeakAtomic<ChannelStatus>&);
 void stopMidiChannel(WeakAtomic<ChannelStatus>&);
 void rewindMidiChannel(WeakAtomic<ChannelStatus>&);
+
+/* recordMidiAction 
+Records a new Action for a MIDI channel. */
+
+void recordMidiAction(ID channelId, const MidiEvent&, Frame currentFrameQuantized, ActionRecorder&);
 } // namespace giada::m::rendering
 
 #endif

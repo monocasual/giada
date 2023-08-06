@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/rendering/midiChannel.h"
+#include "core/actions/actionRecorder.h"
 #include "core/kernelMidi.h"
 #include <cassert>
 
@@ -171,5 +172,14 @@ void rewindMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
 		playStatus = ChannelStatus::PLAY;
 
 	a_playStatus.store(playStatus);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void recordMidiAction(ID channelId, const MidiEvent& event, Frame currentFrameQuantized, ActionRecorder& actionRecorder)
+{
+	MidiEvent flat(event);
+	flat.setChannel(0);
+	actionRecorder.liveRec(channelId, flat, currentFrameQuantized);
 }
 } // namespace giada::m::rendering
