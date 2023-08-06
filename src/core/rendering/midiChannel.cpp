@@ -36,7 +36,7 @@ std::function<void()> onSend_ = nullptr;
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidi_(MidiEvent e, int outputFilter, KernelMidi& kernelMidi)
+void sendMidiToOut_(MidiEvent e, int outputFilter, KernelMidi& kernelMidi)
 {
 	assert(onSend_ != nullptr);
 
@@ -61,13 +61,13 @@ void sendMidiFromActions(ID channelId, const std::vector<Action>& actions, int o
 {
 	for (const Action& a : actions)
 		if (a.channelId == channelId)
-			sendMidi_(a.event, outputFilter, kernelMidi);
+			sendMidiToOut_(a.event, outputFilter, kernelMidi);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void sendMidiAllNotesOff(int outputFilter, KernelMidi& kernelMidi)
 {
-	sendMidi_(MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), outputFilter, kernelMidi);
+	sendMidiToOut_(MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), outputFilter, kernelMidi);
 }
 } // namespace giada::m::rendering
