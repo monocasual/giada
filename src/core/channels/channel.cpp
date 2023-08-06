@@ -181,6 +181,13 @@ bool Channel::isPlaying() const
 
 /* -------------------------------------------------------------------------- */
 
+bool Channel::canReceiveAudio() const
+{
+	return type == ChannelType::SAMPLE && armed && sampleChannel->inputMonitor;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Channel::setMute(bool v)
 {
 	m_mute = v;

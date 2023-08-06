@@ -56,6 +56,11 @@ public:
 	bool canActionRec() const;
 	bool hasWave() const;
 
+	/* canReceiveAudio
+	Tells if the sample channel can receive audio as input monitor. */
+
+	bool canReceiveAudio() const;
+
 	/* isAudible
 	True if this channel is currently audible: not muted or not included in a 
 	solo session. */
