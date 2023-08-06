@@ -30,7 +30,6 @@
 #include "core/channels/midiActionRecorder.h"
 #include "core/channels/midiController.h"
 #include "core/channels/midiLighter.h"
-#include "core/channels/midiReceiver.h"
 #include "core/channels/sampleActionRecorder.h"
 #include "core/channels/sampleReactor.h"
 #include "core/resampler.h"
@@ -230,7 +229,6 @@ private:
 	model::Model&           m_model;
 	KernelMidi&             m_kernelMidi;
 	MidiLighter<KernelMidi> m_midiLighter;
-	MidiReceiver            m_midiReceiver;
 	MidiActionRecorder      m_midiActionRecorder;
 	SampleActionRecorder    m_sampleActionRecorder;
 	SampleReactor           m_sampleReactor;
