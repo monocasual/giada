@@ -362,8 +362,13 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 	{
 		const SamplePlayerMode mode = ch.sampleChannel->mode;
 
-		if (ch.hasWave() && canRecordActions)
-			m_sampleActionRecorder.keyKill(channelId, canRecordActions, currentFrameQuantized, mode, ch.hasActions);
+		if (ch.hasWave() && canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+		{
+			/* Record a stop event only if channel is SINGLE_PRESS. For any other 
+			mode the key release event is meaningless. */
+
+			m_sampleActionRecorder.keyKill(channelId, currentFrameQuantized, ch.hasActions);
+		}
 
 		m_sampleReactor.keyKill(*ch.shared, mode);
 	}

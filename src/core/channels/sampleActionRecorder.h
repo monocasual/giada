@@ -43,7 +43,7 @@ public:
 	void toggleReadActions(ChannelShared&, bool treatRecsAsLoops, bool seqIsRunning) const;
 	void keyPress(ID channelId, ChannelShared&, Frame currentFrameQuantized, SamplePlayerMode, bool& hasActions) const;
 	void keyRelease(ID channelId, Frame currentFrameQuantized, bool& hasActions) const;
-	void keyKill(ID channelId, bool canRecordActions, Frame currentFrameQuantized, SamplePlayerMode, bool& hasActions) const;
+	void keyKill(ID channelId, Frame currentFrameQuantized, bool& hasActions) const;
 
 private:
 	void record(ID channelId, int note, Frame currentFrameQuantized, bool& hasActions) const;

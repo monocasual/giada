@@ -69,13 +69,9 @@ void SampleActionRecorder::keyRelease(ID channelId, Frame currentFrameQuantized,
 
 /* -------------------------------------------------------------------------- */
 
-void SampleActionRecorder::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQuantized, SamplePlayerMode mode, bool& hasActions) const
+void SampleActionRecorder::keyKill(ID channelId, Frame currentFrameQuantized, bool& hasActions) const
 {
-	/* Record a stop event only if channel is SINGLE_PRESS. For any other mode 
-	the key release event is meaningless. */
-
-	if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
-		record(channelId, MidiEvent::CHANNEL_NOTE_KILL, currentFrameQuantized, hasActions);
+	record(channelId, MidiEvent::CHANNEL_NOTE_KILL, currentFrameQuantized, hasActions);
 }
 
 /* -------------------------------------------------------------------------- */
