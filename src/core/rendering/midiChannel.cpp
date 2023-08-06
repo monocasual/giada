@@ -63,4 +63,11 @@ void sendMidiFromActions(ID channelId, const std::vector<Action>& actions, int o
 		if (a.channelId == channelId)
 			sendMidi_(a.event, outputFilter, kernelMidi);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void sendMidiAllNotesOff(int outputFilter, KernelMidi& kernelMidi)
+{
+	sendMidi_(MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), outputFilter, kernelMidi);
+}
 } // namespace giada::m::rendering

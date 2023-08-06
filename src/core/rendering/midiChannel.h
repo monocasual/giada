@@ -46,6 +46,12 @@ void registerOnSendMidiCb(std::function<void()>);
 Sends a corresponding MIDI event for each action in the action vector. */
 
 void sendMidiFromActions(ID channelId, const std::vector<Action>&, int outputFilter, KernelMidi&);
+
+/* sendMidiAllNotesOff
+Sends a G_MIDI_ALL_NOTES_OFF event to the outside world. */
+
+void sendMidiAllNotesOff(int outputFilter, KernelMidi&);
+
 } // namespace giada::m::rendering
 
 #endif
