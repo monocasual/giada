@@ -56,6 +56,7 @@ void MidiReceiver::render(ChannelShared& shared, const std::vector<Plugin*>& plu
 	}
 
 	pluginHost.processStack(shared.audioBuffer, plugins, &shared.midiBuffer);
+	shared.midiBuffer.clear();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -90,7 +90,7 @@ public:
 	Applies the fx list to the buffer. */
 
 	void processStack(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>& plugins,
-	    juce::MidiBuffer* events = nullptr);
+	    const juce::MidiBuffer* events = nullptr);
 
 	/* swapPlugin 
 	Swaps plug-in 1 with plug-in 2 in the plug-in vector. */
@@ -128,7 +128,7 @@ private:
 
 	void juceToGiadaOutBuf(mcl::AudioBuffer& outBuf) const;
 
-	void processPlugins(const std::vector<Plugin*>&, juce::MidiBuffer& events);
+	void processPlugins(const std::vector<Plugin*>&, const juce::MidiBuffer& events);
 
 	void processPlugin(Plugin*, const juce::MidiBuffer& events);
 

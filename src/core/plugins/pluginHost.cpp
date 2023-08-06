@@ -93,7 +93,7 @@ void PluginHost::setBufferSize(int bufferSize)
 /* -------------------------------------------------------------------------- */
 
 void PluginHost::processStack(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>& plugins,
-    juce::MidiBuffer* events)
+    const juce::MidiBuffer* events)
 {
 	assert(outBuf.countFrames() == m_audioBuffer.getNumSamples());
 
@@ -201,7 +201,7 @@ void PluginHost::juceToGiadaOutBuf(mcl::AudioBuffer& outBuf) const
 
 /* -------------------------------------------------------------------------- */
 
-void PluginHost::processPlugins(const std::vector<Plugin*>& plugins, juce::MidiBuffer& events)
+void PluginHost::processPlugins(const std::vector<Plugin*>& plugins, const juce::MidiBuffer& events)
 {
 	for (Plugin* p : plugins)
 	{
@@ -209,7 +209,6 @@ void PluginHost::processPlugins(const std::vector<Plugin*>& plugins, juce::MidiB
 			continue;
 		processPlugin(p, events);
 	}
-	events.clear();
 }
 
 /* -------------------------------------------------------------------------- */
