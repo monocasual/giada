@@ -27,6 +27,7 @@
 #ifndef G_RENDERING_MIDI_CHANNEL_H
 #define G_RENDERING_MIDI_CHANNEL_H
 
+#include "core/channels/channelShared.h"
 #include "core/midiEvent.h"
 
 namespace giada::m
@@ -52,6 +53,11 @@ Sends a G_MIDI_ALL_NOTES_OFF event to the outside world. */
 
 void sendMidiAllNotesOff(int outputFilter, KernelMidi&);
 
+/* sendMidiEventToPlugins
+Enqueue MIDI event to to the MIDI queue, so that it will be processed later
+on by the PluginHost. */
+
+void sendMidiEventToPlugins(ChannelShared::MidiQueue&, const MidiEvent&);
 } // namespace giada::m::rendering
 
 #endif

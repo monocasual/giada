@@ -44,6 +44,15 @@ void sendMidiToOut_(MidiEvent e, int outputFilter, KernelMidi& kernelMidi)
 	kernelMidi.send(e);
 	onSend_();
 }
+
+/* -------------------------------------------------------------------------- */
+
+void sendMidiToPlugins_(ChannelShared::MidiQueue& midiQueue, const MidiEvent& e, Frame localFrame)
+{
+	MidiEvent eWithDelta(e);
+	eWithDelta.setDelta(localFrame);
+	midiQueue.push(eWithDelta);
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -69,5 +78,18 @@ void sendMidiFromActions(ID channelId, const std::vector<Action>& actions, int o
 void sendMidiAllNotesOff(int outputFilter, KernelMidi& kernelMidi)
 {
 	sendMidiToOut_(MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), outputFilter, kernelMidi);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void sendMidiEventToPlugins(ChannelShared::MidiQueue& midiQueue, const MidiEvent& e)
+{
+	/* Now all messages are turned into Channel-0 messages. Giada doesn't care 
+	about holding MIDI channel information. Moreover, having all internal 
+	messages on channel 0 is way easier. Then send it to plug-ins. */
+
+	MidiEvent flat(e);
+	flat.setChannel(0);
+	sendMidiToPlugins_(midiQueue, flat, /*delta=*/0);
 }
 } // namespace giada::m::rendering
