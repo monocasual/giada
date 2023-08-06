@@ -79,8 +79,7 @@ list(APPEND SOURCES
 	src/core/channels/channelManager.cpp
 	src/core/channels/sampleActionRecorder.cpp
 	src/core/channels/midiActionRecorder.cpp
-		src/core/waveReader.cpp
-	src/core/channels/midiController.cpp
+	src/core/waveReader.cpp
 	src/core/channels/sampleReactor.cpp
 	src/core/channels/sampleAdvancer.cpp
 	src/core/channels/samplePlayer.cpp
