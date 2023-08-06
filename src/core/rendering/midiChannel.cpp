@@ -92,4 +92,11 @@ void sendMidiEventToPlugins(ChannelShared::MidiQueue& midiQueue, const MidiEvent
 	flat.setChannel(0);
 	sendMidiToPlugins_(midiQueue, flat, /*delta=*/0);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void sendMidiAllNotesOffToPlugins(ChannelShared::MidiQueue& midiQueue)
+{
+	sendMidiToPlugins_(midiQueue, MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), 0);
+}
 } // namespace giada::m::rendering

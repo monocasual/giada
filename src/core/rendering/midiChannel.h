@@ -58,6 +58,11 @@ Enqueue MIDI event to to the MIDI queue, so that it will be processed later
 on by the PluginHost. */
 
 void sendMidiEventToPlugins(ChannelShared::MidiQueue&, const MidiEvent&);
+
+/* sendMidiAllNotesOffToPlugins
+Enqueue a G_MIDI_ALL_NOTES_OFF event to the MIDI queue. */
+
+void sendMidiAllNotesOffToPlugins(ChannelShared::MidiQueue&);
 } // namespace giada::m::rendering
 
 #endif
