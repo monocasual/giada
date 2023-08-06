@@ -39,12 +39,6 @@ namespace mcl
 class AudioBuffer;
 }
 
-namespace giada::m::model
-{
-class Model;
-class Channels;
-} // namespace giada::m::model
-
 namespace giada::m
 {
 class Engine;
@@ -56,6 +50,16 @@ class PluginHost;
 class JackSynchronizer;
 class JackTransport;
 #endif
+} // namespace giada::m
+
+namespace giada::m::model
+{
+class Model;
+class Channels;
+} // namespace giada::m::model
+
+namespace giada::m::rendering
+{
 class Renderer
 {
 public:
@@ -100,6 +104,6 @@ private:
 	MidiReceiver   m_midiReceiver;
 	MidiController m_midiController;
 };
-} // namespace giada::m
+} // namespace giada::m::rendering
 
 #endif

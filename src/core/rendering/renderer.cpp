@@ -32,7 +32,7 @@
 #include "core/jackTransport.h"
 #endif
 
-namespace giada::m
+namespace giada::m::rendering
 {
 mcl::AudioBuffer::Pan calcPanning_(float pan)
 {
@@ -263,4 +263,4 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 
 	out.sum(ch.shared->audioBuffer, ch.volume, calcPanning_(ch.pan));
 }
-} // namespace giada::m
+} // namespace giada::m::rendering
