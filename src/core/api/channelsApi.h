@@ -33,6 +33,11 @@
 #include <string>
 #include <vector>
 
+namespace giada::m::model
+{
+class Model;
+}
+
 namespace giada::m
 {
 class MidiEvent;

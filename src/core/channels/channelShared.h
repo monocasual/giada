@@ -30,6 +30,7 @@
 #include "core/channels/samplePlayer.h"
 #include "core/const.h"
 #include "core/midiEvent.h"
+#include "core/quantizer.h"
 #include "core/queue.h"
 #include "core/resampler.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"

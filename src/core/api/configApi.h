@@ -37,6 +37,7 @@ class Model;
 
 namespace giada::m
 {
+class MidiSynchronizer;
 class ConfigApi
 {
 public:

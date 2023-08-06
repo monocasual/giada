@@ -28,15 +28,12 @@
 #define G_CHANNEL_SAMPLE_PLAYER_H
 
 #include "core/channels/waveReader.h"
-#include "core/const.h"
-#include "core/patch.h"
-#include "core/sequencer.h"
 #include "core/types.h"
+#include "core/weakAtomic.h"
 #include <functional>
 
 namespace giada::m
 {
-struct ChannelShared;
 class Channel;
 class SamplePlayer final
 {
