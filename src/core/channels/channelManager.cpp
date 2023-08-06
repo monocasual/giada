@@ -378,7 +378,7 @@ void ChannelManager::processMidiEvent(ID channelId, const MidiEvent& e, bool can
 	if (canRecordActions)
 		m_midiActionRecorder.record(channelId, e, currentFrameQuantized, ch.hasActions);
 
-	m_midiReceiver.parseMidi(ch.shared->midiQueue, e);
+	rendering::sendMidiEventToPlugins(ch.shared->midiQueue, e);
 }
 
 /* -------------------------------------------------------------------------- */
