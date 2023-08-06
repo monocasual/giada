@@ -66,8 +66,6 @@ public:
 
 	void render(const Channel&, Render, bool seqIsRunning) const;
 
-	WaveReader waveReader;
-
 	/* onLastFrame
 	Callback fired when the last frame has been reached. 'natural' == true
 	if the rendering has ended because the end of the sample has ben reached. 
@@ -91,6 +89,8 @@ private:
 	void stop(const Channel&, mcl::AudioBuffer&, Frame offset, bool seqIsRunning) const;
 
 	bool shouldLoop(SamplePlayerMode, ChannelStatus) const;
+
+	WaveReader m_waveReader;
 };
 } // namespace giada::m
 
