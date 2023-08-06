@@ -29,7 +29,6 @@
 
 #include "core/channels/midiController.h"
 #include "core/channels/midiReceiver.h"
-#include "core/channels/midiSender.h"
 #include "core/channels/sampleAdvancer.h"
 #include "core/channels/samplePlayer.h"
 #include <vector>
@@ -46,6 +45,7 @@ class Sequencer;
 class Mixer;
 class Channel;
 class PluginHost;
+class KernelMidi;
 #ifdef WITH_AUDIO_JACK
 class JackSynchronizer;
 class JackTransport;
@@ -63,8 +63,6 @@ namespace giada::m::rendering
 class Renderer
 {
 public:
-	friend Engine;
-
 #ifdef WITH_AUDIO_JACK
 	Renderer(Sequencer&, Mixer&, PluginHost&, JackSynchronizer&, JackTransport&, KernelMidi&);
 #else
@@ -93,6 +91,7 @@ private:
 	Sequencer&  m_sequencer;
 	Mixer&      m_mixer;
 	PluginHost& m_pluginHost;
+	KernelMidi& m_kernelMidi;
 #ifdef WITH_AUDIO_JACK
 	JackSynchronizer& m_jackSynchronizer;
 	JackTransport&    m_jackTransport;
@@ -100,7 +99,6 @@ private:
 
 	SamplePlayer   m_samplePlayer;
 	SampleAdvancer m_sampleAdvancer;
-	MidiSender     m_midiSender;
 	MidiReceiver   m_midiReceiver;
 	MidiController m_midiController;
 };

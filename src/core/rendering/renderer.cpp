@@ -27,6 +27,7 @@
 #include "core/rendering/renderer.h"
 #include "core/mixer.h"
 #include "core/model/model.h"
+#include "core/rendering/midiChannel.h"
 #ifdef WITH_AUDIO_JACK
 #include "core/jackSynchronizer.h"
 #include "core/jackTransport.h"
@@ -58,11 +59,11 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, KernelMidi& km)
 : m_sequencer(s)
 , m_mixer(m)
 , m_pluginHost(ph)
+, m_kernelMidi(km)
 #ifdef WITH_AUDIO_JACK
 , m_jackSynchronizer(js)
 , m_jackTransport(jt)
 #endif
-, m_midiSender(km)
 {
 	m_samplePlayer.onLastFrame = [this](const Channel& ch, bool natural, bool seqIsRunning) {
 		m_sampleAdvancer.onLastFrame(*ch.shared, seqIsRunning, natural, ch.sampleChannel->mode,
@@ -173,8 +174,8 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 
 			m_midiReceiver.advance(ch.id, ch.shared->midiQueue, e);
 
-			if (ch.canSendMidi())
-				m_midiSender.advance(ch.id, e, ch.midiChannel->outputFilter);
+			if (ch.canSendMidi() && e.type == Sequencer::EventType::ACTIONS)
+				sendMidiFromActions(ch.id, *e.actions, ch.midiChannel->outputFilter, m_kernelMidi);
 		}
 		else if (ch.type == ChannelType::SAMPLE)
 			m_sampleAdvancer.advance(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());

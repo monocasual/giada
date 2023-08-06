@@ -28,6 +28,7 @@
 #include "core/conf.h"
 #include "core/confFactory.h"
 #include "core/model/model.h"
+#include "core/rendering/midiChannel.h"
 #include "utils/fs.h"
 #include "utils/log.h"
 #include "utils/string.h"
@@ -300,7 +301,7 @@ void Engine::setMidiCallback(std::function<void()> f)
 {
 	m_channelManager.m_midiLighter.onSend = f;
 	m_channelManager.m_midiSender.onSend  = f;
-	m_renderer.m_midiSender.onSend        = f;
+	rendering::registerOnSendCb(f);
 }
 
 /* -------------------------------------------------------------------------- */
