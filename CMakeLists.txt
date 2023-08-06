@@ -83,7 +83,6 @@ list(APPEND SOURCES
 	src/core/channels/sampleReactor.cpp
 	src/core/channels/sampleAdvancer.cpp
 	src/core/channels/samplePlayer.cpp
-	src/core/channels/audioReceiver.cpp
 	src/core/channels/midiLighter.cpp
 	src/core/channels/midiLightning.cpp
 	src/core/channels/midiLearn.cpp

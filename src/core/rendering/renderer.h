@@ -27,7 +27,6 @@
 #ifndef G_RENDERER_H
 #define G_RENDERER_H
 
-#include "core/channels/audioReceiver.h"
 #include "core/channels/midiController.h"
 #include "core/channels/midiReceiver.h"
 #include "core/channels/midiSender.h"
@@ -95,7 +94,6 @@ private:
 	JackTransport&    m_jackTransport;
 #endif
 
-	AudioReceiver  m_audioReceiver;
 	SamplePlayer   m_samplePlayer;
 	SampleAdvancer m_sampleAdvancer;
 	MidiSender     m_midiSender;
