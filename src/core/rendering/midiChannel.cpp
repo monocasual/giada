@@ -80,9 +80,13 @@ void sendMidiFromActions(const Channel& ch, const std::vector<Action>& actions, 
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiAllNotesOff(int outputFilter, KernelMidi& kernelMidi)
+void sendMidiAllNotesOff(const Channel& ch, KernelMidi& kernelMidi)
 {
-	sendMidiToOut_(MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), outputFilter, kernelMidi);
+	const MidiEvent e = MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3);
+
+	sendMidiToPlugins_(ch.shared->midiQueue, e, 0);
+	if (ch.canSendMidi())
+		sendMidiToOut_(e, ch.midiChannel->outputFilter, kernelMidi);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -96,13 +100,6 @@ void sendMidiEventToPlugins(ChannelShared::MidiQueue& midiQueue, const MidiEvent
 	MidiEvent flat(e);
 	flat.setChannel(0);
 	sendMidiToPlugins_(midiQueue, flat, /*delta=*/0);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void sendMidiAllNotesOffToPlugins(ChannelShared::MidiQueue& midiQueue)
-{
-	sendMidiToPlugins_(midiQueue, MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), 0);
 }
 
 /* -------------------------------------------------------------------------- */

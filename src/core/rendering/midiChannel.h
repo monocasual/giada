@@ -49,20 +49,15 @@ Sends a corresponding MIDI event for each action in the action vector. */
 void sendMidiFromActions(const Channel&, const std::vector<Action>&, Frame delta, KernelMidi&);
 
 /* sendMidiAllNotesOff
-Sends a G_MIDI_ALL_NOTES_OFF event to the outside world. */
+Sends a G_MIDI_ALL_NOTES_OFF event to the outside world and plug-ins. */
 
-void sendMidiAllNotesOff(int outputFilter, KernelMidi&);
+void sendMidiAllNotesOff(const Channel&, KernelMidi&);
 
 /* sendMidiEventToPlugins
 Enqueue MIDI event to to the MIDI queue, so that it will be processed later
 on by the PluginHost. */
 
 void sendMidiEventToPlugins(ChannelShared::MidiQueue&, const MidiEvent&);
-
-/* sendMidiAllNotesOffToPlugins
-Enqueue a G_MIDI_ALL_NOTES_OFF event to the MIDI queue. */
-
-void sendMidiAllNotesOffToPlugins(ChannelShared::MidiQueue&);
 
 /* prepareMidiBuffer 
 Fills the JUCE MIDI buffer with events previously enqueued in the MidiQueue.
