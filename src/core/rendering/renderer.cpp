@@ -217,10 +217,8 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl
 	}
 	else if (ch.type == ChannelType::MIDI)
 	{
-		/* If is MIDI channel, let MidiReceiver process the plug-in stack, as it 
-		might contain plug-ins that take MIDI events (i.e. synths). */
-
-		m_midiReceiver.render(*ch.shared, ch.plugins, m_pluginHost);
+		m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, &prepareMidiBuffer(*ch.shared));
+		ch.shared->midiBuffer.clear();
 	}
 
 	if (ch.isAudible(mixerHasSolos))
