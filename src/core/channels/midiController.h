@@ -41,10 +41,6 @@ public:
 	void keyKill(WeakAtomic<ChannelStatus>&) const;
 	void stop(WeakAtomic<ChannelStatus>&) const;
 	void rewind(WeakAtomic<ChannelStatus>&) const;
-
-private:
-	ChannelStatus onFirstBeat(ChannelStatus) const;
-	ChannelStatus press(ChannelStatus) const;
 };
 } // namespace giada::m
 

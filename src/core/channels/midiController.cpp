@@ -38,46 +38,8 @@ void MidiController::advance(WeakAtomic<ChannelStatus>& a_playStatus, const Sequ
 
 void MidiController::keyPress(WeakAtomic<ChannelStatus>& a_playStatus) const
 {
-	a_playStatus.store(press(a_playStatus.load()));
-}
+	ChannelStatus playStatus = a_playStatus.load();
 
-/* -------------------------------------------------------------------------- */
-
-void MidiController::keyKill(WeakAtomic<ChannelStatus>& a_playStatus) const
-{
-	stop(a_playStatus);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void MidiController::stop(WeakAtomic<ChannelStatus>& a_playStatus) const
-{
-	a_playStatus.store(ChannelStatus::OFF);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void MidiController::rewind(WeakAtomic<ChannelStatus>& a_playStatus) const
-{
-	a_playStatus.store(onFirstBeat(a_playStatus.load()));
-}
-
-/* -------------------------------------------------------------------------- */
-
-ChannelStatus MidiController::onFirstBeat(ChannelStatus playStatus) const
-{
-	if (playStatus == ChannelStatus::ENDING)
-		playStatus = ChannelStatus::OFF;
-	else if (playStatus == ChannelStatus::WAIT)
-		playStatus = ChannelStatus::PLAY;
-
-	return playStatus;
-}
-
-/* -------------------------------------------------------------------------- */
-
-ChannelStatus MidiController::press(ChannelStatus playStatus) const
-{
 	switch (playStatus)
 	{
 	case ChannelStatus::PLAY:
@@ -100,6 +62,34 @@ ChannelStatus MidiController::press(ChannelStatus playStatus) const
 		break;
 	}
 
-	return playStatus;
+	a_playStatus.store(playStatus);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MidiController::keyKill(WeakAtomic<ChannelStatus>& a_playStatus) const
+{
+	stop(a_playStatus);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MidiController::stop(WeakAtomic<ChannelStatus>& a_playStatus) const
+{
+	a_playStatus.store(ChannelStatus::OFF);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MidiController::rewind(WeakAtomic<ChannelStatus>& a_playStatus) const
+{
+	ChannelStatus playStatus = a_playStatus.load();
+
+	if (playStatus == ChannelStatus::ENDING)
+		playStatus = ChannelStatus::OFF;
+	else if (playStatus == ChannelStatus::WAIT)
+		playStatus = ChannelStatus::PLAY;
+
+	a_playStatus.store(playStatus);
 }
 } // namespace giada::m
