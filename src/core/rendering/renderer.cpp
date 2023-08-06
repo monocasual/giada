@@ -167,8 +167,8 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 	{
 		if (ch.type == ChannelType::MIDI)
 		{
-			m_midiController.advance(ch.shared->playStatus, e);
-
+			if (e.type == Sequencer::EventType::FIRST_BEAT)
+				rendering::rewindMidiChannel(ch.shared->playStatus);
 			if (ch.isPlaying() && e.type == Sequencer::EventType::ACTIONS)
 				sendMidiFromActions(ch, *e.actions, e.delta, m_kernelMidi);
 		}
