@@ -329,11 +329,15 @@ void ChannelManager::keyRelease(ID channelId, bool canRecordActions, Frame curre
 	if (ch.type != ChannelType::SAMPLE || !ch.hasWave())
 		return;
 
-	const bool             isAnyLoopMode = ch.sampleChannel->isAnyLoopMode();
-	const SamplePlayerMode mode          = ch.sampleChannel->mode;
+	const SamplePlayerMode mode = ch.sampleChannel->mode;
 
-	if (canRecordActions && !isAnyLoopMode)
-		m_sampleActionRecorder.keyRelease(channelId, canRecordActions, currentFrameQuantized, mode, ch.hasActions);
+	if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+	{
+		/* Record a stop event only if channel is SINGLE_PRESS. For any other 
+		mode the key release event is meaningless. */
+
+		m_sampleActionRecorder.keyRelease(channelId, currentFrameQuantized, ch.hasActions);
+	}
 
 	m_sampleReactor.keyRelease(*ch.shared, mode);
 
