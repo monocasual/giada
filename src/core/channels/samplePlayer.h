@@ -27,7 +27,7 @@
 #ifndef G_CHANNEL_SAMPLE_PLAYER_H
 #define G_CHANNEL_SAMPLE_PLAYER_H
 
-#include "core/channels/waveReader.h"
+#include "src/core/waveReader.h"
 #include "core/types.h"
 #include "core/weakAtomic.h"
 #include <functional>

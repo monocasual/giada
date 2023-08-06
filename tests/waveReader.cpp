@@ -1,4 +1,4 @@
-#include "../src/core/channels/waveReader.h"
+#include "src/core/waveReader.h"
 #include "../src/core/resampler.h"
 #include "../src/core/wave.h"
 #include "../src/utils/vector.h"
