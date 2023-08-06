@@ -63,6 +63,12 @@ void sendMidiEventToPlugins(ChannelShared::MidiQueue&, const MidiEvent&);
 Enqueue a G_MIDI_ALL_NOTES_OFF event to the MIDI queue. */
 
 void sendMidiAllNotesOffToPlugins(ChannelShared::MidiQueue&);
+
+/* prepareMidiBuffer 
+Fills the JUCE MIDI buffer with events previously enqueued in the MidiQueue.
+Returns a reference to the JUCE MIDI buffer for convenience. */
+
+const juce::MidiBuffer& prepareMidiBuffer(ChannelShared&);
 } // namespace giada::m::rendering
 
 #endif

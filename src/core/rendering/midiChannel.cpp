@@ -104,4 +104,23 @@ void sendMidiAllNotesOffToPlugins(ChannelShared::MidiQueue& midiQueue)
 {
 	sendMidiToPlugins_(midiQueue, MidiEvent::makeFromRaw(G_MIDI_ALL_NOTES_OFF, /*numBytes=*/3), 0);
 }
+
+/* -------------------------------------------------------------------------- */
+
+const juce::MidiBuffer& prepareMidiBuffer(ChannelShared& shared)
+{
+	shared.midiBuffer.clear();
+
+	MidiEvent e;
+	while (shared.midiQueue.pop(e))
+	{
+		juce::MidiMessage message = juce::MidiMessage(
+		    e.getStatus(),
+		    e.getNote(),
+		    e.getVelocity());
+		shared.midiBuffer.addEvent(message, e.getDelta());
+	}
+
+	return shared.midiBuffer;
+}
 } // namespace giada::m::rendering
