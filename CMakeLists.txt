@@ -87,7 +87,6 @@ list(APPEND SOURCES
 	src/core/channels/midiLighter.cpp
 	src/core/channels/midiLightning.cpp
 	src/core/channels/midiLearn.cpp
-	src/core/channels/midiReceiver.cpp
 	src/core/channels/channel.cpp
 	src/core/channels/sampleChannel.cpp
 	src/core/channels/midiChannel.cpp
