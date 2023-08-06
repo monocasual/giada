@@ -51,7 +51,7 @@ ChannelManager::ChannelManager(model::Model& model, MidiMapper<KernelMidi>& m, A
 : m_model(model)
 , m_kernelMidi(km)
 , m_actionRecorder(a)
-, m_midiLighter(m)
+, m_midiMapper(m)
 , m_sampleActionRecorder(a)
 {
 }
@@ -462,7 +462,7 @@ void ChannelManager::toggleMute(ID channelId)
 	ch.setMute(newMute);
 
 	m_model.swap(model::SwapType::SOFT);
-	m_midiLighter.sendMute(ch.midiLightning, newMute);
+	rendering::sendMidiLightningMute(ch.midiLightning, newMute, m_midiMapper);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -475,7 +475,7 @@ void ChannelManager::toggleSolo(ID channelId)
 	ch.setSolo(newSolo);
 
 	m_model.swap(model::SwapType::SOFT);
-	m_midiLighter.sendSolo(ch.midiLightning, newSolo);
+	rendering::sendMidiLightningSolo(ch.midiLightning, newSolo, m_midiMapper);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -680,7 +680,7 @@ void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, Frame begin, Frame 
 void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& shared) const
 {
 	shared.playStatus.onChange = [this, midiLightning = ch.midiLightning](ChannelStatus status) {
-		m_midiLighter.sendStatus(midiLightning, status, /*isAudible=*/true /* TODO!!! */);
+		rendering::sendMidiLightningStatus(midiLightning, status, /*isAudible=*/true /* TODO!!! */, m_midiMapper);
 	};
 
 	if (ch.type == ChannelType ::SAMPLE)
