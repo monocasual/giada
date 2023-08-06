@@ -173,7 +173,7 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 
 			m_midiReceiver.advance(ch.id, ch.shared->midiQueue, e);
 
-			if (!ch.isMuted() && ch.midiChannel->outputEnabled)
+			if (ch.canSendMidi())
 				m_midiSender.advance(ch.id, e, ch.midiChannel->outputFilter);
 		}
 		else if (ch.type == ChannelType::SAMPLE)

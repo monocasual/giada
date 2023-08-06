@@ -188,6 +188,13 @@ bool Channel::canReceiveAudio() const
 
 /* -------------------------------------------------------------------------- */
 
+bool Channel::canSendMidi() const
+{
+	return type == ChannelType::MIDI && !isMuted() && midiChannel->outputEnabled;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Channel::setMute(bool v)
 {
 	m_mute = v;

@@ -61,6 +61,11 @@ public:
 
 	bool canReceiveAudio() const;
 
+	/* canSendMidi
+	Tells if the MIDI channel can output MIDI messages to the outside world. */
+
+	bool canSendMidi() const;
+
 	/* isAudible
 	True if this channel is currently audible: not muted or not included in a 
 	solo session. */
