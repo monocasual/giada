@@ -348,11 +348,14 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 
 	if (ch.type == ChannelType::MIDI)
 	{
-		m_midiController.keyKill(ch.shared->playStatus);
-		rendering::sendMidiAllNotesOffToPlugins(ch.shared->midiQueue);
+		if (ch.isPlaying())
+		{
+			m_midiController.keyKill(ch.shared->playStatus);
+			rendering::sendMidiAllNotesOffToPlugins(ch.shared->midiQueue);
 
-		if (ch.isPlaying() && ch.canSendMidi())
-			rendering::sendMidiAllNotesOff(ch.midiChannel->outputFilter, m_kernelMidi);
+			if (ch.canSendMidi())
+				rendering::sendMidiAllNotesOff(ch.midiChannel->outputFilter, m_kernelMidi);
+		}
 	}
 	else if (ch.type == ChannelType::SAMPLE)
 	{
@@ -574,10 +577,13 @@ void ChannelManager::stopAll()
 	{
 		if (ch.type == ChannelType::MIDI)
 		{
+			if (!ch.isPlaying())
+				continue;
+
 			m_midiController.stop(ch.shared->playStatus);
 			rendering::sendMidiAllNotesOffToPlugins(ch.shared->midiQueue);
 
-			if (ch.isPlaying() && ch.canSendMidi())
+			if (ch.canSendMidi())
 				rendering::sendMidiAllNotesOff(ch.midiChannel->outputFilter, m_kernelMidi);
 		}
 		else if (ch.type == ChannelType::SAMPLE)
