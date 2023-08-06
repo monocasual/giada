@@ -24,10 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_RENDERING_MIDI_CHANNEL_H
-#define G_RENDERING_MIDI_CHANNEL_H
+#ifndef G_RENDERING_MIDI_REACTIONS_H
+#define G_RENDERING_MIDI_REACTIONS_H
 
-#include "core/channels/channelShared.h"
 #include "core/midiEvent.h"
 #include "core/midiMapper.h"
 #include "core/weakAtomic.h"
@@ -42,33 +41,6 @@ class MidiLightning;
 
 namespace giada::m::rendering
 {
-/* registerOnSendMidiCb
-Callback fired when a MIDI signal has been sent. */
-
-void registerOnSendMidiCb(std::function<void()>);
-
-/* sendMidiFromActions
-Sends a corresponding MIDI event for each action in the action vector. */
-
-void sendMidiFromActions(const Channel&, const std::vector<Action>&, Frame delta, KernelMidi&);
-
-/* sendMidiAllNotesOff
-Sends a G_MIDI_ALL_NOTES_OFF event to the outside world and plug-ins. */
-
-void sendMidiAllNotesOff(const Channel&, KernelMidi&);
-
-/* sendMidiEventToPlugins
-Enqueue MIDI event to to the MIDI queue, so that it will be processed later
-on by the PluginHost. */
-
-void sendMidiEventToPlugins(ChannelShared::MidiQueue&, const MidiEvent&);
-
-/* prepareMidiBuffer 
-Fills the JUCE MIDI buffer with events previously enqueued in the MidiQueue.
-Returns a reference to the JUCE MIDI buffer for convenience. */
-
-const juce::MidiBuffer& prepareMidiBuffer(ChannelShared&);
-
 /* [play|stop|rewind]MidiChannel
 Actions manually performed on a MIDI channel. */
 
@@ -80,13 +52,6 @@ void rewindMidiChannel(WeakAtomic<ChannelStatus>&);
 Records a new Action for a MIDI channel. */
 
 void recordMidiAction(ID channelId, const MidiEvent&, Frame currentFrameQuantized, ActionRecorder&);
-
-/* sendMidiLightning[...]
-Sends MIDI lightning messages to the outside world. */
-
-void sendMidiLightningStatus(const MidiLightning&, ChannelStatus, bool audible, MidiMapper<KernelMidi>&);
-void sendMidiLightningMute(const MidiLightning&, bool isMuted, MidiMapper<KernelMidi>&);
-void sendMidiLightningSolo(const MidiLightning&, bool isSoloed, MidiMapper<KernelMidi>&);
 } // namespace giada::m::rendering
 
 #endif

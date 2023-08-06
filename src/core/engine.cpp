@@ -28,7 +28,7 @@
 #include "core/conf.h"
 #include "core/confFactory.h"
 #include "core/model/model.h"
-#include "core/rendering/midiChannel.h"
+#include "core/rendering/midiOutput.h"
 #include "utils/fs.h"
 #include "utils/log.h"
 #include "utils/string.h"

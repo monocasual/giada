@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/rendering/midiChannel.h"
+#include "core/rendering/midiOutput.h"
 #include "core/actions/actionRecorder.h"
 #include "core/kernelMidi.h"
 #include <cassert>
@@ -111,86 +111,6 @@ void sendMidiEventToPlugins(ChannelShared::MidiQueue& midiQueue, const MidiEvent
 	MidiEvent flat(e);
 	flat.setChannel(0);
 	sendMidiToPlugins_(midiQueue, flat, /*delta=*/0);
-}
-
-/* -------------------------------------------------------------------------- */
-
-const juce::MidiBuffer& prepareMidiBuffer(ChannelShared& shared)
-{
-	shared.midiBuffer.clear();
-
-	MidiEvent e;
-	while (shared.midiQueue.pop(e))
-	{
-		juce::MidiMessage message = juce::MidiMessage(
-		    e.getStatus(),
-		    e.getNote(),
-		    e.getVelocity());
-		shared.midiBuffer.addEvent(message, e.getDelta());
-	}
-
-	return shared.midiBuffer;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void playMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
-{
-	ChannelStatus playStatus = a_playStatus.load();
-
-	switch (playStatus)
-	{
-	case ChannelStatus::PLAY:
-		playStatus = ChannelStatus::ENDING;
-		break;
-
-	case ChannelStatus::ENDING:
-		playStatus = ChannelStatus::PLAY;
-		break;
-
-	case ChannelStatus::WAIT:
-		playStatus = ChannelStatus::OFF;
-		break;
-
-	case ChannelStatus::OFF:
-		playStatus = ChannelStatus::WAIT;
-		break;
-
-	default:
-		break;
-	}
-
-	a_playStatus.store(playStatus);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void stopMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
-{
-	a_playStatus.store(ChannelStatus::OFF);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void rewindMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
-{
-	ChannelStatus playStatus = a_playStatus.load();
-
-	if (playStatus == ChannelStatus::ENDING)
-		playStatus = ChannelStatus::OFF;
-	else if (playStatus == ChannelStatus::WAIT)
-		playStatus = ChannelStatus::PLAY;
-
-	a_playStatus.store(playStatus);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void recordMidiAction(ID channelId, const MidiEvent& event, Frame currentFrameQuantized, ActionRecorder& actionRecorder)
-{
-	MidiEvent flat(event);
-	flat.setChannel(0);
-	actionRecorder.liveRec(channelId, flat, currentFrameQuantized);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -36,7 +36,9 @@ list(APPEND SOURCES
 	src/mapper.cpp
 	src/core/engine.cpp
 	src/core/rendering/renderer.cpp
-	src/core/rendering/midiChannel.cpp
+    src/core/rendering/midiReactions.cpp
+	src/core/rendering/midiOutput.cpp
+	src/core/rendering/midiRendering.cpp
 	src/core/api/mainApi.cpp
 	src/core/api/channelsApi.cpp
 	src/core/api/sampleEditorApi.cpp

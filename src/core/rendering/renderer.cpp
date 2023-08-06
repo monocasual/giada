@@ -27,7 +27,9 @@
 #include "core/rendering/renderer.h"
 #include "core/mixer.h"
 #include "core/model/model.h"
-#include "core/rendering/midiChannel.h"
+#include "core/rendering/midiOutput.h"
+#include "core/rendering/midiReactions.h"
+#include "core/rendering/midiRendering.h"
 #ifdef WITH_AUDIO_JACK
 #include "core/jackSynchronizer.h"
 #include "core/jackTransport.h"
