@@ -27,7 +27,6 @@
 #ifndef G_CHANNEL_MANAGER_H
 #define G_CHANNEL_MANAGER_H
 
-#include "core/channels/sampleActionRecorder.h"
 #include "core/channels/sampleReactor.h"
 #include "core/midiMapper.h"
 #include "core/resampler.h"
@@ -228,7 +227,6 @@ private:
 	KernelMidi&             m_kernelMidi;
 	ActionRecorder&         m_actionRecorder;
 	MidiMapper<KernelMidi>& m_midiMapper;
-	SampleActionRecorder    m_sampleActionRecorder;
 	SampleReactor           m_sampleReactor;
 };
 } // namespace giada::m

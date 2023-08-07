@@ -32,6 +32,7 @@
 #include "core/model/model.h"
 #include "core/rendering/midiOutput.h"
 #include "core/rendering/midiReactions.h"
+#include "core/rendering/sampleReactions.h"
 #include "core/waveFactory.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include "utils/log.h"
@@ -53,7 +54,6 @@ ChannelManager::ChannelManager(model::Model& model, MidiMapper<KernelMidi>& m, A
 , m_kernelMidi(km)
 , m_actionRecorder(a)
 , m_midiMapper(m)
-, m_sampleActionRecorder(a)
 {
 }
 
@@ -313,7 +313,10 @@ void ChannelManager::keyPress(ID channelId, int velocity, bool canRecordActions,
 		const SamplePlayerMode mode          = ch.sampleChannel->mode;
 
 		if (canRecordActions && !isAnyLoopMode)
-			m_sampleActionRecorder.keyPress(channelId, *ch.shared, currentFrameQuantized, mode, ch.hasActions);
+		{
+			rendering::recordSampleKeyPress(channelId, *ch.shared, currentFrameQuantized, mode, m_actionRecorder);
+			ch.hasActions = true;
+		}
 
 		m_sampleReactor.keyPress(channelId, *ch.shared, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol, ch.volume_i);
 	}
@@ -337,7 +340,8 @@ void ChannelManager::keyRelease(ID channelId, bool canRecordActions, Frame curre
 		/* Record a stop event only if channel is SINGLE_PRESS. For any other 
 		mode the key release event is meaningless. */
 
-		m_sampleActionRecorder.keyRelease(channelId, currentFrameQuantized, ch.hasActions);
+		rendering::recordSampleKeyRelease(channelId, currentFrameQuantized, m_actionRecorder);
+		ch.hasActions = true;
 	}
 
 	m_sampleReactor.keyRelease(*ch.shared, mode);
@@ -368,7 +372,8 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 			/* Record a stop event only if channel is SINGLE_PRESS. For any other 
 			mode the key release event is meaningless. */
 
-			m_sampleActionRecorder.keyKill(channelId, currentFrameQuantized, ch.hasActions);
+			rendering::recordSampleKeyKill(channelId, currentFrameQuantized, m_actionRecorder);
+			ch.hasActions = true;
 		}
 
 		m_sampleReactor.keyKill(*ch.shared, mode);
@@ -505,7 +510,7 @@ void ChannelManager::toggleReadActions(ID channelId, bool seqIsRunning)
 	Channel& ch = m_model.get().channels.get(channelId);
 	if (!ch.hasActions)
 		return;
-	m_sampleActionRecorder.toggleReadActions(*ch.shared, m_model.get().behaviors.treatRecsAsLoops, seqIsRunning);
+	rendering::toggleSampleReadActions(*ch.shared, m_model.get().behaviors.treatRecsAsLoops, seqIsRunning);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -518,7 +523,7 @@ void ChannelManager::killReadActions(ID channelId)
 	if (!m_model.get().behaviors.treatRecsAsLoops)
 		return;
 	Channel& ch = m_model.get().channels.get(channelId);
-	m_sampleActionRecorder.killReadActions(*ch.shared);
+	rendering::killSampleReadActions(*ch.shared);
 }
 
 /* -------------------------------------------------------------------------- */
