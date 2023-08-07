@@ -46,12 +46,6 @@ sequencer stop, ... . */
 class SampleReactor final
 {
 public:
-	struct Event
-	{
-		int   type;
-		Frame offset;
-	};
-
 	void stopBySeq(ChannelShared&, bool chansStopOnSeqHalt, bool isLoop) const;
 	void keyPress(ID channelId, ChannelShared&, SamplePlayerMode, int velocity, bool canQuantize, bool isLoop, bool velocityAsVol, float& volume_i) const;
 	void keyRelease(ChannelShared&, SamplePlayerMode) const;
