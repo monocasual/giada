@@ -26,15 +26,22 @@
 
 #include "core/rendering/sampleReactions.h"
 #include "core/actions/actionRecorder.h"
+#include "utils/math.h"
 
 namespace giada::m::rendering
 {
 namespace
 {
+constexpr int Q_ACTION_PLAY   = 0;
+constexpr int Q_ACTION_REWIND = 10000; // Avoid clash with Q_ACTION_PLAY + channelId
+
+/* -------------------------------------------------------------------------- */
+
 void record_(ID channelId, int note, Frame currentFrameQuantized, ActionRecorder& actionRecorder)
 {
 	actionRecorder.liveRec(channelId, MidiEvent::makeFrom3Bytes(note, 0, 0), currentFrameQuantized);
 }
+
 /* -------------------------------------------------------------------------- */
 
 void startReadActions_(ChannelShared& shared, bool treatRecsAsLoops)
@@ -70,6 +77,55 @@ void stopReadActions_(ChannelShared& shared, ChannelStatus curRecStatus,
 		shared.recStatus.store(ChannelStatus::ENDING);
 }
 
+/* -------------------------------------------------------------------------- */
+
+void stopSampleChannel_(ChannelShared& shared)
+{
+	shared.renderQueue->push({SamplePlayer::Render::Mode::STOP, 0});
+}
+
+/* -------------------------------------------------------------------------- */
+
+ChannelStatus pressWhileOff_(ID channelId, ChannelShared& shared, int velocity,
+    bool canQuantize, bool velocityAsVol, float& volume_i)
+{
+	if (velocityAsVol)
+		volume_i = u::math::map(velocity, G_MAX_VELOCITY, G_MAX_VOLUME);
+
+	if (canQuantize)
+	{
+		shared.quantizer->trigger(Q_ACTION_PLAY + channelId);
+		return ChannelStatus::OFF;
+	}
+	else
+		return ChannelStatus::PLAY;
+}
+
+/* -------------------------------------------------------------------------- */
+
+ChannelStatus pressWhilePlay_(ID channelId, ChannelShared& shared, SamplePlayerMode mode,
+    bool canQuantize)
+{
+	switch (mode)
+	{
+	case SamplePlayerMode::SINGLE_RETRIG:
+		if (canQuantize)
+			shared.quantizer->trigger(Q_ACTION_REWIND + channelId);
+		else
+			rewindSampleChannel(shared, /*localFrame=*/0);
+		return ChannelStatus::PLAY;
+
+	case SamplePlayerMode::SINGLE_ENDLESS:
+		return ChannelStatus::ENDING;
+
+	case SamplePlayerMode::SINGLE_BASIC:
+		stopSampleChannel_(shared);
+		return ChannelStatus::PLAY; // Let SamplePlayer stop it once done
+
+	default:
+		return ChannelStatus::OFF;
+	}
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -128,5 +184,113 @@ void toggleSampleReadActions(ChannelShared& shared, bool treatRecsAsLoops, bool 
 		stopReadActions_(shared, recStatus, treatRecsAsLoops, seqIsRunning);
 	else
 		startReadActions_(shared, treatRecsAsLoops);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void stopSampleChannelBySeq(ChannelShared& shared, bool chansStopOnSeqHalt, bool isLoop)
+{
+	const ChannelStatus playStatus       = shared.playStatus.load();
+	const bool          isReadingActions = shared.isReadingActions();
+
+	switch (playStatus)
+	{
+
+	case ChannelStatus::WAIT:
+		/* Loop-mode channels in wait status get stopped right away. */
+		if (isLoop)
+			shared.playStatus.store(ChannelStatus::OFF);
+		break;
+
+	case ChannelStatus::PLAY:
+		if (chansStopOnSeqHalt && (isLoop || isReadingActions))
+			stopSampleChannel_(shared);
+		break;
+
+	default:
+		break;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void pressSampleChannel(ID channelId, ChannelShared& shared, SamplePlayerMode mode, int velocity, bool canQuantize, bool isLoop, bool velocityAsVol, float& volume_i)
+{
+	ChannelStatus playStatus = shared.playStatus.load();
+
+	switch (playStatus)
+	{
+	case ChannelStatus::OFF:
+		if (isLoop)
+			playStatus = ChannelStatus::WAIT;
+		else
+			playStatus = pressWhileOff_(channelId, shared, velocity, canQuantize, velocityAsVol, volume_i);
+		break;
+
+	case ChannelStatus::PLAY:
+		if (isLoop)
+			playStatus = ChannelStatus::ENDING;
+		else
+			playStatus = pressWhilePlay_(channelId, shared, mode, canQuantize);
+		break;
+
+	case ChannelStatus::WAIT:
+		playStatus = ChannelStatus::OFF;
+		break;
+
+	case ChannelStatus::ENDING:
+		playStatus = ChannelStatus::PLAY;
+		break;
+
+	default:
+		break;
+	}
+
+	shared.playStatus.store(playStatus);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void releaseSampleChannel(ChannelShared& shared, SamplePlayerMode mode)
+{
+	/* Key release is meaningful only for SINGLE_PRESS modes. */
+
+	if (mode != SamplePlayerMode::SINGLE_PRESS)
+		return;
+
+	/* Kill it if it's SINGLE_PRESS is playing. Otherwise there might be a 
+	quantization step in progress that would play the channel later on: 
+	disable it. */
+
+	if (shared.playStatus.load() == ChannelStatus::PLAY)
+		stopSampleChannel_(shared); // Let SamplePlayer stop it once done
+	else if (shared.quantizer->hasBeenTriggered())
+		shared.quantizer->clear();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void killSampleChannel(ChannelShared& shared, SamplePlayerMode mode)
+{
+	const ChannelStatus playStatus = shared.playStatus.load();
+	if (playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING)
+		stopSampleChannel_(shared);
+	if (mode == SamplePlayerMode::SINGLE_BASIC_PAUSE)
+		shared.tracker.store(0); // Hard rewind
+}
+
+/* -------------------------------------------------------------------------- */
+
+void rewindSampleChannel(ChannelShared& shared, Frame localFrame)
+{
+	shared.renderQueue->push({SamplePlayer::Render::Mode::REWIND, localFrame});
+}
+
+/* -------------------------------------------------------------------------- */
+
+void playSampleChannel(ChannelShared& shared, Frame localFrame)
+{
+	shared.playStatus.store(ChannelStatus::PLAY);
+	shared.renderQueue->push({SamplePlayer::Render::Mode::NORMAL, localFrame});
 }
 } // namespace giada::m::rendering

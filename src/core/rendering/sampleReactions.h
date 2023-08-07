@@ -42,6 +42,17 @@ void recordSampleKeyRelease(ID channelId, Frame currentFrameQuantized, ActionRec
 void recordSampleKeyKill(ID channelId, Frame currentFrameQuantized, ActionRecorder&);
 void killSampleReadActions(ChannelShared&);
 void toggleSampleReadActions(ChannelShared&, bool treatRecsAsLoops, bool seqIsRunning);
+
+/* [...]SampleChannel
+Actions manually performed on a Sample channel. */
+
+void stopSampleChannelBySeq(ChannelShared&, bool chansStopOnSeqHalt, bool isLoop);
+void pressSampleChannel(ID channelId, ChannelShared&, SamplePlayerMode, int velocity, bool canQuantize, bool isLoop, bool velocityAsVol, float& volume_i);
+void releaseSampleChannel(ChannelShared&, SamplePlayerMode);
+void killSampleChannel(ChannelShared&, SamplePlayerMode);
+void rewindSampleChannel(ChannelShared&, Frame localFrame);
+void playSampleChannel(ChannelShared&, Frame localFrame);
+
 } // namespace giada::m::rendering
 
 #endif
