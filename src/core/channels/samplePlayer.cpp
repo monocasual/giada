@@ -26,6 +26,7 @@
 
 #include "samplePlayer.h"
 #include "core/channels/channel.h"
+#include "core/rendering/sampleRendering.h"
 #include "core/wave.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include <algorithm>
@@ -62,7 +63,7 @@ void SamplePlayer::render(const Channel& ch, Render renderInfo, bool seqIsRunnin
 		might stop the rendering): waveReader.fill() is just enough. Just notify 
 		waveReader this is the last read before rewind. */
 
-		tracker = m_waveReader.fill(*ch.sampleChannel->getWave(), buf, tracker, end, 0, pitch, resampler).used;
+		tracker = rendering::readWave(*ch.sampleChannel->getWave(), buf, tracker, end, 0, pitch, resampler).used;
 		resampler.last();
 
 		/* Mode::REWIND: 2nd = [abcdefghi|abcdfefg]
@@ -94,7 +95,7 @@ Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame track
 
 	/* First pass rendering. */
 
-	WaveReader::Result res = m_waveReader.fill(wave, buf, tracker, end, offset, pitch, resampler);
+	rendering::ReadResult res = rendering::readWave(wave, buf, tracker, end, offset, pitch, resampler);
 	tracker += res.used;
 
 	/* Second pass rendering: if tracker has looped, special care is needed. If 
@@ -110,7 +111,7 @@ Frame SamplePlayer::render(const Channel& ch, mcl::AudioBuffer& buf, Frame track
 		onLastFrame(ch, /*natural=*/true, seqIsRunning);
 
 		if (shouldLoop(mode, status) && res.generated < buf.countFrames())
-			tracker += m_waveReader.fill(wave, buf, tracker, end, res.generated, pitch, resampler).used;
+			tracker += rendering::readWave(wave, buf, tracker, end, res.generated, pitch, resampler).used;
 	}
 
 	return tracker;

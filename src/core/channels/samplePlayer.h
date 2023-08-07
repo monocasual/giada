@@ -27,10 +27,14 @@
 #ifndef G_CHANNEL_SAMPLE_PLAYER_H
 #define G_CHANNEL_SAMPLE_PLAYER_H
 
-#include "src/core/waveReader.h"
 #include "core/types.h"
 #include "core/weakAtomic.h"
 #include <functional>
+
+namespace mcl
+{
+class AudioBuffer;
+}
 
 namespace giada::m
 {
@@ -86,8 +90,6 @@ private:
 	void stop(const Channel&, mcl::AudioBuffer&, Frame offset, bool seqIsRunning) const;
 
 	bool shouldLoop(SamplePlayerMode, ChannelStatus) const;
-
-	WaveReader m_waveReader;
 };
 } // namespace giada::m
 
