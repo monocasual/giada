@@ -80,7 +80,6 @@ list(APPEND SOURCES
 	src/core/plugins/pluginState.cpp
 	src/core/plugins/pluginFactory.cpp
 	src/core/channels/channelManager.cpp
-	src/core/channels/sampleActionRecorder.cpp
 	src/core/waveReader.cpp
 	src/core/channels/sampleReactor.cpp
 	src/core/channels/sampleAdvancer.cpp
