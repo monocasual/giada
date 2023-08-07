@@ -75,7 +75,6 @@ list(APPEND SOURCES
 	src/core/recorder.cpp
 	src/core/midiLearnParam.cpp
 	src/core/resampler.cpp
-	src/core/waveReader.cpp
 	src/core/plugins/pluginHost.cpp
 	src/core/plugins/pluginManager.cpp
 	src/core/plugins/plugin.cpp
