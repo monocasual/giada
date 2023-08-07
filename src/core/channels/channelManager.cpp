@@ -318,7 +318,7 @@ void ChannelManager::keyPress(ID channelId, int velocity, bool canRecordActions,
 			ch.hasActions = true;
 		}
 
-		m_sampleReactor.keyPress(channelId, *ch.shared, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol, ch.volume_i);
+		rendering::pressSampleChannel(channelId, *ch.shared, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol, ch.volume_i);
 	}
 
 	m_model.swap(model::SwapType::SOFT);
@@ -344,7 +344,7 @@ void ChannelManager::keyRelease(ID channelId, bool canRecordActions, Frame curre
 		ch.hasActions = true;
 	}
 
-	m_sampleReactor.keyRelease(*ch.shared, mode);
+	rendering::releaseSampleChannel(*ch.shared, mode);
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -376,7 +376,7 @@ void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentF
 			ch.hasActions = true;
 		}
 
-		m_sampleReactor.keyKill(*ch.shared, mode);
+		rendering::killSampleChannel(*ch.shared, mode);
 	}
 
 	m_model.swap(model::SwapType::SOFT);
@@ -599,7 +599,7 @@ void ChannelManager::stopAll()
 		}
 		else if (ch.type == ChannelType::SAMPLE)
 		{
-			m_sampleReactor.stopBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
+			rendering::stopSampleChannelBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
 		}
 	}
 	m_model.swap(model::SwapType::SOFT);
@@ -702,15 +702,15 @@ void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& sha
 	{
 		shared.quantizer->schedule(Q_ACTION_PLAY + ch.id, [this, channelId = ch.id](Frame delta) {
 			Channel& ch = m_model.get().channels.get(channelId);
-			m_sampleReactor.play(*ch.shared, delta);
+			rendering::playSampleChannel(*ch.shared, delta);
 		});
 		shared.quantizer->schedule(Q_ACTION_REWIND + ch.id, [this, channelId = ch.id](Frame delta) {
 			Channel&            ch     = m_model.get().channels.get(channelId);
 			const ChannelStatus status = ch.shared->playStatus.load();
 			if (status == ChannelStatus::OFF)
-				m_sampleReactor.play(*ch.shared, delta);
+				rendering::playSampleChannel(*ch.shared, delta);
 			else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
-				m_sampleReactor.rewind(*ch.shared, delta);
+				rendering::rewindSampleChannel(*ch.shared, delta);
 		});
 	}
 }

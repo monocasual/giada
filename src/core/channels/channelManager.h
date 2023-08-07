@@ -27,7 +27,6 @@
 #ifndef G_CHANNEL_MANAGER_H
 #define G_CHANNEL_MANAGER_H
 
-#include "core/channels/sampleReactor.h"
 #include "core/midiMapper.h"
 #include "core/resampler.h"
 #include "core/types.h"
@@ -49,6 +48,7 @@ class Model;
 namespace giada::m
 {
 class Channel;
+struct ChannelShared;
 class Wave;
 class Plugin;
 class MidiEvent;
@@ -227,7 +227,6 @@ private:
 	KernelMidi&             m_kernelMidi;
 	ActionRecorder&         m_actionRecorder;
 	MidiMapper<KernelMidi>& m_midiMapper;
-	SampleReactor           m_sampleReactor;
 };
 } // namespace giada::m
 
