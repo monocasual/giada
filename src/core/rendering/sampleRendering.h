@@ -84,7 +84,7 @@ RenderInfo::Mode::STOP type). */
 
 void registerOnLastFrameReadCb(std::function<void(const Channel&, bool natural, bool seqIsRunning)>);
 
-void renderSampleChannel(const Channel&, RenderInfo, bool seqIsRunning);
+void renderSampleChannel(const Channel&, bool seqIsRunning);
 
 ReadResult readWave(const Wave&, mcl::AudioBuffer&, Frame start, Frame max, Frame offset, float pitch, const Resampler&);
 } // namespace giada::m::rendering

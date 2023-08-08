@@ -139,8 +139,12 @@ void registerOnLastFrameReadCb(std::function<void(const Channel&, bool natural, 
 
 /* -------------------------------------------------------------------------- */
 
-void renderSampleChannel(const Channel& ch, RenderInfo renderInfo, bool seqIsRunning)
+void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 {
+	RenderInfo renderInfo;
+	while (ch.shared->renderQueue->pop(renderInfo))
+		;
+
 	const Frame      begin     = ch.sampleChannel->begin;
 	const Frame      end       = ch.sampleChannel->end;
 	const float      pitch     = ch.sampleChannel->pitch;

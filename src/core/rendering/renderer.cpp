@@ -199,12 +199,7 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl
 	if (ch.type == ChannelType::SAMPLE)
 	{
 		if (ch.isPlaying())
-		{
-			RenderInfo renderInfo;
-			while (ch.shared->renderQueue->pop(renderInfo))
-				;
-			renderSampleChannel(ch, renderInfo, seqIsRunning);
-		}
+			renderSampleChannel(ch, seqIsRunning);
 
 		if (ch.canReceiveAudio())
 		{
@@ -251,12 +246,7 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 	ch.shared->audioBuffer.clear();
 
 	if (ch.isPlaying())
-	{
-		RenderInfo renderInfo;
-		while (ch.shared->renderQueue->pop(renderInfo))
-			;
-		renderSampleChannel(ch, renderInfo, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
-	}
+		renderSampleChannel(ch, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
 
 	out.sum(ch.shared->audioBuffer, ch.volume, calcPanning_(ch.pan));
 }
