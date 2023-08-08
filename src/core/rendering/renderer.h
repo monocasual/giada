@@ -28,7 +28,6 @@
 #define G_RENDERER_H
 
 #include "core/channels/sampleAdvancer.h"
-#include "core/channels/samplePlayer.h"
 #include <vector>
 
 namespace mcl
@@ -95,7 +94,6 @@ private:
 	JackTransport&    m_jackTransport;
 #endif
 
-	SamplePlayer   m_samplePlayer;
 	SampleAdvancer m_sampleAdvancer;
 };
 } // namespace giada::m::rendering

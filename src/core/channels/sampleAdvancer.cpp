@@ -26,6 +26,7 @@
 
 #include "core/channels/sampleAdvancer.h"
 #include "core/channels/channelShared.h"
+#include "core/rendering/sampleRendering.h"
 
 namespace giada::m
 {
@@ -91,14 +92,14 @@ void SampleAdvancer::advance(ID channelId, ChannelShared& shared,
 
 void SampleAdvancer::rewind(ChannelShared& shared, Frame localFrame) const
 {
-	shared.renderQueue->push({SamplePlayer::Render::Mode::REWIND, localFrame});
+	shared.renderQueue->push({rendering::RenderInfo::Mode::REWIND, localFrame});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void SampleAdvancer::stop(ChannelShared& shared, Frame localFrame) const
 {
-	shared.renderQueue->push({SamplePlayer::Render::Mode::STOP, localFrame});
+	shared.renderQueue->push({rendering::RenderInfo::Mode::STOP, localFrame});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -106,7 +107,7 @@ void SampleAdvancer::stop(ChannelShared& shared, Frame localFrame) const
 void SampleAdvancer::play(ChannelShared& shared, Frame localFrame) const
 {
 	shared.playStatus.store(ChannelStatus::PLAY);
-	shared.renderQueue->push({SamplePlayer::Render::Mode::NORMAL, localFrame});
+	shared.renderQueue->push({rendering::RenderInfo::Mode::NORMAL, localFrame});
 }
 
 /* -------------------------------------------------------------------------- */

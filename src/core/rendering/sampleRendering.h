@@ -80,7 +80,7 @@ struct ReadResult
 Callback fired when the last frame has been reached. 'natural' == true if the 
 rendering has ended because the end of the sample has ben reached. 
 'natural' == false if the rendering has been manually interrupted (by a 
-Render::Mode::STOP type). */
+RenderInfo::Mode::STOP type). */
 
 void registerOnLastFrameReadCb(std::function<void(const Channel&, bool natural, bool seqIsRunning)>);
 

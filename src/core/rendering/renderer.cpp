@@ -30,6 +30,7 @@
 #include "core/rendering/midiOutput.h"
 #include "core/rendering/midiReactions.h"
 #include "core/rendering/midiRendering.h"
+#include "core/rendering/sampleRendering.h"
 #ifdef WITH_AUDIO_JACK
 #include "core/jackSynchronizer.h"
 #include "core/jackTransport.h"
@@ -67,10 +68,10 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, KernelMidi& km)
 , m_jackTransport(jt)
 #endif
 {
-	m_samplePlayer.onLastFrame = [this](const Channel& ch, bool natural, bool seqIsRunning) {
+	registerOnLastFrameReadCb([this](const Channel& ch, bool natural, bool seqIsRunning) {
 		m_sampleAdvancer.onLastFrame(*ch.shared, seqIsRunning, natural, ch.sampleChannel->mode,
 		    ch.sampleChannel->isAnyLoopMode());
-	};
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -199,10 +200,10 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl
 	{
 		if (ch.isPlaying())
 		{
-			SamplePlayer::Render render;
-			while (ch.shared->renderQueue->pop(render))
+			RenderInfo renderInfo;
+			while (ch.shared->renderQueue->pop(renderInfo))
 				;
-			m_samplePlayer.render(ch, render, seqIsRunning);
+			renderSampleChannel(ch, renderInfo, seqIsRunning);
 		}
 
 		if (ch.canReceiveAudio())
@@ -251,10 +252,10 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 
 	if (ch.isPlaying())
 	{
-		SamplePlayer::Render render;
-		while (ch.shared->renderQueue->pop(render))
+		RenderInfo renderInfo;
+		while (ch.shared->renderQueue->pop(renderInfo))
 			;
-		m_samplePlayer.render(ch, render, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
+		renderSampleChannel(ch, renderInfo, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
 	}
 
 	out.sum(ch.shared->audioBuffer, ch.volume, calcPanning_(ch.pan));

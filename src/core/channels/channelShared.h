@@ -32,6 +32,7 @@
 #include "core/midiEvent.h"
 #include "core/quantizer.h"
 #include "core/queue.h"
+#include "core/rendering/sampleRendering.h"
 #include "core/resampler.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include <juce_audio_basics/juce_audio_basics.h>
@@ -42,7 +43,7 @@ namespace giada::m
 struct ChannelShared final
 {
 	using MidiQueue   = Queue<MidiEvent, 32>; // TODO - must be multi-producer (multiple midi threads)
-	using RenderQueue = Queue<SamplePlayer::Render, 2>;
+	using RenderQueue = Queue<rendering::RenderInfo, 2>;
 
 	ChannelShared(Frame bufferSize);
 
