@@ -26,7 +26,6 @@
 
 #include "core/channels/channelFactory.h"
 #include "core/channels/channel.h"
-#include "core/channels/samplePlayer.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/model/model.h"

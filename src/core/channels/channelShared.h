@@ -27,7 +27,6 @@
 #ifndef G_CHANNELSHARED_H
 #define G_CHANNELSHARED_H
 
-#include "core/channels/samplePlayer.h"
 #include "core/const.h"
 #include "core/midiEvent.h"
 #include "core/quantizer.h"
