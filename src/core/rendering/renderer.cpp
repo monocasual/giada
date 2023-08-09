@@ -30,6 +30,7 @@
 #include "core/rendering/midiOutput.h"
 #include "core/rendering/midiReactions.h"
 #include "core/rendering/midiRendering.h"
+#include "core/rendering/sampleAdvance.h"
 #include "core/rendering/sampleRendering.h"
 #ifdef WITH_AUDIO_JACK
 #include "core/jackSynchronizer.h"
@@ -68,8 +69,8 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, KernelMidi& km)
 , m_jackTransport(jt)
 #endif
 {
-	registerOnLastFrameReadCb([this](const Channel& ch, bool natural, bool seqIsRunning) {
-		m_sampleAdvancer.onLastFrame(*ch.shared, seqIsRunning, natural, ch.sampleChannel->mode,
+	registerOnLastFrameReadCb([](const Channel& ch, bool natural, bool seqIsRunning) {
+		rendering::onSampleEnd(*ch.shared, seqIsRunning, natural, ch.sampleChannel->mode,
 		    ch.sampleChannel->isAnyLoopMode());
 	});
 }
@@ -176,7 +177,7 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 				sendMidiFromActions(ch, *e.actions, e.delta, m_kernelMidi);
 		}
 		else if (ch.type == ChannelType::SAMPLE)
-			m_sampleAdvancer.advance(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());
+			rendering::advanceSampleChannel(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());
 	}
 }
 

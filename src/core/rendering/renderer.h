@@ -27,7 +27,7 @@
 #ifndef G_RENDERER_H
 #define G_RENDERER_H
 
-#include "core/channels/sampleAdvancer.h"
+#include "core/sequencer.h"
 #include <vector>
 
 namespace mcl
@@ -93,8 +93,6 @@ private:
 	JackSynchronizer& m_jackSynchronizer;
 	JackTransport&    m_jackTransport;
 #endif
-
-	SampleAdvancer m_sampleAdvancer;
 };
 } // namespace giada::m::rendering
 
