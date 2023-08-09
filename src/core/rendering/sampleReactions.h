@@ -47,6 +47,7 @@ void toggleSampleReadActions(ChannelShared&, bool treatRecsAsLoops, bool seqIsRu
 Actions manually performed on a Sample channel. */
 
 void stopSampleChannelBySeq(ChannelShared&, bool chansStopOnSeqHalt, bool isLoop);
+void stopSampleChannel(ChannelShared&, Frame localFrame);
 void pressSampleChannel(ID channelId, ChannelShared&, SamplePlayerMode, int velocity, bool canQuantize, bool isLoop, bool velocityAsVol, float& volume_i);
 void releaseSampleChannel(ChannelShared&, SamplePlayerMode);
 void killSampleChannel(ChannelShared&, SamplePlayerMode);

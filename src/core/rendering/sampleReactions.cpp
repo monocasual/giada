@@ -79,13 +79,6 @@ void stopReadActions_(ChannelShared& shared, ChannelStatus curRecStatus,
 
 /* -------------------------------------------------------------------------- */
 
-void stopSampleChannel_(ChannelShared& shared)
-{
-	shared.renderQueue->push({RenderInfo::Mode::STOP, 0});
-}
-
-/* -------------------------------------------------------------------------- */
-
 ChannelStatus pressWhileOff_(ID channelId, ChannelShared& shared, int velocity,
     bool canQuantize, bool velocityAsVol, float& volume_i)
 {
@@ -119,7 +112,7 @@ ChannelStatus pressWhilePlay_(ID channelId, ChannelShared& shared, SamplePlayerM
 		return ChannelStatus::ENDING;
 
 	case SamplePlayerMode::SINGLE_BASIC:
-		stopSampleChannel_(shared);
+		stopSampleChannel(shared, 0);
 		return ChannelStatus::PLAY; // Let SamplePlayer stop it once done
 
 	default:
@@ -204,12 +197,19 @@ void stopSampleChannelBySeq(ChannelShared& shared, bool chansStopOnSeqHalt, bool
 
 	case ChannelStatus::PLAY:
 		if (chansStopOnSeqHalt && (isLoop || isReadingActions))
-			stopSampleChannel_(shared);
+			stopSampleChannel(shared, 0);
 		break;
 
 	default:
 		break;
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void stopSampleChannel(ChannelShared& shared, Frame localFrame)
+{
+	shared.renderQueue->push({RenderInfo::Mode::STOP, localFrame});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -263,7 +263,7 @@ void releaseSampleChannel(ChannelShared& shared, SamplePlayerMode mode)
 	disable it. */
 
 	if (shared.playStatus.load() == ChannelStatus::PLAY)
-		stopSampleChannel_(shared); // Let SamplePlayer stop it once done
+		stopSampleChannel(shared, 0); // Let SamplePlayer stop it once done
 	else if (shared.quantizer->hasBeenTriggered())
 		shared.quantizer->clear();
 }
@@ -274,7 +274,7 @@ void killSampleChannel(ChannelShared& shared, SamplePlayerMode mode)
 {
 	const ChannelStatus playStatus = shared.playStatus.load();
 	if (playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING)
-		stopSampleChannel_(shared);
+		stopSampleChannel(shared, 0);
 	if (mode == SamplePlayerMode::SINGLE_BASIC_PAUSE)
 		shared.tracker.store(0); // Hard rewind
 }
