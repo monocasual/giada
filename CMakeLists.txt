@@ -38,6 +38,7 @@ list(APPEND SOURCES
 	src/core/rendering/renderer.cpp
     src/core/rendering/sampleReactions.cpp
     src/core/rendering/sampleRendering.cpp
+    src/core/rendering/sampleAdvance.cpp
     src/core/rendering/midiReactions.cpp
 	src/core/rendering/midiOutput.cpp
 	src/core/rendering/midiRendering.cpp
