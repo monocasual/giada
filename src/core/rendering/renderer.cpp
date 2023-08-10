@@ -71,7 +71,7 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, KernelMidi& km)
 #endif
 {
 	registerOnLastFrameReadCb([](const Channel& ch, bool natural, bool seqIsRunning) {
-		rendering::onSampleEnd(*ch.shared, seqIsRunning, natural, ch.sampleChannel->mode,
+		onSampleEnd(*ch.shared, seqIsRunning, natural, ch.sampleChannel->mode,
 		    ch.sampleChannel->isAnyLoopMode());
 	});
 }
@@ -173,7 +173,7 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 		if (ch.type == ChannelType::MIDI)
 			advanceMidiChannel(ch, e, m_kernelMidi);
 		else if (ch.type == ChannelType::SAMPLE)
-			rendering::advanceSampleChannel(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());
+			advanceSampleChannel(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());
 	}
 }
 
