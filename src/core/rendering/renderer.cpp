@@ -173,7 +173,7 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 		if (ch.type == ChannelType::MIDI)
 			advanceMidiChannel(ch, e, m_kernelMidi);
 		else if (ch.type == ChannelType::SAMPLE)
-			advanceSampleChannel(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());
+			advanceSampleChannel(ch, e);
 	}
 }
 

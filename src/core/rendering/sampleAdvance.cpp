@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/rendering/sampleAdvance.h"
+#include "core/channels/channel.h"
 #include "core/channels/channelShared.h"
 #include "core/rendering/sampleReactions.h"
 
@@ -142,26 +143,29 @@ void parseActions_(ID channelId, ChannelShared& shared, const std::vector<Action
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void advanceSampleChannel(ID channelId, ChannelShared& shared, const Sequencer::Event& e, SamplePlayerMode mode, bool isLoop)
+void advanceSampleChannel(const Channel& ch, const Sequencer::Event& e)
 {
+	const SamplePlayerMode mode   = ch.sampleChannel->mode;
+	const bool             isLoop = ch.sampleChannel->isAnyLoopMode();
+
 	switch (e.type)
 	{
 	case Sequencer::EventType::FIRST_BEAT:
-		onFirstBeat_(shared, e.delta, isLoop);
+		onFirstBeat_(*ch.shared, e.delta, isLoop);
 		break;
 
 	case Sequencer::EventType::BAR:
-		onBar_(shared, e.delta, mode);
+		onBar_(*ch.shared, e.delta, mode);
 		break;
 
 	case Sequencer::EventType::REWIND:
 		if (isLoop)
-			rewindSampleChannel(shared, e.delta);
+			rewindSampleChannel(*ch.shared, e.delta);
 		break;
 
 	case Sequencer::EventType::ACTIONS:
-		if (!isLoop && shared.isReadingActions())
-			parseActions_(channelId, shared, *e.actions, e.delta, mode);
+		if (!isLoop && ch.shared->isReadingActions())
+			parseActions_(ch.id, *ch.shared, *e.actions, e.delta, mode);
 		break;
 
 	default:

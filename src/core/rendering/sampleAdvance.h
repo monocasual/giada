@@ -34,11 +34,12 @@ namespace giada::m
 {
 struct Action;
 struct ChannelShared;
+class Channel;
 } // namespace giada::m
 
 namespace giada::m::rendering
 {
-void advanceSampleChannel(ID channelId, ChannelShared&, const Sequencer::Event&, SamplePlayerMode, bool isLoop);
+void advanceSampleChannel(const Channel&, const Sequencer::Event&);
 void onSampleEnd(ChannelShared&, bool seqIsRunning, bool natural, SamplePlayerMode, bool isLoop);
 } // namespace giada::m::rendering
 
