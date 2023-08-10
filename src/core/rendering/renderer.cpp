@@ -27,6 +27,7 @@
 #include "core/rendering/renderer.h"
 #include "core/mixer.h"
 #include "core/model/model.h"
+#include "core/rendering/midiAdvance.h"
 #include "core/rendering/midiOutput.h"
 #include "core/rendering/midiReactions.h"
 #include "core/rendering/midiRendering.h"
@@ -170,12 +171,7 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 	for (const Sequencer::Event& e : events)
 	{
 		if (ch.type == ChannelType::MIDI)
-		{
-			if (e.type == Sequencer::EventType::FIRST_BEAT)
-				rendering::rewindMidiChannel(ch.shared->playStatus);
-			if (ch.isPlaying() && e.type == Sequencer::EventType::ACTIONS)
-				sendMidiFromActions(ch, *e.actions, e.delta, m_kernelMidi);
-		}
+			advanceMidiChannel(ch, e, m_kernelMidi);
 		else if (ch.type == ChannelType::SAMPLE)
 			rendering::advanceSampleChannel(ch.id, *ch.shared, e, ch.sampleChannel->mode, ch.sampleChannel->isAnyLoopMode());
 	}

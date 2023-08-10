@@ -40,6 +40,7 @@ list(APPEND SOURCES
     src/core/rendering/sampleRendering.cpp
     src/core/rendering/sampleAdvance.cpp
     src/core/rendering/midiReactions.cpp
+    src/core/rendering/midiAdvance.cpp
 	src/core/rendering/midiOutput.cpp
 	src/core/rendering/midiRendering.cpp
 	src/core/api/mainApi.cpp
