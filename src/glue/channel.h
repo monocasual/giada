@@ -173,12 +173,6 @@ void clearAllActions(ID channelId);
 
 void setSamplePlayerMode(ID channelId, SamplePlayerMode m);
 
-/* setCallbacks
-Install callbacks to a m::Channel object in order to communicate with the UI. 
-Call this whenever you add a new channel. */
-
-void setCallbacks(m::Channel&);
-
 void  pressChannel(ID channelId, int velocity, Thread t);
 void  releaseChannel(ID channelId, Thread t);
 void  killChannel(ID channelId, Thread t);

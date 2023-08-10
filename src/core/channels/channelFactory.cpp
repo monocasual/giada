@@ -33,7 +33,6 @@
 #include "core/plugins/plugin.h"
 #include "core/plugins/pluginHost.h"
 #include "core/wave.h"
-#include "glue/channel.h"
 #include <cassert>
 #include <memory>
 
@@ -86,8 +85,6 @@ Data create(ID channelId, ChannelType type, ID columnId, int position, int buffe
 	if (ch.sampleChannel)
 		ch.sampleChannel->overdubProtection = overdubProtection;
 
-	c::channel::setCallbacks(ch); // UI callbacks
-
 	return {ch, std::move(shared)};
 }
 
@@ -101,8 +98,6 @@ Data create(const Channel& o, int bufferSize, Resampler::Quality quality)
 	ch.id     = channelId_.generate();
 	ch.shared = shared.get();
 
-	c::channel::setCallbacks(ch); // UI callbacks
-
 	return {ch, std::move(shared)};
 }
 
@@ -114,8 +109,6 @@ Data deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bu
 
 	std::unique_ptr<ChannelShared> shared = makeShared_(pch.type, bufferSize, quality);
 	Channel                        ch     = Channel(pch, *shared.get(), samplerateRatio, wave, plugins);
-
-	c::channel::setCallbacks(ch); // UI callbacks
 
 	return {ch, std::move(shared)};
 }

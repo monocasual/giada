@@ -293,17 +293,6 @@ void clearAllActions(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void setCallbacks(m::Channel& ch)
-{
-	auto onSendMidiCb = [](ID channelId) {
-		g_ui.pumpEvent([channelId]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); });
-	};
-
-	g_engine.setMidiCallback(onSendMidiCb);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void pressChannel(ID channelId, int velocity, Thread t)
 {
 	g_engine.getChannelsApi().press(channelId, velocity);

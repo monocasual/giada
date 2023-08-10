@@ -29,6 +29,7 @@
 #endif
 #include "core/confFactory.h"
 #include "core/engine.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/mainIO.h"
 #include "gui/ui.h"
 #include "gui/updater.h"
@@ -126,6 +127,10 @@ void startup(int argc, char** argv)
 			return;
 		g_ui.pumpEvent([type]() { type == model::SwapType::HARD ? g_ui.rebuild() : g_ui.refresh(); });
 	};
+
+	g_engine.setMidiCallback([](ID channelId) {
+		g_ui.pumpEvent([channelId]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); });
+	});
 
 	Conf conf = confFactory::deserialize();
 
