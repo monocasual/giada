@@ -29,13 +29,14 @@
 
 #include "core/channels/channelShared.h"
 
+namespace giada::m
+{
+class PluginHost;
+}
+
 namespace giada::m::rendering
 {
-/* prepareMidiBuffer 
-Fills the JUCE MIDI buffer with events previously enqueued in the MidiQueue.
-Returns a reference to the JUCE MIDI buffer for convenience. */
-
-const juce::MidiBuffer& prepareMidiBuffer(ChannelShared&);
+void renderMidiChannelPlugins(const Channel&, PluginHost&);
 } // namespace giada::m::rendering
 
 #endif

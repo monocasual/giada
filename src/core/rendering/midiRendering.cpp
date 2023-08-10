@@ -25,10 +25,18 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/rendering/midiRendering.h"
+#include "core/channels/channel.h"
+#include "core/plugins/pluginHost.h"
 
 namespace giada::m::rendering
 {
-const juce::MidiBuffer& prepareMidiBuffer(ChannelShared& shared)
+namespace
+{
+/* prepareMidiBuffer_
+Fills the JUCE MIDI buffer with events previously enqueued in the MidiQueue.
+Returns a reference to the JUCE MIDI buffer for convenience. */
+
+const juce::MidiBuffer& prepareMidiBuffer_(ChannelShared& shared)
 {
 	shared.midiBuffer.clear();
 
@@ -43,5 +51,16 @@ const juce::MidiBuffer& prepareMidiBuffer(ChannelShared& shared)
 	}
 
 	return shared.midiBuffer;
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+void renderMidiChannelPlugins(const Channel& ch, PluginHost& pluginHost)
+{
+	pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, &prepareMidiBuffer_(*ch.shared));
+	ch.shared->midiBuffer.clear();
 }
 } // namespace giada::m::rendering
