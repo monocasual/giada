@@ -159,7 +159,7 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>& plugins)
+Channel& ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>& plugins)
 {
 	const Channel&           oldChannel     = m_model.get().channels.get(channelId);
 	const Resampler::Quality rsmpQuality    = m_model.get().kernelAudio.rsmpQuality;
@@ -186,6 +186,8 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 	m_model.get().channels.add(newChannelData.channel);
 	m_model.addChannelShared(std::move(newChannelData.shared));
 	m_model.swap(model::SwapType::HARD);
+
+	return m_model.get().channels.getLast();
 }
 
 /* -------------------------------------------------------------------------- */

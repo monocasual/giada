@@ -140,7 +140,7 @@ public:
 	/* cloneChannel
 	Creates a duplicate of Channel. Wants a vector of already cloned plug-ins. */
 
-	void cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>&);
+	Channel& cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>&);
 
 	/* finalizeInputRec
     Fills armed Sample channel with audio data coming from an input recording
