@@ -130,7 +130,7 @@ void ChannelsApi::freePreviewChannel()
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsApi::clone(ID channelId)
+Channel& ChannelsApi::clone(ID channelId)
 {
 	/* Plug-in cloning must be done in the main thread, due to JUCE and VST3
 	internal workings. */
@@ -141,9 +141,11 @@ void ChannelsApi::clone(ID channelId)
 	const std::vector<Plugin*> plugins       = m_pluginManager.clonePlugins(ch.plugins, sampleRate, bufferSize, m_model);
 	const ID                   nextChannelId = channelFactory::getNextId();
 
-	m_channelManager.cloneChannel(channelId, bufferSize, plugins);
+	Channel& newCh = m_channelManager.cloneChannel(channelId, bufferSize, plugins);
 	if (ch.hasActions)
 		m_actionRecorder.cloneActions(channelId, nextChannelId);
+
+	return newCh;
 }
 
 /* -------------------------------------------------------------------------- */

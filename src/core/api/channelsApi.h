@@ -71,7 +71,7 @@ public:
 	void     remove(ID);
 	void     freeSampleChannel(ID);
 	void     freePreviewChannel();
-	void     clone(ID);
+	Channel& clone(ID);
 	void     move(ID channelId, ID columnId, int position);
 
 	void press(ID, int velocity);
