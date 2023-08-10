@@ -40,6 +40,7 @@ namespace giada::m
 class Channel;
 class Wave;
 class Resampler;
+class PluginHost;
 } // namespace giada::m
 
 namespace giada::m::rendering
@@ -85,6 +86,7 @@ RenderInfo::Mode::STOP type). */
 void registerOnLastFrameReadCb(std::function<void(const Channel&, bool natural, bool seqIsRunning)>);
 
 void renderSampleChannel(const Channel&, bool seqIsRunning);
+void renderSampleChannelPlugins(const Channel&, PluginHost&);
 
 ReadResult readWave(const Wave&, mcl::AudioBuffer&, Frame start, Frame max, Frame offset, float pitch, const Resampler&);
 } // namespace giada::m::rendering

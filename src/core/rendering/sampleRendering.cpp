@@ -26,6 +26,7 @@
 
 #include "core/rendering/sampleRendering.h"
 #include "core/channels/channel.h"
+#include "core/plugins/pluginHost.h"
 #include "core/resampler.h"
 #include "core/wave.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
@@ -181,6 +182,13 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 	}
 
 	ch.shared->tracker.store(tracker);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void renderSampleChannelPlugins(const Channel& ch, PluginHost& pluginHost)
+{
+	pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
 }
 
 /* -------------------------------------------------------------------------- */

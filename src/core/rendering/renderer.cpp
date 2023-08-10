@@ -212,7 +212,7 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl
 			ch.shared->audioBuffer.set(in, /*gain=*/1.0f); // add, don't overwrite
 		}
 
-		m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
+		renderSampleChannelPlugins(ch, m_pluginHost);
 	}
 	else if (ch.type == ChannelType::MIDI)
 	{
