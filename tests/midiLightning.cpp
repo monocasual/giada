@@ -1,5 +1,5 @@
-#include "../src/core/channels/midiLighter.h"
 #include "../src/core/channels/midiLightning.h"
+#include "../src/core/rendering/midiOutput.h"
 #include "mocks/kernelMidiMock.h"
 #include <catch2/catch.hpp>
 #include <memory>
@@ -10,7 +10,6 @@ TEST_CASE("MidiMapper")
 
 	m::KernelMidiMock                kernelMidi;
 	m::MidiMapper<m::KernelMidiMock> midiMapper(kernelMidi);
-	m::MidiLighter                   midiLighter(midiMapper);
 	m::MidiLightning                 midiLightning;
 
 	midiMapper.currentMap = {
@@ -28,7 +27,7 @@ TEST_CASE("MidiMapper")
 	    {0, "0x000009", 0, 0x000009},   // playingInaudible
 	};
 
-	midiLighter.onSend = []() {};
+	m::rendering::registerOnSendMidiCb([]() {});
 
 	midiLightning.playing = {0x000010, 0};
 	midiLightning.mute    = {0x000011, 0};
@@ -41,46 +40,46 @@ TEST_CASE("MidiMapper")
 
 	SECTION("Test send OFF status")
 	{
-		midiLighter.sendStatus(midiLightning, ChannelStatus::OFF, /*audible=*/true);
+		m::rendering::sendMidiLightningStatus(midiLightning, ChannelStatus::OFF, /*audible=*/true, midiMapper);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000008); // Stopped
 	}
 
 	SECTION("Test send WAIT status")
 	{
-		midiLighter.sendStatus(midiLightning, ChannelStatus::WAIT, /*audible=*/true);
+		m::rendering::sendMidiLightningStatus(midiLightning, ChannelStatus::WAIT, /*audible=*/true, midiMapper);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000005); // Waiting
 	}
 
 	SECTION("Test send ENDING status")
 	{
-		midiLighter.sendStatus(midiLightning, ChannelStatus::ENDING, /*audible=*/true);
+		m::rendering::sendMidiLightningStatus(midiLightning, ChannelStatus::ENDING, /*audible=*/true, midiMapper);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000007); // Stopping
 	}
 
 	SECTION("Test send PLAY status")
 	{
-		midiLighter.sendStatus(midiLightning, ChannelStatus::PLAY, /*audible=*/true);
+		m::rendering::sendMidiLightningStatus(midiLightning, ChannelStatus::PLAY, /*audible=*/true, midiMapper);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000006); // Playing
 
-		midiLighter.sendStatus(midiLightning, ChannelStatus::PLAY, /*audible=*/false);
+		m::rendering::sendMidiLightningStatus(midiLightning, ChannelStatus::PLAY, /*audible=*/false, midiMapper);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000009); // Playing inaudible
 	}
 
 	SECTION("Test send mute")
 	{
-		midiLighter.sendMute(midiLightning, /*isMuted=*/true);
+		m::rendering::sendMidiLightningMute(midiLightning, /*isMuted=*/true, midiMapper);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000001); // Mute on
 
-		midiLighter.sendMute(midiLightning, /*isMuted=*/false);
+		m::rendering::sendMidiLightningMute(midiLightning, /*isMuted=*/false, midiMapper);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000002); // Mute off
 	}
 
 	SECTION("Test send solo")
 	{
-		midiLighter.sendSolo(midiLightning, /*isSoloed=*/true);
+		m::rendering::sendMidiLightningSolo(midiLightning, /*isSoloed=*/true, midiMapper);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000003); // Solo on
 
-		midiLighter.sendSolo(midiLightning, /*isSoloed=*/false);
+		m::rendering::sendMidiLightningSolo(midiLightning, /*isSoloed=*/false, midiMapper);
 		REQUIRE(kernelMidi.sent.back().getRaw() == 0x000004); // Solo off
 	}
 }

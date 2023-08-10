@@ -1,7 +1,7 @@
-#include "src/core/waveReader.h"
 #include "../src/core/resampler.h"
 #include "../src/core/wave.h"
 #include "../src/utils/vector.h"
+#include "src/core/rendering/sampleRendering.h"
 #include <catch2/catch.hpp>
 #include <memory>
 
@@ -18,8 +18,7 @@ TEST_CASE("WaveReader")
 		f[0] = static_cast<float>(i + 1);
 		f[1] = static_cast<float>(i + 1);
 	});
-	m::Resampler  resampler;
-	m::WaveReader waveReader;
+	m::Resampler resampler;
 
 	SECTION("Test fill, pitch 1.0")
 	{
@@ -27,7 +26,7 @@ TEST_CASE("WaveReader")
 
 		SECTION("Regular fill")
 		{
-			m::WaveReader::Result res = waveReader.fill(wave, out,
+			m::rendering::ReadResult res = rendering::readWave(wave, out,
 			    /*start=*/0, BUFFER_SIZE, /*offset=*/0, /*pitch=*/1.0f, resampler);
 
 			bool allFilled       = true;
@@ -46,7 +45,7 @@ TEST_CASE("WaveReader")
 
 		SECTION("Partial fill")
 		{
-			m::WaveReader::Result res = waveReader.fill(wave, out,
+			m::rendering::ReadResult res = rendering::readWave(wave, out,
 			    /*start=*/0, BUFFER_SIZE, /*offset=*/BUFFER_SIZE / 2, /*pitch=*/1.0f, resampler);
 
 			int numFramesFilled = 0;

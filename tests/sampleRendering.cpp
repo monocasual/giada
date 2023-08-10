@@ -1,4 +1,4 @@
-#include "../src/core/channels/samplePlayer.h"
+#include "../src/core/rendering/sampleRendering.h"
 #include "../src/core/channels/channel.h"
 #include <catch2/catch.hpp>
 
@@ -19,8 +19,8 @@ TEST_CASE("SamplePlayer")
 
 	m::ChannelShared channelShared(BUFFER_SIZE);
 	m::Channel       channel(ChannelType::SAMPLE, 1, 1, 0, channelShared);
-	m::SamplePlayer  samplePlayer;
-	samplePlayer.onLastFrame = [](const m::Channel&, bool, bool) {};
+
+	m::rendering::registerOnLastFrameReadCb([](const m::Channel&, bool, bool) {});
 
 	SECTION("Test initialization")
 	{
@@ -49,7 +49,8 @@ TEST_CASE("SamplePlayer")
 
 				channel.sampleChannel->begin = RANGE_BEGIN;
 				channel.sampleChannel->end   = RANGE_END;
-				samplePlayer.render(channel, {}, /*seqIsRunning=*/false);
+
+				m::rendering::renderSampleChannel(channel, /*seqIsRunning=*/false);
 
 				int numFramesWritten = 0;
 				channelShared.audioBuffer.forEachFrame([&numFramesWritten](float* f, int) {
@@ -65,7 +66,9 @@ TEST_CASE("SamplePlayer")
 				// Point in audio buffer where the rewind takes place
 				const int OFFSET = 256;
 
-				samplePlayer.render(channel, {m::SamplePlayer::Render::Mode::REWIND, OFFSET}, /*seqIsRunning=*/false);
+				channelShared.renderQueue->push({m::rendering::RenderInfo::Mode::REWIND, OFFSET});
+
+				m::rendering::renderSampleChannel(channel, /*seqIsRunning=*/false);
 
 				// Rendering should start over again at buffer[OFFSET]
 				REQUIRE(channelShared.audioBuffer[OFFSET][0] == 1.0f);
@@ -76,7 +79,9 @@ TEST_CASE("SamplePlayer")
 				// Point in audio buffer where the stop takes place
 				const int OFFSET = 256;
 
-				samplePlayer.render(channel, {m::SamplePlayer::Render::Mode::STOP, OFFSET}, /*seqIsRunning=*/false);
+				channelShared.renderQueue->push({m::rendering::RenderInfo::Mode::STOP, OFFSET});
+
+				m::rendering::renderSampleChannel(channel, /*seqIsRunning=*/false);
 
 				int numFramesWritten = 0;
 				channelShared.audioBuffer.forEachFrame([&numFramesWritten](float* f, int) {

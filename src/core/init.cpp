@@ -39,13 +39,13 @@
 #include "tests/actionRecorder.cpp"
 #include "tests/channelFactory.cpp"
 #include "tests/midiEvent.cpp"
-#include "tests/midiLighter.cpp"
-#include "tests/samplePlayer.cpp"
+#include "tests/midiLightning.cpp"
+#include "tests/sampleRendering.cpp"
 #include "tests/utils.cpp"
 #include "tests/wave.cpp"
 #include "tests/waveFactory.cpp"
 #include "tests/waveFx.cpp"
-#include "tests/waveReader.cpp"
+#include "tests/waveReading.cpp"
 #include <catch2/catch.hpp>
 #include <string>
 #include <vector>
