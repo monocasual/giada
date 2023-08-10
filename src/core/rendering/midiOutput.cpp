@@ -33,28 +33,28 @@ namespace giada::m::rendering
 {
 namespace
 {
-std::function<void()> onSend_ = nullptr;
+std::function<void(ID)> onSend_ = nullptr;
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiToOut_(MidiEvent e, int outputFilter, KernelMidi& kernelMidi)
+void sendMidiToOut_(ID channelId, MidiEvent e, int outputFilter, KernelMidi& kernelMidi)
 {
 	assert(onSend_ != nullptr);
 
 	e.setChannel(outputFilter);
 	kernelMidi.send(e);
-	onSend_();
+	onSend_(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-void sendMidiLightning_(uint32_t learnt, const MidiMap::Message& msg, MidiMapper<KernelMidiI>& midiMapper)
+void sendMidiLightning_(ID channelId, uint32_t learnt, const MidiMap::Message& msg, MidiMapper<KernelMidiI>& midiMapper)
 {
 	assert(onSend_ != nullptr);
 
 	midiMapper.sendMidiLightning(learnt, msg);
-	onSend_();
+	onSend_(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -71,7 +71,7 @@ void sendMidiToPlugins_(ChannelShared::MidiQueue& midiQueue, const MidiEvent& e,
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void registerOnSendMidiCb(std::function<void()> f)
+void registerOnSendMidiCb(std::function<void(ID)> f)
 {
 	onSend_ = f;
 }
@@ -86,7 +86,7 @@ void sendMidiFromActions(const Channel& ch, const std::vector<Action>& actions, 
 			continue;
 		sendMidiToPlugins_(ch.shared->midiQueue, action.event, delta);
 		if (ch.canSendMidi())
-			sendMidiToOut_(action.event, ch.midiChannel->outputFilter, kernelMidi);
+			sendMidiToOut_(0, action.event, ch.midiChannel->outputFilter, kernelMidi);
 	}
 }
 
@@ -98,7 +98,7 @@ void sendMidiAllNotesOff(const Channel& ch, KernelMidi& kernelMidi)
 
 	sendMidiToPlugins_(ch.shared->midiQueue, e, 0);
 	if (ch.canSendMidi())
-		sendMidiToOut_(e, ch.midiChannel->outputFilter, kernelMidi);
+		sendMidiToOut_(0, e, ch.midiChannel->outputFilter, kernelMidi);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -128,19 +128,19 @@ void sendMidiLightningStatus(const MidiLightning& m, ChannelStatus status, bool 
 	switch (status)
 	{
 	case ChannelStatus::OFF:
-		sendMidiLightning_(l_playing, midiMap.stopped, midiMapper);
+		sendMidiLightning_(0, l_playing, midiMap.stopped, midiMapper);
 		break;
 
 	case ChannelStatus::WAIT:
-		sendMidiLightning_(l_playing, midiMap.waiting, midiMapper);
+		sendMidiLightning_(0, l_playing, midiMap.waiting, midiMapper);
 		break;
 
 	case ChannelStatus::ENDING:
-		sendMidiLightning_(l_playing, midiMap.stopping, midiMapper);
+		sendMidiLightning_(0, l_playing, midiMap.stopping, midiMapper);
 		break;
 
 	case ChannelStatus::PLAY:
-		sendMidiLightning_(l_playing, audible ? midiMap.playing : midiMap.playingInaudible, midiMapper);
+		sendMidiLightning_(0, l_playing, audible ? midiMap.playing : midiMap.playingInaudible, midiMapper);
 		break;
 
 	default:
@@ -157,7 +157,7 @@ void sendMidiLightningMute(const MidiLightning& m, bool isMuted, MidiMapper<Kern
 	const uint32_t l_mute  = m.mute.getValue();
 
 	if (l_mute != 0x0)
-		sendMidiLightning_(l_mute, isMuted ? midiMap.muteOn : midiMap.muteOff, midiMapper);
+		sendMidiLightning_(0, l_mute, isMuted ? midiMap.muteOn : midiMap.muteOff, midiMapper);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -169,7 +169,7 @@ void sendMidiLightningSolo(const MidiLightning& m, bool isSoloed, MidiMapper<Ker
 	const uint32_t l_solo  = m.solo.getValue();
 
 	if (l_solo != 0x0)
-		sendMidiLightning_(l_solo, isSoloed ? midiMap.soloOn : midiMap.soloOff, midiMapper);
+		sendMidiLightning_(0, l_solo, isSoloed ? midiMap.soloOn : midiMap.soloOff, midiMapper);
 }
 
 /* -------------------------------------------------------------------------- */

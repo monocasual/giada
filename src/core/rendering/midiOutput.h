@@ -43,7 +43,7 @@ namespace giada::m::rendering
 /* registerOnSendMidiCb
 Callback fired when a MIDI signal has been sent. */
 
-void registerOnSendMidiCb(std::function<void()>);
+void registerOnSendMidiCb(std::function<void(ID channelId)>);
 
 /* sendMidiFromActions
 Sends a corresponding MIDI event for each action in the action vector. */

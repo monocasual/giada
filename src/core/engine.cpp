@@ -297,7 +297,7 @@ void Engine::resume()
 
 /* -------------------------------------------------------------------------- */
 
-void Engine::setMidiCallback(std::function<void()> f)
+void Engine::setMidiCallback(std::function<void(ID channelId)> f)
 {
 	rendering::registerOnSendMidiCb(f);
 }

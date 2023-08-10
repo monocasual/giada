@@ -295,7 +295,7 @@ void clearAllActions(ID channelId)
 
 void setCallbacks(m::Channel& ch)
 {
-	auto onSendMidiCb = [channelId = ch.id]() {
+	auto onSendMidiCb = [](ID channelId) {
 		g_ui.pumpEvent([channelId]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); });
 	};
 

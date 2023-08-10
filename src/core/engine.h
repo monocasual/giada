@@ -100,7 +100,7 @@ public:
 	is defined in the UI layer to lit the interface when a MIDI signal is
 	sent/received. */
 
-	void setMidiCallback(std::function<void()>);
+	void setMidiCallback(std::function<void(ID channelId)>);
 
 #ifdef G_DEBUG_MODE
 	void debug();

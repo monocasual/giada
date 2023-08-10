@@ -27,7 +27,7 @@ TEST_CASE("MidiMapper")
 	    {0, "0x000009", 0, 0x000009},   // playingInaudible
 	};
 
-	m::rendering::registerOnSendMidiCb([]() {});
+	m::rendering::registerOnSendMidiCb([](ID) {});
 
 	midiLightning.playing = {0x000010, 0};
 	midiLightning.mute    = {0x000011, 0};
