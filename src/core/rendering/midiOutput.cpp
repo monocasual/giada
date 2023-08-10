@@ -86,7 +86,7 @@ void sendMidiFromActions(const Channel& ch, const std::vector<Action>& actions, 
 			continue;
 		sendMidiToPlugins_(ch.shared->midiQueue, action.event, delta);
 		if (ch.canSendMidi())
-			sendMidiToOut_(0, action.event, ch.midiChannel->outputFilter, kernelMidi);
+			sendMidiToOut_(ch.id, action.event, ch.midiChannel->outputFilter, kernelMidi);
 	}
 }
 
@@ -98,7 +98,7 @@ void sendMidiAllNotesOff(const Channel& ch, KernelMidi& kernelMidi)
 
 	sendMidiToPlugins_(ch.shared->midiQueue, e, 0);
 	if (ch.canSendMidi())
-		sendMidiToOut_(0, e, ch.midiChannel->outputFilter, kernelMidi);
+		sendMidiToOut_(ch.id, e, ch.midiChannel->outputFilter, kernelMidi);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -117,7 +117,7 @@ void sendMidiEventToPlugins(ChannelShared::MidiQueue& midiQueue, const MidiEvent
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-void sendMidiLightningStatus(const MidiLightning& m, ChannelStatus status, bool audible, MidiMapper<KernelMidiI>& midiMapper)
+void sendMidiLightningStatus(ID channelId, const MidiLightning& m, ChannelStatus status, bool audible, MidiMapper<KernelMidiI>& midiMapper)
 {
 	const MidiMap& midiMap   = midiMapper.currentMap;
 	const uint32_t l_playing = m.playing.getValue();
@@ -128,19 +128,19 @@ void sendMidiLightningStatus(const MidiLightning& m, ChannelStatus status, bool 
 	switch (status)
 	{
 	case ChannelStatus::OFF:
-		sendMidiLightning_(0, l_playing, midiMap.stopped, midiMapper);
+		sendMidiLightning_(channelId, l_playing, midiMap.stopped, midiMapper);
 		break;
 
 	case ChannelStatus::WAIT:
-		sendMidiLightning_(0, l_playing, midiMap.waiting, midiMapper);
+		sendMidiLightning_(channelId, l_playing, midiMap.waiting, midiMapper);
 		break;
 
 	case ChannelStatus::ENDING:
-		sendMidiLightning_(0, l_playing, midiMap.stopping, midiMapper);
+		sendMidiLightning_(channelId, l_playing, midiMap.stopping, midiMapper);
 		break;
 
 	case ChannelStatus::PLAY:
-		sendMidiLightning_(0, l_playing, audible ? midiMap.playing : midiMap.playingInaudible, midiMapper);
+		sendMidiLightning_(channelId, l_playing, audible ? midiMap.playing : midiMap.playingInaudible, midiMapper);
 		break;
 
 	default:
@@ -151,35 +151,35 @@ void sendMidiLightningStatus(const MidiLightning& m, ChannelStatus status, bool 
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-void sendMidiLightningMute(const MidiLightning& m, bool isMuted, MidiMapper<KernelMidiI>& midiMapper)
+void sendMidiLightningMute(ID channelId, const MidiLightning& m, bool isMuted, MidiMapper<KernelMidiI>& midiMapper)
 {
 	const MidiMap& midiMap = midiMapper.currentMap;
 	const uint32_t l_mute  = m.mute.getValue();
 
 	if (l_mute != 0x0)
-		sendMidiLightning_(0, l_mute, isMuted ? midiMap.muteOn : midiMap.muteOff, midiMapper);
+		sendMidiLightning_(channelId, l_mute, isMuted ? midiMap.muteOn : midiMap.muteOff, midiMapper);
 }
 
 /* -------------------------------------------------------------------------- */
 
 template <typename KernelMidiI>
-void sendMidiLightningSolo(const MidiLightning& m, bool isSoloed, MidiMapper<KernelMidiI>& midiMapper)
+void sendMidiLightningSolo(ID channelId, const MidiLightning& m, bool isSoloed, MidiMapper<KernelMidiI>& midiMapper)
 {
 	const MidiMap& midiMap = midiMapper.currentMap;
 	const uint32_t l_solo  = m.solo.getValue();
 
 	if (l_solo != 0x0)
-		sendMidiLightning_(0, l_solo, isSoloed ? midiMap.soloOn : midiMap.soloOff, midiMapper);
+		sendMidiLightning_(channelId, l_solo, isSoloed ? midiMap.soloOn : midiMap.soloOff, midiMapper);
 }
 
 /* -------------------------------------------------------------------------- */
 
-template void sendMidiLightningStatus(const MidiLightning&, ChannelStatus, bool audible, MidiMapper<KernelMidi>&);
-template void sendMidiLightningMute(const MidiLightning&, bool isMuted, MidiMapper<KernelMidi>&);
-template void sendMidiLightningSolo(const MidiLightning&, bool isSoloed, MidiMapper<KernelMidi>&);
+template void sendMidiLightningStatus(ID channelId, const MidiLightning&, ChannelStatus, bool audible, MidiMapper<KernelMidi>&);
+template void sendMidiLightningMute(ID channelId, const MidiLightning&, bool isMuted, MidiMapper<KernelMidi>&);
+template void sendMidiLightningSolo(ID channelId, const MidiLightning&, bool isSoloed, MidiMapper<KernelMidi>&);
 #ifdef WITH_TESTS
-template void sendMidiLightningStatus(const MidiLightning&, giada::ChannelStatus, bool audible, MidiMapper<KernelMidiMock>&);
-template void sendMidiLightningMute(const MidiLightning&, bool isMuted, MidiMapper<KernelMidiMock>&);
-template void sendMidiLightningSolo(const MidiLightning&, bool isSoloed, MidiMapper<KernelMidiMock>&);
+template void sendMidiLightningStatus(ID channelId, const MidiLightning&, giada::ChannelStatus, bool audible, MidiMapper<KernelMidiMock>&);
+template void sendMidiLightningMute(ID channelId, const MidiLightning&, bool isMuted, MidiMapper<KernelMidiMock>&);
+template void sendMidiLightningSolo(ID channelId, const MidiLightning&, bool isSoloed, MidiMapper<KernelMidiMock>&);
 #endif
 } // namespace giada::m::rendering

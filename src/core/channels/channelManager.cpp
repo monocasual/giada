@@ -479,7 +479,7 @@ void ChannelManager::toggleMute(ID channelId)
 	ch.setMute(newMute);
 
 	m_model.swap(model::SwapType::SOFT);
-	rendering::sendMidiLightningMute(ch.midiLightning, newMute, m_midiMapper);
+	rendering::sendMidiLightningMute(ch.id, ch.midiLightning, newMute, m_midiMapper);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -492,7 +492,7 @@ void ChannelManager::toggleSolo(ID channelId)
 	ch.setSolo(newSolo);
 
 	m_model.swap(model::SwapType::SOFT);
-	rendering::sendMidiLightningSolo(ch.midiLightning, newSolo, m_midiMapper);
+	rendering::sendMidiLightningSolo(ch.id, ch.midiLightning, newSolo, m_midiMapper);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -696,8 +696,8 @@ void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, Frame begin, Frame 
 
 void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& shared) const
 {
-	shared.playStatus.onChange = [this, midiLightning = ch.midiLightning](ChannelStatus status) {
-		rendering::sendMidiLightningStatus(midiLightning, status, /*isAudible=*/true /* TODO!!! */, m_midiMapper);
+	shared.playStatus.onChange = [this, &ch](ChannelStatus status) {
+		rendering::sendMidiLightningStatus(ch.id, ch.midiLightning, status, /*isAudible=*/true /* TODO!!! */, m_midiMapper);
 	};
 
 	if (ch.type == ChannelType ::SAMPLE)
