@@ -64,9 +64,21 @@ void sendMidiEventToPlugins(ChannelShared::MidiQueue&, const MidiEvent&);
 /* sendMidiLightning[...]
 Sends MIDI lightning messages to the outside world. */
 
-void sendMidiLightningStatus(const MidiLightning&, ChannelStatus, bool audible, MidiMapper<KernelMidi>&);
-void sendMidiLightningMute(const MidiLightning&, bool isMuted, MidiMapper<KernelMidi>&);
-void sendMidiLightningSolo(const MidiLightning&, bool isSoloed, MidiMapper<KernelMidi>&);
+template <typename KernelMidiI>
+void sendMidiLightningStatus(const MidiLightning&, ChannelStatus, bool audible, MidiMapper<KernelMidiI>&);
+template <typename KernelMidiI>
+void sendMidiLightningMute(const MidiLightning&, bool isMuted, MidiMapper<KernelMidiI>&);
+template <typename KernelMidiI>
+void sendMidiLightningSolo(const MidiLightning&, bool isSoloed, MidiMapper<KernelMidiI>&);
+
+extern template void sendMidiLightningStatus(const MidiLightning&, ChannelStatus, bool audible, MidiMapper<KernelMidi>&);
+extern template void sendMidiLightningMute(const MidiLightning&, bool isMuted, MidiMapper<KernelMidi>&);
+extern template void sendMidiLightningSolo(const MidiLightning&, bool isSoloed, MidiMapper<KernelMidi>&);
+#ifdef WITH_TESTS
+extern template void sendMidiLightningStatus(const MidiLightning&, giada::ChannelStatus, bool audible, MidiMapper<KernelMidiMock>&);
+extern template void sendMidiLightningMute(const MidiLightning&, bool isMuted, MidiMapper<KernelMidiMock>&);
+extern template void sendMidiLightningSolo(const MidiLightning&, bool isSoloed, MidiMapper<KernelMidiMock>&);
+#endif
 } // namespace giada::m::rendering
 
 #endif

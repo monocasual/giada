@@ -48,7 +48,8 @@ void sendMidiToOut_(MidiEvent e, int outputFilter, KernelMidi& kernelMidi)
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiLightning_(uint32_t learnt, const MidiMap::Message& msg, MidiMapper<KernelMidi>& midiMapper)
+template <typename KernelMidiI>
+void sendMidiLightning_(uint32_t learnt, const MidiMap::Message& msg, MidiMapper<KernelMidiI>& midiMapper)
 {
 	assert(onSend_ != nullptr);
 
@@ -115,7 +116,8 @@ void sendMidiEventToPlugins(ChannelShared::MidiQueue& midiQueue, const MidiEvent
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiLightningStatus(const MidiLightning& m, ChannelStatus status, bool audible, MidiMapper<KernelMidi>& midiMapper)
+template <typename KernelMidiI>
+void sendMidiLightningStatus(const MidiLightning& m, ChannelStatus status, bool audible, MidiMapper<KernelMidiI>& midiMapper)
 {
 	const MidiMap& midiMap   = midiMapper.currentMap;
 	const uint32_t l_playing = m.playing.getValue();
@@ -148,7 +150,8 @@ void sendMidiLightningStatus(const MidiLightning& m, ChannelStatus status, bool 
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiLightningMute(const MidiLightning& m, bool isMuted, MidiMapper<KernelMidi>& midiMapper)
+template <typename KernelMidiI>
+void sendMidiLightningMute(const MidiLightning& m, bool isMuted, MidiMapper<KernelMidiI>& midiMapper)
 {
 	const MidiMap& midiMap = midiMapper.currentMap;
 	const uint32_t l_mute  = m.mute.getValue();
@@ -159,7 +162,8 @@ void sendMidiLightningMute(const MidiLightning& m, bool isMuted, MidiMapper<Kern
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiLightningSolo(const MidiLightning& m, bool isSoloed, MidiMapper<KernelMidi>& midiMapper)
+template <typename KernelMidiI>
+void sendMidiLightningSolo(const MidiLightning& m, bool isSoloed, MidiMapper<KernelMidiI>& midiMapper)
 {
 	const MidiMap& midiMap = midiMapper.currentMap;
 	const uint32_t l_solo  = m.solo.getValue();
@@ -167,4 +171,15 @@ void sendMidiLightningSolo(const MidiLightning& m, bool isSoloed, MidiMapper<Ker
 	if (l_solo != 0x0)
 		sendMidiLightning_(l_solo, isSoloed ? midiMap.soloOn : midiMap.soloOff, midiMapper);
 }
+
+/* -------------------------------------------------------------------------- */
+
+template void sendMidiLightningStatus(const MidiLightning&, ChannelStatus, bool audible, MidiMapper<KernelMidi>&);
+template void sendMidiLightningMute(const MidiLightning&, bool isMuted, MidiMapper<KernelMidi>&);
+template void sendMidiLightningSolo(const MidiLightning&, bool isSoloed, MidiMapper<KernelMidi>&);
+#ifdef WITH_TESTS
+template void sendMidiLightningStatus(const MidiLightning&, giada::ChannelStatus, bool audible, MidiMapper<KernelMidiMock>&);
+template void sendMidiLightningMute(const MidiLightning&, bool isMuted, MidiMapper<KernelMidiMock>&);
+template void sendMidiLightningSolo(const MidiLightning&, bool isSoloed, MidiMapper<KernelMidiMock>&);
+#endif
 } // namespace giada::m::rendering
