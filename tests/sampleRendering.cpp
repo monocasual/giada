@@ -20,6 +20,10 @@ TEST_CASE("SamplePlayer")
 	m::ChannelShared channelShared(BUFFER_SIZE);
 	m::Channel       channel(ChannelType::SAMPLE, 1, 1, 0, channelShared);
 
+	channelShared.quantizer.emplace();
+	channelShared.renderQueue.emplace();
+	channelShared.resampler.emplace(Resampler::Quality::LINEAR, G_MAX_IO_CHANS);
+
 	m::rendering::registerOnLastFrameReadCb([](const m::Channel&, bool, bool) {});
 
 	SECTION("Test initialization")
@@ -49,6 +53,8 @@ TEST_CASE("SamplePlayer")
 
 				channel.sampleChannel->begin = RANGE_BEGIN;
 				channel.sampleChannel->end   = RANGE_END;
+
+				channelShared.renderQueue->push({m::rendering::RenderInfo::Mode::NORMAL, 0});
 
 				m::rendering::renderSampleChannel(channel, /*seqIsRunning=*/false);
 
