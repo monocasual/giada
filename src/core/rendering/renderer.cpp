@@ -199,14 +199,7 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl
 			renderSampleChannel(ch, seqIsRunning);
 
 		if (ch.canReceiveAudio())
-		{
-			/* Copy input buffer to channel buffer: this enables the input 
-			monitoring. The channel buffer will be overwritten later on by 
-			pluginHost::processStack, so that you would record "clean" audio 
-			(i.e. not plugin-processed). */
-
-			ch.shared->audioBuffer.set(in, /*gain=*/1.0f); // add, don't overwrite
-		}
+			renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
 
 		renderSampleChannelPlugins(ch, m_pluginHost);
 	}

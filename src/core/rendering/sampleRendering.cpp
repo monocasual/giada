@@ -193,6 +193,13 @@ void renderSampleChannelPlugins(const Channel& ch, PluginHost& pluginHost)
 
 /* -------------------------------------------------------------------------- */
 
+void renderSampleChannelInput(const Channel& ch, const mcl::AudioBuffer& in)
+{
+	ch.shared->audioBuffer.set(in, /*gain=*/1.0f); // add, don't overwrite
+}
+
+/* -------------------------------------------------------------------------- */
+
 ReadResult readWave(const Wave& wave, mcl::AudioBuffer& out, Frame start, Frame max,
     Frame offset, float pitch, const Resampler& resampler)
 {
