@@ -40,7 +40,7 @@ class Channel;
 namespace giada::m::rendering
 {
 void advanceSampleChannel(const Channel&, const Sequencer::Event&);
-void onSampleEnd(ChannelShared&, bool seqIsRunning, bool natural, SamplePlayerMode, bool isLoop);
+void onSampleEnd(const Channel&, bool seqIsRunning, bool natural);
 } // namespace giada::m::rendering
 
 #endif

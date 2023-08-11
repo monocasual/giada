@@ -175,8 +175,12 @@ void advanceSampleChannel(const Channel& ch, const Sequencer::Event& e)
 
 /* -------------------------------------------------------------------------- */
 
-void onSampleEnd(ChannelShared& shared, bool seqIsRunning, bool natural, SamplePlayerMode mode, bool isLoop)
+void onSampleEnd(const Channel& ch, bool seqIsRunning, bool natural)
 {
+	ChannelShared&         shared = *ch.shared;
+	const SamplePlayerMode mode   = ch.sampleChannel->mode;
+	const bool             isLoop = ch.sampleChannel->isAnyLoopMode();
+
 	switch (shared.playStatus.load())
 	{
 	case ChannelStatus::PLAY:

@@ -71,8 +71,7 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, KernelMidi& km)
 #endif
 {
 	registerOnLastFrameReadCb([](const Channel& ch, bool natural, bool seqIsRunning) {
-		onSampleEnd(*ch.shared, seqIsRunning, natural, ch.sampleChannel->mode,
-		    ch.sampleChannel->isAnyLoopMode());
+		onSampleEnd(ch, seqIsRunning, natural);
 	});
 }
 
