@@ -196,6 +196,10 @@ Engine::Engine()
 		assert(onModelSwap != nullptr);
 		onModelSwap(t);
 	};
+
+	rendering::registerOnSendMidiCb([this](ID channelId) {
+		onMidiSentFromChannel(channelId);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -293,13 +297,6 @@ void Engine::suspend()
 void Engine::resume()
 {
 	m_mixer.enable();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Engine::setMidiCallback(std::function<void(ID channelId)> f)
-{
-	rendering::registerOnSendMidiCb(f);
 }
 
 /* -------------------------------------------------------------------------- */

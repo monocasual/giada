@@ -95,13 +95,6 @@ public:
 	void suspend();
 	void resume();
 
-	/* setMidiCallback
-	Registers callback 'f' to MIDI events happening in the model. The callback
-	is defined in the UI layer to lit the interface when a MIDI signal is
-	sent/received. */
-
-	void setMidiCallback(std::function<void(ID channelId)>);
-
 #ifdef G_DEBUG_MODE
 	void debug();
 #endif
@@ -127,8 +120,9 @@ public:
 	/* onMidi[Received|Sent]
 	Callback fired when the engine has received or sent a MIDI event. */
 
-	std::function<void()> onMidiReceived;
-	std::function<void()> onMidiSent;
+	std::function<void()>   onMidiReceived;
+	std::function<void()>   onMidiSent;
+	std::function<void(ID)> onMidiSentFromChannel;
 
 	/* onModelSwap
 	Callback fired when the model gets swapped. */

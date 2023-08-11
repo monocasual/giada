@@ -119,6 +119,10 @@ void startup(int argc, char** argv)
 		g_ui.pumpEvent([] { g_ui.mainWindow->mainIO->setMidiOutActivity(); });
 	};
 
+	g_engine.onMidiSentFromChannel = [](ID channelId) {
+		g_ui.pumpEvent([channelId]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); });
+	};
+
 	g_engine.onModelSwap = [](model::SwapType type) {
 		/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap
 		callback might be performed by a non-main thread, which must talk to the 
@@ -127,10 +131,6 @@ void startup(int argc, char** argv)
 			return;
 		g_ui.pumpEvent([type]() { type == model::SwapType::HARD ? g_ui.rebuild() : g_ui.refresh(); });
 	};
-
-	g_engine.setMidiCallback([](ID channelId) {
-		g_ui.pumpEvent([channelId]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); });
-	});
 
 	Conf conf = confFactory::deserialize();
 
