@@ -24,8 +24,6 @@ TEST_CASE("SamplePlayer")
 	channelShared.renderQueue.emplace();
 	channelShared.resampler.emplace(Resampler::Quality::LINEAR, G_MAX_IO_CHANS);
 
-	m::rendering::registerOnLastFrameReadCb([](const m::Channel&, bool, bool) {});
-
 	SECTION("Test initialization")
 	{
 		REQUIRE(channel.sampleChannel->hasWave() == false);

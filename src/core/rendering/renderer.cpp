@@ -70,9 +70,6 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, KernelMidi& km)
 , m_jackTransport(jt)
 #endif
 {
-	registerOnLastFrameReadCb([](const Channel& ch, bool natural, bool seqIsRunning) {
-		onSampleEnd(ch, seqIsRunning, natural);
-	});
 }
 
 /* -------------------------------------------------------------------------- */

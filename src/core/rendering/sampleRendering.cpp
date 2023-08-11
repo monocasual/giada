@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/rendering/sampleRendering.h"
+#include "core/rendering/sampleAdvance.h"
 #include "core/channels/channel.h"
 #include "core/plugins/pluginHost.h"
 #include "core/resampler.h"
@@ -36,10 +37,6 @@ namespace giada::m::rendering
 {
 namespace
 {
-std::function<void(const Channel&, bool natural, bool seqIsRunning)> onLastFrameReadCb_ = nullptr;
-
-/* -------------------------------------------------------------------------- */
-
 ReadResult readResampled_(const Wave& wave, mcl::AudioBuffer& dest, Frame start,
     Frame max, Frame offset, float pitch, const Resampler& resampler)
 {
@@ -74,10 +71,7 @@ ReadResult readCopy_(const Wave& wave, mcl::AudioBuffer& dest, Frame start,
 
 void stop_(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, bool seqIsRunning)
 {
-	assert(onLastFrameReadCb_ != nullptr);
-
-	onLastFrameReadCb_(ch, /*natural=*/false, seqIsRunning);
-
+	onSampleEnd(ch, /*natural=*/false, seqIsRunning);
 	if (offset != 0)
 		buf.clear(offset);
 }
@@ -115,11 +109,9 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame off
 
 	if (tracker >= end)
 	{
-		assert(onLastFrameReadCb_ != nullptr);
-
 		tracker = begin;
 		ch.shared->resampler->last();
-		onLastFrameReadCb_(ch, /*natural=*/true, seqIsRunning);
+		onSampleEnd(ch, /*natural=*/true, seqIsRunning);
 
 		if (shouldLoop_(mode, status) && res.generated < buf.countFrames())
 			tracker += rendering::readWave(wave, buf, tracker, end, res.generated, pitch, resampler).used;
@@ -131,13 +123,6 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame off
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-void registerOnLastFrameReadCb(std::function<void(const Channel&, bool natural, bool seqIsRunning)> f)
-{
-	onLastFrameReadCb_ = f;
-}
-
 /* -------------------------------------------------------------------------- */
 
 void renderSampleChannel(const Channel& ch, bool seqIsRunning)

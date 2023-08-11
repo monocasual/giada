@@ -40,6 +40,13 @@ class Channel;
 namespace giada::m::rendering
 {
 void advanceSampleChannel(const Channel&, const Sequencer::Event&);
+
+/* onSampleEnd
+Things to do when the last frame has been reached. 'natural' == true if the 
+rendering has ended because the end of the sample has ben reached. 
+'natural' == false if the rendering has been manually interrupted (by a 
+RenderInfo::Mode::STOP type). */
+
 void onSampleEnd(const Channel&, bool seqIsRunning, bool natural);
 } // namespace giada::m::rendering
 
