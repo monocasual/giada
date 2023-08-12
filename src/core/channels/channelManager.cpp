@@ -696,8 +696,8 @@ void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, Frame begin, Frame 
 
 void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& shared) const
 {
-	shared.playStatus.onChange = [this, &ch](ChannelStatus status) {
-		rendering::sendMidiLightningStatus(ch.id, ch.midiLightning, status, /*isAudible=*/true /* TODO!!! */, m_midiMapper);
+	shared.playStatus.onChange = [this, id = ch.id, midiLightning = ch.midiLightning](ChannelStatus status) {
+		rendering::sendMidiLightningStatus(id, midiLightning, status, /*isAudible=*/true /* TODO!!! */, m_midiMapper);
 	};
 
 	if (ch.type == ChannelType ::SAMPLE)
