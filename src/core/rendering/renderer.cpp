@@ -176,7 +176,7 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderNormalChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
-    mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const
+    const mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const
 {
 	for (const Channel& c : channels)
 		if (!c.isInternal())
@@ -185,7 +185,8 @@ void Renderer::renderNormalChannels(const std::vector<Channel>& channels, mcl::A
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out, mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const
+void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
+    const mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const
 {
 	ch.shared->audioBuffer.clear();
 
