@@ -707,17 +707,15 @@ void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& sha
 
 	if (ch.type == ChannelType ::SAMPLE)
 	{
-		shared.quantizer->schedule(Q_ACTION_PLAY + ch.id, [this, channelId = ch.id](Frame delta) {
-			Channel& ch = m_model.get().channels.get(channelId);
-			rendering::playSampleChannel(*ch.shared, delta);
+		shared.quantizer->schedule(Q_ACTION_PLAY + ch.id, [&shared](Frame delta) {
+			rendering::playSampleChannel(shared, delta);
 		});
-		shared.quantizer->schedule(Q_ACTION_REWIND + ch.id, [this, channelId = ch.id](Frame delta) {
-			Channel&            ch     = m_model.get().channels.get(channelId);
-			const ChannelStatus status = ch.shared->playStatus.load();
+		shared.quantizer->schedule(Q_ACTION_REWIND + ch.id, [&shared](Frame delta) {
+			const ChannelStatus status = shared.playStatus.load();
 			if (status == ChannelStatus::OFF)
-				rendering::playSampleChannel(*ch.shared, delta);
+				rendering::playSampleChannel(shared, delta);
 			else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
-				rendering::rewindSampleChannel(*ch.shared, delta);
+				rendering::rewindSampleChannel(shared, delta);
 		});
 	}
 }
