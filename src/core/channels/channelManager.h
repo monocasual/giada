@@ -193,6 +193,11 @@ public:
 
 	std::function<std::unique_ptr<Wave>(Frame)> onChannelRecorded;
 
+	/* onChannelPlayStatusChanged
+	Fired when the play status of a Sample channel has changed. */
+
+	std::function<void(ID, ChannelStatus)> onChannelPlayStatusChanged;
+
 private:
 	void loadSampleChannel(Channel&, Wave*, Frame begin = -1, Frame end = -1, Frame shift = -1) const;
 
