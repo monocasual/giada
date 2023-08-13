@@ -25,9 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/rendering/sampleRendering.h"
-#include "core/rendering/sampleAdvance.h"
 #include "core/channels/channel.h"
 #include "core/plugins/pluginHost.h"
+#include "core/rendering/sampleAdvance.h"
 #include "core/resampler.h"
 #include "core/wave.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
@@ -69,9 +69,48 @@ ReadResult readCopy_(const Wave& wave, mcl::AudioBuffer& dest, Frame start,
 
 /* -------------------------------------------------------------------------- */
 
+/* onSampleEnd
+Things to do when the last frame has been reached. 'natural' == true if the 
+rendering has ended because the end of the sample has ben reached. 
+'natural' == false if the rendering has been manually interrupted (by a 
+RenderInfo::Mode::STOP type). */
+
+void onSampleEnd_(const Channel& ch, bool seqIsRunning, bool natural)
+{
+	ChannelShared&         shared = *ch.shared;
+	const SamplePlayerMode mode   = ch.sampleChannel->mode;
+	const bool             isLoop = ch.sampleChannel->isAnyLoopMode();
+
+	switch (shared.playStatus.load())
+	{
+	case ChannelStatus::PLAY:
+		/* Stop LOOP_* when the sequencer is off, or SINGLE_* except for
+		SINGLE_ENDLESS, which runs forever unless it's in ENDING mode. 
+		Other loop once modes are put in wait mode. */
+		if ((mode == SamplePlayerMode::SINGLE_BASIC ||
+		        mode == SamplePlayerMode::SINGLE_BASIC_PAUSE ||
+		        mode == SamplePlayerMode::SINGLE_PRESS ||
+		        mode == SamplePlayerMode::SINGLE_RETRIG) ||
+		    (isLoop && !seqIsRunning) || !natural)
+			shared.playStatus.store(ChannelStatus::OFF);
+		else if (mode == SamplePlayerMode::LOOP_ONCE || mode == SamplePlayerMode::LOOP_ONCE_BAR)
+			shared.playStatus.store(ChannelStatus::WAIT);
+		break;
+
+	case ChannelStatus::ENDING:
+		shared.playStatus.store(ChannelStatus::OFF);
+		break;
+
+	default:
+		break;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
 void stop_(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, bool seqIsRunning)
 {
-	onSampleEnd(ch, /*natural=*/false, seqIsRunning);
+	onSampleEnd_(ch, /*natural=*/false, seqIsRunning);
 	if (offset != 0)
 		buf.clear(offset);
 }
@@ -111,7 +150,7 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame off
 	{
 		tracker = begin;
 		ch.shared->resampler->last();
-		onSampleEnd(ch, /*natural=*/true, seqIsRunning);
+		onSampleEnd_(ch, /*natural=*/true, seqIsRunning);
 
 		if (shouldLoop_(mode, status) && res.generated < buf.countFrames())
 			tracker += rendering::readWave(wave, buf, tracker, end, res.generated, pitch, resampler).used;

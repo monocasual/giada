@@ -172,37 +172,4 @@ void advanceSampleChannel(const Channel& ch, const Sequencer::Event& e)
 		break;
 	}
 }
-
-/* -------------------------------------------------------------------------- */
-
-void onSampleEnd(const Channel& ch, bool seqIsRunning, bool natural)
-{
-	ChannelShared&         shared = *ch.shared;
-	const SamplePlayerMode mode   = ch.sampleChannel->mode;
-	const bool             isLoop = ch.sampleChannel->isAnyLoopMode();
-
-	switch (shared.playStatus.load())
-	{
-	case ChannelStatus::PLAY:
-		/* Stop LOOP_* when the sequencer is off, or SINGLE_* except for
-		SINGLE_ENDLESS, which runs forever unless it's in ENDING mode. 
-		Other loop once modes are put in wait mode. */
-		if ((mode == SamplePlayerMode::SINGLE_BASIC ||
-		        mode == SamplePlayerMode::SINGLE_BASIC_PAUSE ||
-		        mode == SamplePlayerMode::SINGLE_PRESS ||
-		        mode == SamplePlayerMode::SINGLE_RETRIG) ||
-		    (isLoop && !seqIsRunning) || !natural)
-			shared.playStatus.store(ChannelStatus::OFF);
-		else if (mode == SamplePlayerMode::LOOP_ONCE || mode == SamplePlayerMode::LOOP_ONCE_BAR)
-			shared.playStatus.store(ChannelStatus::WAIT);
-		break;
-
-	case ChannelStatus::ENDING:
-		shared.playStatus.store(ChannelStatus::OFF);
-		break;
-
-	default:
-		break;
-	}
-}
 } // namespace giada::m::rendering
