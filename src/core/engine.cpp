@@ -57,8 +57,9 @@ Engine::Engine()
 #else
 , m_renderer(m_sequencer, m_mixer, m_pluginHost, m_kernelMidi)
 #endif
-, m_mainApi(m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder)
-, m_channelsApi(m_model, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager)
+, m_reactor(m_model, m_midiMapper, m_actionRecorder, m_kernelMidi)
+, m_mainApi(m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder, m_reactor)
+, m_channelsApi(m_model, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager, m_reactor)
 , m_pluginsApi(m_kernelAudio, m_pluginManager, m_pluginHost, m_model)
 , m_sampleEditorApi(m_kernelAudio, m_model, m_channelManager)
 , m_actionEditorApi(*this, m_sequencer, m_actionRecorder)

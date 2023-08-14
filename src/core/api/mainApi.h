@@ -29,6 +29,11 @@
 
 #include "core/mixer.h"
 
+namespace giada::m::rendering
+{
+class Reactor;
+}
+
 namespace giada::m
 {
 class Engine;
@@ -40,7 +45,8 @@ class Recorder;
 class MainApi
 {
 public:
-	MainApi(KernelAudio&, Mixer&, Sequencer&, MidiSynchronizer&, ChannelManager&, Recorder&);
+	MainApi(KernelAudio&, Mixer&, Sequencer&, MidiSynchronizer&, ChannelManager&, Recorder&,
+	    rendering::Reactor&);
 
 	bool              isRecordingInput() const;
 	bool              isRecordingActions() const;
@@ -87,12 +93,13 @@ public:
 	void startActionRecOnCallback();
 
 private:
-	KernelAudio&      m_kernelAudio;
-	Mixer&            m_mixer;
-	Sequencer&        m_sequencer;
-	MidiSynchronizer& m_midiSynchronizer;
-	ChannelManager&   m_channelManager;
-	Recorder&         m_recorder;
+	KernelAudio&        m_kernelAudio;
+	Mixer&              m_mixer;
+	Sequencer&          m_sequencer;
+	MidiSynchronizer&   m_midiSynchronizer;
+	ChannelManager&     m_channelManager;
+	Recorder&           m_recorder;
+	rendering::Reactor& m_reactor;
 };
 } // namespace giada::m
 

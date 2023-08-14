@@ -148,29 +148,19 @@ public:
 
 	void finalizeInputRec(const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame);
 
-	void keyPress(ID channelId, int velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized);
-	void keyRelease(ID channelId, bool canRecordActions, Frame currentFrameQuantized);
-	void keyKill(ID channelId, bool canRecordActions, Frame currentFrameQuantized);
-	void processMidiEvent(ID channelId, const MidiEvent&, bool canRecordActions, Frame currentFrameQuantized);
 	void setInputMonitor(ID channelId, bool value);
 	void setVolume(ID channelId, float value);
 	void setPitch(ID channelId, float value);
 	void setPan(ID channelId, float value);
 	void setBeginEnd(ID channelId, Frame b, Frame e);
 	void resetBeginEnd(ID channelId);
-	void toggleMute(ID channelId);
-	void toggleSolo(ID channelId);
 	void toggleArm(ID channelId);
-	void toggleReadActions(ID channelId, bool seqIsRunning);
-	void killReadActions(ID channelId);
 	void setOverdubProtection(ID channelId, bool value);
 	void setSamplePlayerMode(ID channelId, SamplePlayerMode);
 	void setHeight(ID channelId, Pixel height);
 	void loadWaveInPreviewChannel(ID sourceChannelId);
 	void freeWaveInPreviewChannel();
 	void setPreviewTracker(Frame f);
-	void stopAll();
-	void rewindAll();
 	bool saveSample(ID channelId, const std::string& filePath);
 
 	/* consolidateChannels

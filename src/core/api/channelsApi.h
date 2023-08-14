@@ -38,6 +38,11 @@ namespace giada::m::model
 class Model;
 }
 
+namespace giada::m::rendering
+{
+class Reactor;
+}
+
 namespace giada::m
 {
 class MidiEvent;
@@ -56,7 +61,7 @@ class ChannelsApi
 {
 public:
 	ChannelsApi(model::Model&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
-	    Recorder&, ActionRecorder&, PluginHost&, PluginManager&);
+	    Recorder&, ActionRecorder&, PluginHost&, PluginManager&, rendering::Reactor&);
 
 	bool hasChannelsWithAudioData() const;
 	bool hasChannelsWithActions() const;
@@ -98,15 +103,16 @@ public:
 	bool saveSample(ID, const std::string& filePath);
 
 private:
-	model::Model&   m_model;
-	KernelAudio&    m_kernelAudio;
-	Mixer&          m_mixer;
-	Sequencer&      m_sequencer;
-	ChannelManager& m_channelManager;
-	Recorder&       m_recorder;
-	ActionRecorder& m_actionRecorder;
-	PluginHost&     m_pluginHost;
-	PluginManager&  m_pluginManager;
+	model::Model&       m_model;
+	KernelAudio&        m_kernelAudio;
+	Mixer&              m_mixer;
+	Sequencer&          m_sequencer;
+	ChannelManager&     m_channelManager;
+	Recorder&           m_recorder;
+	ActionRecorder&     m_actionRecorder;
+	PluginHost&         m_pluginHost;
+	PluginManager&      m_pluginManager;
+	rendering::Reactor& m_reactor;
 };
 } // namespace giada::m
 

@@ -300,109 +300,6 @@ void ChannelManager::finalizeInputRec(const mcl::AudioBuffer& buffer, Frame reco
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::keyPress(ID channelId, int velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized)
-{
-	Channel& ch = m_model.get().channels.get(channelId);
-
-	if (ch.type == ChannelType::MIDI)
-	{
-		rendering::playMidiChannel(ch.shared->playStatus);
-	}
-	else if (ch.type == ChannelType::SAMPLE && ch.hasWave())
-	{
-		const bool             isAnyLoopMode = ch.sampleChannel->isAnyLoopMode();
-		const bool             velocityAsVol = ch.sampleChannel->velocityAsVol;
-		const SamplePlayerMode mode          = ch.sampleChannel->mode;
-
-		if (canRecordActions && !isAnyLoopMode)
-		{
-			rendering::recordSampleKeyPress(channelId, *ch.shared, currentFrameQuantized, mode, m_actionRecorder);
-			ch.hasActions = true;
-		}
-
-		rendering::pressSampleChannel(channelId, *ch.shared, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol, ch.volume_i);
-	}
-
-	m_model.swap(model::SwapType::SOFT);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ChannelManager::keyRelease(ID channelId, bool canRecordActions, Frame currentFrameQuantized)
-{
-	Channel& ch = m_model.get().channels.get(channelId);
-
-	if (ch.type != ChannelType::SAMPLE || !ch.hasWave())
-		return;
-
-	const SamplePlayerMode mode = ch.sampleChannel->mode;
-
-	if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
-	{
-		/* Record a stop event only if channel is SINGLE_PRESS. For any other 
-		mode the key release event is meaningless. */
-
-		rendering::recordSampleKeyRelease(channelId, currentFrameQuantized, m_actionRecorder);
-		ch.hasActions = true;
-	}
-
-	rendering::releaseSampleChannel(*ch.shared, mode);
-
-	m_model.swap(model::SwapType::SOFT);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ChannelManager::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQuantized)
-{
-	Channel& ch = m_model.get().channels.get(channelId);
-
-	if (ch.type == ChannelType::MIDI)
-	{
-		if (ch.isPlaying())
-		{
-			rendering::stopMidiChannel(ch.shared->playStatus);
-			rendering::sendMidiAllNotesOff(ch, m_kernelMidi);
-		}
-	}
-	else if (ch.type == ChannelType::SAMPLE)
-	{
-		const SamplePlayerMode mode = ch.sampleChannel->mode;
-
-		if (ch.hasWave() && canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
-		{
-			/* Record a stop event only if channel is SINGLE_PRESS. For any other 
-			mode the key release event is meaningless. */
-
-			rendering::recordSampleKeyKill(channelId, currentFrameQuantized, m_actionRecorder);
-			ch.hasActions = true;
-		}
-
-		rendering::killSampleChannel(*ch.shared, mode);
-	}
-
-	m_model.swap(model::SwapType::SOFT);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ChannelManager::processMidiEvent(ID channelId, const MidiEvent& e, bool canRecordActions, Frame currentFrameQuantized)
-{
-	Channel& ch = m_model.get().channels.get(channelId);
-
-	assert(ch.type == ChannelType::MIDI);
-
-	if (canRecordActions)
-	{
-		rendering::recordMidiAction(channelId, e, currentFrameQuantized, m_actionRecorder);
-		ch.hasActions = true;
-		m_model.swap(model::SwapType::HARD);
-	}
-	rendering::sendMidiEventToPlugins(ch.shared->midiQueue, e);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void ChannelManager::setInputMonitor(ID channelId, bool value)
 {
 	m_model.get().channels.get(channelId).sampleChannel->inputMonitor = value;
@@ -471,65 +368,12 @@ void ChannelManager::resetBeginEnd(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::toggleMute(ID channelId)
-{
-	Channel&   ch      = m_model.get().channels.get(channelId);
-	const bool newMute = !ch.isMuted();
-
-	ch.setMute(newMute);
-
-	m_model.swap(model::SwapType::SOFT);
-
-	if (ch.midiLightning.enabled)
-		rendering::sendMidiLightningMute(ch.id, ch.midiLightning, newMute, m_midiMapper);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ChannelManager::toggleSolo(ID channelId)
-{
-	Channel&   ch      = m_model.get().channels.get(channelId);
-	const bool newSolo = !ch.isSoloed();
-
-	ch.setSolo(newSolo);
-
-	m_model.swap(model::SwapType::SOFT);
-
-	if (ch.midiLightning.enabled)
-		rendering::sendMidiLightningSolo(ch.id, ch.midiLightning, newSolo, m_midiMapper);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void ChannelManager::toggleArm(ID channelId)
 {
 	Channel& ch = m_model.get().channels.get(channelId);
 	ch.armed    = !ch.armed;
 
 	m_model.swap(model::SwapType::SOFT);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ChannelManager::toggleReadActions(ID channelId, bool seqIsRunning)
-{
-	Channel& ch = m_model.get().channels.get(channelId);
-	if (!ch.hasActions)
-		return;
-	rendering::toggleSampleReadActions(*ch.shared, m_model.get().behaviors.treatRecsAsLoops, seqIsRunning);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ChannelManager::killReadActions(ID channelId)
-{
-	/* Killing Read Actions, i.e. shift + click on 'R' button is meaningful 
-	only when the treatRecsAsLoops flag is true. */
-
-	if (!m_model.get().behaviors.treatRecsAsLoops)
-		return;
-	Channel& ch = m_model.get().channels.get(channelId);
-	rendering::killSampleReadActions(*ch.shared);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -588,37 +432,6 @@ void ChannelManager::freeWaveInPreviewChannel()
 void ChannelManager::setPreviewTracker(Frame f)
 {
 	m_model.get().channels.get(m::Mixer::PREVIEW_CHANNEL_ID).shared->tracker.store(f);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ChannelManager::stopAll()
-{
-	for (Channel& ch : m_model.get().channels.getAll())
-	{
-		if (ch.type == ChannelType::MIDI)
-		{
-			if (!ch.isPlaying())
-				continue;
-			rendering::stopMidiChannel(ch.shared->playStatus);
-			rendering::sendMidiAllNotesOff(ch, m_kernelMidi);
-		}
-		else if (ch.type == ChannelType::SAMPLE)
-		{
-			rendering::stopSampleChannelBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
-		}
-	}
-	m_model.swap(model::SwapType::SOFT);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ChannelManager::rewindAll()
-{
-	for (Channel& ch : m_model.get().channels.getAll())
-		if (ch.type == ChannelType::MIDI)
-			rendering::rewindMidiChannel(ch.shared->playStatus);
-	m_model.swap(model::SwapType::SOFT);
 }
 
 /* -------------------------------------------------------------------------- */

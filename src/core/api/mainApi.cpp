@@ -33,13 +33,15 @@
 
 namespace giada::m
 {
-MainApi::MainApi(KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms, ChannelManager& cm, Recorder& r)
+MainApi::MainApi(KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms,
+    ChannelManager& cm, Recorder& r, rendering::Reactor& re)
 : m_kernelAudio(ka)
 , m_mixer(m)
 , m_sequencer(s)
 , m_midiSynchronizer(ms)
 , m_channelManager(cm)
 , m_recorder(r)
+, m_reactor(re)
 {
 }
 
@@ -235,7 +237,7 @@ void MainApi::startSequencer()
 void MainApi::stopSequencer()
 {
 	m_sequencer.stop();
-	m_channelManager.stopAll();
+	m_reactor.stopAll();
 }
 
 void MainApi::toggleSequencer()
@@ -246,7 +248,7 @@ void MainApi::toggleSequencer()
 void MainApi::rewindSequencer()
 {
 	m_sequencer.rewind();
-	m_channelManager.rewindAll();
+	m_reactor.rewindAll();
 }
 
 /* -------------------------------------------------------------------------- */

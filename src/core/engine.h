@@ -53,6 +53,7 @@
 #include "core/recorder.h"
 #include "core/sequencer.h"
 #include "core/waveFactory.h"
+#include "src/core/rendering/reactor.h"
 #include "src/core/rendering/renderer.h"
 #ifdef WITH_AUDIO_JACK
 #include "core/jackSynchronizer.h"
@@ -151,6 +152,7 @@ private:
 	JackSynchronizer m_jackSynchronizer;
 #endif
 	rendering::Renderer m_renderer;
+	rendering::Reactor  m_reactor;
 
 	MainApi         m_mainApi;
 	ChannelsApi     m_channelsApi;

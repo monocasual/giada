@@ -35,7 +35,8 @@
 namespace giada::m
 {
 ChannelsApi::ChannelsApi(model::Model& m, KernelAudio& k, Mixer& mx, Sequencer& s,
-    ChannelManager& cm, Recorder& r, ActionRecorder& ar, PluginHost& ph, PluginManager& pm)
+    ChannelManager& cm, Recorder& r, ActionRecorder& ar, PluginHost& ph, PluginManager& pm,
+    rendering::Reactor& re)
 : m_model(m)
 , m_kernelAudio(k)
 , m_mixer(mx)
@@ -45,6 +46,7 @@ ChannelsApi::ChannelsApi(model::Model& m, KernelAudio& k, Mixer& mx, Sequencer& 
 , m_actionRecorder(ar)
 , m_pluginHost(ph)
 , m_pluginManager(pm)
+, m_reactor(re)
 {
 }
 
@@ -162,21 +164,21 @@ void ChannelsApi::press(ID channelId, int velocity)
 	const bool  canRecordActions = m_recorder.canRecordActions();
 	const bool  canQuantize      = m_sequencer.canQuantize();
 	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	m_channelManager.keyPress(channelId, velocity, canRecordActions, canQuantize, currentFrameQ);
+	m_reactor.keyPress(channelId, velocity, canRecordActions, canQuantize, currentFrameQ);
 }
 
 void ChannelsApi::release(ID channelId)
 {
 	const bool  canRecordActions = m_recorder.canRecordActions();
 	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	m_channelManager.keyRelease(channelId, canRecordActions, currentFrameQ);
+	m_reactor.keyRelease(channelId, canRecordActions, currentFrameQ);
 }
 
 void ChannelsApi::kill(ID channelId)
 {
 	const bool  canRecordActions = m_recorder.canRecordActions();
 	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	m_channelManager.keyKill(channelId, canRecordActions, currentFrameQ);
+	m_reactor.keyKill(channelId, canRecordActions, currentFrameQ);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -204,14 +206,14 @@ void ChannelsApi::setPan(ID channelId, float v)
 
 void ChannelsApi::toggleMute(ID channelId)
 {
-	m_channelManager.toggleMute(channelId);
+	m_reactor.toggleMute(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelsApi::toggleSolo(ID channelId)
 {
-	m_channelManager.toggleSolo(channelId);
+	m_reactor.toggleSolo(channelId);
 	m_mixer.updateSoloCount(m_channelManager.hasSolos());
 }
 
@@ -226,14 +228,14 @@ void ChannelsApi::toggleArm(ID channelId)
 
 void ChannelsApi::toggleReadActions(ID channelId)
 {
-	m_channelManager.toggleReadActions(channelId, m_sequencer.isRunning());
+	m_reactor.toggleReadActions(channelId, m_sequencer.isRunning());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelsApi::killReadActions(ID channelId)
 {
-	m_channelManager.killReadActions(channelId);
+	m_reactor.killReadActions(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -303,7 +305,7 @@ void ChannelsApi::sendMidi(ID channelId, MidiEvent e)
 {
 	const bool  canRecordActions = m_recorder.canRecordActions();
 	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	m_channelManager.processMidiEvent(channelId, e, canRecordActions, currentFrameQ);
+	m_reactor.processMidiEvent(channelId, e, canRecordActions, currentFrameQ);
 }
 
 /* -------------------------------------------------------------------------- */
