@@ -45,7 +45,7 @@ const model::MidiIn& IOApi::getModelMidiIn() const
 
 /* -------------------------------------------------------------------------- */
 
-void IOApi::channel_enableMidiLearn(ID channelId, bool v)
+void IOApi::channel_enableMidiInput(ID channelId, bool v)
 {
 	m_model.get().channels.get(channelId).midiInput.enabled = v;
 	m_model.swap(m::model::SwapType::NONE);

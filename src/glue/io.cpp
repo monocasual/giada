@@ -174,7 +174,7 @@ Master_InputData master_getInputData()
 
 void channel_enableMidiLearn(ID channelId, bool v)
 {
-	g_engine.getIOApi().channel_enableMidiLearn(channelId, v);
+	g_engine.getIOApi().channel_enableMidiInput(channelId, v);
 	rebuildMidiWindows_();
 }
 

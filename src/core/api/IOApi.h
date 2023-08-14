@@ -41,7 +41,7 @@ public:
 
 	const model::MidiIn& getModelMidiIn() const;
 
-	void channel_enableMidiLearn(ID channelId, bool v);
+	void channel_enableMidiInput(ID channelId, bool v);
 	void channel_enableMidiLightning(ID channelId, bool v);
 	void channel_enableMidiOutput(ID channelId, bool v);
 	void channel_enableVelocityAsVol(ID channelId, bool v);
