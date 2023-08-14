@@ -29,7 +29,7 @@
 
 #include "core/channels/channelShared.h"
 #include "core/channels/midiChannel.h"
-#include "core/channels/midiLearn.h"
+#include "core/channels/midiInput.h"
 #include "core/channels/midiLightning.h"
 #include "core/channels/sampleChannel.h"
 #include "core/const.h"
@@ -109,7 +109,7 @@ public:
 	Pixel                height;
 	std::vector<Plugin*> plugins;
 
-	MidiLearn     midiLearn;
+	MidiInput     midiInput;
 	MidiLightning midiLightning;
 
 	std::optional<SampleChannel> sampleChannel;

@@ -88,7 +88,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , name(p.name)
 , height(p.height)
 , plugins(plugins)
-, midiLearn(p)
+, midiInput(p)
 , midiLightning(p)
 , m_mute(p.mute)
 , m_solo(p.solo)

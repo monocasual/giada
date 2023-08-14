@@ -24,19 +24,19 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_CHANNEL_MIDI_LEARN_H
-#define G_CHANNEL_MIDI_LEARN_H
+#ifndef G_CHANNEL_MIDI_INPUT_H
+#define G_CHANNEL_MIDI_INPUT_H
 
 #include "core/midiLearnParam.h"
 #include "core/patch.h"
 
 namespace giada::m
 {
-class MidiLearn final
+class MidiInput final
 {
 public:
-	MidiLearn();
-	MidiLearn(const Patch::Channel&);
+	MidiInput();
+	MidiInput(const Patch::Channel&);
 
 	/* isAllowed
     Tells whether the MIDI channel 'c' is enabled to receive MIDI data. */

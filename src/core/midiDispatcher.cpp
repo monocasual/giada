@@ -147,7 +147,7 @@ bool MidiDispatcher::isMasterMidiInAllowed(int c)
 
 bool MidiDispatcher::isChannelMidiInAllowed(ID channelId, int c)
 {
-	return m_model.get().channels.get(channelId).midiLearn.isAllowed(c);
+	return m_model.get().channels.get(channelId).midiInput.isAllowed(c);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -187,54 +187,54 @@ void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 		/* Do nothing on this channel if MIDI in is disabled or filtered out for
 		the current MIDI channel. */
 
-		if (!c.midiLearn.isAllowed(midiEvent.getChannel()))
+		if (!c.midiInput.isAllowed(midiEvent.getChannel()))
 			continue;
 
-		if (pure == c.midiLearn.keyPress.getValue())
+		if (pure == c.midiInput.keyPress.getValue())
 		{
 			G_DEBUG("   keyPress, ch={} (pure=0x{:0X})", c.id, pure);
 			c::channel::pressChannel(c.id, midiEvent.getVelocity(), Thread::MIDI);
 		}
-		else if (pure == c.midiLearn.keyRelease.getValue())
+		else if (pure == c.midiInput.keyRelease.getValue())
 		{
 			G_DEBUG("   keyRel ch={} (pure=0x{:0X})", c.id, pure);
 			c::channel::releaseChannel(c.id, Thread::MIDI);
 		}
-		else if (pure == c.midiLearn.mute.getValue())
+		else if (pure == c.midiInput.mute.getValue())
 		{
 			G_DEBUG("   mute ch={} (pure=0x{:0X})", c.id, pure);
 			c::channel::toggleMuteChannel(c.id, Thread::MIDI);
 		}
-		else if (pure == c.midiLearn.kill.getValue())
+		else if (pure == c.midiInput.kill.getValue())
 		{
 			G_DEBUG("   kill ch={} (pure=0x{:0X})", c.id, pure);
 			c::channel::killChannel(c.id, Thread::MIDI);
 		}
-		else if (pure == c.midiLearn.arm.getValue())
+		else if (pure == c.midiInput.arm.getValue())
 		{
 			G_DEBUG("   arm ch={} (pure=0x{:0X})", c.id, pure);
 			c::channel::toggleArmChannel(c.id, Thread::MIDI);
 		}
-		else if (pure == c.midiLearn.solo.getValue())
+		else if (pure == c.midiInput.solo.getValue())
 		{
 			G_DEBUG("   solo ch={} (pure=0x{:0X})", c.id, pure);
 			c::channel::toggleSoloChannel(c.id, Thread::MIDI);
 		}
-		else if (pure == c.midiLearn.volume.getValue())
+		else if (pure == c.midiInput.volume.getValue())
 		{
 			float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME);
 			G_DEBUG("   volume ch={} (pure=0x{:0X}, value={}, float={})",
 			    c.id, pure, midiEvent.getVelocity(), vf);
 			c::channel::setChannelVolume(c.id, vf, Thread::MIDI);
 		}
-		else if (pure == c.midiLearn.pitch.getValue())
+		else if (pure == c.midiInput.pitch.getValue())
 		{
 			float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_PITCH);
 			G_DEBUG("   pitch ch={} (pure=0x{:0X}, value={}, float={})",
 			    c.id, pure, midiEvent.getVelocity(), vf);
 			c::channel::setChannelPitch(c.id, vf, Thread::MIDI);
 		}
-		else if (pure == c.midiLearn.readActions.getValue())
+		else if (pure == c.midiInput.readActions.getValue())
 		{
 			G_DEBUG("   toggle read actions ch={} (pure=0x{:0X})", c.id, pure);
 			c::channel::toggleReadActionsChannel(c.id, Thread::MIDI);
@@ -322,31 +322,31 @@ void MidiDispatcher::learnChannel(MidiEvent e, int param, ID channelId, std::fun
 	switch (param)
 	{
 	case G_MIDI_IN_KEYPRESS:
-		ch.midiLearn.keyPress.setValue(raw);
+		ch.midiInput.keyPress.setValue(raw);
 		break;
 	case G_MIDI_IN_KEYREL:
-		ch.midiLearn.keyRelease.setValue(raw);
+		ch.midiInput.keyRelease.setValue(raw);
 		break;
 	case G_MIDI_IN_KILL:
-		ch.midiLearn.kill.setValue(raw);
+		ch.midiInput.kill.setValue(raw);
 		break;
 	case G_MIDI_IN_ARM:
-		ch.midiLearn.arm.setValue(raw);
+		ch.midiInput.arm.setValue(raw);
 		break;
 	case G_MIDI_IN_MUTE:
-		ch.midiLearn.mute.setValue(raw);
+		ch.midiInput.mute.setValue(raw);
 		break;
 	case G_MIDI_IN_SOLO:
-		ch.midiLearn.solo.setValue(raw);
+		ch.midiInput.solo.setValue(raw);
 		break;
 	case G_MIDI_IN_VOLUME:
-		ch.midiLearn.volume.setValue(raw);
+		ch.midiInput.volume.setValue(raw);
 		break;
 	case G_MIDI_IN_PITCH:
-		ch.midiLearn.pitch.setValue(raw);
+		ch.midiInput.pitch.setValue(raw);
 		break;
 	case G_MIDI_IN_READ_ACTIONS:
-		ch.midiLearn.readActions.setValue(raw);
+		ch.midiInput.readActions.setValue(raw);
 		break;
 	case G_MIDI_OUT_L_PLAYING:
 		ch.midiLightning.playing.setValue(raw);

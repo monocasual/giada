@@ -47,7 +47,7 @@ const model::MidiIn& IOApi::getModelMidiIn() const
 
 void IOApi::channel_enableMidiLearn(ID channelId, bool v)
 {
-	m_model.get().channels.get(channelId).midiLearn.enabled = v;
+	m_model.get().channels.get(channelId).midiInput.enabled = v;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
@@ -79,7 +79,7 @@ void IOApi::channel_enableVelocityAsVol(ID channelId, bool v)
 
 void IOApi::channel_setMidiInputFilter(ID channelId, int ch)
 {
-	m_model.get().channels.get(channelId).midiLearn.filter = ch;
+	m_model.get().channels.get(channelId).midiInput.filter = ch;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
