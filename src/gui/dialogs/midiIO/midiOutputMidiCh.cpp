@@ -129,6 +129,7 @@ void gdMidiOutputMidiCh::rebuild()
 	m_learners->update(data);
 	m_chanListOut->showItem(data.output->filter);
 	m_enableOut->value(data.output->enabled);
+	m_enableLightning->value(data.lightningEnabled);
 
 	data.output->enabled ? m_chanListOut->activate() : m_chanListOut->deactivate();
 }
