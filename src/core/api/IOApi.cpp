@@ -55,7 +55,15 @@ void IOApi::channel_enableMidiInput(ID channelId, bool v)
 
 void IOApi::channel_enableMidiLightning(ID channelId, bool v)
 {
-	m_model.get().channels.get(channelId).midiLightning.enabled = v;
+	/* Enabling MIDI lightning also enables MIDI input, because MIDI input is
+	needed for learning the lightning actions. */
+
+	Channel& ch = m_model.get().channels.get(channelId);
+
+	ch.midiLightning.enabled = v;
+	if (v)
+		ch.midiInput.enabled = true;
+
 	m_model.swap(m::model::SwapType::NONE);
 }
 
