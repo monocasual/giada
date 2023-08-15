@@ -110,7 +110,7 @@ void onSampleEnd_(const Channel& ch, bool seqIsRunning, bool natural)
 
 void stop_(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, bool seqIsRunning)
 {
-	onSampleEnd_(ch, /*natural=*/false, seqIsRunning);
+	onSampleEnd_(ch, seqIsRunning, /*natural=*/false);
 	if (offset != 0)
 		buf.clear(offset);
 }
@@ -150,7 +150,7 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame off
 	{
 		tracker = begin;
 		ch.shared->resampler->last();
-		onSampleEnd_(ch, /*natural=*/true, seqIsRunning);
+		onSampleEnd_(ch, seqIsRunning, /*natural=*/true);
 
 		if (shouldLoop_(mode, status) && res.generated < buf.countFrames())
 			tracker += rendering::readWave(wave, buf, tracker, end, res.generated, pitch, resampler).used;
