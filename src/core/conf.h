@@ -45,8 +45,8 @@ struct Conf final
 	bool               showTooltips     = true;
 	std::string        langMap          = "";
 	RtAudio::Api       soundSystem      = G_DEFAULT_SOUNDSYS;
-	int                soundDeviceOut   = G_DEFAULT_SOUNDDEV_OUT;
-	int                soundDeviceIn    = G_DEFAULT_SOUNDDEV_IN;
+	unsigned int       soundDeviceOut   = G_DEFAULT_SOUNDDEV_OUT;
+	unsigned int       soundDeviceIn    = G_DEFAULT_SOUNDDEV_IN;
 	int                channelsOutCount = G_MAX_IO_CHANS;
 	int                channelsOutStart = 0;
 	int                channelsInCount  = 1;

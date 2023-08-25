@@ -37,9 +37,9 @@ struct KernelAudio
 {
 	struct Device
 	{
-		int index         = 0;
-		int channelsCount = 0;
-		int channelsStart = 0;
+		unsigned int id            = 0;
+		int          channelsCount = 0;
+		int          channelsStart = 0;
 	};
 
 	RtAudio::Api       api             = G_DEFAULT_SOUNDSYS;

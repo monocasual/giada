@@ -56,8 +56,7 @@ class KernelAudio final
 public:
 	struct Device
 	{
-		size_t                    index             = 0;
-		bool                      probed            = false;
+		unsigned int              id                = 0;
 		std::string               name              = "";
 		int                       maxOutputChannels = 0;
 		int                       maxInputChannels  = 0;
@@ -167,7 +166,7 @@ private:
 
 	static int audioCallback(void*, void*, unsigned, double, RtAudioStreamStatus, void*);
 
-	Device fetchDevice(size_t deviceIndex) const;
+	Device fetchDevice(unsigned int deviceId) const;
 	void   printDevices(const std::vector<Device>& devices) const;
 
 #ifdef WITH_AUDIO_JACK

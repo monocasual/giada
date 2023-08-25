@@ -50,7 +50,7 @@ namespace giada::c::config
 {
 AudioDeviceData::AudioDeviceData(DeviceType type, const m::KernelAudio::Device& device)
 : type(type)
-, index(device.index)
+, id(device.id)
 , name(device.name)
 , channelsMax(type == DeviceType::OUTPUT ? device.maxOutputChannels : device.maxInputChannels)
 , sampleRates(device.sampleRates)
@@ -63,11 +63,11 @@ AudioDeviceData::AudioDeviceData(DeviceType type, const m::KernelAudio::Device& 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void AudioData::setOutputDevice(int index)
+void AudioData::setOutputDevice(unsigned int id)
 {
 	for (AudioDeviceData& d : outputDevices)
 	{
-		if (index != d.index)
+		if (id != d.id)
 			continue;
 		outputDevice = d;
 	}
@@ -75,17 +75,26 @@ void AudioData::setOutputDevice(int index)
 
 /* -------------------------------------------------------------------------- */
 
-void AudioData::setInputDevice(int index)
+void AudioData::setInputDevice(unsigned int id)
 {
 	for (AudioDeviceData& d : inputDevices)
 	{
-		if (index == d.index)
+		if (id == d.id)
 		{
 			inputDevice = d;
 			return;
 		}
 	}
 	inputDevice = {};
+}
+
+/* -------------------------------------------------------------------------- */
+
+void AudioData::toggleInputDevice(bool v)
+{
+	if (inputDevices.empty())
+		return;
+	setInputDevice(v ? inputDevices[0].id : 0);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -245,12 +254,12 @@ void apply(const AudioData& data)
 {
 	bool res = g_engine.getConfigApi().audio_openStream(
 	    {
-	        data.outputDevice.index,
+	        data.outputDevice.id,
 	        data.outputDevice.channelsCount,
 	        data.outputDevice.channelsStart,
 	    },
 	    {
-	        data.inputDevice.index,
+	        data.inputDevice.id,
 	        data.inputDevice.channelsCount,
 	        data.inputDevice.channelsStart,
 	    },

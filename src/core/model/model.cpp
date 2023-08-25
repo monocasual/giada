@@ -177,10 +177,10 @@ void Model::load(const Conf& conf)
 	Layout& layout = get();
 
 	layout.kernelAudio.api                     = conf.soundSystem;
-	layout.kernelAudio.deviceOut.index         = conf.soundDeviceOut;
+	layout.kernelAudio.deviceOut.id            = conf.soundDeviceOut;
 	layout.kernelAudio.deviceOut.channelsCount = conf.channelsOutCount;
 	layout.kernelAudio.deviceOut.channelsStart = conf.channelsOutStart;
-	layout.kernelAudio.deviceIn.index          = conf.soundDeviceIn;
+	layout.kernelAudio.deviceIn.id             = conf.soundDeviceIn;
 	layout.kernelAudio.deviceIn.channelsCount  = conf.channelsInCount;
 	layout.kernelAudio.deviceIn.channelsStart  = conf.channelsInStart;
 	layout.kernelAudio.samplerate              = conf.samplerate;
@@ -290,10 +290,10 @@ void Model::store(Conf& conf) const
 	const Layout& layout = get();
 
 	conf.soundSystem      = layout.kernelAudio.api;
-	conf.soundDeviceOut   = layout.kernelAudio.deviceOut.index;
+	conf.soundDeviceOut   = layout.kernelAudio.deviceOut.id;
 	conf.channelsOutCount = layout.kernelAudio.deviceOut.channelsCount;
 	conf.channelsOutStart = layout.kernelAudio.deviceOut.channelsStart;
-	conf.soundDeviceIn    = layout.kernelAudio.deviceIn.index;
+	conf.soundDeviceIn    = layout.kernelAudio.deviceIn.id;
 	conf.channelsInCount  = layout.kernelAudio.deviceIn.channelsCount;
 	conf.channelsInStart  = layout.kernelAudio.deviceIn.channelsStart;
 	conf.samplerate       = layout.kernelAudio.samplerate;

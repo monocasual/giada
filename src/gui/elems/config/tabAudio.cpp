@@ -64,7 +64,7 @@ void geTabAudio::geDeviceMenu::rebuild(const std::vector<c::config::AudioDeviceD
 	}
 
 	for (const c::config::AudioDeviceData& device : devices)
-		addItem(u::gui::removeFltkChars(device.name), device.index);
+		addItem(u::gui::removeFltkChars(device.name), device.id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -94,7 +94,7 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 {
 	clear();
 
-	if (data.index == -1 || data.channelsMax == 0)
+	if (data.id == 0 || data.channelsMax == 0)
 	{
 		addItem(g_ui.getI18Text(LangMap::COMMON_NONE), 0);
 		showFirstItem();
@@ -236,7 +236,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 	m_enableIn->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_AUDIO_ENABLEINPUT));
 	m_enableIn->onChange = [this](bool b) {
-		m_data.setInputDevice(b ? 0 : -1);
+		m_data.toggleInputDevice(b);
 		refreshDevInProperties();
 	};
 
@@ -298,13 +298,13 @@ void geTabAudio::rebuild(const c::config::AudioData& data)
 		m_bufferSize->activate();
 
 	m_sounddevOut->rebuild(m_data.outputDevices);
-	m_sounddevOut->showItem(m_data.outputDevice.index);
+	m_sounddevOut->showItem(m_data.outputDevice.id);
 
 	m_sounddevIn->rebuild(m_data.inputDevices);
-	if (m_data.inputDevice.index != -1)
-		m_sounddevIn->showItem(m_data.inputDevice.index);
+	if (m_data.inputDevice.id != 0)
+		m_sounddevIn->showItem(m_data.inputDevice.id);
 
-	m_enableIn->value(m_data.inputDevice.index != -1);
+	m_enableIn->value(m_data.inputDevice.id != 0);
 
 	m_limitOutput->value(m_data.limitOutput);
 
@@ -347,7 +347,7 @@ void geTabAudio::refreshDevOutProperties()
 
 void geTabAudio::refreshDevInProperties()
 {
-	if (m_data.inputDevice.index != -1)
+	if (m_data.inputDevice.id != 0)
 	{
 		m_channelsIn->rebuild(m_data.inputDevice);
 		m_sounddevIn->activate();
