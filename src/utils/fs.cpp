@@ -27,13 +27,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/const.h"
-#include <filesystem>
-#ifdef G_OS_WINDOWS // getcwd (unix) or __getcwd (win)
-#include <direct.h>
-#include <windows.h>
-#endif
 #include <climits>
 #include <cstdlib>
+#include <filesystem>
 #include <string>
 #ifdef G_OS_MAC
 #include <libgen.h> // basename unix
