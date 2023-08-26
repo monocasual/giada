@@ -26,8 +26,9 @@
  *
  * -------------------------------------------------------------------------- */
 
+#include "core/const.h"
 #include <filesystem>
-#if defined(_WIN32) // getcwd (unix) or __getcwd (win)
+#ifdef G_OS_WINDOWS // getcwd (unix) or __getcwd (win)
 #include <direct.h>
 #include <windows.h>
 #else
@@ -41,11 +42,10 @@
 #include <errno.h>
 #include <string>
 #include <sys/stat.h> // stat (fs::dirExists)
-#ifdef __APPLE__
+#ifdef G_OS_MAC
 #include <libgen.h> // basename unix
 #include <pwd.h>    // getpwuid
 #endif
-#include "core/const.h"
 #include "utils/fs.h"
 #include "utils/log.h"
 #include "utils/string.h"
@@ -189,7 +189,7 @@ std::string getLangMapsPath()
 
 bool createConfigFolder()
 {
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
 
 	const std::string confDirPath = getConfigDirPath();
 
