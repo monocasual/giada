@@ -45,7 +45,7 @@ bool isRootDir(const std::string& s);
 bool        isProject(const std::string& s);
 bool        mkdir(const std::string& s);
 std::string getCurrentPath();
-std::string getHomePath();
+std::string getConfigDirPath();
 std::string getMidiMapsPath();
 std::string getLangMapsPath();
 

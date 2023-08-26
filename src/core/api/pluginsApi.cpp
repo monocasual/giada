@@ -138,7 +138,7 @@ void PluginsApi::setParameter(ID pluginId, int paramIndex, float value)
 void PluginsApi::scan(const std::string& dir, const std::function<void(float)>& progress)
 {
 	m_pluginManager.scanDirs(dir, progress);
-	m_pluginManager.saveList(u::fs::join(u::fs::getHomePath(), "plugins.xml"));
+	m_pluginManager.saveList(u::fs::join(u::fs::getConfigDirPath(), "plugins.xml"));
 }
 
 /* -------------------------------------------------------------------------- */

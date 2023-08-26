@@ -37,7 +37,7 @@ bool init(int m)
 	mode = m;
 	if (mode == LOG_MODE_FILE)
 	{
-		std::string fpath = u::fs::join(fs::getHomePath(), "giada.log");
+		std::string fpath = u::fs::join(fs::getConfigDirPath(), "giada.log");
 		file.open(fpath, std::fstream::out | std::fstream::app);
 		if (!file.is_open())
 			return false;

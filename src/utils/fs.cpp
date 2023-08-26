@@ -142,7 +142,7 @@ std::string stripFileUrl(const std::string& s)
 
 /* -------------------------------------------------------------------------- */
 
-std::string getHomePath()
+std::string getConfigDirPath()
 {
 #if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 
@@ -160,7 +160,7 @@ std::string getHomePath()
 	struct passwd* pwd = getpwuid(getuid());
 	if (pwd == nullptr)
 	{
-		log::print("[getHomePath] unable to fetch user infos\n");
+		log::print("[getConfigDirPath] unable to fetch user infos\n");
 		return "";
 	}
 	const char* home = pwd->pw_dir;
@@ -175,13 +175,13 @@ std::string getHomePath()
 
 std::string getMidiMapsPath()
 {
-	auto out = stdfs::path(getHomePath()) / "midimaps";
+	auto out = stdfs::path(getConfigDirPath()) / "midimaps";
 	return out.string();
 }
 
 std::string getLangMapsPath()
 {
-	auto out = stdfs::path(getHomePath()) / "langmaps";
+	auto out = stdfs::path(getConfigDirPath()) / "langmaps";
 	return out.string();
 }
 
@@ -191,7 +191,7 @@ bool createConfigFolder()
 {
 #if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
 
-	const std::string confDirPath = getHomePath();
+	const std::string confDirPath = getConfigDirPath();
 
 	if (u::fs::dirExists(confDirPath))
 		return true;
@@ -220,7 +220,7 @@ bool createConfigFolder()
 
 std::string getConfigFilePath()
 {
-	return join(getHomePath(), G_CONF_FILENAME);
+	return join(getConfigDirPath(), G_CONF_FILENAME);
 }
 
 /* -------------------------------------------------------------------------- */
