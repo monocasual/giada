@@ -31,15 +31,9 @@
 #ifdef G_OS_WINDOWS // getcwd (unix) or __getcwd (win)
 #include <direct.h>
 #include <windows.h>
-#else
-#include <unistd.h>
 #endif
 #include <climits>
-#include <cstdarg>
-#include <cstdint>
 #include <cstdlib>
-#include <cstring>
-#include <errno.h>
 #include <string>
 #ifdef G_OS_MAC
 #include <libgen.h> // basename unix
