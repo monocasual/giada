@@ -35,6 +35,9 @@
 #include <libgen.h> // basename unix
 #include <pwd.h>    // getpwuid
 #endif
+#ifdef G_OS_WINDOWS
+#include <shlobj.h> // SHGetKnownFolderPath
+#endif
 #include "utils/fs.h"
 #include "utils/log.h"
 #include "utils/string.h"
@@ -141,7 +144,20 @@ std::string getConfigDirPath()
 
 #elif defined(G_OS_WINDOWS)
 
-	return stdfs::current_path().string();
+	wchar_t* appdataPathPtr = nullptr;
+	auto     result         = SHGetKnownFolderPath(FOLDERID_RoamingAppData, KF_FLAG_CREATE, NULL, &appdataPathPtr);
+	if (result != S_OK)
+	{
+		log::print("[getConfigDirPath] unable to fetch AppData path\n");
+		return "";
+	}
+
+	auto appDataPath = stdfs::path(std::wstring(appdataPathPtr)) / "Giada";
+
+	// It's up to the SHGetKnownFolderPath caller to free appdataPathPtr.
+	CoTaskMemFree(static_cast<void*>(appdataPathPtr));
+
+	return appDataPath.string();
 
 #elif defined(G_OS_MAC)
 
@@ -178,8 +194,6 @@ std::string getLangMapsPath()
 
 bool createConfigFolder()
 {
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
-
 	const std::string confDirPath = getConfigDirPath();
 
 	if (u::fs::dirExists(confDirPath))
@@ -197,12 +211,6 @@ bool createConfigFolder()
 		u::log::print("[fs::createConfigFolder] status: error!\n");
 		return false;
 	}
-
-#else // Windows: nothing to do
-
-	return true;
-
-#endif
 }
 
 /* -------------------------------------------------------------------------- */
