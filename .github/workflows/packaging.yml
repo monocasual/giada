@@ -82,7 +82,7 @@ jobs:
         
       - name: Generate Makefile
         shell: bash
-        run: cmake -S . -B build/ -G "Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DWITH_VST3=ON
+        run: cmake -S . -B build/ -G "Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static-md -DWITH_VST3=ON
 
       - name: Build
         shell: bash
