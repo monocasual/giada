@@ -41,7 +41,6 @@
 #include <cstring>
 #include <errno.h>
 #include <string>
-#include <sys/stat.h> // stat (fs::dirExists)
 #ifdef G_OS_MAC
 #include <libgen.h> // basename unix
 #include <pwd.h>    // getpwuid
