@@ -140,6 +140,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 60
     needs: create-release
+    if: github.ref_type == 'tag' # This job needs a tag for the make-src.py script
     steps:
       - name: Download repository
         uses: actions/checkout@v2
