@@ -57,9 +57,7 @@ void Dispatcher::perform(ID channelId, int event) const
 {
 	if (event == FL_KEYDOWN)
 	{
-		if (Fl::event_ctrl())
-			c::channel::toggleMuteChannel(channelId, Thread::MAIN);
-		else if (Fl::event_shift())
+		if (Fl::event_shift())
 			c::channel::killChannel(channelId, Thread::MAIN);
 		else
 			c::channel::pressChannel(channelId, G_MAX_VELOCITY, Thread::MAIN);
