@@ -89,8 +89,7 @@ void geWaveTools::rebuild(const c::sampleEditor::Data& d)
 
 void geWaveTools::refresh()
 {
-	if (m_data->a_getPreviewStatus() == ChannelStatus::PLAY)
-		waveform->redraw();
+	waveform->redraw();
 }
 
 /* -------------------------------------------------------------------------- */
