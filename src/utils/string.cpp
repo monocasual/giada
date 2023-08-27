@@ -130,6 +130,35 @@ std::string toString(RtAudio::Api api)
 
 /* -------------------------------------------------------------------------- */
 
+std::string toString(SamplePlayerMode mode)
+{
+	switch (mode)
+	{
+	case SamplePlayerMode::LOOP_BASIC:
+		return "LOOP_BASIC";
+	case SamplePlayerMode::LOOP_ONCE:
+		return "LOOP_ONCE";
+	case SamplePlayerMode::LOOP_REPEAT:
+		return "LOOP_REPEAT";
+	case SamplePlayerMode::LOOP_ONCE_BAR:
+		return "LOOP_ONCE_BAR";
+	case SamplePlayerMode::SINGLE_BASIC:
+		return "SINGLE_BASIC";
+	case SamplePlayerMode::SINGLE_PRESS:
+		return "SINGLE_PRESS";
+	case SamplePlayerMode::SINGLE_RETRIG:
+		return "SINGLE_RETRIG";
+	case SamplePlayerMode::SINGLE_ENDLESS:
+		return "SINGLE_ENDLESS";
+	case SamplePlayerMode::SINGLE_BASIC_PAUSE:
+		return "SINGLE_BASIC_PAUSE";
+	default:
+		return "(unknown)";
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
 float toFloat(const std::string& s)
 {
 	try
