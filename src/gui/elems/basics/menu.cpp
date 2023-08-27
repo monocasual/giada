@@ -27,6 +27,7 @@
 #include "gui/elems/basics/menu.h"
 #include "core/const.h"
 #include "gui/elems/basics/boxtypes.h"
+#include "utils/gui.h"
 #include <FL/Fl.H>
 #include <cstdio>
 
@@ -58,7 +59,7 @@ void geMenu::callback(ID id)
 
 void geMenu::addItem(ID id, const char* text, int flags)
 {
-	add(text, /*shortcut=*/0, callback, /*data=*/(void*)(intptr_t)(id), flags);
+	add(u::gui::removeFltkChars(text).c_str(), /*shortcut=*/0, callback, /*data=*/(void*)(intptr_t)(id), flags);
 }
 
 /* -------------------------------------------------------------------------- */
