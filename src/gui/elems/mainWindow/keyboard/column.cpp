@@ -125,7 +125,7 @@ geChannel* geColumn::addChannel(c::channel::Data d)
 
 /* -------------------------------------------------------------------------- */
 
-void geColumn::showAddChannelMenu()
+void geColumn::showAddChannelMenu() const
 {
 	geMenu menu;
 
