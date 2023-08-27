@@ -353,8 +353,8 @@ int geWaveform::handle(int e)
 
 	case FL_RELEASE:
 	{
-
-		c::sampleEditor::setPreviewTracker(m_mouseX);
+		if (!m_chanStartLit && !m_chanEndLit)
+			c::sampleEditor::setPreviewTracker(m_mouseX);
 
 		/* If selection has been done (m_dragged or resized), make sure that point A 
 			is always lower than B. */
