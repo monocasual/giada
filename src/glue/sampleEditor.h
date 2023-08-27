@@ -107,6 +107,7 @@ void shift(ID channelId, Frame offset);
 void reload(ID channelId);
 
 void setLoop(bool);
+void preparePreview(ID channelId);
 void togglePreview();
 void playPreview();
 void stopPreview();

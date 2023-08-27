@@ -108,9 +108,6 @@ Frame Data::getFramesInLoop() const
 
 Data getData(ID channelId)
 {
-	/* Prepare the preview channel first, then return Data object. */
-
-	g_engine.getChannelsApi().loadPreviewChannel(channelId);
 	return Data(g_engine.getChannelsApi().get(channelId));
 }
 
@@ -193,6 +190,11 @@ void trim(ID channelId, Frame a, Frame b)
 }
 
 /* -------------------------------------------------------------------------- */
+
+void preparePreview(ID channelId)
+{
+	g_engine.getChannelsApi().loadPreviewChannel(channelId);
+}
 
 void setLoop(bool shouldLoop)
 {
