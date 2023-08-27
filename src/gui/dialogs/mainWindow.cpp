@@ -101,22 +101,39 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, cha
 
 		/* zone 2 - mainTransport and timing tools */
 
-		geFlex* zone2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {2, 0, 3, 0});
+		geFlex* zone2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {3, 0, 0, 0});
 		{
 			mainTransport = new v::geMainTransport();
-			mainTimer     = new v::geMainTimer();
+
+			geFlex* zoneTimer = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN, {2, 0, 3, 0});
+			{
+				mainTimer = new v::geMainTimer();
+				zoneTimer->add(mainTimer);
+				zoneTimer->end();
+			}
+
 			zone2->add(mainTransport, 400);
 			zone2->add(new geBox());
-			zone2->add(mainTimer, 237);
+			zone2->add(zoneTimer, 237);
 			zone2->end();
 		}
 
-		sequencer = new v::geSequencer();
-		keyboard  = new v::geKeyboard();
+		/* zone 3 - sequencer */
+
+		geFlex* zone3 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {0, 5});
+		{
+			sequencer = new v::geSequencer();
+			zone3->add(new geBox(), 80);
+			zone3->add(sequencer);
+			zone3->add(new geBox(), 80);
+			zone3->end();
+		}
+
+		keyboard = new v::geKeyboard();
 
 		container->add(zone1, G_GUI_UNIT);
-		container->add(zone2, 30);
-		container->add(sequencer, 40);
+		container->add(zone2, 28);
+		container->add(zone3, 40);
 		container->add(keyboard);
 		container->end();
 	}
