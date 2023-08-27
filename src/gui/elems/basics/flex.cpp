@@ -40,39 +40,39 @@ int toFlDirection_(Direction d)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geFlex::geFlex(int x, int y, int w, int h, Direction d, int gutter)
+geFlex::geFlex(int x, int y, int w, int h, Direction d, int gutter, geompp::Border<int> pad)
 : Fl_Flex(x, y, w, h, toFlDirection_(d))
 {
 	Fl_Flex::end();
 	Fl_Flex::gap(gutter);
+	Fl_Flex::margin(pad.left, pad.top, pad.right, pad.bottom);
 }
 
 /* -------------------------------------------------------------------------- */
 
-geFlex::geFlex(geompp::Rect<int> r, Direction d, int gutter)
-: geFlex(r.x, r.y, r.w, r.h, d, gutter)
+geFlex::geFlex(geompp::Rect<int> r, Direction d, int gutter, geompp::Border<int> pad)
+: geFlex(r.x, r.y, r.w, r.h, d, gutter, pad)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-geFlex::geFlex(Direction d, int gutter)
-: geFlex(0, 0, 0, 0, d, gutter)
+geFlex::geFlex(Direction d, int gutter, geompp::Border<int> pad)
+: geFlex(0, 0, 0, 0, d, gutter, pad)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geFlex::add(Fl_Widget& w, int size, geompp::Border<int> pad)
+void geFlex::add(Fl_Widget& w, int size)
 {
 	Fl_Flex::add(w);
 	Fl_Flex::fixed(w, size);
-	Fl_Flex::margin(pad.left, pad.top, pad.right, pad.bottom); // TODO - this property is no longer per-child with Fl_Flex
 }
 
-void geFlex::add(Fl_Widget* w, int size, geompp::Border<int> pad)
+void geFlex::add(Fl_Widget* w, int size)
 {
-	geFlex::add(*w, size, pad);
+	geFlex::add(*w, size);
 }
 
 /* -------------------------------------------------------------------------- */

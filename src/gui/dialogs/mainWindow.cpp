@@ -101,13 +101,13 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, cha
 
 		/* zone 2 - mainTransport and timing tools */
 
-		geFlex* zone2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+		geFlex* zone2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {2, 0, 3, 0});
 		{
 			mainTransport = new v::geMainTransport();
 			mainTimer     = new v::geMainTimer();
 			zone2->add(mainTransport, 400);
 			zone2->add(new geBox());
-			zone2->add(mainTimer, 237, {2, 0, 3, 0});
+			zone2->add(mainTimer, 237);
 			zone2->end();
 		}
 
@@ -115,8 +115,8 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, cha
 		keyboard  = new v::geKeyboard();
 
 		container->add(zone1, G_GUI_UNIT);
-		container->add(zone2, 30, {5, 0, 0, 0});
-		container->add(sequencer, 40, {4, 80, 4, 80});
+		container->add(zone2, 30);
+		container->add(sequencer, 40);
 		container->add(keyboard);
 		container->end();
 	}

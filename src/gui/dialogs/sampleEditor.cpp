@@ -93,14 +93,14 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 
 		geFlex* bottom = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			geFlex* controls = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+			geFlex* controls = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {21, 0, 22, 0});
 			{
 				rewind = new geImageButton(graphics::rewindOff, graphics::rewindOn);
 				play   = new geImageButton(graphics::playOff, graphics::playOn);
 				loop   = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::SAMPLEEDITOR_LOOP));
-				controls->add(rewind, 25, {21, 0, 22, 0});
-				controls->add(play, 25, {21, 0, 22, 0});
-				controls->add(loop, -1, {21, 0, 22, 0});
+				controls->add(rewind, 25);
+				controls->add(play, 25);
+				controls->add(loop, -1);
 				controls->end();
 			}
 
