@@ -31,50 +31,9 @@
 
 namespace giada::v
 {
-geFlex::Elem::Elem(Fl_Widget& w, geFlex& parent, Direction d, int size, geompp::Border<int> pad)
-: size(size)
-, m_w(w)
-, m_parent(parent)
-, m_dir(d)
-, m_pad(pad)
+int toFlDirection_(Direction d)
 {
-}
-
-/* -------------------------------------------------------------------------- */
-
-int geFlex::Elem::getSize() const
-{
-	if (isFixed())
-		return size;
-	return m_dir == Direction::VERTICAL ? m_w.h() : m_w.w();
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool geFlex::Elem::isFixed() const
-{
-	return size != -1;
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool geFlex::Elem::isVisible() const
-{
-	return m_w.visible();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geFlex::Elem::resize(int pos, int newSize)
-{
-	geompp::Rect<int> bounds;
-
-	if (m_dir == Direction::VERTICAL)
-		bounds = geompp::Rect<int>(m_parent.x(), pos, m_parent.w(), newSize).reduced(m_pad);
-	else
-		bounds = geompp::Rect<int>(pos, m_parent.y(), newSize, m_parent.h()).reduced(m_pad);
-
-	m_w.resize(bounds.x, bounds.y, bounds.w, bounds.h);
+	return d == Direction::HORIZONTAL ? Fl_Flex::ROW : Fl_Flex::COLUMN;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -82,11 +41,10 @@ void geFlex::Elem::resize(int pos, int newSize)
 /* -------------------------------------------------------------------------- */
 
 geFlex::geFlex(int x, int y, int w, int h, Direction d, int gutter)
-: Fl_Group(x, y, w, h, nullptr)
-, m_direction(d)
-, m_gutter(gutter)
+: Fl_Flex(x, y, w, h, toFlDirection_(d))
 {
-	Fl_Group::end();
+	Fl_Flex::end();
+	Fl_Flex::gap(gutter);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -107,8 +65,9 @@ geFlex::geFlex(Direction d, int gutter)
 
 void geFlex::add(Fl_Widget& w, int size, geompp::Border<int> pad)
 {
-	Fl_Group::add(w);
-	m_elems.push_back({w, *this, m_direction, size, pad});
+	Fl_Flex::add(w);
+	Fl_Flex::fixed(w, size);
+	Fl_Flex::margin(pad.left, pad.top, pad.right, pad.bottom); // TODO - this property is no longer per-child with Fl_Flex
 }
 
 void geFlex::add(Fl_Widget* w, int size, geompp::Border<int> pad)
@@ -118,54 +77,9 @@ void geFlex::add(Fl_Widget* w, int size, geompp::Border<int> pad)
 
 /* -------------------------------------------------------------------------- */
 
-void geFlex::resize(int X, int Y, int W, int H)
-{
-	Fl_Group::resize(X, Y, W, H);
-
-	const size_t numAllElems    = std::count_if(m_elems.begin(), m_elems.end(), [](const Elem& e) { return e.isVisible(); });
-	const size_t numFixedElems  = std::count_if(m_elems.begin(), m_elems.end(), [](const Elem& e) { return e.isFixed() && e.isVisible(); });
-	const size_t numLiquidElems = numAllElems - numFixedElems;
-
-	const int pos  = m_direction == Direction::VERTICAL ? y() : x();
-	const int size = m_direction == Direction::VERTICAL ? h() : w();
-
-	/* No fancy computations if there are no liquid elements. Just lay children
-	according to their fixed size. */
-
-	if (numLiquidElems == 0)
-	{
-		layWidgets(pos);
-		return;
-	}
-
-	const int fixedElemsSize = std::accumulate(m_elems.begin(), m_elems.end(), 0, [](int acc, const Elem& e) {
-		return e.isVisible() && e.isFixed() ? acc + e.getSize() : acc;
-	});
-	const int availableSize  = size - (m_gutter * (numAllElems - 1)); // Total size - gutters
-	const int liquidElemSize = (availableSize - fixedElemsSize) / numLiquidElems;
-
-	layWidgets(pos, liquidElemSize);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geFlex::layWidgets(int startPos, int sizeIfLiquid)
-{
-	int nextElemPos = startPos;
-	for (Elem& e : m_elems)
-	{
-		if (!e.isVisible())
-			continue;
-		e.resize(nextElemPos, e.isFixed() ? e.size : sizeIfLiquid);
-		nextElemPos += e.getSize() + m_gutter;
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
 void geFlex::end()
 {
-	Fl_Group::end();
+	Fl_Flex::end();
 	resize(x(), y(), w(), h());
 }
 } // namespace giada::v
