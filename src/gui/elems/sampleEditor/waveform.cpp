@@ -327,13 +327,6 @@ int geWaveform::handle(int e)
 
 	case FL_PUSH:
 	{
-
-		if (Fl::event_clicks() > 0)
-		{
-			selectAll();
-			return 1;
-		}
-
 		m_pushed = true;
 
 		if (!mouseOnEnd() && !mouseOnStart())
