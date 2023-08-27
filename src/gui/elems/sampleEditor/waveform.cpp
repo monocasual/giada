@@ -315,7 +315,11 @@ int geWaveform::handle(int e)
 
 	switch (e)
 	{
+	case FL_FOCUS:
+	case FL_UNFOCUS:
+		return 1; // enables receiving keyboard events
 
+	case FL_SHORTCUT:
 	case FL_KEYDOWN:
 	{
 		if (Fl::event_key() == ' ')
