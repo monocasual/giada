@@ -320,7 +320,10 @@ void ChannelManager::setPitch(ID channelId, float value)
 {
 	assert(m_model.get().channels.get(channelId).sampleChannel);
 
-	m_model.get().channels.get(channelId).sampleChannel->pitch = std::clamp(value, G_MIN_PITCH, G_MAX_PITCH);
+	const float pitch = std::clamp(value, G_MIN_PITCH, G_MAX_PITCH);
+
+	m_model.get().channels.get(channelId).sampleChannel->pitch                 = pitch;
+	m_model.get().channels.get(Mixer::PREVIEW_CHANNEL_ID).sampleChannel->pitch = pitch;
 	m_model.swap(model::SwapType::SOFT);
 }
 
