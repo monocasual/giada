@@ -339,7 +339,8 @@ void ChannelManager::setPan(ID channelId, float value)
 
 void ChannelManager::setBeginEnd(ID channelId, Frame b, Frame e)
 {
-	Channel& c = m_model.get().channels.get(channelId);
+	Channel& c       = m_model.get().channels.get(channelId);
+	Channel& preview = m_model.get().channels.get(Mixer::PREVIEW_CHANNEL_ID);
 
 	assert(c.sampleChannel);
 
@@ -353,8 +354,10 @@ void ChannelManager::setBeginEnd(ID channelId, Frame b, Frame e)
 	if (c.shared->tracker.load() < b)
 		c.shared->tracker.store(b);
 
-	c.sampleChannel->begin = b;
-	c.sampleChannel->end   = e;
+	c.sampleChannel->begin       = b;
+	c.sampleChannel->end         = e;
+	preview.sampleChannel->begin = b;
+	preview.sampleChannel->end   = e;
 	m_model.swap(model::SwapType::HARD);
 }
 
