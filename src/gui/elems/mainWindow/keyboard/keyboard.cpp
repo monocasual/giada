@@ -254,7 +254,7 @@ int geKeyboard::handle(int e)
 	switch (e)
 	{
 	case FL_PUSH:
-		if (Fl::event_button3())
+		if (Fl::event_button1() && Fl::event_ctrl())
 		{
 			m_channelDragger.begin();
 			return 1;
@@ -262,7 +262,7 @@ int geKeyboard::handle(int e)
 		return geScroll::handle(e);
 
 	case FL_DRAG:
-		if (Fl::event_button3() && m_channelDragger.isDragging())
+		if (Fl::event_button1() && Fl::event_ctrl() && m_channelDragger.isDragging())
 			m_channelDragger.drag();
 		return geScroll::handle(e); // Let geScroll process this event anyway, to enable autoscroll
 
