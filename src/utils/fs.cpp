@@ -34,6 +34,7 @@
 #ifdef G_OS_MAC
 #include <libgen.h> // basename unix
 #include <pwd.h>    // getpwuid
+#include <unistd.h> // getuid
 #endif
 #ifdef G_OS_WINDOWS
 #include <shlobj.h> // SHGetKnownFolderPath
