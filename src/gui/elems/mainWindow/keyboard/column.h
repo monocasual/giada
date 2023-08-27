@@ -81,7 +81,7 @@ public:
 private:
 	int computeHeight() const;
 
-	void addChannel();
+	void showAddChannelMenu();
 
 	std::vector<geChannel*> m_channels;
 

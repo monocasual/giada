@@ -125,7 +125,7 @@ geChannel* geColumn::addChannel(c::channel::Data d)
 
 /* -------------------------------------------------------------------------- */
 
-void geColumn::addChannel()
+void geColumn::showAddChannelMenu()
 {
 	geMenu menu;
 
@@ -190,7 +190,7 @@ void geColumn::init()
 	m_channels.clear();
 
 	m_addChannelBtn          = new geTextButton(x(), y(), w(), G_GUI_UNIT, g_ui.getI18Text(LangMap::MAIN_COLUMN_BUTTON));
-	m_addChannelBtn->onClick = [this]() { addChannel(); };
+	m_addChannelBtn->onClick = [this]() { showAddChannelMenu(); };
 
 	add(m_addChannelBtn);
 }
