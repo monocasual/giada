@@ -206,10 +206,9 @@ void playPreview()
 
 void stopPreview()
 {
-	/* Let the Sample Editor show the final tracker position, then kill the
-	channel. */
+	/* Let the Sample Editor show the final tracker position first. */
 	getWindow()->refresh();
-	channel::killChannel(m::Mixer::PREVIEW_CHANNEL_ID, Thread::MAIN);
+	channel::pressChannel(m::Mixer::PREVIEW_CHANNEL_ID, G_MAX_VELOCITY, Thread::MAIN);
 }
 
 void togglePreview()

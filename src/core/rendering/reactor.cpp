@@ -65,6 +65,12 @@ void Reactor::keyPress(ID channelId, int velocity, bool canRecordActions, bool c
 
 		pressSampleChannel(channelId, *ch.shared, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol, ch.volume_i);
 	}
+	else if (ch.type == ChannelType::PREVIEW)
+	{
+		pressSampleChannel(channelId, *ch.shared, SamplePlayerMode::SINGLE_BASIC_PAUSE,
+		    /*velocity=*/0, /*canQuantize=*/false, /*isAnyLoopMode=*/false,
+		    /*velocityAsVol=*/false, ch.volume_i);
+	}
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -75,21 +81,28 @@ void Reactor::keyRelease(ID channelId, bool canRecordActions, Frame currentFrame
 {
 	Channel& ch = m_model.get().channels.get(channelId);
 
-	if (ch.type != ChannelType::SAMPLE || !ch.hasWave())
+	if (ch.type == ChannelType::MIDI)
 		return;
 
-	const SamplePlayerMode mode = ch.sampleChannel->mode;
-
-	if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+	if (ch.type == ChannelType::SAMPLE && ch.hasWave())
 	{
-		/* Record a stop event only if channel is SINGLE_PRESS. For any other 
+		const SamplePlayerMode mode = ch.sampleChannel->mode;
+
+		if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+		{
+			/* Record a stop event only if channel is SINGLE_PRESS. For any other 
 		mode the key release event is meaningless. */
 
-		recordSampleKeyRelease(channelId, currentFrameQuantized, m_actionRecorder);
-		ch.hasActions = true;
-	}
+			recordSampleKeyRelease(channelId, currentFrameQuantized, m_actionRecorder);
+			ch.hasActions = true;
+		}
 
-	releaseSampleChannel(*ch.shared, mode);
+		releaseSampleChannel(*ch.shared, mode);
+	}
+	else if (ch.type == ChannelType::PREVIEW)
+	{
+		releaseSampleChannel(*ch.shared, SamplePlayerMode::SINGLE_BASIC_PAUSE);
+	}
 
 	m_model.swap(model::SwapType::SOFT);
 }
