@@ -55,8 +55,8 @@
 #include "utils/string.h"
 #include <cassert>
 
-extern giada::m::Engine g_engine;
-extern giada::v::Ui     g_ui;
+extern giada::m::Engine* g_engine;
+extern giada::v::Ui      g_ui;
 
 namespace giada::c::storage
 {
@@ -109,7 +109,7 @@ void loadProject(void* data)
 	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
 	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
-	m::model::LoadState state = g_engine.getStorageApi().loadProject(projectPath, pluginsSortMethod, engineProgress);
+	m::model::LoadState state = g_engine->getStorageApi().loadProject(projectPath, pluginsSortMethod, engineProgress);
 
 	if (state.patch.status != G_FILE_OK)
 	{
@@ -149,7 +149,7 @@ void saveProject(void* data)
 
 	g_ui.model.projectName = projectName;
 
-	if (g_engine.getStorageApi().storeProject(projectPath, g_ui.model, engineProgress))
+	if (g_engine->getStorageApi().storeProject(projectPath, g_ui.model, engineProgress))
 	{
 		g_ui.setMainWindowTitle(projectName);
 		g_ui.model.patchPath = u::fs::getUpDir(projectPath);
@@ -195,7 +195,7 @@ void saveSample(void* data)
 	        g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_FILEEXISTS)))
 		return;
 
-	if (!g_engine.getChannelsApi().saveSample(channelId, filePath))
+	if (!g_engine->getChannelsApi().saveSample(channelId, filePath))
 		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGFILEERROR));
 	else
 	{

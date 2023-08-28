@@ -53,8 +53,8 @@
 #include <cassert>
 #include <memory>
 
-extern giada::v::Ui     g_ui;
-extern giada::m::Engine g_engine;
+extern giada::v::Ui      g_ui;
+extern giada::m::Engine* g_engine;
 
 namespace giada::c::sampleEditor
 {
@@ -79,12 +79,12 @@ Data::Data(const m::Channel& c)
 
 ChannelStatus Data::a_getPreviewStatus() const
 {
-	return g_engine.getChannelsApi().get(m::Mixer::PREVIEW_CHANNEL_ID).shared->playStatus.load();
+	return g_engine->getChannelsApi().get(m::Mixer::PREVIEW_CHANNEL_ID).shared->playStatus.load();
 }
 
 Frame Data::a_getPreviewTracker() const
 {
-	return g_engine.getChannelsApi().get(m::Mixer::PREVIEW_CHANNEL_ID).shared->tracker.load();
+	return g_engine->getChannelsApi().get(m::Mixer::PREVIEW_CHANNEL_ID).shared->tracker.load();
 }
 
 const m::Wave& Data::getWaveRef() const
@@ -94,12 +94,12 @@ const m::Wave& Data::getWaveRef() const
 
 Frame Data::getFramesInBar() const
 {
-	return g_engine.getMainApi().getFramesInBar();
+	return g_engine->getMainApi().getFramesInBar();
 }
 
 Frame Data::getFramesInLoop() const
 {
-	return g_engine.getMainApi().getFramesInLoop();
+	return g_engine->getMainApi().getFramesInLoop();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -108,7 +108,7 @@ Frame Data::getFramesInLoop() const
 
 Data getData(ID channelId)
 {
-	return Data(g_engine.getChannelsApi().get(channelId));
+	return Data(g_engine->getChannelsApi().get(channelId));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -122,28 +122,28 @@ v::gdSampleEditor* getWindow()
 
 void setBeginEnd(ID channelId, Frame b, Frame e)
 {
-	g_engine.getSampleEditorApi().setBeginEnd(channelId, b, e);
+	g_engine->getSampleEditorApi().setBeginEnd(channelId, b, e);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void cut(ID channelId, Frame a, Frame b)
 {
-	g_engine.getSampleEditorApi().cut(channelId, a, b);
+	g_engine->getSampleEditorApi().cut(channelId, a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void copy(ID channelId, Frame a, Frame b)
 {
-	g_engine.getSampleEditorApi().copy(channelId, a, b);
+	g_engine->getSampleEditorApi().copy(channelId, a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void paste(ID channelId, Frame a)
 {
-	g_engine.getSampleEditorApi().paste(channelId, a);
+	g_engine->getSampleEditorApi().paste(channelId, a);
 	getWindow()->rebuild();
 }
 
@@ -151,49 +151,49 @@ void paste(ID channelId, Frame a)
 
 void silence(ID channelId, Frame a, Frame b)
 {
-	g_engine.getSampleEditorApi().silence(channelId, a, b);
+	g_engine->getSampleEditorApi().silence(channelId, a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void fade(ID channelId, Frame a, Frame b, m::wfx::Fade type)
 {
-	g_engine.getSampleEditorApi().fade(channelId, a, b, type);
+	g_engine->getSampleEditorApi().fade(channelId, a, b, type);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void smoothEdges(ID channelId, Frame a, Frame b)
 {
-	g_engine.getSampleEditorApi().smoothEdges(channelId, a, b);
+	g_engine->getSampleEditorApi().smoothEdges(channelId, a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void reverse(ID channelId, Frame a, Frame b)
 {
-	g_engine.getSampleEditorApi().reverse(channelId, a, b);
+	g_engine->getSampleEditorApi().reverse(channelId, a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void normalize(ID channelId, Frame a, Frame b)
 {
-	g_engine.getSampleEditorApi().normalize(channelId, a, b);
+	g_engine->getSampleEditorApi().normalize(channelId, a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void trim(ID channelId, Frame a, Frame b)
 {
-	g_engine.getSampleEditorApi().trim(channelId, a, b);
+	g_engine->getSampleEditorApi().trim(channelId, a, b);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void preparePreview(ID channelId)
 {
-	g_engine.getChannelsApi().loadPreviewChannel(channelId);
+	g_engine->getChannelsApi().loadPreviewChannel(channelId);
 }
 
 void setLoop(bool shouldLoop)
@@ -215,19 +215,19 @@ void stopPreview()
 
 void togglePreview()
 {
-	const bool isPlaying = g_engine.getChannelsApi().get(m::Mixer::PREVIEW_CHANNEL_ID).isPlaying();
+	const bool isPlaying = g_engine->getChannelsApi().get(m::Mixer::PREVIEW_CHANNEL_ID).isPlaying();
 	isPlaying ? stopPreview() : playPreview();
 }
 
 void setPreviewTracker(Frame f)
 {
-	g_engine.getChannelsApi().setPreviewTracker(f);
+	g_engine->getChannelsApi().setPreviewTracker(f);
 	getWindow()->refresh();
 }
 
 void cleanupPreview()
 {
-	g_engine.getChannelsApi().freePreviewChannel();
+	g_engine->getChannelsApi().freePreviewChannel();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -235,7 +235,7 @@ void cleanupPreview()
 void toNewChannel(ID channelId, Frame a, Frame b)
 {
 	const ID columnId = g_ui.mainWindow->keyboard->getChannelColumnId(channelId);
-	g_engine.getSampleEditorApi().toNewChannel(channelId, columnId, a, b);
+	g_engine->getSampleEditorApi().toNewChannel(channelId, columnId, a, b);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -244,13 +244,13 @@ void reload(ID channelId)
 {
 	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING), "Reload sample: are you sure?"))
 		return;
-	g_engine.getSampleEditorApi().reload(channelId);
+	g_engine->getSampleEditorApi().reload(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void shift(ID channelId, Frame offset)
 {
-	g_engine.getSampleEditorApi().shift(channelId, offset);
+	g_engine->getSampleEditorApi().shift(channelId, offset);
 }
 } // namespace giada::c::sampleEditor

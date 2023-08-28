@@ -49,8 +49,8 @@
 #include "utils/math.h"
 #include <FL/Fl.H>
 
-extern giada::v::Ui     g_ui;
-extern giada::m::Engine g_engine;
+extern giada::v::Ui      g_ui;
+extern giada::m::Engine* g_engine;
 
 namespace giada::c::io
 {
@@ -153,28 +153,28 @@ Master_InputData::Master_InputData(const m::model::MidiIn& midiIn)
 
 Channel_InputData channel_getInputData(ID channelId)
 {
-	return Channel_InputData(g_engine.getChannelsApi().get(channelId));
+	return Channel_InputData(g_engine->getChannelsApi().get(channelId));
 }
 
 /* -------------------------------------------------------------------------- */
 
 Channel_OutputData channel_getOutputData(ID channelId)
 {
-	return Channel_OutputData(g_engine.getChannelsApi().get(channelId));
+	return Channel_OutputData(g_engine->getChannelsApi().get(channelId));
 }
 
 /* -------------------------------------------------------------------------- */
 
 Master_InputData master_getInputData()
 {
-	return Master_InputData(g_engine.getIOApi().getModelMidiIn());
+	return Master_InputData(g_engine->getIOApi().getModelMidiIn());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void channel_enableMidiLearn(ID channelId, bool v)
 {
-	g_engine.getIOApi().channel_enableMidiInput(channelId, v);
+	g_engine->getIOApi().channel_enableMidiInput(channelId, v);
 	rebuildMidiWindows_();
 }
 
@@ -182,7 +182,7 @@ void channel_enableMidiLearn(ID channelId, bool v)
 
 void channel_enableMidiLightning(ID channelId, bool v)
 {
-	g_engine.getIOApi().channel_enableMidiLightning(channelId, v);
+	g_engine->getIOApi().channel_enableMidiLightning(channelId, v);
 	rebuildMidiWindows_();
 }
 
@@ -190,7 +190,7 @@ void channel_enableMidiLightning(ID channelId, bool v)
 
 void channel_enableMidiOutput(ID channelId, bool v)
 {
-	g_engine.getIOApi().channel_enableMidiOutput(channelId, v);
+	g_engine->getIOApi().channel_enableMidiOutput(channelId, v);
 	rebuildMidiWindows_();
 }
 
@@ -198,19 +198,19 @@ void channel_enableMidiOutput(ID channelId, bool v)
 
 void channel_enableVelocityAsVol(ID channelId, bool v)
 {
-	g_engine.getIOApi().channel_enableVelocityAsVol(channelId, v);
+	g_engine->getIOApi().channel_enableVelocityAsVol(channelId, v);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void channel_setMidiInputFilter(ID channelId, int ch)
 {
-	g_engine.getIOApi().channel_setMidiInputFilter(channelId, ch);
+	g_engine->getIOApi().channel_setMidiInputFilter(channelId, ch);
 }
 
 void channel_setMidiOutputFilter(ID channelId, int ch)
 {
-	g_engine.getIOApi().channel_setMidiOutputFilter(channelId, ch);
+	g_engine->getIOApi().channel_setMidiOutputFilter(channelId, ch);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -219,7 +219,7 @@ bool channel_setKey(ID channelId, int k)
 {
 	if (!isValidKey_(k))
 		return false;
-	g_engine.getIOApi().channel_setKey(channelId, k);
+	g_engine->getIOApi().channel_setKey(channelId, k);
 	return true;
 }
 
@@ -227,24 +227,24 @@ bool channel_setKey(ID channelId, int k)
 
 void channel_startMidiLearn(int param, ID channelId)
 {
-	g_engine.getIOApi().channel_startMidiLearn(param, channelId, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().channel_startMidiLearn(param, channelId, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
 }
 
 void master_startMidiLearn(int param)
 {
-	g_engine.getIOApi().master_startMidiLearn(param, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().master_startMidiLearn(param, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
 }
 
 void plugin_startMidiLearn(int paramIndex, ID pluginId)
 {
-	g_engine.getIOApi().plugin_startMidiLearn(paramIndex, pluginId, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().plugin_startMidiLearn(paramIndex, pluginId, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
 }
 
 /* -------------------------------------------------------------------------- */
 
 void stopMidiLearn()
 {
-	g_engine.getIOApi().stopMidiLearn();
+	g_engine->getIOApi().stopMidiLearn();
 	g_ui.pumpEvent([]() { rebuildMidiWindows_(); });
 }
 
@@ -252,24 +252,24 @@ void stopMidiLearn()
 
 void channel_clearMidiLearn(int param, ID channelId)
 {
-	g_engine.getIOApi().channel_clearMidiLearn(param, channelId, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().channel_clearMidiLearn(param, channelId, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
 }
 
 void master_clearMidiLearn(int param)
 {
-	g_engine.getIOApi().master_clearMidiLearn(param, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().master_clearMidiLearn(param, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
 }
 
 void plugin_clearMidiLearn(int param, ID pluginId)
 {
-	g_engine.getIOApi().plugin_clearMidiLearn(param, pluginId, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().plugin_clearMidiLearn(param, pluginId, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
 }
 
 /* -------------------------------------------------------------------------- */
 
 void master_enableMidiLearn(bool v)
 {
-	g_engine.getIOApi().master_enableMidiLearn(v);
+	g_engine->getIOApi().master_enableMidiLearn(v);
 	rebuildMidiWindows_();
 }
 
@@ -277,6 +277,6 @@ void master_enableMidiLearn(bool v)
 
 void master_setMidiFilter(int c)
 {
-	g_engine.getIOApi().master_setMidiFilter(c);
+	g_engine->getIOApi().master_setMidiFilter(c);
 }
 } // namespace giada::c::io

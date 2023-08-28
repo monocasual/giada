@@ -44,8 +44,8 @@
 #include <cassert>
 #include <memory>
 
-extern giada::v::Ui     g_ui;
-extern giada::m::Engine g_engine;
+extern giada::v::Ui      g_ui;
+extern giada::m::Engine* g_engine;
 
 namespace giada::c::plugin
 {
@@ -116,7 +116,7 @@ Plugins::Plugins(const m::Channel& c)
 
 Plugins getPlugins(ID channelId)
 {
-	return Plugins(g_engine.getChannelsApi().get(channelId));
+	return Plugins(g_engine->getChannelsApi().get(channelId));
 }
 
 Plugin getPlugin(m::Plugin& plugin, ID channelId)
@@ -131,14 +131,14 @@ Param getParam(int index, const m::Plugin& plugin, ID channelId)
 
 std::vector<m::PluginManager::PluginInfo> getPluginsInfo()
 {
-	return g_engine.getPluginsApi().getInfo();
+	return g_engine->getPluginsApi().getInfo();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void updateWindow(ID pluginId, Thread t)
 {
-	const m::Plugin* p = g_engine.getPluginsApi().get(pluginId);
+	const m::Plugin* p = g_engine->getPluginsApi().get(pluginId);
 
 	assert(p != nullptr);
 
@@ -156,35 +156,35 @@ void updateWindow(ID pluginId, Thread t)
 
 void addPlugin(int pluginListIndex, ID channelId)
 {
-	g_engine.getPluginsApi().add(pluginListIndex, channelId);
+	g_engine->getPluginsApi().add(pluginListIndex, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId)
 {
-	g_engine.getPluginsApi().swap(p1, p2, channelId);
+	g_engine->getPluginsApi().swap(p1, p2, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void sortPlugins(m::PluginManager::SortMethod method)
 {
-	g_engine.getPluginsApi().sort(method);
+	g_engine->getPluginsApi().sort(method);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void freePlugin(const m::Plugin& plugin, ID channelId)
 {
-	g_engine.getPluginsApi().free(plugin, channelId);
+	g_engine->getPluginsApi().free(plugin, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setProgram(ID pluginId, int programIndex)
 {
-	g_engine.getPluginsApi().setProgram(pluginId, programIndex);
+	g_engine->getPluginsApi().setProgram(pluginId, programIndex);
 	updateWindow(pluginId, Thread::MAIN); // Only Main thread so far
 }
 
@@ -192,7 +192,7 @@ void setProgram(ID pluginId, int programIndex)
 
 void setParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread t)
 {
-	g_engine.getPluginsApi().setParameter(pluginId, paramIndex, value);
+	g_engine->getPluginsApi().setParameter(pluginId, paramIndex, value);
 	channel::notifyChannelForMidiIn(t, channelId);
 
 	g_ui.pumpEvent([pluginId, t]() { c::plugin::updateWindow(pluginId, t); });
@@ -202,6 +202,6 @@ void setParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread
 
 void toggleBypass(ID pluginId)
 {
-	g_engine.getPluginsApi().toggleBypass(pluginId);
+	g_engine->getPluginsApi().toggleBypass(pluginId);
 }
 } // namespace giada::c::plugin

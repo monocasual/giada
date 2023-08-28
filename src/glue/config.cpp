@@ -43,8 +43,8 @@
 #include <cstddef>
 #include <fmt/core.h>
 
-extern giada::v::Ui     g_ui;
-extern giada::m::Engine g_engine;
+extern giada::v::Ui      g_ui;
+extern giada::m::Engine* g_engine;
 
 namespace giada::c::config
 {
@@ -115,22 +115,22 @@ AudioData getAudioData()
 	AudioData audioData;
 
 	audioData.apis[RtAudio::Api::RTAUDIO_DUMMY] = "(Dummy)";
-	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::LINUX_ALSA))
+	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::LINUX_ALSA))
 		audioData.apis[RtAudio::Api::LINUX_ALSA] = "ALSA";
-	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::UNIX_JACK))
+	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::UNIX_JACK))
 		audioData.apis[RtAudio::Api::UNIX_JACK] = "JACK";
-	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::LINUX_PULSE))
+	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::LINUX_PULSE))
 		audioData.apis[RtAudio::Api::LINUX_PULSE] = "PulseAudio";
-	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::WINDOWS_DS))
+	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::WINDOWS_DS))
 		audioData.apis[RtAudio::Api::WINDOWS_DS] = "DirectSound";
-	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::WINDOWS_ASIO))
+	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::WINDOWS_ASIO))
 		audioData.apis[RtAudio::Api::WINDOWS_ASIO] = "ASIO";
-	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::WINDOWS_WASAPI))
+	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::WINDOWS_WASAPI))
 		audioData.apis[RtAudio::Api::WINDOWS_WASAPI] = "WASAPI";
-	if (g_engine.getConfigApi().audio_hasAPI(RtAudio::Api::MACOSX_CORE))
+	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::MACOSX_CORE))
 		audioData.apis[RtAudio::Api::MACOSX_CORE] = "CoreAudio";
 
-	for (const m::KernelAudio::Device& device : g_engine.getConfigApi().audio_getAvailableDevices())
+	for (const m::KernelAudio::Device& device : g_engine->getConfigApi().audio_getAvailableDevices())
 	{
 		if (device.maxOutputChannels > 0)
 			audioData.outputDevices.push_back(AudioDeviceData(DeviceType::OUTPUT, device));
@@ -138,14 +138,14 @@ AudioData getAudioData()
 			audioData.inputDevices.push_back(AudioDeviceData(DeviceType::INPUT, device));
 	}
 
-	audioData.api             = g_engine.getConfigApi().audio_getAPI();
-	audioData.bufferSize      = g_engine.getConfigApi().audio_getBufferSize();
-	audioData.sampleRate      = g_engine.getConfigApi().audio_getSampleRate();
-	audioData.limitOutput     = g_engine.getConfigApi().audio_isLimitOutput();
-	audioData.recTriggerLevel = g_engine.getConfigApi().audio_getRecTriggerLevel();
-	audioData.resampleQuality = static_cast<int>(g_engine.getConfigApi().audio_getResamplerQuality());
-	audioData.outputDevice    = AudioDeviceData(DeviceType::OUTPUT, g_engine.getConfigApi().audio_getCurrentOutDevice());
-	audioData.inputDevice     = AudioDeviceData(DeviceType::INPUT, g_engine.getConfigApi().audio_getCurrentInDevice());
+	audioData.api             = g_engine->getConfigApi().audio_getAPI();
+	audioData.bufferSize      = g_engine->getConfigApi().audio_getBufferSize();
+	audioData.sampleRate      = g_engine->getConfigApi().audio_getSampleRate();
+	audioData.limitOutput     = g_engine->getConfigApi().audio_isLimitOutput();
+	audioData.recTriggerLevel = g_engine->getConfigApi().audio_getRecTriggerLevel();
+	audioData.resampleQuality = static_cast<int>(g_engine->getConfigApi().audio_getResamplerQuality());
+	audioData.outputDevice    = AudioDeviceData(DeviceType::OUTPUT, g_engine->getConfigApi().audio_getCurrentOutDevice());
+	audioData.inputDevice     = AudioDeviceData(DeviceType::INPUT, g_engine->getConfigApi().audio_getCurrentInDevice());
 
 	return audioData;
 }
@@ -156,29 +156,29 @@ MidiData getMidiData()
 {
 	MidiData midiData;
 
-	if (g_engine.getConfigApi().midi_hasAPI(RtMidi::Api::RTMIDI_DUMMY))
+	if (g_engine->getConfigApi().midi_hasAPI(RtMidi::Api::RTMIDI_DUMMY))
 		midiData.apis[RtMidi::Api::RTMIDI_DUMMY] = "(Dummy)";
-	if (g_engine.getConfigApi().midi_hasAPI(RtMidi::Api::LINUX_ALSA))
+	if (g_engine->getConfigApi().midi_hasAPI(RtMidi::Api::LINUX_ALSA))
 		midiData.apis[RtMidi::Api::LINUX_ALSA] = "ALSA";
-	if (g_engine.getConfigApi().midi_hasAPI(RtMidi::Api::UNIX_JACK))
+	if (g_engine->getConfigApi().midi_hasAPI(RtMidi::Api::UNIX_JACK))
 		midiData.apis[RtMidi::Api::UNIX_JACK] = "JACK";
-	if (g_engine.getConfigApi().midi_hasAPI(RtMidi::Api::WINDOWS_MM))
+	if (g_engine->getConfigApi().midi_hasAPI(RtMidi::Api::WINDOWS_MM))
 		midiData.apis[RtMidi::Api::WINDOWS_MM] = "Multimedia MIDI";
-	if (g_engine.getConfigApi().midi_hasAPI(RtMidi::Api::MACOSX_CORE))
+	if (g_engine->getConfigApi().midi_hasAPI(RtMidi::Api::MACOSX_CORE))
 		midiData.apis[RtMidi::Api::MACOSX_CORE] = "OSX Core MIDI";
 
 	midiData.syncModes[G_MIDI_SYNC_NONE]         = "(disabled)";
 	midiData.syncModes[G_MIDI_SYNC_CLOCK_MASTER] = "MIDI Clock (master)";
 	midiData.syncModes[G_MIDI_SYNC_CLOCK_SLAVE]  = "MIDI Clock (slave)";
 
-	midiData.midiMaps = g_engine.getConfigApi().midi_getMidiMapFilesFound();
-	midiData.midiMap  = g_engine.getConfigApi().midi_getCurrentMidiMapPath();
-	midiData.outPorts = g_engine.getConfigApi().midi_getOutPorts();
-	midiData.inPorts  = g_engine.getConfigApi().midi_getInPorts();
-	midiData.api      = g_engine.getConfigApi().midi_getAPI();
-	midiData.syncMode = g_engine.getConfigApi().midi_getSyncMode();
-	midiData.outPort  = g_engine.getConfigApi().midi_getCurrentOutPort();
-	midiData.inPort   = g_engine.getConfigApi().midi_getCurrentInPort();
+	midiData.midiMaps = g_engine->getConfigApi().midi_getMidiMapFilesFound();
+	midiData.midiMap  = g_engine->getConfigApi().midi_getCurrentMidiMapPath();
+	midiData.outPorts = g_engine->getConfigApi().midi_getOutPorts();
+	midiData.inPorts  = g_engine->getConfigApi().midi_getInPorts();
+	midiData.api      = g_engine->getConfigApi().midi_getAPI();
+	midiData.syncMode = g_engine->getConfigApi().midi_getSyncMode();
+	midiData.outPort  = g_engine->getConfigApi().midi_getCurrentOutPort();
+	midiData.inPort   = g_engine->getConfigApi().midi_getCurrentInPort();
 
 	return midiData;
 }
@@ -188,7 +188,7 @@ MidiData getMidiData()
 PluginData getPluginData()
 {
 	PluginData pluginData;
-	pluginData.numAvailablePlugins = g_engine.getPluginsApi().countAvailablePlugins();
+	pluginData.numAvailablePlugins = g_engine->getPluginsApi().countAvailablePlugins();
 	pluginData.pluginPath          = g_ui.model.pluginPath;
 	return pluginData;
 }
@@ -209,7 +209,7 @@ MiscData getMiscData()
 
 BehaviorsData getBehaviorsData()
 {
-	const m::model::Behaviors& behaviors = g_engine.getConfigApi().behaviors_getData();
+	const m::model::Behaviors& behaviors = g_engine->getConfigApi().behaviors_getData();
 
 	BehaviorsData behaviorsData = {
 	    behaviors.chansStopOnSeqHalt,
@@ -224,35 +224,35 @@ BehaviorsData getBehaviorsData()
 
 void changeAudioAPI(RtAudio::Api api)
 {
-	g_engine.getConfigApi().audio_setAPI(api);
+	g_engine->getConfigApi().audio_setAPI(api);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void changeMidiAPI(RtMidi::Api api)
 {
-	g_engine.getConfigApi().midi_setAPI(api);
+	g_engine->getConfigApi().midi_setAPI(api);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setMidiMapPath(const std::string& midiMapPath)
 {
-	g_engine.getConfigApi().midi_setMidiMapPath(midiMapPath);
+	g_engine->getConfigApi().midi_setMidiMapPath(midiMapPath);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setMidiSyncMode(int syncMode)
 {
-	g_engine.getConfigApi().midi_setSyncMode(syncMode);
+	g_engine->getConfigApi().midi_setSyncMode(syncMode);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void apply(const AudioData& data)
 {
-	bool res = g_engine.getConfigApi().audio_openStream(
+	bool res = g_engine->getConfigApi().audio_openStream(
 	    {
 	        data.outputDevice.id,
 	        data.outputDevice.channelsCount,
@@ -271,7 +271,7 @@ void apply(const AudioData& data)
 		return;
 	}
 
-	g_engine.getConfigApi().audio_storeData(data.limitOutput,
+	g_engine->getConfigApi().audio_storeData(data.limitOutput,
 	    static_cast<m::Resampler::Quality>(data.resampleQuality), data.recTriggerLevel);
 }
 
@@ -286,8 +286,8 @@ void save(const PluginData& data)
 
 void apply(const MidiData& data)
 {
-	const m::KernelMidi::Result outRes = g_engine.getConfigApi().midi_openOutPort(data.outPort);
-	const m::KernelMidi::Result inRes  = g_engine.getConfigApi().midi_openInPort(data.inPort);
+	const m::KernelMidi::Result outRes = g_engine->getConfigApi().midi_openOutPort(data.outPort);
+	const m::KernelMidi::Result inRes  = g_engine->getConfigApi().midi_openInPort(data.inPort);
 
 	if (outRes.success && inRes.success)
 		return;
@@ -314,7 +314,7 @@ void save(const MiscData& data)
 
 void save(const BehaviorsData& data)
 {
-	g_engine.getConfigApi().behaviors_storeData({data.chansStopOnSeqHalt,
+	g_engine->getConfigApi().behaviors_storeData({data.chansStopOnSeqHalt,
 	    data.treatRecsAsLoops,
 	    data.inputMonitorDefaultOn,
 	    data.overdubProtectionDefaultOn});
@@ -324,7 +324,7 @@ void save(const BehaviorsData& data)
 
 void scanPlugins(std::string dir, const std::function<void(float)>& progress)
 {
-	g_engine.getPluginsApi().scan(dir, progress);
+	g_engine->getPluginsApi().scan(dir, progress);
 }
 
 /* -------------------------------------------------------------------------- */

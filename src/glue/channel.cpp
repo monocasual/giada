@@ -64,8 +64,8 @@
 #include <cmath>
 #include <functional>
 
-extern giada::v::Ui     g_ui;
-extern giada::m::Engine g_engine;
+extern giada::v::Ui      g_ui;
+extern giada::m::Engine* g_engine;
 
 namespace giada::c::channel
 {
@@ -138,11 +138,11 @@ Data::Data(const m::Channel& c)
 ChannelStatus Data::getPlayStatus() const { return m_playStatus->load(); }
 ChannelStatus Data::getRecStatus() const { return m_recStatus->load(); }
 bool          Data::getReadActions() const { return m_readActions->load(); }
-bool          Data::isRecordingInput() const { return g_engine.getMainApi().isRecordingInput(); }
-bool          Data::isRecordingActions() const { return g_engine.getMainApi().isRecordingActions(); }
-bool          Data::isMuted() const { return g_engine.getChannelsApi().get(id).isMuted(); }
-bool          Data::isSoloed() const { return g_engine.getChannelsApi().get(id).isSoloed(); }
-bool          Data::isArmed() const { return g_engine.getChannelsApi().get(id).armed; }
+bool          Data::isRecordingInput() const { return g_engine->getMainApi().isRecordingInput(); }
+bool          Data::isRecordingActions() const { return g_engine->getMainApi().isRecordingActions(); }
+bool          Data::isMuted() const { return g_engine->getChannelsApi().get(id).isMuted(); }
+bool          Data::isSoloed() const { return g_engine->getChannelsApi().get(id).isSoloed(); }
+bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).armed; }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -150,13 +150,13 @@ bool          Data::isArmed() const { return g_engine.getChannelsApi().get(id).a
 
 Data getData(ID channelId)
 {
-	return Data(g_engine.getChannelsApi().get(channelId));
+	return Data(g_engine->getChannelsApi().get(channelId));
 }
 
 std::vector<Data> getChannels()
 {
 	std::vector<Data> out;
-	for (const m::Channel& ch : g_engine.getChannelsApi().getAll())
+	for (const m::Channel& ch : g_engine->getChannelsApi().getAll())
 		if (!ch.isInternal())
 			out.push_back(Data(ch));
 
@@ -171,7 +171,7 @@ void loadChannel(ID channelId, const std::string& fname)
 {
 	auto progress = g_ui.mainWindow->getScopedProgress(g_ui.getI18Text(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
 
-	int res = g_engine.getChannelsApi().loadSampleChannel(channelId, fname);
+	int res = g_engine->getChannelsApi().loadSampleChannel(channelId, fname);
 	if (res != G_RES_OK)
 		printLoadError_(res);
 
@@ -183,7 +183,7 @@ void loadChannel(ID channelId, const std::string& fname)
 
 void addChannel(ID columnId, ChannelType type)
 {
-	g_engine.getChannelsApi().add(columnId, type);
+	g_engine->getChannelsApi().add(columnId, type);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -191,7 +191,7 @@ void addChannel(ID columnId, ChannelType type)
 void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 {
 	auto progress    = g_ui.mainWindow->getScopedProgress(g_ui.getI18Text(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
-	auto channelsApi = g_engine.getChannelsApi();
+	auto channelsApi = g_engine->getChannelsApi();
 
 	int  i      = 0;
 	bool errors = false;
@@ -216,7 +216,7 @@ void deleteChannel(ID channelId)
 	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING), g_ui.getI18Text(v::LangMap::MESSAGE_CHANNEL_DELETE)))
 		return;
 	g_ui.closeAllSubwindows();
-	g_engine.getChannelsApi().remove(channelId);
+	g_engine->getChannelsApi().remove(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -226,42 +226,42 @@ void freeChannel(ID channelId)
 	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING), g_ui.getI18Text(v::LangMap::MESSAGE_CHANNEL_FREE)))
 		return;
 	g_ui.closeAllSubwindows();
-	g_engine.getChannelsApi().freeSampleChannel(channelId);
+	g_engine->getChannelsApi().freeSampleChannel(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setInputMonitor(ID channelId, bool value)
 {
-	g_engine.getChannelsApi().setInputMonitor(channelId, value);
+	g_engine->getChannelsApi().setInputMonitor(channelId, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setOverdubProtection(ID channelId, bool value)
 {
-	g_engine.getChannelsApi().setOverdubProtection(channelId, value);
+	g_engine->getChannelsApi().setOverdubProtection(channelId, value);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void cloneChannel(ID channelId)
 {
-	g_engine.getChannelsApi().clone(channelId);
+	g_engine->getChannelsApi().clone(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void moveChannel(ID channelId, ID columnId, int position)
 {
-	g_engine.getChannelsApi().move(channelId, columnId, position);
+	g_engine->getChannelsApi().move(channelId, columnId, position);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
-	g_engine.getChannelsApi().setSamplePlayerMode(channelId, mode);
+	g_engine->getChannelsApi().setSamplePlayerMode(channelId, mode);
 	g_ui.refreshSubWindow(WID_ACTION_EDITOR);
 }
 
@@ -269,14 +269,14 @@ void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 
 void setHeight(ID channelId, Pixel p)
 {
-	g_engine.getChannelsApi().setHeight(channelId, p);
+	g_engine->getChannelsApi().setHeight(channelId, p);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void setName(ID channelId, const std::string& name)
 {
-	g_engine.getChannelsApi().setName(channelId, name);
+	g_engine->getChannelsApi().setName(channelId, name);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -287,7 +287,7 @@ void clearAllActions(ID channelId)
 	        g_ui.getI18Text(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
 		return;
 
-	g_engine.getChannelsApi().clearAllActions(channelId);
+	g_engine->getChannelsApi().clearAllActions(channelId);
 	g_ui.refreshSubWindow(WID_ACTION_EDITOR);
 }
 
@@ -295,19 +295,19 @@ void clearAllActions(ID channelId)
 
 void pressChannel(ID channelId, int velocity, Thread t)
 {
-	g_engine.getChannelsApi().press(channelId, velocity);
+	g_engine->getChannelsApi().press(channelId, velocity);
 	notifyChannelForMidiIn(t, channelId);
 }
 
 void releaseChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsApi().release(channelId);
+	g_engine->getChannelsApi().release(channelId);
 	notifyChannelForMidiIn(t, channelId);
 }
 
 void killChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsApi().kill(channelId);
+	g_engine->getChannelsApi().kill(channelId);
 	notifyChannelForMidiIn(t, channelId);
 }
 
@@ -315,7 +315,7 @@ void killChannel(ID channelId, Thread t)
 
 float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
 {
-	g_engine.getChannelsApi().setVolume(channelId, v);
+	g_engine->getChannelsApi().setVolume(channelId, v);
 	notifyChannelForMidiIn(t, channelId);
 
 	if (t != Thread::MAIN || repaintMainUi)
@@ -328,7 +328,7 @@ float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
 
 float setChannelPitch(ID channelId, float v, Thread t)
 {
-	g_engine.getChannelsApi().setPitch(channelId, v);
+	g_engine->getChannelsApi().setPitch(channelId, v);
 	g_ui.pumpEvent([v]() {
 		if (auto* w = sampleEditor::getWindow(); w != nullptr)
 			w->pitchTool->update(v); });
@@ -340,7 +340,7 @@ float setChannelPitch(ID channelId, float v, Thread t)
 
 float sendChannelPan(ID channelId, float v)
 {
-	g_engine.getChannelsApi().setPan(channelId, v);
+	g_engine->getChannelsApi().setPan(channelId, v);
 	notifyChannelForMidiIn(Thread::MAIN, channelId); // Currently triggered only by the main thread
 	return v;
 }
@@ -349,13 +349,13 @@ float sendChannelPan(ID channelId, float v)
 
 void toggleMuteChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsApi().toggleMute(channelId);
+	g_engine->getChannelsApi().toggleMute(channelId);
 	notifyChannelForMidiIn(t, channelId);
 }
 
 void toggleSoloChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsApi().toggleSolo(channelId);
+	g_engine->getChannelsApi().toggleSolo(channelId);
 	notifyChannelForMidiIn(t, channelId);
 }
 
@@ -363,19 +363,19 @@ void toggleSoloChannel(ID channelId, Thread t)
 
 void toggleArmChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsApi().toggleArm(channelId);
+	g_engine->getChannelsApi().toggleArm(channelId);
 	notifyChannelForMidiIn(t, channelId);
 }
 
 void toggleReadActionsChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsApi().toggleReadActions(channelId);
+	g_engine->getChannelsApi().toggleReadActions(channelId);
 	notifyChannelForMidiIn(t, channelId);
 }
 
 void killReadActionsChannel(ID channelId, Thread t)
 {
-	g_engine.getChannelsApi().killReadActions(channelId);
+	g_engine->getChannelsApi().killReadActions(channelId);
 	notifyChannelForMidiIn(t, channelId);
 }
 
@@ -383,7 +383,7 @@ void killReadActionsChannel(ID channelId, Thread t)
 
 void sendMidiToChannel(ID channelId, m::MidiEvent e, Thread t)
 {
-	g_engine.getChannelsApi().sendMidi(channelId, e);
+	g_engine->getChannelsApi().sendMidi(channelId, e);
 	notifyChannelForMidiIn(t, channelId);
 }
 
