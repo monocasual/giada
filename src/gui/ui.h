@@ -121,14 +121,6 @@ public:
 
 	void setMainWindowTitle(const std::string&);
 
-	/* [start|stop]JuceDispatchLoop
-	Starts and stops the JUCE dispatch loop from its MessageManager component.
-	This is needed for plugin-ins to wake up their UI editor and let it react
-	to UI events. */
-
-	void startJuceDispatchLoop();
-	void stopJuceDispatchLoop();
-
 	std::unique_ptr<gdMainWindow> mainWindow;
 	Dispatcher                    dispatcher;
 	Model                         model;
@@ -137,6 +129,14 @@ private:
 	static constexpr int BLINK_RATE = G_GUI_FPS / 2;
 
 	static void juceDispatchLoop(void*);
+
+	/* [start|stop]JuceDispatchLoop
+	Starts and stops the JUCE dispatch loop from its MessageManager component.
+	This is needed for plugin-ins to wake up their UI editor and let it react
+	to UI events. */
+
+	void startJuceDispatchLoop();
+	void stopJuceDispatchLoop();
 
 	/* rebuildStaticWidgets
     Updates attributes of static widgets, i.e. those elements that don't get
