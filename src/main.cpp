@@ -27,13 +27,17 @@
 #include "core/engine.h"
 #include "gui/ui.h"
 
-giada::m::Engine g_engine;
-giada::v::Ui     g_ui;
+giada::m::Engine* g_engine = nullptr;
+giada::v::Ui      g_ui;
 
 int main(int argc, char** argv)
 {
 	if (int ret = giada::m::init::tests(argc, argv); ret != -1)
 		return ret;
+
+	auto enginePtr = std::make_unique<giada::m::Engine>();
+
+	g_engine = enginePtr.get();
 
 	giada::m::init::startup(argc, argv);
 	giada::m::init::run();
