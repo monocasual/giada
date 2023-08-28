@@ -206,6 +206,10 @@ Engine::Engine()
 		assert(onModelSwap != nullptr);
 		onModelSwap(t);
 	};
+
+	rendering::registerOnSendMidiCb([this](ID channelId) {
+		onMidiSentFromChannel(channelId);
+	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -246,15 +250,6 @@ void Engine::init(const Conf& conf)
 
 	m_eventDispatcher.start();
 	m_midiSynchronizer.startSendClock(G_DEFAULT_BPM);
-
-	/* TODO - Can't register this callback in constructor: rendering:: callback 
-	is in a unnamed namespace, so it's a static variable. This fucks up the
-	initialization order because Engine is still a global object. We must
-	fix this: Engine (and UI) must live inside main(). */
-
-	rendering::registerOnSendMidiCb([this](ID channelId) {
-		onMidiSentFromChannel(channelId);
-	});
 }
 
 /* -------------------------------------------------------------------------- */
