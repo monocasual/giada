@@ -32,17 +32,19 @@ giada::v::Ui*     g_ui     = nullptr;
 
 int main(int argc, char** argv)
 {
-	if (int ret = giada::m::init::tests(argc, argv); ret != -1)
+	using namespace giada;
+
+	if (int ret = m::init::tests(argc, argv); ret != -1)
 		return ret;
 
-	auto enginePtr = std::make_unique<giada::m::Engine>();
-	auto uiPtr     = std::make_unique<giada::v::Ui>();
+	auto enginePtr = std::make_unique<m::Engine>();
+	auto uiPtr     = std::make_unique<v::Ui>();
 
 	g_engine = enginePtr.get();
 	g_ui     = uiPtr.get();
 
-	giada::m::init::startup(argc, argv);
-	giada::m::init::run();
+	m::init::startup(argc, argv);
+	m::init::run();
 
 	return 0;
 }
