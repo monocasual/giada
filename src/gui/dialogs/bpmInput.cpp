@@ -38,7 +38,7 @@
 #include <cstring>
 #include <fmt/core.h>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -48,7 +48,7 @@ gdBpmInput::gdBpmInput(float value)
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{
 		m_value = new geInput(0, 0, 0, 0);
-		m_ok    = new geTextButton(g_ui.getI18Text(LangMap::COMMON_OK));
+		m_ok    = new geTextButton(g_ui->getI18Text(LangMap::COMMON_OK));
 		container->add(m_value);
 		container->add(m_ok, 70);
 		container->end();

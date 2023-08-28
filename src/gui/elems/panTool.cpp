@@ -37,7 +37,7 @@
 #include <FL/Fl.H>
 #include <fmt/core.h>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -45,9 +45,9 @@ gePanTool::gePanTool(ID channelId, float pan, int labelWidth)
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , m_channelId(channelId)
 {
-	m_input = new geInput(g_ui.getI18Text(LangMap::SAMPLEEDITOR_PAN), labelWidth);
+	m_input = new geInput(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PAN), labelWidth);
 	m_dial  = new geDial();
-	m_reset = new geTextButton(g_ui.getI18Text(LangMap::COMMON_RESET));
+	m_reset = new geTextButton(g_ui->getI18Text(LangMap::COMMON_RESET));
 	add(m_input);
 	add(m_dial, G_GUI_UNIT);
 	add(m_reset, 70);

@@ -41,7 +41,7 @@
 #include <cassert>
 #include <string>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -67,7 +67,7 @@ gdPluginList::gdPluginList(ID channelId, geompp::Rect<int> bounds)
 
 gdPluginList::~gdPluginList()
 {
-	g_ui.model.pluginListBounds = getBounds();
+	g_ui->model.pluginListBounds = getBounds();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -77,11 +77,11 @@ void gdPluginList::rebuild()
 	m_plugins = c::plugin::getPlugins(m_channelId);
 
 	if (m_plugins.channelId == m::Mixer::MASTER_OUT_CHANNEL_ID)
-		label(g_ui.getI18Text(LangMap::PLUGINLIST_TITLE_MASTEROUT));
+		label(g_ui->getI18Text(LangMap::PLUGINLIST_TITLE_MASTEROUT));
 	else if (m_plugins.channelId == m::Mixer::MASTER_IN_CHANNEL_ID)
-		label(g_ui.getI18Text(LangMap::PLUGINLIST_TITLE_MASTERIN));
+		label(g_ui->getI18Text(LangMap::PLUGINLIST_TITLE_MASTERIN));
 	else
-		label(g_ui.getI18Text(LangMap::PLUGINLIST_TITLE_CHANNEL));
+		label(g_ui->getI18Text(LangMap::PLUGINLIST_TITLE_CHANNEL));
 
 	/* Clear the previous list. */
 
@@ -91,7 +91,7 @@ void gdPluginList::rebuild()
 	for (m::Plugin* plugin : m_plugins.plugins)
 		list->addWidget(new gePluginElement(0, 0, w(), G_GUI_UNIT, c::plugin::getPlugin(*plugin, m_plugins.channelId)));
 
-	addPlugin = list->addWidget(new geTextButton(0, 0, 0, G_GUI_UNIT, g_ui.getI18Text(LangMap::PLUGINLIST_ADDPLUGIN)));
+	addPlugin = list->addWidget(new geTextButton(0, 0, 0, G_GUI_UNIT, g_ui->getI18Text(LangMap::PLUGINLIST_ADDPLUGIN)));
 
 	addPlugin->onClick = [this]() {
 		c::layout::openPluginChooser(m_plugins.channelId);

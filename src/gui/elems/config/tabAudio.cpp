@@ -41,7 +41,7 @@
 
 constexpr int LABEL_WIDTH = 120;
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -58,7 +58,7 @@ void geTabAudio::geDeviceMenu::rebuild(const std::vector<c::config::AudioDeviceD
 
 	if (devices.size() == 0)
 	{
-		addItem(g_ui.getI18Text(LangMap::CONFIG_AUDIO_NODEVICESFOUND), 0);
+		addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_NODEVICESFOUND), 0);
 		showFirstItem();
 		return;
 	}
@@ -96,7 +96,7 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 
 	if (data.id == 0 || data.channelsMax == 0)
 	{
-		addItem(g_ui.getI18Text(LangMap::COMMON_NONE), 0);
+		addItem(g_ui->getI18Text(LangMap::COMMON_NONE), 0);
 		showFirstItem();
 		return;
 	}
@@ -130,30 +130,30 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 /* -------------------------------------------------------------------------- */
 
 geTabAudio::geTabAudio(geompp::Rect<int> bounds)
-: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.getI18Text(LangMap::CONFIG_AUDIO_TITLE))
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui->getI18Text(LangMap::CONFIG_AUDIO_TITLE))
 {
 	end();
 
 	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		m_api = new geChoice(g_ui.getI18Text(LangMap::CONFIG_AUDIO_SYSTEM), LABEL_WIDTH);
+		m_api = new geChoice(g_ui->getI18Text(LangMap::CONFIG_AUDIO_SYSTEM), LABEL_WIDTH);
 
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_bufferSize = new geChoice(g_ui.getI18Text(LangMap::CONFIG_AUDIO_BUFFERSIZE), LABEL_WIDTH);
-			m_sampleRate = new geChoice(g_ui.getI18Text(LangMap::CONFIG_AUDIO_SAMPLERATE), LABEL_WIDTH);
+			m_bufferSize = new geChoice(g_ui->getI18Text(LangMap::CONFIG_AUDIO_BUFFERSIZE), LABEL_WIDTH);
+			m_sampleRate = new geChoice(g_ui->getI18Text(LangMap::CONFIG_AUDIO_SAMPLERATE), LABEL_WIDTH);
 
 			line1->add(m_bufferSize, 180);
 			line1->add(m_sampleRate, 180);
 			line1->end();
 		}
 
-		m_sounddevOut = new geDeviceMenu(g_ui.getI18Text(LangMap::CONFIG_AUDIO_OUTPUTDEVICE));
+		m_sounddevOut = new geDeviceMenu(g_ui->getI18Text(LangMap::CONFIG_AUDIO_OUTPUTDEVICE));
 
 		geFlex* line2 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_channelsOut = new geChannelMenu(g_ui.getI18Text(LangMap::CONFIG_AUDIO_OUTPUTCHANNELS));
-			m_limitOutput = new geCheck(x() + 177, y() + 93, 100, 20, g_ui.getI18Text(LangMap::CONFIG_AUDIO_LIMITOUTPUT));
+			m_channelsOut = new geChannelMenu(g_ui->getI18Text(LangMap::CONFIG_AUDIO_OUTPUTCHANNELS));
+			m_limitOutput = new geCheck(x() + 177, y() + 93, 100, 20, g_ui->getI18Text(LangMap::CONFIG_AUDIO_LIMITOUTPUT));
 
 			line2->add(m_channelsOut, 180);
 			line2->add(m_limitOutput);
@@ -162,7 +162,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 		geFlex* line3 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_sounddevIn = new geDeviceMenu(g_ui.getI18Text(LangMap::CONFIG_AUDIO_INPUTDEVICE));
+			m_sounddevIn = new geDeviceMenu(g_ui->getI18Text(LangMap::CONFIG_AUDIO_INPUTDEVICE));
 			m_enableIn   = new geCheck(0, 0, 0, 0);
 
 			line3->add(m_sounddevIn);
@@ -172,8 +172,8 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 		geFlex* line4 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_channelsIn      = new geChannelMenu(g_ui.getI18Text(LangMap::CONFIG_AUDIO_INPUTCHANNELS));
-			m_recTriggerLevel = new geInput(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RECTHRESHOLD), 120);
+			m_channelsIn      = new geChannelMenu(g_ui->getI18Text(LangMap::CONFIG_AUDIO_INPUTCHANNELS));
+			m_recTriggerLevel = new geInput(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RECTHRESHOLD), 120);
 
 			line4->add(m_channelsIn, 180);
 			line4->add(m_recTriggerLevel, 180);
@@ -184,7 +184,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 		{
 			geFlex* line5 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 			{
-				m_applyBtn = new geTextButton(g_ui.getI18Text(LangMap::COMMON_APPLY));
+				m_applyBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_APPLY));
 
 				line5->add(new geBox());
 				line5->add(m_applyBtn, 80);
@@ -198,7 +198,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 			col1->end();
 		}
 
-		m_rsmpQuality = new geChoice(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING), LABEL_WIDTH);
+		m_rsmpQuality = new geChoice(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING), LABEL_WIDTH);
 
 		body->add(m_api, 20);
 		body->add(line1, 20);
@@ -234,7 +234,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 		refreshDevInProperties();
 	};
 
-	m_enableIn->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_AUDIO_ENABLEINPUT));
+	m_enableIn->copy_tooltip(g_ui->getI18Text(LangMap::CONFIG_AUDIO_ENABLEINPUT));
 	m_enableIn->onChange = [this](bool b) {
 		m_data.toggleInputDevice(b);
 		refreshDevInProperties();
@@ -264,11 +264,11 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	m_bufferSize->addItem("4096", 4096);
 	m_bufferSize->onChange = [this](ID id) { m_data.bufferSize = id; };
 
-	m_rsmpQuality->addItem(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCBEST), 0);
-	m_rsmpQuality->addItem(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCMEDIUM), 1);
-	m_rsmpQuality->addItem(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCBASIC), 2);
-	m_rsmpQuality->addItem(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_ZEROORDER), 3);
-	m_rsmpQuality->addItem(g_ui.getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_LINEAR), 4);
+	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCBEST), 0);
+	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCMEDIUM), 1);
+	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCBASIC), 2);
+	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_ZEROORDER), 3);
+	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_LINEAR), 4);
 
 	m_rsmpQuality->onChange = [this](ID id) { m_data.resampleQuality = id; };
 
@@ -324,7 +324,7 @@ void geTabAudio::refreshDevOutProperties()
 
 	if (m_data.outputDevice.sampleRates.size() == 0)
 	{
-		m_sampleRate->addItem(g_ui.getI18Text(LangMap::COMMON_NONE), 0);
+		m_sampleRate->addItem(g_ui->getI18Text(LangMap::COMMON_NONE), 0);
 		m_sampleRate->showFirstItem();
 		m_sampleRate->deactivate();
 	}

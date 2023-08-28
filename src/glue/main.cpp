@@ -51,7 +51,7 @@
 #include <cassert>
 #include <cmath>
 
-extern giada::v::Ui      g_ui;
+extern giada::v::Ui*     g_ui;
 extern giada::m::Engine* g_engine;
 
 namespace giada::c::main
@@ -124,7 +124,7 @@ Sequencer getSequencer()
 	const m::Mixer::RecordInfo recInfo = g_engine->getMainApi().getRecordInfo();
 
 	out.isFreeModeInputRec = g_engine->getMainApi().isRecordingInput() && g_engine->getMainApi().getInputRecMode() == InputRecMode::FREE;
-	out.shouldBlink        = g_ui.shouldBlink() && (g_engine->getMainApi().getSequencerStatus() == SeqStatus::WAITING || out.isFreeModeInputRec);
+	out.shouldBlink        = g_ui->shouldBlink() && (g_engine->getMainApi().getSequencerStatus() == SeqStatus::WAITING || out.isFreeModeInputRec);
 	out.beats              = g_engine->getMainApi().getBeats();
 	out.bars               = g_engine->getMainApi().getBars();
 	out.currentBeat        = g_engine->getMainApi().getCurrentBeat();
@@ -176,11 +176,11 @@ void quantize(int val)
 
 void clearAllSamples()
 {
-	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
-	        g_ui.getI18Text(v::LangMap::MESSAGE_MAIN_FREEALLSAMPLES)))
+	if (!v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),
+	        g_ui->getI18Text(v::LangMap::MESSAGE_MAIN_FREEALLSAMPLES)))
 		return;
 
-	g_ui.closeSubWindow(WID_SAMPLE_EDITOR);
+	g_ui->closeSubWindow(WID_SAMPLE_EDITOR);
 	g_engine->getChannelsApi().freeAllSampleChannels();
 }
 
@@ -188,11 +188,11 @@ void clearAllSamples()
 
 void clearAllActions()
 {
-	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
-	        g_ui.getI18Text(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
+	if (!v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),
+	        g_ui->getI18Text(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
 		return;
 
-	g_ui.closeSubWindow(WID_ACTION_EDITOR);
+	g_ui->closeSubWindow(WID_ACTION_EDITOR);
 	g_engine->getChannelsApi().clearAllActions();
 }
 
@@ -231,7 +231,7 @@ void setMasterInVolume(float v, Thread t)
 	g_engine->getMainApi().setMasterInVolume(v);
 
 	if (t != Thread::MAIN)
-		g_ui.pumpEvent([v]() { g_ui.mainWindow->mainIO->setInVol(v); });
+		g_ui->pumpEvent([v]() { g_ui->mainWindow->mainIO->setInVol(v); });
 }
 
 void setMasterOutVolume(float v, Thread t)
@@ -239,7 +239,7 @@ void setMasterOutVolume(float v, Thread t)
 	g_engine->getMainApi().setMasterOutVolume(v);
 
 	if (t != Thread::MAIN)
-		g_ui.pumpEvent([v]() { g_ui.mainWindow->mainIO->setOutVol(v); });
+		g_ui->pumpEvent([v]() { g_ui->mainWindow->mainIO->setOutVol(v); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -284,24 +284,24 @@ void printDebugInfo()
 
 void closeProject()
 {
-	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
-	        g_ui.getI18Text(v::LangMap::MESSAGE_MAIN_CLOSEPROJECT)))
+	if (!v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),
+	        g_ui->getI18Text(v::LangMap::MESSAGE_MAIN_CLOSEPROJECT)))
 		return;
 
-	g_ui.stopUpdater();
+	g_ui->stopUpdater();
 	g_engine->suspend();
-	g_engine->reset(g_ui.model.pluginChooserSortMethod);
-	g_ui.reset();
+	g_engine->reset(g_ui->model.pluginChooserSortMethod);
+	g_ui->reset();
 	g_engine->resume();
-	g_ui.startUpdater();
+	g_ui->startUpdater();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void quitGiada()
 {
-	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
-	        g_ui.getI18Text(v::LangMap::MESSAGE_INIT_QUITGIADA)))
+	if (!v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),
+	        g_ui->getI18Text(v::LangMap::MESSAGE_INIT_QUITGIADA)))
 		return;
 
 	m::init::shutdown();

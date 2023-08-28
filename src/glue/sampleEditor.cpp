@@ -53,7 +53,7 @@
 #include <cassert>
 #include <memory>
 
-extern giada::v::Ui      g_ui;
+extern giada::v::Ui*     g_ui;
 extern giada::m::Engine* g_engine;
 
 namespace giada::c::sampleEditor
@@ -115,7 +115,7 @@ Data getData(ID channelId)
 
 v::gdSampleEditor* getWindow()
 {
-	return static_cast<v::gdSampleEditor*>(g_ui.getSubwindow(WID_SAMPLE_EDITOR));
+	return static_cast<v::gdSampleEditor*>(g_ui->getSubwindow(WID_SAMPLE_EDITOR));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -234,7 +234,7 @@ void cleanupPreview()
 
 void toNewChannel(ID channelId, Frame a, Frame b)
 {
-	const ID columnId = g_ui.mainWindow->keyboard->getChannelColumnId(channelId);
+	const ID columnId = g_ui->mainWindow->keyboard->getChannelColumnId(channelId);
 	g_engine->getSampleEditorApi().toNewChannel(channelId, columnId, a, b);
 }
 
@@ -242,7 +242,7 @@ void toNewChannel(ID channelId, Frame a, Frame b)
 
 void reload(ID channelId)
 {
-	if (!v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING), "Reload sample: are you sure?"))
+	if (!v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING), "Reload sample: are you sure?"))
 		return;
 	g_engine->getSampleEditorApi().reload(channelId);
 }

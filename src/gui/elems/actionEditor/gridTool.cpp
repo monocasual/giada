@@ -31,7 +31,7 @@
 #include "utils/math.h"
 #include <FL/Fl_Double_Window.H>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -59,16 +59,16 @@ geGridTool::geGridTool(Pixel x, Pixel y, const Model& model)
 
 	end();
 
-	gridType->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_GRIDRES));
-	active->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_SNAPTOGRID));
+	gridType->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_GRIDRES));
+	active->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_SNAPTOGRID));
 }
 
 /* -------------------------------------------------------------------------- */
 
 geGridTool::~geGridTool()
 {
-	g_ui.model.actionEditorGridVal = gridType->getSelectedId();
-	g_ui.model.actionEditorGridOn  = active->value();
+	g_ui->model.actionEditorGridVal = gridType->getSelectedId();
+	g_ui->model.actionEditorGridOn  = active->value();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -33,7 +33,7 @@
 #include "gui/ui.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -44,7 +44,7 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 	{
 		geFlex* body = new geFlex(Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 		{
-			m_enableLightning = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::MIDIOUTPUT_CHANNEL_ENABLE_LIGHTNING));
+			m_enableLightning = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::MIDIOUTPUT_CHANNEL_ENABLE_LIGHTNING));
 			m_learners        = new geLightningLearnerPack(0, 0, channelId);
 
 			body->add(m_enableLightning, G_GUI_UNIT);
@@ -54,7 +54,7 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL);
 		{
-			m_close = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLOSE));
+			m_close = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
 
 			footer->add(new geBox()); // Spacer
 			footer->add(m_close, 80);

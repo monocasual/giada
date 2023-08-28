@@ -35,12 +35,12 @@
 #include "gui/ui.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
 gdChannelNameInput::gdChannelNameInput(const c::channel::Data& d)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, 400, 64}), g_ui.getI18Text(LangMap::CHANNELNAME_TITLE), WID_SAMPLE_NAME)
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 400, 64}), g_ui->getI18Text(LangMap::CHANNELNAME_TITLE), WID_SAMPLE_NAME)
 , m_data(d)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
@@ -49,8 +49,8 @@ gdChannelNameInput::gdChannelNameInput(const c::channel::Data& d)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_ok     = new geTextButton(g_ui.getI18Text(LangMap::COMMON_OK));
-			m_cancel = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CANCEL));
+			m_ok     = new geTextButton(g_ui->getI18Text(LangMap::COMMON_OK));
+			m_cancel = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CANCEL));
 			footer->add(new geBox());
 			footer->add(m_cancel, 70);
 			footer->add(m_ok, 70);

@@ -30,22 +30,22 @@
 #include "gui/ui.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
 geTabBindings::geTabBindings(geompp::Rect<int> bounds, const Model& model)
-: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.getI18Text(LangMap::CONFIG_BINDINGS_TITLE))
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui->getI18Text(LangMap::CONFIG_BINDINGS_TITLE))
 {
 	end();
 
 	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_INNER_MARGIN);
 	{
-		play          = new geKeyBinder(g_ui.getI18Text(LangMap::CONFIG_BINDINGS_PLAY), model.keyBindPlay);
-		rewind        = new geKeyBinder(g_ui.getI18Text(LangMap::CONFIG_BINDINGS_REWIND), model.keyBindRewind);
-		recordActions = new geKeyBinder(g_ui.getI18Text(LangMap::CONFIG_BINDINGS_RECORDACTIONS), model.keyBindRecordActions);
-		recordInput   = new geKeyBinder(g_ui.getI18Text(LangMap::CONFIG_BINDINGS_RECORDAUDIO), model.keyBindRecordInput);
-		exit          = new geKeyBinder(g_ui.getI18Text(LangMap::CONFIG_BINDINGS_EXIT), model.keyBindExit);
+		play          = new geKeyBinder(g_ui->getI18Text(LangMap::CONFIG_BINDINGS_PLAY), model.keyBindPlay);
+		rewind        = new geKeyBinder(g_ui->getI18Text(LangMap::CONFIG_BINDINGS_REWIND), model.keyBindRewind);
+		recordActions = new geKeyBinder(g_ui->getI18Text(LangMap::CONFIG_BINDINGS_RECORDACTIONS), model.keyBindRecordActions);
+		recordInput   = new geKeyBinder(g_ui->getI18Text(LangMap::CONFIG_BINDINGS_RECORDAUDIO), model.keyBindRecordInput);
+		exit          = new geKeyBinder(g_ui->getI18Text(LangMap::CONFIG_BINDINGS_EXIT), model.keyBindExit);
 
 		body->add(play, G_GUI_UNIT);
 		body->add(rewind, G_GUI_UNIT);
@@ -58,10 +58,10 @@ geTabBindings::geTabBindings(geompp::Rect<int> bounds, const Model& model)
 	add(body);
 	resizable(body);
 
-	play->onKeyBound          = [](int key) { g_ui.model.keyBindPlay = key; };
-	rewind->onKeyBound        = [](int key) { g_ui.model.keyBindRewind = key; };
-	recordActions->onKeyBound = [](int key) { g_ui.model.keyBindRecordActions = key; };
-	recordInput->onKeyBound   = [](int key) { g_ui.model.keyBindRecordInput = key; };
-	exit->onKeyBound          = [](int key) { g_ui.model.keyBindExit = key; };
+	play->onKeyBound          = [](int key) { g_ui->model.keyBindPlay = key; };
+	rewind->onKeyBound        = [](int key) { g_ui->model.keyBindRewind = key; };
+	recordActions->onKeyBound = [](int key) { g_ui->model.keyBindRecordActions = key; };
+	recordInput->onKeyBound   = [](int key) { g_ui->model.keyBindRecordInput = key; };
+	exit->onKeyBound          = [](int key) { g_ui->model.keyBindExit = key; };
 }
 } // namespace giada::v

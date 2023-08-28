@@ -40,12 +40,12 @@
 #include "gui/ui.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
 gdConfig::gdConfig(int w, int h, const Model& model)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, w, h}), g_ui.getI18Text(LangMap::CONFIG_TITLE), WID_CONFIG)
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, w, h}), g_ui->getI18Text(LangMap::CONFIG_TITLE), WID_CONFIG)
 {
 	const geompp::Rect<int> bounds = getContentBounds().reduced(G_GUI_OUTER_MARGIN);
 
@@ -70,7 +70,7 @@ gdConfig::gdConfig(int w, int h, const Model& model)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			geTextButton* closeBtn = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLOSE));
+			geTextButton* closeBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
 			closeBtn->onClick      = [this]() { do_callback(); };
 
 			footer->add(new geBox()); // Spacer

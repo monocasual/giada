@@ -34,7 +34,7 @@
 #include "gui/ui.h"
 #include "utils/string.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -42,9 +42,9 @@ geShiftTool::geShiftTool(const c::sampleEditor::Data& d)
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , m_data(nullptr)
 {
-	m_label = new geBox(g_ui.getI18Text(LangMap::SAMPLEEDITOR_SHIFT), FL_ALIGN_LEFT);
+	m_label = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_SHIFT), FL_ALIGN_LEFT);
 	m_shift = new geInput();
-	m_reset = new geTextButton(g_ui.getI18Text(LangMap::COMMON_RESET));
+	m_reset = new geTextButton(g_ui->getI18Text(LangMap::COMMON_RESET));
 	add(m_label, 50);
 	add(m_shift, 70);
 	add(m_reset, 70);

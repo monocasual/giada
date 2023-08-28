@@ -40,7 +40,7 @@
 #include "utils/string.h"
 #include <fmt/core.h>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -48,14 +48,14 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , m_data(nullptr)
 {
-	m_label       = new geBox(g_ui.getI18Text(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT);
+	m_label       = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT);
 	m_dial        = new geDial();
 	m_input       = new geInput();
-	m_pitchToBar  = new geTextButton(g_ui.getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOBAR));
-	m_pitchToSong = new geTextButton(g_ui.getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOSONG));
+	m_pitchToBar  = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOBAR));
+	m_pitchToSong = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOSONG));
 	m_pitchHalf   = new geImageButton(graphics::divideOff, graphics::divideOn);
 	m_pitchDouble = new geImageButton(graphics::multiplyOff, graphics::multiplyOn);
-	m_pitchReset  = new geTextButton(g_ui.getI18Text(LangMap::COMMON_RESET));
+	m_pitchReset  = new geTextButton(g_ui->getI18Text(LangMap::COMMON_RESET));
 	add(m_label, 50);
 	add(m_dial, G_GUI_UNIT);
 	add(m_input, 70);

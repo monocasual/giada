@@ -28,7 +28,7 @@
 #include "gui/ui.h"
 
 giada::m::Engine* g_engine = nullptr;
-giada::v::Ui      g_ui;
+giada::v::Ui*     g_ui     = nullptr;
 
 int main(int argc, char** argv)
 {
@@ -36,8 +36,10 @@ int main(int argc, char** argv)
 		return ret;
 
 	auto enginePtr = std::make_unique<giada::m::Engine>();
+	auto uiPtr     = std::make_unique<giada::v::Ui>();
 
 	g_engine = enginePtr.get();
+	g_ui     = uiPtr.get();
 
 	giada::m::init::startup(argc, argv);
 	giada::m::init::run();

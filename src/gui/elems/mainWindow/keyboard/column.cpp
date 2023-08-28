@@ -42,7 +42,7 @@
 #include "utils/string.h"
 #include <cassert>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -129,9 +129,9 @@ void geColumn::showAddChannelMenu() const
 {
 	geMenu menu;
 
-	menu.addItem((ID)Menu::ADD_SAMPLE_CHANNEL, g_ui.getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL));
-	menu.addItem((ID)Menu::ADD_MIDI_CHANNEL, g_ui.getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADDMIDICHANNEL));
-	menu.addItem((ID)Menu::REMOVE, g_ui.getI18Text(LangMap::MAIN_COLUMN_BUTTON_REMOVE));
+	menu.addItem((ID)Menu::ADD_SAMPLE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL));
+	menu.addItem((ID)Menu::ADD_MIDI_CHANNEL, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADDMIDICHANNEL));
+	menu.addItem((ID)Menu::REMOVE, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_REMOVE));
 
 	if (countChannels() > 0)
 		menu.setEnabled((ID)Menu::REMOVE, false);
@@ -197,7 +197,7 @@ void geColumn::init()
 	Fl_Group::clear();
 	m_channels.clear();
 
-	m_addChannelBtn          = new geTextButton(x(), y(), w(), G_GUI_UNIT, g_ui.getI18Text(LangMap::MAIN_COLUMN_BUTTON));
+	m_addChannelBtn          = new geTextButton(x(), y(), w(), G_GUI_UNIT, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON));
 	m_addChannelBtn->onClick = [this]() { showAddChannelMenu(); };
 
 	add(m_addChannelBtn);

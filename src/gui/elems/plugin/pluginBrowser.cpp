@@ -33,7 +33,7 @@
 #include "utils/gui.h"
 #include <fmt/core.h>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -75,7 +75,7 @@ void gePluginBrowser::refresh()
 {
 	clear();
 
-	add(g_ui.getI18Text(LangMap::PLUGINCHOOSER_HEADER));
+	add(g_ui->getI18Text(LangMap::PLUGINCHOOSER_HEADER));
 	add("---\t---\t---\t---\t---");
 
 	for (m::PluginManager::PluginInfo pi : c::plugin::getPluginsInfo())

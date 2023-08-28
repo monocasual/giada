@@ -34,19 +34,19 @@
 #include "gui/ui.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
 gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
-: gdWindow(u::gui::getCenterWinBounds(model.pluginChooserBounds), g_ui.getI18Text(LangMap::PLUGINCHOOSER_TITLE), WID_FX_CHOOSER)
+: gdWindow(u::gui::getCenterWinBounds(model.pluginChooserBounds), g_ui->getI18Text(LangMap::PLUGINCHOOSER_TITLE), WID_FX_CHOOSER)
 , m_channelId(channelId)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
 		geFlex* header = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 		{
-			sortMethod = new geChoice(g_ui.getI18Text(LangMap::PLUGINCHOOSER_SORTBY), 0);
+			sortMethod = new geChoice(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY), 0);
 			header->add(sortMethod, 180);
 			header->add(new geBox());
 			header->end();
@@ -56,8 +56,8 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			addBtn    = new geTextButton(g_ui.getI18Text(LangMap::COMMON_ADD));
-			cancelBtn = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CANCEL));
+			addBtn    = new geTextButton(g_ui->getI18Text(LangMap::COMMON_ADD));
+			cancelBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CANCEL));
 			footer->add(new geBox());
 			footer->add(cancelBtn, 80);
 			footer->add(addBtn, 80);
@@ -73,10 +73,10 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 	add(container);
 	resizable(container);
 
-	sortMethod->addItem(g_ui.getI18Text(LangMap::PLUGINCHOOSER_SORTBY_NAME));
-	sortMethod->addItem(g_ui.getI18Text(LangMap::PLUGINCHOOSER_SORTBY_CATEGORY));
-	sortMethod->addItem(g_ui.getI18Text(LangMap::PLUGINCHOOSER_SORTBY_MANUFACTURER));
-	sortMethod->addItem(g_ui.getI18Text(LangMap::PLUGINCHOOSER_SORTBY_FORMAT));
+	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_NAME));
+	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_CATEGORY));
+	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_MANUFACTURER));
+	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_FORMAT));
 	sortMethod->showItem(static_cast<int>(model.pluginChooserSortMethod));
 	sortMethod->onChange = [this](ID id) {
 		c::plugin::sortPlugins(static_cast<m::PluginManager::SortMethod>(id));
@@ -103,7 +103,7 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 
 gdPluginChooser::~gdPluginChooser()
 {
-	g_ui.model.pluginChooserBounds     = getBounds();
-	g_ui.model.pluginChooserSortMethod = static_cast<m::PluginManager::SortMethod>(sortMethod->getSelectedId());
+	g_ui->model.pluginChooserBounds     = getBounds();
+	g_ui->model.pluginChooserSortMethod = static_cast<m::PluginManager::SortMethod>(sortMethod->getSelectedId());
 }
 } // namespace giada::v

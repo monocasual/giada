@@ -29,7 +29,7 @@
 #include "gui/ui.h"
 #include <FL/fl_draw.H>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {

@@ -44,12 +44,12 @@
 #include <limits>
 #include <string>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
 gdBaseActionEditor::gdBaseActionEditor(ID channelId, const Model& model)
-: gdWindow(u::gui::getCenterWinBounds(model.actionEditorBounds), g_ui.getI18Text(LangMap::ACTIONEDITOR_TITLE), WID_ACTION_EDITOR)
+: gdWindow(u::gui::getCenterWinBounds(model.actionEditorBounds), g_ui->getI18Text(LangMap::ACTIONEDITOR_TITLE), WID_ACTION_EDITOR)
 , channelId(channelId)
 , gridTool(new geGridTool(0, 0, model))
 , m_zoomInBtn(new geImageButton(graphics::plusOff, graphics::plusOn))
@@ -58,19 +58,19 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, const Model& model)
 , m_ratio(model.actionEditorZoom)
 {
 	m_zoomInBtn->onClick = [this]() { zoomIn(); };
-	m_zoomInBtn->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_ZOOMIN));
+	m_zoomInBtn->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMIN));
 
 	m_zoomOutBtn->onClick = [this]() { zoomOut(); };
-	m_zoomOutBtn->copy_tooltip(g_ui.getI18Text(LangMap::COMMON_ZOOMOUT));
+	m_zoomOutBtn->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMOUT));
 }
 
 /* -------------------------------------------------------------------------- */
 
 gdBaseActionEditor::~gdBaseActionEditor()
 {
-	g_ui.model.actionEditorBounds = getBounds();
-	g_ui.model.actionEditorSplitH = m_splitScroll->getTopContentH();
-	g_ui.model.actionEditorZoom   = m_ratio;
+	g_ui->model.actionEditorBounds = getBounds();
+	g_ui->model.actionEditorSplitH = m_splitScroll->getTopContentH();
+	g_ui->model.actionEditorZoom   = m_ratio;
 }
 
 /* -------------------------------------------------------------------------- */

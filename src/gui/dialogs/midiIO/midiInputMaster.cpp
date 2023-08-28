@@ -35,7 +35,7 @@
 #include "gui/ui.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -45,15 +45,15 @@ geMasterLearnerPack::geMasterLearnerPack(int x, int y)
 	setCallbacks(
 	    [](int param) { c::io::master_startMidiLearn(param); },
 	    [](int param) { c::io::master_clearMidiLearn(param); });
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_REWIND), G_MIDI_IN_REWIND);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_PLAYSTOP), G_MIDI_IN_START_STOP);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_ACTIONREC), G_MIDI_IN_ACTION_REC);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_INPUTREC), G_MIDI_IN_INPUT_REC);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_METRONOME), G_MIDI_IN_METRONOME);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_INVOLUME), G_MIDI_IN_VOLUME_IN);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_OUTVOLUME), G_MIDI_IN_VOLUME_OUT);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_SEQDOUBLE), G_MIDI_IN_BEAT_DOUBLE);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_SEQHALF), G_MIDI_IN_BEAT_HALF);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_REWIND), G_MIDI_IN_REWIND);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_PLAYSTOP), G_MIDI_IN_START_STOP);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_ACTIONREC), G_MIDI_IN_ACTION_REC);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_INPUTREC), G_MIDI_IN_INPUT_REC);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_METRONOME), G_MIDI_IN_METRONOME);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_INVOLUME), G_MIDI_IN_VOLUME_IN);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_OUTVOLUME), G_MIDI_IN_VOLUME_OUT);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_SEQDOUBLE), G_MIDI_IN_BEAT_DOUBLE);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_SEQHALF), G_MIDI_IN_BEAT_HALF);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -77,13 +77,13 @@ void geMasterLearnerPack::update(const c::io::Master_InputData& d)
 /* -------------------------------------------------------------------------- */
 
 gdMidiInputMaster::gdMidiInputMaster(const Model& model)
-: gdMidiInputBase(g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_TITLE), model)
+: gdMidiInputBase(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_TITLE), model)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
 		geFlex* enableGroup = new geFlex(Direction::HORIZONTAL);
 		{
-			m_enable  = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::MIDIINPUT_MASTER_ENABLE));
+			m_enable  = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_ENABLE));
 			m_channel = new geChoice();
 
 			enableGroup->add(m_enable, geMidiLearnerPack::LEARNER_WIDTH - 120);
@@ -100,7 +100,7 @@ gdMidiInputMaster::gdMidiInputMaster(const Model& model)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL);
 		{
-			m_ok = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLOSE));
+			m_ok = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
 
 			footer->add(new geBox()); // Spacer
 			footer->add(m_ok, 80);

@@ -41,7 +41,7 @@
 #include "gui/ui.h"
 #include <string>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -69,16 +69,16 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, const Model& model)
 	add(container);
 	resizable(container);
 
-	m_actionType->addItem(g_ui.getI18Text(LangMap::ACTIONEDITOR_KEYPRESS));
-	m_actionType->addItem(g_ui.getI18Text(LangMap::ACTIONEDITOR_KEYRELEASE));
-	m_actionType->addItem(g_ui.getI18Text(LangMap::ACTIONEDITOR_STOPSAMPLE));
+	m_actionType->addItem(g_ui->getI18Text(LangMap::ACTIONEDITOR_KEYPRESS));
+	m_actionType->addItem(g_ui->getI18Text(LangMap::ACTIONEDITOR_KEYRELEASE));
+	m_actionType->addItem(g_ui->getI18Text(LangMap::ACTIONEDITOR_STOPSAMPLE));
 	m_actionType->showItem(0);
-	m_actionType->copy_tooltip(g_ui.getI18Text(LangMap::ACTIONEDITOR_LABEL_ACTIONTYPE));
+	m_actionType->copy_tooltip(g_ui->getI18Text(LangMap::ACTIONEDITOR_LABEL_ACTIONTYPE));
 	if (!canChangeActionType())
 		m_actionType->deactivate();
 
 	m_sampleActionEditor = new geSampleActionEditor(0, 0, this);
-	m_envelopeEditor     = new geEnvelopeEditor(0, 0, g_ui.getI18Text(LangMap::ACTIONEDITOR_VOLUME), this);
+	m_envelopeEditor     = new geEnvelopeEditor(0, 0, g_ui->getI18Text(LangMap::ACTIONEDITOR_VOLUME), this);
 	m_splitScroll->addWidgets(*m_sampleActionEditor, *m_envelopeEditor, model.actionEditorSplitH);
 
 	prepareWindow();

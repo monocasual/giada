@@ -33,7 +33,7 @@
 #include <cassert>
 #include <fmt/core.h>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -46,8 +46,8 @@ geMidiLearner::geMidiLearner(int x, int y, int w, int h, std::string l, int para
 {
 	m_text     = new geBox(l.c_str());
 	m_value    = new geBox("");
-	m_learnBtn = new geTextButton(g_ui.getI18Text(LangMap::COMMON_LEARN));
-	m_clearBtn = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLEAR));
+	m_learnBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_LEARN));
+	m_clearBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLEAR));
 
 	add(m_text);
 	add(m_value, 80);
@@ -79,7 +79,7 @@ geMidiLearner::geMidiLearner(int x, int y, int w, int h, std::string l, int para
 
 void geMidiLearner::update(uint32_t value)
 {
-	std::string tmp = g_ui.getI18Text(LangMap::COMMON_NOTSET);
+	std::string tmp = g_ui->getI18Text(LangMap::COMMON_NOTSET);
 
 	if (value != 0x0)
 	{

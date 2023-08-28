@@ -37,24 +37,24 @@
 
 constexpr int LABEL_WIDTH = 120;
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
 geTabMidi::geTabMidi(geompp::Rect<int> bounds)
-: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui.getI18Text(LangMap::CONFIG_MIDI_TITLE))
+: Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui->getI18Text(LangMap::CONFIG_MIDI_TITLE))
 , m_data(c::config::getMidiData())
 {
 	end();
 
 	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		m_system = new geChoice(g_ui.getI18Text(LangMap::CONFIG_MIDI_SYSTEM), LABEL_WIDTH);
+		m_system = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MIDI_SYSTEM), LABEL_WIDTH);
 
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_portOut   = new geStringMenu(g_ui.getI18Text(LangMap::CONFIG_MIDI_OUTPUTPORT),
-                g_ui.getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
+			m_portOut   = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MIDI_OUTPUTPORT),
+                g_ui->getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
 			m_enableOut = new geCheck(0, 0, 0, 0);
 
 			line1->add(m_portOut);
@@ -64,8 +64,8 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 
 		geFlex* line2 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_portIn   = new geStringMenu(g_ui.getI18Text(LangMap::CONFIG_MIDI_INPUTPORT),
-                g_ui.getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
+			m_portIn   = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MIDI_INPUTPORT),
+                g_ui->getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
 			m_enableIn = new geCheck(0, 0, 0, 0);
 
 			line2->add(m_portIn);
@@ -77,7 +77,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		{
 			geFlex* line5 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 			{
-				m_applyBtn = new geTextButton(g_ui.getI18Text(LangMap::COMMON_APPLY));
+				m_applyBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_APPLY));
 
 				line5->add(new geBox());
 				line5->add(m_applyBtn, 80);
@@ -91,9 +91,9 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 			col1->end();
 		}
 
-		m_midiMap = new geStringMenu(g_ui.getI18Text(LangMap::CONFIG_MIDI_OUTPUTMIDIMAP),
-		    g_ui.getI18Text(LangMap::CONFIG_MIDI_NOMIDIMAPSFOUND), LABEL_WIDTH);
-		m_sync    = new geChoice(g_ui.getI18Text(LangMap::CONFIG_MIDI_SYNC), LABEL_WIDTH);
+		m_midiMap = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MIDI_OUTPUTMIDIMAP),
+		    g_ui->getI18Text(LangMap::CONFIG_MIDI_NOMIDIMAPSFOUND), LABEL_WIDTH);
+		m_sync    = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MIDI_SYNC), LABEL_WIDTH);
 
 		body->add(m_system, 20);
 		body->add(line1, 20);
@@ -116,7 +116,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 
 	m_portIn->onChange = [this](ID id) { m_data.inPort = id; };
 
-	m_enableOut->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEOUT));
+	m_enableOut->copy_tooltip(g_ui->getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEOUT));
 	m_enableOut->onChange = [this](bool b) {
 		if (m_data.outPorts.empty())
 			return;
@@ -132,7 +132,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		}
 	};
 
-	m_enableIn->copy_tooltip(g_ui.getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEIN));
+	m_enableIn->copy_tooltip(g_ui->getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEIN));
 	m_enableIn->onChange = [this](bool b) {
 		if (m_data.inPorts.empty())
 			return;

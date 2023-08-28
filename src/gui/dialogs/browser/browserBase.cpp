@@ -40,7 +40,7 @@
 #include "utils/fs.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -54,7 +54,7 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 	{
 		geFlex* header = new geFlex(Direction::HORIZONTAL);
 		{
-			hiddenFiles = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::BROWSER_SHOWHIDDENFILES));
+			hiddenFiles = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::BROWSER_SHOWHIDDENFILES));
 			header->add(hiddenFiles, 180);
 			header->add(new geBox());
 			header->end();
@@ -76,7 +76,7 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			ok     = new geTextButton("");
-			cancel = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CANCEL));
+			cancel = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CANCEL));
 			footer->add(new geBox());
 			footer->add(cancel, 80);
 			footer->add(ok, 80);
@@ -120,10 +120,10 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 gdBrowserBase::~gdBrowserBase()
 {
-	g_ui.model.browserBounds    = getBounds();
-	g_ui.model.browserPosition  = browser->vposition();
-	g_ui.model.browserLastValue = browser->value();
-	g_ui.model.browserLastPath  = browser->getCurrentDir();
+	g_ui->model.browserBounds    = getBounds();
+	g_ui->model.browserPosition  = browser->vposition();
+	g_ui->model.browserLastValue = browser->value();
+	g_ui->model.browserLastPath  = browser->getCurrentDir();
 }
 
 /* -------------------------------------------------------------------------- */

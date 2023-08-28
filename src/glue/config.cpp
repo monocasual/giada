@@ -43,7 +43,7 @@
 #include <cstddef>
 #include <fmt/core.h>
 
-extern giada::v::Ui      g_ui;
+extern giada::v::Ui*     g_ui;
 extern giada::m::Engine* g_engine;
 
 namespace giada::c::config
@@ -189,7 +189,7 @@ PluginData getPluginData()
 {
 	PluginData pluginData;
 	pluginData.numAvailablePlugins = g_engine->getPluginsApi().countAvailablePlugins();
-	pluginData.pluginPath          = g_ui.model.pluginPath;
+	pluginData.pluginPath          = g_ui->model.pluginPath;
 	return pluginData;
 }
 
@@ -198,11 +198,11 @@ PluginData getPluginData()
 MiscData getMiscData()
 {
 	MiscData miscData;
-	miscData.logMode      = g_ui.model.logMode;
-	miscData.showTooltips = g_ui.model.showTooltips;
-	miscData.langMaps     = g_ui.getLangMapFilesFound();
-	miscData.langMap      = g_ui.model.langMap;
-	miscData.uiScaling    = g_ui.model.uiScaling;
+	miscData.logMode      = g_ui->model.logMode;
+	miscData.showTooltips = g_ui->model.showTooltips;
+	miscData.langMaps     = g_ui->getLangMapFilesFound();
+	miscData.langMap      = g_ui->model.langMap;
+	miscData.uiScaling    = g_ui->model.uiScaling;
 	return miscData;
 }
 /* -------------------------------------------------------------------------- */
@@ -267,7 +267,7 @@ void apply(const AudioData& data)
 
 	if (!res)
 	{
-		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
+		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
 		return;
 	}
 
@@ -279,7 +279,7 @@ void apply(const AudioData& data)
 
 void save(const PluginData& data)
 {
-	g_ui.model.pluginPath = data.pluginPath;
+	g_ui->model.pluginPath = data.pluginPath;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -293,7 +293,7 @@ void apply(const MidiData& data)
 		return;
 
 	const std::string message = fmt::format("{}\n\n{}\n{}",
-	    g_ui.getI18Text(v::LangMap::CONFIG_MIDI_LABEL_WRONGMIDI),
+	    g_ui->getI18Text(v::LangMap::CONFIG_MIDI_LABEL_WRONGMIDI),
 	    outRes.message,
 	    inRes.message);
 
@@ -304,10 +304,10 @@ void apply(const MidiData& data)
 
 void save(const MiscData& data)
 {
-	g_ui.model.logMode      = data.logMode;
-	g_ui.model.showTooltips = data.showTooltips;
-	g_ui.model.langMap      = data.langMap;
-	g_ui.model.uiScaling    = std::clamp(data.uiScaling, G_MIN_UI_SCALING, G_MAX_UI_SCALING);
+	g_ui->model.logMode      = data.logMode;
+	g_ui->model.showTooltips = data.showTooltips;
+	g_ui->model.langMap      = data.langMap;
+	g_ui->model.uiScaling    = std::clamp(data.uiScaling, G_MIN_UI_SCALING, G_MAX_UI_SCALING);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -332,11 +332,11 @@ void scanPlugins(std::string dir, const std::function<void(float)>& progress)
 void setPluginPathCb(void* data)
 {
 	v::gdBrowserDir* browser    = static_cast<v::gdBrowserDir*>(data);
-	std::string      pluginPath = g_ui.model.pluginPath;
+	std::string      pluginPath = g_ui->model.pluginPath;
 
 	if (browser->getCurrentPath() == "")
 	{
-		v::gdAlert(g_ui.getI18Text(v::LangMap::CONFIG_PLUGINS_INVALIDPATH));
+		v::gdAlert(g_ui->getI18Text(v::LangMap::CONFIG_PLUGINS_INVALIDPATH));
 		return;
 	}
 
@@ -344,11 +344,11 @@ void setPluginPathCb(void* data)
 		pluginPath += ";";
 	pluginPath += browser->getCurrentPath();
 
-	g_ui.model.pluginPath = pluginPath;
+	g_ui->model.pluginPath = pluginPath;
 
 	browser->do_callback();
 
-	v::gdConfig* configWin = static_cast<v::gdConfig*>(g_ui.getSubwindow(WID_CONFIG));
+	v::gdConfig* configWin = static_cast<v::gdConfig*>(g_ui->getSubwindow(WID_CONFIG));
 	configWin->tabPlugins->rebuild();
 }
 } // namespace giada::c::config

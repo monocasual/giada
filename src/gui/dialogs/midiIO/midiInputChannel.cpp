@@ -43,25 +43,25 @@
 #include <cassert>
 #include <cstddef>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
 geChannelLearnerPack::geChannelLearnerPack(int x, int y, const c::io::Channel_InputData& channel)
-: geMidiLearnerPack(x, y, g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_CHANNEL))
+: geMidiLearnerPack(x, y, g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_CHANNEL))
 {
 	setCallbacks(
 	    [channelId = channel.channelId](int param) { c::io::channel_startMidiLearn(param, channelId); },
 	    [channelId = channel.channelId](int param) { c::io::channel_clearMidiLearn(param, channelId); });
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYPRESS), G_MIDI_IN_KEYPRESS);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYREL), G_MIDI_IN_KEYREL);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYKILL), G_MIDI_IN_KILL);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_ARM), G_MIDI_IN_ARM);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_MUTE), G_MIDI_IN_MUTE);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_SOLO), G_MIDI_IN_SOLO);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_VOLUME), G_MIDI_IN_VOLUME);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_PITCH), G_MIDI_IN_PITCH, /*visible=*/channel.channelType == ChannelType::SAMPLE);
-	addMidiLearner(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_READACTIONS), G_MIDI_IN_READ_ACTIONS, /*visible=*/channel.channelType == ChannelType::SAMPLE);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYPRESS), G_MIDI_IN_KEYPRESS);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYREL), G_MIDI_IN_KEYREL);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYKILL), G_MIDI_IN_KILL);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_ARM), G_MIDI_IN_ARM);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_MUTE), G_MIDI_IN_MUTE);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_SOLO), G_MIDI_IN_SOLO);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_VOLUME), G_MIDI_IN_VOLUME);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_PITCH), G_MIDI_IN_PITCH, /*visible=*/channel.channelType == ChannelType::SAMPLE);
+	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_READACTIONS), G_MIDI_IN_READ_ACTIONS, /*visible=*/channel.channelType == ChannelType::SAMPLE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -110,7 +110,7 @@ void gePluginLearnerPack::update(const c::io::PluginData& d, bool enabled)
 /* -------------------------------------------------------------------------- */
 
 gdMidiInputChannel::gdMidiInputChannel(ID channelId, const Model& model)
-: gdMidiInputBase(g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_TITLE), model)
+: gdMidiInputBase(g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_TITLE), model)
 , m_channelId(channelId)
 , m_data(c::io::channel_getInputData(channelId))
 {
@@ -118,7 +118,7 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, const Model& model)
 	{
 		geFlex* enableGroup = new geFlex(Direction::HORIZONTAL);
 		{
-			m_enable  = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_ENABLE));
+			m_enable  = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_ENABLE));
 			m_channel = new geChoice();
 
 			enableGroup->add(m_enable, geMidiLearnerPack::LEARNER_WIDTH - 120);
@@ -126,7 +126,7 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, const Model& model)
 			enableGroup->end();
 		}
 
-		m_veloAsVol = new geCheck(0, 0, 0, 0, g_ui.getI18Text(LangMap::MIDIINPUT_CHANNEL_VELOCITYDRIVESVOL));
+		m_veloAsVol = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_VELOCITYDRIVESVOL));
 
 		m_container = new geScrollPack(0, 0, 0, 0);
 		m_container->add(new geChannelLearnerPack(0, 0, m_data));
@@ -135,7 +135,7 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, const Model& model)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL);
 		{
-			m_ok = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLOSE));
+			m_ok = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
 
 			footer->add(new geBox()); // Spacer
 			footer->add(m_ok, 80);

@@ -37,7 +37,7 @@
 #include "waveform.h"
 #include <cstdint>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -145,18 +145,18 @@ void geWaveTools::openMenu()
 {
 	geMenu menu;
 
-	menu.addItem((ID)Menu::CUT, g_ui.getI18Text(LangMap::SAMPLEEDITOR_TOOLS_CUT));
-	menu.addItem((ID)Menu::COPY, g_ui.getI18Text(LangMap::SAMPLEEDITOR_TOOLS_COPY));
-	menu.addItem((ID)Menu::PASTE, g_ui.getI18Text(LangMap::SAMPLEEDITOR_TOOLS_PASTE));
-	menu.addItem((ID)Menu::TRIM, g_ui.getI18Text(LangMap::SAMPLEEDITOR_TOOLS_TRIM));
-	menu.addItem((ID)Menu::SILENCE, g_ui.getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SILENCE));
-	menu.addItem((ID)Menu::REVERSE, g_ui.getI18Text(LangMap::SAMPLEEDITOR_TOOLS_REVERSE));
-	menu.addItem((ID)Menu::NORMALIZE, g_ui.getI18Text(LangMap::SAMPLEEDITOR_TOOLS_NORMALIZE));
-	menu.addItem((ID)Menu::FADE_IN, g_ui.getI18Text(LangMap::SAMPLEEDITOR_TOOLS_FADE_IN));
-	menu.addItem((ID)Menu::FADE_OUT, g_ui.getI18Text(LangMap::SAMPLEEDITOR_TOOLS_FADE_OUT));
-	menu.addItem((ID)Menu::SMOOTH_EDGES, g_ui.getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SMOOTH_EDGES));
-	menu.addItem((ID)Menu::SET_BEGIN_END, g_ui.getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SET_BEGIN_END));
-	menu.addItem((ID)Menu::TO_NEW_CHANNEL, g_ui.getI18Text(LangMap::SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL));
+	menu.addItem((ID)Menu::CUT, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_CUT));
+	menu.addItem((ID)Menu::COPY, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_COPY));
+	menu.addItem((ID)Menu::PASTE, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_PASTE));
+	menu.addItem((ID)Menu::TRIM, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_TRIM));
+	menu.addItem((ID)Menu::SILENCE, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SILENCE));
+	menu.addItem((ID)Menu::REVERSE, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_REVERSE));
+	menu.addItem((ID)Menu::NORMALIZE, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_NORMALIZE));
+	menu.addItem((ID)Menu::FADE_IN, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_FADE_IN));
+	menu.addItem((ID)Menu::FADE_OUT, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_FADE_OUT));
+	menu.addItem((ID)Menu::SMOOTH_EDGES, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SMOOTH_EDGES));
+	menu.addItem((ID)Menu::SET_BEGIN_END, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SET_BEGIN_END));
+	menu.addItem((ID)Menu::TO_NEW_CHANNEL, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL));
 
 	if (!waveform->isSelected())
 	{

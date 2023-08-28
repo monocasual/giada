@@ -38,7 +38,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -108,7 +108,7 @@ int geChannel::getColumnId() const
 
 void geChannel::blink()
 {
-	if (g_ui.shouldBlink())
+	if (g_ui->shouldBlink())
 		mainButton->setPlayMode();
 	else
 		mainButton->setDefaultMode();

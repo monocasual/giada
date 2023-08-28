@@ -33,12 +33,12 @@
 #include "gui/ui.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
 gdChannelRouting::gdChannelRouting(const c::channel::Data& d)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, 260, 90}), g_ui.getI18Text(LangMap::CHANNELROUTING_TITLE), WID_CHANNEL_ROUTING)
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 260, 90}), g_ui->getI18Text(LangMap::CHANNELROUTING_TITLE), WID_CHANNEL_ROUTING)
 {
 	constexpr int LABEL_WIDTH = 70;
 
@@ -55,7 +55,7 @@ gdChannelRouting::gdChannelRouting(const c::channel::Data& d)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_close = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLOSE));
+			m_close = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
 			footer->add(new geBox());
 			footer->add(m_close, 70);
 			footer->end();

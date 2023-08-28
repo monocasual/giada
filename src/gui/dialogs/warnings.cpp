@@ -34,7 +34,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -49,11 +49,11 @@ bool confirmRet_ = false;
 
 void gdAlert(const char* msg, bool resizable)
 {
-	gdWindow win(u::gui::getCenterWinBounds({-1, -1, 300, 90}), g_ui.getI18Text(LangMap::COMMON_WARNING));
+	gdWindow win(u::gui::getCenterWinBounds({-1, -1, 300, 90}), g_ui->getI18Text(LangMap::COMMON_WARNING));
 	win.set_modal();
 	win.begin();
 	geBox*        box = new geBox(10, 10, 280, 40, msg);
-	geTextButton* b   = new geTextButton(210, 60, 80, 20, g_ui.getI18Text(LangMap::COMMON_CLOSE));
+	geTextButton* b   = new geTextButton(210, 60, 80, 20, g_ui->getI18Text(LangMap::COMMON_CLOSE));
 	win.end();
 	box->labelsize(G_GUI_FONT_SIZE_BASE);
 
@@ -77,8 +77,8 @@ int gdConfirmWin(const char* title, const char* msg)
 	win.set_modal();
 	win.begin();
 	new geBox(10, 10, 280, 40, msg);
-	geTextButton* ok = new geTextButton(212, 62, 80, 20, g_ui.getI18Text(LangMap::COMMON_OK));
-	geTextButton* ko = new geTextButton(124, 62, 80, 20, g_ui.getI18Text(LangMap::COMMON_CANCEL));
+	geTextButton* ok = new geTextButton(212, 62, 80, 20, g_ui->getI18Text(LangMap::COMMON_OK));
+	geTextButton* ko = new geTextButton(124, 62, 80, 20, g_ui->getI18Text(LangMap::COMMON_CANCEL));
 	win.end();
 
 	ok->shortcut(FL_Enter);

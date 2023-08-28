@@ -47,7 +47,7 @@
 #include <FL/fl_draw.H>
 #include <cassert>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -189,13 +189,13 @@ void geKeyboard::init()
 
 	/* Add 6 empty columns as initial layout. */
 
-	g_ui.model.columns.clear();
-	g_ui.model.columns.push_back({1, G_DEFAULT_COLUMN_WIDTH});
-	g_ui.model.columns.push_back({2, G_DEFAULT_COLUMN_WIDTH});
-	g_ui.model.columns.push_back({3, G_DEFAULT_COLUMN_WIDTH});
-	g_ui.model.columns.push_back({4, G_DEFAULT_COLUMN_WIDTH});
-	g_ui.model.columns.push_back({5, G_DEFAULT_COLUMN_WIDTH});
-	g_ui.model.columns.push_back({6, G_DEFAULT_COLUMN_WIDTH});
+	g_ui->model.columns.clear();
+	g_ui->model.columns.push_back({1, G_DEFAULT_COLUMN_WIDTH});
+	g_ui->model.columns.push_back({2, G_DEFAULT_COLUMN_WIDTH});
+	g_ui->model.columns.push_back({3, G_DEFAULT_COLUMN_WIDTH});
+	g_ui->model.columns.push_back({4, G_DEFAULT_COLUMN_WIDTH});
+	g_ui->model.columns.push_back({5, G_DEFAULT_COLUMN_WIDTH});
+	g_ui->model.columns.push_back({6, G_DEFAULT_COLUMN_WIDTH});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -206,7 +206,7 @@ void geKeyboard::rebuild()
 
 	deleteAllColumns();
 
-	for (const Model::Column& c : g_ui.model.columns)
+	for (const Model::Column& c : g_ui->model.columns)
 		addColumn(c.width, c.id);
 
 	for (const c::channel::Data& ch : c::channel::getChannels())
@@ -219,7 +219,7 @@ void geKeyboard::rebuild()
 
 void geKeyboard::deleteColumn(ID id)
 {
-	u::vector::removeIf(g_ui.model.columns, [=](const Model::Column& c) { return c.id == id; });
+	u::vector::removeIf(g_ui->model.columns, [=](const Model::Column& c) { return c.id == id; });
 	rebuild();
 }
 
@@ -305,7 +305,7 @@ int geKeyboard::handle(int e)
 	case FL_SHORTCUT: // In case widget that isn't ours has focus
 	case FL_KEYDOWN:  // Keyboard key pushed
 	case FL_KEYUP:    // Keyboard key released
-		g_ui.dispatcher.dispatchKey(e);
+		g_ui->dispatcher.dispatchKey(e);
 		return 1;
 
 	case FL_DND_ENTER: // return(1) for these events to 'accept' dnd
@@ -460,8 +460,8 @@ void geKeyboard::openColumnMenu() const
 
 void geKeyboard::storeLayout()
 {
-	g_ui.model.columns.clear();
+	g_ui->model.columns.clear();
 	for (const geColumn* c : m_columns)
-		g_ui.model.columns.push_back({c->id, c->w()});
+		g_ui->model.columns.push_back({c->id, c->w()});
 }
 } // namespace giada::v

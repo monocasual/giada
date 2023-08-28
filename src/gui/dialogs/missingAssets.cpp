@@ -34,18 +34,18 @@
 #include "utils/gui.h"
 #include <FL/Fl_Group.H>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
 gdMissingAssets::gdMissingAssets(const m::model::LoadState& state)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, 400, 300}), g_ui.getI18Text(LangMap::COMMON_WARNING), WID_MISSING_ASSETS)
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 400, 300}), g_ui->getI18Text(LangMap::COMMON_WARNING), WID_MISSING_ASSETS)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
 		geFlex* body = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN);
 		{
-			geBox* textIntro = new geBox(g_ui.getI18Text(LangMap::MISSINGASSETS_INTRO), FL_ALIGN_LEFT);
+			geBox* textIntro = new geBox(g_ui->getI18Text(LangMap::MISSINGASSETS_INTRO), FL_ALIGN_LEFT);
 			textIntro->color(G_COLOR_BLUE);
 
 			body->add(textIntro, G_GUI_UNIT);
@@ -55,7 +55,7 @@ gdMissingAssets::gdMissingAssets(const m::model::LoadState& state)
 				geBrowser* waves = new geBrowser();
 				for (const std::string& s : state.missingWaves)
 					waves->add(s.c_str());
-				body->add(new geBox(g_ui.getI18Text(LangMap::MISSINGASSETS_AUDIOFILES), FL_ALIGN_LEFT), G_GUI_UNIT);
+				body->add(new geBox(g_ui->getI18Text(LangMap::MISSINGASSETS_AUDIOFILES), FL_ALIGN_LEFT), G_GUI_UNIT);
 				body->add(waves);
 			}
 
@@ -64,7 +64,7 @@ gdMissingAssets::gdMissingAssets(const m::model::LoadState& state)
 				geBrowser* plugins = new geBrowser();
 				for (const std::string& s : state.missingPlugins)
 					plugins->add(s.c_str());
-				body->add(new geBox(g_ui.getI18Text(LangMap::MISSINGASSETS_PLUGINS), FL_ALIGN_LEFT), G_GUI_UNIT);
+				body->add(new geBox(g_ui->getI18Text(LangMap::MISSINGASSETS_PLUGINS), FL_ALIGN_LEFT), G_GUI_UNIT);
 				body->add(plugins);
 			}
 			body->end();
@@ -72,7 +72,7 @@ gdMissingAssets::gdMissingAssets(const m::model::LoadState& state)
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL);
 		{
-			geTextButton* close = new geTextButton(g_ui.getI18Text(LangMap::COMMON_CLOSE));
+			geTextButton* close = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
 			close->onClick      = [this]() { do_callback(); };
 			footer->add(new geBox()); // Spacer
 			footer->add(close, 80);

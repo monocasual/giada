@@ -56,49 +56,49 @@
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/ui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::c::layout
 {
 void openBrowserForProjectLoad()
 {
-	v::gdWindow* childWin = new v::gdBrowserLoad(g_ui.getI18Text(v::LangMap::BROWSER_OPENPROJECT),
-	    g_ui.model.patchPath, c::storage::loadProject, 0, g_ui.model);
-	g_ui.openSubWindow(childWin);
+	v::gdWindow* childWin = new v::gdBrowserLoad(g_ui->getI18Text(v::LangMap::BROWSER_OPENPROJECT),
+	    g_ui->model.patchPath, c::storage::loadProject, 0, g_ui->model);
+	g_ui->openSubWindow(childWin);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openBrowserForProjectSave()
 {
-	v::gdWindow* childWin = new v::gdBrowserSave(g_ui.getI18Text(v::LangMap::BROWSER_SAVEPROJECT),
-	    g_ui.model.patchPath, g_ui.model.projectName, c::storage::saveProject, 0, g_ui.model);
-	g_ui.openSubWindow(childWin);
+	v::gdWindow* childWin = new v::gdBrowserSave(g_ui->getI18Text(v::LangMap::BROWSER_SAVEPROJECT),
+	    g_ui->model.patchPath, g_ui->model.projectName, c::storage::saveProject, 0, g_ui->model);
+	g_ui->openSubWindow(childWin);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openBrowserForSampleLoad(ID channelId)
 {
-	v::gdWindow* w = new v::gdBrowserLoad(g_ui.getI18Text(v::LangMap::BROWSER_OPENSAMPLE),
-	    g_ui.model.samplePath, c::storage::loadSample, channelId, g_ui.model);
-	g_ui.openSubWindow(w);
+	v::gdWindow* w = new v::gdBrowserLoad(g_ui->getI18Text(v::LangMap::BROWSER_OPENSAMPLE),
+	    g_ui->model.samplePath, c::storage::loadSample, channelId, g_ui->model);
+	g_ui->openSubWindow(w);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openBrowserForSampleSave(ID channelId)
 {
-	v::gdWindow* w = new v::gdBrowserSave(g_ui.getI18Text(v::LangMap::BROWSER_SAVESAMPLE),
-	    g_ui.model.samplePath, "", c::storage::saveSample, channelId, g_ui.model);
-	g_ui.openSubWindow(w);
+	v::gdWindow* w = new v::gdBrowserSave(g_ui->getI18Text(v::LangMap::BROWSER_SAVESAMPLE),
+	    g_ui->model.samplePath, "", c::storage::saveSample, channelId, g_ui->model);
+	g_ui->openSubWindow(w);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openAboutWindow()
 {
-	g_ui.openSubWindow(new v::gdAbout());
+	g_ui->openSubWindow(new v::gdAbout());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -109,106 +109,106 @@ void openKeyGrabberWindow(int key, std::function<bool(int)> f)
 
 	keyGrabber->onSetKey = f;
 
-	g_ui.openSubWindow(keyGrabber);
+	g_ui->openSubWindow(keyGrabber);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openBpmWindow(float bpm)
 {
-	g_ui.openSubWindow(new v::gdBpmInput(bpm));
+	g_ui->openSubWindow(new v::gdBpmInput(bpm));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openBeatsWindow(int beats, int bars)
 {
-	g_ui.openSubWindow(new v::gdBeatsInput(beats, bars));
+	g_ui->openSubWindow(new v::gdBeatsInput(beats, bars));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openConfigWindow()
 {
-	g_ui.openSubWindow(new v::gdConfig(400, 370, g_ui.model));
+	g_ui->openSubWindow(new v::gdConfig(400, 370, g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMasterMidiInputWindow()
 {
-	g_ui.openSubWindow(new v::gdMidiInputMaster(g_ui.model));
+	g_ui->openSubWindow(new v::gdMidiInputMaster(g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openChannelMidiInputWindow(ID channelId)
 {
-	g_ui.openSubWindow(new v::gdMidiInputChannel(channelId, g_ui.model));
+	g_ui->openSubWindow(new v::gdMidiInputChannel(channelId, g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openChannelRoutingWindow(ID channelId)
 {
-	g_ui.openSubWindow(new v::gdChannelRouting(channel::getData(channelId)));
+	g_ui->openSubWindow(new v::gdChannelRouting(channel::getData(channelId)));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openSampleChannelMidiOutputWindow(ID channelId)
 {
-	g_ui.openSubWindow(new v::gdMidiOutputSampleCh(channelId));
+	g_ui->openSubWindow(new v::gdMidiOutputSampleCh(channelId));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMidiChannelMidiOutputWindow(ID channelId)
 {
-	g_ui.openSubWindow(new v::gdMidiOutputMidiCh(channelId));
+	g_ui->openSubWindow(new v::gdMidiOutputMidiCh(channelId));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openSampleActionEditor(ID channelId)
 {
-	g_ui.openSubWindow(new v::gdSampleActionEditor(channelId, g_ui.model));
+	g_ui->openSubWindow(new v::gdSampleActionEditor(channelId, g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMidiActionEditor(ID channelId)
 {
-	g_ui.openSubWindow(new v::gdMidiActionEditor(channelId, g_ui.model));
+	g_ui->openSubWindow(new v::gdMidiActionEditor(channelId, g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openSampleEditor(ID channelId)
 {
-	g_ui.openSubWindow(new v::gdSampleEditor(channelId, g_ui.model));
+	g_ui->openSubWindow(new v::gdSampleEditor(channelId, g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openRenameChannelWindow(const c::channel::Data& data)
 {
-	g_ui.openSubWindow(new v::gdChannelNameInput(data));
+	g_ui->openSubWindow(new v::gdChannelNameInput(data));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMissingAssetsWindow(const m::model::LoadState& state)
 {
-	g_ui.openSubWindow(new v::gdMissingAssets(state));
+	g_ui->openSubWindow(new v::gdMissingAssets(state));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openBrowserForPlugins(v::gdWindow& parent)
 {
-	v::gdBrowserDir* browser = new v::gdBrowserDir(g_ui.getI18Text(v::LangMap::BROWSER_OPENPLUGINSDIR),
-	    g_ui.model.patchPath, c::config::setPluginPathCb, g_ui.model);
+	v::gdBrowserDir* browser = new v::gdBrowserDir(g_ui->getI18Text(v::LangMap::BROWSER_OPENPLUGINSDIR),
+	    g_ui->model.patchPath, c::config::setPluginPathCb, g_ui->model);
 	parent.addChild(browser);
 }
 
@@ -216,27 +216,27 @@ void openBrowserForPlugins(v::gdWindow& parent)
 
 void openChannelPluginListWindow(ID channelId)
 {
-	g_ui.openSubWindow(new v::gdPluginList(channelId, g_ui.model.pluginListBounds));
+	g_ui->openSubWindow(new v::gdPluginList(channelId, g_ui->model.pluginListBounds));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMasterInPluginListWindow()
 {
-	g_ui.openSubWindow(new v::gdPluginList(m::Mixer::MASTER_IN_CHANNEL_ID, g_ui.model.pluginListBounds));
+	g_ui->openSubWindow(new v::gdPluginList(m::Mixer::MASTER_IN_CHANNEL_ID, g_ui->model.pluginListBounds));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMasterOutPluginListWindow()
 {
-	g_ui.openSubWindow(new v::gdPluginList(m::Mixer::MASTER_OUT_CHANNEL_ID, g_ui.model.pluginListBounds));
+	g_ui->openSubWindow(new v::gdPluginList(m::Mixer::MASTER_OUT_CHANNEL_ID, g_ui->model.pluginListBounds));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openPluginChooser(ID channelId)
 {
-	g_ui.openSubWindow(new v::gdPluginChooser(channelId, g_ui.model));
+	g_ui->openSubWindow(new v::gdPluginChooser(channelId, g_ui->model));
 }
 } // namespace giada::c::layout

@@ -33,14 +33,14 @@
 #include "utils/math.h"
 #include <FL/fl_draw.H>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
 geSequencer::geSequencer()
 : geBox()
 {
-	copy_tooltip(g_ui.getI18Text(LangMap::MAIN_SEQUENCER_LABEL));
+	copy_tooltip(g_ui->getI18Text(LangMap::MAIN_SEQUENCER_LABEL));
 }
 
 /* -------------------------------------------------------------------------- */

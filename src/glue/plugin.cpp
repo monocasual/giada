@@ -44,7 +44,7 @@
 #include <cassert>
 #include <memory>
 
-extern giada::v::Ui      g_ui;
+extern giada::v::Ui*     g_ui;
 extern giada::m::Engine* g_engine;
 
 namespace giada::c::plugin
@@ -73,7 +73,7 @@ Plugin::Plugin(m::Plugin& p, ID channelId)
 , name(p.getName())
 , uniqueId(p.getUniqueId())
 , currentProgram(p.getCurrentProgram())
-, uiScaling(g_ui.getScaling())
+, uiScaling(g_ui->getScaling())
 , m_plugin(p)
 {
 	for (int i = 0; i < p.getNumPrograms(); i++)
@@ -145,7 +145,7 @@ void updateWindow(ID pluginId, Thread t)
 	if (p->hasEditor())
 		return;
 
-	v::gdPluginWindow* pluginWindow = static_cast<v::gdPluginWindow*>(g_ui.getSubwindow(v::Ui::getPluginWindowId(pluginId)));
+	v::gdPluginWindow* pluginWindow = static_cast<v::gdPluginWindow*>(g_ui->getSubwindow(v::Ui::getPluginWindowId(pluginId)));
 	if (pluginWindow == nullptr)
 		return;
 
@@ -195,7 +195,7 @@ void setParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread
 	g_engine->getPluginsApi().setParameter(pluginId, paramIndex, value);
 	channel::notifyChannelForMidiIn(t, channelId);
 
-	g_ui.pumpEvent([pluginId, t]() { c::plugin::updateWindow(pluginId, t); });
+	g_ui->pumpEvent([pluginId, t]() { c::plugin::updateWindow(pluginId, t); });
 }
 
 /* -------------------------------------------------------------------------- */

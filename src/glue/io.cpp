@@ -49,7 +49,7 @@
 #include "utils/math.h"
 #include <FL/Fl.H>
 
-extern giada::v::Ui      g_ui;
+extern giada::v::Ui*     g_ui;
 extern giada::m::Engine* g_engine;
 
 namespace giada::c::io
@@ -58,8 +58,8 @@ namespace
 {
 void rebuildMidiWindows_()
 {
-	g_ui.rebuildSubWindow(WID_MIDI_INPUT);
-	g_ui.rebuildSubWindow(WID_MIDI_OUTPUT);
+	g_ui->rebuildSubWindow(WID_MIDI_INPUT);
+	g_ui->rebuildSubWindow(WID_MIDI_OUTPUT);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -68,11 +68,11 @@ bool isValidKey_(int key)
 {
 	if (strlen(Fl::event_text()) == 0)
 		return false;
-	if (key == g_ui.model.keyBindPlay ||
-	    key == g_ui.model.keyBindRewind ||
-	    key == g_ui.model.keyBindRecordActions ||
-	    key == g_ui.model.keyBindRecordInput ||
-	    key == g_ui.model.keyBindExit)
+	if (key == g_ui->model.keyBindPlay ||
+	    key == g_ui->model.keyBindRewind ||
+	    key == g_ui->model.keyBindRecordActions ||
+	    key == g_ui->model.keyBindRecordInput ||
+	    key == g_ui->model.keyBindExit)
 		return false;
 	return true;
 }
@@ -227,17 +227,17 @@ bool channel_setKey(ID channelId, int k)
 
 void channel_startMidiLearn(int param, ID channelId)
 {
-	g_engine->getIOApi().channel_startMidiLearn(param, channelId, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().channel_startMidiLearn(param, channelId, []() { g_ui->pumpEvent([]() { rebuildMidiWindows_(); }); });
 }
 
 void master_startMidiLearn(int param)
 {
-	g_engine->getIOApi().master_startMidiLearn(param, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().master_startMidiLearn(param, []() { g_ui->pumpEvent([]() { rebuildMidiWindows_(); }); });
 }
 
 void plugin_startMidiLearn(int paramIndex, ID pluginId)
 {
-	g_engine->getIOApi().plugin_startMidiLearn(paramIndex, pluginId, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().plugin_startMidiLearn(paramIndex, pluginId, []() { g_ui->pumpEvent([]() { rebuildMidiWindows_(); }); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -245,24 +245,24 @@ void plugin_startMidiLearn(int paramIndex, ID pluginId)
 void stopMidiLearn()
 {
 	g_engine->getIOApi().stopMidiLearn();
-	g_ui.pumpEvent([]() { rebuildMidiWindows_(); });
+	g_ui->pumpEvent([]() { rebuildMidiWindows_(); });
 }
 
 /* -------------------------------------------------------------------------- */
 
 void channel_clearMidiLearn(int param, ID channelId)
 {
-	g_engine->getIOApi().channel_clearMidiLearn(param, channelId, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().channel_clearMidiLearn(param, channelId, []() { g_ui->pumpEvent([]() { rebuildMidiWindows_(); }); });
 }
 
 void master_clearMidiLearn(int param)
 {
-	g_engine->getIOApi().master_clearMidiLearn(param, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().master_clearMidiLearn(param, []() { g_ui->pumpEvent([]() { rebuildMidiWindows_(); }); });
 }
 
 void plugin_clearMidiLearn(int param, ID pluginId)
 {
-	g_engine->getIOApi().plugin_clearMidiLearn(param, pluginId, []() { g_ui.pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().plugin_clearMidiLearn(param, pluginId, []() { g_ui->pumpEvent([]() { rebuildMidiWindows_(); }); });
 }
 
 /* -------------------------------------------------------------------------- */

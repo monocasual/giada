@@ -29,7 +29,7 @@
 #include "gui/ui.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -44,6 +44,6 @@ gdMidiInputBase::~gdMidiInputBase()
 {
 	c::io::stopMidiLearn();
 
-	g_ui.model.midiInputBounds = getBounds();
+	g_ui->model.midiInputBounds = getBounds();
 }
 } // namespace giada::v

@@ -42,7 +42,7 @@
 #include <FL/Fl_Tooltip.H>
 #include <fmt/core.h>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -156,7 +156,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, cha
 
 gdMainWindow::~gdMainWindow()
 {
-	g_ui.model.mainWindowBounds = getBounds();
+	g_ui->model.mainWindowBounds = getBounds();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -56,7 +56,7 @@
 #include <cassert>
 
 extern giada::m::Engine* g_engine;
-extern giada::v::Ui      g_ui;
+extern giada::v::Ui*     g_ui;
 
 namespace giada::c::storage
 {
@@ -65,11 +65,11 @@ namespace
 void printLoadError_(int res)
 {
 	if (res == G_FILE_UNREADABLE)
-		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_PATCHUNREADABLE));
+		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_PATCHUNREADABLE));
 	else if (res == G_FILE_INVALID)
-		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_PATCHINVALID));
+		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_PATCHINVALID));
 	else if (res == G_FILE_UNSUPPORTED)
-		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_PATCHUNSUPPORTED));
+		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_PATCHUNSUPPORTED));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -78,12 +78,12 @@ bool validateFileName_(const std::string& name)
 {
 	if (name == "")
 	{
-		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_CHOOSEFILENAME));
+		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_CHOOSEFILENAME));
 		return false;
 	}
 	if (!u::fs::isValidFileName(name))
 	{
-		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_FILEHASINVALIDCHARS));
+		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_FILEHASINVALIDCHARS));
 		return false;
 	}
 	return true;
@@ -99,14 +99,14 @@ void loadProject(void* data)
 	v::gdBrowserLoad* browser = static_cast<v::gdBrowserLoad*>(data);
 
 	const std::string                  projectPath       = browser->getSelectedItem();
-	const m::PluginManager::SortMethod pluginsSortMethod = g_ui.model.pluginChooserSortMethod;
+	const m::PluginManager::SortMethod pluginsSortMethod = g_ui->model.pluginChooserSortMethod;
 
 	/* Close all sub-windows first, in case there are VST editors visible. VST
 	editors must be closed before deleting their plug-in processors. */
 
-	g_ui.closeAllSubwindows();
+	g_ui->closeAllSubwindows();
 
-	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
+	auto uiProgress     = g_ui->mainWindow->getScopedProgress(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
 	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
 	m::model::LoadState state = g_engine->getStorageApi().loadProject(projectPath, pluginsSortMethod, engineProgress);
@@ -117,12 +117,12 @@ void loadProject(void* data)
 		return;
 	}
 
-	g_ui.model.patchPath = u::fs::getUpDir(projectPath);
+	g_ui->model.patchPath = u::fs::getUpDir(projectPath);
 
 	if (!state.isGood())
 		layout::openMissingAssetsWindow(state);
 
-	g_ui.load(state.patch);
+	g_ui->load(state.patch);
 
 	browser->do_callback();
 }
@@ -140,23 +140,23 @@ void saveProject(void* data)
 		return;
 
 	if (u::fs::dirExists(projectPath) &&
-	    !v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
-	        g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_PROJECTEXISTS)))
+	    !v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),
+	        g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_PROJECTEXISTS)))
 		return;
 
-	auto uiProgress     = g_ui.mainWindow->getScopedProgress(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECT));
+	auto uiProgress     = g_ui->mainWindow->getScopedProgress(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECT));
 	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
-	g_ui.model.projectName = projectName;
+	g_ui->model.projectName = projectName;
 
-	if (g_engine->getStorageApi().storeProject(projectPath, g_ui.model, engineProgress))
+	if (g_engine->getStorageApi().storeProject(projectPath, g_ui->model, engineProgress))
 	{
-		g_ui.setMainWindowTitle(projectName);
-		g_ui.model.patchPath = u::fs::getUpDir(projectPath);
+		g_ui->setMainWindowTitle(projectName);
+		g_ui->model.patchPath = u::fs::getUpDir(projectPath);
 		browser->do_callback();
 	}
 	else
-		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECTERROR));
+		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECTERROR));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -169,7 +169,7 @@ void loadSample(void* data)
 	if (fullPath.empty())
 		return;
 
-	g_ui.model.samplePath = u::fs::dirname(fullPath);
+	g_ui->model.samplePath = u::fs::dirname(fullPath);
 
 	c::channel::loadChannel(browser->getChannelId(), fullPath);
 
@@ -191,15 +191,15 @@ void saveSample(void* data)
 	const std::string filePath = u::fs::join(folderPath, u::fs::stripExt(name) + ".wav");
 
 	if (u::fs::fileExists(filePath) &&
-	    !v::gdConfirmWin(g_ui.getI18Text(v::LangMap::COMMON_WARNING),
-	        g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_FILEEXISTS)))
+	    !v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),
+	        g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_FILEEXISTS)))
 		return;
 
 	if (!g_engine->getChannelsApi().saveSample(channelId, filePath))
-		v::gdAlert(g_ui.getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGFILEERROR));
+		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGFILEERROR));
 	else
 	{
-		g_ui.model.samplePath = u::fs::dirname(filePath);
+		g_ui->model.samplePath = u::fs::dirname(filePath);
 	}
 
 	browser->do_callback();

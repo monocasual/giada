@@ -37,7 +37,7 @@
 #include "gui/graphics.h"
 #include "gui/ui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -78,7 +78,7 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, const Model& model)
 
 gdMidiActionEditor::~gdMidiActionEditor()
 {
-	g_ui.model.actionEditorPianoRollY = m_splitScroll->getScrollY();
+	g_ui->model.actionEditorPianoRollY = m_splitScroll->getScrollY();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -40,7 +40,7 @@
 #include <cassert>
 #include <string>
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -86,7 +86,7 @@ gePluginElement::gePluginElement(int x, int y, int w, int h, c::plugin::Plugin d
 
 	if (program->countItems() == 0)
 	{
-		program->addItem(g_ui.getI18Text(LangMap::PLUGINLIST_NOPROGRAMS));
+		program->addItem(g_ui->getI18Text(LangMap::PLUGINLIST_NOPROGRAMS));
 		program->showItem(0);
 		program->deactivate();
 	}
@@ -139,7 +139,7 @@ void gePluginElement::removePlugin()
 {
 	/* Any subwindow linked to the plugin must be destroyed first. */
 
-	g_ui.closeSubWindow(Ui::getPluginWindowId(m_plugin.id));
+	g_ui->closeSubWindow(Ui::getPluginWindowId(m_plugin.id));
 	c::plugin::freePlugin(m_plugin.getPluginRef(), m_plugin.channelId);
 }
 
@@ -149,7 +149,7 @@ void gePluginElement::openPluginWindow()
 {
 	const int pwid = Ui::getPluginWindowId(m_plugin.id);
 
-	gdWindow* pluginWindow = g_ui.getSubwindow(pwid);
+	gdWindow* pluginWindow = g_ui->getSubwindow(pwid);
 
 	/* If Plug-in window is already opened, just raise it on top and quit. */
 
@@ -164,6 +164,6 @@ void gePluginElement::openPluginWindow()
 	else
 		pluginWindow = new gdPluginWindow(m_plugin, pwid);
 
-	g_ui.openSubWindow(pluginWindow);
+	g_ui->openSubWindow(pluginWindow);
 }
 } // namespace giada::v

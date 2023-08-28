@@ -38,7 +38,7 @@
 #include "gui/ui.h"
 #include "utils/gui.h"
 
-extern giada::v::Ui g_ui;
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -64,14 +64,14 @@ geMainIO::geMainIO()
 	add(m_midiActivity, 10);
 	end();
 
-	m_outMeter->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_OUTMETER));
-	m_inMeter->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_INMETER));
-	m_outVol->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_OUTVOL));
-	m_inVol->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_INVOL));
-	m_inToOut->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_INTOOUT));
-	m_masterFxOut->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_FXOUT));
-	m_masterFxIn->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_FXIN));
-	m_midiActivity->copy_tooltip(g_ui.getI18Text(LangMap::MAIN_IO_LABEL_MIDIACTIVITY));
+	m_outMeter->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_IO_LABEL_OUTMETER));
+	m_inMeter->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_IO_LABEL_INMETER));
+	m_outVol->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_IO_LABEL_OUTVOL));
+	m_inVol->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_IO_LABEL_INVOL));
+	m_inToOut->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_IO_LABEL_INTOOUT));
+	m_masterFxOut->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_IO_LABEL_FXOUT));
+	m_masterFxIn->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_IO_LABEL_FXIN));
+	m_midiActivity->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_IO_LABEL_MIDIACTIVITY));
 
 	m_outVol->onChange = [](float v) {
 		c::main::setMasterOutVolume(v, Thread::MAIN);

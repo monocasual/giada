@@ -54,7 +54,7 @@
 #include <FL/Fl.H>
 
 extern giada::m::Engine* g_engine;
-extern giada::v::Ui      g_ui;
+extern giada::v::Ui*     g_ui;
 
 namespace giada::m::init
 {
@@ -107,20 +107,20 @@ int tests(int argc, char** argv)
 
 void startup(int argc, char** argv)
 {
-	g_ui.dispatcher.onEventOccured = []() {
+	g_ui->dispatcher.onEventOccured = []() {
 		g_engine->getMainApi().startActionRecOnCallback();
 	};
 
 	g_engine->onMidiReceived = []() {
-		g_ui.pumpEvent([] { g_ui.mainWindow->mainIO->setMidiInActivity(); });
+		g_ui->pumpEvent([] { g_ui->mainWindow->mainIO->setMidiInActivity(); });
 	};
 
 	g_engine->onMidiSent = []() {
-		g_ui.pumpEvent([] { g_ui.mainWindow->mainIO->setMidiOutActivity(); });
+		g_ui->pumpEvent([] { g_ui->mainWindow->mainIO->setMidiOutActivity(); });
 	};
 
 	g_engine->onMidiSentFromChannel = [](ID channelId) {
-		g_ui.pumpEvent([channelId]() { g_ui.mainWindow->keyboard->notifyMidiOut(channelId); });
+		g_ui->pumpEvent([channelId]() { g_ui->mainWindow->keyboard->notifyMidiOut(channelId); });
 	};
 
 	g_engine->onModelSwap = [](model::SwapType type) {
@@ -129,7 +129,7 @@ void startup(int argc, char** argv)
 		UI (main thread) through the UI queue by pumping an event in it. */
 		if (type == model::SwapType::NONE)
 			return;
-		g_ui.pumpEvent([type]() { type == model::SwapType::HARD ? g_ui.rebuild() : g_ui.refresh(); });
+		g_ui->pumpEvent([type]() { type == model::SwapType::HARD ? g_ui->rebuild() : g_ui->refresh(); });
 	};
 
 	Conf conf = confFactory::deserialize();
@@ -142,7 +142,7 @@ void startup(int argc, char** argv)
 
 	juce::initialiseJuce_GUI();
 	g_engine->init(conf);
-	g_ui.init(argc, argv, conf, G_DEFAULT_PATCH_NAME, g_engine->isAudioReady());
+	g_ui->init(argc, argv, conf, G_DEFAULT_PATCH_NAME, g_engine->isAudioReady());
 
 	printBuildInfo_();
 }
@@ -151,7 +151,7 @@ void startup(int argc, char** argv)
 
 void run()
 {
-	g_ui.run();
+	g_ui->run();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -160,7 +160,7 @@ void shutdown()
 {
 	Conf conf;
 
-	g_ui.shutdown(conf);
+	g_ui->shutdown(conf);
 	g_engine->shutdown(conf);
 	juce::shutdownJuce_GUI();
 
