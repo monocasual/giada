@@ -171,15 +171,23 @@ geChannel* geColumn::getChannelAtCursor(Pixel y) const
 	if (m_channels.empty())
 		return nullptr;
 
-	geChannel* last = m_channels.back();
-	if (y > last->y())
-		return last;
-
 	for (geChannel* c : m_channels)
 		if (geompp::Range(c->y(), c->y() + c->h()).contains(y))
 			return c;
 
 	return nullptr;
+}
+
+/* -------------------------------------------------------------------------- */
+
+geChannel* geColumn::getFirstChannel() const
+{
+	return m_channels.empty() ? nullptr : m_channels.front();
+}
+
+geChannel* geColumn::getLastChannel() const
+{
+	return m_channels.empty() ? nullptr : m_channels.back();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -55,6 +55,12 @@ public:
 
 	geChannel* getChannelAtCursor(Pixel y) const;
 
+	/* get[First|Last]Channel
+	Returns first/last channel in the column. Nullptr if the column is empty. */
+
+	geChannel* getFirstChannel() const;
+	geChannel* getLastChannel() const;
+
 	/* countChannels
 	Returns the number of channels contained into this column. */
 

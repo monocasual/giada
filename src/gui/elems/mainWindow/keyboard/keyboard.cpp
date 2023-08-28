@@ -125,15 +125,36 @@ void geKeyboard::ChannelDragger::end()
 		return;
 	}
 
-	const ID         targetColumnId = column->id;
-	const geChannel* targetChannel  = column->getChannelAtCursor(Fl::event_y());
-	const int        targetPosition = targetChannel == nullptr ? 0 : targetChannel->getData().position + 1;
+	const ID  targetColumnId = column->id;
+	const int targetPosition = getPositionForCursor(column, Fl::event_y());
 
 	c::channel::moveChannel(m_channelId, targetColumnId, targetPosition);
 
 	m_channelId = -1;
 	m_xoffset   = 0;
 	m_keyboard.remove(m_placeholder);
+}
+
+/* -------------------------------------------------------------------------- */
+
+int geKeyboard::ChannelDragger::getPositionForCursor(const geColumn* column, Pixel y) const
+{
+	const geChannel* lastChannel = column->getLastChannel();
+	if (lastChannel == nullptr) // Column is empty
+		return 0;
+
+	const geChannel* targetChannel = column->getChannelAtCursor(y);
+	if (targetChannel != nullptr)
+		return targetChannel->getData().position + 1;
+
+	/* Channel not found, case 1: the cursor could be above the first channel. 
+	Channel not found, case 2: the cursor could be below the last channel, over
+	the empty space at the bottom of the column. */
+
+	const geChannel* firstChannel = column->getFirstChannel();
+	if (y < firstChannel->y())
+		return 0;
+	return lastChannel->getData().position + 1;
 }
 
 /* -------------------------------------------------------------------------- */

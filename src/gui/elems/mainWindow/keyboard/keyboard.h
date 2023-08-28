@@ -107,6 +107,12 @@ private:
 		geKeyboard& m_keyboard;
 		ID          m_channelId;
 		int         m_xoffset;
+
+		/* getPositionForCursor
+		Given a geColumn and a y-coordinate, returns the channel position for
+		that point, taking empty spaces into account. */
+
+		int getPositionForCursor(const geColumn*, Pixel y) const;
 	};
 
 	void addColumn(int width = G_DEFAULT_COLUMN_WIDTH, ID id = 0);
