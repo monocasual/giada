@@ -204,16 +204,4 @@ void toggleBypass(ID pluginId)
 {
 	g_engine.getPluginsApi().toggleBypass(pluginId);
 }
-
-/* -------------------------------------------------------------------------- */
-
-void startDispatchLoop()
-{
-	g_ui.startJuceDispatchLoop();
-}
-
-void stopDispatchLoop()
-{
-	g_ui.stopJuceDispatchLoop();
-}
 } // namespace giada::c::plugin

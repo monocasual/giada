@@ -121,8 +121,6 @@ void gdPluginWindowGUI::showEditor()
 	m_editor->addToDesktop(0, reinterpret_cast<void*>(fl_xid(this)));
 
 #endif
-
-	c::plugin::startDispatchLoop();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -131,7 +129,6 @@ void gdPluginWindowGUI::closeEditor()
 {
 	assert(m_editor != nullptr);
 
-	c::plugin::stopDispatchLoop();
 	m_plugin.setResizeCallback(nullptr);
 	m_editor.reset();
 }

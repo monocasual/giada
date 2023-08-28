@@ -132,6 +132,7 @@ void Ui::init(int argc, char** argv, const m::Conf& conf, const std::string& pat
 	m_updater.start();
 
 	rebuildStaticWidgets();
+	startJuceDispatchLoop();
 
 	if (!isAudioReady)
 		v::gdAlert(m_langMapper.get(v::LangMap::MESSAGE_INIT_WRONGSYSTEM));
@@ -164,6 +165,8 @@ void Ui::shutdown(m::Conf& conf)
 
 	mainWindow.reset();
 	m_updater.stop();
+
+	stopJuceDispatchLoop();
 
 	u::log::print("[ui] All windows closed\n");
 }
