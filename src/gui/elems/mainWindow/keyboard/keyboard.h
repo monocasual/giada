@@ -125,7 +125,7 @@ private:
 	/* getColumnAtCursor
 	Returns the column below the cursor. */
 
-	geColumn* getColumnAtCursor(Pixel x);
+	geColumn* getColumnAtCursor(Pixel x) const;
 
 	/* getChannel
 	Given a channel ID returns the UI channel it belongs to. */

@@ -382,7 +382,7 @@ geColumn* geKeyboard::getColumn(ID id)
 	return nullptr;
 }
 
-geColumn* geKeyboard::getColumnAtCursor(Pixel px)
+geColumn* geKeyboard::getColumnAtCursor(Pixel px) const
 {
 	for (geColumn* c : m_columns)
 		if (geompp::Range(c->x(), c->x() + c->w()).contains(px))
