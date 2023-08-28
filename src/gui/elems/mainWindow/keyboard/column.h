@@ -60,6 +60,11 @@ public:
 
 	int countChannels() const;
 
+	/* showAddChannelMenu
+	Displays the menu for adding/removing channels. */
+
+	void showAddChannelMenu() const;
+
 	/* addChannel
 	Adds a new channel in this column. */
 
@@ -80,8 +85,6 @@ public:
 
 private:
 	int computeHeight() const;
-
-	void showAddChannelMenu() const;
 
 	std::vector<geChannel*> m_channels;
 

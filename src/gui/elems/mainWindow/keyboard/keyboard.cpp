@@ -259,6 +259,12 @@ int geKeyboard::handle(int e)
 			m_channelDragger.begin();
 			return 1;
 		}
+		if (Fl::event_button3())
+		{
+			openColumnMenu();
+			return 1;
+		}
+
 		return geScroll::handle(e);
 
 	case FL_DRAG:
@@ -417,6 +423,16 @@ std::vector<std::string> geKeyboard::getDroppedFilePaths() const
 	for (std::string& p : paths)
 		p = u::fs::stripFileUrl(p);
 	return paths;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geKeyboard::openColumnMenu() const
+{
+	const geColumn* column = getColumnAtCursor(Fl::event_x());
+	if (column == nullptr || column->getChannelAtCursor(Fl::event_y()) != nullptr)
+		return;
+	column->showAddChannelMenu();
 }
 
 /* -------------------------------------------------------------------------- */

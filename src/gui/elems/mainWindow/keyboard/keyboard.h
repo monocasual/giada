@@ -117,6 +117,11 @@ private:
 
 	std::vector<std::string> getDroppedFilePaths() const;
 
+	/* openColumnMenu
+	Opens the 'add/remove channel' menu for the column under the cursor. */
+
+	void openColumnMenu() const;
+
 	/* getColumn
 	Returns the column given the ID. */
 
