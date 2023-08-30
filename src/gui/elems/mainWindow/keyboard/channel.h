@@ -80,10 +80,10 @@ protected:
 	/* Define some breakpoints for dynamic resize. BREAK_DELTA: base amount of
 	pixels to shrink sampleButton. */
 
-	static const int BREAK_LARGE  = 240;
-	static const int BREAK_MEDIUM = 216;
-	static const int BREAK_SMALL  = 192;
-	static const int BREAK_MINI   = 168;
+	static const int BREAK_LARGE  = 250;
+	static const int BREAK_MEDIUM = 226;
+	static const int BREAK_SMALL  = 202;
+	static const int BREAK_MINI   = 178;
 
 	static void cb_changeVol(Fl_Widget* /*w*/, void* p);
 	void        cb_changeVol();
