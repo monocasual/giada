@@ -55,10 +55,10 @@ namespace giada
 
 /* -- version --------------------------------------------------------------- */
 constexpr auto G_APP_NAME      = "Giada";
-constexpr auto G_VERSION_STR   = "0.25.1";
+constexpr auto G_VERSION_STR   = "0.26.0";
 constexpr int  G_VERSION_MAJOR = 0;
-constexpr int  G_VERSION_MINOR = 25;
-constexpr int  G_VERSION_PATCH = 1;
+constexpr int  G_VERSION_MINOR = 26;
+constexpr int  G_VERSION_PATCH = 0;
 
 constexpr auto G_CONF_FILENAME = "giada.conf";
 
