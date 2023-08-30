@@ -314,6 +314,7 @@ void geSampleChannel::resize(int X, int Y, int W, int H)
 {
 	geChannel::resize(X, Y, W, H);
 
+	progress->hide();
 	arm->hide();
 	modeBox->hide();
 	readActionsBtn->hide();
@@ -322,7 +323,10 @@ void geSampleChannel::resize(int X, int Y, int W, int H)
 	if (w() > BREAK_MINI)
 		arm->show();
 	if (w() > BREAK_SMALL)
+	{
+		progress->show();
 		fx->show();
+	}
 	if (w() > BREAK_MEDIUM)
 		modeBox->show();
 	if (w() > BREAK_LARGE)
