@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/mainWindow/keyboard/channelStatus.h"
+#include "gui/elems/mainWindow/keyboard/channelProgress.h"
 #include "core/const.h"
 #include "glue/channel.h"
 #include "gui/drawing.h"
@@ -33,7 +33,7 @@
 
 namespace giada::v
 {
-geChannelStatus::geChannelStatus(int x, int y, int w, int h, c::channel::Data& d)
+geChannelProgress::geChannelProgress(int x, int y, int w, int h, c::channel::Data& d)
 : Fl_Box(x, y, w, h)
 , m_channel(d)
 {
@@ -41,7 +41,7 @@ geChannelStatus::geChannelStatus(int x, int y, int w, int h, c::channel::Data& d
 
 /* -------------------------------------------------------------------------- */
 
-void geChannelStatus::draw()
+void geChannelProgress::draw()
 {
 	const ChannelStatus playStatus = m_channel.getPlayStatus();
 	const Frame         tracker    = m_channel.sample->getTracker();

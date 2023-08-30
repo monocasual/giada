@@ -35,7 +35,7 @@
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/menu.h"
-#include "gui/elems/mainWindow/keyboard/channelStatus.h"
+#include "gui/elems/mainWindow/keyboard/channelProgress.h"
 #include "gui/elems/mainWindow/keyboard/column.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannelButton.h"
@@ -80,7 +80,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 {
 	playButton     = new geImageButton(graphics::channelPlayOff, graphics::channelPlayOn);
 	arm            = new geImageButton(graphics::armOff, graphics::armOn, graphics::armDisabled);
-	status         = new geChannelStatus(0, 0, 0, 0, m_channel);
+	progress       = new geChannelProgress(0, 0, 0, 0, m_channel);
 	mainButton     = new geSampleChannelButton(0, 0, 0, 0, m_channel);
 	midiActivity   = new geMidiActivity();
 	readActionsBtn = new geImageButton(graphics::readActionOff, graphics::readActionOn, graphics::readActionDisabled);
@@ -92,7 +92,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 
 	add(playButton, G_GUI_UNIT);
 	add(arm, G_GUI_UNIT);
-	add(status, G_GUI_UNIT);
+	add(progress, G_GUI_UNIT);
 	add(mainButton);
 	add(midiActivity, 10);
 	add(readActionsBtn, G_GUI_UNIT);
@@ -105,7 +105,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 
 	playButton->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_PLAY));
 	arm->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_ARM));
-	status->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_STATUS));
+	progress->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_STATUS));
 	midiActivity->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_MIDIACTIVITY));
 	readActionsBtn->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_READACTIONS));
 	modeBox->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_MODEBOX));
@@ -279,7 +279,7 @@ void geSampleChannel::refresh()
 
 	if (m_channel.sample->waveId != 0)
 	{
-		status->redraw();
+		progress->redraw();
 		if (m_channel.sample->overdubProtection)
 			arm->deactivate();
 		else

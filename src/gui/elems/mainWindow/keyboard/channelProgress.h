@@ -26,8 +26,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_CHANNEL_STATUS_H
-#define GE_CHANNEL_STATUS_H
+#ifndef GE_CHANNEL_PROGRESS_H
+#define GE_CHANNEL_PROGRESS_H
 
 #include <FL/Fl_Box.H>
 
@@ -37,10 +37,10 @@ struct Data;
 }
 namespace giada::v
 {
-class geChannelStatus : public Fl_Box
+class geChannelProgress : public Fl_Box
 {
 public:
-	geChannelStatus(int x, int y, int w, int h, c::channel::Data& d);
+	geChannelProgress(int x, int y, int w, int h, c::channel::Data& d);
 
 	void draw() override;
 

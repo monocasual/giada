@@ -176,7 +176,7 @@ list(APPEND SOURCES
 	src/gui/elems/mainWindow/sequencer.cpp
 	src/gui/elems/mainWindow/keyboard/sampleChannelMode.cpp
 	src/gui/elems/mainWindow/keyboard/channelButton.cpp
-	src/gui/elems/mainWindow/keyboard/channelStatus.cpp
+        src/gui/elems/mainWindow/keyboard/channelProgress.cpp
 	src/gui/elems/mainWindow/keyboard/keyboard.cpp
 	src/gui/elems/mainWindow/keyboard/column.cpp
 	src/gui/elems/mainWindow/keyboard/sampleChannel.cpp

@@ -31,7 +31,7 @@
 #include "gui/elems/basics/imageButton.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/channelButton.h"
-#include "gui/elems/mainWindow/keyboard/channelStatus.h"
+#include "gui/elems/mainWindow/keyboard/channelProgress.h"
 #include "gui/elems/mainWindow/keyboard/column.h"
 #include "gui/elems/midiActivity.h"
 #include "gui/ui.h"

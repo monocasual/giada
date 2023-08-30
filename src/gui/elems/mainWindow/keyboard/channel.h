@@ -35,7 +35,7 @@ namespace giada::v
 {
 class geDial;
 class geImageButton;
-class geChannelStatus;
+class geChannelProgress;
 class geChannelButton;
 class geMidiActivity;
 class geChannel : public geFlex
@@ -66,15 +66,15 @@ public:
 
 	const c::channel::Data& getData() const;
 
-	geImageButton*   playButton;
-	geImageButton*   arm;
-	geChannelStatus* status;
-	geChannelButton* mainButton;
-	geMidiActivity*  midiActivity;
-	geImageButton*   mute;
-	geImageButton*   solo;
-	geDial*          vol;
-	geImageButton*   fx;
+	geImageButton*     playButton;
+	geImageButton*     arm;
+	geChannelProgress* progress;
+	geChannelButton*   mainButton;
+	geMidiActivity*    midiActivity;
+	geImageButton*     mute;
+	geImageButton*     solo;
+	geDial*            vol;
+	geImageButton*     fx;
 
 protected:
 	/* Define some breakpoints for dynamic resize. BREAK_DELTA: base amount of
