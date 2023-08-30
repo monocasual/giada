@@ -289,10 +289,8 @@ void Engine::shutdown(Conf& conf)
 
 	m_model.store(conf);
 
-	/* Currently the Engine is global/static, and so are all of its sub-components,
-	Model included. Some plug-ins (JUCE-based ones) crash hard on destructor when
-	deleted as a result of returning from main, so it's better to free them all first.
-	TODO - investigate this! */
+	/* It's safer and cleaner to free all plug-ins before closing the app. Some
+	would crash badly otherwise. */
 
 	m_pluginHost.freeAllPlugins();
 }
