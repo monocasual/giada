@@ -102,7 +102,7 @@ void Ui::load(const m::Patch& patch)
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::init(int argc, char** argv, const m::Conf& conf, const std::string& patchName, bool isAudioReady)
+void Ui::init(const m::Conf& conf, const std::string& patchName, bool isAudioReady)
 {
 	model.load(conf);
 
@@ -117,7 +117,7 @@ void Ui::init(int argc, char** argv, const m::Conf& conf, const std::string& pat
 	m_langMapper.init();
 	m_langMapper.read(model.langMap);
 
-	mainWindow = std::make_unique<gdMainWindow>(u::gui::getCenterWinBounds(model.mainWindowBounds), "", argc, argv);
+	mainWindow = std::make_unique<gdMainWindow>(u::gui::getCenterWinBounds(model.mainWindowBounds), "");
 	mainWindow->setTitle(patchName == "" ? G_DEFAULT_PATCH_NAME : patchName);
 
 	if (Fl::screen_scaling_supported() && model.uiScaling != G_DEFAULT_UI_SCALING)

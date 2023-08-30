@@ -70,7 +70,7 @@ void gdMainWindow::ScopedProgress::setProgress(float v)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, char** argv)
+gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 : gdWindow(r, title)
 {
 	Fl::visible_focus(0);
@@ -149,7 +149,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title, int argc, cha
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 	refresh();
-	show(argc, argv);
+	show();
 }
 
 /* -------------------------------------------------------------------------- */

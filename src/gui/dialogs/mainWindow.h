@@ -44,7 +44,7 @@ class gdMainWindow : public gdWindow
 	class ScopedProgress;
 
 public:
-	gdMainWindow(geompp::Rect<int>, const char* title, int argc, char** argv);
+	gdMainWindow(geompp::Rect<int>, const char* title);
 	~gdMainWindow();
 
 	void refresh() override;

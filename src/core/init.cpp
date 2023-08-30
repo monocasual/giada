@@ -105,7 +105,7 @@ int tests(int argc, char** argv)
 
 /* -------------------------------------------------------------------------- */
 
-void startup(int argc, char** argv)
+void startup()
 {
 	g_ui->dispatcher.onEventOccured = []() {
 		g_engine->getMainApi().startActionRecOnCallback();
@@ -142,7 +142,7 @@ void startup(int argc, char** argv)
 
 	juce::initialiseJuce_GUI();
 	g_engine->init(conf);
-	g_ui->init(argc, argv, conf, G_DEFAULT_PATCH_NAME, g_engine->isAudioReady());
+	g_ui->init(conf, G_DEFAULT_PATCH_NAME, g_engine->isAudioReady());
 
 	printBuildInfo_();
 }

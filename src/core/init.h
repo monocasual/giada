@@ -35,7 +35,7 @@ Performs tests, if requested. Returns -1 if no tests are available or the
 
 int tests(int argc, char** argv);
 
-void startup(int argc, char** argv);
+void startup();
 void run();
 void shutdown();
 } // namespace giada::m::init

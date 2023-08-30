@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 	g_engine = enginePtr.get();
 	g_ui     = uiPtr.get();
 
-	m::init::startup(argc, argv);
+	m::init::startup();
 	m::init::run();
 
 	return 0;

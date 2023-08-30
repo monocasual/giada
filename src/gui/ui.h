@@ -72,7 +72,7 @@ public:
 
 	void load(const m::Patch&);
 
-	void init(int argc, char** argv, const m::Conf&, const std::string& patchName, bool isAudioReady);
+	void init(const m::Conf&, const std::string& patchName, bool isAudioReady);
 	void reset();
 	void run();
 	void shutdown(m::Conf&);
