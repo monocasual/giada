@@ -277,9 +277,10 @@ void geSampleChannel::refresh()
 {
 	geChannel::refresh();
 
+	progress->redraw();
+
 	if (m_channel.sample->waveId != 0)
 	{
-		progress->redraw();
 		if (m_channel.sample->overdubProtection)
 			arm->deactivate();
 		else
