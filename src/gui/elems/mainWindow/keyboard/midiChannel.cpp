@@ -198,9 +198,9 @@ void geMidiChannel::resize(int X, int Y, int W, int H)
 	arm->hide();
 	fx->hide();
 
-	if (w() > BREAK_ARM)
+	if (w() > BREAK_MINI)
 		arm->show();
-	if (w() > BREAK_FX)
+	if (w() > BREAK_SMALL)
 		fx->show();
 }
 } // namespace giada::v

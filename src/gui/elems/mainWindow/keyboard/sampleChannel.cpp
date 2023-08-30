@@ -318,13 +318,13 @@ void geSampleChannel::resize(int X, int Y, int W, int H)
 	readActionsBtn->hide();
 	fx->hide();
 
-	if (w() > BREAK_ARM)
+	if (w() > BREAK_MINI)
 		arm->show();
-	if (w() > BREAK_FX)
+	if (w() > BREAK_SMALL)
 		fx->show();
-	if (w() > BREAK_MODE_BOX)
+	if (w() > BREAK_MEDIUM)
 		modeBox->show();
-	if (w() > BREAK_READ_ACTIONS)
+	if (w() > BREAK_LARGE)
 		readActionsBtn->show();
 }
 } // namespace giada::v
