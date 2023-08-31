@@ -29,7 +29,7 @@
 
 #include "core/types.h"
 #include "glue/channel.h"
-#include <FL/Fl_Group.H>
+#include "gui/elems/basics/flex.h"
 #include <functional>
 #include <vector>
 
@@ -39,7 +39,7 @@ class geTextButton;
 class geResizerBar;
 class geKeyboard;
 class geChannel;
-class geColumn : public Fl_Group
+class geColumn : public geFlex
 {
 public:
 	geColumn(int x, int y, int w, int h, ID id, geResizerBar* b);

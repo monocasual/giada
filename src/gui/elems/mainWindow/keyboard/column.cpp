@@ -54,6 +54,15 @@ enum class Menu
 	ADD_MIDI_CHANNEL,
 	REMOVE
 };
+
+/* -------------------------------------------------------------------------- */
+
+geChannel* makeChannel_(const c::channel::Data& data)
+{
+	if (data.type == ChannelType::SAMPLE)
+		return new geSampleChannel(0, 0, 0, 0, data);
+	return new geMidiChannel(0, 0, 0, 0, data);
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -61,7 +70,7 @@ enum class Menu
 /* -------------------------------------------------------------------------- */
 
 geColumn::geColumn(int X, int Y, int W, int H, ID id, geResizerBar* b)
-: Fl_Group(X, Y, W, H)
+: geFlex(X, Y, W, H, Direction::VERTICAL)
 , id(id)
 , resizerBar(b)
 {
@@ -81,16 +90,8 @@ void geColumn::refresh()
 
 geChannel* geColumn::addChannel(c::channel::Data d)
 {
-	geChannel* gch  = nullptr;
-	Fl_Widget* last = m_channels.size() == 0 ? static_cast<Fl_Widget*>(m_addChannelBtn) : m_channels.back();
-
-	if (d.type == ChannelType::SAMPLE)
-		gch = new geSampleChannel(x(), last->y() + last->h() + G_GUI_INNER_MARGIN, w(), d.height, d);
-	else
-		gch = new geMidiChannel(x(), last->y() + last->h() + G_GUI_INNER_MARGIN, w(), d.height, d);
-
-	geResizerBar* bar = new geResizerBar(x(), gch->y() + gch->h(), w(),
-	    G_GUI_INNER_MARGIN, G_GUI_UNIT, geResizerBar::Direction::VERTICAL,
+	geChannel*    gch = makeChannel_(d);
+	geResizerBar* bar = new geResizerBar(0, 0, 0, G_GUI_INNER_MARGIN, G_GUI_UNIT, geResizerBar::Direction::VERTICAL,
 	    geResizerBar::Mode::MOVE);
 
 	/* Update the column height while dragging the resizer bar. */
@@ -109,16 +110,9 @@ geChannel* geColumn::addChannel(c::channel::Data d)
 
 	m_channels.push_back(gch);
 
-	/* Temporarily disable the resizability, add new stuff, resize the group and 
-	bring the resizability back. This is needed to prevent weird vertical 
-	stretching on existing content. */
-
-	resizable(nullptr);
-	add(gch);
-	add(bar);
+	addWidget(gch, d.height);
+	addWidget(bar, G_GUI_INNER_MARGIN);
 	size(w(), computeHeight());
-	init_sizes();
-	resizable(this);
 
 	return gch;
 }
@@ -194,13 +188,15 @@ geChannel* geColumn::getLastChannel() const
 
 void geColumn::init()
 {
-	Fl_Group::clear();
+	clear();
 	m_channels.clear();
 
-	m_addChannelBtn          = new geTextButton(x(), y(), w(), G_GUI_UNIT, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON));
+	m_addChannelBtn          = new geTextButton(g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON));
 	m_addChannelBtn->onClick = [this]() { showAddChannelMenu(); };
 
-	add(m_addChannelBtn);
+	addWidget(m_addChannelBtn, G_GUI_UNIT);
+	addWidget(new geBox(), G_GUI_INNER_MARGIN); // Spacer between 'Edit column' button and channels
+	end();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -222,9 +218,8 @@ int geColumn::countChannels() const
 
 int geColumn::computeHeight() const
 {
-	int out = 0;
-	for (const geChannel* c : m_channels)
-		out += c->h() + G_GUI_INNER_MARGIN;
-	return out + m_addChannelBtn->h() + G_GUI_INNER_MARGIN;
+	const auto last   = child(children() - 1);
+	const int  height = (last->y() + last->h()) - y();
+	return height;
 }
 } // namespace giada::v
