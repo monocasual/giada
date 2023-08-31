@@ -46,6 +46,9 @@ public:
 	geFlex(geompp::Rect<int>, Direction d, int gutter = 0, geompp::Border<int> pad = {});
 	geFlex(Direction d, int gutter = 0, geompp::Border<int> pad = {});
 
+	void add(Fl_Widget&) = delete;
+	void add(Fl_Widget*) = delete;
+
 	/* addWidget
 	Adds an existing widget to the Flex layout. If 'size' == -1, the widget
 	will be stretched to take up the available space. WARNING: like Fl_Group,
