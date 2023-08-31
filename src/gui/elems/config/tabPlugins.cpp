@@ -60,17 +60,17 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 			m_folderPath = new geInput(g_ui->getI18Text(LangMap::CONFIG_PLUGINS_FOLDER));
 			m_browse     = new geImageButton(graphics::plusOff, graphics::plusOn);
 
-			line1->add(m_folderPath);
-			line1->add(m_browse, 20);
+			line1->addWidget(m_folderPath);
+			line1->addWidget(m_browse, 20);
 			line1->end();
 		}
 
 		m_scanButton = new geTextButton("");
 		m_info       = new geBox();
 
-		body->add(line1, 20);
-		body->add(m_scanButton, 20);
-		body->add(m_info);
+		body->addWidget(line1, 20);
+		body->addWidget(m_scanButton, 20);
+		body->addWidget(m_info);
 		body->end();
 	}
 

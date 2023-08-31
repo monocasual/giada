@@ -121,8 +121,8 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, const Model& model)
 			m_enable  = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_ENABLE));
 			m_channel = new geChoice();
 
-			enableGroup->add(m_enable, geMidiLearnerPack::LEARNER_WIDTH - 120);
-			enableGroup->add(m_channel, 120);
+			enableGroup->addWidget(m_enable, geMidiLearnerPack::LEARNER_WIDTH - 120);
+			enableGroup->addWidget(m_channel, 120);
 			enableGroup->end();
 		}
 
@@ -137,15 +137,15 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, const Model& model)
 		{
 			m_ok = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
 
-			footer->add(new geBox()); // Spacer
-			footer->add(m_ok, 80);
+			footer->addWidget(new geBox()); // Spacer
+			footer->addWidget(m_ok, 80);
 			footer->end();
 		}
 
-		container->add(enableGroup, G_GUI_UNIT);
-		container->add(m_veloAsVol, G_GUI_UNIT);
-		container->add(m_container);
-		container->add(footer, G_GUI_UNIT);
+		container->addWidget(enableGroup, G_GUI_UNIT);
+		container->addWidget(m_veloAsVol, G_GUI_UNIT);
+		container->addWidget(m_container);
+		container->addWidget(footer, G_GUI_UNIT);
 		container->end();
 	}
 

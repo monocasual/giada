@@ -47,10 +47,10 @@ geRangeTool::geRangeTool(const c::sampleEditor::Data& d)
 	m_begin = new geInput();
 	m_end   = new geInput();
 	m_reset = new geTextButton(g_ui->getI18Text(LangMap::COMMON_RESET));
-	add(m_label, 50);
-	add(m_begin, 70);
-	add(m_end, 70);
-	add(m_reset, 70);
+	addWidget(m_label, 50);
+	addWidget(m_begin, 70);
+	addWidget(m_end, 70);
+	addWidget(m_reset, 70);
 	end();
 
 	m_begin->setType(FL_INT_INPUT);

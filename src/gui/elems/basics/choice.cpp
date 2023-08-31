@@ -71,10 +71,10 @@ geChoice::geChoice(int x, int y, int w, int h, const char* l, int labelWidth)
 	if (l != nullptr)
 	{
 		m_text = new geBox(l, FL_ALIGN_RIGHT);
-		add(m_text, labelWidth != 0 ? labelWidth : u::gui::getStringRect(l).w);
+		addWidget(m_text, labelWidth != 0 ? labelWidth : u::gui::getStringRect(l).w);
 	}
 	m_menu = new geMenu(x, y, w, h);
-	add(m_menu);
+	addWidget(m_menu);
 	end();
 }
 

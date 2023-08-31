@@ -51,13 +51,13 @@ gdChannelNameInput::gdChannelNameInput(const c::channel::Data& d)
 		{
 			m_ok     = new geTextButton(g_ui->getI18Text(LangMap::COMMON_OK));
 			m_cancel = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CANCEL));
-			footer->add(new geBox());
-			footer->add(m_cancel, 70);
-			footer->add(m_ok, 70);
+			footer->addWidget(new geBox());
+			footer->addWidget(m_cancel, 70);
+			footer->addWidget(m_ok, 70);
 			footer->end();
 		}
-		container->add(m_name, G_GUI_UNIT);
-		container->add(footer, G_GUI_UNIT);
+		container->addWidget(m_name, G_GUI_UNIT);
+		container->addWidget(footer, G_GUI_UNIT);
 		container->end();
 	}
 

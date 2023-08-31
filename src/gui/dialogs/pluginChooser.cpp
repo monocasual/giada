@@ -47,8 +47,8 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 		geFlex* header = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 		{
 			sortMethod = new geChoice(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY), 0);
-			header->add(sortMethod, 180);
-			header->add(new geBox());
+			header->addWidget(sortMethod, 180);
+			header->addWidget(new geBox());
 			header->end();
 		}
 
@@ -58,15 +58,15 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 		{
 			addBtn    = new geTextButton(g_ui->getI18Text(LangMap::COMMON_ADD));
 			cancelBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CANCEL));
-			footer->add(new geBox());
-			footer->add(cancelBtn, 80);
-			footer->add(addBtn, 80);
+			footer->addWidget(new geBox());
+			footer->addWidget(cancelBtn, 80);
+			footer->addWidget(addBtn, 80);
 			footer->end();
 		}
 
-		container->add(header, G_GUI_UNIT);
-		container->add(browser);
-		container->add(footer, G_GUI_UNIT);
+		container->addWidget(header, G_GUI_UNIT);
+		container->addWidget(browser);
+		container->addWidget(footer, G_GUI_UNIT);
 		container->end();
 	}
 

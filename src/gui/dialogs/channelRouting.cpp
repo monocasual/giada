@@ -48,21 +48,21 @@ gdChannelRouting::gdChannelRouting(const c::channel::Data& d)
 		{
 			m_volume = new geVolumeTool(d.id, d.volume, LABEL_WIDTH);
 			m_pan    = new gePanTool(d.id, d.pan, LABEL_WIDTH);
-			body->add(m_volume, G_GUI_UNIT);
-			body->add(m_pan, G_GUI_UNIT);
+			body->addWidget(m_volume, G_GUI_UNIT);
+			body->addWidget(m_pan, G_GUI_UNIT);
 			body->end();
 		}
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			m_close = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
-			footer->add(new geBox());
-			footer->add(m_close, 70);
+			footer->addWidget(new geBox());
+			footer->addWidget(m_close, 70);
 			footer->end();
 		}
 
-		container->add(body);
-		container->add(footer, G_GUI_UNIT);
+		container->addWidget(body);
+		container->addWidget(footer, G_GUI_UNIT);
 		container->end();
 	}
 

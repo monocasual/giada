@@ -47,11 +47,11 @@ geTabBindings::geTabBindings(geompp::Rect<int> bounds, const Model& model)
 		recordInput   = new geKeyBinder(g_ui->getI18Text(LangMap::CONFIG_BINDINGS_RECORDAUDIO), model.keyBindRecordInput);
 		exit          = new geKeyBinder(g_ui->getI18Text(LangMap::CONFIG_BINDINGS_EXIT), model.keyBindExit);
 
-		body->add(play, G_GUI_UNIT);
-		body->add(rewind, G_GUI_UNIT);
-		body->add(recordActions, G_GUI_UNIT);
-		body->add(recordInput, G_GUI_UNIT);
-		body->add(exit, G_GUI_UNIT);
+		body->addWidget(play, G_GUI_UNIT);
+		body->addWidget(rewind, G_GUI_UNIT);
+		body->addWidget(recordActions, G_GUI_UNIT);
+		body->addWidget(recordInput, G_GUI_UNIT);
+		body->addWidget(exit, G_GUI_UNIT);
 		body->end();
 	}
 

@@ -56,14 +56,14 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	m_pitchHalf   = new geImageButton(graphics::divideOff, graphics::divideOn);
 	m_pitchDouble = new geImageButton(graphics::multiplyOff, graphics::multiplyOn);
 	m_pitchReset  = new geTextButton(g_ui->getI18Text(LangMap::COMMON_RESET));
-	add(m_label, 50);
-	add(m_dial, G_GUI_UNIT);
-	add(m_input, 70);
-	add(m_pitchToBar, 70);
-	add(m_pitchToSong, 70);
-	add(m_pitchHalf, G_GUI_UNIT);
-	add(m_pitchDouble, G_GUI_UNIT);
-	add(m_pitchReset, 70);
+	addWidget(m_label, 50);
+	addWidget(m_dial, G_GUI_UNIT);
+	addWidget(m_input, 70);
+	addWidget(m_pitchToBar, 70);
+	addWidget(m_pitchToSong, 70);
+	addWidget(m_pitchHalf, G_GUI_UNIT);
+	addWidget(m_pitchDouble, G_GUI_UNIT);
+	addWidget(m_pitchReset, 70);
 	end();
 
 	m_dial->range(0.01f, 4.0f);

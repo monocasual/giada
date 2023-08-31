@@ -54,12 +54,12 @@ gePluginElement::gePluginElement(int x, int y, int w, int h, c::plugin::Plugin d
 	shiftUpBtn   = new geImageButton(graphics::upOff, graphics::upOn);
 	shiftDownBtn = new geImageButton(graphics::downOff, graphics::downOn);
 	remove       = new geImageButton(graphics::removeOff, graphics::removeOn);
-	add(button);
-	add(program);
-	add(bypass, G_GUI_UNIT);
-	add(shiftUpBtn, G_GUI_UNIT);
-	add(shiftDownBtn, G_GUI_UNIT);
-	add(remove, G_GUI_UNIT);
+	addWidget(button);
+	addWidget(program);
+	addWidget(bypass, G_GUI_UNIT);
+	addWidget(shiftUpBtn, G_GUI_UNIT);
+	addWidget(shiftDownBtn, G_GUI_UNIT);
+	addWidget(remove, G_GUI_UNIT);
 	end();
 
 	remove->onClick = [this]() { removePlugin(); };

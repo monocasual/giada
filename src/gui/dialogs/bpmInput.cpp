@@ -49,8 +49,8 @@ gdBpmInput::gdBpmInput(float value)
 	{
 		m_value = new geInput(0, 0, 0, 0);
 		m_ok    = new geTextButton(g_ui->getI18Text(LangMap::COMMON_OK));
-		container->add(m_value);
-		container->add(m_ok, 70);
+		container->addWidget(m_value);
+		container->addWidget(m_ok, 70);
 		container->end();
 	}
 

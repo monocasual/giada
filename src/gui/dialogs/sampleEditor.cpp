@@ -79,12 +79,12 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 			snap    = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::COMMON_SNAPTOGRID));
 			zoomOut = new geImageButton(graphics::minusOff, graphics::minusOn);
 			zoomIn  = new geImageButton(graphics::plusOff, graphics::plusOn);
-			top->add(reload, 70);
-			top->add(grid, 50);
-			top->add(snap, 12);
-			top->add(new geBox());
-			top->add(zoomOut, G_GUI_UNIT);
-			top->add(zoomIn, G_GUI_UNIT);
+			top->addWidget(reload, 70);
+			top->addWidget(grid, 50);
+			top->addWidget(snap, 12);
+			top->addWidget(new geBox());
+			top->addWidget(zoomOut, G_GUI_UNIT);
+			top->addWidget(zoomIn, G_GUI_UNIT);
 			top->end();
 		}
 
@@ -98,9 +98,9 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 				rewind = new geImageButton(graphics::rewindOff, graphics::rewindOn);
 				play   = new geImageButton(graphics::playOff, graphics::playOn);
 				loop   = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::SAMPLEEDITOR_LOOP));
-				controls->add(rewind, 25);
-				controls->add(play, 25);
-				controls->add(loop, -1);
+				controls->addWidget(rewind, 25);
+				controls->addWidget(play, 25);
+				controls->addWidget(loop, -1);
 				controls->end();
 			}
 
@@ -109,23 +109,23 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 				pitchTool = new gePitchTool(m_data);
 				rangeTool = new geRangeTool(m_data);
 				shiftTool = new geShiftTool(m_data);
-				tools->add(pitchTool, G_GUI_UNIT);
-				tools->add(rangeTool, G_GUI_UNIT);
-				tools->add(shiftTool, G_GUI_UNIT);
+				tools->addWidget(pitchTool, G_GUI_UNIT);
+				tools->addWidget(rangeTool, G_GUI_UNIT);
+				tools->addWidget(shiftTool, G_GUI_UNIT);
 				tools->end();
 			}
 
 			info = new geBox();
 
-			bottom->add(controls, 120);
-			bottom->add(tools, 420);
-			bottom->add(info);
+			bottom->addWidget(controls, 120);
+			bottom->addWidget(tools, 420);
+			bottom->addWidget(info);
 			bottom->end();
 		}
 
-		container->add(top, G_GUI_UNIT);
-		container->add(waveTools);
-		container->add(bottom, 68);
+		container->addWidget(top, G_GUI_UNIT);
+		container->addWidget(waveTools);
+		container->addWidget(bottom, 68);
 		container->end();
 	}
 

@@ -143,8 +143,8 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 			m_bufferSize = new geChoice(g_ui->getI18Text(LangMap::CONFIG_AUDIO_BUFFERSIZE), LABEL_WIDTH);
 			m_sampleRate = new geChoice(g_ui->getI18Text(LangMap::CONFIG_AUDIO_SAMPLERATE), LABEL_WIDTH);
 
-			line1->add(m_bufferSize, 180);
-			line1->add(m_sampleRate, 180);
+			line1->addWidget(m_bufferSize, 180);
+			line1->addWidget(m_sampleRate, 180);
 			line1->end();
 		}
 
@@ -155,8 +155,8 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 			m_channelsOut = new geChannelMenu(g_ui->getI18Text(LangMap::CONFIG_AUDIO_OUTPUTCHANNELS));
 			m_limitOutput = new geCheck(x() + 177, y() + 93, 100, 20, g_ui->getI18Text(LangMap::CONFIG_AUDIO_LIMITOUTPUT));
 
-			line2->add(m_channelsOut, 180);
-			line2->add(m_limitOutput);
+			line2->addWidget(m_channelsOut, 180);
+			line2->addWidget(m_limitOutput);
 			line2->end();
 		}
 
@@ -165,8 +165,8 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 			m_sounddevIn = new geDeviceMenu(g_ui->getI18Text(LangMap::CONFIG_AUDIO_INPUTDEVICE));
 			m_enableIn   = new geCheck(0, 0, 0, 0);
 
-			line3->add(m_sounddevIn);
-			line3->add(m_enableIn, 12);
+			line3->addWidget(m_sounddevIn);
+			line3->addWidget(m_enableIn, 12);
 			line3->end();
 		}
 
@@ -175,8 +175,8 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 			m_channelsIn      = new geChannelMenu(g_ui->getI18Text(LangMap::CONFIG_AUDIO_INPUTCHANNELS));
 			m_recTriggerLevel = new geInput(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RECTHRESHOLD), 120);
 
-			line4->add(m_channelsIn, 180);
-			line4->add(m_recTriggerLevel, 180);
+			line4->addWidget(m_channelsIn, 180);
+			line4->addWidget(m_recTriggerLevel, 180);
 			line4->end();
 		}
 
@@ -186,28 +186,28 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 			{
 				m_applyBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_APPLY));
 
-				line5->add(new geBox());
-				line5->add(m_applyBtn, 80);
-				line5->add(new geBox());
+				line5->addWidget(new geBox());
+				line5->addWidget(m_applyBtn, 80);
+				line5->addWidget(new geBox());
 				line5->end();
 			}
 
-			col1->add(new geBox());
-			col1->add(line5, G_GUI_UNIT);
-			col1->add(new geBox());
+			col1->addWidget(new geBox());
+			col1->addWidget(line5, G_GUI_UNIT);
+			col1->addWidget(new geBox());
 			col1->end();
 		}
 
 		m_rsmpQuality = new geChoice(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING), LABEL_WIDTH);
 
-		body->add(m_api, 20);
-		body->add(line1, 20);
-		body->add(m_sounddevOut, 20);
-		body->add(line2, 20);
-		body->add(line3, 20);
-		body->add(line4, 20);
-		body->add(m_rsmpQuality, 20);
-		body->add(col1);
+		body->addWidget(m_api, 20);
+		body->addWidget(line1, 20);
+		body->addWidget(m_sounddevOut, 20);
+		body->addWidget(line2, 20);
+		body->addWidget(line3, 20);
+		body->addWidget(line4, 20);
+		body->addWidget(m_rsmpQuality, 20);
+		body->addWidget(col1);
 		body->end();
 	}
 

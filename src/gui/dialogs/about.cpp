@@ -75,11 +75,11 @@ gdAbout::gdAbout()
 			vstText->label(g_ui->getI18Text(LangMap::ABOUT_BODY_VST));
 #endif
 
-			body->add(logo, 120);
-			body->add(text, 140);
+			body->addWidget(logo, 120);
+			body->addWidget(text, 140);
 #ifdef WITH_VST
-			body->add(vstLogo, 60);
-			body->add(vstText);
+			body->addWidget(vstLogo, 60);
+			body->addWidget(vstText);
 #endif
 			body->end();
 		}
@@ -88,13 +88,13 @@ gdAbout::gdAbout()
 		{
 			geTextButton* close = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
 			close->onClick      = [this]() { do_callback(); };
-			footer->add(new geBox()); // Spacer
-			footer->add(close, 80);
+			footer->addWidget(new geBox()); // Spacer
+			footer->addWidget(close, 80);
 			footer->end();
 		}
 
-		container->add(body);
-		container->add(footer, G_GUI_UNIT);
+		container->addWidget(body);
+		container->addWidget(footer, G_GUI_UNIT);
 		container->end();
 	}
 

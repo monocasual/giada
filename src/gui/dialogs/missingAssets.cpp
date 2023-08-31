@@ -48,15 +48,15 @@ gdMissingAssets::gdMissingAssets(const m::model::LoadState& state)
 			geBox* textIntro = new geBox(g_ui->getI18Text(LangMap::MISSINGASSETS_INTRO), FL_ALIGN_LEFT);
 			textIntro->color(G_COLOR_BLUE);
 
-			body->add(textIntro, G_GUI_UNIT);
+			body->addWidget(textIntro, G_GUI_UNIT);
 
 			if (state.missingWaves.size() > 0)
 			{
 				geBrowser* waves = new geBrowser();
 				for (const std::string& s : state.missingWaves)
 					waves->add(s.c_str());
-				body->add(new geBox(g_ui->getI18Text(LangMap::MISSINGASSETS_AUDIOFILES), FL_ALIGN_LEFT), G_GUI_UNIT);
-				body->add(waves);
+				body->addWidget(new geBox(g_ui->getI18Text(LangMap::MISSINGASSETS_AUDIOFILES), FL_ALIGN_LEFT), G_GUI_UNIT);
+				body->addWidget(waves);
 			}
 
 			if (state.missingPlugins.size() > 0)
@@ -64,8 +64,8 @@ gdMissingAssets::gdMissingAssets(const m::model::LoadState& state)
 				geBrowser* plugins = new geBrowser();
 				for (const std::string& s : state.missingPlugins)
 					plugins->add(s.c_str());
-				body->add(new geBox(g_ui->getI18Text(LangMap::MISSINGASSETS_PLUGINS), FL_ALIGN_LEFT), G_GUI_UNIT);
-				body->add(plugins);
+				body->addWidget(new geBox(g_ui->getI18Text(LangMap::MISSINGASSETS_PLUGINS), FL_ALIGN_LEFT), G_GUI_UNIT);
+				body->addWidget(plugins);
 			}
 			body->end();
 		}
@@ -74,13 +74,13 @@ gdMissingAssets::gdMissingAssets(const m::model::LoadState& state)
 		{
 			geTextButton* close = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
 			close->onClick      = [this]() { do_callback(); };
-			footer->add(new geBox()); // Spacer
-			footer->add(close, 80);
+			footer->addWidget(new geBox()); // Spacer
+			footer->addWidget(close, 80);
 			footer->end();
 		}
 
-		container->add(body);
-		container->add(footer, G_GUI_UNIT);
+		container->addWidget(body);
+		container->addWidget(footer, G_GUI_UNIT);
 		container->end();
 	}
 

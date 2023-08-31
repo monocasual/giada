@@ -57,8 +57,8 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
                 g_ui->getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
 			m_enableOut = new geCheck(0, 0, 0, 0);
 
-			line1->add(m_portOut);
-			line1->add(m_enableOut, 12);
+			line1->addWidget(m_portOut);
+			line1->addWidget(m_enableOut, 12);
 			line1->end();
 		}
 
@@ -68,8 +68,8 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
                 g_ui->getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
 			m_enableIn = new geCheck(0, 0, 0, 0);
 
-			line2->add(m_portIn);
-			line2->add(m_enableIn, 12);
+			line2->addWidget(m_portIn);
+			line2->addWidget(m_enableIn, 12);
 			line2->end();
 		}
 
@@ -79,15 +79,15 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 			{
 				m_applyBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_APPLY));
 
-				line5->add(new geBox());
-				line5->add(m_applyBtn, 80);
-				line5->add(new geBox());
+				line5->addWidget(new geBox());
+				line5->addWidget(m_applyBtn, 80);
+				line5->addWidget(new geBox());
 				line5->end();
 			}
 
-			col1->add(new geBox());
-			col1->add(line5, G_GUI_UNIT);
-			col1->add(new geBox());
+			col1->addWidget(new geBox());
+			col1->addWidget(line5, G_GUI_UNIT);
+			col1->addWidget(new geBox());
 			col1->end();
 		}
 
@@ -95,12 +95,12 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		    g_ui->getI18Text(LangMap::CONFIG_MIDI_NOMIDIMAPSFOUND), LABEL_WIDTH);
 		m_sync    = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MIDI_SYNC), LABEL_WIDTH);
 
-		body->add(m_system, 20);
-		body->add(line1, 20);
-		body->add(line2, 20);
-		body->add(m_midiMap, 20);
-		body->add(m_sync, 20);
-		body->add(col1);
+		body->addWidget(m_system, 20);
+		body->addWidget(line1, 20);
+		body->addWidget(line2, 20);
+		body->addWidget(m_midiMap, 20);
+		body->addWidget(m_sync, 20);
+		body->addWidget(col1);
 		body->end();
 	}
 

@@ -50,18 +50,18 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 				m_enableOut   = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::MIDIOUTPUT_CHANNEL_ENABLE));
 				m_chanListOut = new geChoice();
 
-				enableOutGroup->add(m_enableOut, 150);
-				enableOutGroup->add(new geBox()); // Spacer
-				enableOutGroup->add(m_chanListOut);
+				enableOutGroup->addWidget(m_enableOut, 150);
+				enableOutGroup->addWidget(new geBox()); // Spacer
+				enableOutGroup->addWidget(m_chanListOut);
 				enableOutGroup->end();
 			}
 
 			m_enableLightning = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::MIDIOUTPUT_CHANNEL_ENABLE_LIGHTNING));
 			m_learners        = new geLightningLearnerPack(0, 0, channelId);
 
-			body->add(enableOutGroup, G_GUI_UNIT);
-			body->add(m_enableLightning, G_GUI_UNIT);
-			body->add(m_learners);
+			body->addWidget(enableOutGroup, G_GUI_UNIT);
+			body->addWidget(m_enableLightning, G_GUI_UNIT);
+			body->addWidget(m_learners);
 			body->end();
 		}
 
@@ -69,13 +69,13 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 		{
 			m_close = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
 
-			footer->add(new geBox()); // Spacer
-			footer->add(m_close, 80);
+			footer->addWidget(new geBox()); // Spacer
+			footer->addWidget(m_close, 80);
 			footer->end();
 		}
 
-		container->add(body);
-		container->add(footer, G_GUI_UNIT);
+		container->addWidget(body);
+		container->addWidget(footer, G_GUI_UNIT);
 		container->end();
 	}
 

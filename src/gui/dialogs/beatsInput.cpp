@@ -48,9 +48,9 @@ gdBeatsInput::gdBeatsInput(int beats, int bars)
 		m_beats = new geInput(0, 0, 0, 0);
 		m_bars  = new geInput(0, 0, 0, 0);
 		m_ok    = new geTextButton(g_ui->getI18Text(LangMap::COMMON_OK));
-		container->add(m_beats);
-		container->add(m_bars);
-		container->add(m_ok, 70);
+		container->addWidget(m_beats);
+		container->addWidget(m_bars);
+		container->addWidget(m_ok, 70);
 		container->end();
 	}
 

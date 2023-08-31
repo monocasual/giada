@@ -46,13 +46,13 @@ public:
 	geFlex(geompp::Rect<int>, Direction d, int gutter = 0, geompp::Border<int> pad = {});
 	geFlex(Direction d, int gutter = 0, geompp::Border<int> pad = {});
 
-	/* add
+	/* addWidget
 	Adds an existing widget to the Flex layout. If 'size' == -1, the widget
 	will be stretched to take up the available space. WARNING: like Fl_Group,
 	geFlex owns widgets! */
 
-	void add(Fl_Widget&, int size = -1);
-	void add(Fl_Widget*, int size = -1);
+	void addWidget(Fl_Widget&, int size = -1);
+	void addWidget(Fl_Widget*, int size = -1);
 };
 } // namespace giada::v
 

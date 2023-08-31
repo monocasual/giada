@@ -47,15 +47,15 @@ geMainTransport::geMainTransport()
 	m_recInput       = new geImageButton(graphics::inputRecOff, graphics::inputRecOn);
 	m_inputRecMode   = new geImageButton(graphics::freeInputRecOff, graphics::freeInputRecOn);
 	m_metronome      = new geImageButton(graphics::metronomeOff, graphics::metronomeOn);
-	add(m_rewind, 25);
-	add(m_play, 25);
-	add(new geBox(), 10);
-	add(m_recTriggerMode, 15);
-	add(m_recAction, 25);
-	add(m_recInput, 25);
-	add(m_inputRecMode, 15);
-	add(new geBox(), 10);
-	add(m_metronome, 15);
+	addWidget(m_rewind, 25);
+	addWidget(m_play, 25);
+	addWidget(new geBox(), 10);
+	addWidget(m_recTriggerMode, 15);
+	addWidget(m_recAction, 25);
+	addWidget(m_recInput, 25);
+	addWidget(m_inputRecMode, 15);
+	addWidget(new geBox(), 10);
+	addWidget(m_metronome, 15);
 	end();
 
 	m_rewind->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TRANSPORT_LABEL_REWIND));

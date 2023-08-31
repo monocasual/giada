@@ -64,14 +64,14 @@ geFlex::geFlex(Direction d, int gutter, geompp::Border<int> pad)
 
 /* -------------------------------------------------------------------------- */
 
-void geFlex::add(Fl_Widget& w, int size)
+void geFlex::addWidget(Fl_Widget& w, int size)
 {
 	Fl_Flex::add(w);
 	Fl_Flex::fixed(w, size);
 }
 
-void geFlex::add(Fl_Widget* w, int size)
+void geFlex::addWidget(Fl_Widget* w, int size)
 {
-	geFlex::add(*w, size);
+	geFlex::addWidget(*w, size);
 }
 } // namespace giada::v

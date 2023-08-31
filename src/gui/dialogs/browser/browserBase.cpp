@@ -55,8 +55,8 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 		geFlex* header = new geFlex(Direction::HORIZONTAL);
 		{
 			hiddenFiles = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::BROWSER_SHOWHIDDENFILES));
-			header->add(hiddenFiles, 180);
-			header->add(new geBox());
+			header->addWidget(hiddenFiles, 180);
+			header->addWidget(new geBox());
 			header->end();
 		}
 
@@ -65,9 +65,9 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 			where = new geInput();
 			name  = new geInput();
 			updir = new geImageButton(graphics::upOff, graphics::upOn);
-			pathArea->add(where);
-			pathArea->add(name);
-			pathArea->add(updir, G_GUI_UNIT);
+			pathArea->addWidget(where);
+			pathArea->addWidget(name);
+			pathArea->addWidget(updir, G_GUI_UNIT);
 			pathArea->end();
 		}
 
@@ -77,16 +77,16 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 		{
 			ok     = new geTextButton("");
 			cancel = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CANCEL));
-			footer->add(new geBox());
-			footer->add(cancel, 80);
-			footer->add(ok, 80);
+			footer->addWidget(new geBox());
+			footer->addWidget(cancel, 80);
+			footer->addWidget(ok, 80);
 			footer->end();
 		}
 
-		container->add(header, G_GUI_UNIT);
-		container->add(pathArea, G_GUI_UNIT);
-		container->add(browser);
-		container->add(footer, G_GUI_UNIT);
+		container->addWidget(header, G_GUI_UNIT);
+		container->addWidget(pathArea, G_GUI_UNIT);
+		container->addWidget(browser);
+		container->addWidget(footer, G_GUI_UNIT);
 		container->end();
 	}
 

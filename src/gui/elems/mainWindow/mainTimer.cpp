@@ -48,11 +48,11 @@ geMainTimer::geMainTimer()
 	m_quantizer  = new geChoice();
 	m_multiplier = new geImageButton(graphics::multiplyOff, graphics::multiplyOn);
 	m_divider    = new geImageButton(graphics::divideOff, graphics::divideOn);
-	add(m_quantizer, 60);
-	add(m_bpm, 60);
-	add(m_meter, 60);
-	add(m_multiplier, G_GUI_UNIT);
-	add(m_divider, G_GUI_UNIT);
+	addWidget(m_quantizer, 60);
+	addWidget(m_bpm, 60);
+	addWidget(m_meter, 60);
+	addWidget(m_multiplier, G_GUI_UNIT);
+	addWidget(m_divider, G_GUI_UNIT);
 	end();
 
 	m_bpm->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TIMER_LABEL_BPM));

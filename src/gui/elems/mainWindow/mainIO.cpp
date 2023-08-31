@@ -54,14 +54,14 @@ geMainIO::geMainIO()
 	m_masterFxIn   = new geImageButton(graphics::fxOff, graphics::fxOn);
 	m_midiActivity = new geMidiActivity();
 
-	add(m_masterFxIn, G_GUI_UNIT);
-	add(m_inVol, G_GUI_UNIT);
-	add(m_inMeter);
-	add(m_inToOut, 12);
-	add(m_outMeter);
-	add(m_outVol, G_GUI_UNIT);
-	add(m_masterFxOut, G_GUI_UNIT);
-	add(m_midiActivity, 10);
+	addWidget(m_masterFxIn, G_GUI_UNIT);
+	addWidget(m_inVol, G_GUI_UNIT);
+	addWidget(m_inMeter);
+	addWidget(m_inToOut, 12);
+	addWidget(m_outMeter);
+	addWidget(m_outVol, G_GUI_UNIT);
+	addWidget(m_masterFxOut, G_GUI_UNIT);
+	addWidget(m_midiActivity, 10);
 	end();
 
 	m_outMeter->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_IO_LABEL_OUTMETER));

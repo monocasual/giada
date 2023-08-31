@@ -53,16 +53,16 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, const Model& model)
 		geFlex* header = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 		{
 			m_actionType = new geChoice();
-			header->add(m_actionType, 120);
-			header->add(gridTool, 80);
-			header->add(new geBox());
-			header->add(m_zoomInBtn, G_GUI_UNIT);
-			header->add(m_zoomOutBtn, G_GUI_UNIT);
+			header->addWidget(m_actionType, 120);
+			header->addWidget(gridTool, 80);
+			header->addWidget(new geBox());
+			header->addWidget(m_zoomInBtn, G_GUI_UNIT);
+			header->addWidget(m_zoomOutBtn, G_GUI_UNIT);
 			header->end();
 		}
 
-		container->add(header, G_GUI_UNIT);
-		container->add(m_splitScroll);
+		container->addWidget(header, G_GUI_UNIT);
+		container->addWidget(m_splitScroll);
 		container->end();
 	}
 

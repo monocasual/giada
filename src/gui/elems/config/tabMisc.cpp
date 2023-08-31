@@ -54,11 +54,11 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
             g_ui->getI18Text(LangMap::CONFIG_MISC_NOLANGUAGESFOUND), LABEL_WIDTH);
 		m_uiScaling = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MISC_UISCALING), LABEL_WIDTH);
 
-		body->add(m_debugMsg, G_GUI_UNIT);
-		body->add(m_tooltips, G_GUI_UNIT);
-		body->add(m_langMap, G_GUI_UNIT);
-		body->add(m_uiScaling, G_GUI_UNIT);
-		body->add(new geBox(g_ui->getI18Text(LangMap::CONFIG_RESTARTGIADA)));
+		body->addWidget(m_debugMsg, G_GUI_UNIT);
+		body->addWidget(m_tooltips, G_GUI_UNIT);
+		body->addWidget(m_langMap, G_GUI_UNIT);
+		body->addWidget(m_uiScaling, G_GUI_UNIT);
+		body->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_RESTARTGIADA)));
 		body->end();
 	}
 

@@ -81,14 +81,14 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 	fx           = new geImageButton(graphics::fxOff, graphics::fxOn);
 	vol          = new geDial(0, 0, 0, 0);
 
-	add(playButton, G_GUI_UNIT);
-	add(arm, G_GUI_UNIT);
-	add(mainButton);
-	add(midiActivity, 10);
-	add(mute, G_GUI_UNIT);
-	add(solo, G_GUI_UNIT);
-	add(fx, G_GUI_UNIT);
-	add(vol, G_GUI_UNIT);
+	addWidget(playButton, G_GUI_UNIT);
+	addWidget(arm, G_GUI_UNIT);
+	addWidget(mainButton);
+	addWidget(midiActivity, 10);
+	addWidget(mute, G_GUI_UNIT);
+	addWidget(solo, G_GUI_UNIT);
+	addWidget(fx, G_GUI_UNIT);
+	addWidget(vol, G_GUI_UNIT);
 	end();
 
 	playButton->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_PLAY));

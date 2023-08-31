@@ -72,10 +72,10 @@ geMainMenu::geMainMenu()
 	geTextButton* edit   = new geTextButton(g_ui->getI18Text(LangMap::MAIN_MENU_EDIT));
 	geTextButton* config = new geTextButton(g_ui->getI18Text(LangMap::MAIN_MENU_CONFIG));
 	geTextButton* about  = new geTextButton(g_ui->getI18Text(LangMap::MAIN_MENU_ABOUT));
-	add(file, 80);
-	add(edit, 80);
-	add(config, 80);
-	add(about, 80);
+	addWidget(file, 80);
+	addWidget(edit, 80);
+	addWidget(config, 80);
+	addWidget(about, 80);
 	end();
 
 	file->onClick   = [this]() { cb_file(); };

@@ -48,10 +48,10 @@ geKeyBinder::geKeyBinder(const std::string& l, int key)
 	m_bindBtn  = new geTextButton(g_ui->getI18Text(LangMap::COMMON_BIND));
 	m_clearBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLEAR));
 
-	add(m_labelBox);
-	add(m_keyBox, 100);
-	add(m_bindBtn, 50);
-	add(m_clearBtn, 50);
+	addWidget(m_labelBox);
+	addWidget(m_keyBox, 100);
+	addWidget(m_bindBtn, 50);
+	addWidget(m_clearBtn, 50);
 	end();
 
 	m_labelBox->box(G_CUSTOM_BORDER_BOX);

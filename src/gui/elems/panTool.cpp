@@ -48,9 +48,9 @@ gePanTool::gePanTool(ID channelId, float pan, int labelWidth)
 	m_input = new geInput(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PAN), labelWidth);
 	m_dial  = new geDial();
 	m_reset = new geTextButton(g_ui->getI18Text(LangMap::COMMON_RESET));
-	add(m_input);
-	add(m_dial, G_GUI_UNIT);
-	add(m_reset, 70);
+	addWidget(m_input);
+	addWidget(m_dial, G_GUI_UNIT);
+	addWidget(m_reset, 70);
 	end();
 
 	m_dial->range(0.0f, G_MAX_PAN);

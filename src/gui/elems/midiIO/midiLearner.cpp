@@ -49,10 +49,10 @@ geMidiLearner::geMidiLearner(int x, int y, int w, int h, std::string l, int para
 	m_learnBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_LEARN));
 	m_clearBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLEAR));
 
-	add(m_text);
-	add(m_value, 80);
-	add(m_learnBtn, 50);
-	add(m_clearBtn, 50);
+	addWidget(m_text);
+	addWidget(m_value, 80);
+	addWidget(m_learnBtn, 50);
+	addWidget(m_clearBtn, 50);
 	end();
 
 	m_text->box(G_CUSTOM_BORDER_BOX);

@@ -55,14 +55,14 @@ gdKeyGrabber::gdKeyGrabber(int key)
 			m_clear  = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLEAR));
 			m_cancel = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
 
-			footer->add(new geBox()); // Spacer
-			footer->add(m_clear, 80);
-			footer->add(m_cancel, 80);
+			footer->addWidget(new geBox()); // Spacer
+			footer->addWidget(m_clear, 80);
+			footer->addWidget(m_cancel, 80);
 			footer->end();
 		}
 
-		container->add(m_text);
-		container->add(footer, G_GUI_UNIT);
+		container->addWidget(m_text);
+		container->addWidget(footer, G_GUI_UNIT);
 		container->end();
 	}
 
