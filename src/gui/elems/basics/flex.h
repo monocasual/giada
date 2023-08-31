@@ -53,11 +53,6 @@ public:
 
 	void add(Fl_Widget&, int size = -1);
 	void add(Fl_Widget*, int size = -1);
-
-	/* end
-	Finalize the Flex item. Call this when you're done add()ing widgets. */
-
-	void end();
 };
 } // namespace giada::v
 

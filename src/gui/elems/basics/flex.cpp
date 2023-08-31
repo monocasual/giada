@@ -74,12 +74,4 @@ void geFlex::add(Fl_Widget* w, int size)
 {
 	geFlex::add(*w, size);
 }
-
-/* -------------------------------------------------------------------------- */
-
-void geFlex::end()
-{
-	Fl_Flex::end();
-	resize(x(), y(), w(), h());
-}
 } // namespace giada::v
