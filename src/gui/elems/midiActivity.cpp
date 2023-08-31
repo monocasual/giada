@@ -74,8 +74,8 @@ geMidiActivity::geMidiActivity()
 {
 	out = new geLed();
 	in  = new geLed();
-	add(out);
-	add(in);
+	addWidget(out);
+	addWidget(in);
 	end();
 }
 } // namespace giada::v
