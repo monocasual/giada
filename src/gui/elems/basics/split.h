@@ -50,6 +50,11 @@ public:
 	void init(Fl_Widget& a, Fl_Widget& b);
 	void resizePanel(Panel p, int s);
 
+	/* onResize
+	Callback fired when the resizer bar in the middle is being dragged. */
+
+	std::function<void()> onResize = nullptr;
+
 private:
 	Fl_Widget*   m_a;
 	Fl_Widget*   m_b;

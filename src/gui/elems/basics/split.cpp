@@ -37,6 +37,10 @@ geSplit::geSplit(int x, int y, int w, int h)
 , m_bar(0, 0, w, G_GUI_INNER_MARGIN, G_GUI_UNIT, geResizerBar::Direction::VERTICAL, geResizerBar::Mode::RESIZE)
 {
 	end();
+	m_bar.onDrag = [this](const Fl_Widget&) {
+		if (onResize)
+			onResize();
+	};
 }
 
 /* -------------------------------------------------------------------------- */
