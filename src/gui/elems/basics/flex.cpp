@@ -64,10 +64,11 @@ geFlex::geFlex(Direction d, int gutter, geompp::Border<int> pad)
 
 /* -------------------------------------------------------------------------- */
 
-void geFlex::addWidget(Fl_Widget& w, int size)
+void geFlex::addWidget(Fl_Widget& widget, int size)
 {
-	Fl_Flex::add(w);
-	Fl_Flex::fixed(w, size);
+	Fl_Flex::add(widget);
+	Fl_Flex::fixed(widget, size);
+	Fl_Flex::size(w(), h());
 }
 
 void geFlex::addWidget(Fl_Widget* w, int size)
