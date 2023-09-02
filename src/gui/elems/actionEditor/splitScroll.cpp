@@ -29,12 +29,18 @@
 namespace giada::v
 {
 geSplitScroll::geSplitScroll(Pixel x, Pixel y, Pixel w, Pixel h)
-: geSplit(x, y, w, h)
+: geFlex(x, y, w, h, Direction::VERTICAL)
 , m_a(0, 0, 0, 0, Fl_Scroll::VERTICAL_ALWAYS)
+, m_bar(0, 0, 0, G_GUI_INNER_MARGIN, G_GUI_UNIT, geResizerBar::Direction::VERTICAL, geResizerBar::Mode::RESIZE)
 , m_b(0, 0, 0, 0, Direction::HORIZONTAL)
 {
 	m_b.onScrollH = [&a = m_a](Pixel x) {
 		a.scroll_to(x, a.yposition());
+	};
+
+	m_bar.onDrag = [this](const Fl_Widget&) {
+		if (onResize)
+			onResize();
 	};
 }
 
@@ -45,10 +51,12 @@ void geSplitScroll::addWidgets(Fl_Widget& wa, Fl_Widget& wb, Pixel topContentH)
 	m_a.add(&wa);
 	m_b.addWidget(&wb);
 
-	init(m_a, m_b);
+	addWidget(m_a);
+	addWidget(m_bar, G_GUI_INNER_MARGIN);
+	addWidget(m_b);
 
 	if (topContentH != -1)
-		resizePanel(geSplit::Panel::A, topContentH);
+		resizePanel(Panel::A, topContentH);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -101,5 +109,12 @@ void geSplitScroll::setScrollX(Pixel p)
 void geSplitScroll::setScrollY(Pixel p)
 {
 	m_a.scroll_to(m_a.xposition(), p);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geSplitScroll::resizePanel(Panel p, int s)
+{
+	m_bar.moveTo(p == Panel::A ? s : h() - s);
 }
 } // namespace giada::v

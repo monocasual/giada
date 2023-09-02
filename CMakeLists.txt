@@ -208,7 +208,6 @@ list(APPEND SOURCES
 	src/gui/elems/basics/slider.cpp
 	src/gui/elems/basics/progress.cpp
 	src/gui/elems/basics/check.cpp
-	src/gui/elems/basics/split.cpp
 	src/gui/elems/basics/browser.cpp
 	src/gui/elems/basics/flex.cpp
 	src/gui/elems/basics/tabs.cpp
