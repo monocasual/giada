@@ -30,6 +30,7 @@
 #include "gui/types.h"
 #include <FL/Fl_Box.H>
 #include <functional>
+#include "gui/types.h"
 
 /* geResizerBar
 A 'resizer bar' between widgets inside a Fl_Scroll. Thanks to Greg Ercolano from
@@ -53,12 +54,6 @@ namespace giada::v
 class geResizerBar : public Fl_Box
 {
 public:
-	enum class Direction
-	{
-		HORIZONTAL,
-		VERTICAL
-	};
-
 	enum class Mode
 	{
 		MOVE,

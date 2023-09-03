@@ -31,7 +31,7 @@ namespace giada::v
 geSplitScroll::geSplitScroll(Pixel x, Pixel y, Pixel w, Pixel h)
 : geFlex(x, y, w, h, Direction::VERTICAL)
 , m_a(0, 0, 0, 0, Fl_Scroll::VERTICAL_ALWAYS)
-, m_bar(0, 0, 0, G_GUI_INNER_MARGIN, G_GUI_UNIT, geResizerBar::Direction::VERTICAL, geResizerBar::Mode::RESIZE)
+, m_bar(0, 0, 0, G_GUI_INNER_MARGIN, G_GUI_UNIT, Direction::VERTICAL, geResizerBar::Mode::RESIZE)
 , m_b(0, 0, 0, 0, Direction::HORIZONTAL)
 {
 	m_b.onScrollH = [&a = m_a](Pixel x) {

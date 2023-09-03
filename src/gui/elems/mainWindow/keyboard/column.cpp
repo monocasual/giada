@@ -91,7 +91,7 @@ void geColumn::refresh()
 geChannel* geColumn::addChannel(c::channel::Data d)
 {
 	geChannel*    gch = makeChannel_(d);
-	geResizerBar* bar = new geResizerBar(0, 0, 0, G_GUI_INNER_MARGIN, G_GUI_UNIT, geResizerBar::Direction::VERTICAL,
+	geResizerBar* bar = new geResizerBar(0, 0, 0, G_GUI_INNER_MARGIN, G_GUI_UNIT, Direction::VERTICAL,
 	    geResizerBar::Mode::MOVE);
 
 	/* Update the column height while dragging the resizer bar. */
