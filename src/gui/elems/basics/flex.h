@@ -49,6 +49,8 @@ public:
 	void add(Fl_Widget&) = delete;
 	void add(Fl_Widget*) = delete;
 
+	Direction getDirection() const;
+
 	/* addWidget
 	Adds an existing widget to the Flex layout. If 'size' == -1, the widget
 	will be stretched to take up the available space. WARNING: like Fl_Group,
@@ -56,6 +58,9 @@ public:
 
 	void addWidget(Fl_Widget&, int size = -1);
 	void addWidget(Fl_Widget*, int size = -1);
+
+private:
+	Direction m_direction;
 };
 } // namespace giada::v
 

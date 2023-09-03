@@ -42,6 +42,7 @@ int toFlDirection_(Direction d)
 
 geFlex::geFlex(int x, int y, int w, int h, Direction d, int gutter, geompp::Border<int> pad)
 : Fl_Flex(x, y, w, h, toFlDirection_(d))
+, m_direction(d)
 {
 	Fl_Flex::end();
 	Fl_Flex::gap(gutter);
@@ -61,6 +62,10 @@ geFlex::geFlex(Direction d, int gutter, geompp::Border<int> pad)
 : geFlex(0, 0, 0, 0, d, gutter, pad)
 {
 }
+
+/* -------------------------------------------------------------------------- */
+
+Direction geFlex::getDirection() const { return m_direction; }
 
 /* -------------------------------------------------------------------------- */
 
