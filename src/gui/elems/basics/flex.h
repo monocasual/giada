@@ -56,8 +56,8 @@ public:
 	will be stretched to take up the available space. WARNING: like Fl_Group,
 	geFlex owns widgets! */
 
-	void addWidget(Fl_Widget&, int size = -1);
-	void addWidget(Fl_Widget*, int size = -1);
+	virtual void addWidget(Fl_Widget&, int size = -1);
+	virtual void addWidget(Fl_Widget*, int size = -1);
 
 private:
 	Direction m_direction;
