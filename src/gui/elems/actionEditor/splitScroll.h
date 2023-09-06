@@ -52,6 +52,7 @@ public:
 	Pixel               getContentWidth() const;
 	Pixel               getTopContentH() const;
 	geompp::Rect<Pixel> getBoundsNoScrollbar() const;
+	Pixel               getBottomScrollbarH() const;
 
 	void addWidgets(Fl_Widget& a, Fl_Widget& b, Pixel topContentH = -1);
 	void setScrollX(Pixel p);

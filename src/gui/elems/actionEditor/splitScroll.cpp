@@ -99,6 +99,13 @@ geompp::Rect<Pixel> geSplitScroll::getBoundsNoScrollbar() const
 
 /* -------------------------------------------------------------------------- */
 
+Pixel geSplitScroll::getBottomScrollbarH() const
+{
+	return m_b.hscrollbar.h();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geSplitScroll::setScrollX(Pixel p)
 {
 	p = std::max(0, p);
