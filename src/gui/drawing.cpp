@@ -66,6 +66,27 @@ void drawText(const std::string& txt, geompp::Rect<int> b, Fl_Font f, Fl_Fontsiz
 
 /* -------------------------------------------------------------------------- */
 
+void drawTextVertical(const std::string& txt, geompp::Rect<int> b, Fl_Font f, Fl_Fontsize s, Fl_Color c)
+{
+	if (txt.empty())
+		return;
+
+	fl_color(c);
+	fl_font(f, s);
+
+	const geompp::Rect<int> textBounds = u::gui::getStringRect(txt);
+	const int               textW      = textBounds.h;
+	const int               textH      = textBounds.w;
+	const int               textX      = b.x + (b.w / 2) + (textW / 4); // TODO - string height seems wrong?
+	const int               textY      = b.y + (b.h / 2) + (textH / 2);
+
+	fl_push_clip(b.x, b.y, b.w, b.h);
+	fl_draw(90, txt.c_str(), textX, textY);
+	fl_pop_clip();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void drawImage(Fl_Image& img, geompp::Rect<int> b)
 {
 	img.draw(b.x, b.y, b.w, b.h);
