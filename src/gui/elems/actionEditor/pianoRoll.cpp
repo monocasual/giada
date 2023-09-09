@@ -132,7 +132,7 @@ void gePianoRoll::drawSurfaceY()
 
 /* -------------------------------------------------------------------------- */
 
-void gePianoRoll::drawSurfaceX()
+void gePianoRoll::drawOffscreenGrid()
 {
 	m_offscreenGrid = fl_create_offscreen(CELL_W, h());
 
@@ -377,7 +377,7 @@ void gePianoRoll::rebuild(c::actionEditor::Data& d)
 	}
 
 	drawSurfaceY();
-	drawSurfaceX();
+	drawOffscreenGrid();
 
 	redraw();
 }

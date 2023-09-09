@@ -85,7 +85,7 @@ private:
 	the ::draw() call. */
 
 	void drawSurfaceY();
-	void drawSurfaceX();
+	void drawOffscreenGrid();
 
 	Pixel snapToY(Pixel p) const;
 	int   yToNote(Pixel y) const;
