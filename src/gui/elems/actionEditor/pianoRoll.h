@@ -76,15 +76,12 @@ private:
 	void onResizeAction() override;
 	void onRefreshAction() override;
 
-	/* drawSurface*
+	/* drawOffscreenGrid
 	Generates a complex drawing in memory first and copy it to the screen at a
-	later point in time. Fl_Offscreen surface holds the necessary data.	The first
-	call creates an offscreen surface of CELL_W pixel wide containing note values.
-	The second call creates another offscreen surface of CELL_W pixels wide
-	containing the rest of the piano roll. The latter will then be tiled during
-	the ::draw() call. */
+	later point in time. Fl_Offscreen m_offscreenGrid holds the necessary data.
+	Creates another offscreen surface of CELL_W pixels wide containing the piano
+	roll grid, then tiled during the ::draw() call. */
 
-	void drawSurfaceY();
 	void drawOffscreenGrid();
 
 	Pixel snapToY(Pixel p) const;
@@ -92,7 +89,6 @@ private:
 	Pixel noteToY(int n) const;
 	Pixel getPianoItemW(Pixel x, const m::Action& a1, const m::Action& a2) const;
 
-	Fl_Offscreen surfaceY;        // vertical notes, no x-repeat
 	Fl_Offscreen m_offscreenGrid; // lines, x-repeat
 
 	/* m_pick

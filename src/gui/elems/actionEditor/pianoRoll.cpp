@@ -48,90 +48,6 @@ gePianoRoll::gePianoRoll(Pixel X, Pixel Y, gdBaseActionEditor* b)
 
 /* -------------------------------------------------------------------------- */
 
-void gePianoRoll::drawSurfaceY()
-{
-	surfaceY = fl_create_offscreen(CELL_W, h());
-	fl_begin_offscreen(surfaceY);
-
-	/* Warning: only w() and h() come from this widget, x and y coordinates are 
-	absolute, since we are writing in a memory chunk. */
-
-	fl_rectf(0, 0, CELL_W, h(), G_COLOR_GREY_1);
-
-	fl_line_style(FL_DASH, 0, nullptr);
-	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-
-	int octave = MAX_OCTAVES;
-
-	for (int i = 1; i <= MAX_KEYS + 1; i++)
-	{
-		/* print key note label. C C# D D# E F F# G G# A A# B */
-
-		std::string note = std::to_string(octave);
-		switch (i % KEYS)
-		{
-		case (int)Notes::G:
-			fl_rectf(0, i * CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-			note += " G";
-			break;
-		case (int)Notes::FS:
-			note += " F#";
-			break;
-		case (int)Notes::F:
-			note += " F";
-			break;
-		case (int)Notes::E:
-			fl_rectf(0, i * CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-			note += " E";
-			break;
-		case (int)Notes::DS:
-			note += " D#";
-			break;
-		case (int)Notes::D:
-			fl_rectf(0, i * CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-			note += " D";
-			break;
-		case (int)Notes::CS:
-			note += " C#";
-			break;
-		case (int)Notes::C:
-			note += " C";
-			octave--;
-			break;
-		case (int)Notes::B:
-			fl_rectf(0, i * CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-			note += " B";
-			break;
-		case (int)Notes::AS:
-			note += " A#";
-			break;
-		case (int)Notes::A:
-			fl_rectf(0, i * CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-			note += " A";
-			break;
-		case (int)Notes::GS:
-			note += " G#";
-			break;
-		}
-
-		/* Print note name */
-
-		fl_color(G_COLOR_GREY_3);
-		fl_draw(note.c_str(), 4, ((i - 1) * CELL_H) + 1, CELL_W, CELL_H,
-		    (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CENTER));
-
-		/* Print horizontal line */
-
-		if (i < MAX_KEYS + 1)
-			fl_line(0, i * CELL_H, CELL_W, +i * CELL_H);
-	}
-
-	fl_line_style(0);
-	fl_end_offscreen();
-}
-
-/* -------------------------------------------------------------------------- */
-
 void gePianoRoll::drawOffscreenGrid()
 {
 	m_offscreenGrid = fl_create_offscreen(CELL_W, h());
@@ -168,14 +84,12 @@ void gePianoRoll::drawOffscreenGrid()
 
 void gePianoRoll::draw()
 {
-	fl_copy_offscreen(x(), y(), CELL_W, h(), surfaceY, 0, 0);
-
 // TODO - is this APPLE thing still useful?
 #if defined(__APPLE__)
-	for (Pixel i = 36; i < m_base->fullWidth; i += 36) /// TODO: i < m_base->loopWidth is faster
+	for (Pixel i = 0; i < m_base->fullWidth; i += 36) /// TODO: i < m_base->loopWidth is faster
 		fl_copy_offscreen(x() + i, y(), CELL_W, h(), m_offscreenGrid, 1, 0);
 #else
-	for (Pixel i = CELL_W; i < m_base->loopWidth; i += CELL_W)
+	for (Pixel i = 0; i < m_base->loopWidth; i += CELL_W)
 		fl_copy_offscreen(x() + i, y(), CELL_W, h(), m_offscreenGrid, 0, 0);
 #endif
 
@@ -376,7 +290,6 @@ void gePianoRoll::rebuild(c::actionEditor::Data& d)
 		add(new gePianoItem(px, py, pw, ph, a1, a2));
 	}
 
-	drawSurfaceY();
 	drawOffscreenGrid();
 
 	redraw();
