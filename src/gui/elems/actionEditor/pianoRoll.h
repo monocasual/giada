@@ -40,20 +40,6 @@ namespace giada::v
 class gePianoRoll : public geBaseActionEditor
 {
 public:
-	static const int   MAX_KEYS    = 127;
-	static const int   MAX_OCTAVES = 9;
-	static const int   KEYS        = 12;
-	static const Pixel CELL_H      = 20;
-	static const Pixel CELL_W      = 40;
-
-	gePianoRoll(Pixel x, Pixel y, gdBaseActionEditor* b);
-
-	void draw() override;
-	int  handle(int e) override;
-
-	void rebuild(c::actionEditor::Data& d) override;
-
-private:
 	enum class Notes
 	{
 		G  = 1,
@@ -70,6 +56,20 @@ private:
 		GS = 0
 	};
 
+	static const int   MAX_KEYS    = 127;
+	static const int   MAX_OCTAVES = 9;
+	static const int   KEYS        = 12;
+	static const Pixel CELL_H      = 20;
+	static const Pixel CELL_W      = 40;
+
+	gePianoRoll(Pixel x, Pixel y, gdBaseActionEditor* b);
+
+	void draw() override;
+	int  handle(int e) override;
+
+	void rebuild(c::actionEditor::Data& d) override;
+
+private:
 	void onAddAction() override;
 	void onDeleteAction() override;
 	void onMoveAction() override;
