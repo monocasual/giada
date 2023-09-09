@@ -30,15 +30,12 @@
 #include "envelopePoint.h"
 #include "glue/actionEditor.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "gui/ui.h"
 #include "src/core/actions/action.h"
 #include "utils/log.h"
 #include "utils/math.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <cassert>
-
-extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -56,14 +53,10 @@ void geVelocityEditor::draw()
 	if (h() < geEnvelopePoint::SIDE)
 		return;
 
-	/* Print label. */
-
-	fl_color(G_COLOR_GREY_4);
-	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-	fl_draw(g_ui->getI18Text(LangMap::ACTIONEDITOR_VELOCITY), x() + 4, y(), w(), h(), FL_ALIGN_LEFT);
-
 	if (children() == 0)
 		return;
+
+	fl_color(G_COLOR_GREY_4);
 
 	const Pixel side = geEnvelopePoint::SIDE / 2;
 
