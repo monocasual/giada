@@ -92,8 +92,8 @@ private:
 	Pixel noteToY(int n) const;
 	Pixel getPianoItemW(Pixel x, const m::Action& a1, const m::Action& a2) const;
 
-	Fl_Offscreen surfaceY; // vertical notes, no x-repeat
-	Fl_Offscreen surfaceX; // lines, x-repeat
+	Fl_Offscreen surfaceY;        // vertical notes, no x-repeat
+	Fl_Offscreen m_offscreenGrid; // lines, x-repeat
 
 	/* m_pick
 	Y-coordinate of the click event when the user clicks on an empty area of the

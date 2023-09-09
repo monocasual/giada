@@ -134,9 +134,9 @@ void gePianoRoll::drawSurfaceY()
 
 void gePianoRoll::drawSurfaceX()
 {
-	surfaceX = fl_create_offscreen(CELL_W, h());
+	m_offscreenGrid = fl_create_offscreen(CELL_W, h());
 
-	fl_begin_offscreen(surfaceX);
+	fl_begin_offscreen(m_offscreenGrid);
 	fl_rectf(0, 0, CELL_W, h(), G_COLOR_GREY_1);
 	fl_color(G_COLOR_GREY_3);
 	fl_line_style(FL_DASH, 0, nullptr);
@@ -173,10 +173,10 @@ void gePianoRoll::draw()
 // TODO - is this APPLE thing still useful?
 #if defined(__APPLE__)
 	for (Pixel i = 36; i < m_base->fullWidth; i += 36) /// TODO: i < m_base->loopWidth is faster
-		fl_copy_offscreen(x() + i, y(), CELL_W, h(), surfaceX, 1, 0);
+		fl_copy_offscreen(x() + i, y(), CELL_W, h(), m_offscreenGrid, 1, 0);
 #else
 	for (Pixel i = CELL_W; i < m_base->loopWidth; i += CELL_W)
-		fl_copy_offscreen(x() + i, y(), CELL_W, h(), surfaceX, 0, 0);
+		fl_copy_offscreen(x() + i, y(), CELL_W, h(), m_offscreenGrid, 0, 0);
 #endif
 
 	baseDraw(false);
