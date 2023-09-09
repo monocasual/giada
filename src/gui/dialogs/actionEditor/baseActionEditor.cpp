@@ -32,6 +32,7 @@
 #include "gui/elems/actionEditor/splitScroll.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/flexResizable.h"
 #include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/scrollPack.h"
 #include "gui/graphics.h"
@@ -55,6 +56,7 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, const Model& model)
 , m_zoomInBtn(new geImageButton(graphics::plusOff, graphics::plusOn))
 , m_zoomOutBtn(new geImageButton(graphics::minusOff, graphics::minusOn))
 , m_splitScroll(new geSplitScroll(0, 0, 0, 0))
+, m_legends(new geFlexResizable(Direction::VERTICAL, geResizerBar::Mode::RESIZE))
 , m_ratio(model.actionEditorZoom)
 {
 	m_zoomInBtn->onClick = [this]() { zoomIn(); };

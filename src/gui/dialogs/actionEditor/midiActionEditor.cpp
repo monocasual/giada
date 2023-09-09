@@ -28,11 +28,14 @@
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
 #include "gui/elems/actionEditor/gridTool.h"
+#include "gui/elems/actionEditor/legend.h"
 #include "gui/elems/actionEditor/pianoRoll.h"
+#include "gui/elems/actionEditor/pianoRollLegend.h"
 #include "gui/elems/actionEditor/splitScroll.h"
 #include "gui/elems/actionEditor/velocityEditor.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/flexResizable.h"
 #include "gui/elems/basics/imageButton.h"
 #include "gui/graphics.h"
 #include "gui/ui.h"
@@ -55,8 +58,25 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, const Model& model)
 			header->end();
 		}
 
+		geFlex* body = new geFlex(Direction::HORIZONTAL);
+		{
+			geFlex* legendBox = new geFlex(Direction::VERTICAL);
+			{
+				m_legends->addWidget(new gePianoRollLegend(), 30);
+				m_legends->addWidget(new geLegend(g_ui->getI18Text(LangMap::ACTIONEDITOR_VELOCITY)), 30);
+
+				legendBox->addWidget(m_legends);
+				legendBox->addWidget(new geBox(), m_splitScroll->getBottomScrollbarH() + G_GUI_OUTER_MARGIN); // bottom-right dead corner
+				legendBox->end();
+			}
+
+			body->addWidget(legendBox, 35);
+			body->addWidget(m_splitScroll);
+			body->end();
+		}
+
 		container->addWidget(header, G_GUI_UNIT);
-		container->addWidget(m_splitScroll);
+		container->addWidget(body);
 		container->end();
 	}
 
@@ -65,10 +85,23 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, const Model& model)
 
 	m_pianoRoll      = new gePianoRoll(0, 0, this);
 	m_velocityEditor = new geVelocityEditor(0, 0, this);
+
 	m_splitScroll->addWidgets(*m_pianoRoll, *m_velocityEditor, model.actionEditorSplitH);
 
+	m_splitScroll->onResize = [this]() {
+		m_legends->resizeWidget(0, m_splitScroll->getTopContentH());
+	};
+	m_splitScroll->onScrollV = [this](int y) {
+		static_cast<gePianoRollLegend&>(m_legends->getWidget(0)).scroll_to(0, y);
+	};
+
+	m_legends->resizeWidget(0, m_splitScroll->getTopContentH());
+
 	if (model.actionEditorPianoRollY != -1)
+	{
 		m_splitScroll->setScrollY(model.actionEditorPianoRollY);
+		static_cast<gePianoRollLegend&>(m_legends->getWidget(0)).scroll_to(0, model.actionEditorPianoRollY);
+	}
 
 	prepareWindow();
 	rebuild();

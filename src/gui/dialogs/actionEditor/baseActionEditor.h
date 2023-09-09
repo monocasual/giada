@@ -43,6 +43,7 @@ namespace giada::v
 class geGridTool;
 class geImageButton;
 class geSplitScroll;
+class geFlexResizable;
 class gdBaseActionEditor : public gdWindow
 {
 public:
@@ -86,9 +87,10 @@ protected:
 
 	void prepareWindow();
 
-	geImageButton* m_zoomInBtn;
-	geImageButton* m_zoomOutBtn;
-	geSplitScroll* m_splitScroll;
+	geImageButton*   m_zoomInBtn;
+	geImageButton*   m_zoomOutBtn;
+	geSplitScroll*   m_splitScroll;
+	geFlexResizable* m_legends;
 
 	c::actionEditor::Data m_data;
 
