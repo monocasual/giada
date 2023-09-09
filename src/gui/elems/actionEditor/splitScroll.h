@@ -64,6 +64,11 @@ public:
 
 	std::function<void()> onResize = nullptr;
 
+	/* onScrollV
+	Callback fired when the vertical scrollbar is moved. */
+
+	std::function<void(int y)> onScrollV = nullptr;
+
 private:
 	geScroll       m_a;
 	geResizerBar   m_bar;

@@ -34,6 +34,11 @@ geSplitScroll::geSplitScroll(Pixel x, Pixel y, Pixel w, Pixel h)
 , m_bar(0, 0, 0, G_GUI_INNER_MARGIN, G_GUI_UNIT, Direction::VERTICAL, geResizerBar::Mode::RESIZE)
 , m_b(0, 0, 0, 0, Direction::HORIZONTAL)
 {
+	m_a.onScrollV = [this](Pixel y) {
+		if (onScrollV)
+			onScrollV(y);
+	};
+
 	m_b.onScrollH = [&a = m_a](Pixel x) {
 		a.scroll_to(x, a.yposition());
 	};
