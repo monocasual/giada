@@ -113,10 +113,13 @@ int gePianoRoll::handle(int e)
 	}
 	case FL_DRAG:
 	{
-		const int pos = Fl::event_y() - m_pick;
-		const int min = parent()->y();
-		const int max = -h() + (parent()->h() + parent()->y());
-		position(x(), std::clamp(pos, max, min));
+		const int pos  = Fl::event_y() - m_pick;
+		const int min  = parent()->y();
+		const int max  = -h() + (parent()->h() + parent()->y());
+		const int newY = std::clamp(pos, max, min);
+		position(x(), newY);
+		if (onScrollV)
+			onScrollV(std::abs(newY) + min);
 		break;
 	}
 	default:

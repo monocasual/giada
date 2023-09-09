@@ -29,6 +29,7 @@
 
 #include "baseActionEditor.h"
 #include <FL/fl_draw.H>
+#include <functional>
 
 namespace giada::m
 {
@@ -68,6 +69,11 @@ public:
 	int  handle(int e) override;
 
 	void rebuild(c::actionEditor::Data& d) override;
+
+	/* onScrollV
+	Callback fired when the piano roll is moved around vertically. */
+
+	std::function<void(int y)> onScrollV = nullptr;
 
 private:
 	void onAddAction() override;
