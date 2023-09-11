@@ -83,7 +83,7 @@ void geBaseActionEditor::baseDraw(bool clear) const
 	fl_color(G_COLOR_GREY_4);
 	drawVerticals(m_data->framesInBeat);
 
-	fl_color(G_COLOR_LIGHT_1);
+	fl_color(G_COLOR_GREY_5);
 	drawVerticals(m_data->framesInBar);
 
 	/* Cover unused area. Avoid drawing cover if width == 0 (i.e. beats are 32). */
