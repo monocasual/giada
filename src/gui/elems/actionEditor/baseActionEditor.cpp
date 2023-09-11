@@ -64,7 +64,7 @@ void geBaseActionEditor::baseDraw(bool clear) const
 	/* Clear the screen. */
 
 	if (clear)
-		fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_1);
+		fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_1_5);
 
 	/* Draw the outer container. */
 
