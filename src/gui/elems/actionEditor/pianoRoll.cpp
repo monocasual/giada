@@ -42,7 +42,6 @@ namespace giada::v
 {
 gePianoRoll::gePianoRoll(Pixel X, Pixel Y, gdBaseActionEditor* b)
 : geBaseActionEditor(X, Y, 200, CELL_H * MAX_KEYS, b)
-, m_pick(0)
 {
 }
 
@@ -95,38 +94,6 @@ void gePianoRoll::draw()
 
 	baseDraw(false);
 	draw_children();
-}
-
-/* -------------------------------------------------------------------------- */
-
-int gePianoRoll::handle(int e)
-{
-	if (!Fl::event_button3())
-		return geBaseActionEditor::handle(e);
-
-	switch (e)
-	{
-	case FL_PUSH:
-	{
-		m_pick = Fl::event_y() - y();
-		break;
-	}
-	case FL_DRAG:
-	{
-		const int pos  = Fl::event_y() - m_pick;
-		const int min  = parent()->y();
-		const int max  = -h() + (parent()->h() + parent()->y());
-		const int newY = std::clamp(pos, max, min);
-		position(x(), newY);
-		if (onScrollV)
-			onScrollV(std::abs(newY) + min);
-		break;
-	}
-	default:
-		break;
-	}
-
-	return geBaseActionEditor::handle(e);
 }
 
 /* -------------------------------------------------------------------------- */

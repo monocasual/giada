@@ -66,14 +66,8 @@ public:
 	gePianoRoll(Pixel x, Pixel y, gdBaseActionEditor* b);
 
 	void draw() override;
-	int  handle(int e) override;
 
 	void rebuild(c::actionEditor::Data& d) override;
-
-	/* onScrollV
-	Callback fired when the piano roll is moved around vertically. */
-
-	std::function<void(int y)> onScrollV = nullptr;
 
 private:
 	void onAddAction() override;
@@ -96,12 +90,6 @@ private:
 	Pixel getPianoItemW(Pixel x, const m::Action& a1, const m::Action& a2) const;
 
 	Fl_Offscreen m_offscreenGrid; // lines, x-repeat
-
-	/* m_pick
-	Y-coordinate of the click event when the user clicks on an empty area of the
-	piano roll. Used for right mouse button scrolling. */
-
-	Pixel m_pick;
 };
 } // namespace giada::v
 
