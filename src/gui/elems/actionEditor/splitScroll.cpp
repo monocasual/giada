@@ -25,6 +25,7 @@
 * --------------------------------------------------------------------------- */
 
 #include "splitScroll.h"
+#include "gui/drawing.h"
 
 namespace giada::v
 {
@@ -47,6 +48,22 @@ geSplitScroll::geSplitScroll(Pixel x, Pixel y, Pixel w, Pixel h)
 		if (onResize)
 			onResize();
 	};
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geSplitScroll::draw()
+{
+	geFlex::draw();
+
+	const geompp::Rect<int> bounds_a = {m_a.x(), m_a.y(), m_a.w(), m_a.h()};
+	const geompp::Rect<int> bounds_b = {m_b.x(), m_b.y(), m_b.w(), m_b.h()};
+
+	drawLine(bounds_a.getTopLine(), G_COLOR_GREY_4);
+	drawLine(bounds_a.getLeftLine(), G_COLOR_GREY_4);
+	drawLine(bounds_a.getBottomLine().withShiftedY(-1), G_COLOR_GREY_4);
+
+	drawLine(bounds_b.getLeftLine(), G_COLOR_GREY_4);
 }
 
 /* -------------------------------------------------------------------------- */

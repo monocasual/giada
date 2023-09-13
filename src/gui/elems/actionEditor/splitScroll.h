@@ -54,6 +54,8 @@ public:
 	geompp::Rect<Pixel> getBoundsNoScrollbar() const;
 	Pixel               getBottomScrollbarH() const;
 
+	void draw() override;
+
 	void addWidgets(Fl_Widget& a, Fl_Widget& b, Pixel topContentH = -1);
 	void setScrollX(Pixel p);
 	void setScrollY(Pixel p);
