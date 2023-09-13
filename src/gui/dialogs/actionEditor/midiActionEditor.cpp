@@ -97,6 +97,10 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, const Model& model)
 
 	m_legends->resizeWidget(0, m_splitScroll->getTopContentH());
 
+	m_legends->onDragBar = [this](const Fl_Widget& widget) {
+		m_splitScroll->resizePanel(geSplitScroll::Panel::A, widget.h());
+	};
+
 	if (model.actionEditorPianoRollY != -1)
 	{
 		m_splitScroll->setScrollY(model.actionEditorPianoRollY);
