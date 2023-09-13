@@ -43,6 +43,8 @@ class geFlexResizable : public geFlex
 public:
 	geFlexResizable(Direction, geResizerBar::Mode);
 
+	void resize(int x, int y, int w, int h) override;
+
 	void addWidget(Fl_Widget*, int size = -1) override;
 	void addWidget(Fl_Widget&, int size = -1) override;
 
@@ -65,6 +67,10 @@ public:
 
 private:
 	int computeHeight() const;
+	int getWidgetMainSize(const Fl_Widget*) const;
+
+	void makeLastWidgetFlex();
+	void makeLastWidgetFixed();
 
 	geResizerBar::Mode         m_mode;
 	std::vector<geResizerBar*> m_bars;

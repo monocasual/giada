@@ -40,6 +40,29 @@ geFlexResizable::geFlexResizable(Direction d, geResizerBar::Mode mode)
 
 /* -------------------------------------------------------------------------- */
 
+void geFlexResizable::resize(int newX, int newY, int newW, int newH)
+{
+	geFlex::resize(newX, newY, newW, newH);
+
+	/* In Mode::RESIZE, we must make sure the last widget, which is flex by 
+	default, doesn't get shrinked lower than G_GUI_UNIT when this flex container
+	is resized. If it happens, the trick is to make the last widget fixed, while
+	everything else flex. */
+
+	if (m_widgets.size() < 2 || m_mode == geResizerBar::Mode::MOVE)
+		return;
+
+	const Fl_Widget* lastWidget     = m_widgets.back();
+	const int        lastWidgetSize = getWidgetMainSize(lastWidget);
+
+	if (lastWidgetSize < G_GUI_UNIT)
+		makeLastWidgetFixed();
+	else
+		makeLastWidgetFlex();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geFlexResizable::addWidget(Fl_Widget& widget, int size)
 {
 	/* Add resizer bar only if there is at least one child. */
@@ -57,9 +80,15 @@ void geFlexResizable::addWidget(Fl_Widget& widget, int size)
 			if (onDragBar != nullptr)
 				onDragBar(wg);
 		};
+
+		/* The widget connected to the drag bar becomes fixed, when resized. */
+
+		bar->onRelease = [this](const Fl_Widget& wg) {
+			geFlex::fixed(const_cast<Fl_Widget&>(wg), getWidgetMainSize(&wg));
+		};
 	}
 
-	geFlex::addWidget(widget);
+	geFlex::addWidget(widget, -1);
 	m_widgets.push_back(&widget);
 
 	geFlex::size(w(), computeHeight());
@@ -94,5 +123,30 @@ int geFlexResizable::computeHeight() const
 	const auto last   = m_widgets.back();
 	const int  height = (last->y() + last->h()) - y();
 	return height;
+}
+
+/* -------------------------------------------------------------------------- */
+
+int geFlexResizable::getWidgetMainSize(const Fl_Widget* wg) const
+{
+	return getDirection() == Direction::VERTICAL ? wg->h() : wg->w();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geFlexResizable::makeLastWidgetFlex()
+{
+	for (Fl_Widget* wg : m_widgets)
+		geFlex::fixed(wg, getWidgetMainSize(wg));
+	geFlex::fixed(m_widgets.back(), -1);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geFlexResizable::makeLastWidgetFixed()
+{
+	for (Fl_Widget* wg : m_widgets)
+		geFlex::fixed(wg, -1);
+	geFlex::fixed(m_widgets.back(), G_GUI_UNIT);
 }
 } // namespace giada::v
