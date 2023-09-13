@@ -53,7 +53,7 @@ void gePianoRoll::drawOffscreenGrid()
 	m_offscreenGrid = fl_create_offscreen(CELL_W, h());
 
 	fl_begin_offscreen(m_offscreenGrid);
-	fl_rectf(0, 0, CELL_W, h(), G_COLOR_GREY_1);
+	fl_rectf(0, 0, CELL_W, h(), G_COLOR_GREY_1_5);
 	fl_color(G_COLOR_GREY_3);
 	fl_line_style(FL_DASH, 0, nullptr);
 
