@@ -43,6 +43,7 @@ namespace giada::v
 gePianoRoll::gePianoRoll(Pixel X, Pixel Y, gdBaseActionEditor* b)
 : geBaseActionEditor(X, Y, 200, CELL_H * MAX_KEYS, b)
 {
+	drawOffscreenGrid();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -259,8 +260,6 @@ void gePianoRoll::rebuild(c::actionEditor::Data& d)
 
 		add(new gePianoItem(px, py, pw, ph, a1, a2));
 	}
-
-	drawOffscreenGrid();
 
 	redraw();
 }
