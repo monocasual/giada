@@ -60,6 +60,8 @@ void geFlexResizable::addWidget(Fl_Widget& widget, int size)
 	}
 
 	geFlex::addWidget(widget);
+	m_widgets.push_back(&widget);
+
 	geFlex::size(w(), computeHeight());
 }
 
@@ -89,7 +91,7 @@ Fl_Widget& geFlexResizable::getWidget(int index) { return *m_widgets[index]; }
 
 int geFlexResizable::computeHeight() const
 {
-	const auto last   = child(children() - 1);
+	const auto last   = m_widgets.back();
 	const int  height = (last->y() + last->h()) - y();
 	return height;
 }
