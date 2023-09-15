@@ -29,22 +29,16 @@
 
 #include "core/types.h"
 #include "deps/geompp/src/rect.hpp"
-#include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/flexResizable.h"
 #include "gui/elems/basics/liquidScroll.h"
 #include "gui/elems/basics/resizerBar.h"
 #include "gui/elems/basics/scroll.h"
 
 namespace giada::v
 {
-class geSplitScroll : public geFlex
+class geSplitScroll : public geFlexResizable
 {
 public:
-	enum class Panel
-	{
-		A,
-		B
-	};
-
 	geSplitScroll(Pixel x, Pixel y, Pixel w, Pixel h);
 
 	Pixel               getScrollX() const;
@@ -59,12 +53,6 @@ public:
 	void addWidgets(Fl_Widget& a, Fl_Widget& b, Pixel topContentH = -1);
 	void setScrollX(Pixel p);
 	void setScrollY(Pixel p);
-	void resizePanel(Panel p, int s);
-
-	/* onDragBar
-	Callback fired when the resizer bar in the middle is being dragged. */
-
-	std::function<void()> onDragBar = nullptr;
 
 	/* onScrollV
 	Callback fired when the vertical scrollbar is moved. */
@@ -73,7 +61,6 @@ public:
 
 private:
 	geScroll       m_a;
-	geResizerBar   m_bar;
 	geLiquidScroll m_b;
 };
 } // namespace giada::v
