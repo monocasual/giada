@@ -61,10 +61,10 @@ public:
 	void setScrollY(Pixel p);
 	void resizePanel(Panel p, int s);
 
-	/* onResize
+	/* onDragBar
 	Callback fired when the resizer bar in the middle is being dragged. */
 
-	std::function<void()> onResize = nullptr;
+	std::function<void()> onDragBar = nullptr;
 
 	/* onScrollV
 	Callback fired when the vertical scrollbar is moved. */

@@ -45,8 +45,8 @@ geSplitScroll::geSplitScroll(Pixel x, Pixel y, Pixel w, Pixel h)
 	};
 
 	m_bar.onDrag = [this](const Fl_Widget&) {
-		if (onResize)
-			onResize();
+		if (onDragBar)
+			onDragBar();
 	};
 }
 
