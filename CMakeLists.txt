@@ -215,6 +215,7 @@ list(APPEND SOURCES
         src/gui/elems/basics/flexResizable.cpp
 	src/gui/elems/basics/tabs.cpp
 	src/gui/elems/basics/menu.cpp
+	src/gui/elems/basics/scrollbar.cpp
 	src/utils/log.cpp
 	src/utils/time.cpp
 	src/utils/math.cpp
