@@ -39,6 +39,10 @@
 
 namespace giada::v
 {
+/* geLiquidScroll
+An extended geScroll container that scrolls in a direction, while stretches
+in the other one. */
+
 class geLiquidScroll : public geScroll
 {
 public:
