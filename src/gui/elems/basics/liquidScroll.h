@@ -46,8 +46,8 @@ in the other one. */
 class geLiquidScroll : public geScroll
 {
 public:
-	geLiquidScroll(int x, int y, int w, int h, Direction d);
-	geLiquidScroll(geompp::Rect<int>, Direction d);
+	geLiquidScroll(int x, int y, int w, int h, Direction d, bool withScrollbar = true);
+	geLiquidScroll(geompp::Rect<int>, Direction d, bool withScrollbar = true);
 
 	void resize(int x, int y, int w, int h) override;
 

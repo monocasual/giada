@@ -35,16 +35,18 @@
 
 namespace giada::v
 {
-geLiquidScroll::geLiquidScroll(int x, int y, int w, int h, Direction d)
+geLiquidScroll::geLiquidScroll(int x, int y, int w, int h, Direction d, bool withScrollbar)
 : geScroll(x, y, w, h, d == Direction::VERTICAL ? Fl_Scroll::VERTICAL_ALWAYS : Fl_Scroll::HORIZONTAL_ALWAYS)
 , m_direction(d)
 {
+	if (!withScrollbar)
+		type(0); // no scrollbars
 }
 
 /* -------------------------------------------------------------------------- */
 
-geLiquidScroll::geLiquidScroll(geompp::Rect<int> r, Direction d)
-: geLiquidScroll(r.x, r.y, r.w, r.h, d)
+geLiquidScroll::geLiquidScroll(geompp::Rect<int> r, Direction d, bool withScrollbars)
+: geLiquidScroll(r.x, r.y, r.w, r.h, d, withScrollbars)
 {
 }
 
@@ -52,14 +54,16 @@ geLiquidScroll::geLiquidScroll(geompp::Rect<int> r, Direction d)
 
 void geLiquidScroll::resize(int X, int Y, int W, int H)
 {
-	const int nc = children() - 2; // skip hscrollbar and vscrollbar
-	for (int t = 0; t < nc; t++)   // tell children to resize to our new width
+	const int scrollbarSpace = type() == 0 ? 0 : 24; // type == 0 means no scrollbars
+	const int nc             = children() - 2;       // skip hscrollbar and vscrollbar
+
+	for (int t = 0; t < nc; t++) // tell children to resize to our new width
 	{
 		Fl_Widget* c = child(t);
 		if (m_direction == Direction::VERTICAL)
-			c->resize(c->x(), c->y(), W - 24, c->h()); // -24: leave room for scrollbar
+			c->resize(c->x(), c->y(), W - scrollbarSpace, c->h());
 		else
-			c->resize(c->x(), c->y(), c->w(), H - 24); // -24: leave room for scrollbar
+			c->resize(c->x(), c->y(), c->w(), H - scrollbarSpace);
 	}
 	init_sizes(); // tell scroll children changed in size
 	Fl_Scroll::resize(X, Y, W, H);
