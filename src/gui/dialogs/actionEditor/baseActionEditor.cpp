@@ -159,7 +159,7 @@ void gdBaseActionEditor::draw()
 void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 {
 	const float ratioPrev = m_ratio;
-	const int   minWidth  = w() - (G_GUI_OUTER_MARGIN * 2);
+	const int   minWidth  = w() - (G_GUI_OUTER_MARGIN * 2) - LEGEND_WIDTH;
 
 	m_ratio = f();
 

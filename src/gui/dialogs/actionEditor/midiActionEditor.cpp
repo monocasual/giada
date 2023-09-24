@@ -70,7 +70,7 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, const Model& model)
 				legendBox->end();
 			}
 
-			body->addWidget(legendBox, 35);
+			body->addWidget(legendBox, LEGEND_WIDTH);
 			body->addWidget(m_splitScroll);
 			body->end();
 		}

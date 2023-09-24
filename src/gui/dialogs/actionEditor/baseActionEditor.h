@@ -63,9 +63,10 @@ public:
 	Pixel loopWidth; // Loop width, i.e. scaled-down sequencer range
 
 protected:
-	static constexpr float MIN_RATIO  = 25.0f;
-	static constexpr float MAX_RATIO  = 40000.0f;
-	static constexpr float RATIO_STEP = 1.5f;
+	static constexpr float MIN_RATIO    = 25.0f;
+	static constexpr float MAX_RATIO    = 40000.0f;
+	static constexpr float RATIO_STEP   = 1.5f;
+	static constexpr int   LEGEND_WIDTH = 35;
 
 	gdBaseActionEditor(ID channelId, const Model&);
 
