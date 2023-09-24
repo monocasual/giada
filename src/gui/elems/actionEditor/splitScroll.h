@@ -29,14 +29,16 @@
 
 #include "core/types.h"
 #include "deps/geompp/src/rect.hpp"
-#include "gui/elems/basics/flexResizable.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/liquidScroll.h"
 #include "gui/elems/basics/resizerBar.h"
 #include "gui/elems/basics/scroll.h"
 
 namespace giada::v
 {
-class geSplitScroll : public geFlexResizable
+class geFlexResizable;
+class geScrollbar;
+class geSplitScroll : public geFlex
 {
 public:
 	geSplitScroll(Pixel x, Pixel y, Pixel w, Pixel h);
@@ -54,14 +56,32 @@ public:
 	void setScrollX(Pixel p);
 	void setScrollY(Pixel p);
 
+	/* resizeWidget
+	Resizes widget at index 'index' to size 'size'. */
+
+	void resizeWidget(int index, int size);
+
+	/* initScrollbar
+	Initializes the horizontal scrollbar properties (size, position, ...). Call
+	this whenever the owned widgets size change. */
+
+	void initScrollbar();
+
 	/* onScrollV
 	Callback fired when the vertical scrollbar is moved. */
 
 	std::function<void(int y)> onScrollV = nullptr;
 
+	/* onDragBar
+	Callback fired when the horizontal drag bar is moved. */
+
+	std::function<void()> onDragBar = nullptr;
+
 private:
-	geScroll       m_a;
-	geLiquidScroll m_b;
+	geFlexResizable* m_body;
+	geScrollbar*     m_scrollbar;
+	geScroll         m_a;
+	geLiquidScroll   m_b;
 };
 } // namespace giada::v
 

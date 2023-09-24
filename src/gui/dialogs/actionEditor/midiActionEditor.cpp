@@ -88,7 +88,7 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, const Model& model)
 
 	m_splitScroll->addWidgets(*m_pianoRoll, *m_velocityEditor, model.actionEditorSplitH);
 
-	m_splitScroll->onDragBar = [this](const Fl_Widget&) {
+	m_splitScroll->onDragBar = [this]() {
 		m_legends->resizeWidget(0, m_splitScroll->getTopContentH());
 	};
 	m_splitScroll->onScrollV = [this](int y) {
@@ -128,5 +128,6 @@ void gdMidiActionEditor::rebuild()
 
 	m_pianoRoll->rebuild(m_data);
 	m_velocityEditor->rebuild(m_data);
+	m_splitScroll->initScrollbar();
 }
 } // namespace giada::v
