@@ -79,7 +79,7 @@ gdBaseActionEditor::~gdBaseActionEditor()
 
 int gdBaseActionEditor::getMouseOverContent() const
 {
-	return m_splitScroll->getScrollX() + (Fl::event_x() - G_GUI_OUTER_MARGIN);
+	return m_splitScroll->getScrollX() + (Fl::event_x() - G_GUI_OUTER_MARGIN - LEGEND_WIDTH);
 }
 
 /* -------------------------------------------------------------------------- */
