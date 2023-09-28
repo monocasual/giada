@@ -34,7 +34,7 @@ namespace giada::v
 class geEnvelopeEditor : public geBaseActionEditor
 {
 public:
-	geEnvelopeEditor(Pixel x, Pixel y, const char* l, gdBaseActionEditor*);
+	geEnvelopeEditor(Pixel x, Pixel y, gdBaseActionEditor*);
 	void draw() override;
 
 	void rebuild(c::actionEditor::Data& d) override;

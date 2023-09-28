@@ -40,10 +40,9 @@
 
 namespace giada::v
 {
-geEnvelopeEditor::geEnvelopeEditor(Pixel x, Pixel y, const char* l, gdBaseActionEditor* b)
+geEnvelopeEditor::geEnvelopeEditor(Pixel x, Pixel y, gdBaseActionEditor* b)
 : geBaseActionEditor(x, y, 200, 40, b)
 {
-	copy_label(l);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -52,14 +51,10 @@ void geEnvelopeEditor::draw()
 {
 	baseDraw();
 
-	/* Print label. */
-
-	fl_color(G_COLOR_GREY_4);
-	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-	fl_draw(label(), x() + 4, y(), w(), h(), (Fl_Align)(FL_ALIGN_LEFT));
-
 	if (children() == 0)
 		return;
+
+	fl_color(G_COLOR_GREY_4);
 
 	Pixel side = geEnvelopePoint::SIDE / 2;
 
