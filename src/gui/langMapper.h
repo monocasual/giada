@@ -218,15 +218,14 @@ public:
 	static constexpr auto SAMPLEEDITOR_TOOLS_SET_BEGIN_END  = "sampleEditor_tools_setBeginEnd";
 	static constexpr auto SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL = "sampleEditor_tools_toNewChannel";
 
-	static constexpr auto ACTIONEDITOR_TITLE             = "actionEditor_title";
-	static constexpr auto ACTIONEDITOR_VOLUME            = "actionEditor_volume";
-	static constexpr auto ACTIONEDITOR_KEYPRESS          = "actionEditor_keyPress";
-	static constexpr auto ACTIONEDITOR_KEYRELEASE        = "actionEditor_keyRelease";
-	static constexpr auto ACTIONEDITOR_STOPSAMPLE        = "actionEditor_stopSample";
-	static constexpr auto ACTIONEDITOR_STARTSTOP         = "actionEditor_startStop";
-	static constexpr auto ACTIONEDITOR_STARTSTOPDISABLED = "actionEditor_startStopDisabled";
-	static constexpr auto ACTIONEDITOR_VELOCITY          = "actionEditor_velocity";
-	static constexpr auto ACTIONEDITOR_LABEL_ACTIONTYPE  = "actionEditor_label_actionType";
+	static constexpr auto ACTIONEDITOR_TITLE            = "actionEditor_title";
+	static constexpr auto ACTIONEDITOR_VOLUME           = "actionEditor_volume";
+	static constexpr auto ACTIONEDITOR_KEYPRESS         = "actionEditor_keyPress";
+	static constexpr auto ACTIONEDITOR_KEYRELEASE       = "actionEditor_keyRelease";
+	static constexpr auto ACTIONEDITOR_STOPSAMPLE       = "actionEditor_stopSample";
+	static constexpr auto ACTIONEDITOR_STARTSTOP        = "actionEditor_startStop";
+	static constexpr auto ACTIONEDITOR_VELOCITY         = "actionEditor_velocity";
+	static constexpr auto ACTIONEDITOR_LABEL_ACTIONTYPE = "actionEditor_label_actionType";
 
 	static constexpr auto BROWSER_SHOWHIDDENFILES = "browser_showHiddenFiles";
 	static constexpr auto BROWSER_OPENPROJECT     = "browser_openProject";

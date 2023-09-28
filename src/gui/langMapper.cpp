@@ -221,15 +221,14 @@ LangMap::LangMap()
 	m_data[SAMPLEEDITOR_TOOLS_SET_BEGIN_END]  = "Set begin/end here";
 	m_data[SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL] = "Copy to new channel";
 
-	m_data[ACTIONEDITOR_TITLE]             = "Action Editor";
-	m_data[ACTIONEDITOR_VOLUME]            = "Volume";
-	m_data[ACTIONEDITOR_KEYPRESS]          = "Key press";
-	m_data[ACTIONEDITOR_KEYRELEASE]        = "Key release";
-	m_data[ACTIONEDITOR_STOPSAMPLE]        = "Stop sample";
-	m_data[ACTIONEDITOR_STARTSTOP]         = "Start/stop";
-	m_data[ACTIONEDITOR_STARTSTOPDISABLED] = "Start/stop (disabled)";
-	m_data[ACTIONEDITOR_VELOCITY]          = "Velocity";
-	m_data[ACTIONEDITOR_LABEL_ACTIONTYPE]  = "Action type to add";
+	m_data[ACTIONEDITOR_TITLE]            = "Action Editor";
+	m_data[ACTIONEDITOR_VOLUME]           = "Volume";
+	m_data[ACTIONEDITOR_KEYPRESS]         = "Key press";
+	m_data[ACTIONEDITOR_KEYRELEASE]       = "Key release";
+	m_data[ACTIONEDITOR_STOPSAMPLE]       = "Stop sample";
+	m_data[ACTIONEDITOR_STARTSTOP]        = "Start/stop";
+	m_data[ACTIONEDITOR_VELOCITY]         = "Velocity";
+	m_data[ACTIONEDITOR_LABEL_ACTIONTYPE] = "Action type to add";
 
 	m_data[BROWSER_SHOWHIDDENFILES] = "Show hidden files";
 	m_data[BROWSER_OPENPROJECT]     = "Open project";
