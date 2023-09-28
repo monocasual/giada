@@ -103,16 +103,6 @@ void geSampleActionEditor::draw()
 	children (the actions). */
 
 	baseDraw();
-
-	/* Print label. */
-
-	fl_color(G_COLOR_GREY_4);
-	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-	if (active())
-		fl_draw(g_ui->getI18Text(LangMap::ACTIONEDITOR_STARTSTOP), x() + 4, y(), w(), h(), (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CENTER));
-	else
-		fl_draw(g_ui->getI18Text(LangMap::ACTIONEDITOR_STARTSTOPDISABLED), x() + 4, y(), w(), h(), (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CENTER));
-
 	draw_children();
 }
 
