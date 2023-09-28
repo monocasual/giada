@@ -31,11 +31,13 @@
 #include "glue/channel.h"
 #include "gui/elems/actionEditor/envelopeEditor.h"
 #include "gui/elems/actionEditor/gridTool.h"
+#include "gui/elems/actionEditor/legend.h"
 #include "gui/elems/actionEditor/sampleActionEditor.h"
 #include "gui/elems/actionEditor/splitScroll.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/flexResizable.h"
 #include "gui/elems/basics/imageButton.h"
 #include "gui/graphics.h"
 #include "gui/ui.h"
@@ -61,8 +63,25 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, const Model& model)
 			header->end();
 		}
 
+		geFlex* body = new geFlex(Direction::HORIZONTAL);
+		{
+			geFlex* legendBox = new geFlex(Direction::VERTICAL);
+			{
+				m_legends->addWidget(new geLegend(g_ui->getI18Text(LangMap::ACTIONEDITOR_STARTSTOP)), 30);
+				m_legends->addWidget(new geLegend(g_ui->getI18Text(LangMap::ACTIONEDITOR_VOLUME)), 30);
+
+				legendBox->addWidget(m_legends);
+				legendBox->addWidget(new geBox(), m_splitScroll->getBottomScrollbarH() + G_GUI_OUTER_MARGIN); // bottom-right dead corner
+				legendBox->end();
+			}
+
+			body->addWidget(legendBox, LEGEND_WIDTH);
+			body->addWidget(m_splitScroll);
+			body->end();
+		}
+
 		container->addWidget(header, G_GUI_UNIT);
-		container->addWidget(m_splitScroll);
+		container->addWidget(body);
 		container->end();
 	}
 
@@ -78,8 +97,18 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, const Model& model)
 		m_actionType->deactivate();
 
 	m_sampleActionEditor = new geSampleActionEditor(0, 0, this);
-	m_envelopeEditor     = new geEnvelopeEditor(0, 0, g_ui->getI18Text(LangMap::ACTIONEDITOR_VOLUME), this);
+	m_envelopeEditor     = new geEnvelopeEditor(0, 0, this);
 	m_splitScroll->addWidgets(*m_sampleActionEditor, *m_envelopeEditor, model.actionEditorSplitH);
+
+	m_splitScroll->onDragBar = [this]() {
+		m_legends->resizeWidget(0, m_splitScroll->getTopContentH());
+	};
+
+	m_legends->resizeWidget(0, m_splitScroll->getTopContentH());
+
+	m_legends->onDragBar = [this](const Fl_Widget& widget) {
+		m_splitScroll->resizeWidget(0, widget.h());
+	};
 
 	prepareWindow();
 	rebuild();
@@ -104,6 +133,7 @@ void gdSampleActionEditor::rebuild()
 
 	m_sampleActionEditor->rebuild(m_data);
 	m_envelopeEditor->rebuild(m_data);
+	m_splitScroll->initScrollbar();
 }
 
 /* -------------------------------------------------------------------------- */
