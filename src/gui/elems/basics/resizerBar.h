@@ -27,6 +27,7 @@
 #ifndef GE_RESIZER_BAR_H
 #define GE_RESIZER_BAR_H
 
+#include "gui/types.h"
 #include <FL/Fl_Box.H>
 #include <functional>
 
@@ -72,6 +73,11 @@ public:
 
 	void moveTo(int p);
 
+	/* getFirstWidget
+	Returns a ref to the first widget before the drag bar. */
+
+	Fl_Widget& getFirstWidget();
+
 	std::function<void(const Fl_Widget&)> onDrag    = nullptr;
 	std::function<void(const Fl_Widget&)> onRelease = nullptr;
 
@@ -105,11 +111,6 @@ private:
 	Resize the first and the second widget, leaving all others untouched. */
 
 	void resize(int diff);
-
-	/* getFirstWidget
-	Returns a ref to the first widget before the drag bar. */
-
-	Fl_Widget& getFirstWidget();
 
 	Direction m_direction;
 	Mode      m_mode;
