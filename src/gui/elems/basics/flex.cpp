@@ -73,11 +73,7 @@ void geFlex::addWidget(Fl_Widget& widget, int size)
 {
 	Fl_Flex::add(widget);
 	Fl_Flex::fixed(widget, size);
-
-	/* Force-resize. It helps with those derived widgets that need to resize
-	themselves when a new widget is added dynamically (e.g. geColumn). */
-
-	Fl_Flex::size(w(), h());
+	Fl_Flex::layout();
 }
 
 void geFlex::addWidget(Fl_Widget* w, int size)

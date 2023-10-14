@@ -96,9 +96,6 @@ void geSplitScroll::addWidgets(Fl_Widget& wa, Fl_Widget& wb, Pixel topContentH)
 	m_a.add(&wa);
 	m_b.addWidget(&wb);
 
-	// Fix initial content positioning if this widget is away from (0, 0) position
-	m_a.scroll_to(-x(), -y());
-
 	if (topContentH != -1)
 		m_body->resizeWidget(0, topContentH);
 }
