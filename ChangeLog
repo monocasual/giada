@@ -11,8 +11,19 @@
 --------------------------------------------------------------------------------
 
 
-0.26.0 ---
+0.26.0 --- 2023 . 10. 15
 - Add ability to open more than one plug-in UI (#575)
+- Huge optimizations to the audio rendering process 
+- Improved floating legends in Action Editor (#655)
+- Enabling MIDI lightning also enables MIDI input (#527)
+- Enable static linking in Windows build (#661)
+- Sample Editor: play preview with the right current pitch and range (#654)
+- Right-click over empty column space opens the column menu (#628)
+- Don't pass command line arguments to FLTK (#372)
+- [Windows] Store configuration file in AppData directory (#299)
+- Update FLTK to latest master
+- Update RtAudio to 6.0.1
+- Lots of code refactoring and internal cleanup
 
 
 0.25.1 --- 2023 . 08 . 03
