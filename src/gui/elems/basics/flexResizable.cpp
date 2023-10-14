@@ -63,7 +63,7 @@ void geFlexResizable::resize(int newX, int newY, int newW, int newH)
 
 /* -------------------------------------------------------------------------- */
 
-void geFlexResizable::addWidget(Fl_Widget& widget, int size)
+void geFlexResizable::addWidget(Fl_Widget& widget, int /*size*/)
 {
 	/* Add resizer bar only if there is at least one child. */
 
