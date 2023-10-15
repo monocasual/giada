@@ -162,6 +162,11 @@ void geFlexResizable::addResizerBar()
 	bar->onDrag = [this](const Fl_Widget& wg) {
 		if (onDragBar != nullptr)
 			onDragBar(wg);
+
+		/*  The whole container gets resized in MOVE mode. */
+
+		if (m_mode == geResizerBar::Mode::MOVE)
+			geFlex::size(w(), computeHeight());
 	};
 
 	/* The widget connected to the drag bar becomes fixed, when resized. */
