@@ -70,50 +70,33 @@ geChannel* makeChannel_(const c::channel::Data& data)
 /* -------------------------------------------------------------------------- */
 
 geColumn::geColumn(int X, int Y, int W, int H, ID id, geResizerBar* b)
-: geFlex(X, Y, W, H, Direction::VERTICAL)
+: geFlexResizable(X, Y, W, H, Direction::VERTICAL, geResizerBar::Mode::MOVE)
 , id(id)
 , resizerBar(b)
 {
-	end();
-	init();
+	clearWidgets();
+
+	/* Store the channel height in model when a resizer bar is released. */
+
+	onDragBar = [](const Fl_Widget& widget) {
+		c::channel::setHeight(static_cast<const geChannel&>(widget).getData().id, widget.h());
+	};
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geColumn::refresh()
 {
-	for (geChannel* c : m_channels)
-		c->refresh();
+	for (Fl_Widget* c : m_widgets)
+		static_cast<geChannel*>(c)->refresh();
 }
 
 /* -------------------------------------------------------------------------- */
 
 geChannel* geColumn::addChannel(c::channel::Data d)
 {
-	geChannel*    gch = makeChannel_(d);
-	geResizerBar* bar = new geResizerBar(0, 0, 0, G_GUI_INNER_MARGIN, G_GUI_UNIT, Direction::VERTICAL,
-	    geResizerBar::Mode::MOVE);
-
-	/* Update the column height while dragging the resizer bar. */
-
-	bar->onDrag = [this](const Fl_Widget& /*w*/) {
-		resizable(nullptr);
-		size(this->w(), (child(children() - 1)->y() - y()) + G_GUI_INNER_MARGIN);
-	};
-
-	/* Store the channel height in model when the resizer bar is released. */
-
-	bar->onRelease = [channelId = d.id, this](const Fl_Widget& w) {
-		resizable(this);
-		c::channel::setHeight(channelId, w.h());
-	};
-
-	m_channels.push_back(gch);
-
+	geChannel* gch = makeChannel_(d);
 	addWidget(gch, d.height);
-	addWidget(bar, G_GUI_INNER_MARGIN);
-	size(w(), computeHeight());
-
 	return gch;
 }
 
@@ -150,11 +133,14 @@ void geColumn::showAddChannelMenu() const
 
 /* -------------------------------------------------------------------------- */
 
-geChannel* geColumn::getChannel(ID channelId) const
+geChannel* geColumn::getChannel(ID channelId)
 {
-	for (geChannel* c : m_channels)
+	for (Fl_Widget* wg : m_widgets)
+	{
+		geChannel* c = static_cast<geChannel*>(wg);
 		if (c->getData().id == channelId)
 			return c;
+	}
 	return nullptr;
 }
 
@@ -162,12 +148,12 @@ geChannel* geColumn::getChannel(ID channelId) const
 
 geChannel* geColumn::getChannelAtCursor(Pixel y) const
 {
-	if (m_channels.empty())
+	if (m_widgets.empty())
 		return nullptr;
 
-	for (geChannel* c : m_channels)
+	for (Fl_Widget* c : m_widgets)
 		if (geompp::Range(c->y(), c->y() + c->h()).contains(y))
-			return c;
+			return static_cast<geChannel*>(c);
 
 	return nullptr;
 }
@@ -176,50 +162,26 @@ geChannel* geColumn::getChannelAtCursor(Pixel y) const
 
 geChannel* geColumn::getFirstChannel() const
 {
-	return m_channels.empty() ? nullptr : m_channels.front();
+	return m_widgets.empty() ? nullptr : static_cast<geChannel*>(m_widgets.front());
 }
 
 geChannel* geColumn::getLastChannel() const
 {
-	return m_channels.empty() ? nullptr : m_channels.back();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geColumn::init()
-{
-	clear();
-	m_channels.clear();
-
-	m_addChannelBtn          = new geTextButton(g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON));
-	m_addChannelBtn->onClick = [this]() { showAddChannelMenu(); };
-
-	addWidget(m_addChannelBtn, G_GUI_UNIT);
-	addWidget(new geBox(), G_GUI_INNER_MARGIN); // Spacer between 'Edit column' button and channels
-	end();
+	return m_widgets.empty() ? nullptr : static_cast<geChannel*>(m_widgets.back());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geColumn::forEachChannel(std::function<void(geChannel& c)> f) const
 {
-	for (geChannel* c : m_channels)
-		f(*c);
+	for (Fl_Widget* wg : m_widgets)
+		f(*static_cast<geChannel*>(wg));
 }
 
 /* -------------------------------------------------------------------------- */
 
 int geColumn::countChannels() const
 {
-	return m_channels.size();
-}
-
-/* -------------------------------------------------------------------------- */
-
-int geColumn::computeHeight() const
-{
-	const auto last   = child(children() - 1);
-	const int  height = (last->y() + last->h()) - y();
-	return height;
+	return m_widgets.size();
 }
 } // namespace giada::v

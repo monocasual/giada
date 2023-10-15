@@ -29,9 +29,8 @@
 
 #include "core/types.h"
 #include "glue/channel.h"
-#include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/flexResizable.h"
 #include <functional>
-#include <vector>
 
 namespace giada::v
 {
@@ -39,7 +38,7 @@ class geTextButton;
 class geResizerBar;
 class geKeyboard;
 class geChannel;
-class geColumn : public geFlex
+class geColumn : public geFlexResizable
 {
 public:
 	geColumn(int x, int y, int w, int h, ID id, geResizerBar* b);
@@ -47,7 +46,7 @@ public:
 	/* getChannel
 	Returns the channel given the ID. */
 
-	geChannel* getChannel(ID channelId) const;
+	geChannel* getChannel(ID channelId);
 
 	/* getChannelAtCursor
 	Returns the channel below the cursor. Returns the last channel if y is 
@@ -81,20 +80,11 @@ public:
 
 	void refresh();
 
-	void init();
-
 	void forEachChannel(std::function<void(geChannel& c)> f) const;
 
 	ID id;
 
 	geResizerBar* resizerBar;
-
-private:
-	int computeHeight() const;
-
-	std::vector<geChannel*> m_channels;
-
-	geTextButton* m_addChannelBtn;
 };
 } // namespace giada::v
 
