@@ -72,13 +72,20 @@ void geFlexResizable::resize(int newX, int newY, int newW, int newH)
 
 void geFlexResizable::addWidget(Fl_Widget& widget, int size)
 {
-	/* Add resizer bar only if there is at least one child. */
+	/* In RESIZE mode the bar is added before the widget, but only if there 
+		is at least one child. */
 
-	if (children() > 0)
+	if (m_mode == geResizerBar::Mode::RESIZE && children() > 0)
 		addResizerBar();
 
 	geFlex::addWidget(widget, size);
 	m_widgets.push_back(&widget);
+
+	/* In MOVE mode the bar is added after the widget, so that also the last
+	one can be resized. */
+
+	if (m_mode == geResizerBar::Mode::MOVE)
+		addResizerBar();
 
 	geFlex::size(w(), computeHeight());
 }
@@ -118,7 +125,7 @@ Fl_Widget& geFlexResizable::getWidget(int index) { return *m_widgets[index]; }
 
 int geFlexResizable::computeHeight() const
 {
-	const auto last   = m_widgets.back();
+	const auto last   = child(children() - 1);
 	const int  height = (last->y() + last->h()) - y();
 	return height;
 }
