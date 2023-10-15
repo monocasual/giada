@@ -62,8 +62,8 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, const Model& model)
 		{
 			geFlex* legendBox = new geFlex(Direction::VERTICAL);
 			{
-				m_legends->addWidget(new gePianoRollLegend(), 30);
-				m_legends->addWidget(new geLegend(g_ui->getI18Text(LangMap::ACTIONEDITOR_VELOCITY)), 30);
+				m_legends->addWidget(new gePianoRollLegend());
+				m_legends->addWidget(new geLegend(g_ui->getI18Text(LangMap::ACTIONEDITOR_VELOCITY)));
 
 				legendBox->addWidget(m_legends);
 				legendBox->addWidget(new geBox(), m_splitScroll->getBottomScrollbarH() + G_GUI_OUTER_MARGIN); // bottom-right dead corner
