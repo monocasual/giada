@@ -82,7 +82,9 @@ private:
 
 	geResizerBar::Mode         m_mode;
 	std::vector<geResizerBar*> m_bars;
-	std::vector<Fl_Widget*>    m_widgets;
+
+protected:
+	std::vector<Fl_Widget*> m_widgets;
 };
 } // namespace giada::v
 
