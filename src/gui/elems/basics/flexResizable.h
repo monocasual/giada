@@ -41,6 +41,7 @@ geResizerBar for the two possible resizing modes. */
 class geFlexResizable : public geFlex
 {
 public:
+	geFlexResizable(int x, int y, int w, int h, Direction, geResizerBar::Mode);
 	geFlexResizable(Direction, geResizerBar::Mode);
 
 	void resize(int x, int y, int w, int h) override;

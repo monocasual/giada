@@ -31,10 +31,17 @@
 
 namespace giada::v
 {
-geFlexResizable::geFlexResizable(Direction d, geResizerBar::Mode mode)
-: geFlex(d)
+geFlexResizable::geFlexResizable(int x, int y, int w, int h, Direction d, geResizerBar::Mode mode)
+: geFlex(x, y, w, h, d)
 , onDragBar(nullptr)
 , m_mode(mode)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
+geFlexResizable::geFlexResizable(Direction d, geResizerBar::Mode mode)
+: geFlexResizable(0, 0, 0, 0, d, mode)
 {
 }
 
