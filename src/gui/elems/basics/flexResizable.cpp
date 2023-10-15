@@ -75,25 +75,7 @@ void geFlexResizable::addWidget(Fl_Widget& widget, int size)
 	/* Add resizer bar only if there is at least one child. */
 
 	if (children() > 0)
-	{
-		/* TODO - geResizerBar is glitchy when added in a flex layout: if width or
-		height is 0 it just doesn't show up. */
-
-		geResizerBar* bar = new geResizerBar(0, 0, G_GUI_INNER_MARGIN, G_GUI_INNER_MARGIN, G_GUI_UNIT, getDirection(), m_mode);
-		geFlex::addWidget(bar, G_GUI_INNER_MARGIN);
-		m_bars.push_back(bar);
-
-		bar->onDrag = [this](const Fl_Widget& wg) {
-			if (onDragBar != nullptr)
-				onDragBar(wg);
-		};
-
-		/* The widget connected to the drag bar becomes fixed, when resized. */
-
-		bar->onRelease = [this](const Fl_Widget& wg) {
-			geFlex::fixed(const_cast<Fl_Widget&>(wg), getWidgetMainSize(&wg));
-		};
-	}
+		addResizerBar();
 
 	geFlex::addWidget(widget, size);
 	m_widgets.push_back(&widget);
@@ -164,5 +146,28 @@ void geFlexResizable::makeLastWidgetFixed()
 	for (Fl_Widget* wg : m_widgets)
 		geFlex::fixed(wg, -1);
 	geFlex::fixed(m_widgets.back(), G_GUI_UNIT);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geFlexResizable::addResizerBar()
+{
+	/* TODO - geResizerBar is glitchy when added in a flex layout: if width or
+		height is 0 it just doesn't show up. */
+
+	geResizerBar* bar = new geResizerBar(0, 0, G_GUI_INNER_MARGIN, G_GUI_INNER_MARGIN, G_GUI_UNIT, getDirection(), m_mode);
+	geFlex::addWidget(bar, G_GUI_INNER_MARGIN);
+	m_bars.push_back(bar);
+
+	bar->onDrag = [this](const Fl_Widget& wg) {
+		if (onDragBar != nullptr)
+			onDragBar(wg);
+	};
+
+	/* The widget connected to the drag bar becomes fixed, when resized. */
+
+	bar->onRelease = [this](const Fl_Widget& wg) {
+		geFlex::fixed(const_cast<Fl_Widget&>(wg), getWidgetMainSize(&wg));
+	};
 }
 } // namespace giada::v

@@ -79,6 +79,7 @@ private:
 
 	void makeLastWidgetFlex();
 	void makeLastWidgetFixed();
+	void addResizerBar();
 
 	geResizerBar::Mode         m_mode;
 	std::vector<geResizerBar*> m_bars;
