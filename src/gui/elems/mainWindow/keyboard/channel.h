@@ -50,6 +50,11 @@ public:
 
 	virtual void refresh();
 
+	/* getId 
+	Returns the ID associated to this channel. */
+
+	ID getId() const;
+
 	/* getColumnId
 	Returns the ID of the column this channel resides in. */
 
