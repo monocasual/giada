@@ -108,6 +108,15 @@ void geFlexResizable::addWidget(Fl_Widget* widget, int size)
 
 /* -------------------------------------------------------------------------- */
 
+void geFlexResizable::clearWidgets()
+{
+	geFlex::clear();
+	m_bars.clear();
+	m_widgets.clear();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geFlexResizable::resizeWidget(int index, int size)
 {
 	assert(index >= 0 && static_cast<size_t>(index) < m_bars.size());

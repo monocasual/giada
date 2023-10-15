@@ -44,10 +44,17 @@ public:
 	geFlexResizable(int x, int y, int w, int h, Direction, geResizerBar::Mode);
 	geFlexResizable(Direction, geResizerBar::Mode);
 
+	void clear() = delete;
+
 	void resize(int x, int y, int w, int h) override;
 
 	void addWidget(Fl_Widget*, int size = -1) override;
 	void addWidget(Fl_Widget&, int size = -1) override;
+
+	/* clearWidgets
+	Remove all widgets from this group. */
+
+	void clearWidgets();
 
 	/* resizeWidget
 	Resizes widget at index 'index' to size 'size'. */
