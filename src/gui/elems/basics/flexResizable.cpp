@@ -60,7 +60,7 @@ void geFlexResizable::resize(int newX, int newY, int newW, int newH)
 		return;
 
 	const Fl_Widget* lastWidget     = m_widgets.back();
-	const int        lastWidgetSize = getWidgetMainSize(lastWidget);
+	const int        lastWidgetSize = getWidgetMainSize(*lastWidget);
 
 	if (lastWidgetSize < G_GUI_UNIT)
 		makeLastWidgetFixed();
@@ -112,7 +112,7 @@ void geFlexResizable::resizeWidget(int index, int size)
 
 	geResizerBar*    bar         = m_bars[index];
 	const Fl_Widget& firstWidget = bar->getFirstWidget();
-	const int        offset      = getWidgetMainPosition(&firstWidget) - getMainPosition();
+	const int        offset      = getWidgetMainPosition(firstWidget) - getMainPosition();
 
 	bar->moveTo(offset + size);
 }
@@ -127,8 +127,8 @@ int geFlexResizable::computeMainSize() const
 {
 	const auto last     = child(children() - 1);
 	const int  thisPos  = getMainPosition();
-	const int  lastPos  = getWidgetMainPosition(last);
-	const int  lastSize = getWidgetMainSize(last);
+	const int  lastPos  = getWidgetMainPosition(*last);
+	const int  lastSize = getWidgetMainSize(*last);
 	const int  size     = (lastPos + lastSize) - thisPos;
 	return size;
 }
@@ -147,14 +147,14 @@ int geFlexResizable::getMainSize() const
 
 /* -------------------------------------------------------------------------- */
 
-int geFlexResizable::getWidgetMainPosition(const Fl_Widget* wg) const
+int geFlexResizable::getWidgetMainPosition(const Fl_Widget& wg) const
 {
-	return getDirection() == Direction::VERTICAL ? wg->y() : wg->x();
+	return getDirection() == Direction::VERTICAL ? wg.y() : wg.x();
 }
 
-int geFlexResizable::getWidgetMainSize(const Fl_Widget* wg) const
+int geFlexResizable::getWidgetMainSize(const Fl_Widget& wg) const
 {
-	return getDirection() == Direction::VERTICAL ? wg->h() : wg->w();
+	return getDirection() == Direction::VERTICAL ? wg.h() : wg.w();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -162,7 +162,7 @@ int geFlexResizable::getWidgetMainSize(const Fl_Widget* wg) const
 void geFlexResizable::makeLastWidgetFlex()
 {
 	for (Fl_Widget* wg : m_widgets)
-		geFlex::fixed(wg, getWidgetMainSize(wg));
+		geFlex::fixed(wg, getWidgetMainSize(*wg));
 	geFlex::fixed(m_widgets.back(), -1);
 }
 
@@ -199,7 +199,7 @@ void geFlexResizable::addResizerBar()
 	/* The widget connected to the drag bar becomes fixed, when resized. */
 
 	bar->onRelease = [this](const Fl_Widget& wg) {
-		geFlex::fixed(const_cast<Fl_Widget&>(wg), getWidgetMainSize(&wg));
+		geFlex::fixed(const_cast<Fl_Widget&>(wg), getWidgetMainSize(wg));
 	};
 }
 
