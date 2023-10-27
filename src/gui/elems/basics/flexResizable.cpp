@@ -34,6 +34,7 @@ namespace giada::v
 geFlexResizable::geFlexResizable(int x, int y, int w, int h, Direction d, geResizerBar::Mode mode)
 : geFlex(x, y, w, h, d)
 , onDragBar(nullptr)
+, endMargin(0)
 , m_mode(mode)
 {
 }
@@ -129,7 +130,7 @@ int geFlexResizable::computeMainSize() const
 	const int  thisPos  = getMainPosition();
 	const int  lastPos  = getWidgetMainPosition(*last);
 	const int  lastSize = getWidgetMainSize(*last);
-	const int  size     = (lastPos + lastSize) - thisPos;
+	const int  size     = ((lastPos + lastSize) - thisPos) + endMargin;
 	return size;
 }
 

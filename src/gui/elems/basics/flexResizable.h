@@ -66,12 +66,20 @@ public:
 
 	Fl_Widget& getWidget(int index);
 
+	void setEndMargin(int);
+
 	/* onDragBar
 	Callback fired when one of the resizer bars is being dragged around. The
 	Fl_Widget parameter is a reference to the widget that is being resized by
 	the resizer bar. */
 
 	std::function<void(const Fl_Widget&)> onDragBar;
+
+	/* setEndMargin
+	Sometimes you want some empty margin at the end of the stack. Useful for
+	MOVE mode. */
+
+	int endMargin;
 
 private:
 	int computeMainSize() const;
