@@ -81,6 +81,10 @@ geColumn::geColumn(int X, int Y, int W, int H, ID id, geResizerBar* b)
 	onDragBar = [](const Fl_Widget& widget) {
 		c::channel::setHeight(static_cast<const geChannel&>(widget).getData().id, widget.h());
 	};
+
+	/* Leave some empty margin at the bottom for the drag and drop area. */
+
+	endMargin = G_GUI_UNIT * 2;
 }
 
 /* -------------------------------------------------------------------------- */
