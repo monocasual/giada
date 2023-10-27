@@ -75,6 +75,9 @@ public:
 
 private:
 	int computeMainSize() const;
+	int getMainPosition() const;
+	int getMainSize() const;
+	int getWidgetMainPosition(const Fl_Widget*) const;
 	int getWidgetMainSize(const Fl_Widget*) const;
 
 	void makeLastWidgetFlex();

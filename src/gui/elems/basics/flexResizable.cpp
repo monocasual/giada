@@ -112,7 +112,7 @@ void geFlexResizable::resizeWidget(int index, int size)
 
 	geResizerBar*    bar         = m_bars[index];
 	const Fl_Widget& firstWidget = bar->getFirstWidget();
-	const int        offset      = getDirection() == Direction::HORIZONTAL ? firstWidget.x() - x() : firstWidget.y() - y();
+	const int        offset      = getWidgetMainPosition(&firstWidget) - getMainPosition();
 
 	bar->moveTo(offset + size);
 }
@@ -126,14 +126,31 @@ Fl_Widget& geFlexResizable::getWidget(int index) { return *m_widgets[index]; }
 int geFlexResizable::computeMainSize() const
 {
 	const auto last     = child(children() - 1);
-	const int  thisPos  = getDirection() == Direction::HORIZONTAL ? x() : y();
-	const int  lastPos  = getDirection() == Direction::HORIZONTAL ? last->x() : last->y();
-	const int  lastSize = getDirection() == Direction::HORIZONTAL ? last->w() : last->h();
+	const int  thisPos  = getMainPosition();
+	const int  lastPos  = getWidgetMainPosition(last);
+	const int  lastSize = getWidgetMainSize(last);
 	const int  size     = (lastPos + lastSize) - thisPos;
 	return size;
 }
 
 /* -------------------------------------------------------------------------- */
+
+int geFlexResizable::getMainPosition() const
+{
+	return getDirection() == Direction::VERTICAL ? y() : x();
+}
+
+int geFlexResizable::getMainSize() const
+{
+	return getDirection() == Direction::VERTICAL ? h() : w();
+}
+
+/* -------------------------------------------------------------------------- */
+
+int geFlexResizable::getWidgetMainPosition(const Fl_Widget* wg) const
+{
+	return getDirection() == Direction::VERTICAL ? wg->y() : wg->x();
+}
 
 int geFlexResizable::getWidgetMainSize(const Fl_Widget* wg) const
 {
