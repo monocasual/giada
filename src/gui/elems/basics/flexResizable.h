@@ -74,12 +74,13 @@ public:
 	std::function<void(const Fl_Widget&)> onDragBar;
 
 private:
-	int computeHeight() const;
+	int computeMainSize() const;
 	int getWidgetMainSize(const Fl_Widget*) const;
 
 	void makeLastWidgetFlex();
 	void makeLastWidgetFixed();
 	void addResizerBar();
+	void adjustMainSize();
 
 	geResizerBar::Mode         m_mode;
 	std::vector<geResizerBar*> m_bars;

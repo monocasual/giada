@@ -87,7 +87,7 @@ void geFlexResizable::addWidget(Fl_Widget& widget, int size)
 	if (m_mode == geResizerBar::Mode::MOVE)
 		addResizerBar();
 
-	geFlex::size(w(), computeHeight());
+	adjustMainSize();
 }
 
 void geFlexResizable::addWidget(Fl_Widget* widget, int size)
@@ -123,11 +123,14 @@ Fl_Widget& geFlexResizable::getWidget(int index) { return *m_widgets[index]; }
 
 /* -------------------------------------------------------------------------- */
 
-int geFlexResizable::computeHeight() const
+int geFlexResizable::computeMainSize() const
 {
-	const auto last   = child(children() - 1);
-	const int  height = (last->y() + last->h()) - y();
-	return height;
+	const auto last     = child(children() - 1);
+	const int  thisPos  = getDirection() == Direction::HORIZONTAL ? x() : y();
+	const int  lastPos  = getDirection() == Direction::HORIZONTAL ? last->x() : last->y();
+	const int  lastSize = getDirection() == Direction::HORIZONTAL ? last->w() : last->h();
+	const int  size     = (lastPos + lastSize) - thisPos;
+	return size;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -173,7 +176,7 @@ void geFlexResizable::addResizerBar()
 		/*  The whole container gets resized in MOVE mode. */
 
 		if (m_mode == geResizerBar::Mode::MOVE)
-			geFlex::size(w(), computeHeight());
+			adjustMainSize();
 	};
 
 	/* The widget connected to the drag bar becomes fixed, when resized. */
@@ -181,5 +184,15 @@ void geFlexResizable::addResizerBar()
 	bar->onRelease = [this](const Fl_Widget& wg) {
 		geFlex::fixed(const_cast<Fl_Widget&>(wg), getWidgetMainSize(&wg));
 	};
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geFlexResizable::adjustMainSize()
+{
+	if (getDirection() == Direction::HORIZONTAL)
+		geFlex::size(computeMainSize(), h());
+	else
+		geFlex::size(w(), computeMainSize());
 }
 } // namespace giada::v
