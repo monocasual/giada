@@ -76,6 +76,13 @@ int geScroll::handle(int e)
 
 /* -------------------------------------------------------------------------- */
 
+geompp::Rect<int> geScroll::getViewportBounds() const
+{
+	return {x(), y(), w() - scrollbar.w(), h() - hscrollbar.h()};
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geScroll::cb_onScrollV(Fl_Widget* w, void* p)
 {
 	geScroll*     s = static_cast<geScroll*>(w->parent());

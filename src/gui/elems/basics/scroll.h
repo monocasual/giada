@@ -30,6 +30,7 @@
 #ifndef GE_SCROLL_H
 #define GE_SCROLL_H
 
+#include "deps/geompp/src/rect.hpp"
 #include <FL/Fl_Scroll.H>
 #include <functional>
 
@@ -42,6 +43,11 @@ public:
 	geScroll(int type = Fl_Scroll::BOTH);
 
 	int countChildren() const;
+
+	/* getViewportBounds
+	Returns the viewport bounds without scrollbars taken into account. */
+
+	geompp::Rect<int> getViewportBounds() const;
 
 	int handle(int e) override;
 
