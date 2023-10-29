@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "deps/geompp/src/rect.hpp"
 #include "glue/channel.h"
 #include "glue/io.h"
 #include "gui/dialogs/warnings.h"
@@ -339,14 +338,37 @@ void geKeyboard::draw()
 
 	for (const geColumn* c : m_columns)
 	{
-		geompp::Rect bounds(c->x(), c->y() + c->h(), c->w(), h() + yposition());
-		drawRectf(bounds, G_COLOR_GREY_1_5);
-		drawRect(bounds, G_COLOR_GREY_2);
+		const geompp::Rect background = getColumnBackround(*c);
+
+		drawRectf(background, G_COLOR_GREY_1_5);
+		drawRect(background, G_COLOR_GREY_2);
 	}
 
 	draw_children();
 
 	fl_pop_clip();
+}
+
+/* -------------------------------------------------------------------------- */
+
+geompp::Rect<int> geKeyboard::getColumnBackround(const geColumn& c) const
+{
+	const geompp::Rect  columnBounds(c.x(), c.y(), c.w(), c.h() - c.endMargin);
+	const geompp::Rect  viewportBounds = getViewportBounds();
+	const geompp::Range columnRange    = columnBounds.getHeightAsRange();
+	const geompp::Range thisRange      = viewportBounds.getHeightAsRange();
+
+	/* Column is empty (c.h() == 0) or away from the viewport: just return a 
+	full-size background. */
+
+	if (c.h() == 0 || !thisRange.intersects(columnRange))
+		return viewportBounds.withX(c.x()).withW(c.w());
+
+	const auto [_, r2] = thisRange.getDifference(columnRange);
+
+	if (!r2.isValid())
+		return {};
+	return columnBounds.withVerticalRange(r2);
 }
 
 /* -------------------------------------------------------------------------- */

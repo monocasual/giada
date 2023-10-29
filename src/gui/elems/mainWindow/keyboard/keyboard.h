@@ -29,6 +29,7 @@
 
 #include "core/const.h"
 #include "core/idManager.h"
+#include "deps/geompp/src/rect.hpp"
 #include "gui/elems/basics/scroll.h"
 #include <FL/Fl_Box.H>
 #include <functional>
@@ -114,6 +115,11 @@ private:
 
 		int getPositionForCursor(const geColumn*, Pixel y) const;
 	};
+
+	/* getColumnBackround
+	Returns a geompp::Rect for the square to be drawn as column background. */
+
+	geompp::Rect<int> getColumnBackround(const geColumn&) const;
 
 	void addColumn(int width = G_DEFAULT_COLUMN_WIDTH, ID id = 0);
 
