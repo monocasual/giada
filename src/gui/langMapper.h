@@ -134,6 +134,8 @@ public:
 	static constexpr auto MAIN_TRANSPORT_LABEL_RECINPUTMODE   = "main_transport_label_recInputMode";
 	static constexpr auto MAIN_TRANSPORT_LABEL_METRONOME      = "main_transport_label_metronome";
 
+	static constexpr auto MAIN_COLUMN_HELP = "main_column_help";
+
 	static constexpr auto MAIN_COLUMN_BUTTON                  = "main_column_button";
 	static constexpr auto MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL = "main_column_button_addSampleChannel";
 	static constexpr auto MAIN_COLUMN_BUTTON_ADDMIDICHANNEL   = "main_column_button_addMidiChannel";

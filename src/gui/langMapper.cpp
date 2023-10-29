@@ -135,6 +135,8 @@ LangMap::LangMap()
 	                                            "project.";
 	m_data[MAIN_TRANSPORT_LABEL_METRONOME] = "Metronome";
 
+	m_data[MAIN_COLUMN_HELP] = "Drop audio files or right-click here";
+
 	m_data[MAIN_COLUMN_BUTTON]                  = "Edit column";
 	m_data[MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL] = "Add Sample channel";
 	m_data[MAIN_COLUMN_BUTTON_ADDMIDICHANNEL]   = "Add MIDI channel";
