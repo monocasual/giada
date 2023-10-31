@@ -40,6 +40,7 @@
 #include "gui/elems/midiActivity.h"
 #include "gui/ui.h"
 #include "utils/fs.h"
+#include "utils/gui.h"
 #include "utils/log.h"
 #include "utils/string.h"
 #include "utils/vector.h"
@@ -343,7 +344,10 @@ void geKeyboard::draw()
 		drawRectf(background, G_COLOR_GREY_1_5);
 		drawRect(background, G_COLOR_GREY_2);
 		if (background.h >= c->endMargin)
-			drawText(g_ui->getI18Text(LangMap::MAIN_COLUMN_HELP), background, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_GREY_3);
+		{
+			const std::string text = u::gui::truncate(g_ui->getI18Text(LangMap::MAIN_COLUMN_HELP), c->w() - G_GUI_UNIT);
+			drawText(text, background, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_GREY_3);
+		}
 	}
 
 	draw_children();
