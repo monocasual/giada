@@ -353,6 +353,9 @@ void geTabAudio::refreshDevInProperties()
 		m_sounddevIn->activate();
 		m_channelsIn->activate();
 		m_recTriggerLevel->activate();
+		// Also refresh channels in info
+		m_data.inputDevice.channelsCount = m_channelsIn->getChannelsCount();
+		m_data.inputDevice.channelsStart = m_channelsIn->getChannelsStart();
 	}
 	else
 	{
@@ -361,10 +364,6 @@ void geTabAudio::refreshDevInProperties()
 		m_channelsIn->deactivate();
 		m_recTriggerLevel->deactivate();
 	}
-
-	// Also refresh channels in info
-	m_data.inputDevice.channelsCount = m_channelsIn->getChannelsCount();
-	m_data.inputDevice.channelsStart = m_channelsIn->getChannelsStart();
 }
 
 /* -------------------------------------------------------------------------- */
