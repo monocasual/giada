@@ -90,13 +90,7 @@ void gdWindow::addChild(gdWindow* w)
 
 void gdWindow::delChild(gdWindow* w)
 {
-	for (unsigned j = 0; j < m_children.size(); j++)
-		if (w->getId() == m_children.at(j)->getId())
-		{
-			delete m_children.at(j);
-			m_children.erase(m_children.begin() + j);
-			return;
-		}
+	delChild(w->getId());
 }
 
 /* -------------------------------------------------------------------------- */
