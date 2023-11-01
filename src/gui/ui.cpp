@@ -255,9 +255,7 @@ void Ui::closeSubWindow(ID wid)
 
 void Ui::closeAllSubwindows()
 {
-	mainWindow->deleteChild(WID_ACTION_EDITOR);
-	mainWindow->deleteChild(WID_SAMPLE_EDITOR);
-	mainWindow->deleteChild(WID_FX_LIST);
+	mainWindow->deleteChildren();
 }
 
 /* -------------------------------------------------------------------------- */
