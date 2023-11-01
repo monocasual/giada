@@ -35,6 +35,7 @@ class geProgress : public Fl_Progress
 {
 public:
 	geProgress(int x, int y, int w, int h, const char* l = nullptr);
+	geProgress();
 };
 } // namespace giada::v
 

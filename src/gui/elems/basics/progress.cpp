@@ -36,4 +36,11 @@ geProgress::geProgress(int x, int y, int w, int h, const char* l)
 	color(G_COLOR_GREY_2, G_COLOR_GREY_4);
 	box(G_CUSTOM_BORDER_BOX);
 }
+
+/* -------------------------------------------------------------------------- */
+
+geProgress::geProgress()
+: geProgress(0, 0, 0, 0)
+{
+}
 } // namespace giada::v
