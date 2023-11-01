@@ -28,11 +28,11 @@
 #define GD_PROGRESS_H
 
 #include "gui/dialogs/window.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/progress.h"
 
 namespace giada::v
 {
+class geBox;
+class geProgress;
 class gdProgress : public gdWindow
 {
 public:
@@ -42,8 +42,8 @@ public:
 	void popup(const char* s);
 
 private:
-	geBox      m_text;
-	geProgress m_progress;
+	geBox*      m_text;
+	geProgress* m_progress;
 };
 } // namespace giada::v
 

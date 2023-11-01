@@ -27,6 +27,9 @@
 #include "gui/dialogs/progress.h"
 #include "core/const.h"
 #include "deps/geompp/src/rect.hpp"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/progress.h"
 #include "utils/gui.h"
 #include <FL/Fl.H>
 
@@ -34,16 +37,22 @@ namespace giada::v
 {
 gdProgress::gdProgress()
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, 388, 58}))
-, m_text(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w() - (G_GUI_OUTER_MARGIN * 2), 30, "", FL_ALIGN_CENTER)
-, m_progress(G_GUI_OUTER_MARGIN, 40, w() - (G_GUI_OUTER_MARGIN * 2), 10)
 {
-	end();
-	add(m_text);
-	add(m_progress);
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		m_text = new geBox();
 
-	m_progress.minimum(0.0f);
-	m_progress.maximum(1.0f);
-	m_progress.value(0.0f);
+		m_progress = new geProgress();
+		m_progress->minimum(0.0f);
+		m_progress->maximum(1.0f);
+		m_progress->value(0.0f);
+
+		container->addWidget(m_text);
+		container->addWidget(m_progress, 10);
+		container->end();
+	}
+
+	add(container);
 
 	hide();
 	border(0);
@@ -54,7 +63,7 @@ gdProgress::gdProgress()
 
 void gdProgress::setProgress(float p)
 {
-	m_progress.value(p);
+	m_progress->value(p);
 	redraw();
 	Fl::flush();
 }
@@ -63,7 +72,7 @@ void gdProgress::setProgress(float p)
 
 void gdProgress::popup(const char* s)
 {
-	m_text.copy_label(s);
+	m_text->copy_label(s);
 
 	const int px = u::gui::centerWindowX(w());
 	const int py = u::gui::centerWindowY(h());
