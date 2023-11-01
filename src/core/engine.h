@@ -83,7 +83,7 @@ public:
 	Resets all sub-components to the initial state. Useful when Giada needs to
 	be brought back to the startup state. */
 
-	void reset(PluginManager::SortMethod);
+	void reset();
 
 	/* shutdown
 	Closes the current audio device. */

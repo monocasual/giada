@@ -39,7 +39,7 @@
 
 namespace giada::m
 {
-void PluginManager::reset(SortMethod sortMethod)
+void PluginManager::reset()
 {
 	pluginFactory::reset();
 
@@ -48,7 +48,6 @@ void PluginManager::reset(SortMethod sortMethod)
 		m_formatManager.addDefaultFormats();
 
 	loadList(u::fs::join(u::fs::getConfigDirPath(), "plugins.xml"));
-	sortPlugins(sortMethod);
 }
 
 /* -------------------------------------------------------------------------- */

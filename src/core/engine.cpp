@@ -236,7 +236,7 @@ void Engine::init(const Conf& conf)
 	m_channelManager.reset(m_kernelAudio.getBufferSize());
 	m_sequencer.reset(m_kernelAudio.getSampleRate());
 	m_pluginHost.reset(m_kernelAudio.getBufferSize());
-	m_pluginManager.reset(conf.pluginSortMethod);
+	m_pluginManager.reset();
 
 	m_mixer.enable();
 	m_kernelAudio.startStream();
@@ -254,13 +254,13 @@ void Engine::init(const Conf& conf)
 
 /* -------------------------------------------------------------------------- */
 
-void Engine::reset(PluginManager::SortMethod pluginSortMethod)
+void Engine::reset()
 {
 	/* Managers first, due to the internal ID numbering. */
 
 	channelFactory::reset();
 	waveFactory::reset();
-	m_pluginManager.reset(pluginSortMethod);
+	m_pluginManager.reset();
 
 	/* Then all other components. */
 

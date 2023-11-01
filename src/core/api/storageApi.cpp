@@ -97,8 +97,7 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 
 /* -------------------------------------------------------------------------- */
 
-model::LoadState StorageApi::loadProject(const std::string& projectPath, PluginManager::SortMethod pluginSortMethod,
-    std::function<void(float)> progress)
+model::LoadState StorageApi::loadProject(const std::string& projectPath, std::function<void(float)> progress)
 {
 	u::log::print("[StorageApi::loadProject] Load project from {}\n", projectPath);
 
@@ -118,7 +117,7 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, PluginM
 
 	m_midiSynchronizer.stopSendClock();
 	m_mixer.disable();
-	m_engine.reset(pluginSortMethod);
+	m_engine.reset();
 
 	/* Load the patch into Model. */
 

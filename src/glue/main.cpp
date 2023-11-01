@@ -291,7 +291,7 @@ void closeProject()
 	g_ui->stopUpdater();
 	g_ui->closeAllSubwindows(); // Close VST editors, if any, before deleting their processors
 	g_engine->suspend();
-	g_engine->reset(g_ui->model.pluginChooserSortMethod);
+	g_engine->reset();
 	g_ui->reset();
 	g_engine->resume();
 	g_ui->startUpdater();

@@ -26,6 +26,7 @@
 
 #include "glue/layout.h"
 #include "core/conf.h"
+#include "core/engine.h"
 #include "core/mixer.h"
 #include "core/patch.h"
 #include "core/sequencer.h"
@@ -56,7 +57,8 @@
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/ui.h"
 
-extern giada::v::Ui* g_ui;
+extern giada::v::Ui*     g_ui;
+extern giada::m::Engine* g_engine;
 
 namespace giada::c::layout
 {
@@ -237,6 +239,7 @@ void openMasterOutPluginListWindow()
 
 void openPluginChooser(ID channelId)
 {
+	g_engine->getPluginsApi().sort(g_ui->model.pluginChooserSortMethod);
 	g_ui->openSubWindow(new v::gdPluginChooser(channelId, g_ui->model));
 }
 } // namespace giada::c::layout

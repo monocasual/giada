@@ -87,7 +87,7 @@ public:
 	/* reset
 	Brings everything back to the initial state. */
 
-	void reset(SortMethod);
+	void reset();
 
 	/* scanDirs
 	Parses plugin directories (semicolon-separated) and store list in 

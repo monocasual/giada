@@ -60,7 +60,7 @@ public:
 	Loads a new project. Returns a model::LoadState object containing the 
 	operation state. */
 
-	model::LoadState loadProject(const std::string& projectPath, PluginManager::SortMethod, std::function<void(float)> progress);
+	model::LoadState loadProject(const std::string& projectPath, std::function<void(float)> progress);
 
 private:
 	Engine&           m_engine;

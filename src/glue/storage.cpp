@@ -98,8 +98,7 @@ void loadProject(void* data)
 {
 	v::gdBrowserLoad* browser = static_cast<v::gdBrowserLoad*>(data);
 
-	const std::string                  projectPath       = browser->getSelectedItem();
-	const m::PluginManager::SortMethod pluginsSortMethod = g_ui->model.pluginChooserSortMethod;
+	const std::string projectPath = browser->getSelectedItem();
 
 	/* Close all sub-windows first (browser included), in case there are VST 
 	editors visible. VST editors must be closed before deleting their plug-in 
@@ -110,7 +109,7 @@ void loadProject(void* data)
 	auto uiProgress     = g_ui->mainWindow->getScopedProgress(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
 	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
-	m::model::LoadState state = g_engine->getStorageApi().loadProject(projectPath, pluginsSortMethod, engineProgress);
+	m::model::LoadState state = g_engine->getStorageApi().loadProject(projectPath, engineProgress);
 
 	if (state.patch.status != G_FILE_OK)
 	{
