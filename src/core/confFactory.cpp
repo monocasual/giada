@@ -149,7 +149,8 @@ bool serialize(const Conf& conf)
 	j[CONF_KEY_PLUGIN_CHOOSER_Y]   = conf.pluginChooserBounds.y;
 	j[CONF_KEY_PLUGIN_CHOOSER_W]   = conf.pluginChooserBounds.w;
 	j[CONF_KEY_PLUGIN_CHOOSER_H]   = conf.pluginChooserBounds.h;
-	j[CONF_KEY_PLUGIN_SORT_METHOD] = conf.pluginSortMethod;
+	j[CONF_KEY_PLUGIN_SORT_METHOD] = conf.pluginSortMode.method;
+	j[CONF_KEY_PLUGIN_SORT_DIR]    = conf.pluginSortMode.dir;
 
 	j[CONF_KEY_UI_SCALING] = conf.uiScaling;
 
@@ -263,7 +264,8 @@ Conf deserialize()
 	conf.pluginChooserBounds.y = j.value(CONF_KEY_PLUGIN_CHOOSER_Y, conf.pluginChooserBounds.y);
 	conf.pluginChooserBounds.w = j.value(CONF_KEY_PLUGIN_CHOOSER_W, conf.pluginChooserBounds.w);
 	conf.pluginChooserBounds.h = j.value(CONF_KEY_PLUGIN_CHOOSER_H, conf.pluginChooserBounds.h);
-	conf.pluginSortMethod      = j.value(CONF_KEY_PLUGIN_SORT_METHOD, conf.pluginSortMethod);
+	conf.pluginSortMode.method = j.value(CONF_KEY_PLUGIN_SORT_METHOD, conf.pluginSortMode.method);
+	conf.pluginSortMode.dir    = j.value(CONF_KEY_PLUGIN_SORT_DIR, conf.pluginSortMode.dir);
 
 	conf.uiScaling = j.value(CONF_KEY_UI_SCALING, conf.uiScaling);
 

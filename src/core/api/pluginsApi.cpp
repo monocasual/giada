@@ -98,9 +98,9 @@ void PluginsApi::swap(const Plugin& p1, const Plugin& p2, ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void PluginsApi::sort(PluginManager::SortMethod method)
+void PluginsApi::sort(PluginManager::SortMode mode)
 {
-	m_pluginManager.sortPlugins(method);
+	m_pluginManager.sortPlugins(mode);
 }
 
 /* -------------------------------------------------------------------------- */

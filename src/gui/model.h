@@ -78,8 +78,8 @@ struct Model
 	geompp::Rect<int> midiInputBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
 	geompp::Rect<int> pluginListBounds = {-1, -1, 468, 204};
 
-	geompp::Rect<int>            pluginChooserBounds     = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
-	m::PluginManager::SortMethod pluginChooserSortMethod = m::PluginManager::SortMethod::NAME;
+	geompp::Rect<int>          pluginChooserBounds   = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	m::PluginManager::SortMode pluginChooserSortMode = {m::PluginManager::SortMethod::NAME, m::PluginManager::SortDir::ASC};
 
 	int keyBindPlay          = ' ';
 	int keyBindRewind        = FL_BackSpace;

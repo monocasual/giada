@@ -204,21 +204,21 @@ bool PluginManager::hasMissingPlugins() const
 
 /* -------------------------------------------------------------------------- */
 
-void PluginManager::sortPlugins(SortMethod method)
+void PluginManager::sortPlugins(SortMode mode)
 {
-	switch (method)
+	switch (mode.method)
 	{
 	case SortMethod::NAME:
-		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortAlphabetically, true);
+		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortAlphabetically, mode.dir == SortDir::ASC);
 		break;
 	case SortMethod::CATEGORY:
-		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByCategory, true);
+		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByCategory, mode.dir == SortDir::ASC);
 		break;
 	case SortMethod::MANUFACTURER:
-		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByManufacturer, true);
+		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByManufacturer, mode.dir == SortDir::ASC);
 		break;
 	case SortMethod::FORMAT:
-		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByFormat, true);
+		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByFormat, mode.dir == SortDir::ASC);
 		break;
 	}
 }

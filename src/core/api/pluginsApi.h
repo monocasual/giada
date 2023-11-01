@@ -54,7 +54,7 @@ public:
 
 	void add(int pluginListIndex, ID channelId);
 	void swap(const Plugin&, const Plugin&, ID channelId);
-	void sort(PluginManager::SortMethod);
+	void sort(PluginManager::SortMode);
 	void free(const Plugin&, ID channelId);
 	void setProgram(ID pluginId, int programIndex);
 	void toggleBypass(ID pluginId);

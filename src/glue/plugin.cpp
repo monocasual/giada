@@ -168,9 +168,9 @@ void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void sortPlugins(m::PluginManager::SortMethod method)
+void sortPlugins(m::PluginManager::SortMode mode)
 {
-	g_engine->getPluginsApi().sort(method);
+	g_engine->getPluginsApi().sort(mode);
 }
 
 /* -------------------------------------------------------------------------- */

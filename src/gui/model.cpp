@@ -60,7 +60,7 @@ void Model::store(m::Conf& conf) const
 	conf.pluginListBounds = pluginListBounds;
 
 	conf.pluginChooserBounds = pluginChooserBounds;
-	conf.pluginSortMethod    = pluginChooserSortMethod;
+	conf.pluginSortMode      = pluginChooserSortMode;
 
 	conf.keyBindPlay          = keyBindPlay;
 	conf.keyBindRewind        = keyBindRewind;
@@ -102,8 +102,8 @@ void Model::load(const m::Conf& conf)
 	midiInputBounds  = conf.midiInputBounds;
 	pluginListBounds = conf.pluginListBounds;
 
-	pluginChooserBounds     = conf.pluginChooserBounds;
-	pluginChooserSortMethod = conf.pluginSortMethod;
+	pluginChooserBounds   = conf.pluginChooserBounds;
+	pluginChooserSortMode = conf.pluginSortMode;
 
 	keyBindPlay          = conf.keyBindPlay;
 	keyBindRewind        = conf.keyBindRewind;

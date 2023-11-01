@@ -56,6 +56,18 @@ public:
 		FORMAT
 	};
 
+	enum class SortDir : int
+	{
+		ASC = 0,
+		DESC
+	};
+
+	struct SortMode
+	{
+		SortMethod method;
+		SortDir    dir;
+	};
+
 	struct PluginInfo
 	{
 		std::string uid;
@@ -115,7 +127,7 @@ public:
 
 	std::vector<Plugin*> clonePlugins(const std::vector<Plugin*>&, int sampleRate, int bufferSize, model::Model&);
 
-	void sortPlugins(SortMethod sortMethod);
+	void sortPlugins(SortMode);
 
 private:
 	/* formatManager

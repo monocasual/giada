@@ -47,7 +47,9 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 		geFlex* header = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 		{
 			sortMethod = new geChoice(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY), 0);
+			sortDir    = new geChoice();
 			header->addWidget(sortMethod, 180);
+			header->addWidget(sortDir, 40);
 			header->addWidget(new geBox());
 			header->end();
 		}
@@ -77,9 +79,17 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_CATEGORY));
 	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_MANUFACTURER));
 	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_FORMAT));
-	sortMethod->showItem(static_cast<int>(model.pluginChooserSortMethod));
-	sortMethod->onChange = [this](ID id) {
-		c::plugin::sortPlugins(static_cast<m::PluginManager::SortMethod>(id));
+	sortMethod->showItem(static_cast<int>(model.pluginChooserSortMode.method));
+	sortMethod->onChange = [this](ID) {
+		c::plugin::sortPlugins(getSortMode());
+		browser->refresh();
+	};
+
+	sortDir->addItem("A-Z");
+	sortDir->addItem("Z-A");
+	sortDir->showItem(static_cast<int>(model.pluginChooserSortMode.dir));
+	sortDir->onChange = [this](ID) {
+		c::plugin::sortPlugins(getSortMode());
 		browser->refresh();
 	};
 
@@ -103,7 +113,16 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 
 gdPluginChooser::~gdPluginChooser()
 {
-	g_ui->model.pluginChooserBounds     = getBounds();
-	g_ui->model.pluginChooserSortMethod = static_cast<m::PluginManager::SortMethod>(sortMethod->getSelectedId());
+	g_ui->model.pluginChooserBounds   = getBounds();
+	g_ui->model.pluginChooserSortMode = getSortMode();
+}
+
+/* -------------------------------------------------------------------------- */
+
+m::PluginManager::SortMode gdPluginChooser::getSortMode() const
+{
+	return {
+	    static_cast<m::PluginManager::SortMethod>(sortMethod->getSelectedId()),
+	    static_cast<m::PluginManager::SortDir>(sortDir->getSelectedId())};
 }
 } // namespace giada::v

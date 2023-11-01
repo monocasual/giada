@@ -239,7 +239,7 @@ void openMasterOutPluginListWindow()
 
 void openPluginChooser(ID channelId)
 {
-	g_engine->getPluginsApi().sort(g_ui->model.pluginChooserSortMethod);
+	g_engine->getPluginsApi().sort(g_ui->model.pluginChooserSortMode);
 	g_ui->openSubWindow(new v::gdPluginChooser(channelId, g_ui->model));
 }
 } // namespace giada::c::layout

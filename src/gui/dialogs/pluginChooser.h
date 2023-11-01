@@ -43,7 +43,10 @@ public:
 	~gdPluginChooser();
 
 private:
+	m::PluginManager::SortMode getSortMode() const;
+
 	geChoice*        sortMethod;
+	geChoice*        sortDir;
 	geTextButton*    addBtn;
 	geTextButton*    cancelBtn;
 	gePluginBrowser* browser;

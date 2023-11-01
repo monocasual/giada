@@ -109,8 +109,8 @@ struct Conf final
 	uint32_t midiInBeatDouble = 0x0;
 	uint32_t midiInBeatHalf   = 0x0;
 
-	geompp::Rect<int>         pluginChooserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
-	PluginManager::SortMethod pluginSortMethod    = PluginManager::SortMethod::NAME;
+	geompp::Rect<int>       pluginChooserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	PluginManager::SortMode pluginSortMode      = {PluginManager::SortMethod::NAME, PluginManager::SortDir::ASC};
 
 	int keyBindPlay          = ' ';
 	int keyBindRewind        = FL_BackSpace;
