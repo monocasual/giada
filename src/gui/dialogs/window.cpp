@@ -53,11 +53,7 @@ gdWindow::gdWindow(geompp::Rect<int> r, const char* title, ID id)
 
 gdWindow::~gdWindow()
 {
-	/* delete all subwindows in order to empty the stack */
-
-	for (unsigned j = 0; j < m_children.size(); j++)
-		delete m_children.at(j);
-	m_children.clear();
+	deleteChildren();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -114,6 +110,15 @@ void gdWindow::delChild(ID wid)
 			m_children.erase(m_children.begin() + j);
 			return;
 		}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdWindow::deleteChildren()
+{
+	for (auto* child : m_children)
+		delete child;
+	m_children.clear();
 }
 
 /* -------------------------------------------------------------------------- */
