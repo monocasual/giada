@@ -69,7 +69,7 @@ void gdWindow::cb_closeChild(Fl_Widget* w, void* /*p*/)
 
 	gdWindow* child = static_cast<gdWindow*>(w);
 	if (child->getParent() != nullptr)
-		(child->getParent())->delChild(child);
+		(child->getParent())->deleteChild(child);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -79,7 +79,7 @@ void gdWindow::addChild(gdWindow* w)
 	if (hasChild(w->getId()))
 	{
 		G_DEBUG("Parent has subwindow with id={}, deleting", w->getId());
-		delChild(w->getId());
+		deleteChild(w->getId());
 	}
 	w->setParent(this);
 	w->callback(cb_closeChild); // you can pass params: w->callback(cb_closeChild, (void*)params)
@@ -88,14 +88,14 @@ void gdWindow::addChild(gdWindow* w)
 
 /* -------------------------------------------------------------------------- */
 
-void gdWindow::delChild(gdWindow* w)
+void gdWindow::deleteChild(gdWindow* w)
 {
-	delChild(w->getId());
+	deleteChild(w->getId());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void gdWindow::delChild(ID wid)
+void gdWindow::deleteChild(ID wid)
 {
 	for (unsigned j = 0; j < m_children.size(); j++)
 		if (m_children.at(j)->getId() == wid)

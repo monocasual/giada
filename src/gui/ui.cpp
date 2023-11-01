@@ -248,16 +248,16 @@ void Ui::openSubWindow(v::gdWindow* child)
 
 void Ui::closeSubWindow(ID wid)
 {
-	mainWindow->delChild(wid);
+	mainWindow->deleteChild(wid);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Ui::closeAllSubwindows()
 {
-	mainWindow->delChild(WID_ACTION_EDITOR);
-	mainWindow->delChild(WID_SAMPLE_EDITOR);
-	mainWindow->delChild(WID_FX_LIST);
+	mainWindow->deleteChild(WID_ACTION_EDITOR);
+	mainWindow->deleteChild(WID_SAMPLE_EDITOR);
+	mainWindow->deleteChild(WID_FX_LIST);
 }
 
 /* -------------------------------------------------------------------------- */

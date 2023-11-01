@@ -70,8 +70,8 @@ public:
 	geompp::Rect<int> getBounds() const;
 
 	void      addChild(gdWindow* w);
-	void      delChild(gdWindow* w);
-	void      delChild(ID);
+	void      deleteChild(gdWindow* w);
+	void      deleteChild(ID);
 	void      deleteChildren();
 	void      setParent(gdWindow* w);
 	gdWindow* getParent();
