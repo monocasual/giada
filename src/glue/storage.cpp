@@ -101,8 +101,9 @@ void loadProject(void* data)
 	const std::string                  projectPath       = browser->getSelectedItem();
 	const m::PluginManager::SortMethod pluginsSortMethod = g_ui->model.pluginChooserSortMethod;
 
-	/* Close all sub-windows first, in case there are VST editors visible. VST
-	editors must be closed before deleting their plug-in processors. */
+	/* Close all sub-windows first (browser included), in case there are VST 
+	editors visible. VST editors must be closed before deleting their plug-in 
+	processors. */
 
 	g_ui->closeAllSubwindows();
 
@@ -123,8 +124,6 @@ void loadProject(void* data)
 		layout::openMissingAssetsWindow(state);
 
 	g_ui->load(state.patch);
-
-	browser->do_callback();
 }
 
 /* -------------------------------------------------------------------------- */
