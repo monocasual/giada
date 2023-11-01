@@ -98,12 +98,13 @@ void gdWindow::deleteChild(gdWindow* w)
 void gdWindow::deleteChild(ID wid)
 {
 	for (unsigned j = 0; j < m_children.size(); j++)
-		if (m_children.at(j)->getId() == wid)
-		{
-			delete m_children.at(j);
-			m_children.erase(m_children.begin() + j);
-			return;
-		}
+	{
+		if (m_children.at(j)->getId() != wid)
+			continue;
+		delete m_children.at(j);
+		m_children.erase(m_children.begin() + j);
+		return;
+	}
 }
 
 /* -------------------------------------------------------------------------- */
