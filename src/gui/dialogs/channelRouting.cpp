@@ -27,6 +27,7 @@
 #include "gui/dialogs/channelRouting.h"
 #include "glue/channel.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/box.h"
 #include "gui/elems/basics/textButton.h"
 #include "gui/elems/panTool.h"
 #include "gui/elems/volumeTool.h"

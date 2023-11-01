@@ -28,6 +28,7 @@
 #include "core/model/model.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/flex.h"
+#include "gui/elems/basics/box.h"
 #include "gui/elems/basics/textButton.h"
 #include "gui/elems/midiIO/midiLearner.h"
 #include "gui/ui.h"
