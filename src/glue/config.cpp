@@ -322,7 +322,7 @@ void save(const BehaviorsData& data)
 
 /* -------------------------------------------------------------------------- */
 
-void scanPlugins(std::string dir, const std::function<void(float)>& progress)
+void scanPlugins(std::string dir, const std::function<bool(float)>& progress)
 {
 	g_engine->getPluginsApi().scan(dir, progress);
 }

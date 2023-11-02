@@ -150,7 +150,7 @@ void apply(const MidiData&);
 void save(const MiscData&);
 void save(const PluginData&);
 void save(const BehaviorsData&);
-void scanPlugins(std::string dir, const std::function<void(float)>& progress);
+void scanPlugins(std::string dir, const std::function<bool(float)>& progress);
 
 /* setPluginPathCb
 Callback attached to the DirBrowser for adding new Plug-in search paths in the

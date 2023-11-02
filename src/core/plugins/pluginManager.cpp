@@ -52,7 +52,7 @@ void PluginManager::reset()
 
 /* -------------------------------------------------------------------------- */
 
-int PluginManager::scanDirs(const std::string& dirs, const std::function<void(float)>& cb)
+int PluginManager::scanDirs(const std::string& dirs, const std::function<bool(float)>& progressCb)
 {
 	u::log::print("[pluginManager::scanDir] requested directories: '{}'\n", dirs);
 	u::log::print("[pluginManager::scanDir] currently known plug-ins: {}\n", m_knownPluginList.getNumTypes());
@@ -61,20 +61,21 @@ int PluginManager::scanDirs(const std::string& dirs, const std::function<void(fl
 
 	std::vector<std::string> dirVec = u::string::split(dirs, ";");
 
+	bool                 shouldRun = true;
 	juce::FileSearchPath searchPath;
 	for (const std::string& dir : dirVec)
 		searchPath.add(juce::File(dir));
 
-	for (int i = 0; i < m_formatManager.getNumFormats(); i++)
+	for (int i = 0; i < m_formatManager.getNumFormats() && shouldRun; i++)
 	{
 		juce::PluginDirectoryScanner scanner(m_knownPluginList, *m_formatManager.getFormat(i), searchPath,
 		    /*recursive=*/true, juce::File());
 
 		juce::String name;
-		while (scanner.scanNextFile(false, name))
+		while (scanner.scanNextFile(false, name) && shouldRun)
 		{
 			u::log::print("[pluginManager::scanDir]   scanning '{}'\n", name.toRawUTF8());
-			cb(scanner.getProgress());
+			shouldRun = progressCb(scanner.getProgress());
 		}
 	}
 
