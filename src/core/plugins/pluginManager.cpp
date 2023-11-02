@@ -39,6 +39,21 @@
 
 namespace giada::m
 {
+namespace
+{
+juce::FileSearchPath toJuceFileSearchPath_(const std::string& dirs)
+{
+	juce::FileSearchPath searchPath;
+	for (const std::string& dir : u::string::split(dirs, ";"))
+		searchPath.add(juce::File(dir));
+	return searchPath;
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 void PluginManager::reset()
 {
 	pluginFactory::reset();
@@ -59,12 +74,8 @@ int PluginManager::scanDirs(const std::string& dirs, std::function<bool(float)> 
 
 	m_knownPluginList.clear(); // clear up previous plugins
 
-	std::vector<std::string> dirVec = u::string::split(dirs, ";");
-
-	bool                 shouldRun = true;
-	juce::FileSearchPath searchPath;
-	for (const std::string& dir : dirVec)
-		searchPath.add(juce::File(dir));
+	const juce::FileSearchPath searchPath = toJuceFileSearchPath_(dirs);
+	bool                       shouldRun  = true;
 
 	for (juce::AudioPluginFormat* format : m_formatManager.getFormats())
 	{
