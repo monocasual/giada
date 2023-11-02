@@ -66,10 +66,12 @@ int PluginManager::scanDirs(const std::string& dirs, std::function<bool(float)> 
 	for (const std::string& dir : dirVec)
 		searchPath.add(juce::File(dir));
 
-	for (int i = 0; i < m_formatManager.getNumFormats() && shouldRun; i++)
+	for (juce::AudioPluginFormat* format : m_formatManager.getFormats())
 	{
-		juce::PluginDirectoryScanner scanner(m_knownPluginList, *m_formatManager.getFormat(i), searchPath,
-		    /*recursive=*/true, juce::File());
+		if (!shouldRun)
+			break;
+
+		juce::PluginDirectoryScanner scanner(m_knownPluginList, *format, searchPath, /*recursive=*/true, juce::File());
 
 		juce::String name;
 		while (scanner.scanNextFile(false, name) && shouldRun)
