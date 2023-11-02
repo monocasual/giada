@@ -66,18 +66,14 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 		}
 
 		m_scanButton = new geTextButton("");
-		m_info       = new geBox();
 
 		body->addWidget(line1, 20);
 		body->addWidget(m_scanButton, 20);
-		body->addWidget(m_info);
 		body->end();
 	}
 
 	add(body);
 	resizable(body);
-
-	m_info->hide();
 
 	m_folderPath->onChange = [this](const std::string& v) {
 		m_data.pluginPath = v;
@@ -89,15 +85,15 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 	};
 
 	m_scanButton->onClick = [this]() {
-		std::function<void(float)> callback = [this](float progress) {
-			std::string l = fmt::format(fmt::runtime(g_ui->getI18Text(LangMap::CONFIG_PLUGINS_SCANNING)), static_cast<int>(progress * 100));
-			m_info->label(l.c_str());
-			Fl::wait();
+		bool shouldScan       = true;
+		auto onCancelCb       = [&shouldScan]() { shouldScan = false; };
+		auto uiProgress       = g_ui->mainWindow->getScopedProgress(g_ui->getI18Text(LangMap::CONFIG_PLUGINS_SCANNING), onCancelCb);
+		auto engineProgressCb = [&shouldScan, &uiProgress](float progress) {
+			uiProgress.setProgress(progress);
+			return shouldScan;
 		};
 
-		m_info->show();
-		c::config::scanPlugins(m_folderPath->getValue(), callback);
-		m_info->hide();
+		c::config::scanPlugins(m_folderPath->getValue(), engineProgressCb);
 		rebuild();
 	};
 

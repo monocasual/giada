@@ -34,7 +34,6 @@
 namespace giada::v
 {
 class geInput;
-class geBox;
 class geImageButton;
 class geTextButton;
 class geTabPlugins : public Fl_Group
@@ -51,7 +50,6 @@ private:
 	geImageButton* m_browse;
 	geInput*       m_folderPath;
 	geTextButton*  m_scanButton;
-	geBox*         m_info;
 };
 } // namespace giada::v
 

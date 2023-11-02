@@ -343,7 +343,7 @@ LangMap::LangMap()
 
 	m_data[CONFIG_PLUGINS_TITLE]       = "Plug-ins";
 	m_data[CONFIG_PLUGINS_FOLDER]      = "Plug-ins folder";
-	m_data[CONFIG_PLUGINS_SCANNING]    = "Scan in progress ({}%). Please wait...";
+	m_data[CONFIG_PLUGINS_SCANNING]    = "Scanning in progress. Please wait...";
 	m_data[CONFIG_PLUGINS_SCAN]        = "Scan ({} found)";
 	m_data[CONFIG_PLUGINS_INVALIDPATH] = "Invalid path.";
 
