@@ -30,29 +30,48 @@
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/progress.h"
+#include "gui/elems/basics/textButton.h"
+#include "gui/ui.h"
 #include "utils/gui.h"
 #include <FL/Fl.H>
+
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
 gdProgress::gdProgress()
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, 388, 58}))
+, onCancel(nullptr)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
 		m_text = new geBox();
 
-		m_progress = new geProgress();
-		m_progress->minimum(0.0f);
-		m_progress->maximum(1.0f);
-		m_progress->value(0.0f);
+		geFlex* progressArea = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+		{
+			m_progress = new geProgress();
+			m_progress->minimum(0.0f);
+			m_progress->maximum(1.0f);
+			m_progress->value(0.0f);
+
+			m_cancelBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CANCEL));
+
+			progressArea->addWidget(m_progress);
+			progressArea->addWidget(m_cancelBtn, 80);
+			progressArea->end();
+		}
 
 		container->addWidget(m_text);
-		container->addWidget(m_progress, 10);
+		container->addWidget(progressArea, G_GUI_UNIT);
 		container->end();
 	}
 
 	add(container);
+
+	m_cancelBtn->onClick = [this]() {
+		if (onCancel)
+			onCancel();
+	};
 
 	hide();
 	border(0);
@@ -70,9 +89,14 @@ void gdProgress::setProgress(float p)
 
 /* -------------------------------------------------------------------------- */
 
-void gdProgress::popup(const char* s)
+void gdProgress::popup(const char* s, bool cancellable)
 {
 	m_text->copy_label(s);
+
+	if (cancellable)
+		m_cancelBtn->show();
+	else
+		m_cancelBtn->hide();
 
 	const int px = u::gui::centerWindowX(w());
 	const int py = u::gui::centerWindowY(h());

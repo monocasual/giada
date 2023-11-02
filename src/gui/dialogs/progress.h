@@ -28,22 +28,27 @@
 #define GD_PROGRESS_H
 
 #include "gui/dialogs/window.h"
+#include <functional>
 
 namespace giada::v
 {
 class geBox;
 class geProgress;
+class geTextButton;
 class gdProgress : public gdWindow
 {
 public:
 	gdProgress();
 
 	void setProgress(float p);
-	void popup(const char* s);
+	void popup(const char* s, bool cancellable = false);
+
+	std::function<void()> onCancel;
 
 private:
-	geBox*      m_text;
-	geProgress* m_progress;
+	geBox*        m_text;
+	geProgress*   m_progress;
+	geTextButton* m_cancelBtn;
 };
 } // namespace giada::v
 
