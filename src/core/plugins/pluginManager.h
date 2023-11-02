@@ -107,7 +107,7 @@ public:
 	the main window from the GUI thread. Return false from the progress callback 
 	to stop	the scanning process. */
 
-	int scanDirs(const std::string& paths, const std::function<bool(float)>& progressCb);
+	int scanDirs(const std::string& paths, std::function<bool(float)> progressCb);
 
 	/* (save|load)List
 	(Save|Load) knownPluginList (in|from) an XML file. */

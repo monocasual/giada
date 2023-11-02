@@ -52,7 +52,7 @@ void PluginManager::reset()
 
 /* -------------------------------------------------------------------------- */
 
-int PluginManager::scanDirs(const std::string& dirs, const std::function<bool(float)>& progressCb)
+int PluginManager::scanDirs(const std::string& dirs, std::function<bool(float)> progressCb)
 {
 	u::log::print("[pluginManager::scanDir] requested directories: '{}'\n", dirs);
 	u::log::print("[pluginManager::scanDir] currently known plug-ins: {}\n", m_knownPluginList.getNumTypes());
