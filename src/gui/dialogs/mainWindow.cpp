@@ -46,10 +46,11 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gdMainWindow::ScopedProgress::ScopedProgress(gdProgress& p, const char* msg)
+gdMainWindow::ScopedProgress::ScopedProgress(gdProgress& p, const char* msg, std::function<void()> onCancel)
 : m_progress(p)
 {
-	m_progress.popup(msg);
+	m_progress.popup(msg, onCancel != nullptr);
+	m_progress.onCancel = onCancel;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -195,8 +196,8 @@ void gdMainWindow::setTitle(const std::string& title)
 
 /* -------------------------------------------------------------------------- */
 
-gdMainWindow::ScopedProgress gdMainWindow::getScopedProgress(const char* msg)
+gdMainWindow::ScopedProgress gdMainWindow::getScopedProgress(const char* msg, std::function<void()> onCancel)
 {
-	return {m_progress, msg};
+	return {m_progress, msg, onCancel};
 }
 } // namespace giada::v

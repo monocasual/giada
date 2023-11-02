@@ -85,6 +85,7 @@ void gdProgress::setProgress(float p)
 	m_progress->value(p);
 	redraw();
 	Fl::flush();
+	Fl::wait();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -60,7 +60,7 @@ public:
 
 	void setTitle(const std::string&);
 
-	[[nodiscard]] ScopedProgress getScopedProgress(const char* msg);
+	[[nodiscard]] ScopedProgress getScopedProgress(const char* msg, std::function<void()> onCancel = nullptr);
 
 	geKeyboard*      keyboard;
 	geSequencer*     sequencer;
@@ -73,7 +73,7 @@ private:
 	class ScopedProgress
 	{
 	public:
-		ScopedProgress(gdProgress&, const char* msg);
+		ScopedProgress(gdProgress&, const char* msg, std::function<void()> onCancel);
 		~ScopedProgress();
 
 		void setProgress(float);
