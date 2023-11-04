@@ -98,6 +98,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	case ChannelType::SAMPLE:
 	case ChannelType::PREVIEW:
 		sampleChannel.emplace(p, wave, samplerateRatio);
+		setWave(wave, samplerateRatio);
 		break;
 
 	case ChannelType::MIDI:
@@ -107,8 +108,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	default:
 		break;
 	}
-
-	setWave(wave, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */
