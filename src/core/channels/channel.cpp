@@ -209,6 +209,8 @@ void Channel::setSolo(bool v)
 
 void Channel::loadWave(Wave* w, Frame newBegin, Frame newEnd, Frame newShift)
 {
+	assert(sampleChannel);
+
 	shared->tracker.store(0);
 	shared->playStatus.store(w != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
 
@@ -219,6 +221,8 @@ void Channel::loadWave(Wave* w, Frame newBegin, Frame newEnd, Frame newShift)
 
 void Channel::setWave(Wave* w, float samplerateRatio)
 {
+	assert(sampleChannel);
+
 	sampleChannel->setWave(w, samplerateRatio);
 }
 
