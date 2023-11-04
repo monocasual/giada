@@ -54,9 +54,9 @@ gdPluginWindowGUI::gdPluginWindowGUI(const c::plugin::Plugin& p, ID wid)
 	/* Make sure to wait_for_expose() before showing the editor: the window must
 	be exposed and visible first. Don't fuck with multithreading! */
 
+	adjustSize();
 	show();
 	wait_for_expose();
-	adjustSize();
 	showEditor();
 
 	Fl::flush();
