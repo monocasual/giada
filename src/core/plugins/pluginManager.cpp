@@ -74,8 +74,10 @@ int PluginManager::scanDirs(const std::string& dirs, std::function<bool(float)> 
 
 	m_knownPluginList.clear(); // clear up previous plugins
 
-	const juce::FileSearchPath searchPath = toJuceFileSearchPath_(dirs);
-	bool                       shouldRun  = true;
+	const juce::FileSearchPath searchPath    = toJuceFileSearchPath_(dirs);
+	const float                numFormats    = m_formatManager.getNumFormats();
+	bool                       shouldRun     = true;
+	float                      totalProgress = 1.0f;
 
 	for (juce::AudioPluginFormat* format : m_formatManager.getFormats())
 	{
@@ -88,8 +90,10 @@ int PluginManager::scanDirs(const std::string& dirs, std::function<bool(float)> 
 		while (scanner.scanNextFile(false, name) && shouldRun)
 		{
 			u::log::print("[pluginManager::scanDir]   scanning '{}'\n", name.toRawUTF8());
-			shouldRun = progressCb(scanner.getProgress());
+			shouldRun = progressCb((totalProgress + scanner.getProgress()) / numFormats);
 		}
+
+		totalProgress += 1.0f;
 	}
 
 	u::log::print("[pluginManager::scanDir] {} plugin(s) found\n", m_knownPluginList.getNumTypes());
