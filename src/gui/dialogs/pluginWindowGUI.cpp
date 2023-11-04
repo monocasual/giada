@@ -80,6 +80,16 @@ void gdPluginWindowGUI::adjustSize()
 	const int               pluginH   = m_editor->getHeight();
 	const geompp::Rect<int> newBounds = getBounds().withSize(pluginW, pluginH).scaled(1 / m_plugin.uiScaling);
 
+#ifdef G_OS_WINDOWS
+
+	/* Dragging around a resized window (this windows will get resized with the
+	setBounds() call below) triggers some weird auto-resize mechanism if the 
+	system UI scale is set to a value greater than 100% (see https://github.com/monocasual/giada/issues/621).
+	Setting this window resizable with size_range() seems to fix the issue. */
+
+	size_range(1, 1);
+#endif
+
 	setBounds(u::gui::getCenterWinBounds(newBounds.withPosition({-1, -1})));
 }
 
