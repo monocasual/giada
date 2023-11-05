@@ -118,11 +118,10 @@ void loadProject(void* data)
 	}
 
 	g_ui->model.patchPath = u::fs::getUpDir(projectPath);
+	g_ui->load(state.patch);
 
 	if (!state.isGood())
 		layout::openMissingAssetsWindow(state);
-
-	g_ui->load(state.patch);
 }
 
 /* -------------------------------------------------------------------------- */
