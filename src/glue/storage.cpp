@@ -106,6 +106,12 @@ void loadProject(void* data)
 
 	g_ui->closeAllSubwindows();
 
+	/* Stop the UI updater: the current model is about to change, but the UI
+	still retains the old one. Updating during this stage would trigger
+	assertions/crashes. */
+
+	g_ui->stopUpdater();
+
 	auto uiProgress     = g_ui->mainWindow->getScopedProgress(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
 	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
 
@@ -114,11 +120,13 @@ void loadProject(void* data)
 	if (state.patch.status != G_FILE_OK)
 	{
 		printLoadError_(state.patch.status);
+		g_ui->startUpdater();
 		return;
 	}
 
 	g_ui->model.patchPath = u::fs::getUpDir(projectPath);
 	g_ui->load(state.patch);
+	g_ui->startUpdater();
 
 	if (!state.isGood())
 		layout::openMissingAssetsWindow(state);
