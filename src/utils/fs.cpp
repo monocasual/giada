@@ -47,6 +47,21 @@ namespace stdfs = std::filesystem;
 
 namespace giada::u::fs
 {
+namespace
+{
+std::string getEnvVariable_(const char* s)
+{
+	const char* tmp = getenv(s);
+	if (tmp == nullptr)
+		return "";
+	return {tmp};
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 bool fileExists(const std::string& s)
 {
 	return stdfs::exists(s);
@@ -139,9 +154,21 @@ std::string getConfigDirPath()
 {
 #if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 
-	char buf[PATH_MAX];
-	snprintf(buf, PATH_MAX, "%s/.giada", getenv("HOME"));
-	return stdfs::path(buf).string();
+	/* See https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+	from issue https://github.com/monocasual/giada/issues/338 */
+
+	const std::string xdgConfigHome = getEnvVariable_("XDG_CONFIG_HOME");
+	if (xdgConfigHome != "")
+		return stdfs::path(xdgConfigHome) / "giada";
+
+	const std::string home = getEnvVariable_("HOME");
+	if (home == "")
+	{
+		log::print("[getConfigDirPath] Can't fetch $HOME environment variable\n");
+		return "";
+	}
+
+	return stdfs::path(home) / ".config" / "giada";
 
 #elif defined(G_OS_WINDOWS)
 
