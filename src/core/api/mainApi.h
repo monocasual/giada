@@ -51,6 +51,7 @@ public:
 	bool              isRecordingInput() const;
 	bool              isRecordingActions() const;
 	bool              canRecordInput() const;
+	bool              canEnableFreeInputRec() const;
 	bool              isSequencerRunning() const;
 	RecTriggerMode    getRecTriggerMode() const;
 	InputRecMode      getInputRecMode() const;

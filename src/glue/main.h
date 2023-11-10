@@ -94,6 +94,7 @@ struct Transport
 	InputRecMode   inputRecMode;
 
 	bool canRecordInput() const;
+	bool canEnableFreeInputRec() const;
 };
 
 struct MainMenu
