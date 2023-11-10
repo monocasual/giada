@@ -61,6 +61,13 @@ bool MainApi::isRecordingActions() const
 
 /* -------------------------------------------------------------------------- */
 
+bool MainApi::canRecordInput() const
+{
+	return m_kernelAudio.isInputEnabled() && m_channelManager.hasInputRecordableChannels();
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool MainApi::isSequencerRunning() const
 {
 	return m_sequencer.isRunning();

@@ -128,7 +128,7 @@ LangMap::LangMap()
 	                                              "and audio recording will start only when a signal (key press or audio) "
 	                                              "is detected.";
 	m_data[MAIN_TRANSPORT_LABEL_RECACTIONS]   = "Record actions";
-	m_data[MAIN_TRANSPORT_LABEL_RECINPUT]     = "Record audio";
+	m_data[MAIN_TRANSPORT_LABEL_RECINPUT]     = "Record audio\n\nEnabled if:\n - input device is enabled\n - there is at least one empty and armed Sample channel";
 	m_data[MAIN_TRANSPORT_LABEL_RECINPUTMODE] = "Free loop-length mode\n\nIf enabled, the sequencer "
 	                                            "will adjust to the length of your first audio recording. "
 	                                            "Available only if there are no other audio samples in the "

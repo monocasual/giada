@@ -44,7 +44,7 @@ geMainTransport::geMainTransport()
 	m_play           = new geImageButton(graphics::playOff, graphics::playOn);
 	m_recTriggerMode = new geImageButton(graphics::recTriggerModeOff, graphics::recTriggerModeOn);
 	m_recAction      = new geImageButton(graphics::actionRecOff, graphics::actionRecOn);
-	m_recInput       = new geImageButton(graphics::inputRecOff, graphics::inputRecOn);
+	m_recInput       = new geImageButton(graphics::inputRecOff, graphics::inputRecOn, graphics::inputRecDisabled);
 	m_inputRecMode   = new geImageButton(graphics::freeInputRecOff, graphics::freeInputRecOn);
 	m_metronome      = new geImageButton(graphics::metronomeOff, graphics::metronomeOn);
 	addWidget(m_rewind, 25);
@@ -113,5 +113,7 @@ void geMainTransport::refresh()
 	m_metronome->setValue(transport.isMetronomeOn);
 	m_recTriggerMode->setValue(transport.recTriggerMode == RecTriggerMode::SIGNAL);
 	m_inputRecMode->setValue(transport.inputRecMode == InputRecMode::FREE);
+
+	transport.canRecordInput() ? m_recInput->activate() : m_recInput->deactivate();
 }
 } // namespace giada::v

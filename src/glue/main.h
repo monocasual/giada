@@ -92,6 +92,8 @@ struct Transport
 	bool           isMetronomeOn;
 	RecTriggerMode recTriggerMode;
 	InputRecMode   inputRecMode;
+
+	bool canRecordInput() const;
 };
 
 struct MainMenu
