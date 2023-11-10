@@ -75,6 +75,13 @@ bool MainApi::canEnableFreeInputRec() const
 
 /* -------------------------------------------------------------------------- */
 
+bool MainApi::canEnableRecOnSignal() const
+{
+	return m_recorder.canEnableRecOnSignal();
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool MainApi::isSequencerRunning() const
 {
 	return m_sequencer.isRunning();

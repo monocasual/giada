@@ -95,6 +95,7 @@ struct Transport
 
 	bool canRecordInput() const;
 	bool canEnableFreeInputRec() const;
+	bool canEnableRecOnSignal() const;
 };
 
 struct MainMenu

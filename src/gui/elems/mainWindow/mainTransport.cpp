@@ -42,7 +42,7 @@ geMainTransport::geMainTransport()
 {
 	m_rewind         = new geImageButton(graphics::rewindOff, graphics::rewindOn);
 	m_play           = new geImageButton(graphics::playOff, graphics::playOn);
-	m_recTriggerMode = new geImageButton(graphics::recTriggerModeOff, graphics::recTriggerModeOn);
+	m_recTriggerMode = new geImageButton(graphics::recTriggerModeOff, graphics::recTriggerModeOn, graphics::recTriggerModeDisabled);
 	m_recAction      = new geImageButton(graphics::actionRecOff, graphics::actionRecOn);
 	m_recInput       = new geImageButton(graphics::inputRecOff, graphics::inputRecOn, graphics::inputRecDisabled);
 	m_inputRecMode   = new geImageButton(graphics::freeInputRecOff, graphics::freeInputRecOn, graphics::freeInputRecDisabled);
@@ -116,5 +116,6 @@ void geMainTransport::refresh()
 
 	transport.canRecordInput() ? m_recInput->activate() : m_recInput->deactivate();
 	transport.canEnableFreeInputRec() ? m_inputRecMode->activate() : m_inputRecMode->deactivate();
+	transport.canEnableRecOnSignal() ? m_recTriggerMode->activate() : m_recTriggerMode->deactivate();
 }
 } // namespace giada::v
