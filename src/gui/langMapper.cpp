@@ -125,11 +125,11 @@ LangMap::LangMap()
 	m_data[MAIN_TRANSPORT_LABEL_REWIND]         = "Rewind";
 	m_data[MAIN_TRANSPORT_LABEL_PLAY]           = "Play/Stop";
 	m_data[MAIN_TRANSPORT_LABEL_RECTRIGGERMODE] = "Record-on-signal mode\n\nAction and audio recording will start only when a signal (key press or audio) "
-	                                              "is detected.\n\nEnabled if the sequencer is not running.";
+	                                              "is detected.\n\nAvailable if the sequencer is not running.";
 	m_data[MAIN_TRANSPORT_LABEL_RECACTIONS]   = "Record actions";
-	m_data[MAIN_TRANSPORT_LABEL_RECINPUT]     = "Record audio\n\nEnabled if:\n - input device is enabled\n - there is at least one empty and armed Sample channel";
+	m_data[MAIN_TRANSPORT_LABEL_RECINPUT]     = "Record audio\n\nAvailable if:\n - input device is enabled\n - there is at least one empty and armed Sample channel";
 	m_data[MAIN_TRANSPORT_LABEL_RECINPUTMODE] = "Free loop-length mode\n\nThe sequencer will adjust to the length of your first audio recording.\n\n"
-	                                            "Enabled if there are no other audio samples in the project.";
+	                                            "Available if there are no other audio samples in the project.";
 	m_data[MAIN_TRANSPORT_LABEL_METRONOME] = "Metronome";
 
 	m_data[MAIN_COLUMN_HELP] = "Drop audio files or right-click here";
