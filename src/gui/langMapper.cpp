@@ -96,6 +96,7 @@ LangMap::LangMap()
 	m_data[MAIN_MENU_FILE_OPENPROJECT]     = "Open project...";
 	m_data[MAIN_MENU_FILE_SAVEPROJECT]     = "Save project...";
 	m_data[MAIN_MENU_FILE_CLOSEPROJECT]    = "Close project";
+	m_data[MAIN_MENU_FILE_DEBUGSTATS]      = "Debug stats";
 	m_data[MAIN_MENU_FILE_QUIT]            = "Quit Giada";
 	m_data[MAIN_MENU_EDIT]                 = "Edit";
 	m_data[MAIN_MENU_EDIT_FREEALLSAMPLES]  = "Free all Sample channels";

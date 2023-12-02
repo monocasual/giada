@@ -101,6 +101,7 @@ public:
 	static constexpr auto MAIN_MENU_FILE_OPENPROJECT     = "main_menu_file_openProject";
 	static constexpr auto MAIN_MENU_FILE_SAVEPROJECT     = "main_menu_file_saveProject";
 	static constexpr auto MAIN_MENU_FILE_CLOSEPROJECT    = "main_menu_file_closeProject";
+	static constexpr auto MAIN_MENU_FILE_DEBUGSTATS      = "main_menu_file_debugStats";
 	static constexpr auto MAIN_MENU_FILE_QUIT            = "main_menu_file_quit";
 	static constexpr auto MAIN_MENU_EDIT                 = "main_menu_edit";
 	static constexpr auto MAIN_MENU_EDIT_FREEALLSAMPLES  = "main_menu_edit_freeAllSamples";
