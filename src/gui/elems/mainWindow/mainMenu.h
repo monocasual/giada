@@ -27,11 +27,11 @@
 #ifndef GE_MAIN_MENU_H
 #define GE_MAIN_MENU_H
 
-#include "gui/elems/basics/flex.h"
+#include <FL/Fl_Sys_Menu_Bar.H>
 
 namespace giada::v
 {
-class geMainMenu : public geFlex
+class geMainMenu : public Fl_Sys_Menu_Bar
 {
 public:
 	geMainMenu();

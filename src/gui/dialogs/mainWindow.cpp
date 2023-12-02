@@ -86,56 +86,72 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 	Fl::set_boxtype(FL_UP_BOX, G_CUSTOM_UP_BOX);
 	Fl::set_boxtype(FL_DOWN_BOX, G_CUSTOM_DOWN_BOX);
 
-	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	geFlex* container = new geFlex(getContentBounds(), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		/* zone 1 - menus, and I/O tools */
-
-		geFlex* zone1 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+		geFlex* header = new geFlex(getContentBounds(), Direction::VERTICAL);
 		{
-			mainMenu = new v::geMainMenu();
-			mainIO   = new v::geMainIO();
-			zone1->addWidget(mainMenu, 350);
-			zone1->addWidget(new geBox(), 80);
-			zone1->addWidget(mainIO);
-			zone1->end();
+			geMainMenu* mainMenu = new geMainMenu();
+
+			header->addWidget(mainMenu);
+			header->end();
 		}
 
-		/* zone 2 - mainTransport and timing tools */
-
-		geFlex* zone2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {3, 0, 0, 0});
+		geFlex* body = new geFlex(getContentBounds(), Direction::VERTICAL, G_GUI_OUTER_MARGIN, {G_GUI_OUTER_MARGIN});
 		{
-			mainTransport = new v::geMainTransport();
 
-			geFlex* zoneTimer = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN, {2, 0, 3, 0});
+			/* zone 1 - menus, and I/O tools */
+
+			geFlex* zone1 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 			{
-				mainTimer = new v::geMainTimer();
-				zoneTimer->addWidget(mainTimer);
-				zoneTimer->end();
+				mainIO = new v::geMainIO();
+				zone1->addWidget(new geBox(), 80);
+				zone1->addWidget(mainIO);
+				zone1->end();
 			}
 
-			zone2->addWidget(mainTransport, 400);
-			zone2->addWidget(new geBox());
-			zone2->addWidget(zoneTimer, 237);
-			zone2->end();
+			/* zone 2 - mainTransport and timing tools */
+
+			geFlex* zone2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {3, 0, 0, 0});
+			{
+				mainTransport = new v::geMainTransport();
+
+				geFlex* zoneTimer = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN, {2, 0, 3, 0});
+				{
+					mainTimer = new v::geMainTimer();
+					zoneTimer->addWidget(mainTimer);
+					zoneTimer->end();
+				}
+
+				zone2->addWidget(mainTransport, 400);
+				zone2->addWidget(new geBox());
+				zone2->addWidget(zoneTimer, 237);
+				zone2->end();
+			}
+
+			/* zone 3 - sequencer */
+
+			geFlex* zone3 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {0, 5});
+			{
+				sequencer = new v::geSequencer();
+				zone3->addWidget(new geBox(), 80);
+				zone3->addWidget(sequencer);
+				zone3->addWidget(new geBox(), 80);
+				zone3->end();
+			}
+
+			keyboard = new v::geKeyboard();
+
+			body->addWidget(zone1, G_GUI_UNIT);
+			body->addWidget(zone2, 28);
+			body->addWidget(zone3, 40);
+			body->addWidget(keyboard);
+			body->end();
 		}
 
-		/* zone 3 - sequencer */
-
-		geFlex* zone3 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {0, 5});
-		{
-			sequencer = new v::geSequencer();
-			zone3->addWidget(new geBox(), 80);
-			zone3->addWidget(sequencer);
-			zone3->addWidget(new geBox(), 80);
-			zone3->end();
-		}
-
-		keyboard = new v::geKeyboard();
-
-		container->addWidget(zone1, G_GUI_UNIT);
-		container->addWidget(zone2, 28);
-		container->addWidget(zone3, 40);
-		container->addWidget(keyboard);
+#ifndef G_OS_MAC // No need on macOS
+		container->addWidget(header, G_GUI_UNIT);
+#endif
+		container->addWidget(body);
 		container->end();
 	}
 
