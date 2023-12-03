@@ -28,6 +28,7 @@
 #define GE_SOUND_METER_H
 
 #include "core/types.h"
+#include "gui/types.h"
 #include <FL/Fl_Box.H>
 
 namespace giada::v
@@ -35,7 +36,7 @@ namespace giada::v
 class geSoundMeter : public Fl_Box
 {
 public:
-	geSoundMeter();
+	geSoundMeter(Direction);
 
 	void draw() override;
 
@@ -52,8 +53,9 @@ private:
 		float m_dbLevelOld = 0.0f;
 	};
 
-	Meter m_left;
-	Meter m_right;
+	Direction m_direction;
+	Meter     m_left;
+	Meter     m_right;
 };
 } // namespace giada::v
 

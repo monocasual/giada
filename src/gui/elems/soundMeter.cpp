@@ -67,8 +67,9 @@ float geSoundMeter::Meter::compute(float peak)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geSoundMeter::geSoundMeter()
+geSoundMeter::geSoundMeter(Direction d)
 : Fl_Box(0, 0, 0, 0)
+, m_direction(d)
 {
 }
 
@@ -94,10 +95,24 @@ void geSoundMeter::draw()
 	const int   colorL = std::fabs(peak.left) > 1.0f ? G_COLOR_BLUE : G_COLOR_GREY_4;
 	const int   colorR = std::fabs(peak.right) > 1.0f ? G_COLOR_BLUE : G_COLOR_GREY_4;
 
-	const geompp::Rect bodyL(body.withTrimmedBottom(h() / 2));
-	const geompp::Rect bodyR(body.withTrimmedTop(h() / 2));
+	if (m_direction == Direction::HORIZONTAL)
+	{
+		const geompp::Rect bodyL(body.withTrimmedBottom(h() / 2));
+		const geompp::Rect bodyR(body.withTrimmedTop(h() / 2));
 
-	drawRectf(bodyL.withW(dbToPx_(dbL, w() - 2)), colorL);
-	drawRectf(bodyR.withW(dbToPx_(dbR, w() - 2)), colorR);
+		drawRectf(bodyL.withW(dbToPx_(dbL, w() - 2)), colorL);
+		drawRectf(bodyR.withW(dbToPx_(dbR, w() - 2)), colorR);
+	}
+	else
+	{
+		const geompp::Rect bodyL(body.withTrimmedRight(w() / 2));
+		const geompp::Rect bodyR(body.withTrimmedLeft(w() / 2));
+
+		const int dbPxL = dbToPx_(dbL, h() - 2);
+		const int dbPxR = dbToPx_(dbR, h() - 2);
+
+		drawRectf(bodyL.withH(dbPxL).withShiftedY(bodyL.h - dbPxL), colorL);
+		drawRectf(bodyR.withH(dbPxR).withShiftedY(bodyR.h - dbPxR), colorR);
+	}
 }
 } // namespace giada::v
