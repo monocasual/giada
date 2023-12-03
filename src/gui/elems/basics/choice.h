@@ -50,6 +50,7 @@ public:
 	ID          getSelectedId() const;
 	std::string getSelectedLabel() const;
 	std::size_t countItems() const;
+	bool        hasItem(ID) const;
 
 	/* addItem
 	Adds a new item with a certain ID. Pass id = -1 to auto-increment it (ID
