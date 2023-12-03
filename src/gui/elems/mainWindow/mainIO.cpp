@@ -45,8 +45,8 @@ namespace giada::v
 geMainIO::geMainIO()
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
-	m_outMeter     = new geSoundMeter(0, 0, 0, 0);
-	m_inMeter      = new geSoundMeter(0, 0, 0, 0);
+	m_outMeter     = new geSoundMeter();
+	m_inMeter      = new geSoundMeter();
 	m_outVol       = new geDial(0, 0, 0, 0);
 	m_inVol        = new geDial(0, 0, 0, 0);
 	m_inToOut      = new geTextButton("");

@@ -35,7 +35,7 @@ namespace giada::v
 class geSoundMeter : public Fl_Box
 {
 public:
-	geSoundMeter(int x, int y, int w, int h, const char* l = nullptr);
+	geSoundMeter();
 
 	void draw() override;
 

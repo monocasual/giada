@@ -67,8 +67,8 @@ float geSoundMeter::Meter::compute(float peak)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geSoundMeter::geSoundMeter(int x, int y, int w, int h, const char* l)
-: Fl_Box(x, y, w, h, l)
+geSoundMeter::geSoundMeter()
+: Fl_Box(0, 0, 0, 0)
 {
 }
 
