@@ -172,7 +172,8 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 	m_system->clear();
 	for (const auto& [key, value] : m_data.apis)
 		m_system->addItem(value.c_str(), key);
-	m_system->showItem(m_data.api);
+	if (m_system->hasItem(m_data.api)) // Selected API might not be present in available APIs
+		m_system->showItem(m_data.api);
 
 	m_portOut->rebuild(m_data.outPorts);
 	if (m_data.outPort == -1)
