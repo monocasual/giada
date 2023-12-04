@@ -32,25 +32,27 @@
 
 namespace giada::v
 {
+class geMidiLed : public Fl_Button
+{
+public:
+	geMidiLed();
+
+	void draw() override;
+	void lit();
+
+private:
+	int m_decay;
+};
+
+/* -------------------------------------------------------------------------- */
+
 class geMidiActivity : public geFlex
 {
 public:
-	class geLed : public Fl_Button
-	{
-	public:
-		geLed();
-
-		void draw() override;
-		void lit();
-
-	private:
-		int m_decay;
-	};
-
 	geMidiActivity();
 
-	geLed* out;
-	geLed* in;
+	geMidiLed* out;
+	geMidiLed* in;
 };
 } // namespace giada::v
 

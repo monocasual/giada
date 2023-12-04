@@ -33,7 +33,7 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-geMidiActivity::geLed::geLed()
+geMidiLed::geMidiLed()
 : Fl_Button(0, 0, 0, 0)
 , m_decay(0) // decay > 0: led is on
 {
@@ -41,7 +41,7 @@ geMidiActivity::geLed::geLed()
 
 /* -------------------------------------------------------------------------- */
 
-void geMidiActivity::geLed::draw()
+void geMidiLed::draw()
 {
 	int bgColor = G_COLOR_GREY_2;
 	int bdColor = G_COLOR_GREY_4;
@@ -60,7 +60,7 @@ void geMidiActivity::geLed::draw()
 
 /* -------------------------------------------------------------------------- */
 
-void geMidiActivity::geLed::lit()
+void geMidiLed::lit()
 {
 	m_decay = 1;
 }
@@ -72,8 +72,8 @@ void geMidiActivity::geLed::lit()
 geMidiActivity::geMidiActivity()
 : geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN)
 {
-	out = new geLed();
-	in  = new geLed();
+	out = new geMidiLed();
+	in  = new geMidiLed();
 	addWidget(out);
 	addWidget(in);
 	end();
