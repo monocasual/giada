@@ -172,6 +172,8 @@ list(APPEND SOURCES
 	src/gui/elems/actionEditor/legend.cpp
 	src/gui/elems/actionEditor/pianoRollLegend.cpp
 	src/gui/elems/mainWindow/mainIO.cpp
+	src/gui/elems/mainWindow/mainInput.cpp
+	src/gui/elems/mainWindow/mainOutput.cpp
 	src/gui/elems/mainWindow/mainMenu.cpp
 	src/gui/elems/mainWindow/mainTimer.cpp
 	src/gui/elems/mainWindow/mainTransport.cpp
