@@ -41,7 +41,8 @@
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannel.h"
-#include "gui/elems/mainWindow/mainIO.h"
+#include "gui/elems/mainWindow/mainInput.h"
+#include "gui/elems/mainWindow/mainOutput.h"
 #include "gui/elems/mainWindow/mainTimer.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
@@ -254,7 +255,7 @@ void setMasterInVolume(float v, Thread t)
 	g_engine->getMainApi().setMasterInVolume(v);
 
 	if (t != Thread::MAIN)
-		g_ui->pumpEvent([v]() { g_ui->mainWindow->mainIO->setInVol(v); });
+		g_ui->pumpEvent([v]() { g_ui->mainWindow->mainInput->setInVol(v); });
 }
 
 void setMasterOutVolume(float v, Thread t)
@@ -262,7 +263,7 @@ void setMasterOutVolume(float v, Thread t)
 	g_engine->getMainApi().setMasterOutVolume(v);
 
 	if (t != Thread::MAIN)
-		g_ui->pumpEvent([v]() { g_ui->mainWindow->mainIO->setOutVol(v); });
+		g_ui->pumpEvent([v]() { g_ui->mainWindow->mainOutput->setOutVol(v); });
 }
 
 /* -------------------------------------------------------------------------- */

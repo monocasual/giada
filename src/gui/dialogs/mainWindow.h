@@ -34,7 +34,8 @@
 namespace giada::v
 {
 class geKeyboard;
-class geMainIO;
+class geMainInput;
+class geMainOutput;
 class geMainMenu;
 class geSequencer;
 class geMainTransport;
@@ -65,9 +66,10 @@ public:
 	geKeyboard*      keyboard;
 	geSequencer*     sequencer;
 	geMainMenu*      mainMenu;
-	geMainIO*        mainIO;
 	geMainTimer*     mainTimer;
 	geMainTransport* mainTransport;
+	geMainInput*     mainInput;
+	geMainOutput*    mainOutput;
 
 private:
 	class ScopedProgress

@@ -30,7 +30,8 @@
 #include "core/confFactory.h"
 #include "core/engine.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/mainIO.h"
+#include "gui/elems/mainWindow/mainInput.h"
+#include "gui/elems/mainWindow/mainOutput.h"
 #include "gui/ui.h"
 #include "gui/updater.h"
 #include "utils/log.h"
@@ -112,11 +113,11 @@ void startup()
 	};
 
 	g_engine->onMidiReceived = []() {
-		g_ui->pumpEvent([] { g_ui->mainWindow->mainIO->setMidiInActivity(); });
+		g_ui->pumpEvent([] { g_ui->mainWindow->mainInput->setMidiInActivity(); });
 	};
 
 	g_engine->onMidiSent = []() {
-		g_ui->pumpEvent([] { g_ui->mainWindow->mainIO->setMidiOutActivity(); });
+		g_ui->pumpEvent([] { g_ui->mainWindow->mainOutput->setMidiOutActivity(); });
 	};
 
 	g_engine->onMidiSentFromChannel = [](ID channelId) {

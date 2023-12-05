@@ -30,8 +30,9 @@
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/mainIO.h"
+#include "gui/elems/mainWindow/mainInput.h"
 #include "gui/elems/mainWindow/mainMenu.h"
+#include "gui/elems/mainWindow/mainOutput.h"
 #include "gui/elems/mainWindow/mainTimer.h"
 #include "gui/elems/mainWindow/mainTransport.h"
 #include "gui/elems/mainWindow/sequencer.h"
@@ -98,17 +99,6 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 
 		geFlex* body = new geFlex(getContentBounds(), Direction::VERTICAL, G_GUI_OUTER_MARGIN, {G_GUI_OUTER_MARGIN});
 		{
-
-			/* zone 1 - menus, and I/O tools */
-
-			geFlex* zone1 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
-			{
-				mainIO = new v::geMainIO();
-				zone1->addWidget(new geBox(), 80);
-				zone1->addWidget(mainIO);
-				zone1->end();
-			}
-
 			/* zone 2 - mainTransport and timing tools */
 
 			geFlex* zone2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {3, 0, 0, 0});
@@ -139,12 +129,22 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 				zone3->end();
 			}
 
-			keyboard = new v::geKeyboard();
+			/* zone 4 - input/output and channels */
 
-			body->addWidget(zone1, G_GUI_UNIT);
+			geFlex* zone4 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+			{
+				mainInput  = new geMainInput();
+				keyboard   = new v::geKeyboard();
+				mainOutput = new geMainOutput();
+				zone4->addWidget(mainInput, G_GUI_UNIT);
+				zone4->addWidget(keyboard);
+				zone4->addWidget(mainOutput, G_GUI_UNIT);
+				zone4->end();
+			}
+
 			body->addWidget(zone2, 28);
 			body->addWidget(zone3, 40);
-			body->addWidget(keyboard);
+			body->addWidget(zone4);
 			body->end();
 		}
 
@@ -180,11 +180,12 @@ gdMainWindow::~gdMainWindow()
 
 void gdMainWindow::refresh()
 {
-	mainIO->refresh();
 	mainTimer->refresh();
 	mainTransport->refresh();
 	sequencer->refresh();
 	keyboard->refresh();
+	mainInput->refresh();
+	mainOutput->refresh();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -192,8 +193,9 @@ void gdMainWindow::refresh()
 void gdMainWindow::rebuild()
 {
 	keyboard->rebuild();
-	mainIO->rebuild();
 	mainTimer->rebuild();
+	mainInput->rebuild();
+	mainOutput->rebuild();
 }
 
 /* -------------------------------------------------------------------------- */

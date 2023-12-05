@@ -29,7 +29,8 @@
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/mainWindow/keyboard/column.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/mainIO.h"
+#include "gui/elems/mainWindow/mainInput.h"
+#include "gui/elems/mainWindow/mainOutput.h"
 #include "gui/elems/mainWindow/mainTimer.h"
 #include "gui/updater.h"
 #include "utils/gui.h"
@@ -281,7 +282,8 @@ void Ui::stopJuceDispatchLoop()
 
 void Ui::rebuildStaticWidgets()
 {
-	mainWindow->mainIO->rebuild();
+	mainWindow->mainInput->rebuild();
+	mainWindow->mainOutput->rebuild();
 	mainWindow->mainTimer->rebuild();
 }
 
