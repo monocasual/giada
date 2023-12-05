@@ -110,14 +110,16 @@ public:
 	static constexpr auto MAIN_MENU_CONFIG               = "main_menu_config";
 	static constexpr auto MAIN_MENU_ABOUT                = "main_menu_about";
 
-	static constexpr auto MAIN_IO_LABEL_OUTMETER     = "main_IO_label_outMeter";
-	static constexpr auto MAIN_IO_LABEL_INMETER      = "main_IO_label_inMeter";
-	static constexpr auto MAIN_IO_LABEL_OUTVOL       = "main_IO_label_outVol";
-	static constexpr auto MAIN_IO_LABEL_INVOL        = "main_IO_label_inVol";
-	static constexpr auto MAIN_IO_LABEL_INTOOUT      = "main_IO_label_inToOut";
-	static constexpr auto MAIN_IO_LABEL_FXOUT        = "main_IO_label_fxOut";
-	static constexpr auto MAIN_IO_LABEL_FXIN         = "main_IO_label_fxIn";
-	static constexpr auto MAIN_IO_LABEL_MIDIACTIVITY = "main_IO_label_midiActivity";
+	static constexpr auto MAIN_IO_LABEL_OUTMETER        = "main_IO_label_outMeter";
+	static constexpr auto MAIN_IO_LABEL_INMETER         = "main_IO_label_inMeter";
+	static constexpr auto MAIN_IO_LABEL_OUTVOL          = "main_IO_label_outVol";
+	static constexpr auto MAIN_IO_LABEL_INVOL           = "main_IO_label_inVol";
+	static constexpr auto MAIN_IO_LABEL_INTOOUT         = "main_IO_label_inToOut";
+	static constexpr auto MAIN_IO_LABEL_FXOUT           = "main_IO_label_fxOut";
+	static constexpr auto MAIN_IO_LABEL_FXIN            = "main_IO_label_fxIn";
+	static constexpr auto MAIN_IO_LABEL_MIDIACTIVITY    = "main_IO_label_midiActivity";
+	static constexpr auto MAIN_IO_LABEL_MIDIINACTIVITY  = "main_IO_label_midiInActivity";
+	static constexpr auto MAIN_IO_LABEL_MIDIOUTACTIVITY = "main_IO_label_midiOutActivity";
 
 	static constexpr auto MAIN_TIMER_LABEL_BPM        = "main_mainTimer_label_bpm";
 	static constexpr auto MAIN_TIMER_LABEL_METER      = "main_mainTimer_label_meter";

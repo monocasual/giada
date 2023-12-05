@@ -114,6 +114,8 @@ LangMap::LangMap()
 	m_data[MAIN_IO_LABEL_FXIN]         = "Main input plug-ins";
 	m_data[MAIN_IO_LABEL_MIDIACTIVITY] = "Master MIDI I/O activity\n\nNotifies MIDI messages sent (top) or "
 	                                     "received (bottom) globally.";
+	m_data[MAIN_IO_LABEL_MIDIINACTIVITY]  = "Master MIDI input activity\n\nNotifies MIDI messages received globally.";
+	m_data[MAIN_IO_LABEL_MIDIOUTACTIVITY] = "Master MIDI output activity\n\nNotifies MIDI messages sent globally.";
 
 	m_data[MAIN_TIMER_LABEL_BPM]        = "Beats per minute (BPM)";
 	m_data[MAIN_TIMER_LABEL_METER]      = "Beats and bars";
