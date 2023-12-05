@@ -30,8 +30,6 @@
 #include "core/engine.h"
 #include "core/kernelAudio.h"
 #include "core/kernelMidi.h"
-#include "core/midiMapper.h"
-#include "core/plugins/pluginManager.h"
 #include "deps/rtaudio/RtAudio.h"
 #include "gui/dialogs/browser/browserDir.h"
 #include "gui/dialogs/config.h"
@@ -40,7 +38,6 @@
 #include "gui/ui.h"
 #include "utils/fs.h"
 #include "utils/vector.h"
-#include <cstddef>
 #include <fmt/core.h>
 
 extern giada::v::Ui*     g_ui;

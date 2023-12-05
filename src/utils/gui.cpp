@@ -25,25 +25,13 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui.h"
-#include "core/conf.h"
-#include "core/mixer.h"
-#include "core/plugins/pluginHost.h"
 #include "core/sequencer.h"
-#include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "gui/dialogs/sampleEditor.h"
-#include "gui/dialogs/warnings.h"
 #include "gui/dialogs/window.h"
-#include "gui/elems/mainWindow/keyboard/channel.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/mainTimer.h"
 #include "gui/elems/mainWindow/mainTransport.h"
-#include "gui/elems/mainWindow/sequencer.h"
 #include "gui/elems/sampleEditor/waveTools.h"
-#include "log.h"
 #include "string.h"
 #include <FL/fl_draw.H>
 #include <FL/platform.H>
-#include <cstddef>
 #include <string>
 
 namespace giada::u::gui

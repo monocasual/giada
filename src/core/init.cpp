@@ -33,7 +33,6 @@
 #include "gui/elems/mainWindow/mainInput.h"
 #include "gui/elems/mainWindow/mainOutput.h"
 #include "gui/ui.h"
-#include "gui/updater.h"
 #include "utils/log.h"
 #include "utils/ver.h"
 #ifdef WITH_TESTS

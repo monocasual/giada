@@ -25,19 +25,11 @@
  * -------------------------------------------------------------------------- */
 
 #include "glue/main.h"
-#include "core/conf.h"
 #include "core/const.h"
 #include "core/engine.h"
 #include "core/init.h"
-#include "core/kernelAudio.h"
 #include "core/kernelMidi.h"
 #include "core/mixer.h"
-#include "core/model/model.h"
-#include "core/plugins/pluginHost.h"
-#include "core/plugins/pluginManager.h"
-#include "core/recorder.h"
-#include "core/sequencer.h"
-#include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannel.h"
@@ -46,11 +38,7 @@
 #include "gui/elems/mainWindow/mainTimer.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
-#include "utils/log.h"
 #include "utils/string.h"
-#include <FL/Fl.H>
-#include <cassert>
-#include <cmath>
 
 extern giada::v::Ui*     g_ui;
 extern giada::m::Engine* g_engine;

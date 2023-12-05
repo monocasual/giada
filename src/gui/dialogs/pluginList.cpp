@@ -29,16 +29,12 @@
 #include "core/const.h"
 #include "core/engine.h"
 #include "glue/layout.h"
-#include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/liquidScroll.h"
 #include "gui/elems/basics/textButton.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/plugin/pluginElement.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
-#include "utils/string.h"
-#include <cassert>
-#include <string>
 
 extern giada::v::Ui* g_ui;
 
