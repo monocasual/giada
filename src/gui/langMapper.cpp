@@ -102,7 +102,7 @@ LangMap::LangMap()
 	m_data[MAIN_MENU_EDIT_FREEALLSAMPLES]  = "Free all Sample channels";
 	m_data[MAIN_MENU_EDIT_CLEARALLACTIONS] = "Clear all actions";
 	m_data[MAIN_MENU_EDIT_SETUPMIDIINPUT]  = "Setup global MIDI input...";
-	m_data[MAIN_MENU_CONFIG]               = "Config";
+	m_data[MAIN_MENU_CONFIG]               = "Setup";
 	m_data[MAIN_MENU_ABOUT]                = "About";
 
 	m_data[MAIN_IO_LABEL_OUTMETER]     = "Main output meter";
