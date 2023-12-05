@@ -33,7 +33,6 @@
 #include "gui/elems/basics/liquidScroll.h"
 #include "gui/elems/basics/textButton.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
-#include "gui/elems/mainWindow/mainIO.h"
 #include "gui/elems/plugin/pluginElement.h"
 #include "gui/ui.h"
 #include "utils/gui.h"

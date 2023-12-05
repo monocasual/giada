@@ -35,7 +35,6 @@
 #include "gui/dialogs/window.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/mainIO.h"
 #include "gui/elems/mainWindow/mainTimer.h"
 #include "gui/elems/mainWindow/mainTransport.h"
 #include "gui/elems/mainWindow/sequencer.h"
