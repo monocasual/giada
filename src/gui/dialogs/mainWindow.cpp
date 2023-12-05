@@ -87,7 +87,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 	Fl::set_boxtype(FL_UP_BOX, G_CUSTOM_UP_BOX);
 	Fl::set_boxtype(FL_DOWN_BOX, G_CUSTOM_DOWN_BOX);
 
-	geFlex* container = new geFlex(getContentBounds(), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	geFlex* container = new geFlex(getContentBounds(), Direction::VERTICAL);
 	{
 		geFlex* header = new geFlex(getContentBounds(), Direction::VERTICAL);
 		{
@@ -101,7 +101,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 		{
 			/* zone 2 - mainTransport and timing tools */
 
-			geFlex* zone2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {3, 0, 0, 0});
+			geFlex* zone2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 			{
 				mainTransport = new v::geMainTransport();
 
@@ -120,7 +120,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 
 			/* zone 3 - sequencer */
 
-			geFlex* zone3 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {0, 5});
+			geFlex* zone3 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {0, 15});
 			{
 				sequencer = new v::geSequencer();
 				zone3->addWidget(new geBox(), 80);
@@ -142,14 +142,14 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 				zone4->end();
 			}
 
-			body->addWidget(zone2, 28);
-			body->addWidget(zone3, 40);
+			body->addWidget(zone2, 25);
+			body->addWidget(zone3, 70);
 			body->addWidget(zone4);
 			body->end();
 		}
 
 #ifndef G_OS_MAC // No need on macOS
-		container->addWidget(header, G_GUI_UNIT);
+		container->addWidget(header, 25);
 #endif
 		container->addWidget(body);
 		container->end();
