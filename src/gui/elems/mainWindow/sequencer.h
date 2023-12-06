@@ -53,6 +53,7 @@ private:
 	void drawCursor() const;
 	void drawCursor(int beat) const;
 	void drawRecBars() const;
+	void drawBeatNumber(int beat, Fl_Color) const;
 
 	c::main::Sequencer m_data;
 

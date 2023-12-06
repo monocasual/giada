@@ -91,6 +91,9 @@ void geSequencer::drawBody() const
 	for (int i = 1; i < m_data.bars; i++)
 		drawLine(line.withShiftedX(m_cell.w * i * delta), G_COLOR_LIGHT_1);
 
+	for (int i = 0; i < m_data.beats; i++)
+		drawBeatNumber(i, G_COLOR_GREY_4);
+
 	/* Unused grey area. */
 
 	drawRectf(body.withTrimmedLeft(m_data.beats * m_cell.w), G_COLOR_GREY_4);
@@ -107,12 +110,20 @@ void geSequencer::drawRecBars() const
 
 /* -------------------------------------------------------------------------- */
 
+void geSequencer::drawBeatNumber(int beat, Fl_Color color) const
+{
+	drawText(std::to_string(beat + 1), m_cell.withX(x() + m_cell.w * beat), FL_HELVETICA, G_GUI_FONT_SIZE_BASE - 2, color);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geSequencer::drawCursor(int beat) const
 {
 	if (m_data.shouldBlink) // Don't paint if is blinking
 		return;
 	// TODO withW(...): FLTK glitch?
 	drawRectf(m_cell.withShiftedX(beat * m_cell.w).reduced(CURSOR_PAD).withW(m_cell.w - CURSOR_PAD - 2), G_COLOR_LIGHT_1);
+	drawBeatNumber(beat, FL_BACKGROUND_COLOR);
 }
 
 /* -------------------------------------------------------------------------- */
