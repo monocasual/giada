@@ -51,7 +51,7 @@ private:
 
 	void drawBody() const;
 	void drawCursor() const;
-	void drawCursor(int beat, Fl_Color col) const;
+	void drawCursor(int beat) const;
 	void drawRecBars() const;
 
 	c::main::Sequencer m_data;

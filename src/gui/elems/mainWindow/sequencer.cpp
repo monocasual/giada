@@ -107,24 +107,24 @@ void geSequencer::drawRecBars() const
 
 /* -------------------------------------------------------------------------- */
 
-void geSequencer::drawCursor(int beat, Fl_Color color) const
+void geSequencer::drawCursor(int beat) const
 {
+	if (m_data.shouldBlink) // Don't paint if is blinking
+		return;
 	// TODO withW(...): FLTK glitch?
-	drawRectf(m_cell.withShiftedX(beat * m_cell.w).reduced(CURSOR_PAD).withW(m_cell.w - CURSOR_PAD - 2), color);
+	drawRectf(m_cell.withShiftedX(beat * m_cell.w).reduced(CURSOR_PAD).withW(m_cell.w - CURSOR_PAD - 2), G_COLOR_LIGHT_1);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geSequencer::drawCursor() const
 {
-	Fl_Color color = m_data.shouldBlink ? FL_BACKGROUND_COLOR : G_COLOR_LIGHT_1;
-
 	if (m_data.isFreeModeInputRec)
 	{
 		for (int i = 0; i < m_data.beats; i++)
-			drawCursor(i, color);
+			drawCursor(i);
 	}
 	else
-		drawCursor(m_data.currentBeat, color);
+		drawCursor(m_data.currentBeat);
 }
 } // namespace giada::v
