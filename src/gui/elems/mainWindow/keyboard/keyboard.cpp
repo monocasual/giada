@@ -331,11 +331,9 @@ void geKeyboard::draw()
 
 	/* Paint columns background. Use a clip to draw only what's visible. */
 
-	fl_push_clip(
-	    x(),
-	    y(),
-	    w() - scrollbar_size() - (G_GUI_OUTER_MARGIN * 2),
-	    h() - scrollbar_size() - (G_GUI_OUTER_MARGIN * 2));
+	const geompp::Rect<int> viewportBounds = getViewportBounds();
+
+	fl_push_clip(viewportBounds.x, viewportBounds.y, viewportBounds.w, viewportBounds.h);
 
 	for (const geColumn* c : m_columns)
 	{
