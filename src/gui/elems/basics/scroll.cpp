@@ -78,7 +78,9 @@ int geScroll::handle(int e)
 
 geompp::Rect<int> geScroll::getViewportBounds() const
 {
-	return {x(), y(), w() - scrollbar.w(), h() - hscrollbar.h()};
+	const int hScrollbarH = hscrollbar.visible() ? hscrollbar.h() : 0;
+	const int vScrollbarW = scrollbar.visible() ? scrollbar.w() : 0;
+	return {x(), y(), w() - vScrollbarW, h() - hScrollbarH};
 }
 
 /* -------------------------------------------------------------------------- */
