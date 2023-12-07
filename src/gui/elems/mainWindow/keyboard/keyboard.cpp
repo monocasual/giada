@@ -162,7 +162,7 @@ int geKeyboard::ChannelDragger::getPositionForCursor(const geColumn* column, Pix
 /* -------------------------------------------------------------------------- */
 
 geKeyboard::geKeyboard()
-: geScroll(Fl_Scroll::BOTH_ALWAYS)
+: geScroll(Fl_Scroll::BOTH)
 , m_channelDragger(*this)
 , m_addColumnBtn(nullptr)
 {
