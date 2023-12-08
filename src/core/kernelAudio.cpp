@@ -370,7 +370,7 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 
 	if (api == RtAudio::Api::UNIX_JACK)
 	{
-		const Device jackDevice = fetchDevice(0); // JACK has only one device
+		const Device jackDevice = fetchDevice(out.id); // JACK has only one device
 
 		assert(jackDevice.sampleRates.size() > 0);
 
