@@ -68,4 +68,20 @@ void geLiquidScroll::resize(int X, int Y, int W, int H)
 	init_sizes(); // tell scroll children changed in size
 	Fl_Scroll::resize(X, Y, W, H);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void geLiquidScroll::addWidget(Fl_Widget* wg)
+{
+	int numChildren = countChildren();
+
+	int wx = x();
+	int wy = y() - yposition() + (numChildren * (wg->h() + G_GUI_INNER_MARGIN));
+	int ww = w() - 24;
+	int wh = wg->h();
+
+	wg->resize(wx, wy, ww, wh);
+	geScroll::add(wg);
+	redraw();
+}
 } // namespace giada::v

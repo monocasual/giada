@@ -86,11 +86,13 @@ void gdPluginList::rebuild()
 	for (m::Plugin* plugin : m_plugins.plugins)
 		list->addWidget(new gePluginElement(0, 0, w(), G_GUI_UNIT, c::plugin::getPlugin(*plugin, m_plugins.channelId)));
 
-	addPlugin = list->addWidget(new geTextButton(0, 0, 0, G_GUI_UNIT, g_ui->getI18Text(LangMap::PLUGINLIST_ADDPLUGIN)));
+	addPlugin = new geTextButton(0, 0, 0, G_GUI_UNIT, g_ui->getI18Text(LangMap::PLUGINLIST_ADDPLUGIN));
 
 	addPlugin->onClick = [this]() {
 		c::layout::openPluginChooser(m_plugins.channelId);
 	};
+
+	list->addWidget(addPlugin);
 }
 
 /* -------------------------------------------------------------------------- */

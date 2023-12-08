@@ -57,22 +57,7 @@ public:
 	/* addWidget
     Adds a new widget to the bottom, with proper spacing. */
 
-	template <typename T>
-	T* addWidget(T* wg)
-	{
-		int numChildren = countChildren();
-
-		int wx = x();
-		int wy = y() - yposition() + (numChildren * (wg->h() + G_GUI_INNER_MARGIN));
-		int ww = w() - 24;
-		int wh = wg->h();
-
-		wg->resize(wx, wy, ww, wh);
-		geScroll::add(wg);
-		redraw();
-
-		return wg;
-	}
+	void addWidget(Fl_Widget*);
 
 private:
 	Direction m_direction;
