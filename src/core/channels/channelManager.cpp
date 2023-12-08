@@ -413,8 +413,8 @@ void ChannelManager::setHeight(ID channelId, Pixel height)
 
 void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 {
-	Channel& previewCh = m_model.get().channels.get(Mixer::PREVIEW_CHANNEL_ID);
-	Channel& sourceCh  = m_model.get().channels.get(channelId);
+	Channel&       previewCh = m_model.get().channels.get(Mixer::PREVIEW_CHANNEL_ID);
+	const Channel& sourceCh  = m_model.get().channels.get(channelId);
 
 	assert(previewCh.sampleChannel);
 	assert(sourceCh.sampleChannel);
