@@ -67,6 +67,12 @@ public:
 
 	void refresh();
 
+	/* addColumn
+	Adds new column at the end of the stack. Pass id != 0 when loading column
+	from model. */
+
+	void addColumn(int width = G_DEFAULT_COLUMN_WIDTH, ID id = 0);
+
 	/* deleteColumn
 	Deletes column by id. */
 
@@ -120,8 +126,6 @@ private:
 	Returns a geompp::Rect for the square to be drawn as column background. */
 
 	geompp::Rect<int> getColumnBackround(const geColumn&) const;
-
-	void addColumn(int width = G_DEFAULT_COLUMN_WIDTH, ID id = 0);
 
 	/* getDroppedFilePaths
 	Returns a vector of audio file paths after a drag-n-drop from desktop
