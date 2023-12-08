@@ -25,17 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 #include "velocityEditor.h"
-#include "core/conf.h"
 #include "core/const.h"
 #include "envelopePoint.h"
 #include "glue/actionEditor.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "src/core/actions/action.h"
-#include "utils/log.h"
 #include "utils/math.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include <cassert>
 
 namespace giada::v
 {
