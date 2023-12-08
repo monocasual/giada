@@ -93,6 +93,8 @@ void geSplitScroll::draw()
 
 void geSplitScroll::addWidgets(Fl_Widget& wa, Fl_Widget& wb, Pixel topContentH)
 {
+	wa.position(x(), y());
+
 	m_a.add(&wa);
 	m_b.addWidget(&wb);
 
@@ -158,7 +160,7 @@ void geSplitScroll::setScrollX(Pixel p)
 
 void geSplitScroll::setScrollY(Pixel p)
 {
-	m_a.scroll_to(m_a.xposition(), p - m_a.y());
+	m_a.scroll_to(m_a.xposition(), p);
 }
 
 /* -------------------------------------------------------------------------- */
