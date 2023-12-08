@@ -112,6 +112,7 @@ constexpr int   G_MIN_GUI_WIDTH         = 816;
 constexpr int   G_MIN_GUI_HEIGHT        = 510;
 constexpr int   G_MAX_IO_CHANS          = 2;
 constexpr int   G_MAX_VELOCITY          = 0x7F;
+constexpr float G_MAX_VELOCITY_FLOAT    = 1.0f;
 constexpr int   G_MAX_MIDI_CHANS        = 16;
 constexpr int   G_MAX_DISPATCHER_EVENTS = 32;
 constexpr int   G_MAX_SEQUENCER_EVENTS  = 128;  // Per block

@@ -46,7 +46,7 @@ MidiEvent::MidiEvent(uint32_t raw, int numBytes, double timestamp)
 : m_raw(raw)
 , m_numBytes(numBytes)
 , m_delta(0)
-, m_velocity(0.0f)
+, m_velocity(u::math::map(getVelocity(), G_MAX_VELOCITY, G_MAX_VELOCITY_FLOAT))
 , m_timestamp(timestamp)
 {
 }
@@ -91,12 +91,16 @@ void MidiEvent::setChannel(int c)
 void MidiEvent::setVelocity(int v)
 {
 	assert(v >= 0 && v <= G_MAX_VELOCITY);
-	m_raw = (m_raw & ~(0xFF << 8)) | (v << 8);
+	m_raw      = (m_raw & ~(0xFF << 8)) | (v << 8);
+	m_velocity = u::math::map(v, G_MAX_VELOCITY, G_MAX_VELOCITY_FLOAT);
 }
 
 void MidiEvent::setVelocityFloat(float f)
 {
-	m_velocity = f;
+	assert(f >= 0.0f && f <= G_MAX_VELOCITY_FLOAT);
+	const int v = u::math::map(f, G_MAX_VELOCITY_FLOAT, G_MAX_VELOCITY);
+	m_velocity  = f;
+	m_raw       = (m_raw & ~(0xFF << 8)) | (v << 8);
 }
 
 /* -------------------------------------------------------------------------- */
