@@ -140,7 +140,7 @@ LangMap::LangMap()
 	m_data[MAIN_COLUMN_BUTTON]                  = "Edit column";
 	m_data[MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL] = "Add Sample channel";
 	m_data[MAIN_COLUMN_BUTTON_ADDMIDICHANNEL]   = "Add MIDI channel";
-	m_data[MAIN_COLUMN_BUTTON_REMOVE]           = "Remove";
+	m_data[MAIN_COLUMN_BUTTON_REMOVE_COLUMN]    = "Remove column";
 	m_data[MAIN_COLUMN_BUTTON_ADD_COLUMN]       = "Add column";
 
 	m_data[MAIN_CHANNEL_NOSAMPLE]          = "-- no sample --";
