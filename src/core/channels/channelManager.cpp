@@ -420,7 +420,10 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 	assert(sourceCh.sampleChannel);
 
 	previewCh.loadWave(sourceCh.sampleChannel->getWave());
-	previewCh.sampleChannel->mode = SamplePlayerMode::SINGLE_BASIC_PAUSE;
+	previewCh.sampleChannel->mode  = SamplePlayerMode::SINGLE_BASIC_PAUSE;
+	previewCh.sampleChannel->begin = sourceCh.sampleChannel->begin;
+	previewCh.sampleChannel->end   = sourceCh.sampleChannel->end;
+	previewCh.sampleChannel->pitch = sourceCh.sampleChannel->pitch;
 
 	m_model.swap(model::SwapType::SOFT);
 }
