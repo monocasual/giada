@@ -42,7 +42,7 @@ geSampleAction::geSampleAction(Pixel X, Pixel Y, Pixel W, Pixel H,
 
 void geSampleAction::draw()
 {
-	Fl_Color color = hovered ? G_COLOR_LIGHT_2 : G_COLOR_LIGHT_1;
+	const Fl_Color color = hovered ? G_COLOR_LIGHT_2 : G_COLOR_LIGHT_1;
 
 	if (m_singlePress)
 	{
