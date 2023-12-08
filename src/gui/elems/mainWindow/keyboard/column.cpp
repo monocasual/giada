@@ -114,10 +114,12 @@ void geColumn::showAddChannelMenu() const
 	menu.addItem((ID)Menu::ADD_MIDI_CHANNEL, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADDMIDICHANNEL));
 	menu.addItem((ID)Menu::REMOVE_COLUMN, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_REMOVE));
 
-	if (countChannels() > 0)
+	geKeyboard* keyboard = static_cast<geKeyboard*>(parent());
+
+	if (countChannels() > 0 || keyboard->countColumns() == 1)
 		menu.setEnabled((ID)Menu::REMOVE_COLUMN, false);
 
-	menu.onSelect = [this](ID menuId) {
+	menu.onSelect = [this, keyboard](ID menuId) {
 		switch (static_cast<Menu>(menuId))
 		{
 		case Menu::ADD_SAMPLE_CHANNEL:
@@ -127,7 +129,7 @@ void geColumn::showAddChannelMenu() const
 			c::channel::addChannel(id, ChannelType::MIDI);
 			break;
 		case Menu::REMOVE_COLUMN:
-			static_cast<geKeyboard*>(parent())->deleteColumn(id);
+			keyboard->deleteColumn(id);
 			break;
 		}
 	};

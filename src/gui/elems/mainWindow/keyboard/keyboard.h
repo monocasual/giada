@@ -57,6 +57,11 @@ public:
 
 	ID getChannelColumnId(ID channelId) const;
 
+	/* countColumns
+	Returns the number of columns in the viewport. */
+
+	size_t countColumns() const;
+
 	/* rebuild
 	Rebuilds this widget from scratch. Used when the model has changed. */
 

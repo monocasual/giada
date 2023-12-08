@@ -181,6 +181,13 @@ ID geKeyboard::getChannelColumnId(ID channelId) const
 
 /* -------------------------------------------------------------------------- */
 
+size_t geKeyboard::countColumns() const
+{
+	return m_columns.size();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geKeyboard::init()
 {
 	m_columnId = m::IdManager();
@@ -219,6 +226,8 @@ void geKeyboard::rebuild()
 
 void geKeyboard::deleteColumn(ID id)
 {
+	if (countColumns() == 1) // One column must stay
+		return;
 	u::vector::removeIf(g_ui->model.columns, [=](const Model::Column& c) { return c.id == id; });
 	rebuild();
 }
