@@ -31,9 +31,7 @@
 #include "utils/math.h"
 #include <FL/fl_draw.H>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 gePianoItem::gePianoItem(Pixel X, Pixel Y, Pixel W, Pixel H, m::Action a1,
     m::Action a2)
@@ -89,5 +87,4 @@ Pixel gePianoItem::calcVelocityH() const
 	int v = a1.event.getVelocity();
 	return u::math::map<int, Pixel>(v, 0, G_MAX_VELOCITY, 0, h() - 3);
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

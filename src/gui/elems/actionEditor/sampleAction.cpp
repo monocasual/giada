@@ -29,9 +29,7 @@
 #include "src/core/actions/action.h"
 #include <FL/fl_draw.H>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geSampleAction::geSampleAction(Pixel X, Pixel Y, Pixel W, Pixel H,
     bool singlePress, m::Action a1, m::Action a2)
@@ -64,5 +62,4 @@ void geSampleAction::draw()
 		}
 	}
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v

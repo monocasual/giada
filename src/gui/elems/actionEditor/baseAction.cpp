@@ -28,9 +28,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geBaseAction::geBaseAction(Pixel X, Pixel Y, Pixel W, Pixel H, bool resizable,
     m::Action a1, m::Action a2)
@@ -125,5 +123,4 @@ bool geBaseAction::isOnEdges() const
 {
 	return onLeftEdge || onRightEdge;
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v
