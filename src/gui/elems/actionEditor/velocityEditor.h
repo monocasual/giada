@@ -31,7 +31,6 @@
 
 namespace giada::v
 {
-class geEnvelopePoint;
 class geVelocityEditor : public geBaseActionEditor
 {
 public:
