@@ -377,6 +377,14 @@ geompp::Rect<int> geKeyboard::getColumnBackround(const geColumn& c) const
 
 /* -------------------------------------------------------------------------- */
 
+void geKeyboard::addColumn()
+{
+	addColumn(G_DEFAULT_COLUMN_WIDTH, /*id=*/0);
+	storeLayout();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geKeyboard::addColumn(int width, ID id)
 {
 	int colx = x() - xposition(); // Mind the x-scroll offset with xposition()

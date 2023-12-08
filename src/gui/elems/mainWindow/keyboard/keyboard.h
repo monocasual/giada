@@ -72,10 +72,9 @@ public:
 	void refresh();
 
 	/* addColumn
-	Adds new column at the end of the stack. Pass id != 0 when loading column
-	from model. */
+	Adds new column at the end of the stack. */
 
-	void addColumn(int width = G_DEFAULT_COLUMN_WIDTH, ID id = 0);
+	void addColumn();
 
 	/* deleteColumn
 	Deletes column by id. */
@@ -162,6 +161,12 @@ private:
 	Stores the current column layout into the layout vector. */
 
 	void storeLayout();
+
+	/* addColumn
+	Adds new column at the end of the stack. Pass id != 0 when loading column
+	from model. */
+
+	void addColumn(int width, ID);
 
 	m::IdManager           m_columnId;
 	ChannelDragger         m_channelDragger;
