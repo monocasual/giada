@@ -38,7 +38,6 @@
 
 namespace giada::v
 {
-class geTextButton;
 class geResizerBar;
 class geColumn;
 class geChannel;
@@ -167,8 +166,6 @@ private:
 	m::IdManager           m_columnId;
 	ChannelDragger         m_channelDragger;
 	std::vector<geColumn*> m_columns;
-
-	geTextButton* m_addColumnBtn;
 };
 } // namespace giada::v
 

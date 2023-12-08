@@ -52,7 +52,8 @@ enum class Menu
 {
 	ADD_SAMPLE_CHANNEL = 0,
 	ADD_MIDI_CHANNEL,
-	REMOVE_COLUMN
+	REMOVE_COLUMN,
+	ADD_COLUMN,
 };
 
 /* -------------------------------------------------------------------------- */
@@ -113,6 +114,7 @@ void geColumn::showAddChannelMenu() const
 	menu.addItem((ID)Menu::ADD_SAMPLE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL));
 	menu.addItem((ID)Menu::ADD_MIDI_CHANNEL, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADDMIDICHANNEL));
 	menu.addItem((ID)Menu::REMOVE_COLUMN, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_REMOVE));
+	menu.addItem((ID)Menu::ADD_COLUMN, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADD_COLUMN));
 
 	geKeyboard* keyboard = static_cast<geKeyboard*>(parent());
 
@@ -130,6 +132,9 @@ void geColumn::showAddChannelMenu() const
 			break;
 		case Menu::REMOVE_COLUMN:
 			keyboard->deleteColumn(id);
+			break;
+		case Menu::ADD_COLUMN:
+			keyboard->addColumn();
 			break;
 		}
 	};

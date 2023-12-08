@@ -164,7 +164,6 @@ int geKeyboard::ChannelDragger::getPositionForCursor(const geColumn* column, Pix
 geKeyboard::geKeyboard()
 : geScroll(Fl_Scroll::BOTH)
 , m_channelDragger(*this)
-, m_addColumnBtn(nullptr)
 {
 	autoscroll = true;
 
@@ -238,14 +237,6 @@ void geKeyboard::deleteAllColumns()
 {
 	Fl_Scroll::clear();
 	m_columns.clear();
-
-	m_addColumnBtn          = new geTextButton(8, y(), 200, 20, "Add new column");
-	m_addColumnBtn->onClick = [this]() {
-		addColumn();
-		storeLayout();
-	};
-
-	add(m_addColumnBtn);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -411,10 +402,6 @@ void geKeyboard::addColumn(int width, ID id)
 	add(column);
 	add(bar);
 	m_columns.push_back(column);
-
-	/* And then shift the "add column" button on the rightmost edge. */
-
-	m_addColumnBtn->position(colx + width + COLUMN_GAP, y());
 
 	redraw();
 }

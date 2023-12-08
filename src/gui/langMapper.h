@@ -143,6 +143,7 @@ public:
 	static constexpr auto MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL = "main_column_button_addSampleChannel";
 	static constexpr auto MAIN_COLUMN_BUTTON_ADDMIDICHANNEL   = "main_column_button_addMidiChannel";
 	static constexpr auto MAIN_COLUMN_BUTTON_REMOVE           = "main_column_button_remove";
+	static constexpr auto MAIN_COLUMN_BUTTON_ADD_COLUMN       = "main_column_button_addColumn";
 
 	static constexpr auto MAIN_CHANNEL_NOSAMPLE           = "main_channel_noSample";
 	static constexpr auto MAIN_CHANNEL_SAMPLENOTFOUND     = "main_channel_sampleNotFound";
