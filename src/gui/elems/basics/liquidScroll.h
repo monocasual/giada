@@ -49,6 +49,9 @@ public:
 	geLiquidScroll(int x, int y, int w, int h, Direction d, bool withScrollbar = true);
 	geLiquidScroll(geompp::Rect<int>, Direction d, bool withScrollbar = true);
 
+	void add(Fl_Widget&) = delete;
+	void add(Fl_Widget*) = delete;
+
 	void resize(int x, int y, int w, int h) override;
 
 	/* addWidget
@@ -65,7 +68,7 @@ public:
 		int wh = wg->h();
 
 		wg->resize(wx, wy, ww, wh);
-		add(wg);
+		geScroll::add(wg);
 		redraw();
 
 		return wg;
