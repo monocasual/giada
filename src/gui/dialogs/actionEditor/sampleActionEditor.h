@@ -32,7 +32,7 @@
 namespace giada::v
 {
 class geSampleActionEditor;
-class geEnvelopeEditor;
+class geVelocityEditor;
 class geChoice;
 class gdSampleActionEditor : public gdBaseActionEditor
 {
@@ -47,7 +47,7 @@ private:
 	bool canChangeActionType();
 
 	geSampleActionEditor* m_sampleActionEditor;
-	geEnvelopeEditor*     m_envelopeEditor;
+	geVelocityEditor*     m_velocityEditor;
 	geChoice*             m_actionType;
 };
 } // namespace giada::v

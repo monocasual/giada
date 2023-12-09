@@ -29,11 +29,11 @@
 #include "core/const.h"
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
-#include "gui/elems/actionEditor/envelopeEditor.h"
 #include "gui/elems/actionEditor/gridTool.h"
 #include "gui/elems/actionEditor/legend.h"
 #include "gui/elems/actionEditor/sampleActionEditor.h"
 #include "gui/elems/actionEditor/splitScroll.h"
+#include "gui/elems/actionEditor/velocityEditor.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/flex.h"
@@ -95,8 +95,8 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, const Model& model)
 	m_actionType->copy_tooltip(g_ui->getI18Text(LangMap::ACTIONEDITOR_LABEL_ACTIONTYPE));
 
 	m_sampleActionEditor = new geSampleActionEditor(0, 0, this);
-	m_envelopeEditor     = new geEnvelopeEditor(0, 0, this);
-	m_splitScroll->addWidgets(*m_sampleActionEditor, *m_envelopeEditor, model.actionEditorSplitH);
+	m_velocityEditor     = new geVelocityEditor(0, 0, this);
+	m_splitScroll->addWidgets(*m_sampleActionEditor, *m_velocityEditor, model.actionEditorSplitH);
 
 	m_splitScroll->onDragBar = [this]() {
 		m_legends->resizeWidget(0, m_splitScroll->getTopContentH());
@@ -130,7 +130,7 @@ void gdSampleActionEditor::rebuild()
 	computeWidth(m_data.framesInSeq, m_data.framesInLoop);
 
 	m_sampleActionEditor->rebuild(m_data);
-	m_envelopeEditor->rebuild(m_data);
+	m_velocityEditor->rebuild(m_data);
 	m_splitScroll->initScrollbar();
 }
 
