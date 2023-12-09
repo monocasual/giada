@@ -222,17 +222,13 @@ void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 		}
 		else if (pure == c.midiInput.volume.getValue())
 		{
-			float vf = midiEvent.getVelocityFloat();
-			G_DEBUG("   volume ch={} (pure=0x{:0X}, value={}, float={})",
-			    c.id, pure, midiEvent.getVelocity(), vf);
-			c::channel::setChannelVolume(c.id, vf, Thread::MIDI);
+			G_DEBUG("   volume ch={} (pure=0x{:0X}, value={})", c.id, pure, midiEvent.getVelocityFloat());
+			c::channel::setChannelVolume(c.id, midiEvent.getVelocityFloat(), Thread::MIDI);
 		}
 		else if (pure == c.midiInput.pitch.getValue())
 		{
-			float vf = midiEvent.getVelocityFloat();
-			G_DEBUG("   pitch ch={} (pure=0x{:0X}, value={}, float={})",
-			    c.id, pure, midiEvent.getVelocity(), vf);
-			c::channel::setChannelPitch(c.id, vf, Thread::MIDI);
+			G_DEBUG("   pitch ch={} (pure=0x{:0X}, value={})", c.id, pure, midiEvent.getVelocityFloat());
+			c::channel::setChannelPitch(c.id, midiEvent.getVelocityFloat(), Thread::MIDI);
 		}
 		else if (pure == c.midiInput.readActions.getValue())
 		{
@@ -284,17 +280,13 @@ void MidiDispatcher::processMaster(const MidiEvent& midiEvent)
 	}
 	else if (pure == midiIn.volumeIn)
 	{
-		float vf = midiEvent.getVelocityFloat();
-		c::main::setMasterInVolume(vf, Thread::MIDI);
-		G_DEBUG("   input volume (master) (pure=0x{:0X}, value={}, float={})",
-		    pure, midiEvent.getVelocity(), vf);
+		c::main::setMasterInVolume(midiEvent.getVelocityFloat(), Thread::MIDI);
+		G_DEBUG("   input volume (master) (pure=0x{:0X}, value={})", pure, midiEvent.getVelocityFloat());
 	}
 	else if (pure == midiIn.volumeOut)
 	{
-		float vf = midiEvent.getVelocityFloat();
-		c::main::setMasterOutVolume(vf, Thread::MIDI);
-		G_DEBUG("   output volume (master) (pure=0x{:0X}, value={}, float={})",
-		    pure, midiEvent.getVelocity(), vf);
+		c::main::setMasterOutVolume(midiEvent.getVelocityFloat(), Thread::MIDI);
+		G_DEBUG("   output volume (master) (pure=0x{:0X}, value={})", pure, midiEvent.getVelocityFloat());
 	}
 	else if (pure == midiIn.beatDouble)
 	{
