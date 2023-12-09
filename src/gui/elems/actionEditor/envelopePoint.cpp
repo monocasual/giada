@@ -39,6 +39,7 @@ geEnvelopePoint::geEnvelopePoint(Pixel X, Pixel Y, m::Action a)
 
 void geEnvelopePoint::draw()
 {
-	fl_rectf(x(), y(), w(), h(), hovered ? G_COLOR_LIGHT_2 : G_COLOR_LIGHT_1);
+	fl_color(hovered ? G_COLOR_LIGHT_2 : G_COLOR_LIGHT_1);
+	fl_pie(x(), y(), w(), h(), 0, 360);
 }
 } // namespace giada::v
