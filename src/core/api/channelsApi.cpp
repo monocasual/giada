@@ -159,7 +159,7 @@ void ChannelsApi::move(ID channelId, ID columnId, int position)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsApi::press(ID channelId, int velocity)
+void ChannelsApi::press(ID channelId, float velocity)
 {
 	const bool  canRecordActions = m_recorder.canRecordActions();
 	const bool  canQuantize      = m_sequencer.canQuantize();

@@ -54,7 +54,7 @@ const Action* ActionEditorApi::findAction(ID id) const
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2)
+void ActionEditorApi::recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2)
 {
 	m_actionRecorder.recordMidiAction(channelId, note, velocity, f1, f2, m_sequencer.getFramesInLoop());
 }
@@ -76,7 +76,7 @@ void ActionEditorApi::deleteMidiAction(ID channelId, const Action& a)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::updateMidiAction(ID channelId, const Action& a, int note, int velocity, Frame f1, Frame f2)
+void ActionEditorApi::updateMidiAction(ID channelId, const Action& a, int note, float velocity, Frame f1, Frame f2)
 {
 	m_actionRecorder.updateMidiAction(channelId, a, note, velocity, f1, f2, m_sequencer.getFramesInLoop());
 }
@@ -125,7 +125,7 @@ void ActionEditorApi::updateEnvelopeAction(ID channelId, const Action& a, Frame 
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::updateVelocity(const Action& a, int value)
+void ActionEditorApi::updateVelocity(const Action& a, float value)
 {
 	m_actionRecorder.updateVelocity(a, value);
 }

@@ -203,14 +203,14 @@ void setLoop(bool shouldLoop)
 
 void playPreview()
 {
-	channel::pressChannel(m::Mixer::PREVIEW_CHANNEL_ID, G_MAX_VELOCITY, Thread::MAIN);
+	channel::pressChannel(m::Mixer::PREVIEW_CHANNEL_ID, G_MAX_VELOCITY_FLOAT, Thread::MAIN);
 }
 
 void stopPreview()
 {
 	/* Let the Sample Editor show the final tracker position first. */
 	getWindow()->refresh();
-	channel::pressChannel(m::Mixer::PREVIEW_CHANNEL_ID, G_MAX_VELOCITY, Thread::MAIN);
+	channel::pressChannel(m::Mixer::PREVIEW_CHANNEL_ID, G_MAX_VELOCITY_FLOAT, Thread::MAIN);
 }
 
 void togglePreview()

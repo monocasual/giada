@@ -47,8 +47,8 @@ private:
 	void onDeleteAction() override{};
 	void onResizeAction() override{};
 
-	Pixel valueToY(int v) const;
-	int   yToValue(Pixel y) const;
+	Pixel valueToY(float v) const;
+	float yToValue(Pixel y) const;
 };
 } // namespace giada::v
 

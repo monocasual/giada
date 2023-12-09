@@ -90,7 +90,7 @@ const m::Action* findAction(ID id)
 
 /* -------------------------------------------------------------------------- */
 
-void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2)
+void recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2)
 {
 	g_engine->getActionEditorApi().recordMidiAction(channelId, note, velocity, f1, f2);
 }
@@ -104,7 +104,7 @@ void deleteMidiAction(ID channelId, const m::Action& a)
 
 /* -------------------------------------------------------------------------- */
 
-void updateMidiAction(ID channelId, const m::Action& a, int note, int velocity,
+void updateMidiAction(ID channelId, const m::Action& a, int note, float velocity,
     Frame f1, Frame f2)
 {
 	g_engine->getActionEditorApi().updateMidiAction(channelId, a, note, velocity, f1, f2);
@@ -154,7 +154,7 @@ void updateEnvelopeAction(ID channelId, const m::Action& a, Frame f, int value)
 
 /* -------------------------------------------------------------------------- */
 
-void updateVelocity(const m::Action& a, int value)
+void updateVelocity(const m::Action& a, float value)
 {
 	g_engine->getActionEditorApi().updateVelocity(a, value);
 }

@@ -103,7 +103,7 @@ void gePianoRoll::onAddAction()
 {
 	Frame frame = m_base->pixelToFrame(Fl::event_x() - x(), m_data->framesInBeat);
 	int   note  = yToNote(Fl::event_y() - y());
-	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY,
+	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY_FLOAT,
 	    frame);
 }
 
@@ -198,8 +198,8 @@ void gePianoRoll::onRefreshAction()
 
 	assert(f2 != 0);
 
-	int note     = yToNote(m_action->y() - y());
-	int velocity = m_action->a1.event.getVelocity();
+	int   note     = yToNote(m_action->y() - y());
+	float velocity = m_action->a1.event.getVelocityFloat();
 
 	ca::updateMidiAction(m_data->channelId, m_action->a1, note, velocity, f1, f2);
 }

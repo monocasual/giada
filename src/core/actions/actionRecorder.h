@@ -77,7 +77,7 @@ public:
 	/* record*Action */
 
 	void recordEnvelopeAction(ID channelId, Frame frame, int value, Frame lastFrameInLoop);
-	void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2, Frame framesInLoop);
+	void recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
 	void recordSampleAction(ID channelId, int type, Frame f1, Frame f2);
 
 	/* delete*Action */
@@ -88,10 +88,10 @@ public:
 
 	/* update*Action */
 
-	void updateMidiAction(ID channelId, const Action&, int note, int velocity, Frame f1, Frame f2, Frame framesInLoop);
+	void updateMidiAction(ID channelId, const Action&, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
 	void updateSampleAction(ID channelId, const Action&, int type, Frame f1, Frame f2);
 	void updateEnvelopeAction(ID channelId, const Action&, Frame f, int value, Frame lastFrameInLoop);
-	void updateVelocity(const Action&, int value);
+	void updateVelocity(const Action&, float value);
 
 	/* consolidate
     Records all live actions. Returns a set of channels IDs that have been 

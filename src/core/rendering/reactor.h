@@ -49,7 +49,7 @@ class Reactor
 public:
 	Reactor(model::Model&, MidiMapper<KernelMidi>&, ActionRecorder&, KernelMidi&);
 
-	void keyPress(ID channelId, int velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized);
+	void keyPress(ID channelId, float velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized);
 	void keyRelease(ID channelId, bool canRecordActions, Frame currentFrameQuantized);
 	void keyKill(ID channelId, bool canRecordActions, Frame currentFrameQuantized);
 	void processMidiEvent(ID channelId, const MidiEvent&, bool canRecordActions, Frame currentFrameQuantized);

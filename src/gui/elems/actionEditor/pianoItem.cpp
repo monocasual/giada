@@ -84,7 +84,6 @@ void gePianoItem::draw()
 
 Pixel gePianoItem::calcVelocityH() const
 {
-	int v = a1.event.getVelocity();
-	return u::math::map<int, Pixel>(v, 0, G_MAX_VELOCITY, 0, h() - 3);
+	return u::math::map(a1.event.getVelocityFloat(), G_MAX_VELOCITY_FLOAT, h() - 3);
 }
 } // namespace giada::v

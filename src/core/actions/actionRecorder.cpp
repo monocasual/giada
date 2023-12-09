@@ -190,7 +190,7 @@ void ActionRecorder::recordEnvelopeAction(ID channelId, Frame frame, int value, 
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2, Frame framesInLoop)
+void ActionRecorder::recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop)
 {
 	if (f2 == 0)
 		f2 = f1 + G_DEFAULT_ACTION_SIZE;
@@ -204,8 +204,11 @@ void ActionRecorder::recordMidiAction(ID channelId, int note, int velocity, Fram
 		f1 -= overflow;
 	}
 
-	MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, note, velocity);
-	MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, note, velocity);
+	MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, note, 0);
+	MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, note, 0);
+
+	e1.setVelocityFloat(velocity);
+	e2.setVelocityFloat(velocity);
 
 	rec(channelId, f1, f2, e1, e2);
 }
@@ -301,7 +304,7 @@ void ActionRecorder::deleteEnvelopeAction(ID channelId, const Action& a)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::updateMidiAction(ID channelId, const Action& a, int note, int velocity,
+void ActionRecorder::updateMidiAction(ID channelId, const Action& a, int note, float velocity,
     Frame f1, Frame f2, Frame framesInLoop)
 {
 	deleteAction(channelId, a.id, a.nextId);
@@ -342,10 +345,10 @@ void ActionRecorder::updateEnvelopeAction(ID channelId, const Action& a, Frame f
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::updateVelocity(const Action& a, int value)
+void ActionRecorder::updateVelocity(const Action& a, float value)
 {
 	MidiEvent event(a.event);
-	event.setVelocity(value);
+	event.setVelocityFloat(value);
 	updateEvent(a.id, event);
 }
 

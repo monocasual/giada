@@ -45,16 +45,16 @@ public:
 	std::vector<Action> getActionsOnChannel(ID channelId) const;
 	const Action*       findAction(ID) const;
 
-	void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2);
+	void recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2);
 	void deleteMidiAction(ID channelId, const Action&);
-	void updateMidiAction(ID channelId, const Action&, int note, int velocity, Frame f1, Frame f2);
+	void updateMidiAction(ID channelId, const Action&, int note, float velocity, Frame f1, Frame f2);
 	void recordSampleAction(ID channelId, int type, Frame f1, Frame f2);
 	void updateSampleAction(ID channelId, const Action&, int type, Frame f1, Frame f2);
 	void deleteSampleAction(ID channelId, const Action&);
 	void recordEnvelopeAction(ID channelId, Frame f, int value);
 	void deleteEnvelopeAction(ID channelId, const Action&);
 	void updateEnvelopeAction(ID channelId, const Action&, Frame f, int value);
-	void updateVelocity(const Action&, int value);
+	void updateVelocity(const Action&, float value);
 
 private:
 	Engine&         m_engine;

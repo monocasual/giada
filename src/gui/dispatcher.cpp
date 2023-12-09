@@ -60,7 +60,7 @@ void Dispatcher::perform(ID channelId, int event) const
 		if (Fl::event_shift())
 			c::channel::killChannel(channelId, Thread::MAIN);
 		else
-			c::channel::pressChannel(channelId, G_MAX_VELOCITY, Thread::MAIN);
+			c::channel::pressChannel(channelId, G_MAX_VELOCITY_FLOAT, Thread::MAIN);
 	}
 	else if (event == FL_KEYUP)
 		c::channel::releaseChannel(channelId, Thread::MAIN);

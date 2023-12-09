@@ -43,7 +43,7 @@ Reactor::Reactor(model::Model& model, MidiMapper<KernelMidi>& m, ActionRecorder&
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::keyPress(ID channelId, int velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized)
+void Reactor::keyPress(ID channelId, float velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized)
 {
 	Channel& ch = m_model.get().channels.get(channelId);
 
@@ -68,7 +68,7 @@ void Reactor::keyPress(ID channelId, int velocity, bool canRecordActions, bool c
 	else if (ch.type == ChannelType::PREVIEW)
 	{
 		pressSampleChannel(channelId, *ch.shared, SamplePlayerMode::SINGLE_BASIC_PAUSE,
-		    /*velocity=*/0, /*canQuantize=*/false, /*isAnyLoopMode=*/false,
+		    /*velocity=*/0.0f, /*canQuantize=*/false, /*isAnyLoopMode=*/false,
 		    /*velocityAsVol=*/false, ch.volume_i);
 	}
 

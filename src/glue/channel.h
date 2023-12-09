@@ -173,7 +173,7 @@ void clearAllActions(ID channelId);
 
 void setSamplePlayerMode(ID channelId, SamplePlayerMode m);
 
-void  pressChannel(ID channelId, int velocity, Thread t);
+void  pressChannel(ID channelId, float velocity, Thread t);
 void  releaseChannel(ID channelId, Thread t);
 void  killChannel(ID channelId, Thread t);
 float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi = false);

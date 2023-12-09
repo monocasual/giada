@@ -61,7 +61,7 @@ void geVelocityEditor::draw()
 	{
 		geEnvelopePoint* p = static_cast<geEnvelopePoint*>(child(i));
 		if (m_action == nullptr)
-			p->position(p->x(), valueToY(p->a1.event.getVelocity()));
+			p->position(p->x(), valueToY(p->a1.event.getVelocityFloat()));
 		const Pixel x1 = p->x() + side;
 		const Pixel y1 = p->y();
 		const Pixel y2 = y() + h();
@@ -73,15 +73,14 @@ void geVelocityEditor::draw()
 
 /* -------------------------------------------------------------------------- */
 
-Pixel geVelocityEditor::valueToY(int v) const
+Pixel geVelocityEditor::valueToY(float v) const
 {
-	/* Cast the input type of 'v' to float, to make the mapping more precise. */
-	return u::math::map<float, Pixel>(v, 0, G_MAX_VELOCITY, y() + (h() - geEnvelopePoint::SIDE), y());
+	return u::math::map<float, Pixel>(v, 0, G_MAX_VELOCITY_FLOAT, y() + (h() - geEnvelopePoint::SIDE), y());
 }
 
-int geVelocityEditor::yToValue(Pixel px) const
+float geVelocityEditor::yToValue(Pixel px) const
 {
-	return u::math::map<Pixel, int>(px, h() - geEnvelopePoint::SIDE, 0, 0, G_MAX_VELOCITY);
+	return u::math::map<Pixel, float>(px, h() - geEnvelopePoint::SIDE, 0, 0, G_MAX_VELOCITY_FLOAT);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -102,7 +101,7 @@ void geVelocityEditor::rebuild(c::actionEditor::Data& d)
 			continue;
 
 		const Pixel px = x() + m_base->frameToPixel(action.frame);
-		const Pixel py = y() + valueToY(action.event.getVelocity());
+		const Pixel py = y() + valueToY(action.event.getVelocityFloat());
 
 		add(new geEnvelopePoint(px, py, action));
 	}

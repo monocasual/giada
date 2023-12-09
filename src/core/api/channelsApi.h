@@ -79,7 +79,7 @@ public:
 	Channel& clone(ID);
 	void     move(ID channelId, ID columnId, int position);
 
-	void press(ID, int velocity);
+	void press(ID, float velocity);
 	void release(ID);
 	void kill(ID);
 	void setVolume(ID, float);

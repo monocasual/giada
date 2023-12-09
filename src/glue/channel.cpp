@@ -293,7 +293,7 @@ void clearAllActions(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void pressChannel(ID channelId, int velocity, Thread t)
+void pressChannel(ID channelId, float velocity, Thread t)
 {
 	g_engine->getChannelsApi().press(channelId, velocity);
 	notifyChannelForMidiIn(t, channelId);

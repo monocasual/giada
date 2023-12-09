@@ -155,8 +155,8 @@ bool MidiDispatcher::isChannelMidiInAllowed(ID channelId, int c)
 void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& plugins,
     const MidiEvent& midiEvent)
 {
-	const uint32_t pure = midiEvent.getRawNoVelocity();
-	const float    vf   = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, 1.0f);
+	const uint32_t pure      = midiEvent.getRawNoVelocity();
+	const float    velocityF = midiEvent.getVelocityFloat();
 
 	/* Plugins' parameters layout reflects the structure of the matrix
 	Channel::midiInPlugins. It is safe to assume then that Plugin 'p' and 
@@ -169,9 +169,9 @@ void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& pl
 		{
 			if (pure != param.getValue())
 				continue;
-			c::plugin::setParameter(channelId, p->id, param.getIndex(), vf, Thread::MIDI);
+			c::plugin::setParameter(channelId, p->id, param.getIndex(), velocityF, Thread::MIDI);
 			G_DEBUG("   [pluginId={} paramIndex={}] (pure=0x{:0X}, value={}, float={})",
-			    p->id, param.getIndex(), pure, midiEvent.getVelocity(), vf);
+			    p->id, param.getIndex(), pure, midiEvent.getVelocity(), velocityF);
 		}
 	}
 }
@@ -193,7 +193,7 @@ void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 		if (pure == c.midiInput.keyPress.getValue())
 		{
 			G_DEBUG("   keyPress, ch={} (pure=0x{:0X})", c.id, pure);
-			c::channel::pressChannel(c.id, midiEvent.getVelocity(), Thread::MIDI);
+			c::channel::pressChannel(c.id, midiEvent.getVelocityFloat(), Thread::MIDI);
 		}
 		else if (pure == c.midiInput.keyRelease.getValue())
 		{
@@ -222,14 +222,14 @@ void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 		}
 		else if (pure == c.midiInput.volume.getValue())
 		{
-			float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME);
+			float vf = midiEvent.getVelocityFloat();
 			G_DEBUG("   volume ch={} (pure=0x{:0X}, value={}, float={})",
 			    c.id, pure, midiEvent.getVelocity(), vf);
 			c::channel::setChannelVolume(c.id, vf, Thread::MIDI);
 		}
 		else if (pure == c.midiInput.pitch.getValue())
 		{
-			float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_PITCH);
+			float vf = midiEvent.getVelocityFloat();
 			G_DEBUG("   pitch ch={} (pure=0x{:0X}, value={}, float={})",
 			    c.id, pure, midiEvent.getVelocity(), vf);
 			c::channel::setChannelPitch(c.id, vf, Thread::MIDI);
@@ -284,14 +284,14 @@ void MidiDispatcher::processMaster(const MidiEvent& midiEvent)
 	}
 	else if (pure == midiIn.volumeIn)
 	{
-		float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME);
+		float vf = midiEvent.getVelocityFloat();
 		c::main::setMasterInVolume(vf, Thread::MIDI);
 		G_DEBUG("   input volume (master) (pure=0x{:0X}, value={}, float={})",
 		    pure, midiEvent.getVelocity(), vf);
 	}
 	else if (pure == midiIn.volumeOut)
 	{
-		float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME);
+		float vf = midiEvent.getVelocityFloat();
 		c::main::setMasterOutVolume(vf, Thread::MIDI);
 		G_DEBUG("   output volume (master) (pure=0x{:0X}, value={}, float={})",
 		    pure, midiEvent.getVelocity(), vf);
