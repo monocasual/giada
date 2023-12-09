@@ -103,7 +103,6 @@ constexpr int   G_MAX_BARS              = 32;
 constexpr int   G_MAX_QUANTIZE          = 8;
 constexpr float G_MIN_DB_SCALE          = 60.0f;
 constexpr int   G_MIN_COLUMN_WIDTH      = 140;
-constexpr float G_MAX_BOOST_DB          = 20.0f;
 constexpr float G_MIN_PITCH             = 0.1f;
 constexpr float G_MAX_PITCH             = 4.0f;
 constexpr float G_MAX_PAN               = 1.0f;
