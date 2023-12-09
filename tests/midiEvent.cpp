@@ -1,4 +1,5 @@
 #include "../src/core/midiEvent.h"
+#include "../src/utils/math.h"
 #include <catch2/catch.hpp>
 
 TEST_CASE("MidiEvent")
@@ -34,6 +35,11 @@ TEST_CASE("MidiEvent")
 			REQUIRE(e.getChannel() == 1);
 			REQUIRE(e.getNote() == 44);
 			REQUIRE(e.getVelocity() == 33);
+			REQUIRE(e.getVelocityFloat() == u::math::map(33, G_MAX_VELOCITY, G_MAX_VELOCITY_FLOAT));
+
+			e.setVelocityFloat(0.4f);
+			REQUIRE(e.getVelocity() == u::math::map(0.4f, G_MAX_VELOCITY_FLOAT, G_MAX_VELOCITY));
+			REQUIRE(e.getVelocityFloat() == 0.4f);
 		}
 
 		SECTION("Test channel")
@@ -42,6 +48,7 @@ TEST_CASE("MidiEvent")
 			REQUIRE(e.getChannel() == 4);
 			REQUIRE(e.getNote() == 44);
 			REQUIRE(e.getVelocity() == 80);
+			REQUIRE(e.getVelocityFloat() == u::math::map(80, G_MAX_VELOCITY, G_MAX_VELOCITY_FLOAT));
 		}
 	}
 }
