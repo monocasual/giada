@@ -75,12 +75,12 @@ void geVelocityEditor::draw()
 
 Pixel geVelocityEditor::valueToY(float v) const
 {
-	return u::math::map<float, Pixel>(v, 0, G_MAX_VELOCITY_FLOAT, y() + (h() - geEnvelopePoint::SIDE), y());
+	return u::math::map(v, 0.0f, G_MAX_VELOCITY_FLOAT, y() + (h() - geEnvelopePoint::SIDE), y());
 }
 
 float geVelocityEditor::yToValue(Pixel px) const
 {
-	return u::math::map<Pixel, float>(px, h() - geEnvelopePoint::SIDE, 0, 0, G_MAX_VELOCITY_FLOAT);
+	return u::math::map(px, h() - geEnvelopePoint::SIDE, 0, 0.0f, G_MAX_VELOCITY_FLOAT);
 }
 
 /* -------------------------------------------------------------------------- */
