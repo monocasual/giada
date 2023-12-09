@@ -206,7 +206,7 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
 	}
 
 	if (ch.isAudible(mixerHasSolos))
-		out.sum(ch.shared->audioBuffer, ch.volume * ch.volume_i, calcPanning_(ch.pan));
+		out.sum(ch.shared->audioBuffer, ch.volume * ch.shared->volumeInternal.load(), calcPanning_(ch.pan));
 }
 
 /* -------------------------------------------------------------------------- */

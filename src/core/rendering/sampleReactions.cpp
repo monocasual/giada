@@ -80,10 +80,10 @@ void stopReadActions_(ChannelShared& shared, ChannelStatus curRecStatus,
 /* -------------------------------------------------------------------------- */
 
 ChannelStatus pressWhileOff_(ID channelId, ChannelShared& shared, float velocity,
-    bool canQuantize, bool velocityAsVol, float& volume_i)
+    bool canQuantize, bool velocityAsVol)
 {
 	if (velocityAsVol)
-		volume_i = velocity; // No need for mapping: velocityFloat has same range of volume
+		shared.volumeInternal.store(velocity); // No need for mapping: velocityFloat has same range of volume
 
 	if (canQuantize)
 	{
@@ -214,7 +214,7 @@ void stopSampleChannel(ChannelShared& shared, Frame localFrame)
 
 /* -------------------------------------------------------------------------- */
 
-void pressSampleChannel(ID channelId, ChannelShared& shared, SamplePlayerMode mode, float velocity, bool canQuantize, bool isLoop, bool velocityAsVol, float& volume_i)
+void pressSampleChannel(ID channelId, ChannelShared& shared, SamplePlayerMode mode, float velocity, bool canQuantize, bool isLoop, bool velocityAsVol)
 {
 	ChannelStatus playStatus = shared.playStatus.load();
 
@@ -224,7 +224,7 @@ void pressSampleChannel(ID channelId, ChannelShared& shared, SamplePlayerMode mo
 		if (isLoop)
 			playStatus = ChannelStatus::WAIT;
 		else
-			playStatus = pressWhileOff_(channelId, shared, velocity, canQuantize, velocityAsVol, volume_i);
+			playStatus = pressWhileOff_(channelId, shared, velocity, canQuantize, velocityAsVol);
 		break;
 
 	case ChannelStatus::PLAY:

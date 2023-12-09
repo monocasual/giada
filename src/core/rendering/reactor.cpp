@@ -63,13 +63,13 @@ void Reactor::keyPress(ID channelId, float velocity, bool canRecordActions, bool
 			ch.hasActions = true;
 		}
 
-		pressSampleChannel(channelId, *ch.shared, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol, ch.volume_i);
+		pressSampleChannel(channelId, *ch.shared, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol);
 	}
 	else if (ch.type == ChannelType::PREVIEW)
 	{
 		pressSampleChannel(channelId, *ch.shared, SamplePlayerMode::SINGLE_BASIC_PAUSE,
 		    /*velocity=*/0.0f, /*canQuantize=*/false, /*isAnyLoopMode=*/false,
-		    /*velocityAsVol=*/false, ch.volume_i);
+		    /*velocityAsVol=*/false);
 	}
 
 	m_model.swap(model::SwapType::SOFT);

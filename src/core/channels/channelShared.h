@@ -57,10 +57,11 @@ struct ChannelShared final
 	juce::MidiBuffer midiBuffer;
 	MidiQueue        midiQueue;
 
-	WeakAtomic<Frame>         tracker     = 0;
-	WeakAtomic<ChannelStatus> playStatus  = ChannelStatus::OFF;
-	WeakAtomic<ChannelStatus> recStatus   = ChannelStatus::OFF;
-	WeakAtomic<bool>          readActions = false;
+	WeakAtomic<Frame>         tracker        = 0;
+	WeakAtomic<ChannelStatus> playStatus     = ChannelStatus::OFF;
+	WeakAtomic<ChannelStatus> recStatus      = ChannelStatus::OFF;
+	WeakAtomic<bool>          readActions    = false;
+	WeakAtomic<float>         volumeInternal = G_DEFAULT_VOL; // Used for velocity-drives-volume mode on Sample Channels
 
 	std::optional<Quantizer> quantizer;
 

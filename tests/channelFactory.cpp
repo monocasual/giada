@@ -32,7 +32,6 @@ TEST_CASE("channelFactory")
 			REQUIRE(clone.channel.columnId == data.channel.columnId);
 			REQUIRE(clone.channel.position == data.channel.position);
 			REQUIRE(clone.channel.volume == data.channel.volume);
-			REQUIRE(clone.channel.volume_i == data.channel.volume_i);
 			REQUIRE(clone.channel.pan == data.channel.pan);
 			REQUIRE(clone.channel.armed == data.channel.armed);
 			REQUIRE(clone.channel.key == data.channel.key);

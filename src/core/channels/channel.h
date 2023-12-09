@@ -100,7 +100,6 @@ public:
 	ID                   columnId;
 	int                  position;
 	float                volume;
-	float                volume_i; // Internal volume used for velocity-drives-volume mode on Sample Channels
 	float                pan;
 	bool                 armed;
 	int                  key;
