@@ -68,7 +68,7 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, const Model& model)
 			geFlex* legendBox = new geFlex(Direction::VERTICAL);
 			{
 				m_legends->addWidget(new geLegend(g_ui->getI18Text(LangMap::ACTIONEDITOR_STARTSTOP)));
-				m_legends->addWidget(new geLegend(g_ui->getI18Text(LangMap::ACTIONEDITOR_VOLUME)));
+				m_legends->addWidget(new geLegend(g_ui->getI18Text(LangMap::ACTIONEDITOR_VELOCITY)));
 
 				legendBox->addWidget(m_legends);
 				legendBox->addWidget(new geBox(), m_splitScroll->getBottomScrollbarH() + G_GUI_OUTER_MARGIN); // bottom-right dead corner
