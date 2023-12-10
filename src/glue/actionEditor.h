@@ -93,9 +93,11 @@ void updateSampleAction(ID channelId, const m::Action& a, int type,
 
 /* Envelope actions (only volume for now). */
 
+#if 0
 void recordEnvelopeAction(ID channelId, Frame f, int value);
 void deleteEnvelopeAction(ID channelId, const m::Action& a);
 void updateEnvelopeAction(ID channelId, const m::Action& a, Frame f, int value);
+#endif
 } // namespace giada::c::actionEditor
 
 #endif

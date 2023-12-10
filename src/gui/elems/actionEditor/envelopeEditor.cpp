@@ -24,6 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
+#if 0
+
 #include "envelopeEditor.h"
 #include "core/conf.h"
 #include "core/const.h"
@@ -201,3 +203,5 @@ void geEnvelopeEditor::onRefreshAction()
 	m_base->rebuild();
 }
 } // namespace giada::v
+
+#endif

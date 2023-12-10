@@ -24,6 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
+#if 0
+
 #ifndef GE_ENVELOPE_EDITOR_H
 #define GE_ENVELOPE_EDITOR_H
 
@@ -54,5 +56,7 @@ private:
 	bool isLastPoint() const;
 };
 } // namespace giada::v
+
+#endif
 
 #endif

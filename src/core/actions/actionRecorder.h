@@ -76,7 +76,9 @@ public:
 
 	/* record*Action */
 
+#if 0
 	void recordEnvelopeAction(ID channelId, Frame frame, int value, Frame lastFrameInLoop);
+#endif
 	void recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
 	void recordSampleAction(ID channelId, int type, Frame f1, Frame f2);
 
@@ -84,13 +86,17 @@ public:
 
 	void deleteMidiAction(ID channelId, const Action&);
 	void deleteSampleAction(ID channelId, const Action&);
+#if 0
 	void deleteEnvelopeAction(ID channelId, const Action&);
+#endif
 
 	/* update*Action */
 
 	void updateMidiAction(ID channelId, const Action&, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
 	void updateSampleAction(ID channelId, const Action&, int type, Frame f1, Frame f2);
+#if 0
 	void updateEnvelopeAction(ID channelId, const Action&, Frame f, int value, Frame lastFrameInLoop);
+#endif
 	void updateVelocity(const Action&, float value);
 
 	/* consolidate
@@ -129,7 +135,7 @@ private:
 
 	/* recordFirstEnvelopeAction
 	First action ever? Add actions at boundaries. */
-
+#if 0
 	void recordFirstEnvelopeAction(ID channelId, Frame frame, int value, Frame lastFrameInLoop);
 
 	/* recordNonFirstEnvelopeAction
@@ -137,14 +143,16 @@ private:
 	Vertical envelope points are forbidden. */
 
 	void recordNonFirstEnvelopeAction(ID channelId, Frame frame, int value);
-
+#endif
 	/* consolidate
     Given an action 'a1' tries to find the matching NOTE_OFF and updates the
     action accordingly. */
 
 	void consolidate(const Action& a1, std::size_t i);
 
+#if 0
 	bool isBoundaryEnvelopeAction(const Action&) const;
+#endif
 
 	model::Model&       m_model;
 	std::vector<Action> m_liveActions;
