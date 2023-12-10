@@ -90,8 +90,10 @@ void onBar_(ChannelShared& shared, Frame localFrame, SamplePlayerMode mode)
 
 /* -------------------------------------------------------------------------- */
 
-void onNoteOn_(ChannelShared& shared, Frame localFrame, SamplePlayerMode mode)
+void onNoteOn_(ChannelShared& shared, Frame localFrame, SamplePlayerMode mode, float velocity)
 {
+	shared.volumeInternal.store(velocity);
+
 	switch (shared.playStatus.load())
 	{
 	case ChannelStatus::OFF:
@@ -123,7 +125,7 @@ void parseActions_(ID channelId, ChannelShared& shared, const std::vector<Action
 		switch (a.event.getStatus())
 		{
 		case MidiEvent::CHANNEL_NOTE_ON:
-			onNoteOn_(shared, localFrame, mode);
+			onNoteOn_(shared, localFrame, mode, a.event.getVelocityFloat());
 			break;
 
 		case MidiEvent::CHANNEL_NOTE_OFF:
