@@ -221,13 +221,13 @@ void ActionRecorder::recordSampleAction(ID channelId, int type, Frame f1, Frame 
 	{
 		if (f2 == 0)
 			f2 = f1 + G_DEFAULT_ACTION_SIZE;
-		MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0, 0);
-		MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0, 0);
+		MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0, G_MAX_VELOCITY);
+		MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0, G_MAX_VELOCITY);
 		rec(channelId, f1, f2, e1, e2);
 	}
 	else
 	{
-		MidiEvent e1 = MidiEvent::makeFrom3Bytes(type, 0, 0);
+		MidiEvent e1 = MidiEvent::makeFrom3Bytes(type, 0, G_MAX_VELOCITY);
 		rec(channelId, f1, e1);
 	}
 }
