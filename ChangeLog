@@ -11,6 +11,21 @@
 --------------------------------------------------------------------------------
 
 
+0.26.1 --- 2023 . 12. 19
+- Add ability to stop plug-ins scan (#423)
+- Add ability to sort plug-ins in both ascending and descending order (#542)
+- Disable main transport buttons when not available, with better explanation (#629)
+- [Linux] Follow the XDG Base Directory Specification for configuration files (#338)
+- Close all subwindows on project close before resetting the engine
+- Fix assertion when when applying audio config changes and input device is disabled
+- Fix assertion when selected RtMidi API is not present in available APIs (#670)
+- Fix Sample Editor not picking up Channel properties (pitch, range, ...) when loading a project
+- Fix crash when fetching audio device and JACK is in use
+- Fix some scrolling glitches in Action Editor
+- [Windows] Fix plug-in GUI weird auto-resize when dragged around (#621)
+- Refactoring and code cleanup
+
+
 0.26.0 --- 2023 . 10. 15
 - Add ability to open more than one plug-in UI (#575)
 - Huge optimizations to the audio rendering process 
