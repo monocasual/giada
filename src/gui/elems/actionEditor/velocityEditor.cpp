@@ -53,18 +53,15 @@ void geVelocityEditor::draw()
 	if (children() == 0)
 		return;
 
-	fl_color(G_COLOR_GREY_4);
-
-	const Pixel side = geEnvelopePoint::SIDE / 2;
-
 	for (int i = 0; i < children(); i++)
 	{
 		geEnvelopePoint* p = static_cast<geEnvelopePoint*>(child(i));
 		if (m_action == nullptr)
 			p->position(p->x(), valueToY(p->a1.event.getVelocityFloat()));
-		const Pixel x1 = p->x() + side;
+		const Pixel x1 = p->x() + (geEnvelopePoint::SIDE / 2);
 		const Pixel y1 = p->y();
 		const Pixel y2 = y() + h();
+		fl_color(p->hovered ? G_COLOR_LIGHT_2 : G_COLOR_LIGHT_1);
 		fl_line(x1, y1, x1, y2);
 	}
 
@@ -100,7 +97,7 @@ void geVelocityEditor::rebuild(c::actionEditor::Data& d)
 		if (action.event.getStatus() != m::MidiEvent::CHANNEL_NOTE_ON)
 			continue;
 
-		const Pixel px = x() + m_base->frameToPixel(action.frame);
+		const Pixel px = x() + m_base->frameToPixel(action.frame) - (geEnvelopePoint::SIDE / 2);
 		const Pixel py = y() + valueToY(action.event.getVelocityFloat());
 
 		add(new geEnvelopePoint(px, py, action));
