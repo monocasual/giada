@@ -98,12 +98,11 @@ void geVelocityEditor::rebuild(c::actionEditor::Data& d)
 
 	for (const m::Action& action : m_data->actions)
 	{
-
 		if (action.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF)
 			continue;
 
-		Pixel px = x() + m_base->frameToPixel(action.frame);
-		Pixel py = y() + valueToY(action.event.getVelocity());
+		const Pixel px = x() + m_base->frameToPixel(action.frame);
+		const Pixel py = y() + valueToY(action.event.getVelocity());
 
 		add(new geEnvelopePoint(px, py, action));
 	}
@@ -118,8 +117,8 @@ void geVelocityEditor::onMoveAction()
 {
 	Pixel ey = Fl::event_y() - (geEnvelopePoint::SIDE / 2);
 
-	Pixel y1 = y();
-	Pixel y2 = y() + h() - geEnvelopePoint::SIDE;
+	const Pixel y1 = y();
+	const Pixel y2 = y() + h() - geEnvelopePoint::SIDE;
 
 	if (ey < y1)
 		ey = y1;
