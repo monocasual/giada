@@ -19,21 +19,9 @@ echo "Strip binary and move it to temp/"
 strip --strip-all ./build/giada
 cp ./build/giada temp/
 
-echo "Create .desktop file"
+echo "Prepare .desktop file"
 
-cat << EOF > ./temp/giada.desktop
-[Desktop Entry]
-Name=Giada
-Name[es]=Giada
-GenericName=Drum machine and loop sequencer
-GenericName[es]=Caja de ritmos y secuenciador de loops
-Icon=giada
-Type=Application
-Exec=giada
-Terminal=false
-Categories=AudioVideo;Audio;X-Digital_Processing;X-Jack;X-MIDI;Midi;
-Keywords=Giada;
-EOF
+cp extras/com.giadamusic.Giada.desktop temp/giada.desktop
 
 echo "Prepare logo"
 
