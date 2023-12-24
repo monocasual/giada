@@ -159,6 +159,25 @@ std::string toString(SamplePlayerMode mode)
 
 /* -------------------------------------------------------------------------- */
 
+std::string toString(ChannelType type)
+{
+	switch (type)
+	{
+	case ChannelType::SAMPLE:
+		return "SAMPLE";
+	case ChannelType::MIDI:
+		return "MIDI";
+	case ChannelType::MASTER:
+		return "MASTER";
+	case ChannelType::PREVIEW:
+		return "PREVIEW";
+	default:
+		return "(unknown)";
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
 float toFloat(const std::string& s)
 {
 	try

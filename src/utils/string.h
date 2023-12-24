@@ -52,6 +52,7 @@ bool contains(const std::string&, char);
 std::string toString(Thread);
 std::string toString(RtAudio::Api);
 std::string toString(SamplePlayerMode);
+std::string toString(ChannelType);
 
 /* toFloat, toInt
 Convert a string to numbers. Like std::stof, std::stoi, just safer. */

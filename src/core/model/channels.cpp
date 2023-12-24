@@ -84,7 +84,7 @@ void Channels::debug() const
 	for (int i = 0; const Channel& c : m_channels)
 	{
 		fmt::print("\t{} - ID={} name='{}' type={} channelShared={}",
-		    i++, c.id, c.name, (int)c.type, (void*)&c.shared);
+		    i++, c.id, c.name, u::string::toString(c.type), (void*)&c.shared);
 
 		if (c.type == ChannelType::SAMPLE || c.type == ChannelType::PREVIEW)
 		{
