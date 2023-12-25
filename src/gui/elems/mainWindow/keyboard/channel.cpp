@@ -99,13 +99,6 @@ void geChannel::cb_changeVol()
 
 /* -------------------------------------------------------------------------- */
 
-ID geChannel::getId() const
-{
-	return m_channel.id;
-}
-
-/* -------------------------------------------------------------------------- */
-
 int geChannel::getColumnIndex() const
 {
 	return static_cast<geColumn*>(parent())->index;
