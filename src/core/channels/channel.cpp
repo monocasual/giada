@@ -25,13 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/channels/channel.h"
-#include "core/actions/actionRecorder.h"
-#include "core/conf.h"
-#include "core/midiMapper.h"
-#include "core/model/model.h"
-#include "core/plugins/pluginHost.h"
-#include "core/plugins/pluginManager.h"
-#include "core/recorder.h"
 #include <cassert>
 #ifdef G_DEBUG_MODE
 #include "utils/string.h"

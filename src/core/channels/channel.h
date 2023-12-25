@@ -32,9 +32,7 @@
 #include "core/channels/midiInput.h"
 #include "core/channels/midiLightning.h"
 #include "core/channels/sampleChannel.h"
-#include "core/const.h"
 #include "core/patch.h"
-#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include <optional>
 
 namespace giada::m
