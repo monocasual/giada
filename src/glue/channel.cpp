@@ -26,42 +26,24 @@
 
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "core/channels/channelFactory.h"
-#include "core/conf.h"
 #include "core/engine.h"
-#include "core/kernelAudio.h"
 #include "core/mixer.h"
-#include "core/model/model.h"
 #include "core/patch.h"
-#include "core/plugins/plugin.h"
-#include "core/plugins/pluginHost.h"
-#include "core/plugins/pluginManager.h"
-#include "core/recorder.h"
-#include "core/wave.h"
-#include "core/waveFactory.h"
 #include "glue/channel.h"
 #include "glue/main.h"
-#include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/dialogs/warnings.h"
-#include "gui/dispatcher.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/input.h"
 #include "gui/elems/mainWindow/keyboard/channelButton.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "gui/elems/sampleEditor/pitchTool.h"
 #include "gui/elems/sampleEditor/rangeTool.h"
 #include "gui/elems/sampleEditor/waveTools.h"
 #include "gui/elems/sampleEditor/waveform.h"
 #include "gui/ui.h"
-#include "src/gui/elems/panTool.h"
-#include "src/gui/elems/volumeTool.h"
 #include "utils/fs.h"
 #include "utils/gui.h"
-#include "utils/log.h"
-#include <FL/Fl.H>
-#include <cassert>
-#include <cmath>
 #include <functional>
 
 extern giada::v::Ui*     g_ui;
