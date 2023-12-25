@@ -70,7 +70,6 @@ enum class Menu
 
 geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 : geChannel(X, Y, W, H, d)
-, m_data(d)
 {
 	playButton   = new geImageButton(graphics::channelPlayOff, graphics::channelPlayOn);
 	arm          = new geImageButton(graphics::armOff, graphics::armOn);
@@ -148,10 +147,10 @@ void geMidiChannel::openMenu()
 	menu.addItem((ID)Menu::CLONE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLONE));
 	menu.addItem((ID)Menu::DELETE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_DELETE));
 
-	if (!m_data.hasActions)
+	if (!m_channel.hasActions)
 		menu.setEnabled((ID)Menu::CLEAR_ACTIONS, false);
 
-	menu.onSelect = [&data = m_data](ID id) {
+	menu.onSelect = [&data = m_channel](ID id) {
 		switch (static_cast<Menu>(id))
 		{
 		case Menu::EDIT_ACTIONS:

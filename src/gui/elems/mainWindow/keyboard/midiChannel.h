@@ -41,8 +41,6 @@ public:
 
 private:
 	void openMenu();
-
-	c::channel::Data m_data;
 };
 } // namespace giada::v
 
