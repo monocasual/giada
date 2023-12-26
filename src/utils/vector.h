@@ -47,9 +47,9 @@ std::ptrdiff_t indexOf(const T& v, const P& p)
 /* -------------------------------------------------------------------------- */
 
 template <typename T, typename F>
-auto findIf(const T& v, F&& func)
+auto findIf(T& v, F&& func)
 {
-	return std::find_if(std::cbegin(v), std::cend(v), func);
+	return std::find_if(std::begin(v), std::end(v), func);
 }
 
 /* -------------------------------------------------------------------------- */
