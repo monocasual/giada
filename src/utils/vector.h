@@ -52,6 +52,14 @@ auto findIf(T& v, F&& func)
 	return std::find_if(std::begin(v), std::end(v), func);
 }
 
+template <typename T, typename F>
+auto findIfSafe(T& v, F&& func)
+{
+	auto it = findIf(v, func);
+	assert(it != std::end(v));
+	return it;
+}
+
 /* -------------------------------------------------------------------------- */
 
 template <typename T, typename F>
