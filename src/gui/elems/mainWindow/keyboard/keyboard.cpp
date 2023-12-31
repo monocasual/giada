@@ -385,7 +385,7 @@ void geKeyboard::addColumn()
 
 /* -------------------------------------------------------------------------- */
 
-void geKeyboard::addColumn(const Model::Column& columnModel)
+geColumn& geKeyboard::addColumn(const Model::Column& columnModel)
 {
 	int colx = x() - xposition(); // Mind the x-scroll offset with xposition()
 
@@ -414,6 +414,8 @@ void geKeyboard::addColumn(const Model::Column& columnModel)
 	m_columns.push_back(column);
 
 	redraw();
+
+	return *column;
 }
 
 /* -------------------------------------------------------------------------- */

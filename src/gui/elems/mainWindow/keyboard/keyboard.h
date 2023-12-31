@@ -167,7 +167,7 @@ private:
 	Adds new column at the end of the stack. Pass Column::id != 0 when loading 
 	columns from model. */
 
-	void addColumn(const Model::Column&);
+	geColumn& addColumn(const Model::Column&);
 
 	m::IdManager           m_columnId;
 	ChannelDragger         m_channelDragger;
