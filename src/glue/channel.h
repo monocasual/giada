@@ -36,7 +36,7 @@
 #include <vector>
 
 /* giada::c::channel
-Functions to interact with channels. Only the main thread can use these! */
+Functions to interact with channels. */
 
 namespace giada::m
 {
