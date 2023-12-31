@@ -31,6 +31,7 @@
 #include "core/idManager.h"
 #include "deps/geompp/src/rect.hpp"
 #include "gui/elems/basics/scroll.h"
+#include "gui/model.h"
 #include <FL/Fl_Box.H>
 #include <functional>
 #include <memory>
@@ -163,10 +164,10 @@ private:
 	void storeLayout();
 
 	/* addColumn
-	Adds new column at the end of the stack. Pass id != 0 when loading column
-	from model. */
+	Adds new column at the end of the stack. Pass Column::id != 0 when loading 
+	columns from model. */
 
-	void addColumn(int width, ID);
+	void addColumn(const Model::Column&);
 
 	m::IdManager           m_columnId;
 	ChannelDragger         m_channelDragger;

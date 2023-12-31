@@ -213,7 +213,7 @@ void geKeyboard::rebuild()
 	deleteAllColumns();
 
 	for (const Model::Column& c : g_ui->model.columns)
-		addColumn(c.width, c.id);
+		addColumn(c);
 
 	for (const c::channel::Data& ch : c::channel::getChannels())
 		getColumn(ch.columnId)->addChannel(ch);
@@ -379,13 +379,13 @@ geompp::Rect<int> geKeyboard::getColumnBackround(const geColumn& c) const
 
 void geKeyboard::addColumn()
 {
-	addColumn(G_DEFAULT_COLUMN_WIDTH, /*id=*/0);
+	addColumn({G_DEFAULT_COLUMN_WIDTH, /*id=*/0});
 	storeLayout();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geKeyboard::addColumn(int width, ID id)
+void geKeyboard::addColumn(const Model::Column& columnModel)
 {
 	int colx = x() - xposition(); // Mind the x-scroll offset with xposition()
 
@@ -396,14 +396,14 @@ void geKeyboard::addColumn(int width, ID id)
 
 	/* Generate new index. If not passed in. */
 
-	m_columnId.set(id);
+	m_columnId.set(columnModel.id);
 
 	/* Add a new column + a new resizer bar. */
 
 	const int viewportH = getViewportBounds().h;
 
-	geResizerBar* bar    = new geResizerBar(colx + width, y(), COLUMN_GAP, viewportH, G_MIN_COLUMN_WIDTH, Direction::HORIZONTAL);
-	geColumn*     column = new geColumn(colx, y(), width, 0, m_columnId.generate(id), bar);
+	geResizerBar* bar    = new geResizerBar(colx + columnModel.width, y(), COLUMN_GAP, viewportH, G_MIN_COLUMN_WIDTH, Direction::HORIZONTAL);
+	geColumn*     column = new geColumn(colx, y(), columnModel.width, 0, m_columnId.generate(columnModel.id), bar);
 
 	/* Store the column width in the model when the resizer bar is released. */
 
