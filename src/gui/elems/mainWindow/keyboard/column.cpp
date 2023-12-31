@@ -98,7 +98,7 @@ void geColumn::refresh()
 
 /* -------------------------------------------------------------------------- */
 
-geChannel* geColumn::addChannel(c::channel::Data d)
+geChannel* geColumn::addChannel(const c::channel::Data& d)
 {
 	geChannel* gch = makeChannel_(d);
 	addWidget(gch, d.height);

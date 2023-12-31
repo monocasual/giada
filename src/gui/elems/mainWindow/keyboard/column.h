@@ -73,7 +73,7 @@ public:
 	/* addChannel
 	Adds a new channel in this column. */
 
-	geChannel* addChannel(c::channel::Data d);
+	geChannel* addChannel(const c::channel::Data&);
 
 	/* refreshChannels
 	Updates channels' graphical statues. Called on each GUI cycle. */
