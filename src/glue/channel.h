@@ -176,6 +176,11 @@ Deletes column by index. */
 
 void deleteColumn(int);
 
+/* setColumnWidth
+Set the width to 'w' pixel of column ad index 'index'. */
+
+void setColumnWidth(int index, int w);
+
 /* set*
 Sets several channel properties. */
 

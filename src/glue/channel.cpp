@@ -168,7 +168,7 @@ Data makeData_(ID channelId, const v::Model::Column& column)
 
 Column makeColumn_(const v::Model::Column& modelColumn)
 {
-	Column column{getColumnIndex_(modelColumn), modelColumn.width};
+	Column column{getColumnIndex_(modelColumn), modelColumn.width, {}};
 
 	for (const ID channelId : modelColumn.channels)
 		column.channels.push_back(makeData_(channelId, getColumnByChannelId_(channelId)));
@@ -366,6 +366,16 @@ void deleteColumn(int index)
 	if (g_ui->model.columns.size() == 1) // One column must stay
 		return;
 	g_ui->model.columns.erase(g_ui->model.columns.begin() + index);
+	g_ui->rebuild();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void setColumnWidth(int index, int w)
+{
+	v::Model::Column& column = getColumnByIndex_(index);
+
+	column.width = w;
 	g_ui->rebuild();
 }
 

@@ -157,11 +157,6 @@ private:
 	geChannel*       getChannel(ID channelId);
 	const geChannel* getChannel(ID channelId) const;
 
-	/* storeLayout
-	Stores the current column layout into the layout vector. */
-
-	void storeLayout();
-
 	/* addColumn
 	Adds new column at the end of the stack. Pass Column::id != 0 when loading 
 	columns from model. */

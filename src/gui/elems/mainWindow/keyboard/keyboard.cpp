@@ -380,7 +380,10 @@ geColumn& geKeyboard::addColumn(const c::channel::Column& columnModel)
 
 	/* Store the column width in the model when the resizer bar is released. */
 
-	bar->onRelease = [this](const Fl_Widget& /*w*/) { storeLayout(); };
+	bar->onRelease = [](const Fl_Widget& w) {
+		const geColumn& column = static_cast<const geColumn&>(w);
+		c::channel::setColumnWidth(column.index, column.w());
+	};
 
 	add(column);
 	add(bar);
@@ -457,16 +460,5 @@ void geKeyboard::openColumnMenu() const
 	if (column == nullptr || column->getChannelAtCursor(Fl::event_y()) != nullptr)
 		return;
 	column->showAddChannelMenu();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geKeyboard::storeLayout()
-{
-	/*
-	g_ui->model.columns.clear();
-	for (const geColumn* c : m_columns)
-		g_ui->model.columns.push_back({c->id, c->w()});
-	 */
 }
 } // namespace giada::v
