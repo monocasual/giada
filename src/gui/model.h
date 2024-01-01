@@ -41,9 +41,12 @@ struct Model
 {
 	struct Column
 	{
-		ID  id;
-		int width;
+		ID              id;
+		int             width;
+		std::vector<ID> channels = {};
 	};
+
+	Model();
 
 	void store(m::Conf&) const;
 

@@ -81,7 +81,7 @@ struct MidiData
 
 struct Data
 {
-	Data(const m::Channel&);
+	Data(const m::Channel&, ID columnId, int position);
 
 	ChannelStatus getPlayStatus() const;
 	ChannelStatus getRecStatus() const;
@@ -113,15 +113,23 @@ private:
 	WeakAtomic<bool>*          m_readActions;
 };
 
+struct Column
+{
+	ID                id;
+	int               width;
+	std::vector<Data> channels;
+};
+
 /* getChannels
 Returns a single viewModel object filled with data from a channel. */
 
 Data getData(ID channelId);
 
-/* getChannels
-Returns a vector of viewModel objects filled with data from channels. */
+/* getColumns
+Returns a vector of Column's filled with Data objects, which reflects the layout
+described by Model::columns. */
 
-std::vector<Data> getChannels();
+std::vector<Column> getColumns();
 
 /* addChannel
 Adds an empty new channel to the stack. */

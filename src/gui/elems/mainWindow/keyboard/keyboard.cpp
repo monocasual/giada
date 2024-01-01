@@ -192,32 +192,15 @@ void geKeyboard::init()
 	m_columnId = m::IdManager();
 
 	deleteAllColumns();
-
-	/* Add 6 empty columns as initial layout. */
-
-	g_ui->model.columns.clear();
-	g_ui->model.columns.push_back({1, G_DEFAULT_COLUMN_WIDTH});
-	g_ui->model.columns.push_back({2, G_DEFAULT_COLUMN_WIDTH});
-	g_ui->model.columns.push_back({3, G_DEFAULT_COLUMN_WIDTH});
-	g_ui->model.columns.push_back({4, G_DEFAULT_COLUMN_WIDTH});
-	g_ui->model.columns.push_back({5, G_DEFAULT_COLUMN_WIDTH});
-	g_ui->model.columns.push_back({6, G_DEFAULT_COLUMN_WIDTH});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geKeyboard::rebuild()
 {
-	/* Wipe out all columns and add them according to the current layout in model. */
-
 	deleteAllColumns();
-
-	for (const Model::Column& c : g_ui->model.columns)
+	for (const c::channel::Column& c : c::channel::getColumns())
 		addColumn(c);
-
-	for (const c::channel::Data& ch : c::channel::getChannels())
-		getColumn(ch.columnId)->addChannel(ch);
-
 	redraw();
 }
 
@@ -385,7 +368,7 @@ void geKeyboard::addColumn()
 
 /* -------------------------------------------------------------------------- */
 
-geColumn& geKeyboard::addColumn(const Model::Column& columnModel)
+geColumn& geKeyboard::addColumn(const c::channel::Column& columnModel)
 {
 	int colx = x() - xposition(); // Mind the x-scroll offset with xposition()
 
@@ -413,6 +396,11 @@ geColumn& geKeyboard::addColumn(const Model::Column& columnModel)
 	add(bar);
 	m_columns.push_back(column);
 
+	/* Fill column with channels. */
+
+	for (const c::channel::Data& ch : columnModel.channels)
+		column->addChannel(ch);
+
 	redraw();
 
 	return *column;
@@ -433,15 +421,6 @@ void geKeyboard::forEachColumn(std::function<void(const geColumn& c)> f) const
 }
 
 /* -------------------------------------------------------------------------- */
-
-geColumn* geKeyboard::getColumn(ID id)
-{
-	for (geColumn* c : m_columns)
-		if (c->id == id)
-			return c;
-	assert(false);
-	return nullptr;
-}
 
 geColumn* geKeyboard::getColumnAtCursor(Pixel px) const
 {

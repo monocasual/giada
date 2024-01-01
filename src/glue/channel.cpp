@@ -82,6 +82,87 @@ void printLoadError_(int res)
 	else if (res == G_RES_ERR_NO_DATA)
 		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_CHANNEL_NOFILESPECIFIED));
 }
+
+/* -------------------------------------------------------------------------- */
+
+v::Model::Column& getColumnById_(ID id)
+{
+	return *u::vector::findIfSafe(g_ui->model.columns, [id](auto& col) { return col.id == id; });
+}
+
+/* -------------------------------------------------------------------------- */
+
+/* getColumnByChannelId_
+Returns the column a channel with a given ID belongs to. */
+
+v::Model::Column& getColumnByChannelId_(ID channelId)
+{
+	return *u::vector::findIfSafe(g_ui->model.columns, [channelId](auto& col) {
+		return u::vector::has(col.channels, [channelId](ID otherId) { return channelId == otherId; });
+	});
+}
+
+/* -------------------------------------------------------------------------- */
+
+int getChannelPositionInColumn_(ID channelId, const v::Model::Column& column)
+{
+	return static_cast<int>(u::vector::indexOf(column.channels, channelId));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void addChannelToColumn_(ID channelId, ID columnId)
+{
+	getColumnById_(columnId).channels.push_back(channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void removeChannelFromColumn_(ID channelId)
+{
+	for (v::Model::Column& column : g_ui->model.columns) // Brute force!
+		u::vector::remove(column.channels, channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void moveChannelToColumn_(ID channelId, ID columnId, int newPosition)
+{
+	const v::Model::Column& column   = getColumnByChannelId_(channelId);
+	std::vector<ID>&        channels = getColumnById_(columnId).channels;
+
+	if (column.id == columnId) // If in same column
+	{
+		const int oldPosition = getChannelPositionInColumn_(channelId, column);
+		if (newPosition >= oldPosition) // If moved below, readjust index
+			newPosition -= 1;
+	}
+
+	removeChannelFromColumn_(channelId);
+	channels.insert(channels.begin() + newPosition, channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Data makeData_(ID channelId, const v::Model::Column& column)
+{
+	const int position = getChannelPositionInColumn_(channelId, column);
+	return Data(g_engine->getChannelsApi().get(channelId), column.id, position);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Column makeColumn_(const v::Model::Column& modelColumn)
+{
+	Column column{
+	    .id    = modelColumn.id,
+	    .width = modelColumn.width};
+
+	for (const ID channelId : modelColumn.channels)
+		column.channels.push_back(makeData_(channelId, getColumnByChannelId_(channelId)));
+
+	return column;
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -113,10 +194,10 @@ MidiData::MidiData(const m::Channel& m)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::Channel& c)
+Data::Data(const m::Channel& c, ID columnId, int position)
 : id(c.id)
-, columnId(c.columnId)
-, position(c.position)
+, columnId(columnId)
+, position(position)
 , plugins(c.plugins)
 , type(c.type)
 , height(c.height)
@@ -150,18 +231,14 @@ bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).
 
 Data getData(ID channelId)
 {
-	return Data(g_engine->getChannelsApi().get(channelId));
+	return makeData_(channelId, getColumnByChannelId_(channelId));
 }
 
-std::vector<Data> getChannels()
+std::vector<Column> getColumns()
 {
-	std::vector<Data> out;
-	for (const m::Channel& ch : g_engine->getChannelsApi().getAll())
-		if (!ch.isInternal())
-			out.push_back(Data(ch));
-
-	std::sort(out.begin(), out.end(), [](const Data& a, const Data& b) { return a.position < b.position; });
-
+	std::vector<Column> out;
+	for (const v::Model::Column& modelColumn : g_ui->model.columns) // Model::columns is the source of truth
+		out.push_back(makeColumn_(modelColumn));
 	return out;
 }
 
@@ -183,7 +260,8 @@ void loadChannel(ID channelId, const std::string& fname)
 
 void addChannel(ID columnId, ChannelType type)
 {
-	g_engine->getChannelsApi().add(columnId, type);
+	const m::Channel& ch = g_engine->getChannelsApi().add(columnId, type);
+	addChannelToColumn_(ch.id, columnId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -203,6 +281,8 @@ void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 		const int         res = channelsApi.loadSampleChannel(ch.id, f);
 		if (res != G_RES_OK)
 			errors = true;
+		else
+			addChannelToColumn_(ch.id, columnId);
 	}
 
 	if (errors)
@@ -217,6 +297,7 @@ void deleteChannel(ID channelId)
 		return;
 	g_ui->closeAllSubwindows();
 	g_engine->getChannelsApi().remove(channelId);
+	removeChannelFromColumn_(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -254,7 +335,8 @@ void cloneChannel(ID channelId)
 
 void moveChannel(ID channelId, ID columnId, int position)
 {
-	g_engine->getChannelsApi().move(channelId, columnId, position);
+	moveChannelToColumn_(channelId, columnId, position);
+	g_ui->rebuild();
 }
 
 /* -------------------------------------------------------------------------- */

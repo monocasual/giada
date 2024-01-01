@@ -37,6 +37,11 @@
 #include <memory>
 #include <vector>
 
+namespace giada::c::channel
+{
+struct Column;
+}
+
 namespace giada::v
 {
 class geResizerBar;
@@ -142,11 +147,6 @@ private:
 
 	void openColumnMenu() const;
 
-	/* getColumn
-	Returns the column given the ID. */
-
-	geColumn* getColumn(ID id);
-
 	/* getColumnAtCursor
 	Returns the column below the cursor. */
 
@@ -167,7 +167,7 @@ private:
 	Adds new column at the end of the stack. Pass Column::id != 0 when loading 
 	columns from model. */
 
-	geColumn& addColumn(const Model::Column&);
+	geColumn& addColumn(const c::channel::Column&);
 
 	m::IdManager           m_columnId;
 	ChannelDragger         m_channelDragger;
