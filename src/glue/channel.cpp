@@ -85,93 +85,20 @@ void printLoadError_(int res)
 
 /* -------------------------------------------------------------------------- */
 
-v::Model::Column& getColumnByIndex_(int index)
-{
-	return g_ui->model.columns.at(index);
-}
-
-/* -------------------------------------------------------------------------- */
-
-int getColumnIndex_(const v::Model::Column& target)
-{
-	for (int i = 0; const v::Model::Column& column : g_ui->model.columns)
-	{
-		if (&target == &column)
-			return i;
-		i++;
-	}
-	assert(false);
-	return -1;
-}
-
-/* -------------------------------------------------------------------------- */
-
-/* getColumnByChannelId_
-Returns the column a channel with a given ID belongs to. */
-
-v::Model::Column& getColumnByChannelId_(ID channelId)
-{
-	return *u::vector::findIfSafe(g_ui->model.columns, [channelId](auto& col) {
-		return u::vector::has(col.channels, [channelId](ID otherId) { return channelId == otherId; });
-	});
-}
-
-/* -------------------------------------------------------------------------- */
-
-int getChannelPositionInColumn_(ID channelId, const v::Model::Column& column)
-{
-	return static_cast<int>(u::vector::indexOf(column.channels, channelId));
-}
-
-/* -------------------------------------------------------------------------- */
-
-void addChannelToColumn_(ID channelId, int columnIndex)
-{
-	getColumnByIndex_(columnIndex).channels.push_back(channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void removeChannelFromColumn_(ID channelId)
-{
-	for (v::Model::Column& column : g_ui->model.columns) // Brute force!
-		u::vector::remove(column.channels, channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void moveChannelToColumn_(ID channelId, int columnIndex, int newPosition)
-{
-	const v::Model::Column& column   = getColumnByChannelId_(channelId);
-	std::vector<ID>&        channels = getColumnByIndex_(columnIndex).channels;
-
-	if (getColumnIndex_(column) == columnIndex) // If in same column
-	{
-		const int oldPosition = getChannelPositionInColumn_(channelId, column);
-		if (newPosition >= oldPosition) // If moved below, readjust index
-			newPosition -= 1;
-	}
-
-	removeChannelFromColumn_(channelId);
-	channels.insert(channels.begin() + newPosition, channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-
 Data makeData_(ID channelId, const v::Model::Column& column)
 {
-	const int position = getChannelPositionInColumn_(channelId, column);
-	return Data(g_engine->getChannelsApi().get(channelId), getColumnIndex_(column), position);
+	const int position = column.getChannelIndex(channelId);
+	return Data(g_engine->getChannelsApi().get(channelId), g_ui->model.getColumnIndex(column), position);
 }
 
 /* -------------------------------------------------------------------------- */
 
 Column makeColumn_(const v::Model::Column& modelColumn)
 {
-	Column column{getColumnIndex_(modelColumn), modelColumn.width, {}};
+	Column column{g_ui->model.getColumnIndex(modelColumn), modelColumn.width, {}};
 
 	for (const ID channelId : modelColumn.channels)
-		column.channels.push_back(makeData_(channelId, getColumnByChannelId_(channelId)));
+		column.channels.push_back(makeData_(channelId, g_ui->model.getColumnByChannelId(channelId)));
 
 	return column;
 }
@@ -243,7 +170,7 @@ bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).
 
 Data getData(ID channelId)
 {
-	return makeData_(channelId, getColumnByChannelId_(channelId));
+	return makeData_(channelId, g_ui->model.getColumnByChannelId(channelId));
 }
 
 std::vector<Column> getColumns()
@@ -273,7 +200,7 @@ void loadChannel(ID channelId, const std::string& fname)
 void addChannel(int columnIndex, ChannelType type)
 {
 	const m::Channel& ch = g_engine->getChannelsApi().add(0, type);
-	addChannelToColumn_(ch.id, columnIndex);
+	g_ui->model.addChannelToColumn(ch.id, columnIndex);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -294,7 +221,7 @@ void addAndLoadChannels(int columnIndex, const std::vector<std::string>& fnames)
 		if (res != G_RES_OK)
 			errors = true;
 		else
-			addChannelToColumn_(ch.id, columnIndex);
+			g_ui->model.addChannelToColumn(ch.id, columnIndex);
 	}
 
 	if (errors)
@@ -309,7 +236,7 @@ void deleteChannel(ID channelId)
 		return;
 	g_ui->closeAllSubwindows();
 	g_engine->getChannelsApi().remove(channelId);
-	removeChannelFromColumn_(channelId);
+	g_ui->model.removeChannelFromColumn(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -345,9 +272,9 @@ void cloneChannel(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void moveChannel(ID channelId, int columnIndex, int position)
+void moveChannel(ID channelId, int columnIndex, int newPosition)
 {
-	moveChannelToColumn_(channelId, columnIndex, position);
+	g_ui->model.moveChannel(channelId, columnIndex, newPosition);
 	g_ui->rebuild();
 }
 
@@ -355,7 +282,7 @@ void moveChannel(ID channelId, int columnIndex, int position)
 
 void addColumn()
 {
-	g_ui->model.columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	g_ui->model.addColumn();
 	g_ui->rebuild();
 }
 
@@ -365,7 +292,7 @@ void deleteColumn(int index)
 {
 	if (g_ui->model.columns.size() == 1) // One column must stay
 		return;
-	g_ui->model.columns.erase(g_ui->model.columns.begin() + index);
+	g_ui->model.removeColumn(index);
 	g_ui->rebuild();
 }
 
@@ -373,7 +300,7 @@ void deleteColumn(int index)
 
 void setColumnWidth(int index, int w)
 {
-	v::Model::Column& column = getColumnByIndex_(index);
+	v::Model::Column& column = g_ui->model.getColumnByIndex(index);
 
 	column.width = w;
 	g_ui->rebuild();

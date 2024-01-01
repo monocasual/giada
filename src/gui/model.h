@@ -41,6 +41,8 @@ struct Model
 {
 	struct Column
 	{
+		int getChannelIndex(ID) const;
+
 		int             width;
 		std::vector<ID> channels = {};
 	};
@@ -48,8 +50,16 @@ struct Model
 	Model();
 
 	void store(m::Conf&) const;
+	int  getColumnIndex(const Column&) const;
 
-	void load(const m::Conf&);
+	void    load(const m::Conf&);
+	Column& getColumnByIndex(int);
+	Column& getColumnByChannelId(ID);
+	void    addColumn();
+	void    removeColumn(int columnIndex);
+	void    moveChannel(ID channelId, int columnIndex, int newPosition);
+	void    addChannelToColumn(ID channelId, int columnIndex, int position = -1);
+	void    removeChannelFromColumn(ID channelId);
 
 	int         logMode      = LOG_MODE_MUTE;
 	bool        showTooltips = true;

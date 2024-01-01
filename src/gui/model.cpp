@@ -26,9 +26,19 @@
 
 #include "gui/model.h"
 #include "core/const.h"
+#include "utils/vector.h"
 
 namespace giada::v
 {
+int Model::Column::getChannelIndex(ID channelId) const
+{
+	return static_cast<int>(u::vector::indexOf(channels, channelId));
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 Model::Model()
 {
 	/* Add 6 empty columns as initial layout. */
@@ -88,6 +98,20 @@ void Model::store(m::Conf& conf) const
 
 /* -------------------------------------------------------------------------- */
 
+int Model::getColumnIndex(const Column& target) const
+{
+	for (int i = 0; const Column& column : columns)
+	{
+		if (&target == &column)
+			return i;
+		i++;
+	}
+	assert(false);
+	return -1;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Model::load(const m::Conf& conf)
 {
 	logMode          = conf.logMode;
@@ -127,5 +151,74 @@ void Model::load(const m::Conf& conf)
 	keyBindExit          = conf.keyBindExit;
 
 	uiScaling = conf.uiScaling;
+}
+
+/* -------------------------------------------------------------------------- */
+
+Model::Column& Model::getColumnByIndex(int index)
+{
+	assert(index < static_cast<int>(columns.size()));
+
+	return columns.at(index);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Model::Column& Model::getColumnByChannelId(ID channelId)
+{
+	const auto p = [channelId](auto& col) {
+		return u::vector::has(col.channels, [channelId](ID otherId) { return channelId == otherId; });
+	};
+	return *u::vector::findIfSafe(columns, p);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::addColumn()
+{
+	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::removeColumn(int columnIndex)
+{
+	columns.erase(columns.begin() + columnIndex);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::moveChannel(ID channelId, int columnIndex, int newPosition)
+{
+	const Column& column = getColumnByChannelId(channelId);
+
+	if (getColumnIndex(column) == columnIndex) // If in same column
+	{
+		const int oldPosition = column.getChannelIndex(channelId);
+		if (newPosition >= oldPosition) // If moved below, readjust index
+			newPosition -= 1;
+	}
+
+	removeChannelFromColumn(channelId);
+	addChannelToColumn(channelId, columnIndex, newPosition);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::addChannelToColumn(ID channelId, int columnIndex, int position)
+{
+	std::vector<ID>& channels = getColumnByIndex(columnIndex).channels;
+	if (position == -1)
+		channels.push_back(channelId);
+	else
+		channels.insert(channels.begin() + position, channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::removeChannelFromColumn(ID channelId)
+{
+	for (Column& column : columns) // Brute force!
+		u::vector::remove(column.channels, channelId);
 }
 } // namespace giada::v
