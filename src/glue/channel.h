@@ -81,7 +81,7 @@ struct MidiData
 
 struct Data
 {
-	Data(const m::Channel&, ID columnId, int position);
+	Data(const m::Channel&, int columnIndex, int position);
 
 	ChannelStatus getPlayStatus() const;
 	ChannelStatus getRecStatus() const;
@@ -93,7 +93,7 @@ struct Data
 	bool          isArmed() const;
 
 	ID                      id;
-	ID                      columnId;
+	int                     columnIndex;
 	int                     position;
 	std::vector<m::Plugin*> plugins;
 	ChannelType             type;
@@ -115,7 +115,7 @@ private:
 
 struct Column
 {
-	ID                id;
+	int               index;
 	int               width;
 	std::vector<Data> channels;
 };
@@ -134,17 +134,17 @@ std::vector<Column> getColumns();
 /* addChannel
 Adds an empty new channel to the stack. */
 
-void addChannel(ID columnId, ChannelType type);
+void addChannel(int columnIndex, ChannelType type);
 
 /* loadChannel
 Fills an existing channel with a wave. */
 
-void loadChannel(ID columnId, const std::string& fname);
+void loadChannel(int columnIndex, const std::string& fname);
 
 /* addAndLoadChannels
 As above, with multiple audio file paths in input. */
 
-void addAndLoadChannels(ID columnId, const std::vector<std::string>& fpaths);
+void addAndLoadChannels(int columnIndex, const std::vector<std::string>& fpaths);
 
 /* deleteChannel
 Removes a channel from Mixer. */
@@ -162,9 +162,9 @@ Makes an exact copy of a channel. */
 void cloneChannel(ID channelId);
 
 /* moveChannel
-Moves channel with channelId to column with columnId at 'position'. */
+Moves channel with channelId to column at 'columnIndex' at 'position'. */
 
-void moveChannel(ID channelId, ID columnId, int position);
+void moveChannel(ID channelId, int columnIndex, int position);
 
 /* addColumn
 Adds a new column at the end of the list. */
@@ -172,9 +172,9 @@ Adds a new column at the end of the list. */
 void addColumn();
 
 /* deleteColumn
-Deletes column by id. */
+Deletes column by index. */
 
-void deleteColumn(ID);
+void deleteColumn(int);
 
 /* set*
 Sets several channel properties. */

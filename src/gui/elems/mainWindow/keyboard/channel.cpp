@@ -106,9 +106,9 @@ ID geChannel::getId() const
 
 /* -------------------------------------------------------------------------- */
 
-int geChannel::getColumnId() const
+int geChannel::getColumnIndex() const
 {
-	return static_cast<geColumn*>(parent())->id;
+	return static_cast<geColumn*>(parent())->index;
 }
 
 /* -------------------------------------------------------------------------- */

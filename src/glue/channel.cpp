@@ -85,9 +85,23 @@ void printLoadError_(int res)
 
 /* -------------------------------------------------------------------------- */
 
-v::Model::Column& getColumnById_(ID id)
+v::Model::Column& getColumnByIndex_(int index)
 {
-	return *u::vector::findIfSafe(g_ui->model.columns, [id](auto& col) { return col.id == id; });
+	return g_ui->model.columns.at(index);
+}
+
+/* -------------------------------------------------------------------------- */
+
+int getColumnIndex_(const v::Model::Column& target)
+{
+	for (int i = 0; const v::Model::Column& column : g_ui->model.columns)
+	{
+		if (&target == &column)
+			return i;
+		i++;
+	}
+	assert(false);
+	return -1;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -111,9 +125,9 @@ int getChannelPositionInColumn_(ID channelId, const v::Model::Column& column)
 
 /* -------------------------------------------------------------------------- */
 
-void addChannelToColumn_(ID channelId, ID columnId)
+void addChannelToColumn_(ID channelId, int columnIndex)
 {
-	getColumnById_(columnId).channels.push_back(channelId);
+	getColumnByIndex_(columnIndex).channels.push_back(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -126,12 +140,12 @@ void removeChannelFromColumn_(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void moveChannelToColumn_(ID channelId, ID columnId, int newPosition)
+void moveChannelToColumn_(ID channelId, int columnIndex, int newPosition)
 {
 	const v::Model::Column& column   = getColumnByChannelId_(channelId);
-	std::vector<ID>&        channels = getColumnById_(columnId).channels;
+	std::vector<ID>&        channels = getColumnByIndex_(columnIndex).channels;
 
-	if (column.id == columnId) // If in same column
+	if (getColumnIndex_(column) == columnIndex) // If in same column
 	{
 		const int oldPosition = getChannelPositionInColumn_(channelId, column);
 		if (newPosition >= oldPosition) // If moved below, readjust index
@@ -147,16 +161,14 @@ void moveChannelToColumn_(ID channelId, ID columnId, int newPosition)
 Data makeData_(ID channelId, const v::Model::Column& column)
 {
 	const int position = getChannelPositionInColumn_(channelId, column);
-	return Data(g_engine->getChannelsApi().get(channelId), column.id, position);
+	return Data(g_engine->getChannelsApi().get(channelId), getColumnIndex_(column), position);
 }
 
 /* -------------------------------------------------------------------------- */
 
 Column makeColumn_(const v::Model::Column& modelColumn)
 {
-	Column column{
-	    .id    = modelColumn.id,
-	    .width = modelColumn.width};
+	Column column{getColumnIndex_(modelColumn), modelColumn.width};
 
 	for (const ID channelId : modelColumn.channels)
 		column.channels.push_back(makeData_(channelId, getColumnByChannelId_(channelId)));
@@ -194,9 +206,9 @@ MidiData::MidiData(const m::Channel& m)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::Channel& c, ID columnId, int position)
+Data::Data(const m::Channel& c, int columnIndex, int position)
 : id(c.id)
-, columnId(columnId)
+, columnIndex(columnIndex)
 , position(position)
 , plugins(c.plugins)
 , type(c.type)
@@ -258,15 +270,15 @@ void loadChannel(ID channelId, const std::string& fname)
 
 /* -------------------------------------------------------------------------- */
 
-void addChannel(ID columnId, ChannelType type)
+void addChannel(int columnIndex, ChannelType type)
 {
-	const m::Channel& ch = g_engine->getChannelsApi().add(columnId, type);
-	addChannelToColumn_(ch.id, columnId);
+	const m::Channel& ch = g_engine->getChannelsApi().add(0, type);
+	addChannelToColumn_(ch.id, columnIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
+void addAndLoadChannels(int columnIndex, const std::vector<std::string>& fnames)
 {
 	auto progress    = g_ui->mainWindow->getScopedProgress(g_ui->getI18Text(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
 	auto channelsApi = g_engine->getChannelsApi();
@@ -277,12 +289,12 @@ void addAndLoadChannels(ID columnId, const std::vector<std::string>& fnames)
 	{
 		progress.setProgress(++i / static_cast<float>(fnames.size()));
 
-		const m::Channel& ch  = channelsApi.add(columnId, ChannelType::SAMPLE);
+		const m::Channel& ch  = channelsApi.add(0, ChannelType::SAMPLE);
 		const int         res = channelsApi.loadSampleChannel(ch.id, f);
 		if (res != G_RES_OK)
 			errors = true;
 		else
-			addChannelToColumn_(ch.id, columnId);
+			addChannelToColumn_(ch.id, columnIndex);
 	}
 
 	if (errors)
@@ -333,9 +345,9 @@ void cloneChannel(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void moveChannel(ID channelId, ID columnId, int position)
+void moveChannel(ID channelId, int columnIndex, int position)
 {
-	moveChannelToColumn_(channelId, columnId, position);
+	moveChannelToColumn_(channelId, columnIndex, position);
 	g_ui->rebuild();
 }
 
@@ -343,17 +355,17 @@ void moveChannel(ID channelId, ID columnId, int position)
 
 void addColumn()
 {
-	g_ui->model.columns.push_back({/*id=*/0, G_DEFAULT_COLUMN_WIDTH});
+	g_ui->model.columns.push_back({G_DEFAULT_COLUMN_WIDTH});
 	g_ui->rebuild();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void deleteColumn(ID id)
+void deleteColumn(int index)
 {
 	if (g_ui->model.columns.size() == 1) // One column must stay
 		return;
-	u::vector::removeIf(g_ui->model.columns, [=](const v::Model::Column& c) { return c.id == id; });
+	g_ui->model.columns.erase(g_ui->model.columns.begin() + index);
 	g_ui->rebuild();
 }
 

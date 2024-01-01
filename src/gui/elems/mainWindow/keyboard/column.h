@@ -41,7 +41,7 @@ class geChannel;
 class geColumn : public geFlexResizable
 {
 public:
-	geColumn(int x, int y, int w, int h, ID id, geResizerBar* b);
+	geColumn(int x, int y, int w, int h, int index, geResizerBar* b);
 
 	/* getChannel
 	Returns the channel given the ID. */
@@ -82,7 +82,7 @@ public:
 
 	void forEachChannel(std::function<void(geChannel& c)> f) const;
 
-	ID id;
+	int index;
 
 	geResizerBar* resizerBar;
 };

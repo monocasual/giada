@@ -93,7 +93,7 @@ void Ui::load(const m::Patch& patch)
 
 	model.columns.clear();
 	for (const m::Patch::Column& col : patch.columns)
-		model.columns.push_back({col.id, col.width});
+		model.columns.push_back({col.width});
 
 	model.projectName = patch.name;
 

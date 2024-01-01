@@ -33,12 +33,12 @@ Model::Model()
 {
 	/* Add 6 empty columns as initial layout. */
 
-	columns.push_back({1, G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({2, G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({3, G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({4, G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({5, G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({6, G_DEFAULT_COLUMN_WIDTH});
+	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
 }
 
 /* -------------------------------------------------------------------------- */

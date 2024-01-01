@@ -125,10 +125,10 @@ void geKeyboard::ChannelDragger::end()
 		return;
 	}
 
-	const ID  targetColumnId = column->id;
-	const int targetPosition = getPositionForCursor(column, Fl::event_y());
+	const int targetColumnIndex = column->index;
+	const int targetPosition    = getPositionForCursor(column, Fl::event_y());
 
-	c::channel::moveChannel(m_channelId, targetColumnId, targetPosition);
+	c::channel::moveChannel(m_channelId, targetColumnIndex, targetPosition);
 
 	m_channelId = -1;
 	m_xoffset   = 0;
@@ -173,9 +173,9 @@ geKeyboard::geKeyboard()
 
 /* -------------------------------------------------------------------------- */
 
-ID geKeyboard::getChannelColumnId(ID channelId) const
+int geKeyboard::getChannelColumnIndex(ID channelId) const
 {
-	return getChannel(channelId)->getColumnId();
+	return getChannel(channelId)->getColumnIndex();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -189,8 +189,6 @@ size_t geKeyboard::countColumns() const
 
 void geKeyboard::init()
 {
-	m_columnId = m::IdManager();
-
 	deleteAllColumns();
 }
 
@@ -206,9 +204,9 @@ void geKeyboard::rebuild()
 
 /* -------------------------------------------------------------------------- */
 
-void geKeyboard::deleteColumn(ID id)
+void geKeyboard::deleteColumn(int index)
 {
-	c::channel::deleteColumn(id);
+	c::channel::deleteColumn(index);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -296,7 +294,7 @@ int geKeyboard::handle(int e)
 	case FL_PASTE: // handle actual drop (paste) operation
 		const geColumn* c = getColumnAtCursor(Fl::event_x());
 		if (c != nullptr)
-			c::channel::addAndLoadChannels(c->id, getDroppedFilePaths());
+			c::channel::addAndLoadChannels(c->index, getDroppedFilePaths());
 		return 1;
 	}
 
@@ -373,16 +371,12 @@ geColumn& geKeyboard::addColumn(const c::channel::Column& columnModel)
 	if (m_columns.size() > 0)
 		colx = m_columns.back()->x() + m_columns.back()->w() + COLUMN_GAP;
 
-	/* Generate new index. If not passed in. */
-
-	m_columnId.set(columnModel.id);
-
 	/* Add a new column + a new resizer bar. */
 
 	const int viewportH = getViewportBounds().h;
 
 	geResizerBar* bar    = new geResizerBar(colx + columnModel.width, y(), COLUMN_GAP, viewportH, G_MIN_COLUMN_WIDTH, Direction::HORIZONTAL);
-	geColumn*     column = new geColumn(colx, y(), columnModel.width, 0, m_columnId.generate(columnModel.id), bar);
+	geColumn*     column = new geColumn(colx, y(), columnModel.width, 0, columnModel.index, bar);
 
 	/* Store the column width in the model when the resizer bar is released. */
 
@@ -469,8 +463,10 @@ void geKeyboard::openColumnMenu() const
 
 void geKeyboard::storeLayout()
 {
+	/*
 	g_ui->model.columns.clear();
 	for (const geColumn* c : m_columns)
 		g_ui->model.columns.push_back({c->id, c->w()});
+	 */
 }
 } // namespace giada::v

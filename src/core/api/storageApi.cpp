@@ -74,7 +74,7 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 	Patch patch;
 
 	for (const v::Model::Column& column : uiModel.columns)
-		patch.columns.push_back({column.id, column.width});
+		patch.columns.push_back({column.width});
 
 	patch.name       = uiModel.projectName;
 	patch.samplerate = m_kernelAudio.getSampleRate();

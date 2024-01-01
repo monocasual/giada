@@ -70,9 +70,9 @@ geChannel* makeChannel_(const c::channel::Data& data)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geColumn::geColumn(int X, int Y, int W, int H, ID id, geResizerBar* b)
+geColumn::geColumn(int X, int Y, int W, int H, int index, geResizerBar* b)
 : geFlexResizable(X, Y, W, H, Direction::VERTICAL, geResizerBar::Mode::MOVE)
-, id(id)
+, index(index)
 , resizerBar(b)
 {
 	clearWidgets();
@@ -125,13 +125,13 @@ void geColumn::showAddChannelMenu() const
 		switch (static_cast<Menu>(menuId))
 		{
 		case Menu::ADD_SAMPLE_CHANNEL:
-			c::channel::addChannel(id, ChannelType::SAMPLE);
+			c::channel::addChannel(index, ChannelType::SAMPLE);
 			break;
 		case Menu::ADD_MIDI_CHANNEL:
-			c::channel::addChannel(id, ChannelType::MIDI);
+			c::channel::addChannel(index, ChannelType::MIDI);
 			break;
 		case Menu::REMOVE_COLUMN:
-			keyboard->deleteColumn(id);
+			keyboard->deleteColumn(index);
 			break;
 		case Menu::ADD_COLUMN:
 			keyboard->addColumn();

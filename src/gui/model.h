@@ -41,7 +41,6 @@ struct Model
 {
 	struct Column
 	{
-		ID              id;
 		int             width;
 		std::vector<ID> channels = {};
 	};

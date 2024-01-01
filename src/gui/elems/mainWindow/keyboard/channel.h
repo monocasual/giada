@@ -55,10 +55,10 @@ public:
 
 	ID getId() const;
 
-	/* getColumnId
-	Returns the ID of the column this channel resides in. */
+	/* getColumnIndex
+	Returns the index of the column this channel resides in. */
 
-	ID getColumnId() const;
+	int getColumnIndex() const;
 
 	/* handleKey
 	Performs some UI-related operations when the bound key is pressed. Returns

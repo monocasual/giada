@@ -28,7 +28,6 @@
 #define GE_KEYBOARD_H
 
 #include "core/const.h"
-#include "core/idManager.h"
 #include "deps/geompp/src/rect.hpp"
 #include "gui/elems/basics/scroll.h"
 #include "gui/model.h"
@@ -57,10 +56,10 @@ public:
 	int  handle(int e) override;
 	void draw() override;
 
-	/* getChannelColumnId
-	Given a channel ID, returns the ID of the column it belongs to. */
+	/* getChannelColumnIndex
+	Given a channel ID, returns the index of the column it belongs to. */
 
-	ID getChannelColumnId(ID channelId) const;
+	int getChannelColumnIndex(ID channelId) const;
 
 	/* countColumns
 	Returns the number of columns in the viewport. */
@@ -83,9 +82,9 @@ public:
 	void addColumn();
 
 	/* deleteColumn
-	Deletes column by id. */
+	Deletes column by index. */
 
-	void deleteColumn(ID id);
+	void deleteColumn(int);
 
 	/* deleteAllColumns
 	Deletes all columns from the stack. */
@@ -169,7 +168,6 @@ private:
 
 	geColumn& addColumn(const c::channel::Column&);
 
-	m::IdManager           m_columnId;
 	ChannelDragger         m_channelDragger;
 	std::vector<geColumn*> m_columns;
 };
