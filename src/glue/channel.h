@@ -166,6 +166,16 @@ Moves channel with channelId to column with columnId at 'position'. */
 
 void moveChannel(ID channelId, ID columnId, int position);
 
+/* addColumn
+Adds a new column at the end of the list. */
+
+void addColumn();
+
+/* deleteColumn
+Deletes column by id. */
+
+void deleteColumn(ID);
+
 /* set*
 Sets several channel properties. */
 

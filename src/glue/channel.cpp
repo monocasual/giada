@@ -341,6 +341,24 @@ void moveChannel(ID channelId, ID columnId, int position)
 
 /* -------------------------------------------------------------------------- */
 
+void addColumn()
+{
+	g_ui->model.columns.push_back({/*id=*/0, G_DEFAULT_COLUMN_WIDTH});
+	g_ui->rebuild();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void deleteColumn(ID id)
+{
+	if (g_ui->model.columns.size() == 1) // One column must stay
+		return;
+	u::vector::removeIf(g_ui->model.columns, [=](const v::Model::Column& c) { return c.id == id; });
+	g_ui->rebuild();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
 	g_engine->getChannelsApi().setSamplePlayerMode(channelId, mode);

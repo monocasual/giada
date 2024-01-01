@@ -208,10 +208,7 @@ void geKeyboard::rebuild()
 
 void geKeyboard::deleteColumn(ID id)
 {
-	if (countColumns() == 1) // One column must stay
-		return;
-	u::vector::removeIf(g_ui->model.columns, [=](const Model::Column& c) { return c.id == id; });
-	rebuild();
+	c::channel::deleteColumn(id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -362,8 +359,7 @@ geompp::Rect<int> geKeyboard::getColumnBackround(const geColumn& c) const
 
 void geKeyboard::addColumn()
 {
-	addColumn({G_DEFAULT_COLUMN_WIDTH, /*id=*/0});
-	storeLayout();
+	c::channel::addColumn();
 }
 
 /* -------------------------------------------------------------------------- */
