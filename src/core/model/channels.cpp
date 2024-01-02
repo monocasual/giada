@@ -68,17 +68,6 @@ const std::vector<Channel>& Channels::getAll() const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<const Channel*> Channels::getColumn(ID columnId) const
-{
-	std::vector<const Channel*> out;
-	for (const Channel& ch : m_channels)
-		if (ch.columnId == columnId)
-			out.push_back(&ch);
-	return out;
-}
-
-/* -------------------------------------------------------------------------- */
-
 bool Channels::anyOf(std::function<bool(const Channel&)> f) const
 {
 	return std::any_of(m_channels.begin(), m_channels.end(), f);
@@ -94,8 +83,8 @@ void Channels::debug() const
 
 	for (int i = 0; const Channel& c : m_channels)
 	{
-		fmt::print("\t{} - ID={} name='{}' type={} columnId={} position={} channelShared={}",
-		    i++, c.id, c.name, (int)c.type, c.columnId, c.position, (void*)&c.shared);
+		fmt::print("\t{} - ID={} name='{}' type={} channelShared={}",
+		    i++, c.id, c.name, (int)c.type, (void*)&c.shared);
 
 		if (c.type == ChannelType::SAMPLE || c.type == ChannelType::PREVIEW)
 		{

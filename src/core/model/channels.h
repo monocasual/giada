@@ -38,11 +38,6 @@ public:
 	const Channel&              get(ID) const;
 	const std::vector<Channel>& getAll() const;
 
-	/* getColumn
-	Returns all channels that belongs to column 'columnId'. Read-only. */
-
-	std::vector<const Channel*> getColumn(ID columnId) const;
-
 	/* anyOf
     Returns true if any channel satisfies the callback 'f'. */
 

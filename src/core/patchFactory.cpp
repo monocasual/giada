@@ -51,11 +51,9 @@ void readCommons_(Patch& patch, const nlohmann::json& j)
 
 void readColumns_(Patch& patch, const nlohmann::json& j)
 {
-	ID id = 0;
 	for (const auto& jcol : j[PATCH_KEY_COLUMNS])
 	{
 		Patch::Column c;
-		c.id    = jcol.value(PATCH_KEY_COLUMN_ID, ++id);
 		c.width = jcol.value(PATCH_KEY_COLUMN_WIDTH, G_DEFAULT_COLUMN_WIDTH);
 		patch.columns.push_back(c);
 	}
@@ -144,8 +142,6 @@ void readChannels_(Patch& patch, const nlohmann::json& j)
 		c.volume            = jchannel.value(PATCH_KEY_CHANNEL_VOLUME, G_DEFAULT_VOL);
 		c.height            = jchannel.value(PATCH_KEY_CHANNEL_SIZE, G_GUI_UNIT);
 		c.name              = jchannel.value(PATCH_KEY_CHANNEL_NAME, "");
-		c.columnId          = jchannel.value(PATCH_KEY_CHANNEL_COLUMN, 1);
-		c.position          = jchannel.value(PATCH_KEY_CHANNEL_POSITION, -1);
 		c.key               = jchannel.value(PATCH_KEY_CHANNEL_KEY, 0);
 		c.mute              = jchannel.value(PATCH_KEY_CHANNEL_MUTE, 0);
 		c.solo              = jchannel.value(PATCH_KEY_CHANNEL_SOLO, 0);
@@ -220,7 +216,6 @@ void writeColumns_(const Patch& patch, nlohmann::json& j)
 	for (const Patch::Column& column : patch.columns)
 	{
 		nlohmann::json jcolumn;
-		jcolumn[PATCH_KEY_COLUMN_ID]    = column.id;
 		jcolumn[PATCH_KEY_COLUMN_WIDTH] = column.width;
 		j[PATCH_KEY_COLUMNS].push_back(jcolumn);
 	}
@@ -292,8 +287,6 @@ void writeChannels_(const Patch& patch, nlohmann::json& j)
 		jchannel[PATCH_KEY_CHANNEL_TYPE]                 = static_cast<int>(c.type);
 		jchannel[PATCH_KEY_CHANNEL_SIZE]                 = c.height;
 		jchannel[PATCH_KEY_CHANNEL_NAME]                 = c.name;
-		jchannel[PATCH_KEY_CHANNEL_COLUMN]               = c.columnId;
-		jchannel[PATCH_KEY_CHANNEL_POSITION]             = c.position;
 		jchannel[PATCH_KEY_CHANNEL_MUTE]                 = c.mute;
 		jchannel[PATCH_KEY_CHANNEL_SOLO]                 = c.solo;
 		jchannel[PATCH_KEY_CHANNEL_VOLUME]               = c.volume;
@@ -341,7 +334,6 @@ void writeChannels_(const Patch& patch, nlohmann::json& j)
 
 void modernize_(Patch& patch)
 {
-	int position = 0;
 	for (Patch::Channel& c : patch.channels)
 	{
 		/* 0.16.3
@@ -364,11 +356,6 @@ void modernize_(Patch& patch)
 			c.pan    = G_DEFAULT_PAN;
 			c.waveId = 0;
 		}
-
-		/* 0.23.0
-		Make sure each channel has a proper position. */
-		if (c.position == -1)
-			c.position = position++;
 	}
 }
 } // namespace

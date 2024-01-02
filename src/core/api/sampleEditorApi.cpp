@@ -153,14 +153,12 @@ void SampleEditorApi::shift(ID channelId, Frame offset)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorApi::toNewChannel(ID channelId, ID columnId, Frame a, Frame b)
+void SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 {
-	const int position   = m_channelManager.getLastChannelPosition(columnId);
 	const int bufferSize = m_kernelAudio.getBufferSize();
+	Wave&     wave       = m_model.addWave(waveFactory::createFromWave(getWave(channelId), a, b));
 
-	Wave& wave = m_model.addWave(waveFactory::createFromWave(getWave(channelId), a, b));
-
-	const Channel& ch = m_channelManager.addChannel(ChannelType::SAMPLE, columnId, position, bufferSize);
+	const Channel& ch = m_channelManager.addChannel(ChannelType::SAMPLE, bufferSize);
 	m_channelManager.loadSampleChannel(ch.id, wave);
 }
 

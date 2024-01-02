@@ -69,7 +69,7 @@ public:
 	Channel&              get(ID);
 	std::vector<Channel>& getAll();
 
-	Channel& add(ID columnId, ChannelType);
+	Channel& add(ChannelType);
 	int      loadSampleChannel(ID channelId, const std::string& filePath);
 	void     loadSampleChannel(ID channelId, Wave&);
 	void     loadPreviewChannel(ID sourceChannelId);
@@ -77,7 +77,6 @@ public:
 	void     freeSampleChannel(ID);
 	void     freePreviewChannel();
 	Channel& clone(ID);
-	void     move(ID channelId, ID columnId, int position);
 
 	void press(ID, float velocity);
 	void release(ID);

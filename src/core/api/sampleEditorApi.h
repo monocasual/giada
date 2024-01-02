@@ -52,7 +52,7 @@ public:
 	void normalize(ID channelId, Frame a, Frame b);
 	void trim(ID channelId, Frame a, Frame b);
 	void shift(ID channelId, Frame offset);
-	void toNewChannel(ID channelId, ID columnId, Frame a, Frame b);
+	void toNewChannel(ID channelId, Frame a, Frame b);
 	void setBeginEnd(ID channelId, Frame b, Frame e);
 	void resetBeginEnd(ID channelId);
 	void reload(ID channelId);

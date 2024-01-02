@@ -36,12 +36,10 @@
 
 namespace giada::m
 {
-Channel::Channel(ChannelType type, ID id, ID columnId, int position, ChannelShared& s)
+Channel::Channel(ChannelType type, ID id, ChannelShared& s)
 : shared(&s)
 , id(id)
 , type(type)
-, columnId(columnId)
-, position(position)
 , volume(G_DEFAULT_VOL)
 , pan(G_DEFAULT_PAN)
 , armed(false)
@@ -73,8 +71,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 : shared(&s)
 , id(p.id)
 , type(p.type)
-, columnId(p.columnId)
-, position(p.position)
 , volume(p.volume)
 , pan(p.pan)
 , armed(p.armed)

@@ -14,8 +14,6 @@ TEST_CASE("channelFactory")
 		channelFactory::Data data = channelFactory::create(
 		    /*id=*/0,
 		    ChannelType::SAMPLE,
-		    /*columnId=*/0,
-		    /*position=*/0,
 		    /*bufferSize=*/1024,
 		    Resampler::Quality::LINEAR,
 		    /*overdubProtection=*/false);
@@ -29,8 +27,6 @@ TEST_CASE("channelFactory")
 
 			REQUIRE(clone.channel.id != data.channel.id); // Clone must have new ID
 			REQUIRE(clone.channel.type == data.channel.type);
-			REQUIRE(clone.channel.columnId == data.channel.columnId);
-			REQUIRE(clone.channel.position == data.channel.position);
 			REQUIRE(clone.channel.volume == data.channel.volume);
 			REQUIRE(clone.channel.pan == data.channel.pan);
 			REQUIRE(clone.channel.armed == data.channel.armed);

@@ -43,7 +43,7 @@ class Plugin;
 class Channel final
 {
 public:
-	Channel(ChannelType t, ID id, ID columnId, int position, ChannelShared&);
+	Channel(ChannelType t, ID id, ChannelShared&);
 	Channel(const Patch::Channel&, ChannelShared&, float samplerateRatio, Wave*, std::vector<Plugin*>);
 
 	bool operator==(const Channel&);
@@ -97,8 +97,6 @@ public:
 	ChannelShared*       shared;
 	ID                   id;
 	ChannelType          type;
-	ID                   columnId;
-	int                  position;
 	float                volume;
 	float                pan;
 	bool                 armed;

@@ -18,7 +18,7 @@ TEST_CASE("SamplePlayer")
 	});
 
 	m::ChannelShared channelShared(BUFFER_SIZE);
-	m::Channel       channel(ChannelType::SAMPLE, 1, 1, 0, channelShared);
+	m::Channel       channel(ChannelType::SAMPLE, 1, channelShared);
 
 	channelShared.quantizer.emplace();
 	channelShared.renderQueue.emplace();

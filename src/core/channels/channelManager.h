@@ -95,11 +95,6 @@ public:
 	float getMasterInVol() const;
 	float getMasterOutVol() const;
 
-	/* getLastChannelPosition
-	Returns the position of the last channel located in column 'columnId'. */
-
-	int getLastChannelPosition(ID columnId) const;
-
 	/* reset
 	Brings channels configuration back to the initial state: two I/O master
     channels, one preview channel. */
@@ -115,7 +110,7 @@ public:
 	/* addChannel
     Adds a new channel to the stack. */
 
-	Channel& addChannel(ChannelType, ID columnId, int position, int bufferSize);
+	Channel& addChannel(ChannelType, int bufferSize);
 
 	/* loadSampleChannel (1)
     Creates a new Wave from a file path and loads it inside a Sample Channel. */
@@ -135,7 +130,6 @@ public:
 
 	void deleteChannel(ID channelId);
 	void renameChannel(ID channelId, const std::string& name);
-	void moveChannel(ID channelId, ID columnId, int position);
 
 	/* cloneChannel
 	Creates a duplicate of Channel. Wants a vector of already cloned plug-ins. */

@@ -76,11 +76,10 @@ std::vector<Channel>& ChannelsApi::getAll()
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelsApi::add(ID columnId, ChannelType type)
+Channel& ChannelsApi::add(ChannelType type)
 {
-	const int position   = m_channelManager.getLastChannelPosition(columnId);
 	const int bufferSize = m_kernelAudio.getBufferSize();
-	return m_channelManager.addChannel(type, columnId, position, bufferSize);
+	return m_channelManager.addChannel(type, bufferSize);
 }
 
 int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)
@@ -148,13 +147,6 @@ Channel& ChannelsApi::clone(ID channelId)
 		m_actionRecorder.cloneActions(channelId, nextChannelId);
 
 	return newCh;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ChannelsApi::move(ID channelId, ID columnId, int position)
-{
-	m_channelManager.moveChannel(channelId, columnId, position);
 }
 
 /* -------------------------------------------------------------------------- */

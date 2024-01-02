@@ -77,10 +77,10 @@ void reset()
 
 /* -------------------------------------------------------------------------- */
 
-Data create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize, Resampler::Quality quality, bool overdubProtection)
+Data create(ID channelId, ChannelType type, int bufferSize, Resampler::Quality quality, bool overdubProtection)
 {
 	std::unique_ptr<ChannelShared> shared = makeShared_(type, bufferSize, quality);
-	Channel                        ch     = Channel(type, channelId_.generate(channelId), columnId, position, *shared.get());
+	Channel                        ch     = Channel(type, channelId_.generate(channelId), *shared.get());
 
 	if (ch.sampleChannel)
 		ch.sampleChannel->overdubProtection = overdubProtection;
@@ -124,8 +124,6 @@ const Patch::Channel serializeChannel(const Channel& c)
 
 	pc.id                = c.id;
 	pc.type              = c.type;
-	pc.columnId          = c.columnId;
-	pc.position          = c.position;
 	pc.height            = c.height;
 	pc.name              = c.name;
 	pc.key               = c.key;

@@ -60,7 +60,7 @@ void reset();
     Creates a new channel. If channelId == 0 generates a new ID, reuse the one 
     passed in otherwise. */
 
-Data create(ID channelId, ChannelType type, ID columnId, int position, int bufferSize, Resampler::Quality, bool overdubProtection);
+Data create(ID channelId, ChannelType type, int bufferSize, Resampler::Quality, bool overdubProtection);
 
 /* create (2)
     Creates a new channel given an existing one (i.e. clone). */

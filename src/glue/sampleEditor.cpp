@@ -235,7 +235,8 @@ void cleanupPreview()
 void toNewChannel(ID channelId, Frame a, Frame b)
 {
 	const int columnIndex = g_ui->mainWindow->keyboard->getChannelColumnIndex(channelId);
-	g_engine->getSampleEditorApi().toNewChannel(channelId, columnIndex, a, b);
+	g_engine->getSampleEditorApi().toNewChannel(channelId, a, b);
+	g_ui->model.addChannelToColumn(channelId, columnIndex);
 }
 
 /* -------------------------------------------------------------------------- */

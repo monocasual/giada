@@ -49,8 +49,8 @@ struct Patch
 
 	struct Column
 	{
-		ID  id;
-		int width;
+		int             width;
+		std::vector<ID> channels;
 	};
 
 	struct Channel
@@ -59,8 +59,6 @@ struct Patch
 		ChannelType type;
 		int         height;
 		std::string name;
-		ID          columnId;
-		int         position;
 		int         key;
 		bool        mute;
 		bool        solo;

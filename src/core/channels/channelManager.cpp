@@ -75,17 +75,15 @@ void ChannelManager::reset(Frame framesInBuffer)
 {
 	m_model.get().channels = {};
 
-	const ID                 columnId          = 0;
-	const int                position          = 0;
 	const bool               overdubProtection = false;
 	const Resampler::Quality rsmpQuality       = m_model.get().kernelAudio.rsmpQuality;
 
 	channelFactory::Data masterOutData = channelFactory::create(
-	    Mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, columnId, position, framesInBuffer, rsmpQuality, overdubProtection);
+	    Mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, framesInBuffer, rsmpQuality, overdubProtection);
 	channelFactory::Data masterInData = channelFactory::create(
-	    Mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, columnId, position, framesInBuffer, rsmpQuality, overdubProtection);
+	    Mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, framesInBuffer, rsmpQuality, overdubProtection);
 	channelFactory::Data previewData = channelFactory::create(
-	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, columnId, position, framesInBuffer, rsmpQuality, overdubProtection);
+	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, framesInBuffer, rsmpQuality, overdubProtection);
 
 	m_model.get().channels.add(masterOutData.channel);
 	m_model.get().channels.add(masterInData.channel);
@@ -106,12 +104,12 @@ void ChannelManager::setBufferSize(int bufferSize)
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelManager::addChannel(ChannelType type, ID columnId, int position, int bufferSize)
+Channel& ChannelManager::addChannel(ChannelType type, int bufferSize)
 {
 	const bool               overdubProtectionDefaultOn = m_model.get().behaviors.overdubProtectionDefaultOn;
 	const Resampler::Quality rsmpQuality                = m_model.get().kernelAudio.rsmpQuality;
 
-	channelFactory::Data data = channelFactory::create(/*id=*/0, type, columnId, position, bufferSize, rsmpQuality, overdubProtectionDefaultOn);
+	channelFactory::Data data = channelFactory::create(/*id=*/0, type, bufferSize, rsmpQuality, overdubProtectionDefaultOn);
 
 	setupChannelCallbacks(data.channel, *data.shared);
 
@@ -249,25 +247,6 @@ void ChannelManager::renameChannel(ID channelId, const std::string& name)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::moveChannel(ID channelId, ID newColumnId, int newPosition)
-{
-	model::Channels& channels = m_model.get().channels;
-
-	/* Make room in the destination column for the new channel. */
-
-	for (Channel& ch : channels.getAll())
-		if (ch.columnId == newColumnId && ch.position >= newPosition)
-			ch.position++;
-
-	Channel& channel = channels.get(channelId);
-	channel.columnId = newColumnId;
-	channel.position = newPosition;
-
-	m_model.swap(model::SwapType::HARD);
-}
-
-/* -------------------------------------------------------------------------- */
-
 float ChannelManager::getMasterInVol() const
 {
 	return m_model.get().channels.get(Mixer::MASTER_IN_CHANNEL_ID).volume;
@@ -276,14 +255,6 @@ float ChannelManager::getMasterInVol() const
 float ChannelManager::getMasterOutVol() const
 {
 	return m_model.get().channels.get(Mixer::MASTER_OUT_CHANNEL_ID).volume;
-}
-
-/* -------------------------------------------------------------------------- */
-
-int ChannelManager::getLastChannelPosition(ID columnId) const
-{
-	std::vector<const Channel*> column = m_model.get().channels.getColumn(columnId);
-	return column.empty() ? 0 : column.back()->position + 1;
 }
 
 /* -------------------------------------------------------------------------- */
