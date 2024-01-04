@@ -37,10 +37,16 @@ bool Patch::Version::operator<(const Version& o) const
 {
 	if (major < o.major)
 		return true;
+	else if (o.major < major)
+		return false;
 	if (minor < o.minor)
 		return true;
+	else if (o.minor < minor)
+		return false;
 	if (patch < o.patch)
 		return true;
+	else if (o.patch < patch)
+		return false;
 	return false;
 }
 } // namespace giada::m

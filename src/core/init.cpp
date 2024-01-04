@@ -41,6 +41,7 @@
 #include "tests/channelFactory.cpp"
 #include "tests/midiEvent.cpp"
 #include "tests/midiLightning.cpp"
+#include "tests/patch.cpp"
 #include "tests/sampleRendering.cpp"
 #include "tests/utils.cpp"
 #include "tests/wave.cpp"
