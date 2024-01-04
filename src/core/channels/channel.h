@@ -72,6 +72,10 @@ public:
 
 	bool isAudible(bool mixerHasSolos) const;
 
+#ifdef G_DEBUG_MODE
+	std::string debug() const;
+#endif
+
 	void setMute(bool);
 	void setSolo(bool);
 

@@ -33,6 +33,10 @@
 #include "core/plugins/pluginManager.h"
 #include "core/recorder.h"
 #include <cassert>
+#ifdef G_DEBUG_MODE
+#include "utils/string.h"
+#include <fmt/core.h>
+#endif
 
 namespace giada::m
 {
@@ -165,6 +169,22 @@ bool Channel::isPlaying() const
 	ChannelStatus s = shared->playStatus.load();
 	return s == ChannelStatus::PLAY || s == ChannelStatus::ENDING;
 }
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef G_DEBUG_MODE
+std::string Channel::debug() const
+{
+	std::string out = fmt::format("ID={} name='{}' type={} channelShared={}",
+	    id, name, u::string::toString(type), (void*)&shared);
+
+	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
+		out += fmt::format(" wave={} mode={}", (void*)sampleChannel->getWave(),
+		    u::string::toString(sampleChannel->mode));
+
+	return out;
+}
+#endif
 
 /* -------------------------------------------------------------------------- */
 

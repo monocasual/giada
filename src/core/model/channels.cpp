@@ -83,16 +83,7 @@ void Channels::debug() const
 
 	for (int i = 0; const Channel& c : m_channels)
 	{
-		fmt::print("\t{} - ID={} name='{}' type={} channelShared={}",
-		    i++, c.id, c.name, u::string::toString(c.type), (void*)&c.shared);
-
-		if (c.type == ChannelType::SAMPLE || c.type == ChannelType::PREVIEW)
-		{
-			fmt::print(" wave={} mode={}", (void*)c.sampleChannel->getWave(),
-			    u::string::toString(c.sampleChannel->mode));
-		}
-
-		fmt::print("\n");
+		fmt::print("\t{} - {}\n", i++, c.debug());
 
 		if (c.plugins.size() > 0)
 		{
