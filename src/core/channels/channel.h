@@ -100,10 +100,10 @@ public:
 	float                volume;
 	float                pan;
 	bool                 armed;
-	int                  key;
+	int                  key; // TODO - move this to v::Model
 	bool                 hasActions;
-	std::string          name;
-	Pixel                height;
+	std::string          name;   // TODO - move this to v::Model
+	Pixel                height; // TODO - move this to v::Model
 	std::vector<Plugin*> plugins;
 
 	MidiInput     midiInput;
