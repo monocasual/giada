@@ -91,11 +91,7 @@ void Ui::load(const m::Patch& patch)
 {
 	reset();
 
-	model.columns.clear();
-	for (const m::Patch::Column& col : patch.columns)
-		model.columns.push_back({col.width});
-
-	model.projectName = patch.name;
+	model.load(patch);
 
 	mainWindow->keyboard->rebuild();
 	mainWindow->setTitle(patch.name);
@@ -143,6 +139,7 @@ void Ui::init(const m::Conf& conf, const std::string& patchName, bool isAudioRea
 
 void Ui::reset()
 {
+	model.reset();
 	mainWindow->setTitle(G_DEFAULT_PATCH_NAME);
 	rebuildStaticWidgets();
 	closeAllSubwindows();

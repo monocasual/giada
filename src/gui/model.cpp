@@ -26,6 +26,7 @@
 
 #include "gui/model.h"
 #include "core/const.h"
+#include "core/patch.h"
 #include "utils/vector.h"
 
 namespace giada::v
@@ -41,14 +42,7 @@ int Model::Column::getChannelIndex(ID channelId) const
 
 Model::Model()
 {
-	/* Add 6 empty columns as initial layout. */
-
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	reset();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -94,6 +88,22 @@ void Model::store(m::Conf& conf) const
 	conf.keyBindExit          = keyBindExit;
 
 	conf.uiScaling = uiScaling;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::store(m::Patch& patch) const
+{
+	patch.name = projectName;
+
+	for (const Column& column : columns)
+	{
+		m::Patch::Column pcolumn;
+		pcolumn.width = column.width;
+		for (ID channelId : column.channels)
+			pcolumn.channels.push_back(channelId);
+		patch.columns.push_back(pcolumn);
+	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -151,6 +161,22 @@ void Model::load(const m::Conf& conf)
 	keyBindExit          = conf.keyBindExit;
 
 	uiScaling = conf.uiScaling;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::load(const m::Patch& patch)
+{
+	columns.clear();
+	for (const m::Patch::Column& pcolumn : patch.columns)
+	{
+		Column column{.width = pcolumn.width};
+		for (ID channelId : pcolumn.channels)
+			column.channels.push_back(channelId);
+		columns.push_back(column);
+	}
+
+	projectName = patch.name;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -220,5 +246,20 @@ void Model::removeChannelFromColumn(ID channelId)
 {
 	for (Column& column : columns) // Brute force!
 		u::vector::remove(column.channels, channelId);
+}
+/* -------------------------------------------------------------------------- */
+
+void Model::reset()
+{
+	columns.clear();
+
+	/* Add 6 empty columns as initial layout. */
+
+	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
 }
 } // namespace giada::v

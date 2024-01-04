@@ -50,9 +50,11 @@ struct Model
 	Model();
 
 	void store(m::Conf&) const;
+	void store(m::Patch&) const;
 	int  getColumnIndex(const Column&) const;
 
 	void    load(const m::Conf&);
+	void    load(const m::Patch&);
 	Column& getColumnByIndex(int);
 	Column& getColumnByChannelId(ID);
 	void    addColumn();
@@ -60,6 +62,12 @@ struct Model
 	void    moveChannel(ID channelId, int columnIndex, int newPosition);
 	void    addChannelToColumn(ID channelId, int columnIndex, int position = -1);
 	void    removeChannelFromColumn(ID channelId);
+
+	/* reset
+	Resets the Model to the latest state loaded from m::Conf. Call this when you
+	load a new patch and you want to reset the column layout. */
+
+	void reset();
 
 	int         logMode      = LOG_MODE_MUTE;
 	bool        showTooltips = true;

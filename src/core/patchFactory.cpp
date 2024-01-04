@@ -55,6 +55,10 @@ void readColumns_(Patch& patch, const nlohmann::json& j)
 	{
 		Patch::Column c;
 		c.width = jcol.value(PATCH_KEY_COLUMN_WIDTH, G_DEFAULT_COLUMN_WIDTH);
+		if (jcol.contains(PATCH_KEY_COLUMN_CHANNELS))
+			for (const auto& jplugin : jcol[PATCH_KEY_COLUMN_CHANNELS])
+				c.channels.push_back(jplugin);
+
 		patch.columns.push_back(c);
 	}
 }
@@ -216,7 +220,11 @@ void writeColumns_(const Patch& patch, nlohmann::json& j)
 	for (const Patch::Column& column : patch.columns)
 	{
 		nlohmann::json jcolumn;
-		jcolumn[PATCH_KEY_COLUMN_WIDTH] = column.width;
+		jcolumn[PATCH_KEY_COLUMN_WIDTH]    = column.width;
+		jcolumn[PATCH_KEY_COLUMN_CHANNELS] = nlohmann::json::array();
+		for (ID channelId : column.channels)
+			jcolumn[PATCH_KEY_COLUMN_CHANNELS].push_back(channelId);
+
 		j[PATCH_KEY_COLUMNS].push_back(jcolumn);
 	}
 }
@@ -336,6 +344,8 @@ void modernize_(Patch& patch)
 {
 	for (Patch::Channel& c : patch.channels)
 	{
+		const bool isInternalChannel = c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER;
+
 		/* 0.16.3
 		Make sure that ChannelType is correct: ID 1, 2 are MASTER channels, ID 3 
 		is PREVIEW channel. */
@@ -346,7 +356,7 @@ void modernize_(Patch& patch)
 
 		/* 0.16.4
 		Make sure internal channels are never armed. */
-		if (c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER)
+		if (isInternalChannel)
 			c.armed = false;
 
 		/* 0.16.3
@@ -355,6 +365,16 @@ void modernize_(Patch& patch)
 		{
 			c.pan    = G_DEFAULT_PAN;
 			c.waveId = 0;
+		}
+
+		/* 1.0.0 
+		The relationship column-channel has been simplified. Let's put all
+		channels in the first column as a fallback. */
+		if (patch.version < Patch::Version{1, 0, 0} && !isInternalChannel)
+		{
+			if (patch.columns.empty())
+				patch.columns.push_back({G_DEFAULT_COLUMN_WIDTH, {}});
+			patch.columns[0].channels.push_back(c.id);
 		}
 	}
 }
