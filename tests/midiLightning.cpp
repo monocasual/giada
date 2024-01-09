@@ -4,7 +4,7 @@
 #include <catch2/catch.hpp>
 #include <memory>
 
-TEST_CASE("MidiMapper")
+TEST_CASE("MidiLightning")
 {
 	using namespace giada;
 

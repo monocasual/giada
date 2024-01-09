@@ -2,7 +2,7 @@
 #include "../src/core/channels/channel.h"
 #include <catch2/catch.hpp>
 
-TEST_CASE("SamplePlayer")
+TEST_CASE("rendering::sampleRendering")
 {
 	using namespace giada;
 

@@ -5,7 +5,7 @@
 #include <catch2/catch.hpp>
 #include <memory>
 
-TEST_CASE("WaveReader")
+TEST_CASE("WaveReading")
 {
 	using namespace giada;
 
