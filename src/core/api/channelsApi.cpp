@@ -94,11 +94,6 @@ void ChannelsApi::loadSampleChannel(ID channelId, Wave& wave)
 	m_channelManager.loadSampleChannel(channelId, wave);
 }
 
-void ChannelsApi::loadPreviewChannel(ID sourceChannelId)
-{
-	m_channelManager.loadWaveInPreviewChannel(sourceChannelId);
-}
-
 /* -------------------------------------------------------------------------- */
 
 void ChannelsApi::remove(ID channelId)
@@ -122,11 +117,6 @@ void ChannelsApi::freeSampleChannel(ID channelId)
 {
 	m_actionRecorder.clearChannel(channelId);
 	m_channelManager.freeSampleChannel(channelId);
-}
-
-void ChannelsApi::freePreviewChannel()
-{
-	m_channelManager.freeWaveInPreviewChannel();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -263,13 +253,6 @@ void ChannelsApi::setHeight(ID channelId, int h)
 void ChannelsApi::setName(ID channelId, const std::string& name)
 {
 	m_channelManager.renameChannel(channelId, name);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ChannelsApi::setPreviewTracker(Frame f)
-{
-	m_channelManager.setPreviewTracker(f);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -42,6 +42,27 @@ SampleEditorApi::SampleEditorApi(KernelAudio& k, model::Model& m, ChannelManager
 
 /* -------------------------------------------------------------------------- */
 
+void SampleEditorApi::loadPreviewChannel(ID sourceChannelId)
+{
+	m_channelManager.loadWaveInPreviewChannel(sourceChannelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorApi::freePreviewChannel()
+{
+	m_channelManager.freeWaveInPreviewChannel();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorApi::setPreviewTracker(Frame f)
+{
+	m_channelManager.setPreviewTracker(f);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void SampleEditorApi::cut(ID channelId, Frame a, Frame b)
 {
 	copy(channelId, a, b);

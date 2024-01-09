@@ -193,7 +193,7 @@ void trim(ID channelId, Frame a, Frame b)
 
 void preparePreview(ID channelId)
 {
-	g_engine->getChannelsApi().loadPreviewChannel(channelId);
+	g_engine->getSampleEditorApi().loadPreviewChannel(channelId);
 }
 
 void setLoop(bool shouldLoop)
@@ -221,13 +221,13 @@ void togglePreview()
 
 void setPreviewTracker(Frame f)
 {
-	g_engine->getChannelsApi().setPreviewTracker(f);
+	g_engine->getSampleEditorApi().setPreviewTracker(f);
 	getWindow()->refresh();
 }
 
 void cleanupPreview()
 {
-	g_engine->getChannelsApi().freePreviewChannel();
+	g_engine->getSampleEditorApi().freePreviewChannel();
 }
 
 /* -------------------------------------------------------------------------- */

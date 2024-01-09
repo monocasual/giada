@@ -42,6 +42,9 @@ class SampleEditorApi
 public:
 	SampleEditorApi(KernelAudio&, model::Model&, ChannelManager&);
 
+	void loadPreviewChannel(ID sourceChannelId);
+	void freePreviewChannel();
+	void setPreviewTracker(Frame);
 	void cut(ID channelId, Frame a, Frame b);
 	void copy(ID channelId, Frame a, Frame b);
 	void paste(ID channelId, Frame a);
