@@ -45,6 +45,8 @@ SampleEditorApi::SampleEditorApi(KernelAudio& k, model::Model& m, ChannelManager
 void SampleEditorApi::loadPreviewChannel(ID sourceChannelId)
 {
 	m_channelManager.loadWaveInPreviewChannel(sourceChannelId);
+	m_model.get().mixer.renderPreview = true;
+	m_model.swap(model::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -52,6 +54,8 @@ void SampleEditorApi::loadPreviewChannel(ID sourceChannelId)
 void SampleEditorApi::freePreviewChannel()
 {
 	m_channelManager.freeWaveInPreviewChannel();
+	m_model.get().mixer.renderPreview = false;
+	m_model.swap(model::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */

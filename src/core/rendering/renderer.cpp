@@ -140,7 +140,8 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		renderNormalChannels(channels.getAll(), out, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
 
 	renderMasterOut(masterOutCh, out);
-	renderPreview(previewCh, out);
+	if (mixer.renderPreview)
+		renderPreview(previewCh, out);
 
 	/* Post processing. */
 

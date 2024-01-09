@@ -61,6 +61,7 @@ public:
 	bool           isRecordingActions = false;
 	bool           isRecordingInput   = false;
 	bool           inToOut            = false;
+	bool           renderPreview      = false;
 	InputRecMode   inputRecMode       = InputRecMode::RIGID;
 	RecTriggerMode recTriggerMode     = RecTriggerMode::NORMAL;
 
