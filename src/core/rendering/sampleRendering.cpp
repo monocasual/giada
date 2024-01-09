@@ -185,9 +185,9 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 	else
 	{
 		/* Both modes: 1st = [abcdefghijklmnopq] 
-		No need for fancy render() here. You don't want the chance to trigger 
-		onLastFrame() at this point which would invalidate the rewind (a listener
-		might stop the rendering): waveReader.fill() is just enough. Just notify 
+		No need for fancy render_ here. You don't want the chance to trigger 
+		onSampleEnd_ at this point which would invalidate the rewind (a listener
+		might stop the rendering): readWave() is just enough. Just notify
 		waveReader this is the last read before rewind. */
 
 		tracker = rendering::readWave(*ch.sampleChannel->getWave(), buf, tracker, end, 0, pitch, resampler).used;
