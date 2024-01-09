@@ -190,7 +190,7 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 		might stop the rendering): readWave() is just enough. Just notify
 		waveReader this is the last read before rewind. */
 
-		tracker = rendering::readWave(*ch.sampleChannel->getWave(), buf, tracker, end, 0, pitch, resampler).used;
+		tracker = readWave(*ch.sampleChannel->getWave(), buf, tracker, end, 0, pitch, resampler).used;
 		resampler.last();
 
 		/* Mode::REWIND: 2nd = [abcdefghi|abcdfefg]
