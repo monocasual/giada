@@ -82,8 +82,12 @@ void stopReadActions_(ChannelShared& shared, ChannelStatus curRecStatus,
 ChannelStatus pressWhileOff_(ID channelId, ChannelShared& shared, float velocity,
     bool canQuantize, bool velocityAsVol)
 {
-	if (velocityAsVol)
-		shared.volumeInternal.store(velocity); // No need for mapping: velocityFloat has same range of volume
+	/* Reset internal volume to default (1.0) if no velocity as volume. This is
+	important in case the channel has actions and some of them have velocity 
+	less than 1.0: without reset you would play the channel with that velocity
+	value. */
+
+	shared.volumeInternal.store(velocityAsVol ? velocity : 1.0f);
 
 	if (canQuantize)
 	{
