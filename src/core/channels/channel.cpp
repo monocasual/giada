@@ -179,8 +179,11 @@ std::string Channel::debug() const
 	    id, name, u::string::toString(type), (void*)&shared);
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
-		out += fmt::format(" wave={} mode={}", (void*)sampleChannel->getWave(),
-		    u::string::toString(sampleChannel->mode));
+		out += fmt::format(" wave={} mode={} begin={} end={}",
+		    (void*)sampleChannel->getWave(),
+		    u::string::toString(sampleChannel->mode),
+		    sampleChannel->begin,
+		    sampleChannel->end);
 
 	return out;
 }
