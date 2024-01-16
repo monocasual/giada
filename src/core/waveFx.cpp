@@ -178,17 +178,20 @@ void trim(Wave& w, Frame a, Frame b)
 
 void paste(const Wave& src, Wave& des, Frame a)
 {
-	assert(src.getBuffer().countChannels() == des.getBuffer().countChannels());
+	const mcl::AudioBuffer& srcBuffer = src.getBuffer();
+	const mcl::AudioBuffer& desBuffer = des.getBuffer();
+
+	assert(srcBuffer.countChannels() == desBuffer.countChannels());
 
 	mcl::AudioBuffer newData;
-	newData.alloc(src.getBuffer().countFrames() + des.getBuffer().countFrames(), des.getBuffer().countChannels());
+	newData.alloc(srcBuffer.countFrames() + desBuffer.countFrames(), desBuffer.countChannels());
 
 	/* |---original data---|///paste data///|---original data---|
 	         des[0, a)      src[0, src.size)   des[a, des.size)	*/
 
-	newData.set(des.getBuffer(), a, 0);
-	newData.set(src.getBuffer(), src.getBuffer().countFrames(), a);
-	newData.set(des.getBuffer(), des.getBuffer().countFrames() - a, src.getBuffer().countFrames() + a);
+	newData.set(desBuffer, a, 0);
+	newData.set(srcBuffer, srcBuffer.countFrames(), a);
+	newData.set(desBuffer, desBuffer.countFrames() - a, srcBuffer.countFrames() + a);
 
 	des.replaceData(std::move(newData));
 	des.setEdited(true);
