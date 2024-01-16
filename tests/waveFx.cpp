@@ -62,6 +62,20 @@ TEST_CASE("waveFx")
 		REQUIRE(waveStereo.getBuffer().countFrames() == prevSize - range);
 	}
 
+	SECTION("test paste")
+	{
+		const int sourceSize       = 512;
+		const int originalDestSize = waveStereo.getBuffer().countFrames();
+
+		Wave source(0);
+
+		source.alloc(sourceSize, 2, SAMPLE_RATE, BIT_DEPTH, "path/to/source.wav");
+
+		wfx::paste(source, waveStereo, 16);
+
+		REQUIRE(waveStereo.getBuffer().countFrames() == sourceSize + originalDestSize);
+	}
+
 	SECTION("test trim")
 	{
 		int a    = 47;
