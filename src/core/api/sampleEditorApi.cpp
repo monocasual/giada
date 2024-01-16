@@ -73,6 +73,7 @@ void SampleEditorApi::cut(ID channelId, Frame a, Frame b)
 	model::DataLock lock = m_model.lockData();
 	wfx::cut(getWave(channelId), a, b);
 	resetBeginEnd(channelId);
+	loadPreviewChannel(channelId); // Refresh preview channel properties
 }
 
 /* -------------------------------------------------------------------------- */
@@ -112,6 +113,7 @@ void SampleEditorApi::paste(ID channelId, Frame a)
 	/* Just brutally restore begin/end points. */
 
 	resetBeginEnd(channelId);
+	loadPreviewChannel(channelId); // Refresh preview channel properties
 }
 
 /* -------------------------------------------------------------------------- */
@@ -161,6 +163,7 @@ void SampleEditorApi::trim(ID channelId, Frame a, Frame b)
 	model::DataLock lock = m_model.lockData();
 	wfx::trim(getWave(channelId), a, b);
 	resetBeginEnd(channelId);
+	loadPreviewChannel(channelId); // Refresh preview channel properties
 }
 
 /* -------------------------------------------------------------------------- */
