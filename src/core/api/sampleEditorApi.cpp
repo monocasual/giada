@@ -212,6 +212,7 @@ void SampleEditorApi::reload(ID channelId)
 	const Resampler::Quality rsmpQuality = m_model.get().kernelAudio.rsmpQuality;
 	// TODO - error checking
 	m_channelManager.loadSampleChannel(channelId, getWave(channelId).getPath(), sampleRate, rsmpQuality);
+	loadPreviewChannel(channelId); // Refresh preview channel properties
 }
 
 /* -------------------------------------------------------------------------- */
