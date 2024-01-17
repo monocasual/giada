@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2023 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2024 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -26,8 +26,8 @@
 
 #include "gui/dialogs/channelRouting.h"
 #include "glue/channel.h"
-#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/box.h"
+#include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/textButton.h"
 #include "gui/elems/panTool.h"
 #include "gui/elems/volumeTool.h"

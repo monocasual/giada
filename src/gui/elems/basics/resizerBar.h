@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2023 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2024 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -30,7 +30,6 @@
 #include "gui/types.h"
 #include <FL/Fl_Box.H>
 #include <functional>
-#include "gui/types.h"
 
 /* geResizerBar
 A 'resizer bar' between widgets inside a Fl_Scroll. Thanks to Greg Ercolano from

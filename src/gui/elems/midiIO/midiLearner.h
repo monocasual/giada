@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2023 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2024 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -28,9 +28,9 @@
 #define GE_MIDI_LEARNER_H
 
 #include "gui/elems/basics/flex.h"
+#include <cstdint>
 #include <functional>
 #include <string>
-#include <cstdint>
 
 namespace giada::v
 {
