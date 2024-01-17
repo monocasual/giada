@@ -45,7 +45,7 @@ void Quantizer::schedule(int id, std::function<void(Frame delta)> f)
 
 /* -------------------------------------------------------------------------- */
 
-void Quantizer::advance(Range<Frame> block, Frame quantizerStep) const
+void Quantizer::advance(geompp::Range<Frame> block, Frame quantizerStep) const
 {
 	/* Nothing to do if there's no action to perform. */
 
@@ -56,7 +56,7 @@ void Quantizer::advance(Range<Frame> block, Frame quantizerStep) const
 
 	assert(m_callbacks.count(pid) > 0);
 
-	for (Frame global = block.getBegin(), local = 0; global < block.getEnd(); global++, local++)
+	for (Frame global = block.a, local = 0; global < block.b; global++, local++)
 	{
 
 		if (global % quantizerStep != 0) // Skip if it's not on a quantization unit.

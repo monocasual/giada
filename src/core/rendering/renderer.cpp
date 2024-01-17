@@ -111,10 +111,10 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 	if (sequencer.isRunning())
 	{
-		const Frame        currentFrame  = sequencer.a_getCurrentFrame();
-		const int          bufferSize    = out.countFrames();
-		const int          quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
-		const Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
+		const Frame                currentFrame  = sequencer.a_getCurrentFrame();
+		const int                  bufferSize    = out.countFrames();
+		const int                  quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
+		const geompp::Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
 		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, actions);
 		m_sequencer.render(out, layout_RT);
@@ -151,7 +151,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 /* -------------------------------------------------------------------------- */
 
 void Renderer::advanceChannels(const Sequencer::EventBuffer& events,
-    const model::Channels& channels, Range<Frame> block, int quantizerStep) const
+    const model::Channels& channels, geompp::Range<Frame> block, int quantizerStep) const
 {
 	for (const Channel& c : channels.getAll())
 		if (!c.isInternal())
@@ -160,7 +160,8 @@ void Renderer::advanceChannels(const Sequencer::EventBuffer& events,
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& events, Range<Frame> block, Frame quantizerStep) const
+void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& events,
+    geompp::Range<Frame> block, Frame quantizerStep) const
 {
 	if (ch.shared->quantizer)
 		ch.shared->quantizer->advance(block, quantizerStep);

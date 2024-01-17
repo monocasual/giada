@@ -28,9 +28,9 @@
 #define G_QUANTIZER_H
 
 #include "core/const.h"
-#include "core/range.h"
 #include "core/types.h"
 #include "core/weakAtomic.h"
+#include "deps/geompp/src/range.hpp"
 #include <functional>
 #include <map>
 
@@ -56,7 +56,7 @@ public:
 	currentFrame + bufferSize) and a quantization step. Call this function
 	on each block. */
 
-	void advance(Range<Frame> block, Frame quantizerStep) const;
+	void advance(geompp::Range<Frame> block, Frame quantizerStep) const;
 
 	/* clear
 	Disables quantized operations in progress, if any. */

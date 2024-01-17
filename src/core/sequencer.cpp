@@ -162,7 +162,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 	/* Advance this and quantizer after the event parsing. */
 
 	sequencer.a_setCurrentFrame(nextFrame, sampleRate);
-	m_quantizer.advance(Range<Frame>(start, end), getQuantizerStep());
+	m_quantizer.advance(geompp::Range<Frame>(start, end), getQuantizerStep());
 
 	return m_eventBuffer;
 }
