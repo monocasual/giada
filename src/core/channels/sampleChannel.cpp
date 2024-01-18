@@ -78,6 +78,16 @@ bool SampleChannel::isAnyLoopOnceMode() const
 
 /* -------------------------------------------------------------------------- */
 
+bool SampleChannel::isAnyNonLoopingSingleMode() const
+{
+	return mode == SamplePlayerMode::SINGLE_BASIC ||
+	       mode == SamplePlayerMode::SINGLE_BASIC_PAUSE ||
+	       mode == SamplePlayerMode::SINGLE_PRESS ||
+	       mode == SamplePlayerMode::SINGLE_RETRIG;
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool SampleChannel::hasWave() const { return m_wave != nullptr; }
 bool SampleChannel::hasLogicalWave() const { return hasWave() && m_wave->isLogical(); }
 bool SampleChannel::hasEditedWave() const { return hasWave() && m_wave->isEdited(); }

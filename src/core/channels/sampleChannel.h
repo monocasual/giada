@@ -40,6 +40,7 @@ public:
 
 	bool  isAnyLoopMode() const;
 	bool  isAnyLoopOnceMode() const;
+	bool  isAnyNonLoopingSingleMode() const;
 	bool  hasWave() const;
 	bool  hasLogicalWave() const;
 	bool  hasEditedWave() const;

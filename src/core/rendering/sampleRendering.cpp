@@ -77,10 +77,10 @@ RenderInfo::Mode::STOP type). */
 
 void onSampleEnd_(const Channel& ch, bool seqIsRunning, bool natural)
 {
-	ChannelShared&         shared     = *ch.shared;
-	const SamplePlayerMode mode       = ch.sampleChannel->mode;
-	const bool             isLoop     = ch.sampleChannel->isAnyLoopMode();
-	const bool             isLoopOnce = ch.sampleChannel->isAnyLoopOnceMode();
+	ChannelShared& shared         = *ch.shared;
+	const bool     isLoop         = ch.sampleChannel->isAnyLoopMode();
+	const bool     isLoopOnce     = ch.sampleChannel->isAnyLoopOnceMode();
+	const bool     isSingleNoLoop = ch.sampleChannel->isAnyNonLoopingSingleMode();
 
 	switch (shared.playStatus.load())
 	{
@@ -88,11 +88,7 @@ void onSampleEnd_(const Channel& ch, bool seqIsRunning, bool natural)
 		/* Stop LOOP_* when the sequencer is off, or SINGLE_* except for
 		SINGLE_ENDLESS, which runs forever unless it's in ENDING mode. 
 		Other loop once modes are put in wait mode. */
-		if ((mode == SamplePlayerMode::SINGLE_BASIC ||
-		        mode == SamplePlayerMode::SINGLE_BASIC_PAUSE ||
-		        mode == SamplePlayerMode::SINGLE_PRESS ||
-		        mode == SamplePlayerMode::SINGLE_RETRIG) ||
-		    (isLoop && !seqIsRunning) || !natural)
+		if (isSingleNoLoop || (isLoop && !seqIsRunning) || !natural)
 			shared.playStatus.store(ChannelStatus::OFF);
 		else if (isLoopOnce)
 			shared.playStatus.store(ChannelStatus::WAIT);
