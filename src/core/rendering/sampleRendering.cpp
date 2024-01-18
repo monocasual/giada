@@ -77,9 +77,10 @@ RenderInfo::Mode::STOP type). */
 
 void onSampleEnd_(const Channel& ch, bool seqIsRunning, bool natural)
 {
-	ChannelShared&         shared = *ch.shared;
-	const SamplePlayerMode mode   = ch.sampleChannel->mode;
-	const bool             isLoop = ch.sampleChannel->isAnyLoopMode();
+	ChannelShared&         shared     = *ch.shared;
+	const SamplePlayerMode mode       = ch.sampleChannel->mode;
+	const bool             isLoop     = ch.sampleChannel->isAnyLoopMode();
+	const bool             isLoopOnce = ch.sampleChannel->isAnyLoopOnceMode();
 
 	switch (shared.playStatus.load())
 	{
@@ -93,7 +94,7 @@ void onSampleEnd_(const Channel& ch, bool seqIsRunning, bool natural)
 		        mode == SamplePlayerMode::SINGLE_RETRIG) ||
 		    (isLoop && !seqIsRunning) || !natural)
 			shared.playStatus.store(ChannelStatus::OFF);
-		else if (mode == SamplePlayerMode::LOOP_ONCE || mode == SamplePlayerMode::LOOP_ONCE_BAR)
+		else if (isLoopOnce)
 			shared.playStatus.store(ChannelStatus::WAIT);
 		break;
 

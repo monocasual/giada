@@ -39,6 +39,7 @@ public:
 	SampleChannel(const Patch::Channel&, Wave*, float samplerateRatio);
 
 	bool  isAnyLoopMode() const;
+	bool  isAnyLoopOnceMode() const;
 	bool  hasWave() const;
 	bool  hasLogicalWave() const;
 	bool  hasEditedWave() const;

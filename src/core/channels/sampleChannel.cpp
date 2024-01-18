@@ -70,6 +70,14 @@ bool SampleChannel::isAnyLoopMode() const
 
 /* -------------------------------------------------------------------------- */
 
+bool SampleChannel::isAnyLoopOnceMode() const
+{
+	return mode == SamplePlayerMode::LOOP_ONCE ||
+	       mode == SamplePlayerMode::LOOP_ONCE_BAR;
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool SampleChannel::hasWave() const { return m_wave != nullptr; }
 bool SampleChannel::hasLogicalWave() const { return hasWave() && m_wave->isLogical(); }
 bool SampleChannel::hasEditedWave() const { return hasWave() && m_wave->isEdited(); }
