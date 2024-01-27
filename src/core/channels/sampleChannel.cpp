@@ -135,13 +135,10 @@ void SampleChannel::loadWave(Wave* w, Frame newBegin, Frame newEnd, Frame newShi
 
 void SampleChannel::setWave(Wave* w, float samplerateRatio)
 {
-	if (w == nullptr)
-	{
-		m_wave = nullptr;
-		return;
-	}
-
 	m_wave = w;
+
+	if (m_wave == nullptr)
+		return;
 
 	if (samplerateRatio != 1.0f)
 	{
