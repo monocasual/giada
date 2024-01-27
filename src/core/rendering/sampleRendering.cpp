@@ -73,14 +73,15 @@ ReadResult readCopy_(const Wave& wave, mcl::AudioBuffer& dest, Frame start,
 Things to do when the last frame has been reached. 'natural' == true if the 
 rendering has ended because the end of the sample has ben reached. 
 'natural' == false if the rendering has been manually interrupted (by a 
-RenderInfo::Mode::STOP type). */
+RenderInfo::Mode::STOP type). Returns whether the sample should loop or not. */
 
-void onSampleEnd_(const Channel& ch, bool seqIsRunning, bool natural)
+bool onSampleEnd_(const Channel& ch, bool seqIsRunning, bool natural)
 {
 	ChannelShared& shared         = *ch.shared;
 	const bool     isLoop         = ch.sampleChannel->isAnyLoopMode();
 	const bool     isLoopOnce     = ch.sampleChannel->isAnyLoopOnceMode();
 	const bool     isSingleNoLoop = ch.sampleChannel->isAnyNonLoopingSingleMode();
+	bool           shouldLoop     = false;
 
 	switch (shared.playStatus.load())
 	{
@@ -92,6 +93,8 @@ void onSampleEnd_(const Channel& ch, bool seqIsRunning, bool natural)
 			shared.playStatus.store(ChannelStatus::OFF);
 		else if (isLoopOnce)
 			shared.playStatus.store(ChannelStatus::WAIT);
+		else
+			shouldLoop = true;
 		break;
 
 	case ChannelStatus::ENDING:
@@ -99,8 +102,11 @@ void onSampleEnd_(const Channel& ch, bool seqIsRunning, bool natural)
 		break;
 
 	default:
+		shouldLoop = true;
 		break;
 	}
+
+	return shouldLoop;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -114,43 +120,34 @@ void stop_(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, bool seqIsRun
 
 /* -------------------------------------------------------------------------- */
 
-bool shouldLoop_(SamplePlayerMode mode, ChannelStatus status)
-{
-	return (mode == SamplePlayerMode::LOOP_BASIC ||
-	           mode == SamplePlayerMode::LOOP_REPEAT ||
-	           mode == SamplePlayerMode::SINGLE_ENDLESS) &&
-	       status == ChannelStatus::PLAY; // Don't loop if ENDING
-}
-
-/* -------------------------------------------------------------------------- */
-
 Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame offset, bool seqIsRunning)
 {
-	const ChannelStatus    status    = ch.shared->playStatus.load();
-	const Frame            begin     = ch.sampleChannel->begin;
-	const Frame            end       = ch.sampleChannel->end;
-	const float            pitch     = ch.sampleChannel->pitch;
-	const SamplePlayerMode mode      = ch.sampleChannel->mode;
-	const Wave&            wave      = *ch.sampleChannel->getWave();
-	const Resampler&       resampler = ch.shared->resampler.value();
+	const Frame      begin     = ch.sampleChannel->begin;
+	const Frame      end       = ch.sampleChannel->end;
+	const float      pitch     = ch.sampleChannel->pitch;
+	const Wave&      wave      = *ch.sampleChannel->getWave();
+	const Resampler& resampler = ch.shared->resampler.value();
 
-	/* First pass rendering. */
-
-	rendering::ReadResult res = rendering::readWave(wave, buf, tracker, end, offset, pitch, resampler);
-	tracker += res.used;
-
-	/* Second pass rendering: if tracker has looped, special care is needed. If 
-	the	channel is in loop mode, fill the second part of the buffer with data
-	coming from the sample's head, starting at 'res.generated' offset. */
-
-	if (tracker >= end)
+	while (true)
 	{
-		tracker = begin;
-		ch.shared->resampler->last();
-		onSampleEnd_(ch, seqIsRunning, /*natural=*/true);
+		ReadResult res = readWave(wave, buf, tracker, end, offset, pitch, resampler);
+		tracker += res.used;
+		offset += res.generated;
 
-		if (shouldLoop_(mode, status) && res.generated < buf.countFrames())
-			tracker += rendering::readWave(wave, buf, tracker, end, res.generated, pitch, resampler).used;
+		/* Break here if the buffer has been filled completely: there's nothing 
+		else do to. */
+
+		if (offset >= buf.countFrames())
+			break;
+
+		if (tracker >= end)
+		{
+			tracker = begin;
+			ch.shared->resampler->last();
+			const bool shouldLoop = onSampleEnd_(ch, seqIsRunning, /*natural=*/true);
+			if (!shouldLoop)
+				break;
+		}
 	}
 
 	return tracker;
