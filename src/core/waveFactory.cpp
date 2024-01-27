@@ -120,7 +120,7 @@ Result createFromFile(const std::string& path, ID id, int samplerate, Resampler:
 {
 	if (path == "" || u::fs::isDir(path))
 	{
-		u::log::print("[waveManager::create] malformed path (was '{}')\n", path);
+		u::log::print("[waveFactory::create] malformed path (was '{}')\n", path);
 		return {G_RES_ERR_NO_DATA};
 	}
 
@@ -132,13 +132,13 @@ Result createFromFile(const std::string& path, ID id, int samplerate, Resampler:
 
 	if (fileIn == nullptr)
 	{
-		u::log::print("[waveManager::create] unable to read {}. {}\n", path, sf_strerror(fileIn));
+		u::log::print("[waveFactory::create] unable to read {}. {}\n", path, sf_strerror(fileIn));
 		return {G_RES_ERR_IO};
 	}
 
 	if (header.channels > G_MAX_IO_CHANS)
 	{
-		u::log::print("[waveManager::create] unsupported multi-channel sample\n");
+		u::log::print("[waveFactory::create] unsupported multi-channel sample\n");
 		return {G_RES_ERR_WRONG_DATA};
 	}
 
@@ -148,7 +148,7 @@ Result createFromFile(const std::string& path, ID id, int samplerate, Resampler:
 	wave->alloc(header.frames, header.channels, header.samplerate, getBits_(header), path);
 
 	if (sf_readf_float(fileIn, wave->getBuffer()[0], header.frames) != header.frames)
-		u::log::print("[waveManager::create] warning: incomplete read!\n");
+		u::log::print("[waveFactory::create] warning: incomplete read!\n");
 
 	sf_close(fileIn);
 
@@ -157,13 +157,13 @@ Result createFromFile(const std::string& path, ID id, int samplerate, Resampler:
 
 	if (wave->getRate() != samplerate)
 	{
-		u::log::print("[waveManager::create] input rate ({}) != required rate ({}), conversion needed\n",
+		u::log::print("[waveFactory::create] input rate ({}) != required rate ({}), conversion needed\n",
 		    wave->getRate(), samplerate);
 		if (resample(*wave.get(), quality, samplerate) != G_RES_OK)
 			return {G_RES_ERR_PROCESSING};
 	}
 
-	u::log::print("[waveManager::create] new Wave created, {} frames\n", wave->getBuffer().countFrames());
+	u::log::print("[waveFactory::create] new Wave created, {} frames\n", wave->getBuffer().countFrames());
 
 	return {G_RES_OK, std::move(wave)};
 }
@@ -177,7 +177,7 @@ std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
 	wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, name);
 	wave->setLogical(true);
 
-	u::log::print("[waveManager::createEmpty] new empty Wave created, {} frames\n",
+	u::log::print("[waveFactory::createEmpty] new empty Wave created, {} frames\n",
 	    wave->getBuffer().countFrames());
 
 	return wave;
@@ -198,7 +198,7 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 	wave->getBuffer().set(src.getBuffer(), frames);
 	wave->setLogical(true);
 
-	u::log::print("[waveManager::createFromWave] new Wave created, {} frames\n", frames);
+	u::log::print("[waveFactory::createFromWave] new Wave created, {} frames\n", frames);
 
 	return wave;
 }
@@ -232,12 +232,12 @@ int resample(Wave& w, Resampler::Quality quality, int samplerate)
 	src_data.output_frames = newSizeFrames;
 	src_data.src_ratio     = ratio;
 
-	u::log::print("[waveManager::resample] resampling: new size={} frames\n", newSizeFrames);
+	u::log::print("[waveFactory::resample] resampling: new size={} frames\n", newSizeFrames);
 
 	int ret = src_simple(&src_data, static_cast<int>(quality), w.getBuffer().countChannels());
 	if (ret != 0)
 	{
-		u::log::print("[waveManager::resample] resampling error: {}\n", src_strerror(ret));
+		u::log::print("[waveFactory::resample] resampling error: {}\n", src_strerror(ret));
 		return G_RES_ERR_PROCESSING;
 	}
 
@@ -259,13 +259,13 @@ int save(const Wave& w, const std::string& path)
 	SNDFILE* file = sf_open(path.c_str(), SFM_WRITE, &header);
 	if (file == nullptr)
 	{
-		u::log::print("[waveManager::save] unable to open {} for exporting: {}\n",
+		u::log::print("[waveFactory::save] unable to open {} for exporting: {}\n",
 		    path, sf_strerror(file));
 		return G_RES_ERR_IO;
 	}
 
 	if (sf_writef_float(file, w.getBuffer()[0], w.getBuffer().countFrames()) != w.getBuffer().countFrames())
-		u::log::print("[waveManager::save] warning: incomplete write!\n");
+		u::log::print("[waveFactory::save] warning: incomplete write!\n");
 
 	sf_close(file);
 
