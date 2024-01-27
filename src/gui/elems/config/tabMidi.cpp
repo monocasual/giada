@@ -181,7 +181,7 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 		m_portOut->showItem(0);
 		m_portOut->deactivate();
 	}
-	else
+	else if (m_portOut->hasItem(m_data.outPort))
 		m_portOut->showItem(m_data.outPort);
 
 	m_portIn->rebuild(m_data.inPorts);
@@ -190,7 +190,7 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 		m_portIn->showItem(0);
 		m_portIn->deactivate();
 	}
-	else
+	else if (m_portIn->hasItem(m_data.inPort))
 		m_portIn->showItem(m_data.inPort);
 
 	m_enableOut->value(m_data.outPort != -1);
