@@ -241,7 +241,7 @@ void geSampleChannel::openMenu()
 			break;
 
 		case Menu::CLONE_CHANNEL:
-			c::channel::cloneChannel(channel.id);
+			c::channel::cloneChannel(channel.id, channel.columnIndex);
 			break;
 
 		case Menu::RENAME_CHANNEL:

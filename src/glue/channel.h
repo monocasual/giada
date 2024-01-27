@@ -159,7 +159,7 @@ void freeChannel(ID channelId);
 /* cloneChannel
 Makes an exact copy of a channel. */
 
-void cloneChannel(ID channelId);
+void cloneChannel(ID channelId, int columnIndex);
 
 /* moveChannel
 Moves channel with channelId to column at 'columnIndex' at 'position'. */

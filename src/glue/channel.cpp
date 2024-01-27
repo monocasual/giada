@@ -265,9 +265,10 @@ void setOverdubProtection(ID channelId, bool value)
 
 /* -------------------------------------------------------------------------- */
 
-void cloneChannel(ID channelId)
+void cloneChannel(ID channelId, int columnIndex)
 {
-	g_engine->getChannelsApi().clone(channelId);
+	const m::Channel& ch = g_engine->getChannelsApi().clone(channelId);
+	g_ui->model.addChannelToColumn(ch.id, columnIndex);
 }
 
 /* -------------------------------------------------------------------------- */
