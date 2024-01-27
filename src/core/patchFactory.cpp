@@ -416,26 +416,26 @@ Patch deserialize(const std::string& filePath)
 		return patch;
 	}
 
-	nlohmann::json j = nlohmann::json::parse(ifs);
-
-	if (j[PATCH_KEY_HEADER] != "GIADAPTC")
-	{
-		patch.status = G_FILE_INVALID;
-		return patch;
-	}
-
-	patch.version = {
-	    static_cast<int>(j[PATCH_KEY_VERSION_MAJOR]),
-	    static_cast<int>(j[PATCH_KEY_VERSION_MINOR]),
-	    static_cast<int>(j[PATCH_KEY_VERSION_PATCH])};
-	if (patch.version < Patch::Version{0, 16, 0})
-	{
-		patch.status = G_FILE_UNSUPPORTED;
-		return patch;
-	}
-
 	try
 	{
+		nlohmann::json j = nlohmann::json::parse(ifs);
+
+		if (j[PATCH_KEY_HEADER] != "GIADAPTC")
+		{
+			patch.status = G_FILE_INVALID;
+			return patch;
+		}
+
+		patch.version = {
+		    static_cast<int>(j[PATCH_KEY_VERSION_MAJOR]),
+		    static_cast<int>(j[PATCH_KEY_VERSION_MINOR]),
+		    static_cast<int>(j[PATCH_KEY_VERSION_PATCH])};
+		if (patch.version < Patch::Version{0, 16, 0})
+		{
+			patch.status = G_FILE_UNSUPPORTED;
+			return patch;
+		}
+
 		readCommons_(patch, j);
 		readColumns_(patch, j);
 		readPlugins_(patch, j);
