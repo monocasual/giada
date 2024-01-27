@@ -102,7 +102,6 @@ bool onSampleEnd_(const Channel& ch, bool seqIsRunning, bool natural)
 		break;
 
 	default:
-		shouldLoop = true;
 		break;
 	}
 
