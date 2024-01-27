@@ -157,7 +157,7 @@ Result createFromFile(const std::string& path, ID id, int samplerate, Resampler:
 
 	if (wave->getRate() != samplerate)
 	{
-		u::log::print("[waveFactory::create] input rate ({}) != required rate ({}), conversion needed\n",
+		u::log::print("[waveFactory::create] file sample rate ({}) != project sample rate ({}), conversion needed\n",
 		    wave->getRate(), samplerate);
 		if (resample(*wave.get(), quality, samplerate) != G_RES_OK)
 			return {G_RES_ERR_PROCESSING};
