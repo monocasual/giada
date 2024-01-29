@@ -163,11 +163,8 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 	while (ch.shared->renderQueue->pop(renderInfo))
 		;
 
-	const Frame      begin     = ch.sampleChannel->begin;
-	const Frame      end       = ch.sampleChannel->end;
-	const float      pitch     = ch.sampleChannel->pitch;
-	const Resampler& resampler = ch.shared->resampler.value();
-
+	const Frame       begin   = ch.sampleChannel->begin;
+	const Frame       end     = ch.sampleChannel->end;
 	mcl::AudioBuffer& buf     = ch.shared->audioBuffer;
 	Frame             tracker = std::clamp(ch.shared->tracker.load(), begin, end); /* Make sure tracker stays within begin-end range. */
 
@@ -177,20 +174,17 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 	}
 	else
 	{
-		/* Both modes: 1st = [abcdefghijklmnopq] 
-		No need for fancy render_ here. You don't want the chance to trigger 
-		onSampleEnd_ at this point which would invalidate the rewind (a listener
-		might stop the rendering): readWave() is just enough. Just notify
-		waveReader this is the last read before rewind. */
+		/* Both modes: fill whole buffer first: [abcdefghijklmnopq]. */
 
-		tracker = readWave(*ch.sampleChannel->getWave(), buf, tracker, end, 0, pitch, resampler).used;
-		resampler.last();
+		render_(ch, buf, tracker, 0, seqIsRunning);
 
-		/* Mode::REWIND: 2nd = [abcdefghi|abcdfefg]
-		   Mode::STOP:   2nd = [abcdefghi|--------] */
+		/* Mode::REWIND: fill buffer from offset:  [abcdefghi|abcdfefg]
+		   Mode::STOP:   clear buffer from offset: [abcdefghi|--------] */
 
 		if (renderInfo.mode == RenderInfo::Mode::REWIND)
+		{
 			tracker = render_(ch, buf, begin, renderInfo.offset, seqIsRunning);
+		}
 		else
 		{
 			stop_(ch, buf, renderInfo.offset, seqIsRunning);
