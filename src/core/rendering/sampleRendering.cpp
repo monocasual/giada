@@ -163,10 +163,11 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 	while (ch.shared->renderQueue->pop(renderInfo))
 		;
 
-	const Frame       begin   = ch.sampleChannel->begin;
-	const Frame       end     = ch.sampleChannel->end;
-	mcl::AudioBuffer& buf     = ch.shared->audioBuffer;
-	Frame             tracker = std::clamp(ch.shared->tracker.load(), begin, end); /* Make sure tracker stays within begin-end range. */
+	const Frame       begin     = ch.sampleChannel->begin;
+	const Frame       end       = ch.sampleChannel->end;
+	const Resampler&  resampler = ch.shared->resampler.value();
+	mcl::AudioBuffer& buf       = ch.shared->audioBuffer;
+	Frame             tracker   = std::clamp(ch.shared->tracker.load(), begin, end); /* Make sure tracker stays within begin-end range. */
 
 	if (renderInfo.mode == RenderInfo::Mode::NORMAL)
 	{
@@ -174,9 +175,11 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 	}
 	else
 	{
-		/* Both modes: fill whole buffer first: [abcdefghijklmnopq]. */
+		/* Both modes: fill whole buffer first: [abcdefghijklmnopq]. Also tell
+		resampler this is the last read before either a rewind or a stop. */
 
 		render_(ch, buf, tracker, 0, seqIsRunning);
+		resampler.last();
 
 		/* Mode::REWIND: fill buffer from offset:  [abcdefghi|abcdfefg]
 		   Mode::STOP:   clear buffer from offset: [abcdefghi|--------] */
