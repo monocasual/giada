@@ -119,10 +119,10 @@ constexpr float G_MIN_UI_SCALING        = 0.0f; // Auto: FLTK will figure it out
 constexpr float G_MAX_UI_SCALING        = 4.0f;
 
 /* -- default values -------------------------------------------------------- */
-constexpr RtAudio::Api G_DEFAULT_SOUNDSYS            = RtAudio::Api::RTAUDIO_DUMMY;
+constexpr RtAudio::Api G_DEFAULT_SOUNDSYS            = RtAudio::Api::UNSPECIFIED;
 constexpr unsigned int G_DEFAULT_SOUNDDEV_OUT        = 0; // disabled by default
 constexpr unsigned int G_DEFAULT_SOUNDDEV_IN         = 0; // disabled by default
-constexpr RtMidi::Api  G_DEFAULT_MIDI_API            = RtMidi::Api::RTMIDI_DUMMY;
+constexpr RtMidi::Api  G_DEFAULT_MIDI_API            = RtMidi::Api::UNSPECIFIED;
 constexpr int          G_DEFAULT_MIDI_PORT_IN        = -1;
 constexpr int          G_DEFAULT_MIDI_PORT_OUT       = -1;
 constexpr int          G_DEFAULT_SAMPLERATE          = 44100;

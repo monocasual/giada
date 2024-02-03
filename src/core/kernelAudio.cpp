@@ -68,7 +68,11 @@ bool KernelAudio::init()
 {
 	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
-	setAPI_(kernelAudio.api);
+	const RtAudio::Api currentApi = setAPI_(kernelAudio.api);
+
+	m_model.get().kernelAudio     = {};
+	m_model.get().kernelAudio.api = currentApi;
+	m_model.swap(model::SwapType::NONE);
 
 	OpenStreamResult result = openStream_(
 	    kernelAudio.deviceOut,
@@ -81,12 +85,12 @@ bool KernelAudio::init()
 
 /* -------------------------------------------------------------------------- */
 
-void KernelAudio::setAPI(RtAudio::Api api)
+void KernelAudio::setAPI(RtAudio::Api desiredApi)
 {
-	setAPI_(api);
+	const RtAudio::Api currentApi = setAPI_(desiredApi);
 
 	m_model.get().kernelAudio     = {};
-	m_model.get().kernelAudio.api = api;
+	m_model.get().kernelAudio.api = currentApi;
 	m_model.swap(model::SwapType::NONE);
 
 	printDevices(getAvailableDevices());
@@ -287,7 +291,7 @@ void KernelAudio::printDevices(const std::vector<m::KernelAudio::Device>& device
 
 /* -------------------------------------------------------------------------- */
 
-void KernelAudio::setAPI_(RtAudio::Api api)
+RtAudio::Api KernelAudio::setAPI_(RtAudio::Api api)
 {
 	u::log::print("[KA] using API {}\n", u::string::toString(api));
 
@@ -299,6 +303,11 @@ void KernelAudio::setAPI_(RtAudio::Api api)
 	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg) {
 		u::log::print("[KA] RtAudio error {}: {}\n", static_cast<int>(type), msg);
 	});
+
+	/* If api == UNSPECIFIED, rtAudio will pick one according to some internal 
+	logic. */
+
+	return api == RtAudio::Api::UNSPECIFIED ? m_rtAudio->getCurrentApi() : api;
 }
 
 /* -------------------------------------------------------------------------- */

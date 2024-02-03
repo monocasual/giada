@@ -156,7 +156,12 @@ private:
 		unsigned int actualBufferSize = 0;
 	};
 
-	void setAPI_(RtAudio::Api);
+	/* setAPI_
+	Sets the API. Returns the chosen API, which might be a different one in 
+	case API in input is UNSPECIFIED (RtAudio would pick one according to some
+	internal logic). */
+
+	RtAudio::Api setAPI_(RtAudio::Api);
 
 	OpenStreamResult openStream_(
 	    const model::KernelAudio::Device& out,
