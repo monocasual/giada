@@ -353,10 +353,6 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 	outParams.nChannels    = out.channelsCount;
 	outParams.firstChannel = out.channelsStart;
 
-	/* Input device can be disabled. Unlike the output, here we are using all
-	channels and let the user choose which one to record from in the configuration
-	panel. */
-
 	if (in.id != 0)
 	{
 		inParams.deviceId     = in.id;
