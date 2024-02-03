@@ -37,8 +37,8 @@ namespace
 {
 void sanitize_(Conf& conf)
 {
-	conf.soundDeviceOut   = std::max(0u, conf.soundDeviceOut);
-	conf.soundDeviceIn    = std::max(0u, conf.soundDeviceIn);
+	conf.soundDeviceOut   = std::max(0, conf.soundDeviceOut);
+	conf.soundDeviceIn    = std::max(0, conf.soundDeviceIn);
 	conf.channelsOutCount = G_MAX_IO_CHANS;
 	conf.channelsOutStart = std::max(0, conf.channelsOutStart);
 	conf.channelsInCount  = std::max(1, conf.channelsInCount);
