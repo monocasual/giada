@@ -165,6 +165,11 @@ private:
 
 	RtAudio::Api setAPI_(RtAudio::Api);
 
+	/* openStream_
+	Opens a (multiplex) stream. Returns the chosen devices as an OpenStreamResult
+	object, which might be different from those passed in in case a device ID
+	is set to -1 (chosen automatically by RtAudio). */
+
 	OpenStreamResult openStream_(
 	    const model::KernelAudio::Device& out,
 	    const model::KernelAudio::Device& in,

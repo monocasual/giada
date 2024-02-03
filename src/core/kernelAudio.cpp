@@ -93,7 +93,7 @@ bool KernelAudio::init()
 
 void KernelAudio::setAPI(RtAudio::Api desiredApi)
 {
-	m_model.get().kernelAudio     = {};
+	m_model.get().kernelAudio     = {}; // Set API = reset everything
 	m_model.get().kernelAudio.api = setAPI_(desiredApi);
 	m_model.swap(model::SwapType::NONE);
 
