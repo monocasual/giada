@@ -151,9 +151,11 @@ private:
 
 	struct OpenStreamResult
 	{
-		bool         success          = false;
-		unsigned int actualSampleRate = 0;
-		unsigned int actualBufferSize = 0;
+		bool                       success          = false;
+		model::KernelAudio::Device deviceOut        = {};
+		model::KernelAudio::Device deviceIn         = {};
+		unsigned int               actualSampleRate = 0;
+		unsigned int               actualBufferSize = 0;
 	};
 
 	/* setAPI_

@@ -70,7 +70,6 @@ bool KernelAudio::init()
 
 	const RtAudio::Api currentApi = setAPI_(kernelAudio.api);
 
-	m_model.get().kernelAudio     = {};
 	m_model.get().kernelAudio.api = currentApi;
 	m_model.swap(model::SwapType::NONE);
 
@@ -79,6 +78,17 @@ bool KernelAudio::init()
 	    kernelAudio.deviceIn,
 	    kernelAudio.samplerate,
 	    kernelAudio.buffersize);
+
+	if (result.success)
+	{
+		model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+
+		kernelAudio.deviceOut  = result.deviceOut;
+		kernelAudio.deviceIn   = result.deviceIn;
+		kernelAudio.samplerate = result.actualSampleRate;
+		kernelAudio.buffersize = result.actualBufferSize;
+		m_model.swap(model::SwapType::NONE);
+	}
 
 	return result.success;
 }
@@ -115,8 +125,8 @@ bool KernelAudio::openStream(
 
 	model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
-	kernelAudio.deviceOut  = out;
-	kernelAudio.deviceIn   = in;
+	kernelAudio.deviceOut  = result.deviceOut;
+	kernelAudio.deviceIn   = result.deviceIn;
 	kernelAudio.samplerate = result.actualSampleRate;
 	kernelAudio.buffersize = result.actualBufferSize;
 	m_model.swap(model::SwapType::NONE);
@@ -349,13 +359,13 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
 
-	outParams.deviceId     = out.id == G_DEFAULT_SOUNDDEV_OUT ? m_rtAudio->getDefaultOutputDevice() : out.id;
+	outParams.deviceId     = out.id == -1 ? m_rtAudio->getDefaultOutputDevice() : out.id;
 	outParams.nChannels    = out.channelsCount;
 	outParams.firstChannel = out.channelsStart;
 
 	if (in.id != 0)
 	{
-		inParams.deviceId     = in.id;
+		inParams.deviceId     = in.id == -1 ? m_rtAudio->getDefaultInputDevice() : in.id;
 		inParams.nChannels    = in.channelsCount;
 		inParams.firstChannel = in.channelsStart;
 	}
@@ -408,7 +418,19 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 
 	u::log::print("[KA] Device opened successfully\n");
 
-	return {true, actualSampleRate, actualBufferSize};
+	return {
+	    true,
+	    {
+	        static_cast<int>(outParams.deviceId),
+	        static_cast<int>(outParams.nChannels),
+	        static_cast<int>(outParams.firstChannel),
+	    },
+	    {
+	        static_cast<int>(inParams.deviceId),
+	        static_cast<int>(inParams.nChannels),
+	        static_cast<int>(inParams.firstChannel),
+	    },
+	    actualSampleRate, actualBufferSize};
 }
 
 /* -------------------------------------------------------------------------- */

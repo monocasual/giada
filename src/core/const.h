@@ -120,8 +120,8 @@ constexpr float G_MAX_UI_SCALING        = 4.0f;
 
 /* -- default values -------------------------------------------------------- */
 constexpr RtAudio::Api G_DEFAULT_SOUNDSYS            = RtAudio::Api::UNSPECIFIED;
-constexpr int          G_DEFAULT_SOUNDDEV_OUT        = 0; // disabled by default
-constexpr int          G_DEFAULT_SOUNDDEV_IN         = 0; // disabled by default
+constexpr int          G_DEFAULT_SOUNDDEV_OUT        = -1; // auto by default: RtAudio will figure it out
+constexpr int          G_DEFAULT_SOUNDDEV_IN         = -1; // auto by default: RtAudio will figure it out
 constexpr RtMidi::Api  G_DEFAULT_MIDI_API            = RtMidi::Api::UNSPECIFIED;
 constexpr int          G_DEFAULT_MIDI_PORT_IN        = -1;
 constexpr int          G_DEFAULT_MIDI_PORT_OUT       = -1;
