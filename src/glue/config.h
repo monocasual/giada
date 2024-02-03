@@ -52,7 +52,7 @@ struct AudioDeviceData
 	AudioDeviceData(DeviceType t, const m::KernelAudio::Device&);
 
 	DeviceType                type        = DeviceType::OUTPUT;
-	unsigned int              id          = 0;
+	int                       id          = 0;
 	std::string               name        = "";
 	int                       channelsMax = 0;
 	std::vector<unsigned int> sampleRates = {};
@@ -65,8 +65,8 @@ struct AudioDeviceData
 
 struct AudioData
 {
-	void setOutputDevice(unsigned int id);
-	void setInputDevice(unsigned int id);
+	void setOutputDevice(int id);
+	void setInputDevice(int id);
 	void toggleInputDevice(bool);
 
 	std::map<RtAudio::Api, std::string> apis;

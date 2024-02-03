@@ -60,7 +60,7 @@ AudioDeviceData::AudioDeviceData(DeviceType type, const m::KernelAudio::Device& 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void AudioData::setOutputDevice(unsigned int id)
+void AudioData::setOutputDevice(int id)
 {
 	for (AudioDeviceData& d : outputDevices)
 	{
@@ -72,7 +72,7 @@ void AudioData::setOutputDevice(unsigned int id)
 
 /* -------------------------------------------------------------------------- */
 
-void AudioData::setInputDevice(unsigned int id)
+void AudioData::setInputDevice(int id)
 {
 	for (AudioDeviceData& d : inputDevices)
 	{
