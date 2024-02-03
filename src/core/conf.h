@@ -87,7 +87,7 @@ struct Conf final
 	int               actionEditorPianoRollY = -1;
 
 	geompp::Rect<int> sampleEditorBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
-	int               sampleEditorGridVal = 0;
+	int               sampleEditorGridVal = 1;
 	int               sampleEditorGridOn  = false;
 
 	geompp::Rect<int> midiInputBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};

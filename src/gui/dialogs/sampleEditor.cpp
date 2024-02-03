@@ -137,20 +137,20 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 		redraw();
 	};
 
-	grid->addItem("1");
-	grid->addItem("2");
-	grid->addItem("3");
-	grid->addItem("4");
-	grid->addItem("6");
-	grid->addItem("8");
-	grid->addItem("16");
-	grid->addItem("32");
-	grid->addItem("64");
+	grid->addItem("1", 1);
+	grid->addItem("2", 2);
+	grid->addItem("3", 3);
+	grid->addItem("4", 4);
+	grid->addItem("6", 6);
+	grid->addItem("8", 8);
+	grid->addItem("16", 16);
+	grid->addItem("32", 32);
+	grid->addItem("64", 64);
 	grid->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_GRIDRES));
 	grid->showItem(model.sampleEditorGridVal);
 	grid->onChange = [this](ID) {
 		/* TODO - redraw grid if != (off) */
-		waveTools->waveform->setGridLevel(std::stoi(grid->getSelectedLabel()));
+		waveTools->waveform->setGridLevel(grid->getSelectedId());
 	};
 
 	snap->value(model.sampleEditorGridOn);
