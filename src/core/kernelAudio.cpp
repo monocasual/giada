@@ -66,12 +66,9 @@ KernelAudio::KernelAudio(model::Model& model)
 
 bool KernelAudio::init()
 {
-	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
+	model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
-	const RtAudio::Api currentApi = setAPI_(kernelAudio.api);
-
-	m_model.get().kernelAudio.api = currentApi;
-	m_model.swap(model::SwapType::NONE);
+	kernelAudio.api = setAPI_(kernelAudio.api);
 
 	OpenStreamResult result = openStream_(
 	    kernelAudio.deviceOut,
@@ -81,14 +78,13 @@ bool KernelAudio::init()
 
 	if (result.success)
 	{
-		model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
-
 		kernelAudio.deviceOut  = result.deviceOut;
 		kernelAudio.deviceIn   = result.deviceIn;
 		kernelAudio.samplerate = result.actualSampleRate;
 		kernelAudio.buffersize = result.actualBufferSize;
-		m_model.swap(model::SwapType::NONE);
 	}
+
+	m_model.swap(model::SwapType::NONE);
 
 	return result.success;
 }
@@ -97,10 +93,8 @@ bool KernelAudio::init()
 
 void KernelAudio::setAPI(RtAudio::Api desiredApi)
 {
-	const RtAudio::Api currentApi = setAPI_(desiredApi);
-
 	m_model.get().kernelAudio     = {};
-	m_model.get().kernelAudio.api = currentApi;
+	m_model.get().kernelAudio.api = setAPI_(desiredApi);
 	m_model.swap(model::SwapType::NONE);
 
 	printDevices(getAvailableDevices());
