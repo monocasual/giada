@@ -165,6 +165,8 @@ void Recorder::toggleInputRec(int sampleRate)
 		return;
 	if (m_mixer.isRecordingInput())
 		stopInputRec(sampleRate);
+	else if (m_sequencer.getStatus() == SeqStatus::WAITING)
+		m_sequencer.setStatus(SeqStatus::STOPPED);
 	else
 		prepareInputRec(m_mixer.getRecTriggerMode(), m_mixer.getInputRecMode());
 }
