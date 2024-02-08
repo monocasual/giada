@@ -92,6 +92,8 @@ void Recorder::toggleActionRec()
 {
 	if (m_mixer.isRecordingActions())
 		stopActionRec();
+	else if (m_sequencer.getStatus() == SeqStatus::WAITING)
+		m_sequencer.setStatus(SeqStatus::STOPPED);
 	else
 		prepareActionRec(m_mixer.getRecTriggerMode());
 }
