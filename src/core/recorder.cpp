@@ -127,8 +127,16 @@ void Recorder::stopInputRec(int sampleRate)
 	if (!m_mixer.isRecordingInput())
 		return;
 
-	const InputRecMode recMode        = m_mixer.getInputRecMode();
-	Frame              recordedFrames = m_mixer.stopInputRec();
+	const RecTriggerMode recTriggerMode = m_mixer.getRecTriggerMode();
+	const InputRecMode   recMode        = m_mixer.getInputRecMode();
+	Frame                recordedFrames = m_mixer.stopInputRec();
+
+	/* Restore record trigger mode to normal in case you want to record again
+	while the sequencer is running - if in SIGNAL mode, the sequencer would
+	pause otherwise (see https://github.com/monocasual/giada/issues/678). */
+
+	if (recTriggerMode == RecTriggerMode::SIGNAL && m_sequencer.getStatus() == SeqStatus::RUNNING)
+		m_mixer.setRecTriggerMode(RecTriggerMode::NORMAL);
 
 	/* When recording in RIGID mode, the amount of recorded frames is always 
 	equal to the current loop length. */
