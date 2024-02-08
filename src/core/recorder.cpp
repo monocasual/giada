@@ -70,6 +70,13 @@ void Recorder::stopActionRec()
 
 	m_mixer.stopActionRec();
 
+	/* Restore record trigger mode to normal in case you want to record again
+	while the sequencer is running - if in SIGNAL mode, the sequencer would
+	pause otherwise (see https://github.com/monocasual/giada/issues/678). */
+
+	if (m_mixer.getRecTriggerMode() == RecTriggerMode::SIGNAL && m_sequencer.getStatus() == SeqStatus::RUNNING)
+		m_mixer.setRecTriggerMode(RecTriggerMode::NORMAL);
+
 	/* If you stop the Action Recorder in SIGNAL mode before any actual 
 	recording: just clean up everything and return. */
 
