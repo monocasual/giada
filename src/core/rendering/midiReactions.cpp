@@ -31,28 +31,6 @@
 
 namespace giada::m::rendering
 {
-
-/* -------------------------------------------------------------------------- */
-/*
-const juce::MidiBuffer& prepareMidiBuffer(ChannelShared& shared)
-{
-	shared.midiBuffer.clear();
-
-	MidiEvent e;
-	while (shared.midiQueue.pop(e))
-	{
-		juce::MidiMessage message = juce::MidiMessage(
-		    e.getStatus(),
-		    e.getNote(),
-		    e.getVelocity());
-		shared.midiBuffer.addEvent(message, e.getDelta());
-	}
-
-	return shared.midiBuffer;
-}*/
-
-/* -------------------------------------------------------------------------- */
-
 void playMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
 {
 	ChannelStatus playStatus = a_playStatus.load();
