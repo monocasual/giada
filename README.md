@@ -18,12 +18,12 @@ Giada is an open source, minimalistic and hardcore music production tool. Design
 
 ## Main features
 
-1. Giada is a loop machine — build your performance in real time by layering audio tracks or MIDI events, driven by the main sequencer.
-2. Giada is a sample player — load samples from your crates and play them with a computer keyboard or a MIDI controller.
-3. Giada is a song editor — write songs from scratch or edit existing live recordings with the powerful Action Editor, for a fine-tuned control.
-4. Giada is a live recorder — record sounds from the real world and MIDI events coming from external devices or other apps.
-5. Giada is an FX processor — process samples or audio/MIDI input signals with VST instruments from your plug-ins collection.
-6. Giada is a MIDI controller — control other software or synchronize physical MIDI devices by using Giada as a MIDI master sequencer.
+* Giada is a loop machine — build your performance in real time by layering audio tracks or MIDI events, driven by the main sequencer;
+* Giada is a sample player — load samples from your crates and play them with a computer keyboard or a MIDI controller;
+* Giada is a song editor — write songs from scratch or edit existing live recordings with the powerful Action Editor, for a fine-tuned control;
+* Giada is a live recorder — record sounds from the real world and MIDI events coming from external devices or other apps;
+* Giada is an FX processor — process samples or audio/MIDI input signals with VST instruments from your plug-ins collection;
+* Giada is a MIDI controller — control other software or synchronize physical MIDI devices by using Giada as a MIDI master sequencer.
 
 ### And more:
 
