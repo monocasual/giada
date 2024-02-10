@@ -11,6 +11,24 @@
 --------------------------------------------------------------------------------
 
 
+1.0.0 --- (unreleased)
+- Main Menu redesign with macOS support
+- Main Window I/O redesign with vertical audio meters
+- Show beat number in Main Sequencer
+- Redesigned Column menu with improved usability
+- New Velocity Editor widget in Sample Channel Action Editor
+- Recursive buffer rendering implementation (#538)
+- Let Giada pick a default audio device if not specified (#669)"
+- [Linux] Remove duplicated .desktop file generation (#591)
+- [Linux] Update metainfo.xml file
+- Optimize audio preview rendering: enable it only when Sample Editor is open
+- Fix some Sample Editor operations not working correctly
+- Fix grid not showing up correctly in Sample Editor (#679)
+- Fix inability to quit record-on-signal mode (#677)
+- Fix Record-on-signal mode not deactivated after recording audio (#678)
+- Refactoring and code cleanup
+
+
 0.26.1 --- 2023 . 12. 19
 - Add ability to stop plug-ins scan (#423)
 - Add ability to sort plug-ins in both ascending and descending order (#542)
