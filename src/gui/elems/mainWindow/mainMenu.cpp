@@ -102,11 +102,10 @@ geMainMenu::geMainMenu()
 
 #ifdef G_OS_MAC
 	static const Fl_Menu_Item macOSextra[] = {
-		makeMenuItem_(LangMap::MAIN_MENU_CONFIG, [](Fl_Widget*, void*) { c::layout::openConfigWindow(); }),
-		endSubMenu_(),
-		endSubMenu_()
-	};
-	Fl_Mac_App_Menu::custom_application_menu_items(macOSextra); 
+	    makeMenuItem_(LangMap::MAIN_MENU_CONFIG, [](Fl_Widget*, void*) { c::layout::openConfigWindow(); }),
+	    endSubMenu_(),
+	    endSubMenu_()};
+	Fl_Mac_App_Menu::custom_application_menu_items(macOSextra);
 	Fl_Sys_Menu_Bar::about([](Fl_Widget*, void*) { c::layout::openAboutWindow(); }, nullptr);
 #endif
 }
