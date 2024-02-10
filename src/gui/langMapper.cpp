@@ -102,7 +102,7 @@ LangMap::LangMap()
 	m_data[MAIN_MENU_EDIT_FREEALLSAMPLES]  = "Free all Sample channels";
 	m_data[MAIN_MENU_EDIT_CLEARALLACTIONS] = "Clear all actions";
 	m_data[MAIN_MENU_EDIT_SETUPMIDIINPUT]  = "Setup global MIDI input...";
-	m_data[MAIN_MENU_CONFIG]               = "Setup";
+	m_data[MAIN_MENU_CONFIG]               = "Settings";
 	m_data[MAIN_MENU_ABOUT]                = "About";
 
 	m_data[MAIN_IO_LABEL_OUTMETER]     = "Main output meter";
@@ -283,7 +283,7 @@ LangMap::LangMap()
 	m_data[ABOUT_BODY_VST] = "VST Plug-In Technology by Steinberg\n"
 	                         "VST is a trademark of Steinberg\nMedia Technologies GmbH";
 
-	m_data[CONFIG_TITLE]        = "Configuration";
+	m_data[CONFIG_TITLE]        = "Settings";
 	m_data[CONFIG_RESTARTGIADA] = "Restart Giada for the changes to take effect.";
 
 	m_data[CONFIG_AUDIO_TITLE]                 = "Audio";
