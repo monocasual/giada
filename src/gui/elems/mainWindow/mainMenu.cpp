@@ -36,6 +36,9 @@
 #include "keyboard/keyboard.h"
 #include "utils/gui.h"
 #include <FL/Fl_Menu_Item.H>
+#ifdef G_OS_MAC
+#include <FL/platform.H>
+#endif
 
 extern giada::v::Ui* g_ui;
 
@@ -89,10 +92,22 @@ geMainMenu::geMainMenu()
 	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_CLEARALLACTIONS, [](Fl_Widget*, void*) { c::main::clearAllActions(); }),
 	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_SETUPMIDIINPUT, [](Fl_Widget*, void*) { c::layout::openMasterMidiInputWindow(); }),
 	    endSubMenu_(),
+#ifndef G_OS_MAC // "Config" and "About" are treated differently on macOS menu
 	    makeMenuItem_(LangMap::MAIN_MENU_CONFIG, [](Fl_Widget*, void*) { c::layout::openConfigWindow(); }),
 	    makeMenuItem_(LangMap::MAIN_MENU_ABOUT, [](Fl_Widget*, void*) { c::layout::openAboutWindow(); }),
+#endif
 	    endSubMenu_()};
 
 	copy(popup);
+
+#ifdef G_OS_MAC
+	static const Fl_Menu_Item macOSextra[] = {
+		makeMenuItem_(LangMap::MAIN_MENU_CONFIG, [](Fl_Widget*, void*) { c::layout::openConfigWindow(); }),
+		endSubMenu_(),
+		endSubMenu_()
+	};
+	Fl_Mac_App_Menu::custom_application_menu_items(macOSextra); 
+	Fl_Sys_Menu_Bar::about([](Fl_Widget*, void*) { c::layout::openAboutWindow(); }, nullptr);
+#endif
 }
 } // namespace giada::v
