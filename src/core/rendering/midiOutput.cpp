@@ -37,17 +37,6 @@ std::function<void(ID)> onSend_ = nullptr;
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiToOut_(ID channelId, MidiEvent e, int outputFilter, KernelMidi& kernelMidi)
-{
-	assert(onSend_ != nullptr);
-
-	e.setChannel(outputFilter);
-	kernelMidi.send(e);
-	onSend_(channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-
 template <typename KernelMidiI>
 void sendMidiLightning_(ID channelId, uint32_t learnt, const MidiMap::Message& msg, MidiMapper<KernelMidiI>& midiMapper)
 {
@@ -86,7 +75,7 @@ void sendMidiFromActions(const Channel& ch, const std::vector<Action>& actions, 
 			continue;
 		sendMidiToPlugins_(ch.shared->midiQueue, action.event, delta);
 		if (ch.canSendMidi())
-			sendMidiToOut_(ch.id, action.event, ch.midiChannel->outputFilter, kernelMidi);
+			sendMidiToOut(ch.id, action.event, ch.midiChannel->outputFilter, kernelMidi);
 	}
 }
 
@@ -98,7 +87,7 @@ void sendMidiAllNotesOff(const Channel& ch, KernelMidi& kernelMidi)
 
 	sendMidiToPlugins_(ch.shared->midiQueue, e, 0);
 	if (ch.canSendMidi())
-		sendMidiToOut_(ch.id, e, ch.midiChannel->outputFilter, kernelMidi);
+		sendMidiToOut(ch.id, e, ch.midiChannel->outputFilter, kernelMidi);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -112,6 +101,17 @@ void sendMidiEventToPlugins(ChannelShared::MidiQueue& midiQueue, const MidiEvent
 	MidiEvent flat(e);
 	flat.setChannel(0);
 	sendMidiToPlugins_(midiQueue, flat, /*delta=*/0);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void sendMidiToOut(ID channelId, MidiEvent e, int outputFilter, KernelMidi& kernelMidi)
+{
+	assert(onSend_ != nullptr);
+
+	e.setChannel(outputFilter);
+	kernelMidi.send(e);
+	onSend_(channelId);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -61,6 +61,11 @@ on by the PluginHost. */
 
 void sendMidiEventToPlugins(ChannelShared::MidiQueue&, const MidiEvent&);
 
+/* sendMidiToOut
+Sends a MIDI event to the outside world. */
+
+void sendMidiToOut(ID channelId, MidiEvent, int outputFilter, KernelMidi&);
+
 /* sendMidiLightning[...]
 Sends MIDI lightning messages to the outside world. */
 
