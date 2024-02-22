@@ -18,7 +18,8 @@
 - Redesigned Column menu with improved usability
 - New Velocity Editor widget in Sample Channel Action Editor
 - Recursive buffer rendering implementation (#538)
-- Let Giada pick a default audio device if not specified (#669)"
+- Let Giada pick a default audio device if not specified (#669)
+- Send MIDI data through armed channels to the outside world (#498)
 - [Linux] Remove duplicated .desktop file generation (#591)
 - [Linux] Update metainfo.xml file
 - Optimize audio preview rendering: enable it only when Sample Editor is open
