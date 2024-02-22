@@ -155,6 +155,8 @@ void Reactor::processMidiEvent(ID channelId, const MidiEvent& e, bool canRecordA
 		m_model.swap(model::SwapType::HARD);
 	}
 	sendMidiEventToPlugins(ch.shared->midiQueue, e);
+	if (ch.canSendMidi())
+		sendMidiToOut(channelId, e, ch.midiChannel->outputFilter, m_kernelMidi); // Also send it back to the outside world
 }
 
 /* -------------------------------------------------------------------------- */
