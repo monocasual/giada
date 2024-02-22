@@ -244,7 +244,7 @@ void Ui::openSubWindow(v::gdWindow* child)
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::498(ID wid)
+void Ui::closeSubWindow(ID wid)
 {
 	mainWindow->deleteChild(wid);
 }
