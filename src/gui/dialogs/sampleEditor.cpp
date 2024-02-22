@@ -182,8 +182,6 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 
 	info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
 
-	c::sampleEditor::preparePreview(channelId);
-
 	size_range(720, 480);
 	set_non_modal();
 	rebuild();
@@ -206,6 +204,8 @@ gdSampleEditor::~gdSampleEditor()
 
 void gdSampleEditor::rebuild()
 {
+	c::sampleEditor::preparePreview(m_channelId);
+
 	m_data = c::sampleEditor::getData(m_channelId);
 	waveTools->rebuild(m_data);
 	pitchTool->rebuild(m_data);

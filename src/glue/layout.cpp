@@ -188,6 +188,11 @@ void openMidiActionEditor(ID channelId)
 
 void openSampleEditor(ID channelId)
 {
+	/* Close it first, in case it is open. This is to prevent the Window class
+	from deleting the Sample Editor window if open, losing the loaded Wave and
+	resulting in a broken Editor (gdSampleEditor's destructor frees the loaded
+	sample). */
+	g_ui->closeSubWindow(WID_SAMPLE_EDITOR);
 	g_ui->openSubWindow(new v::gdSampleEditor(channelId, g_ui->model));
 }
 
