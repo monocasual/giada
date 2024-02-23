@@ -11,7 +11,7 @@
 --------------------------------------------------------------------------------
 
 
-1.0.0 --- (unreleased)
+1.0.0 --- 2024 . 02 . 24
 - Main Menu redesign with macOS support
 - Main Window I/O redesign with vertical audio meters
 - Show beat number in Main Sequencer
@@ -23,6 +23,7 @@
 - [Linux] Remove duplicated .desktop file generation (#591)
 - [Linux] Update metainfo.xml file
 - Optimize audio preview rendering: enable it only when Sample Editor is open
+- Improved zoom with mouse wheel in Sample Editor and Action Editor
 - Fix some Sample Editor operations not working correctly
 - Fix grid not showing up correctly in Sample Editor (#679)
 - Fix inability to quit record-on-signal mode (#677)
