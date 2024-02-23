@@ -138,7 +138,7 @@ int gdBaseActionEditor::handle(int e)
 		works if Ctrl or Cmd are pressed. */
 		if (!Fl::event_command())
 			return Fl_Group::handle(e);
-		Fl::event_dy() == -1 ? zoomIn() : zoomOut();
+		Fl::event_dy() <= 0 ? zoomIn() : zoomOut();
 		return 1;
 	default:
 		return Fl_Group::handle(e);

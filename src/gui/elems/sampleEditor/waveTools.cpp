@@ -124,7 +124,7 @@ int geWaveTools::handle(int e)
 		works if Ctrl or Cmd are pressed. */
 		if (!Fl::event_command())
 			return Fl_Group::handle(e);
-		waveform->setZoom(Fl::event_dy() == 1 ? geWaveform::Zoom::OUT : geWaveform::Zoom::IN);
+		waveform->setZoom(Fl::event_dy() <= 0 ? geWaveform::Zoom::IN : geWaveform::Zoom::OUT);
 		redraw();
 		return 1;
 	}
