@@ -12,6 +12,6 @@ Comment[es]=Caja de ritmos y secuenciador de loops
 Comment[fr]=Boîte à rythme et séquenceur de boucle
 Exec=giada %f
 Terminal=false
-Icon=com.giadamusic.Giada
+Icon=giada
 Categories=Music;AudioVideo;Audio;Midi;X-Digital_Processing;X-Jack;X-MIDI;
 Keywords=midi;jackd;alsa;pulse;audio;sound;loop;
