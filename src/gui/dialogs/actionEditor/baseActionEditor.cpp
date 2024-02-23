@@ -134,6 +134,10 @@ int gdBaseActionEditor::handle(int e)
 	switch (e)
 	{
 	case FL_MOUSEWHEEL:
+		/* Zoom with mousewheel (or two fingers gesture on the mac trackpad) only
+		works if Ctrl or Cmd are pressed. */
+		if (!Fl::event_command())
+			return Fl_Group::handle(e);
 		Fl::event_dy() == -1 ? zoomIn() : zoomOut();
 		return 1;
 	default:
