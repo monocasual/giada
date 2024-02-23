@@ -120,6 +120,10 @@ int geWaveTools::handle(int e)
 	{
 	case FL_MOUSEWHEEL:
 	{
+		/* Zoom with mousewheel (or two fingers gesture on the mac trackpad) only
+		works if Ctrl or Cmd are pressed. */
+		if (!Fl::event_command())
+			return Fl_Group::handle(e);
 		waveform->setZoom(Fl::event_dy() == 1 ? geWaveform::Zoom::OUT : geWaveform::Zoom::IN);
 		redraw();
 		return 1;
