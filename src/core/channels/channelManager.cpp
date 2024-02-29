@@ -104,22 +104,31 @@ void ChannelManager::setBufferSize(int bufferSize)
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelManager::addChannel(ChannelType type, int bufferSize)
+Channel& ChannelManager::addChannel(ChannelType type, int bufferSize, ID groupChannelId)
 {
 	const bool               overdubProtectionDefaultOn = m_model.get().behaviors.overdubProtectionDefaultOn;
 	const Resampler::Quality rsmpQuality                = m_model.get().kernelAudio.rsmpQuality;
 
-	channelFactory::Data data = channelFactory::create(/*id=*/0, type, bufferSize, rsmpQuality, overdubProtectionDefaultOn);
+	channelFactory::Data data      = channelFactory::create(/*id=*/0, type, bufferSize, rsmpQuality, overdubProtectionDefaultOn);
+	const ID             channelId = data.channel.id;
 
 	setupChannelCallbacks(data.channel, *data.shared);
 
-	m_model.get().channels.add(std::move(data.channel));
+	if (groupChannelId != 0)
+	{
+		Channel& child  = data.channel;
+		Channel& parent = m_model.get().channels.get(groupChannelId);
+		parent.addChild(std::move(child));
+	}
+	else
+		m_model.get().channels.add(std::move(data.channel));
+
 	m_model.addChannelShared(std::move(data.shared));
 	m_model.swap(model::SwapType::HARD);
 
 	triggerOnChannelsAltered();
 
-	return m_model.get().channels.getLast();
+	return m_model.get().channels.get(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
