@@ -35,6 +35,29 @@
 
 namespace giada::m::model
 {
+namespace
+{
+const Channel* getChannel_(const std::vector<Channel>& channels, ID id)
+{
+	for (const Channel& ch : channels)
+	{
+		if (ch.id == id)
+			return &ch;
+		if (ch.type == ChannelType::GROUP)
+		{
+			const Channel* child = getChannel_(ch.groupChannel->channels->getAll(), id);
+			if (child != nullptr)
+				return child;
+		}
+	}
+	return nullptr;
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 Channel& Channels::get(ID id)
 {
 	return const_cast<Channel&>(std::as_const(*this).get(id));
@@ -42,9 +65,9 @@ Channel& Channels::get(ID id)
 
 const Channel& Channels::get(ID id) const
 {
-	auto it = std::find_if(m_channels.begin(), m_channels.end(), [id](const Channel& c) { return c.id == id; });
-	assert(it != m_channels.end());
-	return *it;
+	const Channel* ch = getChannel_(m_channels, id);
+	assert(ch != nullptr);
+	return *ch;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -84,6 +107,9 @@ void Channels::debug() const
 	for (int i = 0; const Channel& c : m_channels)
 	{
 		fmt::print("\t{} - {}\n", i++, c.debug());
+		if (c.type == ChannelType::GROUP)
+			for (const Channel& child : c.groupChannel->channels->getAll())
+				fmt::print("\t\t{} - {}\n", i++, child.debug());
 
 		if (c.plugins.size() > 0)
 		{

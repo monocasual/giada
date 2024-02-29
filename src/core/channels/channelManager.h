@@ -108,9 +108,10 @@ public:
 	void setBufferSize(int);
 
 	/* addChannel
-    Adds a new channel to the stack. */
+    Adds a new channel to the stack. Pass groupChannelId > 0 to add it to a 
+	Group Channel. */
 
-	Channel& addChannel(ChannelType, int bufferSize);
+	Channel& addChannel(ChannelType, int bufferSize, ID groupChannelId);
 
 	/* loadSampleChannel (1)
     Creates a new Wave from a file path and loads it inside a Sample Channel. */

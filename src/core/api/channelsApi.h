@@ -69,7 +69,7 @@ public:
 	Channel&              get(ID);
 	std::vector<Channel>& getAll();
 
-	Channel& add(ChannelType);
+	Channel& add(ChannelType, ID groupChannelId);
 	int      loadSampleChannel(ID channelId, const std::string& filePath);
 	void     loadSampleChannel(ID channelId, Wave&);
 	void     remove(ID);
