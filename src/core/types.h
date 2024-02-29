@@ -61,7 +61,8 @@ enum class ChannelType : int
 	SAMPLE = 1,
 	MIDI,
 	MASTER,
-	PREVIEW
+	PREVIEW,
+	GROUP
 };
 
 enum class ChannelStatus : int
