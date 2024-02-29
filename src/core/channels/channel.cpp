@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/channels/channel.h"
+#include "core/model/channels.h"
 #include <cassert>
 #ifdef G_DEBUG_MODE
 #include "utils/string.h"
@@ -36,6 +37,7 @@ namespace giada::m
 Channel::Channel(ChannelType type, ID id, ChannelShared& s)
 : shared(&s)
 , id(id)
+, parentId(0)
 , type(type)
 , volume(G_DEFAULT_VOL)
 , pan(G_DEFAULT_PAN)
@@ -57,6 +59,10 @@ Channel::Channel(ChannelType type, ID id, ChannelShared& s)
 		midiChannel.emplace();
 		break;
 
+	case ChannelType::GROUP:
+		groupChannel.emplace();
+		break;
+
 	default:
 		break;
 	}
@@ -67,6 +73,7 @@ Channel::Channel(ChannelType type, ID id, ChannelShared& s)
 Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRatio, Wave* wave, std::vector<Plugin*> plugins)
 : shared(&s)
 , id(p.id)
+, parentId(0) // TODO
 , type(p.type)
 , volume(p.volume)
 , pan(p.pan)
@@ -93,6 +100,10 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 
 	case ChannelType::MIDI:
 		midiChannel.emplace(p);
+		break;
+
+	case ChannelType::GROUP:
+		groupChannel.emplace(); // TODO
 		break;
 
 	default:
@@ -156,6 +167,11 @@ bool Channel::hasWave() const
 	return sampleChannel && sampleChannel->hasWave();
 }
 
+bool Channel::isGrouped() const
+{
+	return parentId != 0;
+}
+
 bool Channel::isPlaying() const
 {
 	ChannelStatus s = shared->playStatus.load();
@@ -167,8 +183,8 @@ bool Channel::isPlaying() const
 #ifdef G_DEBUG_MODE
 std::string Channel::debug() const
 {
-	std::string out = fmt::format("ID={} name='{}' type={} channelShared={}",
-	    id, name, u::string::toString(type), (void*)&shared);
+	std::string out = fmt::format("ID={} name='{}' type={} grouped={} channelShared={}",
+	    id, name, u::string::toString(type), isGrouped(), (void*)&shared);
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
 		out += fmt::format(" wave={} mode={} begin={} end={}",
@@ -176,6 +192,8 @@ std::string Channel::debug() const
 		    u::string::toString(sampleChannel->mode),
 		    sampleChannel->begin,
 		    sampleChannel->end);
+	else if (type == ChannelType::GROUP)
+		out += fmt::format(" channels={}", groupChannel->getChildren().size());
 
 	return out;
 }

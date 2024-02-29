@@ -28,6 +28,7 @@
 #define G_CHANNEL_H
 
 #include "core/channels/channelShared.h"
+#include "core/channels/groupChannel.h"
 #include "core/channels/midiChannel.h"
 #include "core/channels/midiInput.h"
 #include "core/channels/midiLightning.h"
@@ -53,6 +54,7 @@ public:
 	bool canInputRec() const;
 	bool canActionRec() const;
 	bool hasWave() const;
+	bool isGrouped() const;
 
 	/* canReceiveAudio
 	Tells if the sample channel can receive audio as input monitor. */
@@ -65,7 +67,7 @@ public:
 	bool canSendMidi() const;
 
 	/* isAudible
-	True if this channel is currently audible: not muted or not included in a 
+	True if this channel is currently audible: not muted or not included in a
 	solo session. */
 
 	bool isAudible(bool mixerHasSolos) const;
@@ -98,6 +100,7 @@ public:
 
 	ChannelShared*       shared;
 	ID                   id;
+	ID                   parentId;
 	ChannelType          type;
 	float                volume;
 	float                pan;
@@ -113,6 +116,7 @@ public:
 
 	std::optional<SampleChannel> sampleChannel;
 	std::optional<MidiChannel>   midiChannel;
+	std::optional<GroupChannel>  groupChannel;
 
 private:
 	bool m_mute;
