@@ -95,7 +95,7 @@ public:
 	void clearAllActions(ID);
 	void clearAllActions();
 	void freeAllSampleChannels();
-	void sendMidi(ID, MidiEvent);
+	void sendMidi(ID, const MidiEvent&);
 	bool saveSample(ID, const std::string& filePath);
 
 private:

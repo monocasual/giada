@@ -413,7 +413,7 @@ void killReadActionsChannel(ID channelId, Thread t)
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiToChannel(ID channelId, m::MidiEvent e, Thread t)
+void sendMidiToChannel(ID channelId, const m::MidiEvent& e, Thread t)
 {
 	g_engine->getChannelsApi().sendMidi(channelId, e);
 	notifyChannelForMidiIn(t, channelId);

@@ -27,7 +27,6 @@
 #ifndef G_GLUE_CHANNEL_H
 #define G_GLUE_CHANNEL_H
 
-#include "core/midiEvent.h"
 #include "core/types.h"
 #include "core/weakAtomic.h"
 #include <atomic>
@@ -42,6 +41,7 @@ namespace giada::m
 {
 class Plugin;
 class Channel;
+class MidiEvent;
 } // namespace giada::m
 
 namespace giada::v
@@ -208,7 +208,7 @@ void  toggleSoloChannel(ID channelId, Thread t);
 void  toggleArmChannel(ID channelId, Thread t);
 void  toggleReadActionsChannel(ID channelId, Thread t);
 void  killReadActionsChannel(ID channelId, Thread t);
-void  sendMidiToChannel(ID channelId, m::MidiEvent e, Thread t);
+void  sendMidiToChannel(ID channelId, const m::MidiEvent&, Thread t);
 
 /* notifyChannelForMidiIn
 Tells Channel with ID that a MIDI event has been received. */

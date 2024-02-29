@@ -276,7 +276,7 @@ void ChannelsApi::freeAllSampleChannels()
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsApi::sendMidi(ID channelId, MidiEvent e)
+void ChannelsApi::sendMidi(ID channelId, const MidiEvent& e)
 {
 	const bool  canRecordActions = m_recorder.canRecordActions();
 	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
