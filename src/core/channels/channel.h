@@ -28,6 +28,7 @@
 #define G_CHANNEL_H
 
 #include "core/channels/channelShared.h"
+#include "core/channels/groupChannel.h"
 #include "core/channels/midiChannel.h"
 #include "core/channels/midiInput.h"
 #include "core/channels/midiLightning.h"
@@ -77,6 +78,11 @@ public:
 	void setMute(bool);
 	void setSolo(bool);
 
+	/* addChild
+	Adds (moves) another channel into this one. Works only on groups. */
+
+	void addChild(Channel&&);
+
 	/* loadWave
 	Loads Wave and sets it up (name, markers, ...). Also updates Channel's shared
 	state accordingly. Resets begin/end points shift if not specified. */
@@ -98,12 +104,14 @@ public:
 
 	ChannelShared*       shared;
 	ID                   id;
+	ID                   parentId;
 	ChannelType          type;
 	float                volume;
 	float                pan;
 	bool                 armed;
 	int                  key; // TODO - move this to v::Model
 	bool                 hasActions;
+	bool                 grouped;
 	std::string          name;   // TODO - move this to v::Model
 	Pixel                height; // TODO - move this to v::Model
 	std::vector<Plugin*> plugins;
@@ -113,6 +121,7 @@ public:
 
 	std::optional<SampleChannel> sampleChannel;
 	std::optional<MidiChannel>   midiChannel;
+	std::optional<GroupChannel>  groupChannel;
 
 private:
 	bool m_mute;
