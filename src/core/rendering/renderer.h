@@ -109,6 +109,12 @@ private:
 	void renderSampleChannel(const Channel&, const mcl::AudioBuffer& in, bool seqIsRunning) const;
 	void renderMidiChannel(const Channel&) const;
 
+	void renderGroupChannel(
+	    const model::ChannelView&,
+	    const mcl::AudioBuffer& in,
+	    bool                    mixerHasSolos,
+	    bool                    seqIsRunning) const;
+
 	Sequencer&  m_sequencer;
 	Mixer&      m_mixer;
 	PluginHost& m_pluginHost;

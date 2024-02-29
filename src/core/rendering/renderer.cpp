@@ -157,7 +157,7 @@ void Renderer::advanceChannels(
     int                                    quantizerStep) const
 {
 	for (const model::ChannelView& view : views)
-		if (!view.channel->isInternal())
+		if (!view.channel->isInternal() && !view.channel->isGrouped())
 			advanceChannel(view, events, block, quantizerStep);
 }
 
@@ -180,6 +180,9 @@ void Renderer::advanceChannel(
 			rendering::advanceMidiChannel(ch, e, m_kernelMidi);
 		else if (ch.type == ChannelType::SAMPLE)
 			rendering::advanceSampleChannel(ch, e);
+		else if (ch.type == ChannelType::GROUP)
+			for (const Channel* child : view.children)
+				advanceChannel({child, {}}, events, block, quantizerStep);
 	}
 }
 
@@ -193,7 +196,7 @@ void Renderer::renderNormalChannels(
     bool                                   seqIsRunning) const
 {
 	for (const model::ChannelView& view : views)
-		if (!view.channel->isInternal())
+		if (!view.channel->isInternal() && !view.channel->isGrouped())
 			renderNormalChannel(view, out, in, hasSolos, seqIsRunning);
 }
 
@@ -217,6 +220,10 @@ void Renderer::renderNormalChannel(
 	else if (ch.type == ChannelType::MIDI)
 	{
 		renderMidiChannel(ch);
+	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		renderGroupChannel(view, in, mixerHasSolos, seqIsRunning);
 	}
 
 	if (ch.isAudible(mixerHasSolos))
@@ -273,5 +280,24 @@ void Renderer::renderMidiChannel(const Channel& ch) const
 	assert(ch.type == ChannelType::MIDI);
 
 	rendering::renderAudioAndMidiPlugins(ch, m_pluginHost);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Renderer::renderGroupChannel(
+    const model::ChannelView& view,
+    const mcl::AudioBuffer&   in,
+    bool                      mixerHasSolos,
+    bool                      seqIsRunning) const
+{
+	assert(view.channel->type == ChannelType::GROUP);
+
+	for (const Channel* child : view.children)
+	{
+		const model::ChannelView childView = {child, {}};
+		mcl::AudioBuffer&        buffer    = view.channel->shared->audioBuffer;
+		renderNormalChannel(childView, buffer, in, mixerHasSolos, seqIsRunning);
+	}
+	rendering::renderAudioPlugins(*view.channel, m_pluginHost);
 }
 } // namespace giada::m::rendering
