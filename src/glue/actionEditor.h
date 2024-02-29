@@ -27,6 +27,7 @@
 #ifndef G_GLUE_ACTION_EDITOR_H
 #define G_GLUE_ACTION_EDITOR_H
 
+#include "core/actions/action.h"
 #include "core/types.h"
 #include <optional>
 #include <string>
@@ -34,7 +35,6 @@
 
 namespace giada::m
 {
-struct Action;
 class SampleChannel;
 class Channel;
 } // namespace giada::m
