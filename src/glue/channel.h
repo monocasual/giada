@@ -27,7 +27,7 @@
 #ifndef G_GLUE_CHANNEL_H
 #define G_GLUE_CHANNEL_H
 
-#include "core/model/model.h"
+#include "core/midiEvent.h"
 #include "core/types.h"
 #include "core/weakAtomic.h"
 #include <atomic>
@@ -41,7 +41,8 @@ Functions to interact with channels. */
 namespace giada::m
 {
 class Plugin;
-}
+class Channel;
+} // namespace giada::m
 
 namespace giada::v
 {
