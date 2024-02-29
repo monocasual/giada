@@ -172,6 +172,8 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 			rendering::advanceMidiChannel(ch, e, m_kernelMidi);
 		else if (ch.type == ChannelType::SAMPLE)
 			rendering::advanceSampleChannel(ch, e);
+		else if (ch.type == ChannelType::GROUP)
+			advanceChannels(events, *ch.groupChannel->channels, block, quantizerStep);
 	}
 }
 
@@ -199,6 +201,10 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
 	else if (ch.type == ChannelType::MIDI)
 	{
 		renderMidiChannel(ch);
+	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		renderGroupChannel(ch, in, mixerHasSolos, seqIsRunning);
 	}
 
 	if (ch.isAudible(mixerHasSolos))
@@ -255,5 +261,19 @@ void Renderer::renderMidiChannel(const Channel& ch) const
 	assert(ch.type == ChannelType::MIDI);
 
 	rendering::renderMidiChannelPlugins(ch, m_pluginHost);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Renderer::renderGroupChannel(const Channel& ch, const mcl::AudioBuffer& in,
+    bool mixerHasSolos, bool seqIsRunning) const
+{
+	assert(ch.type == ChannelType::GROUP);
+
+	const std::vector<Channel>& children = ch.groupChannel->channels->getAll();
+	mcl::AudioBuffer&           buffer   = ch.shared->audioBuffer;
+
+	renderNormalChannels(children, buffer, in, mixerHasSolos, seqIsRunning);
+	rendering::renderSampleChannelPlugins(ch, m_pluginHost);
 }
 } // namespace giada::m::rendering

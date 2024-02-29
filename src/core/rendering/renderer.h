@@ -80,6 +80,8 @@ private:
 
 	void renderNormalChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
 	    const mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const;
+	void renderGroupedChannels(const std::vector<Channel*>& channels, mcl::AudioBuffer& out,
+	    const mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const;
 	void renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
 	    const mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const;
 	void renderMasterIn(const Channel&, mcl::AudioBuffer& in) const;
@@ -87,6 +89,8 @@ private:
 	void renderPreview(const Channel&, mcl::AudioBuffer& out) const;
 	void renderSampleChannel(const Channel&, const mcl::AudioBuffer& in, bool seqIsRunning) const;
 	void renderMidiChannel(const Channel&) const;
+	void renderGroupChannel(const Channel&, const mcl::AudioBuffer& in, bool mixerHasSolos,
+	    bool seqIsRunning) const;
 
 	Sequencer&  m_sequencer;
 	Mixer&      m_mixer;
