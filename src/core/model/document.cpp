@@ -43,7 +43,7 @@ void Document::load(const Patch& patch, Shared& shared, float sampleRateRatio)
 		assert(channelShared != nullptr);
 
 		Channel channel = channelFactory::deserializeChannel(pchannel, *channelShared, sampleRateRatio, wave, plugins);
-		channels.add(channel);
+		channels.add(std::move(channel));
 	}
 
 	actions.set(actionFactory::deserializeActions(patch.actions));
