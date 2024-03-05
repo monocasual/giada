@@ -51,7 +51,7 @@ public:
 	Channel&              getLast();
 	std::vector<Channel>& getAll();
 	std::vector<Channel*> getIf(std::function<bool(const Channel&)> f);
-	void                  add(const Channel&);
+	void                  add(Channel&&);
 	void                  remove(ID);
 
 private:

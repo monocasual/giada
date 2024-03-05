@@ -118,8 +118,8 @@ void Channels::remove(ID id)
 
 /* -------------------------------------------------------------------------- */
 
-void Channels::add(const Channel& ch)
+void Channels::add(Channel&& ch)
 {
-	m_channels.push_back(ch);
+	m_channels.push_back(std::move(ch));
 }
 } // namespace giada::m::model

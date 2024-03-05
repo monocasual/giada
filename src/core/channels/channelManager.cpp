@@ -85,9 +85,9 @@ void ChannelManager::reset(Frame framesInBuffer)
 	channelFactory::Data previewData = channelFactory::create(
 	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, framesInBuffer, rsmpQuality, overdubProtection);
 
-	m_model.get().channels.add(masterOutData.channel);
-	m_model.get().channels.add(masterInData.channel);
-	m_model.get().channels.add(previewData.channel);
+	m_model.get().channels.add(std::move(masterOutData.channel));
+	m_model.get().channels.add(std::move(masterInData.channel));
+	m_model.get().channels.add(std::move(previewData.channel));
 
 	m_model.addChannelShared(std::move(masterOutData.shared));
 	m_model.addChannelShared(std::move(masterInData.shared));
@@ -113,7 +113,7 @@ Channel& ChannelManager::addChannel(ChannelType type, int bufferSize)
 
 	setupChannelCallbacks(data.channel, *data.shared);
 
-	m_model.get().channels.add(data.channel);
+	m_model.get().channels.add(std::move(data.channel));
 	m_model.addChannelShared(std::move(data.shared));
 	m_model.swap(model::SwapType::HARD);
 
@@ -181,7 +181,7 @@ Channel& ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::v
 
 	/* Then push the new channel in the channels vector. */
 
-	m_model.get().channels.add(newChannelData.channel);
+	m_model.get().channels.add(std::move(newChannelData.channel));
 	m_model.addChannelShared(std::move(newChannelData.shared));
 	m_model.swap(model::SwapType::HARD);
 
