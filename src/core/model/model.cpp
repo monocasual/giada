@@ -265,7 +265,7 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 		Wave*                wave    = findWave(pchannel.waveId);
 		std::vector<Plugin*> plugins = findPlugins(pchannel.pluginIds);
 		channelFactory::Data data    = channelFactory::deserializeChannel(pchannel, sampleRateRatio, bufferSize, rsmpQuality, wave, plugins);
-		layout.channels.add(data.channel);
+		layout.channels.add(std::move(data.channel));
 		getAllChannelsShared().push_back(std::move(data.shared));
 	}
 
