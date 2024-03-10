@@ -89,6 +89,7 @@ list(APPEND SOURCES
 	src/core/channels/channel.cpp
 	src/core/channels/sampleChannel.cpp
 	src/core/channels/midiChannel.cpp
+	src/core/channels/groupChannel.cpp
 	src/core/channels/channelShared.cpp
 	src/core/channels/channelFactory.cpp
 	src/core/model/document.cpp
