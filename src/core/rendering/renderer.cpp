@@ -30,7 +30,7 @@
 #include "core/rendering/midiAdvance.h"
 #include "core/rendering/midiOutput.h"
 #include "core/rendering/midiReactions.h"
-#include "core/rendering/midiRendering.h"
+#include "core/rendering/pluginRendering.h"
 #include "core/rendering/sampleAdvance.h"
 #include "core/rendering/sampleRendering.h"
 #ifdef WITH_AUDIO_JACK
@@ -251,7 +251,7 @@ void Renderer::renderSampleChannel(const Channel& ch, const mcl::AudioBuffer& in
 	if (ch.canReceiveAudio())
 		rendering::renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
 
-	rendering::renderSampleChannelPlugins(ch, m_pluginHost);
+	rendering::renderAudioPlugins(ch, m_pluginHost);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -260,7 +260,7 @@ void Renderer::renderMidiChannel(const Channel& ch) const
 {
 	assert(ch.type == ChannelType::MIDI);
 
-	rendering::renderMidiChannelPlugins(ch, m_pluginHost);
+	rendering::renderAudioAndMidiPlugins(ch, m_pluginHost);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -274,6 +274,6 @@ void Renderer::renderGroupChannel(const Channel& ch, const mcl::AudioBuffer& in,
 	mcl::AudioBuffer&           buffer   = ch.shared->audioBuffer;
 
 	renderNormalChannels(children, buffer, in, mixerHasSolos, seqIsRunning);
-	rendering::renderSampleChannelPlugins(ch, m_pluginHost);
+	rendering::renderAudioPlugins(ch, m_pluginHost);
 }
 } // namespace giada::m::rendering

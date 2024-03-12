@@ -78,7 +78,6 @@ struct ReadResult
 };
 
 void renderSampleChannel(const Channel&, bool seqIsRunning);
-void renderSampleChannelPlugins(const Channel&, PluginHost&);
 
 /* renderSampleChannelInput 
 Copies input buffer to channel buffer: this enables the input monitoring. */
