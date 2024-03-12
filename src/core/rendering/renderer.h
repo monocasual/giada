@@ -85,6 +85,8 @@ private:
 	void renderMasterIn(const Channel&, mcl::AudioBuffer& in) const;
 	void renderMasterOut(const Channel&, mcl::AudioBuffer& out) const;
 	void renderPreview(const Channel&, mcl::AudioBuffer& out) const;
+	void renderSampleChannel(const Channel&, const mcl::AudioBuffer& in, bool seqIsRunning) const;
+	void renderMidiChannel(const Channel&) const;
 
 	Sequencer&  m_sequencer;
 	Mixer&      m_mixer;

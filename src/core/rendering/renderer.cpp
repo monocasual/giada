@@ -169,9 +169,9 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 	for (const Sequencer::Event& e : events)
 	{
 		if (ch.type == ChannelType::MIDI)
-			advanceMidiChannel(ch, e, m_kernelMidi);
+			rendering::advanceMidiChannel(ch, e, m_kernelMidi);
 		else if (ch.type == ChannelType::SAMPLE)
-			advanceSampleChannel(ch, e);
+			rendering::advanceSampleChannel(ch, e);
 	}
 }
 
@@ -194,17 +194,11 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
 
 	if (ch.type == ChannelType::SAMPLE)
 	{
-		if (ch.isPlaying())
-			renderSampleChannel(ch, seqIsRunning);
-
-		if (ch.canReceiveAudio())
-			renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
-
-		renderSampleChannelPlugins(ch, m_pluginHost);
+		renderSampleChannel(ch, in, seqIsRunning);
 	}
 	else if (ch.type == ChannelType::MIDI)
 	{
-		renderMidiChannelPlugins(ch, m_pluginHost);
+		renderMidiChannel(ch);
 	}
 
 	if (ch.isAudible(mixerHasSolos))
@@ -234,8 +228,32 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 	ch.shared->audioBuffer.clear();
 
 	if (ch.isPlaying())
-		renderSampleChannel(ch, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
+		rendering::renderSampleChannel(ch, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
 
 	out.sum(ch.shared->audioBuffer, ch.volume, calcPanning_(ch.pan));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Renderer::renderSampleChannel(const Channel& ch, const mcl::AudioBuffer& in, bool seqIsRunning) const
+{
+	assert(ch.type == ChannelType::SAMPLE);
+
+	if (ch.isPlaying())
+		rendering::renderSampleChannel(ch, seqIsRunning);
+
+	if (ch.canReceiveAudio())
+		rendering::renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
+
+	rendering::renderSampleChannelPlugins(ch, m_pluginHost);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Renderer::renderMidiChannel(const Channel& ch) const
+{
+	assert(ch.type == ChannelType::MIDI);
+
+	rendering::renderMidiChannelPlugins(ch, m_pluginHost);
 }
 } // namespace giada::m::rendering
