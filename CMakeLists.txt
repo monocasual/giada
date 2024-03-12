@@ -43,7 +43,7 @@ list(APPEND SOURCES
     src/core/rendering/midiReactions.cpp
     src/core/rendering/midiAdvance.cpp
 	src/core/rendering/midiOutput.cpp
-	src/core/rendering/midiRendering.cpp
+	src/core/rendering/pluginRendering.cpp
 	src/core/api/mainApi.cpp
 	src/core/api/channelsApi.cpp
 	src/core/api/sampleEditorApi.cpp

@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/rendering/midiRendering.h"
+#include "core/rendering/pluginRendering.h"
 #include "core/channels/channel.h"
 #include "core/plugins/pluginHost.h"
 
@@ -58,9 +58,16 @@ const juce::MidiBuffer& prepareMidiBuffer_(ChannelShared& shared)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void renderMidiChannelPlugins(const Channel& ch, PluginHost& pluginHost)
+void renderAudioAndMidiPlugins(const Channel& ch, PluginHost& pluginHost)
 {
 	pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, &prepareMidiBuffer_(*ch.shared));
 	ch.shared->midiBuffer.clear();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void renderAudioPlugins(const Channel& ch, PluginHost& pluginHost)
+{
+	pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
 }
 } // namespace giada::m::rendering
