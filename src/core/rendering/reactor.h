@@ -61,6 +61,10 @@ public:
 	void rewindAll();
 
 private:
+	void keyPress_(ID channelId, float velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized);
+	void keyRelease_(ID channelId, bool canRecordActions, Frame currentFrameQuantized);
+	void keyKill_(ID channelId, bool canRecordActions, Frame currentFrameQuantized);
+
 	model::Model&           m_model;
 	KernelMidi&             m_kernelMidi;
 	ActionRecorder&         m_actionRecorder;
