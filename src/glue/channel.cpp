@@ -127,6 +127,7 @@ Data::Data(const m::Channel& c, int columnIndex, int position)
 , pan(c.pan)
 , key(c.key)
 , hasActions(c.hasActions)
+, grouped(c.grouped)
 , m_playStatus(&c.shared->playStatus)
 , m_recStatus(&c.shared->recStatus)
 , m_readActions(&c.shared->readActions)
@@ -179,10 +180,17 @@ void loadChannel(ID channelId, const std::string& fname)
 
 /* -------------------------------------------------------------------------- */
 
-void addChannel(int columnIndex, ChannelType type)
+void addChannel(int columnIndex, ChannelType type, ID groupChannelId)
 {
-	const m::Channel& ch = g_engine->getChannelsApi().add(type, /*groupChannelId=*/0);
-	g_ui->model.addChannelToColumn(ch.id, columnIndex);
+	const m::Channel& ch = g_engine->getChannelsApi().add(type, groupChannelId);
+	if (groupChannelId > 0)
+	{
+		const m::Channel& parent   = g_engine->getChannelsApi().get(groupChannelId);
+		const int         position = parent.groupChannel->channels->getAll().size(); // Add to bottom
+		g_ui->model.addChannelToGroup(ch.id, groupChannelId, position);
+	}
+	else
+		g_ui->model.addChannelToColumn(ch.id, columnIndex);
 }
 
 /* -------------------------------------------------------------------------- */

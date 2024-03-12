@@ -32,6 +32,7 @@
 #include "gui/elems/basics/menu.h"
 #include "gui/elems/basics/resizerBar.h"
 #include "gui/elems/basics/textButton.h"
+#include "gui/elems/mainWindow/keyboard/groupChannel.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/keyboard/midiChannel.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannel.h"
@@ -52,6 +53,7 @@ enum class Menu
 {
 	ADD_SAMPLE_CHANNEL = 0,
 	ADD_MIDI_CHANNEL,
+	ADD_GROUP_CHANNEL,
 	ADD_COLUMN,
 	REMOVE_COLUMN,
 };
@@ -60,9 +62,18 @@ enum class Menu
 
 geChannel* makeChannel_(const c::channel::Data& data)
 {
-	if (data.type == ChannelType::SAMPLE)
+	switch (data.type)
+	{
+	case ChannelType::SAMPLE:
 		return new geSampleChannel(0, 0, 0, 0, data);
-	return new geMidiChannel(0, 0, 0, 0, data);
+	case ChannelType::MIDI:
+		return new geMidiChannel(0, 0, 0, 0, data);
+	case ChannelType::GROUP:
+		return new geGroupChannel(data);
+	default:
+		assert(false);
+		return nullptr;
+	}
 }
 } // namespace
 
@@ -113,6 +124,7 @@ void geColumn::showAddChannelMenu() const
 
 	menu.addItem((ID)Menu::ADD_SAMPLE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL));
 	menu.addItem((ID)Menu::ADD_MIDI_CHANNEL, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADDMIDICHANNEL));
+	menu.addItem((ID)Menu::ADD_GROUP_CHANNEL, "Add group channel"); // TODO channel-groups
 	menu.addItem((ID)Menu::ADD_COLUMN, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADD_COLUMN));
 	menu.addItem((ID)Menu::REMOVE_COLUMN, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_REMOVE_COLUMN));
 
@@ -125,10 +137,13 @@ void geColumn::showAddChannelMenu() const
 		switch (static_cast<Menu>(menuId))
 		{
 		case Menu::ADD_SAMPLE_CHANNEL:
-			c::channel::addChannel(index, ChannelType::SAMPLE);
+			c::channel::addChannel(index, ChannelType::SAMPLE, /*groupChannelId=*/0);
 			break;
 		case Menu::ADD_MIDI_CHANNEL:
-			c::channel::addChannel(index, ChannelType::MIDI);
+			c::channel::addChannel(index, ChannelType::MIDI, /*groupChannelId=*/0);
+			break;
+		case Menu::ADD_GROUP_CHANNEL:
+			c::channel::addChannel(index, ChannelType::GROUP, /*groupChannelId=*/0);
 			break;
 		case Menu::REMOVE_COLUMN:
 			keyboard->deleteColumn(index);

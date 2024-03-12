@@ -242,6 +242,15 @@ void Model::addChannelToColumn(ID channelId, int columnIndex, int position)
 
 /* -------------------------------------------------------------------------- */
 
+void Model::addChannelToGroup(ID channelId, ID groupId, int /*position*/)
+{
+	Column& column = getColumnByChannelId(groupId);
+	column.channels.push_back(channelId);
+	// TODO - position still not used
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Model::removeChannelFromColumn(ID channelId)
 {
 	for (Column& column : columns) // Brute force!
