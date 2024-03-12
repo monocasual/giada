@@ -185,9 +185,11 @@ list(APPEND SOURCES
 	src/gui/elems/mainWindow/keyboard/column.cpp
 	src/gui/elems/mainWindow/keyboard/sampleChannel.cpp
 	src/gui/elems/mainWindow/keyboard/midiChannel.cpp
+	src/gui/elems/mainWindow/keyboard/groupChannel.cpp
 	src/gui/elems/mainWindow/keyboard/channel.cpp
 	src/gui/elems/mainWindow/keyboard/sampleChannelButton.cpp
 	src/gui/elems/mainWindow/keyboard/midiChannelButton.cpp
+	src/gui/elems/mainWindow/keyboard/groupChannelButton.cpp
 	src/gui/elems/config/tabMisc.cpp
 	src/gui/elems/config/tabMidi.cpp
 	src/gui/elems/config/tabAudio.cpp
