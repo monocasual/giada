@@ -347,12 +347,16 @@ list(APPEND SOURCES
 	src/gui/elems/mainWindow/keyboard/sampleChannel.h
 	src/gui/elems/mainWindow/keyboard/midiChannel.cpp
 	src/gui/elems/mainWindow/keyboard/midiChannel.h
+	src/gui/elems/mainWindow/keyboard/groupChannel.cpp
+	src/gui/elems/mainWindow/keyboard/groupChannel.h
 	src/gui/elems/mainWindow/keyboard/channel.cpp
 	src/gui/elems/mainWindow/keyboard/channel.h
 	src/gui/elems/mainWindow/keyboard/sampleChannelButton.cpp
 	src/gui/elems/mainWindow/keyboard/sampleChannelButton.h
 	src/gui/elems/mainWindow/keyboard/midiChannelButton.cpp
 	src/gui/elems/mainWindow/keyboard/midiChannelButton.h
+	src/gui/elems/mainWindow/keyboard/groupChannelButton.cpp
+	src/gui/elems/mainWindow/keyboard/groupChannelButton.h
 	src/gui/elems/config/tabMisc.cpp
 	src/gui/elems/config/tabMisc.h
 	src/gui/elems/config/tabMidi.cpp
