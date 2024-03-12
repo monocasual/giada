@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_RENDERING_MIDI_RENDERING_H
-#define G_RENDERING_MIDI_RENDERING_H
+#ifndef G_RENDERING_PLUGIN_RENDERING_H
+#define G_RENDERING_PLUGIN_RENDERING_H
 
 #include "core/channels/channelShared.h"
 
@@ -36,7 +36,16 @@ class PluginHost;
 
 namespace giada::m::rendering
 {
-void renderMidiChannelPlugins(const Channel&, PluginHost&);
+/* renderAudioAndMidiPlugins 
+Renders plug-ins using the shared juce::MidiBuffer for MIDI event rendering. It
+renders normal audio plug-ins too. */
+
+void renderAudioAndMidiPlugins(const Channel&, PluginHost&);
+
+/* renderAudioPlugins
+Renders audio-only plug-ins. */
+
+void renderAudioPlugins(const Channel&, PluginHost&);
 } // namespace giada::m::rendering
 
 #endif

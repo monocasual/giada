@@ -200,13 +200,6 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 
 /* -------------------------------------------------------------------------- */
 
-void renderSampleChannelPlugins(const Channel& ch, PluginHost& pluginHost)
-{
-	pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void renderSampleChannelInput(const Channel& ch, const mcl::AudioBuffer& in)
 {
 	ch.shared->audioBuffer.set(in, /*gain=*/1.0f); // add, don't overwrite
