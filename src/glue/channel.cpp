@@ -127,6 +127,7 @@ Data::Data(const m::Channel& c, int columnIndex, int position)
 , pan(c.pan)
 , key(c.key)
 , hasActions(c.hasActions)
+, grouped(c.grouped)
 , m_playStatus(&c.shared->playStatus)
 , m_recStatus(&c.shared->recStatus)
 , m_readActions(&c.shared->readActions)
@@ -179,10 +180,17 @@ void loadChannel(ID channelId, const std::string& fname)
 
 /* -------------------------------------------------------------------------- */
 
-void addChannel(int columnIndex, ChannelType type)
+void addChannel(int columnIndex, ChannelType type, ID groupChannelId)
 {
-	const m::Channel& ch = g_engine->getChannelsApi().add(type);
-	g_ui->model.addChannelToColumn(ch.id, columnIndex);
+	const m::Channel& ch = g_engine->getChannelsApi().add(type, groupChannelId);
+	if (groupChannelId > 0)
+	{
+		const m::Channel& parent   = g_engine->getChannelsApi().get(groupChannelId);
+		const int         position = parent.groupChannel->channels->size(); // Add to bottom
+		g_ui->model.addChannelToGroup(ch.id, groupChannelId, position);
+	}
+	else
+		g_ui->model.addChannelToColumn(ch.id, columnIndex);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -198,7 +206,7 @@ void addAndLoadChannels(int columnIndex, const std::vector<std::string>& fnames)
 	{
 		progress.setProgress(++i / static_cast<float>(fnames.size()));
 
-		const m::Channel& ch  = channelsApi.add(ChannelType::SAMPLE);
+		const m::Channel& ch  = channelsApi.add(ChannelType::SAMPLE, /*groupChannelId=*/0);
 		const int         res = channelsApi.loadSampleChannel(ch.id, f);
 		if (res != G_RES_OK)
 			errors = true;

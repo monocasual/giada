@@ -242,6 +242,15 @@ void Model::addChannelToColumn(ID channelId, int columnIndex, int position)
 
 /* -------------------------------------------------------------------------- */
 
+void Model::addChannelToGroup(ID channelId, ID groupId, int position)
+{
+	Column&   column = getColumnByChannelId(groupId);
+	const int offset = column.channels.getIndex(groupId);
+	column.channels.insert({channelId}, position + offset);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Model::removeChannelFromColumn(ID channelId)
 {
 	for (Column& column : columns) // Brute force!
