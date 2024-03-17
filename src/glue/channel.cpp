@@ -79,8 +79,8 @@ Column makeColumn_(const v::Model::Column& modelColumn)
 {
 	Column column{g_ui->model.getColumnIndex(modelColumn), modelColumn.width, {}};
 
-	for (const ID channelId : modelColumn.channels)
-		column.channels.push_back(makeData_(channelId, g_ui->model.getColumnByChannelId(channelId)));
+	for (const v::Model::Channel& channel : modelColumn.channels.getAll())
+		column.channels.push_back(makeData_(channel.id, g_ui->model.getColumnByChannelId(channel.id)));
 
 	return column;
 }
