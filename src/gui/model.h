@@ -31,6 +31,7 @@
 #include "core/const.h"
 #include "core/plugins/pluginManager.h"
 #include "deps/geompp/src/rect.hpp"
+#include "utils/container.h"
 #include <FL/Enumerations.H>
 #include <string>
 #include <vector>
@@ -39,12 +40,20 @@ namespace giada::v
 {
 struct Model
 {
+	struct Channel
+	{
+		ID  id;
+		int index = -1;
+	};
+
+	using Channels = u::Container<Channel, /*Identifiable=*/true, /*Sortable=*/true>;
+
 	struct Column
 	{
 		int getChannelIndex(ID) const;
 
-		int             width;
-		std::vector<ID> channels = {};
+		int      width;
+		Channels channels = {};
 	};
 
 	Model();
