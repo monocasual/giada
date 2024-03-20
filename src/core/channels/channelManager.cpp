@@ -237,7 +237,7 @@ void ChannelManager::deleteChannel(ID channelId)
 	const Channel& ch   = m_model.get().channels.get(channelId);
 	const Wave*    wave = ch.sampleChannel ? ch.sampleChannel->getWave() : nullptr;
 
-	m_model.get().channels.remove(channelId);
+	m_model.get().channels.removeById(channelId);
 	m_model.swap(model::SwapType::HARD);
 
 	if (wave != nullptr)
