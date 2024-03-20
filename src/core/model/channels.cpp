@@ -35,65 +35,18 @@
 
 namespace giada::m::model
 {
-namespace
+const Channel& Channels::get(ID id) const
 {
-const Channel* getChannel_(const std::vector<Channel>& channels, ID id)
-{
-	for (const Channel& ch : channels)
-	{
-		if (ch.id == id)
-			return &ch;
-		if (ch.type == ChannelType::GROUP)
-		{
-			const Channel* child = getChannel_(ch.groupChannel->channels->getAll(), id);
-			if (child != nullptr)
-				return child;
-		}
-	}
-	return nullptr;
+	const Channel* out = find_(id);
+	assert(out != nullptr);
+	return *out;
 }
-} // namespace
 
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 Channel& Channels::get(ID id)
 {
 	return const_cast<Channel&>(std::as_const(*this).get(id));
-}
-
-const Channel& Channels::get(ID id) const
-{
-	const Channel* ch = getChannel_(m_channels, id);
-	assert(ch != nullptr);
-	return *ch;
-}
-
-/* -------------------------------------------------------------------------- */
-
-Channel& Channels::getLast()
-{
-	return m_channels.back();
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::vector<Channel>& Channels::getAll()
-{
-	return m_channels;
-}
-
-const std::vector<Channel>& Channels::getAll() const
-{
-	return m_channels;
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool Channels::anyOf(std::function<bool(const Channel&)> f) const
-{
-	return std::any_of(m_channels.begin(), m_channels.end(), f);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -104,7 +57,7 @@ void Channels::debug() const
 {
 	puts("model::channels");
 
-	for (int i = 0; const Channel& c : m_channels)
+	for (int i = 0; const Channel& c : getAll())
 	{
 		fmt::print("\t{} - {}\n", i++, c.debug());
 		if (c.type == ChannelType::GROUP)
@@ -124,26 +77,19 @@ void Channels::debug() const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Channel*> Channels::getIf(std::function<bool(const Channel&)> f)
+const Channel* Channels::find_(ID id) const
 {
-	std::vector<Channel*> out;
-	for (Channel& ch : m_channels)
-		if (f(ch))
-			out.push_back(&ch);
-	return out;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Channels::remove(ID id)
-{
-	u::vector::removeIf(m_channels, [id](const Channel& c) { return c.id == id; });
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Channels::add(Channel&& ch)
-{
-	m_channels.push_back(std::move(ch));
+	for (const Channel& ch : getAll())
+	{
+		if (ch.id == id)
+			return &ch;
+		if (ch.type == ChannelType::GROUP)
+		{
+			const Channel* child = ch.groupChannel->channels->find(id);
+			if (child != nullptr)
+				return child;
+		}
+	}
+	return nullptr;
 }
 } // namespace giada::m::model

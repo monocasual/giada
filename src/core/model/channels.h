@@ -29,33 +29,25 @@
 
 #include "core/channels/channel.h"
 #include "core/types.h"
+#include "utils/container.h"
 
 namespace giada::m::model
 {
-class Channels
+class Channels : public u::Container<Channel>
 {
 public:
-	const Channel&              get(ID) const;
-	const std::vector<Channel>& getAll() const;
+	/* get
+	Returns a Channel for the given ID, by looking also inside groups. */
 
-	/* anyOf
-    Returns true if any channel satisfies the callback 'f'. */
-
-	bool anyOf(std::function<bool(const Channel&)> f) const;
+	const Channel& get(ID) const override;
+	Channel&       get(ID) override;
 
 #ifdef G_DEBUG_MODE
 	void debug() const;
 #endif
 
-	Channel&              get(ID);
-	Channel&              getLast();
-	std::vector<Channel>& getAll();
-	std::vector<Channel*> getIf(std::function<bool(const Channel&)> f);
-	void                  add(Channel&&);
-	void                  remove(ID);
-
 private:
-	std::vector<Channel> m_channels;
+	const Channel* find_(ID) const;
 };
 } // namespace giada::m::model
 
