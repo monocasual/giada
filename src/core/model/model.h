@@ -47,7 +47,7 @@
 
 namespace giada::m::model
 {
-struct Layout
+struct Document
 {
 #ifdef G_DEBUG_MODE
 	void debug() const;
@@ -71,18 +71,18 @@ struct Layout
 
 /* LayoutLock
 Alias for a REALTIME scoped lock provided by the Swapper class. Use this in the
-real-time thread to lock the Layout. */
+real-time thread to lock the Document. */
 
-using AtomicSwapper = mcl::AtomicSwapper<Layout, /*size=*/6>;
+using AtomicSwapper = mcl::AtomicSwapper<Document, /*size=*/6>;
 using LayoutLock    = AtomicSwapper::RtLock;
 
 /* SwapType
-Type of Layout change. 
+Type of Document change. 
 	Hard: the structure has changed (e.g. add a new channel);
 	Soft: a property has changed (e.g. change volume);
 	None: something has changed but we don't care. 
 Used by model listeners to determine the type of change that occurred in the 
-layout. */
+Document. */
 
 enum class SwapType
 {
@@ -122,12 +122,12 @@ public:
 	[[nodiscard]] DataLock lockData(SwapType t = SwapType::HARD);
 
 	/* init
-	Initializes the internal layout. All values go back to default. */
+	Initializes the internal Document. All values go back to default. */
 
 	void init();
 
 	/* reset
-	Resets the internal layout to default. Configuration data (e.g. KernelAudio)
+	Resets the internal Document to default. Configuration data (e.g. KernelAudio)
 	are left untouched.  */
 
 	void reset();
@@ -155,19 +155,19 @@ public:
 	bool registerThread(Thread, bool realtime) const;
 
 	/* get_RT
-	Returns a LayoutLock object for REALTIME processing. Access layout by 
-	calling LayoutLock::get() method (returns ready-only Layout). */
+	Returns a LayoutLock object for REALTIME processing. Access Document by 
+	calling LayoutLock::get() method (returns ready-only Document). */
 
 	LayoutLock get_RT() const;
 
 	/* get
-	Returns a reference to the NON-REALTIME layout structure. */
+	Returns a reference to the NON-REALTIME Document structure. */
 
-	Layout&       get();
-	const Layout& get() const;
+	Document&       get();
+	const Document& get() const;
 
 	/* swap
-	Swap non-rt layout with the rt one. See 'SwapType' notes above. */
+	Swap non-rt Document with the rt one. See 'SwapType' notes above. */
 
 	void swap(SwapType t);
 
@@ -203,7 +203,7 @@ public:
 #endif
 
 	/* onSwap
-	Callbacks fired when the layout has been swapped. Useful for listening to 
+	Callbacks fired when the Document has been swapped. Useful for listening to 
 	model changes. */
 
 	std::function<void(SwapType)> onSwap;

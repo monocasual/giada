@@ -169,9 +169,9 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::render(mcl::AudioBuffer& outBuf, const model::Layout& layout_RT) const
+void Sequencer::render(mcl::AudioBuffer& outBuf, const model::Document& document_RT) const
 {
-	if (layout_RT.sequencer.metronome)
+	if (document_RT.sequencer.metronome)
 		m_metronome.render(outBuf);
 }
 

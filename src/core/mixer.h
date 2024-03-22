@@ -45,7 +45,7 @@ namespace giada::m::model
 {
 class Mixer;
 class Channels;
-struct Layout;
+struct Document;
 } // namespace giada::m::model
 
 namespace giada::m
@@ -88,7 +88,7 @@ public:
 	/* render
 	Core rendering function. */
 
-	void render(const mcl::AudioBuffer& in, const model::Layout&, int maxFramesToRec) const;
+	void render(const mcl::AudioBuffer& in, const model::Document&, int maxFramesToRec) const;
 
 	/* reset
 	Brings everything back to the initial state. Must be called only when mixer

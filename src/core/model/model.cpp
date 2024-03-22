@@ -95,7 +95,7 @@ void clear_(std::vector<T>& dest, Model& model)
 
 #ifdef G_DEBUG_MODE
 
-void Layout::debug() const
+void Document::debug() const
 {
 	mixer.debug();
 	channels.debug();
@@ -146,10 +146,10 @@ void Model::init()
 {
 	m_shared = {};
 
-	Layout& layout          = get();
-	layout                  = {};
-	layout.sequencer.shared = &m_shared.sequencerShared;
-	layout.mixer.shared     = &m_shared.mixerShared;
+	Document& document        = get();
+	document                  = {};
+	document.sequencer.shared = &m_shared.sequencerShared;
+	document.mixer.shared     = &m_shared.mixerShared;
 
 	swap(SwapType::NONE);
 }
@@ -160,12 +160,12 @@ void Model::reset()
 {
 	m_shared = {};
 
-	Layout& layout          = get();
-	layout.sequencer        = {};
-	layout.sequencer.shared = &m_shared.sequencerShared;
-	layout.mixer            = {};
-	layout.mixer.shared     = &m_shared.mixerShared;
-	layout.channels         = {};
+	Document& document        = get();
+	document.sequencer        = {};
+	document.sequencer.shared = &m_shared.sequencerShared;
+	document.mixer            = {};
+	document.mixer.shared     = &m_shared.mixerShared;
+	document.channels         = {};
 
 	swap(SwapType::NONE);
 }
@@ -174,46 +174,46 @@ void Model::reset()
 
 void Model::load(const Conf& conf)
 {
-	Layout& layout = get();
+	Document& document = get();
 
-	layout.kernelAudio.api                     = conf.soundSystem;
-	layout.kernelAudio.deviceOut.id            = conf.soundDeviceOut;
-	layout.kernelAudio.deviceOut.channelsCount = conf.channelsOutCount;
-	layout.kernelAudio.deviceOut.channelsStart = conf.channelsOutStart;
-	layout.kernelAudio.deviceIn.id             = conf.soundDeviceIn;
-	layout.kernelAudio.deviceIn.channelsCount  = conf.channelsInCount;
-	layout.kernelAudio.deviceIn.channelsStart  = conf.channelsInStart;
-	layout.kernelAudio.samplerate              = conf.samplerate;
-	layout.kernelAudio.buffersize              = conf.buffersize;
-	layout.kernelAudio.limitOutput             = conf.limitOutput;
-	layout.kernelAudio.rsmpQuality             = conf.rsmpQuality;
-	layout.kernelAudio.recTriggerLevel         = conf.recTriggerLevel;
+	document.kernelAudio.api                     = conf.soundSystem;
+	document.kernelAudio.deviceOut.id            = conf.soundDeviceOut;
+	document.kernelAudio.deviceOut.channelsCount = conf.channelsOutCount;
+	document.kernelAudio.deviceOut.channelsStart = conf.channelsOutStart;
+	document.kernelAudio.deviceIn.id             = conf.soundDeviceIn;
+	document.kernelAudio.deviceIn.channelsCount  = conf.channelsInCount;
+	document.kernelAudio.deviceIn.channelsStart  = conf.channelsInStart;
+	document.kernelAudio.samplerate              = conf.samplerate;
+	document.kernelAudio.buffersize              = conf.buffersize;
+	document.kernelAudio.limitOutput             = conf.limitOutput;
+	document.kernelAudio.rsmpQuality             = conf.rsmpQuality;
+	document.kernelAudio.recTriggerLevel         = conf.recTriggerLevel;
 
-	layout.kernelMidi.api         = conf.midiSystem;
-	layout.kernelMidi.portOut     = conf.midiPortOut;
-	layout.kernelMidi.portIn      = conf.midiPortIn;
-	layout.kernelMidi.midiMapPath = conf.midiMapPath;
-	layout.kernelMidi.sync        = conf.midiSync;
+	document.kernelMidi.api         = conf.midiSystem;
+	document.kernelMidi.portOut     = conf.midiPortOut;
+	document.kernelMidi.portIn      = conf.midiPortIn;
+	document.kernelMidi.midiMapPath = conf.midiMapPath;
+	document.kernelMidi.sync        = conf.midiSync;
 
-	layout.mixer.inputRecMode   = conf.inputRecMode;
-	layout.mixer.recTriggerMode = conf.recTriggerMode;
+	document.mixer.inputRecMode   = conf.inputRecMode;
+	document.mixer.recTriggerMode = conf.recTriggerMode;
 
-	layout.midiIn.enabled    = conf.midiInEnabled;
-	layout.midiIn.filter     = conf.midiInFilter;
-	layout.midiIn.rewind     = conf.midiInRewind;
-	layout.midiIn.startStop  = conf.midiInStartStop;
-	layout.midiIn.actionRec  = conf.midiInActionRec;
-	layout.midiIn.inputRec   = conf.midiInInputRec;
-	layout.midiIn.metronome  = conf.midiInMetronome;
-	layout.midiIn.volumeIn   = conf.midiInVolumeIn;
-	layout.midiIn.volumeOut  = conf.midiInVolumeOut;
-	layout.midiIn.beatDouble = conf.midiInBeatDouble;
-	layout.midiIn.beatHalf   = conf.midiInBeatHalf;
+	document.midiIn.enabled    = conf.midiInEnabled;
+	document.midiIn.filter     = conf.midiInFilter;
+	document.midiIn.rewind     = conf.midiInRewind;
+	document.midiIn.startStop  = conf.midiInStartStop;
+	document.midiIn.actionRec  = conf.midiInActionRec;
+	document.midiIn.inputRec   = conf.midiInInputRec;
+	document.midiIn.metronome  = conf.midiInMetronome;
+	document.midiIn.volumeIn   = conf.midiInVolumeIn;
+	document.midiIn.volumeOut  = conf.midiInVolumeOut;
+	document.midiIn.beatDouble = conf.midiInBeatDouble;
+	document.midiIn.beatHalf   = conf.midiInBeatHalf;
 
-	layout.behaviors.chansStopOnSeqHalt         = conf.chansStopOnSeqHalt;
-	layout.behaviors.treatRecsAsLoops           = conf.treatRecsAsLoops;
-	layout.behaviors.inputMonitorDefaultOn      = conf.inputMonitorDefaultOn;
-	layout.behaviors.overdubProtectionDefaultOn = conf.overdubProtectionDefaultOn;
+	document.behaviors.chansStopOnSeqHalt         = conf.chansStopOnSeqHalt;
+	document.behaviors.treatRecsAsLoops           = conf.treatRecsAsLoops;
+	document.behaviors.inputMonitorDefaultOn      = conf.inputMonitorDefaultOn;
+	document.behaviors.overdubProtectionDefaultOn = conf.overdubProtectionDefaultOn;
 
 	swap(model::SwapType::NONE);
 }
@@ -227,13 +227,13 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 	/* Lock the shared data. Real-time thread can't read from it until this method
 	goes out of scope. */
 
-	DataLock  lock   = lockData(SwapType::NONE);
-	Layout&   layout = get();
+	DataLock  lock     = lockData(SwapType::NONE);
+	Document& document = get();
 	LoadState state{patch};
 
 	/* Clear and re-initialize stuff first. */
 
-	layout.channels = {};
+	document.channels = {};
 	getAllChannelsShared().clear();
 	getAllPlugins().clear();
 	getAllWaves().clear();
@@ -243,7 +243,7 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 	for (const Patch::Plugin& pplugin : patch.plugins)
 	{
 		std::unique_ptr<juce::AudioPluginInstance> pi = pluginManager.makeJucePlugin(pplugin.path, sampleRate, bufferSize);
-		std::unique_ptr<Plugin>                    p  = pluginFactory::deserializePlugin(pplugin, std::move(pi), layout.sequencer, sampleRate, bufferSize);
+		std::unique_ptr<Plugin>                    p  = pluginFactory::deserializePlugin(pplugin, std::move(pi), document.sequencer, sampleRate, bufferSize);
 		if (!p->valid)
 			state.missingPlugins.push_back(pplugin.path);
 		getAllPlugins().push_back(std::move(p));
@@ -265,18 +265,18 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 		Wave*                wave    = findWave(pchannel.waveId);
 		std::vector<Plugin*> plugins = findPlugins(pchannel.pluginIds);
 		channelFactory::Data data    = channelFactory::deserializeChannel(pchannel, sampleRateRatio, bufferSize, rsmpQuality, wave, plugins);
-		layout.channels.add(data.channel);
+		document.channels.add(data.channel);
 		getAllChannelsShared().push_back(std::move(data.shared));
 	}
 
-	layout.actions.set(actionFactory::deserializeActions(patch.actions));
+	document.actions.set(actionFactory::deserializeActions(patch.actions));
 
-	layout.sequencer.status    = SeqStatus::STOPPED;
-	layout.sequencer.bars      = patch.bars;
-	layout.sequencer.beats     = patch.beats;
-	layout.sequencer.bpm       = patch.bpm;
-	layout.sequencer.quantize  = patch.quantize;
-	layout.sequencer.metronome = patch.metronome;
+	document.sequencer.status    = SeqStatus::STOPPED;
+	document.sequencer.bars      = patch.bars;
+	document.sequencer.beats     = patch.beats;
+	document.sequencer.bpm       = patch.bpm;
+	document.sequencer.quantize  = patch.quantize;
+	document.sequencer.metronome = patch.metronome;
 
 	return state;
 
@@ -287,46 +287,46 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 
 void Model::store(Conf& conf) const
 {
-	const Layout& layout = get();
+	const Document& document = get();
 
-	conf.soundSystem      = layout.kernelAudio.api;
-	conf.soundDeviceOut   = layout.kernelAudio.deviceOut.id;
-	conf.channelsOutCount = layout.kernelAudio.deviceOut.channelsCount;
-	conf.channelsOutStart = layout.kernelAudio.deviceOut.channelsStart;
-	conf.soundDeviceIn    = layout.kernelAudio.deviceIn.id;
-	conf.channelsInCount  = layout.kernelAudio.deviceIn.channelsCount;
-	conf.channelsInStart  = layout.kernelAudio.deviceIn.channelsStart;
-	conf.samplerate       = layout.kernelAudio.samplerate;
-	conf.buffersize       = layout.kernelAudio.buffersize;
-	conf.limitOutput      = layout.kernelAudio.limitOutput;
-	conf.rsmpQuality      = layout.kernelAudio.rsmpQuality;
-	conf.recTriggerLevel  = layout.kernelAudio.recTriggerLevel;
+	conf.soundSystem      = document.kernelAudio.api;
+	conf.soundDeviceOut   = document.kernelAudio.deviceOut.id;
+	conf.channelsOutCount = document.kernelAudio.deviceOut.channelsCount;
+	conf.channelsOutStart = document.kernelAudio.deviceOut.channelsStart;
+	conf.soundDeviceIn    = document.kernelAudio.deviceIn.id;
+	conf.channelsInCount  = document.kernelAudio.deviceIn.channelsCount;
+	conf.channelsInStart  = document.kernelAudio.deviceIn.channelsStart;
+	conf.samplerate       = document.kernelAudio.samplerate;
+	conf.buffersize       = document.kernelAudio.buffersize;
+	conf.limitOutput      = document.kernelAudio.limitOutput;
+	conf.rsmpQuality      = document.kernelAudio.rsmpQuality;
+	conf.recTriggerLevel  = document.kernelAudio.recTriggerLevel;
 
-	conf.midiSystem  = layout.kernelMidi.api;
-	conf.midiPortOut = layout.kernelMidi.portOut;
-	conf.midiPortIn  = layout.kernelMidi.portIn;
-	conf.midiMapPath = layout.kernelMidi.midiMapPath;
-	conf.midiSync    = layout.kernelMidi.sync;
+	conf.midiSystem  = document.kernelMidi.api;
+	conf.midiPortOut = document.kernelMidi.portOut;
+	conf.midiPortIn  = document.kernelMidi.portIn;
+	conf.midiMapPath = document.kernelMidi.midiMapPath;
+	conf.midiSync    = document.kernelMidi.sync;
 
-	conf.inputRecMode   = layout.mixer.inputRecMode;
-	conf.recTriggerMode = layout.mixer.recTriggerMode;
+	conf.inputRecMode   = document.mixer.inputRecMode;
+	conf.recTriggerMode = document.mixer.recTriggerMode;
 
-	conf.midiInEnabled    = layout.midiIn.enabled;
-	conf.midiInFilter     = layout.midiIn.filter;
-	conf.midiInRewind     = layout.midiIn.rewind;
-	conf.midiInStartStop  = layout.midiIn.startStop;
-	conf.midiInActionRec  = layout.midiIn.actionRec;
-	conf.midiInInputRec   = layout.midiIn.inputRec;
-	conf.midiInMetronome  = layout.midiIn.metronome;
-	conf.midiInVolumeIn   = layout.midiIn.volumeIn;
-	conf.midiInVolumeOut  = layout.midiIn.volumeOut;
-	conf.midiInBeatDouble = layout.midiIn.beatDouble;
-	conf.midiInBeatHalf   = layout.midiIn.beatHalf;
+	conf.midiInEnabled    = document.midiIn.enabled;
+	conf.midiInFilter     = document.midiIn.filter;
+	conf.midiInRewind     = document.midiIn.rewind;
+	conf.midiInStartStop  = document.midiIn.startStop;
+	conf.midiInActionRec  = document.midiIn.actionRec;
+	conf.midiInInputRec   = document.midiIn.inputRec;
+	conf.midiInMetronome  = document.midiIn.metronome;
+	conf.midiInVolumeIn   = document.midiIn.volumeIn;
+	conf.midiInVolumeOut  = document.midiIn.volumeOut;
+	conf.midiInBeatDouble = document.midiIn.beatDouble;
+	conf.midiInBeatHalf   = document.midiIn.beatHalf;
 
-	conf.chansStopOnSeqHalt         = layout.behaviors.chansStopOnSeqHalt;
-	conf.treatRecsAsLoops           = layout.behaviors.treatRecsAsLoops;
-	conf.inputMonitorDefaultOn      = layout.behaviors.inputMonitorDefaultOn;
-	conf.overdubProtectionDefaultOn = layout.behaviors.overdubProtectionDefaultOn;
+	conf.chansStopOnSeqHalt         = document.behaviors.chansStopOnSeqHalt;
+	conf.treatRecsAsLoops           = document.behaviors.treatRecsAsLoops;
+	conf.inputMonitorDefaultOn      = document.behaviors.inputMonitorDefaultOn;
+	conf.overdubProtectionDefaultOn = document.behaviors.overdubProtectionDefaultOn;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -339,18 +339,18 @@ void Model::store(Patch& patch, const std::string& projectPath)
 
 	DataLock lock = lockData(SwapType::NONE);
 
-	const Layout& layout = get();
+	const Document& document = get();
 
-	patch.bars      = layout.sequencer.bars;
-	patch.beats     = layout.sequencer.beats;
-	patch.bpm       = layout.sequencer.bpm;
-	patch.quantize  = layout.sequencer.quantize;
-	patch.metronome = layout.sequencer.metronome;
+	patch.bars      = document.sequencer.bars;
+	patch.beats     = document.sequencer.beats;
+	patch.bpm       = document.sequencer.bpm;
+	patch.quantize  = document.sequencer.quantize;
+	patch.metronome = document.sequencer.metronome;
 
 	for (const auto& p : getAllPlugins())
 		patch.plugins.push_back(pluginFactory::serializePlugin(*p));
 
-	patch.actions = actionFactory::serializeActions(layout.actions.getAll());
+	patch.actions = actionFactory::serializeActions(document.actions.getAll());
 
 	for (auto& w : getAllWaves())
 	{
@@ -363,7 +363,7 @@ void Model::store(Patch& patch, const std::string& projectPath)
 		patch.waves.push_back(waveFactory::serializeWave(*w));
 	}
 
-	for (const Channel& c : layout.channels.getAll())
+	for (const Channel& c : document.channels.getAll())
 		patch.channels.push_back(channelFactory::serializeChannel(c));
 }
 
@@ -376,9 +376,9 @@ bool Model::registerThread(Thread t, bool realtime) const
 
 /* -------------------------------------------------------------------------- */
 
-Layout&       Model::get() { return m_swapper.get(); }
-const Layout& Model::get() const { return m_swapper.get(); }
-LayoutLock    Model::get_RT() const { return LayoutLock(m_swapper); }
+Document&       Model::get() { return m_swapper.get(); }
+const Document& Model::get() const { return m_swapper.get(); }
+LayoutLock      Model::get_RT() const { return LayoutLock(m_swapper); }
 
 /* -------------------------------------------------------------------------- */
 

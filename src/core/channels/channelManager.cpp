@@ -147,7 +147,7 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 	m_model.swap(model::SwapType::HARD);
 
 	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is 
-	already processing the new layout. */
+	already processing the new Document. */
 
 	if (oldWave != nullptr)
 		m_model.removeWave(*oldWave);

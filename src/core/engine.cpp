@@ -228,7 +228,7 @@ void Engine::init(const Conf& conf)
 	m_model.init();
 	m_model.load(conf);
 
-	const model::Layout& layout = m_model.get();
+	const model::Document& document = m_model.get();
 
 	m_kernelAudio.init();
 
@@ -245,7 +245,7 @@ void Engine::init(const Conf& conf)
 	m_kernelMidi.start();
 
 	m_midiMapper.init();
-	m_midiMapper.read(layout.kernelMidi.midiMapPath);
+	m_midiMapper.read(document.kernelMidi.midiMapPath);
 	m_midiMapper.sendInitMessages();
 
 	m_eventDispatcher.start();
