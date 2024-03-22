@@ -290,6 +290,7 @@ constexpr auto PATCH_KEY_CHANNEL_MIDI_IN_PITCH        = "midi_in_pitch";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT             = "midi_out";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT_CHAN        = "midi_out_chan";
 constexpr auto PATCH_KEY_CHANNEL_PLUGINS              = "plugins";
+constexpr auto PATCH_KEY_CHANNEL_CHANNELS             = "channels";
 constexpr auto PATCH_KEY_CHANNEL_PLUGIN_ID            = "plugin_id";
 constexpr auto PATCH_KEY_CHANNEL_ARMED                = "armed";
 constexpr auto PATCH_KEY_WAVES                        = "waves";

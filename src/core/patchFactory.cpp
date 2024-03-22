@@ -283,59 +283,68 @@ void writeCommons_(const Patch& patch, nlohmann::json& j)
 
 /* -------------------------------------------------------------------------- */
 
+nlohmann::json makeChannel_(const Patch::Channel& c)
+{
+	nlohmann::json jchannel;
+
+	jchannel[PATCH_KEY_CHANNEL_ID]                   = c.id;
+	jchannel[PATCH_KEY_CHANNEL_TYPE]                 = static_cast<int>(c.type);
+	jchannel[PATCH_KEY_CHANNEL_SIZE]                 = c.height;
+	jchannel[PATCH_KEY_CHANNEL_NAME]                 = c.name;
+	jchannel[PATCH_KEY_CHANNEL_MUTE]                 = c.mute;
+	jchannel[PATCH_KEY_CHANNEL_SOLO]                 = c.solo;
+	jchannel[PATCH_KEY_CHANNEL_VOLUME]               = c.volume;
+	jchannel[PATCH_KEY_CHANNEL_PAN]                  = c.pan;
+	jchannel[PATCH_KEY_CHANNEL_HAS_ACTIONS]          = c.hasActions;
+	jchannel[PATCH_KEY_CHANNEL_ARMED]                = c.armed;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_IN]              = c.midiIn;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_IN_KEYREL]       = c.midiInKeyRel;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS]     = c.midiInKeyPress;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_IN_KILL]         = c.midiInKill;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_IN_ARM]          = c.midiInArm;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_IN_VOLUME]       = c.midiInVolume;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_IN_MUTE]         = c.midiInMute;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_IN_SOLO]         = c.midiInSolo;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_IN_FILTER]       = c.midiInFilter;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_L]           = c.midiOutL;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING]   = c.midiOutLplaying;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE]      = c.midiOutLmute;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO]      = c.midiOutLsolo;
+	jchannel[PATCH_KEY_CHANNEL_KEY]                  = c.key;
+	jchannel[PATCH_KEY_CHANNEL_WAVE_ID]              = c.waveId;
+	jchannel[PATCH_KEY_CHANNEL_MODE]                 = static_cast<int>(c.mode);
+	jchannel[PATCH_KEY_CHANNEL_BEGIN]                = c.begin;
+	jchannel[PATCH_KEY_CHANNEL_END]                  = c.end;
+	jchannel[PATCH_KEY_CHANNEL_SHIFT]                = c.shift;
+	jchannel[PATCH_KEY_CHANNEL_READ_ACTIONS]         = c.readActions;
+	jchannel[PATCH_KEY_CHANNEL_PITCH]                = c.pitch;
+	jchannel[PATCH_KEY_CHANNEL_INPUT_MONITOR]        = c.inputMonitor;
+	jchannel[PATCH_KEY_CHANNEL_OVERDUB_PROTECTION]   = c.overdubProtection;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_IN_VELO_AS_VOL]  = c.midiInVeloAsVol;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS] = c.midiInReadActions;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_IN_PITCH]        = c.midiInPitch;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_OUT]             = c.midiOut;
+	jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_CHAN]        = c.midiOutChan;
+
+	jchannel[PATCH_KEY_CHANNEL_PLUGINS] = nlohmann::json::array();
+	for (ID pid : c.pluginIds)
+		jchannel[PATCH_KEY_CHANNEL_PLUGINS].push_back(pid);
+
+	jchannel[PATCH_KEY_CHANNEL_CHANNELS] = nlohmann::json::array();
+	for (const Patch::Channel& child : c.channels)
+		jchannel[PATCH_KEY_CHANNEL_CHANNELS].push_back(makeChannel_(child));
+
+	return jchannel;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void writeChannels_(const Patch& patch, nlohmann::json& j)
 {
 	j[PATCH_KEY_CHANNELS] = nlohmann::json::array();
 
 	for (const Patch::Channel& c : patch.channels)
-	{
-		nlohmann::json jchannel;
-
-		jchannel[PATCH_KEY_CHANNEL_ID]                   = c.id;
-		jchannel[PATCH_KEY_CHANNEL_TYPE]                 = static_cast<int>(c.type);
-		jchannel[PATCH_KEY_CHANNEL_SIZE]                 = c.height;
-		jchannel[PATCH_KEY_CHANNEL_NAME]                 = c.name;
-		jchannel[PATCH_KEY_CHANNEL_MUTE]                 = c.mute;
-		jchannel[PATCH_KEY_CHANNEL_SOLO]                 = c.solo;
-		jchannel[PATCH_KEY_CHANNEL_VOLUME]               = c.volume;
-		jchannel[PATCH_KEY_CHANNEL_PAN]                  = c.pan;
-		jchannel[PATCH_KEY_CHANNEL_HAS_ACTIONS]          = c.hasActions;
-		jchannel[PATCH_KEY_CHANNEL_ARMED]                = c.armed;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_IN]              = c.midiIn;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_KEYREL]       = c.midiInKeyRel;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS]     = c.midiInKeyPress;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_KILL]         = c.midiInKill;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_ARM]          = c.midiInArm;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_VOLUME]       = c.midiInVolume;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_MUTE]         = c.midiInMute;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_SOLO]         = c.midiInSolo;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_FILTER]       = c.midiInFilter;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_L]           = c.midiOutL;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING]   = c.midiOutLplaying;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE]      = c.midiOutLmute;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO]      = c.midiOutLsolo;
-		jchannel[PATCH_KEY_CHANNEL_KEY]                  = c.key;
-		jchannel[PATCH_KEY_CHANNEL_WAVE_ID]              = c.waveId;
-		jchannel[PATCH_KEY_CHANNEL_MODE]                 = static_cast<int>(c.mode);
-		jchannel[PATCH_KEY_CHANNEL_BEGIN]                = c.begin;
-		jchannel[PATCH_KEY_CHANNEL_END]                  = c.end;
-		jchannel[PATCH_KEY_CHANNEL_SHIFT]                = c.shift;
-		jchannel[PATCH_KEY_CHANNEL_READ_ACTIONS]         = c.readActions;
-		jchannel[PATCH_KEY_CHANNEL_PITCH]                = c.pitch;
-		jchannel[PATCH_KEY_CHANNEL_INPUT_MONITOR]        = c.inputMonitor;
-		jchannel[PATCH_KEY_CHANNEL_OVERDUB_PROTECTION]   = c.overdubProtection;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_VELO_AS_VOL]  = c.midiInVeloAsVol;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS] = c.midiInReadActions;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_PITCH]        = c.midiInPitch;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_OUT]             = c.midiOut;
-		jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_CHAN]        = c.midiOutChan;
-
-		jchannel[PATCH_KEY_CHANNEL_PLUGINS] = nlohmann::json::array();
-		for (ID pid : c.pluginIds)
-			jchannel[PATCH_KEY_CHANNEL_PLUGINS].push_back(pid);
-
-		j[PATCH_KEY_CHANNELS].push_back(jchannel);
-	}
+		j[PATCH_KEY_CHANNELS].push_back(makeChannel_(c));
 }
 
 /* -------------------------------------------------------------------------- */

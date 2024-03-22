@@ -128,6 +128,7 @@ const Patch::Channel serializeChannel(const Channel& c)
 		pc.pluginIds.push_back(p->id);
 
 	pc.id                = c.id;
+	pc.parentId          = c.parentId;
 	pc.type              = c.type;
 	pc.height            = c.height;
 	pc.name              = c.name;
@@ -171,6 +172,11 @@ const Patch::Channel serializeChannel(const Channel& c)
 	{
 		pc.midiOut     = c.midiChannel->outputEnabled;
 		pc.midiOutChan = c.midiChannel->outputFilter;
+	}
+	else if (c.type == ChannelType::GROUP)
+	{
+		for (const Channel& child : c.groupChannel->channels->getAll())
+			pc.channels.push_back(serializeChannel(child));
 	}
 
 	return pc;
