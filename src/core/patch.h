@@ -56,6 +56,7 @@ struct Patch
 	struct Channel
 	{
 		ID          id;
+		ID          parentId;
 		ChannelType type;
 		int         height;
 		std::string name;
@@ -96,6 +97,8 @@ struct Patch
 		bool            midiOut;
 		int             midiOutChan;
 		std::vector<ID> pluginIds;
+		// group channel
+		std::vector<Channel> channels;
 	};
 
 	struct Action
