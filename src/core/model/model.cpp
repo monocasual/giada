@@ -378,7 +378,7 @@ bool Model::registerThread(Thread t, bool realtime) const
 
 Document&       Model::get() { return m_swapper.get(); }
 const Document& Model::get() const { return m_swapper.get(); }
-LayoutLock      Model::get_RT() const { return LayoutLock(m_swapper); }
+DocumentLock    Model::get_RT() const { return DocumentLock(m_swapper); }
 
 /* -------------------------------------------------------------------------- */
 

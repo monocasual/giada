@@ -69,12 +69,12 @@ struct Document
 	Behaviors   behaviors;
 };
 
-/* LayoutLock
+/* DocumentLock
 Alias for a REALTIME scoped lock provided by the Swapper class. Use this in the
 real-time thread to lock the Document. */
 
 using AtomicSwapper = mcl::AtomicSwapper<Document, /*size=*/6>;
-using LayoutLock    = AtomicSwapper::RtLock;
+using DocumentLock  = AtomicSwapper::RtLock;
 
 /* SwapType
 Type of Document change. 
@@ -155,10 +155,10 @@ public:
 	bool registerThread(Thread, bool realtime) const;
 
 	/* get_RT
-	Returns a LayoutLock object for REALTIME processing. Access Document by 
-	calling LayoutLock::get() method (returns ready-only Document). */
+	Returns a DocumentLock object for REALTIME processing. Access Document by 
+	calling DocumentLock::get() method (returns ready-only Document). */
 
-	LayoutLock get_RT() const;
+	DocumentLock get_RT() const;
 
 	/* get
 	Returns a reference to the NON-REALTIME Document structure. */

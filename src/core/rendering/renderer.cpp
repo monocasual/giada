@@ -82,17 +82,17 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 	out.clear();
 
-	/* Prepare the LayoutLock. From this point on (until out of scope) the
+	/* Prepare the DocumentLock. From this point on (until out of scope) the
 	Document is locked for realtime rendering by the audio thread. Rendering
-	functions must access the realtime Document coming from layoutLock.get(). */
+	functions must access the realtime Document coming from documentLock.get(). */
 
-	const model::LayoutLock   layoutLock  = model.get_RT();
-	const model::Document&    document_RT = layoutLock.get();
-	const model::KernelAudio& kernelAudio = document_RT.kernelAudio;
-	const model::Mixer&       mixer       = document_RT.mixer;
-	const model::Sequencer&   sequencer   = document_RT.sequencer;
-	const model::Channels&    channels    = document_RT.channels;
-	const model::Actions&     actions     = document_RT.actions;
+	const model::DocumentLock documentLock = model.get_RT();
+	const model::Document&    document_RT  = documentLock.get();
+	const model::KernelAudio& kernelAudio  = document_RT.kernelAudio;
+	const model::Mixer&       mixer        = document_RT.mixer;
+	const model::Sequencer&   sequencer    = document_RT.sequencer;
+	const model::Channels&    channels     = document_RT.channels;
+	const model::Actions&     actions      = document_RT.actions;
 
 	/* Mixer disabled or Kernel Audio not ready: nothing to do here. */
 
