@@ -225,6 +225,14 @@ void deleteChannel(ID channelId)
 	if (!v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING), g_ui->getI18Text(v::LangMap::MESSAGE_CHANNEL_DELETE)))
 		return;
 	g_ui->closeAllSubwindows();
+
+	const m::Channel& ch = g_engine->getChannelsApi().get(channelId);
+	if (ch.type == ChannelType::GROUP)
+	{
+		for (const m::Channel& child : ch.groupChannel->channels->getAll())
+			g_ui->model.removeChannelFromColumn(child.id);
+	}
+
 	g_engine->getChannelsApi().remove(channelId);
 	g_ui->model.removeChannelFromColumn(channelId);
 }
