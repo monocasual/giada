@@ -47,27 +47,7 @@
 
 namespace giada::m::model
 {
-struct Document
-{
-#ifdef G_DEBUG_MODE
-	void debug() const;
-#endif
-
-	/* locked
-	If locked, Mixer won't process channels. This is used to allow editing the 
-	shared data (e.g. Plugins, Waves) by the rendering engine without data races. */
-
-	bool locked = false;
-
-	KernelAudio kernelAudio;
-	KernelMidi  kernelMidi;
-	Sequencer   sequencer;
-	Mixer       mixer;
-	MidiIn      midiIn;
-	Channels    channels;
-	Actions     actions;
-	Behaviors   behaviors;
-};
+struct Document;
 
 /* DocumentLock
 Alias for a REALTIME scoped lock provided by the Swapper class. Use this in the

@@ -27,6 +27,7 @@
 #include "core/model/model.h"
 #include "core/actions/actionFactory.h"
 #include "core/channels/channelFactory.h"
+#include "core/model/document.h"
 #include "core/plugins/pluginFactory.h"
 #include "core/plugins/pluginManager.h"
 #include "core/waveFactory.h"
@@ -88,21 +89,6 @@ void clear_(std::vector<T>& dest, Model& model)
 	dest.clear();
 }
 } // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-#ifdef G_DEBUG_MODE
-
-void Document::debug() const
-{
-	mixer.debug();
-	channels.debug();
-	actions.debug();
-}
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
