@@ -38,6 +38,7 @@
 #include "core/model/midiIn.h"
 #include "core/model/mixer.h"
 #include "core/model/sequencer.h"
+#include "core/model/types.h"
 #include "core/plugins/plugin.h"
 #include "core/wave.h"
 #include "deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
@@ -48,30 +49,6 @@
 namespace giada::m::model
 {
 struct Document;
-
-/* DocumentLock
-Alias for a REALTIME scoped lock provided by the Swapper class. Use this in the
-real-time thread to lock the Document. */
-
-using AtomicSwapper = mcl::AtomicSwapper<Document, /*size=*/6>;
-using DocumentLock  = AtomicSwapper::RtLock;
-
-/* SwapType
-Type of Document change. 
-	Hard: the structure has changed (e.g. add a new channel);
-	Soft: a property has changed (e.g. change volume);
-	None: something has changed but we don't care. 
-Used by model listeners to determine the type of change that occurred in the 
-Document. */
-
-enum class SwapType
-{
-	HARD,
-	SOFT,
-	NONE
-};
-
-/* -------------------------------------------------------------------------- */
 
 /* LoadState
 Contains information about the model state after a patch has been loaded. */
