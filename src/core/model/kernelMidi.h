@@ -27,8 +27,8 @@
 #ifndef G_MODEL_KERNEL_MIDI_H
 #define G_MODEL_KERNEL_MIDI_H
 
-#include "core/kernelMidi.h"
-#include "core/types.h"
+#include "core/const.h"
+#include <RtMidi.h>
 
 namespace giada::m::model
 {
