@@ -28,10 +28,16 @@
 #define G_MODEL_SHARED_H
 
 #include "core/model/channels.h"
+#include "core/model/loadState.h"
 #include "core/model/mixer.h"
 #include "core/model/sequencer.h"
 #include "core/plugins/plugin.h"
 #include "core/wave.h"
+
+namespace giada::m
+{
+class PluginManager;
+}
 
 namespace giada::m::model
 {
@@ -44,6 +50,16 @@ public:
 	Initializes the shared data. All values go back to default. */
 
 	void init();
+
+	/* load  
+	Loads shared data from a Patch object. */
+
+	LoadState load(const Patch&, PluginManager&, const Sequencer&, int sampleRate, int bufferSize, Resampler::Quality);
+
+	/* store
+	Stores shared data into a Patch object. */
+
+	void store(Patch&, const std::string& projectPath);
 
 #ifdef G_DEBUG_MODE
 	void
