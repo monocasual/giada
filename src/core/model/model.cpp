@@ -178,11 +178,12 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 
 	for (const Patch::Channel& pchannel : patch.channels)
 	{
-		Wave*                wave    = findWave(pchannel.waveId);
-		std::vector<Plugin*> plugins = m_shared.findPlugins(pchannel.pluginIds);
-		channelFactory::Data data    = channelFactory::deserializeChannel(pchannel, sampleRateRatio, bufferSize, rsmpQuality, wave, plugins);
-		document.channels.add(data.channel);
-		getAllChannelsShared().push_back(std::move(data.shared));
+		Wave*                          wave    = findWave(pchannel.waveId);
+		std::vector<Plugin*>           plugins = m_shared.findPlugins(pchannel.pluginIds);
+		std::unique_ptr<ChannelShared> shared  = channelFactory::deserializeShared(pchannel.type, bufferSize, rsmpQuality);
+		Channel                        channel = channelFactory::deserializeChannel(pchannel, *shared.get(), sampleRateRatio, wave, plugins);
+		document.channels.add(channel);
+		getAllChannelsShared().push_back(std::move(shared));
 	}
 
 	document.actions.set(actionFactory::deserializeActions(patch.actions));
