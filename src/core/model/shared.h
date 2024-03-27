@@ -79,12 +79,12 @@ public:
 	std::vector<Plugin*> findPlugins(std::vector<ID> pluginIds);
 
 private:
-	Sequencer::Shared                           sequencer;
-	Mixer::Shared                               mixer;
-	std::vector<std::unique_ptr<ChannelShared>> channels;
+	Sequencer::Shared                           m_sequencer;
+	Mixer::Shared                               m_mixer;
+	std::vector<std::unique_ptr<ChannelShared>> m_channels;
 
-	std::vector<std::unique_ptr<Wave>>   waves;
-	std::vector<std::unique_ptr<Plugin>> plugins;
+	std::vector<std::unique_ptr<Wave>>   m_waves;
+	std::vector<std::unique_ptr<Plugin>> m_plugins;
 };
 } // namespace giada::m::model
 

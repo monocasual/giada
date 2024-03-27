@@ -74,11 +74,11 @@ void remove_(D& dest, T& ref)
 
 void Shared::init()
 {
-	sequencer = {};
-	mixer     = {};
-	channels.clear();
-	waves.clear();
-	plugins.clear();
+	m_sequencer = {};
+	m_mixer     = {};
+	m_channels.clear();
+	m_waves.clear();
+	m_plugins.clear();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -89,17 +89,17 @@ void Shared::debug() const
 {
 	puts("shared::channels");
 
-	for (int i = 0; const auto& c : channels)
+	for (int i = 0; const auto& c : m_channels)
 		fmt::print("\t{}) - {}\n", i++, (void*)c.get());
 
 	puts("shared::waves");
 
-	for (int i = 0; const auto& w : waves)
+	for (int i = 0; const auto& w : m_waves)
 		fmt::print("\t{}) {} - ID={} name='{}'\n", i++, (void*)w.get(), w->id, w->getPath());
 
 	puts("shared::plugins");
 
-	for (int i = 0; const auto& p : plugins)
+	for (int i = 0; const auto& p : m_plugins)
 		fmt::print("\t{}) {} - ID={}\n", i++, (void*)p.get(), p->id);
 }
 
@@ -107,31 +107,31 @@ void Shared::debug() const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<std::unique_ptr<Wave>>&          Shared::getAllWaves() { return waves; };
-std::vector<std::unique_ptr<Plugin>>&        Shared::getAllPlugins() { return plugins; }
-std::vector<std::unique_ptr<ChannelShared>>& Shared::getAllChannels() { return channels; }
+std::vector<std::unique_ptr<Wave>>&          Shared::getAllWaves() { return m_waves; };
+std::vector<std::unique_ptr<Plugin>>&        Shared::getAllPlugins() { return m_plugins; }
+std::vector<std::unique_ptr<ChannelShared>>& Shared::getAllChannels() { return m_channels; }
 
 /* -------------------------------------------------------------------------- */
 
-Plugin*        Shared::findPlugin(ID id) { return get_(plugins, id); }
-Wave*          Shared::findWave(ID id) { return get_(waves, id); }
-ChannelShared* Shared::findChannel(ID id) { return get_(channels, id); }
+Plugin*        Shared::findPlugin(ID id) { return get_(m_plugins, id); }
+Wave*          Shared::findWave(ID id) { return get_(m_waves, id); }
+ChannelShared* Shared::findChannel(ID id) { return get_(m_channels, id); }
 
 /* -------------------------------------------------------------------------- */
 
-Wave&          Shared::addWave(std::unique_ptr<Wave> w) { return add_(waves, std::move(w)); }
-Plugin&        Shared::addPlugin(std::unique_ptr<Plugin> p) { return add_(plugins, std::move(p)); }
-ChannelShared& Shared::addChannel(std::unique_ptr<ChannelShared> cs) { return add_(channels, std::move(cs)); }
+Wave&          Shared::addWave(std::unique_ptr<Wave> w) { return add_(m_waves, std::move(w)); }
+Plugin&        Shared::addPlugin(std::unique_ptr<Plugin> p) { return add_(m_plugins, std::move(p)); }
+ChannelShared& Shared::addChannel(std::unique_ptr<ChannelShared> cs) { return add_(m_channels, std::move(cs)); }
 
 /* -------------------------------------------------------------------------- */
 
-void Shared::removePlugin(const Plugin& p) { remove_(plugins, p); }
-void Shared::removeWave(const Wave& w) { remove_(waves, w); }
+void Shared::removePlugin(const Plugin& p) { remove_(m_plugins, p); }
+void Shared::removeWave(const Wave& w) { remove_(m_waves, w); }
 
 /* -------------------------------------------------------------------------- */
 
-void Shared::clearPlugins() { plugins.clear(); }
-void Shared::clearWaves() { waves.clear(); }
+void Shared::clearPlugins() { m_plugins.clear(); }
+void Shared::clearWaves() { m_waves.clear(); }
 
 /* -------------------------------------------------------------------------- */
 

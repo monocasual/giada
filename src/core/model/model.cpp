@@ -57,8 +57,8 @@ void Model::init()
 
 	Document& document        = get();
 	document                  = {};
-	document.sequencer.shared = &m_shared.sequencer;
-	document.mixer.shared     = &m_shared.mixer;
+	document.sequencer.shared = &m_shared.m_sequencer;
+	document.mixer.shared     = &m_shared.m_mixer;
 
 	swap(SwapType::NONE);
 }
@@ -71,9 +71,9 @@ void Model::reset()
 
 	Document& document        = get();
 	document.sequencer        = {};
-	document.sequencer.shared = &m_shared.sequencer;
+	document.sequencer.shared = &m_shared.m_sequencer;
 	document.mixer            = {};
-	document.mixer.shared     = &m_shared.mixer;
+	document.mixer.shared     = &m_shared.m_mixer;
 	document.channels         = {};
 
 	swap(SwapType::NONE);
