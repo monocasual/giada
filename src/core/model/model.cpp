@@ -145,9 +145,9 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 	/* Lock the shared data. Real-time thread can't read from it until this method
 	goes out of scope. */
 
-	SharedLock lock     = lockShared(SwapType::NONE);
-	Document&  document = get();
-	LoadState  state{patch};
+	const SharedLock lock     = lockShared(SwapType::NONE);
+	Document&        document = get();
+	LoadState        state{patch};
 
 	/* Clear and re-initialize stuff first. */
 
@@ -253,7 +253,7 @@ void Model::store(Patch& patch, const std::string& projectPath)
 	goes out of scope. Even if it's mostly a read-only operation, some Wave
 	objects need to be updated at some point. */
 
-	SharedLock lock = lockShared(SwapType::NONE);
+	const SharedLock lock = lockShared(SwapType::NONE);
 
 	const Document& document = get();
 
