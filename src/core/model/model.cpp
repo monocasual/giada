@@ -230,25 +230,11 @@ void Model::store(Patch& patch, const std::string& projectPath)
 	patch.bpm       = document.sequencer.bpm;
 	patch.quantize  = document.sequencer.quantize;
 	patch.metronome = document.sequencer.metronome;
-
-	for (const auto& p : getAllPlugins())
-		patch.plugins.push_back(pluginFactory::serializePlugin(*p));
-
-	patch.actions = actionFactory::serializeActions(document.actions.getAll());
-
-	for (auto& w : getAllWaves())
-	{
-		/* Update all existing file paths in Waves, so that they point to the 
-		project folder they belong to. */
-
-		w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, getAllWaves()));
-		waveFactory::save(*w, w->getPath()); // TODO - error checking
-
-		patch.waves.push_back(waveFactory::serializeWave(*w));
-	}
-
+	patch.actions   = actionFactory::serializeActions(document.actions.getAll());
 	for (const Channel& c : document.channels.getAll())
 		patch.channels.push_back(channelFactory::serializeChannel(c));
+
+	m_shared.store(patch, projectPath);
 }
 
 /* -------------------------------------------------------------------------- */
