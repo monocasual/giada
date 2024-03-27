@@ -217,12 +217,6 @@ void Model::store(Conf& conf) const
 
 void Model::store(Patch& patch, const std::string& projectPath)
 {
-	/* Lock the shared data. Real-time thread can't read from it until this method
-	goes out of scope. Even if it's mostly a read-only operation, some Wave
-	objects need to be updated at some point. */
-
-	const SharedLock lock = lockShared(SwapType::NONE);
-
 	const Document& document = get();
 
 	patch.bars      = document.sequencer.bars;
@@ -233,6 +227,12 @@ void Model::store(Patch& patch, const std::string& projectPath)
 	patch.actions   = actionFactory::serializeActions(document.actions.getAll());
 	for (const Channel& c : document.channels.getAll())
 		patch.channels.push_back(channelFactory::serializeChannel(c));
+
+	/* Lock the shared data before storing it. Real-time thread can't read from 
+	it until this method goes out of scope. Even if it's mostly a read-only operation, 
+	some Wave objects need to be updated at some point. */
+
+	const SharedLock lock = lockShared(SwapType::NONE);
 
 	m_shared.store(patch, projectPath);
 }
