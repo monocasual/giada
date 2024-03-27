@@ -24,22 +24,24 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/model/dataLock.h"
-#include "core/model/model.h"
+#ifndef G_MODEL_SHAREDLOCK_H
+#define G_MODEL_SHAREDLOCK_H
+
+#include "core/model/types.h"
 
 namespace giada::m::model
 {
-DataLock::DataLock(Model& m, SwapType t)
-: m_model(m)
-, m_swapType(t)
+class Model;
+class SharedLock
 {
-	m_model.get().locked = true;
-	m_model.swap(SwapType::NONE);
-}
+public:
+	SharedLock(Model&, SwapType t);
+	~SharedLock();
 
-DataLock::~DataLock()
-{
-	m_model.get().locked = false;
-	m_model.swap(m_swapType);
-}
+private:
+	Model&   m_model;
+	SwapType m_swapType;
+};
 } // namespace giada::m::model
+
+#endif

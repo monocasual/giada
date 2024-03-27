@@ -435,7 +435,7 @@ bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
 
 	/* Reset logical and edited states in Wave. */
 
-	model::DataLock lock = m_model.lockData();
+	model::SharedLock lock = m_model.lockShared();
 	wave->setLogical(false);
 	wave->setEdited(false);
 
@@ -571,7 +571,7 @@ void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer,
 	/* Need model::DataLock here, as data might be being read by the audio
 	thread at the same time. */
 
-	model::DataLock lock = m_model.lockData();
+	model::SharedLock lock = m_model.lockShared();
 
 	wave->getBuffer().sum(buffer, /*gain=*/1.0f);
 	wave->setLogical(true);

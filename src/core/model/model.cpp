@@ -145,9 +145,9 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 	/* Lock the shared data. Real-time thread can't read from it until this method
 	goes out of scope. */
 
-	DataLock  lock     = lockData(SwapType::NONE);
-	Document& document = get();
-	LoadState state{patch};
+	SharedLock lock     = lockShared(SwapType::NONE);
+	Document&  document = get();
+	LoadState  state{patch};
 
 	/* Clear and re-initialize stuff first. */
 
@@ -253,7 +253,7 @@ void Model::store(Patch& patch, const std::string& projectPath)
 	goes out of scope. Even if it's mostly a read-only operation, some Wave
 	objects need to be updated at some point. */
 
-	DataLock lock = lockData(SwapType::NONE);
+	SharedLock lock = lockShared(SwapType::NONE);
 
 	const Document& document = get();
 
@@ -307,9 +307,9 @@ void Model::swap(SwapType t)
 
 /* -------------------------------------------------------------------------- */
 
-DataLock Model::lockData(SwapType t)
+SharedLock Model::lockShared(SwapType t)
 {
-	return DataLock(*this, t);
+	return SharedLock(*this, t);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -334,19 +334,19 @@ Wave*   Model::findWave(ID id) { return m_shared.findWave(id); }
 
 Wave& Model::addWave(std::unique_ptr<Wave> w)
 {
-	const DataLock lock = lockData(SwapType::NONE);
+	const SharedLock lock = lockShared(SwapType::NONE);
 	return m_shared.addWave(std::move(w));
 }
 
 Plugin& Model::addPlugin(std::unique_ptr<Plugin> p)
 {
-	const DataLock lock = lockData(SwapType::NONE);
+	const SharedLock lock = lockShared(SwapType::NONE);
 	return m_shared.addPlugin(std::move(p));
 }
 
 ChannelShared& Model::addChannelShared(std::unique_ptr<ChannelShared> cs)
 {
-	const DataLock lock = lockData(SwapType::NONE);
+	const SharedLock lock = lockShared(SwapType::NONE);
 	return m_shared.addChannel(std::move(cs));
 }
 
@@ -354,13 +354,13 @@ ChannelShared& Model::addChannelShared(std::unique_ptr<ChannelShared> cs)
 
 void Model::removePlugin(const Plugin& p)
 {
-	const DataLock lock = lockData(SwapType::NONE);
+	const SharedLock lock = lockShared(SwapType::NONE);
 	m_shared.removePlugin(p);
 }
 
 void Model::removeWave(const Wave& w)
 {
-	const DataLock lock = lockData(SwapType::NONE);
+	const SharedLock lock = lockShared(SwapType::NONE);
 	m_shared.removeWave(w);
 }
 
@@ -368,13 +368,13 @@ void Model::removeWave(const Wave& w)
 
 void Model::clearPlugins()
 {
-	const DataLock lock = lockData(SwapType::NONE);
+	const SharedLock lock = lockShared(SwapType::NONE);
 	m_shared.clearPlugins();
 }
 
 void Model::clearWaves()
 {
-	const DataLock lock = lockData(SwapType::NONE);
+	const SharedLock lock = lockShared(SwapType::NONE);
 	m_shared.clearWaves();
 }
 

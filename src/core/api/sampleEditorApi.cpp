@@ -70,7 +70,7 @@ void SampleEditorApi::setPreviewTracker(Frame f)
 void SampleEditorApi::cut(ID channelId, Frame a, Frame b)
 {
 	copy(channelId, a, b);
-	model::DataLock lock = m_model.lockData();
+	model::SharedLock lock = m_model.lockShared();
 	wfx::cut(getWave(channelId), a, b);
 	resetBeginEnd(channelId);
 	loadPreviewChannel(channelId); // Refresh preview channel properties
@@ -100,7 +100,7 @@ void SampleEditorApi::paste(ID channelId, Frame a)
 	/* Temporary disable wave reading in channel. From now on, the audio
 	    thread won't be reading any wave, so editing it is safe.  */
 
-	model::DataLock lock = m_model.lockData();
+	model::SharedLock lock = m_model.lockShared();
 
 	/* Paste copied data to destination wave. */
 
@@ -120,7 +120,7 @@ void SampleEditorApi::paste(ID channelId, Frame a)
 
 void SampleEditorApi::silence(ID channelId, Frame a, Frame b)
 {
-	model::DataLock lock = m_model.lockData();
+	model::SharedLock lock = m_model.lockShared();
 	wfx::silence(getWave(channelId), a, b);
 }
 
@@ -128,7 +128,7 @@ void SampleEditorApi::silence(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
 {
-	model::DataLock lock = m_model.lockData();
+	model::SharedLock lock = m_model.lockShared();
 	wfx::fade(getWave(channelId), a, b, type);
 }
 
@@ -136,7 +136,7 @@ void SampleEditorApi::fade(ID channelId, Frame a, Frame b, wfx::Fade type)
 
 void SampleEditorApi::smoothEdges(ID channelId, Frame a, Frame b)
 {
-	model::DataLock lock = m_model.lockData();
+	model::SharedLock lock = m_model.lockShared();
 	wfx::smooth(getWave(channelId), a, b);
 }
 
@@ -144,7 +144,7 @@ void SampleEditorApi::smoothEdges(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::reverse(ID channelId, Frame a, Frame b)
 {
-	model::DataLock lock = m_model.lockData();
+	model::SharedLock lock = m_model.lockShared();
 	wfx::reverse(getWave(channelId), a, b);
 }
 
@@ -152,7 +152,7 @@ void SampleEditorApi::reverse(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::normalize(ID channelId, Frame a, Frame b)
 {
-	model::DataLock lock = m_model.lockData();
+	model::SharedLock lock = m_model.lockShared();
 	wfx::normalize(getWave(channelId), a, b);
 }
 
@@ -160,7 +160,7 @@ void SampleEditorApi::normalize(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::trim(ID channelId, Frame a, Frame b)
 {
-	model::DataLock lock = m_model.lockData();
+	model::SharedLock lock = m_model.lockShared();
 	wfx::trim(getWave(channelId), a, b);
 	resetBeginEnd(channelId);
 	loadPreviewChannel(channelId); // Refresh preview channel properties
@@ -173,7 +173,7 @@ void SampleEditorApi::shift(ID channelId, Frame offset)
 	const Channel& ch       = m_channelManager.getChannel(channelId);
 	const Frame    oldShift = ch.sampleChannel->shift;
 
-	m::model::DataLock lock = m_model.lockData();
+	m::model::SharedLock lock = m_model.lockShared();
 	m::wfx::shift(getWave(channelId), offset - oldShift);
 	// Model has been swapped by DataLock constructor, needs to get Channel again
 	m_channelManager.getChannel(channelId).sampleChannel->shift = offset;

@@ -33,13 +33,13 @@
 #include "core/model/actions.h"
 #include "core/model/behaviors.h"
 #include "core/model/channels.h"
-#include "core/model/dataLock.h"
 #include "core/model/kernelAudio.h"
 #include "core/model/kernelMidi.h"
 #include "core/model/midiIn.h"
 #include "core/model/mixer.h"
 #include "core/model/sequencer.h"
 #include "core/model/shared.h"
+#include "core/model/sharedLock.h"
 #include "core/model/types.h"
 #include "core/plugins/plugin.h"
 #include "core/wave.h"
@@ -73,11 +73,11 @@ public:
 
 	bool isLocked() const;
 
-	/* lockData
-	Returns a scoped locker DataLock object. Use this when you want to lock
-	the model: a locked model won't be processed by Mixer. */
+	/* lockShared
+	Returns a scoped locker SharedLock object. Use this when you want to lock
+	the shared data: it won't be processed by Mixer. */
 
-	[[nodiscard]] DataLock lockData(SwapType t = SwapType::HARD);
+	[[nodiscard]] SharedLock lockShared(SwapType t = SwapType::HARD);
 
 	/* init
 	Initializes the internal Document. All values go back to default. */
