@@ -58,8 +58,9 @@ public:
 	Finds something in the shared data given an ID. Returns nullptr if the
 	object is not found. */
 
-	Plugin* findPlugin(ID);
-	Wave*   findWave(ID);
+	Plugin*        findPlugin(ID);
+	Wave*          findWave(ID);
+	ChannelShared* findChannel(ID);
 
 	/* add[*]
 	Adds some shared data (by moving it). Returns a reference to the last added 

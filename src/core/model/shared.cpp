@@ -113,8 +113,9 @@ std::vector<std::unique_ptr<ChannelShared>>& Shared::getAllChannels() { return c
 
 /* -------------------------------------------------------------------------- */
 
-Plugin* Shared::findPlugin(ID id) { return get_(plugins, id); }
-Wave*   Shared::findWave(ID id) { return get_(waves, id); }
+Plugin*        Shared::findPlugin(ID id) { return get_(plugins, id); }
+Wave*          Shared::findWave(ID id) { return get_(waves, id); }
+ChannelShared* Shared::findChannel(ID id) { return get_(channels, id); }
 
 /* -------------------------------------------------------------------------- */
 
