@@ -39,6 +39,7 @@
 #include "core/model/midiIn.h"
 #include "core/model/mixer.h"
 #include "core/model/sequencer.h"
+#include "core/model/shared.h"
 #include "core/model/types.h"
 #include "core/plugins/plugin.h"
 #include "core/wave.h"
@@ -166,18 +167,6 @@ public:
 	std::function<void(SwapType)> onSwap;
 
 private:
-	struct Shared
-	{
-		Sequencer::Shared                           sequencerShared;
-		Mixer::Shared                               mixerShared;
-		std::vector<std::unique_ptr<ChannelShared>> channelsShared;
-
-		std::vector<std::unique_ptr<Wave>>   waves;
-		std::vector<std::unique_ptr<Plugin>> plugins;
-	};
-
-	std::vector<Plugin*> findPlugins(std::vector<ID> pluginIds);
-
 	AtomicSwapper m_swapper;
 	Shared        m_shared;
 };

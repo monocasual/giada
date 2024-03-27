@@ -44,56 +44,6 @@ using namespace mcl;
 
 namespace giada::m::model
 {
-namespace
-{
-template <typename T>
-auto getIter_(const std::vector<std::unique_ptr<T>>& source, ID id)
-{
-	return u::vector::findIf(source, [id](const std::unique_ptr<T>& p) { return p->id == id; });
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename S>
-auto* get_(S& source, ID id)
-{
-	auto it = getIter_(source, id);
-	return it == source.end() ? nullptr : it->get();
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename T>
-typename T::element_type& add_(std::vector<T>& dest, T obj, Model& model)
-{
-	DataLock lock = model.lockData(SwapType::NONE);
-	dest.push_back(std::move(obj));
-	return *dest.back().get();
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename D, typename T>
-void remove_(D& dest, T& ref, Model& model)
-{
-	DataLock lock = model.lockData(SwapType::NONE);
-	u::vector::removeIf(dest, [&ref](const auto& other) { return other.get() == &ref; });
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename T>
-void clear_(std::vector<T>& dest, Model& model)
-{
-	DataLock lock = model.lockData(SwapType::NONE);
-	dest.clear();
-}
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 bool LoadState::isGood() const
 {
 	return patch.status == G_FILE_OK && missingWaves.empty() && missingPlugins.empty();
@@ -112,12 +62,12 @@ Model::Model()
 
 void Model::init()
 {
-	m_shared = {};
+	m_shared.init();
 
 	Document& document        = get();
 	document                  = {};
-	document.sequencer.shared = &m_shared.sequencerShared;
-	document.mixer.shared     = &m_shared.mixerShared;
+	document.sequencer.shared = &m_shared.sequencer;
+	document.mixer.shared     = &m_shared.mixer;
 
 	swap(SwapType::NONE);
 }
@@ -126,13 +76,13 @@ void Model::init()
 
 void Model::reset()
 {
-	m_shared = {};
+	m_shared.init();
 
 	Document& document        = get();
 	document.sequencer        = {};
-	document.sequencer.shared = &m_shared.sequencerShared;
+	document.sequencer.shared = &m_shared.sequencer;
 	document.mixer            = {};
-	document.mixer.shared     = &m_shared.mixerShared;
+	document.mixer.shared     = &m_shared.mixer;
 	document.channels         = {};
 
 	swap(SwapType::NONE);
@@ -202,9 +152,7 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 	/* Clear and re-initialize stuff first. */
 
 	document.channels = {};
-	getAllChannelsShared().clear();
-	getAllPlugins().clear();
-	getAllWaves().clear();
+	m_shared.init();
 
 	/* Load external data first: plug-ins and waves. */
 
@@ -231,7 +179,7 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 	for (const Patch::Channel& pchannel : patch.channels)
 	{
 		Wave*                wave    = findWave(pchannel.waveId);
-		std::vector<Plugin*> plugins = findPlugins(pchannel.pluginIds);
+		std::vector<Plugin*> plugins = m_shared.findPlugins(pchannel.pluginIds);
 		channelFactory::Data data    = channelFactory::deserializeChannel(pchannel, sampleRateRatio, bufferSize, rsmpQuality, wave, plugins);
 		document.channels.add(data.channel);
 		getAllChannelsShared().push_back(std::move(data.shared));
@@ -373,43 +321,61 @@ bool Model::isLocked() const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<std::unique_ptr<Wave>>&          Model::getAllWaves() { return m_shared.waves; };
-std::vector<std::unique_ptr<Plugin>>&        Model::getAllPlugins() { return m_shared.plugins; }
-std::vector<std::unique_ptr<ChannelShared>>& Model::getAllChannelsShared() { return m_shared.channelsShared; }
+std::vector<std::unique_ptr<Wave>>&          Model::getAllWaves() { return m_shared.getAllWaves(); };
+std::vector<std::unique_ptr<Plugin>>&        Model::getAllPlugins() { return m_shared.getAllPlugins(); }
+std::vector<std::unique_ptr<ChannelShared>>& Model::getAllChannelsShared() { return m_shared.getAllChannels(); }
 
 /* -------------------------------------------------------------------------- */
 
-Plugin* Model::findPlugin(ID id) { return get_(m_shared.plugins, id); }
-Wave*   Model::findWave(ID id) { return get_(m_shared.waves, id); }
+Plugin* Model::findPlugin(ID id) { return m_shared.findPlugin(id); }
+Wave*   Model::findWave(ID id) { return m_shared.findWave(id); }
 
 /* -------------------------------------------------------------------------- */
 
-Wave&          Model::addWave(std::unique_ptr<Wave> w) { return add_(m_shared.waves, std::move(w), *this); }
-Plugin&        Model::addPlugin(std::unique_ptr<Plugin> p) { return add_(m_shared.plugins, std::move(p), *this); }
-ChannelShared& Model::addChannelShared(std::unique_ptr<ChannelShared> cs) { return add_(m_shared.channelsShared, std::move(cs), *this); }
-
-/* -------------------------------------------------------------------------- */
-
-void Model::removePlugin(const Plugin& p) { remove_(m_shared.plugins, p, *this); }
-void Model::removeWave(const Wave& w) { remove_(m_shared.waves, w, *this); }
-
-/* -------------------------------------------------------------------------- */
-
-void Model::clearPlugins() { clear_(m_shared.plugins, *this); }
-void Model::clearWaves() { clear_(m_shared.waves, *this); }
-
-/* -------------------------------------------------------------------------- */
-
-std::vector<Plugin*> Model::findPlugins(std::vector<ID> pluginIds)
+Wave& Model::addWave(std::unique_ptr<Wave> w)
 {
-	std::vector<Plugin*> out;
-	for (ID id : pluginIds)
-	{
-		Plugin* plugin = findPlugin(id);
-		if (plugin != nullptr)
-			out.push_back(plugin);
-	}
-	return out;
+	const DataLock lock = lockData(SwapType::NONE);
+	return m_shared.addWave(std::move(w));
+}
+
+Plugin& Model::addPlugin(std::unique_ptr<Plugin> p)
+{
+	const DataLock lock = lockData(SwapType::NONE);
+	return m_shared.addPlugin(std::move(p));
+}
+
+ChannelShared& Model::addChannelShared(std::unique_ptr<ChannelShared> cs)
+{
+	const DataLock lock = lockData(SwapType::NONE);
+	return m_shared.addChannel(std::move(cs));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::removePlugin(const Plugin& p)
+{
+	const DataLock lock = lockData(SwapType::NONE);
+	m_shared.removePlugin(p);
+}
+
+void Model::removeWave(const Wave& w)
+{
+	const DataLock lock = lockData(SwapType::NONE);
+	m_shared.removeWave(w);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::clearPlugins()
+{
+	const DataLock lock = lockData(SwapType::NONE);
+	m_shared.clearPlugins();
+}
+
+void Model::clearWaves()
+{
+	const DataLock lock = lockData(SwapType::NONE);
+	m_shared.clearWaves();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -425,23 +391,7 @@ void Model::debug()
 	puts("-------------------------------");
 
 	get().debug();
-
-	puts("model::channelsShared");
-
-	for (int i = 0; const auto& c : m_shared.channelsShared)
-	{
-		fmt::print("\t{}) - {}\n", i++, (void*)c.get());
-	}
-
-	puts("model::shared.waves");
-
-	for (int i = 0; const auto& w : m_shared.waves)
-		fmt::print("\t{}) {} - ID={} name='{}'\n", i++, (void*)w.get(), w->id, w->getPath());
-
-	puts("model::shared.plugins");
-
-	for (int i = 0; const auto& p : m_shared.plugins)
-		fmt::print("\t{}) {} - ID={}\n", i++, (void*)p.get(), p->id);
+	m_shared.debug();
 }
 
 #endif // G_DEBUG_MODE
