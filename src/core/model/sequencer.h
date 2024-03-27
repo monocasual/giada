@@ -37,6 +37,7 @@ namespace giada::m::model
 class Sequencer
 {
 	friend class Model;
+	friend class Shared;
 
 public:
 	/* isRunning

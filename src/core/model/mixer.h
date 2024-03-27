@@ -38,6 +38,7 @@ namespace giada::m::model
 class Mixer
 {
 	friend class Model;
+	friend class Shared;
 
 public:
 	bool  a_isActive() const;
