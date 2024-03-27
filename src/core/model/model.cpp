@@ -138,43 +138,19 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 
 	const SharedLock lock     = lockShared(SwapType::NONE);
 	Document&        document = get();
-	LoadState        state{patch};
 
-	/* Clear and re-initialize stuff first. */
+	const LoadState state = m_shared.load(patch, pluginManager, document.sequencer, sampleRate, bufferSize, rsmpQuality);
 
 	document.channels = {};
-	m_shared.init();
-
-	/* Load external data first: plug-ins and waves. */
-
-	for (const Patch::Plugin& pplugin : patch.plugins)
-	{
-		std::unique_ptr<juce::AudioPluginInstance> pi = pluginManager.makeJucePlugin(pplugin.path, sampleRate, bufferSize);
-		std::unique_ptr<Plugin>                    p  = pluginFactory::deserializePlugin(pplugin, std::move(pi), document.sequencer, sampleRate, bufferSize);
-		if (!p->valid)
-			state.missingPlugins.push_back(pplugin.path);
-		getAllPlugins().push_back(std::move(p));
-	}
-
-	for (const Patch::Wave& pwave : patch.waves)
-	{
-		std::unique_ptr<Wave> w = waveFactory::deserializeWave(pwave, sampleRate, rsmpQuality);
-		if (w != nullptr)
-			getAllWaves().push_back(std::move(w));
-		else
-			state.missingWaves.push_back(pwave.path);
-	}
-
-	/* Then load up channels, actions and global properties. */
-
 	for (const Patch::Channel& pchannel : patch.channels)
 	{
-		Wave*                          wave    = findWave(pchannel.waveId);
-		std::vector<Plugin*>           plugins = m_shared.findPlugins(pchannel.pluginIds);
-		std::unique_ptr<ChannelShared> shared  = channelFactory::deserializeShared(pchannel, bufferSize, rsmpQuality);
-		Channel                        channel = channelFactory::deserializeChannel(pchannel, *shared.get(), sampleRateRatio, wave, plugins);
+		Wave*                wave    = findWave(pchannel.waveId);
+		std::vector<Plugin*> plugins = m_shared.findPlugins(pchannel.pluginIds);
+		ChannelShared*       shared  = m_shared.findChannel(pchannel.id);
+		assert(shared != nullptr);
+
+		Channel channel = channelFactory::deserializeChannel(pchannel, *shared, sampleRateRatio, wave, plugins);
 		document.channels.add(channel);
-		getAllChannelsShared().push_back(std::move(shared));
 	}
 
 	document.actions.set(actionFactory::deserializeActions(patch.actions));
