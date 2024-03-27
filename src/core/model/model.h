@@ -35,6 +35,7 @@
 #include "core/model/channels.h"
 #include "core/model/kernelAudio.h"
 #include "core/model/kernelMidi.h"
+#include "core/model/loadState.h"
 #include "core/model/midiIn.h"
 #include "core/model/mixer.h"
 #include "core/model/sequencer.h"
@@ -51,21 +52,6 @@
 namespace giada::m::model
 {
 struct Document;
-
-/* LoadState
-Contains information about the model state after a patch has been loaded. */
-
-struct LoadState
-{
-	bool isGood() const;
-
-	Patch                    patch;
-	std::vector<std::string> missingWaves   = {};
-	std::vector<std::string> missingPlugins = {};
-};
-
-/* -------------------------------------------------------------------------- */
-
 class Model
 {
 public:

@@ -44,15 +44,6 @@ using namespace mcl;
 
 namespace giada::m::model
 {
-bool LoadState::isGood() const
-{
-	return patch.status == G_FILE_OK && missingWaves.empty() && missingPlugins.empty();
-}
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 Model::Model()
 : onSwap(nullptr)
 {

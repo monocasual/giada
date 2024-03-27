@@ -92,6 +92,7 @@ list(APPEND SOURCES
 	src/core/channels/channelShared.cpp
 	src/core/channels/channelFactory.cpp
 	src/core/model/document.cpp
+	src/core/model/loadState.cpp
 	src/core/model/sharedLock.cpp
 	src/core/model/shared.cpp
 	src/core/model/sequencer.cpp
