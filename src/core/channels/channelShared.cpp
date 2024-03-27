@@ -28,8 +28,9 @@
 
 namespace giada::m
 {
-ChannelShared::ChannelShared(Frame bufferSize)
-: audioBuffer(bufferSize, G_MAX_IO_CHANS)
+ChannelShared::ChannelShared(ID id, Frame bufferSize)
+: id(id)
+, audioBuffer(bufferSize, G_MAX_IO_CHANS)
 {
 }
 

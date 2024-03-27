@@ -76,7 +76,7 @@ const Patch::Channel serializeChannel(const Channel& c);
 /* deserializeShared
 Returns a new ChannelShared object to be passed to deserializeChannel() above. */
 
-std::unique_ptr<ChannelShared> deserializeShared(ChannelType, int bufferSize, Resampler::Quality);
+std::unique_ptr<ChannelShared> deserializeShared(const Patch::Channel&, int bufferSize, Resampler::Quality);
 
 } // namespace giada::m::channelFactory
 

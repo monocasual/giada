@@ -44,7 +44,7 @@ struct ChannelShared final
 	using MidiQueue   = Queue<MidiEvent, 32>; // TODO - must be multi-producer (multiple midi threads)
 	using RenderQueue = Queue<rendering::RenderInfo, 2>;
 
-	ChannelShared(Frame bufferSize);
+	ChannelShared(ID, Frame bufferSize);
 
 	bool isReadingActions() const;
 
@@ -52,6 +52,8 @@ struct ChannelShared final
 	Sets a new size for the internal audio buffer. */
 
 	void setBufferSize(int);
+
+	ID id; // Must match the corresponding Channel ID
 
 	mcl::AudioBuffer audioBuffer;
 	juce::MidiBuffer midiBuffer;

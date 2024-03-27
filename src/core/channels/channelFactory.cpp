@@ -44,9 +44,9 @@ IdManager channelId_;
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<ChannelShared> makeShared_(ChannelType type, int bufferSize, Resampler::Quality quality)
+std::unique_ptr<ChannelShared> makeShared_(ChannelType type, ID channelId, int bufferSize, Resampler::Quality quality)
 {
-	std::unique_ptr<ChannelShared> shared = std::make_unique<ChannelShared>(bufferSize);
+	std::unique_ptr<ChannelShared> shared = std::make_unique<ChannelShared>(channelId, bufferSize);
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
 	{
@@ -79,8 +79,10 @@ void reset()
 
 Data create(ID channelId, ChannelType type, int bufferSize, Resampler::Quality quality, bool overdubProtection)
 {
-	std::unique_ptr<ChannelShared> shared = makeShared_(type, bufferSize, quality);
-	Channel                        ch     = Channel(type, channelId_.generate(channelId), *shared.get());
+	channelId = channelId_.generate(channelId);
+
+	std::unique_ptr<ChannelShared> shared = makeShared_(type, channelId, bufferSize, quality);
+	Channel                        ch     = Channel(type, channelId, *shared.get());
 
 	if (ch.sampleChannel)
 		ch.sampleChannel->overdubProtection = overdubProtection;
@@ -92,7 +94,7 @@ Data create(ID channelId, ChannelType type, int bufferSize, Resampler::Quality q
 
 Data create(const Channel& o, int bufferSize, Resampler::Quality quality)
 {
-	std::unique_ptr<ChannelShared> shared = makeShared_(o.type, bufferSize, quality);
+	std::unique_ptr<ChannelShared> shared = makeShared_(o.type, o.id, bufferSize, quality);
 	Channel                        ch     = Channel(o);
 
 	ch.id     = channelId_.generate();
@@ -111,9 +113,9 @@ Channel deserializeChannel(const Patch::Channel& pch, ChannelShared& shared, flo
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<ChannelShared> deserializeShared(ChannelType type, int bufferSize, Resampler::Quality quality)
+std::unique_ptr<ChannelShared> deserializeShared(const Patch::Channel& pch, int bufferSize, Resampler::Quality quality)
 {
-	return makeShared_(type, bufferSize, quality);
+	return makeShared_(pch.type, pch.id, bufferSize, quality);
 }
 
 /* -------------------------------------------------------------------------- */

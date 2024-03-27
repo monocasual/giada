@@ -17,7 +17,7 @@ TEST_CASE("rendering::sampleRendering")
 		f[1] = static_cast<float>(i + 1);
 	});
 
-	m::ChannelShared channelShared(BUFFER_SIZE);
+	m::ChannelShared channelShared(0, BUFFER_SIZE);
 	m::Channel       channel(ChannelType::SAMPLE, 1, channelShared);
 
 	channelShared.quantizer.emplace();
