@@ -33,6 +33,7 @@
 #include "core/model/actions.h"
 #include "core/model/behaviors.h"
 #include "core/model/channels.h"
+#include "core/model/dataLock.h"
 #include "core/model/kernelAudio.h"
 #include "core/model/kernelMidi.h"
 #include "core/model/midiIn.h"
@@ -64,7 +65,6 @@ struct LoadState
 
 /* -------------------------------------------------------------------------- */
 
-class DataLock;
 class Model
 {
 public:
@@ -180,19 +180,6 @@ private:
 
 	AtomicSwapper m_swapper;
 	Shared        m_shared;
-};
-
-/* -------------------------------------------------------------------------- */
-
-class DataLock
-{
-public:
-	DataLock(Model&, SwapType t);
-	~DataLock();
-
-private:
-	Model&   m_model;
-	SwapType m_swapType;
 };
 } // namespace giada::m::model
 

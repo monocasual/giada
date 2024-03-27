@@ -94,24 +94,6 @@ void clear_(std::vector<T>& dest, Model& model)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-DataLock::DataLock(Model& m, SwapType t)
-: m_model(m)
-, m_swapType(t)
-{
-	m_model.get().locked = true;
-	m_model.swap(SwapType::NONE);
-}
-
-DataLock::~DataLock()
-{
-	m_model.get().locked = false;
-	m_model.swap(m_swapType);
-}
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 bool LoadState::isGood() const
 {
 	return patch.status == G_FILE_OK && missingWaves.empty() && missingPlugins.empty();
