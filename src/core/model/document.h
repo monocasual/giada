@@ -38,8 +38,19 @@
 
 namespace giada::m::model
 {
+class Shared;
 struct Document
 {
+	/* load  
+	Loads data from a Patch object. */
+
+	void load(const Patch&, Shared&, float sampleRateRatio);
+
+	/* store
+	Stores data into a Patch object. */
+
+	void store(Patch&) const;
+
 #ifdef G_DEBUG_MODE
 	void debug() const;
 #endif

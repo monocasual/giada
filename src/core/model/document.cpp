@@ -25,9 +25,52 @@
  * -------------------------------------------------------------------------- */
 
 #include "core/model/document.h"
+#include "core/actions/actionFactory.h"
+#include "core/channels/channelFactory.h"
+#include "core/model/shared.h"
 
 namespace giada::m::model
 {
+void Document::load(const Patch& patch, Shared& shared, float sampleRateRatio)
+{
+	channels = {};
+	for (const Patch::Channel& pchannel : patch.channels)
+	{
+		Wave*                wave          = shared.findWave(pchannel.waveId);
+		std::vector<Plugin*> plugins       = shared.findPlugins(pchannel.pluginIds);
+		ChannelShared*       channelShared = shared.findChannel(pchannel.id);
+		assert(channelShared != nullptr);
+
+		Channel channel = channelFactory::deserializeChannel(pchannel, *channelShared, sampleRateRatio, wave, plugins);
+		channels.add(channel);
+	}
+
+	actions.set(actionFactory::deserializeActions(patch.actions));
+
+	sequencer.status    = SeqStatus::STOPPED;
+	sequencer.bars      = patch.bars;
+	sequencer.beats     = patch.beats;
+	sequencer.bpm       = patch.bpm;
+	sequencer.quantize  = patch.quantize;
+	sequencer.metronome = patch.metronome;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Document::store(Patch& patch) const
+{
+	patch.bars      = sequencer.bars;
+	patch.beats     = sequencer.beats;
+	patch.bpm       = sequencer.bpm;
+	patch.quantize  = sequencer.quantize;
+	patch.metronome = sequencer.metronome;
+	patch.actions   = actionFactory::serializeActions(actions.getAll());
+	for (const Channel& c : channels.getAll())
+		patch.channels.push_back(channelFactory::serializeChannel(c));
+}
+
+/* -------------------------------------------------------------------------- */
+
 #ifdef G_DEBUG_MODE
 void Document::debug() const
 {
