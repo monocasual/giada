@@ -136,31 +136,9 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 	/* Lock the shared data. Real-time thread can't read from it until this method
 	goes out of scope. */
 
-	const SharedLock lock     = lockShared(SwapType::NONE);
-	Document&        document = get();
-
-	const LoadState state = m_shared.load(patch, pluginManager, document.sequencer, sampleRate, bufferSize, rsmpQuality);
-
-	document.channels = {};
-	for (const Patch::Channel& pchannel : patch.channels)
-	{
-		Wave*                wave    = findWave(pchannel.waveId);
-		std::vector<Plugin*> plugins = m_shared.findPlugins(pchannel.pluginIds);
-		ChannelShared*       shared  = m_shared.findChannel(pchannel.id);
-		assert(shared != nullptr);
-
-		Channel channel = channelFactory::deserializeChannel(pchannel, *shared, sampleRateRatio, wave, plugins);
-		document.channels.add(channel);
-	}
-
-	document.actions.set(actionFactory::deserializeActions(patch.actions));
-
-	document.sequencer.status    = SeqStatus::STOPPED;
-	document.sequencer.bars      = patch.bars;
-	document.sequencer.beats     = patch.beats;
-	document.sequencer.bpm       = patch.bpm;
-	document.sequencer.quantize  = patch.quantize;
-	document.sequencer.metronome = patch.metronome;
+	const SharedLock lock  = lockShared(SwapType::NONE);
+	const LoadState  state = m_shared.load(patch, pluginManager, get().sequencer, sampleRate, bufferSize, rsmpQuality);
+	get().load(patch, m_shared, sampleRateRatio);
 
 	return state;
 
@@ -217,16 +195,7 @@ void Model::store(Conf& conf) const
 
 void Model::store(Patch& patch, const std::string& projectPath)
 {
-	const Document& document = get();
-
-	patch.bars      = document.sequencer.bars;
-	patch.beats     = document.sequencer.beats;
-	patch.bpm       = document.sequencer.bpm;
-	patch.quantize  = document.sequencer.quantize;
-	patch.metronome = document.sequencer.metronome;
-	patch.actions   = actionFactory::serializeActions(document.actions.getAll());
-	for (const Channel& c : document.channels.getAll())
-		patch.channels.push_back(channelFactory::serializeChannel(c));
+	get().store(patch);
 
 	/* Lock the shared data before storing it. Real-time thread can't read from 
 	it until this method goes out of scope. Even if it's mostly a read-only operation, 
