@@ -83,47 +83,7 @@ void Model::reset()
 
 void Model::load(const Conf& conf)
 {
-	Document& document = get();
-
-	document.kernelAudio.api                     = conf.soundSystem;
-	document.kernelAudio.deviceOut.id            = conf.soundDeviceOut;
-	document.kernelAudio.deviceOut.channelsCount = conf.channelsOutCount;
-	document.kernelAudio.deviceOut.channelsStart = conf.channelsOutStart;
-	document.kernelAudio.deviceIn.id             = conf.soundDeviceIn;
-	document.kernelAudio.deviceIn.channelsCount  = conf.channelsInCount;
-	document.kernelAudio.deviceIn.channelsStart  = conf.channelsInStart;
-	document.kernelAudio.samplerate              = conf.samplerate;
-	document.kernelAudio.buffersize              = conf.buffersize;
-	document.kernelAudio.limitOutput             = conf.limitOutput;
-	document.kernelAudio.rsmpQuality             = conf.rsmpQuality;
-	document.kernelAudio.recTriggerLevel         = conf.recTriggerLevel;
-
-	document.kernelMidi.api         = conf.midiSystem;
-	document.kernelMidi.portOut     = conf.midiPortOut;
-	document.kernelMidi.portIn      = conf.midiPortIn;
-	document.kernelMidi.midiMapPath = conf.midiMapPath;
-	document.kernelMidi.sync        = conf.midiSync;
-
-	document.mixer.inputRecMode   = conf.inputRecMode;
-	document.mixer.recTriggerMode = conf.recTriggerMode;
-
-	document.midiIn.enabled    = conf.midiInEnabled;
-	document.midiIn.filter     = conf.midiInFilter;
-	document.midiIn.rewind     = conf.midiInRewind;
-	document.midiIn.startStop  = conf.midiInStartStop;
-	document.midiIn.actionRec  = conf.midiInActionRec;
-	document.midiIn.inputRec   = conf.midiInInputRec;
-	document.midiIn.metronome  = conf.midiInMetronome;
-	document.midiIn.volumeIn   = conf.midiInVolumeIn;
-	document.midiIn.volumeOut  = conf.midiInVolumeOut;
-	document.midiIn.beatDouble = conf.midiInBeatDouble;
-	document.midiIn.beatHalf   = conf.midiInBeatHalf;
-
-	document.behaviors.chansStopOnSeqHalt         = conf.chansStopOnSeqHalt;
-	document.behaviors.treatRecsAsLoops           = conf.treatRecsAsLoops;
-	document.behaviors.inputMonitorDefaultOn      = conf.inputMonitorDefaultOn;
-	document.behaviors.overdubProtectionDefaultOn = conf.overdubProtectionDefaultOn;
-
+	get().load(conf);
 	swap(model::SwapType::NONE);
 }
 
@@ -149,46 +109,7 @@ LoadState Model::load(const Patch& patch, PluginManager& pluginManager, int samp
 
 void Model::store(Conf& conf) const
 {
-	const Document& document = get();
-
-	conf.soundSystem      = document.kernelAudio.api;
-	conf.soundDeviceOut   = document.kernelAudio.deviceOut.id;
-	conf.channelsOutCount = document.kernelAudio.deviceOut.channelsCount;
-	conf.channelsOutStart = document.kernelAudio.deviceOut.channelsStart;
-	conf.soundDeviceIn    = document.kernelAudio.deviceIn.id;
-	conf.channelsInCount  = document.kernelAudio.deviceIn.channelsCount;
-	conf.channelsInStart  = document.kernelAudio.deviceIn.channelsStart;
-	conf.samplerate       = document.kernelAudio.samplerate;
-	conf.buffersize       = document.kernelAudio.buffersize;
-	conf.limitOutput      = document.kernelAudio.limitOutput;
-	conf.rsmpQuality      = document.kernelAudio.rsmpQuality;
-	conf.recTriggerLevel  = document.kernelAudio.recTriggerLevel;
-
-	conf.midiSystem  = document.kernelMidi.api;
-	conf.midiPortOut = document.kernelMidi.portOut;
-	conf.midiPortIn  = document.kernelMidi.portIn;
-	conf.midiMapPath = document.kernelMidi.midiMapPath;
-	conf.midiSync    = document.kernelMidi.sync;
-
-	conf.inputRecMode   = document.mixer.inputRecMode;
-	conf.recTriggerMode = document.mixer.recTriggerMode;
-
-	conf.midiInEnabled    = document.midiIn.enabled;
-	conf.midiInFilter     = document.midiIn.filter;
-	conf.midiInRewind     = document.midiIn.rewind;
-	conf.midiInStartStop  = document.midiIn.startStop;
-	conf.midiInActionRec  = document.midiIn.actionRec;
-	conf.midiInInputRec   = document.midiIn.inputRec;
-	conf.midiInMetronome  = document.midiIn.metronome;
-	conf.midiInVolumeIn   = document.midiIn.volumeIn;
-	conf.midiInVolumeOut  = document.midiIn.volumeOut;
-	conf.midiInBeatDouble = document.midiIn.beatDouble;
-	conf.midiInBeatHalf   = document.midiIn.beatHalf;
-
-	conf.chansStopOnSeqHalt         = document.behaviors.chansStopOnSeqHalt;
-	conf.treatRecsAsLoops           = document.behaviors.treatRecsAsLoops;
-	conf.inputMonitorDefaultOn      = document.behaviors.inputMonitorDefaultOn;
-	conf.overdubProtectionDefaultOn = document.behaviors.overdubProtectionDefaultOn;
+	get().store(conf);
 }
 
 /* -------------------------------------------------------------------------- */
