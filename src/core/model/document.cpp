@@ -27,6 +27,7 @@
 #include "core/model/document.h"
 #include "core/actions/actionFactory.h"
 #include "core/channels/channelFactory.h"
+#include "core/conf.h"
 #include "core/model/shared.h"
 
 namespace giada::m::model
@@ -57,6 +58,53 @@ void Document::load(const Patch& patch, Shared& shared, float sampleRateRatio)
 
 /* -------------------------------------------------------------------------- */
 
+/* load (2)
+	Loads data from a Conf object. */
+
+void Document::load(const Conf& conf)
+{
+	kernelAudio.api                     = conf.soundSystem;
+	kernelAudio.deviceOut.id            = conf.soundDeviceOut;
+	kernelAudio.deviceOut.channelsCount = conf.channelsOutCount;
+	kernelAudio.deviceOut.channelsStart = conf.channelsOutStart;
+	kernelAudio.deviceIn.id             = conf.soundDeviceIn;
+	kernelAudio.deviceIn.channelsCount  = conf.channelsInCount;
+	kernelAudio.deviceIn.channelsStart  = conf.channelsInStart;
+	kernelAudio.samplerate              = conf.samplerate;
+	kernelAudio.buffersize              = conf.buffersize;
+	kernelAudio.limitOutput             = conf.limitOutput;
+	kernelAudio.rsmpQuality             = conf.rsmpQuality;
+	kernelAudio.recTriggerLevel         = conf.recTriggerLevel;
+
+	kernelMidi.api         = conf.midiSystem;
+	kernelMidi.portOut     = conf.midiPortOut;
+	kernelMidi.portIn      = conf.midiPortIn;
+	kernelMidi.midiMapPath = conf.midiMapPath;
+	kernelMidi.sync        = conf.midiSync;
+
+	mixer.inputRecMode   = conf.inputRecMode;
+	mixer.recTriggerMode = conf.recTriggerMode;
+
+	midiIn.enabled    = conf.midiInEnabled;
+	midiIn.filter     = conf.midiInFilter;
+	midiIn.rewind     = conf.midiInRewind;
+	midiIn.startStop  = conf.midiInStartStop;
+	midiIn.actionRec  = conf.midiInActionRec;
+	midiIn.inputRec   = conf.midiInInputRec;
+	midiIn.metronome  = conf.midiInMetronome;
+	midiIn.volumeIn   = conf.midiInVolumeIn;
+	midiIn.volumeOut  = conf.midiInVolumeOut;
+	midiIn.beatDouble = conf.midiInBeatDouble;
+	midiIn.beatHalf   = conf.midiInBeatHalf;
+
+	behaviors.chansStopOnSeqHalt         = conf.chansStopOnSeqHalt;
+	behaviors.treatRecsAsLoops           = conf.treatRecsAsLoops;
+	behaviors.inputMonitorDefaultOn      = conf.inputMonitorDefaultOn;
+	behaviors.overdubProtectionDefaultOn = conf.overdubProtectionDefaultOn;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Document::store(Patch& patch) const
 {
 	patch.bars      = sequencer.bars;
@@ -67,6 +115,50 @@ void Document::store(Patch& patch) const
 	patch.actions   = actionFactory::serializeActions(actions.getAll());
 	for (const Channel& c : channels.getAll())
 		patch.channels.push_back(channelFactory::serializeChannel(c));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Document::store(Conf& conf) const
+{
+	conf.soundSystem      = kernelAudio.api;
+	conf.soundDeviceOut   = kernelAudio.deviceOut.id;
+	conf.channelsOutCount = kernelAudio.deviceOut.channelsCount;
+	conf.channelsOutStart = kernelAudio.deviceOut.channelsStart;
+	conf.soundDeviceIn    = kernelAudio.deviceIn.id;
+	conf.channelsInCount  = kernelAudio.deviceIn.channelsCount;
+	conf.channelsInStart  = kernelAudio.deviceIn.channelsStart;
+	conf.samplerate       = kernelAudio.samplerate;
+	conf.buffersize       = kernelAudio.buffersize;
+	conf.limitOutput      = kernelAudio.limitOutput;
+	conf.rsmpQuality      = kernelAudio.rsmpQuality;
+	conf.recTriggerLevel  = kernelAudio.recTriggerLevel;
+
+	conf.midiSystem  = kernelMidi.api;
+	conf.midiPortOut = kernelMidi.portOut;
+	conf.midiPortIn  = kernelMidi.portIn;
+	conf.midiMapPath = kernelMidi.midiMapPath;
+	conf.midiSync    = kernelMidi.sync;
+
+	conf.inputRecMode   = mixer.inputRecMode;
+	conf.recTriggerMode = mixer.recTriggerMode;
+
+	conf.midiInEnabled    = midiIn.enabled;
+	conf.midiInFilter     = midiIn.filter;
+	conf.midiInRewind     = midiIn.rewind;
+	conf.midiInStartStop  = midiIn.startStop;
+	conf.midiInActionRec  = midiIn.actionRec;
+	conf.midiInInputRec   = midiIn.inputRec;
+	conf.midiInMetronome  = midiIn.metronome;
+	conf.midiInVolumeIn   = midiIn.volumeIn;
+	conf.midiInVolumeOut  = midiIn.volumeOut;
+	conf.midiInBeatDouble = midiIn.beatDouble;
+	conf.midiInBeatHalf   = midiIn.beatHalf;
+
+	conf.chansStopOnSeqHalt         = behaviors.chansStopOnSeqHalt;
+	conf.treatRecsAsLoops           = behaviors.treatRecsAsLoops;
+	conf.inputMonitorDefaultOn      = behaviors.inputMonitorDefaultOn;
+	conf.overdubProtectionDefaultOn = behaviors.overdubProtectionDefaultOn;
 }
 
 /* -------------------------------------------------------------------------- */

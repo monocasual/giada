@@ -36,20 +36,35 @@
 #include "core/model/mixer.h"
 #include "core/model/sequencer.h"
 
+namespace giada::m
+{
+struct Conf;
+}
+
 namespace giada::m::model
 {
 class Shared;
 struct Document
 {
-	/* load  
+	/* load (1)
 	Loads data from a Patch object. */
 
 	void load(const Patch&, Shared&, float sampleRateRatio);
 
-	/* store
+	/* load (2)
+	Loads data from a Conf object. */
+
+	void load(const Conf&);
+
+	/* store (1)
 	Stores data into a Patch object. */
 
 	void store(Patch&) const;
+
+	/* store (2)
+	Stores data into a Conf object. */
+
+	void store(Conf&) const;
 
 #ifdef G_DEBUG_MODE
 	void debug() const;
