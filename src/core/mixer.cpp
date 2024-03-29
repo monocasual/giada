@@ -79,7 +79,7 @@ void Mixer::enable()
 void Mixer::disable()
 {
 	m_model.get().mixer.a_setActive(false);
-	while (m_model.isLocked())
+	while (m_model.isRtLocked())
 		;
 	u::log::print("[mixer::disable] disabled\n");
 }

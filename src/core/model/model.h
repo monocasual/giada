@@ -57,7 +57,11 @@ class Model
 public:
 	Model();
 
-	bool isLocked() const;
+	/* isRtLocked
+	Returns true if the realtime thread has its own copy of data locked down,
+	as it's reading it. */
+
+	bool isRtLocked() const;
 
 	/* lockShared
 	Returns a scoped locker SharedLock object. Use this when you want to lock

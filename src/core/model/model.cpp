@@ -158,7 +158,7 @@ SharedLock Model::lockShared(SwapType t)
 
 /* -------------------------------------------------------------------------- */
 
-bool Model::isLocked() const
+bool Model::isRtLocked() const
 {
 	return m_swapper.isRtLocked();
 }
