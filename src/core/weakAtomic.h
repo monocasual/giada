@@ -51,7 +51,10 @@ public:
 	{
 	}
 
-	WeakAtomic(WeakAtomic&& o) = delete;
+	WeakAtomic(WeakAtomic&& o) noexcept
+	: WeakAtomic(o)
+	{
+	}
 
 	WeakAtomic& operator=(const WeakAtomic& o)
 	{
@@ -63,7 +66,13 @@ public:
 		return *this;
 	}
 
-	WeakAtomic& operator=(WeakAtomic&& o) = delete;
+	WeakAtomic& operator=(WeakAtomic&& o) noexcept
+	{
+		if (this == &o)
+			return *this;
+		*this = o;
+		return *this;
+	}
 
 	T load() const
 	{
