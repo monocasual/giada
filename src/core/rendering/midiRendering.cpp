@@ -41,7 +41,7 @@ const juce::MidiBuffer& prepareMidiBuffer_(ChannelShared& shared)
 	shared.midiBuffer.clear();
 
 	MidiEvent e;
-	while (shared.midiQueue.pop(e))
+	while (shared.midiQueue.try_dequeue(e))
 	{
 		juce::MidiMessage message = juce::MidiMessage(
 		    e.getStatus(),

@@ -213,7 +213,7 @@ void stopSampleChannelBySeq(ChannelShared& shared, bool chansStopOnSeqHalt, bool
 
 void stopSampleChannel(ChannelShared& shared, Frame localFrame)
 {
-	shared.renderQueue->push({RenderInfo::Mode::STOP, localFrame});
+	shared.renderQueue->enqueue({RenderInfo::Mode::STOP, localFrame});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -287,7 +287,7 @@ void killSampleChannel(ChannelShared& shared, SamplePlayerMode mode)
 
 void rewindSampleChannel(ChannelShared& shared, Frame localFrame)
 {
-	shared.renderQueue->push({RenderInfo::Mode::REWIND, localFrame});
+	shared.renderQueue->enqueue({RenderInfo::Mode::REWIND, localFrame});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -295,6 +295,6 @@ void rewindSampleChannel(ChannelShared& shared, Frame localFrame)
 void playSampleChannel(ChannelShared& shared, Frame localFrame)
 {
 	shared.playStatus.store(ChannelStatus::PLAY);
-	shared.renderQueue->push({RenderInfo::Mode::NORMAL, localFrame});
+	shared.renderQueue->enqueue({RenderInfo::Mode::NORMAL, localFrame});
 }
 } // namespace giada::m::rendering

@@ -28,7 +28,6 @@
 #define G_MIXER_H
 
 #include "core/midiEvent.h"
-#include "core/queue.h"
 #include "core/ringBuffer.h"
 #include "core/sequencer.h"
 #include "core/types.h"

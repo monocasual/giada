@@ -51,7 +51,7 @@ std::unique_ptr<ChannelShared> makeShared_(ChannelType type, ID channelId, int b
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
 	{
 		shared->quantizer.emplace();
-		shared->renderQueue.emplace();
+		shared->renderQueue.emplace(/*size=*/2, 0, /*num_threads=*/2);
 		shared->resampler.emplace(quality, G_MAX_IO_CHANS);
 	}
 

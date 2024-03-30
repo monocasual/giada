@@ -52,7 +52,7 @@ void sendMidiToPlugins_(ChannelShared::MidiQueue& midiQueue, const MidiEvent& e,
 {
 	MidiEvent eWithDelta(e);
 	eWithDelta.setDelta(localFrame);
-	midiQueue.push(eWithDelta);
+	midiQueue.enqueue(eWithDelta);
 }
 } // namespace
 
