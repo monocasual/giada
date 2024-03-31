@@ -28,6 +28,7 @@
 #define G_CONFIG_API_H
 
 #include "core/kernelAudio.h"
+#include "core/kernelMidi.h"
 #include <vector>
 
 namespace giada::m::model

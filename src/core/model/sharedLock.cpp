@@ -24,75 +24,22 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_WEAK_ATOMIC_H
-#define G_WEAK_ATOMIC_H
+#include "core/model/model.h"
+#include "core/model/sharedLock.h"
 
-#include <atomic>
-#include <functional>
-
-namespace giada
+namespace giada::m::model
 {
-template <typename T>
-class WeakAtomic
+SharedLock::SharedLock(Model& m, SwapType t)
+: m_model(m)
+, m_swapType(t)
 {
-public:
-	WeakAtomic() = default;
+	m_model.get().locked = true;
+	m_model.swap(SwapType::NONE);
+}
 
-	WeakAtomic(T t)
-	: m_atomic(t)
-	, m_value(t)
-	{
-	}
-
-	WeakAtomic(const WeakAtomic& o)
-	: onChange(o.onChange)
-	, m_atomic(o.load())
-	, m_value(o.m_value)
-	{
-	}
-
-	WeakAtomic(WeakAtomic&& o) noexcept
-	: WeakAtomic(o)
-	{
-	}
-
-	WeakAtomic& operator=(const WeakAtomic& o)
-	{
-		if (this == &o)
-			return *this;
-		onChange = o.onChange;
-		store(o.load());
-		m_value = o.m_value;
-		return *this;
-	}
-
-	WeakAtomic& operator=(WeakAtomic&& o) noexcept
-	{
-		if (this == &o)
-			return *this;
-		*this = o;
-		return *this;
-	}
-
-	T load() const
-	{
-		return m_atomic.load(std::memory_order_relaxed);
-	}
-
-	void store(T t)
-	{
-		m_atomic.store(t, std::memory_order_relaxed);
-		if (onChange != nullptr && t != m_value)
-			onChange(t);
-		m_value = t;
-	}
-
-	std::function<void(T)> onChange = nullptr;
-
-private:
-	std::atomic<T> m_atomic;
-	T              m_value;
-};
-} // namespace giada
-
-#endif
+SharedLock::~SharedLock()
+{
+	m_model.get().locked = false;
+	m_model.swap(m_swapType);
+}
+} // namespace giada::m::model

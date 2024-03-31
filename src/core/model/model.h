@@ -35,9 +35,13 @@
 #include "core/model/channels.h"
 #include "core/model/kernelAudio.h"
 #include "core/model/kernelMidi.h"
+#include "core/model/loadState.h"
 #include "core/model/midiIn.h"
 #include "core/model/mixer.h"
 #include "core/model/sequencer.h"
+#include "core/model/shared.h"
+#include "core/model/sharedLock.h"
+#include "core/model/types.h"
 #include "core/plugins/plugin.h"
 #include "core/wave.h"
 #include "deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
@@ -47,87 +51,31 @@
 
 namespace giada::m::model
 {
-struct Layout
-{
-#ifdef G_DEBUG_MODE
-	void debug() const;
-#endif
-
-	/* locked
-	If locked, Mixer won't process channels. This is used to allow editing the 
-	shared data (e.g. Plugins, Waves) by the rendering engine without data races. */
-
-	bool locked = false;
-
-	KernelAudio kernelAudio;
-	KernelMidi  kernelMidi;
-	Sequencer   sequencer;
-	Mixer       mixer;
-	MidiIn      midiIn;
-	Channels    channels;
-	Actions     actions;
-	Behaviors   behaviors;
-};
-
-/* LayoutLock
-Alias for a REALTIME scoped lock provided by the Swapper class. Use this in the
-real-time thread to lock the Layout. */
-
-using AtomicSwapper = mcl::AtomicSwapper<Layout, /*size=*/6>;
-using LayoutLock    = AtomicSwapper::RtLock;
-
-/* SwapType
-Type of Layout change. 
-	Hard: the structure has changed (e.g. add a new channel);
-	Soft: a property has changed (e.g. change volume);
-	None: something has changed but we don't care. 
-Used by model listeners to determine the type of change that occurred in the 
-layout. */
-
-enum class SwapType
-{
-	HARD,
-	SOFT,
-	NONE
-};
-
-/* -------------------------------------------------------------------------- */
-
-/* LoadState
-Contains information about the model state after a patch has been loaded. */
-
-struct LoadState
-{
-	bool isGood() const;
-
-	Patch                    patch;
-	std::vector<std::string> missingWaves   = {};
-	std::vector<std::string> missingPlugins = {};
-};
-
-/* -------------------------------------------------------------------------- */
-
-class DataLock;
+struct Document;
 class Model
 {
 public:
 	Model();
 
-	bool isLocked() const;
+	/* isRtLocked
+	Returns true if the realtime thread has its own copy of data locked down,
+	as it's reading it. */
 
-	/* lockData
-	Returns a scoped locker DataLock object. Use this when you want to lock
-	the model: a locked model won't be processed by Mixer. */
+	bool isRtLocked() const;
 
-	[[nodiscard]] DataLock lockData(SwapType t = SwapType::HARD);
+	/* lockShared
+	Returns a scoped locker SharedLock object. Use this when you want to lock
+	the shared data: it won't be processed by Mixer. */
+
+	[[nodiscard]] SharedLock lockShared(SwapType t = SwapType::HARD);
 
 	/* init
-	Initializes the internal layout. All values go back to default. */
+	Initializes the internal Document. All values go back to default. */
 
 	void init();
 
 	/* reset
-	Resets the internal layout to default. Configuration data (e.g. KernelAudio)
+	Resets the internal Document to default. Configuration data (e.g. KernelAudio)
 	are left untouched.  */
 
 	void reset();
@@ -155,19 +103,19 @@ public:
 	bool registerThread(Thread, bool realtime) const;
 
 	/* get_RT
-	Returns a LayoutLock object for REALTIME processing. Access layout by 
-	calling LayoutLock::get() method (returns ready-only Layout). */
+	Returns a DocumentLock object for REALTIME processing. Access Document by 
+	calling DocumentLock::get() method (returns ready-only Document). */
 
-	LayoutLock get_RT() const;
+	DocumentLock get_RT() const;
 
 	/* get
-	Returns a reference to the NON-REALTIME layout structure. */
+	Returns a reference to the NON-REALTIME Document structure. */
 
-	Layout&       get();
-	const Layout& get() const;
+	Document&       get();
+	const Document& get() const;
 
 	/* swap
-	Swap non-rt layout with the rt one. See 'SwapType' notes above. */
+	Swap non-rt Document with the rt one. See 'SwapType' notes above. */
 
 	void swap(SwapType t);
 
@@ -203,39 +151,14 @@ public:
 #endif
 
 	/* onSwap
-	Callbacks fired when the layout has been swapped. Useful for listening to 
+	Callbacks fired when the Document has been swapped. Useful for listening to 
 	model changes. */
 
 	std::function<void(SwapType)> onSwap;
 
 private:
-	struct Shared
-	{
-		Sequencer::Shared                           sequencerShared;
-		Mixer::Shared                               mixerShared;
-		std::vector<std::unique_ptr<ChannelShared>> channelsShared;
-
-		std::vector<std::unique_ptr<Wave>>   waves;
-		std::vector<std::unique_ptr<Plugin>> plugins;
-	};
-
-	std::vector<Plugin*> findPlugins(std::vector<ID> pluginIds);
-
 	AtomicSwapper m_swapper;
 	Shared        m_shared;
-};
-
-/* -------------------------------------------------------------------------- */
-
-class DataLock
-{
-public:
-	DataLock(Model&, SwapType t);
-	~DataLock();
-
-private:
-	Model&   m_model;
-	SwapType m_swapType;
 };
 } // namespace giada::m::model
 

@@ -24,21 +24,66 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_KERNEL_MIDI_H
-#define G_MODEL_KERNEL_MIDI_H
+#ifndef G_MODEL_DOCUMENT_H
+#define G_MODEL_DOCUMENT_H
 
-#include "core/const.h"
-#include <RtMidi.h>
+#include "core/model/actions.h"
+#include "core/model/behaviors.h"
+#include "core/model/channels.h"
+#include "core/model/kernelAudio.h"
+#include "core/model/kernelMidi.h"
+#include "core/model/midiIn.h"
+#include "core/model/mixer.h"
+#include "core/model/sequencer.h"
+
+namespace giada::m
+{
+struct Conf;
+}
 
 namespace giada::m::model
 {
-struct KernelMidi
+class Shared;
+struct Document
 {
-	RtMidi::Api api         = G_DEFAULT_MIDI_API;
-	int         portOut     = G_DEFAULT_MIDI_PORT_OUT;
-	int         portIn      = G_DEFAULT_MIDI_PORT_IN;
-	std::string midiMapPath = "";
-	int         sync        = G_MIDI_SYNC_NONE;
+	/* load (1)
+	Loads data from a Patch object. */
+
+	void load(const Patch&, Shared&, float sampleRateRatio);
+
+	/* load (2)
+	Loads data from a Conf object. */
+
+	void load(const Conf&);
+
+	/* store (1)
+	Stores data into a Patch object. */
+
+	void store(Patch&) const;
+
+	/* store (2)
+	Stores data into a Conf object. */
+
+	void store(Conf&) const;
+
+#ifdef G_DEBUG_MODE
+	void debug() const;
+#endif
+
+	/* locked
+	If locked, Mixer won't process channels. This is used to allow editing the 
+	shared data (e.g. Plugins, Waves) by the rendering engine without data races. */
+
+	bool locked = false;
+
+	KernelAudio kernelAudio;
+	KernelMidi  kernelMidi;
+	Sequencer   sequencer;
+	Mixer       mixer;
+	MidiIn      midiIn;
+	Channels    channels;
+	Actions     actions;
+	Behaviors   behaviors;
 };
 } // namespace giada::m::model
 

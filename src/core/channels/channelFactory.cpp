@@ -44,14 +44,14 @@ IdManager channelId_;
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<ChannelShared> makeShared_(ChannelType type, int bufferSize, Resampler::Quality quality)
+std::unique_ptr<ChannelShared> makeShared_(ChannelType type, ID channelId, int bufferSize, Resampler::Quality quality)
 {
-	std::unique_ptr<ChannelShared> shared = std::make_unique<ChannelShared>(bufferSize);
+	std::unique_ptr<ChannelShared> shared = std::make_unique<ChannelShared>(channelId, bufferSize);
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
 	{
 		shared->quantizer.emplace();
-		shared->renderQueue.emplace();
+		shared->renderQueue.emplace(/*size=*/2, 0, /*num_threads=*/2);
 		shared->resampler.emplace(quality, G_MAX_IO_CHANS);
 	}
 
@@ -79,8 +79,10 @@ void reset()
 
 Data create(ID channelId, ChannelType type, int bufferSize, Resampler::Quality quality, bool overdubProtection)
 {
-	std::unique_ptr<ChannelShared> shared = makeShared_(type, bufferSize, quality);
-	Channel                        ch     = Channel(type, channelId_.generate(channelId), *shared.get());
+	channelId = channelId_.generate(channelId);
+
+	std::unique_ptr<ChannelShared> shared = makeShared_(type, channelId, bufferSize, quality);
+	Channel                        ch     = Channel(type, channelId, *shared.get());
 
 	if (ch.sampleChannel)
 		ch.sampleChannel->overdubProtection = overdubProtection;
@@ -92,7 +94,7 @@ Data create(ID channelId, ChannelType type, int bufferSize, Resampler::Quality q
 
 Data create(const Channel& o, int bufferSize, Resampler::Quality quality)
 {
-	std::unique_ptr<ChannelShared> shared = makeShared_(o.type, bufferSize, quality);
+	std::unique_ptr<ChannelShared> shared = makeShared_(o.type, o.id, bufferSize, quality);
 	Channel                        ch     = Channel(o);
 
 	ch.id     = channelId_.generate();
@@ -103,14 +105,17 @@ Data create(const Channel& o, int bufferSize, Resampler::Quality quality)
 
 /* -------------------------------------------------------------------------- */
 
-Data deserializeChannel(const Patch::Channel& pch, float samplerateRatio, int bufferSize, Resampler::Quality quality, Wave* wave, std::vector<Plugin*> plugins)
+Channel deserializeChannel(const Patch::Channel& pch, ChannelShared& shared, float samplerateRatio, Wave* wave, std::vector<Plugin*> plugins)
 {
 	channelId_.set(pch.id);
+	return Channel(pch, shared, samplerateRatio, wave, plugins);
+}
 
-	std::unique_ptr<ChannelShared> shared = makeShared_(pch.type, bufferSize, quality);
-	Channel                        ch     = Channel(pch, *shared.get(), samplerateRatio, wave, plugins);
+/* -------------------------------------------------------------------------- */
 
-	return {ch, std::move(shared)};
+std::unique_ptr<ChannelShared> deserializeShared(const Patch::Channel& pch, int bufferSize, Resampler::Quality quality)
+{
+	return makeShared_(pch.type, pch.id, bufferSize, quality);
 }
 
 /* -------------------------------------------------------------------------- */

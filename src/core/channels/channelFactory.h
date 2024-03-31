@@ -67,11 +67,17 @@ Data create(ID channelId, ChannelType type, int bufferSize, Resampler::Quality, 
 
 Data create(const Channel& ch, int bufferSize, Resampler::Quality);
 
-/* (de)serializeWave
-    Creates a new channel given the patch raw data and vice versa. */
+/* (de)deserializeChannel
+Creates a new channel given the patch raw data and vice versa. */
 
-Data                 deserializeChannel(const Patch::Channel& c, float samplerateRatio, int bufferSize, Resampler::Quality, Wave*, std::vector<Plugin*>);
+Channel              deserializeChannel(const Patch::Channel& c, ChannelShared&, float samplerateRatio, Wave*, std::vector<Plugin*>);
 const Patch::Channel serializeChannel(const Channel& c);
+
+/* deserializeShared
+Returns a new ChannelShared object to be passed to deserializeChannel() above. */
+
+std::unique_ptr<ChannelShared> deserializeShared(const Patch::Channel&, int bufferSize, Resampler::Quality);
+
 } // namespace giada::m::channelFactory
 
 #endif

@@ -79,7 +79,7 @@ void Mixer::enable()
 void Mixer::disable()
 {
 	m_model.get().mixer.a_setActive(false);
-	while (m_model.isLocked())
+	while (m_model.isRtLocked())
 		;
 	u::log::print("[mixer::disable] disabled\n");
 }
@@ -133,12 +133,12 @@ void Mixer::setInputRecMode(InputRecMode m)
 
 /* -------------------------------------------------------------------------- */
 
-void Mixer::render(const mcl::AudioBuffer& in, const model::Layout& layout_RT, int maxFramesToRec) const
+void Mixer::render(const mcl::AudioBuffer& in, const model::Document& document_RT, int maxFramesToRec) const
 {
-	const model::Mixer&       mixer       = layout_RT.mixer;
-	const model::Sequencer&   sequencer   = layout_RT.sequencer;
-	const model::Channels&    channels    = layout_RT.channels;
-	const model::KernelAudio& kernelAudio = layout_RT.kernelAudio;
+	const model::Mixer&       mixer       = document_RT.mixer;
+	const model::Sequencer&   sequencer   = document_RT.sequencer;
+	const model::Channels&    channels    = document_RT.channels;
+	const model::KernelAudio& kernelAudio = document_RT.kernelAudio;
 
 	const Channel& masterInCh = channels.get(Mixer::MASTER_IN_CHANNEL_ID);
 

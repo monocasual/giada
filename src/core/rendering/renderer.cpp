@@ -82,17 +82,17 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 	out.clear();
 
-	/* Prepare the LayoutLock. From this point on (until out of scope) the
-	Layout is locked for realtime rendering by the audio thread. Rendering
-	functions must access the realtime layout coming from layoutLock.get(). */
+	/* Prepare the DocumentLock. From this point on (until out of scope) the
+	Document is locked for realtime rendering by the audio thread. Rendering
+	functions must access the realtime Document coming from documentLock.get(). */
 
-	const model::LayoutLock   layoutLock  = model.get_RT();
-	const model::Layout&      layout_RT   = layoutLock.get();
-	const model::KernelAudio& kernelAudio = layout_RT.kernelAudio;
-	const model::Mixer&       mixer       = layout_RT.mixer;
-	const model::Sequencer&   sequencer   = layout_RT.sequencer;
-	const model::Channels&    channels    = layout_RT.channels;
-	const model::Actions&     actions     = layout_RT.actions;
+	const model::DocumentLock documentLock = model.get_RT();
+	const model::Document&    document_RT  = documentLock.get();
+	const model::KernelAudio& kernelAudio  = document_RT.kernelAudio;
+	const model::Mixer&       mixer        = document_RT.mixer;
+	const model::Sequencer&   sequencer    = document_RT.sequencer;
+	const model::Channels&    channels     = document_RT.channels;
+	const model::Actions&     actions      = document_RT.actions;
 
 	/* Mixer disabled or Kernel Audio not ready: nothing to do here. */
 
@@ -106,7 +106,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 	/* If the m_sequencer is running, advance it first (i.e. parse it for events).
 	Also advance channels (i.e. let them react to m_sequencer events), only if the
-	layout is not locked: another thread might altering channel's data in the
+	document is not locked: another thread might altering channel's data in the
 	meantime (e.g. Plugins or Waves). */
 
 	if (sequencer.isRunning())
@@ -117,8 +117,8 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		const geompp::Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
 		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, actions);
-		m_sequencer.render(out, layout_RT);
-		if (!layout_RT.locked)
+		m_sequencer.render(out, document_RT);
+		if (!document_RT.locked)
 			advanceChannels(events, channels, renderRange, quantizerStep);
 	}
 
@@ -131,12 +131,12 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	const Channel& masterInCh     = channels.get(Mixer::MASTER_IN_CHANNEL_ID);
 	const Channel& previewCh      = channels.get(Mixer::PREVIEW_CHANNEL_ID);
 
-	m_mixer.render(in, layout_RT, maxFramesToRec);
+	m_mixer.render(in, document_RT, maxFramesToRec);
 
 	if (hasInput)
 		renderMasterIn(masterInCh, mixer.getInBuffer());
 
-	if (!layout_RT.locked)
+	if (!document_RT.locked)
 		renderNormalChannels(channels.getAll(), out, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
 
 	renderMasterOut(masterOutCh, out);

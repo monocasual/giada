@@ -24,75 +24,35 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_WEAK_ATOMIC_H
-#define G_WEAK_ATOMIC_H
+#ifndef G_MODEL_TYPES_H
+#define G_MODEL_TYPES_H
 
-#include <atomic>
-#include <functional>
+#include "core/model/document.h"
+#include "deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
 
-namespace giada
+namespace giada::m::model
 {
-template <typename T>
-class WeakAtomic
+/* DocumentLock
+Alias for a REALTIME scoped lock provided by the Swapper class. Use this in the
+real-time thread to lock the Document. */
+
+using AtomicSwapper = mcl::AtomicSwapper<Document, /*size=*/6>;
+using DocumentLock  = AtomicSwapper::RtLock;
+
+/* SwapType
+Type of Document change. 
+	Hard: the structure has changed (e.g. add a new channel);
+	Soft: a property has changed (e.g. change volume);
+	None: something has changed but we don't care. 
+Used by model listeners to determine the type of change that occurred in the 
+Document. */
+
+enum class SwapType
 {
-public:
-	WeakAtomic() = default;
-
-	WeakAtomic(T t)
-	: m_atomic(t)
-	, m_value(t)
-	{
-	}
-
-	WeakAtomic(const WeakAtomic& o)
-	: onChange(o.onChange)
-	, m_atomic(o.load())
-	, m_value(o.m_value)
-	{
-	}
-
-	WeakAtomic(WeakAtomic&& o) noexcept
-	: WeakAtomic(o)
-	{
-	}
-
-	WeakAtomic& operator=(const WeakAtomic& o)
-	{
-		if (this == &o)
-			return *this;
-		onChange = o.onChange;
-		store(o.load());
-		m_value = o.m_value;
-		return *this;
-	}
-
-	WeakAtomic& operator=(WeakAtomic&& o) noexcept
-	{
-		if (this == &o)
-			return *this;
-		*this = o;
-		return *this;
-	}
-
-	T load() const
-	{
-		return m_atomic.load(std::memory_order_relaxed);
-	}
-
-	void store(T t)
-	{
-		m_atomic.store(t, std::memory_order_relaxed);
-		if (onChange != nullptr && t != m_value)
-			onChange(t);
-		m_value = t;
-	}
-
-	std::function<void(T)> onChange = nullptr;
-
-private:
-	std::atomic<T> m_atomic;
-	T              m_value;
+	HARD,
+	SOFT,
+	NONE
 };
-} // namespace giada
+} // namespace giada::m::model
 
 #endif

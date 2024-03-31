@@ -24,75 +24,24 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_WEAK_ATOMIC_H
-#define G_WEAK_ATOMIC_H
+#ifndef G_MODEL_LOADSTATE_H
+#define G_MODEL_LOADSTATE_H
 
-#include <atomic>
-#include <functional>
+#include "core/patch.h"
 
-namespace giada
+namespace giada::m::model
 {
-template <typename T>
-class WeakAtomic
+/* LoadState
+Contains information about the model state after a patch has been loaded. */
+
+struct LoadState
 {
-public:
-	WeakAtomic() = default;
+	bool isGood() const;
 
-	WeakAtomic(T t)
-	: m_atomic(t)
-	, m_value(t)
-	{
-	}
-
-	WeakAtomic(const WeakAtomic& o)
-	: onChange(o.onChange)
-	, m_atomic(o.load())
-	, m_value(o.m_value)
-	{
-	}
-
-	WeakAtomic(WeakAtomic&& o) noexcept
-	: WeakAtomic(o)
-	{
-	}
-
-	WeakAtomic& operator=(const WeakAtomic& o)
-	{
-		if (this == &o)
-			return *this;
-		onChange = o.onChange;
-		store(o.load());
-		m_value = o.m_value;
-		return *this;
-	}
-
-	WeakAtomic& operator=(WeakAtomic&& o) noexcept
-	{
-		if (this == &o)
-			return *this;
-		*this = o;
-		return *this;
-	}
-
-	T load() const
-	{
-		return m_atomic.load(std::memory_order_relaxed);
-	}
-
-	void store(T t)
-	{
-		m_atomic.store(t, std::memory_order_relaxed);
-		if (onChange != nullptr && t != m_value)
-			onChange(t);
-		m_value = t;
-	}
-
-	std::function<void(T)> onChange = nullptr;
-
-private:
-	std::atomic<T> m_atomic;
-	T              m_value;
+	Patch                    patch;
+	std::vector<std::string> missingWaves   = {};
+	std::vector<std::string> missingPlugins = {};
 };
-} // namespace giada
+} // namespace giada::m::model
 
 #endif

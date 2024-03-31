@@ -147,7 +147,7 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 	m_model.swap(model::SwapType::HARD);
 
 	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is 
-	already processing the new layout. */
+	already processing the new Document. */
 
 	if (oldWave != nullptr)
 		m_model.removeWave(*oldWave);
@@ -435,7 +435,7 @@ bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
 
 	/* Reset logical and edited states in Wave. */
 
-	model::DataLock lock = m_model.lockData();
+	model::SharedLock lock = m_model.lockShared();
 	wave->setLogical(false);
 	wave->setEdited(false);
 
@@ -571,7 +571,7 @@ void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer,
 	/* Need model::DataLock here, as data might be being read by the audio
 	thread at the same time. */
 
-	model::DataLock lock = m_model.lockData();
+	model::SharedLock lock = m_model.lockShared();
 
 	wave->getBuffer().sum(buffer, /*gain=*/1.0f);
 	wave->setLogical(true);

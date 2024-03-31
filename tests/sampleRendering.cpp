@@ -17,11 +17,11 @@ TEST_CASE("rendering::sampleRendering")
 		f[1] = static_cast<float>(i + 1);
 	});
 
-	m::ChannelShared channelShared(BUFFER_SIZE);
+	m::ChannelShared channelShared(0, BUFFER_SIZE);
 	m::Channel       channel(ChannelType::SAMPLE, 1, channelShared);
 
 	channelShared.quantizer.emplace();
-	channelShared.renderQueue.emplace();
+	channelShared.renderQueue.emplace(/*size=*/16);
 	channelShared.resampler.emplace(Resampler::Quality::LINEAR, G_MAX_IO_CHANS);
 
 	SECTION("Test initialization")
@@ -52,7 +52,7 @@ TEST_CASE("rendering::sampleRendering")
 				channel.sampleChannel->begin = RANGE_BEGIN;
 				channel.sampleChannel->end   = RANGE_END;
 
-				channelShared.renderQueue->push({m::rendering::RenderInfo::Mode::NORMAL, 0});
+				channelShared.renderQueue->enqueue({m::rendering::RenderInfo::Mode::NORMAL, 0});
 
 				m::rendering::renderSampleChannel(channel, /*seqIsRunning=*/false);
 
@@ -70,7 +70,7 @@ TEST_CASE("rendering::sampleRendering")
 				// Point in audio buffer where the rewind takes place
 				const int OFFSET = 256;
 
-				channelShared.renderQueue->push({m::rendering::RenderInfo::Mode::REWIND, OFFSET});
+				channelShared.renderQueue->enqueue({m::rendering::RenderInfo::Mode::REWIND, OFFSET});
 
 				m::rendering::renderSampleChannel(channel, /*seqIsRunning=*/false);
 
@@ -83,7 +83,7 @@ TEST_CASE("rendering::sampleRendering")
 				// Point in audio buffer where the stop takes place
 				const int OFFSET = 256;
 
-				channelShared.renderQueue->push({m::rendering::RenderInfo::Mode::STOP, OFFSET});
+				channelShared.renderQueue->enqueue({m::rendering::RenderInfo::Mode::STOP, OFFSET});
 
 				m::rendering::renderSampleChannel(channel, /*seqIsRunning=*/false);
 

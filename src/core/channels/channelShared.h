@@ -30,9 +30,9 @@
 #include "core/const.h"
 #include "core/midiEvent.h"
 #include "core/quantizer.h"
-#include "core/queue.h"
 #include "core/rendering/sampleRendering.h"
 #include "core/resampler.h"
+#include "deps/concurrentqueue/concurrentqueue.h"
 #include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <optional>
@@ -41,10 +41,10 @@ namespace giada::m
 {
 struct ChannelShared final
 {
-	using MidiQueue   = Queue<MidiEvent, 32>; // TODO - must be multi-producer (multiple midi threads)
-	using RenderQueue = Queue<rendering::RenderInfo, 2>;
+	using MidiQueue   = moodycamel::ConcurrentQueue<MidiEvent>;
+	using RenderQueue = moodycamel::ConcurrentQueue<rendering::RenderInfo>;
 
-	ChannelShared(Frame bufferSize);
+	ChannelShared(ID, Frame bufferSize);
 
 	bool isReadingActions() const;
 
@@ -53,9 +53,11 @@ struct ChannelShared final
 
 	void setBufferSize(int);
 
+	ID id; // Must match the corresponding Channel ID
+
 	mcl::AudioBuffer audioBuffer;
 	juce::MidiBuffer midiBuffer;
-	MidiQueue        midiQueue;
+	MidiQueue        midiQueue{/*size=*/32, 0, /*num_threads=*/8}; // TODO - maximum 8 MIDI threads for now
 
 	WeakAtomic<Frame>         tracker        = 0;
 	WeakAtomic<ChannelStatus> playStatus     = ChannelStatus::OFF;

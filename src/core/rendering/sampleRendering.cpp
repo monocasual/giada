@@ -160,7 +160,7 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame off
 void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 {
 	RenderInfo renderInfo;
-	while (ch.shared->renderQueue->pop(renderInfo))
+	while (ch.shared->renderQueue->try_dequeue(renderInfo))
 		;
 
 	const Frame       begin     = ch.sampleChannel->begin;
