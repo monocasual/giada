@@ -81,7 +81,7 @@ Column makeColumn_(const v::Model::Column& modelColumn)
 	Column column{modelColumn.index, modelColumn.width, {}};
 
 	for (const ID channelId : modelColumn.channels)
-		column.channels.push_back(makeData_(channelId, g_ui->model.columns.getColumnByChannelId(channelId)));
+		column.channels.push_back(makeData_(channelId, modelColumn));
 
 	return column;
 }
