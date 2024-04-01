@@ -69,8 +69,9 @@ void printLoadError_(int res)
 
 Data makeData_(ID channelId, const v::Model::Column& column)
 {
-	const int position = column.getChannelIndex(channelId);
-	return Data(g_engine->getChannelsApi().get(channelId), g_ui->model.getColumnIndex(column), position);
+	const int position    = column.getChannelIndex(channelId);
+	const int columnIndex = g_ui->model.getColumnIndex(column);
+	return Data(g_engine->getChannelsApi().get(channelId), columnIndex, position);
 }
 
 /* -------------------------------------------------------------------------- */
