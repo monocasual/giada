@@ -108,20 +108,6 @@ void Model::store(m::Patch& patch) const
 
 /* -------------------------------------------------------------------------- */
 
-int Model::getColumnIndex(const Column& target) const
-{
-	for (int i = 0; const Column& column : columns)
-	{
-		if (&target == &column)
-			return i;
-		i++;
-	}
-	assert(false);
-	return -1;
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Model::load(const m::Conf& conf)
 {
 	logMode          = conf.logMode;
@@ -201,7 +187,10 @@ Model::Column& Model::getColumnByChannelId(ID channelId)
 
 void Model::addColumn()
 {
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	const int index = static_cast<int>(columns.size());
+	const int width = G_DEFAULT_COLUMN_WIDTH;
+
+	columns.push_back({index, width});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -217,7 +206,7 @@ void Model::moveChannel(ID channelId, int columnIndex, int newPosition)
 {
 	const Column& column = getColumnByChannelId(channelId);
 
-	if (getColumnIndex(column) == columnIndex) // If in same column
+	if (column.index == columnIndex) // If in same column
 	{
 		const int oldPosition = column.getChannelIndex(channelId);
 		if (newPosition >= oldPosition) // If moved below, readjust index
@@ -263,11 +252,11 @@ void Model::reset()
 
 	/* Add 6 empty columns as initial layout. */
 
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	addColumn();
+	addColumn();
+	addColumn();
+	addColumn();
+	addColumn();
+	addColumn();
 }
 } // namespace giada::v

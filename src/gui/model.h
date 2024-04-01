@@ -52,6 +52,7 @@ struct Model
 	{
 		int getChannelIndex(ID) const;
 
+		int      index;
 		int      width;
 		Channels channels = {};
 	};
@@ -60,7 +61,6 @@ struct Model
 
 	void store(m::Conf&) const;
 	void store(m::Patch&) const;
-	int  getColumnIndex(const Column&) const;
 
 	void    load(const m::Conf&);
 	void    load(const m::Patch&);
