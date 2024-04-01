@@ -31,15 +31,6 @@
 
 namespace giada::v
 {
-int Model::Column::getChannelIndex(ID channelId) const
-{
-	return channels.getIndex(channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 Model::Model()
 {
 	reset();
@@ -208,7 +199,7 @@ void Model::moveChannel(ID channelId, int columnIndex, int newPosition)
 
 	if (column.index == columnIndex) // If in same column
 	{
-		const int oldPosition = column.getChannelIndex(channelId);
+		const int oldPosition = column.channels.getIndex(channelId);
 		if (newPosition >= oldPosition) // If moved below, readjust index
 			newPosition -= 1;
 	}

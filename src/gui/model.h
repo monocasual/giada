@@ -50,8 +50,6 @@ struct Model
 
 	struct Column
 	{
-		int getChannelIndex(ID) const;
-
 		int      index;
 		int      width;
 		Channels channels = {};
