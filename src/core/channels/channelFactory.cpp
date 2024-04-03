@@ -100,6 +100,12 @@ Data create(const Channel& o, int bufferSize, Resampler::Quality quality)
 	ch.id     = channelId_.generate();
 	ch.shared = shared.get();
 
+	/* Update IDs in children channels if this is a group. */
+
+	if (ch.type == ChannelType::GROUP)
+		for (Channel& child : ch.groupChannel->channels->getAll())
+			child.id = channelId_.generate();
+
 	return {ch, std::move(shared)};
 }
 
