@@ -43,6 +43,7 @@ struct Model
 	struct Channel
 	{
 		ID  id;
+		int columnIndex;
 		int index = -1;
 	};
 

@@ -67,10 +67,8 @@ void printLoadError_(int res)
 
 /* -------------------------------------------------------------------------- */
 
-Data makeData_(ID channelId, const v::Model::Column& column)
+Data makeData_(ID channelId, int columnIndex, int position)
 {
-	const int position    = column.channels.getIndex(channelId);
-	const int columnIndex = column.index;
 	return Data(g_engine->getChannelsApi().get(channelId), columnIndex, position);
 }
 
@@ -81,7 +79,7 @@ Column makeColumn_(const v::Model::Column& modelColumn)
 	Column column{modelColumn.index, modelColumn.width, {}};
 
 	for (const v::Model::Channel& channel : modelColumn.channels.getAll())
-		column.channels.push_back(makeData_(channel.id, modelColumn));
+		column.channels.push_back(makeData_(channel.id, channel.columnIndex, channel.index));
 
 	return column;
 }
@@ -154,7 +152,9 @@ bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).
 
 Data getData(ID channelId)
 {
-	return makeData_(channelId, g_ui->model.getColumnByChannelId(channelId));
+	const v::Model::Column&  column  = g_ui->model.getColumnByChannelId(channelId);
+	const v::Model::Channel& channel = column.channels.getById(channelId);
+	return makeData_(channelId, channel.columnIndex, channel.index);
 }
 
 std::vector<Column> getColumns()

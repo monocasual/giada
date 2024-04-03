@@ -147,9 +147,10 @@ void Model::load(const m::Patch& patch)
 	columns.clear();
 	for (const m::Patch::Column& pcolumn : patch.columns)
 	{
+		int    columnIndex = 0;
 		Column column{.width = pcolumn.width};
 		for (ID channelId : pcolumn.channels)
-			column.channels.add({channelId});
+			column.channels.add({channelId, columnIndex++});
 		columns.push_back(column);
 	}
 
@@ -169,9 +170,8 @@ Model::Column& Model::getColumnByIndex(int index)
 
 Model::Column& Model::getColumnByChannelId(ID channelId)
 {
-	return *u::vector::findIfSafe(columns, [channelId](auto& col) {
-		return col.channels.findById(channelId) != nullptr;
-	});
+	return *u::vector::findIfSafe(columns, [channelId](auto& col)
+	    { return col.channels.findById(channelId) != nullptr; });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -212,11 +212,11 @@ void Model::moveChannel(ID channelId, int columnIndex, int newPosition)
 
 void Model::addChannelToColumn(ID channelId, int columnIndex, int position)
 {
-	Channels& channels = getColumnByIndex(columnIndex).channels;
+	Column& column = getColumnByIndex(columnIndex);
 	if (position == -1)
-		channels.add({channelId});
+		column.channels.add({channelId, columnIndex});
 	else
-		channels.insert({channelId}, position);
+		column.channels.insert({channelId, columnIndex}, position);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -225,7 +225,7 @@ void Model::addChannelToGroup(ID channelId, ID groupId, int position)
 {
 	Column&   column = getColumnByChannelId(groupId);
 	const int offset = column.channels.getIndex(groupId);
-	column.channels.insert({channelId}, position + offset);
+	column.channels.insert({channelId, column.index}, position + offset);
 }
 
 /* -------------------------------------------------------------------------- */
