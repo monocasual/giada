@@ -272,9 +272,9 @@ void cloneChannel(ID channelId, int columnIndex)
 
 /* -------------------------------------------------------------------------- */
 
-void moveChannel(ID channelId, int columnIndex, int newPosition)
+void moveChannel(ID channelId, int newColumnIndex, int newPosition)
 {
-	g_ui->model.moveChannel(channelId, columnIndex, newPosition);
+	g_ui->model.moveChannel(channelId, newColumnIndex, newPosition);
 	g_ui->rebuild();
 }
 

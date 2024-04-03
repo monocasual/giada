@@ -193,11 +193,11 @@ void Model::removeColumn(int columnIndex)
 
 /* -------------------------------------------------------------------------- */
 
-void Model::moveChannel(ID channelId, int columnIndex, int newPosition)
+void Model::moveChannel(ID channelId, int newColumnIndex, int newPosition)
 {
 	const Column& column = getColumnByChannelId(channelId);
 
-	if (column.index == columnIndex) // If in same column
+	if (column.index == newColumnIndex) // If in same column
 	{
 		const int oldPosition = column.channels.getIndex(channelId);
 		if (newPosition >= oldPosition) // If moved below, readjust index
@@ -205,7 +205,7 @@ void Model::moveChannel(ID channelId, int columnIndex, int newPosition)
 	}
 
 	removeChannelFromColumn(channelId);
-	addChannelToColumn(channelId, columnIndex, newPosition);
+	addChannelToColumn(channelId, newColumnIndex, newPosition);
 }
 
 /* -------------------------------------------------------------------------- */

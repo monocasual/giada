@@ -134,7 +134,7 @@ described by Model::columns. */
 std::vector<Column> getColumns();
 
 /* addChannel
-Adds an empty new channel to the stack. Pass groupChannelId > 0 to add it to 
+Adds an empty new channel to the stack. Pass groupChannelId > 0 to add it to
 a Group Channel. */
 
 void addChannel(int columnIndex, ChannelType type, ID groupChannelId);
@@ -165,9 +165,9 @@ Makes an exact copy of a channel. */
 void cloneChannel(ID channelId, int columnIndex);
 
 /* moveChannel
-Moves channel with channelId to column at 'columnIndex' at 'position'. */
+Moves channel with channelId to column at 'newColumnIndex' at 'newPosition'. */
 
-void moveChannel(ID channelId, int columnIndex, int position);
+void moveChannel(ID channelId, int newColumnIndex, int newPosition);
 
 /* addColumn
 Adds a new column at the end of the list. */
