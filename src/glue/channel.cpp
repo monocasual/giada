@@ -79,7 +79,11 @@ Column makeColumn_(const v::Model::Column& modelColumn)
 	Column column{modelColumn.index, modelColumn.width, {}};
 
 	for (const v::Model::Channel& channel : modelColumn.channels.getAll())
+	{
 		column.channels.push_back(makeData_(channel.id, channel.columnIndex, channel.index));
+		for (const v::Model::Channel& child : channel.channels.getAll()) // for groups
+			column.channels.push_back(makeData_(child.id, child.columnIndex, child.index));
+	}
 
 	return column;
 }
@@ -185,11 +189,7 @@ void addChannel(int columnIndex, ChannelType type, ID groupChannelId)
 {
 	const m::Channel& ch = g_engine->getChannelsApi().add(type, groupChannelId);
 	if (groupChannelId > 0)
-	{
-		const m::Channel& parent   = g_engine->getChannelsApi().get(groupChannelId);
-		const int         position = parent.groupChannel->channels->getAll().size(); // Add to bottom
-		g_ui->model.addChannelToGroup(ch.id, groupChannelId, position);
-	}
+		g_ui->model.addChannelToGroup(ch.id, groupChannelId);
 	else
 		g_ui->model.addChannelToColumn(ch.id, columnIndex);
 }

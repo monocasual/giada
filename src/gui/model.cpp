@@ -223,9 +223,12 @@ void Model::addChannelToColumn(ID channelId, int columnIndex, int position)
 
 void Model::addChannelToGroup(ID channelId, ID groupId, int position)
 {
-	Column&   column = getColumnByChannelId(groupId);
-	const int offset = column.channels.getIndex(groupId);
-	column.channels.insert({channelId, column.index}, position + offset);
+	Column&  column = getColumnByChannelId(groupId);
+	Channel& group  = column.channels.getById(groupId);
+	if (position == -1)
+		group.channels.add({channelId, column.index});
+	else
+		group.channels.insert({channelId, column.index}, position);
 }
 
 /* -------------------------------------------------------------------------- */

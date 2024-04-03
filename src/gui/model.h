@@ -40,20 +40,22 @@ namespace giada::v
 {
 struct Model
 {
+	template <typename T>
+	using Channels = u::Container<T, /*Identifiable=*/true, /*Sortable=*/true>;
+
 	struct Channel
 	{
-		ID  id;
-		int columnIndex;
-		int index = -1;
+		ID                id;
+		int               columnIndex;
+		int               index    = -1;
+		Channels<Channel> channels = {};
 	};
-
-	using Channels = u::Container<Channel, /*Identifiable=*/true, /*Sortable=*/true>;
 
 	struct Column
 	{
-		int      index;
-		int      width;
-		Channels channels = {};
+		int               index;
+		int               width;
+		Channels<Channel> channels = {};
 	};
 
 	Model();
@@ -69,7 +71,7 @@ struct Model
 	void    removeColumn(int columnIndex);
 	void    moveChannel(ID channelId, int columnIndex, int newPosition);
 	void    addChannelToColumn(ID channelId, int columnIndex, int position = -1);
-	void    addChannelToGroup(ID channelId, ID groupId, int position);
+	void    addChannelToGroup(ID channelId, ID groupId, int position = -1);
 	void    removeChannelFromColumn(ID channelId);
 
 	/* reset
