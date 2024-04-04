@@ -34,10 +34,12 @@
 
 namespace giada::m
 {
-Channel::Channel(ChannelType type, ID id, ChannelShared& s)
+Channel::Channel(ChannelType type, ID id, int columnIndex, ChannelShared& s)
 : shared(&s)
 , id(id)
 , parentId(0)
+, index(0)
+, columnIndex(columnIndex)
 , type(type)
 , volume(G_DEFAULT_VOL)
 , pan(G_DEFAULT_PAN)
@@ -75,6 +77,8 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 : shared(&s)
 , id(p.id)
 , parentId(0) // TODO
+, index(0)
+, columnIndex(0) // TODO
 , type(p.type)
 , volume(p.volume)
 , pan(p.pan)
@@ -180,8 +184,8 @@ bool Channel::isPlaying() const
 #ifdef G_DEBUG_MODE
 std::string Channel::debug() const
 {
-	std::string out = fmt::format("ID={} name='{}' type={} grouped={} channelShared={}",
-	    id, name, u::string::toString(type), grouped, (void*)&shared);
+	std::string out = fmt::format("ID={} name='{}' type={} columnIndex={} grouped={} channelShared={}",
+	    id, name, u::string::toString(type), columnIndex, grouped, (void*)&shared);
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
 		out += fmt::format(" wave={} mode={} begin={} end={}",

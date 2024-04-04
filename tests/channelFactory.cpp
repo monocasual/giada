@@ -14,6 +14,7 @@ TEST_CASE("channelFactory")
 		channelFactory::Data data = channelFactory::create(
 		    /*id=*/0,
 		    ChannelType::SAMPLE,
+		    /*columnIndex=*/0,
 		    /*bufferSize=*/1024,
 		    Resampler::Quality::LINEAR,
 		    /*overdubProtection=*/false);

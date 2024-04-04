@@ -76,10 +76,10 @@ std::vector<Channel>& ChannelsApi::getAll()
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelsApi::add(ChannelType type, ID groupChannelId)
+Channel& ChannelsApi::add(ChannelType type, int columnIndex, ID groupChannelId)
 {
 	const int bufferSize = m_kernelAudio.getBufferSize();
-	return m_channelManager.addChannel(type, bufferSize, groupChannelId);
+	return m_channelManager.addChannel(type, bufferSize, columnIndex,  groupChannelId);
 }
 
 int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)

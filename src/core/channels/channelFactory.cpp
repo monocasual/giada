@@ -77,12 +77,12 @@ void reset()
 
 /* -------------------------------------------------------------------------- */
 
-Data create(ID channelId, ChannelType type, int bufferSize, Resampler::Quality quality, bool overdubProtection)
+Data create(ID channelId, ChannelType type, int columnIndex, int bufferSize, Resampler::Quality quality, bool overdubProtection)
 {
 	channelId = channelId_.generate(channelId);
 
 	std::unique_ptr<ChannelShared> shared = makeShared_(type, channelId, bufferSize, quality);
-	Channel                        ch     = Channel(type, channelId, *shared.get());
+	Channel                        ch     = Channel(type, channelId, columnIndex, *shared.get());
 
 	if (ch.sampleChannel)
 		ch.sampleChannel->overdubProtection = overdubProtection;

@@ -33,7 +33,7 @@
 
 namespace giada::m::model
 {
-class Channels : public u::Container<Channel, /*Identifiable=*/true>
+class Channels : public u::Container<Channel, /*Identifiable=*/true, /*Sortable=*/true>
 {
 public:
 	/* get

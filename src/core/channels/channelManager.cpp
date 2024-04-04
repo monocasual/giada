@@ -79,11 +79,11 @@ void ChannelManager::reset(Frame framesInBuffer)
 	const Resampler::Quality rsmpQuality       = m_model.get().kernelAudio.rsmpQuality;
 
 	channelFactory::Data masterOutData = channelFactory::create(
-	    Mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, framesInBuffer, rsmpQuality, overdubProtection);
+	    Mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, 0, framesInBuffer, rsmpQuality, overdubProtection);
 	channelFactory::Data masterInData = channelFactory::create(
-	    Mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, framesInBuffer, rsmpQuality, overdubProtection);
+	    Mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, 0, framesInBuffer, rsmpQuality, overdubProtection);
 	channelFactory::Data previewData = channelFactory::create(
-	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, framesInBuffer, rsmpQuality, overdubProtection);
+	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, 0, framesInBuffer, rsmpQuality, overdubProtection);
 
 	m_model.get().channels.add(std::move(masterOutData.channel));
 	m_model.get().channels.add(std::move(masterInData.channel));
@@ -104,12 +104,12 @@ void ChannelManager::setBufferSize(int bufferSize)
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelManager::addChannel(ChannelType type, int bufferSize, ID groupChannelId)
+Channel& ChannelManager::addChannel(ChannelType type, int bufferSize, int columnIndex, ID groupChannelId)
 {
 	const bool               overdubProtectionDefaultOn = m_model.get().behaviors.overdubProtectionDefaultOn;
 	const Resampler::Quality rsmpQuality                = m_model.get().kernelAudio.rsmpQuality;
 
-	channelFactory::Data data      = channelFactory::create(/*id=*/0, type, bufferSize, rsmpQuality, overdubProtectionDefaultOn);
+	channelFactory::Data data      = channelFactory::create(/*id=*/0, type, columnIndex, bufferSize, rsmpQuality, overdubProtectionDefaultOn);
 	const ID             channelId = data.channel.id;
 
 	setupChannelCallbacks(data.channel, *data.shared);

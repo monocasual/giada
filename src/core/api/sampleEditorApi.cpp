@@ -185,7 +185,7 @@ const Channel& SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 {
 	const int      bufferSize = m_kernelAudio.getBufferSize();
 	Wave&          wave       = m_model.addWave(waveFactory::createFromWave(getWave(channelId), a, b));
-	const Channel& ch         = m_channelManager.addChannel(ChannelType::SAMPLE, bufferSize, /*groupChannelId=*/0);
+	const Channel& ch         = m_channelManager.addChannel(ChannelType::SAMPLE, bufferSize, /*columnIndex=*/0, /*groupChannelId=*/0);
 	m_channelManager.loadSampleChannel(ch.id, wave);
 
 	return ch;

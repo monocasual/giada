@@ -18,7 +18,7 @@ TEST_CASE("rendering::sampleRendering")
 	});
 
 	m::ChannelShared channelShared(0, BUFFER_SIZE);
-	m::Channel       channel(ChannelType::SAMPLE, 1, channelShared);
+	m::Channel       channel(ChannelType::SAMPLE, 1, 0, channelShared);
 
 	channelShared.quantizer.emplace();
 	channelShared.renderQueue.emplace(/*size=*/16);
