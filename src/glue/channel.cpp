@@ -268,6 +268,9 @@ void cloneChannel(ID channelId, int columnIndex)
 {
 	const m::Channel& ch = g_engine->getChannelsApi().clone(channelId);
 	g_ui->model.addChannelToColumn(ch.id, columnIndex);
+	if (ch.type == ChannelType::GROUP)
+		for (const m::Channel& child : ch.groupChannel->channels->getAll())
+			g_ui->model.addChannelToGroup(child.id, ch.id);
 }
 
 /* -------------------------------------------------------------------------- */
