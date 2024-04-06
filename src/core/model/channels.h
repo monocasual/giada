@@ -33,7 +33,7 @@
 
 namespace giada::m::model
 {
-class Channels : public u::Container<Channel, /*Identifiable=*/true, /*Sortable=*/true>
+class Channels
 {
 public:
 	/* get
@@ -42,12 +42,22 @@ public:
 	const Channel& get(ID) const;
 	Channel&       get(ID);
 
+	std::vector<Channel>&       getAll();
+	const std::vector<Channel>& getAll() const;
+	Channel*                    find(ID);
+	const Channel*              find(ID) const;
+	Channel&                    add(Channel&&);
+	Channel&                    getLast();
+	void                        remove(ID);
+	bool                        anyOf(std::function<bool(const Channel&)>) const;
+	std::vector<Channel*>       getIf(std::function<bool(const Channel&)>);
+
 #ifdef G_DEBUG_MODE
 	void debug() const;
 #endif
 
 private:
-	const Channel* find_(ID) const;
+	u::Container<Channel, /*Identifiable=*/true, /*Sortable=*/true> m_channels;
 };
 } // namespace giada::m::model
 

@@ -37,7 +37,18 @@ namespace giada::m::model
 {
 const Channel& Channels::get(ID id) const
 {
-	const Channel* out = find_(id);
+	const Channel* out = nullptr;
+	for (const Channel& ch : m_channels.getAll())
+	{
+		if (ch.id == id)
+			out = &ch;
+		if (ch.type == ChannelType::GROUP)
+		{
+			const Channel* child = ch.groupChannel->channels->find(id);
+			if (child != nullptr)
+				out = child;
+		}
+	}
 	assert(out != nullptr);
 	return *out;
 }
@@ -51,13 +62,25 @@ Channel& Channels::get(ID id)
 
 /* -------------------------------------------------------------------------- */
 
+std::vector<Channel>&       Channels::getAll() { return m_channels.getAll(); }
+const std::vector<Channel>& Channels::getAll() const { return m_channels.getAll(); }
+Channel*                    Channels::find(ID id) { return m_channels.findById(id); }
+const Channel*              Channels::find(ID id) const { return m_channels.findById(id); }
+Channel&                    Channels::add(Channel&& c) { return m_channels.add(std::move(c)); };
+Channel&                    Channels::getLast() { return m_channels.getLast(); }
+void                        Channels::remove(ID id) { return m_channels.removeById(id); };
+bool                        Channels::anyOf(std::function<bool(const Channel&)> f) const { return m_channels.anyOf(f); }
+std::vector<Channel*>       Channels::getIf(std::function<bool(const Channel&)> f) { return m_channels.getIf(f); }
+
+/* -------------------------------------------------------------------------- */
+
 #ifdef G_DEBUG_MODE
 
 void Channels::debug() const
 {
 	puts("model::channels");
 
-	for (int i = 0; const Channel& c : getAll())
+	for (int i = 0; const Channel& c : m_channels.getAll())
 	{
 		fmt::print("\t{} - {}\n", i++, c.debug());
 		if (c.type == ChannelType::GROUP)
@@ -74,22 +97,4 @@ void Channels::debug() const
 }
 
 #endif
-
-/* -------------------------------------------------------------------------- */
-
-const Channel* Channels::find_(ID id) const
-{
-	for (const Channel& ch : getAll())
-	{
-		if (ch.id == id)
-			return &ch;
-		if (ch.type == ChannelType::GROUP)
-		{
-			const Channel* child = ch.groupChannel->channels->findById(id);
-			if (child != nullptr)
-				return child;
-		}
-	}
-	return nullptr;
-}
 } // namespace giada::m::model
