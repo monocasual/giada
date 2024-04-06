@@ -145,9 +145,9 @@ int geKeyboard::ChannelDragger::getPositionForCursor(const geColumn* column, Pix
 
 	const geChannel* targetChannel = column->getChannelAtCursor(y);
 	if (targetChannel != nullptr)
-		return targetChannel->getData().position + 1;
+		return targetChannel->getData().position;
 
-	/* Channel not found, case 1: the cursor could be above the first channel. 
+	/* Channel not found, case 1: the cursor could be above the first channel.
 	Channel not found, case 2: the cursor could be below the last channel, over
 	the empty space at the bottom of the column. */
 

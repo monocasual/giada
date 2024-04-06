@@ -195,17 +195,19 @@ void Model::removeColumn(int columnIndex)
 
 void Model::moveChannel(ID channelId, int newColumnIndex, int newPosition)
 {
-	const Column& column = getColumnByChannelId(channelId);
+	Column& sourceColumn = getColumnByChannelId(channelId);
 
-	if (column.index == newColumnIndex) // If in same column
+	if (sourceColumn.index == newColumnIndex) // If in same column
 	{
-		const int oldPosition = column.channels.getIndex(channelId);
-		if (newPosition >= oldPosition) // If moved below, readjust index
-			newPosition -= 1;
+		sourceColumn.channels.moveById(channelId, newPosition);
 	}
-
-	removeChannelFromColumn(channelId);
-	addChannelToColumn(channelId, newColumnIndex, newPosition);
+	else
+	{
+		Channel channel      = sourceColumn.channels.getById(channelId);
+		Column& targetColumn = getColumnByIndex(newColumnIndex);
+		sourceColumn.channels.removeById(channelId);
+		targetColumn.channels.insert(std::move(channel), newPosition);
+	}
 }
 
 /* -------------------------------------------------------------------------- */
