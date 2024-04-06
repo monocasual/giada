@@ -164,7 +164,7 @@ Data getData(ID channelId)
 std::vector<Column> getColumns()
 {
 	std::vector<Column> out;
-	for (const v::Model::Column& modelColumn : g_ui->model.columns) // Model::columns is the source of truth
+	for (const v::Model::Column& modelColumn : g_ui->model.columns.getAll()) // Model::columns is the source of truth
 		out.push_back(makeColumn_(modelColumn));
 	return out;
 }

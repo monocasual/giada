@@ -87,7 +87,7 @@ void Model::store(m::Patch& patch) const
 {
 	patch.name = projectName;
 
-	for (const Column& column : columns)
+	for (const Column& column : columns.getAll())
 	{
 		m::Patch::Column pcolumn;
 		pcolumn.width = column.width;
@@ -151,7 +151,7 @@ void Model::load(const m::Patch& patch)
 		Column column{.width = pcolumn.width};
 		for (ID channelId : pcolumn.channels)
 			column.channels.add({channelId, columnIndex++});
-		columns.push_back(column);
+		columns.add(std::move(column));
 	}
 
 	projectName = patch.name;
@@ -161,16 +161,14 @@ void Model::load(const m::Patch& patch)
 
 Model::Column& Model::getColumnByIndex(int index)
 {
-	assert(index < static_cast<int>(columns.size()));
-
-	return columns.at(index);
+	return columns.getByIndex(index);
 }
 
 /* -------------------------------------------------------------------------- */
 
 Model::Column& Model::getColumnByChannelId(ID channelId)
 {
-	return *u::vector::findIfSafe(columns, [channelId](auto& col)
+	return *u::vector::findIfSafe(columns.getAll(), [channelId](auto& col)
 	    { return col.channels.findById(channelId) != nullptr; });
 }
 
@@ -178,17 +176,14 @@ Model::Column& Model::getColumnByChannelId(ID channelId)
 
 void Model::addColumn()
 {
-	const int index = static_cast<int>(columns.size());
-	const int width = G_DEFAULT_COLUMN_WIDTH;
-
-	columns.push_back({index, width});
+	columns.add({G_DEFAULT_COLUMN_WIDTH});
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Model::removeColumn(int columnIndex)
 {
-	columns.erase(columns.begin() + columnIndex);
+	columns.removeByIndex(columnIndex);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -237,7 +232,7 @@ void Model::addChannelToGroup(ID channelId, ID groupId, int position)
 
 void Model::removeChannelFromColumn(ID channelId)
 {
-	for (Column& column : columns) // Brute force!
+	for (Column& column : columns.getAll()) // Brute force!
 		column.channels.removeById(channelId);
 }
 /* -------------------------------------------------------------------------- */

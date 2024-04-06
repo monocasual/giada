@@ -43,6 +43,9 @@ struct Model
 	template <typename T>
 	using Channels = u::Container<T, /*Identifiable=*/true, /*Sortable=*/true>;
 
+	template <typename T>
+	using Columns = u::Container<T, /*Identifiable=*/false, /*Sortable=*/true>;
+
 	struct Channel
 	{
 		ID                id;
@@ -53,8 +56,8 @@ struct Model
 
 	struct Column
 	{
-		int               index;
 		int               width;
+		int               index    = -1;
 		Channels<Channel> channels = {};
 	};
 
@@ -120,7 +123,7 @@ struct Model
 
 	float uiScaling = G_DEFAULT_UI_SCALING;
 
-	std::vector<Column> columns;
+	Columns<Column> columns;
 };
 } // namespace giada::v
 
