@@ -87,6 +87,15 @@ const Channel* Channels::find(ID id) const
 
 /* -------------------------------------------------------------------------- */
 
+Channels& Channels::getChannelsInGroup(ID id)
+{
+	Channel& ch = get(id);
+	assert(ch.type == ChannelType::GROUP);
+	return *ch.groupChannel->channels;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Channels::remove(ID id)
 {
 	m_channels.removeById(id);

@@ -188,13 +188,20 @@ Channel& ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::v
 
 	newChannelData.channel.plugins = plugins;
 
-	/* Then push the new channel in the channels vector. */
+	/* Then push the new channel in the channels vector. Make sure to add it to
+	the right group if the cloned channel was grouped. */
 
-	m_model.get().channels.add(std::move(newChannelData.channel));
+	Channel* newChannel = nullptr;
+
+	if (oldChannel.grouped)
+		newChannel = &m_model.get().channels.getChannelsInGroup(oldChannel.parentId).add(std::move(newChannelData.channel));
+	else
+		newChannel = &m_model.get().channels.add(std::move(newChannelData.channel));
+
 	m_model.addChannelShared(std::move(newChannelData.shared));
 	m_model.swap(model::SwapType::HARD);
 
-	return m_model.get().channels.getLast();
+	return *newChannel;
 }
 
 /* -------------------------------------------------------------------------- */

@@ -49,6 +49,12 @@ public:
 	Channel*       find(ID);
 	const Channel* find(ID) const;
 
+	/* getChannelsInGroup
+	Returns the Channel container of a Channel with a given ID, assuming that
+	the channel is a group. */
+
+	Channels& getChannelsInGroup(ID);
+
 	void remove(ID);
 
 	std::vector<Channel>&       getAll();
