@@ -37,18 +37,7 @@ namespace giada::m::model
 {
 const Channel& Channels::get(ID id) const
 {
-	const Channel* out = nullptr;
-	for (const Channel& ch : m_channels.getAll())
-	{
-		if (ch.id == id)
-			out = &ch;
-		if (ch.type == ChannelType::GROUP)
-		{
-			const Channel* child = ch.groupChannel->channels->find(id);
-			if (child != nullptr)
-				out = child;
-		}
-	}
+	const Channel* out = find(id);
 	assert(out != nullptr);
 	return *out;
 }
@@ -64,13 +53,38 @@ Channel& Channels::get(ID id)
 
 std::vector<Channel>&       Channels::getAll() { return m_channels.getAll(); }
 const std::vector<Channel>& Channels::getAll() const { return m_channels.getAll(); }
-Channel*                    Channels::find(ID id) { return m_channels.findById(id); }
-const Channel*              Channels::find(ID id) const { return m_channels.findById(id); }
 Channel&                    Channels::add(Channel&& c) { return m_channels.add(std::move(c)); };
 Channel&                    Channels::getLast() { return m_channels.getLast(); }
 void                        Channels::remove(ID id) { return m_channels.removeById(id); };
 bool                        Channels::anyOf(std::function<bool(const Channel&)> f) const { return m_channels.anyOf(f); }
 std::vector<Channel*>       Channels::getIf(std::function<bool(const Channel&)> f) { return m_channels.getIf(f); }
+
+/* -------------------------------------------------------------------------- */
+
+Channel* Channels::find(ID id)
+{
+	return const_cast<Channel*>(std::as_const(*this).find(id));
+}
+
+/* -------------------------------------------------------------------------- */
+
+const Channel* Channels::find(ID id) const
+{
+	const Channel* ch = m_channels.findById(id);
+	if (ch != nullptr)
+		return ch;
+
+	for (const Channel& ch : m_channels.getAll())
+	{
+		if (ch.type != ChannelType::GROUP)
+			continue;
+		const Channel* child = ch.groupChannel->channels->find(id);
+		if (child != nullptr)
+			return child;
+	}
+
+	return nullptr;
+}
 
 /* -------------------------------------------------------------------------- */
 

@@ -42,10 +42,15 @@ public:
 	const Channel& get(ID) const;
 	Channel&       get(ID);
 
+	/* find
+	Finds a Channel for the given ID, by looking also inside groups. Returns
+	nullptr if not found. */
+
+	Channel*       find(ID);
+	const Channel* find(ID) const;
+
 	std::vector<Channel>&       getAll();
 	const std::vector<Channel>& getAll() const;
-	Channel*                    find(ID);
-	const Channel*              find(ID) const;
 	Channel&                    add(Channel&&);
 	Channel&                    getLast();
 	void                        remove(ID);
