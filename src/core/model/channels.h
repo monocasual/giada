@@ -49,11 +49,12 @@ public:
 	Channel*       find(ID);
 	const Channel* find(ID) const;
 
+	void remove(ID);
+
 	std::vector<Channel>&       getAll();
 	const std::vector<Channel>& getAll() const;
 	Channel&                    add(Channel&&);
 	Channel&                    getLast();
-	void                        remove(ID);
 	bool                        anyOf(std::function<bool(const Channel&)>) const;
 	std::vector<Channel*>       getIf(std::function<bool(const Channel&)>);
 

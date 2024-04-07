@@ -233,8 +233,13 @@ void Model::addChannelToGroup(ID channelId, ID groupId, int position)
 void Model::removeChannelFromColumn(ID channelId)
 {
 	for (Column& column : columns.getAll()) // Brute force!
+	{
 		column.channels.removeById(channelId);
+		for (Channel& channel : column.channels.getAll())
+			channel.channels.removeById(channelId);
+	}
 }
+
 /* -------------------------------------------------------------------------- */
 
 void Model::reset()

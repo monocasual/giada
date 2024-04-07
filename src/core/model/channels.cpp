@@ -55,7 +55,6 @@ std::vector<Channel>&       Channels::getAll() { return m_channels.getAll(); }
 const std::vector<Channel>& Channels::getAll() const { return m_channels.getAll(); }
 Channel&                    Channels::add(Channel&& c) { return m_channels.add(std::move(c)); };
 Channel&                    Channels::getLast() { return m_channels.getLast(); }
-void                        Channels::remove(ID id) { return m_channels.removeById(id); };
 bool                        Channels::anyOf(std::function<bool(const Channel&)> f) const { return m_channels.anyOf(f); }
 std::vector<Channel*>       Channels::getIf(std::function<bool(const Channel&)> f) { return m_channels.getIf(f); }
 
@@ -84,6 +83,16 @@ const Channel* Channels::find(ID id) const
 	}
 
 	return nullptr;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Channels::remove(ID id)
+{
+	m_channels.removeById(id);
+	for (Channel& ch : m_channels.getAll())
+		if (ch.type == ChannelType::GROUP)
+			ch.groupChannel->channels->remove(id);
 }
 
 /* -------------------------------------------------------------------------- */
