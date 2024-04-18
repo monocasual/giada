@@ -31,6 +31,7 @@
 #include "core/const.h"
 #include "core/plugins/pluginManager.h"
 #include "deps/geompp/src/rect.hpp"
+#include "deps/mcl-container/src/container.hpp"
 #include "utils/container.h"
 #include <FL/Enumerations.H>
 #include <string>
@@ -44,7 +45,7 @@ struct Model
 	using Channels = u::Container<T, /*Identifiable=*/true, /*Sortable=*/true>;
 
 	template <typename T>
-	using Columns = u::Container<T, /*Identifiable=*/false, /*Sortable=*/true>;
+	using Columns = mcl::Container<T>;
 
 	struct Channel
 	{

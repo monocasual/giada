@@ -87,7 +87,7 @@ void Model::store(m::Patch& patch) const
 {
 	patch.name = projectName;
 
-	for (const Column& column : columns.getAll())
+	for (const Column& column : columns)
 	{
 		m::Patch::Column pcolumn;
 		pcolumn.width = column.width;
@@ -168,7 +168,7 @@ Model::Column& Model::getColumnByIndex(int index)
 
 Model::Column& Model::getColumnByChannelId(ID channelId)
 {
-	return *u::vector::findIfSafe(columns.getAll(), [channelId](auto& col)
+	return *u::vector::findIfSafe(columns, [channelId](auto& col)
 	    { return col.channels.findById(channelId) != nullptr; });
 }
 
@@ -232,7 +232,7 @@ void Model::addChannelToGroup(ID channelId, ID groupId, int position)
 
 void Model::removeChannelFromColumn(ID channelId)
 {
-	for (Column& column : columns.getAll()) // Brute force!
+	for (Column& column : columns) // Brute force!
 	{
 		column.channels.removeById(channelId);
 		for (Channel& channel : column.channels.getAll())
