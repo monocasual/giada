@@ -117,7 +117,7 @@ private:
 
 struct Column
 {
-	int               index;
+	std::size_t       index;
 	int               width;
 	std::vector<Data> channels;
 };

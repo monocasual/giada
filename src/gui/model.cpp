@@ -31,6 +31,15 @@
 
 namespace giada::v
 {
+Model::Column::Column(int width)
+: width(width)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 Model::Model()
 {
 	reset();
@@ -91,7 +100,7 @@ void Model::store(m::Patch& patch) const
 	{
 		m::Patch::Column pcolumn;
 		pcolumn.width = column.width;
-		for (const v::Model::Channel& channel : column.channels.getAll())
+		for (const v::Model::Channel& channel : column)
 			pcolumn.channels.push_back(channel.id);
 		patch.columns.push_back(pcolumn);
 	}
@@ -147,10 +156,10 @@ void Model::load(const m::Patch& patch)
 	columns.clear();
 	for (const m::Patch::Column& pcolumn : patch.columns)
 	{
-		int    columnIndex = 0;
-		Column column{.width = pcolumn.width};
+		std::size_t columnIndex = 0;
+		Column      column{pcolumn.width};
 		for (ID channelId : pcolumn.channels)
-			column.channels.add({channelId, columnIndex++});
+			column.add({channelId, columnIndex++});
 		columns.add(std::move(column));
 	}
 
@@ -159,7 +168,7 @@ void Model::load(const m::Patch& patch)
 
 /* -------------------------------------------------------------------------- */
 
-Model::Column& Model::getColumnByIndex(int index)
+Model::Column& Model::getColumnByIndex(std::size_t index)
 {
 	return columns.getByIndex(index);
 }
@@ -169,7 +178,7 @@ Model::Column& Model::getColumnByIndex(int index)
 Model::Column& Model::getColumnByChannelId(ID channelId)
 {
 	return *u::vector::findIfSafe(columns, [channelId](auto& col)
-	    { return col.channels.findById(channelId) != nullptr; });
+	    { return col.findById(channelId) != nullptr; });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -188,32 +197,32 @@ void Model::removeColumn(int columnIndex)
 
 /* -------------------------------------------------------------------------- */
 
-void Model::moveChannel(ID channelId, int newColumnIndex, int newPosition)
+void Model::moveChannel(ID channelId, std::size_t newColumnIndex, int newPosition)
 {
 	Column& sourceColumn = getColumnByChannelId(channelId);
 
 	if (sourceColumn.index == newColumnIndex) // If in same column
 	{
-		sourceColumn.channels.moveById(channelId, newPosition);
+		sourceColumn.moveById(channelId, newPosition);
 	}
 	else
 	{
-		Channel channel      = sourceColumn.channels.getById(channelId);
+		Channel channel      = sourceColumn.getById(channelId);
 		Column& targetColumn = getColumnByIndex(newColumnIndex);
-		sourceColumn.channels.removeById(channelId);
-		targetColumn.channels.insert(std::move(channel), newPosition);
+		sourceColumn.removeById(channelId);
+		targetColumn.insert(std::move(channel), newPosition);
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Model::addChannelToColumn(ID channelId, int columnIndex, int position)
+void Model::addChannelToColumn(ID channelId, std::size_t columnIndex, int position)
 {
 	Column& column = getColumnByIndex(columnIndex);
 	if (position == -1)
-		column.channels.add({channelId, columnIndex});
+		column.add({channelId, columnIndex});
 	else
-		column.channels.insert({channelId, columnIndex}, position);
+		column.insert({channelId, columnIndex}, position);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -221,7 +230,7 @@ void Model::addChannelToColumn(ID channelId, int columnIndex, int position)
 void Model::addChannelToGroup(ID channelId, ID groupId, int position)
 {
 	Column&  column = getColumnByChannelId(groupId);
-	Channel& group  = column.channels.getById(groupId);
+	Channel& group  = column.getById(groupId);
 	if (position == -1)
 		group.channels.add({channelId, column.index});
 	else
@@ -234,8 +243,8 @@ void Model::removeChannelFromColumn(ID channelId)
 {
 	for (Column& column : columns) // Brute force!
 	{
-		column.channels.removeById(channelId);
-		for (Channel& channel : column.channels.getAll())
+		column.removeById(channelId);
+		for (Channel& channel : column)
 			channel.channels.removeById(channelId);
 	}
 }

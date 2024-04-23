@@ -50,16 +50,16 @@ struct Model
 	struct Channel
 	{
 		ID                id;
-		int               columnIndex;
+		std::size_t       columnIndex;
 		int               index    = -1;
 		Channels<Channel> channels = {};
 	};
 
-	struct Column
+	struct Column : public mcl::Container<Channel, /*Identifiable=*/false, /*Sortable=*/true>
 	{
-		int               width;
-		int               index    = -1;
-		Channels<Channel> channels = {};
+		Column(int width);
+
+		int width;
 	};
 
 	Model();
@@ -69,12 +69,12 @@ struct Model
 
 	void    load(const m::Conf&);
 	void    load(const m::Patch&);
-	Column& getColumnByIndex(int);
+	Column& getColumnByIndex(std::size_t);
 	Column& getColumnByChannelId(ID);
 	void    addColumn();
 	void    removeColumn(int columnIndex);
-	void    moveChannel(ID channelId, int newColumnIndex, int newPosition);
-	void    addChannelToColumn(ID channelId, int columnIndex, int position = -1);
+	void    moveChannel(ID channelId, std::size_t newColumnIndex, int newPosition);
+	void    addChannelToColumn(ID channelId, std::size_t columnIndex, int position = -1);
 	void    addChannelToGroup(ID channelId, ID groupId, int position = -1);
 	void    removeChannelFromColumn(ID channelId);
 

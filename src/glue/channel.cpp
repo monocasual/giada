@@ -78,7 +78,7 @@ Column makeColumn_(const v::Model::Column& modelColumn)
 {
 	Column column{modelColumn.index, modelColumn.width, {}};
 
-	for (const v::Model::Channel& channel : modelColumn.channels.getAll())
+	for (const v::Model::Channel& channel : modelColumn)
 	{
 		column.channels.push_back(makeData_(channel));
 		for (const v::Model::Channel& child : channel.channels.getAll()) // for groups
@@ -157,7 +157,7 @@ bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).
 Data getData(ID channelId)
 {
 	const v::Model::Column&  column  = g_ui->model.getColumnByChannelId(channelId);
-	const v::Model::Channel& channel = column.channels.getById(channelId);
+	const v::Model::Channel& channel = column.getById(channelId);
 	return makeData_(channel);
 }
 
