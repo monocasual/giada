@@ -81,7 +81,7 @@ Column makeColumn_(const v::Model::Column& modelColumn)
 	for (const v::Model::Channel& channel : modelColumn)
 	{
 		column.channels.push_back(makeData_(channel));
-		for (const v::Model::Channel& child : channel.channels.getAll()) // for groups
+		for (const v::Model::Channel& child : channel) // for groups
 			column.channels.push_back(makeData_(child));
 	}
 

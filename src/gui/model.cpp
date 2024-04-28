@@ -31,6 +31,16 @@
 
 namespace giada::v
 {
+Model::Channel::Channel(ID id, std::size_t columnIndex)
+: Container(id)
+, columnIndex(columnIndex)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 Model::Column::Column(int width)
 : width(width)
 {
@@ -232,9 +242,9 @@ void Model::addChannelToGroup(ID channelId, ID groupId, int position)
 	Column&  column = getColumnByChannelId(groupId);
 	Channel& group  = column.getById(groupId);
 	if (position == -1)
-		group.channels.add({channelId, column.index});
+		group.add({channelId, column.index});
 	else
-		group.channels.insert({channelId, column.index}, position);
+		group.insert({channelId, column.index}, position);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -245,7 +255,7 @@ void Model::removeChannelFromColumn(ID channelId)
 	{
 		column.removeById(channelId);
 		for (Channel& channel : column)
-			channel.channels.removeById(channelId);
+			channel.removeById(channelId);
 	}
 }
 

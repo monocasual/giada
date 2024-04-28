@@ -32,7 +32,6 @@
 #include "core/plugins/pluginManager.h"
 #include "deps/geompp/src/rect.hpp"
 #include "deps/mcl-container/src/container.hpp"
-#include "utils/container.h"
 #include <FL/Enumerations.H>
 #include <string>
 #include <vector>
@@ -42,17 +41,13 @@ namespace giada::v
 struct Model
 {
 	template <typename T>
-	using Channels = u::Container<T, /*Identifiable=*/true, /*Sortable=*/true>;
-
-	template <typename T>
 	using Columns = mcl::Container<T>;
 
-	struct Channel
+	struct Channel : public mcl::Container<Channel, /*Identifiable=*/true, /*Sortable=*/true>
 	{
-		ID                id;
-		std::size_t       columnIndex;
-		int               index    = -1;
-		Channels<Channel> channels = {};
+		Channel(ID id, std::size_t columnIndex);
+
+		std::size_t columnIndex;
 	};
 
 	struct Column : public mcl::Container<Channel, /*Identifiable=*/false, /*Sortable=*/true>
