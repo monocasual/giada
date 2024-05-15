@@ -188,10 +188,7 @@ void loadChannel(ID channelId, const std::string& fname)
 void addChannel(int columnIndex, ChannelType type, ID groupChannelId)
 {
 	const m::Channel& ch = g_engine->getChannelsApi().add(type, columnIndex, groupChannelId);
-	if (groupChannelId > 0)
-		g_ui->model.columns.addChannelToGroup(ch.id, groupChannelId);
-	else
-		g_ui->model.columns.addChannelToColumn(ch.id, columnIndex);
+	g_ui->model.columns.addChannel(ch.id, columnIndex, groupChannelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -212,7 +209,7 @@ void addAndLoadChannels(int columnIndex, const std::vector<std::string>& fnames)
 		if (res != G_RES_OK)
 			errors = true;
 		else
-			g_ui->model.columns.addChannelToColumn(ch.id, columnIndex);
+			g_ui->model.columns.addChannel(ch.id, columnIndex);
 	}
 
 	if (errors)
@@ -259,15 +256,11 @@ void setOverdubProtection(ID channelId, bool value)
 void cloneChannel(ID channelId, int columnIndex)
 {
 	const m::Channel& ch = g_engine->getChannelsApi().clone(channelId);
-
-	if (ch.grouped)
-		g_ui->model.columns.addChannelToGroup(ch.id, ch.parentId);
-	else
-		g_ui->model.columns.addChannelToColumn(ch.id, columnIndex);
+	g_ui->model.columns.addChannel(ch.id, columnIndex, ch.grouped ? ch.parentId : 0);
 
 	if (ch.type == ChannelType::GROUP)
 		for (const m::Channel& child : ch.groupChannel->channels->getAll())
-			g_ui->model.columns.addChannelToGroup(child.id, ch.id);
+			g_ui->model.columns.addChannel(child.id, columnIndex, ch.id);
 }
 
 /* -------------------------------------------------------------------------- */

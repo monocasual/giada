@@ -99,27 +99,15 @@ void Model::Columns::moveChannel(ID channelId, std::size_t newColumnIndex, int n
 
 /* -------------------------------------------------------------------------- */
 
-void Model::Columns::addChannelToColumn(ID channelId, std::size_t columnIndex, int position)
+void Model::Columns::addChannel(ID channelId, std::size_t columnIndex, ID groupId)
 {
-	Column& column  = getColumnByIndex(columnIndex);
-	Channel channel = {channelId, /*groupId=*/0, columnIndex};
-	if (position == -1)
+	Channel channel = {channelId, groupId, columnIndex};
+	Column& column  = getByIndex(columnIndex);
+
+	if (groupId == 0)
 		column.add(std::move(channel));
 	else
-		column.insert(std::move(channel), position);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Columns::addChannelToGroup(ID channelId, ID groupId, int position)
-{
-	Column&  column  = getColumnByChannelId(groupId);
-	Channel& group   = column.getById(groupId);
-	Channel  channel = {channelId, groupId, column.index};
-	if (position == -1)
-		group.add(std::move(channel));
-	else
-		group.insert(std::move(channel), position);
+		column.getById(groupId).add(std::move(channel));
 }
 
 /* -------------------------------------------------------------------------- */

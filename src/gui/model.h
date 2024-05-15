@@ -62,8 +62,7 @@ struct Model
 		void    addColumn();
 		void    removeColumn(int columnIndex);
 		void    moveChannel(ID channelId, std::size_t newColumnIndex, int newPosition);
-		void    addChannelToColumn(ID channelId, std::size_t columnIndex, int position = -1);
-		void    addChannelToGroup(ID channelId, ID groupId, int position = -1);
+		void    addChannel(ID channelId, std::size_t columnIndex, ID groupId = 0);
 		void    removeChannelFromColumn(ID channelId);
 	};
 
