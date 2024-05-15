@@ -40,9 +40,6 @@ namespace giada::v
 {
 struct Model
 {
-	template <typename T>
-	using Columns = mcl::Container<T>;
-
 	struct Channel : public mcl::Container<Channel, /*Identifiable=*/true, /*Sortable=*/true>
 	{
 		Channel(ID id, ID groupId, std::size_t columnIndex);
@@ -58,21 +55,24 @@ struct Model
 		int width;
 	};
 
+	struct Columns : mcl::Container<Column>
+	{
+		Column& getColumnByIndex(std::size_t);
+		Column& getColumnByChannelId(ID);
+		void    addColumn();
+		void    removeColumn(int columnIndex);
+		void    moveChannel(ID channelId, std::size_t newColumnIndex, int newPosition);
+		void    addChannelToColumn(ID channelId, std::size_t columnIndex, int position = -1);
+		void    addChannelToGroup(ID channelId, ID groupId, int position = -1);
+		void    removeChannelFromColumn(ID channelId);
+	};
+
 	Model();
 
 	void store(m::Conf&) const;
 	void store(m::Patch&) const;
-
-	void    load(const m::Conf&);
-	void    load(const m::Patch&);
-	Column& getColumnByIndex(std::size_t);
-	Column& getColumnByChannelId(ID);
-	void    addColumn();
-	void    removeColumn(int columnIndex);
-	void    moveChannel(ID channelId, std::size_t newColumnIndex, int newPosition);
-	void    addChannelToColumn(ID channelId, std::size_t columnIndex, int position = -1);
-	void    addChannelToGroup(ID channelId, ID groupId, int position = -1);
-	void    removeChannelFromColumn(ID channelId);
+	void load(const m::Conf&);
+	void load(const m::Patch&);
 
 	/* reset
 	Resets the Model to the latest state loaded from m::Conf. Call this when you
@@ -120,7 +120,7 @@ struct Model
 
 	float uiScaling = G_DEFAULT_UI_SCALING;
 
-	Columns<Column> columns;
+	Columns columns;
 };
 } // namespace giada::v
 

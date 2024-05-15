@@ -156,7 +156,7 @@ bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).
 
 Data getData(ID channelId)
 {
-	const v::Model::Column&  column  = g_ui->model.getColumnByChannelId(channelId);
+	const v::Model::Column&  column  = g_ui->model.columns.getColumnByChannelId(channelId);
 	const v::Model::Channel& channel = column.getById(channelId);
 	return makeData_(channel);
 }
@@ -189,9 +189,9 @@ void addChannel(int columnIndex, ChannelType type, ID groupChannelId)
 {
 	const m::Channel& ch = g_engine->getChannelsApi().add(type, columnIndex, groupChannelId);
 	if (groupChannelId > 0)
-		g_ui->model.addChannelToGroup(ch.id, groupChannelId);
+		g_ui->model.columns.addChannelToGroup(ch.id, groupChannelId);
 	else
-		g_ui->model.addChannelToColumn(ch.id, columnIndex);
+		g_ui->model.columns.addChannelToColumn(ch.id, columnIndex);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -212,7 +212,7 @@ void addAndLoadChannels(int columnIndex, const std::vector<std::string>& fnames)
 		if (res != G_RES_OK)
 			errors = true;
 		else
-			g_ui->model.addChannelToColumn(ch.id, columnIndex);
+			g_ui->model.columns.addChannelToColumn(ch.id, columnIndex);
 	}
 
 	if (errors)
@@ -227,7 +227,7 @@ void deleteChannel(ID channelId)
 		return;
 	g_ui->closeAllSubwindows();
 	g_engine->getChannelsApi().remove(channelId);
-	g_ui->model.removeChannelFromColumn(channelId);
+	g_ui->model.columns.removeChannelFromColumn(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -261,20 +261,20 @@ void cloneChannel(ID channelId, int columnIndex)
 	const m::Channel& ch = g_engine->getChannelsApi().clone(channelId);
 
 	if (ch.grouped)
-		g_ui->model.addChannelToGroup(ch.id, ch.parentId);
+		g_ui->model.columns.addChannelToGroup(ch.id, ch.parentId);
 	else
-		g_ui->model.addChannelToColumn(ch.id, columnIndex);
+		g_ui->model.columns.addChannelToColumn(ch.id, columnIndex);
 
 	if (ch.type == ChannelType::GROUP)
 		for (const m::Channel& child : ch.groupChannel->channels->getAll())
-			g_ui->model.addChannelToGroup(child.id, ch.id);
+			g_ui->model.columns.addChannelToGroup(child.id, ch.id);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void moveChannel(ID channelId, int newColumnIndex, int newPosition)
 {
-	g_ui->model.moveChannel(channelId, newColumnIndex, newPosition);
+	g_ui->model.columns.moveChannel(channelId, newColumnIndex, newPosition);
 	g_ui->rebuild();
 }
 
@@ -282,7 +282,7 @@ void moveChannel(ID channelId, int newColumnIndex, int newPosition)
 
 void addColumn()
 {
-	g_ui->model.addColumn();
+	g_ui->model.columns.addColumn();
 	g_ui->rebuild();
 }
 
@@ -292,7 +292,7 @@ void deleteColumn(int index)
 {
 	if (g_ui->model.columns.size() == 1) // One column must stay
 		return;
-	g_ui->model.removeColumn(index);
+	g_ui->model.columns.removeColumn(index);
 	g_ui->rebuild();
 }
 
@@ -300,7 +300,7 @@ void deleteColumn(int index)
 
 void setColumnWidth(int index, int w)
 {
-	v::Model::Column& column = g_ui->model.getColumnByIndex(index);
+	v::Model::Column& column = g_ui->model.columns.getColumnByIndex(index);
 
 	column.width = w;
 	g_ui->rebuild();

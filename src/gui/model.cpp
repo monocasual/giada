@@ -51,6 +51,93 @@ Model::Column::Column(int width)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+Model::Column& Model::Columns::getColumnByIndex(std::size_t index)
+{
+	return getByIndex(index);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Model::Column& Model::Columns::getColumnByChannelId(ID channelId)
+{
+	return *u::vector::findIfSafe(*this, [channelId](auto& col)
+	    { return col.findById(channelId) != nullptr; });
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::Columns::addColumn()
+{
+	add({G_DEFAULT_COLUMN_WIDTH});
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::Columns::removeColumn(int columnIndex)
+{
+	removeByIndex(columnIndex);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::Columns::moveChannel(ID channelId, std::size_t newColumnIndex, int newPosition)
+{
+	Column& sourceColumn = getColumnByChannelId(channelId);
+
+	if (sourceColumn.index == newColumnIndex) // If in same column
+	{
+		sourceColumn.moveById(channelId, newPosition);
+	}
+	else
+	{
+		Channel channel      = sourceColumn.getById(channelId);
+		Column& targetColumn = getColumnByIndex(newColumnIndex);
+		sourceColumn.removeById(channelId);
+		targetColumn.insert(std::move(channel), newPosition);
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::Columns::addChannelToColumn(ID channelId, std::size_t columnIndex, int position)
+{
+	Column& column  = getColumnByIndex(columnIndex);
+	Channel channel = {channelId, /*groupId=*/0, columnIndex};
+	if (position == -1)
+		column.add(std::move(channel));
+	else
+		column.insert(std::move(channel), position);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::Columns::addChannelToGroup(ID channelId, ID groupId, int position)
+{
+	Column&  column  = getColumnByChannelId(groupId);
+	Channel& group   = column.getById(groupId);
+	Channel  channel = {channelId, groupId, column.index};
+	if (position == -1)
+		group.add(std::move(channel));
+	else
+		group.insert(std::move(channel), position);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::Columns::removeChannelFromColumn(ID channelId)
+{
+	for (Column& column : *this) // Brute force!
+	{
+		column.removeById(channelId);
+		for (Channel& channel : column)
+			channel.removeById(channelId);
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 Model::Model()
 {
 	reset();
@@ -179,102 +266,17 @@ void Model::load(const m::Patch& patch)
 
 /* -------------------------------------------------------------------------- */
 
-Model::Column& Model::getColumnByIndex(std::size_t index)
-{
-	return columns.getByIndex(index);
-}
-
-/* -------------------------------------------------------------------------- */
-
-Model::Column& Model::getColumnByChannelId(ID channelId)
-{
-	return *u::vector::findIfSafe(columns, [channelId](auto& col)
-	    { return col.findById(channelId) != nullptr; });
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::addColumn()
-{
-	columns.add({G_DEFAULT_COLUMN_WIDTH});
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::removeColumn(int columnIndex)
-{
-	columns.removeByIndex(columnIndex);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::moveChannel(ID channelId, std::size_t newColumnIndex, int newPosition)
-{
-	Column& sourceColumn = getColumnByChannelId(channelId);
-
-	if (sourceColumn.index == newColumnIndex) // If in same column
-	{
-		sourceColumn.moveById(channelId, newPosition);
-	}
-	else
-	{
-		Channel channel      = sourceColumn.getById(channelId);
-		Column& targetColumn = getColumnByIndex(newColumnIndex);
-		sourceColumn.removeById(channelId);
-		targetColumn.insert(std::move(channel), newPosition);
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::addChannelToColumn(ID channelId, std::size_t columnIndex, int position)
-{
-	Column& column  = getColumnByIndex(columnIndex);
-	Channel channel = {channelId, /*groupId=*/0, columnIndex};
-	if (position == -1)
-		column.add(std::move(channel));
-	else
-		column.insert(std::move(channel), position);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::addChannelToGroup(ID channelId, ID groupId, int position)
-{
-	Column&  column  = getColumnByChannelId(groupId);
-	Channel& group   = column.getById(groupId);
-	Channel  channel = {channelId, groupId, column.index};
-	if (position == -1)
-		group.add(std::move(channel));
-	else
-		group.insert(std::move(channel), position);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::removeChannelFromColumn(ID channelId)
-{
-	for (Column& column : columns) // Brute force!
-	{
-		column.removeById(channelId);
-		for (Channel& channel : column)
-			channel.removeById(channelId);
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Model::reset()
 {
 	columns.clear();
 
 	/* Add 6 empty columns as initial layout. */
 
-	addColumn();
-	addColumn();
-	addColumn();
-	addColumn();
-	addColumn();
-	addColumn();
+	columns.addColumn();
+	columns.addColumn();
+	columns.addColumn();
+	columns.addColumn();
+	columns.addColumn();
+	columns.addColumn();
 }
 } // namespace giada::v
