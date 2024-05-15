@@ -31,8 +31,9 @@
 
 namespace giada::v
 {
-Model::Channel::Channel(ID id, std::size_t columnIndex)
+Model::Channel::Channel(ID id, ID groupId, std::size_t columnIndex)
 : Container(id)
+, groupId(groupId)
 , columnIndex(columnIndex)
 {
 }
@@ -169,7 +170,7 @@ void Model::load(const m::Patch& patch)
 		std::size_t columnIndex = 0;
 		Column      column{pcolumn.width};
 		for (ID channelId : pcolumn.channels)
-			column.add({channelId, columnIndex++});
+			column.add({channelId, /* TODO - group persistence*/ 0, columnIndex++});
 		columns.add(std::move(column));
 	}
 
@@ -230,9 +231,9 @@ void Model::addChannelToColumn(ID channelId, std::size_t columnIndex, int positi
 {
 	Column& column = getColumnByIndex(columnIndex);
 	if (position == -1)
-		column.add({channelId, columnIndex});
+		column.add({channelId, /*groupId=*/0, columnIndex});
 	else
-		column.insert({channelId, columnIndex}, position);
+		column.insert({channelId, /*groupId=*/0, columnIndex}, position);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -242,9 +243,9 @@ void Model::addChannelToGroup(ID channelId, ID groupId, int position)
 	Column&  column = getColumnByChannelId(groupId);
 	Channel& group  = column.getById(groupId);
 	if (position == -1)
-		group.add({channelId, column.index});
+		group.add({channelId, groupId, column.index});
 	else
-		group.insert({channelId, column.index}, position);
+		group.insert({channelId, groupId, column.index}, position);
 }
 
 /* -------------------------------------------------------------------------- */

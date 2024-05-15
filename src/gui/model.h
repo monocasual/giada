@@ -45,8 +45,9 @@ struct Model
 
 	struct Channel : public mcl::Container<Channel, /*Identifiable=*/true, /*Sortable=*/true>
 	{
-		Channel(ID id, std::size_t columnIndex);
+		Channel(ID id, ID groupId, std::size_t columnIndex);
 
+		ID          groupId;
 		std::size_t columnIndex;
 	};
 
