@@ -84,7 +84,13 @@ void Channels::debug() const
 
 	for (int i = 0; const Channel& c : m_channels)
 	{
+		if (c.isGrouped())
+			continue;
+
 		fmt::print("\t{} - {}\n", i++, c.debug());
+		if (c.type == ChannelType::GROUP)
+			for (ID childId : c.groupChannel->getChildren())
+				fmt::print("\t\t{} - {}\n", i++, get(childId).debug());
 
 		if (c.plugins.size() > 0)
 		{
