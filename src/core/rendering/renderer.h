@@ -53,6 +53,7 @@ namespace giada::m::model
 {
 class Model;
 class Channels;
+struct ChannelView;
 } // namespace giada::m::model
 
 namespace giada::m::rendering
@@ -70,13 +71,20 @@ public:
 
 private:
 	/* advanceChannels
-	Processes Channels' static events (e.g. pre-recorded actions or sequencer 
+	Processes Channels' static events (e.g. pre-recorded actions or sequencer
 	events) in the current audio block. Called when the sequencer is running. */
 
-	void advanceChannels(const Sequencer::EventBuffer&, const model::Channels&,
-	    geompp::Range<Frame>, int quantizerStep) const;
+	void advanceChannels(
+	    const Sequencer::EventBuffer&,
+	    const std::vector<model::ChannelView>&,
+	    geompp::Range<Frame>,
+	    int quantizerStep) const;
 
-	void advanceChannel(const Channel&, const Sequencer::EventBuffer&, geompp::Range<Frame>, Frame quantizerStep) const;
+	void advanceChannel(
+	    const model::ChannelView&,
+	    const Sequencer::EventBuffer&,
+	    geompp::Range<Frame>,
+	    Frame quantizerStep) const;
 
 	void renderNormalChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
 	    const mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const;

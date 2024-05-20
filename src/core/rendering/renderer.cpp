@@ -119,7 +119,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, actions);
 		m_sequencer.render(out, document_RT);
 		if (!document_RT.locked)
-			advanceChannels(events, channels, renderRange, quantizerStep);
+			advanceChannels(events, channels.getView(), renderRange, quantizerStep);
 	}
 
 	/* Then render Mixer, channels and finalize output. */
@@ -150,19 +150,27 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::advanceChannels(const Sequencer::EventBuffer& events,
-    const model::Channels& channels, geompp::Range<Frame> block, int quantizerStep) const
+void Renderer::advanceChannels(
+    const Sequencer::EventBuffer&          events,
+    const std::vector<model::ChannelView>& views,
+    geompp::Range<Frame>                   block,
+    int                                    quantizerStep) const
 {
-	for (const Channel& c : channels.getAll())
-		if (!c.isInternal())
-			advanceChannel(c, events, block, quantizerStep);
+	for (const model::ChannelView& view : views)
+		if (!view.channel->isInternal())
+			advanceChannel(view, events, block, quantizerStep);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& events,
-    geompp::Range<Frame> block, Frame quantizerStep) const
+void Renderer::advanceChannel(
+    const model::ChannelView&     view,
+    const Sequencer::EventBuffer& events,
+    geompp::Range<Frame>          block,
+    Frame                         quantizerStep) const
 {
+	const Channel& ch = *view.channel;
+
 	if (ch.shared->quantizer)
 		ch.shared->quantizer->advance(block, quantizerStep);
 

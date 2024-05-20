@@ -69,11 +69,11 @@ const std::vector<Channel>& Channels::getAll() const
 
 /* -------------------------------------------------------------------------- */
 
-const std::vector<ChannelView>& Channels::getView()
+const std::vector<ChannelView>& Channels::getView() const
 {
 	// TODO - add caching
 	m_channelsView.clear();
-	for (Channel& ch : m_channels)
+	for (const Channel& ch : m_channels)
 	{
 		ChannelView channelView;
 		channelView.channel = &ch;

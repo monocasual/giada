@@ -34,8 +34,8 @@ namespace giada::m::model
 {
 struct ChannelView
 {
-	Channel*              channel = nullptr;
-	std::vector<Channel*> children;
+	const Channel*              channel = nullptr;
+	std::vector<const Channel*> children;
 };
 
 /* -------------------------------------------------------------------------- */
@@ -45,7 +45,7 @@ class Channels
 public:
 	const Channel&                  get(ID) const;
 	const std::vector<Channel>&     getAll() const;
-	const std::vector<ChannelView>& getView();
+	const std::vector<ChannelView>& getView() const;
 
 	/* anyOf
 	Returns true if any channel satisfies the callback 'f'. */
@@ -64,8 +64,8 @@ public:
 	void                  remove(ID);
 
 private:
-	std::vector<Channel>     m_channels;
-	std::vector<ChannelView> m_channelsView;
+	std::vector<Channel>             m_channels;
+	mutable std::vector<ChannelView> m_channelsView;
 };
 } // namespace giada::m::model
 
