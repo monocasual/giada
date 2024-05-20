@@ -86,10 +86,23 @@ private:
 	    geompp::Range<Frame>,
 	    Frame quantizerStep) const;
 
-	void renderNormalChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
-	    const mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const;
-	void renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
-	    const mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const;
+	/* renderNormalChannels
+	Generates audio out of non-internal channels. */
+
+	void renderNormalChannels(
+	    const std::vector<model::ChannelView>&,
+	    mcl::AudioBuffer&       out,
+	    const mcl::AudioBuffer& in,
+	    bool                    hasSolos,
+	    bool                    seqIsRunning) const;
+
+	void renderNormalChannel(
+	    const model::ChannelView&,
+	    mcl::AudioBuffer&       out,
+	    const mcl::AudioBuffer& in,
+	    bool                    mixerHasSolos,
+	    bool                    seqIsRunning) const;
+
 	void renderMasterIn(const Channel&, mcl::AudioBuffer& in) const;
 	void renderMasterOut(const Channel&, mcl::AudioBuffer& out) const;
 	void renderPreview(const Channel&, mcl::AudioBuffer& out) const;

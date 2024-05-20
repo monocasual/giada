@@ -137,7 +137,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		renderMasterIn(masterInCh, mixer.getInBuffer());
 
 	if (!document_RT.locked)
-		renderNormalChannels(channels.getAll(), out, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
+		renderNormalChannels(channels.getView(), out, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
 
 	renderMasterOut(masterOutCh, out);
 	if (mixer.renderPreview)
@@ -185,19 +185,29 @@ void Renderer::advanceChannel(
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderNormalChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
-    const mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const
+void Renderer::renderNormalChannels(
+    const std::vector<model::ChannelView>& views,
+    mcl::AudioBuffer&                      out,
+    const mcl::AudioBuffer&                in,
+    bool                                   hasSolos,
+    bool                                   seqIsRunning) const
 {
-	for (const Channel& c : channels)
-		if (!c.isInternal())
-			renderNormalChannel(c, out, in, hasSolos, seqIsRunning);
+	for (const model::ChannelView& view : views)
+		if (!view.channel->isInternal())
+			renderNormalChannel(view, out, in, hasSolos, seqIsRunning);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
-    const mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const
+void Renderer::renderNormalChannel(
+    const model::ChannelView& view,
+    mcl::AudioBuffer&         out,
+    const mcl::AudioBuffer&   in,
+    bool                      mixerHasSolos,
+    bool                      seqIsRunning) const
 {
+	const Channel& ch = *view.channel;
+
 	ch.shared->audioBuffer.clear();
 
 	if (ch.type == ChannelType::SAMPLE)
