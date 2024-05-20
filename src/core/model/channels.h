@@ -39,7 +39,7 @@ public:
 	const std::vector<Channel>& getAll() const;
 
 	/* anyOf
-    Returns true if any channel satisfies the callback 'f'. */
+	Returns true if any channel satisfies the callback 'f'. */
 
 	bool anyOf(std::function<bool(const Channel&)> f) const;
 

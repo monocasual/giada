@@ -42,7 +42,8 @@ Channel& Channels::get(ID id)
 
 const Channel& Channels::get(ID id) const
 {
-	auto it = std::find_if(m_channels.begin(), m_channels.end(), [id](const Channel& c) { return c.id == id; });
+	auto it = std::find_if(m_channels.begin(), m_channels.end(), [id](const Channel& c)
+	    { return c.id == id; });
 	assert(it != m_channels.end());
 	return *it;
 }
@@ -111,7 +112,8 @@ std::vector<Channel*> Channels::getIf(std::function<bool(const Channel&)> f)
 
 void Channels::remove(ID id)
 {
-	u::vector::removeIf(m_channels, [id](const Channel& c) { return c.id == id; });
+	u::vector::removeIf(m_channels, [id](const Channel& c)
+	    { return c.id == id; });
 }
 
 /* -------------------------------------------------------------------------- */
