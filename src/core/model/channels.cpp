@@ -69,6 +69,24 @@ const std::vector<Channel>& Channels::getAll() const
 
 /* -------------------------------------------------------------------------- */
 
+const std::vector<ChannelView>& Channels::getView()
+{
+	// TODO - add caching
+	m_channelsView.clear();
+	for (Channel& ch : m_channels)
+	{
+		ChannelView channelView;
+		channelView.channel = &ch;
+		if (ch.type == ChannelType::GROUP)
+			for (ID id : ch.groupChannel->getChildren())
+				channelView.children.push_back(&get(id));
+		m_channelsView.push_back(channelView);
+	}
+	return m_channelsView;
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool Channels::anyOf(std::function<bool(const Channel&)> f) const
 {
 	return std::any_of(m_channels.begin(), m_channels.end(), f);
