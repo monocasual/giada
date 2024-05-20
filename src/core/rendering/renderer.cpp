@@ -119,7 +119,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, actions);
 		m_sequencer.render(out, document_RT);
 		if (!document_RT.locked)
-			advanceChannels(events, channels.getAll(), renderRange, quantizerStep);
+			advanceChannels(events, channels, renderRange, quantizerStep);
 	}
 
 	/* Then render Mixer, channels and finalize output. */
@@ -151,9 +151,9 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 /* -------------------------------------------------------------------------- */
 
 void Renderer::advanceChannels(const Sequencer::EventBuffer& events,
-    const std::vector<Channel>& channels, geompp::Range<Frame> block, int quantizerStep) const
+    const model::Channels& channels, geompp::Range<Frame> block, int quantizerStep) const
 {
-	for (const Channel& c : channels)
+	for (const Channel& c : channels.getAll())
 		if (!c.isInternal())
 			advanceChannel(c, events, block, quantizerStep);
 }

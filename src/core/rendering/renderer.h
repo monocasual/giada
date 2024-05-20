@@ -70,10 +70,10 @@ public:
 
 private:
 	/* advanceChannels
-	Processes Channels' static events (e.g. pre-recorded actions or sequencer
+	Processes Channels' static events (e.g. pre-recorded actions or sequencer 
 	events) in the current audio block. Called when the sequencer is running. */
 
-	void advanceChannels(const Sequencer::EventBuffer&, const std::vector<Channel>&,
+	void advanceChannels(const Sequencer::EventBuffer&, const model::Channels&,
 	    geompp::Range<Frame>, int quantizerStep) const;
 
 	void advanceChannel(const Channel&, const Sequencer::EventBuffer&, geompp::Range<Frame>, Frame quantizerStep) const;
