@@ -192,8 +192,10 @@ Model::Column& Model::getColumnByIndex(int index)
 
 Model::Column& Model::getColumnByChannelId(ID channelId)
 {
-	const auto p = [channelId](auto& col) {
-		return u::vector::has(col.channels, [channelId](ID otherId) { return channelId == otherId; });
+	const auto p = [channelId](auto& col)
+	{
+		return u::vector::has(col.channels, [channelId](ID otherId)
+		    { return channelId == otherId; });
 	};
 	return *u::vector::findIfSafe(columns, p);
 }
