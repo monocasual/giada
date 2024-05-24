@@ -43,13 +43,13 @@ struct Model
 	{
 		int getChannelIndex(ID) const;
 
+		int             index;
 		int             width;
 		std::vector<ID> channels = {};
 	};
 
 	struct Columns
 	{
-		int                        getColumnIndex(const Column&) const;
 		const std::vector<Column>& getAll() const;
 
 		Column& getColumnByIndex(int);

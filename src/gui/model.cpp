@@ -40,20 +40,6 @@ int Model::Column::getChannelIndex(ID channelId) const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-int Model::Columns::getColumnIndex(const Column& target) const
-{
-	for (int i = 0; const Column& column : m_columns)
-	{
-		if (&target == &column)
-			return i;
-		i++;
-	}
-	assert(false);
-	return -1;
-}
-
-/* -------------------------------------------------------------------------- */
-
 const std::vector<Model::Column>& Model::Columns::getAll() const
 {
 
@@ -85,7 +71,10 @@ Model::Column& Model::Columns::getColumnByChannelId(ID channelId)
 
 void Model::Columns::addDefaultColumn()
 {
-	addColumn({G_DEFAULT_COLUMN_WIDTH});
+	const int index = static_cast<int>(m_columns.size());
+	const int width = G_DEFAULT_COLUMN_WIDTH;
+
+	addColumn({index, width});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -108,7 +97,7 @@ void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
 {
 	const Column& column = getColumnByChannelId(channelId);
 
-	if (getColumnIndex(column) == columnIndex) // If in same column
+	if (column.index == columnIndex) // If in same column
 	{
 		const int oldPosition = column.getChannelIndex(channelId);
 		if (newPosition >= oldPosition) // If moved below, readjust index
@@ -263,9 +252,9 @@ void Model::load(const m::Conf& conf)
 void Model::load(const m::Patch& patch)
 {
 	columns.clear();
-	for (const m::Patch::Column& pcolumn : patch.columns)
+	for (int i = 0; const m::Patch::Column& pcolumn : patch.columns)
 	{
-		Column column{.width = pcolumn.width};
+		Column column{.index = i++, .width = pcolumn.width};
 		for (ID channelId : pcolumn.channels)
 			column.channels.push_back(channelId);
 		columns.addColumn(std::move(column));
