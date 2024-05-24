@@ -70,7 +70,7 @@ void printLoadError_(int res)
 Data makeData_(ID channelId, const v::Model::Column& column)
 {
 	const int position    = column.getChannelIndex(channelId);
-	const int columnIndex = g_ui->model.getColumnIndex(column);
+	const int columnIndex = g_ui->model.columns.getColumnIndex(column);
 	return Data(g_engine->getChannelsApi().get(channelId), columnIndex, position);
 }
 
@@ -78,10 +78,10 @@ Data makeData_(ID channelId, const v::Model::Column& column)
 
 Column makeColumn_(const v::Model::Column& modelColumn)
 {
-	Column column{g_ui->model.getColumnIndex(modelColumn), modelColumn.width, {}};
+	Column column{g_ui->model.columns.getColumnIndex(modelColumn), modelColumn.width, {}};
 
 	for (const ID channelId : modelColumn.channels)
-		column.channels.push_back(makeData_(channelId, g_ui->model.getColumnByChannelId(channelId)));
+		column.channels.push_back(makeData_(channelId, g_ui->model.columns.getColumnByChannelId(channelId)));
 
 	return column;
 }
@@ -153,13 +153,13 @@ bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).
 
 Data getData(ID channelId)
 {
-	return makeData_(channelId, g_ui->model.getColumnByChannelId(channelId));
+	return makeData_(channelId, g_ui->model.columns.getColumnByChannelId(channelId));
 }
 
 std::vector<Column> getColumns()
 {
 	std::vector<Column> out;
-	for (const v::Model::Column& modelColumn : g_ui->model.columns) // Model::columns is the source of truth
+	for (const v::Model::Column& modelColumn : g_ui->model.columns.getAll()) // Model::columns is the source of truth
 		out.push_back(makeColumn_(modelColumn));
 	return out;
 }
@@ -183,7 +183,7 @@ void loadChannel(ID channelId, const std::string& fname)
 void addChannel(int columnIndex, ChannelType type)
 {
 	const m::Channel& ch = g_engine->getChannelsApi().add(type);
-	g_ui->model.addChannelToColumn(ch.id, columnIndex);
+	g_ui->model.columns.addChannelToColumn(ch.id, columnIndex);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -204,7 +204,7 @@ void addAndLoadChannels(int columnIndex, const std::vector<std::string>& fnames)
 		if (res != G_RES_OK)
 			errors = true;
 		else
-			g_ui->model.addChannelToColumn(ch.id, columnIndex);
+			g_ui->model.columns.addChannelToColumn(ch.id, columnIndex);
 	}
 
 	if (errors)
@@ -219,7 +219,7 @@ void deleteChannel(ID channelId)
 		return;
 	g_ui->closeAllSubwindows();
 	g_engine->getChannelsApi().remove(channelId);
-	g_ui->model.removeChannelFromColumn(channelId);
+	g_ui->model.columns.removeChannelFromColumn(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -251,14 +251,14 @@ void setOverdubProtection(ID channelId, bool value)
 void cloneChannel(ID channelId, int columnIndex)
 {
 	const m::Channel& ch = g_engine->getChannelsApi().clone(channelId);
-	g_ui->model.addChannelToColumn(ch.id, columnIndex);
+	g_ui->model.columns.addChannelToColumn(ch.id, columnIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void moveChannel(ID channelId, int columnIndex, int newPosition)
 {
-	g_ui->model.moveChannel(channelId, columnIndex, newPosition);
+	g_ui->model.columns.moveChannel(channelId, columnIndex, newPosition);
 	g_ui->rebuild();
 }
 
@@ -266,7 +266,7 @@ void moveChannel(ID channelId, int columnIndex, int newPosition)
 
 void addColumn()
 {
-	g_ui->model.addColumn({G_DEFAULT_COLUMN_WIDTH});
+	g_ui->model.columns.addColumn({G_DEFAULT_COLUMN_WIDTH});
 	g_ui->rebuild();
 }
 
@@ -274,9 +274,9 @@ void addColumn()
 
 void deleteColumn(int index)
 {
-	if (g_ui->model.columns.size() == 1) // One column must stay
+	if (g_ui->model.columns.getAll().size() == 1) // One column must stay
 		return;
-	g_ui->model.removeColumn(index);
+	g_ui->model.columns.removeColumn(index);
 	g_ui->rebuild();
 }
 
@@ -284,7 +284,7 @@ void deleteColumn(int index)
 
 void setColumnWidth(int index, int w)
 {
-	v::Model::Column& column = g_ui->model.getColumnByIndex(index);
+	v::Model::Column& column = g_ui->model.columns.getColumnByIndex(index);
 
 	column.width = w;
 	g_ui->rebuild();

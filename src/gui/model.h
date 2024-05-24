@@ -47,21 +47,31 @@ struct Model
 		std::vector<ID> channels = {};
 	};
 
+	struct Columns
+	{
+		int                        getColumnIndex(const Column&) const;
+		const std::vector<Column>& getAll() const;
+
+		Column& getColumnByIndex(int);
+		Column& getColumnByChannelId(ID);
+		void    addColumn(Column&&);
+		void    removeColumn(int columnIndex);
+		void    moveChannel(ID channelId, int columnIndex, int newPosition);
+		void    addChannelToColumn(ID channelId, int columnIndex, int position = -1);
+		void    removeChannelFromColumn(ID channelId);
+		void    clear();
+
+	private:
+		std::vector<Column> m_columns;
+	};
+
 	Model();
 
 	void store(m::Conf&) const;
 	void store(m::Patch&) const;
-	int  getColumnIndex(const Column&) const;
 
-	void    load(const m::Conf&);
-	void    load(const m::Patch&);
-	Column& getColumnByIndex(int);
-	Column& getColumnByChannelId(ID);
-	void    addColumn(Column&&);
-	void    removeColumn(int columnIndex);
-	void    moveChannel(ID channelId, int columnIndex, int newPosition);
-	void    addChannelToColumn(ID channelId, int columnIndex, int position = -1);
-	void    removeChannelFromColumn(ID channelId);
+	void load(const m::Conf&);
+	void load(const m::Patch&);
 
 	/* reset
 	Resets the Model to the latest state loaded from m::Conf. Call this when you
@@ -109,7 +119,7 @@ struct Model
 
 	float uiScaling = G_DEFAULT_UI_SCALING;
 
-	std::vector<Column> columns;
+	Columns columns;
 };
 } // namespace giada::v
 
