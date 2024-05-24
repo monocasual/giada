@@ -266,7 +266,7 @@ void moveChannel(ID channelId, int columnIndex, int newPosition)
 
 void addColumn()
 {
-	g_ui->model.addColumn();
+	g_ui->model.addColumn({G_DEFAULT_COLUMN_WIDTH});
 	g_ui->rebuild();
 }
 

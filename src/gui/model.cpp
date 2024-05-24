@@ -173,7 +173,7 @@ void Model::load(const m::Patch& patch)
 		Column column{.width = pcolumn.width};
 		for (ID channelId : pcolumn.channels)
 			column.channels.push_back(channelId);
-		columns.push_back(column);
+		addColumn(std::move(column));
 	}
 
 	projectName = patch.name;
@@ -202,9 +202,9 @@ Model::Column& Model::getColumnByChannelId(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void Model::addColumn()
+void Model::addColumn(Column&& column)
 {
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	columns.push_back(std::move(column));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -257,11 +257,11 @@ void Model::reset()
 
 	/* Add 6 empty columns as initial layout. */
 
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
-	columns.push_back({G_DEFAULT_COLUMN_WIDTH});
+	addColumn({G_DEFAULT_COLUMN_WIDTH});
+	addColumn({G_DEFAULT_COLUMN_WIDTH});
+	addColumn({G_DEFAULT_COLUMN_WIDTH});
+	addColumn({G_DEFAULT_COLUMN_WIDTH});
+	addColumn({G_DEFAULT_COLUMN_WIDTH});
+	addColumn({G_DEFAULT_COLUMN_WIDTH});
 }
 } // namespace giada::v

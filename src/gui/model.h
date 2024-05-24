@@ -57,7 +57,7 @@ struct Model
 	void    load(const m::Patch&);
 	Column& getColumnByIndex(int);
 	Column& getColumnByChannelId(ID);
-	void    addColumn();
+	void    addColumn(Column&&);
 	void    removeColumn(int columnIndex);
 	void    moveChannel(ID channelId, int columnIndex, int newPosition);
 	void    addChannelToColumn(ID channelId, int columnIndex, int position = -1);
