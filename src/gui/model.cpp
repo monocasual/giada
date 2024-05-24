@@ -83,6 +83,13 @@ Model::Column& Model::Columns::getColumnByChannelId(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
+void Model::Columns::addDefaultColumn()
+{
+	addColumn({G_DEFAULT_COLUMN_WIDTH});
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Model::Columns::addColumn(Column&& column)
 {
 	m_columns.push_back(std::move(column));
@@ -275,11 +282,11 @@ void Model::reset()
 
 	/* Add 6 empty columns as initial layout. */
 
-	columns.addColumn({G_DEFAULT_COLUMN_WIDTH});
-	columns.addColumn({G_DEFAULT_COLUMN_WIDTH});
-	columns.addColumn({G_DEFAULT_COLUMN_WIDTH});
-	columns.addColumn({G_DEFAULT_COLUMN_WIDTH});
-	columns.addColumn({G_DEFAULT_COLUMN_WIDTH});
-	columns.addColumn({G_DEFAULT_COLUMN_WIDTH});
+	columns.addDefaultColumn();
+	columns.addDefaultColumn();
+	columns.addDefaultColumn();
+	columns.addDefaultColumn();
+	columns.addDefaultColumn();
+	columns.addDefaultColumn();
 }
 } // namespace giada::v

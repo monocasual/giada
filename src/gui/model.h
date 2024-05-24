@@ -54,6 +54,7 @@ struct Model
 
 		Column& getColumnByIndex(int);
 		Column& getColumnByChannelId(ID);
+		void    addDefaultColumn();
 		void    addColumn(Column&&);
 		void    removeColumn(int columnIndex);
 		void    moveChannel(ID channelId, int columnIndex, int newPosition);
