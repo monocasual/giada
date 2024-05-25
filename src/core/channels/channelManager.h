@@ -73,17 +73,17 @@ public:
 	std::vector<Channel>& getAllChannels();
 
 	/* hasInputRecordableChannels
-    Tells whether Mixer has one or more input-recordable channels. */
+	Tells whether Mixer has one or more input-recordable channels. */
 
 	bool hasInputRecordableChannels() const;
 
 	/* hasActions
-    True if at least one Channel has actions recorded in it. */
+	True if at least one Channel has actions recorded in it. */
 
 	bool hasActions() const;
 
 	/* hasAudioData
-    True if at least one Sample Channel has some audio recorded in it. */
+	True if at least one Sample Channel has some audio recorded in it. */
 
 	bool hasAudioData() const;
 
@@ -97,7 +97,7 @@ public:
 
 	/* reset
 	Brings channels configuration back to the initial state: two I/O master
-    channels, one preview channel. */
+	channels, one preview channel. */
 
 	void reset(Frame framesInBuffer);
 
@@ -108,23 +108,23 @@ public:
 	void setBufferSize(int);
 
 	/* addChannel
-    Adds a new channel to the stack. Pass groupChannelId > 0 to add it to a 
+	Adds a new channel to the stack. Pass groupChannelId > 0 to add it to a
 	Group Channel. */
 
 	Channel& addChannel(ChannelType, int bufferSize, ID groupChannelId);
 
 	/* loadSampleChannel (1)
-    Creates a new Wave from a file path and loads it inside a Sample Channel. */
+	Creates a new Wave from a file path and loads it inside a Sample Channel. */
 
 	int loadSampleChannel(ID channelId, const std::string&, int sampleRate, Resampler::Quality);
 
 	/* loadSampleChannel (2)
-    Loads an existing Wave inside a Sample Channel. */
+	Loads an existing Wave inside a Sample Channel. */
 
 	void loadSampleChannel(ID channelId, Wave&);
 
 	/* freeChannel
-    Unloads existing Wave from a Sample Channel. */
+	Unloads existing Wave from a Sample Channel. */
 
 	void freeSampleChannel(ID channelId);
 	void freeAllSampleChannels();
@@ -138,8 +138,8 @@ public:
 	Channel& cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>&);
 
 	/* finalizeInputRec
-    Fills armed Sample channel with audio data coming from an input recording
-    session. */
+	Fills armed Sample channel with audio data coming from an input recording
+	session. */
 
 	void finalizeInputRec(const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame);
 
@@ -160,7 +160,7 @@ public:
 
 	/* consolidateChannels
 	Enable reading actions for Channels that have just been filled with actions
-	after an action recording session. This will start reading actions right 
+	after an action recording session. This will start reading actions right
 	away, without checking whether conf::treatRecsAsLoops is enabled or not.
 	Same thing for MIDI channels.  */
 
@@ -187,7 +187,7 @@ private:
 	void loadSampleChannel(Channel&, Wave*, Frame begin = -1, Frame end = -1, Frame shift = -1) const;
 
 	/* setupChannelCallbacks
-    Prepares the channel with the necessary callbacks. Call this whenever a 
+	Prepares the channel with the necessary callbacks. Call this whenever a
 	new channel is created. */
 
 	void setupChannelCallbacks(const Channel&, ChannelShared&) const;
@@ -196,7 +196,7 @@ private:
 	std::vector<Channel*> getOverdubbableChannels();
 
 	/* setupChannelPostRecording
-    Fnialize the Sample channel after an audio recording session. */
+	Fnialize the Sample channel after an audio recording session. */
 
 	void setupChannelPostRecording(Channel&, Frame currentFrame);
 

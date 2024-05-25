@@ -158,7 +158,7 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 	loadSampleChannel(channel, &newWave);
 	m_model.swap(model::SwapType::HARD);
 
-	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is 
+	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is
 	already processing the new Document. */
 
 	if (oldWave != nullptr)
@@ -473,26 +473,26 @@ void ChannelManager::consolidateChannels(const std::unordered_set<ID>& ids)
 
 bool ChannelManager::hasInputRecordableChannels() const
 {
-	return m_model.get().channels.anyOf([](const Channel& ch) { return ch.canInputRec(); });
+	return m_model.get().channels.anyOf([](const Channel& ch)
+	    { return ch.canInputRec(); });
 }
 
 bool ChannelManager::hasActions() const
 {
-	return m_model.get().channels.anyOf([](const Channel& ch) { return ch.hasActions; });
+	return m_model.get().channels.anyOf([](const Channel& ch)
+	    { return ch.hasActions; });
 }
 
 bool ChannelManager::hasAudioData() const
 {
-	return m_model.get().channels.anyOf([](const Channel& ch) {
-		return ch.sampleChannel && ch.sampleChannel->hasWave();
-	});
+	return m_model.get().channels.anyOf([](const Channel& ch)
+	    { return ch.sampleChannel && ch.sampleChannel->hasWave(); });
 }
 
 bool ChannelManager::hasSolos() const
 {
-	return m_model.get().channels.anyOf([](const Channel& ch) {
-		return !ch.isInternal() && ch.isSoloed();
-	});
+	return m_model.get().channels.anyOf([](const Channel& ch)
+	    { return !ch.isInternal() && ch.isSoloed(); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -509,22 +509,22 @@ void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& sha
 {
 	assert(onChannelPlayStatusChanged != nullptr);
 
-	shared.playStatus.onChange = [this, id = ch.id](ChannelStatus status) {
+	shared.playStatus.onChange = [this, id = ch.id](ChannelStatus status)
+	{
 		onChannelPlayStatusChanged(id, status);
 	};
 
 	if (ch.type == ChannelType ::SAMPLE)
 	{
-		shared.quantizer->schedule(Q_ACTION_PLAY + ch.id, [&shared](Frame delta) {
-			rendering::playSampleChannel(shared, delta);
-		});
-		shared.quantizer->schedule(Q_ACTION_REWIND + ch.id, [&shared](Frame delta) {
+		shared.quantizer->schedule(Q_ACTION_PLAY + ch.id, [&shared](Frame delta)
+		    { rendering::playSampleChannel(shared, delta); });
+		shared.quantizer->schedule(Q_ACTION_REWIND + ch.id, [&shared](Frame delta)
+		    {
 			const ChannelStatus status = shared.playStatus.load();
 			if (status == ChannelStatus::OFF)
 				rendering::playSampleChannel(shared, delta);
 			else if (status == ChannelStatus::PLAY || status == ChannelStatus::ENDING)
-				rendering::rewindSampleChannel(shared, delta);
-		});
+				rendering::rewindSampleChannel(shared, delta); });
 	}
 }
 
@@ -532,12 +532,14 @@ void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& sha
 
 std::vector<Channel*> ChannelManager::getRecordableChannels()
 {
-	return m_model.get().channels.getIf([](const Channel& c) { return c.canInputRec() && !c.hasWave(); });
+	return m_model.get().channels.getIf([](const Channel& c)
+	    { return c.canInputRec() && !c.hasWave(); });
 }
 
 std::vector<Channel*> ChannelManager::getOverdubbableChannels()
 {
-	return m_model.get().channels.getIf([](const Channel& c) { return c.canInputRec() && c.hasWave(); });
+	return m_model.get().channels.getIf([](const Channel& c)
+	    { return c.canInputRec() && c.hasWave(); });
 }
 
 /* -------------------------------------------------------------------------- */
