@@ -31,9 +31,41 @@
 
 namespace giada::v
 {
+Model::Column::Column(int index, int width)
+: index(index)
+, width(width)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 int Model::Column::getChannelIndex(ID channelId) const
 {
-	return static_cast<int>(u::vector::indexOf(channels, channelId));
+	return static_cast<int>(u::vector::indexOf(m_channels, channelId));
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::vector<ID> Model::Column::getChannels() const
+{
+	return m_channels;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::Column::addChannel(ID channelId, int position)
+{
+	if (position == -1)
+		m_channels.push_back(channelId);
+	else
+		m_channels.insert(m_channels.begin() + position, channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::Column::removeChannel(ID channelId)
+{
+	u::vector::remove(m_channels, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -61,7 +93,7 @@ Model::Column& Model::Columns::getColumnByChannelId(ID channelId)
 {
 	const auto p = [channelId](auto& col)
 	{
-		return u::vector::has(col.channels, [channelId](ID otherId)
+		return u::vector::has(col.getChannels(), [channelId](ID otherId)
 		    { return channelId == otherId; });
 	};
 	return *u::vector::findIfSafe(m_columns, p);
@@ -112,18 +144,14 @@ void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
 
 void Model::Columns::addChannelToColumn(ID channelId, int columnIndex, int position)
 {
-	std::vector<ID>& channels = getColumnByIndex(columnIndex).channels;
-	if (position == -1)
-		channels.push_back(channelId);
-	else
-		channels.insert(channels.begin() + position, channelId);
+	getColumnByIndex(columnIndex).addChannel(channelId, position);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Model::Columns::addChannelToGroup(ID channelId, ID groupId)
 {
-	getColumnByChannelId(groupId).channels.push_back(channelId);
+	getColumnByChannelId(groupId).addChannel(channelId, /*position=*/-1);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -131,7 +159,7 @@ void Model::Columns::addChannelToGroup(ID channelId, ID groupId)
 void Model::Columns::removeChannelFromColumn(ID channelId)
 {
 	for (Column& column : m_columns) // Brute force!
-		u::vector::remove(column.channels, channelId);
+		column.removeChannel(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -205,7 +233,7 @@ void Model::store(m::Patch& patch) const
 	{
 		m::Patch::Column pcolumn;
 		pcolumn.width = column.width;
-		for (ID channelId : column.channels)
+		for (ID channelId : column.getChannels())
 			pcolumn.channels.push_back(channelId);
 		patch.columns.push_back(pcolumn);
 	}
@@ -261,9 +289,9 @@ void Model::load(const m::Patch& patch)
 	columns.clear();
 	for (int i = 0; const m::Patch::Column& pcolumn : patch.columns)
 	{
-		Column column{.index = i++, .width = pcolumn.width};
+		Column column(i++, pcolumn.width);
 		for (ID channelId : pcolumn.channels)
-			column.channels.push_back(channelId);
+			column.addChannel(channelId, /*position=*/-1);
 		columns.addColumn(std::move(column));
 	}
 

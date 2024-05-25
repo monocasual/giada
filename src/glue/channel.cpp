@@ -80,7 +80,7 @@ Column makeColumn_(const v::Model::Column& modelColumn)
 {
 	Column column{modelColumn.index, modelColumn.width, {}};
 
-	for (const ID channelId : modelColumn.channels)
+	for (const ID channelId : modelColumn.getChannels())
 		column.channels.push_back(makeData_(channelId, modelColumn));
 
 	return column;

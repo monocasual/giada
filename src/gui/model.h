@@ -39,17 +39,27 @@ namespace giada::v
 {
 struct Model
 {
-	struct Column
+	class Column
 	{
-		int getChannelIndex(ID) const;
+	public:
+		Column(int index, int width);
 
-		int             index;
-		int             width;
-		std::vector<ID> channels = {};
+		int             getChannelIndex(ID) const;
+		std::vector<ID> getChannels() const;
+
+		void addChannel(ID, int position);
+		void removeChannel(ID);
+
+		int index;
+		int width;
+
+	private:
+		std::vector<ID> m_channels = {};
 	};
 
-	struct Columns
+	class Columns
 	{
+	public:
 		const std::vector<Column>& getAll() const;
 
 		Column& getColumnByIndex(int);
