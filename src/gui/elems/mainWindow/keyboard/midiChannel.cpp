@@ -32,6 +32,7 @@
 #include "glue/main.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/dispatcher.h"
+#include "gui/elems/basics/box.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/imageButton.h"
@@ -80,6 +81,8 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 	fx           = new geImageButton(graphics::fxOff, graphics::fxOn);
 	vol          = new geDial(0, 0, 0, 0);
 
+	if (m_channel.grouped)
+		addWidget(new geBox(), G_GUI_UNIT);
 	addWidget(playButton, G_GUI_UNIT);
 	addWidget(arm, G_GUI_UNIT);
 	addWidget(mainButton);

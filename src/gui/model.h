@@ -59,6 +59,7 @@ struct Model
 		void    removeColumn(int columnIndex);
 		void    moveChannel(ID channelId, int columnIndex, int newPosition);
 		void    addChannelToColumn(ID channelId, int columnIndex, int position = -1);
+		void    addChannelToGroup(ID channelId, ID groupId);
 		void    removeChannelFromColumn(ID channelId);
 		void    clear();
 

@@ -104,6 +104,7 @@ struct Data
 	float                   pan;
 	int                     key;
 	bool                    hasActions;
+	bool                    grouped;
 
 	std::optional<SampleData> sample;
 	std::optional<MidiData>   midi;
@@ -133,9 +134,10 @@ described by Model::columns. */
 std::vector<Column> getColumns();
 
 /* addChannel
-Adds an empty new channel to the stack. */
+Adds an empty new channel to the stack. Pass groupChannelId > 0 to add it to 
+a Group Channel. */
 
-void addChannel(int columnIndex, ChannelType type);
+void addChannel(int columnIndex, ChannelType type, ID groupChannelId);
 
 /* loadChannel
 Fills an existing channel with a wave. */

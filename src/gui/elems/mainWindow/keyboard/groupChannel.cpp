@@ -138,10 +138,10 @@ void geGroupChannel::openMenu()
 		switch (static_cast<Menu>(id))
 		{
 		case Menu::ADD_SAMPLE_CHANNEL:
-			c::channel::addChannel(data.columnIndex, ChannelType::SAMPLE);
+			c::channel::addChannel(data.columnIndex, ChannelType::SAMPLE, data.id);
 			break;
 		case Menu::ADD_MIDI_CHANNEL:
-			c::channel::addChannel(data.columnIndex, ChannelType::MIDI);
+			c::channel::addChannel(data.columnIndex, ChannelType::MIDI, data.id);
 			break;
 		case Menu::EDIT_ROUTING:
 			c::layout::openChannelRoutingWindow(data.id);
