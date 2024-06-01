@@ -59,7 +59,7 @@ int Model::Column::getChannelIndex(ID channelId) const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<ID> Model::Column::getChannels() const
+const std::vector<ID>& Model::Column::getChannels() const
 {
 	return m_channelIds;
 }

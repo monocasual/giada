@@ -51,8 +51,8 @@ struct Model
 	public:
 		Column(int index, int width);
 
-		int             getChannelIndex(ID) const;
-		std::vector<ID> getChannels() const;
+		int                    getChannelIndex(ID) const;
+		const std::vector<ID>& getChannels() const;
 
 		void addChannel(ID, int position);
 		void removeChannel(ID);
