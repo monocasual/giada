@@ -223,7 +223,7 @@ void deleteChannel(ID channelId)
 		return;
 	g_ui->closeAllSubwindows();
 	g_engine->getChannelsApi().remove(channelId);
-	g_ui->model.columns.removeChannelFromColumn(channelId);
+	g_ui->model.columns.removeChannel(channelId);
 }
 
 /* -------------------------------------------------------------------------- */

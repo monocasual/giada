@@ -183,7 +183,7 @@ void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
 			newPosition -= 1;
 	}
 
-	removeChannelFromColumn(channelId);
+	removeChannel(channelId);
 	addChannelToColumn(channelId, columnIndex, newPosition);
 }
 
@@ -203,7 +203,7 @@ void Model::Columns::addChannelToGroup(ID channelId, ID groupId)
 
 /* -------------------------------------------------------------------------- */
 
-void Model::Columns::removeChannelFromColumn(ID channelId)
+void Model::Columns::removeChannel(ID channelId)
 {
 	for (Column& column : m_columns) // Brute force!
 		column.removeChannel(channelId);
