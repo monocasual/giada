@@ -66,12 +66,20 @@ const std::vector<ID>& Model::Column::getChannels() const
 
 /* -------------------------------------------------------------------------- */
 
-void Model::Column::addChannel(ID channelId, int position)
+void Model::Column::addChannel(ID channelId, int position, ID groupId)
 {
-	if (position == -1)
-		m_channels.push_back({channelId});
+	if (groupId == 0)
+	{
+		if (position == -1)
+			m_channels.push_back({channelId});
+		else
+			m_channels.insert(m_channels.begin() + position, {channelId});
+	}
 	else
-		m_channels.insert(m_channels.begin() + position, {channelId});
+	{
+		// TODO position not used yet when grouping
+		getChannelById(groupId).children.push_back(channelId);
+	}
 
 	rebuildIds();
 }
@@ -97,6 +105,14 @@ void Model::Column::rebuildIds()
 		for (const ID childId : ch.children)
 			m_channelIds.push_back(childId);
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+Model::Channel& Model::Column::getChannelById(ID channelId)
+{
+	return *u::vector::findIfSafe(m_channels, [channelId](const Channel& ch)
+	    { return ch.id == channelId; });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -175,14 +191,14 @@ void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
 
 void Model::Columns::addChannelToColumn(ID channelId, int columnIndex, int position)
 {
-	getColumnByIndex(columnIndex).addChannel(channelId, position);
+	getColumnByIndex(columnIndex).addChannel(channelId, position, /*groupId=*/0);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Model::Columns::addChannelToGroup(ID channelId, ID groupId)
 {
-	getColumnByChannelId(groupId).addChannel(channelId, /*position=*/-1);
+	getColumnByChannelId(groupId).addChannel(channelId, /*position=*/-1, groupId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -322,7 +338,7 @@ void Model::load(const m::Patch& patch)
 	{
 		Column column(i++, pcolumn.width);
 		for (ID channelId : pcolumn.channels)
-			column.addChannel(channelId, /*position=*/-1);
+			column.addChannel(channelId, /*position=*/-1, /*groupId=*/0);
 		columns.addColumn(std::move(column));
 	}
 
