@@ -39,6 +39,13 @@ namespace giada::v
 {
 struct Model
 {
+	class Channel
+	{
+	public:
+		ID              id;
+		std::vector<ID> children = {};
+	};
+
 	class Column
 	{
 	public:
@@ -54,7 +61,8 @@ struct Model
 		int width;
 
 	private:
-		std::vector<ID> m_channels = {};
+		std::vector<Channel> m_channels;
+		std::vector<ID>      m_channelIds;
 	};
 
 	class Columns

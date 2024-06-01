@@ -41,14 +41,27 @@ Model::Column::Column(int index, int width)
 
 int Model::Column::getChannelIndex(ID channelId) const
 {
-	return static_cast<int>(u::vector::indexOf(m_channels, channelId));
+	for (int i = 0; const Channel& ch : m_channels)
+	{
+		if (ch.id == channelId)
+			return i;
+		for (int j = 0; const ID childId : ch.children)
+		{
+			if (childId == channelId)
+				return j;
+			j++;
+		}
+		i++;
+	}
+	assert(false);
+	return -1;
 }
 
 /* -------------------------------------------------------------------------- */
 
 std::vector<ID> Model::Column::getChannels() const
 {
-	return m_channels;
+	return m_channelIds;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -56,16 +69,21 @@ std::vector<ID> Model::Column::getChannels() const
 void Model::Column::addChannel(ID channelId, int position)
 {
 	if (position == -1)
-		m_channels.push_back(channelId);
+		m_channels.push_back({channelId});
 	else
-		m_channels.insert(m_channels.begin() + position, channelId);
+		m_channels.insert(m_channels.begin() + position, {channelId});
+
+	// TODO - rebuild m_channelIds vector
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Model::Column::removeChannel(ID channelId)
 {
-	u::vector::remove(m_channels, channelId);
+	u::vector::removeIf(m_channels, [channelId](const Channel& ch)
+	    { return ch.id == channelId; });
+
+	// TODO - rebuild m_channelIds vector
 }
 
 /* -------------------------------------------------------------------------- */
@@ -233,7 +251,7 @@ void Model::store(m::Patch& patch) const
 	{
 		m::Patch::Column pcolumn;
 		pcolumn.width = column.width;
-		for (ID channelId : column.getChannels())
+		for (const ID channelId : column.getChannels())
 			pcolumn.channels.push_back(channelId);
 		patch.columns.push_back(pcolumn);
 	}
