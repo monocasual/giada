@@ -61,6 +61,8 @@ struct Model
 		int width;
 
 	private:
+		void rebuildIds();
+
 		std::vector<Channel> m_channels;
 		std::vector<ID>      m_channelIds;
 	};

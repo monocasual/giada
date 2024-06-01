@@ -73,7 +73,7 @@ void Model::Column::addChannel(ID channelId, int position)
 	else
 		m_channels.insert(m_channels.begin() + position, {channelId});
 
-	// TODO - rebuild m_channelIds vector
+	rebuildIds();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -83,7 +83,20 @@ void Model::Column::removeChannel(ID channelId)
 	u::vector::removeIf(m_channels, [channelId](const Channel& ch)
 	    { return ch.id == channelId; });
 
-	// TODO - rebuild m_channelIds vector
+	rebuildIds();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Model::Column::rebuildIds()
+{
+	m_channelIds.clear();
+	for (const Channel& ch : m_channels)
+	{
+		m_channelIds.push_back(ch.id);
+		for (const ID childId : ch.children)
+			m_channelIds.push_back(childId);
+	}
 }
 
 /* -------------------------------------------------------------------------- */
