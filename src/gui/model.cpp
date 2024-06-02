@@ -68,12 +68,12 @@ const std::vector<ID>& Model::Column::getChannels() const
 
 void Model::Column::addChannel(ID channelId, int position, ID groupId)
 {
+	if (position == -1)
+		position = m_channels.size();
+
 	if (groupId == 0)
 	{
-		if (position == -1)
-			m_channels.push_back({channelId});
-		else
-			m_channels.insert(m_channels.begin() + position, {channelId});
+		m_channels.insert(m_channels.begin() + position, {channelId});
 	}
 	else
 	{
