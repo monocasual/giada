@@ -42,8 +42,8 @@ struct Model
 	class Channel
 	{
 	public:
-		ID              id;
-		std::vector<ID> children = {};
+		ID                   id;
+		std::vector<Channel> children = {};
 	};
 
 	class Column

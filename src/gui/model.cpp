@@ -45,9 +45,9 @@ int Model::Column::getChannelIndex(ID channelId) const
 	{
 		if (ch.id == channelId)
 			return i;
-		for (int j = 0; const ID childId : ch.children)
+		for (int j = 0; const Channel& child : ch.children)
 		{
-			if (childId == channelId)
+			if (child.id == channelId)
 				return j;
 			j++;
 		}
@@ -78,7 +78,7 @@ void Model::Column::addChannel(ID channelId, int position, ID groupId)
 	else
 	{
 		// TODO position not used yet when grouping
-		getChannelById(groupId).children.push_back(channelId);
+		getChannelById(groupId).children.push_back({channelId});
 	}
 
 	rebuildIds();
@@ -102,8 +102,8 @@ void Model::Column::rebuildIds()
 	for (const Channel& ch : m_channels)
 	{
 		m_channelIds.push_back(ch.id);
-		for (const ID childId : ch.children)
-			m_channelIds.push_back(childId);
+		for (const Channel& child : ch.children)
+			m_channelIds.push_back(child.id);
 	}
 }
 
@@ -195,8 +195,8 @@ void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
 	addChannelToColumn(channelId, columnIndex, newPosition);
 
 	// Add also children channels, if any
-	for (const ID childId : channel.children)
-		addChannelToGroup(childId, channel.id);
+	for (const Channel& child : channel.children)
+		addChannelToGroup(child.id, channel.id);
 }
 
 /* -------------------------------------------------------------------------- */
