@@ -111,6 +111,13 @@ void Model::Column::rebuildIds()
 
 Model::Channel& Model::Column::getChannelById(ID channelId)
 {
+	return const_cast<Channel&>(std::as_const(*this).getChannelById(channelId));
+}
+
+/* -------------------------------------------------------------------------- */
+
+const Model::Channel& Model::Column::getChannelById(ID channelId) const
+{
 	return *u::vector::findIfSafe(m_channels, [channelId](const Channel& ch)
 	    { return ch.id == channelId; });
 }
@@ -174,7 +181,8 @@ void Model::Columns::removeColumn(int columnIndex)
 
 void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
 {
-	const Column& column = getColumnByChannelId(channelId);
+	const Column& column  = getColumnByChannelId(channelId);
+	const Channel channel = column.getChannelById(channelId); // Copy, as it will be deleted soon
 
 	if (column.index == columnIndex) // If in same column
 	{
@@ -185,6 +193,10 @@ void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
 
 	removeChannel(channelId);
 	addChannelToColumn(channelId, columnIndex, newPosition);
+
+	// Add also children channels, if any
+	for (const ID childId : channel.children)
+		addChannelToGroup(childId, channel.id);
 }
 
 /* -------------------------------------------------------------------------- */

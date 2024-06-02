@@ -53,6 +53,7 @@ struct Model
 
 		int                    getChannelIndex(ID) const;
 		const std::vector<ID>& getChannels() const;
+		const Channel&         getChannelById(ID) const;
 
 		void addChannel(ID, int position, ID groupId);
 		void removeChannel(ID);
