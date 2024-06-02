@@ -78,7 +78,7 @@ void Model::Column::addChannel(ID channelId, int position, ID groupId)
 	else
 	{
 		// TODO position not used yet when grouping
-		getChannelById(groupId).children.push_back({channelId});
+		getChannelById(groupId)->children.push_back({channelId});
 	}
 
 	rebuildIds();
@@ -109,17 +109,25 @@ void Model::Column::rebuildIds()
 
 /* -------------------------------------------------------------------------- */
 
-Model::Channel& Model::Column::getChannelById(ID channelId)
+Model::Channel* Model::Column::getChannelById(ID channelId)
 {
-	return const_cast<Channel&>(std::as_const(*this).getChannelById(channelId));
+	return const_cast<Channel*>(std::as_const(*this).getChannelById(channelId));
 }
 
 /* -------------------------------------------------------------------------- */
 
-const Model::Channel& Model::Column::getChannelById(ID channelId) const
+const Model::Channel* Model::Column::getChannelById(ID channelId) const
 {
-	return *u::vector::findIfSafe(m_channels, [channelId](const Channel& ch)
-	    { return ch.id == channelId; });
+	for (const Channel& ch : m_channels)
+	{
+		if (ch.id == channelId)
+			return &ch;
+		for (const Channel& child : ch.children)
+			if (child.id == channelId)
+				return &child;
+	}
+	assert(false);
+	return nullptr;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -181,8 +189,8 @@ void Model::Columns::removeColumn(int columnIndex)
 
 void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
 {
-	const Column& column  = getColumnByChannelId(channelId);
-	const Channel channel = column.getChannelById(channelId); // Copy, as it will be deleted soon
+	const Column&              column   = getColumnByChannelId(channelId);
+	const std::vector<Channel> children = column.getChannelById(channelId)->children;
 
 	if (column.index == columnIndex) // If in same column
 	{
@@ -195,8 +203,8 @@ void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
 	addChannelToColumn(channelId, columnIndex, newPosition);
 
 	// Add also children channels, if any
-	for (const Channel& child : channel.children)
-		addChannelToGroup(child.id, channel.id);
+	for (const Channel& child : children)
+		addChannelToGroup(child.id, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
