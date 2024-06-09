@@ -63,11 +63,9 @@ struct Model
 		std::vector<ID> m_channelIds;
 	};
 
-	class Columns
+	class Columns : public mcl::Container<Column>
 	{
 	public:
-		const std::vector<Column>& getAll() const;
-
 		Column& getColumnByIndex(int);
 		Column& getColumnByChannelId(ID);
 		void    addDefaultColumn();
@@ -77,10 +75,6 @@ struct Model
 		void    addChannelToColumn(ID channelId, int columnIndex, int position = -1);
 		void    addChannelToGroup(ID channelId, ID groupId);
 		void    removeChannel(ID channelId);
-		void    clear();
-
-	private:
-		std::vector<Column> m_columns;
 	};
 
 	Model();

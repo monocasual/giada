@@ -97,31 +97,17 @@ void Model::Column::rebuildIds()
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-const std::vector<Model::Column>& Model::Columns::getAll() const
-{
-
-	return m_columns;
-}
-
-/* -------------------------------------------------------------------------- */
-
 Model::Column& Model::Columns::getColumnByIndex(int index)
 {
-	assert(index < static_cast<int>(m_columns.size()));
-
-	return m_columns.at(index);
+	return getByIndex(index);
 }
 
 /* -------------------------------------------------------------------------- */
 
 Model::Column& Model::Columns::getColumnByChannelId(ID channelId)
 {
-	const auto p = [channelId](auto& col)
-	{
-		return u::vector::has(col.getChannels(), [channelId](ID otherId)
-		    { return channelId == otherId; });
-	};
-	return *u::vector::findIfSafe(m_columns, p);
+	return getIf([channelId](const Column& column)
+	    { return column.contains(channelId); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -135,14 +121,14 @@ void Model::Columns::addDefaultColumn()
 
 void Model::Columns::addColumn(Column&& column)
 {
-	m_columns.push_back(std::move(column));
+	add(std::move(column));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Model::Columns::removeColumn(int columnIndex)
 {
-	m_columns.erase(m_columns.begin() + columnIndex);
+	removeByIndex(columnIndex);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -185,15 +171,8 @@ void Model::Columns::addChannelToGroup(ID channelId, ID groupId)
 
 void Model::Columns::removeChannel(ID channelId)
 {
-	for (Column& column : m_columns) // Brute force!
+	for (Column& column : *this) // Brute force!
 		column.removeChannel(channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Columns::clear()
-{
-	m_columns.clear();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -256,7 +235,7 @@ void Model::store(m::Patch& patch) const
 {
 	patch.name = projectName;
 
-	for (const Column& column : columns.getAll())
+	for (const Column& column : columns)
 	{
 		m::Patch::Column pcolumn;
 		pcolumn.width = column.width;

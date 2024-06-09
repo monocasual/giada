@@ -160,7 +160,7 @@ Data getData(ID channelId)
 std::vector<Column> getColumns()
 {
 	std::vector<Column> out;
-	for (const v::Model::Column& modelColumn : g_ui->model.columns.getAll()) // Model::columns is the source of truth
+	for (const v::Model::Column& modelColumn : g_ui->model.columns) // Model::columns is the source of truth
 		out.push_back(makeColumn_(modelColumn));
 	return out;
 }
@@ -278,7 +278,7 @@ void addColumn()
 
 void deleteColumn(int index)
 {
-	if (g_ui->model.columns.getAll().size() == 1) // One column must stay
+	if (g_ui->model.columns.size() == 1) // One column must stay
 		return;
 	g_ui->model.columns.removeColumn(index);
 	g_ui->rebuild();
