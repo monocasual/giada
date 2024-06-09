@@ -43,11 +43,11 @@ int Model::Column::getChannelIndex(ID channelId) const
 {
 	for (int i = 0; const Channel& ch : m_channels)
 	{
-		if (ch.id == channelId)
+		if (ch.id == mcl::ID(channelId))
 			return i;
-		for (int j = 0; const Channel& child : ch.children)
+		for (int j = 0; const Channel& child : ch)
 		{
-			if (child.id == channelId)
+			if (child.id == mcl::ID(channelId))
 				return j;
 			j++;
 		}
@@ -73,12 +73,12 @@ void Model::Column::addChannel(ID channelId, int position, ID groupId)
 
 	if (groupId == 0)
 	{
-		m_channels.insert(m_channels.begin() + position, {channelId});
+		m_channels.insert(m_channels.begin() + position, {mcl::ID(channelId)});
 	}
 	else
 	{
 		// TODO position not used yet when grouping
-		getChannelById(groupId)->children.push_back({channelId});
+		getChannelById(groupId)->add({mcl::ID(channelId)});
 	}
 
 	rebuildIds();
@@ -89,7 +89,7 @@ void Model::Column::addChannel(ID channelId, int position, ID groupId)
 void Model::Column::removeChannel(ID channelId)
 {
 	u::vector::removeIf(m_channels, [channelId](const Channel& ch)
-	    { return ch.id == channelId; });
+	    { return ch.id == mcl::ID(channelId); });
 
 	rebuildIds();
 }
@@ -102,7 +102,7 @@ void Model::Column::rebuildIds()
 	for (const Channel& ch : m_channels)
 	{
 		m_channelIds.push_back(ch.id);
-		for (const Channel& child : ch.children)
+		for (const Channel& child : ch)
 			m_channelIds.push_back(child.id);
 	}
 }
@@ -120,10 +120,10 @@ const Model::Channel* Model::Column::getChannelById(ID channelId) const
 {
 	for (const Channel& ch : m_channels)
 	{
-		if (ch.id == channelId)
+		if (ch.id == mcl::ID(channelId))
 			return &ch;
-		for (const Channel& child : ch.children)
-			if (child.id == channelId)
+		for (const Channel& child : ch)
+			if (child.id == mcl::ID(channelId))
 				return &child;
 	}
 	assert(false);
@@ -189,8 +189,8 @@ void Model::Columns::removeColumn(int columnIndex)
 
 void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
 {
-	const Column&              column   = getColumnByChannelId(channelId);
-	const std::vector<Channel> children = column.getChannelById(channelId)->children;
+	const Column&        column      = getColumnByChannelId(channelId);
+	std::vector<mcl::ID> childrenIds = column.getChannelById(channelId)->getItemIds();
 
 	if (column.index == columnIndex) // If in same column
 	{
@@ -203,8 +203,8 @@ void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
 	addChannelToColumn(channelId, columnIndex, newPosition);
 
 	// Add also children channels, if any
-	for (const Channel& child : children)
-		addChannelToGroup(child.id, channelId);
+	for (const mcl::ID childId : childrenIds)
+		addChannelToGroup(childId, channelId);
 }
 
 /* -------------------------------------------------------------------------- */

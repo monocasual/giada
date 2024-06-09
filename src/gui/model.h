@@ -31,6 +31,7 @@
 #include "core/const.h"
 #include "core/plugins/pluginManager.h"
 #include "deps/geompp/src/rect.hpp"
+#include "deps/mcl-container/src/container.hpp"
 #include <FL/Enumerations.H>
 #include <string>
 #include <vector>
@@ -39,11 +40,8 @@ namespace giada::v
 {
 struct Model
 {
-	class Channel
+	class Channel : public mcl::Container<Channel, /*Identifiable=*/true, /*Sortable=*/true>
 	{
-	public:
-		ID                   id;
-		std::vector<Channel> children = {};
 	};
 
 	class Column
