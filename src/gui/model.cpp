@@ -31,9 +31,8 @@
 
 namespace giada::v
 {
-Model::Column::Column(int index, int width)
-: index(index)
-, width(width)
+Model::Column::Column(int width)
+: width(width)
 {
 }
 
@@ -41,20 +40,9 @@ Model::Column::Column(int index, int width)
 
 int Model::Column::getChannelIndex(ID channelId) const
 {
-	for (int i = 0; const Channel& ch : m_channels)
-	{
-		if (ch.id == mcl::ID(channelId))
-			return i;
-		for (int j = 0; const Channel& child : ch)
-		{
-			if (child.id == mcl::ID(channelId))
-				return j;
-			j++;
-		}
-		i++;
-	}
-	assert(false);
-	return -1;
+	const Channel* ch = deepFindById<Channel>(channelId);
+	assert(ch != nullptr);
+	return ch->index;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -69,16 +57,16 @@ const std::vector<ID>& Model::Column::getChannels() const
 void Model::Column::addChannel(ID channelId, int position, ID groupId)
 {
 	if (position == -1)
-		position = m_channels.size();
+		position = size();
 
 	if (groupId == 0)
 	{
-		m_channels.insert(m_channels.begin() + position, {mcl::ID(channelId)});
+		insert({mcl::ID(channelId)}, position);
 	}
 	else
 	{
 		// TODO position not used yet when grouping
-		getChannelById(groupId)->add({mcl::ID(channelId)});
+		getById(groupId).add({mcl::ID(channelId)});
 	}
 
 	rebuildIds();
@@ -88,9 +76,7 @@ void Model::Column::addChannel(ID channelId, int position, ID groupId)
 
 void Model::Column::removeChannel(ID channelId)
 {
-	u::vector::removeIf(m_channels, [channelId](const Channel& ch)
-	    { return ch.id == mcl::ID(channelId); });
-
+	deepRemoveById<Channel>({mcl::ID(channelId)});
 	rebuildIds();
 }
 
@@ -99,35 +85,12 @@ void Model::Column::removeChannel(ID channelId)
 void Model::Column::rebuildIds()
 {
 	m_channelIds.clear();
-	for (const Channel& ch : m_channels)
+	for (const Channel& ch : *this)
 	{
 		m_channelIds.push_back(ch.id);
 		for (const Channel& child : ch)
 			m_channelIds.push_back(child.id);
 	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-Model::Channel* Model::Column::getChannelById(ID channelId)
-{
-	return const_cast<Channel*>(std::as_const(*this).getChannelById(channelId));
-}
-
-/* -------------------------------------------------------------------------- */
-
-const Model::Channel* Model::Column::getChannelById(ID channelId) const
-{
-	for (const Channel& ch : m_channels)
-	{
-		if (ch.id == mcl::ID(channelId))
-			return &ch;
-		for (const Channel& child : ch)
-			if (child.id == mcl::ID(channelId))
-				return &child;
-	}
-	assert(false);
-	return nullptr;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -165,10 +128,7 @@ Model::Column& Model::Columns::getColumnByChannelId(ID channelId)
 
 void Model::Columns::addDefaultColumn()
 {
-	const int index = static_cast<int>(m_columns.size());
-	const int width = G_DEFAULT_COLUMN_WIDTH;
-
-	addColumn({index, width});
+	addColumn({G_DEFAULT_COLUMN_WIDTH});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -190,7 +150,7 @@ void Model::Columns::removeColumn(int columnIndex)
 void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
 {
 	const Column&        column      = getColumnByChannelId(channelId);
-	std::vector<mcl::ID> childrenIds = column.getChannelById(channelId)->getItemIds();
+	std::vector<mcl::ID> childrenIds = column.getById(channelId).getItemIds();
 
 	if (column.index == columnIndex) // If in same column
 	{
@@ -354,9 +314,9 @@ void Model::load(const m::Conf& conf)
 void Model::load(const m::Patch& patch)
 {
 	columns.clear();
-	for (int i = 0; const m::Patch::Column& pcolumn : patch.columns)
+	for (const m::Patch::Column& pcolumn : patch.columns)
 	{
-		Column column(i++, pcolumn.width);
+		Column column(pcolumn.width);
 		for (ID channelId : pcolumn.channels)
 			column.addChannel(channelId, /*position=*/-1, /*groupId=*/0);
 		columns.addColumn(std::move(column));

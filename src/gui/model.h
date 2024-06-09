@@ -44,27 +44,23 @@ struct Model
 	{
 	};
 
-	class Column
+	class Column : public mcl::Container<Channel, /*Identifiable=*/false, /*Sortable=*/true>
 	{
 	public:
-		Column(int index, int width);
+		Column(int width);
 
 		int                    getChannelIndex(ID) const;
 		const std::vector<ID>& getChannels() const;
-		const Channel*         getChannelById(ID) const;
 
 		void addChannel(ID, int position, ID groupId);
 		void removeChannel(ID);
 
-		int index;
 		int width;
 
 	private:
-		void     rebuildIds();
-		Channel* getChannelById(ID);
+		void rebuildIds();
 
-		std::vector<Channel> m_channels;
-		std::vector<ID>      m_channelIds;
+		std::vector<ID> m_channelIds;
 	};
 
 	class Columns

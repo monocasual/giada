@@ -78,7 +78,7 @@ Data makeData_(ID channelId, const v::Model::Column& column)
 
 Column makeColumn_(const v::Model::Column& modelColumn)
 {
-	Column column{modelColumn.index, modelColumn.width, {}};
+	Column column{static_cast<int>(modelColumn.index), modelColumn.width, {}};
 
 	for (const ID channelId : modelColumn.getChannels())
 		column.channels.push_back(makeData_(channelId, modelColumn));
