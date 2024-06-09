@@ -136,8 +136,15 @@ std::vector<Channel*> Channels::getIf(std::function<bool(const Channel&)> f)
 
 void Channels::remove(ID id)
 {
-	u::vector::removeIf(m_channels, [id](const Channel& c)
-	    { return c.id == id; });
+	u::vector::removeIf(m_channels, [this, id](const Channel& c)
+	    {
+		    const bool found = c.id == id;
+		    if (!found)
+			    return false;
+		    if (c.isGrouped())
+			    get(c.parentId).groupChannel->removeChild(id);
+		    return true;
+	    });
 }
 
 /* -------------------------------------------------------------------------- */
