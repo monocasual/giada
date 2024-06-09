@@ -22,3 +22,6 @@
 [submodule "src/deps/concurrentqueue"]
 	path = src/deps/concurrentqueue
 	url = https://github.com/cameron314/concurrentqueue.git
+[submodule "src/deps/mcl-container"]
+	path = src/deps/mcl-container
+	url = https://github.com/monocasual/mcl-container.git
