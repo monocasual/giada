@@ -71,6 +71,11 @@ void Reactor::keyPress(ID channelId, float velocity, bool canRecordActions, bool
 		    /*velocity=*/0.0f, /*canQuantize=*/false, /*isAnyLoopMode=*/false,
 		    /*velocityAsVol=*/false);
 	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		for (const ID childId : ch.groupChannel->getChildren())
+			keyPress(childId, velocity, canRecordActions, canQuantize, currentFrameQuantized);
+	}
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -102,6 +107,11 @@ void Reactor::keyRelease(ID channelId, bool canRecordActions, Frame currentFrame
 	else if (ch.type == ChannelType::PREVIEW)
 	{
 		releaseSampleChannel(*ch.shared, SamplePlayerMode::SINGLE_BASIC_PAUSE);
+	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		for (const ID childId : ch.groupChannel->getChildren())
+			keyRelease(childId, canRecordActions, currentFrameQuantized);
 	}
 
 	m_model.swap(model::SwapType::SOFT);
@@ -135,6 +145,11 @@ void Reactor::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQua
 		}
 
 		killSampleChannel(*ch.shared, mode);
+	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		for (const ID childId : ch.groupChannel->getChildren())
+			keyKill(childId, canRecordActions, currentFrameQuantized);
 	}
 
 	m_model.swap(model::SwapType::SOFT);
