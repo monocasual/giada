@@ -23,7 +23,7 @@ jobs:
         run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON -DWITH_VST3=ON
 
       - name: Build
-        run: cmake --build build/ -j 2
+        run: cmake --build build/ -j 3
 
       - name: Run tests
         run: xvfb-run ./build/giada --run-tests 
@@ -49,7 +49,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: cmake --build build/ --config Debug -j 2
+        run: cmake --build build/ --config Debug -j 3
 
       - name: Run tests
         run: ./build/Debug/giada.exe --run-tests 

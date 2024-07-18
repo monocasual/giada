@@ -86,7 +86,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: cmake --build build/ --config Release -j 2
+        run: cmake --build build/ --config Release -j 3
 
       - name: Make package
         run: bash ./.github/scripts/windows/make-package.sh ${{ github.ref_name }}
@@ -118,7 +118,7 @@ jobs:
         run: cmake -S . -B build/ -G "Xcode" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_CXX_FLAGS="-x objective-c++" -DWITH_VST3=ON
 
       - name: Build
-        run: cmake --build build/ --config Release -j 2
+        run: cmake --build build/ --config Release -j 3
 
       - name: Make package
         run: bash ./.github/scripts/macos/make-package.sh ${{ github.ref_name }}
