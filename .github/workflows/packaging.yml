@@ -105,7 +105,7 @@ jobs:
   # macOS ----------------------------------------------------------------------
   macos:
     name: macOS
-    runs-on: macos-11
+    runs-on: macos-12
     timeout-minutes: 60
     needs: create-release
     steps:
