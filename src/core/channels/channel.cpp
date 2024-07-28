@@ -102,7 +102,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 
 /* -------------------------------------------------------------------------- */
 
-bool Channel::operator==(const Channel& other)
+bool Channel::operator==(const Channel& other) const
 {
 	return id == other.id;
 }
