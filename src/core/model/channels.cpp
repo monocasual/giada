@@ -83,6 +83,13 @@ const std::vector<Channel>& Channels::getAll() const
 
 /* -------------------------------------------------------------------------- */
 
+const std::size_t Channels::getIndex(ID id) const
+{
+	return static_cast<std::size_t>(u::vector::indexOf(m_channels, get(id)));
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool Channels::anyOf(std::function<bool(const Channel&)> f) const
 {
 	return std::any_of(m_channels.begin(), m_channels.end(), f);

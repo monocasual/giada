@@ -38,6 +38,7 @@ public:
 	const Channel&              get(ID) const;
 	const Channel*              find(ID) const;
 	const std::vector<Channel>& getAll() const;
+	const std::size_t           getIndex(ID) const;
 
 	/* anyOf
 	Returns true if any channel satisfies the callback 'f'. */
