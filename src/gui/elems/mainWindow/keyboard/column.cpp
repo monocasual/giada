@@ -32,6 +32,7 @@
 #include "gui/elems/basics/menu.h"
 #include "gui/elems/basics/resizerBar.h"
 #include "gui/elems/basics/textButton.h"
+#include "gui/elems/mainWindow/keyboard/groupChannel.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/keyboard/midiChannel.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannel.h"
@@ -60,9 +61,18 @@ enum class Menu
 
 geChannel* makeChannel_(const c::channel::Data& data)
 {
-	if (data.type == ChannelType::SAMPLE)
+	switch (data.type)
+	{
+	case ChannelType::SAMPLE:
 		return new geSampleChannel(0, 0, 0, 0, data);
-	return new geMidiChannel(0, 0, 0, 0, data);
+	case ChannelType::MIDI:
+		return new geMidiChannel(0, 0, 0, 0, data);
+	case ChannelType::GROUP:
+		return new geGroupChannel(data);
+	default:
+		assert(false);
+		return nullptr;
+	}
 }
 } // namespace
 
