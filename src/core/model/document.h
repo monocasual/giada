@@ -35,6 +35,7 @@
 #include "core/model/midiIn.h"
 #include "core/model/mixer.h"
 #include "core/model/sequencer.h"
+#include "core/model/tracks.h"
 
 namespace giada::m
 {
@@ -82,6 +83,7 @@ struct Document
 	Mixer       mixer;
 	MidiIn      midiIn;
 	Channels    channels;
+	Tracks      tracks;
 	Actions     actions;
 	Behaviors   behaviors;
 };
