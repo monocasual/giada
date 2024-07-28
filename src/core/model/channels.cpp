@@ -35,6 +35,20 @@
 
 namespace giada::m::model
 {
+Channel* Channels::find(ID id)
+{
+	return const_cast<Channel*>(std::as_const(*this).find(id));
+}
+
+const Channel* Channels::find(ID id) const
+{
+	auto it = std::find_if(m_channels.begin(), m_channels.end(), [id](const Channel& c)
+	    { return c.id == id; });
+	return it != m_channels.end() ? &*it : nullptr;
+}
+
+/* -------------------------------------------------------------------------- */
+
 Channel& Channels::get(ID id)
 {
 	return const_cast<Channel&>(std::as_const(*this).get(id));

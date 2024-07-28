@@ -36,6 +36,7 @@ class Channels
 {
 public:
 	const Channel&              get(ID) const;
+	const Channel*              find(ID) const;
 	const std::vector<Channel>& getAll() const;
 
 	/* anyOf
@@ -47,6 +48,7 @@ public:
 	void debug() const;
 #endif
 
+	Channel*              find(ID);
 	Channel&              get(ID);
 	Channel&              getLast();
 	std::vector<Channel>& getAll();
