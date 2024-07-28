@@ -67,11 +67,6 @@ public:
 
 	Channel& getChannel(ID);
 
-	/* getAllChannels
-	Returns all channel in the model. */
-
-	std::vector<Channel>& getAllChannels();
-
 	/* hasInputRecordableChannels
     Tells whether Mixer has one or more input-recordable channels. */
 

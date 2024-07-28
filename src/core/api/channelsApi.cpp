@@ -69,11 +69,6 @@ Channel& ChannelsApi::get(ID channelId)
 	return m_channelManager.getChannel(channelId);
 }
 
-std::vector<Channel>& ChannelsApi::getAll()
-{
-	return m_channelManager.getAllChannels();
-}
-
 /* -------------------------------------------------------------------------- */
 
 model::Tracks& ChannelsApi::getTracks()

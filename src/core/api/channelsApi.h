@@ -67,9 +67,8 @@ public:
 	bool hasChannelsWithAudioData() const;
 	bool hasChannelsWithActions() const;
 
-	Channel&              get(ID);
-	std::vector<Channel>& getAll();
-	model::Tracks&        getTracks();
+	Channel&       get(ID);
+	model::Tracks& getTracks();
 
 	Channel& add(ChannelType);
 	int      loadSampleChannel(ID channelId, const std::string& filePath);

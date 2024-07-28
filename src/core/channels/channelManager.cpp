@@ -64,11 +64,6 @@ Channel& ChannelManager::getChannel(ID channelId)
 	return m_model.get().channels.get(channelId);
 }
 
-std::vector<Channel>& ChannelManager::getAllChannels()
-{
-	return m_model.get().channels.getAll();
-}
-
 /* -------------------------------------------------------------------------- */
 
 void ChannelManager::reset(Frame framesInBuffer)
