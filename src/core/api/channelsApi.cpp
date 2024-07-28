@@ -76,6 +76,13 @@ std::vector<Channel>& ChannelsApi::getAll()
 
 /* -------------------------------------------------------------------------- */
 
+model::Tracks& ChannelsApi::getTracks()
+{
+	return m_model.get().tracks;
+}
+
+/* -------------------------------------------------------------------------- */
+
 Channel& ChannelsApi::add(ChannelType type)
 {
 	const int bufferSize = m_kernelAudio.getBufferSize();

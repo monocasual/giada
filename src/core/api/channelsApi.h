@@ -36,7 +36,8 @@
 namespace giada::m::model
 {
 class Model;
-}
+class Tracks;
+} // namespace giada::m::model
 
 namespace giada::m::rendering
 {
@@ -68,6 +69,7 @@ public:
 
 	Channel&              get(ID);
 	std::vector<Channel>& getAll();
+	model::Tracks&        getTracks();
 
 	Channel& add(ChannelType);
 	int      loadSampleChannel(ID channelId, const std::string& filePath);
