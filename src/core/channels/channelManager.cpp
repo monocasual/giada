@@ -99,6 +99,20 @@ void ChannelManager::setBufferSize(int bufferSize)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelManager::addTrack(Frame bufferSize)
+{
+	const bool               overdubProtection = false;
+	const Resampler::Quality rsmpQuality       = m_model.get().kernelAudio.rsmpQuality;
+
+	channelFactory::Data groupData = channelFactory::create(/*id=*/0, ChannelType::GROUP, bufferSize, rsmpQuality, overdubProtection);
+
+	m_model.addChannelShared(std::move(groupData.shared));
+	m_model.get().tracks.add(std::move(groupData.channel), G_DEFAULT_COLUMN_WIDTH, /*isInternal=*/false);
+	m_model.swap(model::SwapType::HARD);
+}
+
+/* -------------------------------------------------------------------------- */
+
 Channel& ChannelManager::addChannel(ChannelType type, int bufferSize)
 {
 	const bool               overdubProtectionDefaultOn = m_model.get().behaviors.overdubProtectionDefaultOn;

@@ -102,6 +102,11 @@ public:
 
 	void setBufferSize(int);
 
+	/* addTrack
+	Adds a new empty track, containing only the default Channel Group. */
+
+	void addTrack(int bufferSize);
+
 	/* addChannel
     Adds a new channel to the stack. */
 
