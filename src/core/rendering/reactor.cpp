@@ -45,7 +45,7 @@ Reactor::Reactor(model::Model& model, MidiMapper<KernelMidi>& m, ActionRecorder&
 
 void Reactor::keyPress(ID channelId, float velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized)
 {
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	if (ch.type == ChannelType::MIDI)
 	{
@@ -79,7 +79,7 @@ void Reactor::keyPress(ID channelId, float velocity, bool canRecordActions, bool
 
 void Reactor::keyRelease(ID channelId, bool canRecordActions, Frame currentFrameQuantized)
 {
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	if (ch.type == ChannelType::MIDI)
 		return;
@@ -111,7 +111,7 @@ void Reactor::keyRelease(ID channelId, bool canRecordActions, Frame currentFrame
 
 void Reactor::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQuantized)
 {
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	if (ch.type == ChannelType::MIDI)
 	{
@@ -144,7 +144,7 @@ void Reactor::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQua
 
 void Reactor::processMidiEvent(ID channelId, const MidiEvent& e, bool canRecordActions, Frame currentFrameQuantized)
 {
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	assert(ch.type == ChannelType::MIDI);
 
@@ -163,7 +163,7 @@ void Reactor::processMidiEvent(ID channelId, const MidiEvent& e, bool canRecordA
 
 void Reactor::toggleReadActions(ID channelId, bool seqIsRunning)
 {
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 	if (!ch.hasActions)
 		return;
 	toggleSampleReadActions(*ch.shared, m_model.get().behaviors.treatRecsAsLoops, seqIsRunning);
@@ -178,7 +178,7 @@ void Reactor::killReadActions(ID channelId)
 
 	if (!m_model.get().behaviors.treatRecsAsLoops)
 		return;
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 	killSampleReadActions(*ch.shared);
 }
 
@@ -186,7 +186,7 @@ void Reactor::killReadActions(ID channelId)
 
 void Reactor::toggleMute(ID channelId)
 {
-	Channel&   ch      = m_model.get().channels.get(channelId);
+	Channel&   ch      = m_model.get().tracks.getChannel(channelId);
 	const bool newMute = !ch.isMuted();
 
 	ch.setMute(newMute);
@@ -201,7 +201,7 @@ void Reactor::toggleMute(ID channelId)
 
 void Reactor::toggleSolo(ID channelId)
 {
-	Channel&   ch      = m_model.get().channels.get(channelId);
+	Channel&   ch      = m_model.get().tracks.getChannel(channelId);
 	const bool newSolo = !ch.isSoloed();
 
 	ch.setSolo(newSolo);
@@ -216,18 +216,21 @@ void Reactor::toggleSolo(ID channelId)
 
 void Reactor::stopAll()
 {
-	for (Channel& ch : m_model.get().channels.getAll())
+	for (const model::Track& track : m_model.get().tracks.getAll())
 	{
-		if (ch.type == ChannelType::MIDI)
+		for (const Channel& ch : track.getChannels().getAll())
 		{
-			if (!ch.isPlaying())
-				continue;
-			stopMidiChannel(ch.shared->playStatus);
-			sendMidiAllNotesOff(ch, m_kernelMidi);
-		}
-		else if (ch.type == ChannelType::SAMPLE)
-		{
-			stopSampleChannelBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
+			if (ch.type == ChannelType::MIDI)
+			{
+				if (!ch.isPlaying())
+					continue;
+				stopMidiChannel(ch.shared->playStatus);
+				sendMidiAllNotesOff(ch, m_kernelMidi);
+			}
+			else if (ch.type == ChannelType::SAMPLE)
+			{
+				stopSampleChannelBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
+			}
 		}
 	}
 	m_model.swap(model::SwapType::SOFT);
@@ -237,9 +240,10 @@ void Reactor::stopAll()
 
 void Reactor::rewindAll()
 {
-	for (Channel& ch : m_model.get().channels.getAll())
-		if (ch.type == ChannelType::MIDI)
-			rewindMidiChannel(ch.shared->playStatus);
+	for (const model::Track& track : m_model.get().tracks.getAll())
+		for (const Channel& ch : track.getChannels().getAll())
+			if (ch.type == ChannelType::MIDI)
+				rewindMidiChannel(ch.shared->playStatus);
 	m_model.swap(model::SwapType::SOFT);
 }
 } // namespace giada::m::rendering
