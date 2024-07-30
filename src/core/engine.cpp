@@ -169,7 +169,7 @@ Engine::Engine()
 	m_channelManager.onChannelPlayStatusChanged = [this](ID channelId, ChannelStatus status) {
 		m_eventDispatcher.pumpEvent([this, channelId, status]() {
 			registerThread(Thread::EVENTS, /*realtime=*/false);
-			const Channel& ch = m_model.get().channels.get(channelId);
+			const Channel& ch = m_model.get().tracks.getChannel(channelId);
 			if (ch.midiLightning.enabled)
 				rendering::sendMidiLightningStatus(ch.id, ch.midiLightning, status, /*isAudible=*/true /* TODO!!! */, m_midiMapper);
 		});
