@@ -84,7 +84,7 @@ void PluginsApi::add(int pluginListIndex, ID channelId)
 	/* TODO - unfortunately JUCE wants mutable plugin objects due to the
 	    presence of the non-const processBlock() method. Why not const_casting
 	    only in the Plugin class? */
-	m_model.get().channels.get(channelId).plugins.push_back(const_cast<Plugin*>(pluginPtr));
+	m_model.get().tracks.getChannel(channelId).plugins.push_back(const_cast<Plugin*>(pluginPtr));
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -92,7 +92,7 @@ void PluginsApi::add(int pluginListIndex, ID channelId)
 
 void PluginsApi::swap(const Plugin& p1, const Plugin& p2, ID channelId)
 {
-	m_pluginHost.swapPlugin(p1, p2, m_model.get().channels.get(channelId).plugins);
+	m_pluginHost.swapPlugin(p1, p2, m_model.get().tracks.getChannel(channelId).plugins);
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -107,7 +107,7 @@ void PluginsApi::sort(PluginManager::SortMode mode)
 
 void PluginsApi::free(const Plugin& plugin, ID channelId)
 {
-	u::vector::remove(m_model.get().channels.get(channelId).plugins, &plugin);
+	u::vector::remove(m_model.get().tracks.getChannel(channelId).plugins, &plugin);
 	m_model.swap(model::SwapType::HARD);
 	m_pluginHost.freePlugin(plugin);
 }
