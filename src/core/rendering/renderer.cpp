@@ -92,6 +92,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	const model::Mixer&       mixer        = document_RT.mixer;
 	const model::Sequencer&   sequencer    = document_RT.sequencer;
 	const model::Channels&    channels     = document_RT.channels;
+	const model::Tracks&      tracks       = document_RT.tracks;
 	const model::Actions&     actions      = document_RT.actions;
 
 	/* Mixer disabled or Kernel Audio not ready: nothing to do here. */
@@ -127,9 +128,9 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	const int      maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
 	const bool     hasSolos       = mixer.hasSolos;
 	const bool     hasInput       = in.isAllocd();
-	const Channel& masterOutCh    = channels.get(Mixer::MASTER_OUT_CHANNEL_ID);
-	const Channel& masterInCh     = channels.get(Mixer::MASTER_IN_CHANNEL_ID);
-	const Channel& previewCh      = channels.get(Mixer::PREVIEW_CHANNEL_ID);
+	const Channel& masterOutCh    = tracks.getChannel(Mixer::MASTER_OUT_CHANNEL_ID);
+	const Channel& masterInCh     = tracks.getChannel(Mixer::MASTER_IN_CHANNEL_ID);
+	const Channel& previewCh      = tracks.getChannel(Mixer::PREVIEW_CHANNEL_ID);
 
 	m_mixer.render(in, document_RT, maxFramesToRec);
 

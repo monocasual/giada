@@ -68,7 +68,7 @@ Channel& ChannelManager::getChannel(ID channelId)
 
 void ChannelManager::reset(Frame framesInBuffer)
 {
-	m_model.get().channels = {};
+	/* Create internal track with internal channels (Master In/Out, Preview). */
 
 	const bool               overdubProtection = false;
 	const Resampler::Quality rsmpQuality       = m_model.get().kernelAudio.rsmpQuality;
@@ -80,13 +80,24 @@ void ChannelManager::reset(Frame framesInBuffer)
 	channelFactory::Data previewData = channelFactory::create(
 	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, framesInBuffer, rsmpQuality, overdubProtection);
 
-	m_model.get().channels.add(std::move(masterOutData.channel));
-	m_model.get().channels.add(std::move(masterInData.channel));
-	m_model.get().channels.add(std::move(previewData.channel));
+	m_model.get().tracks = {};
+
+	model::Track& track = m_model.get().tracks.add(std::move(masterOutData.channel), 0, /*isInternal=*/true);
+	track.addChannel(std::move(masterInData.channel));
+	track.addChannel(std::move(previewData.channel));
 
 	m_model.addChannelShared(std::move(masterOutData.shared));
 	m_model.addChannelShared(std::move(masterInData.shared));
 	m_model.addChannelShared(std::move(previewData.shared));
+
+	/* Create six visible empty tracks. */
+
+	addTrack(framesInBuffer);
+	addTrack(framesInBuffer);
+	addTrack(framesInBuffer);
+	addTrack(framesInBuffer);
+	addTrack(framesInBuffer);
+	addTrack(framesInBuffer);
 }
 
 /* -------------------------------------------------------------------------- */
