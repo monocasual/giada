@@ -182,7 +182,7 @@ void loadChannel(ID channelId, const std::string& fname)
 
 void addChannel(int columnIndex, ChannelType type)
 {
-	const m::Channel& ch = g_engine->getChannelsApi().add(type);
+	const m::Channel& ch = g_engine->getChannelsApi().add(type, columnIndex);
 	g_ui->model.columns.addChannelToColumn(ch.id, columnIndex);
 }
 
@@ -199,7 +199,7 @@ void addAndLoadChannels(int columnIndex, const std::vector<std::string>& fnames)
 	{
 		progress.setProgress(++i / static_cast<float>(fnames.size()));
 
-		const m::Channel& ch  = channelsApi.add(ChannelType::SAMPLE);
+		const m::Channel& ch  = channelsApi.add(ChannelType::SAMPLE, columnIndex);
 		const int         res = channelsApi.loadSampleChannel(ch.id, f);
 		if (res != G_RES_OK)
 			errors = true;

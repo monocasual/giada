@@ -124,7 +124,7 @@ void ChannelManager::addTrack(Frame bufferSize)
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelManager::addChannel(ChannelType type, int bufferSize)
+Channel& ChannelManager::addChannel(ChannelType type, std::size_t trackIndex, int bufferSize)
 {
 	const bool               overdubProtectionDefaultOn = m_model.get().behaviors.overdubProtectionDefaultOn;
 	const Resampler::Quality rsmpQuality                = m_model.get().kernelAudio.rsmpQuality;
@@ -133,13 +133,13 @@ Channel& ChannelManager::addChannel(ChannelType type, int bufferSize)
 
 	setupChannelCallbacks(data.channel, *data.shared);
 
-	m_model.get().channels.add(std::move(data.channel));
+	m_model.get().tracks.addChannel(std::move(data.channel), trackIndex);
 	m_model.addChannelShared(std::move(data.shared));
 	m_model.swap(model::SwapType::HARD);
 
 	triggerOnChannelsAltered();
 
-	return m_model.get().channels.getLast();
+	return m_model.get().tracks.getLastChannel(trackIndex);
 }
 
 /* -------------------------------------------------------------------------- */

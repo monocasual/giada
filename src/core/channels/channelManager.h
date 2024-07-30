@@ -110,7 +110,7 @@ public:
 	/* addChannel
     Adds a new channel to the stack. */
 
-	Channel& addChannel(ChannelType, int bufferSize);
+	Channel& addChannel(ChannelType, std::size_t trackIndex, int bufferSize);
 
 	/* loadSampleChannel (1)
     Creates a new Wave from a file path and loads it inside a Sample Channel. */

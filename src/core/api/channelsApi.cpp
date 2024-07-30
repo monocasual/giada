@@ -78,10 +78,10 @@ model::Tracks& ChannelsApi::getTracks()
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelsApi::add(ChannelType type)
+Channel& ChannelsApi::add(ChannelType type, std::size_t trackIndex)
 {
 	const int bufferSize = m_kernelAudio.getBufferSize();
-	return m_channelManager.addChannel(type, bufferSize);
+	return m_channelManager.addChannel(type, trackIndex, bufferSize);
 }
 
 int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)
