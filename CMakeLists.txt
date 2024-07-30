@@ -167,6 +167,10 @@ list(APPEND SOURCES
 	src/core/model/channels.h
 	src/core/model/actions.cpp
 	src/core/model/actions.h
+	src/core/model/tracks.cpp
+	src/core/model/tracks.h
+	src/core/model/track.cpp
+	src/core/model/track.h
 	src/core/idManager.cpp
 	src/core/idManager.h
 	src/glue/main.cpp
