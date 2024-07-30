@@ -91,7 +91,6 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	const model::KernelAudio& kernelAudio  = document_RT.kernelAudio;
 	const model::Mixer&       mixer        = document_RT.mixer;
 	const model::Sequencer&   sequencer    = document_RT.sequencer;
-	const model::Channels&    channels     = document_RT.channels;
 	const model::Tracks&      tracks       = document_RT.tracks;
 	const model::Actions&     actions      = document_RT.actions;
 
@@ -120,7 +119,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, actions);
 		m_sequencer.render(out, document_RT);
 		if (!document_RT.locked)
-			advanceChannels(events, channels, renderRange, quantizerStep);
+			advanceTracks(events, tracks, renderRange, quantizerStep);
 	}
 
 	/* Then render Mixer, channels and finalize output. */
@@ -138,7 +137,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		renderMasterIn(masterInCh, mixer.getInBuffer());
 
 	if (!document_RT.locked)
-		renderNormalChannels(channels.getAll(), out, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
+		renderTracks(tracks, out, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
 
 	renderMasterOut(masterOutCh, out);
 	if (mixer.renderPreview)
@@ -151,12 +150,13 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::advanceChannels(const Sequencer::EventBuffer& events,
-    const model::Channels& channels, geompp::Range<Frame> block, int quantizerStep) const
+void Renderer::advanceTracks(const Sequencer::EventBuffer& events, const model::Tracks& tracks,
+    geompp::Range<Frame> block, int quantizerStep) const
 {
-	for (const Channel& c : channels.getAll())
-		if (!c.isInternal())
-			advanceChannel(c, events, block, quantizerStep);
+	for (const model::Track& track : tracks.getAll())
+		for (const Channel& c : track.getChannels().getAll())
+			if (!c.isInternal())
+				advanceChannel(c, events, block, quantizerStep);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -178,12 +178,24 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderNormalChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
+void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
     const mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const
 {
-	for (const Channel& c : channels)
-		if (!c.isInternal())
-			renderNormalChannel(c, out, in, hasSolos, seqIsRunning);
+	for (const model::Track& track : tracks.getAll())
+	{
+		if (track.isInternal())
+			continue;
+
+		const Channel& group = track.getGroupChannel();
+		group.shared->audioBuffer.clear();
+
+		for (const Channel& c : track.getChannels().getAll())
+			if (!c.isInternal())
+				renderNormalChannel(c, group.shared->audioBuffer, in, hasSolos, seqIsRunning);
+
+		rendering::renderAudioPlugins(group, m_pluginHost);
+		out.sum(group.shared->audioBuffer, group.volume, calcPanning_(group.pan));
+	}
 }
 
 /* -------------------------------------------------------------------------- */

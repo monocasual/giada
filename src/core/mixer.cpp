@@ -137,10 +137,10 @@ void Mixer::render(const mcl::AudioBuffer& in, const model::Document& document_R
 {
 	const model::Mixer&       mixer       = document_RT.mixer;
 	const model::Sequencer&   sequencer   = document_RT.sequencer;
-	const model::Channels&    channels    = document_RT.channels;
+	const model::Tracks&      tracks      = document_RT.tracks;
 	const model::KernelAudio& kernelAudio = document_RT.kernelAudio;
 
-	const Channel& masterInCh = channels.get(Mixer::MASTER_IN_CHANNEL_ID);
+	const Channel& masterInCh = tracks.getChannel(Mixer::MASTER_IN_CHANNEL_ID);
 
 	const bool  hasInput        = in.isAllocd();
 	const bool  seqIsActive     = sequencer.isActive();
