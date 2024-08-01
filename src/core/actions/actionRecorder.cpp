@@ -150,7 +150,7 @@ bool ActionRecorder::cloneActions(ID channelId, ID newChannelId)
 	}
 
 	m_model.get().actions.rec(actions);
-	m_model.get().channels.get(newChannelId).hasActions = true;
+	m_model.get().tracks.getChannel(newChannelId).hasActions = true;
 	m_model.swap(model::SwapType::HARD);
 
 	return cloned;
@@ -373,8 +373,8 @@ std::unordered_set<ID> ActionRecorder::consolidate()
 
 void ActionRecorder::clearAllActions()
 {
-	for (Channel& ch : m_model.get().channels.getAll())
-		ch.hasActions = false;
+	m_model.get().tracks.forEachChannel([](Channel& ch)
+	    { ch.hasActions = false; return true; });
 	m_model.get().actions.clearAll();
 	m_model.swap(model::SwapType::HARD);
 }
@@ -406,7 +406,7 @@ Frame ActionRecorder::fixVerticalEnvActions(Frame f, const Action& a1, const Act
 
 bool ActionRecorder::isSinglePressMode(ID channelId) const
 {
-	return m_model.get().channels.get(channelId).sampleChannel->mode == SamplePlayerMode::SINGLE_PRESS;
+	return m_model.get().tracks.getChannel(channelId).sampleChannel->mode == SamplePlayerMode::SINGLE_PRESS;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -494,7 +494,7 @@ std::vector<Action> ActionRecorder::getActionsOnChannel(ID channelId) const
 
 void ActionRecorder::clearChannel(ID channelId)
 {
-	m_model.get().channels.get(channelId).hasActions = false;
+	m_model.get().tracks.getChannel(channelId).hasActions = false;
 	m_model.get().actions.clearChannel(channelId);
 	m_model.swap(model::SwapType::HARD);
 }
@@ -502,7 +502,7 @@ void ActionRecorder::clearChannel(ID channelId)
 void ActionRecorder::clearActions(ID channelId, int type)
 {
 	m_model.get().actions.clearActions(channelId, type);
-	m_model.get().channels.get(channelId).hasActions = hasActions(channelId);
+	m_model.get().tracks.getChannel(channelId).hasActions = hasActions(channelId);
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -510,14 +510,14 @@ Action ActionRecorder::rec(ID channelId, Frame frame, MidiEvent e)
 {
 	Action action = m_model.get().actions.rec(channelId, frame, e);
 
-	m_model.get().channels.get(channelId).hasActions = true;
+	m_model.get().tracks.getChannel(channelId).hasActions = true;
 	m_model.swap(model::SwapType::HARD);
 	return action;
 }
 
 void ActionRecorder::rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
-	m_model.get().channels.get(channelId).hasActions = true;
+	m_model.get().tracks.getChannel(channelId).hasActions = true;
 	m_model.get().actions.rec(channelId, f1, f2, e1, e2);
 	m_model.swap(model::SwapType::HARD);
 }
@@ -531,14 +531,14 @@ void ActionRecorder::updateSiblings(ID id, ID prevId, ID nextId)
 void ActionRecorder::deleteAction(ID channelId, ID id)
 {
 	m_model.get().actions.deleteAction(id);
-	m_model.get().channels.get(channelId).hasActions = hasActions(channelId);
+	m_model.get().tracks.getChannel(channelId).hasActions = hasActions(channelId);
 	m_model.swap(model::SwapType::HARD);
 }
 
 void ActionRecorder::deleteAction(ID channelId, ID currId, ID nextId)
 {
 	m_model.get().actions.deleteAction(currId, nextId);
-	m_model.get().channels.get(channelId).hasActions = hasActions(channelId);
+	m_model.get().tracks.getChannel(channelId).hasActions = hasActions(channelId);
 	m_model.swap(model::SwapType::HARD);
 }
 
