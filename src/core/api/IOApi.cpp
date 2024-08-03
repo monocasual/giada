@@ -47,7 +47,7 @@ const model::MidiIn& IOApi::getModelMidiIn() const
 
 void IOApi::channel_enableMidiInput(ID channelId, bool v)
 {
-	m_model.get().channels.get(channelId).midiInput.enabled = v;
+	m_model.get().tracks.getChannel(channelId).midiInput.enabled = v;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
@@ -58,7 +58,7 @@ void IOApi::channel_enableMidiLightning(ID channelId, bool v)
 	/* Enabling MIDI lightning also enables MIDI input, because MIDI input is
 	needed for learning the lightning actions. */
 
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	ch.midiLightning.enabled = v;
 	if (v)
@@ -71,7 +71,7 @@ void IOApi::channel_enableMidiLightning(ID channelId, bool v)
 
 void IOApi::channel_enableMidiOutput(ID channelId, bool v)
 {
-	m_model.get().channels.get(channelId).midiChannel->outputEnabled = v;
+	m_model.get().tracks.getChannel(channelId).midiChannel->outputEnabled = v;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
@@ -79,7 +79,7 @@ void IOApi::channel_enableMidiOutput(ID channelId, bool v)
 
 void IOApi::channel_enableVelocityAsVol(ID channelId, bool v)
 {
-	m_model.get().channels.get(channelId).sampleChannel->velocityAsVol = v;
+	m_model.get().tracks.getChannel(channelId).sampleChannel->velocityAsVol = v;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
@@ -87,13 +87,13 @@ void IOApi::channel_enableVelocityAsVol(ID channelId, bool v)
 
 void IOApi::channel_setMidiInputFilter(ID channelId, int ch)
 {
-	m_model.get().channels.get(channelId).midiInput.filter = ch;
+	m_model.get().tracks.getChannel(channelId).midiInput.filter = ch;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
 void IOApi::channel_setMidiOutputFilter(ID channelId, int ch)
 {
-	m_model.get().channels.get(channelId).midiChannel->outputFilter = ch;
+	m_model.get().tracks.getChannel(channelId).midiChannel->outputFilter = ch;
 	m_model.swap(m::model::SwapType::NONE);
 }
 
@@ -101,7 +101,7 @@ void IOApi::channel_setMidiOutputFilter(ID channelId, int ch)
 
 bool IOApi::channel_setKey(ID channelId, int k)
 {
-	m_model.get().channels.get(channelId).key = k;
+	m_model.get().tracks.getChannel(channelId).key = k;
 	m_model.swap(m::model::SwapType::HARD);
 	return true;
 }
