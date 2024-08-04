@@ -307,6 +307,7 @@ constexpr auto PATCH_KEY_PLUGIN_PARAMS                = "params";
 constexpr auto PATCH_KEY_PLUGIN_STATE                 = "state";
 constexpr auto PATCH_KEY_PLUGIN_MIDI_IN_PARAMS        = "midi_in_params";
 constexpr auto PATCH_KEY_TRACK_WIDTH                  = "width";
+constexpr auto PATCH_KEY_TRACK_INTERNAL               = "internal";
 constexpr auto PATCH_KEY_TRACK_CHANNELS               = "channels";
 constexpr auto G_PATCH_KEY_ACTION_ID                  = "id";
 constexpr auto G_PATCH_KEY_ACTION_CHANNEL             = "channel";

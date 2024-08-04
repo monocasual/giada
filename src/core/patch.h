@@ -50,6 +50,7 @@ struct Patch
 	struct Track
 	{
 		int             width;
+		bool            internal;
 		std::vector<ID> channels;
 	};
 

@@ -113,8 +113,13 @@ void Document::store(Patch& patch) const
 	patch.quantize  = sequencer.quantize;
 	patch.metronome = sequencer.metronome;
 	patch.actions   = actionFactory::serializeActions(actions.getAll());
-	for (const Channel& c : channels.getAll())
-		patch.channels.push_back(channelFactory::serializeChannel(c));
+
+	for (const Track& track : tracks.getAll())
+	{
+		patch.tracks.push_back({track.width, track.isInternal(), track.getChannels().getAllIDs()});
+		for (const Channel& c : track.getChannels().getAll())
+			patch.channels.push_back(channelFactory::serializeChannel(c));
+	}
 }
 
 /* -------------------------------------------------------------------------- */

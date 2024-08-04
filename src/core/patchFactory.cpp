@@ -54,7 +54,8 @@ void readTracks_(Patch& patch, const nlohmann::json& j)
 	for (const auto& jtrack : j[PATCH_KEY_TRACKS])
 	{
 		Patch::Track track;
-		track.width = jtrack.value(PATCH_KEY_TRACK_WIDTH, G_DEFAULT_COLUMN_WIDTH);
+		track.width    = jtrack.value(PATCH_KEY_TRACK_WIDTH, G_DEFAULT_COLUMN_WIDTH);
+		track.internal = jtrack.value(PATCH_KEY_TRACK_INTERNAL, false);
 		if (jtrack.contains(PATCH_KEY_TRACK_CHANNELS))
 			for (const auto& jplugin : jtrack[PATCH_KEY_TRACK_CHANNELS])
 				track.channels.push_back(jplugin);
@@ -221,6 +222,7 @@ void writeTracks_(const Patch& patch, nlohmann::json& j)
 	{
 		nlohmann::json jcolumn;
 		jcolumn[PATCH_KEY_TRACK_WIDTH]    = track.width;
+		jcolumn[PATCH_KEY_TRACK_INTERNAL] = track.internal;
 		jcolumn[PATCH_KEY_TRACK_CHANNELS] = nlohmann::json::array();
 		for (ID channelId : track.channels)
 			jcolumn[PATCH_KEY_TRACK_CHANNELS].push_back(channelId);
