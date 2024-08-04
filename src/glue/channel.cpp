@@ -184,7 +184,7 @@ void loadChannel(ID channelId, const std::string& fname)
 void addChannel(int columnIndex, ChannelType type)
 {
 	const m::Channel& ch = g_engine->getChannelsApi().add(type, columnIndex);
-	g_ui->model.columns.addChannelToColumn(ch.id, columnIndex);
+	g_ui->model.tracks.addChannelToTrack(ch.id, columnIndex);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -205,7 +205,7 @@ void addAndLoadChannels(int columnIndex, const std::vector<std::string>& fnames)
 		if (res != G_RES_OK)
 			errors = true;
 		else
-			g_ui->model.columns.addChannelToColumn(ch.id, columnIndex);
+			g_ui->model.tracks.addChannelToTrack(ch.id, columnIndex);
 	}
 
 	if (errors)
@@ -220,7 +220,7 @@ void deleteChannel(ID channelId)
 		return;
 	g_ui->closeAllSubwindows();
 	g_engine->getChannelsApi().remove(channelId);
-	g_ui->model.columns.removeChannelFromColumn(channelId);
+	g_ui->model.tracks.removeChannelFromTrack(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -252,14 +252,14 @@ void setOverdubProtection(ID channelId, bool value)
 void cloneChannel(ID channelId, int columnIndex)
 {
 	const m::Channel& ch = g_engine->getChannelsApi().clone(channelId);
-	g_ui->model.columns.addChannelToColumn(ch.id, columnIndex);
+	g_ui->model.tracks.addChannelToTrack(ch.id, columnIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void moveChannel(ID channelId, int columnIndex, int newPosition)
 {
-	g_ui->model.columns.moveChannel(channelId, columnIndex, newPosition);
+	g_ui->model.tracks.moveChannel(channelId, columnIndex, newPosition);
 	g_ui->rebuild();
 }
 
@@ -267,7 +267,7 @@ void moveChannel(ID channelId, int columnIndex, int newPosition)
 
 void addColumn()
 {
-	g_ui->model.columns.addDefaultColumn();
+	g_ui->model.tracks.addDefaultTrack();
 	g_ui->rebuild();
 }
 
@@ -275,9 +275,9 @@ void addColumn()
 
 void deleteColumn(int index)
 {
-	if (g_ui->model.columns.getAll().size() == 1) // One column must stay
+	if (g_ui->model.tracks.getAll().size() == 1) // One column must stay
 		return;
-	g_ui->model.columns.removeColumn(index);
+	g_ui->model.tracks.removeTrack(index);
 	g_ui->rebuild();
 }
 
@@ -285,7 +285,7 @@ void deleteColumn(int index)
 
 void setColumnWidth(int index, int w)
 {
-	v::Model::Column& column = g_ui->model.columns.getColumnByIndex(index);
+	v::Model::Track& column = g_ui->model.tracks.getTrackByIndex(index);
 
 	column.width = w;
 	g_ui->rebuild();

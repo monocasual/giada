@@ -39,7 +39,7 @@ namespace giada::v
 {
 struct Model
 {
-	struct Column
+	struct Track
 	{
 		int getChannelIndex(ID) const;
 
@@ -48,22 +48,22 @@ struct Model
 		std::vector<ID> channels = {};
 	};
 
-	struct Columns
+	struct Tracks
 	{
-		const std::vector<Column>& getAll() const;
+		const std::vector<Track>& getAll() const;
 
-		Column& getColumnByIndex(int);
-		Column& getColumnByChannelId(ID);
-		void    addDefaultColumn();
-		void    addColumn(Column&&);
-		void    removeColumn(int columnIndex);
-		void    moveChannel(ID channelId, int columnIndex, int newPosition);
-		void    addChannelToColumn(ID channelId, int columnIndex, int position = -1);
-		void    removeChannelFromColumn(ID channelId);
-		void    clear();
+		Track& getTrackByIndex(int);
+		Track& getTrackByChannelId(ID);
+		void   addDefaultTrack();
+		void   addTrack(Track&&);
+		void   removeTrack(int trackIndex);
+		void   moveChannel(ID channelId, int trackIndex, int newPosition);
+		void   addChannelToTrack(ID channelId, int trackIndex, int position = -1);
+		void   removeChannelFromTrack(ID channelId);
+		void   clear();
 
 	private:
-		std::vector<Column> m_columns;
+		std::vector<Track> m_tracks;
 	};
 
 	Model();
@@ -120,7 +120,7 @@ struct Model
 
 	float uiScaling = G_DEFAULT_UI_SCALING;
 
-	Columns columns;
+	Tracks tracks;
 };
 } // namespace giada::v
 

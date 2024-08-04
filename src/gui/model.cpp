@@ -31,7 +31,7 @@
 
 namespace giada::v
 {
-int Model::Column::getChannelIndex(ID channelId) const
+int Model::Track::getChannelIndex(ID channelId) const
 {
 	return static_cast<int>(u::vector::indexOf(channels, channelId));
 }
@@ -40,79 +40,79 @@ int Model::Column::getChannelIndex(ID channelId) const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-const std::vector<Model::Column>& Model::Columns::getAll() const
+const std::vector<Model::Track>& Model::Tracks::getAll() const
 {
 
-	return m_columns;
+	return m_tracks;
 }
 
 /* -------------------------------------------------------------------------- */
 
-Model::Column& Model::Columns::getColumnByIndex(int index)
+Model::Track& Model::Tracks::getTrackByIndex(int index)
 {
 	assert(index < static_cast<int>(m_columns.size()));
 
-	return m_columns.at(index);
+	return m_tracks.at(index);
 }
 
 /* -------------------------------------------------------------------------- */
 
-Model::Column& Model::Columns::getColumnByChannelId(ID channelId)
+Model::Track& Model::Tracks::getTrackByChannelId(ID channelId)
 {
 	const auto p = [channelId](auto& col)
 	{
 		return u::vector::has(col.channels, [channelId](ID otherId)
-		    { return channelId == otherId; });
+		{ return channelId == otherId; });
 	};
-	return *u::vector::findIfSafe(m_columns, p);
+	return *u::vector::findIfSafe(m_tracks, p);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Model::Columns::addDefaultColumn()
+void Model::Tracks::addDefaultTrack()
 {
-	const int index = static_cast<int>(m_columns.size());
+	const int index = static_cast<int>(m_tracks.size());
 	const int width = G_DEFAULT_COLUMN_WIDTH;
 
-	addColumn({index, width});
+	addTrack({index, width});
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Model::Columns::addColumn(Column&& column)
+void Model::Tracks::addTrack(Track&& track)
 {
-	m_columns.push_back(std::move(column));
+	m_tracks.push_back(std::move(track));
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Model::Columns::removeColumn(int columnIndex)
+void Model::Tracks::removeTrack(int trackIndex)
 {
-	m_columns.erase(m_columns.begin() + columnIndex);
+	m_tracks.erase(m_tracks.begin() + trackIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
+void Model::Tracks::moveChannel(ID channelId, int trackIndex, int newPosition)
 {
-	const Column& column = getColumnByChannelId(channelId);
+	const Track& track = getTrackByChannelId(channelId);
 
-	if (column.index == columnIndex) // If in same column
+	if (track.index == trackIndex) // If in same track
 	{
-		const int oldPosition = column.getChannelIndex(channelId);
+		const int oldPosition = track.getChannelIndex(channelId);
 		if (newPosition >= oldPosition) // If moved below, readjust index
 			newPosition -= 1;
 	}
 
-	removeChannelFromColumn(channelId);
-	addChannelToColumn(channelId, columnIndex, newPosition);
+	removeChannelFromTrack(channelId);
+	addChannelToTrack(channelId, trackIndex, newPosition);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Model::Columns::addChannelToColumn(ID channelId, int columnIndex, int position)
+void Model::Tracks::addChannelToTrack(ID channelId, int trackIndex, int position)
 {
-	std::vector<ID>& channels = getColumnByIndex(columnIndex).channels;
+	std::vector<ID>& channels = getTrackByIndex(trackIndex).channels;
 	if (position == -1)
 		channels.push_back(channelId);
 	else
@@ -121,17 +121,17 @@ void Model::Columns::addChannelToColumn(ID channelId, int columnIndex, int posit
 
 /* -------------------------------------------------------------------------- */
 
-void Model::Columns::removeChannelFromColumn(ID channelId)
+void Model::Tracks::removeChannelFromTrack(ID channelId)
 {
-	for (Column& column : m_columns) // Brute force!
-		u::vector::remove(column.channels, channelId);
+	for (Track& track : m_tracks) // Brute force!
+		u::vector::remove(track.channels, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Model::Columns::clear()
+void Model::Tracks::clear()
 {
-	m_columns.clear();
+	m_tracks.clear();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -194,11 +194,11 @@ void Model::store(m::Patch& patch) const
 {
 	patch.name = projectName;
 
-	for (const Column& column : columns.getAll())
+	for (const Track& track : tracks.getAll())
 	{
 		m::Patch::Track ptrack;
-		ptrack.width = column.width;
-		for (ID channelId : column.channels)
+		ptrack.width = track.width;
+		for (ID channelId : track.channels)
 			ptrack.channels.push_back(channelId);
 		patch.tracks.push_back(ptrack);
 	}
@@ -251,13 +251,13 @@ void Model::load(const m::Conf& conf)
 
 void Model::load(const m::Patch& patch)
 {
-	columns.clear();
+	tracks.clear();
 	for (int i = 0; const m::Patch::Track& ptrack : patch.tracks)
 	{
-		Column column{.index = i++, .width = ptrack.width};
+		Track track{.index = i++, .width = ptrack.width};
 		for (ID channelId : ptrack.channels)
-			column.channels.push_back(channelId);
-		columns.addColumn(std::move(column));
+			track.channels.push_back(channelId);
+		tracks.addTrack(std::move(track));
 	}
 
 	projectName = patch.name;
@@ -267,15 +267,15 @@ void Model::load(const m::Patch& patch)
 
 void Model::reset()
 {
-	columns.clear();
+	tracks.clear();
 
-	/* Add 6 empty columns as initial layout. */
+	/* Add 6 empty tracks as initial layout. */
 
-	columns.addDefaultColumn();
-	columns.addDefaultColumn();
-	columns.addDefaultColumn();
-	columns.addDefaultColumn();
-	columns.addDefaultColumn();
-	columns.addDefaultColumn();
+	tracks.addDefaultTrack();
+	tracks.addDefaultTrack();
+	tracks.addDefaultTrack();
+	tracks.addDefaultTrack();
+	tracks.addDefaultTrack();
+	tracks.addDefaultTrack();
 }
 } // namespace giada::v
