@@ -180,7 +180,7 @@ void Document::store(Conf& conf) const
 void Document::debug() const
 {
 	mixer.debug();
-	channels.debug();
+	tracks.debug();
 	actions.debug();
 }
 #endif
