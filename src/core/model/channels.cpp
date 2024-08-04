@@ -90,6 +90,16 @@ const std::size_t Channels::getIndex(ID id) const
 
 /* -------------------------------------------------------------------------- */
 
+const std::vector<ID> Channels::getAllIDs() const
+{
+	std::vector<ID> out;
+	for (const Channel& ch : m_channels)
+		out.push_back(ch.id);
+	return out;
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool Channels::anyOf(std::function<bool(const Channel&)> f) const
 {
 	return std::any_of(m_channels.begin(), m_channels.end(), f);
