@@ -70,6 +70,7 @@ public:
 	Channel&       get(ID);
 	model::Tracks& getTracks();
 
+	void     addTrack();
 	Channel& add(ChannelType, std::size_t trackIndex);
 	int      loadSampleChannel(ID channelId, const std::string& filePath);
 	void     loadSampleChannel(ID channelId, Wave&);

@@ -267,8 +267,7 @@ void moveChannel(ID channelId, int columnIndex, int newPosition)
 
 void addColumn()
 {
-	g_ui->model.tracks.addDefaultTrack();
-	g_ui->rebuild();
+	g_engine->getChannelsApi().addTrack();
 }
 
 /* -------------------------------------------------------------------------- */
