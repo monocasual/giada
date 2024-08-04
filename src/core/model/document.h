@@ -82,7 +82,6 @@ struct Document
 	Sequencer   sequencer;
 	Mixer       mixer;
 	MidiIn      midiIn;
-	Channels    channels;
 	Tracks      tracks;
 	Actions     actions;
 	Behaviors   behaviors;
