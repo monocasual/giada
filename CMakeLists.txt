@@ -37,11 +37,11 @@ list(APPEND SOURCES
 	src/core/engine.cpp
 	src/core/rendering/renderer.cpp
 	src/core/rendering/reactor.cpp
-    src/core/rendering/sampleReactions.cpp
-    src/core/rendering/sampleRendering.cpp
-    src/core/rendering/sampleAdvance.cpp
-    src/core/rendering/midiReactions.cpp
-    src/core/rendering/midiAdvance.cpp
+	src/core/rendering/sampleReactions.cpp
+	src/core/rendering/sampleRendering.cpp
+	src/core/rendering/sampleAdvance.cpp
+	src/core/rendering/midiReactions.cpp
+	src/core/rendering/midiAdvance.cpp
 	src/core/rendering/midiOutput.cpp
 	src/core/rendering/pluginRendering.cpp
 	src/core/api/mainApi.cpp
@@ -148,7 +148,7 @@ list(APPEND SOURCES
 	src/gui/dialogs/midiIO/midiInputMaster.cpp
 	src/gui/elems/midiIO/midiLearner.cpp
 	src/gui/elems/midiIO/midiLearnerPack.cpp
-    src/gui/elems/fileBrowser.cpp
+	src/gui/elems/fileBrowser.cpp
 	src/gui/elems/soundMeter.cpp
 	src/gui/elems/keyBinder.cpp
 	src/gui/elems/plugin/pluginBrowser.cpp
@@ -156,7 +156,7 @@ list(APPEND SOURCES
 	src/gui/elems/plugin/pluginElement.cpp
 	src/gui/elems/sampleEditor/waveform.cpp
 	src/gui/elems/sampleEditor/waveTools.cpp
-    src/gui/elems/volumeTool.cpp
+	src/gui/elems/volumeTool.cpp
 	src/gui/elems/panTool.cpp
 	src/gui/elems/midiActivity.cpp
 	src/gui/elems/sampleEditor/pitchTool.cpp
@@ -183,7 +183,7 @@ list(APPEND SOURCES
 	src/gui/elems/mainWindow/sequencer.cpp
 	src/gui/elems/mainWindow/keyboard/sampleChannelMode.cpp
 	src/gui/elems/mainWindow/keyboard/channelButton.cpp
-        src/gui/elems/mainWindow/keyboard/channelProgress.cpp
+	src/gui/elems/mainWindow/keyboard/channelProgress.cpp
 	src/gui/elems/mainWindow/keyboard/keyboard.cpp
 	src/gui/elems/mainWindow/keyboard/column.cpp
 	src/gui/elems/mainWindow/keyboard/sampleChannel.cpp
@@ -217,7 +217,7 @@ list(APPEND SOURCES
 	src/gui/elems/basics/check.cpp
 	src/gui/elems/basics/browser.cpp
 	src/gui/elems/basics/flex.cpp
-        src/gui/elems/basics/flexResizable.cpp
+	src/gui/elems/basics/flexResizable.cpp
 	src/gui/elems/basics/tabs.cpp
 	src/gui/elems/basics/menu.cpp
 	src/gui/elems/basics/scrollbar.cpp
