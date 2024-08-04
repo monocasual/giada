@@ -55,6 +55,7 @@ public:
 	std::vector<Channel>& getAll();
 	std::vector<Channel*> getIf(std::function<bool(const Channel&)> f);
 	void                  add(Channel&&);
+	void                  add(Channel&&, std::size_t position);
 	void                  remove(ID);
 
 private:

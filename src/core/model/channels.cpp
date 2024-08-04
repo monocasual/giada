@@ -143,4 +143,11 @@ void Channels::add(Channel&& ch)
 {
 	m_channels.push_back(std::move(ch));
 }
+
+/* -------------------------------------------------------------------------- */
+
+void Channels::add(Channel&& ch, std::size_t position)
+{
+	m_channels.insert(m_channels.begin() + std::min(position, m_channels.size()), std::move(ch));
+}
 } // namespace giada::m::model
