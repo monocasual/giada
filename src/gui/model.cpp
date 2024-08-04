@@ -31,120 +31,6 @@
 
 namespace giada::v
 {
-int Model::Track::getChannelIndex(ID channelId) const
-{
-	return static_cast<int>(u::vector::indexOf(channels, channelId));
-}
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-const std::vector<Model::Track>& Model::Tracks::getAll() const
-{
-
-	return m_tracks;
-}
-
-/* -------------------------------------------------------------------------- */
-
-Model::Track& Model::Tracks::getTrackByIndex(int index)
-{
-	assert(index < static_cast<int>(m_columns.size()));
-
-	return m_tracks.at(index);
-}
-
-/* -------------------------------------------------------------------------- */
-
-Model::Track& Model::Tracks::getTrackByChannelId(ID channelId)
-{
-	const auto p = [channelId](auto& col)
-	{
-		return u::vector::has(col.channels, [channelId](ID otherId)
-		{ return channelId == otherId; });
-	};
-	return *u::vector::findIfSafe(m_tracks, p);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Tracks::addDefaultTrack()
-{
-	const int index = static_cast<int>(m_tracks.size());
-	const int width = G_DEFAULT_COLUMN_WIDTH;
-
-	addTrack({index, width});
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Tracks::addTrack(Track&& track)
-{
-	m_tracks.push_back(std::move(track));
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Tracks::removeTrack(int trackIndex)
-{
-	m_tracks.erase(m_tracks.begin() + trackIndex);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Tracks::moveChannel(ID channelId, int trackIndex, int newPosition)
-{
-	const Track& track = getTrackByChannelId(channelId);
-
-	if (track.index == trackIndex) // If in same track
-	{
-		const int oldPosition = track.getChannelIndex(channelId);
-		if (newPosition >= oldPosition) // If moved below, readjust index
-			newPosition -= 1;
-	}
-
-	removeChannelFromTrack(channelId);
-	addChannelToTrack(channelId, trackIndex, newPosition);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Tracks::addChannelToTrack(ID channelId, int trackIndex, int position)
-{
-	std::vector<ID>& channels = getTrackByIndex(trackIndex).channels;
-	if (position == -1)
-		channels.push_back(channelId);
-	else
-		channels.insert(channels.begin() + position, channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Tracks::removeChannelFromTrack(ID channelId)
-{
-	for (Track& track : m_tracks) // Brute force!
-		u::vector::remove(track.channels, channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Tracks::clear()
-{
-	m_tracks.clear();
-}
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-Model::Model()
-{
-	reset();
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Model::store(m::Conf& conf) const
 {
 	conf.logMode      = logMode;
@@ -193,15 +79,6 @@ void Model::store(m::Conf& conf) const
 void Model::store(m::Patch& patch) const
 {
 	patch.name = projectName;
-
-	for (const Track& track : tracks.getAll())
-	{
-		m::Patch::Track ptrack;
-		ptrack.width = track.width;
-		for (ID channelId : track.channels)
-			ptrack.channels.push_back(channelId);
-		patch.tracks.push_back(ptrack);
-	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -251,31 +128,6 @@ void Model::load(const m::Conf& conf)
 
 void Model::load(const m::Patch& patch)
 {
-	tracks.clear();
-	for (int i = 0; const m::Patch::Track& ptrack : patch.tracks)
-	{
-		Track track{.index = i++, .width = ptrack.width};
-		for (ID channelId : ptrack.channels)
-			track.channels.push_back(channelId);
-		tracks.addTrack(std::move(track));
-	}
-
 	projectName = patch.name;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::reset()
-{
-	tracks.clear();
-
-	/* Add 6 empty tracks as initial layout. */
-
-	tracks.addDefaultTrack();
-	tracks.addDefaultTrack();
-	tracks.addDefaultTrack();
-	tracks.addDefaultTrack();
-	tracks.addDefaultTrack();
-	tracks.addDefaultTrack();
 }
 } // namespace giada::v

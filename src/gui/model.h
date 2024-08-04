@@ -39,46 +39,11 @@ namespace giada::v
 {
 struct Model
 {
-	struct Track
-	{
-		int getChannelIndex(ID) const;
-
-		int             index;
-		int             width;
-		std::vector<ID> channels = {};
-	};
-
-	struct Tracks
-	{
-		const std::vector<Track>& getAll() const;
-
-		Track& getTrackByIndex(int);
-		Track& getTrackByChannelId(ID);
-		void   addDefaultTrack();
-		void   addTrack(Track&&);
-		void   removeTrack(int trackIndex);
-		void   moveChannel(ID channelId, int trackIndex, int newPosition);
-		void   addChannelToTrack(ID channelId, int trackIndex, int position = -1);
-		void   removeChannelFromTrack(ID channelId);
-		void   clear();
-
-	private:
-		std::vector<Track> m_tracks;
-	};
-
-	Model();
-
 	void store(m::Conf&) const;
 	void store(m::Patch&) const;
 
 	void load(const m::Conf&);
 	void load(const m::Patch&);
-
-	/* reset
-	Resets the Model to the latest state loaded from m::Conf. Call this when you
-	load a new patch and you want to reset the column layout. */
-
-	void reset();
 
 	int         logMode      = LOG_MODE_MUTE;
 	bool        showTooltips = true;
@@ -119,8 +84,6 @@ struct Model
 	int keyBindExit          = FL_Escape;
 
 	float uiScaling = G_DEFAULT_UI_SCALING;
-
-	Tracks tracks;
 };
 } // namespace giada::v
 
