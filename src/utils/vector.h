@@ -60,6 +60,15 @@ auto findIfSafe(T& v, F&& func)
 	return it;
 }
 
+template <typename T>
+auto findIfSafe(T& v, ID id)
+{
+	auto it = findIf(v, [id](const T::value_type& t)
+	{ return t.id == id; });
+	assert(it != std::end(v));
+	return it;
+}
+
 /* -------------------------------------------------------------------------- */
 
 template <typename T, typename F>
