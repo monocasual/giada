@@ -29,21 +29,29 @@
 #include "core/channels/channelFactory.h"
 #include "core/conf.h"
 #include "core/model/shared.h"
+#include "utils/vector.h"
 
 namespace giada::m::model
 {
 void Document::load(const Patch& patch, Shared& shared, float sampleRateRatio)
 {
-	channels = {};
-	for (const Patch::Channel& pchannel : patch.channels)
-	{
-		Wave*                wave          = shared.findWave(pchannel.waveId);
-		std::vector<Plugin*> plugins       = shared.findPlugins(pchannel.pluginIds);
-		ChannelShared*       channelShared = shared.findChannel(pchannel.id);
-		assert(channelShared != nullptr);
+	tracks = {};
 
-		Channel channel = channelFactory::deserializeChannel(pchannel, *channelShared, sampleRateRatio, wave, plugins);
-		channels.add(std::move(channel));
+	for (const Patch::Track& ptrack : patch.tracks)
+	{
+		Track& track = tracks.add(ptrack.width, ptrack.internal);
+
+		for (const ID channelId : ptrack.channels)
+		{
+			const Patch::Channel& pchannel      = *u::vector::findIfSafe(patch.channels, channelId);
+			Wave*                 wave          = shared.findWave(pchannel.waveId);
+			std::vector<Plugin*>  plugins       = shared.findPlugins(pchannel.pluginIds);
+			ChannelShared*        channelShared = shared.findChannel(pchannel.id);
+			assert(channelShared != nullptr);
+
+			Channel channel = channelFactory::deserializeChannel(pchannel, *channelShared, sampleRateRatio, wave, plugins);
+			track.addChannel(std::move(channel));
+		}
 	}
 
 	actions.set(actionFactory::deserializeActions(patch.actions));
