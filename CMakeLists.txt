@@ -34,200 +34,395 @@ project(giada LANGUAGES CXX)
 list(APPEND SOURCES
 	src/main.cpp
 	src/mapper.cpp
+	src/mapper.h
 	src/core/engine.cpp
+	src/core/engine.h
 	src/core/rendering/renderer.cpp
+	src/core/rendering/renderer.h
 	src/core/rendering/reactor.cpp
+	src/core/rendering/reactor.h
 	src/core/rendering/sampleReactions.cpp
+	src/core/rendering/sampleReactions.h
 	src/core/rendering/sampleRendering.cpp
+	src/core/rendering/sampleRendering.h
 	src/core/rendering/sampleAdvance.cpp
+	src/core/rendering/sampleAdvance.h
 	src/core/rendering/midiReactions.cpp
+	src/core/rendering/midiReactions.h
 	src/core/rendering/midiAdvance.cpp
+	src/core/rendering/midiAdvance.h
 	src/core/rendering/midiOutput.cpp
+	src/core/rendering/midiOutput.h
 	src/core/rendering/pluginRendering.cpp
+	src/core/rendering/pluginRendering.h
 	src/core/api/mainApi.cpp
+	src/core/api/mainApi.h
 	src/core/api/channelsApi.cpp
+	src/core/api/channelsApi.h
 	src/core/api/sampleEditorApi.cpp
+	src/core/api/sampleEditorApi.h
 	src/core/api/actionEditorApi.cpp
+	src/core/api/actionEditorApi.h
 	src/core/api/pluginsApi.cpp
+	src/core/api/pluginsApi.h
 	src/core/api/storageApi.cpp
+	src/core/api/storageApi.h
 	src/core/api/IOApi.cpp
+	src/core/api/IOApi.h
 	src/core/api/configApi.cpp
+	src/core/api/configApi.h
 	src/core/worker.cpp
+	src/core/worker.h
 	src/core/eventDispatcher.cpp
+	src/core/eventDispatcher.h
 	src/core/midiDispatcher.cpp
+	src/core/midiDispatcher.h
 	src/core/midiMapper.cpp
+	src/core/midiMapper.h
 	src/core/midiEvent.cpp
+	src/core/midiEvent.h
 	src/core/quantizer.cpp
+	src/core/quantizer.h
 	src/core/confFactory.cpp
+	src/core/confFactory.h
 	src/core/patchFactory.cpp
+	src/core/patchFactory.h
 	src/core/kernelAudio.cpp
+	src/core/kernelAudio.h
 	src/core/jackTransport.cpp
+	src/core/jackTransport.h
 	src/core/sequencer.cpp
+	src/core/sequencer.h
 	src/core/metronome.cpp
+	src/core/metronome.h
 	src/core/init.cpp
+	src/core/init.h
 	src/core/wave.cpp
+	src/core/wave.h
 	src/core/waveFx.cpp
+	src/core/waveFx.h
 	src/core/kernelMidi.cpp
+	src/core/kernelMidi.h
 	src/core/patch.cpp
+	src/core/patch.h
 	src/core/actions/actionFactory.cpp
+	src/core/actions/actionFactory.h
 	src/core/actions/actionRecorder.cpp
+	src/core/actions/actionRecorder.h
 	src/core/mixer.cpp
+	src/core/mixer.h
 	src/core/jackSynchronizer.cpp
+	src/core/jackSynchronizer.h
 	src/core/midiSynchronizer.cpp
+	src/core/midiSynchronizer.h
 	src/core/waveFactory.cpp
+	src/core/waveFactory.h
 	src/core/recorder.cpp
+	src/core/recorder.h
 	src/core/midiLearnParam.cpp
+	src/core/midiLearnParam.h
 	src/core/resampler.cpp
+	src/core/resampler.h
 	src/core/plugins/pluginHost.cpp
+	src/core/plugins/pluginHost.h
 	src/core/plugins/pluginManager.cpp
+	src/core/plugins/pluginManager.h
 	src/core/plugins/plugin.cpp
+	src/core/plugins/plugin.h
 	src/core/plugins/pluginState.cpp
+	src/core/plugins/pluginState.h
 	src/core/plugins/pluginFactory.cpp
+	src/core/plugins/pluginFactory.h
 	src/core/channels/channelManager.cpp
+	src/core/channels/channelManager.h
 	src/core/channels/midiLightning.cpp
+	src/core/channels/midiLightning.h
 	src/core/channels/midiInput.cpp
+	src/core/channels/midiInput.h
 	src/core/channels/channel.cpp
+	src/core/channels/channel.h
 	src/core/channels/sampleChannel.cpp
+	src/core/channels/sampleChannel.h
 	src/core/channels/midiChannel.cpp
+	src/core/channels/midiChannel.h
 	src/core/channels/channelShared.cpp
+	src/core/channels/channelShared.h
 	src/core/channels/channelFactory.cpp
+	src/core/channels/channelFactory.h
 	src/core/model/document.cpp
+	src/core/model/document.h
 	src/core/model/loadState.cpp
+	src/core/model/loadState.h
 	src/core/model/sharedLock.cpp
+	src/core/model/sharedLock.h
 	src/core/model/shared.cpp
+	src/core/model/shared.h
 	src/core/model/sequencer.cpp
+	src/core/model/sequencer.h
 	src/core/model/mixer.cpp
+	src/core/model/mixer.h
 	src/core/model/model.cpp
+	src/core/model/model.h
 	src/core/model/channels.cpp
+	src/core/model/channels.h
 	src/core/model/actions.cpp
+	src/core/model/actions.h
 	src/core/idManager.cpp
+	src/core/idManager.h
 	src/glue/main.cpp
+	src/glue/main.h
 	src/glue/io.cpp
+	src/glue/io.h
 	src/glue/storage.cpp
+	src/glue/storage.h
 	src/glue/channel.cpp
+	src/glue/channel.h
 	src/glue/plugin.cpp
+	src/glue/plugin.h
 	src/glue/sampleEditor.cpp
+	src/glue/sampleEditor.h
 	src/glue/actionEditor.cpp
+	src/glue/actionEditor.h
 	src/glue/config.cpp
+	src/glue/config.h
 	src/glue/layout.cpp
+	src/glue/layout.h
 	src/gui/ui.cpp
+	src/gui/ui.h
 	src/gui/model.cpp
+	src/gui/model.h
 	src/gui/dialogs/window.cpp
+	src/gui/dialogs/window.h
 	src/gui/dispatcher.cpp
+	src/gui/dispatcher.h
 	src/gui/updater.cpp
+	src/gui/updater.h
 	src/gui/langMapper.cpp
+	src/gui/langMapper.h
 	src/gui/drawing.cpp
+	src/gui/drawing.h
 	src/gui/dialogs/progress.cpp
+	src/gui/dialogs/progress.h
 	src/gui/dialogs/keyGrabber.cpp
+	src/gui/dialogs/keyGrabber.h
 	src/gui/dialogs/about.cpp
+	src/gui/dialogs/about.h
 	src/gui/dialogs/mainWindow.cpp
+	src/gui/dialogs/mainWindow.h
 	src/gui/dialogs/beatsInput.cpp
+	src/gui/dialogs/beatsInput.h
 	src/gui/dialogs/warnings.cpp
+	src/gui/dialogs/warnings.h
 	src/gui/dialogs/bpmInput.cpp
+	src/gui/dialogs/bpmInput.h
 	src/gui/dialogs/channelNameInput.cpp
+	src/gui/dialogs/channelNameInput.h
 	src/gui/dialogs/channelRouting.cpp
+	src/gui/dialogs/channelRouting.h
 	src/gui/dialogs/config.cpp
+	src/gui/dialogs/config.h
 	src/gui/dialogs/pluginList.cpp
+	src/gui/dialogs/pluginList.h
 	src/gui/dialogs/pluginWindow.cpp
+	src/gui/dialogs/pluginWindow.h
 	src/gui/dialogs/sampleEditor.cpp
+	src/gui/dialogs/sampleEditor.h
 	src/gui/dialogs/pluginWindowGUI.cpp
+	src/gui/dialogs/pluginWindowGUI.h
 	src/gui/dialogs/pluginChooser.cpp
+	src/gui/dialogs/pluginChooser.h
 	src/gui/dialogs/missingAssets.cpp
+	src/gui/dialogs/missingAssets.h
 	src/gui/dialogs/actionEditor/baseActionEditor.cpp
+	src/gui/dialogs/actionEditor/baseActionEditor.h
 	src/gui/dialogs/actionEditor/sampleActionEditor.cpp
+	src/gui/dialogs/actionEditor/sampleActionEditor.h
 	src/gui/dialogs/actionEditor/midiActionEditor.cpp
+	src/gui/dialogs/actionEditor/midiActionEditor.h
 	src/gui/dialogs/browser/browserBase.cpp
+	src/gui/dialogs/browser/browserBase.h
 	src/gui/dialogs/browser/browserDir.cpp
+	src/gui/dialogs/browser/browserDir.h
 	src/gui/dialogs/browser/browserLoad.cpp
+	src/gui/dialogs/browser/browserLoad.h
 	src/gui/dialogs/browser/browserSave.cpp
+	src/gui/dialogs/browser/browserSave.h
 	src/gui/dialogs/midiIO/midiOutputBase.cpp
+	src/gui/dialogs/midiIO/midiOutputBase.h
 	src/gui/dialogs/midiIO/midiOutputSampleCh.cpp
+	src/gui/dialogs/midiIO/midiOutputSampleCh.h
 	src/gui/dialogs/midiIO/midiOutputMidiCh.cpp
+	src/gui/dialogs/midiIO/midiOutputMidiCh.h
 	src/gui/dialogs/midiIO/midiInputBase.cpp
+	src/gui/dialogs/midiIO/midiInputBase.h
 	src/gui/dialogs/midiIO/midiInputChannel.cpp
+	src/gui/dialogs/midiIO/midiInputChannel.h
 	src/gui/dialogs/midiIO/midiInputMaster.cpp
+	src/gui/dialogs/midiIO/midiInputMaster.h
 	src/gui/elems/midiIO/midiLearner.cpp
+	src/gui/elems/midiIO/midiLearner.h
 	src/gui/elems/midiIO/midiLearnerPack.cpp
+	src/gui/elems/midiIO/midiLearnerPack.h
 	src/gui/elems/fileBrowser.cpp
+	src/gui/elems/fileBrowser.h
 	src/gui/elems/soundMeter.cpp
+	src/gui/elems/soundMeter.h
 	src/gui/elems/keyBinder.cpp
+	src/gui/elems/keyBinder.h
 	src/gui/elems/plugin/pluginBrowser.cpp
+	src/gui/elems/plugin/pluginBrowser.h
 	src/gui/elems/plugin/pluginParameter.cpp
+	src/gui/elems/plugin/pluginParameter.h
 	src/gui/elems/plugin/pluginElement.cpp
+	src/gui/elems/plugin/pluginElement.h
 	src/gui/elems/sampleEditor/waveform.cpp
+	src/gui/elems/sampleEditor/waveform.h
 	src/gui/elems/sampleEditor/waveTools.cpp
+	src/gui/elems/sampleEditor/waveTools.h
 	src/gui/elems/volumeTool.cpp
+	src/gui/elems/volumeTool.h
 	src/gui/elems/panTool.cpp
+	src/gui/elems/panTool.h
 	src/gui/elems/midiActivity.cpp
+	src/gui/elems/midiActivity.h
 	src/gui/elems/sampleEditor/pitchTool.cpp
+	src/gui/elems/sampleEditor/pitchTool.h
 	src/gui/elems/sampleEditor/rangeTool.cpp
+	src/gui/elems/sampleEditor/rangeTool.h
 	src/gui/elems/sampleEditor/shiftTool.cpp
+	src/gui/elems/sampleEditor/shiftTool.h
 	src/gui/elems/actionEditor/baseActionEditor.cpp
+	src/gui/elems/actionEditor/baseActionEditor.h
 	src/gui/elems/actionEditor/baseAction.cpp
+	src/gui/elems/actionEditor/baseAction.h
 	src/gui/elems/actionEditor/envelopeEditor.cpp
+	src/gui/elems/actionEditor/envelopeEditor.h
 	src/gui/elems/actionEditor/velocityEditor.cpp
+	src/gui/elems/actionEditor/velocityEditor.h
 	src/gui/elems/actionEditor/envelopePoint.cpp
+	src/gui/elems/actionEditor/envelopePoint.h
 	src/gui/elems/actionEditor/pianoRoll.cpp
+	src/gui/elems/actionEditor/pianoRoll.h
 	src/gui/elems/actionEditor/pianoItem.cpp
+	src/gui/elems/actionEditor/pianoItem.h
 	src/gui/elems/actionEditor/sampleActionEditor.cpp
+	src/gui/elems/actionEditor/sampleActionEditor.h
 	src/gui/elems/actionEditor/sampleAction.cpp
+	src/gui/elems/actionEditor/sampleAction.h
 	src/gui/elems/actionEditor/gridTool.cpp
+	src/gui/elems/actionEditor/gridTool.h
 	src/gui/elems/actionEditor/splitScroll.cpp
+	src/gui/elems/actionEditor/splitScroll.h
 	src/gui/elems/actionEditor/legend.cpp
+	src/gui/elems/actionEditor/legend.h
 	src/gui/elems/actionEditor/pianoRollLegend.cpp
+	src/gui/elems/actionEditor/pianoRollLegend.h
 	src/gui/elems/mainWindow/mainInput.cpp
+	src/gui/elems/mainWindow/mainInput.h
 	src/gui/elems/mainWindow/mainOutput.cpp
+	src/gui/elems/mainWindow/mainOutput.h
 	src/gui/elems/mainWindow/mainMenu.cpp
+	src/gui/elems/mainWindow/mainMenu.h
 	src/gui/elems/mainWindow/mainTimer.cpp
+	src/gui/elems/mainWindow/mainTimer.h
 	src/gui/elems/mainWindow/mainTransport.cpp
+	src/gui/elems/mainWindow/mainTransport.h
 	src/gui/elems/mainWindow/sequencer.cpp
+	src/gui/elems/mainWindow/sequencer.h
 	src/gui/elems/mainWindow/keyboard/sampleChannelMode.cpp
+	src/gui/elems/mainWindow/keyboard/sampleChannelMode.h
 	src/gui/elems/mainWindow/keyboard/channelButton.cpp
+	src/gui/elems/mainWindow/keyboard/channelButton.h
 	src/gui/elems/mainWindow/keyboard/channelProgress.cpp
+	src/gui/elems/mainWindow/keyboard/channelProgress.h
 	src/gui/elems/mainWindow/keyboard/keyboard.cpp
+	src/gui/elems/mainWindow/keyboard/keyboard.h
 	src/gui/elems/mainWindow/keyboard/column.cpp
+	src/gui/elems/mainWindow/keyboard/column.h
 	src/gui/elems/mainWindow/keyboard/sampleChannel.cpp
+	src/gui/elems/mainWindow/keyboard/sampleChannel.h
 	src/gui/elems/mainWindow/keyboard/midiChannel.cpp
+	src/gui/elems/mainWindow/keyboard/midiChannel.h
 	src/gui/elems/mainWindow/keyboard/channel.cpp
+	src/gui/elems/mainWindow/keyboard/channel.h
 	src/gui/elems/mainWindow/keyboard/sampleChannelButton.cpp
+	src/gui/elems/mainWindow/keyboard/sampleChannelButton.h
 	src/gui/elems/mainWindow/keyboard/midiChannelButton.cpp
+	src/gui/elems/mainWindow/keyboard/midiChannelButton.h
 	src/gui/elems/config/tabMisc.cpp
+	src/gui/elems/config/tabMisc.h
 	src/gui/elems/config/tabMidi.cpp
+	src/gui/elems/config/tabMidi.h
 	src/gui/elems/config/tabAudio.cpp
+	src/gui/elems/config/tabAudio.h
 	src/gui/elems/config/tabBehaviors.cpp
+	src/gui/elems/config/tabBehaviors.h
 	src/gui/elems/config/tabPlugins.cpp
+	src/gui/elems/config/tabPlugins.h
 	src/gui/elems/config/tabBindings.cpp
+	src/gui/elems/config/tabBindings.h
 	src/gui/elems/config/stringMenu.cpp
+	src/gui/elems/config/stringMenu.h
 	src/gui/elems/basics/button.cpp
+	src/gui/elems/basics/button.h
 	src/gui/elems/basics/imageButton.cpp
+	src/gui/elems/basics/imageButton.h
 	src/gui/elems/basics/textButton.cpp
+	src/gui/elems/basics/textButton.h
 	src/gui/elems/basics/scroll.cpp
+	src/gui/elems/basics/scroll.h
 	src/gui/elems/basics/pack.cpp
+	src/gui/elems/basics/pack.h
 	src/gui/elems/basics/group.cpp
+	src/gui/elems/basics/group.h
 	src/gui/elems/basics/scrollPack.cpp
+	src/gui/elems/basics/scrollPack.h
 	src/gui/elems/basics/boxtypes.cpp
+	src/gui/elems/basics/boxtypes.h
 	src/gui/elems/basics/resizerBar.cpp
+	src/gui/elems/basics/resizerBar.h
 	src/gui/elems/basics/input.cpp
+	src/gui/elems/basics/input.h
 	src/gui/elems/basics/liquidScroll.cpp
+	src/gui/elems/basics/liquidScroll.h
 	src/gui/elems/basics/choice.cpp
+	src/gui/elems/basics/choice.h
 	src/gui/elems/basics/dial.cpp
+	src/gui/elems/basics/dial.h
 	src/gui/elems/basics/box.cpp
+	src/gui/elems/basics/box.h
 	src/gui/elems/basics/slider.cpp
+	src/gui/elems/basics/slider.h
 	src/gui/elems/basics/progress.cpp
+	src/gui/elems/basics/progress.h
 	src/gui/elems/basics/check.cpp
+	src/gui/elems/basics/check.h
 	src/gui/elems/basics/browser.cpp
+	src/gui/elems/basics/browser.h
 	src/gui/elems/basics/flex.cpp
+	src/gui/elems/basics/flex.h
 	src/gui/elems/basics/flexResizable.cpp
+	src/gui/elems/basics/flexResizable.h
 	src/gui/elems/basics/tabs.cpp
+	src/gui/elems/basics/tabs.h
 	src/gui/elems/basics/menu.cpp
+	src/gui/elems/basics/menu.h
 	src/gui/elems/basics/scrollbar.cpp
+	src/gui/elems/basics/scrollbar.h
 	src/utils/log.cpp
+	src/utils/log.h
 	src/utils/time.cpp
+	src/utils/time.h
 	src/utils/math.cpp
+	src/utils/math.h
 	src/utils/gui.cpp
+	src/utils/gui.h
 	src/utils/fs.cpp
+	src/utils/fs.h
 	src/utils/ver.cpp
+	src/utils/ver.h
 	src/utils/string.cpp
+	src/utils/string.h
 	src/deps/rtaudio/RtAudio.cpp
 	src/deps/mcl-audio-buffer/src/audioBuffer.cpp)
 
