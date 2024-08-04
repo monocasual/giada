@@ -260,6 +260,16 @@ void ChannelManager::freeAllSampleChannels()
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelManager::moveChannel(ID channelId, std::size_t newTrackIndex, std::size_t newPosition)
+{
+	Channel ch = m_model.get().tracks.getChannel(channelId); // Make copy
+	m_model.get().tracks.removeChannel(channelId);
+	m_model.get().tracks.addChannel(std::move(ch), newTrackIndex, newPosition);
+	m_model.swap(model::SwapType::HARD);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelManager::deleteChannel(ID channelId)
 {
 	const Channel& ch   = m_model.get().tracks.getChannel(channelId);

@@ -134,6 +134,7 @@ public:
 	void freeSampleChannel(ID channelId);
 	void freeAllSampleChannels();
 
+	void moveChannel(ID, std::size_t newTrackIndex, std::size_t newPosition);
 	void deleteChannel(ID channelId);
 	void renameChannel(ID channelId, const std::string& name);
 

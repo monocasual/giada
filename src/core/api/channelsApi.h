@@ -73,6 +73,7 @@ public:
 	void     addTrack();
 	void     removeTrack(std::size_t trackIndex);
 	Channel& add(ChannelType, std::size_t trackIndex);
+	void     move(ID, std::size_t newTrackIndex, std::size_t newPosition);
 	int      loadSampleChannel(ID channelId, const std::string& filePath);
 	void     loadSampleChannel(ID channelId, Wave&);
 	void     remove(ID);

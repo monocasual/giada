@@ -254,8 +254,7 @@ void cloneChannel(ID channelId, int columnIndex)
 
 void moveChannel(ID channelId, int columnIndex, int newPosition)
 {
-	g_ui->model.tracks.moveChannel(channelId, columnIndex, newPosition);
-	g_ui->rebuild();
+	g_engine->getChannelsApi().move(channelId, columnIndex, newPosition);
 }
 
 /* -------------------------------------------------------------------------- */

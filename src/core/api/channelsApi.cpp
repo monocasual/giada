@@ -99,6 +99,15 @@ Channel& ChannelsApi::add(ChannelType type, std::size_t trackIndex)
 	return m_channelManager.addChannel(type, trackIndex, bufferSize);
 }
 
+/* -------------------------------------------------------------------------- */
+
+void ChannelsApi::move(ID channelId, std::size_t newTrackIndex, std::size_t newPosition)
+{
+	m_channelManager.moveChannel(channelId, newTrackIndex, newPosition);
+}
+
+/* -------------------------------------------------------------------------- */
+
 int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)
 {
 	const int                sampleRate  = m_kernelAudio.getSampleRate();
