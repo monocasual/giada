@@ -196,11 +196,11 @@ void Model::store(m::Patch& patch) const
 
 	for (const Column& column : columns.getAll())
 	{
-		m::Patch::Column pcolumn;
-		pcolumn.width = column.width;
+		m::Patch::Track ptrack;
+		ptrack.width = column.width;
 		for (ID channelId : column.channels)
-			pcolumn.channels.push_back(channelId);
-		patch.columns.push_back(pcolumn);
+			ptrack.channels.push_back(channelId);
+		patch.tracks.push_back(ptrack);
 	}
 }
 
@@ -252,10 +252,10 @@ void Model::load(const m::Conf& conf)
 void Model::load(const m::Patch& patch)
 {
 	columns.clear();
-	for (int i = 0; const m::Patch::Column& pcolumn : patch.columns)
+	for (int i = 0; const m::Patch::Track& ptrack : patch.tracks)
 	{
-		Column column{.index = i++, .width = pcolumn.width};
-		for (ID channelId : pcolumn.channels)
+		Column column{.index = i++, .width = ptrack.width};
+		for (ID channelId : ptrack.channels)
 			column.channels.push_back(channelId);
 		columns.addColumn(std::move(column));
 	}
