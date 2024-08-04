@@ -86,6 +86,13 @@ void ChannelsApi::addTrack()
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelsApi::removeTrack(std::size_t trackIndex)
+{
+	m_channelManager.removeTrack(trackIndex);
+}
+
+/* -------------------------------------------------------------------------- */
+
 Channel& ChannelsApi::add(ChannelType type, std::size_t trackIndex)
 {
 	const int bufferSize = m_kernelAudio.getBufferSize();

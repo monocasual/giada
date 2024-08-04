@@ -124,6 +124,19 @@ void ChannelManager::addTrack(Frame bufferSize)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelManager::removeTrack(std::size_t trackIndex)
+{
+	assert(m_model.get().tracks.get(trackIndex).getAll().size() == 1); // Only one Channel Group
+
+	const ID groupChannelId = m_model.get().tracks.get(trackIndex).getGroupChannel().id;
+
+	m_model.get().tracks.removeChannel(groupChannelId);
+	m_model.get().tracks.remove(trackIndex);
+	m_model.swap(model::SwapType::HARD);
+}
+
+/* -------------------------------------------------------------------------- */
+
 Channel& ChannelManager::addChannel(ChannelType type, std::size_t trackIndex, int bufferSize)
 {
 	const bool               overdubProtectionDefaultOn = m_model.get().behaviors.overdubProtectionDefaultOn;

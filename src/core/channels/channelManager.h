@@ -107,6 +107,12 @@ public:
 
 	void addTrack(int bufferSize);
 
+	/* removeTracks
+	Removes a track. Note: it must be empty, except for the default Channel
+	Group. Raises assertion otherwise. */
+
+	void removeTrack(std::size_t trackIndex);
+
 	/* addChannel
     Adds a new channel to the stack. */
 

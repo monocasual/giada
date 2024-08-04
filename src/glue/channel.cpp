@@ -274,10 +274,9 @@ void addColumn()
 
 void deleteColumn(int index)
 {
-	if (g_ui->model.tracks.getAll().size() == 1) // One column must stay
+	if (g_engine->getChannelsApi().getTracks().getAll().size() == 1) // One track must stay
 		return;
-	g_ui->model.tracks.removeTrack(index);
-	g_ui->rebuild();
+	g_engine->getChannelsApi().removeTrack(index);
 }
 
 /* -------------------------------------------------------------------------- */
