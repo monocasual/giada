@@ -113,6 +113,8 @@ public:
 
 	void removeTrack(std::size_t trackIndex);
 
+	void setTrackWidth(std::size_t trackIndex, int width);
+
 	/* addChannel
     Adds a new channel to the stack. */
 

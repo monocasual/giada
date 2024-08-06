@@ -277,10 +277,7 @@ void deleteColumn(int index)
 
 void setColumnWidth(int index, int w)
 {
-	// v::Model::Track& column = g_ui->model.tracks.getTrackByIndex(index);
-
-	// column.width = w;
-	// g_ui->rebuild();
+	g_engine->getChannelsApi().setTrackWidth(index, w);
 }
 
 /* -------------------------------------------------------------------------- */

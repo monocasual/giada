@@ -137,6 +137,14 @@ void ChannelManager::removeTrack(std::size_t trackIndex)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelManager::setTrackWidth(std::size_t trackIndex, int width)
+{
+	m_model.get().tracks.get(trackIndex).width = width;
+	m_model.swap(model::SwapType::HARD);
+}
+
+/* -------------------------------------------------------------------------- */
+
 Channel& ChannelManager::addChannel(ChannelType type, std::size_t trackIndex, int bufferSize)
 {
 	const bool               overdubProtectionDefaultOn = m_model.get().behaviors.overdubProtectionDefaultOn;
