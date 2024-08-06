@@ -67,21 +67,21 @@ void printLoadError_(int res)
 
 /* -------------------------------------------------------------------------- */
 
-Data makeData_(ID channelId, const v::Model::Column& column)
+Data makeData_(ID channelId, const m::model::Track& modelTrack)
 {
-	const int position    = column.getChannelIndex(channelId);
-	const int columnIndex = column.index;
-	return Data(g_engine->getChannelsApi().get(channelId), columnIndex, position);
+	const std::size_t channelIndex = modelTrack.getChannelIndex(channelId);
+	const std::size_t columnIndex  = modelTrack.getIndex();
+	return Data(g_engine->getChannelsApi().get(channelId), columnIndex, channelIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
-Column makeColumn_(const v::Model::Column& modelColumn)
+Column makeColumn_(const m::model::Track& modelTrack)
 {
-	Column column{modelColumn.index, modelColumn.width, {}};
+	Column column{static_cast<int>(modelTrack.getIndex()), modelTrack.width, {}};
 
-	for (const ID channelId : modelColumn.channels)
-		column.channels.push_back(makeData_(channelId, modelColumn));
+	for (const m::Channel& channel : modelTrack.getChannels().getAll())
+		column.channels.push_back(makeData_(channel.id, modelTrack));
 
 	return column;
 }
@@ -153,14 +153,15 @@ bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).
 
 Data getData(ID channelId)
 {
-	return makeData_(channelId, g_ui->model.columns.getColumnByChannelId(channelId));
+	return makeData_(channelId, g_engine->getChannelsApi().getTracks().getByChannel(channelId));
 }
 
 std::vector<Column> getColumns()
 {
 	std::vector<Column> out;
-	for (const v::Model::Column& modelColumn : g_ui->model.columns.getAll()) // Model::columns is the source of truth
-		out.push_back(makeColumn_(modelColumn));
+	for (const m::model::Track& modelTrack : g_engine->getChannelsApi().getTracks().getAll())
+		if (!modelTrack.isInternal())
+			out.push_back(makeColumn_(modelTrack));
 	return out;
 }
 
