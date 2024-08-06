@@ -82,7 +82,7 @@ struct MidiData
 
 struct Data
 {
-	Data(const m::Channel&, int columnIndex, int position);
+	Data(const m::Channel&, int trackIndex, int position);
 
 	ChannelStatus getPlayStatus() const;
 	ChannelStatus getRecStatus() const;
@@ -94,7 +94,7 @@ struct Data
 	bool          isArmed() const;
 
 	ID                      id;
-	int                     columnIndex;
+	int                     trackIndex;
 	int                     position;
 	std::vector<m::Plugin*> plugins;
 	ChannelType             type;
@@ -114,7 +114,7 @@ private:
 	WeakAtomic<bool>*          m_readActions;
 };
 
-struct Column
+struct Track
 {
 	int               index;
 	int               width;
@@ -126,26 +126,26 @@ Returns a single viewModel object filled with data from a channel. */
 
 Data getData(ID channelId);
 
-/* getColumns
-Returns a vector of Column's filled with Data objects, which reflects the layout
-described by Model::columns. */
+/* getTracks
+Returns a vector of Track's filled with Data objects, which reflects the layout
+described by m::model::Tracks. */
 
-std::vector<Column> getColumns();
+std::vector<Track> getTracks();
 
 /* addChannel
 Adds an empty new channel to the stack. */
 
-void addChannel(int columnIndex, ChannelType type);
+void addChannel(int trackIndex, ChannelType type);
 
 /* loadChannel
 Fills an existing channel with a wave. */
 
-void loadChannel(int columnIndex, const std::string& fname);
+void loadChannel(int trackIndex, const std::string& fname);
 
 /* addAndLoadChannels
 As above, with multiple audio file paths in input. */
 
-void addAndLoadChannels(int columnIndex, const std::vector<std::string>& fpaths);
+void addAndLoadChannels(int trackIndex, const std::vector<std::string>& fpaths);
 
 /* deleteChannel
 Removes a channel from Mixer. */
@@ -160,27 +160,27 @@ void freeChannel(ID channelId);
 /* cloneChannel
 Makes an exact copy of a channel. */
 
-void cloneChannel(ID channelId, int columnIndex);
+void cloneChannel(ID channelId, int trackIndex);
 
 /* moveChannel
-Moves channel with channelId to column at 'columnIndex' at 'position'. */
+Moves channel with channelId to track at 'trackIndex' at 'position'. */
 
-void moveChannel(ID channelId, int columnIndex, int position);
+void moveChannel(ID channelId, int trackIndex, int position);
 
-/* addColumn
-Adds a new column at the end of the list. */
+/* addTrack
+Adds a new track at the end of the list. */
 
-void addColumn();
+void addTrack();
 
-/* deleteColumn
-Deletes column by index. */
+/* deleteTrack
+Deletes track by index. */
 
-void deleteColumn(int);
+void deleteTrack(int);
 
-/* setColumnWidth
-Set the width to 'w' pixel of column ad index 'index'. */
+/* setTrackWidth
+Set the width to 'w' pixel of track at index 'index'. */
 
-void setColumnWidth(int index, int w);
+void setTrackWidth(int index, int w);
 
 /* set*
 Sets several channel properties. */

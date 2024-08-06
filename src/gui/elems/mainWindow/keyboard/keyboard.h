@@ -38,7 +38,7 @@
 
 namespace giada::c::channel
 {
-struct Column;
+struct Track;
 }
 
 namespace giada::v
@@ -161,7 +161,7 @@ private:
 	Adds new column at the end of the stack. Pass Column::id != 0 when loading 
 	columns from model. */
 
-	geColumn& addColumn(const c::channel::Column&);
+	geColumn& addColumn(const c::channel::Track&);
 
 	ChannelDragger         m_channelDragger;
 	std::vector<geColumn*> m_columns;

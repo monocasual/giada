@@ -70,20 +70,20 @@ void printLoadError_(int res)
 Data makeData_(ID channelId, const m::model::Track& modelTrack)
 {
 	const std::size_t channelIndex = modelTrack.getChannelIndex(channelId);
-	const std::size_t columnIndex  = modelTrack.getIndex();
-	return Data(g_engine->getChannelsApi().get(channelId), columnIndex, channelIndex);
+	const std::size_t trackIndex   = modelTrack.getIndex();
+	return Data(g_engine->getChannelsApi().get(channelId), trackIndex, channelIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
-Column makeColumn_(const m::model::Track& modelTrack)
+Track makeTrack_(const m::model::Track& modelTrack)
 {
-	Column column{static_cast<int>(modelTrack.getIndex()), modelTrack.width, {}};
+	Track track{static_cast<int>(modelTrack.getIndex()), modelTrack.width, {}};
 
 	for (const m::Channel& channel : modelTrack.getChannels().getAll())
-		column.channels.push_back(makeData_(channel.id, modelTrack));
+		track.channels.push_back(makeData_(channel.id, modelTrack));
 
-	return column;
+	return track;
 }
 } // namespace
 
@@ -116,9 +116,9 @@ MidiData::MidiData(const m::Channel& m)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::Channel& c, int columnIndex, int position)
+Data::Data(const m::Channel& c, int trackIndex, int position)
 : id(c.id)
-, columnIndex(columnIndex)
+, trackIndex(trackIndex)
 , position(position)
 , plugins(c.plugins)
 , type(c.type)
@@ -156,12 +156,12 @@ Data getData(ID channelId)
 	return makeData_(channelId, g_engine->getChannelsApi().getTracks().getByChannel(channelId));
 }
 
-std::vector<Column> getColumns()
+std::vector<Track> getTracks()
 {
-	std::vector<Column> out;
+	std::vector<Track> out;
 	for (const m::model::Track& modelTrack : g_engine->getChannelsApi().getTracks().getAll())
 		if (!modelTrack.isInternal())
-			out.push_back(makeColumn_(modelTrack));
+			out.push_back(makeTrack_(modelTrack));
 	return out;
 }
 
@@ -181,14 +181,14 @@ void loadChannel(ID channelId, const std::string& fname)
 
 /* -------------------------------------------------------------------------- */
 
-void addChannel(int columnIndex, ChannelType type)
+void addChannel(int trackIndex, ChannelType type)
 {
-	g_engine->getChannelsApi().add(type, columnIndex);
+	g_engine->getChannelsApi().add(type, trackIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void addAndLoadChannels(int columnIndex, const std::vector<std::string>& fnames)
+void addAndLoadChannels(int trackIndex, const std::vector<std::string>& fnames)
 {
 	auto progress    = g_ui->mainWindow->getScopedProgress(g_ui->getI18Text(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
 	auto channelsApi = g_engine->getChannelsApi();
@@ -199,7 +199,7 @@ void addAndLoadChannels(int columnIndex, const std::vector<std::string>& fnames)
 	{
 		progress.setProgress(++i / static_cast<float>(fnames.size()));
 
-		const m::Channel& ch  = channelsApi.add(ChannelType::SAMPLE, columnIndex);
+		const m::Channel& ch  = channelsApi.add(ChannelType::SAMPLE, trackIndex);
 		const int         res = channelsApi.loadSampleChannel(ch.id, f);
 		if (res != G_RES_OK)
 			errors = true;
@@ -245,28 +245,28 @@ void setOverdubProtection(ID channelId, bool value)
 
 /* -------------------------------------------------------------------------- */
 
-void cloneChannel(ID channelId, int columnIndex)
+void cloneChannel(ID channelId, int trackIndex)
 {
 	g_engine->getChannelsApi().clone(channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void moveChannel(ID channelId, int columnIndex, int newPosition)
+void moveChannel(ID channelId, int trackIndex, int newPosition)
 {
-	g_engine->getChannelsApi().move(channelId, columnIndex, newPosition);
+	g_engine->getChannelsApi().move(channelId, trackIndex, newPosition);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void addColumn()
+void addTrack()
 {
 	g_engine->getChannelsApi().addTrack();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void deleteColumn(int index)
+void deleteTrack(int index)
 {
 	if (g_engine->getChannelsApi().getTracks().getAll().size() == 1) // One track must stay
 		return;
@@ -275,7 +275,7 @@ void deleteColumn(int index)
 
 /* -------------------------------------------------------------------------- */
 
-void setColumnWidth(int index, int w)
+void setTrackWidth(int index, int w)
 {
 	g_engine->getChannelsApi().setTrackWidth(index, w);
 }
