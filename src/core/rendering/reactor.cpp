@@ -219,10 +219,36 @@ void Reactor::toggleMute(ID channelId)
 
 void Reactor::toggleSolo(ID channelId)
 {
-	Channel&   ch      = m_model.get().tracks.getChannel(channelId);
-	const bool newSolo = !ch.isSoloed();
+	Channel&      ch      = m_model.get().tracks.getChannel(channelId);
+	model::Track& track   = m_model.get().tracks.getByChannel(ch.id);
+	const bool    newSolo = !ch.isSoloed();
 
 	ch.setSolo(newSolo);
+
+	if (ch.type == ChannelType::GROUP)
+	{
+		/* Toggling a solo on a group will toggle solo on all its children too. */
+		for (Channel& child : track.getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				child.setSolo(newSolo);
+	}
+	else
+	{
+		const auto noChildrenSoloed = [](const model::Track& track)
+		{
+			for (const Channel& child : track.getChannels().getAll())
+				if (child.type != ChannelType::GROUP && child.isSoloed())
+					return false;
+			return true;
+		};
+		/* Turn group solo on if one of the children has been soloed. Turn group solo off
+		if no children are soloed instead. */
+		Channel& group = track.getGroupChannel();
+		if (newSolo)
+			group.setSolo(true);
+		else if (noChildrenSoloed(track))
+			group.setSolo(false);
+	}
 
 	m_model.swap(model::SwapType::SOFT);
 
