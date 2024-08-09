@@ -67,11 +67,6 @@ public:
 
 	Channel& getChannel(ID);
 
-	/* getAllChannels
-	Returns all channel in the model. */
-
-	std::vector<Channel>& getAllChannels();
-
 	/* hasInputRecordableChannels
     Tells whether Mixer has one or more input-recordable channels. */
 
@@ -107,10 +102,23 @@ public:
 
 	void setBufferSize(int);
 
+	/* addTrack
+	Adds a new empty track, containing only the default Channel Group. */
+
+	void addTrack(int bufferSize);
+
+	/* removeTracks
+	Removes a track. Note: it must be empty, except for the default Channel
+	Group. Raises assertion otherwise. */
+
+	void removeTrack(std::size_t trackIndex);
+
+	void setTrackWidth(std::size_t trackIndex, int width);
+
 	/* addChannel
     Adds a new channel to the stack. */
 
-	Channel& addChannel(ChannelType, int bufferSize);
+	Channel& addChannel(ChannelType, std::size_t trackIndex, int bufferSize);
 
 	/* loadSampleChannel (1)
     Creates a new Wave from a file path and loads it inside a Sample Channel. */
@@ -128,6 +136,7 @@ public:
 	void freeSampleChannel(ID channelId);
 	void freeAllSampleChannels();
 
+	void moveChannel(ID, std::size_t newTrackIndex, std::size_t newPosition);
 	void deleteChannel(ID channelId);
 	void renameChannel(ID channelId, const std::string& name);
 

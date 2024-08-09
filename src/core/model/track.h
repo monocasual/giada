@@ -24,43 +24,59 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_CHANNELS_H
-#define G_MODEL_CHANNELS_H
+#ifndef G_MODEL_TRACK_H
+#define G_MODEL_TRACK_H
 
-#include "core/channels/channel.h"
-#include "core/types.h"
+#include "core/model/channels.h"
 
 namespace giada::m::model
 {
-class Channels
+class Track
 {
 public:
-	const Channel&              get(ID) const;
-	const Channel*              find(ID) const;
-	const std::vector<Channel>& getAll() const;
-	const std::size_t           getIndex(ID) const;
-	const std::vector<ID>       getAllIDs() const;
+	/* ctor
+	A non-internal track always contains at least one Group Channel that determines the
+	track's behavior and properties (volumes, FXs, ...). */
 
-	/* anyOf
-	Returns true if any channel satisfies the callback 'f'. */
+	Track(std::size_t index, int width, bool internal);
 
-	bool anyOf(std::function<bool(const Channel&)> f) const;
+	const Channels& getChannels() const;
+	const Channel*  findChannel(ID) const;
+	const Channel&  getGroupChannel() const;
+
+	/* getIndex
+	Returns this Track index. */
+
+	std::size_t getIndex() const;
+
+	/* getChannelIndex
+	Returns the Channel index given its ID. */
+
+	std::size_t getChannelIndex(ID) const;
+
+	/* isInternal
+	True when the Track should be hidden, containing only master i/o or preview
+	channels, not to be shown on the UI. */
+
+	bool isInternal() const;
 
 #ifdef G_DEBUG_MODE
 	void debug() const;
 #endif
 
-	Channel*              find(ID);
-	Channel&              get(ID);
-	Channel&              getLast();
-	std::vector<Channel>& getAll();
-	std::vector<Channel*> getIf(std::function<bool(const Channel&)> f);
-	void                  add(Channel&&);
-	void                  add(Channel&&, std::size_t position);
-	void                  remove(ID);
+	Channel*  findChannel(ID);
+	Channel&  getGroupChannel();
+	void      addChannel(Channel&&);
+	void      addChannel(Channel&&, std::size_t position);
+	Channel&  getLastChannel();
+	Channels& getChannels();
+
+	int width;
 
 private:
-	std::vector<Channel> m_channels;
+	Channels    m_channels;
+	std::size_t m_index;
+	bool        m_internal;
 };
 } // namespace giada::m::model
 

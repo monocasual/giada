@@ -39,46 +39,11 @@ namespace giada::v
 {
 struct Model
 {
-	struct Column
-	{
-		int getChannelIndex(ID) const;
-
-		int             index;
-		int             width;
-		std::vector<ID> channels = {};
-	};
-
-	struct Columns
-	{
-		const std::vector<Column>& getAll() const;
-
-		Column& getColumnByIndex(int);
-		Column& getColumnByChannelId(ID);
-		void    addDefaultColumn();
-		void    addColumn(Column&&);
-		void    removeColumn(int columnIndex);
-		void    moveChannel(ID channelId, int columnIndex, int newPosition);
-		void    addChannelToColumn(ID channelId, int columnIndex, int position = -1);
-		void    removeChannelFromColumn(ID channelId);
-		void    clear();
-
-	private:
-		std::vector<Column> m_columns;
-	};
-
-	Model();
-
 	void store(m::Conf&) const;
 	void store(m::Patch&) const;
 
 	void load(const m::Conf&);
 	void load(const m::Patch&);
-
-	/* reset
-	Resets the Model to the latest state loaded from m::Conf. Call this when you
-	load a new patch and you want to reset the column layout. */
-
-	void reset();
 
 	int         logMode      = LOG_MODE_MUTE;
 	bool        showTooltips = true;
@@ -119,8 +84,6 @@ struct Model
 	int keyBindExit          = FL_Escape;
 
 	float uiScaling = G_DEFAULT_UI_SCALING;
-
-	Columns columns;
 };
 } // namespace giada::v
 

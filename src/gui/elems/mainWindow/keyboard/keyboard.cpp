@@ -197,7 +197,7 @@ void geKeyboard::init()
 void geKeyboard::rebuild()
 {
 	deleteAllColumns();
-	for (const c::channel::Column& c : c::channel::getColumns())
+	for (const c::channel::Track& c : c::channel::getTracks())
 		addColumn(c);
 	redraw();
 }
@@ -206,7 +206,7 @@ void geKeyboard::rebuild()
 
 void geKeyboard::deleteColumn(int index)
 {
-	c::channel::deleteColumn(index);
+	c::channel::deleteTrack(index);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -357,12 +357,12 @@ geompp::Rect<int> geKeyboard::getColumnBackround(const geColumn& c) const
 
 void geKeyboard::addColumn()
 {
-	c::channel::addColumn();
+	c::channel::addTrack();
 }
 
 /* -------------------------------------------------------------------------- */
 
-geColumn& geKeyboard::addColumn(const c::channel::Column& columnModel)
+geColumn& geKeyboard::addColumn(const c::channel::Track& columnModel)
 {
 	int colx = x() - xposition(); // Mind the x-scroll offset with xposition()
 
@@ -382,7 +382,7 @@ geColumn& geKeyboard::addColumn(const c::channel::Column& columnModel)
 
 	bar->onRelease = [](const Fl_Widget& w) {
 		const geColumn& column = static_cast<const geColumn&>(w);
-		c::channel::setColumnWidth(column.index, column.w());
+		c::channel::setTrackWidth(column.index, column.w());
 	};
 
 	add(column);

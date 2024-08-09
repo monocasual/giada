@@ -24,44 +24,23 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_CHANNELS_H
-#define G_MODEL_CHANNELS_H
+#include "gui/elems/mainWindow/keyboard/groupChannelButton.h"
+#include "glue/channel.h"
+#include <string>
 
-#include "core/channels/channel.h"
-#include "core/types.h"
-
-namespace giada::m::model
+namespace giada::v
 {
-class Channels
+geGroupChannelButton::geGroupChannelButton(const c::channel::Data& d)
+: geChannelButton(0, 0, 0, 0, d)
 {
-public:
-	const Channel&              get(ID) const;
-	const Channel*              find(ID) const;
-	const std::vector<Channel>& getAll() const;
-	const std::size_t           getIndex(ID) const;
-	const std::vector<ID>       getAllIDs() const;
+}
 
-	/* anyOf
-	Returns true if any channel satisfies the callback 'f'. */
+/* -------------------------------------------------------------------------- */
 
-	bool anyOf(std::function<bool(const Channel&)> f) const;
-
-#ifdef G_DEBUG_MODE
-	void debug() const;
-#endif
-
-	Channel*              find(ID);
-	Channel&              get(ID);
-	Channel&              getLast();
-	std::vector<Channel>& getAll();
-	std::vector<Channel*> getIf(std::function<bool(const Channel&)> f);
-	void                  add(Channel&&);
-	void                  add(Channel&&, std::size_t position);
-	void                  remove(ID);
-
-private:
-	std::vector<Channel> m_channels;
-};
-} // namespace giada::m::model
-
-#endif
+void geGroupChannelButton::refresh()
+{
+	const std::string l = m_channel.name.empty() ? "-- group --" : m_channel.name;
+	copy_label(l.c_str());
+	redraw();
+}
+} // namespace giada::v

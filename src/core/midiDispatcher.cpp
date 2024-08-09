@@ -147,7 +147,7 @@ bool MidiDispatcher::isMasterMidiInAllowed(int c)
 
 bool MidiDispatcher::isChannelMidiInAllowed(ID channelId, int c)
 {
-	return m_model.get().channels.get(channelId).midiInput.isAllowed(c);
+	return m_model.get().tracks.getChannel(channelId).midiInput.isAllowed(c);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -182,13 +182,13 @@ void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 {
 	const uint32_t pure = midiEvent.getRawNoVelocity();
 
-	for (const Channel& c : m_model.get().channels.getAll())
-	{
+	m_model.get().tracks.forEachChannel([this, &midiEvent, &pure](const Channel& c)
+	    {
 		/* Do nothing on this channel if MIDI in is disabled or filtered out for
 		the current MIDI channel. */
 
 		if (!c.midiInput.isAllowed(midiEvent.getChannel()))
-			continue;
+			return false;
 
 		if (pure == c.midiInput.keyPress.getValue())
 		{
@@ -242,8 +242,9 @@ void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 		/* Redirect raw MIDI message (pure + velocity) to plug-ins in armed
 		channels. */
 		if (c.armed)
-			c::channel::sendMidiToChannel(c.id, midiEvent, Thread::MIDI);
-	}
+			c::channel::sendMidiToChannel(c.id, midiEvent, Thread::MIDI); 
+
+		return true; });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -309,7 +310,7 @@ void MidiDispatcher::learnChannel(MidiEvent e, int param, ID channelId, std::fun
 
 	const uint32_t raw = e.getRawNoVelocity();
 
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	switch (param)
 	{

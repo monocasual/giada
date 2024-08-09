@@ -47,9 +47,10 @@ struct Patch
 		bool operator<(const Version& o) const;
 	};
 
-	struct Column
+	struct Track
 	{
 		int             width;
+		bool            internal;
 		std::vector<ID> channels;
 	};
 
@@ -134,7 +135,7 @@ struct Patch
 	int         samplerate = G_DEFAULT_SAMPLERATE;
 	bool        metronome  = false;
 
-	std::vector<Column>  columns;
+	std::vector<Track>   tracks;
 	std::vector<Channel> channels;
 	std::vector<Action>  actions;
 	std::vector<Wave>    waves;

@@ -35,6 +35,20 @@
 
 namespace giada::m::model
 {
+Channel* Channels::find(ID id)
+{
+	return const_cast<Channel*>(std::as_const(*this).find(id));
+}
+
+const Channel* Channels::find(ID id) const
+{
+	auto it = std::find_if(m_channels.begin(), m_channels.end(), [id](const Channel& c)
+	    { return c.id == id; });
+	return it != m_channels.end() ? &*it : nullptr;
+}
+
+/* -------------------------------------------------------------------------- */
+
 Channel& Channels::get(ID id)
 {
 	return const_cast<Channel&>(std::as_const(*this).get(id));
@@ -65,6 +79,23 @@ std::vector<Channel>& Channels::getAll()
 const std::vector<Channel>& Channels::getAll() const
 {
 	return m_channels;
+}
+
+/* -------------------------------------------------------------------------- */
+
+const std::size_t Channels::getIndex(ID id) const
+{
+	return static_cast<std::size_t>(u::vector::indexOf(m_channels, get(id)));
+}
+
+/* -------------------------------------------------------------------------- */
+
+const std::vector<ID> Channels::getAllIDs() const
+{
+	std::vector<ID> out;
+	for (const Channel& ch : m_channels)
+		out.push_back(ch.id);
+	return out;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -121,5 +152,12 @@ void Channels::remove(ID id)
 void Channels::add(Channel&& ch)
 {
 	m_channels.push_back(std::move(ch));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Channels::add(Channel&& ch, std::size_t position)
+{
+	m_channels.insert(m_channels.begin() + std::min(position, m_channels.size()), std::move(ch));
 }
 } // namespace giada::m::model

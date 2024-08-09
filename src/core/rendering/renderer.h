@@ -53,6 +53,7 @@ namespace giada::m::model
 {
 class Model;
 class Channels;
+class Tracks;
 } // namespace giada::m::model
 
 namespace giada::m::rendering
@@ -69,16 +70,16 @@ public:
 	void render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Model&) const;
 
 private:
-	/* advanceChannels
-	Processes Channels' static events (e.g. pre-recorded actions or sequencer 
+	/* advanceTracks
+	Processes Channels' static events (e.g. pre-recorded actions or sequencer
 	events) in the current audio block. Called when the sequencer is running. */
 
-	void advanceChannels(const Sequencer::EventBuffer&, const model::Channels&,
+	void advanceTracks(const Sequencer::EventBuffer&, const model::Tracks&,
 	    geompp::Range<Frame>, int quantizerStep) const;
 
 	void advanceChannel(const Channel&, const Sequencer::EventBuffer&, geompp::Range<Frame>, Frame quantizerStep) const;
 
-	void renderNormalChannels(const std::vector<Channel>& channels, mcl::AudioBuffer& out,
+	void renderTracks(const model::Tracks&, mcl::AudioBuffer& out,
 	    const mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const;
 	void renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
 	    const mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const;

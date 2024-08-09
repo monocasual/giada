@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2024 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2023 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -24,44 +24,24 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_CHANNELS_H
-#define G_MODEL_CHANNELS_H
+#ifndef GE_GROUP_CHANNEL_H
+#define GE_GROUP_CHANNEL_H
 
-#include "core/channels/channel.h"
-#include "core/types.h"
+#include "channel.h"
+#include "glue/channel.h"
 
-namespace giada::m::model
+namespace giada::v
 {
-class Channels
+class geGroupChannel : public geChannel
 {
 public:
-	const Channel&              get(ID) const;
-	const Channel*              find(ID) const;
-	const std::vector<Channel>& getAll() const;
-	const std::size_t           getIndex(ID) const;
-	const std::vector<ID>       getAllIDs() const;
+	geGroupChannel(c::channel::Data d);
 
-	/* anyOf
-	Returns true if any channel satisfies the callback 'f'. */
-
-	bool anyOf(std::function<bool(const Channel&)> f) const;
-
-#ifdef G_DEBUG_MODE
-	void debug() const;
-#endif
-
-	Channel*              find(ID);
-	Channel&              get(ID);
-	Channel&              getLast();
-	std::vector<Channel>& getAll();
-	std::vector<Channel*> getIf(std::function<bool(const Channel&)> f);
-	void                  add(Channel&&);
-	void                  add(Channel&&, std::size_t position);
-	void                  remove(ID);
+	void resize(int x, int y, int w, int h) override;
 
 private:
-	std::vector<Channel> m_channels;
+	void openMenu();
 };
-} // namespace giada::m::model
+} // namespace giada::v
 
 #endif

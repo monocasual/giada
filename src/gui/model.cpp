@@ -31,120 +31,6 @@
 
 namespace giada::v
 {
-int Model::Column::getChannelIndex(ID channelId) const
-{
-	return static_cast<int>(u::vector::indexOf(channels, channelId));
-}
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-const std::vector<Model::Column>& Model::Columns::getAll() const
-{
-
-	return m_columns;
-}
-
-/* -------------------------------------------------------------------------- */
-
-Model::Column& Model::Columns::getColumnByIndex(int index)
-{
-	assert(index < static_cast<int>(m_columns.size()));
-
-	return m_columns.at(index);
-}
-
-/* -------------------------------------------------------------------------- */
-
-Model::Column& Model::Columns::getColumnByChannelId(ID channelId)
-{
-	const auto p = [channelId](auto& col)
-	{
-		return u::vector::has(col.channels, [channelId](ID otherId)
-		    { return channelId == otherId; });
-	};
-	return *u::vector::findIfSafe(m_columns, p);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Columns::addDefaultColumn()
-{
-	const int index = static_cast<int>(m_columns.size());
-	const int width = G_DEFAULT_COLUMN_WIDTH;
-
-	addColumn({index, width});
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Columns::addColumn(Column&& column)
-{
-	m_columns.push_back(std::move(column));
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Columns::removeColumn(int columnIndex)
-{
-	m_columns.erase(m_columns.begin() + columnIndex);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Columns::moveChannel(ID channelId, int columnIndex, int newPosition)
-{
-	const Column& column = getColumnByChannelId(channelId);
-
-	if (column.index == columnIndex) // If in same column
-	{
-		const int oldPosition = column.getChannelIndex(channelId);
-		if (newPosition >= oldPosition) // If moved below, readjust index
-			newPosition -= 1;
-	}
-
-	removeChannelFromColumn(channelId);
-	addChannelToColumn(channelId, columnIndex, newPosition);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Columns::addChannelToColumn(ID channelId, int columnIndex, int position)
-{
-	std::vector<ID>& channels = getColumnByIndex(columnIndex).channels;
-	if (position == -1)
-		channels.push_back(channelId);
-	else
-		channels.insert(channels.begin() + position, channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Columns::removeChannelFromColumn(ID channelId)
-{
-	for (Column& column : m_columns) // Brute force!
-		u::vector::remove(column.channels, channelId);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::Columns::clear()
-{
-	m_columns.clear();
-}
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-Model::Model()
-{
-	reset();
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Model::store(m::Conf& conf) const
 {
 	conf.logMode      = logMode;
@@ -193,15 +79,6 @@ void Model::store(m::Conf& conf) const
 void Model::store(m::Patch& patch) const
 {
 	patch.name = projectName;
-
-	for (const Column& column : columns.getAll())
-	{
-		m::Patch::Column pcolumn;
-		pcolumn.width = column.width;
-		for (ID channelId : column.channels)
-			pcolumn.channels.push_back(channelId);
-		patch.columns.push_back(pcolumn);
-	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -251,31 +128,6 @@ void Model::load(const m::Conf& conf)
 
 void Model::load(const m::Patch& patch)
 {
-	columns.clear();
-	for (int i = 0; const m::Patch::Column& pcolumn : patch.columns)
-	{
-		Column column{.index = i++, .width = pcolumn.width};
-		for (ID channelId : pcolumn.channels)
-			column.channels.push_back(channelId);
-		columns.addColumn(std::move(column));
-	}
-
 	projectName = patch.name;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Model::reset()
-{
-	columns.clear();
-
-	/* Add 6 empty columns as initial layout. */
-
-	columns.addDefaultColumn();
-	columns.addDefaultColumn();
-	columns.addDefaultColumn();
-	columns.addDefaultColumn();
-	columns.addDefaultColumn();
-	columns.addDefaultColumn();
 }
 } // namespace giada::v

@@ -171,6 +171,8 @@ std::string toString(ChannelType type)
 		return "MASTER";
 	case ChannelType::PREVIEW:
 		return "PREVIEW";
+	case ChannelType::GROUP:
+		return "GROUP";
 	default:
 		return "(unknown)";
 	}

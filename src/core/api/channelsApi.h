@@ -36,7 +36,8 @@
 namespace giada::m::model
 {
 class Model;
-}
+class Tracks;
+} // namespace giada::m::model
 
 namespace giada::m::rendering
 {
@@ -66,10 +67,14 @@ public:
 	bool hasChannelsWithAudioData() const;
 	bool hasChannelsWithActions() const;
 
-	Channel&              get(ID);
-	std::vector<Channel>& getAll();
+	Channel&       get(ID);
+	model::Tracks& getTracks();
 
-	Channel& add(ChannelType);
+	void     addTrack();
+	void     removeTrack(std::size_t trackIndex);
+	void     setTrackWidth(std::size_t trackIndex, int width);
+	Channel& add(ChannelType, std::size_t trackIndex);
+	void     move(ID, std::size_t newTrackIndex, std::size_t newPosition);
 	int      loadSampleChannel(ID channelId, const std::string& filePath);
 	void     loadSampleChannel(ID channelId, Wave&);
 	void     remove(ID);

@@ -45,7 +45,7 @@ Reactor::Reactor(model::Model& model, MidiMapper<KernelMidi>& m, ActionRecorder&
 
 void Reactor::keyPress(ID channelId, float velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized)
 {
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	if (ch.type == ChannelType::MIDI)
 	{
@@ -71,6 +71,12 @@ void Reactor::keyPress(ID channelId, float velocity, bool canRecordActions, bool
 		    /*velocity=*/0.0f, /*canQuantize=*/false, /*isAnyLoopMode=*/false,
 		    /*velocityAsVol=*/false);
 	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				keyPress(child.id, velocity, canRecordActions, canQuantize, currentFrameQuantized);
+	}
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -79,7 +85,7 @@ void Reactor::keyPress(ID channelId, float velocity, bool canRecordActions, bool
 
 void Reactor::keyRelease(ID channelId, bool canRecordActions, Frame currentFrameQuantized)
 {
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	if (ch.type == ChannelType::MIDI)
 		return;
@@ -103,6 +109,12 @@ void Reactor::keyRelease(ID channelId, bool canRecordActions, Frame currentFrame
 	{
 		releaseSampleChannel(*ch.shared, SamplePlayerMode::SINGLE_BASIC_PAUSE);
 	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				keyRelease(child.id, canRecordActions, currentFrameQuantized);
+	}
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -111,7 +123,7 @@ void Reactor::keyRelease(ID channelId, bool canRecordActions, Frame currentFrame
 
 void Reactor::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQuantized)
 {
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	if (ch.type == ChannelType::MIDI)
 	{
@@ -136,6 +148,12 @@ void Reactor::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQua
 
 		killSampleChannel(*ch.shared, mode);
 	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				keyKill(child.id, canRecordActions, currentFrameQuantized);
+	}
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -144,7 +162,7 @@ void Reactor::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQua
 
 void Reactor::processMidiEvent(ID channelId, const MidiEvent& e, bool canRecordActions, Frame currentFrameQuantized)
 {
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	assert(ch.type == ChannelType::MIDI);
 
@@ -163,7 +181,7 @@ void Reactor::processMidiEvent(ID channelId, const MidiEvent& e, bool canRecordA
 
 void Reactor::toggleReadActions(ID channelId, bool seqIsRunning)
 {
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 	if (!ch.hasActions)
 		return;
 	toggleSampleReadActions(*ch.shared, m_model.get().behaviors.treatRecsAsLoops, seqIsRunning);
@@ -178,7 +196,7 @@ void Reactor::killReadActions(ID channelId)
 
 	if (!m_model.get().behaviors.treatRecsAsLoops)
 		return;
-	Channel& ch = m_model.get().channels.get(channelId);
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
 	killSampleReadActions(*ch.shared);
 }
 
@@ -186,10 +204,19 @@ void Reactor::killReadActions(ID channelId)
 
 void Reactor::toggleMute(ID channelId)
 {
-	Channel&   ch      = m_model.get().channels.get(channelId);
-	const bool newMute = !ch.isMuted();
+	Channel&      ch      = m_model.get().tracks.getChannel(channelId);
+	model::Track& track   = m_model.get().tracks.getByChannel(ch.id);
+	const bool    newMute = !ch.isMuted();
 
 	ch.setMute(newMute);
+
+	if (ch.type == ChannelType::GROUP)
+	{
+		/* Toggling mute on a group will toggle mute on all its children too. */
+		for (Channel& child : track.getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				child.setMute(newMute);
+	}
 
 	m_model.swap(model::SwapType::SOFT);
 
@@ -201,10 +228,36 @@ void Reactor::toggleMute(ID channelId)
 
 void Reactor::toggleSolo(ID channelId)
 {
-	Channel&   ch      = m_model.get().channels.get(channelId);
-	const bool newSolo = !ch.isSoloed();
+	Channel&      ch      = m_model.get().tracks.getChannel(channelId);
+	model::Track& track   = m_model.get().tracks.getByChannel(ch.id);
+	const bool    newSolo = !ch.isSoloed();
 
 	ch.setSolo(newSolo);
+
+	if (ch.type == ChannelType::GROUP)
+	{
+		/* Toggling a solo on a group will toggle solo on all its children too. */
+		for (Channel& child : track.getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				child.setSolo(newSolo);
+	}
+	else
+	{
+		const auto noChildrenSoloed = [](const model::Track& track)
+		{
+			for (const Channel& child : track.getChannels().getAll())
+				if (child.type != ChannelType::GROUP && child.isSoloed())
+					return false;
+			return true;
+		};
+		/* Turn group solo on if one of the children has been soloed. Turn group solo off
+		if no children are soloed instead. */
+		Channel& group = track.getGroupChannel();
+		if (newSolo)
+			group.setSolo(true);
+		else if (noChildrenSoloed(track))
+			group.setSolo(false);
+	}
 
 	m_model.swap(model::SwapType::SOFT);
 
@@ -216,18 +269,21 @@ void Reactor::toggleSolo(ID channelId)
 
 void Reactor::stopAll()
 {
-	for (Channel& ch : m_model.get().channels.getAll())
+	for (const model::Track& track : m_model.get().tracks.getAll())
 	{
-		if (ch.type == ChannelType::MIDI)
+		for (const Channel& ch : track.getChannels().getAll())
 		{
-			if (!ch.isPlaying())
-				continue;
-			stopMidiChannel(ch.shared->playStatus);
-			sendMidiAllNotesOff(ch, m_kernelMidi);
-		}
-		else if (ch.type == ChannelType::SAMPLE)
-		{
-			stopSampleChannelBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
+			if (ch.type == ChannelType::MIDI)
+			{
+				if (!ch.isPlaying())
+					continue;
+				stopMidiChannel(ch.shared->playStatus);
+				sendMidiAllNotesOff(ch, m_kernelMidi);
+			}
+			else if (ch.type == ChannelType::SAMPLE)
+			{
+				stopSampleChannelBySeq(*ch.shared, m_model.get().behaviors.chansStopOnSeqHalt, ch.sampleChannel->isAnyLoopMode());
+			}
 		}
 	}
 	m_model.swap(model::SwapType::SOFT);
@@ -237,9 +293,10 @@ void Reactor::stopAll()
 
 void Reactor::rewindAll()
 {
-	for (Channel& ch : m_model.get().channels.getAll())
-		if (ch.type == ChannelType::MIDI)
-			rewindMidiChannel(ch.shared->playStatus);
+	for (const model::Track& track : m_model.get().tracks.getAll())
+		for (const Channel& ch : track.getChannels().getAll())
+			if (ch.type == ChannelType::MIDI)
+				rewindMidiChannel(ch.shared->playStatus);
 	m_model.swap(model::SwapType::SOFT);
 }
 } // namespace giada::m::rendering

@@ -49,17 +49,18 @@ void readCommons_(Patch& patch, const nlohmann::json& j)
 
 /* -------------------------------------------------------------------------- */
 
-void readColumns_(Patch& patch, const nlohmann::json& j)
+void readTracks_(Patch& patch, const nlohmann::json& j)
 {
-	for (const auto& jcol : j[PATCH_KEY_COLUMNS])
+	for (const auto& jtrack : j[PATCH_KEY_TRACKS])
 	{
-		Patch::Column c;
-		c.width = jcol.value(PATCH_KEY_COLUMN_WIDTH, G_DEFAULT_COLUMN_WIDTH);
-		if (jcol.contains(PATCH_KEY_COLUMN_CHANNELS))
-			for (const auto& jplugin : jcol[PATCH_KEY_COLUMN_CHANNELS])
-				c.channels.push_back(jplugin);
+		Patch::Track track;
+		track.width    = jtrack.value(PATCH_KEY_TRACK_WIDTH, G_DEFAULT_COLUMN_WIDTH);
+		track.internal = jtrack.value(PATCH_KEY_TRACK_INTERNAL, false);
+		if (jtrack.contains(PATCH_KEY_TRACK_CHANNELS))
+			for (const auto& jplugin : jtrack[PATCH_KEY_TRACK_CHANNELS])
+				track.channels.push_back(jplugin);
 
-		patch.columns.push_back(c);
+		patch.tracks.push_back(track);
 	}
 }
 
@@ -213,19 +214,20 @@ void writePlugins_(const Patch& patch, nlohmann::json& j)
 
 /* -------------------------------------------------------------------------- */
 
-void writeColumns_(const Patch& patch, nlohmann::json& j)
+void writeTracks_(const Patch& patch, nlohmann::json& j)
 {
-	j[PATCH_KEY_COLUMNS] = nlohmann::json::array();
+	j[PATCH_KEY_TRACKS] = nlohmann::json::array();
 
-	for (const Patch::Column& column : patch.columns)
+	for (const Patch::Track& track : patch.tracks)
 	{
 		nlohmann::json jcolumn;
-		jcolumn[PATCH_KEY_COLUMN_WIDTH]    = column.width;
-		jcolumn[PATCH_KEY_COLUMN_CHANNELS] = nlohmann::json::array();
-		for (ID channelId : column.channels)
-			jcolumn[PATCH_KEY_COLUMN_CHANNELS].push_back(channelId);
+		jcolumn[PATCH_KEY_TRACK_WIDTH]    = track.width;
+		jcolumn[PATCH_KEY_TRACK_INTERNAL] = track.internal;
+		jcolumn[PATCH_KEY_TRACK_CHANNELS] = nlohmann::json::array();
+		for (ID channelId : track.channels)
+			jcolumn[PATCH_KEY_TRACK_CHANNELS].push_back(channelId);
 
-		j[PATCH_KEY_COLUMNS].push_back(jcolumn);
+		j[PATCH_KEY_TRACKS].push_back(jcolumn);
 	}
 }
 
@@ -367,14 +369,14 @@ void modernize_(Patch& patch)
 			c.waveId = 0;
 		}
 
-		/* 1.0.0 
-		The relationship column-channel has been simplified. Let's put all
-		channels in the first column as a fallback. */
+		/* 1.0.0
+		The relationship track-channel has been simplified. Let's put all
+		channels in the first track as a fallback. */
 		if (patch.version < Patch::Version{1, 0, 0} && !isInternalChannel)
 		{
-			if (patch.columns.empty())
-				patch.columns.push_back({G_DEFAULT_COLUMN_WIDTH, {}});
-			patch.columns[0].channels.push_back(c.id);
+			if (patch.tracks.empty())
+				patch.tracks.push_back({G_DEFAULT_COLUMN_WIDTH, {}});
+			patch.tracks[0].channels.push_back(c.id);
 		}
 	}
 }
@@ -389,7 +391,7 @@ bool serialize(const Patch& patch, const std::string& filePath)
 	nlohmann::json j;
 
 	writeCommons_(patch, j);
-	writeColumns_(patch, j);
+	writeTracks_(patch, j);
 	writeChannels_(patch, j);
 	writeActions_(patch, j);
 	writeWaves_(patch, j);
@@ -437,7 +439,7 @@ Patch deserialize(const std::string& filePath)
 		}
 
 		readCommons_(patch, j);
-		readColumns_(patch, j);
+		readTracks_(patch, j);
 		readPlugins_(patch, j);
 		readWaves_(patch, j, u::fs::dirname(filePath));
 		readActions_(patch, j);

@@ -69,18 +69,51 @@ Channel& ChannelsApi::get(ID channelId)
 	return m_channelManager.getChannel(channelId);
 }
 
-std::vector<Channel>& ChannelsApi::getAll()
+/* -------------------------------------------------------------------------- */
+
+model::Tracks& ChannelsApi::getTracks()
 {
-	return m_channelManager.getAllChannels();
+	return m_model.get().tracks;
 }
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelsApi::add(ChannelType type)
+void ChannelsApi::addTrack()
 {
 	const int bufferSize = m_kernelAudio.getBufferSize();
-	return m_channelManager.addChannel(type, bufferSize);
+	m_channelManager.addTrack(bufferSize);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsApi::removeTrack(std::size_t trackIndex)
+{
+	m_channelManager.removeTrack(trackIndex);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsApi::setTrackWidth(std::size_t trackIndex, int width)
+{
+	m_channelManager.setTrackWidth(trackIndex, width);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Channel& ChannelsApi::add(ChannelType type, std::size_t trackIndex)
+{
+	const int bufferSize = m_kernelAudio.getBufferSize();
+	return m_channelManager.addChannel(type, trackIndex, bufferSize);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelsApi::move(ID channelId, std::size_t newTrackIndex, std::size_t newPosition)
+{
+	m_channelManager.moveChannel(channelId, newTrackIndex, newPosition);
+}
+
+/* -------------------------------------------------------------------------- */
 
 int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)
 {

@@ -74,7 +74,7 @@ void Model::reset()
 	document.sequencer.shared = &m_shared.m_sequencer;
 	document.mixer            = {};
 	document.mixer.shared     = &m_shared.m_mixer;
-	document.channels         = {};
+	document.tracks           = {};
 
 	swap(SwapType::NONE);
 }

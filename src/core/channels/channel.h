@@ -44,7 +44,7 @@ public:
 	Channel(ChannelType t, ID id, ChannelShared&);
 	Channel(const Patch::Channel&, ChannelShared&, float samplerateRatio, Wave*, std::vector<Plugin*>);
 
-	bool operator==(const Channel&);
+	bool operator==(const Channel&) const;
 
 	bool isPlaying() const;
 	bool isInternal() const;

@@ -24,43 +24,52 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_CHANNELS_H
-#define G_MODEL_CHANNELS_H
+#ifndef G_MODEL_TRACKS_H
+#define G_MODEL_TRACKS_H
 
-#include "core/channels/channel.h"
-#include "core/types.h"
+#include "core/model/track.h"
+
+namespace giada::m
+{
+class Channel;
+}
 
 namespace giada::m::model
 {
-class Channels
+class Tracks
 {
 public:
-	const Channel&              get(ID) const;
-	const Channel*              find(ID) const;
-	const std::vector<Channel>& getAll() const;
-	const std::size_t           getIndex(ID) const;
-	const std::vector<ID>       getAllIDs() const;
-
-	/* anyOf
-	Returns true if any channel satisfies the callback 'f'. */
-
-	bool anyOf(std::function<bool(const Channel&)> f) const;
+	const std::vector<Track>& getAll() const;
+	const Channel&            getChannel(ID) const;
+	bool                      anyChannelOf(std::function<bool(const Channel&)> f) const;
 
 #ifdef G_DEBUG_MODE
 	void debug() const;
 #endif
 
-	Channel*              find(ID);
-	Channel&              get(ID);
-	Channel&              getLast();
-	std::vector<Channel>& getAll();
-	std::vector<Channel*> getIf(std::function<bool(const Channel&)> f);
-	void                  add(Channel&&);
-	void                  add(Channel&&, std::size_t position);
-	void                  remove(ID);
+	/* add (1)
+	Adds a new Track with an already available GroupChannel in it. */
+
+	Track& add(Channel&& groupChannel, int width, bool internal);
+
+	/* Add (2)
+	Add an empty Track. Used while de-serializing. */
+
+	Track& add(int width, bool internal);
+
+	void                  remove(std::size_t index);
+	Track&                get(std::size_t index);
+	Channel&              getChannel(ID);
+	Track&                getByChannel(ID);
+	void                  addChannel(Channel&&, std::size_t index);
+	void                  addChannel(Channel&&, std::size_t index, std::size_t position);
+	void                  removeChannel(ID);
+	Channel&              getLastChannel(std::size_t index);
+	void                  forEachChannel(std::function<bool(Channel&)>);
+	std::vector<Channel*> getChannelsIf(std::function<bool(const Channel&)>);
 
 private:
-	std::vector<Channel> m_channels;
+	std::vector<Track> m_tracks;
 };
 } // namespace giada::m::model
 
