@@ -204,10 +204,19 @@ void Reactor::killReadActions(ID channelId)
 
 void Reactor::toggleMute(ID channelId)
 {
-	Channel&   ch      = m_model.get().tracks.getChannel(channelId);
-	const bool newMute = !ch.isMuted();
+	Channel&      ch      = m_model.get().tracks.getChannel(channelId);
+	model::Track& track   = m_model.get().tracks.getByChannel(ch.id);
+	const bool    newMute = !ch.isMuted();
 
 	ch.setMute(newMute);
+
+	if (ch.type == ChannelType::GROUP)
+	{
+		/* Toggling mute on a group will toggle mute on all its children too. */
+		for (Channel& child : track.getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				child.setMute(newMute);
+	}
 
 	m_model.swap(model::SwapType::SOFT);
 
