@@ -71,6 +71,12 @@ void Reactor::keyPress(ID channelId, float velocity, bool canRecordActions, bool
 		    /*velocity=*/0.0f, /*canQuantize=*/false, /*isAnyLoopMode=*/false,
 		    /*velocityAsVol=*/false);
 	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				keyPress(child.id, velocity, canRecordActions, canQuantize, currentFrameQuantized);
+	}
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -102,6 +108,12 @@ void Reactor::keyRelease(ID channelId, bool canRecordActions, Frame currentFrame
 	else if (ch.type == ChannelType::PREVIEW)
 	{
 		releaseSampleChannel(*ch.shared, SamplePlayerMode::SINGLE_BASIC_PAUSE);
+	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				keyRelease(child.id, canRecordActions, currentFrameQuantized);
 	}
 
 	m_model.swap(model::SwapType::SOFT);
@@ -135,6 +147,12 @@ void Reactor::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQua
 		}
 
 		killSampleChannel(*ch.shared, mode);
+	}
+	else if (ch.type == ChannelType::GROUP)
+	{
+		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				keyKill(child.id, canRecordActions, currentFrameQuantized);
 	}
 
 	m_model.swap(model::SwapType::SOFT);
