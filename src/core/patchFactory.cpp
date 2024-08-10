@@ -51,6 +51,9 @@ void readCommons_(Patch& patch, const nlohmann::json& j)
 
 void readTracks_(Patch& patch, const nlohmann::json& j)
 {
+	if (!j.contains(PATCH_KEY_TRACKS))
+		return;
+
 	for (const auto& jtrack : j[PATCH_KEY_TRACKS])
 	{
 		Patch::Track track;
@@ -344,6 +347,17 @@ void writeChannels_(const Patch& patch, nlohmann::json& j)
 
 void modernize_(Patch& patch)
 {
+	/* 1.1.0
+	Older patches don't contain Tracks. Let's recreate a basic Track layout: one
+	internal, one external. */
+	if (patch.version < Patch::Version{1, 1, 0})
+	{
+		const ID groupChannelId = 8192;
+		patch.tracks.push_back({G_DEFAULT_COLUMN_WIDTH, /*internal=*/true, {}});
+		patch.tracks.push_back({G_DEFAULT_COLUMN_WIDTH, /*internal=*/false, {groupChannelId}});
+		patch.channels.push_back({groupChannelId, ChannelType::GROUP, G_GUI_UNIT});
+	}
+
 	for (Patch::Channel& c : patch.channels)
 	{
 		const bool isInternalChannel = c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER;
@@ -369,14 +383,12 @@ void modernize_(Patch& patch)
 			c.waveId = 0;
 		}
 
-		/* 1.0.0
-		The relationship track-channel has been simplified. Let's put all
-		channels in the first track as a fallback. */
-		if (patch.version < Patch::Version{1, 0, 0} && !isInternalChannel)
+		/* 1.1.0
+		Let's put non-group channels into the relevant tracks. */
+		if (patch.version < Patch::Version{1, 1, 0} && c.type != ChannelType::GROUP)
 		{
-			if (patch.tracks.empty())
-				patch.tracks.push_back({G_DEFAULT_COLUMN_WIDTH, {}});
-			patch.tracks[0].channels.push_back(c.id);
+			const std::size_t targetIndex = isInternalChannel ? 0 : 1;
+			patch.tracks[targetIndex].channels.push_back(c.id);
 		}
 	}
 }
