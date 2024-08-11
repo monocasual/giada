@@ -63,7 +63,7 @@ auto findIfSafe(T& v, F&& func)
 template <typename T>
 auto findIfSafe(T& v, ID id)
 {
-	auto it = findIf(v, [id](const T::value_type& t)
+	auto it = findIf(v, [id](const typename T::value_type& t)
 	{ return t.id == id; });
 	assert(it != std::end(v));
 	return it;
