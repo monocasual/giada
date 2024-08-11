@@ -129,7 +129,7 @@ void geTrack::showAddChannelMenu() const
 
 	geKeyboard* keyboard = static_cast<geKeyboard*>(parent());
 
-	if (countChannels() > 0 || keyboard->countTracks() == 1)
+	if (!c::channel::canRemoveTrack(index))
 		menu.setEnabled((ID)Menu::REMOVE_TRACK, false);
 
 	menu.onSelect = [this, keyboard](ID menuId)

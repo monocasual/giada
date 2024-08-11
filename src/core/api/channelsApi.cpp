@@ -64,6 +64,13 @@ bool ChannelsApi::hasChannelsWithActions() const
 
 /* -------------------------------------------------------------------------- */
 
+bool ChannelsApi::canRemoveTrack(std::size_t trackIndex) const
+{
+	return m_channelManager.canRemoveTrack(trackIndex);
+}
+
+/* -------------------------------------------------------------------------- */
+
 Channel& ChannelsApi::get(ID channelId)
 {
 	return m_channelManager.getChannel(channelId);

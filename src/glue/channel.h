@@ -182,6 +182,11 @@ Set the width to 'w' pixel of track at index 'index'. */
 
 void setTrackWidth(int index, int w);
 
+/* canRemoveTrack
+True if the track is removable (only one Group channel contained). */
+
+bool canRemoveTrack(std::size_t trackIndex);
+
 /* set*
 Sets several channel properties. */
 

@@ -544,6 +544,13 @@ bool ChannelManager::hasSolos() const
 
 /* -------------------------------------------------------------------------- */
 
+bool ChannelManager::canRemoveTrack(std::size_t trackIndex) const
+{
+	return m_model.get().tracks.get(trackIndex).getNumChannels() == 1;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, Frame begin, Frame end, Frame shift) const
 {
 	ch.loadWave(w, begin, end, shift);

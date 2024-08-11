@@ -114,6 +114,13 @@ Channel& Track::getGroupChannel()
 
 /* -------------------------------------------------------------------------- */
 
+std::size_t Track::getNumChannels() const
+{
+	return m_channels.getAll().size();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Track::addChannel(Channel&& ch)
 {
 	m_channels.add(std::move(ch));

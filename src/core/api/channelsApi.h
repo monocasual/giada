@@ -66,6 +66,7 @@ public:
 
 	bool hasChannelsWithAudioData() const;
 	bool hasChannelsWithActions() const;
+	bool canRemoveTrack(std::size_t trackIndex) const;
 
 	Channel&       get(ID);
 	model::Tracks& getTracks();

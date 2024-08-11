@@ -282,6 +282,13 @@ void setTrackWidth(int index, int w)
 
 /* -------------------------------------------------------------------------- */
 
+bool canRemoveTrack(std::size_t trackIndex)
+{
+	return g_engine->getChannelsApi().canRemoveTrack(trackIndex);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
 	g_engine->getChannelsApi().setSamplePlayerMode(channelId, mode);

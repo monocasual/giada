@@ -87,6 +87,11 @@ public:
 
 	bool hasSolos() const;
 
+	/* canRemoveTrack
+	True if a track contains only one Group Channel. */
+
+	bool canRemoveTrack(std::size_t trackIndex) const;
+
 	float getMasterInVol() const;
 	float getMasterOutVol() const;
 

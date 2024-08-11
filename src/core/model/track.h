@@ -43,6 +43,7 @@ public:
 	const Channels& getChannels() const;
 	const Channel*  findChannel(ID) const;
 	const Channel&  getGroupChannel() const;
+	std::size_t     getNumChannels() const;
 
 	/* getIndex
 	Returns this Track index. */
