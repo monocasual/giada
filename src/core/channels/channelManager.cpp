@@ -118,7 +118,7 @@ void ChannelManager::addTrack(Frame bufferSize)
 	channelFactory::Data groupData = channelFactory::create(/*id=*/0, ChannelType::GROUP, bufferSize, rsmpQuality, overdubProtection);
 
 	m_model.addChannelShared(std::move(groupData.shared));
-	m_model.get().tracks.add(std::move(groupData.channel), G_DEFAULT_COLUMN_WIDTH, /*isInternal=*/false);
+	m_model.get().tracks.add(std::move(groupData.channel), G_DEFAULT_TRACK_WIDTH, /*isInternal=*/false);
 	m_model.swap(model::SwapType::HARD);
 }
 

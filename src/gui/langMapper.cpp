@@ -135,13 +135,13 @@ LangMap::LangMap()
 	                                            "Available if there are no other audio samples in the project.";
 	m_data[MAIN_TRANSPORT_LABEL_METRONOME] = "Metronome";
 
-	m_data[MAIN_COLUMN_HELP] = "Drop audio files or right-click here";
+	m_data[MAIN_TRACK_HELP] = "Drop audio files or right-click here";
 
-	m_data[MAIN_COLUMN_BUTTON]                  = "Edit column";
-	m_data[MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL] = "Add Sample channel";
-	m_data[MAIN_COLUMN_BUTTON_ADDMIDICHANNEL]   = "Add MIDI channel";
-	m_data[MAIN_COLUMN_BUTTON_REMOVE_COLUMN]    = "Remove column";
-	m_data[MAIN_COLUMN_BUTTON_ADD_COLUMN]       = "Add column";
+	m_data[MAIN_TRACK_BUTTON]                  = "Edit track";
+	m_data[MAIN_TRACK_BUTTON_ADDSAMPLECHANNEL] = "Add Sample channel";
+	m_data[MAIN_TRACK_BUTTON_ADDMIDICHANNEL]   = "Add MIDI channel";
+	m_data[MAIN_TRACK_BUTTON_REMOVE_TRACK]     = "Remove track";
+	m_data[MAIN_TRACK_BUTTON_ADD_TRACK]        = "Add track";
 
 	m_data[MAIN_CHANNEL_NOSAMPLE]          = "-- no sample --";
 	m_data[MAIN_CHANNEL_SAMPLENOTFOUND]    = "* file not found! *";

@@ -137,13 +137,13 @@ public:
 	static constexpr auto MAIN_TRANSPORT_LABEL_RECINPUTMODE   = "main_transport_label_recInputMode";
 	static constexpr auto MAIN_TRANSPORT_LABEL_METRONOME      = "main_transport_label_metronome";
 
-	static constexpr auto MAIN_COLUMN_HELP = "main_column_help";
+	static constexpr auto MAIN_TRACK_HELP = "main_track_help";
 
-	static constexpr auto MAIN_COLUMN_BUTTON                  = "main_column_button";
-	static constexpr auto MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL = "main_column_button_addSampleChannel";
-	static constexpr auto MAIN_COLUMN_BUTTON_ADDMIDICHANNEL   = "main_column_button_addMidiChannel";
-	static constexpr auto MAIN_COLUMN_BUTTON_REMOVE_COLUMN    = "main_column_button_removeColumn";
-	static constexpr auto MAIN_COLUMN_BUTTON_ADD_COLUMN       = "main_column_button_addColumn";
+	static constexpr auto MAIN_TRACK_BUTTON                  = "main_track_button";
+	static constexpr auto MAIN_TRACK_BUTTON_ADDSAMPLECHANNEL = "main_track_button_addSampleChannel";
+	static constexpr auto MAIN_TRACK_BUTTON_ADDMIDICHANNEL   = "main_track_button_addMidiChannel";
+	static constexpr auto MAIN_TRACK_BUTTON_REMOVE_TRACK     = "main_track_button_removeTrack";
+	static constexpr auto MAIN_TRACK_BUTTON_ADD_TRACK        = "main_track_button_addTrack";
 
 	static constexpr auto MAIN_CHANNEL_NOSAMPLE           = "main_channel_noSample";
 	static constexpr auto MAIN_CHANNEL_SAMPLENOTFOUND     = "main_channel_sampleNotFound";

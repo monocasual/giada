@@ -52,7 +52,7 @@ public:
 	void rebuild() override;
 
 	/* clearKeyboard
-	Resets Keyboard to initial state, with no columns. */
+	Resets Keyboard to initial state, with no tracks. */
 
 	void clearKeyboard();
 

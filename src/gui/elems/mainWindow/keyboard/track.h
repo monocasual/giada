@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_COLUMN_H
-#define GE_COLUMN_H
+#ifndef GE_TRACK_H
+#define GE_TRACK_H
 
 #include "core/types.h"
 #include "glue/channel.h"
@@ -38,10 +38,10 @@ class geTextButton;
 class geResizerBar;
 class geKeyboard;
 class geChannel;
-class geColumn : public geFlexResizable
+class geTrack : public geFlexResizable
 {
 public:
-	geColumn(int x, int y, int w, int h, int index, geResizerBar* b);
+	geTrack(int x, int y, int w, int h, int index, geResizerBar* b);
 
 	/* getChannel
 	Returns the channel given the ID. */
@@ -49,19 +49,19 @@ public:
 	geChannel* getChannel(ID channelId);
 
 	/* getChannelAtCursor
-	Returns the channel below the cursor. Returns the last channel if y is 
+	Returns the channel below the cursor. Returns the last channel if y is
 	greater than last channel range. */
 
 	geChannel* getChannelAtCursor(Pixel y) const;
 
 	/* get[First|Last]Channel
-	Returns first/last channel in the column. Nullptr if the column is empty. */
+	Returns first/last channel in the track. Nullptr if the track is empty. */
 
 	geChannel* getFirstChannel() const;
 	geChannel* getLastChannel() const;
 
 	/* countChannels
-	Returns the number of channels contained into this column. */
+	Returns the number of channels contained into this track. */
 
 	int countChannels() const;
 
@@ -71,7 +71,7 @@ public:
 	void showAddChannelMenu() const;
 
 	/* addChannel
-	Adds a new channel in this column. */
+	Adds a new channel in this track. */
 
 	geChannel* addChannel(const c::channel::Data&);
 

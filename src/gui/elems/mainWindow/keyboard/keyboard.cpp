@@ -35,8 +35,8 @@
 #include "gui/elems/basics/resizerBar.h"
 #include "gui/elems/basics/textButton.h"
 #include "gui/elems/mainWindow/keyboard/channelButton.h"
-#include "gui/elems/mainWindow/keyboard/column.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannel.h"
+#include "gui/elems/mainWindow/keyboard/track.h"
 #include "gui/elems/midiActivity.h"
 #include "gui/ui.h"
 #include "utils/fs.h"
@@ -69,11 +69,11 @@ bool geKeyboard::ChannelDragger::isDragging() const
 
 void geKeyboard::ChannelDragger::begin()
 {
-	const geColumn* column = m_keyboard.getColumnAtCursor(Fl::event_x());
-	if (column == nullptr)
+	const geTrack* track = m_keyboard.getTrackAtCursor(Fl::event_x());
+	if (track == nullptr)
 		return;
 
-	const geChannel* channel = column->getChannelAtCursor(Fl::event_y());
+	const geChannel* channel = track->getChannelAtCursor(Fl::event_y());
 	if (channel == nullptr)
 		return;
 
@@ -92,14 +92,14 @@ void geKeyboard::ChannelDragger::drag()
 	if (!isDragging())
 		return;
 
-	assert(m_keyboard.m_columns.size() > 0);
+	assert(m_keyboard.m_tracks.size() > 0);
 
-	const geColumn* firstColumn = m_keyboard.m_columns[0];
-	const geColumn* lastColumn  = m_keyboard.m_columns.back();
+	const geTrack* firstTrack = m_keyboard.m_tracks[0];
+	const geTrack* lastTrack  = m_keyboard.m_tracks.back();
 
-	const int minx = firstColumn->x();
-	const int maxx = lastColumn->x() + lastColumn->w() - m_placeholder->w();
-	const int miny = firstColumn->y();
+	const int minx = firstTrack->x();
+	const int maxx = lastTrack->x() + lastTrack->w() - m_placeholder->w();
+	const int miny = firstTrack->y();
 
 	// Explicit type std::min/max<int> to fix MINMAX macro hell on Windows
 	const int newx = std::min<int>(std::max<int>(minx, m_xoffset + Fl::event_x()), maxx);
@@ -116,8 +116,8 @@ void geKeyboard::ChannelDragger::end()
 	if (!isDragging())
 		return;
 
-	const geColumn* column = m_keyboard.getColumnAtCursor(Fl::event_x());
-	if (column == nullptr)
+	const geTrack* track = m_keyboard.getTrackAtCursor(Fl::event_x());
+	if (track == nullptr)
 	{
 		m_channelId = -1;
 		m_xoffset   = 0;
@@ -125,10 +125,10 @@ void geKeyboard::ChannelDragger::end()
 		return;
 	}
 
-	const int targetColumnIndex = column->index;
-	const int targetPosition    = getPositionForCursor(column, Fl::event_y());
+	const int targetTrackIndex = track->index;
+	const int targetPosition   = getPositionForCursor(track, Fl::event_y());
 
-	c::channel::moveChannel(m_channelId, targetColumnIndex, targetPosition);
+	c::channel::moveChannel(m_channelId, targetTrackIndex, targetPosition);
 
 	m_channelId = -1;
 	m_xoffset   = 0;
@@ -137,21 +137,21 @@ void geKeyboard::ChannelDragger::end()
 
 /* -------------------------------------------------------------------------- */
 
-int geKeyboard::ChannelDragger::getPositionForCursor(const geColumn* column, Pixel y) const
+int geKeyboard::ChannelDragger::getPositionForCursor(const geTrack* track, Pixel y) const
 {
-	const geChannel* lastChannel = column->getLastChannel();
-	if (lastChannel == nullptr) // Column is empty
+	const geChannel* lastChannel = track->getLastChannel();
+	if (lastChannel == nullptr) // Track is empty
 		return 0;
 
-	const geChannel* targetChannel = column->getChannelAtCursor(y);
+	const geChannel* targetChannel = track->getChannelAtCursor(y);
 	if (targetChannel != nullptr)
 		return targetChannel->getData().position + 1;
 
-	/* Channel not found, case 1: the cursor could be above the first channel. 
+	/* Channel not found, case 1: the cursor could be above the first channel.
 	Channel not found, case 2: the cursor could be below the last channel, over
-	the empty space at the bottom of the column. */
+	the empty space at the bottom of the track. */
 
-	const geChannel* firstChannel = column->getFirstChannel();
+	const geChannel* firstChannel = track->getFirstChannel();
 	if (y < firstChannel->y())
 		return 0;
 	return lastChannel->getData().position + 1;
@@ -173,48 +173,48 @@ geKeyboard::geKeyboard()
 
 /* -------------------------------------------------------------------------- */
 
-int geKeyboard::getChannelColumnIndex(ID channelId) const
+int geKeyboard::getChannelTrackIndex(ID channelId) const
 {
-	return getChannel(channelId)->getColumnIndex();
+	return getChannel(channelId)->getTrackIndex();
 }
 
 /* -------------------------------------------------------------------------- */
 
-size_t geKeyboard::countColumns() const
+size_t geKeyboard::countTracks() const
 {
-	return m_columns.size();
+	return m_tracks.size();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geKeyboard::init()
 {
-	deleteAllColumns();
+	deleteAllTracks();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geKeyboard::rebuild()
 {
-	deleteAllColumns();
+	deleteAllTracks();
 	for (const c::channel::Track& c : c::channel::getTracks())
-		addColumn(c);
+		addTrack(c);
 	redraw();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geKeyboard::deleteColumn(int index)
+void geKeyboard::deleteTrack(int index)
 {
 	c::channel::deleteTrack(index);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geKeyboard::deleteAllColumns()
+void geKeyboard::deleteAllTracks()
 {
 	Fl_Scroll::clear();
-	m_columns.clear();
+	m_tracks.clear();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -242,7 +242,7 @@ void geKeyboard::refresh()
 {
 	if (m_channelDragger.isDragging())
 		return;
-	for (geColumn* c : m_columns)
+	for (geTrack* c : m_tracks)
 		c->refresh();
 }
 
@@ -260,7 +260,7 @@ int geKeyboard::handle(int e)
 		}
 		if (Fl::event_button3())
 		{
-			openColumnMenu();
+			openTrackMenu();
 			return 1;
 		}
 
@@ -292,7 +292,7 @@ int geKeyboard::handle(int e)
 		return 1;
 
 	case FL_PASTE: // handle actual drop (paste) operation
-		const geColumn* c = getColumnAtCursor(Fl::event_x());
+		const geTrack* c = getTrackAtCursor(Fl::event_x());
 		if (c != nullptr)
 			c::channel::addAndLoadChannels(c->index, getDroppedFilePaths());
 		return 1;
@@ -307,21 +307,21 @@ void geKeyboard::draw()
 {
 	geScroll::draw();
 
-	/* Paint columns background. Use a clip to draw only what's visible. */
+	/* Paint tracks background. Use a clip to draw only what's visible. */
 
 	const geompp::Rect<int> viewportBounds = getViewportBounds();
 
 	fl_push_clip(viewportBounds.x, viewportBounds.y, viewportBounds.w, viewportBounds.h);
 
-	for (const geColumn* c : m_columns)
+	for (const geTrack* c : m_tracks)
 	{
-		const geompp::Rect background = getColumnBackround(*c);
+		const geompp::Rect background = getTrackBackround(*c);
 
 		drawRectf(background, G_COLOR_GREY_1_5);
 		drawRect(background, G_COLOR_GREY_2);
 		if (background.h >= c->endMargin)
 		{
-			const std::string text = u::gui::truncate(g_ui->getI18Text(LangMap::MAIN_COLUMN_HELP), c->w() - G_GUI_UNIT);
+			const std::string text = u::gui::truncate(g_ui->getI18Text(LangMap::MAIN_TRACK_HELP), c->w() - G_GUI_UNIT);
 			drawText(text, background, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_GREY_3);
 		}
 	}
@@ -333,91 +333,92 @@ void geKeyboard::draw()
 
 /* -------------------------------------------------------------------------- */
 
-geompp::Rect<int> geKeyboard::getColumnBackround(const geColumn& c) const
+geompp::Rect<int> geKeyboard::getTrackBackround(const geTrack& c) const
 {
-	const geompp::Rect  columnBounds(c.x(), c.y(), c.w(), c.h() - c.endMargin);
+	const geompp::Rect  trackBounds(c.x(), c.y(), c.w(), c.h() - c.endMargin);
 	const geompp::Rect  viewportBounds = getViewportBounds();
-	const geompp::Range columnRange    = columnBounds.getHeightAsRange();
+	const geompp::Range trackRange     = trackBounds.getHeightAsRange();
 	const geompp::Range thisRange      = viewportBounds.getHeightAsRange();
 
-	/* Column is empty (c.h() == 0) or away from the viewport: just return a 
+	/* Track is empty (c.h() == 0) or away from the viewport: just return a
 	full-size background. */
 
-	if (c.h() == 0 || !thisRange.intersects(columnRange))
+	if (c.h() == 0 || !thisRange.intersects(trackRange))
 		return viewportBounds.withX(c.x()).withW(c.w());
 
-	const auto [_, r2] = thisRange.getDifference(columnRange);
+	const auto [_, r2] = thisRange.getDifference(trackRange);
 
 	if (!r2.isValid())
 		return {};
-	return columnBounds.withVerticalRange(r2);
+	return trackBounds.withVerticalRange(r2);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geKeyboard::addColumn()
+void geKeyboard::addTrack()
 {
 	c::channel::addTrack();
 }
 
 /* -------------------------------------------------------------------------- */
 
-geColumn& geKeyboard::addColumn(const c::channel::Track& columnModel)
+geTrack& geKeyboard::addTrack(const c::channel::Track& trackModel)
 {
 	int colx = x() - xposition(); // Mind the x-scroll offset with xposition()
 
-	/* If this is not the first column... */
+	/* If this is not the first track... */
 
-	if (m_columns.size() > 0)
-		colx = m_columns.back()->x() + m_columns.back()->w() + COLUMN_GAP;
+	if (m_tracks.size() > 0)
+		colx = m_tracks.back()->x() + m_tracks.back()->w() + TRACK_GAP;
 
-	/* Add a new column + a new resizer bar. */
+	/* Add a new track + a new resizer bar. */
 
 	const int viewportH = getViewportBounds().h;
 
-	geResizerBar* bar    = new geResizerBar(colx + columnModel.width, y(), COLUMN_GAP, viewportH, G_MIN_COLUMN_WIDTH, Direction::HORIZONTAL);
-	geColumn*     column = new geColumn(colx, y(), columnModel.width, 0, columnModel.index, bar);
+	geResizerBar* bar   = new geResizerBar(colx + trackModel.width, y(), TRACK_GAP, viewportH, G_MIN_TRACK_WIDTH, Direction::HORIZONTAL);
+	geTrack*      track = new geTrack(colx, y(), trackModel.width, 0, trackModel.index, bar);
 
-	/* Store the column width in the model when the resizer bar is released. */
+	/* Store the track width in the model when the resizer bar is released. */
 
-	bar->onRelease = [](const Fl_Widget& w) {
-		const geColumn& column = static_cast<const geColumn&>(w);
-		c::channel::setTrackWidth(column.index, column.w());
+	bar->onRelease = [](const Fl_Widget& w)
+	{
+		const geTrack& track = static_cast<const geTrack&>(w);
+		c::channel::setTrackWidth(track.index, track.w());
 	};
 
-	add(column);
+	add(track);
 	add(bar);
-	m_columns.push_back(column);
+	m_tracks.push_back(track);
 
-	/* Fill column with channels. */
+	/* Fill track with channels. */
 
-	for (const c::channel::Data& ch : columnModel.channels)
-		column->addChannel(ch);
+	for (const c::channel::Data& ch : trackModel.channels)
+		track->addChannel(ch);
 
 	redraw();
 
-	return *column;
+	return *track;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geKeyboard::forEachChannel(std::function<void(geChannel& c)> f) const
 {
-	for (geColumn* column : m_columns)
-		column->forEachChannel(f);
+	for (geTrack* track : m_tracks)
+		track->forEachChannel(f);
 }
 
-void geKeyboard::forEachColumn(std::function<void(const geColumn& c)> f) const
+void geKeyboard::forEachTrack(std::function<void(const geTrack& c)> f) const
 {
-	for (geColumn* column : m_columns)
-		f(*column);
+	for (geTrack* track : m_tracks)
+		f(*track);
 }
 
 /* -------------------------------------------------------------------------- */
 
-geColumn* geKeyboard::getColumnAtCursor(Pixel px) const
+geTrack* geKeyboard::getTrackAtCursor(Pixel px) const
 {
-	for (geColumn* c : m_columns)
+	for (geTrack* c : m_tracks)
 		if (geompp::Range(c->x(), c->x() + c->w()).contains(px))
 			return c;
 	return nullptr;
@@ -427,9 +428,9 @@ geColumn* geKeyboard::getColumnAtCursor(Pixel px) const
 
 const geChannel* geKeyboard::getChannel(ID channelId) const
 {
-	for (geColumn* column : m_columns)
+	for (geTrack* track : m_tracks)
 	{
-		geChannel* c = column->getChannel(channelId);
+		geChannel* c = track->getChannel(channelId);
 		if (c != nullptr)
 			return c;
 	}
@@ -454,11 +455,11 @@ std::vector<std::string> geKeyboard::getDroppedFilePaths() const
 
 /* -------------------------------------------------------------------------- */
 
-void geKeyboard::openColumnMenu() const
+void geKeyboard::openTrackMenu() const
 {
-	const geColumn* column = getColumnAtCursor(Fl::event_x());
-	if (column == nullptr || column->getChannelAtCursor(Fl::event_y()) != nullptr)
+	const geTrack* track = getTrackAtCursor(Fl::event_x());
+	if (track == nullptr || track->getChannelAtCursor(Fl::event_y()) != nullptr)
 		return;
-	column->showAddChannelMenu();
+	track->showAddChannelMenu();
 }
 } // namespace giada::v

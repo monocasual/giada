@@ -50,10 +50,10 @@ public:
 
 	virtual void refresh();
 
-	/* getColumnId
-	Returns the ID of the column this channel resides in. */
+	/* getTrackIndex
+	Returns the index of the track this channel resides in. */
 
-	int getColumnIndex() const;
+	int getTrackIndex() const;
 
 	/* handleKey
 	Performs some UI-related operations when the bound key is pressed. Returns

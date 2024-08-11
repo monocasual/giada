@@ -341,8 +341,8 @@ list(APPEND SOURCES
 	src/gui/elems/mainWindow/keyboard/channelProgress.h
 	src/gui/elems/mainWindow/keyboard/keyboard.cpp
 	src/gui/elems/mainWindow/keyboard/keyboard.h
-	src/gui/elems/mainWindow/keyboard/column.cpp
-	src/gui/elems/mainWindow/keyboard/column.h
+	src/gui/elems/mainWindow/keyboard/track.cpp
+	src/gui/elems/mainWindow/keyboard/track.h
 	src/gui/elems/mainWindow/keyboard/sampleChannel.cpp
 	src/gui/elems/mainWindow/keyboard/sampleChannel.h
 	src/gui/elems/mainWindow/keyboard/midiChannel.cpp

@@ -32,7 +32,7 @@
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "gui/elems/mainWindow/keyboard/channelButton.h"
 #include "gui/elems/mainWindow/keyboard/channelProgress.h"
-#include "gui/elems/mainWindow/keyboard/column.h"
+#include "gui/elems/mainWindow/keyboard/track.h"
 #include "gui/elems/midiActivity.h"
 #include "gui/ui.h"
 #include <FL/Fl.H>
@@ -99,9 +99,9 @@ void geChannel::cb_changeVol()
 
 /* -------------------------------------------------------------------------- */
 
-int geChannel::getColumnIndex() const
+int geChannel::getTrackIndex() const
 {
-	return static_cast<geColumn*>(parent())->index;
+	return static_cast<geTrack*>(parent())->index;
 }
 
 /* -------------------------------------------------------------------------- */

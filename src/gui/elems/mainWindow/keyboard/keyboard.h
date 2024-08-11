@@ -44,7 +44,7 @@ struct Track;
 namespace giada::v
 {
 class geResizerBar;
-class geColumn;
+class geTrack;
 class geChannel;
 class geKeyboard : public geScroll
 {
@@ -56,15 +56,15 @@ public:
 	int  handle(int e) override;
 	void draw() override;
 
-	/* getChannelColumnIndex
-	Given a channel ID, returns the index of the column it belongs to. */
+	/* getChannelTrackIndex
+	Given a channel ID, returns the index of the track it belongs to. */
 
-	int getChannelColumnIndex(ID channelId) const;
+	int getChannelTrackIndex(ID channelId) const;
 
-	/* countColumns
-	Returns the number of columns in the viewport. */
+	/* countTracks
+	Returns the number of tracks in the viewport. */
 
-	size_t countColumns() const;
+	size_t countTracks() const;
 
 	/* rebuild
 	Rebuilds this widget from scratch. Used when the model has changed. */
@@ -72,39 +72,39 @@ public:
 	void rebuild();
 
 	/* refresh
-	Refreshes each column's channel, called on each GUI cycle. */
+	Refreshes each track's channel, called on each GUI cycle. */
 
 	void refresh();
 
-	/* addColumn
-	Adds new column at the end of the stack. */
+	/* addTrack
+	Adds new track at the end of the stack. */
 
-	void addColumn();
+	void addTrack();
 
-	/* deleteColumn
-	Deletes column by index. */
+	/* deleteTrack
+	Deletes track by index. */
 
-	void deleteColumn(int);
+	void deleteTrack(int);
 
-	/* deleteAllColumns
-	Deletes all columns from the stack. */
+	/* deleteAllTracks
+	Deletes all tracks from the stack. */
 
-	void deleteAllColumns();
+	void deleteAllTracks();
 
 	void setChannelVolume(ID channelId, float v);
 	void notifyMidiIn(ID channelId);
 	void notifyMidiOut(ID channelId);
 
 	/* init
-	Builds the default setup of empty columns. */
+	Builds the default setup of empty tracks. */
 
 	void init();
 
 	void forEachChannel(std::function<void(geChannel& c)> f) const;
-	void forEachColumn(std::function<void(const geColumn& c)> f) const;
+	void forEachTrack(std::function<void(const geTrack& c)> f) const;
 
 private:
-	static constexpr int COLUMN_GAP = 20;
+	static constexpr int TRACK_GAP = 20;
 
 	class ChannelDragger
 	{
@@ -124,16 +124,16 @@ private:
 		int         m_xoffset;
 
 		/* getPositionForCursor
-		Given a geColumn and a y-coordinate, returns the channel position for
+		Given a geTrack and a y-coordinate, returns the channel position for
 		that point, taking empty spaces into account. */
 
-		int getPositionForCursor(const geColumn*, Pixel y) const;
+		int getPositionForCursor(const geTrack*, Pixel y) const;
 	};
 
-	/* getColumnBackround
-	Returns a geompp::Rect for the square to be drawn as column background. */
+	/* getTrackBackround
+	Returns a geompp::Rect for the square to be drawn as track background. */
 
-	geompp::Rect<int> getColumnBackround(const geColumn&) const;
+	geompp::Rect<int> getTrackBackround(const geTrack&) const;
 
 	/* getDroppedFilePaths
 	Returns a vector of audio file paths after a drag-n-drop from desktop
@@ -141,15 +141,15 @@ private:
 
 	std::vector<std::string> getDroppedFilePaths() const;
 
-	/* openColumnMenu
-	Opens the 'add/remove channel' menu for the column under the cursor. */
+	/* openTrackMenu
+	Opens the 'add/remove channel' menu for the track under the cursor. */
 
-	void openColumnMenu() const;
+	void openTrackMenu() const;
 
-	/* getColumnAtCursor
-	Returns the column below the cursor. */
+	/* getTrackAtCursor
+	Returns the track below the cursor. */
 
-	geColumn* getColumnAtCursor(Pixel x) const;
+	geTrack* getTrackAtCursor(Pixel x) const;
 
 	/* getChannel
 	Given a channel ID returns the UI channel it belongs to. */
@@ -157,14 +157,14 @@ private:
 	geChannel*       getChannel(ID channelId);
 	const geChannel* getChannel(ID channelId) const;
 
-	/* addColumn
-	Adds new column at the end of the stack. Pass Column::id != 0 when loading 
-	columns from model. */
+	/* addTrack
+	Adds new track at the end of the stack. Pass Track::id != 0 when loading
+	tracks from model. */
 
-	geColumn& addColumn(const c::channel::Track&);
+	geTrack& addTrack(const c::channel::Track&);
 
-	ChannelDragger         m_channelDragger;
-	std::vector<geColumn*> m_columns;
+	ChannelDragger        m_channelDragger;
+	std::vector<geTrack*> m_tracks;
 };
 } // namespace giada::v
 

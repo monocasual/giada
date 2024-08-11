@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/mainWindow/keyboard/column.h"
+#include "gui/elems/mainWindow/keyboard/track.h"
 #include "deps/geompp/src/range.hpp"
 #include "glue/channel.h"
 #include "gui/dialogs/warnings.h"
@@ -53,8 +53,8 @@ enum class Menu
 {
 	ADD_SAMPLE_CHANNEL = 0,
 	ADD_MIDI_CHANNEL,
-	ADD_COLUMN,
-	REMOVE_COLUMN,
+	ADD_TRACK,
+	REMOVE_TRACK,
 };
 
 /* -------------------------------------------------------------------------- */
@@ -80,7 +80,7 @@ geChannel* makeChannel_(const c::channel::Data& data)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geColumn::geColumn(int X, int Y, int W, int H, int index, geResizerBar* b)
+geTrack::geTrack(int X, int Y, int W, int H, int index, geResizerBar* b)
 : geFlexResizable(X, Y, W, H, Direction::VERTICAL, geResizerBar::Mode::MOVE)
 , index(index)
 , resizerBar(b)
@@ -89,7 +89,8 @@ geColumn::geColumn(int X, int Y, int W, int H, int index, geResizerBar* b)
 
 	/* Store the channel height in model when a resizer bar is released. */
 
-	onDragBar = [](const Fl_Widget& widget) {
+	onDragBar = [](const Fl_Widget& widget)
+	{
 		c::channel::setHeight(static_cast<const geChannel&>(widget).getData().id, widget.h());
 	};
 
@@ -100,7 +101,7 @@ geColumn::geColumn(int X, int Y, int W, int H, int index, geResizerBar* b)
 
 /* -------------------------------------------------------------------------- */
 
-void geColumn::refresh()
+void geTrack::refresh()
 {
 	for (Fl_Widget* c : m_widgets)
 		static_cast<geChannel*>(c)->refresh();
@@ -108,7 +109,7 @@ void geColumn::refresh()
 
 /* -------------------------------------------------------------------------- */
 
-geChannel* geColumn::addChannel(const c::channel::Data& d)
+geChannel* geTrack::addChannel(const c::channel::Data& d)
 {
 	geChannel* gch = makeChannel_(d);
 	addWidget(gch, d.height);
@@ -117,21 +118,22 @@ geChannel* geColumn::addChannel(const c::channel::Data& d)
 
 /* -------------------------------------------------------------------------- */
 
-void geColumn::showAddChannelMenu() const
+void geTrack::showAddChannelMenu() const
 {
 	geMenu menu;
 
-	menu.addItem((ID)Menu::ADD_SAMPLE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADDSAMPLECHANNEL));
-	menu.addItem((ID)Menu::ADD_MIDI_CHANNEL, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADDMIDICHANNEL));
-	menu.addItem((ID)Menu::ADD_COLUMN, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_ADD_COLUMN));
-	menu.addItem((ID)Menu::REMOVE_COLUMN, g_ui->getI18Text(LangMap::MAIN_COLUMN_BUTTON_REMOVE_COLUMN));
+	menu.addItem((ID)Menu::ADD_SAMPLE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_ADDSAMPLECHANNEL));
+	menu.addItem((ID)Menu::ADD_MIDI_CHANNEL, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_ADDMIDICHANNEL));
+	menu.addItem((ID)Menu::ADD_TRACK, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_ADD_TRACK));
+	menu.addItem((ID)Menu::REMOVE_TRACK, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_REMOVE_TRACK));
 
 	geKeyboard* keyboard = static_cast<geKeyboard*>(parent());
 
-	if (countChannels() > 0 || keyboard->countColumns() == 1)
-		menu.setEnabled((ID)Menu::REMOVE_COLUMN, false);
+	if (countChannels() > 0 || keyboard->countTracks() == 1)
+		menu.setEnabled((ID)Menu::REMOVE_TRACK, false);
 
-	menu.onSelect = [this, keyboard](ID menuId) {
+	menu.onSelect = [this, keyboard](ID menuId)
+	{
 		switch (static_cast<Menu>(menuId))
 		{
 		case Menu::ADD_SAMPLE_CHANNEL:
@@ -140,11 +142,11 @@ void geColumn::showAddChannelMenu() const
 		case Menu::ADD_MIDI_CHANNEL:
 			c::channel::addChannel(index, ChannelType::MIDI);
 			break;
-		case Menu::REMOVE_COLUMN:
-			keyboard->deleteColumn(index);
+		case Menu::REMOVE_TRACK:
+			keyboard->deleteTrack(index);
 			break;
-		case Menu::ADD_COLUMN:
-			keyboard->addColumn();
+		case Menu::ADD_TRACK:
+			keyboard->addTrack();
 			break;
 		}
 	};
@@ -154,7 +156,7 @@ void geColumn::showAddChannelMenu() const
 
 /* -------------------------------------------------------------------------- */
 
-geChannel* geColumn::getChannel(ID channelId)
+geChannel* geTrack::getChannel(ID channelId)
 {
 	for (Fl_Widget* wg : m_widgets)
 	{
@@ -167,7 +169,7 @@ geChannel* geColumn::getChannel(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-geChannel* geColumn::getChannelAtCursor(Pixel y) const
+geChannel* geTrack::getChannelAtCursor(Pixel y) const
 {
 	if (m_widgets.empty())
 		return nullptr;
@@ -181,19 +183,19 @@ geChannel* geColumn::getChannelAtCursor(Pixel y) const
 
 /* -------------------------------------------------------------------------- */
 
-geChannel* geColumn::getFirstChannel() const
+geChannel* geTrack::getFirstChannel() const
 {
 	return m_widgets.empty() ? nullptr : static_cast<geChannel*>(m_widgets.front());
 }
 
-geChannel* geColumn::getLastChannel() const
+geChannel* geTrack::getLastChannel() const
 {
 	return m_widgets.empty() ? nullptr : static_cast<geChannel*>(m_widgets.back());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geColumn::forEachChannel(std::function<void(geChannel& c)> f) const
+void geTrack::forEachChannel(std::function<void(geChannel& c)> f) const
 {
 	for (Fl_Widget* wg : m_widgets)
 		f(*static_cast<geChannel*>(wg));
@@ -201,7 +203,7 @@ void geColumn::forEachChannel(std::function<void(geChannel& c)> f) const
 
 /* -------------------------------------------------------------------------- */
 
-int geColumn::countChannels() const
+int geTrack::countChannels() const
 {
 	return m_widgets.size();
 }

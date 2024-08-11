@@ -57,7 +57,7 @@ void readTracks_(Patch& patch, const nlohmann::json& j)
 	for (const auto& jtrack : j[PATCH_KEY_TRACKS])
 	{
 		Patch::Track track;
-		track.width    = jtrack.value(PATCH_KEY_TRACK_WIDTH, G_DEFAULT_COLUMN_WIDTH);
+		track.width    = jtrack.value(PATCH_KEY_TRACK_WIDTH, G_DEFAULT_TRACK_WIDTH);
 		track.internal = jtrack.value(PATCH_KEY_TRACK_INTERNAL, false);
 		if (jtrack.contains(PATCH_KEY_TRACK_CHANNELS))
 			for (const auto& jplugin : jtrack[PATCH_KEY_TRACK_CHANNELS])
@@ -223,14 +223,14 @@ void writeTracks_(const Patch& patch, nlohmann::json& j)
 
 	for (const Patch::Track& track : patch.tracks)
 	{
-		nlohmann::json jcolumn;
-		jcolumn[PATCH_KEY_TRACK_WIDTH]    = track.width;
-		jcolumn[PATCH_KEY_TRACK_INTERNAL] = track.internal;
-		jcolumn[PATCH_KEY_TRACK_CHANNELS] = nlohmann::json::array();
+		nlohmann::json jtrack;
+		jtrack[PATCH_KEY_TRACK_WIDTH]    = track.width;
+		jtrack[PATCH_KEY_TRACK_INTERNAL] = track.internal;
+		jtrack[PATCH_KEY_TRACK_CHANNELS] = nlohmann::json::array();
 		for (ID channelId : track.channels)
-			jcolumn[PATCH_KEY_TRACK_CHANNELS].push_back(channelId);
+			jtrack[PATCH_KEY_TRACK_CHANNELS].push_back(channelId);
 
-		j[PATCH_KEY_TRACKS].push_back(jcolumn);
+		j[PATCH_KEY_TRACKS].push_back(jtrack);
 	}
 }
 
@@ -353,8 +353,8 @@ void modernize_(Patch& patch)
 	if (patch.version < Patch::Version{1, 1, 0})
 	{
 		const ID groupChannelId = 8192;
-		patch.tracks.push_back({G_DEFAULT_COLUMN_WIDTH, /*internal=*/true, {}});
-		patch.tracks.push_back({G_DEFAULT_COLUMN_WIDTH, /*internal=*/false, {groupChannelId}});
+		patch.tracks.push_back({G_DEFAULT_TRACK_WIDTH, /*internal=*/true, {}});
+		patch.tracks.push_back({G_DEFAULT_TRACK_WIDTH, /*internal=*/false, {groupChannelId}});
 		patch.channels.push_back({groupChannelId, ChannelType::GROUP, G_GUI_UNIT});
 	}
 
