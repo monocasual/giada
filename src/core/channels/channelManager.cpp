@@ -126,7 +126,7 @@ void ChannelManager::addTrack(Frame bufferSize)
 
 void ChannelManager::removeTrack(std::size_t trackIndex)
 {
-	assert(m_model.get().tracks.get(trackIndex).getChannels().getAll().size() == 1); // Only one Channel Group
+	assert(canRemoveTrack(trackIndex));
 
 	const ID groupChannelId = m_model.get().tracks.get(trackIndex).getGroupChannel().id;
 
