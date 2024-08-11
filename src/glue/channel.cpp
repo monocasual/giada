@@ -245,7 +245,7 @@ void setOverdubProtection(ID channelId, bool value)
 
 /* -------------------------------------------------------------------------- */
 
-void cloneChannel(ID channelId, int trackIndex)
+void cloneChannel(ID channelId)
 {
 	g_engine->getChannelsApi().clone(channelId);
 }

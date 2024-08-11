@@ -182,7 +182,7 @@ void geMidiChannel::openMenu()
 			c::layout::openChannelRoutingWindow(data.id);
 			break;
 		case Menu::CLONE_CHANNEL:
-			c::channel::cloneChannel(data.id, data.trackIndex);
+			c::channel::cloneChannel(data.id);
 			break;
 		case Menu::RENAME_CHANNEL:
 			c::layout::openRenameChannelWindow(data);

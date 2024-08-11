@@ -160,7 +160,7 @@ void freeChannel(ID channelId);
 /* cloneChannel
 Makes an exact copy of a channel. */
 
-void cloneChannel(ID channelId, int trackIndex);
+void cloneChannel(ID channelId);
 
 /* moveChannel
 Moves channel with channelId to track at 'trackIndex' at 'position'. */
