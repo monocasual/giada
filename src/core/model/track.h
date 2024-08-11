@@ -33,6 +33,8 @@ namespace giada::m::model
 {
 class Track
 {
+	friend class Tracks;
+
 public:
 	/* ctor
 	A non-internal track always contains at least one Group Channel that determines the

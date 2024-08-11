@@ -56,6 +56,9 @@ void Tracks::remove(std::size_t index)
 	assert(index < m_tracks.size());
 
 	m_tracks.erase(m_tracks.begin() + index);
+
+	for (std::size_t index = 0; Track & track : m_tracks)
+		track.m_index = index++;
 }
 
 /* -------------------------------------------------------------------------- */
