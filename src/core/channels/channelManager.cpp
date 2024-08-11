@@ -128,9 +128,6 @@ void ChannelManager::removeTrack(std::size_t trackIndex)
 {
 	assert(canRemoveTrack(trackIndex));
 
-	const ID groupChannelId = m_model.get().tracks.get(trackIndex).getGroupChannel().id;
-
-	m_model.get().tracks.removeChannel(groupChannelId);
 	m_model.get().tracks.remove(trackIndex);
 	m_model.swap(model::SwapType::HARD);
 }
