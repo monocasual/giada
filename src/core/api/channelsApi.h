@@ -80,7 +80,7 @@ public:
 	void     loadSampleChannel(ID channelId, Wave&);
 	void     remove(ID);
 	void     freeSampleChannel(ID);
-	Channel& clone(ID);
+	void     clone(ID);
 
 	void press(ID, float velocity);
 	void release(ID);

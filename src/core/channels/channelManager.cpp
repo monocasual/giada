@@ -198,7 +198,7 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 
 /* -------------------------------------------------------------------------- */
 
-Channel& ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>& plugins)
+void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>& plugins)
 {
 	const Channel&           oldChannel     = m_model.get().tracks.getChannel(channelId);
 	const std::size_t        trackIndex     = m_model.get().tracks.getByChannel(channelId).getIndex();
@@ -226,8 +226,6 @@ Channel& ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::v
 	m_model.get().tracks.get(trackIndex).addChannel(std::move(newChannelData.channel));
 	m_model.addChannelShared(std::move(newChannelData.shared));
 	m_model.swap(model::SwapType::HARD);
-
-	return m_model.get().tracks.get(trackIndex).getChannels().getLast();
 }
 
 /* -------------------------------------------------------------------------- */
