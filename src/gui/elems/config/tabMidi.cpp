@@ -54,7 +54,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			m_portOut   = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MIDI_OUTPUTPORT),
-                g_ui->getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
+			      g_ui->getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
 			m_enableOut = new geCheck(0, 0, 0, 0);
 
 			line1->addWidget(m_portOut);
@@ -65,7 +65,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		geFlex* line2 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			m_portIn   = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MIDI_INPUTPORT),
-                g_ui->getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
+			      g_ui->getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
 			m_enableIn = new geCheck(0, 0, 0, 0);
 
 			line2->addWidget(m_portIn);
@@ -107,17 +107,21 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 	add(body);
 	resizable(body);
 
-	m_system->onChange = [this](ID id) {
+	m_system->onChange = [this](ID id)
+	{
 		c::config::changeMidiAPI(static_cast<RtMidi::Api>(id));
 		rebuild(c::config::getMidiData());
 	};
 
-	m_portOut->onChange = [this](ID id) { m_data.outPort = id; };
+	m_portOut->onChange = [this](ID id)
+	{ m_data.outPort = id; };
 
-	m_portIn->onChange = [this](ID id) { m_data.inPort = id; };
+	m_portIn->onChange = [this](ID id)
+	{ m_data.inPort = id; };
 
 	m_enableOut->copy_tooltip(g_ui->getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEOUT));
-	m_enableOut->onChange = [this](bool b) {
+	m_enableOut->onChange = [this](bool b)
+	{
 		if (m_data.outPorts.empty())
 			return;
 		if (b)
@@ -133,7 +137,8 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 	};
 
 	m_enableIn->copy_tooltip(g_ui->getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEIN));
-	m_enableIn->onChange = [this](bool b) {
+	m_enableIn->onChange = [this](bool b)
+	{
 		if (m_data.inPorts.empty())
 			return;
 		if (b)
@@ -148,17 +153,20 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		}
 	};
 
-	m_midiMap->onChange = [this](ID id) {
+	m_midiMap->onChange = [this](ID id)
+	{
 		m_data.midiMap = id;
 		c::config::setMidiMapPath(m_data.getMidiMapByIndex(id));
 	};
 
-	m_sync->onChange = [this](ID id) {
+	m_sync->onChange = [this](ID id)
+	{
 		m_data.syncMode = id;
 		c::config::setMidiSyncMode(m_data.syncMode);
 	};
 
-	m_applyBtn->onClick = [this]() { c::config::apply(m_data); };
+	m_applyBtn->onClick = [this]()
+	{ c::config::apply(m_data); };
 
 	rebuild(c::config::getMidiData());
 }

@@ -65,7 +65,7 @@ public:
 	bool canSendMidi() const;
 
 	/* isAudible
-	True if this channel is currently audible: not muted or not included in a 
+	True if this channel is currently audible: not muted or not included in a
 	solo session. */
 
 	bool isAudible(bool mixerHasSolos) const;

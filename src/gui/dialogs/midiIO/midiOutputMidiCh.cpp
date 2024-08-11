@@ -99,19 +99,23 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 	m_chanListOut->addItem("Channel 15");
 	m_chanListOut->addItem("Channel 16");
 	m_chanListOut->showItem(0);
-	m_chanListOut->onChange = [this](ID id) {
+	m_chanListOut->onChange = [this](ID id)
+	{
 		c::io::channel_setMidiOutputFilter(m_channelId, id);
 	};
 
-	m_enableOut->onChange = [this](bool value) {
+	m_enableOut->onChange = [this](bool value)
+	{
 		c::io::channel_enableMidiOutput(m_channelId, value);
 	};
 
-	m_enableLightning->onChange = [this](bool value) {
+	m_enableLightning->onChange = [this](bool value)
+	{
 		c::io::channel_enableMidiLightning(m_channelId, value);
 	};
 
-	m_close->onClick = [this]() { do_callback(); };
+	m_close->onClick = [this]()
+	{ do_callback(); };
 
 	set_modal();
 	rebuild();

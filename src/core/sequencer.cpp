@@ -55,7 +55,8 @@ Sequencer::Sequencer(model::Model& m, MidiSynchronizer& s, JackTransport& j)
 , m_jackTransport(j)
 , m_quantizerStep(1)
 {
-	m_quantizer.schedule(Q_ACTION_REWIND, [this](Frame delta) { rawRewind(delta); });
+	m_quantizer.schedule(Q_ACTION_REWIND, [this](Frame delta)
+	{ rawRewind(delta); });
 }
 /* -------------------------------------------------------------------------- */
 

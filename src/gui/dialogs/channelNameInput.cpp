@@ -66,12 +66,14 @@ gdChannelNameInput::gdChannelNameInput(const c::channel::Data& d)
 	m_name->setValue(m_data.name);
 
 	m_ok->shortcut(FL_Enter);
-	m_ok->onClick = [this]() {
+	m_ok->onClick = [this]()
+	{
 		c::channel::setName(m_data.id, m_name->getValue());
 		do_callback();
 	};
 
-	m_cancel->onClick = [this]() {
+	m_cancel->onClick = [this]()
+	{
 		do_callback();
 	};
 

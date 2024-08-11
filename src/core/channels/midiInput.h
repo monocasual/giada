@@ -39,18 +39,18 @@ public:
 	MidiInput(const Patch::Channel&);
 
 	/* isAllowed
-    Tells whether the MIDI channel 'c' is enabled to receive MIDI data. */
+	Tells whether the MIDI channel 'c' is enabled to receive MIDI data. */
 
 	bool isAllowed(int c) const;
 
 	/* enabled
-    Tells whether MIDI learning is enabled for the current channel. */
+	Tells whether MIDI learning is enabled for the current channel. */
 
 	bool enabled;
 
 	/* filter
-    Which MIDI channel should be filtered out when receiving MIDI messages. 
-    If -1 means 'all'. */
+	Which MIDI channel should be filtered out when receiving MIDI messages.
+	If -1 means 'all'. */
 
 	int filter;
 

@@ -70,9 +70,11 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 	add(container);
 	resizable(nullptr);
 
-	m_close->onClick = [this]() { do_callback(); };
+	m_close->onClick = [this]()
+	{ do_callback(); };
 
-	m_enableLightning->onChange = [this](bool value) {
+	m_enableLightning->onChange = [this](bool value)
+	{
 		c::io::channel_enableMidiLightning(m_channelId, value);
 	};
 

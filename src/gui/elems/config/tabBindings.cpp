@@ -58,10 +58,15 @@ geTabBindings::geTabBindings(geompp::Rect<int> bounds, const Model& model)
 	add(body);
 	resizable(body);
 
-	play->onKeyBound          = [](int key) { g_ui->model.keyBindPlay = key; };
-	rewind->onKeyBound        = [](int key) { g_ui->model.keyBindRewind = key; };
-	recordActions->onKeyBound = [](int key) { g_ui->model.keyBindRecordActions = key; };
-	recordInput->onKeyBound   = [](int key) { g_ui->model.keyBindRecordInput = key; };
-	exit->onKeyBound          = [](int key) { g_ui->model.keyBindExit = key; };
+	play->onKeyBound = [](int key)
+	{ g_ui->model.keyBindPlay = key; };
+	rewind->onKeyBound = [](int key)
+	{ g_ui->model.keyBindRewind = key; };
+	recordActions->onKeyBound = [](int key)
+	{ g_ui->model.keyBindRecordActions = key; };
+	recordInput->onKeyBound = [](int key)
+	{ g_ui->model.keyBindRecordInput = key; };
+	exit->onKeyBound = [](int key)
+	{ g_ui->model.keyBindExit = key; };
 }
 } // namespace giada::v

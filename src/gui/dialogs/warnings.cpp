@@ -58,7 +58,8 @@ void gdAlert(const char* msg, bool resizable)
 	box->labelsize(G_GUI_FONT_SIZE_BASE);
 
 	b->shortcut(FL_Enter);
-	b->onClick = [&win]() { win.hide(); };
+	b->onClick = [&win]()
+	{ win.hide(); };
 
 	if (resizable)
 		win.resizable(box);
@@ -82,9 +83,11 @@ int gdConfirmWin(const char* title, const char* msg)
 	win.end();
 
 	ok->shortcut(FL_Enter);
-	ok->onClick = [&win]() { confirmRet_ = true; win.hide(); };
+	ok->onClick = [&win]()
+	{ confirmRet_ = true; win.hide(); };
 
-	ko->onClick = [&win]() { confirmRet_ = false; win.hide(); };
+	ko->onClick = [&win]()
+	{ confirmRet_ = false; win.hide(); };
 
 	win.show();
 

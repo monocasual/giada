@@ -42,7 +42,8 @@ namespace
 template <typename T>
 auto getIter_(const std::vector<std::unique_ptr<T>>& source, ID id)
 {
-	return u::vector::findIf(source, [id](const std::unique_ptr<T>& p) { return p->id == id; });
+	return u::vector::findIf(source, [id](const std::unique_ptr<T>& p)
+	{ return p->id == id; });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -68,7 +69,8 @@ typename T::element_type& add_(std::vector<T>& dest, T obj)
 template <typename D, typename T>
 void remove_(D& dest, T& ref)
 {
-	u::vector::removeIf(dest, [&ref](const auto& other) { return other.get() == &ref; });
+	u::vector::removeIf(dest, [&ref](const auto& other)
+	{ return other.get() == &ref; });
 }
 } // namespace
 
@@ -130,7 +132,7 @@ void Shared::store(Patch& patch, const std::string& projectPath)
 
 	for (auto& w : getAllWaves())
 	{
-		/* Update all existing file paths in Waves, so that they point to the 
+		/* Update all existing file paths in Waves, so that they point to the
 		project folder they belong to. */
 
 		w->setPath(waveFactory::makeUniqueWavePath(projectPath, *w, getAllWaves()));

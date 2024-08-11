@@ -56,13 +56,13 @@ void MidiSynchronizer::receive(const MidiEvent& e, int numBeatsInLoop)
 	assert(onStart != nullptr);
 	assert(onStop != nullptr);
 
-	/* MidiSynchronizer, if working in SLAVE mode, can receive SYSTEM_* MIDI 
+	/* MidiSynchronizer, if working in SLAVE mode, can receive SYSTEM_* MIDI
 	types. More specifically:
-		* SYSTEM_CLOCK - when another MIDI device sends CLOCK data to perform
-		  synchronization;
-		* SYSTEM_START - when another MIDI device is about to start;
-		* SYSTEM_STOP - when another MIDI device is about to stop;
-		* SYSTEM_SPP - when another MIDI device has changed song position. */
+	    * SYSTEM_CLOCK - when another MIDI device sends CLOCK data to perform
+	      synchronization;
+	    * SYSTEM_START - when another MIDI device is about to start;
+	    * SYSTEM_STOP - when another MIDI device is about to stop;
+	    * SYSTEM_SPP - when another MIDI device has changed song position. */
 
 	if (!m_kernelMidi.canSyncSlave() || e.getType() != MidiEvent::Type::SYSTEM)
 		return;
@@ -100,7 +100,8 @@ void MidiSynchronizer::startSendClock(float bpm)
 	setClockBpm(bpm);
 	const MidiEvent clockEvent = MidiEvent::makeFrom1Byte(MidiEvent::SYSTEM_CLOCK);
 
-	m_worker.start([this, clockEvent]() {
+	m_worker.start([this, clockEvent]()
+	{
 		if (!m_kernelMidi.send(clockEvent))
 			G_DEBUG("Can't send MIDI out message!", );
 	});
@@ -149,9 +150,9 @@ void MidiSynchronizer::computeClock(double timestamp)
 {
 	assert(onChangeBpm != nullptr);
 
-	/* A MIDI clock event (SYSTEM_CLOCK) is sent 24 times per quarter note, that 
-	is 24 times per beat. This is tempo-relative, since the tempo defines the 
-	length of a quarter note (aka frames in beat) and so the duration of each 
+	/* A MIDI clock event (SYSTEM_CLOCK) is sent 24 times per quarter note, that
+	is 24 times per beat. This is tempo-relative, since the tempo defines the
+	length of a quarter note (aka frames in beat) and so the duration of each
 	pulse. Faster tempo -> faster SYSTEM_CLOCK events stream. Here we are
 	interpreting that rate and converting into a BPM value. */
 
@@ -182,8 +183,8 @@ void MidiSynchronizer::computeClock(double timestamp)
 	m_lastDelta           = (rawDelta * SMOOTHNESS) + (m_lastDelta * (1.0 - SMOOTHNESS));
 
 	/* Do the same as delta for the BPM value. The raw bpm formula is a simplified
-	version of 
-		rawBpm = ((1.0 / m_lastDelta) / MIDI_CLOCK_PPQ) * 60.0;
+	version of
+	    rawBpm = ((1.0 / m_lastDelta) / MIDI_CLOCK_PPQ) * 60.0;
 	where MIDI_CLOCK_PPQ == 24.0 */
 
 	const double rawBpm = 2.5 / m_lastDelta;
@@ -205,7 +206,7 @@ void MidiSynchronizer::computePosition(int sppPosition, int numBeatsInLoop)
 {
 	assert(onChangePosition != nullptr);
 
-	/* Each MIDI Beat spans 6 MIDI Clocks. In other words, each MIDI Beat is a 
+	/* Each MIDI Beat spans 6 MIDI Clocks. In other words, each MIDI Beat is a
 	16th note (since there are 24 MIDI Clocks in a quarter note).
 
 	So 1 MIDI beat = a 16th note = 6 clock pulses. A quarter (aka a beat) is

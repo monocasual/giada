@@ -43,34 +43,34 @@ public:
 	using Map = std::map<Frame, std::vector<Action>>;
 
 	/* forEachAction
-    Applies a read-only callback on each action recorded. NEVER do anything
-    inside the callback that might alter the ActionMap. */
+	Applies a read-only callback on each action recorded. NEVER do anything
+	inside the callback that might alter the ActionMap. */
 
 	void forEachAction(std::function<void(const Action&)> f) const;
 
 	/* getActionsOnChannel
-    Returns a vector of actions belonging to channel 'ch'. */
+	Returns a vector of actions belonging to channel 'ch'. */
 
 	std::vector<Action> getActionsOnChannel(ID channelId) const;
 
 	/* getClosestAction
-    Given a frame 'f' returns the closest action. */
+	Given a frame 'f' returns the closest action. */
 
 	Action getClosestAction(ID channelId, Frame f, int type) const;
 
 	/* getActionsOnFrame
-    Returns a pointer to a vector of actions recorded on frame 'f', or nullptr 
-    if the frame has no actions. */
+	Returns a pointer to a vector of actions recorded on frame 'f', or nullptr
+	if the frame has no actions. */
 
 	const std::vector<Action>* getActionsOnFrame(Frame f) const;
 
 	/* hasActions
-    Checks if the channel has at least one action recorded. */
+	Checks if the channel has at least one action recorded. */
 
 	bool hasActions(ID channelId, int type = 0) const;
 
 	/* getAll
-    Returns a reference to the internal map. */
+	Returns a reference to the internal map. */
 
 	const Map& getAll() const;
 
@@ -89,61 +89,61 @@ public:
 	void set(model::Actions::Map&&);
 
 	/* clearAll
-    Deletes all recorded actions. */
+	Deletes all recorded actions. */
 
 	void clearAll();
 
 	/* clearChannel
-    Clears all actions from a channel. */
+	Clears all actions from a channel. */
 
 	void clearChannel(ID channelId);
 
 	/* clearActions
-    Clears the actions by type from a channel. */
+	Clears the actions by type from a channel. */
 
 	void clearActions(ID channelId, int type);
 
 	/* deleteAction (1)
-    Deletes a specific action. */
+	Deletes a specific action. */
 
 	void deleteAction(ID id);
 
 	/* deleteAction (2)
-    Deletes a specific pair of actions. Useful for composite stuff (i.e. MIDI). */
+	Deletes a specific pair of actions. Useful for composite stuff (i.e. MIDI). */
 
 	void deleteAction(ID currId, ID nextId);
 
 	/* updateKeyFrames
-    Update all the key frames in the internal map of actions, according to a 
-    lambda function 'f'. */
+	Update all the key frames in the internal map of actions, according to a
+	lambda function 'f'. */
 
 	void updateKeyFrames(std::function<Frame(Frame old)> f);
 
 	/* updateEvent
-    Changes the event in action 'a'. */
+	Changes the event in action 'a'. */
 
 	void updateEvent(ID id, MidiEvent e);
 
 	/* updateSiblings
-    Changes previous and next actions in action with id 'id'. Mostly used for
-    chained actions such as envelopes. */
+	Changes previous and next actions in action with id 'id'. Mostly used for
+	chained actions such as envelopes. */
 
 	void updateSiblings(ID id, ID prevId, ID nextId);
 
 	/* rec (1)
-    Records an action and returns it. Used by the Action Editor. */
+	Records an action and returns it. Used by the Action Editor. */
 
 	Action rec(ID channelId, Frame frame, MidiEvent e);
 
 	/* rec (2)
-    Transfer a vector of actions into the current ActionMap. This is called by 
-    recordHandler when a live session is over and consolidation is required. */
+	Transfer a vector of actions into the current ActionMap. This is called by
+	recordHandler when a live session is over and consolidation is required. */
 
 	void rec(std::vector<Action>& actions);
 
 	/* rec (3)
-    Records two actions on channel 'channel'. Useful when recording composite 
-    actions in the Action Editor. */
+	Records two actions on channel 'channel'. Useful when recording composite
+	actions in the Action Editor. */
 
 	void rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 
@@ -155,7 +155,7 @@ private:
 	const Action* findAction(const Map& src, ID id) const;
 
 	/* optimize
-    Removes frames without actions. */
+	Removes frames without actions. */
 
 	void optimize(Map& map);
 

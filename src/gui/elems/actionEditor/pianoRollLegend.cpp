@@ -51,7 +51,7 @@ void gePianoRollLegend::geContent::drawOffscreen()
 	m_offscreen = fl_create_offscreen(gePianoRoll::CELL_W, h());
 	fl_begin_offscreen(m_offscreen);
 
-	/* Warning: only w() and h() come from this widget, x and y coordinates are 
+	/* Warning: only w() and h() come from this widget, x and y coordinates are
 	absolute, since we are writing in a memory chunk. */
 
 	fl_rectf(0, 0, gePianoRoll::CELL_W, h(), G_COLOR_GREY_1_5);

@@ -66,37 +66,44 @@ geMainTransport::geMainTransport()
 	m_inputRecMode->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TRANSPORT_LABEL_RECINPUTMODE));
 	m_metronome->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TRANSPORT_LABEL_METRONOME));
 
-	m_rewind->onClick = []() {
+	m_rewind->onClick = []()
+	{
 		c::main::rewindSequencer();
 	};
 
 	m_play->setToggleable(true);
-	m_play->onClick = []() {
+	m_play->onClick = []()
+	{
 		c::main::toggleSequencer();
 	};
 
 	m_recAction->setToggleable(true);
-	m_recAction->onClick = []() {
+	m_recAction->onClick = []()
+	{
 		c::main::toggleActionRecording();
 	};
 
 	m_recInput->setToggleable(true);
-	m_recInput->onClick = []() {
+	m_recInput->onClick = []()
+	{
 		c::main::toggleInputRecording();
 	};
 
 	m_recTriggerMode->setToggleable(true);
-	m_recTriggerMode->onClick = []() {
+	m_recTriggerMode->onClick = []()
+	{
 		c::main::toggleRecOnSignal();
 	};
 
 	m_inputRecMode->setToggleable(true);
-	m_inputRecMode->onClick = []() {
+	m_inputRecMode->onClick = []()
+	{
 		c::main::toggleFreeInputRec();
 	};
 
 	m_metronome->setToggleable(true);
-	m_metronome->onClick = []() {
+	m_metronome->onClick = []()
+	{
 		c::main::toggleMetronome();
 	};
 }

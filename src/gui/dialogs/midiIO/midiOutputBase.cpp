@@ -39,8 +39,10 @@ geLightningLearnerPack::geLightningLearnerPack(int x, int y, ID channelId)
 : geMidiLearnerPack(x, y)
 {
 	setCallbacks(
-	    [channelId](int param) { c::io::channel_startMidiLearn(param, channelId); },
-	    [channelId](int param) { c::io::channel_clearMidiLearn(param, channelId); });
+	    [channelId](int param)
+	{ c::io::channel_startMidiLearn(param, channelId); },
+	    [channelId](int param)
+	{ c::io::channel_clearMidiLearn(param, channelId); });
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIOUTPUT_CHANNEL_LEARN_PLAYING), G_MIDI_OUT_L_PLAYING);
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIOUTPUT_CHANNEL_LEARN_MUTE), G_MIDI_OUT_L_MUTE);
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIOUTPUT_CHANNEL_LEARN_SOLO), G_MIDI_OUT_L_SOLO);

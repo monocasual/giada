@@ -54,10 +54,10 @@ public:
 	Plugin(ID  id, std::unique_ptr<juce::AudioPluginInstance>, std::unique_ptr<PluginHost::Info>,
 	    double samplerate, int buffersize);
 
-	Plugin(const Plugin& o) = delete;
-	Plugin(Plugin&& o)      = delete;
+	Plugin(const Plugin& o)          = delete;
+	Plugin(Plugin&& o)               = delete;
 	Plugin& operator=(const Plugin&) = delete;
-	Plugin& operator=(Plugin&&) = delete;
+	Plugin& operator=(Plugin&&)      = delete;
 
 	~Plugin();
 
@@ -89,9 +89,9 @@ public:
 	int countMainOutChannels() const;
 
 	/* process
-	Process the plug-in with audio and MIDI data. The audio buffer is a 
-	reference, while the MIDI buffer must be passed by copy: each plug-in must 
-	receive its own copy of the event set, so that any attempt to change/clear 
+	Process the plug-in with audio and MIDI data. The audio buffer is a
+	reference, while the MIDI buffer must be passed by copy: each plug-in must
+	receive its own copy of the event set, so that any attempt to change/clear
 	the MIDI buffer will only modify the local copy. Returns a reference of the
 	local buffer filled with processed data. */
 

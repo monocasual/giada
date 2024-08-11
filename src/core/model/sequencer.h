@@ -41,13 +41,13 @@ class Sequencer
 
 public:
 	/* isRunning
-    When sequencer is actually moving forward, i.e. SeqStatus == RUNNING. */
+	When sequencer is actually moving forward, i.e. SeqStatus == RUNNING. */
 
 	bool isRunning() const;
 
 	/* isActive
-    Sequencer is enabled, but might be in wait mode, i.e. SeqStatus == RUNNING or
-    SeqStatus == WAITING. */
+	Sequencer is enabled, but might be in wait mode, i.e. SeqStatus == RUNNING or
+	SeqStatus == WAITING. */
 
 	bool isActive() const;
 
@@ -65,8 +65,8 @@ public:
 	float a_getCurrentSecond(int sampleRate) const;
 
 	/* getMaxFramesInLoop
-    Returns how many frames the current loop length might contain at the slowest
-    speed possible (G_MIN_BPM). */
+	Returns how many frames the current loop length might contain at the slowest
+	speed possible (G_MIN_BPM). */
 
 	int getMaxFramesInLoop(int sampleRate) const;
 

@@ -77,7 +77,7 @@ void Recorder::stopActionRec()
 	if (m_mixer.getRecTriggerMode() == RecTriggerMode::SIGNAL && m_sequencer.getStatus() == SeqStatus::RUNNING)
 		m_mixer.setRecTriggerMode(RecTriggerMode::NORMAL);
 
-	/* If you stop the Action Recorder in SIGNAL mode before any actual 
+	/* If you stop the Action Recorder in SIGNAL mode before any actual
 	recording: just clean up everything and return. */
 
 	if (m_sequencer.getStatus() == SeqStatus::WAITING)
@@ -86,8 +86,8 @@ void Recorder::stopActionRec()
 		return;
 	}
 
-	/* Enable reading actions for Channels that have just been filled with 
-	actions. This will start reading right away, without checking whether 
+	/* Enable reading actions for Channels that have just been filled with
+	actions. This will start reading right away, without checking whether
 	conf::treatRecsAsLoops is enabled or not. Same thing for MIDI channels.  */
 
 	m_channelManager.consolidateChannels(m_actionRecorder.consolidate());
@@ -145,7 +145,7 @@ void Recorder::stopInputRec(int sampleRate)
 	if (recTriggerMode == RecTriggerMode::SIGNAL && m_sequencer.getStatus() == SeqStatus::RUNNING)
 		m_mixer.setRecTriggerMode(RecTriggerMode::NORMAL);
 
-	/* When recording in RIGID mode, the amount of recorded frames is always 
+	/* When recording in RIGID mode, the amount of recorded frames is always
 	equal to the current loop length. */
 
 	if (recMode == InputRecMode::RIGID)
@@ -153,7 +153,7 @@ void Recorder::stopInputRec(int sampleRate)
 
 	G_DEBUG("Stop input rec, recordedFrames={}", recordedFrames);
 
-	/* If you stop the Input Recorder in SIGNAL mode before any actual 
+	/* If you stop the Input Recorder in SIGNAL mode before any actual
 	recording: just clean up everything and return. */
 
 	if (m_sequencer.getStatus() == SeqStatus::WAITING)

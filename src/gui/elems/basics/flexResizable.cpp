@@ -52,7 +52,7 @@ void geFlexResizable::resize(int newX, int newY, int newW, int newH)
 {
 	geFlex::resize(newX, newY, newW, newH);
 
-	/* In Mode::RESIZE, we must make sure the last widget, which is flex by 
+	/* In Mode::RESIZE, we must make sure the last widget, which is flex by
 	default, doesn't get shrinked lower than G_GUI_UNIT when this flex container
 	is resized. If it happens, the trick is to make the last widget fixed, while
 	everything else flex. */
@@ -73,8 +73,8 @@ void geFlexResizable::resize(int newX, int newY, int newW, int newH)
 
 void geFlexResizable::addWidget(Fl_Widget& widget, int size)
 {
-	/* In RESIZE mode the bar is added before the widget, but only if there 
-		is at least one child. */
+	/* In RESIZE mode the bar is added before the widget, but only if there
+	    is at least one child. */
 
 	if (m_mode == geResizerBar::Mode::RESIZE && children() > 0)
 		addResizerBar();
@@ -181,13 +181,14 @@ void geFlexResizable::makeLastWidgetFixed()
 void geFlexResizable::addResizerBar()
 {
 	/* TODO - geResizerBar is glitchy when added in a flex layout: if width or
-		height is 0 it just doesn't show up. */
+	    height is 0 it just doesn't show up. */
 
 	geResizerBar* bar = new geResizerBar(0, 0, G_GUI_INNER_MARGIN, G_GUI_INNER_MARGIN, G_GUI_UNIT, getDirection(), m_mode);
 	geFlex::addWidget(bar, G_GUI_INNER_MARGIN);
 	m_bars.push_back(bar);
 
-	bar->onDrag = [this](const Fl_Widget& wg) {
+	bar->onDrag = [this](const Fl_Widget& wg)
+	{
 		if (onDragBar != nullptr)
 			onDragBar(wg);
 
@@ -199,7 +200,8 @@ void geFlexResizable::addResizerBar()
 
 	/* The widget connected to the drag bar becomes fixed, when resized. */
 
-	bar->onRelease = [this](const Fl_Widget& wg) {
+	bar->onRelease = [this](const Fl_Widget& wg)
+	{
 		geFlex::fixed(const_cast<Fl_Widget&>(wg), getWidgetMainSize(wg));
 	};
 }

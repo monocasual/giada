@@ -57,9 +57,11 @@ geKeyBinder::geKeyBinder(const std::string& l, int key)
 	m_labelBox->box(G_CUSTOM_BORDER_BOX);
 	m_keyBox->box(G_CUSTOM_BORDER_BOX);
 
-	m_bindBtn->onClick = [key, this]() {
+	m_bindBtn->onClick = [key, this]()
+	{
 		assert(onKeyBound != nullptr);
-		c::layout::openKeyGrabberWindow(key, [this](int newKey) {
+		c::layout::openKeyGrabberWindow(key, [this](int newKey)
+		{
 			m_key = newKey;
 			m_keyBox->copy_label(u::gui::keyToString(m_key).c_str());
 			onKeyBound(newKey);
@@ -67,7 +69,8 @@ geKeyBinder::geKeyBinder(const std::string& l, int key)
 		});
 	};
 
-	m_clearBtn->onClick = [key, this]() {
+	m_clearBtn->onClick = [key, this]()
+	{
 		m_key = 0;
 		m_keyBox->copy_label(u::gui::keyToString(key).c_str());
 	};

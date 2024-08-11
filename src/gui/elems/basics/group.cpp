@@ -67,7 +67,7 @@ void geGroup::add(Fl_Widget* widget)
 	}
 
 	/* Don't call size(newW, newH) as it changes widgets position. Adjust width
-    and height manually instead. */
+	and height manually instead. */
 
 	w(newW);
 	h(newH);

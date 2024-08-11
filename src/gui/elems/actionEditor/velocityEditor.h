@@ -43,9 +43,9 @@ public:
 private:
 	void onMoveAction() override;
 	void onRefreshAction() override;
-	void onAddAction() override{};
-	void onDeleteAction() override{};
-	void onResizeAction() override{};
+	void onAddAction() override {};
+	void onDeleteAction() override {};
+	void onResizeAction() override {};
 
 	Pixel valueToY(float v) const;
 	float yToValue(Pixel y) const;

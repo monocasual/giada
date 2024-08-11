@@ -83,7 +83,7 @@ void gdPluginWindowGUI::adjustSize()
 #ifdef G_OS_WINDOWS
 
 	/* Dragging around a resized window (this windows will get resized with the
-	setBounds() call below) triggers some weird auto-resize mechanism if the 
+	setBounds() call below) triggers some weird auto-resize mechanism if the
 	system UI scale is set to a value greater than 100% (see https://github.com/monocasual/giada/issues/621).
 	Setting this window resizable with size_range() seems to fix the issue. */
 
@@ -108,7 +108,8 @@ void gdPluginWindowGUI::createEditor()
 
 	m_editor->setScaleFactor(m_plugin.uiScaling);
 
-	m_plugin.setResizeCallback([this](int w, int h) {
+	m_plugin.setResizeCallback([this](int w, int h)
+	{
 		setBounds(getBounds().withSize(w, h));
 	});
 }

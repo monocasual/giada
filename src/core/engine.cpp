@@ -67,15 +67,18 @@ Engine::Engine()
 , m_storageApi(*this, m_model, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
 , m_configApi(m_model, m_kernelAudio, m_kernelMidi, m_midiMapper, m_midiSynchronizer)
 {
-	m_kernelAudio.onAudioCallback = [this](mcl::AudioBuffer& out, const mcl::AudioBuffer& in) {
+	m_kernelAudio.onAudioCallback = [this](mcl::AudioBuffer& out, const mcl::AudioBuffer& in)
+	{
 		registerThread(Thread::AUDIO, /*realtime=*/true);
 		m_renderer.render(out, in, m_model);
 		return 0;
 	};
-	m_kernelAudio.onStreamAboutToOpen = [this]() {
+	m_kernelAudio.onStreamAboutToOpen = [this]()
+	{
 		m_mixer.disable();
 	};
-	m_kernelAudio.onStreamOpened = [this]() {
+	m_kernelAudio.onStreamOpened = [this]()
+	{
 #ifdef WITH_AUDIO_JACK
 		if (m_kernelAudio.getAPI() == RtAudio::Api::UNIX_JACK)
 			m_jackTransport.setHandle(m_kernelAudio.getJackHandle());
@@ -89,7 +92,8 @@ Engine::Engine()
 		m_mixer.enable();
 	};
 
-	m_kernelMidi.onMidiReceived = [this](const MidiEvent& e) {
+	m_kernelMidi.onMidiReceived = [this](const MidiEvent& e)
+	{
 		assert(onMidiReceived != nullptr);
 
 		registerThread(Thread::MIDI, /*realtime=*/false);
@@ -97,25 +101,31 @@ Engine::Engine()
 		m_midiSynchronizer.receive(e, m_sequencer.getBeats());
 		onMidiReceived();
 	};
-	m_kernelMidi.onMidiSent = [this]() {
+	m_kernelMidi.onMidiSent = [this]()
+	{
 		assert(onMidiSent != nullptr);
 		onMidiSent();
 	};
 
-	m_midiDispatcher.onEventReceived = [this]() {
+	m_midiDispatcher.onEventReceived = [this]()
+	{
 		m_recorder.startActionRecOnCallback();
 	};
 
-	m_midiSynchronizer.onChangePosition = [this](int beat) {
+	m_midiSynchronizer.onChangePosition = [this](int beat)
+	{
 		m_mainApi.goToBeat(beat);
 	};
-	m_midiSynchronizer.onChangeBpm = [this](float bpm) {
+	m_midiSynchronizer.onChangeBpm = [this](float bpm)
+	{
 		m_mainApi.setBpm(bpm);
 	};
-	m_midiSynchronizer.onStart = [this]() {
+	m_midiSynchronizer.onStart = [this]()
+	{
 		m_mainApi.startSequencer();
 	};
-	m_midiSynchronizer.onStop = [this]() {
+	m_midiSynchronizer.onStop = [this]()
+	{
 		m_mainApi.stopSequencer();
 	};
 
@@ -126,48 +136,62 @@ Engine::Engine()
 	on the m_model that the realtime thread cannot perform directly. */
 
 #ifdef WITH_AUDIO_JACK
-	m_jackSynchronizer.onJackRewind = [this]() {
-		m_eventDispatcher.pumpEvent([this]() {
+	m_jackSynchronizer.onJackRewind = [this]()
+	{
+		m_eventDispatcher.pumpEvent([this]()
+		{
 			registerThread(Thread::EVENTS, /*realtime=*/false);
 			m_sequencer.jack_rewind();
 		});
 	};
-	m_jackSynchronizer.onJackChangeBpm = [this](float bpm) {
-		m_eventDispatcher.pumpEvent([this, bpm]() {
+	m_jackSynchronizer.onJackChangeBpm = [this](float bpm)
+	{
+		m_eventDispatcher.pumpEvent([this, bpm]()
+		{
 			registerThread(Thread::EVENTS, /*realtime=*/false);
 			m_sequencer.jack_setBpm(bpm, m_kernelAudio.getSampleRate());
 		});
 	};
-	m_jackSynchronizer.onJackStart = [this]() {
-		m_eventDispatcher.pumpEvent([this]() {
+	m_jackSynchronizer.onJackStart = [this]()
+	{
+		m_eventDispatcher.pumpEvent([this]()
+		{
 			registerThread(Thread::EVENTS, /*realtime=*/false);
 			m_sequencer.jack_start();
 		});
 	};
-	m_jackSynchronizer.onJackStop = [this]() {
-		m_eventDispatcher.pumpEvent([this]() {
+	m_jackSynchronizer.onJackStop = [this]()
+	{
+		m_eventDispatcher.pumpEvent([this]()
+		{
 			registerThread(Thread::EVENTS, /*realtime=*/false);
 			m_sequencer.jack_stop();
 		});
 	};
 #endif
 
-	m_mixer.onSignalTresholdReached = [this]() {
-		m_eventDispatcher.pumpEvent([this]() {
+	m_mixer.onSignalTresholdReached = [this]()
+	{
+		m_eventDispatcher.pumpEvent([this]()
+		{
 			registerThread(Thread::EVENTS, /*realtime=*/false);
 			m_recorder.startInputRecOnCallback();
 		});
 	};
-	m_mixer.onEndOfRecording = [this]() {
+	m_mixer.onEndOfRecording = [this]()
+	{
 		if (m_mixer.isRecordingInput())
-			m_eventDispatcher.pumpEvent([this]() {
+			m_eventDispatcher.pumpEvent([this]()
+			{
 				registerThread(Thread::EVENTS, /*realtime=*/false);
 				m_recorder.stopInputRec(m_kernelAudio.getSampleRate());
 			});
 	};
 
-	m_channelManager.onChannelPlayStatusChanged = [this](ID channelId, ChannelStatus status) {
-		m_eventDispatcher.pumpEvent([this, channelId, status]() {
+	m_channelManager.onChannelPlayStatusChanged = [this](ID channelId, ChannelStatus status)
+	{
+		m_eventDispatcher.pumpEvent([this, channelId, status]()
+		{
 			registerThread(Thread::EVENTS, /*realtime=*/false);
 			const Channel& ch = m_model.get().tracks.getChannel(channelId);
 			if (ch.midiLightning.enabled)
@@ -175,21 +199,25 @@ Engine::Engine()
 		});
 	};
 
-	m_channelManager.onChannelsAltered = [this]() {
+	m_channelManager.onChannelsAltered = [this]()
+	{
 		if (!m_recorder.canEnableFreeInputRec())
 			m_mixer.setInputRecMode(InputRecMode::RIGID);
 	};
-	m_channelManager.onChannelRecorded = [this](Frame recordedFrames) {
+	m_channelManager.onChannelRecorded = [this](Frame recordedFrames)
+	{
 		return waveFactory::createEmpty(recordedFrames, G_MAX_IO_CHANS, m_kernelAudio.getSampleRate(), "TAKE");
 	};
 
-	m_sequencer.onAboutStart = [this](SeqStatus status) {
+	m_sequencer.onAboutStart = [this](SeqStatus status)
+	{
 		/* TODO move this logic to Recorder */
 		if (status == SeqStatus::WAITING)
 			m_recorder.stopActionRec();
 		m_model.get().mixer.recTriggerMode = RecTriggerMode::NORMAL;
 	};
-	m_sequencer.onAboutStop = [this]() {
+	m_sequencer.onAboutStop = [this]()
+	{
 		/* If recordings (both input and action) are active deactivate them, but
 	store the takes. RecManager takes care of it. */
 		/* TODO move this logic to Recorder */
@@ -198,16 +226,19 @@ Engine::Engine()
 		else if (m_mixer.isRecordingInput())
 			m_recorder.stopInputRec(m_kernelAudio.getSampleRate());
 	};
-	m_sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep) {
+	m_sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep)
+	{
 		m_actionRecorder.updateBpm(oldVal / newVal, quantizerStep);
 	};
 
-	m_model.onSwap = [this](model::SwapType t) {
+	m_model.onSwap = [this](model::SwapType t)
+	{
 		assert(onModelSwap != nullptr);
 		onModelSwap(t);
 	};
 
-	rendering::registerOnSendMidiCb([this](ID channelId) {
+	rendering::registerOnSendMidiCb([this](ID channelId)
+	{
 		onMidiSentFromChannel(channelId);
 	});
 }

@@ -223,7 +223,7 @@ void PluginHost::processPlugin(Plugin* p, const juce::MidiBuffer& events)
 
 	for (int i = 0, j = 0; i < m_audioBuffer.getNumChannels(); i++)
 	{
-		/* If instrument (i.e. a plug-in that accepts MIDI and produces audio 
+		/* If instrument (i.e. a plug-in that accepts MIDI and produces audio
 		out of it), SUM the local working buffer to the main one. This allows
 		multiple plug-in instruments to play simultaneously on a given set of
 		MIDI events. If it's a normal FX instead (!isInstrument), the local

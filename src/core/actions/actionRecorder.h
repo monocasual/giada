@@ -52,25 +52,25 @@ public:
 	void reset();
 
 	/* updateBpm
-    Changes actions position by calculating the new bpm value. */
+	Changes actions position by calculating the new bpm value. */
 
 	void updateBpm(float ratio, int quantizerStep);
 
 	/* updateSamplerate
-    Changes actions position by taking in account the new samplerate. If 
-    f_system == f_patch nothing will change, otherwise the conversion is 
-    mandatory. */
+	Changes actions position by taking in account the new samplerate. If
+	f_system == f_patch nothing will change, otherwise the conversion is
+	mandatory. */
 
 	void updateSamplerate(int systemRate, int patchRate);
 
 	/* cloneActions
-    Clones actions in channel 'channelId', giving them a new channel ID. Returns
-    whether any action has been cloned. */
+	Clones actions in channel 'channelId', giving them a new channel ID. Returns
+	whether any action has been cloned. */
 
 	bool cloneActions(ID channelId, ID newChannelId);
 
 	/* liveRec
-    Records a user-generated action. NOTE_ON or NOTE_OFF only for now. */
+	Records a user-generated action. NOTE_ON or NOTE_OFF only for now. */
 
 	void liveRec(ID channelId, MidiEvent e, Frame global);
 
@@ -100,13 +100,13 @@ public:
 	void updateVelocity(const Action&, float value);
 
 	/* consolidate
-    Records all live actions. Returns a set of channels IDs that have been 
-    recorded. */
+	Records all live actions. Returns a set of channels IDs that have been
+	recorded. */
 
 	std::unordered_set<ID> consolidate();
 
 	/* clearAllActions
-    Deletes all recorded actions. */
+	Deletes all recorded actions. */
 
 	void clearAllActions();
 
@@ -126,7 +126,7 @@ public:
 
 private:
 	/* areComposite
-    Composite: NOTE_ON + NOTE_OFF on the same note. */
+	Composite: NOTE_ON + NOTE_OFF on the same note. */
 
 	bool areComposite(const Action& a1, const Action& a2) const;
 
@@ -145,8 +145,8 @@ private:
 	void recordNonFirstEnvelopeAction(ID channelId, Frame frame, int value);
 #endif
 	/* consolidate
-    Given an action 'a1' tries to find the matching NOTE_OFF and updates the
-    action accordingly. */
+	Given an action 'a1' tries to find the matching NOTE_OFF and updates the
+	action accordingly. */
 
 	void consolidate(const Action& a1, std::size_t i);
 

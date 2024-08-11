@@ -51,8 +51,10 @@ geChannelLearnerPack::geChannelLearnerPack(int x, int y, const c::io::Channel_In
 : geMidiLearnerPack(x, y, g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_CHANNEL))
 {
 	setCallbacks(
-	    [channelId = channel.channelId](int param) { c::io::channel_startMidiLearn(param, channelId); },
-	    [channelId = channel.channelId](int param) { c::io::channel_clearMidiLearn(param, channelId); });
+	    [channelId = channel.channelId](int param)
+	{ c::io::channel_startMidiLearn(param, channelId); },
+	    [channelId = channel.channelId](int param)
+	{ c::io::channel_clearMidiLearn(param, channelId); });
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYPRESS), G_MIDI_IN_KEYPRESS);
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYREL), G_MIDI_IN_KEYREL);
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_CHANNEL_LEARN_KEYKILL), G_MIDI_IN_KILL);
@@ -88,8 +90,10 @@ gePluginLearnerPack::gePluginLearnerPack(int x, int y, const c::io::PluginData& 
 : geMidiLearnerPack(x, y, plugin.name)
 {
 	setCallbacks(
-	    [pluginId = plugin.id](int param) { c::io::plugin_startMidiLearn(param, pluginId); },
-	    [pluginId = plugin.id](int param) { c::io::plugin_clearMidiLearn(param, pluginId); });
+	    [pluginId = plugin.id](int param)
+	{ c::io::plugin_startMidiLearn(param, pluginId); },
+	    [pluginId = plugin.id](int param)
+	{ c::io::plugin_clearMidiLearn(param, pluginId); });
 
 	for (const c::io::PluginParamData& param : plugin.params)
 		addMidiLearner(param.name, param.index);
@@ -152,9 +156,11 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, const Model& model)
 	add(container);
 	resizable(container);
 
-	m_ok->onClick = [this]() { do_callback(); };
+	m_ok->onClick = [this]()
+	{ do_callback(); };
 
-	m_enable->onChange = [this](bool value) {
+	m_enable->onChange = [this](bool value)
+	{
 		c::io::channel_enableMidiLearn(m_data.channelId, value);
 	};
 
@@ -175,11 +181,13 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, const Model& model)
 	m_channel->addItem("Channel 14");
 	m_channel->addItem("Channel 15");
 	m_channel->addItem("Channel 16");
-	m_channel->onChange = [this](ID id) {
+	m_channel->onChange = [this](ID id)
+	{
 		c::io::channel_setMidiInputFilter(m_data.channelId, id == 0 ? -1 : id - 1);
 	};
 
-	m_veloAsVol->onChange = [this](bool value) {
+	m_veloAsVol->onChange = [this](bool value)
+	{
 		c::io::channel_enableVelocityAsVol(m_data.channelId, value);
 	};
 

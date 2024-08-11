@@ -79,22 +79,32 @@ geMainMenu::geMainMenu()
 
 	Fl_Menu_Item popup[] = {
 	    beginSubMenu_(LangMap::MAIN_MENU_FILE),
-	    makeMenuItem_(LangMap::MAIN_MENU_FILE_OPENPROJECT, [](Fl_Widget*, void*) { c::layout::openBrowserForProjectLoad(); }),
-	    makeMenuItem_(LangMap::MAIN_MENU_FILE_SAVEPROJECT, [](Fl_Widget*, void*) { c::layout::openBrowserForProjectSave(); }),
-	    makeMenuItem_(LangMap::MAIN_MENU_FILE_CLOSEPROJECT, [](Fl_Widget*, void*) { c::main::closeProject(); }),
+	    makeMenuItem_(LangMap::MAIN_MENU_FILE_OPENPROJECT, [](Fl_Widget*, void*)
+	{ c::layout::openBrowserForProjectLoad(); }),
+	    makeMenuItem_(LangMap::MAIN_MENU_FILE_SAVEPROJECT, [](Fl_Widget*, void*)
+	{ c::layout::openBrowserForProjectSave(); }),
+	    makeMenuItem_(LangMap::MAIN_MENU_FILE_CLOSEPROJECT, [](Fl_Widget*, void*)
+	{ c::main::closeProject(); }),
 #ifdef G_DEBUG_MODE
-	    makeMenuItem_(LangMap::MAIN_MENU_FILE_DEBUGSTATS, [](Fl_Widget*, void*) { c::main::printDebugInfo(); }),
+	    makeMenuItem_(LangMap::MAIN_MENU_FILE_DEBUGSTATS, [](Fl_Widget*, void*)
+	{ c::main::printDebugInfo(); }),
 #endif
-	    makeMenuItem_(LangMap::MAIN_MENU_FILE_QUIT, [](Fl_Widget*, void*) { c::main::quitGiada(); }),
+	    makeMenuItem_(LangMap::MAIN_MENU_FILE_QUIT, [](Fl_Widget*, void*)
+	{ c::main::quitGiada(); }),
 	    endSubMenu_(),
 	    beginSubMenu_(LangMap::MAIN_MENU_EDIT),
-	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_FREEALLSAMPLES, [](Fl_Widget*, void*) { c::main::clearAllSamples(); }),
-	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_CLEARALLACTIONS, [](Fl_Widget*, void*) { c::main::clearAllActions(); }),
-	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_SETUPMIDIINPUT, [](Fl_Widget*, void*) { c::layout::openMasterMidiInputWindow(); }),
+	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_FREEALLSAMPLES, [](Fl_Widget*, void*)
+	{ c::main::clearAllSamples(); }),
+	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_CLEARALLACTIONS, [](Fl_Widget*, void*)
+	{ c::main::clearAllActions(); }),
+	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_SETUPMIDIINPUT, [](Fl_Widget*, void*)
+	{ c::layout::openMasterMidiInputWindow(); }),
 	    endSubMenu_(),
 #ifndef G_OS_MAC // "Config" and "About" are treated differently on macOS menu
-	    makeMenuItem_(LangMap::MAIN_MENU_CONFIG, [](Fl_Widget*, void*) { c::layout::openConfigWindow(); }),
-	    makeMenuItem_(LangMap::MAIN_MENU_ABOUT, [](Fl_Widget*, void*) { c::layout::openAboutWindow(); }),
+	    makeMenuItem_(LangMap::MAIN_MENU_CONFIG, [](Fl_Widget*, void*)
+	{ c::layout::openConfigWindow(); }),
+	    makeMenuItem_(LangMap::MAIN_MENU_ABOUT, [](Fl_Widget*, void*)
+	{ c::layout::openAboutWindow(); }),
 #endif
 	    endSubMenu_()};
 
@@ -102,11 +112,13 @@ geMainMenu::geMainMenu()
 
 #ifdef G_OS_MAC
 	static const Fl_Menu_Item macOSextra[] = {
-	    makeMenuItem_(LangMap::MAIN_MENU_CONFIG, [](Fl_Widget*, void*) { c::layout::openConfigWindow(); }),
+	    makeMenuItem_(LangMap::MAIN_MENU_CONFIG, [](Fl_Widget*, void*)
+	{ c::layout::openConfigWindow(); }),
 	    endSubMenu_(),
 	    endSubMenu_()};
 	Fl_Mac_App_Menu::custom_application_menu_items(macOSextra);
-	Fl_Sys_Menu_Bar::about([](Fl_Widget*, void*) { c::layout::openAboutWindow(); }, nullptr);
+	Fl_Sys_Menu_Bar::about([](Fl_Widget*, void*)
+	{ c::layout::openAboutWindow(); }, nullptr);
 #endif
 }
 } // namespace giada::v

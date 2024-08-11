@@ -67,7 +67,7 @@ bool Ui::shouldBlink() const
 
 float Ui::getScaling() const
 {
-	//return 1.0;
+	// return 1.0;
 	return Fl::screen_scale(mainWindow->screen_num());
 }
 

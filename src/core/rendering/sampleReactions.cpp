@@ -60,7 +60,7 @@ void startReadActions_(ChannelShared& shared, bool treatRecsAsLoops)
 void stopReadActions_(ChannelShared& shared, ChannelStatus curRecStatus,
     bool treatRecsAsLoops, bool seqIsRunning)
 {
-	/* First of all, if the sequencer is not running or treatRecsAsLoops is off, 
+	/* First of all, if the sequencer is not running or treatRecsAsLoops is off,
 	just stop and disable everything. Otherwise make sure a channel with actions
 	behave like a dynamic one. */
 
@@ -83,7 +83,7 @@ ChannelStatus pressWhileOff_(ID channelId, ChannelShared& shared, float velocity
     bool canQuantize, bool velocityAsVol)
 {
 	/* Reset internal volume to default (1.0) if no velocity as volume. This is
-	important in case the channel has actions and some of them have velocity 
+	important in case the channel has actions and some of them have velocity
 	less than 1.0: without reset you would play the channel with that velocity
 	value. */
 
@@ -133,7 +133,7 @@ void recordSampleKeyPress(ID channelId, ChannelShared& shared, Frame currentFram
 {
 	record_(channelId, MidiEvent::CHANNEL_NOTE_ON, currentFrameQuantized, actionRecorder);
 
-	/* Skip reading actions when recording on ChannelMode::SINGLE_PRESS to 
+	/* Skip reading actions when recording on ChannelMode::SINGLE_PRESS to
 	prevent	existing actions to interfere with the keypress/keyrel combo. */
 
 	if (mode == SamplePlayerMode::SINGLE_PRESS)
@@ -262,8 +262,8 @@ void releaseSampleChannel(ChannelShared& shared, SamplePlayerMode mode)
 	if (mode != SamplePlayerMode::SINGLE_PRESS)
 		return;
 
-	/* Kill it if it's SINGLE_PRESS is playing. Otherwise there might be a 
-	quantization step in progress that would play the channel later on: 
+	/* Kill it if it's SINGLE_PRESS is playing. Otherwise there might be a
+	quantization step in progress that would play the channel later on:
 	disable it. */
 
 	if (shared.playStatus.load() == ChannelStatus::PLAY)

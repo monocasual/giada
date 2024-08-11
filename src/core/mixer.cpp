@@ -289,7 +289,7 @@ int Mixer::lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf, Fr
 void Mixer::processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inBuf,
     float inVol, float recTriggerLevel, bool isSeqActive) const
 {
-	/* Prepare the working buffer for input stream, which will be processed 
+	/* Prepare the working buffer for input stream, which will be processed
 	later on by the Master Input Channel with plug-ins. */
 
 	assert(inBuf.countChannels() <= mixer.getInBuffer().countChannels());

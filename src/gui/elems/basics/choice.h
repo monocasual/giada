@@ -40,7 +40,7 @@ namespace giada::v
 class geChoice : public geFlex
 {
 public:
-	/* geChoice 
+	/* geChoice
 	Constructors. If label is != nullptr but labelWidth is not specified, the
 	label width is automatically computed and adjusted accordingly. */
 

@@ -84,10 +84,11 @@ void ActionRecorder::updateBpm(float ratio, int quantizerStep)
 	if (ratio == 1.0f)
 		return;
 
-	m_model.get().actions.updateKeyFrames([=](Frame old) {
-		/* The division here cannot be precise. A new frame can be 44099 and the 
-		quantizer set to 44100. That would mean two recs completely useless. So we 
-		compute a reject value ('delta'): if it's lower than 6 frames the new frame 
+	m_model.get().actions.updateKeyFrames([=](Frame old)
+	{
+		/* The division here cannot be precise. A new frame can be 44099 and the
+		quantizer set to 44100. That would mean two recs completely useless. So we
+		compute a reject value ('delta'): if it's lower than 6 frames the new frame
 		is collapsed with a quantized frame. FIXME - maybe 6 frames are too low. */
 		Frame frame = static_cast<Frame>(old * ratio);
 		if (frame != 0)
@@ -111,7 +112,8 @@ void ActionRecorder::updateSamplerate(int systemRate, int patchRate)
 
 	float ratio = systemRate / (float)patchRate;
 
-	m_model.get().actions.updateKeyFrames([=](Frame old) { return floorf(old * ratio); });
+	m_model.get().actions.updateKeyFrames([=](Frame old)
+	{ return floorf(old * ratio); });
 	m_model.swap(model::SwapType::NONE);
 }
 
@@ -123,7 +125,8 @@ bool ActionRecorder::cloneActions(ID channelId, ID newChannelId)
 	std::vector<Action>        actions;
 	std::unordered_map<ID, ID> map; // Action ID mapper, old -> new
 
-	m_model.get().actions.forEachAction([&](const Action& a) {
+	m_model.get().actions.forEachAction([&](const Action& a)
+	{
 		if (a.channelId != channelId)
 			return;
 
@@ -374,7 +377,7 @@ std::unordered_set<ID> ActionRecorder::consolidate()
 void ActionRecorder::clearAllActions()
 {
 	m_model.get().tracks.forEachChannel([](Channel& ch)
-	    { ch.hasActions = false; return true; });
+	{ ch.hasActions = false; return true; });
 	m_model.get().actions.clearAll();
 	m_model.swap(model::SwapType::HARD);
 }
@@ -413,9 +416,9 @@ bool ActionRecorder::isSinglePressMode(ID channelId) const
 
 void ActionRecorder::consolidate(const Action& a1, std::size_t i)
 {
-	/* This algorithm must start searching from the element next to 'a1': since 
-	live actions are recorded in linear sequence, the potential partner of 'a1' 
-	always lies beyond a1 itself. Without this trick (i.e. if it loops from 
+	/* This algorithm must start searching from the element next to 'a1': since
+	live actions are recorded in linear sequence, the potential partner of 'a1'
+	always lies beyond a1 itself. Without this trick (i.e. if it loops from
 	vector.begin() each time) the algorithm would end up matching wrong partners. */
 
 	for (auto it = m_liveActions.begin() + i; it != m_liveActions.end(); ++it)

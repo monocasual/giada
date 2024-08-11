@@ -99,7 +99,7 @@ private:
 	void refresh() override;
 
 	/* zoomAbout
-	Zooms and centers the viewport around the mouse cursor. Wants a function to 
+	Zooms and centers the viewport around the mouse cursor. Wants a function to
 	apply to the current ratio. */
 
 	void zoomAbout(std::function<float()> f);

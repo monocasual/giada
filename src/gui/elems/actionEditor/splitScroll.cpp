@@ -1,28 +1,28 @@
 /* -----------------------------------------------------------------------------
-*
-* Giada - Your Hardcore Loopmachine
-*
-* ------------------------------------------------------------------------------
-*
-* Copyright (C) 2010-2024 Giovanni A. Zuliani | Monocasual Laboratories
-*
-* This file is part of Giada - Your Hardcore Loopmachine.
-*
-* Giada - Your Hardcore Loopmachine is free software: you can
-* redistribute it and/or modify it under the terms of the GNU General
-* Public License as published by the Free Software Foundation, either
-* version 3 of the License, or (at your option) any later version.
-*
-* Giada - Your Hardcore Loopmachine is distributed in the hope that it
-* will be useful, but WITHOUT ANY WARRANTY; without even the implied
-* warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-* See the GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Giada - Your Hardcore Loopmachine. If not, see
-* <http://www.gnu.org/licenses/>.
-*
-* --------------------------------------------------------------------------- */
+ *
+ * Giada - Your Hardcore Loopmachine
+ *
+ * ------------------------------------------------------------------------------
+ *
+ * Copyright (C) 2010-2024 Giovanni A. Zuliani | Monocasual Laboratories
+ *
+ * This file is part of Giada - Your Hardcore Loopmachine.
+ *
+ * Giada - Your Hardcore Loopmachine is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * Giada - Your Hardcore Loopmachine is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Giada - Your Hardcore Loopmachine. If not, see
+ * <http://www.gnu.org/licenses/>.
+ *
+ * --------------------------------------------------------------------------- */
 
 #include "splitScroll.h"
 #include "gui/drawing.h"
@@ -53,22 +53,26 @@ geSplitScroll::geSplitScroll(Pixel x, Pixel y, Pixel w, Pixel h)
 	end();
 
 	m_scrollbar->type(FL_HORIZONTAL);
-	m_scrollbar->onScroll = [this](float v) {
+	m_scrollbar->onScroll = [this](float v)
+	{
 		m_a.scroll_to(v, m_a.yposition());
 		m_b.scroll_to(v, m_b.yposition());
 	};
 
-	m_body->onDragBar = [this](const Fl_Widget&) {
+	m_body->onDragBar = [this](const Fl_Widget&)
+	{
 		if (onDragBar)
 			onDragBar();
 	};
 
-	m_a.onScrollV = [this](Pixel y) {
+	m_a.onScrollV = [this](Pixel y)
+	{
 		if (onScrollV)
 			onScrollV(y);
 	};
 
-	m_b.onScrollH = [&a = m_a](Pixel x) {
+	m_b.onScrollH = [&a = m_a](Pixel x)
+	{
 		a.scroll_to(x, a.yposition());
 	};
 }

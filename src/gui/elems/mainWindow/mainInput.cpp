@@ -1,28 +1,28 @@
 /* -----------------------------------------------------------------------------
-*
-* Giada - Your Hardcore Loopmachine
-*
-* ------------------------------------------------------------------------------
-*
-* Copyright (C) 2010-2024 Giovanni A. Zuliani | Monocasual Laboratories
-*
-* This file is part of Giada - Your Hardcore Loopmachine.
-*
-* Giada - Your Hardcore Loopmachine is free software: you can
-* redistribute it and/or modify it under the terms of the GNU General
-* Public License as published by the Free Software Foundation, either
-* version 3 of the License, or (at your option) any later version.
-*
-* Giada - Your Hardcore Loopmachine is distributed in the hope that it
-* will be useful, but WITHOUT ANY WARRANTY; without even the implied
-* warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-* See the GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Giada - Your Hardcore Loopmachine. If not, see
-* <http://www.gnu.org/licenses/>.
-*
-* --------------------------------------------------------------------------- */
+ *
+ * Giada - Your Hardcore Loopmachine
+ *
+ * ------------------------------------------------------------------------------
+ *
+ * Copyright (C) 2010-2024 Giovanni A. Zuliani | Monocasual Laboratories
+ *
+ * This file is part of Giada - Your Hardcore Loopmachine.
+ *
+ * Giada - Your Hardcore Loopmachine is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * Giada - Your Hardcore Loopmachine is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Giada - Your Hardcore Loopmachine. If not, see
+ * <http://www.gnu.org/licenses/>.
+ *
+ * --------------------------------------------------------------------------- */
 
 #include "gui/elems/mainWindow/mainInput.h"
 #include "core/const.h"
@@ -64,16 +64,19 @@ geMainInput::geMainInput()
 	m_masterFxIn->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_IO_LABEL_FXIN));
 	m_midiIn->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_IO_LABEL_MIDIINACTIVITY));
 
-	m_inVol->onChange = [](float v) {
+	m_inVol->onChange = [](float v)
+	{
 		c::main::setMasterInVolume(v, Thread::MAIN);
 	};
 
 	m_inToOut->setToggleable(true);
-	m_inToOut->onClick = [&inToOut = m_inToOut]() {
+	m_inToOut->onClick = [&inToOut = m_inToOut]()
+	{
 		c::main::setInToOut(inToOut->getValue());
 	};
 
-	m_masterFxIn->onClick = [] { c::layout::openMasterInPluginListWindow(); };
+	m_masterFxIn->onClick = []
+	{ c::layout::openMasterInPluginListWindow(); };
 }
 
 /* -------------------------------------------------------------------------- */

@@ -62,7 +62,8 @@ void geResizerBar::handleDrag(int diff)
 void geResizerBar::move(int diff)
 {
 	Fl_Widget&              wfirst  = getFirstWidget();
-	std::vector<Fl_Widget*> wothers = findWidgets([this](const Fl_Widget& wd) { return isAfter(wd); });
+	std::vector<Fl_Widget*> wothers = findWidgets([this](const Fl_Widget& wd)
+	{ return isAfter(wd); });
 
 	if (m_direction == Direction::VERTICAL)
 	{
@@ -89,7 +90,8 @@ void geResizerBar::move(int diff)
 void geResizerBar::resize(int diff)
 {
 	Fl_Widget& wa = getFirstWidget();
-	Fl_Widget& wb = *findWidgets([this](const Fl_Widget& wd) { return isAfter(wd); }, /*howmany=*/1)[0];
+	Fl_Widget& wb = *findWidgets([this](const Fl_Widget& wd)
+	{ return isAfter(wd); }, /*howmany=*/1)[0];
 
 	if (m_direction == Direction::VERTICAL)
 	{
@@ -131,7 +133,8 @@ bool geResizerBar::isAfter(const Fl_Widget& wd) const
 
 Fl_Widget& geResizerBar::getFirstWidget()
 {
-	return *findWidgets([this](const Fl_Widget& wd) { return isBefore(wd); }, /*howmany=*/1)[0];
+	return *findWidgets([this](const Fl_Widget& wd)
+	{ return isBefore(wd); }, /*howmany=*/1)[0];
 }
 
 /* -------------------------------------------------------------------------- */
@@ -151,7 +154,7 @@ std::vector<Fl_Widget*> geResizerBar::findWidgets(std::function<bool(const Fl_Wi
 			break;
 	}
 
-	/* Make sure it finds the exact number of widgets requested, in case 
+	/* Make sure it finds the exact number of widgets requested, in case
 	howmany != -1. */
 
 	assert(howmany == -1 || (howmany != -1 && out.size() == (size_t)howmany));

@@ -69,7 +69,8 @@ gdChannelRouting::gdChannelRouting(const c::channel::Data& d)
 
 	add(container);
 
-	m_close->onClick = [this]() { do_callback(); };
+	m_close->onClick = [this]()
+	{ do_callback(); };
 
 	set_modal();
 	show();

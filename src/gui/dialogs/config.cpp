@@ -71,7 +71,8 @@ gdConfig::gdConfig(int w, int h, const Model& model)
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			geTextButton* closeBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
-			closeBtn->onClick      = [this]() { do_callback(); };
+			closeBtn->onClick      = [this]()
+			{ do_callback(); };
 
 			footer->addWidget(new geBox()); // Spacer
 			footer->addWidget(closeBtn, 80);

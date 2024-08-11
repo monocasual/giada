@@ -108,7 +108,7 @@ int geWaveform::alloc(int datasize, bool force)
 
 	int gridFreq = m_grid.level != 0 ? wave.getBuffer().countFrames() / m_grid.level : 0;
 
-	/* Resampling the waveform, hardcore way. Many thanks to 
+	/* Resampling the waveform, hardcore way. Many thanks to
 	http://fourier.eng.hmc.edu/e161/lectures/resize/node3.html */
 
 	for (int i = 0; i < m_waveform.size; i++)
@@ -286,7 +286,7 @@ void geWaveform::draw()
 
 	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2); // blank canvas
 
-	/* Draw things from 'from' (offset driven by the scrollbar) to 'to' (width of 
+	/* Draw things from 'from' (offset driven by the scrollbar) to 'to' (width of
 	parent window). We don't draw the entire waveform, only the visible part. */
 
 	int from = abs(x() - parent()->x());
@@ -356,8 +356,8 @@ int geWaveform::handle(int e)
 		if (!m_chanStartLit && !m_chanEndLit)
 			c::sampleEditor::setPreviewTracker(m_mouseX);
 
-		/* If selection has been done (m_dragged or resized), make sure that point A 
-			is always lower than B. */
+		/* If selection has been done (m_dragged or resized), make sure that point A
+		    is always lower than B. */
 
 		if (m_dragged || m_resizedA || m_resizedB)
 			fixSelection();
@@ -468,7 +468,7 @@ int geWaveform::handle(int e)
 
 		else if (m_resizedA || m_resizedB)
 		{
-			int pos                    = snap(m_mouseX);
+			int pos = snap(m_mouseX);
 			m_resizedA ? m_selection.a = pos : m_selection.b = pos;
 			redraw();
 		}
@@ -597,13 +597,13 @@ void geWaveform::setZoom(Zoom z)
 
 	/* Avoid overflow when zooming out with scrollbar like that:
 
-		|----------[scrollbar]|
+	    |----------[scrollbar]|
 
 	Offset vs smaller:
-	
-		|[wave------------| offset > 0  smaller = false
-		|[wave----]       | offset < 0, smaller = true
-		|-------------]   | offset < 0, smaller = false  */
+
+	    |[wave------------| offset > 0  smaller = false
+	    |[wave----]       | offset < 0, smaller = true
+	    |-------------]   | offset < 0, smaller = false  */
 
 	int parentW = parent()->w();
 	int thisW   = x() + w() - BORDER; // visible width, not full width

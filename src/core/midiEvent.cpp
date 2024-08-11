@@ -177,7 +177,7 @@ int MidiEvent::getSppPosition() const
 {
 	assert(getType() == MidiEvent::Type::SYSTEM && getByte1() == SYSTEM_SPP);
 
-	/* Song position: the two 7-bit data bytes (least significant byte first) 
+	/* Song position: the two 7-bit data bytes (least significant byte first)
 	forming a 14-bit value which specifies the number of "MIDI beats". */
 
 	return getByte2() | (getByte3() << 7);

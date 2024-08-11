@@ -75,20 +75,25 @@ geTabPlugins::geTabPlugins(geompp::Rect<int> bounds)
 	add(body);
 	resizable(body);
 
-	m_folderPath->onChange = [this](const std::string& v) {
+	m_folderPath->onChange = [this](const std::string& v)
+	{
 		m_data.pluginPath = v;
 		c::config::save(m_data);
 	};
 
-	m_browse->onClick = [this]() {
+	m_browse->onClick = [this]()
+	{
 		c::layout::openBrowserForPlugins(*static_cast<v::gdWindow*>(top_window()));
 	};
 
-	m_scanButton->onClick = [this]() {
-		bool shouldScan       = true;
-		auto onCancelCb       = [&shouldScan]() { shouldScan = false; };
+	m_scanButton->onClick = [this]()
+	{
+		bool shouldScan = true;
+		auto onCancelCb = [&shouldScan]()
+		{ shouldScan = false; };
 		auto uiProgress       = g_ui->mainWindow->getScopedProgress(g_ui->getI18Text(LangMap::CONFIG_PLUGINS_SCANNING), onCancelCb);
-		auto engineProgressCb = [&shouldScan, &uiProgress](float progress) {
+		auto engineProgressCb = [&shouldScan, &uiProgress](float progress)
+		{
 			uiProgress.setProgress(progress);
 			return shouldScan;
 		};

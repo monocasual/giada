@@ -48,7 +48,7 @@ struct ChannelShared final
 
 	bool isReadingActions() const;
 
-	/* setBufferSize 
+	/* setBufferSize
 	Sets a new size for the internal audio buffer. */
 
 	void setBufferSize(int);
@@ -68,14 +68,14 @@ struct ChannelShared final
 	std::optional<Quantizer> quantizer;
 
 	/* Optional render queue for sample-based channels. Used by callers on thread
-	different than the real-time one to instruct the real-time one how to render 
+	different than the real-time one to instruct the real-time one how to render
 	audio. */
 
 	std::optional<RenderQueue> renderQueue = {};
 
 	/* Optional resampler for sample-based channels. Unfortunately a Resampler
 	object (based on libsamplerate) doesn't like to get copied while rendering
-	audio, so can't live inside a Channel object (which is copied on model 
+	audio, so can't live inside a Channel object (which is copied on model
 	changes by the Swapper mechanism). Let's put it in the shared state here. */
 
 	std::optional<Resampler> resampler = {};

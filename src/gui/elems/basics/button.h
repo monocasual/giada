@@ -54,7 +54,7 @@ public:
 	void setToggleable(bool);
 
 	/* setValue
-	Sets the button into a particular graphical state. The state will change 
+	Sets the button into a particular graphical state. The state will change
 	when the button is pressed or released. No callback fired. */
 
 	void setValue(bool);

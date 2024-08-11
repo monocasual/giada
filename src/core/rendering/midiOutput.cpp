@@ -94,8 +94,8 @@ void sendMidiAllNotesOff(const Channel& ch, KernelMidi& kernelMidi)
 
 void sendMidiEventToPlugins(ChannelShared::MidiQueue& midiQueue, const MidiEvent& e)
 {
-	/* Now all messages are turned into Channel-0 messages. Giada doesn't care 
-	about holding MIDI channel information. Moreover, having all internal 
+	/* Now all messages are turned into Channel-0 messages. Giada doesn't care
+	about holding MIDI channel information. Moreover, having all internal
 	messages on channel 0 is way easier. Then send it to plug-ins. */
 
 	MidiEvent flat(e);

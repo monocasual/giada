@@ -60,7 +60,8 @@ geMidiLearner::geMidiLearner(int x, int y, int w, int h, std::string l, int para
 	m_value->box(G_CUSTOM_BORDER_BOX);
 
 	m_learnBtn->setToggleable(true);
-	m_learnBtn->onClick = [this]() {
+	m_learnBtn->onClick = [this]()
+	{
 		assert(onStartLearn != nullptr);
 		assert(onStopLearn != nullptr);
 
@@ -70,7 +71,8 @@ geMidiLearner::geMidiLearner(int x, int y, int w, int h, std::string l, int para
 			onStopLearn();
 	};
 
-	m_clearBtn->onClick = [this]() {
+	m_clearBtn->onClick = [this]()
+	{
 		onClearLearn(m_param);
 	};
 }

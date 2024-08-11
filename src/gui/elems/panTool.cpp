@@ -54,7 +54,8 @@ gePanTool::gePanTool(ID channelId, float pan, int labelWidth)
 	end();
 
 	m_dial->range(0.0f, G_MAX_PAN);
-	m_dial->onChange = [this](float val) {
+	m_dial->onChange = [this](float val)
+	{
 		c::channel::sendChannelPan(m_channelId, val);
 		update(val);
 	};
@@ -62,7 +63,8 @@ gePanTool::gePanTool(ID channelId, float pan, int labelWidth)
 	m_input->setReadonly(true);
 	m_input->setCursorColor(FL_WHITE);
 
-	m_reset->onClick = [this]() {
+	m_reset->onClick = [this]()
+	{
 		c::channel::sendChannelPan(m_channelId, 0.5f);
 		update(0.5f);
 	};

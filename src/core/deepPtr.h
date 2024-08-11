@@ -42,7 +42,7 @@ public:
 		swap(first.m_ptr, second.m_ptr);
 	}
 
-	/* Constructor (empty). You can construct it with an explicit nullptr parameter, if 
+	/* Constructor (empty). You can construct it with an explicit nullptr parameter, if
 	needed, like so: DeepPtr ptr(nullptr). Or simply DeepPtr ptr; */
 	DeepPtr(std::nullptr_t value = nullptr)
 	: m_ptr(value)

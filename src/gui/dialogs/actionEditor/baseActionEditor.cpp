@@ -59,10 +59,12 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId, const Model& model)
 , m_legends(new geFlexResizable(Direction::VERTICAL, geResizerBar::Mode::RESIZE))
 , m_ratio(model.actionEditorZoom)
 {
-	m_zoomInBtn->onClick = [this]() { zoomIn(); };
+	m_zoomInBtn->onClick = [this]()
+	{ zoomIn(); };
 	m_zoomInBtn->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMIN));
 
-	m_zoomOutBtn->onClick = [this]() { zoomOut(); };
+	m_zoomOutBtn->onClick = [this]()
+	{ zoomOut(); };
 	m_zoomOutBtn->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMOUT));
 }
 
@@ -107,7 +109,8 @@ Frame gdBaseActionEditor::pixelToFrame(Pixel p, Frame framesInBeat, bool snap) c
 void gdBaseActionEditor::zoomIn()
 {
 	// Explicit type std::max<int> to fix MINMAX macro hell on Windows
-	zoomAbout([&r = m_ratio]() { return std::max<int>(r / RATIO_STEP, MIN_RATIO); });
+	zoomAbout([&r = m_ratio]()
+	{ return std::max<int>(r / RATIO_STEP, MIN_RATIO); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -115,7 +118,8 @@ void gdBaseActionEditor::zoomIn()
 void gdBaseActionEditor::zoomOut()
 {
 	// Explicit type std::max<int> to fix MINMAX macro hell on Windows
-	zoomAbout([&r = m_ratio]() { return std::min<int>(r * RATIO_STEP, MAX_RATIO); });
+	zoomAbout([&r = m_ratio]()
+	{ return std::min<int>(r * RATIO_STEP, MAX_RATIO); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -167,7 +171,7 @@ void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 
 	m_ratio = f();
 
-	/* Make sure the new content width doesn't underflow the window space (i.e. 
+	/* Make sure the new content width doesn't underflow the window space (i.e.
 	the minimum width allowed). */
 
 	if (frameToPixel(m_data.framesInSeq) < minWidth)

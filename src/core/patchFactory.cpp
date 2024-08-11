@@ -363,7 +363,7 @@ void modernize_(Patch& patch)
 		const bool isInternalChannel = c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER;
 
 		/* 0.16.3
-		Make sure that ChannelType is correct: ID 1, 2 are MASTER channels, ID 3 
+		Make sure that ChannelType is correct: ID 1, 2 are MASTER channels, ID 3
 		is PREVIEW channel. */
 		if (c.id == Mixer::MASTER_OUT_CHANNEL_ID || c.id == Mixer::MASTER_IN_CHANNEL_ID)
 			c.type = ChannelType::MASTER;

@@ -88,16 +88,19 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId, const Model& model)
 
 	m_splitScroll->addWidgets(*m_pianoRoll, *m_velocityEditor, model.actionEditorSplitH);
 
-	m_splitScroll->onDragBar = [this]() {
+	m_splitScroll->onDragBar = [this]()
+	{
 		m_legends->resizeWidget(0, m_splitScroll->getTopContentH());
 	};
-	m_splitScroll->onScrollV = [this](int y) {
+	m_splitScroll->onScrollV = [this](int y)
+	{
 		static_cast<gePianoRollLegend&>(m_legends->getWidget(0)).scroll_to(0, y);
 	};
 
 	m_legends->resizeWidget(0, m_splitScroll->getTopContentH());
 
-	m_legends->onDragBar = [this](const Fl_Widget& widget) {
+	m_legends->onDragBar = [this](const Fl_Widget& widget)
+	{
 		m_splitScroll->resizeWidget(0, widget.h());
 	};
 

@@ -187,7 +187,7 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 	loadSampleChannel(channel, &newWave);
 	m_model.swap(model::SwapType::HARD);
 
-	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is 
+	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is
 	already processing the new Document. */
 
 	if (oldWave != nullptr)
@@ -563,16 +563,19 @@ void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& sha
 {
 	assert(onChannelPlayStatusChanged != nullptr);
 
-	shared.playStatus.onChange = [this, id = ch.id](ChannelStatus status) {
+	shared.playStatus.onChange = [this, id = ch.id](ChannelStatus status)
+	{
 		onChannelPlayStatusChanged(id, status);
 	};
 
 	if (ch.type == ChannelType ::SAMPLE)
 	{
-		shared.quantizer->schedule(Q_ACTION_PLAY + ch.id, [&shared](Frame delta) {
+		shared.quantizer->schedule(Q_ACTION_PLAY + ch.id, [&shared](Frame delta)
+		{
 			rendering::playSampleChannel(shared, delta);
 		});
-		shared.quantizer->schedule(Q_ACTION_REWIND + ch.id, [&shared](Frame delta) {
+		shared.quantizer->schedule(Q_ACTION_REWIND + ch.id, [&shared](Frame delta)
+		{
 			const ChannelStatus status = shared.playStatus.load();
 			if (status == ChannelStatus::OFF)
 				rendering::playSampleChannel(shared, delta);

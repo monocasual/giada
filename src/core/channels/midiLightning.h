@@ -39,7 +39,7 @@ public:
 	MidiLightning(const Patch::Channel&);
 
 	/* enabled
-    Tells whether MIDI lighting is enabled or not. */
+	Tells whether MIDI lighting is enabled or not. */
 
 	bool enabled;
 

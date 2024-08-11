@@ -90,7 +90,7 @@ public:
 	int read(const std::string& file);
 
 	/* sendInitMessages
-	Sends initialization messages from the currently loaded midimap to the 
+	Sends initialization messages from the currently loaded midimap to the
 	connected MIDI devices. */
 
 	void sendInitMessages() const;

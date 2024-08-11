@@ -159,7 +159,7 @@ private:
 	int frameToPixel(int f) const; // TODO - move these to utils::, will be needed in actionEditor
 
 	/* fixSelection
-	Helper function which flattens the selection if it was made from right to left 
+	Helper function which flattens the selection if it was made from right to left
 	(inverse selection). It also computes the absolute points. Call this one
 	whenever the selection gesture is done. */
 
@@ -187,7 +187,7 @@ private:
 	void selectAll();
 
 	/* alloc
-	Allocates memory for the picture. It's smart enough not to reallocate if 
+	Allocates memory for the picture. It's smart enough not to reallocate if
 	datasize hasn't changed, but it can be forced otherwise. */
 
 	int alloc(int datasize, bool force = false);

@@ -40,7 +40,8 @@ EventDispatcher::EventDispatcher()
 
 void EventDispatcher::start()
 {
-	m_worker.start([this]() { process(); });
+	m_worker.start([this]()
+	{ process(); });
 }
 
 /* -------------------------------------------------------------------------- */

@@ -65,12 +65,12 @@ constexpr auto G_CONF_FILENAME = "giada.conf";
 /* -- Engine ---------------------------------------------------------------- */
 /* G_EVENT_DISPATCHER_RATE_MS
 The amount of sleep between each Event Dispatcher cycle. It should be lower
-than the audio thread sleep time. Note: this value will obviously increase the 
+than the audio thread sleep time. Note: this value will obviously increase the
 live input latency, keep it small! */
 constexpr int G_EVENT_DISPATCHER_RATE_MS = 5;
 
 /* G_KERNEL_MIDI_OUTPUT_RATE_MS
-The rate at which KernelMidi spits out MIDI events. Note: this value will 
+The rate at which KernelMidi spits out MIDI events. Note: this value will
 obviously increase the MIDI output latency, keep it small!*/
 constexpr int G_KERNEL_MIDI_OUTPUT_RATE_MS = 3;
 

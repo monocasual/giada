@@ -38,12 +38,12 @@ public:
 	MidiChannel(const Patch::Channel&);
 
 	/* outputEnabled
-    Tells whether MIDI output is enabled or not. */
+	Tells whether MIDI output is enabled or not. */
 
 	bool outputEnabled;
 
 	/* outputFilter
-    Which MIDI channel data should be sent to. */
+	Which MIDI channel data should be sent to. */
 
 	int outputFilter;
 };

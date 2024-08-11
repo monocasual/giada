@@ -33,20 +33,20 @@
 
 /* geResizerBar
 A 'resizer bar' between widgets inside a Fl_Scroll. Thanks to Greg Ercolano from
-FLTK dev team (http://seriss.com/people/erco/fltk/). It also shows a resize 
+FLTK dev team (http://seriss.com/people/erco/fltk/). It also shows a resize
 cursor when hovered over.
 
 Assumes:
-	- Parent is an Fl_Group;
-	- The widget before us has an edge touching our edge;
-	  ie. w->y() + w->h() == this->y() if Direction::VERTICAL.
+    - Parent is an Fl_Group;
+    - The widget before us has an edge touching our edge;
+      ie. w->y() + w->h() == this->y() if Direction::VERTICAL.
 
 When this widget is dragged:
-	- The widget before us (with a common edge) will be resized;
-	- if Mode == MOVE 
-		All children after us will be moved.
-	- else if Mode == RESIZE
-		The child after us is resized. */
+    - The widget before us (with a common edge) will be resized;
+    - if Mode == MOVE
+        All children after us will be moved.
+    - else if Mode == RESIZE
+        The child after us is resized. */
 
 namespace giada::v
 {
@@ -101,7 +101,7 @@ private:
 
 	void move(int diff);
 
-	/* resize 
+	/* resize
 	Resize the first and the second widget, leaving all others untouched. */
 
 	void resize(int diff);

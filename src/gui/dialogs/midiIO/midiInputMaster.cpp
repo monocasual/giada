@@ -43,8 +43,10 @@ geMasterLearnerPack::geMasterLearnerPack(int x, int y)
 : geMidiLearnerPack(x, y)
 {
 	setCallbacks(
-	    [](int param) { c::io::master_startMidiLearn(param); },
-	    [](int param) { c::io::master_clearMidiLearn(param); });
+	    [](int param)
+	{ c::io::master_startMidiLearn(param); },
+	    [](int param)
+	{ c::io::master_clearMidiLearn(param); });
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_REWIND), G_MIDI_IN_REWIND);
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_PLAYSTOP), G_MIDI_IN_START_STOP);
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_ACTIONREC), G_MIDI_IN_ACTION_REC);
@@ -116,9 +118,11 @@ gdMidiInputMaster::gdMidiInputMaster(const Model& model)
 	add(container);
 	resizable(container);
 
-	m_ok->onClick = [this]() { do_callback(); };
+	m_ok->onClick = [this]()
+	{ do_callback(); };
 
-	m_enable->onChange = [](bool value) { c::io::master_enableMidiLearn(value); };
+	m_enable->onChange = [](bool value)
+	{ c::io::master_enableMidiLearn(value); };
 
 	m_channel->addItem("Channel (any)");
 	m_channel->addItem("Channel 1");
@@ -137,7 +141,8 @@ gdMidiInputMaster::gdMidiInputMaster(const Model& model)
 	m_channel->addItem("Channel 14");
 	m_channel->addItem("Channel 15");
 	m_channel->addItem("Channel 16");
-	m_channel->onChange = [](ID id) {
+	m_channel->onChange = [](ID id)
+	{
 		c::io::master_setMidiFilter(id == 0 ? -1 : id - 1);
 	};
 

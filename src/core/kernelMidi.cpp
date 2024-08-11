@@ -123,7 +123,8 @@ void KernelMidi::start()
 {
 	if (m_midiOut == nullptr)
 		return;
-	m_worker.start([this]() {
+	m_worker.start([this]()
+	{
 		RtMidiMessage msg;
 		while (m_midiQueue.try_dequeue(msg))
 			m_midiOut->sendMessage(&msg);

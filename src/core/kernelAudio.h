@@ -85,7 +85,7 @@ public:
 	static void logCompiledAPIs();
 
 	/* init
-	Initializes the audio engine given the current model::KernelAudio data. Closes 
+	Initializes the audio engine given the current model::KernelAudio data. Closes
 	any existing and running streams and return false on failure. */
 
 	bool init();
@@ -159,7 +159,7 @@ private:
 	};
 
 	/* setAPI_
-	Sets the API. Returns the chosen API, which might be a different one in 
+	Sets the API. Returns the chosen API, which might be a different one in
 	case API in input is UNSPECIFIED (RtAudio would pick one according to some
 	internal logic). */
 

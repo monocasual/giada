@@ -61,7 +61,8 @@ gdBpmInput::gdBpmInput(float value)
 	m_value->setValue(fmt::format("{:.1f}", value));
 
 	m_ok->shortcut(FL_Enter);
-	m_ok->onClick = [this]() {
+	m_ok->onClick = [this]()
+	{
 		std::string value = m_value->getValue();
 		if (value == "")
 			return;

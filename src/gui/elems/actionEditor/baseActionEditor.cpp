@@ -97,7 +97,7 @@ void geBaseActionEditor::baseDraw(bool clear) const
 
 void geBaseActionEditor::drawVerticals(int steps) const
 {
-	/* Start drawing from steps, not from 0. The zero-th element is always 
+	/* Start drawing from steps, not from 0. The zero-th element is always
 	graphically useless. */
 	for (Frame i = steps; i < m_data->framesInLoop; i += steps)
 	{

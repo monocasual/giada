@@ -158,7 +158,8 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 	add(container);
 	resizable(container);
 
-	callback([](Fl_Widget* /*w*/, void* /*v*/) {
+	callback([](Fl_Widget* /*w*/, void* /*v*/)
+	{
 		if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
 			return; // ignore Escape
 		c::main::quitGiada();

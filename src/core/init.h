@@ -30,7 +30,7 @@
 namespace giada::m::init
 {
 /* tests
-Performs tests, if requested. Returns -1 if no tests are available or the 
+Performs tests, if requested. Returns -1 if no tests are available or the
 `--run-tests` has not been passed in. */
 
 int tests(int argc, char** argv);

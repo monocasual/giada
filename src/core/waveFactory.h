@@ -49,38 +49,38 @@ struct Result
 void reset();
 
 /* create
-	Creates a new Wave object with data read from file 'path'. Pass id = 0 to 
-	auto-generate it. The function converts the Wave sample rate if it doesn't 
-	match the desired one as specified in 'samplerate'. */
+    Creates a new Wave object with data read from file 'path'. Pass id = 0 to
+    auto-generate it. The function converts the Wave sample rate if it doesn't
+    match the desired one as specified in 'samplerate'. */
 
 Result createFromFile(const std::string& path, ID id, int samplerate, Resampler::Quality);
 
 /* createEmpty
-	Creates a new silent Wave object. */
+    Creates a new silent Wave object. */
 
 std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
     const std::string& name);
 
 /* createFromWave
-	Creates a new Wave from an existing one. If specified, copying the data in 
-	range a - b. Range is [0, sr.buffer.countFrames()] otherwise. */
+    Creates a new Wave from an existing one. If specified, copying the data in
+    range a - b. Range is [0, sr.buffer.countFrames()] otherwise. */
 
 std::unique_ptr<Wave> createFromWave(const Wave& src, int a = -1, int b = -1);
 
 /* (de)serializeWave
-	Creates a new Wave given the patch raw data and vice versa. */
+    Creates a new Wave given the patch raw data and vice versa. */
 
 std::unique_ptr<Wave> deserializeWave(const Patch::Wave& w, int samplerate, Resampler::Quality);
 const Patch::Wave     serializeWave(const Wave& w);
 
 /* resample
-	Change sample rate of 'w' to the desider value. The 'quality' parameter sets 
-	the algorithm to use for the conversion. */
+    Change sample rate of 'w' to the desider value. The 'quality' parameter sets
+    the algorithm to use for the conversion. */
 
 int resample(Wave&, Resampler::Quality, int samplerate);
 
 /* save
-	Writes Wave data to file 'path'. Only 'wav' format is supported for now. */
+    Writes Wave data to file 'path'. Only 'wav' format is supported for now. */
 
 int save(const Wave& w, const std::string& path);
 

@@ -48,7 +48,8 @@ void Worker::start(std::function<void()> f) const
 {
 	stop();
 	m_running.store(true);
-	m_thread = std::thread([this, f]() {
+	m_thread = std::thread([this, f]()
+	{
 		while (m_running.load() == true)
 		{
 			f();

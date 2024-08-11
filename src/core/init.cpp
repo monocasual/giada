@@ -108,29 +108,38 @@ int tests(int argc, char** argv)
 
 void startup()
 {
-	g_ui->dispatcher.onEventOccured = []() {
+	g_ui->dispatcher.onEventOccured = []()
+	{
 		g_engine->getMainApi().startActionRecOnCallback();
 	};
 
-	g_engine->onMidiReceived = []() {
-		g_ui->pumpEvent([] { g_ui->mainWindow->mainInput->setMidiInActivity(); });
+	g_engine->onMidiReceived = []()
+	{
+		g_ui->pumpEvent([]
+		{ g_ui->mainWindow->mainInput->setMidiInActivity(); });
 	};
 
-	g_engine->onMidiSent = []() {
-		g_ui->pumpEvent([] { g_ui->mainWindow->mainOutput->setMidiOutActivity(); });
+	g_engine->onMidiSent = []()
+	{
+		g_ui->pumpEvent([]
+		{ g_ui->mainWindow->mainOutput->setMidiOutActivity(); });
 	};
 
-	g_engine->onMidiSentFromChannel = [](ID channelId) {
-		g_ui->pumpEvent([channelId]() { g_ui->mainWindow->keyboard->notifyMidiOut(channelId); });
+	g_engine->onMidiSentFromChannel = [](ID channelId)
+	{
+		g_ui->pumpEvent([channelId]()
+		{ g_ui->mainWindow->keyboard->notifyMidiOut(channelId); });
 	};
 
-	g_engine->onModelSwap = [](model::SwapType type) {
+	g_engine->onModelSwap = [](model::SwapType type)
+	{
 		/* Rebuild or refresh the UI accoring to the swap type. Note: the onSwap
-		callback might be performed by a non-main thread, which must talk to the 
+		callback might be performed by a non-main thread, which must talk to the
 		UI (main thread) through the UI queue by pumping an event in it. */
 		if (type == model::SwapType::NONE)
 			return;
-		g_ui->pumpEvent([type]() { type == model::SwapType::HARD ? g_ui->rebuild() : g_ui->refresh(); });
+		g_ui->pumpEvent([type]()
+		{ type == model::SwapType::HARD ? g_ui->rebuild() : g_ui->refresh(); });
 	};
 
 	Conf conf = confFactory::deserialize();

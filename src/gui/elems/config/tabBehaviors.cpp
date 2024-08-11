@@ -60,25 +60,29 @@ geTabBehaviors::geTabBehaviors(geompp::Rect<int> bounds)
 	resizable(body);
 
 	m_chansStopOnSeqHalt->value(m_data.chansStopOnSeqHalt);
-	m_chansStopOnSeqHalt->onChange = [this](bool v) {
+	m_chansStopOnSeqHalt->onChange = [this](bool v)
+	{
 		m_data.chansStopOnSeqHalt = v;
 		c::config::save(m_data);
 	};
 
 	m_treatRecsAsLoops->value(m_data.treatRecsAsLoops);
-	m_treatRecsAsLoops->onChange = [this](bool v) {
+	m_treatRecsAsLoops->onChange = [this](bool v)
+	{
 		m_data.treatRecsAsLoops = v;
 		c::config::save(m_data);
 	};
 
 	m_inputMonitorDefaultOn->value(m_data.inputMonitorDefaultOn);
-	m_inputMonitorDefaultOn->onChange = [this](bool v) {
+	m_inputMonitorDefaultOn->onChange = [this](bool v)
+	{
 		m_data.inputMonitorDefaultOn = v;
 		c::config::save(m_data);
 	};
 
 	m_overdubProtectionDefaultOn->value(m_data.overdubProtectionDefaultOn);
-	m_overdubProtectionDefaultOn->onChange = [this](bool v) {
+	m_overdubProtectionDefaultOn->onChange = [this](bool v)
+	{
 		m_data.overdubProtectionDefaultOn = v;
 		c::config::save(m_data);
 	};

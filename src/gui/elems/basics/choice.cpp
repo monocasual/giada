@@ -173,7 +173,8 @@ std::size_t geChoice::countItems() const
 
 bool geChoice::hasItem(ID oid) const
 {
-	return u::vector::has(m_ids, [oid](const ID& id) { return oid == id; });
+	return u::vector::has(m_ids, [oid](const ID& id)
+	{ return oid == id; });
 }
 
 /* -------------------------------------------------------------------------- */

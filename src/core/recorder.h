@@ -41,14 +41,14 @@ public:
 	Recorder(Sequencer&, ChannelManager&, Mixer&, ActionRecorder&);
 
 	/* canEnableRecOnSignal
-    True if rec-on-signal can be enabled: can't set it while sequencer is 
-    running, in order to prevent mistakes while live recording. */
+	True if rec-on-signal can be enabled: can't set it while sequencer is
+	running, in order to prevent mistakes while live recording. */
 
 	bool canEnableRecOnSignal() const;
 
 	/* canEnableFreeInputRec
-    True if free loop-length can be enabled: Can't set it if there's already a 
-    filled Sample Channel in the current project. */
+	True if free loop-length can be enabled: Can't set it if there's already a
+	filled Sample Channel in the current project. */
 
 	bool canEnableFreeInputRec() const;
 

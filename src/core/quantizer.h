@@ -40,19 +40,19 @@ class Quantizer
 {
 public:
 	/* schedule
-	Schedules a function in slot 'id' to be called at the right time. The 
+	Schedules a function in slot 'id' to be called at the right time. The
 	function has a 'delta' parameter for the buffer offset. */
 
 	void schedule(int id, std::function<void(Frame)>);
 
 	/* trigger
-	Triggers the function in slot 'id'. Might start right away, or at the end 
+	Triggers the function in slot 'id'. Might start right away, or at the end
 	of the quantization step. */
 
 	void trigger(int id);
 
 	/* advance
-	Computes the internal state. Wants a range of frames [currentFrame, 
+	Computes the internal state. Wants a range of frames [currentFrame,
 	currentFrame + bufferSize) and a quantization step. Call this function
 	on each block. */
 

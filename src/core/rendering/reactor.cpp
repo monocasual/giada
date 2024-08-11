@@ -96,7 +96,7 @@ void Reactor::keyRelease(ID channelId, bool canRecordActions, Frame currentFrame
 
 		if (canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
 		{
-			/* Record a stop event only if channel is SINGLE_PRESS. For any other 
+			/* Record a stop event only if channel is SINGLE_PRESS. For any other
 		mode the key release event is meaningless. */
 
 			recordSampleKeyRelease(channelId, currentFrameQuantized, m_actionRecorder);
@@ -139,7 +139,7 @@ void Reactor::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQua
 
 		if (ch.hasWave() && canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
 		{
-			/* Record a stop event only if channel is SINGLE_PRESS. For any other 
+			/* Record a stop event only if channel is SINGLE_PRESS. For any other
 			mode the key release event is meaningless. */
 
 			recordSampleKeyKill(channelId, currentFrameQuantized, m_actionRecorder);
@@ -191,7 +191,7 @@ void Reactor::toggleReadActions(ID channelId, bool seqIsRunning)
 
 void Reactor::killReadActions(ID channelId)
 {
-	/* Killing Read Actions, i.e. shift + click on 'R' button is meaningful 
+	/* Killing Read Actions, i.e. shift + click on 'R' button is meaningful
 	only when the treatRecsAsLoops flag is true. */
 
 	if (!m_model.get().behaviors.treatRecsAsLoops)

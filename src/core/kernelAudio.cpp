@@ -304,11 +304,12 @@ RtAudio::Api KernelAudio::setAPI_(RtAudio::Api api)
 
 	m_rtAudio = std::make_unique<RtAudio>(api);
 
-	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg) {
+	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg)
+	{
 		u::log::print("[KA] RtAudio error {}: {}\n", static_cast<int>(type), msg);
 	});
 
-	/* If api == UNSPECIFIED, rtAudio will pick one according to some internal 
+	/* If api == UNSPECIFIED, rtAudio will pick one according to some internal
 	logic. */
 
 	return api == RtAudio::Api::UNSPECIFIED ? m_rtAudio->getCurrentApi() : api;
@@ -338,7 +339,7 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 
 	const RtAudio::Api api = m_model.get().kernelAudio.api;
 
-	/* Abort here if devices found are zero, both devices are disabled or 
+	/* Abort here if devices found are zero, both devices are disabled or
 	current API is dummy. */
 
 	if (m_rtAudio->getDeviceCount() == 0 || (in.id == 0 && out.id == 0) || api == RtAudio::Api::RTAUDIO_DUMMY)

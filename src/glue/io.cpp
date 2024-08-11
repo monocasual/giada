@@ -227,17 +227,23 @@ bool channel_setKey(ID channelId, int k)
 
 void channel_startMidiLearn(int param, ID channelId)
 {
-	g_engine->getIOApi().channel_startMidiLearn(param, channelId, []() { g_ui->pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().channel_startMidiLearn(param, channelId, []()
+	{ g_ui->pumpEvent([]()
+	  { rebuildMidiWindows_(); }); });
 }
 
 void master_startMidiLearn(int param)
 {
-	g_engine->getIOApi().master_startMidiLearn(param, []() { g_ui->pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().master_startMidiLearn(param, []()
+	{ g_ui->pumpEvent([]()
+	  { rebuildMidiWindows_(); }); });
 }
 
 void plugin_startMidiLearn(int paramIndex, ID pluginId)
 {
-	g_engine->getIOApi().plugin_startMidiLearn(paramIndex, pluginId, []() { g_ui->pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().plugin_startMidiLearn(paramIndex, pluginId, []()
+	{ g_ui->pumpEvent([]()
+	  { rebuildMidiWindows_(); }); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -245,24 +251,31 @@ void plugin_startMidiLearn(int paramIndex, ID pluginId)
 void stopMidiLearn()
 {
 	g_engine->getIOApi().stopMidiLearn();
-	g_ui->pumpEvent([]() { rebuildMidiWindows_(); });
+	g_ui->pumpEvent([]()
+	{ rebuildMidiWindows_(); });
 }
 
 /* -------------------------------------------------------------------------- */
 
 void channel_clearMidiLearn(int param, ID channelId)
 {
-	g_engine->getIOApi().channel_clearMidiLearn(param, channelId, []() { g_ui->pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().channel_clearMidiLearn(param, channelId, []()
+	{ g_ui->pumpEvent([]()
+	  { rebuildMidiWindows_(); }); });
 }
 
 void master_clearMidiLearn(int param)
 {
-	g_engine->getIOApi().master_clearMidiLearn(param, []() { g_ui->pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().master_clearMidiLearn(param, []()
+	{ g_ui->pumpEvent([]()
+	  { rebuildMidiWindows_(); }); });
 }
 
 void plugin_clearMidiLearn(int param, ID pluginId)
 {
-	g_engine->getIOApi().plugin_clearMidiLearn(param, pluginId, []() { g_ui->pumpEvent([]() { rebuildMidiWindows_(); }); });
+	g_engine->getIOApi().plugin_clearMidiLearn(param, pluginId, []()
+	{ g_ui->pumpEvent([]()
+	  { rebuildMidiWindows_(); }); });
 }
 
 /* -------------------------------------------------------------------------- */

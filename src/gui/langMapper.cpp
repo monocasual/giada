@@ -105,15 +105,15 @@ LangMap::LangMap()
 	m_data[MAIN_MENU_CONFIG]               = "Settings";
 	m_data[MAIN_MENU_ABOUT]                = "About";
 
-	m_data[MAIN_IO_LABEL_OUTMETER]     = "Main output meter";
-	m_data[MAIN_IO_LABEL_INMETER]      = "Main input meter";
-	m_data[MAIN_IO_LABEL_OUTVOL]       = "Main output volume";
-	m_data[MAIN_IO_LABEL_INVOL]        = "Main input volume";
-	m_data[MAIN_IO_LABEL_INTOOUT]      = "Stream linker\n\nConnects input to output to enable \"hear what you're playing\" mode.";
-	m_data[MAIN_IO_LABEL_FXOUT]        = "Main output plug-ins";
-	m_data[MAIN_IO_LABEL_FXIN]         = "Main input plug-ins";
-	m_data[MAIN_IO_LABEL_MIDIACTIVITY] = "Master MIDI I/O activity\n\nNotifies MIDI messages sent (top) or "
-	                                     "received (bottom) globally.";
+	m_data[MAIN_IO_LABEL_OUTMETER]        = "Main output meter";
+	m_data[MAIN_IO_LABEL_INMETER]         = "Main input meter";
+	m_data[MAIN_IO_LABEL_OUTVOL]          = "Main output volume";
+	m_data[MAIN_IO_LABEL_INVOL]           = "Main input volume";
+	m_data[MAIN_IO_LABEL_INTOOUT]         = "Stream linker\n\nConnects input to output to enable \"hear what you're playing\" mode.";
+	m_data[MAIN_IO_LABEL_FXOUT]           = "Main output plug-ins";
+	m_data[MAIN_IO_LABEL_FXIN]            = "Main input plug-ins";
+	m_data[MAIN_IO_LABEL_MIDIACTIVITY]    = "Master MIDI I/O activity\n\nNotifies MIDI messages sent (top) or "
+	                                        "received (bottom) globally.";
 	m_data[MAIN_IO_LABEL_MIDIINACTIVITY]  = "Master MIDI input activity\n\nNotifies MIDI messages received globally.";
 	m_data[MAIN_IO_LABEL_MIDIOUTACTIVITY] = "Master MIDI output activity\n\nNotifies MIDI messages sent globally.";
 
@@ -129,11 +129,11 @@ LangMap::LangMap()
 	m_data[MAIN_TRANSPORT_LABEL_PLAY]           = "Play/Stop";
 	m_data[MAIN_TRANSPORT_LABEL_RECTRIGGERMODE] = "Record-on-signal mode\n\nAction and audio recording will start only when a signal (key press or audio) "
 	                                              "is detected.\n\nAvailable if the sequencer is not running.";
-	m_data[MAIN_TRANSPORT_LABEL_RECACTIONS]   = "Record actions";
-	m_data[MAIN_TRANSPORT_LABEL_RECINPUT]     = "Record audio\n\nAvailable if:\n - input device is enabled\n - there is at least one empty and armed Sample channel";
-	m_data[MAIN_TRANSPORT_LABEL_RECINPUTMODE] = "Free loop-length mode\n\nThe sequencer will adjust to the length of your first audio recording.\n\n"
-	                                            "Available if there are no other audio samples in the project.";
-	m_data[MAIN_TRANSPORT_LABEL_METRONOME] = "Metronome";
+	m_data[MAIN_TRANSPORT_LABEL_RECACTIONS]     = "Record actions";
+	m_data[MAIN_TRANSPORT_LABEL_RECINPUT]       = "Record audio\n\nAvailable if:\n - input device is enabled\n - there is at least one empty and armed Sample channel";
+	m_data[MAIN_TRANSPORT_LABEL_RECINPUTMODE]   = "Free loop-length mode\n\nThe sequencer will adjust to the length of your first audio recording.\n\n"
+	                                              "Available if there are no other audio samples in the project.";
+	m_data[MAIN_TRANSPORT_LABEL_METRONOME]      = "Metronome";
 
 	m_data[MAIN_TRACK_HELP] = "Drop audio files or right-click here";
 
@@ -143,13 +143,13 @@ LangMap::LangMap()
 	m_data[MAIN_TRACK_BUTTON_REMOVE_TRACK]     = "Remove track";
 	m_data[MAIN_TRACK_BUTTON_ADD_TRACK]        = "Add track";
 
-	m_data[MAIN_CHANNEL_NOSAMPLE]          = "-- no sample --";
-	m_data[MAIN_CHANNEL_SAMPLENOTFOUND]    = "* file not found! *";
-	m_data[MAIN_CHANNEL_LABEL_PLAY]        = "Play/stop";
-	m_data[MAIN_CHANNEL_LABEL_ARM]         = "Arm for recording";
-	m_data[MAIN_CHANNEL_LABEL_STATUS]      = "Progress bar";
-	m_data[MAIN_CHANNEL_LABEL_READACTIONS] = "Read actions\n\nToggles playback of pre-recorded "
-	                                         "actions (key press, key release, ...).";
+	m_data[MAIN_CHANNEL_NOSAMPLE]           = "-- no sample --";
+	m_data[MAIN_CHANNEL_SAMPLENOTFOUND]     = "* file not found! *";
+	m_data[MAIN_CHANNEL_LABEL_PLAY]         = "Play/stop";
+	m_data[MAIN_CHANNEL_LABEL_ARM]          = "Arm for recording";
+	m_data[MAIN_CHANNEL_LABEL_STATUS]       = "Progress bar";
+	m_data[MAIN_CHANNEL_LABEL_READACTIONS]  = "Read actions\n\nToggles playback of pre-recorded "
+	                                          "actions (key press, key release, ...).";
 	m_data[MAIN_CHANNEL_LABEL_MODEBOX]      = "Mode";
 	m_data[MAIN_CHANNEL_LABEL_MUTE]         = "Mute";
 	m_data[MAIN_CHANNEL_LABEL_SOLO]         = "Solo";
@@ -273,13 +273,13 @@ LangMap::LangMap()
 	m_data[MIDIOUTPUT_CHANNEL_LEARN_MUTE]       = "Mute";
 	m_data[MIDIOUTPUT_CHANNEL_LEARN_SOLO]       = "Solo";
 
-	m_data[ABOUT_TITLE] = "About Giada";
-	m_data[ABOUT_BODY]  = "Version {} ({} build) {}\n\n"
-	                     "Developed by Monocasual Laboratories\n\n"
-	                     "Released under the terms of the GNU General\n"
-	                     "Public License (GPL v3)\n\n"
-	                     "News, infos, contacts and documentation:\n"
-	                     "www.giadamusic.com";
+	m_data[ABOUT_TITLE]    = "About Giada";
+	m_data[ABOUT_BODY]     = "Version {} ({} build) {}\n\n"
+	                         "Developed by Monocasual Laboratories\n\n"
+	                         "Released under the terms of the GNU General\n"
+	                         "Public License (GPL v3)\n\n"
+	                         "News, infos, contacts and documentation:\n"
+	                         "www.giadamusic.com";
 	m_data[ABOUT_BODY_VST] = "VST Plug-In Technology by Steinberg\n"
 	                         "VST is a trademark of Steinberg\nMedia Technologies GmbH";
 

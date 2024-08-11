@@ -214,7 +214,8 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	add(body);
 	resizable(body);
 
-	m_api->onChange = [this](ID id) {
+	m_api->onChange = [this](ID id)
+	{
 		m_data.api = static_cast<RtAudio::Api>(id);
 		deactivateAll();
 		c::config::changeAudioAPI(static_cast<RtAudio::Api>(id));
@@ -222,35 +223,42 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 		activateAll();
 	};
 
-	m_sampleRate->onChange = [this](ID id) { m_data.sampleRate = id; };
+	m_sampleRate->onChange = [this](ID id)
+	{ m_data.sampleRate = id; };
 
-	m_sounddevOut->onChange = [this](ID id) {
+	m_sounddevOut->onChange = [this](ID id)
+	{
 		m_data.setOutputDevice(id);
 		refreshDevOutProperties();
 	};
 
-	m_sounddevIn->onChange = [this](ID id) {
+	m_sounddevIn->onChange = [this](ID id)
+	{
 		m_data.setInputDevice(id);
 		refreshDevInProperties();
 	};
 
 	m_enableIn->copy_tooltip(g_ui->getI18Text(LangMap::CONFIG_AUDIO_ENABLEINPUT));
-	m_enableIn->onChange = [this](bool b) {
+	m_enableIn->onChange = [this](bool b)
+	{
 		m_data.toggleInputDevice(b);
 		refreshDevInProperties();
 	};
 
-	m_channelsOut->onChange = [this](ID) {
+	m_channelsOut->onChange = [this](ID)
+	{
 		m_data.outputDevice.channelsCount = m_channelsOut->getChannelsCount();
 		m_data.outputDevice.channelsStart = m_channelsOut->getChannelsStart();
 	};
 
-	m_channelsIn->onChange = [this](ID) {
+	m_channelsIn->onChange = [this](ID)
+	{
 		m_data.inputDevice.channelsCount = m_channelsIn->getChannelsCount();
 		m_data.inputDevice.channelsStart = m_channelsIn->getChannelsStart();
 	};
 
-	m_limitOutput->onChange = [this](bool v) { m_data.limitOutput = v; };
+	m_limitOutput->onChange = [this](bool v)
+	{ m_data.limitOutput = v; };
 
 	m_bufferSize->addItem("8", 8);
 	m_bufferSize->addItem("16", 16);
@@ -262,7 +270,8 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	m_bufferSize->addItem("1024", 1024);
 	m_bufferSize->addItem("2048", 2048);
 	m_bufferSize->addItem("4096", 4096);
-	m_bufferSize->onChange = [this](ID id) { m_data.bufferSize = id; };
+	m_bufferSize->onChange = [this](ID id)
+	{ m_data.bufferSize = id; };
 
 	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCBEST), 0);
 	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCMEDIUM), 1);
@@ -270,11 +279,14 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_ZEROORDER), 3);
 	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_LINEAR), 4);
 
-	m_rsmpQuality->onChange = [this](ID id) { m_data.resampleQuality = id; };
+	m_rsmpQuality->onChange = [this](ID id)
+	{ m_data.resampleQuality = id; };
 
-	m_recTriggerLevel->onChange = [this](const std::string& s) { m_data.recTriggerLevel = std::stof(s); };
+	m_recTriggerLevel->onChange = [this](const std::string& s)
+	{ m_data.recTriggerLevel = std::stof(s); };
 
-	m_applyBtn->onClick = [this]() { c::config::apply(m_data); };
+	m_applyBtn->onClick = [this]()
+	{ c::config::apply(m_data); };
 
 	rebuild(c::config::getAudioData());
 }

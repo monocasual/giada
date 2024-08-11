@@ -45,7 +45,7 @@ public:
 	};
 
 	/* Result
-	A Result object is returned by the process() function below, containing the 
+	A Result object is returned by the process() function below, containing the
 	number of frames used from input and generated to output. */
 
 	struct Result
@@ -57,7 +57,7 @@ public:
 	Resampler(Quality quality, int channels);
 	Resampler(const Resampler& o);
 	Resampler(Resampler&&) = delete;
-	Resampler& operator    =(const Resampler&);
+	Resampler& operator=(const Resampler&);
 	Resampler& operator=(Resampler&&) = delete;
 	~Resampler();
 

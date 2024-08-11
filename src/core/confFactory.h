@@ -31,12 +31,12 @@
 
 namespace giada::m::confFactory
 {
-/* serialize 
+/* serialize
 Writes Conf to disk. */
 
 bool serialize(const Conf&);
 
-/* deserialize 
+/* deserialize
 Reads data from disk into a new Conf object. */
 
 Conf deserialize();

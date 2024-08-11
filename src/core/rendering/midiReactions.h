@@ -48,7 +48,7 @@ void playMidiChannel(WeakAtomic<ChannelStatus>&);
 void stopMidiChannel(WeakAtomic<ChannelStatus>&);
 void rewindMidiChannel(WeakAtomic<ChannelStatus>&);
 
-/* recordMidiAction 
+/* recordMidiAction
 Records a new Action for a MIDI channel. */
 
 void recordMidiAction(ID channelId, const MidiEvent&, Frame currentFrameQuantized, ActionRecorder&);

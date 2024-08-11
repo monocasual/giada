@@ -118,7 +118,7 @@ void gePianoRoll::onDeleteAction()
 
 void gePianoRoll::onMoveAction()
 {
-	/* Y computation:  - (CELL_H/2) is wrong: we should need the y pick value as 
+	/* Y computation:  - (CELL_H/2) is wrong: we should need the y pick value as
 	done with x. Let's change this when vertical piano zoom will be available. */
 
 	Pixel ex = Fl::event_x() - m_action->pick;

@@ -127,7 +127,7 @@ void cut(Wave& w, int a, int b)
 		b = w.getBuffer().countFrames();
 
 	/* Create a new temp wave and copy there the original one, skipping the a-b
-    range. */
+	range. */
 
 	int newSize = w.getBuffer().countFrames() - (b - a);
 
@@ -220,7 +220,7 @@ void fade(Wave& w, int a, int b, Fade type)
 
 void smooth(Wave& w, int a, int b)
 {
-	/* Do nothing if fade edges (both of SMOOTH_SIZE samples) are > than selected 
+	/* Do nothing if fade edges (both of SMOOTH_SIZE samples) are > than selected
 	portion of wave. SMOOTH_SIZE*2 to count both edges. */
 
 	if (SMOOTH_SIZE * 2 > (b - a))

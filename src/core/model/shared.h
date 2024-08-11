@@ -51,7 +51,7 @@ public:
 
 	void init();
 
-	/* load  
+	/* load
 	Loads shared data from a Patch object. */
 
 	LoadState load(const Patch&, PluginManager&, const Sequencer&, int sampleRate, int bufferSize, Resampler::Quality);
@@ -79,7 +79,7 @@ public:
 	ChannelShared* findChannel(ID);
 
 	/* add[*]
-	Adds some shared data (by moving it). Returns a reference to the last added 
+	Adds some shared data (by moving it). Returns a reference to the last added
 	shared item. */
 
 	Wave&          addWave(std::unique_ptr<Wave>);

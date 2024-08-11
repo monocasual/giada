@@ -61,10 +61,14 @@ geMainTimer::geMainTimer()
 	m_multiplier->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TIMER_LABEL_MULTIPLIER));
 	m_divider->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TIMER_LABEL_DIVIDER));
 
-	m_bpm->onClick        = [&timer = m_timer]() { c::layout::openBpmWindow(timer.bpm); };
-	m_meter->onClick      = [&timer = m_timer]() { c::layout::openBeatsWindow(timer.beats, timer.bars); };
-	m_multiplier->onClick = []() { c::main::multiplyBeats(); };
-	m_divider->onClick    = []() { c::main::divideBeats(); };
+	m_bpm->onClick = [&timer = m_timer]()
+	{ c::layout::openBpmWindow(timer.bpm); };
+	m_meter->onClick = [&timer = m_timer]()
+	{ c::layout::openBeatsWindow(timer.beats, timer.bars); };
+	m_multiplier->onClick = []()
+	{ c::main::multiplyBeats(); };
+	m_divider->onClick = []()
+	{ c::main::divideBeats(); };
 
 	m_quantizer->addItem(g_ui->getI18Text(LangMap::COMMON_OFF));
 	m_quantizer->addItem("1\\/1");
@@ -74,7 +78,8 @@ geMainTimer::geMainTimer()
 	m_quantizer->addItem("1\\/6");
 	m_quantizer->addItem("1\\/8");
 	m_quantizer->showItem(1); //  "off" by default
-	m_quantizer->onChange = [](ID value) { c::main::quantize(value); };
+	m_quantizer->onChange = [](ID value)
+	{ c::main::quantize(value); };
 }
 
 /* -------------------------------------------------------------------------- */

@@ -31,12 +31,12 @@
 
 namespace giada::m::patchFactory
 {
-/* serialize 
+/* serialize
 Writes Patch to disk. The 'filePath' parameter refers to the .gptc file. */
 
 bool serialize(const Patch&, const std::string& filePath);
 
-/* deserialize 
+/* deserialize
 Reads data from disk into a new Patch object. The 'filePath' parameter refers to
 the .gptc file. */
 

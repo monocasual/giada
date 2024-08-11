@@ -42,7 +42,8 @@ geSampleChannelMode::geSampleChannelMode(int x, int y, int w, int h, c::channel:
 : geImageButton(x, y, w, h, nullptr, nullptr)
 , m_channel(d)
 {
-	onClick = [this]() {
+	onClick = [this]()
+	{
 		openMenu();
 	};
 
@@ -115,7 +116,8 @@ void geSampleChannelMode::openMenu()
 	menu.addItem((ID)SamplePlayerMode::SINGLE_RETRIG, "Oneshot - Retrig");
 	menu.addItem((ID)SamplePlayerMode::SINGLE_ENDLESS, "Oneshot - Endless");
 
-	menu.onSelect = [this](ID id) {
+	menu.onSelect = [this](ID id)
+	{
 		c::channel::setSamplePlayerMode(m_channel.id, static_cast<SamplePlayerMode>(id));
 	};
 

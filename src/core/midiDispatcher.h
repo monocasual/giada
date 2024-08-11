@@ -51,7 +51,7 @@ public:
 	void clearPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f);
 
 	/* dispatch
-    Main callback invoked by kernelMidi whenever a new MIDI data comes in. */
+	Main callback invoked by kernelMidi whenever a new MIDI data comes in. */
 
 	void dispatch(const MidiEvent&);
 
@@ -62,13 +62,13 @@ public:
 
 private:
 	/* learn
-    Learns event 'e'. Called by the Event Dispatcher. */
+	Learns event 'e'. Called by the Event Dispatcher. */
 
 	void learn(const MidiEvent&);
 
 	/* process
-    Sends event 'e' to channels (masters and keyboard). Called by the Event 
-    Dispatcher. */
+	Sends event 'e' to channels (masters and keyboard). Called by the Event
+	Dispatcher. */
 
 	void process(const MidiEvent&);
 
@@ -85,8 +85,8 @@ private:
 	void learnPlugin(MidiEvent, std::size_t paramIndex, ID pluginId, std::function<void()> doneCb);
 
 	/* cb_midiLearn
-    Callback prepared by the gdMidiGrabber window and called by midiDispatcher. 
-    It contains things to do once the midi message has been stored. */
+	Callback prepared by the gdMidiGrabber window and called by midiDispatcher.
+	It contains things to do once the midi message has been stored. */
 
 	std::function<void(MidiEvent)> m_learnCb;
 

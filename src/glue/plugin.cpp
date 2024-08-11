@@ -195,7 +195,8 @@ void setParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread
 	g_engine->getPluginsApi().setParameter(pluginId, paramIndex, value);
 	channel::notifyChannelForMidiIn(t, channelId);
 
-	g_ui->pumpEvent([pluginId, t]() { c::plugin::updateWindow(pluginId, t); });
+	g_ui->pumpEvent([pluginId, t]()
+	{ c::plugin::updateWindow(pluginId, t); });
 }
 
 /* -------------------------------------------------------------------------- */

@@ -350,7 +350,7 @@ float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
 
 	if (t != Thread::MAIN || repaintMainUi)
 		g_ui->pumpEvent([channelId, v]()
-		    { g_ui->mainWindow->keyboard->setChannelVolume(channelId, v); });
+		{ g_ui->mainWindow->keyboard->setChannelVolume(channelId, v); });
 
 	return v;
 }
@@ -361,7 +361,7 @@ float setChannelPitch(ID channelId, float v, Thread t)
 {
 	g_engine->getChannelsApi().setPitch(channelId, v);
 	g_ui->pumpEvent([v]()
-	    {
+	{
 		if (auto* w = sampleEditor::getWindow(); w != nullptr)
 			w->pitchTool->update(v); });
 	notifyChannelForMidiIn(t, channelId);
@@ -425,7 +425,7 @@ void notifyChannelForMidiIn(Thread t, ID channelId)
 {
 	if (t == Thread::MIDI)
 		g_ui->pumpEvent([channelId]()
-		    { g_ui->mainWindow->keyboard->notifyMidiIn(channelId); });
+		{ g_ui->mainWindow->keyboard->notifyMidiIn(channelId); });
 }
 
 } // namespace giada::c::channel

@@ -72,7 +72,7 @@ struct Document
 #endif
 
 	/* locked
-	If locked, Mixer won't process channels. This is used to allow editing the 
+	If locked, Mixer won't process channels. This is used to allow editing the
 	shared data (e.g. Plugins, Waves) by the rendering engine without data races. */
 
 	bool locked = false;

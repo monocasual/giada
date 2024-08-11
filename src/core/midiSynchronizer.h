@@ -69,7 +69,7 @@ private:
 
 	void computeClock(double timestamp);
 
-	/* computePosition 
+	/* computePosition
 	Given a SPP (Song Position Pointer), it jumps to the right beat. */
 
 	void computePosition(int sppPosition, int numBeatsInLoop);

@@ -85,7 +85,7 @@ public:
 
 	void load(const Conf&);
 
-	/* load (2) 
+	/* load (2)
 	Loads data from a Patch object. */
 
 	LoadState load(const Patch&, PluginManager&, int sampleRate, int bufferSize, Resampler::Quality);
@@ -103,7 +103,7 @@ public:
 	bool registerThread(Thread, bool realtime) const;
 
 	/* get_RT
-	Returns a DocumentLock object for REALTIME processing. Access Document by 
+	Returns a DocumentLock object for REALTIME processing. Access Document by
 	calling DocumentLock::get() method (returns ready-only Document). */
 
 	DocumentLock get_RT() const;
@@ -133,7 +133,7 @@ public:
 	Wave*   findWave(ID);
 
 	/* add[*]
-	Adds some shared data (by moving it). Returns a reference to the last added 
+	Adds some shared data (by moving it). Returns a reference to the last added
 	shared item. */
 
 	Wave&          addWave(std::unique_ptr<Wave>);
@@ -151,7 +151,7 @@ public:
 #endif
 
 	/* onSwap
-	Callbacks fired when the Document has been swapped. Useful for listening to 
+	Callbacks fired when the Document has been swapped. Useful for listening to
 	model changes. */
 
 	std::function<void(SwapType)> onSwap;

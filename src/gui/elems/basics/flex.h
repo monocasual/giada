@@ -36,7 +36,7 @@
 namespace giada::v
 {
 /* geFlex
-Like a FlexBox item, it's a group that contains widgets that can be stretched 
+Like a FlexBox item, it's a group that contains widgets that can be stretched
 to fill the area. Inspired by https://github.com/osen/FL_Flex. */
 
 class geFlex : public Fl_Flex

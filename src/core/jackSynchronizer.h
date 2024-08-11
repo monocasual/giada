@@ -46,12 +46,12 @@ public:
 	JackSynchronizer();
 
 	/* recvJackSync
-    Receives a new JACK state. Called by Kernel Audio on each audio block. */
+	Receives a new JACK state. Called by Kernel Audio on each audio block. */
 
 	void recvJackSync(const JackTransport::State&) const;
 
 	/* onJack[...]
-    Callbacks called when something happens in the JACK state. */
+	Callbacks called when something happens in the JACK state. */
 
 	std::function<void()>      onJackRewind;
 	std::function<void(float)> onJackChangeBpm;

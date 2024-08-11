@@ -88,7 +88,8 @@ void gdPluginList::rebuild()
 
 	addPlugin = new geTextButton(0, 0, 0, G_GUI_UNIT, g_ui->getI18Text(LangMap::PLUGINLIST_ADDPLUGIN));
 
-	addPlugin->onClick = [this]() {
+	addPlugin->onClick = [this]()
+	{
 		c::layout::openPluginChooser(m_plugins.channelId);
 	};
 

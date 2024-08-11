@@ -81,7 +81,7 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 		resizable(gsa);
 	}
 
-	/* If channel is LOOP_ANY, deactivate it: a loop mode channel cannot hold 
+	/* If channel is LOOP_ANY, deactivate it: a loop mode channel cannot hold
 	keypress/keyrelease actions. */
 
 	isAnyLoopMode ? deactivate() : activate();
@@ -93,13 +93,13 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 
 void geSampleActionEditor::draw()
 {
-	/* Force height to match its parent's height. This widget belongs to a 
+	/* Force height to match its parent's height. This widget belongs to a
 	geScroll container (see geSplitScroll class in baseActionEditor.h) but
 	there's nothing to scroll here actually. */
 
 	size(w(), parent()->h());
 
-	/* Draw basic boundaries (+ beat bars) and hide the unused area. Then draw 
+	/* Draw basic boundaries (+ beat bars) and hide the unused area. Then draw
 	children (the actions). */
 
 	baseDraw();

@@ -45,7 +45,7 @@ public:
 	    Direction d = Direction::HORIZONTAL, int gutter = G_GUI_INNER_MARGIN);
 
 	/* countChildren
-    Returns the number of widgets contained in this group. */
+	Returns the number of widgets contained in this group. */
 
 	std::size_t countChildren() const;
 
@@ -55,9 +55,9 @@ public:
 	Fl_Widget* getLastChild();
 
 private:
-	/* m_widgets 
-    The internal Fl_Scroll::array_ is unreliable when inspected with the child()
-    method. Let's keep track of widgets that belong to this group manually. */
+	/* m_widgets
+	The internal Fl_Scroll::array_ is unreliable when inspected with the child()
+	method. Let's keep track of widgets that belong to this group manually. */
 
 	std::vector<Fl_Widget*> m_widgets;
 

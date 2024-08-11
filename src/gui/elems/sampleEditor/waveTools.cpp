@@ -179,7 +179,8 @@ void geWaveTools::openMenu()
 
 	menu.onSelect = [channelId = m_data->channelId,
 	                    a      = waveform->getSelectionA(),
-	                    b      = waveform->getSelectionB()](ID id) {
+	                    b      = waveform->getSelectionB()](ID id)
+	{
 		switch (static_cast<Menu>(id))
 		{
 		case Menu::CUT:

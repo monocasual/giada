@@ -102,9 +102,9 @@ public:
 	void reset();
 
 	/* scanDirs
-	Parses plugin directories (semicolon-separated) and store list in 
+	Parses plugin directories (semicolon-separated) and store list in
 	knownPluginList. The callback is called on each plugin found. Used to update
-	the main window from the GUI thread. Return false from the progress callback 
+	the main window from the GUI thread. Return false from the progress callback
 	to stop	the scanning process. */
 
 	int scanDirs(const std::string& paths, std::function<bool(float)> progressCb);

@@ -42,7 +42,8 @@ geScrollbar::geScrollbar()
 	labelcolor(G_COLOR_LIGHT_1);
 	slider(G_CUSTOM_BORDER_BOX);
 
-	callback([](Fl_Widget* w) {
+	callback([](Fl_Widget* w)
+	{
 		const geScrollbar* self = static_cast<geScrollbar*>(w);
 		if (self->onScroll)
 			self->onScroll(self->value());

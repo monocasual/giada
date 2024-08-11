@@ -65,7 +65,8 @@ gdBeatsInput::gdBeatsInput(int beats, int bars)
 	m_bars->setType(FL_INT_INPUT);
 
 	m_ok->shortcut(FL_Enter);
-	m_ok->onClick = [this]() {
+	m_ok->onClick = [this]()
+	{
 		if (m_beats->getValue() == "" || m_bars->getValue() == "")
 			return;
 		c::main::setBeats(std::stoi(m_beats->getValue()), std::stoi(m_bars->getValue()));

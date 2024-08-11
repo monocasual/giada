@@ -62,7 +62,8 @@ gePluginElement::gePluginElement(int x, int y, int w, int h, c::plugin::Plugin d
 	addWidget(remove, G_GUI_UNIT);
 	end();
 
-	remove->onClick = [this]() { removePlugin(); };
+	remove->onClick = [this]()
+	{ removePlugin(); };
 
 	if (!m_plugin.valid)
 	{
@@ -75,9 +76,11 @@ gePluginElement::gePluginElement(int x, int y, int w, int h, c::plugin::Plugin d
 	}
 
 	button->copy_label(m_plugin.name.c_str());
-	button->onClick = [this]() { openPluginWindow(); };
+	button->onClick = [this]()
+	{ openPluginWindow(); };
 
-	program->onChange = [pluginId = m_plugin.id](ID id) {
+	program->onChange = [pluginId = m_plugin.id](ID id)
+	{
 		c::plugin::setProgram(pluginId, id);
 	};
 
@@ -95,12 +98,15 @@ gePluginElement::gePluginElement(int x, int y, int w, int h, c::plugin::Plugin d
 
 	bypass->setToggleable(true);
 	bypass->setValue(!m_plugin.isBypassed);
-	bypass->onClick = [this]() {
+	bypass->onClick = [this]()
+	{
 		c::plugin::toggleBypass(m_plugin.id);
 	};
 
-	shiftUpBtn->onClick   = [this]() { shiftUp(); };
-	shiftDownBtn->onClick = [this]() { shiftDown(); };
+	shiftUpBtn->onClick = [this]()
+	{ shiftUp(); };
+	shiftDownBtn->onClick = [this]()
+	{ shiftDown(); };
 }
 
 /* -------------------------------------------------------------------------- */

@@ -99,17 +99,20 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 	where->setCursorColor(G_COLOR_BLACK);
 	where->setValue(path.c_str());
 
-	updir->onClick = [this]() {
+	updir->onClick = [this]()
+	{
 		browser->loadDir(u::fs::getUpDir(browser->getCurrentDir()));
 		where->setValue(browser->getCurrentDir().c_str());
 	};
 
-	browser->onSelectedElement = [this]() { fireCallback(); };
+	browser->onSelectedElement = [this]()
+	{ fireCallback(); };
 	browser->loadDir(path);
 	if (path == model.browserLastPath)
 		browser->preselect(model.browserPosition, model.browserLastValue);
 
-	cancel->onClick = [this]() { do_callback(); };
+	cancel->onClick = [this]()
+	{ do_callback(); };
 
 	set_non_modal();
 	size_range(320, 200);

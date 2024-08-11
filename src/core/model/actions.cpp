@@ -50,14 +50,16 @@ void Actions::clearAll()
 
 void Actions::clearChannel(ID channelId)
 {
-	removeIf([=](const Action& a) { return a.channelId == channelId; });
+	removeIf([=](const Action& a)
+	{ return a.channelId == channelId; });
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Actions::clearActions(ID channelId, int type)
 {
-	removeIf([=](const Action& a) {
+	removeIf([=](const Action& a)
+	{
 		return a.channelId == channelId && a.event.getStatus() == type;
 	});
 }
@@ -66,12 +68,14 @@ void Actions::clearActions(ID channelId, int type)
 
 void Actions::deleteAction(ID id)
 {
-	removeIf([=](const Action& a) { return a.id == id; });
+	removeIf([=](const Action& a)
+	{ return a.id == id; });
 }
 
 void Actions::deleteAction(ID currId, ID nextId)
 {
-	removeIf([=](const Action& a) { return a.id == currId || a.id == nextId; });
+	removeIf([=](const Action& a)
+	{ return a.id == currId || a.id == nextId; });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -175,7 +179,7 @@ Action Actions::rec(ID channelId, Frame frame, MidiEvent event)
 
 	Action a = actionFactory::makeAction(0, channelId, frame, event);
 
-	/* If key frame doesn't exist yet, the [] operator in std::map is smart 
+	/* If key frame doesn't exist yet, the [] operator in std::map is smart
 	enough to insert a new item first. No plug-in data for now. */
 
 	m_actions[frame].push_back(a);
@@ -222,7 +226,8 @@ const std::vector<Action>* Actions::getActionsOnFrame(Frame frame) const
 Action Actions::getClosestAction(ID channelId, Frame f, int type) const
 {
 	Action out = {};
-	forEachAction([&](const Action& a) {
+	forEachAction([&](const Action& a)
+	{
 		if (a.event.getStatus() != type || a.channelId != channelId)
 			return;
 		if (!out.isValid() || (a.frame <= f && a.frame > out.frame))
@@ -236,7 +241,8 @@ Action Actions::getClosestAction(ID channelId, Frame f, int type) const
 std::vector<Action> Actions::getActionsOnChannel(ID channelId) const
 {
 	std::vector<Action> out;
-	forEachAction([&](const Action& a) {
+	forEachAction([&](const Action& a)
+	{
 		if (a.channelId == channelId)
 			out.push_back(a);
 	});

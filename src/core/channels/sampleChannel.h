@@ -49,7 +49,7 @@ public:
 	Wave* getWave() const;
 
 	/* loadWave
-	Loads Wave and sets it up (name, markers, ...). Resets begin/end points 
+	Loads Wave and sets it up (name, markers, ...). Resets begin/end points
 	and shift if not specified. */
 
 	void loadWave(Wave*, Frame begin = -1, Frame end = -1, Frame shift = -1);

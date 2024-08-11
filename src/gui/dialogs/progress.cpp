@@ -68,7 +68,8 @@ gdProgress::gdProgress()
 
 	add(container);
 
-	m_cancelBtn->onClick = [this]() {
+	m_cancelBtn->onClick = [this]()
+	{
 		if (onCancel)
 			onCancel();
 	};

@@ -77,18 +77,18 @@ public:
 	Sequencer(model::Model&, MidiSynchronizer&, JackTransport&);
 
 	/* canQuantize
-    Tells whether the quantizer value is > 0 and the sequencer is running. */
+	Tells whether the quantizer value is > 0 and the sequencer is running. */
 
 	bool canQuantize() const;
 
 	/* isRunning
-    When sequencer is actually moving forward, i.e. SeqStatus == RUNNING. */
+	When sequencer is actually moving forward, i.e. SeqStatus == RUNNING. */
 
 	bool isRunning() const;
 
 	/* isActive
-    Sequencer is enabled, but might be in wait mode, i.e. SeqStatus == RUNNING or
-    SeqStatus == WAITING. */
+	Sequencer is enabled, but might be in wait mode, i.e. SeqStatus == RUNNING or
+	SeqStatus == WAITING. */
 
 	bool isActive() const;
 
@@ -114,13 +114,13 @@ public:
 	int       getMaxFramesInLoop(int sampleRate) const;
 
 	/* calcBpmFromRec
-    Given the amount of recorded frames, returns the speed of the current 
-    performance. Used while input recording in FREE mode. */
+	Given the amount of recorded frames, returns the speed of the current
+	performance. Used while input recording in FREE mode. */
 
 	float calcBpmFromRec(Frame recordedFrames, int sampleRate) const;
 
 	/* quantize
-    Quantizes the frame 'f'.  */
+	Quantizes the frame 'f'.  */
 
 	Frame quantize(Frame f) const;
 
@@ -130,13 +130,13 @@ public:
 	void reset(int sampleRate);
 
 	/* setSampleRate
-	Sets a new sample rate value for the internal beat computation. Must be 
+	Sets a new sample rate value for the internal beat computation. Must be
 	called only when mixer is disabled.*/
 
 	void setSampleRate(int);
 
 	/* advance
-	Parses sequencer events that might occur in a block and advances the internal 
+	Parses sequencer events that might occur in a block and advances the internal
 	quantizer. Returns a reference to the internal EventBuffer filled with events
 	(if any). Call this on each new audio block. */
 
@@ -168,7 +168,7 @@ public:
 #endif
 
 	/* recomputeFrames
-    Updates bpm, frames, beats and so on. */
+	Updates bpm, frames, beats and so on. */
 
 	void recomputeFrames(int sampleRate);
 
@@ -178,7 +178,7 @@ public:
 
 private:
 	/* raw[*]
-	Raw functions to start, stop and rewind the sequencer or change other 
+	Raw functions to start, stop and rewind the sequencer or change other
 	properties. These functions must be called only internally. Other modules
 	should send a SEQUENCER_* event to the Event Dispatcher. */
 
@@ -193,7 +193,7 @@ private:
 	JackTransport&    m_jackTransport;
 
 	/* m_eventBuffer
-	Buffer of events found in each block sent to channels for event parsing. 
+	Buffer of events found in each block sent to channels for event parsing.
 	This is filled during react(). */
 
 	mutable EventBuffer m_eventBuffer;
@@ -202,7 +202,7 @@ private:
 	Quantizer m_quantizer;
 
 	/* m_quantizerStep
-    Tells how many frames to wait to perform a quantized action. */
+	Tells how many frames to wait to perform a quantized action. */
 
 	int m_quantizerStep;
 };

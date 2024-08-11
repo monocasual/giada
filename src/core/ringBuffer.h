@@ -33,7 +33,7 @@
 namespace giada
 {
 /* RingBuffer
-A non-thread-safe, fixed-size ring buffer implementation. It grows from 0 to S, 
+A non-thread-safe, fixed-size ring buffer implementation. It grows from 0 to S,
 then items are overwritten starting from position 0. */
 
 template <typename T, std::size_t S>

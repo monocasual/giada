@@ -51,7 +51,7 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 		m_debugMsg  = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MISC_DEBUGMESSAGES), LABEL_WIDTH);
 		m_tooltips  = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MISC_TOOLTIPS), LABEL_WIDTH);
 		m_langMap   = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MISC_LANGUAGE),
-            g_ui->getI18Text(LangMap::CONFIG_MISC_NOLANGUAGESFOUND), LABEL_WIDTH);
+		      g_ui->getI18Text(LangMap::CONFIG_MISC_NOLANGUAGESFOUND), LABEL_WIDTH);
 		m_uiScaling = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MISC_UISCALING), LABEL_WIDTH);
 
 		body->addWidget(m_debugMsg, G_GUI_UNIT);
@@ -69,7 +69,8 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 	m_debugMsg->addItem(g_ui->getI18Text(LangMap::CONFIG_MISC_DEBUGMESSAGES_TOSTDOUT));
 	m_debugMsg->addItem(g_ui->getI18Text(LangMap::CONFIG_MISC_DEBUGMESSAGES_TOFILE));
 	m_debugMsg->showItem(m_data.logMode);
-	m_debugMsg->onChange = [this](ID id) {
+	m_debugMsg->onChange = [this](ID id)
+	{
 		m_data.logMode = id;
 		c::config::save(m_data);
 	};
@@ -77,7 +78,8 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 	m_tooltips->addItem(g_ui->getI18Text(LangMap::CONFIG_MISC_TOOLTIPS_DISABLED));
 	m_tooltips->addItem(g_ui->getI18Text(LangMap::CONFIG_MISC_TOOLTIPS_ENABLED));
 	m_tooltips->showItem(m_data.showTooltips);
-	m_tooltips->onChange = [this](ID id) {
+	m_tooltips->onChange = [this](ID id)
+	{
 		m_data.showTooltips = id;
 		c::config::save(m_data);
 	};
@@ -88,7 +90,8 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 		m_langMap->showItem(0);
 	else
 		m_langMap->showItem(m_data.langMap);
-	m_langMap->onChange = [this](ID /*id*/) {
+	m_langMap->onChange = [this](ID /*id*/)
+	{
 		m_data.langMap = m_langMap->getSelectedLabel();
 		c::config::save(m_data);
 	};
@@ -100,7 +103,8 @@ geTabMisc::geTabMisc(geompp::Rect<int> bounds)
 	m_uiScaling->addItem("250%", 250);
 	m_uiScaling->addItem("300%", 300);
 	m_uiScaling->showItem(static_cast<int>(m_data.uiScaling * 100));
-	m_uiScaling->onChange = [this](ID id) {
+	m_uiScaling->onChange = [this](ID id)
+	{
 		m_data.uiScaling = id / 100.0f;
 		c::config::save(m_data);
 	};

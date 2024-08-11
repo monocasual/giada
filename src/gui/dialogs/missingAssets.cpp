@@ -73,7 +73,8 @@ gdMissingAssets::gdMissingAssets(const m::model::LoadState& state)
 		geFlex* footer = new geFlex(Direction::HORIZONTAL);
 		{
 			geTextButton* close = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
-			close->onClick      = [this]() { do_callback(); };
+			close->onClick      = [this]()
+			{ do_callback(); };
 			footer->addWidget(new geBox()); // Spacer
 			footer->addWidget(close, 80);
 			footer->end();

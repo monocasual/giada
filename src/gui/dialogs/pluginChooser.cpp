@@ -80,7 +80,8 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_MANUFACTURER));
 	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_FORMAT));
 	sortMethod->showItem(static_cast<int>(model.pluginChooserSortMode.method));
-	sortMethod->onChange = [this](ID) {
+	sortMethod->onChange = [this](ID)
+	{
 		c::plugin::sortPlugins(getSortMode());
 		browser->refresh();
 	};
@@ -88,12 +89,14 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 	sortDir->addItem("A-Z");
 	sortDir->addItem("Z-A");
 	sortDir->showItem(static_cast<int>(model.pluginChooserSortMode.dir));
-	sortDir->onChange = [this](ID) {
+	sortDir->onChange = [this](ID)
+	{
 		c::plugin::sortPlugins(getSortMode());
 		browser->refresh();
 	};
 
-	addBtn->onClick = [this]() {
+	addBtn->onClick = [this]()
+	{
 		int pluginIndex = browser->value() - 3; // subtract header lines
 		if (pluginIndex < 0)
 			return;
@@ -102,7 +105,8 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 	};
 	addBtn->shortcut(FL_Enter);
 
-	cancelBtn->onClick = [this]() {
+	cancelBtn->onClick = [this]()
+	{
 		do_callback();
 	};
 

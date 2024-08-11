@@ -100,8 +100,8 @@ void loadProject(void* data)
 
 	const std::string projectPath = browser->getSelectedItem();
 
-	/* Close all sub-windows first (browser included), in case there are VST 
-	editors visible. VST editors must be closed before deleting their plug-in 
+	/* Close all sub-windows first (browser included), in case there are VST
+	editors visible. VST editors must be closed before deleting their plug-in
 	processors. */
 
 	g_ui->closeAllSubwindows();
@@ -113,7 +113,8 @@ void loadProject(void* data)
 	g_ui->stopUpdater();
 
 	auto uiProgress     = g_ui->mainWindow->getScopedProgress(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_LOADINGPROJECT));
-	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
+	auto engineProgress = [&uiProgress](float v)
+	{ uiProgress.setProgress(v); };
 
 	m::model::LoadState state = g_engine->getStorageApi().loadProject(projectPath, engineProgress);
 
@@ -150,7 +151,8 @@ void saveProject(void* data)
 		return;
 
 	auto uiProgress     = g_ui->mainWindow->getScopedProgress(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGPROJECT));
-	auto engineProgress = [&uiProgress](float v) { uiProgress.setProgress(v); };
+	auto engineProgress = [&uiProgress](float v)
+	{ uiProgress.setProgress(v); };
 
 	g_ui->model.projectName = projectName;
 

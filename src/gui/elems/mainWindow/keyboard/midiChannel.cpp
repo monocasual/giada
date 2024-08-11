@@ -99,31 +99,37 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 	vol->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
 
 	fx->setValue(m_channel.plugins.size() > 0);
-	fx->onClick = [this]() {
+	fx->onClick = [this]()
+	{
 		c::layout::openChannelPluginListWindow(m_channel.id);
 	};
 
 	playButton->when(FL_WHEN_CHANGED); // On keypress && on keyrelease
-	playButton->onClick = [this]() {
+	playButton->onClick = [this]()
+	{
 		g_ui->dispatcher.dispatchTouch(*this, playButton->getValue());
 	};
 
 	arm->setToggleable(true);
-	arm->onClick = [this]() {
+	arm->onClick = [this]()
+	{
 		c::channel::toggleArmChannel(m_channel.id, Thread::MAIN);
 	};
 
 	mute->setToggleable(true);
-	mute->onClick = [this]() {
+	mute->onClick = [this]()
+	{
 		c::channel::toggleMuteChannel(m_channel.id, Thread::MAIN);
 	};
 
 	solo->setToggleable(true);
-	solo->onClick = [this]() {
+	solo->onClick = [this]()
+	{
 		c::channel::toggleSoloChannel(m_channel.id, Thread::MAIN);
 	};
 
-	mainButton->onClick = [this]() { openMenu(); };
+	mainButton->onClick = [this]()
+	{ openMenu(); };
 
 	vol->value(m_channel.volume);
 	vol->callback(cb_changeVol, (void*)this);
@@ -150,7 +156,8 @@ void geMidiChannel::openMenu()
 	if (!m_channel.hasActions)
 		menu.setEnabled((ID)Menu::CLEAR_ACTIONS, false);
 
-	menu.onSelect = [&data = m_channel](ID id) {
+	menu.onSelect = [&data = m_channel](ID id)
+	{
 		switch (static_cast<Menu>(id))
 		{
 		case Menu::EDIT_ACTIONS:
@@ -160,7 +167,8 @@ void geMidiChannel::openMenu()
 			c::channel::clearAllActions(data.id);
 			break;
 		case Menu::SETUP_KEYBOARD_INPUT:
-			c::layout::openKeyGrabberWindow(data.key, [channelId = data.id](int key) {
+			c::layout::openKeyGrabberWindow(data.key, [channelId = data.id](int key)
+			{
 				return c::io::channel_setKey(channelId, key);
 			});
 			break;

@@ -74,7 +74,7 @@ public:
 	static MidiEvent makeFrom2Bytes(uint8_t byte1, uint8_t byte2, double timestamp = 0.0);
 	static MidiEvent makeFrom1Byte(uint8_t byte1, double timestamp = 0.0);
 
-	/* MidiEvent 
+	/* MidiEvent
 	Creates and empty and invalid MIDI event. */
 
 	MidiEvent();
@@ -94,7 +94,7 @@ public:
 	double  getTimestamp() const;
 
 	/* getSppPosition
-	Returns the number of MIDI beats from the song-position-pointer data 
+	Returns the number of MIDI beats from the song-position-pointer data
 	(byte1 + byte2). */
 
 	int getSppPosition() const;
@@ -111,14 +111,14 @@ public:
 	void setVelocity(int v);
 
 	/* setVelocityFloat
-	Stores the velocity value in a high-resolution float variable, instead of 
+	Stores the velocity value in a high-resolution float variable, instead of
 	using the limited 7-bit MIDI one that comes with a CHANNEL type. */
 
 	void setVelocityFloat(float);
 
 	/* fixVelocityZero()
-	According to the MIDI standard, there is a special case if the velocity is 
-	set to zero. The NOTE ON message then has the same meaning as a NOTE OFF 
+	According to the MIDI standard, there is a special case if the velocity is
+	set to zero. The NOTE ON message then has the same meaning as a NOTE OFF
 	message, switching the note off. Let's fix it. Sometime however you do want
 	a NOTE ON with velocity zero: setting velocity to 0 in MIDI action editor to
 	mute a specific event.  */

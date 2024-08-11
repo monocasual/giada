@@ -47,7 +47,7 @@ struct Data
 };
 
 /* getNextId
-	Returns the next channel ID that will be assigned to a new channel. */
+    Returns the next channel ID that will be assigned to a new channel. */
 
 ID getNextId();
 
@@ -57,7 +57,7 @@ ID getNextId();
 void reset();
 
 /* create (1)
-    Creates a new channel. If channelId == 0 generates a new ID, reuse the one 
+    Creates a new channel. If channelId == 0 generates a new ID, reuse the one
     passed in otherwise. */
 
 Data create(ID channelId, ChannelType type, int bufferSize, Resampler::Quality, bool overdubProtection);

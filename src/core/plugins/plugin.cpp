@@ -56,7 +56,7 @@ Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin,
 , m_bypass(false)
 , m_hasEditor(m_plugin->hasEditor())
 {
-	/* (1) Initialize midiInParams vector, where midiInParams.size == number of 
+	/* (1) Initialize midiInParams vector, where midiInParams.size == number of
 	plugin parameters. All values are initially empty (0x0): they will be filled
 	during MIDI learning process. */
 
@@ -216,7 +216,7 @@ void Plugin::setBypass(bool b) { m_bypass.store(b); }
 
 const Plugin::Buffer& Plugin::process(const Plugin::Buffer& out, juce::MidiBuffer m)
 {
-	/* Copy the incoming buffer data into the temporary one. This way FXes will 
+	/* Copy the incoming buffer data into the temporary one. This way FXes will
 	process	existing audio data on the private buffer. This is needed later on
 	when merging it back into the incoming buffer. */
 

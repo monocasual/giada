@@ -40,23 +40,23 @@ class Dispatcher final
 public:
 	Dispatcher();
 
-	/* init 
+	/* init
 	Initializes internal reference to gdMainWindow. */
 
 	void init(gdMainWindow&, const Model&);
 
 	/* dispatchKey
-    Processes a key pressed on the physical keyboard. */
+	Processes a key pressed on the physical keyboard. */
 
 	void dispatchKey(int event);
 
 	/* dispatchTouch
-    Processes a mouse click/touch event. */
+	Processes a mouse click/touch event. */
 
 	void dispatchTouch(const geChannel& gch, bool status);
 
 	/* onEventOccured
-    Callback fired when a key has been pressed or a mouse button clicked. */
+	Callback fired when a key has been pressed or a mouse button clicked. */
 
 	std::function<void()> onEventOccured;
 
@@ -64,8 +64,8 @@ private:
 	void perform(ID channelId, int event) const;
 
 	/* dispatchChannels
-    Walks channels array, trying to match button's bound key with the event. If 
-    found, trigger the key-press/key-release function. */
+	Walks channels array, trying to match button's bound key with the event. If
+	found, trigger the key-press/key-release function. */
 
 	void dispatchChannels(int event) const;
 

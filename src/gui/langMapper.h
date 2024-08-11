@@ -377,8 +377,8 @@ public:
 
 private:
 	/* maps
-	The current langmap selected and loaded. It might be the default one (En_US) 
-    if no langmaps have been found. */
+	The current langmap selected and loaded. It might be the default one (En_US)
+	if no langmaps have been found. */
 
 	LangMap m_map;
 };

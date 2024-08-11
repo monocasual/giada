@@ -74,7 +74,7 @@ public:
 	Result openInPort(int port);
 
 	/* getOutPorts, getOutPorts
-    Returns a vector of port names. */
+	Returns a vector of port names. */
 
 	std::vector<std::string> getOutPorts() const;
 	std::vector<std::string> getInPorts() const;
@@ -86,13 +86,13 @@ public:
 	int         getCurrentInPort() const;
 
 	/* canSend, canReceive
-	Return true if KernelMidi is capable of sending/receiving MIDI messages, 
+	Return true if KernelMidi is capable of sending/receiving MIDI messages,
 	given the current configuration. */
 
 	bool canSend() const;
 	bool canReceive() const;
 
-	/* canSyncMaster, canSyncSlave 
+	/* canSyncMaster, canSyncSlave
 	Return true if KernelMidi has MIDI sync enabled, master or slave, given the
 	current configuration. */
 
@@ -100,7 +100,7 @@ public:
 	bool canSyncSlave() const;
 
 	/* send
-    Sends a MIDI message to the outside world. Returns false if MIDI out is not
+	Sends a MIDI message to the outside world. Returns false if MIDI out is not
 	enabled or the internal queue is full. */
 
 	bool send(const MidiEvent&) const;

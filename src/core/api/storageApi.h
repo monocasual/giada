@@ -57,7 +57,7 @@ public:
 	    std::function<void(float)>       progress) const;
 
 	/* loadProject
-	Loads a new project. Returns a model::LoadState object containing the 
+	Loads a new project. Returns a model::LoadState object containing the
 	operation state. */
 
 	model::LoadState loadProject(const std::string& projectPath, std::function<void(float)> progress);

@@ -47,7 +47,7 @@ public:
 	Ui();
 
 	/* shouldBlink
-	Return whether is time to blink something or not. This is used to make 
+	Return whether is time to blink something or not. This is used to make
 	widgets blink. */
 
 	bool shouldBlink() const;
@@ -90,7 +90,7 @@ public:
 
 	void rebuild();
 
-	/* [rebuild|refresh]SubWindow 
+	/* [rebuild|refresh]SubWindow
 	Rebuilds or refreshes subwindow with ID 'wid' if it exists, i.e. if it's open. */
 
 	void rebuildSubWindow(ID wid);
@@ -116,7 +116,7 @@ public:
 
 	void closeAllSubwindows();
 
-	/* setMainWindowTitle 
+	/* setMainWindowTitle
 	Changes Main Window title. */
 
 	void setMainWindowTitle(const std::string&);
@@ -139,9 +139,9 @@ private:
 	void stopJuceDispatchLoop();
 
 	/* rebuildStaticWidgets
-    Updates attributes of static widgets, i.e. those elements that don't get
-    automatically refreshed during the UI update loop. Useful when loading a new 
-    patch. */
+	Updates attributes of static widgets, i.e. those elements that don't get
+	automatically refreshed during the UI update loop. Useful when loading a new
+	patch. */
 
 	void rebuildStaticWidgets();
 

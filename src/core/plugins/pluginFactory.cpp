@@ -58,8 +58,8 @@ std::unique_ptr<Plugin> create(ID id, const std::string& pid, std::unique_ptr<ju
     const model::Sequencer& sequencer, int sampleRate, int bufferSize)
 {
 	/* If the original juce::AudioPluginInstance is invalid, just return an
-    invalid giada::m::Plugin object. This way we can keep track of invalid
-    plug-ins. */
+	invalid giada::m::Plugin object. This way we can keep track of invalid
+	plug-ins. */
 
 	if (pi == nullptr)
 		return pluginFactory::createInvalid(id, pid);
@@ -88,7 +88,7 @@ std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin& pplugin, std::uni
 	plugin->setBypass(pplugin.bypass);
 	plugin->setState(PluginState(pplugin.state));
 
-	/* Fill plug-in MidiIn parameters. Don't fill Plugin::midiInParam if 
+	/* Fill plug-in MidiIn parameters. Don't fill Plugin::midiInParam if
 	Patch::midiInParams are zero: it would wipe out the current default 0x0
 	values. */
 

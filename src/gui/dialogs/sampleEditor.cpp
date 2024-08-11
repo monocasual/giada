@@ -132,7 +132,8 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 	add(container);
 	resizable(container);
 
-	reload->onClick = [this]() {
+	reload->onClick = [this]()
+	{
 		c::sampleEditor::reload(m_data.channelId);
 		redraw();
 	};
@@ -148,37 +149,44 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 	grid->addItem("64", 64);
 	grid->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_GRIDRES));
 	grid->showItem(model.sampleEditorGridVal);
-	grid->onChange = [this](ID) {
+	grid->onChange = [this](ID)
+	{
 		/* TODO - redraw grid if != (off) */
 		waveTools->waveform->setGridLevel(grid->getSelectedId());
 	};
 
 	snap->value(model.sampleEditorGridOn);
 	snap->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_SNAPTOGRID));
-	snap->onChange = [this](bool val) {
+	snap->onChange = [this](bool val)
+	{
 		waveTools->waveform->setSnap(val);
 	};
 
 	zoomOut->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMOUT));
-	zoomOut->onClick = [this]() {
+	zoomOut->onClick = [this]()
+	{
 		waveTools->waveform->setZoom(geWaveform::Zoom::OUT);
 		waveTools->redraw();
 	};
 
 	zoomIn->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMIN));
-	zoomIn->onClick = [this]() {
+	zoomIn->onClick = [this]()
+	{
 		waveTools->waveform->setZoom(geWaveform::Zoom::IN);
 		waveTools->redraw();
 	};
 
 	play->setToggleable(true);
-	play->onClick = []() { c::sampleEditor::togglePreview(); };
+	play->onClick = []()
+	{ c::sampleEditor::togglePreview(); };
 
-	rewind->onClick = [this]() {
+	rewind->onClick = [this]()
+	{
 		c::sampleEditor::setPreviewTracker(m_data.begin);
 	};
 
-	loop->onChange = [](bool shouldLoop) { c::sampleEditor::setLoop(shouldLoop); };
+	loop->onChange = [](bool shouldLoop)
+	{ c::sampleEditor::setLoop(shouldLoop); };
 
 	info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
 

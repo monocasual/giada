@@ -36,7 +36,7 @@ class PluginHost;
 
 namespace giada::m::rendering
 {
-/* renderAudioAndMidiPlugins 
+/* renderAudioAndMidiPlugins
 Renders plug-ins using the shared juce::MidiBuffer for MIDI event rendering. It
 renders normal audio plug-ins too. */
 

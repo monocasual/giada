@@ -90,7 +90,7 @@ long Resampler::callback(float** audio)
 {
 	assert(audio != nullptr);
 
-	/* Move pointer properly, taking into account read data and number of 
+	/* Move pointer properly, taking into account read data and number of
 	channels in input data. */
 
 	*audio = m_input + (m_inputPos * m_channels);

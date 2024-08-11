@@ -128,7 +128,7 @@ public:
 	void stopActionRec();
 
 	/* updateSoloCount
-    Updates the number of solo-ed channels in mixer. */
+	Updates the number of solo-ed channels in mixer. */
 
 	void updateSoloCount(bool hasSolos);
 
@@ -148,7 +148,7 @@ public:
 	void setInputRecMode(InputRecMode);
 
 	/* onSignalTresholdReached
-	Callback fired when audio has reached a certain threshold (record-on-signal 
+	Callback fired when audio has reached a certain threshold (record-on-signal
 	mode). */
 
 	std::function<void()> onSignalTresholdReached;
@@ -160,7 +160,7 @@ public:
 
 private:
 	/* thresholdReached
-	Returns true if left or right channel's peak has reached a certain 
+	Returns true if left or right channel's peak has reached a certain
 	threshold. */
 
 	bool thresholdReached(Peak p, float threshold) const;
@@ -172,8 +172,8 @@ private:
 	Peak makePeak(const mcl::AudioBuffer& b) const;
 
 	/* lineInRec
-	Records from line in. 'maxFrames' determines how many frames to record 
-	before the internal tracker loops over. The value changes whether you are 
+	Records from line in. 'maxFrames' determines how many frames to record
+	before the internal tracker loops over. The value changes whether you are
 	recording in RIGID or FREE mode. Returns the number of recorded frames. */
 
 	int lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf,
@@ -194,7 +194,7 @@ private:
 	model::Model& m_model;
 
 	/* m_signalCbFired, m_endOfRecCbFired
-	Boolean guards to determine whether the callbacks have been fired or not, 
+	Boolean guards to determine whether the callbacks have been fired or not,
 	to avoid retriggering. Mutable: strictly for internal use only. */
 
 	mutable bool m_signalCbFired;

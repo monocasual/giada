@@ -70,9 +70,9 @@ ReadResult readCopy_(const Wave& wave, mcl::AudioBuffer& dest, Frame start,
 /* -------------------------------------------------------------------------- */
 
 /* onSampleEnd
-Things to do when the last frame has been reached. 'natural' == true if the 
-rendering has ended because the end of the sample has ben reached. 
-'natural' == false if the rendering has been manually interrupted (by a 
+Things to do when the last frame has been reached. 'natural' == true if the
+rendering has ended because the end of the sample has ben reached.
+'natural' == false if the rendering has been manually interrupted (by a
 RenderInfo::Mode::STOP type). Returns whether the sample should loop or not. */
 
 bool onSampleEnd_(const Channel& ch, bool seqIsRunning, bool natural)
@@ -87,7 +87,7 @@ bool onSampleEnd_(const Channel& ch, bool seqIsRunning, bool natural)
 	{
 	case ChannelStatus::PLAY:
 		/* Stop LOOP_* when the sequencer is off, or SINGLE_* except for
-		SINGLE_ENDLESS, which runs forever unless it's in ENDING mode. 
+		SINGLE_ENDLESS, which runs forever unless it's in ENDING mode.
 		Other loop once modes are put in wait mode. */
 		if (isSingleNoLoop || (isLoop && !seqIsRunning) || !natural)
 			shared.playStatus.store(ChannelStatus::OFF);
@@ -133,7 +133,7 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame off
 		tracker += res.used;
 		offset += res.generated;
 
-		/* Break here if the buffer has been filled completely: there's nothing 
+		/* Break here if the buffer has been filled completely: there's nothing
 		else do to. */
 
 		if (offset >= buf.countFrames())

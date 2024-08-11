@@ -98,13 +98,15 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, const Model& model)
 	m_velocityEditor     = new geVelocityEditor(0, 0, this);
 	m_splitScroll->addWidgets(*m_sampleActionEditor, *m_velocityEditor, model.actionEditorSplitH);
 
-	m_splitScroll->onDragBar = [this]() {
+	m_splitScroll->onDragBar = [this]()
+	{
 		m_legends->resizeWidget(0, m_splitScroll->getTopContentH());
 	};
 
 	m_legends->resizeWidget(0, m_splitScroll->getTopContentH());
 
-	m_legends->onDragBar = [this](const Fl_Widget& widget) {
+	m_legends->onDragBar = [this](const Fl_Widget& widget)
+	{
 		m_splitScroll->resizeWidget(0, widget.h());
 	};
 

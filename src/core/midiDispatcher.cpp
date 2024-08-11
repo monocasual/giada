@@ -53,17 +53,20 @@ MidiDispatcher::MidiDispatcher(model::Model& m)
 
 void MidiDispatcher::startChannelLearn(int param, ID channelId, std::function<void()> f)
 {
-	m_learnCb = [this, param, channelId, f](MidiEvent e) { learnChannel(e, param, channelId, f); };
+	m_learnCb = [this, param, channelId, f](MidiEvent e)
+	{ learnChannel(e, param, channelId, f); };
 }
 
 void MidiDispatcher::startMasterLearn(int param, std::function<void()> f)
 {
-	m_learnCb = [this, param, f](MidiEvent e) { learnMaster(e, param, f); };
+	m_learnCb = [this, param, f](MidiEvent e)
+	{ learnMaster(e, param, f); };
 }
 
 void MidiDispatcher::startPluginLearn(std::size_t paramIndex, ID pluginId, std::function<void()> f)
 {
-	m_learnCb = [this, paramIndex, pluginId, f](MidiEvent e) { learnPlugin(e, paramIndex, pluginId, f); };
+	m_learnCb = [this, paramIndex, pluginId, f](MidiEvent e)
+	{ learnPlugin(e, paramIndex, pluginId, f); };
 }
 
 void MidiDispatcher::stopLearn()
@@ -92,7 +95,7 @@ void MidiDispatcher::clearPluginLearn(std::size_t paramIndex, ID pluginId, std::
 
 void MidiDispatcher::dispatch(const MidiEvent& e)
 {
-	/* Fix the velocity zero issue for those devices that sends NOTE OFF events 
+	/* Fix the velocity zero issue for those devices that sends NOTE OFF events
 	as NOTE ON + velocity zero. Let's make it a real NOTE OFF event. */
 
 	MidiEvent eFixed = e;
@@ -122,7 +125,7 @@ void MidiDispatcher::process(const MidiEvent& e)
 	assert(onEventReceived != nullptr);
 	assert(e.getType() != MidiEvent::Type::INVALID);
 
-	/* Here we are interested only in CHANNEL events, that is note on/note off 
+	/* Here we are interested only in CHANNEL events, that is note on/note off
 	from a MIDI keyboard, knob/wheel/slider movements from a MIDI controller,
 	and so on. SYSTEM events (MIDI Clock, ...) are ignored. */
 
@@ -159,8 +162,8 @@ void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& pl
 	const float    velocityF = midiEvent.getVelocityFloat();
 
 	/* Plugins' parameters layout reflects the structure of the matrix
-	Channel::midiInPlugins. It is safe to assume then that Plugin 'p' and 
-	parameter indexes match both the structure of Channel::midiInPlugins and the 
+	Channel::midiInPlugins. It is safe to assume then that Plugin 'p' and
+	parameter indexes match both the structure of Channel::midiInPlugins and the
 	vector of plugins. */
 
 	for (Plugin* p : plugins)
@@ -183,7 +186,7 @@ void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 	const uint32_t pure = midiEvent.getRawNoVelocity();
 
 	m_model.get().tracks.forEachChannel([this, &midiEvent, &pure](const Channel& c)
-	    {
+	{
 		/* Do nothing on this channel if MIDI in is disabled or filtered out for
 		the current MIDI channel. */
 

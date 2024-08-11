@@ -55,7 +55,7 @@ public:
 	void resize(int x, int y, int w, int h) override;
 
 	/* addWidget
-    Adds a new widget to the bottom, with proper spacing. */
+	Adds a new widget to the bottom, with proper spacing. */
 
 	void addWidget(Fl_Widget*);
 

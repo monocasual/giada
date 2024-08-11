@@ -46,11 +46,11 @@ public:
 
 	/* rebuild, refresh
 	Rebuild() is called by the View Updater when something structural changes
-	(e.g. a new channel added). Refresh() is called periodically by the View 
+	(e.g. a new channel added). Refresh() is called periodically by the View
 	Updater during the refresh loop. */
 
-	virtual void rebuild(){};
-	virtual void refresh(){};
+	virtual void rebuild() {};
+	virtual void refresh() {};
 
 	/* hasChild
 	True if the window with id 'id' exists in the stack. */

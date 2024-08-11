@@ -58,7 +58,7 @@ public:
 	const mcl::AudioBuffer& getBuffer() const;
 
 	/* setPath
-	Sets new path 'p'. If 'id' != -1 inserts a numeric id next to the file 
+	Sets new path 'p'. If 'id' != -1 inserts a numeric id next to the file
 	extension, e.g. : /path/to/sample-[id].wav */
 
 	void setPath(const std::string& p, int id = -1);

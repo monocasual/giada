@@ -42,8 +42,8 @@ public:
 	void set(ID id);
 
 	/* generate
-	Generates a new unique id. If 'id' parameter is passed in is valid, it just 
-	returns it with no unique id generation. Useful when loading things from the 
+	Generates a new unique id. If 'id' parameter is passed in is valid, it just
+	returns it with no unique id generation. Useful when loading things from the
 	model that already have their own id. */
 
 	ID generate(ID id = 0);

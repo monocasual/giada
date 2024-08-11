@@ -68,12 +68,13 @@ void Dispatcher::perform(ID channelId, int event) const
 
 /* -------------------------------------------------------------------------- */
 
-/* Walk channels array, trying to match button's bound key with the event. If 
+/* Walk channels array, trying to match button's bound key with the event. If
 found, trigger the key-press/key-release function. */
 
 void Dispatcher::dispatchChannels(int event) const
 {
-	m_mainWindow->keyboard->forEachChannel([this, event](geChannel& c) {
+	m_mainWindow->keyboard->forEachChannel([this, event](geChannel& c)
+	{
 		if (c.handleKey(event))
 			perform(c.getData().id, event);
 	});
@@ -86,7 +87,7 @@ void Dispatcher::dispatchKey(int event)
 	assert(onEventOccured != nullptr);
 	assert(m_model != nullptr);
 
-	/* These events come from the keyboard, not from a direct interaction on the 
+	/* These events come from the keyboard, not from a direct interaction on the
 	UI with the mouse/touch. */
 
 	if (event == FL_KEYDOWN)

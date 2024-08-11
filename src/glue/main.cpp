@@ -243,7 +243,8 @@ void setMasterInVolume(float v, Thread t)
 	g_engine->getMainApi().setMasterInVolume(v);
 
 	if (t != Thread::MAIN)
-		g_ui->pumpEvent([v]() { g_ui->mainWindow->mainInput->setInVol(v); });
+		g_ui->pumpEvent([v]()
+		{ g_ui->mainWindow->mainInput->setInVol(v); });
 }
 
 void setMasterOutVolume(float v, Thread t)
@@ -251,7 +252,8 @@ void setMasterOutVolume(float v, Thread t)
 	g_engine->getMainApi().setMasterOutVolume(v);
 
 	if (t != Thread::MAIN)
-		g_ui->pumpEvent([v]() { g_ui->mainWindow->mainOutput->setOutVol(v); });
+		g_ui->pumpEvent([v]()
+		{ g_ui->mainWindow->mainOutput->setOutVol(v); });
 }
 
 /* -------------------------------------------------------------------------- */

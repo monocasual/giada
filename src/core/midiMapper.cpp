@@ -153,12 +153,12 @@ void MidiMapper<KernelMidiI>::sendMidiLightning(uint32_t learnt, const MidiMap::
 	u::log::print("[MidiMapper::sendMidiLightning] learnt={:#x}, chan={}, msg={:#x}, offset={}\n",
 	    learnt, m.channel, m.value, m.offset);
 
-	/* Isolate 'channel' from learnt message and offset it as requested by 'nn' in 
+	/* Isolate 'channel' from learnt message and offset it as requested by 'nn' in
 	the midiMap configuration file. */
 
 	uint32_t out = ((learnt & 0x00FF0000) >> 16) << m.offset;
 
-	/* Merge the previously prepared channel into final message, and finally send 
+	/* Merge the previously prepared channel into final message, and finally send
 	it. */
 
 	out |= m.value | (m.channel << 24);

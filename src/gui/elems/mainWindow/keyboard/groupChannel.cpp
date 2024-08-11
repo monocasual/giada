@@ -90,26 +90,31 @@ geGroupChannel::geGroupChannel(c::channel::Data d)
 	vol->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
 
 	fx->forceValue(m_channel.plugins.size() > 0);
-	fx->onClick = [this]() {
+	fx->onClick = [this]()
+	{
 		c::layout::openChannelPluginListWindow(m_channel.id);
 	};
 
 	playButton->when(FL_WHEN_CHANGED); // On keypress && on keyrelease
-	playButton->onClick = [this]() {
+	playButton->onClick = [this]()
+	{
 		g_ui->dispatcher.dispatchTouch(*this, playButton->getValue());
 	};
 
 	mute->setToggleable(true);
-	mute->onClick = [this]() {
+	mute->onClick = [this]()
+	{
 		c::channel::toggleMuteChannel(m_channel.id, Thread::MAIN);
 	};
 
 	solo->setToggleable(true);
-	solo->onClick = [this]() {
+	solo->onClick = [this]()
+	{
 		c::channel::toggleSoloChannel(m_channel.id, Thread::MAIN);
 	};
 
-	mainButton->onClick = [this]() { openMenu(); };
+	mainButton->onClick = [this]()
+	{ openMenu(); };
 
 	vol->value(m_channel.volume);
 	vol->callback(cb_changeVol, (void*)this);

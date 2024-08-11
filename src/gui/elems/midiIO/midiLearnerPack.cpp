@@ -61,7 +61,8 @@ void geMidiLearnerPack::addMidiLearner(std::string label, int param, bool visibl
 
 	l->onStartLearn = m_onStartLearn;
 	l->onClearLearn = m_onClearLearn;
-	l->onStopLearn  = []() { c::io::stopMidiLearn(); };
+	l->onStopLearn  = []()
+	{ c::io::stopMidiLearn(); };
 
 	add(l);
 	if (!visible)

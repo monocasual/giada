@@ -40,11 +40,11 @@ using AtomicSwapper = mcl::AtomicSwapper<Document, /*size=*/6>;
 using DocumentLock  = AtomicSwapper::RtLock;
 
 /* SwapType
-Type of Document change. 
-	Hard: the structure has changed (e.g. add a new channel);
-	Soft: a property has changed (e.g. change volume);
-	None: something has changed but we don't care. 
-Used by model listeners to determine the type of change that occurred in the 
+Type of Document change.
+    Hard: the structure has changed (e.g. add a new channel);
+    Soft: a property has changed (e.g. change volume);
+    None: something has changed but we don't care.
+Used by model listeners to determine the type of change that occurred in the
 Document. */
 
 enum class SwapType

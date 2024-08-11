@@ -68,7 +68,8 @@ gdKeyGrabber::gdKeyGrabber(int key)
 
 	add(container);
 
-	m_clear->onClick = [this]() {
+	m_clear->onClick = [this]()
+	{
 		assert(onSetKey != nullptr);
 
 		m_key = 0;
@@ -76,7 +77,8 @@ gdKeyGrabber::gdKeyGrabber(int key)
 		rebuild();
 	};
 
-	m_cancel->onClick = [this]() {
+	m_cancel->onClick = [this]()
+	{
 		do_callback();
 	};
 
