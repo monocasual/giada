@@ -166,7 +166,7 @@ void Tracks::addChannel(Channel&& channel, std::size_t trackIndex, std::size_t p
 
 void Tracks::removeChannel(ID channelId)
 {
-	getByChannel(channelId).getChannels().remove(channelId);
+	getByChannel(channelId).removeChannel(channelId);
 }
 
 /* -------------------------------------------------------------------------- */

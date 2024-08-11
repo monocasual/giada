@@ -71,6 +71,7 @@ public:
 	void      addChannel(Channel&&, std::size_t position);
 	Channel&  getLastChannel();
 	Channels& getChannels();
+	void      removeChannel(ID);
 
 	int width;
 

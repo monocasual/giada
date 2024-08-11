@@ -137,4 +137,14 @@ Channel& Track::getLastChannel()
 {
 	return m_channels.getLast();
 }
+
+/* -------------------------------------------------------------------------- */
+
+void Track::removeChannel(ID channelId)
+{
+	assert(m_channels.getAll().size() > 1); // One channel, the Group one, must stay
+	assert(m_channels.get(channelId).type != ChannelType::GROUP);
+
+	m_channels.remove(channelId);
+}
 } // namespace giada::m::model
