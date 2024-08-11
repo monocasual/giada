@@ -106,6 +106,13 @@ int geChannel::getTrackIndex() const
 
 /* -------------------------------------------------------------------------- */
 
+bool geChannel::isGroup() const
+{
+	return m_channel.type == ChannelType::GROUP;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geChannel::blink()
 {
 	if (g_ui->shouldBlink())

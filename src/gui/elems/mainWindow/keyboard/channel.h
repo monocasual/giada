@@ -55,6 +55,11 @@ public:
 
 	int getTrackIndex() const;
 
+	/* isGroup
+	True if this channel is the first one in a track, that is the Group one. */
+
+	bool isGroup() const;
+
 	/* handleKey
 	Performs some UI-related operations when the bound key is pressed. Returns
 	whether the bound key has been pressed or not. */

@@ -74,7 +74,7 @@ void geKeyboard::ChannelDragger::begin()
 		return;
 
 	const geChannel* channel = track->getChannelAtCursor(Fl::event_y());
-	if (channel == nullptr)
+	if (channel == nullptr || channel->isGroup())
 		return;
 
 	m_channelId   = channel->getData().id;
