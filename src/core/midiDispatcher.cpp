@@ -133,7 +133,7 @@ void MidiDispatcher::process(const MidiEvent& e)
 		return;
 
 	processMaster(e);
-	processChannels(e);
+	processTracks(e);
 	onEventReceived();
 }
 
@@ -181,13 +181,18 @@ void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& pl
 
 /* -------------------------------------------------------------------------- */
 
-void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
+void MidiDispatcher::processTracks(const MidiEvent& midiEvent)
 {
-	m_model.get().tracks.forEachChannel([this, &midiEvent](const Channel& c)
-	{
-		processChannel(c, midiEvent);
-		return true;
-	});
+	for (const model::Track& track : m_model.get().tracks.getAll())
+		processChannels(track.getChannels().getAll(), midiEvent);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MidiDispatcher::processChannels(const std::vector<Channel>& channels, const MidiEvent& midiEvent)
+{
+	for (const Channel& ch : channels)
+		processChannel(ch, midiEvent);
 }
 
 /* -------------------------------------------------------------------------- */
