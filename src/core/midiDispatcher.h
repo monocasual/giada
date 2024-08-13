@@ -76,6 +76,7 @@ private:
 	bool isChannelMidiInAllowed(ID channelId, int c);
 
 	void processChannels(const MidiEvent&);
+	void processChannel(const Channel&, const MidiEvent&);
 	void processMaster(const MidiEvent&);
 
 	void learnChannel(MidiEvent, int param, ID channelId, std::function<void()> doneCb);

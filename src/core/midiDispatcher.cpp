@@ -183,71 +183,78 @@ void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& pl
 
 void MidiDispatcher::processChannels(const MidiEvent& midiEvent)
 {
+	m_model.get().tracks.forEachChannel([this, &midiEvent](const Channel& c)
+	{
+		processChannel(c, midiEvent);
+		return true;
+	});
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MidiDispatcher::processChannel(const Channel& c, const MidiEvent& midiEvent)
+{
+	/* Do nothing on this channel if MIDI in is disabled or filtered out for
+	the current MIDI channel. */
+
+	if (!c.midiInput.isAllowed(midiEvent.getChannel()))
+		return;
+
 	const uint32_t pure = midiEvent.getRawNoVelocity();
 
-	m_model.get().tracks.forEachChannel([this, &midiEvent, &pure](const Channel& c)
+	if (pure == c.midiInput.keyPress.getValue())
 	{
-		/* Do nothing on this channel if MIDI in is disabled or filtered out for
-		the current MIDI channel. */
+		G_DEBUG("   keyPress, ch={} (pure=0x{:0X})", c.id, pure);
+		c::channel::pressChannel(c.id, midiEvent.getVelocityFloat(), Thread::MIDI);
+	}
+	else if (pure == c.midiInput.keyRelease.getValue())
+	{
+		G_DEBUG("   keyRel ch={} (pure=0x{:0X})", c.id, pure);
+		c::channel::releaseChannel(c.id, Thread::MIDI);
+	}
+	else if (pure == c.midiInput.mute.getValue())
+	{
+		G_DEBUG("   mute ch={} (pure=0x{:0X})", c.id, pure);
+		c::channel::toggleMuteChannel(c.id, Thread::MIDI);
+	}
+	else if (pure == c.midiInput.kill.getValue())
+	{
+		G_DEBUG("   kill ch={} (pure=0x{:0X})", c.id, pure);
+		c::channel::killChannel(c.id, Thread::MIDI);
+	}
+	else if (pure == c.midiInput.arm.getValue())
+	{
+		G_DEBUG("   arm ch={} (pure=0x{:0X})", c.id, pure);
+		c::channel::toggleArmChannel(c.id, Thread::MIDI);
+	}
+	else if (pure == c.midiInput.solo.getValue())
+	{
+		G_DEBUG("   solo ch={} (pure=0x{:0X})", c.id, pure);
+		c::channel::toggleSoloChannel(c.id, Thread::MIDI);
+	}
+	else if (pure == c.midiInput.volume.getValue())
+	{
+		G_DEBUG("   volume ch={} (pure=0x{:0X}, value={})", c.id, pure, midiEvent.getVelocityFloat());
+		c::channel::setChannelVolume(c.id, midiEvent.getVelocityFloat(), Thread::MIDI);
+	}
+	else if (pure == c.midiInput.pitch.getValue())
+	{
+		G_DEBUG("   pitch ch={} (pure=0x{:0X}, value={})", c.id, pure, midiEvent.getVelocityFloat());
+		c::channel::setChannelPitch(c.id, midiEvent.getVelocityFloat(), Thread::MIDI);
+	}
+	else if (pure == c.midiInput.readActions.getValue())
+	{
+		G_DEBUG("   toggle read actions ch={} (pure=0x{:0X})", c.id, pure);
+		c::channel::toggleReadActionsChannel(c.id, Thread::MIDI);
+	}
 
-		if (!c.midiInput.isAllowed(midiEvent.getChannel()))
-			return false;
+	/* Process learned plugins parameters. */
+	processPlugins(c.id, c.plugins, midiEvent);
 
-		if (pure == c.midiInput.keyPress.getValue())
-		{
-			G_DEBUG("   keyPress, ch={} (pure=0x{:0X})", c.id, pure);
-			c::channel::pressChannel(c.id, midiEvent.getVelocityFloat(), Thread::MIDI);
-		}
-		else if (pure == c.midiInput.keyRelease.getValue())
-		{
-			G_DEBUG("   keyRel ch={} (pure=0x{:0X})", c.id, pure);
-			c::channel::releaseChannel(c.id, Thread::MIDI);
-		}
-		else if (pure == c.midiInput.mute.getValue())
-		{
-			G_DEBUG("   mute ch={} (pure=0x{:0X})", c.id, pure);
-			c::channel::toggleMuteChannel(c.id, Thread::MIDI);
-		}
-		else if (pure == c.midiInput.kill.getValue())
-		{
-			G_DEBUG("   kill ch={} (pure=0x{:0X})", c.id, pure);
-			c::channel::killChannel(c.id, Thread::MIDI);
-		}
-		else if (pure == c.midiInput.arm.getValue())
-		{
-			G_DEBUG("   arm ch={} (pure=0x{:0X})", c.id, pure);
-			c::channel::toggleArmChannel(c.id, Thread::MIDI);
-		}
-		else if (pure == c.midiInput.solo.getValue())
-		{
-			G_DEBUG("   solo ch={} (pure=0x{:0X})", c.id, pure);
-			c::channel::toggleSoloChannel(c.id, Thread::MIDI);
-		}
-		else if (pure == c.midiInput.volume.getValue())
-		{
-			G_DEBUG("   volume ch={} (pure=0x{:0X}, value={})", c.id, pure, midiEvent.getVelocityFloat());
-			c::channel::setChannelVolume(c.id, midiEvent.getVelocityFloat(), Thread::MIDI);
-		}
-		else if (pure == c.midiInput.pitch.getValue())
-		{
-			G_DEBUG("   pitch ch={} (pure=0x{:0X}, value={})", c.id, pure, midiEvent.getVelocityFloat());
-			c::channel::setChannelPitch(c.id, midiEvent.getVelocityFloat(), Thread::MIDI);
-		}
-		else if (pure == c.midiInput.readActions.getValue())
-		{
-			G_DEBUG("   toggle read actions ch={} (pure=0x{:0X})", c.id, pure);
-			c::channel::toggleReadActionsChannel(c.id, Thread::MIDI);
-		}
-
-		/* Process learned plugins parameters. */
-		processPlugins(c.id, c.plugins, midiEvent);
-
-		/* Redirect raw MIDI message (pure + velocity) to plug-ins in armed
-		channels. */
-		if (c.armed)
-			c::channel::sendMidiToChannel(c.id, midiEvent, Thread::MIDI); 
-
-		return true; });
+	/* Redirect raw MIDI message (pure + velocity) to plug-ins in armed
+	channels. */
+	if (c.armed)
+		c::channel::sendMidiToChannel(c.id, midiEvent, Thread::MIDI);
 }
 
 /* -------------------------------------------------------------------------- */
