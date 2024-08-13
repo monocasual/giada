@@ -39,9 +39,10 @@ namespace giada::m::model
 class Tracks
 {
 public:
-	const std::vector<Track>& getAll() const;
-	const Channel&            getChannel(ID) const;
-	bool                      anyChannelOf(std::function<bool(const Channel&)> f) const;
+	const std::vector<Track>&   getAll() const;
+	const Channel&              getChannel(ID) const;
+	bool                        anyChannelOf(std::function<bool(const Channel&)> f) const;
+	std::vector<const Channel*> getChannels() const;
 
 #ifdef G_DEBUG_MODE
 	void debug() const;

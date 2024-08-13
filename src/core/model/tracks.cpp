@@ -125,6 +125,17 @@ bool Tracks::anyChannelOf(std::function<bool(const Channel&)> f) const
 
 /* -------------------------------------------------------------------------- */
 
+std::vector<const Channel*> Tracks::getChannels() const
+{
+	std::vector<const Channel*> out;
+	for (const Track& track : m_tracks)
+		for (const Channel& channel : track.getChannels().getAll())
+			out.push_back(&channel);
+	return out;
+}
+
+/* -------------------------------------------------------------------------- */
+
 #ifdef G_DEBUG_MODE
 
 void Tracks::debug() const
