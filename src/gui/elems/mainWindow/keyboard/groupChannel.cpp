@@ -52,6 +52,7 @@ namespace
 {
 enum class Menu
 {
+	SETUP_MIDI_INPUT,
 	EDIT_ROUTING,
 	RENAME_CHANNEL,
 };
@@ -128,6 +129,7 @@ void geGroupChannel::openMenu()
 {
 	geMenu menu;
 
+	menu.addItem((ID)Menu::SETUP_MIDI_INPUT, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
 	menu.addItem((ID)Menu::EDIT_ROUTING, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
 	menu.addItem((ID)Menu::RENAME_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME));
 
@@ -135,6 +137,9 @@ void geGroupChannel::openMenu()
 	{
 		switch (static_cast<Menu>(id))
 		{
+		case Menu::SETUP_MIDI_INPUT:
+			c::layout::openChannelMidiInputWindow(data.id);
+			break;
 		case Menu::EDIT_ROUTING:
 			c::layout::openChannelRoutingWindow(data.id);
 			break;
