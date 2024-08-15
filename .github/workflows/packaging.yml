@@ -35,7 +35,7 @@ jobs:
     needs: create-release
     steps:
       - name: Download repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -72,7 +72,7 @@ jobs:
     needs: create-release
     steps:
       - name: Download repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -110,7 +110,7 @@ jobs:
     needs: create-release
     steps:
       - name: Download repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -143,7 +143,7 @@ jobs:
     if: github.ref_type == 'tag' # This job needs a tag for the make-src.py script
     steps:
       - name: Download repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Make source package
         run: python3 ./.github/scripts/make-src.py ${{ github.ref_name }}
