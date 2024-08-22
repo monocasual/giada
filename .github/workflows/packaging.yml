@@ -67,7 +67,7 @@ jobs:
   # Windows --------------------------------------------------------------------
   windows:
     name: Windows
-    runs-on: windows-2019
+    runs-on: windows-2022
     timeout-minutes: 60
     needs: create-release
     steps:
@@ -82,7 +82,7 @@ jobs:
         
       - name: Generate Makefile
         shell: bash
-        run: cmake -S . -B build/ -G "Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static-md -DWITH_VST3=ON
+        run: cmake -S . -B build/ -G "Visual Studio 17 2022" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static-md -DWITH_VST3=ON
 
       - name: Build
         shell: bash
