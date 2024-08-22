@@ -75,10 +75,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-
-      - name: Install dependencies
-        shell: bash
-        run: bash ./.github/scripts/windows/install-deps.sh
         
       - name: Generate Makefile
         shell: bash

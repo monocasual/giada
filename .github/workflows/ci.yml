@@ -39,10 +39,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install dependencies
-        shell: bash
-        run: bash ./.github/scripts/windows/install-deps.sh
-        
       - name: Generate Makefile
         shell: bash
         run: cmake -S . -B build/ -G "Visual Studio 17 2022" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DWITH_TESTS=ON -DWITH_VST3=ON
