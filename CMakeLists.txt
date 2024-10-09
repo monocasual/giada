@@ -547,38 +547,19 @@ list(APPEND INCLUDE_DIRS ${LIBRARY_RTMIDI_INCLUDE_DIR})
 
 # FLTK 
 
-include (ExternalProject)
-ExternalProject_Add(
-    fltk
-	SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/deps/fltk
-	INSTALL_COMMAND "" # Don't install
-	CMAKE_ARGS 
-		-DFLTK_BUILD_TEST=OFF 
-		-DFLTK_BUILD_EXAMPLES=OFF 
-		-DOPTION_BUILD_HTML_DOCUMENTATION=OFF 
-		-DOPTION_BUILD_PDF_DOCUMENTATION=OFF
-		-DOPTION_USE_SYSTEM_ZLIB=OFF
-		-DOPTION_USE_WAYLAND=OFF
-)
-ExternalProject_Get_property(fltk BINARY_DIR)
-ExternalProject_Get_property(fltk SOURCE_DIR)
-list(APPEND INCLUDE_DIRS ${BINARY_DIR})
-list(APPEND INCLUDE_DIRS ${SOURCE_DIR})
-if(DEFINED OS_WINDOWS)
-	list(APPEND LIBRARIES "${BINARY_DIR}/lib/$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>/fltk_images$<$<CONFIG:Debug>:d>.lib")
-	list(APPEND LIBRARIES "${BINARY_DIR}/lib/$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>/fltk$<$<CONFIG:Debug>:d>.lib")
-	list(APPEND LIBRARIES "${BINARY_DIR}/lib/$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>/fltk_z$<$<CONFIG:Debug>:d>.lib")
-	list(APPEND LIBRARIES "${BINARY_DIR}/lib/$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>/fltk_gl$<$<CONFIG:Debug>:d>.lib")
-	list(APPEND LIBRARIES gdiplus)
-elseif (DEFINED OS_MACOS)
-	list(APPEND LIBRARIES "${BINARY_DIR}/lib/$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>/libfltk_images.a")
-	list(APPEND LIBRARIES "${BINARY_DIR}/lib/$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>/libfltk.a")
-	list(APPEND LIBRARIES "${BINARY_DIR}/lib/$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>/libfltk_z.a")
-else() # Linux and FreeBSD
-	list(APPEND LIBRARIES "${BINARY_DIR}/lib/libfltk_images.a")
-	list(APPEND LIBRARIES "${BINARY_DIR}/lib/libfltk.a")
-	list(APPEND LIBRARIES "${BINARY_DIR}/lib/libfltk_z.a")
-endif()
+include (FetchContent)
+FetchContent_Declare(
+	FLTK
+	SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/deps/fltk)
+
+set(FLTK_BUILD_GL ON CACHE BOOL "FLTK: enable OpenGL support")
+set(FLTK_BUILD_TEST OFF CACHE BOOL "FLTK: don't build tests")
+set(FLTK_BUILD_FLTK_OPTIONS OFF CACHE BOOL "FLTK: don't build 'options' editor")
+set(FLTK_BUILD_FLUID OFF CACHE BOOL "FLTK: don't build FLUID")
+set(FLTK_BUILD_FORMS OFF CACHE BOOL "FLTK: don't build (X)Forms compatibility library")
+
+FetchContent_MakeAvailable(FLTK)
+list(APPEND LIBRARIES fltk::fltk fltk::images)
 
 # Libsndfile
 
