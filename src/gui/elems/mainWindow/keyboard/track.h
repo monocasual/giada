@@ -65,10 +65,10 @@ public:
 
 	int countChannels() const;
 
-	/* showAddChannelMenu
+	/* showMenu
 	Displays the menu for adding/removing channels. */
 
-	void showAddChannelMenu() const;
+	void showMenu() const;
 
 	/* addChannel
 	Adds a new channel in this track. */

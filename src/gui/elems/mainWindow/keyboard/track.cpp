@@ -118,7 +118,7 @@ geChannel* geTrack::addChannel(const c::channel::Data& d)
 
 /* -------------------------------------------------------------------------- */
 
-void geTrack::showAddChannelMenu() const
+void geTrack::showMenu() const
 {
 	geMenu menu;
 

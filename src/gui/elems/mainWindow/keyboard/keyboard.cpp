@@ -460,6 +460,6 @@ void geKeyboard::openTrackMenu() const
 	const geTrack* track = getTrackAtCursor(Fl::event_x());
 	if (track == nullptr || track->getChannelAtCursor(Fl::event_y()) != nullptr)
 		return;
-	track->showAddChannelMenu();
+	track->showMenu();
 }
 } // namespace giada::v
