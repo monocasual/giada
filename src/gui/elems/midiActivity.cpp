@@ -69,12 +69,13 @@ void geMidiLed::lit()
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geMidiActivity::geMidiActivity()
+geMidiActivity::geMidiActivity(bool hasOut)
 : geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN)
 {
 	out = new geMidiLed();
 	in  = new geMidiLed();
-	addWidget(out);
+	if (hasOut)
+		addWidget(out);
 	addWidget(in);
 	end();
 }

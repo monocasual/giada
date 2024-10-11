@@ -68,7 +68,7 @@ geGroupChannel::geGroupChannel(c::channel::Data d)
 	playButton   = new geImageButton(graphics::channelPlayOff, graphics::channelPlayOn);
 	arm          = new geImageButton(graphics::armOff, graphics::armOn);
 	mainButton   = new geGroupChannelButton(m_channel);
-	midiActivity = new geMidiActivity();
+	midiActivity = new geMidiActivity(/*hasOut=*/false);
 	mute         = new geImageButton(graphics::muteOff, graphics::muteOn);
 	solo         = new geImageButton(graphics::soloOff, graphics::soloOn);
 	fx           = new geImageButton(graphics::fxOff, graphics::fxOn);
@@ -84,7 +84,7 @@ geGroupChannel::geGroupChannel(c::channel::Data d)
 	end();
 
 	playButton->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_PLAY));
-	midiActivity->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_MIDIACTIVITY));
+	midiActivity->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_MIDIACTIVITY_INONLY));
 	mute->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_MUTE));
 	solo->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_SOLO));
 	fx->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_FX));

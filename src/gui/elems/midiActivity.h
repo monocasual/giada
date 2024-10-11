@@ -49,7 +49,7 @@ private:
 class geMidiActivity : public geFlex
 {
 public:
-	geMidiActivity();
+	geMidiActivity(bool hasOut = true);
 
 	geMidiLed* out;
 	geMidiLed* in;

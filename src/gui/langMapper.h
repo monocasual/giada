@@ -145,18 +145,19 @@ public:
 	static constexpr auto MAIN_TRACK_BUTTON_REMOVE_TRACK     = "main_track_button_removeTrack";
 	static constexpr auto MAIN_TRACK_BUTTON_ADD_TRACK        = "main_track_button_addTrack";
 
-	static constexpr auto MAIN_CHANNEL_NOSAMPLE           = "main_channel_noSample";
-	static constexpr auto MAIN_CHANNEL_SAMPLENOTFOUND     = "main_channel_sampleNotFound";
-	static constexpr auto MAIN_CHANNEL_LABEL_PLAY         = "main_channel_label_play";
-	static constexpr auto MAIN_CHANNEL_LABEL_ARM          = "main_channel_label_arm";
-	static constexpr auto MAIN_CHANNEL_LABEL_STATUS       = "main_channel_label_status";
-	static constexpr auto MAIN_CHANNEL_LABEL_READACTIONS  = "main_channel_label_readActions";
-	static constexpr auto MAIN_CHANNEL_LABEL_MODEBOX      = "main_channel_label_modeBox";
-	static constexpr auto MAIN_CHANNEL_LABEL_MUTE         = "main_channel_label_mute";
-	static constexpr auto MAIN_CHANNEL_LABEL_SOLO         = "main_channel_label_solo";
-	static constexpr auto MAIN_CHANNEL_LABEL_FX           = "main_channel_label_fx";
-	static constexpr auto MAIN_CHANNEL_LABEL_VOLUME       = "main_channel_label_volume";
-	static constexpr auto MAIN_CHANNEL_LABEL_MIDIACTIVITY = "main_channel_label_midiActivity";
+	static constexpr auto MAIN_CHANNEL_NOSAMPLE                  = "main_channel_noSample";
+	static constexpr auto MAIN_CHANNEL_SAMPLENOTFOUND            = "main_channel_sampleNotFound";
+	static constexpr auto MAIN_CHANNEL_LABEL_PLAY                = "main_channel_label_play";
+	static constexpr auto MAIN_CHANNEL_LABEL_ARM                 = "main_channel_label_arm";
+	static constexpr auto MAIN_CHANNEL_LABEL_STATUS              = "main_channel_label_status";
+	static constexpr auto MAIN_CHANNEL_LABEL_READACTIONS         = "main_channel_label_readActions";
+	static constexpr auto MAIN_CHANNEL_LABEL_MODEBOX             = "main_channel_label_modeBox";
+	static constexpr auto MAIN_CHANNEL_LABEL_MUTE                = "main_channel_label_mute";
+	static constexpr auto MAIN_CHANNEL_LABEL_SOLO                = "main_channel_label_solo";
+	static constexpr auto MAIN_CHANNEL_LABEL_FX                  = "main_channel_label_fx";
+	static constexpr auto MAIN_CHANNEL_LABEL_VOLUME              = "main_channel_label_volume";
+	static constexpr auto MAIN_CHANNEL_LABEL_MIDIACTIVITY        = "main_channel_label_midiActivity";
+	static constexpr auto MAIN_CHANNEL_LABEL_MIDIACTIVITY_INONLY = "main_channel_label_midiActivity_inOnly";
 
 	static constexpr auto MAIN_CHANNEL_MENU_INPUTMONITOR           = "main_channel_menu_inputMonitor";
 	static constexpr auto MAIN_CHANNEL_MENU_OVERDUBPROTECTION      = "main_channel_menu_overdubProtection";

@@ -143,20 +143,21 @@ LangMap::LangMap()
 	m_data[MAIN_TRACK_BUTTON_REMOVE_TRACK]     = "Remove track";
 	m_data[MAIN_TRACK_BUTTON_ADD_TRACK]        = "Add track";
 
-	m_data[MAIN_CHANNEL_NOSAMPLE]           = "-- no sample --";
-	m_data[MAIN_CHANNEL_SAMPLENOTFOUND]     = "* file not found! *";
-	m_data[MAIN_CHANNEL_LABEL_PLAY]         = "Play/stop";
-	m_data[MAIN_CHANNEL_LABEL_ARM]          = "Arm for recording";
-	m_data[MAIN_CHANNEL_LABEL_STATUS]       = "Progress bar";
-	m_data[MAIN_CHANNEL_LABEL_READACTIONS]  = "Read actions\n\nToggles playback of pre-recorded "
-	                                          "actions (key press, key release, ...).";
-	m_data[MAIN_CHANNEL_LABEL_MODEBOX]      = "Mode";
-	m_data[MAIN_CHANNEL_LABEL_MUTE]         = "Mute";
-	m_data[MAIN_CHANNEL_LABEL_SOLO]         = "Solo";
-	m_data[MAIN_CHANNEL_LABEL_FX]           = "Plug-ins";
-	m_data[MAIN_CHANNEL_LABEL_VOLUME]       = "Volume";
-	m_data[MAIN_CHANNEL_LABEL_MIDIACTIVITY] = "MIDI I/O activity\n\nNotifies MIDI messages sent (top) or "
-	                                          "received (bottom) by this channel.";
+	m_data[MAIN_CHANNEL_NOSAMPLE]                  = "-- no sample --";
+	m_data[MAIN_CHANNEL_SAMPLENOTFOUND]            = "* file not found! *";
+	m_data[MAIN_CHANNEL_LABEL_PLAY]                = "Play/stop";
+	m_data[MAIN_CHANNEL_LABEL_ARM]                 = "Arm for recording";
+	m_data[MAIN_CHANNEL_LABEL_STATUS]              = "Progress bar";
+	m_data[MAIN_CHANNEL_LABEL_READACTIONS]         = "Read actions\n\nToggles playback of pre-recorded "
+	                                                 "actions (key press, key release, ...).";
+	m_data[MAIN_CHANNEL_LABEL_MODEBOX]             = "Mode";
+	m_data[MAIN_CHANNEL_LABEL_MUTE]                = "Mute";
+	m_data[MAIN_CHANNEL_LABEL_SOLO]                = "Solo";
+	m_data[MAIN_CHANNEL_LABEL_FX]                  = "Plug-ins";
+	m_data[MAIN_CHANNEL_LABEL_VOLUME]              = "Volume";
+	m_data[MAIN_CHANNEL_LABEL_MIDIACTIVITY]        = "MIDI I/O activity\n\nNotifies MIDI messages sent (top) or "
+	                                                 "received (bottom) by this channel.";
+	m_data[MAIN_CHANNEL_LABEL_MIDIACTIVITY_INONLY] = "MIDI I/O activity\n\nNotifies MIDI messages received by this channel.";
 
 	m_data[MAIN_CHANNEL_MENU_INPUTMONITOR]           = "Input monitor";
 	m_data[MAIN_CHANNEL_MENU_OVERDUBPROTECTION]      = "Overdub protection";
