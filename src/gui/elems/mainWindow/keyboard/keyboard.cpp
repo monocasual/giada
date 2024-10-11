@@ -32,6 +32,7 @@
 #include "gui/drawing.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/dial.h"
+#include "gui/elems/basics/menu.h"
 #include "gui/elems/basics/resizerBar.h"
 #include "gui/elems/basics/textButton.h"
 #include "gui/elems/mainWindow/keyboard/channelButton.h"
@@ -51,6 +52,18 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
+namespace
+{
+enum class Menu
+{
+	ADD_TRACK = 0
+};
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 geKeyboard::ChannelDragger::ChannelDragger(geKeyboard& k)
 : m_keyboard(k)
 , m_channelId(-1)
@@ -187,6 +200,27 @@ size_t geKeyboard::countTracks() const
 
 /* -------------------------------------------------------------------------- */
 
+void geKeyboard::showMenu() const
+{
+	geMenu menu;
+
+	menu.addItem((ID)Menu::ADD_TRACK, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_ADD_TRACK));
+
+	menu.onSelect = [this](ID menuId)
+	{
+		switch (static_cast<Menu>(menuId))
+		{
+		case Menu::ADD_TRACK:
+			addTrack();
+			break;
+		}
+	};
+
+	menu.popup();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geKeyboard::init()
 {
 	deleteAllTracks();
@@ -260,7 +294,7 @@ int geKeyboard::handle(int e)
 		}
 		if (Fl::event_button3())
 		{
-			openTrackMenu();
+			openMenu();
 			return 1;
 		}
 
@@ -355,7 +389,7 @@ geompp::Rect<int> geKeyboard::getTrackBackround(const geTrack& c) const
 
 /* -------------------------------------------------------------------------- */
 
-void geKeyboard::addTrack()
+void geKeyboard::addTrack() const
 {
 	c::channel::addTrack();
 }
@@ -455,11 +489,15 @@ std::vector<std::string> geKeyboard::getDroppedFilePaths() const
 
 /* -------------------------------------------------------------------------- */
 
-void geKeyboard::openTrackMenu() const
+void geKeyboard::openMenu() const
 {
 	const geTrack* track = getTrackAtCursor(Fl::event_x());
-	if (track == nullptr || track->getChannelAtCursor(Fl::event_y()) != nullptr)
+	if (track == nullptr) // No track hovered: show Keyboard menu
+	{
+		showMenu();
 		return;
-	track->showMenu();
+	}
+	if (track->getChannelAtCursor(Fl::event_y()) == nullptr) // No channel hovered: show track menu
+		track->showMenu();
 }
 } // namespace giada::v

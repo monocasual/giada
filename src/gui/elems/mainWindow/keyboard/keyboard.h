@@ -66,6 +66,11 @@ public:
 
 	size_t countTracks() const;
 
+	/* showMenu
+	Displays the menu for adding/removing tracks. */
+
+	void showMenu() const;
+
 	/* rebuild
 	Rebuilds this widget from scratch. Used when the model has changed. */
 
@@ -79,7 +84,7 @@ public:
 	/* addTrack
 	Adds new track at the end of the stack. */
 
-	void addTrack();
+	void addTrack() const;
 
 	/* deleteTrack
 	Deletes track by index. */
@@ -141,10 +146,11 @@ private:
 
 	std::vector<std::string> getDroppedFilePaths() const;
 
-	/* openTrackMenu
-	Opens the 'add/remove channel' menu for the track under the cursor. */
+	/* openMenu
+	Opens the Track menu for the track under the cursor, or the generic one if
+	no tracks hovered. */
 
-	void openTrackMenu() const;
+	void openMenu() const;
 
 	/* getTrackAtCursor
 	Returns the track below the cursor. */
