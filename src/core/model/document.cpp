@@ -66,9 +66,6 @@ void Document::load(const Patch& patch, Shared& shared, float sampleRateRatio)
 
 /* -------------------------------------------------------------------------- */
 
-/* load (2)
-    Loads data from a Conf object. */
-
 void Document::load(const Conf& conf)
 {
 	kernelAudio.api                     = conf.soundSystem;
