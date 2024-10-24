@@ -11,6 +11,13 @@
 --------------------------------------------------------------------------------
 
 
+1.1.0 --- 2024 . 10 . 25
+- New "Channel Groups" feature
+- Update FLTK library to latest master
+- Update JUCE Framework to 8.0.1
+- Lots of refactoring and code cleanups
+
+
 1.0.0 --- 2024 . 02 . 24
 - Main Menu redesign with macOS support
 - Main Window I/O redesign with vertical audio meters
