@@ -139,7 +139,6 @@ public:
 
 	static constexpr auto MAIN_TRACK_HELP = "main_track_help";
 
-	static constexpr auto MAIN_TRACK_BUTTON                  = "main_track_button";
 	static constexpr auto MAIN_TRACK_BUTTON_ADDSAMPLECHANNEL = "main_track_button_addSampleChannel";
 	static constexpr auto MAIN_TRACK_BUTTON_ADDMIDICHANNEL   = "main_track_button_addMidiChannel";
 	static constexpr auto MAIN_TRACK_BUTTON_REMOVE_TRACK     = "main_track_button_removeTrack";

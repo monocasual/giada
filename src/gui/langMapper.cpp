@@ -137,7 +137,6 @@ LangMap::LangMap()
 
 	m_data[MAIN_TRACK_HELP] = "Drop audio files or right-click here";
 
-	m_data[MAIN_TRACK_BUTTON]                  = "Edit track";
 	m_data[MAIN_TRACK_BUTTON_ADDSAMPLECHANNEL] = "Add Sample channel";
 	m_data[MAIN_TRACK_BUTTON_ADDMIDICHANNEL]   = "Add MIDI channel";
 	m_data[MAIN_TRACK_BUTTON_REMOVE_TRACK]     = "Remove track";
