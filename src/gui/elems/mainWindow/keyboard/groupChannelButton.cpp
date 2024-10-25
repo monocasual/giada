@@ -26,7 +26,10 @@
 
 #include "gui/elems/mainWindow/keyboard/groupChannelButton.h"
 #include "glue/channel.h"
+#include "gui/ui.h"
 #include <string>
+
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -39,7 +42,7 @@ geGroupChannelButton::geGroupChannelButton(const c::channel::Data& d)
 
 void geGroupChannelButton::refresh()
 {
-	const std::string l = m_channel.name.empty() ? "-- group --" : m_channel.name;
+	const std::string l = m_channel.name.empty() ? g_ui->getI18Text(LangMap::MAIN_CHANNEL_DEFAULTGROUPNAME) : m_channel.name;
 	copy_label(l.c_str());
 	redraw();
 }

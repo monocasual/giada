@@ -139,10 +139,11 @@ LangMap::LangMap()
 
 	m_data[MAIN_TRACK_BUTTON_ADDSAMPLECHANNEL] = "Add Sample channel";
 	m_data[MAIN_TRACK_BUTTON_ADDMIDICHANNEL]   = "Add MIDI channel";
-	m_data[MAIN_TRACK_BUTTON_REMOVE_TRACK]     = "Remove track";
-	m_data[MAIN_TRACK_BUTTON_ADD_TRACK]        = "Add track";
+	m_data[MAIN_TRACK_BUTTON_REMOVE_TRACK]     = "Remove column";
+	m_data[MAIN_TRACK_BUTTON_ADD_TRACK]        = "Add column";
 
 	m_data[MAIN_CHANNEL_NOSAMPLE]                  = "-- no sample --";
+	m_data[MAIN_CHANNEL_DEFAULTGROUPNAME]          = "-- group --";
 	m_data[MAIN_CHANNEL_SAMPLENOTFOUND]            = "* file not found! *";
 	m_data[MAIN_CHANNEL_LABEL_PLAY]                = "Play/stop";
 	m_data[MAIN_CHANNEL_LABEL_ARM]                 = "Arm for recording";

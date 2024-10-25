@@ -145,6 +145,7 @@ public:
 	static constexpr auto MAIN_TRACK_BUTTON_ADD_TRACK        = "main_track_button_addTrack";
 
 	static constexpr auto MAIN_CHANNEL_NOSAMPLE                  = "main_channel_noSample";
+	static constexpr auto MAIN_CHANNEL_DEFAULTGROUPNAME          = "main_channel_defaultGroupName";
 	static constexpr auto MAIN_CHANNEL_SAMPLENOTFOUND            = "main_channel_sampleNotFound";
 	static constexpr auto MAIN_CHANNEL_LABEL_PLAY                = "main_channel_label_play";
 	static constexpr auto MAIN_CHANNEL_LABEL_ARM                 = "main_channel_label_arm";
