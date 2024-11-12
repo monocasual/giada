@@ -64,13 +64,12 @@ void ActionEditorApi::recordMidiAction(ID channelId, int note, float velocity, F
 void ActionEditorApi::deleteMidiAction(ID channelId, const Action& a)
 {
 	/* Send a note-off first in case we are deleting it in a middle of a
-	key_on/key_off sequence. */
+	key_on/key_off sequence. Only if it exists (i.e. it's not orphaned). */
 
 	const Action* noteOff = m_actionRecorder.findAction(a.nextId);
+	if (noteOff != nullptr)
+		m_engine.getChannelsApi().sendMidi(channelId, noteOff->event);
 
-	assert(noteOff != nullptr);
-
-	m_engine.getChannelsApi().sendMidi(channelId, noteOff->event);
 	m_actionRecorder.deleteMidiAction(channelId, a);
 }
 
