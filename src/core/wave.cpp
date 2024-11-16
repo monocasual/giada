@@ -86,9 +86,9 @@ const mcl::AudioBuffer& Wave::getBuffer() const { return m_buffer; }
 
 /* -------------------------------------------------------------------------- */
 
-int Wave::getDuration() const
+float Wave::getDuration() const
 {
-	return m_buffer.countFrames() / m_rate;
+	return m_buffer.countFrames() / static_cast<float>(m_rate);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -47,7 +47,7 @@ public:
 	int         getRate() const;
 	std::string getPath() const;
 	int         getBits() const;
-	int         getDuration() const;
+	float       getDuration() const;
 	bool        isLogical() const;
 	bool        isEdited() const;
 

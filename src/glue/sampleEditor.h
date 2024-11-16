@@ -69,7 +69,7 @@ struct Data
 	Frame       shift;
 	Frame       waveSize;
 	int         waveBits;
-	int         waveDuration;
+	float       waveDuration;
 	int         waveRate;
 	std::string wavePath;
 	bool        isLogical;
