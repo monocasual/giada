@@ -204,7 +204,7 @@ LangMap::LangMap()
 	m_data[SAMPLEEDITOR_TITLE]                = "Sample Editor";
 	m_data[SAMPLEEDITOR_RELOAD]               = "Reload";
 	m_data[SAMPLEEDITOR_LOOP]                 = "Loop";
-	m_data[SAMPLEEDITOR_INFO]                 = "File: {}\nSize: {} frames\nDuration {} seconds\nBit depth: {}\nFrequency: {} Hz";
+	m_data[SAMPLEEDITOR_INFO]                 = "File: {}\nSize: {} frames\nDuration: {} seconds\nBit depth: {}\nFrequency: {} Hz";
 	m_data[SAMPLEEDITOR_PAN]                  = "Pan";
 	m_data[SAMPLEEDITOR_PITCH]                = "Pitch";
 	m_data[SAMPLEEDITOR_PITCH_TOBAR]          = "To bar";
