@@ -71,7 +71,7 @@ ReadResult readCopy_(const Wave& wave, mcl::AudioBuffer& dest, Frame start,
 
 /* onSampleEnd
 Things to do when the last frame has been reached. 'natural' == true if the
-rendering has ended because the end of the sample has ben reached.
+rendering has ended because the end of the sample has been reached.
 'natural' == false if the rendering has been manually interrupted (by a
 RenderInfo::Mode::STOP type). Returns whether the sample should loop or not. */
 
