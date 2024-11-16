@@ -366,7 +366,7 @@ void ChannelManager::setBeginEnd(ID channelId, Frame b, Frame e)
 	assert(c.sampleChannel);
 
 	b = std::clamp(b, 0, c.sampleChannel->getWaveSize() - 1);
-	e = std::clamp(e, 1, c.sampleChannel->getWaveSize() - 1);
+	e = std::clamp(e, 1, c.sampleChannel->getWaveSize());
 	if (b >= e)
 		b = e - 1;
 	else if (e < b)

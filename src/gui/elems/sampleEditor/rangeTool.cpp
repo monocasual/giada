@@ -69,7 +69,7 @@ geRangeTool::geRangeTool(const c::sampleEditor::Data& d)
 
 	m_reset->onClick = [this]()
 	{
-		c::sampleEditor::setBeginEnd(m_data->channelId, 0, m_data->waveSize - 1);
+		c::sampleEditor::setBeginEnd(m_data->channelId, 0, m_data->waveSize);
 	};
 
 	rebuild(d);
