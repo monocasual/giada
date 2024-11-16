@@ -127,7 +127,7 @@ void SampleChannel::loadWave(Wave* w, Frame newBegin, Frame newEnd, Frame newShi
 	{
 		shift = newShift == -1 ? 0 : newShift;
 		begin = newBegin == -1 ? 0 : newBegin;
-		end   = newEnd == -1 ? w->getBuffer().countFrames() - 1 : newEnd;
+		end   = newEnd == -1 ? w->getBuffer().countFrames() : newEnd;
 	}
 }
 
