@@ -119,7 +119,7 @@ void stop_(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, bool seqIsRun
 
 /* -------------------------------------------------------------------------- */
 
-Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame offset, bool seqIsRunning)
+Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame offset, bool seqIsRunning, bool testEnd)
 {
 	const Frame      begin     = ch.sampleChannel->begin;
 	const Frame      end       = ch.sampleChannel->end;
@@ -143,9 +143,13 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame off
 		{
 			tracker = begin;
 			ch.shared->resampler->last();
-			const bool shouldLoop = onSampleEnd_(ch, seqIsRunning, /*natural=*/true);
-			if (!shouldLoop)
-				break;
+
+			if (testEnd)
+			{
+				const bool shouldLoop = onSampleEnd_(ch, seqIsRunning, /*natural=*/true);
+				if (!shouldLoop)
+					break;
+			}
 		}
 	}
 
@@ -171,14 +175,16 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 
 	if (renderInfo.mode == RenderInfo::Mode::NORMAL)
 	{
-		tracker = render_(ch, buf, tracker, renderInfo.offset, seqIsRunning);
+		tracker = render_(ch, buf, tracker, renderInfo.offset, seqIsRunning, /*testEnd=*/true);
 	}
 	else
 	{
 		/* Both modes: fill whole buffer first: [abcdefghijklmnopq]. Also tell
-		resampler this is the last read before either a rewind or a stop. */
+		resampler this is the last read before either a rewind or a stop. Don't run
+		complex logic on sample end (testEnd=false), we just want to fill the buffer
+		as much as possible here. */
 
-		render_(ch, buf, tracker, 0, seqIsRunning);
+		render_(ch, buf, tracker, 0, seqIsRunning, /*testEnd=*/false);
 		resampler.last();
 
 		/* Mode::REWIND: fill buffer from offset:  [abcdefghi|abcdfefg]
@@ -186,7 +192,7 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 
 		if (renderInfo.mode == RenderInfo::Mode::REWIND)
 		{
-			tracker = render_(ch, buf, begin, renderInfo.offset, seqIsRunning);
+			tracker = render_(ch, buf, begin, renderInfo.offset, seqIsRunning, /*testEnd=*/true);
 		}
 		else
 		{
