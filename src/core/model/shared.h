@@ -88,6 +88,7 @@ public:
 
 	void removePlugin(const Plugin&);
 	void removeWave(const Wave&);
+	void removeChannel(const ChannelShared&);
 
 	void clearPlugins();
 	void clearWaves();

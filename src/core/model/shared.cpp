@@ -188,6 +188,7 @@ ChannelShared& Shared::addChannel(std::unique_ptr<ChannelShared> cs) { return ad
 
 void Shared::removePlugin(const Plugin& p) { remove_(m_plugins, p); }
 void Shared::removeWave(const Wave& w) { remove_(m_waves, w); }
+void Shared::removeChannel(const ChannelShared& c) { remove_(m_channels, c); }
 
 /* -------------------------------------------------------------------------- */
 

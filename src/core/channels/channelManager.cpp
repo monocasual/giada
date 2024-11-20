@@ -128,6 +128,9 @@ void ChannelManager::removeTrack(std::size_t trackIndex)
 {
 	assert(canRemoveTrack(trackIndex));
 
+	const Channel& ch = m_model.get().tracks.get(trackIndex).getGroupChannel();
+
+	m_model.removeChannelShared(*ch.shared);
 	m_model.get().tracks.remove(trackIndex);
 	m_model.swap(model::SwapType::HARD);
 }
@@ -278,6 +281,7 @@ void ChannelManager::deleteChannel(ID channelId)
 	const Channel& ch   = m_model.get().tracks.getChannel(channelId);
 	const Wave*    wave = ch.sampleChannel ? ch.sampleChannel->getWave() : nullptr;
 
+	m_model.removeChannelShared(*ch.shared);
 	m_model.get().tracks.getByChannel(channelId).removeChannel(channelId);
 	m_model.swap(model::SwapType::HARD);
 

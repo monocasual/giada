@@ -208,6 +208,12 @@ void Model::removeWave(const Wave& w)
 	m_shared.removeWave(w);
 }
 
+void Model::removeChannelShared(const ChannelShared& c)
+{
+	const SharedLock lock = lockShared(SwapType::NONE);
+	m_shared.removeChannel(c);
+}
+
 /* -------------------------------------------------------------------------- */
 
 void Model::clearPlugins()

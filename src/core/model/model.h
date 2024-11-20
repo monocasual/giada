@@ -142,6 +142,7 @@ public:
 
 	void removePlugin(const Plugin&);
 	void removeWave(const Wave&);
+	void removeChannelShared(const ChannelShared&);
 
 	void clearPlugins();
 	void clearWaves();
