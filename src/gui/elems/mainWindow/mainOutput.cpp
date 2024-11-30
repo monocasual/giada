@@ -66,6 +66,7 @@ geMainOutput::geMainOutput()
 		c::main::setMasterOutVolume(v, Thread::MAIN);
 	};
 
+	m_masterFxOut->forceValue(m_io.masterOutHasPlugins);
 	m_masterFxOut->onClick = []
 	{ c::layout::openMasterOutPluginListWindow(); };
 }

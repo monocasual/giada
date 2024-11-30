@@ -98,7 +98,7 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 	fx->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_FX));
 	vol->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_CHANNEL_LABEL_VOLUME));
 
-	fx->setValue(m_channel.plugins.size() > 0);
+	fx->forceValue(m_channel.plugins.size() > 0);
 	fx->onClick = [this]()
 	{
 		c::layout::openChannelPluginListWindow(m_channel.id);

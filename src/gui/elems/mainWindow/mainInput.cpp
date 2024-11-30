@@ -75,6 +75,7 @@ geMainInput::geMainInput()
 		c::main::setInToOut(inToOut->getValue());
 	};
 
+	m_masterFxIn->forceValue(m_io.masterInHasPlugins);
 	m_masterFxIn->onClick = []
 	{ c::layout::openMasterInPluginListWindow(); };
 }
