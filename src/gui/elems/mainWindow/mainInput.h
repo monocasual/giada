@@ -45,13 +45,11 @@ public:
 	void rebuild();
 
 	void setInVol(float v);
-	void setMasterFxInFull(bool v);
 	void setMidiInActivity();
 
 private:
 	c::main::IO m_io;
 
-	geSoundMeter*  m_outMeter;
 	geSoundMeter*  m_inMeter;
 	geDial*        m_inVol;
 	geImageButton* m_inToOut;

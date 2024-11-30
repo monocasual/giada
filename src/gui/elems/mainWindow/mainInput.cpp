@@ -85,13 +85,6 @@ void geMainInput::setInVol(float v) { m_inVol->value(v); }
 
 /* -------------------------------------------------------------------------- */
 
-void geMainInput::setMasterFxInFull(bool v)
-{
-	m_masterFxIn->forceValue(v);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void geMainInput::refresh()
 {
 	m_inMeter->peak  = m_io.getMasterInPeak();

@@ -76,13 +76,6 @@ void geMainOutput::setOutVol(float v) { m_outVol->value(v); }
 
 /* -------------------------------------------------------------------------- */
 
-void geMainOutput::setMasterFxOutFull(bool v)
-{
-	m_masterFxOut->forceValue(v);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void geMainOutput::refresh()
 {
 	m_outMeter->peak  = m_io.getMasterOutPeak();

@@ -46,7 +46,6 @@ public:
 	void rebuild();
 
 	void setOutVol(float v);
-	void setMasterFxOutFull(bool v);
 	void setMidiOutActivity();
 
 private:
