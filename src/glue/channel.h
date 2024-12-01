@@ -207,7 +207,7 @@ void  releaseChannel(ID channelId, Thread t);
 void  killChannel(ID channelId, Thread t);
 float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi = false);
 float setChannelPitch(ID channelId, float v, Thread t);
-float sendChannelPan(ID channelId, float v); // FIXME typo: should be setChannelPan
+float setChannelPan(ID channelId, float v);
 void  toggleMuteChannel(ID channelId, Thread t);
 void  toggleSoloChannel(ID channelId, Thread t);
 void  toggleArmChannel(ID channelId, Thread t);

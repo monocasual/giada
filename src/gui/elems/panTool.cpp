@@ -56,7 +56,7 @@ gePanTool::gePanTool(ID channelId, float pan, int labelWidth)
 	m_dial->range(0.0f, G_MAX_PAN);
 	m_dial->onChange = [this](float val)
 	{
-		c::channel::sendChannelPan(m_channelId, val);
+		c::channel::setChannelPan(m_channelId, val);
 		update(val);
 	};
 
@@ -65,7 +65,7 @@ gePanTool::gePanTool(ID channelId, float pan, int labelWidth)
 
 	m_reset->onClick = [this]()
 	{
-		c::channel::sendChannelPan(m_channelId, 0.5f);
+		c::channel::setChannelPan(m_channelId, 0.5f);
 		update(0.5f);
 	};
 

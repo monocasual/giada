@@ -370,7 +370,7 @@ float setChannelPitch(ID channelId, float v, Thread t)
 
 /* -------------------------------------------------------------------------- */
 
-float sendChannelPan(ID channelId, float v)
+float setChannelPan(ID channelId, float v)
 {
 	g_engine->getChannelsApi().setPan(channelId, v);
 	notifyChannelForMidiIn(Thread::MAIN, channelId); // Currently triggered only by the main thread
