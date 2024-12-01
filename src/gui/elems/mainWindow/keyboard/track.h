@@ -41,7 +41,7 @@ class geChannel;
 class geTrack : public geFlexResizable
 {
 public:
-	geTrack(int x, int y, int w, int h, int index, geResizerBar* b);
+	geTrack(int x, int y, int w, int h, std::size_t index, geResizerBar* b);
 
 	/* getChannel
 	Returns the channel given the ID. */
@@ -82,7 +82,7 @@ public:
 
 	void forEachChannel(std::function<void(geChannel& c)> f) const;
 
-	int index;
+	std::size_t index;
 
 	geResizerBar* resizerBar;
 };

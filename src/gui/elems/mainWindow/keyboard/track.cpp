@@ -80,7 +80,7 @@ geChannel* makeChannel_(const c::channel::Data& data)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geTrack::geTrack(int X, int Y, int W, int H, int index, geResizerBar* b)
+geTrack::geTrack(int X, int Y, int W, int H, std::size_t index, geResizerBar* b)
 : geFlexResizable(X, Y, W, H, Direction::VERTICAL, geResizerBar::Mode::MOVE)
 , index(index)
 , resizerBar(b)

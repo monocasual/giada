@@ -78,7 +78,7 @@ Data makeData_(ID channelId, const m::model::Track& modelTrack)
 
 Track makeTrack_(const m::model::Track& modelTrack)
 {
-	Track track{static_cast<int>(modelTrack.getIndex()), modelTrack.width, {}};
+	Track track{modelTrack.getIndex(), modelTrack.width, {}};
 
 	for (const m::Channel& channel : modelTrack.getChannels().getAll())
 		track.channels.push_back(makeData_(channel.id, modelTrack));
@@ -116,7 +116,7 @@ MidiData::MidiData(const m::Channel& m)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::Channel& c, int trackIndex, int position)
+Data::Data(const m::Channel& c, std::size_t trackIndex, int position)
 : id(c.id)
 , trackIndex(trackIndex)
 , position(position)
@@ -181,14 +181,14 @@ void loadChannel(ID channelId, const std::string& fname)
 
 /* -------------------------------------------------------------------------- */
 
-void addChannel(int trackIndex, ChannelType type)
+void addChannel(std::size_t trackIndex, ChannelType type)
 {
 	g_engine->getChannelsApi().add(type, trackIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void addAndLoadChannels(int trackIndex, const std::vector<std::string>& fnames)
+void addAndLoadChannels(std::size_t trackIndex, const std::vector<std::string>& fnames)
 {
 	auto progress    = g_ui->mainWindow->getScopedProgress(g_ui->getI18Text(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));
 	auto channelsApi = g_engine->getChannelsApi();
@@ -252,7 +252,7 @@ void cloneChannel(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void moveChannel(ID channelId, int trackIndex, int newPosition)
+void moveChannel(ID channelId, std::size_t trackIndex, int newPosition)
 {
 	g_engine->getChannelsApi().move(channelId, trackIndex, newPosition);
 }
@@ -266,7 +266,7 @@ void addTrack()
 
 /* -------------------------------------------------------------------------- */
 
-void deleteTrack(int index)
+void deleteTrack(std::size_t index)
 {
 	if (g_engine->getChannelsApi().getTracks().getAll().size() == 1) // One track must stay
 		return;
@@ -275,7 +275,7 @@ void deleteTrack(int index)
 
 /* -------------------------------------------------------------------------- */
 
-void setTrackWidth(int index, int w)
+void setTrackWidth(std::size_t index, int w)
 {
 	g_engine->getChannelsApi().setTrackWidth(index, w);
 }

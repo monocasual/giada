@@ -53,7 +53,7 @@ public:
 	/* getTrackIndex
 	Returns the index of the track this channel resides in. */
 
-	int getTrackIndex() const;
+	std::size_t getTrackIndex() const;
 
 	/* isGroup
 	True if this channel is the first one in a track, that is the Group one. */

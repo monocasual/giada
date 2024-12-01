@@ -82,7 +82,7 @@ struct MidiData
 
 struct Data
 {
-	Data(const m::Channel&, int trackIndex, int position);
+	Data(const m::Channel&, std::size_t trackIndex, int position);
 
 	ChannelStatus getPlayStatus() const;
 	ChannelStatus getRecStatus() const;
@@ -94,7 +94,7 @@ struct Data
 	bool          isArmed() const;
 
 	ID                      id;
-	int                     trackIndex;
+	std::size_t             trackIndex;
 	int                     position;
 	std::vector<m::Plugin*> plugins;
 	ChannelType             type;
@@ -116,7 +116,7 @@ private:
 
 struct Track
 {
-	int               index;
+	std::size_t       index;
 	int               width;
 	std::vector<Data> channels;
 };
@@ -135,7 +135,7 @@ std::vector<Track> getTracks();
 /* addChannel
 Adds an empty new channel to the stack. */
 
-void addChannel(int trackIndex, ChannelType type);
+void addChannel(std::size_t trackIndex, ChannelType type);
 
 /* loadChannel
 Fills an existing channel with a wave. */
@@ -145,7 +145,7 @@ void loadChannel(int trackIndex, const std::string& fname);
 /* addAndLoadChannels
 As above, with multiple audio file paths in input. */
 
-void addAndLoadChannels(int trackIndex, const std::vector<std::string>& fpaths);
+void addAndLoadChannels(std::size_t trackIndex, const std::vector<std::string>& fpaths);
 
 /* deleteChannel
 Removes a channel from Mixer. */
@@ -165,7 +165,7 @@ void cloneChannel(ID channelId);
 /* moveChannel
 Moves channel with channelId to track at 'trackIndex' at 'position'. */
 
-void moveChannel(ID channelId, int trackIndex, int position);
+void moveChannel(ID channelId, std::size_t trackIndex, int position);
 
 /* addTrack
 Adds a new track at the end of the list. */
@@ -175,12 +175,12 @@ void addTrack();
 /* deleteTrack
 Deletes track by index. */
 
-void deleteTrack(int);
+void deleteTrack(std::size_t);
 
 /* setTrackWidth
 Set the width to 'w' pixel of track at index 'index'. */
 
-void setTrackWidth(int index, int w);
+void setTrackWidth(std::size_t index, int w);
 
 /* canRemoveTrack
 True if the track is removable (only one Group channel contained). */

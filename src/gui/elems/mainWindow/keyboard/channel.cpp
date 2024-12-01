@@ -99,7 +99,7 @@ void geChannel::cb_changeVol()
 
 /* -------------------------------------------------------------------------- */
 
-int geChannel::getTrackIndex() const
+std::size_t geChannel::getTrackIndex() const
 {
 	return static_cast<geTrack*>(parent())->index;
 }

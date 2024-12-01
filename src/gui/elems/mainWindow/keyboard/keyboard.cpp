@@ -138,8 +138,8 @@ void geKeyboard::ChannelDragger::end()
 		return;
 	}
 
-	const int targetTrackIndex = track->index;
-	const int targetPosition   = getPositionForCursor(track, Fl::event_y());
+	const std::size_t targetTrackIndex = track->index;
+	const int         targetPosition   = getPositionForCursor(track, Fl::event_y());
 
 	c::channel::moveChannel(m_channelId, targetTrackIndex, targetPosition);
 
@@ -186,7 +186,7 @@ geKeyboard::geKeyboard()
 
 /* -------------------------------------------------------------------------- */
 
-int geKeyboard::getChannelTrackIndex(ID channelId) const
+std::size_t geKeyboard::getChannelTrackIndex(ID channelId) const
 {
 	return getChannel(channelId)->getTrackIndex();
 }
@@ -238,7 +238,7 @@ void geKeyboard::rebuild()
 
 /* -------------------------------------------------------------------------- */
 
-void geKeyboard::deleteTrack(int index)
+void geKeyboard::deleteTrack(std::size_t index)
 {
 	c::channel::deleteTrack(index);
 }

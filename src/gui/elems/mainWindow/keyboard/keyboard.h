@@ -59,7 +59,7 @@ public:
 	/* getChannelTrackIndex
 	Given a channel ID, returns the index of the track it belongs to. */
 
-	int getChannelTrackIndex(ID channelId) const;
+	std::size_t getChannelTrackIndex(ID channelId) const;
 
 	/* countTracks
 	Returns the number of tracks in the viewport. */
@@ -89,7 +89,7 @@ public:
 	/* deleteTrack
 	Deletes track by index. */
 
-	void deleteTrack(int);
+	void deleteTrack(std::size_t);
 
 	/* deleteAllTracks
 	Deletes all tracks from the stack. */
