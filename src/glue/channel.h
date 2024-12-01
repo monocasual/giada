@@ -140,7 +140,7 @@ void addChannel(std::size_t trackIndex, ChannelType type);
 /* loadChannel
 Fills an existing channel with a wave. */
 
-void loadChannel(int trackIndex, const std::string& fname);
+void loadChannel(ID channelId, const std::string& fname);
 
 /* addAndLoadChannels
 As above, with multiple audio file paths in input. */
