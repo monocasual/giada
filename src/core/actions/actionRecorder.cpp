@@ -199,7 +199,7 @@ void ActionRecorder::recordMidiAction(ID channelId, int note, float velocity, Fr
 
 	/* Avoid frame overflow. */
 
-	Frame overflow = f2 - framesInLoop;
+	const Frame overflow = f2 - framesInLoop;
 	if (overflow > 0)
 	{
 		f2 -= overflow;
