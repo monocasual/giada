@@ -72,7 +72,7 @@ void IOApi::channel_enableMidiLightning(ID channelId, bool v)
 void IOApi::channel_enableMidiOutput(ID channelId, bool v)
 {
 	m_model.get().tracks.getChannel(channelId).midiChannel->outputEnabled = v;
-	m_model.swap(m::model::SwapType::NONE);
+	m_model.swap(m::model::SwapType::HARD); // Rebuild info printed in MIDI channels
 }
 
 /* -------------------------------------------------------------------------- */
@@ -94,7 +94,7 @@ void IOApi::channel_setMidiInputFilter(ID channelId, int ch)
 void IOApi::channel_setMidiOutputFilter(ID channelId, int ch)
 {
 	m_model.get().tracks.getChannel(channelId).midiChannel->outputFilter = ch;
-	m_model.swap(m::model::SwapType::NONE);
+	m_model.swap(m::model::SwapType::HARD); // Rebuild info printed in MIDI channels
 }
 
 /* -------------------------------------------------------------------------- */
