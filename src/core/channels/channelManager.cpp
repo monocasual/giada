@@ -474,7 +474,7 @@ void ChannelManager::setPreviewTracker(Frame f)
 
 bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
 {
-	Channel& ch = m_model.get().tracks.getChannel(channelId);
+	const Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	assert(ch.sampleChannel);
 
