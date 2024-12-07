@@ -47,7 +47,7 @@ void geChannelProgress::draw()
 	const Frame         tracker    = m_channel.sample->getTracker();
 	const Frame         begin      = m_channel.sample->begin;
 	const Frame         end        = m_channel.sample->end;
-	const Pixel         pos        = u::math::map(tracker, begin, end, 0, w());
+	const Pixel         pos        = u::math::map(std::max(tracker, begin), begin, end, 0, w());
 
 	const geompp::Rect<int> bounds(x(), y(), w(), h());
 
