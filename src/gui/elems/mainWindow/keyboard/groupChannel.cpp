@@ -26,12 +26,9 @@
 
 #include "gui/elems/mainWindow/keyboard/groupChannel.h"
 #include "glue/channel.h"
-#include "glue/io.h"
 #include "glue/layout.h"
 #include "glue/main.h"
-#include "glue/storage.h"
 #include "gui/dispatcher.h"
-#include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/imageButton.h"
 #include "gui/elems/basics/menu.h"
@@ -42,7 +39,6 @@
 #include "gui/elems/midiActivity.h"
 #include "gui/graphics.h"
 #include "gui/ui.h"
-#include "utils/gui.h"
 
 extern giada::v::Ui* g_ui;
 

@@ -27,20 +27,15 @@
 #include "gui/elems/mainWindow/keyboard/track.h"
 #include "deps/geompp/src/range.hpp"
 #include "glue/channel.h"
-#include "gui/dialogs/warnings.h"
-#include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/menu.h"
 #include "gui/elems/basics/resizerBar.h"
-#include "gui/elems/basics/textButton.h"
 #include "gui/elems/mainWindow/keyboard/groupChannel.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/keyboard/midiChannel.h"
 #include "gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "gui/ui.h"
-#include "utils/fs.h"
 #include "utils/gui.h"
 #include "utils/log.h"
-#include "utils/string.h"
 #include <cassert>
 
 extern giada::v::Ui* g_ui;

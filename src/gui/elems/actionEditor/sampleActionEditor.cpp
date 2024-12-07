@@ -27,16 +27,12 @@
 #include "gui/elems/actionEditor/sampleActionEditor.h"
 #include "core/const.h"
 #include "glue/actionEditor.h"
-#include "glue/channel.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "gui/dialogs/actionEditor/sampleActionEditor.h"
 #include "gui/ui.h"
 #include "sampleAction.h"
 #include "src/core/actions/action.h"
-#include "utils/log.h"
-#include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include <cassert>
 
 extern giada::v::Ui* g_ui;
 

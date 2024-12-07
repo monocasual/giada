@@ -28,9 +28,7 @@
 #include "baseAction.h"
 #include "baseActionEditor.h"
 #include "core/const.h"
-#include "core/sequencer.h"
 #include "gridTool.h"
-#include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
 namespace giada::v

@@ -29,7 +29,6 @@
 #include "glue/channel.h"
 #include "gui/drawing.h"
 #include "utils/math.h"
-#include <FL/fl_draw.H>
 
 namespace giada::v
 {
