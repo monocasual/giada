@@ -217,7 +217,7 @@ void channel_setMidiOutputFilter(ID channelId, int ch)
 
 bool channel_setKey(ID channelId, int k)
 {
-	if (!isValidKey_(k))
+	if (!isValidKey_(k) && k != 0) // 0 is allowed, it means 'no binding'
 		return false;
 	g_engine->getIOApi().channel_setKey(channelId, k);
 	return true;
