@@ -190,8 +190,7 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
 		group.shared->audioBuffer.clear();
 
 		for (const Channel& c : track.getChannels().getAll())
-			if (!c.isInternal())
-				renderNormalChannel(c, group.shared->audioBuffer, in, hasSolos, seqIsRunning);
+			renderNormalChannel(c, group.shared->audioBuffer, in, hasSolos, seqIsRunning);
 
 		rendering::renderAudioPlugins(group, m_pluginHost);
 
