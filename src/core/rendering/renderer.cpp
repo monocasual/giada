@@ -194,7 +194,9 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
 				renderNormalChannel(c, group.shared->audioBuffer, in, hasSolos, seqIsRunning);
 
 		rendering::renderAudioPlugins(group, m_pluginHost);
-		out.sum(group.shared->audioBuffer, group.volume, calcPanning_(group.pan));
+
+		if (group.isAudible(hasSolos))
+			out.sum(group.shared->audioBuffer, group.volume, calcPanning_(group.pan));
 	}
 }
 
