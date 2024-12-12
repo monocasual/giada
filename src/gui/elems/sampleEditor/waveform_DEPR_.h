@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_WAVEFORM_H
-#define GE_WAVEFORM_H
+#ifndef GE_WAVEFORM_DEPR_H
+#define GE_WAVEFORM_DEPR_H
 
 #include "src/types.h"
 #include <FL/Fl_Widget.H>
@@ -38,7 +38,7 @@ struct Data;
 
 namespace giada::v
 {
-class geWaveform : public Fl_Widget
+class geWaveform_DEPR_ : public Fl_Widget
 {
 public:
 #if G_OS_WINDOWS
@@ -52,7 +52,7 @@ public:
 		OUT
 	};
 
-	geWaveform(int x, int y, int w, int h, bool gridEnabled, int gridVal);
+	geWaveform_DEPR_(int x, int y, int w, int h, bool gridEnabled, int gridVal);
 
 	void draw() override;
 	int  handle(int e) override;
