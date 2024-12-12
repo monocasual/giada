@@ -40,7 +40,7 @@
 #include "src/gui/elems/sampleEditor/pitchTool.h"
 #include "src/gui/elems/sampleEditor/rangeTool.h"
 #include "src/gui/elems/sampleEditor/waveTools.h"
-#include "src/gui/elems/sampleEditor/waveform.h"
+#include "src/gui/elems/sampleEditor/waveform_DEPR_.h"
 #include "src/gui/ui.h"
 #include "src/utils/fs.h"
 #include "src/utils/gui.h"
