@@ -34,7 +34,7 @@
 #include "gui/elems/basics/menu.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
-#include "waveform.h"
+#include "waveform_DEPR_.h"
 #include <cstdint>
 
 extern giada::v::Ui* g_ui;
@@ -74,7 +74,7 @@ geWaveTools::geWaveTools(int x, int y, int w, int h, bool gridEnabled, int gridV
 	hscrollbar.labelcolor(G_COLOR_LIGHT_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-	waveform = new v::geWaveform(x, y, w, h - 24, gridEnabled, gridVal);
+	waveform_DEPR_ = new v::geWaveform_DEPR_(x, y, w, h - 24, gridEnabled, gridVal);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -82,14 +82,14 @@ geWaveTools::geWaveTools(int x, int y, int w, int h, bool gridEnabled, int gridV
 void geWaveTools::rebuild(const c::sampleEditor::Data& d)
 {
 	m_data = &d;
-	waveform->rebuild(d);
+	waveform_DEPR_->rebuild(d);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geWaveTools::refresh()
 {
-	waveform->redraw();
+	waveform_DEPR_->redraw();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -100,16 +100,16 @@ void geWaveTools::resize(int x, int y, int w, int h)
 
 	if (this->w() == w || (this->w() != w && this->h() != h))
 	{ // vertical or both resize
-		waveform->resize(x, y, waveform->w(), h - 24);
-		waveform->rebuild(*m_data);
+		waveform_DEPR_->resize(x, y, waveform_DEPR_->w(), h - 24);
+		waveform_DEPR_->rebuild(*m_data);
 	}
 
-	if (this->w() > waveform->w())
-		waveform->stretchToWindow();
+	if (this->w() > waveform_DEPR_->w())
+		waveform_DEPR_->stretchToWindow();
 
-	int offset = waveform->x() + waveform->w() - this->w() - this->x();
+	int offset = waveform_DEPR_->x() + waveform_DEPR_->w() - this->w() - this->x();
 	if (offset < 0)
-		waveform->position(waveform->x() - offset, this->y());
+		waveform_DEPR_->position(waveform_DEPR_->x() - offset, this->y());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -124,7 +124,7 @@ int geWaveTools::handle(int e)
 		works if Ctrl or Cmd are pressed. */
 		if (!Fl::event_command())
 			return Fl_Group::handle(e);
-		waveform->setZoom(Fl::event_dy() <= 0 ? geWaveform::Zoom::IN : geWaveform::Zoom::OUT);
+		waveform_DEPR_->setZoom(Fl::event_dy() <= 0 ? geWaveform_DEPR_::Zoom::IN : geWaveform_DEPR_::Zoom::OUT);
 		redraw();
 		return 1;
 	}
@@ -135,7 +135,7 @@ int geWaveTools::handle(int e)
 			openMenu();
 			return 1;
 		}
-		Fl::focus(waveform);
+		Fl::focus(waveform_DEPR_);
 		return Fl_Group::handle(e);
 	}
 	default:
@@ -162,7 +162,7 @@ void geWaveTools::openMenu()
 	menu.addItem((ID)Menu::SET_BEGIN_END, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SET_BEGIN_END));
 	menu.addItem((ID)Menu::TO_NEW_CHANNEL, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL));
 
-	if (!waveform->isSelected())
+	if (!waveform_DEPR_->isSelected())
 	{
 		menu.setEnabled((ID)Menu::CUT, false);
 		menu.setEnabled((ID)Menu::COPY, false);
@@ -178,8 +178,8 @@ void geWaveTools::openMenu()
 	}
 
 	menu.onSelect = [channelId = m_data->channelId,
-	                    a      = waveform->getSelectionA(),
-	                    b      = waveform->getSelectionB()](ID id)
+	                    a      = waveform_DEPR_->getSelectionA(),
+	                    b      = waveform_DEPR_->getSelectionB()](ID id)
 	{
 		switch (static_cast<Menu>(id))
 		{
