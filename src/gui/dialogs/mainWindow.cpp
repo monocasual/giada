@@ -172,13 +172,6 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 
 /* -------------------------------------------------------------------------- */
 
-gdMainWindow::~gdMainWindow()
-{
-	g_ui->model.mainWindowBounds = getBounds();
-}
-
-/* -------------------------------------------------------------------------- */
-
 void gdMainWindow::refresh()
 {
 	mainTimer->refresh();
@@ -218,5 +211,13 @@ void gdMainWindow::setTitle(const std::string& title)
 gdMainWindow::ScopedProgress gdMainWindow::getScopedProgress(const char* msg, std::function<void()> onCancel)
 {
 	return {m_progress, msg, onCancel};
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdMainWindow::resize(int x, int y, int w, int h)
+{
+	gdWindow::resize(x, y, w, h);
+	g_ui->model.mainWindowBounds = getBounds();
 }
 } // namespace giada::v

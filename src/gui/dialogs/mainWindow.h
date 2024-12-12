@@ -46,7 +46,6 @@ class gdMainWindow : public gdWindow
 
 public:
 	gdMainWindow(geompp::Rect<int>, const char* title);
-	~gdMainWindow();
 
 	void refresh() override;
 	void rebuild() override;
@@ -83,6 +82,8 @@ private:
 	private:
 		gdProgress& m_progress;
 	};
+
+	void resize(int x, int y, int w, int h) override;
 
 	gdProgress m_progress;
 };
