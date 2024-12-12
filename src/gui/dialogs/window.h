@@ -42,8 +42,6 @@ public:
 	gdWindow(geompp::Rect<int>, const char* title = nullptr, ID id = 0);
 	~gdWindow();
 
-	static void cb_closeChild(Fl_Widget* /*w*/, void* p);
-
 	/* rebuild, refresh
 	Rebuild() is called by the View Updater when something structural changes
 	(e.g. a new channel added). Refresh() is called periodically by the View
@@ -80,6 +78,8 @@ public:
 	void setBounds(geompp::Rect<int>);
 
 private:
+	static void cb_closeChild(Fl_Widget* /*w*/, void* p);
+
 	std::vector<gdWindow*> m_children;
 	int                    m_id;
 	gdWindow*              m_parent;
