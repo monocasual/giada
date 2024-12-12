@@ -42,7 +42,7 @@
 #include "gui/elems/sampleEditor/rangeTool.h"
 #include "gui/elems/sampleEditor/shiftTool.h"
 #include "gui/elems/sampleEditor/waveTools.h"
-#include "gui/elems/sampleEditor/waveform.h"
+#include "gui/elems/sampleEditor/waveform_DEPR_.h"
 #include "gui/ui.h"
 #include "sampleEditor.h"
 #include "src/gui/elems/panTool.h"

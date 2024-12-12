@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/sampleEditor/waveform.h"
+#include "gui/elems/sampleEditor/waveform_DEPR_.h"
 #include "core/const.h"
 #include "core/mixer.h"
 #include "core/model/model.h"
@@ -43,7 +43,7 @@
 
 namespace giada::v
 {
-geWaveform::geWaveform(int x, int y, int w, int h, bool gridEnabled, int gridVal)
+geWaveform_DEPR_::geWaveform_DEPR_(int x, int y, int w, int h, bool gridEnabled, int gridVal)
 : Fl_Widget(x, y, w, h, nullptr)
 , m_selection{}
 , m_data(nullptr)
@@ -65,7 +65,7 @@ geWaveform::geWaveform(int x, int y, int w, int h, bool gridEnabled, int gridVal
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::clearData()
+void geWaveform_DEPR_::clearData()
 {
 	m_waveform.sup.clear();
 	m_waveform.inf.clear();
@@ -75,7 +75,7 @@ void geWaveform::clearData()
 
 /* -------------------------------------------------------------------------- */
 
-int geWaveform::alloc(int datasize, bool force)
+int geWaveform_DEPR_::alloc(int datasize, bool force)
 {
 	const m::Wave& wave = m_data->getWaveRef();
 
@@ -166,7 +166,7 @@ int geWaveform::alloc(int datasize, bool force)
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::recalcPoints()
+void geWaveform_DEPR_::recalcPoints()
 {
 	m_chanStart = m_data->begin;
 	m_chanEnd   = m_data->end;
@@ -174,7 +174,7 @@ void geWaveform::recalcPoints()
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::drawSelection()
+void geWaveform_DEPR_::drawSelection()
 {
 	if (!isSelected())
 		return;
@@ -195,7 +195,7 @@ void geWaveform::drawSelection()
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::drawWaveform(int from, int to)
+void geWaveform_DEPR_::drawWaveform(int from, int to)
 {
 	int zero = y() + (h() / 2); // zero amplitude (-inf dB)
 
@@ -211,7 +211,7 @@ void geWaveform::drawWaveform(int from, int to)
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::drawGrid(int from, int to)
+void geWaveform_DEPR_::drawGrid(int from, int to)
 {
 	fl_color(G_COLOR_GREY_3);
 	fl_line_style(FL_DASH, 1, nullptr);
@@ -228,7 +228,7 @@ void geWaveform::drawGrid(int from, int to)
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::drawStartEndPoints()
+void geWaveform_DEPR_::drawStartEndPoints()
 {
 	/* print m_chanStart */
 
@@ -270,7 +270,7 @@ void geWaveform::drawStartEndPoints()
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::drawPlayHead()
+void geWaveform_DEPR_::drawPlayHead()
 {
 	int p = frameToPixel(m_data->a_getPreviewTracker()) + x();
 	fl_color(G_COLOR_LIGHT_2);
@@ -279,7 +279,7 @@ void geWaveform::drawPlayHead()
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::draw()
+void geWaveform_DEPR_::draw()
 {
 	assert(m_waveform.sup.size() > 0);
 	assert(m_waveform.inf.size() > 0);
@@ -306,7 +306,7 @@ void geWaveform::draw()
 
 /* -------------------------------------------------------------------------- */
 
-int geWaveform::handle(int e)
+int geWaveform_DEPR_::handle(int e)
 {
 	const m::Wave& wave = m_data->getWaveRef();
 
@@ -483,7 +483,7 @@ int geWaveform::handle(int e)
 
 /* -------------------------------------------------------------------------- */
 
-int geWaveform::snap(int pos)
+int geWaveform_DEPR_::snap(int pos)
 {
 	// TODO use math::quantize
 	if (!m_grid.snap)
@@ -501,7 +501,7 @@ int geWaveform::snap(int pos)
 
 /* -------------------------------------------------------------------------- */
 
-bool geWaveform::mouseOnStart() const
+bool geWaveform_DEPR_::mouseOnStart() const
 {
 	int mouseXp    = frameToPixel(m_mouseX);
 	int mouseYp    = frameToPixel(m_mouseY);
@@ -513,7 +513,7 @@ bool geWaveform::mouseOnStart() const
 
 /* -------------------------------------------------------------------------- */
 
-bool geWaveform::mouseOnEnd() const
+bool geWaveform_DEPR_::mouseOnEnd() const
 {
 	int mouseXp  = frameToPixel(m_mouseX);
 	int mouseYp  = frameToPixel(m_mouseY);
@@ -525,14 +525,14 @@ bool geWaveform::mouseOnEnd() const
 
 /* -------------------------------------------------------------------------- */
 
-bool geWaveform::mouseOnSelectionA() const
+bool geWaveform_DEPR_::mouseOnSelectionA() const
 {
 	int mouseXp = frameToPixel(m_mouseX);
 	int selAp   = frameToPixel(m_selection.a);
 	return mouseXp >= selAp - (FLAG_WIDTH / 2) && mouseXp <= selAp + (FLAG_WIDTH / 2);
 }
 
-bool geWaveform::mouseOnSelectionB() const
+bool geWaveform_DEPR_::mouseOnSelectionB() const
 {
 	int mouseXp = frameToPixel(m_mouseX);
 	int selBp   = frameToPixel(m_selection.b);
@@ -541,7 +541,7 @@ bool geWaveform::mouseOnSelectionB() const
 
 /* -------------------------------------------------------------------------- */
 
-int geWaveform::pixelToFrame(int p) const
+int geWaveform_DEPR_::pixelToFrame(int p) const
 {
 	if (p <= 0)
 		return 0;
@@ -552,14 +552,14 @@ int geWaveform::pixelToFrame(int p) const
 
 /* -------------------------------------------------------------------------- */
 
-int geWaveform::frameToPixel(int p) const
+int geWaveform_DEPR_::frameToPixel(int p) const
 {
 	return ceil(p / m_ratio);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::fixSelection()
+void geWaveform_DEPR_::fixSelection()
 {
 	if (m_selection.a > m_selection.b) // inverted m_selection
 		std::swap(m_selection.a, m_selection.b);
@@ -569,7 +569,7 @@ void geWaveform::fixSelection()
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::clearSelection()
+void geWaveform_DEPR_::clearSelection()
 {
 	m_selection.a = 0;
 	m_selection.b = 0;
@@ -581,7 +581,7 @@ void geWaveform::clearSelection()
 #undef IN
 #endif
 
-void geWaveform::setZoom(Zoom z)
+void geWaveform_DEPR_::setZoom(Zoom z)
 {
 	if (!alloc(z == Zoom::IN ? m_waveform.size * G_GUI_ZOOM_FACTOR : m_waveform.size / G_GUI_ZOOM_FACTOR))
 		return;
@@ -618,7 +618,7 @@ void geWaveform::setZoom(Zoom z)
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::stretchToWindow()
+void geWaveform_DEPR_::stretchToWindow()
 {
 	int s = parent()->w();
 	alloc(s);
@@ -628,7 +628,7 @@ void geWaveform::stretchToWindow()
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::rebuild(const c::sampleEditor::Data& d)
+void geWaveform_DEPR_::rebuild(const c::sampleEditor::Data& d)
 {
 	m_data = &d;
 	clearSelection();
@@ -638,14 +638,14 @@ void geWaveform::rebuild(const c::sampleEditor::Data& d)
 
 /* -------------------------------------------------------------------------- */
 
-bool geWaveform::smaller() const
+bool geWaveform_DEPR_::smaller() const
 {
 	return w() < parent()->w();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::setGridLevel(int l)
+void geWaveform_DEPR_::setGridLevel(int l)
 {
 	m_grid.points.clear();
 	m_grid.level = l;
@@ -655,23 +655,23 @@ void geWaveform::setGridLevel(int l)
 
 /* -------------------------------------------------------------------------- */
 
-bool geWaveform::isSelected() const
+bool geWaveform_DEPR_::isSelected() const
 {
 	return m_selection.a != m_selection.b;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::setSnap(bool v) { m_grid.snap = v; }
-bool geWaveform::getSnap() const { return m_grid.snap; }
-int  geWaveform::getSize() const { return m_waveform.size; }
+void geWaveform_DEPR_::setSnap(bool v) { m_grid.snap = v; }
+bool geWaveform_DEPR_::getSnap() const { return m_grid.snap; }
+int  geWaveform_DEPR_::getSize() const { return m_waveform.size; }
 
 /* -------------------------------------------------------------------------- */
 
-int geWaveform::getSelectionA() const { return m_selection.a; }
-int geWaveform::getSelectionB() const { return m_selection.b; }
+int geWaveform_DEPR_::getSelectionA() const { return m_selection.a; }
+int geWaveform_DEPR_::getSelectionB() const { return m_selection.b; }
 
-void geWaveform::selectAll()
+void geWaveform_DEPR_::selectAll()
 {
 	m_selection.a = 0;
 	m_selection.b = m_data->waveSize - 1;
