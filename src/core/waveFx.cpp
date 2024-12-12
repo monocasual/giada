@@ -53,6 +53,7 @@ void fadeFrame_(Wave& w, int i, float val)
 
 float getPeak_(const Wave& w, int a, int b)
 {
+	// TODO - use mcl::AudioBuffer::getPeak
 	float peak = 0.0f;
 	float abs  = 0.0f;
 	for (int i = a; i < b; i++)
