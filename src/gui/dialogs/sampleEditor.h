@@ -44,7 +44,7 @@ class geRangeTool;
 class geShiftTool;
 class gdSampleEditor : public gdWindow
 {
-	friend class geWaveform;
+	friend class geWaveform_DEPR_;
 
 public:
 	gdSampleEditor(ID channelId, const Model&);

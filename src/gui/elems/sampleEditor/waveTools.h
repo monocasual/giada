@@ -36,7 +36,7 @@ struct Data;
 
 namespace giada::v
 {
-class geWaveform;
+class geWaveform_DEPR_;
 class geWaveTools : public Fl_Scroll
 {
 public:
@@ -60,7 +60,7 @@ public:
 
 	const c::sampleEditor::Data& getChannelData() const { return *m_data; }
 
-	v::geWaveform* waveform;
+	v::geWaveform_DEPR_* waveform_DEPR_;
 
 private:
 	void openMenu();

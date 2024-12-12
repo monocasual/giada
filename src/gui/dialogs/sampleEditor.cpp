@@ -43,7 +43,7 @@
 #include "src/gui/elems/sampleEditor/rangeTool.h"
 #include "src/gui/elems/sampleEditor/shiftTool.h"
 #include "src/gui/elems/sampleEditor/waveTools.h"
-#include "src/gui/elems/sampleEditor/waveform.h"
+#include "src/gui/elems/sampleEditor/waveform_DEPR_.h"
 #include "src/gui/graphics.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
@@ -149,27 +149,27 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 	grid->onChange = [this](ID)
 	{
 		/* TODO - redraw grid if != (off) */
-		waveTools->waveform->setGridLevel(grid->getSelectedId());
+		waveTools->waveform_DEPR_->setGridLevel(grid->getSelectedId());
 	};
 
 	snap->value(model.sampleEditorGridOn);
 	snap->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_SNAPTOGRID));
 	snap->onChange = [this](bool val)
 	{
-		waveTools->waveform->setSnap(val);
+		waveTools->waveform_DEPR_->setSnap(val);
 	};
 
 	zoomOut->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMOUT));
 	zoomOut->onClick = [this]()
 	{
-		waveTools->waveform->setZoom(geWaveform::Zoom::OUT);
+		waveTools->waveform_DEPR_->setZoom(geWaveform_DEPR_::Zoom::OUT);
 		waveTools->redraw();
 	};
 
 	zoomIn->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMIN));
 	zoomIn->onClick = [this]()
 	{
-		waveTools->waveform->setZoom(geWaveform::Zoom::IN);
+		waveTools->waveform_DEPR_->setZoom(geWaveform_DEPR_::Zoom::IN);
 		waveTools->redraw();
 	};
 
