@@ -286,6 +286,8 @@ list(APPEND SOURCES
 	src/gui/elems/plugin/pluginElement.h
 	src/gui/elems/sampleEditor/waveform_DEPR_.cpp
 	src/gui/elems/sampleEditor/waveform_DEPR_.h
+	src/gui/elems/sampleEditor/waveform.cpp
+	src/gui/elems/sampleEditor/waveform.h
 	src/gui/elems/sampleEditor/waveTools.cpp
 	src/gui/elems/sampleEditor/waveTools.h
 	src/gui/elems/volumeTool.cpp
