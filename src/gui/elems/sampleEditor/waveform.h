@@ -52,10 +52,13 @@ public:
 
 	void draw() override;
 
+	geompp::Range<Frame> getMoveableRange() const;
+
 	void rebuild(const c::sampleEditor::Data&);
 	void zoomIn();
 	void zoomOut();
-	void setStartRange(Frame);
+	void moveRange(Frame);
+	void move(double);
 
 private:
 	class Data
