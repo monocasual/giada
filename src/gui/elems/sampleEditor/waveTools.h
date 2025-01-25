@@ -27,7 +27,7 @@
 #ifndef GE_WAVE_TOOLS_H
 #define GE_WAVE_TOOLS_H
 
-#include <FL/Fl_Scroll.H>
+#include "src/gui/elems/basics/flex.h"
 
 namespace giada::c::sampleEditor
 {
@@ -36,14 +36,14 @@ struct Data;
 
 namespace giada::v
 {
-class geWaveform_DEPR_;
-class geWaveTools : public Fl_Scroll
+class geWaveform;
+class geScrollbar;
+class geWaveTools : public geFlex
 {
 public:
 	geWaveTools(int x, int y, int w, int h, bool gridEnabled, int gridVal);
 
-	void resize(int x, int y, int w, int h) override;
-	int  handle(int e) override;
+	int handle(int e) override;
 
 	/* rebuild
 	Updates the waveform by realloc-ing new data (i.e. when the waveform has
@@ -58,14 +58,18 @@ public:
 
 	void refresh();
 
-	const c::sampleEditor::Data& getChannelData() const { return *m_data; }
+	void zoomIn();
+	void zoomOut();
 
-	v::geWaveform_DEPR_* waveform_DEPR_;
+	const c::sampleEditor::Data& getChannelData() const { return *m_data; }
 
 private:
 	void openMenu();
 
 	const c::sampleEditor::Data* m_data;
+
+	geWaveform*  m_waveform;
+	geScrollbar* m_scrollbar;
 };
 } // namespace giada::v
 
