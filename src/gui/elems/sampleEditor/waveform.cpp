@@ -24,14 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/sampleEditor/waveform.h"
-#include "core/const.h"
-#include "core/wave.h"
-#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
-#include "glue/sampleEditor.h"
-#include "gui/drawing.h"
-#include "utils/log.h"
-#include "utils/math.h"
+#include "src/gui/elems/sampleEditor/waveform.h"
+#include "src/core/wave.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/glue/sampleEditor.h"
+#include "src/gui/const.h"
+#include "src/gui/drawing.h"
+#include "src/utils/log.h"
+#include "src/utils/math.h"
 
 namespace giada::v
 {
@@ -83,8 +83,9 @@ geWaveform::Data::Peak geWaveform::Data::getPeak(const m::Wave& wave, geompp::Ra
 	float                   peakUp      = 0.0;
 	float                   peakDown    = 0.0;
 
-	for (double frame = range.a; frame < std::floor(range.a + steps); frame++)
+	for (double frameD = range.a; frameD < std::floor(range.a + steps); frameD++)
 	{
+		const Frame frame = std::min(static_cast<Frame>(frameD), audioBuffer.countFrames() - 1);
 		const float value = audioBuffer[frame][channel];
 		peakUp            = std::max(value, peakUp);
 		peakDown          = std::min(value, peakDown);
@@ -149,6 +150,19 @@ void geWaveform::draw()
 
 /* -------------------------------------------------------------------------- */
 
+geompp::Range<Frame> geWaveform::getMoveableRange() const
+{
+	const auto windowF = static_cast<Frame>(m_data.getRatio() * w());
+	const auto maxF    = m_sampleEditorData->getWaveRef().getBuffer().countFrames();
+	const auto hidden  = m_sampleEditorData->getWaveRef().getBuffer().countFrames() - m_range.getLength();
+	if (hidden == 0)
+		return {0, maxF};
+	else
+		return {0, maxF - windowF};
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geWaveform::rebuild(const c::sampleEditor::Data& data)
 {
 	m_sampleEditorData = &data;
@@ -178,9 +192,17 @@ void geWaveform::zoomOut()
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::setStartRange(Frame start)
+void geWaveform::moveRange(Frame start)
 {
-	m_range.b = std::max(0, start);
+	// const auto wFrames   = static_cast<Frame>(m_data.getRatio() * w());
+	const auto maxFrames = m_sampleEditorData->getWaveRef().getBuffer().countFrames();
+
+	// if (start >= maxFrames)
+	//	puts("!");
+
+	// TODO - m_range.move(start);
+
+	printf("[%d, %d) . max=%d\n", m_range.a, m_range.b, maxFrames);
 
 	invalidate();
 	redraw();
@@ -188,9 +210,32 @@ void geWaveform::setStartRange(Frame start)
 
 /* -------------------------------------------------------------------------- */
 
+void geWaveform::move(double p)
+{
+	const auto wFrames   = static_cast<Frame>(m_data.getRatio() * w());
+	const auto maxFrames = m_sampleEditorData->getWaveRef().getBuffer().countFrames();
+	const auto hidden    = m_sampleEditorData->getWaveRef().getBuffer().countFrames() - m_range.getLength();
+
+	if (hidden == 0)
+		return;
+
+	const auto pMap = u::math::map(p, 1.0, maxFrames - wFrames);
+	printf("%d - wFrames=%d maxFrames=%d hidden=%d\n", pMap, wFrames, maxFrames, hidden);
+
+	// TODO - m_range.move(pMap);
+
+	invalidate();
+	redraw();
+	// std::cout << p << "\n";
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geWaveform::invalidate()
 {
 	G_DEBUG("Invalidate waveform data");
+
+	assert(w() > 0);
 
 	m_data = {m_sampleEditorData->getWaveRef(), m_range, w() - 2}; // -2: take care of 1px border
 }
