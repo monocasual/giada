@@ -86,7 +86,6 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 		}
 
 		waveTools = new geWaveTools(0, 0, 0, 0, model.sampleEditorGridOn, model.sampleEditorGridVal);
-		waveTools->rebuild(c::sampleEditor::getData(m_channelId)); // TODO - crappy temporary workaround for WaveTools
 
 		geFlex* bottom = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
@@ -149,28 +148,26 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 	grid->onChange = [this](ID)
 	{
 		/* TODO - redraw grid if != (off) */
-		waveTools->waveform_DEPR_->setGridLevel(grid->getSelectedId());
+		// waveTools->waveform_DEPR_->setGridLevel(grid->getSelectedId());
 	};
 
 	snap->value(model.sampleEditorGridOn);
 	snap->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_SNAPTOGRID));
 	snap->onChange = [this](bool val)
 	{
-		waveTools->waveform_DEPR_->setSnap(val);
+		// waveTools->waveform_DEPR_->setSnap(val);
 	};
 
 	zoomOut->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMOUT));
 	zoomOut->onClick = [this]()
 	{
-		waveTools->waveform_DEPR_->setZoom(geWaveform_DEPR_::Zoom::OUT);
-		waveTools->redraw();
+		waveTools->zoomOut();
 	};
 
 	zoomIn->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMIN));
 	zoomIn->onClick = [this]()
 	{
-		waveTools->waveform_DEPR_->setZoom(geWaveform_DEPR_::Zoom::IN);
-		waveTools->redraw();
+		waveTools->zoomIn();
 	};
 
 	play->setToggleable(true);
