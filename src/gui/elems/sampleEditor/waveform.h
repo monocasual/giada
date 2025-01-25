@@ -27,8 +27,8 @@
 #ifndef GE_WAVEFORM_H
 #define GE_WAVEFORM_H
 
-#include "core/types.h"
-#include "deps/geompp/src/range.hpp"
+#include "src/deps/geompp/src/range.hpp"
+#include "src/types.h"
 #include <FL/Fl_Widget.H>
 #include <utility>
 #include <vector>
@@ -52,10 +52,13 @@ public:
 
 	void draw() override;
 
+	geompp::Range<Frame> getMoveableRange() const;
+
 	void rebuild(const c::sampleEditor::Data&);
 	void zoomIn();
 	void zoomOut();
-	void setStartRange(Frame);
+	void moveRange(Frame);
+	void move(double);
 
 private:
 	class Data
