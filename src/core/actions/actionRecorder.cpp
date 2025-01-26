@@ -66,7 +66,7 @@ std::tuple<Frame, Frame> sanitizeFrames_(Frame f1, Frame f2, int framesInLoop)
 
 Frame sanitizeFrame_(Frame f, int framesInLoop)
 {
-	return std::min(f, framesInLoop);
+	return std::min(f, framesInLoop - 1);
 }
 } // namespace
 
