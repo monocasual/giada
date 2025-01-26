@@ -6,7 +6,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2024 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2025 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
