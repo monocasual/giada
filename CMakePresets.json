@@ -1,0 +1,30 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "debug",
+            "displayName": "Debug Build",
+            "description": "Debug build with Clang and Vcpkg toolchain",
+            "binaryDir": "${sourceDir}/cmake-build-debug",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_TOOLCHAIN_FILE": "~/apps/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "WITH_VST3": "ON",
+                "WITH_TESTS": "ON"
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Release Build",
+            "description": "Release build with Clang and Vcpkg toolchain",
+            "binaryDir": "${sourceDir}/cmake-build-release",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_TOOLCHAIN_FILE": "~/apps/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_BUILD_TYPE": "Release",
+                "WITH_VST3": "ON"
+            }
+        }
+    ]
+}
