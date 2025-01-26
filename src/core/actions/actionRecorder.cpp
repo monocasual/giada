@@ -44,6 +44,25 @@ namespace giada::m
 namespace
 {
 constexpr int MAX_LIVE_RECS_CHUNK = 128;
+
+/* -------------------------------------------------------------------------- */
+
+std::tuple<Frame, Frame> sanitizeFrames_(Frame f1, Frame f2, int framesInLoop)
+{
+	if (f2 == 0)
+		f2 = f1 + G_DEFAULT_ACTION_SIZE;
+
+	/* Avoid frame overflow. */
+
+	const Frame overflow = f2 - framesInLoop + 1;
+	if (overflow > 0)
+	{
+		f2 -= overflow;
+		f1 -= overflow;
+	}
+
+	return {f1, f2};
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -194,17 +213,7 @@ void ActionRecorder::recordEnvelopeAction(ID channelId, Frame frame, int value, 
 
 void ActionRecorder::recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop)
 {
-	if (f2 == 0)
-		f2 = f1 + G_DEFAULT_ACTION_SIZE;
-
-	/* Avoid frame overflow. */
-
-	const Frame overflow = f2 - framesInLoop + 1;
-	if (overflow > 0)
-	{
-		f2 -= overflow;
-		f1 -= overflow;
-	}
+	const auto [ff1, ff2] = sanitizeFrames_(f1, f2, framesInLoop);
 
 	MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, note, 0);
 	MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, note, 0);
@@ -212,7 +221,7 @@ void ActionRecorder::recordMidiAction(ID channelId, int note, float velocity, Fr
 	e1.setVelocityFloat(velocity);
 	e2.setVelocityFloat(velocity);
 
-	rec(channelId, f1, f2, e1, e2);
+	rec(channelId, ff1, ff2, e1, e2);
 }
 
 /* -------------------------------------------------------------------------- */
