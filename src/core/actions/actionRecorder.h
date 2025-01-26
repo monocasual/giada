@@ -80,7 +80,7 @@ public:
 	void recordEnvelopeAction(ID channelId, Frame frame, int value, Frame lastFrameInLoop);
 #endif
 	void recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
-	void recordSampleAction(ID channelId, int type, Frame f1, Frame f2);
+	void recordSampleAction(ID channelId, int type, Frame f1, Frame f2, Frame framesInLoop);
 
 	/* delete*Action */
 
@@ -93,7 +93,7 @@ public:
 	/* update*Action */
 
 	void updateMidiAction(ID channelId, const Action&, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
-	void updateSampleAction(ID channelId, const Action&, int type, Frame f1, Frame f2);
+	void updateSampleAction(ID channelId, const Action&, int type, Frame f1, Frame f2, Frame framesInLoop);
 #if 0
 	void updateEnvelopeAction(ID channelId, const Action&, Frame f, int value, Frame lastFrameInLoop);
 #endif

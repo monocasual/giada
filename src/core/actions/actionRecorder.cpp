@@ -63,6 +63,11 @@ std::tuple<Frame, Frame> sanitizeFrames_(Frame f1, Frame f2, int framesInLoop)
 
 	return {f1, f2};
 }
+
+Frame sanitizeFrame_(Frame f, int framesInLoop)
+{
+	return std::min(f, framesInLoop);
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -226,20 +231,20 @@ void ActionRecorder::recordMidiAction(ID channelId, int note, float velocity, Fr
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
+void ActionRecorder::recordSampleAction(ID channelId, int type, Frame f1, Frame f2, Frame framesInLoop)
 {
 	if (isSinglePressMode(channelId))
 	{
-		if (f2 == 0)
-			f2 = f1 + G_DEFAULT_ACTION_SIZE;
+		const auto [ff1, ff2] = sanitizeFrames_(f1, f2, framesInLoop);
+
 		MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0, G_MAX_VELOCITY);
 		MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0, G_MAX_VELOCITY);
-		rec(channelId, f1, f2, e1, e2);
+		rec(channelId, ff1, ff2, e1, e2);
 	}
 	else
 	{
 		MidiEvent e1 = MidiEvent::makeFrom3Bytes(type, 0, G_MAX_VELOCITY);
-		rec(channelId, f1, e1);
+		rec(channelId, sanitizeFrame_(f1, framesInLoop), e1);
 	}
 }
 
@@ -324,14 +329,14 @@ void ActionRecorder::updateMidiAction(ID channelId, const Action& a, int note, f
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::updateSampleAction(ID channelId, const Action& a, int type, Frame f1, Frame f2)
+void ActionRecorder::updateSampleAction(ID channelId, const Action& a, int type, Frame f1, Frame f2, Frame framesInLoop)
 {
 	if (isSinglePressMode(channelId))
 		deleteAction(channelId, a.id, a.nextId);
 	else
 		deleteAction(channelId, a.id);
 
-	recordSampleAction(channelId, type, f1, f2);
+	recordSampleAction(channelId, type, f1, f2, framesInLoop);
 }
 
 /* -------------------------------------------------------------------------- */

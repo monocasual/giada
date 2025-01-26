@@ -84,14 +84,14 @@ void ActionEditorApi::updateMidiAction(ID channelId, const Action& a, int note, 
 
 void ActionEditorApi::recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
 {
-	m_actionRecorder.recordSampleAction(channelId, type, f1, f2);
+	m_actionRecorder.recordSampleAction(channelId, type, f1, f2, m_sequencer.getFramesInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ActionEditorApi::updateSampleAction(ID channelId, const Action& a, int type, Frame f1, Frame f2)
 {
-	m_actionRecorder.updateSampleAction(channelId, a, type, f1, f2);
+	m_actionRecorder.updateSampleAction(channelId, a, type, f1, f2, m_sequencer.getFramesInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
