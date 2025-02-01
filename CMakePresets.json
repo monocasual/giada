@@ -8,7 +8,10 @@
             "binaryDir": "${sourceDir}/cmake-build-debug",
             "cacheVariables": {
                 "CMAKE_CXX_COMPILER": "clang++",
-                "CMAKE_TOOLCHAIN_FILE": "~/apps/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_TOOLCHAIN_FILE": {
+                    "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                    "type": "FILEPATH"
+                },
                 "CMAKE_BUILD_TYPE": "Debug",
                 "WITH_VST3": "ON",
                 "WITH_TESTS": "ON"
@@ -21,7 +24,10 @@
             "binaryDir": "${sourceDir}/cmake-build-release",
             "cacheVariables": {
                 "CMAKE_CXX_COMPILER": "clang++",
-                "CMAKE_TOOLCHAIN_FILE": "~/apps/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_TOOLCHAIN_FILE": {
+                    "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                    "type": "FILEPATH"
+                },
                 "CMAKE_BUILD_TYPE": "Release",
                 "WITH_VST3": "ON"
             }
