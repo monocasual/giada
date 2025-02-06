@@ -11,6 +11,23 @@
 --------------------------------------------------------------------------------
 
 
+1.1.1 --- 2025 . 01 . 07
+- Update FLTK dependency to 1.4.0-1
+- Render Group Channels audio data to master output only if audible (#709)
+- Fix MIDI out information not being refreshed properly on MIDI channels (#717)
+- Fix MIDI actions not being added on the rightmost edge in the Action Editor (#716)
+- Fix FX buttons not being properly lit (#712)
+- Fix ChannelShared objects not being deleted on Channel deletion (#695)
+- Fix wrong play mode for sample channels in one-shot retrig mode
+- Fix missing last sample when moving or resetting 'end' point in Sample Editor
+- Fix last audio sample not being played in sample channels
+- Fix inability to clear Channels' key bindings (#708)
+- Fix Main Window size not being stored correctly (#713)
+- Add basic CMakePresets.json file
+- Many other minor bugs and typos fixed
+- Lots of refactoring and code cleanups
+
+
 1.1.0 --- 2024 . 10 . 25
 - New "Channel Groups" feature
 - Update FLTK library to latest master
