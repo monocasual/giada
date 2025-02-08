@@ -54,7 +54,7 @@ KernelMidi::KernelMidi(model::Model& m)
 , m_model(m)
 , m_worker(G_KERNEL_MIDI_OUTPUT_RATE_MS)
 , m_midiQueue(MAX_RTMIDI_EVENTS, 0, MAX_NUM_PRODUCERS) // See https://github.com/cameron314/concurrentqueue#preallocation-correctly-using-try_enqueue
-, m_elpsedTime(0.0)
+, m_elapsedTime(0.0)
 {
 }
 
@@ -283,21 +283,21 @@ void KernelMidi::callback(double deltatime, RtMidiMessage* msg)
 	assert(onMidiReceived != nullptr);
 	assert(msg->size() > 0);
 
-	m_elpsedTime += deltatime;
+	m_elapsedTime += deltatime;
 
 	MidiEvent event;
 	if (msg->size() == 1)
-		event = MidiEvent::makeFrom1Byte((*msg)[0], m_elpsedTime);
+		event = MidiEvent::makeFrom1Byte((*msg)[0], m_elapsedTime);
 	else if (msg->size() == 2)
-		event = MidiEvent::makeFrom2Bytes((*msg)[0], (*msg)[1], m_elpsedTime);
+		event = MidiEvent::makeFrom2Bytes((*msg)[0], (*msg)[1], m_elapsedTime);
 	else if (msg->size() == 3)
-		event = MidiEvent::makeFrom3Bytes((*msg)[0], (*msg)[1], (*msg)[2], m_elpsedTime);
+		event = MidiEvent::makeFrom3Bytes((*msg)[0], (*msg)[1], (*msg)[2], m_elapsedTime);
 	else
 		assert(false); // MIDI messages longer than 3 bytes are not supported
 
 	onMidiReceived(event);
 
-	G_DEBUG("Recv MIDI msg=0x{:0X}, timestamp={}", event.getRaw(), m_elpsedTime);
+	G_DEBUG("Recv MIDI msg=0x{:0X}, timestamp={}", event.getRaw(), m_elapsedTime);
 }
 
 /* -------------------------------------------------------------------------- */
