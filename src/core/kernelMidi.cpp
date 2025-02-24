@@ -42,6 +42,20 @@ constexpr auto OUTPUT_NAME       = "Giada MIDI output";
 constexpr auto INPUT_NAME        = "Giada MIDI input";
 constexpr int  MAX_RTMIDI_EVENTS = 8;
 constexpr int  MAX_NUM_PRODUCERS = 2; // Real-time thread and MIDI sync thread
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+std::vector<std::string> getPorts_(RtMidi::Api api)
+{
+	std::vector<std::string>          res;
+	const std::unique_ptr<RtMidiType> midiType = std::make_unique<RtMidiType>(api);
+
+	for (unsigned int i = 0; i < midiType->getPortCount(); i++)
+		res.push_back(midiType->getPortName(i));
+
+	return res;
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -225,18 +239,12 @@ bool KernelMidi::canSyncSlave() const
 
 std::vector<std::string> KernelMidi::getOutPorts() const
 {
-	std::vector<std::string> out;
-	for (unsigned i = 0; i < countOutPorts(); i++)
-		out.push_back(getPortName(*m_midiOut, i));
-	return out;
+	return getPorts_<RtMidiOut>(getAPI());
 }
 
 std::vector<std::string> KernelMidi::getInPorts() const
 {
-	std::vector<std::string> out;
-	for (unsigned i = 0; i < countInPorts(); i++)
-		out.push_back(getPortName(*m_midiIn, i));
-	return out;
+	return getPorts_<RtMidiIn>(getAPI());
 }
 
 /* -------------------------------------------------------------------------- */
