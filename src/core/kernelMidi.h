@@ -131,7 +131,7 @@ private:
 	bool   setAPI_(RtMidi::Api);
 	Result openOutPort_(int port);
 	Result openInPort_(int port);
-	Result openPort(RtMidi&, int port);
+	Result openPort(RtMidi&, int port, bool isOut);
 
 	model::Model&              m_model;
 	std::unique_ptr<RtMidiOut> m_midiOut;

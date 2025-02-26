@@ -172,14 +172,14 @@ KernelMidi::Result KernelMidi::openOutPort_(int port)
 {
 	assert(m_midiOut != nullptr);
 
-	return openPort(*m_midiOut, port);
+	return openPort(*m_midiOut, port, /*isOut=*/true);
 }
 
 KernelMidi::Result KernelMidi::openInPort_(int port)
 {
 	assert(m_midiIn != nullptr);
 
-	return openPort(*m_midiIn, port);
+	return openPort(*m_midiIn, port, /*isOut=*/false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -329,7 +329,7 @@ template std::unique_ptr<RtMidiIn>  KernelMidi::makeDevice(RtMidi::Api, std::str
 
 /* -------------------------------------------------------------------------- */
 
-KernelMidi::Result KernelMidi::openPort(RtMidi& device, int port)
+KernelMidi::Result KernelMidi::openPort(RtMidi& device, int port, bool isOut)
 {
 	if (device.isPortOpen())
 		device.closePort();
@@ -337,7 +337,7 @@ KernelMidi::Result KernelMidi::openPort(RtMidi& device, int port)
 	if (port == -1)
 		return {true, ""};
 
-	const std::string deviceStr = &device == m_midiOut.get() ? "out" : "in";
+	const std::string deviceStr = isOut ? "out" : "in";
 
 	try
 	{
