@@ -360,20 +360,6 @@ void KernelMidi::callback(double deltatime, const RtMidiMessage& msg)
 
 /* -------------------------------------------------------------------------- */
 
-std::string KernelMidi::getPortName(RtMidi& device, int port) const
-{
-	try
-	{
-		return device.getPortName(port);
-	}
-	catch (RtMidiError& /*error*/)
-	{
-		return "";
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
 void KernelMidi::logCompiledAPIs()
 {
 	std::vector<RtMidi::Api> apis;
