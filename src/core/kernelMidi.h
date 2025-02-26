@@ -119,19 +119,14 @@ private:
 	static void s_callback(double, RtMidiMessage*, void*);
 	void        callback(double, const RtMidiMessage&);
 
-	template <typename Device>
-	std::unique_ptr<Device> makeDevice(RtMidi::Api api, std::string name) const;
-
 	unsigned    countOutPorts() const;
 	unsigned    countInPorts() const;
 	std::string getPortName(RtMidi&, int port) const;
-	void        logPorts(RtMidi&, std::string name) const;
 	void        logPorts() const;
 
 	bool   setAPI_(RtMidi::Api);
 	Result openOutPort_(int port);
 	Result openInPort_(int port);
-	Result openPort(RtMidi&, int port, bool isOut);
 
 	model::Model&              m_model;
 	std::unique_ptr<RtMidiOut> m_midiOut;
