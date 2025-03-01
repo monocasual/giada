@@ -112,6 +112,84 @@ std::unique_ptr<RtMidiType> makeDevice_(RtMidi::Api api, std::string name)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+template <typename RtMidiType>
+KernelMidi::Device<RtMidiType>::Device(RtMidi::Api api, const std::string& name, unsigned port)
+: m_port(port)
+{
+	try
+	{
+		m_rtMidi = std::make_unique<RtMidiType>(api, name);
+
+		assert(port < m_rtMidi->getPortCount());
+
+		G_DEBUG("***Prepare OUT device api={} name='{}' port={}", m_rtMidi->getApiName(api), name, port);
+	}
+	catch (const RtMidiError& error)
+	{
+		u::log::print("[KM] Error opening device '{}': {}\n", name, error.getMessage());
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+bool KernelMidi::Device<RtMidiType>::isOpen() const
+{
+	assert(m_rtMidi != nullptr);
+
+	return m_rtMidi->isPortOpen();
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+KernelMidi::Result KernelMidi::Device<RtMidiType>::open()
+{
+	assert(m_rtMidi != nullptr);
+
+	try
+	{
+		m_rtMidi->openPort(m_port);
+		u::log::print("[KM] MIDI OUT port {} opened successfully\n", m_port);
+		return {true, ""};
+	}
+	catch (RtMidiError& error)
+	{
+		u::log::print("[KM] Error opening OUT port {}: {}\n", m_port, error.getMessage());
+		return {false, error.getMessage()};
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+void KernelMidi::Device<RtMidiType>::close()
+{
+	assert(m_rtMidi != nullptr);
+
+	m_rtMidi->closePort();
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+void KernelMidi::Device<RtMidiType>::sendMessage(const RtMidiMessage& msg)
+    requires std::is_same_v<RtMidiType, RtMidiOut>
+{
+	assert(m_rtMidi != nullptr);
+
+	m_rtMidi->sendMessage(&msg);
+}
+
+/* -------------------------------------------------------------------------- */
+
+template class KernelMidi::Device<RtMidiIn>;
+template class KernelMidi::Device<RtMidiOut>;
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 KernelMidi::KernelMidi(model::Model& m)
 : onMidiReceived(nullptr)
 , onMidiSent(nullptr)

@@ -32,6 +32,7 @@
 #include "deps/concurrentqueue/concurrentqueue.h"
 #include "midiMapper.h"
 #include <RtMidi.h>
+#include <concepts>
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -115,6 +116,24 @@ public:
 
 private:
 	using RtMidiMessage = std::vector<unsigned char>;
+
+	template <typename RtMidiType>
+	class Device
+	{
+	public:
+		Device(RtMidi::Api, const std::string& name, unsigned port);
+
+		bool isOpen() const;
+
+		Result open();
+		void   close();
+		void   sendMessage(const RtMidiMessage&)
+		    requires std::is_same_v<RtMidiType, RtMidiOut>;
+
+	private:
+		std::unique_ptr<RtMidiType> m_rtMidi;
+		unsigned                    m_port;
+	};
 
 	static void s_callback(double, RtMidiMessage*, void*);
 	void        callback(double, const RtMidiMessage&);
