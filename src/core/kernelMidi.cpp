@@ -33,6 +33,7 @@
 #include <cassert>
 #include <chrono>
 #include <memory>
+#include <ranges>
 
 namespace giada::m
 {
@@ -204,6 +205,11 @@ KernelMidi::KernelMidi(model::Model& m)
 
 bool KernelMidi::init()
 {
+	/* Prepare vectors of available in/out devices. */
+
+	m_midiOuts = makeDevices<RtMidiOut>();
+	// TODO - inputs
+
 	const model::KernelMidi& kernelMidi = m_model.get().kernelMidi;
 
 	if (!setAPI_(kernelMidi.api))
@@ -263,26 +269,21 @@ KernelMidi::Result KernelMidi::openInPort(int port)
 
 void KernelMidi::start()
 {
-	if (m_midiOut == nullptr)
+	if (m_midiOuts.empty())
 		return;
 	m_worker.start([this]()
-	{
+	    {
 		RtMidiMessage msg;
 		while (m_midiQueue.try_dequeue(msg))
-			m_midiOut->sendMessage(&msg);
-	});
+			for (auto& device : m_midiOuts)
+				device.sendMessage(msg); });
 }
 
 /* -------------------------------------------------------------------------- */
 
 bool KernelMidi::setAPI_(RtMidi::Api api)
 {
-	m_midiOut = makeDevice_<RtMidiOut>(api, OUTPUT_NAME);
-	m_midiIn  = makeDevice_<RtMidiIn>(api, INPUT_NAME);
-
-	if (m_midiIn == nullptr || m_midiOut == nullptr)
-		return false;
-
+	m_midiIn = makeDevice_<RtMidiIn>(api, INPUT_NAME);
 	if (m_midiIn != nullptr)
 	{
 		m_midiIn->setCallback(&s_callback, this);
@@ -298,9 +299,9 @@ bool KernelMidi::setAPI_(RtMidi::Api api)
 
 KernelMidi::Result KernelMidi::openOutPort_(int port)
 {
-	assert(m_midiOut != nullptr);
-
-	return openPort_(*m_midiOut, port, /*isOut=*/true);
+	if (port < 0 || port >= m_midiOuts.size())
+		return {false, "Invalid device"};
+	return m_midiOuts[port].open();
 }
 
 KernelMidi::Result KernelMidi::openInPort_(int port)
@@ -314,8 +315,7 @@ KernelMidi::Result KernelMidi::openInPort_(int port)
 
 void KernelMidi::logPorts() const
 {
-	if (m_midiOut != nullptr)
-		logPorts_(*m_midiOut, OUTPUT_NAME);
+	// TODO - log out devices
 	if (m_midiIn != nullptr)
 		logPorts_(*m_midiIn, INPUT_NAME);
 }
@@ -343,7 +343,8 @@ int         KernelMidi::getCurrentInPort() const { return m_model.get().kernelMi
 
 bool KernelMidi::canSend() const
 {
-	return m_midiOut && m_midiOut->isPortOpen();
+	return std::ranges::any_of(m_midiOuts, [](const Device<RtMidiOut>& device)
+	    { return device.isOpen(); });
 }
 
 bool KernelMidi::canReceive() const
@@ -402,8 +403,19 @@ bool KernelMidi::send(const MidiEvent& event) const
 
 /* -------------------------------------------------------------------------- */
 
-unsigned KernelMidi::countOutPorts() const { return m_midiOut != nullptr ? m_midiOut->getPortCount() : 0; }
 unsigned KernelMidi::countInPorts() const { return m_midiIn != nullptr ? m_midiIn->getPortCount() : 0; }
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+std::vector<KernelMidi::Device<RtMidiType>> KernelMidi::makeDevices()
+{
+	std::vector<KernelMidi::Device<RtMidiType>> out;
+	unsigned                                    i = 0;
+	for (const std::string& portName : getPorts_<RtMidiType>(getAPI()))
+		out.emplace_back(getAPI(), portName, i++);
+	return out;
+}
 
 /* -------------------------------------------------------------------------- */
 

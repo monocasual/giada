@@ -135,10 +135,12 @@ private:
 		unsigned                    m_port;
 	};
 
+	template <typename RtMidiType>
+	std::vector<Device<RtMidiType>> makeDevices();
+
 	static void s_callback(double, RtMidiMessage*, void*);
 	void        callback(double, const RtMidiMessage&);
 
-	unsigned countOutPorts() const;
 	unsigned countInPorts() const;
 	void     logPorts() const;
 
@@ -146,9 +148,9 @@ private:
 	Result openOutPort_(int port);
 	Result openInPort_(int port);
 
-	model::Model&              m_model;
-	std::unique_ptr<RtMidiOut> m_midiOut;
-	std::unique_ptr<RtMidiIn>  m_midiIn;
+	model::Model&                  m_model;
+	std::vector<Device<RtMidiOut>> m_midiOuts;
+	std::unique_ptr<RtMidiIn>      m_midiIn;
 
 	/* m_worker
 	A separate thread responsible for the MIDI output, so that multiple threads
