@@ -273,25 +273,25 @@ unsigned KernelMidi::countInPorts() const { return m_midiIn != nullptr ? m_midiI
 
 void KernelMidi::s_callback(double deltatime, RtMidiMessage* msg, void* data)
 {
-	static_cast<KernelMidi*>(data)->callback(deltatime, msg);
+	static_cast<KernelMidi*>(data)->callback(deltatime, *msg);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::callback(double deltatime, RtMidiMessage* msg)
+void KernelMidi::callback(double deltatime, const RtMidiMessage& msg)
 {
 	assert(onMidiReceived != nullptr);
-	assert(msg->size() > 0);
+	assert(msg.size() > 0);
 
 	m_elapsedTime += deltatime;
 
 	MidiEvent event;
-	if (msg->size() == 1)
-		event = MidiEvent::makeFrom1Byte((*msg)[0], m_elapsedTime);
-	else if (msg->size() == 2)
-		event = MidiEvent::makeFrom2Bytes((*msg)[0], (*msg)[1], m_elapsedTime);
-	else if (msg->size() == 3)
-		event = MidiEvent::makeFrom3Bytes((*msg)[0], (*msg)[1], (*msg)[2], m_elapsedTime);
+	if (msg.size() == 1)
+		event = MidiEvent::makeFrom1Byte(msg[0], m_elapsedTime);
+	else if (msg.size() == 2)
+		event = MidiEvent::makeFrom2Bytes(msg[0], msg[1], m_elapsedTime);
+	else if (msg.size() == 3)
+		event = MidiEvent::makeFrom3Bytes(msg[0], msg[1], msg[2], m_elapsedTime);
 	else
 		assert(false); // MIDI messages longer than 3 bytes are not supported
 

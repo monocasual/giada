@@ -117,7 +117,7 @@ private:
 	using RtMidiMessage = std::vector<unsigned char>;
 
 	static void s_callback(double, RtMidiMessage*, void*);
-	void        callback(double, RtMidiMessage*);
+	void        callback(double, const RtMidiMessage&);
 
 	template <typename Device>
 	std::unique_ptr<Device> makeDevice(RtMidi::Api api, std::string name) const;
