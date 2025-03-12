@@ -121,7 +121,7 @@ private:
 	class Device
 	{
 	public:
-		Device(RtMidi::Api, const std::string& name, unsigned port);
+		Device(RtMidi::Api, const std::string& name, unsigned port, KernelMidi&);
 
 		bool isOpen() const;
 
@@ -131,8 +131,20 @@ private:
 		    requires std::is_same_v<RtMidiType, RtMidiOut>;
 
 	private:
+		static void s_callback(double, RtMidiMessage*, void*)
+		    requires std::is_same_v<RtMidiType, RtMidiIn>;
+		void callback(double, const RtMidiMessage&)
+		    requires std::is_same_v<RtMidiType, RtMidiIn>;
+
 		std::unique_ptr<RtMidiType> m_rtMidi;
 		unsigned                    m_port;
+		KernelMidi&                 m_kernelMidi;
+
+		/* m_elapsedTime
+		Time elapsed on received MIDI events. Used only with RtMidiIn type to
+		compute the absolute timestamp to pass to MidiEvent class. */
+
+		double m_elapsedTime;
 	};
 
 	template <typename RtMidiType>
@@ -162,6 +174,12 @@ private:
 	Collects MIDI messages to be sent to the outside world. */
 
 	mutable moodycamel::ConcurrentQueue<RtMidiMessage> m_outputQueue;
+
+	/* m_inputQueue
+	Collects MIDI events received from the outside world from multiple threads
+	(devices). */
+
+	mutable moodycamel::ConcurrentQueue<MidiEvent> m_inputQueue;
 
 	/* m_elapsedTime
 	Time elapsed on received MIDI events. Used to compute the absolute timestamp

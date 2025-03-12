@@ -114,14 +114,22 @@ std::unique_ptr<RtMidiType> makeDevice_(RtMidi::Api api, std::string name)
 /* -------------------------------------------------------------------------- */
 
 template <typename RtMidiType>
-KernelMidi::Device<RtMidiType>::Device(RtMidi::Api api, const std::string& name, unsigned port)
+KernelMidi::Device<RtMidiType>::Device(RtMidi::Api api, const std::string& name, unsigned port, KernelMidi& kernelMidi)
 : m_port(port)
+, m_kernelMidi(kernelMidi)
+, m_elapsedTime(0.0)
 {
 	try
 	{
 		m_rtMidi = std::make_unique<RtMidiType>(api, name);
 
 		assert(port < m_rtMidi->getPortCount());
+
+		if constexpr (std::is_same_v<RtMidiType, RtMidiIn>)
+		{
+			m_rtMidi->setCallback(&s_callback, this);
+			m_rtMidi->ignoreTypes(/*midiSysex=*/true, /*midiTime=*/false, /*midiSense=*/true); // Don't ignore time msgs
+		}
 
 		G_DEBUG("***Prepare OUT device api={} name='{}' port={}", m_rtMidi->getApiName(api), name, port);
 	}
@@ -184,6 +192,38 @@ void KernelMidi::Device<RtMidiType>::sendMessage(const RtMidiMessage& msg)
 
 /* -------------------------------------------------------------------------- */
 
+template <typename RtMidiType>
+void KernelMidi::Device<RtMidiType>::s_callback(double deltatime, RtMidiMessage* msg, void* data)
+    requires std::is_same_v<RtMidiType, RtMidiIn>
+{
+	static_cast<KernelMidi::Device<RtMidiType>*>(data)->callback(deltatime, *msg);
+}
+
+template <typename RtMidiType>
+void KernelMidi::Device<RtMidiType>::callback(double deltatime, const RtMidiMessage& msg)
+    requires std::is_same_v<RtMidiType, RtMidiIn>
+{
+	assert(msg.size() > 0);
+
+	m_elapsedTime += deltatime;
+
+	MidiEvent event;
+	if (msg.size() == 1)
+		event = MidiEvent::makeFrom1Byte(msg[0], m_elapsedTime);
+	else if (msg.size() == 2)
+		event = MidiEvent::makeFrom2Bytes(msg[0], msg[1], m_elapsedTime);
+	else if (msg.size() == 3)
+		event = MidiEvent::makeFrom3Bytes(msg[0], msg[1], msg[2], m_elapsedTime);
+	else
+		assert(false); // MIDI messages longer than 3 bytes are not supported
+
+	m_kernelMidi.m_inputQueue.try_enqueue(event);
+
+	G_DEBUG("Recv MIDI msg=0x{:0X}, timestamp={}", event.getRaw(), m_elapsedTime);
+}
+
+/* -------------------------------------------------------------------------- */
+
 template class KernelMidi::Device<RtMidiIn>;
 template class KernelMidi::Device<RtMidiOut>;
 
@@ -197,6 +237,7 @@ KernelMidi::KernelMidi(model::Model& m)
 , m_model(m)
 , m_outputWorker(G_KERNEL_MIDI_OUTPUT_RATE_MS)
 , m_outputQueue(MAX_RTMIDI_EVENTS, 0, MAX_NUM_PRODUCERS) // See https://github.com/cameron314/concurrentqueue#preallocation-correctly-using-try_enqueue
+, m_inputQueue(MAX_RTMIDI_EVENTS, 0, MAX_NUM_PRODUCERS)
 , m_elapsedTime(0.0)
 {
 }
@@ -413,7 +454,7 @@ std::vector<KernelMidi::Device<RtMidiType>> KernelMidi::makeDevices()
 	std::vector<KernelMidi::Device<RtMidiType>> out;
 	unsigned                                    i = 0;
 	for (const std::string& portName : getPorts_<RtMidiType>(getAPI()))
-		out.emplace_back(getAPI(), portName, i++);
+		out.emplace_back(getAPI(), portName, i++, *this);
 	return out;
 }
 
