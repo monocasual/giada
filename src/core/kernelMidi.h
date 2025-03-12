@@ -152,16 +152,16 @@ private:
 	std::vector<Device<RtMidiOut>> m_midiOuts;
 	std::unique_ptr<RtMidiIn>      m_midiIn;
 
-	/* m_worker
+	/* m_outputWorker
 	A separate thread responsible for the MIDI output, so that multiple threads
 	can access the output device simultaneously. */
 
-	Worker m_worker;
+	Worker m_outputWorker;
 
-	/* m_midiQueue
+	/* m_outputQueue
 	Collects MIDI messages to be sent to the outside world. */
 
-	mutable moodycamel::ConcurrentQueue<RtMidiMessage> m_midiQueue;
+	mutable moodycamel::ConcurrentQueue<RtMidiMessage> m_outputQueue;
 
 	/* m_elapsedTime
 	Time elapsed on received MIDI events. Used to compute the absolute timestamp
