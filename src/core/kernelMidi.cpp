@@ -131,11 +131,11 @@ KernelMidi::Device<RtMidiType>::Device(RtMidi::Api api, const std::string& name,
 			m_rtMidi->ignoreTypes(/*midiSysex=*/true, /*midiTime=*/false, /*midiSense=*/true); // Don't ignore time msgs
 		}
 
-		G_DEBUG("***Prepare OUT device api={} name='{}' port={}", m_rtMidi->getApiName(api), name, port);
+		u::log::print("[KM] Prepared {} device '{}' - api={} port={}\n", getTypeStr(), name, m_rtMidi->getApiName(api), port);
 	}
 	catch (const RtMidiError& error)
 	{
-		u::log::print("[KM] Error opening device '{}': {}\n", name, error.getMessage());
+		u::log::print("[KM] Error preparing device '{}': {}\n", name, error.getMessage());
 	}
 }
 
@@ -159,12 +159,12 @@ KernelMidi::Result KernelMidi::Device<RtMidiType>::open()
 	try
 	{
 		m_rtMidi->openPort(m_port);
-		u::log::print("[KM] MIDI OUT port {} opened successfully\n", m_port);
+		u::log::print("[KM] MIDI {} port {} opened successfully\n", getTypeStr(), m_port);
 		return {true, ""};
 	}
 	catch (RtMidiError& error)
 	{
-		u::log::print("[KM] Error opening OUT port {}: {}\n", m_port, error.getMessage());
+		u::log::print("[KM] Error opening {} port {}: {}\n", getTypeStr(), m_port, error.getMessage());
 		return {false, error.getMessage()};
 	}
 }
@@ -220,6 +220,17 @@ void KernelMidi::Device<RtMidiType>::callback(double deltatime, const RtMidiMess
 	m_kernelMidi.m_inputQueue.try_enqueue(event);
 
 	G_DEBUG("Recv MIDI msg=0x{:0X}, timestamp={}", event.getRaw(), m_elapsedTime);
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+std::string KernelMidi::Device<RtMidiType>::getTypeStr() const
+{
+	if constexpr (std::is_same_v<RtMidiType, RtMidiOut>)
+		return "OUT";
+	else
+		return "IN";
 }
 
 /* -------------------------------------------------------------------------- */

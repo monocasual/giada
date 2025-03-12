@@ -136,6 +136,8 @@ private:
 		void callback(double, const RtMidiMessage&)
 		    requires std::is_same_v<RtMidiType, RtMidiIn>;
 
+		std::string getTypeStr() const;
+
 		std::unique_ptr<RtMidiType> m_rtMidi;
 		unsigned                    m_port;
 		KernelMidi&                 m_kernelMidi;
