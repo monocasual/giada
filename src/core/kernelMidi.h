@@ -164,7 +164,7 @@ private:
 
 	model::Model&                  m_model;
 	std::vector<Device<RtMidiOut>> m_midiOuts;
-	std::unique_ptr<RtMidiIn>      m_midiIn;
+	std::vector<Device<RtMidiIn>>  m_midiIns;
 
 	/* m_outputWorker
 	A separate thread responsible for the MIDI output, so that multiple threads

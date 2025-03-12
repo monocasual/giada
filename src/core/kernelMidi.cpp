@@ -260,7 +260,7 @@ bool KernelMidi::init()
 	/* Prepare vectors of available in/out devices. */
 
 	m_midiOuts = makeDevices<RtMidiOut>();
-	// TODO - inputs
+	m_midiIns  = makeDevices<RtMidiIn>();
 
 	const model::KernelMidi& kernelMidi = m_model.get().kernelMidi;
 
@@ -335,15 +335,7 @@ void KernelMidi::start()
 
 bool KernelMidi::setAPI_(RtMidi::Api api)
 {
-	m_midiIn = makeDevice_<RtMidiIn>(api, INPUT_NAME);
-	if (m_midiIn != nullptr)
-	{
-		m_midiIn->setCallback(&s_callback, this);
-		m_midiIn->ignoreTypes(/*midiSysex=*/true, /*midiTime=*/false, /*midiSense=*/true); // Don't ignore time msgs
-	}
-
 	logPorts();
-
 	return true;
 }
 
@@ -358,9 +350,9 @@ KernelMidi::Result KernelMidi::openOutPort_(int port)
 
 KernelMidi::Result KernelMidi::openInPort_(int port)
 {
-	assert(m_midiIn != nullptr);
-
-	return openPort_(*m_midiIn, port, /*isOut=*/false);
+	if (port < 0 || port >= m_midiIns.size())
+		return {false, "Invalid device"};
+	return m_midiIns[port].open();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -368,8 +360,7 @@ KernelMidi::Result KernelMidi::openInPort_(int port)
 void KernelMidi::logPorts() const
 {
 	// TODO - log out devices
-	if (m_midiIn != nullptr)
-		logPorts_(*m_midiIn, INPUT_NAME);
+	// TODO - log in devices
 }
 
 /* -------------------------------------------------------------------------- */
@@ -401,7 +392,8 @@ bool KernelMidi::canSend() const
 
 bool KernelMidi::canReceive() const
 {
-	return m_midiIn && m_midiIn->isPortOpen();
+	return std::ranges::any_of(m_midiIns, [](const Device<RtMidiIn>& device)
+	{ return device.isOpen(); });
 }
 
 /* -------------------------------------------------------------------------- */
