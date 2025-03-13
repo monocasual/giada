@@ -46,40 +46,6 @@ constexpr int  MAX_NUM_PRODUCERS = 2; // Real-time thread and MIDI sync thread
 
 /* -------------------------------------------------------------------------- */
 
-KernelMidi::Result openPort_(RtMidi& device, int port, bool isOut)
-{
-	if (device.isPortOpen())
-		device.closePort();
-
-	if (port == -1)
-		return {true, ""};
-
-	const std::string deviceStr = isOut ? "out" : "in";
-
-	try
-	{
-		device.openPort(port, device.getPortName(port));
-		u::log::print("[KM] MIDI {} port {} opened successfully\n", deviceStr, port);
-		return {true, ""};
-	}
-	catch (RtMidiError& error)
-	{
-		u::log::print("[KM] Error opening {} port {}: {}\n", deviceStr, port, error.getMessage());
-		return {false, error.getMessage()};
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void logPorts_(RtMidi& device, std::string name)
-{
-	u::log::print("[KM] Device '{}': {} MIDI ports found\n", name, device.getPortCount());
-	for (unsigned i = 0; i < device.getPortCount(); i++)
-		u::log::print("  {}) {}\n", i, device.getPortName(i));
-}
-
-/* -------------------------------------------------------------------------- */
-
 template <typename RtMidiType>
 std::vector<std::string> getDevices_(RtMidi::Api api)
 {
@@ -90,22 +56,6 @@ std::vector<std::string> getDevices_(RtMidi::Api api)
 		res.push_back(midiType->getPortName(i));
 
 	return res;
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename RtMidiType>
-std::unique_ptr<RtMidiType> makeDevice_(RtMidi::Api api, std::string name)
-{
-	try
-	{
-		return std::make_unique<RtMidiType>(api, name);
-	}
-	catch (RtMidiError& error)
-	{
-		u::log::print("[KM] Error opening device '{}': {}\n", name, error.getMessage());
-		return nullptr;
-	}
 }
 } // namespace
 
