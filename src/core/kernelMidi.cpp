@@ -263,14 +263,8 @@ bool KernelMidi::init()
 	m_midiOuts = makeDevices<RtMidiOut>();
 	m_midiIns  = makeDevices<RtMidiIn>();
 
-	const model::KernelMidi& kernelMidi = m_model.get().kernelMidi;
-
-	if (!setAPI_(kernelMidi.api))
-		return false;
-	if (!openOutPort_(kernelMidi.portOut).success)
-		return false;
-	if (!openInPort_(kernelMidi.portIn).success)
-		return false;
+	// TODO - open devices accoring to model::KernelMidi info (aka persistence)
+	// const model::KernelMidi& kernelMidi = m_model.get().kernelMidi;
 
 	return true;
 }
@@ -279,9 +273,6 @@ bool KernelMidi::init()
 
 bool KernelMidi::setAPI(RtMidi::Api api)
 {
-	if (!setAPI_(api))
-		return false;
-
 	m_model.get().kernelMidi.api     = api;
 	m_model.get().kernelMidi.portOut = G_DEFAULT_MIDI_PORT_OUT;
 	m_model.get().kernelMidi.portIn  = G_DEFAULT_MIDI_PORT_IN;
@@ -341,14 +332,6 @@ void KernelMidi::start()
 				onMidiReceived(event);
 		});
 	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool KernelMidi::setAPI_(RtMidi::Api api)
-{
-	logPorts();
-	return true;
 }
 
 /* -------------------------------------------------------------------------- */

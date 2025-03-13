@@ -157,7 +157,6 @@ private:
 
 	void logPorts() const;
 
-	bool   setAPI_(RtMidi::Api);
 	Result openOutPort_(int port);
 	Result openInPort_(int port);
 
