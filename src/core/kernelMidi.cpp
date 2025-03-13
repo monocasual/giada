@@ -223,9 +223,10 @@ bool KernelMidi::init()
 
 bool KernelMidi::setAPI(RtMidi::Api api)
 {
-	m_model.get().kernelMidi.api     = api;
-	m_model.get().kernelMidi.portOut = G_DEFAULT_MIDI_PORT_OUT;
-	m_model.get().kernelMidi.portIn  = G_DEFAULT_MIDI_PORT_IN;
+	m_model.get().kernelMidi.api = api;
+	// TODO - devices persistence
+	// m_model.get().kernelMidi.portOut = G_DEFAULT_MIDI_PORT_OUT;
+	// m_model.get().kernelMidi.portIn  = G_DEFAULT_MIDI_PORT_IN;
 	m_model.swap(model::SwapType::NONE);
 
 	return true;
@@ -240,8 +241,9 @@ KernelMidi::Result KernelMidi::openOutDevice(std::size_t deviceIndex)
 	if (!res.success)
 		return res;
 
-	m_model.get().kernelMidi.portOut = deviceIndex;
-	m_model.swap(model::SwapType::NONE);
+	// TODO - devices persistence
+	// m_model.get().kernelMidi.portOut = deviceIndex;
+	// m_model.swap(model::SwapType::NONE);
 
 	return res;
 }
@@ -253,8 +255,9 @@ KernelMidi::Result KernelMidi::openInDevice(std::size_t deviceIndex)
 	if (!res.success)
 		return res;
 
-	m_model.get().kernelMidi.portIn = deviceIndex;
-	m_model.swap(model::SwapType::NONE);
+	// TODO - devices persistence
+	// m_model.get().kernelMidi.portIn = deviceIndex;
+	// m_model.swap(model::SwapType::NONE);
 
 	return res;
 }
