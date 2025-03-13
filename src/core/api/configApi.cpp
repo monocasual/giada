@@ -156,12 +156,12 @@ int ConfigApi::midi_getCurrentInPort() const
 
 std::vector<std::string> ConfigApi::midi_getOutPorts() const
 {
-	return m_kernelMidi.getOutPorts();
+	return m_kernelMidi.getAvailableOutDevices();
 }
 
 std::vector<std::string> ConfigApi::midi_getInPorts() const
 {
-	return m_kernelMidi.getInPorts();
+	return m_kernelMidi.getAvailableInDevices();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -187,12 +187,12 @@ bool ConfigApi::midi_setAPI(RtMidi::Api api)
 
 KernelMidi::Result ConfigApi::midi_openOutPort(int out)
 {
-	return m_kernelMidi.openOutPort(out);
+	return m_kernelMidi.openOutDevice(out);
 }
 
 KernelMidi::Result ConfigApi::midi_openInPort(int in)
 {
-	return m_kernelMidi.openInPort(in);
+	return m_kernelMidi.openInDevice(in);
 }
 
 /* -------------------------------------------------------------------------- */

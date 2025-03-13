@@ -81,7 +81,7 @@ void logPorts_(RtMidi& device, std::string name)
 /* -------------------------------------------------------------------------- */
 
 template <typename RtMidiType>
-std::vector<std::string> getPorts_(RtMidi::Api api)
+std::vector<std::string> getDevices_(RtMidi::Api api)
 {
 	std::vector<std::string>          res;
 	const std::unique_ptr<RtMidiType> midiType = std::make_unique<RtMidiType>(api);
@@ -283,27 +283,27 @@ bool KernelMidi::setAPI(RtMidi::Api api)
 
 /* -------------------------------------------------------------------------- */
 
-KernelMidi::Result KernelMidi::openOutPort(int port)
+KernelMidi::Result KernelMidi::openOutDevice(int deviceIndex)
 {
-	Result res = openOutPort_(port);
+	Result res = openOutDevice_(deviceIndex);
 
 	if (!res.success)
 		return res;
 
-	m_model.get().kernelMidi.portOut = port;
+	m_model.get().kernelMidi.portOut = deviceIndex;
 	m_model.swap(model::SwapType::NONE);
 
 	return res;
 }
 
-KernelMidi::Result KernelMidi::openInPort(int port)
+KernelMidi::Result KernelMidi::openInDevice(int deviceIndex)
 {
-	Result res = openInPort_(port);
+	Result res = openInDevice_(deviceIndex);
 
 	if (!res.success)
 		return res;
 
-	m_model.get().kernelMidi.portIn = port;
+	m_model.get().kernelMidi.portIn = deviceIndex;
 	m_model.swap(model::SwapType::NONE);
 
 	return res;
@@ -336,23 +336,23 @@ void KernelMidi::start()
 
 /* -------------------------------------------------------------------------- */
 
-KernelMidi::Result KernelMidi::openOutPort_(int port)
+KernelMidi::Result KernelMidi::openOutDevice_(int deviceIndex)
 {
-	if (port < 0 || port >= m_midiOuts.size())
+	if (deviceIndex < 0 || deviceIndex >= m_midiOuts.size())
 		return {false, "Invalid device"};
-	return m_midiOuts[port].open();
+	return m_midiOuts[deviceIndex].open();
 }
 
-KernelMidi::Result KernelMidi::openInPort_(int port)
+KernelMidi::Result KernelMidi::openInDevice_(int deviceIndex)
 {
-	if (port < 0 || port >= m_midiIns.size())
+	if (deviceIndex < 0 || deviceIndex >= m_midiIns.size())
 		return {false, "Invalid device"};
-	return m_midiIns[port].open();
+	return m_midiIns[deviceIndex].open();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::logPorts() const
+void KernelMidi::logDevices() const
 {
 	// TODO - log out devices
 	// TODO - log in devices
@@ -405,14 +405,14 @@ bool KernelMidi::canSyncSlave() const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<std::string> KernelMidi::getOutPorts() const
+std::vector<std::string> KernelMidi::getAvailableOutDevices() const
 {
-	return getPorts_<RtMidiOut>(getAPI());
+	return getDevices_<RtMidiOut>(getAPI());
 }
 
-std::vector<std::string> KernelMidi::getInPorts() const
+std::vector<std::string> KernelMidi::getAvailableInDevices() const
 {
-	return getPorts_<RtMidiIn>(getAPI());
+	return getDevices_<RtMidiIn>(getAPI());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -447,8 +447,8 @@ std::vector<KernelMidi::Device<RtMidiType>> KernelMidi::makeDevices()
 {
 	std::vector<KernelMidi::Device<RtMidiType>> out;
 	unsigned                                    i = 0;
-	for (const std::string& portName : getPorts_<RtMidiType>(getAPI()))
-		out.emplace_back(getAPI(), portName, i++, *this);
+	for (const std::string& deviceName : getDevices_<RtMidiType>(getAPI()))
+		out.emplace_back(getAPI(), deviceName, i++, *this);
 	return out;
 }
 

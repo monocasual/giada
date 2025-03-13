@@ -45,7 +45,7 @@ class KernelMidi final
 {
 public:
 	/* Result
-	Data returned when opening a port. The 'message' variable will be filled
+	Data returned when opening a device. The 'message' variable will be filled
 	in case of failure with the error message. */
 
 	struct Result
@@ -68,17 +68,18 @@ public:
 
 	bool setAPI(RtMidi::Api API);
 
-	/* open[I/0]port
-	Opens a new I/O port. Also updates model::KernelMidi data if successful. */
+	/* open[I/0]device
+	Opens a new I/O device. Also updates model::KernelMidi data if successful. */
 
-	Result openOutPort(int port);
-	Result openInPort(int port);
+	Result openOutDevice(int deviceIndex);
+	Result openInDevice(int deviceIndex);
 
-	/* getOutPorts, getOutPorts
-	Returns a vector of port names. */
+	/* getAvailable[Out|In]Devices
+	Return vectors of device names. Use vector indexes coming from these vectors
+	to specify which devices to open. */
 
-	std::vector<std::string> getOutPorts() const;
-	std::vector<std::string> getInPorts() const;
+	std::vector<std::string> getAvailableOutDevices() const;
+	std::vector<std::string> getAvailableInDevices() const;
 
 	bool        hasAPI(RtMidi::Api API) const;
 	RtMidi::Api getAPI() const;
@@ -152,10 +153,10 @@ private:
 	template <typename RtMidiType>
 	std::vector<Device<RtMidiType>> makeDevices();
 
-	void logPorts() const;
+	void logDevices() const;
 
-	Result openOutPort_(int port);
-	Result openInPort_(int port);
+	Result openOutDevice_(int deviceIndex);
+	Result openInDevice_(int deviceIndex);
 
 	model::Model&                  m_model;
 	std::vector<Device<RtMidiOut>> m_midiOuts;
