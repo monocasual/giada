@@ -152,9 +152,6 @@ private:
 	template <typename RtMidiType>
 	std::vector<Device<RtMidiType>> makeDevices();
 
-	static void s_callback(double, RtMidiMessage*, void*);
-	void        callback(double, const RtMidiMessage&);
-
 	void logPorts() const;
 
 	Result openOutPort_(int port);
