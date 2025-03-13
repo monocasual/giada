@@ -74,6 +74,11 @@ The rate at which KernelMidi spits out MIDI events. Note: this value will
 obviously increase the MIDI output latency, keep it small!*/
 constexpr int G_KERNEL_MIDI_OUTPUT_RATE_MS = 3;
 
+/* G_KERNEL_MIDI_INPUT_RATE_MS
+The rate at which KernelMidi checks for MIDI events received from the devices.
+Note: this value will obviously increase the MIDI latency, keep it small! */
+constexpr int G_KERNEL_MIDI_INPUT_RATE_MS = 3;
+
 /* -- GUI ------------------------------------------------------------------- */
 constexpr int   G_GUI_FPS            = 30;
 constexpr float G_GUI_REFRESH_RATE   = 1 / static_cast<float>(G_GUI_FPS);

@@ -107,7 +107,7 @@ public:
 	bool send(const MidiEvent&) const;
 
 	/* start
-	Starts the internal worker on a separate thread. Call this on startup. */
+	Starts the internal workers on separate threads. Call this on startup. */
 
 	void start();
 
@@ -171,6 +171,12 @@ private:
 	can access the output device simultaneously. */
 
 	Worker m_outputWorker;
+
+	/* m_inputWorker
+	A separate thread responsible for the MIDI input. It pops MIDI events from
+	the inputQueue and notify listeners via onMidiReceived callback. */
+
+	Worker m_inputWorker;
 
 	/* m_outputQueue
 	Collects MIDI messages to be sent to the outside world. */

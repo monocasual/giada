@@ -247,6 +247,7 @@ KernelMidi::KernelMidi(model::Model& m)
 , onMidiSent(nullptr)
 , m_model(m)
 , m_outputWorker(G_KERNEL_MIDI_OUTPUT_RATE_MS)
+, m_inputWorker(G_KERNEL_MIDI_INPUT_RATE_MS)
 , m_outputQueue(MAX_RTMIDI_EVENTS, 0, MAX_NUM_PRODUCERS) // See https://github.com/cameron314/concurrentqueue#preallocation-correctly-using-try_enqueue
 , m_inputQueue(MAX_RTMIDI_EVENTS, 0, MAX_NUM_PRODUCERS)
 , m_elapsedTime(0.0)
@@ -321,14 +322,25 @@ KernelMidi::Result KernelMidi::openInPort(int port)
 
 void KernelMidi::start()
 {
-	if (m_midiOuts.empty())
-		return;
-	m_outputWorker.start([this]()
-	    {
-		RtMidiMessage msg;
-		while (m_outputQueue.try_dequeue(msg))
-			for (auto& device : m_midiOuts)
-				device.sendMessage(msg); });
+	if (!m_midiOuts.empty())
+	{
+		m_outputWorker.start([this]()
+		{
+			RtMidiMessage msg;
+			while (m_outputQueue.try_dequeue(msg))
+				for (auto& device : m_midiOuts)
+					device.sendMessage(msg);
+		});
+	}
+	if (!m_midiIns.empty())
+	{
+		m_inputWorker.start([this]()
+		{
+			MidiEvent event;
+			while (m_inputQueue.try_dequeue(event))
+				onMidiReceived(event);
+		});
+	}
 }
 
 /* -------------------------------------------------------------------------- */
