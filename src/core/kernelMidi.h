@@ -71,8 +71,8 @@ public:
 	/* open[I/0]device
 	Opens a new I/O device. Also updates model::KernelMidi data if successful. */
 
-	Result openOutDevice(int deviceIndex);
-	Result openInDevice(int deviceIndex);
+	Result openOutDevice(std::size_t deviceIndex);
+	Result openInDevice(std::size_t deviceIndex);
 
 	/* getAvailable[Out|In]Devices
 	Return vectors of device names. Use vector indexes coming from these vectors
@@ -155,8 +155,8 @@ private:
 
 	void logDevices() const;
 
-	Result openOutDevice_(int deviceIndex);
-	Result openInDevice_(int deviceIndex);
+	Result openOutDevice_(std::size_t deviceIndex);
+	Result openInDevice_(std::size_t deviceIndex);
 
 	model::Model&                  m_model;
 	std::vector<Device<RtMidiOut>> m_midiOuts;

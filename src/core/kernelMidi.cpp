@@ -233,7 +233,7 @@ bool KernelMidi::setAPI(RtMidi::Api api)
 
 /* -------------------------------------------------------------------------- */
 
-KernelMidi::Result KernelMidi::openOutDevice(int deviceIndex)
+KernelMidi::Result KernelMidi::openOutDevice(std::size_t deviceIndex)
 {
 	Result res = openOutDevice_(deviceIndex);
 
@@ -246,7 +246,7 @@ KernelMidi::Result KernelMidi::openOutDevice(int deviceIndex)
 	return res;
 }
 
-KernelMidi::Result KernelMidi::openInDevice(int deviceIndex)
+KernelMidi::Result KernelMidi::openInDevice(std::size_t deviceIndex)
 {
 	Result res = openInDevice_(deviceIndex);
 
@@ -286,14 +286,14 @@ void KernelMidi::start()
 
 /* -------------------------------------------------------------------------- */
 
-KernelMidi::Result KernelMidi::openOutDevice_(int deviceIndex)
+KernelMidi::Result KernelMidi::openOutDevice_(std::size_t deviceIndex)
 {
 	if (deviceIndex < 0 || deviceIndex >= m_midiOuts.size())
 		return {false, "Invalid device"};
 	return m_midiOuts[deviceIndex].open();
 }
 
-KernelMidi::Result KernelMidi::openInDevice_(int deviceIndex)
+KernelMidi::Result KernelMidi::openInDevice_(std::size_t deviceIndex)
 {
 	if (deviceIndex < 0 || deviceIndex >= m_midiIns.size())
 		return {false, "Invalid device"};
