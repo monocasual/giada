@@ -100,7 +100,7 @@ void AudioData::toggleInputDevice(bool v)
 
 std::string MidiData::getMidiMapByIndex(int i)
 {
-	return u::vector::atOr(midiMaps, i, "");
+	return u::vector::atOr(availableMidiMaps, i, "");
 }
 
 /* -------------------------------------------------------------------------- */
@@ -154,28 +154,28 @@ MidiData getMidiData()
 	MidiData midiData;
 
 	if (g_engine->getConfigApi().midi_hasAPI(RtMidi::Api::RTMIDI_DUMMY))
-		midiData.apis[RtMidi::Api::RTMIDI_DUMMY] = "(Dummy)";
+		midiData.availableApis[RtMidi::Api::RTMIDI_DUMMY] = "(Dummy)";
 	if (g_engine->getConfigApi().midi_hasAPI(RtMidi::Api::LINUX_ALSA))
-		midiData.apis[RtMidi::Api::LINUX_ALSA] = "ALSA";
+		midiData.availableApis[RtMidi::Api::LINUX_ALSA] = "ALSA";
 	if (g_engine->getConfigApi().midi_hasAPI(RtMidi::Api::UNIX_JACK))
-		midiData.apis[RtMidi::Api::UNIX_JACK] = "JACK";
+		midiData.availableApis[RtMidi::Api::UNIX_JACK] = "JACK";
 	if (g_engine->getConfigApi().midi_hasAPI(RtMidi::Api::WINDOWS_MM))
-		midiData.apis[RtMidi::Api::WINDOWS_MM] = "Multimedia MIDI";
+		midiData.availableApis[RtMidi::Api::WINDOWS_MM] = "Multimedia MIDI";
 	if (g_engine->getConfigApi().midi_hasAPI(RtMidi::Api::MACOSX_CORE))
-		midiData.apis[RtMidi::Api::MACOSX_CORE] = "OSX Core MIDI";
+		midiData.availableApis[RtMidi::Api::MACOSX_CORE] = "OSX Core MIDI";
 
-	midiData.syncModes[G_MIDI_SYNC_NONE]         = "(disabled)";
-	midiData.syncModes[G_MIDI_SYNC_CLOCK_MASTER] = "MIDI Clock (master)";
-	midiData.syncModes[G_MIDI_SYNC_CLOCK_SLAVE]  = "MIDI Clock (slave)";
+	midiData.availableSyncModes[G_MIDI_SYNC_NONE]         = "(disabled)";
+	midiData.availableSyncModes[G_MIDI_SYNC_CLOCK_MASTER] = "MIDI Clock (master)";
+	midiData.availableSyncModes[G_MIDI_SYNC_CLOCK_SLAVE]  = "MIDI Clock (slave)";
 
-	midiData.midiMaps = g_engine->getConfigApi().midi_getMidiMapFilesFound();
-	midiData.midiMap  = g_engine->getConfigApi().midi_getCurrentMidiMapPath();
-	midiData.outPorts = g_engine->getConfigApi().midi_getOutPorts();
-	midiData.inPorts  = g_engine->getConfigApi().midi_getInPorts();
-	midiData.api      = g_engine->getConfigApi().midi_getAPI();
-	midiData.syncMode = g_engine->getConfigApi().midi_getSyncMode();
-	midiData.outPort  = g_engine->getConfigApi().midi_getCurrentOutPort();
-	midiData.inPort   = g_engine->getConfigApi().midi_getCurrentInPort();
+	midiData.availableMidiMaps   = g_engine->getConfigApi().midi_getMidiMapFilesFound();
+	midiData.selectedMidiMap     = g_engine->getConfigApi().midi_getCurrentMidiMapPath();
+	midiData.availableOutDevices = g_engine->getConfigApi().midi_getOutPorts();
+	midiData.availableInDevices  = g_engine->getConfigApi().midi_getInPorts();
+	midiData.selectedApi         = g_engine->getConfigApi().midi_getAPI();
+	midiData.selectedSyncMode    = g_engine->getConfigApi().midi_getSyncMode();
+	midiData.selectedOutDevice   = g_engine->getConfigApi().midi_getCurrentOutPort();
+	midiData.selectedInDevice    = g_engine->getConfigApi().midi_getCurrentInPort();
 
 	return midiData;
 }
@@ -283,8 +283,8 @@ void save(const PluginData& data)
 
 void apply(const MidiData& data)
 {
-	const m::KernelMidi::Result outRes = g_engine->getConfigApi().midi_openOutPort(data.outPort);
-	const m::KernelMidi::Result inRes  = g_engine->getConfigApi().midi_openInPort(data.inPort);
+	const m::KernelMidi::Result outRes = g_engine->getConfigApi().midi_openOutPort(data.selectedOutDevice);
+	const m::KernelMidi::Result inRes  = g_engine->getConfigApi().midi_openInPort(data.selectedInDevice);
 
 	if (outRes.success && inRes.success)
 		return;

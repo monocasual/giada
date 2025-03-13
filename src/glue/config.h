@@ -89,19 +89,19 @@ struct MidiData
 {
 	std::string getMidiMapByIndex(int);
 
-	std::map<RtMidi::Api, std::string> apis;
-	std::map<int, std::string>         syncModes;
-	std::vector<std::string>           midiMaps;
-	std::vector<std::string>           outPorts;
-	std::vector<std::string>           inPorts;
+	std::map<RtMidi::Api, std::string> availableApis;
+	std::map<int, std::string>         availableSyncModes;
+	std::vector<std::string>           availableMidiMaps;
+	std::vector<std::string>           availableOutDevices;
+	std::vector<std::string>           availableInDevices;
 
 	/* Selectable values. */
 
-	RtMidi::Api api;
-	int         syncMode;
-	std::string midiMap;
-	int         outPort;
-	int         inPort;
+	RtMidi::Api selectedApi;
+	int         selectedSyncMode;
+	std::string selectedMidiMap;
+	int         selectedOutDevice;
+	int         selectedInDevice;
 };
 
 struct PluginData

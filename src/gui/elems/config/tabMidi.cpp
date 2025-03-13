@@ -114,24 +114,24 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 	};
 
 	m_portOut->onChange = [this](ID id)
-	{ m_data.outPort = id; };
+	{ m_data.selectedOutDevice = id; };
 
 	m_portIn->onChange = [this](ID id)
-	{ m_data.inPort = id; };
+	{ m_data.selectedInDevice = id; };
 
 	m_enableOut->copy_tooltip(g_ui->getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEOUT));
 	m_enableOut->onChange = [this](bool b)
 	{
-		if (m_data.outPorts.empty())
+		if (m_data.availableOutDevices.empty())
 			return;
 		if (b)
 		{
-			m_data.outPort = m_portOut->getSelectedId();
+			m_data.selectedOutDevice = m_portOut->getSelectedId();
 			m_portOut->activate();
 		}
 		else
 		{
-			m_data.outPort = -1;
+			m_data.selectedOutDevice = -1;
 			m_portOut->deactivate();
 		}
 	};
@@ -139,30 +139,30 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 	m_enableIn->copy_tooltip(g_ui->getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEIN));
 	m_enableIn->onChange = [this](bool b)
 	{
-		if (m_data.inPorts.empty())
+		if (m_data.availableInDevices.empty())
 			return;
 		if (b)
 		{
-			m_data.inPort = m_portIn->getSelectedId();
+			m_data.selectedInDevice = m_portIn->getSelectedId();
 			m_portIn->activate();
 		}
 		else
 		{
-			m_data.inPort = -1;
+			m_data.selectedInDevice = -1;
 			m_portIn->deactivate();
 		}
 	};
 
 	m_midiMap->onChange = [this](ID id)
 	{
-		m_data.midiMap = id;
+		m_data.selectedMidiMap = id;
 		c::config::setMidiMapPath(m_data.getMidiMapByIndex(id));
 	};
 
 	m_sync->onChange = [this](ID id)
 	{
-		m_data.syncMode = id;
-		c::config::setMidiSyncMode(m_data.syncMode);
+		m_data.selectedSyncMode = id;
+		c::config::setMidiSyncMode(m_data.selectedSyncMode);
 	};
 
 	m_applyBtn->onClick = [this]()
@@ -178,49 +178,49 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 	m_data = data;
 
 	m_system->clear();
-	for (const auto& [key, value] : m_data.apis)
+	for (const auto& [key, value] : m_data.availableApis)
 		m_system->addItem(value.c_str(), key);
-	if (m_system->hasItem(m_data.api)) // Selected API might not be present in available APIs
-		m_system->showItem(m_data.api);
+	if (m_system->hasItem(m_data.selectedApi)) // Selected API might not be present in available APIs
+		m_system->showItem(m_data.selectedApi);
 
-	m_portOut->rebuild(m_data.outPorts);
-	if (m_data.outPort == -1)
+	m_portOut->rebuild(m_data.availableOutDevices);
+	if (m_data.selectedOutDevice == -1)
 	{
 		m_portOut->showItem(0);
 		m_portOut->deactivate();
 	}
-	else if (m_portOut->hasItem(m_data.outPort))
-		m_portOut->showItem(m_data.outPort);
+	else if (m_portOut->hasItem(m_data.selectedOutDevice))
+		m_portOut->showItem(m_data.selectedOutDevice);
 
-	m_portIn->rebuild(m_data.inPorts);
-	if (m_data.inPort == -1)
+	m_portIn->rebuild(m_data.availableInDevices);
+	if (m_data.selectedInDevice == -1)
 	{
 		m_portIn->showItem(0);
 		m_portIn->deactivate();
 	}
-	else if (m_portIn->hasItem(m_data.inPort))
-		m_portIn->showItem(m_data.inPort);
+	else if (m_portIn->hasItem(m_data.selectedInDevice))
+		m_portIn->showItem(m_data.selectedInDevice);
 
-	m_enableOut->value(m_data.outPort != -1);
-	if (m_data.outPorts.empty())
+	m_enableOut->value(m_data.selectedOutDevice != -1);
+	if (m_data.availableOutDevices.empty())
 		m_enableOut->deactivate();
 	else
 		m_enableOut->activate();
 
-	m_enableIn->value(m_data.inPort != -1);
-	if (m_data.inPorts.empty())
+	m_enableIn->value(m_data.selectedInDevice != -1);
+	if (m_data.availableInDevices.empty())
 		m_enableIn->deactivate();
 	else
 		m_enableIn->activate();
 
-	m_midiMap->rebuild(m_data.midiMaps);
-	const std::size_t midiMapIndex = u::vector::indexOf(m_data.midiMaps, m_data.midiMap);
-	if (midiMapIndex < m_data.midiMaps.size())
+	m_midiMap->rebuild(m_data.availableMidiMaps);
+	const std::size_t midiMapIndex = u::vector::indexOf(m_data.availableMidiMaps, m_data.selectedMidiMap);
+	if (midiMapIndex < m_data.availableMidiMaps.size())
 		m_midiMap->showItem(midiMapIndex);
 
 	m_sync->clear();
-	for (const auto& [key, value] : m_data.syncModes)
+	for (const auto& [key, value] : m_data.availableSyncModes)
 		m_sync->addItem(value.c_str(), key);
-	m_sync->showItem(m_data.syncMode);
+	m_sync->showItem(m_data.selectedSyncMode);
 }
 } // namespace giada::v
