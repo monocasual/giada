@@ -155,8 +155,7 @@ private:
 	static void s_callback(double, RtMidiMessage*, void*);
 	void        callback(double, const RtMidiMessage&);
 
-	unsigned countInPorts() const;
-	void     logPorts() const;
+	void logPorts() const;
 
 	bool   setAPI_(RtMidi::Api);
 	Result openOutPort_(int port);

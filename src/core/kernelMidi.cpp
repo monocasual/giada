@@ -459,10 +459,6 @@ bool KernelMidi::send(const MidiEvent& event) const
 
 /* -------------------------------------------------------------------------- */
 
-unsigned KernelMidi::countInPorts() const { return m_midiIn != nullptr ? m_midiIn->getPortCount() : 0; }
-
-/* -------------------------------------------------------------------------- */
-
 template <typename RtMidiType>
 std::vector<KernelMidi::Device<RtMidiType>> KernelMidi::makeDevices()
 {
