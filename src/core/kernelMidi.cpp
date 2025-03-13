@@ -332,7 +332,7 @@ int         KernelMidi::getCurrentInPort() const { return m_model.get().kernelMi
 bool KernelMidi::canSend() const
 {
 	return std::ranges::any_of(m_midiOuts, [](const Device<RtMidiOut>& device)
-	    { return device.isOpen(); });
+	{ return device.isOpen(); });
 }
 
 bool KernelMidi::canReceive() const
