@@ -29,11 +29,11 @@
 
 #include "deps/geompp/src/rect.hpp"
 #include "glue/config.h"
+#include "gui/elems/basics/table.h"
 #include <FL/Fl_Group.H>
 
 namespace giada::v
 {
-class geCheck;
 class geStringMenu;
 class geChoice;
 class geTextButton;
@@ -43,15 +43,28 @@ public:
 	geTabMidi(geompp::Rect<int>);
 
 private:
+	class geDevices : public geTable
+	{
+	public:
+		geDevices(const std::vector<m::KernelMidi::DeviceInfo>&, c::config::DeviceType);
+
+		Fl_Widget*  setCellContent(int row, int col, int x, int y, int w, int h) override;
+		std::string setHeaderText(int col) override;
+
+	private:
+		static constexpr int PADDING = 2;
+
+		const std::vector<m::KernelMidi::DeviceInfo>& m_devices;
+		c::config::DeviceType                         m_type;
+	};
+
 	void rebuild(const c::config::MidiData&);
 
 	c::config::MidiData m_data;
 
 	geChoice*     m_system;
-	geStringMenu* m_portOut;
-	geStringMenu* m_portIn;
-	geCheck*      m_enableOut;
-	geCheck*      m_enableIn;
+	geDevices*    m_devicesOut;
+	geDevices*    m_devicesIn;
 	geStringMenu* m_midiMap;
 	geChoice*     m_sync;
 	geTextButton* m_applyBtn;
