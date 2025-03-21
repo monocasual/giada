@@ -44,6 +44,9 @@ public:
 	geScrollPack(int x, int y, int w, int h, int type = Fl_Scroll::BOTH,
 	    Direction d = Direction::HORIZONTAL, int gutter = G_GUI_INNER_MARGIN);
 
+	geScrollPack(int type = Fl_Scroll::BOTH, Direction d = Direction::HORIZONTAL,
+	    int gutter = G_GUI_INNER_MARGIN);
+
 	/* countChildren
 	Returns the number of widgets contained in this group. */
 

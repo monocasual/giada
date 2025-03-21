@@ -45,6 +45,13 @@ geScrollPack::geScrollPack(int x, int y, int w, int h, int type, Direction dir,
 
 /* -------------------------------------------------------------------------- */
 
+geScrollPack::geScrollPack(int type, Direction dir, int gutter)
+: geScrollPack(0, 0, 0, 0, type, dir, gutter)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 std::size_t geScrollPack::countChildren() const
 {
 	return m_widgets.size();
