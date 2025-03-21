@@ -183,7 +183,7 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 	if (m_system->hasItem(m_data.selectedApi)) // Selected API might not be present in available APIs
 		m_system->showItem(m_data.selectedApi);
 
-	m_portOut->rebuild(m_data.availableOutDevices);
+	// m_portOut->rebuild(m_data.availableOutDevices);
 	if (m_data.selectedOutDevice == -1)
 	{
 		m_portOut->showItem(0);
@@ -192,7 +192,7 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 	else if (m_portOut->hasItem(m_data.selectedOutDevice))
 		m_portOut->showItem(m_data.selectedOutDevice);
 
-	m_portIn->rebuild(m_data.availableInDevices);
+	// m_portIn->rebuild(m_data.availableInDevices);
 	if (m_data.selectedInDevice == -1)
 	{
 		m_portIn->showItem(0);

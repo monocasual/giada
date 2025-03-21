@@ -65,15 +65,15 @@ public:
 
 	void audio_storeData(bool limitOutput, Resampler::Quality, float recTriggerLevel);
 
-	bool                            midi_hasAPI(RtMidi::Api) const;
-	RtMidi::Api                     midi_getAPI() const;
-	int                             midi_getSyncMode() const;
-	int                             midi_getCurrentOutPort() const;
-	int                             midi_getCurrentInPort() const;
-	std::vector<std::string>        midi_getOutPorts() const;
-	std::vector<std::string>        midi_getInPorts() const;
-	const std::vector<std::string>& midi_getMidiMapFilesFound() const;
-	std::string                     midi_getCurrentMidiMapPath() const;
+	bool                                midi_hasAPI(RtMidi::Api) const;
+	RtMidi::Api                         midi_getAPI() const;
+	int                                 midi_getSyncMode() const;
+	int                                 midi_getCurrentOutPort() const;
+	int                                 midi_getCurrentInPort() const;
+	std::vector<KernelMidi::DeviceInfo> midi_getOutPorts() const;
+	std::vector<KernelMidi::DeviceInfo> midi_getInPorts() const;
+	const std::vector<std::string>&     midi_getMidiMapFilesFound() const;
+	std::string                         midi_getCurrentMidiMapPath() const;
 
 	bool               midi_setAPI(RtMidi::Api);
 	KernelMidi::Result midi_openOutPort(int);

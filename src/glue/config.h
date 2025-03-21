@@ -28,6 +28,7 @@
 #define G_GLUE_CONFIG_H
 
 #include "core/kernelAudio.h"
+#include "core/kernelMidi.h"
 #include "core/types.h"
 #include <RtMidi.h>
 #include <map>
@@ -89,11 +90,11 @@ struct MidiData
 {
 	std::string getMidiMapByIndex(int);
 
-	std::map<RtMidi::Api, std::string> availableApis;
-	std::map<int, std::string>         availableSyncModes;
-	std::vector<std::string>           availableMidiMaps;
-	std::vector<std::string>           availableOutDevices;
-	std::vector<std::string>           availableInDevices;
+	std::map<RtMidi::Api, std::string>     availableApis;
+	std::map<int, std::string>             availableSyncModes;
+	std::vector<std::string>               availableMidiMaps;
+	std::vector<m::KernelMidi::DeviceInfo> availableOutDevices;
+	std::vector<m::KernelMidi::DeviceInfo> availableInDevices;
 
 	/* Selectable values. */
 

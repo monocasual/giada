@@ -102,6 +102,16 @@ bool KernelMidi::Device<RtMidiType>::isOpen() const
 /* -------------------------------------------------------------------------- */
 
 template <typename RtMidiType>
+std::string KernelMidi::Device<RtMidiType>::getName() const
+{
+	assert(m_rtMidi != nullptr);
+
+	return m_rtMidi->getPortName(m_port);
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
 KernelMidi::Result KernelMidi::Device<RtMidiType>::open()
 {
 	assert(m_rtMidi != nullptr);
@@ -358,14 +368,14 @@ bool KernelMidi::canSyncSlave() const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<std::string> KernelMidi::getAvailableOutDevices() const
+std::vector<KernelMidi::DeviceInfo> KernelMidi::getAvailableOutDevices() const
 {
-	return getDevices_<RtMidiOut>(getAPI());
+	return getDevicesInfo<RtMidiOut>(m_midiOuts);
 }
 
-std::vector<std::string> KernelMidi::getAvailableInDevices() const
+std::vector<KernelMidi::DeviceInfo> KernelMidi::getAvailableInDevices() const
 {
-	return getDevices_<RtMidiIn>(getAPI());
+	return getDevicesInfo<RtMidiIn>(m_midiIns);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -402,6 +412,17 @@ std::vector<KernelMidi::Device<RtMidiType>> KernelMidi::makeDevices()
 	unsigned                                    i = 0;
 	for (const std::string& deviceName : getDevices_<RtMidiType>(getAPI()))
 		out.emplace_back(getAPI(), deviceName, i++, *this);
+	return out;
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+std::vector<KernelMidi::DeviceInfo> KernelMidi::getDevicesInfo(const std::vector<KernelMidi::Device<RtMidiType>>& devices) const
+{
+	std::vector<KernelMidi::DeviceInfo> out;
+	for (std::size_t index = 0; const auto& device : devices)
+		out.emplace_back(index++, device.getName(), device.isOpen());
 	return out;
 }
 

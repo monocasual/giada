@@ -154,12 +154,12 @@ int ConfigApi::midi_getCurrentInPort() const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<std::string> ConfigApi::midi_getOutPorts() const
+std::vector<KernelMidi::DeviceInfo> ConfigApi::midi_getOutPorts() const
 {
 	return m_kernelMidi.getAvailableOutDevices();
 }
 
-std::vector<std::string> ConfigApi::midi_getInPorts() const
+std::vector<KernelMidi::DeviceInfo> ConfigApi::midi_getInPorts() const
 {
 	return m_kernelMidi.getAvailableInDevices();
 }

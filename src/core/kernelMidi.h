@@ -54,6 +54,16 @@ public:
 		std::string message;
 	};
 
+	/* DeviceInfo
+	Information about an input/output device. */
+
+	struct DeviceInfo
+	{
+		std::size_t index;
+		std::string name;
+		bool        isOpen;
+	};
+
 	KernelMidi(model::Model&);
 
 	static void logCompiledAPIs();
@@ -75,11 +85,11 @@ public:
 	Result openInDevice(std::size_t deviceIndex);
 
 	/* getAvailable[Out|In]Devices
-	Return vectors of device names. Use vector indexes coming from these vectors
-	to specify which devices to open. */
+	Return vectors of device information. Use vector indexes coming from each
+	DeviceInfo object to specify which devices to open. */
 
-	std::vector<std::string> getAvailableOutDevices() const;
-	std::vector<std::string> getAvailableInDevices() const;
+	std::vector<DeviceInfo> getAvailableOutDevices() const;
+	std::vector<DeviceInfo> getAvailableInDevices() const;
 
 	bool        hasAPI(RtMidi::Api API) const;
 	RtMidi::Api getAPI() const;
@@ -124,7 +134,8 @@ private:
 	public:
 		Device(RtMidi::Api, const std::string& name, unsigned port, KernelMidi&);
 
-		bool isOpen() const;
+		bool        isOpen() const;
+		std::string getName() const;
 
 		Result open();
 		void   close();
@@ -152,6 +163,9 @@ private:
 
 	template <typename RtMidiType>
 	std::vector<Device<RtMidiType>> makeDevices();
+
+	template <typename RtMidiType>
+	std::vector<DeviceInfo> getDevicesInfo(const std::vector<Device<RtMidiType>>&) const;
 
 	void logDevices() const;
 
