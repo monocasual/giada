@@ -31,9 +31,7 @@
 #include "gui/elems/basics/scroll.h"
 #include <cstddef>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 /* geScrollPack
 A scrollable viewport that contains packed widgets. */
@@ -67,7 +65,6 @@ private:
 	Direction m_direction;
 	int       m_gutter;
 };
-} // namespace v
-} // namespace giada
+} // namespace giada::v
 
 #endif

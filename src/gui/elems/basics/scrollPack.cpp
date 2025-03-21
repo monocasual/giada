@@ -30,9 +30,7 @@
 #include <cassert>
 #include <cstddef>
 
-namespace giada
-{
-namespace v
+namespace giada::v
 {
 geScrollPack::geScrollPack(int x, int y, int w, int h, int type, Direction dir,
     int gutter)
@@ -85,5 +83,4 @@ Fl_Widget* geScrollPack::getLastChild()
 {
 	return m_widgets.at(m_widgets.size() - 1); // Throws std::out_of_range in case
 }
-} // namespace v
-} // namespace giada
+} // namespace giada::v
