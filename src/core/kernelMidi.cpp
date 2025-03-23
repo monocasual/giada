@@ -315,14 +315,6 @@ KernelMidi::Result KernelMidi::openInDevice_(std::size_t deviceIndex)
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::logDevices() const
-{
-	// TODO - log out devices
-	// TODO - log in devices
-}
-
-/* -------------------------------------------------------------------------- */
-
 bool KernelMidi::hasAPI(RtMidi::Api API) const
 {
 	std::vector<RtMidi::Api> APIs;

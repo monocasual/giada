@@ -167,8 +167,6 @@ private:
 	template <typename RtMidiType>
 	std::vector<DeviceInfo> getDevicesInfo(const std::vector<Device<RtMidiType>>&) const;
 
-	void logDevices() const;
-
 	Result openOutDevice_(std::size_t deviceIndex);
 	Result openInDevice_(std::size_t deviceIndex);
 
