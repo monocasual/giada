@@ -161,18 +161,27 @@ private:
 		double m_elapsedTime;
 	};
 
-	template <typename RtMidiType>
-	std::vector<Device<RtMidiType>> makeDevices();
+	/* Devices
+	Vector of KernelMidi::Device objects. Not a simple std::vector<Device>, but
+	rather a vector of unique_ptrs. This is necessary because we are passing
+	pointers to Devices around callbacks (for MIDI in), so all pointers to Devices
+	must remain valid during copy/move operations. */
 
 	template <typename RtMidiType>
-	std::vector<DeviceInfo> getDevicesInfo(const std::vector<Device<RtMidiType>>&) const;
+	using Devices = std::vector<std::unique_ptr<Device<RtMidiType>>>;
+
+	template <typename RtMidiType>
+	Devices<RtMidiType> makeDevices();
+
+	template <typename RtMidiType>
+	std::vector<DeviceInfo> getDevicesInfo(const Devices<RtMidiType>&) const;
 
 	Result openOutDevice_(std::size_t deviceIndex);
 	Result openInDevice_(std::size_t deviceIndex);
 
-	model::Model&                  m_model;
-	std::vector<Device<RtMidiOut>> m_midiOuts;
-	std::vector<Device<RtMidiIn>>  m_midiIns;
+	model::Model&      m_model;
+	Devices<RtMidiOut> m_midiOuts;
+	Devices<RtMidiIn>  m_midiIns;
 
 	/* m_outputWorker
 	A separate thread responsible for the MIDI output, so that multiple threads

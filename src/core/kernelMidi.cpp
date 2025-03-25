@@ -284,7 +284,7 @@ void KernelMidi::start()
 			RtMidiMessage msg;
 			while (m_outputQueue.try_dequeue(msg))
 				for (auto& device : m_midiOuts)
-					device.sendMessage(msg);
+					device->sendMessage(msg);
 		});
 	}
 	if (!m_midiIns.empty())
@@ -304,14 +304,14 @@ KernelMidi::Result KernelMidi::openOutDevice_(std::size_t deviceIndex)
 {
 	if (deviceIndex < 0 || deviceIndex >= m_midiOuts.size())
 		return {false, "Invalid device"};
-	return m_midiOuts[deviceIndex].open();
+	return m_midiOuts[deviceIndex]->open();
 }
 
 KernelMidi::Result KernelMidi::openInDevice_(std::size_t deviceIndex)
 {
 	if (deviceIndex < 0 || deviceIndex >= m_midiIns.size())
 		return {false, "Invalid device"};
-	return m_midiIns[deviceIndex].open();
+	return m_midiIns[deviceIndex]->open();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -337,14 +337,14 @@ int         KernelMidi::getCurrentInPort() const { return m_model.get().kernelMi
 
 bool KernelMidi::canSend() const
 {
-	return std::ranges::any_of(m_midiOuts, [](const Device<RtMidiOut>& device)
-	{ return device.isOpen(); });
+	return std::ranges::any_of(m_midiOuts, [](const std::unique_ptr<Device<RtMidiOut>>& device)
+	{ return device->isOpen(); });
 }
 
 bool KernelMidi::canReceive() const
 {
-	return std::ranges::any_of(m_midiIns, [](const Device<RtMidiIn>& device)
-	{ return device.isOpen(); });
+	return std::ranges::any_of(m_midiIns, [](const std::unique_ptr<Device<RtMidiIn>>& device)
+	{ return device->isOpen(); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -399,23 +399,23 @@ bool KernelMidi::send(const MidiEvent& event) const
 /* -------------------------------------------------------------------------- */
 
 template <typename RtMidiType>
-std::vector<KernelMidi::Device<RtMidiType>> KernelMidi::makeDevices()
+KernelMidi::Devices<RtMidiType> KernelMidi::makeDevices()
 {
-	std::vector<KernelMidi::Device<RtMidiType>> out;
-	unsigned                                    i = 0;
+	Devices<RtMidiType> out;
+	unsigned            i = 0;
 	for (const std::string& deviceName : getDevices_<RtMidiType>(getAPI()))
-		out.emplace_back(getAPI(), deviceName, i++, *this);
+		out.emplace_back(std::make_unique<Device<RtMidiType>>(getAPI(), deviceName, i++, *this));
 	return out;
 }
 
 /* -------------------------------------------------------------------------- */
 
 template <typename RtMidiType>
-std::vector<KernelMidi::DeviceInfo> KernelMidi::getDevicesInfo(const std::vector<KernelMidi::Device<RtMidiType>>& devices) const
+std::vector<KernelMidi::DeviceInfo> KernelMidi::getDevicesInfo(const KernelMidi::Devices<RtMidiType>& devices) const
 {
 	std::vector<KernelMidi::DeviceInfo> out;
 	for (std::size_t index = 0; const auto& device : devices)
-		out.emplace_back(index++, device.getName(), device.isOpen());
+		out.emplace_back(index++, device->getName(), device->isOpen());
 	return out;
 }
 
