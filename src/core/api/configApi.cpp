@@ -185,14 +185,14 @@ bool ConfigApi::midi_setAPI(RtMidi::Api api)
 
 /* -------------------------------------------------------------------------- */
 
-KernelMidi::Result ConfigApi::midi_openOutPort(int out)
+KernelMidi::Result ConfigApi::midi_openOutDevice(std::size_t deviceIndex)
 {
-	return m_kernelMidi.openOutDevice(out);
+	return m_kernelMidi.openOutDevice(deviceIndex);
 }
 
-KernelMidi::Result ConfigApi::midi_openInPort(int in)
+KernelMidi::Result ConfigApi::midi_openInDevice(std::size_t deviceIndex)
 {
-	return m_kernelMidi.openInDevice(in);
+	return m_kernelMidi.openInDevice(deviceIndex);
 }
 
 /* -------------------------------------------------------------------------- */

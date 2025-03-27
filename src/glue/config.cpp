@@ -269,7 +269,7 @@ void setMidiSyncMode(int syncMode)
 bool openMidiDevice(DeviceType type, std::size_t index)
 {
 	auto&      api = g_engine->getConfigApi();
-	const auto res = type == DeviceType::OUTPUT ? api.midi_openOutPort(index) : api.midi_openInPort(index);
+	const auto res = type == DeviceType::OUTPUT ? api.midi_openOutDevice(index) : api.midi_openInDevice(index);
 	printMidiErrorIfAny_(res);
 	return res.success;
 }
@@ -320,8 +320,8 @@ void save(const PluginData& data)
 
 void apply(const MidiData& data)
 {
-	const m::KernelMidi::Result outRes = g_engine->getConfigApi().midi_openOutPort(data.selectedOutDevice);
-	const m::KernelMidi::Result inRes  = g_engine->getConfigApi().midi_openInPort(data.selectedInDevice);
+	const m::KernelMidi::Result outRes = g_engine->getConfigApi().midi_openOutDevice(data.selectedOutDevice);
+	const m::KernelMidi::Result inRes  = g_engine->getConfigApi().midi_openInDevice(data.selectedInDevice);
 
 	if (outRes.success && inRes.success)
 		return;

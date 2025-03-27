@@ -76,8 +76,8 @@ public:
 	std::string                         midi_getCurrentMidiMapPath() const;
 
 	bool               midi_setAPI(RtMidi::Api);
-	KernelMidi::Result midi_openOutPort(int);
-	KernelMidi::Result midi_openInPort(int);
+	KernelMidi::Result midi_openOutDevice(std::size_t);
+	KernelMidi::Result midi_openInDevice(std::size_t);
 	void               midi_closeOutDevice(std::size_t);
 	void               midi_closeInDevice(std::size_t);
 
