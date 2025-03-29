@@ -59,13 +59,12 @@ void geCheck::draw()
 	const Fl_Color boxColor  = !active() ? FL_INACTIVE_COLOR : G_COLOR_GREY_4;
 	const int      textColor = !active() ? FL_INACTIVE_COLOR : G_COLOR_LIGHT_2;
 	const Fl_Align textAlign = FL_ALIGN_LEFT | FL_ALIGN_CENTER;
-	const int      checkboxW = 12;
-	const int      textW     = w() - (checkboxW + G_GUI_UNIT);
+	const int      textW     = w() - (CHECKBOX_WIDTH + G_GUI_UNIT);
 
 	if (value())
-		fl_rectf(x(), y(), checkboxW, h(), boxColor);
+		fl_rectf(x(), y(), CHECKBOX_WIDTH, h(), boxColor);
 	else
-		fl_rect(x(), y(), checkboxW, h(), boxColor);
+		fl_rect(x(), y(), CHECKBOX_WIDTH, h(), boxColor);
 
 	if (label() == nullptr)
 		return;
