@@ -225,8 +225,11 @@ bool KernelMidi::init()
 	m_midiOuts = makeDevices<RtMidiOut>();
 	m_midiIns  = makeDevices<RtMidiIn>();
 
-	// TODO - open devices accoring to model::KernelMidi info (aka persistence)
-	// const model::KernelMidi& kernelMidi = m_model.get().kernelMidi;
+	/* Open devices accoring to model::KernelMidi info. */
+
+	const model::KernelMidi& kernelMidi = m_model.get().kernelMidi;
+	openDevices(m_midiOuts, kernelMidi.devicesOut);
+	openDevices(m_midiIns, kernelMidi.devicesIn);
 
 	return true;
 }
@@ -235,10 +238,9 @@ bool KernelMidi::init()
 
 bool KernelMidi::setAPI(RtMidi::Api api)
 {
-	m_model.get().kernelMidi.api = api;
-	// TODO - devices persistence
-	// m_model.get().kernelMidi.portOut = G_DEFAULT_MIDI_PORT_OUT;
-	// m_model.get().kernelMidi.portIn  = G_DEFAULT_MIDI_PORT_IN;
+	m_model.get().kernelMidi.api        = api;
+	m_model.get().kernelMidi.devicesOut = {};
+	m_model.get().kernelMidi.devicesIn  = {};
 	m_model.swap(model::SwapType::NONE);
 
 	return true;
@@ -253,9 +255,8 @@ KernelMidi::Result KernelMidi::openOutDevice(std::size_t deviceIndex)
 	if (!res.success)
 		return res;
 
-	// TODO - devices persistence
-	// m_model.get().kernelMidi.portOut = deviceIndex;
-	// m_model.swap(model::SwapType::NONE);
+	m_model.get().kernelMidi.devicesOut.insert(deviceIndex);
+	m_model.swap(model::SwapType::NONE);
 
 	return res;
 }
@@ -267,9 +268,8 @@ KernelMidi::Result KernelMidi::openInDevice(std::size_t deviceIndex)
 	if (!res.success)
 		return res;
 
-	// TODO - devices persistence
-	// m_model.get().kernelMidi.portIn = deviceIndex;
-	// m_model.swap(model::SwapType::NONE);
+	m_model.get().kernelMidi.devicesIn.insert(deviceIndex);
+	m_model.swap(model::SwapType::NONE);
 
 	return res;
 }
@@ -280,12 +280,18 @@ void KernelMidi::closeOutDevice(std::size_t deviceIndex)
 {
 	assert(deviceIndex >= 0 && deviceIndex < m_midiOuts.size());
 	m_midiOuts[deviceIndex]->close();
+
+	m_model.get().kernelMidi.devicesOut.erase(deviceIndex);
+	m_model.swap(model::SwapType::NONE);
 }
 
 void KernelMidi::closeInDevice(std::size_t deviceIndex)
 {
 	assert(deviceIndex >= 0 && deviceIndex < m_midiIns.size());
 	m_midiIns[deviceIndex]->close();
+
+	m_model.get().kernelMidi.devicesIn.erase(deviceIndex);
+	m_model.swap(model::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -430,6 +436,16 @@ std::vector<KernelMidi::DeviceInfo> KernelMidi::getDevicesInfo(const KernelMidi:
 	for (std::size_t index = 0; const auto& device : devices)
 		out.emplace_back(index++, device->getName(), device->isOpen());
 	return out;
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+void KernelMidi::openDevices(Devices<RtMidiType>& devices, const std::set<std::size_t> deviceIndexes)
+{
+	for (const std::size_t deviceIndex : deviceIndexes)
+		if (deviceIndex < devices.size())
+			devices[deviceIndex]->open();
 }
 
 /* -------------------------------------------------------------------------- */
