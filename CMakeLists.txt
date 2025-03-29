@@ -415,6 +415,8 @@ list(APPEND SOURCES
 	src/gui/elems/basics/menu.h
 	src/gui/elems/basics/scrollbar.cpp
 	src/gui/elems/basics/scrollbar.h
+	src/gui/elems/basics/table.cpp
+	src/gui/elems/basics/table.h
 	src/utils/log.cpp
 	src/utils/log.h
 	src/utils/time.cpp
