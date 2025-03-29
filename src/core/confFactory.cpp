@@ -35,6 +35,108 @@ namespace giada::m::confFactory
 {
 namespace
 {
+Conf parse_(std::ifstream& ifs)
+{
+	Conf           conf;
+	nlohmann::json j = nlohmann::json::parse(ifs);
+
+	conf.valid                      = true;
+	conf.logMode                    = j.value(CONF_KEY_LOG_MODE, conf.logMode);
+	conf.showTooltips               = j.value(CONF_KEY_SHOW_TOOLTIPS, conf.showTooltips);
+	conf.langMap                    = j.value(CONF_KEY_LANGMAP, conf.langMap);
+	conf.soundSystem                = j.value(CONF_KEY_SOUND_SYSTEM, conf.soundSystem);
+	conf.soundDeviceOut             = j.value(CONF_KEY_SOUND_DEVICE_OUT, conf.soundDeviceOut);
+	conf.soundDeviceIn              = j.value(CONF_KEY_SOUND_DEVICE_IN, conf.soundDeviceIn);
+	conf.channelsOutCount           = j.value(CONF_KEY_CHANNELS_OUT_COUNT, conf.channelsOutCount);
+	conf.channelsOutStart           = j.value(CONF_KEY_CHANNELS_OUT_START, conf.channelsOutStart);
+	conf.channelsInCount            = j.value(CONF_KEY_CHANNELS_IN_COUNT, conf.channelsInCount);
+	conf.channelsInStart            = j.value(CONF_KEY_CHANNELS_IN_START, conf.channelsInStart);
+	conf.samplerate                 = j.value(CONF_KEY_SAMPLERATE, conf.samplerate);
+	conf.buffersize                 = j.value(CONF_KEY_BUFFER_SIZE, conf.buffersize);
+	conf.limitOutput                = j.value(CONF_KEY_LIMIT_OUTPUT, conf.limitOutput);
+	conf.rsmpQuality                = j.value(CONF_KEY_RESAMPLE_QUALITY, conf.rsmpQuality);
+	conf.midiSystem                 = j.value(CONF_KEY_MIDI_SYSTEM, conf.midiSystem);
+	conf.midiDevicesOut             = j.value(CONF_KEY_MIDI_PORT_OUT, conf.midiDevicesOut);
+	conf.midiDevicesIn              = j.value(CONF_KEY_MIDI_PORT_IN, conf.midiDevicesIn);
+	conf.midiMapPath                = j.value(CONF_KEY_MIDIMAP_PATH, conf.midiMapPath);
+	conf.midiSync                   = j.value(CONF_KEY_MIDI_SYNC, conf.midiSync);
+	conf.midiTCfps                  = j.value(CONF_KEY_MIDI_TC_FPS, conf.midiTCfps);
+	conf.chansStopOnSeqHalt         = j.value(CONF_KEY_CHANS_STOP_ON_SEQ_HALT, conf.chansStopOnSeqHalt);
+	conf.treatRecsAsLoops           = j.value(CONF_KEY_TREAT_RECS_AS_LOOPS, conf.treatRecsAsLoops);
+	conf.inputMonitorDefaultOn      = j.value(CONF_KEY_INPUT_MONITOR_DEFAULT_ON, conf.inputMonitorDefaultOn);
+	conf.overdubProtectionDefaultOn = j.value(CONF_KEY_OVERDUB_PROTECTION_DEFAULT_ON, conf.overdubProtectionDefaultOn);
+	conf.pluginPath                 = j.value(CONF_KEY_PLUGINS_PATH, conf.pluginPath);
+	conf.patchPath                  = j.value(CONF_KEY_PATCHES_PATH, conf.patchPath);
+	conf.samplePath                 = j.value(CONF_KEY_SAMPLES_PATH, conf.samplePath);
+	conf.mainWindowBounds.x         = j.value(CONF_KEY_MAIN_WINDOW_X, conf.mainWindowBounds.x);
+	conf.mainWindowBounds.y         = j.value(CONF_KEY_MAIN_WINDOW_Y, conf.mainWindowBounds.y);
+	conf.mainWindowBounds.w         = j.value(CONF_KEY_MAIN_WINDOW_W, conf.mainWindowBounds.w);
+	conf.mainWindowBounds.h         = j.value(CONF_KEY_MAIN_WINDOW_H, conf.mainWindowBounds.h);
+	conf.browserBounds.x            = j.value(CONF_KEY_BROWSER_X, conf.browserBounds.x);
+	conf.browserBounds.y            = j.value(CONF_KEY_BROWSER_Y, conf.browserBounds.y);
+	conf.browserBounds.w            = j.value(CONF_KEY_BROWSER_W, conf.browserBounds.w);
+	conf.browserBounds.h            = j.value(CONF_KEY_BROWSER_H, conf.browserBounds.h);
+	conf.browserPosition            = j.value(CONF_KEY_BROWSER_POSITION, conf.browserPosition);
+	conf.browserLastPath            = j.value(CONF_KEY_BROWSER_LAST_PATH, conf.browserLastPath);
+	conf.browserLastValue           = j.value(CONF_KEY_BROWSER_LAST_VALUE, conf.browserLastValue);
+	conf.actionEditorBounds.x       = j.value(CONF_KEY_ACTION_EDITOR_X, conf.actionEditorBounds.x);
+	conf.actionEditorBounds.y       = j.value(CONF_KEY_ACTION_EDITOR_Y, conf.actionEditorBounds.y);
+	conf.actionEditorBounds.w       = j.value(CONF_KEY_ACTION_EDITOR_W, conf.actionEditorBounds.w);
+	conf.actionEditorBounds.h       = j.value(CONF_KEY_ACTION_EDITOR_H, conf.actionEditorBounds.h);
+	conf.actionEditorZoom           = j.value(CONF_KEY_ACTION_EDITOR_ZOOM, conf.actionEditorZoom);
+	conf.actionEditorSplitH         = j.value(CONF_KEY_ACTION_EDITOR_SPLIT_H, conf.actionEditorSplitH);
+	conf.actionEditorGridVal        = j.value(CONF_KEY_ACTION_EDITOR_GRID_VAL, conf.actionEditorGridVal);
+	conf.actionEditorGridOn         = j.value(CONF_KEY_ACTION_EDITOR_GRID_ON, conf.actionEditorGridOn);
+	conf.actionEditorPianoRollY     = j.value(CONF_KEY_ACTION_EDITOR_PIANO_ROLL_Y, conf.actionEditorPianoRollY);
+	conf.sampleEditorBounds.x       = j.value(CONF_KEY_SAMPLE_EDITOR_X, conf.sampleEditorBounds.x);
+	conf.sampleEditorBounds.y       = j.value(CONF_KEY_SAMPLE_EDITOR_Y, conf.sampleEditorBounds.y);
+	conf.sampleEditorBounds.w       = j.value(CONF_KEY_SAMPLE_EDITOR_W, conf.sampleEditorBounds.w);
+	conf.sampleEditorBounds.h       = j.value(CONF_KEY_SAMPLE_EDITOR_H, conf.sampleEditorBounds.h);
+	conf.sampleEditorGridVal        = j.value(CONF_KEY_SAMPLE_EDITOR_GRID_VAL, conf.sampleEditorGridVal);
+	conf.sampleEditorGridOn         = j.value(CONF_KEY_SAMPLE_EDITOR_GRID_ON, conf.sampleEditorGridOn);
+	conf.pluginListBounds.x         = j.value(CONF_KEY_PLUGIN_LIST_X, conf.pluginListBounds.x);
+	conf.pluginListBounds.y         = j.value(CONF_KEY_PLUGIN_LIST_Y, conf.pluginListBounds.y);
+	conf.pluginListBounds.w         = j.value(CONF_KEY_PLUGIN_LIST_W, conf.pluginListBounds.w);
+	conf.pluginListBounds.h         = j.value(CONF_KEY_PLUGIN_LIST_H, conf.pluginListBounds.h);
+	conf.midiInputBounds.x          = j.value(CONF_KEY_MIDI_INPUT_X, conf.midiInputBounds.x);
+	conf.midiInputBounds.y          = j.value(CONF_KEY_MIDI_INPUT_Y, conf.midiInputBounds.y);
+	conf.midiInputBounds.w          = j.value(CONF_KEY_MIDI_INPUT_W, conf.midiInputBounds.w);
+	conf.midiInputBounds.h          = j.value(CONF_KEY_MIDI_INPUT_H, conf.midiInputBounds.h);
+	conf.recTriggerMode             = j.value(CONF_KEY_REC_TRIGGER_MODE, conf.recTriggerMode);
+	conf.recTriggerLevel            = j.value(CONF_KEY_REC_TRIGGER_LEVEL, conf.recTriggerLevel);
+	conf.inputRecMode               = j.value(CONF_KEY_INPUT_REC_MODE, conf.inputRecMode);
+	conf.midiInEnabled              = j.value(CONF_KEY_MIDI_IN, conf.midiInEnabled);
+	conf.midiInFilter               = j.value(CONF_KEY_MIDI_IN_FILTER, conf.midiInFilter);
+	conf.midiInRewind               = j.value(CONF_KEY_MIDI_IN_REWIND, conf.midiInRewind);
+	conf.midiInStartStop            = j.value(CONF_KEY_MIDI_IN_START_STOP, conf.midiInStartStop);
+	conf.midiInActionRec            = j.value(CONF_KEY_MIDI_IN_ACTION_REC, conf.midiInActionRec);
+	conf.midiInInputRec             = j.value(CONF_KEY_MIDI_IN_INPUT_REC, conf.midiInInputRec);
+	conf.midiInMetronome            = j.value(CONF_KEY_MIDI_IN_METRONOME, conf.midiInMetronome);
+	conf.midiInVolumeIn             = j.value(CONF_KEY_MIDI_IN_VOLUME_IN, conf.midiInVolumeIn);
+	conf.midiInVolumeOut            = j.value(CONF_KEY_MIDI_IN_VOLUME_OUT, conf.midiInVolumeOut);
+	conf.midiInBeatDouble           = j.value(CONF_KEY_MIDI_IN_BEAT_DOUBLE, conf.midiInBeatDouble);
+	conf.midiInBeatHalf             = j.value(CONF_KEY_MIDI_IN_BEAT_HALF, conf.midiInBeatHalf);
+
+	conf.keyBindPlay          = j.value(CONF_KEY_BIND_PLAY, 0);
+	conf.keyBindRewind        = j.value(CONF_KEY_BIND_REWIND, 0);
+	conf.keyBindRecordActions = j.value(CONF_KEY_BIND_RECORD_ACTIONS, 0);
+	conf.keyBindRecordInput   = j.value(CONF_KEY_BIND_RECORD_INPUT, 0);
+	conf.keyBindExit          = j.value(CONF_KEY_BIND_EXIT, 0);
+
+	conf.pluginChooserBounds.x = j.value(CONF_KEY_PLUGIN_CHOOSER_X, conf.pluginChooserBounds.x);
+	conf.pluginChooserBounds.y = j.value(CONF_KEY_PLUGIN_CHOOSER_Y, conf.pluginChooserBounds.y);
+	conf.pluginChooserBounds.w = j.value(CONF_KEY_PLUGIN_CHOOSER_W, conf.pluginChooserBounds.w);
+	conf.pluginChooserBounds.h = j.value(CONF_KEY_PLUGIN_CHOOSER_H, conf.pluginChooserBounds.h);
+	conf.pluginSortMode.method = j.value(CONF_KEY_PLUGIN_SORT_METHOD, conf.pluginSortMode.method);
+	conf.pluginSortMode.dir    = j.value(CONF_KEY_PLUGIN_SORT_DIR, conf.pluginSortMode.dir);
+
+	conf.uiScaling = j.value(CONF_KEY_UI_SCALING, conf.uiScaling);
+
+	return conf;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void sanitize_(Conf& conf)
 {
 	conf.soundDeviceOut   = std::max(0, conf.soundDeviceOut);
@@ -166,108 +268,21 @@ bool serialize(const Conf& conf)
 
 Conf deserialize()
 {
-	Conf          conf;
 	std::ifstream ifs(u::fs::getConfigFilePath());
-
 	if (!ifs.good())
 		return {};
 
-	nlohmann::json j = nlohmann::json::parse(ifs);
-
-	conf.valid                      = true;
-	conf.logMode                    = j.value(CONF_KEY_LOG_MODE, conf.logMode);
-	conf.showTooltips               = j.value(CONF_KEY_SHOW_TOOLTIPS, conf.showTooltips);
-	conf.langMap                    = j.value(CONF_KEY_LANGMAP, conf.langMap);
-	conf.soundSystem                = j.value(CONF_KEY_SOUND_SYSTEM, conf.soundSystem);
-	conf.soundDeviceOut             = j.value(CONF_KEY_SOUND_DEVICE_OUT, conf.soundDeviceOut);
-	conf.soundDeviceIn              = j.value(CONF_KEY_SOUND_DEVICE_IN, conf.soundDeviceIn);
-	conf.channelsOutCount           = j.value(CONF_KEY_CHANNELS_OUT_COUNT, conf.channelsOutCount);
-	conf.channelsOutStart           = j.value(CONF_KEY_CHANNELS_OUT_START, conf.channelsOutStart);
-	conf.channelsInCount            = j.value(CONF_KEY_CHANNELS_IN_COUNT, conf.channelsInCount);
-	conf.channelsInStart            = j.value(CONF_KEY_CHANNELS_IN_START, conf.channelsInStart);
-	conf.samplerate                 = j.value(CONF_KEY_SAMPLERATE, conf.samplerate);
-	conf.buffersize                 = j.value(CONF_KEY_BUFFER_SIZE, conf.buffersize);
-	conf.limitOutput                = j.value(CONF_KEY_LIMIT_OUTPUT, conf.limitOutput);
-	conf.rsmpQuality                = j.value(CONF_KEY_RESAMPLE_QUALITY, conf.rsmpQuality);
-	conf.midiSystem                 = j.value(CONF_KEY_MIDI_SYSTEM, conf.midiSystem);
-	conf.midiDevicesOut             = j.value(CONF_KEY_MIDI_PORT_OUT, conf.midiDevicesOut);
-	conf.midiDevicesIn              = j.value(CONF_KEY_MIDI_PORT_IN, conf.midiDevicesIn);
-	conf.midiMapPath                = j.value(CONF_KEY_MIDIMAP_PATH, conf.midiMapPath);
-	conf.midiSync                   = j.value(CONF_KEY_MIDI_SYNC, conf.midiSync);
-	conf.midiTCfps                  = j.value(CONF_KEY_MIDI_TC_FPS, conf.midiTCfps);
-	conf.chansStopOnSeqHalt         = j.value(CONF_KEY_CHANS_STOP_ON_SEQ_HALT, conf.chansStopOnSeqHalt);
-	conf.treatRecsAsLoops           = j.value(CONF_KEY_TREAT_RECS_AS_LOOPS, conf.treatRecsAsLoops);
-	conf.inputMonitorDefaultOn      = j.value(CONF_KEY_INPUT_MONITOR_DEFAULT_ON, conf.inputMonitorDefaultOn);
-	conf.overdubProtectionDefaultOn = j.value(CONF_KEY_OVERDUB_PROTECTION_DEFAULT_ON, conf.overdubProtectionDefaultOn);
-	conf.pluginPath                 = j.value(CONF_KEY_PLUGINS_PATH, conf.pluginPath);
-	conf.patchPath                  = j.value(CONF_KEY_PATCHES_PATH, conf.patchPath);
-	conf.samplePath                 = j.value(CONF_KEY_SAMPLES_PATH, conf.samplePath);
-	conf.mainWindowBounds.x         = j.value(CONF_KEY_MAIN_WINDOW_X, conf.mainWindowBounds.x);
-	conf.mainWindowBounds.y         = j.value(CONF_KEY_MAIN_WINDOW_Y, conf.mainWindowBounds.y);
-	conf.mainWindowBounds.w         = j.value(CONF_KEY_MAIN_WINDOW_W, conf.mainWindowBounds.w);
-	conf.mainWindowBounds.h         = j.value(CONF_KEY_MAIN_WINDOW_H, conf.mainWindowBounds.h);
-	conf.browserBounds.x            = j.value(CONF_KEY_BROWSER_X, conf.browserBounds.x);
-	conf.browserBounds.y            = j.value(CONF_KEY_BROWSER_Y, conf.browserBounds.y);
-	conf.browserBounds.w            = j.value(CONF_KEY_BROWSER_W, conf.browserBounds.w);
-	conf.browserBounds.h            = j.value(CONF_KEY_BROWSER_H, conf.browserBounds.h);
-	conf.browserPosition            = j.value(CONF_KEY_BROWSER_POSITION, conf.browserPosition);
-	conf.browserLastPath            = j.value(CONF_KEY_BROWSER_LAST_PATH, conf.browserLastPath);
-	conf.browserLastValue           = j.value(CONF_KEY_BROWSER_LAST_VALUE, conf.browserLastValue);
-	conf.actionEditorBounds.x       = j.value(CONF_KEY_ACTION_EDITOR_X, conf.actionEditorBounds.x);
-	conf.actionEditorBounds.y       = j.value(CONF_KEY_ACTION_EDITOR_Y, conf.actionEditorBounds.y);
-	conf.actionEditorBounds.w       = j.value(CONF_KEY_ACTION_EDITOR_W, conf.actionEditorBounds.w);
-	conf.actionEditorBounds.h       = j.value(CONF_KEY_ACTION_EDITOR_H, conf.actionEditorBounds.h);
-	conf.actionEditorZoom           = j.value(CONF_KEY_ACTION_EDITOR_ZOOM, conf.actionEditorZoom);
-	conf.actionEditorSplitH         = j.value(CONF_KEY_ACTION_EDITOR_SPLIT_H, conf.actionEditorSplitH);
-	conf.actionEditorGridVal        = j.value(CONF_KEY_ACTION_EDITOR_GRID_VAL, conf.actionEditorGridVal);
-	conf.actionEditorGridOn         = j.value(CONF_KEY_ACTION_EDITOR_GRID_ON, conf.actionEditorGridOn);
-	conf.actionEditorPianoRollY     = j.value(CONF_KEY_ACTION_EDITOR_PIANO_ROLL_Y, conf.actionEditorPianoRollY);
-	conf.sampleEditorBounds.x       = j.value(CONF_KEY_SAMPLE_EDITOR_X, conf.sampleEditorBounds.x);
-	conf.sampleEditorBounds.y       = j.value(CONF_KEY_SAMPLE_EDITOR_Y, conf.sampleEditorBounds.y);
-	conf.sampleEditorBounds.w       = j.value(CONF_KEY_SAMPLE_EDITOR_W, conf.sampleEditorBounds.w);
-	conf.sampleEditorBounds.h       = j.value(CONF_KEY_SAMPLE_EDITOR_H, conf.sampleEditorBounds.h);
-	conf.sampleEditorGridVal        = j.value(CONF_KEY_SAMPLE_EDITOR_GRID_VAL, conf.sampleEditorGridVal);
-	conf.sampleEditorGridOn         = j.value(CONF_KEY_SAMPLE_EDITOR_GRID_ON, conf.sampleEditorGridOn);
-	conf.pluginListBounds.x         = j.value(CONF_KEY_PLUGIN_LIST_X, conf.pluginListBounds.x);
-	conf.pluginListBounds.y         = j.value(CONF_KEY_PLUGIN_LIST_Y, conf.pluginListBounds.y);
-	conf.pluginListBounds.w         = j.value(CONF_KEY_PLUGIN_LIST_W, conf.pluginListBounds.w);
-	conf.pluginListBounds.h         = j.value(CONF_KEY_PLUGIN_LIST_H, conf.pluginListBounds.h);
-	conf.midiInputBounds.x          = j.value(CONF_KEY_MIDI_INPUT_X, conf.midiInputBounds.x);
-	conf.midiInputBounds.y          = j.value(CONF_KEY_MIDI_INPUT_Y, conf.midiInputBounds.y);
-	conf.midiInputBounds.w          = j.value(CONF_KEY_MIDI_INPUT_W, conf.midiInputBounds.w);
-	conf.midiInputBounds.h          = j.value(CONF_KEY_MIDI_INPUT_H, conf.midiInputBounds.h);
-	conf.recTriggerMode             = j.value(CONF_KEY_REC_TRIGGER_MODE, conf.recTriggerMode);
-	conf.recTriggerLevel            = j.value(CONF_KEY_REC_TRIGGER_LEVEL, conf.recTriggerLevel);
-	conf.inputRecMode               = j.value(CONF_KEY_INPUT_REC_MODE, conf.inputRecMode);
-	conf.midiInEnabled              = j.value(CONF_KEY_MIDI_IN, conf.midiInEnabled);
-	conf.midiInFilter               = j.value(CONF_KEY_MIDI_IN_FILTER, conf.midiInFilter);
-	conf.midiInRewind               = j.value(CONF_KEY_MIDI_IN_REWIND, conf.midiInRewind);
-	conf.midiInStartStop            = j.value(CONF_KEY_MIDI_IN_START_STOP, conf.midiInStartStop);
-	conf.midiInActionRec            = j.value(CONF_KEY_MIDI_IN_ACTION_REC, conf.midiInActionRec);
-	conf.midiInInputRec             = j.value(CONF_KEY_MIDI_IN_INPUT_REC, conf.midiInInputRec);
-	conf.midiInMetronome            = j.value(CONF_KEY_MIDI_IN_METRONOME, conf.midiInMetronome);
-	conf.midiInVolumeIn             = j.value(CONF_KEY_MIDI_IN_VOLUME_IN, conf.midiInVolumeIn);
-	conf.midiInVolumeOut            = j.value(CONF_KEY_MIDI_IN_VOLUME_OUT, conf.midiInVolumeOut);
-	conf.midiInBeatDouble           = j.value(CONF_KEY_MIDI_IN_BEAT_DOUBLE, conf.midiInBeatDouble);
-	conf.midiInBeatHalf             = j.value(CONF_KEY_MIDI_IN_BEAT_HALF, conf.midiInBeatHalf);
-
-	conf.keyBindPlay          = j.value(CONF_KEY_BIND_PLAY, 0);
-	conf.keyBindRewind        = j.value(CONF_KEY_BIND_REWIND, 0);
-	conf.keyBindRecordActions = j.value(CONF_KEY_BIND_RECORD_ACTIONS, 0);
-	conf.keyBindRecordInput   = j.value(CONF_KEY_BIND_RECORD_INPUT, 0);
-	conf.keyBindExit          = j.value(CONF_KEY_BIND_EXIT, 0);
-
-	conf.pluginChooserBounds.x = j.value(CONF_KEY_PLUGIN_CHOOSER_X, conf.pluginChooserBounds.x);
-	conf.pluginChooserBounds.y = j.value(CONF_KEY_PLUGIN_CHOOSER_Y, conf.pluginChooserBounds.y);
-	conf.pluginChooserBounds.w = j.value(CONF_KEY_PLUGIN_CHOOSER_W, conf.pluginChooserBounds.w);
-	conf.pluginChooserBounds.h = j.value(CONF_KEY_PLUGIN_CHOOSER_H, conf.pluginChooserBounds.h);
-	conf.pluginSortMode.method = j.value(CONF_KEY_PLUGIN_SORT_METHOD, conf.pluginSortMode.method);
-	conf.pluginSortMode.dir    = j.value(CONF_KEY_PLUGIN_SORT_DIR, conf.pluginSortMode.dir);
-
-	conf.uiScaling = j.value(CONF_KEY_UI_SCALING, conf.uiScaling);
-
-	sanitize_(conf);
-
-	return conf;
+	try
+	{
+		Conf conf = parse_(ifs);
+		sanitize_(conf);
+		return conf;
+	}
+	catch (const nlohmann::json::exception& e)
+	{
+		puts("CATCH!");
+		u::log::print("[confFactory::deserialize] Unable to read configuration file! Reason: {}\n", e.what());
+		return {};
+	}
 }
 } // namespace giada::m::confFactory
