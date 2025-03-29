@@ -101,8 +101,6 @@ struct MidiData
 	RtMidi::Api selectedApi;
 	int         selectedSyncMode;
 	std::string selectedMidiMap;
-	int         selectedOutDevice;
-	int         selectedInDevice;
 };
 
 struct PluginData

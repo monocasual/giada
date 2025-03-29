@@ -345,8 +345,6 @@ bool KernelMidi::hasAPI(RtMidi::Api API) const
 
 RtMidi::Api KernelMidi::getAPI() const { return m_model.get().kernelMidi.api; }
 int         KernelMidi::getSyncMode() const { return m_model.get().kernelMidi.sync; }
-int         KernelMidi::getCurrentOutPort() const { return m_model.get().kernelMidi.portOut; }
-int         KernelMidi::getCurrentInPort() const { return m_model.get().kernelMidi.portIn; }
 
 /* -------------------------------------------------------------------------- */
 

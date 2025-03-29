@@ -44,9 +44,6 @@ void sanitize_(Conf& conf)
 	conf.channelsInCount  = std::max(1, conf.channelsInCount);
 	conf.channelsInStart  = std::max(0, conf.channelsInStart);
 
-	conf.midiPortOut = std::max(-1, conf.midiPortOut);
-	conf.midiPortIn  = std::max(-1, conf.midiPortIn);
-
 	conf.uiScaling = std::clamp(conf.uiScaling, G_MIN_UI_SCALING, G_MAX_UI_SCALING);
 }
 } // namespace
@@ -78,8 +75,8 @@ bool serialize(const Conf& conf)
 	j[CONF_KEY_LIMIT_OUTPUT]                  = conf.limitOutput;
 	j[CONF_KEY_RESAMPLE_QUALITY]              = conf.rsmpQuality;
 	j[CONF_KEY_MIDI_SYSTEM]                   = conf.midiSystem;
-	j[CONF_KEY_MIDI_PORT_OUT]                 = conf.midiPortOut;
-	j[CONF_KEY_MIDI_PORT_IN]                  = conf.midiPortIn;
+	j[CONF_KEY_MIDI_PORT_OUT]                 = conf.midiDevicesOut;
+	j[CONF_KEY_MIDI_PORT_IN]                  = conf.midiDevicesIn;
 	j[CONF_KEY_MIDIMAP_PATH]                  = conf.midiMapPath;
 	j[CONF_KEY_MIDI_SYNC]                     = conf.midiSync;
 	j[CONF_KEY_MIDI_TC_FPS]                   = conf.midiTCfps;
@@ -193,8 +190,8 @@ Conf deserialize()
 	conf.limitOutput                = j.value(CONF_KEY_LIMIT_OUTPUT, conf.limitOutput);
 	conf.rsmpQuality                = j.value(CONF_KEY_RESAMPLE_QUALITY, conf.rsmpQuality);
 	conf.midiSystem                 = j.value(CONF_KEY_MIDI_SYSTEM, conf.midiSystem);
-	conf.midiPortOut                = j.value(CONF_KEY_MIDI_PORT_OUT, conf.midiPortOut);
-	conf.midiPortIn                 = j.value(CONF_KEY_MIDI_PORT_IN, conf.midiPortIn);
+	conf.midiDevicesOut             = j.value(CONF_KEY_MIDI_PORT_OUT, conf.midiDevicesOut);
+	conf.midiDevicesIn              = j.value(CONF_KEY_MIDI_PORT_IN, conf.midiDevicesIn);
 	conf.midiMapPath                = j.value(CONF_KEY_MIDIMAP_PATH, conf.midiMapPath);
 	conf.midiSync                   = j.value(CONF_KEY_MIDI_SYNC, conf.midiSync);
 	conf.midiTCfps                  = j.value(CONF_KEY_MIDI_TC_FPS, conf.midiTCfps);

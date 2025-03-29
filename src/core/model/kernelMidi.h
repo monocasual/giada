@@ -34,11 +34,11 @@ namespace giada::m::model
 {
 struct KernelMidi
 {
-	RtMidi::Api api         = G_DEFAULT_MIDI_API;
-	int         portOut     = G_DEFAULT_MIDI_PORT_OUT;
-	int         portIn      = G_DEFAULT_MIDI_PORT_IN;
-	std::string midiMapPath = "";
-	int         sync        = G_MIDI_SYNC_NONE;
+	RtMidi::Api           api = G_DEFAULT_MIDI_API;
+	std::set<std::size_t> devicesOut;
+	std::set<std::size_t> devicesIn;
+	std::string           midiMapPath = "";
+	int                   sync        = G_MIDI_SYNC_NONE;
 };
 } // namespace giada::m::model
 

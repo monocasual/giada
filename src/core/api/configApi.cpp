@@ -142,18 +142,6 @@ int ConfigApi::midi_getSyncMode() const
 
 /* -------------------------------------------------------------------------- */
 
-int ConfigApi::midi_getCurrentOutPort() const
-{
-	return m_kernelMidi.getCurrentOutPort();
-}
-
-int ConfigApi::midi_getCurrentInPort() const
-{
-	return m_kernelMidi.getCurrentInPort();
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::vector<KernelMidi::DeviceInfo> ConfigApi::midi_getOutPorts() const
 {
 	return m_kernelMidi.getAvailableOutDevices();

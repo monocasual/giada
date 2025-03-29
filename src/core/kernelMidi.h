@@ -97,8 +97,6 @@ public:
 	bool        hasAPI(RtMidi::Api API) const;
 	RtMidi::Api getAPI() const;
 	int         getSyncMode() const;
-	int         getCurrentOutPort() const;
-	int         getCurrentInPort() const;
 
 	/* canSend, canReceive
 	Return true if KernelMidi is capable of sending/receiving MIDI messages,

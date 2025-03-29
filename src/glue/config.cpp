@@ -193,8 +193,6 @@ MidiData getMidiData()
 	midiData.availableInDevices  = g_engine->getConfigApi().midi_getInPorts();
 	midiData.selectedApi         = g_engine->getConfigApi().midi_getAPI();
 	midiData.selectedSyncMode    = g_engine->getConfigApi().midi_getSyncMode();
-	midiData.selectedOutDevice   = g_engine->getConfigApi().midi_getCurrentOutPort();
-	midiData.selectedInDevice    = g_engine->getConfigApi().midi_getCurrentInPort();
 
 	return midiData;
 }
@@ -320,8 +318,9 @@ void save(const PluginData& data)
 
 void apply(const MidiData& data)
 {
-	const m::KernelMidi::Result outRes = g_engine->getConfigApi().midi_openOutDevice(data.selectedOutDevice);
-	const m::KernelMidi::Result inRes  = g_engine->getConfigApi().midi_openInDevice(data.selectedInDevice);
+	// TODO - to be removed
+	const m::KernelMidi::Result outRes;
+	const m::KernelMidi::Result inRes;
 
 	if (outRes.success && inRes.success)
 		return;

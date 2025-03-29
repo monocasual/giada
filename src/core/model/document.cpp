@@ -82,8 +82,8 @@ void Document::load(const Conf& conf)
 	kernelAudio.recTriggerLevel         = conf.recTriggerLevel;
 
 	kernelMidi.api         = conf.midiSystem;
-	kernelMidi.portOut     = conf.midiPortOut;
-	kernelMidi.portIn      = conf.midiPortIn;
+	kernelMidi.devicesOut  = conf.midiDevicesOut;
+	kernelMidi.devicesIn   = conf.midiDevicesIn;
 	kernelMidi.midiMapPath = conf.midiMapPath;
 	kernelMidi.sync        = conf.midiSync;
 
@@ -144,11 +144,11 @@ void Document::store(Conf& conf) const
 	conf.rsmpQuality      = kernelAudio.rsmpQuality;
 	conf.recTriggerLevel  = kernelAudio.recTriggerLevel;
 
-	conf.midiSystem  = kernelMidi.api;
-	conf.midiPortOut = kernelMidi.portOut;
-	conf.midiPortIn  = kernelMidi.portIn;
-	conf.midiMapPath = kernelMidi.midiMapPath;
-	conf.midiSync    = kernelMidi.sync;
+	conf.midiSystem     = kernelMidi.api;
+	conf.midiDevicesOut = kernelMidi.devicesOut;
+	conf.midiDevicesIn  = kernelMidi.devicesIn;
+	conf.midiMapPath    = kernelMidi.midiMapPath;
+	conf.midiSync       = kernelMidi.sync;
 
 	conf.inputRecMode   = mixer.inputRecMode;
 	conf.recTriggerMode = mixer.recTriggerMode;
