@@ -197,6 +197,18 @@ KernelMidi::Result ConfigApi::midi_openInPort(int in)
 
 /* -------------------------------------------------------------------------- */
 
+void ConfigApi::midi_closeOutDevice(std::size_t deviceIndex)
+{
+	m_kernelMidi.closeOutDevice(deviceIndex);
+}
+
+void ConfigApi::midi_closeInDevice(std::size_t deviceIndex)
+{
+	m_kernelMidi.closeInDevice(deviceIndex);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ConfigApi::midi_setSyncMode(int syncMode)
 {
 	const float currentBpm = m_model.get().sequencer.bpm;

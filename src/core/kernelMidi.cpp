@@ -138,6 +138,7 @@ void KernelMidi::Device<RtMidiType>::close()
 	assert(m_rtMidi != nullptr);
 
 	m_rtMidi->closePort();
+	u::log::print("[KM] MIDI {} port {} closed successfully\n", getTypeStr(), m_port);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -271,6 +272,20 @@ KernelMidi::Result KernelMidi::openInDevice(std::size_t deviceIndex)
 	// m_model.swap(model::SwapType::NONE);
 
 	return res;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void KernelMidi::closeOutDevice(std::size_t deviceIndex)
+{
+	assert(deviceIndex >= 0 && deviceIndex < m_midiOuts.size());
+	m_midiOuts[deviceIndex]->close();
+}
+
+void KernelMidi::closeInDevice(std::size_t deviceIndex)
+{
+	assert(deviceIndex >= 0 && deviceIndex < m_midiIns.size());
+	m_midiIns[deviceIndex]->close();
 }
 
 /* -------------------------------------------------------------------------- */

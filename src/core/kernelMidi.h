@@ -78,11 +78,14 @@ public:
 
 	bool setAPI(RtMidi::Api API);
 
-	/* open[I/0]device
-	Opens a new I/O device. Also updates model::KernelMidi data if successful. */
+	/* [open|close][I/0]device
+	Opens or closes a new I/O device. Also updates model::KernelMidi data if
+	successful. */
 
 	Result openOutDevice(std::size_t deviceIndex);
 	Result openInDevice(std::size_t deviceIndex);
+	void   closeOutDevice(std::size_t deviceIndex);
+	void   closeInDevice(std::size_t deviceIndex);
 
 	/* getAvailable[Out|In]Devices
 	Return vectors of device information. Use vector indexes coming from each

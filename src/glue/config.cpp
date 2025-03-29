@@ -276,6 +276,14 @@ bool openMidiDevice(DeviceType type, std::size_t index)
 
 /* -------------------------------------------------------------------------- */
 
+void closeMidiDevice(DeviceType type, std::size_t index)
+{
+	auto& api = g_engine->getConfigApi();
+	type == DeviceType::OUTPUT ? api.midi_closeOutDevice(index) : api.midi_closeInDevice(index);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void apply(const AudioData& data)
 {
 	bool res = g_engine->getConfigApi().audio_openStream(
