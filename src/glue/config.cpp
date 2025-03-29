@@ -45,6 +45,25 @@ extern giada::m::Engine* g_engine;
 
 namespace giada::c::config
 {
+namespace
+{
+void printMidiErrorIfAny_(const m::KernelMidi::Result& result)
+{
+	if (result.success)
+		return;
+
+	const std::string message = fmt::format("{}\n\n{}",
+	    g_ui->getI18Text(v::LangMap::CONFIG_MIDI_LABEL_WRONGMIDI),
+	    result.message);
+
+	v::gdAlert(message.c_str(), /*resizable=*/true);
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 AudioDeviceData::AudioDeviceData(DeviceType type, const m::KernelAudio::Device& device)
 : type(type)
 , id(device.id)
@@ -243,6 +262,16 @@ void setMidiMapPath(const std::string& midiMapPath)
 void setMidiSyncMode(int syncMode)
 {
 	g_engine->getConfigApi().midi_setSyncMode(syncMode);
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool openMidiDevice(DeviceType type, std::size_t index)
+{
+	auto&      api = g_engine->getConfigApi();
+	const auto res = type == DeviceType::OUTPUT ? api.midi_openOutPort(index) : api.midi_openInPort(index);
+	printMidiErrorIfAny_(res);
+	return res.success;
 }
 
 /* -------------------------------------------------------------------------- */

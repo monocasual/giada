@@ -145,6 +145,7 @@ void changeMidiAPI(RtMidi::Api);
 
 void setMidiMapPath(const std::string& midiMapPath);
 void setMidiSyncMode(int syncMode);
+bool openMidiDevice(DeviceType, std::size_t index);
 
 void apply(const AudioData&);
 void apply(const MidiData&);
