@@ -34,8 +34,6 @@
 #include "utils/gui.h"
 #include <string>
 
-constexpr int LABEL_WIDTH = 120;
-
 extern giada::v::Ui* g_ui;
 
 namespace giada::v
@@ -115,9 +113,17 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 {
 	end();
 
+	const int LABEL_WIDTH = 120;
+
 	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		m_system = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MIDI_SYSTEM), LABEL_WIDTH);
+		geFlex* line0 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			m_system = new geChoice();
+			line0->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_MIDI_SYSTEM), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line0->addWidget(m_system);
+			line0->end();
+		}
 
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
@@ -137,15 +143,27 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 			line2->end();
 		}
 
-		m_midiMap = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MIDI_OUTPUTMIDIMAP),
-		    g_ui->getI18Text(LangMap::CONFIG_MIDI_NOMIDIMAPSFOUND), LABEL_WIDTH);
-		m_sync    = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MIDI_SYNC), LABEL_WIDTH);
+		geFlex* line3 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			m_midiMap = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MIDI_NOMIDIMAPSFOUND));
+			line3->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_MIDI_OUTPUTMIDIMAP), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line3->addWidget(m_midiMap);
+			line3->end();
+		}
 
-		body->addWidget(m_system, 20);
+		geFlex* line4 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			m_sync = new geChoice();
+			line4->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_MIDI_SYNC), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line4->addWidget(m_sync);
+			line4->end();
+		}
+
+		body->addWidget(line0, G_GUI_UNIT);
 		body->addWidget(line1);
 		body->addWidget(line2);
-		body->addWidget(m_midiMap, 20);
-		body->addWidget(m_sync, 20);
+		body->addWidget(line3, G_GUI_UNIT);
+		body->addWidget(line4, G_GUI_UNIT);
 		body->end();
 	}
 
