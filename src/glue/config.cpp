@@ -189,8 +189,8 @@ MidiData getMidiData()
 
 	midiData.availableMidiMaps   = g_engine->getConfigApi().midi_getMidiMapFilesFound();
 	midiData.selectedMidiMap     = g_engine->getConfigApi().midi_getCurrentMidiMapPath();
-	midiData.availableOutDevices = g_engine->getConfigApi().midi_getOutPorts();
-	midiData.availableInDevices  = g_engine->getConfigApi().midi_getInPorts();
+	midiData.availableOutDevices = g_engine->getConfigApi().midi_getOutDevices();
+	midiData.availableInDevices  = g_engine->getConfigApi().midi_getInDevices();
 	midiData.selectedApi         = g_engine->getConfigApi().midi_getAPI();
 	midiData.selectedSyncMode    = g_engine->getConfigApi().midi_getSyncMode();
 

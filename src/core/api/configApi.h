@@ -68,8 +68,8 @@ public:
 	bool                                midi_hasAPI(RtMidi::Api) const;
 	RtMidi::Api                         midi_getAPI() const;
 	int                                 midi_getSyncMode() const;
-	std::vector<KernelMidi::DeviceInfo> midi_getOutPorts() const;
-	std::vector<KernelMidi::DeviceInfo> midi_getInPorts() const;
+	std::vector<KernelMidi::DeviceInfo> midi_getOutDevices() const;
+	std::vector<KernelMidi::DeviceInfo> midi_getInDevices() const;
 	const std::vector<std::string>&     midi_getMidiMapFilesFound() const;
 	std::string                         midi_getCurrentMidiMapPath() const;
 

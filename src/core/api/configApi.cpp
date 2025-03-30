@@ -142,12 +142,12 @@ int ConfigApi::midi_getSyncMode() const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<KernelMidi::DeviceInfo> ConfigApi::midi_getOutPorts() const
+std::vector<KernelMidi::DeviceInfo> ConfigApi::midi_getOutDevices() const
 {
 	return m_kernelMidi.getAvailableOutDevices();
 }
 
-std::vector<KernelMidi::DeviceInfo> ConfigApi::midi_getInPorts() const
+std::vector<KernelMidi::DeviceInfo> ConfigApi::midi_getInDevices() const
 {
 	return m_kernelMidi.getAvailableInDevices();
 }
