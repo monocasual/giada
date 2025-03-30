@@ -147,7 +147,6 @@ bool openMidiDevice(DeviceType, std::size_t index);
 void closeMidiDevice(DeviceType, std::size_t index);
 
 void apply(const AudioData&);
-void apply(const MidiData&);
 void save(const MiscData&);
 void save(const PluginData&);
 void save(const BehaviorsData&);

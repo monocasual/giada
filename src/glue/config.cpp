@@ -316,25 +316,6 @@ void save(const PluginData& data)
 
 /* -------------------------------------------------------------------------- */
 
-void apply(const MidiData& data)
-{
-	// TODO - to be removed
-	const m::KernelMidi::Result outRes;
-	const m::KernelMidi::Result inRes;
-
-	if (outRes.success && inRes.success)
-		return;
-
-	const std::string message = fmt::format("{}\n\n{}\n{}",
-	    g_ui->getI18Text(v::LangMap::CONFIG_MIDI_LABEL_WRONGMIDI),
-	    outRes.message,
-	    inRes.message);
-
-	v::gdAlert(message.c_str(), /*resizable=*/true);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void save(const MiscData& data)
 {
 	g_ui->model.logMode      = data.logMode;

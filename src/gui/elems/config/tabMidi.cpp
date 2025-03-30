@@ -29,7 +29,6 @@
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/textButton.h"
 #include "gui/elems/config/stringMenu.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
@@ -138,24 +137,6 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 			line2->end();
 		}
 
-		geFlex* col1 = new geFlex(Direction::VERTICAL);
-		{
-			geFlex* line5 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
-			{
-				m_applyBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_APPLY));
-
-				line5->addWidget(new geBox());
-				line5->addWidget(m_applyBtn, 80);
-				line5->addWidget(new geBox());
-				line5->end();
-			}
-
-			col1->addWidget(new geBox());
-			col1->addWidget(line5, G_GUI_UNIT);
-			col1->addWidget(new geBox());
-			col1->end();
-		}
-
 		m_midiMap = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MIDI_OUTPUTMIDIMAP),
 		    g_ui->getI18Text(LangMap::CONFIG_MIDI_NOMIDIMAPSFOUND), LABEL_WIDTH);
 		m_sync    = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MIDI_SYNC), LABEL_WIDTH);
@@ -165,7 +146,6 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		body->addWidget(line2);
 		body->addWidget(m_midiMap, 20);
 		body->addWidget(m_sync, 20);
-		body->addWidget(col1);
 		body->end();
 	}
 
@@ -189,9 +169,6 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		m_data.selectedSyncMode = id;
 		c::config::setMidiSyncMode(m_data.selectedSyncMode);
 	};
-
-	m_applyBtn->onClick = [this]()
-	{ c::config::apply(m_data); };
 
 	rebuild(c::config::getMidiData());
 }
