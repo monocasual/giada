@@ -39,11 +39,9 @@ namespace giada::m
 {
 namespace
 {
-constexpr auto OUTPUT_NAME               = "Giada MIDI output";
-constexpr auto INPUT_NAME                = "Giada MIDI input";
-constexpr int  OUTPUT_QUEUE_MIN_CAPACITY = 8;
-constexpr int  INPUT_QUEUE_MIN_CAPACITY  = 8;
-constexpr int  MAX_NUM_PRODUCERS         = 2; // Real-time thread and MIDI sync thread
+constexpr int OUTPUT_QUEUE_MIN_CAPACITY = 8;
+constexpr int INPUT_QUEUE_MIN_CAPACITY  = 8;
+constexpr int MAX_NUM_PRODUCERS         = 2; // Real-time thread and MIDI sync thread
 
 /* -------------------------------------------------------------------------- */
 
