@@ -43,15 +43,7 @@ geTabMidi::geDevices::geDevices(const std::vector<m::KernelMidi::DeviceInfo>& de
 , m_devices(devices)
 , m_type(type)
 {
-	rows(devices.size());
-	row_header(false);
-	row_height_all(G_GUI_UNIT + PADDING * 2);
-	row_resize(false);
-
-	cols(2);
-	col_header(true);
-	col_resize(true);
-	col_width(0, 350);
+	prepareLayout();
 }
 
 Fl_Widget* geTabMidi::geDevices::setCellContent(int row, int col, int X, int Y, int W, int H)
@@ -103,6 +95,27 @@ std::string geTabMidi::geDevices::setHeaderText(int col)
 	return "";
 }
 
+void geTabMidi::geDevices::rebuild(const std::vector<m::KernelMidi::DeviceInfo>& devices)
+{
+	m_devices = devices;
+	clear();
+	prepareLayout();
+	init();
+}
+
+void geTabMidi::geDevices::prepareLayout()
+{
+	rows(m_devices.size());
+	row_header(false);
+	row_height_all(G_GUI_UNIT + PADDING * 2);
+	row_resize(false);
+
+	cols(2);
+	col_header(true);
+	col_resize(true);
+	col_width(0, 350);
+}
+
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -128,7 +141,6 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			m_devicesOut = new geDevices(m_data.availableOutDevices, c::config::DeviceType::OUTPUT);
-			m_devicesOut->init();
 			line1->addWidget(new geBox("Output devices", FL_ALIGN_RIGHT), LABEL_WIDTH);
 			line1->addWidget(m_devicesOut);
 			line1->end();
@@ -137,7 +149,6 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		geFlex* line2 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			m_devicesIn = new geDevices(m_data.availableInDevices, c::config::DeviceType::INPUT);
-			m_devicesIn->init();
 			line2->addWidget(new geBox("Input devices", FL_ALIGN_RIGHT), LABEL_WIDTH);
 			line2->addWidget(m_devicesIn);
 			line2->end();
@@ -196,6 +207,9 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 void geTabMidi::rebuild(const c::config::MidiData& data)
 {
 	m_data = data;
+
+	m_devicesOut->rebuild(m_data.availableOutDevices);
+	m_devicesIn->rebuild(m_data.availableInDevices);
 
 	m_system->clear();
 	for (const auto& [key, value] : m_data.availableApis)

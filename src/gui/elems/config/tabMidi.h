@@ -50,11 +50,15 @@ private:
 		Fl_Widget*  setCellContent(int row, int col, int x, int y, int w, int h) override;
 		std::string setHeaderText(int col) override;
 
+		void rebuild(const std::vector<m::KernelMidi::DeviceInfo>&);
+
 	private:
 		static constexpr int PADDING = 2;
 
-		const std::vector<m::KernelMidi::DeviceInfo>& m_devices;
-		c::config::DeviceType                         m_type;
+		void prepareLayout();
+
+		std::vector<m::KernelMidi::DeviceInfo> m_devices;
+		c::config::DeviceType                  m_type;
 	};
 
 	void rebuild(const c::config::MidiData&);
