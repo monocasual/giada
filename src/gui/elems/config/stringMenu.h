@@ -37,6 +37,7 @@ class geStringMenu : public geChoice
 {
 public:
 	geStringMenu(const char* l, const std::string& msgIfNotFound, int labelWidth);
+	geStringMenu(const std::string& msgIfNotFound);
 
 	void rebuild(const std::vector<std::string>& data);
 
