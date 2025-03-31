@@ -256,9 +256,8 @@ void MidiDispatcher::processChannel(const Channel& c, const MidiEvent& midiEvent
 	/* Process learned plugins parameters. */
 	processPlugins(c.id, c.plugins, midiEvent);
 
-	/* Redirect raw MIDI message (pure + velocity) to plug-ins in armed
-	channels. */
-	if (c.armed)
+	/* Redirect raw MIDI message (pure + velocity) to plug-ins in armed MIDI channels. */
+	if (c.armed && c.type == ChannelType::MIDI)
 		c::channel::sendMidiToChannel(c.id, midiEvent, Thread::MIDI);
 }
 
