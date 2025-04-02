@@ -27,21 +27,38 @@
 #ifndef GE_PLUGIN_BROWSER_H
 #define GE_PLUGIN_BROWSER_H
 
-#include <FL/Fl_Browser.H>
+#include "src/core/plugins/pluginManager.h"
+#include "src/gui/elems/basics/tableText.h"
 
 namespace giada::v
 {
-class gePluginBrowser : public Fl_Browser
+class gePluginBrowser : public geTableText
 {
 public:
-	gePluginBrowser(int x, int y, int w, int h);
+	enum class Column : int
+	{
+		NAME = 0,
+		MANUFACTURER_NAME,
+		CATEGORY,
+		FORMAT,
+		JUCE_ID
+	};
 
-	void refresh();
+	gePluginBrowser();
+
+	std::string getCellText(int row, int col) const override;
+	std::string getHeaderText(int col) const override;
+
+	m::PluginManager::SortMethod getSortMethodByColumn(int col) const;
+
+	void rebuild();
 
 private:
-	void computeWidths();
+	int getContentWidth(int row, int column) const override;
 
-	int m_widths[5];
+	void prepareLayout();
+
+	std::vector<m::PluginManager::PluginInfo> m_pluginInfo;
 };
 } // namespace giada::v
 

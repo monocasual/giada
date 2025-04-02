@@ -36,82 +36,121 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
-: Fl_Browser(x, y, w, h)
-, m_widths{0}
+gePluginBrowser::gePluginBrowser()
+: geTableText()
+, m_pluginInfo(c::plugin::getPluginsInfo())
 {
-	box(G_CUSTOM_BORDER_BOX);
-	textsize(G_GUI_FONT_SIZE_BASE);
-	textcolor(G_COLOR_LIGHT_2);
-	selection_color(G_COLOR_GREY_4);
-	color(G_COLOR_GREY_2);
-
-	this->scrollbar.color(G_COLOR_GREY_2);
-	this->scrollbar.selection_color(G_COLOR_GREY_4);
-	this->scrollbar.labelcolor(G_COLOR_LIGHT_1);
-	this->scrollbar.slider(G_CUSTOM_BORDER_BOX);
-
-	this->hscrollbar.color(G_COLOR_GREY_2);
-	this->hscrollbar.selection_color(G_COLOR_GREY_4);
-	this->hscrollbar.labelcolor(G_COLOR_LIGHT_1);
-	this->hscrollbar.slider(G_CUSTOM_BORDER_BOX);
-
-	type(FL_HOLD_BROWSER);
-
-	computeWidths();
-
-	column_widths(m_widths);
-	column_char('\t'); // tabs as column delimiters
-
-	refresh();
-
-	end();
+	prepareLayout();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void gePluginBrowser::refresh()
+std::string gePluginBrowser::getCellText(int row, int col) const
 {
+	switch (static_cast<Column>(col))
+	{
+	case Column::NAME:
+		return m_pluginInfo[row].name;
+	case Column::MANUFACTURER_NAME:
+		return m_pluginInfo[row].manufacturerName;
+	case Column::CATEGORY:
+		return m_pluginInfo[row].category;
+	case Column::FORMAT:
+		return m_pluginInfo[row].format;
+	case Column::JUCE_ID:
+		return m_pluginInfo[row].juceId;
+	default:
+		return "";
+	}
+
+	return "";
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::string gePluginBrowser::getHeaderText(int col) const
+{
+	switch (static_cast<Column>(col))
+	{
+	case Column::NAME:
+		return "Name";
+	case Column::MANUFACTURER_NAME:
+		return "Manufacturer";
+	case Column::CATEGORY:
+		return "Category";
+	case Column::FORMAT:
+		return "Format";
+	case Column::JUCE_ID:
+		return "ID";
+	default:
+		return "";
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+m::PluginManager::SortMethod gePluginBrowser::getSortMethodByColumn(int col) const
+{
+	switch (static_cast<gePluginBrowser::Column>(col))
+	{
+	case gePluginBrowser::Column::NAME:
+	default:
+		return m::PluginManager::SortMethod::NAME;
+	case gePluginBrowser::Column::MANUFACTURER_NAME:
+		return m::PluginManager::SortMethod::MANUFACTURER;
+	case gePluginBrowser::Column::CATEGORY:
+		return m::PluginManager::SortMethod::CATEGORY;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gePluginBrowser::rebuild()
+{
+	m_pluginInfo = c::plugin::getPluginsInfo();
+
 	clear();
-
-	add(g_ui->getI18Text(LangMap::PLUGINCHOOSER_HEADER));
-	add("---\t---\t---\t---\t---");
-
-	for (m::PluginManager::PluginInfo pi : c::plugin::getPluginsInfo())
-	{
-		std::string s;
-		if (pi.isKnown)
-		{
-			std::string m = pi.exists ? "" : "@-";
-
-			s = fmt::format("{0}{1}\t{0}{2}\t{0}{3}\t{0}{4}\t{0}{5}",
-			    m, pi.name, pi.manufacturerName, pi.category, pi.format, pi.juceId);
-		}
-		else
-			s = fmt::format("?\t?\t?\t?\t? {} ?", pi.juceId);
-
-		add(s.c_str());
-	}
+	prepareLayout();
+	redraw();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void gePluginBrowser::computeWidths()
+void gePluginBrowser::prepareLayout()
 {
-	constexpr int PADDDING = 60;
+	rows(m_pluginInfo.size());
+	row_header(false);
+	row_height_all(G_GUI_UNIT);
+	row_resize(false);
 
-	for (m::PluginManager::PluginInfo pi : c::plugin::getPluginsInfo())
+	cols(5);
+	col_header(true);
+	col_resize(true);
+
+	fitContent();
+}
+
+/* -------------------------------------------------------------------------- */
+
+int gePluginBrowser::getContentWidth(int row, int column) const
+{
+	const auto columnToField = [this](int row, int column) -> const std::string&
 	{
-		// Explicit type std::max<int> to fix MINMAX macro hell on Windows
-		m_widths[0] = std::max<int>(u::gui::getStringRect(pi.name).w, m_widths[0]);
-		m_widths[1] = std::max<int>(u::gui::getStringRect(pi.manufacturerName).w, m_widths[1]);
-		m_widths[2] = std::max<int>(u::gui::getStringRect(pi.category).w, m_widths[2]);
-		m_widths[3] = std::max<int>(u::gui::getStringRect(pi.format).w, m_widths[3]);
-	}
-	m_widths[0] += PADDDING;
-	m_widths[1] += PADDDING;
-	m_widths[2] += PADDDING;
-	m_widths[3] += PADDDING;
-	m_widths[4] = 0;
+		switch (static_cast<Column>(column))
+		{
+		case Column::NAME:
+			return m_pluginInfo[row].name;
+		case Column::MANUFACTURER_NAME:
+			return m_pluginInfo[row].manufacturerName;
+		case Column::CATEGORY:
+			return m_pluginInfo[row].category;
+		case Column::FORMAT:
+			return m_pluginInfo[row].format;
+		case Column::JUCE_ID:
+			return m_pluginInfo[row].juceId;
+		}
+	};
+
+	return u::gui::getStringRect(columnToField(row, column)).w + G_GUI_OUTER_MARGIN;
 }
 } // namespace giada::v
