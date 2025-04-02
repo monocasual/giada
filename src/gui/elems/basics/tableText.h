@@ -24,27 +24,35 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_TABLE_H
-#define GE_TABLE_H
+#ifndef GE_TABLE_TEXT_H
+#define GE_TABLE_TEXT_H
 
+#include "src/deps/geompp/src/rect.hpp"
 #include "src/gui/elems/basics/tableBase.h"
 #include <string>
 
 namespace giada::v
 {
-/* geTable
-A table where each cell contains a Fl_Widget. */
+/* geTableText
+A table where each cell contains text. It works on a row-basis, where only the
+entire row can be selected (instead of the single cell). Use this for list of
+elements such as plug-ins or file in a file browser. */
 
-class geTable : public geTableBase
+class geTableText : public geTableBase
 {
 public:
-	virtual Fl_Widget*  setCellContent(int row, int col, int x, int y, int w, int h) = 0;
-	virtual std::string setHeaderText(int col)                                       = 0;
+	/* getSelection
+	Returns the selected rows range [a, b). */
 
-	void init();
+	geompp::Range<int> getSelection();
 
 protected:
-	geTable();
+	geTableText();
+
+	int handle(int) override;
+
+	virtual std::string getCellText(int row, int col) const = 0;
+	virtual std::string getHeaderText(int col) const        = 0;
 
 private:
 	void draw_cell(TableContext, int row, int col, int x, int y, int w, int h) override;
