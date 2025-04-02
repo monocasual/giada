@@ -29,78 +29,152 @@
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/textButton.h"
 #include "gui/elems/config/stringMenu.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 #include <string>
 
-constexpr int LABEL_WIDTH = 120;
-
 extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
+geTabMidi::geDevices::geDevices(const std::vector<m::KernelMidi::DeviceInfo>& devices, c::config::DeviceType type)
+: geTable()
+, m_devices(devices)
+, m_type(type)
+{
+	prepareLayout();
+}
+
+Fl_Widget* geTabMidi::geDevices::setCellContent(int row, int col, int X, int Y, int W, int H)
+{
+	assert(static_cast<std::size_t>(row) < m_devices.size());
+
+	geFlex* container = nullptr;
+
+	if (col == 0)
+	{
+		container = new geFlex(X, Y, W, H, Direction::HORIZONTAL);
+		{
+			container->addWidget(new geBox(), PADDING);
+			container->addWidget(new geBox(X, Y, W, H, m_devices[row].name.c_str(), FL_ALIGN_LEFT));
+			container->end();
+		}
+	}
+	else
+	{
+		container = new geFlex(X, Y, W, H, Direction::HORIZONTAL, /*gutter=*/0, /*pad=*/{PADDING});
+		{
+			geCheck* check = new geCheck(0, 0, 0, 0);
+			container->addWidget(new geBox());
+			container->addWidget(check, geCheck::CHECKBOX_WIDTH);
+			container->addWidget(new geBox());
+			container->end();
+
+			check->value(m_devices[row].isOpen);
+
+			check->onChange = [this, row](bool value)
+			{
+				if (value)
+					c::config::openMidiDevice(m_type, row);
+				else
+					c::config::closeMidiDevice(m_type, row);
+			};
+		}
+	}
+
+	return container;
+}
+
+std::string geTabMidi::geDevices::setHeaderText(int col)
+{
+	if (col == 0)
+		return "Device";
+	if (col == 1)
+		return "Enable";
+	return "";
+}
+
+void geTabMidi::geDevices::rebuild(const std::vector<m::KernelMidi::DeviceInfo>& devices)
+{
+	m_devices = devices;
+	clear();
+	prepareLayout();
+	init();
+}
+
+void geTabMidi::geDevices::prepareLayout()
+{
+	rows(m_devices.size());
+	row_header(false);
+	row_height_all(G_GUI_UNIT + PADDING * 2);
+	row_resize(false);
+
+	cols(2);
+	col_header(true);
+	col_resize(true);
+	col_width(0, 350);
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 : Fl_Group(bounds.x, bounds.y, bounds.w, bounds.h, g_ui->getI18Text(LangMap::CONFIG_MIDI_TITLE))
 , m_data(c::config::getMidiData())
 {
 	end();
 
+	const int LABEL_WIDTH = 120;
+
 	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		m_system = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MIDI_SYSTEM), LABEL_WIDTH);
+		geFlex* line0 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			m_system = new geChoice();
+			line0->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_MIDI_SYSTEM), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line0->addWidget(m_system);
+			line0->end();
+		}
 
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_portOut   = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MIDI_OUTPUTPORT),
-			      g_ui->getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
-			m_enableOut = new geCheck(0, 0, 0, 0);
-
-			line1->addWidget(m_portOut);
-			line1->addWidget(m_enableOut, 12);
+			m_devicesOut = new geDevices(m_data.availableOutDevices, c::config::DeviceType::OUTPUT);
+			line1->addWidget(new geBox("Output devices", FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line1->addWidget(m_devicesOut);
 			line1->end();
 		}
 
 		geFlex* line2 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_portIn   = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MIDI_INPUTPORT),
-			      g_ui->getI18Text(LangMap::CONFIG_MIDI_NOPORTSFOUND), LABEL_WIDTH);
-			m_enableIn = new geCheck(0, 0, 0, 0);
-
-			line2->addWidget(m_portIn);
-			line2->addWidget(m_enableIn, 12);
+			m_devicesIn = new geDevices(m_data.availableInDevices, c::config::DeviceType::INPUT);
+			line2->addWidget(new geBox("Input devices", FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line2->addWidget(m_devicesIn);
 			line2->end();
 		}
 
-		geFlex* col1 = new geFlex(Direction::VERTICAL);
+		geFlex* line3 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			geFlex* line5 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
-			{
-				m_applyBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_APPLY));
-
-				line5->addWidget(new geBox());
-				line5->addWidget(m_applyBtn, 80);
-				line5->addWidget(new geBox());
-				line5->end();
-			}
-
-			col1->addWidget(new geBox());
-			col1->addWidget(line5, G_GUI_UNIT);
-			col1->addWidget(new geBox());
-			col1->end();
+			m_midiMap = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MIDI_NOMIDIMAPSFOUND));
+			line3->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_MIDI_OUTPUTMIDIMAP), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line3->addWidget(m_midiMap);
+			line3->end();
 		}
 
-		m_midiMap = new geStringMenu(g_ui->getI18Text(LangMap::CONFIG_MIDI_OUTPUTMIDIMAP),
-		    g_ui->getI18Text(LangMap::CONFIG_MIDI_NOMIDIMAPSFOUND), LABEL_WIDTH);
-		m_sync    = new geChoice(g_ui->getI18Text(LangMap::CONFIG_MIDI_SYNC), LABEL_WIDTH);
+		geFlex* line4 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			m_sync = new geChoice();
+			line4->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_MIDI_SYNC), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line4->addWidget(m_sync);
+			line4->end();
+		}
 
-		body->addWidget(m_system, 20);
-		body->addWidget(line1, 20);
-		body->addWidget(line2, 20);
-		body->addWidget(m_midiMap, 20);
-		body->addWidget(m_sync, 20);
-		body->addWidget(col1);
+		body->addWidget(line0, G_GUI_UNIT);
+		body->addWidget(line1);
+		body->addWidget(line2);
+		body->addWidget(line3, G_GUI_UNIT);
+		body->addWidget(line4, G_GUI_UNIT);
 		body->end();
 	}
 
@@ -113,60 +187,17 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		rebuild(c::config::getMidiData());
 	};
 
-	m_portOut->onChange = [this](ID id)
-	{ m_data.outPort = id; };
-
-	m_portIn->onChange = [this](ID id)
-	{ m_data.inPort = id; };
-
-	m_enableOut->copy_tooltip(g_ui->getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEOUT));
-	m_enableOut->onChange = [this](bool b)
-	{
-		if (m_data.outPorts.empty())
-			return;
-		if (b)
-		{
-			m_data.outPort = m_portOut->getSelectedId();
-			m_portOut->activate();
-		}
-		else
-		{
-			m_data.outPort = -1;
-			m_portOut->deactivate();
-		}
-	};
-
-	m_enableIn->copy_tooltip(g_ui->getI18Text(LangMap::CONFIG_MIDI_LABEL_ENABLEIN));
-	m_enableIn->onChange = [this](bool b)
-	{
-		if (m_data.inPorts.empty())
-			return;
-		if (b)
-		{
-			m_data.inPort = m_portIn->getSelectedId();
-			m_portIn->activate();
-		}
-		else
-		{
-			m_data.inPort = -1;
-			m_portIn->deactivate();
-		}
-	};
-
 	m_midiMap->onChange = [this](ID id)
 	{
-		m_data.midiMap = id;
+		m_data.selectedMidiMap = id;
 		c::config::setMidiMapPath(m_data.getMidiMapByIndex(id));
 	};
 
 	m_sync->onChange = [this](ID id)
 	{
-		m_data.syncMode = id;
-		c::config::setMidiSyncMode(m_data.syncMode);
+		m_data.selectedSyncMode = id;
+		c::config::setMidiSyncMode(m_data.selectedSyncMode);
 	};
-
-	m_applyBtn->onClick = [this]()
-	{ c::config::apply(m_data); };
 
 	rebuild(c::config::getMidiData());
 }
@@ -177,50 +208,23 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 {
 	m_data = data;
 
+	m_devicesOut->rebuild(m_data.availableOutDevices);
+	m_devicesIn->rebuild(m_data.availableInDevices);
+
 	m_system->clear();
-	for (const auto& [key, value] : m_data.apis)
+	for (const auto& [key, value] : m_data.availableApis)
 		m_system->addItem(value.c_str(), key);
-	if (m_system->hasItem(m_data.api)) // Selected API might not be present in available APIs
-		m_system->showItem(m_data.api);
+	if (m_system->hasItem(m_data.selectedApi)) // Selected API might not be present in available APIs
+		m_system->showItem(m_data.selectedApi);
 
-	m_portOut->rebuild(m_data.outPorts);
-	if (m_data.outPort == -1)
-	{
-		m_portOut->showItem(0);
-		m_portOut->deactivate();
-	}
-	else if (m_portOut->hasItem(m_data.outPort))
-		m_portOut->showItem(m_data.outPort);
-
-	m_portIn->rebuild(m_data.inPorts);
-	if (m_data.inPort == -1)
-	{
-		m_portIn->showItem(0);
-		m_portIn->deactivate();
-	}
-	else if (m_portIn->hasItem(m_data.inPort))
-		m_portIn->showItem(m_data.inPort);
-
-	m_enableOut->value(m_data.outPort != -1);
-	if (m_data.outPorts.empty())
-		m_enableOut->deactivate();
-	else
-		m_enableOut->activate();
-
-	m_enableIn->value(m_data.inPort != -1);
-	if (m_data.inPorts.empty())
-		m_enableIn->deactivate();
-	else
-		m_enableIn->activate();
-
-	m_midiMap->rebuild(m_data.midiMaps);
-	const std::size_t midiMapIndex = u::vector::indexOf(m_data.midiMaps, m_data.midiMap);
-	if (midiMapIndex < m_data.midiMaps.size())
+	m_midiMap->rebuild(m_data.availableMidiMaps);
+	const std::size_t midiMapIndex = u::vector::indexOf(m_data.availableMidiMaps, m_data.selectedMidiMap);
+	if (midiMapIndex < m_data.availableMidiMaps.size())
 		m_midiMap->showItem(midiMapIndex);
 
 	m_sync->clear();
-	for (const auto& [key, value] : m_data.syncModes)
+	for (const auto& [key, value] : m_data.availableSyncModes)
 		m_sync->addItem(value.c_str(), key);
-	m_sync->showItem(m_data.syncMode);
+	m_sync->showItem(m_data.selectedSyncMode);
 }
 } // namespace giada::v

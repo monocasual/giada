@@ -37,6 +37,14 @@ geStringMenu::geStringMenu(const char* l, const std::string& msgIfNotFound, int 
 
 /* -------------------------------------------------------------------------- */
 
+geStringMenu::geStringMenu(const std::string& msgIfNotFound)
+: geChoice()
+, m_msgIfNotFound(msgIfNotFound)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geStringMenu::rebuild(const std::vector<std::string>& data)
 {
 	clear();

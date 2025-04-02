@@ -142,26 +142,14 @@ int ConfigApi::midi_getSyncMode() const
 
 /* -------------------------------------------------------------------------- */
 
-int ConfigApi::midi_getCurrentOutPort() const
+std::vector<KernelMidi::DeviceInfo> ConfigApi::midi_getOutDevices() const
 {
-	return m_kernelMidi.getCurrentOutPort();
+	return m_kernelMidi.getAvailableOutDevices();
 }
 
-int ConfigApi::midi_getCurrentInPort() const
+std::vector<KernelMidi::DeviceInfo> ConfigApi::midi_getInDevices() const
 {
-	return m_kernelMidi.getCurrentInPort();
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::vector<std::string> ConfigApi::midi_getOutPorts() const
-{
-	return m_kernelMidi.getOutPorts();
-}
-
-std::vector<std::string> ConfigApi::midi_getInPorts() const
-{
-	return m_kernelMidi.getInPorts();
+	return m_kernelMidi.getAvailableInDevices();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -185,14 +173,26 @@ bool ConfigApi::midi_setAPI(RtMidi::Api api)
 
 /* -------------------------------------------------------------------------- */
 
-KernelMidi::Result ConfigApi::midi_openOutPort(int out)
+KernelMidi::Result ConfigApi::midi_openOutDevice(std::size_t deviceIndex)
 {
-	return m_kernelMidi.openOutPort(out);
+	return m_kernelMidi.openOutDevice(deviceIndex);
 }
 
-KernelMidi::Result ConfigApi::midi_openInPort(int in)
+KernelMidi::Result ConfigApi::midi_openInDevice(std::size_t deviceIndex)
 {
-	return m_kernelMidi.openInPort(in);
+	return m_kernelMidi.openInDevice(deviceIndex);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ConfigApi::midi_closeOutDevice(std::size_t deviceIndex)
+{
+	m_kernelMidi.closeOutDevice(deviceIndex);
+}
+
+void ConfigApi::midi_closeInDevice(std::size_t deviceIndex)
+{
+	m_kernelMidi.closeInDevice(deviceIndex);
 }
 
 /* -------------------------------------------------------------------------- */

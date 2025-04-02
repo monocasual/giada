@@ -33,16 +33,170 @@
 #include <cassert>
 #include <chrono>
 #include <memory>
+#include <ranges>
 
 namespace giada::m
 {
 namespace
 {
-constexpr auto OUTPUT_NAME       = "Giada MIDI output";
-constexpr auto INPUT_NAME        = "Giada MIDI input";
-constexpr int  MAX_RTMIDI_EVENTS = 8;
-constexpr int  MAX_NUM_PRODUCERS = 2; // Real-time thread and MIDI sync thread
+constexpr int OUTPUT_QUEUE_MIN_CAPACITY = 8;
+constexpr int INPUT_QUEUE_MIN_CAPACITY  = 8;
+constexpr int MAX_NUM_PRODUCERS         = 2; // Real-time thread and MIDI sync thread
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+std::vector<std::string> getDevices_(RtMidi::Api api)
+{
+	std::vector<std::string>          res;
+	const std::unique_ptr<RtMidiType> midiType = std::make_unique<RtMidiType>(api);
+
+	for (unsigned int i = 0; i < midiType->getPortCount(); i++)
+		res.push_back(midiType->getPortName(i));
+
+	return res;
+}
 } // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+KernelMidi::Device<RtMidiType>::Device(RtMidi::Api api, const std::string& name, unsigned port, KernelMidi& kernelMidi)
+: m_port(port)
+, m_kernelMidi(kernelMidi)
+, m_elapsedTime(0.0)
+{
+	try
+	{
+		m_rtMidi = std::make_unique<RtMidiType>(api, name);
+
+		assert(port < m_rtMidi->getPortCount());
+
+		if constexpr (std::is_same_v<RtMidiType, RtMidiIn>)
+		{
+			m_rtMidi->setCallback(&s_callback, this);
+			m_rtMidi->ignoreTypes(/*midiSysex=*/true, /*midiTime=*/false, /*midiSense=*/true); // Don't ignore time msgs
+		}
+
+		u::log::print("[KM] Prepared {} device '{}' - api={} port={}\n", getTypeStr(), name, m_rtMidi->getApiName(api), port);
+	}
+	catch (const RtMidiError& error)
+	{
+		u::log::print("[KM] Error preparing device '{}': {}\n", name, error.getMessage());
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+bool KernelMidi::Device<RtMidiType>::isOpen() const
+{
+	assert(m_rtMidi != nullptr);
+
+	return m_rtMidi->isPortOpen();
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+std::string KernelMidi::Device<RtMidiType>::getName() const
+{
+	assert(m_rtMidi != nullptr);
+
+	return m_rtMidi->getPortName(m_port);
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+KernelMidi::Result KernelMidi::Device<RtMidiType>::open()
+{
+	assert(m_rtMidi != nullptr);
+
+	try
+	{
+		m_rtMidi->openPort(m_port);
+		u::log::print("[KM] MIDI {} port {} opened successfully\n", getTypeStr(), m_port);
+		return {true, ""};
+	}
+	catch (RtMidiError& error)
+	{
+		u::log::print("[KM] Error opening {} port {}: {}\n", getTypeStr(), m_port, error.getMessage());
+		return {false, error.getMessage()};
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+void KernelMidi::Device<RtMidiType>::close()
+{
+	assert(m_rtMidi != nullptr);
+
+	m_rtMidi->closePort();
+	u::log::print("[KM] MIDI {} port {} closed successfully\n", getTypeStr(), m_port);
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+void KernelMidi::Device<RtMidiType>::sendMessage(const RtMidiMessage& msg)
+    requires std::is_same_v<RtMidiType, RtMidiOut>
+{
+	assert(m_rtMidi != nullptr);
+
+	m_rtMidi->sendMessage(&msg);
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+void KernelMidi::Device<RtMidiType>::s_callback(double deltatime, RtMidiMessage* msg, void* data)
+    requires std::is_same_v<RtMidiType, RtMidiIn>
+{
+	static_cast<KernelMidi::Device<RtMidiType>*>(data)->callback(deltatime, *msg);
+}
+
+template <typename RtMidiType>
+void KernelMidi::Device<RtMidiType>::callback(double deltatime, const RtMidiMessage& msg)
+    requires std::is_same_v<RtMidiType, RtMidiIn>
+{
+	assert(msg.size() > 0);
+
+	m_elapsedTime += deltatime;
+
+	MidiEvent event;
+	if (msg.size() == 1)
+		event = MidiEvent::makeFrom1Byte(msg[0], m_elapsedTime);
+	else if (msg.size() == 2)
+		event = MidiEvent::makeFrom2Bytes(msg[0], msg[1], m_elapsedTime);
+	else if (msg.size() == 3)
+		event = MidiEvent::makeFrom3Bytes(msg[0], msg[1], msg[2], m_elapsedTime);
+	else
+		assert(false); // MIDI messages longer than 3 bytes are not supported
+
+	m_kernelMidi.m_inputQueue.try_enqueue(event);
+
+	G_DEBUG("Recv MIDI msg=0x{:0X}, timestamp={}", event.getRaw(), m_elapsedTime);
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename RtMidiType>
+std::string KernelMidi::Device<RtMidiType>::getTypeStr() const
+{
+	if constexpr (std::is_same_v<RtMidiType, RtMidiOut>)
+		return "OUT";
+	else
+		return "IN";
+}
+
+/* -------------------------------------------------------------------------- */
+
+template class KernelMidi::Device<RtMidiIn>;
+template class KernelMidi::Device<RtMidiOut>;
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -52,8 +206,10 @@ KernelMidi::KernelMidi(model::Model& m)
 : onMidiReceived(nullptr)
 , onMidiSent(nullptr)
 , m_model(m)
-, m_worker(G_KERNEL_MIDI_OUTPUT_RATE_MS)
-, m_midiQueue(MAX_RTMIDI_EVENTS, 0, MAX_NUM_PRODUCERS) // See https://github.com/cameron314/concurrentqueue#preallocation-correctly-using-try_enqueue
+, m_outputWorker(G_KERNEL_MIDI_OUTPUT_RATE_MS)
+, m_inputWorker(G_KERNEL_MIDI_INPUT_RATE_MS)
+, m_outputQueue(OUTPUT_QUEUE_MIN_CAPACITY, 0, MAX_NUM_PRODUCERS) // See https://github.com/cameron314/concurrentqueue#preallocation-correctly-using-try_enqueue
+, m_inputQueue(INPUT_QUEUE_MIN_CAPACITY, 0, MAX_NUM_PRODUCERS)
 , m_elapsedTime(0.0)
 {
 }
@@ -62,14 +218,16 @@ KernelMidi::KernelMidi(model::Model& m)
 
 bool KernelMidi::init()
 {
-	const model::KernelMidi& kernelMidi = m_model.get().kernelMidi;
+	/* Prepare vectors of available in/out devices. */
 
-	if (!setAPI_(kernelMidi.api))
-		return false;
-	if (!openOutPort_(kernelMidi.portOut).success)
-		return false;
-	if (!openInPort_(kernelMidi.portIn).success)
-		return false;
+	m_midiOuts = makeDevices<RtMidiOut>();
+	m_midiIns  = makeDevices<RtMidiIn>();
+
+	/* Open devices accoring to model::KernelMidi info. */
+
+	const model::KernelMidi& kernelMidi = m_model.get().kernelMidi;
+	openDevices(m_midiOuts, kernelMidi.devicesOut);
+	openDevices(m_midiIns, kernelMidi.devicesIn);
 
 	return true;
 }
@@ -78,12 +236,9 @@ bool KernelMidi::init()
 
 bool KernelMidi::setAPI(RtMidi::Api api)
 {
-	if (!setAPI_(api))
-		return false;
-
-	m_model.get().kernelMidi.api     = api;
-	m_model.get().kernelMidi.portOut = G_DEFAULT_MIDI_PORT_OUT;
-	m_model.get().kernelMidi.portIn  = G_DEFAULT_MIDI_PORT_IN;
+	m_model.get().kernelMidi.api        = api;
+	m_model.get().kernelMidi.devicesOut = {};
+	m_model.get().kernelMidi.devicesIn  = {};
 	m_model.swap(model::SwapType::NONE);
 
 	return true;
@@ -91,91 +246,91 @@ bool KernelMidi::setAPI(RtMidi::Api api)
 
 /* -------------------------------------------------------------------------- */
 
-KernelMidi::Result KernelMidi::openOutPort(int port)
+KernelMidi::Result KernelMidi::openOutDevice(std::size_t deviceIndex)
 {
-	Result res = openOutPort_(port);
+	Result res = openOutDevice_(deviceIndex);
 
 	if (!res.success)
 		return res;
 
-	m_model.get().kernelMidi.portOut = port;
+	m_model.get().kernelMidi.devicesOut.insert(deviceIndex);
 	m_model.swap(model::SwapType::NONE);
 
 	return res;
 }
 
-KernelMidi::Result KernelMidi::openInPort(int port)
+KernelMidi::Result KernelMidi::openInDevice(std::size_t deviceIndex)
 {
-	Result res = openInPort_(port);
+	Result res = openInDevice_(deviceIndex);
 
 	if (!res.success)
 		return res;
 
-	m_model.get().kernelMidi.portIn = port;
+	m_model.get().kernelMidi.devicesIn.insert(deviceIndex);
 	m_model.swap(model::SwapType::NONE);
 
 	return res;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void KernelMidi::closeOutDevice(std::size_t deviceIndex)
+{
+	assert(deviceIndex >= 0 && deviceIndex < m_midiOuts.size());
+	m_midiOuts[deviceIndex]->close();
+
+	m_model.get().kernelMidi.devicesOut.erase(deviceIndex);
+	m_model.swap(model::SwapType::NONE);
+}
+
+void KernelMidi::closeInDevice(std::size_t deviceIndex)
+{
+	assert(deviceIndex >= 0 && deviceIndex < m_midiIns.size());
+	m_midiIns[deviceIndex]->close();
+
+	m_model.get().kernelMidi.devicesIn.erase(deviceIndex);
+	m_model.swap(model::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void KernelMidi::start()
 {
-	if (m_midiOut == nullptr)
-		return;
-	m_worker.start([this]()
+	if (!m_midiOuts.empty())
 	{
-		RtMidiMessage msg;
-		while (m_midiQueue.try_dequeue(msg))
-			m_midiOut->sendMessage(&msg);
-	});
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool KernelMidi::setAPI_(RtMidi::Api api)
-{
-	m_midiOut = makeDevice<RtMidiOut>(api, OUTPUT_NAME);
-	m_midiIn  = makeDevice<RtMidiIn>(api, INPUT_NAME);
-
-	if (m_midiIn == nullptr || m_midiOut == nullptr)
-		return false;
-
-	if (m_midiIn != nullptr)
-	{
-		m_midiIn->setCallback(&s_callback, this);
-		m_midiIn->ignoreTypes(/*midiSysex=*/true, /*midiTime=*/false, /*midiSense=*/true); // Don't ignore time msgs
+		m_outputWorker.start([this]()
+		{
+			RtMidiMessage msg;
+			while (m_outputQueue.try_dequeue(msg))
+				for (auto& device : m_midiOuts)
+					device->sendMessage(msg);
+		});
 	}
-
-	logPorts();
-
-	return true;
+	if (!m_midiIns.empty())
+	{
+		m_inputWorker.start([this]()
+		{
+			MidiEvent event;
+			while (m_inputQueue.try_dequeue(event))
+				onMidiReceived(event);
+		});
+	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-KernelMidi::Result KernelMidi::openOutPort_(int port)
+KernelMidi::Result KernelMidi::openOutDevice_(std::size_t deviceIndex)
 {
-	assert(m_midiOut != nullptr);
-
-	return openPort(*m_midiOut, port);
+	if (deviceIndex < 0 || deviceIndex >= m_midiOuts.size())
+		return {false, "Invalid device"};
+	return m_midiOuts[deviceIndex]->open();
 }
 
-KernelMidi::Result KernelMidi::openInPort_(int port)
+KernelMidi::Result KernelMidi::openInDevice_(std::size_t deviceIndex)
 {
-	assert(m_midiIn != nullptr);
-
-	return openPort(*m_midiIn, port);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void KernelMidi::logPorts() const
-{
-	if (m_midiOut != nullptr)
-		logPorts(*m_midiOut, OUTPUT_NAME);
-	if (m_midiIn != nullptr)
-		logPorts(*m_midiIn, INPUT_NAME);
+	if (deviceIndex < 0 || deviceIndex >= m_midiIns.size())
+		return {false, "Invalid device"};
+	return m_midiIns[deviceIndex]->open();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -194,19 +349,19 @@ bool KernelMidi::hasAPI(RtMidi::Api API) const
 
 RtMidi::Api KernelMidi::getAPI() const { return m_model.get().kernelMidi.api; }
 int         KernelMidi::getSyncMode() const { return m_model.get().kernelMidi.sync; }
-int         KernelMidi::getCurrentOutPort() const { return m_model.get().kernelMidi.portOut; }
-int         KernelMidi::getCurrentInPort() const { return m_model.get().kernelMidi.portIn; }
 
 /* -------------------------------------------------------------------------- */
 
 bool KernelMidi::canSend() const
 {
-	return m_midiOut && m_midiOut->isPortOpen();
+	return std::ranges::any_of(m_midiOuts, [](const std::unique_ptr<Device<RtMidiOut>>& device)
+	{ return device->isOpen(); });
 }
 
 bool KernelMidi::canReceive() const
 {
-	return m_midiIn && m_midiIn->isPortOpen();
+	return std::ranges::any_of(m_midiIns, [](const std::unique_ptr<Device<RtMidiIn>>& device)
+	{ return device->isOpen(); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -223,20 +378,14 @@ bool KernelMidi::canSyncSlave() const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<std::string> KernelMidi::getOutPorts() const
+std::vector<KernelMidi::DeviceInfo> KernelMidi::getAvailableOutDevices() const
 {
-	std::vector<std::string> out;
-	for (unsigned i = 0; i < countOutPorts(); i++)
-		out.push_back(getPortName(*m_midiOut, i));
-	return out;
+	return getDevicesInfo<RtMidiOut>(m_midiOuts);
 }
 
-std::vector<std::string> KernelMidi::getInPorts() const
+std::vector<KernelMidi::DeviceInfo> KernelMidi::getAvailableInDevices() const
 {
-	std::vector<std::string> out;
-	for (unsigned i = 0; i < countInPorts(); i++)
-		out.push_back(getPortName(*m_midiIn, i));
-	return out;
+	return getDevicesInfo<RtMidiIn>(m_midiIns);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -261,110 +410,40 @@ bool KernelMidi::send(const MidiEvent& event) const
 
 	onMidiSent();
 
-	return m_midiQueue.try_enqueue(msg);
+	return m_outputQueue.try_enqueue(msg);
 }
 
 /* -------------------------------------------------------------------------- */
 
-unsigned KernelMidi::countOutPorts() const { return m_midiOut != nullptr ? m_midiOut->getPortCount() : 0; }
-unsigned KernelMidi::countInPorts() const { return m_midiIn != nullptr ? m_midiIn->getPortCount() : 0; }
-
-/* -------------------------------------------------------------------------- */
-
-void KernelMidi::s_callback(double deltatime, RtMidiMessage* msg, void* data)
+template <typename RtMidiType>
+KernelMidi::Devices<RtMidiType> KernelMidi::makeDevices()
 {
-	static_cast<KernelMidi*>(data)->callback(deltatime, msg);
+	Devices<RtMidiType> out;
+	unsigned            i = 0;
+	for (const std::string& deviceName : getDevices_<RtMidiType>(getAPI()))
+		out.emplace_back(std::make_unique<Device<RtMidiType>>(getAPI(), deviceName, i++, *this));
+	return out;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void KernelMidi::callback(double deltatime, RtMidiMessage* msg)
+template <typename RtMidiType>
+std::vector<KernelMidi::DeviceInfo> KernelMidi::getDevicesInfo(const KernelMidi::Devices<RtMidiType>& devices) const
 {
-	assert(onMidiReceived != nullptr);
-	assert(msg->size() > 0);
-
-	m_elapsedTime += deltatime;
-
-	MidiEvent event;
-	if (msg->size() == 1)
-		event = MidiEvent::makeFrom1Byte((*msg)[0], m_elapsedTime);
-	else if (msg->size() == 2)
-		event = MidiEvent::makeFrom2Bytes((*msg)[0], (*msg)[1], m_elapsedTime);
-	else if (msg->size() == 3)
-		event = MidiEvent::makeFrom3Bytes((*msg)[0], (*msg)[1], (*msg)[2], m_elapsedTime);
-	else
-		assert(false); // MIDI messages longer than 3 bytes are not supported
-
-	onMidiReceived(event);
-
-	G_DEBUG("Recv MIDI msg=0x{:0X}, timestamp={}", event.getRaw(), m_elapsedTime);
+	std::vector<KernelMidi::DeviceInfo> out;
+	for (std::size_t index = 0; const auto& device : devices)
+		out.emplace_back(index++, device->getName(), device->isOpen());
+	return out;
 }
 
 /* -------------------------------------------------------------------------- */
 
-template <typename Device>
-std::unique_ptr<Device> KernelMidi::makeDevice(RtMidi::Api api, std::string name) const
+template <typename RtMidiType>
+void KernelMidi::openDevices(Devices<RtMidiType>& devices, const std::set<std::size_t> deviceIndexes)
 {
-	try
-	{
-		return std::make_unique<Device>(static_cast<RtMidi::Api>(api), name);
-	}
-	catch (RtMidiError& error)
-	{
-		u::log::print("[KM] Error opening device '{}': {}\n", name, error.getMessage());
-		return nullptr;
-	}
-}
-
-template std::unique_ptr<RtMidiOut> KernelMidi::makeDevice(RtMidi::Api, std::string) const;
-template std::unique_ptr<RtMidiIn>  KernelMidi::makeDevice(RtMidi::Api, std::string) const;
-
-/* -------------------------------------------------------------------------- */
-
-KernelMidi::Result KernelMidi::openPort(RtMidi& device, int port)
-{
-	if (device.isPortOpen())
-		device.closePort();
-
-	if (port == -1)
-		return {true, ""};
-
-	const std::string deviceStr = &device == m_midiOut.get() ? "out" : "in";
-
-	try
-	{
-		device.openPort(port, device.getPortName(port));
-		u::log::print("[KM] MIDI {} port {} opened successfully\n", deviceStr, port);
-		return {true, ""};
-	}
-	catch (RtMidiError& error)
-	{
-		u::log::print("[KM] Error opening {} port {}: {}\n", deviceStr, port, error.getMessage());
-		return {false, error.getMessage()};
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::string KernelMidi::getPortName(RtMidi& device, int port) const
-{
-	try
-	{
-		return device.getPortName(port);
-	}
-	catch (RtMidiError& /*error*/)
-	{
-		return "";
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void KernelMidi::logPorts(RtMidi& device, std::string name) const
-{
-	u::log::print("[KM] Device '{}': {} MIDI ports found\n", name, device.getPortCount());
-	for (unsigned i = 0; i < device.getPortCount(); i++)
-		u::log::print("  {}) {}\n", i, device.getPortName(i));
+	for (const std::size_t deviceIndex : deviceIndexes)
+		if (deviceIndex < devices.size())
+			devices[deviceIndex]->open();
 }
 
 /* -------------------------------------------------------------------------- */

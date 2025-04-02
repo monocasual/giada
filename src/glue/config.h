@@ -28,6 +28,7 @@
 #define G_GLUE_CONFIG_H
 
 #include "core/kernelAudio.h"
+#include "core/kernelMidi.h"
 #include "core/types.h"
 #include <RtMidi.h>
 #include <map>
@@ -89,19 +90,17 @@ struct MidiData
 {
 	std::string getMidiMapByIndex(int);
 
-	std::map<RtMidi::Api, std::string> apis;
-	std::map<int, std::string>         syncModes;
-	std::vector<std::string>           midiMaps;
-	std::vector<std::string>           outPorts;
-	std::vector<std::string>           inPorts;
+	std::map<RtMidi::Api, std::string>     availableApis;
+	std::map<int, std::string>             availableSyncModes;
+	std::vector<std::string>               availableMidiMaps;
+	std::vector<m::KernelMidi::DeviceInfo> availableOutDevices;
+	std::vector<m::KernelMidi::DeviceInfo> availableInDevices;
 
 	/* Selectable values. */
 
-	RtMidi::Api api;
-	int         syncMode;
-	std::string midiMap;
-	int         outPort;
-	int         inPort;
+	RtMidi::Api selectedApi;
+	int         selectedSyncMode;
+	std::string selectedMidiMap;
 };
 
 struct PluginData
@@ -144,9 +143,10 @@ void changeMidiAPI(RtMidi::Api);
 
 void setMidiMapPath(const std::string& midiMapPath);
 void setMidiSyncMode(int syncMode);
+bool openMidiDevice(DeviceType, std::size_t index);
+void closeMidiDevice(DeviceType, std::size_t index);
 
 void apply(const AudioData&);
-void apply(const MidiData&);
 void save(const MiscData&);
 void save(const PluginData&);
 void save(const BehaviorsData&);

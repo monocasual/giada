@@ -56,12 +56,12 @@ struct Conf final
 	bool               limitOutput      = false;
 	Resampler::Quality rsmpQuality      = Resampler::Quality::SINC_BEST;
 
-	RtMidi::Api midiSystem  = G_DEFAULT_MIDI_API;
-	int         midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
-	int         midiPortIn  = G_DEFAULT_MIDI_PORT_IN;
-	std::string midiMapPath = "";
-	int         midiSync    = G_MIDI_SYNC_NONE;
-	float       midiTCfps   = 25.0f;
+	RtMidi::Api           midiSystem = G_DEFAULT_MIDI_API;
+	std::set<std::size_t> midiDevicesOut;
+	std::set<std::size_t> midiDevicesIn;
+	std::string           midiMapPath = "";
+	int                   midiSync    = G_MIDI_SYNC_NONE;
+	float                 midiTCfps   = 25.0f;
 
 	bool chansStopOnSeqHalt         = false;
 	bool treatRecsAsLoops           = false;
