@@ -27,21 +27,30 @@
 #ifndef GE_PLUGIN_BROWSER_H
 #define GE_PLUGIN_BROWSER_H
 
-#include <FL/Fl_Browser.H>
+#include "src/core/plugins/pluginManager.h"
+#include "src/gui/elems/basics/tableText.h"
 
 namespace giada::v
 {
-class gePluginBrowser : public Fl_Browser
+class gePluginBrowser : public geTableText
 {
 public:
-	gePluginBrowser(int x, int y, int w, int h);
+	gePluginBrowser();
 
-	void refresh();
+	std::string setCellText(int row, int col) override;
+	std::string setHeaderText(int col) override;
+
+	void rebuild();
 
 private:
-	void computeWidths();
+	int getLongestString(const std::string m::PluginManager::PluginInfo::*) const;
+
+	void computeColumnWidths();
+	void prepareLayout();
 
 	int m_widths[5];
+
+	std::vector<m::PluginManager::PluginInfo> m_pluginInfo;
 };
 } // namespace giada::v
 

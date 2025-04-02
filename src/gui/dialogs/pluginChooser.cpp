@@ -54,7 +54,7 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 			header->end();
 		}
 
-		browser = new v::gePluginBrowser(0, 0, 0, 0);
+		browser = new v::gePluginBrowser();
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
@@ -83,7 +83,7 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 	sortMethod->onChange = [this](ID)
 	{
 		c::plugin::sortPlugins(getSortMode());
-		browser->refresh();
+		browser->rebuild();
 	};
 
 	sortDir->addItem("A-Z");
@@ -92,15 +92,21 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 	sortDir->onChange = [this](ID)
 	{
 		c::plugin::sortPlugins(getSortMode());
-		browser->refresh();
+		browser->rebuild();
+	};
+
+	browser->onClickRow = [this](int row, int /*col*/, bool doubleClick)
+	{
+		if (doubleClick)
+			c::plugin::addPlugin(row, m_channelId);
 	};
 
 	addBtn->onClick = [this]()
 	{
-		int pluginIndex = browser->value() - 3; // subtract header lines
-		if (pluginIndex < 0)
+		const auto selection = browser->getSelection();
+		if (!selection.isValid())
 			return;
-		c::plugin::addPlugin(pluginIndex, m_channelId);
+		c::plugin::addPlugin(selection.a, m_channelId);
 		do_callback();
 	};
 	addBtn->shortcut(FL_Enter);
