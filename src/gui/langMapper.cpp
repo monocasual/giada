@@ -308,14 +308,9 @@ LangMap::LangMap()
 
 	m_data[CONFIG_MIDI_TITLE]           = "MIDI";
 	m_data[CONFIG_MIDI_SYSTEM]          = "System";
-	m_data[CONFIG_MIDI_OUTPUTPORT]      = "Output port";
-	m_data[CONFIG_MIDI_INPUTPORT]       = "Input port";
-	m_data[CONFIG_MIDI_NOPORTSFOUND]    = "-- no ports found --";
 	m_data[CONFIG_MIDI_OUTPUTMIDIMAP]   = "Output MIDI Map";
 	m_data[CONFIG_MIDI_NOMIDIMAPSFOUND] = "(no MIDI maps available)";
 	m_data[CONFIG_MIDI_SYNC]            = "Sync";
-	m_data[CONFIG_MIDI_LABEL_ENABLEOUT] = "Enable Output port";
-	m_data[CONFIG_MIDI_LABEL_ENABLEIN]  = "Enable Input port";
 	m_data[CONFIG_MIDI_LABEL_WRONGMIDI] = "Could not apply MIDI configuration. Error:";
 
 	m_data[CONFIG_BEHAVIORS_TITLE]                      = "Behaviors";
