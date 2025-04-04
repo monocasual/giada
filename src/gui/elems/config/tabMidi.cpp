@@ -89,9 +89,9 @@ Fl_Widget* geTabMidi::geDevices::setCellContent(int row, int col, int X, int Y, 
 std::string geTabMidi::geDevices::setHeaderText(int col)
 {
 	if (col == 0)
-		return "Device";
+		return g_ui->getI18Text(LangMap::CONFIG_MIDI_COLUMN_DEVICE);
 	if (col == 1)
-		return "Enable";
+		return g_ui->getI18Text(LangMap::CONFIG_MIDI_COLUMN_ENABLE);
 	return "";
 }
 
@@ -141,7 +141,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			m_devicesOut = new geDevices(m_data.availableOutDevices, c::config::DeviceType::OUTPUT);
-			line1->addWidget(new geBox("Output devices", FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line1->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_MIDI_OUTPUTDEVICES), FL_ALIGN_RIGHT), LABEL_WIDTH);
 			line1->addWidget(m_devicesOut);
 			line1->end();
 		}
@@ -149,7 +149,7 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 		geFlex* line2 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			m_devicesIn = new geDevices(m_data.availableInDevices, c::config::DeviceType::INPUT);
-			line2->addWidget(new geBox("Input devices", FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line2->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_MIDI_INPUTDEVICES), FL_ALIGN_RIGHT), LABEL_WIDTH);
 			line2->addWidget(m_devicesIn);
 			line2->end();
 		}

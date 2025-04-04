@@ -302,10 +302,14 @@ public:
 
 	static constexpr auto CONFIG_MIDI_TITLE           = "config_midi_title";
 	static constexpr auto CONFIG_MIDI_SYSTEM          = "config_midi_system";
+	static constexpr auto CONFIG_MIDI_OUTPUTDEVICES   = "config_midi_outputDevices";
+	static constexpr auto CONFIG_MIDI_INPUTDEVICES    = "config_midi_inputDevices";
 	static constexpr auto CONFIG_MIDI_OUTPUTMIDIMAP   = "config_midi_outputMidiMap";
 	static constexpr auto CONFIG_MIDI_NOMIDIMAPSFOUND = "config_midi_noMidiMapsFound";
 	static constexpr auto CONFIG_MIDI_SYNC            = "config_midi_sync";
 	static constexpr auto CONFIG_MIDI_LABEL_WRONGMIDI = "config_midi_label_wrongMidi";
+	static constexpr auto CONFIG_MIDI_COLUMN_DEVICE   = "config_midi_column_device";
+	static constexpr auto CONFIG_MIDI_COLUMN_ENABLE   = "config_midi_column_enable";
 
 	static constexpr auto CONFIG_BEHAVIORS_TITLE                      = "config_behaviors_title";
 	static constexpr auto CONFIG_BEHAVIORS_CHANSSTOPONSEQHALT         = "config_behaviors_chansStopOnSeqHalt";

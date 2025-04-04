@@ -308,10 +308,14 @@ LangMap::LangMap()
 
 	m_data[CONFIG_MIDI_TITLE]           = "MIDI";
 	m_data[CONFIG_MIDI_SYSTEM]          = "System";
+	m_data[CONFIG_MIDI_OUTPUTDEVICES]   = "Output devices";
+	m_data[CONFIG_MIDI_INPUTDEVICES]    = "Input devices";
 	m_data[CONFIG_MIDI_OUTPUTMIDIMAP]   = "Output MIDI Map";
 	m_data[CONFIG_MIDI_NOMIDIMAPSFOUND] = "(no MIDI maps available)";
 	m_data[CONFIG_MIDI_SYNC]            = "Sync";
 	m_data[CONFIG_MIDI_LABEL_WRONGMIDI] = "Could not apply MIDI configuration. Error:";
+	m_data[CONFIG_MIDI_COLUMN_DEVICE]   = "Device";
+	m_data[CONFIG_MIDI_COLUMN_ENABLE]   = "Enable";
 
 	m_data[CONFIG_BEHAVIORS_TITLE]                      = "Behaviors";
 	m_data[CONFIG_BEHAVIORS_CHANSSTOPONSEQHALT]         = "Dynamic channels stop immediately when the sequencer is halted";
