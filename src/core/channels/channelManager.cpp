@@ -216,7 +216,8 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 		const Frame oldBegin = oldChannel.sampleChannel->begin;
 		const Frame oldEnd   = oldChannel.sampleChannel->end;
 		Wave&       wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
-		loadSampleChannel(newChannelData.channel, &wave, oldBegin, oldEnd, oldShift);
+
+		newChannelData.channel.loadWave(&wave, oldBegin, oldEnd, oldShift);
 	}
 
 	newChannelData.channel.plugins = plugins;
