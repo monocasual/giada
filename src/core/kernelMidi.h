@@ -209,12 +209,6 @@ private:
 	(devices). */
 
 	mutable moodycamel::ConcurrentQueue<MidiEvent> m_inputQueue;
-
-	/* m_elapsedTime
-	Time elapsed on received MIDI events. Used to compute the absolute timestamp
-	to pass to MidiEvent class. */
-
-	double m_elapsedTime;
 };
 } // namespace giada::m
 

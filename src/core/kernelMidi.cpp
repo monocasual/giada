@@ -210,7 +210,6 @@ KernelMidi::KernelMidi(model::Model& m)
 , m_inputWorker(G_KERNEL_MIDI_INPUT_RATE_MS)
 , m_outputQueue(OUTPUT_QUEUE_MIN_CAPACITY, 0, MAX_NUM_PRODUCERS) // See https://github.com/cameron314/concurrentqueue#preallocation-correctly-using-try_enqueue
 , m_inputQueue(INPUT_QUEUE_MIN_CAPACITY, 0, MAX_NUM_PRODUCERS)
-, m_elapsedTime(0.0)
 {
 }
 
