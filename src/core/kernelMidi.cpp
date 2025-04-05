@@ -431,8 +431,10 @@ std::vector<KernelMidi::DeviceInfo> KernelMidi::getDevicesInfo(const KernelMidi:
 {
 	std::vector<KernelMidi::DeviceInfo> out;
 	for (std::size_t index = 0; const auto& device : devices)
-		out.emplace_back(index++, device->getName(), device->isOpen());
+		out.push_back({index++, device->getName(), device->isOpen()}); // [1]
 	return out;
+	/* [1] TODO - for some obscure reason, out.emplace_back(index++, device->getName(), device->isOpen())
+	doesn't work on macOS with Xcode 15.4. So we have to use push_back + aggregate initialization. */
 }
 
 /* -------------------------------------------------------------------------- */
