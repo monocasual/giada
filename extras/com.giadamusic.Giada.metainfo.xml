@@ -18,6 +18,9 @@
 			<caption>Giada official screenshot</caption>
 		</screenshot>
 	</screenshots>
+	<releases>
+		<release version="1.1.1" date="2025-02-08" />
+	</releases>
 	<update_contact>giadaloopmachine_AT_gmail.com</update_contact>
 	<url type="homepage">https://www.giadamusic.com/</url>
 	<url type="help">https://github.com/monocasual/giada/discussions</url>
