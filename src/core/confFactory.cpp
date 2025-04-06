@@ -288,7 +288,6 @@ Conf deserialize()
 	}
 	catch (const nlohmann::json::exception& e)
 	{
-		puts("CATCH!");
 		u::log::print("[confFactory::deserialize] Unable to read configuration file! Reason: {}\n", e.what());
 		return {};
 	}
