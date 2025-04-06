@@ -41,7 +41,7 @@ class geTabPlugins;
 class gdConfig : public gdWindow
 {
 public:
-	gdConfig(int w, int h, const Model&);
+	gdConfig(const Model&);
 	~gdConfig();
 
 	geTabAudio*     tabAudio;
@@ -50,6 +50,10 @@ public:
 	geTabMisc*      tabMisc;
 	geTabBindings*  tabBindings;
 	geTabPlugins*   tabPlugins;
+
+private:
+	static constexpr int MIN_W = 400;
+	static constexpr int MIN_H = 370;
 };
 } // namespace giada::v
 

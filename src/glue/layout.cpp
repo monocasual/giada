@@ -132,7 +132,7 @@ void openBeatsWindow(int beats, int bars)
 
 void openConfigWindow()
 {
-	g_ui->openSubWindow(new v::gdConfig(400, 370, g_ui->model));
+	g_ui->openSubWindow(new v::gdConfig(g_ui->model));
 }
 
 /* -------------------------------------------------------------------------- */
