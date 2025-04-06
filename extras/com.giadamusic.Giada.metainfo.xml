@@ -9,6 +9,7 @@
 	<description>
 		<p>Giada is an open source, minimalistic and hardcore music production tool. Designed for DJs, live performers and electronic musicians.</p>
 	</description>
+	<developer_name>Monocasual Laboratories</developer_name>
 	<content_rating type="oars-1.1" />
 	<launchable type="desktop-id">com.giadamusic.Giada.desktop</launchable>
 	<screenshots>
