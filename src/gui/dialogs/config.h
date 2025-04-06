@@ -42,6 +42,7 @@ class gdConfig : public gdWindow
 {
 public:
 	gdConfig(int w, int h, const Model&);
+	~gdConfig();
 
 	geTabAudio*     tabAudio;
 	geTabBehaviors* tabBehaviors;

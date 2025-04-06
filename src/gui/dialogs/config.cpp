@@ -45,7 +45,7 @@ extern giada::v::Ui* g_ui;
 namespace giada::v
 {
 gdConfig::gdConfig(int w, int h, const Model& model)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, w, h}), g_ui->getI18Text(LangMap::CONFIG_TITLE), WID_CONFIG)
+: gdWindow(u::gui::getCenterWinBounds(model.settingsBounds), g_ui->getI18Text(LangMap::CONFIG_TITLE), WID_CONFIG)
 {
 	const geompp::Rect<int> bounds = getContentBounds().reduced(G_GUI_OUTER_MARGIN);
 
@@ -89,5 +89,12 @@ gdConfig::gdConfig(int w, int h, const Model& model)
 	size_range(w, h);
 
 	show();
+}
+
+/* -------------------------------------------------------------------------- */
+
+gdConfig::~gdConfig()
+{
+	g_ui->model.settingsBounds = getBounds();
 }
 } // namespace giada::v
