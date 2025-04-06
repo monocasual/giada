@@ -72,6 +72,10 @@ Conf parse_(std::ifstream& ifs)
 	conf.mainWindowBounds.y         = j.value(CONF_KEY_MAIN_WINDOW_Y, conf.mainWindowBounds.y);
 	conf.mainWindowBounds.w         = j.value(CONF_KEY_MAIN_WINDOW_W, conf.mainWindowBounds.w);
 	conf.mainWindowBounds.h         = j.value(CONF_KEY_MAIN_WINDOW_H, conf.mainWindowBounds.h);
+	conf.settingsBounds.x           = j.value(CONF_KEY_SETTINGS_WINDOW_X, conf.settingsBounds.x);
+	conf.settingsBounds.y           = j.value(CONF_KEY_SETTINGS_WINDOW_Y, conf.settingsBounds.y);
+	conf.settingsBounds.w           = j.value(CONF_KEY_SETTINGS_WINDOW_W, conf.settingsBounds.w);
+	conf.settingsBounds.h           = j.value(CONF_KEY_SETTINGS_WINDOW_H, conf.settingsBounds.h);
 	conf.browserBounds.x            = j.value(CONF_KEY_BROWSER_X, conf.browserBounds.x);
 	conf.browserBounds.y            = j.value(CONF_KEY_BROWSER_Y, conf.browserBounds.y);
 	conf.browserBounds.w            = j.value(CONF_KEY_BROWSER_W, conf.browserBounds.w);
@@ -204,6 +208,10 @@ bool serialize(const Conf& conf)
 	j[CONF_KEY_MAIN_WINDOW_Y]                 = conf.mainWindowBounds.y;
 	j[CONF_KEY_MAIN_WINDOW_W]                 = conf.mainWindowBounds.w;
 	j[CONF_KEY_MAIN_WINDOW_H]                 = conf.mainWindowBounds.h;
+	j[CONF_KEY_SETTINGS_WINDOW_X]             = conf.settingsBounds.x;
+	j[CONF_KEY_SETTINGS_WINDOW_Y]             = conf.settingsBounds.y;
+	j[CONF_KEY_SETTINGS_WINDOW_W]             = conf.settingsBounds.w;
+	j[CONF_KEY_SETTINGS_WINDOW_H]             = conf.settingsBounds.h;
 	j[CONF_KEY_BROWSER_X]                     = conf.browserBounds.x;
 	j[CONF_KEY_BROWSER_Y]                     = conf.browserBounds.y;
 	j[CONF_KEY_BROWSER_W]                     = conf.browserBounds.w;

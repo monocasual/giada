@@ -42,6 +42,8 @@ void Model::store(m::Conf& conf) const
 
 	conf.mainWindowBounds = mainWindowBounds;
 
+	conf.settingsBounds = settingsBounds;
+
 	conf.browserBounds    = browserBounds;
 	conf.browserPosition  = browserPosition;
 	conf.browserLastValue = browserLastValue;
@@ -92,6 +94,8 @@ void Model::load(const m::Conf& conf)
 	patchPath        = conf.patchPath;
 	samplePath       = conf.samplePath;
 	mainWindowBounds = conf.mainWindowBounds;
+
+	settingsBounds = conf.settingsBounds;
 
 	browserBounds    = conf.browserBounds;
 	browserPosition  = conf.browserPosition;
