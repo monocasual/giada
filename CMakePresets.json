@@ -4,6 +4,7 @@
         {
             "name": "common",
             "hidden": true,
+            "binaryDir": "${sourceDir}/build",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": {
                     "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
@@ -17,7 +18,6 @@
             "inherits": "common",
             "displayName": "Debug Build",
             "description": "Debug build with Vcpkg toolchain",
-            "binaryDir": "${sourceDir}/cmake-build-debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "WITH_TESTS": "ON"
@@ -28,7 +28,6 @@
             "inherits": "common",
             "displayName": "Release Build",
             "description": "Release build with Vcpkg toolchain",
-            "binaryDir": "${sourceDir}/cmake-build-release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
