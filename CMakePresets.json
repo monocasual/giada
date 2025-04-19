@@ -14,27 +14,13 @@
             }
         },
         {
-            "name": "debug",
-            "hidden": true,
-            "inherits": "common",
-            "displayName": "Debug configuration",
-            "cacheVariables": {
-                "WITH_TESTS": "ON"
-            }
-        },
-        {
-            "name": "release",
-            "hidden": true,
-            "inherits": "common",
-            "displayName": "Release configuration"
-        },
-        {
             "name": "debug-linux",
-            "inherits": "debug",
+            "inherits": "common",
             "displayName": "Debug configuration for Linux",
             "binaryDir": "${sourceDir}/build/debug",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "WITH_TESTS": "ON"
             },
             "condition": {
                 "type": "equals",
@@ -44,7 +30,7 @@
         },
         {
             "name": "release-linux",
-            "inherits": "release",
+            "inherits": "common",
             "binaryDir": "${sourceDir}/build/release",
             "displayName": "Release configuration for Linux",
             "cacheVariables": {
