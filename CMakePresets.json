@@ -14,60 +14,58 @@
             }
         },
         {
-            "name": "debug-linux",
+            "name": "common-linux",
             "inherits": "common",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "common-windows",
+            "inherits": "common",
+            "hidden": true,
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "debug-linux",
+            "inherits": "common-linux",
             "displayName": "Debug configuration for Linux",
             "binaryDir": "${sourceDir}/build/debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "WITH_TESTS": "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Linux"
             }
         },
         {
             "name": "release-linux",
-            "inherits": "common",
+            "inherits": "common-linux",
             "binaryDir": "${sourceDir}/build/release",
             "displayName": "Release configuration for Linux",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Linux"
             }
         },
         {
             "name": "debug-windows",
-            "inherits": "common",
+            "inherits": "common-windows",
             "displayName": "Debug configuration for Windows",
-            "generator": "Visual Studio 17 2022",
-            "architecture": "x64",
             "cacheVariables": {
                 "WITH_TESTS": "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
             }
         },
         {
             "name": "release-windows",
-            "inherits": "common",
-            "displayName": "Release configuration for Windows",
-            "generator": "Visual Studio 17 2022",
-            "architecture": "x64",
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
+            "inherits": "common-windows",
+            "displayName": "Release configuration for Windows"
         }
     ]
 }
