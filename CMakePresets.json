@@ -17,7 +17,6 @@
             "name": "debug",
             "inherits": "common",
             "displayName": "Debug Build",
-            "description": "Debug build with Vcpkg toolchain",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "WITH_TESTS": "ON"
@@ -27,7 +26,6 @@
             "name": "release",
             "inherits": "common",
             "displayName": "Release Build",
-            "description": "Release build with Vcpkg toolchain",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
