@@ -16,10 +16,9 @@
             "name": "debug",
             "inherits": "common",
             "displayName": "Debug Build",
-            "description": "Debug build with Clang and Vcpkg toolchain",
+            "description": "Debug build with Vcpkg toolchain",
             "binaryDir": "${sourceDir}/cmake-build-debug",
             "cacheVariables": {
-                "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_BUILD_TYPE": "Debug",
                 "WITH_TESTS": "ON"
             }
@@ -28,10 +27,9 @@
             "name": "release",
             "inherits": "common",
             "displayName": "Release Build",
-            "description": "Release build with Clang and Vcpkg toolchain",
+            "description": "Release build with Vcpkg toolchain",
             "binaryDir": "${sourceDir}/cmake-build-release",
             "cacheVariables": {
-                "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_BUILD_TYPE": "Release"
             }
         }
