@@ -16,7 +16,7 @@
         {
             "name": "debug",
             "inherits": "common",
-            "displayName": "Debug Build",
+            "displayName": "Debug configuration",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "WITH_TESTS": "ON"
@@ -25,7 +25,7 @@
         {
             "name": "release",
             "inherits": "common",
-            "displayName": "Release Build",
+            "displayName": "Release configuration",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
