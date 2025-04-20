@@ -2,35 +2,94 @@
     "version": 6,
     "configurePresets": [
         {
-            "name": "debug",
-            "displayName": "Debug Build",
-            "description": "Debug build with Clang and Vcpkg toolchain",
-            "binaryDir": "${sourceDir}/cmake-build-debug",
+            "name": "common",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build",
             "cacheVariables": {
-                "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_TOOLCHAIN_FILE": {
                     "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                     "type": "FILEPATH"
                 },
+                "WITH_VST3": "ON"
+            }
+        },
+        {
+            "name": "common-linux",
+            "inherits": "common",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "common-windows",
+            "inherits": "common",
+            "hidden": true,
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "common-macos",
+            "inherits": "common",
+            "hidden": true,
+            "generator": "Xcode",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "debug-linux",
+            "inherits": "common-linux",
+            "displayName": "Debug configuration for Linux",
+            "binaryDir": "${sourceDir}/build/debug",
+            "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "WITH_VST3": "ON",
                 "WITH_TESTS": "ON"
             }
         },
         {
-            "name": "release",
-            "displayName": "Release Build",
-            "description": "Release build with Clang and Vcpkg toolchain",
-            "binaryDir": "${sourceDir}/cmake-build-release",
+            "name": "release-linux",
+            "inherits": "common-linux",
+            "binaryDir": "${sourceDir}/build/release",
+            "displayName": "Release configuration for Linux",
             "cacheVariables": {
-                "CMAKE_CXX_COMPILER": "clang++",
-                "CMAKE_TOOLCHAIN_FILE": {
-                    "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                    "type": "FILEPATH"
-                },
-                "CMAKE_BUILD_TYPE": "Release",
-                "WITH_VST3": "ON"
+                "CMAKE_BUILD_TYPE": "Release"
             }
+        },
+        {
+            "name": "debug-windows",
+            "inherits": "common-windows",
+            "displayName": "Debug configuration for Windows",
+            "cacheVariables": {
+                "WITH_TESTS": "ON"
+            }
+        },
+        {
+            "name": "release-windows",
+            "inherits": "common-windows",
+            "displayName": "Release configuration for Windows"
+        },
+        {
+            "name": "debug-macos",
+            "inherits": "common-macos",
+            "displayName": "Debug configuration for macOS",
+            "cacheVariables": {
+                "WITH_TESTS": "ON"
+            }
+        },
+        {
+            "name": "release-macos",
+            "inherits": "common-macos",
+            "displayName": "Release configuration for macOS"
         }
     ]
 }
