@@ -36,6 +36,17 @@
             }
         },
         {
+            "name": "common-macos",
+            "inherits": "common",
+            "hidden": true,
+            "generator": "Xcode",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
             "name": "debug-linux",
             "inherits": "common-linux",
             "displayName": "Debug configuration for Linux",
@@ -66,6 +77,19 @@
             "name": "release-windows",
             "inherits": "common-windows",
             "displayName": "Release configuration for Windows"
+        },
+        {
+            "name": "debug-macos",
+            "inherits": "common-macos",
+            "displayName": "Debug configuration for macOS",
+            "cacheVariables": {
+                "WITH_TESTS": "ON"
+            }
+        },
+        {
+            "name": "release-macos",
+            "inherits": "common-macos",
+            "displayName": "Release configuration for macOS"
         }
     ]
 }
