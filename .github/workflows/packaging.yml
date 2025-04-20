@@ -12,7 +12,7 @@ jobs:
   # create-release -------------------------------------------------------------
   create-release:
     name: Create release
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs: # Output contains the upload url. Will be reused on upload release
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
@@ -30,7 +30,7 @@ jobs:
   # Linux ----------------------------------------------------------------------
   linux:
     name: Linux
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 60
     needs: create-release
     steps:
@@ -133,7 +133,7 @@ jobs:
   # source ---------------------------------------------------------------------
   source:
     name: Source
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 60
     needs: create-release
     if: github.ref_type == 'tag' # This job needs a tag for the make-src.py script
