@@ -139,6 +139,7 @@ void Ui::init(const m::Conf& conf, const std::string& patchName, bool isAudioRea
 
 void Ui::reset()
 {
+	model.projectName = "";
 	mainWindow->setTitle(G_DEFAULT_PATCH_NAME);
 	rebuildStaticWidgets();
 	closeAllSubwindows();
