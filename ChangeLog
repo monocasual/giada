@@ -11,6 +11,16 @@
 --------------------------------------------------------------------------------
 
 
+1.2.0 --- 2025 . 04 . 22
+- Add support for multiple MIDI devices (#215)
+- Preserve position and size of 'Settings' window
+- Fix wrong name in cloned sample channels (#725)
+- Update concurrentqueue dependency to version 1.0.4
+- Update FLTK dependency to 1.4.2
+- More CMake presets improvements
+- Refactoring and code gardening
+
+
 1.1.1 --- 2025 . 01 . 07
 - Update FLTK dependency to 1.4.0-1
 - Render Group Channels audio data to master output only if audible (#709)
