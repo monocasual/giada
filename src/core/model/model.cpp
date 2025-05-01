@@ -55,10 +55,11 @@ void Model::init()
 {
 	m_shared.init();
 
-	Document& document        = get();
-	document                  = {};
-	document.sequencer.shared = &m_shared.m_sequencer;
-	document.mixer.shared     = &m_shared.m_mixer;
+	Document& document          = get();
+	document                    = {};
+	document.kernelAudio.shared = &m_shared.m_kernelAudio;
+	document.sequencer.shared   = &m_shared.m_sequencer;
+	document.mixer.shared       = &m_shared.m_mixer;
 
 	swap(SwapType::NONE);
 }
@@ -69,12 +70,13 @@ void Model::reset()
 {
 	m_shared.init();
 
-	Document& document        = get();
-	document.sequencer        = {};
-	document.sequencer.shared = &m_shared.m_sequencer;
-	document.mixer            = {};
-	document.mixer.shared     = &m_shared.m_mixer;
-	document.tracks           = {};
+	Document& document          = get();
+	document.kernelAudio.shared = &m_shared.m_kernelAudio;
+	document.sequencer          = {};
+	document.sequencer.shared   = &m_shared.m_sequencer;
+	document.mixer              = {};
+	document.mixer.shared       = &m_shared.m_mixer;
+	document.tracks             = {};
 
 	swap(SwapType::NONE);
 }

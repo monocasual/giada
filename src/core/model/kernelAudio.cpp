@@ -24,48 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_KERNEL_AUDIO_H
-#define G_MODEL_KERNEL_AUDIO_H
-
-#include "src/core/resampler.h"
-#include "src/core/types.h"
-#include "src/deps/rtaudio/RtAudio.h"
+#include "core/model/kernelAudio.h"
 
 namespace giada::m::model
 {
-class KernelAudio
+void KernelAudio::a_setCpuLoad(double v) const
 {
-	friend class Model;
-	friend class Shared;
+	shared->cpuLoad.store(v);
+}
 
-public:
-	struct Device
-	{
-		int id            = 0;
-		int channelsCount = 0;
-		int channelsStart = 0;
-	};
-
-	void   a_setCpuLoad(double) const;
-	double a_getCpuLoad() const;
-
-	RtAudio::Api       api             = G_DEFAULT_SOUNDSYS;
-	Device             deviceOut       = {G_DEFAULT_SOUNDDEV_OUT, G_MAX_IO_CHANS, 0};
-	Device             deviceIn        = {G_DEFAULT_SOUNDDEV_IN, 1, 0};
-	unsigned int       samplerate      = G_DEFAULT_SAMPLERATE;
-	unsigned int       buffersize      = G_DEFAULT_BUFSIZE;
-	bool               limitOutput     = false;
-	Resampler::Quality rsmpQuality     = Resampler::Quality::LINEAR;
-	float              recTriggerLevel = 0.0f;
-
-private:
-	struct Shared
-	{
-		WeakAtomic<double> cpuLoad = 0.0f;
-	};
-
-	Shared* shared = nullptr;
-};
+double KernelAudio::a_getCpuLoad() const
+{
+	return shared->cpuLoad.load();
+}
 } // namespace giada::m::model
-
-#endif
