@@ -33,6 +33,7 @@
 #include "src/core/rendering/pluginRendering.h"
 #include "src/core/rendering/sampleAdvance.h"
 #include "src/core/rendering/sampleRendering.h"
+#include <chrono>
 #ifdef WITH_AUDIO_JACK
 #include "src/core/jackSynchronizer.h"
 #include "src/core/jackTransport.h"
@@ -40,6 +41,26 @@
 
 namespace giada::m::rendering
 {
+using Now      = std::chrono::time_point<std::chrono::high_resolution_clock>;
+using Duration = std::chrono::duration<double, std::micro>;
+
+/* -------------------------------------------------------------------------- */
+
+double computeCPULoad_(const Now& startTime, unsigned int sampleRate, int bufferSize)
+{
+	const Now      endTime        = std::chrono::high_resolution_clock::now();
+	const Duration processingTime = endTime - startTime;
+
+	const double callbackDuration = (static_cast<double>(bufferSize) / sampleRate) * 1e6; // in microseconds
+	const double load             = (processingTime.count() / callbackDuration) * 100.0;
+
+	return load;
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 #ifdef WITH_AUDIO_JACK
 Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, JackSynchronizer& js, JackTransport& jt, KernelMidi& km)
 #else
@@ -60,6 +81,8 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, KernelMidi& km)
 
 void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Model& model) const
 {
+	const Now startTime = std::chrono::high_resolution_clock::now();
+
 	/* Clean up output buffer before any rendering. Do this even if mixer is
 	disabled to avoid audio leftovers during a temporary suspension (e.g. when
 	loading a new patch). */
@@ -88,6 +111,8 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		m_jackSynchronizer.recvJackSync(m_jackTransport.getState());
 #endif
 
+	const int bufferSize = out.countFrames();
+
 	/* If the m_sequencer is running, advance it first (i.e. parse it for events).
 	Also advance channels (i.e. let them react to m_sequencer events), only if the
 	document is not locked: another thread might altering channel's data in the
@@ -96,7 +121,6 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	if (sequencer.isRunning())
 	{
 		const Frame                currentFrame  = sequencer.a_getCurrentFrame();
-		const int                  bufferSize    = out.countFrames();
 		const int                  quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
 		const geompp::Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
@@ -133,6 +157,10 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	/* Post processing. */
 
 	m_mixer.finalizeOutput(mixer, out, mixer.inToOut, kernelAudio.limitOutput, masterOutCh.volume);
+
+	/* CPU load computation. */
+
+	mixer.a_setCpuLoad(computeCPULoad_(startTime, kernelAudio.samplerate, bufferSize));
 }
 
 /* -------------------------------------------------------------------------- */
