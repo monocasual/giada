@@ -103,6 +103,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 			geFlex* zone2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 			{
 				mainTransport = new v::geMainTransport();
+				cpuLoad       = new geCpuLoad();
 
 				geFlex* zoneTimer = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN, {2, 0, 3, 0});
 				{
@@ -113,6 +114,8 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 
 				zone2->addWidget(mainTransport, 400);
 				zone2->addWidget(new geBox());
+				zone2->addWidget(cpuLoad, 100);
+				zone2->addWidget(new geBox(), G_GUI_OUTER_MARGIN);
 				zone2->addWidget(zoneTimer, 237);
 				zone2->end();
 			}
@@ -161,8 +164,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 	{
 		if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
 			return; // ignore Escape
-		c::main::quitGiada();
-	});
+		c::main::quitGiada(); });
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 	refresh();
@@ -174,6 +176,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 void gdMainWindow::refresh()
 {
 	mainTimer->refresh();
+	cpuLoad->refresh();
 	mainTransport->refresh();
 	sequencer->refresh();
 	keyboard->refresh();

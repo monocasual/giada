@@ -60,6 +60,7 @@ public:
 	bool              getInToOut() const;
 	Peak              getPeakOut() const;
 	Peak              getPeakIn() const;
+	double            getCpuLoad() const;
 	Mixer::RecordInfo getRecordInfo() const;
 	int               getBeats() const;
 	int               getBars() const;

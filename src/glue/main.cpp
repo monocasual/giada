@@ -284,7 +284,11 @@ void toggleInputRecording() { g_engine->getMainApi().toggleInputRecording(); }
 
 /* -------------------------------------------------------------------------- */
 
-#if G_DEBUG_MODE
+double getCpuLoad() { return g_engine->getMainApi().getCpuLoad(); }
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef G_DEBUG_MODE
 
 void printDebugInfo()
 {
