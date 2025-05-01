@@ -50,6 +50,8 @@ struct KernelAudio
 	bool               limitOutput     = false;
 	Resampler::Quality rsmpQuality     = Resampler::Quality::LINEAR;
 	float              recTriggerLevel = 0.0f;
+
+	WeakAtomic<double> cpuLoad = 0.0f;
 };
 } // namespace giada::m::model
 

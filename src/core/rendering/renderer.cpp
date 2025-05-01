@@ -81,8 +81,6 @@ Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, KernelMidi& km)
 
 void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const model::Model& model) const
 {
-	const Now startTime = std::chrono::high_resolution_clock::now();
-
 	/* Clean up output buffer before any rendering. Do this even if mixer is
 	disabled to avoid audio leftovers during a temporary suspension (e.g. when
 	loading a new patch). */
@@ -157,10 +155,6 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	/* Post processing. */
 
 	m_mixer.finalizeOutput(mixer, out, mixer.inToOut, kernelAudio.limitOutput, masterOutCh.volume);
-
-	/* CPU load computation. */
-
-	mixer.a_setCpuLoad(computeCPULoad_(startTime, kernelAudio.samplerate, bufferSize));
 }
 
 /* -------------------------------------------------------------------------- */

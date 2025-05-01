@@ -109,6 +109,7 @@ public:
 	std::vector<Device> getAvailableDevices() const;
 	Device              getCurrentOutDevice() const;
 	Device              getCurrentInDevice() const;
+	double              getCpuLoad() const;
 #ifdef WITH_AUDIO_JACK
 	jack_client_t* getJackHandle() const;
 #endif

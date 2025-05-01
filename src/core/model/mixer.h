@@ -42,17 +42,15 @@ class Mixer
 	friend class Shared;
 
 public:
-	bool   a_isActive() const;
-	Frame  a_getInputTracker() const;
-	Peak   a_getPeakOut() const;
-	Peak   a_getPeakIn() const;
-	double a_getCpuLoad() const;
+	bool  a_isActive() const;
+	Frame a_getInputTracker() const;
+	Peak  a_getPeakOut() const;
+	Peak  a_getPeakIn() const;
 
 	void a_setActive(bool) const;
 	void a_setInputTracker(Frame) const;
 	void a_setPeakOut(Peak) const;
 	void a_setPeakIn(Peak) const;
-	void a_setCpuLoad(double) const;
 
 	mcl::AudioBuffer& getRecBuffer() const;
 	mcl::AudioBuffer& getInBuffer() const;
@@ -74,13 +72,12 @@ private:
 	{
 		Shared& operator=(const Shared&);
 
-		std::atomic<bool>  active       = false;
-		WeakAtomic<double> cpuLoad      = 0.0f;
-		WeakAtomic<float>  peakOutL     = 0.0f;
-		WeakAtomic<float>  peakOutR     = 0.0f;
-		WeakAtomic<float>  peakInL      = 0.0f;
-		WeakAtomic<float>  peakInR      = 0.0f;
-		WeakAtomic<Frame>  inputTracker = 0;
+		std::atomic<bool> active       = false;
+		WeakAtomic<float> peakOutL     = 0.0f;
+		WeakAtomic<float> peakOutR     = 0.0f;
+		WeakAtomic<float> peakInL      = 0.0f;
+		WeakAtomic<float> peakInR      = 0.0f;
+		WeakAtomic<Frame> inputTracker = 0;
 
 		/* recBuffer
 		Working buffer for audio recording. */

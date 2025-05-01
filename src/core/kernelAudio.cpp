@@ -41,6 +41,9 @@ namespace giada::m
 {
 namespace
 {
+using Now      = std::chrono::time_point<std::chrono::high_resolution_clock>;
+using Duration = std::chrono::duration<double, std::micro>;
+
 /* RTAUDIO_MAX_PRIORITY
 The maximum priority level when instructing RtAudio to work in real-time mode
 (with RTAUDIO_SCHEDULE_REALTIME flag). This is actually the maximum value allowed
@@ -48,6 +51,20 @@ on Unix, however RtAudio has some magic hardcoded values when it comes to Window
 implementation, so we can safely pass this value below in the options struct.*/
 
 constexpr int RTAUDIO_MAX_PRIORITY = 99;
+
+/* -------------------------------------------------------------------------- */
+
+double computeCpuLoad(const Now& startTime, unsigned int sampleRate, int bufferSize)
+{
+	const Now      endTime        = std::chrono::high_resolution_clock::now();
+	const Duration processingTime = endTime - startTime;
+
+	const double callbackDuration = (static_cast<double>(bufferSize) / sampleRate) * 1e6; // in microseconds
+	const double load             = (processingTime.count() / callbackDuration) * 100.0;
+
+	return load;
+}
+
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -224,6 +241,13 @@ KernelAudio::Device KernelAudio::getCurrentInDevice() const
 
 /* -------------------------------------------------------------------------- */
 
+double KernelAudio::getCpuLoad() const
+{
+	m_model.get().kernelAudio.cpuLoad.load();
+}
+
+/* -------------------------------------------------------------------------- */
+
 #ifdef WITH_AUDIO_JACK
 jack_client_t* KernelAudio::getJackHandle() const
 {
@@ -305,9 +329,7 @@ RtAudio::Api KernelAudio::setAPI_(RtAudio::Api api)
 	m_rtAudio = std::make_unique<RtAudio>(api);
 
 	m_rtAudio->setErrorCallback([](RtAudioErrorType type, const std::string& msg)
-	{
-		u::log::print("[KA] RtAudio error {}: {}\n", static_cast<int>(type), msg);
-	});
+	    { u::log::print("[KA] RtAudio error {}: {}\n", static_cast<int>(type), msg); });
 
 	/* If api == UNSPECIFIED, rtAudio will pick one according to some internal
 	logic. */
@@ -438,6 +460,8 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 int KernelAudio::audioCallback(void* outBuf, void* inBuf, unsigned bufferSize,
     double /*streamTime*/, RtAudioStreamStatus /*status*/, void*   data)
 {
+	const Now startTime = std::chrono::high_resolution_clock::now();
+
 	const CallbackInfo& info = *static_cast<CallbackInfo*>(data);
 
 	mcl::AudioBuffer out(static_cast<float*>(outBuf), bufferSize, info.channelsOutCount);
@@ -445,6 +469,13 @@ int KernelAudio::audioCallback(void* outBuf, void* inBuf, unsigned bufferSize,
 	if (info.channelsInCount > 0)
 		in = mcl::AudioBuffer(static_cast<float*>(inBuf), bufferSize, info.channelsInCount);
 
-	return info.kernelAudio->onAudioCallback(out, in);
+	const int ret = info.kernelAudio->onAudioCallback(out, in);
+
+	/* CPU load computation. */
+
+	model::KernelAudio& kernelAudio = info.kernelAudio->m_model.get().kernelAudio;
+	kernelAudio.cpuLoad.store(computeCpuLoad(startTime, kernelAudio.samplerate, bufferSize));
+
+	return ret;
 }
 } // namespace giada::m
