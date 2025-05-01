@@ -123,6 +123,10 @@ Peak MainApi::getPeakIn() const { return m_mixer.getPeakIn(); }
 
 /* -------------------------------------------------------------------------- */
 
+double MainApi::getCpuLoad() const { return m_kernelAudio.getCpuLoad(); }
+
+/* -------------------------------------------------------------------------- */
+
 Mixer::RecordInfo MainApi::getRecordInfo() const
 {
 	return m_mixer.getRecordInfo();
