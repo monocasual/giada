@@ -87,13 +87,6 @@ Peak Mixer::a_getPeakIn() const
 
 /* -------------------------------------------------------------------------- */
 
-double Mixer::a_getCpuLoad() const
-{
-	return shared->cpuLoad.load();
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Mixer::a_setPeakOut(Peak p) const
 {
 	shared->peakOutL.store(p.left);
@@ -104,13 +97,6 @@ void Mixer::a_setPeakIn(Peak p) const
 {
 	shared->peakInL.store(p.left);
 	shared->peakInR.store(p.right);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Mixer::a_setCpuLoad(double v) const
-{
-	shared->cpuLoad.store(v);
 }
 
 /* -------------------------------------------------------------------------- */
