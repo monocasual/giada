@@ -243,7 +243,7 @@ KernelAudio::Device KernelAudio::getCurrentInDevice() const
 
 double KernelAudio::getCpuLoad() const
 {
-	m_model.get().kernelAudio.cpuLoad.load();
+	return m_model.get().kernelAudio.cpuLoad.load();
 }
 
 /* -------------------------------------------------------------------------- */
