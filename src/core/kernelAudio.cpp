@@ -243,7 +243,7 @@ KernelAudio::Device KernelAudio::getCurrentInDevice() const
 
 double KernelAudio::getCpuLoad() const
 {
-	return m_model.get().kernelAudio.cpuLoad.load();
+	return m_model.get().kernelAudio.a_getCpuLoad();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -473,8 +473,11 @@ int KernelAudio::audioCallback(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	/* CPU load computation. */
 
-	model::KernelAudio& kernelAudio = info.kernelAudio->m_model.get().kernelAudio;
-	kernelAudio.cpuLoad.store(computeCpuLoad(startTime, kernelAudio.samplerate, bufferSize));
+	const model::DocumentLock documentLock = info.kernelAudio->m_model.get_RT();
+	const model::Document&    document_RT  = documentLock.get();
+	const model::KernelAudio& kernelAudio  = document_RT.kernelAudio;
+
+	kernelAudio.a_setCpuLoad(computeCpuLoad(startTime, kernelAudio.samplerate, bufferSize));
 
 	return ret;
 }

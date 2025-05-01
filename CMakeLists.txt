@@ -160,6 +160,8 @@ list(APPEND SOURCES
 	src/core/model/sharedLock.h
 	src/core/model/shared.cpp
 	src/core/model/shared.h
+	src/core/model/kernelAudio.cpp
+	src/core/model/kernelAudio.h
 	src/core/model/sequencer.cpp
 	src/core/model/sequencer.h
 	src/core/model/mixer.cpp

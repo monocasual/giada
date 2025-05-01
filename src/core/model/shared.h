@@ -96,6 +96,7 @@ public:
 	std::vector<Plugin*> findPlugins(std::vector<ID> pluginIds);
 
 private:
+	KernelAudio::Shared                         m_kernelAudio;
 	Sequencer::Shared                           m_sequencer;
 	Mixer::Shared                               m_mixer;
 	std::vector<std::unique_ptr<ChannelShared>> m_channels;
