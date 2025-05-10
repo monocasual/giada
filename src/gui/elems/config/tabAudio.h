@@ -42,14 +42,14 @@ class geTabAudio : public Fl_Group
 public:
 	struct geDeviceMenu : public geChoice
 	{
-		geDeviceMenu(const char* l);
+		geDeviceMenu();
 
 		void rebuild(const std::vector<c::config::AudioDeviceData>&);
 	};
 
 	struct geChannelMenu : public geChoice
 	{
-		geChannelMenu(const char* l);
+		geChannelMenu();
 
 		int getChannelsCount() const;
 		int getChannelsStart() const;
