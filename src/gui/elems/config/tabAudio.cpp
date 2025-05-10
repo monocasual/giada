@@ -39,14 +39,12 @@
 #include <fmt/core.h>
 #include <string>
 
-constexpr int LABEL_WIDTH = 120;
-
 extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-geTabAudio::geDeviceMenu::geDeviceMenu(const char* l)
-: geChoice(l, LABEL_WIDTH)
+geTabAudio::geDeviceMenu::geDeviceMenu()
+: geChoice()
 {
 }
 
@@ -71,8 +69,8 @@ void geTabAudio::geDeviceMenu::rebuild(const std::vector<c::config::AudioDeviceD
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geTabAudio::geChannelMenu::geChannelMenu(const char* l)
-: geChoice(l, LABEL_WIDTH)
+geTabAudio::geChannelMenu::geChannelMenu()
+: geChoice()
 {
 }
 
@@ -134,80 +132,104 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 {
 	end();
 
+	const int LABEL_WIDTH = 120;
+
 	geFlex* body = new geFlex(bounds.reduced(G_GUI_OUTER_MARGIN), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		m_api = new geChoice(g_ui->getI18Text(LangMap::CONFIG_AUDIO_SYSTEM), LABEL_WIDTH);
+		geFlex* line0 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			m_api = new geChoice();
+
+			line0->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_SYSTEM), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line0->addWidget(m_api);
+			line0->end();
+		}
 
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_bufferSize = new geChoice(g_ui->getI18Text(LangMap::CONFIG_AUDIO_BUFFERSIZE), LABEL_WIDTH);
-			m_sampleRate = new geChoice(g_ui->getI18Text(LangMap::CONFIG_AUDIO_SAMPLERATE), LABEL_WIDTH);
+			m_bufferSize = new geChoice();
+			m_sampleRate = new geChoice();
 
-			line1->addWidget(m_bufferSize, 180);
-			line1->addWidget(m_sampleRate, 180);
+			line1->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_BUFFERSIZE), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line1->addWidget(m_bufferSize, 60);
+			line1->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_SAMPLERATE), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line1->addWidget(m_sampleRate, 60);
 			line1->end();
 		}
 
-		m_sounddevOut = new geDeviceMenu(g_ui->getI18Text(LangMap::CONFIG_AUDIO_OUTPUTDEVICE));
-
 		geFlex* line2 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_channelsOut = new geChannelMenu(g_ui->getI18Text(LangMap::CONFIG_AUDIO_OUTPUTCHANNELS));
-			m_limitOutput = new geCheck(x() + 177, y() + 93, 100, 20, g_ui->getI18Text(LangMap::CONFIG_AUDIO_LIMITOUTPUT));
+			m_sounddevOut = new geDeviceMenu();
 
-			line2->addWidget(m_channelsOut, 180);
-			line2->addWidget(m_limitOutput);
+			line2->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_OUTPUTDEVICE), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line2->addWidget(m_sounddevOut);
 			line2->end();
 		}
 
 		geFlex* line3 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_sounddevIn = new geDeviceMenu(g_ui->getI18Text(LangMap::CONFIG_AUDIO_INPUTDEVICE));
-			m_enableIn   = new geCheck(0, 0, 0, 0);
+			m_channelsOut = new geChannelMenu();
+			m_limitOutput = new geCheck();
 
-			line3->addWidget(m_sounddevIn);
-			line3->addWidget(m_enableIn, 12);
+			line3->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_OUTPUTCHANNELS), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line3->addWidget(m_channelsOut, 60);
+			line3->addWidget(m_limitOutput, 12);
+			line3->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_LIMITOUTPUT), FL_ALIGN_LEFT), LABEL_WIDTH);
 			line3->end();
 		}
 
 		geFlex* line4 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_channelsIn      = new geChannelMenu(g_ui->getI18Text(LangMap::CONFIG_AUDIO_INPUTCHANNELS));
-			m_recTriggerLevel = new geInput(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RECTHRESHOLD), 120);
+			m_sounddevIn = new geDeviceMenu();
+			m_enableIn   = new geCheck();
 
-			line4->addWidget(m_channelsIn, 180);
-			line4->addWidget(m_recTriggerLevel, 180);
+			line4->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_INPUTDEVICE), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line4->addWidget(m_sounddevIn);
+			line4->addWidget(m_enableIn, 12);
 			line4->end();
 		}
 
-		geFlex* col1 = new geFlex(Direction::VERTICAL);
+		geFlex* line5 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			geFlex* line5 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
-			{
-				m_applyBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_APPLY));
+			m_channelsIn      = new geChannelMenu();
+			m_recTriggerLevel = new geInput();
 
-				line5->addWidget(new geBox());
-				line5->addWidget(m_applyBtn, 80);
-				line5->addWidget(new geBox());
-				line5->end();
-			}
-
-			col1->addWidget(new geBox());
-			col1->addWidget(line5, G_GUI_UNIT);
-			col1->addWidget(new geBox());
-			col1->end();
+			line5->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_INPUTCHANNELS), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line5->addWidget(m_channelsIn, 60);
+			line5->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RECTHRESHOLD), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line5->addWidget(m_recTriggerLevel, 60);
+			line5->end();
 		}
 
-		m_rsmpQuality = new geChoice(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING), LABEL_WIDTH);
+		geFlex* line6 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			m_rsmpQuality = new geChoice();
 
-		body->addWidget(m_api, 20);
+			line6->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING), FL_ALIGN_RIGHT), LABEL_WIDTH);
+			line6->addWidget(m_rsmpQuality);
+			line6->end();
+		}
+
+		geFlex* line7 = new geFlex(Direction::HORIZONTAL);
+		{
+			m_applyBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_APPLY));
+
+			line7->addWidget(new geBox());
+			line7->addWidget(m_applyBtn, 80);
+			line7->addWidget(new geBox());
+			line7->end();
+		}
+
+		body->addWidget(line0, 20);
 		body->addWidget(line1, 20);
-		body->addWidget(m_sounddevOut, 20);
 		body->addWidget(line2, 20);
 		body->addWidget(line3, 20);
 		body->addWidget(line4, 20);
-		body->addWidget(m_rsmpQuality, 20);
-		body->addWidget(col1);
+		body->addWidget(line5, 20);
+		body->addWidget(line6, 20);
+		body->addWidget(new geBox());
+		body->addWidget(line7, 20);
+		body->addWidget(new geBox());
 		body->end();
 	}
 
