@@ -55,28 +55,28 @@ struct Model
 
 	geompp::Rect<int> mainWindowBounds = {-1, -1, G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT};
 
-	geompp::Rect<int> settingsBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	geompp::Rect<int> settingsBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_H};
 
-	geompp::Rect<int> browserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	geompp::Rect<int> browserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_H};
 	int               browserPosition;
 	int               browserLastValue;
 	std::string       browserLastPath;
 
-	geompp::Rect<int> actionEditorBounds     = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	geompp::Rect<int> actionEditorBounds     = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_H};
 	int               actionEditorZoom       = G_DEFAULT_ZOOM_RATIO;
 	int               actionEditorSplitH     = -1;
 	int               actionEditorGridVal    = 0;
 	int               actionEditorGridOn     = false;
 	int               actionEditorPianoRollY = -1;
 
-	geompp::Rect<int> sampleEditorBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	geompp::Rect<int> sampleEditorBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_H};
 	int               sampleEditorGridVal = 1;
 	int               sampleEditorGridOn  = false;
 
-	geompp::Rect<int> midiInputBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	geompp::Rect<int> midiInputBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_H};
 	geompp::Rect<int> pluginListBounds = {-1, -1, 468, 204};
 
-	geompp::Rect<int>          pluginChooserBounds   = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	geompp::Rect<int>          pluginChooserBounds   = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_H};
 	m::PluginManager::SortMode pluginChooserSortMode = {m::PluginManager::SortMethod::NAME, m::PluginManager::SortDir::ASC};
 
 	int keyBindPlay          = ' ';
