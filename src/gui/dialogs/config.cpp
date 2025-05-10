@@ -47,6 +47,9 @@ namespace giada::v
 gdConfig::gdConfig(const Model& model)
 : gdWindow(u::gui::getCenterWinBounds(model.settingsBounds), g_ui->getI18Text(LangMap::CONFIG_TITLE), WID_CONFIG)
 {
+	const int minW = 400;
+	const int minH = 370;
+
 	const geompp::Rect<int> bounds = getContentBounds().reduced(G_GUI_OUTER_MARGIN);
 
 	geFlex* container = new geFlex(bounds, Direction::VERTICAL, G_GUI_OUTER_MARGIN);
@@ -86,7 +89,7 @@ gdConfig::gdConfig(const Model& model)
 
 	add(container);
 	resizable(container);
-	size_range(MIN_W, MIN_H);
+	size_range(minW, minH);
 
 	show();
 }
