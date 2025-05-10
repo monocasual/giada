@@ -32,6 +32,13 @@
 
 namespace giada::v
 {
+geCheck::geCheck()
+: geCheck(0, 0, 0, 0)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 geCheck::geCheck(int x, int y, int w, int h, const char* l)
 : Fl_Check_Button(x, y, w, h, l)
 {

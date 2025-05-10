@@ -37,6 +37,7 @@ class geCheck : public Fl_Check_Button
 public:
 	static constexpr int CHECKBOX_WIDTH = 12;
 
+	geCheck();
 	geCheck(int x, int y, int w, int h, const char* l = nullptr);
 
 	void draw() override;
