@@ -115,12 +115,12 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 		for (int i = 0; i < data.channelsMax; i += 2)
 			addItem(fmt::format("{}-{}", i + 1, i + 2), i + STEREO_OFFSET);
 
-	if (data.channelsCount == 0) // First time you choose a device, so no channels selected yet: just show first item
+	if (data.selectedChannelsCount == 0) // First time you choose a device, so no channels selected yet: just show first item
 		showFirstItem();
-	else if (data.channelsCount == 1)
-		showItem(data.channelsStart);
-	else if (data.channelsCount == 2)
-		showItem(data.channelsStart + STEREO_OFFSET);
+	else if (data.selectedChannelsCount == 1)
+		showItem(data.selectedChannelsStart);
+	else if (data.selectedChannelsCount == 2)
+		showItem(data.selectedChannelsStart + STEREO_OFFSET);
 	else
 		assert(false);
 }
@@ -216,7 +216,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 	m_api->onChange = [this](ID id)
 	{
-		m_data.api = static_cast<RtAudio::Api>(id);
+		m_data.selectedApi = static_cast<RtAudio::Api>(id);
 		deactivateAll();
 		c::config::changeAudioAPI(static_cast<RtAudio::Api>(id));
 		rebuild(c::config::getAudioData());
@@ -224,7 +224,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	};
 
 	m_sampleRate->onChange = [this](ID id)
-	{ m_data.sampleRate = id; };
+	{ m_data.selectedSampleRate = id; };
 
 	m_sounddevOut->onChange = [this](ID id)
 	{
@@ -247,18 +247,18 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 	m_channelsOut->onChange = [this](ID)
 	{
-		m_data.outputDevice.channelsCount = m_channelsOut->getChannelsCount();
-		m_data.outputDevice.channelsStart = m_channelsOut->getChannelsStart();
+		m_data.selectedOutputDevice.selectedChannelsCount = m_channelsOut->getChannelsCount();
+		m_data.selectedOutputDevice.selectedChannelsStart = m_channelsOut->getChannelsStart();
 	};
 
 	m_channelsIn->onChange = [this](ID)
 	{
-		m_data.inputDevice.channelsCount = m_channelsIn->getChannelsCount();
-		m_data.inputDevice.channelsStart = m_channelsIn->getChannelsStart();
+		m_data.selectedInputDevice.selectedChannelsCount = m_channelsIn->getChannelsCount();
+		m_data.selectedInputDevice.selectedChannelsStart = m_channelsIn->getChannelsStart();
 	};
 
 	m_limitOutput->onChange = [this](bool v)
-	{ m_data.limitOutput = v; };
+	{ m_data.selectedLimitOutput = v; };
 
 	m_bufferSize->addItem("8", 8);
 	m_bufferSize->addItem("16", 16);
@@ -271,7 +271,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	m_bufferSize->addItem("2048", 2048);
 	m_bufferSize->addItem("4096", 4096);
 	m_bufferSize->onChange = [this](ID id)
-	{ m_data.bufferSize = id; };
+	{ m_data.selectedBufferSize = id; };
 
 	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCBEST), 0);
 	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCMEDIUM), 1);
@@ -280,10 +280,10 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_LINEAR), 4);
 
 	m_rsmpQuality->onChange = [this](ID id)
-	{ m_data.resampleQuality = id; };
+	{ m_data.selectedResampleQuality = id; };
 
 	m_recTriggerLevel->onChange = [this](const std::string& s)
-	{ m_data.recTriggerLevel = std::stof(s); };
+	{ m_data.selectedRecTriggerLevel = std::stof(s); };
 
 	m_applyBtn->onClick = [this]()
 	{ c::config::apply(m_data); };
@@ -299,30 +299,30 @@ void geTabAudio::rebuild(const c::config::AudioData& data)
 
 	activateAll();
 
-	for (const auto& [key, value] : m_data.apis)
+	for (const auto& [key, value] : m_data.availableApis)
 		m_api->addItem(value.c_str(), key);
-	m_api->showItem(m_data.api);
+	m_api->showItem(m_data.selectedApi);
 
-	m_bufferSize->showItem(m_data.bufferSize);
-	if (m_data.api == RtAudio::Api::UNIX_JACK)
+	m_bufferSize->showItem(m_data.selectedBufferSize);
+	if (m_data.selectedApi == RtAudio::Api::UNIX_JACK)
 		m_bufferSize->deactivate();
 	else
 		m_bufferSize->activate();
 
-	m_sounddevOut->rebuild(m_data.outputDevices);
-	m_sounddevOut->showItem(m_data.outputDevice.id);
+	m_sounddevOut->rebuild(m_data.availableOutputDevices);
+	m_sounddevOut->showItem(m_data.selectedOutputDevice.id);
 
-	m_sounddevIn->rebuild(m_data.inputDevices);
-	if (m_data.inputDevice.id != 0)
-		m_sounddevIn->showItem(m_data.inputDevice.id);
+	m_sounddevIn->rebuild(m_data.availableInputDevices);
+	if (m_data.selectedInputDevice.id != 0)
+		m_sounddevIn->showItem(m_data.selectedInputDevice.id);
 
-	m_enableIn->value(m_data.inputDevice.id != 0);
+	m_enableIn->value(m_data.selectedInputDevice.id != 0);
 
-	m_limitOutput->value(m_data.limitOutput);
+	m_limitOutput->value(m_data.selectedLimitOutput);
 
-	m_rsmpQuality->showItem(m_data.resampleQuality);
+	m_rsmpQuality->showItem(m_data.selectedResampleQuality);
 
-	m_recTriggerLevel->setValue(fmt::format("{:.1f}", m_data.recTriggerLevel));
+	m_recTriggerLevel->setValue(fmt::format("{:.1f}", m_data.selectedRecTriggerLevel));
 
 	refreshDevOutProperties();
 	refreshDevInProperties();
@@ -334,7 +334,7 @@ void geTabAudio::refreshDevOutProperties()
 {
 	m_sampleRate->clear();
 
-	if (m_data.outputDevice.sampleRates.size() == 0)
+	if (m_data.selectedOutputDevice.sampleRates.size() == 0)
 	{
 		m_sampleRate->addItem(g_ui->getI18Text(LangMap::COMMON_NONE), 0);
 		m_sampleRate->showFirstItem();
@@ -342,32 +342,32 @@ void geTabAudio::refreshDevOutProperties()
 	}
 	else
 	{
-		for (unsigned int sampleRate : m_data.outputDevice.sampleRates)
+		for (unsigned int sampleRate : m_data.selectedOutputDevice.sampleRates)
 			m_sampleRate->addItem(std::to_string(sampleRate), sampleRate);
-		m_sampleRate->showItem(m_data.sampleRate);
+		m_sampleRate->showItem(m_data.selectedSampleRate);
 		m_sampleRate->activate();
 	}
 
-	m_channelsOut->rebuild(m_data.outputDevice);
+	m_channelsOut->rebuild(m_data.selectedOutputDevice);
 
 	// Also refresh channels out info
-	m_data.outputDevice.channelsCount = m_channelsOut->getChannelsCount();
-	m_data.outputDevice.channelsStart = m_channelsOut->getChannelsStart();
+	m_data.selectedOutputDevice.selectedChannelsCount = m_channelsOut->getChannelsCount();
+	m_data.selectedOutputDevice.selectedChannelsStart = m_channelsOut->getChannelsStart();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geTabAudio::refreshDevInProperties()
 {
-	if (m_data.inputDevice.id != 0)
+	if (m_data.selectedInputDevice.id != 0)
 	{
-		m_channelsIn->rebuild(m_data.inputDevice);
+		m_channelsIn->rebuild(m_data.selectedInputDevice);
 		m_sounddevIn->activate();
 		m_channelsIn->activate();
 		m_recTriggerLevel->activate();
 		// Also refresh channels in info
-		m_data.inputDevice.channelsCount = m_channelsIn->getChannelsCount();
-		m_data.inputDevice.channelsStart = m_channelsIn->getChannelsStart();
+		m_data.selectedInputDevice.selectedChannelsCount = m_channelsIn->getChannelsCount();
+		m_data.selectedInputDevice.selectedChannelsStart = m_channelsIn->getChannelsStart();
 	}
 	else
 	{

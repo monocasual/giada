@@ -70,8 +70,8 @@ AudioDeviceData::AudioDeviceData(DeviceType type, const m::KernelAudio::Device& 
 , name(device.name)
 , channelsMax(type == DeviceType::OUTPUT ? device.maxOutputChannels : device.maxInputChannels)
 , sampleRates(device.sampleRates)
-, channelsCount(device.channelsCount)
-, channelsStart(device.channelsStart)
+, selectedChannelsCount(device.channelsCount)
+, selectedChannelsStart(device.channelsStart)
 {
 }
 
@@ -81,11 +81,11 @@ AudioDeviceData::AudioDeviceData(DeviceType type, const m::KernelAudio::Device& 
 
 void AudioData::setOutputDevice(int id)
 {
-	for (AudioDeviceData& d : outputDevices)
+	for (AudioDeviceData& d : availableOutputDevices)
 	{
 		if (id != d.id)
 			continue;
-		outputDevice = d;
+		selectedOutputDevice = d;
 	}
 }
 
@@ -93,24 +93,24 @@ void AudioData::setOutputDevice(int id)
 
 void AudioData::setInputDevice(int id)
 {
-	for (AudioDeviceData& d : inputDevices)
+	for (AudioDeviceData& d : availableInputDevices)
 	{
 		if (id == d.id)
 		{
-			inputDevice = d;
+			selectedInputDevice = d;
 			return;
 		}
 	}
-	inputDevice = {};
+	selectedInputDevice = {};
 }
 
 /* -------------------------------------------------------------------------- */
 
 void AudioData::toggleInputDevice(bool v)
 {
-	if (inputDevices.empty())
+	if (availableInputDevices.empty())
 		return;
-	setInputDevice(v ? inputDevices[0].id : 0);
+	setInputDevice(v ? availableInputDevices[0].id : 0);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -130,38 +130,38 @@ AudioData getAudioData()
 {
 	AudioData audioData;
 
-	audioData.apis[RtAudio::Api::RTAUDIO_DUMMY] = "(Dummy)";
+	audioData.availableApis[RtAudio::Api::RTAUDIO_DUMMY] = "(Dummy)";
 	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::LINUX_ALSA))
-		audioData.apis[RtAudio::Api::LINUX_ALSA] = "ALSA";
+		audioData.availableApis[RtAudio::Api::LINUX_ALSA] = "ALSA";
 	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::UNIX_JACK))
-		audioData.apis[RtAudio::Api::UNIX_JACK] = "JACK";
+		audioData.availableApis[RtAudio::Api::UNIX_JACK] = "JACK";
 	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::LINUX_PULSE))
-		audioData.apis[RtAudio::Api::LINUX_PULSE] = "PulseAudio";
+		audioData.availableApis[RtAudio::Api::LINUX_PULSE] = "PulseAudio";
 	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::WINDOWS_DS))
-		audioData.apis[RtAudio::Api::WINDOWS_DS] = "DirectSound";
+		audioData.availableApis[RtAudio::Api::WINDOWS_DS] = "DirectSound";
 	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::WINDOWS_ASIO))
-		audioData.apis[RtAudio::Api::WINDOWS_ASIO] = "ASIO";
+		audioData.availableApis[RtAudio::Api::WINDOWS_ASIO] = "ASIO";
 	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::WINDOWS_WASAPI))
-		audioData.apis[RtAudio::Api::WINDOWS_WASAPI] = "WASAPI";
+		audioData.availableApis[RtAudio::Api::WINDOWS_WASAPI] = "WASAPI";
 	if (g_engine->getConfigApi().audio_hasAPI(RtAudio::Api::MACOSX_CORE))
-		audioData.apis[RtAudio::Api::MACOSX_CORE] = "CoreAudio";
+		audioData.availableApis[RtAudio::Api::MACOSX_CORE] = "CoreAudio";
 
 	for (const m::KernelAudio::Device& device : g_engine->getConfigApi().audio_getAvailableDevices())
 	{
 		if (device.maxOutputChannels > 0)
-			audioData.outputDevices.push_back(AudioDeviceData(DeviceType::OUTPUT, device));
+			audioData.availableOutputDevices.push_back(AudioDeviceData(DeviceType::OUTPUT, device));
 		if (device.maxInputChannels > 0)
-			audioData.inputDevices.push_back(AudioDeviceData(DeviceType::INPUT, device));
+			audioData.availableInputDevices.push_back(AudioDeviceData(DeviceType::INPUT, device));
 	}
 
-	audioData.api             = g_engine->getConfigApi().audio_getAPI();
-	audioData.bufferSize      = g_engine->getConfigApi().audio_getBufferSize();
-	audioData.sampleRate      = g_engine->getConfigApi().audio_getSampleRate();
-	audioData.limitOutput     = g_engine->getConfigApi().audio_isLimitOutput();
-	audioData.recTriggerLevel = g_engine->getConfigApi().audio_getRecTriggerLevel();
-	audioData.resampleQuality = static_cast<int>(g_engine->getConfigApi().audio_getResamplerQuality());
-	audioData.outputDevice    = AudioDeviceData(DeviceType::OUTPUT, g_engine->getConfigApi().audio_getCurrentOutDevice());
-	audioData.inputDevice     = AudioDeviceData(DeviceType::INPUT, g_engine->getConfigApi().audio_getCurrentInDevice());
+	audioData.selectedApi             = g_engine->getConfigApi().audio_getAPI();
+	audioData.selectedBufferSize      = g_engine->getConfigApi().audio_getBufferSize();
+	audioData.selectedSampleRate      = g_engine->getConfigApi().audio_getSampleRate();
+	audioData.selectedLimitOutput     = g_engine->getConfigApi().audio_isLimitOutput();
+	audioData.selectedRecTriggerLevel = g_engine->getConfigApi().audio_getRecTriggerLevel();
+	audioData.selectedResampleQuality = static_cast<int>(g_engine->getConfigApi().audio_getResamplerQuality());
+	audioData.selectedOutputDevice    = AudioDeviceData(DeviceType::OUTPUT, g_engine->getConfigApi().audio_getCurrentOutDevice());
+	audioData.selectedInputDevice     = AudioDeviceData(DeviceType::INPUT, g_engine->getConfigApi().audio_getCurrentInDevice());
 
 	return audioData;
 }
@@ -286,16 +286,16 @@ void apply(const AudioData& data)
 {
 	bool res = g_engine->getConfigApi().audio_openStream(
 	    {
-	        data.outputDevice.id,
-	        data.outputDevice.channelsCount,
-	        data.outputDevice.channelsStart,
+	        data.selectedOutputDevice.id,
+	        data.selectedOutputDevice.selectedChannelsCount,
+	        data.selectedOutputDevice.selectedChannelsStart,
 	    },
 	    {
-	        data.inputDevice.id,
-	        data.inputDevice.channelsCount,
-	        data.inputDevice.channelsStart,
+	        data.selectedInputDevice.id,
+	        data.selectedInputDevice.selectedChannelsCount,
+	        data.selectedInputDevice.selectedChannelsStart,
 	    },
-	    data.sampleRate, data.bufferSize);
+	    data.selectedSampleRate, data.selectedBufferSize);
 
 	if (!res)
 	{
@@ -303,8 +303,8 @@ void apply(const AudioData& data)
 		return;
 	}
 
-	g_engine->getConfigApi().audio_storeData(data.limitOutput,
-	    static_cast<m::Resampler::Quality>(data.resampleQuality), data.recTriggerLevel);
+	g_engine->getConfigApi().audio_storeData(data.selectedLimitOutput,
+	    static_cast<m::Resampler::Quality>(data.selectedResampleQuality), data.selectedRecTriggerLevel);
 }
 
 /* -------------------------------------------------------------------------- */
