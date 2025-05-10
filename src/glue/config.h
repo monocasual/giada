@@ -60,8 +60,8 @@ struct AudioDeviceData
 
 	/* Selectable values. */
 
-	int channelsCount = 0;
-	int channelsStart = 0;
+	int selectedChannelsCount = 0;
+	int selectedChannelsStart = 0;
 };
 
 struct AudioData
@@ -70,20 +70,20 @@ struct AudioData
 	void setInputDevice(int id);
 	void toggleInputDevice(bool);
 
-	std::map<RtAudio::Api, std::string> apis;
-	std::vector<AudioDeviceData>        outputDevices;
-	std::vector<AudioDeviceData>        inputDevices;
+	std::map<RtAudio::Api, std::string> availableApis;
+	std::vector<AudioDeviceData>        availableOutputDevices;
+	std::vector<AudioDeviceData>        availableInputDevices;
 
 	/* Selectable values. */
 
-	RtAudio::Api    api;
-	AudioDeviceData outputDevice;
-	AudioDeviceData inputDevice;
-	int             bufferSize;
-	int             sampleRate;
-	bool            limitOutput;
-	float           recTriggerLevel;
-	int             resampleQuality;
+	RtAudio::Api    selectedApi;
+	AudioDeviceData selectedOutputDevice;
+	AudioDeviceData selectedInputDevice;
+	int             selectedBufferSize;
+	int             selectedSampleRate;
+	bool            selectedLimitOutput;
+	float           selectedRecTriggerLevel;
+	int             selectedResampleQuality;
 };
 
 struct MidiData
