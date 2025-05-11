@@ -333,10 +333,6 @@ void geTabAudio::rebuild(const c::config::AudioData& data)
 	m_api->showItem(m_data.selectedApi);
 
 	m_bufferSize->showItem(m_data.selectedBufferSize);
-	if (m_data.selectedApi == RtAudio::Api::UNIX_JACK)
-		m_bufferSize->deactivate();
-	else
-		m_bufferSize->activate();
 
 	m_sounddevOut->rebuild(m_data.availableOutputDevices);
 	m_sounddevOut->showItem(m_data.selectedOutputDevice.id);
@@ -352,6 +348,17 @@ void geTabAudio::rebuild(const c::config::AudioData& data)
 	m_rsmpQuality->showItem(m_data.selectedResampleQuality);
 
 	m_recTriggerLevel->setValue(fmt::format("{:.1f}", m_data.selectedRecTriggerLevel));
+
+	if (m_data.selectedApi == RtAudio::Api::UNIX_JACK)
+	{
+		m_bufferSize->deactivate();
+		m_sampleRate->deactivate();
+	}
+	else
+	{
+		m_bufferSize->activate();
+		m_sampleRate->activate();
+	}
 
 	refreshDevOutProperties();
 	refreshDevInProperties();
@@ -374,7 +381,9 @@ void geTabAudio::refreshDevOutProperties()
 		for (unsigned int sampleRate : m_data.selectedOutputDevice.sampleRates)
 			m_sampleRate->addItem(std::to_string(sampleRate), sampleRate);
 		m_sampleRate->showItem(m_data.selectedSampleRate);
-		m_sampleRate->activate();
+
+		if (m_data.selectedApi != RtAudio::Api::UNIX_JACK)
+			m_sampleRate->activate();
 	}
 
 	m_channelsOut->rebuild(m_data.selectedOutputDevice);
@@ -426,11 +435,14 @@ void geTabAudio::deactivateAll()
 
 void geTabAudio::activateAll()
 {
-	m_bufferSize->activate();
+	if (m_data.selectedApi != RtAudio::Api::UNIX_JACK)
+	{
+		m_bufferSize->activate();
+		m_sampleRate->activate();
+	}
 	m_limitOutput->activate();
 	m_sounddevOut->activate();
 	m_channelsOut->activate();
-	m_sampleRate->activate();
 	m_sounddevIn->activate();
 	m_channelsIn->activate();
 	m_recTriggerLevel->activate();
