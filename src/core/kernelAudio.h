@@ -181,9 +181,6 @@ private:
 	Device fetchDevice(unsigned int deviceId) const;
 	void   printDevices(const std::vector<Device>& devices) const;
 
-#ifdef WITH_AUDIO_JACK
-	JackTransport m_jackTransport;
-#endif
 	std::unique_ptr<RtAudio> m_rtAudio;
 	CallbackInfo             m_callbackInfo;
 	model::Model&            m_model;
