@@ -226,16 +226,16 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 			line8->end();
 		}
 
-		body->addWidget(line0, 20);
-		body->addWidget(line1, 20);
-		body->addWidget(line2, 20);
-		body->addWidget(line3, 20);
-		body->addWidget(line4, 20);
-		body->addWidget(line5, 20);
-		body->addWidget(line6, 20);
-		body->addWidget(line7, 20);
+		body->addWidget(line0, G_GUI_UNIT);
+		body->addWidget(line1, G_GUI_UNIT);
+		body->addWidget(line2, G_GUI_UNIT);
+		body->addWidget(line3, G_GUI_UNIT);
+		body->addWidget(line4, G_GUI_UNIT);
+		body->addWidget(line5, G_GUI_UNIT);
+		body->addWidget(line6, G_GUI_UNIT);
+		body->addWidget(line7, G_GUI_UNIT);
 		body->addWidget(new geBox());
-		body->addWidget(line8, 20);
+		body->addWidget(line8, G_GUI_UNIT);
 		body->addWidget(new geBox());
 		body->end();
 	}
