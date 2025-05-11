@@ -366,7 +366,7 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 	}
 
 	RtAudio::StreamOptions options;
-	options.flags           = RTAUDIO_SCHEDULE_REALTIME;
+	options.flags           = RTAUDIO_SCHEDULE_REALTIME | RTAUDIO_JACK_DONT_CONNECT;
 	options.priority        = RTAUDIO_MAX_PRIORITY;
 	options.streamName      = G_APP_NAME;
 	options.numberOfBuffers = 4; // TODO - wtf?
