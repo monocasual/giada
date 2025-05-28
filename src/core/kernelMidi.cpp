@@ -275,7 +275,7 @@ KernelMidi::Result KernelMidi::openInDevice(std::size_t deviceIndex)
 
 void KernelMidi::closeOutDevice(std::size_t deviceIndex)
 {
-	assert(deviceIndex >= 0 && deviceIndex < m_midiOuts.size());
+	assert(deviceIndex < m_midiOuts.size());
 	m_midiOuts[deviceIndex]->close();
 
 	m_model.get().kernelMidi.devicesOut.erase(deviceIndex);
@@ -284,7 +284,7 @@ void KernelMidi::closeOutDevice(std::size_t deviceIndex)
 
 void KernelMidi::closeInDevice(std::size_t deviceIndex)
 {
-	assert(deviceIndex >= 0 && deviceIndex < m_midiIns.size());
+	assert(deviceIndex < m_midiIns.size());
 	m_midiIns[deviceIndex]->close();
 
 	m_model.get().kernelMidi.devicesIn.erase(deviceIndex);
@@ -320,14 +320,14 @@ void KernelMidi::start()
 
 KernelMidi::Result KernelMidi::openOutDevice_(std::size_t deviceIndex)
 {
-	if (deviceIndex < 0 || deviceIndex >= m_midiOuts.size())
+	if (deviceIndex >= m_midiOuts.size())
 		return {false, "Invalid device"};
 	return m_midiOuts[deviceIndex]->open();
 }
 
 KernelMidi::Result KernelMidi::openInDevice_(std::size_t deviceIndex)
 {
-	if (deviceIndex < 0 || deviceIndex >= m_midiIns.size())
+	if (deviceIndex >= m_midiIns.size())
 		return {false, "Invalid device"};
 	return m_midiIns[deviceIndex]->open();
 }
