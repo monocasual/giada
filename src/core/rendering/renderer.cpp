@@ -40,7 +40,11 @@
 
 namespace giada::m::rendering
 {
-mcl::AudioBuffer::Pan calcPanning_(float pan)
+using Pan = std::array<float, 2>;
+
+/* -------------------------------------------------------------------------- */
+
+Pan calcPanning_(float pan)
 {
 	/* TODO - precompute the AudioBuffer::Pan when pan value changes instead of
 	building it on the fly. */
@@ -195,7 +199,11 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
 		rendering::renderAudioPlugins(group, m_pluginHost);
 
 		if (group.isAudible(hasSolos))
-			out.sum(group.shared->audioBuffer, {-1, 0, 0, 0, 0, group.volume, calcPanning_(group.pan)});
+		{
+			const Pan pan = calcPanning_(group.pan);
+			out.sum(group.shared->audioBuffer, {-1, 0, 0, 0, 0, group.volume * pan[0]});
+			out.sum(group.shared->audioBuffer, {-1, 0, 0, 1, 1, group.volume * pan[1]});
+		}
 	}
 }
 
@@ -216,7 +224,12 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
 	}
 
 	if (ch.isAudible(mixerHasSolos))
-		out.sum(ch.shared->audioBuffer, {-1, 0, 0, 0, 0, ch.volume * ch.shared->volumeInternal.load(), calcPanning_(ch.pan)});
+	{
+		const Pan   pan            = calcPanning_(ch.pan);
+		const float volumeInternal = ch.shared->volumeInternal.load();
+		out.sum(ch.shared->audioBuffer, {-1, 0, 0, 0, 0, ch.volume * volumeInternal * pan[0]});
+		out.sum(ch.shared->audioBuffer, {-1, 0, 0, 1, 1, ch.volume * volumeInternal * pan[1]});
+	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -244,7 +257,7 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 	if (ch.isPlaying())
 		rendering::renderSampleChannel(ch, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
 
-	out.sum(ch.shared->audioBuffer, {-1, 0, 0, 0, 0, ch.volume, calcPanning_(ch.pan)});
+	out.sum(ch.shared->audioBuffer, {-1, 0, 0, 0, 0, ch.volume});
 }
 
 /* -------------------------------------------------------------------------- */
