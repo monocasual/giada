@@ -10,7 +10,6 @@ TEST_CASE("waveFactory")
 {
 	constexpr int  SAMPLE_RATE   = 44100;
 	constexpr int  BUFFER_SIZE   = 4096;
-	constexpr int  G_CHANNELS    = 2;
 	constexpr auto TEST_WAV_PATH = TEST_RESOURCES_DIR "test.wav";
 
 	SECTION("test creation")
@@ -20,7 +19,7 @@ TEST_CASE("waveFactory")
 
 		REQUIRE(res.status == G_RES_OK);
 		REQUIRE(res.wave->getRate() == SAMPLE_RATE);
-		REQUIRE(res.wave->getBuffer().countChannels() == G_CHANNELS);
+		REQUIRE(res.wave->getBuffer().countChannels() == 1);
 		REQUIRE(res.wave->isLogical() == false);
 		REQUIRE(res.wave->isEdited() == false);
 	}
@@ -32,7 +31,7 @@ TEST_CASE("waveFactory")
 
 		REQUIRE(wave->getRate() == SAMPLE_RATE);
 		REQUIRE(wave->getBuffer().countFrames() == BUFFER_SIZE);
-		REQUIRE(wave->getBuffer().countChannels() == G_CHANNELS);
+		REQUIRE(wave->getBuffer().countChannels() == G_MAX_IO_CHANS);
 		REQUIRE(wave->isLogical() == true);
 		REQUIRE(wave->isEdited() == false);
 	}
@@ -47,7 +46,7 @@ TEST_CASE("waveFactory")
 
 		REQUIRE(res.wave->getRate() == SAMPLE_RATE * 2);
 		REQUIRE(res.wave->getBuffer().countFrames() == oldSize * 2);
-		REQUIRE(res.wave->getBuffer().countChannels() == G_CHANNELS);
+		REQUIRE(res.wave->getBuffer().countChannels() == 1);
 		REQUIRE(res.wave->isLogical() == false);
 		REQUIRE(res.wave->isEdited() == false);
 	}
