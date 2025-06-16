@@ -74,6 +74,8 @@ list(APPEND SOURCES
 	src/core/api/configApi.h
 	src/core/worker.cpp
 	src/core/worker.h
+	src/core/pan.cpp
+	src/core/pan.h
 	src/core/eventDispatcher.cpp
 	src/core/eventDispatcher.h
 	src/core/midiDispatcher.cpp

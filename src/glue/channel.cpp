@@ -125,7 +125,7 @@ Data::Data(const m::Channel& c, std::size_t trackIndex, std::size_t channelIndex
 , height(c.height)
 , name(c.name)
 , volume(c.volume)
-, pan(c.pan)
+, pan(c.pan.asFloat())
 , key(c.key)
 , hasActions(c.hasActions)
 , m_playStatus(&c.shared->playStatus)
