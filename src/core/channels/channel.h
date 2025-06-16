@@ -32,6 +32,7 @@
 #include "core/channels/midiInput.h"
 #include "core/channels/midiLightning.h"
 #include "core/channels/sampleChannel.h"
+#include "core/pan.h"
 #include "core/patch.h"
 #include <optional>
 
@@ -100,7 +101,7 @@ public:
 	ID                   id;
 	ChannelType          type;
 	float                volume;
-	float                pan;
+	Pan                  pan;
 	bool                 armed;
 	int                  key; // TODO - move this to v::Model
 	bool                 hasActions;
