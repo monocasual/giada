@@ -40,22 +40,6 @@
 
 namespace giada::m::rendering
 {
-mcl::AudioBuffer::Pan calcPanning_(float pan)
-{
-	/* TODO - precompute the AudioBuffer::Pan when pan value changes instead of
-	building it on the fly. */
-
-	/* Center pan (0.5f)? Pass-through. */
-
-	if (pan == 0.5f)
-		return {1.0f, 1.0f};
-	return {1.0f - pan, pan};
-}
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 #ifdef WITH_AUDIO_JACK
 Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, JackSynchronizer& js, JackTransport& jt, KernelMidi& km)
 #else
@@ -195,7 +179,7 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
 		rendering::renderAudioPlugins(group, m_pluginHost);
 
 		if (group.isAudible(hasSolos))
-			out.sum(group.shared->audioBuffer, group.volume, calcPanning_(group.pan));
+			out.sum(group.shared->audioBuffer, group.volume);
 	}
 }
 
@@ -216,7 +200,7 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
 	}
 
 	if (ch.isAudible(mixerHasSolos))
-		out.sum(ch.shared->audioBuffer, ch.volume * ch.shared->volumeInternal.load(), calcPanning_(ch.pan));
+		out.sum(ch.shared->audioBuffer, ch.volume * ch.shared->volumeInternal.load());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -244,7 +228,7 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 	if (ch.isPlaying())
 		rendering::renderSampleChannel(ch, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
 
-	out.sum(ch.shared->audioBuffer, ch.volume, calcPanning_(ch.pan));
+	out.sum(ch.shared->audioBuffer, ch.volume);
 }
 
 /* -------------------------------------------------------------------------- */
