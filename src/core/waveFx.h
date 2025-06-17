@@ -47,11 +47,6 @@ enum class Fade
 	OUT
 };
 
-/* monoToStereo
-Converts a 1-channel Wave to a 2-channels wave. */
-
-int monoToStereo(Wave& w);
-
 /* normalize
 Normalizes the wave in range a-b by altering values in memory. */
 

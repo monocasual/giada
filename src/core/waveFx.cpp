@@ -88,25 +88,6 @@ void normalize(Wave& w, int a, int b)
 
 /* -------------------------------------------------------------------------- */
 
-int monoToStereo(Wave& w)
-{
-	if (w.getBuffer().countChannels() >= G_MAX_IO_CHANS)
-		return G_RES_OK;
-
-	mcl::AudioBuffer newData;
-	newData.alloc(w.getBuffer().countFrames(), G_MAX_IO_CHANS);
-
-	for (int i = 0; i < newData.countFrames(); i++)
-		for (int j = 0; j < newData.countChannels(); j++)
-			newData[i][j] = w.getBuffer()[i][0];
-
-	w.replaceData(std::move(newData));
-
-	return G_RES_OK;
-}
-
-/* -------------------------------------------------------------------------- */
-
 void silence(Wave& w, int a, int b)
 {
 	u::log::print("[wfx::silence] silencing from {} to {}\n", a, b);

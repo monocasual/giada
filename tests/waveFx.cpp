@@ -20,25 +20,6 @@ TEST_CASE("waveFx")
 	waveMono.alloc(BUFFER_SIZE, 1, SAMPLE_RATE, BIT_DEPTH, "path/to/sample-mono.wav");
 	waveStereo.alloc(BUFFER_SIZE, 2, SAMPLE_RATE, BIT_DEPTH, "path/to/sample-stereo.wav");
 
-	SECTION("test mono->stereo conversion")
-	{
-		int prevSize = waveMono.getBuffer().countFrames();
-
-		REQUIRE(wfx::monoToStereo(waveMono) == G_RES_OK);
-		REQUIRE(waveMono.getBuffer().countFrames() == prevSize); // size does not change, channels do
-		REQUIRE(waveMono.getBuffer().countChannels() == 2);
-
-		SECTION("test mono->stereo conversion for already stereo wave")
-		{
-			/* Should do nothing. */
-			int prevSize = waveStereo.getBuffer().countFrames();
-
-			REQUIRE(wfx::monoToStereo(waveStereo) == G_RES_OK);
-			REQUIRE(waveStereo.getBuffer().countFrames() == prevSize);
-			REQUIRE(waveStereo.getBuffer().countChannels() == 2);
-		}
-	}
-
 	SECTION("test silence")
 	{
 		int a = 20;

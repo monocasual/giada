@@ -152,9 +152,6 @@ Result createFromFile(const std::string& path, ID id, int samplerate, Resampler:
 
 	sf_close(fileIn);
 
-	if (header.channels == 1 && !wfx::monoToStereo(*wave))
-		return {G_RES_ERR_PROCESSING};
-
 	if (wave->getRate() != samplerate)
 	{
 		u::log::print("[waveFactory::create] file sample rate ({}) != project sample rate ({}), conversion needed\n",
