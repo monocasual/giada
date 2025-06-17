@@ -160,7 +160,8 @@ Result createFromFile(const std::string& path, ID id, int samplerate, Resampler:
 			return {G_RES_ERR_PROCESSING};
 	}
 
-	u::log::print("[waveFactory::create] new Wave created, {} frames\n", wave->getBuffer().countFrames());
+	u::log::print("[waveFactory::create] new Wave created - frames={}, channels={}\n",
+	    wave->getBuffer().countFrames(), wave->getBuffer().countChannels());
 
 	return {G_RES_OK, std::move(wave)};
 }
