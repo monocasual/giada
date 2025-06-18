@@ -10,6 +10,7 @@ TEST_CASE("waveFactory")
 {
 	constexpr int  SAMPLE_RATE   = 44100;
 	constexpr int  BUFFER_SIZE   = 4096;
+	constexpr int  G_CHANNELS    = 2;
 	constexpr auto TEST_WAV_PATH = TEST_RESOURCES_DIR "test.wav";
 
 	SECTION("test creation")
