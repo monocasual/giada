@@ -9,14 +9,14 @@
 using std::string;
 using namespace giada::m;
 
-#define G_SAMPLE_RATE 44100
-#define G_BUFFER_SIZE 4096
-#define G_CHANNELS 2
-
 TEST_CASE("waveFactory")
 {
 	/* Each SECTION the TEST_CASE is executed from the start. Any code between 
 	this comment and the first SECTION macro is executed before each SECTION. */
+
+	constexpr int G_SAMPLE_RATE = 44100;
+	constexpr int G_BUFFER_SIZE = 4096;
+	constexpr int G_CHANNELS    = 2;
 
 	SECTION("test creation")
 	{
