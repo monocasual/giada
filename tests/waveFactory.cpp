@@ -8,13 +8,13 @@ using namespace giada::m;
 
 TEST_CASE("waveFactory")
 {
-	constexpr int G_SAMPLE_RATE = 44100;
-	constexpr int G_BUFFER_SIZE = 4096;
-	constexpr int G_CHANNELS    = 2;
+	constexpr int  G_SAMPLE_RATE = 44100;
+	constexpr int  G_BUFFER_SIZE = 4096;
+	constexpr auto TEST_WAV_PATH = TEST_RESOURCES_DIR "test.wav";
 
 	SECTION("test creation")
 	{
-		waveFactory::Result res = waveFactory::createFromFile(TEST_RESOURCES_DIR "test.wav",
+		waveFactory::Result res = waveFactory::createFromFile(TEST_WAV_PATH,
 		    /*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, Resampler::Quality::LINEAR);
 
 		REQUIRE(res.status == G_RES_OK);
@@ -38,7 +38,7 @@ TEST_CASE("waveFactory")
 
 	SECTION("test resampling")
 	{
-		waveFactory::Result res = waveFactory::createFromFile(TEST_RESOURCES_DIR "test.wav",
+		waveFactory::Result res = waveFactory::createFromFile(TEST_WAV_PATH,
 		    /*ID=*/0, /*sampleRate=*/G_SAMPLE_RATE, Resampler::Quality::LINEAR);
 
 		int oldSize = res.wave->getBuffer().countFrames();
