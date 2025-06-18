@@ -3,10 +3,7 @@
 #include "../src/core/resampler.h"
 #include "../src/core/wave.h"
 #include <catch2/catch.hpp>
-#include <memory>
-#include <samplerate.h>
 
-using std::string;
 using namespace giada::m;
 
 TEST_CASE("waveFactory")
