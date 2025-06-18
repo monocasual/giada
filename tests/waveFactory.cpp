@@ -8,9 +8,6 @@ using namespace giada::m;
 
 TEST_CASE("waveFactory")
 {
-	/* Each SECTION the TEST_CASE is executed from the start. Any code between
-	this comment and the first SECTION macro is executed before each SECTION. */
-
 	constexpr int G_SAMPLE_RATE = 44100;
 	constexpr int G_BUFFER_SIZE = 4096;
 	constexpr int G_CHANNELS    = 2;
