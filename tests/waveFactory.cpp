@@ -11,7 +11,7 @@ using namespace giada::m;
 
 TEST_CASE("waveFactory")
 {
-	/* Each SECTION the TEST_CASE is executed from the start. Any code between 
+	/* Each SECTION the TEST_CASE is executed from the start. Any code between
 	this comment and the first SECTION macro is executed before each SECTION. */
 
 	constexpr int G_SAMPLE_RATE = 44100;
