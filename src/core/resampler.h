@@ -55,10 +55,10 @@ public:
 
 	Resampler(); // Invalid
 	Resampler(Quality quality, int channels);
-	Resampler(const Resampler& o);
-	Resampler(Resampler&&) = delete;
-	Resampler& operator=(const Resampler&);
-	Resampler& operator=(Resampler&&) = delete;
+	Resampler(const Resampler& o)          = delete;
+	Resampler(Resampler&&)                 = delete;
+	Resampler& operator=(const Resampler&) = delete;
+	Resampler& operator=(Resampler&&)      = delete;
 	~Resampler();
 
 	/* process

@@ -54,24 +54,6 @@ Resampler::Resampler(Quality quality, int channels)
 
 /* -------------------------------------------------------------------------- */
 
-Resampler::Resampler(const Resampler& o)
-: Resampler()
-{
-	*this = o;
-}
-
-/* -------------------------------------------------------------------------- */
-
-Resampler& Resampler::operator=(const Resampler& o)
-{
-	if (this == &o)
-		return *this;
-	alloc(o.m_quality, o.m_channels);
-	return *this;
-}
-
-/* -------------------------------------------------------------------------- */
-
 Resampler::~Resampler()
 {
 	src_delete(m_state);
