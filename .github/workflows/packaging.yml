@@ -12,7 +12,7 @@ jobs:
   # create-release -------------------------------------------------------------
   create-release:
     name: Create release
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs: # Output contains the upload url. Will be reused on upload release
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
@@ -30,7 +30,7 @@ jobs:
   # Linux ----------------------------------------------------------------------
   linux:
     name: Linux
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: create-release
     steps:
