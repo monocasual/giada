@@ -6,11 +6,7 @@ set -e
 
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y 
 sudo apt-get update -qq
-sudo apt-get install g++-10 xvfb libasound2-dev libxpm-dev libpulse-dev libjack-dev libxft-dev libxrandr-dev libx11-dev libxinerama-dev libxcursor-dev libfontconfig1-dev libgl-dev libfuse2
-
-# Symlink gcc in order to use the latest version
-
-sudo ln -f -s /usr/bin/g++-10 /usr/bin/g++
+sudo apt-get install xvfb libasound2-dev libxpm-dev libpulse-dev libjack-dev libxft-dev libxrandr-dev libx11-dev libxinerama-dev libxcursor-dev libfontconfig1-dev libgl-dev libfuse2
 
 # Download linuxdeploy for building AppImages
 
