@@ -441,7 +441,7 @@ list(APPEND INCLUDE_DIRS
 	${CMAKE_SOURCE_DIR}/src)
 list(APPEND COMPILER_OPTIONS)
 list(APPEND LIBRARIES)
-list(APPEND COMPILER_FEATURES cxx_std_20)
+list(APPEND COMPILER_FEATURES cxx_std_23)
 list(APPEND TARGET_PROPERTIES)
 
 # ------------------------------------------------------------------------------
