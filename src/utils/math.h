@@ -43,7 +43,7 @@ Maps 'x' in range [a, b] to a new range [w, z]. Source:
     https://en.wikipedia.org/wiki/Linear_equation#Two-point_form*/
 
 template <typename TI, typename TO>
-TO map(TI x, TI a, TI b, TO w, TO z)
+constexpr TO map(TI x, TI a, TI b, TO w, TO z)
 {
 	static_assert(std::is_arithmetic_v<TI>);
 	static_assert(std::is_arithmetic_v<TO>);
@@ -57,7 +57,7 @@ TO map(TI x, TI a, TI b, TO w, TO z)
 Maps 'x' in range [0, b) to a new range [0, z]. */
 
 template <typename TI, typename TO>
-TO map(TI x, TI b, TO z)
+constexpr TO map(TI x, TI b, TO z)
 {
 	return map(x, static_cast<TI>(0), b, static_cast<TO>(0), z);
 }
