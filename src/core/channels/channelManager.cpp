@@ -180,18 +180,29 @@ int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, in
 
 void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 {
-	Channel&    channel = m_model.get().tracks.getChannel(channelId);
-	Wave&       newWave = wave;
-	const Wave* oldWave = channel.sampleChannel->getWave();
+	model::SharedLock lock = m_model.lockShared();
+
+	Channel&    channel        = m_model.get().tracks.getChannel(channelId);
+	Wave&       newWave        = wave;
+	const Wave* oldWave        = channel.sampleChannel->getWave();
+	const int   newNumChannels = newWave.getBuffer().countChannels();
+
+	/* Adjust AudioBuffer and Resampler accoring to the number of channels
+	of the new Wave. */
+
+	channel.shared->resampler->setChannels(newNumChannels);
+	channel.shared->audioBuffer.resizeChannels(newNumChannels);
 
 	loadSampleChannel(channel, &newWave);
-	m_model.swap(model::SwapType::HARD);
 
 	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is
-	already processing the new Document. */
+	not processing the Document. */
 
 	if (oldWave != nullptr)
 		m_model.removeWave(*oldWave);
+
+	/* No need to swap model: we have a SharedLock that will take care of it
+	for us when it goes out of scope. */
 
 	triggerOnChannelsAltered();
 }

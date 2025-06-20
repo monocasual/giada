@@ -73,6 +73,11 @@ public:
 
 	void last() const;
 
+	/* setChannels
+	Set a new number of channels. Calls alloc internally. */
+
+	void setChannels(int channels);
+
 private:
 	static long callback(void* self, float** audio);
 	long        callback(float** audio);

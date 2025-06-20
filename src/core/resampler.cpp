@@ -131,4 +131,11 @@ void Resampler::last() const
 {
 	src_reset(m_state);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void Resampler::setChannels(int channels)
+{
+	alloc(m_quality, channels);
+}
 } // namespace giada::m
