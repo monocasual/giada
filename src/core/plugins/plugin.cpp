@@ -229,7 +229,7 @@ const Plugin::Buffer& Plugin::process(const Plugin::Buffer& out, juce::MidiBuffe
 
 void Plugin::setState(PluginState state)
 {
-	m_plugin->setStateInformation(state.getData(), state.getSize());
+	m_plugin->setStateInformation(state.getData(), static_cast<int>(state.getSize()));
 }
 
 /* -------------------------------------------------------------------------- */

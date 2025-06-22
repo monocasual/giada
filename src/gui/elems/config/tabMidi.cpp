@@ -105,7 +105,7 @@ void geTabMidi::geDevices::rebuild(const std::vector<m::KernelMidi::DeviceInfo>&
 
 void geTabMidi::geDevices::prepareLayout()
 {
-	rows(m_devices.size());
+	rows(static_cast<int>(m_devices.size()));
 	row_header(false);
 	row_height_all(G_GUI_UNIT + PADDING * 2);
 	row_resize(false);
@@ -220,7 +220,7 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 	m_midiMap->rebuild(m_data.availableMidiMaps);
 	const std::size_t midiMapIndex = u::vector::indexOf(m_data.availableMidiMaps, m_data.selectedMidiMap);
 	if (midiMapIndex < m_data.availableMidiMaps.size())
-		m_midiMap->showItem(midiMapIndex);
+		m_midiMap->showItem(static_cast<int>(midiMapIndex));
 
 	m_sync->clear();
 	for (const auto& [key, value] : m_data.availableSyncModes)
