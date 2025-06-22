@@ -29,7 +29,6 @@
 
 #include "core/types.h"
 #include "core/waveFx.h"
-#include <functional>
 #include <string>
 
 /* giada::c::sampleEditor

@@ -25,33 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/sampleEditor.h"
-#include "channel.h"
-#include "core/const.h"
 #include "core/engine.h"
-#include "core/kernelAudio.h"
-#include "core/model/model.h"
-#include "core/sequencer.h"
-#include "core/wave.h"
-#include "core/waveFactory.h"
-#include "glue/main.h"
-#include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/warnings.h"
-#include "gui/elems/mainWindow/keyboard/channel.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/sampleEditor/pitchTool.h"
-#include "gui/elems/sampleEditor/rangeTool.h"
-#include "gui/elems/sampleEditor/shiftTool.h"
-#include "gui/elems/sampleEditor/waveTools.h"
-#include "gui/elems/sampleEditor/waveform.h"
 #include "gui/ui.h"
-#include "sampleEditor.h"
-#include "src/gui/elems/panTool.h"
-#include "src/gui/elems/volumeTool.h"
-#include "utils/gui.h"
-#include "utils/log.h"
-#include <FL/Fl.H>
-#include <cassert>
-#include <memory>
 
 extern giada::v::Ui*     g_ui;
 extern giada::m::Engine* g_engine;
