@@ -195,11 +195,4 @@ void geTrack::forEachChannel(std::function<void(geChannel& c)> f) const
 	for (Fl_Widget* wg : m_widgets)
 		f(*static_cast<geChannel*>(wg));
 }
-
-/* -------------------------------------------------------------------------- */
-
-int geTrack::countChannels() const
-{
-	return m_widgets.size();
-}
 } // namespace giada::v

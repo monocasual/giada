@@ -60,10 +60,6 @@ public:
 	geChannel* getFirstChannel() const;
 	geChannel* getLastChannel() const;
 
-	/* countChannels
-	Returns the number of channels contained into this track. */
-
-	int countChannels() const;
 
 	/* showMenu
 	Displays the menu for adding/removing channels. */
