@@ -29,7 +29,7 @@
 #include "glue/plugin.h"
 #include "utils/gui.h"
 #include "utils/log.h"
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <cassert>
 #ifdef G_OS_MAC
 #import "utils/cocoa.h" // objective-c
