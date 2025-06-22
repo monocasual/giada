@@ -153,7 +153,7 @@ int geKeyboard::ChannelDragger::getPositionForCursor(const geTrack* track, Pixel
 
 	const geChannel* targetChannel = track->getChannelAtCursor(y);
 	if (targetChannel != nullptr)
-		return targetChannel->getData().position + 1;
+		return static_cast<int>(targetChannel->getData().channelIndex + 1);
 
 	/* Channel not found, case 1: the cursor could be above the first channel.
 	Channel not found, case 2: the cursor could be below the last channel, over
@@ -162,7 +162,7 @@ int geKeyboard::ChannelDragger::getPositionForCursor(const geTrack* track, Pixel
 	const geChannel* firstChannel = track->getFirstChannel();
 	if (y < firstChannel->y())
 		return 0;
-	return lastChannel->getData().position + 1;
+	return static_cast<int>(lastChannel->getData().channelIndex + 1);
 }
 
 /* -------------------------------------------------------------------------- */

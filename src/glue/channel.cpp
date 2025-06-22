@@ -116,10 +116,10 @@ MidiData::MidiData(const m::Channel& m)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::Channel& c, std::size_t trackIndex, int position)
+Data::Data(const m::Channel& c, std::size_t trackIndex, std::size_t channelIndex)
 : id(c.id)
 , trackIndex(trackIndex)
-, position(position)
+, channelIndex(channelIndex)
 , plugins(c.plugins)
 , type(c.type)
 , height(c.height)

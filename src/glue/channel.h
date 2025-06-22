@@ -82,7 +82,7 @@ struct MidiData
 
 struct Data
 {
-	Data(const m::Channel&, std::size_t trackIndex, int position);
+	Data(const m::Channel&, std::size_t trackIndex, std::size_t channelIndex);
 
 	ChannelStatus getPlayStatus() const;
 	ChannelStatus getRecStatus() const;
@@ -95,7 +95,7 @@ struct Data
 
 	ID                      id;
 	std::size_t             trackIndex;
-	int                     position;
+	std::size_t             channelIndex;
 	std::vector<m::Plugin*> plugins;
 	ChannelType             type;
 	Pixel                   height;
