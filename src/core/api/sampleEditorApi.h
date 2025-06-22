@@ -32,6 +32,11 @@
 #include "core/waveFx.h"
 #include <memory>
 
+namespace giada::m::rendering
+{
+class Reactor;
+}
+
 namespace giada::m
 {
 class KernelAudio;
@@ -40,11 +45,16 @@ class Wave;
 class SampleEditorApi
 {
 public:
-	SampleEditorApi(KernelAudio&, model::Model&, ChannelManager&);
+	SampleEditorApi(KernelAudio&, model::Model&, ChannelManager&, rendering::Reactor&);
 
-	void           loadPreviewChannel(ID sourceChannelId);
-	void           freePreviewChannel();
-	void           setPreviewTracker(Frame);
+	void          loadPreviewChannel(ID sourceChannelId);
+	void          freePreviewChannel();
+	void          setPreviewTracker(Frame);
+	void          setPreviewLoop(bool);
+	void          togglePreview();
+	Frame         getPreviewTracker();
+	ChannelStatus getPreviewStatus();
+
 	void           cut(ID channelId, Frame a, Frame b);
 	void           copy(ID channelId, Frame a, Frame b);
 	void           paste(ID channelId, Frame a);
@@ -63,9 +73,10 @@ public:
 private:
 	Wave& getWave(ID channelId) const;
 
-	KernelAudio&    m_kernelAudio;
-	model::Model&   m_model;
-	ChannelManager& m_channelManager;
+	KernelAudio&        m_kernelAudio;
+	model::Model&       m_model;
+	ChannelManager&     m_channelManager;
+	rendering::Reactor& m_reactor;
 
 	/* waveBuffer
 	A Wave used during cut/copy/paste operations. */

@@ -27,16 +27,20 @@
 #include "sampleEditorApi.h"
 #include "core/channels/channelManager.h"
 #include "core/kernelAudio.h"
+#include "core/mixer.h"
+#include "core/rendering/reactor.h"
 #include "core/waveFactory.h"
 #include "core/waveFx.h"
 #include "utils/log.h"
 
 namespace giada::m
 {
-SampleEditorApi::SampleEditorApi(KernelAudio& k, model::Model& m, ChannelManager& cm)
+SampleEditorApi::SampleEditorApi(KernelAudio& k, model::Model& m, ChannelManager& cm,
+    rendering::Reactor& re)
 : m_kernelAudio(k)
 , m_model(m)
 , m_channelManager(cm)
+, m_reactor(re)
 {
 }
 
@@ -63,6 +67,38 @@ void SampleEditorApi::freePreviewChannel()
 void SampleEditorApi::setPreviewTracker(Frame f)
 {
 	m_channelManager.setPreviewTracker(f);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorApi::setPreviewLoop(bool shouldLoop)
+{
+	m_channelManager.setSamplePlayerMode(m::Mixer::PREVIEW_CHANNEL_ID, shouldLoop ? SamplePlayerMode::SINGLE_ENDLESS : SamplePlayerMode::SINGLE_BASIC_PAUSE);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleEditorApi::togglePreview()
+{
+	const bool  canRecordActions = false;
+	const bool  canQuantize      = false;
+	const Frame currentFrameQ    = 0;
+	const float velocity         = G_MAX_VELOCITY_FLOAT;
+	m_reactor.keyPress(m::Mixer::PREVIEW_CHANNEL_ID, velocity, canRecordActions, canQuantize, currentFrameQ);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Frame SampleEditorApi::getPreviewTracker()
+{
+	return m_channelManager.getChannel(m::Mixer::PREVIEW_CHANNEL_ID).shared->tracker.load();
+}
+
+/* -------------------------------------------------------------------------- */
+
+ChannelStatus SampleEditorApi::getPreviewStatus()
+{
+	return m_channelManager.getChannel(m::Mixer::PREVIEW_CHANNEL_ID).shared->playStatus.load();
 }
 
 /* -------------------------------------------------------------------------- */

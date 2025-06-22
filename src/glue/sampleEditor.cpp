@@ -79,12 +79,12 @@ Data::Data(const m::Channel& c)
 
 ChannelStatus Data::a_getPreviewStatus() const
 {
-	return g_engine->getChannelsApi().get(m::Mixer::PREVIEW_CHANNEL_ID).shared->playStatus.load();
+	return g_engine->getSampleEditorApi().getPreviewStatus();
 }
 
 Frame Data::a_getPreviewTracker() const
 {
-	return g_engine->getChannelsApi().get(m::Mixer::PREVIEW_CHANNEL_ID).shared->tracker.load();
+	return g_engine->getSampleEditorApi().getPreviewTracker();
 }
 
 const m::Wave& Data::getWaveRef() const
@@ -198,12 +198,12 @@ void preparePreview(ID channelId)
 
 void setLoop(bool shouldLoop)
 {
-	channel::setSamplePlayerMode(m::Mixer::PREVIEW_CHANNEL_ID, shouldLoop ? SamplePlayerMode::SINGLE_ENDLESS : SamplePlayerMode::SINGLE_BASIC_PAUSE);
+	g_engine->getSampleEditorApi().setPreviewLoop(shouldLoop);
 }
 
 void togglePreview()
 {
-	channel::pressChannel(m::Mixer::PREVIEW_CHANNEL_ID, G_MAX_VELOCITY_FLOAT, Thread::MAIN);
+	g_engine->getSampleEditorApi().togglePreview();
 }
 
 void setPreviewTracker(Frame f)
