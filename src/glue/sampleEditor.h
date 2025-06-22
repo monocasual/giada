@@ -109,8 +109,6 @@ void reload(ID channelId);
 void setLoop(bool);
 void preparePreview(ID channelId);
 void togglePreview();
-void playPreview();
-void stopPreview();
 void setPreviewTracker(Frame f);
 void cleanupPreview();
 

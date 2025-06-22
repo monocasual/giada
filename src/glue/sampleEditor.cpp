@@ -201,22 +201,9 @@ void setLoop(bool shouldLoop)
 	channel::setSamplePlayerMode(m::Mixer::PREVIEW_CHANNEL_ID, shouldLoop ? SamplePlayerMode::SINGLE_ENDLESS : SamplePlayerMode::SINGLE_BASIC_PAUSE);
 }
 
-void playPreview()
-{
-	channel::pressChannel(m::Mixer::PREVIEW_CHANNEL_ID, G_MAX_VELOCITY_FLOAT, Thread::MAIN);
-}
-
-void stopPreview()
-{
-	/* Let the Sample Editor show the final tracker position first. */
-	getWindow()->refresh();
-	channel::pressChannel(m::Mixer::PREVIEW_CHANNEL_ID, G_MAX_VELOCITY_FLOAT, Thread::MAIN);
-}
-
 void togglePreview()
 {
-	const bool isPlaying = g_engine->getChannelsApi().get(m::Mixer::PREVIEW_CHANNEL_ID).isPlaying();
-	isPlaying ? stopPreview() : playPreview();
+	channel::pressChannel(m::Mixer::PREVIEW_CHANNEL_ID, G_MAX_VELOCITY_FLOAT, Thread::MAIN);
 }
 
 void setPreviewTracker(Frame f)

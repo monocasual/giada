@@ -204,7 +204,6 @@ gdSampleEditor::~gdSampleEditor()
 	g_ui->model.sampleEditorGridVal = grid->getSelectedId();
 	g_ui->model.sampleEditorGridOn  = snap->value();
 
-	c::sampleEditor::stopPreview();
 	c::sampleEditor::cleanupPreview();
 }
 
