@@ -69,6 +69,7 @@
             "name": "debug-windows",
             "inherits": "common-windows",
             "displayName": "Debug configuration for Windows",
+            "binaryDir": "${sourceDir}/build/debug",
             "cacheVariables": {
                 "WITH_TESTS": "ON"
             }
@@ -76,12 +77,14 @@
         {
             "name": "release-windows",
             "inherits": "common-windows",
-            "displayName": "Release configuration for Windows"
+            "displayName": "Release configuration for Windows",
+            "binaryDir": "${sourceDir}/build/release"
         },
         {
             "name": "debug-macos",
             "inherits": "common-macos",
             "displayName": "Debug configuration for macOS",
+            "binaryDir": "${sourceDir}/build/debug",
             "cacheVariables": {
                 "WITH_TESTS": "ON"
             }
@@ -89,7 +92,8 @@
         {
             "name": "release-macos",
             "inherits": "common-macos",
-            "displayName": "Release configuration for macOS"
+            "displayName": "Release configuration for macOS",
+            "binaryDir": "${sourceDir}/build/release"
         }
     ]
 }
