@@ -73,7 +73,12 @@ void SampleEditorApi::setPreviewTracker(Frame f)
 
 void SampleEditorApi::setPreviewLoop(bool shouldLoop)
 {
-	m_channelManager.setSamplePlayerMode(m::Mixer::PREVIEW_CHANNEL_ID, shouldLoop ? SamplePlayerMode::SINGLE_ENDLESS : SamplePlayerMode::SINGLE_BASIC_PAUSE);
+	/* Don't swap HARD here, as it would trigger loadPreviewChannel() above,
+	resetting the internal Preview Channel samplePlayerMode to default. A
+	SwapType::SOFT would be also OK, but unnecessary. */
+
+	const SamplePlayerMode mode = shouldLoop ? SamplePlayerMode::SINGLE_ENDLESS : SamplePlayerMode::SINGLE_BASIC_PAUSE;
+	m_channelManager.setSamplePlayerMode(m::Mixer::PREVIEW_CHANNEL_ID, mode, model::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
