@@ -421,10 +421,10 @@ void ChannelManager::setOverdubProtection(ID channelId, bool value)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::setSamplePlayerMode(ID channelId, SamplePlayerMode mode, model::SwapType swapType)
+void ChannelManager::setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 {
 	m_model.get().tracks.getChannel(channelId).sampleChannel->mode = mode;
-	m_model.swap(swapType);
+	m_model.swap(model::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */

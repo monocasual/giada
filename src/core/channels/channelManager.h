@@ -28,7 +28,6 @@
 #define G_CHANNEL_MANAGER_H
 
 #include "core/midiMapper.h"
-#include "core/model/types.h"
 #include "core/resampler.h"
 #include "core/types.h"
 #include <functional>
@@ -165,7 +164,7 @@ public:
 	void resetBeginEnd(ID channelId);
 	void toggleArm(ID channelId);
 	void setOverdubProtection(ID channelId, bool value);
-	void setSamplePlayerMode(ID channelId, SamplePlayerMode, model::SwapType = model::SwapType::HARD);
+	void setSamplePlayerMode(ID channelId, SamplePlayerMode);
 	void setHeight(ID channelId, Pixel height);
 	void loadWaveInPreviewChannel(ID sourceChannelId);
 	void freeWaveInPreviewChannel();
