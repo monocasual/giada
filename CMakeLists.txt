@@ -495,10 +495,6 @@ if(WITH_TESTS)
 		TEST_RESOURCES_DIR="${CMAKE_SOURCE_DIR}/tests/resources/")
 endif()
 
-if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-	list(APPEND PREPROCESSOR_DEFS NDEBUG)
-endif()
-
 # ------------------------------------------------------------------------------
 # Dependencies
 # ------------------------------------------------------------------------------
