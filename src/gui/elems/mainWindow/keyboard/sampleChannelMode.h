@@ -31,6 +31,11 @@
 
 #include "gui/elems/basics/imageButton.h"
 
+namespace giada
+{
+enum class SamplePlayerMode;
+}
+
 namespace giada::c::channel
 {
 struct Data;
@@ -44,7 +49,7 @@ public:
 	geSampleChannelMode(int x, int y, int w, int h, c::channel::Data& d);
 
 private:
-	void refresh();
+	void refresh(SamplePlayerMode);
 	void openMenu();
 
 	c::channel::Data& m_channel;

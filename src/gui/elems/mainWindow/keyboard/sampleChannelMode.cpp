@@ -47,14 +47,14 @@ geSampleChannelMode::geSampleChannelMode(int x, int y, int w, int h, c::channel:
 		openMenu();
 	};
 
-	refresh();
+	refresh(m_channel.sample->mode);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geSampleChannelMode::refresh()
+void geSampleChannelMode::refresh(SamplePlayerMode mode)
 {
-	switch (m_channel.sample->mode)
+	switch (mode)
 	{
 	case SamplePlayerMode::LOOP_BASIC:
 		m_imgOff = std::make_unique<Fl_SVG_Image>(nullptr, graphics::loopBasic);
@@ -118,7 +118,9 @@ void geSampleChannelMode::openMenu()
 
 	menu.onSelect = [this](ID id)
 	{
-		c::channel::setSamplePlayerMode(m_channel.id, static_cast<SamplePlayerMode>(id));
+		const SamplePlayerMode mode = static_cast<SamplePlayerMode>(id);
+		c::channel::setSamplePlayerMode(m_channel.id, mode);
+		refresh(mode);
 	};
 
 	menu.popup();
