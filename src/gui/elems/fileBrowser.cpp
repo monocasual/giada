@@ -100,13 +100,15 @@ int geFileBrowser::handle(int e)
 			select(value() + 1);
 		else if (Fl::event_key(FL_Up))
 			select(value() - 1);
-		else if (Fl::event_key(FL_Enter) && onChooseItem != nullptr)
-			onChooseItem();
+		else if (Fl::event_key(FL_Enter))
+			if (onChooseItem != nullptr)
+				onChooseItem();
 		ret = 1;
 		break;
-	case FL_PUSH:                                              // mouse
-		if (Fl::event_clicks() > 0 && onChooseItem != nullptr) // double click
-			onChooseItem();
+	case FL_PUSH:                   // mouse
+		if (Fl::event_clicks() > 0) // double click
+			if (onChooseItem != nullptr)
+				onChooseItem();
 		ret = 1;
 		break;
 	case FL_RELEASE: // mouse
