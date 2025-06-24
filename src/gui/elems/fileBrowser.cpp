@@ -24,18 +24,18 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "fileBrowser.h"
+#include "gui/elems/fileBrowser.h"
 #include "basics/boxtypes.h"
 #include "core/const.h"
-#include "gui/dialogs/browser/browserBase.h"
 #include "utils/fs.h"
-#include "utils/string.h"
 
 namespace giada::v
 {
 geFileBrowser::geFileBrowser()
 : Fl_File_Browser(0, 0, 0, 0)
-, onSelectedElement(nullptr)
+, onChooseItem(nullptr)
+, onSelectItem(nullptr)
+, onChangeDir(nullptr)
 , m_showHiddenFiles(false)
 {
 	box(G_CUSTOM_BORDER_BOX);
@@ -55,7 +55,8 @@ geFileBrowser::geFileBrowser()
 	this->hscrollbar.labelcolor(G_COLOR_LIGHT_1);
 	this->hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-	take_focus(); // let it have focus on startup
+	take_focus();        // let it have focus on startup
+	when(FL_WHEN_NEVER); // Disable callback from this widget
 }
 
 /* -------------------------------------------------------------------------- */
@@ -72,6 +73,8 @@ void geFileBrowser::loadDir(const std::string& dir)
 {
 	m_currentDir = dir;
 	load(m_currentDir.c_str());
+	if (onChangeDir != nullptr)
+		onChangeDir();
 
 	/* Clean up unwanted elements. Hide "../" first, it just screws up things.
 	Also remove hidden files, if requested. */
@@ -84,6 +87,8 @@ void geFileBrowser::loadDir(const std::string& dir)
 		if (el == "../" || (!m_showHiddenFiles && el[0] == '.'))
 			remove(i);
 	}
+
+	select(1); // Pre-select first item
 }
 
 /* -------------------------------------------------------------------------- */
@@ -96,34 +101,35 @@ int geFileBrowser::handle(int e)
 	case FL_UNFOCUS:
 		return 1;    // enables receiving Keyboard events
 	case FL_KEYDOWN: // keyboard
+	{
 		if (Fl::event_key(FL_Down))
 			select(value() + 1);
 		else if (Fl::event_key(FL_Up))
 			select(value() - 1);
-		else if (Fl::event_key(FL_Enter) && onSelectedElement != nullptr)
-			processPath(getSelectedItem());
+		else if (Fl::event_key(FL_Enter))
+			chooseItem();
+		else if (Fl::event_key(FL_Back))
+			loadDir(u::fs::getUpDir(getCurrentDir()));
+		selectItem();
 		return 1;
-	case FL_PUSH:                                                   // mouse
-		if (Fl::event_clicks() > 0 && onSelectedElement != nullptr) // double click
-		{
-			const int ret = Fl_File_Browser::handle(e);
-			/* Do stuff only if you double-clicked a file name and nothing else
-			e.g. the scrollbars, otherwise it screws the default behavior when
-			double-clicking on the scrollbar arrows. */
-			if (Fl::belowmouse() == this)
-				processPath(getSelectedItem());
-			return ret;
-		}
+	}
+	case FL_PUSH: // mouse
+	{
+		/* Do custom stuff only if you (double-)clicked a file name and nothing
+		else e.g. the scrollbars, otherwise it screws the default behavior when
+		clicking on the scrollbar arrows. */
+		if (Fl::belowmouse() != this)
+			return Fl_File_Browser::handle(e);
+
+		const int ret = Fl_File_Browser::handle(e);
+		if (Fl::event_clicks() > 0) // double click
+			chooseItem();
 		else
-		{
-			/* Disable callback on single click. */
-			when(FL_WHEN_NEVER);
-			const int ret = Fl_File_Browser::handle(e);
-			when(FL_WHEN_RELEASE);
-			return ret;
-		}
-	case FL_RELEASE:
-		return 1;
+			selectItem();
+		return ret;
+	}
+	case FL_RELEASE: // mouse
+		return 1;    // Prevents losing selection on mouse up
 	default:
 		return Fl_File_Browser::handle(e);
 	}
@@ -131,19 +137,18 @@ int geFileBrowser::handle(int e)
 
 /* -------------------------------------------------------------------------- */
 
-std::string geFileBrowser::getCurrentDir()
+std::string geFileBrowser::getCurrentDir() const
 {
 	return u::fs::getRealPath(m_currentDir);
 }
 
 /* -------------------------------------------------------------------------- */
 
-std::string geFileBrowser::getSelectedItem(bool fullPath)
+std::string geFileBrowser::getSelectedItem() const
 {
 	if (value() == 0) // no rows selected? return current directory
 		return m_currentDir;
-	const std::string path = u::fs::getRealPath(u::fs::join(m_currentDir, text(value())));
-	return fullPath ? path : u::fs::basename(path);
+	return u::fs::getRealPath(u::fs::join(m_currentDir, text(value())));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -156,11 +161,19 @@ void geFileBrowser::preselect(int pos, int line)
 
 /* -------------------------------------------------------------------------- */
 
-void geFileBrowser::processPath(const std::string& path)
+void geFileBrowser::chooseItem()
 {
-	if (u::fs::isDir(path))
-		loadDir(path);
-	else
-		onSelectedElement();
+	const std::string selectedItemPath = getSelectedItem();
+	if (u::fs::isDir(selectedItemPath))
+		loadDir(selectedItemPath);
+	else if (onChooseItem != nullptr)
+		onChooseItem();
+}
+/* -------------------------------------------------------------------------- */
+
+void geFileBrowser::selectItem()
+{
+	if (onSelectItem != nullptr)
+		onSelectItem();
 }
 } // namespace giada::v

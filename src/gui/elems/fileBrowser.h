@@ -48,23 +48,34 @@ public:
 	void loadDir(const std::string& dir);
 
 	/* getSelectedItem
-	Returns the full path or just the displayed name of the i-th selected item.
-	Always with the trailing slash! */
+	Returns the full path or of the selected item. */
 
-	std::string getSelectedItem(bool fullPath = true);
+	std::string getSelectedItem() const;
 
-	std::string getCurrentDir();
+	std::string getCurrentDir() const;
 	void        toggleHiddenFiles();
 	void        preselect(int position, int line);
 
-	/* onSelectedElement
+	/* onChooseItem
 	Callback fired when an element has been selected by pressing Enter or
 	double-clicking on it. */
 
-	std::function<void()> onSelectedElement;
+	std::function<void()> onChooseItem;
+
+	/* onSelectItem
+	Callback fired when an element has been selected with a single click or
+	with up/down arrows. */
+
+	std::function<void()> onSelectItem;
+
+	/* onChangeDir
+	Callback fired when the current dictory displayed changes. */
+
+	std::function<void()> onChangeDir;
 
 private:
-	void processPath(const std::string& path);
+	void chooseItem();
+	void selectItem();
 
 	std::string m_currentDir;
 	bool        m_showHiddenFiles;

@@ -42,37 +42,15 @@ gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
 {
 	name->setValue(name_.c_str());
 
-	browser->callback(cb_down, (void*)this);
+	browser->onSelectItem = [this]
+	{
+		name->setValue(u::fs::basename(browser->getSelectedItem()));
+	};
 
 	ok->label(g_ui->getI18Text(LangMap::COMMON_SAVE));
 	ok->shortcut(FL_ENTER);
 	ok->onClick = [this]()
 	{ fireCallback(); };
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdBrowserSave::cb_down(Fl_Widget* /*v*/, void* p) { ((gdBrowserSave*)p)->cb_down(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdBrowserSave::cb_down()
-{
-	std::string path = browser->getSelectedItem();
-
-	if (path.empty()) // when click on an empty area
-		return;
-
-	/* if the selected item is a directory just load its content. If it's a file
-	 * use it as the file name (i.e. fill name->value()). */
-
-	if (u::fs::isDir(path))
-	{
-		browser->loadDir(path);
-		where->setValue(browser->getCurrentDir().c_str());
-	}
-	else
-		name->setValue(browser->getSelectedItem(false).c_str());
 }
 
 /* -------------------------------------------------------------------------- */

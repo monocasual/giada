@@ -36,10 +36,6 @@ class gdBrowserLoad : public gdBrowserBase
 public:
 	gdBrowserLoad(const std::string& title, const std::string& path,
 	    std::function<void(void*)> cb, ID channelId, const Model&);
-
-private:
-	static void cb_down(Fl_Widget* /*w*/, void* p);
-	void        cb_down();
 };
 } // namespace giada::v
 

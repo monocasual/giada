@@ -37,12 +37,6 @@ class gdBrowserDir : public gdBrowserBase
 public:
 	gdBrowserDir(const std::string& title, const std::string& path,
 	    std::function<void(void*)> cb, const Model&);
-
-private:
-	static void cb_load(Fl_Widget* /*w*/, void* p);
-	static void cb_down(Fl_Widget* /*w*/, void* p);
-	void        cb_load();
-	void        cb_down();
 };
 } // namespace giada::v
 
