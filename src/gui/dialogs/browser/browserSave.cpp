@@ -42,6 +42,11 @@ gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
 {
 	name->setValue(name_.c_str());
 
+	browser->onSelectItem = [this]
+	{
+		name->setValue(u::fs::basename(browser->getSelectedItem()));
+	};
+
 	ok->label(g_ui->getI18Text(LangMap::COMMON_SAVE));
 	ok->shortcut(FL_ENTER);
 	ok->onClick = [this]()
