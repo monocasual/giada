@@ -34,6 +34,7 @@ namespace giada::v
 geFileBrowser::geFileBrowser()
 : Fl_File_Browser(0, 0, 0, 0)
 , onChooseItem(nullptr)
+, onSelectItem(nullptr)
 , m_showHiddenFiles(false)
 {
 	box(G_CUSTOM_BORDER_BOX);
@@ -101,6 +102,7 @@ int geFileBrowser::handle(int e)
 			select(value() - 1);
 		else if (Fl::event_key(FL_Enter))
 			chooseItem();
+		selectItem();
 		return 1;
 	case FL_PUSH:                   // mouse
 		if (Fl::event_clicks() > 0) // double click
@@ -114,7 +116,13 @@ int geFileBrowser::handle(int e)
 			return ret;
 		}
 		else
-			return Fl_File_Browser::handle(e);
+		{
+			const int ret = Fl_File_Browser::handle(e);
+			/* Same as above. */
+			if (Fl::belowmouse() == this)
+				selectItem();
+			return ret;
+		}
 	case FL_RELEASE: // mouse
 		return 1;    // Prevents losing selection on mouse up
 	default:
@@ -155,5 +163,12 @@ void geFileBrowser::chooseItem()
 		loadDir(selectedItemPath);
 	else if (onChooseItem != nullptr)
 		onChooseItem();
+}
+/* -------------------------------------------------------------------------- */
+
+void geFileBrowser::selectItem()
+{
+	if (onSelectItem != nullptr)
+		onSelectItem();
 }
 } // namespace giada::v

@@ -62,8 +62,15 @@ public:
 
 	std::function<void()> onChooseItem;
 
+	/* onSelectItem
+	Callback fired when an element has been selected with a single click or
+	with up/down arrows. */
+
+	std::function<void()> onSelectItem;
+
 private:
 	void chooseItem();
+	void selectItem();
 
 	std::string m_currentDir;
 	bool        m_showHiddenFiles;
