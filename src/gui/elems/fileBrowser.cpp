@@ -53,7 +53,8 @@ geFileBrowser::geFileBrowser()
 	this->hscrollbar.labelcolor(G_COLOR_LIGHT_1);
 	this->hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-	take_focus(); // let it have focus on startup
+	take_focus();        // let it have focus on startup
+	when(FL_WHEN_NEVER); // Disable callback from this widget
 }
 
 /* -------------------------------------------------------------------------- */
@@ -88,13 +89,11 @@ void geFileBrowser::loadDir(const std::string& dir)
 
 int geFileBrowser::handle(int e)
 {
-	int ret = Fl_File_Browser::handle(e);
 	switch (e)
 	{
 	case FL_FOCUS:
 	case FL_UNFOCUS:
-		ret = 1; // enables receiving Keyboard events
-		break;
+		return 1;    // enables receiving Keyboard events
 	case FL_KEYDOWN: // keyboard
 		if (Fl::event_key(FL_Down))
 			select(value() + 1);
@@ -103,30 +102,25 @@ int geFileBrowser::handle(int e)
 		else if (Fl::event_key(FL_Enter))
 			if (onChooseItem != nullptr)
 				onChooseItem();
-		ret = 1;
-		break;
+		return 1;
 	case FL_PUSH:                   // mouse
 		if (Fl::event_clicks() > 0) // double click
-			if (onChooseItem != nullptr)
-				onChooseItem();
-		ret = 1;
-		break;
-	case FL_RELEASE: // mouse
-		/* nasty trick to keep the selection on mouse release */
-		if (value() > 1)
 		{
-			select(value() - 1);
-			select(value() + 1);
+			const int ret = Fl_File_Browser::handle(e);
+			/* Do stuff only if you double-clicked a file name and nothing else
+			e.g. the scrollbars, otherwise it screws the default behavior when
+			double-clicking on the scrollbar arrows. */
+			if (onChooseItem != nullptr && Fl::belowmouse() == this)
+				onChooseItem();
+			return ret;
 		}
 		else
-		{
-			select(value() + 1);
-			select(value() - 1);
-		}
-		ret = 1;
-		break;
+			return Fl_File_Browser::handle(e);
+	case FL_RELEASE: // mouse
+		return 1;    // Prevents losing selection on mouse up
+	default:
+		return Fl_File_Browser::handle(e);
 	}
-	return ret;
 }
 
 /* -------------------------------------------------------------------------- */
