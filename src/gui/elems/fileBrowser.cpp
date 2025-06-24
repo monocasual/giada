@@ -90,43 +90,43 @@ void geFileBrowser::loadDir(const std::string& dir)
 
 int geFileBrowser::handle(int e)
 {
-	int ret = Fl_File_Browser::handle(e);
 	switch (e)
 	{
 	case FL_FOCUS:
 	case FL_UNFOCUS:
-		ret = 1; // enables receiving Keyboard events
-		break;
+		return 1;    // enables receiving Keyboard events
 	case FL_KEYDOWN: // keyboard
 		if (Fl::event_key(FL_Down))
 			select(value() + 1);
 		else if (Fl::event_key(FL_Up))
 			select(value() - 1);
 		else if (Fl::event_key(FL_Enter) && onSelectedElement != nullptr)
-			onSelectedElement();
-		ret = 1;
-		break;
+			processPath(getSelectedItem());
+		return 1;
 	case FL_PUSH:                                                   // mouse
 		if (Fl::event_clicks() > 0 && onSelectedElement != nullptr) // double click
-			onSelectedElement();
-		ret = 1;
-		break;
-	case FL_RELEASE: // mouse
-		/* nasty trick to keep the selection on mouse release */
-		if (value() > 1)
 		{
-			select(value() - 1);
-			select(value() + 1);
+			const int ret = Fl_File_Browser::handle(e);
+			/* Do stuff only if you double-clicked a file name and nothing else
+			e.g. the scrollbars, otherwise it screws the default behavior when
+			double-clicking on the scrollbar arrows. */
+			if (Fl::belowmouse() == this)
+				processPath(getSelectedItem());
+			return ret;
 		}
 		else
 		{
-			select(value() + 1);
-			select(value() - 1);
+			/* Disable callback on single click. */
+			when(FL_WHEN_NEVER);
+			const int ret = Fl_File_Browser::handle(e);
+			when(FL_WHEN_RELEASE);
+			return ret;
 		}
-		ret = 1;
-		break;
+	case FL_RELEASE:
+		return 1;
+	default:
+		return Fl_File_Browser::handle(e);
 	}
-	return ret;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -152,5 +152,15 @@ void geFileBrowser::preselect(int pos, int line)
 {
 	vposition(pos);
 	select(line);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geFileBrowser::processPath(const std::string& path)
+{
+	if (u::fs::isDir(path))
+		loadDir(path);
+	else
+		onSelectedElement();
 }
 } // namespace giada::v

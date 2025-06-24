@@ -64,6 +64,8 @@ public:
 	std::function<void()> onSelectedElement;
 
 private:
+	void processPath(const std::string& path);
+
 	std::string m_currentDir;
 	bool        m_showHiddenFiles;
 };
