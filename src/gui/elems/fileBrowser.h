@@ -68,6 +68,11 @@ public:
 
 	std::function<void()> onSelectItem;
 
+	/* onChangeDir
+	Callback fired when the current dictory displayed changes. */
+
+	std::function<void()> onChangeDir;
+
 private:
 	void chooseItem();
 	void selectItem();

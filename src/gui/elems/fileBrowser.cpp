@@ -35,6 +35,7 @@ geFileBrowser::geFileBrowser()
 : Fl_File_Browser(0, 0, 0, 0)
 , onChooseItem(nullptr)
 , onSelectItem(nullptr)
+, onChangeDir(nullptr)
 , m_showHiddenFiles(false)
 {
 	box(G_CUSTOM_BORDER_BOX);
@@ -72,6 +73,8 @@ void geFileBrowser::loadDir(const std::string& dir)
 {
 	m_currentDir = dir;
 	load(m_currentDir.c_str());
+	if (onChangeDir != nullptr)
+		onChangeDir();
 
 	/* Clean up unwanted elements. Hide "../" first, it just screws up things.
 	Also remove hidden files, if requested. */
