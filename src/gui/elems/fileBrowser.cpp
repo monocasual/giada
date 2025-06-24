@@ -99,6 +99,7 @@ int geFileBrowser::handle(int e)
 	case FL_UNFOCUS:
 		return 1;    // enables receiving Keyboard events
 	case FL_KEYDOWN: // keyboard
+	{
 		if (Fl::event_key(FL_Down))
 			select(value() + 1);
 		else if (Fl::event_key(FL_Up))
@@ -107,25 +108,22 @@ int geFileBrowser::handle(int e)
 			chooseItem();
 		selectItem();
 		return 1;
-	case FL_PUSH:                   // mouse
+	}
+	case FL_PUSH: // mouse
+	{
+		/* Do custom stuff only if you (double-)clicked a file name and nothing
+		else e.g. the scrollbars, otherwise it screws the default behavior when
+		clicking on the scrollbar arrows. */
+		if (Fl::belowmouse() != this)
+			return Fl_File_Browser::handle(e);
+
+		const int ret = Fl_File_Browser::handle(e);
 		if (Fl::event_clicks() > 0) // double click
-		{
-			const int ret = Fl_File_Browser::handle(e);
-			/* Do stuff only if you double-clicked a file name and nothing else
-			e.g. the scrollbars, otherwise it screws the default behavior when
-			double-clicking on the scrollbar arrows. */
-			if (Fl::belowmouse() == this)
-				chooseItem();
-			return ret;
-		}
+			chooseItem();
 		else
-		{
-			const int ret = Fl_File_Browser::handle(e);
-			/* Same as above. */
-			if (Fl::belowmouse() == this)
-				selectItem();
-			return ret;
-		}
+			selectItem();
+		return ret;
+	}
 	case FL_RELEASE: // mouse
 		return 1;    // Prevents losing selection on mouse up
 	default:
