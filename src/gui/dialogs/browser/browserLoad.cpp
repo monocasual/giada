@@ -42,28 +42,9 @@ gdBrowserLoad::gdBrowserLoad(const std::string& title, const std::string& path,
 {
 	hidePathName();
 
-	browser->callback(cb_down, (void*)this);
-
 	ok->label(g_ui->getI18Text(LangMap::COMMON_LOAD));
 	ok->shortcut(FL_ENTER);
 	ok->onClick = [this]()
 	{ fireCallback(); };
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdBrowserLoad::cb_down(Fl_Widget* /*v*/, void* p) { ((gdBrowserLoad*)p)->cb_down(); }
-
-/* -------------------------------------------------------------------------- */
-
-void gdBrowserLoad::cb_down()
-{
-	std::string path = browser->getSelectedItem();
-
-	if (path.empty() || !u::fs::isDir(path)) // when click on an empty area or not a dir
-		return;
-
-	browser->loadDir(path);
-	where->setValue(browser->getCurrentDir().c_str());
 }
 } // namespace giada::v

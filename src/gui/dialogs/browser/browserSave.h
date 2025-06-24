@@ -41,10 +41,6 @@ public:
 	    ID channelId, const Model&);
 
 	std::string getName() const;
-
-private:
-	static void cb_down(Fl_Widget* /*w*/, void* p);
-	void        cb_down();
 };
 } // namespace giada::v
 
