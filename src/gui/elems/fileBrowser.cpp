@@ -24,12 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "fileBrowser.h"
+#include "gui/elems/fileBrowser.h"
 #include "basics/boxtypes.h"
 #include "core/const.h"
-#include "gui/dialogs/browser/browserBase.h"
 #include "utils/fs.h"
-#include "utils/string.h"
 
 namespace giada::v
 {
