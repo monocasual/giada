@@ -48,7 +48,6 @@ gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
 	};
 
 	ok->label(g_ui->getI18Text(LangMap::COMMON_SAVE));
-	ok->shortcut(FL_ENTER);
 	ok->onClick = [this]()
 	{ fireCallback(); };
 }

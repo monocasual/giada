@@ -43,7 +43,6 @@ gdBrowserDir::gdBrowserDir(const std::string& title, const std::string& path,
 	hidePathName();
 
 	ok->label(g_ui->getI18Text(LangMap::COMMON_SELECT));
-	ok->shortcut(FL_ENTER);
 	ok->onClick = [this]()
 	{ fireCallback(); };
 }
