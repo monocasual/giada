@@ -102,9 +102,10 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 	updir->onClick = [this]()
 	{
 		browser->loadDir(u::fs::getUpDir(browser->getCurrentDir()));
-		where->setValue(browser->getCurrentDir().c_str());
 	};
 
+	browser->onChangeDir = [this]
+	{ where->setValue(browser->getCurrentDir()); };
 	browser->onChooseItem = [this]()
 	{ fireCallback(); };
 	browser->loadDir(path);
