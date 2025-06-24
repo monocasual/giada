@@ -87,6 +87,8 @@ void geFileBrowser::loadDir(const std::string& dir)
 		if (el == "../" || (!m_showHiddenFiles && el[0] == '.'))
 			remove(i);
 	}
+
+	select(1); // Pre-select first item
 }
 
 /* -------------------------------------------------------------------------- */
