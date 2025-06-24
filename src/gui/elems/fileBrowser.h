@@ -48,10 +48,9 @@ public:
 	void loadDir(const std::string& dir);
 
 	/* getSelectedItem
-	Returns the full path or just the displayed name of the i-th selected item.
-	Always with the trailing slash! */
+	Returns the full path or of the selected item. */
 
-	std::string getSelectedItem(bool fullPath = true);
+	std::string getSelectedItem() const;
 
 	std::string getCurrentDir();
 	void        toggleHiddenFiles();

@@ -72,7 +72,7 @@ void gdBrowserSave::cb_down()
 		where->setValue(browser->getCurrentDir().c_str());
 	}
 	else
-		name->setValue(browser->getSelectedItem(false).c_str());
+		name->setValue(u::fs::basename(browser->getSelectedItem()));
 }
 
 /* -------------------------------------------------------------------------- */
