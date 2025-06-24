@@ -52,7 +52,7 @@ public:
 
 	std::string getSelectedItem() const;
 
-	std::string getCurrentDir();
+	std::string getCurrentDir() const;
 	void        toggleHiddenFiles();
 	void        preselect(int position, int line);
 

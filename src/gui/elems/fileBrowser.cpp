@@ -131,7 +131,7 @@ int geFileBrowser::handle(int e)
 
 /* -------------------------------------------------------------------------- */
 
-std::string geFileBrowser::getCurrentDir()
+std::string geFileBrowser::getCurrentDir() const
 {
 	return u::fs::getRealPath(m_currentDir);
 }
