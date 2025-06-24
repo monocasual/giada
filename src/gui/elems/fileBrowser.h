@@ -57,11 +57,11 @@ public:
 	void        toggleHiddenFiles();
 	void        preselect(int position, int line);
 
-	/* onSelectedElement
+	/* onChooseItem
 	Callback fired when an element has been selected by pressing Enter or
 	double-clicking on it. */
 
-	std::function<void()> onSelectedElement;
+	std::function<void()> onChooseItem;
 
 private:
 	std::string m_currentDir;

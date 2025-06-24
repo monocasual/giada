@@ -105,7 +105,7 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 		where->setValue(browser->getCurrentDir().c_str());
 	};
 
-	browser->onSelectedElement = [this]()
+	browser->onChooseItem = [this]()
 	{ fireCallback(); };
 	browser->loadDir(path);
 	if (path == model.browserLastPath)
