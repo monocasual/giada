@@ -63,6 +63,8 @@ public:
 	std::function<void()> onChooseItem;
 
 private:
+	void chooseItem();
+
 	std::string m_currentDir;
 	bool        m_showHiddenFiles;
 };

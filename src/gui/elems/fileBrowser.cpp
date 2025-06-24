@@ -100,8 +100,7 @@ int geFileBrowser::handle(int e)
 		else if (Fl::event_key(FL_Up))
 			select(value() - 1);
 		else if (Fl::event_key(FL_Enter))
-			if (onChooseItem != nullptr)
-				onChooseItem();
+			chooseItem();
 		return 1;
 	case FL_PUSH:                   // mouse
 		if (Fl::event_clicks() > 0) // double click
@@ -110,8 +109,8 @@ int geFileBrowser::handle(int e)
 			/* Do stuff only if you double-clicked a file name and nothing else
 			e.g. the scrollbars, otherwise it screws the default behavior when
 			double-clicking on the scrollbar arrows. */
-			if (onChooseItem != nullptr && Fl::belowmouse() == this)
-				onChooseItem();
+			if (Fl::belowmouse() == this)
+				chooseItem();
 			return ret;
 		}
 		else
@@ -145,5 +144,16 @@ void geFileBrowser::preselect(int pos, int line)
 {
 	vposition(pos);
 	select(line);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geFileBrowser::chooseItem()
+{
+	const std::string selectedItemPath = getSelectedItem();
+	if (u::fs::isDir(selectedItemPath))
+		loadDir(selectedItemPath);
+	else if (onChooseItem != nullptr)
+		onChooseItem();
 }
 } // namespace giada::v
