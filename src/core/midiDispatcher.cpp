@@ -132,9 +132,9 @@ void MidiDispatcher::process(const MidiEvent& e)
 	if (e.getType() != MidiEvent::Type::CHANNEL)
 		return;
 
+	onEventReceived();
 	processMaster(e);
 	processTracks(e);
-	onEventReceived();
 }
 
 /* -------------------------------------------------------------------------- */
