@@ -11,6 +11,22 @@
 --------------------------------------------------------------------------------
 
 
+1.2.1 --- 2025 . 06 . 26
+- Beautify UI layout in Audio Configuration Window
+- Disable sample rate and buffer size menus when using JACK in Audio Configuration Window
+- Reset project name when closing a project (#744)
+- File browser refactoring with improved usability
+- Fix double click on scrollbar arrows in File Browser loads a non-existing project (#735)
+- Fix wrong default height for all sub-windows
+- Fix Loop mode not working in Sample Editor (#723)
+- Fix missing first MIDI action recorded with "record-on-signal" mode (#732)
+- Set minimum C++ version to C++23
+- Update minimum CMake requirements to 3.29
+- Update JUCE to 8.0.8
+- Update FLTK to 1.4.3
+- Refactoring and code gardening
+
+
 1.2.0 --- 2025 . 04 . 22
 - Add support for multiple MIDI devices (#215)
 - Preserve position and size of 'Settings' window
