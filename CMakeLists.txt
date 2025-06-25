@@ -2,7 +2,7 @@
 # Preliminary setup
 # ------------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.29)
 
 # CMAKE_OSX_DEPLOYMENT_TARGET should be set prior to the first project() or
 # enable_language() command invocation because it may influence configuration
