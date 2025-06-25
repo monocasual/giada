@@ -27,43 +27,6 @@ jobs:
           draft: true
           prerelease: false
 
-  # Linux ----------------------------------------------------------------------
-  linux:
-    name: Linux
-    runs-on: ubuntu-24.04
-    timeout-minutes: 60
-    needs: create-release
-    steps:
-      - name: Download repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Install dependencies
-        run: ./.github/scripts/linux/install-deps.sh
-        shell: bash
-
-      - name: Generate Makefile
-        run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-Wno-class-memaccess -DWITH_VST3=ON
-
-      - name: Build
-        run: cmake --build build/ -j 2
-
-      - name: Make package
-        run: ./.github/scripts/linux/make-package.sh ${{ github.ref_name }}
-        shell: bash
-
-      - name: Upload release
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: dist/Giada-${{ github.ref_name }}-x86_64.AppImage
-          asset_name: Giada-${{ github.ref_name }}-x86_64.AppImage
-          asset_content_type: application/x-executable
-
   # Windows --------------------------------------------------------------------
   windows:
     name: Windows
