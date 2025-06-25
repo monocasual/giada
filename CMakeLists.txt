@@ -483,6 +483,8 @@ option(WITH_VST2 "Enable VST2 support (requires path to VST2 SDK with -DVST2_SDK
 option(WITH_VST3 "Enable VST3 support." OFF)
 option(WITH_TESTS "Include the test suite." OFF)
 
+option(USE_SYSTEM_FLTK "Use system-installed FLTK" OFF)
+
 if(DEFINED OS_LINUX)
 	option(WITH_ALSA "Enable ALSA support (Linux only)." ON)
 	option(WITH_PULSE "Enable PulseAudio support (Linux only)." ON)
@@ -543,18 +545,17 @@ list(APPEND INCLUDE_DIRS ${LIBRARY_RTMIDI_INCLUDE_DIR})
 
 # FLTK 
 
-include (FetchContent)
-FetchContent_Declare(
-	FLTK
-	SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/deps/fltk)
-
 set(FLTK_BUILD_GL ON CACHE BOOL "FLTK: enable OpenGL support")
 set(FLTK_BUILD_TEST OFF CACHE BOOL "FLTK: don't build tests")
 set(FLTK_BUILD_FLTK_OPTIONS OFF CACHE BOOL "FLTK: don't build 'options' editor")
 set(FLTK_BUILD_FLUID OFF CACHE BOOL "FLTK: don't build FLUID")
 set(FLTK_BUILD_FORMS OFF CACHE BOOL "FLTK: don't build (X)Forms compatibility library")
 
-FetchContent_MakeAvailable(FLTK)
+if(USE_SYSTEM_FLTK)
+    find_package(FLTK 1.4 CONFIG REQUIRED)
+else()
+	add_subdirectory("${CMAKE_SOURCE_DIR}/src/deps/fltk")
+endif()
 list(APPEND LIBRARIES fltk::fltk fltk::images)
 
 # Libsndfile
@@ -791,7 +792,7 @@ endif()
 # Finalize 'giada' target (main executable).
 # ------------------------------------------------------------------------------
 
-add_executable(giada)
+add_executable(giada WIN32 MACOSX_BUNDLE)
 add_dependencies(giada fltk) # Wait for fltk to be ready before building Giada
 target_compile_features(giada PRIVATE ${COMPILER_FEATURES})
 target_sources(giada PRIVATE ${SOURCES})
