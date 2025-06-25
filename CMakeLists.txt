@@ -465,7 +465,7 @@ endif()
 # ------------------------------------------------------------------------------
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-	list(APPEND COMPILER_OPTIONS /W4 /bigobj /external:anglebrackets /external:W0)
+	list(APPEND COMPILER_OPTIONS /W4 /bigobj /external:anglebrackets /external:W0 /Zc:preprocessor)
 else()
 	list(APPEND COMPILER_OPTIONS 
 		-Wall -Wextra -Wpedantic -Wunreachable-code -Wcast-align
