@@ -18,7 +18,7 @@ jobs:
 
       - name: Install dependencies
         run: bash ./.github/scripts/linux/install-deps.sh
-        
+
       - name: Generate Makefile
         run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON -DWITH_VST3=ON
 
@@ -26,7 +26,7 @@ jobs:
         run: cmake --build build/ -j 3
 
       - name: Run tests
-        run: xvfb-run ./build/giada --run-tests 
+        run: xvfb-run ./build/giada --run-tests
 
   # Windows --------------------------------------------------------------------
   windows:
@@ -48,7 +48,7 @@ jobs:
         run: cmake --build build/ --config Debug -j 3
 
       - name: Run tests
-        run: ./build/Debug/giada.exe --run-tests 
+        run: ./build/Debug/giada.exe --run-tests
 
   # macOS ----------------------------------------------------------------------
   macos:
@@ -68,4 +68,4 @@ jobs:
         run: cmake --build build/ --config Debug -j 2
 
       - name: Run tests
-        run: ./build/Debug/giada --run-tests 
+        run: ./build/Debug/giada --run-tests
