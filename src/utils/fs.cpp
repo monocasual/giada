@@ -252,7 +252,7 @@ std::string getConfigFilePath()
 
 bool isRootDir(const std::string& s)
 {
-	return stdfs::current_path().root_directory() == s;
+	return stdfs::current_path().root_path() == s;
 }
 
 /* -------------------------------------------------------------------------- */
