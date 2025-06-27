@@ -29,6 +29,7 @@
             "hidden": true,
             "generator": "Visual Studio 17 2022",
             "architecture": "x64",
+            "binaryDir": "${sourceDir}/build",
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
@@ -69,7 +70,6 @@
             "name": "debug-windows",
             "inherits": "common-windows",
             "displayName": "Debug configuration for Windows",
-            "binaryDir": "${sourceDir}/build/debug",
             "cacheVariables": {
                 "WITH_TESTS": "ON"
             }
@@ -77,8 +77,7 @@
         {
             "name": "release-windows",
             "inherits": "common-windows",
-            "displayName": "Release configuration for Windows",
-            "binaryDir": "${sourceDir}/build/release"
+            "displayName": "Release configuration for Windows"
         },
         {
             "name": "debug-macos",
