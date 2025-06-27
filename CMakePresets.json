@@ -40,7 +40,7 @@
             "name": "common-macos",
             "inherits": "common",
             "hidden": true,
-            "generator": "Xcode",
+            "binaryDir": "${sourceDir}/build",
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
@@ -80,19 +80,38 @@
             "displayName": "Release configuration for Windows"
         },
         {
-            "name": "debug-macos",
+            "name": "debug-macos-default",
             "inherits": "common-macos",
-            "displayName": "Debug configuration for macOS",
+            "displayName": "Debug configuration for macOS, default generator",
             "binaryDir": "${sourceDir}/build/debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "WITH_TESTS": "ON"
+            }
+        },
+        {
+            "name": "release-macos-default",
+            "inherits": "common-macos",
+            "displayName": "Release configuration for macOS, default generator",
+            "binaryDir": "${sourceDir}/build/release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "debug-macos-xcode",
+            "inherits": "common-macos",
+            "generator": "Xcode",
+            "displayName": "Debug configuration for macOS, Xcode generator",
             "cacheVariables": {
                 "WITH_TESTS": "ON"
             }
         },
         {
-            "name": "release-macos",
+            "name": "release-macos-xcode",
             "inherits": "common-macos",
-            "displayName": "Release configuration for macOS",
-            "binaryDir": "${sourceDir}/build/release"
+            "generator": "Xcode",
+            "displayName": "Release configuration for macOS, Xcode generator"
         }
     ]
 }
