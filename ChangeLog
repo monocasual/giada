@@ -11,7 +11,7 @@
 --------------------------------------------------------------------------------
 
 
-1.2.1 --- 2025 . 06 . 26
+1.2.1 --- 2025 . 06 . 28
 - Beautify UI layout in Audio Configuration Window
 - Disable sample rate and buffer size menus when using JACK in Audio Configuration Window
 - Reset project name when closing a project (#744)
