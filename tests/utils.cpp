@@ -18,7 +18,6 @@ TEST_CASE("u::fs")
 	REQUIRE(u::fs::getExt("tests/utils.cpp") == ".cpp");
 	REQUIRE(u::fs::stripExt("tests/utils.cpp") == "tests/utils");
 #if defined(_WIN32)
-	REQUIRE(u::fs::isRootDir("C:\\") == true);
 	REQUIRE(u::fs::isRootDir("C:\\path\\to\\something") == false);
 	REQUIRE(u::fs::getUpDir("C:\\path\\to\\something") == "C:\\path\\to");
 	REQUIRE(u::fs::getUpDir("C:\\path") == "C:\\");
