@@ -49,6 +49,8 @@ namespace giada::u::fs
 {
 namespace
 {
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+
 std::string getEnvVariable_(const char* s)
 {
 	const char* tmp = getenv(s);
@@ -56,6 +58,8 @@ std::string getEnvVariable_(const char* s)
 		return "";
 	return {tmp};
 }
+
+#endif
 } // namespace
 
 /* -------------------------------------------------------------------------- */
