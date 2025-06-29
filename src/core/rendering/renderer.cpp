@@ -121,7 +121,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		renderMasterIn(masterInCh, mixer.getInBuffer());
 
 	if (!document_RT.locked)
-		renderTracks(tracks, out, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
+		renderTracks(tracks, masterOutCh.shared->audioBuffer, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
 
 	renderMasterOut(masterOutCh, out);
 	if (mixer.renderPreview)
@@ -165,6 +165,8 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
     const mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const
 {
+	out.clear();
+
 	for (const model::Track& track : tracks.getAll())
 	{
 		if (track.isInternal())
@@ -214,9 +216,10 @@ void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
 
 void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const
 {
-	ch.shared->audioBuffer.setAll(out);
 	m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
-	out.setAll(ch.shared->audioBuffer, ch.volume);
+	const int offset = 0; // TODO - Use master output channel offset coming from configuration panel
+	for (int i = 0; i < ch.shared->audioBuffer.countChannels(); i++)
+		out.set(ch.shared->audioBuffer, i, i + offset, ch.volume);
 }
 
 /* -------------------------------------------------------------------------- */
