@@ -139,10 +139,15 @@ public:
 
 	/* finalizeOutput
 	Last touches after the output has been rendered: apply inToOut if any, apply
-	output volume, compute peak. */
+	output volume. */
 
 	void finalizeOutput(const model::Mixer&, mcl::AudioBuffer&, bool inToOut,
 	    bool limit, float vol) const;
+
+	/* updateOutputPeak
+	Reads the maximum peak in the given buffer and updates the value in model::Mixer. */
+
+	void updateOutputPeak(const model::Mixer&, const mcl::AudioBuffer&) const;
 
 	void setRecTriggerMode(RecTriggerMode);
 	void setInputRecMode(InputRecMode);

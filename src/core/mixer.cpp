@@ -329,7 +329,12 @@ void Mixer::finalizeOutput(const model::Mixer& mixer, mcl::AudioBuffer& buf,
 
 	if (shouldLimit)
 		limit(buf);
+}
 
+/* -------------------------------------------------------------------------- */
+
+void Mixer::updateOutputPeak(const model::Mixer& mixer, const mcl::AudioBuffer& buf) const
+{
 	mixer.a_setPeakOut({buf.getPeak(CH_LEFT), buf.getPeak(CH_RIGHT)});
 }
 } // namespace giada::m
