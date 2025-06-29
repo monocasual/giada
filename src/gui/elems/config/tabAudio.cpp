@@ -105,7 +105,8 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 			addItem(std::to_string(i + 1), i);
 
 	/* Dirty trick for stereo channels: they start at STEREO_OFFSET. Also,
-	what if channelsMax > 2? Only channel pairs are allowed at the moment. */
+	what if channelsMax > 2? Only channel pairs are allowed at the moment. In
+	other words, master out is always stereo. */
 
 	if (data.channelsMax > 1)
 		for (int i = 0; i < data.channelsMax; i += 2)
