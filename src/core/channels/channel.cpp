@@ -43,6 +43,7 @@ Channel::Channel(ChannelType type, ID id, ChannelShared& s)
 , key(0)
 , hasActions(false)
 , height(G_GUI_UNIT)
+, sendToMaster(true)
 , m_mute(false)
 , m_solo(false)
 {
@@ -76,6 +77,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , name(p.name)
 , height(p.height)
 , plugins(plugins)
+, sendToMaster(true) // TODO - persistence
 , midiInput(p)
 , midiLightning(p)
 , m_mute(p.mute)
