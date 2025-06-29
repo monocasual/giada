@@ -354,9 +354,13 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
 
+	/* Output is always configured to use all the available channels, starting
+	from the first one. It's up to Mixer to choose which channels to use for
+	the master output. */
+
 	outParams.deviceId     = out.id == -1 ? m_rtAudio->getDefaultOutputDevice() : out.id;
-	outParams.nChannels    = out.channelsCount;
-	outParams.firstChannel = out.channelsStart;
+	outParams.nChannels    = fetchDevice(outParams.deviceId).maxOutputChannels;
+	outParams.firstChannel = 0;
 
 	if (in.id != 0)
 	{
@@ -395,8 +399,8 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 
 	m_callbackInfo = {
 	    /* rtAudio */ this,
-	    /* channelsOutCount */ out.channelsCount,
-	    /* channelsInCount */ in.channelsCount};
+	    /* channelsOutCount */ static_cast<int>(outParams.nChannels),
+	    /* channelsInCount */ in.channelsCount}; // TODO - pass inParams.nChannels for consistency
 
 	RtAudioErrorType res = m_rtAudio->openStream(
 	    &outParams,                       // output params
@@ -416,9 +420,9 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 	return {
 	    true,
 	    {
-	        static_cast<int>(outParams.deviceId),
-	        static_cast<int>(outParams.nChannels),
-	        static_cast<int>(outParams.firstChannel),
+	        static_cast<int>(out.id),
+	        static_cast<int>(out.channelsCount),
+	        static_cast<int>(out.channelsStart),
 	    },
 	    {
 	        static_cast<int>(inParams.deviceId),
