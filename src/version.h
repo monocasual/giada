@@ -53,19 +53,7 @@ public:
 
 	constexpr bool operator<(const Version& o) const
 	{
-		if (m_major < o.m_major)
-			return true;
-		else if (o.m_major < m_major)
-			return false;
-		if (m_minor < o.m_minor)
-			return true;
-		else if (o.m_minor < m_minor)
-			return false;
-		if (m_patch < o.m_patch)
-			return true;
-		else if (o.m_patch < m_patch)
-			return false;
-		return false;
+		return std::tie(m_major, m_minor, m_patch) < std::tie(o.m_major, o.m_minor, o.m_patch);
 	}
 
 	constexpr int getMajor() const { return m_major; }
