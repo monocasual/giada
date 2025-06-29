@@ -84,7 +84,7 @@ private:
 	void renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
 	    const mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const;
 	void renderMasterIn(const Channel&, mcl::AudioBuffer& in) const;
-	void renderMasterOut(const Channel&, mcl::AudioBuffer& out) const;
+	void renderMasterOut(const Channel&, mcl::AudioBuffer& out, int channelOffset) const;
 	void renderPreview(const Channel&, mcl::AudioBuffer& out) const;
 	void renderSampleChannel(const Channel&, const mcl::AudioBuffer& in, bool seqIsRunning) const;
 	void renderMidiChannel(const Channel&) const;
