@@ -123,7 +123,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	if (!document_RT.locked)
 		renderTracks(tracks, masterOutCh.shared->audioBuffer, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
 
-	renderMasterOut(masterOutCh, out);
+	renderMasterOut(masterOutCh, out, kernelAudio.deviceOut.channelsStart);
 	if (mixer.renderPreview)
 		renderPreview(previewCh, out);
 
@@ -180,7 +180,7 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
 
 		rendering::renderAudioPlugins(group, m_pluginHost);
 
-		if (group.isAudible(hasSolos))
+		if (group.isAudible(hasSolos) && group.sendToMaster)
 			out.sumAll(group.shared->audioBuffer, group.pan.get(), group.volume);
 	}
 }
@@ -201,7 +201,7 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
 		renderMidiChannel(ch);
 	}
 
-	if (ch.isAudible(mixerHasSolos))
+	if (ch.isAudible(mixerHasSolos) && ch.sendToMaster)
 		out.sumAll(ch.shared->audioBuffer, ch.pan.get(), ch.volume * ch.shared->volumeInternal.load());
 }
 
@@ -214,12 +214,11 @@ void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const
+void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out, int channelOffset) const
 {
 	m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
-	const int offset = 0; // TODO - Use master output channel offset coming from configuration panel
 	for (int i = 0; i < ch.shared->audioBuffer.countChannels(); i++)
-		out.set(ch.shared->audioBuffer, i, i + offset, ch.volume);
+		out.set(ch.shared->audioBuffer, i, i + channelOffset, ch.volume);
 }
 
 /* -------------------------------------------------------------------------- */
