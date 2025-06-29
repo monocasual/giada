@@ -109,6 +109,19 @@ public:
 	Pixel                height; // TODO - move this to v::Model
 	std::vector<Plugin*> plugins;
 
+	/* sendToMaster
+	If false, the audio buffer of this channel won't be rendered to master
+	channel. Useful if you want extra outputs only (see below). */
+
+	bool sendToMaster;
+
+	/* extraOutputs
+	Defines the channel _offsets_ that will be used to render the audio buffer of
+	this channel when extra outputs are used. Each element of the vector is
+	intended as an extra ouput. */
+
+	std::vector<int> extraOutputs;
+
 	MidiInput     midiInput;
 	MidiLightning midiLightning;
 
