@@ -274,9 +274,9 @@ void writeWaves_(const Patch& patch, nlohmann::json& j)
 void writeCommons_(const Patch& patch, nlohmann::json& j)
 {
 	j[PATCH_KEY_HEADER]        = "GIADAPTC";
-	j[PATCH_KEY_VERSION_MAJOR] = G_VERSION_MAJOR;
-	j[PATCH_KEY_VERSION_MINOR] = G_VERSION_MINOR;
-	j[PATCH_KEY_VERSION_PATCH] = G_VERSION_PATCH;
+	j[PATCH_KEY_VERSION_MAJOR] = G_VERSION.getMajor();
+	j[PATCH_KEY_VERSION_MINOR] = G_VERSION.getMinor();
+	j[PATCH_KEY_VERSION_PATCH] = G_VERSION.getPatch();
 	j[PATCH_KEY_NAME]          = patch.name;
 	j[PATCH_KEY_BARS]          = patch.bars;
 	j[PATCH_KEY_BEATS]         = patch.beats;

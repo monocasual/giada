@@ -116,7 +116,7 @@ struct Patch
 		std::vector<uint32_t> midiInParams;
 	};
 
-	Version     version    = Version(G_VERSION_MAJOR, G_VERSION_MINOR, G_VERSION_PATCH);
+	Version     version    = G_VERSION;
 	int         status     = G_FILE_INVALID;
 	std::string name       = G_DEFAULT_PATCH_NAME;
 	int         bars       = G_DEFAULT_BARS;

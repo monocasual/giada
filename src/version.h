@@ -63,6 +63,10 @@ public:
 		return false;
 	}
 
+	constexpr int getMajor() const { return m_major; }
+	constexpr int getMinor() const { return m_minor; }
+	constexpr int getPatch() const { return m_patch; }
+
 	constexpr std::string toString() const
 	{
 		return std::to_string(m_major) + "." + std::to_string(m_minor) + "." + std::to_string(m_patch);

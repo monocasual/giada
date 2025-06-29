@@ -29,6 +29,7 @@
 
 #include "core/types.h"
 #include "deps/rtaudio/RtAudio.h"
+#include "version.h"
 #include <RtMidi.h>
 #include <cstdint>
 
@@ -54,11 +55,8 @@ namespace giada
 #endif
 
 /* -- version --------------------------------------------------------------- */
-constexpr auto G_APP_NAME      = "Giada";
-constexpr auto G_VERSION_STR   = "1.2.1";
-constexpr int  G_VERSION_MAJOR = 1;
-constexpr int  G_VERSION_MINOR = 2;
-constexpr int  G_VERSION_PATCH = 1;
+constexpr auto    G_APP_NAME = "Giada";
+constexpr Version G_VERSION(1, 2, 1);
 
 constexpr auto G_CONF_FILENAME = "giada.conf";
 

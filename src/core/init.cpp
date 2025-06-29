@@ -63,7 +63,7 @@ namespace
 {
 void printBuildInfo_()
 {
-	u::log::print("[init] Giada {}\n", G_VERSION_STR);
+	u::log::print("[init] Giada {}\n", G_VERSION.toString());
 	u::log::print("[init] Build date: " BUILD_DATE "\n");
 #ifdef G_DEBUG_MODE
 	u::log::print("[init] Debug build\n");
@@ -179,7 +179,7 @@ void shutdown()
 	else
 		u::log::print("[init::shutdown] configuration saved\n");
 
-	u::log::print("[init] Giada {} closed\n\n", G_VERSION_STR);
+	u::log::print("[init] Giada {} closed\n\n", G_VERSION.toString());
 	u::log::close();
 }
 } // namespace giada::m::init
