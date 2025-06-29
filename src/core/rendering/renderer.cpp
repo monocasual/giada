@@ -127,6 +127,8 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	if (mixer.renderPreview)
 		renderPreview(previewCh, out);
 
+	m_mixer.updateOutputPeak(mixer, masterOutCh.shared->audioBuffer);
+
 	/* Post processing. */
 
 	m_mixer.finalizeOutput(mixer, out, mixer.inToOut, kernelAudio.limitOutput, masterOutCh.volume);
