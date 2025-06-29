@@ -46,6 +46,11 @@ public:
 		return m_major == o.m_major && m_minor == o.m_minor && m_patch == o.m_patch;
 	}
 
+	constexpr bool operator!=(const Version& o) const
+	{
+		return !operator==(o);
+	}
+
 	constexpr bool operator<(const Version& o) const
 	{
 		if (m_major < o.m_major)
