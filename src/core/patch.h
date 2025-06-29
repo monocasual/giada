@@ -29,6 +29,7 @@
 
 #include "core/const.h"
 #include "core/types.h"
+#include "version.h"
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -37,16 +38,6 @@ namespace giada::m
 {
 struct Patch
 {
-	struct Version
-	{
-		int major = G_VERSION_MAJOR;
-		int minor = G_VERSION_MINOR;
-		int patch = G_VERSION_PATCH;
-
-		bool operator==(const Version& o) const;
-		bool operator<(const Version& o) const;
-	};
-
 	struct Track
 	{
 		int             width;
@@ -125,7 +116,7 @@ struct Patch
 		std::vector<uint32_t> midiInParams;
 	};
 
-	Version     version;
+	Version     version    = Version(G_VERSION_MAJOR, G_VERSION_MINOR, G_VERSION_PATCH);
 	int         status     = G_FILE_INVALID;
 	std::string name       = G_DEFAULT_PATCH_NAME;
 	int         bars       = G_DEFAULT_BARS;

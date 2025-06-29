@@ -82,7 +82,7 @@ void readPlugins_(Patch& patch, const nlohmann::json& j)
 		p.path   = jplugin.value(PATCH_KEY_PLUGIN_PATH, "");
 		p.bypass = jplugin.value(PATCH_KEY_PLUGIN_BYPASS, false);
 
-		if (patch.version < Patch::Version{0, 17, 0})
+		if (patch.version < Version{0, 17, 0})
 			for (const auto& jparam : jplugin[PATCH_KEY_PLUGIN_PARAMS])
 				p.params.push_back(jparam);
 		else
@@ -350,7 +350,7 @@ void modernize_(Patch& patch)
 	/* 1.1.0
 	Older patches don't contain Tracks. Let's recreate a basic Track layout: one
 	internal, one external. */
-	if (patch.version < Patch::Version{1, 1, 0})
+	if (patch.version < Version{1, 1, 0})
 	{
 		const ID groupChannelId = 8192;
 		patch.tracks.push_back({G_DEFAULT_TRACK_WIDTH, /*internal=*/true, {}});
@@ -385,7 +385,7 @@ void modernize_(Patch& patch)
 
 		/* 1.1.0
 		Let's put non-group channels into the relevant tracks. */
-		if (patch.version < Patch::Version{1, 1, 0} && c.type != ChannelType::GROUP)
+		if (patch.version < Version{1, 1, 0} && c.type != ChannelType::GROUP)
 		{
 			const std::size_t targetIndex = isInternalChannel ? 0 : 1;
 			patch.tracks[targetIndex].channels.push_back(c.id);
@@ -444,7 +444,7 @@ Patch deserialize(const std::string& filePath)
 		    static_cast<int>(j[PATCH_KEY_VERSION_MAJOR]),
 		    static_cast<int>(j[PATCH_KEY_VERSION_MINOR]),
 		    static_cast<int>(j[PATCH_KEY_VERSION_PATCH])};
-		if (patch.version < Patch::Version{0, 16, 0})
+		if (patch.version < Version{0, 16, 0})
 		{
 			patch.status = G_FILE_UNSUPPORTED;
 			return patch;

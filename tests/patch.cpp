@@ -10,6 +10,6 @@ TEST_CASE("Patch")
 		Patch patch;
 		patch.version = {0, 16, 0};
 
-		REQUIRE(patch.version < Patch::Version{1, 0, 0});
+		REQUIRE(patch.version < Version{1, 0, 0});
 	}
 }

@@ -104,7 +104,6 @@ list(APPEND SOURCES
 	src/core/waveFx.h
 	src/core/kernelMidi.cpp
 	src/core/kernelMidi.h
-	src/core/patch.cpp
 	src/core/patch.h
 	src/core/actions/actionFactory.cpp
 	src/core/actions/actionFactory.h
