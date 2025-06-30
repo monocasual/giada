@@ -27,7 +27,6 @@
 #ifndef G_V_UI_H
 #define G_V_UI_H
 
-#include "core/conf.h"
 #include "core/patch.h"
 #include "gui/const.h"
 #include "gui/dialogs/mainWindow.h"

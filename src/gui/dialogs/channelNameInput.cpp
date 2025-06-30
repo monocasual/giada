@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/channelNameInput.h"
-#include "core/conf.h"
 #include "core/model/model.h"
 #include "glue/channel.h"
 #include "gui/elems/basics/flex.h"

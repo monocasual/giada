@@ -27,7 +27,6 @@
 #ifndef GD_PLUGINLIST_H
 #define GD_PLUGINLIST_H
 
-#include "core/conf.h"
 #include "glue/plugin.h"
 #include "window.h"
 

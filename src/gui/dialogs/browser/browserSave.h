@@ -28,7 +28,6 @@
 #define GD_BROWSER_SAVE_H
 
 #include "browserBase.h"
-#include "core/conf.h"
 
 namespace giada::v
 {

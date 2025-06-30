@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/config.h"
-#include "core/conf.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/flex.h"

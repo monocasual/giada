@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/keyGrabber.h"
-#include "core/conf.h"
 #include "glue/channel.h"
 #include "glue/io.h"
 #include "gui/elems/basics/box.h"

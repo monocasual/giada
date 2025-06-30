@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/browser/browserBase.h"
-#include "core/conf.h"
 #include "gui/const.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"

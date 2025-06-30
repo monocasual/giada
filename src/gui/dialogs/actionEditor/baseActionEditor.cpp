@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "core/conf.h"
 #include "glue/channel.h"
 #include "gui/const.h"
 #include "gui/drawing.h"

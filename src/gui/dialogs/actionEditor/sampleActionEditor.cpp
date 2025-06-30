@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/actionEditor/sampleActionEditor.h"
-#include "core/conf.h"
 #include "glue/actionEditor.h"
 #include "glue/channel.h"
 #include "gui/elems/actionEditor/gridTool.h"

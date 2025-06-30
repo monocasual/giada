@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/config/tabBehaviors.h"
-#include "core/conf.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/flex.h"

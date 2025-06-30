@@ -27,7 +27,6 @@
 #ifndef GD_KEYGRABBER_H
 #define GD_KEYGRABBER_H
 
-#include "core/conf.h"
 #include "window.h"
 #include <FL/Fl.H>
 #include <functional>
