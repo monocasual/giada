@@ -93,6 +93,11 @@ private:
 
 	void mergeChannel(const Channel&, mcl::AudioBuffer& out) const;
 
+	/* mergeChannel (2)
+	Same as above, with a channel offset for the destination buffer 'out'. */
+
+	void mergeChannel(const Channel&, mcl::AudioBuffer& out, int destChannelOffset) const;
+
 	Sequencer&  m_sequencer;
 	Mixer&      m_mixer;
 	PluginHost& m_pluginHost;
