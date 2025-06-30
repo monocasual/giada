@@ -31,6 +31,7 @@
 #include "boxtypes.h"
 #include "core/const.h"
 #include "deps/geompp/src/rect.hpp"
+#include "gui/const.h"
 
 namespace giada::v
 {

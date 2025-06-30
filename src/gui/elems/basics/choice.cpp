@@ -26,6 +26,7 @@
 
 #include "gui/elems/basics/choice.h"
 #include "core/const.h"
+#include "gui/const.h"
 #include "gui/drawing.h"
 #include "utils/gui.h"
 #include "utils/vector.h"

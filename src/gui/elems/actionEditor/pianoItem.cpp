@@ -27,6 +27,7 @@
 #include "pianoItem.h"
 #include "core/const.h"
 #include "core/midiEvent.h"
+#include "gui/const.h"
 #include "src/core/actions/action.h"
 #include "utils/math.h"
 #include <FL/fl_draw.H>

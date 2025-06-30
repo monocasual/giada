@@ -26,6 +26,7 @@
 
 #include "gui/dialogs/missingAssets.h"
 #include "core/engine.h"
+#include "gui/const.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/browser.h"
 #include "gui/elems/basics/flex.h"

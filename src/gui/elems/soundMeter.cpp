@@ -28,6 +28,7 @@
 #include "core/const.h"
 #include "core/kernelAudio.h"
 #include "core/types.h"
+#include "gui/const.h"
 #include "gui/drawing.h"
 #include "utils/math.h"
 #include <FL/fl_draw.H>

@@ -29,6 +29,7 @@
 
 #include "gui/elems/basics/browser.h"
 #include "core/const.h"
+#include "gui/const.h"
 #include "gui/elems/basics/boxtypes.h"
 
 namespace giada::v

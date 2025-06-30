@@ -14,7 +14,7 @@
  * version 3 of the License, or (at your option) any later version.
  *
  * Giada - Your Hardcore Loopmachine is distributed in the hope that it
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * will be useful, but WITHOUT ANY WARRANTY without even the implied
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
@@ -24,31 +24,22 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/actionEditor/legend.h"
-#include "core/const.h"
-#include "gui/const.h"
-#include "gui/drawing.h"
-#include <FL/fl_draw.H>
+#ifndef G_GUI_CONST_H
+#define G_GUI_CONST_H
 
-namespace giada::v
+namespace giada
 {
-geLegend::geLegend(const char* label)
-: geBox(label)
-{
-}
+#define G_COLOR_RED fl_rgb_color(28, 32, 80)
+#define G_COLOR_BLUE fl_rgb_color(113, 31, 31)
+#define G_COLOR_LIGHT_2 fl_rgb_color(200, 200, 200)
+#define G_COLOR_LIGHT_1 fl_rgb_color(170, 170, 170)
+#define G_COLOR_GREY_5 fl_rgb_color(110, 110, 110)
+#define G_COLOR_GREY_4 fl_rgb_color(78, 78, 78)
+#define G_COLOR_GREY_3 fl_rgb_color(54, 54, 54)
+#define G_COLOR_GREY_2 fl_rgb_color(37, 37, 37)
+#define G_COLOR_GREY_1_5 fl_rgb_color(28, 28, 28)
+#define G_COLOR_GREY_1 fl_rgb_color(25, 25, 25)
+#define G_COLOR_BLACK fl_rgb_color(0, 0, 0)
+} // namespace giada
 
-/* -------------------------------------------------------------------------- */
-
-void geLegend::draw()
-{
-	const geompp::Rect<int> bounds = {x(), y(), w(), h()};
-
-	drawRectf(bounds, G_COLOR_GREY_2); // Clear background
-
-	drawLine(bounds.getTopLine(), G_COLOR_GREY_4);
-	drawLine(bounds.getLeftLine(), G_COLOR_GREY_4);
-	drawLine(bounds.getBottomLine().withShiftedY(-1), G_COLOR_GREY_4);
-
-	drawTextVertical(label(), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_GREY_5);
-}
-} // namespace giada::v
+#endif

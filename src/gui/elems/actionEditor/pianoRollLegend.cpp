@@ -26,6 +26,7 @@
 
 #include "gui/elems/actionEditor/pianoRollLegend.h"
 #include "core/const.h"
+#include "gui/const.h"
 #include "gui/drawing.h"
 #include "gui/elems/actionEditor/pianoRoll.h"
 #include <FL/fl_draw.H>

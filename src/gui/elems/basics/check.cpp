@@ -26,6 +26,7 @@
 
 #include "check.h"
 #include "core/const.h"
+#include "gui/const.h"
 #include "utils/gui.h"
 #include <FL/fl_draw.H>
 #include <cstring>

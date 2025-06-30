@@ -26,6 +26,7 @@
 
 #include "gui/ui.h"
 #include "core/const.h"
+#include "gui/const.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/keyboard/track.h"

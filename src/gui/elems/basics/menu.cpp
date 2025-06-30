@@ -26,6 +26,7 @@
 
 #include "gui/elems/basics/menu.h"
 #include "core/const.h"
+#include "gui/const.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "utils/gui.h"
 #include <FL/Fl.H>

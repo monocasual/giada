@@ -28,6 +28,7 @@
 #include "core/const.h"
 #include "core/plugins/pluginManager.h"
 #include "glue/plugin.h"
+#include "gui/const.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/ui.h"
 #include "utils/gui.h"

@@ -28,6 +28,7 @@
 #include "core/const.h"
 #include "envelopePoint.h"
 #include "glue/actionEditor.h"
+#include "gui/const.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "src/core/actions/action.h"
 #include "utils/math.h"

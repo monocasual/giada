@@ -191,6 +191,7 @@ list(APPEND SOURCES
 	src/glue/config.h
 	src/glue/layout.cpp
 	src/glue/layout.h
+	src/gui/const.h
 	src/gui/ui.cpp
 	src/gui/ui.h
 	src/gui/model.cpp

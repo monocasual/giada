@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "sampleAction.h"
-#include "core/const.h"
+#include "gui/const.h"
 #include "src/core/actions/action.h"
 #include <FL/fl_draw.H>
 

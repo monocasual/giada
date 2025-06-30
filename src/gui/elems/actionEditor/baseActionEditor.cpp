@@ -27,8 +27,8 @@
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "baseAction.h"
 #include "baseActionEditor.h"
-#include "core/const.h"
 #include "gridTool.h"
+#include "gui/const.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v

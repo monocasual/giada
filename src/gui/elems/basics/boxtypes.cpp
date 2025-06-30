@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "boxtypes.h"
-#include "../../../core/const.h"
+#include "gui/const.h"
 #include <FL/fl_draw.H>
 
 void g_customBorderBox(int x, int y, int w, int h, Fl_Color c)

@@ -26,6 +26,7 @@
 
 #include "gui/elems/basics/table.h"
 #include "core/const.h"
+#include "gui/const.h"
 #include "gui/drawing.h"
 #include "gui/elems/basics/boxtypes.h"
 #include <FL/Fl.H>
@@ -64,7 +65,7 @@ void geTable::draw()
 void geTable::init()
 {
 	forEachCell([this](int row, int col, int X, int Y, int W, int H)
-	    { add(setCellContent(row, col, X, Y, W, H)); });
+	{ add(setCellContent(row, col, X, Y, W, H)); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -89,7 +90,7 @@ void geTable::draw_cell(TableContext context, int /*row*/, int col, int X, int Y
 	{
 		int index = 0;
 		forEachCell([this, &index](int /*row*/, int /*col*/, int X, int Y, int W, int H)
-		    { 
+		{ 
 			if (index < children()) 
 				child(index++)->resize(X, Y, W, H); });
 		init_sizes(); // tell group children resized

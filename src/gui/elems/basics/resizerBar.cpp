@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "resizerBar.h"
-#include "core/const.h"
+#include "gui/const.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include <FL/fl_draw.H>

@@ -29,6 +29,7 @@
 #include "core/model/model.h"
 #include "core/waveFx.h"
 #include "glue/sampleEditor.h"
+#include "gui/const.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/menu.h"

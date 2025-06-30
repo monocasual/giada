@@ -29,6 +29,7 @@
 #include "core/patch.h"
 #include "glue/layout.h"
 #include "glue/main.h"
+#include "gui/const.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/menu.h"
 #include "gui/elems/basics/textButton.h"

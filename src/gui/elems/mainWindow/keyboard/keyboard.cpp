@@ -27,6 +27,7 @@
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "glue/channel.h"
 #include "glue/io.h"
+#include "gui/const.h"
 #include "gui/drawing.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/menu.h"

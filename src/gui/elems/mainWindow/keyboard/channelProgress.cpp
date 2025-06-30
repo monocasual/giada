@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/mainWindow/keyboard/channelProgress.h"
-#include "core/const.h"
 #include "glue/channel.h"
+#include "gui/const.h"
 #include "gui/drawing.h"
 #include "utils/math.h"
 

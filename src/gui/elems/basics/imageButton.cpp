@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/basics/imageButton.h"
-#include "core/const.h"
+#include "gui/const.h"
 #include "gui/drawing.h"
 
 namespace giada::v

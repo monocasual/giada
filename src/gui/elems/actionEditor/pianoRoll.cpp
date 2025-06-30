@@ -28,6 +28,7 @@
 #include "core/const.h"
 #include "core/midiEvent.h"
 #include "glue/actionEditor.h"
+#include "gui/const.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "gui/elems/actionEditor/pianoItem.h"
 #include "src/core/actions/action.h"

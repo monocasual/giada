@@ -27,6 +27,7 @@
 #include "slider.h"
 #include "../../../core/const.h"
 #include "boxtypes.h"
+#include "gui/const.h"
 
 namespace giada::v
 {

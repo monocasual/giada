@@ -32,6 +32,7 @@
 #include "core/waveFx.h"
 #include "glue/channel.h"
 #include "glue/sampleEditor.h"
+#include "gui/const.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "utils/log.h"

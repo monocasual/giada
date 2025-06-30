@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "envelopePoint.h"
-#include "core/const.h"
+#include "gui/const.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v

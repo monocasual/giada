@@ -25,6 +25,7 @@
  * --------------------------------------------------------------------------- */
 
 #include "splitScroll.h"
+#include "gui/const.h"
 #include "gui/drawing.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/boxtypes.h"
