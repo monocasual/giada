@@ -156,9 +156,9 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 	for (const Sequencer::Event& e : events)
 	{
 		if (ch.type == ChannelType::MIDI)
-			rendering::advanceMidiChannel(ch, e, m_kernelMidi);
+			advanceMidiChannel(ch, e, m_kernelMidi);
 		else if (ch.type == ChannelType::SAMPLE)
-			rendering::advanceSampleChannel(ch, e);
+			advanceSampleChannel(ch, e);
 	}
 }
 
@@ -184,7 +184,7 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
 				mergeChannel(c, group.shared->audioBuffer);
 		}
 
-		rendering::renderAudioPlugins(group, m_pluginHost);
+		renderAudioPlugins(group, m_pluginHost);
 
 		if (group.isAudible(hasSolos) && group.sendToMaster)
 			mergeChannel(group, out);
@@ -242,9 +242,9 @@ void Renderer::renderSampleChannel(const Channel& ch, const mcl::AudioBuffer& in
 		rendering::renderSampleChannel(ch, seqIsRunning);
 
 	if (ch.canReceiveAudio())
-		rendering::renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
+		renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
 
-	rendering::renderAudioPlugins(ch, m_pluginHost);
+	renderAudioPlugins(ch, m_pluginHost);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -253,7 +253,7 @@ void Renderer::renderMidiChannel(const Channel& ch) const
 {
 	assert(ch.type == ChannelType::MIDI);
 
-	rendering::renderAudioAndMidiPlugins(ch, m_pluginHost);
+	renderAudioAndMidiPlugins(ch, m_pluginHost);
 }
 
 /* -------------------------------------------------------------------------- */
