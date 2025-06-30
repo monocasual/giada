@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/midiIO/midiOutputSampleCh.h"
-#include "core/model/model.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/flex.h"

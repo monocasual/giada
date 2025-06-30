@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/updater.h"
-#include "core/model/model.h"
 #include "gui/ui.h"
 #include "utils/gui.h"
 

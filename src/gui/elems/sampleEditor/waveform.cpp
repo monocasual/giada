@@ -25,10 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/sampleEditor/waveform.h"
-#include "core/mixer.h"
-#include "core/model/model.h"
 #include "core/wave.h"
-#include "core/waveFx.h"
 #include "glue/channel.h"
 #include "glue/sampleEditor.h"
 #include "gui/const.h"

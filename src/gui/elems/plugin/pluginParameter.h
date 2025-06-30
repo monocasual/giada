@@ -27,7 +27,6 @@
 #ifndef GE_PLUGIN_PARAMETER_H
 #define GE_PLUGIN_PARAMETER_H
 
-#include "core/types.h"
 #include "glue/plugin.h"
 #include <FL/Fl_Group.H>
 

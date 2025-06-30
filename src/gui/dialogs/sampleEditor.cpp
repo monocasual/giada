@@ -25,10 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "glue/sampleEditor.h"
-#include "core/engine.h"
-#include "core/mixer.h"
-#include "core/wave.h"
-#include "core/waveFx.h"
 #include "glue/channel.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/dialogs/warnings.h"

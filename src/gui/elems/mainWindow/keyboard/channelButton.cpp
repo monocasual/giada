@@ -25,8 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/mainWindow/keyboard/channelButton.h"
-#include "core/channels/channel.h"
-#include "core/model/model.h"
 #include "glue/channel.h"
 #include "gui/const.h"
 #include "gui/drawing.h"

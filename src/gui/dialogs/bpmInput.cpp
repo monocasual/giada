@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/bpmInput.h"
-#include "core/mixer.h"
 #include "glue/main.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/input.h"

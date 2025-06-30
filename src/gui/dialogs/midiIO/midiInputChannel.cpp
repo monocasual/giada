@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/midiIO/midiInputChannel.h"
-#include "core/plugins/plugin.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"

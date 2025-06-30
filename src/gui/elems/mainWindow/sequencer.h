@@ -29,7 +29,6 @@
 #ifndef GE_SEQUENCER_H
 #define GE_SEQUENCER_H
 
-#include "core/types.h"
 #include "deps/geompp/src/rect.hpp"
 #include "glue/main.h"
 #include "gui/elems/basics/box.h"

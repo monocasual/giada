@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/missingAssets.h"
-#include "core/engine.h"
+#include "core/model/loadState.h"
 #include "gui/const.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/browser.h"

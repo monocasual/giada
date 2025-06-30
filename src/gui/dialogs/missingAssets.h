@@ -27,8 +27,12 @@
 #ifndef GD_MISSING_ASSETS_H
 #define GD_MISSING_ASSETS_H
 
-#include "core/api/storageApi.h"
 #include "gui/dialogs/window.h"
+
+namespace giada::m::model
+{
+struct LoadState;
+}
 
 namespace giada::v
 {

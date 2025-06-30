@@ -27,7 +27,6 @@
 #ifndef GE_CHANNEL_H
 #define GE_CHANNEL_H
 
-#include "core/types.h"
 #include "glue/channel.h"
 #include "gui/elems/basics/flex.h"
 

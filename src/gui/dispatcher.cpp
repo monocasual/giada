@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "dispatcher.h"
-#include "core/init.h"
 #include "glue/channel.h"
 #include "glue/main.h"
 #include "gui/dialogs/mainWindow.h"

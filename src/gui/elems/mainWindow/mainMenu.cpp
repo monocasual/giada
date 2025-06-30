@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/mainWindow/mainMenu.h"
-#include "core/patch.h"
 #include "glue/layout.h"
 #include "glue/main.h"
 #include "gui/const.h"

@@ -27,7 +27,6 @@
 #ifndef GE_FLEXRESIZABLE_H
 #define GE_FLEXRESIZABLE_H
 
-#include "core/types.h"
 #include "gui/elems/basics/flex.h"
 #include "gui/elems/basics/resizerBar.h"
 #include <functional>
