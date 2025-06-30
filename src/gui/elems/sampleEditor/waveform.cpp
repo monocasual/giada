@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/sampleEditor/waveform.h"
-#include "core/const.h"
 #include "core/mixer.h"
 #include "core/model/model.h"
 #include "core/wave.h"

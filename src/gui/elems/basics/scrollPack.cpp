@@ -26,7 +26,6 @@
 
 #include "scrollPack.h"
 #include "boxtypes.h"
-#include "core/const.h"
 #include <cassert>
 #include <cstddef>
 

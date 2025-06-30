@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/actionEditor/sampleActionEditor.h"
-#include "core/const.h"
 #include "glue/actionEditor.h"
 #include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "gui/dialogs/actionEditor/sampleActionEditor.h"

@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/mainWindow/keyboard/midiChannel.h"
-#include "core/const.h"
 #include "glue/channel.h"
 #include "glue/io.h"
 #include "glue/layout.h"

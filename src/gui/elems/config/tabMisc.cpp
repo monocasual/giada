@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "tabMisc.h"
-#include "core/const.h"
 #include "glue/config.h"
 #include "gui/elems/basics/choice.h"
 #include "gui/elems/basics/input.h"

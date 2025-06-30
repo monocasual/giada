@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "pianoItem.h"
-#include "core/const.h"
 #include "core/midiEvent.h"
 #include "gui/const.h"
 #include "src/core/actions/action.h"

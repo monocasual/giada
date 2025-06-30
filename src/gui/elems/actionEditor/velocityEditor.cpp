@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "velocityEditor.h"
-#include "core/const.h"
 #include "envelopePoint.h"
 #include "glue/actionEditor.h"
 #include "gui/const.h"

@@ -26,7 +26,6 @@
 
 #include "tabPlugins.h"
 #include "core/conf.h"
-#include "core/const.h"
 #include "glue/layout.h"
 #include "glue/plugin.h"
 #include "gui/dialogs/window.h"

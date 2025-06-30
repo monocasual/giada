@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/progress.h"
-#include "core/const.h"
 #include "deps/geompp/src/rect.hpp"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/flex.h"

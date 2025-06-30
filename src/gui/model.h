@@ -28,7 +28,6 @@
 #define G_V_MODEL_H
 
 #include "core/conf.h"
-#include "core/const.h"
 #include "core/plugins/pluginManager.h"
 #include "deps/geompp/src/rect.hpp"
 #include <FL/Enumerations.H>

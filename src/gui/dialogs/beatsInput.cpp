@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/beatsInput.h"
-#include "core/const.h"
 #include "glue/main.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/flex.h"

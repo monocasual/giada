@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "waveTools.h"
-#include "core/const.h"
 #include "core/model/model.h"
 #include "core/waveFx.h"
 #include "glue/sampleEditor.h"

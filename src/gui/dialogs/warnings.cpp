@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "warnings.h"
-#include "core/const.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/textButton.h"
 #include "gui/ui.h"

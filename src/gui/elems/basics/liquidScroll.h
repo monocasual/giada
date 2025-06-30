@@ -32,7 +32,6 @@
 #ifndef GE_LIQUID_SCROLL_H
 #define GE_LIQUID_SCROLL_H
 
-#include "core/const.h"
 #include "deps/geompp/src/rect.hpp"
 #include "gui/types.h"
 #include "scroll.h"

@@ -27,7 +27,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/mainWindow/keyboard/sampleChannelMode.h"
-#include "core/const.h"
 #include "glue/channel.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/menu.h"

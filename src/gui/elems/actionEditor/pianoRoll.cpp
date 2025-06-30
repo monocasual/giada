@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "pianoRoll.h"
-#include "core/const.h"
 #include "core/midiEvent.h"
 #include "glue/actionEditor.h"
 #include "gui/const.h"

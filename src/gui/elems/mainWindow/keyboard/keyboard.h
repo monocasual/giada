@@ -27,7 +27,6 @@
 #ifndef GE_KEYBOARD_H
 #define GE_KEYBOARD_H
 
-#include "core/const.h"
 #include "deps/geompp/src/rect.hpp"
 #include "gui/elems/basics/scroll.h"
 #include "gui/model.h"

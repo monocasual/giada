@@ -28,7 +28,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/basics/scrollbar.h"
-#include "core/const.h"
 #include "gui/const.h"
 #include "gui/elems/basics/boxtypes.h"
 

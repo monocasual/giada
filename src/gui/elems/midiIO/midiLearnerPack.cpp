@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "midiLearnerPack.h"
-#include "core/const.h"
 #include "glue/io.h"
 #include "gui/elems/basics/box.h"
 #include <cassert>

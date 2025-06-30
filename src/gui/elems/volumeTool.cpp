@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/volumeTool.h"
-#include "core/const.h"
 #include "glue/channel.h"
 #include "gui/elems/basics/dial.h"
 #include "gui/elems/basics/input.h"

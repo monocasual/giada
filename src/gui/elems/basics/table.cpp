@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/basics/table.h"
-#include "core/const.h"
 #include "gui/const.h"
 #include "gui/drawing.h"
 #include "gui/elems/basics/boxtypes.h"

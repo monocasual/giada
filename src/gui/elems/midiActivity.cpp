@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/midiActivity.h"
-#include "core/const.h"
 #include "gui/const.h"
 #include "gui/ui.h"
 #include <FL/fl_draw.H>

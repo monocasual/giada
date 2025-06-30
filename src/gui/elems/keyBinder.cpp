@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/keyBinder.h"
-#include "core/const.h"
 #include "glue/layout.h"
 #include "gui/dialogs/keyGrabber.h"
 #include "gui/elems/basics/box.h"

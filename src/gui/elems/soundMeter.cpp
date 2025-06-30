@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "soundMeter.h"
-#include "core/const.h"
 #include "core/kernelAudio.h"
 #include "core/types.h"
 #include "gui/const.h"

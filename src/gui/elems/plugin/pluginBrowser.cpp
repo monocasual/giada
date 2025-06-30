@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/plugin/pluginBrowser.h"
-#include "core/const.h"
 #include "core/plugins/pluginManager.h"
 #include "glue/plugin.h"
 #include "gui/const.h"

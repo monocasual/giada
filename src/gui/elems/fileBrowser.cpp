@@ -26,7 +26,6 @@
 
 #include "gui/elems/fileBrowser.h"
 #include "basics/boxtypes.h"
-#include "core/const.h"
 #include "gui/const.h"
 #include "utils/fs.h"
 

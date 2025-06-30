@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/model.h"
-#include "core/const.h"
 #include "core/patch.h"
 #include "utils/vector.h"
 

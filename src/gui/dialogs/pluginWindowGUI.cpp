@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/pluginWindowGUI.h"
-#include "core/const.h"
 #include "glue/plugin.h"
 #include "utils/gui.h"
 #include "utils/log.h"

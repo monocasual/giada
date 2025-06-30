@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "mainTimer.h"
-#include "core/const.h"
 #include "glue/layout.h"
 #include "glue/main.h"
 #include "gui/elems/basics/choice.h"

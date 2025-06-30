@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/actionEditor/legend.h"
-#include "core/const.h"
 #include "gui/const.h"
 #include "gui/drawing.h"
 #include <FL/fl_draw.H>

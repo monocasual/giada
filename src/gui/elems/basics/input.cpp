@@ -26,7 +26,6 @@
 
 #include "input.h"
 #include "boxtypes.h"
-#include "core/const.h"
 #include "gui/const.h"
 #include "utils/gui.h"
 

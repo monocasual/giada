@@ -26,7 +26,6 @@
 
 #include "gui/dialogs/pluginList.h"
 #include "core/conf.h"
-#include "core/const.h"
 #include "core/engine.h"
 #include "glue/layout.h"
 #include "gui/elems/basics/liquidScroll.h"

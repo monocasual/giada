@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "tabAudio.h"
-#include "core/const.h"
 #include "core/kernelAudio.h"
 #include "deps/rtaudio/RtAudio.h"
 #include "gui/elems/basics/box.h"

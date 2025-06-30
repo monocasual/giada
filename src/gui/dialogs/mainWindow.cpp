@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/dialogs/mainWindow.h"
-#include "core/const.h"
 #include "glue/main.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/flex.h"

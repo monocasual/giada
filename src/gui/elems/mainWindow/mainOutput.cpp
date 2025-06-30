@@ -25,7 +25,6 @@
  * --------------------------------------------------------------------------- */
 
 #include "gui/elems/mainWindow/mainOutput.h"
-#include "core/const.h"
 #include "glue/layout.h"
 #include "glue/main.h"
 #include "gui/elems/basics/dial.h"

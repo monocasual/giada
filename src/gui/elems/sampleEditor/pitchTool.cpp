@@ -26,7 +26,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/sampleEditor/pitchTool.h"
-#include "core/const.h"
 #include "glue/channel.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "gui/elems/basics/box.h"
