@@ -31,7 +31,7 @@
 
 #include "liquidScroll.h"
 #include "boxtypes.h"
-#include "core/const.h"
+#include "gui/const.h"
 
 namespace giada::v
 {

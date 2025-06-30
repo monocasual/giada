@@ -40,6 +40,14 @@ namespace giada
 #define G_COLOR_GREY_1_5 fl_rgb_color(28, 28, 28)
 #define G_COLOR_GREY_1 fl_rgb_color(25, 25, 25)
 #define G_COLOR_BLACK fl_rgb_color(0, 0, 0)
+
+constexpr int   G_GUI_FPS            = 30;
+constexpr float G_GUI_REFRESH_RATE   = 1 / static_cast<float>(G_GUI_FPS);
+constexpr int   G_GUI_FONT_SIZE_BASE = 12;
+constexpr int   G_GUI_INNER_MARGIN   = 4;
+constexpr int   G_GUI_OUTER_MARGIN   = 8;
+constexpr int   G_GUI_UNIT           = 20; // base unit for elements
+constexpr int   G_GUI_ZOOM_FACTOR    = 2;
 } // namespace giada
 
 #endif

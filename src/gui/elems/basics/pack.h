@@ -30,7 +30,7 @@
 #ifndef GE_PACK_H
 #define GE_PACK_H
 
-#include "core/const.h"
+#include "gui/const.h"
 #include "gui/elems/basics/group.h"
 #include "gui/types.h"
 

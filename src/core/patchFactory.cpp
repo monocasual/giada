@@ -27,6 +27,7 @@
 #include "core/patchFactory.h"
 #include "core/const.h"
 #include "core/mixer.h"
+#include "gui/const.h"
 #include "utils/fs.h"
 #include "utils/log.h"
 #include <fstream>

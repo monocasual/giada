@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "gui/elems/basics/flexResizable.h"
-#include "core/const.h"
+#include "gui/const.h"
 #include "gui/elems/basics/box.h"
 #include <cassert>
 

@@ -29,6 +29,7 @@
 
 #include "core/conf.h"
 #include "core/patch.h"
+#include "gui/const.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dispatcher.h"
 #include "gui/langMapper.h"

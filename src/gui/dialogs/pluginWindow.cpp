@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 #include "pluginWindow.h"
-#include "core/const.h"
 #include "glue/plugin.h"
+#include "gui/const.h"
 #include "gui/elems/basics/liquidScroll.h"
 #include "gui/elems/plugin/pluginParameter.h"
 #include "utils/gui.h"

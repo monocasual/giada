@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 #include "pluginParameter.h"
-#include "core/const.h"
 #include "glue/plugin.h"
+#include "gui/const.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/elems/basics/slider.h"

@@ -77,15 +77,6 @@ The rate at which KernelMidi checks for MIDI events received from the devices.
 Note: this value will obviously increase the MIDI latency, keep it small! */
 constexpr int G_KERNEL_MIDI_INPUT_RATE_MS = 3;
 
-/* -- GUI ------------------------------------------------------------------- */
-constexpr int   G_GUI_FPS            = 30;
-constexpr float G_GUI_REFRESH_RATE   = 1 / static_cast<float>(G_GUI_FPS);
-constexpr int   G_GUI_FONT_SIZE_BASE = 12;
-constexpr int   G_GUI_INNER_MARGIN   = 4;
-constexpr int   G_GUI_OUTER_MARGIN   = 8;
-constexpr int   G_GUI_UNIT           = 20; // base unit for elements
-constexpr int   G_GUI_ZOOM_FACTOR    = 2;
-
 /* -- MIN/MAX values -------------------------------------------------------- */
 constexpr float G_MIN_BPM               = 20.0f;
 constexpr float G_MAX_BPM               = 999.0f;
