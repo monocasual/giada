@@ -234,23 +234,6 @@ constexpr uint32_t G_MIDI_ALL_NOTES_OFF = (G_MIDI_CONTROLLER) | (0x7B << 16);
 constexpr int G_MIDI_SYNC_NONE         = 0;
 constexpr int G_MIDI_SYNC_CLOCK_MASTER = 1;
 constexpr int G_MIDI_SYNC_CLOCK_SLAVE  = 2;
-
-/* JSON midimaps keys */
-
-constexpr auto MIDIMAP_KEY_BRAND             = "brand";
-constexpr auto MIDIMAP_KEY_DEVICE            = "device";
-constexpr auto MIDIMAP_KEY_INIT_COMMANDS     = "init_commands";
-constexpr auto MIDIMAP_KEY_MUTE_ON           = "mute_on";
-constexpr auto MIDIMAP_KEY_MUTE_OFF          = "mute_off";
-constexpr auto MIDIMAP_KEY_SOLO_ON           = "solo_on";
-constexpr auto MIDIMAP_KEY_SOLO_OFF          = "solo_off";
-constexpr auto MIDIMAP_KEY_WAITING           = "waiting";
-constexpr auto MIDIMAP_KEY_PLAYING           = "playing";
-constexpr auto MIDIMAP_KEY_PLAYING_INAUDIBLE = "playing_inaudible";
-constexpr auto MIDIMAP_KEY_STOPPING          = "stopping";
-constexpr auto MIDIMAP_KEY_STOPPED           = "stopped";
-constexpr auto MIDIMAP_KEY_CHANNEL           = "channel";
-constexpr auto MIDIMAP_KEY_MESSAGE           = "message";
 } // namespace giada
 
 #endif

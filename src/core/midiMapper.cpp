@@ -45,6 +45,28 @@ namespace nl = nlohmann;
 
 namespace giada::m
 {
+namespace
+{
+constexpr auto MIDIMAP_KEY_BRAND             = "brand";
+constexpr auto MIDIMAP_KEY_DEVICE            = "device";
+constexpr auto MIDIMAP_KEY_INIT_COMMANDS     = "init_commands";
+constexpr auto MIDIMAP_KEY_MUTE_ON           = "mute_on";
+constexpr auto MIDIMAP_KEY_MUTE_OFF          = "mute_off";
+constexpr auto MIDIMAP_KEY_SOLO_ON           = "solo_on";
+constexpr auto MIDIMAP_KEY_SOLO_OFF          = "solo_off";
+constexpr auto MIDIMAP_KEY_WAITING           = "waiting";
+constexpr auto MIDIMAP_KEY_PLAYING           = "playing";
+constexpr auto MIDIMAP_KEY_PLAYING_INAUDIBLE = "playing_inaudible";
+constexpr auto MIDIMAP_KEY_STOPPING          = "stopping";
+constexpr auto MIDIMAP_KEY_STOPPED           = "stopped";
+constexpr auto MIDIMAP_KEY_CHANNEL           = "channel";
+constexpr auto MIDIMAP_KEY_MESSAGE           = "message";
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 bool MidiMap::isValid() const
 {
 	return !(brand.empty() || device.empty());
