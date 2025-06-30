@@ -121,7 +121,8 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		renderMasterIn(masterInCh, mixer.getInBuffer());
 
 	if (!document_RT.locked)
-		renderTracks(tracks, masterOutCh.shared->audioBuffer, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
+		renderTracks(tracks, masterOutCh.shared->audioBuffer, out, mixer.getInBuffer(),
+		    hasSolos, sequencer.isRunning());
 
 	renderMasterOut(masterOutCh, out, kernelAudio.deviceOut.channelsStart);
 	if (mixer.renderPreview)
@@ -164,10 +165,11 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
-    const mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const
+void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& masterOut,
+    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, bool hasSolos,
+    bool seqIsRunning) const
 {
-	out.clear();
+	masterOut.clear();
 
 	for (const model::Track& track : tracks.getAll())
 	{
@@ -180,14 +182,22 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
 		for (const Channel& c : track.getChannels().getAll())
 		{
 			renderNormalChannel(c, in, seqIsRunning);
-			if (c.isAudible(hasSolos) && c.sendToMaster)
+			if (!c.isAudible(hasSolos))
+				continue;
+			if (c.sendToMaster)
 				mergeChannel(c, group.shared->audioBuffer);
+			for (const int offset : c.extraOutputs)
+				mergeChannel(c, hardwareOut, offset);
 		}
 
 		renderAudioPlugins(group, m_pluginHost);
 
-		if (group.isAudible(hasSolos) && group.sendToMaster)
-			mergeChannel(group, out);
+		if (!group.isAudible(hasSolos))
+			continue;
+		if (group.sendToMaster)
+			mergeChannel(group, masterOut);
+		for (const int offset : group.extraOutputs)
+			mergeChannel(group, hardwareOut, offset);
 	}
 }
 
