@@ -180,14 +180,22 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
 		for (const Channel& c : track.getChannels().getAll())
 		{
 			renderNormalChannel(c, in, seqIsRunning);
-			if (c.isAudible(hasSolos) && c.sendToMaster)
+			if (!c.isAudible(hasSolos))
+				continue;
+			if (c.sendToMaster)
 				mergeChannel(c, group.shared->audioBuffer);
+			for (const int offset : c.extraOutputs)
+				mergeChannel(c, out, offset);
 		}
 
 		renderAudioPlugins(group, m_pluginHost);
 
-		if (group.isAudible(hasSolos) && group.sendToMaster)
+		if (!group.isAudible(hasSolos))
+			continue;
+		if (group.sendToMaster)
 			mergeChannel(group, out);
+		for (const int offset : group.extraOutputs)
+			mergeChannel(group, out, offset);
 	}
 }
 
