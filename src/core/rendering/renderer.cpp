@@ -216,8 +216,7 @@ void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
 void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out, int channelOffset) const
 {
 	m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
-	for (int i = 0; i < ch.shared->audioBuffer.countChannels(); i++)
-		out.set(ch.shared->audioBuffer, i, i + channelOffset, ch.volume);
+	mergeChannel(ch, out, channelOffset);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -261,5 +260,13 @@ void Renderer::renderMidiChannel(const Channel& ch) const
 void Renderer::mergeChannel(const Channel& ch, mcl::AudioBuffer& out) const
 {
 	out.sumAll(ch.shared->audioBuffer, ch.pan.get(), ch.volume * ch.shared->volumeInternal.load());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Renderer::mergeChannel(const Channel& ch, mcl::AudioBuffer& out, int destChannelOffset) const
+{
+	for (int i = 0; i < ch.shared->audioBuffer.countChannels(); i++)
+		out.set(ch.shared->audioBuffer, i, i + destChannelOffset, ch.volume);
 }
 } // namespace giada::m::rendering
