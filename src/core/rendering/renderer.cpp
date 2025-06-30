@@ -178,33 +178,30 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
 		group.shared->audioBuffer.clear();
 
 		for (const Channel& c : track.getChannels().getAll())
-			renderNormalChannel(c, group.shared->audioBuffer, in, hasSolos, seqIsRunning);
+		{
+			renderNormalChannel(c, in, seqIsRunning);
+			if (c.isAudible(hasSolos) && c.sendToMaster)
+				mergeChannel(c, group.shared->audioBuffer);
+		}
 
 		rendering::renderAudioPlugins(group, m_pluginHost);
 
 		if (group.isAudible(hasSolos) && group.sendToMaster)
-			out.sumAll(group.shared->audioBuffer, group.pan.get(), group.volume);
+			mergeChannel(group, out);
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
-    const mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const
+void Renderer::renderNormalChannel(const Channel& ch, const mcl::AudioBuffer& in,
+    bool seqIsRunning) const
 {
 	ch.shared->audioBuffer.clear();
 
 	if (ch.type == ChannelType::SAMPLE)
-	{
 		renderSampleChannel(ch, in, seqIsRunning);
-	}
 	else if (ch.type == ChannelType::MIDI)
-	{
 		renderMidiChannel(ch);
-	}
-
-	if (ch.isAudible(mixerHasSolos) && ch.sendToMaster)
-		out.sumAll(ch.shared->audioBuffer, ch.pan.get(), ch.volume * ch.shared->volumeInternal.load());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -257,5 +254,12 @@ void Renderer::renderMidiChannel(const Channel& ch) const
 	assert(ch.type == ChannelType::MIDI);
 
 	rendering::renderAudioAndMidiPlugins(ch, m_pluginHost);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Renderer::mergeChannel(const Channel& ch, mcl::AudioBuffer& out) const
+{
+	out.sumAll(ch.shared->audioBuffer, ch.pan.get(), ch.volume * ch.shared->volumeInternal.load());
 }
 } // namespace giada::m::rendering
