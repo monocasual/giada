@@ -167,6 +167,7 @@ public:
 	void setOverdubProtection(ID channelId, bool value);
 	void setSamplePlayerMode(ID channelId, SamplePlayerMode);
 	void setHeight(ID channelId, Pixel height);
+	void setSendToMaster(ID channelId, bool value);
 	void loadWaveInPreviewChannel(ID sourceChannelId);
 	void freeWaveInPreviewChannel();
 	void setPreviewTracker(Frame f);

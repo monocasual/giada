@@ -437,6 +437,14 @@ void ChannelManager::setHeight(ID channelId, Pixel height)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelManager::setSendToMaster(ID channelId, bool value)
+{
+	m_model.get().tracks.getChannel(channelId).sendToMaster = value;
+	m_model.swap(model::SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 {
 	Channel&       previewCh = m_model.get().tracks.getChannel(Mixer::PREVIEW_CHANNEL_ID);
