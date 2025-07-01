@@ -39,6 +39,7 @@ public:
 
 	geCheck();
 	geCheck(int x, int y, int w, int h, const char* l = nullptr);
+	geCheck(const char* l);
 
 	void draw() override;
 

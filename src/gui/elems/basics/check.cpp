@@ -47,6 +47,13 @@ geCheck::geCheck(int x, int y, int w, int h, const char* l)
 
 /* -------------------------------------------------------------------------- */
 
+geCheck::geCheck(const char* l)
+: geCheck(0, 0, 0, 0, l)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geCheck::cb_onChange(Fl_Widget* /*w*/, void* p) { (static_cast<geCheck*>(p))->cb_onChange(); }
 
 /* -------------------------------------------------------------------------- */
