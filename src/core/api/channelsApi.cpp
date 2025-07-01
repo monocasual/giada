@@ -295,6 +295,13 @@ void ChannelsApi::setName(ID channelId, const std::string& name)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelsApi::setSendToMaster(ID channelId, bool value)
+{
+	m_channelManager.setSendToMaster(channelId, value);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelsApi::clearAllActions(ID channelId)
 {
 	m_actionRecorder.clearChannel(channelId);
