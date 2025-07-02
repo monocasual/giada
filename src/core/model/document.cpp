@@ -43,7 +43,7 @@ void Document::load(const Patch& patch, Shared& shared, float sampleRateRatio)
 
 		for (const ID channelId : ptrack.channels)
 		{
-			const Patch::Channel& pchannel      = *u::vector::findIfSafe(patch.channels, channelId);
+			const Patch::Channel& pchannel      = *u::vector::findIf(patch.channels, channelId);
 			Wave*                 wave          = shared.findWave(pchannel.waveId);
 			std::vector<Plugin*>  plugins       = shared.findPlugins(pchannel.pluginIds);
 			ChannelShared*        channelShared = shared.findChannel(pchannel.id);
