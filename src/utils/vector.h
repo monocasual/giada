@@ -74,7 +74,7 @@ auto findIfSafe(T& v, ID id)
 template <typename T, typename F>
 bool has(const T& v, F&& func)
 {
-	return std::find_if(std::begin(v), std::end(v), func) != std::cend(v);
+	return findIf(v, func) != std::cend(v);
 }
 
 /* -------------------------------------------------------------------------- */
