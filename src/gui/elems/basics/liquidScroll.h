@@ -47,6 +47,7 @@ class geLiquidScroll : public geScroll
 public:
 	geLiquidScroll(int x, int y, int w, int h, Direction d, bool withScrollbar = true);
 	geLiquidScroll(geompp::Rect<int>, Direction d, bool withScrollbar = true);
+	geLiquidScroll(Direction d, bool withScrollbar = true);
 
 	void add(Fl_Widget&) = delete;
 	void add(Fl_Widget*) = delete;

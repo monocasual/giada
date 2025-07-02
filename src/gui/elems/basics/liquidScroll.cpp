@@ -52,6 +52,13 @@ geLiquidScroll::geLiquidScroll(geompp::Rect<int> r, Direction d, bool withScroll
 
 /* -------------------------------------------------------------------------- */
 
+geLiquidScroll::geLiquidScroll(Direction d, bool withScrollbars)
+: geLiquidScroll(0, 0, 0, 0, d, withScrollbars)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geLiquidScroll::resize(int X, int Y, int W, int H)
 {
 	const int scrollbarSpace = getScrollbarSpace();
