@@ -302,6 +302,18 @@ void ChannelsApi::setSendToMaster(ID channelId, bool value)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelsApi::addExtraOutput(ID channelId, int offset)
+{
+	m_channelManager.addExtraOutput(channelId, offset);
+}
+
+void ChannelsApi::removeExtraOutput(ID channelId, std::size_t index)
+{
+	m_channelManager.removeExtraOutput(channelId, index);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelsApi::clearAllActions(ID channelId)
 {
 	m_actionRecorder.clearChannel(channelId);

@@ -445,6 +445,23 @@ void ChannelManager::setSendToMaster(ID channelId, bool value)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelManager::addExtraOutput(ID channelId, int offset)
+{
+	/* 'offset' can be only multiple of 2, that is stereo pair. */
+	assert(offset >= 0 && offset % 2 == 0);
+
+	m_model.get().tracks.getChannel(channelId).extraOutputs.push_back(offset);
+	m_model.swap(model::SwapType::HARD);
+}
+
+void ChannelManager::removeExtraOutput(ID channelId, std::size_t i)
+{
+	u::vector::removeAt(m_model.get().tracks.getChannel(channelId).extraOutputs, i);
+	m_model.swap(model::SwapType::HARD);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 {
 	Channel&       previewCh = m_model.get().tracks.getChannel(Mixer::PREVIEW_CHANNEL_ID);
