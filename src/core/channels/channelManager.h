@@ -168,6 +168,8 @@ public:
 	void setSamplePlayerMode(ID channelId, SamplePlayerMode);
 	void setHeight(ID channelId, Pixel height);
 	void setSendToMaster(ID channelId, bool value);
+	void addExtraOutput(ID channelId, int offset);
+	void removeExtraOutput(ID channelId, std::size_t);
 	void loadWaveInPreviewChannel(ID sourceChannelId);
 	void freeWaveInPreviewChannel();
 	void setPreviewTracker(Frame f);
