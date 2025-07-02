@@ -29,6 +29,7 @@
 #include "gui/elems/basics/boxtypes.h"
 #include "utils/gui.h"
 #include <FL/Fl.H>
+#include <cstdint>
 #include <cstdio>
 
 namespace giada::v
