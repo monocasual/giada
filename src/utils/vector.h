@@ -49,16 +49,24 @@ std::ptrdiff_t indexOf(const T& v, const P& p)
 template <typename T, typename F>
 auto findIf(T& v, F&& func)
 {
-	auto it = std::find_if(std::begin(v), std::end(v), func);
+	return std::find_if(std::begin(v), std::end(v), func);
+}
+
+template <typename T, typename F>
+auto findIfSafe(T& v, F&& func)
+{
+	auto it = findIf(v, func);
 	assert(it != std::end(v));
 	return it;
 }
 
 template <typename T>
-auto findIf(T& v, ID id)
+auto findIfSafe(T& v, ID id)
 {
-	return findIf(v, [id](const typename T::value_type& t)
+	auto it = findIf(v, [id](const typename T::value_type& t)
 	{ return t.id == id; });
+	assert(it != std::end(v));
+	return it;
 }
 
 /* -------------------------------------------------------------------------- */
