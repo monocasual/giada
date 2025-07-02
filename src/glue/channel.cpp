@@ -128,6 +128,7 @@ Data::Data(const m::Channel& c, std::size_t trackIndex, std::size_t channelIndex
 , pan(c.pan.asFloat())
 , key(c.key)
 , hasActions(c.hasActions)
+, sendToMaster(c.sendToMaster)
 , m_playStatus(&c.shared->playStatus)
 , m_recStatus(&c.shared->recStatus)
 , m_readActions(&c.shared->readActions)
@@ -172,9 +173,10 @@ RoutingData getRoutingData(ID channelId)
 	const m::Channel& channel = g_engine->getChannelsApi().get(channelId);
 
 	return {
-	    .id     = channelId,
-	    .volume = channel.volume,
-	    .pan    = channel.pan.asFloat()};
+	    .id           = channelId,
+	    .volume       = channel.volume,
+	    .pan          = channel.pan.asFloat(),
+	    .sendToMaster = channel.sendToMaster};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -312,6 +314,13 @@ void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 void setHeight(ID channelId, Pixel p)
 {
 	g_engine->getChannelsApi().setHeight(channelId, p);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void setSendToMaster(ID channelId, bool value)
+{
+	g_engine->getChannelsApi().setSendToMaster(channelId, value);
 }
 
 /* -------------------------------------------------------------------------- */

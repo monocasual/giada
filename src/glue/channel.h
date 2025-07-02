@@ -104,6 +104,7 @@ struct Data
 	float                   pan;
 	int                     key;
 	bool                    hasActions;
+	bool                    sendToMaster;
 
 	std::optional<SampleData> sample;
 	std::optional<MidiData>   midi;
@@ -126,6 +127,7 @@ struct RoutingData
 	ID    id;
 	float volume;
 	float pan;
+	bool  sendToMaster;
 };
 
 /* getChannels
@@ -206,6 +208,7 @@ void setInputMonitor(ID channelId, bool value);
 void setOverdubProtection(ID channelId, bool value);
 void setName(ID channelId, const std::string& name);
 void setHeight(ID channelId, Pixel p);
+void setSendToMaster(ID channelId, bool value);
 
 /* clearAllActions
 Deletes all recorded actions on channel 'channelId'. */

@@ -38,6 +38,7 @@ namespace giada::v
 {
 class geVolumeTool;
 class gePanTool;
+class geCheck;
 class geTextButton;
 class gdChannelRouting : public gdWindow
 {
@@ -48,6 +49,7 @@ private:
 	geVolumeTool* m_volume;
 	gePanTool*    m_pan;
 	geTextButton* m_close;
+	geCheck*      m_sendToMaster;
 };
 } // namespace giada::v
 
