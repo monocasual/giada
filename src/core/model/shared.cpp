@@ -116,7 +116,7 @@ LoadState Shared::load(const Patch& patch, PluginManager& pluginManager, const S
 	for (const Patch::Channel& pchannel : patch.channels)
 	{
 		std::vector<Plugin*>           plugins = findPlugins(pchannel.pluginIds);
-		std::unique_ptr<ChannelShared> shared  = channelFactory::deserializeShared(pchannel, bufferSize, rsmpQuality);
+		std::unique_ptr<ChannelShared> shared  = channelFactory::deserializeShared(pchannel, bufferSize, G_MAX_IO_CHANS, rsmpQuality);
 		getAllChannels().push_back(std::move(shared));
 	}
 

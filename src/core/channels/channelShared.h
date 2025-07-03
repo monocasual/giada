@@ -44,7 +44,7 @@ struct ChannelShared final
 	using MidiQueue   = moodycamel::ConcurrentQueue<MidiEvent>;
 	using RenderQueue = moodycamel::ConcurrentQueue<rendering::RenderInfo>;
 
-	ChannelShared(ID, Frame bufferSize);
+	ChannelShared(ID, Frame bufferSize, int numChannels);
 
 	bool isReadingActions() const;
 
@@ -52,6 +52,11 @@ struct ChannelShared final
 	Sets a new size for the internal audio buffer. */
 
 	void setBufferSize(int);
+
+	/* setBufferChannels
+	Sets a new number of channels for the internal audio buffer. */
+
+	void setBufferChannels(int);
 
 	ID id; // Must match the corresponding Channel ID
 

@@ -28,9 +28,9 @@
 
 namespace giada::m
 {
-ChannelShared::ChannelShared(ID id, Frame bufferSize)
+ChannelShared::ChannelShared(ID id, Frame bufferSize, int numChannels)
 : id(id)
-, audioBuffer(bufferSize, G_MAX_IO_CHANS)
+, audioBuffer(bufferSize, numChannels)
 {
 }
 
@@ -48,5 +48,12 @@ bool ChannelShared::isReadingActions() const
 void ChannelShared::setBufferSize(int bufferSize)
 {
 	audioBuffer.alloc(bufferSize, audioBuffer.countChannels());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelShared::setBufferChannels(int numChannels)
+{
+	audioBuffer.resizeChannels(numChannels);
 }
 } // namespace giada::m

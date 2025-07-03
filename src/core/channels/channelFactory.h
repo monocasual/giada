@@ -60,12 +60,13 @@ void reset();
     Creates a new channel. If channelId == 0 generates a new ID, reuse the one
     passed in otherwise. */
 
-Data create(ID channelId, ChannelType type, int bufferSize, Resampler::Quality, bool overdubProtection);
+Data create(ID channelId, ChannelType type, int bufferSize, int numChannels,
+    Resampler::Quality, bool overdubProtection);
 
 /* create (2)
     Creates a new channel given an existing one (i.e. clone). */
 
-Data create(const Channel& ch, int bufferSize, Resampler::Quality);
+Data create(const Channel& ch, int bufferSize, int numChannels, Resampler::Quality);
 
 /* (de)deserializeChannel
 Creates a new channel given the patch raw data and vice versa. */
@@ -76,7 +77,8 @@ const Patch::Channel serializeChannel(const Channel& c);
 /* deserializeShared
 Returns a new ChannelShared object to be passed to deserializeChannel() above. */
 
-std::unique_ptr<ChannelShared> deserializeShared(const Patch::Channel&, int bufferSize, Resampler::Quality);
+std::unique_ptr<ChannelShared> deserializeShared(const Patch::Channel&, int bufferSize,
+    int numChannels, Resampler::Quality);
 
 } // namespace giada::m::channelFactory
 

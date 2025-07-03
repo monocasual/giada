@@ -20,8 +20,8 @@ TEST_CASE("ActionRecorder")
 	model.registerThread(Thread::MAIN, /*realtime=*/false);
 	model.reset();
 
-	channelFactory::Data channel1 = channelFactory::create(channelID1, ChannelType::SAMPLE, 1024, Resampler::Quality::LINEAR, false);
-	channelFactory::Data channel2 = channelFactory::create(channelID2, ChannelType::SAMPLE, 1024, Resampler::Quality::LINEAR, false);
+	channelFactory::Data channel1 = channelFactory::create(channelID1, ChannelType::SAMPLE, 1024, G_MAX_IO_CHANS, Resampler::Quality::LINEAR, false);
+	channelFactory::Data channel2 = channelFactory::create(channelID2, ChannelType::SAMPLE, 1024, G_MAX_IO_CHANS, Resampler::Quality::LINEAR, false);
 
 	model.get().tracks.add(0, false);
 	model.get().tracks.get(0).getChannels().getAll() = {channel1.channel, channel2.channel};

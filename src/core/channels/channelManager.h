@@ -99,7 +99,7 @@ public:
 	Brings channels configuration back to the initial state: two I/O master
 	channels, one preview channel. */
 
-	void reset(Frame framesInBuffer);
+	void reset(Frame framesInBuffer, int numChannelsOutput);
 
 	/* setBufferSize
 	Sets a new buffer size value to all channels. Must be called only when

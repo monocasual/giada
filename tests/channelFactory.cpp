@@ -15,6 +15,7 @@ TEST_CASE("channelFactory")
 		    /*id=*/0,
 		    ChannelType::SAMPLE,
 		    /*bufferSize=*/1024,
+		    G_MAX_IO_CHANS,
 		    Resampler::Quality::LINEAR,
 		    /*overdubProtection=*/false);
 
@@ -23,7 +24,7 @@ TEST_CASE("channelFactory")
 
 		SECTION("test clone")
 		{
-			channelFactory::Data clone = channelFactory::create(data.channel, /*bufferSize=*/1024, Resampler::Quality::LINEAR);
+			channelFactory::Data clone = channelFactory::create(data.channel, /*bufferSize=*/1024, G_MAX_IO_CHANS, Resampler::Quality::LINEAR);
 
 			REQUIRE(clone.channel.id != data.channel.id); // Clone must have new ID
 			REQUIRE(clone.channel.type == data.channel.type);

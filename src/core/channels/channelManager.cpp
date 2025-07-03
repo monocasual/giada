@@ -66,7 +66,7 @@ Channel& ChannelManager::getChannel(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::reset(Frame framesInBuffer)
+void ChannelManager::reset(Frame framesInBuffer, int numChannelsOutput)
 {
 	/* Create internal track with internal channels (Master In/Out, Preview). */
 
@@ -74,11 +74,11 @@ void ChannelManager::reset(Frame framesInBuffer)
 	const Resampler::Quality rsmpQuality       = m_model.get().kernelAudio.rsmpQuality;
 
 	channelFactory::Data masterOutData = channelFactory::create(
-	    Mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, framesInBuffer, rsmpQuality, overdubProtection);
+	    Mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, framesInBuffer, numChannelsOutput, rsmpQuality, overdubProtection);
 	channelFactory::Data masterInData = channelFactory::create(
-	    Mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, framesInBuffer, rsmpQuality, overdubProtection);
+	    Mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, framesInBuffer, G_MAX_IO_CHANS, rsmpQuality, overdubProtection);
 	channelFactory::Data previewData = channelFactory::create(
-	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, framesInBuffer, rsmpQuality, overdubProtection);
+	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, framesInBuffer, G_MAX_IO_CHANS, rsmpQuality, overdubProtection);
 
 	m_model.get().tracks = {};
 
@@ -115,7 +115,7 @@ void ChannelManager::addTrack(Frame bufferSize)
 	const bool               overdubProtection = false;
 	const Resampler::Quality rsmpQuality       = m_model.get().kernelAudio.rsmpQuality;
 
-	channelFactory::Data groupData = channelFactory::create(/*id=*/0, ChannelType::GROUP, bufferSize, rsmpQuality, overdubProtection);
+	channelFactory::Data groupData = channelFactory::create(/*id=*/0, ChannelType::GROUP, bufferSize, G_MAX_IO_CHANS, rsmpQuality, overdubProtection);
 
 	m_model.addChannelShared(std::move(groupData.shared));
 	m_model.get().tracks.add(std::move(groupData.channel), G_DEFAULT_TRACK_WIDTH, /*isInternal=*/false);
@@ -150,7 +150,7 @@ Channel& ChannelManager::addChannel(ChannelType type, std::size_t trackIndex, in
 	const bool               overdubProtectionDefaultOn = m_model.get().behaviors.overdubProtectionDefaultOn;
 	const Resampler::Quality rsmpQuality                = m_model.get().kernelAudio.rsmpQuality;
 
-	channelFactory::Data data = channelFactory::create(/*id=*/0, type, bufferSize, rsmpQuality, overdubProtectionDefaultOn);
+	channelFactory::Data data = channelFactory::create(/*id=*/0, type, bufferSize, G_MAX_IO_CHANS, rsmpQuality, overdubProtectionDefaultOn);
 
 	setupChannelCallbacks(data.channel, *data.shared);
 
@@ -203,7 +203,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 	const Channel&           oldChannel     = m_model.get().tracks.getChannel(channelId);
 	const std::size_t        trackIndex     = m_model.get().tracks.getByChannel(channelId).getIndex();
 	const Resampler::Quality rsmpQuality    = m_model.get().kernelAudio.rsmpQuality;
-	channelFactory::Data     newChannelData = channelFactory::create(oldChannel, bufferSize, rsmpQuality);
+	channelFactory::Data     newChannelData = channelFactory::create(oldChannel, bufferSize, G_MAX_IO_CHANS, rsmpQuality);
 
 	setupChannelCallbacks(newChannelData.channel, *newChannelData.shared);
 

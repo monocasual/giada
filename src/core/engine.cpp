@@ -263,8 +263,10 @@ void Engine::init(const Conf& conf)
 
 	m_kernelAudio.init();
 
+	const int numOutputChannels = m_kernelAudio.getChannelsOutCount();
+
 	m_mixer.reset(m_sequencer.getMaxFramesInLoop(m_kernelAudio.getSampleRate()), m_kernelAudio.getBufferSize());
-	m_channelManager.reset(m_kernelAudio.getBufferSize());
+	m_channelManager.reset(m_kernelAudio.getBufferSize(), numOutputChannels);
 	m_sequencer.reset(m_kernelAudio.getSampleRate());
 	m_pluginHost.reset(m_kernelAudio.getBufferSize());
 	m_pluginManager.reset();
@@ -295,12 +297,13 @@ void Engine::reset()
 
 	/* Then all other components. */
 
-	const int sampleRate = m_kernelAudio.getSampleRate();
-	const int bufferSize = m_kernelAudio.getBufferSize();
+	const int sampleRate        = m_kernelAudio.getSampleRate();
+	const int bufferSize        = m_kernelAudio.getBufferSize();
+	const int numOutputChannels = m_kernelAudio.getChannelsOutCount();
 
 	m_model.reset();
 	m_mixer.reset(m_sequencer.getMaxFramesInLoop(sampleRate), bufferSize);
-	m_channelManager.reset(bufferSize);
+	m_channelManager.reset(bufferSize, numOutputChannels);
 	m_sequencer.reset(sampleRate);
 	m_actionRecorder.reset();
 	m_pluginHost.reset(bufferSize);

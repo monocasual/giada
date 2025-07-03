@@ -176,7 +176,7 @@ bool KernelAudio::isReady() const
 
 unsigned int       KernelAudio::getBufferSize() const { return m_model.get().kernelAudio.buffersize; }
 int                KernelAudio::getSampleRate() const { return m_model.get().kernelAudio.samplerate; }
-int                KernelAudio::getChannelsOutCount() const { return m_model.get().kernelAudio.deviceOut.channelsCount; }
+int                KernelAudio::getChannelsOutCount() const { return getCurrentOutDevice().maxOutputChannels; /* Always return max value */ }
 int                KernelAudio::getChannelsInCount() const { return m_model.get().kernelAudio.deviceIn.channelsCount; }
 bool               KernelAudio::isInputEnabled() const { return m_model.get().kernelAudio.deviceIn.id != 0; }
 bool               KernelAudio::isLimitOutput() const { return m_model.get().kernelAudio.limitOutput; }
