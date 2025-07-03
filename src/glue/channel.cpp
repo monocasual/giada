@@ -167,6 +167,18 @@ std::vector<Track> getTracks()
 
 /* -------------------------------------------------------------------------- */
 
+RoutingData getRoutingData(ID channelId)
+{
+	const m::Channel& channel = g_engine->getChannelsApi().get(channelId);
+
+	return {
+	    .id     = channelId,
+	    .volume = channel.volume,
+	    .pan    = channel.pan.asFloat()};
+}
+
+/* -------------------------------------------------------------------------- */
+
 void loadChannel(ID channelId, const std::string& fname)
 {
 	auto progress = g_ui->mainWindow->getScopedProgress(g_ui->getI18Text(v::LangMap::MESSAGE_CHANNEL_LOADINGSAMPLES));

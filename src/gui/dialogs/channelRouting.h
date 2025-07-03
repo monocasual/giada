@@ -31,7 +31,7 @@
 
 namespace giada::c::channel
 {
-struct Data;
+struct RoutingData;
 }
 
 namespace giada::v
@@ -42,7 +42,7 @@ class geTextButton;
 class gdChannelRouting : public gdWindow
 {
 public:
-	gdChannelRouting(const c::channel::Data& d);
+	gdChannelRouting(const c::channel::RoutingData& d);
 
 private:
 	geVolumeTool* m_volume;

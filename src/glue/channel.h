@@ -122,6 +122,13 @@ struct Track
 	std::vector<Data> channels;
 };
 
+struct RoutingData
+{
+	ID    id;
+	float volume;
+	float pan;
+};
+
 /* getChannels
 Returns a single viewModel object filled with data from a channel. */
 
@@ -132,6 +139,11 @@ Returns a vector of Track's filled with Data objects, which reflects the layout
 described by m::model::Tracks. */
 
 std::vector<Track> getTracks();
+
+/* getRoutingData
+Returns a single viewModel object for the 'Routing' window. */
+
+RoutingData getRoutingData(ID channelId);
 
 /* addChannel
 Adds an empty new channel to the stack. */
