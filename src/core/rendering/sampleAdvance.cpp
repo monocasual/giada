@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/rendering/sampleAdvance.h"
-#include "core/channels/channel.h"
-#include "core/channels/channelShared.h"
-#include "core/rendering/sampleReactions.h"
+#include "src/core/rendering/sampleAdvance.h"
+#include "src/core/channels/channel.h"
+#include "src/core/channels/channelShared.h"
+#include "src/core/rendering/sampleReactions.h"
 
 namespace giada::m::rendering
 {

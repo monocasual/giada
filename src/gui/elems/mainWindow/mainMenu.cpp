@@ -24,16 +24,16 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/mainWindow/mainMenu.h"
-#include "glue/layout.h"
-#include "glue/main.h"
-#include "gui/const.h"
-#include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/menu.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/ui.h"
-#include "keyboard/keyboard.h"
-#include "utils/gui.h"
+#include "src/gui/elems/mainWindow/mainMenu.h"
+#include "src/glue/layout.h"
+#include "src/glue/main.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/boxtypes.h"
+#include "src/gui/elems/basics/menu.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/elems/mainWindow/keyboard/keyboard.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 #include <FL/Fl_Menu_Item.H>
 #ifdef G_OS_MAC
 #include <FL/platform.H>

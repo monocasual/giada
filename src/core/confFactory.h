@@ -27,7 +27,7 @@
 #ifndef G_CONF_FACTORY_H
 #define G_CONF_FACTORY_H
 
-#include "core/conf.h"
+#include "src/core/conf.h"
 
 namespace giada::m::confFactory
 {

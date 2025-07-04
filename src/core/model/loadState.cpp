@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/model/loadState.h"
+#include "src/core/model/loadState.h"
 
 namespace giada::m::model
 {

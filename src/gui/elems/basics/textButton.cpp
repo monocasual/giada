@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/basics/textButton.h"
-#include "gui/const.h"
-#include "gui/drawing.h"
-#include "utils/gui.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/const.h"
+#include "src/gui/drawing.h"
+#include "src/utils/gui.h"
 
 namespace giada::v
 {

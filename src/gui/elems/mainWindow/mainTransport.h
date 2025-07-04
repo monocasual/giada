@@ -27,7 +27,7 @@
 #ifndef GE_MAIN_TRANSPORT_H
 #define GE_MAIN_TRANSPORT_H
 
-#include "gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/flex.h"
 
 namespace giada::v
 {

@@ -24,14 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/progress.h"
-#include "deps/geompp/src/rect.hpp"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/progress.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/dialogs/progress.h"
+#include "src/deps/geompp/src/rect.hpp"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/progress.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 #include <FL/Fl.H>
 
 extern giada::v::Ui* g_ui;

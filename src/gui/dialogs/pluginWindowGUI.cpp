@@ -24,14 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/pluginWindowGUI.h"
-#include "glue/plugin.h"
-#include "utils/gui.h"
-#include "utils/log.h"
+#include "src/gui/dialogs/pluginWindowGUI.h"
+#include "src/glue/plugin.h"
+#include "src/utils/gui.h"
+#include "src/utils/log.h"
 #include <FL/platform.H>
 #include <cassert>
 #ifdef G_OS_MAC
-#import "utils/cocoa.h" // objective-c
+#import "src/utils/cocoa.h" // objective-c
 #endif
 
 namespace giada::v

@@ -26,14 +26,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/kernelAudio.h"
-#include "core/const.h"
-#include "core/model/kernelAudio.h"
-#include "core/model/model.h"
-#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
-#include "utils/log.h"
-#include "utils/string.h"
-#include "utils/vector.h"
+#include "src/core/kernelAudio.h"
+#include "src/core/const.h"
+#include "src/core/model/kernelAudio.h"
+#include "src/core/model/model.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/utils/log.h"
+#include "src/utils/string.h"
+#include "src/utils/vector.h"
 #include <cassert>
 #include <cstddef>
 

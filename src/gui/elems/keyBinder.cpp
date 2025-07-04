@@ -24,14 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/keyBinder.h"
-#include "glue/layout.h"
-#include "gui/dialogs/keyGrabber.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/elems/keyBinder.h"
+#include "src/glue/layout.h"
+#include "src/gui/dialogs/keyGrabber.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/boxtypes.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 
 extern giada::v::Ui* g_ui;
 

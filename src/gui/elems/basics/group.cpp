@@ -27,7 +27,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "group.h"
+#include "src/gui/elems/basics/group.h"
 #include <algorithm>
 #include <cstddef>
 

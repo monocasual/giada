@@ -24,12 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "pluginParameter.h"
-#include "glue/plugin.h"
-#include "gui/const.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/slider.h"
+#include "src/gui/elems/plugin/pluginParameter.h"
+#include "src/glue/plugin.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/boxtypes.h"
+#include "src/gui/elems/basics/slider.h"
 
 namespace giada::v
 {

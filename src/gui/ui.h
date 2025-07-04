@@ -27,12 +27,12 @@
 #ifndef G_V_UI_H
 #define G_V_UI_H
 
-#include "gui/const.h"
-#include "gui/dialogs/mainWindow.h"
-#include "gui/dispatcher.h"
-#include "gui/langMapper.h"
-#include "gui/model.h"
-#include "gui/updater.h"
+#include "src/gui/const.h"
+#include "src/gui/dialogs/mainWindow.h"
+#include "src/gui/dispatcher.h"
+#include "src/gui/langMapper.h"
+#include "src/gui/model.h"
+#include "src/gui/updater.h"
 #include <memory>
 #include <string>
 

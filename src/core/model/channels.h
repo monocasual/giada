@@ -27,8 +27,8 @@
 #ifndef G_MODEL_CHANNELS_H
 #define G_MODEL_CHANNELS_H
 
-#include "core/channels/channel.h"
-#include "core/types.h"
+#include "src/core/channels/channel.h"
+#include "src/core/types.h"
 
 namespace giada::m::model
 {

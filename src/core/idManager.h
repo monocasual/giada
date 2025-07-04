@@ -27,7 +27,7 @@
 #ifndef G_ID_MANAGER_H
 #define G_ID_MANAGER_H
 
-#include "core/types.h"
+#include "src/core/types.h"
 
 namespace giada::m
 {

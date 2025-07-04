@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "channelsApi.h"
-#include "core/channels/channelManager.h"
-#include "core/engine.h"
-#include "core/kernelAudio.h"
-#include "core/midiSynchronizer.h"
-#include "core/mixer.h"
-#include "utils/fs.h"
+#include "src/core/api/channelsApi.h"
+#include "src/core/channels/channelManager.h"
+#include "src/core/engine.h"
+#include "src/core/kernelAudio.h"
+#include "src/core/midiSynchronizer.h"
+#include "src/core/mixer.h"
+#include "src/utils/fs.h"
 
 namespace giada::m
 {

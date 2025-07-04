@@ -24,15 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/plugins/pluginHost.h"
-#include "core/channels/channel.h"
-#include "core/const.h"
-#include "core/model/model.h"
-#include "core/plugins/plugin.h"
-#include "core/plugins/pluginManager.h"
-#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
-#include "utils/log.h"
-#include "utils/vector.h"
+#include "src/core/plugins/pluginHost.h"
+#include "src/core/channels/channel.h"
+#include "src/core/const.h"
+#include "src/core/model/model.h"
+#include "src/core/plugins/plugin.h"
+#include "src/core/plugins/pluginManager.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/utils/log.h"
+#include "src/utils/vector.h"
 #include <cassert>
 #include <cstddef>
 #include <memory>

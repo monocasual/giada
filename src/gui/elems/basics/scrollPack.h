@@ -27,8 +27,8 @@
 #ifndef GE_SCROLL_PACK_H
 #define GE_SCROLL_PACK_H
 
-#include "gui/elems/basics/pack.h"
-#include "gui/elems/basics/scroll.h"
+#include "src/gui/elems/basics/pack.h"
+#include "src/gui/elems/basics/scroll.h"
 #include <cstddef>
 
 namespace giada::v

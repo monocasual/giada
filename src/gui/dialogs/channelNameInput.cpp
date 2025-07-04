@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/channelNameInput.h"
-#include "glue/channel.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/dialogs/channelNameInput.h"
+#include "src/glue/channel.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/input.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 
 extern giada::v::Ui* g_ui;
 

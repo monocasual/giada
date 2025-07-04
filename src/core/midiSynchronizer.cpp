@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/midiSynchronizer.h"
-#include "core/conf.h"
-#include "core/kernelMidi.h"
-#include "core/midiEvent.h"
-#include "core/model/sequencer.h"
-#include "utils/log.h"
-#include "utils/time.h"
+#include "src/core/midiSynchronizer.h"
+#include "src/core/conf.h"
+#include "src/core/kernelMidi.h"
+#include "src/core/midiEvent.h"
+#include "src/core/model/sequencer.h"
+#include "src/utils/log.h"
+#include "src/utils/time.h"
 #include <numeric>
 
 namespace giada::m

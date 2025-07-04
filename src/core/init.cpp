@@ -27,14 +27,14 @@
 #ifdef __APPLE__
 #include <pwd.h>
 #endif
-#include "core/confFactory.h"
-#include "core/engine.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/mainInput.h"
-#include "gui/elems/mainWindow/mainOutput.h"
-#include "gui/ui.h"
-#include "utils/log.h"
-#include "utils/ver.h"
+#include "src/core/confFactory.h"
+#include "src/core/engine.h"
+#include "src/gui/elems/mainWindow/keyboard/keyboard.h"
+#include "src/gui/elems/mainWindow/mainInput.h"
+#include "src/gui/elems/mainWindow/mainOutput.h"
+#include "src/gui/ui.h"
+#include "src/utils/log.h"
+#include "src/utils/ver.h"
 #ifdef WITH_TESTS
 #define CATCH_CONFIG_RUNNER
 #include "tests/actionRecorder.cpp"

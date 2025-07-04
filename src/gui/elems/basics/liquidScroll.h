@@ -32,9 +32,9 @@
 #ifndef GE_LIQUID_SCROLL_H
 #define GE_LIQUID_SCROLL_H
 
-#include "deps/geompp/src/rect.hpp"
-#include "gui/types.h"
-#include "scroll.h"
+#include "src/deps/geompp/src/rect.hpp"
+#include "src/gui/elems/basics/scroll.h"
+#include "src/gui/types.h"
 
 namespace giada::v
 {

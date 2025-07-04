@@ -27,7 +27,7 @@
 #ifndef GD_CHANNEL_NAME_INPUT_H
 #define GD_CHANNEL_NAME_INPUT_H
 
-#include "window.h"
+#include "src/gui/dialogs/window.h"
 
 namespace giada::c::channel
 {

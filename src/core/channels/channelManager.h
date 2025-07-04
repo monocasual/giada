@@ -27,9 +27,9 @@
 #ifndef G_CHANNEL_MANAGER_H
 #define G_CHANNEL_MANAGER_H
 
-#include "core/midiMapper.h"
-#include "core/resampler.h"
-#include "core/types.h"
+#include "src/core/midiMapper.h"
+#include "src/core/resampler.h"
+#include "src/core/types.h"
 #include <functional>
 #include <map>
 #include <memory>

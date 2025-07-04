@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "jackTransport.h"
+#include "src/core/jackTransport.h"
 #ifdef WITH_AUDIO_JACK
 #include <jack/intclient.h>
 #include <jack/transport.h>

@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "mapper.h"
-#include "utils/fs.h"
+#include "src/mapper.h"
+#include "src/utils/fs.h"
 #include <filesystem>
 #include <fstream>
 

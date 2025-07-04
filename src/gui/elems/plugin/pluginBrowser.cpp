@@ -24,12 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/plugin/pluginBrowser.h"
-#include "glue/plugin.h"
-#include "gui/const.h"
-#include "gui/elems/basics/boxtypes.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/elems/plugin/pluginBrowser.h"
+#include "src/glue/plugin.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/boxtypes.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 #include <fmt/core.h>
 
 extern giada::v::Ui* g_ui;

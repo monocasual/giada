@@ -27,9 +27,9 @@
 #ifndef GE_PIANO_ROLL_LEGEND_H
 #define GE_PIANO_ROLL_LEGEND_H
 
-#include "core/types.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/scroll.h"
+#include "src/core/types.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/scroll.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v

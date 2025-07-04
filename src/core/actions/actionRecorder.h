@@ -27,9 +27,9 @@
 #ifndef G_ACTION_RECORDER_H
 #define G_ACTION_RECORDER_H
 
-#include "core/midiEvent.h"
-#include "core/model/model.h"
-#include "core/types.h"
+#include "src/core/midiEvent.h"
+#include "src/core/model/model.h"
+#include "src/core/types.h"
 #include <cstddef>
 #include <unordered_set>
 

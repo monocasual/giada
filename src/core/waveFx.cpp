@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "waveFx.h"
-#include "const.h"
-#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
-#include "utils/log.h"
-#include "wave.h"
+#include "src/core/waveFx.h"
+#include "src/core/const.h"
+#include "src/core/wave.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/utils/log.h"
 #include <algorithm>
 #include <cassert>
 #include <cmath>

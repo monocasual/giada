@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/plugins/plugin.h"
-#include "core/const.h"
-#include "utils/log.h"
-#include "utils/time.h"
+#include "src/core/plugins/plugin.h"
+#include "src/core/const.h"
+#include "src/utils/log.h"
+#include "src/utils/time.h"
 #include <FL/Fl.H>
 #include <cassert>
 #include <memory>

@@ -27,8 +27,8 @@
 #ifndef GE_MAIN_TIMER_H
 #define GE_MAIN_TIMER_H
 
-#include "glue/main.h"
-#include "gui/elems/basics/flex.h"
+#include "src/glue/main.h"
+#include "src/gui/elems/basics/flex.h"
 
 namespace giada::v
 {

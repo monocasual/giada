@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/rendering/midiOutput.h"
-#include "core/actions/actionRecorder.h"
-#include "core/kernelMidi.h"
+#include "src/core/rendering/midiOutput.h"
+#include "src/core/actions/actionRecorder.h"
+#include "src/core/kernelMidi.h"
 #include <cassert>
 
 namespace giada::m::rendering

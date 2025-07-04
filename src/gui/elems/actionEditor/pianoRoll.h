@@ -27,7 +27,7 @@
 #ifndef GE_PIANO_ROLL_H
 #define GE_PIANO_ROLL_H
 
-#include "baseActionEditor.h"
+#include "src/gui/elems/actionEditor/baseActionEditor.h"
 #include <FL/fl_draw.H>
 #include <functional>
 

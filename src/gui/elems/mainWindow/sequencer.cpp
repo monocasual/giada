@@ -26,11 +26,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "sequencer.h"
-#include "gui/const.h"
-#include "gui/drawing.h"
-#include "gui/ui.h"
-#include "utils/math.h"
+#include "src/gui/elems/mainWindow/sequencer.h"
+#include "src/gui/const.h"
+#include "src/gui/drawing.h"
+#include "src/gui/ui.h"
+#include "src/utils/math.h"
 #include <FL/fl_draw.H>
 
 extern giada::v::Ui* g_ui;

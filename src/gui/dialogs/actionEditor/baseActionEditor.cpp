@@ -24,21 +24,21 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "glue/channel.h"
-#include "gui/const.h"
-#include "gui/drawing.h"
-#include "gui/elems/actionEditor/gridTool.h"
-#include "gui/elems/actionEditor/splitScroll.h"
-#include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/flexResizable.h"
-#include "gui/elems/basics/imageButton.h"
-#include "gui/elems/basics/scrollPack.h"
-#include "gui/graphics.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
-#include "utils/string.h"
+#include "src/gui/dialogs/actionEditor/baseActionEditor.h"
+#include "src/glue/channel.h"
+#include "src/gui/const.h"
+#include "src/gui/drawing.h"
+#include "src/gui/elems/actionEditor/gridTool.h"
+#include "src/gui/elems/actionEditor/splitScroll.h"
+#include "src/gui/elems/basics/choice.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/flexResizable.h"
+#include "src/gui/elems/basics/imageButton.h"
+#include "src/gui/elems/basics/scrollPack.h"
+#include "src/gui/graphics.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
+#include "src/utils/string.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <cassert>

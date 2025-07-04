@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/plugins/pluginFactory.h"
-#include "core/idManager.h"
-#include "core/plugins/plugin.h"
-#include "core/plugins/pluginHost.h"
+#include "src/core/plugins/pluginFactory.h"
+#include "src/core/idManager.h"
+#include "src/core/plugins/plugin.h"
+#include "src/core/plugins/pluginHost.h"
 
 namespace giada::m::pluginFactory
 {

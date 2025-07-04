@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/midiMapper.h"
-#include "core/const.h"
-#include "core/kernelMidi.h"
-#include "core/midiEvent.h"
-#include "utils/fs.h"
-#include "utils/log.h"
-#include "utils/string.h"
+#include "src/core/midiMapper.h"
+#include "src/core/const.h"
+#include "src/core/kernelMidi.h"
+#include "src/core/midiEvent.h"
+#include "src/utils/fs.h"
+#include "src/utils/log.h"
+#include "src/utils/string.h"
 #include <cstddef>
 #include <cstring>
 #include <filesystem>

@@ -27,7 +27,7 @@
 #ifndef G_MODEL_TRACK_H
 #define G_MODEL_TRACK_H
 
-#include "core/model/channels.h"
+#include "src/core/model/channels.h"
 
 namespace giada::m::model
 {

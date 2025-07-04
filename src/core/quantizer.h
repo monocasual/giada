@@ -27,10 +27,10 @@
 #ifndef G_QUANTIZER_H
 #define G_QUANTIZER_H
 
-#include "core/const.h"
-#include "core/types.h"
-#include "core/weakAtomic.h"
-#include "deps/geompp/src/range.hpp"
+#include "src/core/const.h"
+#include "src/core/types.h"
+#include "src/core/weakAtomic.h"
+#include "src/deps/geompp/src/range.hpp"
 #include <functional>
 #include <map>
 

@@ -27,7 +27,7 @@
 #ifndef GE_VELOCITY_EDITOR_H
 #define GE_VELOCITY_EDITOR_H
 
-#include "baseActionEditor.h"
+#include "src/gui/elems/actionEditor/baseActionEditor.h"
 
 namespace giada::v
 {

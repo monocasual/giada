@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "midiLearnParam.h"
+#include "src/core/midiLearnParam.h"
 #include <cstddef>
 
 namespace giada::m

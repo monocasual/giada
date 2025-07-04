@@ -27,7 +27,7 @@
 #ifndef GE_RESIZER_BAR_H
 #define GE_RESIZER_BAR_H
 
-#include "gui/types.h"
+#include "src/gui/types.h"
 #include <FL/Fl_Box.H>
 #include <functional>
 

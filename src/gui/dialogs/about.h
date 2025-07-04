@@ -27,7 +27,7 @@
 #ifndef GD_ABOUT_H
 #define GD_ABOUT_H
 
-#include "gui/dialogs/window.h"
+#include "src/gui/dialogs/window.h"
 
 namespace giada::v
 {

@@ -26,12 +26,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/mainWindow/keyboard/sampleChannelMode.h"
-#include "glue/channel.h"
-#include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/menu.h"
-#include "gui/graphics.h"
-#include "utils/gui.h"
+#include "src/gui/elems/mainWindow/keyboard/sampleChannelMode.h"
+#include "src/glue/channel.h"
+#include "src/gui/elems/basics/boxtypes.h"
+#include "src/gui/elems/basics/menu.h"
+#include "src/gui/graphics.h"
+#include "src/utils/gui.h"
 #include <FL/fl_draw.H>
 #include <cassert>
 

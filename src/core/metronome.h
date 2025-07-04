@@ -27,7 +27,7 @@
 #ifndef G_METRONOME_H
 #define G_METRONOME_H
 
-#include "core/types.h"
+#include "src/core/types.h"
 
 namespace mcl
 {

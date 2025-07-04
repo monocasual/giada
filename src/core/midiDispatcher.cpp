@@ -24,19 +24,19 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/midiDispatcher.h"
-#include "core/conf.h"
-#include "core/mixer.h"
-#include "core/model/model.h"
-#include "core/plugins/plugin.h"
-#include "core/plugins/pluginHost.h"
-#include "core/recorder.h"
-#include "core/types.h"
-#include "glue/channel.h"
-#include "glue/main.h"
-#include "glue/plugin.h"
-#include "utils/log.h"
-#include "utils/math.h"
+#include "src/core/midiDispatcher.h"
+#include "src/core/conf.h"
+#include "src/core/mixer.h"
+#include "src/core/model/model.h"
+#include "src/core/plugins/plugin.h"
+#include "src/core/plugins/pluginHost.h"
+#include "src/core/recorder.h"
+#include "src/core/types.h"
+#include "src/glue/channel.h"
+#include "src/glue/main.h"
+#include "src/glue/plugin.h"
+#include "src/utils/log.h"
+#include "src/utils/math.h"
 #include <cassert>
 #include <cstddef>
 #include <vector>

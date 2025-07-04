@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/rendering/pluginRendering.h"
-#include "core/channels/channel.h"
-#include "core/plugins/pluginHost.h"
+#include "src/core/rendering/pluginRendering.h"
+#include "src/core/channels/channel.h"
+#include "src/core/plugins/pluginHost.h"
 
 namespace giada::m::rendering
 {

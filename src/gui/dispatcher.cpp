@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "dispatcher.h"
-#include "glue/channel.h"
-#include "glue/main.h"
-#include "gui/dialogs/mainWindow.h"
-#include "gui/elems/mainWindow/keyboard/channel.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/ui.h"
+#include "src/gui/dispatcher.h"
+#include "src/glue/channel.h"
+#include "src/glue/main.h"
+#include "src/gui/dialogs/mainWindow.h"
+#include "src/gui/elems/mainWindow/keyboard/channel.h"
+#include "src/gui/elems/mainWindow/keyboard/keyboard.h"
+#include "src/gui/ui.h"
 #include <FL/Fl.H>
 #include <cassert>
 

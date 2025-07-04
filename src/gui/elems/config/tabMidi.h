@@ -27,9 +27,9 @@
 #ifndef GE_TAB_MIDI_H
 #define GE_TAB_MIDI_H
 
-#include "deps/geompp/src/rect.hpp"
-#include "glue/config.h"
-#include "gui/elems/basics/table.h"
+#include "src/deps/geompp/src/rect.hpp"
+#include "src/glue/config.h"
+#include "src/gui/elems/basics/table.h"
 #include <FL/Fl_Group.H>
 
 namespace giada::v

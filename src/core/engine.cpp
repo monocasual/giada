@@ -24,14 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/engine.h"
-#include "core/conf.h"
-#include "core/confFactory.h"
-#include "core/model/model.h"
-#include "core/rendering/midiOutput.h"
-#include "utils/fs.h"
-#include "utils/log.h"
-#include "utils/string.h"
+#include "src/core/engine.h"
+#include "src/core/conf.h"
+#include "src/core/confFactory.h"
+#include "src/core/model/model.h"
+#include "src/core/rendering/midiOutput.h"
+#include "src/utils/fs.h"
+#include "src/utils/log.h"
+#include "src/utils/string.h"
 #include <fmt/core.h>
 #include <memory>
 

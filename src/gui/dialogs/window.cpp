@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/window.h"
-#include "gui/graphics.h"
-#include "utils/gui.h"
-#include "utils/log.h"
+#include "src/gui/dialogs/window.h"
+#include "src/gui/graphics.h"
+#include "src/utils/gui.h"
+#include "src/utils/log.h"
 #include <FL/Fl.H>
 
 namespace giada::v

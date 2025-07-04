@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/browser/browserDir.h"
-#include "gui/elems/basics/imageButton.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/elems/fileBrowser.h"
-#include "gui/ui.h"
-#include "utils/fs.h"
+#include "src/gui/dialogs/browser/browserDir.h"
+#include "src/gui/elems/basics/imageButton.h"
+#include "src/gui/elems/basics/input.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/elems/fileBrowser.h"
+#include "src/gui/ui.h"
+#include "src/utils/fs.h"
 
 extern giada::v::Ui* g_ui;
 

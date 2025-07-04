@@ -27,10 +27,10 @@
 #ifndef GD_MIDI_INPUT_MASTER_H
 #define GD_MIDI_INPUT_MASTER_H
 
-#include "glue/io.h"
-#include "gui/elems/midiIO/midiLearnerPack.h"
-#include "gui/model.h"
-#include "midiInputBase.h"
+#include "src/glue/io.h"
+#include "src/gui/dialogs/midiIO/midiInputBase.h"
+#include "src/gui/elems/midiIO/midiLearnerPack.h"
+#include "src/gui/model.h"
 
 namespace giada::v
 {

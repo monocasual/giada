@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "input.h"
-#include "boxtypes.h"
-#include "gui/const.h"
-#include "utils/gui.h"
+#include "src/gui/elems/basics/input.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/boxtypes.h"
+#include "src/utils/gui.h"
 
 namespace giada::v
 {

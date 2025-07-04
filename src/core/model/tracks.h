@@ -27,7 +27,7 @@
 #ifndef G_MODEL_TRACKS_H
 #define G_MODEL_TRACKS_H
 
-#include "core/model/track.h"
+#include "src/core/model/track.h"
 
 namespace giada::m
 {

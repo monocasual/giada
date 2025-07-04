@@ -27,10 +27,10 @@
 #ifndef GD_SAMPLE_EDITOR_H
 #define GD_SAMPLE_EDITOR_H
 
-#include "core/types.h"
-#include "glue/sampleEditor.h"
-#include "gui/dialogs/window.h"
-#include "gui/model.h"
+#include "src/core/types.h"
+#include "src/glue/sampleEditor.h"
+#include "src/gui/dialogs/window.h"
+#include "src/gui/model.h"
 
 namespace giada::v
 {

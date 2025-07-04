@@ -27,8 +27,8 @@
 #ifndef GE_LEARNER_PACK_H
 #define GE_LEARNER_PACK_H
 
-#include "gui/elems/basics/pack.h"
-#include "gui/elems/midiIO/midiLearner.h"
+#include "src/gui/elems/basics/pack.h"
+#include "src/gui/elems/midiIO/midiLearner.h"
 #include <string>
 #include <vector>
 

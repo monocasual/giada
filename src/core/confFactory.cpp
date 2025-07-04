@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/confFactory.h"
-#include "core/const.h"
-#include "utils/fs.h"
-#include "utils/log.h"
+#include "src/core/confFactory.h"
+#include "src/core/const.h"
+#include "src/utils/fs.h"
+#include "src/utils/log.h"
 #include <fstream>
 #include <nlohmann/json.hpp>
 

@@ -27,8 +27,8 @@
 #ifndef G_MIDI_LIGHTNING_H
 #define G_MIDI_LIGHTNING_H
 
-#include "core/midiLearnParam.h"
-#include "core/patch.h"
+#include "src/core/midiLearnParam.h"
+#include "src/core/patch.h"
 
 namespace giada::m
 {

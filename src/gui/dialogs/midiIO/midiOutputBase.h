@@ -27,11 +27,11 @@
 #ifndef GD_MIDI_OUTPUT_BASE_H
 #define GD_MIDI_OUTPUT_BASE_H
 
-#include "core/types.h"
-#include "glue/io.h"
-#include "gui/dialogs/window.h"
-#include "gui/elems/midiIO/midiLearner.h"
-#include "gui/elems/midiIO/midiLearnerPack.h"
+#include "src/core/types.h"
+#include "src/glue/io.h"
+#include "src/gui/dialogs/window.h"
+#include "src/gui/elems/midiIO/midiLearner.h"
+#include "src/gui/elems/midiIO/midiLearnerPack.h"
 
 /* There's no such thing as a gdMidiOutputMaster vs gdMidiOutputChannel. MIDI
 output master is managed by the configuration window, hence gdMidiOutput deals

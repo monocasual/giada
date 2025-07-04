@@ -27,9 +27,9 @@
 #ifndef GE_FLEX_H
 #define GE_FLEX_H
 
-#include "deps/geompp/src/border.hpp"
-#include "deps/geompp/src/rect.hpp"
-#include "gui/types.h"
+#include "src/deps/geompp/src/border.hpp"
+#include "src/deps/geompp/src/rect.hpp"
+#include "src/gui/types.h"
 #include <FL/Fl_Flex.H>
 #include <vector>
 

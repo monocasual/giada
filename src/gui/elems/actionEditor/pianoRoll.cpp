@@ -24,14 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "pianoRoll.h"
-#include "core/midiEvent.h"
-#include "glue/actionEditor.h"
-#include "gui/const.h"
-#include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "gui/elems/actionEditor/pianoItem.h"
+#include "src/gui/elems/actionEditor/pianoRoll.h"
 #include "src/core/actions/action.h"
-#include "utils/math.h"
+#include "src/core/midiEvent.h"
+#include "src/glue/actionEditor.h"
+#include "src/gui/const.h"
+#include "src/gui/dialogs/actionEditor/baseActionEditor.h"
+#include "src/gui/elems/actionEditor/pianoItem.h"
+#include "src/utils/math.h"
 #include <cassert>
 
 namespace giada::v

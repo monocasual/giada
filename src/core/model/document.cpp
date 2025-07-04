@@ -24,12 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/model/document.h"
-#include "core/actions/actionFactory.h"
-#include "core/channels/channelFactory.h"
-#include "core/conf.h"
-#include "core/model/shared.h"
-#include "utils/vector.h"
+#include "src/core/model/document.h"
+#include "src/core/actions/actionFactory.h"
+#include "src/core/channels/channelFactory.h"
+#include "src/core/conf.h"
+#include "src/core/model/shared.h"
+#include "src/utils/vector.h"
 
 namespace giada::m::model
 {

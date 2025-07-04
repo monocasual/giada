@@ -27,7 +27,7 @@
 #ifndef GE_PIANO_ITEM_H
 #define GE_PIANO_ITEM_H
 
-#include "baseAction.h"
+#include "src/gui/elems/actionEditor/baseAction.h"
 
 namespace giada::m
 {

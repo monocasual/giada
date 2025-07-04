@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/basics/flexResizable.h"
-#include "gui/const.h"
-#include "gui/elems/basics/box.h"
+#include "src/gui/elems/basics/flexResizable.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/box.h"
 #include <cassert>
 
 namespace giada::v

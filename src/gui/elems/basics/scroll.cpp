@@ -27,10 +27,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "scroll.h"
-#include "boxtypes.h"
-#include "deps/geompp/src/rect.hpp"
-#include "gui/const.h"
+#include "src/gui/elems/basics/scroll.h"
+#include "src/deps/geompp/src/rect.hpp"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/boxtypes.h"
 
 namespace giada::v
 {

@@ -26,12 +26,12 @@
 
 #ifdef WITH_AUDIO_JACK
 
-#include "core/jackSynchronizer.h"
-#include "core/conf.h"
-#include "core/kernelAudio.h"
-#include "core/kernelMidi.h"
-#include "core/model/model.h"
-#include "utils/log.h"
+#include "src/core/jackSynchronizer.h"
+#include "src/core/conf.h"
+#include "src/core/kernelAudio.h"
+#include "src/core/kernelMidi.h"
+#include "src/core/model/model.h"
+#include "src/utils/log.h"
 
 namespace giada::m
 {

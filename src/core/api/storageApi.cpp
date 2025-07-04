@@ -24,17 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "storageApi.h"
-#include "core/actions/actionFactory.h"
-#include "core/channels/channelFactory.h"
-#include "core/engine.h"
-#include "core/midiSynchronizer.h"
-#include "core/model/model.h"
-#include "core/patchFactory.h"
-#include "core/plugins/pluginFactory.h"
-#include "core/waveFactory.h"
-#include "utils/fs.h"
-#include "utils/log.h"
+#include "src/core/api/storageApi.h"
+#include "src/core/actions/actionFactory.h"
+#include "src/core/channels/channelFactory.h"
+#include "src/core/engine.h"
+#include "src/core/midiSynchronizer.h"
+#include "src/core/model/model.h"
+#include "src/core/patchFactory.h"
+#include "src/core/plugins/pluginFactory.h"
+#include "src/core/waveFactory.h"
+#include "src/utils/fs.h"
+#include "src/utils/log.h"
 
 namespace giada::m
 {

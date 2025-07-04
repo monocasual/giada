@@ -27,10 +27,10 @@
 #ifndef G_MODEL_SEQUENCER_H
 #define G_MODEL_SEQUENCER_H
 
-#include "core/const.h"
-#include "core/types.h"
-#include "core/weakAtomic.h"
-#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/core/const.h"
+#include "src/core/types.h"
+#include "src/core/weakAtomic.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 
 namespace giada::m::model
 {

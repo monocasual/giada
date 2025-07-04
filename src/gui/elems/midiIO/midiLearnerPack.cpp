@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "midiLearnerPack.h"
-#include "glue/io.h"
-#include "gui/elems/basics/box.h"
+#include "src/gui/elems/midiIO/midiLearnerPack.h"
+#include "src/glue/io.h"
+#include "src/gui/elems/basics/box.h"
 #include <cassert>
 
 namespace giada::v

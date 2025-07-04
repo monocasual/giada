@@ -27,7 +27,7 @@
 #ifndef GE_IMAGE_BUTTON_H
 #define GE_IMAGE_BUTTON_H
 
-#include "gui/elems/basics/button.h"
+#include "src/gui/elems/basics/button.h"
 #include <FL/Fl_SVG_Image.H>
 #include <memory>
 

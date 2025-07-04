@@ -27,10 +27,10 @@
 #ifndef G_MIDI_DISPATCHER_H
 #define G_MIDI_DISPATCHER_H
 
-#include "core/actions/action.h"
-#include "core/midiEvent.h"
-#include "core/model/model.h"
-#include "core/types.h"
+#include "src/core/actions/action.h"
+#include "src/core/midiEvent.h"
+#include "src/core/model/model.h"
+#include "src/core/types.h"
 #include <cstddef>
 #include <cstdint>
 #include <functional>

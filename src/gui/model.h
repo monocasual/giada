@@ -27,9 +27,9 @@
 #ifndef G_V_MODEL_H
 #define G_V_MODEL_H
 
-#include "core/conf.h"
-#include "core/plugins/pluginManager.h"
-#include "deps/geompp/src/rect.hpp"
+#include "src/core/conf.h"
+#include "src/core/plugins/pluginManager.h"
+#include "src/deps/geompp/src/rect.hpp"
 #include <FL/Enumerations.H>
 #include <string>
 #include <vector>

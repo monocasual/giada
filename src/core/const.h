@@ -27,9 +27,9 @@
 #ifndef G_CONST_H
 #define G_CONST_H
 
-#include "core/types.h"
-#include "deps/rtaudio/RtAudio.h"
-#include "version.h"
+#include "src/core/types.h"
+#include "src/deps/rtaudio/RtAudio.h"
+#include "src/version.h"
 #include <RtMidi.h>
 #include <cstdint>
 

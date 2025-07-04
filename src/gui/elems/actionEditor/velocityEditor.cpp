@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "velocityEditor.h"
-#include "envelopePoint.h"
-#include "glue/actionEditor.h"
-#include "gui/const.h"
-#include "gui/dialogs/actionEditor/baseActionEditor.h"
+#include "src/gui/elems/actionEditor/velocityEditor.h"
 #include "src/core/actions/action.h"
-#include "utils/math.h"
+#include "src/glue/actionEditor.h"
+#include "src/gui/const.h"
+#include "src/gui/dialogs/actionEditor/baseActionEditor.h"
+#include "src/gui/elems/actionEditor/envelopePoint.h"
+#include "src/utils/math.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 

@@ -27,7 +27,7 @@
 #ifndef GD_BROWSER_LOAD_H
 #define GD_BROWSER_LOAD_H
 
-#include "gui/dialogs/browser/browserBase.h"
+#include "src/gui/dialogs/browser/browserBase.h"
 
 namespace giada::v
 {

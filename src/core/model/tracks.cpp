@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/model/tracks.h"
-#include "utils/vector.h"
+#include "src/core/model/tracks.h"
+#include "src/utils/vector.h"
 
 namespace giada::m::model
 {

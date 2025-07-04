@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/mixer.h"
-#include "core/const.h"
-#include "core/model/model.h"
-#include "utils/log.h"
-#include "utils/math.h"
+#include "src/core/mixer.h"
+#include "src/core/const.h"
+#include "src/core/model/model.h"
+#include "src/utils/log.h"
+#include "src/utils/math.h"
 
 namespace giada::m
 {

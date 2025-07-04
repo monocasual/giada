@@ -24,15 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/model/model.h"
-#include "core/actions/actionFactory.h"
-#include "core/channels/channelFactory.h"
-#include "core/model/document.h"
-#include "core/plugins/pluginFactory.h"
-#include "core/plugins/pluginManager.h"
-#include "core/waveFactory.h"
-#include "utils/log.h"
-#include "utils/string.h"
+#include "src/core/model/model.h"
+#include "src/core/actions/actionFactory.h"
+#include "src/core/channels/channelFactory.h"
+#include "src/core/model/document.h"
+#include "src/core/plugins/pluginFactory.h"
+#include "src/core/plugins/pluginManager.h"
+#include "src/core/waveFactory.h"
+#include "src/utils/log.h"
+#include "src/utils/string.h"
 #include <cassert>
 #include <memory>
 #ifdef G_DEBUG_MODE

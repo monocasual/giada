@@ -24,21 +24,21 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "glue/main.h"
-#include "core/const.h"
-#include "core/engine.h"
-#include "core/init.h"
-#include "core/kernelMidi.h"
-#include "core/mixer.h"
-#include "gui/dialogs/warnings.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/keyboard/sampleChannel.h"
-#include "gui/elems/mainWindow/mainInput.h"
-#include "gui/elems/mainWindow/mainOutput.h"
-#include "gui/elems/mainWindow/mainTimer.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
-#include "utils/string.h"
+#include "src/glue/main.h"
+#include "src/core/const.h"
+#include "src/core/engine.h"
+#include "src/core/init.h"
+#include "src/core/kernelMidi.h"
+#include "src/core/mixer.h"
+#include "src/gui/dialogs/warnings.h"
+#include "src/gui/elems/mainWindow/keyboard/keyboard.h"
+#include "src/gui/elems/mainWindow/keyboard/sampleChannel.h"
+#include "src/gui/elems/mainWindow/mainInput.h"
+#include "src/gui/elems/mainWindow/mainOutput.h"
+#include "src/gui/elems/mainWindow/mainTimer.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
+#include "src/utils/string.h"
 
 extern giada::v::Ui*     g_ui;
 extern giada::m::Engine* g_engine;

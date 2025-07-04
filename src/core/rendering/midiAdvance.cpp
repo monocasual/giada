@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/rendering/midiAdvance.h"
-#include "core/channels/channel.h"
-#include "core/rendering/midiOutput.h"
-#include "core/rendering/midiReactions.h"
+#include "src/core/rendering/midiAdvance.h"
+#include "src/core/channels/channel.h"
+#include "src/core/rendering/midiOutput.h"
+#include "src/core/rendering/midiReactions.h"
 
 namespace giada::m::rendering
 {

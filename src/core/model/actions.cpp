@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/model/actions.h"
-#include "core/actions/actionFactory.h"
-#include "utils/log.h"
+#include "src/core/model/actions.h"
+#include "src/core/actions/actionFactory.h"
+#include "src/utils/log.h"
 #include <algorithm>
 #include <cassert>
 #include <memory>

@@ -27,9 +27,9 @@
 #ifndef G_GLUE_IO_H
 #define G_GLUE_IO_H
 
-#include "core/midiEvent.h"
-#include "core/model/model.h"
-#include "core/types.h"
+#include "src/core/midiEvent.h"
+#include "src/core/model/model.h"
+#include "src/core/types.h"
 
 /* giada::c::io
 Functions to interact with the MIDI I/O. Only the main thread can use these! */

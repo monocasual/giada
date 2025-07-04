@@ -27,9 +27,9 @@
 #ifndef GD_PLUGIN_CHOOSER_H
 #define GD_PLUGIN_CHOOSER_H
 
-#include "core/types.h"
-#include "gui/model.h"
-#include "window.h"
+#include "src/core/types.h"
+#include "src/gui/dialogs/window.h"
+#include "src/gui/model.h"
 
 namespace giada::v
 {

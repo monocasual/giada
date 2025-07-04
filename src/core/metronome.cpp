@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "metronome.h"
-#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/core/metronome.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 
 namespace giada::m
 {

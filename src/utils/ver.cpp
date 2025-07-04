@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "ver.h"
-#include "core/const.h"
-#include "deps/rtaudio/RtAudio.h"
+#include "src/utils/ver.h"
+#include "src/core/const.h"
+#include "src/deps/rtaudio/RtAudio.h"
 #include <RtMidi.h>
 #include <sndfile.h>
 

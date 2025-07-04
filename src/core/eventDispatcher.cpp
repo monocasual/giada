@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/eventDispatcher.h"
-#include "core/const.h"
+#include "src/core/eventDispatcher.h"
+#include "src/core/const.h"
 #include <cassert>
 
 namespace giada::m

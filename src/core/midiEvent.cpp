@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "midiEvent.h"
-#include "const.h"
-#include "utils/math.h"
+#include "src/core/midiEvent.h"
+#include "src/core/const.h"
+#include "src/utils/math.h"
 #include <cassert>
 
 namespace giada::m

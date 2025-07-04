@@ -24,15 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/pluginList.h"
-#include "core/engine.h"
-#include "glue/layout.h"
-#include "gui/elems/basics/liquidScroll.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/elems/mainWindow/keyboard/channel.h"
-#include "gui/elems/plugin/pluginElement.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/dialogs/pluginList.h"
+#include "src/core/engine.h"
+#include "src/glue/layout.h"
+#include "src/gui/elems/basics/liquidScroll.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/elems/mainWindow/keyboard/channel.h"
+#include "src/gui/elems/plugin/pluginElement.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 
 extern giada::v::Ui* g_ui;
 

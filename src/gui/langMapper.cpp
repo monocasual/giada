@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/langMapper.h"
-#include "utils/fs.h"
-#include "utils/log.h"
+#include "src/gui/langMapper.h"
+#include "src/utils/fs.h"
+#include "src/utils/log.h"
 #include <filesystem>
 #include <fstream>
 

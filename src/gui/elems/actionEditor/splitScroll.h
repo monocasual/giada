@@ -27,12 +27,12 @@
 #ifndef GE_SPLITSCROLL_H
 #define GE_SPLITSCROLL_H
 
-#include "core/types.h"
-#include "deps/geompp/src/rect.hpp"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/liquidScroll.h"
-#include "gui/elems/basics/resizerBar.h"
-#include "gui/elems/basics/scroll.h"
+#include "src/core/types.h"
+#include "src/deps/geompp/src/rect.hpp"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/liquidScroll.h"
+#include "src/gui/elems/basics/resizerBar.h"
+#include "src/gui/elems/basics/scroll.h"
 
 namespace giada::v
 {

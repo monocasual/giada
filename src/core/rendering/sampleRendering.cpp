@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/rendering/sampleRendering.h"
-#include "core/channels/channel.h"
-#include "core/plugins/pluginHost.h"
-#include "core/rendering/sampleAdvance.h"
-#include "core/resampler.h"
-#include "core/wave.h"
-#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/core/rendering/sampleRendering.h"
+#include "src/core/channels/channel.h"
+#include "src/core/plugins/pluginHost.h"
+#include "src/core/rendering/sampleAdvance.h"
+#include "src/core/resampler.h"
+#include "src/core/wave.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include <cassert>
 
 namespace giada::m::rendering

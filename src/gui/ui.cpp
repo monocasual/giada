@@ -24,17 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/ui.h"
-#include "gui/const.h"
-#include "gui/dialogs/warnings.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/keyboard/track.h"
-#include "gui/elems/mainWindow/mainInput.h"
-#include "gui/elems/mainWindow/mainOutput.h"
-#include "gui/elems/mainWindow/mainTimer.h"
-#include "gui/updater.h"
-#include "utils/gui.h"
-#include "utils/log.h"
+#include "src/gui/ui.h"
+#include "src/gui/const.h"
+#include "src/gui/dialogs/warnings.h"
+#include "src/gui/elems/mainWindow/keyboard/keyboard.h"
+#include "src/gui/elems/mainWindow/keyboard/track.h"
+#include "src/gui/elems/mainWindow/mainInput.h"
+#include "src/gui/elems/mainWindow/mainOutput.h"
+#include "src/gui/elems/mainWindow/mainTimer.h"
+#include "src/gui/updater.h"
+#include "src/utils/gui.h"
+#include "src/utils/log.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Tooltip.H>
 #if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)

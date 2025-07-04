@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/basics/progress.h"
-#include "gui/const.h"
-#include "gui/elems/basics/boxtypes.h"
+#include "src/gui/elems/basics/progress.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/boxtypes.h"
 
 namespace giada::v
 {

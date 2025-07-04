@@ -24,20 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/mainWindow.h"
-#include "glue/main.h"
-#include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/mainInput.h"
-#include "gui/elems/mainWindow/mainMenu.h"
-#include "gui/elems/mainWindow/mainOutput.h"
-#include "gui/elems/mainWindow/mainTimer.h"
-#include "gui/elems/mainWindow/mainTransport.h"
-#include "gui/elems/mainWindow/sequencer.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
-#include "warnings.h"
+#include "src/gui/dialogs/mainWindow.h"
+#include "src/glue/main.h"
+#include "src/gui/dialogs/warnings.h"
+#include "src/gui/elems/basics/boxtypes.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/mainWindow/keyboard/keyboard.h"
+#include "src/gui/elems/mainWindow/mainInput.h"
+#include "src/gui/elems/mainWindow/mainMenu.h"
+#include "src/gui/elems/mainWindow/mainOutput.h"
+#include "src/gui/elems/mainWindow/mainTimer.h"
+#include "src/gui/elems/mainWindow/mainTransport.h"
+#include "src/gui/elems/mainWindow/sequencer.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Tooltip.H>
 #include <fmt/core.h>

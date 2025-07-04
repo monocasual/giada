@@ -29,7 +29,7 @@
 #ifndef G_JACK_SYNCHRONIZER_H
 #define G_JACK_SYNCHRONIZER_H
 
-#include "core/jackTransport.h"
+#include "src/core/jackTransport.h"
 #include <functional>
 
 namespace giada::m::kernelAudio

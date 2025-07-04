@@ -27,8 +27,8 @@
 #ifndef G_GLUE_SAMPLE_EDITOR_H
 #define G_GLUE_SAMPLE_EDITOR_H
 
-#include "core/types.h"
-#include "core/waveFx.h"
+#include "src/core/types.h"
+#include "src/core/waveFx.h"
 #include <string>
 
 /* giada::c::sampleEditor

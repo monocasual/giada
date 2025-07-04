@@ -24,15 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "waveTools.h"
-#include "glue/sampleEditor.h"
-#include "gui/const.h"
-#include "gui/dialogs/sampleEditor.h"
-#include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/menu.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
-#include "waveform.h"
+#include "src/gui/elems/sampleEditor/waveTools.h"
+#include "src/glue/sampleEditor.h"
+#include "src/gui/const.h"
+#include "src/gui/dialogs/sampleEditor.h"
+#include "src/gui/elems/basics/boxtypes.h"
+#include "src/gui/elems/basics/menu.h"
+#include "src/gui/elems/sampleEditor/waveform.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 #include <cstdint>
 
 extern giada::v::Ui* g_ui;

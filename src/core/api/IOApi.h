@@ -27,8 +27,8 @@
 #ifndef G_IO_API_H
 #define G_IO_API_H
 
-#include "core/model/model.h"
-#include "core/types.h"
+#include "src/core/model/model.h"
+#include "src/core/types.h"
 #include <functional>
 
 namespace giada::m

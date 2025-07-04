@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "baseAction.h"
-#include "baseActionEditor.h"
-#include "gridTool.h"
-#include "gui/const.h"
+#include "src/gui/dialogs/actionEditor/baseActionEditor.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/actionEditor/baseAction.h"
+#include "src/gui/elems/actionEditor/baseActionEditor.h"
+#include "src/gui/elems/actionEditor/gridTool.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v

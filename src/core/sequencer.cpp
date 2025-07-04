@@ -24,17 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/sequencer.h"
-#include "core/actions/actionRecorder.h"
-#include "core/jackTransport.h"
-#include "core/kernelAudio.h"
-#include "core/metronome.h"
-#include "core/midiSynchronizer.h"
-#include "core/model/model.h"
-#include "core/quantizer.h"
-#include "utils/log.h"
-#include "utils/math.h"
-#include "utils/time.h"
+#include "src/core/sequencer.h"
+#include "src/core/actions/actionRecorder.h"
+#include "src/core/jackTransport.h"
+#include "src/core/kernelAudio.h"
+#include "src/core/metronome.h"
+#include "src/core/midiSynchronizer.h"
+#include "src/core/model/model.h"
+#include "src/core/quantizer.h"
+#include "src/utils/log.h"
+#include "src/utils/math.h"
+#include "src/utils/time.h"
 
 namespace giada::m
 {

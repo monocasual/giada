@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/channels/sampleChannel.h"
-#include "core/const.h"
-#include "core/wave.h"
+#include "src/core/channels/sampleChannel.h"
+#include "src/core/const.h"
+#include "src/core/wave.h"
 
 namespace giada::m
 {

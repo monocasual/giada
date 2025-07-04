@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/channels/channelShared.h"
+#include "src/core/channels/channelShared.h"
 
 namespace giada::m
 {

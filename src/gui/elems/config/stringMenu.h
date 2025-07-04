@@ -27,7 +27,7 @@
 #ifndef GE_STRING_MENU_H
 #define GE_STRING_MENU_H
 
-#include "gui/elems/basics/choice.h"
+#include "src/gui/elems/basics/choice.h"
 #include <string>
 #include <vector>
 

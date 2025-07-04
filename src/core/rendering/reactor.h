@@ -27,8 +27,8 @@
 #ifndef G_RENDERING_REACTOR_H
 #define G_RENDERING_REACTOR_H
 
-#include "core/midiMapper.h"
-#include "core/types.h"
+#include "src/core/midiMapper.h"
+#include "src/core/types.h"
 
 namespace giada::m
 {

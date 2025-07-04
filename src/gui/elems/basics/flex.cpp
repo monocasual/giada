@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "flex.h"
+#include "src/gui/elems/basics/flex.h"
 #include <algorithm>
 #include <cstddef>
 #include <numeric>

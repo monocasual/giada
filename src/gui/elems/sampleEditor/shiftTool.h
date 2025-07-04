@@ -27,8 +27,8 @@
 #ifndef GE_SHIFT_TOOL_H
 #define GE_SHIFT_TOOL_H
 
-#include "core/types.h"
-#include "gui/elems/basics/flex.h"
+#include "src/core/types.h"
+#include "src/gui/elems/basics/flex.h"
 
 namespace giada::c::sampleEditor
 {

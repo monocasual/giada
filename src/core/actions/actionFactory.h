@@ -27,10 +27,10 @@
 #ifndef G_ACTION_FACTORY_H
 #define G_ACTION_FACTORY_H
 
-#include "core/actions/action.h"
-#include "core/idManager.h"
-#include "core/model/actions.h"
-#include "core/patch.h"
+#include "src/core/actions/action.h"
+#include "src/core/idManager.h"
+#include "src/core/model/actions.h"
+#include "src/core/patch.h"
 
 namespace giada::m::actionFactory
 {

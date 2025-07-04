@@ -24,15 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/channelRouting.h"
-#include "glue/channel.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/elems/panTool.h"
-#include "gui/elems/volumeTool.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/dialogs/channelRouting.h"
+#include "src/glue/channel.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/elems/panTool.h"
+#include "src/gui/elems/volumeTool.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 
 extern giada::v::Ui* g_ui;
 

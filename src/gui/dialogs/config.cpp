@@ -24,20 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/config.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/tabs.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/elems/config/tabAudio.h"
-#include "gui/elems/config/tabBehaviors.h"
-#include "gui/elems/config/tabBindings.h"
-#include "gui/elems/config/tabMidi.h"
-#include "gui/elems/config/tabMisc.h"
-#include "gui/elems/config/tabPlugins.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/dialogs/config.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/boxtypes.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/tabs.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/elems/config/tabAudio.h"
+#include "src/gui/elems/config/tabBehaviors.h"
+#include "src/gui/elems/config/tabBindings.h"
+#include "src/gui/elems/config/tabMidi.h"
+#include "src/gui/elems/config/tabMisc.h"
+#include "src/gui/elems/config/tabPlugins.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 
 extern giada::v::Ui* g_ui;
 

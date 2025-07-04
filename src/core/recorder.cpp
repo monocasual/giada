@@ -24,15 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/recorder.h"
-#include "core/channels/channelManager.h"
-#include "core/mixer.h"
-#include "core/model/model.h"
-#include "core/sequencer.h"
-#include "core/types.h"
+#include "src/core/recorder.h"
+#include "src/core/channels/channelManager.h"
+#include "src/core/mixer.h"
+#include "src/core/model/model.h"
+#include "src/core/sequencer.h"
+#include "src/core/types.h"
 #include "src/core/actions/actionRecorder.h"
 #include "src/core/model/actions.h"
-#include "utils/log.h"
+#include "src/utils/log.h"
 
 namespace giada::m
 {

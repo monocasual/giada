@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/mainWindow/keyboard/channelProgress.h"
-#include "glue/channel.h"
-#include "gui/const.h"
-#include "gui/drawing.h"
-#include "utils/math.h"
+#include "src/gui/elems/mainWindow/keyboard/channelProgress.h"
+#include "src/glue/channel.h"
+#include "src/gui/const.h"
+#include "src/gui/drawing.h"
+#include "src/utils/math.h"
 
 namespace giada::v
 {

@@ -24,16 +24,16 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/keyGrabber.h"
-#include "glue/channel.h"
-#include "glue/io.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
-#include "utils/log.h"
-#include "utils/string.h"
+#include "src/gui/dialogs/keyGrabber.h"
+#include "src/glue/channel.h"
+#include "src/glue/io.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
+#include "src/utils/log.h"
+#include "src/utils/string.h"
 #include <cassert>
 
 extern giada::v::Ui* g_ui;

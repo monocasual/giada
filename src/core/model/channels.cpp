@@ -24,12 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/model/channels.h"
-#include "core/plugins/plugin.h"
-#include "utils/vector.h"
+#include "src/core/model/channels.h"
+#include "src/core/plugins/plugin.h"
+#include "src/utils/vector.h"
 #include <cassert>
 #ifdef G_DEBUG_MODE
-#include "utils/string.h"
+#include "src/utils/string.h"
 #include <fmt/core.h>
 #endif
 

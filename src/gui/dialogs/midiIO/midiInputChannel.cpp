@@ -24,20 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/midiIO/midiInputChannel.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/check.h"
-#include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/group.h"
-#include "gui/elems/basics/scrollPack.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/elems/midiIO/midiLearner.h"
-#include "gui/elems/midiIO/midiLearnerPack.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
-#include "utils/log.h"
-#include "utils/string.h"
+#include "src/gui/dialogs/midiIO/midiInputChannel.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/check.h"
+#include "src/gui/elems/basics/choice.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/group.h"
+#include "src/gui/elems/basics/scrollPack.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/elems/midiIO/midiLearner.h"
+#include "src/gui/elems/midiIO/midiLearnerPack.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
+#include "src/utils/log.h"
+#include "src/utils/string.h"
 #include <cassert>
 #include <cstddef>
 

@@ -27,7 +27,7 @@
 #ifndef GD_BPMINPUT_H
 #define GD_BPMINPUT_H
 
-#include "window.h"
+#include "src/gui/dialogs/window.h"
 
 namespace giada::v
 {

@@ -27,8 +27,8 @@
 #ifndef G_WAVE_H
 #define G_WAVE_H
 
-#include "core/types.h"
-#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/core/types.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include <string>
 
 namespace giada::m

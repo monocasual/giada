@@ -27,8 +27,8 @@
 #ifndef G_PLUGIN_FACTORY_H
 #define G_PLUGIN_FACTORY_H
 
-#include "core/patch.h"
-#include "core/types.h"
+#include "src/core/patch.h"
+#include "src/core/types.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <memory>
 #include <string>

@@ -27,7 +27,7 @@
 #ifndef G_V_DRAWING_H
 #define G_V_DRAWING_H
 
-#include "deps/geompp/src/rect.hpp"
+#include "src/deps/geompp/src/rect.hpp"
 #include <FL/fl_draw.H>
 #include <string>
 

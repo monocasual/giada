@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/api/configApi.h"
-#include "core/kernelAudio.h"
-#include "core/midiSynchronizer.h"
-#include "core/model/model.h"
+#include "src/core/api/configApi.h"
+#include "src/core/kernelAudio.h"
+#include "src/core/midiSynchronizer.h"
+#include "src/core/model/model.h"
 
 namespace giada::m
 {

@@ -27,8 +27,8 @@
 #ifndef GD_CONFIG_H
 #define GD_CONFIG_H
 
-#include "gui/model.h"
-#include "window.h"
+#include "src/gui/dialogs/window.h"
+#include "src/gui/model.h"
 
 namespace giada::v
 {

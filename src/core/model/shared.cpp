@@ -24,12 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/model/shared.h"
-#include "core/channels/channelFactory.h"
-#include "core/plugins/pluginFactory.h"
-#include "core/plugins/pluginManager.h"
-#include "core/waveFactory.h"
-#include "utils/vector.h"
+#include "src/core/model/shared.h"
+#include "src/core/channels/channelFactory.h"
+#include "src/core/plugins/pluginFactory.h"
+#include "src/core/plugins/pluginManager.h"
+#include "src/core/waveFactory.h"
+#include "src/utils/vector.h"
 #ifdef G_DEBUG_MODE
 #include <fmt/core.h>
 #endif

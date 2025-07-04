@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "quantizer.h"
+#include "src/core/quantizer.h"
 #include <cassert>
 
 namespace giada::m

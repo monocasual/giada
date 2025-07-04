@@ -24,22 +24,22 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/plugins/plugin.h"
-#include "core/const.h"
-#include "core/engine.h"
-#include "core/kernelAudio.h"
-#include "core/mixer.h"
-#include "core/model/model.h"
-#include "core/plugins/pluginHost.h"
-#include "core/plugins/pluginManager.h"
-#include "glue/channel.h"
-#include "glue/plugin.h"
-#include "gui/dialogs/config.h"
-#include "gui/dialogs/mainWindow.h"
-#include "gui/dialogs/pluginList.h"
-#include "gui/dialogs/pluginWindow.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/core/plugins/plugin.h"
+#include "src/core/const.h"
+#include "src/core/engine.h"
+#include "src/core/kernelAudio.h"
+#include "src/core/mixer.h"
+#include "src/core/model/model.h"
+#include "src/core/plugins/pluginHost.h"
+#include "src/core/plugins/pluginManager.h"
+#include "src/glue/channel.h"
+#include "src/glue/plugin.h"
+#include "src/gui/dialogs/config.h"
+#include "src/gui/dialogs/mainWindow.h"
+#include "src/gui/dialogs/pluginList.h"
+#include "src/gui/dialogs/pluginWindow.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 #include <FL/Fl.H>
 #include <cassert>
 #include <memory>

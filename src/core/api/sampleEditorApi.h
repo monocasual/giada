@@ -27,9 +27,9 @@
 #ifndef G_SAMPLE_EDITOR_API_H
 #define G_SAMPLE_EDITOR_API_H
 
-#include "core/model/model.h"
-#include "core/types.h"
-#include "core/waveFx.h"
+#include "src/core/model/model.h"
+#include "src/core/types.h"
+#include "src/core/waveFx.h"
 #include <memory>
 
 namespace giada::m::rendering

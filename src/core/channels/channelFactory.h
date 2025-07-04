@@ -27,10 +27,10 @@
 #ifndef G_CHANNEL_FACTORY_H
 #define G_CHANNEL_FACTORY_H
 
-#include "core/channels/channel.h"
-#include "core/idManager.h"
-#include "core/patch.h"
-#include "core/types.h"
+#include "src/core/channels/channel.h"
+#include "src/core/idManager.h"
+#include "src/core/patch.h"
+#include "src/core/types.h"
 
 namespace giada::m
 {

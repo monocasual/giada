@@ -24,15 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "mainTimer.h"
-#include "glue/layout.h"
-#include "glue/main.h"
-#include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/imageButton.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/graphics.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/elems/mainWindow/mainTimer.h"
+#include "src/glue/layout.h"
+#include "src/glue/main.h"
+#include "src/gui/elems/basics/choice.h"
+#include "src/gui/elems/basics/imageButton.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/graphics.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 #include <fmt/core.h>
 
 extern giada::v::Ui* g_ui;

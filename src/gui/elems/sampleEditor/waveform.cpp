@@ -24,15 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/sampleEditor/waveform.h"
-#include "core/wave.h"
-#include "glue/channel.h"
-#include "glue/sampleEditor.h"
-#include "gui/const.h"
-#include "gui/dialogs/sampleEditor.h"
-#include "gui/elems/basics/boxtypes.h"
-#include "utils/log.h"
-#include "waveTools.h"
+#include "src/gui/elems/sampleEditor/waveform.h"
+#include "src/core/wave.h"
+#include "src/glue/channel.h"
+#include "src/glue/sampleEditor.h"
+#include "src/gui/const.h"
+#include "src/gui/dialogs/sampleEditor.h"
+#include "src/gui/elems/basics/boxtypes.h"
+#include "src/gui/elems/sampleEditor/waveTools.h"
+#include "src/utils/log.h"
 #include <FL/Fl_Menu_Button.H>
 #include <FL/fl_draw.H>
 #include <cassert>

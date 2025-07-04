@@ -25,14 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/panTool.h"
-#include "glue/channel.h"
-#include "gui/ui.h"
+#include "src/glue/channel.h"
+#include "src/gui/ui.h"
 #include "src/gui/elems/basics/dial.h"
 #include "src/gui/elems/basics/input.h"
 #include "src/gui/elems/basics/textButton.h"
-#include "utils/gui.h"
-#include "utils/math.h"
-#include "utils/string.h"
+#include "src/utils/gui.h"
+#include "src/utils/math.h"
+#include "src/utils/string.h"
 #include <FL/Fl.H>
 #include <fmt/core.h>
 

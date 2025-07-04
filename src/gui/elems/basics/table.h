@@ -27,7 +27,7 @@
 #ifndef GE_TABLE_H
 #define GE_TABLE_H
 
-#include "deps/geompp/src/rect.hpp"
+#include "src/deps/geompp/src/rect.hpp"
 #include <FL/Fl_Table.H>
 #include <functional>
 #include <string>

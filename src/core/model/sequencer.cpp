@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/model/sequencer.h"
-#include "core/const.h"
-#include "utils/time.h"
+#include "src/core/model/sequencer.h"
+#include "src/core/const.h"
+#include "src/utils/time.h"
 
 namespace giada::m::model
 {

@@ -27,13 +27,13 @@
 #ifndef G_CHANNELSHARED_H
 #define G_CHANNELSHARED_H
 
-#include "core/const.h"
-#include "core/midiEvent.h"
-#include "core/quantizer.h"
-#include "core/rendering/sampleRendering.h"
-#include "core/resampler.h"
-#include "deps/concurrentqueue/concurrentqueue.h"
-#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/core/const.h"
+#include "src/core/midiEvent.h"
+#include "src/core/quantizer.h"
+#include "src/core/rendering/sampleRendering.h"
+#include "src/core/resampler.h"
+#include "src/deps/concurrentqueue/concurrentqueue.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <optional>
 

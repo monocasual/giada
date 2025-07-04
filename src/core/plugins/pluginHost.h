@@ -27,8 +27,8 @@
 #ifndef G_PLUGIN_HOST_H
 #define G_PLUGIN_HOST_H
 
-#include "core/const.h"
-#include "core/types.h"
+#include "src/core/const.h"
+#include "src/core/types.h"
 #include <functional>
 /* windows.h, included somewhere, defines 'small' as a macro and it clashes with
 some enum defined in the JUCE GUI module. */

@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/actionEditor/sampleActionEditor.h"
-#include "glue/actionEditor.h"
-#include "gui/dialogs/actionEditor/baseActionEditor.h"
-#include "gui/dialogs/actionEditor/sampleActionEditor.h"
-#include "gui/ui.h"
-#include "sampleAction.h"
+#include "src/gui/elems/actionEditor/sampleActionEditor.h"
 #include "src/core/actions/action.h"
+#include "src/glue/actionEditor.h"
+#include "src/gui/dialogs/actionEditor/baseActionEditor.h"
+#include "src/gui/dialogs/actionEditor/sampleActionEditor.h"
+#include "src/gui/elems/actionEditor/sampleAction.h"
+#include "src/gui/ui.h"
 #include <FL/fl_draw.H>
 
 extern giada::v::Ui* g_ui;

@@ -27,7 +27,7 @@
 #ifndef G_PATCH_FACTORY_H
 #define G_PATCH_FACTORY_H
 
-#include "core/patch.h"
+#include "src/core/patch.h"
 
 namespace giada::m::patchFactory
 {

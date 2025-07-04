@@ -27,7 +27,7 @@
 #ifndef G_MODEL_SHAREDLOCK_H
 #define G_MODEL_SHAREDLOCK_H
 
-#include "core/model/types.h"
+#include "src/core/model/types.h"
 
 namespace giada::m::model
 {

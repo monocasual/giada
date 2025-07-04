@@ -24,14 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/sampleEditor/shiftTool.h"
-#include "glue/sampleEditor.h"
-#include "gui/dialogs/sampleEditor.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/ui.h"
-#include "utils/string.h"
+#include "src/gui/elems/sampleEditor/shiftTool.h"
+#include "src/glue/sampleEditor.h"
+#include "src/gui/dialogs/sampleEditor.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/input.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/ui.h"
+#include "src/utils/string.h"
 
 extern giada::v::Ui* g_ui;
 

@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/api/IOApi.h"
-#include "core/midiDispatcher.h"
-#include "core/model/model.h"
+#include "src/core/api/IOApi.h"
+#include "src/core/midiDispatcher.h"
+#include "src/core/model/model.h"
 
 namespace giada::m
 {

@@ -27,9 +27,9 @@
 #ifndef G_GLUE_CONFIG_H
 #define G_GLUE_CONFIG_H
 
-#include "core/kernelAudio.h"
-#include "core/kernelMidi.h"
-#include "core/types.h"
+#include "src/core/kernelAudio.h"
+#include "src/core/kernelMidi.h"
+#include "src/core/types.h"
 #include <RtMidi.h>
 #include <map>
 #include <string>

@@ -27,8 +27,8 @@
 #ifndef GE_CHANNEL_H
 #define GE_CHANNEL_H
 
-#include "glue/channel.h"
-#include "gui/elems/basics/flex.h"
+#include "src/glue/channel.h"
+#include "src/gui/elems/basics/flex.h"
 
 namespace giada::v
 {

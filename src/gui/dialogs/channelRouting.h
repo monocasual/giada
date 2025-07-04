@@ -27,7 +27,7 @@
 #ifndef GD_CHANNEL_ROUTING_H
 #define GD_CHANNEL_ROUTING_H
 
-#include "gui/dialogs/window.h"
+#include "src/gui/dialogs/window.h"
 
 namespace giada::c::channel
 {

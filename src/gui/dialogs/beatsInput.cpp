@@ -24,15 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/beatsInput.h"
-#include "glue/main.h"
-#include "gui/elems/basics/check.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
-#include "utils/string.h"
+#include "src/gui/dialogs/beatsInput.h"
+#include "src/glue/main.h"
+#include "src/gui/elems/basics/check.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/input.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
+#include "src/utils/string.h"
 #include <cstring>
 
 extern giada::v::Ui* g_ui;

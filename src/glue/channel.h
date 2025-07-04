@@ -27,8 +27,8 @@
 #ifndef G_GLUE_CHANNEL_H
 #define G_GLUE_CHANNEL_H
 
-#include "core/types.h"
-#include "core/weakAtomic.h"
+#include "src/core/types.h"
+#include "src/core/weakAtomic.h"
 #include <atomic>
 #include <optional>
 #include <string>

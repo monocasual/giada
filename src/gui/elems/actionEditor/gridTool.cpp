@@ -24,11 +24,11 @@
  *
  * --------------------------------------------------------------------------- */
 
-#include "gui/elems/actionEditor/gridTool.h"
-#include "gui/elems/basics/check.h"
-#include "gui/elems/basics/choice.h"
-#include "gui/ui.h"
-#include "utils/math.h"
+#include "src/gui/elems/actionEditor/gridTool.h"
+#include "src/gui/elems/basics/check.h"
+#include "src/gui/elems/basics/choice.h"
+#include "src/gui/ui.h"
+#include "src/utils/math.h"
 #include <FL/Fl_Double_Window.H>
 
 extern giada::v::Ui* g_ui;

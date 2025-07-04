@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/model/track.h"
-#include "core/types.h"
+#include "src/core/model/track.h"
+#include "src/core/types.h"
 #include <cassert>
 #ifdef G_DEBUG_MODE
 #include <fmt/core.h>

@@ -29,7 +29,7 @@
 #ifndef G_UTILS_TIME_H
 #define G_UTILS_TIME_H
 
-#include "core/types.h"
+#include "src/core/types.h"
 
 namespace giada::u::time
 {

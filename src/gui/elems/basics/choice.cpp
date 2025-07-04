@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/basics/choice.h"
-#include "gui/const.h"
-#include "gui/drawing.h"
-#include "utils/gui.h"
-#include "utils/vector.h"
+#include "src/gui/elems/basics/choice.h"
+#include "src/gui/const.h"
+#include "src/gui/drawing.h"
+#include "src/utils/gui.h"
+#include "src/utils/vector.h"
 #include <FL/fl_draw.H>
 #include <cassert>
 

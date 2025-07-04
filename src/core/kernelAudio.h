@@ -27,16 +27,16 @@
 #ifndef G_KERNELAUDIO_H
 #define G_KERNELAUDIO_H
 
-#include "core/model/model.h"
-#include "core/weakAtomic.h"
-#include "deps/rtaudio/RtAudio.h"
+#include "src/core/model/model.h"
+#include "src/core/weakAtomic.h"
+#include "src/deps/rtaudio/RtAudio.h"
 #include <cstddef>
 #include <functional>
 #include <memory>
 #include <string>
 #include <vector>
 #ifdef WITH_AUDIO_JACK
-#include "core/jackTransport.h"
+#include "src/core/jackTransport.h"
 #endif
 
 namespace mcl

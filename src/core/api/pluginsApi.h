@@ -27,8 +27,8 @@
 #ifndef G_PLUGINS_API_H
 #define G_PLUGINS_API_H
 
-#include "core/plugins/pluginManager.h"
-#include "core/types.h"
+#include "src/core/plugins/pluginManager.h"
+#include "src/core/types.h"
 
 namespace giada::m::model
 {

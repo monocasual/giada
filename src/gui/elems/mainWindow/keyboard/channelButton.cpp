@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/mainWindow/keyboard/channelButton.h"
-#include "glue/channel.h"
-#include "gui/const.h"
-#include "gui/drawing.h"
-#include "utils/string.h"
+#include "src/gui/elems/mainWindow/keyboard/channelButton.h"
+#include "src/glue/channel.h"
+#include "src/gui/const.h"
+#include "src/gui/drawing.h"
+#include "src/utils/string.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v

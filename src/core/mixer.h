@@ -27,12 +27,12 @@
 #ifndef G_MIXER_H
 #define G_MIXER_H
 
-#include "core/midiEvent.h"
-#include "core/ringBuffer.h"
-#include "core/sequencer.h"
-#include "core/types.h"
-#include "core/weakAtomic.h"
-#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/core/midiEvent.h"
+#include "src/core/ringBuffer.h"
+#include "src/core/sequencer.h"
+#include "src/core/types.h"
+#include "src/core/weakAtomic.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include <functional>
 
 namespace mcl

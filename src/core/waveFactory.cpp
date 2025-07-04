@@ -24,15 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "waveFactory.h"
-#include "const.h"
-#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
-#include "idManager.h"
-#include "patch.h"
-#include "utils/fs.h"
-#include "utils/log.h"
-#include "wave.h"
-#include "waveFx.h"
+#include "src/core/waveFactory.h"
+#include "src/core/const.h"
+#include "src/core/idManager.h"
+#include "src/core/patch.h"
+#include "src/core/wave.h"
+#include "src/core/waveFx.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/utils/fs.h"
+#include "src/utils/log.h"
 #include <cmath>
 #include <fmt/core.h>
 #include <memory>

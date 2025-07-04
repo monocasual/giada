@@ -27,8 +27,8 @@
 #ifndef G_EVENT_DISPATCHER_H
 #define G_EVENT_DISPATCHER_H
 
-#include "core/worker.h"
-#include "deps/concurrentqueue/concurrentqueue.h"
+#include "src/core/worker.h"
+#include "src/deps/concurrentqueue/concurrentqueue.h"
 #include <functional>
 
 /* giada::m::EventDispatcher

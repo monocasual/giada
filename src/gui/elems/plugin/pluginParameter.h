@@ -27,7 +27,7 @@
 #ifndef GE_PLUGIN_PARAMETER_H
 #define GE_PLUGIN_PARAMETER_H
 
-#include "glue/plugin.h"
+#include "src/glue/plugin.h"
 #include <FL/Fl_Group.H>
 
 namespace giada::v

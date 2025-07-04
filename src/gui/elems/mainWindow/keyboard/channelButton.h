@@ -27,7 +27,7 @@
 #ifndef GE_CHANNEL_BUTTON_H
 #define GE_CHANNEL_BUTTON_H
 
-#include "gui/elems/basics/textButton.h"
+#include "src/gui/elems/basics/textButton.h"
 
 namespace giada::c::channel
 {

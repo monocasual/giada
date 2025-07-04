@@ -30,9 +30,9 @@
 #ifndef GE_PACK_H
 #define GE_PACK_H
 
-#include "gui/const.h"
-#include "gui/elems/basics/group.h"
-#include "gui/types.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/group.h"
+#include "src/gui/types.h"
 
 namespace giada::v
 {

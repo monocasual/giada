@@ -27,11 +27,11 @@
 #ifndef G_SEQUENCER_H
 #define G_SEQUENCER_H
 
-#include "core/actions/action.h"
-#include "core/eventDispatcher.h"
-#include "core/metronome.h"
-#include "core/quantizer.h"
-#include "core/ringBuffer.h"
+#include "src/core/actions/action.h"
+#include "src/core/eventDispatcher.h"
+#include "src/core/metronome.h"
+#include "src/core/quantizer.h"
+#include "src/core/ringBuffer.h"
 #include <vector>
 
 namespace mcl

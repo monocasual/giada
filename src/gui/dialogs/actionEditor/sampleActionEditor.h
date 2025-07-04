@@ -27,7 +27,7 @@
 #ifndef GD_SAMPLE_ACTION_EDITOR_H
 #define GD_SAMPLE_ACTION_EDITOR_H
 
-#include "baseActionEditor.h"
+#include "src/gui/dialogs/actionEditor/baseActionEditor.h"
 
 namespace giada::v
 {

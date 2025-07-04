@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "pianoItem.h"
-#include "core/midiEvent.h"
-#include "gui/const.h"
+#include "src/gui/elems/actionEditor/pianoItem.h"
 #include "src/core/actions/action.h"
-#include "utils/math.h"
+#include "src/core/midiEvent.h"
+#include "src/gui/const.h"
+#include "src/utils/math.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v

@@ -27,8 +27,8 @@
 #ifndef GD_MAINWINDOW_H
 #define GD_MAINWINDOW_H
 
-#include "gui/dialogs/progress.h"
-#include "window.h"
+#include "src/gui/dialogs/progress.h"
+#include "src/gui/dialogs/window.h"
 #include <string>
 
 namespace giada::v

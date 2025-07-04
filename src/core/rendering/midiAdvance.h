@@ -27,8 +27,8 @@
 #ifndef G_RENDERING_MIDI_ADVANCE_H
 #define G_RENDERING_MIDI_ADVANCE_H
 
-#include "core/channels/channelShared.h"
-#include "core/sequencer.h"
+#include "src/core/channels/channelShared.h"
+#include "src/core/sequencer.h"
 
 namespace giada::m
 {

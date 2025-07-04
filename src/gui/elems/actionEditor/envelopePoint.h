@@ -27,8 +27,8 @@
 #ifndef GE_ENVELOPE_POINT_H
 #define GE_ENVELOPE_POINT_H
 
-#include "baseAction.h"
 #include "src/core/actions/action.h"
+#include "src/gui/elems/actionEditor/baseAction.h"
 
 namespace giada::v
 {

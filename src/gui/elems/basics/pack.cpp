@@ -27,7 +27,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "pack.h"
+#include "src/gui/elems/basics/pack.h"
 
 namespace giada::v
 {

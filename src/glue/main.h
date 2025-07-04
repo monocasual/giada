@@ -27,7 +27,7 @@
 #ifndef G_MAIN_H
 #define G_MAIN_H
 
-#include "core/types.h"
+#include "src/core/types.h"
 
 /* giada::c::main
 Functions to interact with the tools in the main window. */

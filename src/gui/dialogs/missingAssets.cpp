@@ -24,15 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/missingAssets.h"
-#include "core/model/loadState.h"
-#include "gui/const.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/browser.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/dialogs/missingAssets.h"
+#include "src/core/model/loadState.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/browser.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 #include <FL/Fl_Group.H>
 
 extern giada::v::Ui* g_ui;

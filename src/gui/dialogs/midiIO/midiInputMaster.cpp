@@ -24,16 +24,16 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/midiIO/midiInputMaster.h"
-#include "gui/elems/basics/check.h"
-#include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/group.h"
-#include "gui/elems/basics/scrollPack.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/elems/midiIO/midiLearner.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/dialogs/midiIO/midiInputMaster.h"
+#include "src/gui/elems/basics/check.h"
+#include "src/gui/elems/basics/choice.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/group.h"
+#include "src/gui/elems/basics/scrollPack.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/elems/midiIO/midiLearner.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 
 extern giada::v::Ui* g_ui;
 

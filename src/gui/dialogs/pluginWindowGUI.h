@@ -30,8 +30,8 @@
 #ifndef GD_PLUGIN_WINDOW_GUI_H
 #define GD_PLUGIN_WINDOW_GUI_H
 
-#include "glue/plugin.h"
-#include "window.h"
+#include "src/glue/plugin.h"
+#include "src/gui/dialogs/window.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <juce_audio_processors/juce_audio_processors.h>

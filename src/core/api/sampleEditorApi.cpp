@@ -24,14 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "sampleEditorApi.h"
-#include "core/channels/channelManager.h"
-#include "core/kernelAudio.h"
-#include "core/mixer.h"
-#include "core/rendering/reactor.h"
-#include "core/waveFactory.h"
-#include "core/waveFx.h"
-#include "utils/log.h"
+#include "src/core/api/sampleEditorApi.h"
+#include "src/core/channels/channelManager.h"
+#include "src/core/kernelAudio.h"
+#include "src/core/mixer.h"
+#include "src/core/rendering/reactor.h"
+#include "src/core/waveFactory.h"
+#include "src/core/waveFx.h"
+#include "src/utils/log.h"
 
 namespace giada::m
 {

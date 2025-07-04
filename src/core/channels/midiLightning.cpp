@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/channels/midiLightning.h"
+#include "src/core/channels/midiLightning.h"
 
 namespace giada::m
 {

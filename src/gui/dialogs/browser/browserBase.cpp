@@ -24,20 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/browser/browserBase.h"
-#include "gui/const.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/check.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/imageButton.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/progress.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/elems/fileBrowser.h"
-#include "gui/graphics.h"
-#include "gui/ui.h"
-#include "utils/fs.h"
-#include "utils/gui.h"
+#include "src/gui/dialogs/browser/browserBase.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/check.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/imageButton.h"
+#include "src/gui/elems/basics/input.h"
+#include "src/gui/elems/basics/progress.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/elems/fileBrowser.h"
+#include "src/gui/graphics.h"
+#include "src/gui/ui.h"
+#include "src/utils/fs.h"
+#include "src/utils/gui.h"
 
 extern giada::v::Ui* g_ui;
 

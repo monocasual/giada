@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "midiInput.h"
-#include "core/patch.h"
+#include "src/core/channels/midiInput.h"
+#include "src/core/patch.h"
 
 namespace giada::m
 {

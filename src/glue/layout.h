@@ -27,8 +27,8 @@
 #ifndef G_GLUE_LAYOUT_H
 #define G_GLUE_LAYOUT_H
 
-#include "core/api/storageApi.h"
-#include "core/types.h"
+#include "src/core/api/storageApi.h"
+#include "src/core/types.h"
 #include <functional>
 #include <string>
 

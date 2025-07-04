@@ -24,21 +24,21 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "midiActionEditor.h"
-#include "glue/actionEditor.h"
-#include "glue/channel.h"
-#include "gui/elems/actionEditor/gridTool.h"
-#include "gui/elems/actionEditor/legend.h"
-#include "gui/elems/actionEditor/pianoRoll.h"
-#include "gui/elems/actionEditor/pianoRollLegend.h"
-#include "gui/elems/actionEditor/splitScroll.h"
-#include "gui/elems/actionEditor/velocityEditor.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/flexResizable.h"
-#include "gui/elems/basics/imageButton.h"
-#include "gui/graphics.h"
-#include "gui/ui.h"
+#include "src/gui/dialogs/actionEditor/midiActionEditor.h"
+#include "src/glue/actionEditor.h"
+#include "src/glue/channel.h"
+#include "src/gui/elems/actionEditor/gridTool.h"
+#include "src/gui/elems/actionEditor/legend.h"
+#include "src/gui/elems/actionEditor/pianoRoll.h"
+#include "src/gui/elems/actionEditor/pianoRollLegend.h"
+#include "src/gui/elems/actionEditor/splitScroll.h"
+#include "src/gui/elems/actionEditor/velocityEditor.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/flexResizable.h"
+#include "src/gui/elems/basics/imageButton.h"
+#include "src/gui/graphics.h"
+#include "src/gui/ui.h"
 
 extern giada::v::Ui* g_ui;
 

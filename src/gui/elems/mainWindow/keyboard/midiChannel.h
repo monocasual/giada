@@ -27,8 +27,8 @@
 #ifndef GE_MIDI_CHANNEL_H
 #define GE_MIDI_CHANNEL_H
 
-#include "channel.h"
-#include "channelButton.h"
+#include "src/gui/elems/mainWindow/keyboard/channel.h"
+#include "src/gui/elems/mainWindow/keyboard/channelButton.h"
 
 namespace giada::v
 {

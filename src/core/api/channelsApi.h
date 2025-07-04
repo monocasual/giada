@@ -27,9 +27,9 @@
 #ifndef G_CHANNELS_API_H
 #define G_CHANNELS_API_H
 
-#include "core/channels/channelFactory.h"
-#include "core/patch.h"
-#include "core/types.h"
+#include "src/core/channels/channelFactory.h"
+#include "src/core/patch.h"
+#include "src/core/types.h"
 #include <string>
 #include <vector>
 

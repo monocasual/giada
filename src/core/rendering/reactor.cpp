@@ -24,12 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/rendering/reactor.h"
-#include "core/mixer.h"
-#include "core/model/model.h"
-#include "core/rendering/midiOutput.h"
-#include "core/rendering/midiReactions.h"
-#include "core/rendering/sampleReactions.h"
+#include "src/core/rendering/reactor.h"
+#include "src/core/mixer.h"
+#include "src/core/model/model.h"
+#include "src/core/rendering/midiOutput.h"
+#include "src/core/rendering/midiReactions.h"
+#include "src/core/rendering/sampleReactions.h"
 
 namespace giada::m::rendering
 {

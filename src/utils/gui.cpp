@@ -24,12 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui.h"
-#include "core/sequencer.h"
-#include "gui/dialogs/window.h"
-#include "gui/elems/mainWindow/mainTransport.h"
-#include "gui/elems/sampleEditor/waveTools.h"
-#include "string.h"
+#include "src/utils/gui.h"
+#include "src/core/sequencer.h"
+#include "src/gui/dialogs/window.h"
+#include "src/gui/elems/mainWindow/mainTransport.h"
+#include "src/gui/elems/sampleEditor/waveTools.h"
+#include "src/utils/string.h"
 #include <FL/fl_draw.H>
 #include <FL/platform.H>
 #include <string>

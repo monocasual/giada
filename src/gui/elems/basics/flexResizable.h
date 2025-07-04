@@ -27,8 +27,8 @@
 #ifndef GE_FLEXRESIZABLE_H
 #define GE_FLEXRESIZABLE_H
 
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/resizerBar.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/resizerBar.h"
 #include <functional>
 
 namespace giada::v

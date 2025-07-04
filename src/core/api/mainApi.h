@@ -27,7 +27,7 @@
 #ifndef G_MAIN_API_H
 #define G_MAIN_API_H
 
-#include "core/mixer.h"
+#include "src/core/mixer.h"
 
 namespace giada::m::rendering
 {

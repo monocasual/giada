@@ -27,7 +27,7 @@
 #ifndef GD_BEATSINPUT_H
 #define GD_BEATSINPUT_H
 
-#include "window.h"
+#include "src/gui/dialogs/window.h"
 
 namespace giada::v
 {

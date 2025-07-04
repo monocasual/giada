@@ -27,7 +27,7 @@
 #ifndef GD_PROGRESS_H
 #define GD_PROGRESS_H
 
-#include "gui/dialogs/window.h"
+#include "src/gui/dialogs/window.h"
 #include <functional>
 
 namespace giada::v

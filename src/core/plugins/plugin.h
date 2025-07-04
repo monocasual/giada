@@ -27,10 +27,10 @@
 #ifndef G_PLUGIN_H
 #define G_PLUGIN_H
 
-#include "core/const.h"
-#include "core/midiLearnParam.h"
-#include "core/plugins/pluginHost.h"
-#include "core/plugins/pluginState.h"
+#include "src/core/const.h"
+#include "src/core/midiLearnParam.h"
+#include "src/core/plugins/pluginHost.h"
+#include "src/core/plugins/pluginState.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <memory>

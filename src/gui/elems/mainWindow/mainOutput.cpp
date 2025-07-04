@@ -24,18 +24,18 @@
  *
  * --------------------------------------------------------------------------- */
 
-#include "gui/elems/mainWindow/mainOutput.h"
-#include "glue/layout.h"
-#include "glue/main.h"
-#include "gui/elems/basics/dial.h"
-#include "gui/elems/basics/imageButton.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/elems/midiActivity.h"
-#include "gui/elems/soundMeter.h"
-#include "gui/graphics.h"
-#include "gui/types.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/elems/mainWindow/mainOutput.h"
+#include "src/glue/layout.h"
+#include "src/glue/main.h"
+#include "src/gui/elems/basics/dial.h"
+#include "src/gui/elems/basics/imageButton.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/elems/midiActivity.h"
+#include "src/gui/elems/soundMeter.h"
+#include "src/gui/graphics.h"
+#include "src/gui/types.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 
 extern giada::v::Ui* g_ui;
 

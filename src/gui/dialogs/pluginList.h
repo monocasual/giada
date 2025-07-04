@@ -27,8 +27,8 @@
 #ifndef GD_PLUGINLIST_H
 #define GD_PLUGINLIST_H
 
-#include "glue/plugin.h"
-#include "window.h"
+#include "src/glue/plugin.h"
+#include "src/gui/dialogs/window.h"
 
 namespace giada::v
 {

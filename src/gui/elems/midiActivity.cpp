@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/midiActivity.h"
-#include "gui/const.h"
-#include "gui/ui.h"
+#include "src/gui/elems/midiActivity.h"
+#include "src/gui/const.h"
+#include "src/gui/ui.h"
 #include <FL/fl_draw.H>
 
 extern giada::v::Ui* g_ui;

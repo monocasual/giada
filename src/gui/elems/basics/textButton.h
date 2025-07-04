@@ -30,7 +30,7 @@
 #ifndef GE_TEXT_BUTTON_H
 #define GE_TEXT_BUTTON_H
 
-#include "gui/elems/basics/button.h"
+#include "src/gui/elems/basics/button.h"
 
 namespace giada::v
 {

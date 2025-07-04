@@ -27,7 +27,7 @@
 #ifndef GE_MIDI_ACTIVITY_H
 #define GE_MIDI_ACTIVITY_H
 
-#include "gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/flex.h"
 #include <FL/Fl_Button.H>
 
 namespace giada::v

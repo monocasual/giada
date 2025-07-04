@@ -27,9 +27,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/basics/scrollbar.h"
-#include "gui/const.h"
-#include "gui/elems/basics/boxtypes.h"
+#include "src/gui/elems/basics/scrollbar.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/boxtypes.h"
 
 namespace giada::v
 {

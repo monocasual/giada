@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/config/stringMenu.h"
-#include "utils/gui.h"
+#include "src/gui/elems/config/stringMenu.h"
+#include "src/utils/gui.h"
 
 namespace giada::v
 {

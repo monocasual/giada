@@ -27,7 +27,7 @@
 #ifndef GD_BROWSER_SAVE_H
 #define GD_BROWSER_SAVE_H
 
-#include "browserBase.h"
+#include "src/gui/dialogs/browser/browserBase.h"
 
 namespace giada::v
 {

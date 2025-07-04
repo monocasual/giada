@@ -27,9 +27,9 @@
 #ifndef G_MODEL_KERNEL_AUDIO_H
 #define G_MODEL_KERNEL_AUDIO_H
 
-#include "core/resampler.h"
-#include "core/types.h"
-#include "deps/rtaudio/RtAudio.h"
+#include "src/core/resampler.h"
+#include "src/core/types.h"
+#include "src/deps/rtaudio/RtAudio.h"
 
 namespace giada::m::model
 {

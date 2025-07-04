@@ -24,15 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/actions/actionRecorder.h"
-#include "core/actions/action.h"
-#include "core/actions/actionFactory.h"
-#include "core/const.h"
-#include "core/model/actions.h"
-#include "core/model/model.h"
-#include "core/patch.h"
-#include "utils/log.h"
-#include "utils/ver.h"
+#include "src/core/actions/actionRecorder.h"
+#include "src/core/actions/action.h"
+#include "src/core/actions/actionFactory.h"
+#include "src/core/const.h"
+#include "src/core/model/actions.h"
+#include "src/core/model/model.h"
+#include "src/core/patch.h"
+#include "src/utils/log.h"
+#include "src/utils/ver.h"
 #include <algorithm>
 #include <cassert>
 #include <cmath>

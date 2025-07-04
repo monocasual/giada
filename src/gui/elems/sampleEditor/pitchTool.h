@@ -27,7 +27,7 @@
 #ifndef GE_PITCH_TOOL_H
 #define GE_PITCH_TOOL_H
 
-#include "gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/flex.h"
 
 namespace giada::c::sampleEditor
 {

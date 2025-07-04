@@ -30,7 +30,7 @@
 #ifndef GE_SCROLL_H
 #define GE_SCROLL_H
 
-#include "deps/geompp/src/rect.hpp"
+#include "src/deps/geompp/src/rect.hpp"
 #include <FL/Fl_Scroll.H>
 #include <functional>
 

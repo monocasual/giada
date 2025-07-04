@@ -27,8 +27,8 @@
 #ifndef GE_SAMPLE_ACTION_H
 #define GE_SAMPLE_ACTION_H
 
-#include "baseAction.h"
 #include "src/core/actions/action.h"
+#include "src/gui/elems/actionEditor/baseAction.h"
 
 namespace giada::v
 {

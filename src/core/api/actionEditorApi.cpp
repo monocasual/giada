@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "actionEditorApi.h"
-#include "core/actions/actionFactory.h"
-#include "core/engine.h"
-#include "core/sequencer.h"
+#include "src/core/api/actionEditorApi.h"
+#include "src/core/actions/actionFactory.h"
+#include "src/core/engine.h"
+#include "src/core/sequencer.h"
 
 namespace giada::m
 {

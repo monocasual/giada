@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "check.h"
-#include "gui/const.h"
-#include "utils/gui.h"
+#include "src/gui/elems/basics/check.h"
+#include "src/gui/const.h"
+#include "src/utils/gui.h"
 #include <FL/fl_draw.H>
 #include <cstring>
 

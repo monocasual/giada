@@ -24,18 +24,18 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/rendering/renderer.h"
-#include "core/mixer.h"
-#include "core/model/model.h"
-#include "core/rendering/midiAdvance.h"
-#include "core/rendering/midiOutput.h"
-#include "core/rendering/midiReactions.h"
-#include "core/rendering/pluginRendering.h"
-#include "core/rendering/sampleAdvance.h"
-#include "core/rendering/sampleRendering.h"
+#include "src/core/rendering/renderer.h"
+#include "src/core/mixer.h"
+#include "src/core/model/model.h"
+#include "src/core/rendering/midiAdvance.h"
+#include "src/core/rendering/midiOutput.h"
+#include "src/core/rendering/midiReactions.h"
+#include "src/core/rendering/pluginRendering.h"
+#include "src/core/rendering/sampleAdvance.h"
+#include "src/core/rendering/sampleRendering.h"
 #ifdef WITH_AUDIO_JACK
-#include "core/jackSynchronizer.h"
-#include "core/jackTransport.h"
+#include "src/core/jackSynchronizer.h"
+#include "src/core/jackTransport.h"
 #endif
 
 namespace giada::m::rendering

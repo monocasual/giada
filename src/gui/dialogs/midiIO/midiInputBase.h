@@ -27,9 +27,9 @@
 #ifndef GD_MIDI_INPUT_BASE_H
 #define GD_MIDI_INPUT_BASE_H
 
-#include "gui/dialogs/window.h"
-#include "gui/elems/midiIO/midiLearner.h"
-#include "gui/model.h"
+#include "src/gui/dialogs/window.h"
+#include "src/gui/elems/midiIO/midiLearner.h"
+#include "src/gui/model.h"
 
 namespace giada::v
 {

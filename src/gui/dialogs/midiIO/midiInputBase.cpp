@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/midiIO/midiInputBase.h"
-#include "glue/io.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/dialogs/midiIO/midiInputBase.h"
+#include "src/glue/io.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 
 extern giada::v::Ui* g_ui;
 

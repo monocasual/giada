@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/config/tabBehaviors.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/check.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/ui.h"
+#include "src/gui/elems/config/tabBehaviors.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/check.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/ui.h"
 #include <FL/Fl_Pack.H>
 
 extern giada::v::Ui* g_ui;

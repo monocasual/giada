@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/basics/box.h"
-#include "gui/const.h"
-#include "utils/gui.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/const.h"
+#include "src/utils/gui.h"
 #include <FL/fl_draw.H>
 #include <cassert>
 

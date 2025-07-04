@@ -26,7 +26,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/const.h"
+#include "src/core/const.h"
 #include <climits>
 #include <cstdlib>
 #include <filesystem>
@@ -39,9 +39,9 @@
 #ifdef G_OS_WINDOWS
 #include <shlobj.h> // SHGetKnownFolderPath
 #endif
-#include "utils/fs.h"
-#include "utils/log.h"
-#include "utils/string.h"
+#include "src/utils/fs.h"
+#include "src/utils/log.h"
+#include "src/utils/string.h"
 
 namespace stdfs = std::filesystem;
 

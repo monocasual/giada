@@ -29,8 +29,8 @@
 #ifndef G_UTILS_STRING_H
 #define G_UTILS_STRING_H
 
-#include "core/types.h"
-#include "deps/rtaudio/RtAudio.h"
+#include "src/core/types.h"
+#include "src/deps/rtaudio/RtAudio.h"
 #include <sstream>
 #include <string>
 #include <vector>

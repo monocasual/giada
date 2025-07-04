@@ -24,20 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "glue/config.h"
-#include "core/conf.h"
-#include "core/const.h"
-#include "core/engine.h"
-#include "core/kernelAudio.h"
-#include "core/kernelMidi.h"
-#include "deps/rtaudio/RtAudio.h"
-#include "gui/dialogs/browser/browserDir.h"
-#include "gui/dialogs/config.h"
-#include "gui/dialogs/warnings.h"
-#include "gui/elems/config/tabPlugins.h"
-#include "gui/ui.h"
-#include "utils/fs.h"
-#include "utils/vector.h"
+#include "src/glue/config.h"
+#include "src/core/conf.h"
+#include "src/core/const.h"
+#include "src/core/engine.h"
+#include "src/core/kernelAudio.h"
+#include "src/core/kernelMidi.h"
+#include "src/deps/rtaudio/RtAudio.h"
+#include "src/gui/dialogs/browser/browserDir.h"
+#include "src/gui/dialogs/config.h"
+#include "src/gui/dialogs/warnings.h"
+#include "src/gui/elems/config/tabPlugins.h"
+#include "src/gui/ui.h"
+#include "src/utils/fs.h"
+#include "src/utils/vector.h"
 #include <fmt/core.h>
 
 extern giada::v::Ui*     g_ui;

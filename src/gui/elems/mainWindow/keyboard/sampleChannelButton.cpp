@@ -24,14 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "sampleChannelButton.h"
-#include "glue/channel.h"
-#include "gui/dialogs/mainWindow.h"
-#include "gui/ui.h"
-#include "keyboard.h"
-#include "sampleChannel.h"
-#include "utils/fs.h"
-#include "utils/string.h"
+#include "src/gui/elems/mainWindow/keyboard/sampleChannelButton.h"
+#include "src/glue/channel.h"
+#include "src/gui/dialogs/mainWindow.h"
+#include "src/gui/elems/mainWindow/keyboard/keyboard.h"
+#include "src/gui/elems/mainWindow/keyboard/sampleChannel.h"
+#include "src/gui/ui.h"
+#include "src/utils/fs.h"
+#include "src/utils/string.h"
 #include <FL/Fl.H>
 
 extern giada::v::Ui* g_ui;

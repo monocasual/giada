@@ -27,9 +27,9 @@
 #ifndef GD_BASE_ACTION_EDITOR_H
 #define GD_BASE_ACTION_EDITOR_H
 
-#include "glue/actionEditor.h"
-#include "gui/dialogs/window.h"
-#include "gui/model.h"
+#include "src/glue/actionEditor.h"
+#include "src/gui/dialogs/window.h"
+#include "src/gui/model.h"
 #include <functional>
 
 namespace giada::m

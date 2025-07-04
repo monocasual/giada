@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/model/sharedLock.h"
-#include "core/model/model.h"
+#include "src/core/model/sharedLock.h"
+#include "src/core/model/model.h"
 
 namespace giada::m::model
 {

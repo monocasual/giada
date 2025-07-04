@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "tabMisc.h"
-#include "glue/config.h"
-#include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/config/stringMenu.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/elems/config/tabMisc.h"
+#include "src/glue/config.h"
+#include "src/gui/elems/basics/choice.h"
+#include "src/gui/elems/basics/input.h"
+#include "src/gui/elems/config/stringMenu.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 #include <fmt/core.h>
 
 constexpr int LABEL_WIDTH = 120;

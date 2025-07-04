@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "soundMeter.h"
-#include "core/const.h"
-#include "gui/const.h"
-#include "gui/drawing.h"
-#include "utils/math.h"
+#include "src/gui/elems/soundMeter.h"
+#include "src/core/const.h"
+#include "src/gui/const.h"
+#include "src/gui/drawing.h"
+#include "src/utils/math.h"
 #include <FL/fl_draw.H>
 #include <algorithm>
 #include <cmath>

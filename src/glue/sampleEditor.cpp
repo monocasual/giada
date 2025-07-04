@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/sampleEditor.h"
-#include "core/engine.h"
-#include "gui/dialogs/warnings.h"
-#include "gui/ui.h"
+#include "src/gui/dialogs/sampleEditor.h"
+#include "src/core/engine.h"
+#include "src/gui/dialogs/warnings.h"
+#include "src/gui/ui.h"
 
 extern giada::v::Ui*     g_ui;
 extern giada::m::Engine* g_engine;

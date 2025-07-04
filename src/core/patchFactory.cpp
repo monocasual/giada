@@ -24,12 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/patchFactory.h"
-#include "core/const.h"
-#include "core/mixer.h"
-#include "gui/const.h"
-#include "utils/fs.h"
-#include "utils/log.h"
+#include "src/core/patchFactory.h"
+#include "src/core/const.h"
+#include "src/core/mixer.h"
+#include "src/gui/const.h"
+#include "src/utils/fs.h"
+#include "src/utils/log.h"
 #include <fstream>
 #include <nlohmann/json.hpp>
 

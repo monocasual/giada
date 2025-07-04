@@ -27,7 +27,7 @@
 #ifndef GD_MISSING_ASSETS_H
 #define GD_MISSING_ASSETS_H
 
-#include "gui/dialogs/window.h"
+#include "src/gui/dialogs/window.h"
 
 namespace giada::m::model
 {

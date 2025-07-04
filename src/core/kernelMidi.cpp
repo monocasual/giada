@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/kernelMidi.h"
-#include "core/const.h"
-#include "core/midiEvent.h"
-#include "core/model/kernelAudio.h"
-#include "utils/log.h"
+#include "src/core/kernelMidi.h"
+#include "src/core/const.h"
+#include "src/core/midiEvent.h"
+#include "src/core/model/kernelAudio.h"
+#include "src/utils/log.h"
 #include <algorithm>
 #include <cassert>
 #include <chrono>

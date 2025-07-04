@@ -24,12 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "pluginWindow.h"
-#include "glue/plugin.h"
-#include "gui/const.h"
-#include "gui/elems/basics/liquidScroll.h"
-#include "gui/elems/plugin/pluginParameter.h"
-#include "utils/gui.h"
+#include "src/gui/dialogs/pluginWindow.h"
+#include "src/glue/plugin.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/liquidScroll.h"
+#include "src/gui/elems/plugin/pluginParameter.h"
+#include "src/utils/gui.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v

@@ -25,13 +25,13 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/volumeTool.h"
-#include "glue/channel.h"
-#include "gui/elems/basics/dial.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/ui.h"
-#include "utils/math.h"
-#include "utils/string.h"
+#include "src/glue/channel.h"
+#include "src/gui/elems/basics/dial.h"
+#include "src/gui/elems/basics/input.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/ui.h"
+#include "src/utils/math.h"
+#include "src/utils/string.h"
 #include <fmt/core.h>
 
 extern giada::v::Ui* g_ui;

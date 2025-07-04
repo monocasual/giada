@@ -29,8 +29,8 @@
 #ifndef G_UTILS_LOG_H
 #define G_UTILS_LOG_H
 
-#include "core/const.h"
-#include "utils/fs.h"
+#include "src/core/const.h"
+#include "src/utils/fs.h"
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 #include <fstream>

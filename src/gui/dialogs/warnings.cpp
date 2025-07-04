@@ -24,12 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "warnings.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
-#include "window.h"
+#include "src/gui/dialogs/warnings.h"
+#include "src/gui/dialogs/window.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 

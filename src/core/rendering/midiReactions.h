@@ -27,9 +27,9 @@
 #ifndef G_RENDERING_MIDI_REACTIONS_H
 #define G_RENDERING_MIDI_REACTIONS_H
 
-#include "core/midiEvent.h"
-#include "core/midiMapper.h"
-#include "core/weakAtomic.h"
+#include "src/core/midiEvent.h"
+#include "src/core/midiMapper.h"
+#include "src/core/weakAtomic.h"
 
 namespace giada::m
 {

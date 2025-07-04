@@ -27,7 +27,7 @@
 #ifndef GE_KEY_BINDER_H
 #define GE_KEY_BINDER_H
 
-#include "gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/flex.h"
 #include <functional>
 #include <string>
 

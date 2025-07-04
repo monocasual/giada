@@ -27,7 +27,7 @@
 #ifndef GE_GROUP_CHANNEL_BUTTON_H
 #define GE_GROUP_CHANNEL_BUTTON_H
 
-#include "gui/elems/mainWindow/keyboard/channelButton.h"
+#include "src/gui/elems/mainWindow/keyboard/channelButton.h"
 
 namespace giada::v
 {

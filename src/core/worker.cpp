@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "worker.h"
-#include "utils/time.h"
+#include "src/core/worker.h"
+#include "src/utils/time.h"
 
 namespace giada
 {

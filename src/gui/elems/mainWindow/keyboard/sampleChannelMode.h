@@ -29,7 +29,7 @@
 #ifndef GE_SAMPLE_CHANNEL_MODE_H
 #define GE_SAMPLE_CHANNEL_MODE_H
 
-#include "gui/elems/basics/imageButton.h"
+#include "src/gui/elems/basics/imageButton.h"
 
 namespace giada
 {

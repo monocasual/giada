@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/mainWindow/keyboard/groupChannelButton.h"
-#include "glue/channel.h"
-#include "gui/ui.h"
+#include "src/gui/elems/mainWindow/keyboard/groupChannelButton.h"
+#include "src/glue/channel.h"
+#include "src/gui/ui.h"
 #include <string>
 
 extern giada::v::Ui* g_ui;

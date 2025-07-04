@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/channels/midiChannel.h"
+#include "src/core/channels/midiChannel.h"
 
 namespace giada::m
 {

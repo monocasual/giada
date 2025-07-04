@@ -27,7 +27,7 @@
 #ifndef GE_MIDI_LEARNER_H
 #define GE_MIDI_LEARNER_H
 
-#include "gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/flex.h"
 #include <cstdint>
 #include <functional>
 #include <string>

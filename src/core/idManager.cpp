@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "idManager.h"
+#include "src/core/idManager.h"
 
 namespace giada::m
 {

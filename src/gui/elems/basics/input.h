@@ -27,8 +27,8 @@
 #ifndef GE_INPUT_H
 #define GE_INPUT_H
 
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/flex.h"
 #include <FL/Fl_Input.H>
 #include <functional>
 #include <string>

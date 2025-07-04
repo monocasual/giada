@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/midiIO/midiLearner.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/boxtypes.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/ui.h"
+#include "src/gui/elems/midiIO/midiLearner.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/boxtypes.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/ui.h"
 #include <cassert>
 #include <fmt/core.h>
 

@@ -27,7 +27,7 @@
 #ifndef GE_BUTTON_H
 #define GE_BUTTON_H
 
-#include "deps/geompp/src/rect.hpp"
+#include "src/deps/geompp/src/rect.hpp"
 #include <FL/Fl_Button.H>
 #include <functional>
 

@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "midiChannelButton.h"
-#include "glue/channel.h"
+#include "src/gui/elems/mainWindow/keyboard/midiChannelButton.h"
+#include "src/glue/channel.h"
 #include <fmt/core.h>
 
 namespace giada::v

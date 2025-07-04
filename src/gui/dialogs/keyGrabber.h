@@ -27,7 +27,7 @@
 #ifndef GD_KEYGRABBER_H
 #define GD_KEYGRABBER_H
 
-#include "window.h"
+#include "src/gui/dialogs/window.h"
 #include <FL/Fl.H>
 #include <functional>
 

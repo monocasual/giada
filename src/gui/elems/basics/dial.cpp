@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/basics/dial.h"
-#include "gui/const.h"
+#include "src/gui/elems/basics/dial.h"
+#include "src/gui/const.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v

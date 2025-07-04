@@ -24,14 +24,14 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/dialogs/bpmInput.h"
-#include "glue/main.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
-#include "utils/string.h"
+#include "src/gui/dialogs/bpmInput.h"
+#include "src/glue/main.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/input.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
+#include "src/utils/string.h"
 #include <cstring>
 #include <fmt/core.h>
 

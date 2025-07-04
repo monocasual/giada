@@ -29,9 +29,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "liquidScroll.h"
-#include "boxtypes.h"
-#include "gui/const.h"
+#include "src/gui/elems/basics/liquidScroll.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/boxtypes.h"
 
 namespace giada::v
 {

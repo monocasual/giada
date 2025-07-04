@@ -27,7 +27,7 @@
 #ifndef G_MIDI_LEARN_PARAM_H
 #define G_MIDI_LEARN_PARAM_H
 
-#include "core/weakAtomic.h"
+#include "src/core/weakAtomic.h"
 #include <atomic>
 #include <cstddef>
 

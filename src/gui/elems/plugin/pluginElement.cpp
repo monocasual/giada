@@ -24,19 +24,19 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/plugin/pluginElement.h"
-#include "gui/dialogs/mainWindow.h"
-#include "gui/dialogs/pluginList.h"
-#include "gui/dialogs/pluginWindow.h"
-#include "gui/dialogs/pluginWindowGUI.h"
-#include "gui/elems/basics/choice.h"
-#include "gui/elems/basics/imageButton.h"
-#include "gui/elems/basics/pack.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/graphics.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
-#include "utils/log.h"
+#include "src/gui/elems/plugin/pluginElement.h"
+#include "src/gui/dialogs/mainWindow.h"
+#include "src/gui/dialogs/pluginList.h"
+#include "src/gui/dialogs/pluginWindow.h"
+#include "src/gui/dialogs/pluginWindowGUI.h"
+#include "src/gui/elems/basics/choice.h"
+#include "src/gui/elems/basics/imageButton.h"
+#include "src/gui/elems/basics/pack.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/graphics.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
+#include "src/utils/log.h"
 #include <cassert>
 #include <string>
 

@@ -27,10 +27,10 @@
 #ifndef G_KERNELMIDI_H
 #define G_KERNELMIDI_H
 
-#include "core/model/model.h"
-#include "core/worker.h"
-#include "deps/concurrentqueue/concurrentqueue.h"
-#include "midiMapper.h"
+#include "src/core/midiMapper.h"
+#include "src/core/model/model.h"
+#include "src/core/worker.h"
+#include "src/deps/concurrentqueue/concurrentqueue.h"
 #include <RtMidi.h>
 #include <concepts>
 #include <cstdint>

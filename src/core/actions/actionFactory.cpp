@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/actions/actionFactory.h"
-#include "core/midiEvent.h"
+#include "src/core/actions/actionFactory.h"
+#include "src/core/midiEvent.h"
 #include <cassert>
 
 namespace giada::m::actionFactory

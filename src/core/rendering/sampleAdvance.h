@@ -27,8 +27,8 @@
 #ifndef G_RENDERING_SAMPLE_ADVANCE_H
 #define G_RENDERING_SAMPLE_ADVANCE_H
 
-#include "core/sequencer.h"
-#include "core/types.h"
+#include "src/core/sequencer.h"
+#include "src/core/types.h"
 
 namespace giada::m
 {

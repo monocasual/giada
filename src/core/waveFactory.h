@@ -27,11 +27,11 @@
 #ifndef G_WAVE_FACTORY_H
 #define G_WAVE_FACTORY_H
 
-#include "core/idManager.h"
-#include "core/patch.h"
-#include "core/resampler.h"
-#include "core/types.h"
-#include "core/wave.h"
+#include "src/core/idManager.h"
+#include "src/core/patch.h"
+#include "src/core/resampler.h"
+#include "src/core/types.h"
+#include "src/core/wave.h"
 #include <memory>
 #include <string>
 

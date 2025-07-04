@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "baseAction.h"
+#include "src/gui/elems/actionEditor/baseAction.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 

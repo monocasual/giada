@@ -29,9 +29,9 @@
 #ifndef GE_SEQUENCER_H
 #define GE_SEQUENCER_H
 
-#include "deps/geompp/src/rect.hpp"
-#include "glue/main.h"
-#include "gui/elems/basics/box.h"
+#include "src/deps/geompp/src/rect.hpp"
+#include "src/glue/main.h"
+#include "src/gui/elems/basics/box.h"
 
 namespace giada::v
 {

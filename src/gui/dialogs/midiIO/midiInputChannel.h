@@ -29,9 +29,9 @@
 #ifndef GD_MIDI_INPUT_CHANNEL_H
 #define GD_MIDI_INPUT_CHANNEL_H
 
-#include "glue/io.h"
-#include "gui/elems/midiIO/midiLearnerPack.h"
-#include "midiInputBase.h"
+#include "src/glue/io.h"
+#include "src/gui/dialogs/midiIO/midiInputBase.h"
+#include "src/gui/elems/midiIO/midiLearnerPack.h"
 
 namespace giada::v
 {

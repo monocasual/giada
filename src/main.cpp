@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/engine.h"
-#include "gui/ui.h"
+#include "src/core/engine.h"
+#include "src/gui/ui.h"
 
 giada::m::Engine* g_engine = nullptr;
 giada::v::Ui*     g_ui     = nullptr;

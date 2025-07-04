@@ -29,7 +29,7 @@
 #ifndef GD_MIDI_OUTPUT_MIDI_CH_H
 #define GD_MIDI_OUTPUT_MIDI_CH_H
 
-#include "midiOutputBase.h"
+#include "src/gui/dialogs/midiIO/midiOutputBase.h"
 
 namespace giada::v
 {

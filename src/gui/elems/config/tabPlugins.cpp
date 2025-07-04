@@ -24,20 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "tabPlugins.h"
-#include "glue/layout.h"
-#include "glue/plugin.h"
-#include "gui/dialogs/window.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/check.h"
-#include "gui/elems/basics/flex.h"
-#include "gui/elems/basics/imageButton.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/graphics.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
-#include "utils/string.h"
+#include "src/gui/elems/config/tabPlugins.h"
+#include "src/glue/layout.h"
+#include "src/glue/plugin.h"
+#include "src/gui/dialogs/window.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/check.h"
+#include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/imageButton.h"
+#include "src/gui/elems/basics/input.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/graphics.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
+#include "src/utils/string.h"
 #include <FL/Fl.H>
 #include <fmt/core.h>
 #include <functional>

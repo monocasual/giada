@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/actionEditor/legend.h"
-#include "gui/const.h"
-#include "gui/drawing.h"
+#include "src/gui/elems/actionEditor/legend.h"
+#include "src/gui/const.h"
+#include "src/gui/drawing.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v

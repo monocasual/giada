@@ -27,7 +27,7 @@
 #ifndef G_V_UPDATER_H
 #define G_V_UPDATER_H
 
-#include "deps/concurrentqueue/concurrentqueue.h"
+#include "src/deps/concurrentqueue/concurrentqueue.h"
 #include <FL/Fl.H>
 #include <functional>
 

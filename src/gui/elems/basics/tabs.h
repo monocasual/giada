@@ -27,7 +27,7 @@
 #ifndef GE_TABS_H
 #define GE_TABS_H
 
-#include "deps/geompp/src/rect.hpp"
+#include "src/deps/geompp/src/rect.hpp"
 #include <FL/Fl_Tabs.H>
 
 namespace giada::v

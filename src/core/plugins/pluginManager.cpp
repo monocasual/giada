@@ -24,15 +24,15 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/plugins/pluginManager.h"
-#include "core/const.h"
-#include "core/model/model.h"
-#include "core/patch.h"
-#include "core/plugins/plugin.h"
-#include "core/plugins/pluginFactory.h"
-#include "utils/fs.h"
-#include "utils/log.h"
-#include "utils/string.h"
+#include "src/core/plugins/pluginManager.h"
+#include "src/core/const.h"
+#include "src/core/model/model.h"
+#include "src/core/patch.h"
+#include "src/core/plugins/plugin.h"
+#include "src/core/plugins/pluginFactory.h"
+#include "src/utils/fs.h"
+#include "src/utils/log.h"
+#include "src/utils/string.h"
 #include <cassert>
 #include <cstddef>
 #include <memory>

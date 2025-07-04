@@ -27,8 +27,8 @@
 #ifndef G_GLUE_ACTION_EDITOR_H
 #define G_GLUE_ACTION_EDITOR_H
 
-#include "core/actions/action.h"
-#include "core/types.h"
+#include "src/core/actions/action.h"
+#include "src/core/types.h"
 #include <optional>
 #include <string>
 #include <vector>

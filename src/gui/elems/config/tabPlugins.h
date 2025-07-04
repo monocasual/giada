@@ -27,8 +27,8 @@
 #ifndef GE_TAB_PLUGINS_H
 #define GE_TAB_PLUGINS_H
 
-#include "deps/geompp/src/rect.hpp"
-#include "glue/config.h"
+#include "src/deps/geompp/src/rect.hpp"
+#include "src/glue/config.h"
 #include <FL/Fl_Group.H>
 
 namespace giada::v

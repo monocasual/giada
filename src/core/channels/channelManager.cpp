@@ -24,18 +24,18 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/channels/channelManager.h"
-#include "core/channels/channel.h"
-#include "core/channels/channelFactory.h"
-#include "core/midiEvent.h"
-#include "core/mixer.h"
-#include "core/model/model.h"
-#include "core/rendering/midiOutput.h"
-#include "core/rendering/midiReactions.h"
-#include "core/rendering/sampleReactions.h"
-#include "core/waveFactory.h"
-#include "deps/mcl-audio-buffer/src/audioBuffer.hpp"
-#include "utils/log.h"
+#include "src/core/channels/channelManager.h"
+#include "src/core/channels/channel.h"
+#include "src/core/channels/channelFactory.h"
+#include "src/core/midiEvent.h"
+#include "src/core/mixer.h"
+#include "src/core/model/model.h"
+#include "src/core/rendering/midiOutput.h"
+#include "src/core/rendering/midiReactions.h"
+#include "src/core/rendering/sampleReactions.h"
+#include "src/core/waveFactory.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/utils/log.h"
 
 namespace giada::m
 {

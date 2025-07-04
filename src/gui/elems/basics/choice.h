@@ -27,9 +27,9 @@
 #ifndef GE_CHOICE_H
 #define GE_CHOICE_H
 
-#include "core/types.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/flex.h"
+#include "src/core/types.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/flex.h"
 #include <FL/Fl_Choice.H>
 #include <functional>
 #include <string>

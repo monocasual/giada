@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/resampler.h"
+#include "src/core/resampler.h"
 #include <algorithm>
 #include <cassert>
 #include <new>

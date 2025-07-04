@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "scrollPack.h"
-#include "boxtypes.h"
+#include "src/gui/elems/basics/scrollPack.h"
+#include "src/gui/elems/basics/boxtypes.h"
 #include <cassert>
 #include <cstddef>
 

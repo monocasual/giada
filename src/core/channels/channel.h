@@ -27,12 +27,12 @@
 #ifndef G_CHANNEL_H
 #define G_CHANNEL_H
 
-#include "core/channels/channelShared.h"
-#include "core/channels/midiChannel.h"
-#include "core/channels/midiInput.h"
-#include "core/channels/midiLightning.h"
-#include "core/channels/sampleChannel.h"
-#include "core/patch.h"
+#include "src/core/channels/channelShared.h"
+#include "src/core/channels/midiChannel.h"
+#include "src/core/channels/midiInput.h"
+#include "src/core/channels/midiLightning.h"
+#include "src/core/channels/sampleChannel.h"
+#include "src/core/patch.h"
 #include <optional>
 
 namespace giada::m

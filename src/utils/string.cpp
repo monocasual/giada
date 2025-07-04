@@ -26,7 +26,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "utils/string.h"
+#include "src/utils/string.h"
 #include <climits>
 #include <cstdarg>
 #include <cstddef>

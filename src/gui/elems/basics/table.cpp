@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/basics/table.h"
-#include "gui/const.h"
-#include "gui/drawing.h"
-#include "gui/elems/basics/boxtypes.h"
+#include "src/gui/elems/basics/table.h"
+#include "src/gui/const.h"
+#include "src/gui/drawing.h"
+#include "src/gui/elems/basics/boxtypes.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 

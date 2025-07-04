@@ -27,8 +27,8 @@
 #ifndef GE_CONFIG_TAB_BINDINGS_H
 #define GE_CONFIG_TAB_BINDINGS_H
 
-#include "deps/geompp/src/rect.hpp"
-#include "gui/model.h"
+#include "src/deps/geompp/src/rect.hpp"
+#include "src/gui/model.h"
 #include <FL/Fl_Group.H>
 
 namespace giada::v

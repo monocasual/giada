@@ -27,7 +27,7 @@
 #ifndef G_RECORDER_H
 #define G_RECORDER_H
 
-#include "core/types.h"
+#include "src/core/types.h"
 
 namespace giada::m
 {

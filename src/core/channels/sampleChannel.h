@@ -27,7 +27,7 @@
 #ifndef G_SAMPLE_CHANNEL_H
 #define G_SAMPLE_CHANNEL_H
 
-#include "core/patch.h"
+#include "src/core/patch.h"
 
 namespace giada::m
 {

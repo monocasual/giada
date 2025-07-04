@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/basics/menu.h"
-#include "gui/const.h"
-#include "gui/elems/basics/boxtypes.h"
-#include "utils/gui.h"
+#include "src/gui/elems/basics/menu.h"
+#include "src/gui/const.h"
+#include "src/gui/elems/basics/boxtypes.h"
+#include "src/utils/gui.h"
 #include <FL/Fl.H>
 #include <cstdint>
 #include <cstdio>

@@ -27,8 +27,8 @@
 #ifndef G_MIDI_SYNCHRONIZER_H
 #define G_MIDI_SYNCHRONIZER_H
 
-#include "core/types.h"
-#include "core/worker.h"
+#include "src/core/types.h"
+#include "src/core/worker.h"
 
 namespace giada::m
 {

@@ -25,18 +25,18 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/sampleEditor/pitchTool.h"
-#include "glue/channel.h"
-#include "gui/dialogs/sampleEditor.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/dial.h"
-#include "gui/elems/basics/imageButton.h"
-#include "gui/elems/basics/input.h"
-#include "gui/elems/basics/textButton.h"
-#include "gui/graphics.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
-#include "utils/string.h"
+#include "src/gui/elems/sampleEditor/pitchTool.h"
+#include "src/glue/channel.h"
+#include "src/gui/dialogs/sampleEditor.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/dial.h"
+#include "src/gui/elems/basics/imageButton.h"
+#include "src/gui/elems/basics/input.h"
+#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/graphics.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
+#include "src/utils/string.h"
 #include <fmt/core.h>
 
 extern giada::v::Ui* g_ui;

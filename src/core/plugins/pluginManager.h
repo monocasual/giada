@@ -27,8 +27,8 @@
 #ifndef G_PLUGIN_MANAGER_H
 #define G_PLUGIN_MANAGER_H
 
-#include "core/patch.h"
-#include "plugin.h"
+#include "src/core/patch.h"
+#include "src/core/plugins/plugin.h"
 #include <memory>
 
 namespace giada::m::patch

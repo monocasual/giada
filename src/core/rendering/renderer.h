@@ -27,7 +27,7 @@
 #ifndef G_RENDERER_H
 #define G_RENDERER_H
 
-#include "core/sequencer.h"
+#include "src/core/sequencer.h"
 #include <vector>
 
 namespace mcl

@@ -27,9 +27,9 @@
 #ifndef G_MODEL_ACTIONS_H
 #define G_MODEL_ACTIONS_H
 
-#include "core/actions/action.h"
-#include "core/midiEvent.h"
-#include "core/types.h"
+#include "src/core/actions/action.h"
+#include "src/core/midiEvent.h"
+#include "src/core/types.h"
 #include <functional>
 #include <map>
 #include <memory>

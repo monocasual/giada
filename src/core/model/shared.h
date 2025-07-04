@@ -27,12 +27,12 @@
 #ifndef G_MODEL_SHARED_H
 #define G_MODEL_SHARED_H
 
-#include "core/model/channels.h"
-#include "core/model/loadState.h"
-#include "core/model/mixer.h"
-#include "core/model/sequencer.h"
-#include "core/plugins/plugin.h"
-#include "core/wave.h"
+#include "src/core/model/channels.h"
+#include "src/core/model/loadState.h"
+#include "src/core/model/mixer.h"
+#include "src/core/model/sequencer.h"
+#include "src/core/plugins/plugin.h"
+#include "src/core/wave.h"
 
 namespace giada::m
 {

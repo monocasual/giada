@@ -27,7 +27,7 @@
 #ifndef GE_MENU_H
 #define GE_MENU_H
 
-#include "core/types.h"
+#include "src/core/types.h"
 #include <FL/Fl_Menu_.H>
 #include <FL/Fl_Menu_Button.H>
 #include <functional>

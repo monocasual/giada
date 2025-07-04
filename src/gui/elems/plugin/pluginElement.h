@@ -27,9 +27,9 @@
 #ifndef GE_PLUGIN_ELEMENT_H
 #define GE_PLUGIN_ELEMENT_H
 
-#include "glue/plugin.h"
+#include "src/glue/plugin.h"
 
-#include "gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/flex.h"
 
 namespace giada::v
 {

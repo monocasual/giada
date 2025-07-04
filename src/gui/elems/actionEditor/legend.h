@@ -27,7 +27,7 @@
 #ifndef GE_LEGEND_H
 #define GE_LEGEND_H
 
-#include "gui/elems/basics/box.h"
+#include "src/gui/elems/basics/box.h"
 
 namespace giada::v
 {

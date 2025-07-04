@@ -27,8 +27,8 @@
 #ifndef G_MODEL_TYPES_H
 #define G_MODEL_TYPES_H
 
-#include "core/model/document.h"
-#include "deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
+#include "src/core/model/document.h"
+#include "src/deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
 
 namespace giada::m::model
 {

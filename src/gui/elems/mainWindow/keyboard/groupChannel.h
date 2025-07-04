@@ -27,8 +27,8 @@
 #ifndef GE_GROUP_CHANNEL_H
 #define GE_GROUP_CHANNEL_H
 
-#include "channel.h"
-#include "glue/channel.h"
+#include "src/glue/channel.h"
+#include "src/gui/elems/mainWindow/keyboard/channel.h"
 
 namespace giada::v
 {

@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "core/channels/channel.h"
-#include "gui/const.h"
+#include "src/core/channels/channel.h"
+#include "src/gui/const.h"
 #include <cassert>
 #ifdef G_DEBUG_MODE
-#include "utils/string.h"
+#include "src/utils/string.h"
 #include <fmt/core.h>
 #endif
 

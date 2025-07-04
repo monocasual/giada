@@ -27,9 +27,9 @@
 #ifndef GE_TRACK_H
 #define GE_TRACK_H
 
-#include "core/types.h"
-#include "glue/channel.h"
-#include "gui/elems/basics/flexResizable.h"
+#include "src/core/types.h"
+#include "src/glue/channel.h"
+#include "src/gui/elems/basics/flexResizable.h"
 #include <functional>
 
 namespace giada::v

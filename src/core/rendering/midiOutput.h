@@ -27,9 +27,9 @@
 #ifndef G_RENDERING_MIDI_OUTPUT_H
 #define G_RENDERING_MIDI_OUTPUT_H
 
-#include "core/channels/channelShared.h"
-#include "core/midiEvent.h"
-#include "core/midiMapper.h"
+#include "src/core/channels/channelShared.h"
+#include "src/core/midiEvent.h"
+#include "src/core/midiMapper.h"
 
 namespace giada::m
 {

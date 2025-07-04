@@ -24,18 +24,18 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/mainWindow/keyboard/track.h"
-#include "deps/geompp/src/range.hpp"
-#include "glue/channel.h"
-#include "gui/elems/basics/menu.h"
-#include "gui/elems/basics/resizerBar.h"
-#include "gui/elems/mainWindow/keyboard/groupChannel.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/keyboard/midiChannel.h"
-#include "gui/elems/mainWindow/keyboard/sampleChannel.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
-#include "utils/log.h"
+#include "src/gui/elems/mainWindow/keyboard/track.h"
+#include "src/deps/geompp/src/range.hpp"
+#include "src/glue/channel.h"
+#include "src/gui/elems/basics/menu.h"
+#include "src/gui/elems/basics/resizerBar.h"
+#include "src/gui/elems/mainWindow/keyboard/groupChannel.h"
+#include "src/gui/elems/mainWindow/keyboard/keyboard.h"
+#include "src/gui/elems/mainWindow/keyboard/midiChannel.h"
+#include "src/gui/elems/mainWindow/keyboard/sampleChannel.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
+#include "src/utils/log.h"
 #include <cassert>
 
 extern giada::v::Ui* g_ui;

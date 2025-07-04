@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/model.h"
-#include "core/patch.h"
-#include "utils/vector.h"
+#include "src/gui/model.h"
+#include "src/core/patch.h"
+#include "src/utils/vector.h"
 
 namespace giada::v
 {

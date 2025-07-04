@@ -27,7 +27,7 @@
 #ifndef G_MODEL_LOADSTATE_H
 #define G_MODEL_LOADSTATE_H
 
-#include "core/patch.h"
+#include "src/core/patch.h"
 
 namespace giada::m::model
 {

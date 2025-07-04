@@ -27,9 +27,9 @@
 #ifndef GD_BROWSER_BASE_H
 #define GD_BROWSER_BASE_H
 
-#include "core/types.h"
-#include "gui/dialogs/window.h"
-#include "gui/model.h"
+#include "src/core/types.h"
+#include "src/gui/dialogs/window.h"
+#include "src/gui/model.h"
 #include <functional>
 #include <string>
 

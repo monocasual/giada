@@ -27,8 +27,8 @@
 #ifndef GE_GRID_TOOL_H
 #define GE_GRID_TOOL_H
 
-#include "core/types.h"
-#include "gui/model.h"
+#include "src/core/types.h"
+#include "src/gui/model.h"
 #include <FL/Fl_Group.H>
 
 namespace giada::v

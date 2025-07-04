@@ -24,21 +24,21 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/mainWindow/keyboard/groupChannel.h"
-#include "glue/channel.h"
-#include "glue/layout.h"
-#include "glue/main.h"
-#include "gui/dispatcher.h"
-#include "gui/elems/basics/dial.h"
-#include "gui/elems/basics/imageButton.h"
-#include "gui/elems/basics/menu.h"
-#include "gui/elems/mainWindow/keyboard/channelProgress.h"
-#include "gui/elems/mainWindow/keyboard/groupChannelButton.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/keyboard/track.h"
-#include "gui/elems/midiActivity.h"
-#include "gui/graphics.h"
-#include "gui/ui.h"
+#include "src/gui/elems/mainWindow/keyboard/groupChannel.h"
+#include "src/glue/channel.h"
+#include "src/glue/layout.h"
+#include "src/glue/main.h"
+#include "src/gui/dispatcher.h"
+#include "src/gui/elems/basics/dial.h"
+#include "src/gui/elems/basics/imageButton.h"
+#include "src/gui/elems/basics/menu.h"
+#include "src/gui/elems/mainWindow/keyboard/channelProgress.h"
+#include "src/gui/elems/mainWindow/keyboard/groupChannelButton.h"
+#include "src/gui/elems/mainWindow/keyboard/keyboard.h"
+#include "src/gui/elems/mainWindow/keyboard/track.h"
+#include "src/gui/elems/midiActivity.h"
+#include "src/gui/graphics.h"
+#include "src/gui/ui.h"
 
 extern giada::v::Ui* g_ui;
 

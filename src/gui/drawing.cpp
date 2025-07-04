@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "drawing.h"
-#include "utils/gui.h"
+#include "src/gui/drawing.h"
+#include "src/utils/gui.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Image_Surface.H>
 #include <cassert>

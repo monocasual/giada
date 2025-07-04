@@ -27,8 +27,8 @@
 #ifndef G_UTILS_GUI_H
 #define G_UTILS_GUI_H
 
-#include "core/types.h"
-#include "deps/geompp/src/rect.hpp"
+#include "src/core/types.h"
+#include "src/deps/geompp/src/rect.hpp"
 #include <FL/Fl_Menu_Item.H>
 #include <string>
 

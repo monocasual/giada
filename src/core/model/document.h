@@ -27,15 +27,15 @@
 #ifndef G_MODEL_DOCUMENT_H
 #define G_MODEL_DOCUMENT_H
 
-#include "core/model/actions.h"
-#include "core/model/behaviors.h"
-#include "core/model/channels.h"
-#include "core/model/kernelAudio.h"
-#include "core/model/kernelMidi.h"
-#include "core/model/midiIn.h"
-#include "core/model/mixer.h"
-#include "core/model/sequencer.h"
-#include "core/model/tracks.h"
+#include "src/core/model/actions.h"
+#include "src/core/model/behaviors.h"
+#include "src/core/model/channels.h"
+#include "src/core/model/kernelAudio.h"
+#include "src/core/model/kernelMidi.h"
+#include "src/core/model/midiIn.h"
+#include "src/core/model/mixer.h"
+#include "src/core/model/sequencer.h"
+#include "src/core/model/tracks.h"
 
 namespace giada::m
 {

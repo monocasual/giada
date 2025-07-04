@@ -27,7 +27,7 @@
 #ifndef G_RENDERING_SAMPLE_RENDERING_H
 #define G_RENDERING_SAMPLE_RENDERING_H
 
-#include "core/types.h"
+#include "src/core/types.h"
 #include <functional>
 
 namespace mcl

@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/config/tabBindings.h"
-#include "gui/elems/basics/liquidScroll.h"
-#include "gui/elems/keyBinder.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/elems/config/tabBindings.h"
+#include "src/gui/elems/basics/liquidScroll.h"
+#include "src/gui/elems/keyBinder.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 
 extern giada::v::Ui* g_ui;
 

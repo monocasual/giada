@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "sampleAction.h"
-#include "gui/const.h"
+#include "src/gui/elems/actionEditor/sampleAction.h"
 #include "src/core/actions/action.h"
+#include "src/gui/const.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v

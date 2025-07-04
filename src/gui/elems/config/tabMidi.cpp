@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/config/tabMidi.h"
-#include "gui/elems/basics/box.h"
-#include "gui/elems/basics/check.h"
-#include "gui/elems/basics/choice.h"
-#include "gui/elems/config/stringMenu.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/elems/config/tabMidi.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/check.h"
+#include "src/gui/elems/basics/choice.h"
+#include "src/gui/elems/config/stringMenu.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 #include <string>
 
 extern giada::v::Ui* g_ui;

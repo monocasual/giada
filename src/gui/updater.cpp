@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/updater.h"
-#include "gui/ui.h"
-#include "utils/gui.h"
+#include "src/gui/updater.h"
+#include "src/gui/ui.h"
+#include "src/utils/gui.h"
 
 namespace giada::v
 {

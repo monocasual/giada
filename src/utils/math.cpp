@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "math.h"
+#include "src/utils/math.h"
 #include <cmath>
 
 namespace giada

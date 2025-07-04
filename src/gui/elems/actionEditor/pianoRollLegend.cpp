@@ -24,10 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "gui/elems/actionEditor/pianoRollLegend.h"
-#include "gui/const.h"
-#include "gui/drawing.h"
-#include "gui/elems/actionEditor/pianoRoll.h"
+#include "src/gui/elems/actionEditor/pianoRollLegend.h"
+#include "src/gui/const.h"
+#include "src/gui/drawing.h"
+#include "src/gui/elems/actionEditor/pianoRoll.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v
