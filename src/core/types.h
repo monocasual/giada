@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_TYPES_H
-#define G_TYPES_H
+#ifndef G_CORE_TYPES_H
+#define G_CORE_TYPES_H
 
 namespace giada
 {
