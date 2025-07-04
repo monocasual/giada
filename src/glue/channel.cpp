@@ -170,13 +170,17 @@ std::vector<Track> getTracks()
 
 RoutingData getRoutingData(ID channelId)
 {
-	const m::Channel& channel = g_engine->getChannelsApi().get(channelId);
+	const m::Channel&             channel   = g_engine->getChannelsApi().get(channelId);
+	const m::KernelAudio::Device& outDevice = g_engine->getConfigApi().audio_getCurrentOutDevice();
 
 	return {
-	    .id           = channelId,
-	    .volume       = channel.volume,
-	    .pan          = channel.pan.asFloat(),
-	    .sendToMaster = channel.sendToMaster};
+	    .id                   = channelId,
+	    .volume               = channel.volume,
+	    .pan                  = channel.pan.asFloat(),
+	    .sendToMaster         = channel.sendToMaster,
+	    .outputMaxNumChannels = outDevice.maxOutputChannels,
+	    .extraOutputs         = channel.extraOutputs,
+	    .outputDeviceName     = outDevice.name};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -321,6 +325,18 @@ void setHeight(ID channelId, Pixel p)
 void setSendToMaster(ID channelId, bool value)
 {
 	g_engine->getChannelsApi().setSendToMaster(channelId, value);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void addExtraOutput(ID channelId, int offset)
+{
+	g_engine->getChannelsApi().addExtraOutput(channelId, offset);
+}
+
+void removeExtraOutput(ID channelId, int offset)
+{
+	g_engine->getChannelsApi().removeExtraOutput(channelId, offset);
 }
 
 /* -------------------------------------------------------------------------- */

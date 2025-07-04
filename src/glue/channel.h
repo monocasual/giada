@@ -106,6 +106,8 @@ struct Data
 	int                     key;
 	bool                    hasActions;
 	bool                    sendToMaster;
+	std::size_t             extraOutputsCount;
+	std::string             outputDeviceName;
 
 	std::optional<SampleData> sample;
 	std::optional<MidiData>   midi;
@@ -125,10 +127,13 @@ struct Track
 
 struct RoutingData
 {
-	ID    id;
-	float volume;
-	float pan;
-	bool  sendToMaster;
+	ID               id;
+	float            volume;
+	float            pan;
+	bool             sendToMaster;
+	int              outputMaxNumChannels;
+	std::vector<int> extraOutputs;
+	std::string      outputDeviceName;
 };
 
 /* getChannels
@@ -210,6 +215,8 @@ void setOverdubProtection(ID channelId, bool value);
 void setName(ID channelId, const std::string& name);
 void setHeight(ID channelId, Pixel p);
 void setSendToMaster(ID channelId, bool value);
+void addExtraOutput(ID channelId, int);
+void removeExtraOutput(ID channelId, int);
 
 /* clearAllActions
 Deletes all recorded actions on channel 'channelId'. */

@@ -28,16 +28,54 @@
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/check.h"
 #include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/basics/imageButton.h"
+#include "src/gui/elems/basics/liquidScroll.h"
+#include "src/gui/elems/basics/menu.h"
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/elems/panTool.h"
 #include "src/gui/elems/volumeTool.h"
+#include "src/gui/graphics.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
+#include <fmt/core.h>
+#include <ranges>
 
 extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
+namespace
+{
+class geOutput : public geFlex
+{
+public:
+	geOutput(const std::string& l, ID channelId, std::size_t index)
+	: geFlex(0, 0, 0, G_GUI_UNIT, Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
+	{
+		m_labelBox  = new geBox(l.c_str());
+		m_removeBtn = new geImageButton(graphics::removeOff, graphics::removeOn);
+		addWidget(m_labelBox);
+		addWidget(m_removeBtn, G_GUI_UNIT);
+		end();
+
+		m_labelBox->box(FL_BORDER_BOX);
+
+		m_removeBtn->onClick = [channelId, index]()
+		{
+			c::channel::removeExtraOutput(channelId, index);
+		};
+	}
+
+private:
+	geBox*         m_labelBox;
+	geImageButton* m_removeBtn;
+};
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 gdChannelRouting::gdChannelRouting(ID channelId)
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, 260, 120}), g_ui->getI18Text(LangMap::CHANNELROUTING_TITLE), WID_CHANNEL_ROUTING)
 , m_channelId(channelId)
@@ -52,10 +90,14 @@ gdChannelRouting::gdChannelRouting(ID channelId)
 			m_volume       = new geVolumeTool(m_data.id, m_data.volume, LABEL_WIDTH);
 			m_pan          = new gePanTool(m_data.id, m_data.pan, LABEL_WIDTH);
 			m_sendToMaster = new geCheck("Send to master");
+			m_outputs      = new geLiquidScroll(Direction::VERTICAL, /*withScrollbar=*/false);
+			m_addNewOutput = new geMenu();
 			body->addWidget(m_volume, G_GUI_UNIT);
 			body->addWidget(m_pan, G_GUI_UNIT);
 			body->addWidget(new geBox(), G_GUI_INNER_MARGIN);
 			body->addWidget(m_sendToMaster, G_GUI_UNIT);
+			body->addWidget(m_addNewOutput, G_GUI_UNIT);
+			body->addWidget(m_outputs);
 			body->end();
 		}
 
@@ -73,11 +115,17 @@ gdChannelRouting::gdChannelRouting(ID channelId)
 	}
 
 	add(container);
+	resizable(container);
 
 	m_sendToMaster->value(m_data.sendToMaster);
 	m_sendToMaster->onChange = [id = m_data.id](bool value)
 	{
 		c::channel::setSendToMaster(id, value);
+	};
+
+	m_addNewOutput->onSelect = [channelId = m_data.id](ID id)
+	{
+		c::channel::addExtraOutput(channelId, id - 1);
 	};
 
 	m_close->onClick = [this]()
@@ -93,5 +141,20 @@ gdChannelRouting::gdChannelRouting(ID channelId)
 
 void gdChannelRouting::rebuild()
 {
+	m_data = c::channel::getRoutingData(m_channelId);
+
+	const auto makeOutputName = [](const std::string& deviceName, int offset)
+	{
+		return fmt::format("{} - {},{}", deviceName, offset + 1, offset + 2);
+	};
+
+	m_addNewOutput->clear();
+	for (int offset = 0; offset < m_data.outputMaxNumChannels; offset += 2)
+		m_addNewOutput->addItem(offset + 1, makeOutputName(m_data.outputDeviceName, offset).c_str());
+
+	m_outputs->clear();
+	std::size_t i = 0;
+	for (const int offset : m_data.extraOutputs)
+		m_outputs->addWidget(new geOutput(makeOutputName(m_data.outputDeviceName, offset), m_data.id, i++));
 }
 } // namespace giada::v
