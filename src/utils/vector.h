@@ -91,6 +91,12 @@ void remove(T& v, const V& o)
 	v.erase(std::remove(v.begin(), v.end(), o), v.end());
 }
 
+template <typename T>
+void removeAt(T& v, std::size_t index)
+{
+	v.erase(v.begin() + index);
+}
+
 /* -------------------------------------------------------------------------- */
 
 template <typename T, typename I>
