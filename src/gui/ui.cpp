@@ -208,6 +208,7 @@ void Ui::rebuild()
 	rebuildSubWindow(WID_FX_LIST);
 	rebuildSubWindow(WID_SAMPLE_EDITOR);
 	rebuildSubWindow(WID_ACTION_EDITOR);
+	rebuildSubWindow(WID_CHANNEL_ROUTING);
 }
 
 /* -------------------------------------------------------------------------- */
