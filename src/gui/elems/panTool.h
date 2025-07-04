@@ -27,8 +27,8 @@
 #ifndef GE_PAN_TOOL_H
 #define GE_PAN_TOOL_H
 
-#include "src/core/types.h"
 #include "src/gui/elems/basics/flex.h"
+#include "src/types.h"
 
 namespace giada::v
 {

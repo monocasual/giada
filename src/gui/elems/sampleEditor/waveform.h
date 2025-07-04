@@ -27,7 +27,7 @@
 #ifndef GE_WAVEFORM_H
 #define GE_WAVEFORM_H
 
-#include "src/core/types.h"
+#include "src/types.h"
 #include <FL/Fl_Widget.H>
 #include <vector>
 

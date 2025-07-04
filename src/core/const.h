@@ -29,6 +29,7 @@
 
 #include "src/core/types.h"
 #include "src/deps/rtaudio/RtAudio.h"
+#include "src/types.h"
 #include "src/version.h"
 #include <RtMidi.h>
 #include <cstdint>

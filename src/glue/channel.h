@@ -29,6 +29,7 @@
 
 #include "src/core/types.h"
 #include "src/core/weakAtomic.h"
+#include "src/types.h"
 #include <atomic>
 #include <optional>
 #include <string>

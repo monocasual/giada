@@ -24,31 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_MENU_H
-#define GE_MENU_H
+#ifndef G_TYPES_H
+#define G_TYPES_H
 
-#include "src/types.h"
-#include <FL/Fl_Menu_.H>
-#include <FL/Fl_Menu_Button.H>
-#include <functional>
-#include <string>
-
-namespace giada::v
+namespace giada
 {
-class geMenu : public Fl_Menu_Button
-{
-public:
-	geMenu();
-
-	void addItem(ID, const char* text, int flags = 0);
-	void setEnabled(ID, bool);
-
-	std::function<void(ID)> onSelect;
-
-private:
-	static void callback(Fl_Widget*, void*);
-	void        callback(ID);
-};
-} // namespace giada::v
+using ID = int;
+} // namespace giada
 
 #endif

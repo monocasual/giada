@@ -28,6 +28,7 @@
 #define G_RENDERING_SAMPLE_REACTIONS_H
 
 #include "src/core/types.h"
+#include "src/types.h"
 
 namespace giada::m
 {

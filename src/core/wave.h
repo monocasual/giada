@@ -29,6 +29,7 @@
 
 #include "src/core/types.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/types.h"
 #include <string>
 
 namespace giada::m

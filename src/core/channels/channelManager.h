@@ -30,6 +30,7 @@
 #include "src/core/midiMapper.h"
 #include "src/core/resampler.h"
 #include "src/core/types.h"
+#include "src/types.h"
 #include <functional>
 #include <map>
 #include <memory>

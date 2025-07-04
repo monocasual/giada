@@ -29,7 +29,6 @@
 
 namespace giada
 {
-using ID    = int;
 using Pixel = int;
 using Frame = int;
 

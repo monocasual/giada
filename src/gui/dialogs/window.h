@@ -27,8 +27,8 @@
 #ifndef GD_WINDOW_H
 #define GD_WINDOW_H
 
-#include "src/core/types.h"
 #include "src/deps/geompp/src/rect.hpp"
+#include "src/types.h"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_SVG_Image.H>
 #include <vector>
