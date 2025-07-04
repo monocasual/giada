@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/channelRouting.h"
-#include "src/glue/channel.h"
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/check.h"
 #include "src/gui/elems/basics/flex.h"
@@ -39,8 +38,10 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gdChannelRouting::gdChannelRouting(const c::channel::RoutingData& d)
+gdChannelRouting::gdChannelRouting(ID channelId)
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, 260, 120}), g_ui->getI18Text(LangMap::CHANNELROUTING_TITLE), WID_CHANNEL_ROUTING)
+, m_channelId(channelId)
+, m_data(c::channel::getRoutingData(channelId))
 {
 	constexpr int LABEL_WIDTH = 70;
 
@@ -48,8 +49,8 @@ gdChannelRouting::gdChannelRouting(const c::channel::RoutingData& d)
 	{
 		geFlex* body = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN);
 		{
-			m_volume       = new geVolumeTool(d.id, d.volume, LABEL_WIDTH);
-			m_pan          = new gePanTool(d.id, d.pan, LABEL_WIDTH);
+			m_volume       = new geVolumeTool(m_data.id, m_data.volume, LABEL_WIDTH);
+			m_pan          = new gePanTool(m_data.id, m_data.pan, LABEL_WIDTH);
 			m_sendToMaster = new geCheck("Send to master");
 			body->addWidget(m_volume, G_GUI_UNIT);
 			body->addWidget(m_pan, G_GUI_UNIT);
@@ -73,8 +74,8 @@ gdChannelRouting::gdChannelRouting(const c::channel::RoutingData& d)
 
 	add(container);
 
-	m_sendToMaster->value(d.sendToMaster);
-	m_sendToMaster->onChange = [id = d.id](bool value)
+	m_sendToMaster->value(m_data.sendToMaster);
+	m_sendToMaster->onChange = [id = m_data.id](bool value)
 	{
 		c::channel::setSendToMaster(id, value);
 	};
@@ -82,7 +83,15 @@ gdChannelRouting::gdChannelRouting(const c::channel::RoutingData& d)
 	m_close->onClick = [this]()
 	{ do_callback(); };
 
+	rebuild();
+
 	set_modal();
 	show();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdChannelRouting::rebuild()
+{
 }
 } // namespace giada::v

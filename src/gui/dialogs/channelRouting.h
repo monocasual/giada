@@ -27,12 +27,8 @@
 #ifndef GD_CHANNEL_ROUTING_H
 #define GD_CHANNEL_ROUTING_H
 
+#include "src/glue/channel.h"
 #include "src/gui/dialogs/window.h"
-
-namespace giada::c::channel
-{
-struct RoutingData;
-}
 
 namespace giada::v
 {
@@ -43,9 +39,14 @@ class geTextButton;
 class gdChannelRouting : public gdWindow
 {
 public:
-	gdChannelRouting(const c::channel::RoutingData& d);
+	gdChannelRouting(ID channelId);
+
+	void rebuild() override;
 
 private:
+	ID                      m_channelId;
+	c::channel::RoutingData m_data;
+
 	geVolumeTool* m_volume;
 	gePanTool*    m_pan;
 	geTextButton* m_close;
