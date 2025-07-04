@@ -27,6 +27,8 @@
 #ifndef G_GUI_CONST_H
 #define G_GUI_CONST_H
 
+#include "src/types.h"
+
 namespace giada
 {
 #define G_COLOR_RED fl_rgb_color(28, 32, 80)
@@ -48,6 +50,24 @@ constexpr int   G_GUI_INNER_MARGIN   = 4;
 constexpr int   G_GUI_OUTER_MARGIN   = 8;
 constexpr int   G_GUI_UNIT           = 20; // base unit for elements
 constexpr int   G_GUI_ZOOM_FACTOR    = 2;
+
+/* -- unique IDs of mainWin's subwindows ------------------------------------ */
+constexpr ID WID_BEATS           = 1;
+constexpr ID WID_BPM             = 2;
+constexpr ID WID_ABOUT           = 3;
+constexpr ID WID_FILE_BROWSER    = 4;
+constexpr ID WID_CONFIG          = 5;
+constexpr ID WID_FX_LIST         = 6;
+constexpr ID WID_ACTION_EDITOR   = 7;
+constexpr ID WID_SAMPLE_EDITOR   = 8;
+constexpr ID WID_KEY_GRABBER     = 10;
+constexpr ID WID_SAMPLE_NAME     = 11;
+constexpr ID WID_FX_CHOOSER      = 12;
+constexpr ID WID_MIDI_INPUT      = 13;
+constexpr ID WID_MIDI_OUTPUT     = 14;
+constexpr ID WID_MISSING_ASSETS  = 15;
+constexpr ID WID_CHANNEL_ROUTING = 16;
+constexpr ID WID_FX              = 1000; // Plug-in windows have ID == WID_FX + [pluginId]
 } // namespace giada
 
 #endif
