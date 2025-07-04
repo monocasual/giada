@@ -51,6 +51,20 @@ constexpr int   G_GUI_OUTER_MARGIN   = 8;
 constexpr int   G_GUI_UNIT           = 20; // base unit for elements
 constexpr int   G_GUI_ZOOM_FACTOR    = 2;
 
+/* -- MIN/MAX values -------------------------------------------------------- */
+constexpr int   G_MIN_TRACK_WIDTH = 140;
+constexpr int   G_MIN_GUI_WIDTH   = 816;
+constexpr int   G_MIN_GUI_HEIGHT  = 510;
+constexpr float G_MIN_UI_SCALING  = 0.0f; // Auto: FLTK will figure it out
+constexpr float G_MAX_UI_SCALING  = 4.0f;
+
+/* -- default values -------------------------------------------------------- */
+constexpr int   G_DEFAULT_TRACK_WIDTH = 380;
+constexpr int   G_DEFAULT_ZOOM_RATIO  = 128;
+constexpr int   G_DEFAULT_SUBWINDOW_W = 640;
+constexpr int   G_DEFAULT_SUBWINDOW_H = 480;
+constexpr float G_DEFAULT_UI_SCALING  = G_MIN_UI_SCALING;
+
 /* -- unique IDs of mainWin's subwindows ------------------------------------ */
 constexpr ID WID_BEATS           = 1;
 constexpr ID WID_BPM             = 2;

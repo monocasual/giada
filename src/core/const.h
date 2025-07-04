@@ -85,21 +85,16 @@ constexpr int   G_MAX_BEATS             = 32;
 constexpr int   G_MAX_BARS              = 32;
 constexpr int   G_MAX_QUANTIZE          = 8;
 constexpr float G_MIN_DB_SCALE          = 60.0f;
-constexpr int   G_MIN_TRACK_WIDTH       = 140;
 constexpr float G_MIN_PITCH             = 0.1f;
 constexpr float G_MAX_PITCH             = 4.0f;
 constexpr float G_MAX_PAN               = 1.0f;
 constexpr float G_MAX_VOLUME            = 1.0f;
-constexpr int   G_MIN_GUI_WIDTH         = 816;
-constexpr int   G_MIN_GUI_HEIGHT        = 510;
 constexpr int   G_MAX_IO_CHANS          = 2;
 constexpr int   G_MAX_VELOCITY          = 0x7F;
 constexpr float G_MAX_VELOCITY_FLOAT    = 1.0f;
 constexpr int   G_MAX_MIDI_CHANS        = 16;
 constexpr int   G_MAX_DISPATCHER_EVENTS = 32;
-constexpr int   G_MAX_SEQUENCER_EVENTS  = 128;  // Per block
-constexpr float G_MIN_UI_SCALING        = 0.0f; // Auto: FLTK will figure it out
-constexpr float G_MAX_UI_SCALING        = 4.0f;
+constexpr int   G_MAX_SEQUENCER_EVENTS  = 128; // Per block
 
 /* -- default values -------------------------------------------------------- */
 constexpr RtAudio::Api G_DEFAULT_SOUNDSYS            = RtAudio::Api::UNSPECIFIED;
@@ -119,15 +114,10 @@ constexpr int          G_DEFAULT_BEATS               = 4;
 constexpr int          G_DEFAULT_BARS                = 1;
 constexpr int          G_DEFAULT_QUANTIZE            = 0;     // quantizer off
 constexpr float        G_DEFAULT_FADEOUT_STEP        = 0.01f; // micro-fadeout speed
-constexpr int          G_DEFAULT_TRACK_WIDTH         = 380;
 constexpr auto         G_DEFAULT_PATCH_NAME          = "(default patch)";
 constexpr int          G_DEFAULT_ACTION_SIZE         = 8192; // frames
-constexpr int          G_DEFAULT_ZOOM_RATIO          = 128;
 constexpr float        G_DEFAULT_REC_TRIGGER_LEVEL   = -10.0f;
-constexpr int          G_DEFAULT_SUBWINDOW_W         = 640;
-constexpr int          G_DEFAULT_SUBWINDOW_H         = 480;
 constexpr int          G_DEFAULT_VST_MIDIBUFFER_SIZE = 1024; // TODO - not 100% sure about this size
-constexpr float        G_DEFAULT_UI_SCALING          = G_MIN_UI_SCALING;
 
 /* -- responses and return codes -------------------------------------------- */
 constexpr int G_RES_ERR_PROCESSING    = -6;

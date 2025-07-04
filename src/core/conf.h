@@ -27,11 +27,11 @@
 #ifndef G_CONF_H
 #define G_CONF_H
 
-#include "src/core/const.h"
 #include "src/core/plugins/pluginManager.h"
 #include "src/core/resampler.h"
 #include "src/core/types.h"
 #include "src/deps/geompp/src/rect.hpp"
+#include "src/gui/const.h"
 #include <FL/Enumerations.H>
 #include <string>
 #include <vector>
