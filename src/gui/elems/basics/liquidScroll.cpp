@@ -77,7 +77,7 @@ void geLiquidScroll::addWidget(Fl_Widget* wg)
 
 	int wx = x();
 	int wy = y() - yposition() + (numChildren * (wg->h() + G_GUI_INNER_MARGIN));
-	int ww = w() - 24;
+	int ww = w() - getScrollbarSpace();
 	int wh = wg->h();
 
 	wg->resize(wx, wy, ww, wh);
