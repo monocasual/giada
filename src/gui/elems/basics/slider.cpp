@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/basics/slider.h"
-#include "src/core/const.h"
 #include "src/gui/const.h"
 #include "src/gui/elems/basics/boxtypes.h"
 

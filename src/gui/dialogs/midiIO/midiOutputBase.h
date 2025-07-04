@@ -27,7 +27,6 @@
 #ifndef GD_MIDI_OUTPUT_BASE_H
 #define GD_MIDI_OUTPUT_BASE_H
 
-#include "src/core/types.h"
 #include "src/glue/io.h"
 #include "src/gui/dialogs/window.h"
 #include "src/gui/elems/midiIO/midiLearner.h"

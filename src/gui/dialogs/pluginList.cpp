@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/pluginList.h"
-#include "src/core/engine.h"
+#include "src/core/mixer.h"
 #include "src/glue/layout.h"
 #include "src/gui/elems/basics/liquidScroll.h"
 #include "src/gui/elems/basics/textButton.h"

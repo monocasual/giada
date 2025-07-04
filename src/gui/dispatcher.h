@@ -27,7 +27,6 @@
 #ifndef G_V_DISPATCHER_H
 #define G_V_DISPATCHER_H
 
-#include "src/core/types.h"
 #include "src/gui/model.h"
 #include <functional>
 

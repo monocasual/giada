@@ -27,8 +27,8 @@
 #ifndef GE_BASE_ACTION_H
 #define GE_BASE_ACTION_H
 
-#include "src/core/types.h"
 #include "src/core/actions/action.h"
+#include "src/core/types.h"
 #include <FL/Fl_Box.H>
 
 namespace giada::m

@@ -27,7 +27,6 @@
 #ifndef GD_SAMPLE_EDITOR_H
 #define GD_SAMPLE_EDITOR_H
 
-#include "src/core/types.h"
 #include "src/glue/sampleEditor.h"
 #include "src/gui/dialogs/window.h"
 #include "src/gui/model.h"

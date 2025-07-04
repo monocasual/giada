@@ -27,7 +27,6 @@
 #ifndef GD_PLUGIN_CHOOSER_H
 #define GD_PLUGIN_CHOOSER_H
 
-#include "src/core/types.h"
 #include "src/gui/dialogs/window.h"
 #include "src/gui/model.h"
 
