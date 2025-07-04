@@ -54,8 +54,8 @@ geLiquidScroll::geLiquidScroll(geompp::Rect<int> r, Direction d, bool withScroll
 
 void geLiquidScroll::resize(int X, int Y, int W, int H)
 {
-	const int scrollbarSpace = type() == 0 ? 0 : 24; // type == 0 means no scrollbars
-	const int nc             = children() - 2;       // skip hscrollbar and vscrollbar
+	const int scrollbarSpace = getScrollbarSpace();
+	const int nc             = children() - 2; // skip hscrollbar and vscrollbar
 
 	for (int t = 0; t < nc; t++) // tell children to resize to our new width
 	{
@@ -83,5 +83,12 @@ void geLiquidScroll::addWidget(Fl_Widget* wg)
 	wg->resize(wx, wy, ww, wh);
 	geScroll::add(wg);
 	redraw();
+}
+
+/* -------------------------------------------------------------------------- */
+
+int geLiquidScroll::getScrollbarSpace() const
+{
+	return type() == 0 ? 0 : 24; // type == 0 means no scrollbars
 }
 } // namespace giada::v

@@ -59,6 +59,8 @@ public:
 	void addWidget(Fl_Widget*);
 
 private:
+	int getScrollbarSpace() const;
+
 	Direction m_direction;
 };
 } // namespace giada::v
