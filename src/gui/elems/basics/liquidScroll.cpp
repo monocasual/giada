@@ -73,12 +73,12 @@ void geLiquidScroll::resize(int X, int Y, int W, int H)
 
 void geLiquidScroll::addWidget(Fl_Widget* wg)
 {
-	int numChildren = countChildren();
+	const int numChildren = countChildren();
 
-	int wx = x();
-	int wy = y() - yposition() + (numChildren * (wg->h() + G_GUI_INNER_MARGIN));
-	int ww = w() - getScrollbarSpace();
-	int wh = wg->h();
+	const int wx = x();
+	const int wy = y() - yposition() + (numChildren * (wg->h() + G_GUI_INNER_MARGIN));
+	const int ww = w() - getScrollbarSpace();
+	const int wh = wg->h();
 
 	wg->resize(wx, wy, ww, wh);
 	geScroll::add(wg);
