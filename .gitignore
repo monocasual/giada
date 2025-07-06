@@ -10,3 +10,5 @@ Session.vim
 *.swp
 *.swo
 .netrwhist
+
+/CMakeUserPresets.json
