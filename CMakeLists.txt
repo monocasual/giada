@@ -648,16 +648,18 @@ endif()
 if(DEFINED OS_LINUX)
 
 	find_package(X11 REQUIRED)
-	find_package(ALSA REQUIRED)
 	find_library(LIBRARY_FONTCONFIG NAMES fontconfig REQUIRED)
 	pkg_check_modules(JACK REQUIRED jack)
 	list(APPEND LIBRARIES
 		${X11_LIBRARIES} ${X11_Xrender_LIB} ${X11_Xft_LIB} ${X11_Xfixes_LIB}
 		${X11_Xinerama_LIB} ${X11_Xcursor_LIB} ${X11_Xpm_LIB} ${LIBRARY_FONTCONFIG}
-		${JACK_LDFLAGS} ${CMAKE_DL_LIBS} ${ALSA_LIBRARIES} pthread stdc++fs)
+		${JACK_LDFLAGS} ${CMAKE_DL_LIBS} pthread stdc++fs)
 
 	if (WITH_ALSA)
+		find_package(ALSA REQUIRED)
+
 		list(APPEND PREPROCESSOR_DEFS __LINUX_ALSA__)
+		list(APPEND LIBRARIES ${ALSA_LIBRARIES} )
 	endif()
 	if (WITH_PULSE)
 		find_library(LIBRARY_PULSE NAMES pulse REQUIRED)
