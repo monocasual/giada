@@ -171,6 +171,7 @@ private:
 	std::unique_ptr<RtAudio> m_rtAudio;
 	CallbackInfo             m_callbackInfo;
 	model::Model&            m_model;
+	int                      m_jackMaxOutputChannels;
 };
 } // namespace giada::m
 
