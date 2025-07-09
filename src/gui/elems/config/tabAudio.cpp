@@ -375,7 +375,10 @@ void geTabAudio::refreshDevOutProperties()
 	{
 		for (unsigned int sampleRate : m_data.selectedOutputDevice.sampleRates)
 			m_sampleRate->addItem(std::to_string(sampleRate), sampleRate);
-		m_sampleRate->showItem(m_data.selectedSampleRate);
+		if (m_sampleRate->hasItem((m_data.selectedSampleRate)))
+			m_sampleRate->showItem(m_data.selectedSampleRate);
+		else
+			m_sampleRate->showFirstItem();
 
 		if (m_data.selectedApi != RtAudio::Api::UNIX_JACK)
 			m_sampleRate->activate();
