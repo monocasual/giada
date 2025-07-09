@@ -34,6 +34,7 @@
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
+#include "src/utils/string.h"
 #include <fmt/core.h>
 #include <string>
 
@@ -307,7 +308,9 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	{ m_data.selectedResampleQuality = id; };
 
 	m_recTriggerLevel->onChange = [this](const std::string& s)
-	{ m_data.selectedRecTriggerLevel = std::stof(s); };
+	{
+		m_data.selectedRecTriggerLevel = u::string::toFloat(s);
+	};
 
 	m_applyBtn->onClick = [this]()
 	{ c::config::apply(m_data); };
