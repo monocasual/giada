@@ -623,7 +623,7 @@ void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, 
 
 	/* Copy up to wave.getSize() from the mixer's input buffer into wave's. */
 
-	wave->getBuffer().set(buffer, wave->getBuffer().countFrames());
+	wave->getBuffer().setAll(buffer, wave->getBuffer().countFrames(), 0, 0);
 
 	/* Update channel with the new Wave. */
 
@@ -644,7 +644,7 @@ void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer,
 
 	model::SharedLock lock = m_model.lockShared();
 
-	wave->getBuffer().sum(buffer, /*gain=*/1.0f);
+	wave->getBuffer().sumAll(buffer);
 	wave->setLogical(true);
 
 	setupChannelPostRecording(ch, currentFrame);

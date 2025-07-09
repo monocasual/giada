@@ -435,7 +435,7 @@ list(APPEND SOURCES
 	src/utils/string.cpp
 	src/utils/string.h
 	src/deps/rtaudio/RtAudio.cpp
-	src/deps/mcl-audio-buffer/src/audioBuffer.cpp)
+	src/deps/mcl-audio-buffer/src/audioBuffer.hpp)
 
 list(APPEND PREPROCESSOR_DEFS 
 	__RTAUDIO_DUMMY__)

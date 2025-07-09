@@ -179,7 +179,7 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
 		rendering::renderAudioPlugins(group, m_pluginHost);
 
 		if (group.isAudible(hasSolos))
-			out.sum(group.shared->audioBuffer, group.volume);
+			out.sumAll(group.shared->audioBuffer, group.pan.get(), group.volume);
 	}
 }
 
@@ -200,7 +200,7 @@ void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
 	}
 
 	if (ch.isAudible(mixerHasSolos))
-		out.sum(ch.shared->audioBuffer, ch.volume * ch.shared->volumeInternal.load());
+		out.sumAll(ch.shared->audioBuffer, ch.pan.get(), ch.volume * ch.shared->volumeInternal.load());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -214,9 +214,9 @@ void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
 
 void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const
 {
-	ch.shared->audioBuffer.set(out, /*gain=*/1.0f);
+	ch.shared->audioBuffer.setAll(out);
 	m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
-	out.set(ch.shared->audioBuffer, ch.volume);
+	out.setAll(ch.shared->audioBuffer, ch.volume);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -228,7 +228,7 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 	if (ch.isPlaying())
 		rendering::renderSampleChannel(ch, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
 
-	out.sum(ch.shared->audioBuffer, ch.volume);
+	out.sumAll(ch.shared->audioBuffer, ch.volume);
 }
 
 /* -------------------------------------------------------------------------- */

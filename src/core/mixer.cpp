@@ -279,7 +279,7 @@ int Mixer::lineInRec(const mcl::AudioBuffer& inBuf, mcl::AudioBuffer& recBuf, Fr
 	const Frame srcOffset    = 0;
 	const Frame destOffset   = inputTracker % maxFrames; // loop over at maxFrames
 
-	recBuf.sum(inBuf, framesToCopy, srcOffset, destOffset, inVol);
+	recBuf.sumAll(inBuf, framesToCopy, srcOffset, destOffset, inVol);
 
 	return inputTracker + inBuf.countFrames();
 }
@@ -294,7 +294,7 @@ void Mixer::processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inB
 
 	assert(inBuf.countChannels() <= mixer.getInBuffer().countChannels());
 
-	mixer.getInBuffer().set(inBuf, inVol);
+	mixer.getInBuffer().setAll(inBuf, inVol);
 
 	const Peak peak = makePeak(mixer.getInBuffer());
 
@@ -323,7 +323,7 @@ void Mixer::finalizeOutput(const model::Mixer& mixer, mcl::AudioBuffer& buf,
     bool inToOut, bool shouldLimit, float vol) const
 {
 	if (inToOut)
-		buf.sum(mixer.getInBuffer(), vol);
+		buf.sumAll(mixer.getInBuffer(), vol);
 	else
 		buf.applyGain(vol);
 
