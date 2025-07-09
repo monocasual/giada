@@ -272,8 +272,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 	m_channelsOut->onChange = [this](ID)
 	{
-		m_data.selectedOutputDevice.selectedChannelsCount = m_channelsOut->getChannelsCount();
-		m_data.selectedOutputDevice.selectedChannelsStart = m_channelsOut->getChannelsStart();
+		refreshChannelOutProperties();
 	};
 
 	m_channelsIn->onChange = [this](ID)
@@ -389,9 +388,7 @@ void geTabAudio::refreshDevOutProperties()
 
 	m_channelsOut->rebuild(m_data.selectedOutputDevice);
 
-	// Also refresh channels out info
-	m_data.selectedOutputDevice.selectedChannelsCount = m_channelsOut->getChannelsCount();
-	m_data.selectedOutputDevice.selectedChannelsStart = m_channelsOut->getChannelsStart();
+	refreshChannelOutProperties();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -415,6 +412,14 @@ void geTabAudio::refreshDevInProperties()
 		m_channelsIn->deactivate();
 		m_recTriggerLevel->deactivate();
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geTabAudio::refreshChannelOutProperties()
+{
+	m_data.selectedOutputDevice.selectedChannelsCount = m_channelsOut->getChannelsCount();
+	m_data.selectedOutputDevice.selectedChannelsStart = m_channelsOut->getChannelsStart();
 }
 
 /* -------------------------------------------------------------------------- */

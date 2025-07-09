@@ -65,6 +65,7 @@ public:
 private:
 	void rebuild(const c::config::AudioData&);
 	void refreshDevOutProperties();
+	void refreshChannelOutProperties();
 	void refreshDevInProperties();
 	void deactivateAll();
 	void activateAll();
