@@ -63,7 +63,6 @@ public:
 		int                       maxDuplexChannels = 0;
 		bool                      isDefaultOut      = false;
 		bool                      isDefaultIn       = false;
-		int                       channelsCount     = 0;
 		int                       channelsStart     = 0;
 		std::vector<unsigned int> sampleRates       = {};
 	};

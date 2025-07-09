@@ -202,7 +202,6 @@ KernelAudio::Device KernelAudio::getCurrentOutDevice() const
 	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
 	Device d        = fetchDevice(m_rtAudio->isStreamOpen() ? kernelAudio.deviceOut.id : m_rtAudio->getDefaultOutputDevice());
-	d.channelsCount = kernelAudio.deviceOut.channelsCount;
 	d.channelsStart = kernelAudio.deviceOut.channelsStart;
 
 	return d;
@@ -215,7 +214,6 @@ KernelAudio::Device KernelAudio::getCurrentInDevice() const
 	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
 	Device d        = fetchDevice(m_rtAudio->isStreamOpen() ? kernelAudio.deviceIn.id : m_rtAudio->getDefaultInputDevice());
-	d.channelsCount = kernelAudio.deviceIn.channelsCount;
 	d.channelsStart = kernelAudio.deviceIn.channelsStart;
 
 	return d;
@@ -271,7 +269,6 @@ m::KernelAudio::Device KernelAudio::fetchDevice(unsigned int deviceId) const
 	    static_cast<int>(info.duplexChannels),
 	    info.isDefaultOutput,
 	    info.isDefaultInput,
-	    0,
 	    0,
 	    info.sampleRates};
 }
