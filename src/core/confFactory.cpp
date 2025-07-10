@@ -240,7 +240,7 @@ void sanitize_(Conf& conf)
 {
 	conf.soundDeviceOut   = std::max(0, conf.soundDeviceOut);
 	conf.soundDeviceIn    = std::max(0, conf.soundDeviceIn);
-	conf.channelsOutCount = G_MAX_IO_CHANS;
+	conf.channelsOutCount = std::max(0, conf.channelsOutCount);
 	conf.channelsOutStart = std::max(0, conf.channelsOutStart);
 	conf.channelsInCount  = std::max(1, conf.channelsInCount);
 	conf.channelsInStart  = std::max(0, conf.channelsInStart);
