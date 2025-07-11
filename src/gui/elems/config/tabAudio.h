@@ -77,6 +77,7 @@ private:
 	geChoice*      m_sampleRate;
 	geDeviceMenu*  m_sounddevOut;
 	geChannelMenu* m_channelsOut;
+	geInput*       m_numOutChannels;
 	geCheck*       m_limitOutput;
 	geDeviceMenu*  m_sounddevIn;
 	geCheck*       m_enableIn;

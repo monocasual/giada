@@ -143,10 +143,12 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_bufferSize = new geChoice();
+			m_bufferSize     = new geChoice();
+			m_numOutChannels = new geInput();
 
 			line1->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_BUFFERSIZE), FL_ALIGN_RIGHT), LABEL_WIDTH);
 			line1->addWidget(m_bufferSize, 60);
+			line1->addWidget(m_numOutChannels, 40);
 			line1->end();
 		}
 
@@ -251,6 +253,11 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	m_sampleRate->onChange = [this](ID id)
 	{ m_data.selectedSampleRate = id; };
 
+	m_numOutChannels->onChange = [this](const std::string& s)
+	{
+		m_data.selectedOutputDevice.selectedChannelsCount = u::string::toInt(s);
+	};
+
 	m_sounddevOut->onChange = [this](ID id)
 	{
 		m_data.setOutputDevice(id);
@@ -330,6 +337,12 @@ void geTabAudio::rebuild(const c::config::AudioData& data)
 	m_api->showItem(m_data.selectedApi);
 
 	m_bufferSize->showItem(m_data.selectedBufferSize);
+
+	m_numOutChannels->setValue(fmt::format("{}", m_data.selectedOutputDevice.selectedChannelsCount));
+	if (m_data.selectedApi == RtAudio::Api::UNIX_JACK)
+		m_numOutChannels->show();
+	else
+		m_numOutChannels->hide();
 
 	m_sounddevOut->rebuild(m_data.availableOutputDevices);
 	m_sounddevOut->showItem(m_data.selectedOutputDevice.id);
@@ -418,7 +431,15 @@ void geTabAudio::refreshDevInProperties()
 
 void geTabAudio::refreshChannelOutProperties()
 {
-	m_data.selectedOutputDevice.selectedChannelsCount = m_channelsOut->getChannelsCount();
+	/* On JACK we use the number of virtual output channels as the selected output
+	channel count value. Otherwise, always use the maximum number of output channels
+	available for the selected device. It will be Mixer's responsibility to determine
+	where to output the master out channel, according to 'selectedChannelsStart' value. */
+
+	if (m_data.selectedApi == RtAudio::Api::UNIX_JACK)
+		m_data.selectedOutputDevice.selectedChannelsCount = u::string::toInt(m_numOutChannels->getValue());
+	else
+		m_data.selectedOutputDevice.selectedChannelsCount = m_data.selectedOutputDevice.channelsMax;
 	m_data.selectedOutputDevice.selectedChannelsStart = m_channelsOut->getChannelsStart();
 }
 
