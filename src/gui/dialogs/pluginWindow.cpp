@@ -44,9 +44,8 @@ gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin, ID wid)
 
 	m_list = new geLiquidScroll(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN,
 	    w() - (G_GUI_OUTER_MARGIN * 2), h() - (G_GUI_OUTER_MARGIN * 2),
-	    Direction::VERTICAL);
+	    Direction::VERTICAL, Fl_Scroll::VERTICAL_ALWAYS);
 
-	m_list->type(Fl_Scroll::VERTICAL_ALWAYS);
 	m_list->begin();
 	int labelWidth = 100; // TODO
 	for (int index : m_plugin.paramIndexes)

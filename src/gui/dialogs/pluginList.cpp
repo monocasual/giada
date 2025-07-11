@@ -46,7 +46,7 @@ gdPluginList::gdPluginList(ID channelId, geompp::Rect<int> bounds)
 
 	list = new geLiquidScroll(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN,
 	    w() - (G_GUI_OUTER_MARGIN * 2), h() - (G_GUI_OUTER_MARGIN * 2),
-	    Direction::VERTICAL);
+	    Direction::VERTICAL, Fl_Scroll::VERTICAL_ALWAYS);
 	list->end();
 	add(list);
 	resizable(list);

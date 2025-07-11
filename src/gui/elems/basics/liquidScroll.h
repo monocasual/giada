@@ -45,9 +45,9 @@ in the other one. */
 class geLiquidScroll : public geScroll
 {
 public:
-	geLiquidScroll(int x, int y, int w, int h, Direction d, bool withScrollbar = true);
-	geLiquidScroll(geompp::Rect<int>, Direction d, bool withScrollbar = true);
-	geLiquidScroll(Direction d, bool withScrollbar = true);
+	geLiquidScroll(int x, int y, int w, int h, Direction d, int scrollbarType);
+	geLiquidScroll(geompp::Rect<int>, Direction d, int scrollbarType);
+	geLiquidScroll(Direction d, int scrollbarType);
 
 	void add(Fl_Widget&) = delete;
 	void add(Fl_Widget*) = delete;

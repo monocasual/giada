@@ -35,25 +35,24 @@
 
 namespace giada::v
 {
-geLiquidScroll::geLiquidScroll(int x, int y, int w, int h, Direction d, bool withScrollbar)
+geLiquidScroll::geLiquidScroll(int x, int y, int w, int h, Direction d, int scrollbarType)
 : geScroll(x, y, w, h, d == Direction::VERTICAL ? Fl_Scroll::VERTICAL_ALWAYS : Fl_Scroll::HORIZONTAL_ALWAYS)
 , m_direction(d)
 {
-	if (!withScrollbar)
-		type(0); // no scrollbars
+	type(scrollbarType);
 }
 
 /* -------------------------------------------------------------------------- */
 
-geLiquidScroll::geLiquidScroll(geompp::Rect<int> r, Direction d, bool withScrollbars)
-: geLiquidScroll(r.x, r.y, r.w, r.h, d, withScrollbars)
+geLiquidScroll::geLiquidScroll(geompp::Rect<int> r, Direction d, int scrollbarType)
+: geLiquidScroll(r.x, r.y, r.w, r.h, d, scrollbarType)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-geLiquidScroll::geLiquidScroll(Direction d, bool withScrollbars)
-: geLiquidScroll(0, 0, 0, 0, d, withScrollbars)
+geLiquidScroll::geLiquidScroll(Direction d, int scrollbarType)
+: geLiquidScroll(0, 0, 0, 0, d, scrollbarType)
 {
 }
 
