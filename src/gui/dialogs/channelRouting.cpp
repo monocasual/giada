@@ -27,10 +27,10 @@
 #include "src/gui/dialogs/channelRouting.h"
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/check.h"
+#include "src/gui/elems/basics/choice.h"
 #include "src/gui/elems/basics/flex.h"
 #include "src/gui/elems/basics/imageButton.h"
 #include "src/gui/elems/basics/liquidScroll.h"
-#include "src/gui/elems/basics/menu.h"
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/elems/panTool.h"
 #include "src/gui/elems/volumeTool.h"
@@ -77,7 +77,7 @@ private:
 /* -------------------------------------------------------------------------- */
 
 gdChannelRouting::gdChannelRouting(ID channelId)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, 260, 120}), g_ui->getI18Text(LangMap::CHANNELROUTING_TITLE), WID_CHANNEL_ROUTING)
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 260, 176}), g_ui->getI18Text(LangMap::CHANNELROUTING_TITLE), WID_CHANNEL_ROUTING)
 , m_channelId(channelId)
 , m_data(c::channel::getRoutingData(channelId))
 {
@@ -85,16 +85,15 @@ gdChannelRouting::gdChannelRouting(ID channelId)
 
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		geFlex* body = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN);
+		geFlex* body = new geFlex(Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 		{
 			m_volume       = new geVolumeTool(m_data.id, m_data.volume, LABEL_WIDTH);
 			m_pan          = new gePanTool(m_data.id, m_data.pan, LABEL_WIDTH);
-			m_sendToMaster = new geCheck("Send to master");
-			m_outputs      = new geLiquidScroll(Direction::VERTICAL, /*withScrollbar=*/false);
-			m_addNewOutput = new geMenu();
+			m_sendToMaster = new geCheck("Send to master output channel");
+			m_addNewOutput = new geChoice("Add new audio output:");
+			m_outputs      = new geLiquidScroll(Direction::VERTICAL, Fl_Scroll::VERTICAL);
 			body->addWidget(m_volume, G_GUI_UNIT);
 			body->addWidget(m_pan, G_GUI_UNIT);
-			body->addWidget(new geBox(), G_GUI_INNER_MARGIN);
 			body->addWidget(m_sendToMaster, G_GUI_UNIT);
 			body->addWidget(m_addNewOutput, G_GUI_UNIT);
 			body->addWidget(m_outputs);
@@ -123,7 +122,7 @@ gdChannelRouting::gdChannelRouting(ID channelId)
 		c::channel::setSendToMaster(id, value);
 	};
 
-	m_addNewOutput->onSelect = [channelId = m_data.id](ID id)
+	m_addNewOutput->onChange = [channelId = m_data.id](ID id)
 	{
 		c::channel::addExtraOutput(channelId, id - 1);
 	};
@@ -149,8 +148,10 @@ void gdChannelRouting::rebuild()
 	};
 
 	m_addNewOutput->clear();
+	m_addNewOutput->addItem("(choose)", 0);
 	for (int offset = 0; offset < m_data.outputMaxNumChannels; offset += 2)
-		m_addNewOutput->addItem(offset + 1, makeOutputName(m_data.outputDeviceName, offset).c_str());
+		m_addNewOutput->addItem(makeOutputName(m_data.outputDeviceName, offset), offset + 1);
+	m_addNewOutput->showFirstItem();
 
 	m_outputs->clear();
 	std::size_t i = 0;
