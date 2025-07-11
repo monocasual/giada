@@ -95,6 +95,10 @@ void geLiquidScroll::addWidget(Fl_Widget* wg)
 
 int geLiquidScroll::getScrollbarSpace() const
 {
-	return type() == 0 ? 0 : 24; // type == 0 means no scrollbars
+	if (scrollbar.visible())
+		return scrollbar.w() + G_GUI_OUTER_MARGIN;
+	if (hscrollbar.visible())
+		return scrollbar.h() + G_GUI_OUTER_MARGIN;
+	return 0;
 }
 } // namespace giada::v
