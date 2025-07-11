@@ -142,20 +142,21 @@ void gdChannelRouting::rebuild()
 {
 	m_data = c::channel::getRoutingData(m_channelId);
 
-	const auto makeOutputName = [](const std::string& deviceName, int offset)
+	const auto makeOutputName = [](const std::string& deviceName, int offset, int maxNumChannels)
 	{
-		return fmt::format("{} - {},{}", deviceName, offset + 1, offset + 2);
+		const std::string unreachable = offset >= maxNumChannels ? " (unreachable)" : "";
+		return fmt::format("{} - {},{}{}", deviceName, offset + 1, offset + 2, unreachable);
 	};
 
 	m_addNewOutput->clear();
 	m_addNewOutput->addItem("(choose)", 0);
 	for (int offset = 0; offset < m_data.outputMaxNumChannels; offset += 2)
-		m_addNewOutput->addItem(makeOutputName(m_data.outputDeviceName, offset), offset + 1);
+		m_addNewOutput->addItem(makeOutputName(m_data.outputDeviceName, offset, m_data.outputMaxNumChannels), offset + 1);
 	m_addNewOutput->showFirstItem();
 
 	m_outputs->clear();
 	std::size_t i = 0;
 	for (const int offset : m_data.extraOutputs)
-		m_outputs->addWidget(new geOutput(makeOutputName(m_data.outputDeviceName, offset), m_data.id, i++));
+		m_outputs->addWidget(new geOutput(makeOutputName(m_data.outputDeviceName, offset, m_data.outputMaxNumChannels), m_data.id, i++));
 }
 } // namespace giada::v
