@@ -14,7 +14,7 @@
  * version 3 of the License, or (at your option) any later version.
  *
  * Giada - Your Hardcore Loopmachine is distributed in the hope that it
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * will be useful, but WITHOUT ANY WARRANTY without even the implied
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
@@ -24,31 +24,28 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_CHECK_H
-#define GE_CHECK_H
+#ifndef G_PAN_H
+#define G_PAN_H
 
-#include <FL/Fl_Check_Button.H>
-#include <functional>
+#include <array>
 
-namespace giada::v
+namespace giada
 {
-class geCheck : public Fl_Check_Button
+class Pan
 {
 public:
-	static constexpr int CHECKBOX_WIDTH = 12;
+	using Type = std::array<float, 2>;
 
-	geCheck();
-	geCheck(int x, int y, int w, int h, const char* l = nullptr);
-	geCheck(const char* l);
+	Pan(float v);
 
-	void draw() override;
+	bool operator==(const Pan&) const;
 
-	std::function<void(bool)> onChange = nullptr;
+	Type  get() const;
+	float asFloat() const;
 
 private:
-	static void cb_onChange(Fl_Widget* w, void* p);
-	void        cb_onChange();
+	Type m_data;
 };
-} // namespace giada::v
+} // namespace giada
 
 #endif

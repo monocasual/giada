@@ -98,6 +98,9 @@ public:
 	void setSamplePlayerMode(ID, SamplePlayerMode);
 	void setHeight(ID, int);
 	void setName(ID, const std::string&);
+	void setSendToMaster(ID, bool value);
+	void addExtraOutput(ID, int);
+	void removeExtraOutput(ID, std::size_t);
 	void clearAllActions(ID);
 	void clearAllActions();
 	void freeAllSampleChannels();

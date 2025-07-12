@@ -59,6 +59,7 @@ KernelAudio::KernelAudio(model::Model& model)
 , onStreamAboutToOpen(nullptr)
 , onStreamOpened(nullptr)
 , m_model(model)
+, m_jackMaxOutputChannels(0)
 {
 }
 
@@ -202,8 +203,9 @@ KernelAudio::Device KernelAudio::getCurrentOutDevice() const
 	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
 	Device d        = fetchDevice(m_rtAudio->isStreamOpen() ? kernelAudio.deviceOut.id : m_rtAudio->getDefaultOutputDevice());
-	d.channelsCount = kernelAudio.deviceOut.channelsCount;
 	d.channelsStart = kernelAudio.deviceOut.channelsStart;
+	if (getAPI() == RtAudio::Api::UNIX_JACK)
+		d.maxOutputChannels = m_jackMaxOutputChannels;
 
 	return d;
 }
@@ -215,7 +217,6 @@ KernelAudio::Device KernelAudio::getCurrentInDevice() const
 	const model::KernelAudio& kernelAudio = m_model.get().kernelAudio;
 
 	Device d        = fetchDevice(m_rtAudio->isStreamOpen() ? kernelAudio.deviceIn.id : m_rtAudio->getDefaultInputDevice());
-	d.channelsCount = kernelAudio.deviceIn.channelsCount;
 	d.channelsStart = kernelAudio.deviceIn.channelsStart;
 
 	return d;
@@ -271,7 +272,6 @@ m::KernelAudio::Device KernelAudio::fetchDevice(unsigned int deviceId) const
 	    static_cast<int>(info.duplexChannels),
 	    info.isDefaultOutput,
 	    info.isDefaultInput,
-	    0,
 	    0,
 	    info.sampleRates};
 }
@@ -357,6 +357,11 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 	outParams.deviceId     = out.id == -1 ? m_rtAudio->getDefaultOutputDevice() : out.id;
 	outParams.nChannels    = out.channelsCount;
 	outParams.firstChannel = out.channelsStart;
+
+	/* Store the current number of output channels for JACK. This is needed when calling getCurrentOutDevice(),
+	where the maxOutputChannels parameter is not correctly updated for JACK. */
+
+	m_jackMaxOutputChannels = out.channelsCount;
 
 	if (in.id != 0)
 	{

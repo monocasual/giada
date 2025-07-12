@@ -437,6 +437,31 @@ void ChannelManager::setHeight(ID channelId, Pixel height)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelManager::setSendToMaster(ID channelId, bool value)
+{
+	m_model.get().tracks.getChannel(channelId).sendToMaster = value;
+	m_model.swap(model::SwapType::NONE);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ChannelManager::addExtraOutput(ID channelId, int offset)
+{
+	/* 'offset' can be only multiple of 2, that is stereo pair. */
+	assert(offset >= 0 && offset % 2 == 0);
+
+	m_model.get().tracks.getChannel(channelId).extraOutputs.push_back(offset);
+	m_model.swap(model::SwapType::HARD);
+}
+
+void ChannelManager::removeExtraOutput(ID channelId, std::size_t i)
+{
+	u::vector::removeAt(m_model.get().tracks.getChannel(channelId).extraOutputs, i);
+	m_model.swap(model::SwapType::HARD);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 {
 	Channel&       previewCh = m_model.get().tracks.getChannel(Mixer::PREVIEW_CHANNEL_ID);
@@ -623,7 +648,7 @@ void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, 
 
 	/* Copy up to wave.getSize() from the mixer's input buffer into wave's. */
 
-	wave->getBuffer().set(buffer, wave->getBuffer().countFrames());
+	wave->getBuffer().setAll(buffer, wave->getBuffer().countFrames(), 0, 0);
 
 	/* Update channel with the new Wave. */
 
@@ -644,7 +669,7 @@ void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer,
 
 	model::SharedLock lock = m_model.lockShared();
 
-	wave->getBuffer().sum(buffer, /*gain=*/1.0f);
+	wave->getBuffer().sumAll(buffer);
 	wave->setLogical(true);
 
 	setupChannelPostRecording(ch, currentFrame);

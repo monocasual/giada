@@ -125,9 +125,10 @@ Data::Data(const m::Channel& c, std::size_t trackIndex, std::size_t channelIndex
 , height(c.height)
 , name(c.name)
 , volume(c.volume)
-, pan(c.pan)
+, pan(c.pan.asFloat())
 , key(c.key)
 , hasActions(c.hasActions)
+, sendToMaster(c.sendToMaster)
 , m_playStatus(&c.shared->playStatus)
 , m_recStatus(&c.shared->recStatus)
 , m_readActions(&c.shared->readActions)
@@ -163,6 +164,23 @@ std::vector<Track> getTracks()
 		if (!modelTrack.isInternal())
 			out.push_back(makeTrack_(modelTrack));
 	return out;
+}
+
+/* -------------------------------------------------------------------------- */
+
+RoutingData getRoutingData(ID channelId)
+{
+	const m::Channel&             channel   = g_engine->getChannelsApi().get(channelId);
+	const m::KernelAudio::Device& outDevice = g_engine->getConfigApi().audio_getCurrentOutDevice();
+
+	return {
+	    .id                   = channelId,
+	    .volume               = channel.volume,
+	    .pan                  = channel.pan.asFloat(),
+	    .sendToMaster         = channel.sendToMaster,
+	    .outputMaxNumChannels = outDevice.maxOutputChannels,
+	    .extraOutputs         = channel.extraOutputs,
+	    .outputDeviceName     = outDevice.name};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -300,6 +318,25 @@ void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 void setHeight(ID channelId, Pixel p)
 {
 	g_engine->getChannelsApi().setHeight(channelId, p);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void setSendToMaster(ID channelId, bool value)
+{
+	g_engine->getChannelsApi().setSendToMaster(channelId, value);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void addExtraOutput(ID channelId, int offset)
+{
+	g_engine->getChannelsApi().addExtraOutput(channelId, offset);
+}
+
+void removeExtraOutput(ID channelId, int offset)
+{
+	g_engine->getChannelsApi().removeExtraOutput(channelId, offset);
 }
 
 /* -------------------------------------------------------------------------- */

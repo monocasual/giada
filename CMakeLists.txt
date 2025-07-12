@@ -74,6 +74,8 @@ list(APPEND SOURCES
 	src/core/api/configApi.h
 	src/core/worker.cpp
 	src/core/worker.h
+	src/core/pan.cpp
+	src/core/pan.h
 	src/core/eventDispatcher.cpp
 	src/core/eventDispatcher.h
 	src/core/midiDispatcher.cpp
@@ -433,7 +435,7 @@ list(APPEND SOURCES
 	src/utils/string.cpp
 	src/utils/string.h
 	src/deps/rtaudio/RtAudio.cpp
-	src/deps/mcl-audio-buffer/src/audioBuffer.cpp)
+	src/deps/mcl-audio-buffer/src/audioBuffer.hpp)
 
 list(APPEND PREPROCESSOR_DEFS 
 	__RTAUDIO_DUMMY__)

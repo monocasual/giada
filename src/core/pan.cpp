@@ -14,7 +14,7 @@
  * version 3 of the License, or (at your option) any later version.
  *
  * Giada - Your Hardcore Loopmachine is distributed in the hope that it
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * will be useful, but WITHOUT ANY WARRANTY without even the implied
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
@@ -24,31 +24,39 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_CHECK_H
-#define GE_CHECK_H
+#include "src/core/pan.h"
+#include "src/utils/math.h"
+#include <cassert>
 
-#include <FL/Fl_Check_Button.H>
-#include <functional>
-
-namespace giada::v
+namespace giada
 {
-class geCheck : public Fl_Check_Button
+Pan::Pan(float v)
+: m_data({0, 0})
 {
-public:
-	static constexpr int CHECKBOX_WIDTH = 12;
+	assert(v >= 0.0f && v <= 1.0f);
 
-	geCheck();
-	geCheck(int x, int y, int w, int h, const char* l = nullptr);
-	geCheck(const char* l);
+	m_data[0] = v <= 0.5f ? 1.0f : u::math::map(v, 0.5f, 1.0f, 1.0f, 0.0f);
+	m_data[1] = v >= 0.5f ? 1.0f : u::math::map(v, 0.0f, 0.5f, 0.0f, 1.0f);
+}
 
-	void draw() override;
+/* -------------------------------------------------------------------------- */
 
-	std::function<void(bool)> onChange = nullptr;
+bool Pan::operator==(const Pan& other) const
+{
+	return m_data[0] == other.m_data[0] && m_data[1] == other.m_data[1];
+}
 
-private:
-	static void cb_onChange(Fl_Widget* w, void* p);
-	void        cb_onChange();
-};
-} // namespace giada::v
+/* -------------------------------------------------------------------------- */
 
-#endif
+Pan::Type Pan::get() const
+{
+	return m_data;
+}
+
+/* -------------------------------------------------------------------------- */
+
+float Pan::asFloat() const
+{
+	return (m_data[0] == 1.0f) ? m_data[1] * 0.5f : 1.0f - m_data[0] * 0.5f;
+}
+} // namespace giada

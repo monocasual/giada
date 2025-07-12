@@ -195,7 +195,7 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 
 	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.generate());
 	wave->alloc(frames, channels, src.getRate(), src.getBits(), src.getPath());
-	wave->getBuffer().set(src.getBuffer(), frames);
+	wave->getBuffer().setAll(src.getBuffer(), frames, 0, 0);
 	wave->setLogical(true);
 
 	u::log::print("[waveFactory::createFromWave] new Wave created, {} frames\n", frames);

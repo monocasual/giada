@@ -32,6 +32,7 @@
 #include "src/core/channels/midiInput.h"
 #include "src/core/channels/midiLightning.h"
 #include "src/core/channels/sampleChannel.h"
+#include "src/core/pan.h"
 #include "src/core/patch.h"
 #include <optional>
 
@@ -100,13 +101,26 @@ public:
 	ID                   id;
 	ChannelType          type;
 	float                volume;
-	float                pan;
+	Pan                  pan;
 	bool                 armed;
 	int                  key; // TODO - move this to v::Model
 	bool                 hasActions;
 	std::string          name;   // TODO - move this to v::Model
 	Pixel                height; // TODO - move this to v::Model
 	std::vector<Plugin*> plugins;
+
+	/* sendToMaster
+	If false, the audio buffer of this channel won't be rendered to master
+	channel. Useful if you want extra outputs only (see below). */
+
+	bool sendToMaster;
+
+	/* extraOutputs
+	Defines the channel _offsets_ that will be used to render the audio buffer of
+	this channel when extra outputs are used. Each element of the vector is
+	intended as an extra ouput. */
+
+	std::vector<int> extraOutputs;
 
 	MidiInput     midiInput;
 	MidiLightning midiLightning;

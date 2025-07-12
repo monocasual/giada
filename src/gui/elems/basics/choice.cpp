@@ -177,6 +177,11 @@ bool geChoice::hasItem(ID oid) const
 	{ return oid == id; });
 }
 
+bool geChoice::hasItem(const std::string& label) const
+{
+	return m_menu->find_index(label.c_str()) != -1;
+}
+
 /* -------------------------------------------------------------------------- */
 
 void geChoice::clear()

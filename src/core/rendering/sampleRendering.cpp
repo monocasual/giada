@@ -62,7 +62,7 @@ ReadResult readCopy_(const Wave& wave, mcl::AudioBuffer& dest, Frame start,
 	if (used > max - start)
 		used = max - start;
 
-	dest.set(wave.getBuffer(), used, start, offset);
+	dest.setAll(wave.getBuffer(), used, start, offset);
 
 	return {used, used};
 }
@@ -208,7 +208,8 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 
 void renderSampleChannelInput(const Channel& ch, const mcl::AudioBuffer& in)
 {
-	ch.shared->audioBuffer.set(in, /*gain=*/1.0f); // add, don't overwrite
+	ch.shared->audioBuffer.set(in, 0, 0, /*gain=*/1.0f); // add, don't overwrite
+	ch.shared->audioBuffer.set(in, 1, 1, /*gain=*/1.0f); // add, don't overwrite
 }
 
 /* -------------------------------------------------------------------------- */

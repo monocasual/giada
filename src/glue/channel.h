@@ -105,6 +105,9 @@ struct Data
 	float                   pan;
 	int                     key;
 	bool                    hasActions;
+	bool                    sendToMaster;
+	std::size_t             extraOutputsCount;
+	std::string             outputDeviceName;
 
 	std::optional<SampleData> sample;
 	std::optional<MidiData>   midi;
@@ -122,6 +125,17 @@ struct Track
 	std::vector<Data> channels;
 };
 
+struct RoutingData
+{
+	ID               id;
+	float            volume;
+	float            pan;
+	bool             sendToMaster;
+	int              outputMaxNumChannels;
+	std::vector<int> extraOutputs;
+	std::string      outputDeviceName;
+};
+
 /* getChannels
 Returns a single viewModel object filled with data from a channel. */
 
@@ -132,6 +146,11 @@ Returns a vector of Track's filled with Data objects, which reflects the layout
 described by m::model::Tracks. */
 
 std::vector<Track> getTracks();
+
+/* getRoutingData
+Returns a single viewModel object for the 'Routing' window. */
+
+RoutingData getRoutingData(ID channelId);
 
 /* addChannel
 Adds an empty new channel to the stack. */
@@ -195,6 +214,9 @@ void setInputMonitor(ID channelId, bool value);
 void setOverdubProtection(ID channelId, bool value);
 void setName(ID channelId, const std::string& name);
 void setHeight(ID channelId, Pixel p);
+void setSendToMaster(ID channelId, bool value);
+void addExtraOutput(ID channelId, int);
+void removeExtraOutput(ID channelId, int);
 
 /* clearAllActions
 Deletes all recorded actions on channel 'channelId'. */

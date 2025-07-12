@@ -70,7 +70,7 @@ AudioDeviceData::AudioDeviceData(DeviceType type, const m::KernelAudio::Device& 
 , name(device.name)
 , channelsMax(type == DeviceType::OUTPUT ? device.maxOutputChannels : device.maxInputChannels)
 , sampleRates(device.sampleRates)
-, selectedChannelsCount(device.channelsCount)
+, selectedChannelsCount(channelsMax)
 , selectedChannelsStart(device.channelsStart)
 {
 }

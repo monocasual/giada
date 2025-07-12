@@ -63,7 +63,6 @@ public:
 		int                       maxDuplexChannels = 0;
 		bool                      isDefaultOut      = false;
 		bool                      isDefaultIn       = false;
-		int                       channelsCount     = 0;
 		int                       channelsStart     = 0;
 		std::vector<unsigned int> sampleRates       = {};
 	};
@@ -172,6 +171,7 @@ private:
 	std::unique_ptr<RtAudio> m_rtAudio;
 	CallbackInfo             m_callbackInfo;
 	model::Model&            m_model;
+	int                      m_jackMaxOutputChannels;
 };
 } // namespace giada::m
 

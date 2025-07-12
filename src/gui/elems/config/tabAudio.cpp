@@ -34,6 +34,7 @@
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
+#include "src/utils/string.h"
 #include <fmt/core.h>
 #include <string>
 
@@ -105,20 +106,17 @@ void geTabAudio::geChannelMenu::rebuild(const c::config::AudioDeviceData& data)
 			addItem(std::to_string(i + 1), i);
 
 	/* Dirty trick for stereo channels: they start at STEREO_OFFSET. Also,
-	what if channelsMax > 2? Only channel pairs are allowed at the moment. */
+	what if channelsMax > 2? Only channel pairs are allowed at the moment. In
+	other words, master out is always stereo. */
 
 	if (data.channelsMax > 1)
 		for (int i = 0; i < data.channelsMax; i += 2)
 			addItem(fmt::format("{}-{}", i + 1, i + 2), i + STEREO_OFFSET);
 
-	if (data.selectedChannelsCount == 0) // First time you choose a device, so no channels selected yet: just show first item
-		showFirstItem();
-	else if (data.selectedChannelsCount == 1)
+	if (data.type == c::config::DeviceType::INPUT)
 		showItem(data.selectedChannelsStart);
-	else if (data.selectedChannelsCount == 2)
+	else if (data.type == c::config::DeviceType::OUTPUT)
 		showItem(data.selectedChannelsStart + STEREO_OFFSET);
-	else
-		assert(false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -145,10 +143,12 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 		geFlex* line1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			m_bufferSize = new geChoice();
+			m_bufferSize     = new geChoice();
+			m_numOutChannels = new geInput();
 
 			line1->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_BUFFERSIZE), FL_ALIGN_RIGHT), LABEL_WIDTH);
 			line1->addWidget(m_bufferSize, 60);
+			line1->addWidget(m_numOutChannels, 40);
 			line1->end();
 		}
 
@@ -253,6 +253,11 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	m_sampleRate->onChange = [this](ID id)
 	{ m_data.selectedSampleRate = id; };
 
+	m_numOutChannels->onChange = [this](const std::string& s)
+	{
+		m_data.selectedOutputDevice.selectedChannelsCount = u::string::toInt(s);
+	};
+
 	m_sounddevOut->onChange = [this](ID id)
 	{
 		m_data.setOutputDevice(id);
@@ -274,8 +279,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 	m_channelsOut->onChange = [this](ID)
 	{
-		m_data.selectedOutputDevice.selectedChannelsCount = m_channelsOut->getChannelsCount();
-		m_data.selectedOutputDevice.selectedChannelsStart = m_channelsOut->getChannelsStart();
+		refreshChannelOutProperties();
 	};
 
 	m_channelsIn->onChange = [this](ID)
@@ -310,7 +314,9 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	{ m_data.selectedResampleQuality = id; };
 
 	m_recTriggerLevel->onChange = [this](const std::string& s)
-	{ m_data.selectedRecTriggerLevel = std::stof(s); };
+	{
+		m_data.selectedRecTriggerLevel = u::string::toFloat(s);
+	};
 
 	m_applyBtn->onClick = [this]()
 	{ c::config::apply(m_data); };
@@ -331,6 +337,12 @@ void geTabAudio::rebuild(const c::config::AudioData& data)
 	m_api->showItem(m_data.selectedApi);
 
 	m_bufferSize->showItem(m_data.selectedBufferSize);
+
+	m_numOutChannels->setValue(fmt::format("{}", m_data.selectedOutputDevice.selectedChannelsCount));
+	if (m_data.selectedApi == RtAudio::Api::UNIX_JACK)
+		m_numOutChannels->show();
+	else
+		m_numOutChannels->hide();
 
 	m_sounddevOut->rebuild(m_data.availableOutputDevices);
 	m_sounddevOut->showItem(m_data.selectedOutputDevice.id);
@@ -378,7 +390,10 @@ void geTabAudio::refreshDevOutProperties()
 	{
 		for (unsigned int sampleRate : m_data.selectedOutputDevice.sampleRates)
 			m_sampleRate->addItem(std::to_string(sampleRate), sampleRate);
-		m_sampleRate->showItem(m_data.selectedSampleRate);
+		if (m_sampleRate->hasItem((m_data.selectedSampleRate)))
+			m_sampleRate->showItem(m_data.selectedSampleRate);
+		else
+			m_sampleRate->showFirstItem();
 
 		if (m_data.selectedApi != RtAudio::Api::UNIX_JACK)
 			m_sampleRate->activate();
@@ -386,9 +401,7 @@ void geTabAudio::refreshDevOutProperties()
 
 	m_channelsOut->rebuild(m_data.selectedOutputDevice);
 
-	// Also refresh channels out info
-	m_data.selectedOutputDevice.selectedChannelsCount = m_channelsOut->getChannelsCount();
-	m_data.selectedOutputDevice.selectedChannelsStart = m_channelsOut->getChannelsStart();
+	refreshChannelOutProperties();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -412,6 +425,22 @@ void geTabAudio::refreshDevInProperties()
 		m_channelsIn->deactivate();
 		m_recTriggerLevel->deactivate();
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geTabAudio::refreshChannelOutProperties()
+{
+	/* On JACK we use the number of virtual output channels as the selected output
+	channel count value. Otherwise, always use the maximum number of output channels
+	available for the selected device. It will be Mixer's responsibility to determine
+	where to output the master out channel, according to 'selectedChannelsStart' value. */
+
+	if (m_data.selectedApi == RtAudio::Api::UNIX_JACK)
+		m_data.selectedOutputDevice.selectedChannelsCount = u::string::toInt(m_numOutChannels->getValue());
+	else
+		m_data.selectedOutputDevice.selectedChannelsCount = m_data.selectedOutputDevice.channelsMax;
+	m_data.selectedOutputDevice.selectedChannelsStart = m_channelsOut->getChannelsStart();
 }
 
 /* -------------------------------------------------------------------------- */

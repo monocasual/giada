@@ -40,22 +40,6 @@
 
 namespace giada::m::rendering
 {
-mcl::AudioBuffer::Pan calcPanning_(float pan)
-{
-	/* TODO - precompute the AudioBuffer::Pan when pan value changes instead of
-	building it on the fly. */
-
-	/* Center pan (0.5f)? Pass-through. */
-
-	if (pan == 0.5f)
-		return {1.0f, 1.0f};
-	return {1.0f - pan, pan};
-}
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 #ifdef WITH_AUDIO_JACK
 Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, JackSynchronizer& js, JackTransport& jt, KernelMidi& km)
 #else
@@ -137,11 +121,14 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		renderMasterIn(masterInCh, mixer.getInBuffer());
 
 	if (!document_RT.locked)
-		renderTracks(tracks, out, mixer.getInBuffer(), hasSolos, sequencer.isRunning());
+		renderTracks(tracks, masterOutCh.shared->audioBuffer, out, mixer.getInBuffer(),
+		    hasSolos, sequencer.isRunning());
 
-	renderMasterOut(masterOutCh, out);
+	renderMasterOut(masterOutCh, out, kernelAudio.deviceOut.channelsStart);
 	if (mixer.renderPreview)
 		renderPreview(previewCh, out);
+
+	m_mixer.updateOutputPeak(mixer, masterOutCh.shared->audioBuffer);
 
 	/* Post processing. */
 
@@ -170,17 +157,20 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 	for (const Sequencer::Event& e : events)
 	{
 		if (ch.type == ChannelType::MIDI)
-			rendering::advanceMidiChannel(ch, e, m_kernelMidi);
+			advanceMidiChannel(ch, e, m_kernelMidi);
 		else if (ch.type == ChannelType::SAMPLE)
-			rendering::advanceSampleChannel(ch, e);
+			advanceSampleChannel(ch, e);
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
-    const mcl::AudioBuffer& in, bool hasSolos, bool seqIsRunning) const
+void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& masterOut,
+    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, bool hasSolos,
+    bool seqIsRunning) const
 {
+	masterOut.clear();
+
 	for (const model::Track& track : tracks.getAll())
 	{
 		if (track.isInternal())
@@ -190,33 +180,38 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& out,
 		group.shared->audioBuffer.clear();
 
 		for (const Channel& c : track.getChannels().getAll())
-			renderNormalChannel(c, group.shared->audioBuffer, in, hasSolos, seqIsRunning);
+		{
+			renderNormalChannel(c, in, seqIsRunning);
+			if (!c.isAudible(hasSolos))
+				continue;
+			if (c.sendToMaster)
+				mergeChannel(c, group.shared->audioBuffer);
+			for (const int offset : c.extraOutputs)
+				mergeChannel(c, hardwareOut, offset);
+		}
 
-		rendering::renderAudioPlugins(group, m_pluginHost);
+		renderAudioPlugins(group, m_pluginHost);
 
-		if (group.isAudible(hasSolos))
-			out.sum(group.shared->audioBuffer, group.volume, calcPanning_(group.pan));
+		if (!group.isAudible(hasSolos))
+			continue;
+		if (group.sendToMaster)
+			mergeChannel(group, masterOut);
+		for (const int offset : group.extraOutputs)
+			mergeChannel(group, hardwareOut, offset);
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderNormalChannel(const Channel& ch, mcl::AudioBuffer& out,
-    const mcl::AudioBuffer& in, bool mixerHasSolos, bool seqIsRunning) const
+void Renderer::renderNormalChannel(const Channel& ch, const mcl::AudioBuffer& in,
+    bool seqIsRunning) const
 {
 	ch.shared->audioBuffer.clear();
 
 	if (ch.type == ChannelType::SAMPLE)
-	{
 		renderSampleChannel(ch, in, seqIsRunning);
-	}
 	else if (ch.type == ChannelType::MIDI)
-	{
 		renderMidiChannel(ch);
-	}
-
-	if (ch.isAudible(mixerHasSolos))
-		out.sum(ch.shared->audioBuffer, ch.volume * ch.shared->volumeInternal.load(), calcPanning_(ch.pan));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -228,11 +223,10 @@ void Renderer::renderMasterIn(const Channel& ch, mcl::AudioBuffer& in) const
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out) const
+void Renderer::renderMasterOut(const Channel& ch, mcl::AudioBuffer& out, int channelOffset) const
 {
-	ch.shared->audioBuffer.set(out, /*gain=*/1.0f);
 	m_pluginHost.processStack(ch.shared->audioBuffer, ch.plugins, nullptr);
-	out.set(ch.shared->audioBuffer, ch.volume);
+	mergeChannel(ch, out, channelOffset);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -244,7 +238,7 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 	if (ch.isPlaying())
 		rendering::renderSampleChannel(ch, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
 
-	out.sum(ch.shared->audioBuffer, ch.volume, calcPanning_(ch.pan));
+	out.sumAll(ch.shared->audioBuffer, ch.volume);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -257,9 +251,9 @@ void Renderer::renderSampleChannel(const Channel& ch, const mcl::AudioBuffer& in
 		rendering::renderSampleChannel(ch, seqIsRunning);
 
 	if (ch.canReceiveAudio())
-		rendering::renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
+		renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)
 
-	rendering::renderAudioPlugins(ch, m_pluginHost);
+	renderAudioPlugins(ch, m_pluginHost);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -268,6 +262,22 @@ void Renderer::renderMidiChannel(const Channel& ch) const
 {
 	assert(ch.type == ChannelType::MIDI);
 
-	rendering::renderAudioAndMidiPlugins(ch, m_pluginHost);
+	renderAudioAndMidiPlugins(ch, m_pluginHost);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Renderer::mergeChannel(const Channel& ch, mcl::AudioBuffer& out) const
+{
+	out.sumAll(ch.shared->audioBuffer, ch.pan.get(), ch.volume * ch.shared->volumeInternal.load());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Renderer::mergeChannel(const Channel& ch, mcl::AudioBuffer& out, int destChannelOffset) const
+{
+	for (int i = 0; i < ch.shared->audioBuffer.countChannels(); i++)
+		if (destChannelOffset < out.countChannels())
+			out.sum(ch.shared->audioBuffer, i, i + destChannelOffset, ch.volume);
 }
 } // namespace giada::m::rendering
