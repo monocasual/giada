@@ -57,7 +57,7 @@ namespace giada
 
 /* -- version --------------------------------------------------------------- */
 constexpr auto    G_APP_NAME = "Giada";
-constexpr Version G_VERSION(1, 2, 1);
+constexpr Version G_VERSION(1, 3, 0);
 
 constexpr auto G_CONF_FILENAME = "giada.conf";
 
