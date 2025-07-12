@@ -278,6 +278,6 @@ void Renderer::mergeChannel(const Channel& ch, mcl::AudioBuffer& out, int destCh
 {
 	for (int i = 0; i < ch.shared->audioBuffer.countChannels(); i++)
 		if (destChannelOffset < out.countChannels())
-			out.set(ch.shared->audioBuffer, i, i + destChannelOffset, ch.volume);
+			out.sum(ch.shared->audioBuffer, i, i + destChannelOffset, ch.volume);
 }
 } // namespace giada::m::rendering
