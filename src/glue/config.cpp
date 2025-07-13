@@ -287,13 +287,13 @@ void apply(const AudioData& data)
 	bool res = g_engine->getConfigApi().audio_openStream(
 	    {
 	        data.selectedOutputDevice.id,
-	        data.selectedOutputDevice.selectedChannelsCount,
-	        data.selectedOutputDevice.selectedChannelsStart,
+	        std::max(0, data.selectedOutputDevice.selectedChannelsCount),
+	        std::max(0, data.selectedOutputDevice.selectedChannelsStart),
 	    },
 	    {
 	        data.selectedInputDevice.id,
-	        data.selectedInputDevice.selectedChannelsCount,
-	        data.selectedInputDevice.selectedChannelsStart,
+	        std::max(0, data.selectedInputDevice.selectedChannelsCount),
+	        std::max(0, data.selectedInputDevice.selectedChannelsStart),
 	    },
 	    data.selectedSampleRate, data.selectedBufferSize);
 
