@@ -39,6 +39,8 @@ namespace giada::v
 class geScroll : public Fl_Scroll
 {
 public:
+	int children() const = delete; // Use countChildren()
+
 	geScroll(int x, int y, int w, int h, int type = Fl_Scroll::BOTH);
 	geScroll(int type = Fl_Scroll::BOTH);
 

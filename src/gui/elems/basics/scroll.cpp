@@ -124,7 +124,7 @@ void geScroll::cb_onScrollH()
 
 int geScroll::countChildren() const
 {
-	return children() - 2; // Exclude scrollbars
+	return Fl_Scroll::children() - 2; // Exclude scrollbars
 }
 /* -------------------------------------------------------------------------- */
 
