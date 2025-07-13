@@ -78,7 +78,8 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , name(p.name)
 , height(p.height)
 , plugins(plugins)
-, sendToMaster(true) // TODO - persistence
+, sendToMaster(p.sendToMaster)
+, extraOutputs(p.extraOutputs)
 , midiInput(p)
 , midiLightning(p)
 , m_mute(p.mute)

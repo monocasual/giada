@@ -139,6 +139,8 @@ const Patch::Channel serializeChannel(const Channel& c)
 	pc.hasActions        = c.hasActions;
 	pc.readActions       = c.shared->readActions.load();
 	pc.armed             = c.armed;
+	pc.sendToMaster      = c.sendToMaster;
+	pc.extraOutputs      = c.extraOutputs;
 	pc.midiIn            = c.midiInput.enabled;
 	pc.midiInFilter      = c.midiInput.filter;
 	pc.midiInKeyPress    = c.midiInput.keyPress.getValue();

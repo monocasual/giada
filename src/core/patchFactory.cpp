@@ -59,6 +59,8 @@ constexpr auto PATCH_KEY_CHANNEL_MUTE                 = "mute";
 constexpr auto PATCH_KEY_CHANNEL_SOLO                 = "solo";
 constexpr auto PATCH_KEY_CHANNEL_VOLUME               = "volume";
 constexpr auto PATCH_KEY_CHANNEL_PAN                  = "pan";
+constexpr auto PATCH_KEY_CHANNEL_SEND_TO_MASTER       = "send_to_master";
+constexpr auto PATCH_KEY_CHANNEL_EXTRA_OUTPUTS        = "extra_outputs";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_IN              = "midi_in";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_IN_VELO_AS_VOL  = "midi_in_velo_as_vol";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS     = "midi_in_keypress";
@@ -231,6 +233,7 @@ void readChannels_(Patch& patch, const nlohmann::json& j)
 		c.solo              = jchannel.value(PATCH_KEY_CHANNEL_SOLO, 0);
 		c.pan               = jchannel.value(PATCH_KEY_CHANNEL_PAN, 0.5f);
 		c.hasActions        = jchannel.value(PATCH_KEY_CHANNEL_HAS_ACTIONS, false);
+		c.sendToMaster      = jchannel.value(PATCH_KEY_CHANNEL_SEND_TO_MASTER, false);
 		c.midiIn            = jchannel.value(PATCH_KEY_CHANNEL_MIDI_IN, 0);
 		c.midiInKeyPress    = jchannel.value(PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS, 0);
 		c.midiInKeyRel      = jchannel.value(PATCH_KEY_CHANNEL_MIDI_IN_KEYREL, 0);
@@ -263,6 +266,10 @@ void readChannels_(Patch& patch, const nlohmann::json& j)
 		if (jchannel.contains(PATCH_KEY_CHANNEL_PLUGINS))
 			for (const auto& jplugin : jchannel[PATCH_KEY_CHANNEL_PLUGINS])
 				c.pluginIds.push_back(jplugin);
+
+		if (jchannel.contains(PATCH_KEY_CHANNEL_EXTRA_OUTPUTS))
+			for (const auto& joutput : jchannel[PATCH_KEY_CHANNEL_EXTRA_OUTPUTS])
+				c.extraOutputs.push_back(joutput);
 
 		patch.channels.push_back(c);
 	}
@@ -382,6 +389,7 @@ void writeChannels_(const Patch& patch, nlohmann::json& j)
 		jchannel[PATCH_KEY_CHANNEL_PAN]                  = c.pan;
 		jchannel[PATCH_KEY_CHANNEL_HAS_ACTIONS]          = c.hasActions;
 		jchannel[PATCH_KEY_CHANNEL_ARMED]                = c.armed;
+		jchannel[PATCH_KEY_CHANNEL_SEND_TO_MASTER]       = c.sendToMaster;
 		jchannel[PATCH_KEY_CHANNEL_MIDI_IN]              = c.midiIn;
 		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_KEYREL]       = c.midiInKeyRel;
 		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS]     = c.midiInKeyPress;
@@ -414,6 +422,10 @@ void writeChannels_(const Patch& patch, nlohmann::json& j)
 		jchannel[PATCH_KEY_CHANNEL_PLUGINS] = nlohmann::json::array();
 		for (ID pid : c.pluginIds)
 			jchannel[PATCH_KEY_CHANNEL_PLUGINS].push_back(pid);
+
+		jchannel[PATCH_KEY_CHANNEL_EXTRA_OUTPUTS] = nlohmann::json::array();
+		for (int output : c.extraOutputs)
+			jchannel[PATCH_KEY_CHANNEL_EXTRA_OUTPUTS].push_back(output);
 
 		j[PATCH_KEY_CHANNELS].push_back(jchannel);
 	}

@@ -47,30 +47,32 @@ struct Patch
 
 	struct Channel
 	{
-		ID          id;
-		ChannelType type;
-		int         height;
-		std::string name;
-		int         key;
-		bool        mute;
-		bool        solo;
-		float       volume = G_DEFAULT_VOL;
-		float       pan    = G_DEFAULT_PAN;
-		bool        hasActions;
-		bool        armed;
-		bool        midiIn;
-		uint32_t    midiInKeyPress;
-		uint32_t    midiInKeyRel;
-		uint32_t    midiInKill;
-		uint32_t    midiInArm;
-		uint32_t    midiInVolume;
-		uint32_t    midiInMute;
-		uint32_t    midiInSolo;
-		int         midiInFilter;
-		bool        midiOutL;
-		uint32_t    midiOutLplaying;
-		uint32_t    midiOutLmute;
-		uint32_t    midiOutLsolo;
+		ID               id;
+		ChannelType      type;
+		int              height;
+		std::string      name;
+		int              key;
+		bool             mute;
+		bool             solo;
+		float            volume = G_DEFAULT_VOL;
+		float            pan    = G_DEFAULT_PAN;
+		bool             hasActions;
+		bool             armed;
+		bool             sendToMaster;
+		std::vector<int> extraOutputs;
+		bool             midiIn;
+		uint32_t         midiInKeyPress;
+		uint32_t         midiInKeyRel;
+		uint32_t         midiInKill;
+		uint32_t         midiInArm;
+		uint32_t         midiInVolume;
+		uint32_t         midiInMute;
+		uint32_t         midiInSolo;
+		int              midiInFilter;
+		bool             midiOutL;
+		uint32_t         midiOutLplaying;
+		uint32_t         midiOutLmute;
+		uint32_t         midiOutLsolo;
 		// sample channel
 		ID               waveId = 0;
 		SamplePlayerMode mode;
