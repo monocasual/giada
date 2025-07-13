@@ -60,7 +60,7 @@ geLiquidScroll::geLiquidScroll(Direction d, int scrollbarType)
 void geLiquidScroll::resize(int X, int Y, int W, int H)
 {
 	const int scrollbarSpace = getScrollbarSpace();
-	const int nc             = children() - 2; // skip hscrollbar and vscrollbar
+	const int nc             = countChildren();
 
 	for (int t = 0; t < nc; t++) // tell children to resize to our new width
 	{
