@@ -36,10 +36,9 @@
 namespace giada::v
 {
 geLiquidScroll::geLiquidScroll(int x, int y, int w, int h, Direction d, int scrollbarType)
-: geScroll(x, y, w, h, d == Direction::VERTICAL ? Fl_Scroll::VERTICAL_ALWAYS : Fl_Scroll::HORIZONTAL_ALWAYS)
+: geScroll(x, y, w, h, scrollbarType)
 , m_direction(d)
 {
-	type(scrollbarType);
 }
 
 /* -------------------------------------------------------------------------- */
