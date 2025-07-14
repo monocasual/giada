@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/model/mixer.h"
+#include "src/const.h"
 #ifdef G_DEBUG_MODE
 #include <fmt/core.h>
 #endif

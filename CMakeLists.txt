@@ -33,6 +33,7 @@ project(giada LANGUAGES C CXX)
 
 list(APPEND SOURCES
 	src/main.cpp
+	src/const.h
 	src/mapper.cpp
 	src/mapper.h
 	src/version.h

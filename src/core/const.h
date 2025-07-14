@@ -36,31 +36,6 @@
 
 namespace giada
 {
-/* -- environment ----------------------------------------------------------- */
-#if defined(_WIN32)
-#define G_OS_WINDOWS
-#elif defined(__APPLE__)
-#define G_OS_MAC
-#elif defined(__linux__)
-#define G_OS_LINUX
-#elif defined(__FreeBSD__)
-#define G_OS_FREEBSD
-#endif
-
-#ifndef NDEBUG
-#define G_DEBUG_MODE
-#endif
-
-#ifndef BUILD_DATE
-#define BUILD_DATE __DATE__
-#endif
-
-/* -- version --------------------------------------------------------------- */
-constexpr auto    G_APP_NAME = "Giada";
-constexpr Version G_VERSION(1, 3, 0);
-
-constexpr auto G_CONF_FILENAME = "giada.conf";
-
 /* -- Engine ---------------------------------------------------------------- */
 /* G_EVENT_DISPATCHER_RATE_MS
 The amount of sleep between each Event Dispatcher cycle. It should be lower
@@ -142,8 +117,9 @@ constexpr int G_FILE_INVALID       = 0;
 constexpr int G_FILE_OK            = 1;
 
 /* -- File system ----------------------------------------------------------- */
-constexpr auto G_PATCH_EXT   = ".gptc";
-constexpr auto G_PROJECT_EXT = ".gprj";
+constexpr auto G_PATCH_EXT     = ".gptc";
+constexpr auto G_PROJECT_EXT   = ".gprj";
+constexpr auto G_CONF_FILENAME = "giada.conf";
 
 /* -- MIDI in parameters (for MIDI learning) -------------------------------- */
 constexpr int G_MIDI_IN_ENABLED      = 1;

@@ -27,6 +27,7 @@
 #ifndef G_PATCH_H
 #define G_PATCH_H
 
+#include "src/const.h"
 #include "src/core/const.h"
 #include "src/core/types.h"
 #include "src/version.h"

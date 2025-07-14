@@ -26,7 +26,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/const.h"
+#include "src/const.h"
 #include <climits>
 #include <cstdlib>
 #include <filesystem>
