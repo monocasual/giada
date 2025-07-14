@@ -30,11 +30,7 @@
 #include <RtMidi.h>
 #include <sndfile.h>
 
-namespace giada
-{
-namespace u
-{
-namespace ver
+namespace giada::u::ver
 {
 std::string getLibsndfileVersion()
 {
@@ -64,6 +60,4 @@ std::string getRtMidiVersion()
 	return RtMidi::getVersion();
 #endif
 }
-} // namespace ver
-} // namespace u
-} // namespace giada
+} // namespace giada::u::ver

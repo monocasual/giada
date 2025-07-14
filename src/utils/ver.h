@@ -29,17 +29,11 @@
 
 #include <string>
 
-namespace giada
-{
-namespace u
-{
-namespace ver
+namespace giada::u::ver
 {
 std::string getLibsndfileVersion();
 std::string getRtAudioVersion();
 std::string getRtMidiVersion();
-} // namespace ver
-} // namespace u
-} // namespace giada
+} // namespace giada::u::ver
 
 #endif
