@@ -29,7 +29,8 @@
 
 namespace giada
 {
-using ID = int;
+using ID    = int;
+using Frame = int;
 } // namespace giada
 
 #endif

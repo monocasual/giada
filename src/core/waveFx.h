@@ -27,7 +27,7 @@
 #ifndef G_WAVE_FX_H
 #define G_WAVE_FX_H
 
-#include "src/core/types.h"
+#include "src/types.h"
 
 namespace giada::m
 {

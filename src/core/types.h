@@ -30,7 +30,6 @@
 namespace giada
 {
 using Pixel = int;
-using Frame = int;
 
 enum class Thread
 {
