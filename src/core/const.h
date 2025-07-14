@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_CONST_H
-#define G_CONST_H
+#ifndef G_CORE_CONST_H
+#define G_CORE_CONST_H
 
 #include "src/core/types.h"
 #include "src/deps/rtaudio/RtAudio.h"
