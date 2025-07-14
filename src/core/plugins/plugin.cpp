@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/plugins/plugin.h"
-#include "src/core/const.h"
 #include "src/utils/log.h"
 #include "src/utils/time.h"
 #include <FL/Fl.H>

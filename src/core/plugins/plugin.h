@@ -27,7 +27,6 @@
 #ifndef G_PLUGIN_H
 #define G_PLUGIN_H
 
-#include "src/core/const.h"
 #include "src/core/midiLearnParam.h"
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/plugins/pluginState.h"

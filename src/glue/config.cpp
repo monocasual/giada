@@ -26,7 +26,6 @@
 
 #include "src/glue/config.h"
 #include "src/core/conf.h"
-#include "src/core/const.h"
 #include "src/core/engine.h"
 #include "src/core/kernelAudio.h"
 #include "src/core/kernelMidi.h"

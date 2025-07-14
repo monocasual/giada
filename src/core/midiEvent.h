@@ -27,7 +27,6 @@
 #ifndef G_MIDI_EVENT_H
 #define G_MIDI_EVENT_H
 
-#include "src/core/const.h"
 #include <cstdint>
 
 #ifdef G_OS_MAC

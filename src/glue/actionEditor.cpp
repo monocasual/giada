@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/glue/actionEditor.h"
-#include "src/core/const.h"
 #include "src/core/engine.h"
 #include "src/core/model/model.h"
 #include "src/core/sequencer.h"

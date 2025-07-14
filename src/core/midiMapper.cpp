@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/midiMapper.h"
-#include "src/core/const.h"
 #include "src/core/kernelMidi.h"
 #include "src/core/midiEvent.h"
 #include "src/utils/fs.h"

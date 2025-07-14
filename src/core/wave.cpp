@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/wave.h"
-#include "src/core/const.h"
 #include "src/utils/fs.h"
 #include <cassert>
 #include <fmt/core.h>

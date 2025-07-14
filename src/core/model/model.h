@@ -29,7 +29,6 @@
 
 #include "src/core/channels/channel.h"
 #include "src/core/conf.h"
-#include "src/core/const.h"
 #include "src/core/model/actions.h"
 #include "src/core/model/behaviors.h"
 #include "src/core/model/channels.h"

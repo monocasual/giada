@@ -27,7 +27,6 @@
 #include "src/core/channels/channelFactory.h"
 #include "src/core/channels/channel.h"
 #include "src/core/conf.h"
-#include "src/core/const.h"
 #include "src/core/model/model.h"
 #include "src/core/patch.h"
 #include "src/core/plugins/plugin.h"

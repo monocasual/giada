@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/plugins/pluginState.h"
-#include "src/core/const.h"
 #include "src/utils/log.h"
 #include <cstddef>
 

@@ -29,6 +29,7 @@
 
 #include "src/core/midiEvent.h"
 #include "src/core/types.h"
+#include "src/types.h"
 
 namespace giada::m
 {

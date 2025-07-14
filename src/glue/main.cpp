@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/glue/main.h"
-#include "src/core/const.h"
 #include "src/core/engine.h"
 #include "src/core/init.h"
 #include "src/core/kernelMidi.h"

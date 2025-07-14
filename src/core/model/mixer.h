@@ -28,7 +28,6 @@
 #define G_MODEL_MIXER_H
 
 #include "src/const.h"
-#include "src/core/const.h"
 #include "src/core/types.h"
 #include "src/core/weakAtomic.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"

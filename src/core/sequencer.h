@@ -28,6 +28,7 @@
 #define G_SEQUENCER_H
 
 #include "src/core/actions/action.h"
+#include "src/core/const.h"
 #include "src/core/eventDispatcher.h"
 #include "src/core/metronome.h"
 #include "src/core/quantizer.h"

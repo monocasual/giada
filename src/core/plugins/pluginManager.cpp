@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/plugins/pluginManager.h"
-#include "src/core/const.h"
 #include "src/core/model/model.h"
 #include "src/core/patch.h"
 #include "src/core/plugins/plugin.h"

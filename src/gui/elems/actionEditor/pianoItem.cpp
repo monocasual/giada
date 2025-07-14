@@ -26,6 +26,7 @@
 
 #include "src/gui/elems/actionEditor/pianoItem.h"
 #include "src/core/actions/action.h"
+#include "src/core/const.h"
 #include "src/core/midiEvent.h"
 #include "src/gui/const.h"
 #include "src/utils/math.h"
