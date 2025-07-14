@@ -348,7 +348,11 @@ LangMap::LangMap()
 	m_data[CONFIG_PLUGINS_SCAN]        = "Scan ({} found)";
 	m_data[CONFIG_PLUGINS_INVALIDPATH] = "Invalid path.";
 
-	m_data[CHANNELROUTING_TITLE] = "Channel Routing";
+	m_data[CHANNELROUTING_TITLE]              = "Channel Routing";
+	m_data[CHANNELROUTING_SENDTOMASTEROUT]    = "Send to master output channel";
+	m_data[CHANNELROUTING_ADDNEWOUTPUT]       = "Add new audio output";
+	m_data[CHANNELROUTING_OUTPUT_CHOOSE]      = "(choose)";
+	m_data[CHANNELROUTING_OUTPUT_UNREACHABLE] = "(unreachable)";
 }
 
 const char* LangMap::get(const std::string& key) const

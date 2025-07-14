@@ -89,8 +89,8 @@ gdChannelRouting::gdChannelRouting(ID channelId)
 		{
 			m_volume       = new geVolumeTool(m_data.id, m_data.volume, LABEL_WIDTH);
 			m_pan          = new gePanTool(m_data.id, m_data.pan, LABEL_WIDTH);
-			m_sendToMaster = new geCheck("Send to master output channel");
-			m_addNewOutput = new geChoice("Add new audio output:");
+			m_sendToMaster = new geCheck(g_ui->getI18Text(LangMap::CHANNELROUTING_SENDTOMASTEROUT));
+			m_addNewOutput = new geChoice(g_ui->getI18Text(LangMap::CHANNELROUTING_ADDNEWOUTPUT));
 			m_outputs      = new geLiquidScroll(Direction::VERTICAL, Fl_Scroll::VERTICAL);
 			body->addWidget(m_volume, G_GUI_UNIT);
 			body->addWidget(m_pan, G_GUI_UNIT);
@@ -144,12 +144,12 @@ void gdChannelRouting::rebuild()
 
 	const auto makeOutputName = [](const std::string& deviceName, int offset, int maxNumChannels)
 	{
-		const std::string unreachable = offset >= maxNumChannels ? " (unreachable)" : "";
-		return fmt::format("{} - {},{}{}", deviceName, offset + 1, offset + 2, unreachable);
+		const std::string unreachable = offset >= maxNumChannels ? g_ui->getI18Text(LangMap::CHANNELROUTING_OUTPUT_UNREACHABLE) : "";
+		return fmt::format("{} - {},{} {}", deviceName, offset + 1, offset + 2, unreachable);
 	};
 
 	m_addNewOutput->clear();
-	m_addNewOutput->addItem("(choose)", 0);
+	m_addNewOutput->addItem(g_ui->getI18Text(LangMap::CHANNELROUTING_OUTPUT_CHOOSE), 0);
 	for (int offset = 0; offset < m_data.outputMaxNumChannels; offset += 2)
 		m_addNewOutput->addItem(makeOutputName(m_data.outputDeviceName, offset, m_data.outputMaxNumChannels), offset + 1);
 	m_addNewOutput->showFirstItem();

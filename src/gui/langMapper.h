@@ -342,7 +342,11 @@ public:
 	static constexpr auto CONFIG_PLUGINS_SCAN        = "config_plugins_scan";
 	static constexpr auto CONFIG_PLUGINS_INVALIDPATH = "config_plugins_invalidPath";
 
-	static constexpr auto CHANNELROUTING_TITLE = "channelRouting_title";
+	static constexpr auto CHANNELROUTING_TITLE              = "channelRouting_title";
+	static constexpr auto CHANNELROUTING_SENDTOMASTEROUT    = "channelRouting_sendToMasterOut";
+	static constexpr auto CHANNELROUTING_ADDNEWOUTPUT       = "channelRouting_addNewOutput";
+	static constexpr auto CHANNELROUTING_OUTPUT_CHOOSE      = "channelRouting_output_choose";
+	static constexpr auto CHANNELROUTING_OUTPUT_UNREACHABLE = "channelRouting_output_unreachable";
 
 	LangMap();
 
