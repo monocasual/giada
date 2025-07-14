@@ -292,10 +292,10 @@ LangMap::LangMap()
 	m_data[CONFIG_AUDIO_BUFFERSIZE]            = "Buffer size";
 	m_data[CONFIG_AUDIO_SAMPLERATE]            = "Sample rate";
 	m_data[CONFIG_AUDIO_OUTPUTDEVICE]          = "Output device";
-	m_data[CONFIG_AUDIO_OUTPUTCHANNELS]        = "Output channels";
+	m_data[CONFIG_AUDIO_OUTPUTCHANNELS]        = "Master out channels";
 	m_data[CONFIG_AUDIO_LIMITOUTPUT]           = "Limit output";
 	m_data[CONFIG_AUDIO_INPUTDEVICE]           = "Input device";
-	m_data[CONFIG_AUDIO_INPUTCHANNELS]         = "Input channels";
+	m_data[CONFIG_AUDIO_INPUTCHANNELS]         = "Master in channels";
 	m_data[CONFIG_AUDIO_RECTHRESHOLD]          = "Rec threshold (dB)";
 	m_data[CONFIG_AUDIO_ENABLEINPUT]           = "Enable Input";
 	m_data[CONFIG_AUDIO_RESAMPLING]            = "Resampling";
