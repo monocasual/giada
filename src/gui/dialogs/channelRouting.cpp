@@ -132,6 +132,7 @@ gdChannelRouting::gdChannelRouting(ID channelId)
 
 	rebuild();
 
+	size_range(260, 176);
 	set_modal();
 	show();
 }
