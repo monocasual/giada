@@ -39,7 +39,8 @@ namespace giada::v
 class geScroll : public Fl_Scroll
 {
 public:
-	int children() const = delete; // Use countChildren()
+	int  children() const = delete; // Use countChildren()
+	void clear()          = delete; // use removeAllChildren();
 
 	geScroll(int x, int y, int w, int h, int type = Fl_Scroll::BOTH);
 	geScroll(int type = Fl_Scroll::BOTH);
@@ -52,6 +53,8 @@ public:
 	geompp::Rect<int> getViewportBounds() const;
 
 	int handle(int e) override;
+
+	void removeAllChildren();
 
 	std::function<void(int)> onScrollV{nullptr};
 	std::function<void(int)> onScrollH{nullptr};

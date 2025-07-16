@@ -75,6 +75,14 @@ int geScroll::handle(int e)
 
 /* -------------------------------------------------------------------------- */
 
+void geScroll::removeAllChildren()
+{
+	Fl_Scroll::clear();
+	redraw();
+}
+
+/* -------------------------------------------------------------------------- */
+
 geompp::Rect<int> geScroll::getViewportBounds() const
 {
 	const int hScrollbarH = hscrollbar.visible() ? hscrollbar.h() : 0;

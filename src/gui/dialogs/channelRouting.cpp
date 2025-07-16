@@ -154,7 +154,7 @@ void gdChannelRouting::rebuild()
 		m_addNewOutput->addItem(makeOutputName(m_data.outputDeviceName, offset, m_data.outputMaxNumChannels), offset + 1);
 	m_addNewOutput->showFirstItem();
 
-	m_outputs->clear();
+	m_outputs->removeAllChildren();
 	std::size_t i = 0;
 	for (const int offset : m_data.extraOutputs)
 		m_outputs->addWidget(new geOutput(makeOutputName(m_data.outputDeviceName, offset, m_data.outputMaxNumChannels), m_data.id, i++));

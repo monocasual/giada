@@ -78,7 +78,7 @@ void gdPluginList::rebuild()
 
 	/* Clear the previous list. */
 
-	list->clear();
+	list->removeAllChildren();
 	list->scroll_to(0, 0);
 
 	for (m::Plugin* plugin : m_plugins.plugins)
