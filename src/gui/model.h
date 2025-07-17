@@ -72,8 +72,9 @@ struct Model
 	int               sampleEditorGridVal = 1;
 	int               sampleEditorGridOn  = false;
 
-	geompp::Rect<int> midiInputBounds  = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_H};
-	geompp::Rect<int> pluginListBounds = {-1, -1, 468, 204};
+	geompp::Rect<int> midiInputBounds      = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_H};
+	geompp::Rect<int> pluginListBounds     = {-1, -1, 468, 204};
+	geompp::Rect<int> channelRoutingBounds = {-1, -1, 260, 176};
 
 	geompp::Rect<int>          pluginChooserBounds   = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_H};
 	m::PluginManager::SortMode pluginChooserSortMode = {m::PluginManager::SortMethod::NAME, m::PluginManager::SortDir::ASC};

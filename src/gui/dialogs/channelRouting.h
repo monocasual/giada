@@ -29,6 +29,7 @@
 
 #include "src/glue/channel.h"
 #include "src/gui/dialogs/window.h"
+#include "src/gui/model.h"
 
 namespace giada::v
 {
@@ -41,7 +42,8 @@ class geLiquidScroll;
 class gdChannelRouting : public gdWindow
 {
 public:
-	gdChannelRouting(ID channelId);
+	gdChannelRouting(ID channelId, const Model&);
+	~gdChannelRouting();
 
 	void rebuild() override;
 

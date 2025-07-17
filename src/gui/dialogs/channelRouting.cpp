@@ -76,8 +76,8 @@ private:
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-gdChannelRouting::gdChannelRouting(ID channelId)
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, 260, 176}), g_ui->getI18Text(LangMap::CHANNELROUTING_TITLE), WID_CHANNEL_ROUTING)
+gdChannelRouting::gdChannelRouting(ID channelId, const Model& model)
+: gdWindow(u::gui::getCenterWinBounds(model.channelRoutingBounds), g_ui->getI18Text(LangMap::CHANNELROUTING_TITLE), WID_CHANNEL_ROUTING)
 , m_channelId(channelId)
 , m_data(c::channel::getRoutingData(channelId))
 {
@@ -135,6 +135,13 @@ gdChannelRouting::gdChannelRouting(ID channelId)
 	size_range(260, 176);
 	set_modal();
 	show();
+}
+
+/* -------------------------------------------------------------------------- */
+
+gdChannelRouting::~gdChannelRouting()
+{
+	g_ui->model.channelRoutingBounds = getBounds();
 }
 
 /* -------------------------------------------------------------------------- */
