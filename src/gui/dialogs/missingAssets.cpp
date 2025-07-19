@@ -91,5 +91,6 @@ gdMissingAssets::gdMissingAssets(const m::model::LoadState& state)
 
 	set_modal();
 	show();
+	wait_for_expose();
 }
 } // namespace giada::v
