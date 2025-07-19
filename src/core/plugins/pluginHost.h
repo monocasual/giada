@@ -27,6 +27,7 @@
 #ifndef G_PLUGIN_HOST_H
 #define G_PLUGIN_HOST_H
 
+#include "src/const.h"
 #include "src/types.h"
 #include <functional>
 /* windows.h, included somewhere, defines 'small' as a macro and it clashes with
