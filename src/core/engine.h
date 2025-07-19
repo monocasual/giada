@@ -51,10 +51,10 @@
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/plugins/pluginManager.h"
 #include "src/core/recorder.h"
-#include "src/core/sequencer.h"
-#include "src/core/waveFactory.h"
 #include "src/core/rendering/reactor.h"
 #include "src/core/rendering/renderer.h"
+#include "src/core/sequencer.h"
+#include "src/core/waveFactory.h"
 #ifdef WITH_AUDIO_JACK
 #include "src/core/jackSynchronizer.h"
 #endif

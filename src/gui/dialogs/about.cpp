@@ -62,7 +62,7 @@ gdAbout::gdAbout()
 			text->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
 			text->copy_label(fmt::format(fmt::runtime(g_ui->getI18Text(LangMap::ABOUT_BODY)),
 			    G_VERSION.toString(), debug ? "Debug" : "Release", BUILD_DATE)
-			                     .c_str());
+			        .c_str());
 
 #ifdef WITH_VST
 			geBox* vstLogo = new geBox();
