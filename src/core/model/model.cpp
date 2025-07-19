@@ -35,7 +35,7 @@
 #include "src/utils/string.h"
 #include <cassert>
 #include <memory>
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 #include <fmt/core.h>
 #endif
 #include <fmt/ostream.h>
@@ -230,7 +230,7 @@ void Model::clearWaves()
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 
 void Model::debug()
 {

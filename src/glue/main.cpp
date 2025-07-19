@@ -284,7 +284,7 @@ void toggleInputRecording() { g_engine->getMainApi().toggleInputRecording(); }
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 
 void printDebugInfo()
 {

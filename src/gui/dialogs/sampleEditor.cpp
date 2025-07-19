@@ -53,7 +53,7 @@
 #include <cmath>
 #include <fmt/core.h>
 
-#ifdef G_OS_WINDOWS
+#if G_OS_WINDOWS
 #undef IN
 #undef OUT
 #endif

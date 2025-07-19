@@ -46,7 +46,7 @@ public:
 
 	bool anyOf(std::function<bool(const Channel&)> f) const;
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 	void debug() const;
 #endif
 

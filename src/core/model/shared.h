@@ -61,7 +61,7 @@ public:
 
 	void store(Patch&, const std::string& projectPath);
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 	void
 	debug() const;
 #endif

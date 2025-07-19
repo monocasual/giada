@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <cassert>
 #include <memory>
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 #include <fmt/core.h>
 #endif
 
@@ -153,7 +153,7 @@ const Action* Actions::findAction(ID id) const { return findAction(m_actions, id
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 
 void Actions::debug() const
 {

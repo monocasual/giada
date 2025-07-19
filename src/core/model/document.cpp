@@ -173,7 +173,7 @@ void Document::store(Conf& conf) const
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 void Document::debug() const
 {
 	mixer.debug();

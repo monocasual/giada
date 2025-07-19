@@ -30,14 +30,14 @@
 #include "src/utils/log.h"
 #include <FL/platform.H>
 #include <cassert>
-#ifdef G_OS_MAC
+#if G_OS_MAC
 #import "src/utils/cocoa.h" // objective-c
 #endif
 
 namespace giada::v
 {
 gdPluginWindowGUI::gdPluginWindowGUI(const c::plugin::Plugin& p, ID wid)
-#ifdef G_OS_MAC
+#if G_OS_MAC
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, Fl::w(), Fl::h()}), "", wid)
 #else
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, 320, 200}), "", wid)
@@ -79,7 +79,7 @@ void gdPluginWindowGUI::adjustSize()
 	const int               pluginH   = m_editor->getHeight();
 	const geompp::Rect<int> newBounds = getBounds().withSize(pluginW, pluginH).scaled(1 / m_plugin.uiScaling);
 
-#ifdef G_OS_WINDOWS
+#if G_OS_WINDOWS
 
 	/* Dragging around a resized window (this windows will get resized with the
 	setBounds() call below) triggers some weird auto-resize mechanism if the
@@ -121,7 +121,7 @@ void gdPluginWindowGUI::showEditor()
 
 	m_editor->setOpaque(true);
 
-#ifdef G_OS_MAC
+#if G_OS_MAC
 
 	void* cocoaWindow = (void*)fl_xid(this);
 	m_editor->addToDesktop(0, cocoa_getViewFromWindow(cocoaWindow));

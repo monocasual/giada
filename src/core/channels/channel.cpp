@@ -27,7 +27,7 @@
 #include "src/core/channels/channel.h"
 #include "src/gui/const.h"
 #include <cassert>
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 #include "src/utils/string.h"
 #include <fmt/core.h>
 #endif
@@ -168,7 +168,7 @@ bool Channel::isPlaying() const
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 std::string Channel::debug() const
 {
 	std::string out = fmt::format("ID={} name='{}' type={} channelShared={}",

@@ -45,7 +45,7 @@ gdAbout::gdAbout()
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, 340, 330}), g_ui->getI18Text(LangMap::ABOUT_TITLE), WID_ABOUT)
 #endif
 {
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 	constexpr bool debug = true;
 #else
 	constexpr bool debug = false;

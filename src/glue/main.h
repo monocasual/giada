@@ -142,7 +142,7 @@ void toggleActionRecording();
 void stopInputRecording();
 void toggleInputRecording();
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 void printDebugInfo();
 #endif
 

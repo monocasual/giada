@@ -55,7 +55,7 @@ public:
 	mcl::AudioBuffer& getRecBuffer() const;
 	mcl::AudioBuffer& getInBuffer() const;
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 	void debug() const;
 #endif
 

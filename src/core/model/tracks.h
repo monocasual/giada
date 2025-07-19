@@ -44,7 +44,7 @@ public:
 	bool                        anyChannelOf(std::function<bool(const Channel&)> f) const;
 	std::vector<const Channel*> getChannels() const;
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 	void debug() const;
 #endif
 

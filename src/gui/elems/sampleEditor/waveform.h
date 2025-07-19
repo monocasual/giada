@@ -41,7 +41,7 @@ namespace giada::v
 class geWaveform : public Fl_Widget
 {
 public:
-#ifdef G_OS_WINDOWS
+#if G_OS_WINDOWS
 /* Fuck... */
 #undef IN
 #undef OUT

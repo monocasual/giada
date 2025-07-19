@@ -147,7 +147,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 			body->end();
 		}
 
-#ifndef G_OS_MAC // No need on macOS
+#if !G_OS_MAC // No need on macOS
 		container->addWidget(header, 25);
 #endif
 		container->addWidget(body);

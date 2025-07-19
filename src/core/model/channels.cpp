@@ -28,7 +28,7 @@
 #include "src/core/plugins/plugin.h"
 #include "src/utils/vector.h"
 #include <cassert>
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 #include "src/utils/string.h"
 #include <fmt/core.h>
 #endif
@@ -107,7 +107,7 @@ bool Channels::anyOf(std::function<bool(const Channel&)> f) const
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 
 void Channels::debug() const
 {

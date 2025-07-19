@@ -27,7 +27,7 @@
 #include "src/core/model/track.h"
 #include "src/core/types.h"
 #include <cassert>
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 #include <fmt/core.h>
 #endif
 
@@ -75,7 +75,7 @@ bool Track::isInternal() const
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 
 void Track::debug() const
 {

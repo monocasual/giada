@@ -39,7 +39,7 @@
 #include <type_traits>
 #include <utility>
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 #define G_DEBUG(f, ...) \
 	std::cerr << __FILE__ << "::" << __func__ << "() - " << fmt::format(f __VA_OPT__(, ) __VA_ARGS__) << "\n";
 #else

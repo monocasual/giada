@@ -37,7 +37,7 @@
 #include "src/utils/log.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Tooltip.H>
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+#if G_OS_LINUX || G_OS_FREEBSD
 #include <X11/Xlib.h> // For XInitThreads
 #endif
 
@@ -107,7 +107,7 @@ void Ui::init(const m::Conf& conf, const std::string& patchName, bool isAudioRea
 	plug-ins go nuts and crash hard. It seems that some plug-ins on our Juce-based
 	PluginHost use Xlib concurrently. */
 
-#if (defined(G_OS_LINUX) || defined(G_OS_FREEBSD))
+#if G_OS_LINUX || G_OS_FREEBSD
 	XInitThreads();
 #endif
 

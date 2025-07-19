@@ -30,7 +30,7 @@
 #include "src/core/plugins/pluginManager.h"
 #include "src/core/waveFactory.h"
 #include "src/utils/vector.h"
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 #include <fmt/core.h>
 #endif
 #include <fmt/ostream.h>
@@ -144,7 +144,7 @@ void Shared::store(Patch& patch, const std::string& projectPath)
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 
 void Shared::debug() const
 {

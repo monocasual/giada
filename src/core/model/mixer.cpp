@@ -26,7 +26,7 @@
 
 #include "src/core/model/mixer.h"
 #include "src/const.h"
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 #include <fmt/core.h>
 #endif
 
@@ -106,7 +106,7 @@ mcl::AudioBuffer& Mixer::getInBuffer() const { return shared->inBuffer; }
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 
 void Mixer::debug() const
 {

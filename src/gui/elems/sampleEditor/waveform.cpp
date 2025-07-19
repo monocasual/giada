@@ -574,7 +574,7 @@ void geWaveform::clearSelection()
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef G_OS_WINDOWS
+#if G_OS_WINDOWS
 #undef IN
 #endif
 

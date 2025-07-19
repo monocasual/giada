@@ -146,7 +146,7 @@ public:
 	void clearPlugins();
 	void clearWaves();
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 	void debug();
 #endif
 

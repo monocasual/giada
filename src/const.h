@@ -33,17 +33,33 @@ namespace giada
 {
 /* -- environment ----------------------------------------------------------- */
 #if defined(_WIN32)
-#define G_OS_WINDOWS
-#elif defined(__APPLE__)
-#define G_OS_MAC
-#elif defined(__linux__)
-#define G_OS_LINUX
-#elif defined(__FreeBSD__)
-#define G_OS_FREEBSD
+#define G_OS_WINDOWS 1
+#else
+#define G_OS_WINDOWS 0
+#endif
+
+#if defined(__APPLE__)
+#define G_OS_MAC 1
+#else
+#define G_OS_MAC 0
+#endif
+
+#if defined(__linux__)
+#define G_OS_LINUX 1
+#else
+#define G_OS_LINUX 0
+#endif
+
+#if defined(__FreeBSD__)
+#define G_OS_FREEBSD 1
+#else
+#define G_OS_FREEBSD 0
 #endif
 
 #ifndef NDEBUG
-#define G_DEBUG_MODE
+#define G_DEBUG_MODE 1
+#else
+#define G_DEBUG_MODE 0
 #endif
 
 #ifndef BUILD_DATE

@@ -343,7 +343,7 @@ void Engine::resume()
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 void Engine::debug()
 {
 	m_model.debug();

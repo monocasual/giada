@@ -118,7 +118,7 @@ public:
 	std::function<void(int w, int h)> onEditorResize;
 
 private:
-#ifdef G_OS_WINDOWS
+#if G_OS_WINDOWS
 /* Fuck... */
 #undef IN
 #undef OUT

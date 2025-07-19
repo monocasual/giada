@@ -29,7 +29,7 @@
 
 #include <cstdint>
 
-#ifdef G_OS_MAC
+#if G_OS_MAC
 #undef SYSTEM_CLOCK
 #endif
 

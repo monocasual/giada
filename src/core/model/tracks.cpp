@@ -136,7 +136,7 @@ std::vector<const Channel*> Tracks::getChannels() const
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 
 void Tracks::debug() const
 {

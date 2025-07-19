@@ -31,12 +31,12 @@
 #include <cstdlib>
 #include <filesystem>
 #include <string>
-#ifdef G_OS_MAC
+#if G_OS_MAC
 #include <libgen.h> // basename unix
 #include <pwd.h>    // getpwuid
 #include <unistd.h> // getuid
 #endif
-#ifdef G_OS_WINDOWS
+#if G_OS_WINDOWS
 #include <shlobj.h> // SHGetKnownFolderPath
 #endif
 #include "src/utils/fs.h"
@@ -49,7 +49,7 @@ namespace giada::u::fs
 {
 namespace
 {
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+#if G_OS_LINUX || G_OS_FREEBSD
 
 std::string getEnvVariable_(const char* s)
 {
@@ -156,7 +156,7 @@ std::string stripFileUrl(const std::string& s)
 
 std::string getConfigDirPath()
 {
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+#if G_OS_LINUX || G_OS_FREEBSD
 
 	/* See https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 	from issue https://github.com/monocasual/giada/issues/338 */
@@ -174,7 +174,7 @@ std::string getConfigDirPath()
 
 	return stdfs::path(home) / ".config" / "giada";
 
-#elif defined(G_OS_WINDOWS)
+#elif G_OS_WINDOWS
 
 	wchar_t* appdataPathPtr = nullptr;
 	auto     result         = SHGetKnownFolderPath(FOLDERID_RoamingAppData, KF_FLAG_CREATE, NULL, &appdataPathPtr);
@@ -191,7 +191,7 @@ std::string getConfigDirPath()
 
 	return appDataPath.string();
 
-#elif defined(G_OS_MAC)
+#elif G_OS_MAC
 
 	char           buf[PATH_MAX];
 	struct passwd* pwd = getpwuid(getuid());
@@ -263,7 +263,7 @@ bool isRootDir(const std::string& s)
 
 std::string getUpDir(const std::string& s)
 {
-#ifdef G_OS_WINDOWS
+#if G_OS_WINDOWS
 
 	// If root, let the user browse the drives list by returning "".
 	if (isRootDir(s))
@@ -286,7 +286,7 @@ std::string join(const std::string& a, const std::string& b)
 
 bool isValidFileName(const std::string& f)
 {
-#ifdef G_OS_WINDOWS
+#if G_OS_WINDOWS
 	const std::vector<char> forbidden = {'<', '>', ':', '"', '/', '\\', '|', '?', '*'};
 #else
 	const std::vector<char> forbidden = {'/', ':'}; // ':' not supported in macOS

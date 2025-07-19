@@ -66,7 +66,7 @@ void printBuildInfo_()
 {
 	u::log::print("[init] Giada {}\n", G_VERSION.toString());
 	u::log::print("[init] Build date: " BUILD_DATE "\n");
-#ifdef G_DEBUG_MODE
+#if G_DEBUG_MODE
 	u::log::print("[init] Debug build\n");
 #else
 	u::log::print("[init] Release build\n");

@@ -32,7 +32,7 @@
 #include <functional>
 /* windows.h, included somewhere, defines 'small' as a macro and it clashes with
 some enum defined in the JUCE GUI module. */
-#ifdef G_OS_WINDOWS
+#if G_OS_WINDOWS
 #undef small
 #endif
 #include <juce_audio_basics/juce_audio_basics.h>
