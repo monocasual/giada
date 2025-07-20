@@ -31,6 +31,11 @@
 #include <cassert>
 #include <memory>
 
+#if G_OS_WINDOWS
+#undef IN
+#undef OUT
+#endif
+
 namespace giada::m
 {
 Plugin::Plugin(ID id, const std::string& UID)

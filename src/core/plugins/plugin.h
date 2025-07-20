@@ -27,6 +27,14 @@
 #ifndef G_PLUGIN_H
 #define G_PLUGIN_H
 
+#if G_OS_WINDOWS
+/* windows.h, included by JUCE, defines 'small' as a macro and it clashes with
+some enum defined in the JUCE GUI module itself. Also NOMINMAX is required on
+Windows. */
+#undef small
+#define NOMINMAX
+#endif
+
 #include "src/core/midiLearnParam.h"
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/plugins/pluginState.h"
