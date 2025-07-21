@@ -188,13 +188,13 @@ std::vector<PluginManager::PluginInfo> PluginManager::getPluginsInfo() const
 		juce::PluginDescription pd = m_knownPluginList.getTypes()[i];
 		PluginInfo              pi;
 
-		pi.juceId           = pd.fileOrIdentifier.toStdString();
+		pi.juceId           = pd.createIdentifierString().toStdString();
 		pi.name             = pd.descriptiveName.toStdString();
 		pi.category         = pd.category.toStdString();
 		pi.manufacturerName = pd.manufacturerName.toStdString();
 		pi.format           = pd.pluginFormatName.toStdString();
 		pi.isInstrument     = pd.isInstrument;
-		pi.exists           = m_formatManager.doesPluginStillExist(*m_knownPluginList.getTypeForFile(pi.juceId));
+		pi.exists           = m_formatManager.doesPluginStillExist(*m_knownPluginList.getTypeForIdentifierString(pi.juceId));
 		pi.isKnown          = true;
 		out.push_back(pi);
 	}
