@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_TABLE_H
-#define GE_TABLE_H
+#ifndef GE_TABLE_WIDGET_H
+#define GE_TABLE_WIDGET_H
 
 #include "src/gui/elems/basics/tableBase.h"
 #include <string>
@@ -35,7 +35,7 @@ namespace giada::v
 /* geTable
 A table where each cell contains a Fl_Widget. */
 
-class geTable : public geTableBase
+class geTableWidget : public geTableBase
 {
 public:
 	virtual Fl_Widget*  setCellContent(int row, int col, int x, int y, int w, int h) = 0;
@@ -44,7 +44,7 @@ public:
 	void init();
 
 protected:
-	geTable();
+	geTableWidget();
 
 private:
 	void draw_cell(TableContext, int row, int col, int x, int y, int w, int h) override;

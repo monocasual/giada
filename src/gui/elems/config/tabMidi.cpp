@@ -38,7 +38,7 @@ extern giada::v::Ui* g_ui;
 namespace giada::v
 {
 geTabMidi::geDevices::geDevices(const std::vector<m::KernelMidi::DeviceInfo>& devices, c::config::DeviceType type)
-: geTable()
+: geTableWidget()
 , m_devices(devices)
 , m_type(type)
 {
