@@ -32,9 +32,6 @@
 #include <string>
 #include <vector>
 
-/* giada::c::plugin
-Functions to interact with plug-ins. Only the main thread can use these! */
-
 namespace juce
 {
 class AudioProcessorEditor;
