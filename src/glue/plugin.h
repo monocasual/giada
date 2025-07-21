@@ -27,10 +27,8 @@
 #ifndef G_GLUE_PLUGIN_H
 #define G_GLUE_PLUGIN_H
 
-#include "src/core/conf.h"
-#include "src/core/plugins/pluginHost.h"
 #include "src/core/plugins/pluginManager.h"
-#include "src/core/types.h"
+#include "src/types.h"
 #include <string>
 #include <vector>
 
