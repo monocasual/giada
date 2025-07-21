@@ -70,7 +70,7 @@ public:
 
 	struct PluginInfo
 	{
-		std::string uid;
+		std::string juceId;
 		std::string name;
 		std::string category;
 		std::string manufacturerName;
