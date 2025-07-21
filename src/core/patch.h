@@ -114,7 +114,6 @@ struct Patch
 		ID                    id;
 		std::string           path;
 		bool                  bypass;
-		std::vector<float>    params; // TODO - to be removed in 0.18.0
 		std::string           state;
 		std::vector<uint32_t> midiInParams;
 	};

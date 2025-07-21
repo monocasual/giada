@@ -99,7 +99,6 @@ constexpr auto PATCH_KEY_ACTIONS                      = "actions";
 constexpr auto PATCH_KEY_PLUGIN_ID                    = "id";
 constexpr auto PATCH_KEY_PLUGIN_PATH                  = "path";
 constexpr auto PATCH_KEY_PLUGIN_BYPASS                = "bypass";
-constexpr auto PATCH_KEY_PLUGIN_PARAMS                = "params";
 constexpr auto PATCH_KEY_PLUGIN_STATE                 = "state";
 constexpr auto PATCH_KEY_PLUGIN_MIDI_IN_PARAMS        = "midi_in_params";
 constexpr auto PATCH_KEY_TRACK_WIDTH                  = "width";
@@ -159,12 +158,7 @@ void readPlugins_(Patch& patch, const nlohmann::json& j)
 		p.id     = jplugin.value(PATCH_KEY_PLUGIN_ID, ++id);
 		p.path   = jplugin.value(PATCH_KEY_PLUGIN_PATH, "");
 		p.bypass = jplugin.value(PATCH_KEY_PLUGIN_BYPASS, false);
-
-		if (patch.version < Version{0, 17, 0})
-			for (const auto& jparam : jplugin[PATCH_KEY_PLUGIN_PARAMS])
-				p.params.push_back(jparam);
-		else
-			p.state = jplugin.value(PATCH_KEY_PLUGIN_STATE, "");
+		p.state  = jplugin.value(PATCH_KEY_PLUGIN_STATE, "");
 
 		for (const auto& jmidiParam : jplugin[PATCH_KEY_PLUGIN_MIDI_IN_PARAMS])
 			p.midiInParams.push_back(jmidiParam);
