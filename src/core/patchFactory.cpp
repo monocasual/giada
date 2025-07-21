@@ -97,7 +97,7 @@ constexpr auto PATCH_KEY_WAVE_ID                      = "id";
 constexpr auto PATCH_KEY_WAVE_PATH                    = "path";
 constexpr auto PATCH_KEY_ACTIONS                      = "actions";
 constexpr auto PATCH_KEY_PLUGIN_ID                    = "id";
-constexpr auto PATCH_KEY_PLUGIN_PATH                  = "path";
+constexpr auto PATCH_KEY_PLUGIN_JUCE_ID               = "juceId";
 constexpr auto PATCH_KEY_PLUGIN_BYPASS                = "bypass";
 constexpr auto PATCH_KEY_PLUGIN_STATE                 = "state";
 constexpr auto PATCH_KEY_PLUGIN_MIDI_IN_PARAMS        = "midi_in_params";
@@ -156,7 +156,7 @@ void readPlugins_(Patch& patch, const nlohmann::json& j)
 	{
 		Patch::Plugin p;
 		p.id     = jplugin.value(PATCH_KEY_PLUGIN_ID, ++id);
-		p.path   = jplugin.value(PATCH_KEY_PLUGIN_PATH, "");
+		p.juceId = jplugin.value(PATCH_KEY_PLUGIN_JUCE_ID, "");
 		p.bypass = jplugin.value(PATCH_KEY_PLUGIN_BYPASS, false);
 		p.state  = jplugin.value(PATCH_KEY_PLUGIN_STATE, "");
 
@@ -279,10 +279,10 @@ void writePlugins_(const Patch& patch, nlohmann::json& j)
 	{
 		nlohmann::json jplugin;
 
-		jplugin[PATCH_KEY_PLUGIN_ID]     = p.id;
-		jplugin[PATCH_KEY_PLUGIN_PATH]   = p.path;
-		jplugin[PATCH_KEY_PLUGIN_BYPASS] = p.bypass;
-		jplugin[PATCH_KEY_PLUGIN_STATE]  = p.state;
+		jplugin[PATCH_KEY_PLUGIN_ID]      = p.id;
+		jplugin[PATCH_KEY_PLUGIN_JUCE_ID] = p.juceId;
+		jplugin[PATCH_KEY_PLUGIN_BYPASS]  = p.bypass;
+		jplugin[PATCH_KEY_PLUGIN_STATE]   = p.state;
 
 		jplugin[PATCH_KEY_PLUGIN_MIDI_IN_PARAMS] = nlohmann::json::array();
 		for (uint32_t param : p.midiInParams)

@@ -38,12 +38,12 @@
 
 namespace giada::m
 {
-Plugin::Plugin(ID id, const std::string& UID)
+Plugin::Plugin(ID id, const std::string& juceId)
 : id(id)
 , valid(false)
 , onEditorResize(nullptr)
 , m_plugin(nullptr)
-, m_UID(UID)
+, m_juceId(juceId)
 , m_hasEditor(false)
 {
 }
@@ -145,10 +145,10 @@ juce::AudioProcessorEditor* Plugin::createEditor() const
 
 /* -------------------------------------------------------------------------- */
 
-std::string Plugin::getUniqueId() const
+std::string Plugin::getJuceId() const
 {
 	if (!valid)
-		return m_UID;
+		return m_juceId;
 	return m_plugin->getPluginDescription().createIdentifierString().toStdString();
 }
 

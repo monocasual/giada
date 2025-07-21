@@ -85,7 +85,7 @@ struct Plugin
 	bool        hasEditor;
 	bool        isBypassed;
 	std::string name;
-	std::string uniqueId;
+	std::string juceId;
 	int         currentProgram;
 	float       uiScaling;
 

@@ -112,7 +112,7 @@ struct Patch
 	struct Plugin
 	{
 		ID                    id;
-		std::string           path;
+		std::string           juceId;
 		bool                  bypass;
 		std::string           state;
 		std::vector<uint32_t> midiInParams;

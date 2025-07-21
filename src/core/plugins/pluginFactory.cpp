@@ -81,9 +81,9 @@ std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin& pplugin, std::uni
 	plug-ins. */
 
 	if (pi == nullptr)
-		return pluginFactory::createInvalid(pplugin.id, pplugin.path);
+		return pluginFactory::createInvalid(pplugin.id, pplugin.juceId);
 
-	std::unique_ptr<Plugin> plugin = create(pplugin.id, pplugin.path, std::move(pi), sequencer, sampleRate, bufferSize);
+	std::unique_ptr<Plugin> plugin = create(pplugin.id, pplugin.juceId, std::move(pi), sequencer, sampleRate, bufferSize);
 
 	plugin->setBypass(pplugin.bypass);
 	plugin->setState(PluginState(pplugin.state));
@@ -109,7 +109,7 @@ Patch::Plugin serializePlugin(const Plugin& p)
 {
 	Patch::Plugin pp;
 	pp.id     = p.id;
-	pp.path   = p.getUniqueId();
+	pp.juceId = p.getJuceId();
 	pp.bypass = p.isBypassed();
 	pp.state  = p.getState().asBase64();
 

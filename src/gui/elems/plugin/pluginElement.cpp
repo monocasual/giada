@@ -67,7 +67,7 @@ gePluginElement::gePluginElement(int x, int y, int w, int h, c::plugin::Plugin d
 
 	if (!m_plugin.valid)
 	{
-		button->copy_label(m_plugin.uniqueId.c_str());
+		button->copy_label(m_plugin.juceId.c_str());
 		button->deactivate();
 		bypass->deactivate();
 		shiftUpBtn->deactivate();
