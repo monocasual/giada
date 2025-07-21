@@ -24,20 +24,20 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/gui/elems/basics/table.h"
+#include "src/gui/elems/basics/tableWidget.h"
 #include "src/gui/const.h"
 #include "src/gui/drawing.h"
 
 namespace giada::v
 {
-geTable::geTable()
+geTableWidget::geTableWidget()
 : geTableBase()
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geTable::init()
+void geTableWidget::init()
 {
 	forEachCell([this](int row, int col, int X, int Y, int W, int H)
 	{ add(setCellContent(row, col, X, Y, W, H)); });
@@ -45,7 +45,7 @@ void geTable::init()
 
 /* -------------------------------------------------------------------------- */
 
-void geTable::draw_cell(TableContext context, int /*row*/, int col, int X, int Y, int W, int H)
+void geTableWidget::draw_cell(TableContext context, int /*row*/, int col, int X, int Y, int W, int H)
 {
 	switch (context)
 	{
