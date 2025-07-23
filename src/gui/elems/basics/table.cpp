@@ -27,36 +27,12 @@
 #include "src/gui/elems/basics/table.h"
 #include "src/gui/const.h"
 #include "src/gui/drawing.h"
-#include "src/gui/elems/basics/boxtypes.h"
-#include <FL/Fl.H>
-#include <FL/fl_draw.H>
 
 namespace giada::v
 {
 geTable::geTable()
-: Fl_Table(0, 0, 0, 0)
+: geTableBase()
 {
-	end();
-
-	vscrollbar->color(G_COLOR_GREY_2);
-	vscrollbar->selection_color(G_COLOR_GREY_4);
-	vscrollbar->labelcolor(G_COLOR_LIGHT_1);
-	vscrollbar->slider(G_CUSTOM_BORDER_BOX);
-
-	hscrollbar->color(G_COLOR_GREY_2);
-	hscrollbar->selection_color(G_COLOR_GREY_4);
-	hscrollbar->labelcolor(G_COLOR_LIGHT_1);
-	hscrollbar->slider(G_CUSTOM_BORDER_BOX);
-
-	col_resize_min(G_GUI_UNIT);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geTable::draw()
-{
-	Fl_Table::draw();
-	drawRect({x(), y(), w(), h()}, G_COLOR_GREY_4);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -98,21 +74,6 @@ void geTable::draw_cell(TableContext context, int /*row*/, int col, int X, int Y
 
 	default:
 		return;
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geTable::forEachCell(std::function<void(int, int, int, int, int, int)> f)
-{
-	for (int row = 0; row < rows(); row++)
-	{
-		for (int col = 0; col < cols(); col++)
-		{
-			int X, Y, W, H;
-			find_cell(CONTEXT_TABLE, row, col, X, Y, W, H);
-			f(row, col, X, Y, W, H);
-		}
 	}
 }
 } // namespace giada::v
