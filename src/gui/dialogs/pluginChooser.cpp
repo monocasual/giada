@@ -25,9 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/pluginChooser.h"
+#include "src/core/plugins/pluginManager.h"
 #include "src/glue/plugin.h"
 #include "src/gui/elems/basics/box.h"
-#include "src/gui/elems/basics/choice.h"
 #include "src/gui/elems/basics/flex.h"
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/elems/plugin/pluginBrowser.h"
@@ -44,16 +44,6 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		geFlex* header = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
-		{
-			sortMethod = new geChoice(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY), 0);
-			sortDir    = new geChoice();
-			header->addWidget(sortMethod, 180);
-			header->addWidget(sortDir, 40);
-			header->addWidget(new geBox());
-			header->end();
-		}
-
 		browser = new v::gePluginBrowser();
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
@@ -66,7 +56,6 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 			footer->end();
 		}
 
-		container->addWidget(header, G_GUI_UNIT);
 		container->addWidget(browser);
 		container->addWidget(footer, G_GUI_UNIT);
 		container->end();
@@ -75,30 +64,20 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 	add(container);
 	resizable(container);
 
-	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_NAME));
-	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_CATEGORY));
-	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_MANUFACTURER));
-	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_FORMAT));
-	sortMethod->showItem(static_cast<int>(model.pluginChooserSortMode.method));
-	sortMethod->onChange = [this](ID)
-	{
-		c::plugin::sortPlugins(getSortMode());
-		browser->rebuild();
-	};
-
-	sortDir->addItem("A-Z");
-	sortDir->addItem("Z-A");
-	sortDir->showItem(static_cast<int>(model.pluginChooserSortMode.dir));
-	sortDir->onChange = [this](ID)
-	{
-		c::plugin::sortPlugins(getSortMode());
-		browser->rebuild();
-	};
-
 	browser->onClickRow = [this](int row, int /*col*/, bool doubleClick)
 	{
 		if (doubleClick)
 			c::plugin::addPlugin(row, m_channelId);
+	};
+	browser->onClickHeader = [this](int col, bool /*doubleClick*/)
+	{
+		m::PluginManager::SortMethod sortMethod = browser->getSortMethodByColumn(col);
+		m::PluginManager::SortDir    sortDir    = g_ui->model.pluginChooserSortMode.dir == m::PluginManager::SortDir::ASC ? m::PluginManager::SortDir::DESC : m::PluginManager::SortDir::ASC;
+
+		c::plugin::sortPlugins({sortMethod, sortDir});
+		g_ui->model.pluginChooserSortMode = {sortMethod, sortDir};
+
+		browser->rebuild();
 	};
 
 	addBtn->onClick = [this]()
@@ -123,16 +102,6 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 
 gdPluginChooser::~gdPluginChooser()
 {
-	g_ui->model.pluginChooserBounds   = getBounds();
-	g_ui->model.pluginChooserSortMode = getSortMode();
-}
-
-/* -------------------------------------------------------------------------- */
-
-m::PluginManager::SortMode gdPluginChooser::getSortMode() const
-{
-	return {
-	    static_cast<m::PluginManager::SortMethod>(sortMethod->getSelectedId()),
-	    static_cast<m::PluginManager::SortDir>(sortDir->getSelectedId())};
+	g_ui->model.pluginChooserBounds = getBounds();
 }
 } // namespace giada::v
