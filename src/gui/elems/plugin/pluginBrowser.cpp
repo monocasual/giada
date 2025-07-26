@@ -85,10 +85,10 @@ void gePluginBrowser::refresh()
 			std::string m = pi.exists ? "" : "@-";
 
 			s = fmt::format("{0}{1}\t{0}{2}\t{0}{3}\t{0}{4}\t{0}{5}",
-			    m, pi.name, pi.manufacturerName, pi.category, pi.format, pi.uid);
+			    m, pi.name, pi.manufacturerName, pi.category, pi.format, pi.juceId);
 		}
 		else
-			s = fmt::format("?\t?\t?\t?\t? {} ?", pi.uid);
+			s = fmt::format("?\t?\t?\t?\t? {} ?", pi.juceId);
 
 		add(s.c_str());
 	}
