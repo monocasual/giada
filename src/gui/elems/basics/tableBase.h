@@ -48,6 +48,10 @@ public:
 protected:
 	geTableBase();
 
+	/* loadLayout
+	Sets each column width according to the vector passed in. Vector.size() must
+	be equal to the number of columns in the table. */
+
 	void loadLayout(const std::vector<int>&);
 
 	/* fitContent
