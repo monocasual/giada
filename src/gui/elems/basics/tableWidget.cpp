@@ -39,8 +39,8 @@ geTableWidget::geTableWidget()
 
 void geTableWidget::init()
 {
-	forEachCell([this](int row, int col, int X, int Y, int W, int H)
-	{ add(setCellContent(row, col, X, Y, W, H)); });
+	forEachCell([this](int row, int col, geompp::Rect<int> cellBounds)
+	{ add(setCellContent(row, col, cellBounds)); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -64,10 +64,10 @@ void geTableWidget::draw_cell(TableContext context, int /*row*/, int col, int X,
 	case CONTEXT_RC_RESIZE: // Table or row/column is resized or scrolled
 	{
 		int index = 0;
-		forEachCell([this, &index](int /*row*/, int /*col*/, int X, int Y, int W, int H)
+		forEachCell([this, &index](int /*row*/, int /*col*/, geompp::Rect<int> cellBounds)
 		{ 
 			if (index < children()) 
-				child(index++)->resize(X, Y, W, H); });
+				child(index++)->resize(cellBounds.x, cellBounds.y, cellBounds.w, cellBounds.h); });
 		init_sizes(); // tell group children resized
 		return;
 	}

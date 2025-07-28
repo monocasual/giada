@@ -27,6 +27,7 @@
 #ifndef GE_TABLE_BASE_H
 #define GE_TABLE_BASE_H
 
+#include "src/deps/geompp/src/rect.hpp"
 #include <FL/Fl_Table.H>
 #include <functional>
 
@@ -60,7 +61,7 @@ protected:
 
 	virtual int getContentWidth(int /*row*/, int /*column*/) const { return -1; }
 
-	void forEachCell(std::function<void(int, int, int, int, int, int)>);
+	void forEachCell(std::function<void(int /*row*/, int /*column*/, geompp::Rect<int> /*cellBounds*/)>);
 
 private:
 	static void cb_onClick(Fl_Widget*, void*);

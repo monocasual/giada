@@ -66,7 +66,7 @@ void geTableBase::draw()
 
 /* -------------------------------------------------------------------------- */
 
-void geTableBase::forEachCell(std::function<void(int, int, int, int, int, int)> f)
+void geTableBase::forEachCell(std::function<void(int, int, geompp::Rect<int>)> f)
 {
 	for (int row = 0; row < rows(); row++)
 	{
@@ -74,7 +74,7 @@ void geTableBase::forEachCell(std::function<void(int, int, int, int, int, int)> 
 		{
 			int X, Y, W, H;
 			find_cell(CONTEXT_TABLE, row, col, X, Y, W, H);
-			f(row, col, X, Y, W, H);
+			f(row, col, {X, Y, W, H});
 		}
 	}
 }

@@ -45,7 +45,7 @@ geTabMidi::geDevices::geDevices(const std::vector<m::KernelMidi::DeviceInfo>& de
 	prepareLayout();
 }
 
-Fl_Widget* geTabMidi::geDevices::setCellContent(int row, int col, int X, int Y, int W, int H)
+Fl_Widget* geTabMidi::geDevices::setCellContent(int row, int col, geompp::Rect<int> cellBounds)
 {
 	assert(static_cast<std::size_t>(row) < m_devices.size());
 
@@ -53,16 +53,16 @@ Fl_Widget* geTabMidi::geDevices::setCellContent(int row, int col, int X, int Y, 
 
 	if (col == 0)
 	{
-		container = new geFlex(X, Y, W, H, Direction::HORIZONTAL);
+		container = new geFlex(cellBounds, Direction::HORIZONTAL);
 		{
 			container->addWidget(new geBox(), PADDING);
-			container->addWidget(new geBox(X, Y, W, H, m_devices[row].name.c_str(), FL_ALIGN_LEFT));
+			container->addWidget(new geBox(cellBounds.x, cellBounds.y, cellBounds.w, cellBounds.h, m_devices[row].name.c_str(), FL_ALIGN_LEFT));
 			container->end();
 		}
 	}
 	else
 	{
-		container = new geFlex(X, Y, W, H, Direction::HORIZONTAL, /*gutter=*/0, /*pad=*/{PADDING});
+		container = new geFlex(cellBounds, Direction::HORIZONTAL, /*gutter=*/0, /*pad=*/{PADDING});
 		{
 			geCheck* check = new geCheck(0, 0, 0, 0);
 			container->addWidget(new geBox());
