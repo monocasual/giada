@@ -25,9 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/pluginChooser.h"
+#include "src/core/plugins/pluginManager.h"
 #include "src/glue/plugin.h"
 #include "src/gui/elems/basics/box.h"
-#include "src/gui/elems/basics/choice.h"
 #include "src/gui/elems/basics/flex.h"
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/elems/plugin/pluginBrowser.h"
@@ -44,17 +44,7 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
-		geFlex* header = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
-		{
-			sortMethod = new geChoice(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY), 0);
-			sortDir    = new geChoice();
-			header->addWidget(sortMethod, 180);
-			header->addWidget(sortDir, 40);
-			header->addWidget(new geBox());
-			header->end();
-		}
-
-		browser = new v::gePluginBrowser(0, 0, 0, 0);
+		browser = new v::gePluginBrowser();
 
 		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
@@ -66,7 +56,6 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 			footer->end();
 		}
 
-		container->addWidget(header, G_GUI_UNIT);
 		container->addWidget(browser);
 		container->addWidget(footer, G_GUI_UNIT);
 		container->end();
@@ -75,32 +64,32 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 	add(container);
 	resizable(container);
 
-	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_NAME));
-	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_CATEGORY));
-	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_MANUFACTURER));
-	sortMethod->addItem(g_ui->getI18Text(LangMap::PLUGINCHOOSER_SORTBY_FORMAT));
-	sortMethod->showItem(static_cast<int>(model.pluginChooserSortMode.method));
-	sortMethod->onChange = [this](ID)
+	browser->onClickRow = [this](int row, int /*col*/, bool doubleClick)
 	{
-		c::plugin::sortPlugins(getSortMode());
-		browser->refresh();
+		if (doubleClick)
+			c::plugin::addPlugin(browser->getJuceId(row), m_channelId);
 	};
-
-	sortDir->addItem("A-Z");
-	sortDir->addItem("Z-A");
-	sortDir->showItem(static_cast<int>(model.pluginChooserSortMode.dir));
-	sortDir->onChange = [this](ID)
+	browser->onClickHeader = [this](int col, bool /*doubleClick*/)
 	{
-		c::plugin::sortPlugins(getSortMode());
-		browser->refresh();
+		m::PluginManager::SortMethod sortMethod = browser->getSortMethodByColumn(col);
+		m::PluginManager::SortDir    sortDir    = g_ui->model.pluginChooserSortMode.dir == m::PluginManager::SortDir::ASC ? m::PluginManager::SortDir::DESC : m::PluginManager::SortDir::ASC;
+
+		c::plugin::sortPlugins({sortMethod, sortDir});
+		g_ui->model.pluginChooserSortMode = {sortMethod, sortDir};
+
+		browser->rebuild();
+	};
+	browser->onResizeColumn = [](int col, int width)
+	{
+		g_ui->model.pluginChooserLayout[col] = width;
 	};
 
 	addBtn->onClick = [this]()
 	{
-		int pluginIndex = browser->value() - 3; // subtract header lines
-		if (pluginIndex < 0)
+		const auto selection = browser->getSelection();
+		if (!selection.isValid())
 			return;
-		c::plugin::addPlugin(pluginIndex, m_channelId);
+		c::plugin::addPlugin(browser->getJuceId(selection.a), m_channelId);
 		do_callback();
 	};
 	addBtn->shortcut(FL_Enter);
@@ -117,16 +106,6 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 
 gdPluginChooser::~gdPluginChooser()
 {
-	g_ui->model.pluginChooserBounds   = getBounds();
-	g_ui->model.pluginChooserSortMode = getSortMode();
-}
-
-/* -------------------------------------------------------------------------- */
-
-m::PluginManager::SortMode gdPluginChooser::getSortMode() const
-{
-	return {
-	    static_cast<m::PluginManager::SortMethod>(sortMethod->getSelectedId()),
-	    static_cast<m::PluginManager::SortDir>(sortDir->getSelectedId())};
+	g_ui->model.pluginChooserBounds = getBounds();
 }
 } // namespace giada::v

@@ -78,6 +78,7 @@ struct Model
 
 	geompp::Rect<int>          pluginChooserBounds   = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_H};
 	m::PluginManager::SortMode pluginChooserSortMode = {m::PluginManager::SortMethod::NAME, m::PluginManager::SortDir::ASC};
+	std::vector<int>           pluginChooserLayout   = {-1, -1, -1, -1, -1};
 
 	int keyBindPlay          = ' ';
 	int keyBindRewind        = FL_BackSpace;

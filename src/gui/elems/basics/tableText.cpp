@@ -24,52 +24,46 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/gui/elems/basics/table.h"
+#include "src/gui/elems/basics/tableText.h"
 #include "src/gui/const.h"
 #include "src/gui/drawing.h"
-#include "src/gui/elems/basics/boxtypes.h"
-#include <FL/Fl.H>
-#include <FL/fl_draw.H>
 
 namespace giada::v
 {
-geTable::geTable()
-: Fl_Table(0, 0, 0, 0)
+geTableText::geTableText()
+: geTableBase()
 {
-	end();
-
-	vscrollbar->color(G_COLOR_GREY_2);
-	vscrollbar->selection_color(G_COLOR_GREY_4);
-	vscrollbar->labelcolor(G_COLOR_LIGHT_1);
-	vscrollbar->slider(G_CUSTOM_BORDER_BOX);
-
-	hscrollbar->color(G_COLOR_GREY_2);
-	hscrollbar->selection_color(G_COLOR_GREY_4);
-	hscrollbar->labelcolor(G_COLOR_LIGHT_1);
-	hscrollbar->slider(G_CUSTOM_BORDER_BOX);
-
-	col_resize_min(G_GUI_UNIT);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geTable::draw()
+int geTableText::handle(int event)
 {
-	Fl_Table::draw();
-	drawRect({x(), y(), w(), h()}, G_COLOR_GREY_4);
+	/* Force full-row selection on click/keyboard press. */
+
+	const int ret = Fl_Table::handle(event);
+	switch (event)
+	{
+	case FL_PUSH:
+	case FL_KEYDOWN:
+	case FL_DRAG:
+	{
+		if (callback_context() == Fl_Table::CONTEXT_CELL)
+		{
+			const geompp::Range<int> selection = getSelection();
+			set_selection(selection.a, 0, selection.b - 1, cols());
+		}
+		else
+			set_selection(-1, -1, -1, -1);
+		break;
+	}
+	}
+	return ret;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geTable::init()
-{
-	forEachCell([this](int row, int col, int X, int Y, int W, int H)
-	{ add(setCellContent(row, col, X, Y, W, H)); });
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geTable::draw_cell(TableContext context, int /*row*/, int col, int X, int Y, int W, int H)
+void geTableText::draw_cell(TableContext context, int row, int col, int X, int Y, int W, int H)
 {
 	switch (context)
 	{
@@ -80,19 +74,18 @@ void geTable::draw_cell(TableContext context, int /*row*/, int col, int X, int Y
 		fl_push_clip(X, Y, W, H);
 		drawRectf(bounds, G_COLOR_GREY_1);                     // Table background
 		drawRectf(bounds.withTrimmedRight(2), G_COLOR_GREY_3); // Label background
-		drawText(setHeaderText(col), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_LIGHT_2, FL_ALIGN_CENTER);
+		drawText(getHeaderText(col), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_LIGHT_2, FL_ALIGN_CENTER);
 		fl_pop_clip();
 		return;
 	}
-
-	case CONTEXT_RC_RESIZE: // Table or row/column is resized or scrolled
+	case Fl_Table::CONTEXT_CELL:
 	{
-		int index = 0;
-		forEachCell([this, &index](int /*row*/, int /*col*/, int X, int Y, int W, int H)
-		{ 
-			if (index < children()) 
-				child(index++)->resize(X, Y, W, H); });
-		init_sizes(); // tell group children resized
+		const geompp::Rect<int> bounds = {X, Y, W, H};
+		fl_push_clip(X, Y, W, H);
+		const auto backgroundColor = is_selected(row, col) ? G_COLOR_GREY_3 : G_COLOR_GREY_1;
+		drawRectf(bounds, backgroundColor); // Table background
+		drawText(getCellText(row, col), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_LIGHT_2, FL_ALIGN_LEFT);
+		fl_pop_clip();
 		return;
 	}
 
@@ -103,16 +96,15 @@ void geTable::draw_cell(TableContext context, int /*row*/, int col, int X, int Y
 
 /* -------------------------------------------------------------------------- */
 
-void geTable::forEachCell(std::function<void(int, int, int, int, int, int)> f)
+geompp::Range<int> geTableText::getSelection()
 {
-	for (int row = 0; row < rows(); row++)
-	{
-		for (int col = 0; col < cols(); col++)
-		{
-			int X, Y, W, H;
-			find_cell(CONTEXT_TABLE, row, col, X, Y, W, H);
-			f(row, col, X, Y, W, H);
-		}
-	}
+	int rowTop;
+	int columnLeft;
+	int rowBottom;
+	int columnRight;
+	get_selection(rowTop, columnLeft, rowBottom, columnRight);
+	if (rowTop == -1 || rowBottom == -1)
+		return {};
+	return {rowTop, rowBottom + 1};
 }
 } // namespace giada::v

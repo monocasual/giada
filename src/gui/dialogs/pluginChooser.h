@@ -33,7 +33,6 @@
 namespace giada::v
 {
 class geTextButton;
-class geChoice;
 class gePluginBrowser;
 class gdPluginChooser : public gdWindow
 {
@@ -44,8 +43,6 @@ public:
 private:
 	m::PluginManager::SortMode getSortMode() const;
 
-	geChoice*        sortMethod;
-	geChoice*        sortDir;
 	geTextButton*    addBtn;
 	geTextButton*    cancelBtn;
 	gePluginBrowser* browser;

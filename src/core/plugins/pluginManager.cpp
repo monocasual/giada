@@ -131,22 +131,6 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& pid,
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Plugin> PluginManager::makePlugin(int index, int sampleRate,
-    int bufferSize, const model::Sequencer& sequencer)
-{
-	juce::PluginDescription pd = m_knownPluginList.getTypes()[index];
-
-	if (pd.uniqueId == 0) // Invalid
-		return {};
-
-	u::log::print("[pluginManager::makePlugin] plugin found, uid={}, name={}...\n",
-	    pd.createIdentifierString().toRawUTF8(), pd.name.toRawUTF8());
-
-	return makePlugin(pd.createIdentifierString().toStdString(), sampleRate, bufferSize, sequencer);
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::unique_ptr<Plugin> PluginManager::makePlugin(const Plugin& src, int sampleRate,
     int bufferSize, const model::Sequencer& sequencer)
 {
@@ -188,13 +172,13 @@ std::vector<PluginManager::PluginInfo> PluginManager::getPluginsInfo() const
 		juce::PluginDescription pd = m_knownPluginList.getTypes()[i];
 		PluginInfo              pi;
 
-		pi.juceId           = pd.fileOrIdentifier.toStdString();
+		pi.juceId           = pd.createIdentifierString().toStdString();
 		pi.name             = pd.descriptiveName.toStdString();
 		pi.category         = pd.category.toStdString();
 		pi.manufacturerName = pd.manufacturerName.toStdString();
 		pi.format           = pd.pluginFormatName.toStdString();
 		pi.isInstrument     = pd.isInstrument;
-		pi.exists           = m_formatManager.doesPluginStillExist(*m_knownPluginList.getTypeForFile(pi.juceId));
+		pi.exists           = m_formatManager.doesPluginStillExist(*m_knownPluginList.getTypeForIdentifierString(pi.juceId));
 		pi.isKnown          = true;
 		out.push_back(pi);
 	}

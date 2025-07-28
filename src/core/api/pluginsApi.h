@@ -52,7 +52,7 @@ public:
 	std::vector<PluginManager::PluginInfo> getInfo() const;
 	int                                    countAvailablePlugins() const;
 
-	void add(int pluginListIndex, ID channelId);
+	void add(const std::string& juceId, ID channelId);
 	void swap(const Plugin&, const Plugin&, ID channelId);
 	void sort(PluginManager::SortMode);
 	void free(const Plugin&, ID channelId);

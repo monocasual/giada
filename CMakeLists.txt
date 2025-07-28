@@ -419,8 +419,12 @@ list(APPEND SOURCES
 	src/gui/elems/basics/menu.h
 	src/gui/elems/basics/scrollbar.cpp
 	src/gui/elems/basics/scrollbar.h
-	src/gui/elems/basics/table.cpp
-	src/gui/elems/basics/table.h
+	src/gui/elems/basics/tableText.cpp
+	src/gui/elems/basics/tableText.h
+	src/gui/elems/basics/tableBase.cpp
+	src/gui/elems/basics/tableBase.h
+	src/gui/elems/basics/tableWidget.cpp
+	src/gui/elems/basics/tableWidget.h
 	src/utils/log.cpp
 	src/utils/log.h
 	src/utils/time.cpp

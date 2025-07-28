@@ -24,42 +24,38 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_PLUGIN_BROWSER_H
-#define GE_PLUGIN_BROWSER_H
+#ifndef GE_TABLE_TEXT_H
+#define GE_TABLE_TEXT_H
 
-#include "src/core/plugins/pluginManager.h"
-#include "src/gui/elems/basics/tableText.h"
+#include "src/deps/geompp/src/rect.hpp"
+#include "src/gui/elems/basics/tableBase.h"
+#include <string>
 
 namespace giada::v
 {
-class gePluginBrowser : public geTableText
+/* geTableText
+A table where each cell contains text. It works on a row-basis, where only the
+entire row can be selected (instead of the single cell). Use this for list of
+elements such as plug-ins or file in a file browser. */
+
+class geTableText : public geTableBase
 {
 public:
-	enum class Column : int
-	{
-		NAME = 0,
-		MANUFACTURER_NAME,
-		CATEGORY,
-		FORMAT,
-		JUCE_ID
-	};
+	/* getSelection
+	Returns the selected rows range [a, b). */
 
-	gePluginBrowser();
+	geompp::Range<int> getSelection();
 
-	std::string getCellText(int row, int col) const override;
-	std::string getHeaderText(int col) const override;
+protected:
+	geTableText();
 
-	m::PluginManager::SortMethod getSortMethodByColumn(int col) const;
-	std::string                  getJuceId(int row) const;
+	int handle(int) override;
 
-	void rebuild();
+	virtual std::string getCellText(int row, int col) const = 0;
+	virtual std::string getHeaderText(int col) const        = 0;
 
 private:
-	int getContentWidth(int row, int column) const override;
-
-	void prepareLayout();
-
-	std::vector<m::PluginManager::PluginInfo> m_pluginInfo;
+	void draw_cell(TableContext, int row, int col, int x, int y, int w, int h) override;
 };
 } // namespace giada::v
 

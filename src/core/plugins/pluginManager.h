@@ -116,7 +116,6 @@ public:
 	bool loadList(const std::string& path);
 
 	std::unique_ptr<Plugin> makePlugin(const std::string& pid, int sampleRate, int bufferSize, const model::Sequencer&, ID id = 0);
-	std::unique_ptr<Plugin> makePlugin(int index, int sampleRate, int bufferSize, const model::Sequencer&);
 	std::unique_ptr<Plugin> makePlugin(const Plugin& other, int sampleRate, int bufferSize, const model::Sequencer&);
 
 	std::unique_ptr<juce::AudioPluginInstance> makeJucePlugin(const std::string& pid, int sampleRate, int bufferSize);

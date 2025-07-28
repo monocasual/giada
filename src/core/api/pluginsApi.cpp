@@ -65,18 +65,15 @@ int PluginsApi::countAvailablePlugins() const
 
 /* -------------------------------------------------------------------------- */
 
-void PluginsApi::add(int pluginListIndex, ID channelId)
+void PluginsApi::add(const std::string& juceId, ID channelId)
 {
 	/* Plug-in creation must be done in the main thread, due to JUCE and VST3
 	internal workings. */
 
-	if (pluginListIndex >= m_pluginManager.countAvailablePlugins())
-		return;
-
 	const int sampleRate = m_kernelAudio.getSampleRate();
 	const int bufferSize = m_kernelAudio.getBufferSize();
 
-	std::unique_ptr<m::Plugin> plugin    = m_pluginManager.makePlugin(pluginListIndex, sampleRate, bufferSize, m_model.get().sequencer);
+	std::unique_ptr<m::Plugin> plugin    = m_pluginManager.makePlugin(juceId, sampleRate, bufferSize, m_model.get().sequencer);
 	const Plugin*              pluginPtr = plugin.get();
 	if (plugin != nullptr)
 		m_pluginHost.addPlugin(std::move(plugin));

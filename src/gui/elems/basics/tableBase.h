@@ -24,42 +24,47 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_PLUGIN_BROWSER_H
-#define GE_PLUGIN_BROWSER_H
+#ifndef GE_TABLE_BASE_H
+#define GE_TABLE_BASE_H
 
-#include "src/core/plugins/pluginManager.h"
-#include "src/gui/elems/basics/tableText.h"
+#include <FL/Fl_Table.H>
+#include <functional>
 
 namespace giada::v
 {
-class gePluginBrowser : public geTableText
+/* geTableBase
+A base class for a table. */
+
+class geTableBase : public Fl_Table
 {
 public:
-	enum class Column : int
-	{
-		NAME = 0,
-		MANUFACTURER_NAME,
-		CATEGORY,
-		FORMAT,
-		JUCE_ID
-	};
+	void draw() override;
 
-	gePluginBrowser();
+	std::function<void(int column, bool doubleClick)>          onClickHeader;
+	std::function<void(int row, int column, bool doubleClick)> onClickRow;
+	std::function<void(int column, int width)>                 onResizeColumn;
 
-	std::string getCellText(int row, int col) const override;
-	std::string getHeaderText(int col) const override;
+protected:
+	geTableBase();
 
-	m::PluginManager::SortMethod getSortMethodByColumn(int col) const;
-	std::string                  getJuceId(int row) const;
+	void loadLayout(const std::vector<int>&);
 
-	void rebuild();
+	/* fitContent
+	Adjusts each column's width so that it automatically fits the widest
+	content in that column. Requires getContentWidth() to be implemented. */
+
+	void fitContent();
+
+	/* getContentWidth (virtual)
+	Implement this if you want to fit all columns to content. */
+
+	virtual int getContentWidth(int /*row*/, int /*column*/) const { return -1; }
+
+	void forEachCell(std::function<void(int, int, int, int, int, int)>);
 
 private:
-	int getContentWidth(int row, int column) const override;
-
-	void prepareLayout();
-
-	std::vector<m::PluginManager::PluginInfo> m_pluginInfo;
+	static void cb_onClick(Fl_Widget*, void*);
+	void        cb_onClick();
 };
 } // namespace giada::v
 

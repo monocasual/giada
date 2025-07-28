@@ -153,9 +153,9 @@ void updateWindow(ID pluginId, Thread t)
 
 /* -------------------------------------------------------------------------- */
 
-void addPlugin(int pluginListIndex, ID channelId)
+void addPlugin(const std::string& juceId, ID channelId)
 {
-	g_engine->getPluginsApi().add(pluginListIndex, channelId);
+	g_engine->getPluginsApi().add(juceId, channelId);
 }
 
 /* -------------------------------------------------------------------------- */

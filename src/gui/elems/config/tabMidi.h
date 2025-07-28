@@ -29,7 +29,7 @@
 
 #include "src/deps/geompp/src/rect.hpp"
 #include "src/glue/config.h"
-#include "src/gui/elems/basics/table.h"
+#include "src/gui/elems/basics/tableWidget.h"
 #include <FL/Fl_Group.H>
 
 namespace giada::v
@@ -42,7 +42,7 @@ public:
 	geTabMidi(geompp::Rect<int>);
 
 private:
-	class geDevices : public geTable
+	class geDevices : public geTableWidget
 	{
 	public:
 		geDevices(const std::vector<m::KernelMidi::DeviceInfo>&, c::config::DeviceType);
