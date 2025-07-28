@@ -38,8 +38,8 @@ A table where each cell contains a Fl_Widget. */
 class geTableWidget : public geTableBase
 {
 public:
-	virtual Fl_Widget*  setCellContent(int row, int col, geompp::Rect<int> cellBounds) = 0;
-	virtual std::string setHeaderText(int col)                                         = 0;
+	virtual Fl_Widget*  getCellContent(int row, int col, geompp::Rect<int> cellBounds) const = 0;
+	virtual std::string getHeaderText(int col) const                                         = 0;
 
 	void init();
 

@@ -45,7 +45,7 @@ geTabMidi::geDevices::geDevices(const std::vector<m::KernelMidi::DeviceInfo>& de
 	prepareLayout();
 }
 
-Fl_Widget* geTabMidi::geDevices::setCellContent(int row, int col, geompp::Rect<int> cellBounds)
+Fl_Widget* geTabMidi::geDevices::getCellContent(int row, int col, geompp::Rect<int> cellBounds) const
 {
 	assert(static_cast<std::size_t>(row) < m_devices.size());
 
@@ -85,7 +85,7 @@ Fl_Widget* geTabMidi::geDevices::setCellContent(int row, int col, geompp::Rect<i
 	return container;
 }
 
-std::string geTabMidi::geDevices::setHeaderText(int col)
+std::string geTabMidi::geDevices::getHeaderText(int col) const
 {
 	if (col == 0)
 		return g_ui->getI18Text(LangMap::CONFIG_MIDI_COLUMN_DEVICE);

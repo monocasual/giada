@@ -40,7 +40,7 @@ geTableWidget::geTableWidget()
 void geTableWidget::init()
 {
 	forEachCell([this](int row, int col, geompp::Rect<int> cellBounds)
-	{ add(setCellContent(row, col, cellBounds)); });
+	{ add(getCellContent(row, col, cellBounds)); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -56,7 +56,7 @@ void geTableWidget::draw_cell(TableContext context, int /*row*/, int col, int X,
 		fl_push_clip(X, Y, W, H);
 		drawRectf(bounds, G_COLOR_GREY_1);                     // Table background
 		drawRectf(bounds.withTrimmedRight(2), G_COLOR_GREY_3); // Label background
-		drawText(setHeaderText(col), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_LIGHT_2, FL_ALIGN_CENTER);
+		drawText(getHeaderText(col), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_LIGHT_2, FL_ALIGN_CENTER);
 		fl_pop_clip();
 		return;
 	}

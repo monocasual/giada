@@ -47,8 +47,8 @@ private:
 	public:
 		geDevices(const std::vector<m::KernelMidi::DeviceInfo>&, c::config::DeviceType);
 
-		Fl_Widget*  setCellContent(int row, int col, geompp::Rect<int> cellBounds) override;
-		std::string setHeaderText(int col) override;
+		Fl_Widget*  getCellContent(int row, int col, geompp::Rect<int> cellBounds) const override;
+		std::string getHeaderText(int col) const override;
 
 		void rebuild(const std::vector<m::KernelMidi::DeviceInfo>&);
 
