@@ -122,11 +122,11 @@ bool PluginManager::loadList(const std::string& filepath)
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& pid,
+std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& juceId,
     int sampleRate, int bufferSize, const model::Sequencer& sequencer, ID id)
 {
-	std::unique_ptr<juce::AudioPluginInstance> pi = makeJucePlugin(pid, sampleRate, bufferSize);
-	return pluginFactory::create(id, pid, std::move(pi), sequencer, sampleRate, bufferSize);
+	std::unique_ptr<juce::AudioPluginInstance> pi = makeJucePlugin(juceId, sampleRate, bufferSize);
+	return pluginFactory::create(id, juceId, std::move(pi), sequencer, sampleRate, bufferSize);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -226,13 +226,13 @@ void PluginManager::sortPlugins(SortMode mode)
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<juce::AudioPluginInstance> PluginManager::makeJucePlugin(const std::string& pid, int sampleRate, int bufferSize)
+std::unique_ptr<juce::AudioPluginInstance> PluginManager::makeJucePlugin(const std::string& juceId, int sampleRate, int bufferSize)
 {
-	const std::unique_ptr<juce::PluginDescription> pd = m_knownPluginList.getTypeForIdentifierString(pid);
+	const std::unique_ptr<juce::PluginDescription> pd = m_knownPluginList.getTypeForIdentifierString(juceId);
 	if (pd == nullptr)
 	{
-		u::log::print("[pluginManager::makeJucePlugin] no plugin found with pid={}!\n", pid);
-		m_unknownPluginList.push_back(pid);
+		u::log::print("[pluginManager::makeJucePlugin] no plugin found with juceId={}!\n", juceId);
+		m_unknownPluginList.push_back(juceId);
 		return nullptr;
 	}
 
@@ -240,13 +240,13 @@ std::unique_ptr<juce::AudioPluginInstance> PluginManager::makeJucePlugin(const s
 	std::unique_ptr<juce::AudioPluginInstance> pi = m_formatManager.createPluginInstance(*pd, sampleRate, bufferSize, error);
 	if (pi == nullptr)
 	{
-		u::log::print("[pluginManager::makeJucePlugin] unable to create instance with pid={}! Error: {}\n",
-		    pid, error.toStdString());
-		m_unknownPluginList.push_back(pid);
+		u::log::print("[pluginManager::makeJucePlugin] unable to create instance with juceId={}! Error: {}\n",
+		    juceId, error.toStdString());
+		m_unknownPluginList.push_back(juceId);
 		return nullptr;
 	}
 
-	u::log::print("[pluginManager::makeJucePlugin] plugin instance with pid={} created\n", pid);
+	u::log::print("[pluginManager::makeJucePlugin] plugin instance with juceId={} created\n", juceId);
 
 	return pi;
 }
