@@ -47,6 +47,8 @@ public:
 protected:
 	geTableBase();
 
+	void loadLayout(const std::vector<int>&);
+
 	/* fitContent
 	Adjusts each column's width so that it automatically fits the widest
 	content in that column. Requires getContentWidth() to be implemented. */

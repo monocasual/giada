@@ -79,6 +79,10 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 
 		browser->rebuild();
 	};
+	browser->onResizeColumn = [](int col, int width)
+	{
+		g_ui->model.pluginChooserLayout[col] = width;
+	};
 
 	addBtn->onClick = [this]()
 	{

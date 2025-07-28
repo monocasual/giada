@@ -127,7 +127,10 @@ void gePluginBrowser::prepareLayout()
 	col_header(true);
 	col_resize(true);
 
-	fitContent();
+	if (g_ui->model.pluginChooserLayout[0] == -1)
+		fitContent();
+	else
+		loadLayout(g_ui->model.pluginChooserLayout);
 }
 
 /* -------------------------------------------------------------------------- */

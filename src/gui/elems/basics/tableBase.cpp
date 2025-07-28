@@ -101,6 +101,17 @@ void geTableBase::cb_onClick()
 
 /* -------------------------------------------------------------------------- */
 
+void geTableBase::loadLayout(const std::vector<int>& layout)
+{
+	assert(layout.size() == static_cast<std::size_t>(cols()));
+
+	int i = 0;
+	for (const int width : layout)
+		col_width(i++, width);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geTableBase::fitContent()
 {
 	if (getContentWidth(0, 0) == -1)
