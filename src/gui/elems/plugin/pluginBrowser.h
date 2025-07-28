@@ -50,6 +50,7 @@ public:
 	std::string getHeaderText(int col) const override;
 
 	m::PluginManager::SortMethod getSortMethodByColumn(int col) const;
+	std::string                  getJuceId(int row) const;
 
 	void rebuild();
 

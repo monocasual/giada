@@ -131,22 +131,6 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(const std::string& pid,
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Plugin> PluginManager::makePlugin(int index, int sampleRate,
-    int bufferSize, const model::Sequencer& sequencer)
-{
-	juce::PluginDescription pd = m_knownPluginList.getTypes()[index];
-
-	if (pd.uniqueId == 0) // Invalid
-		return {};
-
-	u::log::print("[pluginManager::makePlugin] plugin found, uid={}, name={}...\n",
-	    pd.createIdentifierString().toRawUTF8(), pd.name.toRawUTF8());
-
-	return makePlugin(pd.createIdentifierString().toStdString(), sampleRate, bufferSize, sequencer);
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::unique_ptr<Plugin> PluginManager::makePlugin(const Plugin& src, int sampleRate,
     int bufferSize, const model::Sequencer& sequencer)
 {

@@ -118,7 +118,7 @@ void updateWindow(ID pluginId, Thread);
 /* addPlugin
 Add a new Plugin to channel 'channelId'. */
 
-void addPlugin(int pluginListIndex, ID channelId);
+void addPlugin(const std::string& juceId, ID channelId);
 
 void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId);
 void sortPlugins(m::PluginManager::SortMode);

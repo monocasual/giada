@@ -105,6 +105,13 @@ m::PluginManager::SortMethod gePluginBrowser::getSortMethodByColumn(int col) con
 
 /* -------------------------------------------------------------------------- */
 
+std::string gePluginBrowser::getJuceId(int row) const
+{
+	return getCellText(row, static_cast<int>(Column::JUCE_ID));
+}
+
+/* -------------------------------------------------------------------------- */
+
 void gePluginBrowser::rebuild()
 {
 	m_pluginInfo = c::plugin::getPluginsInfo();

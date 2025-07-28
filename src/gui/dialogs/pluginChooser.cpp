@@ -67,7 +67,7 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 	browser->onClickRow = [this](int row, int /*col*/, bool doubleClick)
 	{
 		if (doubleClick)
-			c::plugin::addPlugin(row, m_channelId);
+			c::plugin::addPlugin(browser->getJuceId(row), m_channelId);
 	};
 	browser->onClickHeader = [this](int col, bool /*doubleClick*/)
 	{
@@ -89,7 +89,7 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 		const auto selection = browser->getSelection();
 		if (!selection.isValid())
 			return;
-		c::plugin::addPlugin(selection.a, m_channelId);
+		c::plugin::addPlugin(browser->getJuceId(selection.a), m_channelId);
 		do_callback();
 	};
 	addBtn->shortcut(FL_Enter);
