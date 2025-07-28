@@ -27,9 +27,7 @@
 #ifndef GE_TABLE_H
 #define GE_TABLE_H
 
-#include "src/deps/geompp/src/rect.hpp"
-#include <FL/Fl_Table.H>
-#include <functional>
+#include "src/gui/elems/basics/tableBase.h"
 #include <string>
 
 namespace giada::v
@@ -38,13 +36,11 @@ namespace giada::v
 A table where each cell contains a Fl_Widget. TODO - geTableText for text-only
 content. */
 
-class geTable : public Fl_Table
+class geTable : public geTableBase
 {
 public:
 	virtual Fl_Widget*  setCellContent(int row, int col, int x, int y, int w, int h) = 0;
 	virtual std::string setHeaderText(int col)                                       = 0;
-
-	void draw() override;
 
 	void init();
 
@@ -53,8 +49,6 @@ protected:
 
 private:
 	void draw_cell(TableContext, int row, int col, int x, int y, int w, int h) override;
-
-	void forEachCell(std::function<void(int, int, int, int, int, int)>);
 };
 } // namespace giada::v
 
