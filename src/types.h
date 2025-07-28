@@ -27,10 +27,44 @@
 #ifndef G_TYPES_H
 #define G_TYPES_H
 
+#include <string>
+
 namespace giada
 {
 using ID    = int;
 using Frame = int;
+
+enum class PluginSortMethod : int
+{
+	NAME = 0,
+	CATEGORY,
+	MANUFACTURER,
+	FORMAT
+};
+
+enum class PluginSortDir : int
+{
+	ASC = 0,
+	DESC
+};
+
+struct PluginSortMode
+{
+	PluginSortMethod method;
+	PluginSortDir    dir;
+};
+
+struct PluginInfo
+{
+	std::string juceId;
+	std::string name;
+	std::string category;
+	std::string manufacturerName;
+	std::string format;
+	bool        isInstrument;
+	bool        exists;
+	bool        isKnown;
+};
 } // namespace giada
 
 #endif

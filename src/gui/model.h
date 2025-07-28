@@ -28,8 +28,9 @@
 #define G_V_MODEL_H
 
 #include "src/core/conf.h"
-#include "src/core/plugins/pluginManager.h"
+#include "src/core/patch.h"
 #include "src/deps/geompp/src/rect.hpp"
+#include "src/types.h"
 #include <FL/Enumerations.H>
 #include <string>
 #include <vector>
@@ -76,9 +77,9 @@ struct Model
 	geompp::Rect<int> pluginListBounds     = {-1, -1, 468, 204};
 	geompp::Rect<int> channelRoutingBounds = {-1, -1, 260, 176};
 
-	geompp::Rect<int>          pluginChooserBounds   = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_H};
-	m::PluginManager::SortMode pluginChooserSortMode = {m::PluginManager::SortMethod::NAME, m::PluginManager::SortDir::ASC};
-	std::vector<int>           pluginChooserLayout   = {-1, -1, -1, -1, -1};
+	geompp::Rect<int> pluginChooserBounds   = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_H};
+	PluginSortMode    pluginChooserSortMode = {PluginSortMethod::NAME, PluginSortDir::ASC};
+	std::vector<int>  pluginChooserLayout   = {-1, -1, -1, -1, -1};
 
 	int keyBindPlay          = ' ';
 	int keyBindRewind        = FL_BackSpace;

@@ -27,8 +27,9 @@
 #ifndef G_GLUE_PLUGIN_H
 #define G_GLUE_PLUGIN_H
 
-#include "src/core/plugins/pluginManager.h"
+#include "src/core/types.h"
 #include "src/types.h"
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -107,7 +108,7 @@ Plugins getPlugins(ID channelId);
 Plugin  getPlugin(m::Plugin&, ID channelId);
 Param   getParam(int index, const m::Plugin& plugin, ID channelId);
 
-std::vector<m::PluginManager::PluginInfo> getPluginsInfo();
+std::vector<PluginInfo> getPluginsInfo();
 
 /* updateWindow
 Updates the editor-less plug-in window. This is useless if the plug-in has an
@@ -121,7 +122,7 @@ Add a new Plugin to channel 'channelId'. */
 void addPlugin(const std::string& juceId, ID channelId);
 
 void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId);
-void sortPlugins(m::PluginManager::SortMode);
+void sortPlugins(PluginSortMode);
 void freePlugin(const m::Plugin& plugin, ID channelId);
 void setProgram(ID pluginId, int programIndex);
 void setParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread);

@@ -48,13 +48,13 @@ class PluginsApi
 public:
 	PluginsApi(KernelAudio&, PluginManager&, PluginHost&, model::Model&);
 
-	const Plugin*                          get(ID pluginId) const;
-	std::vector<PluginManager::PluginInfo> getInfo() const;
-	int                                    countAvailablePlugins() const;
+	const Plugin*           get(ID pluginId) const;
+	std::vector<PluginInfo> getInfo() const;
+	int                     countAvailablePlugins() const;
 
 	void add(const std::string& juceId, ID channelId);
 	void swap(const Plugin&, const Plugin&, ID channelId);
-	void sort(PluginManager::SortMode);
+	void sort(PluginSortMode);
 	void free(const Plugin&, ID channelId);
 	void setProgram(ID pluginId, int programIndex);
 	void toggleBypass(ID pluginId);

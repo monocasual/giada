@@ -41,7 +41,7 @@ public:
 	~gdPluginChooser();
 
 private:
-	m::PluginManager::SortMode getSortMode() const;
+	PluginSortMode getSortMode() const;
 
 	geTextButton*    addBtn;
 	geTextButton*    cancelBtn;

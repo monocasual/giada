@@ -89,17 +89,17 @@ std::string gePluginBrowser::getHeaderText(int col) const
 
 /* -------------------------------------------------------------------------- */
 
-m::PluginManager::SortMethod gePluginBrowser::getSortMethodByColumn(int col) const
+PluginSortMethod gePluginBrowser::getSortMethodByColumn(int col) const
 {
 	switch (static_cast<gePluginBrowser::Column>(col))
 	{
 	case gePluginBrowser::Column::NAME:
 	default:
-		return m::PluginManager::SortMethod::NAME;
+		return PluginSortMethod::NAME;
 	case gePluginBrowser::Column::MANUFACTURER_NAME:
-		return m::PluginManager::SortMethod::MANUFACTURER;
+		return PluginSortMethod::MANUFACTURER;
 	case gePluginBrowser::Column::CATEGORY:
-		return m::PluginManager::SortMethod::CATEGORY;
+		return PluginSortMethod::CATEGORY;
 	}
 }
 

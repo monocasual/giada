@@ -163,7 +163,7 @@ int PluginManager::countAvailablePlugins() const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<PluginManager::PluginInfo> PluginManager::getPluginsInfo() const
+std::vector<PluginInfo> PluginManager::getPluginsInfo() const
 {
 	std::vector<PluginInfo> out;
 
@@ -205,21 +205,21 @@ bool PluginManager::hasMissingPlugins() const
 
 /* -------------------------------------------------------------------------- */
 
-void PluginManager::sortPlugins(SortMode mode)
+void PluginManager::sortPlugins(PluginSortMode mode)
 {
 	switch (mode.method)
 	{
-	case SortMethod::NAME:
-		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortAlphabetically, mode.dir == SortDir::ASC);
+	case PluginSortMethod::NAME:
+		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortAlphabetically, mode.dir == PluginSortDir::ASC);
 		break;
-	case SortMethod::CATEGORY:
-		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByCategory, mode.dir == SortDir::ASC);
+	case PluginSortMethod::CATEGORY:
+		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByCategory, mode.dir == PluginSortDir::ASC);
 		break;
-	case SortMethod::MANUFACTURER:
-		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByManufacturer, mode.dir == SortDir::ASC);
+	case PluginSortMethod::MANUFACTURER:
+		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByManufacturer, mode.dir == PluginSortDir::ASC);
 		break;
-	case SortMethod::FORMAT:
-		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByFormat, mode.dir == SortDir::ASC);
+	case PluginSortMethod::FORMAT:
+		m_knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByFormat, mode.dir == PluginSortDir::ASC);
 		break;
 	}
 }

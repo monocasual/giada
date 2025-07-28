@@ -51,7 +51,7 @@ const Plugin* PluginsApi::get(ID pluginId) const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<PluginManager::PluginInfo> PluginsApi::getInfo() const
+std::vector<PluginInfo> PluginsApi::getInfo() const
 {
 	return m_pluginManager.getPluginsInfo();
 }
@@ -95,7 +95,7 @@ void PluginsApi::swap(const Plugin& p1, const Plugin& p2, ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void PluginsApi::sort(PluginManager::SortMode mode)
+void PluginsApi::sort(PluginSortMode mode)
 {
 	m_pluginManager.sortPlugins(mode);
 }

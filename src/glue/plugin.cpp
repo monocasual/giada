@@ -128,7 +128,7 @@ Param getParam(int index, const m::Plugin& plugin, ID channelId)
 	return Param(plugin, index, channelId);
 }
 
-std::vector<m::PluginManager::PluginInfo> getPluginsInfo()
+std::vector<PluginInfo> getPluginsInfo()
 {
 	return g_engine->getPluginsApi().getInfo();
 }
@@ -167,7 +167,7 @@ void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void sortPlugins(m::PluginManager::SortMode mode)
+void sortPlugins(PluginSortMode mode)
 {
 	g_engine->getPluginsApi().sort(mode);
 }

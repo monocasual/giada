@@ -37,6 +37,7 @@
 #include "src/utils/log.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Tooltip.H>
+#include <juce_events/juce_events.h>
 #if G_OS_LINUX || G_OS_FREEBSD
 #include <X11/Xlib.h> // For XInitThreads
 #endif

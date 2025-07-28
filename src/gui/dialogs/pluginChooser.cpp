@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/pluginChooser.h"
-#include "src/core/plugins/pluginManager.h"
 #include "src/glue/plugin.h"
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/flex.h"
@@ -71,8 +70,8 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 	};
 	browser->onClickHeader = [this](int col, bool /*doubleClick*/)
 	{
-		m::PluginManager::SortMethod sortMethod = browser->getSortMethodByColumn(col);
-		m::PluginManager::SortDir    sortDir    = g_ui->model.pluginChooserSortMode.dir == m::PluginManager::SortDir::ASC ? m::PluginManager::SortDir::DESC : m::PluginManager::SortDir::ASC;
+		PluginSortMethod sortMethod = browser->getSortMethodByColumn(col);
+		PluginSortDir    sortDir    = g_ui->model.pluginChooserSortMode.dir == PluginSortDir::ASC ? PluginSortDir::DESC : PluginSortDir::ASC;
 
 		c::plugin::sortPlugins({sortMethod, sortDir});
 		g_ui->model.pluginChooserSortMode = {sortMethod, sortDir};

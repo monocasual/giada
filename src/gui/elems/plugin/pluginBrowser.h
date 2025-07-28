@@ -27,8 +27,8 @@
 #ifndef GE_PLUGIN_BROWSER_H
 #define GE_PLUGIN_BROWSER_H
 
-#include "src/core/plugins/pluginManager.h"
 #include "src/gui/elems/basics/tableText.h"
+#include "src/types.h"
 
 namespace giada::v
 {
@@ -49,8 +49,8 @@ public:
 	std::string getCellText(int row, int col) const override;
 	std::string getHeaderText(int col) const override;
 
-	m::PluginManager::SortMethod getSortMethodByColumn(int col) const;
-	std::string                  getJuceId(int row) const;
+	PluginSortMethod getSortMethodByColumn(int col) const;
+	std::string      getJuceId(int row) const;
 
 	void rebuild();
 
@@ -59,7 +59,7 @@ private:
 
 	void prepareLayout();
 
-	std::vector<m::PluginManager::PluginInfo> m_pluginInfo;
+	std::vector<PluginInfo> m_pluginInfo;
 };
 } // namespace giada::v
 

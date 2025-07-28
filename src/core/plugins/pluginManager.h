@@ -48,38 +48,6 @@ namespace giada::m
 class PluginManager final
 {
 public:
-	enum class SortMethod : int
-	{
-		NAME = 0,
-		CATEGORY,
-		MANUFACTURER,
-		FORMAT
-	};
-
-	enum class SortDir : int
-	{
-		ASC = 0,
-		DESC
-	};
-
-	struct SortMode
-	{
-		SortMethod method;
-		SortDir    dir;
-	};
-
-	struct PluginInfo
-	{
-		std::string juceId;
-		std::string name;
-		std::string category;
-		std::string manufacturerName;
-		std::string format;
-		bool        isInstrument;
-		bool        exists;
-		bool        isKnown;
-	};
-
 	/* getPluginsInfo
 	Returns a vector of PluginInfo objects containing all plug-ins, known and
 	unknown, scanned so far. */
@@ -127,7 +95,7 @@ public:
 
 	std::vector<Plugin*> clonePlugins(const std::vector<Plugin*>&, int sampleRate, int bufferSize, model::Model&);
 
-	void sortPlugins(SortMode);
+	void sortPlugins(PluginSortMode);
 
 private:
 	/* formatManager

@@ -27,12 +27,16 @@
 #ifndef G_CONF_H
 #define G_CONF_H
 
-#include "src/core/plugins/pluginManager.h"
+#include "src/core/const.h"
 #include "src/core/resampler.h"
 #include "src/core/types.h"
 #include "src/deps/geompp/src/rect.hpp"
+#include "src/deps/rtaudio/RtAudio.h"
 #include "src/gui/const.h"
+#include "src/types.h"
 #include <FL/Enumerations.H>
+#include <RtMidi.h>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -112,8 +116,8 @@ struct Conf final
 	uint32_t midiInBeatDouble = 0x0;
 	uint32_t midiInBeatHalf   = 0x0;
 
-	geompp::Rect<int>       pluginChooserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
-	PluginManager::SortMode pluginSortMode      = {PluginManager::SortMethod::NAME, PluginManager::SortDir::ASC};
+	geompp::Rect<int> pluginChooserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
+	PluginSortMode    pluginSortMode      = {PluginSortMethod::NAME, PluginSortDir::ASC};
 
 	int keyBindPlay          = ' ';
 	int keyBindRewind        = FL_BackSpace;
