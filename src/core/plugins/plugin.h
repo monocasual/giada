@@ -58,7 +58,7 @@ public:
 	/* Plugin (2)
 	Constructs a valid and working plug-in. */
 
-	Plugin(ID  id, std::unique_ptr<juce::AudioPluginInstance>, std::unique_ptr<PluginHost::Info>,
+	Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPluginInstance>, std::unique_ptr<PluginHost::Info>,
 	    double samplerate, int buffersize);
 
 	Plugin(const Plugin& o)          = delete;

@@ -66,6 +66,7 @@ std::unique_ptr<Plugin> create(ID id, const std::string& pid, std::unique_ptr<ju
 
 	return std::make_unique<Plugin>(
 	    pluginId_.generate(id),
+	    pid,
 	    std::move(pi),
 	    std::make_unique<PluginHost::Info>(sequencer, sampleRate),
 	    sampleRate, bufferSize);

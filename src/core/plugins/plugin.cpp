@@ -50,7 +50,7 @@ Plugin::Plugin(ID id, const std::string& juceId)
 
 /* -------------------------------------------------------------------------- */
 
-Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin,
+Plugin::Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPluginInstance> plugin,
     std::unique_ptr<PluginHost::Info> playHead, double samplerate, int buffersize)
 : id(id)
 , valid(true)
@@ -58,6 +58,7 @@ Plugin::Plugin(ID id, std::unique_ptr<juce::AudioPluginInstance> plugin,
 , m_plugin(std::move(plugin))
 , m_playHead(std::move(playHead))
 , m_bypass(false)
+, m_juceId(juceId)
 , m_hasEditor(m_plugin->hasEditor())
 {
 	/* (1) Initialize midiInParams vector, where midiInParams.size == number of
@@ -147,9 +148,7 @@ juce::AudioProcessorEditor* Plugin::createEditor() const
 
 std::string Plugin::getJuceId() const
 {
-	if (!valid)
-		return m_juceId;
-	return m_plugin->getPluginDescription().createIdentifierString().toStdString();
+	return m_juceId;
 }
 
 /* -------------------------------------------------------------------------- */
