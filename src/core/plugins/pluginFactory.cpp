@@ -47,14 +47,14 @@ void reset()
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Plugin> createInvalid(ID id, const std::string& pid)
+std::unique_ptr<Plugin> createInvalid(ID id, const std::string& juceId)
 {
-	return std::make_unique<Plugin>(pluginId_.generate(id), pid);
+	return std::make_unique<Plugin>(pluginId_.generate(id), juceId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-std::unique_ptr<Plugin> create(ID id, const std::string& pid, std::unique_ptr<juce::AudioPluginInstance> pi,
+std::unique_ptr<Plugin> create(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPluginInstance> pi,
     const model::Sequencer& sequencer, int sampleRate, int bufferSize)
 {
 	/* If the original juce::AudioPluginInstance is invalid, just return an
@@ -62,11 +62,11 @@ std::unique_ptr<Plugin> create(ID id, const std::string& pid, std::unique_ptr<ju
 	plug-ins. */
 
 	if (pi == nullptr)
-		return pluginFactory::createInvalid(id, pid);
+		return pluginFactory::createInvalid(id, juceId);
 
 	return std::make_unique<Plugin>(
 	    pluginId_.generate(id),
-	    pid,
+	    juceId,
 	    std::move(pi),
 	    std::make_unique<PluginHost::Info>(sequencer, sampleRate),
 	    sampleRate, bufferSize);
