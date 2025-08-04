@@ -158,6 +158,9 @@ int gePluginBrowser::getContentWidth(int row, int column) const
 			return m_pluginInfo[row].format;
 		case Column::JUCE_ID:
 			return m_pluginInfo[row].juceId;
+		default:
+			assert(false);
+			return m_pluginInfo[row].name;
 		}
 	};
 
