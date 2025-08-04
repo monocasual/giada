@@ -100,7 +100,7 @@ LoadState Shared::load(const Patch& patch, PluginManager& pluginManager, const S
 		std::unique_ptr<juce::AudioPluginInstance> pi = pluginManager.makeJucePlugin(pplugin.juceId, sampleRate, bufferSize);
 		std::unique_ptr<Plugin>                    p  = pluginFactory::deserializePlugin(pplugin, std::move(pi), sequencer, sampleRate, bufferSize);
 		if (!p->valid)
-			state.missingPlugins.push_back(pplugin.juceId);
+			state.missingPlugins.emplace(pplugin.juceId);
 		getAllPlugins().push_back(std::move(p));
 	}
 

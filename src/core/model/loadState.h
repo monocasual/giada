@@ -28,6 +28,7 @@
 #define G_MODEL_LOADSTATE_H
 
 #include "src/core/patch.h"
+#include <unordered_set>
 
 namespace giada::m::model
 {
@@ -38,9 +39,9 @@ struct LoadState
 {
 	bool isGood() const;
 
-	Patch                    patch;
-	std::vector<std::string> missingWaves   = {};
-	std::vector<std::string> missingPlugins = {};
+	Patch                           patch;
+	std::vector<std::string>        missingWaves   = {};
+	std::unordered_set<std::string> missingPlugins = {};
 };
 } // namespace giada::m::model
 
