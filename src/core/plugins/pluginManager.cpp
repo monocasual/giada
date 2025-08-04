@@ -198,13 +198,6 @@ std::vector<PluginInfo> PluginManager::getPluginsInfo() const
 
 /* -------------------------------------------------------------------------- */
 
-bool PluginManager::hasMissingPlugins() const
-{
-	return !m_unknownPluginList.empty();
-}
-
-/* -------------------------------------------------------------------------- */
-
 void PluginManager::sortPlugins(PluginSortMode mode)
 {
 	switch (mode.method)

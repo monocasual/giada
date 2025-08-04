@@ -54,11 +54,6 @@ public:
 
 	std::vector<PluginInfo> getPluginsInfo() const;
 
-	/* hasMissingPlugins
-	True if some plug-ins have been marked as missing during the initial scan. */
-
-	bool hasMissingPlugins() const;
-
 	/* countAvailablePlugins
 	Returns how many plug-ins are ready and available for usage. */
 
