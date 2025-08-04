@@ -57,7 +57,6 @@ void PluginManager::reset()
 {
 	pluginFactory::reset();
 
-	m_unknownPluginList.clear();
 	if (m_formatManager.getNumFormats() == 0) // Must be called only once
 		m_formatManager.addDefaultFormats();
 
@@ -183,16 +182,6 @@ std::vector<PluginInfo> PluginManager::getPluginsInfo() const
 		out.push_back(pi);
 	}
 
-	for (const std::string& uid : m_unknownPluginList)
-	{
-		PluginInfo pi;
-		pi.juceId       = uid;
-		pi.isInstrument = false;
-		pi.exists       = false;
-		pi.isKnown      = false;
-		out.push_back(pi);
-	}
-
 	return out;
 }
 
@@ -225,7 +214,6 @@ std::unique_ptr<juce::AudioPluginInstance> PluginManager::makeJucePlugin(const s
 	if (pd == nullptr)
 	{
 		u::log::print("[pluginManager::makeJucePlugin] no plugin found with juceId={}!\n", juceId);
-		m_unknownPluginList.push_back(juceId);
 		return nullptr;
 	}
 
@@ -235,7 +223,6 @@ std::unique_ptr<juce::AudioPluginInstance> PluginManager::makeJucePlugin(const s
 	{
 		u::log::print("[pluginManager::makeJucePlugin] unable to create instance with juceId={}! Error: {}\n",
 		    juceId, error.toStdString());
-		m_unknownPluginList.push_back(juceId);
 		return nullptr;
 	}
 

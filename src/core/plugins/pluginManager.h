@@ -102,11 +102,6 @@ private:
 	List of known (i.e. scanned) plugins. */
 
 	juce::KnownPluginList m_knownPluginList;
-
-	/* unknownPluginList
-	List of unrecognized plugins found in a patch. */
-
-	std::vector<std::string> m_unknownPluginList;
 };
 } // namespace giada::m
 
