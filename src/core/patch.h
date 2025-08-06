@@ -59,7 +59,7 @@ struct Patch
 		float            pan    = G_DEFAULT_PAN;
 		bool             hasActions;
 		bool             armed;
-		bool             sendToMaster;
+		bool             sendToMaster = true;
 		std::vector<int> extraOutputs;
 		bool             midiIn;
 		uint32_t         midiInKeyPress;

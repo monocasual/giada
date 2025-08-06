@@ -231,7 +231,7 @@ void readChannels_(Patch& patch, const nlohmann::json& j)
 		c.solo              = jchannel.value(PATCH_KEY_CHANNEL_SOLO, 0);
 		c.pan               = jchannel.value(PATCH_KEY_CHANNEL_PAN, 0.5f);
 		c.hasActions        = jchannel.value(PATCH_KEY_CHANNEL_HAS_ACTIONS, false);
-		c.sendToMaster      = jchannel.value(PATCH_KEY_CHANNEL_SEND_TO_MASTER, false);
+		c.sendToMaster      = jchannel.value(PATCH_KEY_CHANNEL_SEND_TO_MASTER, true);
 		c.midiIn            = jchannel.value(PATCH_KEY_CHANNEL_MIDI_IN, 0);
 		c.midiInKeyPress    = jchannel.value(PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS, 0);
 		c.midiInKeyRel      = jchannel.value(PATCH_KEY_CHANNEL_MIDI_IN_KEYREL, 0);
