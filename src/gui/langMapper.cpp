@@ -290,6 +290,7 @@ LangMap::LangMap()
 	m_data[CONFIG_AUDIO_TITLE]                 = "Audio";
 	m_data[CONFIG_AUDIO_SYSTEM]                = "System";
 	m_data[CONFIG_AUDIO_BUFFERSIZE]            = "Buffer size";
+	m_data[CONFIG_AUDIO_TOTALOUTPUTCHANNELS]   = "Total output channels";
 	m_data[CONFIG_AUDIO_SAMPLERATE]            = "Sample rate";
 	m_data[CONFIG_AUDIO_OUTPUTDEVICE]          = "Output device";
 	m_data[CONFIG_AUDIO_OUTPUTCHANNELS]        = "Master out channels";

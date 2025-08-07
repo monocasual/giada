@@ -148,6 +148,8 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 			line1->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_BUFFERSIZE), FL_ALIGN_RIGHT), LABEL_WIDTH);
 			line1->addWidget(m_bufferSize, 60);
+			line1->addWidget(new geBox());
+			line1->addWidget(new geBox(g_ui->getI18Text(LangMap::CONFIG_AUDIO_TOTALOUTPUTCHANNELS), FL_ALIGN_RIGHT), 140);
 			line1->addWidget(m_numOutChannels, 40);
 			line1->end();
 		}

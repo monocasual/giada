@@ -284,6 +284,7 @@ public:
 	static constexpr auto CONFIG_AUDIO_TITLE                 = "config_audio_title";
 	static constexpr auto CONFIG_AUDIO_SYSTEM                = "config_audio_system";
 	static constexpr auto CONFIG_AUDIO_BUFFERSIZE            = "config_audio_bufferSize";
+	static constexpr auto CONFIG_AUDIO_TOTALOUTPUTCHANNELS   = "config_audio_totalOutputChannels";
 	static constexpr auto CONFIG_AUDIO_SAMPLERATE            = "config_audio_sampleRate";
 	static constexpr auto CONFIG_AUDIO_OUTPUTDEVICE          = "config_audio_outputDevice";
 	static constexpr auto CONFIG_AUDIO_OUTPUTCHANNELS        = "config_audio_outputChannels";
