@@ -344,6 +344,7 @@ public:
 
 	static constexpr auto CHANNELROUTING_TITLE              = "channelRouting_title";
 	static constexpr auto CHANNELROUTING_SENDTOMASTEROUT    = "channelRouting_sendToMasterOut";
+	static constexpr auto CHANNELROUTING_SENDTOPARENTGROUP  = "channelRouting_sendToParentGroup";
 	static constexpr auto CHANNELROUTING_ADDNEWOUTPUT       = "channelRouting_addNewOutput";
 	static constexpr auto CHANNELROUTING_OUTPUT_CHOOSE      = "channelRouting_output_choose";
 	static constexpr auto CHANNELROUTING_OUTPUT_UNREACHABLE = "channelRouting_output_unreachable";

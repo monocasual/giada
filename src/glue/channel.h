@@ -128,6 +128,7 @@ struct Track
 struct RoutingData
 {
 	ID               id;
+	bool             isGroup;
 	float            volume;
 	float            pan;
 	bool             sendToMaster;

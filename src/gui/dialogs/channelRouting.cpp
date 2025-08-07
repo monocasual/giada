@@ -89,7 +89,7 @@ gdChannelRouting::gdChannelRouting(ID channelId, const Model& model)
 		{
 			m_volume       = new geVolumeTool(m_data.id, m_data.volume, LABEL_WIDTH);
 			m_pan          = new gePanTool(m_data.id, m_data.pan, LABEL_WIDTH);
-			m_sendToMaster = new geCheck(g_ui->getI18Text(LangMap::CHANNELROUTING_SENDTOMASTEROUT));
+			m_sendToMaster = new geCheck(g_ui->getI18Text(m_data.isGroup ? LangMap::CHANNELROUTING_SENDTOMASTEROUT : LangMap::CHANNELROUTING_SENDTOPARENTGROUP));
 			m_addNewOutput = new geChoice(g_ui->getI18Text(LangMap::CHANNELROUTING_ADDNEWOUTPUT));
 			m_outputs      = new geLiquidScroll(Direction::VERTICAL, Fl_Scroll::VERTICAL);
 			body->addWidget(m_volume, G_GUI_UNIT);

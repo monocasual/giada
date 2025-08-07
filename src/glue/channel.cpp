@@ -175,6 +175,7 @@ RoutingData getRoutingData(ID channelId)
 
 	return {
 	    .id                   = channelId,
+	    .isGroup              = channel.type == ChannelType::GROUP,
 	    .volume               = channel.volume,
 	    .pan                  = channel.pan.asFloat(),
 	    .sendToMaster         = channel.sendToMaster,
