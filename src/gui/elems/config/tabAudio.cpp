@@ -343,9 +343,9 @@ void geTabAudio::rebuild(const c::config::AudioData& data)
 
 	m_numOutChannels->setValue(fmt::format("{}", m_data.selectedOutputDevice.selectedChannelsCount));
 	if (m_data.selectedApi == RtAudio::Api::UNIX_JACK)
-		m_numOutChannels->show();
+		m_numOutChannels->activate();
 	else
-		m_numOutChannels->hide();
+		m_numOutChannels->deactivate();
 
 	m_sounddevOut->rebuild(m_data.availableOutputDevices);
 	m_sounddevOut->showItem(m_data.selectedOutputDevice.id);
