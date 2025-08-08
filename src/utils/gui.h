@@ -27,7 +27,6 @@
 #ifndef G_UTILS_GUI_H
 #define G_UTILS_GUI_H
 
-#include "src/core/types.h"
 #include "src/deps/geompp/src/rect.hpp"
 #include <FL/Fl_Menu_Item.H>
 #include <string>
@@ -64,7 +63,7 @@ geompp::Rect<int> getCenterWinBounds(geompp::Rect<int>);
 /* truncate
 Adds ellipsis to a string 's' if it longer than 'width' pixels. */
 
-std::string truncate(const std::string& s, Pixel width);
+std::string truncate(const std::string& s, int width);
 
 int centerWindowX(int w);
 int centerWindowY(int h);

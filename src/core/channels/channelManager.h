@@ -166,7 +166,7 @@ public:
 	void toggleArm(ID channelId);
 	void setOverdubProtection(ID channelId, bool value);
 	void setSamplePlayerMode(ID channelId, SamplePlayerMode);
-	void setHeight(ID channelId, Pixel height);
+	void setHeight(ID channelId, int height);
 	void setSendToMaster(ID channelId, bool value);
 	void addExtraOutput(ID channelId, int offset);
 	void removeExtraOutput(ID channelId, std::size_t);

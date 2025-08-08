@@ -29,8 +29,6 @@
 
 namespace giada
 {
-using Pixel = int;
-
 enum class Thread
 {
 	MAIN,

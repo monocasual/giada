@@ -99,7 +99,7 @@ struct Data
 	std::size_t             channelIndex;
 	std::vector<m::Plugin*> plugins;
 	ChannelType             type;
-	Pixel                   height;
+	int                     height;
 	std::string             name;
 	float                   volume;
 	float                   pan;
@@ -214,7 +214,7 @@ Sets several channel properties. */
 void setInputMonitor(ID channelId, bool value);
 void setOverdubProtection(ID channelId, bool value);
 void setName(ID channelId, const std::string& name);
-void setHeight(ID channelId, Pixel p);
+void setHeight(ID channelId, int p);
 void setSendToMaster(ID channelId, bool value);
 void addExtraOutput(ID channelId, int);
 void removeExtraOutput(ID channelId, int);

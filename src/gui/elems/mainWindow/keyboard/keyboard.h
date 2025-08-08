@@ -30,6 +30,7 @@
 #include "src/deps/geompp/src/rect.hpp"
 #include "src/gui/elems/basics/scroll.h"
 #include "src/gui/model.h"
+#include "src/gui/types.h"
 #include <FL/Fl_Box.H>
 #include <functional>
 #include <memory>

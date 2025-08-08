@@ -28,7 +28,7 @@
 #ifndef GE_BASE_ACTION_EDITOR_H
 #define GE_BASE_ACTION_EDITOR_H
 
-#include "src/core/types.h"
+#include "src/gui/types.h"
 #include <FL/Fl_Group.H>
 
 namespace giada::c::actionEditor

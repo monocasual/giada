@@ -28,6 +28,7 @@
 #include "src/glue/channel.h"
 #include "src/gui/const.h"
 #include "src/gui/drawing.h"
+#include "src/gui/types.h"
 #include "src/utils/math.h"
 
 namespace giada::v

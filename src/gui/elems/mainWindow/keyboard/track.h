@@ -27,9 +27,9 @@
 #ifndef GE_TRACK_H
 #define GE_TRACK_H
 
-#include "src/core/types.h"
 #include "src/glue/channel.h"
 #include "src/gui/elems/basics/flexResizable.h"
+#include "src/gui/types.h"
 #include <functional>
 
 namespace giada::v
@@ -59,7 +59,6 @@ public:
 
 	geChannel* getFirstChannel() const;
 	geChannel* getLastChannel() const;
-
 
 	/* showMenu
 	Displays the menu for adding/removing channels. */

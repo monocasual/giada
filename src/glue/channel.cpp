@@ -316,7 +316,7 @@ void setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 
 /* -------------------------------------------------------------------------- */
 
-void setHeight(ID channelId, Pixel p)
+void setHeight(ID channelId, int p)
 {
 	g_engine->getChannelsApi().setHeight(channelId, p);
 }

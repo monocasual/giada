@@ -30,6 +30,7 @@
 #include "src/glue/actionEditor.h"
 #include "src/gui/dialogs/window.h"
 #include "src/gui/model.h"
+#include "src/gui/types.h"
 #include <functional>
 
 namespace giada::m

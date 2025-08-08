@@ -29,6 +29,8 @@
 
 namespace giada::v
 {
+using Pixel = int;
+
 enum class Direction
 {
 	HORIZONTAL,

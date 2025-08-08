@@ -106,7 +106,7 @@ public:
 	int                  key; // TODO - move this to v::Model
 	bool                 hasActions;
 	std::string          name;   // TODO - move this to v::Model
-	Pixel                height; // TODO - move this to v::Model
+	int                  height; // TODO - move this to v::Model
 	std::vector<Plugin*> plugins;
 
 	/* sendToMaster

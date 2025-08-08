@@ -429,7 +429,7 @@ void ChannelManager::setSamplePlayerMode(ID channelId, SamplePlayerMode mode)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::setHeight(ID channelId, Pixel height)
+void ChannelManager::setHeight(ID channelId, int height)
 {
 	m_model.get().tracks.getChannel(channelId).height = height;
 	m_model.swap(model::SwapType::SOFT);
