@@ -73,7 +73,7 @@ void SampleEditorApi::setPreviewTracker(Frame f)
 
 void SampleEditorApi::setPreviewLoop(bool shouldLoop)
 {
-	m_channelManager.setSamplePlayerMode(m::Mixer::PREVIEW_CHANNEL_ID, shouldLoop ? SamplePlayerMode::SINGLE_ENDLESS : SamplePlayerMode::SINGLE_BASIC_PAUSE);
+	m_channelManager.setSamplePlayerMode(PREVIEW_CHANNEL_ID, shouldLoop ? SamplePlayerMode::SINGLE_ENDLESS : SamplePlayerMode::SINGLE_BASIC_PAUSE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -84,21 +84,21 @@ void SampleEditorApi::togglePreview()
 	const bool  canQuantize      = false;
 	const Frame currentFrameQ    = 0;
 	const float velocity         = G_MAX_VELOCITY_FLOAT;
-	m_reactor.keyPress(m::Mixer::PREVIEW_CHANNEL_ID, velocity, canRecordActions, canQuantize, currentFrameQ);
+	m_reactor.keyPress(PREVIEW_CHANNEL_ID, velocity, canRecordActions, canQuantize, currentFrameQ);
 }
 
 /* -------------------------------------------------------------------------- */
 
 Frame SampleEditorApi::getPreviewTracker()
 {
-	return m_channelManager.getChannel(m::Mixer::PREVIEW_CHANNEL_ID).shared->tracker.load();
+	return m_channelManager.getChannel(PREVIEW_CHANNEL_ID).shared->tracker.load();
 }
 
 /* -------------------------------------------------------------------------- */
 
 ChannelStatus SampleEditorApi::getPreviewStatus()
 {
-	return m_channelManager.getChannel(m::Mixer::PREVIEW_CHANNEL_ID).shared->playStatus.load();
+	return m_channelManager.getChannel(PREVIEW_CHANNEL_ID).shared->playStatus.load();
 }
 
 /* -------------------------------------------------------------------------- */

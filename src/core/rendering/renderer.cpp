@@ -111,9 +111,9 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	const int      maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
 	const bool     hasSolos       = mixer.hasSolos;
 	const bool     hasInput       = in.isAllocd();
-	const Channel& masterOutCh    = tracks.getChannel(Mixer::MASTER_OUT_CHANNEL_ID);
-	const Channel& masterInCh     = tracks.getChannel(Mixer::MASTER_IN_CHANNEL_ID);
-	const Channel& previewCh      = tracks.getChannel(Mixer::PREVIEW_CHANNEL_ID);
+	const Channel& masterOutCh    = tracks.getChannel(MASTER_OUT_CHANNEL_ID);
+	const Channel& masterInCh     = tracks.getChannel(MASTER_IN_CHANNEL_ID);
+	const Channel& previewCh      = tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	m_mixer.render(in, document_RT, maxFramesToRec);
 

@@ -216,7 +216,7 @@ void readChannels_(Patch& patch, const nlohmann::json& j)
 	if (!j.contains(PATCH_KEY_CHANNELS))
 		return;
 
-	ID defaultId = Mixer::PREVIEW_CHANNEL_ID;
+	ID defaultId = PREVIEW_CHANNEL_ID;
 
 	for (const auto& jchannel : j[PATCH_KEY_CHANNELS])
 	{
@@ -451,9 +451,9 @@ void modernize_(Patch& patch)
 		/* 0.16.3
 		Make sure that ChannelType is correct: ID 1, 2 are MASTER channels, ID 3
 		is PREVIEW channel. */
-		if (c.id == Mixer::MASTER_OUT_CHANNEL_ID || c.id == Mixer::MASTER_IN_CHANNEL_ID)
+		if (c.id == MASTER_OUT_CHANNEL_ID || c.id == MASTER_IN_CHANNEL_ID)
 			c.type = ChannelType::MASTER;
-		else if (c.id == Mixer::PREVIEW_CHANNEL_ID)
+		else if (c.id == PREVIEW_CHANNEL_ID)
 			c.type = ChannelType::PREVIEW;
 
 		/* 0.16.4

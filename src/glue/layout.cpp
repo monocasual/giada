@@ -230,14 +230,14 @@ void openChannelPluginListWindow(ID channelId)
 
 void openMasterInPluginListWindow()
 {
-	g_ui->openSubWindow(new v::gdPluginList(m::Mixer::MASTER_IN_CHANNEL_ID, g_ui->model.pluginListBounds));
+	g_ui->openSubWindow(new v::gdPluginList(MASTER_IN_CHANNEL_ID, g_ui->model.pluginListBounds));
 }
 
 /* -------------------------------------------------------------------------- */
 
 void openMasterOutPluginListWindow()
 {
-	g_ui->openSubWindow(new v::gdPluginList(m::Mixer::MASTER_OUT_CHANNEL_ID, g_ui->model.pluginListBounds));
+	g_ui->openSubWindow(new v::gdPluginList(MASTER_OUT_CHANNEL_ID, g_ui->model.pluginListBounds));
 }
 
 /* -------------------------------------------------------------------------- */

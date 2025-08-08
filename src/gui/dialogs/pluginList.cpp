@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/pluginList.h"
-#include "src/core/mixer.h"
 #include "src/glue/layout.h"
 #include "src/gui/elems/basics/liquidScroll.h"
 #include "src/gui/elems/basics/textButton.h"
@@ -69,9 +68,9 @@ void gdPluginList::rebuild()
 {
 	m_plugins = c::plugin::getPlugins(m_channelId);
 
-	if (m_plugins.channelId == m::Mixer::MASTER_OUT_CHANNEL_ID)
+	if (m_plugins.channelId == MASTER_OUT_CHANNEL_ID)
 		label(g_ui->getI18Text(LangMap::PLUGINLIST_TITLE_MASTEROUT));
-	else if (m_plugins.channelId == m::Mixer::MASTER_IN_CHANNEL_ID)
+	else if (m_plugins.channelId == MASTER_IN_CHANNEL_ID)
 		label(g_ui->getI18Text(LangMap::PLUGINLIST_TITLE_MASTERIN));
 	else
 		label(g_ui->getI18Text(LangMap::PLUGINLIST_TITLE_CHANNEL));

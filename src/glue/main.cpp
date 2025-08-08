@@ -122,8 +122,8 @@ Timer getTimer()
 
 IO getIO()
 {
-	return IO(g_engine->getChannelsApi().get(m::Mixer::MASTER_OUT_CHANNEL_ID),
-	    g_engine->getChannelsApi().get(m::Mixer::MASTER_IN_CHANNEL_ID));
+	return IO(g_engine->getChannelsApi().get(MASTER_OUT_CHANNEL_ID),
+	    g_engine->getChannelsApi().get(MASTER_IN_CHANNEL_ID));
 }
 
 /* -------------------------------------------------------------------------- */

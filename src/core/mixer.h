@@ -54,10 +54,6 @@ class Channel;
 class Mixer
 {
 public:
-	static constexpr int MASTER_OUT_CHANNEL_ID = 1;
-	static constexpr int MASTER_IN_CHANNEL_ID  = 2;
-	static constexpr int PREVIEW_CHANNEL_ID    = 3;
-
 	/* RecordInfo
 	Information regarding the input recording progress. */
 

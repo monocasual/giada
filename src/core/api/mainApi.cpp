@@ -197,12 +197,12 @@ void MainApi::toggleMetronome()
 
 void MainApi::setMasterInVolume(float v)
 {
-	m_channelManager.setVolume(Mixer::MASTER_IN_CHANNEL_ID, v);
+	m_channelManager.setVolume(MASTER_IN_CHANNEL_ID, v);
 }
 
 void MainApi::setMasterOutVolume(float v)
 {
-	m_channelManager.setVolume(Mixer::MASTER_OUT_CHANNEL_ID, v);
+	m_channelManager.setVolume(MASTER_OUT_CHANNEL_ID, v);
 }
 
 /* -------------------------------------------------------------------------- */

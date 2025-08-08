@@ -74,11 +74,11 @@ void ChannelManager::reset(Frame framesInBuffer)
 	const Resampler::Quality rsmpQuality       = m_model.get().kernelAudio.rsmpQuality;
 
 	channelFactory::Data masterOutData = channelFactory::create(
-	    Mixer::MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, framesInBuffer, rsmpQuality, overdubProtection);
+	    MASTER_OUT_CHANNEL_ID, ChannelType::MASTER, framesInBuffer, rsmpQuality, overdubProtection);
 	channelFactory::Data masterInData = channelFactory::create(
-	    Mixer::MASTER_IN_CHANNEL_ID, ChannelType::MASTER, framesInBuffer, rsmpQuality, overdubProtection);
+	    MASTER_IN_CHANNEL_ID, ChannelType::MASTER, framesInBuffer, rsmpQuality, overdubProtection);
 	channelFactory::Data previewData = channelFactory::create(
-	    Mixer::PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, framesInBuffer, rsmpQuality, overdubProtection);
+	    PREVIEW_CHANNEL_ID, ChannelType::PREVIEW, framesInBuffer, rsmpQuality, overdubProtection);
 
 	m_model.get().tracks = {};
 
@@ -304,12 +304,12 @@ void ChannelManager::renameChannel(ID channelId, const std::string& name)
 
 float ChannelManager::getMasterInVol() const
 {
-	return m_model.get().tracks.getChannel(Mixer::MASTER_IN_CHANNEL_ID).volume;
+	return m_model.get().tracks.getChannel(MASTER_IN_CHANNEL_ID).volume;
 }
 
 float ChannelManager::getMasterOutVol() const
 {
-	return m_model.get().tracks.getChannel(Mixer::MASTER_OUT_CHANNEL_ID).volume;
+	return m_model.get().tracks.getChannel(MASTER_OUT_CHANNEL_ID).volume;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -348,8 +348,8 @@ void ChannelManager::setPitch(ID channelId, float value)
 
 	const float pitch = std::clamp(value, G_MIN_PITCH, G_MAX_PITCH);
 
-	m_model.get().tracks.getChannel(channelId).sampleChannel->pitch                 = pitch;
-	m_model.get().tracks.getChannel(Mixer::PREVIEW_CHANNEL_ID).sampleChannel->pitch = pitch;
+	m_model.get().tracks.getChannel(channelId).sampleChannel->pitch          = pitch;
+	m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID).sampleChannel->pitch = pitch;
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -366,7 +366,7 @@ void ChannelManager::setPan(ID channelId, float value)
 void ChannelManager::setBeginEnd(ID channelId, Frame b, Frame e)
 {
 	Channel& c       = m_model.get().tracks.getChannel(channelId);
-	Channel& preview = m_model.get().tracks.getChannel(Mixer::PREVIEW_CHANNEL_ID);
+	Channel& preview = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	assert(c.sampleChannel);
 
@@ -464,7 +464,7 @@ void ChannelManager::removeExtraOutput(ID channelId, std::size_t i)
 
 void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 {
-	Channel&       previewCh = m_model.get().tracks.getChannel(Mixer::PREVIEW_CHANNEL_ID);
+	Channel&       previewCh = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 	const Channel& sourceCh  = m_model.get().tracks.getChannel(channelId);
 
 	assert(previewCh.sampleChannel);
@@ -483,7 +483,7 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 
 void ChannelManager::freeWaveInPreviewChannel()
 {
-	Channel& previewCh = m_model.get().tracks.getChannel(Mixer::PREVIEW_CHANNEL_ID);
+	Channel& previewCh = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	previewCh.loadWave(nullptr);
 	m_model.swap(model::SwapType::SOFT);
@@ -493,7 +493,7 @@ void ChannelManager::freeWaveInPreviewChannel()
 
 void ChannelManager::setPreviewTracker(Frame f)
 {
-	m_model.get().tracks.getChannel(m::Mixer::PREVIEW_CHANNEL_ID).shared->tracker.store(f);
+	m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID).shared->tracker.store(f);
 }
 
 /* -------------------------------------------------------------------------- */
