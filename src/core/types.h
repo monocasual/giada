@@ -96,15 +96,6 @@ enum class InputRecMode : int
 	RIGID = 0,
 	FREE
 };
-
-/* Peak
-Audio peak information for two In/Out channels. */
-
-struct Peak
-{
-	float left;
-	float right;
-};
 } // namespace giada
 
 #endif

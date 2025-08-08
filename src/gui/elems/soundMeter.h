@@ -27,8 +27,8 @@
 #ifndef GE_SOUND_METER_H
 #define GE_SOUND_METER_H
 
-#include "src/core/types.h"
 #include "src/gui/types.h"
+#include "src/types.h"
 #include <FL/Fl_Box.H>
 
 namespace giada::v
