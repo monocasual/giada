@@ -74,6 +74,11 @@ constexpr Version G_VERSION(1, 4, 0);
 constexpr int MASTER_OUT_CHANNEL_ID = 1;
 constexpr int MASTER_IN_CHANNEL_ID  = 2;
 constexpr int PREVIEW_CHANNEL_ID    = 3;
+
+/* -- Min/max values -------------------------------------------------------- */
+// TODO - move other min/max values from src/core/const.h
+constexpr int G_MAX_NUM_SCENES = 8;
+
 } // namespace giada
 
 #endif
