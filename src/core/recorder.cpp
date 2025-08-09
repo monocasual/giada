@@ -90,7 +90,7 @@ void Recorder::stopActionRec()
 	actions. This will start reading right away, without checking whether
 	conf::treatRecsAsLoops is enabled or not. Same thing for MIDI channels.  */
 
-	m_channelManager.consolidateChannels(m_actionRecorder.consolidate());
+	m_channelManager.finalizeActionRec(m_actionRecorder.consolidate());
 }
 
 /* -------------------------------------------------------------------------- */

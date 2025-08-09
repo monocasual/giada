@@ -524,7 +524,7 @@ bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::consolidateChannels(const std::unordered_set<ID>& ids)
+void ChannelManager::finalizeActionRec(const std::unordered_set<ID>& ids)
 {
 	for (ID id : ids)
 	{

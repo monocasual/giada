@@ -157,6 +157,14 @@ public:
 
 	void finalizeInputRec(const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame);
 
+	/* finalizeActionRec
+	Enable reading actions for Channels that have just been filled with actions
+	after an action recording session. This will start reading actions right
+	away, without checking whether conf::treatRecsAsLoops is enabled or not.
+	Same thing for MIDI channels.  */
+
+	void finalizeActionRec(const std::unordered_set<ID>&);
+
 	void setInputMonitor(ID channelId, bool value);
 	void setVolume(ID channelId, float value);
 	void setPitch(ID channelId, float value);
@@ -174,14 +182,6 @@ public:
 	void freeWaveInPreviewChannel();
 	void setPreviewTracker(Frame f);
 	bool saveSample(ID channelId, const std::string& filePath);
-
-	/* consolidateChannels
-	Enable reading actions for Channels that have just been filled with actions
-	after an action recording session. This will start reading actions right
-	away, without checking whether conf::treatRecsAsLoops is enabled or not.
-	Same thing for MIDI channels.  */
-
-	void consolidateChannels(const std::unordered_set<ID>&);
 
 	/* onChannelsAltered
 	Fired when something is done on channels (added, removed, loaded, ...). */
