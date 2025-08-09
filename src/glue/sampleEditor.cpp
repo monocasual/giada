@@ -42,12 +42,12 @@ Data::Data(const m::Channel& c)
 , pitch(c.sampleChannel->pitch)
 , range(c.sampleChannel->range)
 , shift(c.sampleChannel->shift)
-, waveSize(c.sampleChannel->getWave()->getBuffer().countFrames())
-, waveBits(c.sampleChannel->getWave()->getBits())
-, waveDuration(c.sampleChannel->getWave()->getDuration())
-, waveRate(c.sampleChannel->getWave()->getRate())
-, wavePath(c.sampleChannel->getWave()->getPath())
-, isLogical(c.sampleChannel->getWave()->isLogical())
+, waveSize(c.sampleChannel->getWave(0)->getBuffer().countFrames())
+, waveBits(c.sampleChannel->getWave(0)->getBits())
+, waveDuration(c.sampleChannel->getWave(0)->getDuration())
+, waveRate(c.sampleChannel->getWave(0)->getRate())
+, wavePath(c.sampleChannel->getWave(0)->getPath())
+, isLogical(c.sampleChannel->getWave(0)->isLogical())
 , m_channel(&c)
 {
 }
@@ -64,7 +64,7 @@ Frame Data::a_getPreviewTracker() const
 
 const m::Wave& Data::getWaveRef() const
 {
-	return *m_channel->sampleChannel->getWave();
+	return *m_channel->sampleChannel->getWave(0);
 }
 
 Frame Data::getFramesInBar() const

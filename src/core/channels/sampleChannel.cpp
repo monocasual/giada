@@ -37,7 +37,7 @@ SampleChannel::SampleChannel()
 , pitch(G_DEFAULT_PITCH)
 , shift(0)
 , velocityAsVol(false)
-, m_wave(nullptr)
+, m_waves{} // all nullptr by default
 {
 }
 
@@ -52,7 +52,7 @@ SampleChannel::SampleChannel(const Patch::Channel& p, Wave* w, float samplerateR
 , range(p.range)
 , velocityAsVol(p.midiInVeloAsVol)
 {
-	setWave(w, samplerateRatio);
+	setWave(w, 0, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -85,36 +85,36 @@ bool SampleChannel::isAnyNonLoopingSingleMode() const
 
 /* -------------------------------------------------------------------------- */
 
-bool SampleChannel::hasWave() const { return m_wave != nullptr; }
-bool SampleChannel::hasLogicalWave() const { return hasWave() && m_wave->isLogical(); }
-bool SampleChannel::hasEditedWave() const { return hasWave() && m_wave->isEdited(); }
+bool SampleChannel::hasWave(std::size_t scene) const { return m_waves[scene] != nullptr; }
+bool SampleChannel::hasLogicalWave(std::size_t scene) const { return hasWave(scene) && m_waves[scene]->isLogical(); }
+bool SampleChannel::hasEditedWave(std::size_t scene) const { return hasWave(scene) && m_waves[scene]->isEdited(); }
 
 /* -------------------------------------------------------------------------- */
 
-Wave* SampleChannel::getWave() const
+Wave* SampleChannel::getWave(std::size_t scene) const
 {
-	return m_wave;
+	return m_waves[scene];
 }
 
-ID SampleChannel::getWaveId() const
+ID SampleChannel::getWaveId(std::size_t scene) const
 {
-	if (hasWave())
-		return m_wave->id;
+	if (hasWave(scene))
+		return m_waves[scene]->id;
 	return 0;
 }
 
 /* -------------------------------------------------------------------------- */
 
-Frame SampleChannel::getWaveSize() const
+Frame SampleChannel::getWaveSize(std::size_t scene) const
 {
-	return hasWave() ? m_wave->getBuffer().countFrames() : 0;
+	return hasWave(scene) ? m_waves[scene]->getBuffer().countFrames() : 0;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::loadWave(Wave* w, SampleRange newRange, Frame newShift)
+void SampleChannel::loadWave(Wave* w, std::size_t scene, SampleRange newRange, Frame newShift)
 {
-	m_wave = w;
+	m_waves[scene] = w;
 
 	shift = 0;
 	range = {};
@@ -128,11 +128,11 @@ void SampleChannel::loadWave(Wave* w, SampleRange newRange, Frame newShift)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::setWave(Wave* w, float samplerateRatio)
+void SampleChannel::setWave(Wave* w, std::size_t scene, float samplerateRatio)
 {
-	m_wave = w;
+	m_waves[scene] = w;
 
-	if (m_wave == nullptr)
+	if (w == nullptr)
 		return;
 
 	if (samplerateRatio != 1.0f)

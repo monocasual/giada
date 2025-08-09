@@ -42,25 +42,25 @@ public:
 	bool  isAnyLoopMode() const;
 	bool  isAnyLoopOnceMode() const;
 	bool  isAnyNonLoopingSingleMode() const;
-	bool  hasWave() const;
-	bool  hasLogicalWave() const;
-	bool  hasEditedWave() const;
-	ID    getWaveId() const;
-	Frame getWaveSize() const;
-	Wave* getWave() const;
+	bool  hasWave(std::size_t scene) const;
+	bool  hasLogicalWave(std::size_t scene) const;
+	bool  hasEditedWave(std::size_t scene) const;
+	ID    getWaveId(std::size_t scene) const;
+	Frame getWaveSize(std::size_t scene) const;
+	Wave* getWave(std::size_t scene) const;
 
 	/* loadWave
 	Loads Wave and sets it up (name, markers, ...). Resets begin/end points
 	and shift if not specified. */
 
-	void loadWave(Wave*, SampleRange newRange = {}, Frame shift = -1);
+	void loadWave(Wave*, std::size_t scene, SampleRange newRange = {}, Frame shift = -1);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The
 	ratio is used to adjust begin/end points in case of patch vs. conf sample
 	rate mismatch. If nullptr, set the wave to invalid. */
 
-	void setWave(Wave* w, float samplerateRatio);
+	void setWave(Wave* w, std::size_t scene, float samplerateRatio);
 
 	bool             inputMonitor;
 	bool             overdubProtection;
@@ -71,10 +71,11 @@ public:
 	bool             velocityAsVol; // Velocity drives volume
 
 private:
-	/* wave
-	Wave object. Might be null if the channel has no sample. */
+	/* m_waves
+	Array of pointers to existing Wave objects. A slot might be null if the channel has
+	no sample for a certain scene. */
 
-	Wave* m_wave;
+	std::array<Wave*, G_MAX_NUM_SCENES> m_waves;
 };
 } // namespace giada::m
 

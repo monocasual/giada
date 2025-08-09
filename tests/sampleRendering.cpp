@@ -12,7 +12,8 @@ TEST_CASE("rendering::sampleRendering")
 	// Wave values: [1..BUFFERSIZE*4]
 	m::Wave wave(0);
 	wave.getBuffer().alloc(BUFFER_SIZE * 4, NUM_CHANNELS);
-	wave.getBuffer().forEachFrame([](float* f, int i) {
+	wave.getBuffer().forEachFrame([](float* f, int i)
+	{
 		f[0] = static_cast<float>(i + 1);
 		f[1] = static_cast<float>(i + 1);
 	});
@@ -26,14 +27,14 @@ TEST_CASE("rendering::sampleRendering")
 
 	SECTION("Test initialization")
 	{
-		REQUIRE(channel.sampleChannel->hasWave() == false);
+		REQUIRE(channel.sampleChannel->hasWave(0) == false);
 	}
 
 	SECTION("Test rendering")
 	{
 		channel.loadWave(&wave);
 
-		REQUIRE(channel.sampleChannel->hasWave() == true);
+		REQUIRE(channel.sampleChannel->hasWave(0) == true);
 		REQUIRE(channel.sampleChannel->range.a == 0);
 		REQUIRE(channel.sampleChannel->range.b == wave.getBuffer().countFrames());
 
@@ -56,7 +57,8 @@ TEST_CASE("rendering::sampleRendering")
 				m::rendering::renderSampleChannel(channel, /*seqIsRunning=*/false);
 
 				int numFramesWritten = 0;
-				channelShared.audioBuffer.forEachFrame([&numFramesWritten](float* f, int) {
+				channelShared.audioBuffer.forEachFrame([&numFramesWritten](float* f, int)
+				{
 					if (f[0] != 0.0)
 						numFramesWritten++;
 				});
@@ -87,7 +89,8 @@ TEST_CASE("rendering::sampleRendering")
 				m::rendering::renderSampleChannel(channel, /*seqIsRunning=*/false);
 
 				int numFramesWritten = 0;
-				channelShared.audioBuffer.forEachFrame([&numFramesWritten](float* f, int) {
+				channelShared.audioBuffer.forEachFrame([&numFramesWritten](float* f, int)
+				{
 					if (f[0] != 0.0)
 						numFramesWritten++;
 				});

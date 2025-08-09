@@ -255,6 +255,6 @@ void SampleEditorApi::reload(ID channelId)
 
 Wave& SampleEditorApi::getWave(ID channelId) const
 {
-	return *m_channelManager.getChannel(channelId).sampleChannel->getWave();
+	return *m_channelManager.getChannel(channelId).sampleChannel->getWave(0);
 }
 } // namespace giada::m
