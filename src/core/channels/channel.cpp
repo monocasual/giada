@@ -143,7 +143,7 @@ bool Channel::canInputRec() const
 	if (type != ChannelType::SAMPLE)
 		return false;
 
-	bool hasWave     = sampleChannel->hasWave();
+	bool hasWave     = sampleChannel->hasWave(0);
 	bool isProtected = sampleChannel->overdubProtection;
 	bool canOverdub  = !hasWave || (hasWave && !isProtected);
 
@@ -157,7 +157,7 @@ bool Channel::canActionRec() const
 
 bool Channel::hasWave() const
 {
-	return sampleChannel && sampleChannel->hasWave();
+	return sampleChannel && sampleChannel->hasWave(0);
 }
 
 bool Channel::isPlaying() const
@@ -176,7 +176,7 @@ std::string Channel::debug() const
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
 		out += fmt::format(" wave={} mode={} begin={} end={}",
-		    (void*)sampleChannel->getWave(),
+		    (void*)sampleChannel->getWave(0),
 		    u::string::toString(sampleChannel->mode),
 		    sampleChannel->begin,
 		    sampleChannel->end);
@@ -229,7 +229,7 @@ void Channel::setWave(Wave* w, float samplerateRatio)
 {
 	assert(sampleChannel);
 
-	sampleChannel->setWave(w, samplerateRatio);
+	sampleChannel->setWave(w, 0, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */

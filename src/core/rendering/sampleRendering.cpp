@@ -124,7 +124,7 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame off
 	const Frame      begin     = ch.sampleChannel->begin;
 	const Frame      end       = ch.sampleChannel->end;
 	const float      pitch     = ch.sampleChannel->pitch;
-	const Wave&      wave      = *ch.sampleChannel->getWave();
+	const Wave&      wave      = *ch.sampleChannel->getWave(0);
 	const Resampler& resampler = ch.shared->resampler.value();
 
 	while (true)

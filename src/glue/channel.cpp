@@ -92,7 +92,7 @@ Track makeTrack_(const m::model::Track& modelTrack)
 /* -------------------------------------------------------------------------- */
 
 SampleData::SampleData(const m::Channel& ch)
-: waveId(ch.sampleChannel->getWaveId())
+: waveId(ch.sampleChannel->getWaveId(0))
 , mode(ch.sampleChannel->mode)
 , isLoop(ch.sampleChannel->isAnyLoopMode())
 , pitch(ch.sampleChannel->pitch)
