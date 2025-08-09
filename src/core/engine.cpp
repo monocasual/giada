@@ -371,11 +371,4 @@ ActionEditorApi& Engine::getActionEditorApi() { return m_actionEditorApi; }
 IOApi&           Engine::getIOApi() { return m_ioApi; }
 StorageApi&      Engine::getStorageApi() { return m_storageApi; }
 ConfigApi&       Engine::getConfigApi() { return m_configApi; }
-
-/* -------------------------------------------------------------------------- */
-
-KernelMidi&             Engine::getKernelMidi() { return m_kernelMidi; }
-ActionRecorder&         Engine::getActionRecorder() { return m_actionRecorder; }
-PluginHost&             Engine::getPluginHost() { return m_pluginHost; }
-MidiMapper<KernelMidi>& Engine::getMidiMapper() { return m_midiMapper; }
 } // namespace giada::m

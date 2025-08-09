@@ -109,15 +109,6 @@ public:
 	StorageApi&      getStorageApi();
 	ConfigApi&       getConfigApi();
 
-	/* get[... component ...]
-	Returns a reference to an internal. TODO - these methods will be removed with
-	new Channel rendering architecture */
-
-	KernelMidi&             getKernelMidi();
-	ActionRecorder&         getActionRecorder();
-	PluginHost&             getPluginHost();
-	MidiMapper<KernelMidi>& getMidiMapper();
-
 	/* onMidi[Received|Sent]
 	Callback fired when the engine has received or sent a MIDI event. */
 
