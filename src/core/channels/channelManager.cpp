@@ -576,9 +576,9 @@ bool ChannelManager::canRemoveTrack(std::size_t trackIndex) const
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, Frame begin, Frame end, Frame shift) const
+void ChannelManager::loadSampleChannel(Channel& ch, Wave* w) const
 {
-	ch.loadWave(w, begin, end, shift);
+	ch.loadWave(w);
 	ch.name = w != nullptr ? w->getBasename(/*ext=*/false) : "";
 }
 

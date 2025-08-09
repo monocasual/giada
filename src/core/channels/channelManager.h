@@ -201,7 +201,7 @@ public:
 	std::function<void(ID, ChannelStatus)> onChannelPlayStatusChanged;
 
 private:
-	void loadSampleChannel(Channel&, Wave*, Frame begin = -1, Frame end = -1, Frame shift = -1) const;
+	void loadSampleChannel(Channel&, Wave*) const;
 
 	/* setupChannelCallbacks
 	Prepares the channel with the necessary callbacks. Call this whenever a
