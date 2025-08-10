@@ -213,23 +213,23 @@ void Channel::setSolo(bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::loadWave(Wave* w, SampleRange newRange, Frame newShift)
+void Channel::loadWave(Wave* w, std::size_t scene, SampleRange newRange, Frame newShift)
 {
 	assert(sampleChannel);
 
 	shared->tracker.store(0);
 	shared->playStatus.store(w != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
 
-	sampleChannel->loadWave(w, 0, newRange, newShift);
+	sampleChannel->loadWave(w, scene, newRange, newShift);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::setWave(Wave* w, float samplerateRatio)
+void Channel::setWave(Wave* w, std::size_t scene, float samplerateRatio)
 {
 	assert(sampleChannel);
 
-	sampleChannel->setWave(w, 0, samplerateRatio);
+	sampleChannel->setWave(w, scene, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */
