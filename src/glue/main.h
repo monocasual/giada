@@ -141,6 +141,7 @@ void stopActionRecording();
 void toggleActionRecording();
 void stopInputRecording();
 void toggleInputRecording();
+void setScene(std::size_t);
 
 #if G_DEBUG_MODE
 void printDebugInfo();
