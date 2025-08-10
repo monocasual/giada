@@ -126,12 +126,12 @@ int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)
 {
 	const int                sampleRate  = m_kernelAudio.getSampleRate();
 	const Resampler::Quality rsmpQuality = m_model.get().kernelAudio.rsmpQuality;
-	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality);
+	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality, 0); // TODO - scene
 }
 
 void ChannelsApi::loadSampleChannel(ID channelId, Wave& wave)
 {
-	m_channelManager.loadSampleChannel(channelId, wave);
+	m_channelManager.loadSampleChannel(channelId, wave, 0); // TODO - scene
 }
 
 /* -------------------------------------------------------------------------- */
@@ -156,7 +156,7 @@ void ChannelsApi::remove(ID channelId)
 void ChannelsApi::freeSampleChannel(ID channelId)
 {
 	m_actionRecorder.clearChannel(channelId);
-	m_channelManager.freeSampleChannel(channelId);
+	m_channelManager.freeSampleChannel(channelId, 0); // TODO - scene
 }
 
 /* -------------------------------------------------------------------------- */
@@ -328,7 +328,7 @@ void ChannelsApi::clearAllActions()
 
 void ChannelsApi::freeAllSampleChannels()
 {
-	m_channelManager.freeAllSampleChannels();
+	m_channelManager.freeAllSampleChannels(0); // TODO - scene
 }
 
 /* -------------------------------------------------------------------------- */

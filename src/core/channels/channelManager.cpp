@@ -165,26 +165,27 @@ Channel& ChannelManager::addChannel(ChannelType type, std::size_t trackIndex, in
 
 /* -------------------------------------------------------------------------- */
 
-int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, int sampleRate, Resampler::Quality quality)
+int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, int sampleRate,
+    Resampler::Quality quality, std::size_t scene)
 {
 	waveFactory::Result res = waveFactory::createFromFile(fname, /*id=*/0, sampleRate, quality);
 	if (res.status != G_RES_OK)
 		return res.status;
 
-	loadSampleChannel(channelId, m_model.addWave(std::move(res.wave)));
+	loadSampleChannel(channelId, m_model.addWave(std::move(res.wave)), scene);
 
 	return G_RES_OK;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
+void ChannelManager::loadSampleChannel(ID channelId, Wave& wave, std::size_t scene)
 {
 	Channel&    channel = m_model.get().tracks.getChannel(channelId);
 	Wave&       newWave = wave;
-	const Wave* oldWave = channel.sampleChannel->getWave(0);
+	const Wave* oldWave = channel.sampleChannel->getWave(scene);
 
-	loadSampleChannel(channel, &newWave);
+	loadSampleChannel(channel, &newWave, scene);
 	m_model.swap(model::SwapType::HARD);
 
 	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is
@@ -216,7 +217,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 		const auto  oldRange = oldChannel.sampleChannel->range;
 		Wave&       wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
 
-		newChannelData.channel.loadWave(&wave, oldRange, oldShift);
+		newChannelData.channel.loadWave(&wave, 0, oldRange, oldShift);
 	}
 
 	newChannelData.channel.plugins = plugins;
@@ -230,7 +231,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::freeSampleChannel(ID channelId)
+void ChannelManager::freeSampleChannel(ID channelId, std::size_t scene)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
@@ -238,7 +239,7 @@ void ChannelManager::freeSampleChannel(ID channelId)
 
 	const Wave* wave = ch.sampleChannel->getWave(0);
 
-	loadSampleChannel(ch, nullptr);
+	loadSampleChannel(ch, nullptr, scene);
 	m_model.swap(model::SwapType::HARD);
 
 	if (wave != nullptr)
@@ -249,12 +250,12 @@ void ChannelManager::freeSampleChannel(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::freeAllSampleChannels()
+void ChannelManager::freeAllSampleChannels(std::size_t scene)
 {
-	m_model.get().tracks.forEachChannel([this](Channel& ch)
+	m_model.get().tracks.forEachChannel([this, scene](Channel& ch)
 	{
 		if (ch.sampleChannel)
-			loadSampleChannel(ch, nullptr);
+			loadSampleChannel(ch, nullptr, scene);
 		return true;
 	});
 
@@ -313,12 +314,12 @@ float ChannelManager::getMasterOutVol() const
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::finalizeInputRec(const mcl::AudioBuffer& buffer, Frame recordedFrames, Frame currentFrame)
+void ChannelManager::finalizeInputRec(const mcl::AudioBuffer& buffer, Frame recordedFrames, Frame currentFrame, std::size_t scene)
 {
 	for (Channel* ch : getRecordableChannels())
-		recordChannel(*ch, buffer, recordedFrames, currentFrame);
+		recordChannel(*ch, buffer, recordedFrames, currentFrame, scene);
 	for (Channel* ch : getOverdubbableChannels())
-		overdubChannel(*ch, buffer, currentFrame);
+		overdubChannel(*ch, buffer, currentFrame, scene);
 
 	triggerOnChannelsAltered();
 }
@@ -471,7 +472,7 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 	assert(previewCh.sampleChannel);
 	assert(sourceCh.sampleChannel);
 
-	previewCh.loadWave(sourceCh.sampleChannel->getWave(0));
+	previewCh.loadWave(sourceCh.sampleChannel->getWave(0), 0); // TODO - scene
 	previewCh.sampleChannel->mode  = SamplePlayerMode::SINGLE_BASIC_PAUSE;
 	previewCh.sampleChannel->range = sourceCh.sampleChannel->range;
 	previewCh.sampleChannel->pitch = sourceCh.sampleChannel->pitch;
@@ -485,7 +486,7 @@ void ChannelManager::freeWaveInPreviewChannel()
 {
 	Channel& previewCh = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
-	previewCh.loadWave(nullptr);
+	previewCh.loadWave(nullptr, /*scene=*/0);
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -576,9 +577,9 @@ bool ChannelManager::canRemoveTrack(std::size_t trackIndex) const
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::loadSampleChannel(Channel& ch, Wave* w) const
+void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, std::size_t scene) const
 {
-	ch.loadWave(w);
+	ch.loadWave(w, scene);
 	ch.name = w != nullptr ? w->getBasename(/*ext=*/false) : "";
 }
 
@@ -638,7 +639,7 @@ void ChannelManager::setupChannelPostRecording(Channel& ch, Frame currentFrame)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, Frame recordedFrames, Frame currentFrame)
+void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, Frame recordedFrames, Frame currentFrame, std::size_t scene)
 {
 	assert(onChannelRecorded != nullptr);
 
@@ -652,7 +653,7 @@ void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, 
 
 	/* Update channel with the new Wave. */
 
-	loadSampleChannel(ch, &m_model.addWave(std::move(wave)));
+	loadSampleChannel(ch, &m_model.addWave(std::move(wave)), scene);
 	setupChannelPostRecording(ch, currentFrame);
 
 	m_model.swap(model::SwapType::HARD);
@@ -660,9 +661,9 @@ void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, 
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer, Frame currentFrame)
+void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer, Frame currentFrame, std::size_t scene)
 {
-	Wave* wave = ch.sampleChannel->getWave(0);
+	Wave* wave = ch.sampleChannel->getWave(scene);
 
 	/* Need model::DataLock here, as data might be being read by the audio
 	thread at the same time. */

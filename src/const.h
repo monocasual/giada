@@ -77,7 +77,7 @@ constexpr int PREVIEW_CHANNEL_ID    = 3;
 
 /* -- Min/max values -------------------------------------------------------- */
 // TODO - move other min/max values from src/core/const.h
-constexpr int G_MAX_NUM_SCENES = 8;
+constexpr std::size_t G_MAX_NUM_SCENES = 8;
 
 } // namespace giada
 

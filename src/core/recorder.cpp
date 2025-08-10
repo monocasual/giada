@@ -164,7 +164,7 @@ void Recorder::stopInputRec(int sampleRate)
 
 	/* Finalize recordings. InputRecMode::FREE requires some adjustments. */
 
-	m_channelManager.finalizeInputRec(m_mixer.getRecBuffer(), recordedFrames, m_sequencer.getCurrentFrame());
+	m_channelManager.finalizeInputRec(m_mixer.getRecBuffer(), recordedFrames, m_sequencer.getCurrentFrame(), 0); // TODO - scene
 	m_mixer.clearRecBuffer();
 
 	if (recMode == InputRecMode::FREE)
