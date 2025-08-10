@@ -130,18 +130,18 @@ public:
 	/* loadSampleChannel (1)
 	Creates a new Wave from a file path and loads it inside a Sample Channel. */
 
-	int loadSampleChannel(ID channelId, const std::string&, int sampleRate, Resampler::Quality);
+	int loadSampleChannel(ID channelId, const std::string&, int sampleRate, Resampler::Quality, std::size_t scene);
 
 	/* loadSampleChannel (2)
 	Loads an existing Wave inside a Sample Channel. */
 
-	void loadSampleChannel(ID channelId, Wave&);
+	void loadSampleChannel(ID channelId, Wave&, std::size_t scene);
 
 	/* freeChannel
 	Unloads existing Wave from a Sample Channel. */
 
-	void freeSampleChannel(ID channelId);
-	void freeAllSampleChannels();
+	void freeSampleChannel(ID channelId, std::size_t scene);
+	void freeAllSampleChannels(std::size_t scene);
 
 	void moveChannel(ID, std::size_t newTrackIndex, std::size_t newPosition);
 	void deleteChannel(ID channelId);
@@ -156,7 +156,7 @@ public:
 	Fills armed Sample channel with audio data coming from an input recording
 	session. */
 
-	void finalizeInputRec(const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame);
+	void finalizeInputRec(const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame, std::size_t scene);
 
 	/* finalizeActionRec
 	Enable reading actions for Channels that have just been filled with actions
@@ -202,7 +202,7 @@ public:
 	std::function<void(ID, ChannelStatus)> onChannelPlayStatusChanged;
 
 private:
-	void loadSampleChannel(Channel&, Wave*) const;
+	void loadSampleChannel(Channel&, Wave*, std::size_t scene) const;
 
 	/* setupChannelCallbacks
 	Prepares the channel with the necessary callbacks. Call this whenever a
@@ -221,13 +221,13 @@ private:
 	/* recordChannel
 	Records the current Mixer audio input data into an empty channel. */
 
-	void recordChannel(Channel&, const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame);
+	void recordChannel(Channel&, const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame, std::size_t scene);
 
 	/* overdubChannel
 	Records the current Mixer audio input data into a channel with an existing
 	Wave, overdub mode. */
 
-	void overdubChannel(Channel&, const mcl::AudioBuffer&, Frame currentFrame);
+	void overdubChannel(Channel&, const mcl::AudioBuffer&, Frame currentFrame, std::size_t scene);
 
 	void triggerOnChannelsAltered();
 
