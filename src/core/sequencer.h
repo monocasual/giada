@@ -98,21 +98,22 @@ public:
 	bool isOnFirstBeat() const;
 	bool isMetronomeOn() const;
 
-	float     getBpm() const;
-	int       getBeats() const;
-	int       getBars() const;
-	int       getCurrentBeat() const;
-	Frame     getCurrentFrame() const;
-	Frame     getCurrentFrameQuantized() const;
-	float     getCurrentSecond(int sampleRate) const;
-	Frame     getFramesInBar() const;
-	Frame     getFramesInBeat() const;
-	Frame     getFramesInLoop() const;
-	Frame     getFramesInSeq() const;
-	int       getQuantizerValue() const;
-	int       getQuantizerStep() const;
-	SeqStatus getStatus() const;
-	int       getMaxFramesInLoop(int sampleRate) const;
+	float       getBpm() const;
+	int         getBeats() const;
+	int         getBars() const;
+	int         getCurrentBeat() const;
+	Frame       getCurrentFrame() const;
+	Frame       getCurrentFrameQuantized() const;
+	float       getCurrentSecond(int sampleRate) const;
+	Frame       getFramesInBar() const;
+	Frame       getFramesInBeat() const;
+	Frame       getFramesInLoop() const;
+	Frame       getFramesInSeq() const;
+	int         getQuantizerValue() const;
+	int         getQuantizerStep() const;
+	SeqStatus   getStatus() const;
+	int         getMaxFramesInLoop(int sampleRate) const;
+	std::size_t getScene() const;
 
 	/* calcBpmFromRec
 	Given the amount of recorded frames, returns the speed of the current
@@ -160,6 +161,7 @@ public:
 	void setQuantize(int q, int sampleRate);
 	void setStatus(SeqStatus);
 	void goToBeat(int beat, int sampleRate);
+	void setScene(std::size_t);
 
 #ifdef WITH_AUDIO_JACK
 	void jack_start();

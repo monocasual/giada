@@ -94,6 +94,7 @@ public:
 	void stopInputRecording();
 	void toggleInputRecording();
 	void startActionRecOnCallback();
+	void setScene(std::size_t);
 
 private:
 	KernelAudio&        m_kernelAudio;

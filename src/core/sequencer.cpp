@@ -60,27 +60,28 @@ Sequencer::Sequencer(model::Model& m, MidiSynchronizer& s, JackTransport& j)
 }
 /* -------------------------------------------------------------------------- */
 
-bool      Sequencer::canQuantize() const { return m_model.get().sequencer.canQuantize(); }
-bool      Sequencer::isRunning() const { return m_model.get().sequencer.isRunning(); }
-bool      Sequencer::isActive() const { return m_model.get().sequencer.isActive(); }
-bool      Sequencer::isOnBar() const { return m_model.get().sequencer.a_isOnBar(); }
-bool      Sequencer::isOnBeat() const { return m_model.get().sequencer.a_isOnBeat(); }
-bool      Sequencer::isOnFirstBeat() const { return m_model.get().sequencer.a_isOnFirstBeat(); }
-float     Sequencer::getBpm() const { return m_model.get().sequencer.bpm; }
-int       Sequencer::getBeats() const { return m_model.get().sequencer.beats; }
-int       Sequencer::getBars() const { return m_model.get().sequencer.bars; }
-int       Sequencer::getCurrentBeat() const { return m_model.get().sequencer.a_getCurrentBeat(); }
-Frame     Sequencer::getCurrentFrame() const { return m_model.get().sequencer.a_getCurrentFrame(); }
-Frame     Sequencer::getCurrentFrameQuantized() const { return quantize(getCurrentFrame()); }
-float     Sequencer::getCurrentSecond(int sampleRate) const { return getCurrentFrame() / static_cast<float>(sampleRate); }
-Frame     Sequencer::getFramesInBar() const { return m_model.get().sequencer.framesInBar; }
-Frame     Sequencer::getFramesInBeat() const { return m_model.get().sequencer.framesInBeat; }
-Frame     Sequencer::getFramesInLoop() const { return m_model.get().sequencer.framesInLoop; }
-Frame     Sequencer::getFramesInSeq() const { return m_model.get().sequencer.framesInSeq; }
-int       Sequencer::getQuantizerValue() const { return m_model.get().sequencer.quantize; }
-int       Sequencer::getQuantizerStep() const { return m_quantizerStep; }
-SeqStatus Sequencer::getStatus() const { return m_model.get().sequencer.status; }
-int       Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model.get().sequencer.getMaxFramesInLoop(sampleRate); }
+bool        Sequencer::canQuantize() const { return m_model.get().sequencer.canQuantize(); }
+bool        Sequencer::isRunning() const { return m_model.get().sequencer.isRunning(); }
+bool        Sequencer::isActive() const { return m_model.get().sequencer.isActive(); }
+bool        Sequencer::isOnBar() const { return m_model.get().sequencer.a_isOnBar(); }
+bool        Sequencer::isOnBeat() const { return m_model.get().sequencer.a_isOnBeat(); }
+bool        Sequencer::isOnFirstBeat() const { return m_model.get().sequencer.a_isOnFirstBeat(); }
+float       Sequencer::getBpm() const { return m_model.get().sequencer.bpm; }
+int         Sequencer::getBeats() const { return m_model.get().sequencer.beats; }
+int         Sequencer::getBars() const { return m_model.get().sequencer.bars; }
+int         Sequencer::getCurrentBeat() const { return m_model.get().sequencer.a_getCurrentBeat(); }
+Frame       Sequencer::getCurrentFrame() const { return m_model.get().sequencer.a_getCurrentFrame(); }
+Frame       Sequencer::getCurrentFrameQuantized() const { return quantize(getCurrentFrame()); }
+float       Sequencer::getCurrentSecond(int sampleRate) const { return getCurrentFrame() / static_cast<float>(sampleRate); }
+Frame       Sequencer::getFramesInBar() const { return m_model.get().sequencer.framesInBar; }
+Frame       Sequencer::getFramesInBeat() const { return m_model.get().sequencer.framesInBeat; }
+Frame       Sequencer::getFramesInLoop() const { return m_model.get().sequencer.framesInLoop; }
+Frame       Sequencer::getFramesInSeq() const { return m_model.get().sequencer.framesInSeq; }
+int         Sequencer::getQuantizerValue() const { return m_model.get().sequencer.quantize; }
+int         Sequencer::getQuantizerStep() const { return m_quantizerStep; }
+SeqStatus   Sequencer::getStatus() const { return m_model.get().sequencer.status; }
+int         Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model.get().sequencer.getMaxFramesInLoop(sampleRate); }
+std::size_t Sequencer::getScene() const { return m_model.get().sequencer.scene; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -375,6 +376,16 @@ void Sequencer::goToBeat(int beat, int sampleRate)
 	const Frame frame = u::time::beatToFrame(beat, sampleRate, bpm);
 	if (!m_jackTransport.setPosition(frame))
 		rawGoToBeat(beat, sampleRate);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::setScene(std::size_t scene)
+{
+	assert(scene < G_MAX_NUM_SCENES);
+
+	m_model.get().sequencer.scene = scene;
+	m_model.swap(model::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
