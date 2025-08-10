@@ -144,7 +144,7 @@ void SampleEditorApi::paste(ID channelId, Frame a)
 
 	/* Pass the old wave that contains the pasted data to channel. */
 
-	m_channelManager.getChannel(channelId).setWave(&wave, 1.0f);
+	m_channelManager.getChannel(channelId).setWave(&wave, 1.0f, /*scene=*/0);
 
 	/* Just brutally restore begin/end points. */
 
@@ -223,7 +223,7 @@ const Channel& SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 	Wave&     wave       = m_model.addWave(waveFactory::createFromWave(getWave(channelId), a, b));
 
 	const Channel& ch = m_channelManager.addChannel(ChannelType::SAMPLE, 0, bufferSize); // TODO trackIndex
-	m_channelManager.loadSampleChannel(ch.id, wave);
+	m_channelManager.loadSampleChannel(ch.id, wave, 0);                                  // TODO - scene
 
 	return ch;
 }
@@ -247,7 +247,7 @@ void SampleEditorApi::reload(ID channelId)
 	const int                sampleRate  = m_kernelAudio.getSampleRate();
 	const Resampler::Quality rsmpQuality = m_model.get().kernelAudio.rsmpQuality;
 	// TODO - error checking
-	m_channelManager.loadSampleChannel(channelId, getWave(channelId).getPath(), sampleRate, rsmpQuality);
+	m_channelManager.loadSampleChannel(channelId, getWave(channelId).getPath(), sampleRate, rsmpQuality, /*scene=*/0);
 	loadPreviewChannel(channelId); // Refresh preview channel properties
 }
 
