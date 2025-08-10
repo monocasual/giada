@@ -73,16 +73,17 @@ public:
 	void a_setCurrentFrame(Frame f, int sampleRate) const;
 	void a_setCurrentBeat(int b, int sampleRate) const;
 
-	SeqStatus status       = SeqStatus::STOPPED;
-	int       framesInLoop = 0;
-	int       framesInBar  = 0;
-	int       framesInBeat = 0;
-	int       framesInSeq  = 0;
-	int       bars         = G_DEFAULT_BARS;
-	int       beats        = G_DEFAULT_BEATS;
-	float     bpm          = G_DEFAULT_BPM;
-	int       quantize     = G_DEFAULT_QUANTIZE;
-	bool      metronome    = false;
+	SeqStatus   status       = SeqStatus::STOPPED;
+	int         framesInLoop = 0;
+	int         framesInBar  = 0;
+	int         framesInBeat = 0;
+	int         framesInSeq  = 0;
+	int         bars         = G_DEFAULT_BARS;
+	int         beats        = G_DEFAULT_BEATS;
+	float       bpm          = G_DEFAULT_BPM;
+	int         quantize     = G_DEFAULT_QUANTIZE;
+	bool        metronome    = false;
+	std::size_t scene        = 0;
 
 private:
 	struct Shared
