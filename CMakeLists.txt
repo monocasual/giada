@@ -335,6 +335,8 @@ list(APPEND SOURCES
 	src/gui/elems/mainWindow/mainTransport.h
 	src/gui/elems/mainWindow/sequencer.cpp
 	src/gui/elems/mainWindow/sequencer.h
+	src/gui/elems/mainWindow/scenes.cpp
+	src/gui/elems/mainWindow/scenes.h
 	src/gui/elems/mainWindow/keyboard/sampleChannelMode.cpp
 	src/gui/elems/mainWindow/keyboard/sampleChannelMode.h
 	src/gui/elems/mainWindow/keyboard/channelButton.cpp
