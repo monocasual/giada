@@ -108,12 +108,13 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 	/* Then render Mixer, channels and finalize output. */
 
-	const int      maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
-	const bool     hasSolos       = mixer.hasSolos;
-	const bool     hasInput       = in.isAllocd();
-	const Channel& masterOutCh    = tracks.getChannel(MASTER_OUT_CHANNEL_ID);
-	const Channel& masterInCh     = tracks.getChannel(MASTER_IN_CHANNEL_ID);
-	const Channel& previewCh      = tracks.getChannel(PREVIEW_CHANNEL_ID);
+	const int         maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
+	const std::size_t scene          = sequencer.scene;
+	const bool        hasSolos       = mixer.hasSolos;
+	const bool        hasInput       = in.isAllocd();
+	const Channel&    masterOutCh    = tracks.getChannel(MASTER_OUT_CHANNEL_ID);
+	const Channel&    masterInCh     = tracks.getChannel(MASTER_IN_CHANNEL_ID);
+	const Channel&    previewCh      = tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	m_mixer.render(in, document_RT, maxFramesToRec);
 
@@ -122,7 +123,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 	if (!document_RT.locked)
 		renderTracks(tracks, masterOutCh.shared->audioBuffer, out, mixer.getInBuffer(),
-		    hasSolos, sequencer.isRunning());
+		    scene, hasSolos, sequencer.isRunning());
 
 	renderMasterOut(masterOutCh, out, kernelAudio.deviceOut.channelsStart);
 	if (mixer.renderPreview)
@@ -166,7 +167,7 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& masterOut,
-    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, bool hasSolos,
+    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, std::size_t scene, bool hasSolos,
     bool seqIsRunning) const
 {
 	masterOut.clear();
@@ -181,7 +182,7 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& maste
 
 		for (const Channel& c : track.getChannels().getAll())
 		{
-			renderNormalChannel(c, in, seqIsRunning);
+			renderNormalChannel(c, in, scene, seqIsRunning);
 			if (!c.isAudible(hasSolos))
 				continue;
 			if (c.sendToMaster)
@@ -204,12 +205,12 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& maste
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderNormalChannel(const Channel& ch, const mcl::AudioBuffer& in,
-    bool seqIsRunning) const
+    std::size_t scene, bool seqIsRunning) const
 {
 	ch.shared->audioBuffer.clear();
 
 	if (ch.type == ChannelType::SAMPLE)
-		renderSampleChannel(ch, in, seqIsRunning);
+		renderSampleChannel(ch, in, scene, seqIsRunning);
 	else if (ch.type == ChannelType::MIDI)
 		renderMidiChannel(ch);
 }
@@ -236,19 +237,19 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 	ch.shared->audioBuffer.clear();
 
 	if (ch.isPlaying())
-		rendering::renderSampleChannel(ch, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
+		rendering::renderSampleChannel(ch, /*scene=*/0, /*seqIsRunning=*/false); // Sequencer status and scene are irrelevant here
 
 	out.sumAll(ch.shared->audioBuffer, ch.volume);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderSampleChannel(const Channel& ch, const mcl::AudioBuffer& in, bool seqIsRunning) const
+void Renderer::renderSampleChannel(const Channel& ch, const mcl::AudioBuffer& in, std::size_t scene, bool seqIsRunning) const
 {
 	assert(ch.type == ChannelType::SAMPLE);
 
 	if (ch.isPlaying())
-		rendering::renderSampleChannel(ch, seqIsRunning);
+		rendering::renderSampleChannel(ch, scene, seqIsRunning);
 
 	if (ch.canReceiveAudio())
 		renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)

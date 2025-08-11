@@ -80,13 +80,13 @@ private:
 	void advanceChannel(const Channel&, const Sequencer::EventBuffer&, SampleRange, Frame quantizerStep) const;
 
 	void renderTracks(const model::Tracks&, mcl::AudioBuffer& masterOut,
-	    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, bool hasSolos,
-	    bool seqIsRunning) const;
-	void renderNormalChannel(const Channel& ch, const mcl::AudioBuffer& in, bool seqIsRunning) const;
+	    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, std::size_t scene,
+	    bool hasSolos, bool seqIsRunning) const;
+	void renderNormalChannel(const Channel& ch, const mcl::AudioBuffer& in, std::size_t scene, bool seqIsRunning) const;
 	void renderMasterIn(const Channel&, mcl::AudioBuffer& in) const;
 	void renderMasterOut(const Channel&, mcl::AudioBuffer& out, int channelOffset) const;
 	void renderPreview(const Channel&, mcl::AudioBuffer& out) const;
-	void renderSampleChannel(const Channel&, const mcl::AudioBuffer& in, bool seqIsRunning) const;
+	void renderSampleChannel(const Channel&, const mcl::AudioBuffer& in, std::size_t scene, bool seqIsRunning) const;
 	void renderMidiChannel(const Channel&) const;
 
 	/* mergeChannel

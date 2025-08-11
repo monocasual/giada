@@ -77,7 +77,7 @@ struct ReadResult
 	Frame used, generated;
 };
 
-void renderSampleChannel(const Channel&, bool seqIsRunning);
+void renderSampleChannel(const Channel&, std::size_t scene, bool seqIsRunning);
 
 /* renderSampleChannelInput
 Copies input buffer to channel buffer: this enables the input monitoring. */
