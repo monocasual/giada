@@ -182,24 +182,27 @@ void ChannelsApi::clone(ID channelId)
 
 void ChannelsApi::press(ID channelId, float velocity)
 {
-	const bool  canRecordActions = m_recorder.canRecordActions();
-	const bool  canQuantize      = m_sequencer.canQuantize();
-	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	m_reactor.keyPress(channelId, velocity, canRecordActions, canQuantize, currentFrameQ);
+	const bool        canRecordActions = m_recorder.canRecordActions();
+	const bool        canQuantize      = m_sequencer.canQuantize();
+	const Frame       currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
+	const std::size_t scene            = m_sequencer.getScene();
+	m_reactor.keyPress(channelId, scene, velocity, canRecordActions, canQuantize, currentFrameQ);
 }
 
 void ChannelsApi::release(ID channelId)
 {
-	const bool  canRecordActions = m_recorder.canRecordActions();
-	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	m_reactor.keyRelease(channelId, canRecordActions, currentFrameQ);
+	const bool        canRecordActions = m_recorder.canRecordActions();
+	const Frame       currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
+	const std::size_t scene            = m_sequencer.getScene();
+	m_reactor.keyRelease(channelId, scene, canRecordActions, currentFrameQ);
 }
 
 void ChannelsApi::kill(ID channelId)
 {
-	const bool  canRecordActions = m_recorder.canRecordActions();
-	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	m_reactor.keyKill(channelId, canRecordActions, currentFrameQ);
+	const bool        canRecordActions = m_recorder.canRecordActions();
+	const Frame       currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
+	const std::size_t scene            = m_sequencer.getScene();
+	m_reactor.keyKill(channelId, scene, canRecordActions, currentFrameQ);
 }
 
 /* -------------------------------------------------------------------------- */
