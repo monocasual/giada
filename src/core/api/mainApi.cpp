@@ -188,6 +188,13 @@ SeqStatus MainApi::getSequencerStatus() const
 
 /* -------------------------------------------------------------------------- */
 
+std::size_t MainApi::getScene() const
+{
+	return m_sequencer.getScene();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void MainApi::toggleMetronome()
 {
 	m_sequencer.toggleMetronome();
