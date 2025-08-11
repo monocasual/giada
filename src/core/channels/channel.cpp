@@ -150,14 +150,14 @@ bool Channel::canInputRec() const
 	return armed && canOverdub;
 }
 
-bool Channel::canActionRec() const
+bool Channel::canActionRec(std::size_t scene) const
 {
-	return hasWave() && !sampleChannel->isAnyLoopMode();
+	return hasWave(scene) && !sampleChannel->isAnyLoopMode();
 }
 
-bool Channel::hasWave() const
+bool Channel::hasWave(std::size_t scene) const
 {
-	return sampleChannel && sampleChannel->hasWave(0);
+	return sampleChannel && sampleChannel->hasWave(scene);
 }
 
 bool Channel::isPlaying() const

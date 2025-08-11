@@ -52,8 +52,8 @@ public:
 	bool isMuted() const;
 	bool isSoloed() const;
 	bool canInputRec() const;
-	bool canActionRec() const;
-	bool hasWave() const;
+	bool canActionRec(std::size_t scene) const;
+	bool hasWave(std::size_t scene) const;
 
 	/* canReceiveAudio
 	Tells if the sample channel can receive audio as input monitor. */
