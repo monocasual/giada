@@ -316,9 +316,9 @@ float ChannelManager::getMasterOutVol() const
 
 void ChannelManager::finalizeInputRec(const mcl::AudioBuffer& buffer, Frame recordedFrames, Frame currentFrame, std::size_t scene)
 {
-	for (Channel* ch : getRecordableChannels())
+	for (Channel* ch : getRecordableChannels(scene))
 		recordChannel(*ch, buffer, recordedFrames, currentFrame, scene);
-	for (Channel* ch : getOverdubbableChannels())
+	for (Channel* ch : getOverdubbableChannels(scene))
 		overdubChannel(*ch, buffer, currentFrame, scene);
 
 	triggerOnChannelsAltered();
@@ -613,16 +613,16 @@ void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& sha
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Channel*> ChannelManager::getRecordableChannels()
+std::vector<Channel*> ChannelManager::getRecordableChannels(std::size_t scene)
 {
-	return m_model.get().tracks.getChannelsIf([](const Channel& c)
-	{ return c.canInputRec() && !c.hasWave(); });
+	return m_model.get().tracks.getChannelsIf([scene](const Channel& c)
+	{ return c.canInputRec() && !c.hasWave(scene); });
 }
 
-std::vector<Channel*> ChannelManager::getOverdubbableChannels()
+std::vector<Channel*> ChannelManager::getOverdubbableChannels(std::size_t scene)
 {
-	return m_model.get().tracks.getChannelsIf([](const Channel& c)
-	{ return c.canInputRec() && c.hasWave(); });
+	return m_model.get().tracks.getChannelsIf([scene](const Channel& c)
+	{ return c.canInputRec() && c.hasWave(scene); });
 }
 
 /* -------------------------------------------------------------------------- */
