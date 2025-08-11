@@ -58,7 +58,7 @@ namespace giada::c::channel
 struct SampleData
 {
 	SampleData() = delete;
-	SampleData(const m::Channel&);
+	SampleData(const m::Channel&, std::size_t scene);
 
 	Frame getTracker() const;
 
@@ -85,7 +85,7 @@ struct MidiData
 
 struct Data
 {
-	Data(const m::Channel&, std::size_t trackIndex, std::size_t channelIndex);
+	Data(const m::Channel&, std::size_t scene, std::size_t trackIndex, std::size_t channelIndex);
 
 	ChannelStatus getPlayStatus() const;
 	ChannelStatus getRecStatus() const;
