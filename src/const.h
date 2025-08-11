@@ -68,7 +68,7 @@ namespace giada
 
 /* -- version --------------------------------------------------------------- */
 constexpr auto    G_APP_NAME = "Giada";
-constexpr Version G_VERSION(1, 3, 0);
+constexpr Version G_VERSION(1, 4, 0);
 
 /* -- Internal channels ----------------------------------------------------- */
 constexpr int MASTER_OUT_CHANNEL_ID = 1;
