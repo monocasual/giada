@@ -123,12 +123,15 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, std::size_t scene, Frame
 {
 	const auto       range     = ch.sampleChannel->range;
 	const float      pitch     = ch.sampleChannel->pitch;
-	const Wave&      wave      = *ch.sampleChannel->getWave(scene);
+	const Wave*      wave      = ch.sampleChannel->getWave(scene);
 	const Resampler& resampler = ch.shared->resampler.value();
+
+	if (wave == nullptr)
+		return tracker;
 
 	while (true)
 	{
-		ReadResult res = readWave(wave, buf, tracker, range.b, offset, pitch, resampler);
+		ReadResult res = readWave(*wave, buf, tracker, range.b, offset, pitch, resampler);
 		tracker += res.used;
 		offset += res.generated;
 

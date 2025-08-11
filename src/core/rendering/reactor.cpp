@@ -43,7 +43,7 @@ Reactor::Reactor(model::Model& model, MidiMapper<KernelMidi>& m, ActionRecorder&
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::keyPress(ID channelId, float velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized)
+void Reactor::keyPress(ID channelId, std::size_t scene, float velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
@@ -51,7 +51,7 @@ void Reactor::keyPress(ID channelId, float velocity, bool canRecordActions, bool
 	{
 		playMidiChannel(ch.shared->playStatus);
 	}
-	else if (ch.type == ChannelType::SAMPLE && ch.hasWave())
+	else if (ch.type == ChannelType::SAMPLE && ch.hasWave(scene))
 	{
 		const bool             isAnyLoopMode = ch.sampleChannel->isAnyLoopMode();
 		const bool             velocityAsVol = ch.sampleChannel->velocityAsVol;
@@ -75,7 +75,7 @@ void Reactor::keyPress(ID channelId, float velocity, bool canRecordActions, bool
 	{
 		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
 			if (child.type != ChannelType::GROUP)
-				keyPress(child.id, velocity, canRecordActions, canQuantize, currentFrameQuantized);
+				keyPress(child.id, scene, velocity, canRecordActions, canQuantize, currentFrameQuantized);
 	}
 
 	m_model.swap(model::SwapType::SOFT);
@@ -83,14 +83,14 @@ void Reactor::keyPress(ID channelId, float velocity, bool canRecordActions, bool
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::keyRelease(ID channelId, bool canRecordActions, Frame currentFrameQuantized)
+void Reactor::keyRelease(ID channelId, std::size_t scene, bool canRecordActions, Frame currentFrameQuantized)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	if (ch.type == ChannelType::MIDI)
 		return;
 
-	if (ch.type == ChannelType::SAMPLE && ch.hasWave())
+	if (ch.type == ChannelType::SAMPLE && ch.hasWave(scene))
 	{
 		const SamplePlayerMode mode = ch.sampleChannel->mode;
 
@@ -113,7 +113,7 @@ void Reactor::keyRelease(ID channelId, bool canRecordActions, Frame currentFrame
 	{
 		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
 			if (child.type != ChannelType::GROUP)
-				keyRelease(child.id, canRecordActions, currentFrameQuantized);
+				keyRelease(child.id, scene, canRecordActions, currentFrameQuantized);
 	}
 
 	m_model.swap(model::SwapType::SOFT);
@@ -121,7 +121,7 @@ void Reactor::keyRelease(ID channelId, bool canRecordActions, Frame currentFrame
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQuantized)
+void Reactor::keyKill(ID channelId, std::size_t scene, bool canRecordActions, Frame currentFrameQuantized)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
@@ -137,7 +137,7 @@ void Reactor::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQua
 	{
 		const SamplePlayerMode mode = ch.sampleChannel->mode;
 
-		if (ch.hasWave() && canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
+		if (ch.hasWave(scene) && canRecordActions && mode == SamplePlayerMode::SINGLE_PRESS)
 		{
 			/* Record a stop event only if channel is SINGLE_PRESS. For any other
 			mode the key release event is meaningless. */
@@ -152,7 +152,7 @@ void Reactor::keyKill(ID channelId, bool canRecordActions, Frame currentFrameQua
 	{
 		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
 			if (child.type != ChannelType::GROUP)
-				keyKill(child.id, canRecordActions, currentFrameQuantized);
+				keyKill(child.id, scene, canRecordActions, currentFrameQuantized);
 	}
 
 	m_model.swap(model::SwapType::SOFT);
@@ -298,5 +298,19 @@ void Reactor::rewindAll()
 			if (ch.type == ChannelType::MIDI)
 				rewindMidiChannel(ch.shared->playStatus);
 	m_model.swap(model::SwapType::SOFT);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Reactor::setScene(std::size_t scene)
+{
+	/* Stop all channels that don't have a Wave to play for the selected scene. */
+
+	m_model.get().tracks.forEachChannel([scene](Channel& ch)
+	{
+		if (!ch.isInternal() && ch.type == ChannelType::SAMPLE && !ch.hasWave(scene) && ch.isPlaying())
+			killSampleChannel(*ch.shared, ch.sampleChannel->mode);
+		return true;
+	});
 }
 } // namespace giada::m::rendering

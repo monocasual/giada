@@ -210,8 +210,8 @@ private:
 
 	void setupChannelCallbacks(const Channel&, ChannelShared&) const;
 
-	std::vector<Channel*> getRecordableChannels();
-	std::vector<Channel*> getOverdubbableChannels();
+	std::vector<Channel*> getRecordableChannels(std::size_t scene);
+	std::vector<Channel*> getOverdubbableChannels(std::size_t scene);
 
 	/* setupChannelPostRecording
 	Fnialize the Sample channel after an audio recording session. */

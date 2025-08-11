@@ -84,7 +84,7 @@ void SampleEditorApi::togglePreview()
 	const bool  canQuantize      = false;
 	const Frame currentFrameQ    = 0;
 	const float velocity         = G_MAX_VELOCITY_FLOAT;
-	m_reactor.keyPress(PREVIEW_CHANNEL_ID, velocity, canRecordActions, canQuantize, currentFrameQ);
+	m_reactor.keyPress(PREVIEW_CHANNEL_ID, /*scene=*/0, velocity, canRecordActions, canQuantize, currentFrameQ);
 }
 
 /* -------------------------------------------------------------------------- */
