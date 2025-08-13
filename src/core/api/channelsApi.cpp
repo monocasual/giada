@@ -124,7 +124,7 @@ void ChannelsApi::move(ID channelId, std::size_t newTrackIndex, std::size_t newP
 
 int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)
 {
-	const int                scene       = m_sequencer.getScene();
+	const int                scene       = m_sequencer.getCurrentScene();
 	const int                sampleRate  = m_kernelAudio.getSampleRate();
 	const Resampler::Quality rsmpQuality = m_model.get().kernelAudio.rsmpQuality;
 	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality, scene);
@@ -132,7 +132,7 @@ int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)
 
 void ChannelsApi::loadSampleChannel(ID channelId, Wave& wave)
 {
-	m_channelManager.loadSampleChannel(channelId, wave, m_sequencer.getScene());
+	m_channelManager.loadSampleChannel(channelId, wave, m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -157,7 +157,7 @@ void ChannelsApi::remove(ID channelId)
 void ChannelsApi::freeSampleChannel(ID channelId)
 {
 	m_actionRecorder.clearChannel(channelId);
-	m_channelManager.freeSampleChannel(channelId, m_sequencer.getScene());
+	m_channelManager.freeSampleChannel(channelId, m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -185,7 +185,7 @@ void ChannelsApi::press(ID channelId, float velocity)
 	const bool        canRecordActions = m_recorder.canRecordActions();
 	const bool        canQuantize      = m_sequencer.canQuantize();
 	const Frame       currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	const std::size_t scene            = m_sequencer.getScene();
+	const std::size_t scene            = m_sequencer.getCurrentScene();
 	m_reactor.keyPress(channelId, scene, velocity, canRecordActions, canQuantize, currentFrameQ);
 }
 
@@ -193,7 +193,7 @@ void ChannelsApi::release(ID channelId)
 {
 	const bool        canRecordActions = m_recorder.canRecordActions();
 	const Frame       currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	const std::size_t scene            = m_sequencer.getScene();
+	const std::size_t scene            = m_sequencer.getCurrentScene();
 	m_reactor.keyRelease(channelId, scene, canRecordActions, currentFrameQ);
 }
 
@@ -201,7 +201,7 @@ void ChannelsApi::kill(ID channelId)
 {
 	const bool        canRecordActions = m_recorder.canRecordActions();
 	const Frame       currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	const std::size_t scene            = m_sequencer.getScene();
+	const std::size_t scene            = m_sequencer.getCurrentScene();
 	m_reactor.keyKill(channelId, scene, canRecordActions, currentFrameQ);
 }
 
@@ -332,7 +332,7 @@ void ChannelsApi::clearAllActions()
 
 void ChannelsApi::freeAllSampleChannels()
 {
-	m_channelManager.freeAllSampleChannels(m_sequencer.getScene());
+	m_channelManager.freeAllSampleChannels(m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
