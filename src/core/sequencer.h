@@ -161,7 +161,7 @@ public:
 	void setQuantize(int q, int sampleRate);
 	void setStatus(SeqStatus);
 	void goToBeat(int beat, int sampleRate);
-	void setScene(std::size_t);
+	void forceScene(std::size_t);
 
 #ifdef WITH_AUDIO_JACK
 	void jack_start();
