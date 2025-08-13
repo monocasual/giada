@@ -154,13 +154,13 @@ bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).
 
 Data getData(ID channelId)
 {
-	const std::size_t scene = g_engine->getMainApi().getScene();
+	const std::size_t scene = g_engine->getMainApi().getCurrentScene();
 	return makeData_(channelId, g_engine->getChannelsApi().getTracks().getByChannel(channelId), scene);
 }
 
 std::vector<Track> getTracks()
 {
-	const std::size_t  scene = g_engine->getMainApi().getScene();
+	const std::size_t  scene = g_engine->getMainApi().getCurrentScene();
 	std::vector<Track> out;
 	for (const m::model::Track& modelTrack : g_engine->getChannelsApi().getTracks().getAll())
 		if (!modelTrack.isInternal())
