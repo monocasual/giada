@@ -66,8 +66,8 @@ public:
 	void           trim(ID channelId, Frame a, Frame b);
 	void           shift(ID channelId, Frame offset);
 	const Channel& toNewChannel(ID channelId, Frame a, Frame b);
-	void           setBeginEnd(ID channelId, Frame b, Frame e);
-	void           resetBeginEnd(ID channelId);
+	void           setRange(ID channelId, geompp::Range<Frame>);
+	void           resetRange(ID channelId);
 	void           reload(ID channelId);
 
 private:

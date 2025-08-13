@@ -53,7 +53,7 @@ enum class Menu
 	FADE_IN,
 	FADE_OUT,
 	SMOOTH_EDGES,
-	SET_BEGIN_END,
+	SET_RANGE,
 	TO_NEW_CHANNEL
 };
 } // namespace
@@ -157,7 +157,7 @@ void geWaveTools::openMenu()
 	menu.addItem((ID)Menu::FADE_IN, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_FADE_IN));
 	menu.addItem((ID)Menu::FADE_OUT, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_FADE_OUT));
 	menu.addItem((ID)Menu::SMOOTH_EDGES, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SMOOTH_EDGES));
-	menu.addItem((ID)Menu::SET_BEGIN_END, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SET_BEGIN_END));
+	menu.addItem((ID)Menu::SET_RANGE, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SET_RANGE));
 	menu.addItem((ID)Menu::TO_NEW_CHANNEL, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL));
 
 	if (!waveform->isSelected())
@@ -171,7 +171,7 @@ void geWaveTools::openMenu()
 		menu.setEnabled((ID)Menu::FADE_IN, false);
 		menu.setEnabled((ID)Menu::FADE_OUT, false);
 		menu.setEnabled((ID)Menu::SMOOTH_EDGES, false);
-		menu.setEnabled((ID)Menu::SET_BEGIN_END, false);
+		menu.setEnabled((ID)Menu::SET_RANGE, false);
 		menu.setEnabled((ID)Menu::TO_NEW_CHANNEL, false);
 	}
 
@@ -211,8 +211,8 @@ void geWaveTools::openMenu()
 		case Menu::SMOOTH_EDGES:
 			c::sampleEditor::smoothEdges(channelId, a, b);
 			break;
-		case Menu::SET_BEGIN_END:
-			c::sampleEditor::setBeginEnd(channelId, a, b);
+		case Menu::SET_RANGE:
+			c::sampleEditor::setRange(channelId, {a, b});
 			break;
 		case Menu::TO_NEW_CHANNEL:
 			c::sampleEditor::toNewChannel(channelId, a, b);

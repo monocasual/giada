@@ -29,6 +29,7 @@
 
 #include "src/core/types.h"
 #include "src/core/waveFx.h"
+#include "src/deps/geompp/src/range.hpp"
 #include "src/types.h"
 #include <string>
 
@@ -59,20 +60,19 @@ struct Data
 	Frame          getFramesInBar() const;
 	Frame          getFramesInLoop() const;
 
-	ID          channelId;
-	std::string name;
-	float       volume;
-	float       pan;
-	float       pitch;
-	Frame       begin;
-	Frame       end;
-	Frame       shift;
-	Frame       waveSize;
-	int         waveBits;
-	float       waveDuration;
-	int         waveRate;
-	std::string wavePath;
-	bool        isLogical;
+	ID                   channelId;
+	std::string          name;
+	float                volume;
+	float                pan;
+	float                pitch;
+	geompp::Range<Frame> range;
+	Frame                shift;
+	Frame                waveSize;
+	int                  waveBits;
+	float                waveDuration;
+	int                  waveRate;
+	std::string          wavePath;
+	bool                 isLogical;
 
 private:
 	const m::Channel* m_channel;
@@ -88,10 +88,10 @@ Returns a pointer to the Sample Editor window. Null if window is not visible. */
 
 v::gdSampleEditor* getWindow();
 
-/* setBeginEnd
+/* setRange
 Sets start/end points in the sample editor. */
 
-void setBeginEnd(ID channelId, Frame b, Frame e);
+void setRange(ID channelId, geompp::Range<Frame>);
 
 void cut(ID channelId, Frame a, Frame b);
 void copy(ID channelId, Frame a, Frame b);

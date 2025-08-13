@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/glue/sampleEditor.h"
+#include "src/deps/geompp/src/range.hpp"
 #include "src/glue/channel.h"
 #include "src/gui/dialogs/sampleEditor.h"
 #include "src/gui/dialogs/warnings.h"
@@ -178,7 +179,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 
 	rewind->onClick = [this]()
 	{
-		c::sampleEditor::setPreviewTracker(m_data.begin);
+		c::sampleEditor::setPreviewTracker(m_data.range.a);
 	};
 
 	loop->onChange = [](bool shouldLoop)

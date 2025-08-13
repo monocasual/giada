@@ -213,11 +213,10 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 	{
 		const Wave& oldWave  = *oldChannel.sampleChannel->getWave();
 		const Frame oldShift = oldChannel.sampleChannel->shift;
-		const Frame oldBegin = oldChannel.sampleChannel->begin;
-		const Frame oldEnd   = oldChannel.sampleChannel->end;
+		const auto  oldRange = oldChannel.sampleChannel->range;
 		Wave&       wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
 
-		newChannelData.channel.loadWave(&wave, oldBegin, oldEnd, oldShift);
+		newChannelData.channel.loadWave(&wave, oldRange.a, oldRange.b, oldShift);
 	}
 
 	newChannelData.channel.plugins = plugins;
@@ -363,38 +362,35 @@ void ChannelManager::setPan(ID channelId, float value)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::setBeginEnd(ID channelId, Frame b, Frame e)
+void ChannelManager::setRange(ID channelId, geompp::Range<Frame> range)
 {
 	Channel& c       = m_model.get().tracks.getChannel(channelId);
 	Channel& preview = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	assert(c.sampleChannel);
 
-	b = std::clamp(b, 0, c.sampleChannel->getWaveSize() - 1);
-	e = std::clamp(e, 1, c.sampleChannel->getWaveSize());
-	if (b >= e)
-		b = e - 1;
-	else if (e < b)
-		e = b + 1;
+	range.a = std::clamp(range.a, 0, c.sampleChannel->getWaveSize() - 1);
+	range.b = std::clamp(range.b, 1, c.sampleChannel->getWaveSize());
+	if (range.a >= range.b)
+		range.a = range.b - 1;
+	else if (range.b < range.a)
+		range.b = range.a + 1;
 
-	if (c.shared->tracker.load() < b)
-		c.shared->tracker.store(b);
+	if (c.shared->tracker.load() < range.a)
+		c.shared->tracker.store(range.a);
 
-	c.sampleChannel->begin       = b;
-	c.sampleChannel->end         = e;
-	preview.sampleChannel->begin = b;
-	preview.sampleChannel->end   = e;
+	c.sampleChannel->range       = range;
+	preview.sampleChannel->range = range;
 	m_model.swap(model::SwapType::HARD);
 }
 
-void ChannelManager::resetBeginEnd(ID channelId)
+void ChannelManager::resetRange(ID channelId)
 {
 	Channel& c = m_model.get().tracks.getChannel(channelId);
 
 	assert(c.sampleChannel);
 
-	c.sampleChannel->begin = 0;
-	c.sampleChannel->end   = c.sampleChannel->getWaveSize();
+	c.sampleChannel->range = {0, c.sampleChannel->getWaveSize()};
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -472,8 +468,7 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 
 	previewCh.loadWave(sourceCh.sampleChannel->getWave());
 	previewCh.sampleChannel->mode  = SamplePlayerMode::SINGLE_BASIC_PAUSE;
-	previewCh.sampleChannel->begin = sourceCh.sampleChannel->begin;
-	previewCh.sampleChannel->end   = sourceCh.sampleChannel->end;
+	previewCh.sampleChannel->range = sourceCh.sampleChannel->range;
 	previewCh.sampleChannel->pitch = sourceCh.sampleChannel->pitch;
 
 	m_model.swap(model::SwapType::SOFT);

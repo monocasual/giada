@@ -28,6 +28,7 @@
 #define G_SAMPLE_CHANNEL_H
 
 #include "src/core/patch.h"
+#include "src/deps/geompp/src/range.hpp"
 
 namespace giada::m
 {
@@ -61,14 +62,13 @@ public:
 
 	void setWave(Wave* w, float samplerateRatio);
 
-	bool             inputMonitor;
-	bool             overdubProtection;
-	SamplePlayerMode mode;
-	float            pitch;
-	Frame            shift;
-	Frame            begin;
-	Frame            end;
-	bool             velocityAsVol; // Velocity drives volume
+	bool                 inputMonitor;
+	bool                 overdubProtection;
+	SamplePlayerMode     mode;
+	float                pitch;
+	Frame                shift;
+	geompp::Range<Frame> range;
+	bool                 velocityAsVol; // Velocity drives volume
 
 private:
 	/* wave

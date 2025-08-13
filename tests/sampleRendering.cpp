@@ -34,8 +34,8 @@ TEST_CASE("rendering::sampleRendering")
 		channel.loadWave(&wave);
 
 		REQUIRE(channel.sampleChannel->hasWave() == true);
-		REQUIRE(channel.sampleChannel->begin == 0);
-		REQUIRE(channel.sampleChannel->end == wave.getBuffer().countFrames());
+		REQUIRE(channel.sampleChannel->range.a == 0);
+		REQUIRE(channel.sampleChannel->range.b == wave.getBuffer().countFrames());
 
 		REQUIRE(channelShared.tracker.load() == 0);
 		REQUIRE(channelShared.playStatus.load() == ChannelStatus::OFF);
@@ -49,8 +49,7 @@ TEST_CASE("rendering::sampleRendering")
 				constexpr int RANGE_BEGIN = 16;
 				constexpr int RANGE_END   = 48;
 
-				channel.sampleChannel->begin = RANGE_BEGIN;
-				channel.sampleChannel->end   = RANGE_END;
+				channel.sampleChannel->range = {RANGE_BEGIN, RANGE_END};
 
 				channelShared.renderQueue->enqueue({m::rendering::RenderInfo::Mode::NORMAL, 0});
 

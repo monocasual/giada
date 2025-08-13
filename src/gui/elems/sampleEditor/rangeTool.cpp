@@ -57,19 +57,19 @@ geRangeTool::geRangeTool(const c::sampleEditor::Data& d)
 	m_begin->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_begin->onChange = [this](const std::string& val)
 	{
-		c::sampleEditor::setBeginEnd(m_data->channelId, u::string::toInt(val), u::string::toInt(m_end->getValue()));
+		c::sampleEditor::setRange(m_data->channelId, {u::string::toInt(val), u::string::toInt(m_end->getValue())});
 	};
 
 	m_end->setType(FL_INT_INPUT);
 	m_end->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_end->onChange = [this](const std::string& val)
 	{
-		c::sampleEditor::setBeginEnd(m_data->channelId, u::string::toInt(m_begin->getValue()), u::string::toInt(val));
+		c::sampleEditor::setRange(m_data->channelId, {u::string::toInt(m_begin->getValue()), u::string::toInt(val)});
 	};
 
 	m_reset->onClick = [this]()
 	{
-		c::sampleEditor::setBeginEnd(m_data->channelId, 0, m_data->waveSize);
+		c::sampleEditor::setRange(m_data->channelId, {0, m_data->waveSize});
 	};
 
 	rebuild(d);
@@ -80,14 +80,14 @@ geRangeTool::geRangeTool(const c::sampleEditor::Data& d)
 void geRangeTool::rebuild(const c::sampleEditor::Data& d)
 {
 	m_data = &d;
-	update(m_data->begin, m_data->end);
+	update(m_data->range);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geRangeTool::update(Frame begin, Frame end)
+void geRangeTool::update(geompp::Range<Frame> range)
 {
-	m_begin->setValue(std::to_string(begin));
-	m_end->setValue(std::to_string(end));
+	m_begin->setValue(std::to_string(range.a));
+	m_end->setValue(std::to_string(range.b));
 }
 } // namespace giada::v

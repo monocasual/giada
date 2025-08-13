@@ -81,13 +81,13 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 
 	m_pitchToBar->onClick = [this]()
 	{
-		c::channel::setChannelPitch(m_data->channelId, m_data->end / (float)m_data->getFramesInBar(),
+		c::channel::setChannelPitch(m_data->channelId, m_data->range.b / (float)m_data->getFramesInBar(),
 		    Thread::MAIN);
 	};
 
 	m_pitchToSong->onClick = [this]()
 	{
-		c::channel::setChannelPitch(m_data->channelId, m_data->end / (float)m_data->getFramesInLoop(),
+		c::channel::setChannelPitch(m_data->channelId, m_data->range.b / (float)m_data->getFramesInLoop(),
 		    Thread::MAIN);
 	};
 

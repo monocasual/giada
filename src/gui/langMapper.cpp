@@ -222,7 +222,7 @@ LangMap::LangMap()
 	m_data[SAMPLEEDITOR_TOOLS_FADE_IN]        = "Fade in";
 	m_data[SAMPLEEDITOR_TOOLS_FADE_OUT]       = "Fade out";
 	m_data[SAMPLEEDITOR_TOOLS_SMOOTH_EDGES]   = "Smooth edges";
-	m_data[SAMPLEEDITOR_TOOLS_SET_BEGIN_END]  = "Set begin/end here";
+	m_data[SAMPLEEDITOR_TOOLS_SET_RANGE]      = "Set begin/end here";
 	m_data[SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL] = "Copy to new channel";
 
 	m_data[ACTIONEDITOR_TITLE]            = "Action Editor";

@@ -40,8 +40,7 @@ Data::Data(const m::Channel& c)
 , volume(c.volume)
 , pan(c.pan.asFloat())
 , pitch(c.sampleChannel->pitch)
-, begin(c.sampleChannel->begin)
-, end(c.sampleChannel->end)
+, range(c.sampleChannel->range)
 , shift(c.sampleChannel->shift)
 , waveSize(c.sampleChannel->getWave()->getBuffer().countFrames())
 , waveBits(c.sampleChannel->getWave()->getBits())
@@ -96,9 +95,9 @@ v::gdSampleEditor* getWindow()
 
 /* -------------------------------------------------------------------------- */
 
-void setBeginEnd(ID channelId, Frame b, Frame e)
+void setRange(ID channelId, geompp::Range<Frame> range)
 {
-	g_engine->getSampleEditorApi().setBeginEnd(channelId, b, e);
+	g_engine->getSampleEditorApi().setRange(channelId, range);
 }
 
 /* -------------------------------------------------------------------------- */

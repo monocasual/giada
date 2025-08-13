@@ -121,15 +121,14 @@ void stop_(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, bool seqIsRun
 
 Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame offset, bool seqIsRunning, bool testEnd)
 {
-	const Frame      begin     = ch.sampleChannel->begin;
-	const Frame      end       = ch.sampleChannel->end;
+	const auto       range     = ch.sampleChannel->range;
 	const float      pitch     = ch.sampleChannel->pitch;
 	const Wave&      wave      = *ch.sampleChannel->getWave();
 	const Resampler& resampler = ch.shared->resampler.value();
 
 	while (true)
 	{
-		ReadResult res = readWave(wave, buf, tracker, end, offset, pitch, resampler);
+		ReadResult res = readWave(wave, buf, tracker, range.b, offset, pitch, resampler);
 		tracker += res.used;
 		offset += res.generated;
 
@@ -139,9 +138,9 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame off
 		if (offset >= buf.countFrames())
 			break;
 
-		if (tracker >= end)
+		if (tracker >= range.b)
 		{
-			tracker = begin;
+			tracker = range.a;
 			ch.shared->resampler->last();
 
 			if (testEnd)
@@ -167,11 +166,10 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 	while (ch.shared->renderQueue->try_dequeue(renderInfo))
 		;
 
-	const Frame       begin     = ch.sampleChannel->begin;
-	const Frame       end       = ch.sampleChannel->end;
+	const auto        range     = ch.sampleChannel->range;
 	const Resampler&  resampler = ch.shared->resampler.value();
 	mcl::AudioBuffer& buf       = ch.shared->audioBuffer;
-	Frame             tracker   = std::clamp(ch.shared->tracker.load(), begin, end); /* Make sure tracker stays within begin-end range. */
+	Frame             tracker   = std::clamp(ch.shared->tracker.load(), range.a, range.b); /* Make sure tracker stays within begin-end range. */
 
 	if (renderInfo.mode == RenderInfo::Mode::NORMAL)
 	{
@@ -192,12 +190,12 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 
 		if (renderInfo.mode == RenderInfo::Mode::REWIND)
 		{
-			tracker = render_(ch, buf, begin, renderInfo.offset, seqIsRunning, /*testEnd=*/true);
+			tracker = render_(ch, buf, range.a, renderInfo.offset, seqIsRunning, /*testEnd=*/true);
 		}
 		else
 		{
 			stop_(ch, buf, renderInfo.offset, seqIsRunning);
-			tracker = begin;
+			tracker = range.a;
 		}
 	}
 

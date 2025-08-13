@@ -222,7 +222,7 @@ public:
 	static constexpr auto SAMPLEEDITOR_TOOLS_FADE_IN        = "sampleEditor_tools_fadeIn";
 	static constexpr auto SAMPLEEDITOR_TOOLS_FADE_OUT       = "sampleEditor_tools_fadeOut";
 	static constexpr auto SAMPLEEDITOR_TOOLS_SMOOTH_EDGES   = "sampleEditor_tools_smoothEdgdes";
-	static constexpr auto SAMPLEEDITOR_TOOLS_SET_BEGIN_END  = "sampleEditor_tools_setBeginEnd";
+	static constexpr auto SAMPLEEDITOR_TOOLS_SET_RANGE      = "sampleEditor_tools_setRange";
 	static constexpr auto SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL = "sampleEditor_tools_toNewChannel";
 
 	static constexpr auto ACTIONEDITOR_TITLE            = "actionEditor_title";

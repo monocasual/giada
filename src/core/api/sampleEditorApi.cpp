@@ -108,7 +108,7 @@ void SampleEditorApi::cut(ID channelId, Frame a, Frame b)
 	copy(channelId, a, b);
 	model::SharedLock lock = m_model.lockShared();
 	wfx::cut(getWave(channelId), a, b);
-	resetBeginEnd(channelId);
+	resetRange(channelId);
 	loadPreviewChannel(channelId); // Refresh preview channel properties
 }
 
@@ -148,7 +148,7 @@ void SampleEditorApi::paste(ID channelId, Frame a)
 
 	/* Just brutally restore begin/end points. */
 
-	resetBeginEnd(channelId);
+	resetRange(channelId);
 	loadPreviewChannel(channelId); // Refresh preview channel properties
 }
 
@@ -198,7 +198,7 @@ void SampleEditorApi::trim(ID channelId, Frame a, Frame b)
 {
 	model::SharedLock lock = m_model.lockShared();
 	wfx::trim(getWave(channelId), a, b);
-	resetBeginEnd(channelId);
+	resetRange(channelId);
 	loadPreviewChannel(channelId); // Refresh preview channel properties
 }
 
@@ -230,14 +230,14 @@ const Channel& SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorApi::setBeginEnd(ID channelId, Frame b, Frame e)
+void SampleEditorApi::setRange(ID channelId, geompp::Range<Frame> range)
 {
-	m_channelManager.setBeginEnd(channelId, b, e);
+	m_channelManager.setRange(channelId, range);
 }
 
-void SampleEditorApi::resetBeginEnd(ID channelId)
+void SampleEditorApi::resetRange(ID channelId)
 {
-	m_channelManager.resetBeginEnd(channelId);
+	m_channelManager.resetRange(channelId);
 }
 
 /* -------------------------------------------------------------------------- */

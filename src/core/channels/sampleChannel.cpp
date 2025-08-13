@@ -36,8 +36,6 @@ SampleChannel::SampleChannel()
 , mode(SamplePlayerMode::SINGLE_BASIC)
 , pitch(G_DEFAULT_PITCH)
 , shift(0)
-, begin(0)
-, end(0)
 , velocityAsVol(false)
 , m_wave(nullptr)
 {
@@ -51,8 +49,7 @@ SampleChannel::SampleChannel(const Patch::Channel& p, Wave* w, float samplerateR
 , mode(p.mode)
 , pitch(p.pitch)
 , shift(p.shift)
-, begin(p.begin)
-, end(p.end)
+, range(p.begin, p.end)
 , velocityAsVol(p.midiInVeloAsVol)
 {
 	setWave(w, samplerateRatio);
@@ -120,14 +117,13 @@ void SampleChannel::loadWave(Wave* w, Frame newBegin, Frame newEnd, Frame newShi
 	m_wave = w;
 
 	shift = 0;
-	begin = 0;
-	end   = 0;
+	range = {};
 
 	if (w != nullptr)
 	{
-		shift = newShift == -1 ? 0 : newShift;
-		begin = newBegin == -1 ? 0 : newBegin;
-		end   = newEnd == -1 ? w->getBuffer().countFrames() : newEnd;
+		shift   = newShift == -1 ? 0 : newShift;
+		range.a = newBegin == -1 ? 0 : newBegin;
+		range.b = newEnd == -1 ? w->getBuffer().countFrames() : newEnd;
 	}
 }
 
@@ -142,8 +138,7 @@ void SampleChannel::setWave(Wave* w, float samplerateRatio)
 
 	if (samplerateRatio != 1.0f)
 	{
-		begin *= samplerateRatio;
-		end *= samplerateRatio;
+		range *= samplerateRatio;
 		shift *= samplerateRatio;
 	}
 }

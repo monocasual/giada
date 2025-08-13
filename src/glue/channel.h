@@ -29,7 +29,10 @@
 
 #include "src/core/types.h"
 #include "src/core/weakAtomic.h"
+#include "src/deps/geompp/src/line.hpp"
+#include "src/deps/geompp/src/range.hpp"
 #include "src/types.h"
+
 #include <atomic>
 #include <optional>
 #include <string>
@@ -59,14 +62,13 @@ struct SampleData
 
 	Frame getTracker() const;
 
-	ID               waveId;
-	SamplePlayerMode mode;
-	bool             isLoop;
-	float            pitch;
-	Frame            begin;
-	Frame            end;
-	bool             inputMonitor;
-	bool             overdubProtection;
+	ID                   waveId;
+	SamplePlayerMode     mode;
+	bool                 isLoop;
+	float                pitch;
+	geompp::Range<Frame> range;
+	bool                 inputMonitor;
+	bool                 overdubProtection;
 
 private:
 	WeakAtomic<Frame>* m_tracker;

@@ -30,6 +30,7 @@
 #include "src/core/midiMapper.h"
 #include "src/core/resampler.h"
 #include "src/core/types.h"
+#include "src/deps/geompp/src/range.hpp"
 #include "src/types.h"
 #include <functional>
 #include <map>
@@ -169,8 +170,8 @@ public:
 	void setVolume(ID channelId, float value);
 	void setPitch(ID channelId, float value);
 	void setPan(ID channelId, float value);
-	void setBeginEnd(ID channelId, Frame b, Frame e);
-	void resetBeginEnd(ID channelId);
+	void setRange(ID channelId, geompp::Range<Frame>);
+	void resetRange(ID channelId);
 	void toggleArm(ID channelId);
 	void setOverdubProtection(ID channelId, bool value);
 	void setSamplePlayerMode(ID channelId, SamplePlayerMode);
