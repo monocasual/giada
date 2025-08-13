@@ -81,7 +81,7 @@ int         Sequencer::getQuantizerValue() const { return m_model.get().sequence
 int         Sequencer::getQuantizerStep() const { return m_quantizerStep; }
 SeqStatus   Sequencer::getStatus() const { return m_model.get().sequencer.status; }
 int         Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model.get().sequencer.getMaxFramesInLoop(sampleRate); }
-std::size_t Sequencer::getCurrentScene() const { return m_model.get().sequencer.currentScene; }
+std::size_t Sequencer::getCurrentScene() const { return m_model.get().sequencer.a_getCurrentScene(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -384,8 +384,7 @@ void Sequencer::forceScene(std::size_t scene)
 {
 	assert(scene < G_MAX_NUM_SCENES);
 
-	m_model.get().sequencer.currentScene = scene;
-	m_model.swap(model::SwapType::HARD);
+	m_model.get().sequencer.a_setCurrentScene(scene);
 }
 
 /* -------------------------------------------------------------------------- */
