@@ -64,6 +64,7 @@ public:
 	Frame       a_getCurrentBeat() const;
 	float       a_getCurrentSecond(int sampleRate) const;
 	std::size_t a_getCurrentScene() const;
+	std::size_t a_getNextScene() const;
 
 	/* getMaxFramesInLoop
 	Returns how many frames the current loop length might contain at the slowest
@@ -74,6 +75,7 @@ public:
 	void a_setCurrentFrame(Frame f, int sampleRate) const;
 	void a_setCurrentBeat(int b, int sampleRate) const;
 	void a_setCurrentScene(std::size_t) const;
+	void a_setNextScene(std::size_t) const;
 
 	SeqStatus status       = SeqStatus::STOPPED;
 	int       framesInLoop = 0;
@@ -92,6 +94,7 @@ private:
 		WeakAtomic<Frame>       currentFrame = 0;
 		WeakAtomic<int>         currentBeat  = 0;
 		WeakAtomic<std::size_t> currentScene = 0;
+		WeakAtomic<std::size_t> nextScene    = 0;
 	};
 
 	Shared* shared = nullptr;
