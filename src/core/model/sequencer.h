@@ -83,7 +83,7 @@ public:
 	float       bpm          = G_DEFAULT_BPM;
 	int         quantize     = G_DEFAULT_QUANTIZE;
 	bool        metronome    = false;
-	std::size_t scene        = 0;
+	std::size_t currentScene = 0;
 
 private:
 	struct Shared

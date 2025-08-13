@@ -188,9 +188,9 @@ SeqStatus MainApi::getSequencerStatus() const
 
 /* -------------------------------------------------------------------------- */
 
-std::size_t MainApi::getScene() const
+std::size_t MainApi::getCurrentScene() const
 {
-	return m_sequencer.getScene();
+	return m_sequencer.getCurrentScene();
 }
 
 /* -------------------------------------------------------------------------- */
