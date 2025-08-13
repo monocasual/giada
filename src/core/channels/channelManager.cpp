@@ -216,7 +216,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 		const auto  oldRange = oldChannel.sampleChannel->range;
 		Wave&       wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
 
-		newChannelData.channel.loadWave(&wave, oldRange.a, oldRange.b, oldShift);
+		newChannelData.channel.loadWave(&wave, oldRange, oldShift);
 	}
 
 	newChannelData.channel.plugins = plugins;

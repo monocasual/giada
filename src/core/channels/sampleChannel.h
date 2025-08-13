@@ -53,7 +53,7 @@ public:
 	Loads Wave and sets it up (name, markers, ...). Resets begin/end points
 	and shift if not specified. */
 
-	void loadWave(Wave*, Frame begin = -1, Frame end = -1, Frame shift = -1);
+	void loadWave(Wave*, geompp::Range<Frame> newRange = {}, Frame shift = -1);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The

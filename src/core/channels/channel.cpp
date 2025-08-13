@@ -213,14 +213,14 @@ void Channel::setSolo(bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::loadWave(Wave* w, Frame newBegin, Frame newEnd, Frame newShift)
+void Channel::loadWave(Wave* w, geompp::Range<Frame> newRange, Frame newShift)
 {
 	assert(sampleChannel);
 
 	shared->tracker.store(0);
 	shared->playStatus.store(w != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
 
-	sampleChannel->loadWave(w, newBegin, newEnd, newShift);
+	sampleChannel->loadWave(w, newRange, newShift);
 }
 
 /* -------------------------------------------------------------------------- */
