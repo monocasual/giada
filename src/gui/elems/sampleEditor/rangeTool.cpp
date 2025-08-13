@@ -85,7 +85,7 @@ void geRangeTool::rebuild(const c::sampleEditor::Data& d)
 
 /* -------------------------------------------------------------------------- */
 
-void geRangeTool::update(geompp::Range<Frame> range)
+void geRangeTool::update(SampleRange range)
 {
 	m_begin->setValue(std::to_string(range.a));
 	m_end->setValue(std::to_string(range.b));

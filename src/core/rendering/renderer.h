@@ -75,9 +75,9 @@ private:
 	events) in the current audio block. Called when the sequencer is running. */
 
 	void advanceTracks(const Sequencer::EventBuffer&, const model::Tracks&,
-	    geompp::Range<Frame>, int quantizerStep) const;
+	    SampleRange, int quantizerStep) const;
 
-	void advanceChannel(const Channel&, const Sequencer::EventBuffer&, geompp::Range<Frame>, Frame quantizerStep) const;
+	void advanceChannel(const Channel&, const Sequencer::EventBuffer&, SampleRange, Frame quantizerStep) const;
 
 	void renderTracks(const model::Tracks&, mcl::AudioBuffer& masterOut,
 	    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, bool hasSolos,

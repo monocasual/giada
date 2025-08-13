@@ -27,12 +27,14 @@
 #ifndef G_TYPES_H
 #define G_TYPES_H
 
+#include "deps/geompp/src/range.hpp"
 #include <string>
 
 namespace giada
 {
-using ID    = int;
-using Frame = int;
+using ID          = int;
+using Frame       = int;
+using SampleRange = geompp::Range<Frame>;
 
 enum class PluginSortMethod : int
 {

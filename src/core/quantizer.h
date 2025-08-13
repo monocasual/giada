@@ -55,7 +55,7 @@ public:
 	currentFrame + bufferSize) and a quantization step. Call this function
 	on each block. */
 
-	void advance(geompp::Range<Frame> block, Frame quantizerStep) const;
+	void advance(SampleRange block, Frame quantizerStep) const;
 
 	/* clear
 	Disables quantized operations in progress, if any. */

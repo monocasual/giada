@@ -170,7 +170,7 @@ public:
 	void setVolume(ID channelId, float value);
 	void setPitch(ID channelId, float value);
 	void setPan(ID channelId, float value);
-	void setRange(ID channelId, geompp::Range<Frame>);
+	void setRange(ID channelId, SampleRange);
 	void resetRange(ID channelId);
 	void toggleArm(ID channelId);
 	void setOverdubProtection(ID channelId, bool value);

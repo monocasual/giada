@@ -60,19 +60,19 @@ struct Data
 	Frame          getFramesInBar() const;
 	Frame          getFramesInLoop() const;
 
-	ID                   channelId;
-	std::string          name;
-	float                volume;
-	float                pan;
-	float                pitch;
-	geompp::Range<Frame> range;
-	Frame                shift;
-	Frame                waveSize;
-	int                  waveBits;
-	float                waveDuration;
-	int                  waveRate;
-	std::string          wavePath;
-	bool                 isLogical;
+	ID          channelId;
+	std::string name;
+	float       volume;
+	float       pan;
+	float       pitch;
+	SampleRange range;
+	Frame       shift;
+	Frame       waveSize;
+	int         waveBits;
+	float       waveDuration;
+	int         waveRate;
+	std::string wavePath;
+	bool        isLogical;
 
 private:
 	const m::Channel* m_channel;
@@ -91,7 +91,7 @@ v::gdSampleEditor* getWindow();
 /* setRange
 Sets start/end points in the sample editor. */
 
-void setRange(ID channelId, geompp::Range<Frame>);
+void setRange(ID channelId, SampleRange);
 
 void cut(ID channelId, Frame a, Frame b);
 void copy(ID channelId, Frame a, Frame b);

@@ -112,7 +112,7 @@ Frame SampleChannel::getWaveSize() const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::loadWave(Wave* w, geompp::Range<Frame> newRange, Frame newShift)
+void SampleChannel::loadWave(Wave* w, SampleRange newRange, Frame newShift)
 {
 	m_wave = w;
 
@@ -122,7 +122,7 @@ void SampleChannel::loadWave(Wave* w, geompp::Range<Frame> newRange, Frame newSh
 	if (w != nullptr)
 	{
 		shift = newShift == -1 ? 0 : newShift;
-		range = newRange.isValid() ? newRange : geompp::Range<Frame>(0, w->getBuffer().countFrames());
+		range = newRange.isValid() ? newRange : SampleRange(0, w->getBuffer().countFrames());
 	}
 }
 

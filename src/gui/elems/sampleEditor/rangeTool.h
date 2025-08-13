@@ -46,7 +46,7 @@ public:
 	geRangeTool(const c::sampleEditor::Data& d);
 
 	void rebuild(const c::sampleEditor::Data& d);
-	void update(geompp::Range<Frame> range);
+	void update(SampleRange range);
 
 private:
 	const c::sampleEditor::Data* m_data;

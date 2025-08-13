@@ -95,7 +95,7 @@ v::gdSampleEditor* getWindow()
 
 /* -------------------------------------------------------------------------- */
 
-void setRange(ID channelId, geompp::Range<Frame> range)
+void setRange(ID channelId, SampleRange range)
 {
 	g_engine->getSampleEditorApi().setRange(channelId, range);
 }

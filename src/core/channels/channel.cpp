@@ -213,7 +213,7 @@ void Channel::setSolo(bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::loadWave(Wave* w, geompp::Range<Frame> newRange, Frame newShift)
+void Channel::loadWave(Wave* w, SampleRange newRange, Frame newShift)
 {
 	assert(sampleChannel);
 

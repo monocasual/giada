@@ -62,13 +62,13 @@ struct SampleData
 
 	Frame getTracker() const;
 
-	ID                   waveId;
-	SamplePlayerMode     mode;
-	bool                 isLoop;
-	float                pitch;
-	geompp::Range<Frame> range;
-	bool                 inputMonitor;
-	bool                 overdubProtection;
+	ID               waveId;
+	SamplePlayerMode mode;
+	bool             isLoop;
+	float            pitch;
+	SampleRange      range;
+	bool             inputMonitor;
+	bool             overdubProtection;
 
 private:
 	WeakAtomic<Frame>* m_tracker;

@@ -230,7 +230,7 @@ const Channel& SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorApi::setRange(ID channelId, geompp::Range<Frame> range)
+void SampleEditorApi::setRange(ID channelId, SampleRange range)
 {
 	m_channelManager.setRange(channelId, range);
 }

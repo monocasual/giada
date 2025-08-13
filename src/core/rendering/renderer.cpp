@@ -95,10 +95,10 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 	if (sequencer.isRunning())
 	{
-		const Frame                currentFrame  = sequencer.a_getCurrentFrame();
-		const int                  bufferSize    = out.countFrames();
-		const int                  quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
-		const geompp::Range<Frame> renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
+		const Frame       currentFrame  = sequencer.a_getCurrentFrame();
+		const int         bufferSize    = out.countFrames();
+		const int         quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
+		const SampleRange renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
 		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, actions);
 		m_sequencer.render(out, document_RT);
@@ -138,7 +138,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 /* -------------------------------------------------------------------------- */
 
 void Renderer::advanceTracks(const Sequencer::EventBuffer& events, const model::Tracks& tracks,
-    geompp::Range<Frame> block, int quantizerStep) const
+    SampleRange block, int quantizerStep) const
 {
 	for (const model::Track& track : tracks.getAll())
 		for (const Channel& c : track.getChannels().getAll())
@@ -149,7 +149,7 @@ void Renderer::advanceTracks(const Sequencer::EventBuffer& events, const model::
 /* -------------------------------------------------------------------------- */
 
 void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& events,
-    geompp::Range<Frame> block, Frame quantizerStep) const
+    SampleRange block, Frame quantizerStep) const
 {
 	if (ch.shared->quantizer)
 		ch.shared->quantizer->advance(block, quantizerStep);

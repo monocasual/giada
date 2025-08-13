@@ -362,7 +362,7 @@ void ChannelManager::setPan(ID channelId, float value)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::setRange(ID channelId, geompp::Range<Frame> range)
+void ChannelManager::setRange(ID channelId, SampleRange range)
 {
 	Channel& c       = m_model.get().tracks.getChannel(channelId);
 	Channel& preview = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);

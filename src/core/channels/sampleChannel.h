@@ -53,7 +53,7 @@ public:
 	Loads Wave and sets it up (name, markers, ...). Resets begin/end points
 	and shift if not specified. */
 
-	void loadWave(Wave*, geompp::Range<Frame> newRange = {}, Frame shift = -1);
+	void loadWave(Wave*, SampleRange newRange = {}, Frame shift = -1);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The
@@ -62,13 +62,13 @@ public:
 
 	void setWave(Wave* w, float samplerateRatio);
 
-	bool                 inputMonitor;
-	bool                 overdubProtection;
-	SamplePlayerMode     mode;
-	float                pitch;
-	Frame                shift;
-	geompp::Range<Frame> range;
-	bool                 velocityAsVol; // Velocity drives volume
+	bool             inputMonitor;
+	bool             overdubProtection;
+	SamplePlayerMode mode;
+	float            pitch;
+	Frame            shift;
+	SampleRange      range;
+	bool             velocityAsVol; // Velocity drives volume
 
 private:
 	/* wave
