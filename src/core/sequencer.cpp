@@ -134,6 +134,9 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 	const Frame framesInBeat = sequencer.framesInBeat;
 	const Frame nextFrame    = end % framesInLoop;
 
+	const std::size_t currentScene = sequencer.a_getCurrentScene();
+	const std::size_t nextScene    = sequencer.a_getNextScene();
+
 	/* Process events in the current block. */
 
 	for (Frame i = start, local = 0; i < end; i++, local++)
@@ -145,6 +148,8 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		{
 			m_eventBuffer.push_back({EventType::FIRST_BEAT, global, local});
 			m_metronome.trigger(Metronome::Click::BEAT, local);
+			if (currentScene != nextScene)
+				sequencer.a_setCurrentScene(nextScene);
 		}
 		else if (global % framesInBar == 0)
 		{
@@ -385,6 +390,21 @@ void Sequencer::forceScene(std::size_t scene)
 	assert(scene < G_MAX_NUM_SCENES);
 
 	m_model.get().sequencer.a_setCurrentScene(scene);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::setScene(std::size_t scene)
+{
+	assert(scene < G_MAX_NUM_SCENES);
+
+	if (scene == m_model.get().sequencer.a_getCurrentScene())
+		return;
+	if (!isRunning())
+		m_model.get().sequencer.a_setCurrentScene(scene);
+	else
+		m_model.get().sequencer.a_setNextScene(scene);
+	m_model.swap(model::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */

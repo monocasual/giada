@@ -161,7 +161,16 @@ public:
 	void setQuantize(int q, int sampleRate);
 	void setStatus(SeqStatus);
 	void goToBeat(int beat, int sampleRate);
+
+	/* forceScene
+	Force-changes to the requested scene. */
+
 	void forceScene(std::size_t);
+
+	/* setScene
+	Prepares for the requested scene, which will be set at the next first beat. */
+
+	void setScene(std::size_t);
 
 #ifdef WITH_AUDIO_JACK
 	void jack_start();
