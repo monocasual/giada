@@ -380,7 +380,7 @@ void Sequencer::goToBeat(int beat, int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::setScene(std::size_t scene)
+void Sequencer::forceScene(std::size_t scene)
 {
 	assert(scene < G_MAX_NUM_SCENES);
 

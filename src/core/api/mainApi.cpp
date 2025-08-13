@@ -337,7 +337,7 @@ void MainApi::startActionRecOnCallback()
 
 void MainApi::setScene(std::size_t scene)
 {
-	m_sequencer.setScene(scene);
+	m_sequencer.forceScene(scene);
 	m_reactor.setScene(scene);
 }
 } // namespace giada::m
