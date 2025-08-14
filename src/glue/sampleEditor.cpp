@@ -34,21 +34,22 @@ extern giada::m::Engine* g_engine;
 
 namespace giada::c::sampleEditor
 {
-Data::Data(const m::Channel& c)
+Data::Data(const m::Channel& c, std::size_t scene)
 : channelId(c.id)
 , name(c.name)
 , volume(c.volume)
 , pan(c.pan.asFloat())
 , pitch(c.sampleChannel->pitch)
-, range(c.sampleChannel->getRange(0))
+, range(c.sampleChannel->getRange(scene))
 , shift(c.sampleChannel->shift)
-, waveSize(c.sampleChannel->getWave(0)->getBuffer().countFrames())
-, waveBits(c.sampleChannel->getWave(0)->getBits())
-, waveDuration(c.sampleChannel->getWave(0)->getDuration())
-, waveRate(c.sampleChannel->getWave(0)->getRate())
-, wavePath(c.sampleChannel->getWave(0)->getPath())
-, isLogical(c.sampleChannel->getWave(0)->isLogical())
+, waveSize(c.sampleChannel->getWave(scene)->getBuffer().countFrames())
+, waveBits(c.sampleChannel->getWave(scene)->getBits())
+, waveDuration(c.sampleChannel->getWave(scene)->getDuration())
+, waveRate(c.sampleChannel->getWave(scene)->getRate())
+, wavePath(c.sampleChannel->getWave(scene)->getPath())
+, isLogical(c.sampleChannel->getWave(scene)->isLogical())
 , m_channel(&c)
+, m_scene(scene)
 {
 }
 
@@ -64,7 +65,7 @@ Frame Data::a_getPreviewTracker() const
 
 const m::Wave& Data::getWaveRef() const
 {
-	return *m_channel->sampleChannel->getWave(0);
+	return *m_channel->sampleChannel->getWave(m_scene);
 }
 
 Frame Data::getFramesInBar() const
@@ -83,7 +84,7 @@ Frame Data::getFramesInLoop() const
 
 Data getData(ID channelId)
 {
-	return Data(g_engine->getChannelsApi().get(channelId));
+	return Data(g_engine->getChannelsApi().get(channelId), g_engine->getMainApi().getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */

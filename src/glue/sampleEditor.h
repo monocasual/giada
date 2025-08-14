@@ -52,7 +52,7 @@ namespace giada::c::sampleEditor
 struct Data
 {
 	Data() = default;
-	Data(const m::Channel&);
+	Data(const m::Channel&, std::size_t scene);
 
 	ChannelStatus  a_getPreviewStatus() const;
 	Frame          a_getPreviewTracker() const;
@@ -76,6 +76,7 @@ struct Data
 
 private:
 	const m::Channel* m_channel;
+	std::size_t       m_scene;
 };
 
 /* getData
