@@ -36,11 +36,12 @@
 namespace giada::m
 {
 SampleEditorApi::SampleEditorApi(KernelAudio& k, model::Model& m, ChannelManager& cm,
-    rendering::Reactor& re)
+    rendering::Reactor& re, Sequencer& s)
 : m_kernelAudio(k)
 , m_model(m)
 , m_channelManager(cm)
 , m_reactor(re)
+, m_sequencer(s)
 {
 }
 
@@ -80,11 +81,12 @@ void SampleEditorApi::setPreviewLoop(bool shouldLoop)
 
 void SampleEditorApi::togglePreview()
 {
-	const bool  canRecordActions = false;
-	const bool  canQuantize      = false;
-	const Frame currentFrameQ    = 0;
-	const float velocity         = G_MAX_VELOCITY_FLOAT;
-	m_reactor.keyPress(PREVIEW_CHANNEL_ID, /*scene=*/0, velocity, canRecordActions, canQuantize, currentFrameQ);
+	const bool        canRecordActions = false;
+	const bool        canQuantize      = false;
+	const Frame       currentFrameQ    = 0;
+	const float       velocity         = G_MAX_VELOCITY_FLOAT;
+	const std::size_t scene            = m_sequencer.getCurrentScene();
+	m_reactor.keyPress(PREVIEW_CHANNEL_ID, scene, velocity, canRecordActions, canQuantize, currentFrameQ);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -223,7 +225,7 @@ const Channel& SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 	Wave&     wave       = m_model.addWave(waveFactory::createFromWave(getWave(channelId), a, b));
 
 	const Channel& ch = m_channelManager.addChannel(ChannelType::SAMPLE, 0, bufferSize); // TODO trackIndex
-	m_channelManager.loadSampleChannel(ch.id, wave, 0);                                  // TODO - scene
+	m_channelManager.loadSampleChannel(ch.id, wave, m_sequencer.getCurrentScene());
 
 	return ch;
 }
@@ -232,12 +234,12 @@ const Channel& SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::setRange(ID channelId, SampleRange range)
 {
-	m_channelManager.setRange(channelId, range, 0); // TODO - scene
+	m_channelManager.setRange(channelId, range, m_sequencer.getCurrentScene());
 }
 
 void SampleEditorApi::resetRange(ID channelId)
 {
-	m_channelManager.resetRange(channelId, 0); // TODO - scene
+	m_channelManager.resetRange(channelId, m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -255,6 +257,7 @@ void SampleEditorApi::reload(ID channelId)
 
 Wave& SampleEditorApi::getWave(ID channelId) const
 {
-	return *m_channelManager.getChannel(channelId).sampleChannel->getWave(0);
+	const std::size_t currentScene = m_sequencer.getCurrentScene();
+	return *m_channelManager.getChannel(channelId).sampleChannel->getWave(currentScene);
 }
 } // namespace giada::m
