@@ -49,8 +49,8 @@ SampleChannel::SampleChannel(const Patch::Channel& p, Wave* w, float samplerateR
 , mode(p.mode)
 , pitch(p.pitch)
 , shift(p.shift)
-, range(p.range)
 , velocityAsVol(p.midiInVeloAsVol)
+, m_range(p.range)
 {
 	setWave(w, 0, samplerateRatio);
 }
@@ -105,6 +105,10 @@ ID SampleChannel::getWaveId(std::size_t scene) const
 
 /* -------------------------------------------------------------------------- */
 
+SampleRange SampleChannel::getRange() const { return m_range; }
+
+/* -------------------------------------------------------------------------- */
+
 Frame SampleChannel::getWaveSize(std::size_t scene) const
 {
 	return hasWave(scene) ? m_waves[scene]->getBuffer().countFrames() : 0;
@@ -116,13 +120,13 @@ void SampleChannel::loadWave(Wave* w, std::size_t scene, SampleRange newRange, F
 {
 	m_waves[scene] = w;
 
-	shift = 0;
-	range = {};
+	shift   = 0;
+	m_range = {};
 
 	if (w != nullptr)
 	{
-		shift = newShift == -1 ? 0 : newShift;
-		range = newRange.isValid() ? newRange : SampleRange(0, w->getBuffer().countFrames());
+		shift   = newShift == -1 ? 0 : newShift;
+		m_range = newRange.isValid() ? newRange : SampleRange(0, w->getBuffer().countFrames());
 	}
 }
 
@@ -137,9 +141,15 @@ void SampleChannel::setWave(Wave* w, std::size_t scene, float samplerateRatio)
 
 	if (samplerateRatio != 1.0f)
 	{
-		range *= samplerateRatio;
+		m_range *= samplerateRatio;
 		shift *= samplerateRatio;
 	}
 }
 
+/* -------------------------------------------------------------------------- */
+
+void SampleChannel::setRange(SampleRange newRange)
+{
+	m_range = newRange;
+}
 } // namespace giada::m
