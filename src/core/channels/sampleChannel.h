@@ -39,15 +39,16 @@ public:
 	SampleChannel();
 	SampleChannel(const Patch::Channel&, Wave*, float samplerateRatio);
 
-	bool  isAnyLoopMode() const;
-	bool  isAnyLoopOnceMode() const;
-	bool  isAnyNonLoopingSingleMode() const;
-	bool  hasWave(std::size_t scene) const;
-	bool  hasLogicalWave(std::size_t scene) const;
-	bool  hasEditedWave(std::size_t scene) const;
-	ID    getWaveId(std::size_t scene) const;
-	Frame getWaveSize(std::size_t scene) const;
-	Wave* getWave(std::size_t scene) const;
+	bool        isAnyLoopMode() const;
+	bool        isAnyLoopOnceMode() const;
+	bool        isAnyNonLoopingSingleMode() const;
+	bool        hasWave(std::size_t scene) const;
+	bool        hasLogicalWave(std::size_t scene) const;
+	bool        hasEditedWave(std::size_t scene) const;
+	ID          getWaveId(std::size_t scene) const;
+	Frame       getWaveSize(std::size_t scene) const;
+	Wave*       getWave(std::size_t scene) const;
+	SampleRange getRange() const;
 
 	/* loadWave
 	Loads Wave and sets it up (name, markers, ...). Resets begin/end points
@@ -62,12 +63,13 @@ public:
 
 	void setWave(Wave* w, std::size_t scene, float samplerateRatio);
 
+	void setRange(SampleRange);
+
 	bool             inputMonitor;
 	bool             overdubProtection;
 	SamplePlayerMode mode;
 	float            pitch;
 	Frame            shift;
-	SampleRange      range;
 	bool             velocityAsVol; // Velocity drives volume
 
 private:
@@ -76,6 +78,7 @@ private:
 	no sample for a certain scene. */
 
 	std::array<Wave*, G_MAX_NUM_SCENES> m_waves;
+	SampleRange                         m_range;
 };
 } // namespace giada::m
 

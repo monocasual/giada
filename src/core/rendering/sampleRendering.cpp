@@ -121,7 +121,7 @@ void stop_(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, bool seqIsRun
 
 Frame render_(const Channel& ch, mcl::AudioBuffer& buf, std::size_t scene, Frame tracker, Frame offset, bool seqIsRunning, bool testEnd)
 {
-	const auto       range     = ch.sampleChannel->range;
+	const auto       range     = ch.sampleChannel->getRange();
 	const float      pitch     = ch.sampleChannel->pitch;
 	const Wave*      wave      = ch.sampleChannel->getWave(scene);
 	const Resampler& resampler = ch.shared->resampler.value();
@@ -169,7 +169,7 @@ void renderSampleChannel(const Channel& ch, std::size_t scene, bool seqIsRunning
 	while (ch.shared->renderQueue->try_dequeue(renderInfo))
 		;
 
-	const auto        range     = ch.sampleChannel->range;
+	const auto        range     = ch.sampleChannel->getRange();
 	const Resampler&  resampler = ch.shared->resampler.value();
 	mcl::AudioBuffer& buf       = ch.shared->audioBuffer;
 	Frame             tracker   = std::clamp(ch.shared->tracker.load(), range.a, range.b); /* Make sure tracker stays within begin-end range. */

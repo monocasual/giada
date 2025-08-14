@@ -214,7 +214,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 	{
 		const Wave& oldWave  = *oldChannel.sampleChannel->getWave(0);
 		const Frame oldShift = oldChannel.sampleChannel->shift;
-		const auto  oldRange = oldChannel.sampleChannel->range;
+		const auto  oldRange = oldChannel.sampleChannel->getRange();
 		Wave&       wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
 
 		newChannelData.channel.loadWave(&wave, 0, oldRange, oldShift);
@@ -380,8 +380,8 @@ void ChannelManager::setRange(ID channelId, SampleRange range)
 	if (c.shared->tracker.load() < range.a)
 		c.shared->tracker.store(range.a);
 
-	c.sampleChannel->range       = range;
-	preview.sampleChannel->range = range;
+	c.sampleChannel->setRange(range);
+	preview.sampleChannel->setRange(range);
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -391,7 +391,7 @@ void ChannelManager::resetRange(ID channelId)
 
 	assert(c.sampleChannel);
 
-	c.sampleChannel->range = {0, c.sampleChannel->getWaveSize(0)};
+	c.sampleChannel->setRange({0, c.sampleChannel->getWaveSize(0)});
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -473,8 +473,8 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 	assert(sourceCh.sampleChannel);
 
 	previewCh.loadWave(sourceCh.sampleChannel->getWave(0), 0); // TODO - scene
-	previewCh.sampleChannel->mode  = SamplePlayerMode::SINGLE_BASIC_PAUSE;
-	previewCh.sampleChannel->range = sourceCh.sampleChannel->range;
+	previewCh.sampleChannel->mode = SamplePlayerMode::SINGLE_BASIC_PAUSE;
+	previewCh.sampleChannel->setRange(sourceCh.sampleChannel->getRange());
 	previewCh.sampleChannel->pitch = sourceCh.sampleChannel->pitch;
 
 	m_model.swap(model::SwapType::SOFT);

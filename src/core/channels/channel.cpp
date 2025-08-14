@@ -178,8 +178,8 @@ std::string Channel::debug() const
 		out += fmt::format(" wave={} mode={} begin={} end={}",
 		    (void*)sampleChannel->getWave(0),
 		    u::string::toString(sampleChannel->mode),
-		    sampleChannel->range.a,
-		    sampleChannel->range.b);
+		    sampleChannel->getRange().a,
+		    sampleChannel->getRange().b);
 
 	return out;
 }
