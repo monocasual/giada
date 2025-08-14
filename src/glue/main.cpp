@@ -171,6 +171,13 @@ MainMenu getMainMenu()
 
 /* -------------------------------------------------------------------------- */
 
+Scenes getScenes()
+{
+	return {g_engine->getMainApi().getCurrentScene()};
+}
+
+/* -------------------------------------------------------------------------- */
+
 void setBeats(int beats, int bars)
 {
 	g_engine->getMainApi().setBeats(beats, bars);
