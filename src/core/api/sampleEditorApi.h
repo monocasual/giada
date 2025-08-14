@@ -42,10 +42,11 @@ namespace giada::m
 class KernelAudio;
 class ChannelManager;
 class Wave;
+class Sequencer;
 class SampleEditorApi
 {
 public:
-	SampleEditorApi(KernelAudio&, model::Model&, ChannelManager&, rendering::Reactor&);
+	SampleEditorApi(KernelAudio&, model::Model&, ChannelManager&, rendering::Reactor&, Sequencer&);
 
 	void          loadPreviewChannel(ID sourceChannelId);
 	void          freePreviewChannel();
@@ -77,6 +78,7 @@ private:
 	model::Model&       m_model;
 	ChannelManager&     m_channelManager;
 	rendering::Reactor& m_reactor;
+	Sequencer&          m_sequencer;
 
 	/* waveBuffer
 	A Wave used during cut/copy/paste operations. */
