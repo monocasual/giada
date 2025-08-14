@@ -48,7 +48,7 @@ public:
 	ID          getWaveId(std::size_t scene) const;
 	Frame       getWaveSize(std::size_t scene) const;
 	Wave*       getWave(std::size_t scene) const;
-	SampleRange getRange() const;
+	SampleRange getRange(std::size_t scene) const;
 
 	/* loadWave
 	Loads Wave and sets it up (name, markers, ...). Resets begin/end points
@@ -63,7 +63,7 @@ public:
 
 	void setWave(Wave* w, std::size_t scene, float samplerateRatio);
 
-	void setRange(SampleRange);
+	void setRange(SampleRange, std::size_t scene);
 
 	bool             inputMonitor;
 	bool             overdubProtection;
@@ -78,7 +78,11 @@ private:
 	no sample for a certain scene. */
 
 	std::array<Wave*, G_MAX_NUM_SCENES> m_waves;
-	SampleRange                         m_range;
+
+	/* m_ranges
+	Array of ranges, one for each wave. */
+
+	std::array<SampleRange, G_MAX_NUM_SCENES> m_ranges;
 };
 } // namespace giada::m
 

@@ -214,7 +214,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 	{
 		const Wave& oldWave  = *oldChannel.sampleChannel->getWave(0);
 		const Frame oldShift = oldChannel.sampleChannel->shift;
-		const auto  oldRange = oldChannel.sampleChannel->getRange();
+		const auto  oldRange = oldChannel.sampleChannel->getRange(0);
 		Wave&       wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
 
 		newChannelData.channel.loadWave(&wave, 0, oldRange, oldShift);
@@ -363,7 +363,7 @@ void ChannelManager::setPan(ID channelId, float value)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::setRange(ID channelId, SampleRange range)
+void ChannelManager::setRange(ID channelId, SampleRange range, std::size_t scene)
 {
 	Channel& c       = m_model.get().tracks.getChannel(channelId);
 	Channel& preview = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
@@ -380,18 +380,18 @@ void ChannelManager::setRange(ID channelId, SampleRange range)
 	if (c.shared->tracker.load() < range.a)
 		c.shared->tracker.store(range.a);
 
-	c.sampleChannel->setRange(range);
-	preview.sampleChannel->setRange(range);
+	c.sampleChannel->setRange(range, scene);
+	preview.sampleChannel->setRange(range, 0);
 	m_model.swap(model::SwapType::HARD);
 }
 
-void ChannelManager::resetRange(ID channelId)
+void ChannelManager::resetRange(ID channelId, std::size_t scene)
 {
 	Channel& c = m_model.get().tracks.getChannel(channelId);
 
 	assert(c.sampleChannel);
 
-	c.sampleChannel->setRange({0, c.sampleChannel->getWaveSize(0)});
+	c.sampleChannel->setRange({0, c.sampleChannel->getWaveSize(0)}, scene);
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -474,7 +474,7 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 
 	previewCh.loadWave(sourceCh.sampleChannel->getWave(0), 0); // TODO - scene
 	previewCh.sampleChannel->mode = SamplePlayerMode::SINGLE_BASIC_PAUSE;
-	previewCh.sampleChannel->setRange(sourceCh.sampleChannel->getRange());
+	previewCh.sampleChannel->setRange(sourceCh.sampleChannel->getRange(0), 0); // TODO - scene
 	previewCh.sampleChannel->pitch = sourceCh.sampleChannel->pitch;
 
 	m_model.swap(model::SwapType::SOFT);

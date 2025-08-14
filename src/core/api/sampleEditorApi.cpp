@@ -232,12 +232,12 @@ const Channel& SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::setRange(ID channelId, SampleRange range)
 {
-	m_channelManager.setRange(channelId, range);
+	m_channelManager.setRange(channelId, range, 0); // TODO - scene
 }
 
 void SampleEditorApi::resetRange(ID channelId)
 {
-	m_channelManager.resetRange(channelId);
+	m_channelManager.resetRange(channelId, 0); // TODO - scene
 }
 
 /* -------------------------------------------------------------------------- */
