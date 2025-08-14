@@ -73,16 +73,20 @@ public:
 	bool             velocityAsVol; // Velocity drives volume
 
 private:
-	/* m_waves
-	Array of pointers to existing Wave objects. A slot might be null if the channel has
-	no sample for a certain scene. */
+	/* Sample
+	Struct that represents a single Wave and its range (begin-end points). No wave
+	and invalid range by default. */
 
-	std::array<Wave*, G_MAX_NUM_SCENES> m_waves;
+	struct Sample
+	{
+		Wave*       wave = nullptr;
+		SampleRange range;
+	};
 
-	/* m_ranges
-	Array of ranges, one for each wave. */
+	/* m_samples
+	Array of Samples, one per scene. */
 
-	std::array<SampleRange, G_MAX_NUM_SCENES> m_ranges;
+	std::array<Sample, G_MAX_NUM_SCENES> m_samples;
 };
 } // namespace giada::m
 
