@@ -170,8 +170,8 @@ public:
 	void setVolume(ID channelId, float value);
 	void setPitch(ID channelId, float value);
 	void setPan(ID channelId, float value);
-	void setRange(ID channelId, SampleRange);
-	void resetRange(ID channelId);
+	void setRange(ID channelId, SampleRange, std::size_t scene);
+	void resetRange(ID channelId, std::size_t scene);
 	void toggleArm(ID channelId);
 	void setOverdubProtection(ID channelId, bool value);
 	void setSamplePlayerMode(ID channelId, SamplePlayerMode);
