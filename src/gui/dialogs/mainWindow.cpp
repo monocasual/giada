@@ -123,9 +123,10 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 			geFlex* zone3 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {0, 15});
 			{
 				sequencer = new v::geSequencer();
+				scenes    = new geScenes();
 				zone3->addWidget(new geBox(), 120);
 				zone3->addWidget(sequencer);
-				zone3->addWidget(new geScenes(), 120);
+				zone3->addWidget(scenes, 120);
 				zone3->end();
 			}
 
@@ -180,6 +181,7 @@ void gdMainWindow::refresh()
 	keyboard->refresh();
 	mainInput->refresh();
 	mainOutput->refresh();
+	scenes->refresh();
 }
 
 /* -------------------------------------------------------------------------- */

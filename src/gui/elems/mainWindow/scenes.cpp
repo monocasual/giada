@@ -71,4 +71,14 @@ geScenes::geScenes()
 		{ c::main::setScene(i); };
 	}
 }
+
+/* -------------------------------------------------------------------------- */
+
+void geScenes::refresh()
+{
+	const c::main::Scenes scenes = c::main::getScenes();
+
+	for (std::size_t i = 0; i < m_buttons.size(); i++)
+		m_buttons[i]->forceValue(scenes.currentScene == i);
+}
 } // namespace giada::v

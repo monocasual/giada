@@ -39,6 +39,8 @@ class geScenes : public geFlex
 public:
 	geScenes();
 
+	void refresh();
+
 private:
 	std::array<geTextButton*, G_MAX_NUM_SCENES> m_buttons;
 };
