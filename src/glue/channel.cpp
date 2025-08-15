@@ -122,7 +122,7 @@ Data::Data(const m::Channel& c, std::size_t scene, std::size_t trackIndex, std::
 , plugins(c.plugins)
 , type(c.type)
 , height(c.height)
-, name(c.name)
+, name(c.getName())
 , volume(c.volume)
 , pan(c.pan.asFloat())
 , key(c.key)
