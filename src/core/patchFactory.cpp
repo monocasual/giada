@@ -248,8 +248,8 @@ void readChannels_(Patch& patch, const nlohmann::json& j)
 		c.armed             = jchannel.value(PATCH_KEY_CHANNEL_ARMED, false);
 		c.mode              = static_cast<SamplePlayerMode>(jchannel.value(PATCH_KEY_CHANNEL_MODE, 1));
 		c.waveId            = jchannel.value(PATCH_KEY_CHANNEL_WAVE_ID, 0);
-		c.begin             = jchannel.value(PATCH_KEY_CHANNEL_BEGIN, 0);
-		c.end               = jchannel.value(PATCH_KEY_CHANNEL_END, 0);
+		c.range.a           = jchannel.value(PATCH_KEY_CHANNEL_BEGIN, 0);
+		c.range.b           = jchannel.value(PATCH_KEY_CHANNEL_END, 0);
 		c.shift             = jchannel.value(PATCH_KEY_CHANNEL_SHIFT, 0);
 		c.readActions       = jchannel.value(PATCH_KEY_CHANNEL_READ_ACTIONS, false);
 		c.pitch             = jchannel.value(PATCH_KEY_CHANNEL_PITCH, G_DEFAULT_PITCH);
@@ -404,8 +404,8 @@ void writeChannels_(const Patch& patch, nlohmann::json& j)
 		jchannel[PATCH_KEY_CHANNEL_KEY]                  = c.key;
 		jchannel[PATCH_KEY_CHANNEL_WAVE_ID]              = c.waveId;
 		jchannel[PATCH_KEY_CHANNEL_MODE]                 = static_cast<int>(c.mode);
-		jchannel[PATCH_KEY_CHANNEL_BEGIN]                = c.begin;
-		jchannel[PATCH_KEY_CHANNEL_END]                  = c.end;
+		jchannel[PATCH_KEY_CHANNEL_BEGIN]                = c.range.a;
+		jchannel[PATCH_KEY_CHANNEL_END]                  = c.range.b;
 		jchannel[PATCH_KEY_CHANNEL_SHIFT]                = c.shift;
 		jchannel[PATCH_KEY_CHANNEL_READ_ACTIONS]         = c.readActions;
 		jchannel[PATCH_KEY_CHANNEL_PITCH]                = c.pitch;

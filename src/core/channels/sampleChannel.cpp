@@ -49,7 +49,7 @@ SampleChannel::SampleChannel(const Patch::Channel& p, Wave* w, float samplerateR
 , mode(p.mode)
 , pitch(p.pitch)
 , shift(p.shift)
-, range(p.begin, p.end)
+, range(p.range)
 , velocityAsVol(p.midiInVeloAsVol)
 {
 	setWave(w, samplerateRatio);

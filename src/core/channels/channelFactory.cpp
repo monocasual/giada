@@ -160,8 +160,7 @@ const Patch::Channel serializeChannel(const Channel& c)
 	{
 		pc.waveId            = c.sampleChannel->getWaveId();
 		pc.mode              = c.sampleChannel->mode;
-		pc.begin             = c.sampleChannel->range.a;
-		pc.end               = c.sampleChannel->range.b;
+		pc.range             = c.sampleChannel->range;
 		pc.pitch             = c.sampleChannel->pitch;
 		pc.shift             = c.sampleChannel->shift;
 		pc.midiInVeloAsVol   = c.sampleChannel->velocityAsVol;
