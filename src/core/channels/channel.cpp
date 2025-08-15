@@ -75,7 +75,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , armed(p.armed)
 , key(p.key)
 , hasActions(p.hasActions)
-, name(p.name)
 , height(p.height)
 , plugins(plugins)
 , sendToMaster(p.sendToMaster)
@@ -84,6 +83,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , midiLightning(p)
 , m_mute(p.mute)
 , m_solo(p.solo)
+, m_name(p.name)
 {
 	shared->readActions.store(p.readActions);
 	shared->recStatus.store(p.readActions ? ChannelStatus::PLAY : ChannelStatus::OFF);
@@ -168,11 +168,15 @@ bool Channel::isPlaying() const
 
 /* -------------------------------------------------------------------------- */
 
+std::string Channel::getName() const { return m_name; }
+
+/* -------------------------------------------------------------------------- */
+
 #if G_DEBUG_MODE
 std::string Channel::debug() const
 {
 	std::string out = fmt::format("ID={} name='{}' type={} channelShared={}",
-	    id, name, u::string::toString(type), (void*)&shared);
+	    id, m_name, u::string::toString(type), (void*)&shared);
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
 		out += fmt::format(" wave={} mode={} begin={} end={}",
@@ -210,6 +214,10 @@ void Channel::setSolo(bool v)
 {
 	m_solo = v;
 }
+
+/* -------------------------------------------------------------------------- */
+
+void Channel::setName(const std::string& name) { m_name = name; }
 
 /* -------------------------------------------------------------------------- */
 

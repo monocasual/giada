@@ -296,7 +296,7 @@ void ChannelManager::deleteChannel(ID channelId)
 
 void ChannelManager::renameChannel(ID channelId, const std::string& name)
 {
-	m_model.get().tracks.getChannel(channelId).name = name;
+	m_model.get().tracks.getChannel(channelId).setName(name);
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -580,7 +580,7 @@ bool ChannelManager::canRemoveTrack(std::size_t trackIndex) const
 void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, std::size_t scene) const
 {
 	ch.loadWave(w, scene);
-	ch.name = w != nullptr ? w->getBasename(/*ext=*/false) : "";
+	ch.setName(w != nullptr ? w->getBasename(/*ext=*/false) : "");
 }
 
 /* -------------------------------------------------------------------------- */
