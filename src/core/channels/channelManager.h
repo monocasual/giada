@@ -145,7 +145,7 @@ public:
 
 	void moveChannel(ID, std::size_t newTrackIndex, std::size_t newPosition);
 	void deleteChannel(ID channelId);
-	void renameChannel(ID channelId, const std::string& name);
+	void renameChannel(ID channelId, const std::string& name, std::size_t scene);
 
 	/* cloneChannel
 	Creates a duplicate of Channel. Wants a vector of already cloned plug-ins. */
