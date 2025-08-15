@@ -46,7 +46,7 @@ SampleData::SampleData(const m::SampleChannel& s)
 
 Data::Data(const m::Channel& c)
 : channelId(c.id)
-, channelName(c.name)
+, channelName(c.getName())
 , framesInSeq(g_engine->getMainApi().getFramesInSeq())
 , framesInBeat(g_engine->getMainApi().getFramesInBeat())
 , framesInBar(g_engine->getMainApi().getFramesInBar())
