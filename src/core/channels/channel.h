@@ -55,7 +55,7 @@ public:
 	bool canActionRec(std::size_t scene) const;
 	bool hasWave(std::size_t scene) const;
 
-	std::string getName() const;
+	std::string getName(std::size_t scene) const;
 
 	/* canReceiveAudio
 	Tells if the sample channel can receive audio as input monitor. */
@@ -79,7 +79,7 @@ public:
 
 	void setMute(bool);
 	void setSolo(bool);
-	void setName(const std::string&);
+	void setName(const std::string&, std::size_t scene);
 
 	/* loadWave
 	Loads Wave and sets it up (name, markers, ...). Also updates Channel's shared
@@ -131,9 +131,11 @@ public:
 	std::optional<MidiChannel>   midiChannel;
 
 private:
-	bool        m_mute;
-	bool        m_solo;
-	std::string m_name;
+	using Names = std::array<std::string, G_MAX_NUM_SCENES>;
+
+	bool  m_mute;
+	bool  m_solo;
+	Names m_names;
 };
 } // namespace giada::m
 

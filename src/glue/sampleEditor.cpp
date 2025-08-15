@@ -36,7 +36,7 @@ namespace giada::c::sampleEditor
 {
 Data::Data(const m::Channel& c, std::size_t scene)
 : channelId(c.id)
-, name(c.getName())
+, name(c.getName(scene))
 , volume(c.volume)
 , pan(c.pan.asFloat())
 , pitch(c.sampleChannel->pitch)

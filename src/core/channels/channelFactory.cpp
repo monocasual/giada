@@ -129,7 +129,7 @@ const Patch::Channel serializeChannel(const Channel& c)
 	pc.id                = c.id;
 	pc.type              = c.type;
 	pc.height            = c.height;
-	pc.name              = c.getName();
+	pc.name              = c.getName(0); // TODO - scenes
 	pc.key               = c.key;
 	pc.mute              = c.isMuted();
 	pc.solo              = c.isSoloed();
