@@ -86,7 +86,7 @@ private:
 	/* m_samples
 	Array of Samples, one per scene. */
 
-	std::array<Sample, G_MAX_NUM_SCENES> m_samples;
+	SceneArray<Sample> m_samples;
 };
 } // namespace giada::m
 

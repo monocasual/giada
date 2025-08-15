@@ -131,11 +131,9 @@ public:
 	std::optional<MidiChannel>   midiChannel;
 
 private:
-	using Names = std::array<std::string, G_MAX_NUM_SCENES>;
-
-	bool  m_mute;
-	bool  m_solo;
-	Names m_names;
+	bool                    m_mute;
+	bool                    m_solo;
+	SceneArray<std::string> m_names;
 };
 } // namespace giada::m
 
