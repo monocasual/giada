@@ -294,7 +294,7 @@ void ChannelsApi::setHeight(ID channelId, int h)
 
 void ChannelsApi::setName(ID channelId, const std::string& name)
 {
-	m_channelManager.renameChannel(channelId, name);
+	m_channelManager.renameChannel(channelId, name, m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
