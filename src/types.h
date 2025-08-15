@@ -27,6 +27,7 @@
 #ifndef G_TYPES_H
 #define G_TYPES_H
 
+#include "const.h"
 #include "deps/geompp/src/range.hpp"
 #include <string>
 
@@ -35,6 +36,9 @@ namespace giada
 using ID          = int;
 using Frame       = int;
 using SampleRange = geompp::Range<Frame>;
+
+template <typename T>
+using SceneArray = std::array<T, G_MAX_NUM_SCENES>;
 
 enum class PluginSortMethod : int
 {
