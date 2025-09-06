@@ -55,6 +55,16 @@ auto* get_(S& source, ID id)
 	return it == source.end() ? nullptr : it->get();
 }
 
+template <typename S>
+auto get_(S& source, std::vector<ID> ids)
+{
+	using RawPtr = decltype(source.front().get());
+	std::vector<RawPtr> out;
+	for (const ID id : ids)
+		out.push_back(get_(source, id));
+	return out;
+}
+
 /* -------------------------------------------------------------------------- */
 
 template <typename T>
@@ -174,9 +184,10 @@ std::vector<std::unique_ptr<ChannelShared>>& Shared::getAllChannels() { return m
 
 /* -------------------------------------------------------------------------- */
 
-Plugin*        Shared::findPlugin(ID id) { return get_(m_plugins, id); }
-Wave*          Shared::findWave(ID id) { return get_(m_waves, id); }
-ChannelShared* Shared::findChannel(ID id) { return get_(m_channels, id); }
+Plugin*            Shared::findPlugin(ID id) { return get_(m_plugins, id); }
+Wave*              Shared::findWave(ID id) { return get_(m_waves, id); }
+std::vector<Wave*> Shared::findWaves(std::vector<ID> ids) { return get_(m_waves, ids); }
+ChannelShared*     Shared::findChannel(ID id) { return get_(m_channels, id); }
 
 /* -------------------------------------------------------------------------- */
 

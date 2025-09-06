@@ -32,8 +32,15 @@
 #include "src/core/types.h"
 #include "src/version.h"
 #include <cstdint>
+#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
+
+namespace geompp
+{
+void to_json(nlohmann::json&, const giada::SampleRange&);
+void from_json(const nlohmann::json&, giada::SampleRange&);
+} // namespace geompp
 
 namespace giada::m
 {
@@ -46,46 +53,52 @@ struct Patch
 		std::vector<ID> channels;
 	};
 
+	struct Sample
+	{
+		ID          waveId = 0;
+		SampleRange range;
+	};
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Sample, waveId, range);
+
 	struct Channel
 	{
-		ID               id;
-		ChannelType      type;
-		int              height;
-		std::string      name;
-		int              key;
-		bool             mute;
-		bool             solo;
-		float            volume = G_DEFAULT_VOL;
-		float            pan    = G_DEFAULT_PAN;
-		bool             hasActions;
-		bool             armed;
-		bool             sendToMaster = true;
-		std::vector<int> extraOutputs;
-		bool             midiIn;
-		uint32_t         midiInKeyPress;
-		uint32_t         midiInKeyRel;
-		uint32_t         midiInKill;
-		uint32_t         midiInArm;
-		uint32_t         midiInVolume;
-		uint32_t         midiInMute;
-		uint32_t         midiInSolo;
-		int              midiInFilter;
-		bool             midiOutL;
-		uint32_t         midiOutLplaying;
-		uint32_t         midiOutLmute;
-		uint32_t         midiOutLsolo;
+		ID                       id;
+		ChannelType              type;
+		int                      height;
+		std::vector<std::string> names;
+		int                      key;
+		bool                     mute;
+		bool                     solo;
+		float                    volume = G_DEFAULT_VOL;
+		float                    pan    = G_DEFAULT_PAN;
+		bool                     hasActions;
+		bool                     armed;
+		bool                     sendToMaster = true;
+		std::vector<int>         extraOutputs;
+		bool                     midiIn;
+		uint32_t                 midiInKeyPress;
+		uint32_t                 midiInKeyRel;
+		uint32_t                 midiInKill;
+		uint32_t                 midiInArm;
+		uint32_t                 midiInVolume;
+		uint32_t                 midiInMute;
+		uint32_t                 midiInSolo;
+		int                      midiInFilter;
+		bool                     midiOutL;
+		uint32_t                 midiOutLplaying;
+		uint32_t                 midiOutLmute;
+		uint32_t                 midiOutLsolo;
 		// sample channel
-		ID               waveId = 0;
-		SamplePlayerMode mode;
-		SampleRange      range;
-		Frame            shift;
-		bool             readActions;
-		float            pitch = G_DEFAULT_PITCH;
-		bool             inputMonitor;
-		bool             overdubProtection;
-		bool             midiInVeloAsVol;
-		uint32_t         midiInReadActions;
-		uint32_t         midiInPitch;
+		std::vector<Sample> samples;
+		SamplePlayerMode    mode;
+		Frame               shift;
+		bool                readActions;
+		float               pitch = G_DEFAULT_PITCH;
+		bool                inputMonitor;
+		bool                overdubProtection;
+		bool                midiInVeloAsVol;
+		uint32_t            midiInReadActions;
+		uint32_t            midiInPitch;
 		// midi channel
 		bool            midiOut;
 		int             midiOutChan;
@@ -133,6 +146,7 @@ struct Patch
 	std::vector<Wave>    waves;
 	std::vector<Plugin>  plugins;
 };
+
 } // namespace giada::m
 
 #endif

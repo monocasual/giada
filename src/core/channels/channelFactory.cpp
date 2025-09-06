@@ -104,10 +104,10 @@ Data create(const Channel& o, int bufferSize, Resampler::Quality quality)
 
 /* -------------------------------------------------------------------------- */
 
-Channel deserializeChannel(const Patch::Channel& pch, ChannelShared& shared, float samplerateRatio, Wave* wave, std::vector<Plugin*> plugins)
+Channel deserializeChannel(const Patch::Channel& pch, ChannelShared& shared, float samplerateRatio, std::vector<Wave*> waves, std::vector<Plugin*> plugins)
 {
 	channelId_.set(pch.id);
-	return Channel(pch, shared, samplerateRatio, wave, plugins);
+	return Channel(pch, shared, samplerateRatio, waves, plugins);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -129,7 +129,6 @@ const Patch::Channel serializeChannel(const Channel& c)
 	pc.id                = c.id;
 	pc.type              = c.type;
 	pc.height            = c.height;
-	pc.name              = c.getName(0); // TODO - scenes
 	pc.key               = c.key;
 	pc.mute              = c.isMuted();
 	pc.solo              = c.isSoloed();
@@ -156,11 +155,14 @@ const Patch::Channel serializeChannel(const Channel& c)
 	pc.midiOutLmute      = c.midiLightning.mute.getValue();
 	pc.midiOutLsolo      = c.midiLightning.solo.getValue();
 
+	for (std::size_t i = 0; i < G_MAX_NUM_SCENES; i++)
+		pc.names.push_back(c.getName(i));
+
 	if (c.type == ChannelType::SAMPLE)
 	{
-		pc.waveId            = c.sampleChannel->getWaveId(0);
+		for (std::size_t i = 0; i < G_MAX_NUM_SCENES; i++)
+			pc.samples.push_back({c.sampleChannel->getWaveId(i), c.sampleChannel->getRange(i)});
 		pc.mode              = c.sampleChannel->mode;
-		pc.range             = c.sampleChannel->getRange(0);
 		pc.pitch             = c.sampleChannel->pitch;
 		pc.shift             = c.sampleChannel->shift;
 		pc.midiInVeloAsVol   = c.sampleChannel->velocityAsVol;
