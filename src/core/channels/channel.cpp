@@ -66,7 +66,7 @@ Channel::Channel(ChannelType type, ID id, ChannelShared& s)
 
 /* -------------------------------------------------------------------------- */
 
-Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRatio, Wave* wave, std::vector<Plugin*> plugins)
+Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRatio, std::vector<Wave*> waves, std::vector<Plugin*> plugins)
 : shared(&s)
 , id(p.id)
 , type(p.type)
@@ -92,7 +92,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	{
 	case ChannelType::SAMPLE:
 	case ChannelType::PREVIEW:
-		sampleChannel.emplace(p, wave, samplerateRatio);
+		sampleChannel.emplace(p, waves, samplerateRatio);
 		break;
 
 	case ChannelType::MIDI:

@@ -42,7 +42,7 @@ SampleChannel::SampleChannel()
 
 /* -------------------------------------------------------------------------- */
 
-SampleChannel::SampleChannel(const Patch::Channel& p, Wave* w, float samplerateRatio)
+SampleChannel::SampleChannel(const Patch::Channel& p, std::vector<Wave*> waves, float samplerateRatio)
 : inputMonitor(p.inputMonitor)
 , overdubProtection(p.overdubProtection)
 , mode(p.mode)
@@ -50,7 +50,9 @@ SampleChannel::SampleChannel(const Patch::Channel& p, Wave* w, float samplerateR
 , shift(p.shift)
 , velocityAsVol(p.midiInVeloAsVol)
 {
-	setWave(w, 0, samplerateRatio);
+	std::size_t scene = 0;
+	for (Wave* wave : waves)
+		setWave(wave, scene++, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */

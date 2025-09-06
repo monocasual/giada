@@ -37,7 +37,7 @@ class SampleChannel final
 {
 public:
 	SampleChannel();
-	SampleChannel(const Patch::Channel&, Wave*, float samplerateRatio);
+	SampleChannel(const Patch::Channel&, std::vector<Wave*>, float samplerateRatio);
 
 	bool        isAnyLoopMode() const;
 	bool        isAnyLoopOnceMode() const;
