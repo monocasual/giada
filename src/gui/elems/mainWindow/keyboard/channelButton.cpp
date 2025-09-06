@@ -74,15 +74,12 @@ void geChannelButton::draw()
 {
 	geTextButton::draw();
 
-	if (m_channel.key == 0)
-		return;
-
-	/* Draw m_channel.key. */
-
-	const geompp::Rect bounds = geompp::Rect(x(), y(), 20, h()).reduced({1});
-
-	drawRectf(bounds, G_COLOR_GREY_3);
-	drawText(std::string(1, m_channel.key), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_LIGHT_2);
+	if (m_channel.key != 0)
+	{
+		const geompp::Rect bounds = geompp::Rect(x(), y(), 20, h()).reduced({1});
+		drawRectf(bounds, G_COLOR_GREY_3);
+		drawText(std::string(1, m_channel.key), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_LIGHT_2);
+	}
 }
 
 /* -------------------------------------------------------------------------- */
