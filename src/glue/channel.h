@@ -109,7 +109,6 @@ struct Data
 	bool                    hasActions;
 	bool                    sendToMaster;
 	std::size_t             extraOutputsCount;
-	std::string             outputDeviceName;
 
 	std::optional<SampleData> sample;
 	std::optional<MidiData>   midi;
