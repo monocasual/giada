@@ -116,7 +116,6 @@ gdChannelRouting::gdChannelRouting(ID channelId, const Model& model)
 	add(container);
 	resizable(container);
 
-	m_sendToMaster->value(m_data.sendToMaster);
 	m_sendToMaster->onChange = [id = m_data.id](bool value)
 	{
 		c::channel::setSendToMaster(id, value);
@@ -149,6 +148,9 @@ gdChannelRouting::~gdChannelRouting()
 void gdChannelRouting::rebuild()
 {
 	m_data = c::channel::getRoutingData(m_channelId);
+
+	m_sendToMaster->value(m_data.sendToMaster);
+	m_data.extraOutputs.size() > 0 ? m_sendToMaster->activate() : m_sendToMaster->deactivate();
 
 	const auto makeOutputName = [](const std::string& deviceName, int offset, int maxNumChannels)
 	{

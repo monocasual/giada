@@ -435,6 +435,9 @@ void ChannelManager::setHeight(ID channelId, int height)
 
 void ChannelManager::setSendToMaster(ID channelId, bool value)
 {
+	/* Can't toggle 'send to master' flag if there are no extra outputs. */
+	assert(m_model.get().tracks.getChannel(channelId).extraOutputs.size() > 0);
+
 	m_model.get().tracks.getChannel(channelId).sendToMaster = value;
 	m_model.swap(model::SwapType::NONE);
 }
@@ -453,6 +456,8 @@ void ChannelManager::addExtraOutput(ID channelId, int offset)
 void ChannelManager::removeExtraOutput(ID channelId, std::size_t i)
 {
 	u::vector::removeAt(m_model.get().tracks.getChannel(channelId).extraOutputs, i);
+	if (m_model.get().tracks.getChannel(channelId).extraOutputs.size() == 0)
+		m_model.get().tracks.getChannel(channelId).sendToMaster = true;
 	m_model.swap(model::SwapType::HARD);
 }
 
