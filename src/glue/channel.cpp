@@ -128,6 +128,7 @@ Data::Data(const m::Channel& c, std::size_t trackIndex, std::size_t channelIndex
 , key(c.key)
 , hasActions(c.hasActions)
 , sendToMaster(c.sendToMaster)
+, extraOutputsCount(c.extraOutputs.size())
 , m_playStatus(&c.shared->playStatus)
 , m_recStatus(&c.shared->recStatus)
 , m_readActions(&c.shared->readActions)
