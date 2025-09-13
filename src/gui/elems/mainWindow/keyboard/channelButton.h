@@ -28,6 +28,7 @@
 #define GE_CHANNEL_BUTTON_H
 
 #include "src/gui/elems/basics/textButton.h"
+#include <FL/Fl_SVG_Image.H>
 
 namespace giada::c::channel
 {
@@ -53,6 +54,9 @@ public:
 
 protected:
 	const c::channel::Data& m_channel;
+
+private:
+	std::unique_ptr<Fl_SVG_Image> m_imgExtraOuputs;
 };
 } // namespace giada::v
 

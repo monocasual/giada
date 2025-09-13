@@ -28,6 +28,7 @@
 #include "src/glue/channel.h"
 #include "src/gui/const.h"
 #include "src/gui/drawing.h"
+#include "src/gui/graphics.h"
 #include "src/utils/string.h"
 #include <FL/fl_draw.H>
 
@@ -36,6 +37,7 @@ namespace giada::v
 geChannelButton::geChannelButton(int x, int y, int w, int h, const c::channel::Data& d)
 : geTextButton(x, y, w, h, "")
 , m_channel(d)
+, m_imgExtraOuputs(std::make_unique<Fl_SVG_Image>(nullptr, graphics::extraOutputs))
 {
 }
 
@@ -79,6 +81,12 @@ void geChannelButton::draw()
 		const geompp::Rect bounds = geompp::Rect(x(), y(), 20, h()).reduced({1});
 		drawRectf(bounds, G_COLOR_GREY_3);
 		drawText(std::string(1, m_channel.key), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_LIGHT_2);
+	}
+	if (m_channel.extraOutputsCount > 0)
+	{
+		const auto parentCenter = geompp::Rect(x(), y(), w(), h()).getCenter();
+		const auto bounds       = geompp::Rect(x(), y(), 10, 10).withShiftedX(w() - 16).withVerticalCenter(parentCenter);
+		drawImage(*m_imgExtraOuputs, bounds);
 	}
 }
 
