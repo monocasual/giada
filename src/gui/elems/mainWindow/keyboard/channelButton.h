@@ -29,6 +29,7 @@
 
 #include "src/gui/elems/basics/textButton.h"
 #include <FL/Fl_SVG_Image.H>
+#include <memory>
 
 namespace giada::c::channel
 {
