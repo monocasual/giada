@@ -134,10 +134,7 @@ std::unique_ptr<Plugin> PluginManager::makePlugin(const Plugin& src, int sampleR
     int bufferSize, const model::Sequencer& sequencer)
 {
 	std::unique_ptr<Plugin> p = makePlugin(src.getJuceId(), sampleRate, bufferSize, sequencer);
-
-	for (int i = 0; i < src.getNumParameters(); i++)
-		p->setParameter(i, src.getParameter(i));
-
+	p->setState(src.getState());
 	return p;
 }
 
