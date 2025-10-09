@@ -387,7 +387,11 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 	{
 		const Device jackDevice = fetchDevice(out.id); // JACK has only one device
 
-		assert(jackDevice.sampleRates.size() > 0);
+		if (jackDevice.sampleRates.size() == 0)
+		{
+			u::log::print("[KA] JACK has no sample rates! Can't proceed\n");
+			return {};
+		}
 
 		const unsigned int jackSampleRate = jackDevice.sampleRates[0];
 
