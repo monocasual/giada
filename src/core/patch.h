@@ -78,7 +78,7 @@ struct Patch
 		// sample channel
 		ID               waveId            = 0;
 		SamplePlayerMode mode              = SamplePlayerMode::SINGLE_BASIC;
-		SampleRange      range             = {0, 0};
+		SampleRange      range             = {};
 		Frame            shift             = 0;
 		bool             readActions       = false;
 		float            pitch             = G_DEFAULT_PITCH;
