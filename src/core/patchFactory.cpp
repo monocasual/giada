@@ -462,12 +462,9 @@ void modernize_(Patch& patch)
 			c.armed = false;
 
 		/* 0.16.3
-		Set panning to default (0.5) and waveId to 0 for non-Sample Channels. */
+		Set waveId to 0 for non-Sample Channels. */
 		if (c.type != ChannelType::SAMPLE)
-		{
-			c.pan    = G_DEFAULT_PAN;
 			c.waveId = 0;
-		}
 
 		/* 1.1.0
 		Let's put non-group channels into the relevant tracks. */
