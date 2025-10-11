@@ -30,6 +30,7 @@
 #include "src/const.h"
 #include "src/core/const.h"
 #include "src/core/types.h"
+#include "src/gui/const.h"
 #include "src/version.h"
 #include <cstdint>
 #include <string>
@@ -41,78 +42,78 @@ struct Patch
 {
 	struct Track
 	{
-		int             width;
-		bool            internal;
+		int             width    = G_DEFAULT_TRACK_WIDTH;
+		bool            internal = false;
 		std::vector<ID> channels;
 	};
 
 	struct Channel
 	{
-		ID               id;
-		ChannelType      type;
-		int              height;
-		std::string      name;
-		int              key;
-		bool             mute;
-		bool             solo;
-		float            volume = G_DEFAULT_VOL;
-		float            pan    = G_DEFAULT_PAN;
-		bool             hasActions;
-		bool             armed;
-		bool             sendToMaster = true;
-		std::vector<int> extraOutputs;
-		bool             midiIn;
-		uint32_t         midiInKeyPress;
-		uint32_t         midiInKeyRel;
-		uint32_t         midiInKill;
-		uint32_t         midiInArm;
-		uint32_t         midiInVolume;
-		uint32_t         midiInMute;
-		uint32_t         midiInSolo;
-		int              midiInFilter;
-		bool             midiOutL;
-		uint32_t         midiOutLplaying;
-		uint32_t         midiOutLmute;
-		uint32_t         midiOutLsolo;
+		ID               id              = 0;
+		ChannelType      type            = ChannelType::SAMPLE;
+		int              height          = 0;
+		std::string      name            = "";
+		int              key             = 0;
+		bool             mute            = false;
+		bool             solo            = false;
+		float            volume          = G_DEFAULT_VOL;
+		float            pan             = G_DEFAULT_PAN;
+		bool             hasActions      = false;
+		bool             armed           = false;
+		bool             sendToMaster    = true;
+		std::vector<int> extraOutputs    = {};
+		bool             midiIn          = false;
+		uint32_t         midiInKeyPress  = 0x0;
+		uint32_t         midiInKeyRel    = 0x0;
+		uint32_t         midiInKill      = 0x0;
+		uint32_t         midiInArm       = 0x0;
+		uint32_t         midiInVolume    = 0x0;
+		uint32_t         midiInMute      = 0x0;
+		uint32_t         midiInSolo      = 0x0;
+		int              midiInFilter    = 0;
+		bool             midiOutL        = false;
+		uint32_t         midiOutLplaying = 0x0;
+		uint32_t         midiOutLmute    = 0x0;
+		uint32_t         midiOutLsolo    = 0x0;
 		// sample channel
-		ID               waveId = 0;
-		SamplePlayerMode mode;
-		SampleRange      range;
-		Frame            shift;
-		bool             readActions;
-		float            pitch = G_DEFAULT_PITCH;
-		bool             inputMonitor;
-		bool             overdubProtection;
-		bool             midiInVeloAsVol;
-		uint32_t         midiInReadActions;
-		uint32_t         midiInPitch;
+		ID               waveId            = 0;
+		SamplePlayerMode mode              = SamplePlayerMode::SINGLE_BASIC;
+		SampleRange      range             = {0, 0};
+		Frame            shift             = 0;
+		bool             readActions       = false;
+		float            pitch             = G_DEFAULT_PITCH;
+		bool             inputMonitor      = false;
+		bool             overdubProtection = false;
+		bool             midiInVeloAsVol   = false;
+		uint32_t         midiInReadActions = 0x0;
+		uint32_t         midiInPitch       = 0x0;
 		// midi channel
-		bool            midiOut;
-		int             midiOutChan;
-		std::vector<ID> pluginIds;
+		bool            midiOut     = false;
+		int             midiOutChan = 0;
+		std::vector<ID> pluginIds   = {};
 	};
 
 	struct Action
 	{
-		ID       id;
-		ID       channelId;
-		Frame    frame;
-		uint32_t event;
-		ID       prevId;
-		ID       nextId;
+		ID       id        = 0;
+		ID       channelId = 0;
+		Frame    frame     = 0;
+		uint32_t event     = 0;
+		ID       prevId    = 0;
+		ID       nextId    = 0;
 	};
 
 	struct Wave
 	{
-		ID          id;
+		ID          id = 0;
 		std::string path;
 	};
 
 	struct Plugin
 	{
-		ID                    id;
+		ID                    id = 0;
 		std::string           juceId;
-		bool                  bypass;
+		bool                  bypass = false;
 		std::string           state;
 		std::vector<uint32_t> midiInParams;
 	};
