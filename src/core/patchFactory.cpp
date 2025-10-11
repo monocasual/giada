@@ -442,17 +442,16 @@ void modernize_(Patch& patch)
 		patch.tracks.push_back({G_DEFAULT_TRACK_WIDTH, /*internal=*/true, {}});
 		patch.tracks.push_back({G_DEFAULT_TRACK_WIDTH, /*internal=*/false, {groupChannelId}});
 		patch.channels.push_back({groupChannelId, ChannelType::GROUP, G_GUI_UNIT});
-	}
 
-	for (Patch::Channel& c : patch.channels)
-	{
-		/* 1.1.0
-		Let's put non-group channels into the relevant tracks. */
-		if (patch.version < Version{1, 1, 0} && c.type != ChannelType::GROUP)
+		for (Patch::Channel& c : patch.channels)
 		{
-			const bool        isInternalChannel = c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER;
-			const std::size_t targetIndex       = isInternalChannel ? 0 : 1;
-			patch.tracks[targetIndex].channels.push_back(c.id);
+			/* 	Let's put non-group channels into the relevant tracks. */
+			if (c.type != ChannelType::GROUP)
+			{
+				const bool        isInternalChannel = c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER;
+				const std::size_t targetIndex       = isInternalChannel ? 0 : 1;
+				patch.tracks[targetIndex].channels.push_back(c.id);
+			}
 		}
 	}
 }
