@@ -446,33 +446,38 @@ void modernize_(Patch& patch)
 
 	for (Patch::Channel& c : patch.channels)
 	{
-		const bool isInternalChannel = c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER;
+		/* 1.1.0
+		Let's put non-group channels into the relevant tracks. */
+		if (patch.version < Version{1, 1, 0} && c.type != ChannelType::GROUP)
+		{
+			const bool        isInternalChannel = c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER;
+			const std::size_t targetIndex       = isInternalChannel ? 0 : 1;
+			patch.tracks[targetIndex].channels.push_back(c.id);
+		}
+	}
+}
 
-		/* 0.16.3
-		Make sure that ChannelType is correct: ID 1, 2 are MASTER channels, ID 3
+/* -------------------------------------------------------------------------- */
+
+void sanitize_(Patch& patch)
+{
+	for (Patch::Channel& c : patch.channels)
+	{
+		/* Make sure that ChannelType is correct: ID 1, 2 are MASTER channels, ID 3
 		is PREVIEW channel. */
 		if (c.id == MASTER_OUT_CHANNEL_ID || c.id == MASTER_IN_CHANNEL_ID)
 			c.type = ChannelType::MASTER;
 		else if (c.id == PREVIEW_CHANNEL_ID)
 			c.type = ChannelType::PREVIEW;
 
-		/* 0.16.4
-		Make sure internal channels are never armed. */
+		/* Make sure internal channels are never armed. */
+		const bool isInternalChannel = c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER;
 		if (isInternalChannel)
 			c.armed = false;
 
-		/* 0.16.3
-		Set waveId to 0 for non-Sample Channels. */
+		/* Set waveId to 0 for non-Sample Channels. */
 		if (c.type != ChannelType::SAMPLE)
 			c.waveId = 0;
-
-		/* 1.1.0
-		Let's put non-group channels into the relevant tracks. */
-		if (patch.version < Version{1, 1, 0} && c.type != ChannelType::GROUP)
-		{
-			const std::size_t targetIndex = isInternalChannel ? 0 : 1;
-			patch.tracks[targetIndex].channels.push_back(c.id);
-		}
 	}
 }
 } // namespace
@@ -540,6 +545,7 @@ Patch deserialize(const std::string& filePath)
 		readActions_(patch, j);
 		readChannels_(patch, j);
 		modernize_(patch);
+		sanitize_(patch);
 	}
 	catch (nlohmann::json::exception& e)
 	{
