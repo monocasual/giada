@@ -109,6 +109,10 @@ SampleRange SampleChannel::getRange(std::size_t scene) const { return m_samples[
 
 /* -------------------------------------------------------------------------- */
 
+const SceneArray<Sample>& SampleChannel::getSamples() const { return m_samples; }
+
+/* -------------------------------------------------------------------------- */
+
 Frame SampleChannel::getWaveSize(std::size_t scene) const
 {
 	return hasWave(scene) ? m_samples[scene].wave->getBuffer().countFrames() : 0;
