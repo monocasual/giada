@@ -31,6 +31,11 @@
 #include "deps/geompp/src/range.hpp"
 #include <string>
 
+namespace giada::m
+{
+class Wave;
+}
+
 namespace giada
 {
 using ID          = int;
@@ -79,6 +84,16 @@ struct Peak
 {
 	float left;
 	float right;
+};
+
+/* Sample
+Struct that represents a single Wave and its range (begin-end points). No wave
+and invalid range by default. */
+
+struct Sample
+{
+	m::Wave*    wave = nullptr;
+	SampleRange range;
 };
 } // namespace giada
 
