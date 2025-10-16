@@ -92,7 +92,6 @@ struct Patch
 		// sample channel
 		std::vector<Sample> samples           = {};
 		SamplePlayerMode    mode              = SamplePlayerMode::SINGLE_BASIC;
-		SampleRange         range             = {};
 		Frame               shift             = 0;
 		bool                readActions       = false;
 		float               pitch             = G_DEFAULT_PITCH;
