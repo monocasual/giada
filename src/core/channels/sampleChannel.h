@@ -73,16 +73,6 @@ public:
 	bool             velocityAsVol; // Velocity drives volume
 
 private:
-	/* Sample
-	Struct that represents a single Wave and its range (begin-end points). No wave
-	and invalid range by default. */
-
-	struct Sample
-	{
-		Wave*       wave = nullptr;
-		SampleRange range;
-	};
-
 	/* m_samples
 	Array of Samples, one per scene. */
 
