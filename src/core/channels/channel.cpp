@@ -28,6 +28,7 @@
 #include "src/gui/const.h"
 #include <cassert>
 #if G_DEBUG_MODE
+#include "src/core/wave.h"
 #include "src/utils/string.h"
 #include <fmt/core.h>
 #endif
@@ -179,11 +180,13 @@ std::string Channel::debug() const
 	    id, u::string::toString(type), (void*)&shared);
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
-		out += fmt::format(" wave={} mode={} begin={} end={}",
-		    (void*)sampleChannel->getWave(0),
-		    u::string::toString(sampleChannel->mode),
-		    sampleChannel->getRange(0).a,
-		    sampleChannel->getRange(0).b);
+	{
+		out += fmt::format(" mode={}", u::string::toString(sampleChannel->mode));
+		out += "\n\twaves:\n";
+		for (const Sample& s : sampleChannel->getSamples())
+			if (s.wave != nullptr)
+				out += fmt::format("\t\tID={} ({}), range=[{}, {})\n", s.wave->id, (void*)s.wave, s.range.a, s.range.b);
+	}
 
 	return out;
 }

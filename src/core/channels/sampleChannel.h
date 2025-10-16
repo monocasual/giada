@@ -50,6 +50,8 @@ public:
 	Wave*       getWave(std::size_t scene) const;
 	SampleRange getRange(std::size_t scene) const;
 
+	const SceneArray<Sample>& getSamples() const;
+
 	/* loadWave
 	Loads Wave and sets it up (name, markers, ...). Resets begin/end points
 	and shift if not specified. */
