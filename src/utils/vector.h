@@ -112,6 +112,18 @@ auto atOr(const Vector& v, int index, Default d)
 {
 	return index >= 0 && static_cast<size_t>(index) < v.size() ? v[index] : d;
 }
+
+/* -------------------------------------------------------------------------- */
+
+template <typename T, typename F>
+auto map(const std::vector<T>& input, F&& func)
+{
+	using OutType = decltype(func(std::declval<T>()));
+	std::vector<OutType> result;
+	result.reserve(input.size());
+	std::transform(input.begin(), input.end(), std::back_inserter(result), std::forward<F>(func));
+	return result;
+}
 } // namespace giada::u::vector
 
 #endif
