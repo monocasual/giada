@@ -40,16 +40,18 @@ void Document::load(const Patch& patch, Shared& shared, float sampleRateRatio)
 	for (const Patch::Track& ptrack : patch.tracks)
 	{
 		Track& track = tracks.add(ptrack.width, ptrack.internal);
-
 		for (const ID channelId : ptrack.channels)
 		{
-			const Patch::Channel& pchannel      = *u::vector::findIfSafe(patch.channels, channelId);
-			Wave*                 wave          = shared.findWave(pchannel.waveId);
-			std::vector<Plugin*>  plugins       = shared.findPlugins(pchannel.pluginIds);
-			ChannelShared*        channelShared = shared.findChannel(pchannel.id);
+			const Patch::Channel& pchannel = *u::vector::findIfSafe(patch.channels, channelId);
+			const std::vector<ID> waveIds  = u::vector::map(pchannel.samples, [](const Patch::Sample& s)
+			 { return s.waveId; });
+
+			std::vector<Wave*>   waves         = shared.findWaves(waveIds);
+			std::vector<Plugin*> plugins       = shared.findPlugins(pchannel.pluginIds);
+			ChannelShared*       channelShared = shared.findChannel(pchannel.id);
 			assert(channelShared != nullptr);
 
-			Channel channel = channelFactory::deserializeChannel(pchannel, *channelShared, sampleRateRatio, wave, plugins);
+			Channel channel = channelFactory::deserializeChannel(pchannel, *channelShared, sampleRateRatio, waves, plugins);
 			track.addChannel(std::move(channel));
 		}
 	}

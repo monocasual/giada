@@ -54,7 +54,7 @@ constexpr auto PATCH_KEY_CHANNELS                     = "channels";
 constexpr auto PATCH_KEY_CHANNEL_TYPE                 = "type";
 constexpr auto PATCH_KEY_CHANNEL_ID                   = "id";
 constexpr auto PATCH_KEY_CHANNEL_SIZE                 = "size";
-constexpr auto PATCH_KEY_CHANNEL_NAME                 = "name";
+constexpr auto PATCH_KEY_CHANNEL_NAMES                = "names";
 constexpr auto PATCH_KEY_CHANNEL_MUTE                 = "mute";
 constexpr auto PATCH_KEY_CHANNEL_SOLO                 = "solo";
 constexpr auto PATCH_KEY_CHANNEL_VOLUME               = "volume";
@@ -75,11 +75,9 @@ constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT_L           = "midi_out_l";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING   = "midi_out_l_playing";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE      = "midi_out_l_mute";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO      = "midi_out_l_solo";
-constexpr auto PATCH_KEY_CHANNEL_WAVE_ID              = "wave_id";
 constexpr auto PATCH_KEY_CHANNEL_KEY                  = "key";
+constexpr auto PATCH_KEY_CHANNEL_SAMPLES              = "samples";
 constexpr auto PATCH_KEY_CHANNEL_MODE                 = "mode";
-constexpr auto PATCH_KEY_CHANNEL_BEGIN                = "begin";
-constexpr auto PATCH_KEY_CHANNEL_END                  = "end";
 constexpr auto PATCH_KEY_CHANNEL_SHIFT                = "shift";
 constexpr auto PATCH_KEY_CHANNEL_HAS_ACTIONS          = "has_actions";
 constexpr auto PATCH_KEY_CHANNEL_READ_ACTIONS         = "read_actions";
@@ -225,7 +223,6 @@ void readChannels_(Patch& patch, const nlohmann::json& j)
 		c.type              = static_cast<ChannelType>(jchannel.value(PATCH_KEY_CHANNEL_TYPE, 1));
 		c.volume            = jchannel.value(PATCH_KEY_CHANNEL_VOLUME, G_DEFAULT_VOL);
 		c.height            = jchannel.value(PATCH_KEY_CHANNEL_SIZE, G_GUI_UNIT);
-		c.name              = jchannel.value(PATCH_KEY_CHANNEL_NAME, "");
 		c.key               = jchannel.value(PATCH_KEY_CHANNEL_KEY, 0);
 		c.mute              = jchannel.value(PATCH_KEY_CHANNEL_MUTE, 0);
 		c.solo              = jchannel.value(PATCH_KEY_CHANNEL_SOLO, 0);
@@ -247,9 +244,6 @@ void readChannels_(Patch& patch, const nlohmann::json& j)
 		c.midiOutLsolo      = jchannel.value(PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO, 0);
 		c.armed             = jchannel.value(PATCH_KEY_CHANNEL_ARMED, false);
 		c.mode              = static_cast<SamplePlayerMode>(jchannel.value(PATCH_KEY_CHANNEL_MODE, 1));
-		c.waveId            = jchannel.value(PATCH_KEY_CHANNEL_WAVE_ID, 0);
-		c.range.a           = jchannel.value(PATCH_KEY_CHANNEL_BEGIN, 0);
-		c.range.b           = jchannel.value(PATCH_KEY_CHANNEL_END, 0);
 		c.shift             = jchannel.value(PATCH_KEY_CHANNEL_SHIFT, 0);
 		c.readActions       = jchannel.value(PATCH_KEY_CHANNEL_READ_ACTIONS, false);
 		c.pitch             = jchannel.value(PATCH_KEY_CHANNEL_PITCH, G_DEFAULT_PITCH);
@@ -260,6 +254,14 @@ void readChannels_(Patch& patch, const nlohmann::json& j)
 		c.midiInPitch       = jchannel.value(PATCH_KEY_CHANNEL_MIDI_IN_PITCH, 0);
 		c.midiOut           = jchannel.value(PATCH_KEY_CHANNEL_MIDI_OUT, 0);
 		c.midiOutChan       = jchannel.value(PATCH_KEY_CHANNEL_MIDI_OUT_CHAN, 0);
+
+		if (jchannel.contains(PATCH_KEY_CHANNEL_NAMES))
+			for (const auto& jname : jchannel[PATCH_KEY_CHANNEL_NAMES])
+				c.names.push_back(jname);
+
+		if (jchannel.contains(PATCH_KEY_CHANNEL_SAMPLES))
+			for (const auto& jsample : jchannel[PATCH_KEY_CHANNEL_SAMPLES])
+				c.samples.push_back(jsample);
 
 		if (jchannel.contains(PATCH_KEY_CHANNEL_PLUGINS))
 			for (const auto& jplugin : jchannel[PATCH_KEY_CHANNEL_PLUGINS])
@@ -380,7 +382,6 @@ void writeChannels_(const Patch& patch, nlohmann::json& j)
 		jchannel[PATCH_KEY_CHANNEL_ID]                   = c.id;
 		jchannel[PATCH_KEY_CHANNEL_TYPE]                 = static_cast<int>(c.type);
 		jchannel[PATCH_KEY_CHANNEL_SIZE]                 = c.height;
-		jchannel[PATCH_KEY_CHANNEL_NAME]                 = c.name;
 		jchannel[PATCH_KEY_CHANNEL_MUTE]                 = c.mute;
 		jchannel[PATCH_KEY_CHANNEL_SOLO]                 = c.solo;
 		jchannel[PATCH_KEY_CHANNEL_VOLUME]               = c.volume;
@@ -402,10 +403,7 @@ void writeChannels_(const Patch& patch, nlohmann::json& j)
 		jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE]      = c.midiOutLmute;
 		jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO]      = c.midiOutLsolo;
 		jchannel[PATCH_KEY_CHANNEL_KEY]                  = c.key;
-		jchannel[PATCH_KEY_CHANNEL_WAVE_ID]              = c.waveId;
 		jchannel[PATCH_KEY_CHANNEL_MODE]                 = static_cast<int>(c.mode);
-		jchannel[PATCH_KEY_CHANNEL_BEGIN]                = c.range.a;
-		jchannel[PATCH_KEY_CHANNEL_END]                  = c.range.b;
 		jchannel[PATCH_KEY_CHANNEL_SHIFT]                = c.shift;
 		jchannel[PATCH_KEY_CHANNEL_READ_ACTIONS]         = c.readActions;
 		jchannel[PATCH_KEY_CHANNEL_PITCH]                = c.pitch;
@@ -416,6 +414,14 @@ void writeChannels_(const Patch& patch, nlohmann::json& j)
 		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_PITCH]        = c.midiInPitch;
 		jchannel[PATCH_KEY_CHANNEL_MIDI_OUT]             = c.midiOut;
 		jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_CHAN]        = c.midiOutChan;
+
+		jchannel[PATCH_KEY_CHANNEL_NAMES] = nlohmann::json::array();
+		for (const std::string& name : c.names)
+			jchannel[PATCH_KEY_CHANNEL_NAMES].push_back(name);
+
+		jchannel[PATCH_KEY_CHANNEL_SAMPLES] = nlohmann::json::array();
+		for (const Patch::Sample& sample : c.samples)
+			jchannel[PATCH_KEY_CHANNEL_SAMPLES].push_back(sample);
 
 		jchannel[PATCH_KEY_CHANNEL_PLUGINS] = nlohmann::json::array();
 		for (ID pid : c.pluginIds)
@@ -473,10 +479,6 @@ void sanitize_(Patch& patch)
 		const bool isInternalChannel = c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER;
 		if (isInternalChannel)
 			c.armed = false;
-
-		/* Set waveId to 0 for non-Sample Channels. */
-		if (c.type != ChannelType::SAMPLE)
-			c.waveId = 0;
 	}
 }
 } // namespace
