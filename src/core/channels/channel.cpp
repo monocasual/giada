@@ -84,7 +84,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , midiLightning(p)
 , m_mute(p.mute)
 , m_solo(p.solo)
-// , m_name(p.name) - TODO - scenes
+, m_names(p.names)
 {
 	shared->readActions.store(p.readActions);
 	shared->recStatus.store(p.readActions ? ChannelStatus::PLAY : ChannelStatus::OFF);
