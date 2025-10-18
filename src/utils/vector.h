@@ -115,10 +115,11 @@ auto atOr(const Vector& v, int index, Default d)
 
 /* -------------------------------------------------------------------------- */
 
-template <typename T, typename F>
-auto map(const std::vector<T>& input, F&& func)
+template <typename Container, typename F>
+auto map(const Container& input, F&& func)
 {
-	using OutType = decltype(func(std::declval<T>()));
+	using OutType = decltype(func(*input.begin()));
+
 	std::vector<OutType> result;
 	result.reserve(input.size());
 	std::transform(input.begin(), input.end(), std::back_inserter(result), std::forward<F>(func));
