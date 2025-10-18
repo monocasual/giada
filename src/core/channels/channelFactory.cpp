@@ -154,14 +154,12 @@ const Patch::Channel serializeChannel(const Channel& c)
 	pc.midiOutLplaying   = c.midiLightning.playing.getValue();
 	pc.midiOutLmute      = c.midiLightning.mute.getValue();
 	pc.midiOutLsolo      = c.midiLightning.solo.getValue();
-
-	for (std::size_t i = 0; i < G_MAX_NUM_SCENES; i++)
-		pc.names.push_back(c.getName(i));
+	pc.names             = c.getNames();
 
 	if (c.type == ChannelType::SAMPLE)
 	{
 		for (std::size_t i = 0; i < G_MAX_NUM_SCENES; i++)
-			pc.samples.push_back({c.sampleChannel->getWaveId(i), c.sampleChannel->getRange(i)});
+			pc.samples[i] = {c.sampleChannel->getWaveId(i), c.sampleChannel->getRange(i)};
 		pc.mode              = c.sampleChannel->mode;
 		pc.pitch             = c.sampleChannel->pitch;
 		pc.shift             = c.sampleChannel->shift;

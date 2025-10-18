@@ -256,12 +256,10 @@ void readChannels_(Patch& patch, const nlohmann::json& j)
 		c.midiOutChan       = jchannel.value(PATCH_KEY_CHANNEL_MIDI_OUT_CHAN, 0);
 
 		if (jchannel.contains(PATCH_KEY_CHANNEL_NAMES))
-			for (const auto& jname : jchannel[PATCH_KEY_CHANNEL_NAMES])
-				c.names.push_back(jname);
+			c.names = jchannel[PATCH_KEY_CHANNEL_NAMES];
 
 		if (jchannel.contains(PATCH_KEY_CHANNEL_SAMPLES))
-			for (const auto& jsample : jchannel[PATCH_KEY_CHANNEL_SAMPLES])
-				c.samples.push_back(jsample);
+			c.samples = jchannel[PATCH_KEY_CHANNEL_SAMPLES];
 
 		if (jchannel.contains(PATCH_KEY_CHANNEL_PLUGINS))
 			for (const auto& jplugin : jchannel[PATCH_KEY_CHANNEL_PLUGINS])
