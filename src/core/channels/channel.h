@@ -55,7 +55,8 @@ public:
 	bool canActionRec(std::size_t scene) const;
 	bool hasWave(std::size_t scene) const;
 
-	std::string getName(std::size_t scene) const;
+	std::string                    getName(std::size_t scene) const;
+	const SceneArray<std::string>& getNames() const;
 
 	/* canReceiveAudio
 	Tells if the sample channel can receive audio as input monitor. */

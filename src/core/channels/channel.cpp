@@ -169,7 +169,8 @@ bool Channel::isPlaying() const
 
 /* -------------------------------------------------------------------------- */
 
-std::string Channel::getName(std::size_t scene) const { return m_names[scene]; }
+std::string                    Channel::getName(std::size_t scene) const { return m_names[scene]; }
+const SceneArray<std::string>& Channel::getNames() const { return m_names; };
 
 /* -------------------------------------------------------------------------- */
 
