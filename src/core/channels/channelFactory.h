@@ -70,7 +70,7 @@ Data create(const Channel& ch, int bufferSize, Resampler::Quality);
 /* (de)deserializeChannel
 Creates a new channel given the patch raw data and vice versa. */
 
-Channel              deserializeChannel(const Patch::Channel& c, ChannelShared&, float samplerateRatio, std::vector<Wave*> waves, std::vector<Plugin*>);
+Channel              deserializeChannel(const Patch::Channel& c, ChannelShared&, float samplerateRatio, const SceneArray<Sample>&, std::vector<Plugin*>);
 const Patch::Channel serializeChannel(const Channel& c);
 
 /* deserializeShared

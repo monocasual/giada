@@ -42,7 +42,7 @@ SampleChannel::SampleChannel()
 
 /* -------------------------------------------------------------------------- */
 
-SampleChannel::SampleChannel(const Patch::Channel& p, std::vector<Wave*> waves, float samplerateRatio)
+SampleChannel::SampleChannel(const Patch::Channel& p, const SceneArray<Sample>& samples, float samplerateRatio)
 : inputMonitor(p.inputMonitor)
 , overdubProtection(p.overdubProtection)
 , mode(p.mode)
@@ -51,8 +51,8 @@ SampleChannel::SampleChannel(const Patch::Channel& p, std::vector<Wave*> waves, 
 , velocityAsVol(p.midiInVeloAsVol)
 {
 	std::size_t scene = 0;
-	for (Wave* wave : waves)
-		setWave(wave, scene++, samplerateRatio);
+	for (const Sample& sample : samples)
+		setSample(sample, scene++, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -153,5 +153,13 @@ void SampleChannel::setWave(Wave* w, std::size_t scene, float samplerateRatio)
 void SampleChannel::setRange(SampleRange newRange, std::size_t scene)
 {
 	m_samples[scene].range = newRange;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleChannel::setSample(const Sample& sample, std::size_t scene, float samplerateRatio)
+{
+	setWave(sample.wave, scene, samplerateRatio);
+	setRange(sample.range, scene);
 }
 } // namespace giada::m

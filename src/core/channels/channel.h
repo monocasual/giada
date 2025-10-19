@@ -43,7 +43,7 @@ class Channel final
 {
 public:
 	Channel(ChannelType t, ID id, ChannelShared&);
-	Channel(const Patch::Channel&, ChannelShared&, float samplerateRatio, std::vector<Wave*>, std::vector<Plugin*>);
+	Channel(const Patch::Channel&, ChannelShared&, float samplerateRatio, const SceneArray<Sample>&, std::vector<Plugin*>);
 
 	bool operator==(const Channel&) const;
 

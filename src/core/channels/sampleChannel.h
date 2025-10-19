@@ -37,7 +37,7 @@ class SampleChannel final
 {
 public:
 	SampleChannel();
-	SampleChannel(const Patch::Channel&, std::vector<Wave*>, float samplerateRatio);
+	SampleChannel(const Patch::Channel&, const SceneArray<Sample>&, float samplerateRatio);
 
 	bool        isAnyLoopMode() const;
 	bool        isAnyLoopOnceMode() const;
@@ -66,6 +66,7 @@ public:
 	void setWave(Wave* w, std::size_t scene, float samplerateRatio);
 
 	void setRange(SampleRange, std::size_t scene);
+	void setSample(const Sample&, std::size_t scene, float samplerateRatio);
 
 	bool             inputMonitor;
 	bool             overdubProtection;

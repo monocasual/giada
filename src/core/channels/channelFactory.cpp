@@ -104,10 +104,11 @@ Data create(const Channel& o, int bufferSize, Resampler::Quality quality)
 
 /* -------------------------------------------------------------------------- */
 
-Channel deserializeChannel(const Patch::Channel& pch, ChannelShared& shared, float samplerateRatio, std::vector<Wave*> waves, std::vector<Plugin*> plugins)
+Channel deserializeChannel(const Patch::Channel& pch, ChannelShared& shared, float samplerateRatio,
+    const SceneArray<Sample>& samples, std::vector<Plugin*> plugins)
 {
 	channelId_.set(pch.id);
-	return Channel(pch, shared, samplerateRatio, waves, plugins);
+	return Channel(pch, shared, samplerateRatio, samples, plugins);
 }
 
 /* -------------------------------------------------------------------------- */
