@@ -32,7 +32,7 @@ TEST_CASE("rendering::sampleRendering")
 
 	SECTION("Test rendering")
 	{
-		channel.loadWave(&wave, /*scene=*/0);
+		channel.loadSample({&wave, {}}, /*scene=*/0);
 
 		REQUIRE(channel.sampleChannel->hasWave(0) == true);
 		REQUIRE(channel.sampleChannel->getRange(0).a == 0);

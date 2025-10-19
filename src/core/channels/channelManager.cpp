@@ -217,7 +217,7 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 		const auto  oldRange = oldChannel.sampleChannel->getRange(0);
 		Wave&       wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
 
-		newChannelData.channel.loadWave(&wave, 0, oldRange, oldShift);
+		newChannelData.channel.loadSample({&wave, oldRange}, 0, oldShift);
 	}
 
 	newChannelData.channel.plugins = plugins;
@@ -472,7 +472,7 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 	assert(previewCh.sampleChannel);
 	assert(sourceCh.sampleChannel);
 
-	previewCh.loadWave(sourceCh.sampleChannel->getWave(0), 0); // TODO - scene
+	previewCh.loadSample({sourceCh.sampleChannel->getWave(0), {}}, 0); // TODO - scene
 	previewCh.sampleChannel->mode = SamplePlayerMode::SINGLE_BASIC_PAUSE;
 	previewCh.sampleChannel->setRange(sourceCh.sampleChannel->getRange(0), 0); // TODO - scene
 	previewCh.sampleChannel->pitch = sourceCh.sampleChannel->pitch;
@@ -486,7 +486,7 @@ void ChannelManager::freeWaveInPreviewChannel()
 {
 	Channel& previewCh = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
-	previewCh.loadWave(nullptr, /*scene=*/0);
+	previewCh.loadSample({}, /*scene=*/0);
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -579,7 +579,7 @@ bool ChannelManager::canRemoveTrack(std::size_t trackIndex) const
 
 void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, std::size_t scene) const
 {
-	ch.loadWave(w, scene);
+	ch.loadSample({w, {}}, scene);
 	ch.setName(w != nullptr ? w->getBasename(/*ext=*/false) : "", scene);
 }
 

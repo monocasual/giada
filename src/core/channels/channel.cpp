@@ -233,14 +233,14 @@ void Channel::setName(const std::string& name, std::size_t scene) { m_names[scen
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::loadWave(Wave* w, std::size_t scene, SampleRange newRange, Frame newShift)
+void Channel::loadSample(const Sample& s, std::size_t scene, Frame newShift)
 {
 	assert(sampleChannel);
 
 	shared->tracker.store(0);
-	shared->playStatus.store(w != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
+	shared->playStatus.store(s.wave != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
 
-	sampleChannel->loadWave(w, scene, newRange, newShift);
+	sampleChannel->loadWave(s.wave, scene, s.range, newShift);
 }
 
 /* -------------------------------------------------------------------------- */
