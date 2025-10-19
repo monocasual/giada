@@ -212,12 +212,13 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 
 	if (oldChannel.sampleChannel && oldChannel.sampleChannel->hasWave(0))
 	{
+		// TODO - scenes
 		const Wave& oldWave  = *oldChannel.sampleChannel->getWave(0);
-		const Frame oldShift = oldChannel.sampleChannel->shift;
+		const Frame oldShift = oldChannel.sampleChannel->getShift(0);
 		const auto  oldRange = oldChannel.sampleChannel->getRange(0);
 		Wave&       wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
 
-		newChannelData.channel.loadSample({&wave, oldRange}, 0, oldShift);
+		newChannelData.channel.loadSample({&wave, oldRange, oldShift}, 0);
 	}
 
 	newChannelData.channel.plugins = plugins;

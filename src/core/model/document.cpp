@@ -47,7 +47,7 @@ void Document::load(const Patch& patch, Shared& shared, float sampleRateRatio)
 			std::transform(pchannel.samples.begin(), pchannel.samples.end(), samples.begin(),
 			    [&shared](const Patch::Sample& ps)
 			{
-				return Sample{shared.findWave(ps.waveId), ps.range};
+				return Sample{shared.findWave(ps.waveId), ps.range, ps.shift};
 			});
 			std::vector<Plugin*> plugins       = shared.findPlugins(pchannel.pluginIds);
 			ChannelShared*       channelShared = shared.findChannel(pchannel.id);

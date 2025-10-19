@@ -78,7 +78,6 @@ constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO      = "midi_out_l_solo";
 constexpr auto PATCH_KEY_CHANNEL_KEY                  = "key";
 constexpr auto PATCH_KEY_CHANNEL_SAMPLES              = "samples";
 constexpr auto PATCH_KEY_CHANNEL_MODE                 = "mode";
-constexpr auto PATCH_KEY_CHANNEL_SHIFT                = "shift";
 constexpr auto PATCH_KEY_CHANNEL_HAS_ACTIONS          = "has_actions";
 constexpr auto PATCH_KEY_CHANNEL_READ_ACTIONS         = "read_actions";
 constexpr auto PATCH_KEY_CHANNEL_PITCH                = "pitch";
@@ -244,7 +243,6 @@ void readChannels_(Patch& patch, const nlohmann::json& j)
 		c.midiOutLsolo      = jchannel.value(PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO, 0);
 		c.armed             = jchannel.value(PATCH_KEY_CHANNEL_ARMED, false);
 		c.mode              = static_cast<SamplePlayerMode>(jchannel.value(PATCH_KEY_CHANNEL_MODE, 1));
-		c.shift             = jchannel.value(PATCH_KEY_CHANNEL_SHIFT, 0);
 		c.readActions       = jchannel.value(PATCH_KEY_CHANNEL_READ_ACTIONS, false);
 		c.pitch             = jchannel.value(PATCH_KEY_CHANNEL_PITCH, G_DEFAULT_PITCH);
 		c.inputMonitor      = jchannel.value(PATCH_KEY_CHANNEL_INPUT_MONITOR, false);
@@ -402,7 +400,6 @@ void writeChannels_(const Patch& patch, nlohmann::json& j)
 		jchannel[PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO]      = c.midiOutLsolo;
 		jchannel[PATCH_KEY_CHANNEL_KEY]                  = c.key;
 		jchannel[PATCH_KEY_CHANNEL_MODE]                 = static_cast<int>(c.mode);
-		jchannel[PATCH_KEY_CHANNEL_SHIFT]                = c.shift;
 		jchannel[PATCH_KEY_CHANNEL_READ_ACTIONS]         = c.readActions;
 		jchannel[PATCH_KEY_CHANNEL_PITCH]                = c.pitch;
 		jchannel[PATCH_KEY_CHANNEL_INPUT_MONITOR]        = c.inputMonitor;

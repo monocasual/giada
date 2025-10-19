@@ -89,9 +89,9 @@ public:
 
 	/* loadWave
 	Loads Wave and sets it up (name, markers, ...). Also updates Channel's shared
-	state accordingly. Resets begin/end points shift if not specified. */
+	state accordingly. Resets begin/end points shift if not specified (-1). */
 
-	void loadSample(const Sample&, std::size_t scene, Frame shift = -1);
+	void loadSample(const Sample&, std::size_t scene);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The

@@ -208,13 +208,16 @@ void SampleEditorApi::trim(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::shift(ID channelId, Frame offset)
 {
+	assert(false); // TODO - scenes
+#if 0
 	const Channel& ch       = m_channelManager.getChannel(channelId);
-	const Frame    oldShift = ch.sampleChannel->shift;
+	const Frame    oldShift = ch.sampleChannel->getShift(/*scene=*/0);
 
 	m::model::SharedLock lock = m_model.lockShared();
 	m::wfx::shift(getWave(channelId), offset - oldShift);
 	// Model has been swapped by DataLock constructor, needs to get Channel again
 	m_channelManager.getChannel(channelId).sampleChannel->shift = offset;
+#endif
 }
 
 /* -------------------------------------------------------------------------- */

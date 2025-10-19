@@ -35,7 +35,6 @@ SampleChannel::SampleChannel()
 , overdubProtection(false)
 , mode(SamplePlayerMode::SINGLE_BASIC)
 , pitch(G_DEFAULT_PITCH)
-, shift(0)
 , velocityAsVol(false)
 {
 }
@@ -47,7 +46,6 @@ SampleChannel::SampleChannel(const Patch::Channel& p, const SceneArray<Sample>& 
 , overdubProtection(p.overdubProtection)
 , mode(p.mode)
 , pitch(p.pitch)
-, shift(p.shift)
 , velocityAsVol(p.midiInVeloAsVol)
 {
 	std::size_t scene = 0;
@@ -109,6 +107,10 @@ SampleRange SampleChannel::getRange(std::size_t scene) const { return m_samples[
 
 /* -------------------------------------------------------------------------- */
 
+Frame SampleChannel::getShift(std::size_t scene) const { return m_samples[scene].shift; }
+
+/* -------------------------------------------------------------------------- */
+
 const SceneArray<Sample>& SampleChannel::getSamples() const { return m_samples; }
 
 /* -------------------------------------------------------------------------- */
@@ -120,14 +122,13 @@ Frame SampleChannel::getWaveSize(std::size_t scene) const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::loadSample(const Sample& s, std::size_t scene, Frame newShift)
+void SampleChannel::loadSample(const Sample& s, std::size_t scene)
 {
 	m_samples[scene] = {s.wave, {}};
-	shift            = 0;
 
 	if (s.wave != nullptr)
 	{
-		shift                  = newShift == -1 ? 0 : newShift;
+		m_samples[scene].shift = s.shift == -1 ? 0 : s.shift;
 		m_samples[scene].range = s.range.isValid() ? s.range : SampleRange(0, s.wave->getBuffer().countFrames());
 	}
 }
@@ -144,7 +145,7 @@ void SampleChannel::setWave(Wave* w, std::size_t scene, float samplerateRatio)
 	if (samplerateRatio != 1.0f)
 	{
 		m_samples[scene].range *= samplerateRatio;
-		shift *= samplerateRatio;
+		m_samples[scene].shift *= samplerateRatio;
 	}
 }
 
@@ -161,5 +162,12 @@ void SampleChannel::setSample(const Sample& sample, std::size_t scene, float sam
 {
 	setWave(sample.wave, scene, samplerateRatio);
 	setRange(sample.range, scene);
+	setShift(sample.shift, scene);
+}
+/* -------------------------------------------------------------------------- */
+
+void SampleChannel::setShift(Frame shift, std::size_t scene)
+{
+	m_samples[scene].shift = shift;
 }
 } // namespace giada::m

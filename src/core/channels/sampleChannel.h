@@ -49,14 +49,15 @@ public:
 	Frame       getWaveSize(std::size_t scene) const;
 	Wave*       getWave(std::size_t scene) const;
 	SampleRange getRange(std::size_t scene) const;
+	Frame       getShift(std::size_t scene) const;
 
 	const SceneArray<Sample>& getSamples() const;
 
 	/* loadSample
 	Loads Wave and sets it up (name, markers, ...). Resets begin/end points
-	and shift if not specified. */
+	and shift if not specified (-1). */
 
-	void loadSample(const Sample&, std::size_t scene, Frame newShift = -1);
+	void loadSample(const Sample&, std::size_t scene);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The
@@ -67,12 +68,12 @@ public:
 
 	void setRange(SampleRange, std::size_t scene);
 	void setSample(const Sample&, std::size_t scene, float samplerateRatio);
+	void setShift(Frame, std::size_t scene);
 
 	bool             inputMonitor;
 	bool             overdubProtection;
 	SamplePlayerMode mode;
 	float            pitch;
-	Frame            shift;
 	bool             velocityAsVol; // Velocity drives volume
 
 private:

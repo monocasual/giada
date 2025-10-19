@@ -94,6 +94,7 @@ struct Sample
 {
 	m::Wave*    wave = nullptr;
 	SampleRange range;
+	Frame       shift = 0;
 };
 } // namespace giada
 
