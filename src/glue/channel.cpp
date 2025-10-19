@@ -147,6 +147,7 @@ bool          Data::isRecordingActions() const { return g_engine->getMainApi().i
 bool          Data::isMuted() const { return g_engine->getChannelsApi().get(id).isMuted(); }
 bool          Data::isSoloed() const { return g_engine->getChannelsApi().get(id).isSoloed(); }
 bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).armed; }
+bool          Data::isActive() const { return g_engine->getChannelsApi().get(id).isActive(); }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */

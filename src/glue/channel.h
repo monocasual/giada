@@ -95,6 +95,7 @@ struct Data
 	bool          isMuted() const;
 	bool          isSoloed() const;
 	bool          isArmed() const;
+	bool          isActive() const;
 
 	ID                      id;
 	std::size_t             trackIndex;

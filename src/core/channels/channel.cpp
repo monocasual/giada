@@ -169,6 +169,14 @@ bool Channel::isPlaying() const
 
 /* -------------------------------------------------------------------------- */
 
+bool Channel::isActive() const
+{
+	ChannelStatus s = shared->playStatus.load();
+	return s == ChannelStatus::PLAY || s == ChannelStatus::WAIT || s == ChannelStatus::ENDING;
+}
+
+/* -------------------------------------------------------------------------- */
+
 std::string                    Channel::getName(std::size_t scene) const { return m_names[scene]; }
 const SceneArray<std::string>& Channel::getNames() const { return m_names; };
 

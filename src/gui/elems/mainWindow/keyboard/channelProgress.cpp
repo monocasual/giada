@@ -43,18 +43,15 @@ geChannelProgress::geChannelProgress(int x, int y, int w, int h, c::channel::Dat
 
 void geChannelProgress::draw()
 {
-	const ChannelStatus playStatus = m_channel.getPlayStatus();
-	const Frame         tracker    = m_channel.sample->getTracker();
-	const auto          range      = m_channel.sample->range;
-	const Pixel         pos        = u::math::map(std::max(tracker, range.a), range.a, range.b, 0, w());
+	const Frame tracker = m_channel.sample->getTracker();
+	const auto  range   = m_channel.sample->range;
+	const Pixel pos     = u::math::map(std::max(tracker, range.a), range.a, range.b, 0, w());
 
 	const geompp::Rect<int> bounds(x(), y(), w(), h());
 
 	drawRectf(bounds, G_COLOR_GREY_2); // reset background
 
-	if (playStatus == ChannelStatus::PLAY ||
-	    playStatus == ChannelStatus::WAIT ||
-	    playStatus == ChannelStatus::ENDING)
+	if (m_channel.isActive())
 	{
 		drawRectf(bounds.withW(pos), G_COLOR_LIGHT_1);
 		drawRect(bounds, G_COLOR_LIGHT_1);

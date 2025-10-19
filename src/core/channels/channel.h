@@ -55,6 +55,11 @@ public:
 	bool canActionRec(std::size_t scene) const;
 	bool hasWave(std::size_t scene) const;
 
+	/* isActive
+	True if status is PLAY, WAIT or ENDING. */
+
+	bool isActive() const;
+
 	std::string                    getName(std::size_t scene) const;
 	const SceneArray<std::string>& getNames() const;
 
