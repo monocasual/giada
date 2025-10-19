@@ -59,8 +59,9 @@ struct Patch
 		ID          waveId = 0;
 		SampleRange range;
 		Frame       shift = 0;
+		float       pitch = G_DEFAULT_PITCH;
 	};
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Sample, waveId, range, shift);
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Sample, waveId, range, shift, pitch);
 
 	struct Channel
 	{
@@ -94,7 +95,6 @@ struct Patch
 		SceneArray<Sample> samples           = {};
 		SamplePlayerMode   mode              = SamplePlayerMode::SINGLE_BASIC;
 		bool               readActions       = false;
-		float              pitch             = G_DEFAULT_PITCH;
 		bool               inputMonitor      = false;
 		bool               overdubProtection = false;
 		bool               midiInVeloAsVol   = false;

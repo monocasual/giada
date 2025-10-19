@@ -168,7 +168,7 @@ public:
 
 	void setInputMonitor(ID channelId, bool value);
 	void setVolume(ID channelId, float value);
-	void setPitch(ID channelId, float value);
+	void setPitch(ID channelId, float value, std::size_t scene);
 	void setPan(ID channelId, float value);
 	void setRange(ID channelId, SampleRange, std::size_t scene);
 	void resetRange(ID channelId, std::size_t scene);

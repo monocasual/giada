@@ -43,7 +43,7 @@ TEST_CASE("rendering::sampleRendering")
 
 		for (const float pitch : {1.0f, 0.5f})
 		{
-			channel.sampleChannel->pitch = pitch;
+			channel.sampleChannel->setPitch(pitch, /*scene=*/0);
 
 			SECTION("Sub-range [M, N), pitch == " + std::to_string(pitch))
 			{

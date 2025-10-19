@@ -122,7 +122,7 @@ void stop_(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, bool seqIsRun
 Frame render_(const Channel& ch, mcl::AudioBuffer& buf, std::size_t scene, Frame tracker, Frame offset, bool seqIsRunning, bool testEnd)
 {
 	const auto       range     = ch.sampleChannel->getRange(scene);
-	const float      pitch     = ch.sampleChannel->pitch;
+	const float      pitch     = ch.sampleChannel->getPitch(scene);
 	const Wave*      wave      = ch.sampleChannel->getWave(scene);
 	const Resampler& resampler = ch.shared->resampler.value();
 

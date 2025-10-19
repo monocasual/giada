@@ -50,6 +50,7 @@ public:
 	Wave*       getWave(std::size_t scene) const;
 	SampleRange getRange(std::size_t scene) const;
 	Frame       getShift(std::size_t scene) const;
+	float       getPitch(std::size_t scene) const;
 
 	const SceneArray<Sample>& getSamples() const;
 
@@ -69,11 +70,11 @@ public:
 	void setRange(SampleRange, std::size_t scene);
 	void setSample(const Sample&, std::size_t scene, float samplerateRatio);
 	void setShift(Frame, std::size_t scene);
+	void setPitch(float, std::size_t scene);
 
 	bool             inputMonitor;
 	bool             overdubProtection;
 	SamplePlayerMode mode;
-	float            pitch;
 	bool             velocityAsVol; // Velocity drives volume
 
 private:

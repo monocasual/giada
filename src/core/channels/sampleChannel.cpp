@@ -34,7 +34,6 @@ SampleChannel::SampleChannel()
 : inputMonitor(false)
 , overdubProtection(false)
 , mode(SamplePlayerMode::SINGLE_BASIC)
-, pitch(G_DEFAULT_PITCH)
 , velocityAsVol(false)
 {
 }
@@ -45,7 +44,6 @@ SampleChannel::SampleChannel(const Patch::Channel& p, const SceneArray<Sample>& 
 : inputMonitor(p.inputMonitor)
 , overdubProtection(p.overdubProtection)
 , mode(p.mode)
-, pitch(p.pitch)
 , velocityAsVol(p.midiInVeloAsVol)
 {
 	std::size_t scene = 0;
@@ -111,6 +109,10 @@ Frame SampleChannel::getShift(std::size_t scene) const { return m_samples[scene]
 
 /* -------------------------------------------------------------------------- */
 
+float SampleChannel::getPitch(std::size_t scene) const { return m_samples[scene].pitch; }
+
+/* -------------------------------------------------------------------------- */
+
 const SceneArray<Sample>& SampleChannel::getSamples() const { return m_samples; }
 
 /* -------------------------------------------------------------------------- */
@@ -163,11 +165,20 @@ void SampleChannel::setSample(const Sample& sample, std::size_t scene, float sam
 	setWave(sample.wave, scene, samplerateRatio);
 	setRange(sample.range, scene);
 	setShift(sample.shift, scene);
+	setPitch(sample.pitch, scene);
 }
+
 /* -------------------------------------------------------------------------- */
 
 void SampleChannel::setShift(Frame shift, std::size_t scene)
 {
 	m_samples[scene].shift = shift;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleChannel::setPitch(float pitch, std::size_t scene)
+{
+	m_samples[scene].pitch = pitch;
 }
 } // namespace giada::m

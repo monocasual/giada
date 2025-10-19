@@ -216,7 +216,7 @@ void ChannelsApi::setVolume(ID channelId, float v)
 
 void ChannelsApi::setPitch(ID channelId, float v)
 {
-	m_channelManager.setPitch(channelId, v);
+	m_channelManager.setPitch(channelId, v, m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */

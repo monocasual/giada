@@ -80,7 +80,6 @@ constexpr auto PATCH_KEY_CHANNEL_SAMPLES              = "samples";
 constexpr auto PATCH_KEY_CHANNEL_MODE                 = "mode";
 constexpr auto PATCH_KEY_CHANNEL_HAS_ACTIONS          = "has_actions";
 constexpr auto PATCH_KEY_CHANNEL_READ_ACTIONS         = "read_actions";
-constexpr auto PATCH_KEY_CHANNEL_PITCH                = "pitch";
 constexpr auto PATCH_KEY_CHANNEL_INPUT_MONITOR        = "input_monitor";
 constexpr auto PATCH_KEY_CHANNEL_OVERDUB_PROTECTION   = "overdub_protection";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS = "midi_in_read_actions";
@@ -244,7 +243,6 @@ void readChannels_(Patch& patch, const nlohmann::json& j)
 		c.armed             = jchannel.value(PATCH_KEY_CHANNEL_ARMED, false);
 		c.mode              = static_cast<SamplePlayerMode>(jchannel.value(PATCH_KEY_CHANNEL_MODE, 1));
 		c.readActions       = jchannel.value(PATCH_KEY_CHANNEL_READ_ACTIONS, false);
-		c.pitch             = jchannel.value(PATCH_KEY_CHANNEL_PITCH, G_DEFAULT_PITCH);
 		c.inputMonitor      = jchannel.value(PATCH_KEY_CHANNEL_INPUT_MONITOR, false);
 		c.overdubProtection = jchannel.value(PATCH_KEY_CHANNEL_OVERDUB_PROTECTION, false);
 		c.midiInVeloAsVol   = jchannel.value(PATCH_KEY_CHANNEL_MIDI_IN_VELO_AS_VOL, 0);
@@ -401,7 +399,6 @@ void writeChannels_(const Patch& patch, nlohmann::json& j)
 		jchannel[PATCH_KEY_CHANNEL_KEY]                  = c.key;
 		jchannel[PATCH_KEY_CHANNEL_MODE]                 = static_cast<int>(c.mode);
 		jchannel[PATCH_KEY_CHANNEL_READ_ACTIONS]         = c.readActions;
-		jchannel[PATCH_KEY_CHANNEL_PITCH]                = c.pitch;
 		jchannel[PATCH_KEY_CHANNEL_INPUT_MONITOR]        = c.inputMonitor;
 		jchannel[PATCH_KEY_CHANNEL_OVERDUB_PROTECTION]   = c.overdubProtection;
 		jchannel[PATCH_KEY_CHANNEL_MIDI_IN_VELO_AS_VOL]  = c.midiInVeloAsVol;

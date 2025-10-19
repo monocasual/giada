@@ -343,14 +343,14 @@ void ChannelManager::setVolume(ID channelId, float value)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::setPitch(ID channelId, float value)
+void ChannelManager::setPitch(ID channelId, float value, std::size_t scene)
 {
 	assert(m_model.get().tracks.getChannel(channelId).sampleChannel);
 
 	const float pitch = std::clamp(value, G_MIN_PITCH, G_MAX_PITCH);
 
-	m_model.get().tracks.getChannel(channelId).sampleChannel->pitch          = pitch;
-	m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID).sampleChannel->pitch = pitch;
+	m_model.get().tracks.getChannel(channelId).sampleChannel->setPitch(pitch, scene);
+	m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID).sampleChannel->setPitch(pitch, /*scene=*/0);
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -476,7 +476,7 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 	previewCh.loadSample({sourceCh.sampleChannel->getWave(0), {}}, 0); // TODO - scene
 	previewCh.sampleChannel->mode = SamplePlayerMode::SINGLE_BASIC_PAUSE;
 	previewCh.sampleChannel->setRange(sourceCh.sampleChannel->getRange(0), 0); // TODO - scene
-	previewCh.sampleChannel->pitch = sourceCh.sampleChannel->pitch;
+	previewCh.sampleChannel->setPitch(sourceCh.sampleChannel->getPitch(0), 0); // TODO - scene
 
 	m_model.swap(model::SwapType::SOFT);
 }
