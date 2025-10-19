@@ -52,11 +52,11 @@ public:
 
 	const SceneArray<Sample>& getSamples() const;
 
-	/* loadWave
+	/* loadSample
 	Loads Wave and sets it up (name, markers, ...). Resets begin/end points
 	and shift if not specified. */
 
-	void loadWave(Wave*, std::size_t scene, SampleRange newRange = {}, Frame shift = -1);
+	void loadSample(const Sample&, std::size_t scene, Frame newShift = -1);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The

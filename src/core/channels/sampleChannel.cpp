@@ -120,15 +120,15 @@ Frame SampleChannel::getWaveSize(std::size_t scene) const
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::loadWave(Wave* w, std::size_t scene, SampleRange newRange, Frame newShift)
+void SampleChannel::loadSample(const Sample& s, std::size_t scene, Frame newShift)
 {
-	m_samples[scene] = {w, {}};
+	m_samples[scene] = {s.wave, {}};
 	shift            = 0;
 
-	if (w != nullptr)
+	if (s.wave != nullptr)
 	{
 		shift                  = newShift == -1 ? 0 : newShift;
-		m_samples[scene].range = newRange.isValid() ? newRange : SampleRange(0, w->getBuffer().countFrames());
+		m_samples[scene].range = s.range.isValid() ? s.range : SampleRange(0, s.wave->getBuffer().countFrames());
 	}
 }
 

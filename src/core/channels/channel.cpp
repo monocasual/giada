@@ -240,7 +240,7 @@ void Channel::loadSample(const Sample& s, std::size_t scene, Frame newShift)
 	shared->tracker.store(0);
 	shared->playStatus.store(s.wave != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
 
-	sampleChannel->loadWave(s.wave, scene, s.range, newShift);
+	sampleChannel->loadSample(s, scene, newShift);
 }
 
 /* -------------------------------------------------------------------------- */
