@@ -30,6 +30,7 @@
 #include "src/glue/sampleEditor.h"
 #include "src/gui/const.h"
 #include "src/gui/dialogs/sampleEditor.h"
+#include "src/gui/drawing.h"
 #include "src/gui/elems/basics/boxtypes.h"
 #include "src/gui/elems/sampleEditor/waveTools.h"
 #include "src/utils/log.h"
@@ -74,7 +75,8 @@ void geWaveform::clearData()
 
 int geWaveform::alloc(int datasize, bool force)
 {
-	assert(m_data->sample.wave != nullptr);
+	if (!m_data->isValid())
+		return 0;
 
 	const m::Wave& wave = *m_data->sample.wave;
 
@@ -285,29 +287,38 @@ void geWaveform::draw()
 
 	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2); // blank canvas
 
-	/* Draw things from 'from' (offset driven by the scrollbar) to 'to' (width of
-	parent window). We don't draw the entire waveform, only the visible part. */
+	if (m_data->isValid())
+	{
+		/* Draw things from 'from' (offset driven by the scrollbar) to 'to' (width of
+		parent window). We don't draw the entire waveform, only the visible part. */
 
-	int from = abs(x() - parent()->x());
-	int to   = from + parent()->w();
-	if (x() + w() < parent()->w())
-		to = x() + w() - BORDER;
+		int from = abs(x() - parent()->x());
+		int to   = from + parent()->w();
+		if (x() + w() < parent()->w())
+			to = x() + w() - BORDER;
 
-	drawSelection();
-	drawWaveform(from, to);
-	drawGrid(from, to);
-	drawPlayHead();
+		drawSelection();
+		drawWaveform(from, to);
+		drawGrid(from, to);
+		drawPlayHead();
 
-	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4); // border box
+		fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4); // border box
 
-	drawStartEndPoints();
+		drawStartEndPoints();
+	}
+	else
+	{
+		drawText("No audio data.", {x(), y(), w(), h()}, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_GREY_4);
+		fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4); // border box
+	}
 }
 
 /* -------------------------------------------------------------------------- */
 
 int geWaveform::handle(int e)
 {
-	assert(m_data->sample.wave != nullptr);
+	if (!m_data->isValid())
+		return 0;
 
 	const m::Wave& wave = *m_data->sample.wave;
 

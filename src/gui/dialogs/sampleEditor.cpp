@@ -218,6 +218,14 @@ void gdSampleEditor::rebuild()
 
 	updateInfo();
 
+	if (!m_data.isValid())
+	{
+		rangeTool->deactivate();
+		pitchTool->deactivate();
+		shiftTool->deactivate();
+		reload->deactivate();
+	}
+
 	if (m_data.isLogical) // Logical samples (aka takes) cannot be reloaded.
 		reload->deactivate();
 }

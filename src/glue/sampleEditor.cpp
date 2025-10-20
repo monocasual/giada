@@ -51,6 +51,11 @@ Data::Data(const m::Channel& c, std::size_t scene)
 {
 }
 
+bool Data::isValid() const
+{
+	return sample.wave != nullptr;
+}
+
 ChannelStatus Data::a_getPreviewStatus() const
 {
 	return g_engine->getSampleEditorApi().getPreviewStatus();
@@ -77,7 +82,12 @@ Frame Data::getFramesInLoop() const
 
 Data getData(ID channelId)
 {
-	return Data(g_engine->getChannelsApi().get(channelId), g_engine->getMainApi().getCurrentScene());
+	const m::Channel& channel = g_engine->getChannelsApi().get(channelId);
+	const std::size_t scene   = g_engine->getMainApi().getCurrentScene();
+
+	if (channel.sampleChannel->getSample(scene).wave == nullptr)
+		return Data();
+	return Data(channel, scene);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -51,9 +51,10 @@ namespace giada::c::sampleEditor
 {
 struct Data
 {
-	Data() = default;
+	Data() = default; // Invalid: no Wave data to display
 	Data(const m::Channel&, std::size_t scene);
 
+	bool          isValid() const;
 	ChannelStatus a_getPreviewStatus() const;
 	Frame         a_getPreviewTracker() const;
 	Frame         getFramesInBar() const;
