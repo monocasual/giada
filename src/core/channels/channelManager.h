@@ -179,7 +179,7 @@ public:
 	void setSendToMaster(ID channelId, bool value);
 	void addExtraOutput(ID channelId, int offset);
 	void removeExtraOutput(ID channelId, std::size_t);
-	void loadWaveInPreviewChannel(ID sourceChannelId);
+	void loadWaveInPreviewChannel(ID sourceChannelId, std::size_t scene);
 	void freeWaveInPreviewChannel();
 	void setPreviewTracker(Frame f);
 	bool saveSample(ID channelId, const std::string& filePath);

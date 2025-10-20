@@ -49,7 +49,7 @@ SampleEditorApi::SampleEditorApi(KernelAudio& k, model::Model& m, ChannelManager
 
 void SampleEditorApi::loadPreviewChannel(ID sourceChannelId)
 {
-	m_channelManager.loadWaveInPreviewChannel(sourceChannelId);
+	m_channelManager.loadWaveInPreviewChannel(sourceChannelId, m_sequencer.getCurrentScene());
 	m_model.get().mixer.renderPreview = true;
 	m_model.swap(model::SwapType::NONE);
 }
