@@ -168,12 +168,13 @@ void ChannelsApi::clone(ID channelId)
 	internal workings. */
 
 	const Channel&             ch            = m_channelManager.getChannel(channelId);
+	const std::size_t          scene         = m_sequencer.getCurrentScene();
 	const int                  bufferSize    = m_kernelAudio.getBufferSize();
 	const int                  sampleRate    = m_kernelAudio.getSampleRate();
 	const std::vector<Plugin*> plugins       = m_pluginManager.clonePlugins(ch.plugins, sampleRate, bufferSize, m_model);
 	const ID                   nextChannelId = channelFactory::getNextId();
 
-	m_channelManager.cloneChannel(channelId, bufferSize, plugins);
+	m_channelManager.cloneChannel(channelId, scene, bufferSize, plugins);
 	if (ch.hasActions)
 		m_actionRecorder.cloneActions(channelId, nextChannelId);
 }

@@ -199,7 +199,7 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave, std::size_t sce
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>& plugins)
+void ChannelManager::cloneChannel(ID channelId, std::size_t scene, int bufferSize, const std::vector<Plugin*>& plugins)
 {
 	const Channel&           oldChannel     = m_model.get().tracks.getChannel(channelId);
 	const std::size_t        trackIndex     = m_model.get().tracks.getByChannel(channelId).getIndex();
@@ -210,13 +210,13 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 
 	/* Clone Wave first, if any. */
 
-	if (oldChannel.sampleChannel && oldChannel.sampleChannel->hasWave(0))
+	if (oldChannel.sampleChannel && oldChannel.sampleChannel->hasWave(scene))
 	{
-		// TODO - scenes
-		const Wave& oldWave  = *oldChannel.sampleChannel->getWave(0);
-		const Frame oldShift = oldChannel.sampleChannel->getShift(0);
-		const auto  oldRange = oldChannel.sampleChannel->getRange(0);
-		Wave&       wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
+		const Sample& sample   = oldChannel.sampleChannel->getSample(scene);
+		const Wave&   oldWave  = *sample.wave;
+		const Frame   oldShift = sample.shift;
+		const auto    oldRange = sample.range;
+		Wave&         wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
 
 		newChannelData.channel.loadSample({&wave, oldRange, oldShift}, 0);
 	}

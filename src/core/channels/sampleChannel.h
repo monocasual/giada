@@ -53,6 +53,7 @@ public:
 	float       getPitch(std::size_t scene) const;
 
 	const SceneArray<Sample>& getSamples() const;
+	const Sample&             getSample(std::size_t scene) const;
 
 	/* loadSample
 	Loads Wave and sets it up (name, markers, ...). Resets begin/end points
