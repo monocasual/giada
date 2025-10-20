@@ -179,7 +179,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 
 	rewind->onClick = [this]()
 	{
-		c::sampleEditor::setPreviewTracker(m_data.range.a);
+		c::sampleEditor::setPreviewTracker(m_data.sample.range.a);
 	};
 
 	loop->onChange = [](bool shouldLoop)

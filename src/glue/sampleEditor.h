@@ -54,19 +54,16 @@ struct Data
 	Data() = default;
 	Data(const m::Channel&, std::size_t scene);
 
-	ChannelStatus  a_getPreviewStatus() const;
-	Frame          a_getPreviewTracker() const;
-	const m::Wave& getWaveRef() const; // TODO - getWaveData (or public ptr member to Wave::data)
-	Frame          getFramesInBar() const;
-	Frame          getFramesInLoop() const;
+	ChannelStatus a_getPreviewStatus() const;
+	Frame         a_getPreviewTracker() const;
+	Frame         getFramesInBar() const;
+	Frame         getFramesInLoop() const;
 
 	ID          channelId;
 	std::string name;
 	float       volume;
 	float       pan;
-	float       pitch;
-	SampleRange range;
-	Frame       shift;
+	Sample      sample;
 	Frame       waveSize;
 	int         waveBits;
 	float       waveDuration;

@@ -39,9 +39,7 @@ Data::Data(const m::Channel& c, std::size_t scene)
 , name(c.getName(scene))
 , volume(c.volume)
 , pan(c.pan.asFloat())
-, pitch(c.sampleChannel->getPitch(scene))
-, range(c.sampleChannel->getRange(scene))
-, shift(c.sampleChannel->getShift(scene))
+, sample(c.sampleChannel->getSample(scene))
 , waveSize(c.sampleChannel->getWave(scene)->getBuffer().countFrames())
 , waveBits(c.sampleChannel->getWave(scene)->getBits())
 , waveDuration(c.sampleChannel->getWave(scene)->getDuration())
@@ -61,11 +59,6 @@ ChannelStatus Data::a_getPreviewStatus() const
 Frame Data::a_getPreviewTracker() const
 {
 	return g_engine->getSampleEditorApi().getPreviewTracker();
-}
-
-const m::Wave& Data::getWaveRef() const
-{
-	return *m_channel->sampleChannel->getWave(m_scene);
 }
 
 Frame Data::getFramesInBar() const
