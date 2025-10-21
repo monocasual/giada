@@ -51,7 +51,7 @@ public:
 	bool isInternal() const;
 	bool isMuted() const;
 	bool isSoloed() const;
-	bool canInputRec() const;
+	bool canInputRec(std::size_t scene) const;
 	bool canActionRec(std::size_t scene) const;
 	bool hasWave(std::size_t scene) const;
 

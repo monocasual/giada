@@ -541,10 +541,10 @@ void ChannelManager::finalizeActionRec(const std::unordered_set<ID>& ids)
 
 /* -------------------------------------------------------------------------- */
 
-bool ChannelManager::hasInputRecordableChannels() const
+bool ChannelManager::hasInputRecordableChannels(std::size_t scene) const
 {
-	return m_model.get().tracks.anyChannelOf([](const Channel& ch)
-	{ return ch.canInputRec(); });
+	return m_model.get().tracks.anyChannelOf([scene](const Channel& ch)
+	{ return ch.canInputRec(scene); });
 }
 
 bool ChannelManager::hasActions() const
@@ -617,13 +617,13 @@ void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& sha
 std::vector<Channel*> ChannelManager::getRecordableChannels(std::size_t scene)
 {
 	return m_model.get().tracks.getChannelsIf([scene](const Channel& c)
-	{ return c.canInputRec() && !c.hasWave(scene); });
+	{ return c.canInputRec(scene) && !c.hasWave(scene); });
 }
 
 std::vector<Channel*> ChannelManager::getOverdubbableChannels(std::size_t scene)
 {
 	return m_model.get().tracks.getChannelsIf([scene](const Channel& c)
-	{ return c.canInputRec() && c.hasWave(scene); });
+	{ return c.canInputRec(scene) && c.hasWave(scene); });
 }
 
 /* -------------------------------------------------------------------------- */

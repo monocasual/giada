@@ -63,7 +63,8 @@ bool MainApi::isRecordingActions() const
 
 bool MainApi::canRecordInput() const
 {
-	return m_kernelAudio.isInputEnabled() && m_channelManager.hasInputRecordableChannels();
+	const std::size_t scene = m_sequencer.getCurrentScene();
+	return m_kernelAudio.isInputEnabled() && m_channelManager.hasInputRecordableChannels(scene);
 }
 
 /* -------------------------------------------------------------------------- */

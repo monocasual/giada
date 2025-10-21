@@ -139,12 +139,12 @@ bool Channel::isAudible(bool mixerHasSolos) const
 	return !mixerHasSolos || (mixerHasSolos && isSoloed());
 }
 
-bool Channel::canInputRec() const
+bool Channel::canInputRec(std::size_t scene) const
 {
 	if (type != ChannelType::SAMPLE)
 		return false;
 
-	bool hasWave     = sampleChannel->hasWave(0);
+	bool hasWave     = sampleChannel->hasWave(scene);
 	bool isProtected = sampleChannel->overdubProtection;
 	bool canOverdub  = !hasWave || (hasWave && !isProtected);
 

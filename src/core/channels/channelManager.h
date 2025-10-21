@@ -72,7 +72,7 @@ public:
 	/* hasInputRecordableChannels
 	Tells whether Mixer has one or more input-recordable channels. */
 
-	bool hasInputRecordableChannels() const;
+	bool hasInputRecordableChannels(std::size_t scene) const;
 
 	/* hasActions
 	True if at least one Channel has actions recorded in it. */
