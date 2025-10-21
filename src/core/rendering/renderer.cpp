@@ -96,6 +96,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	if (sequencer.isRunning())
 	{
 		const Frame       currentFrame  = sequencer.a_getCurrentFrame();
+		const std::size_t currentScene  = sequencer.a_getCurrentScene();
 		const int         bufferSize    = out.countFrames();
 		const int         quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
 		const SampleRange renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
@@ -103,7 +104,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, actions);
 		m_sequencer.render(out, document_RT);
 		if (!document_RT.locked)
-			advanceTracks(events, tracks, renderRange, quantizerStep);
+			advanceTracks(events, tracks, currentScene, renderRange, quantizerStep);
 	}
 
 	/* Then render Mixer, channels and finalize output. */
@@ -139,17 +140,17 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 /* -------------------------------------------------------------------------- */
 
 void Renderer::advanceTracks(const Sequencer::EventBuffer& events, const model::Tracks& tracks,
-    SampleRange block, int quantizerStep) const
+    std::size_t scene, SampleRange block, int quantizerStep) const
 {
 	for (const model::Track& track : tracks.getAll())
 		for (const Channel& c : track.getChannels().getAll())
 			if (!c.isInternal())
-				advanceChannel(c, events, block, quantizerStep);
+				advanceChannel(c, scene, events, block, quantizerStep);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& events,
+void Renderer::advanceChannel(const Channel& ch, std::size_t scene, const Sequencer::EventBuffer& events,
     SampleRange block, Frame quantizerStep) const
 {
 	if (ch.shared->quantizer)
@@ -158,9 +159,9 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 	for (const Sequencer::Event& e : events)
 	{
 		if (ch.type == ChannelType::MIDI)
-			advanceMidiChannel(ch, e, m_kernelMidi);
+			advanceMidiChannel(ch, scene, e, m_kernelMidi);
 		else if (ch.type == ChannelType::SAMPLE)
-			advanceSampleChannel(ch, e);
+			advanceSampleChannel(ch, scene, e);
 	}
 }
 

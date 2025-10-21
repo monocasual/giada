@@ -114,12 +114,12 @@ void onNoteOn_(ChannelShared& shared, Frame localFrame, SamplePlayerMode mode, f
 
 /* -------------------------------------------------------------------------- */
 
-void parseActions_(ID channelId, ChannelShared& shared, const std::vector<Action>& as,
+void parseActions_(ID channelId, std::size_t scene, ChannelShared& shared, const std::vector<Action>& as,
     Frame localFrame, SamplePlayerMode mode)
 {
 	for (const Action& a : as)
 	{
-		if (a.channelId != channelId)
+		if (a.channelId != channelId || a.scene != scene)
 			continue;
 
 		switch (a.event.getStatus())
@@ -145,7 +145,7 @@ void parseActions_(ID channelId, ChannelShared& shared, const std::vector<Action
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void advanceSampleChannel(const Channel& ch, const Sequencer::Event& e)
+void advanceSampleChannel(const Channel& ch, std::size_t scene, const Sequencer::Event& e)
 {
 	const SamplePlayerMode mode   = ch.sampleChannel->mode;
 	const bool             isLoop = ch.sampleChannel->isAnyLoopMode();
@@ -167,7 +167,7 @@ void advanceSampleChannel(const Channel& ch, const Sequencer::Event& e)
 
 	case Sequencer::EventType::ACTIONS:
 		if (!isLoop && ch.shared->isReadingActions())
-			parseActions_(ch.id, *ch.shared, *e.actions, e.delta, mode);
+			parseActions_(ch.id, scene, *ch.shared, *e.actions, e.delta, mode);
 		break;
 
 	default:

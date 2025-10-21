@@ -48,7 +48,7 @@ void registerOnSendMidiCb(std::function<void(ID channelId)>);
 /* sendMidiFromActions
 Sends a corresponding MIDI event for each action in the action vector. */
 
-void sendMidiFromActions(const Channel&, const std::vector<Action>&, Frame delta, KernelMidi&);
+void sendMidiFromActions(const Channel&, std::size_t scene, const std::vector<Action>&, Frame delta, KernelMidi&);
 
 /* sendMidiAllNotesOff
 Sends a G_MIDI_ALL_NOTES_OFF event to the outside world and plug-ins. */

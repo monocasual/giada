@@ -39,7 +39,7 @@ class Channel;
 
 namespace giada::m::rendering
 {
-void advanceSampleChannel(const Channel&, const Sequencer::Event&);
+void advanceSampleChannel(const Channel&, std::size_t scene, const Sequencer::Event&);
 } // namespace giada::m::rendering
 
 #endif
