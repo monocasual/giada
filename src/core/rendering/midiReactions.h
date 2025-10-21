@@ -53,7 +53,7 @@ void rewindMidiChannel(WeakAtomic<ChannelStatus>&);
 /* recordMidiAction
 Records a new Action for a MIDI channel. */
 
-void recordMidiAction(ID channelId, const MidiEvent&, Frame currentFrameQuantized, ActionRecorder&);
+void recordMidiAction(ID channelId, std::size_t scene, const MidiEvent&, Frame currentFrameQuantized, ActionRecorder&);
 } // namespace giada::m::rendering
 
 #endif

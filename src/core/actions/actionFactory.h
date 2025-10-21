@@ -42,7 +42,7 @@ void reset();
 /* makeAction
 Makes a new action given some data. */
 
-Action makeAction(ID id, ID channelId, Frame frame, MidiEvent e);
+Action makeAction(ID id, ID channelId, std::size_t scene, Frame frame, MidiEvent e);
 Action makeAction(const Patch::Action&);
 
 /* getNewActionId

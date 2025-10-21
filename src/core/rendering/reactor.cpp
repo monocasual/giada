@@ -59,7 +59,7 @@ void Reactor::keyPress(ID channelId, std::size_t scene, float velocity, bool can
 
 		if (canRecordActions && !isAnyLoopMode)
 		{
-			recordSampleKeyPress(channelId, *ch.shared, currentFrameQuantized, mode, m_actionRecorder);
+			recordSampleKeyPress(channelId, scene, *ch.shared, currentFrameQuantized, mode, m_actionRecorder);
 			ch.hasActions = true;
 		}
 
@@ -99,7 +99,7 @@ void Reactor::keyRelease(ID channelId, std::size_t scene, bool canRecordActions,
 			/* Record a stop event only if channel is SINGLE_PRESS. For any other
 		mode the key release event is meaningless. */
 
-			recordSampleKeyRelease(channelId, currentFrameQuantized, m_actionRecorder);
+			recordSampleKeyRelease(channelId, scene, currentFrameQuantized, m_actionRecorder);
 			ch.hasActions = true;
 		}
 
@@ -142,7 +142,7 @@ void Reactor::keyKill(ID channelId, std::size_t scene, bool canRecordActions, Fr
 			/* Record a stop event only if channel is SINGLE_PRESS. For any other
 			mode the key release event is meaningless. */
 
-			recordSampleKeyKill(channelId, currentFrameQuantized, m_actionRecorder);
+			recordSampleKeyKill(channelId, scene, currentFrameQuantized, m_actionRecorder);
 			ch.hasActions = true;
 		}
 
@@ -160,7 +160,7 @@ void Reactor::keyKill(ID channelId, std::size_t scene, bool canRecordActions, Fr
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::processMidiEvent(ID channelId, const MidiEvent& e, bool canRecordActions, Frame currentFrameQuantized)
+void Reactor::processMidiEvent(ID channelId, std::size_t scene, const MidiEvent& e, bool canRecordActions, Frame currentFrameQuantized)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
@@ -168,7 +168,7 @@ void Reactor::processMidiEvent(ID channelId, const MidiEvent& e, bool canRecordA
 
 	if (canRecordActions)
 	{
-		recordMidiAction(channelId, e, currentFrameQuantized, m_actionRecorder);
+		recordMidiAction(channelId, scene, e, currentFrameQuantized, m_actionRecorder);
 		ch.hasActions = true;
 		m_model.swap(model::SwapType::HARD);
 	}

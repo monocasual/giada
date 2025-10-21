@@ -35,14 +35,15 @@ namespace giada::m
 {
 struct Action
 {
-	ID        id = 0; // Invalid
-	ID        channelId;
-	Frame     frame;
-	MidiEvent event;
-	ID        pluginId    = -1;
-	int       pluginParam = -1;
-	ID        prevId      = 0;
-	ID        nextId      = 0;
+	ID          id = 0; // Invalid
+	ID          channelId;
+	std::size_t scene;
+	Frame       frame;
+	MidiEvent   event;
+	ID          pluginId    = -1;
+	int         pluginParam = -1;
+	ID          prevId      = 0;
+	ID          nextId      = 0;
 
 	bool isValid() const
 	{

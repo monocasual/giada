@@ -42,7 +42,7 @@ ActionEditorApi::ActionEditorApi(Engine& e, Sequencer& s, ActionRecorder& ar)
 
 std::vector<Action> ActionEditorApi::getActionsOnChannel(ID channelId) const
 {
-	return m_actionRecorder.getActionsOnChannel(channelId);
+	return m_actionRecorder.getActionsOnChannel(channelId, m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -56,7 +56,7 @@ const Action* ActionEditorApi::findAction(ID id) const
 
 void ActionEditorApi::recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2)
 {
-	m_actionRecorder.recordMidiAction(channelId, note, velocity, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionRecorder.recordMidiAction(channelId, m_sequencer.getCurrentScene(), note, velocity, f1, f2, m_sequencer.getFramesInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -77,21 +77,21 @@ void ActionEditorApi::deleteMidiAction(ID channelId, const Action& a)
 
 void ActionEditorApi::updateMidiAction(ID channelId, const Action& a, int note, float velocity, Frame f1, Frame f2)
 {
-	m_actionRecorder.updateMidiAction(channelId, a, note, velocity, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionRecorder.updateMidiAction(channelId, m_sequencer.getCurrentScene(), a, note, velocity, f1, f2, m_sequencer.getFramesInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ActionEditorApi::recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
 {
-	m_actionRecorder.recordSampleAction(channelId, type, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionRecorder.recordSampleAction(channelId, m_sequencer.getCurrentScene(), type, f1, f2, m_sequencer.getFramesInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ActionEditorApi::updateSampleAction(ID channelId, const Action& a, int type, Frame f1, Frame f2)
 {
-	m_actionRecorder.updateSampleAction(channelId, a, type, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionRecorder.updateSampleAction(channelId, m_sequencer.getCurrentScene(), a, type, f1, f2, m_sequencer.getFramesInLoop());
 }
 
 /* -------------------------------------------------------------------------- */

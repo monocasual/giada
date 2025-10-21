@@ -40,8 +40,8 @@ TEST_CASE("ActionRecorder")
 		const MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0x00, 0x00, 0);
 		const MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0x00, 0x00, 0);
 
-		const Action a1 = ar.rec(channelID1, f1, e1);
-		const Action a2 = ar.rec(channelID1, f2, e2);
+		const Action a1 = ar.rec(channelID1, /*scene=*/0, f1, e1);
+		const Action a2 = ar.rec(channelID1, /*scene=*/0, f2, e2);
 
 		REQUIRE(ar.hasActions(channelID1) == true);
 		REQUIRE(a1.frame == f1);
@@ -58,8 +58,8 @@ TEST_CASE("ActionRecorder")
 			const MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0x00, 0x00, 0);
 			const MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0x00, 0x00, 0);
 
-			ar.rec(channelID2, f1, e1);
-			ar.rec(channelID2, f2, e2);
+			ar.rec(channelID2, /*scene=*/0, f1, e1);
+			ar.rec(channelID2, /*scene=*/0, f2, e2);
 
 			ar.clearChannel(channelID1);
 

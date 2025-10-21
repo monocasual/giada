@@ -176,7 +176,7 @@ void ChannelsApi::clone(ID channelId)
 
 	m_channelManager.cloneChannel(channelId, scene, bufferSize, plugins);
 	if (ch.hasActions)
-		m_actionRecorder.cloneActions(channelId, nextChannelId);
+		m_actionRecorder.cloneActions(channelId, scene, nextChannelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -340,9 +340,10 @@ void ChannelsApi::freeAllSampleChannels()
 
 void ChannelsApi::sendMidi(ID channelId, const MidiEvent& e)
 {
-	const bool  canRecordActions = m_recorder.canRecordActions();
-	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	m_reactor.processMidiEvent(channelId, e, canRecordActions, currentFrameQ);
+	const bool        canRecordActions = m_recorder.canRecordActions();
+	const Frame       currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
+	const std::size_t scene            = m_sequencer.getCurrentScene();
+	m_reactor.processMidiEvent(channelId, scene, e, canRecordActions, currentFrameQ);
 }
 
 /* -------------------------------------------------------------------------- */

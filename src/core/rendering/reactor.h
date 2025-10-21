@@ -53,7 +53,7 @@ public:
 	void keyPress(ID channelId, std::size_t scene, float velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized);
 	void keyRelease(ID channelId, std::size_t scene, bool canRecordActions, Frame currentFrameQuantized);
 	void keyKill(ID channelId, std::size_t scene, bool canRecordActions, Frame currentFrameQuantized);
-	void processMidiEvent(ID channelId, const MidiEvent&, bool canRecordActions, Frame currentFrameQuantized);
+	void processMidiEvent(ID channelId, std::size_t scene, const MidiEvent&, bool canRecordActions, Frame currentFrameQuantized);
 	void toggleReadActions(ID channelId, bool seqIsRunning);
 	void killReadActions(ID channelId);
 	void toggleMute(ID channelId);
