@@ -108,12 +108,13 @@ struct Patch
 
 	struct Action
 	{
-		ID       id        = 0;
-		ID       channelId = 0;
-		Frame    frame     = 0;
-		uint32_t event     = 0;
-		ID       prevId    = 0;
-		ID       nextId    = 0;
+		ID          id        = 0;
+		ID          channelId = 0;
+		std::size_t scene     = 0;
+		Frame       frame     = 0;
+		uint32_t    event     = 0;
+		ID          prevId    = 0;
+		ID          nextId    = 0;
 	};
 
 	struct Wave
