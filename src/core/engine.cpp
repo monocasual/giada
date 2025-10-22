@@ -230,6 +230,12 @@ Engine::Engine()
 	{
 		m_actionRecorder.updateBpm(oldVal / newVal, quantizerStep);
 	};
+	m_sequencer.onSceneChanged = [this]()
+	{
+		/* Rebuild UI when the scene has changed to update channels. */
+		assert(onModelSwap != nullptr);
+		onModelSwap(model::SwapType::HARD);
+	};
 
 	m_model.onSwap = [this](model::SwapType t)
 	{

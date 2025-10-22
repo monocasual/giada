@@ -50,6 +50,7 @@ constexpr int Q_ACTION_REWIND = 0;
 Sequencer::Sequencer(model::Model& m, MidiSynchronizer& s, JackTransport& j)
 : onAboutStart(nullptr)
 , onAboutStop(nullptr)
+, onSceneChanged(nullptr)
 , m_model(m)
 , m_midiSynchronizer(s)
 , m_jackTransport(j)
@@ -149,7 +150,11 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 			m_eventBuffer.push_back({EventType::FIRST_BEAT, global, local});
 			m_metronome.trigger(Metronome::Click::BEAT, local);
 			if (currentScene != nextScene)
+			{
+				assert(onSceneChanged != nullptr);
 				sequencer.a_setCurrentScene(nextScene);
+				onSceneChanged(); // Can't directly swap model here, this is real-time stuff
+			}
 		}
 		else if (global % framesInBar == 0)
 		{
