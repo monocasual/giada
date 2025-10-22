@@ -82,9 +82,9 @@ model::Actions::Map deserializeActions(const std::vector<Patch::Action>& paction
 std::vector<Patch::Action> serializeActions(const model::Actions::Map& actions)
 {
 	std::vector<Patch::Action> out;
-	for (const auto& kv : actions) // TODO - const auto& [_, actionsInFrame]
+	for (const auto& [_, actionsInFrame] : actions)
 	{
-		for (const Action& a : kv.second)
+		for (const Action& a : actionsInFrame)
 		{
 			out.push_back({
 			    a.id,
