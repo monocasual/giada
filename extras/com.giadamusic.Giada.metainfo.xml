@@ -19,6 +19,17 @@
 		</screenshot>
 	</screenshots>
 	<releases>
+		<release version="1.3.1" date="2025-10-24">
+			<description>
+				<p>This is a bugfix release.</p>
+				<ul>
+					<li>Fix broken plug-ins when a channel is cloned;</li>
+					<li>Prevent crash if using JACK and no samplerate choice is available;</li>
+					<li>Small improvements to project loading mechanism;</li>
+					<li>Update RtAudio library to latest commit.</li>
+				</ul>
+			</description>
+		</release>
 		<release version="1.3.0" date="2025-09-15">
 			<description>
 				<p>This release introduces support for multiple audio outputs (more than stereo). It is now possible to have multiple audio channels, each of which sends the signal to an external hardware output or internally to another software for multitrack recording of your live performances.</p>
