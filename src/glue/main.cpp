@@ -171,6 +171,13 @@ MainMenu getMainMenu()
 
 /* -------------------------------------------------------------------------- */
 
+Scenes getScenes()
+{
+	return {g_engine->getMainApi().getCurrentScene()};
+}
+
+/* -------------------------------------------------------------------------- */
+
 void setBeats(int beats, int bars)
 {
 	g_engine->getMainApi().setBeats(beats, bars);
@@ -281,6 +288,10 @@ void stopActionRecording() { g_engine->getMainApi().stopActionRecording(); }
 void stopInputRecording() { g_engine->getMainApi().stopInputRecording(); }
 void toggleActionRecording() { g_engine->getMainApi().toggleActionRecording(); }
 void toggleInputRecording() { g_engine->getMainApi().toggleInputRecording(); }
+
+/* -------------------------------------------------------------------------- */
+
+void setScene(std::size_t scene) { g_engine->getMainApi().setScene(scene); }
 
 /* -------------------------------------------------------------------------- */
 

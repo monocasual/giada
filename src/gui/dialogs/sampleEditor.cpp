@@ -179,7 +179,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 
 	rewind->onClick = [this]()
 	{
-		c::sampleEditor::setPreviewTracker(m_data.range.a);
+		c::sampleEditor::setPreviewTracker(m_data.sample.range.a);
 	};
 
 	loop->onChange = [](bool shouldLoop)
@@ -217,6 +217,14 @@ void gdSampleEditor::rebuild()
 	shiftTool->rebuild(m_data);
 
 	updateInfo();
+
+	if (!m_data.isValid())
+	{
+		rangeTool->deactivate();
+		pitchTool->deactivate();
+		shiftTool->deactivate();
+		reload->deactivate();
+	}
 
 	if (m_data.isLogical) // Logical samples (aka takes) cannot be reloaded.
 		reload->deactivate();

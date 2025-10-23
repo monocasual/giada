@@ -98,21 +98,22 @@ public:
 	bool isOnFirstBeat() const;
 	bool isMetronomeOn() const;
 
-	float     getBpm() const;
-	int       getBeats() const;
-	int       getBars() const;
-	int       getCurrentBeat() const;
-	Frame     getCurrentFrame() const;
-	Frame     getCurrentFrameQuantized() const;
-	float     getCurrentSecond(int sampleRate) const;
-	Frame     getFramesInBar() const;
-	Frame     getFramesInBeat() const;
-	Frame     getFramesInLoop() const;
-	Frame     getFramesInSeq() const;
-	int       getQuantizerValue() const;
-	int       getQuantizerStep() const;
-	SeqStatus getStatus() const;
-	int       getMaxFramesInLoop(int sampleRate) const;
+	float       getBpm() const;
+	int         getBeats() const;
+	int         getBars() const;
+	int         getCurrentBeat() const;
+	Frame       getCurrentFrame() const;
+	Frame       getCurrentFrameQuantized() const;
+	float       getCurrentSecond(int sampleRate) const;
+	Frame       getFramesInBar() const;
+	Frame       getFramesInBeat() const;
+	Frame       getFramesInLoop() const;
+	Frame       getFramesInSeq() const;
+	int         getQuantizerValue() const;
+	int         getQuantizerStep() const;
+	SeqStatus   getStatus() const;
+	int         getMaxFramesInLoop(int sampleRate) const;
+	std::size_t getCurrentScene() const;
 
 	/* calcBpmFromRec
 	Given the amount of recorded frames, returns the speed of the current
@@ -161,6 +162,16 @@ public:
 	void setStatus(SeqStatus);
 	void goToBeat(int beat, int sampleRate);
 
+	/* forceScene
+	Force-changes to the requested scene. */
+
+	void forceScene(std::size_t);
+
+	/* setScene
+	Prepares for the requested scene, which will be set at the next first beat. */
+
+	void setScene(std::size_t);
+
 #ifdef WITH_AUDIO_JACK
 	void jack_start();
 	void jack_stop();
@@ -176,6 +187,7 @@ public:
 	std::function<void(SeqStatus)>         onAboutStart;
 	std::function<void()>                  onAboutStop;
 	std::function<void(float, float, int)> onBpmChange;
+	std::function<void()>                  onSceneChanged;
 
 private:
 	/* raw[*]

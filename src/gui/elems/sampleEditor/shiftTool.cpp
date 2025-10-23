@@ -69,7 +69,7 @@ geShiftTool::geShiftTool(const c::sampleEditor::Data& d)
 void geShiftTool::rebuild(const c::sampleEditor::Data& d)
 {
 	m_data = &d;
-	update(m_data->shift);
+	update(m_data->sample.shift);
 }
 
 /* -------------------------------------------------------------------------- */

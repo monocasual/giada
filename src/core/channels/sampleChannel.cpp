@@ -34,25 +34,21 @@ SampleChannel::SampleChannel()
 : inputMonitor(false)
 , overdubProtection(false)
 , mode(SamplePlayerMode::SINGLE_BASIC)
-, pitch(G_DEFAULT_PITCH)
-, shift(0)
 , velocityAsVol(false)
-, m_wave(nullptr)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-SampleChannel::SampleChannel(const Patch::Channel& p, Wave* w, float samplerateRatio)
+SampleChannel::SampleChannel(const Patch::Channel& p, const SceneArray<Sample>& samples, float samplerateRatio)
 : inputMonitor(p.inputMonitor)
 , overdubProtection(p.overdubProtection)
 , mode(p.mode)
-, pitch(p.pitch)
-, shift(p.shift)
-, range(p.range)
 , velocityAsVol(p.midiInVeloAsVol)
 {
-	setWave(w, samplerateRatio);
+	std::size_t scene = 0;
+	for (const Sample& sample : samples)
+		setSample(sample, scene++, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -85,61 +81,111 @@ bool SampleChannel::isAnyNonLoopingSingleMode() const
 
 /* -------------------------------------------------------------------------- */
 
-bool SampleChannel::hasWave() const { return m_wave != nullptr; }
-bool SampleChannel::hasLogicalWave() const { return hasWave() && m_wave->isLogical(); }
-bool SampleChannel::hasEditedWave() const { return hasWave() && m_wave->isEdited(); }
+bool SampleChannel::hasWave(std::size_t scene) const { return m_samples[scene].wave != nullptr; }
+bool SampleChannel::hasLogicalWave(std::size_t scene) const { return hasWave(scene) && m_samples[scene].wave->isLogical(); }
+bool SampleChannel::hasEditedWave(std::size_t scene) const { return hasWave(scene) && m_samples[scene].wave->isEdited(); }
 
 /* -------------------------------------------------------------------------- */
 
-Wave* SampleChannel::getWave() const
+Wave* SampleChannel::getWave(std::size_t scene) const
 {
-	return m_wave;
+	return m_samples[scene].wave;
 }
 
-ID SampleChannel::getWaveId() const
+ID SampleChannel::getWaveId(std::size_t scene) const
 {
-	if (hasWave())
-		return m_wave->id;
+	if (hasWave(scene))
+		return m_samples[scene].wave->id;
 	return 0;
 }
 
 /* -------------------------------------------------------------------------- */
 
-Frame SampleChannel::getWaveSize() const
+SampleRange SampleChannel::getRange(std::size_t scene) const { return m_samples[scene].range; }
+
+/* -------------------------------------------------------------------------- */
+
+Frame SampleChannel::getShift(std::size_t scene) const { return m_samples[scene].shift; }
+
+/* -------------------------------------------------------------------------- */
+
+float SampleChannel::getPitch(std::size_t scene) const { return m_samples[scene].pitch; }
+
+/* -------------------------------------------------------------------------- */
+
+const SceneArray<Sample>& SampleChannel::getSamples() const { return m_samples; }
+
+/* -------------------------------------------------------------------------- */
+
+const Sample& SampleChannel::getSample(std::size_t scene) const
 {
-	return hasWave() ? m_wave->getBuffer().countFrames() : 0;
+	return m_samples[scene];
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::loadWave(Wave* w, SampleRange newRange, Frame newShift)
+Frame SampleChannel::getWaveSize(std::size_t scene) const
 {
-	m_wave = w;
+	return hasWave(scene) ? m_samples[scene].wave->getBuffer().countFrames() : 0;
+}
 
-	shift = 0;
-	range = {};
+/* -------------------------------------------------------------------------- */
 
-	if (w != nullptr)
+void SampleChannel::loadSample(const Sample& s, std::size_t scene)
+{
+	m_samples[scene] = {s.wave, {}};
+
+	if (s.wave != nullptr)
 	{
-		shift = newShift == -1 ? 0 : newShift;
-		range = newRange.isValid() ? newRange : SampleRange(0, w->getBuffer().countFrames());
+		m_samples[scene].shift = s.shift == -1 ? 0 : s.shift;
+		m_samples[scene].range = s.range.isValid() ? s.range : SampleRange(0, s.wave->getBuffer().countFrames());
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::setWave(Wave* w, float samplerateRatio)
+void SampleChannel::setWave(Wave* w, std::size_t scene, float samplerateRatio)
 {
-	m_wave = w;
+	m_samples[scene].wave = w;
 
-	if (m_wave == nullptr)
+	if (w == nullptr)
 		return;
 
 	if (samplerateRatio != 1.0f)
 	{
-		range *= samplerateRatio;
-		shift *= samplerateRatio;
+		m_samples[scene].range *= samplerateRatio;
+		m_samples[scene].shift *= samplerateRatio;
 	}
 }
 
+/* -------------------------------------------------------------------------- */
+
+void SampleChannel::setRange(SampleRange newRange, std::size_t scene)
+{
+	m_samples[scene].range = newRange;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleChannel::setSample(const Sample& sample, std::size_t scene, float samplerateRatio)
+{
+	setWave(sample.wave, scene, samplerateRatio);
+	setRange(sample.range, scene);
+	setShift(sample.shift, scene);
+	setPitch(sample.pitch, scene);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleChannel::setShift(Frame shift, std::size_t scene)
+{
+	m_samples[scene].shift = shift;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleChannel::setPitch(float pitch, std::size_t scene)
+{
+	m_samples[scene].pitch = pitch;
+}
 } // namespace giada::m

@@ -96,6 +96,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 	if (sequencer.isRunning())
 	{
 		const Frame       currentFrame  = sequencer.a_getCurrentFrame();
+		const std::size_t currentScene  = sequencer.a_getCurrentScene();
 		const int         bufferSize    = out.countFrames();
 		const int         quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
 		const SampleRange renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
@@ -103,17 +104,18 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, actions);
 		m_sequencer.render(out, document_RT);
 		if (!document_RT.locked)
-			advanceTracks(events, tracks, renderRange, quantizerStep);
+			advanceTracks(events, tracks, currentScene, renderRange, quantizerStep);
 	}
 
 	/* Then render Mixer, channels and finalize output. */
 
-	const int      maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
-	const bool     hasSolos       = mixer.hasSolos;
-	const bool     hasInput       = in.isAllocd();
-	const Channel& masterOutCh    = tracks.getChannel(MASTER_OUT_CHANNEL_ID);
-	const Channel& masterInCh     = tracks.getChannel(MASTER_IN_CHANNEL_ID);
-	const Channel& previewCh      = tracks.getChannel(PREVIEW_CHANNEL_ID);
+	const int         maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
+	const std::size_t scene          = sequencer.a_getCurrentScene();
+	const bool        hasSolos       = mixer.hasSolos;
+	const bool        hasInput       = in.isAllocd();
+	const Channel&    masterOutCh    = tracks.getChannel(MASTER_OUT_CHANNEL_ID);
+	const Channel&    masterInCh     = tracks.getChannel(MASTER_IN_CHANNEL_ID);
+	const Channel&    previewCh      = tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	m_mixer.render(in, document_RT, maxFramesToRec);
 
@@ -122,7 +124,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 	if (!document_RT.locked)
 		renderTracks(tracks, masterOutCh.shared->audioBuffer, out, mixer.getInBuffer(),
-		    hasSolos, sequencer.isRunning());
+		    scene, hasSolos, sequencer.isRunning());
 
 	renderMasterOut(masterOutCh, out, kernelAudio.deviceOut.channelsStart);
 	if (mixer.renderPreview)
@@ -138,17 +140,17 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 /* -------------------------------------------------------------------------- */
 
 void Renderer::advanceTracks(const Sequencer::EventBuffer& events, const model::Tracks& tracks,
-    SampleRange block, int quantizerStep) const
+    std::size_t scene, SampleRange block, int quantizerStep) const
 {
 	for (const model::Track& track : tracks.getAll())
 		for (const Channel& c : track.getChannels().getAll())
 			if (!c.isInternal())
-				advanceChannel(c, events, block, quantizerStep);
+				advanceChannel(c, scene, events, block, quantizerStep);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& events,
+void Renderer::advanceChannel(const Channel& ch, std::size_t scene, const Sequencer::EventBuffer& events,
     SampleRange block, Frame quantizerStep) const
 {
 	if (ch.shared->quantizer)
@@ -157,16 +159,16 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 	for (const Sequencer::Event& e : events)
 	{
 		if (ch.type == ChannelType::MIDI)
-			advanceMidiChannel(ch, e, m_kernelMidi);
+			advanceMidiChannel(ch, scene, e, m_kernelMidi);
 		else if (ch.type == ChannelType::SAMPLE)
-			advanceSampleChannel(ch, e);
+			advanceSampleChannel(ch, scene, e);
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& masterOut,
-    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, bool hasSolos,
+    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, std::size_t scene, bool hasSolos,
     bool seqIsRunning) const
 {
 	masterOut.clear();
@@ -181,7 +183,7 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& maste
 
 		for (const Channel& c : track.getChannels().getAll())
 		{
-			renderNormalChannel(c, in, seqIsRunning);
+			renderNormalChannel(c, in, scene, seqIsRunning);
 			if (!c.isAudible(hasSolos))
 				continue;
 			if (c.sendToMaster)
@@ -204,12 +206,12 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& maste
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderNormalChannel(const Channel& ch, const mcl::AudioBuffer& in,
-    bool seqIsRunning) const
+    std::size_t scene, bool seqIsRunning) const
 {
 	ch.shared->audioBuffer.clear();
 
 	if (ch.type == ChannelType::SAMPLE)
-		renderSampleChannel(ch, in, seqIsRunning);
+		renderSampleChannel(ch, in, scene, seqIsRunning);
 	else if (ch.type == ChannelType::MIDI)
 		renderMidiChannel(ch);
 }
@@ -236,19 +238,19 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 	ch.shared->audioBuffer.clear();
 
 	if (ch.isPlaying())
-		rendering::renderSampleChannel(ch, /*seqIsRunning=*/false); // Sequencer status is irrelevant here
+		rendering::renderSampleChannel(ch, /*scene=*/0, /*seqIsRunning=*/false); // Sequencer status and scene are irrelevant here
 
 	out.sumAll(ch.shared->audioBuffer, ch.volume);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderSampleChannel(const Channel& ch, const mcl::AudioBuffer& in, bool seqIsRunning) const
+void Renderer::renderSampleChannel(const Channel& ch, const mcl::AudioBuffer& in, std::size_t scene, bool seqIsRunning) const
 {
 	assert(ch.type == ChannelType::SAMPLE);
 
 	if (ch.isPlaying())
-		rendering::renderSampleChannel(ch, seqIsRunning);
+		rendering::renderSampleChannel(ch, scene, seqIsRunning);
 
 	if (ch.canReceiveAudio())
 		renderSampleChannelInput(ch, in); // record "clean" audio first	(i.e. not plugin-processed)

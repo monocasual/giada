@@ -119,16 +119,19 @@ void stop_(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, bool seqIsRun
 
 /* -------------------------------------------------------------------------- */
 
-Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame offset, bool seqIsRunning, bool testEnd)
+Frame render_(const Channel& ch, mcl::AudioBuffer& buf, std::size_t scene, Frame tracker, Frame offset, bool seqIsRunning, bool testEnd)
 {
-	const auto       range     = ch.sampleChannel->range;
-	const float      pitch     = ch.sampleChannel->pitch;
-	const Wave&      wave      = *ch.sampleChannel->getWave();
+	const auto       range     = ch.sampleChannel->getRange(scene);
+	const float      pitch     = ch.sampleChannel->getPitch(scene);
+	const Wave*      wave      = ch.sampleChannel->getWave(scene);
 	const Resampler& resampler = ch.shared->resampler.value();
+
+	if (wave == nullptr)
+		return tracker;
 
 	while (true)
 	{
-		ReadResult res = readWave(wave, buf, tracker, range.b, offset, pitch, resampler);
+		ReadResult res = readWave(*wave, buf, tracker, range.b, offset, pitch, resampler);
 		tracker += res.used;
 		offset += res.generated;
 
@@ -160,20 +163,20 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Frame tracker, Frame off
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void renderSampleChannel(const Channel& ch, bool seqIsRunning)
+void renderSampleChannel(const Channel& ch, std::size_t scene, bool seqIsRunning)
 {
 	RenderInfo renderInfo;
 	while (ch.shared->renderQueue->try_dequeue(renderInfo))
 		;
 
-	const auto        range     = ch.sampleChannel->range;
+	const auto        range     = ch.sampleChannel->getRange(scene);
 	const Resampler&  resampler = ch.shared->resampler.value();
 	mcl::AudioBuffer& buf       = ch.shared->audioBuffer;
 	Frame             tracker   = std::clamp(ch.shared->tracker.load(), range.a, range.b); /* Make sure tracker stays within begin-end range. */
 
 	if (renderInfo.mode == RenderInfo::Mode::NORMAL)
 	{
-		tracker = render_(ch, buf, tracker, renderInfo.offset, seqIsRunning, /*testEnd=*/true);
+		tracker = render_(ch, buf, scene, tracker, renderInfo.offset, seqIsRunning, /*testEnd=*/true);
 	}
 	else
 	{
@@ -182,7 +185,7 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 		complex logic on sample end (testEnd=false), we just want to fill the buffer
 		as much as possible here. */
 
-		render_(ch, buf, tracker, 0, seqIsRunning, /*testEnd=*/false);
+		render_(ch, buf, scene, tracker, 0, seqIsRunning, /*testEnd=*/false);
 		resampler.last();
 
 		/* Mode::REWIND: fill buffer from offset:  [abcdefghi|abcdfefg]
@@ -190,7 +193,7 @@ void renderSampleChannel(const Channel& ch, bool seqIsRunning)
 
 		if (renderInfo.mode == RenderInfo::Mode::REWIND)
 		{
-			tracker = render_(ch, buf, range.a, renderInfo.offset, seqIsRunning, /*testEnd=*/true);
+			tracker = render_(ch, buf, scene, range.a, renderInfo.offset, seqIsRunning, /*testEnd=*/true);
 		}
 		else
 		{

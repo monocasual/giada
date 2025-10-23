@@ -105,6 +105,11 @@ struct MainMenu
 	bool hasActions;
 };
 
+struct Scenes
+{
+	std::size_t currentScene;
+};
+
 /* get*
 Returns viewModel objects filled with data. */
 
@@ -113,6 +118,7 @@ IO        getIO();
 Sequencer getSequencer();
 Transport getTransport();
 MainMenu  getMainMenu();
+Scenes    getScenes();
 
 void setBeats(int beats, int bars);
 void quantize(int val);
@@ -141,6 +147,7 @@ void stopActionRecording();
 void toggleActionRecording();
 void stopInputRecording();
 void toggleInputRecording();
+void setScene(std::size_t);
 
 #if G_DEBUG_MODE
 void printDebugInfo();

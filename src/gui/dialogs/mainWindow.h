@@ -40,6 +40,7 @@ class geMainMenu;
 class geSequencer;
 class geMainTransport;
 class geMainTimer;
+class geScenes;
 class gdMainWindow : public gdWindow
 {
 	class ScopedProgress;
@@ -69,6 +70,7 @@ public:
 	geMainTransport* mainTransport;
 	geMainInput*     mainInput;
 	geMainOutput*    mainOutput;
+	geScenes*        scenes;
 
 private:
 	class ScopedProgress

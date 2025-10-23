@@ -50,6 +50,7 @@ constexpr int Q_ACTION_REWIND = 0;
 Sequencer::Sequencer(model::Model& m, MidiSynchronizer& s, JackTransport& j)
 : onAboutStart(nullptr)
 , onAboutStop(nullptr)
+, onSceneChanged(nullptr)
 , m_model(m)
 , m_midiSynchronizer(s)
 , m_jackTransport(j)
@@ -60,27 +61,28 @@ Sequencer::Sequencer(model::Model& m, MidiSynchronizer& s, JackTransport& j)
 }
 /* -------------------------------------------------------------------------- */
 
-bool      Sequencer::canQuantize() const { return m_model.get().sequencer.canQuantize(); }
-bool      Sequencer::isRunning() const { return m_model.get().sequencer.isRunning(); }
-bool      Sequencer::isActive() const { return m_model.get().sequencer.isActive(); }
-bool      Sequencer::isOnBar() const { return m_model.get().sequencer.a_isOnBar(); }
-bool      Sequencer::isOnBeat() const { return m_model.get().sequencer.a_isOnBeat(); }
-bool      Sequencer::isOnFirstBeat() const { return m_model.get().sequencer.a_isOnFirstBeat(); }
-float     Sequencer::getBpm() const { return m_model.get().sequencer.bpm; }
-int       Sequencer::getBeats() const { return m_model.get().sequencer.beats; }
-int       Sequencer::getBars() const { return m_model.get().sequencer.bars; }
-int       Sequencer::getCurrentBeat() const { return m_model.get().sequencer.a_getCurrentBeat(); }
-Frame     Sequencer::getCurrentFrame() const { return m_model.get().sequencer.a_getCurrentFrame(); }
-Frame     Sequencer::getCurrentFrameQuantized() const { return quantize(getCurrentFrame()); }
-float     Sequencer::getCurrentSecond(int sampleRate) const { return getCurrentFrame() / static_cast<float>(sampleRate); }
-Frame     Sequencer::getFramesInBar() const { return m_model.get().sequencer.framesInBar; }
-Frame     Sequencer::getFramesInBeat() const { return m_model.get().sequencer.framesInBeat; }
-Frame     Sequencer::getFramesInLoop() const { return m_model.get().sequencer.framesInLoop; }
-Frame     Sequencer::getFramesInSeq() const { return m_model.get().sequencer.framesInSeq; }
-int       Sequencer::getQuantizerValue() const { return m_model.get().sequencer.quantize; }
-int       Sequencer::getQuantizerStep() const { return m_quantizerStep; }
-SeqStatus Sequencer::getStatus() const { return m_model.get().sequencer.status; }
-int       Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model.get().sequencer.getMaxFramesInLoop(sampleRate); }
+bool        Sequencer::canQuantize() const { return m_model.get().sequencer.canQuantize(); }
+bool        Sequencer::isRunning() const { return m_model.get().sequencer.isRunning(); }
+bool        Sequencer::isActive() const { return m_model.get().sequencer.isActive(); }
+bool        Sequencer::isOnBar() const { return m_model.get().sequencer.a_isOnBar(); }
+bool        Sequencer::isOnBeat() const { return m_model.get().sequencer.a_isOnBeat(); }
+bool        Sequencer::isOnFirstBeat() const { return m_model.get().sequencer.a_isOnFirstBeat(); }
+float       Sequencer::getBpm() const { return m_model.get().sequencer.bpm; }
+int         Sequencer::getBeats() const { return m_model.get().sequencer.beats; }
+int         Sequencer::getBars() const { return m_model.get().sequencer.bars; }
+int         Sequencer::getCurrentBeat() const { return m_model.get().sequencer.a_getCurrentBeat(); }
+Frame       Sequencer::getCurrentFrame() const { return m_model.get().sequencer.a_getCurrentFrame(); }
+Frame       Sequencer::getCurrentFrameQuantized() const { return quantize(getCurrentFrame()); }
+float       Sequencer::getCurrentSecond(int sampleRate) const { return getCurrentFrame() / static_cast<float>(sampleRate); }
+Frame       Sequencer::getFramesInBar() const { return m_model.get().sequencer.framesInBar; }
+Frame       Sequencer::getFramesInBeat() const { return m_model.get().sequencer.framesInBeat; }
+Frame       Sequencer::getFramesInLoop() const { return m_model.get().sequencer.framesInLoop; }
+Frame       Sequencer::getFramesInSeq() const { return m_model.get().sequencer.framesInSeq; }
+int         Sequencer::getQuantizerValue() const { return m_model.get().sequencer.quantize; }
+int         Sequencer::getQuantizerStep() const { return m_quantizerStep; }
+SeqStatus   Sequencer::getStatus() const { return m_model.get().sequencer.status; }
+int         Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model.get().sequencer.getMaxFramesInLoop(sampleRate); }
+std::size_t Sequencer::getCurrentScene() const { return m_model.get().sequencer.a_getCurrentScene(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -133,6 +135,9 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 	const Frame framesInBeat = sequencer.framesInBeat;
 	const Frame nextFrame    = end % framesInLoop;
 
+	const std::size_t currentScene = sequencer.a_getCurrentScene();
+	const std::size_t nextScene    = sequencer.a_getNextScene();
+
 	/* Process events in the current block. */
 
 	for (Frame i = start, local = 0; i < end; i++, local++)
@@ -144,6 +149,15 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		{
 			m_eventBuffer.push_back({EventType::FIRST_BEAT, global, local});
 			m_metronome.trigger(Metronome::Click::BEAT, local);
+			if (currentScene != nextScene)
+			{
+				assert(onSceneChanged != nullptr);
+				sequencer.a_setCurrentScene(nextScene);
+				onSceneChanged(); // Can't directly swap model here, this is real-time stuff
+				/* If new scene, just return here. We don't want to grab more actions
+				from this current scene (ie. the old one): a new one is coming up. */
+				return m_eventBuffer;
+			}
 		}
 		else if (global % framesInBar == 0)
 		{
@@ -375,6 +389,30 @@ void Sequencer::goToBeat(int beat, int sampleRate)
 	const Frame frame = u::time::beatToFrame(beat, sampleRate, bpm);
 	if (!m_jackTransport.setPosition(frame))
 		rawGoToBeat(beat, sampleRate);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::forceScene(std::size_t scene)
+{
+	assert(scene < G_MAX_NUM_SCENES);
+
+	m_model.get().sequencer.a_setCurrentScene(scene);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::setScene(std::size_t scene)
+{
+	assert(scene < G_MAX_NUM_SCENES);
+
+	if (scene == m_model.get().sequencer.a_getCurrentScene())
+		return;
+	if (!isRunning())
+		m_model.get().sequencer.a_setCurrentScene(scene);
+	else
+		m_model.get().sequencer.a_setNextScene(scene);
+	m_model.swap(model::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */

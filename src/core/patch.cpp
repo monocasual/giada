@@ -24,22 +24,18 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_RENDERING_SAMPLE_ADVANCE_H
-#define G_RENDERING_SAMPLE_ADVANCE_H
+#include "src/core/patch.h"
 
-#include "src/core/sequencer.h"
-#include "src/core/types.h"
-
-namespace giada::m
+namespace geompp
 {
-struct Action;
-struct ChannelShared;
-class Channel;
-} // namespace giada::m
-
-namespace giada::m::rendering
+void to_json(nlohmann::json& j, const giada::SampleRange& r)
 {
-void advanceSampleChannel(const Channel&, std::size_t scene, const Sequencer::Event&);
-} // namespace giada::m::rendering
+	j = nlohmann::json{{"a", r.a}, {"b", r.b}};
+}
 
-#endif
+void from_json(const nlohmann::json& j, giada::SampleRange& r)
+{
+	r.a = j.value("a", 0);
+	r.b = j.value("b", 0);
+}
+} // namespace geompp

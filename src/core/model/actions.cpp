@@ -163,8 +163,8 @@ void Actions::debug() const
 	{
 		fmt::print("\tframe: {}\n", frame);
 		for (const Action& a : actions)
-			fmt::print("\t\t({}) - ID={}, frame={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
-			    (void*)&a, a.id, a.frame, a.channelId, a.event.getRaw(), a.prevId, a.nextId);
+			fmt::print("\t\t({}) - ID={}, scene={}, frame={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
+			    (void*)&a, a.id, a.scene, a.frame, a.channelId, a.event.getRaw(), a.prevId, a.nextId);
 	}
 }
 
@@ -172,14 +172,14 @@ void Actions::debug() const
 
 /* -------------------------------------------------------------------------- */
 
-Action Actions::rec(ID channelId, Frame frame, MidiEvent event)
+Action Actions::rec(ID channelId, std::size_t scene, Frame frame, MidiEvent event)
 {
 	/* Skip duplicates. */
 
-	if (exists(channelId, frame, event))
+	if (exists(channelId, scene, frame, event))
 		return {};
 
-	Action a = actionFactory::makeAction(0, channelId, frame, event);
+	Action a = actionFactory::makeAction(0, channelId, scene, frame, event);
 
 	/* If key frame doesn't exist yet, the [] operator in std::map is smart
 	enough to insert a new item first. No plug-in data for now. */
@@ -191,22 +191,22 @@ Action Actions::rec(ID channelId, Frame frame, MidiEvent event)
 
 /* -------------------------------------------------------------------------- */
 
-void Actions::rec(std::vector<Action>& actions)
+void Actions::rec(std::vector<Action>& actions, std::size_t scene)
 {
 	if (actions.size() == 0)
 		return;
 
 	for (const Action& a : actions)
-		if (!exists(a.channelId, a.frame, a.event, m_actions))
+		if (!exists(a.channelId, scene, a.frame, a.event, m_actions))
 			m_actions[a.frame].push_back(a);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Actions::rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
+void Actions::rec(ID channelId, std::size_t scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
-	m_actions[f1].push_back(actionFactory::makeAction(0, channelId, f1, e1));
-	m_actions[f2].push_back(actionFactory::makeAction(0, channelId, f2, e2));
+	m_actions[f1].push_back(actionFactory::makeAction(0, channelId, scene, f1, e1));
+	m_actions[f2].push_back(actionFactory::makeAction(0, channelId, scene, f2, e2));
 
 	Action* a1 = findAction(m_actions, m_actions[f1].back().id);
 	Action* a2 = findAction(m_actions, m_actions[f2].back().id);
@@ -240,12 +240,12 @@ Action Actions::getClosestAction(ID channelId, Frame f, int type) const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Action> Actions::getActionsOnChannel(ID channelId) const
+std::vector<Action> Actions::getActionsOnChannel(ID channelId, std::size_t scene) const
 {
 	std::vector<Action> out;
 	forEachAction([&](const Action& a)
 	{
-		if (a.channelId == channelId)
+		if (a.channelId == channelId && a.scene == scene)
 			out.push_back(a);
 	});
 	return out;
@@ -297,19 +297,19 @@ void Actions::removeIf(std::function<bool(const Action&)> f)
 
 /* -------------------------------------------------------------------------- */
 
-bool Actions::exists(ID channelId, Frame frame, const MidiEvent& event, const Map& target) const
+bool Actions::exists(ID channelId, std::size_t scene, Frame frame, const MidiEvent& event, const Map& target) const
 {
 	for (const auto& [_, actions] : target)
 		for (const Action& a : actions)
-			if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw())
+			if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw() && a.scene == scene)
 				return true;
 	return false;
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool Actions::exists(ID channelId, Frame frame, const MidiEvent& event) const
+bool Actions::exists(ID channelId, std::size_t scene, Frame frame, const MidiEvent& event) const
 {
-	return exists(channelId, frame, event, m_actions);
+	return exists(channelId, scene, frame, event, m_actions);
 }
 } // namespace giada::m::model

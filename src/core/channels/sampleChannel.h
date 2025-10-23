@@ -37,44 +37,52 @@ class SampleChannel final
 {
 public:
 	SampleChannel();
-	SampleChannel(const Patch::Channel&, Wave*, float samplerateRatio);
+	SampleChannel(const Patch::Channel&, const SceneArray<Sample>&, float samplerateRatio);
 
-	bool  isAnyLoopMode() const;
-	bool  isAnyLoopOnceMode() const;
-	bool  isAnyNonLoopingSingleMode() const;
-	bool  hasWave() const;
-	bool  hasLogicalWave() const;
-	bool  hasEditedWave() const;
-	ID    getWaveId() const;
-	Frame getWaveSize() const;
-	Wave* getWave() const;
+	bool        isAnyLoopMode() const;
+	bool        isAnyLoopOnceMode() const;
+	bool        isAnyNonLoopingSingleMode() const;
+	bool        hasWave(std::size_t scene) const;
+	bool        hasLogicalWave(std::size_t scene) const;
+	bool        hasEditedWave(std::size_t scene) const;
+	ID          getWaveId(std::size_t scene) const;
+	Frame       getWaveSize(std::size_t scene) const;
+	Wave*       getWave(std::size_t scene) const;
+	SampleRange getRange(std::size_t scene) const;
+	Frame       getShift(std::size_t scene) const;
+	float       getPitch(std::size_t scene) const;
 
-	/* loadWave
+	const SceneArray<Sample>& getSamples() const;
+	const Sample&             getSample(std::size_t scene) const;
+
+	/* loadSample
 	Loads Wave and sets it up (name, markers, ...). Resets begin/end points
-	and shift if not specified. */
+	and shift if not specified (-1). */
 
-	void loadWave(Wave*, SampleRange newRange = {}, Frame shift = -1);
+	void loadSample(const Sample&, std::size_t scene);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The
 	ratio is used to adjust begin/end points in case of patch vs. conf sample
 	rate mismatch. If nullptr, set the wave to invalid. */
 
-	void setWave(Wave* w, float samplerateRatio);
+	void setWave(Wave* w, std::size_t scene, float samplerateRatio);
+
+	void setRange(SampleRange, std::size_t scene);
+	void setSample(const Sample&, std::size_t scene, float samplerateRatio);
+	void setShift(Frame, std::size_t scene);
+	void setPitch(float, std::size_t scene);
 
 	bool             inputMonitor;
 	bool             overdubProtection;
 	SamplePlayerMode mode;
-	float            pitch;
-	Frame            shift;
-	SampleRange      range;
 	bool             velocityAsVol; // Velocity drives volume
 
 private:
-	/* wave
-	Wave object. Might be null if the channel has no sample. */
+	/* m_samples
+	Array of Samples, one per scene. */
 
-	Wave* m_wave;
+	SceneArray<Sample> m_samples;
 };
 } // namespace giada::m
 

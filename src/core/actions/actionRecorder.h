@@ -67,20 +67,20 @@ public:
 	Clones actions in channel 'channelId', giving them a new channel ID. Returns
 	whether any action has been cloned. */
 
-	bool cloneActions(ID channelId, ID newChannelId);
+	bool cloneActions(ID channelId, std::size_t scene, ID newChannelId);
 
 	/* liveRec
 	Records a user-generated action. NOTE_ON or NOTE_OFF only for now. */
 
-	void liveRec(ID channelId, MidiEvent e, Frame global);
+	void liveRec(ID channelId, std::size_t scene, MidiEvent e, Frame global);
 
 	/* record*Action */
 
 #if 0
 	void recordEnvelopeAction(ID channelId, Frame frame, int value, Frame lastFrameInLoop);
 #endif
-	void recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
-	void recordSampleAction(ID channelId, int type, Frame f1, Frame f2, Frame framesInLoop);
+	void recordMidiAction(ID channelId, std::size_t scene, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
+	void recordSampleAction(ID channelId, std::size_t scene, int type, Frame f1, Frame f2, Frame framesInLoop);
 
 	/* delete*Action */
 
@@ -92,8 +92,8 @@ public:
 
 	/* update*Action */
 
-	void updateMidiAction(ID channelId, const Action&, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
-	void updateSampleAction(ID channelId, const Action&, int type, Frame f1, Frame f2, Frame framesInLoop);
+	void updateMidiAction(ID channelId, std::size_t scene, const Action&, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
+	void updateSampleAction(ID channelId, std::size_t scene, const Action&, int type, Frame f1, Frame f2, Frame framesInLoop);
 #if 0
 	void updateEnvelopeAction(ID channelId, const Action&, Frame f, int value, Frame lastFrameInLoop);
 #endif
@@ -103,7 +103,7 @@ public:
 	Records all live actions. Returns a set of channels IDs that have been
 	recorded. */
 
-	std::unordered_set<ID> consolidate();
+	std::unordered_set<ID> consolidate(std::size_t scene);
 
 	/* clearAllActions
 	Deletes all recorded actions. */
@@ -114,11 +114,11 @@ public:
 
 	const Action*       findAction(ID) const;
 	bool                hasActions(ID channelId, int type = 0) const;
-	std::vector<Action> getActionsOnChannel(ID channelId) const;
+	std::vector<Action> getActionsOnChannel(ID channelId, std::size_t scene) const;
 	void                clearChannel(ID channelId);
 	void                clearActions(ID channelId, int type);
-	Action              rec(ID channelId, Frame frame, MidiEvent e);
-	void                rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
+	Action              rec(ID channelId, std::size_t scene, Frame frame, MidiEvent e);
+	void                rec(ID channelId, std::size_t scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 	void                updateSiblings(ID id, ID prevId, ID nextId);
 	void                deleteAction(ID channelId, ID id);
 	void                deleteAction(ID channelId, ID currId, ID nextId);

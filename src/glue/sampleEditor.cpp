@@ -34,22 +34,26 @@ extern giada::m::Engine* g_engine;
 
 namespace giada::c::sampleEditor
 {
-Data::Data(const m::Channel& c)
+Data::Data(const m::Channel& c, std::size_t scene)
 : channelId(c.id)
-, name(c.name)
+, name(c.getName(scene))
 , volume(c.volume)
 , pan(c.pan.asFloat())
-, pitch(c.sampleChannel->pitch)
-, range(c.sampleChannel->range)
-, shift(c.sampleChannel->shift)
-, waveSize(c.sampleChannel->getWave()->getBuffer().countFrames())
-, waveBits(c.sampleChannel->getWave()->getBits())
-, waveDuration(c.sampleChannel->getWave()->getDuration())
-, waveRate(c.sampleChannel->getWave()->getRate())
-, wavePath(c.sampleChannel->getWave()->getPath())
-, isLogical(c.sampleChannel->getWave()->isLogical())
+, sample(c.sampleChannel->getSample(scene))
+, waveSize(c.sampleChannel->getWave(scene)->getBuffer().countFrames())
+, waveBits(c.sampleChannel->getWave(scene)->getBits())
+, waveDuration(c.sampleChannel->getWave(scene)->getDuration())
+, waveRate(c.sampleChannel->getWave(scene)->getRate())
+, wavePath(c.sampleChannel->getWave(scene)->getPath())
+, isLogical(c.sampleChannel->getWave(scene)->isLogical())
 , m_channel(&c)
+, m_scene(scene)
 {
+}
+
+bool Data::isValid() const
+{
+	return sample.wave != nullptr;
 }
 
 ChannelStatus Data::a_getPreviewStatus() const
@@ -60,11 +64,6 @@ ChannelStatus Data::a_getPreviewStatus() const
 Frame Data::a_getPreviewTracker() const
 {
 	return g_engine->getSampleEditorApi().getPreviewTracker();
-}
-
-const m::Wave& Data::getWaveRef() const
-{
-	return *m_channel->sampleChannel->getWave();
 }
 
 Frame Data::getFramesInBar() const
@@ -83,7 +82,12 @@ Frame Data::getFramesInLoop() const
 
 Data getData(ID channelId)
 {
-	return Data(g_engine->getChannelsApi().get(channelId));
+	const m::Channel& channel = g_engine->getChannelsApi().get(channelId);
+	const std::size_t scene   = g_engine->getMainApi().getCurrentScene();
+
+	if (channel.sampleChannel->getSample(scene).wave == nullptr)
+		return Data();
+	return Data(channel, scene);
 }
 
 /* -------------------------------------------------------------------------- */

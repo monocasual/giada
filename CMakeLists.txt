@@ -107,6 +107,7 @@ list(APPEND SOURCES
 	src/core/waveFx.h
 	src/core/kernelMidi.cpp
 	src/core/kernelMidi.h
+	src/core/patch.cpp
 	src/core/patch.h
 	src/core/actions/actionFactory.cpp
 	src/core/actions/actionFactory.h
@@ -335,6 +336,8 @@ list(APPEND SOURCES
 	src/gui/elems/mainWindow/mainTransport.h
 	src/gui/elems/mainWindow/sequencer.cpp
 	src/gui/elems/mainWindow/sequencer.h
+	src/gui/elems/mainWindow/scenes.cpp
+	src/gui/elems/mainWindow/scenes.h
 	src/gui/elems/mainWindow/keyboard/sampleChannelMode.cpp
 	src/gui/elems/mainWindow/keyboard/sampleChannelMode.h
 	src/gui/elems/mainWindow/keyboard/channelButton.cpp

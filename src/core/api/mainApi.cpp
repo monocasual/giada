@@ -63,7 +63,8 @@ bool MainApi::isRecordingActions() const
 
 bool MainApi::canRecordInput() const
 {
-	return m_kernelAudio.isInputEnabled() && m_channelManager.hasInputRecordableChannels();
+	const std::size_t scene = m_sequencer.getCurrentScene();
+	return m_kernelAudio.isInputEnabled() && m_channelManager.hasInputRecordableChannels(scene);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -184,6 +185,13 @@ int MainApi::getFramesInBeat() const
 SeqStatus MainApi::getSequencerStatus() const
 {
 	return m_sequencer.getStatus();
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::size_t MainApi::getCurrentScene() const
+{
+	return m_sequencer.getCurrentScene();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -324,5 +332,13 @@ void MainApi::toggleInputRecording()
 void MainApi::startActionRecOnCallback()
 {
 	m_recorder.startActionRecOnCallback();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MainApi::setScene(std::size_t scene)
+{
+	m_sequencer.setScene(scene);
+	m_reactor.setScene(scene);
 }
 } // namespace giada::m

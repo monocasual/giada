@@ -80,7 +80,7 @@ geRangeTool::geRangeTool(const c::sampleEditor::Data& d)
 void geRangeTool::rebuild(const c::sampleEditor::Data& d)
 {
 	m_data = &d;
-	update(m_data->range);
+	update(m_data->sample.range);
 }
 
 /* -------------------------------------------------------------------------- */

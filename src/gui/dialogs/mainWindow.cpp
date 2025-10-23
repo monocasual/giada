@@ -35,6 +35,7 @@
 #include "src/gui/elems/mainWindow/mainOutput.h"
 #include "src/gui/elems/mainWindow/mainTimer.h"
 #include "src/gui/elems/mainWindow/mainTransport.h"
+#include "src/gui/elems/mainWindow/scenes.h"
 #include "src/gui/elems/mainWindow/sequencer.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
@@ -122,9 +123,10 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 			geFlex* zone3 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {0, 15});
 			{
 				sequencer = new v::geSequencer();
-				zone3->addWidget(new geBox(), 80);
+				scenes    = new geScenes();
+				zone3->addWidget(new geBox(), 120);
 				zone3->addWidget(sequencer);
-				zone3->addWidget(new geBox(), 80);
+				zone3->addWidget(scenes, 120);
 				zone3->end();
 			}
 
@@ -179,6 +181,7 @@ void gdMainWindow::refresh()
 	keyboard->refresh();
 	mainInput->refresh();
 	mainOutput->refresh();
+	scenes->refresh();
 }
 
 /* -------------------------------------------------------------------------- */

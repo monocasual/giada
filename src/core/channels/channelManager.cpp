@@ -165,26 +165,27 @@ Channel& ChannelManager::addChannel(ChannelType type, std::size_t trackIndex, in
 
 /* -------------------------------------------------------------------------- */
 
-int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, int sampleRate, Resampler::Quality quality)
+int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, int sampleRate,
+    Resampler::Quality quality, std::size_t scene)
 {
 	waveFactory::Result res = waveFactory::createFromFile(fname, /*id=*/0, sampleRate, quality);
 	if (res.status != G_RES_OK)
 		return res.status;
 
-	loadSampleChannel(channelId, m_model.addWave(std::move(res.wave)));
+	loadSampleChannel(channelId, m_model.addWave(std::move(res.wave)), scene);
 
 	return G_RES_OK;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
+void ChannelManager::loadSampleChannel(ID channelId, Wave& wave, std::size_t scene)
 {
 	Channel&    channel = m_model.get().tracks.getChannel(channelId);
 	Wave&       newWave = wave;
-	const Wave* oldWave = channel.sampleChannel->getWave();
+	const Wave* oldWave = channel.sampleChannel->getWave(scene);
 
-	loadSampleChannel(channel, &newWave);
+	loadSampleChannel(channel, &newWave, scene);
 	m_model.swap(model::SwapType::HARD);
 
 	/* Remove the old Wave, if any. It is safe to do it now: the audio thread is
@@ -198,7 +199,7 @@ void ChannelManager::loadSampleChannel(ID channelId, Wave& wave)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vector<Plugin*>& plugins)
+void ChannelManager::cloneChannel(ID channelId, std::size_t scene, int bufferSize, const std::vector<Plugin*>& plugins)
 {
 	const Channel&           oldChannel     = m_model.get().tracks.getChannel(channelId);
 	const std::size_t        trackIndex     = m_model.get().tracks.getByChannel(channelId).getIndex();
@@ -209,14 +210,15 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 
 	/* Clone Wave first, if any. */
 
-	if (oldChannel.sampleChannel && oldChannel.sampleChannel->hasWave())
+	if (oldChannel.sampleChannel && oldChannel.sampleChannel->hasWave(scene))
 	{
-		const Wave& oldWave  = *oldChannel.sampleChannel->getWave();
-		const Frame oldShift = oldChannel.sampleChannel->shift;
-		const auto  oldRange = oldChannel.sampleChannel->range;
-		Wave&       wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
+		const Sample& sample   = oldChannel.sampleChannel->getSample(scene);
+		const Wave&   oldWave  = *sample.wave;
+		const Frame   oldShift = sample.shift;
+		const auto    oldRange = sample.range;
+		Wave&         wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
 
-		newChannelData.channel.loadWave(&wave, oldRange, oldShift);
+		newChannelData.channel.loadSample({&wave, oldRange, oldShift}, 0);
 	}
 
 	newChannelData.channel.plugins = plugins;
@@ -230,15 +232,15 @@ void ChannelManager::cloneChannel(ID channelId, int bufferSize, const std::vecto
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::freeSampleChannel(ID channelId)
+void ChannelManager::freeSampleChannel(ID channelId, std::size_t scene)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	assert(ch.sampleChannel);
 
-	const Wave* wave = ch.sampleChannel->getWave();
+	const Wave* wave = ch.sampleChannel->getWave(0);
 
-	loadSampleChannel(ch, nullptr);
+	loadSampleChannel(ch, nullptr, scene);
 	m_model.swap(model::SwapType::HARD);
 
 	if (wave != nullptr)
@@ -249,12 +251,12 @@ void ChannelManager::freeSampleChannel(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::freeAllSampleChannels()
+void ChannelManager::freeAllSampleChannels(std::size_t scene)
 {
-	m_model.get().tracks.forEachChannel([this](Channel& ch)
+	m_model.get().tracks.forEachChannel([this, scene](Channel& ch)
 	{
 		if (ch.sampleChannel)
-			loadSampleChannel(ch, nullptr);
+			loadSampleChannel(ch, nullptr, scene);
 		return true;
 	});
 
@@ -279,7 +281,7 @@ void ChannelManager::moveChannel(ID channelId, std::size_t newTrackIndex, std::s
 void ChannelManager::deleteChannel(ID channelId)
 {
 	const Channel& ch   = m_model.get().tracks.getChannel(channelId);
-	const Wave*    wave = ch.sampleChannel ? ch.sampleChannel->getWave() : nullptr;
+	const Wave*    wave = ch.sampleChannel ? ch.sampleChannel->getWave(0) : nullptr;
 
 	m_model.removeChannelShared(*ch.shared);
 	m_model.get().tracks.getByChannel(channelId).removeChannel(channelId);
@@ -293,9 +295,9 @@ void ChannelManager::deleteChannel(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::renameChannel(ID channelId, const std::string& name)
+void ChannelManager::renameChannel(ID channelId, const std::string& name, std::size_t scene)
 {
-	m_model.get().tracks.getChannel(channelId).name = name;
+	m_model.get().tracks.getChannel(channelId).setName(name, scene);
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -313,12 +315,12 @@ float ChannelManager::getMasterOutVol() const
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::finalizeInputRec(const mcl::AudioBuffer& buffer, Frame recordedFrames, Frame currentFrame)
+void ChannelManager::finalizeInputRec(const mcl::AudioBuffer& buffer, Frame recordedFrames, Frame currentFrame, std::size_t scene)
 {
-	for (Channel* ch : getRecordableChannels())
-		recordChannel(*ch, buffer, recordedFrames, currentFrame);
-	for (Channel* ch : getOverdubbableChannels())
-		overdubChannel(*ch, buffer, currentFrame);
+	for (Channel* ch : getRecordableChannels(scene))
+		recordChannel(*ch, buffer, recordedFrames, currentFrame, scene);
+	for (Channel* ch : getOverdubbableChannels(scene))
+		overdubChannel(*ch, buffer, currentFrame, scene);
 
 	triggerOnChannelsAltered();
 }
@@ -341,14 +343,14 @@ void ChannelManager::setVolume(ID channelId, float value)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::setPitch(ID channelId, float value)
+void ChannelManager::setPitch(ID channelId, float value, std::size_t scene)
 {
 	assert(m_model.get().tracks.getChannel(channelId).sampleChannel);
 
 	const float pitch = std::clamp(value, G_MIN_PITCH, G_MAX_PITCH);
 
-	m_model.get().tracks.getChannel(channelId).sampleChannel->pitch          = pitch;
-	m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID).sampleChannel->pitch = pitch;
+	m_model.get().tracks.getChannel(channelId).sampleChannel->setPitch(pitch, scene);
+	m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID).sampleChannel->setPitch(pitch, /*scene=*/0);
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -362,15 +364,15 @@ void ChannelManager::setPan(ID channelId, float value)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::setRange(ID channelId, SampleRange range)
+void ChannelManager::setRange(ID channelId, SampleRange range, std::size_t scene)
 {
 	Channel& c       = m_model.get().tracks.getChannel(channelId);
 	Channel& preview = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	assert(c.sampleChannel);
 
-	range.a = std::clamp(range.a, 0, c.sampleChannel->getWaveSize() - 1);
-	range.b = std::clamp(range.b, 1, c.sampleChannel->getWaveSize());
+	range.a = std::clamp(range.a, 0, c.sampleChannel->getWaveSize(scene) - 1);
+	range.b = std::clamp(range.b, 1, c.sampleChannel->getWaveSize(scene));
 	if (range.a >= range.b)
 		range.a = range.b - 1;
 	else if (range.b < range.a)
@@ -379,18 +381,18 @@ void ChannelManager::setRange(ID channelId, SampleRange range)
 	if (c.shared->tracker.load() < range.a)
 		c.shared->tracker.store(range.a);
 
-	c.sampleChannel->range       = range;
-	preview.sampleChannel->range = range;
+	c.sampleChannel->setRange(range, scene);
+	preview.sampleChannel->setRange(range, scene);
 	m_model.swap(model::SwapType::HARD);
 }
 
-void ChannelManager::resetRange(ID channelId)
+void ChannelManager::resetRange(ID channelId, std::size_t scene)
 {
 	Channel& c = m_model.get().tracks.getChannel(channelId);
 
 	assert(c.sampleChannel);
 
-	c.sampleChannel->range = {0, c.sampleChannel->getWaveSize()};
+	c.sampleChannel->setRange({0, c.sampleChannel->getWaveSize(scene)}, scene);
 	m_model.swap(model::SwapType::HARD);
 }
 
@@ -463,7 +465,7 @@ void ChannelManager::removeExtraOutput(ID channelId, std::size_t i)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::loadWaveInPreviewChannel(ID channelId)
+void ChannelManager::loadWaveInPreviewChannel(ID channelId, std::size_t scene)
 {
 	Channel&       previewCh = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 	const Channel& sourceCh  = m_model.get().tracks.getChannel(channelId);
@@ -471,10 +473,10 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId)
 	assert(previewCh.sampleChannel);
 	assert(sourceCh.sampleChannel);
 
-	previewCh.loadWave(sourceCh.sampleChannel->getWave());
-	previewCh.sampleChannel->mode  = SamplePlayerMode::SINGLE_BASIC_PAUSE;
-	previewCh.sampleChannel->range = sourceCh.sampleChannel->range;
-	previewCh.sampleChannel->pitch = sourceCh.sampleChannel->pitch;
+	previewCh.loadSample(sourceCh.sampleChannel->getSample(scene), /*scene=*/0);
+	previewCh.sampleChannel->mode = SamplePlayerMode::SINGLE_BASIC_PAUSE;
+	previewCh.sampleChannel->setRange(sourceCh.sampleChannel->getRange(scene), /*scene=*/0);
+	previewCh.sampleChannel->setPitch(sourceCh.sampleChannel->getPitch(scene), /*scene=*/0);
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -485,7 +487,7 @@ void ChannelManager::freeWaveInPreviewChannel()
 {
 	Channel& previewCh = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
-	previewCh.loadWave(nullptr);
+	previewCh.loadSample({}, /*scene=*/0);
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -504,7 +506,7 @@ bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
 
 	assert(ch.sampleChannel);
 
-	Wave* wave = ch.sampleChannel->getWave();
+	Wave* wave = ch.sampleChannel->getWave(0);
 
 	assert(wave != nullptr);
 
@@ -539,10 +541,10 @@ void ChannelManager::finalizeActionRec(const std::unordered_set<ID>& ids)
 
 /* -------------------------------------------------------------------------- */
 
-bool ChannelManager::hasInputRecordableChannels() const
+bool ChannelManager::hasInputRecordableChannels(std::size_t scene) const
 {
-	return m_model.get().tracks.anyChannelOf([](const Channel& ch)
-	{ return ch.canInputRec(); });
+	return m_model.get().tracks.anyChannelOf([scene](const Channel& ch)
+	{ return ch.canInputRec(scene); });
 }
 
 bool ChannelManager::hasActions() const
@@ -555,7 +557,7 @@ bool ChannelManager::hasAudioData() const
 {
 	return m_model.get().tracks.anyChannelOf([](const Channel& ch)
 	{
-		return ch.sampleChannel && ch.sampleChannel->hasWave();
+		return ch.sampleChannel && ch.sampleChannel->hasWave(0);
 	});
 }
 
@@ -576,10 +578,10 @@ bool ChannelManager::canRemoveTrack(std::size_t trackIndex) const
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::loadSampleChannel(Channel& ch, Wave* w) const
+void ChannelManager::loadSampleChannel(Channel& ch, Wave* w, std::size_t scene) const
 {
-	ch.loadWave(w);
-	ch.name = w != nullptr ? w->getBasename(/*ext=*/false) : "";
+	ch.loadSample({w, {}}, scene);
+	ch.setName(w != nullptr ? w->getBasename(/*ext=*/false) : "", scene);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -612,16 +614,16 @@ void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& sha
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Channel*> ChannelManager::getRecordableChannels()
+std::vector<Channel*> ChannelManager::getRecordableChannels(std::size_t scene)
 {
-	return m_model.get().tracks.getChannelsIf([](const Channel& c)
-	{ return c.canInputRec() && !c.hasWave(); });
+	return m_model.get().tracks.getChannelsIf([scene](const Channel& c)
+	{ return c.canInputRec(scene) && !c.hasWave(scene); });
 }
 
-std::vector<Channel*> ChannelManager::getOverdubbableChannels()
+std::vector<Channel*> ChannelManager::getOverdubbableChannels(std::size_t scene)
 {
-	return m_model.get().tracks.getChannelsIf([](const Channel& c)
-	{ return c.canInputRec() && c.hasWave(); });
+	return m_model.get().tracks.getChannelsIf([scene](const Channel& c)
+	{ return c.canInputRec(scene) && c.hasWave(scene); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -638,7 +640,7 @@ void ChannelManager::setupChannelPostRecording(Channel& ch, Frame currentFrame)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, Frame recordedFrames, Frame currentFrame)
+void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, Frame recordedFrames, Frame currentFrame, std::size_t scene)
 {
 	assert(onChannelRecorded != nullptr);
 
@@ -652,7 +654,7 @@ void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, 
 
 	/* Update channel with the new Wave. */
 
-	loadSampleChannel(ch, &m_model.addWave(std::move(wave)));
+	loadSampleChannel(ch, &m_model.addWave(std::move(wave)), scene);
 	setupChannelPostRecording(ch, currentFrame);
 
 	m_model.swap(model::SwapType::HARD);
@@ -660,9 +662,9 @@ void ChannelManager::recordChannel(Channel& ch, const mcl::AudioBuffer& buffer, 
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer, Frame currentFrame)
+void ChannelManager::overdubChannel(Channel& ch, const mcl::AudioBuffer& buffer, Frame currentFrame, std::size_t scene)
 {
-	Wave* wave = ch.sampleChannel->getWave();
+	Wave* wave = ch.sampleChannel->getWave(scene);
 
 	/* Need model::DataLock here, as data might be being read by the audio
 	thread at the same time. */

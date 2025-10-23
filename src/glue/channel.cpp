@@ -67,21 +67,21 @@ void printLoadError_(int res)
 
 /* -------------------------------------------------------------------------- */
 
-Data makeData_(ID channelId, const m::model::Track& modelTrack)
+Data makeData_(ID channelId, const m::model::Track& modelTrack, std::size_t scene)
 {
 	const std::size_t channelIndex = modelTrack.getChannelIndex(channelId);
 	const std::size_t trackIndex   = modelTrack.getIndex();
-	return Data(g_engine->getChannelsApi().get(channelId), trackIndex, channelIndex);
+	return Data(g_engine->getChannelsApi().get(channelId), scene, trackIndex, channelIndex);
 }
 
 /* -------------------------------------------------------------------------- */
 
-Track makeTrack_(const m::model::Track& modelTrack)
+Track makeTrack_(const m::model::Track& modelTrack, std::size_t scene)
 {
 	Track track{modelTrack.getIndex(), modelTrack.width, {}};
 
 	for (const m::Channel& channel : modelTrack.getChannels().getAll())
-		track.channels.push_back(makeData_(channel.id, modelTrack));
+		track.channels.push_back(makeData_(channel.id, modelTrack, scene));
 
 	return track;
 }
@@ -91,12 +91,12 @@ Track makeTrack_(const m::model::Track& modelTrack)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-SampleData::SampleData(const m::Channel& ch)
-: waveId(ch.sampleChannel->getWaveId())
+SampleData::SampleData(const m::Channel& ch, std::size_t scene)
+: waveId(ch.sampleChannel->getWaveId(scene))
 , mode(ch.sampleChannel->mode)
 , isLoop(ch.sampleChannel->isAnyLoopMode())
-, pitch(ch.sampleChannel->pitch)
-, range(ch.sampleChannel->range)
+, pitch(ch.sampleChannel->getPitch(scene))
+, range(ch.sampleChannel->getRange(scene))
 , inputMonitor(ch.sampleChannel->inputMonitor)
 , overdubProtection(ch.sampleChannel->overdubProtection)
 , m_tracker(&ch.shared->tracker)
@@ -115,14 +115,14 @@ MidiData::MidiData(const m::Channel& m)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::Channel& c, std::size_t trackIndex, std::size_t channelIndex)
+Data::Data(const m::Channel& c, std::size_t scene, std::size_t trackIndex, std::size_t channelIndex)
 : id(c.id)
 , trackIndex(trackIndex)
 , channelIndex(channelIndex)
 , plugins(c.plugins)
 , type(c.type)
 , height(c.height)
-, name(c.name)
+, name(c.getName(scene))
 , volume(c.volume)
 , pan(c.pan.asFloat())
 , key(c.key)
@@ -134,7 +134,7 @@ Data::Data(const m::Channel& c, std::size_t trackIndex, std::size_t channelIndex
 , m_readActions(&c.shared->readActions)
 {
 	if (c.type == ChannelType::SAMPLE)
-		sample = std::make_optional<SampleData>(c);
+		sample = std::make_optional<SampleData>(c, scene);
 	else if (c.type == ChannelType::MIDI)
 		midi = std::make_optional<MidiData>(c);
 }
@@ -147,6 +147,7 @@ bool          Data::isRecordingActions() const { return g_engine->getMainApi().i
 bool          Data::isMuted() const { return g_engine->getChannelsApi().get(id).isMuted(); }
 bool          Data::isSoloed() const { return g_engine->getChannelsApi().get(id).isSoloed(); }
 bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).armed; }
+bool          Data::isActive() const { return g_engine->getChannelsApi().get(id).isActive(); }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -154,15 +155,17 @@ bool          Data::isArmed() const { return g_engine->getChannelsApi().get(id).
 
 Data getData(ID channelId)
 {
-	return makeData_(channelId, g_engine->getChannelsApi().getTracks().getByChannel(channelId));
+	const std::size_t scene = g_engine->getMainApi().getCurrentScene();
+	return makeData_(channelId, g_engine->getChannelsApi().getTracks().getByChannel(channelId), scene);
 }
 
 std::vector<Track> getTracks()
 {
+	const std::size_t  scene = g_engine->getMainApi().getCurrentScene();
 	std::vector<Track> out;
 	for (const m::model::Track& modelTrack : g_engine->getChannelsApi().getTracks().getAll())
 		if (!modelTrack.isInternal())
-			out.push_back(makeTrack_(modelTrack));
+			out.push_back(makeTrack_(modelTrack, scene));
 	return out;
 }
 

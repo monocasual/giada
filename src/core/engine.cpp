@@ -61,7 +61,7 @@ Engine::Engine()
 , m_mainApi(m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder, m_reactor)
 , m_channelsApi(m_model, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager, m_reactor)
 , m_pluginsApi(m_kernelAudio, m_pluginManager, m_pluginHost, m_model)
-, m_sampleEditorApi(m_kernelAudio, m_model, m_channelManager, m_reactor)
+, m_sampleEditorApi(m_kernelAudio, m_model, m_channelManager, m_reactor, m_sequencer)
 , m_actionEditorApi(*this, m_sequencer, m_actionRecorder)
 , m_ioApi(m_model, m_midiDispatcher)
 , m_storageApi(*this, m_model, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
@@ -229,6 +229,12 @@ Engine::Engine()
 	m_sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep)
 	{
 		m_actionRecorder.updateBpm(oldVal / newVal, quantizerStep);
+	};
+	m_sequencer.onSceneChanged = [this]()
+	{
+		/* Rebuild UI when the scene has changed to update channels. */
+		assert(onModelSwap != nullptr);
+		onModelSwap(model::SwapType::HARD);
 	};
 
 	m_model.onSwap = [this](model::SwapType t)

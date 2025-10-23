@@ -124,14 +124,15 @@ void ChannelsApi::move(ID channelId, std::size_t newTrackIndex, std::size_t newP
 
 int ChannelsApi::loadSampleChannel(ID channelId, const std::string& filePath)
 {
+	const int                scene       = m_sequencer.getCurrentScene();
 	const int                sampleRate  = m_kernelAudio.getSampleRate();
 	const Resampler::Quality rsmpQuality = m_model.get().kernelAudio.rsmpQuality;
-	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality);
+	return m_channelManager.loadSampleChannel(channelId, filePath, sampleRate, rsmpQuality, scene);
 }
 
 void ChannelsApi::loadSampleChannel(ID channelId, Wave& wave)
 {
-	m_channelManager.loadSampleChannel(channelId, wave);
+	m_channelManager.loadSampleChannel(channelId, wave, m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -156,7 +157,7 @@ void ChannelsApi::remove(ID channelId)
 void ChannelsApi::freeSampleChannel(ID channelId)
 {
 	m_actionRecorder.clearChannel(channelId);
-	m_channelManager.freeSampleChannel(channelId);
+	m_channelManager.freeSampleChannel(channelId, m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -167,38 +168,42 @@ void ChannelsApi::clone(ID channelId)
 	internal workings. */
 
 	const Channel&             ch            = m_channelManager.getChannel(channelId);
+	const std::size_t          scene         = m_sequencer.getCurrentScene();
 	const int                  bufferSize    = m_kernelAudio.getBufferSize();
 	const int                  sampleRate    = m_kernelAudio.getSampleRate();
 	const std::vector<Plugin*> plugins       = m_pluginManager.clonePlugins(ch.plugins, sampleRate, bufferSize, m_model);
 	const ID                   nextChannelId = channelFactory::getNextId();
 
-	m_channelManager.cloneChannel(channelId, bufferSize, plugins);
+	m_channelManager.cloneChannel(channelId, scene, bufferSize, plugins);
 	if (ch.hasActions)
-		m_actionRecorder.cloneActions(channelId, nextChannelId);
+		m_actionRecorder.cloneActions(channelId, scene, nextChannelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelsApi::press(ID channelId, float velocity)
 {
-	const bool  canRecordActions = m_recorder.canRecordActions();
-	const bool  canQuantize      = m_sequencer.canQuantize();
-	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	m_reactor.keyPress(channelId, velocity, canRecordActions, canQuantize, currentFrameQ);
+	const bool        canRecordActions = m_recorder.canRecordActions();
+	const bool        canQuantize      = m_sequencer.canQuantize();
+	const Frame       currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
+	const std::size_t scene            = m_sequencer.getCurrentScene();
+	m_reactor.keyPress(channelId, scene, velocity, canRecordActions, canQuantize, currentFrameQ);
 }
 
 void ChannelsApi::release(ID channelId)
 {
-	const bool  canRecordActions = m_recorder.canRecordActions();
-	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	m_reactor.keyRelease(channelId, canRecordActions, currentFrameQ);
+	const bool        canRecordActions = m_recorder.canRecordActions();
+	const Frame       currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
+	const std::size_t scene            = m_sequencer.getCurrentScene();
+	m_reactor.keyRelease(channelId, scene, canRecordActions, currentFrameQ);
 }
 
 void ChannelsApi::kill(ID channelId)
 {
-	const bool  canRecordActions = m_recorder.canRecordActions();
-	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	m_reactor.keyKill(channelId, canRecordActions, currentFrameQ);
+	const bool        canRecordActions = m_recorder.canRecordActions();
+	const Frame       currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
+	const std::size_t scene            = m_sequencer.getCurrentScene();
+	m_reactor.keyKill(channelId, scene, canRecordActions, currentFrameQ);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -212,7 +217,7 @@ void ChannelsApi::setVolume(ID channelId, float v)
 
 void ChannelsApi::setPitch(ID channelId, float v)
 {
-	m_channelManager.setPitch(channelId, v);
+	m_channelManager.setPitch(channelId, v, m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -290,7 +295,7 @@ void ChannelsApi::setHeight(ID channelId, int h)
 
 void ChannelsApi::setName(ID channelId, const std::string& name)
 {
-	m_channelManager.renameChannel(channelId, name);
+	m_channelManager.renameChannel(channelId, name, m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -328,16 +333,17 @@ void ChannelsApi::clearAllActions()
 
 void ChannelsApi::freeAllSampleChannels()
 {
-	m_channelManager.freeAllSampleChannels();
+	m_channelManager.freeAllSampleChannels(m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ChannelsApi::sendMidi(ID channelId, const MidiEvent& e)
 {
-	const bool  canRecordActions = m_recorder.canRecordActions();
-	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
-	m_reactor.processMidiEvent(channelId, e, canRecordActions, currentFrameQ);
+	const bool        canRecordActions = m_recorder.canRecordActions();
+	const Frame       currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
+	const std::size_t scene            = m_sequencer.getCurrentScene();
+	m_reactor.processMidiEvent(channelId, scene, e, canRecordActions, currentFrameQ);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -38,7 +38,7 @@ class KernelMidi;
 
 namespace giada::m::rendering
 {
-void advanceMidiChannel(const Channel&, const Sequencer::Event&, KernelMidi&);
+void advanceMidiChannel(const Channel&, std::size_t scene, const Sequencer::Event&, KernelMidi&);
 } // namespace giada::m::rendering
 
 #endif

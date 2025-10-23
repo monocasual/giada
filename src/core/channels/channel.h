@@ -43,7 +43,7 @@ class Channel final
 {
 public:
 	Channel(ChannelType t, ID id, ChannelShared&);
-	Channel(const Patch::Channel&, ChannelShared&, float samplerateRatio, Wave*, std::vector<Plugin*>);
+	Channel(const Patch::Channel&, ChannelShared&, float samplerateRatio, const SceneArray<Sample>&, std::vector<Plugin*>);
 
 	bool operator==(const Channel&) const;
 
@@ -51,9 +51,17 @@ public:
 	bool isInternal() const;
 	bool isMuted() const;
 	bool isSoloed() const;
-	bool canInputRec() const;
-	bool canActionRec() const;
-	bool hasWave() const;
+	bool canInputRec(std::size_t scene) const;
+	bool canActionRec(std::size_t scene) const;
+	bool hasWave(std::size_t scene) const;
+
+	/* isActive
+	True if status is PLAY, WAIT or ENDING. */
+
+	bool isActive() const;
+
+	std::string                    getName(std::size_t scene) const;
+	const SceneArray<std::string>& getNames() const;
 
 	/* canReceiveAudio
 	Tells if the sample channel can receive audio as input monitor. */
@@ -77,19 +85,20 @@ public:
 
 	void setMute(bool);
 	void setSolo(bool);
+	void setName(const std::string&, std::size_t scene);
 
 	/* loadWave
 	Loads Wave and sets it up (name, markers, ...). Also updates Channel's shared
-	state accordingly. Resets begin/end points shift if not specified. */
+	state accordingly. Resets begin/end points shift if not specified (-1). */
 
-	void loadWave(Wave*, SampleRange range = {}, Frame shift = -1);
+	void loadSample(const Sample&, std::size_t scene);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The
 	ratio is used to adjust begin/end points in case of patch vs. conf sample
 	rate mismatch. If nullptr, set the wave to invalid. */
 
-	void setWave(Wave* w, float samplerateRatio);
+	void setWave(Wave* w, std::size_t scene, float samplerateRatio);
 
 	/* kickIn
 	Starts the player right away at frame 'f'. Used when launching a loop after
@@ -105,7 +114,6 @@ public:
 	bool                 armed;
 	int                  key; // TODO - move this to v::Model
 	bool                 hasActions;
-	std::string          name;   // TODO - move this to v::Model
 	int                  height; // TODO - move this to v::Model
 	std::vector<Plugin*> plugins;
 
@@ -129,8 +137,9 @@ public:
 	std::optional<MidiChannel>   midiChannel;
 
 private:
-	bool m_mute;
-	bool m_solo;
+	bool                    m_mute;
+	bool                    m_solo;
+	SceneArray<std::string> m_names;
 };
 } // namespace giada::m
 

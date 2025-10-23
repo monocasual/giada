@@ -28,6 +28,7 @@
 #include "src/gui/const.h"
 #include <cassert>
 #if G_DEBUG_MODE
+#include "src/core/wave.h"
 #include "src/utils/string.h"
 #include <fmt/core.h>
 #endif
@@ -66,7 +67,7 @@ Channel::Channel(ChannelType type, ID id, ChannelShared& s)
 
 /* -------------------------------------------------------------------------- */
 
-Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRatio, Wave* wave, std::vector<Plugin*> plugins)
+Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRatio, const SceneArray<Sample>& samples, std::vector<Plugin*> plugins)
 : shared(&s)
 , id(p.id)
 , type(p.type)
@@ -75,7 +76,6 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , armed(p.armed)
 , key(p.key)
 , hasActions(p.hasActions)
-, name(p.name)
 , height(p.height)
 , plugins(plugins)
 , sendToMaster(p.sendToMaster)
@@ -84,6 +84,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 , midiLightning(p)
 , m_mute(p.mute)
 , m_solo(p.solo)
+, m_names(p.names)
 {
 	shared->readActions.store(p.readActions);
 	shared->recStatus.store(p.readActions ? ChannelStatus::PLAY : ChannelStatus::OFF);
@@ -92,7 +93,7 @@ Channel::Channel(const Patch::Channel& p, ChannelShared& s, float samplerateRati
 	{
 	case ChannelType::SAMPLE:
 	case ChannelType::PREVIEW:
-		sampleChannel.emplace(p, wave, samplerateRatio);
+		sampleChannel.emplace(p, samples, samplerateRatio);
 		break;
 
 	case ChannelType::MIDI:
@@ -138,26 +139,26 @@ bool Channel::isAudible(bool mixerHasSolos) const
 	return !mixerHasSolos || (mixerHasSolos && isSoloed());
 }
 
-bool Channel::canInputRec() const
+bool Channel::canInputRec(std::size_t scene) const
 {
 	if (type != ChannelType::SAMPLE)
 		return false;
 
-	bool hasWave     = sampleChannel->hasWave();
+	bool hasWave     = sampleChannel->hasWave(scene);
 	bool isProtected = sampleChannel->overdubProtection;
 	bool canOverdub  = !hasWave || (hasWave && !isProtected);
 
 	return armed && canOverdub;
 }
 
-bool Channel::canActionRec() const
+bool Channel::canActionRec(std::size_t scene) const
 {
-	return hasWave() && !sampleChannel->isAnyLoopMode();
+	return hasWave(scene) && !sampleChannel->isAnyLoopMode();
 }
 
-bool Channel::hasWave() const
+bool Channel::hasWave(std::size_t scene) const
 {
-	return sampleChannel && sampleChannel->hasWave();
+	return sampleChannel && sampleChannel->hasWave(scene);
 }
 
 bool Channel::isPlaying() const
@@ -168,18 +169,33 @@ bool Channel::isPlaying() const
 
 /* -------------------------------------------------------------------------- */
 
+bool Channel::isActive() const
+{
+	ChannelStatus s = shared->playStatus.load();
+	return s == ChannelStatus::PLAY || s == ChannelStatus::WAIT || s == ChannelStatus::ENDING;
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::string                    Channel::getName(std::size_t scene) const { return m_names[scene]; }
+const SceneArray<std::string>& Channel::getNames() const { return m_names; };
+
+/* -------------------------------------------------------------------------- */
+
 #if G_DEBUG_MODE
 std::string Channel::debug() const
 {
-	std::string out = fmt::format("ID={} name='{}' type={} channelShared={}",
-	    id, name, u::string::toString(type), (void*)&shared);
+	std::string out = fmt::format("ID={} type={} channelShared={}",
+	    id, u::string::toString(type), (void*)&shared);
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
-		out += fmt::format(" wave={} mode={} begin={} end={}",
-		    (void*)sampleChannel->getWave(),
-		    u::string::toString(sampleChannel->mode),
-		    sampleChannel->range.a,
-		    sampleChannel->range.b);
+	{
+		out += fmt::format(" mode={}", u::string::toString(sampleChannel->mode));
+		out += "\n\twaves:\n";
+		for (const Sample& s : sampleChannel->getSamples())
+			if (s.wave != nullptr)
+				out += fmt::format("\t\tID={} ({}), range=[{}, {})\n", s.wave->id, (void*)s.wave, s.range.a, s.range.b);
+	}
 
 	return out;
 }
@@ -213,23 +229,27 @@ void Channel::setSolo(bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::loadWave(Wave* w, SampleRange newRange, Frame newShift)
+void Channel::setName(const std::string& name, std::size_t scene) { m_names[scene] = name; }
+
+/* -------------------------------------------------------------------------- */
+
+void Channel::loadSample(const Sample& s, std::size_t scene)
 {
 	assert(sampleChannel);
 
 	shared->tracker.store(0);
-	shared->playStatus.store(w != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
+	shared->playStatus.store(s.wave != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
 
-	sampleChannel->loadWave(w, newRange, newShift);
+	sampleChannel->loadSample(s, scene);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::setWave(Wave* w, float samplerateRatio)
+void Channel::setWave(Wave* w, std::size_t scene, float samplerateRatio)
 {
 	assert(sampleChannel);
 
-	sampleChannel->setWave(w, samplerateRatio);
+	sampleChannel->setWave(w, scene, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */

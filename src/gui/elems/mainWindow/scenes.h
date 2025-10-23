@@ -24,22 +24,26 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_RENDERING_SAMPLE_ADVANCE_H
-#define G_RENDERING_SAMPLE_ADVANCE_H
+#ifndef GE_SCENES_H
+#define GE_SCENES_H
 
-#include "src/core/sequencer.h"
-#include "src/core/types.h"
+#include "src/const.h"
+#include "src/gui/elems/basics/flex.h"
+#include <array>
 
-namespace giada::m
+namespace giada::v
 {
-struct Action;
-struct ChannelShared;
-class Channel;
-} // namespace giada::m
-
-namespace giada::m::rendering
+class geTextButton;
+class geScenes : public geFlex
 {
-void advanceSampleChannel(const Channel&, std::size_t scene, const Sequencer::Event&);
-} // namespace giada::m::rendering
+public:
+	geScenes();
+
+	void refresh();
+
+private:
+	std::array<geTextButton*, G_MAX_NUM_SCENES> m_buttons;
+};
+} // namespace giada::v
 
 #endif

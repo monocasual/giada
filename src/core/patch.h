@@ -33,8 +33,15 @@
 #include "src/gui/const.h"
 #include "src/version.h"
 #include <cstdint>
+#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
+
+namespace geompp
+{
+void to_json(nlohmann::json&, const giada::SampleRange&);
+void from_json(const nlohmann::json&, giada::SampleRange&);
+} // namespace geompp
 
 namespace giada::m
 {
@@ -47,46 +54,52 @@ struct Patch
 		std::vector<ID> channels;
 	};
 
+	struct Sample
+	{
+		ID          waveId = 0;
+		SampleRange range;
+		Frame       shift = 0;
+		float       pitch = G_DEFAULT_PITCH;
+	};
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Sample, waveId, range, shift, pitch);
+
 	struct Channel
 	{
-		ID               id              = 0;
-		ChannelType      type            = ChannelType::SAMPLE;
-		int              height          = 0;
-		std::string      name            = "";
-		int              key             = 0;
-		bool             mute            = false;
-		bool             solo            = false;
-		float            volume          = G_DEFAULT_VOL;
-		float            pan             = G_DEFAULT_PAN;
-		bool             hasActions      = false;
-		bool             armed           = false;
-		bool             sendToMaster    = true;
-		std::vector<int> extraOutputs    = {};
-		bool             midiIn          = false;
-		uint32_t         midiInKeyPress  = 0x0;
-		uint32_t         midiInKeyRel    = 0x0;
-		uint32_t         midiInKill      = 0x0;
-		uint32_t         midiInArm       = 0x0;
-		uint32_t         midiInVolume    = 0x0;
-		uint32_t         midiInMute      = 0x0;
-		uint32_t         midiInSolo      = 0x0;
-		int              midiInFilter    = 0;
-		bool             midiOutL        = false;
-		uint32_t         midiOutLplaying = 0x0;
-		uint32_t         midiOutLmute    = 0x0;
-		uint32_t         midiOutLsolo    = 0x0;
+		ID                      id              = 0;
+		ChannelType             type            = ChannelType::SAMPLE;
+		int                     height          = 0;
+		SceneArray<std::string> names           = {};
+		int                     key             = 0;
+		bool                    mute            = false;
+		bool                    solo            = false;
+		float                   volume          = G_DEFAULT_VOL;
+		float                   pan             = G_DEFAULT_PAN;
+		bool                    hasActions      = false;
+		bool                    armed           = false;
+		bool                    sendToMaster    = true;
+		std::vector<int>        extraOutputs    = {};
+		bool                    midiIn          = false;
+		uint32_t                midiInKeyPress  = 0x0;
+		uint32_t                midiInKeyRel    = 0x0;
+		uint32_t                midiInKill      = 0x0;
+		uint32_t                midiInArm       = 0x0;
+		uint32_t                midiInVolume    = 0x0;
+		uint32_t                midiInMute      = 0x0;
+		uint32_t                midiInSolo      = 0x0;
+		int                     midiInFilter    = 0;
+		bool                    midiOutL        = false;
+		uint32_t                midiOutLplaying = 0x0;
+		uint32_t                midiOutLmute    = 0x0;
+		uint32_t                midiOutLsolo    = 0x0;
 		// sample channel
-		ID               waveId            = 0;
-		SamplePlayerMode mode              = SamplePlayerMode::SINGLE_BASIC;
-		SampleRange      range             = {};
-		Frame            shift             = 0;
-		bool             readActions       = false;
-		float            pitch             = G_DEFAULT_PITCH;
-		bool             inputMonitor      = false;
-		bool             overdubProtection = false;
-		bool             midiInVeloAsVol   = false;
-		uint32_t         midiInReadActions = 0x0;
-		uint32_t         midiInPitch       = 0x0;
+		SceneArray<Sample> samples           = {};
+		SamplePlayerMode   mode              = SamplePlayerMode::SINGLE_BASIC;
+		bool               readActions       = false;
+		bool               inputMonitor      = false;
+		bool               overdubProtection = false;
+		bool               midiInVeloAsVol   = false;
+		uint32_t           midiInReadActions = 0x0;
+		uint32_t           midiInPitch       = 0x0;
 		// midi channel
 		bool            midiOut     = false;
 		int             midiOutChan = 0;
@@ -95,12 +108,13 @@ struct Patch
 
 	struct Action
 	{
-		ID       id        = 0;
-		ID       channelId = 0;
-		Frame    frame     = 0;
-		uint32_t event     = 0;
-		ID       prevId    = 0;
-		ID       nextId    = 0;
+		ID          id        = 0;
+		ID          channelId = 0;
+		std::size_t scene     = 0;
+		Frame       frame     = 0;
+		uint32_t    event     = 0;
+		ID          prevId    = 0;
+		ID          nextId    = 0;
 	};
 
 	struct Wave

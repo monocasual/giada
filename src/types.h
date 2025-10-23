@@ -27,14 +27,23 @@
 #ifndef G_TYPES_H
 #define G_TYPES_H
 
+#include "const.h"
 #include "deps/geompp/src/range.hpp"
 #include <string>
+
+namespace giada::m
+{
+class Wave;
+}
 
 namespace giada
 {
 using ID          = int;
 using Frame       = int;
 using SampleRange = geompp::Range<Frame>;
+
+template <typename T>
+using SceneArray = std::array<T, G_MAX_NUM_SCENES>;
 
 enum class PluginSortMethod : int
 {
@@ -75,6 +84,18 @@ struct Peak
 {
 	float left;
 	float right;
+};
+
+/* Sample
+Struct that represents a single Wave and its range (begin-end points). No wave
+and invalid range by default. */
+
+struct Sample
+{
+	m::Wave*    wave = nullptr;
+	SampleRange range;
+	Frame       shift = 0;
+	float       pitch = 1.0;
 };
 } // namespace giada
 

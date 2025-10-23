@@ -25,13 +25,13 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/recorder.h"
+#include "src/core/actions/actionRecorder.h"
 #include "src/core/channels/channelManager.h"
 #include "src/core/mixer.h"
+#include "src/core/model/actions.h"
 #include "src/core/model/model.h"
 #include "src/core/sequencer.h"
 #include "src/core/types.h"
-#include "src/core/actions/actionRecorder.h"
-#include "src/core/model/actions.h"
 #include "src/utils/log.h"
 
 namespace giada::m
@@ -90,7 +90,7 @@ void Recorder::stopActionRec()
 	actions. This will start reading right away, without checking whether
 	conf::treatRecsAsLoops is enabled or not. Same thing for MIDI channels.  */
 
-	m_channelManager.finalizeActionRec(m_actionRecorder.consolidate());
+	m_channelManager.finalizeActionRec(m_actionRecorder.consolidate(m_sequencer.getCurrentScene()));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -137,6 +137,7 @@ void Recorder::stopInputRec(int sampleRate)
 	const RecTriggerMode recTriggerMode = m_mixer.getRecTriggerMode();
 	const InputRecMode   recMode        = m_mixer.getInputRecMode();
 	Frame                recordedFrames = m_mixer.stopInputRec();
+	const std::size_t    scene          = m_sequencer.getCurrentScene();
 
 	/* Restore record trigger mode to normal in case you want to record again
 	while the sequencer is running - if in SIGNAL mode, the sequencer would
@@ -164,7 +165,7 @@ void Recorder::stopInputRec(int sampleRate)
 
 	/* Finalize recordings. InputRecMode::FREE requires some adjustments. */
 
-	m_channelManager.finalizeInputRec(m_mixer.getRecBuffer(), recordedFrames, m_sequencer.getCurrentFrame());
+	m_channelManager.finalizeInputRec(m_mixer.getRecBuffer(), recordedFrames, m_sequencer.getCurrentFrame(), scene);
 	m_mixer.clearRecBuffer();
 
 	if (recMode == InputRecMode::FREE)
@@ -178,7 +179,7 @@ void Recorder::stopInputRec(int sampleRate)
 
 void Recorder::toggleInputRec(int sampleRate)
 {
-	if (!m_channelManager.hasInputRecordableChannels())
+	if (!m_channelManager.hasInputRecordableChannels(m_sequencer.getCurrentScene()))
 		return;
 	if (m_mixer.isRecordingInput())
 		stopInputRec(sampleRate);
