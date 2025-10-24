@@ -218,7 +218,7 @@ void ChannelManager::cloneChannel(ID channelId, std::size_t scene, int bufferSiz
 		const auto    oldRange = sample.range;
 		Wave&         wave     = m_model.addWave(waveFactory::createFromWave(oldWave));
 
-		newChannelData.channel.loadSample({&wave, oldRange, oldShift}, 0);
+		newChannelData.channel.loadSample({&wave, oldRange, oldShift}, scene);
 	}
 
 	newChannelData.channel.plugins = plugins;
