@@ -41,7 +41,7 @@ struct Action;
 namespace giada::m
 {
 struct Action;
-class ActionRecorder
+class ActionRecorder // TODO - rename ActionManager
 {
 public:
 	ActionRecorder(model::Model&);
