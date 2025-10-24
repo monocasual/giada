@@ -132,10 +132,9 @@ void ActionRecorder::updateSamplerate(int systemRate, int patchRate)
 
 /* -------------------------------------------------------------------------- */
 
-bool ActionRecorder::cloneActions(ID channelId, std::size_t scene, ID newChannelId)
+void ActionRecorder::cloneActions(ID channelId, std::size_t scene, ID newChannelId)
 {
 	copyActions(channelId, scene, scene, newChannelId);
-	return true; // TODO - return void
 }
 
 /* -------------------------------------------------------------------------- */

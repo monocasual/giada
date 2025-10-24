@@ -67,7 +67,7 @@ public:
 	Clones actions in channel 'channelId', giving them a new channel ID. Returns
 	whether any action has been cloned. */
 
-	bool cloneActions(ID channelId, std::size_t scene, ID newChannelId);
+	void cloneActions(ID channelId, std::size_t scene, ID newChannelId);
 
 	/* copyActionsToScene
 	Copies actions of a given channel from a scene to another. */
