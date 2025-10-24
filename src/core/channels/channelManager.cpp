@@ -49,10 +49,9 @@ constexpr int Q_ACTION_REWIND = 10000; // Avoid clash with Q_ACTION_PLAY + chann
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-ChannelManager::ChannelManager(model::Model& model, MidiMapper<KernelMidi>& m, ActionRecorder& a, KernelMidi& km)
+ChannelManager::ChannelManager(model::Model& model, MidiMapper<KernelMidi>& m, KernelMidi& km)
 : m_model(model)
 , m_kernelMidi(km)
-, m_actionRecorder(a)
 , m_midiMapper(m)
 {
 }

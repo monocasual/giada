@@ -62,7 +62,7 @@ class ChannelManager final
 public:
 	friend Engine;
 
-	ChannelManager(model::Model&, MidiMapper<KernelMidi>&, ActionRecorder&, KernelMidi&);
+	ChannelManager(model::Model&, MidiMapper<KernelMidi>&, KernelMidi&);
 
 	/* getChannel
 	Returns channel object by ID. */
@@ -238,7 +238,6 @@ private:
 
 	model::Model&           m_model;
 	KernelMidi&             m_kernelMidi;
-	ActionRecorder&         m_actionRecorder;
 	MidiMapper<KernelMidi>& m_midiMapper;
 };
 } // namespace giada::m
