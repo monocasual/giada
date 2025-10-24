@@ -81,6 +81,7 @@ public:
 	void     remove(ID);
 	void     freeSampleChannel(ID);
 	void     clone(ID);
+	void     copyToScene(ID, std::size_t dstScene);
 
 	void press(ID, float velocity);
 	void release(ID);

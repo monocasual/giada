@@ -181,6 +181,18 @@ void ChannelsApi::clone(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelsApi::copyToScene(ID channelId, std::size_t dstScene)
+{
+	const Channel&    ch       = m_channelManager.getChannel(channelId);
+	const std::size_t srcScene = m_sequencer.getCurrentScene();
+
+	m_channelManager.copyChannelToScene(channelId, srcScene, dstScene);
+	if (ch.hasActions)
+		m_actionRecorder.copyActionsToScene(channelId, srcScene, dstScene);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelsApi::press(ID channelId, float velocity)
 {
 	const bool        canRecordActions = m_recorder.canRecordActions();

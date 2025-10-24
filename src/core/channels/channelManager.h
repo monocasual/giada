@@ -152,6 +152,11 @@ public:
 
 	void cloneChannel(ID channelId, std::size_t scene, int bufferSize, const std::vector<Plugin*>&);
 
+	/* copyChannelToScene
+	Copies channel's data between scenes. */
+
+	void copyChannelToScene(ID channelId, std::size_t srcScene, std::size_t dstScene);
+
 	/* finalizeInputRec
 	Fills armed Sample channel with audio data coming from an input recording
 	session. */

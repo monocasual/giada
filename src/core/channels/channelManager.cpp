@@ -232,6 +232,33 @@ void ChannelManager::cloneChannel(ID channelId, std::size_t scene, int bufferSiz
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelManager::copyChannelToScene(ID channelId, std::size_t srcScene, std::size_t dstScene)
+{
+	Channel& ch = m_model.get().tracks.getChannel(channelId);
+
+	if (ch.type != ChannelType::SAMPLE) // Currently relevant for Sample Channels only.
+		return;
+
+	if (!ch.sampleChannel->hasWave(srcScene))
+		return;
+
+	/* Ideally we could just copy the Sample structure to the new scene, so that
+	the Sample::wave pointer points to the original, and now shared, Wave object.
+	This would be very confusing for the user, though, especially when destructively
+	editing the Wave (e.g. cut/copy/paste). It's better to just create a new copy
+	of Wave and set it to the new scene. */
+
+	Sample sample = ch.sampleChannel->getSample(srcScene);
+	Wave&  wave   = m_model.addWave(waveFactory::createFromWave(*sample.wave));
+
+	sample.wave = &wave;
+
+	ch.sampleChannel->setSample(sample, dstScene, /*samplerateRatio=*/1.0f);
+	m_model.swap(model::SwapType::HARD);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelManager::freeSampleChannel(ID channelId, std::size_t scene)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
