@@ -69,6 +69,11 @@ public:
 
 	bool cloneActions(ID channelId, std::size_t scene, ID newChannelId);
 
+	/* copyActionsToScene
+	Copies actions of a given channel from a scene to another. */
+
+	void copyActionsToScene(ID channelId, std::size_t srcScene, std::size_t dstScene);
+
 	/* liveRec
 	Records a user-generated action. NOTE_ON or NOTE_OFF only for now. */
 
@@ -149,6 +154,11 @@ private:
 	action accordingly. */
 
 	void consolidate(const Action& a1, std::size_t i);
+
+	/* cloneActions
+	Internal generic method for copying actions between channels and/or scenes. */
+
+	void copyActions(ID channelId, std::size_t srcScene, std::size_t dstScene, ID newChannelId);
 
 #if 0
 	bool isBoundaryEnvelopeAction(const Action&) const;

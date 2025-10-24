@@ -145,42 +145,15 @@ void ActionRecorder::updateSamplerate(int systemRate, int patchRate)
 
 bool ActionRecorder::cloneActions(ID channelId, std::size_t scene, ID newChannelId)
 {
-	bool                       cloned = false;
-	std::vector<Action>        actions;
-	std::unordered_map<ID, ID> map; // Action ID mapper, old -> new
+	copyActions(channelId, scene, scene, newChannelId);
+	return true; // TODO - return void
+}
 
-	m_model.get().actions.forEachAction([&](const Action& a)
-	{
-		if (a.channelId != channelId)
-			return;
+/* -------------------------------------------------------------------------- */
 
-		ID newActionId = actionFactory::getNewActionId();
-
-		map.insert({a.id, newActionId});
-
-		Action clone(a);
-		clone.id        = newActionId;
-		clone.channelId = newChannelId;
-
-		actions.push_back(clone);
-		cloned = true;
-	});
-
-	/* Update nextId and prevId relationships given the new action ID. */
-
-	for (Action& a : actions)
-	{
-		if (a.prevId != 0)
-			a.prevId = map.at(a.prevId);
-		if (a.nextId != 0)
-			a.nextId = map.at(a.nextId);
-	}
-
-	m_model.get().actions.rec(actions, scene);
-	m_model.get().tracks.getChannel(newChannelId).hasActions = true;
-	m_model.swap(model::SwapType::HARD);
-
-	return cloned;
+void ActionRecorder::copyActionsToScene(ID channelId, std::size_t srcScene, std::size_t dstScene)
+{
+	copyActions(channelId, srcScene, dstScene, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -448,6 +421,45 @@ void ActionRecorder::consolidate(const Action& a1, std::size_t i)
 
 		break;
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ActionRecorder::copyActions(ID channelId, std::size_t srcScene, std::size_t dstScene, ID newChannelId)
+{
+	const std::size_t          scene = srcScene == dstScene ? srcScene : dstScene;
+	std::vector<Action>        actions;
+	std::unordered_map<ID, ID> map; // Action ID mapper, old -> new
+
+	m_model.get().actions.forEachAction([&](const Action& a)
+	{
+		if (a.channelId != channelId)
+			return;
+
+		ID newActionId = actionFactory::getNewActionId();
+
+		map.insert({a.id, newActionId});
+
+		Action clone(a);
+		clone.id        = newActionId;
+		clone.channelId = newChannelId;
+
+		actions.push_back(clone);
+	});
+
+	/* Update nextId and prevId relationships given the new action ID. */
+
+	for (Action& a : actions)
+	{
+		if (a.prevId != 0)
+			a.prevId = map.at(a.prevId);
+		if (a.nextId != 0)
+			a.nextId = map.at(a.nextId);
+	}
+
+	m_model.get().actions.rec(actions, scene);
+	m_model.get().tracks.getChannel(newChannelId).hasActions = true;
+	m_model.swap(model::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
