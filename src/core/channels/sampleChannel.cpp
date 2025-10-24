@@ -147,15 +147,8 @@ void SampleChannel::loadSample(const Sample& s, std::size_t scene)
 void SampleChannel::setWave(Wave* w, std::size_t scene, float samplerateRatio)
 {
 	m_samples[scene].wave = w;
-
-	if (w == nullptr)
-		return;
-
-	if (samplerateRatio != 1.0f)
-	{
-		m_samples[scene].range *= samplerateRatio;
-		m_samples[scene].shift *= samplerateRatio;
-	}
+	if (w != nullptr)
+		adjustSampleByRate(scene, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -170,11 +163,8 @@ void SampleChannel::setRange(SampleRange newRange, std::size_t scene)
 void SampleChannel::setSample(const Sample& sample, std::size_t scene, float samplerateRatio)
 {
 	m_samples[scene] = sample;
-	if (sample.wave != nullptr && samplerateRatio != 1.0f)
-	{
-		m_samples[scene].range *= samplerateRatio;
-		m_samples[scene].shift *= samplerateRatio;
-	}
+	if (sample.wave != nullptr)
+		adjustSampleByRate(scene, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -189,5 +179,13 @@ void SampleChannel::setShift(Frame shift, std::size_t scene)
 void SampleChannel::setPitch(float pitch, std::size_t scene)
 {
 	m_samples[scene].pitch = pitch;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void SampleChannel::adjustSampleByRate(std::size_t scene, float samplerateRatio)
+{
+	m_samples[scene].range *= samplerateRatio;
+	m_samples[scene].shift *= samplerateRatio;
 }
 } // namespace giada::m

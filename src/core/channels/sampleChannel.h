@@ -79,6 +79,11 @@ public:
 	bool             velocityAsVol; // Velocity drives volume
 
 private:
+	/* adjustSampleByRate
+	Adjusts all frame-based properties (range, shift, ...) by a certain samplerateRatio. */
+
+	void adjustSampleByRate(std::size_t scene, float samplerateRatio);
+
 	/* m_samples
 	Array of Samples, one per scene. */
 
