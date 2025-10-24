@@ -169,10 +169,12 @@ void SampleChannel::setRange(SampleRange newRange, std::size_t scene)
 
 void SampleChannel::setSample(const Sample& sample, std::size_t scene, float samplerateRatio)
 {
-	setWave(sample.wave, scene, samplerateRatio);
-	setRange(sample.range, scene);
-	setShift(sample.shift, scene);
-	setPitch(sample.pitch, scene);
+	m_samples[scene] = sample;
+	if (sample.wave != nullptr && samplerateRatio != 1.0f)
+	{
+		m_samples[scene].range *= samplerateRatio;
+		m_samples[scene].shift *= samplerateRatio;
+	}
 }
 
 /* -------------------------------------------------------------------------- */
