@@ -432,7 +432,7 @@ void writeChannels_(const Patch& patch, nlohmann::json& j)
 
 /* -------------------------------------------------------------------------- */
 
-void modernize_(Patch& patch)
+void modernize_(Patch& patch, nlohmann::json& j)
 {
 	/* 1.1.0
 	Older patches don't contain Tracks. Let's recreate a basic Track layout: one
@@ -452,6 +452,28 @@ void modernize_(Patch& patch)
 				const bool        isInternalChannel = c.type == ChannelType::PREVIEW || c.type == ChannelType::MASTER;
 				const std::size_t targetIndex       = isInternalChannel ? 0 : 1;
 				patch.tracks[targetIndex].channels.push_back(c.id);
+			}
+		}
+	}
+
+	/* 1.4.0
+	Older patches don't support scenes. This is a problem for sample channels. Let's
+	put all samples and their properties into scene 0. */
+	if (patch.version < Version{1, 4, 0})
+	{
+		for (Patch::Channel& c : patch.channels)
+		{
+			if (c.type != ChannelType::SAMPLE)
+				continue;
+			for (const auto& jchannel : j[PATCH_KEY_CHANNELS])
+			{
+				if (jchannel.value(PATCH_KEY_CHANNEL_ID, 0) != c.id)
+					continue;
+				c.names[0]          = jchannel.value("name", "");
+				c.samples[0].waveId = jchannel.value("wave_id", 0);
+				c.samples[0].range  = {jchannel.value("begin", 0), jchannel.value("end", 0)};
+				c.samples[0].shift  = {jchannel.value("shift", 0)};
+				c.samples[0].pitch  = jchannel.value("pitch", 0.0f);
 			}
 		}
 	}
@@ -540,7 +562,7 @@ Patch deserialize(const std::string& filePath)
 		readWaves_(patch, j, u::fs::dirname(filePath));
 		readActions_(patch, j);
 		readChannels_(patch, j);
-		modernize_(patch);
+		modernize_(patch, j);
 		sanitize_(patch);
 	}
 	catch (nlohmann::json::exception& e)
