@@ -81,9 +81,6 @@ public:
 
 	/* record*Action */
 
-#if 0
-	void recordEnvelopeAction(ID channelId, Frame frame, int value, Frame lastFrameInLoop);
-#endif
 	void recordMidiAction(ID channelId, std::size_t scene, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
 	void recordSampleAction(ID channelId, std::size_t scene, int type, Frame f1, Frame f2, Frame framesInLoop);
 
@@ -91,17 +88,11 @@ public:
 
 	void deleteMidiAction(ID channelId, const Action&);
 	void deleteSampleAction(ID channelId, const Action&);
-#if 0
-	void deleteEnvelopeAction(ID channelId, const Action&);
-#endif
 
 	/* update*Action */
 
 	void updateMidiAction(ID channelId, std::size_t scene, const Action&, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
 	void updateSampleAction(ID channelId, std::size_t scene, const Action&, int type, Frame f1, Frame f2, Frame framesInLoop);
-#if 0
-	void updateEnvelopeAction(ID channelId, const Action&, Frame f, int value, Frame lastFrameInLoop);
-#endif
 	void updateVelocity(const Action&, float value);
 
 	/* consolidate
@@ -138,17 +129,6 @@ private:
 	Frame fixVerticalEnvActions(Frame f, const Action& a1, const Action& a2) const;
 	bool  isSinglePressMode(ID channelId) const;
 
-	/* recordFirstEnvelopeAction
-	First action ever? Add actions at boundaries. */
-#if 0
-	void recordFirstEnvelopeAction(ID channelId, Frame frame, int value, Frame lastFrameInLoop);
-
-	/* recordNonFirstEnvelopeAction
-	Find action right before frame 'frame' and inject a new action in there. 
-	Vertical envelope points are forbidden. */
-
-	void recordNonFirstEnvelopeAction(ID channelId, Frame frame, int value);
-#endif
 	/* consolidate
 	Given an action 'a1' tries to find the matching NOTE_OFF and updates the
 	action accordingly. */
@@ -159,10 +139,6 @@ private:
 	Internal generic method for copying actions between channels and/or scenes. */
 
 	void copyActions(ID channelId, std::size_t srcScene, std::size_t dstScene, ID newChannelId);
-
-#if 0
-	bool isBoundaryEnvelopeAction(const Action&) const;
-#endif
 
 	model::Model&       m_model;
 	std::vector<Action> m_liveActions;
