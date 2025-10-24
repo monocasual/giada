@@ -472,7 +472,7 @@ void modernize_(Patch& patch, nlohmann::json& j)
 				c.names[0]          = jchannel.value("name", "");
 				c.samples[0].waveId = jchannel.value("wave_id", 0);
 				c.samples[0].range  = {jchannel.value("begin", 0), jchannel.value("end", 0)};
-				c.samples[0].shift  = {jchannel.value("shift", 0)};
+				c.samples[0].shift  = jchannel.value("shift", 0);
 				c.samples[0].pitch  = jchannel.value("pitch", 0.0f);
 			}
 		}
