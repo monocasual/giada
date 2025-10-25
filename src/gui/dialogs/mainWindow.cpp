@@ -120,13 +120,14 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 
 			/* zone 3 - sequencer */
 
-			geFlex* zone3 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {0, 15});
+			geFlex* zone3 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {0, 13});
 			{
 				sequencer = new v::geSequencer();
 				scenes    = new geScenes();
 				zone3->addWidget(new geBox(), 120);
 				zone3->addWidget(sequencer);
-				zone3->addWidget(scenes, 120);
+				zone3->addWidget(new geBox(), 16);
+				zone3->addWidget(scenes, 92);
 				zone3->end();
 			}
 

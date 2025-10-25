@@ -29,47 +29,33 @@
 #include "src/gui/const.h"
 #include "src/gui/elems/basics/flex.h"
 #include "src/gui/elems/basics/textButton.h"
+#include <fmt/core.h>
 
 namespace giada::v
 {
 geScenes::geScenes()
-: geFlex(Direction::VERTICAL, G_GUI_OUTER_MARGIN)
+: geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN)
 {
-	geFlex* row1 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+	geFlex* row1 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{
-		m_buttons[0] = new geTextButton("A");
-		m_buttons[1] = new geTextButton("B");
-		m_buttons[2] = new geTextButton("C");
-		m_buttons[3] = new geTextButton("D");
-		row1->addWidget(m_buttons[0], G_GUI_UNIT);
-		row1->addWidget(m_buttons[1], G_GUI_UNIT);
-		row1->addWidget(m_buttons[2], G_GUI_UNIT);
-		row1->addWidget(m_buttons[3], G_GUI_UNIT);
+		row1->addWidget(makeButton(0), G_GUI_UNIT);
+		row1->addWidget(makeButton(1), G_GUI_UNIT);
+		row1->addWidget(makeButton(2), G_GUI_UNIT);
+		row1->addWidget(makeButton(3), G_GUI_UNIT);
 		row1->end();
 	}
 
-	geFlex* row2 = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+	geFlex* row2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{
-		m_buttons[4] = new geTextButton("E");
-		m_buttons[5] = new geTextButton("F");
-		m_buttons[6] = new geTextButton("G");
-		m_buttons[7] = new geTextButton("H");
-
-		row2->addWidget(m_buttons[4], G_GUI_UNIT);
-		row2->addWidget(m_buttons[5], G_GUI_UNIT);
-		row2->addWidget(m_buttons[6], G_GUI_UNIT);
-		row2->addWidget(m_buttons[7], G_GUI_UNIT);
+		row2->addWidget(makeButton(4), G_GUI_UNIT);
+		row2->addWidget(makeButton(5), G_GUI_UNIT);
+		row2->addWidget(makeButton(6), G_GUI_UNIT);
+		row2->addWidget(makeButton(7), G_GUI_UNIT);
 		row2->end();
 	}
 
 	addWidget(row1);
 	addWidget(row2);
-
-	for (std::size_t i = 0; i < m_buttons.size(); i++)
-	{
-		m_buttons[i]->onClick = [i]()
-		{ c::main::setScene(i); };
-	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -80,5 +66,17 @@ void geScenes::refresh()
 
 	for (std::size_t i = 0; i < m_buttons.size(); i++)
 		m_buttons[i]->forceValue(scenes.currentScene == i);
+}
+
+/* -------------------------------------------------------------------------- */
+
+geTextButton* geScenes::makeButton(std::size_t scene)
+{
+	m_buttons[scene] = new geTextButton(fmt::format("{}", scene + 1).c_str());
+	m_buttons[scene]->setPadding(0);
+	m_buttons[scene]->onClick = [scene]()
+	{ c::main::setScene(scene); };
+
+	return m_buttons[scene];
 }
 } // namespace giada::v

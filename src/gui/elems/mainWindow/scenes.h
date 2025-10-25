@@ -29,6 +29,7 @@
 
 #include "src/const.h"
 #include "src/gui/elems/basics/flex.h"
+#include "src/types.h"
 #include <array>
 
 namespace giada::v
@@ -42,7 +43,9 @@ public:
 	void refresh();
 
 private:
-	std::array<geTextButton*, G_MAX_NUM_SCENES> m_buttons;
+	geTextButton* makeButton(std::size_t scene);
+
+	SceneArray<geTextButton*> m_buttons;
 };
 } // namespace giada::v
 
