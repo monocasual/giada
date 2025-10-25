@@ -37,6 +37,7 @@ geTextButton::geTextButton(int x, int y, int w, int h, const char* l)
 , m_backgroundColorOn(G_COLOR_GREY_4)
 , m_borderColor(G_COLOR_GREY_4)
 , m_textColor(G_COLOR_LIGHT_2)
+, m_padding(16)
 {
 }
 
@@ -59,6 +60,13 @@ void geTextButton::draw()
 	drawRect(bounds, m_borderColor); // draw border
 
 	if (label() != nullptr)
-		drawText(u::gui::truncate(label(), w() - 16), bounds.reduced(1), FL_HELVETICA, G_GUI_FONT_SIZE_BASE, textColor);
+		drawText(u::gui::truncate(label(), w() - m_padding), bounds.reduced(1), FL_HELVETICA, G_GUI_FONT_SIZE_BASE, textColor);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void geTextButton::setPadding(int p)
+{
+	m_padding = p;
 }
 } // namespace giada::v

@@ -42,11 +42,16 @@ public:
 
 	void draw() override;
 
+	void setPadding(int);
+
 protected:
 	Fl_Color m_backgroundColorOff;
 	Fl_Color m_backgroundColorOn;
 	Fl_Color m_borderColor;
 	Fl_Color m_textColor;
+
+private:
+	int m_padding;
 };
 } // namespace giada::v
 
