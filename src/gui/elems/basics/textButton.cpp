@@ -32,13 +32,14 @@
 namespace giada::v
 {
 geTextButton::geTextButton(int x, int y, int w, int h, const char* l)
-: geButton(x, y, w, h, l)
+: geButton(x, y, w, h, nullptr)
 , m_backgroundColorOff(G_COLOR_GREY_2)
 , m_backgroundColorOn(G_COLOR_GREY_4)
 , m_borderColor(G_COLOR_GREY_4)
 , m_textColor(G_COLOR_LIGHT_2)
 , m_padding(16)
 {
+	copy_label(l);
 }
 
 /* -------------------------------------------------------------------------- */
