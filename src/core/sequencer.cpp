@@ -410,8 +410,7 @@ void Sequencer::setScene(std::size_t scene)
 		return;
 	if (!isRunning())
 		m_model.get().sequencer.a_setCurrentScene(scene);
-	else
-		m_model.get().sequencer.a_setNextScene(scene);
+	m_model.get().sequencer.a_setNextScene(scene);
 	m_model.swap(model::SwapType::HARD);
 }
 
