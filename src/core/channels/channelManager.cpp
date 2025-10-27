@@ -305,15 +305,19 @@ void ChannelManager::moveChannel(ID channelId, std::size_t newTrackIndex, std::s
 
 void ChannelManager::deleteChannel(ID channelId)
 {
-	const Channel& ch   = m_model.get().tracks.getChannel(channelId);
-	const Wave*    wave = ch.sampleChannel ? ch.sampleChannel->getWave(0) : nullptr;
+	const Channel& ch = m_model.get().tracks.getChannel(channelId);
+
+	if (ch.type == ChannelType::SAMPLE)
+	{
+		const SceneArray<Sample>& samples = ch.sampleChannel->getSamples();
+		for (const Sample& sample : samples)
+			if (sample.wave != nullptr)
+				m_model.removeWave(*sample.wave);
+	}
 
 	m_model.removeChannelShared(*ch.shared);
 	m_model.get().tracks.getByChannel(channelId).removeChannel(channelId);
 	m_model.swap(model::SwapType::HARD);
-
-	if (wave != nullptr)
-		m_model.removeWave(*wave);
 
 	triggerOnChannelsAltered();
 }
