@@ -274,6 +274,13 @@ void cloneChannel(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
+void copyChannelToScene(ID channelId, std::size_t dstScene)
+{
+	g_engine->getChannelsApi().copyToScene(channelId, dstScene);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void moveChannel(ID channelId, std::size_t trackIndex, int newPosition)
 {
 	g_engine->getChannelsApi().move(channelId, trackIndex, newPosition);

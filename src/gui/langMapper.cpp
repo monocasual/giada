@@ -60,6 +60,7 @@ LangMap::LangMap()
 	m_data[COMMON_NOTSET]     = "(not set)";
 	m_data[COMMON_NONE]       = "None";
 	m_data[COMMON_APPLY]      = "Apply";
+	m_data[COMMON_SCENE]      = "Scene";
 
 	m_data[MESSAGE_MAIN_FREEALLSAMPLES]           = "Free all Sample channels: are you sure?";
 	m_data[MESSAGE_MAIN_CLEARALLACTIONS]          = "Clear all actions: are you sure?";
@@ -175,6 +176,7 @@ LangMap::LangMap()
 	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS_STARTSTOP] = "Start/Stop";
 	m_data[MAIN_CHANNEL_MENU_RENAME]                 = "Rename";
 	m_data[MAIN_CHANNEL_MENU_CLONE]                  = "Clone";
+	m_data[MAIN_CHANNEL_MENU_COPYTOSCENE]            = "Copy to scene...";
 	m_data[MAIN_CHANNEL_MENU_FREE]                   = "Free";
 	m_data[MAIN_CHANNEL_MENU_DELETE]                 = "Delete";
 

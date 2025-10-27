@@ -41,6 +41,7 @@
 #include "src/gui/elems/midiActivity.h"
 #include "src/gui/graphics.h"
 #include "src/gui/ui.h"
+#include <fmt/core.h>
 
 extern giada::v::Ui* g_ui;
 
@@ -63,6 +64,14 @@ enum class Menu
 	CLEAR_ACTIONS,
 	RENAME_CHANNEL,
 	CLONE_CHANNEL,
+	COPY_CHANNEL_TO_SCENE_0,
+	COPY_CHANNEL_TO_SCENE_1,
+	COPY_CHANNEL_TO_SCENE_2,
+	COPY_CHANNEL_TO_SCENE_3,
+	COPY_CHANNEL_TO_SCENE_4,
+	COPY_CHANNEL_TO_SCENE_5,
+	COPY_CHANNEL_TO_SCENE_6,
+	COPY_CHANNEL_TO_SCENE_7,
 	FREE_CHANNEL,
 	DELETE_CHANNEL
 };
@@ -181,6 +190,22 @@ void geSampleChannel::openMenu()
 	menu.addItem((ID)Menu::CLEAR_ACTIONS, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS));
 	menu.addItem((ID)Menu::RENAME_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME));
 	menu.addItem((ID)Menu::CLONE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLONE));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, fmt::format("{}/{} {}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE),
+	                                                    g_ui->getI18Text(LangMap::COMMON_SCENE), 1));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_1, fmt::format("{}/{} {}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE),
+	                                                    g_ui->getI18Text(LangMap::COMMON_SCENE), 2));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_2, fmt::format("{}/{} {}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE),
+	                                                    g_ui->getI18Text(LangMap::COMMON_SCENE), 3));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_3, fmt::format("{}/{} {}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE),
+	                                                    g_ui->getI18Text(LangMap::COMMON_SCENE), 4));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_4, fmt::format("{}/{} {}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE),
+	                                                    g_ui->getI18Text(LangMap::COMMON_SCENE), 5));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_5, fmt::format("{}/{} {}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE),
+	                                                    g_ui->getI18Text(LangMap::COMMON_SCENE), 6));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_6, fmt::format("{}/{} {}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE),
+	                                                    g_ui->getI18Text(LangMap::COMMON_SCENE), 7));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_7, fmt::format("{}/{} {}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE),
+	                                                    g_ui->getI18Text(LangMap::COMMON_SCENE), 8));
 	menu.addItem((ID)Menu::FREE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREE));
 	menu.addItem((ID)Menu::DELETE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_DELETE));
 
@@ -248,6 +273,31 @@ void geSampleChannel::openMenu()
 
 		case Menu::CLONE_CHANNEL:
 			c::channel::cloneChannel(channel.id);
+			break;
+
+		case Menu::COPY_CHANNEL_TO_SCENE_0:
+			c::channel::copyChannelToScene(channel.id, 0);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_1:
+			c::channel::copyChannelToScene(channel.id, 1);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_2:
+			c::channel::copyChannelToScene(channel.id, 2);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_3:
+			c::channel::copyChannelToScene(channel.id, 3);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_4:
+			c::channel::copyChannelToScene(channel.id, 4);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_5:
+			c::channel::copyChannelToScene(channel.id, 5);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_6:
+			c::channel::copyChannelToScene(channel.id, 6);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_7:
+			c::channel::copyChannelToScene(channel.id, 7);
 			break;
 
 		case Menu::RENAME_CHANNEL:

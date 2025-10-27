@@ -65,6 +65,7 @@ public:
 	static constexpr auto COMMON_NOTSET     = "common_notSet";
 	static constexpr auto COMMON_NONE       = "common_none";
 	static constexpr auto COMMON_APPLY      = "common_apply";
+	static constexpr auto COMMON_SCENE      = "common_scene";
 
 	static constexpr auto MESSAGE_MAIN_FREEALLSAMPLES           = "message_main_freeAllSamples";
 	static constexpr auto MESSAGE_MAIN_CLEARALLACTIONS          = "message_main_clearAllActions";
@@ -175,6 +176,7 @@ public:
 	static constexpr auto MAIN_CHANNEL_MENU_CLEARACTIONS_STARTSTOP = "main_channel_menu_clearActions_startStop";
 	static constexpr auto MAIN_CHANNEL_MENU_RENAME                 = "main_channel_menu_rename";
 	static constexpr auto MAIN_CHANNEL_MENU_CLONE                  = "main_channel_menu_clone";
+	static constexpr auto MAIN_CHANNEL_MENU_COPYTOSCENE            = "main_channel_menu_copyToScene";
 	static constexpr auto MAIN_CHANNEL_MENU_FREE                   = "main_channel_menu_free";
 	static constexpr auto MAIN_CHANNEL_MENU_DELETE                 = "main_channel_menu_delete";
 

@@ -185,6 +185,11 @@ Makes an exact copy of a channel. */
 
 void cloneChannel(ID channelId);
 
+/* copyChannelToScene
+Copies channel's content (Wave, actions, ...) from the current scene to dstScene. */
+
+void copyChannelToScene(ID channelId, std::size_t dstScene);
+
 /* moveChannel
 Moves channel with channelId to track at 'trackIndex' at 'position'. */
 
