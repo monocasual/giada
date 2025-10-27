@@ -352,6 +352,7 @@ void ActionRecorder::copyActions(ID channelId, std::size_t srcScene, std::size_t
 		Action clone(a);
 		clone.id        = newActionId;
 		clone.channelId = newChannelId;
+		clone.scene     = scene;
 
 		actions.push_back(clone);
 	});
