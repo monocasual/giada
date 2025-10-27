@@ -238,7 +238,7 @@ void ChannelManager::copyChannelToScene(ID channelId, std::size_t srcScene, std:
 	if (ch.type != ChannelType::SAMPLE) // Currently relevant for Sample Channels only.
 		return;
 
-	if (!ch.sampleChannel->hasWave(srcScene))
+	if (!ch.sampleChannel->hasWave(srcScene) || ch.sampleChannel->hasWave(dstScene))
 		return;
 
 	/* Ideally we could just copy the Sample structure to the new scene, so that
