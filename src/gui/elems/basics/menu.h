@@ -41,6 +41,7 @@ public:
 	geMenu();
 
 	void addItem(ID, const char* text, int flags = 0);
+	void addItem(ID, const std::string& text, int flags = 0);
 	void setEnabled(ID, bool);
 
 	std::function<void(ID)> onSelect;

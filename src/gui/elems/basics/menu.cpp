@@ -63,6 +63,11 @@ void geMenu::addItem(ID id, const char* text, int flags)
 	add(text, /*shortcut=*/0, callback, /*data=*/(void*)(intptr_t)(id), flags);
 }
 
+void geMenu::addItem(ID id, const std::string& text, int flags)
+{
+	addItem(id, text.c_str(), flags);
+}
+
 /* -------------------------------------------------------------------------- */
 
 void geMenu::setEnabled(ID id, bool value)
