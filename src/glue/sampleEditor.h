@@ -51,7 +51,7 @@ namespace giada::c::sampleEditor
 {
 struct Data
 {
-	Data() = default; // Invalid: no Wave data to display
+	Data() = default;
 	Data(const m::Channel&, std::size_t scene);
 
 	bool          isValid() const;
@@ -61,6 +61,7 @@ struct Data
 	Frame         getFramesInLoop() const;
 
 	ID          channelId;
+	std::size_t scene;
 	std::string name;
 	float       volume;
 	float       pan;

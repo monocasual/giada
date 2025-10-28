@@ -217,6 +217,7 @@ void gdSampleEditor::rebuild()
 	shiftTool->rebuild(m_data);
 
 	updateInfo();
+	updateTitleWithScene(m_data.scene);
 
 	if (!m_data.isValid())
 	{
@@ -247,5 +248,13 @@ void gdSampleEditor::updateInfo()
 	    m_data.waveBits != 0 ? std::to_string(m_data.waveBits) : "?", m_data.waveRate);
 
 	info->copy_label(infoText.c_str());
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdSampleEditor::updateTitleWithScene(std::size_t scene)
+{
+	setTitle(fmt::format("{} - {} {}", g_ui->getI18Text(LangMap::ACTIONEDITOR_TITLE),
+	    g_ui->getI18Text(LangMap::COMMON_SCENE), scene + 1));
 }
 } // namespace giada::v

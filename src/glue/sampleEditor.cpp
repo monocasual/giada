@@ -36,18 +36,26 @@ namespace giada::c::sampleEditor
 {
 Data::Data(const m::Channel& c, std::size_t scene)
 : channelId(c.id)
+, scene(scene)
 , name(c.getName(scene))
 , volume(c.volume)
 , pan(c.pan.asFloat())
 , sample(c.sampleChannel->getSample(scene))
-, waveSize(c.sampleChannel->getWave(scene)->getBuffer().countFrames())
-, waveBits(c.sampleChannel->getWave(scene)->getBits())
-, waveDuration(c.sampleChannel->getWave(scene)->getDuration())
-, waveRate(c.sampleChannel->getWave(scene)->getRate())
-, wavePath(c.sampleChannel->getWave(scene)->getPath())
-, isLogical(c.sampleChannel->getWave(scene)->isLogical())
+, waveSize(0)
+, waveBits(0)
+, waveDuration(0.0f)
+, waveRate(0)
+, isLogical(false)
 , m_channel(&c)
 {
+	if (!isValid())
+		return;
+	waveSize     = c.sampleChannel->getWave(scene)->getBuffer().countFrames();
+	waveBits     = c.sampleChannel->getWave(scene)->getBits();
+	waveDuration = c.sampleChannel->getWave(scene)->getDuration();
+	waveRate     = c.sampleChannel->getWave(scene)->getRate();
+	wavePath     = c.sampleChannel->getWave(scene)->getPath();
+	isLogical    = c.sampleChannel->getWave(scene)->isLogical();
 }
 
 bool Data::isValid() const
@@ -84,8 +92,6 @@ Data getData(ID channelId)
 	const m::Channel& channel = g_engine->getChannelsApi().get(channelId);
 	const std::size_t scene   = g_engine->getMainApi().getCurrentScene();
 
-	if (channel.sampleChannel->getSample(scene).wave == nullptr)
-		return Data();
 	return Data(channel, scene);
 }
 
