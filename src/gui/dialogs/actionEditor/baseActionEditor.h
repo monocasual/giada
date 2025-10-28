@@ -89,6 +89,11 @@ protected:
 
 	void prepareWindow();
 
+	/* updateTitleWithScene
+	Updates window title with the current scene being edited. */
+
+	void updateTitleWithScene(std::size_t scene);
+
 	geImageButton*   m_zoomInBtn;
 	geImageButton*   m_zoomOutBtn;
 	geSplitScroll*   m_splitScroll;

@@ -128,6 +128,7 @@ void gdMidiActionEditor::rebuild()
 	m_data = c::actionEditor::getData(channelId);
 
 	computeWidth(m_data.framesInSeq, m_data.framesInLoop);
+	updateTitleWithScene(m_data.scene);
 
 	m_pianoRoll->rebuild(m_data);
 	m_velocityEditor->rebuild(m_data);

@@ -128,6 +128,7 @@ void gdSampleActionEditor::rebuild()
 
 	canChangeActionType() ? m_actionType->activate() : m_actionType->deactivate();
 	computeWidth(m_data.framesInSeq, m_data.framesInLoop);
+	updateTitleWithScene(m_data.scene);
 
 	m_sampleActionEditor->rebuild(m_data);
 	m_velocityEditor->rebuild(m_data);

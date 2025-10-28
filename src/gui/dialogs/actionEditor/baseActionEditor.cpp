@@ -42,6 +42,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <cassert>
+#include <fmt/core.h>
 #include <limits>
 #include <string>
 
@@ -129,6 +130,14 @@ void gdBaseActionEditor::prepareWindow()
 	set_non_modal();
 	size_range(640, 284);
 	show();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdBaseActionEditor::updateTitleWithScene(std::size_t scene)
+{
+	setTitle(fmt::format("{} - {} {}", g_ui->getI18Text(LangMap::ACTIONEDITOR_TITLE),
+	    g_ui->getI18Text(LangMap::COMMON_SCENE), scene + 1));
 }
 
 /* -------------------------------------------------------------------------- */
