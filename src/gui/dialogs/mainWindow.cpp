@@ -204,9 +204,9 @@ void gdMainWindow::clearKeyboard()
 
 /* -------------------------------------------------------------------------- */
 
-void gdMainWindow::setTitle(const std::string& title)
+void gdMainWindow::setMainTitle(const std::string& title)
 {
-	copy_label(fmt::format("{} - {}", G_APP_NAME, title).c_str());
+	setTitle(fmt::format("{} - {}", G_APP_NAME, title));
 }
 
 /* -------------------------------------------------------------------------- */

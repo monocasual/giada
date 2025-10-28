@@ -56,10 +56,10 @@ public:
 
 	void clearKeyboard();
 
-	/* setTitle
+	/* setMainTitle
 	Sets a new window title, prefixed by "Giada - [title]". */
 
-	void setTitle(const std::string&);
+	void setMainTitle(const std::string&);
 
 	[[nodiscard]] ScopedProgress getScopedProgress(const char* msg, std::function<void()> onCancel = nullptr);
 

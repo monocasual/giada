@@ -173,4 +173,11 @@ void gdWindow::setBounds(geompp::Rect<int> r)
 {
 	resize(r.x, r.y, r.w, r.h);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void gdWindow::setTitle(const std::string& t)
+{
+	Fl_Window::copy_label(t.c_str());
+}
 } // namespace giada::v

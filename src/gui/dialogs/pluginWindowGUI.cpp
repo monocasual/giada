@@ -44,7 +44,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(const c::plugin::Plugin& p, ID wid)
 #endif
 , m_plugin(p)
 {
-	copy_label(m_plugin.name.c_str());
+	setTitle(m_plugin.name);
 
 	createEditor();
 	if (m_editor == nullptr)
