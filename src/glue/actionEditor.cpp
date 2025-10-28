@@ -44,9 +44,10 @@ SampleData::SampleData(const m::SampleChannel& s)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::Channel& c)
+Data::Data(const m::Channel& c, std::size_t scene)
 : channelId(c.id)
-, channelName(c.getName(0)) // TODO - scenes
+, scene(scene)
+, channelName(c.getName(scene))
 , framesInSeq(g_engine->getMainApi().getFramesInSeq())
 , framesInBeat(g_engine->getMainApi().getFramesInBeat())
 , framesInBar(g_engine->getMainApi().getFramesInBar())
@@ -77,7 +78,7 @@ bool Data::isChannelPlaying() const
 
 Data getData(ID channelId)
 {
-	return Data(g_engine->getChannelsApi().get(channelId));
+	return Data(g_engine->getChannelsApi().get(channelId), g_engine->getMainApi().getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */

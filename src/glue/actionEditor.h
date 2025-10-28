@@ -55,12 +55,13 @@ struct SampleData
 struct Data
 {
 	Data() = default;
-	Data(const m::Channel&);
+	Data(const m::Channel&, std::size_t scene);
 
 	Frame getCurrentFrame() const;
 	bool  isChannelPlaying() const;
 
 	ID                     channelId;
+	std::size_t            scene;
 	std::string            channelName;
 	Frame                  framesInSeq;
 	Frame                  framesInBeat;
