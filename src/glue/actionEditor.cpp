@@ -132,31 +132,6 @@ void deleteSampleAction(ID channelId, const m::Action& a)
 
 /* -------------------------------------------------------------------------- */
 
-#if 0
-
-void recordEnvelopeAction(ID channelId, Frame f, int value)
-{
-	g_engine->getActionEditorApi().recordEnvelopeAction(channelId, f, value);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void deleteEnvelopeAction(ID channelId, const m::Action& a)
-{
-	g_engine->getActionEditorApi().deleteEnvelopeAction(channelId, a);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void updateEnvelopeAction(ID channelId, const m::Action& a, Frame f, int value)
-{
-	g_engine->getActionEditorApi().updateEnvelopeAction(channelId, a, f, value);
-}
-
-#endif
-
-/* -------------------------------------------------------------------------- */
-
 void updateVelocity(const m::Action& a, float value)
 {
 	g_engine->getActionEditorApi().updateVelocity(a, value);
