@@ -74,7 +74,6 @@ struct Data
 
 private:
 	const m::Channel* m_channel;
-	std::size_t       m_scene;
 };
 
 /* getData

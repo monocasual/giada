@@ -47,7 +47,6 @@ Data::Data(const m::Channel& c, std::size_t scene)
 , wavePath(c.sampleChannel->getWave(scene)->getPath())
 , isLogical(c.sampleChannel->getWave(scene)->isLogical())
 , m_channel(&c)
-, m_scene(scene)
 {
 }
 
