@@ -153,9 +153,6 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 				assert(onSceneChanged != nullptr);
 				sequencer.a_setCurrentScene(nextScene);
 				onSceneChanged(); // Can't directly swap model here, this is real-time stuff
-				/* If new scene, just return here. We don't want to grab more actions
-				from this current scene (ie. the old one): a new one is coming up. */
-				return m_eventBuffer;
 			}
 		}
 		else if (global % framesInBar == 0)
