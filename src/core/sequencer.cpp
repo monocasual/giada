@@ -142,7 +142,6 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	for (Frame i = start, local = 0; i < end; i++, local++)
 	{
-
 		Frame global = i % framesInLoop; // wraps around 'framesInLoop'
 
 		if (global == 0)
