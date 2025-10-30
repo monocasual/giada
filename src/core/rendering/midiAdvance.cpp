@@ -33,9 +33,19 @@ namespace giada::m::rendering
 {
 void advanceMidiChannel(const Channel& ch, std::size_t scene, const Sequencer::Event& e, KernelMidi& kernelMidi)
 {
-	if (e.type == Sequencer::EventType::FIRST_BEAT)
+	switch (e.type)
+	{
+	case Sequencer::EventType::FIRST_BEAT:
 		rewindMidiChannel(ch.shared->playStatus);
-	if (ch.isPlaying() && e.type == Sequencer::EventType::ACTIONS)
-		sendMidiFromActions(ch, scene, *e.actions, e.delta, kernelMidi);
+		break;
+
+	case Sequencer::EventType::ACTIONS:
+		if (ch.isPlaying())
+			sendMidiFromActions(ch, scene, *e.actions, e.delta, kernelMidi);
+		break;
+
+	default:
+		break;
+	}
 }
 } // namespace giada::m::rendering
