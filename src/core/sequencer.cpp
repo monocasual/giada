@@ -137,6 +137,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	const std::size_t currentScene = sequencer.a_getCurrentScene();
 	const std::size_t nextScene    = sequencer.a_getNextScene();
+	bool              sceneChanged = false;
 
 	/* Process events in the current block. */
 
@@ -152,6 +153,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 			{
 				assert(onSceneChanged != nullptr);
 				sequencer.a_setCurrentScene(nextScene);
+				sceneChanged = true;
 				onSceneChanged(); // Can't directly swap model here, this is real-time stuff
 			}
 		}
@@ -165,9 +167,13 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 			m_metronome.trigger(Metronome::Click::BEAT, local);
 		}
 
+		/* Fetch actions in the current frame. Extra care is needed if the scene
+		has changed in this block: we need to process actions that belong to the
+		next scene, not the current one (which is the old one). */
+
 		const std::vector<Action>* as = actions.getActionsOnFrame(global);
 		if (as != nullptr)
-			m_eventBuffer.push_back({EventType::ACTIONS, global, local, as});
+			m_eventBuffer.push_back({EventType::ACTIONS, global, local, as, sceneChanged ? nextScene : currentScene});
 	}
 
 	/* Advance this and quantizer after the event parsing. */

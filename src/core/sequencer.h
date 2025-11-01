@@ -71,6 +71,7 @@ public:
 		Frame                      global  = 0;
 		Frame                      delta   = 0;
 		const std::vector<Action>* actions = nullptr;
+		std::size_t                scene   = 0;
 	};
 
 	using EventBuffer = RingBuffer<Event, G_MAX_SEQUENCER_EVENTS>;

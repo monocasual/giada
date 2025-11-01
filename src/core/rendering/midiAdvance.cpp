@@ -31,7 +31,7 @@
 
 namespace giada::m::rendering
 {
-void advanceMidiChannel(const Channel& ch, std::size_t scene, const Sequencer::Event& e, KernelMidi& kernelMidi)
+void advanceMidiChannel(const Channel& ch, const Sequencer::Event& e, KernelMidi& kernelMidi)
 {
 	switch (e.type)
 	{
@@ -41,7 +41,7 @@ void advanceMidiChannel(const Channel& ch, std::size_t scene, const Sequencer::E
 
 	case Sequencer::EventType::ACTIONS:
 		if (ch.isPlaying())
-			sendMidiFromActions(ch, scene, *e.actions, e.delta, kernelMidi);
+			sendMidiFromActions(ch, e.scene, *e.actions, e.delta, kernelMidi);
 		break;
 
 	default:

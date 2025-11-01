@@ -145,7 +145,7 @@ void parseActions_(ID channelId, std::size_t scene, ChannelShared& shared, const
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void advanceSampleChannel(const Channel& ch, std::size_t scene, const Sequencer::Event& e)
+void advanceSampleChannel(const Channel& ch, const Sequencer::Event& e)
 {
 	const SamplePlayerMode mode   = ch.sampleChannel->mode;
 	const bool             isLoop = ch.sampleChannel->isAnyLoopMode();
@@ -167,7 +167,7 @@ void advanceSampleChannel(const Channel& ch, std::size_t scene, const Sequencer:
 
 	case Sequencer::EventType::ACTIONS:
 		if (!isLoop && ch.shared->isReadingActions())
-			parseActions_(ch.id, scene, *ch.shared, *e.actions, e.delta, mode);
+			parseActions_(ch.id, e.scene, *ch.shared, *e.actions, e.delta, mode);
 		break;
 
 	default:
