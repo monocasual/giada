@@ -133,7 +133,7 @@ Frame SampleChannel::getWaveSize(std::size_t scene) const
 
 void SampleChannel::loadSample(const Sample& s, std::size_t scene)
 {
-	m_samples[scene] = {s.wave, {}};
+	m_samples[scene] = s;
 
 	if (s.wave != nullptr)
 	{

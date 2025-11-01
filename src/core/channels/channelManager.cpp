@@ -250,8 +250,9 @@ void ChannelManager::copyChannelToScene(ID channelId, std::size_t srcScene, std:
 	Sample sample = ch.sampleChannel->getSample(srcScene);
 	Wave&  wave   = m_model.addWave(waveFactory::createFromWave(*sample.wave));
 
-	loadSampleChannel(ch, &wave, dstScene);
-	ch.sampleChannel->setSample(sample, dstScene, /*samplerateRatio=*/1.0f);
+	sample.wave = &wave;
+	ch.loadSample(sample, dstScene);
+	ch.setName(ch.getName(srcScene), dstScene);
 	m_model.swap(model::SwapType::HARD);
 }
 
