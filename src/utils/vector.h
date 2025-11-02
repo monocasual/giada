@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <functional>
+#include <ranges>
 #include <vector>
 
 namespace giada::u::vector
@@ -111,6 +112,15 @@ template <typename Vector, typename Default>
 auto atOr(const Vector& v, int index, Default d)
 {
 	return index >= 0 && static_cast<size_t>(index) < v.size() ? v[index] : d;
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <typename T>
+    requires std::integral<T>
+constexpr auto range(T n) noexcept
+{
+	return std::views::iota(T{0}, n);
 }
 } // namespace giada::u::vector
 
