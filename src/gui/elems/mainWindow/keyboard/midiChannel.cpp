@@ -28,22 +28,13 @@
 #include "src/glue/channel.h"
 #include "src/glue/io.h"
 #include "src/glue/layout.h"
-#include "src/glue/main.h"
-#include "src/gui/dialogs/warnings.h"
-#include "src/gui/dispatcher.h"
-#include "src/gui/elems/basics/boxtypes.h"
 #include "src/gui/elems/basics/dial.h"
 #include "src/gui/elems/basics/imageButton.h"
 #include "src/gui/elems/basics/menu.h"
 #include "src/gui/elems/mainWindow/keyboard/midiChannelButton.h"
-#include "src/gui/elems/mainWindow/keyboard/track.h"
 #include "src/gui/elems/midiActivity.h"
 #include "src/gui/graphics.h"
 #include "src/gui/ui.h"
-#include "src/utils/gui.h"
-#include "src/utils/string.h"
-#include <FL/Fl_Menu_Button.H>
-#include <cassert>
 
 extern giada::v::Ui* g_ui;
 

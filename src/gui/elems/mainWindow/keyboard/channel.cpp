@@ -25,18 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/glue/channel.h"
-#include "src/glue/layout.h"
-#include "src/glue/main.h"
 #include "src/gui/const.h"
 #include "src/gui/elems/basics/dial.h"
 #include "src/gui/elems/basics/imageButton.h"
 #include "src/gui/elems/mainWindow/keyboard/channel.h"
 #include "src/gui/elems/mainWindow/keyboard/channelButton.h"
-#include "src/gui/elems/mainWindow/keyboard/channelProgress.h"
 #include "src/gui/elems/mainWindow/keyboard/track.h"
 #include "src/gui/elems/midiActivity.h"
 #include "src/gui/ui.h"
-#include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <fmt/core.h>
 
