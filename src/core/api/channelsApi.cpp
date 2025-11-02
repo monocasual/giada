@@ -156,7 +156,6 @@ void ChannelsApi::remove(ID channelId)
 
 void ChannelsApi::freeSampleChannel(ID channelId)
 {
-	m_actionRecorder.clearChannel(channelId);
 	m_channelManager.freeSampleChannel(channelId, m_sequencer.getCurrentScene());
 }
 
