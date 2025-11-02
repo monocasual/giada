@@ -243,12 +243,12 @@ void deleteChannel(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void freeChannel(ID channelId)
+void freeChannel(ID channelId, bool allScenes)
 {
 	if (!v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING), g_ui->getI18Text(v::LangMap::MESSAGE_CHANNEL_FREE)))
 		return;
 	g_ui->closeAllSubwindows();
-	g_engine->getChannelsApi().freeSampleChannel(channelId);
+	g_engine->getChannelsApi().freeSampleChannel(channelId, allScenes);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -138,9 +138,11 @@ public:
 	void loadSampleChannel(ID channelId, Wave&, std::size_t scene);
 
 	/* freeChannel
-	Unloads existing Wave from a Sample Channel. */
+	Unloads existing Wave from a Sample Channel. Pass G_INVALID_SCENE as 'scene' parameter
+	to remove all Waves from all scenes. */
 
 	void freeSampleChannel(ID channelId, std::size_t scene);
+
 	void freeAllSampleChannels(std::size_t scene);
 
 	void moveChannel(ID, std::size_t newTrackIndex, std::size_t newPosition);

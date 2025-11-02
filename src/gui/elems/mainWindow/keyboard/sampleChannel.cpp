@@ -37,6 +37,7 @@
 #include "src/gui/elems/midiActivity.h"
 #include "src/gui/graphics.h"
 #include "src/gui/ui.h"
+#include <fmt/core.h>
 
 extern giada::v::Ui* g_ui;
 
@@ -67,7 +68,8 @@ enum class Menu
 	COPY_CHANNEL_TO_SCENE_5,
 	COPY_CHANNEL_TO_SCENE_6,
 	COPY_CHANNEL_TO_SCENE_7,
-	FREE_CHANNEL,
+	FREE_CHANNEL_THIS_SCENE,
+	FREE_CHANNEL_ALL_SCENES,
 	DELETE_CHANNEL
 };
 } // namespace
@@ -193,14 +195,16 @@ void geSampleChannel::openMenu()
 	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_5, makeCopyToSceneMenuText(5));
 	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_6, makeCopyToSceneMenuText(6));
 	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_7, makeCopyToSceneMenuText(7));
-	menu.addItem((ID)Menu::FREE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREE));
+	menu.addItem((ID)Menu::FREE_CHANNEL_THIS_SCENE, fmt::format("{}/{}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREE),
+	                                                    g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREETHISSCENE)));
+	menu.addItem((ID)Menu::FREE_CHANNEL_ALL_SCENES, fmt::format("{}/{}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREE),
+	                                                    g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREEALLSCENES)));
 	menu.addItem((ID)Menu::DELETE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_DELETE));
 
 	if (m_channel.sample->waveId == 0)
 	{
 		menu.setEnabled((ID)Menu::EXPORT_SAMPLE, false);
 		menu.setEnabled((ID)Menu::EDIT_SAMPLE, false);
-		menu.setEnabled((ID)Menu::FREE_CHANNEL, false);
 		menu.setEnabled((ID)Menu::RENAME_CHANNEL, false);
 	}
 
@@ -291,8 +295,11 @@ void geSampleChannel::openMenu()
 			c::layout::openRenameChannelWindow(channel);
 			break;
 
-		case Menu::FREE_CHANNEL:
-			c::channel::freeChannel(channel.id);
+		case Menu::FREE_CHANNEL_THIS_SCENE:
+			c::channel::freeChannel(channel.id, /*allScenes=*/false);
+			break;
+		case Menu::FREE_CHANNEL_ALL_SCENES:
+			c::channel::freeChannel(channel.id, /*allScenes=*/true);
 			break;
 
 		case Menu::DELETE_CHANNEL:

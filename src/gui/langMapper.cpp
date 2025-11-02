@@ -177,7 +177,9 @@ LangMap::LangMap()
 	m_data[MAIN_CHANNEL_MENU_RENAME]                 = "Rename";
 	m_data[MAIN_CHANNEL_MENU_CLONE]                  = "Clone";
 	m_data[MAIN_CHANNEL_MENU_COPYTOSCENE]            = "Copy to scene...";
-	m_data[MAIN_CHANNEL_MENU_FREE]                   = "Free";
+	m_data[MAIN_CHANNEL_MENU_FREE]                   = "Free sample...";
+	m_data[MAIN_CHANNEL_MENU_FREETHISSCENE]          = "For this scene";
+	m_data[MAIN_CHANNEL_MENU_FREEALLSCENES]          = "For all scenes";
 	m_data[MAIN_CHANNEL_MENU_DELETE]                 = "Delete";
 
 	m_data[MISSINGASSETS_INTRO]      = "This project contains missing assets.";

@@ -178,7 +178,7 @@ void deleteChannel(ID channelId);
 /* freeChannel
 Unloads the sample from a sample channel. */
 
-void freeChannel(ID channelId);
+void freeChannel(ID channelId, bool allScenes);
 
 /* cloneChannel
 Makes an exact copy of a channel. */

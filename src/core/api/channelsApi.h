@@ -79,7 +79,7 @@ public:
 	int      loadSampleChannel(ID channelId, const std::string& filePath);
 	void     loadSampleChannel(ID channelId, Wave&);
 	void     remove(ID);
-	void     freeSampleChannel(ID);
+	void     freeSampleChannel(ID, bool allScenes);
 	void     clone(ID);
 	void     copyToScene(ID, std::size_t dstScene);
 

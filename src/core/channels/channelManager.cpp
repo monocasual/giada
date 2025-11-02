@@ -258,19 +258,27 @@ void ChannelManager::copyChannelToScene(ID channelId, std::size_t srcScene, std:
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::freeSampleChannel(ID channelId, std::size_t scene)
+void ChannelManager::freeSampleChannel(ID channelId, std::size_t sceneToFree)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	assert(ch.sampleChannel);
 
-	const Wave* wave = ch.sampleChannel->getWave(0); // TODO - scenes
+	std::vector<const Wave*> wavesToRemove;
+	for (const std::size_t scene : u::vector::range(G_MAX_NUM_SCENES))
+	{
+		if (sceneToFree != G_INVALID_SCENE && sceneToFree != scene)
+			continue;
 
-	loadSampleChannel(ch, nullptr, scene);
+		loadSampleChannel(ch, nullptr, scene);
+		const Wave* wave = ch.sampleChannel->getWave(scene);
+		if (wave != nullptr)
+			wavesToRemove.push_back(wave);
+	}
+
 	m_model.swap(model::SwapType::HARD);
-
-	if (wave != nullptr)
-		m_model.removeWave(*wave);
+	for (const Wave* w : wavesToRemove)
+		m_model.removeWave(*w);
 
 	triggerOnChannelsAltered();
 }

@@ -178,6 +178,8 @@ public:
 	static constexpr auto MAIN_CHANNEL_MENU_CLONE                  = "main_channel_menu_clone";
 	static constexpr auto MAIN_CHANNEL_MENU_COPYTOSCENE            = "main_channel_menu_copyToScene";
 	static constexpr auto MAIN_CHANNEL_MENU_FREE                   = "main_channel_menu_free";
+	static constexpr auto MAIN_CHANNEL_MENU_FREETHISSCENE          = "main_channel_menu_freeThisScene";
+	static constexpr auto MAIN_CHANNEL_MENU_FREEALLSCENES          = "main_channel_menu_freeAllScenes";
 	static constexpr auto MAIN_CHANNEL_MENU_DELETE                 = "main_channel_menu_delete";
 
 	static constexpr auto MISSINGASSETS_INTRO      = "missingAssets_intro";

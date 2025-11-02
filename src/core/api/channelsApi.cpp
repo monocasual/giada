@@ -154,9 +154,10 @@ void ChannelsApi::remove(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsApi::freeSampleChannel(ID channelId)
+void ChannelsApi::freeSampleChannel(ID channelId, bool allScenes)
 {
-	m_channelManager.freeSampleChannel(channelId, m_sequencer.getCurrentScene());
+	const std::size_t scene = allScenes ? G_INVALID_SCENE : m_sequencer.getCurrentScene();
+	m_channelManager.freeSampleChannel(channelId, scene);
 }
 
 /* -------------------------------------------------------------------------- */
