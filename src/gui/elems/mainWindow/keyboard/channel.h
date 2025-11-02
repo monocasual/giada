@@ -89,6 +89,8 @@ protected:
 	static const int BREAK_SMALL  = 202;
 	static const int BREAK_MINI   = 178;
 
+	std::string makeCopyToSceneMenuText(std::size_t scene) const;
+
 	static void cb_changeVol(Fl_Widget* /*w*/, void* p);
 	void        cb_changeVol();
 
