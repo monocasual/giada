@@ -186,6 +186,11 @@ void ChannelsApi::copyToScene(ID channelId, std::size_t dstScene)
 	const Channel&    ch       = m_channelManager.getChannel(channelId);
 	const std::size_t srcScene = m_sequencer.getCurrentScene();
 
+	if (ch.type == ChannelType::GROUP)
+		for (const Channel& child : getTracks().getByChannel(ch.id).getChannels().getAll())
+			if (child.type != ChannelType::GROUP)
+				copyToScene(child.id, dstScene);
+
 	m_channelManager.copyChannelToScene(channelId, srcScene, dstScene);
 	if (ch.hasActions)
 		m_actionRecorder.copyActionsToScene(channelId, srcScene, dstScene);

@@ -46,6 +46,14 @@ enum class Menu
 	SETUP_MIDI_INPUT,
 	EDIT_ROUTING,
 	RENAME_CHANNEL,
+	COPY_CHANNEL_TO_SCENE_0,
+	COPY_CHANNEL_TO_SCENE_1,
+	COPY_CHANNEL_TO_SCENE_2,
+	COPY_CHANNEL_TO_SCENE_3,
+	COPY_CHANNEL_TO_SCENE_4,
+	COPY_CHANNEL_TO_SCENE_5,
+	COPY_CHANNEL_TO_SCENE_6,
+	COPY_CHANNEL_TO_SCENE_7
 };
 } // namespace
 
@@ -123,6 +131,14 @@ void geGroupChannel::openMenu()
 	menu.addItem((ID)Menu::SETUP_MIDI_INPUT, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
 	menu.addItem((ID)Menu::EDIT_ROUTING, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
 	menu.addItem((ID)Menu::RENAME_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, makeCopyToSceneMenuText(0));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_1, makeCopyToSceneMenuText(1));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_2, makeCopyToSceneMenuText(2));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_3, makeCopyToSceneMenuText(3));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_4, makeCopyToSceneMenuText(4));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_5, makeCopyToSceneMenuText(5));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_6, makeCopyToSceneMenuText(6));
+	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_7, makeCopyToSceneMenuText(7));
 
 	menu.onSelect = [&data = m_channel](ID id)
 	{
@@ -136,6 +152,30 @@ void geGroupChannel::openMenu()
 			break;
 		case Menu::RENAME_CHANNEL:
 			c::layout::openRenameChannelWindow(data);
+		case Menu::COPY_CHANNEL_TO_SCENE_0:
+			c::channel::copyChannelToScene(data.id, 0);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_1:
+			c::channel::copyChannelToScene(data.id, 1);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_2:
+			c::channel::copyChannelToScene(data.id, 2);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_3:
+			c::channel::copyChannelToScene(data.id, 3);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_4:
+			c::channel::copyChannelToScene(data.id, 4);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_5:
+			c::channel::copyChannelToScene(data.id, 5);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_6:
+			c::channel::copyChannelToScene(data.id, 6);
+			break;
+		case Menu::COPY_CHANNEL_TO_SCENE_7:
+			c::channel::copyChannelToScene(data.id, 7);
+			break;
 		}
 	};
 
