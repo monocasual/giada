@@ -264,7 +264,7 @@ void ChannelManager::freeSampleChannel(ID channelId, std::size_t scene)
 
 	assert(ch.sampleChannel);
 
-	const Wave* wave = ch.sampleChannel->getWave(0);
+	const Wave* wave = ch.sampleChannel->getWave(0); // TODO - scenes
 
 	loadSampleChannel(ch, nullptr, scene);
 	m_model.swap(model::SwapType::HARD);
@@ -536,7 +536,7 @@ bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
 
 	assert(ch.sampleChannel);
 
-	Wave* wave = ch.sampleChannel->getWave(0);
+	Wave* wave = ch.sampleChannel->getWave(0); // TODO - scenes
 
 	assert(wave != nullptr);
 
