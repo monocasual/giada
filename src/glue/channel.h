@@ -227,9 +227,10 @@ void addExtraOutput(ID channelId, int);
 void removeExtraOutput(ID channelId, int);
 
 /* clearAllActions
-Deletes all recorded actions on channel 'channelId'. */
+Deletes all recorded actions on channel 'channelId'. Pass false as 'allScenes' to
+delete only actions in the current scene. */
 
-void clearAllActions(ID channelId);
+void clearAllActions(ID channelId, bool allScenes);
 
 void setSamplePlayerMode(ID channelId, SamplePlayerMode m);
 

@@ -61,7 +61,7 @@ TEST_CASE("ActionRecorder")
 			ar.rec(channelID2, /*scene=*/0, f1, e1);
 			ar.rec(channelID2, /*scene=*/0, f2, e2);
 
-			ar.clearChannel(channelID1);
+			ar.clearChannel(channelID1, /*scene=*/0);
 
 			REQUIRE(ar.hasActions(channelID1) == false);
 			REQUIRE(ar.hasActions(channelID2) == true);

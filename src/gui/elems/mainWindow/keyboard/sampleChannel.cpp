@@ -57,7 +57,8 @@ enum class Menu
 	EDIT_ROUTING,
 	EDIT_SAMPLE,
 	EDIT_ACTIONS,
-	CLEAR_ACTIONS,
+	CLEAR_ACTIONS_THIS_SCENE,
+	CLEAR_ACTIONS_ALL_SCENES,
 	RENAME_CHANNEL,
 	CLONE_CHANNEL,
 	COPY_CHANNEL_TO_SCENE_0,
@@ -184,7 +185,10 @@ void geSampleChannel::openMenu()
 	menu.addItem((ID)Menu::EDIT_ROUTING, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
 	menu.addItem((ID)Menu::EDIT_SAMPLE, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITSAMPLE));
 	menu.addItem((ID)Menu::EDIT_ACTIONS, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITACTIONS));
-	menu.addItem((ID)Menu::CLEAR_ACTIONS, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS));
+	menu.addItem((ID)Menu::CLEAR_ACTIONS_THIS_SCENE, fmt::format("{}/{}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS),
+	                                                     g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_THISSCENE)));
+	menu.addItem((ID)Menu::CLEAR_ACTIONS_ALL_SCENES, fmt::format("{}/{}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS),
+	                                                     g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_ALLSCENES)));
 	menu.addItem((ID)Menu::RENAME_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME));
 	menu.addItem((ID)Menu::CLONE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLONE));
 	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, makeCopyToSceneMenuText(0));
@@ -209,7 +213,10 @@ void geSampleChannel::openMenu()
 	}
 
 	if (!m_channel.hasActions)
-		menu.setEnabled((ID)Menu::CLEAR_ACTIONS, false);
+	{
+		menu.setEnabled((ID)Menu::CLEAR_ACTIONS_ALL_SCENES, false);
+		menu.setEnabled((ID)Menu::CLEAR_ACTIONS_THIS_SCENE, false);
+	}
 
 	menu.onSelect = [&channel = m_channel](ID id)
 	{
@@ -258,8 +265,11 @@ void geSampleChannel::openMenu()
 			c::layout::openSampleActionEditor(channel.id);
 			break;
 
-		case Menu::CLEAR_ACTIONS:
-			c::channel::clearAllActions(channel.id);
+		case Menu::CLEAR_ACTIONS_THIS_SCENE:
+			c::channel::clearAllActions(channel.id, /*allScenes=*/false);
+			break;
+		case Menu::CLEAR_ACTIONS_ALL_SCENES:
+			c::channel::clearAllActions(channel.id, /*allScenes=*/true);
 			break;
 
 		case Menu::CLONE_CHANNEL:

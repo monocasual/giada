@@ -35,6 +35,7 @@
 #include "src/gui/elems/midiActivity.h"
 #include "src/gui/graphics.h"
 #include "src/gui/ui.h"
+#include <fmt/core.h>
 
 extern giada::v::Ui* g_ui;
 
@@ -45,7 +46,8 @@ namespace
 enum class Menu
 {
 	EDIT_ACTIONS = 0,
-	CLEAR_ACTIONS,
+	CLEAR_ACTIONS_THIS_SCENE,
+	CLEAR_ACTIONS_ALL_SCENES,
 	SETUP_KEYBOARD_INPUT,
 	SETUP_MIDI_INPUT,
 	SETUP_MIDI_OUTPUT,
@@ -142,7 +144,10 @@ void geMidiChannel::openMenu()
 	geMenu menu;
 
 	menu.addItem((ID)Menu::EDIT_ACTIONS, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITACTIONS));
-	menu.addItem((ID)Menu::CLEAR_ACTIONS, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS));
+	menu.addItem((ID)Menu::CLEAR_ACTIONS_THIS_SCENE, fmt::format("{}/{}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS),
+	                                                     g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_THISSCENE)));
+	menu.addItem((ID)Menu::CLEAR_ACTIONS_ALL_SCENES, fmt::format("{}/{}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS),
+	                                                     g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_ALLSCENES)));
 	menu.addItem((ID)Menu::SETUP_KEYBOARD_INPUT, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT));
 	menu.addItem((ID)Menu::SETUP_MIDI_INPUT, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
 	menu.addItem((ID)Menu::SETUP_MIDI_OUTPUT, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT));
@@ -160,7 +165,10 @@ void geMidiChannel::openMenu()
 	menu.addItem((ID)Menu::DELETE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_DELETE));
 
 	if (!m_channel.hasActions)
-		menu.setEnabled((ID)Menu::CLEAR_ACTIONS, false);
+	{
+		menu.setEnabled((ID)Menu::CLEAR_ACTIONS_THIS_SCENE, false);
+		menu.setEnabled((ID)Menu::CLEAR_ACTIONS_ALL_SCENES, false);
+	}
 
 	menu.onSelect = [&data = m_channel](ID id)
 	{
@@ -169,8 +177,11 @@ void geMidiChannel::openMenu()
 		case Menu::EDIT_ACTIONS:
 			c::layout::openMidiActionEditor(data.id);
 			break;
-		case Menu::CLEAR_ACTIONS:
-			c::channel::clearAllActions(data.id);
+		case Menu::CLEAR_ACTIONS_THIS_SCENE:
+			c::channel::clearAllActions(data.id, /*allScenes=*/false);
+			break;
+		case Menu::CLEAR_ACTIONS_ALL_SCENES:
+			c::channel::clearAllActions(data.id, /*allScenes=*/true);
 			break;
 		case Menu::SETUP_KEYBOARD_INPUT:
 			c::layout::openKeyGrabberWindow(data.key, [channelId = data.id](int key)

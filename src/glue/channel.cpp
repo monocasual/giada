@@ -359,13 +359,13 @@ void setName(ID channelId, const std::string& name)
 
 /* -------------------------------------------------------------------------- */
 
-void clearAllActions(ID channelId)
+void clearAllActions(ID channelId, bool allScenes)
 {
 	if (!v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),
 	        g_ui->getI18Text(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
 		return;
 
-	g_engine->getChannelsApi().clearAllActions(channelId);
+	g_engine->getChannelsApi().clearAllActions(channelId, allScenes);
 	g_ui->refreshSubWindow(WID_ACTION_EDITOR);
 }
 

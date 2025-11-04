@@ -111,14 +111,20 @@ public:
 	const Action*       findAction(ID) const;
 	bool                hasActions(ID channelId, int type = 0) const;
 	std::vector<Action> getActionsOnChannel(ID channelId, std::size_t scene) const;
-	void                clearChannel(ID channelId);
-	void                clearActions(ID channelId, int type);
-	Action              rec(ID channelId, std::size_t scene, Frame frame, MidiEvent e);
-	void                rec(ID channelId, std::size_t scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
-	void                updateSiblings(ID id, ID prevId, ID nextId);
-	void                deleteAction(ID channelId, ID id);
-	void                deleteAction(ID channelId, ID currId, ID nextId);
-	void                updateEvent(ID id, MidiEvent e);
+
+	/* clearChannel
+	Removes all actions from channel 'channelId' from a given scene. Pass G_INVALID_SCENE
+	to remove all actions from all scenes. */
+
+	void clearChannel(ID channelId, std::size_t scene);
+
+	void   clearActions(ID channelId, int type);
+	Action rec(ID channelId, std::size_t scene, Frame frame, MidiEvent e);
+	void   rec(ID channelId, std::size_t scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
+	void   updateSiblings(ID id, ID prevId, ID nextId);
+	void   deleteAction(ID channelId, ID id);
+	void   deleteAction(ID channelId, ID currId, ID nextId);
+	void   updateEvent(ID id, MidiEvent e);
 
 private:
 	/* areComposite

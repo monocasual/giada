@@ -95,9 +95,9 @@ public:
 	void clearAll();
 
 	/* clearChannel
-	Clears all actions from a channel. */
+	Clears all actions from a channel in a given scene. */
 
-	void clearChannel(ID channelId);
+	void clearChannel(ID channelId, std::size_t scene);
 
 	/* clearActions
 	Clears the actions by type from a channel. */

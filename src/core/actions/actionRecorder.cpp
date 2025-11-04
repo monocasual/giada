@@ -389,10 +389,12 @@ std::vector<Action> ActionRecorder::getActionsOnChannel(ID channelId, std::size_
 	return m_model.get().actions.getActionsOnChannel(channelId, scene);
 }
 
-void ActionRecorder::clearChannel(ID channelId)
+void ActionRecorder::clearChannel(ID channelId, std::size_t sceneToClear)
 {
-	m_model.get().tracks.getChannel(channelId).hasActions = false;
-	m_model.get().actions.clearChannel(channelId);
+	for (const std::size_t scene : u::vector::range(G_MAX_NUM_SCENES))
+		if (sceneToClear == G_INVALID_SCENE || sceneToClear == scene)
+			m_model.get().actions.clearChannel(channelId, scene);
+	m_model.get().tracks.getChannel(channelId).hasActions = hasActions(channelId);
 	m_model.swap(model::SwapType::HARD);
 }
 

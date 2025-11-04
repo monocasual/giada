@@ -48,10 +48,10 @@ void Actions::clearAll()
 
 /* -------------------------------------------------------------------------- */
 
-void Actions::clearChannel(ID channelId)
+void Actions::clearChannel(ID channelId, std::size_t scene)
 {
 	removeIf([=](const Action& a)
-	{ return a.channelId == channelId; });
+	{ return a.channelId == channelId && a.scene == scene; });
 }
 
 /* -------------------------------------------------------------------------- */

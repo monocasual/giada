@@ -171,6 +171,8 @@ public:
 	static constexpr auto MAIN_CHANNEL_MENU_EDITSAMPLE             = "main_channel_menu_editSample";
 	static constexpr auto MAIN_CHANNEL_MENU_EDITACTIONS            = "main_channel_menu_editActions";
 	static constexpr auto MAIN_CHANNEL_MENU_CLEARACTIONS           = "main_channel_menu_clearActions";
+	static constexpr auto MAIN_CHANNEL_MENU_CLEARACTIONS_THISSCENE = "main_channel_menu_clearActions_thisScene";
+	static constexpr auto MAIN_CHANNEL_MENU_CLEARACTIONS_ALLSCENES = "main_channel_menu_clearActions_allScenes";
 	static constexpr auto MAIN_CHANNEL_MENU_CLEARACTIONS_ALL       = "main_channel_menu_clearActions_all";
 	static constexpr auto MAIN_CHANNEL_MENU_CLEARACTIONS_VOLUME    = "main_channel_menu_clearActions_volume";
 	static constexpr auto MAIN_CHANNEL_MENU_CLEARACTIONS_STARTSTOP = "main_channel_menu_clearActions_startStop";

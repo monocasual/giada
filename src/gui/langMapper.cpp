@@ -170,7 +170,9 @@ LangMap::LangMap()
 	m_data[MAIN_CHANNEL_MENU_EDITROUTING]            = "Edit routing...";
 	m_data[MAIN_CHANNEL_MENU_EDITSAMPLE]             = "Edit sample...";
 	m_data[MAIN_CHANNEL_MENU_EDITACTIONS]            = "Edit actions...";
-	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS]           = "Clear actions";
+	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS]           = "Clear actions...";
+	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS_THISSCENE] = "In this scene";
+	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS_ALLSCENES] = "In all scenes";
 	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS_ALL]       = "All";
 	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS_VOLUME]    = "Volume";
 	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS_STARTSTOP] = "Start/Stop";

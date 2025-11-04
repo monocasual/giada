@@ -142,7 +142,7 @@ void ChannelsApi::remove(ID channelId)
 	const std::vector<Plugin*> plugins  = m_channelManager.getChannel(channelId).plugins;
 	const bool                 hasSolos = m_channelManager.hasSolos();
 
-	m_actionRecorder.clearChannel(channelId);
+	m_actionRecorder.clearChannel(channelId, G_INVALID_SCENE);
 	m_channelManager.deleteChannel(channelId);
 	m_mixer.updateSoloCount(hasSolos);
 
@@ -336,9 +336,10 @@ void ChannelsApi::removeExtraOutput(ID channelId, std::size_t index)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsApi::clearAllActions(ID channelId)
+void ChannelsApi::clearAllActions(ID channelId, bool allScenes)
 {
-	m_actionRecorder.clearChannel(channelId);
+	const std::size_t scene = allScenes ? G_INVALID_SCENE : m_sequencer.getCurrentScene();
+	m_actionRecorder.clearChannel(channelId, scene);
 }
 
 void ChannelsApi::clearAllActions()

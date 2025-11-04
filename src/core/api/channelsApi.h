@@ -102,7 +102,7 @@ public:
 	void setSendToMaster(ID, bool value);
 	void addExtraOutput(ID, int);
 	void removeExtraOutput(ID, std::size_t);
-	void clearAllActions(ID);
+	void clearAllActions(ID, bool allScenes);
 	void clearAllActions();
 	void freeAllSampleChannels();
 	void sendMidi(ID, const MidiEvent&);
