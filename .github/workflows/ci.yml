@@ -53,7 +53,7 @@ jobs:
   # macOS ----------------------------------------------------------------------
   macos:
     name: macOS
-    runs-on: macOS-13
+    runs-on: macOS-14
     timeout-minutes: 60
     steps:
       - name: Download repository
