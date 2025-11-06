@@ -5,6 +5,7 @@
     "dependencies": [
         "fmt",
         "catch2",
+        "nlohmann-json",
         {
             "name": "rtmidi",
             "version>=": "5.0.0#2",
@@ -21,10 +22,6 @@
         {
             "name": "libsamplerate",
             "version>=": "0.2.2"
-        },
-        {
-            "name": "nlohmann-json",
-            "version>=": "3.11.2"
         },
         {
             "name": "libsndfile",
@@ -49,7 +46,7 @@
         },
         {
             "name": "nlohmann-json",
-            "version": "3.11.2"
+            "version": "3.12.0"
         },
         {
             "name": "libsndfile",
