@@ -8,7 +8,6 @@
         "nlohmann-json",
         {
             "name": "rtmidi",
-            "version>=": "5.0.0#2",
             "platform": "linux",
             "features": [
                 "alsa"
@@ -16,7 +15,6 @@
         },
         {
             "name": "rtmidi",
-            "version>=": "5.0.0",
             "platform": "!linux"
         },
         {
@@ -35,6 +33,10 @@
         {
             "name": "fmt",
             "version": "12.0.0"
+        },
+        {
+            "name": "rtmidi",
+            "version": "6.0.0"
         },
         {
             "name": "catch2",
