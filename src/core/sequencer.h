@@ -115,6 +115,7 @@ public:
 	SeqStatus   getStatus() const;
 	int         getMaxFramesInLoop(int sampleRate) const;
 	std::size_t getCurrentScene() const;
+	SceneStatus getSceneStatus() const;
 
 	/* calcBpmFromRec
 	Given the amount of recorded frames, returns the speed of the current

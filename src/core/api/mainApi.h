@@ -73,6 +73,7 @@ public:
 	int               getFramesInBeat() const;
 	SeqStatus         getSequencerStatus() const;
 	std::size_t       getCurrentScene() const;
+	SceneStatus       getSceneStatus() const;
 
 	void toggleMetronome();
 	void setMasterInVolume(float);

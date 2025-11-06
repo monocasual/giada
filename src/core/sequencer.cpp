@@ -83,6 +83,7 @@ int         Sequencer::getQuantizerStep() const { return m_quantizerStep; }
 SeqStatus   Sequencer::getStatus() const { return m_model.get().sequencer.status; }
 int         Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model.get().sequencer.getMaxFramesInLoop(sampleRate); }
 std::size_t Sequencer::getCurrentScene() const { return m_model.get().sequencer.a_getCurrentScene(); }
+SceneStatus Sequencer::getSceneStatus() const { return m_model.get().sequencer.a_getSceneStatus(); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -153,6 +154,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 			{
 				assert(onSceneChanged != nullptr);
 				sequencer.a_setCurrentScene(nextScene);
+				sequencer.a_setSceneStatus(SceneStatus::IDLE);
 				sceneChanged = true;
 				onSceneChanged(); // Can't directly swap model here, this is real-time stuff
 			}
@@ -412,6 +414,8 @@ void Sequencer::setScene(std::size_t scene)
 		return;
 	if (!isRunning())
 		m_model.get().sequencer.a_setCurrentScene(scene);
+	else
+		m_model.get().sequencer.a_setSceneStatus(SceneStatus::CHANGING);
 	m_model.get().sequencer.a_setNextScene(scene);
 	m_model.swap(model::SwapType::HARD);
 }

@@ -59,6 +59,12 @@ enum class PluginSortDir : int
 	DESC
 };
 
+enum class SceneStatus
+{
+	IDLE,
+	CHANGING
+};
+
 struct PluginSortMode
 {
 	PluginSortMethod method;

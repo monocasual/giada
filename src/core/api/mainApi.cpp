@@ -196,6 +196,13 @@ std::size_t MainApi::getCurrentScene() const
 
 /* -------------------------------------------------------------------------- */
 
+SceneStatus MainApi::getSceneStatus() const
+{
+	return m_sequencer.getSceneStatus();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void MainApi::toggleMetronome()
 {
 	m_sequencer.toggleMetronome();

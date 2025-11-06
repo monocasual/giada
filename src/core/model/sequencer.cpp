@@ -100,6 +100,13 @@ std::size_t Sequencer::a_getNextScene() const
 
 /* -------------------------------------------------------------------------- */
 
+SceneStatus Sequencer::a_getSceneStatus() const
+{
+	return shared->sceneStatus.load();
+}
+
+/* -------------------------------------------------------------------------- */
+
 int Sequencer::getMaxFramesInLoop(int sampleRate) const
 {
 	return (sampleRate * (60.0f / G_MIN_BPM)) * beats;
@@ -131,5 +138,12 @@ void Sequencer::a_setCurrentScene(std::size_t scene) const
 void Sequencer::a_setNextScene(std::size_t scene) const
 {
 	shared->nextScene.store(scene);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::a_setSceneStatus(SceneStatus s) const
+{
+	shared->sceneStatus.store(s);
 }
 } // namespace giada::m::model
