@@ -3,6 +3,7 @@
     "version-string": "1.0",
     "builtin-baseline": "f6a5d4e8eb7476b8d7fc12a56dff300c1c986131",
     "dependencies": [
+        "fmt",
         {
             "name": "rtmidi",
             "version>=": "5.0.0#2",
@@ -15,10 +16,6 @@
             "name": "rtmidi",
             "version>=": "5.0.0",
             "platform": "!linux"
-        },
-        {
-            "name": "fmt",
-            "version>=": "10.0.0"
         },
         {
             "name": "catch2",
@@ -43,7 +40,7 @@
     "overrides": [
         {
             "name": "fmt",
-            "version": "10.0.0"
+            "version": "12.0.0"
         },
         {
             "name": "catch2",
