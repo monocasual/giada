@@ -29,6 +29,7 @@
 #include "src/gui/const.h"
 #include "src/gui/elems/basics/flex.h"
 #include "src/gui/elems/basics/textButton.h"
+#include "src/utils/vector.h"
 #include <fmt/core.h>
 
 namespace giada::v
@@ -64,7 +65,7 @@ void geScenes::refresh()
 {
 	const c::main::Scenes scenes = c::main::getScenes();
 
-	for (std::size_t i = 0; i < m_buttons.size(); i++)
+	for (const std::size_t i : u::vector::range(m_buttons.size()))
 		m_buttons[i]->forceValue(scenes.currentScene == i);
 }
 
