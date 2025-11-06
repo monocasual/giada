@@ -6,6 +6,7 @@
         "fmt",
         "catch2",
         "nlohmann-json",
+        "libsamplerate",
         {
             "name": "rtmidi",
             "platform": "linux",
@@ -16,10 +17,6 @@
         {
             "name": "rtmidi",
             "platform": "!linux"
-        },
-        {
-            "name": "libsamplerate",
-            "version>=": "0.2.2"
         },
         {
             "name": "libsndfile",
