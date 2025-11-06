@@ -61,7 +61,7 @@ struct Patch
 		Frame       shift = 0;
 		float       pitch = G_DEFAULT_PITCH;
 	};
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Sample, waveId, range, shift, pitch);
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Sample, waveId, range, shift, pitch)
 
 	struct Channel
 	{
