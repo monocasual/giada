@@ -34,8 +34,8 @@
 
 namespace giada::v
 {
-geChannelButton::geChannelButton(int x, int y, int w, int h, const c::channel::Data& d)
-: geTextButton(x, y, w, h, "")
+geChannelButton::geChannelButton(const c::channel::Data& d)
+: gePlayButton()
 , m_channel(d)
 , m_imgExtraOuputs(std::make_unique<Fl_SVG_Image>(nullptr, graphics::extraOutputs))
 {
@@ -49,13 +49,13 @@ void geChannelButton::refresh()
 	{
 	case ChannelStatus::OFF:
 	case ChannelStatus::EMPTY:
-		setDefaultMode();
+		setDefaultState();
 		break;
 	case ChannelStatus::PLAY:
-		setPlayMode();
+		setPlayState();
 		break;
 	case ChannelStatus::ENDING:
-		setEndingMode();
+		setEndingState();
 		break;
 	default:
 		break;
@@ -63,7 +63,7 @@ void geChannelButton::refresh()
 	switch (m_channel.getRecStatus())
 	{
 	case ChannelStatus::ENDING:
-		setEndingMode();
+		setEndingState();
 		break;
 	default:
 		break;
@@ -92,43 +92,16 @@ void geChannelButton::draw()
 
 /* -------------------------------------------------------------------------- */
 
-void geChannelButton::setInputRecordMode()
+void geChannelButton::setInputRecordState()
 {
 	m_backgroundColorOff = G_COLOR_RED;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geChannelButton::setActionRecordMode()
+void geChannelButton::setActionRecordState()
 {
 	m_backgroundColorOff = G_COLOR_BLUE;
 	m_textColor          = G_COLOR_LIGHT_2;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geChannelButton::setDefaultMode(const char* l)
-{
-	m_backgroundColorOff = G_COLOR_GREY_2;
-	m_borderColor        = G_COLOR_GREY_4;
-	m_textColor          = G_COLOR_LIGHT_2;
-	if (l != nullptr)
-		label(l);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geChannelButton::setPlayMode()
-{
-	m_backgroundColorOff = G_COLOR_LIGHT_1;
-	m_borderColor        = G_COLOR_LIGHT_1;
-	m_textColor          = G_COLOR_GREY_1;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geChannelButton::setEndingMode()
-{
-	m_backgroundColorOff = G_COLOR_GREY_4;
 }
 } // namespace giada::v

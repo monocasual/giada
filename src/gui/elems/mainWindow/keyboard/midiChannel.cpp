@@ -73,7 +73,7 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, c::channel::Data d)
 {
 	playButton   = new geImageButton(graphics::channelPlayOff, graphics::channelPlayOn);
 	arm          = new geImageButton(graphics::armOff, graphics::armOn);
-	mainButton   = new geMidiChannelButton(0, 0, 0, 0, m_channel);
+	mainButton   = new geMidiChannelButton(m_channel);
 	midiActivity = new geMidiActivity();
 	mute         = new geImageButton(graphics::muteOff, graphics::muteOn);
 	solo         = new geImageButton(graphics::soloOff, graphics::soloOn);

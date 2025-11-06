@@ -38,8 +38,8 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h, const c::channel::Data& d)
-: geChannelButton(x, y, w, h, d)
+geSampleChannelButton::geSampleChannelButton(const c::channel::Data& d)
+: geChannelButton(d)
 {
 	switch (m_channel.getPlayStatus())
 	{
@@ -60,9 +60,9 @@ void geSampleChannelButton::refresh()
 	geChannelButton::refresh();
 
 	if (m_channel.isRecordingInput() && m_channel.isArmed())
-		setInputRecordMode();
+		setInputRecordState();
 	else if (m_channel.isRecordingActions() && m_channel.sample->waveId != 0 && !m_channel.sample->isLoop)
-		setActionRecordMode();
+		setActionRecordState();
 
 	redraw();
 }

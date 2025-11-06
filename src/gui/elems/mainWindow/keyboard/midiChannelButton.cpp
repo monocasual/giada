@@ -30,8 +30,8 @@
 
 namespace giada::v
 {
-geMidiChannelButton::geMidiChannelButton(int x, int y, int w, int h, const c::channel::Data& d)
-: geChannelButton(x, y, w, h, d)
+geMidiChannelButton::geMidiChannelButton(const c::channel::Data& d)
+: geChannelButton(d)
 {
 }
 
@@ -44,7 +44,7 @@ void geMidiChannelButton::refresh()
 	refreshLabel();
 
 	if (m_channel.isRecordingActions() && m_channel.isArmed())
-		setActionRecordMode();
+		setActionRecordState();
 
 	redraw();
 }

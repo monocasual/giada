@@ -85,7 +85,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, c::channel::Data d)
 	playButton     = new geImageButton(graphics::channelPlayOff, graphics::channelPlayOn);
 	arm            = new geImageButton(graphics::armOff, graphics::armOn, graphics::armDisabled);
 	progress       = new geChannelProgress(0, 0, 0, 0, m_channel);
-	mainButton     = new geSampleChannelButton(0, 0, 0, 0, m_channel);
+	mainButton     = new geSampleChannelButton(m_channel);
 	midiActivity   = new geMidiActivity();
 	readActionsBtn = new geImageButton(graphics::readActionOff, graphics::readActionOn, graphics::readActionDisabled);
 	modeBox        = new geSampleChannelMode(0, 0, 0, 0, m_channel);

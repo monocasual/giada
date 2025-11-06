@@ -122,9 +122,9 @@ bool geChannel::isGroup() const
 void geChannel::blink()
 {
 	if (g_ui->shouldBlink())
-		mainButton->setPlayMode();
+		mainButton->setPlayState();
 	else
-		mainButton->setDefaultMode();
+		mainButton->setDefaultState();
 }
 
 /* -------------------------------------------------------------------------- */

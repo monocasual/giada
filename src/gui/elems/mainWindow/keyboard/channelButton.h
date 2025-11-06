@@ -27,7 +27,7 @@
 #ifndef GE_CHANNEL_BUTTON_H
 #define GE_CHANNEL_BUTTON_H
 
-#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/elems/playButton.h"
 #include <FL/Fl_SVG_Image.H>
 #include <memory>
 
@@ -38,20 +38,17 @@ struct Data;
 
 namespace giada::v
 {
-class geChannelButton : public geTextButton
+class geChannelButton : public gePlayButton
 {
 public:
-	geChannelButton(int x, int y, int w, int h, const c::channel::Data& d);
+	geChannelButton(const c::channel::Data& d);
 
 	virtual void refresh();
 
 	void draw() override;
 
-	void setPlayMode();
-	void setEndingMode();
-	void setDefaultMode(const char* l = nullptr);
-	void setInputRecordMode();
-	void setActionRecordMode();
+	void setInputRecordState();
+	void setActionRecordState();
 
 protected:
 	const c::channel::Data& m_channel;
