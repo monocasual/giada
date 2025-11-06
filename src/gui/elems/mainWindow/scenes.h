@@ -34,7 +34,7 @@
 
 namespace giada::v
 {
-class geTextButton;
+class gePlayButton;
 class geScenes : public geFlex
 {
 public:
@@ -43,9 +43,9 @@ public:
 	void refresh();
 
 private:
-	geTextButton* makeButton(std::size_t scene);
+	gePlayButton* makeButton(std::size_t scene);
 
-	SceneArray<geTextButton*> m_buttons;
+	SceneArray<gePlayButton*> m_buttons;
 };
 } // namespace giada::v
 

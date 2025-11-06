@@ -28,7 +28,7 @@
 #include "src/glue/main.h"
 #include "src/gui/const.h"
 #include "src/gui/elems/basics/flex.h"
-#include "src/gui/elems/basics/textButton.h"
+#include "src/gui/elems/playButton.h"
 #include "src/utils/vector.h"
 #include <fmt/core.h>
 
@@ -66,14 +66,20 @@ void geScenes::refresh()
 	const c::main::Scenes scenes = c::main::getScenes();
 
 	for (const std::size_t i : u::vector::range(m_buttons.size()))
-		m_buttons[i]->forceValue(scenes.currentScene == i);
+	{
+		if (i == scenes.currentScene)
+			m_buttons[i]->setPlayState();
+		else
+			m_buttons[i]->setDefaultState();
+		m_buttons[i]->redraw();
+	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-geTextButton* geScenes::makeButton(std::size_t scene)
+gePlayButton* geScenes::makeButton(std::size_t scene)
 {
-	m_buttons[scene] = new geTextButton(fmt::format("{}", scene + 1).c_str());
+	m_buttons[scene] = new gePlayButton(fmt::format("{}", scene + 1));
 	m_buttons[scene]->setPadding(0);
 	m_buttons[scene]->onClick = [scene]()
 	{ c::main::setScene(scene); };

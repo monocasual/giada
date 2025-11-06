@@ -173,7 +173,9 @@ MainMenu getMainMenu()
 
 Scenes getScenes()
 {
-	return {g_engine->getMainApi().getCurrentScene()};
+	return {
+	    g_engine->getMainApi().getCurrentScene(),
+	    g_engine->getMainApi().getSceneStatus()};
 }
 
 /* -------------------------------------------------------------------------- */

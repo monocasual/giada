@@ -108,6 +108,7 @@ struct MainMenu
 struct Scenes
 {
 	std::size_t currentScene;
+	SceneStatus status;
 };
 
 /* get*
