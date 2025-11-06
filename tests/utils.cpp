@@ -1,7 +1,8 @@
 #include "../src/utils/fs.h"
 #include "../src/utils/math.h"
 #include "../src/utils/string.h"
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 TEST_CASE("u::fs")
 {
@@ -50,9 +51,9 @@ TEST_CASE("::math")
 
 	REQUIRE(u::math::map(0.0f, 0.0f, 30.0f, 0.0f, 1.0f) == 0.0f);
 	REQUIRE(u::math::map(30.0f, 0.0f, 30.0f, 0.0f, 1.0f) == 1.0f);
-	REQUIRE(u::math::map(15.0f, 0.0f, 30.0f, 0.0f, 1.0f) == Approx(0.5f));
+	REQUIRE_THAT(u::math::map(15.0f, 0.0f, 30.0f, 0.0f, 1.0f), Catch::Matchers::WithinAbs(0.5f, 0.001f));
 
 	REQUIRE(u::math::map(0.0f, 30.0f, 1.0f) == 0.0f);
 	REQUIRE(u::math::map(30.0f, 30.0f, 1.0f) == 1.0f);
-	REQUIRE(u::math::map(15.0f, 30.0f, 1.0f) == Approx(0.5f));
+	REQUIRE_THAT(u::math::map(15.0f, 30.0f, 1.0f), Catch::Matchers::WithinAbs(0.5f, 0.001f));
 }

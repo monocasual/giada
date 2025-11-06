@@ -1,7 +1,7 @@
 
 #include "../src/core/channels/channelFactory.h"
 #include "../src/core/types.h"
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 using std::string;
 using namespace giada;

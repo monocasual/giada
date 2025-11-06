@@ -4,6 +4,7 @@
     "builtin-baseline": "f6a5d4e8eb7476b8d7fc12a56dff300c1c986131",
     "dependencies": [
         "fmt",
+        "catch2",
         {
             "name": "rtmidi",
             "version>=": "5.0.0#2",
@@ -16,10 +17,6 @@
             "name": "rtmidi",
             "version>=": "5.0.0",
             "platform": "!linux"
-        },
-        {
-            "name": "catch2",
-            "version>=": "2.13.8"
         },
         {
             "name": "libsamplerate",
@@ -44,7 +41,7 @@
         },
         {
             "name": "catch2",
-            "version": "2.13.8"
+            "version": "3.11.0"
         },
         {
             "name": "libsamplerate",

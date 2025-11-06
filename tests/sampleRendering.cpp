@@ -1,6 +1,6 @@
 #include "../src/core/rendering/sampleRendering.h"
 #include "../src/core/channels/channel.h"
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("rendering::sampleRendering")
 {

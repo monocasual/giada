@@ -49,7 +49,7 @@
 #include "tests/waveFactory.cpp"
 #include "tests/waveFx.cpp"
 #include "tests/waveReading.cpp"
-#include <catch2/catch.hpp>
+#include <catch2/catch_session.hpp>
 #include <string>
 #include <vector>
 #endif

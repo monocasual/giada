@@ -2,7 +2,7 @@
 #include "../src/core/const.h"
 #include "../src/core/types.h"
 #include "../src/core/wave.h"
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <memory>
 
 using namespace giada;

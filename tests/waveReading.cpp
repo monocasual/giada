@@ -2,7 +2,7 @@
 #include "../src/core/wave.h"
 #include "../src/utils/vector.h"
 #include "src/core/rendering/sampleRendering.h"
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <memory>
 
 TEST_CASE("WaveReading")

@@ -5,7 +5,7 @@
 #include "src/core/model/actions.h"
 #include "src/core/model/model.h"
 #include "src/core/types.h"
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("ActionRecorder")
 {

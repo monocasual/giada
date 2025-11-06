@@ -1,7 +1,7 @@
 #include "../src/core/channels/midiLightning.h"
 #include "../src/core/rendering/midiOutput.h"
 #include "mocks/kernelMidiMock.h"
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <memory>
 
 TEST_CASE("MidiLightning")
