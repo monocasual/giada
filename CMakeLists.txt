@@ -294,6 +294,8 @@ list(APPEND SOURCES
 	src/gui/elems/panTool.h
 	src/gui/elems/midiActivity.cpp
 	src/gui/elems/midiActivity.h
+	src/gui/elems/playButton.cpp
+	src/gui/elems/playButton.h
 	src/gui/elems/sampleEditor/pitchTool.cpp
 	src/gui/elems/sampleEditor/pitchTool.h
 	src/gui/elems/sampleEditor/rangeTool.cpp
