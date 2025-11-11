@@ -28,7 +28,6 @@
 #define GE_MENU_H
 
 #include "src/types.h"
-#include <FL/Fl_Menu_.H>
 #include <FL/Fl_Menu_Button.H>
 #include <functional>
 #include <string>
