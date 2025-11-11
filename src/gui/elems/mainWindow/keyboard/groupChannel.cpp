@@ -34,6 +34,7 @@
 #include "src/gui/elems/midiActivity.h"
 #include "src/gui/graphics.h"
 #include "src/gui/ui.h"
+#include <fmt/core.h>
 
 extern giada::v::Ui* g_ui;
 
@@ -127,18 +128,20 @@ geGroupChannel::geGroupChannel(c::channel::Data d)
 void geGroupChannel::openMenu()
 {
 	geMenu menu;
-
 	menu.addItem((ID)Menu::SETUP_MIDI_INPUT, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
 	menu.addItem((ID)Menu::EDIT_ROUTING, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
 	menu.addItem((ID)Menu::RENAME_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, makeCopyToSceneMenuText(0));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_1, makeCopyToSceneMenuText(1));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_2, makeCopyToSceneMenuText(2));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_3, makeCopyToSceneMenuText(3));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_4, makeCopyToSceneMenuText(4));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_5, makeCopyToSceneMenuText(5));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_6, makeCopyToSceneMenuText(6));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_7, makeCopyToSceneMenuText(7));
+
+	geMenu sceneSubMenu;
+	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, fmt::format("{} 1", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_1, fmt::format("{} 2", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_2, fmt::format("{} 3", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_3, fmt::format("{} 4", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_4, fmt::format("{} 5", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_5, fmt::format("{} 6", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_6, fmt::format("{} 7", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_7, fmt::format("{} 8", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE), sceneSubMenu);
 
 	menu.onSelect = [&data = m_channel](ID id)
 	{

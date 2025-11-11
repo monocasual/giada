@@ -41,6 +41,7 @@ public:
 
 	void addItem(ID, const char* text, int flags = 0);
 	void addItem(ID, const std::string& text, int flags = 0);
+	void addSubMenu(const std::string& text, geMenu&);
 	void setEnabled(ID, bool);
 
 	std::function<void(ID)> onSelect;

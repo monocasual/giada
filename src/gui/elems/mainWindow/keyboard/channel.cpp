@@ -34,7 +34,6 @@
 #include "src/gui/elems/midiActivity.h"
 #include "src/gui/ui.h"
 #include <FL/fl_draw.H>
-#include <fmt/core.h>
 
 extern giada::v::Ui* g_ui;
 
@@ -62,14 +61,6 @@ void geChannel::draw()
 	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_1_5);
 
 	geFlex::draw();
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::string geChannel::makeCopyToSceneMenuText(std::size_t scene) const
-{
-	return fmt::format("{}/{} {}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE),
-	    g_ui->getI18Text(LangMap::COMMON_SCENE), scene + 1);
 }
 
 /* -------------------------------------------------------------------------- */

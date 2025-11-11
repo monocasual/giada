@@ -185,24 +185,31 @@ void geSampleChannel::openMenu()
 	menu.addItem((ID)Menu::EDIT_ROUTING, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
 	menu.addItem((ID)Menu::EDIT_SAMPLE, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITSAMPLE));
 	menu.addItem((ID)Menu::EDIT_ACTIONS, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITACTIONS));
-	menu.addItem((ID)Menu::CLEAR_ACTIONS_THIS_SCENE, fmt::format("{}/{}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS),
-	                                                     g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_THISSCENE)));
-	menu.addItem((ID)Menu::CLEAR_ACTIONS_ALL_SCENES, fmt::format("{}/{}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS),
-	                                                     g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_ALLSCENES)));
+
+	geMenu clearActionsSubMenu;
+	clearActionsSubMenu.addItem((ID)Menu::CLEAR_ACTIONS_THIS_SCENE, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_THISSCENE));
+	clearActionsSubMenu.addItem((ID)Menu::CLEAR_ACTIONS_ALL_SCENES, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_ALLSCENES));
+	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS), clearActionsSubMenu);
+
 	menu.addItem((ID)Menu::RENAME_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME));
 	menu.addItem((ID)Menu::CLONE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLONE));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, makeCopyToSceneMenuText(0));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_1, makeCopyToSceneMenuText(1));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_2, makeCopyToSceneMenuText(2));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_3, makeCopyToSceneMenuText(3));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_4, makeCopyToSceneMenuText(4));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_5, makeCopyToSceneMenuText(5));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_6, makeCopyToSceneMenuText(6));
-	menu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_7, makeCopyToSceneMenuText(7));
-	menu.addItem((ID)Menu::FREE_CHANNEL_THIS_SCENE, fmt::format("{}/{}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREE),
-	                                                    g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREETHISSCENE)));
-	menu.addItem((ID)Menu::FREE_CHANNEL_ALL_SCENES, fmt::format("{}/{}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREE),
-	                                                    g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREEALLSCENES)));
+
+	geMenu copySceneSubMenu;
+	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, fmt::format("{} 1", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, fmt::format("{} 2", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, fmt::format("{} 3", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, fmt::format("{} 4", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, fmt::format("{} 5", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, fmt::format("{} 6", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, fmt::format("{} 7", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, fmt::format("{} 8", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE), copySceneSubMenu);
+
+	geMenu freeChannelSubMenu;
+	freeChannelSubMenu.addItem((ID)Menu::FREE_CHANNEL_THIS_SCENE, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREETHISSCENE));
+	freeChannelSubMenu.addItem((ID)Menu::FREE_CHANNEL_ALL_SCENES, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREEALLSCENES));
+	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREE), freeChannelSubMenu);
+
 	menu.addItem((ID)Menu::DELETE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_DELETE));
 
 	if (m_channel.sample->waveId == 0)

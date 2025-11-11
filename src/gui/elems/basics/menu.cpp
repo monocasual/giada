@@ -61,11 +61,17 @@ void geMenu::callback(ID id)
 void geMenu::addItem(ID id, const char* text, int flags)
 {
 	add(text, /*shortcut=*/0, callback, /*data=*/(void*)(intptr_t)(id), flags);
+	menu_end();
 }
 
 void geMenu::addItem(ID id, const std::string& text, int flags)
 {
 	addItem(id, text.c_str(), flags);
+}
+
+void geMenu::addSubMenu(const std::string& text, geMenu& subMenu)
+{
+	add(text.c_str(), 0, nullptr, (void*)subMenu.menu(), FL_SUBMENU_POINTER);
 }
 
 /* -------------------------------------------------------------------------- */
