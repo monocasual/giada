@@ -91,6 +91,8 @@ void geMenu::callback(ID id)
 
 void geMenu::addItem(ID id, const char* text, int flags)
 {
+	assert(findItemById(id) == nullptr);
+
 	add(text, /*shortcut=*/0, callback, /*data=*/(void*)(intptr_t)(id), flags);
 	menu_end();
 }
