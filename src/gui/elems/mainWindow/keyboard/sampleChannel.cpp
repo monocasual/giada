@@ -217,6 +217,8 @@ void geSampleChannel::openMenu()
 		menu.setEnabled((ID)Menu::EXPORT_SAMPLE, false);
 		menu.setEnabled((ID)Menu::EDIT_SAMPLE, false);
 		menu.setEnabled((ID)Menu::RENAME_CHANNEL, false);
+		menu.setEnabled((ID)Menu::FREE_CHANNEL_THIS_SCENE, false);
+		menu.setEnabled((ID)Menu::FREE_CHANNEL_ALL_SCENES, false);
 	}
 
 	if (!m_channel.hasActions)
