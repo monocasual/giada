@@ -49,6 +49,11 @@ public:
 private:
 	static void callback(Fl_Widget*, void*);
 	void        callback(ID);
+
+	/* findItemById
+	Finds menu item by ID recusively (in sub-menus). Returns nullptr if not found. */
+
+	const Fl_Menu_Item* findItemById(ID targetId) const;
 };
 } // namespace giada::v
 
