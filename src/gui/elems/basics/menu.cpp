@@ -93,7 +93,7 @@ void geMenu::addItem(ID id, const char* text, int flags)
 {
 	assert(findItemById(id) == nullptr);
 
-	add(text, /*shortcut=*/0, callback, /*data=*/(void*)(intptr_t)(id), flags);
+	add(u::gui::removeFltkChars(text).c_str(), /*shortcut=*/0, callback, /*data=*/(void*)(intptr_t)(id), flags);
 	menu_end();
 }
 
