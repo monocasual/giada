@@ -58,4 +58,11 @@ void gePlayButton::setDefaultState()
 	m_borderColor        = G_COLOR_GREY_4;
 	m_textColor          = G_COLOR_LIGHT_2;
 }
+
+/* -------------------------------------------------------------------------- */
+
+void gePlayButton::blink(bool blinkState)
+{
+	blinkState ? setPlayState() : setDefaultState();
+}
 }; // namespace giada::v

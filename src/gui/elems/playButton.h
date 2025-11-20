@@ -45,6 +45,11 @@ public:
 	void setPlayState();
 	void setEndingState();
 	void setDefaultState();
+
+	/* blink
+	Utility method to make the button blink. Call this on each refresh. */
+
+	void blink(bool blinkState);
 };
 } // namespace giada::v
 

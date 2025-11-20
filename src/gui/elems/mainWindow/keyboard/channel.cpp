@@ -78,7 +78,7 @@ void geChannel::refresh()
 		mainButton->refresh();
 
 	if (recStatus == ChannelStatus::WAIT || playStatus == ChannelStatus::WAIT)
-		blink();
+		mainButton->blink(g_ui->shouldBlink());
 
 	playButton->setValue(playStatus == ChannelStatus::PLAY || playStatus == ChannelStatus::ENDING);
 	midiActivity->redraw();
@@ -106,16 +106,6 @@ std::size_t geChannel::getTrackIndex() const
 bool geChannel::isGroup() const
 {
 	return m_channel.type == ChannelType::GROUP;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void geChannel::blink()
-{
-	if (g_ui->shouldBlink())
-		mainButton->setPlayState();
-	else
-		mainButton->setDefaultState();
 }
 
 /* -------------------------------------------------------------------------- */

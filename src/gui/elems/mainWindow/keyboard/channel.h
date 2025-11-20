@@ -92,11 +92,6 @@ protected:
 	static void cb_changeVol(Fl_Widget* /*w*/, void* p);
 	void        cb_changeVol();
 
-	/* blink
-	Blinks button when channel is in wait/ending status. */
-
-	void blink();
-
 	/* m_channel
 	Channel's data. */
 
