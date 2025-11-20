@@ -144,10 +144,12 @@ void geMidiChannel::openMenu()
 	geMenu menu;
 
 	menu.addItem((ID)Menu::EDIT_ACTIONS, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITACTIONS));
-	menu.addItem((ID)Menu::CLEAR_ACTIONS_THIS_SCENE, fmt::format("{}/{}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS),
-	                                                     g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_THISSCENE)));
-	menu.addItem((ID)Menu::CLEAR_ACTIONS_ALL_SCENES, fmt::format("{}/{}", g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS),
-	                                                     g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_ALLSCENES)));
+
+	geMenu clearActionsSubMenu;
+	clearActionsSubMenu.addItem((ID)Menu::CLEAR_ACTIONS_THIS_SCENE, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_THISSCENE));
+	clearActionsSubMenu.addItem((ID)Menu::CLEAR_ACTIONS_ALL_SCENES, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_ALLSCENES));
+	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS), clearActionsSubMenu);
+
 	menu.addItem((ID)Menu::SETUP_KEYBOARD_INPUT, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT));
 	menu.addItem((ID)Menu::SETUP_MIDI_INPUT, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
 	menu.addItem((ID)Menu::SETUP_MIDI_OUTPUT, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT));
