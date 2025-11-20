@@ -73,6 +73,7 @@ public:
 	int               getFramesInBeat() const;
 	SeqStatus         getSequencerStatus() const;
 	std::size_t       getCurrentScene() const;
+	std::size_t       getNextScene() const;
 	SceneStatus       getSceneStatus() const;
 
 	void toggleMetronome();

@@ -29,8 +29,11 @@
 #include "src/gui/const.h"
 #include "src/gui/elems/basics/flex.h"
 #include "src/gui/elems/playButton.h"
+#include "src/gui/ui.h"
 #include "src/utils/vector.h"
 #include <fmt/core.h>
+
+extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
@@ -66,13 +69,18 @@ void geScenes::refresh()
 	const c::main::Scenes scenes = c::main::getScenes();
 
 	for (const std::size_t i : u::vector::range(m_buttons.size()))
+		m_buttons[i]->setDefaultState();
+
+	if (scenes.status == SceneStatus::CHANGING)
 	{
-		if (i == scenes.currentScene)
-			m_buttons[i]->setPlayState();
-		else
-			m_buttons[i]->setDefaultState();
-		m_buttons[i]->redraw();
+		m_buttons[scenes.currentScene]->setEndingState();
+		m_buttons[scenes.nextScene]->blink(g_ui->shouldBlink());
 	}
+	else
+		m_buttons[scenes.currentScene]->setPlayState();
+
+	for (const std::size_t i : u::vector::range(m_buttons.size()))
+		m_buttons[i]->redraw();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -194,6 +194,11 @@ std::size_t MainApi::getCurrentScene() const
 	return m_sequencer.getCurrentScene();
 }
 
+std::size_t MainApi::getNextScene() const
+{
+	return m_sequencer.getNextScene();
+}
+
 /* -------------------------------------------------------------------------- */
 
 SceneStatus MainApi::getSceneStatus() const

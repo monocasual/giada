@@ -83,6 +83,7 @@ int         Sequencer::getQuantizerStep() const { return m_quantizerStep; }
 SeqStatus   Sequencer::getStatus() const { return m_model.get().sequencer.status; }
 int         Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model.get().sequencer.getMaxFramesInLoop(sampleRate); }
 std::size_t Sequencer::getCurrentScene() const { return m_model.get().sequencer.a_getCurrentScene(); }
+std::size_t Sequencer::getNextScene() const { return m_model.get().sequencer.a_getNextScene(); }
 SceneStatus Sequencer::getSceneStatus() const { return m_model.get().sequencer.a_getSceneStatus(); }
 
 /* -------------------------------------------------------------------------- */
