@@ -33,8 +33,6 @@
 
 namespace giada::u::time
 {
-void sleep(int millisecs);
-
 /* beatToFrame
 Returns the frame a beat corresponds to. */
 

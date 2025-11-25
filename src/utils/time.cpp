@@ -32,13 +32,6 @@
 
 namespace giada::u::time
 {
-void sleep(int millisecs)
-{
-	std::this_thread::sleep_for(std::chrono::milliseconds(millisecs));
-}
-
-/* -------------------------------------------------------------------------- */
-
 Frame beatToFrame(int beat, int sampleRate, float bpm)
 {
 	return static_cast<Frame>((sampleRate * (60.0f / bpm)) * beat);

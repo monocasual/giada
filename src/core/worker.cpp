@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/worker.h"
-#include "src/utils/time.h"
+#include "src/deps/mcl-utils/src/time.hpp"
 
 namespace giada
 {
@@ -46,6 +46,8 @@ Worker::~Worker()
 
 void Worker::start(std::function<void()> f) const
 {
+	namespace time = mcl::utils::time;
+
 	stop();
 	m_running.store(true);
 	m_thread = std::thread([this, f]()
@@ -53,7 +55,7 @@ void Worker::start(std::function<void()> f) const
 		while (m_running.load() == true)
 		{
 			f();
-			u::time::sleep(m_sleep);
+			time::sleep(m_sleep);
 		}
 	});
 }

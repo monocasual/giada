@@ -445,6 +445,8 @@ list(APPEND SOURCES
 	src/deps/rtaudio/RtAudio.cpp
 	src/deps/mcl-utils/src/math.hpp
 	src/deps/mcl-utils/src/math.cpp
+	src/deps/mcl-utils/src/time.hpp
+	src/deps/mcl-utils/src/time.cpp
 	src/deps/mcl-audio-buffer/src/audioBuffer.hpp)
 
 list(APPEND PREPROCESSOR_DEFS 
