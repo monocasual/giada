@@ -31,11 +31,13 @@
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginManager.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/deps/mcl-utils/src/vector.hpp"
 #include "src/utils/log.h"
-#include "src/utils/vector.h"
 #include <cassert>
 #include <cstddef>
 #include <memory>
+
+namespace utils = mcl::utils;
 
 namespace giada::m
 {
@@ -124,8 +126,8 @@ const Plugin& PluginHost::addPlugin(std::unique_ptr<Plugin> p)
 
 void PluginHost::swapPlugin(const m::Plugin& p1, const m::Plugin& p2, std::vector<Plugin*>& plugins)
 {
-	std::size_t index1 = u::vector::indexOf(plugins, &p1);
-	std::size_t index2 = u::vector::indexOf(plugins, &p2);
+	std::size_t index1 = utils::vector::indexOf(plugins, &p1);
+	std::size_t index2 = utils::vector::indexOf(plugins, &p2);
 	std::swap(plugins.at(index1), plugins.at(index2));
 }
 

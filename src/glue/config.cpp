@@ -29,6 +29,7 @@
 #include "src/core/engine.h"
 #include "src/core/kernelAudio.h"
 #include "src/core/kernelMidi.h"
+#include "src/deps/mcl-utils/src/vector.hpp"
 #include "src/deps/rtaudio/RtAudio.h"
 #include "src/gui/dialogs/browser/browserDir.h"
 #include "src/gui/dialogs/config.h"
@@ -36,11 +37,12 @@
 #include "src/gui/elems/config/tabPlugins.h"
 #include "src/gui/ui.h"
 #include "src/utils/fs.h"
-#include "src/utils/vector.h"
 #include <fmt/core.h>
 
 extern giada::v::Ui*     g_ui;
 extern giada::m::Engine* g_engine;
+
+namespace utils = mcl::utils;
 
 namespace giada::c::config
 {
@@ -118,7 +120,7 @@ void AudioData::toggleInputDevice(bool v)
 
 std::string MidiData::getMidiMapByIndex(int i)
 {
-	return u::vector::atOr(availableMidiMaps, i, "");
+	return utils::vector::atOr(availableMidiMaps, i, "");
 }
 
 /* -------------------------------------------------------------------------- */

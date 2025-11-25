@@ -25,7 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/model/tracks.h"
-#include "src/utils/vector.h"
+#include "src/deps/mcl-utils/src/vector.hpp"
+
+namespace utils = mcl::utils;
 
 namespace giada::m::model
 {
@@ -152,10 +154,10 @@ Track& Tracks::getByChannel(ID channelId)
 {
 	const auto p = [channelId](Track& track)
 	{
-		return u::vector::has(track.getChannels().getAll(), [channelId](const Channel& ch)
+		return utils::vector::has(track.getChannels().getAll(), [channelId](const Channel& ch)
 		{ return channelId == ch.id; });
 	};
-	auto it = u::vector::findIf(m_tracks, p);
+	auto it = utils::vector::findIf(m_tracks, p);
 	assert(it != m_tracks.end());
 	return *it;
 }

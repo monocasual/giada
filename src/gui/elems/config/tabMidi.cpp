@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/config/tabMidi.h"
+#include "src/deps/mcl-utils/src/vector.hpp"
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/check.h"
 #include "src/gui/elems/basics/choice.h"
@@ -34,6 +35,8 @@
 #include <string>
 
 extern giada::v::Ui* g_ui;
+
+namespace utils = mcl::utils;
 
 namespace giada::v
 {
@@ -217,7 +220,7 @@ void geTabMidi::rebuild(const c::config::MidiData& data)
 		m_system->showItem(m_data.selectedApi);
 
 	m_midiMap->rebuild(m_data.availableMidiMaps);
-	const std::size_t midiMapIndex = u::vector::indexOf(m_data.availableMidiMaps, m_data.selectedMidiMap);
+	const std::size_t midiMapIndex = utils::vector::indexOf(m_data.availableMidiMaps, m_data.selectedMidiMap);
 	if (midiMapIndex < m_data.availableMidiMaps.size())
 		m_midiMap->showItem(static_cast<int>(midiMapIndex));
 

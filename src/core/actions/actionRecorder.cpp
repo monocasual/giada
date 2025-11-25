@@ -31,6 +31,7 @@
 #include "src/core/model/actions.h"
 #include "src/core/model/model.h"
 #include "src/core/patch.h"
+#include "src/deps/mcl-utils/src/vector.hpp"
 #include "src/utils/log.h"
 #include "src/utils/ver.h"
 #include <algorithm>
@@ -38,6 +39,8 @@
 #include <cmath>
 #include <cstddef>
 #include <unordered_map>
+
+namespace utils = mcl::utils;
 
 namespace giada::m
 {
@@ -391,7 +394,7 @@ std::vector<Action> ActionRecorder::getActionsOnChannel(ID channelId, std::size_
 
 void ActionRecorder::clearChannel(ID channelId, std::size_t sceneToClear)
 {
-	for (const std::size_t scene : u::vector::range(G_MAX_NUM_SCENES))
+	for (const std::size_t scene : utils::vector::range(G_MAX_NUM_SCENES))
 		if (sceneToClear == G_INVALID_SCENE || sceneToClear == scene)
 			m_model.get().actions.clearChannel(channelId, scene);
 	m_model.get().tracks.getChannel(channelId).hasActions = hasActions(channelId);

@@ -29,11 +29,13 @@
 #include "src/core/plugins/pluginFactory.h"
 #include "src/core/plugins/pluginManager.h"
 #include "src/core/waveFactory.h"
-#include "src/utils/vector.h"
+#include "src/deps/mcl-utils/src/vector.hpp"
 #if G_DEBUG_MODE
 #include <fmt/core.h>
 #endif
 #include <fmt/ostream.h>
+
+namespace utils = mcl::utils;
 
 namespace giada::m::model
 {
@@ -42,7 +44,7 @@ namespace
 template <typename T>
 auto getIter_(const std::vector<std::unique_ptr<T>>& source, ID id)
 {
-	return u::vector::findIf(source, [id](const std::unique_ptr<T>& p)
+	return utils::vector::findIf(source, [id](const std::unique_ptr<T>& p)
 	{ return p->id == id; });
 }
 
@@ -79,7 +81,7 @@ typename T::element_type& add_(std::vector<T>& dest, T obj)
 template <typename D, typename T>
 void remove_(D& dest, T& ref)
 {
-	u::vector::removeIf(dest, [&ref](const auto& other)
+	utils::vector::removeIf(dest, [&ref](const auto& other)
 	{ return other.get() == &ref; });
 }
 } // namespace

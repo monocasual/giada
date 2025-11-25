@@ -25,12 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/basics/choice.h"
+#include "src/deps/mcl-utils/src/vector.hpp"
 #include "src/gui/const.h"
 #include "src/gui/drawing.h"
 #include "src/utils/gui.h"
-#include "src/utils/vector.h"
 #include <FL/fl_draw.H>
 #include <cassert>
+
+namespace utils = mcl::utils;
 
 namespace giada::v
 {
@@ -132,7 +134,7 @@ void geChoice::showItem(const std::string& label)
 
 void geChoice::showItem(ID id)
 {
-	const std::size_t index = u::vector::indexOf(m_ids, id);
+	const std::size_t index = utils::vector::indexOf(m_ids, id);
 	assert(index < m_ids.size());
 	m_menu->value(index);
 }
@@ -173,7 +175,7 @@ std::size_t geChoice::countItems() const
 
 bool geChoice::hasItem(ID oid) const
 {
-	return u::vector::has(m_ids, [oid](const ID& id)
+	return utils::vector::has(m_ids, [oid](const ID& id)
 	{ return oid == id; });
 }
 

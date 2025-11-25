@@ -35,7 +35,10 @@
 #include "src/core/rendering/sampleReactions.h"
 #include "src/core/waveFactory.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/deps/mcl-utils/src/vector.hpp"
 #include "src/utils/log.h"
+
+namespace utils = mcl::utils;
 
 namespace giada::m
 {
@@ -265,7 +268,7 @@ void ChannelManager::freeSampleChannel(ID channelId, std::size_t sceneToFree)
 	assert(ch.sampleChannel);
 
 	std::vector<const Wave*> wavesToRemove;
-	for (const std::size_t scene : u::vector::range(G_MAX_NUM_SCENES))
+	for (const std::size_t scene : utils::vector::range(G_MAX_NUM_SCENES))
 	{
 		if (sceneToFree != G_INVALID_SCENE && sceneToFree != scene)
 			continue;
@@ -495,7 +498,7 @@ void ChannelManager::addExtraOutput(ID channelId, int offset)
 
 void ChannelManager::removeExtraOutput(ID channelId, std::size_t i)
 {
-	u::vector::removeAt(m_model.get().tracks.getChannel(channelId).extraOutputs, i);
+	utils::vector::removeAt(m_model.get().tracks.getChannel(channelId).extraOutputs, i);
 	if (m_model.get().tracks.getChannel(channelId).extraOutputs.size() == 0)
 		m_model.get().tracks.getChannel(channelId).sendToMaster = true;
 	m_model.swap(model::SwapType::HARD);

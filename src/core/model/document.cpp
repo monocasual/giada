@@ -42,7 +42,7 @@ void Document::load(const Patch& patch, Shared& shared, float sampleRateRatio)
 		Track& track = tracks.add(ptrack.width, ptrack.internal);
 		for (const ID channelId : ptrack.channels)
 		{
-			auto it = u::vector::findIf(patch.channels, channelId);
+			const auto it = u::vector::findIf(patch.channels, channelId);
 			assert(it != patch.channels.end());
 			const Patch::Channel& pchannel = *it;
 			SceneArray<Sample>    samples;

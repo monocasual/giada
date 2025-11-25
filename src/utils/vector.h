@@ -27,90 +27,17 @@
 #ifndef G_UTILS_VECTOR_H
 #define G_UTILS_VECTOR_H
 
-#include <algorithm>
-#include <cstddef>
-#include <functional>
-#include <ranges>
-#include <vector>
+#include "src/deps/mcl-utils/src/vector.hpp"
+
+namespace utils = mcl::utils;
 
 namespace giada::u::vector
 {
-/* indexOf
-Returns the index of element p in container/view 'v'. Returns v.size() if
-element is not found. */
-
-template <typename T, typename P>
-std::ptrdiff_t indexOf(const T& v, const P& p)
-{
-	return std::distance(std::cbegin(v), std::find(std::cbegin(v), std::cend(v), p));
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename T, typename F>
-auto findIf(T& v, F&& func)
-{
-	return std::find_if(std::begin(v), std::end(v), func);
-}
-
 template <typename T>
 auto findIf(T& v, ID id)
 {
-	return findIf(v, [id](const typename T::value_type& t)
+	return utils::vector::findIf(v, [id](const typename T::value_type& t)
 	{ return t.id == id; });
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename T, typename F>
-bool has(const T& v, F&& func)
-{
-	return findIf(v, func) != std::cend(v);
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename T, typename F>
-void removeIf(T& v, F&& func)
-{
-	v.erase(std::remove_if(v.begin(), v.end(), func), v.end());
-}
-
-template <typename T, typename V>
-void remove(T& v, const V& o)
-{
-	v.erase(std::remove(v.begin(), v.end(), o), v.end());
-}
-
-template <typename T>
-void removeAt(T& v, std::size_t index)
-{
-	v.erase(v.begin() + index);
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename T, typename I>
-std::vector<T> cast(const I& i)
-{
-	return {i.begin(), i.end()};
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename Vector, typename Default>
-auto atOr(const Vector& v, std::size_t index, Default d)
-{
-	return index < v.size() ? v[index] : d;
-}
-
-/* -------------------------------------------------------------------------- */
-
-template <typename T>
-    requires std::integral<T>
-constexpr auto range(T n) noexcept
-{
-	return std::views::iota(T{0}, n);
 }
 } // namespace giada::u::vector
 

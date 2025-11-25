@@ -447,6 +447,7 @@ list(APPEND SOURCES
 	src/deps/mcl-utils/src/math.cpp
 	src/deps/mcl-utils/src/time.hpp
 	src/deps/mcl-utils/src/time.cpp
+	src/deps/mcl-utils/src/vector.hpp
 	src/deps/mcl-audio-buffer/src/audioBuffer.hpp)
 
 list(APPEND PREPROCESSOR_DEFS 
