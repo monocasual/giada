@@ -34,7 +34,6 @@
 #include "src/core/quantizer.h"
 #include "src/deps/mcl-utils/src/math.hpp"
 #include "src/utils/log.h"
-#include "src/utils/math.h"
 #include "src/utils/time.h"
 
 namespace giada::m

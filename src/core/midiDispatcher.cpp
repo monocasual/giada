@@ -36,7 +36,6 @@
 #include "src/glue/main.h"
 #include "src/glue/plugin.h"
 #include "src/utils/log.h"
-#include "src/utils/math.h"
 #include <cassert>
 #include <cstddef>
 #include <vector>

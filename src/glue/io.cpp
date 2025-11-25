@@ -46,7 +46,6 @@
 #include "src/gui/elems/mainWindow/mainTransport.h"
 #include "src/gui/ui.h"
 #include "src/utils/log.h"
-#include "src/utils/math.h"
 #include <FL/Fl.H>
 
 extern giada::v::Ui*     g_ui;

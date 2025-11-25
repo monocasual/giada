@@ -26,7 +26,6 @@
 
 #include "src/core/rendering/sampleReactions.h"
 #include "src/core/actions/actionRecorder.h"
-#include "src/utils/math.h"
 
 namespace giada::m::rendering
 {

@@ -27,7 +27,6 @@
 #include "src/core/midiEvent.h"
 #include "src/core/const.h"
 #include "src/deps/mcl-utils/src/math.hpp"
-#include "src/utils/math.h"
 #include <cassert>
 
 namespace math = mcl::utils::math;
