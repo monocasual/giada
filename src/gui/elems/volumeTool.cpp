@@ -25,14 +25,16 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/volumeTool.h"
+#include "src/deps/mcl-utils/src/math.hpp"
 #include "src/glue/channel.h"
 #include "src/gui/elems/basics/dial.h"
 #include "src/gui/elems/basics/input.h"
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/ui.h"
-#include "src/utils/math.h"
 #include "src/utils/string.h"
 #include <fmt/core.h>
+
+namespace math = mcl::utils::math;
 
 extern giada::v::Ui* g_ui;
 
@@ -61,7 +63,7 @@ geVolumeTool::geVolumeTool(ID channelId, float volume, int labelWidth)
 	m_input->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_input->onChange = [this](const std::string& val)
 	{
-		const float valf = c::channel::setChannelVolume(m_channelId, u::math::dBtoLinear(u::string::toFloat(val)),
+		const float valf = c::channel::setChannelVolume(m_channelId, math::dBtoLinear(u::string::toFloat(val)),
 		    Thread::MAIN, /*repaintMainUi=*/true);
 		update(valf, /*fromDial=*/false);
 	};
@@ -79,7 +81,7 @@ geVolumeTool::geVolumeTool(ID channelId, float volume, int labelWidth)
 
 void geVolumeTool::update(float volume, bool fromDial)
 {
-	const float dB = u::math::linearToDB(volume);
+	const float dB = math::linearToDB(volume);
 	m_input->setValue(dB > -INFINITY ? fmt::format("{:.2f}", dB) : "-inf");
 
 	if (!fromDial)

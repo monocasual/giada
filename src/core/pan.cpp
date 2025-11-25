@@ -25,8 +25,10 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/pan.h"
-#include "src/utils/math.h"
+#include "src/deps/mcl-utils/src/math.hpp"
 #include <cassert>
+
+namespace math = mcl::utils::math;
 
 namespace giada
 {
@@ -35,8 +37,8 @@ Pan::Pan(float v)
 {
 	assert(v >= 0.0f && v <= 1.0f);
 
-	m_data[0] = v <= 0.5f ? 1.0f : u::math::map(v, 0.5f, 1.0f, 1.0f, 0.0f);
-	m_data[1] = v >= 0.5f ? 1.0f : u::math::map(v, 0.0f, 0.5f, 0.0f, 1.0f);
+	m_data[0] = v <= 0.5f ? 1.0f : math::map(v, 0.5f, 1.0f, 1.0f, 0.0f);
+	m_data[1] = v >= 0.5f ? 1.0f : math::map(v, 0.0f, 0.5f, 0.0f, 1.0f);
 }
 
 /* -------------------------------------------------------------------------- */

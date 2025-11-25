@@ -27,11 +27,11 @@
 #include "src/gui/elems/actionEditor/pianoRoll.h"
 #include "src/core/actions/action.h"
 #include "src/core/midiEvent.h"
+#include "src/deps/mcl-utils/src/math.hpp"
 #include "src/glue/actionEditor.h"
 #include "src/gui/const.h"
 #include "src/gui/dialogs/actionEditor/baseActionEditor.h"
 #include "src/gui/elems/actionEditor/pianoItem.h"
-#include "src/utils/math.h"
 #include <cassert>
 
 namespace giada::v
@@ -214,7 +214,9 @@ Pixel gePianoRoll::noteToY(int n) const
 
 Pixel gePianoRoll::snapToY(Pixel p) const
 {
-	return u::math::quantize(p, CELL_H);
+	namespace math = mcl::utils::math;
+
+	return math::quantize(p, CELL_H);
 }
 
 Pixel gePianoRoll::getPianoItemW(Pixel px, const m::Action& a1, const m::Action& a2) const

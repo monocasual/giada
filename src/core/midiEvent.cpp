@@ -26,8 +26,11 @@
 
 #include "src/core/midiEvent.h"
 #include "src/core/const.h"
+#include "src/deps/mcl-utils/src/math.hpp"
 #include "src/utils/math.h"
 #include <cassert>
+
+namespace math = mcl::utils::math;
 
 namespace giada::m
 {
@@ -46,7 +49,7 @@ MidiEvent::MidiEvent(uint32_t raw, int numBytes, double timestamp)
 : m_raw(raw)
 , m_numBytes(numBytes)
 , m_delta(0)
-, m_velocity(u::math::map(getVelocity(), G_MAX_VELOCITY, G_MAX_VELOCITY_FLOAT))
+, m_velocity(math::map(getVelocity(), G_MAX_VELOCITY, G_MAX_VELOCITY_FLOAT))
 , m_timestamp(timestamp)
 {
 }
@@ -92,13 +95,13 @@ void MidiEvent::setVelocity(int v)
 {
 	assert(v >= 0 && v <= G_MAX_VELOCITY);
 	m_raw      = (m_raw & ~(0xFF << 8)) | (v << 8);
-	m_velocity = u::math::map(v, G_MAX_VELOCITY, G_MAX_VELOCITY_FLOAT);
+	m_velocity = math::map(v, G_MAX_VELOCITY, G_MAX_VELOCITY_FLOAT);
 }
 
 void MidiEvent::setVelocityFloat(float f)
 {
 	assert(f >= 0.0f && f <= G_MAX_VELOCITY_FLOAT);
-	const int v = u::math::map(f, G_MAX_VELOCITY_FLOAT, G_MAX_VELOCITY);
+	const int v = math::map(f, G_MAX_VELOCITY_FLOAT, G_MAX_VELOCITY);
 	m_velocity  = f;
 	m_raw       = (m_raw & ~(0xFF << 8)) | (v << 8);
 }

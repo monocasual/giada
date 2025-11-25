@@ -32,6 +32,7 @@
 #include "src/core/midiSynchronizer.h"
 #include "src/core/model/model.h"
 #include "src/core/quantizer.h"
+#include "src/deps/mcl-utils/src/math.hpp"
 #include "src/utils/log.h"
 #include "src/utils/math.h"
 #include "src/utils/time.h"
@@ -97,9 +98,11 @@ float Sequencer::calcBpmFromRec(Frame recordedFrames, int sampleRate) const
 
 Frame Sequencer::quantize(Frame f) const
 {
+	namespace math = mcl::utils::math;
+
 	if (!canQuantize())
 		return f;
-	return u::math::quantize(f, m_quantizerStep) % getFramesInLoop(); // No overflow
+	return math::quantize(f, m_quantizerStep) % getFramesInLoop(); // No overflow
 }
 
 /* -------------------------------------------------------------------------- */

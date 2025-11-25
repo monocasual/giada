@@ -27,10 +27,10 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/mainWindow/sequencer.h"
+#include "src/deps/mcl-utils/src/math.hpp"
 #include "src/gui/const.h"
 #include "src/gui/drawing.h"
 #include "src/gui/ui.h"
-#include "src/utils/math.h"
 #include <FL/fl_draw.H>
 
 extern giada::v::Ui* g_ui;
@@ -103,7 +103,9 @@ void geSequencer::drawBody() const
 
 void geSequencer::drawRecBars() const
 {
-	int length = u::math::map(m_data.recPosition, m_data.recMaxLength, w());
+	namespace math = mcl::utils::math;
+
+	int length = math::map(m_data.recPosition, m_data.recMaxLength, w());
 
 	drawRectf(geompp::Rect(x(), y(), length, h()), G_COLOR_LIGHT_1);
 }

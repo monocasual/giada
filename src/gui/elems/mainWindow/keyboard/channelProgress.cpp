@@ -25,11 +25,11 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/mainWindow/keyboard/channelProgress.h"
+#include "src/deps/mcl-utils/src/math.hpp"
 #include "src/glue/channel.h"
 #include "src/gui/const.h"
 #include "src/gui/drawing.h"
 #include "src/gui/types.h"
-#include "src/utils/math.h"
 
 namespace giada::v
 {
@@ -43,9 +43,11 @@ geChannelProgress::geChannelProgress(int x, int y, int w, int h, c::channel::Dat
 
 void geChannelProgress::draw()
 {
+	namespace math = mcl::utils::math;
+
 	const Frame tracker = m_channel.sample->getTracker();
 	const auto  range   = m_channel.sample->range;
-	const Pixel pos     = range.isValid() ? u::math::map(std::max(tracker, range.a), range.a, range.b, 0, w()) : 0;
+	const Pixel pos     = range.isValid() ? math::map(std::max(tracker, range.a), range.a, range.b, 0, w()) : 0;
 
 	const geompp::Rect<int> bounds(x(), y(), w(), h());
 

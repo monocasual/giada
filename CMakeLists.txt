@@ -434,8 +434,6 @@ list(APPEND SOURCES
 	src/utils/log.h
 	src/utils/time.cpp
 	src/utils/time.h
-	src/utils/math.cpp
-	src/utils/math.h
 	src/utils/gui.cpp
 	src/utils/gui.h
 	src/utils/fs.cpp
@@ -445,6 +443,8 @@ list(APPEND SOURCES
 	src/utils/string.cpp
 	src/utils/string.h
 	src/deps/rtaudio/RtAudio.cpp
+	src/deps/mcl-utils/src/math.hpp
+	src/deps/mcl-utils/src/math.cpp
 	src/deps/mcl-audio-buffer/src/audioBuffer.hpp)
 
 list(APPEND PREPROCESSOR_DEFS 

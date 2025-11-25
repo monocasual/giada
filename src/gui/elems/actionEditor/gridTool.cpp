@@ -25,10 +25,10 @@
  * --------------------------------------------------------------------------- */
 
 #include "src/gui/elems/actionEditor/gridTool.h"
+#include "src/deps/mcl-utils/src/math.hpp"
 #include "src/gui/elems/basics/check.h"
 #include "src/gui/elems/basics/choice.h"
 #include "src/gui/ui.h"
-#include "src/utils/math.h"
 #include <FL/Fl_Double_Window.H>
 
 extern giada::v::Ui* g_ui;
@@ -109,9 +109,11 @@ int geGridTool::getValue() const
 
 Frame geGridTool::getSnapFrame(Frame v, Frame framesInBeat) const
 {
+	namespace math = mcl::utils::math;
+
 	if (!isOn())
 		return v;
-	return u::math::quantize(v, getCellSize(framesInBeat));
+	return math::quantize(v, getCellSize(framesInBeat));
 }
 
 /* -------------------------------------------------------------------------- */

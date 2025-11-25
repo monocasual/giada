@@ -28,8 +28,8 @@
 #include "src/core/actions/action.h"
 #include "src/core/const.h"
 #include "src/core/midiEvent.h"
+#include "src/deps/mcl-utils/src/math.hpp"
 #include "src/gui/const.h"
-#include "src/utils/math.h"
 #include <FL/fl_draw.H>
 
 namespace giada::v
@@ -85,6 +85,8 @@ void gePianoItem::draw()
 
 Pixel gePianoItem::calcVelocityH() const
 {
-	return u::math::map(a1.event.getVelocityFloat(), G_MAX_VELOCITY_FLOAT, h() - 3);
+	namespace math = mcl::utils::math;
+
+	return math::map(a1.event.getVelocityFloat(), G_MAX_VELOCITY_FLOAT, h() - 3);
 }
 } // namespace giada::v

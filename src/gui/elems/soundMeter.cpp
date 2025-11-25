@@ -26,12 +26,14 @@
 
 #include "src/gui/elems/soundMeter.h"
 #include "src/core/const.h"
+#include "src/deps/mcl-utils/src/math.hpp"
 #include "src/gui/const.h"
 #include "src/gui/drawing.h"
-#include "src/utils/math.h"
 #include <FL/fl_draw.H>
 #include <algorithm>
 #include <cmath>
+
+namespace math = mcl::utils::math;
 
 namespace giada::v
 {
@@ -39,8 +41,9 @@ namespace
 {
 Pixel dbToPx_(float db, Pixel max)
 {
+
 	const float maxf = max;
-	return std::clamp(u::math::map(db, -G_MIN_DB_SCALE, 0.0f, 0.0f, maxf), 0.0f, maxf);
+	return std::clamp(math::map(db, -G_MIN_DB_SCALE, 0.0f, 0.0f, maxf), 0.0f, maxf);
 }
 } // namespace
 
@@ -52,7 +55,7 @@ float geSoundMeter::Meter::compute(float peak)
 {
 	/*  dBFS (full scale) calculation, plus decay of -2dB per call. */
 
-	float dbLevelCur = u::math::linearToDB(std::fabs(peak));
+	float dbLevelCur = math::linearToDB(std::fabs(peak));
 
 	if (dbLevelCur < m_dbLevelOld && m_dbLevelOld > -G_MIN_DB_SCALE)
 		dbLevelCur = m_dbLevelOld - 2.0f;

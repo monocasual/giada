@@ -27,8 +27,10 @@
 #include "src/core/mixer.h"
 #include "src/core/const.h"
 #include "src/core/model/model.h"
+#include "src/deps/mcl-utils/src/math.hpp"
 #include "src/utils/log.h"
-#include "src/utils/math.h"
+
+namespace math = mcl::utils::math;
 
 namespace giada::m
 {
@@ -247,8 +249,8 @@ InputRecMode Mixer::getInputRecMode() const
 
 bool Mixer::thresholdReached(Peak p, float threshold) const
 {
-	return u::math::linearToDB(p.left) > threshold ||
-	       u::math::linearToDB(p.right) > threshold;
+	return math::linearToDB(p.left) > threshold ||
+	       math::linearToDB(p.right) > threshold;
 }
 
 /* -------------------------------------------------------------------------- */

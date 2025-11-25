@@ -1,9 +1,12 @@
 #include "../src/core/midiEvent.h"
-#include "../src/utils/math.h"
+#include "../src/core/const.h"
+#include "../src/deps/mcl-utils/src/math.hpp"
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("MidiEvent")
 {
+	namespace math = mcl::utils::math;
+
 	using namespace giada::m;
 
 	constexpr uint32_t raw = 0x912C5000; // Note on, channel 1, key 44 (0x2C), velocity 80 (0x50)
@@ -35,10 +38,10 @@ TEST_CASE("MidiEvent")
 			REQUIRE(e.getChannel() == 1);
 			REQUIRE(e.getNote() == 44);
 			REQUIRE(e.getVelocity() == 33);
-			REQUIRE(e.getVelocityFloat() == u::math::map(33, G_MAX_VELOCITY, G_MAX_VELOCITY_FLOAT));
+			REQUIRE(e.getVelocityFloat() == math::map(33, G_MAX_VELOCITY, G_MAX_VELOCITY_FLOAT));
 
 			e.setVelocityFloat(0.4f);
-			REQUIRE(e.getVelocity() == u::math::map(0.4f, G_MAX_VELOCITY_FLOAT, G_MAX_VELOCITY));
+			REQUIRE(e.getVelocity() == math::map(0.4f, G_MAX_VELOCITY_FLOAT, G_MAX_VELOCITY));
 			REQUIRE(e.getVelocityFloat() == 0.4f);
 		}
 
@@ -48,7 +51,7 @@ TEST_CASE("MidiEvent")
 			REQUIRE(e.getChannel() == 4);
 			REQUIRE(e.getNote() == 44);
 			REQUIRE(e.getVelocity() == 80);
-			REQUIRE(e.getVelocityFloat() == u::math::map(80, G_MAX_VELOCITY, G_MAX_VELOCITY_FLOAT));
+			REQUIRE(e.getVelocityFloat() == math::map(80, G_MAX_VELOCITY, G_MAX_VELOCITY_FLOAT));
 		}
 	}
 }

@@ -26,13 +26,15 @@
 
 #include "src/gui/elems/actionEditor/velocityEditor.h"
 #include "src/core/actions/action.h"
+#include "src/deps/mcl-utils/src/math.hpp"
 #include "src/glue/actionEditor.h"
 #include "src/gui/const.h"
 #include "src/gui/dialogs/actionEditor/baseActionEditor.h"
 #include "src/gui/elems/actionEditor/envelopePoint.h"
-#include "src/utils/math.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+
+namespace math = mcl::utils::math;
 
 namespace giada::v
 {
@@ -72,12 +74,12 @@ void geVelocityEditor::draw()
 
 Pixel geVelocityEditor::valueToY(float v) const
 {
-	return u::math::map(v, 0.0f, G_MAX_VELOCITY_FLOAT, y() + (h() - geEnvelopePoint::SIDE), y());
+	return math::map(v, 0.0f, G_MAX_VELOCITY_FLOAT, y() + (h() - geEnvelopePoint::SIDE), y());
 }
 
 float geVelocityEditor::yToValue(Pixel px) const
 {
-	return u::math::map(px, h() - geEnvelopePoint::SIDE, 0, 0.0f, G_MAX_VELOCITY_FLOAT);
+	return math::map(px, h() - geEnvelopePoint::SIDE, 0, 0.0f, G_MAX_VELOCITY_FLOAT);
 }
 
 /* -------------------------------------------------------------------------- */
