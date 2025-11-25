@@ -155,7 +155,9 @@ Track& Tracks::getByChannel(ID channelId)
 		return u::vector::has(track.getChannels().getAll(), [channelId](const Channel& ch)
 		{ return channelId == ch.id; });
 	};
-	return *u::vector::findIfSafe(m_tracks, p);
+	auto it = u::vector::findIf(m_tracks, p);
+	assert(it != m_tracks.end());
+	return *it;
 }
 
 /* -------------------------------------------------------------------------- */
