@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/config/tabAudio.h"
+#include "src/deps/mcl-utils/src/string.hpp"
 #include "src/deps/rtaudio/RtAudio.h"
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/check.h"
@@ -34,11 +35,12 @@
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
-#include "src/utils/string.h"
 #include <fmt/core.h>
 #include <string>
 
 extern giada::v::Ui* g_ui;
+
+namespace utils = mcl::utils;
 
 namespace giada::v
 {
@@ -258,7 +260,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 	m_numOutChannels->onChange = [this](const std::string& s)
 	{
-		m_data.selectedOutputDevice.selectedChannelsCount = u::string::toInt(s);
+		m_data.selectedOutputDevice.selectedChannelsCount = utils::string::toInt(s);
 	};
 
 	m_sounddevOut->onChange = [this](ID id)
@@ -318,7 +320,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 
 	m_recTriggerLevel->onChange = [this](const std::string& s)
 	{
-		m_data.selectedRecTriggerLevel = u::string::toFloat(s);
+		m_data.selectedRecTriggerLevel = utils::string::toFloat(s);
 	};
 
 	m_applyBtn->onClick = [this]()
@@ -440,7 +442,7 @@ void geTabAudio::refreshChannelOutProperties()
 	where to output the master out channel, according to 'selectedChannelsStart' value. */
 
 	if (m_data.selectedApi == RtAudio::Api::UNIX_JACK)
-		m_data.selectedOutputDevice.selectedChannelsCount = u::string::toInt(m_numOutChannels->getValue());
+		m_data.selectedOutputDevice.selectedChannelsCount = utils::string::toInt(m_numOutChannels->getValue());
 	else
 		m_data.selectedOutputDevice.selectedChannelsCount = m_data.selectedOutputDevice.channelsMax;
 	m_data.selectedOutputDevice.selectedChannelsStart = m_channelsOut->getChannelsStart();

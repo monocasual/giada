@@ -25,15 +25,17 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/sampleEditor/shiftTool.h"
+#include "src/deps/mcl-utils/src/string.hpp"
 #include "src/glue/sampleEditor.h"
 #include "src/gui/dialogs/sampleEditor.h"
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/input.h"
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/ui.h"
-#include "src/utils/string.h"
 
 extern giada::v::Ui* g_ui;
+
+namespace utils = mcl::utils;
 
 namespace giada::v
 {
@@ -53,7 +55,7 @@ geShiftTool::geShiftTool(const c::sampleEditor::Data& d)
 	m_shift->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_shift->onChange = [this](const std::string& val)
 	{
-		c::sampleEditor::shift(m_data->channelId, u::string::toInt(val));
+		c::sampleEditor::shift(m_data->channelId, utils::string::toInt(val));
 	};
 
 	m_reset->onClick = [this]()

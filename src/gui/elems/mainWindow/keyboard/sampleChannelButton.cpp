@@ -25,16 +25,18 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/mainWindow/keyboard/sampleChannelButton.h"
+#include "src/deps/mcl-utils/src/string.hpp"
 #include "src/glue/channel.h"
 #include "src/gui/dialogs/mainWindow.h"
 #include "src/gui/elems/mainWindow/keyboard/keyboard.h"
 #include "src/gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "src/gui/ui.h"
 #include "src/utils/fs.h"
-#include "src/utils/string.h"
 #include <FL/Fl.H>
 
 extern giada::v::Ui* g_ui;
+
+namespace utils = mcl::utils;
 
 namespace giada::v
 {
@@ -83,7 +85,7 @@ int geSampleChannelButton::handle(int e)
 	}
 	case FL_PASTE:
 	{
-		c::channel::loadChannel(m_channel.id, u::string::trim(u::fs::stripFileUrl(Fl::event_text())));
+		c::channel::loadChannel(m_channel.id, utils::string::trim(u::fs::stripFileUrl(Fl::event_text())));
 		ret = 1;
 		break;
 	}

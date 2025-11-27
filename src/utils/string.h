@@ -31,34 +31,13 @@
 
 #include "src/core/types.h"
 #include "src/deps/rtaudio/RtAudio.h"
-#include <sstream>
-#include <string>
-#include <vector>
 
 namespace giada::u::string
 {
-std::string replace(std::string in, const std::string& search,
-    const std::string& replace);
-
-std::string trim(const std::string& s);
-
-std::vector<std::string> split(std::string in, std::string sep);
-
-/* contains
-Returns true if the string in input contains the specified character. */
-
-bool contains(const std::string&, char);
-
 std::string toString(Thread);
 std::string toString(RtAudio::Api);
 std::string toString(SamplePlayerMode);
 std::string toString(ChannelType);
-
-/* toFloat, toInt
-Convert a string to numbers. Like std::stof, std::stoi, just safer. */
-
-float toFloat(const std::string&);
-int   toInt(const std::string&);
 } // namespace giada::u::string
 
 #endif

@@ -25,17 +25,19 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/bpmInput.h"
+#include "src/deps/mcl-utils/src/string.hpp"
 #include "src/glue/main.h"
 #include "src/gui/elems/basics/flex.h"
 #include "src/gui/elems/basics/input.h"
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
-#include "src/utils/string.h"
 #include <cstring>
 #include <fmt/core.h>
 
 extern giada::v::Ui* g_ui;
+
+namespace utils = mcl::utils;
 
 namespace giada::v
 {
@@ -63,7 +65,7 @@ gdBpmInput::gdBpmInput(float value)
 		std::string value = m_value->getValue();
 		if (value == "")
 			return;
-		c::main::setBpm(u::string::toFloat(value));
+		c::main::setBpm(utils::string::toFloat(value));
 		do_callback();
 	};
 

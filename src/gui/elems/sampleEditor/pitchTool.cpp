@@ -26,6 +26,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/sampleEditor/pitchTool.h"
+#include "src/deps/mcl-utils/src/string.hpp"
 #include "src/glue/channel.h"
 #include "src/gui/dialogs/sampleEditor.h"
 #include "src/gui/elems/basics/box.h"
@@ -36,10 +37,11 @@
 #include "src/gui/graphics.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
-#include "src/utils/string.h"
 #include <fmt/core.h>
 
 extern giada::v::Ui* g_ui;
+
+namespace utils = mcl::utils;
 
 namespace giada::v
 {
@@ -76,7 +78,7 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	m_input->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_input->onChange = [this](const std::string& val)
 	{
-		c::channel::setChannelPitch(m_data->channelId, u::string::toFloat(val), Thread::MAIN);
+		c::channel::setChannelPitch(m_data->channelId, utils::string::toFloat(val), Thread::MAIN);
 	};
 
 	m_pitchToBar->onClick = [this]()

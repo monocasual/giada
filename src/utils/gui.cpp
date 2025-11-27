@@ -26,13 +26,15 @@
 
 #include "src/utils/gui.h"
 #include "src/core/sequencer.h"
+#include "src/deps/mcl-utils/src/string.hpp"
 #include "src/gui/dialogs/window.h"
 #include "src/gui/elems/mainWindow/mainTransport.h"
 #include "src/gui/elems/sampleEditor/waveTools.h"
-#include "src/utils/string.h"
 #include <FL/fl_draw.H>
 #include <FL/platform.H>
 #include <string>
+
+namespace utils = mcl::utils;
 
 namespace giada::u::gui
 {
@@ -73,10 +75,10 @@ geompp::Rect<int> getCenterWinBounds(geompp::Rect<int> r)
 
 std::string removeFltkChars(const std::string& s)
 {
-	std::string out = u::string::replace(s, "/", "-");
-	out             = u::string::replace(out, "|", "-");
-	out             = u::string::replace(out, "&", "-");
-	out             = u::string::replace(out, "_", "-");
+	std::string out = utils::string::replace(s, "/", "-");
+	out             = utils::string::replace(out, "|", "-");
+	out             = utils::string::replace(out, "&", "-");
+	out             = utils::string::replace(out, "_", "-");
 	return out;
 }
 

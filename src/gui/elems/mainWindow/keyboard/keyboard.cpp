@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/mainWindow/keyboard/keyboard.h"
+#include "src/deps/mcl-utils/src/string.hpp"
 #include "src/glue/channel.h"
 #include "src/glue/io.h"
 #include "src/gui/const.h"
@@ -41,10 +42,11 @@
 #include "src/utils/fs.h"
 #include "src/utils/gui.h"
 #include "src/utils/log.h"
-#include "src/utils/string.h"
 #include <cassert>
 
 extern giada::v::Ui* g_ui;
+
+namespace utils = mcl::utils;
 
 namespace giada::v
 {
@@ -477,7 +479,7 @@ geChannel* geKeyboard::getChannel(ID channelId)
 
 std::vector<std::string> geKeyboard::getDroppedFilePaths() const
 {
-	std::vector<std::string> paths = u::string::split(Fl::event_text(), "\n");
+	std::vector<std::string> paths = utils::string::split(Fl::event_text(), "\n");
 	for (std::string& p : paths)
 		p = u::fs::stripFileUrl(p);
 	return paths;

@@ -29,12 +29,14 @@
 #include "src/core/patch.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginFactory.h"
+#include "src/deps/mcl-utils/src/string.hpp"
 #include "src/utils/fs.h"
 #include "src/utils/log.h"
-#include "src/utils/string.h"
 #include <cassert>
 #include <cstddef>
 #include <memory>
+
+namespace utils = mcl::utils;
 
 namespace giada::m
 {
@@ -43,7 +45,7 @@ namespace
 juce::FileSearchPath toJuceFileSearchPath_(const std::string& dirs)
 {
 	juce::FileSearchPath searchPath;
-	for (const std::string& dir : u::string::split(dirs, ";"))
+	for (const std::string& dir : utils::string::split(dirs, ";"))
 		searchPath.add(juce::File(dir));
 	return searchPath;
 }

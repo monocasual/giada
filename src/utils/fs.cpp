@@ -39,11 +39,12 @@
 #if G_OS_WINDOWS
 #include <shlobj.h> // SHGetKnownFolderPath
 #endif
+#include "src/deps/mcl-utils/src/string.hpp"
 #include "src/utils/fs.h"
 #include "src/utils/log.h"
-#include "src/utils/string.h"
 
 namespace stdfs = std::filesystem;
+namespace utils = mcl::utils;
 
 namespace giada::u::fs
 {
@@ -147,8 +148,8 @@ bool isProject(const std::string& s)
 std::string stripFileUrl(const std::string& s)
 {
 	std::string out = s;
-	out             = u::string::replace(out, "file://", "");
-	out             = u::string::replace(out, "%20", " ");
+	out             = utils::string::replace(out, "file://", "");
+	out             = utils::string::replace(out, "%20", " ");
 	return out;
 }
 
@@ -292,7 +293,7 @@ bool isValidFileName(const std::string& f)
 	const std::vector<char> forbidden = {'/', ':'}; // ':' not supported in macOS
 #endif
 	for (const char c : forbidden)
-		if (u::string::contains(f, c))
+		if (utils::string::contains(f, c))
 			return false;
 	return true;
 }
