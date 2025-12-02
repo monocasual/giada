@@ -89,13 +89,6 @@ std::string dirname(const std::string& s)
 
 /* -------------------------------------------------------------------------- */
 
-std::string getCurrentPath()
-{
-	return stdfs::current_path().string();
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::string getExt(const std::string& s)
 {
 	return stdfs::path(s).extension().string();
