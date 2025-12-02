@@ -31,13 +31,15 @@
 #include "src/core/wave.h"
 #include "src/core/waveFx.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
-#include "src/utils/fs.h"
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/utils/log.h"
 #include <cmath>
 #include <fmt/core.h>
 #include <memory>
 #include <samplerate.h>
 #include <sndfile.h>
+
+namespace utils = mcl::utils;
 
 namespace giada::m::waveFactory
 {
@@ -118,7 +120,7 @@ void reset()
 
 Result createFromFile(const std::string& path, ID id, int samplerate, Resampler::Quality quality)
 {
-	if (path == "" || u::fs::isDir(path))
+	if (path == "" || utils::fs::isDir(path))
 	{
 		u::log::print("[waveFactory::create] malformed path (was '{}')\n", path);
 		return {G_RES_ERR_NO_DATA};

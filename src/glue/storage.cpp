@@ -39,6 +39,7 @@
 #include "src/core/sequencer.h"
 #include "src/core/wave.h"
 #include "src/core/waveFactory.h"
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/glue/layout.h"
 #include "src/glue/main.h"
 #include "src/gui/dialogs/browser/browserLoad.h"
@@ -57,6 +58,8 @@
 
 extern giada::m::Engine* g_engine;
 extern giada::v::Ui*     g_ui;
+
+namespace utils = mcl::utils;
 
 namespace giada::c::storage
 {
@@ -145,7 +148,7 @@ void saveProject(void* data)
 	if (!validateFileName_(projectName))
 		return;
 
-	if (u::fs::dirExists(projectPath) &&
+	if (utils::fs::dirExists(projectPath) &&
 	    !v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),
 	        g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_PROJECTEXISTS)))
 		return;
@@ -197,7 +200,7 @@ void saveSample(void* data)
 
 	const std::string filePath = u::fs::join(folderPath, u::fs::stripExt(name) + ".wav");
 
-	if (u::fs::fileExists(filePath) &&
+	if (utils::fs::fileExists(filePath) &&
 	    !v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),
 	        g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_FILEEXISTS)))
 		return;

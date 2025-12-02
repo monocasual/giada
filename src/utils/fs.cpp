@@ -26,6 +26,7 @@
  *
  * -------------------------------------------------------------------------- */
 
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/const.h"
 #include <climits>
 #include <cstdlib>
@@ -67,30 +68,9 @@ std::string getEnvVariable_(const char* s)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-bool fileExists(const std::string& s)
-{
-	return stdfs::exists(s);
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool isDir(const std::string& s)
-{
-	return stdfs::is_directory(s) && !isProject(s);
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool dirExists(const std::string& s)
-{
-	return stdfs::exists(s);
-}
-
-/* -------------------------------------------------------------------------- */
-
 bool mkdir(const std::string& s)
 {
-	return dirExists(s) ? true : stdfs::create_directory(s);
+	return utils::fs::dirExists(s) ? true : stdfs::create_directory(s);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -229,7 +209,7 @@ bool createConfigFolder()
 {
 	const std::string confDirPath = getConfigDirPath();
 
-	if (u::fs::dirExists(confDirPath))
+	if (utils::fs::dirExists(confDirPath))
 		return true;
 
 	u::log::print("[fs::createConfigFolder] .giada folder not present. Updating...\n");

@@ -33,10 +33,6 @@
 
 namespace giada::u::fs
 {
-bool fileExists(const std::string& s);
-bool dirExists(const std::string& s);
-bool isDir(const std::string& s);
-
 /* isRootDir
 Tells whether 's' is '/' on Unix or '[X]:\' on Windows. */
 

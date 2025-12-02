@@ -25,9 +25,12 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/fileBrowser.h"
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/gui/const.h"
 #include "src/gui/elems/basics/boxtypes.h"
 #include "src/utils/fs.h"
+
+namespace utils = mcl::utils;
 
 namespace giada::v
 {
@@ -164,7 +167,7 @@ void geFileBrowser::preselect(int pos, int line)
 void geFileBrowser::chooseItem()
 {
 	const std::string selectedItemPath = getSelectedItem();
-	if (u::fs::isDir(selectedItemPath))
+	if (utils::fs::isDir(selectedItemPath))
 		loadDir(selectedItemPath);
 	else if (onChooseItem != nullptr)
 		onChooseItem();
