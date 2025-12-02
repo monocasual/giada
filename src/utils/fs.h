@@ -34,7 +34,6 @@
 namespace giada::u::fs
 {
 bool        isProject(const std::string& s);
-bool        mkdir(const std::string& s);
 std::string getCurrentPath();
 std::string getConfigDirPath();
 std::string getMidiMapsPath();

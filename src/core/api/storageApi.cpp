@@ -33,8 +33,10 @@
 #include "src/core/patchFactory.h"
 #include "src/core/plugins/pluginFactory.h"
 #include "src/core/waveFactory.h"
-#include "src/utils/fs.h"
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/utils/log.h"
+
+namespace utils = mcl::utils;
 
 namespace giada::m
 {
@@ -59,7 +61,7 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 {
 	progress(0.0f);
 
-	if (!u::fs::mkdir(projectPath))
+	if (!utils::fs::mkdir(projectPath))
 	{
 		u::log::print("[StorageApi::storeProject] Unable to make project directory!\n");
 		return false;

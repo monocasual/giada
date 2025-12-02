@@ -68,13 +68,6 @@ std::string getEnvVariable_(const char* s)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-bool mkdir(const std::string& s)
-{
-	return utils::fs::dirExists(s) ? true : stdfs::create_directory(s);
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::string getRealPath(const std::string& s)
 {
 	return s.empty() || !stdfs::exists(s) ? "" : stdfs::canonical(s).string();
@@ -214,7 +207,7 @@ bool createConfigFolder()
 
 	u::log::print("[fs::createConfigFolder] .giada folder not present. Updating...\n");
 
-	if (u::fs::mkdir(confDirPath))
+	if (utils::fs::mkdir(confDirPath))
 	{
 		u::log::print("[fs::createConfigFolder] status: ok\n");
 		return true;
