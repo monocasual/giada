@@ -49,25 +49,6 @@ namespace utils = mcl::utils;
 
 namespace giada::u::fs
 {
-namespace
-{
-#if G_OS_LINUX || G_OS_FREEBSD
-
-std::string getEnvVariable_(const char* s)
-{
-	const char* tmp = getenv(s);
-	if (tmp == nullptr)
-		return "";
-	return {tmp};
-}
-
-#endif
-} // namespace
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 bool isProject(const std::string& s)
 {
 	/** TODO - checks too weak. */
@@ -78,56 +59,7 @@ bool isProject(const std::string& s)
 
 std::string getConfigDirPath()
 {
-#if G_OS_LINUX || G_OS_FREEBSD
-
-	/* See https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-	from issue https://github.com/monocasual/giada/issues/338 */
-
-	const std::string xdgConfigHome = getEnvVariable_("XDG_CONFIG_HOME");
-	if (xdgConfigHome != "")
-		return stdfs::path(xdgConfigHome) / "giada";
-
-	const std::string home = getEnvVariable_("HOME");
-	if (home == "")
-	{
-		log::print("[getConfigDirPath] Can't fetch $HOME environment variable\n");
-		return "";
-	}
-
-	return stdfs::path(home) / ".config" / "giada";
-
-#elif G_OS_WINDOWS
-
-	wchar_t* appdataPathPtr = nullptr;
-	auto     result         = SHGetKnownFolderPath(FOLDERID_RoamingAppData, KF_FLAG_CREATE, NULL, &appdataPathPtr);
-	if (result != S_OK)
-	{
-		log::print("[getConfigDirPath] unable to fetch AppData path\n");
-		return "";
-	}
-
-	auto appDataPath = stdfs::path(std::wstring(appdataPathPtr)) / "Giada";
-
-	// It's up to the SHGetKnownFolderPath caller to free appdataPathPtr.
-	CoTaskMemFree(static_cast<void*>(appdataPathPtr));
-
-	return appDataPath.string();
-
-#elif G_OS_MAC
-
-	char           buf[PATH_MAX];
-	struct passwd* pwd = getpwuid(getuid());
-	if (pwd == nullptr)
-	{
-		log::print("[getConfigDirPath] unable to fetch user infos\n");
-		return "";
-	}
-	const char* home = pwd->pw_dir;
-	snprintf(buf, PATH_MAX, "%s/Library/Application Support/Giada", home);
-
-	return stdfs::path(buf).string();
-
-#endif
+	return utils::fs::join(utils::fs::getConfigDirPath(), "Giada");
 }
 
 /* -------------------------------------------------------------------------- */
