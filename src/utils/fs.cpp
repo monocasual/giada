@@ -28,23 +28,9 @@
 
 #include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/const.h"
-#include <climits>
-#include <cstdlib>
-#include <filesystem>
-#include <string>
-#if G_OS_MAC
-#include <libgen.h> // basename unix
-#include <pwd.h>    // getpwuid
-#include <unistd.h> // getuid
-#endif
-#if G_OS_WINDOWS
-#include <shlobj.h> // SHGetKnownFolderPath
-#endif
 #include "src/deps/mcl-utils/src/string.hpp"
-#include "src/utils/fs.h"
 #include "src/utils/log.h"
 
-namespace stdfs = std::filesystem;
 namespace utils = mcl::utils;
 
 namespace giada::u::fs
