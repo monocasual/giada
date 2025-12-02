@@ -142,7 +142,7 @@ int geFileBrowser::handle(int e)
 
 std::string geFileBrowser::getCurrentDir() const
 {
-	return u::fs::getRealPath(m_currentDir);
+	return utils::fs::getRealPath(m_currentDir);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -151,7 +151,7 @@ std::string geFileBrowser::getSelectedItem() const
 {
 	if (value() == 0) // no rows selected? return current directory
 		return m_currentDir;
-	return u::fs::getRealPath(u::fs::join(m_currentDir, text(value())));
+	return utils::fs::getRealPath(u::fs::join(m_currentDir, text(value())));
 }
 
 /* -------------------------------------------------------------------------- */

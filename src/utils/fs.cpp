@@ -68,13 +68,6 @@ std::string getEnvVariable_(const char* s)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-std::string getRealPath(const std::string& s)
-{
-	return s.empty() || !stdfs::exists(s) ? "" : stdfs::canonical(s).string();
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::string basename(const std::string& s)
 {
 	return stdfs::path(s).filename().string();

@@ -48,12 +48,6 @@ Returns the path to the .conf file. */
 
 std::string getConfigFilePath();
 
-/* getRealPath
-Expands all symbolic links and resolves references to /./, /../ and extra /
-characters in the input path and returns the canonicalized absolute pathname. */
-
-std::string getRealPath(const std::string& s);
-
 /* basename
 /path/to/file.txt -> file.txt */
 
