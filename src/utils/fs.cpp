@@ -171,14 +171,6 @@ bool createConfigFolder()
 
 std::string getConfigFilePath()
 {
-	return join(getConfigDirPath(), G_CONF_FILENAME);
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::string join(const std::string& a, const std::string& b)
-{
-	auto out = stdfs::path(a) / stdfs::path(b);
-	return out.string();
+	return utils::fs::join(getConfigDirPath(), G_CONF_FILENAME);
 }
 } // namespace giada::u::fs

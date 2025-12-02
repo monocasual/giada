@@ -27,8 +27,11 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/utils/log.h"
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include <cstdio>
 #include <string>
+
+namespace utils = mcl::utils;
 
 namespace giada::u::log
 {
@@ -37,7 +40,7 @@ bool init(int m)
 	mode = m;
 	if (mode == LOG_MODE_FILE)
 	{
-		std::string fpath = u::fs::join(fs::getConfigDirPath(), "giada.log");
+		std::string fpath = utils::fs::join(fs::getConfigDirPath(), "giada.log");
 		file.open(fpath, std::fstream::out | std::fstream::app);
 		if (!file.is_open())
 			return false;

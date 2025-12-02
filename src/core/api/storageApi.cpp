@@ -81,7 +81,7 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 
 	progress(0.6f);
 
-	const std::string patchPath = u::fs::join(projectPath, patch.name + G_PATCH_EXT);
+	const std::string patchPath = utils::fs::join(projectPath, patch.name + G_PATCH_EXT);
 
 	if (!patchFactory::serialize(patch, patchPath))
 		return false;
@@ -103,7 +103,7 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, std::fu
 
 	/* Read the selected project's patch. */
 
-	const std::string patchPath = u::fs::join(projectPath, utils::fs::stripExt(utils::fs::basename(projectPath)) + G_PATCH_EXT);
+	const std::string patchPath = utils::fs::join(projectPath, utils::fs::stripExt(utils::fs::basename(projectPath)) + G_PATCH_EXT);
 	const Patch       patch     = patchFactory::deserialize(patchPath);
 
 	if (patch.status != G_FILE_OK)

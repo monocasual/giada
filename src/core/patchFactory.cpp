@@ -182,7 +182,7 @@ void readWaves_(Patch& patch, const nlohmann::json& j, const std::string& basePa
 	{
 		Patch::Wave w;
 		w.id   = jwave.value(PATCH_KEY_WAVE_ID, ++id);
-		w.path = u::fs::join(basePath, jwave.value(PATCH_KEY_WAVE_PATH, ""));
+		w.path = utils::fs::join(basePath, jwave.value(PATCH_KEY_WAVE_PATH, ""));
 		patch.waves.push_back(w);
 	}
 }

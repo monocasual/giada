@@ -29,6 +29,7 @@
 #include "src/core/patch.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginFactory.h"
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/deps/mcl-utils/src/string.hpp"
 #include "src/utils/fs.h"
 #include "src/utils/log.h"
@@ -62,7 +63,7 @@ void PluginManager::reset()
 	if (m_formatManager.getNumFormats() == 0) // Must be called only once
 		m_formatManager.addDefaultFormats();
 
-	loadList(u::fs::join(u::fs::getConfigDirPath(), "plugins.xml"));
+	loadList(utils::fs::join(u::fs::getConfigDirPath(), "plugins.xml"));
 }
 
 /* -------------------------------------------------------------------------- */

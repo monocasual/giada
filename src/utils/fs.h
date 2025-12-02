@@ -47,11 +47,6 @@ bool createConfigFolder();
 Returns the path to the .conf file. */
 
 std::string getConfigFilePath();
-
-/* join
-Joins two string paths using the correct separator. */
-
-std::string join(const std::string& a, const std::string& b);
 } // namespace giada::u::fs
 
 #endif

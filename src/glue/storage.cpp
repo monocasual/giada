@@ -142,7 +142,7 @@ void saveProject(void* data)
 	v::gdBrowserSave* browser = static_cast<v::gdBrowserSave*>(data);
 
 	const std::string projectName = utils::fs::stripExt(browser->getName());
-	const std::string projectPath = u::fs::join(browser->getCurrentPath(), projectName + G_PROJECT_EXT);
+	const std::string projectPath = utils::fs::join(browser->getCurrentPath(), projectName + G_PROJECT_EXT);
 
 	if (!validateFileName_(projectName))
 		return;
@@ -197,7 +197,7 @@ void saveSample(void* data)
 	if (!validateFileName_(name))
 		return;
 
-	const std::string filePath = u::fs::join(folderPath, utils::fs::stripExt(name) + ".wav");
+	const std::string filePath = utils::fs::join(folderPath, utils::fs::stripExt(name) + ".wav");
 
 	if (utils::fs::fileExists(filePath) &&
 	    !v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),

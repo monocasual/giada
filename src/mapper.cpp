@@ -25,11 +25,12 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/mapper.h"
-#include "src/utils/fs.h"
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include <filesystem>
 #include <fstream>
 
-namespace nl = nlohmann;
+namespace nl    = nlohmann;
+namespace utils = mcl::utils;
 
 namespace giada
 {
@@ -53,7 +54,7 @@ std::optional<nlohmann::json> Mapper::read(const std::string& file) const
 	if (file.empty())
 		return {};
 
-	std::ifstream ifs(u::fs::join(m_mapsPath, file));
+	std::ifstream ifs(utils::fs::join(m_mapsPath, file));
 	if (!ifs.good())
 		return {};
 

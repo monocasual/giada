@@ -30,6 +30,7 @@
 #include "src/core/kernelAudio.h"
 #include "src/core/mixer.h"
 #include "src/core/plugins/pluginFactory.h"
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/deps/mcl-utils/src/vector.hpp"
 #include "src/utils/fs.h"
 
@@ -138,7 +139,7 @@ void PluginsApi::setParameter(ID pluginId, int paramIndex, float value)
 void PluginsApi::scan(const std::string& dir, const std::function<bool(float)>& progress)
 {
 	m_pluginManager.scanDirs(dir, progress);
-	m_pluginManager.saveList(u::fs::join(u::fs::getConfigDirPath(), "plugins.xml"));
+	m_pluginManager.saveList(utils::fs::join(u::fs::getConfigDirPath(), "plugins.xml"));
 }
 
 /* -------------------------------------------------------------------------- */

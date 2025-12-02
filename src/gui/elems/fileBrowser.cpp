@@ -28,7 +28,6 @@
 #include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/gui/const.h"
 #include "src/gui/elems/basics/boxtypes.h"
-#include "src/utils/fs.h"
 
 namespace utils = mcl::utils;
 
@@ -151,7 +150,7 @@ std::string geFileBrowser::getSelectedItem() const
 {
 	if (value() == 0) // no rows selected? return current directory
 		return m_currentDir;
-	return utils::fs::getRealPath(u::fs::join(m_currentDir, text(value())));
+	return utils::fs::getRealPath(utils::fs::join(m_currentDir, text(value())));
 }
 
 /* -------------------------------------------------------------------------- */
