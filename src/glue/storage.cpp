@@ -83,7 +83,7 @@ bool validateFileName_(const std::string& name)
 		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_CHOOSEFILENAME));
 		return false;
 	}
-	if (!u::fs::isValidFileName(name))
+	if (!utils::fs::isValidFileName(name))
 	{
 		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_FILEHASINVALIDCHARS));
 		return false;
