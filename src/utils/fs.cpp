@@ -235,13 +235,6 @@ std::string getConfigFilePath()
 
 /* -------------------------------------------------------------------------- */
 
-bool isRootDir(const std::string& s)
-{
-	return stdfs::current_path().root_path() == s;
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::string getUpDir(const std::string& s)
 {
 #if G_OS_WINDOWS

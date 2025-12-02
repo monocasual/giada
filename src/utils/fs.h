@@ -33,11 +33,6 @@
 
 namespace giada::u::fs
 {
-/* isRootDir
-Tells whether 's' is '/' on Unix or '[X]:\' on Windows. */
-
-bool isRootDir(const std::string& s);
-
 bool        isProject(const std::string& s);
 bool        mkdir(const std::string& s);
 std::string getCurrentPath();
