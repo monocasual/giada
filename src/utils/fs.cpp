@@ -66,14 +66,12 @@ std::string getConfigDirPath()
 
 std::string getMidiMapsPath()
 {
-	auto out = stdfs::path(getConfigDirPath()) / "midimaps";
-	return out.string();
+	return utils::fs::join(getConfigDirPath(), "midimaps");
 }
 
 std::string getLangMapsPath()
 {
-	auto out = stdfs::path(getConfigDirPath()) / "langmaps";
-	return out.string();
+	return utils::fs::join(getConfigDirPath(), "langmaps");
 }
 
 /* -------------------------------------------------------------------------- */
