@@ -26,7 +26,6 @@
 
 #include "src/core/wave.h"
 #include "src/deps/mcl-utils/src/fs.hpp"
-#include "src/utils/fs.h"
 #include <cassert>
 #include <fmt/core.h>
 
@@ -70,7 +69,7 @@ void Wave::alloc(Frame size, int channels, int rate, int bits, const std::string
 
 std::string Wave::getBasename(bool ext) const
 {
-	return ext ? utils::fs::basename(m_path) : u::fs::stripExt(utils::fs::basename(m_path));
+	return ext ? utils::fs::basename(m_path) : utils::fs::stripExt(utils::fs::basename(m_path));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -97,7 +96,7 @@ float Wave::getDuration() const
 
 std::string Wave::getExtension() const
 {
-	return u::fs::getExt(m_path);
+	return utils::fs::getExt(m_path);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -113,7 +112,7 @@ void Wave::setPath(const std::string& p, int wid)
 	if (wid == -1)
 		m_path = p;
 	else
-		m_path = fmt::format("{}-{}{}", u::fs::stripExt(p), wid, u::fs::getExt(p));
+		m_path = fmt::format("{}-{}{}", utils::fs::stripExt(p), wid, utils::fs::getExt(p));
 }
 
 /* -------------------------------------------------------------------------- */

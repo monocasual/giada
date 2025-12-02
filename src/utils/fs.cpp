@@ -68,24 +68,10 @@ std::string getEnvVariable_(const char* s)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-std::string getExt(const std::string& s)
-{
-	return stdfs::path(s).extension().string();
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::string stripExt(const std::string& s)
-{
-	return stdfs::path(s).replace_extension("").string();
-}
-
-/* -------------------------------------------------------------------------- */
-
 bool isProject(const std::string& s)
 {
 	/** TODO - checks too weak. */
-	return getExt(s) == G_PROJECT_EXT;
+	return utils::fs::getExt(s) == G_PROJECT_EXT;
 }
 
 /* -------------------------------------------------------------------------- */
