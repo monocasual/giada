@@ -27,11 +27,13 @@
 #include "src/core/patchFactory.h"
 #include "src/core/const.h"
 #include "src/core/mixer.h"
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/gui/const.h"
-#include "src/utils/fs.h"
 #include "src/utils/log.h"
 #include <fstream>
 #include <nlohmann/json.hpp>
+
+namespace utils = mcl::utils;
 
 namespace giada::m::patchFactory
 {
@@ -559,7 +561,7 @@ Patch deserialize(const std::string& filePath)
 		readCommons_(patch, j);
 		readTracks_(patch, j);
 		readPlugins_(patch, j);
-		readWaves_(patch, j, u::fs::dirname(filePath));
+		readWaves_(patch, j, utils::fs::dirname(filePath));
 		readActions_(patch, j);
 		readChannels_(patch, j);
 		modernize_(patch, j);

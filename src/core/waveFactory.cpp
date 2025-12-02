@@ -214,7 +214,7 @@ std::unique_ptr<Wave> deserializeWave(const Patch::Wave& w, int samplerate, Resa
 
 const Patch::Wave serializeWave(const Wave& w)
 {
-	return {w.id, u::fs::basename(w.getPath())};
+	return {w.id, utils::fs::basename(w.getPath())};
 }
 
 /* -------------------------------------------------------------------------- */

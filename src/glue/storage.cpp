@@ -179,7 +179,7 @@ void loadSample(void* data)
 	if (fullPath.empty())
 		return;
 
-	g_ui->model.samplePath = u::fs::dirname(fullPath);
+	g_ui->model.samplePath = utils::fs::dirname(fullPath);
 
 	c::channel::loadChannel(browser->getChannelId(), fullPath);
 
@@ -209,7 +209,7 @@ void saveSample(void* data)
 		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGFILEERROR));
 	else
 	{
-		g_ui->model.samplePath = u::fs::dirname(filePath);
+		g_ui->model.samplePath = utils::fs::dirname(filePath);
 	}
 
 	browser->do_callback();

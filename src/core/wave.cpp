@@ -25,9 +25,12 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/wave.h"
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/utils/fs.h"
 #include <cassert>
 #include <fmt/core.h>
+
+namespace utils = mcl::utils;
 
 namespace giada::m
 {
@@ -67,7 +70,7 @@ void Wave::alloc(Frame size, int channels, int rate, int bits, const std::string
 
 std::string Wave::getBasename(bool ext) const
 {
-	return ext ? u::fs::basename(m_path) : u::fs::stripExt(u::fs::basename(m_path));
+	return ext ? utils::fs::basename(m_path) : u::fs::stripExt(utils::fs::basename(m_path));
 }
 
 /* -------------------------------------------------------------------------- */

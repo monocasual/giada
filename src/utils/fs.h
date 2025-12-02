@@ -48,16 +48,6 @@ Returns the path to the .conf file. */
 
 std::string getConfigFilePath();
 
-/* basename
-/path/to/file.txt -> file.txt */
-
-std::string basename(const std::string& s);
-
-/* dirname
-/path/to/file.txt -> /path/to */
-
-std::string dirname(const std::string& s);
-
 /* getExt
 /path/to/file.txt -> txt */
 

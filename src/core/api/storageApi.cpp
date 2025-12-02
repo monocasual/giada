@@ -103,7 +103,7 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, std::fu
 
 	/* Read the selected project's patch. */
 
-	const std::string patchPath = u::fs::join(projectPath, u::fs::stripExt(u::fs::basename(projectPath)) + G_PATCH_EXT);
+	const std::string patchPath = u::fs::join(projectPath, u::fs::stripExt(utils::fs::basename(projectPath)) + G_PATCH_EXT);
 	const Patch       patch     = patchFactory::deserialize(patchPath);
 
 	if (patch.status != G_FILE_OK)

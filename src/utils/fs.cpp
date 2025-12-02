@@ -68,20 +68,6 @@ std::string getEnvVariable_(const char* s)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-std::string basename(const std::string& s)
-{
-	return stdfs::path(s).filename().string();
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::string dirname(const std::string& s)
-{
-	return stdfs::path(s).parent_path().string();
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::string getExt(const std::string& s)
 {
 	return stdfs::path(s).extension().string();

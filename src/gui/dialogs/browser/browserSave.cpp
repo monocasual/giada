@@ -25,13 +25,15 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/browser/browserSave.h"
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/gui/elems/basics/input.h"
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/elems/fileBrowser.h"
 #include "src/gui/ui.h"
-#include "src/utils/fs.h"
 
 extern giada::v::Ui* g_ui;
+
+namespace utils = mcl::utils;
 
 namespace giada::v
 {
@@ -44,7 +46,7 @@ gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path,
 
 	browser->onSelectItem = [this]
 	{
-		name->setValue(u::fs::basename(browser->getSelectedItem()));
+		name->setValue(utils::fs::basename(browser->getSelectedItem()));
 	};
 
 	ok->label(g_ui->getI18Text(LangMap::COMMON_SAVE));
