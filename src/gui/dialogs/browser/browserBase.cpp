@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/browser/browserBase.h"
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/gui/const.h"
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/check.h"
@@ -36,10 +37,11 @@
 #include "src/gui/elems/fileBrowser.h"
 #include "src/gui/graphics.h"
 #include "src/gui/ui.h"
-#include "src/utils/fs.h"
 #include "src/utils/gui.h"
 
 extern giada::v::Ui* g_ui;
+
+namespace utils = mcl::utils;
 
 namespace giada::v
 {
@@ -100,7 +102,7 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 	updir->onClick = [this]()
 	{
-		browser->loadDir(u::fs::getUpDir(browser->getCurrentDir()));
+		browser->loadDir(utils::fs::getUpDir(browser->getCurrentDir()));
 	};
 
 	browser->onChangeDir = [this]

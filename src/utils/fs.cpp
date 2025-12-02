@@ -176,21 +176,6 @@ std::string getConfigFilePath()
 
 /* -------------------------------------------------------------------------- */
 
-std::string getUpDir(const std::string& s)
-{
-#if G_OS_WINDOWS
-
-	// If root, let the user browse the drives list by returning "".
-	if (isRootDir(s))
-		return "";
-
-#endif
-
-	return stdfs::path(s).parent_path().string();
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::string join(const std::string& a, const std::string& b)
 {
 	auto out = stdfs::path(a) / stdfs::path(b);

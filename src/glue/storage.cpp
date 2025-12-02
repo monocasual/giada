@@ -50,7 +50,6 @@
 #include "src/gui/elems/mainWindow/keyboard/keyboard.h"
 #include "src/gui/elems/mainWindow/keyboard/track.h"
 #include "src/gui/ui.h"
-#include "src/utils/fs.h"
 #include "src/utils/gui.h"
 #include "src/utils/log.h"
 #include "src/utils/string.h"
@@ -128,7 +127,7 @@ void loadProject(void* data)
 		return;
 	}
 
-	g_ui->model.patchPath = u::fs::getUpDir(projectPath);
+	g_ui->model.patchPath = utils::fs::getUpDir(projectPath);
 	g_ui->load(state.patch);
 	g_ui->startUpdater();
 
@@ -162,7 +161,7 @@ void saveProject(void* data)
 	if (g_engine->getStorageApi().storeProject(projectPath, g_ui->model, engineProgress))
 	{
 		g_ui->setMainWindowTitle(projectName);
-		g_ui->model.patchPath = u::fs::getUpDir(projectPath);
+		g_ui->model.patchPath = utils::fs::getUpDir(projectPath);
 		browser->do_callback();
 	}
 	else

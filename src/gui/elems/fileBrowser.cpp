@@ -112,7 +112,7 @@ int geFileBrowser::handle(int e)
 		else if (Fl::event_key(FL_Enter))
 			chooseItem();
 		else if (Fl::event_key(FL_BackSpace))
-			loadDir(u::fs::getUpDir(getCurrentDir()));
+			loadDir(utils::fs::getUpDir(getCurrentDir()));
 		selectItem();
 		return 1;
 	}

@@ -48,12 +48,6 @@ Returns the path to the .conf file. */
 
 std::string getConfigFilePath();
 
-/* getUpDir
-Returns the upper directory:
-/path/to/my/directory -> /path/to/my/ */
-
-std::string getUpDir(const std::string& s);
-
 /* join
 Joins two string paths using the correct separator. */
 
