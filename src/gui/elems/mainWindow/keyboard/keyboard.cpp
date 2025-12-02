@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/mainWindow/keyboard/keyboard.h"
+#include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/deps/mcl-utils/src/string.hpp"
 #include "src/glue/channel.h"
 #include "src/glue/io.h"
@@ -39,7 +40,6 @@
 #include "src/gui/elems/mainWindow/keyboard/track.h"
 #include "src/gui/elems/midiActivity.h"
 #include "src/gui/ui.h"
-#include "src/utils/fs.h"
 #include "src/utils/gui.h"
 #include "src/utils/log.h"
 #include <cassert>
@@ -481,7 +481,7 @@ std::vector<std::string> geKeyboard::getDroppedFilePaths() const
 {
 	std::vector<std::string> paths = utils::string::split(Fl::event_text(), "\n");
 	for (std::string& p : paths)
-		p = u::fs::stripFileUrl(p);
+		p = utils::fs::uriToPath(p);
 	return paths;
 }
 

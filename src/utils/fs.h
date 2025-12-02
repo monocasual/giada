@@ -48,8 +48,6 @@ Returns the path to the .conf file. */
 
 std::string getConfigFilePath();
 
-std::string stripFileUrl(const std::string& s);
-
 /* getUpDir
 Returns the upper directory:
 /path/to/my/directory -> /path/to/my/ */

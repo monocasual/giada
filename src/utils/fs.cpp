@@ -76,16 +76,6 @@ bool isProject(const std::string& s)
 
 /* -------------------------------------------------------------------------- */
 
-std::string stripFileUrl(const std::string& s)
-{
-	std::string out = s;
-	out             = utils::string::replace(out, "file://", "");
-	out             = utils::string::replace(out, "%20", " ");
-	return out;
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::string getConfigDirPath()
 {
 #if G_OS_LINUX || G_OS_FREEBSD
