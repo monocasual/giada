@@ -170,7 +170,7 @@ LangMap::LangMap()
 	m_data[MAIN_CHANNEL_MENU_EDITROUTING]            = "Edit routing...";
 	m_data[MAIN_CHANNEL_MENU_EDITSAMPLE]             = "Edit sample...";
 	m_data[MAIN_CHANNEL_MENU_EDITACTIONS]            = "Edit actions...";
-	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS]           = "Clear actions...";
+	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS]           = "Clear actions";
 	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS_THISSCENE] = "In this scene";
 	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS_ALLSCENES] = "In all scenes";
 	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS_ALL]       = "All";
@@ -178,8 +178,8 @@ LangMap::LangMap()
 	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS_STARTSTOP] = "Start/Stop";
 	m_data[MAIN_CHANNEL_MENU_RENAME]                 = "Rename";
 	m_data[MAIN_CHANNEL_MENU_CLONE]                  = "Clone";
-	m_data[MAIN_CHANNEL_MENU_COPYTOSCENE]            = "Copy to scene...";
-	m_data[MAIN_CHANNEL_MENU_FREE]                   = "Free sample...";
+	m_data[MAIN_CHANNEL_MENU_COPYTOSCENE]            = "Copy to scene";
+	m_data[MAIN_CHANNEL_MENU_FREE]                   = "Free sample";
 	m_data[MAIN_CHANNEL_MENU_FREETHISSCENE]          = "For this scene";
 	m_data[MAIN_CHANNEL_MENU_FREEALLSCENES]          = "For all scenes";
 	m_data[MAIN_CHANNEL_MENU_DELETE]                 = "Delete";
