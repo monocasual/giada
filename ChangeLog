@@ -1,3 +1,14 @@
+1.4.0 --- 2025 . 12 . 06
+- New 'scenes' feature
+- Lots of code refactoring and minor internal improvements
+- Update JUCE dependency to 8.0.10
+- Update fmt dependency to 12.0.0
+- Update catch2 dependency to 3.11.0
+- Update nlohmann-json dependency to 3.12.0
+- Update rtmidi dependency to 6.0.0
+- Update libsndfile dependency to 1.2.2
+
+
 1.3.1 --- 2025 . 10 . 24
 - Fix broken plug-ins when a channel is cloned
 - Prevent crash if using JACK and no samplerate choice is available
