@@ -21,9 +21,9 @@
 	<releases>
 		<release version="1.4.0" date="2025-12-06">
 			<description>
-				<p>This release introduces <strong>scenes</strong>: a new way to add greater variety and richness to your live performances.</p>
+				<p>This release introduces scenes: a new way to add greater variety and richness to your live performances.</p>
 				<ul>
-					<li>New <strong>scenes</strong> feature;</li>
+					<li>New scenes feature;</li>
 					<li>Lots of code refactoring and minor internal improvements;</li>
 					<li>Update JUCE dependency to 8.0.10;</li>
 					<li>Update fmt dependency to 12.0.0;</li>
