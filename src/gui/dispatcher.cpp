@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dispatcher.h"
+#include "src/deps/mcl-utils/src/vector.hpp"
 #include "src/glue/channel.h"
 #include "src/glue/main.h"
 #include "src/gui/dialogs/mainWindow.h"
@@ -33,6 +34,8 @@
 #include "src/gui/ui.h"
 #include <FL/Fl.H>
 #include <cassert>
+
+namespace utils = mcl::utils;
 
 namespace giada::v
 {
@@ -104,6 +107,8 @@ void Dispatcher::dispatchKey(int event)
 			c::main::toggleActionRecording();
 		else if (m_keyPressed == m_model->keyBindRecordInput)
 			c::main::toggleInputRecording();
+		else if (utils::vector::has(m_model->keyBindScenes, m_keyPressed))
+			c::main::setScene(utils::vector::indexOf(m_model->keyBindScenes, m_keyPressed));
 		else if (m_keyPressed == m_model->keyBindExit)
 		{
 			c::main::stopActionRecording();
