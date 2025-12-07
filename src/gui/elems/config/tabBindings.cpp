@@ -51,7 +51,7 @@ geTabBindings::geTabBindings(geompp::Rect<int> bounds, const Model& model)
 		exit          = new geKeyBinder(g_ui->getI18Text(LangMap::CONFIG_BINDINGS_EXIT), model.keyBindExit);
 
 		for (const auto [index, scene] : std::views::enumerate(scenes))
-			scene = new geKeyBinder(std::format("scene {}", index + 1), model.keyBindScenes[index]);
+			scene = new geKeyBinder(std::format("{} {}", g_ui->getI18Text(LangMap::COMMON_SCENE), index + 1), model.keyBindScenes[index]);
 
 		body->addWidget(play, G_GUI_UNIT);
 		body->addWidget(rewind, G_GUI_UNIT);
