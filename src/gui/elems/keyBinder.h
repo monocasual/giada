@@ -35,6 +35,7 @@ namespace giada::v
 {
 class geBox;
 class geTextButton;
+/* TODO - this class is VERY similar to geMidiLearner. */
 class geKeyBinder : public geFlex
 {
 public:
