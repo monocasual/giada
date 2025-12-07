@@ -71,6 +71,7 @@ void Model::store(m::Conf& conf) const
 	conf.keyBindRecordActions = keyBindRecordActions;
 	conf.keyBindRecordInput   = keyBindRecordInput;
 	conf.keyBindExit          = keyBindExit;
+	conf.keyBindScenes        = keyBindScenes;
 
 	conf.uiScaling = uiScaling;
 }
@@ -123,6 +124,7 @@ void Model::load(const m::Conf& conf)
 	keyBindRecordActions = conf.keyBindRecordActions;
 	keyBindRecordInput   = conf.keyBindRecordInput;
 	keyBindExit          = conf.keyBindExit;
+	keyBindScenes        = conf.keyBindScenes;
 
 	uiScaling = conf.uiScaling;
 }

@@ -129,6 +129,7 @@ constexpr auto CONF_KEY_BIND_REWIND                   = "key_bind_rewind";
 constexpr auto CONF_KEY_BIND_RECORD_ACTIONS           = "key_bind_record_actions";
 constexpr auto CONF_KEY_BIND_RECORD_INPUT             = "key_bind_record_input";
 constexpr auto CONF_KEY_BIND_EXIT                     = "key_bind_record_exit";
+constexpr auto CONF_KEY_BIND_SCENES                   = "key_bind_scenes";
 constexpr auto CONF_KEY_UI_SCALING                    = "ui_scaling";
 
 /* -------------------------------------------------------------------------- */
@@ -228,6 +229,7 @@ Conf parse_(std::ifstream& ifs)
 	conf.keyBindRecordActions = j.value(CONF_KEY_BIND_RECORD_ACTIONS, 0);
 	conf.keyBindRecordInput   = j.value(CONF_KEY_BIND_RECORD_INPUT, 0);
 	conf.keyBindExit          = j.value(CONF_KEY_BIND_EXIT, 0);
+	conf.keyBindScenes        = j.value(CONF_KEY_BIND_SCENES, conf.keyBindScenes);
 
 	conf.pluginChooserBounds.x = j.value(CONF_KEY_PLUGIN_CHOOSER_X, conf.pluginChooserBounds.x);
 	conf.pluginChooserBounds.y = j.value(CONF_KEY_PLUGIN_CHOOSER_Y, conf.pluginChooserBounds.y);
@@ -357,6 +359,7 @@ bool serialize(const Conf& conf)
 	j[CONF_KEY_BIND_RECORD_ACTIONS] = conf.keyBindRecordActions;
 	j[CONF_KEY_BIND_RECORD_INPUT]   = conf.keyBindRecordInput;
 	j[CONF_KEY_BIND_EXIT]           = conf.keyBindExit;
+	j[CONF_KEY_BIND_SCENES]         = conf.keyBindScenes;
 
 	j[CONF_KEY_PLUGIN_CHOOSER_X]   = conf.pluginChooserBounds.x;
 	j[CONF_KEY_PLUGIN_CHOOSER_Y]   = conf.pluginChooserBounds.y;

@@ -119,11 +119,12 @@ struct Conf final
 	geompp::Rect<int> pluginChooserBounds = {-1, -1, G_DEFAULT_SUBWINDOW_W, G_DEFAULT_SUBWINDOW_W};
 	PluginSortMode    pluginSortMode      = {PluginSortMethod::NAME, PluginSortDir::ASC};
 
-	int keyBindPlay          = ' ';
-	int keyBindRewind        = FL_BackSpace;
-	int keyBindRecordActions = FL_Enter;
-	int keyBindRecordInput   = FL_End;
-	int keyBindExit          = FL_Escape;
+	int             keyBindPlay          = ' ';
+	int             keyBindRewind        = FL_BackSpace;
+	int             keyBindRecordActions = FL_Enter;
+	int             keyBindRecordInput   = FL_End;
+	int             keyBindExit          = FL_Escape;
+	SceneArray<int> keyBindScenes        = {'1', '2', '3', '4', '5', '6', '7', '8'};
 
 	float uiScaling = G_DEFAULT_UI_SCALING;
 };
