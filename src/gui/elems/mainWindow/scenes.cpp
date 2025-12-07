@@ -25,7 +25,6 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/mainWindow/scenes.h"
-#include "src/deps/mcl-utils/src/vector.hpp"
 #include "src/glue/main.h"
 #include "src/gui/const.h"
 #include "src/gui/elems/basics/flex.h"
@@ -34,8 +33,6 @@
 #include <fmt/core.h>
 
 extern giada::v::Ui* g_ui;
-
-namespace utils = mcl::utils;
 
 namespace giada::v
 {
@@ -70,8 +67,8 @@ void geScenes::refresh()
 {
 	const c::main::Scenes scenes = c::main::getScenes();
 
-	for (const std::size_t i : utils::vector::range(m_buttons.size()))
-		m_buttons[i]->setDefaultState();
+	for (gePlayButton* button : m_buttons)
+		button->setDefaultState();
 
 	if (scenes.status == SceneStatus::CHANGING)
 	{
@@ -81,8 +78,8 @@ void geScenes::refresh()
 	else
 		m_buttons[scenes.currentScene]->setPlayState();
 
-	for (const std::size_t i : utils::vector::range(m_buttons.size()))
-		m_buttons[i]->redraw();
+	for (gePlayButton* button : m_buttons)
+		button->redraw();
 }
 
 /* -------------------------------------------------------------------------- */
