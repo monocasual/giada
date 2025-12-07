@@ -58,9 +58,9 @@ geKeyBinder::geKeyBinder(const std::string& l, int key)
 
 	m_bindBtn->onClick = [key, this]()
 	{
-		assert(onKeyBound != nullptr);
 		c::layout::openKeyGrabberWindow(key, [this](int newKey)
 		{
+			assert(onKeyBound != nullptr);
 			setKey(newKey);
 			onKeyBound(newKey);
 			return true;
