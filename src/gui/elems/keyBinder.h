@@ -44,6 +44,7 @@ public:
 	int getKey() const;
 
 	std::function<void(int key)> onKeyBound;
+	std::function<void()>        onKeyClear;
 
 private:
 	void setKey(int key);

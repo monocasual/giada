@@ -40,6 +40,7 @@ namespace giada::v
 geKeyBinder::geKeyBinder(const std::string& l, int key)
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , onKeyBound(nullptr)
+, onKeyClear(nullptr)
 , m_key(key)
 {
 	m_labelBox = new geBox(l.c_str());
@@ -69,7 +70,9 @@ geKeyBinder::geKeyBinder(const std::string& l, int key)
 
 	m_clearBtn->onClick = [this]()
 	{
+		assert(onKeyClear != nullptr);
 		setKey(0);
+		onKeyClear();
 	};
 }
 
