@@ -29,6 +29,9 @@
 #include "src/gui/elems/keyBinder.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
+#include "src/utils/log.h"
+#include <format>
+#include <ranges>
 
 extern giada::v::Ui* g_ui;
 
@@ -47,11 +50,16 @@ geTabBindings::geTabBindings(geompp::Rect<int> bounds, const Model& model)
 		recordInput   = new geKeyBinder(g_ui->getI18Text(LangMap::CONFIG_BINDINGS_RECORDAUDIO), model.keyBindRecordInput);
 		exit          = new geKeyBinder(g_ui->getI18Text(LangMap::CONFIG_BINDINGS_EXIT), model.keyBindExit);
 
+		for (const auto [index, scene] : std::views::enumerate(scenes))
+			scene = new geKeyBinder(std::format("scene {}", index + 1), model.keyBindScenes[index]);
+
 		body->addWidget(play, G_GUI_UNIT);
 		body->addWidget(rewind, G_GUI_UNIT);
 		body->addWidget(recordActions, G_GUI_UNIT);
 		body->addWidget(recordInput, G_GUI_UNIT);
 		body->addWidget(exit, G_GUI_UNIT);
+		for (geKeyBinder* scene : scenes)
+			body->addWidget(scene, G_GUI_UNIT);
 		body->end();
 	}
 
@@ -68,5 +76,9 @@ geTabBindings::geTabBindings(geompp::Rect<int> bounds, const Model& model)
 	{ g_ui->model.keyBindRecordInput = key; };
 	exit->onKeyBound = [](int key)
 	{ g_ui->model.keyBindExit = key; };
+
+	for (const auto [index, scene] : std::views::enumerate(scenes))
+		scene->onKeyBound = [index](int key)
+		{ g_ui->model.keyBindScenes[index] = key; };
 }
 } // namespace giada::v

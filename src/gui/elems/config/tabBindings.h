@@ -42,11 +42,12 @@ public:
 	geTabBindings(geompp::Rect<int>, const Model&);
 
 private:
-	geKeyBinder* play;
-	geKeyBinder* rewind;
-	geKeyBinder* recordActions;
-	geKeyBinder* recordInput;
-	geKeyBinder* exit;
+	geKeyBinder*             play;
+	geKeyBinder*             rewind;
+	geKeyBinder*             recordActions;
+	geKeyBinder*             recordInput;
+	geKeyBinder*             exit;
+	SceneArray<geKeyBinder*> scenes;
 };
 } // namespace giada::v
 
