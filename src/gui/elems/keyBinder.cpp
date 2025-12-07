@@ -81,9 +81,7 @@ int geKeyBinder::getKey() const { return m_key; }
 
 void geKeyBinder::setKey(int key)
 {
-	const std::string newLabel = key == 0 ? g_ui->getI18Text(LangMap::COMMON_NOTSET) : u::gui::keyToString(key);
-
 	m_key = key;
-	m_keyBox->copy_label(newLabel.c_str());
+	m_keyBox->copy_label(u::gui::keyToString(key).c_str());
 }
 } // namespace giada::v
