@@ -154,7 +154,7 @@ Track& Tracks::getByChannel(ID channelId)
 {
 	const auto p = [channelId](Track& track)
 	{
-		return utils::vector::has(track.getChannels().getAll(), [channelId](const Channel& ch)
+		return utils::vector::hasIf(track.getChannels().getAll(), [channelId](const Channel& ch)
 		{ return channelId == ch.id; });
 	};
 	auto it = utils::vector::findIf(m_tracks, p);
