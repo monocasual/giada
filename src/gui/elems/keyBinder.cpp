@@ -61,21 +61,29 @@ geKeyBinder::geKeyBinder(const std::string& l, int key)
 		assert(onKeyBound != nullptr);
 		c::layout::openKeyGrabberWindow(key, [this](int newKey)
 		{
-			m_key = newKey;
-			m_keyBox->copy_label(u::gui::keyToString(m_key).c_str());
+			setKey(newKey);
 			onKeyBound(newKey);
 			return true;
 		});
 	};
 
-	m_clearBtn->onClick = [key, this]()
+	m_clearBtn->onClick = [this]()
 	{
-		m_key = 0;
-		m_keyBox->copy_label(u::gui::keyToString(key).c_str());
+		setKey(0);
 	};
 }
 
 /* -------------------------------------------------------------------------- */
 
 int geKeyBinder::getKey() const { return m_key; }
+
+/* -------------------------------------------------------------------------- */
+
+void geKeyBinder::setKey(int key)
+{
+	const std::string newLabel = key == 0 ? g_ui->getI18Text(LangMap::COMMON_NOTSET) : u::gui::keyToString(key);
+
+	m_key = key;
+	m_keyBox->copy_label(newLabel.c_str());
+}
 } // namespace giada::v

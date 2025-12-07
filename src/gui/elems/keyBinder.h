@@ -46,6 +46,8 @@ public:
 	std::function<void(int key)> onKeyBound;
 
 private:
+	void setKey(int key);
+
 	int           m_key;
 	geBox*        m_labelBox;
 	geBox*        m_keyBox;
