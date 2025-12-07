@@ -119,7 +119,7 @@ int centerWindowY(int h)
 std::string keyToString(int key)
 {
 	// https://github.com/fltk/fltk/blob/570a05a33c9dc42a16caa5a1a11cf34d4df1c1f9/FL/Enumerations.H
-	// https://www.fltk.org/doc-1.3/group__fl__events.html#gafa17a5b4d8d9163631c88142e60447ed
+	// https://www.fltk.org/doc-1.4/group__fl__events.html#gafa17a5b4d8d9163631c88142e60447ed
 
 	if (key == 0)
 		return "[None]";
@@ -215,7 +215,7 @@ std::string keyToString(int key)
 	case FL_Delete:
 		return "Delete";
 	default:
-		return Fl::event_text();
+		return std::string(1, key); // Regular key
 	}
 }
 } // namespace giada::u::gui
