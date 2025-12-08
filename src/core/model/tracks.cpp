@@ -59,7 +59,7 @@ void Tracks::remove(std::size_t index)
 
 	m_tracks.erase(m_tracks.begin() + index);
 
-	for (const auto [newIndex, track] : std::views::enumerate(m_tracks))
+	for (const auto [newIndex, track] : utils::vector::enumerate(m_tracks))
 		track.m_index = newIndex;
 }
 
