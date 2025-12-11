@@ -66,6 +66,7 @@ constexpr auto CONF_KEY_MIDI_IN_VOLUME_IN             = "midi_in_volume_in";
 constexpr auto CONF_KEY_MIDI_IN_VOLUME_OUT            = "midi_in_volume_out";
 constexpr auto CONF_KEY_MIDI_IN_BEAT_DOUBLE           = "midi_in_beat_doble";
 constexpr auto CONF_KEY_MIDI_IN_BEAT_HALF             = "midi_in_beat_half";
+constexpr auto CONF_KEY_MIDI_IN_SCENES                = "midi_in_scenes";
 constexpr auto CONF_KEY_CHANS_STOP_ON_SEQ_HALT        = "chans_stop_on_seq_halt";
 constexpr auto CONF_KEY_TREAT_RECS_AS_LOOPS           = "treat_recs_as_loops";
 constexpr auto CONF_KEY_INPUT_MONITOR_DEFAULT_ON      = "input_monitor_default_on";
@@ -223,6 +224,7 @@ Conf parse_(std::ifstream& ifs)
 	conf.midiInVolumeOut            = j.value(CONF_KEY_MIDI_IN_VOLUME_OUT, conf.midiInVolumeOut);
 	conf.midiInBeatDouble           = j.value(CONF_KEY_MIDI_IN_BEAT_DOUBLE, conf.midiInBeatDouble);
 	conf.midiInBeatHalf             = j.value(CONF_KEY_MIDI_IN_BEAT_HALF, conf.midiInBeatHalf);
+	conf.midiInScenes               = j.value(CONF_KEY_MIDI_IN_SCENES, conf.midiInScenes);
 
 	conf.keyBindPlay          = j.value(CONF_KEY_BIND_PLAY, 0);
 	conf.keyBindRewind        = j.value(CONF_KEY_BIND_REWIND, 0);
@@ -301,6 +303,7 @@ bool serialize(const Conf& conf)
 	j[CONF_KEY_MIDI_IN_VOLUME_OUT]            = conf.midiInVolumeOut;
 	j[CONF_KEY_MIDI_IN_BEAT_DOUBLE]           = conf.midiInBeatDouble;
 	j[CONF_KEY_MIDI_IN_BEAT_HALF]             = conf.midiInBeatHalf;
+	j[CONF_KEY_MIDI_IN_SCENES]                = conf.midiInScenes;
 	j[CONF_KEY_CHANS_STOP_ON_SEQ_HALT]        = conf.chansStopOnSeqHalt;
 	j[CONF_KEY_TREAT_RECS_AS_LOOPS]           = conf.treatRecsAsLoops;
 	j[CONF_KEY_INPUT_MONITOR_DEFAULT_ON]      = conf.inputMonitorDefaultOn;

@@ -107,6 +107,7 @@ void Document::load(const Conf& conf)
 	midiIn.volumeOut  = conf.midiInVolumeOut;
 	midiIn.beatDouble = conf.midiInBeatDouble;
 	midiIn.beatHalf   = conf.midiInBeatHalf;
+	midiIn.scenes     = conf.midiInScenes;
 
 	behaviors.chansStopOnSeqHalt         = conf.chansStopOnSeqHalt;
 	behaviors.treatRecsAsLoops           = conf.treatRecsAsLoops;
@@ -170,6 +171,7 @@ void Document::store(Conf& conf) const
 	conf.midiInVolumeOut  = midiIn.volumeOut;
 	conf.midiInBeatDouble = midiIn.beatDouble;
 	conf.midiInBeatHalf   = midiIn.beatHalf;
+	conf.midiInScenes     = midiIn.scenes;
 
 	conf.chansStopOnSeqHalt         = behaviors.chansStopOnSeqHalt;
 	conf.treatRecsAsLoops           = behaviors.treatRecsAsLoops;
