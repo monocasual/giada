@@ -122,26 +122,27 @@ constexpr auto G_PROJECT_EXT   = ".gprj";
 constexpr auto G_CONF_FILENAME = "giada.conf";
 
 /* -- MIDI in parameters (for MIDI learning) -------------------------------- */
-constexpr int G_MIDI_IN_ENABLED      = 1;
-constexpr int G_MIDI_IN_FILTER       = 2;
-constexpr int G_MIDI_IN_REWIND       = 3;
-constexpr int G_MIDI_IN_START_STOP   = 4;
-constexpr int G_MIDI_IN_ACTION_REC   = 5;
-constexpr int G_MIDI_IN_INPUT_REC    = 6;
-constexpr int G_MIDI_IN_METRONOME    = 7;
-constexpr int G_MIDI_IN_VOLUME_IN    = 8;
-constexpr int G_MIDI_IN_VOLUME_OUT   = 9;
-constexpr int G_MIDI_IN_BEAT_DOUBLE  = 10;
-constexpr int G_MIDI_IN_BEAT_HALF    = 11;
-constexpr int G_MIDI_IN_KEYPRESS     = 12;
-constexpr int G_MIDI_IN_KEYREL       = 13;
-constexpr int G_MIDI_IN_KILL         = 14;
-constexpr int G_MIDI_IN_ARM          = 15;
-constexpr int G_MIDI_IN_MUTE         = 16;
-constexpr int G_MIDI_IN_SOLO         = 17;
-constexpr int G_MIDI_IN_VOLUME       = 18;
-constexpr int G_MIDI_IN_PITCH        = 19;
-constexpr int G_MIDI_IN_READ_ACTIONS = 20;
+constexpr int             G_MIDI_IN_ENABLED      = 1;
+constexpr int             G_MIDI_IN_FILTER       = 2;
+constexpr int             G_MIDI_IN_REWIND       = 3;
+constexpr int             G_MIDI_IN_START_STOP   = 4;
+constexpr int             G_MIDI_IN_ACTION_REC   = 5;
+constexpr int             G_MIDI_IN_INPUT_REC    = 6;
+constexpr int             G_MIDI_IN_METRONOME    = 7;
+constexpr int             G_MIDI_IN_VOLUME_IN    = 8;
+constexpr int             G_MIDI_IN_VOLUME_OUT   = 9;
+constexpr int             G_MIDI_IN_BEAT_DOUBLE  = 10;
+constexpr int             G_MIDI_IN_BEAT_HALF    = 11;
+constexpr int             G_MIDI_IN_KEYPRESS     = 12;
+constexpr int             G_MIDI_IN_KEYREL       = 13;
+constexpr int             G_MIDI_IN_KILL         = 14;
+constexpr int             G_MIDI_IN_ARM          = 15;
+constexpr int             G_MIDI_IN_MUTE         = 16;
+constexpr int             G_MIDI_IN_SOLO         = 17;
+constexpr int             G_MIDI_IN_VOLUME       = 18;
+constexpr int             G_MIDI_IN_PITCH        = 19;
+constexpr int             G_MIDI_IN_READ_ACTIONS = 20;
+constexpr SceneArray<int> G_MIDI_IN_SCENES       = {21, 22, 23, 24, 25, 26, 27, 28};
 
 /* -- MIDI out parameters (for MIDI output and lightning) ------------------- */
 constexpr int G_MIDI_OUT_ENABLED   = 1;

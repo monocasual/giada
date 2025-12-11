@@ -312,6 +312,11 @@ void MidiDispatcher::processMaster(const MidiEvent& midiEvent)
 		c::main::divideBeats();
 		G_DEBUG("   sequencer /2 (master) (pure=0x{:0X})", pure);
 	}
+	else if (midiIn.hasScene(pure))
+	{
+		c::main::setScene(midiIn.getScene(pure));
+		G_DEBUG("   set scene {} (pure=0x{:0X})", midiIn.getScene(pure), pure);
+	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -399,6 +404,8 @@ void MidiDispatcher::learnMaster(MidiEvent e, int param, std::function<void()> d
 		midiIn.beatDouble = raw;
 	else if (param == G_MIDI_IN_BEAT_HALF)
 		midiIn.beatHalf = raw;
+	else if (utils::vector::has(G_MIDI_IN_SCENES, param))
+		midiIn.setScene(utils::vector::indexOf(G_MIDI_IN_SCENES, param), raw);
 
 	m_model.swap(model::SwapType::SOFT);
 

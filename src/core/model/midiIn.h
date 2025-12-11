@@ -27,21 +27,37 @@
 #ifndef G_MODEL_MIDI_IN_H
 #define G_MODEL_MIDI_IN_H
 
+#include "src/types.h"
+#include <cstdint>
+
 namespace giada::m::model
 {
 struct MidiIn
 {
-	bool     enabled    = false;
-	int      filter     = -1;
-	uint32_t rewind     = 0x0;
-	uint32_t startStop  = 0x0;
-	uint32_t actionRec  = 0x0;
-	uint32_t inputRec   = 0x0;
-	uint32_t volumeIn   = 0x0;
-	uint32_t volumeOut  = 0x0;
-	uint32_t beatDouble = 0x0;
-	uint32_t beatHalf   = 0x0;
-	uint32_t metronome  = 0x0;
+	bool                 enabled    = false;
+	int                  filter     = -1;
+	uint32_t             rewind     = 0x0;
+	uint32_t             startStop  = 0x0;
+	uint32_t             actionRec  = 0x0;
+	uint32_t             inputRec   = 0x0;
+	uint32_t             volumeIn   = 0x0;
+	uint32_t             volumeOut  = 0x0;
+	uint32_t             beatDouble = 0x0;
+	uint32_t             beatHalf   = 0x0;
+	uint32_t             metronome  = 0x0;
+	SceneArray<uint32_t> scenes;
+
+	/* isScene
+	True if MIDI learn value passed in exists in the 'scenes' array. */
+
+	bool hasScene(uint32_t) const;
+
+	/* getScene
+	Returns the scene index, given a certain MIDI learn value. */
+
+	std::size_t getScene(uint32_t) const;
+
+	void setScene(std::size_t scene, uint32_t);
 };
 } // namespace giada::m::model
 

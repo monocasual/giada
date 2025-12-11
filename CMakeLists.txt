@@ -175,6 +175,8 @@ list(APPEND SOURCES
 	src/core/model/tracks.h
 	src/core/model/track.cpp
 	src/core/model/track.h
+	src/core/model/midiIn.cpp
+	src/core/model/midiIn.h
 	src/core/idManager.cpp
 	src/core/idManager.h
 	src/glue/main.cpp

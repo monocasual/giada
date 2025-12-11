@@ -87,15 +87,16 @@ struct Master_InputData
 	bool enabled;
 	int  filter;
 
-	uint32_t rewind;
-	uint32_t startStop;
-	uint32_t actionRec;
-	uint32_t inputRec;
-	uint32_t volumeIn;
-	uint32_t volumeOut;
-	uint32_t beatDouble;
-	uint32_t beatHalf;
-	uint32_t metronome;
+	uint32_t             rewind;
+	uint32_t             startStop;
+	uint32_t             actionRec;
+	uint32_t             inputRec;
+	uint32_t             volumeIn;
+	uint32_t             volumeOut;
+	uint32_t             beatDouble;
+	uint32_t             beatHalf;
+	uint32_t             metronome;
+	SceneArray<uint32_t> scenes;
 };
 
 struct MidiChannel_OutputData

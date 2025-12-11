@@ -143,6 +143,7 @@ Master_InputData::Master_InputData(const m::model::MidiIn& midiIn)
 , beatDouble(midiIn.beatDouble)
 , beatHalf(midiIn.beatHalf)
 , metronome(midiIn.metronome)
+, scenes(midiIn.scenes)
 {
 }
 

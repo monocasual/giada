@@ -34,6 +34,7 @@
 #include "src/gui/elems/midiIO/midiLearner.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
+#include <format>
 
 extern giada::v::Ui* g_ui;
 
@@ -56,6 +57,8 @@ geMasterLearnerPack::geMasterLearnerPack(int x, int y)
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_OUTVOLUME), G_MIDI_IN_VOLUME_OUT);
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_SEQDOUBLE), G_MIDI_IN_BEAT_DOUBLE);
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_SEQHALF), G_MIDI_IN_BEAT_HALF);
+	for (const auto [index, scene] : utils::vector::enumerate(G_MIDI_IN_SCENES))
+		addMidiLearner(std::format("{} {}", g_ui->getI18Text(LangMap::COMMON_SCENE), index + 1), scene);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -71,6 +74,14 @@ void geMasterLearnerPack::update(const c::io::Master_InputData& d)
 	learners[6]->update(d.volumeOut);
 	learners[7]->update(d.beatDouble);
 	learners[8]->update(d.beatHalf);
+	learners[9]->update(d.scenes[0]);
+	learners[10]->update(d.scenes[1]);
+	learners[11]->update(d.scenes[2]);
+	learners[12]->update(d.scenes[3]);
+	learners[13]->update(d.scenes[4]);
+	learners[14]->update(d.scenes[5]);
+	learners[15]->update(d.scenes[6]);
+	learners[16]->update(d.scenes[7]);
 	setEnabled(d.enabled);
 }
 
