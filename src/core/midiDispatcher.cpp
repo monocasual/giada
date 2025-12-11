@@ -380,36 +380,24 @@ void MidiDispatcher::learnMaster(MidiEvent e, int param, std::function<void()> d
 
 	const uint32_t raw = e.getRawNoVelocity();
 
-	switch (param)
-	{
-	case G_MIDI_IN_REWIND:
+	if (param == G_MIDI_IN_REWIND)
 		m_model.get().midiIn.rewind = raw;
-		break;
-	case G_MIDI_IN_START_STOP:
+	else if (param == G_MIDI_IN_START_STOP)
 		m_model.get().midiIn.startStop = raw;
-		break;
-	case G_MIDI_IN_ACTION_REC:
+	else if (param == G_MIDI_IN_ACTION_REC)
 		m_model.get().midiIn.actionRec = raw;
-		break;
-	case G_MIDI_IN_INPUT_REC:
+	else if (param == G_MIDI_IN_INPUT_REC)
 		m_model.get().midiIn.inputRec = raw;
-		break;
-	case G_MIDI_IN_METRONOME:
+	else if (param == G_MIDI_IN_METRONOME)
 		m_model.get().midiIn.metronome = raw;
-		break;
-	case G_MIDI_IN_VOLUME_IN:
+	else if (param == G_MIDI_IN_VOLUME_IN)
 		m_model.get().midiIn.volumeIn = raw;
-		break;
-	case G_MIDI_IN_VOLUME_OUT:
+	else if (param == G_MIDI_IN_VOLUME_OUT)
 		m_model.get().midiIn.volumeOut = raw;
-		break;
-	case G_MIDI_IN_BEAT_DOUBLE:
+	else if (param == G_MIDI_IN_BEAT_DOUBLE)
 		m_model.get().midiIn.beatDouble = raw;
-		break;
-	case G_MIDI_IN_BEAT_HALF:
+	else if (param == G_MIDI_IN_BEAT_HALF)
 		m_model.get().midiIn.beatHalf = raw;
-		break;
-	}
 
 	m_model.swap(model::SwapType::SOFT);
 
