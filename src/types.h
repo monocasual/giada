@@ -27,8 +27,9 @@
 #ifndef G_TYPES_H
 #define G_TYPES_H
 
-#include "const.h"
-#include "deps/geompp/src/range.hpp"
+#include "src/const.h"
+#include "src/deps/geompp/src/range.hpp"
+#include <array>
 #include <string>
 
 namespace giada::m
