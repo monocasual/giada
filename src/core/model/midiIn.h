@@ -45,7 +45,7 @@ struct MidiIn
 	uint32_t             beatDouble = 0x0;
 	uint32_t             beatHalf   = 0x0;
 	uint32_t             metronome  = 0x0;
-	SceneArray<uint32_t> scenes;
+	SceneArray<uint32_t> scenes     = {};
 
 	/* isScene
 	True if MIDI learn value passed in exists in the 'scenes' array. */
