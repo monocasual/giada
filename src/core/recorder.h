@@ -28,6 +28,7 @@
 #define G_RECORDER_H
 
 #include "src/core/types.h"
+#include <cstddef>
 
 namespace giada::m
 {
@@ -48,9 +49,9 @@ public:
 
 	/* canEnableFreeInputRec
 	True if free loop-length can be enabled: Can't set it if there's already a
-	filled Sample Channel in the current project. */
+	filled Sample Channel in the selected scene. */
 
-	bool canEnableFreeInputRec() const;
+	bool canEnableFreeInputRec(std::size_t scene) const;
 
 	/* canRecordActions
 	True if actions are recordable right now. */

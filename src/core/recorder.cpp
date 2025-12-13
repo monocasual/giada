@@ -209,7 +209,7 @@ void Recorder::toggleFreeInputRec()
 	const InputRecMode currentMode = m_mixer.getInputRecMode();
 	InputRecMode       newMode     = currentMode == InputRecMode::RIGID ? InputRecMode::FREE : InputRecMode::RIGID;
 
-	if (!canEnableFreeInputRec())
+	if (!canEnableFreeInputRec(m_sequencer.getCurrentScene()))
 		newMode = InputRecMode::RIGID;
 
 	m_mixer.setInputRecMode(newMode);
@@ -218,7 +218,7 @@ void Recorder::toggleFreeInputRec()
 /* -------------------------------------------------------------------------- */
 
 bool Recorder::canEnableRecOnSignal() const { return !m_sequencer.isRunning(); }
-bool Recorder::canEnableFreeInputRec() const { return !m_channelManager.hasAudioData(); }
+bool Recorder::canEnableFreeInputRec(std::size_t scene) const { return !m_channelManager.hasAudioData(scene); }
 
 /* -------------------------------------------------------------------------- */
 

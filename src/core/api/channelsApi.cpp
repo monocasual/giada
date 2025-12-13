@@ -54,7 +54,7 @@ ChannelsApi::ChannelsApi(model::Model& m, KernelAudio& k, Mixer& mx, Sequencer& 
 
 bool ChannelsApi::hasChannelsWithAudioData() const
 {
-	return m_channelManager.hasAudioData();
+	return m_channelManager.hasAudioData(m_sequencer.getCurrentScene());
 }
 
 bool ChannelsApi::hasChannelsWithActions() const

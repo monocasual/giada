@@ -201,7 +201,7 @@ Engine::Engine()
 
 	m_channelManager.onChannelsAltered = [this]()
 	{
-		if (!m_recorder.canEnableFreeInputRec())
+		if (!m_recorder.canEnableFreeInputRec(m_sequencer.getCurrentScene()))
 			m_mixer.setInputRecMode(InputRecMode::RIGID);
 	};
 	m_channelManager.onChannelRecorded = [this](Frame recordedFrames)
@@ -232,6 +232,9 @@ Engine::Engine()
 	};
 	m_sequencer.onSceneChanged = [this]()
 	{
+		if (!m_recorder.canEnableFreeInputRec(m_sequencer.getCurrentScene()))
+			m_mixer.setInputRecMode(InputRecMode::RIGID);
+
 		/* Rebuild UI when the scene has changed to update channels. */
 		assert(onModelSwap != nullptr);
 		onModelSwap(model::SwapType::HARD);

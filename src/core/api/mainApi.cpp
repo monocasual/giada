@@ -71,7 +71,7 @@ bool MainApi::canRecordInput() const
 
 bool MainApi::canEnableFreeInputRec() const
 {
-	return m_recorder.canEnableFreeInputRec();
+	return m_recorder.canEnableFreeInputRec(m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */

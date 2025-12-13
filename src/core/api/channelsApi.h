@@ -64,7 +64,11 @@ public:
 	ChannelsApi(model::Model&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
 	    Recorder&, ActionRecorder&, PluginHost&, PluginManager&, rendering::Reactor&);
 
+	/* hasChannelsWithAudioData
+	True if there are channels with audio data in the current scene. */
+
 	bool hasChannelsWithAudioData() const;
+
 	bool hasChannelsWithActions() const;
 	bool canRemoveTrack(std::size_t trackIndex) const;
 

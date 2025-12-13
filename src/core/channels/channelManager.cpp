@@ -594,11 +594,11 @@ bool ChannelManager::hasActions() const
 	{ return ch.hasActions; });
 }
 
-bool ChannelManager::hasAudioData() const
+bool ChannelManager::hasAudioData(std::size_t scene) const
 {
-	return m_model.get().tracks.anyChannelOf([](const Channel& ch)
+	return m_model.get().tracks.anyChannelOf([scene](const Channel& ch)
 	{
-		return ch.sampleChannel && ch.sampleChannel->hasWave(0); // TODO - scenes!
+		return ch.sampleChannel && ch.sampleChannel->hasWave(scene);
 	});
 }
 
