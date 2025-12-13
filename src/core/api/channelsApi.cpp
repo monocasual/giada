@@ -57,11 +57,6 @@ bool ChannelsApi::hasChannelsWithAudioData() const
 	return m_channelManager.hasAudioData(m_sequencer.getCurrentScene());
 }
 
-bool ChannelsApi::hasChannelsWithActions() const
-{
-	return m_channelManager.hasActions();
-}
-
 /* -------------------------------------------------------------------------- */
 
 bool ChannelsApi::canRemoveTrack(std::size_t trackIndex) const

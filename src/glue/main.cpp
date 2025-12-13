@@ -161,16 +161,6 @@ Transport getTransport()
 
 /* -------------------------------------------------------------------------- */
 
-MainMenu getMainMenu()
-{
-	MainMenu mainMenu;
-	mainMenu.hasAudioData = g_engine->getChannelsApi().hasChannelsWithAudioData();
-	mainMenu.hasActions   = g_engine->getChannelsApi().hasChannelsWithActions();
-	return mainMenu;
-}
-
-/* -------------------------------------------------------------------------- */
-
 Scenes getScenes()
 {
 	const auto& mainApi = g_engine->getMainApi();

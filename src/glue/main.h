@@ -99,12 +99,6 @@ struct Transport
 	bool canEnableRecOnSignal() const;
 };
 
-struct MainMenu
-{
-	bool hasAudioData;
-	bool hasActions;
-};
-
 struct Scenes
 {
 	std::size_t currentScene;
@@ -119,7 +113,6 @@ Timer     getTimer();
 IO        getIO();
 Sequencer getSequencer();
 Transport getTransport();
-MainMenu  getMainMenu();
 Scenes    getScenes();
 
 void setBeats(int beats, int bars);

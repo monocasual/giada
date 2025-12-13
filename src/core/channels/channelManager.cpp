@@ -588,12 +588,6 @@ bool ChannelManager::hasInputRecordableChannels(std::size_t scene) const
 	{ return ch.canInputRec(scene); });
 }
 
-bool ChannelManager::hasActions() const
-{
-	return m_model.get().tracks.anyChannelOf([](const Channel& ch)
-	{ return ch.hasActions; });
-}
-
 bool ChannelManager::hasAudioData(std::size_t scene) const
 {
 	return m_model.get().tracks.anyChannelOf([scene](const Channel& ch)

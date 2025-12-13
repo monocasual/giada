@@ -74,11 +74,6 @@ public:
 
 	bool hasInputRecordableChannels(std::size_t scene) const;
 
-	/* hasActions
-	True if at least one Channel has actions recorded in it. */
-
-	bool hasActions() const;
-
 	/* hasAudioData
 	True if at least one Sample Channel has some audio recorded in it for the
 	given scene. */
