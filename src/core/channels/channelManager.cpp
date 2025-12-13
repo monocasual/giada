@@ -598,7 +598,7 @@ bool ChannelManager::hasAudioData() const
 {
 	return m_model.get().tracks.anyChannelOf([](const Channel& ch)
 	{
-		return ch.sampleChannel && ch.sampleChannel->hasWave(0);
+		return ch.sampleChannel && ch.sampleChannel->hasWave(0); // TODO - scenes!
 	});
 }
 
