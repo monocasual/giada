@@ -38,9 +38,9 @@ class ActionRecorder;
 
 namespace giada::m::rendering
 {
-void recordSampleKeyPress(ID channelId, std::size_t scene, ChannelShared&, Frame currentFrameQuantized, SamplePlayerMode, ActionRecorder&);
-void recordSampleKeyRelease(ID channelId, std::size_t scene, Frame currentFrameQuantized, ActionRecorder&);
-void recordSampleKeyKill(ID channelId, std::size_t scene, Frame currentFrameQuantized, ActionRecorder&);
+void recordSampleKeyPress(ID channelId, Scene, ChannelShared&, Frame currentFrameQuantized, SamplePlayerMode, ActionRecorder&);
+void recordSampleKeyRelease(ID channelId, Scene, Frame currentFrameQuantized, ActionRecorder&);
+void recordSampleKeyKill(ID channelId, Scene, Frame currentFrameQuantized, ActionRecorder&);
 void killSampleReadActions(ChannelShared&);
 void toggleSampleReadActions(ChannelShared&, bool treatRecsAsLoops, bool seqIsRunning);
 

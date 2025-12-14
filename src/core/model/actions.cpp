@@ -48,10 +48,10 @@ void Actions::clearAll()
 
 /* -------------------------------------------------------------------------- */
 
-void Actions::clearChannel(ID channelId, std::size_t scene)
+void Actions::clearChannel(ID channelId, Scene scene)
 {
 	removeIf([=](const Action& a)
-	{ return a.channelId == channelId && a.scene == scene; });
+	{ return a.channelId == channelId && a.scene.index == scene.index; });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -164,7 +164,7 @@ void Actions::debug() const
 		fmt::print("\tframe: {}\n", frame);
 		for (const Action& a : actions)
 			fmt::print("\t\t({}) - ID={}, scene={}, frame={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
-			    (void*)&a, a.id, a.scene, a.frame, a.channelId, a.event.getRaw(), a.prevId, a.nextId);
+			    (void*)&a, a.id, a.scene.index, a.frame, a.channelId, a.event.getRaw(), a.prevId, a.nextId);
 	}
 }
 
@@ -172,7 +172,7 @@ void Actions::debug() const
 
 /* -------------------------------------------------------------------------- */
 
-Action Actions::rec(ID channelId, std::size_t scene, Frame frame, MidiEvent event)
+Action Actions::rec(ID channelId, Scene scene, Frame frame, MidiEvent event)
 {
 	/* Skip duplicates. */
 
@@ -191,7 +191,7 @@ Action Actions::rec(ID channelId, std::size_t scene, Frame frame, MidiEvent even
 
 /* -------------------------------------------------------------------------- */
 
-void Actions::rec(std::vector<Action>& actions, std::size_t scene)
+void Actions::rec(std::vector<Action>& actions, Scene scene)
 {
 	if (actions.size() == 0)
 		return;
@@ -203,7 +203,7 @@ void Actions::rec(std::vector<Action>& actions, std::size_t scene)
 
 /* -------------------------------------------------------------------------- */
 
-void Actions::rec(ID channelId, std::size_t scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
+void Actions::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
 	m_actions[f1].push_back(actionFactory::makeAction(0, channelId, scene, f1, e1));
 	m_actions[f2].push_back(actionFactory::makeAction(0, channelId, scene, f2, e2));
@@ -240,12 +240,12 @@ Action Actions::getClosestAction(ID channelId, Frame f, int type) const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Action> Actions::getActionsOnChannel(ID channelId, std::size_t scene) const
+std::vector<Action> Actions::getActionsOnChannel(ID channelId, Scene scene) const
 {
 	std::vector<Action> out;
 	forEachAction([&](const Action& a)
 	{
-		if (a.channelId == channelId && a.scene == scene)
+		if (a.channelId == channelId && a.scene.index == scene.index)
 			out.push_back(a);
 	});
 	return out;
@@ -297,18 +297,18 @@ void Actions::removeIf(std::function<bool(const Action&)> f)
 
 /* -------------------------------------------------------------------------- */
 
-bool Actions::exists(ID channelId, std::size_t scene, Frame frame, const MidiEvent& event, const Map& target) const
+bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& event, const Map& target) const
 {
 	for (const auto& [_, actions] : target)
 		for (const Action& a : actions)
-			if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw() && a.scene == scene)
+			if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw() && a.scene.index == scene.index)
 				return true;
 	return false;
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool Actions::exists(ID channelId, std::size_t scene, Frame frame, const MidiEvent& event) const
+bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& event) const
 {
 	return exists(channelId, scene, frame, event, m_actions);
 }

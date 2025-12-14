@@ -43,7 +43,7 @@ public:
 	void refresh();
 
 private:
-	gePlayButton* makeButton(std::size_t scene);
+	gePlayButton* makeButton(Scene);
 
 	SceneArray<gePlayButton*> m_buttons;
 };

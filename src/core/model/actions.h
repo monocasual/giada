@@ -52,7 +52,7 @@ public:
 	/* getActionsOnChannel
 	Returns a vector of actions belonging to channel 'ch'. */
 
-	std::vector<Action> getActionsOnChannel(ID channelId, std::size_t scene) const;
+	std::vector<Action> getActionsOnChannel(ID channelId, Scene) const;
 
 	/* getClosestAction
 	Given a frame 'f' returns the closest action. */
@@ -97,7 +97,7 @@ public:
 	/* clearChannel
 	Clears all actions from a channel in a given scene. */
 
-	void clearChannel(ID channelId, std::size_t scene);
+	void clearChannel(ID channelId, Scene);
 
 	/* clearActions
 	Clears the actions by type from a channel. */
@@ -134,23 +134,23 @@ public:
 	/* rec (1)
 	Records an action and returns it. Used by the Action Editor. */
 
-	Action rec(ID channelId, std::size_t scene, Frame frame, MidiEvent e);
+	Action rec(ID channelId, Scene, Frame frame, MidiEvent e);
 
 	/* rec (2)
 	Transfer a vector of actions into the current ActionMap. This is called by
 	recordHandler when a live session is over and consolidation is required. */
 
-	void rec(std::vector<Action>& actions, std::size_t scene);
+	void rec(std::vector<Action>& actions, Scene);
 
 	/* rec (3)
 	Records two actions on channel 'channel'. Useful when recording composite
 	actions in the Action Editor. */
 
-	void rec(ID channelId, std::size_t scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
+	void rec(ID channelId, Scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 
 private:
-	bool exists(ID channelId, std::size_t scene, Frame frame, const MidiEvent& event, const Map& target) const;
-	bool exists(ID channelId, std::size_t scene, Frame frame, const MidiEvent& event) const;
+	bool exists(ID channelId, Scene, Frame frame, const MidiEvent& event, const Map& target) const;
+	bool exists(ID channelId, Scene, Frame frame, const MidiEvent& event) const;
 
 	Action*       findAction(Map& src, ID id);
 	const Action* findAction(const Map& src, ID id) const;

@@ -104,6 +104,11 @@ struct Sample
 	Frame       shift = 0;
 	float       pitch = 1.0;
 };
+
+struct Scene
+{
+	std::size_t index = G_INVALID_SCENE;
+};
 } // namespace giada
 
 #endif

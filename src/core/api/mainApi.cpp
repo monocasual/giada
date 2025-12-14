@@ -63,7 +63,7 @@ bool MainApi::isRecordingActions() const
 
 bool MainApi::canRecordInput() const
 {
-	const std::size_t scene = m_sequencer.getCurrentScene();
+	const Scene scene = m_sequencer.getCurrentScene();
 	return m_kernelAudio.isInputEnabled() && m_channelManager.hasInputRecordableChannels(scene);
 }
 
@@ -189,12 +189,12 @@ SeqStatus MainApi::getSequencerStatus() const
 
 /* -------------------------------------------------------------------------- */
 
-std::size_t MainApi::getCurrentScene() const
+Scene MainApi::getCurrentScene() const
 {
 	return m_sequencer.getCurrentScene();
 }
 
-std::size_t MainApi::getNextScene() const
+Scene MainApi::getNextScene() const
 {
 	return m_sequencer.getNextScene();
 }
@@ -348,7 +348,7 @@ void MainApi::startActionRecOnCallback()
 
 /* -------------------------------------------------------------------------- */
 
-void MainApi::setScene(std::size_t scene)
+void MainApi::setScene(Scene scene)
 {
 	m_sequencer.setScene(scene);
 	m_reactor.setScene(scene);

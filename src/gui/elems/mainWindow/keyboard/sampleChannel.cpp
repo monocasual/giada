@@ -286,28 +286,28 @@ void geSampleChannel::openMenu()
 			break;
 
 		case Menu::COPY_CHANNEL_TO_SCENE_0:
-			c::channel::copyChannelToScene(channel.id, 0);
+			c::channel::copyChannelToScene(channel.id, {0});
 			break;
 		case Menu::COPY_CHANNEL_TO_SCENE_1:
-			c::channel::copyChannelToScene(channel.id, 1);
+			c::channel::copyChannelToScene(channel.id, {1});
 			break;
 		case Menu::COPY_CHANNEL_TO_SCENE_2:
-			c::channel::copyChannelToScene(channel.id, 2);
+			c::channel::copyChannelToScene(channel.id, {2});
 			break;
 		case Menu::COPY_CHANNEL_TO_SCENE_3:
-			c::channel::copyChannelToScene(channel.id, 3);
+			c::channel::copyChannelToScene(channel.id, {3});
 			break;
 		case Menu::COPY_CHANNEL_TO_SCENE_4:
-			c::channel::copyChannelToScene(channel.id, 4);
+			c::channel::copyChannelToScene(channel.id, {4});
 			break;
 		case Menu::COPY_CHANNEL_TO_SCENE_5:
-			c::channel::copyChannelToScene(channel.id, 5);
+			c::channel::copyChannelToScene(channel.id, {5});
 			break;
 		case Menu::COPY_CHANNEL_TO_SCENE_6:
-			c::channel::copyChannelToScene(channel.id, 6);
+			c::channel::copyChannelToScene(channel.id, {6});
 			break;
 		case Menu::COPY_CHANNEL_TO_SCENE_7:
-			c::channel::copyChannelToScene(channel.id, 7);
+			c::channel::copyChannelToScene(channel.id, {7});
 			break;
 
 		case Menu::RENAME_CHANNEL:

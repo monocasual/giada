@@ -46,9 +46,9 @@ SampleChannel::SampleChannel(const Patch::Channel& p, const SceneArray<Sample>& 
 , mode(p.mode)
 , velocityAsVol(p.midiInVeloAsVol)
 {
-	std::size_t scene = 0;
-	for (const Sample& sample : samples)
-		setSample(sample, scene++, samplerateRatio);
+	std::size_t sceneIndex = 0;
+	for (const Sample& sample : samples) // TODO - use enumerate()
+		setSample(sample, {sceneIndex++}, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -81,35 +81,35 @@ bool SampleChannel::isAnyNonLoopingSingleMode() const
 
 /* -------------------------------------------------------------------------- */
 
-bool SampleChannel::hasWave(std::size_t scene) const { return m_samples[scene].wave != nullptr; }
-bool SampleChannel::hasLogicalWave(std::size_t scene) const { return hasWave(scene) && m_samples[scene].wave->isLogical(); }
-bool SampleChannel::hasEditedWave(std::size_t scene) const { return hasWave(scene) && m_samples[scene].wave->isEdited(); }
+bool SampleChannel::hasWave(Scene scene) const { return m_samples[scene.index].wave != nullptr; }
+bool SampleChannel::hasLogicalWave(Scene scene) const { return hasWave(scene) && m_samples[scene.index].wave->isLogical(); }
+bool SampleChannel::hasEditedWave(Scene scene) const { return hasWave(scene) && m_samples[scene.index].wave->isEdited(); }
 
 /* -------------------------------------------------------------------------- */
 
-Wave* SampleChannel::getWave(std::size_t scene) const
+Wave* SampleChannel::getWave(Scene scene) const
 {
-	return m_samples[scene].wave;
+	return m_samples[scene.index].wave;
 }
 
-ID SampleChannel::getWaveId(std::size_t scene) const
+ID SampleChannel::getWaveId(Scene scene) const
 {
 	if (hasWave(scene))
-		return m_samples[scene].wave->id;
+		return m_samples[scene.index].wave->id;
 	return 0;
 }
 
 /* -------------------------------------------------------------------------- */
 
-SampleRange SampleChannel::getRange(std::size_t scene) const { return m_samples[scene].range; }
+SampleRange SampleChannel::getRange(Scene scene) const { return m_samples[scene.index].range; }
 
 /* -------------------------------------------------------------------------- */
 
-Frame SampleChannel::getShift(std::size_t scene) const { return m_samples[scene].shift; }
+Frame SampleChannel::getShift(Scene scene) const { return m_samples[scene.index].shift; }
 
 /* -------------------------------------------------------------------------- */
 
-float SampleChannel::getPitch(std::size_t scene) const { return m_samples[scene].pitch; }
+float SampleChannel::getPitch(Scene scene) const { return m_samples[scene.index].pitch; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -117,75 +117,75 @@ const SceneArray<Sample>& SampleChannel::getSamples() const { return m_samples; 
 
 /* -------------------------------------------------------------------------- */
 
-const Sample& SampleChannel::getSample(std::size_t scene) const
+const Sample& SampleChannel::getSample(Scene scene) const
 {
-	return m_samples[scene];
+	return m_samples[scene.index];
 }
 
 /* -------------------------------------------------------------------------- */
 
-Frame SampleChannel::getWaveSize(std::size_t scene) const
+Frame SampleChannel::getWaveSize(Scene scene) const
 {
-	return hasWave(scene) ? m_samples[scene].wave->getBuffer().countFrames() : 0;
+	return hasWave(scene) ? m_samples[scene.index].wave->getBuffer().countFrames() : 0;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::loadSample(const Sample& s, std::size_t scene)
+void SampleChannel::loadSample(const Sample& s, Scene scene)
 {
-	m_samples[scene] = s;
+	m_samples[scene.index] = s;
 
 	if (s.wave != nullptr)
 	{
-		m_samples[scene].shift = s.shift == -1 ? 0 : s.shift;
-		m_samples[scene].range = s.range.isValid() ? s.range : SampleRange(0, s.wave->getBuffer().countFrames());
+		m_samples[scene.index].shift = s.shift == -1 ? 0 : s.shift;
+		m_samples[scene.index].range = s.range.isValid() ? s.range : SampleRange(0, s.wave->getBuffer().countFrames());
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::setWave(Wave* w, std::size_t scene, float samplerateRatio)
+void SampleChannel::setWave(Wave* w, Scene scene, float samplerateRatio)
 {
-	m_samples[scene].wave = w;
+	m_samples[scene.index].wave = w;
 	if (w != nullptr)
 		adjustSampleByRate(scene, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::setRange(SampleRange newRange, std::size_t scene)
+void SampleChannel::setRange(SampleRange newRange, Scene scene)
 {
-	m_samples[scene].range = newRange;
+	m_samples[scene.index].range = newRange;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::setSample(const Sample& sample, std::size_t scene, float samplerateRatio)
+void SampleChannel::setSample(const Sample& sample, Scene scene, float samplerateRatio)
 {
-	m_samples[scene] = sample;
+	m_samples[scene.index] = sample;
 	if (sample.wave != nullptr)
 		adjustSampleByRate(scene, samplerateRatio);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::setShift(Frame shift, std::size_t scene)
+void SampleChannel::setShift(Frame shift, Scene scene)
 {
-	m_samples[scene].shift = shift;
+	m_samples[scene.index].shift = shift;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::setPitch(float pitch, std::size_t scene)
+void SampleChannel::setPitch(float pitch, Scene scene)
 {
-	m_samples[scene].pitch = pitch;
+	m_samples[scene.index].pitch = pitch;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::adjustSampleByRate(std::size_t scene, float samplerateRatio)
+void SampleChannel::adjustSampleByRate(Scene scene, float samplerateRatio)
 {
-	m_samples[scene].range *= samplerateRatio;
-	m_samples[scene].shift *= samplerateRatio;
+	m_samples[scene.index].range *= samplerateRatio;
+	m_samples[scene.index].shift *= samplerateRatio;
 }
 } // namespace giada::m

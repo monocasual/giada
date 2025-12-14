@@ -114,12 +114,12 @@ void onNoteOn_(ChannelShared& shared, Frame localFrame, SamplePlayerMode mode, f
 
 /* -------------------------------------------------------------------------- */
 
-void parseActions_(ID channelId, std::size_t scene, ChannelShared& shared, const std::vector<Action>& as,
+void parseActions_(ID channelId, Scene scene, ChannelShared& shared, const std::vector<Action>& as,
     Frame localFrame, SamplePlayerMode mode)
 {
 	for (const Action& a : as)
 	{
-		if (a.channelId != channelId || a.scene != scene)
+		if (a.channelId != channelId || a.scene.index != scene.index)
 			continue;
 
 		switch (a.event.getStatus())

@@ -285,7 +285,7 @@ void toggleInputRecording() { g_engine->getMainApi().toggleInputRecording(); }
 
 /* -------------------------------------------------------------------------- */
 
-void setScene(std::size_t scene) { g_engine->getMainApi().setScene(scene); }
+void setScene(Scene scene) { g_engine->getMainApi().setScene(scene); }
 
 /* -------------------------------------------------------------------------- */
 

@@ -72,13 +72,13 @@ public:
 	/* hasInputRecordableChannels
 	Tells whether Mixer has one or more input-recordable channels. */
 
-	bool hasInputRecordableChannels(std::size_t scene) const;
+	bool hasInputRecordableChannels(Scene) const;
 
 	/* hasAudioData
 	True if at least one Sample Channel has some audio recorded in it for the
 	given scene. */
 
-	bool hasAudioData(std::size_t scene) const;
+	bool hasAudioData(Scene) const;
 
 	/* hasSolos
 	True if there are soloed channels. */
@@ -126,40 +126,40 @@ public:
 	/* loadSampleChannel (1)
 	Creates a new Wave from a file path and loads it inside a Sample Channel. */
 
-	int loadSampleChannel(ID channelId, const std::string&, int sampleRate, Resampler::Quality, std::size_t scene);
+	int loadSampleChannel(ID channelId, const std::string&, int sampleRate, Resampler::Quality, Scene);
 
 	/* loadSampleChannel (2)
 	Loads an existing Wave inside a Sample Channel. */
 
-	void loadSampleChannel(ID channelId, Wave&, std::size_t scene);
+	void loadSampleChannel(ID channelId, Wave&, Scene);
 
 	/* freeChannel
 	Unloads existing Wave from a Sample Channel. Pass G_INVALID_SCENE as 'scene' parameter
 	to remove all Waves from all scenes. */
 
-	void freeSampleChannel(ID channelId, std::size_t scene);
+	void freeSampleChannel(ID channelId, Scene);
 
-	void freeAllSampleChannels(std::size_t scene);
+	void freeAllSampleChannels(Scene);
 
 	void moveChannel(ID, std::size_t newTrackIndex, std::size_t newPosition);
 	void deleteChannel(ID channelId);
-	void renameChannel(ID channelId, const std::string& name, std::size_t scene);
+	void renameChannel(ID channelId, const std::string& name, Scene);
 
 	/* cloneChannel
 	Creates a duplicate of Channel. Wants a vector of already cloned plug-ins. */
 
-	void cloneChannel(ID channelId, std::size_t scene, int bufferSize, const std::vector<Plugin*>&);
+	void cloneChannel(ID channelId, Scene, int bufferSize, const std::vector<Plugin*>&);
 
 	/* copyChannelToScene
 	Copies channel's data between scenes. */
 
-	void copyChannelToScene(ID channelId, std::size_t srcScene, std::size_t dstScene);
+	void copyChannelToScene(ID channelId, Scene srcScene, Scene dstScene);
 
 	/* finalizeInputRec
 	Fills armed Sample channel with audio data coming from an input recording
 	session. */
 
-	void finalizeInputRec(const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame, std::size_t scene);
+	void finalizeInputRec(const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame, Scene);
 
 	/* finalizeActionRec
 	Enable reading actions for Channels that have just been filled with actions
@@ -171,10 +171,10 @@ public:
 
 	void setInputMonitor(ID channelId, bool value);
 	void setVolume(ID channelId, float value);
-	void setPitch(ID channelId, float value, std::size_t scene);
+	void setPitch(ID channelId, float value, Scene);
 	void setPan(ID channelId, float value);
-	void setRange(ID channelId, SampleRange, std::size_t scene);
-	void resetRange(ID channelId, std::size_t scene);
+	void setRange(ID channelId, SampleRange, Scene);
+	void resetRange(ID channelId, Scene);
 	void toggleArm(ID channelId);
 	void setOverdubProtection(ID channelId, bool value);
 	void setSamplePlayerMode(ID channelId, SamplePlayerMode);
@@ -182,7 +182,7 @@ public:
 	void setSendToMaster(ID channelId, bool value);
 	void addExtraOutput(ID channelId, int offset);
 	void removeExtraOutput(ID channelId, std::size_t);
-	void loadWaveInPreviewChannel(ID sourceChannelId, std::size_t scene);
+	void loadWaveInPreviewChannel(ID sourceChannelId, Scene);
 	void freeWaveInPreviewChannel();
 	void setPreviewTracker(Frame f);
 	bool saveSample(ID channelId, const std::string& filePath);
@@ -205,7 +205,7 @@ public:
 	std::function<void(ID, ChannelStatus)> onChannelPlayStatusChanged;
 
 private:
-	void loadSampleChannel(Channel&, Wave*, std::size_t scene) const;
+	void loadSampleChannel(Channel&, Wave*, Scene) const;
 
 	/* setupChannelCallbacks
 	Prepares the channel with the necessary callbacks. Call this whenever a
@@ -213,8 +213,8 @@ private:
 
 	void setupChannelCallbacks(const Channel&, ChannelShared&) const;
 
-	std::vector<Channel*> getRecordableChannels(std::size_t scene);
-	std::vector<Channel*> getOverdubbableChannels(std::size_t scene);
+	std::vector<Channel*> getRecordableChannels(Scene);
+	std::vector<Channel*> getOverdubbableChannels(Scene);
 
 	/* setupChannelPostRecording
 	Fnialize the Sample channel after an audio recording session. */
@@ -224,13 +224,13 @@ private:
 	/* recordChannel
 	Records the current Mixer audio input data into an empty channel. */
 
-	void recordChannel(Channel&, const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame, std::size_t scene);
+	void recordChannel(Channel&, const mcl::AudioBuffer&, Frame recordedFrames, Frame currentFrame, Scene);
 
 	/* overdubChannel
 	Records the current Mixer audio input data into a channel with an existing
 	Wave, overdub mode. */
 
-	void overdubChannel(Channel&, const mcl::AudioBuffer&, Frame currentFrame, std::size_t scene);
+	void overdubChannel(Channel&, const mcl::AudioBuffer&, Frame currentFrame, Scene);
 
 	void triggerOnChannelsAltered();
 

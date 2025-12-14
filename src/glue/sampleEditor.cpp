@@ -34,7 +34,7 @@ extern giada::m::Engine* g_engine;
 
 namespace giada::c::sampleEditor
 {
-Data::Data(const m::Channel& c, std::size_t scene)
+Data::Data(const m::Channel& c, Scene scene)
 : channelId(c.id)
 , scene(scene)
 , name(c.getName(scene))
@@ -90,7 +90,7 @@ Frame Data::getFramesInLoop() const
 Data getData(ID channelId)
 {
 	const m::Channel& channel = g_engine->getChannelsApi().get(channelId);
-	const std::size_t scene   = g_engine->getMainApi().getCurrentScene();
+	const Scene       scene   = g_engine->getMainApi().getCurrentScene();
 
 	return Data(channel, scene);
 }

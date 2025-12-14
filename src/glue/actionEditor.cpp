@@ -44,7 +44,7 @@ SampleData::SampleData(const m::SampleChannel& s)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::Channel& c, std::size_t scene)
+Data::Data(const m::Channel& c, Scene scene)
 : channelId(c.id)
 , scene(scene)
 , channelName(c.getName(scene))

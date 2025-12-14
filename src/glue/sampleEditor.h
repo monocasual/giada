@@ -52,7 +52,7 @@ namespace giada::c::sampleEditor
 struct Data
 {
 	Data() = default;
-	Data(const m::Channel&, std::size_t scene);
+	Data(const m::Channel&, Scene scene);
 
 	bool          isValid() const;
 	ChannelStatus a_getPreviewStatus() const;
@@ -61,7 +61,7 @@ struct Data
 	Frame         getFramesInLoop() const;
 
 	ID          channelId;
-	std::size_t scene;
+	Scene       scene;
 	std::string name;
 	float       volume;
 	float       pan;

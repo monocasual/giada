@@ -92,7 +92,7 @@ protected:
 	/* updateTitleWithScene
 	Updates window title with the current scene being edited. */
 
-	void updateTitleWithScene(std::size_t scene);
+	void updateTitleWithScene(Scene);
 
 	geImageButton*   m_zoomInBtn;
 	geImageButton*   m_zoomOutBtn;

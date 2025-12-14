@@ -67,7 +67,7 @@ void printLoadError_(int res)
 
 /* -------------------------------------------------------------------------- */
 
-Data makeData_(ID channelId, const m::model::Track& modelTrack, std::size_t scene)
+Data makeData_(ID channelId, const m::model::Track& modelTrack, Scene scene)
 {
 	const std::size_t channelIndex = modelTrack.getChannelIndex(channelId);
 	const std::size_t trackIndex   = modelTrack.getIndex();
@@ -76,7 +76,7 @@ Data makeData_(ID channelId, const m::model::Track& modelTrack, std::size_t scen
 
 /* -------------------------------------------------------------------------- */
 
-Track makeTrack_(const m::model::Track& modelTrack, std::size_t scene)
+Track makeTrack_(const m::model::Track& modelTrack, Scene scene)
 {
 	Track track{modelTrack.getIndex(), modelTrack.width, {}};
 
@@ -91,7 +91,7 @@ Track makeTrack_(const m::model::Track& modelTrack, std::size_t scene)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-SampleData::SampleData(const m::Channel& ch, std::size_t scene)
+SampleData::SampleData(const m::Channel& ch, Scene scene)
 : waveId(ch.sampleChannel->getWaveId(scene))
 , mode(ch.sampleChannel->mode)
 , isLoop(ch.sampleChannel->isAnyLoopMode())
@@ -115,7 +115,7 @@ MidiData::MidiData(const m::Channel& m)
 
 /* -------------------------------------------------------------------------- */
 
-Data::Data(const m::Channel& c, std::size_t scene, std::size_t trackIndex, std::size_t channelIndex)
+Data::Data(const m::Channel& c, Scene scene, std::size_t trackIndex, std::size_t channelIndex)
 : id(c.id)
 , trackIndex(trackIndex)
 , channelIndex(channelIndex)
@@ -155,13 +155,13 @@ bool          Data::isActive() const { return g_engine->getChannelsApi().get(id)
 
 Data getData(ID channelId)
 {
-	const std::size_t scene = g_engine->getMainApi().getCurrentScene();
+	const Scene scene = g_engine->getMainApi().getCurrentScene();
 	return makeData_(channelId, g_engine->getChannelsApi().getTracks().getByChannel(channelId), scene);
 }
 
 std::vector<Track> getTracks()
 {
-	const std::size_t  scene = g_engine->getMainApi().getCurrentScene();
+	const Scene        scene = g_engine->getMainApi().getCurrentScene();
 	std::vector<Track> out;
 	for (const m::model::Track& modelTrack : g_engine->getChannelsApi().getTracks().getAll())
 		if (!modelTrack.isInternal())
@@ -274,7 +274,7 @@ void cloneChannel(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void copyChannelToScene(ID channelId, std::size_t dstScene)
+void copyChannelToScene(ID channelId, Scene dstScene)
 {
 	g_engine->getChannelsApi().copyToScene(channelId, dstScene);
 }

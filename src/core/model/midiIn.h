@@ -53,11 +53,11 @@ struct MidiIn
 	bool hasScene(uint32_t) const;
 
 	/* getScene
-	Returns the scene index, given a certain MIDI learn value. */
+	Returns the corresponding scene given a certain MIDI learn value. */
 
-	std::size_t getScene(uint32_t) const;
+	Scene getScene(uint32_t) const;
 
-	void setScene(std::size_t scene, uint32_t);
+	void setScene(Scene scene, uint32_t);
 };
 } // namespace giada::m::model
 

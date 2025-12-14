@@ -71,7 +71,7 @@ public:
 		Frame                      global  = 0;
 		Frame                      delta   = 0;
 		const std::vector<Action>* actions = nullptr;
-		std::size_t                scene   = 0;
+		Scene                      scene   = {0};
 	};
 
 	using EventBuffer = RingBuffer<Event, G_MAX_SEQUENCER_EVENTS>;
@@ -114,8 +114,8 @@ public:
 	int         getQuantizerStep() const;
 	SeqStatus   getStatus() const;
 	int         getMaxFramesInLoop(int sampleRate) const;
-	std::size_t getCurrentScene() const;
-	std::size_t getNextScene() const;
+	Scene       getCurrentScene() const;
+	Scene       getNextScene() const;
 	SceneStatus getSceneStatus() const;
 
 	/* calcBpmFromRec
@@ -168,12 +168,12 @@ public:
 	/* forceScene
 	Force-changes to the requested scene. */
 
-	void forceScene(std::size_t);
+	void forceScene(Scene);
 
 	/* setScene
 	Prepares for the requested scene, which will be set at the next first beat. */
 
-	void setScene(std::size_t);
+	void setScene(Scene);
 
 #ifdef WITH_AUDIO_JACK
 	void jack_start();

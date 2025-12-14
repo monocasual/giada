@@ -58,7 +58,7 @@ namespace giada::c::channel
 struct SampleData
 {
 	SampleData() = delete;
-	SampleData(const m::Channel&, std::size_t scene);
+	SampleData(const m::Channel&, Scene);
 
 	Frame getTracker() const;
 
@@ -85,7 +85,7 @@ struct MidiData
 
 struct Data
 {
-	Data(const m::Channel&, std::size_t scene, std::size_t trackIndex, std::size_t channelIndex);
+	Data(const m::Channel&, Scene, std::size_t trackIndex, std::size_t channelIndex);
 
 	ChannelStatus getPlayStatus() const;
 	ChannelStatus getRecStatus() const;
@@ -188,7 +188,7 @@ void cloneChannel(ID channelId);
 /* copyChannelToScene
 Copies channel's content (Wave, actions, ...) from the current scene to dstScene. */
 
-void copyChannelToScene(ID channelId, std::size_t dstScene);
+void copyChannelToScene(ID channelId, Scene dstScene);
 
 /* moveChannel
 Moves channel with channelId to track at 'trackIndex' at 'position'. */

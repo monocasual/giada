@@ -72,8 +72,8 @@ public:
 	int               getFramesInSeq() const;
 	int               getFramesInBeat() const;
 	SeqStatus         getSequencerStatus() const;
-	std::size_t       getCurrentScene() const;
-	std::size_t       getNextScene() const;
+	Scene             getCurrentScene() const;
+	Scene             getNextScene() const;
 	SceneStatus       getSceneStatus() const;
 
 	void toggleMetronome();
@@ -97,7 +97,7 @@ public:
 	void stopInputRecording();
 	void toggleInputRecording();
 	void startActionRecOnCallback();
-	void setScene(std::size_t);
+	void setScene(Scene);
 
 private:
 	KernelAudio&        m_kernelAudio;

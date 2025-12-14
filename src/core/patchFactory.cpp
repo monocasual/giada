@@ -199,7 +199,7 @@ void readActions_(Patch& patch, const nlohmann::json& j)
 		Patch::Action a;
 		a.id        = jaction.value(G_PATCH_KEY_ACTION_ID, ++id);
 		a.channelId = jaction.value(G_PATCH_KEY_ACTION_CHANNEL, 0);
-		a.scene     = jaction.value(G_PATCH_KEY_ACTION_SCENE, 0);
+		a.scene     = jaction.value(G_PATCH_KEY_ACTION_SCENE, Patch::Scene{0});
 		a.frame     = jaction.value(G_PATCH_KEY_ACTION_FRAME, 0);
 		a.event     = jaction.value(G_PATCH_KEY_ACTION_EVENT, 0);
 		a.prevId    = jaction.value(G_PATCH_KEY_ACTION_PREV, 0);

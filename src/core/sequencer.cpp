@@ -82,8 +82,8 @@ int         Sequencer::getQuantizerValue() const { return m_model.get().sequence
 int         Sequencer::getQuantizerStep() const { return m_quantizerStep; }
 SeqStatus   Sequencer::getStatus() const { return m_model.get().sequencer.status; }
 int         Sequencer::getMaxFramesInLoop(int sampleRate) const { return m_model.get().sequencer.getMaxFramesInLoop(sampleRate); }
-std::size_t Sequencer::getCurrentScene() const { return m_model.get().sequencer.a_getCurrentScene(); }
-std::size_t Sequencer::getNextScene() const { return m_model.get().sequencer.a_getNextScene(); }
+Scene       Sequencer::getCurrentScene() const { return m_model.get().sequencer.a_getCurrentScene(); }
+Scene       Sequencer::getNextScene() const { return m_model.get().sequencer.a_getNextScene(); }
 SceneStatus Sequencer::getSceneStatus() const { return m_model.get().sequencer.a_getSceneStatus(); }
 
 /* -------------------------------------------------------------------------- */
@@ -139,9 +139,9 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 	const Frame framesInBeat = sequencer.framesInBeat;
 	const Frame nextFrame    = end % framesInLoop;
 
-	const std::size_t currentScene = sequencer.a_getCurrentScene();
-	const std::size_t nextScene    = sequencer.a_getNextScene();
-	bool              sceneChanged = false;
+	const Scene currentScene = sequencer.a_getCurrentScene();
+	const Scene nextScene    = sequencer.a_getNextScene();
+	bool        sceneChanged = false;
 
 	/* Process events in the current block. */
 
@@ -153,7 +153,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		{
 			m_eventBuffer.push_back({EventType::FIRST_BEAT, global, local});
 			m_metronome.trigger(Metronome::Click::BEAT, local);
-			if (currentScene != nextScene)
+			if (currentScene.index != nextScene.index)
 			{
 				assert(onSceneChanged != nullptr);
 				sequencer.a_setCurrentScene(nextScene);
@@ -400,20 +400,20 @@ void Sequencer::goToBeat(int beat, int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::forceScene(std::size_t scene)
+void Sequencer::forceScene(Scene scene)
 {
-	assert(scene < G_MAX_NUM_SCENES);
+	assert(scene.index < G_MAX_NUM_SCENES);
 
 	m_model.get().sequencer.a_setCurrentScene(scene);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::setScene(std::size_t scene)
+void Sequencer::setScene(Scene scene)
 {
-	assert(scene < G_MAX_NUM_SCENES);
+	assert(scene.index < G_MAX_NUM_SCENES);
 
-	if (scene == m_model.get().sequencer.a_getCurrentScene())
+	if (scene.index == m_model.get().sequencer.a_getCurrentScene().index)
 		return;
 	if (!isRunning())
 		m_model.get().sequencer.a_setCurrentScene(scene);

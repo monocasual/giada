@@ -137,7 +137,7 @@ bool Channel::isAudible(bool mixerHasSolos) const
 	return !mixerHasSolos || (mixerHasSolos && isSoloed());
 }
 
-bool Channel::canInputRec(std::size_t scene) const
+bool Channel::canInputRec(Scene scene) const
 {
 	if (type != ChannelType::SAMPLE)
 		return false;
@@ -149,12 +149,12 @@ bool Channel::canInputRec(std::size_t scene) const
 	return armed && canOverdub;
 }
 
-bool Channel::canActionRec(std::size_t scene) const
+bool Channel::canActionRec(Scene scene) const
 {
 	return hasWave(scene) && !sampleChannel->isAnyLoopMode();
 }
 
-bool Channel::hasWave(std::size_t scene) const
+bool Channel::hasWave(Scene scene) const
 {
 	return sampleChannel && sampleChannel->hasWave(scene);
 }
@@ -175,7 +175,7 @@ bool Channel::isActive() const
 
 /* -------------------------------------------------------------------------- */
 
-std::string                    Channel::getName(std::size_t scene) const { return m_names[scene]; }
+std::string                    Channel::getName(Scene scene) const { return m_names[scene.index]; }
 const SceneArray<std::string>& Channel::getNames() const { return m_names; };
 
 /* -------------------------------------------------------------------------- */
@@ -227,11 +227,11 @@ void Channel::setSolo(bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::setName(const std::string& name, std::size_t scene) { m_names[scene] = name; }
+void Channel::setName(const std::string& name, Scene scene) { m_names[scene.index] = name; }
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::loadSample(const Sample& s, std::size_t scene)
+void Channel::loadSample(const Sample& s, Scene scene)
 {
 	assert(sampleChannel);
 
@@ -243,7 +243,7 @@ void Channel::loadSample(const Sample& s, std::size_t scene)
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::setWave(Wave* w, std::size_t scene, float samplerateRatio)
+void Channel::setWave(Wave* w, Scene scene, float samplerateRatio)
 {
 	assert(sampleChannel);
 

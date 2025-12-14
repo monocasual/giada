@@ -38,19 +38,19 @@ bool MidiIn::hasScene(uint32_t val) const
 
 /* -------------------------------------------------------------------------- */
 
-std::size_t MidiIn::getScene(uint32_t val) const
+Scene MidiIn::getScene(uint32_t val) const
 {
 	assert(hasScene(val));
 
-	return utils::vector::indexOf(scenes, val);
+	return Scene{static_cast<std::size_t>(utils::vector::indexOf(scenes, val))};
 }
 
 /* -------------------------------------------------------------------------- */
 
-void MidiIn::setScene(std::size_t scene, uint32_t val)
+void MidiIn::setScene(Scene scene, uint32_t val)
 {
-	assert(scene < scenes.size());
+	assert(scene.index < scenes.size());
 
-	scenes[scene] = val;
+	scenes[scene.index] = val;
 }
 } // namespace giada::m::model

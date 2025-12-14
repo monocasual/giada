@@ -88,14 +88,14 @@ float Sequencer::a_getCurrentSecond(int sampleRate) const
 
 /* -------------------------------------------------------------------------- */
 
-std::size_t Sequencer::a_getCurrentScene() const
+Scene Sequencer::a_getCurrentScene() const
 {
-	return shared->currentScene.load();
+	return {shared->currentSceneIndex.load()};
 }
 
-std::size_t Sequencer::a_getNextScene() const
+Scene Sequencer::a_getNextScene() const
 {
-	return shared->nextScene.load();
+	return {shared->nextSceneIndex.load()};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -130,14 +130,14 @@ void Sequencer::a_setCurrentBeat(int b, int sampleRate) const
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::a_setCurrentScene(std::size_t scene) const
+void Sequencer::a_setCurrentScene(Scene scene) const
 {
-	shared->currentScene.store(scene);
+	shared->currentSceneIndex.store(scene.index);
 }
 
-void Sequencer::a_setNextScene(std::size_t scene) const
+void Sequencer::a_setNextScene(Scene scene) const
 {
-	shared->nextScene.store(scene);
+	shared->nextSceneIndex.store(scene.index);
 }
 
 /* -------------------------------------------------------------------------- */

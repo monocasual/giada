@@ -101,8 +101,8 @@ struct Transport
 
 struct Scenes
 {
-	std::size_t currentScene;
-	std::size_t nextScene;
+	Scene       currentScene;
+	Scene       nextScene;
 	SceneStatus status;
 };
 
@@ -142,7 +142,7 @@ void stopActionRecording();
 void toggleActionRecording();
 void stopInputRecording();
 void toggleInputRecording();
-void setScene(std::size_t);
+void setScene(Scene);
 
 #if G_DEBUG_MODE
 void printDebugInfo();

@@ -63,8 +63,8 @@ public:
 	Frame       a_getCurrentFrame() const;
 	Frame       a_getCurrentBeat() const;
 	float       a_getCurrentSecond(int sampleRate) const;
-	std::size_t a_getCurrentScene() const;
-	std::size_t a_getNextScene() const;
+	Scene       a_getCurrentScene() const;
+	Scene       a_getNextScene() const;
 	SceneStatus a_getSceneStatus() const;
 
 	/* getMaxFramesInLoop
@@ -75,8 +75,8 @@ public:
 
 	void a_setCurrentFrame(Frame f, int sampleRate) const;
 	void a_setCurrentBeat(int b, int sampleRate) const;
-	void a_setCurrentScene(std::size_t) const;
-	void a_setNextScene(std::size_t) const;
+	void a_setCurrentScene(Scene) const;
+	void a_setNextScene(Scene) const;
 	void a_setSceneStatus(SceneStatus) const;
 
 	SeqStatus status       = SeqStatus::STOPPED;
@@ -93,10 +93,10 @@ public:
 private:
 	struct Shared
 	{
-		WeakAtomic<Frame>       currentFrame = 0;
-		WeakAtomic<int>         currentBeat  = 0;
-		WeakAtomic<std::size_t> currentScene = 0;
-		WeakAtomic<std::size_t> nextScene    = 0;
+		WeakAtomic<Frame>       currentFrame      = 0;
+		WeakAtomic<int>         currentBeat       = 0;
+		WeakAtomic<std::size_t> currentSceneIndex = 0;
+		WeakAtomic<std::size_t> nextSceneIndex    = 0;
 
 		/* m_sceneStatus
 		IDLE = current scene selected. CHANGING = a change of scene has been requested

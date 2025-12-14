@@ -108,13 +108,13 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 	/* Then render Mixer, channels and finalize output. */
 
-	const int         maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
-	const std::size_t scene          = sequencer.a_getCurrentScene();
-	const bool        hasSolos       = mixer.hasSolos;
-	const bool        hasInput       = in.isAllocd();
-	const Channel&    masterOutCh    = tracks.getChannel(MASTER_OUT_CHANNEL_ID);
-	const Channel&    masterInCh     = tracks.getChannel(MASTER_IN_CHANNEL_ID);
-	const Channel&    previewCh      = tracks.getChannel(PREVIEW_CHANNEL_ID);
+	const int      maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
+	const Scene    scene          = sequencer.a_getCurrentScene();
+	const bool     hasSolos       = mixer.hasSolos;
+	const bool     hasInput       = in.isAllocd();
+	const Channel& masterOutCh    = tracks.getChannel(MASTER_OUT_CHANNEL_ID);
+	const Channel& masterInCh     = tracks.getChannel(MASTER_IN_CHANNEL_ID);
+	const Channel& previewCh      = tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	m_mixer.render(in, document_RT, maxFramesToRec);
 
@@ -167,7 +167,7 @@ void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& e
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& masterOut,
-    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, std::size_t scene, bool hasSolos,
+    mcl::AudioBuffer& hardwareOut, const mcl::AudioBuffer& in, Scene scene, bool hasSolos,
     bool seqIsRunning) const
 {
 	masterOut.clear();
@@ -205,7 +205,7 @@ void Renderer::renderTracks(const model::Tracks& tracks, mcl::AudioBuffer& maste
 /* -------------------------------------------------------------------------- */
 
 void Renderer::renderNormalChannel(const Channel& ch, const mcl::AudioBuffer& in,
-    std::size_t scene, bool seqIsRunning) const
+    Scene scene, bool seqIsRunning) const
 {
 	ch.shared->audioBuffer.clear();
 
@@ -237,14 +237,14 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 	ch.shared->audioBuffer.clear();
 
 	if (ch.isPlaying())
-		rendering::renderSampleChannel(ch, /*scene=*/0, /*seqIsRunning=*/false); // Sequencer status and scene are irrelevant here
+		rendering::renderSampleChannel(ch, /*scene=*/{0}, /*seqIsRunning=*/false); // Sequencer status and scene are irrelevant here
 
 	out.sumAll(ch.shared->audioBuffer, ch.volume);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Renderer::renderSampleChannel(const Channel& ch, const mcl::AudioBuffer& in, std::size_t scene, bool seqIsRunning) const
+void Renderer::renderSampleChannel(const Channel& ch, const mcl::AudioBuffer& in, Scene scene, bool seqIsRunning) const
 {
 	assert(ch.type == ChannelType::SAMPLE);
 

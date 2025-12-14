@@ -52,7 +52,7 @@ public:
 	True if free loop-length can be enabled: Can't set it if there's already a
 	filled Sample Channel in the selected scene. */
 
-	bool canEnableFreeInputRec(std::size_t scene) const;
+	bool canEnableFreeInputRec(Scene) const;
 
 	/* canRecordActions
 	True if actions are recordable right now. */

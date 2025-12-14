@@ -67,11 +67,11 @@ void registerOnSendMidiCb(std::function<void(ID)> f)
 
 /* -------------------------------------------------------------------------- */
 
-void sendMidiFromActions(const Channel& ch, std::size_t scene, const std::vector<Action>& actions, Frame delta, KernelMidi& kernelMidi)
+void sendMidiFromActions(const Channel& ch, Scene scene, const std::vector<Action>& actions, Frame delta, KernelMidi& kernelMidi)
 {
 	for (const Action& action : actions)
 	{
-		if (action.channelId != ch.id || action.scene != scene)
+		if (action.channelId != ch.id || action.scene.index != scene.index)
 			continue;
 		sendMidiToPlugins_(ch.shared->midiQueue, action.event, delta);
 		if (ch.canSendMidi())

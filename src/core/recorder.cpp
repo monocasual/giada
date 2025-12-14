@@ -137,7 +137,7 @@ void Recorder::stopInputRec(int sampleRate)
 	const RecTriggerMode recTriggerMode = m_mixer.getRecTriggerMode();
 	const InputRecMode   recMode        = m_mixer.getInputRecMode();
 	Frame                recordedFrames = m_mixer.stopInputRec();
-	const std::size_t    scene          = m_sequencer.getCurrentScene();
+	const Scene          scene          = m_sequencer.getCurrentScene();
 
 	/* Restore record trigger mode to normal in case you want to record again
 	while the sequencer is running - if in SIGNAL mode, the sequencer would
@@ -218,7 +218,7 @@ void Recorder::toggleFreeInputRec()
 /* -------------------------------------------------------------------------- */
 
 bool Recorder::canEnableRecOnSignal() const { return !m_sequencer.isRunning(); }
-bool Recorder::canEnableFreeInputRec(std::size_t scene) const { return !m_channelManager.hasAudioData(scene); }
+bool Recorder::canEnableFreeInputRec(Scene scene) const { return !m_channelManager.hasAudioData(scene); }
 
 /* -------------------------------------------------------------------------- */
 

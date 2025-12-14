@@ -43,7 +43,7 @@ Reactor::Reactor(model::Model& model, MidiMapper<KernelMidi>& m, ActionRecorder&
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::keyPress(ID channelId, std::size_t scene, float velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized)
+void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
@@ -80,7 +80,7 @@ void Reactor::keyPress(ID channelId, std::size_t scene, float velocity, bool can
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::keyRelease(ID channelId, std::size_t scene, bool canRecordActions, Frame currentFrameQuantized)
+void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Frame currentFrameQuantized)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
@@ -117,7 +117,7 @@ void Reactor::keyRelease(ID channelId, std::size_t scene, bool canRecordActions,
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::keyKill(ID channelId, std::size_t scene, bool canRecordActions, Frame currentFrameQuantized)
+void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Frame currentFrameQuantized)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
@@ -155,7 +155,7 @@ void Reactor::keyKill(ID channelId, std::size_t scene, bool canRecordActions, Fr
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::processMidiEvent(ID channelId, std::size_t scene, const MidiEvent& e, bool canRecordActions, Frame currentFrameQuantized)
+void Reactor::processMidiEvent(ID channelId, Scene scene, const MidiEvent& e, bool canRecordActions, Frame currentFrameQuantized)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
@@ -294,7 +294,7 @@ void Reactor::rewindAll()
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::setScene(std::size_t scene)
+void Reactor::setScene(Scene scene)
 {
 	/* Stop all channels that don't have a Wave to play for the selected scene. */
 

@@ -83,7 +83,7 @@ void rewindMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
 
 /* -------------------------------------------------------------------------- */
 
-void recordMidiAction(ID channelId, std::size_t scene, const MidiEvent& event, Frame currentFrameQuantized, ActionRecorder& actionRecorder)
+void recordMidiAction(ID channelId, Scene scene, const MidiEvent& event, Frame currentFrameQuantized, ActionRecorder& actionRecorder)
 {
 	MidiEvent flat(event);
 	flat.setChannel(0);

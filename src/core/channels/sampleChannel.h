@@ -42,36 +42,36 @@ public:
 	bool        isAnyLoopMode() const;
 	bool        isAnyLoopOnceMode() const;
 	bool        isAnyNonLoopingSingleMode() const;
-	bool        hasWave(std::size_t scene) const;
-	bool        hasLogicalWave(std::size_t scene) const;
-	bool        hasEditedWave(std::size_t scene) const;
-	ID          getWaveId(std::size_t scene) const;
-	Frame       getWaveSize(std::size_t scene) const;
-	Wave*       getWave(std::size_t scene) const;
-	SampleRange getRange(std::size_t scene) const;
-	Frame       getShift(std::size_t scene) const;
-	float       getPitch(std::size_t scene) const;
+	bool        hasWave(Scene) const;
+	bool        hasLogicalWave(Scene) const;
+	bool        hasEditedWave(Scene) const;
+	ID          getWaveId(Scene) const;
+	Frame       getWaveSize(Scene) const;
+	Wave*       getWave(Scene) const;
+	SampleRange getRange(Scene) const;
+	Frame       getShift(Scene) const;
+	float       getPitch(Scene) const;
 
 	const SceneArray<Sample>& getSamples() const;
-	const Sample&             getSample(std::size_t scene) const;
+	const Sample&             getSample(Scene) const;
 
 	/* loadSample
 	Loads Wave and sets it up (name, markers, ...). Resets begin/end points
 	and shift if not specified (-1). */
 
-	void loadSample(const Sample&, std::size_t scene);
+	void loadSample(const Sample&, Scene);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The
 	ratio is used to adjust begin/end points in case of patch vs. conf sample
 	rate mismatch. If nullptr, set the wave to invalid. */
 
-	void setWave(Wave* w, std::size_t scene, float samplerateRatio);
+	void setWave(Wave* w, Scene, float samplerateRatio);
 
-	void setRange(SampleRange, std::size_t scene);
-	void setSample(const Sample&, std::size_t scene, float samplerateRatio);
-	void setShift(Frame, std::size_t scene);
-	void setPitch(float, std::size_t scene);
+	void setRange(SampleRange, Scene);
+	void setSample(const Sample&, Scene, float samplerateRatio);
+	void setShift(Frame, Scene);
+	void setPitch(float, Scene);
 
 	bool             inputMonitor;
 	bool             overdubProtection;
@@ -82,7 +82,7 @@ private:
 	/* adjustSampleByRate
 	Adjusts all frame-based properties (range, shift, ...) by a certain samplerateRatio. */
 
-	void adjustSampleByRate(std::size_t scene, float samplerateRatio);
+	void adjustSampleByRate(Scene, float samplerateRatio);
 
 	/* m_samples
 	Array of Samples, one per scene. */

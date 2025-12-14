@@ -67,22 +67,22 @@ public:
 	Clones actions in channel 'channelId', giving them a new channel ID. Returns
 	whether any action has been cloned. */
 
-	void cloneActions(ID channelId, std::size_t scene, ID newChannelId);
+	void cloneActions(ID channelId, Scene, ID newChannelId);
 
 	/* copyActionsToScene
 	Copies actions of a given channel from a scene to another. */
 
-	void copyActionsToScene(ID channelId, std::size_t srcScene, std::size_t dstScene);
+	void copyActionsToScene(ID channelId, Scene src, Scene dst);
 
 	/* liveRec
 	Records a user-generated action. NOTE_ON or NOTE_OFF only for now. */
 
-	void liveRec(ID channelId, std::size_t scene, MidiEvent e, Frame global);
+	void liveRec(ID channelId, Scene, MidiEvent e, Frame global);
 
 	/* record*Action */
 
-	void recordMidiAction(ID channelId, std::size_t scene, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
-	void recordSampleAction(ID channelId, std::size_t scene, int type, Frame f1, Frame f2, Frame framesInLoop);
+	void recordMidiAction(ID channelId, Scene, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
+	void recordSampleAction(ID channelId, Scene, int type, Frame f1, Frame f2, Frame framesInLoop);
 
 	/* delete*Action */
 
@@ -91,15 +91,15 @@ public:
 
 	/* update*Action */
 
-	void updateMidiAction(ID channelId, std::size_t scene, const Action&, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
-	void updateSampleAction(ID channelId, std::size_t scene, const Action&, int type, Frame f1, Frame f2, Frame framesInLoop);
+	void updateMidiAction(ID channelId, Scene, const Action&, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
+	void updateSampleAction(ID channelId, Scene, const Action&, int type, Frame f1, Frame f2, Frame framesInLoop);
 	void updateVelocity(const Action&, float value);
 
 	/* consolidate
 	Records all live actions. Returns a set of channels IDs that have been
 	recorded. */
 
-	std::unordered_set<ID> consolidate(std::size_t scene);
+	std::unordered_set<ID> consolidate(Scene);
 
 	/* clearAllActions
 	Deletes all recorded actions. */
@@ -110,17 +110,17 @@ public:
 
 	const Action*       findAction(ID) const;
 	bool                hasActions(ID channelId, int type = 0) const;
-	std::vector<Action> getActionsOnChannel(ID channelId, std::size_t scene) const;
+	std::vector<Action> getActionsOnChannel(ID channelId, Scene) const;
 
 	/* clearChannel
 	Removes all actions from channel 'channelId' from a given scene. Pass G_INVALID_SCENE
 	to remove all actions from all scenes. */
 
-	void clearChannel(ID channelId, std::size_t scene);
+	void clearChannel(ID channelId, Scene);
 
 	void   clearActions(ID channelId, int type);
-	Action rec(ID channelId, std::size_t scene, Frame frame, MidiEvent e);
-	void   rec(ID channelId, std::size_t scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
+	Action rec(ID channelId, Scene, Frame frame, MidiEvent e);
+	void   rec(ID channelId, Scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 	void   updateSiblings(ID id, ID prevId, ID nextId);
 	void   deleteAction(ID id);
 	void   deleteAction(ID currId, ID nextId);
@@ -144,7 +144,7 @@ private:
 	/* cloneActions
 	Internal generic method for copying actions between channels and/or scenes. */
 
-	void copyActions(ID channelId, std::size_t srcScene, std::size_t dstScene, ID newChannelId);
+	void copyActions(ID channelId, Scene src, Scene dst, ID newChannelId);
 
 	model::Model&       m_model;
 	std::vector<Action> m_liveActions;

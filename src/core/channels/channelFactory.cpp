@@ -159,7 +159,7 @@ const Patch::Channel serializeChannel(const Channel& c)
 	if (c.type == ChannelType::SAMPLE)
 	{
 		for (std::size_t i = 0; i < G_MAX_NUM_SCENES; i++)
-			pc.samples[i] = {c.sampleChannel->getWaveId(i), c.sampleChannel->getRange(i), c.sampleChannel->getShift(i), c.sampleChannel->getPitch(i)}; // TODO - scenes - use std::transform
+			pc.samples[i] = {c.sampleChannel->getWaveId({i}), c.sampleChannel->getRange({i}), c.sampleChannel->getShift({i}), c.sampleChannel->getPitch({i})}; // TODO - scenes - use std::transform
 		pc.mode              = c.sampleChannel->mode;
 		pc.midiInVeloAsVol   = c.sampleChannel->velocityAsVol;
 		pc.inputMonitor      = c.sampleChannel->inputMonitor;

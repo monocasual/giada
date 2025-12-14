@@ -51,16 +51,16 @@ public:
 	bool isInternal() const;
 	bool isMuted() const;
 	bool isSoloed() const;
-	bool canInputRec(std::size_t scene) const;
-	bool canActionRec(std::size_t scene) const;
-	bool hasWave(std::size_t scene) const;
+	bool canInputRec(Scene) const;
+	bool canActionRec(Scene) const;
+	bool hasWave(Scene) const;
 
 	/* isActive
 	True if status is PLAY, WAIT or ENDING. */
 
 	bool isActive() const;
 
-	std::string                    getName(std::size_t scene) const;
+	std::string                    getName(Scene) const;
 	const SceneArray<std::string>& getNames() const;
 
 	/* canReceiveAudio
@@ -85,20 +85,20 @@ public:
 
 	void setMute(bool);
 	void setSolo(bool);
-	void setName(const std::string&, std::size_t scene);
+	void setName(const std::string&, Scene);
 
 	/* loadWave
 	Loads Wave and sets it up (name, markers, ...). Also updates Channel's shared
 	state accordingly. Resets begin/end points shift if not specified (-1). */
 
-	void loadSample(const Sample&, std::size_t scene);
+	void loadSample(const Sample&, Scene);
 
 	/* setWave
 	Just sets the pointer to a Wave object. Used during de-serialization. The
 	ratio is used to adjust begin/end points in case of patch vs. conf sample
 	rate mismatch. If nullptr, set the wave to invalid. */
 
-	void setWave(Wave* w, std::size_t scene, float samplerateRatio);
+	void setWave(Wave* w, Scene, float samplerateRatio);
 
 	/* kickIn
 	Starts the player right away at frame 'f'. Used when launching a loop after

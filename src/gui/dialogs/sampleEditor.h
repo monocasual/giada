@@ -76,7 +76,7 @@ private:
 	/* updateTitleWithScene
 	Updates window title with the current scene being edited. */
 
-	void updateTitleWithScene(std::size_t scene);
+	void updateTitleWithScene(Scene);
 
 	ID                    m_channelId;
 	c::sampleEditor::Data m_data;

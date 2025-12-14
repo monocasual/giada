@@ -119,7 +119,7 @@ void stop_(const Channel& ch, mcl::AudioBuffer& buf, Frame offset, bool seqIsRun
 
 /* -------------------------------------------------------------------------- */
 
-Frame render_(const Channel& ch, mcl::AudioBuffer& buf, std::size_t scene, Frame tracker, Frame offset, bool seqIsRunning, bool testEnd)
+Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Scene scene, Frame tracker, Frame offset, bool seqIsRunning, bool testEnd)
 {
 	const auto       range     = ch.sampleChannel->getRange(scene);
 	const float      pitch     = ch.sampleChannel->getPitch(scene);
@@ -163,7 +163,7 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, std::size_t scene, Frame
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void renderSampleChannel(const Channel& ch, std::size_t scene, bool seqIsRunning)
+void renderSampleChannel(const Channel& ch, Scene scene, bool seqIsRunning)
 {
 	RenderInfo renderInfo;
 	while (ch.shared->renderQueue->try_dequeue(renderInfo))

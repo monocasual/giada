@@ -81,11 +81,11 @@ void SampleEditorApi::setPreviewLoop(bool shouldLoop)
 
 void SampleEditorApi::togglePreview()
 {
-	const bool        canRecordActions = false;
-	const bool        canQuantize      = false;
-	const Frame       currentFrameQ    = 0;
-	const float       velocity         = G_MAX_VELOCITY_FLOAT;
-	const std::size_t scene            = m_sequencer.getCurrentScene();
+	const bool  canRecordActions = false;
+	const bool  canQuantize      = false;
+	const Frame currentFrameQ    = 0;
+	const float velocity         = G_MAX_VELOCITY_FLOAT;
+	const Scene scene            = m_sequencer.getCurrentScene();
 	m_reactor.keyPress(PREVIEW_CHANNEL_ID, scene, velocity, canRecordActions, canQuantize, currentFrameQ);
 }
 
@@ -146,7 +146,7 @@ void SampleEditorApi::paste(ID channelId, Frame a)
 
 	/* Pass the old wave that contains the pasted data to channel. */
 
-	m_channelManager.getChannel(channelId).setWave(&wave, 1.0f, /*scene=*/0);
+	m_channelManager.getChannel(channelId).setWave(&wave, /*Scene=*/{0}, 1.0f); // TODO - scenes
 
 	/* Just brutally restore begin/end points. */
 
@@ -208,9 +208,9 @@ void SampleEditorApi::trim(ID channelId, Frame a, Frame b)
 
 void SampleEditorApi::shift(ID channelId, Frame offset)
 {
-	const Channel&    ch       = m_channelManager.getChannel(channelId);
-	const std::size_t scene    = m_sequencer.getCurrentScene();
-	const Frame       oldShift = ch.sampleChannel->getShift(scene);
+	const Channel& ch       = m_channelManager.getChannel(channelId);
+	const Scene    scene    = m_sequencer.getCurrentScene();
+	const Frame    oldShift = ch.sampleChannel->getShift(scene);
 
 	m::model::SharedLock lock = m_model.lockShared();
 	m::wfx::shift(getWave(channelId), offset - oldShift);
@@ -250,7 +250,7 @@ void SampleEditorApi::reload(ID channelId)
 	const int                sampleRate  = m_kernelAudio.getSampleRate();
 	const Resampler::Quality rsmpQuality = m_model.get().kernelAudio.rsmpQuality;
 	// TODO - error checking
-	m_channelManager.loadSampleChannel(channelId, getWave(channelId).getPath(), sampleRate, rsmpQuality, /*scene=*/0);
+	m_channelManager.loadSampleChannel(channelId, getWave(channelId).getPath(), sampleRate, rsmpQuality, /*scene=*/{0});
 	loadPreviewChannel(channelId); // Refresh preview channel properties
 }
 
@@ -258,7 +258,7 @@ void SampleEditorApi::reload(ID channelId)
 
 Wave& SampleEditorApi::getWave(ID channelId) const
 {
-	const std::size_t currentScene = m_sequencer.getCurrentScene();
+	const Scene currentScene = m_sequencer.getCurrentScene();
 	return *m_channelManager.getChannel(channelId).sampleChannel->getWave(currentScene);
 }
 } // namespace giada::m
