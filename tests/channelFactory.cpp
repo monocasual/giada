@@ -31,7 +31,6 @@ TEST_CASE("channelFactory")
 			REQUIRE(clone.channel.pan == data.channel.pan);
 			REQUIRE(clone.channel.armed == data.channel.armed);
 			REQUIRE(clone.channel.key == data.channel.key);
-			REQUIRE(clone.channel.hasActions == data.channel.hasActions);
 			REQUIRE(clone.channel.getName(/*scene=*/0) == data.channel.getName(/*scene=*/0));
 			REQUIRE(clone.channel.height == data.channel.height);
 		}

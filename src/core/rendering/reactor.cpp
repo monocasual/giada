@@ -182,8 +182,6 @@ void Reactor::processMidiEvent(ID channelId, std::size_t scene, const MidiEvent&
 void Reactor::toggleReadActions(ID channelId, bool seqIsRunning)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
-	if (!ch.hasActions)
-		return;
 	toggleSampleReadActions(*ch.shared, m_model.get().behaviors.treatRecsAsLoops, seqIsRunning);
 }
 

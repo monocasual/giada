@@ -126,7 +126,7 @@ Data::Data(const m::Channel& c, std::size_t scene, std::size_t trackIndex, std::
 , volume(c.volume)
 , pan(c.pan.asFloat())
 , key(c.key)
-, hasActions(c.hasActions)
+, hasActions(g_engine->getChannelsApi().hasActions(c.id))
 , sendToMaster(c.sendToMaster)
 , extraOutputsCount(c.extraOutputs.size())
 , m_playStatus(&c.shared->playStatus)

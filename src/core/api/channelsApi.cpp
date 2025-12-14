@@ -66,6 +66,13 @@ bool ChannelsApi::canRemoveTrack(std::size_t trackIndex) const
 
 /* -------------------------------------------------------------------------- */
 
+bool ChannelsApi::hasActions(ID channelId) const
+{
+	return m_recorder.hasActions(channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
 Channel& ChannelsApi::get(ID channelId)
 {
 	return m_channelManager.getChannel(channelId);
@@ -170,8 +177,7 @@ void ChannelsApi::clone(ID channelId)
 	const ID                   nextChannelId = channelFactory::getNextId();
 
 	m_channelManager.cloneChannel(channelId, scene, bufferSize, plugins);
-	if (ch.hasActions)
-		m_actionRecorder.cloneActions(channelId, scene, nextChannelId);
+	m_actionRecorder.cloneActions(channelId, scene, nextChannelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -187,8 +193,7 @@ void ChannelsApi::copyToScene(ID channelId, std::size_t dstScene)
 				copyToScene(child.id, dstScene);
 
 	m_channelManager.copyChannelToScene(channelId, srcScene, dstScene);
-	if (ch.hasActions)
-		m_actionRecorder.copyActionsToScene(channelId, srcScene, dstScene);
+	m_actionRecorder.copyActionsToScene(channelId, srcScene, dstScene);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -135,7 +135,6 @@ const Patch::Channel serializeChannel(const Channel& c)
 	pc.solo              = c.isSoloed();
 	pc.volume            = c.volume;
 	pc.pan               = c.pan.asFloat();
-	pc.hasActions        = c.hasActions;
 	pc.readActions       = c.shared->readActions.load();
 	pc.armed             = c.armed;
 	pc.sendToMaster      = c.sendToMaster;

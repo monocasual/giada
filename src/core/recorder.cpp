@@ -229,6 +229,13 @@ bool Recorder::canRecordActions() const
 
 /* -------------------------------------------------------------------------- */
 
+bool Recorder::hasActions(ID channelId) const
+{
+	return m_actionRecorder.hasActions(channelId);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Recorder::startActionRecOnCallback()
 {
 	if (m_sequencer.getStatus() != SeqStatus::WAITING)

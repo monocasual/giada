@@ -28,6 +28,7 @@
 #define G_RECORDER_H
 
 #include "src/core/types.h"
+#include "src/types.h"
 #include <cstddef>
 
 namespace giada::m
@@ -57,6 +58,8 @@ public:
 	True if actions are recordable right now. */
 
 	bool canRecordActions() const;
+
+	bool hasActions(ID channelId) const;
 
 	void prepareActionRec(RecTriggerMode);
 	void startActionRecOnCallback();
