@@ -74,7 +74,6 @@ struct Patch
 		bool                    solo            = false;
 		float                   volume          = G_DEFAULT_VOL;
 		float                   pan             = G_DEFAULT_PAN;
-		bool                    hasActions      = false;
 		bool                    armed           = false;
 		bool                    sendToMaster    = true;
 		std::vector<int>        extraOutputs    = {};

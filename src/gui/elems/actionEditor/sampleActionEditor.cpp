@@ -113,7 +113,7 @@ void geSampleActionEditor::onAddAction()
 
 void geSampleActionEditor::onDeleteAction()
 {
-	c::actionEditor::deleteSampleAction(m_data->channelId, m_action->a1);
+	c::actionEditor::deleteSampleAction(m_action->a1);
 }
 
 /* -------------------------------------------------------------------------- */

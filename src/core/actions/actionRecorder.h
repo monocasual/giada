@@ -86,8 +86,8 @@ public:
 
 	/* delete*Action */
 
-	void deleteMidiAction(ID channelId, const Action&);
-	void deleteSampleAction(ID channelId, const Action&);
+	void deleteMidiAction(const Action&);
+	void deleteSampleAction(const Action&);
 
 	/* update*Action */
 
@@ -122,8 +122,8 @@ public:
 	Action rec(ID channelId, std::size_t scene, Frame frame, MidiEvent e);
 	void   rec(ID channelId, std::size_t scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 	void   updateSiblings(ID id, ID prevId, ID nextId);
-	void   deleteAction(ID channelId, ID id);
-	void   deleteAction(ID channelId, ID currId, ID nextId);
+	void   deleteAction(ID id);
+	void   deleteAction(ID currId, ID nextId);
 	void   updateEvent(ID id, MidiEvent e);
 
 private:

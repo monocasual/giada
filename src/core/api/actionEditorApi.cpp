@@ -70,7 +70,7 @@ void ActionEditorApi::deleteMidiAction(ID channelId, const Action& a)
 	if (noteOff != nullptr)
 		m_engine.getChannelsApi().sendMidi(channelId, noteOff->event);
 
-	m_actionRecorder.deleteMidiAction(channelId, a);
+	m_actionRecorder.deleteMidiAction(a);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -96,9 +96,9 @@ void ActionEditorApi::updateSampleAction(ID channelId, const Action& a, int type
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::deleteSampleAction(ID channelId, const Action& a)
+void ActionEditorApi::deleteSampleAction(const Action& a)
 {
-	m_actionRecorder.deleteSampleAction(channelId, a);
+	m_actionRecorder.deleteSampleAction(a);
 }
 
 /* -------------------------------------------------------------------------- */

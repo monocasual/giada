@@ -126,9 +126,9 @@ void updateSampleAction(ID channelId, const m::Action& a, int type, Frame f1, Fr
 
 /* -------------------------------------------------------------------------- */
 
-void deleteSampleAction(ID channelId, const m::Action& a)
+void deleteSampleAction(const m::Action& a)
 {
-	g_engine->getActionEditorApi().deleteSampleAction(channelId, a);
+	g_engine->getActionEditorApi().deleteSampleAction(a);
 }
 
 /* -------------------------------------------------------------------------- */

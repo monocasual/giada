@@ -112,8 +112,7 @@ public:
 	float                volume;
 	Pan                  pan;
 	bool                 armed;
-	int                  key; // TODO - move this to v::Model
-	bool                 hasActions;
+	int                  key;    // TODO - move this to v::Model
 	int                  height; // TODO - move this to v::Model
 	std::vector<Plugin*> plugins;
 

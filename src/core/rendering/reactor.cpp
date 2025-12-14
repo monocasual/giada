@@ -58,10 +58,7 @@ void Reactor::keyPress(ID channelId, std::size_t scene, float velocity, bool can
 		const SamplePlayerMode mode          = ch.sampleChannel->mode;
 
 		if (canRecordActions && !isAnyLoopMode)
-		{
 			recordSampleKeyPress(channelId, scene, *ch.shared, currentFrameQuantized, mode, m_actionRecorder);
-			ch.hasActions = true;
-		}
 
 		pressSampleChannel(channelId, *ch.shared, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol);
 	}
@@ -100,7 +97,6 @@ void Reactor::keyRelease(ID channelId, std::size_t scene, bool canRecordActions,
 		mode the key release event is meaningless. */
 
 			recordSampleKeyRelease(channelId, scene, currentFrameQuantized, m_actionRecorder);
-			ch.hasActions = true;
 		}
 
 		releaseSampleChannel(*ch.shared, mode);
@@ -143,7 +139,6 @@ void Reactor::keyKill(ID channelId, std::size_t scene, bool canRecordActions, Fr
 			mode the key release event is meaningless. */
 
 			recordSampleKeyKill(channelId, scene, currentFrameQuantized, m_actionRecorder);
-			ch.hasActions = true;
 		}
 
 		killSampleChannel(*ch.shared, mode);
@@ -169,7 +164,6 @@ void Reactor::processMidiEvent(ID channelId, std::size_t scene, const MidiEvent&
 	if (canRecordActions)
 	{
 		recordMidiAction(channelId, scene, e, currentFrameQuantized, m_actionRecorder);
-		ch.hasActions = true;
 		m_model.swap(model::SwapType::HARD);
 	}
 	sendMidiEventToPlugins(ch.shared->midiQueue, e);
