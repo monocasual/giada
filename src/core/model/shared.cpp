@@ -29,7 +29,7 @@
 #include "src/core/plugins/pluginFactory.h"
 #include "src/core/plugins/pluginManager.h"
 #include "src/core/waveFactory.h"
-#include "src/deps/mcl-utils/src/vector.hpp"
+#include "src/deps/mcl-utils/src/container.hpp"
 #if G_DEBUG_MODE
 #include <fmt/core.h>
 #endif
@@ -44,7 +44,7 @@ namespace
 template <typename T>
 auto getIter_(const std::vector<std::unique_ptr<T>>& source, ID id)
 {
-	return utils::vector::findIf(source, [id](const std::unique_ptr<T>& p)
+	return utils::container::findIf(source, [id](const std::unique_ptr<T>& p)
 	{ return p->id == id; });
 }
 
@@ -81,7 +81,7 @@ typename T::element_type& add_(std::vector<T>& dest, T obj)
 template <typename D, typename T>
 void remove_(D& dest, T& ref)
 {
-	utils::vector::removeIf(dest, [&ref](const auto& other)
+	utils::container::removeIf(dest, [&ref](const auto& other)
 	{ return other.get() == &ref; });
 }
 } // namespace

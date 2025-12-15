@@ -31,7 +31,7 @@
 #include "src/core/model/actions.h"
 #include "src/core/model/model.h"
 #include "src/core/patch.h"
-#include "src/deps/mcl-utils/src/vector.hpp"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include "src/utils/log.h"
 #include "src/utils/ver.h"
 #include <algorithm>
@@ -391,7 +391,7 @@ std::vector<Action> ActionRecorder::getActionsOnChannel(ID channelId, Scene scen
 
 void ActionRecorder::clearChannel(ID channelId, Scene sceneToClear)
 {
-	for (const std::size_t sceneIndex : utils::vector::range(G_MAX_NUM_SCENES))
+	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
 		if (sceneToClear.index == G_INVALID_SCENE || sceneToClear.index == sceneIndex)
 			m_model.get().actions.clearChannel(channelId, {sceneIndex});
 	m_model.swap(model::SwapType::HARD);

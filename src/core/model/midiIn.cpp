@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/model/midiIn.h"
-#include "src/deps/mcl-utils/src/vector.hpp"
+#include "src/deps/mcl-utils/src/container.hpp"
 
 namespace utils = mcl::utils;
 
@@ -33,7 +33,7 @@ namespace giada::m::model
 {
 bool MidiIn::hasScene(uint32_t val) const
 {
-	return utils::vector::has(scenes, val);
+	return utils::container::has(scenes, val);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -42,7 +42,7 @@ Scene MidiIn::getScene(uint32_t val) const
 {
 	assert(hasScene(val));
 
-	return Scene{static_cast<std::size_t>(utils::vector::indexOf(scenes, val))};
+	return Scene{static_cast<std::size_t>(utils::container::indexOf(scenes, val))};
 }
 
 /* -------------------------------------------------------------------------- */

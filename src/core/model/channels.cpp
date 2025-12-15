@@ -26,7 +26,7 @@
 
 #include "src/core/model/channels.h"
 #include "src/core/plugins/plugin.h"
-#include "src/deps/mcl-utils/src/vector.hpp"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include <cassert>
 #if G_DEBUG_MODE
 #include "src/utils/string.h"
@@ -87,7 +87,7 @@ const std::vector<Channel>& Channels::getAll() const
 
 const std::size_t Channels::getIndex(ID id) const
 {
-	return static_cast<std::size_t>(utils::vector::indexOf(m_channels, get(id)));
+	return static_cast<std::size_t>(utils::container::indexOf(m_channels, get(id)));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -145,7 +145,7 @@ std::vector<Channel*> Channels::getIf(std::function<bool(const Channel&)> f)
 
 void Channels::remove(ID id)
 {
-	utils::vector::removeIf(m_channels, [id](const Channel& c)
+	utils::container::removeIf(m_channels, [id](const Channel& c)
 	{ return c.id == id; });
 }
 

@@ -29,7 +29,7 @@
 #include "src/core/engine.h"
 #include "src/core/kernelAudio.h"
 #include "src/core/kernelMidi.h"
-#include "src/deps/mcl-utils/src/vector.hpp"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include "src/deps/rtaudio/RtAudio.h"
 #include "src/gui/dialogs/browser/browserDir.h"
 #include "src/gui/dialogs/config.h"
@@ -120,7 +120,7 @@ void AudioData::toggleInputDevice(bool v)
 
 std::string MidiData::getMidiMapByIndex(int i)
 {
-	return utils::vector::atOr(availableMidiMaps, i, "");
+	return utils::container::atOr(availableMidiMaps, i, "");
 }
 
 /* -------------------------------------------------------------------------- */

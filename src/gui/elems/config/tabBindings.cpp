@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/config/tabBindings.h"
-#include "src/deps/mcl-utils/src/vector.hpp"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include "src/gui/elems/basics/liquidScroll.h"
 #include "src/gui/elems/keyBinder.h"
 #include "src/gui/ui.h"
@@ -52,7 +52,7 @@ geTabBindings::geTabBindings(geompp::Rect<int> bounds, const Model& model)
 		recordInput   = new geKeyBinder(g_ui->getI18Text(LangMap::CONFIG_BINDINGS_RECORDAUDIO), model.keyBindRecordInput);
 		exit          = new geKeyBinder(g_ui->getI18Text(LangMap::CONFIG_BINDINGS_EXIT), model.keyBindExit);
 
-		for (const auto [index, scene] : utils::vector::enumerate(scenes))
+		for (const auto [index, scene] : utils::container::enumerate(scenes))
 			scene = new geKeyBinder(std::format("{} {}", g_ui->getI18Text(LangMap::COMMON_SCENE), index + 1), model.keyBindScenes[index]);
 
 		body->addWidget(play, G_GUI_UNIT);
@@ -93,7 +93,7 @@ geTabBindings::geTabBindings(geompp::Rect<int> bounds, const Model& model)
 	exit->onKeyClear = []
 	{ g_ui->model.keyBindExit = 0; };
 
-	for (const auto [index, scene] : utils::vector::enumerate(scenes))
+	for (const auto [index, scene] : utils::container::enumerate(scenes))
 	{
 		scene->onKeyBound = [index](int key)
 		{ g_ui->model.keyBindScenes[index] = key; };

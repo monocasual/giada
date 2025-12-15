@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/model/tracks.h"
-#include "src/deps/mcl-utils/src/vector.hpp"
+#include "src/deps/mcl-utils/src/container.hpp"
 
 namespace utils = mcl::utils;
 
@@ -59,7 +59,7 @@ void Tracks::remove(std::size_t index)
 
 	m_tracks.erase(m_tracks.begin() + index);
 
-	for (const auto [newIndex, track] : utils::vector::enumerate(m_tracks))
+	for (const auto [newIndex, track] : utils::container::enumerate(m_tracks))
 		track.m_index = newIndex;
 }
 
@@ -154,10 +154,10 @@ Track& Tracks::getByChannel(ID channelId)
 {
 	const auto p = [channelId](Track& track)
 	{
-		return utils::vector::hasIf(track.getChannels().getAll(), [channelId](const Channel& ch)
+		return utils::container::hasIf(track.getChannels().getAll(), [channelId](const Channel& ch)
 		{ return channelId == ch.id; });
 	};
-	auto it = utils::vector::findIf(m_tracks, p);
+	auto it = utils::container::findIf(m_tracks, p);
 	assert(it != m_tracks.end());
 	return *it;
 }

@@ -57,7 +57,7 @@ geMasterLearnerPack::geMasterLearnerPack(int x, int y)
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_OUTVOLUME), G_MIDI_IN_VOLUME_OUT);
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_SEQDOUBLE), G_MIDI_IN_BEAT_DOUBLE);
 	addMidiLearner(g_ui->getI18Text(LangMap::MIDIINPUT_MASTER_LEARN_SEQHALF), G_MIDI_IN_BEAT_HALF);
-	for (const auto [index, scene] : utils::vector::enumerate(G_MIDI_IN_SCENES))
+	for (const auto [index, scene] : utils::container::enumerate(G_MIDI_IN_SCENES))
 		addMidiLearner(std::format("{} {}", g_ui->getI18Text(LangMap::COMMON_SCENE), index + 1), scene);
 }
 

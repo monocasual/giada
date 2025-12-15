@@ -30,8 +30,8 @@
 #include "src/core/kernelAudio.h"
 #include "src/core/mixer.h"
 #include "src/core/plugins/pluginFactory.h"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include "src/deps/mcl-utils/src/fs.hpp"
-#include "src/deps/mcl-utils/src/vector.hpp"
 #include "src/utils/fs.h"
 
 namespace utils = mcl::utils;
@@ -108,7 +108,7 @@ void PluginsApi::sort(PluginSortMode mode)
 
 void PluginsApi::free(const Plugin& plugin, ID channelId)
 {
-	utils::vector::remove(m_model.get().tracks.getChannel(channelId).plugins, &plugin);
+	utils::container::remove(m_model.get().tracks.getChannel(channelId).plugins, &plugin);
 	m_model.swap(model::SwapType::HARD);
 	m_pluginHost.freePlugin(plugin);
 }

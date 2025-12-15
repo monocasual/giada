@@ -35,7 +35,7 @@
 #include "src/core/rendering/sampleReactions.h"
 #include "src/core/waveFactory.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
-#include "src/deps/mcl-utils/src/vector.hpp"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include "src/utils/log.h"
 
 namespace utils = mcl::utils;
@@ -268,7 +268,7 @@ void ChannelManager::freeSampleChannel(ID channelId, Scene sceneToFree)
 	assert(ch.sampleChannel);
 
 	std::vector<const Wave*> wavesToRemove;
-	for (const std::size_t sceneIndex : utils::vector::range(G_MAX_NUM_SCENES))
+	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
 	{
 		if (sceneToFree.index != G_INVALID_SCENE && sceneToFree.index != sceneIndex)
 			continue;
@@ -498,7 +498,7 @@ void ChannelManager::addExtraOutput(ID channelId, int offset)
 
 void ChannelManager::removeExtraOutput(ID channelId, std::size_t i)
 {
-	utils::vector::removeAt(m_model.get().tracks.getChannel(channelId).extraOutputs, i);
+	utils::container::removeAt(m_model.get().tracks.getChannel(channelId).extraOutputs, i);
 	if (m_model.get().tracks.getChannel(channelId).extraOutputs.size() == 0)
 		m_model.get().tracks.getChannel(channelId).sendToMaster = true;
 	m_model.swap(model::SwapType::HARD);

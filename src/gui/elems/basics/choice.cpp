@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/elems/basics/choice.h"
-#include "src/deps/mcl-utils/src/vector.hpp"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include "src/gui/const.h"
 #include "src/gui/drawing.h"
 #include "src/utils/gui.h"
@@ -134,7 +134,7 @@ void geChoice::showItem(const std::string& label)
 
 void geChoice::showItem(ID id)
 {
-	const std::size_t index = utils::vector::indexOf(m_ids, id);
+	const std::size_t index = utils::container::indexOf(m_ids, id);
 	assert(index < m_ids.size());
 	m_menu->value(index);
 }
@@ -175,7 +175,7 @@ std::size_t geChoice::countItems() const
 
 bool geChoice::hasItem(ID oid) const
 {
-	return utils::vector::hasIf(m_ids, [oid](const ID& id)
+	return utils::container::hasIf(m_ids, [oid](const ID& id)
 	{ return oid == id; });
 }
 

@@ -27,18 +27,18 @@
 #ifndef G_UTILS_VECTOR_H
 #define G_UTILS_VECTOR_H
 
-#include "src/deps/mcl-utils/src/vector.hpp"
+#include "src/deps/mcl-utils/src/container.hpp"
 
 namespace utils = mcl::utils;
 
-namespace giada::u::vector
+namespace giada::u::container
 {
 template <typename T>
 auto findIf(T& v, ID id)
 {
-	return utils::vector::findIf(v, [id](const typename T::value_type& t)
+	return utils::container::findIf(v, [id](const typename T::value_type& t)
 	{ return t.id == id; });
 }
-} // namespace giada::u::vector
+} // namespace giada::u::container
 
 #endif
