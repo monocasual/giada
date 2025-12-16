@@ -78,7 +78,7 @@ public:
 	bool saveList(const std::string& path) const;
 	bool loadList(const std::string& path);
 
-	std::unique_ptr<Plugin> makePlugin(const std::string& juceId, int sampleRate, int bufferSize, const model::Sequencer&, ID id = 0);
+	std::unique_ptr<Plugin> makePlugin(const std::string& juceId, int sampleRate, int bufferSize, const model::Sequencer&, ID id = {});
 	std::unique_ptr<Plugin> makePlugin(const Plugin& other, int sampleRate, int bufferSize, const model::Sequencer&);
 
 	std::unique_ptr<juce::AudioPluginInstance> makeJucePlugin(const std::string& juceId, int sampleRate, int bufferSize);

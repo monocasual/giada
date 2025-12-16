@@ -66,22 +66,22 @@ constexpr int   G_DEFAULT_SUBWINDOW_H = 480;
 constexpr float G_DEFAULT_UI_SCALING  = G_MIN_UI_SCALING;
 
 /* -- unique IDs of mainWin's subwindows ------------------------------------ */
-constexpr ID WID_BEATS           = 1;
-constexpr ID WID_BPM             = 2;
-constexpr ID WID_ABOUT           = 3;
-constexpr ID WID_FILE_BROWSER    = 4;
-constexpr ID WID_CONFIG          = 5;
-constexpr ID WID_FX_LIST         = 6;
-constexpr ID WID_ACTION_EDITOR   = 7;
-constexpr ID WID_SAMPLE_EDITOR   = 8;
-constexpr ID WID_KEY_GRABBER     = 10;
-constexpr ID WID_SAMPLE_NAME     = 11;
-constexpr ID WID_FX_CHOOSER      = 12;
-constexpr ID WID_MIDI_INPUT      = 13;
-constexpr ID WID_MIDI_OUTPUT     = 14;
-constexpr ID WID_MISSING_ASSETS  = 15;
-constexpr ID WID_CHANNEL_ROUTING = 16;
-constexpr ID WID_FX              = 1000; // Plug-in windows have ID == WID_FX + [pluginId]
+constexpr ID WID_BEATS           = ID{1};
+constexpr ID WID_BPM             = ID{2};
+constexpr ID WID_ABOUT           = ID{3};
+constexpr ID WID_FILE_BROWSER    = ID{4};
+constexpr ID WID_CONFIG          = ID{5};
+constexpr ID WID_FX_LIST         = ID{6};
+constexpr ID WID_ACTION_EDITOR   = ID{7};
+constexpr ID WID_SAMPLE_EDITOR   = ID{8};
+constexpr ID WID_KEY_GRABBER     = ID{9};
+constexpr ID WID_SAMPLE_NAME     = ID{10};
+constexpr ID WID_FX_CHOOSER      = ID{11};
+constexpr ID WID_MIDI_INPUT      = ID{12};
+constexpr ID WID_MIDI_OUTPUT     = ID{13};
+constexpr ID WID_MISSING_ASSETS  = ID{14};
+constexpr ID WID_CHANNEL_ROUTING = ID{15};
+constexpr ID WID_FX              = ID{1000}; // Plug-in windows have ID == WID_FX + [pluginId]
 } // namespace giada
 
 #endif

@@ -29,6 +29,7 @@
 
 #include "src/types.h"
 #include <FL/Fl_Menu_Button.H>
+#include <deque>
 #include <functional>
 #include <string>
 
@@ -54,6 +55,13 @@ private:
 	Finds menu item by ID recusively (in sub-menus). Returns nullptr if not found. */
 
 	const Fl_Menu_Item* findItemById(ID targetId) const;
+
+	/* m_ids
+	Helper structure to keep track of element IDs to pass to callback as void*
+	pointers. Why not std::vector? We need pointers/refs to elements to remain
+	valid after a push_back. */
+
+	std::deque<ID> m_ids;
 };
 } // namespace giada::v
 

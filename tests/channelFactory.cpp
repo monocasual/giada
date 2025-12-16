@@ -12,13 +12,13 @@ TEST_CASE("channelFactory")
 	SECTION("test creation")
 	{
 		channelFactory::Data data = channelFactory::create(
-		    /*id=*/0,
+		    /*id=*/{},
 		    ChannelType::SAMPLE,
 		    /*bufferSize=*/1024,
 		    Resampler::Quality::LINEAR,
 		    /*overdubProtection=*/false);
 
-		REQUIRE(data.channel.id != 0); // If ID == 0, must be auto-generated
+		REQUIRE(data.channel.id.isValid()); // Id must be auto-generated if passed {} (invalid) in channelFactory::create
 		REQUIRE(data.channel.type == ChannelType::SAMPLE);
 
 		SECTION("test clone")

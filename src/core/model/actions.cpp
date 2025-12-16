@@ -122,11 +122,11 @@ void Actions::updateSiblings(ID id, ID prevId, ID nextId)
 	pcurr->prevId = pprev->id;
 	pcurr->nextId = pnext->id;
 
-	if (pprev->id != 0)
+	if (pprev->id.isValid())
 	{
 		pprev->nextId = pcurr->id;
 	}
-	if (pnext->id != 0)
+	if (pnext->id.isValid())
 	{
 		pnext->prevId = pcurr->id;
 	}
@@ -164,7 +164,7 @@ void Actions::debug() const
 		fmt::print("\tframe: {}\n", frame);
 		for (const Action& a : actions)
 			fmt::print("\t\t({}) - ID={}, scene={}, frame={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
-			    (void*)&a, a.id, a.scene.index, a.frame, a.channelId, a.event.getRaw(), a.prevId, a.nextId);
+			    (void*)&a, a.id.getValue(), a.scene.index, a.frame, a.channelId.getValue(), a.event.getRaw(), a.prevId.getValue(), a.nextId.getValue());
 	}
 }
 
@@ -179,7 +179,7 @@ Action Actions::rec(ID channelId, Scene scene, Frame frame, MidiEvent event)
 	if (exists(channelId, scene, frame, event))
 		return {};
 
-	Action a = actionFactory::makeAction(0, channelId, scene, frame, event);
+	Action a = actionFactory::makeAction({}, channelId, scene, frame, event);
 
 	/* If key frame doesn't exist yet, the [] operator in std::map is smart
 	enough to insert a new item first. No plug-in data for now. */
@@ -205,8 +205,8 @@ void Actions::rec(std::vector<Action>& actions, Scene scene)
 
 void Actions::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
-	m_actions[f1].push_back(actionFactory::makeAction(0, channelId, scene, f1, e1));
-	m_actions[f2].push_back(actionFactory::makeAction(0, channelId, scene, f2, e2));
+	m_actions[f1].push_back(actionFactory::makeAction({}, channelId, scene, f1, e1));
+	m_actions[f2].push_back(actionFactory::makeAction({}, channelId, scene, f2, e2));
 
 	Action* a1 = findAction(m_actions, m_actions[f1].back().id);
 	Action* a2 = findAction(m_actions, m_actions[f2].back().id);
@@ -264,7 +264,7 @@ void Actions::forEachAction(std::function<void(const Action&)> f) const
 
 const Action* Actions::findAction(const Map& src, ID id) const
 {
-	if (id == 0)
+	if (!id.isValid())
 		return nullptr;
 	for (const auto& [frame, actions] : src)
 		for (const Action& a : actions)

@@ -62,7 +62,7 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 		if (a1.event.getStatus() == m::MidiEvent::CHANNEL_CC || isNoteOffSinglePress(a1))
 			continue;
 
-		const m::Action& a2 = a1.nextId != 0 ? *c::actionEditor::findAction(a1.nextId) : m::Action{};
+		const m::Action& a2 = a1.nextId.isValid() ? *c::actionEditor::findAction(a1.nextId) : m::Action{};
 
 		Pixel px = x() + m_base->frameToPixel(a1.frame);
 		Pixel py = y() + 4;

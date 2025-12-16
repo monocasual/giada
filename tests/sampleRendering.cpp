@@ -10,7 +10,7 @@ TEST_CASE("rendering::sampleRendering")
 	constexpr int NUM_CHANNELS = 2;
 
 	// Wave values: [1..BUFFERSIZE*4]
-	m::Wave wave(0);
+	m::Wave wave({});
 	wave.getBuffer().alloc(BUFFER_SIZE * 4, NUM_CHANNELS);
 	wave.getBuffer().forEachFrame([](float* f, int i)
 	{
@@ -18,8 +18,8 @@ TEST_CASE("rendering::sampleRendering")
 		f[1] = static_cast<float>(i + 1);
 	});
 
-	m::ChannelShared channelShared(0, BUFFER_SIZE);
-	m::Channel       channel(ChannelType::SAMPLE, 1, channelShared);
+	m::ChannelShared channelShared({}, BUFFER_SIZE);
+	m::Channel       channel(ChannelType::SAMPLE, ID{1}, channelShared);
 
 	channelShared.quantizer.emplace();
 	channelShared.renderQueue.emplace(/*size=*/16);

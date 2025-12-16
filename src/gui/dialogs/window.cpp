@@ -78,7 +78,7 @@ void gdWindow::addChild(gdWindow* w)
 {
 	if (hasChild(w->getId()))
 	{
-		G_DEBUG("Parent has subwindow with id={}, deleting", w->getId());
+		G_DEBUG("Parent has subwindow with id={}, deleting", w->getId().getValue());
 		deleteChild(w->getId());
 	}
 	w->setParent(this);

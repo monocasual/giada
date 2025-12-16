@@ -44,7 +44,7 @@ namespace
 {
 enum class Menu
 {
-	SETUP_MIDI_INPUT,
+	SETUP_MIDI_INPUT = 1,
 	EDIT_ROUTING,
 	RENAME_CHANNEL,
 	COPY_CHANNEL_TO_SCENE_0,
@@ -128,58 +128,45 @@ geGroupChannel::geGroupChannel(c::channel::Data d)
 void geGroupChannel::openMenu()
 {
 	geMenu menu;
-	menu.addItem((ID)Menu::SETUP_MIDI_INPUT, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
-	menu.addItem((ID)Menu::EDIT_ROUTING, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
-	menu.addItem((ID)Menu::RENAME_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME));
+	menu.addItem(ID{Menu::SETUP_MIDI_INPUT}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
+	menu.addItem(ID{Menu::EDIT_ROUTING}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
+	menu.addItem(ID{Menu::RENAME_CHANNEL}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME));
 
 	geMenu sceneSubMenu;
-	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, fmt::format("{} 1", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_1, fmt::format("{} 2", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_2, fmt::format("{} 3", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_3, fmt::format("{} 4", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_4, fmt::format("{} 5", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_5, fmt::format("{} 6", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_6, fmt::format("{} 7", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	sceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_7, fmt::format("{} 8", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_0}, fmt::format("{} 1", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_1}, fmt::format("{} 2", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_2}, fmt::format("{} 3", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_3}, fmt::format("{} 4", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_4}, fmt::format("{} 5", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_5}, fmt::format("{} 6", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_6}, fmt::format("{} 7", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	sceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_7}, fmt::format("{} 8", g_ui->getI18Text(LangMap::COMMON_SCENE)));
 	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE), sceneSubMenu);
 
 	menu.onSelect = [&data = m_channel](ID id)
 	{
-		switch (static_cast<Menu>(id))
-		{
-		case Menu::SETUP_MIDI_INPUT:
+		if (id == Menu::SETUP_MIDI_INPUT)
 			c::layout::openChannelMidiInputWindow(data.id);
-			break;
-		case Menu::EDIT_ROUTING:
+		else if (id == Menu::EDIT_ROUTING)
 			c::layout::openChannelRoutingWindow(data.id);
-			break;
-		case Menu::RENAME_CHANNEL:
+		else if (id == Menu::RENAME_CHANNEL)
 			c::layout::openRenameChannelWindow(data);
-		case Menu::COPY_CHANNEL_TO_SCENE_0:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_0)
 			c::channel::copyChannelToScene(data.id, {0});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_1:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_1)
 			c::channel::copyChannelToScene(data.id, {1});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_2:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_2)
 			c::channel::copyChannelToScene(data.id, {2});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_3:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_3)
 			c::channel::copyChannelToScene(data.id, {3});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_4:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_4)
 			c::channel::copyChannelToScene(data.id, {4});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_5:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_5)
 			c::channel::copyChannelToScene(data.id, {5});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_6:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_6)
 			c::channel::copyChannelToScene(data.id, {6});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_7:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_7)
 			c::channel::copyChannelToScene(data.id, {7});
-			break;
-		}
 	};
 
 	menu.popup();

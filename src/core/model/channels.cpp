@@ -123,7 +123,7 @@ void Channels::debug() const
 		{
 			puts("\t\tplugins:");
 			for (const auto& p : c.plugins)
-				fmt::print("\t\t\t{} - ID={}\n", (void*)p, p->id);
+				fmt::print("\t\t\t{} - ID={}\n", (void*)p, p->id.getValue());
 		}
 	}
 }

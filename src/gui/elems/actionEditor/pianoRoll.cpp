@@ -249,7 +249,7 @@ void gePianoRoll::rebuild(c::actionEditor::Data& d)
 
 		assert(a1.isValid()); // a2 might be null if orphaned
 
-		const m::Action& a2 = a1.nextId != 0 ? *c::actionEditor::findAction(a1.nextId) : m::Action{};
+		const m::Action& a2 = a1.nextId.isValid() ? *c::actionEditor::findAction(a1.nextId) : m::Action{};
 
 		Pixel px = x() + m_base->frameToPixel(a1.frame);
 		Pixel py = y() + noteToY(a1.event.getNote());

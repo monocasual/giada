@@ -52,7 +52,7 @@ const Fl_Menu_Item* findItemById_(ID targetId, std::span<const Fl_Menu_Item> ite
 		}
 		else if (item.label() != nullptr) // This is a regular, valid menu item
 		{
-			const ID id = static_cast<ID>(reinterpret_cast<intptr_t>(item.user_data()));
+			const ID& id = *static_cast<ID*>(item.user_data());
 			if (id == targetId)
 				return &item;
 		}
@@ -77,7 +77,7 @@ geMenu::geMenu()
 
 /* -------------------------------------------------------------------------- */
 
-void geMenu::callback(Fl_Widget* w, void* p) { static_cast<geMenu*>(w)->callback((ID)(intptr_t)p); }
+void geMenu::callback(Fl_Widget* w, void* p) { static_cast<geMenu*>(w)->callback(*static_cast<ID*>(p)); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -93,7 +93,8 @@ void geMenu::addItem(ID id, const char* text, int flags)
 {
 	assert(findItemById(id) == nullptr);
 
-	add(u::gui::removeFltkChars(text).c_str(), /*shortcut=*/0, callback, /*data=*/(void*)(intptr_t)(id), flags);
+	m_ids.push_back(id);
+	add(u::gui::removeFltkChars(text).c_str(), /*shortcut=*/0, callback, /*data=*/static_cast<void*>(&m_ids.back()), flags);
 	menu_end();
 }
 

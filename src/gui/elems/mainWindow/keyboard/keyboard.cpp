@@ -54,7 +54,7 @@ namespace
 {
 enum class Menu
 {
-	ADD_TRACK = 0
+	ADD_TRACK = 1
 };
 } // namespace
 
@@ -64,7 +64,6 @@ enum class Menu
 
 geKeyboard::ChannelDragger::ChannelDragger(geKeyboard& k)
 : m_keyboard(k)
-, m_channelId(-1)
 , m_xoffset(0)
 {
 }
@@ -73,7 +72,7 @@ geKeyboard::ChannelDragger::ChannelDragger(geKeyboard& k)
 
 bool geKeyboard::ChannelDragger::isDragging() const
 {
-	return m_channelId != -1;
+	return m_channelId.isValid();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -130,7 +129,7 @@ void geKeyboard::ChannelDragger::end()
 	const geTrack* track = m_keyboard.getTrackAtCursor(Fl::event_x());
 	if (track == nullptr)
 	{
-		m_channelId = -1;
+		m_channelId = {};
 		m_xoffset   = 0;
 		m_keyboard.rebuild(); // Just cleanup the UI
 		return;
@@ -141,7 +140,7 @@ void geKeyboard::ChannelDragger::end()
 
 	c::channel::moveChannel(m_channelId, targetTrackIndex, targetPosition);
 
-	m_channelId = -1;
+	m_channelId = {};
 	m_xoffset   = 0;
 	m_keyboard.remove(m_placeholder);
 }
@@ -202,16 +201,12 @@ void geKeyboard::showMenu() const
 {
 	geMenu menu;
 
-	menu.addItem((ID)Menu::ADD_TRACK, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_ADD_TRACK));
+	menu.addItem(ID{Menu::ADD_TRACK}, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_ADD_TRACK));
 
 	menu.onSelect = [this](ID menuId)
 	{
-		switch (static_cast<Menu>(menuId))
-		{
-		case Menu::ADD_TRACK:
+		if (menuId == Menu::ADD_TRACK)
 			addTrack();
-			break;
-		}
 	};
 
 	menu.popup();

@@ -184,7 +184,7 @@ const SceneArray<std::string>& Channel::getNames() const { return m_names; };
 std::string Channel::debug() const
 {
 	std::string out = fmt::format("ID={} type={} channelShared={}",
-	    id, u::string::toString(type), (void*)&shared);
+	    id.getValue(), u::string::toString(type), (void*)&shared);
 
 	if (type == ChannelType::SAMPLE || type == ChannelType::PREVIEW)
 	{
@@ -192,7 +192,7 @@ std::string Channel::debug() const
 		out += "\n\twaves:\n";
 		for (const Sample& s : sampleChannel->getSamples())
 			if (s.wave != nullptr)
-				out += fmt::format("\t\tID={} ({}), range=[{}, {})\n", s.wave->id, (void*)s.wave, s.range.a, s.range.b);
+				out += fmt::format("\t\tID={} ({}), range=[{}, {})\n", s.wave->id.getValue(), (void*)s.wave, s.range.a, s.range.b);
 	}
 
 	return out;

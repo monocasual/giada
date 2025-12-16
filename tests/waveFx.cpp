@@ -14,8 +14,8 @@ TEST_CASE("waveFx")
 	static const int BUFFER_SIZE = 4000;
 	static const int BIT_DEPTH   = 32;
 
-	Wave waveMono(0);
-	Wave waveStereo(0);
+	Wave waveMono({});
+	Wave waveStereo({});
 
 	waveMono.alloc(BUFFER_SIZE, 1, SAMPLE_RATE, BIT_DEPTH, "path/to/sample-mono.wav");
 	waveStereo.alloc(BUFFER_SIZE, 2, SAMPLE_RATE, BIT_DEPTH, "path/to/sample-stereo.wav");
@@ -67,7 +67,7 @@ TEST_CASE("waveFx")
 		const int sourceSize       = 512;
 		const int originalDestSize = waveStereo.getBuffer().countFrames();
 
-		Wave source(0);
+		Wave source({});
 
 		source.alloc(sourceSize, 2, SAMPLE_RATE, BIT_DEPTH, "path/to/source.wav");
 

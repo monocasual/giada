@@ -96,7 +96,7 @@ ID SampleChannel::getWaveId(Scene scene) const
 {
 	if (hasWave(scene))
 		return m_samples[scene.index].wave->id;
-	return 0;
+	return {};
 }
 
 /* -------------------------------------------------------------------------- */

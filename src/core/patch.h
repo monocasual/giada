@@ -27,6 +27,7 @@
 #ifndef G_PATCH_H
 #define G_PATCH_H
 
+#include "src/aliases.h"
 #include "src/const.h"
 #include "src/core/const.h"
 #include "src/core/types.h"
@@ -43,6 +44,12 @@ void to_json(nlohmann::json&, const giada::SampleRange&);
 void from_json(const nlohmann::json&, giada::SampleRange&);
 } // namespace geompp
 
+namespace mcl::utils
+{
+void to_json(nlohmann::json&, const Id&);
+void from_json(const nlohmann::json&, Id&);
+} // namespace mcl::utils
+
 namespace giada::m
 {
 struct Patch
@@ -56,7 +63,7 @@ struct Patch
 
 	struct Sample
 	{
-		ID          waveId = 0;
+		ID          waveId;
 		SampleRange range;
 		Frame       shift = 0;
 		float       pitch = G_DEFAULT_PITCH;
@@ -71,7 +78,7 @@ struct Patch
 
 	struct Channel
 	{
-		ID                      id              = 0;
+		ID                      id;
 		ChannelType             type            = ChannelType::SAMPLE;
 		int                     height          = 0;
 		SceneArray<std::string> names           = {};
@@ -113,24 +120,24 @@ struct Patch
 
 	struct Action
 	{
-		ID       id        = 0;
-		ID       channelId = 0;
-		Scene    scene     = {};
-		Frame    frame     = 0;
-		uint32_t event     = 0;
-		ID       prevId    = 0;
-		ID       nextId    = 0;
+		ID       id;
+		ID       channelId;
+		Scene    scene = {};
+		Frame    frame = 0;
+		uint32_t event = 0;
+		ID       prevId;
+		ID       nextId;
 	};
 
 	struct Wave
 	{
-		ID          id = 0;
+		ID          id;
 		std::string path;
 	};
 
 	struct Plugin
 	{
-		ID                    id = 0;
+		ID                    id;
 		std::string           juceId;
 		bool                  bypass = false;
 		std::string           state;

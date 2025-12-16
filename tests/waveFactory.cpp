@@ -16,7 +16,7 @@ TEST_CASE("waveFactory")
 	SECTION("test creation")
 	{
 		waveFactory::Result res = waveFactory::createFromFile(TEST_WAV_PATH,
-		    /*ID=*/0, /*sampleRate=*/SAMPLE_RATE, Resampler::Quality::LINEAR);
+		    /*ID=*/{}, /*sampleRate=*/SAMPLE_RATE, Resampler::Quality::LINEAR);
 
 		REQUIRE(res.status == G_RES_OK);
 		REQUIRE(res.wave->getRate() == SAMPLE_RATE);
@@ -40,7 +40,7 @@ TEST_CASE("waveFactory")
 	SECTION("test resampling")
 	{
 		waveFactory::Result res = waveFactory::createFromFile(TEST_WAV_PATH,
-		    /*ID=*/0, /*sampleRate=*/SAMPLE_RATE, Resampler::Quality::LINEAR);
+		    /*ID=*/{}, /*sampleRate=*/SAMPLE_RATE, Resampler::Quality::LINEAR);
 
 		int oldSize = res.wave->getBuffer().countFrames();
 		waveFactory::resample(*res.wave.get(), Resampler::Quality::LINEAR, SAMPLE_RATE * 2);

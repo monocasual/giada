@@ -362,9 +362,9 @@ void ActionRecorder::copyActions(ID channelId, Scene src, Scene dst, ID newChann
 
 	for (Action& a : actions)
 	{
-		if (a.prevId != 0)
+		if (a.prevId.isValid())
 			a.prevId = map.at(a.prevId);
-		if (a.nextId != 0)
+		if (a.nextId.isValid())
 			a.nextId = map.at(a.nextId);
 	}
 

@@ -28,16 +28,9 @@
 
 namespace giada::m
 {
-IdManager::IdManager()
-: m_id(0)
-{
-}
-
-/* -------------------------------------------------------------------------- */
-
 void IdManager::set(ID id)
 {
-	if (id != 0 && id > m_id)
+	if (id.isValid() && id > m_id)
 		m_id = id;
 }
 
@@ -45,7 +38,7 @@ void IdManager::set(ID id)
 
 ID IdManager::generate(ID id)
 {
-	if (id != 0)
+	if (id.isValid())
 	{
 		m_id = id;
 		return id;

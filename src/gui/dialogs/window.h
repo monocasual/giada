@@ -40,8 +40,8 @@ class gdWindow : public Fl_Double_Window
 public:
 	void copy_label(const char*) = delete; // Use setTitle()
 
-	gdWindow(int x, int y, int w, int h, const char* title = nullptr, ID id = 0);
-	gdWindow(geompp::Rect<int>, const char* title = nullptr, ID id = 0);
+	gdWindow(int x, int y, int w, int h, const char* title = nullptr, ID id = {});
+	gdWindow(geompp::Rect<int>, const char* title = nullptr, ID id = {});
 	~gdWindow();
 
 	/* rebuild, refresh
@@ -84,7 +84,7 @@ private:
 	static void cb_closeChild(Fl_Widget* /*w*/, void* p);
 
 	std::vector<gdWindow*> m_children;
-	int                    m_id;
+	ID                     m_id;
 	gdWindow*              m_parent;
 	Fl_SVG_Image           m_icon;
 };

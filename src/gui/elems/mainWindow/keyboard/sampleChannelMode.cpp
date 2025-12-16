@@ -105,19 +105,19 @@ void geSampleChannelMode::openMenu()
 {
 	geMenu menu;
 
-	menu.addItem((ID)SamplePlayerMode::LOOP_BASIC, "Loop - Basic");
-	menu.addItem((ID)SamplePlayerMode::LOOP_ONCE, "Loop - Once");
-	menu.addItem((ID)SamplePlayerMode::LOOP_ONCE_BAR, "Loop - Once bar");
-	menu.addItem((ID)SamplePlayerMode::LOOP_REPEAT, "Loop - Repeat");
-	menu.addItem((ID)SamplePlayerMode::SINGLE_BASIC, "Oneshot - Basic");
-	menu.addItem((ID)SamplePlayerMode::SINGLE_BASIC_PAUSE, "Oneshot - Basic pause");
-	menu.addItem((ID)SamplePlayerMode::SINGLE_PRESS, "Oneshot - Press");
-	menu.addItem((ID)SamplePlayerMode::SINGLE_RETRIG, "Oneshot - Retrig");
-	menu.addItem((ID)SamplePlayerMode::SINGLE_ENDLESS, "Oneshot - Endless");
+	menu.addItem(ID{SamplePlayerMode::LOOP_BASIC}, "Loop - Basic");
+	menu.addItem(ID{SamplePlayerMode::LOOP_ONCE}, "Loop - Once");
+	menu.addItem(ID{SamplePlayerMode::LOOP_ONCE_BAR}, "Loop - Once bar");
+	menu.addItem(ID{SamplePlayerMode::LOOP_REPEAT}, "Loop - Repeat");
+	menu.addItem(ID{SamplePlayerMode::SINGLE_BASIC}, "Oneshot - Basic");
+	menu.addItem(ID{SamplePlayerMode::SINGLE_BASIC_PAUSE}, "Oneshot - Basic pause");
+	menu.addItem(ID{SamplePlayerMode::SINGLE_PRESS}, "Oneshot - Press");
+	menu.addItem(ID{SamplePlayerMode::SINGLE_RETRIG}, "Oneshot - Retrig");
+	menu.addItem(ID{SamplePlayerMode::SINGLE_ENDLESS}, "Oneshot - Endless");
 
 	menu.onSelect = [this](ID id)
 	{
-		const SamplePlayerMode mode = static_cast<SamplePlayerMode>(id);
+		const SamplePlayerMode mode = static_cast<SamplePlayerMode>(id.getValue());
 		c::channel::setSamplePlayerMode(m_channel.id, mode);
 		refresh(mode);
 	};

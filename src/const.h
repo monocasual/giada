@@ -27,6 +27,7 @@
 #ifndef G_CONST_H
 #define G_CONST_H
 
+#include "src/aliases.h"
 #include "src/version.h"
 
 namespace giada
@@ -71,9 +72,9 @@ constexpr auto    G_APP_NAME = "Giada";
 constexpr Version G_VERSION(1, 4, 0);
 
 /* -- Internal channels ----------------------------------------------------- */
-constexpr int MASTER_OUT_CHANNEL_ID = 1;
-constexpr int MASTER_IN_CHANNEL_ID  = 2;
-constexpr int PREVIEW_CHANNEL_ID    = 3;
+constexpr ID MASTER_OUT_CHANNEL_ID = ID{1};
+constexpr ID MASTER_IN_CHANNEL_ID  = ID{2};
+constexpr ID PREVIEW_CHANNEL_ID    = ID{3};
 
 /* -- Min/max values -------------------------------------------------------- */
 // TODO - move other min/max values from src/core/const.h

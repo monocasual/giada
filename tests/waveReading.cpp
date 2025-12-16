@@ -12,7 +12,7 @@ TEST_CASE("WaveReading")
 	constexpr int BUFFER_SIZE  = 1024;
 	constexpr int NUM_CHANNELS = 2;
 
-	m::Wave wave(0);
+	m::Wave wave({});
 	wave.getBuffer().alloc(BUFFER_SIZE, NUM_CHANNELS);
 	wave.getBuffer().forEachFrame([](float* f, int i)
 	{

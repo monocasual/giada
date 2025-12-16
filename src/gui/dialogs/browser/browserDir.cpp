@@ -38,7 +38,7 @@ namespace giada::v
 {
 gdBrowserDir::gdBrowserDir(const std::string& title, const std::string& path,
     std::function<void(void*)> cb, const Model& model)
-: gdBrowserBase(title, path, cb, 0, model)
+: gdBrowserBase(title, path, cb, {}, model)
 {
 	hidePathName();
 

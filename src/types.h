@@ -28,7 +28,6 @@
 #define G_TYPES_H
 
 #include "src/const.h"
-#include "src/deps/geompp/src/range.hpp"
 #include <array>
 #include <string>
 
@@ -39,10 +38,6 @@ class Wave;
 
 namespace giada
 {
-using ID          = int;
-using Frame       = int;
-using SampleRange = geompp::Range<Frame>;
-
 template <typename T>
 using SceneArray = std::array<T, G_MAX_NUM_SCENES>;
 

@@ -168,12 +168,12 @@ void Shared::debug() const
 	puts("shared::waves");
 
 	for (int i = 0; const auto& w : m_waves)
-		fmt::print("\t{}) {} - ID={} name='{}'\n", i++, (void*)w.get(), w->id, w->getPath());
+		fmt::print("\t{}) {} - ID={} name='{}'\n", i++, (void*)w.get(), w->id.getValue(), w->getPath());
 
 	puts("shared::plugins");
 
 	for (int i = 0; const auto& p : m_plugins)
-		fmt::print("\t{}) {} - ID={}\n", i++, (void*)p.get(), p->id);
+		fmt::print("\t{}) {} - ID={}\n", i++, (void*)p.get(), p->id.getValue());
 }
 
 #endif // G_DEBUG_MODE

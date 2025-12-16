@@ -34,8 +34,6 @@ namespace giada::m
 class IdManager
 {
 public:
-	IdManager();
-
 	/* set
 	Stores a new id, only if != 0 (valid) and greater than current id (unique). */
 
@@ -46,7 +44,7 @@ public:
 	returns it with no unique id generation. Useful when loading things from the
 	model that already have their own id. */
 
-	ID generate(ID id = 0);
+	ID generate(ID id = {});
 
 	/* get
 	Returns the current id, a.k.a. the last generated one. */

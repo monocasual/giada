@@ -39,3 +39,18 @@ void from_json(const nlohmann::json& j, giada::SampleRange& r)
 	r.b = j.value("b", 0);
 }
 } // namespace geompp
+
+/* -------------------------------------------------------------------------- */
+
+namespace mcl::utils
+{
+void to_json(nlohmann::json& j, const Id& id)
+{
+	j = id.getValue();
+}
+
+void from_json(const nlohmann::json& j, Id& id)
+{
+	id = Id(j.get<std::size_t>());
+}
+} // namespace mcl::utils

@@ -159,7 +159,7 @@ void gdChannelRouting::rebuild()
 	};
 
 	m_addNewOutput->clear();
-	m_addNewOutput->addItem(g_ui->getI18Text(LangMap::CHANNELROUTING_OUTPUT_CHOOSE), 0);
+	m_addNewOutput->addItem(g_ui->getI18Text(LangMap::CHANNELROUTING_OUTPUT_CHOOSE), {});
 	for (int offset = 0; offset < m_data.outputMaxNumChannels; offset += 2)
 		m_addNewOutput->addItem(makeOutputName(m_data.outputDeviceName, offset, m_data.outputMaxNumChannels), offset + 1);
 	m_addNewOutput->showFirstItem();

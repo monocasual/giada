@@ -50,7 +50,7 @@ geSampleChannelButton::geSampleChannelButton(const c::channel::Data& d)
 		label(g_ui->getI18Text(LangMap::MAIN_CHANNEL_SAMPLENOTFOUND));
 		break;
 	default:
-		label(m_channel.sample->waveId == 0 ? g_ui->getI18Text(LangMap::MAIN_CHANNEL_NOSAMPLE) : m_channel.name.c_str());
+		label(!m_channel.sample->waveId.isValid() ? g_ui->getI18Text(LangMap::MAIN_CHANNEL_NOSAMPLE) : m_channel.name.c_str());
 		break;
 	}
 }
@@ -63,7 +63,7 @@ void geSampleChannelButton::refresh()
 
 	if (m_channel.isRecordingInput() && m_channel.isArmed())
 		setInputRecordState();
-	else if (m_channel.isRecordingActions() && m_channel.sample->waveId != 0 && !m_channel.sample->isLoop)
+	else if (m_channel.isRecordingActions() && m_channel.sample->waveId.isValid() && !m_channel.sample->isLoop)
 		setActionRecordState();
 
 	redraw();

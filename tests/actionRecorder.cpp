@@ -12,8 +12,8 @@ TEST_CASE("ActionRecorder")
 	using namespace giada;
 	using namespace giada::m;
 
-	const ID channelID1 = 1;
-	const ID channelID2 = 2;
+	const ID channelID1 = ID{1};
+	const ID channelID2 = ID{2};
 
 	model::Model model;
 
@@ -46,10 +46,10 @@ TEST_CASE("ActionRecorder")
 		REQUIRE(ar.hasActions(channelID1) == true);
 		REQUIRE(a1.frame == f1);
 		REQUIRE(a2.frame == f2);
-		REQUIRE(a1.prevId == 0);
-		REQUIRE(a1.nextId == 0);
-		REQUIRE(a2.prevId == 0);
-		REQUIRE(a2.nextId == 0);
+		REQUIRE(!a1.prevId.isValid());
+		REQUIRE(!a1.nextId.isValid());
+		REQUIRE(!a2.prevId.isValid());
+		REQUIRE(!a2.nextId.isValid());
 
 		SECTION("Test clear actions by channel")
 		{

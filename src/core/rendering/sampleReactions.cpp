@@ -90,7 +90,7 @@ ChannelStatus pressWhileOff_(ID channelId, ChannelShared& shared, float velocity
 
 	if (canQuantize)
 	{
-		shared.quantizer->trigger(Q_ACTION_PLAY + channelId);
+		shared.quantizer->trigger(Q_ACTION_PLAY + channelId.getValue());
 		return ChannelStatus::OFF;
 	}
 	else
@@ -106,7 +106,7 @@ ChannelStatus pressWhilePlay_(ID channelId, ChannelShared& shared, SamplePlayerM
 	{
 	case SamplePlayerMode::SINGLE_RETRIG:
 		if (canQuantize)
-			shared.quantizer->trigger(Q_ACTION_REWIND + channelId);
+			shared.quantizer->trigger(Q_ACTION_REWIND + channelId.getValue());
 		else
 			rewindSampleChannel(shared, /*localFrame=*/0);
 		return ChannelStatus::PLAY;

@@ -65,7 +65,7 @@ namespace giada::c::layout
 void openBrowserForProjectLoad()
 {
 	v::gdWindow* childWin = new v::gdBrowserLoad(g_ui->getI18Text(v::LangMap::BROWSER_OPENPROJECT),
-	    g_ui->model.patchPath, c::storage::loadProject, 0, g_ui->model);
+	    g_ui->model.patchPath, c::storage::loadProject, {}, g_ui->model);
 	g_ui->openSubWindow(childWin);
 }
 
@@ -74,7 +74,7 @@ void openBrowserForProjectLoad()
 void openBrowserForProjectSave()
 {
 	v::gdWindow* childWin = new v::gdBrowserSave(g_ui->getI18Text(v::LangMap::BROWSER_SAVEPROJECT),
-	    g_ui->model.patchPath, g_ui->model.projectName, c::storage::saveProject, 0, g_ui->model);
+	    g_ui->model.patchPath, g_ui->model.projectName, c::storage::saveProject, {}, g_ui->model);
 	g_ui->openSubWindow(childWin);
 }
 

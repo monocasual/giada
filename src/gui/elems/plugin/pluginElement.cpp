@@ -153,7 +153,7 @@ void gePluginElement::removePlugin()
 
 void gePluginElement::openPluginWindow()
 {
-	const int pwid = Ui::getPluginWindowId(m_plugin.id);
+	const ID pwid = Ui::getPluginWindowId(m_plugin.id);
 
 	gdWindow* pluginWindow = g_ui->getSubwindow(pwid);
 

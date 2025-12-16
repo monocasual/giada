@@ -47,7 +47,7 @@ namespace
 {
 enum class Menu
 {
-	INPUT_MONITOR = 0,
+	INPUT_MONITOR = 1,
 	OVERDUB_PROTECTION,
 	LOAD_SAMPLE,
 	EXPORT_SAMPLE,
@@ -173,158 +173,115 @@ void geSampleChannel::openMenu()
 
 	geMenu menu;
 
-	menu.addItem((ID)Menu::INPUT_MONITOR, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_INPUTMONITOR),
+	menu.addItem(ID{Menu::INPUT_MONITOR}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_INPUTMONITOR),
 	    FL_MENU_TOGGLE | (m_channel.sample->inputMonitor ? FL_MENU_VALUE : 0));
-	menu.addItem((ID)Menu::OVERDUB_PROTECTION, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_OVERDUBPROTECTION),
+	menu.addItem(ID{Menu::OVERDUB_PROTECTION}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_OVERDUBPROTECTION),
 	    FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->overdubProtection ? FL_MENU_VALUE : 0));
-	menu.addItem((ID)Menu::LOAD_SAMPLE, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_LOADSAMPLE));
-	menu.addItem((ID)Menu::EXPORT_SAMPLE, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EXPORTSAMPLE));
-	menu.addItem((ID)Menu::SETUP_KEYBOARD_INPUT, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT));
-	menu.addItem((ID)Menu::SETUP_MIDI_INPUT, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
-	menu.addItem((ID)Menu::SETUP_MIDI_OUTPUT, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT));
-	menu.addItem((ID)Menu::EDIT_ROUTING, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
-	menu.addItem((ID)Menu::EDIT_SAMPLE, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITSAMPLE));
-	menu.addItem((ID)Menu::EDIT_ACTIONS, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITACTIONS));
+	menu.addItem(ID{Menu::LOAD_SAMPLE}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_LOADSAMPLE));
+	menu.addItem(ID{Menu::EXPORT_SAMPLE}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EXPORTSAMPLE));
+	menu.addItem(ID{Menu::SETUP_KEYBOARD_INPUT}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT));
+	menu.addItem(ID{Menu::SETUP_MIDI_INPUT}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
+	menu.addItem(ID{Menu::SETUP_MIDI_OUTPUT}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT));
+	menu.addItem(ID{Menu::EDIT_ROUTING}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
+	menu.addItem(ID{Menu::EDIT_SAMPLE}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITSAMPLE));
+	menu.addItem(ID{Menu::EDIT_ACTIONS}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITACTIONS));
 
 	geMenu clearActionsSubMenu;
-	clearActionsSubMenu.addItem((ID)Menu::CLEAR_ACTIONS_THIS_SCENE, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_THISSCENE));
-	clearActionsSubMenu.addItem((ID)Menu::CLEAR_ACTIONS_ALL_SCENES, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_ALLSCENES));
+	clearActionsSubMenu.addItem(ID{Menu::CLEAR_ACTIONS_THIS_SCENE}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_THISSCENE));
+	clearActionsSubMenu.addItem(ID{Menu::CLEAR_ACTIONS_ALL_SCENES}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_ALLSCENES));
 	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS), clearActionsSubMenu);
 
-	menu.addItem((ID)Menu::RENAME_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME));
-	menu.addItem((ID)Menu::CLONE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLONE));
+	menu.addItem(ID{Menu::RENAME_CHANNEL}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME));
+	menu.addItem(ID{Menu::CLONE_CHANNEL}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLONE));
 
 	geMenu copySceneSubMenu;
-	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_0, fmt::format("{} 1", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_1, fmt::format("{} 2", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_2, fmt::format("{} 3", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_3, fmt::format("{} 4", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_4, fmt::format("{} 5", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_5, fmt::format("{} 6", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_6, fmt::format("{} 7", g_ui->getI18Text(LangMap::COMMON_SCENE)));
-	copySceneSubMenu.addItem((ID)Menu::COPY_CHANNEL_TO_SCENE_7, fmt::format("{} 8", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_0}, fmt::format("{} 1", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_1}, fmt::format("{} 2", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_2}, fmt::format("{} 3", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_3}, fmt::format("{} 4", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_4}, fmt::format("{} 5", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_5}, fmt::format("{} 6", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_6}, fmt::format("{} 7", g_ui->getI18Text(LangMap::COMMON_SCENE)));
+	copySceneSubMenu.addItem(ID{Menu::COPY_CHANNEL_TO_SCENE_7}, fmt::format("{} 8", g_ui->getI18Text(LangMap::COMMON_SCENE)));
 	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_COPYTOSCENE), copySceneSubMenu);
 
 	geMenu freeChannelSubMenu;
-	freeChannelSubMenu.addItem((ID)Menu::FREE_CHANNEL_THIS_SCENE, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREETHISSCENE));
-	freeChannelSubMenu.addItem((ID)Menu::FREE_CHANNEL_ALL_SCENES, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREEALLSCENES));
+	freeChannelSubMenu.addItem(ID{Menu::FREE_CHANNEL_THIS_SCENE}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREETHISSCENE));
+	freeChannelSubMenu.addItem(ID{Menu::FREE_CHANNEL_ALL_SCENES}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREEALLSCENES));
 	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_FREE), freeChannelSubMenu);
 
-	menu.addItem((ID)Menu::DELETE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_DELETE));
+	menu.addItem(ID{Menu::DELETE_CHANNEL}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_DELETE));
 
-	if (m_channel.sample->waveId == 0)
+	if (!m_channel.sample->waveId.isValid())
 	{
-		menu.setEnabled((ID)Menu::EXPORT_SAMPLE, false);
-		menu.setEnabled((ID)Menu::EDIT_SAMPLE, false);
-		menu.setEnabled((ID)Menu::RENAME_CHANNEL, false);
-		menu.setEnabled((ID)Menu::FREE_CHANNEL_THIS_SCENE, false);
-		menu.setEnabled((ID)Menu::FREE_CHANNEL_ALL_SCENES, false);
+		menu.setEnabled(ID{Menu::EXPORT_SAMPLE}, false);
+		menu.setEnabled(ID{Menu::EDIT_SAMPLE}, false);
+		menu.setEnabled(ID{Menu::RENAME_CHANNEL}, false);
+		menu.setEnabled(ID{Menu::FREE_CHANNEL_THIS_SCENE}, false);
+		menu.setEnabled(ID{Menu::FREE_CHANNEL_ALL_SCENES}, false);
 	}
 
 	if (!m_channel.hasActions)
 	{
-		menu.setEnabled((ID)Menu::CLEAR_ACTIONS_ALL_SCENES, false);
-		menu.setEnabled((ID)Menu::CLEAR_ACTIONS_THIS_SCENE, false);
+		menu.setEnabled(ID{Menu::CLEAR_ACTIONS_ALL_SCENES}, false);
+		menu.setEnabled(ID{Menu::CLEAR_ACTIONS_THIS_SCENE}, false);
 	}
 
 	menu.onSelect = [&channel = m_channel](ID id)
 	{
-		switch (static_cast<Menu>(id))
-		{
-		case Menu::INPUT_MONITOR:
+		if (id == Menu::INPUT_MONITOR)
 			c::channel::setInputMonitor(channel.id, !channel.sample->inputMonitor);
-			break;
-
-		case Menu::OVERDUB_PROTECTION:
+		else if (id == Menu::OVERDUB_PROTECTION)
 			c::channel::setOverdubProtection(channel.id, !channel.sample->overdubProtection);
-			break;
-
-		case Menu::LOAD_SAMPLE:
+		else if (id == Menu::LOAD_SAMPLE)
 			c::layout::openBrowserForSampleLoad(channel.id);
-			break;
-
-		case Menu::EXPORT_SAMPLE:
+		else if (id == Menu::EXPORT_SAMPLE)
 			c::layout::openBrowserForSampleSave(channel.id);
-			break;
-
-		case Menu::SETUP_KEYBOARD_INPUT:
+		else if (id == Menu::SETUP_KEYBOARD_INPUT)
 			c::layout::openKeyGrabberWindow(channel.key, [channelId = channel.id](int key)
 			{
 				return c::io::channel_setKey(channelId, key);
 			});
-			break;
-
-		case Menu::SETUP_MIDI_INPUT:
+		else if (id == Menu::SETUP_MIDI_INPUT)
 			c::layout::openChannelMidiInputWindow(channel.id);
-			break;
-
-		case Menu::SETUP_MIDI_OUTPUT:
+		else if (id == Menu::SETUP_MIDI_OUTPUT)
 			c::layout::openSampleChannelMidiOutputWindow(channel.id);
-			break;
-
-		case Menu::EDIT_ROUTING:
+		else if (id == Menu::EDIT_ROUTING)
 			c::layout::openChannelRoutingWindow(channel.id);
-			break;
-
-		case Menu::EDIT_SAMPLE:
+		else if (id == Menu::EDIT_SAMPLE)
 			c::layout::openSampleEditor(channel.id);
-			break;
-
-		case Menu::EDIT_ACTIONS:
+		else if (id == Menu::EDIT_ACTIONS)
 			c::layout::openSampleActionEditor(channel.id);
-			break;
-
-		case Menu::CLEAR_ACTIONS_THIS_SCENE:
+		else if (id == Menu::CLEAR_ACTIONS_THIS_SCENE)
 			c::channel::clearAllActions(channel.id, /*allScenes=*/false);
-			break;
-		case Menu::CLEAR_ACTIONS_ALL_SCENES:
+		else if (id == Menu::CLEAR_ACTIONS_ALL_SCENES)
 			c::channel::clearAllActions(channel.id, /*allScenes=*/true);
-			break;
-
-		case Menu::CLONE_CHANNEL:
+		else if (id == Menu::CLONE_CHANNEL)
 			c::channel::cloneChannel(channel.id);
-			break;
-
-		case Menu::COPY_CHANNEL_TO_SCENE_0:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_0)
 			c::channel::copyChannelToScene(channel.id, {0});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_1:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_1)
 			c::channel::copyChannelToScene(channel.id, {1});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_2:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_2)
 			c::channel::copyChannelToScene(channel.id, {2});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_3:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_3)
 			c::channel::copyChannelToScene(channel.id, {3});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_4:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_4)
 			c::channel::copyChannelToScene(channel.id, {4});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_5:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_5)
 			c::channel::copyChannelToScene(channel.id, {5});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_6:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_6)
 			c::channel::copyChannelToScene(channel.id, {6});
-			break;
-		case Menu::COPY_CHANNEL_TO_SCENE_7:
+		else if (id == Menu::COPY_CHANNEL_TO_SCENE_7)
 			c::channel::copyChannelToScene(channel.id, {7});
-			break;
-
-		case Menu::RENAME_CHANNEL:
+		else if (id == Menu::RENAME_CHANNEL)
 			c::layout::openRenameChannelWindow(channel);
-			break;
-
-		case Menu::FREE_CHANNEL_THIS_SCENE:
+		else if (id == Menu::FREE_CHANNEL_THIS_SCENE)
 			c::channel::freeChannel(channel.id, /*allScenes=*/false);
-			break;
-		case Menu::FREE_CHANNEL_ALL_SCENES:
+		else if (id == Menu::FREE_CHANNEL_ALL_SCENES)
 			c::channel::freeChannel(channel.id, /*allScenes=*/true);
-			break;
-
-		case Menu::DELETE_CHANNEL:
+		else if (id == Menu::DELETE_CHANNEL)
 			c::channel::deleteChannel(channel.id);
-			break;
-		}
 	};
 
 	menu.popup();
@@ -348,7 +305,7 @@ void geSampleChannel::refresh()
 
 	progress->redraw();
 
-	if (m_channel.sample->waveId != 0)
+	if (!m_channel.sample->waveId.isValid())
 	{
 		if (m_channel.sample->overdubProtection)
 			arm->deactivate();

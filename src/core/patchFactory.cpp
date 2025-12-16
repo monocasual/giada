@@ -137,7 +137,7 @@ void readTracks_(Patch& patch, const nlohmann::json& j)
 		track.internal = jtrack.value(PATCH_KEY_TRACK_INTERNAL, false);
 		if (jtrack.contains(PATCH_KEY_TRACK_CHANNELS))
 			for (const auto& jplugin : jtrack[PATCH_KEY_TRACK_CHANNELS])
-				track.channels.push_back(jplugin);
+				track.channels.push_back(ID(jplugin));
 
 		patch.tracks.push_back(track);
 	}
@@ -150,7 +150,7 @@ void readPlugins_(Patch& patch, const nlohmann::json& j)
 	if (!j.contains(PATCH_KEY_PLUGINS))
 		return;
 
-	ID id = 0;
+	ID id;
 	for (const auto& jplugin : j[PATCH_KEY_PLUGINS])
 	{
 		Patch::Plugin p;
@@ -176,7 +176,7 @@ void readWaves_(Patch& patch, const nlohmann::json& j, const std::string& basePa
 	if (!j.contains(PATCH_KEY_WAVES))
 		return;
 
-	ID id = 0;
+	ID id;
 	for (const auto& jwave : j[PATCH_KEY_WAVES])
 	{
 		Patch::Wave w;
@@ -193,17 +193,17 @@ void readActions_(Patch& patch, const nlohmann::json& j)
 	if (!j.contains(PATCH_KEY_ACTIONS))
 		return;
 
-	ID id = 0;
+	ID id;
 	for (const auto& jaction : j[PATCH_KEY_ACTIONS])
 	{
 		Patch::Action a;
 		a.id        = jaction.value(G_PATCH_KEY_ACTION_ID, ++id);
-		a.channelId = jaction.value(G_PATCH_KEY_ACTION_CHANNEL, 0);
+		a.channelId = jaction.value(G_PATCH_KEY_ACTION_CHANNEL, ID{});
 		a.scene     = jaction.value(G_PATCH_KEY_ACTION_SCENE, Patch::Scene{0});
 		a.frame     = jaction.value(G_PATCH_KEY_ACTION_FRAME, 0);
 		a.event     = jaction.value(G_PATCH_KEY_ACTION_EVENT, 0);
-		a.prevId    = jaction.value(G_PATCH_KEY_ACTION_PREV, 0);
-		a.nextId    = jaction.value(G_PATCH_KEY_ACTION_NEXT, 0);
+		a.prevId    = jaction.value(G_PATCH_KEY_ACTION_PREV, ID{});
+		a.nextId    = jaction.value(G_PATCH_KEY_ACTION_NEXT, ID{});
 		patch.actions.push_back(a);
 	}
 }
@@ -438,7 +438,7 @@ void modernize_(Patch& patch, nlohmann::json& j)
 	internal, one external. */
 	if (patch.version < Version{1, 1, 0})
 	{
-		const ID groupChannelId = 8192;
+		const ID groupChannelId{8192};
 		patch.tracks.push_back({G_DEFAULT_TRACK_WIDTH, /*internal=*/true, {}});
 		patch.tracks.push_back({G_DEFAULT_TRACK_WIDTH, /*internal=*/false, {groupChannelId}});
 		patch.channels.push_back({groupChannelId, ChannelType::GROUP, G_GUI_UNIT});
@@ -466,10 +466,10 @@ void modernize_(Patch& patch, nlohmann::json& j)
 				continue;
 			for (const auto& jchannel : j[PATCH_KEY_CHANNELS])
 			{
-				if (jchannel.value(PATCH_KEY_CHANNEL_ID, 0) != c.id)
+				if (jchannel.value(PATCH_KEY_CHANNEL_ID, ID{}) != c.id)
 					continue;
 				c.names[0]          = jchannel.value("name", "");
-				c.samples[0].waveId = jchannel.value("wave_id", 0);
+				c.samples[0].waveId = jchannel.value("wave_id", ID{});
 				c.samples[0].range  = {jchannel.value("begin", 0), jchannel.value("end", 0)};
 				c.samples[0].shift  = jchannel.value("shift", 0);
 				c.samples[0].pitch  = jchannel.value("pitch", 0.0f);

@@ -43,7 +43,7 @@ namespace
 {
 enum class Menu
 {
-	CUT = 0,
+	CUT = 1,
 	COPY,
 	PASTE,
 	TRIM,
@@ -147,77 +147,62 @@ void geWaveTools::openMenu()
 {
 	geMenu menu;
 
-	menu.addItem((ID)Menu::CUT, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_CUT));
-	menu.addItem((ID)Menu::COPY, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_COPY));
-	menu.addItem((ID)Menu::PASTE, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_PASTE));
-	menu.addItem((ID)Menu::TRIM, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_TRIM));
-	menu.addItem((ID)Menu::SILENCE, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SILENCE));
-	menu.addItem((ID)Menu::REVERSE, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_REVERSE));
-	menu.addItem((ID)Menu::NORMALIZE, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_NORMALIZE));
-	menu.addItem((ID)Menu::FADE_IN, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_FADE_IN));
-	menu.addItem((ID)Menu::FADE_OUT, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_FADE_OUT));
-	menu.addItem((ID)Menu::SMOOTH_EDGES, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SMOOTH_EDGES));
-	menu.addItem((ID)Menu::SET_RANGE, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SET_RANGE));
-	menu.addItem((ID)Menu::TO_NEW_CHANNEL, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL));
+	menu.addItem(ID{Menu::CUT}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_CUT));
+	menu.addItem(ID{Menu::COPY}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_COPY));
+	menu.addItem(ID{Menu::PASTE}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_PASTE));
+	menu.addItem(ID{Menu::TRIM}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_TRIM));
+	menu.addItem(ID{Menu::SILENCE}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SILENCE));
+	menu.addItem(ID{Menu::REVERSE}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_REVERSE));
+	menu.addItem(ID{Menu::NORMALIZE}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_NORMALIZE));
+	menu.addItem(ID{Menu::FADE_IN}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_FADE_IN));
+	menu.addItem(ID{Menu::FADE_OUT}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_FADE_OUT));
+	menu.addItem(ID{Menu::SMOOTH_EDGES}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SMOOTH_EDGES));
+	menu.addItem(ID{Menu::SET_RANGE}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SET_RANGE));
+	menu.addItem(ID{Menu::TO_NEW_CHANNEL}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL));
 
 	if (!waveform->isSelected())
 	{
-		menu.setEnabled((ID)Menu::CUT, false);
-		menu.setEnabled((ID)Menu::COPY, false);
-		menu.setEnabled((ID)Menu::TRIM, false);
-		menu.setEnabled((ID)Menu::SILENCE, false);
-		menu.setEnabled((ID)Menu::REVERSE, false);
-		menu.setEnabled((ID)Menu::NORMALIZE, false);
-		menu.setEnabled((ID)Menu::FADE_IN, false);
-		menu.setEnabled((ID)Menu::FADE_OUT, false);
-		menu.setEnabled((ID)Menu::SMOOTH_EDGES, false);
-		menu.setEnabled((ID)Menu::SET_RANGE, false);
-		menu.setEnabled((ID)Menu::TO_NEW_CHANNEL, false);
+		menu.setEnabled(ID{Menu::CUT}, false);
+		menu.setEnabled(ID{Menu::COPY}, false);
+		menu.setEnabled(ID{Menu::TRIM}, false);
+		menu.setEnabled(ID{Menu::SILENCE}, false);
+		menu.setEnabled(ID{Menu::REVERSE}, false);
+		menu.setEnabled(ID{Menu::NORMALIZE}, false);
+		menu.setEnabled(ID{Menu::FADE_IN}, false);
+		menu.setEnabled(ID{Menu::FADE_OUT}, false);
+		menu.setEnabled(ID{Menu::SMOOTH_EDGES}, false);
+		menu.setEnabled(ID{Menu::SET_RANGE}, false);
+		menu.setEnabled(ID{Menu::TO_NEW_CHANNEL}, false);
 	}
 
 	menu.onSelect = [channelId = m_data->channelId,
 	                    a      = waveform->getSelectionA(),
 	                    b      = waveform->getSelectionB()](ID id)
 	{
-		switch (static_cast<Menu>(id))
-		{
-		case Menu::CUT:
+		if (id == Menu::CUT)
 			c::sampleEditor::cut(channelId, a, b);
-			break;
-		case Menu::COPY:
+		else if (id == Menu::COPY)
 			c::sampleEditor::copy(channelId, a, b);
-			break;
-		case Menu::PASTE:
+		else if (id == Menu::PASTE)
 			c::sampleEditor::paste(channelId, a);
-			break;
-		case Menu::TRIM:
+		else if (id == Menu::TRIM)
 			c::sampleEditor::trim(channelId, a, b);
-			break;
-		case Menu::SILENCE:
+		else if (id == Menu::SILENCE)
 			c::sampleEditor::silence(channelId, a, b);
-			break;
-		case Menu::REVERSE:
+		else if (id == Menu::REVERSE)
 			c::sampleEditor::reverse(channelId, a, b);
-			break;
-		case Menu::NORMALIZE:
+		else if (id == Menu::NORMALIZE)
 			c::sampleEditor::normalize(channelId, a, b);
-			break;
-		case Menu::FADE_IN:
+		else if (id == Menu::FADE_IN)
 			c::sampleEditor::fade(channelId, a, b, m::wfx::Fade::IN);
-			break;
-		case Menu::FADE_OUT:
+		else if (id == Menu::FADE_OUT)
 			c::sampleEditor::fade(channelId, a, b, m::wfx::Fade::OUT);
-			break;
-		case Menu::SMOOTH_EDGES:
+		else if (id == Menu::SMOOTH_EDGES)
 			c::sampleEditor::smoothEdges(channelId, a, b);
-			break;
-		case Menu::SET_RANGE:
+		else if (id == Menu::SET_RANGE)
 			c::sampleEditor::setRange(channelId, {a, b});
-			break;
-		case Menu::TO_NEW_CHANNEL:
+		else if (id == Menu::TO_NEW_CHANNEL)
 			c::sampleEditor::toNewChannel(channelId, a, b);
-			break;
-		}
 	};
 
 	menu.popup();

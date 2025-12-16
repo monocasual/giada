@@ -117,7 +117,7 @@ void ChannelManager::addTrack(Frame bufferSize)
 	const bool               overdubProtection = false;
 	const Resampler::Quality rsmpQuality       = m_model.get().kernelAudio.rsmpQuality;
 
-	channelFactory::Data groupData = channelFactory::create(/*id=*/0, ChannelType::GROUP, bufferSize, rsmpQuality, overdubProtection);
+	channelFactory::Data groupData = channelFactory::create(/*id=*/{}, ChannelType::GROUP, bufferSize, rsmpQuality, overdubProtection);
 
 	m_model.addChannelShared(std::move(groupData.shared));
 	m_model.get().tracks.add(std::move(groupData.channel), G_DEFAULT_TRACK_WIDTH, /*isInternal=*/false);
@@ -152,7 +152,7 @@ Channel& ChannelManager::addChannel(ChannelType type, std::size_t trackIndex, in
 	const bool               overdubProtectionDefaultOn = m_model.get().behaviors.overdubProtectionDefaultOn;
 	const Resampler::Quality rsmpQuality                = m_model.get().kernelAudio.rsmpQuality;
 
-	channelFactory::Data data = channelFactory::create(/*id=*/0, type, bufferSize, rsmpQuality, overdubProtectionDefaultOn);
+	channelFactory::Data data = channelFactory::create(/*id=*/{}, type, bufferSize, rsmpQuality, overdubProtectionDefaultOn);
 
 	setupChannelCallbacks(data.channel, *data.shared);
 
@@ -170,7 +170,7 @@ Channel& ChannelManager::addChannel(ChannelType type, std::size_t trackIndex, in
 int ChannelManager::loadSampleChannel(ID channelId, const std::string& fname, int sampleRate,
     Resampler::Quality quality, Scene scene)
 {
-	waveFactory::Result res = waveFactory::createFromFile(fname, /*id=*/0, sampleRate, quality);
+	waveFactory::Result res = waveFactory::createFromFile(fname, /*id=*/{}, sampleRate, quality);
 	if (res.status != G_RES_OK)
 		return res.status;
 
@@ -632,11 +632,11 @@ void ChannelManager::setupChannelCallbacks(const Channel& ch, ChannelShared& sha
 
 	if (ch.type == ChannelType ::SAMPLE)
 	{
-		shared.quantizer->schedule(Q_ACTION_PLAY + ch.id, [&shared](Frame delta)
+		shared.quantizer->schedule(Q_ACTION_PLAY + ch.id.getValue(), [&shared](Frame delta)
 		{
 			rendering::playSampleChannel(shared, delta);
 		});
-		shared.quantizer->schedule(Q_ACTION_REWIND + ch.id, [&shared](Frame delta)
+		shared.quantizer->schedule(Q_ACTION_REWIND + ch.id.getValue(), [&shared](Frame delta)
 		{
 			const ChannelStatus status = shared.playStatus.load();
 			if (status == ChannelStatus::OFF)

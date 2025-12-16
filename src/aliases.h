@@ -24,37 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_ACTION_H
-#define G_ACTION_H
+#ifndef G_ALIASES_H
+#define G_ALIASES_H
 
-#include "src/core/midiEvent.h"
-#include "src/core/types.h"
-#include "src/types.h"
+#include "src/deps/geompp/src/range.hpp"
+#include "src/deps/mcl-utils/src/id.hpp"
 
-namespace giada::m
+namespace giada
 {
-struct Action
-{
-	ID        id;
-	ID        channelId;
-	Scene     scene;
-	Frame     frame;
-	MidiEvent event;
-	ID        pluginId;
-	int       pluginParam = -1;
-	ID        prevId      = {};
-	ID        nextId      = {};
-
-	bool isValid() const
-	{
-		return id.isValid();
-	}
-
-	bool isVolumeEnvelope() const
-	{
-		return event.getStatus() == MidiEvent::CHANNEL_CC && pluginId.isValid();
-	}
-};
-} // namespace giada::m
+using ID          = mcl::utils::Id;
+using Frame       = int;
+using SampleRange = geompp::Range<Frame>;
+} // namespace giada
 
 #endif

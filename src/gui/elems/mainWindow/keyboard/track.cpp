@@ -46,7 +46,7 @@ namespace
 {
 enum class Menu
 {
-	ADD_SAMPLE_CHANNEL = 0,
+	ADD_SAMPLE_CHANNEL = 1,
 	ADD_MIDI_CHANNEL,
 	ADD_TRACK,
 	REMOVE_TRACK,
@@ -117,10 +117,10 @@ void geTrack::showMenu() const
 {
 	geMenu menu;
 
-	menu.addItem((ID)Menu::ADD_SAMPLE_CHANNEL, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_ADDSAMPLECHANNEL));
-	menu.addItem((ID)Menu::ADD_MIDI_CHANNEL, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_ADDMIDICHANNEL));
-	menu.addItem((ID)Menu::ADD_TRACK, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_ADD_TRACK));
-	menu.addItem((ID)Menu::REMOVE_TRACK, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_REMOVE_TRACK));
+	menu.addItem(ID{Menu::ADD_SAMPLE_CHANNEL}, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_ADDSAMPLECHANNEL));
+	menu.addItem(ID{Menu::ADD_MIDI_CHANNEL}, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_ADDMIDICHANNEL));
+	menu.addItem(ID{Menu::ADD_TRACK}, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_ADD_TRACK));
+	menu.addItem(ID{Menu::REMOVE_TRACK}, g_ui->getI18Text(LangMap::MAIN_TRACK_BUTTON_REMOVE_TRACK));
 
 	geKeyboard* keyboard = static_cast<geKeyboard*>(parent());
 
@@ -129,21 +129,14 @@ void geTrack::showMenu() const
 
 	menu.onSelect = [this, keyboard](ID menuId)
 	{
-		switch (static_cast<Menu>(menuId))
-		{
-		case Menu::ADD_SAMPLE_CHANNEL:
+		if (menuId == Menu::ADD_SAMPLE_CHANNEL)
 			c::channel::addChannel(index, ChannelType::SAMPLE);
-			break;
-		case Menu::ADD_MIDI_CHANNEL:
+		else if (menuId == Menu::ADD_MIDI_CHANNEL)
 			c::channel::addChannel(index, ChannelType::MIDI);
-			break;
-		case Menu::REMOVE_TRACK:
+		else if (menuId == Menu::REMOVE_TRACK)
 			keyboard->deleteTrack(index);
-			break;
-		case Menu::ADD_TRACK:
+		else if (menuId == Menu::ADD_TRACK)
 			keyboard->addTrack();
-			break;
-		}
 	};
 
 	menu.popup();
