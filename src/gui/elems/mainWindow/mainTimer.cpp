@@ -77,7 +77,7 @@ geMainTimer::geMainTimer()
 	m_quantizer->addItem("1\\/6");
 	m_quantizer->addItem("1\\/8");
 	m_quantizer->showItem(1); //  "off" by default
-	m_quantizer->onChange = [](ID value)
+	m_quantizer->onChange = [](int value)
 	{ c::main::quantize(value); };
 }
 

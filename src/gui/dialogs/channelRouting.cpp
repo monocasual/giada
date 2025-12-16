@@ -121,7 +121,7 @@ gdChannelRouting::gdChannelRouting(ID channelId, const Model& model)
 		c::channel::setSendToMaster(id, value);
 	};
 
-	m_addNewOutput->onChange = [channelId = m_data.id](ID id)
+	m_addNewOutput->onChange = [channelId = m_data.id](int id)
 	{
 		c::channel::addExtraOutput(channelId, id - 1);
 	};

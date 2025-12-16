@@ -246,7 +246,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	add(body);
 	resizable(body);
 
-	m_api->onChange = [this](ID id)
+	m_api->onChange = [this](int id)
 	{
 		m_data.selectedApi = static_cast<RtAudio::Api>(id);
 		deactivateAll();
@@ -255,7 +255,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 		activateAll();
 	};
 
-	m_sampleRate->onChange = [this](ID id)
+	m_sampleRate->onChange = [this](int id)
 	{ m_data.selectedSampleRate = id; };
 
 	m_numOutChannels->onChange = [this](const std::string& s)
@@ -263,13 +263,13 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 		m_data.selectedOutputDevice.selectedChannelsCount = utils::string::toInt(s);
 	};
 
-	m_sounddevOut->onChange = [this](ID id)
+	m_sounddevOut->onChange = [this](int id)
 	{
 		m_data.setOutputDevice(id);
 		refreshDevOutProperties();
 	};
 
-	m_sounddevIn->onChange = [this](ID id)
+	m_sounddevIn->onChange = [this](int id)
 	{
 		m_data.setInputDevice(id);
 		refreshDevInProperties();
@@ -282,12 +282,12 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 		refreshDevInProperties();
 	};
 
-	m_channelsOut->onChange = [this](ID)
+	m_channelsOut->onChange = [this](int)
 	{
 		refreshChannelOutProperties();
 	};
 
-	m_channelsIn->onChange = [this](ID)
+	m_channelsIn->onChange = [this](int)
 	{
 		m_data.selectedInputDevice.selectedChannelsCount = m_channelsIn->getChannelsCount();
 		m_data.selectedInputDevice.selectedChannelsStart = m_channelsIn->getChannelsStart();
@@ -306,7 +306,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	m_bufferSize->addItem("1024", 1024);
 	m_bufferSize->addItem("2048", 2048);
 	m_bufferSize->addItem("4096", 4096);
-	m_bufferSize->onChange = [this](ID id)
+	m_bufferSize->onChange = [this](int id)
 	{ m_data.selectedBufferSize = id; };
 
 	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_SINCBEST), 0);
@@ -315,7 +315,7 @@ geTabAudio::geTabAudio(geompp::Rect<int> bounds)
 	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_ZEROORDER), 3);
 	m_rsmpQuality->addItem(g_ui->getI18Text(LangMap::CONFIG_AUDIO_RESAMPLING_LINEAR), 4);
 
-	m_rsmpQuality->onChange = [this](ID id)
+	m_rsmpQuality->onChange = [this](int id)
 	{ m_data.selectedResampleQuality = id; };
 
 	m_recTriggerLevel->onChange = [this](const std::string& s)

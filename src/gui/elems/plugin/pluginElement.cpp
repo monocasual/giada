@@ -79,7 +79,7 @@ gePluginElement::gePluginElement(int x, int y, int w, int h, c::plugin::Plugin d
 	button->onClick = [this]()
 	{ openPluginWindow(); };
 
-	program->onChange = [pluginId = m_plugin.id](ID id)
+	program->onChange = [pluginId = m_plugin.id](int id)
 	{
 		c::plugin::setProgram(pluginId, id);
 	};

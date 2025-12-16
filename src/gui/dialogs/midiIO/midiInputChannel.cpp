@@ -179,7 +179,7 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId, const Model& model)
 	m_channel->addItem("Channel 14");
 	m_channel->addItem("Channel 15");
 	m_channel->addItem("Channel 16");
-	m_channel->onChange = [this](ID id)
+	m_channel->onChange = [this](int id)
 	{
 		c::io::channel_setMidiInputFilter(m_data.channelId, id == 0 ? -1 : id - 1);
 	};

@@ -146,7 +146,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 	grid->addItem("64", 64);
 	grid->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_GRIDRES));
 	grid->showItem(model.sampleEditorGridVal);
-	grid->onChange = [this](ID)
+	grid->onChange = [this](int)
 	{
 		/* TODO - redraw grid if != (off) */
 		waveTools->waveform->setGridLevel(grid->getSelectedId());

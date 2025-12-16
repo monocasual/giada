@@ -183,19 +183,19 @@ geTabMidi::geTabMidi(geompp::Rect<int> bounds)
 	add(body);
 	resizable(body);
 
-	m_system->onChange = [this](ID id)
+	m_system->onChange = [this](int id)
 	{
 		c::config::changeMidiAPI(static_cast<RtMidi::Api>(id));
 		rebuild(c::config::getMidiData());
 	};
 
-	m_midiMap->onChange = [this](ID id)
+	m_midiMap->onChange = [this](int id)
 	{
 		m_data.selectedMidiMap = id;
 		c::config::setMidiMapPath(m_data.getMidiMapByIndex(id));
 	};
 
-	m_sync->onChange = [this](ID id)
+	m_sync->onChange = [this](int id)
 	{
 		m_data.selectedSyncMode = id;
 		c::config::setMidiSyncMode(m_data.selectedSyncMode);

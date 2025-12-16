@@ -48,7 +48,7 @@ geGridTool::geGridTool(Pixel x, Pixel y, const Model& model)
 	gridType->addItem("16");
 	gridType->addItem("32");
 	gridType->showItem(0);
-	gridType->onChange = [this](ID)
+	gridType->onChange = [this](int)
 	{
 		window()->redraw();
 	};

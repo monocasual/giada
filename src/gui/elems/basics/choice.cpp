@@ -101,14 +101,14 @@ void geChoice::cb_onChange()
 
 /* -------------------------------------------------------------------------- */
 
-ID geChoice::getSelectedId() const
+int geChoice::getSelectedId() const
 {
 	return m_menu->value() == -1 ? -1 : m_ids.at(m_menu->value());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geChoice::addItem(const std::string& label, ID id)
+void geChoice::addItem(const std::string& label, int id)
 {
 	m_menu->add(label.c_str(), 0, cb_onChange, static_cast<void*>(this));
 
@@ -132,7 +132,7 @@ void geChoice::showItem(const std::string& label)
 	m_menu->value(index);
 }
 
-void geChoice::showItem(ID id)
+void geChoice::showItem(int id)
 {
 	const std::size_t index = utils::container::indexOf(m_ids, id);
 	assert(index < m_ids.size());
@@ -173,9 +173,9 @@ std::size_t geChoice::countItems() const
 
 /* -------------------------------------------------------------------------- */
 
-bool geChoice::hasItem(ID oid) const
+bool geChoice::hasItem(int oid) const
 {
-	return utils::container::hasIf(m_ids, [oid](const ID& id)
+	return utils::container::hasIf(m_ids, [oid](const int& id)
 	{ return oid == id; });
 }
 

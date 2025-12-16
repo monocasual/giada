@@ -29,7 +29,6 @@
 
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/flex.h"
-#include "src/types.h"
 #include <FL/Fl_Choice.H>
 #include <functional>
 #include <string>
@@ -37,6 +36,9 @@
 
 namespace giada::v
 {
+/* TODO - changed ID to basic 'int' as the new Id class from mcl::utils, aliased
+to giada::ID is not compatible here anymore. Convert it back to mcl::utils::Id
+in the future. */
 class geChoice : public geFlex
 {
 public:
@@ -47,17 +49,17 @@ public:
 	geChoice(int x, int y, int w, int h, const char* l = nullptr, int labelWidth = 0);
 	geChoice(const char* l = nullptr, int labelWidth = 0);
 
-	ID          getSelectedId() const;
+	int         getSelectedId() const;
 	std::string getSelectedLabel() const;
 	std::size_t countItems() const;
-	bool        hasItem(ID) const;
+	bool        hasItem(int id) const;
 	bool        hasItem(const std::string&) const;
 
 	/* addItem
 	Adds a new item with a certain ID. Pass id = -1 to auto-increment it (ID
 	starts from 0). */
 
-	void addItem(const std::string& label, ID id = -1);
+	void addItem(const std::string& label, int id = -1);
 
 	/* showFirstItem
 	Shows the first, default item. */
@@ -65,13 +67,13 @@ public:
 	void showFirstItem();
 
 	void showItem(const std::string& label);
-	void showItem(ID);
+	void showItem(int id);
 	void activate();
 	void deactivate();
 
 	void clear();
 
-	std::function<void(ID)> onChange = nullptr;
+	std::function<void(int)> onChange = nullptr;
 
 private:
 	class geMenu : public Fl_Choice
@@ -84,9 +86,9 @@ private:
 	static void cb_onChange(Fl_Widget* w, void* p);
 	void        cb_onChange();
 
-	geBox*          m_text;
-	geMenu*         m_menu;
-	std::vector<ID> m_ids;
+	geBox*           m_text;
+	geMenu*          m_menu;
+	std::vector<int> m_ids;
 };
 } // namespace giada::v
 
