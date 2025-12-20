@@ -14,7 +14,8 @@ TEST_CASE("WaveReading")
 
 	m::Wave wave(0);
 	wave.getBuffer().alloc(BUFFER_SIZE, NUM_CHANNELS);
-	wave.getBuffer().forEachFrame([](float* f, int i) {
+	wave.getBuffer().forEachFrame([](float* f, int i)
+	{
 		f[0] = static_cast<float>(i + 1);
 		f[1] = static_cast<float>(i + 1);
 	});
@@ -31,7 +32,8 @@ TEST_CASE("WaveReading")
 
 			bool allFilled       = true;
 			int  numFramesFilled = 0;
-			out.forEachFrame([&allFilled, &numFramesFilled](const float* f, int) {
+			out.forEachFrame([&allFilled, &numFramesFilled](const float* f, int)
+			{
 				if (f[0] == 0.0f)
 					allFilled = false;
 				else
@@ -49,7 +51,8 @@ TEST_CASE("WaveReading")
 			    /*start=*/0, BUFFER_SIZE, /*offset=*/BUFFER_SIZE / 2, /*pitch=*/1.0f, resampler);
 
 			int numFramesFilled = 0;
-			out.forEachFrame([&numFramesFilled](const float* f, int) {
+			out.forEachFrame([&numFramesFilled](const float* f, int)
+			{
 				if (f[0] != 0.0f)
 					numFramesFilled++;
 			});
