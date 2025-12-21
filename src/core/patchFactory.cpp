@@ -137,7 +137,7 @@ void readTracks_(Patch& patch, const nlohmann::json& j)
 		track.internal = jtrack.value(PATCH_KEY_TRACK_INTERNAL, false);
 		if (jtrack.contains(PATCH_KEY_TRACK_CHANNELS))
 			for (const auto& jplugin : jtrack[PATCH_KEY_TRACK_CHANNELS])
-				track.channels.push_back(ID(jplugin));
+				track.channels.push_back(ID{jplugin});
 
 		patch.tracks.push_back(track);
 	}
