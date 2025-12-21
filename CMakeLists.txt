@@ -35,6 +35,7 @@ list(APPEND SOURCES
 	src/main.cpp
 	src/const.h
 	src/aliases.h
+	src/scene.h
 	src/mapper.cpp
 	src/mapper.h
 	src/version.h

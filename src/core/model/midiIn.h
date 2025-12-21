@@ -27,6 +27,7 @@
 #ifndef G_MODEL_MIDI_IN_H
 #define G_MODEL_MIDI_IN_H
 
+#include "src/scene.h"
 #include "src/types.h"
 #include <cstdint>
 

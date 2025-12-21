@@ -259,21 +259,21 @@ void geSampleChannel::openMenu()
 		else if (id == Menu::CLONE_CHANNEL)
 			c::channel::cloneChannel(channel.id);
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_0)
-			c::channel::copyChannelToScene(channel.id, {0});
+			c::channel::copyChannelToScene(channel.id, Scene{0});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_1)
-			c::channel::copyChannelToScene(channel.id, {1});
+			c::channel::copyChannelToScene(channel.id, Scene{1});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_2)
-			c::channel::copyChannelToScene(channel.id, {2});
+			c::channel::copyChannelToScene(channel.id, Scene{2});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_3)
-			c::channel::copyChannelToScene(channel.id, {3});
+			c::channel::copyChannelToScene(channel.id, Scene{3});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_4)
-			c::channel::copyChannelToScene(channel.id, {4});
+			c::channel::copyChannelToScene(channel.id, Scene{4});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_5)
-			c::channel::copyChannelToScene(channel.id, {5});
+			c::channel::copyChannelToScene(channel.id, Scene{5});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_6)
-			c::channel::copyChannelToScene(channel.id, {6});
+			c::channel::copyChannelToScene(channel.id, Scene{6});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_7)
-			c::channel::copyChannelToScene(channel.id, {7});
+			c::channel::copyChannelToScene(channel.id, Scene{7});
 		else if (id == Menu::RENAME_CHANNEL)
 			c::layout::openRenameChannelWindow(channel);
 		else if (id == Menu::FREE_CHANNEL_THIS_SCENE)

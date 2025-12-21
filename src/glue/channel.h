@@ -31,6 +31,7 @@
 #include "src/core/weakAtomic.h"
 #include "src/deps/geompp/src/line.hpp"
 #include "src/deps/geompp/src/range.hpp"
+#include "src/scene.h"
 #include "src/types.h"
 
 #include <atomic>

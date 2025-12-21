@@ -270,11 +270,11 @@ void ChannelManager::freeSampleChannel(ID channelId, Scene sceneToFree)
 	std::vector<const Wave*> wavesToRemove;
 	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
 	{
-		if (sceneToFree.index != G_INVALID_SCENE && sceneToFree.index != sceneIndex)
+		if (sceneToFree.isValid() && sceneToFree.getIndex() != sceneIndex)
 			continue;
 
-		loadSampleChannel(ch, nullptr, {sceneIndex});
-		const Wave* wave = ch.sampleChannel->getWave({sceneIndex});
+		loadSampleChannel(ch, nullptr, Scene{sceneIndex});
+		const Wave* wave = ch.sampleChannel->getWave(Scene{sceneIndex});
 		if (wave != nullptr)
 			wavesToRemove.push_back(wave);
 	}
@@ -514,10 +514,10 @@ void ChannelManager::loadWaveInPreviewChannel(ID channelId, Scene scene)
 	assert(previewCh.sampleChannel);
 	assert(sourceCh.sampleChannel);
 
-	previewCh.loadSample(sourceCh.sampleChannel->getSample(scene), /*scene=*/{0});
+	previewCh.loadSample(sourceCh.sampleChannel->getSample(scene), Scene{0});
 	previewCh.sampleChannel->mode = SamplePlayerMode::SINGLE_BASIC_PAUSE;
-	previewCh.sampleChannel->setRange(sourceCh.sampleChannel->getRange(scene), /*scene=*/{0});
-	previewCh.sampleChannel->setPitch(sourceCh.sampleChannel->getPitch(scene), /*scene=*/{0});
+	previewCh.sampleChannel->setRange(sourceCh.sampleChannel->getRange(scene), Scene{0});
+	previewCh.sampleChannel->setPitch(sourceCh.sampleChannel->getPitch(scene), Scene{0});
 
 	m_model.swap(model::SwapType::SOFT);
 }
@@ -528,7 +528,7 @@ void ChannelManager::freeWaveInPreviewChannel()
 {
 	Channel& previewCh = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
-	previewCh.loadSample({}, /*scene=*/{0});
+	previewCh.loadSample({}, Scene{0});
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -547,7 +547,7 @@ bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
 
 	assert(ch.sampleChannel);
 
-	Wave* wave = ch.sampleChannel->getWave({0}); // TODO - scenes
+	Wave* wave = ch.sampleChannel->getWave(Scene{0}); // TODO - scenes
 
 	assert(wave != nullptr);
 

@@ -29,6 +29,7 @@
 
 #include "src/core/patch.h"
 #include "src/deps/geompp/src/range.hpp"
+#include "src/scene.h"
 
 namespace giada::m
 {

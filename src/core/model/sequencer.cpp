@@ -90,12 +90,12 @@ float Sequencer::a_getCurrentSecond(int sampleRate) const
 
 Scene Sequencer::a_getCurrentScene() const
 {
-	return {shared->currentSceneIndex.load()};
+	return Scene{shared->currentSceneIndex.load()};
 }
 
 Scene Sequencer::a_getNextScene() const
 {
-	return {shared->nextSceneIndex.load()};
+	return Scene{shared->nextSceneIndex.load()};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -132,12 +132,12 @@ void Sequencer::a_setCurrentBeat(int b, int sampleRate) const
 
 void Sequencer::a_setCurrentScene(Scene scene) const
 {
-	shared->currentSceneIndex.store(scene.index);
+	shared->currentSceneIndex.store(scene.getIndex());
 }
 
 void Sequencer::a_setNextScene(Scene scene) const
 {
-	shared->nextSceneIndex.store(scene.index);
+	shared->nextSceneIndex.store(scene.getIndex());
 }
 
 /* -------------------------------------------------------------------------- */

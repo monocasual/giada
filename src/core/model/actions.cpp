@@ -51,7 +51,7 @@ void Actions::clearAll()
 void Actions::clearChannel(ID channelId, Scene scene)
 {
 	removeIf([=](const Action& a)
-	{ return a.channelId == channelId && a.scene.index == scene.index; });
+	{ return a.channelId == channelId && a.scene == scene; });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -164,7 +164,7 @@ void Actions::debug() const
 		fmt::print("\tframe: {}\n", frame);
 		for (const Action& a : actions)
 			fmt::print("\t\t({}) - ID={}, scene={}, frame={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
-			    (void*)&a, a.id.getValue(), a.scene.index, a.frame, a.channelId.getValue(), a.event.getRaw(), a.prevId.getValue(), a.nextId.getValue());
+			    (void*)&a, a.id.getValue(), a.scene.getIndex(), a.frame, a.channelId.getValue(), a.event.getRaw(), a.prevId.getValue(), a.nextId.getValue());
 	}
 }
 
@@ -245,7 +245,7 @@ std::vector<Action> Actions::getActionsOnChannel(ID channelId, Scene scene) cons
 	std::vector<Action> out;
 	forEachAction([&](const Action& a)
 	{
-		if (a.channelId == channelId && a.scene.index == scene.index)
+		if (a.channelId == channelId && a.scene == scene)
 			out.push_back(a);
 	});
 	return out;
@@ -301,7 +301,7 @@ bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& ev
 {
 	for (const auto& [_, actions] : target)
 		for (const Action& a : actions)
-			if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw() && a.scene.index == scene.index)
+			if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw() && a.scene == scene)
 				return true;
 	return false;
 }

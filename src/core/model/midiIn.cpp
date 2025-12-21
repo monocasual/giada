@@ -49,8 +49,8 @@ Scene MidiIn::getScene(uint32_t val) const
 
 void MidiIn::setScene(Scene scene, uint32_t val)
 {
-	assert(scene.index < scenes.size());
+	assert(scene.getIndex() < scenes.size());
 
-	scenes[scene.index] = val;
+	scenes[scene.getIndex()] = val;
 }
 } // namespace giada::m::model

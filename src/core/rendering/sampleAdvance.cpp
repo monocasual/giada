@@ -119,7 +119,7 @@ void parseActions_(ID channelId, Scene scene, ChannelShared& shared, const std::
 {
 	for (const Action& a : as)
 	{
-		if (a.channelId != channelId || a.scene.index != scene.index)
+		if (a.channelId != channelId || a.scene != scene)
 			continue;
 
 		switch (a.event.getStatus())

@@ -29,6 +29,7 @@
 
 #include "src/const.h"
 #include "src/gui/elems/basics/flex.h"
+#include "src/scene.h"
 #include "src/types.h"
 #include <array>
 

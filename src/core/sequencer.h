@@ -71,7 +71,7 @@ public:
 		Frame                      global  = 0;
 		Frame                      delta   = 0;
 		const std::vector<Action>* actions = nullptr;
-		Scene                      scene   = {0};
+		Scene                      scene   = {};
 	};
 
 	using EventBuffer = RingBuffer<Event, G_MAX_SEQUENCER_EVENTS>;

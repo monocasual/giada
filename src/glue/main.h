@@ -28,6 +28,7 @@
 #define G_MAIN_H
 
 #include "src/core/types.h"
+#include "src/scene.h"
 #include "src/types.h"
 
 /* giada::c::main

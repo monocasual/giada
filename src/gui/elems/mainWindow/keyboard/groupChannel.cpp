@@ -152,21 +152,21 @@ void geGroupChannel::openMenu()
 		else if (id == Menu::RENAME_CHANNEL)
 			c::layout::openRenameChannelWindow(data);
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_0)
-			c::channel::copyChannelToScene(data.id, {0});
+			c::channel::copyChannelToScene(data.id, Scene{0});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_1)
-			c::channel::copyChannelToScene(data.id, {1});
+			c::channel::copyChannelToScene(data.id, Scene{1});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_2)
-			c::channel::copyChannelToScene(data.id, {2});
+			c::channel::copyChannelToScene(data.id, Scene{2});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_3)
-			c::channel::copyChannelToScene(data.id, {3});
+			c::channel::copyChannelToScene(data.id, Scene{3});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_4)
-			c::channel::copyChannelToScene(data.id, {4});
+			c::channel::copyChannelToScene(data.id, Scene{4});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_5)
-			c::channel::copyChannelToScene(data.id, {5});
+			c::channel::copyChannelToScene(data.id, Scene{5});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_6)
-			c::channel::copyChannelToScene(data.id, {6});
+			c::channel::copyChannelToScene(data.id, Scene{6});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_7)
-			c::channel::copyChannelToScene(data.id, {7});
+			c::channel::copyChannelToScene(data.id, Scene{7});
 	};
 
 	menu.popup();

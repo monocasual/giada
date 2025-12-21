@@ -29,6 +29,7 @@
 
 #include "src/core/midiMapper.h"
 #include "src/core/types.h"
+#include "src/scene.h"
 #include "src/types.h"
 
 namespace giada::m

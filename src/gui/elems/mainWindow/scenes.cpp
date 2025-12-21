@@ -41,19 +41,19 @@ geScenes::geScenes()
 {
 	geFlex* row1 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{
-		row1->addWidget(makeButton({0}), G_GUI_UNIT);
-		row1->addWidget(makeButton({1}), G_GUI_UNIT);
-		row1->addWidget(makeButton({2}), G_GUI_UNIT);
-		row1->addWidget(makeButton({3}), G_GUI_UNIT);
+		row1->addWidget(makeButton(Scene{0}), G_GUI_UNIT);
+		row1->addWidget(makeButton(Scene{1}), G_GUI_UNIT);
+		row1->addWidget(makeButton(Scene{2}), G_GUI_UNIT);
+		row1->addWidget(makeButton(Scene{3}), G_GUI_UNIT);
 		row1->end();
 	}
 
 	geFlex* row2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{
-		row2->addWidget(makeButton({4}), G_GUI_UNIT);
-		row2->addWidget(makeButton({5}), G_GUI_UNIT);
-		row2->addWidget(makeButton({6}), G_GUI_UNIT);
-		row2->addWidget(makeButton({7}), G_GUI_UNIT);
+		row2->addWidget(makeButton(Scene{4}), G_GUI_UNIT);
+		row2->addWidget(makeButton(Scene{5}), G_GUI_UNIT);
+		row2->addWidget(makeButton(Scene{6}), G_GUI_UNIT);
+		row2->addWidget(makeButton(Scene{7}), G_GUI_UNIT);
 		row2->end();
 	}
 
@@ -72,11 +72,11 @@ void geScenes::refresh()
 
 	if (scenes.status == SceneStatus::CHANGING)
 	{
-		m_buttons[scenes.currentScene.index]->setEndingState();
-		m_buttons[scenes.nextScene.index]->blink(g_ui->shouldBlink());
+		m_buttons[scenes.currentScene.getIndex()]->setEndingState();
+		m_buttons[scenes.nextScene.getIndex()]->blink(g_ui->shouldBlink());
 	}
 	else
-		m_buttons[scenes.currentScene.index]->setPlayState();
+		m_buttons[scenes.currentScene.getIndex()]->setPlayState();
 
 	for (gePlayButton* button : m_buttons)
 		button->redraw();
@@ -86,11 +86,11 @@ void geScenes::refresh()
 
 gePlayButton* geScenes::makeButton(Scene scene)
 {
-	m_buttons[scene.index] = new gePlayButton(fmt::format("{}", scene.index + 1));
-	m_buttons[scene.index]->setPadding(0);
-	m_buttons[scene.index]->onClick = [scene]()
+	m_buttons[scene.getIndex()] = new gePlayButton(fmt::format("{}", scene.getIndex() + 1));
+	m_buttons[scene.getIndex()]->setPadding(0);
+	m_buttons[scene.getIndex()]->onClick = [scene]()
 	{ c::main::setScene(scene); };
 
-	return m_buttons[scene.index];
+	return m_buttons[scene.getIndex()];
 }
 } // namespace giada::v

@@ -237,7 +237,7 @@ void Renderer::renderPreview(const Channel& ch, mcl::AudioBuffer& out) const
 	ch.shared->audioBuffer.clear();
 
 	if (ch.isPlaying())
-		rendering::renderSampleChannel(ch, /*scene=*/{0}, /*seqIsRunning=*/false); // Sequencer status and scene are irrelevant here
+		rendering::renderSampleChannel(ch, Scene{0}, /*seqIsRunning=*/false); // Sequencer status and scene are irrelevant here
 
 	out.sumAll(ch.shared->audioBuffer, ch.volume);
 }

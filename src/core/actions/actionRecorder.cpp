@@ -337,7 +337,7 @@ void ActionRecorder::consolidate(const Action& a1, std::size_t i)
 
 void ActionRecorder::copyActions(ID channelId, Scene src, Scene dst, ID newChannelId)
 {
-	const Scene                scene = src.index == dst.index ? src : dst;
+	const Scene                scene = src == dst ? src : dst;
 	std::vector<Action>        actions;
 	std::unordered_map<ID, ID> map; // Action ID mapper, old -> new
 
@@ -392,8 +392,8 @@ std::vector<Action> ActionRecorder::getActionsOnChannel(ID channelId, Scene scen
 void ActionRecorder::clearChannel(ID channelId, Scene sceneToClear)
 {
 	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
-		if (sceneToClear.index == G_INVALID_SCENE || sceneToClear.index == sceneIndex)
-			m_model.get().actions.clearChannel(channelId, {sceneIndex});
+		if (sceneToClear.isValid() || sceneToClear.getIndex() == sceneIndex)
+			m_model.get().actions.clearChannel(channelId, Scene{sceneIndex});
 	m_model.swap(model::SwapType::HARD);
 }
 

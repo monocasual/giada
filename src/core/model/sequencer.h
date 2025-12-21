@@ -31,6 +31,7 @@
 #include "src/core/types.h"
 #include "src/core/weakAtomic.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/scene.h"
 
 namespace giada::m::model
 {

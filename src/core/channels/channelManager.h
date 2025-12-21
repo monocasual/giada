@@ -31,6 +31,7 @@
 #include "src/core/resampler.h"
 #include "src/core/types.h"
 #include "src/deps/geompp/src/range.hpp"
+#include "src/scene.h"
 #include "src/types.h"
 #include <functional>
 #include <map>

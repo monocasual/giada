@@ -27,6 +27,7 @@
 #ifndef G_RENDERING_SAMPLE_RENDERING_H
 #define G_RENDERING_SAMPLE_RENDERING_H
 
+#include "src/scene.h"
 #include "src/types.h"
 #include <functional>
 

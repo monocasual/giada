@@ -153,7 +153,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		{
 			m_eventBuffer.push_back({EventType::FIRST_BEAT, global, local});
 			m_metronome.trigger(Metronome::Click::BEAT, local);
-			if (currentScene.index != nextScene.index)
+			if (currentScene != nextScene)
 			{
 				assert(onSceneChanged != nullptr);
 				sequencer.a_setCurrentScene(nextScene);
@@ -402,7 +402,7 @@ void Sequencer::goToBeat(int beat, int sampleRate)
 
 void Sequencer::forceScene(Scene scene)
 {
-	assert(scene.index < G_MAX_NUM_SCENES);
+	assert(scene.isValid());
 
 	m_model.get().sequencer.a_setCurrentScene(scene);
 }
@@ -411,9 +411,9 @@ void Sequencer::forceScene(Scene scene)
 
 void Sequencer::setScene(Scene scene)
 {
-	assert(scene.index < G_MAX_NUM_SCENES);
+	assert(scene.isValid());
 
-	if (scene.index == m_model.get().sequencer.a_getCurrentScene().index)
+	if (scene == m_model.get().sequencer.a_getCurrentScene())
 		return;
 	if (!isRunning())
 		m_model.get().sequencer.a_setCurrentScene(scene);

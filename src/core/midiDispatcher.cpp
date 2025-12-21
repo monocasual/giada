@@ -315,7 +315,7 @@ void MidiDispatcher::processMaster(const MidiEvent& midiEvent)
 	else if (midiIn.hasScene(pure))
 	{
 		c::main::setScene(midiIn.getScene(pure));
-		G_DEBUG("   set scene {} (pure=0x{:0X})", midiIn.getScene(pure).index, pure);
+		G_DEBUG("   set scene {} (pure=0x{:0X})", midiIn.getScene(pure).getIndex(), pure);
 	}
 }
 
@@ -405,7 +405,7 @@ void MidiDispatcher::learnMaster(MidiEvent e, int param, std::function<void()> d
 	else if (param == G_MIDI_IN_BEAT_HALF)
 		midiIn.beatHalf = raw;
 	else if (utils::container::has(G_MIDI_IN_SCENES, param))
-		midiIn.setScene({static_cast<std::size_t>(utils::container::indexOf(G_MIDI_IN_SCENES, param))}, raw);
+		midiIn.setScene(Scene{static_cast<std::size_t>(utils::container::indexOf(G_MIDI_IN_SCENES, param))}, raw);
 
 	m_model.swap(model::SwapType::SOFT);
 

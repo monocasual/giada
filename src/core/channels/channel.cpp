@@ -175,7 +175,7 @@ bool Channel::isActive() const
 
 /* -------------------------------------------------------------------------- */
 
-std::string                    Channel::getName(Scene scene) const { return m_names[scene.index]; }
+std::string                    Channel::getName(Scene scene) const { return m_names[scene.getIndex()]; }
 const SceneArray<std::string>& Channel::getNames() const { return m_names; };
 
 /* -------------------------------------------------------------------------- */
@@ -227,7 +227,7 @@ void Channel::setSolo(bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void Channel::setName(const std::string& name, Scene scene) { m_names[scene.index] = name; }
+void Channel::setName(const std::string& name, Scene scene) { m_names[scene.getIndex()] = name; }
 
 /* -------------------------------------------------------------------------- */
 

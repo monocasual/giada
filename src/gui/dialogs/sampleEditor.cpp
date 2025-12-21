@@ -255,6 +255,6 @@ void gdSampleEditor::updateInfo()
 void gdSampleEditor::updateTitleWithScene(Scene scene)
 {
 	setTitle(fmt::format("{} - {} {}", g_ui->getI18Text(LangMap::ACTIONEDITOR_TITLE),
-	    g_ui->getI18Text(LangMap::COMMON_SCENE), scene.index + 1));
+	    g_ui->getI18Text(LangMap::COMMON_SCENE), scene.getIndex() + 1));
 }
 } // namespace giada::v

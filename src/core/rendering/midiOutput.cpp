@@ -71,7 +71,7 @@ void sendMidiFromActions(const Channel& ch, Scene scene, const std::vector<Actio
 {
 	for (const Action& action : actions)
 	{
-		if (action.channelId != ch.id || action.scene.index != scene.index)
+		if (action.channelId != ch.id || action.scene != scene)
 			continue;
 		sendMidiToPlugins_(ch.shared->midiQueue, action.event, delta);
 		if (ch.canSendMidi())
