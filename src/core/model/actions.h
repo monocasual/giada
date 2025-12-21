@@ -65,10 +65,15 @@ public:
 
 	const std::vector<Action>* getActionsOnFrame(Frame f) const;
 
-	/* hasActions
+	/* hasActions (1)
 	Checks if the channel has at least one action recorded. */
 
 	bool hasActions(ID channelId, int type = 0) const;
+
+	/* hasActions (2)
+	True if there is at least one action in the given scene. */
+
+	bool hasActions(Scene scene) const;
 
 	/* getAll
 	Returns a reference to the internal map. */

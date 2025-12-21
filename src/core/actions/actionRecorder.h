@@ -110,6 +110,7 @@ public:
 
 	const Action*       findAction(ID) const;
 	bool                hasActions(ID channelId, int type = 0) const;
+	bool                hasActions(Scene) const;
 	std::vector<Action> getActionsOnChannel(ID channelId, Scene) const;
 
 	/* clearChannel

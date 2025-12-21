@@ -234,6 +234,11 @@ bool Recorder::hasActions(ID channelId) const
 	return m_actionRecorder.hasActions(channelId);
 }
 
+bool Recorder::hasActions(Scene scene) const
+{
+	return m_actionRecorder.hasActions(scene);
+}
+
 /* -------------------------------------------------------------------------- */
 
 void Recorder::startActionRecOnCallback()

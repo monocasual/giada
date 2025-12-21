@@ -384,10 +384,17 @@ bool ActionRecorder::hasActions(ID channelId, int type) const
 	return m_model.get().actions.hasActions(channelId, type);
 }
 
+bool ActionRecorder::hasActions(Scene scene) const
+{
+	return m_model.get().actions.hasActions(scene);
+}
+
 std::vector<Action> ActionRecorder::getActionsOnChannel(ID channelId, Scene scene) const
 {
 	return m_model.get().actions.getActionsOnChannel(channelId, scene);
 }
+
+/* -------------------------------------------------------------------------- */
 
 void ActionRecorder::clearChannel(ID channelId, Scene sceneToClear)
 {

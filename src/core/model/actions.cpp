@@ -26,6 +26,7 @@
 
 #include "src/core/model/actions.h"
 #include "src/core/actions/actionFactory.h"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include "src/utils/log.h"
 #include <algorithm>
 #include <cassert>
@@ -33,6 +34,8 @@
 #if G_DEBUG_MODE
 #include <fmt/core.h>
 #endif
+
+namespace utils = mcl::utils;
 
 namespace giada::m::model
 {
@@ -141,6 +144,18 @@ bool Actions::hasActions(ID channelId, int type) const
 			if (a.channelId == channelId && (type == 0 || type == a.event.getStatus()))
 				return true;
 	return false;
+}
+
+bool Actions::hasActions(Scene scene) const
+{
+	return utils::container::hasIf(m_actions, [scene](const auto& pair)
+	{
+		const auto& [_, actions] = pair;
+		for (const Action& a : actions)
+			if (a.scene == scene)
+				return true;
+		return false;
+	});
 }
 
 /* -------------------------------------------------------------------------- */

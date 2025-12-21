@@ -61,6 +61,7 @@ public:
 	bool canRecordActions() const;
 
 	bool hasActions(ID channelId) const;
+	bool hasActions(Scene) const;
 
 	void prepareActionRec(RecTriggerMode);
 	void startActionRecOnCallback();
