@@ -39,12 +39,12 @@ public:
 	explicit constexpr Scene(std::size_t i) noexcept
 	: m_index(i)
 	{
-		assert(i < G_MAX_NUM_SCENES);
+		assert(isValid());
 	}
 
 	constexpr bool operator==(const Scene&) const noexcept = default;
 
-	constexpr bool isValid() const { return m_index != G_INVALID_SCENE; }
+	constexpr bool isValid() const { return m_index < G_INVALID_SCENE; }
 
 	constexpr std::size_t getIndex() const { return m_index; };
 
