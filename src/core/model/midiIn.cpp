@@ -42,7 +42,7 @@ Scene MidiIn::getScene(uint32_t val) const
 {
 	assert(hasScene(val));
 
-	return Scene{static_cast<std::size_t>(utils::container::indexOf(scenes, val))};
+	return Scene{utils::container::indexOf(scenes, val)};
 }
 
 /* -------------------------------------------------------------------------- */

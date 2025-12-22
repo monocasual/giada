@@ -405,7 +405,7 @@ void MidiDispatcher::learnMaster(MidiEvent e, int param, std::function<void()> d
 	else if (param == G_MIDI_IN_BEAT_HALF)
 		midiIn.beatHalf = raw;
 	else if (utils::container::has(G_MIDI_IN_SCENES, param))
-		midiIn.setScene(Scene{static_cast<std::size_t>(utils::container::indexOf(G_MIDI_IN_SCENES, param))}, raw);
+		midiIn.setScene(Scene{utils::container::indexOf(G_MIDI_IN_SCENES, param)}, raw);
 
 	m_model.swap(model::SwapType::SOFT);
 

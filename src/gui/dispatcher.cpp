@@ -108,7 +108,7 @@ void Dispatcher::dispatchKey(int event)
 		else if (m_keyPressed == m_model->keyBindRecordInput)
 			c::main::toggleInputRecording();
 		else if (utils::container::has(m_model->keyBindScenes, m_keyPressed))
-			c::main::setScene(Scene{static_cast<std::size_t>(utils::container::indexOf(m_model->keyBindScenes, m_keyPressed))});
+			c::main::setScene(Scene{utils::container::indexOf(m_model->keyBindScenes, m_keyPressed)});
 		else if (m_keyPressed == m_model->keyBindExit)
 		{
 			c::main::stopActionRecording();

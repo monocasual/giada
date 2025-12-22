@@ -87,7 +87,7 @@ const std::vector<Channel>& Channels::getAll() const
 
 const std::size_t Channels::getIndex(ID id) const
 {
-	return static_cast<std::size_t>(utils::container::indexOf(m_channels, get(id)));
+	return utils::container::indexOf(m_channels, get(id));
 }
 
 /* -------------------------------------------------------------------------- */
