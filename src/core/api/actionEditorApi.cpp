@@ -103,31 +103,6 @@ void ActionEditorApi::deleteSampleAction(const Action& a)
 
 /* -------------------------------------------------------------------------- */
 
-#if 0
-
-void ActionEditorApi::recordEnvelopeAction(ID channelId, Frame f, int value)
-{
-	m_actionRecorder.recordEnvelopeAction(channelId, f, value, m_sequencer.getFramesInLoop() - 1);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ActionEditorApi::deleteEnvelopeAction(ID channelId, const Action& a)
-{
-	m_actionRecorder.deleteEnvelopeAction(channelId, a);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ActionEditorApi::updateEnvelopeAction(ID channelId, const Action& a, Frame f, int value)
-{
-	m_actionRecorder.updateEnvelopeAction(channelId, a, f, value, m_sequencer.getFramesInLoop() - 1);
-}
-
-#endif
-
-/* -------------------------------------------------------------------------- */
-
 void ActionEditorApi::updateVelocity(const Action& a, float value)
 {
 	m_actionRecorder.updateVelocity(a, value);

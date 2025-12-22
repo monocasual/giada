@@ -51,11 +51,6 @@ public:
 	void recordSampleAction(ID channelId, int type, Frame f1, Frame f2);
 	void updateSampleAction(ID channelId, const Action&, int type, Frame f1, Frame f2);
 	void deleteSampleAction(const Action&);
-#if 0
-	void recordEnvelopeAction(ID channelId, Frame f, int value);
-	void deleteEnvelopeAction(ID channelId, const Action&);
-	void updateEnvelopeAction(ID channelId, const Action&, Frame f, int value);
-#endif
 	void updateVelocity(const Action&, float value);
 
 private:
