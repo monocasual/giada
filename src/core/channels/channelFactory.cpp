@@ -32,8 +32,11 @@
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/wave.h"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include <cassert>
 #include <memory>
+
+namespace utils = mcl::utils;
 
 namespace giada::m::channelFactory
 {
@@ -158,11 +161,11 @@ const Patch::Channel serializeChannel(const Channel& c)
 
 	if (c.type == ChannelType::SAMPLE)
 	{
-		for (std::size_t i = 0; i < G_MAX_NUM_SCENES; i++)
+		for (const std::size_t i : utils::container::range(G_MAX_NUM_SCENES))
 			pc.samples[i] = {c.sampleChannel->getWaveId(Scene{i}),
 			    c.sampleChannel->getRange(Scene{i}),
 			    c.sampleChannel->getShift(Scene{i}),
-			    c.sampleChannel->getPitch(Scene{i})}; // TODO - scenes - use std::transform
+			    c.sampleChannel->getPitch(Scene{i})};
 		pc.mode              = c.sampleChannel->mode;
 		pc.midiInVeloAsVol   = c.sampleChannel->velocityAsVol;
 		pc.inputMonitor      = c.sampleChannel->inputMonitor;
