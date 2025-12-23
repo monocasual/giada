@@ -70,12 +70,6 @@ struct Patch
 	};
 	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Sample, waveId, range, shift, pitch)
 
-	struct Scene
-	{
-		std::size_t index = 0;
-	};
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Scene, index)
-
 	struct Channel
 	{
 		ID                      id;
@@ -120,13 +114,13 @@ struct Patch
 
 	struct Action
 	{
-		ID       id;
-		ID       channelId;
-		Scene    scene = {};
-		Frame    frame = 0;
-		uint32_t event = 0;
-		ID       prevId;
-		ID       nextId;
+		ID          id;
+		ID          channelId;
+		std::size_t scene = 0;
+		Frame       frame = 0;
+		uint32_t    event = 0;
+		ID          prevId;
+		ID          nextId;
 	};
 
 	struct Wave
