@@ -196,7 +196,6 @@ void readActions_(Patch& patch, const nlohmann::json& j)
 	ID id;
 	for (const auto& jaction : j[PATCH_KEY_ACTIONS])
 	{
-		std::cout << jaction << "\n";
 		Patch::Action a;
 		a.id        = jaction.value(G_PATCH_KEY_ACTION_ID, ++id);
 		a.channelId = jaction.value(G_PATCH_KEY_ACTION_CHANNEL, ID{});
