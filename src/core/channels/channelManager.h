@@ -186,7 +186,7 @@ public:
 	void loadWaveInPreviewChannel(ID sourceChannelId, Scene);
 	void freeWaveInPreviewChannel();
 	void setPreviewTracker(Frame f);
-	bool saveSample(ID channelId, const std::string& filePath);
+	bool saveSample(ID channelId, const std::string& filePath, Scene);
 
 	/* onChannelsAltered
 	Fired when something is done on channels (added, removed, loaded, ...). */

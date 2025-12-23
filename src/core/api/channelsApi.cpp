@@ -368,6 +368,6 @@ void ChannelsApi::sendMidi(ID channelId, const MidiEvent& e)
 
 bool ChannelsApi::saveSample(ID channelId, const std::string& filePath)
 {
-	return m_channelManager.saveSample(channelId, filePath);
+	return m_channelManager.saveSample(channelId, filePath, m_sequencer.getCurrentScene());
 }
 } // namespace giada::m

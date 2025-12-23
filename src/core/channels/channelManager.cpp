@@ -541,13 +541,13 @@ void ChannelManager::setPreviewTracker(Frame f)
 
 /* -------------------------------------------------------------------------- */
 
-bool ChannelManager::saveSample(ID channelId, const std::string& filePath)
+bool ChannelManager::saveSample(ID channelId, const std::string& filePath, Scene scene)
 {
 	const Channel& ch = m_model.get().tracks.getChannel(channelId);
 
 	assert(ch.sampleChannel);
 
-	Wave* wave = ch.sampleChannel->getWave(Scene{0}); // TODO - scenes
+	Wave* wave = ch.sampleChannel->getWave(scene);
 
 	assert(wave != nullptr);
 
