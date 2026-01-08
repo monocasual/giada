@@ -31,6 +31,7 @@
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
 #include <fmt/core.h>
+#include <iterator>
 
 extern giada::v::Ui* g_ui;
 
@@ -144,6 +145,9 @@ void gePluginBrowser::prepareLayout()
 
 int gePluginBrowser::getContentWidth(int row, int column) const
 {
+	if (m_pluginInfo.empty())
+		return G_GUI_UNIT * 10;
+
 	const auto columnToField = [this](int row, int column) -> const std::string&
 	{
 		switch (static_cast<Column>(column))
