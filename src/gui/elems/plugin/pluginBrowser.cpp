@@ -145,7 +145,7 @@ void gePluginBrowser::prepareLayout()
 int gePluginBrowser::getContentWidth(int row, int column) const
 {
 	if (m_pluginInfo.empty())
-		return G_GUI_UNIT * 10;
+		return G_GUI_UNIT;
 
 	const auto columnToField = [this](int row, int column) -> const std::string&
 	{
