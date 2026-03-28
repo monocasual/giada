@@ -73,9 +73,6 @@ struct Data
 	int         waveRate;
 	std::string wavePath;
 	bool        isLogical;
-
-private:
-	const m::Channel* m_channel;
 };
 
 /* getData

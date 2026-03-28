@@ -46,7 +46,6 @@ Data::Data(const m::Channel& c, Scene scene)
 , waveDuration(0.0f)
 , waveRate(0)
 , isLogical(false)
-, m_channel(&c)
 {
 	if (!isValid())
 		return;
