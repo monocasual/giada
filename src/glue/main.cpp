@@ -90,6 +90,29 @@ bool IO::isKernelReady()
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+Scene Scenes::getCurrentScene() const
+{
+	return g_engine->getMainApi().getCurrentScene();
+}
+
+/* -------------------------------------------------------------------------- */
+
+Scene Scenes::getNextScene() const
+{
+	return g_engine->getMainApi().getNextScene();
+}
+
+/* -------------------------------------------------------------------------- */
+
+SceneStatus Scenes::getStatus() const
+{
+	return g_engine->getMainApi().getSceneStatus();
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 bool Transport::canRecordInput() const
 {
 	return g_engine->getMainApi().canRecordInput();
@@ -163,11 +186,7 @@ Transport getTransport()
 
 Scenes getScenes()
 {
-	const auto& mainApi = g_engine->getMainApi();
-	return {
-	    mainApi.getCurrentScene(),
-	    mainApi.getNextScene(),
-	    mainApi.getSceneStatus()};
+	return Scenes();
 }
 
 /* -------------------------------------------------------------------------- */

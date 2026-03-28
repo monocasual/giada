@@ -102,9 +102,9 @@ struct Transport
 
 struct Scenes
 {
-	Scene       currentScene;
-	Scene       nextScene;
-	SceneStatus status;
+	Scene       getCurrentScene() const;
+	Scene       getNextScene() const;
+	SceneStatus getStatus() const;
 };
 
 /* get*

@@ -70,13 +70,13 @@ void geScenes::refresh()
 	for (gePlayButton* button : m_buttons)
 		button->setDefaultState();
 
-	if (scenes.status == SceneStatus::CHANGING)
+	if (scenes.getStatus() == SceneStatus::CHANGING)
 	{
-		m_buttons[scenes.currentScene.getIndex()]->setEndingState();
-		m_buttons[scenes.nextScene.getIndex()]->blink(g_ui->shouldBlink());
+		m_buttons[scenes.getCurrentScene().getIndex()]->setEndingState();
+		m_buttons[scenes.getNextScene().getIndex()]->blink(g_ui->shouldBlink());
 	}
 	else
-		m_buttons[scenes.currentScene.getIndex()]->setPlayState();
+		m_buttons[scenes.getCurrentScene().getIndex()]->setPlayState();
 
 	for (gePlayButton* button : m_buttons)
 		button->redraw();
