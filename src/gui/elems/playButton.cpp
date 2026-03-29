@@ -52,11 +52,11 @@ void gePlayButton::setEndingState()
 
 /* -------------------------------------------------------------------------- */
 
-void gePlayButton::setDefaultState()
+void gePlayButton::setDefaultState(Fl_Color textColor)
 {
 	m_backgroundColorOff = G_COLOR_GREY_2;
 	m_borderColor        = G_COLOR_GREY_4;
-	m_textColor          = G_COLOR_LIGHT_2;
+	m_textColor          = textColor != 0 ? textColor : G_COLOR_LIGHT_2;
 }
 
 /* -------------------------------------------------------------------------- */

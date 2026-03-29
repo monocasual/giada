@@ -44,7 +44,7 @@ public:
 
 	void setPlayState();
 	void setEndingState();
-	void setDefaultState();
+	void setDefaultState(Fl_Color textColor = 0);
 
 	/* blink
 	Utility method to make the button blink. Call this on each refresh. */
