@@ -28,6 +28,7 @@
 #define GE_SCENES_H
 
 #include "src/const.h"
+#include "src/glue/main.h"
 #include "src/gui/elems/basics/flex.h"
 #include "src/scene.h"
 #include "src/types.h"
@@ -41,10 +42,13 @@ class geScenes : public geFlex
 public:
 	geScenes();
 
+	void rebuild();
 	void refresh();
 
 private:
 	gePlayButton* makeButton(Scene);
+
+	c::main::Scenes m_scenes;
 
 	SceneArray<gePlayButton*> m_buttons;
 };

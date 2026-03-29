@@ -208,6 +208,13 @@ SceneStatus MainApi::getSceneStatus() const
 
 /* -------------------------------------------------------------------------- */
 
+bool MainApi::isSceneActive(Scene s) const
+{
+	return m_recorder.hasActions(s) || m_channelManager.hasAudioData(s);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void MainApi::toggleMetronome()
 {
 	m_sequencer.toggleMetronome();

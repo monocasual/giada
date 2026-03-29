@@ -90,6 +90,12 @@ bool IO::isKernelReady()
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+Scenes::Scenes()
+{
+	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
+		activeScenes[sceneIndex] = g_engine->getMainApi().isSceneActive(Scene{sceneIndex});
+}
+
 Scene Scenes::getCurrentScene() const
 {
 	return g_engine->getMainApi().getCurrentScene();

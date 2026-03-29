@@ -193,6 +193,7 @@ void gdMainWindow::rebuild()
 	mainTimer->rebuild();
 	mainInput->rebuild();
 	mainOutput->rebuild();
+	scenes->rebuild();
 }
 
 /* -------------------------------------------------------------------------- */

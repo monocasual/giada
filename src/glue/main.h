@@ -102,6 +102,10 @@ struct Transport
 
 struct Scenes
 {
+	Scenes();
+
+	SceneArray<bool> activeScenes;
+
 	Scene       getCurrentScene() const;
 	Scene       getNextScene() const;
 	SceneStatus getStatus() const;

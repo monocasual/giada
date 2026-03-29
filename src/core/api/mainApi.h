@@ -75,6 +75,7 @@ public:
 	Scene             getCurrentScene() const;
 	Scene             getNextScene() const;
 	SceneStatus       getSceneStatus() const;
+	bool              isSceneActive(Scene) const; // If scene has actions or samples in it
 
 	void toggleMetronome();
 	void setMasterInVolume(float);
