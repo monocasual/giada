@@ -413,13 +413,17 @@ void Sequencer::setScene(Scene scene)
 {
 	assert(scene.isValid());
 
-	if (scene == m_model.get().sequencer.a_getCurrentScene())
+	const auto& sequencer    = m_model.get().sequencer;
+	const Scene currentScene = sequencer.a_getCurrentScene();
+	const bool  sameScene    = scene == currentScene;
+
+	if (sameScene)
 		return;
 	if (!isRunning())
-		m_model.get().sequencer.a_setCurrentScene(scene);
+		sequencer.a_setCurrentScene(scene);
 	else
-		m_model.get().sequencer.a_setSceneStatus(SceneStatus::CHANGING);
-	m_model.get().sequencer.a_setNextScene(scene);
+		sequencer.a_setSceneStatus(SceneStatus::CHANGING);
+	sequencer.a_setNextScene(scene);
 	m_model.swap(model::SwapType::HARD);
 }
 
