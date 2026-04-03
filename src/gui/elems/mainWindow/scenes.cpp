@@ -76,7 +76,7 @@ void geScenes::rebuild()
 void geScenes::refresh()
 {
 	for (const auto [index, button] : mcl::utils::container::enumerate(m_buttons))
-		button->setDefaultState(m_scenes.activeScenes[index] ? G_COLOR_LIGHT_2 : G_COLOR_GREY_3);
+		button->setDefaultState(m_scenes.activeScenes[index] ? G_COLOR_LIGHT_2 : G_COLOR_GREY_4);
 
 	if (m_scenes.getStatus() == SceneStatus::CHANGING)
 	{
