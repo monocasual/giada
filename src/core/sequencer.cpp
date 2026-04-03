@@ -418,7 +418,13 @@ void Sequencer::setScene(Scene scene)
 	const bool  sameScene    = scene == currentScene;
 
 	if (sameScene)
+	{
+		if (!isRunning())
+			return;
+		sequencer.a_setNextScene(scene);
+		sequencer.a_setSceneStatus(SceneStatus::IDLE);
 		return;
+	}
 	if (!isRunning())
 		sequencer.a_setCurrentScene(scene);
 	else
