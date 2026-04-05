@@ -166,6 +166,11 @@ void geFileBrowser::preselect(int pos, int line)
 void geFileBrowser::chooseItem()
 {
 	const std::string selectedItemPath = getSelectedItem();
+	if (utils::fs::isProject(selectedItemPath) && onChooseItem != nullptr)
+	{
+		onChooseItem();
+		return;
+	}
 	if (utils::fs::isDir(selectedItemPath))
 		loadDir(selectedItemPath);
 	else if (onChooseItem != nullptr)
