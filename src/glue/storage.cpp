@@ -184,33 +184,4 @@ void loadSample(void* data)
 
 	browser->do_callback();
 }
-
-/* -------------------------------------------------------------------------- */
-
-void saveSample(void* data)
-{
-	v::gdBrowserSave* browser    = static_cast<v::gdBrowserSave*>(data);
-	const std::string name       = browser->getName();
-	const std::string folderPath = browser->getCurrentPath();
-	const ID          channelId  = browser->getChannelId();
-
-	if (!validateFileName_(name))
-		return;
-
-	const std::string filePath = utils::fs::join(folderPath, utils::fs::stripExt(name) + ".wav");
-
-	if (utils::fs::fileExists(filePath) &&
-	    !v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),
-	        g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_FILEEXISTS)))
-		return;
-
-	if (!g_engine->getChannelsApi().saveSample(channelId, filePath))
-		v::gdAlert(g_ui->getI18Text(v::LangMap::MESSAGE_STORAGE_SAVINGFILEERROR));
-	else
-	{
-		g_ui->model.samplePath = utils::fs::dirname(filePath);
-	}
-
-	browser->do_callback();
-}
 } // namespace giada::c::storage

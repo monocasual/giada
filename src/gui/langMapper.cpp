@@ -163,7 +163,6 @@ LangMap::LangMap()
 	m_data[MAIN_CHANNEL_MENU_INPUTMONITOR]           = "Input monitor";
 	m_data[MAIN_CHANNEL_MENU_OVERDUBPROTECTION]      = "Overdub protection";
 	m_data[MAIN_CHANNEL_MENU_LOADSAMPLE]             = "Load new sample...";
-	m_data[MAIN_CHANNEL_MENU_EXPORTSAMPLE]           = "Export sample to file...";
 	m_data[MAIN_CHANNEL_MENU_KEYBOARDINPUT]          = "Setup keyboard input...";
 	m_data[MAIN_CHANNEL_MENU_MIDIINPUT]              = "Setup MIDI input...";
 	m_data[MAIN_CHANNEL_MENU_MIDIOUTPUT]             = "Setup MIDI output...";

@@ -364,11 +364,4 @@ void ChannelsApi::sendMidi(ID channelId, const MidiEvent& e)
 	const Scene scene            = m_sequencer.getCurrentScene();
 	m_reactor.processMidiEvent(channelId, scene, e, canRecordActions, currentFrameQ);
 }
-
-/* -------------------------------------------------------------------------- */
-
-bool ChannelsApi::saveSample(ID channelId, const std::string& filePath)
-{
-	return m_channelManager.saveSample(channelId, filePath, m_sequencer.getCurrentScene());
-}
 } // namespace giada::m

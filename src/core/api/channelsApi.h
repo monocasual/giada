@@ -110,7 +110,6 @@ public:
 	void clearAllActions();
 	void freeAllSampleChannels();
 	void sendMidi(ID, const MidiEvent&);
-	bool saveSample(ID, const std::string& filePath);
 
 private:
 	model::Model&       m_model;

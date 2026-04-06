@@ -543,32 +543,6 @@ void ChannelManager::setPreviewTracker(Frame f)
 
 /* -------------------------------------------------------------------------- */
 
-bool ChannelManager::saveSample(ID channelId, const std::string& filePath, Scene scene)
-{
-	const Channel& ch = m_model.get().tracks.getChannel(channelId);
-
-	assert(ch.sampleChannel);
-
-	Wave* wave = ch.sampleChannel->getWave(scene);
-
-	assert(wave != nullptr);
-
-	if (!waveFactory::save(*wave, filePath))
-		return false;
-
-	u::log::print("[saveSample] sample saved to {}\n", filePath);
-
-	/* Reset logical and edited states in Wave. */
-
-	model::SharedLock lock = m_model.lockShared();
-	wave->setLogical(false);
-	wave->setEdited(false);
-
-	return true;
-}
-
-/* -------------------------------------------------------------------------- */
-
 void ChannelManager::finalizeActionRec(const std::unordered_set<ID>& ids)
 {
 	for (ID id : ids)

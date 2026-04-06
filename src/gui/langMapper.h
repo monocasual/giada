@@ -163,7 +163,6 @@ public:
 	static constexpr auto MAIN_CHANNEL_MENU_INPUTMONITOR           = "main_channel_menu_inputMonitor";
 	static constexpr auto MAIN_CHANNEL_MENU_OVERDUBPROTECTION      = "main_channel_menu_overdubProtection";
 	static constexpr auto MAIN_CHANNEL_MENU_LOADSAMPLE             = "main_channel_menu_loadSample";
-	static constexpr auto MAIN_CHANNEL_MENU_EXPORTSAMPLE           = "main_channel_menu_exportSample";
 	static constexpr auto MAIN_CHANNEL_MENU_KEYBOARDINPUT          = "main_channel_menu_keyboardInput";
 	static constexpr auto MAIN_CHANNEL_MENU_MIDIINPUT              = "main_channel_menu_midiInput";
 	static constexpr auto MAIN_CHANNEL_MENU_MIDIOUTPUT             = "main_channel_menu_midiOutput";

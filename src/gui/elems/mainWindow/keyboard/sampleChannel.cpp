@@ -50,7 +50,6 @@ enum class Menu
 	INPUT_MONITOR = 1,
 	OVERDUB_PROTECTION,
 	LOAD_SAMPLE,
-	EXPORT_SAMPLE,
 	SETUP_KEYBOARD_INPUT,
 	SETUP_MIDI_INPUT,
 	SETUP_MIDI_OUTPUT,
@@ -179,7 +178,6 @@ void geSampleChannel::openMenu()
 	menu.addItem(ID{Menu::OVERDUB_PROTECTION}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_OVERDUBPROTECTION),
 	    FL_MENU_TOGGLE | FL_MENU_DIVIDER | (m_channel.sample->overdubProtection ? FL_MENU_VALUE : 0));
 	menu.addItem(ID{Menu::LOAD_SAMPLE}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_LOADSAMPLE));
-	menu.addItem(ID{Menu::EXPORT_SAMPLE}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EXPORTSAMPLE));
 	menu.addItem(ID{Menu::SETUP_KEYBOARD_INPUT}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_KEYBOARDINPUT));
 	menu.addItem(ID{Menu::SETUP_MIDI_INPUT}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
 	menu.addItem(ID{Menu::SETUP_MIDI_OUTPUT}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT));
@@ -219,7 +217,6 @@ void geSampleChannel::openMenu()
 
 	if (!m_channel.sample->waveId.isValid())
 	{
-		menu.setEnabled(ID{Menu::EXPORT_SAMPLE}, false);
 		menu.setEnabled(ID{Menu::EDIT_SAMPLE}, false);
 		menu.setEnabled(ID{Menu::RENAME_CHANNEL_THIS_SCENE}, false);
 		menu.setEnabled(ID{Menu::RENAME_CHANNEL_ALL_SCENES}, false);
@@ -241,8 +238,6 @@ void geSampleChannel::openMenu()
 			c::channel::setOverdubProtection(channel.id, !channel.sample->overdubProtection);
 		else if (id == Menu::LOAD_SAMPLE)
 			c::layout::openBrowserForSampleLoad(channel.id);
-		else if (id == Menu::EXPORT_SAMPLE)
-			c::layout::openBrowserForSampleSave(channel.id);
 		else if (id == Menu::SETUP_KEYBOARD_INPUT)
 			c::layout::openKeyGrabberWindow(channel.key, [channelId = channel.id](int key)
 			{

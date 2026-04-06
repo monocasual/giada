@@ -51,7 +51,6 @@ namespace giada::c::layout
 void openBrowserForProjectLoad();
 void openBrowserForProjectSave();
 void openBrowserForSampleLoad(ID channelId);
-void openBrowserForSampleSave(ID channelId);
 void openAboutWindow();
 void openKeyGrabberWindow(int key, std::function<bool(int)>);
 void openBpmWindow(float bpm);

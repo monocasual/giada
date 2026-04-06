@@ -34,7 +34,6 @@ namespace giada::c::storage
 {
 void loadProject(void* data);
 void saveProject(void* data);
-void saveSample(void* data);
 void loadSample(void* data);
 } // namespace giada::c::storage
 

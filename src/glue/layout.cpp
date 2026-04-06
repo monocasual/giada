@@ -89,15 +89,6 @@ void openBrowserForSampleLoad(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void openBrowserForSampleSave(ID channelId)
-{
-	v::gdWindow* w = new v::gdBrowserSave(g_ui->getI18Text(v::LangMap::BROWSER_SAVESAMPLE),
-	    g_ui->model.samplePath, "", c::storage::saveSample, channelId, g_ui->model);
-	g_ui->openSubWindow(w);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void openAboutWindow()
 {
 	g_ui->openSubWindow(new v::gdAbout());
