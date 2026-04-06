@@ -59,7 +59,8 @@ enum class Menu
 	EDIT_ACTIONS,
 	CLEAR_ACTIONS_THIS_SCENE,
 	CLEAR_ACTIONS_ALL_SCENES,
-	RENAME_CHANNEL,
+	RENAME_CHANNEL_THIS_SCENE,
+	RENAME_CHANNEL_ALL_SCENES,
 	CLONE_CHANNEL,
 	COPY_CHANNEL_TO_SCENE_0,
 	COPY_CHANNEL_TO_SCENE_1,
@@ -191,7 +192,11 @@ void geSampleChannel::openMenu()
 	clearActionsSubMenu.addItem(ID{Menu::CLEAR_ACTIONS_ALL_SCENES}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS_ALLSCENES));
 	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLEARACTIONS), clearActionsSubMenu);
 
-	menu.addItem(ID{Menu::RENAME_CHANNEL}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME));
+	geMenu renameChannelSubMenu;
+	renameChannelSubMenu.addItem(ID{Menu::RENAME_CHANNEL_THIS_SCENE}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME_THISSCENE));
+	renameChannelSubMenu.addItem(ID{Menu::RENAME_CHANNEL_ALL_SCENES}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME_ALLSCENES));
+	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME), renameChannelSubMenu);
+
 	menu.addItem(ID{Menu::CLONE_CHANNEL}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLONE));
 
 	geMenu copySceneSubMenu;
@@ -216,7 +221,8 @@ void geSampleChannel::openMenu()
 	{
 		menu.setEnabled(ID{Menu::EXPORT_SAMPLE}, false);
 		menu.setEnabled(ID{Menu::EDIT_SAMPLE}, false);
-		menu.setEnabled(ID{Menu::RENAME_CHANNEL}, false);
+		menu.setEnabled(ID{Menu::RENAME_CHANNEL_THIS_SCENE}, false);
+		menu.setEnabled(ID{Menu::RENAME_CHANNEL_ALL_SCENES}, false);
 		menu.setEnabled(ID{Menu::FREE_CHANNEL_THIS_SCENE}, false);
 		menu.setEnabled(ID{Menu::FREE_CHANNEL_ALL_SCENES}, false);
 	}
@@ -274,8 +280,10 @@ void geSampleChannel::openMenu()
 			c::channel::copyChannelToScene(channel.id, Scene{6});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_7)
 			c::channel::copyChannelToScene(channel.id, Scene{7});
-		else if (id == Menu::RENAME_CHANNEL)
-			c::layout::openRenameChannelWindow(channel);
+		else if (id == Menu::RENAME_CHANNEL_THIS_SCENE)
+			c::layout::openRenameChannelWindow(channel, /*allScenes=*/false);
+		else if (id == Menu::RENAME_CHANNEL_ALL_SCENES)
+			c::layout::openRenameChannelWindow(channel, /*allScenes=*/true);
 		else if (id == Menu::FREE_CHANNEL_THIS_SCENE)
 			c::channel::freeChannel(channel.id, /*allScenes=*/false);
 		else if (id == Menu::FREE_CHANNEL_ALL_SCENES)

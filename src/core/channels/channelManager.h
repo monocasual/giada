@@ -144,6 +144,11 @@ public:
 
 	void moveChannel(ID, std::size_t newTrackIndex, std::size_t newPosition);
 	void deleteChannel(ID channelId);
+
+	/* renameChannel
+	Changes channel name. Pass an invalid Scene object to change name in all
+	scenes. */
+
 	void renameChannel(ID channelId, const std::string& name, Scene);
 
 	/* cloneChannel

@@ -41,7 +41,7 @@ class geInput;
 class gdChannelNameInput : public gdWindow
 {
 public:
-	gdChannelNameInput(const c::channel::Data& d);
+	gdChannelNameInput(const c::channel::Data& d, bool allScenes);
 
 private:
 	const c::channel::Data& m_data;

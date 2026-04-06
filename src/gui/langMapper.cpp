@@ -177,6 +177,8 @@ LangMap::LangMap()
 	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS_VOLUME]    = "Volume";
 	m_data[MAIN_CHANNEL_MENU_CLEARACTIONS_STARTSTOP] = "Start/Stop";
 	m_data[MAIN_CHANNEL_MENU_RENAME]                 = "Rename";
+	m_data[MAIN_CHANNEL_MENU_RENAME_THISSCENE]       = "In this scene";
+	m_data[MAIN_CHANNEL_MENU_RENAME_ALLSCENES]       = "In all scenes";
 	m_data[MAIN_CHANNEL_MENU_CLONE]                  = "Clone";
 	m_data[MAIN_CHANNEL_MENU_COPYTOSCENE]            = "Copy to scene";
 	m_data[MAIN_CHANNEL_MENU_FREE]                   = "Free sample";

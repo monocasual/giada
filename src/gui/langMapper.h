@@ -177,6 +177,8 @@ public:
 	static constexpr auto MAIN_CHANNEL_MENU_CLEARACTIONS_VOLUME    = "main_channel_menu_clearActions_volume";
 	static constexpr auto MAIN_CHANNEL_MENU_CLEARACTIONS_STARTSTOP = "main_channel_menu_clearActions_startStop";
 	static constexpr auto MAIN_CHANNEL_MENU_RENAME                 = "main_channel_menu_rename";
+	static constexpr auto MAIN_CHANNEL_MENU_RENAME_THISSCENE       = "main_channel_menu_renameThisScene";
+	static constexpr auto MAIN_CHANNEL_MENU_RENAME_ALLSCENES       = "main_channel_menu_renameAllScenes";
 	static constexpr auto MAIN_CHANNEL_MENU_CLONE                  = "main_channel_menu_clone";
 	static constexpr auto MAIN_CHANNEL_MENU_COPYTOSCENE            = "main_channel_menu_copyToScene";
 	static constexpr auto MAIN_CHANNEL_MENU_FREE                   = "main_channel_menu_free";

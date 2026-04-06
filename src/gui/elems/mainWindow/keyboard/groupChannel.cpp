@@ -150,7 +150,7 @@ void geGroupChannel::openMenu()
 		else if (id == Menu::EDIT_ROUTING)
 			c::layout::openChannelRoutingWindow(data.id);
 		else if (id == Menu::RENAME_CHANNEL)
-			c::layout::openRenameChannelWindow(data);
+			c::layout::openRenameChannelWindow(data, /*allScenes=*/true);
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_0)
 			c::channel::copyChannelToScene(data.id, Scene{0});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_1)

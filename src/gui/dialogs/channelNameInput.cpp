@@ -36,7 +36,7 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gdChannelNameInput::gdChannelNameInput(const c::channel::Data& d)
+gdChannelNameInput::gdChannelNameInput(const c::channel::Data& d, bool allScenes)
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, 400, 64}), g_ui->getI18Text(LangMap::CHANNELNAME_TITLE), WID_SAMPLE_NAME)
 , m_data(d)
 {
@@ -63,9 +63,9 @@ gdChannelNameInput::gdChannelNameInput(const c::channel::Data& d)
 	m_name->setValue(m_data.name);
 
 	m_ok->shortcut(FL_Enter);
-	m_ok->onClick = [this]()
+	m_ok->onClick = [this, allScenes]()
 	{
-		c::channel::setName(m_data.id, m_name->getValue());
+		c::channel::setName(m_data.id, m_name->getValue(), allScenes);
 		do_callback();
 	};
 

@@ -52,7 +52,8 @@ enum class Menu
 	SETUP_MIDI_INPUT,
 	SETUP_MIDI_OUTPUT,
 	EDIT_ROUTING,
-	RENAME_CHANNEL,
+	RENAME_CHANNEL_THIS_SCENE,
+	RENAME_CHANNEL_ALL_SCENES,
 	CLONE_CHANNEL,
 	COPY_CHANNEL_TO_SCENE_0,
 	COPY_CHANNEL_TO_SCENE_1,
@@ -154,7 +155,12 @@ void geMidiChannel::openMenu()
 	menu.addItem(ID{Menu::SETUP_MIDI_INPUT}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIINPUT));
 	menu.addItem(ID{Menu::SETUP_MIDI_OUTPUT}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_MIDIOUTPUT));
 	menu.addItem(ID{Menu::EDIT_ROUTING}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_EDITROUTING));
-	menu.addItem(ID{Menu::RENAME_CHANNEL}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME));
+
+	geMenu renameChannelSubMenu;
+	renameChannelSubMenu.addItem(ID{Menu::RENAME_CHANNEL_THIS_SCENE}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME_THISSCENE));
+	renameChannelSubMenu.addItem(ID{Menu::RENAME_CHANNEL_ALL_SCENES}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME_ALLSCENES));
+	menu.addSubMenu(g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_RENAME), renameChannelSubMenu);
+
 	menu.addItem(ID{Menu::CLONE_CHANNEL}, g_ui->getI18Text(LangMap::MAIN_CHANNEL_MENU_CLONE));
 
 	geMenu copySceneSubMenu;
@@ -213,8 +219,10 @@ void geMidiChannel::openMenu()
 			c::channel::copyChannelToScene(data.id, Scene{6});
 		else if (id == Menu::COPY_CHANNEL_TO_SCENE_7)
 			c::channel::copyChannelToScene(data.id, Scene{7});
-		else if (id == Menu::RENAME_CHANNEL)
-			c::layout::openRenameChannelWindow(data);
+		else if (id == Menu::RENAME_CHANNEL_THIS_SCENE)
+			c::layout::openRenameChannelWindow(data, /*allScenes=*/false);
+		else if (id == Menu::RENAME_CHANNEL_ALL_SCENES)
+			c::layout::openRenameChannelWindow(data, /*allScenes=*/true);
 		else if (id == Menu::DELETE_CHANNEL)
 			c::channel::deleteChannel(data.id);
 	};

@@ -338,7 +338,9 @@ void ChannelManager::deleteChannel(ID channelId)
 
 void ChannelManager::renameChannel(ID channelId, const std::string& name, Scene scene)
 {
-	m_model.get().tracks.getChannel(channelId).setName(name, scene);
+	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
+		if (!scene.isValid() || scene.getIndex() == sceneIndex)
+			m_model.get().tracks.getChannel(channelId).setName(name, Scene{sceneIndex});
 	m_model.swap(model::SwapType::HARD);
 }
 

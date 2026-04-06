@@ -65,7 +65,7 @@ void openMidiChannelMidiOutputWindow(ID channelId);
 void openSampleActionEditor(ID channelId);
 void openMidiActionEditor(ID channelId);
 void openSampleEditor(ID channelId);
-void openRenameChannelWindow(const c::channel::Data&);
+void openRenameChannelWindow(const c::channel::Data&, bool allScenes);
 void openMissingAssetsWindow(const m::model::LoadState&);
 void openBrowserForPlugins(v::gdWindow& parent);
 void openChannelPluginListWindow(ID channelId);

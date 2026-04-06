@@ -102,7 +102,7 @@ public:
 	void setOverdubProtection(ID, bool value);
 	void setSamplePlayerMode(ID, SamplePlayerMode);
 	void setHeight(ID, int);
-	void setName(ID, const std::string&);
+	void setName(ID, const std::string&, bool allScenes);
 	void setSendToMaster(ID, bool value);
 	void addExtraOutput(ID, int);
 	void removeExtraOutput(ID, std::size_t);

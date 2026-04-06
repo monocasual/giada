@@ -352,9 +352,9 @@ void removeExtraOutput(ID channelId, int offset)
 
 /* -------------------------------------------------------------------------- */
 
-void setName(ID channelId, const std::string& name)
+void setName(ID channelId, const std::string& name, bool allScenes)
 {
-	g_engine->getChannelsApi().setName(channelId, name);
+	g_engine->getChannelsApi().setName(channelId, name, allScenes);
 }
 
 /* -------------------------------------------------------------------------- */

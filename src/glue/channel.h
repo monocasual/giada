@@ -221,7 +221,7 @@ Sets several channel properties. */
 
 void setInputMonitor(ID channelId, bool value);
 void setOverdubProtection(ID channelId, bool value);
-void setName(ID channelId, const std::string& name);
+void setName(ID channelId, const std::string& name, bool allScenes);
 void setHeight(ID channelId, int p);
 void setSendToMaster(ID channelId, bool value);
 void addExtraOutput(ID channelId, int);
