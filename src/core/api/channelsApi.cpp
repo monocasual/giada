@@ -158,7 +158,7 @@ void ChannelsApi::remove(ID channelId)
 
 void ChannelsApi::freeSampleChannel(ID channelId, bool allScenes)
 {
-	const Scene scene = allScenes ? Scene{G_INVALID_SCENE} : m_sequencer.getCurrentScene();
+	const Scene scene = allScenes ? Scene{} : m_sequencer.getCurrentScene();
 	m_channelManager.freeSampleChannel(channelId, scene);
 }
 
@@ -338,7 +338,7 @@ void ChannelsApi::removeExtraOutput(ID channelId, std::size_t index)
 
 void ChannelsApi::clearAllActions(ID channelId, bool allScenes)
 {
-	const Scene scene = allScenes ? Scene{G_INVALID_SCENE} : m_sequencer.getCurrentScene();
+	const Scene scene = allScenes ? Scene{} : m_sequencer.getCurrentScene();
 	m_actionRecorder.clearChannel(channelId, scene);
 }
 

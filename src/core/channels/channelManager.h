@@ -135,7 +135,7 @@ public:
 	void loadSampleChannel(ID channelId, Wave&, Scene);
 
 	/* freeChannel
-	Unloads existing Wave from a Sample Channel. Pass G_INVALID_SCENE as 'scene' parameter
+	Unloads existing Wave from a Sample Channel. Pass an invalid Scene object
 	to remove all Waves from all scenes. */
 
 	void freeSampleChannel(ID channelId, Scene);

@@ -114,8 +114,8 @@ public:
 	std::vector<Action> getActionsOnChannel(ID channelId, Scene) const;
 
 	/* clearChannel
-	Removes all actions from channel 'channelId' from a given scene. Pass G_INVALID_SCENE
-	to remove all actions from all scenes. */
+	Removes all actions from channel 'channelId' from a given scene. Pass an invalid Scene
+	object to remove all actions from all scenes. */
 
 	void clearChannel(ID channelId, Scene);
 
