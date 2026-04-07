@@ -273,10 +273,10 @@ void ChannelManager::freeSampleChannel(ID channelId, Scene sceneToFree)
 		if (sceneToFree.isValid() && sceneToFree.getIndex() != sceneIndex)
 			continue;
 
-		loadSampleChannel(ch, nullptr, Scene{sceneIndex});
 		const Wave* wave = ch.sampleChannel->getWave(Scene{sceneIndex});
 		if (wave != nullptr)
 			wavesToRemove.push_back(wave);
+		loadSampleChannel(ch, nullptr, Scene{sceneIndex});
 	}
 
 	m_model.swap(model::SwapType::HARD);
