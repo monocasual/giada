@@ -1,0 +1,182 @@
+##############################################################
+# Taskfile quick-start
+#
+# Taskfile (build automation)
+#
+# A `Taskfile.yml` is provided to simplify common developer flows
+# (submodules, vcpkg, CMake configure/build, tests, and running
+# the `giada` binary) on POSIX and Windows. It requires `task`
+# (go-task).
+#
+# Common commands:
+#
+# - task update-submodules    — init/update git submodules
+# - task init-vcpkg           — clone/bootstrap `vcpkg` (if missing)
+# - task install-windows-tools— try to install `ninja`, `7zip` and `yasm` on Windows
+#                              via Chocolatey or Scoop
+# - task remove-embedded-ninja— remove vcpkg's embedded ninja artifacts
+# - task configure            — configure with CMake (uses vcpkg toolchain).
+#                              Set CMAKE_GENERATOR / CMAKE_GENERATOR_PLATFORM
+#                              to override the generator.
+# - task build                — build the project
+# - task run                  — run the built `giada` binary
+# - task test                 — configure with `-DWITH_TESTS=ON`, build and run tests
+# - task clean                — remove the build directory
+#
+# Examples (Windows PowerShell):
+#
+#   task install-windows-tools
+#   task update-submodules
+#   task init-vcpkg
+#   $env:CMAKE_GENERATOR='Visual Studio 17 2022'
+#   $env:CMAKE_GENERATOR_PLATFORM='x64'
+#   task configure
+#   task build
+#   task run
+#
+# Examples (POSIX):
+#
+#   task update-submodules
+#   task configure
+#   task build
+#   task run
+#
+##############################################################
+version: '3'
+# Default task: `task` will run the `default` task which performs
+# the typical developer flow: configure -> build -> run. On POSIX
+# systems `vcpkg` is generally not required; you can skip or omit
+# `init-vcpkg` and `configure` will work with your system libraries
+# and compilers. On Windows, `init-vcpkg` is used to provide
+# dependencies via vcpkg.
+
+vars:
+  build_dir: build
+  vcpkg_dir: '{{if env "VCPKG_ROOT"}}{{env "VCPKG_ROOT"}}{{else}}vcpkg{{end}}'
+  is_windows: '{{if or (eq .OS "windows") (eq (env "OS") "Windows_NT")}}true{{else}}false{{end}}'
+  cmake_toolchain: '{{if eq .is_windows "true"}}{{.vcpkg_dir}}\\scripts\\buildsystems\\vcpkg.cmake{{else}}{{.vcpkg_dir}}/scripts/buildsystems/vcpkg.cmake{{end}}'
+  # Optional: set CMAKE_GENERATOR and CMAKE_GENERATOR_PLATFORM in your environment to force a generator
+  # Example (PowerShell): $env:CMAKE_GENERATOR = 'Visual Studio 17 2022'; $env:CMAKE_GENERATOR_PLATFORM = 'x64'
+  cmake_generator: '{{if env "CMAKE_GENERATOR"}}{{env "CMAKE_GENERATOR"}}{{else}}{{if eq .is_windows "true"}}Visual Studio 17 2022{{end}}{{end}}'
+  cmake_generator_platform: '{{if env "CMAKE_GENERATOR_PLATFORM"}}{{env "CMAKE_GENERATOR_PLATFORM"}}{{else}}{{if eq .is_windows "true"}}x64{{end}}{{end}}'
+
+tasks:
+  default:
+    desc: Build (configure + build + run)
+    deps: [configure, build, run]
+
+  init-vcpkg:
+    desc: Clone and bootstrap vcpkg if missing (supports Windows and POSIX)
+    cmds:
+      - |
+        {{if eq .is_windows "true"}}
+        git clone https://github.com/microsoft/vcpkg.git "{{.vcpkg_dir}}" || echo "vcpkg clone skipped or already exists"
+        cmd /C "cd /d \"{{.vcpkg_dir}}\" && if exist bootstrap-vcpkg.bat call bootstrap-vcpkg.bat"
+        git -C "{{.vcpkg_dir}}" fetch --all --tags || true
+        git -C "{{.vcpkg_dir}}" checkout master 2>nul || git -C "{{.vcpkg_dir}}" checkout main 2>nul || true
+        git -C "{{.vcpkg_dir}}" pull --rebase --autostash || echo "vcpkg update skipped or already up-to-date"
+        {{else}}
+        sh -c 'if [ ! -d "{{.vcpkg_dir}}" ]; then git clone https://github.com/microsoft/vcpkg.git "{{.vcpkg_dir}}" && (cd "{{.vcpkg_dir}}" && ./bootstrap-vcpkg.sh); else (cd "{{.vcpkg_dir}}" && git fetch --all --tags && (git checkout master || git checkout main || git checkout -B master origin/master || git checkout -B main origin/main) && git pull --rebase --autostash || true); fi'
+        
+        {{end}}
+    silent: true
+
+  update-submodules:
+    desc: Initialize and update git submodules recursively
+    cmds:
+      - >
+        {{if eq .is_windows "true"}}
+        git submodule sync --recursive && git submodule update --init --recursive
+        {{else}}
+        git submodule sync --recursive && git submodule update --init --recursive
+        {{end}}
+
+  check-prereqs:
+    desc: Verify required tools (ninja, 7z/7zr) are available for vcpkg on Windows and POSIX
+    cmds:
+      - '{{if eq .is_windows "true"}}cmd /C where ninja{{else}}command -v ninja >/dev/null 2>&1 || (echo "ERROR: ninja not found. Install via apt/brew or your distro package manager" && exit 1){{end}}'
+      - '{{if eq .is_windows "true"}}cmd /C where 7z{{else}}command -v 7z >/dev/null 2>&1 || command -v 7zr >/dev/null 2>&1 || (echo "ERROR: 7z/7zr not found. Install p7zip-full or 7zip via your package manager" && exit 1){{end}}'
+      - '{{if eq .is_windows "true"}}cmd /C where yasm{{else}}command -v yasm >/dev/null 2>&1 || (echo "ERROR: yasm not found. Install via apt/brew or your distro package manager" && exit 1){{end}}'
+
+  install-windows-tools:
+    desc: Attempt to install `ninja` and `7zip` on Windows using Chocolatey or Scoop (requires admin)
+    cmds:
+      - >
+        {{if eq .is_windows "true"}}
+        where choco >nul 2>nul && (choco install ninja 7zip yasm -y || (echo "choco install failed" & exit 1)) || (where scoop >nul 2>nul && (scoop install ninja 7zip yasm || (echo "scoop install failed" & exit 1)) || (echo "No supported package manager found. Install Chocolatey (https://chocolatey.org/) or Scoop (https://scoop.sh/) and re-run this task." & exit 1))
+        {{else}}
+        echo "This task is Windows-only. Use your package manager to install ninja and p7zip (e.g. apt, brew)."
+        {{end}}
+    silent: false
+
+  remove-embedded-ninja:
+    desc: Remove vcpkg's embedded ninja downloads/tools so system ninja is used
+    cmds:
+      - >
+        {{if eq .is_windows "true"}}
+        cmd /C "if exist {{.vcpkg_dir}}\\downloads\\tools rmdir /s /q {{.vcpkg_dir}}\\downloads\\tools 2>nul || echo"
+        cmd /C "if exist {{.vcpkg_dir}}\\downloads\\ninja* del /q {{.vcpkg_dir}}\\downloads\\ninja* 2>nul || echo"
+        {{else}}
+        rm -rf "{{.vcpkg_dir}}/downloads/tools/ninja*" "{{.vcpkg_dir}}/downloads/ninja*" 2>/dev/null || true
+        {{end}}
+    silent: false
+
+  configure:
+    desc: Run CMake configure using vcpkg toolchain (if available)
+    deps: [update-submodules, check-prereqs, init-vcpkg]
+    cmds:
+      - >
+        {{/* Use system binaries for vcpkg and default to Visual Studio generator on Windows to avoid embedded ninja issues. */}}
+        {{if eq .is_windows "true"}}
+        set VCPKG_FORCE_SYSTEM_BINARIES=1 && cmake -S . -B "{{.build_dir}}" -G "{{.cmake_generator}}" -A "{{.cmake_generator_platform}}" -DCMAKE_TOOLCHAIN_FILE="{{.cmake_toolchain}}" -DCMAKE_BUILD_TYPE=Release
+        {{else}}
+        cmake -S . -B "{{.build_dir}}" -DCMAKE_TOOLCHAIN_FILE="{{.cmake_toolchain}}" -DCMAKE_BUILD_TYPE=Release
+        {{end}}
+
+  build:
+    desc: Build the project
+    cmds:
+      - cmake --build "{{.build_dir}}" --config Release
+
+  test:
+    desc: Run tests (if built with tests)
+    deps: [configure-tests, build]
+    cmds:
+      - >
+        {{if eq .is_windows "true"}}
+        cmd /C "if exist {{.build_dir}}\\giada.exe {{.build_dir}}\\giada.exe --run-tests & if exist {{.build_dir}}\\giada.exe exit /b 0 & if exist {{.build_dir}}\\Release\\giada.exe {{.build_dir}}\\Release\\giada.exe --run-tests & if exist {{.build_dir}}\\Release\\giada.exe exit /b 0 & echo giada.exe not found in build dir & exit /b 1"
+        {{else}}
+        sh -c 'if [ -x "{{.build_dir}}/giada" ]; then "{{.build_dir}}/giada" --run-tests; elif [ -x "{{.build_dir}}/Release/giada" ]; then "{{.build_dir}}/Release/giada" --run-tests; else echo "giada binary not found"; exit 1; fi'
+        {{end}}
+
+  clean:
+    desc: Remove build artifacts
+    cmds:
+      - >
+        {{if eq .is_windows "true"}}
+        cmd /C if exist "{{.build_dir}}" rmdir /s /q "{{.build_dir}}"
+        {{else}}
+        rm -rf "{{.build_dir}}"
+        {{end}}
+
+  configure-tests:
+    desc: Configure with tests enabled (-DWITH_TESTS=ON)
+    deps: [update-submodules, check-prereqs, init-vcpkg]
+    cmds:
+      - >
+        {{if eq .is_windows "true"}}
+        set VCPKG_FORCE_SYSTEM_BINARIES=1 && cmake -S . -B "{{.build_dir}}" -G "{{.cmake_generator}}" -A "{{.cmake_generator_platform}}" -DCMAKE_TOOLCHAIN_FILE="{{.cmake_toolchain}}" -DCMAKE_BUILD_TYPE=Release -DWITH_TESTS=ON
+        {{else}}
+        cmake -S . -B "{{.build_dir}}" -DCMAKE_TOOLCHAIN_FILE="{{.cmake_toolchain}}" -DCMAKE_BUILD_TYPE=Release -DWITH_TESTS=ON
+        {{end}}
+
+  run:
+    desc: Run the built Giada binary (tries common locations)
+    deps: []
+    cmds:
+      - >
+        {{if eq .is_windows "true"}}
+        cmd /C "if exist {{.build_dir}}\\giada.exe {{.build_dir}}\\giada.exe & if exist {{.build_dir}}\\giada.exe exit /b 0 & if exist {{.build_dir}}\\Release\\giada.exe {{.build_dir}}\\Release\\giada.exe & if exist {{.build_dir}}\\Release\\giada.exe exit /b 0 & if exist {{.build_dir}}\\bin\\Release\\giada.exe {{.build_dir}}\\bin\\Release\\giada.exe & if exist {{.build_dir}}\\bin\\Release\\giada.exe exit /b 0 & echo giada binary not found; exit /b 1"
+        {{else}}
+        sh -c 'for p in "{{.build_dir}}/giada" "{{.build_dir}}/Release/giada" "{{.build_dir}}/bin/giada"; do if [ -x "$p" ]; then "$p"; exit 0; fi; done; echo "giada binary not found; run task build first."; exit 1'
+        {{end}}
