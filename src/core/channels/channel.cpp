@@ -235,10 +235,9 @@ void Channel::loadSample(const Sample& s, Scene scene)
 {
 	assert(sampleChannel);
 
-	shared->tracker.store(0);
-	shared->playStatus.store(s.wave != nullptr ? ChannelStatus::OFF : ChannelStatus::EMPTY);
-
 	sampleChannel->loadSample(s, scene);
+	shared->tracker.store(0);
+	shared->playStatus.store(sampleChannel->hasWaves() ? ChannelStatus::OFF : ChannelStatus::EMPTY);
 }
 
 /* -------------------------------------------------------------------------- */

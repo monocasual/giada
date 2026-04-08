@@ -44,6 +44,7 @@ public:
 	bool        isAnyLoopOnceMode() const;
 	bool        isAnyNonLoopingSingleMode() const;
 	bool        hasWave(Scene) const;
+	bool        hasWaves() const;
 	bool        hasLogicalWave(Scene) const;
 	bool        hasEditedWave(Scene) const;
 	ID          getWaveId(Scene) const;

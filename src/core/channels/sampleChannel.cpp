@@ -27,6 +27,9 @@
 #include "src/core/channels/sampleChannel.h"
 #include "src/core/const.h"
 #include "src/core/wave.h"
+#include "src/deps/mcl-utils/src/container.hpp"
+
+namespace utils = mcl::utils;
 
 namespace giada::m
 {
@@ -84,6 +87,14 @@ bool SampleChannel::isAnyNonLoopingSingleMode() const
 bool SampleChannel::hasWave(Scene scene) const { return m_samples[scene.getIndex()].wave != nullptr; }
 bool SampleChannel::hasLogicalWave(Scene scene) const { return hasWave(scene) && m_samples[scene.getIndex()].wave->isLogical(); }
 bool SampleChannel::hasEditedWave(Scene scene) const { return hasWave(scene) && m_samples[scene.getIndex()].wave->isEdited(); }
+
+/* -------------------------------------------------------------------------- */
+
+bool SampleChannel::hasWaves() const
+{
+	return utils::container::hasIf(m_samples, [](const Sample& s)
+	{ return s.wave != nullptr; });
+}
 
 /* -------------------------------------------------------------------------- */
 
