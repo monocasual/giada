@@ -269,6 +269,13 @@ void Sequencer::stop()
 {
 	if (!m_jackTransport.stop())
 		rawStop();
+
+	const auto& sequencer = m_model.get().sequencer;
+	if (sequencer.a_getSceneStatus() == SceneStatus::CHANGING)
+	{
+		sequencer.a_setSceneStatus(SceneStatus::IDLE);
+		sequencer.a_setNextScene(sequencer.a_getCurrentScene());
+	}
 }
 
 /* -------------------------------------------------------------------------- */
