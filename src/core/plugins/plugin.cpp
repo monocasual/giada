@@ -85,8 +85,9 @@ Plugin::Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPlug
 	const int defaultOutCh = countChannelsForCurrentBusLayout(BusType::OUT);
 	const int defaultInCh  = countChannelsForCurrentBusLayout(BusType::IN);
 
-	m_buffer.setSize(std::max(defaultInCh, defaultOutCh), buffersize);
-	
+	m_buffer.setSize(std::max(defaultInCh, defaultOutCh), buffersize, /*keepExistingContent=*/false,
+	    /*clearExtraSpace=*/true);
+
 	/* Set pointer to PlayHead, used to pass Giada information (bpm, time, ...)
 	to the plug-in. */
 
