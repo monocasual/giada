@@ -144,6 +144,7 @@ private:
 	void componentMovedOrResized(juce::Component& c, bool moved, bool resized) override;
 
 	juce::AudioProcessor::Bus* getMainBus(BusType b) const;
+	int                        countChannelsForCurrentBusLayout(BusType) const;
 
 	std::unique_ptr<juce::AudioPluginInstance> m_plugin;
 	std::unique_ptr<PluginHost::Info>          m_playHead;

@@ -68,10 +68,9 @@ Plugin::Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPlug
 	for (int i = 0; i < m_plugin->getParameters().size(); i++)
 		midiInParams.emplace_back(0x0, i);
 
-	m_buffer.setSize(G_MAX_IO_CHANS, buffersize);
-
 	/* Try to set the main bus to the current number of channels. In the future
-	this setup will be performed manually through a proper channel matrix. */
+	this setup will be performed manually through a proper channel matrix. Also,
+	currently only the main bus is supported. */
 
 	juce::AudioProcessor::Bus* outBus = getMainBus(BusType::OUT);
 	juce::AudioProcessor::Bus* inBus  = getMainBus(BusType::IN);
@@ -80,6 +79,14 @@ Plugin::Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPlug
 	if (inBus != nullptr)
 		inBus->setNumberOfChannels(G_MAX_IO_CHANS);
 
+	/* Prepare internal buffer. Must have enough channels to accomodate all audio
+	buses in use by the plug-in, both in and out. */
+
+	const int defaultOutCh = countChannelsForCurrentBusLayout(BusType::OUT);
+	const int defaultInCh  = countChannelsForCurrentBusLayout(BusType::IN);
+
+	m_buffer.setSize(std::max(defaultInCh, defaultOutCh), buffersize);
+	
 	/* Set pointer to PlayHead, used to pass Giada information (bpm, time, ...)
 	to the plug-in. */
 
@@ -132,6 +139,21 @@ int Plugin::countMainOutChannels() const
 	juce::AudioProcessor::Bus* b = getMainBus(BusType::OUT);
 	assert(b != nullptr);
 	return b->getNumberOfChannels();
+}
+
+/* -------------------------------------------------------------------------- */
+
+int Plugin::countChannelsForCurrentBusLayout(BusType b) const
+{
+	const bool isInput = static_cast<bool>(b);
+	int        total   = 0;
+	for (int i = 0; i < m_plugin->getBusCount(isInput); i++)
+	{
+		if (auto* bus = m_plugin->getBus(isInput, i))
+			if (bus->isEnabled()) // important: only enabled buses contribute
+				total += bus->getNumberOfChannels();
+	}
+	return total;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -223,7 +245,7 @@ const Plugin::Buffer& Plugin::process(const Plugin::Buffer& out, juce::MidiBuffe
 	process	existing audio data on the private buffer. This is needed later on
 	when merging it back into the incoming buffer. */
 
-	m_buffer = out;
+	m_buffer.copyFrom(0, 0, out, 0, 0, out.getNumSamples());
 	m_plugin->processBlock(m_buffer, m);
 	return m_buffer;
 }
