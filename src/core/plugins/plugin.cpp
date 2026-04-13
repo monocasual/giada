@@ -248,9 +248,10 @@ const Plugin::Buffer& Plugin::process(const Plugin::Buffer& out, juce::MidiBuffe
 	process	existing audio data on the private buffer. This is needed later on
 	when merging it back into the incoming buffer. */
 
-	const int channelsToCopy = std::min(out.getNumChannels(), m_buffer.getNumChannels());
+	const int channelsToCopy   = std::min(out.getNumChannels(), m_buffer.getNumChannels());
+	const int numSamplesToCopy = std::min(out.getNumSamples(), m_buffer.getNumSamples());
 	for (int ch = 0; ch < channelsToCopy; ch++)
-		m_buffer.copyFrom(ch, 0, out, ch, 0, out.getNumSamples());
+		m_buffer.copyFrom(ch, 0, out, ch, 0, numSamplesToCopy);
 
 	m_plugin->processBlock(m_buffer, m);
 	return m_buffer;
