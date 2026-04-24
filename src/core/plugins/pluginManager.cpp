@@ -61,7 +61,7 @@ void PluginManager::reset()
 	pluginFactory::reset();
 
 	if (m_formatManager.getNumFormats() == 0) // Must be called only once
-		m_formatManager.addDefaultFormats();
+		juce::addDefaultFormatsToManager(m_formatManager);
 
 	loadList(utils::fs::join(u::fs::getConfigDirPath(), "plugins.xml"));
 }
