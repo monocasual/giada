@@ -34,26 +34,26 @@
 namespace giada::v
 {
 gePluginParameter::gePluginParameter(int X, int Y, int W, int labelWidth, const c::plugin::Param p)
-: Fl_Group(X, Y, W, G_GUI_UNIT)
+: geFlex(X, Y, W, G_GUI_UNIT, Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , m_param(p)
 {
-	begin();
-
 	const int VALUE_WIDTH = 100;
 
-	m_label = new geBox(x(), y(), labelWidth, G_GUI_UNIT);
+	m_label  = new geBox();
+	m_slider = new geSlider(0, 0, 0, 0);
+	m_value  = new geBox();
+	addWidget(m_label, labelWidth);
+	addWidget(m_slider);
+	addWidget(m_value, VALUE_WIDTH);
+	end();
+
 	m_label->copy_label(m_param.name.c_str());
 
-	m_slider = new geSlider(m_label->x() + m_label->w() + G_GUI_OUTER_MARGIN, y(),
-	    w() - (m_label->x() + m_label->w() + G_GUI_OUTER_MARGIN) - VALUE_WIDTH, G_GUI_UNIT);
 	m_slider->value(m_param.value);
 	m_slider->callback(cb_setValue, (void*)this);
 
-	m_value = new geBox(m_slider->x() + m_slider->w() + G_GUI_OUTER_MARGIN, y(), VALUE_WIDTH, G_GUI_UNIT);
 	m_value->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 	m_value->box(G_CUSTOM_BORDER_BOX);
-
-	end();
 
 	resizable(m_slider);
 	update(m_param, false);

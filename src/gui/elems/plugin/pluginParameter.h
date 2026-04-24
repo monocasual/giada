@@ -28,13 +28,13 @@
 #define GE_PLUGIN_PARAMETER_H
 
 #include "src/glue/plugin.h"
-#include <FL/Fl_Group.H>
+#include "src/gui/elems/basics/flex.h"
 
 namespace giada::v
 {
 class geSlider;
 class geBox;
-class gePluginParameter : public Fl_Group
+class gePluginParameter : public geFlex
 {
 public:
 	gePluginParameter(int x, int y, int w, int labelWidth, const c::plugin::Param);
