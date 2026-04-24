@@ -39,7 +39,7 @@ gePluginParameter::gePluginParameter(int X, int Y, int W, int labelWidth, const 
 {
 	const int VALUE_WIDTH = 100;
 
-	m_label  = new geBox();
+	m_label  = new geBox("", FL_ALIGN_RIGHT);
 	m_slider = new geSlider(0, 0, 0, 0);
 	m_value  = new geBox();
 	addWidget(m_label, labelWidth);

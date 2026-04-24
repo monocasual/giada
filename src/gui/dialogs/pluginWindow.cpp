@@ -47,7 +47,7 @@ gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin, ID wid)
 	    Direction::VERTICAL, Fl_Scroll::VERTICAL_ALWAYS);
 
 	m_list->begin();
-	int labelWidth = 100; // TODO
+	const int labelWidth = 150;
 	for (int index : m_plugin.paramIndexes)
 	{
 		int py = m_list->y() + (index * (G_GUI_UNIT + G_GUI_INNER_MARGIN));
