@@ -260,6 +260,15 @@ void Ui::closeAllSubwindows()
 
 /* -------------------------------------------------------------------------- */
 
+void Ui::closeAllPluginsEditors()
+{
+	for (const auto& child : mainWindow->getChildren())
+		if (child->getId() >= WID_FX)
+			mainWindow->deleteChild(child->getId());
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Ui::setMainWindowTitle(const std::string& title)
 {
 	mainWindow->setTitle(title);

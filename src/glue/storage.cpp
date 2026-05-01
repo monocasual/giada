@@ -102,11 +102,10 @@ void loadProject(void* data)
 
 	const std::string projectPath = browser->getSelectedItem();
 
-	/* Close all sub-windows first (browser included), in case there are VST
-	editors visible. VST editors must be closed before deleting their plug-in
-	processors. */
+	/* Close all plug-ins sub-windows first, in case there are VST editors visible.
+	VST editors must be closed before deleting their plug-in processors. */
 
-	g_ui->closeAllSubwindows();
+	g_ui->closeAllPluginsEditors();
 
 	/* Stop the UI updater: the current model is about to change, but the UI
 	still retains the old one. Updating during this stage would trigger

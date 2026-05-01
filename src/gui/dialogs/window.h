@@ -59,6 +59,8 @@ public:
 
 	ID getId() const;
 
+	const std::vector<gdWindow*>& getChildren() const;
+
 	/* getContentBounds
 	Returns {0, 0, w(), h()}. */
 

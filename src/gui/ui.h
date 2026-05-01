@@ -115,6 +115,11 @@ public:
 
 	void closeAllSubwindows();
 
+	/* closeAllPluginsEditors
+	Closes all plug-ins windows attached to the main one. */
+
+	void closeAllPluginsEditors();
+
 	/* setMainWindowTitle
 	Changes Main Window title. */
 

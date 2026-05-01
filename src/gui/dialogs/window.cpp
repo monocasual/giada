@@ -125,6 +125,10 @@ ID gdWindow::getId() const
 
 /* -------------------------------------------------------------------------- */
 
+const std::vector<gdWindow*>& gdWindow::getChildren() const { return m_children; }
+
+/* -------------------------------------------------------------------------- */
+
 geompp::Rect<int> gdWindow::getContentBounds() const
 {
 	return {0, 0, w(), h()};
