@@ -343,7 +343,7 @@ void ActionRecorder::copyActions(ID channelId, Scene src, Scene dst, ID newChann
 
 	m_model.get().actions.forEachAction([&](const Action& a)
 	{
-		if (a.channelId != channelId)
+		if (a.channelId != channelId || a.scene != src)
 			return;
 
 		ID newActionId = actionFactory::getNewActionId();
