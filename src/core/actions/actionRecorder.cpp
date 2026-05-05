@@ -399,7 +399,7 @@ std::vector<Action> ActionRecorder::getActionsOnChannel(ID channelId, Scene scen
 void ActionRecorder::clearChannel(ID channelId, Scene sceneToClear)
 {
 	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
-		if (sceneToClear.isValid() || sceneToClear.getIndex() == sceneIndex)
+		if (!sceneToClear.isValid() || (sceneToClear.isValid() && sceneToClear.getIndex() == sceneIndex))
 			m_model.get().actions.clearChannel(channelId, Scene{sceneIndex});
 	m_model.swap(model::SwapType::HARD);
 }
