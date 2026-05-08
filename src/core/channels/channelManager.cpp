@@ -396,7 +396,7 @@ void ChannelManager::setPitch(ID channelId, float value, Scene scene)
 	const float pitch = std::clamp(value, G_MIN_PITCH, G_MAX_PITCH);
 
 	c.sampleChannel->setPitch(pitch, scene);
-	preview.sampleChannel->setPitch(pitch, scene);
+	preview.sampleChannel->setPitch(pitch, Scene{0});
 	m_model.swap(model::SwapType::SOFT);
 }
 
@@ -428,7 +428,7 @@ void ChannelManager::setRange(ID channelId, SampleRange range, Scene scene)
 		c.shared->tracker.store(range.a);
 
 	c.sampleChannel->setRange(range, scene);
-	preview.sampleChannel->setRange(range, scene);
+	preview.sampleChannel->setRange(range, Scene{0});
 	m_model.swap(model::SwapType::HARD);
 }
 
