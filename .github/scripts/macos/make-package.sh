@@ -65,5 +65,5 @@ echo "Copy final bundle to dist/, zip it and clean it up"
 
 cp -r temp/giada.app dist/
 cd dist
-zip -r giada-$RELEASE_VERSION-x86_64-macos.zip giada.app
+zip -r giada-$RELEASE_VERSION-arm64-macos.zip giada.app
 rm -rf giada.app
