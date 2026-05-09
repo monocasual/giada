@@ -19,6 +19,31 @@
 		</screenshot>
 	</screenshots>
 	<releases>
+		<release version="1.4.1" date="2026-05-10">
+			<description>
+				<p>This is a bugfix release that makes Giada feel smoother and more flexible, with better scene and channel workflow, customizable keyboard and MIDI control for switching scenes and a round of fixes for playback, editing, file browsing, and plug-in stability.</p>
+				<ul>
+					<li>Enable scene switching via keyboard or MIDI, with support for custom bindings;</li>
+					<li>Display inactive scenes (i.e. with no audio or actions);</li>
+					<li>Add ability to rename a channel in all scenes;</li>
+					<li>Add ability to undo a scene change when transport is running;</li>
+					<li>Remove obsolete 'export sample...' function;</li>
+					<li>Improve support for audio plug-ins with complex buses layout;</li>
+					<li>Revert scene status to IDLE when transport stops;</li>
+					<li>File Browser: fix bug that would allow to incorrectly browse into project folders;</li>
+					<li>Fix bug that would prevent to successfully clear keyboard bindings;</li>
+					<li>Fix crash when opening plug-in browser with no plug-ins detected;</li>
+					<li>Fix wrong Wave object deletion when freeing a sample channel;</li>
+					<li>Fix inability to play samples once removed from a scene;</li>
+					<li>Fix inability to delete all channel actions from all scenes;</li>
+					<li>Fix Channel 'copy to scene' function, copying too many actions;</li>
+					<li>Sample Editor: fix pitch changes not working in scenes greater than 1;</li>
+					<li>Sample Editor: prevent tools to get stuck in 'deactivated' state when switching between scenes;</li>
+					<li>Update JUCE to version 8.0.12;</li>
+					<li>Update FLTK to version 1.4.5.</li>
+				</ul>
+			</description>
+		</release>
 		<release version="1.4.0" date="2025-12-06">
 			<description>
 				<p>This release introduces scenes: a new way to add greater variety and richness to your live performances.</p>

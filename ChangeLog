@@ -1,3 +1,24 @@
+1.4.1 --- 2026 . 05 . 10
+- Enable scene switching via keyboard or MIDI, with support for custom bindings
+- Display inactive scenes (i.e. with no audio or actions)
+- Add ability to rename a channel in all scenes
+- Add ability to undo a scene change when transport is running
+- Remove obsolete 'export sample...' function
+- Improve support for audio plug-ins with complex buses layout
+- Revert scene status to IDLE when transport stops
+- File Browser: fix bug that would allow to incorrectly browse into project folders
+- Fix bug that would prevent to successfully clear keyboard bindings
+- Fix crash when opening plug-in browser with no plug-ins detected
+- Fix wrong Wave object deletion when freeing a sample channel
+- Fix inability to play samples once removed from a scene
+- Fix inability to delete all channel actions from all scenes
+- Fix Channel 'copy to scene' function, copying too many actions
+- Sample Editor: fix pitch changes not working in scenes greater than 1
+- Sample Editor: prevent tools to get stuck in 'deactivated' state when switching between scenes
+- Update JUCE to version 8.0.12
+- Update FLTK to version 1.4.5
+
+
 1.4.0 --- 2025 . 12 . 06
 - New 'scenes' feature
 - Lots of code refactoring and minor internal improvements
