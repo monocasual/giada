@@ -274,10 +274,15 @@ void ChannelManager::freeSampleChannel(ID channelId, Scene sceneToFree)
 			continue;
 
 		const Wave* wave = ch.sampleChannel->getWave(Scene{sceneIndex});
-		if (wave != nullptr)
-			wavesToRemove.push_back(wave);
+		if (wave == nullptr)
+			continue;
+		wavesToRemove.push_back(wave);
 		loadSampleChannel(ch, nullptr, Scene{sceneIndex});
 	}
+
+	/* Prevent unnecessary swap + callback if there's nothing to free. */
+	if (wavesToRemove.empty())
+		return;
 
 	m_model.swap(model::SwapType::HARD);
 	for (const Wave* w : wavesToRemove)
