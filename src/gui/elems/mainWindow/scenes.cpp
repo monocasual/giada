@@ -94,8 +94,10 @@ void geScenes::refresh()
 
 gePlayButton* geScenes::makeButton(Scene scene)
 {
-	gePlayButton* button = new gePlayButton(fmt::format("{}", scene.getIndex() + 1));
+	const std::string sceneStr = std::to_string(scene.getIndex() + 1);
+	gePlayButton*     button   = new gePlayButton(sceneStr);
 	button->setPadding(0);
+	button->copy_tooltip(fmt::format("{} {}", g_ui->getI18Text(LangMap::COMMON_SCENE), sceneStr).c_str());
 	button->onClick = [scene]()
 	{ c::main::setScene(scene); };
 
