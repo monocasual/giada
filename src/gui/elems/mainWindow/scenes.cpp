@@ -94,11 +94,13 @@ void geScenes::refresh()
 
 gePlayButton* geScenes::makeButton(Scene scene)
 {
-	m_buttons[scene.getIndex()] = new gePlayButton(fmt::format("{}", scene.getIndex() + 1));
-	m_buttons[scene.getIndex()]->setPadding(0);
-	m_buttons[scene.getIndex()]->onClick = [scene]()
+	gePlayButton* button = new gePlayButton(fmt::format("{}", scene.getIndex() + 1));
+	button->setPadding(0);
+	button->onClick = [scene]()
 	{ c::main::setScene(scene); };
 
-	return m_buttons[scene.getIndex()];
+	m_buttons[scene.getIndex()] = button;
+
+	return button;
 }
 } // namespace giada::v
