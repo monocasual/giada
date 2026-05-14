@@ -100,7 +100,7 @@ LangMap::LangMap()
 	m_data[MAIN_MENU_FILE_DEBUGSTATS]               = "Debug stats";
 	m_data[MAIN_MENU_FILE_QUIT]                     = "Quit Giada";
 	m_data[MAIN_MENU_EDIT]                          = "Edit";
-	m_data[MAIN_MENU_EDIT_FREEALLSAMPLES]           = "Free all Sample channels...";
+	m_data[MAIN_MENU_EDIT_FREEALLSAMPLES]           = "Free all Sample channels";
 	m_data[MAIN_MENU_EDIT_FREEALLSAMPLES_THISSCENE] = "From this scene";
 	m_data[MAIN_MENU_EDIT_FREEALLSAMPLES_ALLSCENES] = "From all scenes";
 	m_data[MAIN_MENU_EDIT_CLEARALLACTIONS]          = "Clear all actions";
