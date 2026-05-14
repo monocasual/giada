@@ -290,15 +290,13 @@ void ChannelManager::freeSampleChannel(ID channelId, Scene sceneToFree)
 
 void ChannelManager::freeAllSampleChannels(Scene scene)
 {
+	// TODO - not super optmized, will swap model for each sample channel
 	m_model.get().tracks.forEachChannel([this, scene](Channel& ch)
 	{
 		if (ch.sampleChannel)
-			loadSampleChannel(ch, nullptr, scene);
+			freeSampleChannel(ch.id, scene);
 		return true;
 	});
-
-	m_model.swap(model::SwapType::HARD);
-	m_model.clearWaves();
 
 	triggerOnChannelsAltered();
 }

@@ -122,7 +122,7 @@ Scenes    getScenes();
 
 void setBeats(int beats, int bars);
 void quantize(int val);
-void clearAllSamples();
+void clearAllSamples(bool allscenes);
 void clearAllActions();
 
 /* setInToOut

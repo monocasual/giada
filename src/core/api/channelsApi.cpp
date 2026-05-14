@@ -350,9 +350,10 @@ void ChannelsApi::clearAllActions()
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelsApi::freeAllSampleChannels()
+void ChannelsApi::freeAllSampleChannels(bool allScenes)
 {
-	m_channelManager.freeAllSampleChannels(m_sequencer.getCurrentScene());
+	const Scene scene = allScenes ? Scene{} : m_sequencer.getCurrentScene();
+	m_channelManager.freeAllSampleChannels(scene);
 }
 
 /* -------------------------------------------------------------------------- */

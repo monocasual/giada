@@ -211,14 +211,14 @@ void quantize(int val)
 
 /* -------------------------------------------------------------------------- */
 
-void clearAllSamples()
+void clearAllSamples(bool allScenes)
 {
 	if (!v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),
 	        g_ui->getI18Text(v::LangMap::MESSAGE_MAIN_FREEALLSAMPLES)))
 		return;
 
 	g_ui->closeSubWindow(WID_SAMPLE_EDITOR);
-	g_engine->getChannelsApi().freeAllSampleChannels();
+	g_engine->getChannelsApi().freeAllSampleChannels(allScenes);
 }
 
 /* -------------------------------------------------------------------------- */

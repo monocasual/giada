@@ -92,8 +92,12 @@ geMainMenu::geMainMenu()
 	{ c::main::quitGiada(); }),
 	    endSubMenu_(),
 	    beginSubMenu_(LangMap::MAIN_MENU_EDIT),
-	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_FREEALLSAMPLES, [](Fl_Widget*, void*)
-	{ c::main::clearAllSamples(); }),
+	    beginSubMenu_(LangMap::MAIN_MENU_EDIT_FREEALLSAMPLES),
+	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_FREEALLSAMPLES_THISSCENE, [](Fl_Widget*, void*)
+	{ c::main::clearAllSamples(/*allScenes=*/false); }),
+	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_FREEALLSAMPLES_ALLSCENES, [](Fl_Widget*, void*)
+	{ c::main::clearAllSamples(/*allScenes=*/true); }),
+	    endSubMenu_(),
 	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_CLEARALLACTIONS, [](Fl_Widget*, void*)
 	{ c::main::clearAllActions(); }),
 	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_SETUPMIDIINPUT, [](Fl_Widget*, void*)
