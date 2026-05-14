@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2025 Giovanni A. Zuliani | Monocasual Laboratories
+ * Copyright (C) 2010-2026 Giovanni A. Zuliani | Monocasual Laboratories
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -59,8 +59,8 @@ protected:
 	std::string m_mapsPath;
 
 	/* m_mapFiles
-	The available map files. Each element of the vector represents a map file 
-    found in the map folder. */
+	The available map files. Each element of the vector represents a map file
+	found in the map folder. */
 
 	std::vector<std::string> m_mapFiles;
 };
