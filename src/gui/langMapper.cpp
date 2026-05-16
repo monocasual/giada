@@ -93,20 +93,20 @@ LangMap::LangMap()
 	m_data[MESSAGE_STORAGE_FILEEXISTS]          = "File exists: overwrite?";
 	m_data[MESSAGE_STORAGE_SAVINGFILEERROR]     = "Unable to save this sample!";
 
-	m_data[MAIN_MENU_FILE]                          = "File";
-	m_data[MAIN_MENU_FILE_OPENPROJECT]              = "Open project...";
-	m_data[MAIN_MENU_FILE_SAVEPROJECT]              = "Save project...";
-	m_data[MAIN_MENU_FILE_CLOSEPROJECT]             = "Close project";
-	m_data[MAIN_MENU_FILE_DEBUGSTATS]               = "Debug stats";
-	m_data[MAIN_MENU_FILE_QUIT]                     = "Quit Giada";
-	m_data[MAIN_MENU_EDIT]                          = "Edit";
-	m_data[MAIN_MENU_EDIT_FREEALLSAMPLES]           = "Free all Sample channels";
-	m_data[MAIN_MENU_EDIT_FREEALLSAMPLES_THISSCENE] = "From this scene";
-	m_data[MAIN_MENU_EDIT_FREEALLSAMPLES_ALLSCENES] = "From all scenes";
-	m_data[MAIN_MENU_EDIT_CLEARALLACTIONS]          = "Clear all actions";
-	m_data[MAIN_MENU_EDIT_SETUPMIDIINPUT]           = "Setup global MIDI input...";
-	m_data[MAIN_MENU_CONFIG]                        = "Settings";
-	m_data[MAIN_MENU_ABOUT]                         = "About";
+	m_data[MAIN_MENU_FILE]                 = "File";
+	m_data[MAIN_MENU_FILE_OPENPROJECT]     = "Open project...";
+	m_data[MAIN_MENU_FILE_SAVEPROJECT]     = "Save project...";
+	m_data[MAIN_MENU_FILE_CLOSEPROJECT]    = "Close project";
+	m_data[MAIN_MENU_FILE_DEBUGSTATS]      = "Debug stats";
+	m_data[MAIN_MENU_FILE_QUIT]            = "Quit Giada";
+	m_data[MAIN_MENU_EDIT]                 = "Edit";
+	m_data[MAIN_MENU_EDIT_FREEALLSAMPLES]  = "Free all Sample channels";
+	m_data[MAIN_MENU_EDIT_INTHISSCENE]     = "In this scene";
+	m_data[MAIN_MENU_EDIT_INALLSCENES]     = "In all scenes";
+	m_data[MAIN_MENU_EDIT_CLEARALLACTIONS] = "Clear all actions";
+	m_data[MAIN_MENU_EDIT_SETUPMIDIINPUT]  = "Setup global MIDI input...";
+	m_data[MAIN_MENU_CONFIG]               = "Settings";
+	m_data[MAIN_MENU_ABOUT]                = "About";
 
 	m_data[MAIN_IO_LABEL_OUTMETER]        = "Main output meter";
 	m_data[MAIN_IO_LABEL_INMETER]         = "Main input meter";

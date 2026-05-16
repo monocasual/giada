@@ -104,10 +104,15 @@ public:
 
 	void clearChannel(ID channelId, Scene);
 
-	/* clearActions
+	/* clearActions (1)
 	Clears the actions by type from a channel. */
 
 	void clearActions(ID channelId, int type);
+
+	/* clearActions (2)
+	Clears all actions from a given scene. */
+
+	void clearActions(Scene);
 
 	/* deleteAction (1)
 	Deletes a specific action. */

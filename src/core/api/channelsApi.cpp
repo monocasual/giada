@@ -343,7 +343,7 @@ void ChannelsApi::clearAllActions(ID channelId, bool allScenes)
 	if (channelId.isValid())
 		m_actionRecorder.clearChannel(channelId, scene);
 	else
-		m_actionRecorder.clearAllActions();
+		m_actionRecorder.clearAllActions(scene);
 }
 
 /* -------------------------------------------------------------------------- */

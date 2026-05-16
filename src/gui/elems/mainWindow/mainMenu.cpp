@@ -93,13 +93,17 @@ geMainMenu::geMainMenu()
 	    endSubMenu_(),
 	    beginSubMenu_(LangMap::MAIN_MENU_EDIT),
 	    beginSubMenu_(LangMap::MAIN_MENU_EDIT_FREEALLSAMPLES),
-	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_FREEALLSAMPLES_THISSCENE, [](Fl_Widget*, void*)
+	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_INTHISSCENE, [](Fl_Widget*, void*)
 	{ c::main::clearAllSamples(/*allScenes=*/false); }),
-	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_FREEALLSAMPLES_ALLSCENES, [](Fl_Widget*, void*)
+	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_INALLSCENES, [](Fl_Widget*, void*)
 	{ c::main::clearAllSamples(/*allScenes=*/true); }),
 	    endSubMenu_(),
-	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_CLEARALLACTIONS, [](Fl_Widget*, void*)
-	{ c::main::clearAllActions(); }),
+	    beginSubMenu_(LangMap::MAIN_MENU_EDIT_CLEARALLACTIONS),
+	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_INTHISSCENE, [](Fl_Widget*, void*)
+	{ c::main::clearAllActions(/*allScenes=*/false); }),
+	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_INALLSCENES, [](Fl_Widget*, void*)
+	{ c::main::clearAllActions(/*allScenes=*/true); }),
+	    endSubMenu_(),
 	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_SETUPMIDIINPUT, [](Fl_Widget*, void*)
 	{ c::layout::openMasterMidiInputWindow(); }),
 	    endSubMenu_(),

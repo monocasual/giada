@@ -67,6 +67,12 @@ void Actions::clearActions(ID channelId, int type)
 	});
 }
 
+void Actions::clearActions(Scene scene)
+{
+	removeIf([=](const Action& a)
+	{ return a.scene == scene; });
+}
+
 /* -------------------------------------------------------------------------- */
 
 void Actions::deleteAction(ID id)

@@ -102,9 +102,10 @@ public:
 	std::unordered_set<ID> consolidate(Scene);
 
 	/* clearAllActions
-	Deletes all recorded actions. */
+	Deletes all recorded actions from the given scene. Pass an invalid scene
+	to delete everything. */
 
-	void clearAllActions();
+	void clearAllActions(Scene);
 
 	/* Pass-thru functions. See Actions.h */
 

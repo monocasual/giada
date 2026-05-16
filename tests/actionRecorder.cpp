@@ -77,7 +77,7 @@ TEST_CASE("ActionRecorder")
 
 		SECTION("Test clear all")
 		{
-			ar.clearAllActions();
+			ar.clearAllActions(Scene{0});
 			REQUIRE(ar.hasActions(channelID1) == false);
 		}
 	}

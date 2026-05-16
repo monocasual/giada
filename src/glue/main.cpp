@@ -223,14 +223,14 @@ void clearAllSamples(bool allScenes)
 
 /* -------------------------------------------------------------------------- */
 
-void clearAllActions()
+void clearAllActions(bool allScenes)
 {
 	if (!v::gdConfirmWin(g_ui->getI18Text(v::LangMap::COMMON_WARNING),
 	        g_ui->getI18Text(v::LangMap::MESSAGE_MAIN_CLEARALLACTIONS)))
 		return;
 
 	g_ui->closeSubWindow(WID_ACTION_EDITOR);
-	g_engine->getChannelsApi().clearAllActions({}, /*allScenes=*/true);
+	g_engine->getChannelsApi().clearAllActions({}, allScenes);
 }
 
 /* -------------------------------------------------------------------------- */

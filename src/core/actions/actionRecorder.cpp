@@ -273,9 +273,12 @@ std::unordered_set<ID> ActionRecorder::consolidate(Scene scene)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::clearAllActions()
+void ActionRecorder::clearAllActions(Scene scene)
 {
-	m_model.get().actions.clearAll();
+	if (scene.isValid())
+		m_model.get().actions.clearActions(scene);
+	else
+		m_model.get().actions.clearAll();
 	m_model.swap(model::SwapType::HARD);
 }
 
