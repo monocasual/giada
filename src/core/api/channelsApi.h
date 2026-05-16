@@ -107,7 +107,6 @@ public:
 	void addExtraOutput(ID, int);
 	void removeExtraOutput(ID, std::size_t);
 	void clearAllActions(ID, bool allScenes);
-	void clearAllActions();
 	void freeAllSampleChannels(bool allScenes);
 	void sendMidi(ID, const MidiEvent&);
 

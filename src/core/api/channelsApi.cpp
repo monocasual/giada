@@ -340,12 +340,10 @@ void ChannelsApi::removeExtraOutput(ID channelId, std::size_t index)
 void ChannelsApi::clearAllActions(ID channelId, bool allScenes)
 {
 	const Scene scene = allScenes ? Scene{} : m_sequencer.getCurrentScene();
-	m_actionRecorder.clearChannel(channelId, scene);
-}
-
-void ChannelsApi::clearAllActions()
-{
-	m_actionRecorder.clearAllActions();
+	if (channelId.isValid())
+		m_actionRecorder.clearChannel(channelId, scene);
+	else
+		m_actionRecorder.clearAllActions();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -230,7 +230,7 @@ void clearAllActions()
 		return;
 
 	g_ui->closeSubWindow(WID_ACTION_EDITOR);
-	g_engine->getChannelsApi().clearAllActions();
+	g_engine->getChannelsApi().clearAllActions({}, /*allScenes=*/true);
 }
 
 /* -------------------------------------------------------------------------- */
