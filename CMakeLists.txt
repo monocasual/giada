@@ -113,8 +113,8 @@ list(APPEND SOURCES
 	src/core/patch.h
 	src/core/actions/actionFactory.cpp
 	src/core/actions/actionFactory.h
-	src/core/actions/actionRecorder.cpp
-	src/core/actions/actionRecorder.h
+	src/core/actions/ActionManager.cpp
+	src/core/actions/ActionManager.h
 	src/core/mixer.cpp
 	src/core/mixer.h
 	src/core/jackSynchronizer.cpp

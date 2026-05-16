@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/rendering/sampleReactions.h"
-#include "src/core/actions/actionRecorder.h"
+#include "src/core/actions/ActionManager.h"
 
 namespace giada::m::rendering
 {
@@ -36,7 +36,7 @@ constexpr int Q_ACTION_REWIND = 10000; // Avoid clash with Q_ACTION_PLAY + chann
 
 /* -------------------------------------------------------------------------- */
 
-void record_(ID channelId, Scene scene, int note, Frame currentFrameQuantized, ActionRecorder& actionRecorder)
+void record_(ID channelId, Scene scene, int note, Frame currentFrameQuantized, ActionManager& actionRecorder)
 {
 	actionRecorder.liveRec(channelId, scene, MidiEvent::makeFrom3Bytes(note, 0, 0), currentFrameQuantized);
 }
@@ -128,7 +128,7 @@ ChannelStatus pressWhilePlay_(ID channelId, ChannelShared& shared, SamplePlayerM
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void recordSampleKeyPress(ID channelId, Scene scene, ChannelShared& shared, Frame currentFrameQuantized, SamplePlayerMode mode, ActionRecorder& actionRecorder)
+void recordSampleKeyPress(ID channelId, Scene scene, ChannelShared& shared, Frame currentFrameQuantized, SamplePlayerMode mode, ActionManager& actionRecorder)
 {
 	record_(channelId, scene, MidiEvent::CHANNEL_NOTE_ON, currentFrameQuantized, actionRecorder);
 
@@ -141,14 +141,14 @@ void recordSampleKeyPress(ID channelId, Scene scene, ChannelShared& shared, Fram
 
 /* -------------------------------------------------------------------------- */
 
-void recordSampleKeyRelease(ID channelId, Scene scene, Frame currentFrameQuantized, ActionRecorder& actionRecorder)
+void recordSampleKeyRelease(ID channelId, Scene scene, Frame currentFrameQuantized, ActionManager& actionRecorder)
 {
 	record_(channelId, scene, MidiEvent::CHANNEL_NOTE_OFF, currentFrameQuantized, actionRecorder);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void recordSampleKeyKill(ID channelId, Scene scene, Frame currentFrameQuantized, ActionRecorder& actionRecorder)
+void recordSampleKeyKill(ID channelId, Scene scene, Frame currentFrameQuantized, ActionManager& actionRecorder)
 {
 	record_(channelId, scene, MidiEvent::CHANNEL_NOTE_KILL, currentFrameQuantized, actionRecorder);
 }

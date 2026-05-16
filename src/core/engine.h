@@ -27,7 +27,7 @@
 #ifndef G_ENGINE_H
 #define G_ENGINE_H
 
-#include "src/core/actions/actionRecorder.h"
+#include "src/core/actions/ActionManager.h"
 #include "src/core/api/IOApi.h"
 #include "src/core/api/actionEditorApi.h"
 #include "src/core/api/channelsApi.h"
@@ -133,7 +133,7 @@ private:
 	MidiSynchronizer       m_midiSynchronizer;
 	Sequencer              m_sequencer;
 	Mixer                  m_mixer;
-	ActionRecorder         m_actionRecorder;
+	ActionManager          m_actionManager;
 	ChannelManager         m_channelManager;
 	Recorder               m_recorder;
 	PluginManager          m_pluginManager;

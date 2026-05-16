@@ -51,7 +51,7 @@ struct Document;
 namespace giada::m
 {
 class JackTransport;
-class ActionRecorder;
+class ActionManager;
 class MidiSynchronizer;
 class Sequencer final
 {

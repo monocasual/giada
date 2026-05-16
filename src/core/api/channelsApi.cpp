@@ -35,7 +35,7 @@
 namespace giada::m
 {
 ChannelsApi::ChannelsApi(model::Model& m, KernelAudio& k, Mixer& mx, Sequencer& s,
-    ChannelManager& cm, Recorder& r, ActionRecorder& ar, PluginHost& ph, PluginManager& pm,
+    ChannelManager& cm, Recorder& r, ActionManager& ar, PluginHost& ph, PluginManager& pm,
     rendering::Reactor& re)
 : m_model(m)
 , m_kernelAudio(k)
@@ -43,7 +43,7 @@ ChannelsApi::ChannelsApi(model::Model& m, KernelAudio& k, Mixer& mx, Sequencer& 
 , m_sequencer(s)
 , m_channelManager(cm)
 , m_recorder(r)
-, m_actionRecorder(ar)
+, m_actionManager(ar)
 , m_pluginHost(ph)
 , m_pluginManager(pm)
 , m_reactor(re)
@@ -144,7 +144,7 @@ void ChannelsApi::remove(ID channelId)
 	const std::vector<Plugin*> plugins  = m_channelManager.getChannel(channelId).plugins;
 	const bool                 hasSolos = m_channelManager.hasSolos();
 
-	m_actionRecorder.clearChannel(channelId, {});
+	m_actionManager.clearChannel(channelId, {});
 	m_channelManager.deleteChannel(channelId);
 	m_mixer.updateSoloCount(hasSolos);
 
@@ -177,7 +177,7 @@ void ChannelsApi::clone(ID channelId)
 	const ID                   nextChannelId = channelFactory::getNextId();
 
 	m_channelManager.cloneChannel(channelId, scene, bufferSize, plugins);
-	m_actionRecorder.cloneActions(channelId, scene, nextChannelId);
+	m_actionManager.cloneActions(channelId, scene, nextChannelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -193,7 +193,7 @@ void ChannelsApi::copyToScene(ID channelId, Scene dstScene)
 				copyToScene(child.id, dstScene);
 
 	m_channelManager.copyChannelToScene(channelId, srcScene, dstScene);
-	m_actionRecorder.copyActionsToScene(channelId, srcScene, dstScene);
+	m_actionManager.copyActionsToScene(channelId, srcScene, dstScene);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -341,9 +341,9 @@ void ChannelsApi::clearAllActions(ID channelId, bool allScenes)
 {
 	const Scene scene = allScenes ? Scene{} : m_sequencer.getCurrentScene();
 	if (channelId.isValid())
-		m_actionRecorder.clearChannel(channelId, scene);
+		m_actionManager.clearChannel(channelId, scene);
 	else
-		m_actionRecorder.clearAllActions(scene);
+		m_actionManager.clearAllActions(scene);
 }
 
 /* -------------------------------------------------------------------------- */

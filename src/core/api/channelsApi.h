@@ -54,7 +54,7 @@ class Sequencer;
 class ChannelManager;
 class Channel;
 class Recorder;
-class ActionRecorder;
+class ActionManager;
 class PluginHost;
 class PluginManager;
 class Wave;
@@ -62,7 +62,7 @@ class ChannelsApi
 {
 public:
 	ChannelsApi(model::Model&, KernelAudio&, Mixer&, Sequencer&, ChannelManager&,
-	    Recorder&, ActionRecorder&, PluginHost&, PluginManager&, rendering::Reactor&);
+	    Recorder&, ActionManager&, PluginHost&, PluginManager&, rendering::Reactor&);
 
 	/* hasChannelsWithAudioData
 	True if there are channels with audio data in the current scene. */
@@ -117,7 +117,7 @@ private:
 	Sequencer&          m_sequencer;
 	ChannelManager&     m_channelManager;
 	Recorder&           m_recorder;
-	ActionRecorder&     m_actionRecorder;
+	ActionManager&      m_actionManager;
 	PluginHost&         m_pluginHost;
 	PluginManager&      m_pluginManager;
 	rendering::Reactor& m_reactor;

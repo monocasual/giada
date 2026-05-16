@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/sequencer.h"
-#include "src/core/actions/actionRecorder.h"
+#include "src/core/actions/ActionManager.h"
 #include "src/core/jackTransport.h"
 #include "src/core/kernelAudio.h"
 #include "src/core/metronome.h"

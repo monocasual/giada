@@ -36,11 +36,11 @@ namespace giada::m
 {
 class Engine;
 class Sequencer;
-class ActionRecorder;
+class ActionManager;
 class ActionEditorApi
 {
 public:
-	ActionEditorApi(Engine&, Sequencer&, ActionRecorder&);
+	ActionEditorApi(Engine&, Sequencer&, ActionManager&);
 
 	std::vector<Action> getActionsOnChannel(ID channelId) const;
 	const Action*       findAction(ID) const;
@@ -54,9 +54,9 @@ public:
 	void updateVelocity(const Action&, float value);
 
 private:
-	Engine&         m_engine;
-	Sequencer&      m_sequencer;
-	ActionRecorder& m_actionRecorder;
+	Engine&        m_engine;
+	Sequencer&     m_sequencer;
+	ActionManager& m_actionManager;
 };
 } // namespace giada::m
 

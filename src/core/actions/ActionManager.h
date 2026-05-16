@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_ACTION_RECORDER_H
-#define G_ACTION_RECORDER_H
+#ifndef G_ACTION_MANAGER_H
+#define G_ACTION_MANAGER_H
 
 #include "src/core/midiEvent.h"
 #include "src/core/model/model.h"
@@ -41,10 +41,10 @@ struct Action;
 namespace giada::m
 {
 struct Action;
-class ActionRecorder // TODO - rename ActionManager
+class ActionManager
 {
 public:
-	ActionRecorder(model::Model&);
+	ActionManager(model::Model&);
 
 	/* reset
 	Brings everything back to the initial state. */

@@ -37,7 +37,7 @@
 #include "src/utils/ver.h"
 #ifdef WITH_TESTS
 #define CATCH_CONFIG_RUNNER
-#include "tests/actionRecorder.cpp"
+#include "tests/ActionManager.cpp"
 #include "tests/channelFactory.cpp"
 #include "tests/midiEvent.cpp"
 #include "tests/midiLightning.cpp"

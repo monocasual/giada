@@ -38,7 +38,7 @@ namespace giada::m
 {
 struct Action;
 class KernelMidi;
-class ActionRecorder;
+class ActionManager;
 class MidiLightning;
 } // namespace giada::m
 
@@ -54,7 +54,7 @@ void rewindMidiChannel(WeakAtomic<ChannelStatus>&);
 /* recordMidiAction
 Records a new Action for a MIDI channel. */
 
-void recordMidiAction(ID channelId, Scene, const MidiEvent&, Frame currentFrameQuantized, ActionRecorder&);
+void recordMidiAction(ID channelId, Scene, const MidiEvent&, Frame currentFrameQuantized, ActionManager&);
 } // namespace giada::m::rendering
 
 #endif

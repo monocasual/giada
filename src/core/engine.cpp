@@ -48,23 +48,23 @@ Engine::Engine()
 , m_midiSynchronizer(m_kernelMidi)
 , m_sequencer(m_model, m_midiSynchronizer, m_jackTransport)
 , m_mixer(m_model)
-, m_actionRecorder(m_model)
+, m_actionManager(m_model)
 , m_channelManager(m_model, m_midiMapper, m_kernelMidi)
-, m_recorder(m_sequencer, m_channelManager, m_mixer, m_actionRecorder)
+, m_recorder(m_sequencer, m_channelManager, m_mixer, m_actionManager)
 , m_midiDispatcher(m_model)
 #ifdef WITH_AUDIO_JACK
 , m_renderer(m_sequencer, m_mixer, m_pluginHost, m_jackSynchronizer, m_jackTransport, m_kernelMidi)
 #else
 , m_renderer(m_sequencer, m_mixer, m_pluginHost, m_kernelMidi)
 #endif
-, m_reactor(m_model, m_midiMapper, m_actionRecorder, m_kernelMidi)
+, m_reactor(m_model, m_midiMapper, m_actionManager, m_kernelMidi)
 , m_mainApi(m_kernelAudio, m_mixer, m_sequencer, m_midiSynchronizer, m_channelManager, m_recorder, m_reactor)
-, m_channelsApi(m_model, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionRecorder, m_pluginHost, m_pluginManager, m_reactor)
+, m_channelsApi(m_model, m_kernelAudio, m_mixer, m_sequencer, m_channelManager, m_recorder, m_actionManager, m_pluginHost, m_pluginManager, m_reactor)
 , m_pluginsApi(m_kernelAudio, m_pluginManager, m_pluginHost, m_model)
 , m_sampleEditorApi(m_kernelAudio, m_model, m_channelManager, m_reactor, m_sequencer)
-, m_actionEditorApi(*this, m_sequencer, m_actionRecorder)
+, m_actionEditorApi(*this, m_sequencer, m_actionManager)
 , m_ioApi(m_model, m_midiDispatcher)
-, m_storageApi(*this, m_model, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionRecorder)
+, m_storageApi(*this, m_model, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionManager)
 , m_configApi(m_model, m_kernelAudio, m_kernelMidi, m_midiMapper, m_midiSynchronizer)
 {
 	m_kernelAudio.onAudioCallback = [this](mcl::AudioBuffer& out, const mcl::AudioBuffer& in)
@@ -228,7 +228,7 @@ Engine::Engine()
 	};
 	m_sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep)
 	{
-		m_actionRecorder.updateBpm(oldVal / newVal, quantizerStep);
+		m_actionManager.updateBpm(oldVal / newVal, quantizerStep);
 	};
 	m_sequencer.onSceneChanged = [this]()
 	{
@@ -321,7 +321,7 @@ void Engine::reset()
 	m_mixer.reset(m_sequencer.getMaxFramesInLoop(sampleRate), bufferSize);
 	m_channelManager.reset(bufferSize);
 	m_sequencer.reset(sampleRate);
-	m_actionRecorder.reset();
+	m_actionManager.reset();
 	m_pluginHost.reset(bufferSize);
 }
 

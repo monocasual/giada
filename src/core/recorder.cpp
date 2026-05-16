@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/recorder.h"
-#include "src/core/actions/actionRecorder.h"
+#include "src/core/actions/ActionManager.h"
 #include "src/core/channels/channelManager.h"
 #include "src/core/mixer.h"
 #include "src/core/model/actions.h"
@@ -36,7 +36,7 @@
 
 namespace giada::m
 {
-Recorder::Recorder(Sequencer& s, ChannelManager& cm, Mixer& mx, ActionRecorder& a)
+Recorder::Recorder(Sequencer& s, ChannelManager& cm, Mixer& mx, ActionManager& a)
 : m_sequencer(s)
 , m_channelManager(cm)
 , m_mixer(mx)

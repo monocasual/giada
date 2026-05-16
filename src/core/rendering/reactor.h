@@ -35,7 +35,7 @@
 namespace giada::m
 {
 class MidiEvent;
-class ActionRecorder;
+class ActionManager;
 class KernelMidi;
 } // namespace giada::m
 
@@ -49,7 +49,7 @@ namespace giada::m::rendering
 class Reactor
 {
 public:
-	Reactor(model::Model&, MidiMapper<KernelMidi>&, ActionRecorder&, KernelMidi&);
+	Reactor(model::Model&, MidiMapper<KernelMidi>&, ActionManager&, KernelMidi&);
 
 	void keyPress(ID channelId, Scene, float velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized);
 	void keyRelease(ID channelId, Scene, bool canRecordActions, Frame currentFrameQuantized);
@@ -66,7 +66,7 @@ public:
 private:
 	model::Model&           m_model;
 	KernelMidi&             m_kernelMidi;
-	ActionRecorder&         m_actionRecorder;
+	ActionManager&          m_actionManager;
 	MidiMapper<KernelMidi>& m_midiMapper;
 };
 } // namespace giada::m::rendering

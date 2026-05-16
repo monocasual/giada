@@ -31,10 +31,10 @@
 
 namespace giada::m
 {
-ActionEditorApi::ActionEditorApi(Engine& e, Sequencer& s, ActionRecorder& ar)
+ActionEditorApi::ActionEditorApi(Engine& e, Sequencer& s, ActionManager& ar)
 : m_engine(e)
 , m_sequencer(s)
-, m_actionRecorder(ar)
+, m_actionManager(ar)
 {
 }
 
@@ -42,21 +42,21 @@ ActionEditorApi::ActionEditorApi(Engine& e, Sequencer& s, ActionRecorder& ar)
 
 std::vector<Action> ActionEditorApi::getActionsOnChannel(ID channelId) const
 {
-	return m_actionRecorder.getActionsOnChannel(channelId, m_sequencer.getCurrentScene());
+	return m_actionManager.getActionsOnChannel(channelId, m_sequencer.getCurrentScene());
 }
 
 /* -------------------------------------------------------------------------- */
 
 const Action* ActionEditorApi::findAction(ID id) const
 {
-	return m_actionRecorder.findAction(id);
+	return m_actionManager.findAction(id);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ActionEditorApi::recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2)
 {
-	m_actionRecorder.recordMidiAction(channelId, m_sequencer.getCurrentScene(), note, velocity, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionManager.recordMidiAction(channelId, m_sequencer.getCurrentScene(), note, velocity, f1, f2, m_sequencer.getFramesInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -66,45 +66,45 @@ void ActionEditorApi::deleteMidiAction(ID channelId, const Action& a)
 	/* Send a note-off first in case we are deleting it in a middle of a
 	key_on/key_off sequence. Only if it exists (i.e. it's not orphaned). */
 
-	const Action* noteOff = m_actionRecorder.findAction(a.nextId);
+	const Action* noteOff = m_actionManager.findAction(a.nextId);
 	if (noteOff != nullptr)
 		m_engine.getChannelsApi().sendMidi(channelId, noteOff->event);
 
-	m_actionRecorder.deleteMidiAction(a);
+	m_actionManager.deleteMidiAction(a);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ActionEditorApi::updateMidiAction(ID channelId, const Action& a, int note, float velocity, Frame f1, Frame f2)
 {
-	m_actionRecorder.updateMidiAction(channelId, m_sequencer.getCurrentScene(), a, note, velocity, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionManager.updateMidiAction(channelId, m_sequencer.getCurrentScene(), a, note, velocity, f1, f2, m_sequencer.getFramesInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ActionEditorApi::recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
 {
-	m_actionRecorder.recordSampleAction(channelId, m_sequencer.getCurrentScene(), type, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionManager.recordSampleAction(channelId, m_sequencer.getCurrentScene(), type, f1, f2, m_sequencer.getFramesInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ActionEditorApi::updateSampleAction(ID channelId, const Action& a, int type, Frame f1, Frame f2)
 {
-	m_actionRecorder.updateSampleAction(channelId, m_sequencer.getCurrentScene(), a, type, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionManager.updateSampleAction(channelId, m_sequencer.getCurrentScene(), a, type, f1, f2, m_sequencer.getFramesInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ActionEditorApi::deleteSampleAction(const Action& a)
 {
-	m_actionRecorder.deleteSampleAction(a);
+	m_actionManager.deleteSampleAction(a);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ActionEditorApi::updateVelocity(const Action& a, float value)
 {
-	m_actionRecorder.updateVelocity(a, value);
+	m_actionManager.updateVelocity(a, value);
 }
 } // namespace giada::m

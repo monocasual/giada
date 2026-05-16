@@ -34,14 +34,14 @@
 
 namespace giada::m
 {
-class ActionRecorder;
+class ActionManager;
 class ChannelManager;
 class Mixer;
 class Sequencer;
 class Recorder final
 {
 public:
-	Recorder(Sequencer&, ChannelManager&, Mixer&, ActionRecorder&);
+	Recorder(Sequencer&, ChannelManager&, Mixer&, ActionManager&);
 
 	/* canEnableRecOnSignal
 	True if rec-on-signal can be enabled: can't set it while sequencer is
@@ -81,7 +81,7 @@ private:
 	Sequencer&      m_sequencer;
 	ChannelManager& m_channelManager;
 	Mixer&          m_mixer;
-	ActionRecorder& m_actionRecorder;
+	ActionManager&  m_actionRecorder;
 };
 } // namespace giada::m
 

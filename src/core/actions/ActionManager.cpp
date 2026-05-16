@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/actions/actionRecorder.h"
+#include "src/core/actions/ActionManager.h"
 #include "src/core/actions/action.h"
 #include "src/core/actions/actionFactory.h"
 #include "src/core/const.h"
@@ -77,7 +77,7 @@ Frame sanitizeFrame_(Frame f, int framesInLoop)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-ActionRecorder::ActionRecorder(model::Model& m)
+ActionManager::ActionManager(model::Model& m)
 : m_model(m)
 {
 	m_liveActions.reserve(MAX_LIVE_RECS_CHUNK);
@@ -85,7 +85,7 @@ ActionRecorder::ActionRecorder(model::Model& m)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::reset()
+void ActionManager::reset()
 {
 	m_liveActions.clear();
 	actionFactory::reset();
@@ -95,7 +95,7 @@ void ActionRecorder::reset()
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::updateBpm(float ratio, int quantizerStep)
+void ActionManager::updateBpm(float ratio, int quantizerStep)
 {
 	if (ratio == 1.0f)
 		return;
@@ -121,7 +121,7 @@ void ActionRecorder::updateBpm(float ratio, int quantizerStep)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::updateSamplerate(int systemRate, int patchRate)
+void ActionManager::updateSamplerate(int systemRate, int patchRate)
 {
 	if (systemRate == patchRate)
 		return;
@@ -135,21 +135,21 @@ void ActionRecorder::updateSamplerate(int systemRate, int patchRate)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::cloneActions(ID channelId, Scene scene, ID newChannelId)
+void ActionManager::cloneActions(ID channelId, Scene scene, ID newChannelId)
 {
 	copyActions(channelId, scene, scene, newChannelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::copyActionsToScene(ID channelId, Scene src, Scene dst)
+void ActionManager::copyActionsToScene(ID channelId, Scene src, Scene dst)
 {
 	copyActions(channelId, src, dst, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::liveRec(ID channelId, Scene scene, MidiEvent e, Frame globalFrame)
+void ActionManager::liveRec(ID channelId, Scene scene, MidiEvent e, Frame globalFrame)
 {
 	assert(e.isNoteOnOff()); // Can't record any other kind of events for now
 
@@ -162,7 +162,7 @@ void ActionRecorder::liveRec(ID channelId, Scene scene, MidiEvent e, Frame globa
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::recordMidiAction(ID channelId, Scene scene, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop)
+void ActionManager::recordMidiAction(ID channelId, Scene scene, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop)
 {
 	const auto [ff1, ff2] = sanitizeFrames_(f1, f2, framesInLoop);
 
@@ -177,7 +177,7 @@ void ActionRecorder::recordMidiAction(ID channelId, Scene scene, int note, float
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::recordSampleAction(ID channelId, Scene scene, int type, Frame f1, Frame f2, Frame framesInLoop)
+void ActionManager::recordSampleAction(ID channelId, Scene scene, int type, Frame f1, Frame f2, Frame framesInLoop)
 {
 	if (isSinglePressMode(channelId))
 	{
@@ -196,7 +196,7 @@ void ActionRecorder::recordSampleAction(ID channelId, Scene scene, int type, Fra
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::deleteMidiAction(const Action& a)
+void ActionManager::deleteMidiAction(const Action& a)
 {
 	assert(a.isValid());
 	assert(a.event.getStatus() == MidiEvent::CHANNEL_NOTE_ON);
@@ -213,7 +213,7 @@ void ActionRecorder::deleteMidiAction(const Action& a)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::deleteSampleAction(const Action& a)
+void ActionManager::deleteSampleAction(const Action& a)
 {
 	const Action* next = m_model.get().actions.findAction(a.nextId);
 
@@ -225,7 +225,7 @@ void ActionRecorder::deleteSampleAction(const Action& a)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::updateMidiAction(ID channelId, Scene scene, const Action& a, int note, float velocity,
+void ActionManager::updateMidiAction(ID channelId, Scene scene, const Action& a, int note, float velocity,
     Frame f1, Frame f2, Frame framesInLoop)
 {
 	deleteAction(a.id, a.nextId);
@@ -234,7 +234,7 @@ void ActionRecorder::updateMidiAction(ID channelId, Scene scene, const Action& a
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::updateSampleAction(ID channelId, Scene scene, const Action& a, int type, Frame f1, Frame f2, Frame framesInLoop)
+void ActionManager::updateSampleAction(ID channelId, Scene scene, const Action& a, int type, Frame f1, Frame f2, Frame framesInLoop)
 {
 	if (isSinglePressMode(channelId))
 		deleteAction(a.id, a.nextId);
@@ -246,7 +246,7 @@ void ActionRecorder::updateSampleAction(ID channelId, Scene scene, const Action&
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::updateVelocity(const Action& a, float value)
+void ActionManager::updateVelocity(const Action& a, float value)
 {
 	MidiEvent event(a.event);
 	event.setVelocityFloat(value);
@@ -255,7 +255,7 @@ void ActionRecorder::updateVelocity(const Action& a, float value)
 
 /* -------------------------------------------------------------------------- */
 
-std::unordered_set<ID> ActionRecorder::consolidate(Scene scene)
+std::unordered_set<ID> ActionManager::consolidate(Scene scene)
 {
 	for (auto it = m_liveActions.begin(); it != m_liveActions.end(); ++it)
 		consolidate(*it, it - m_liveActions.begin()); // Pass current index
@@ -273,7 +273,7 @@ std::unordered_set<ID> ActionRecorder::consolidate(Scene scene)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::clearAllActions(Scene scene)
+void ActionManager::clearAllActions(Scene scene)
 {
 	if (scene.isValid())
 		m_model.get().actions.clearActions(scene);
@@ -284,7 +284,7 @@ void ActionRecorder::clearAllActions(Scene scene)
 
 /* -------------------------------------------------------------------------- */
 
-bool ActionRecorder::areComposite(const Action& a1, const Action& a2) const
+bool ActionManager::areComposite(const Action& a1, const Action& a2) const
 {
 	return a1.event.getStatus() == MidiEvent::CHANNEL_NOTE_ON &&
 	       a2.event.getStatus() == MidiEvent::CHANNEL_NOTE_OFF &&
@@ -294,7 +294,7 @@ bool ActionRecorder::areComposite(const Action& a1, const Action& a2) const
 
 /* -------------------------------------------------------------------------- */
 
-Frame ActionRecorder::fixVerticalEnvActions(Frame f, const Action& a1, const Action& a2) const
+Frame ActionManager::fixVerticalEnvActions(Frame f, const Action& a1, const Action& a2) const
 {
 	if (a1.frame == f)
 		f += 1;
@@ -307,14 +307,14 @@ Frame ActionRecorder::fixVerticalEnvActions(Frame f, const Action& a1, const Act
 
 /* -------------------------------------------------------------------------- */
 
-bool ActionRecorder::isSinglePressMode(ID channelId) const
+bool ActionManager::isSinglePressMode(ID channelId) const
 {
 	return m_model.get().tracks.getChannel(channelId).sampleChannel->mode == SamplePlayerMode::SINGLE_PRESS;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::consolidate(const Action& a1, std::size_t i)
+void ActionManager::consolidate(const Action& a1, std::size_t i)
 {
 	/* This algorithm must start searching from the element next to 'a1': since
 	live actions are recorded in linear sequence, the potential partner of 'a1'
@@ -338,7 +338,7 @@ void ActionRecorder::consolidate(const Action& a1, std::size_t i)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::copyActions(ID channelId, Scene src, Scene dst, ID newChannelId)
+void ActionManager::copyActions(ID channelId, Scene src, Scene dst, ID newChannelId)
 {
 	const Scene                scene = src == dst ? src : dst;
 	std::vector<Action>        actions;
@@ -377,29 +377,29 @@ void ActionRecorder::copyActions(ID channelId, Scene src, Scene dst, ID newChann
 
 /* -------------------------------------------------------------------------- */
 
-const Action* ActionRecorder::findAction(ID id) const
+const Action* ActionManager::findAction(ID id) const
 {
 	return m_model.get().actions.findAction(id);
 }
 
-bool ActionRecorder::hasActions(ID channelId, int type) const
+bool ActionManager::hasActions(ID channelId, int type) const
 {
 	return m_model.get().actions.hasActions(channelId, type);
 }
 
-bool ActionRecorder::hasActions(Scene scene) const
+bool ActionManager::hasActions(Scene scene) const
 {
 	return m_model.get().actions.hasActions(scene);
 }
 
-std::vector<Action> ActionRecorder::getActionsOnChannel(ID channelId, Scene scene) const
+std::vector<Action> ActionManager::getActionsOnChannel(ID channelId, Scene scene) const
 {
 	return m_model.get().actions.getActionsOnChannel(channelId, scene);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionRecorder::clearChannel(ID channelId, Scene sceneToClear)
+void ActionManager::clearChannel(ID channelId, Scene sceneToClear)
 {
 	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
 		if (!sceneToClear.isValid() || (sceneToClear.isValid() && sceneToClear.getIndex() == sceneIndex))
@@ -407,13 +407,13 @@ void ActionRecorder::clearChannel(ID channelId, Scene sceneToClear)
 	m_model.swap(model::SwapType::HARD);
 }
 
-void ActionRecorder::clearActions(ID channelId, int type)
+void ActionManager::clearActions(ID channelId, int type)
 {
 	m_model.get().actions.clearActions(channelId, type);
 	m_model.swap(model::SwapType::HARD);
 }
 
-Action ActionRecorder::rec(ID channelId, Scene scene, Frame frame, MidiEvent e)
+Action ActionManager::rec(ID channelId, Scene scene, Frame frame, MidiEvent e)
 {
 	Action action = m_model.get().actions.rec(channelId, scene, frame, e);
 
@@ -421,31 +421,31 @@ Action ActionRecorder::rec(ID channelId, Scene scene, Frame frame, MidiEvent e)
 	return action;
 }
 
-void ActionRecorder::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
+void ActionManager::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
 	m_model.get().actions.rec(channelId, scene, f1, f2, e1, e2);
 	m_model.swap(model::SwapType::HARD);
 }
 
-void ActionRecorder::updateSiblings(ID id, ID prevId, ID nextId)
+void ActionManager::updateSiblings(ID id, ID prevId, ID nextId)
 {
 	m_model.get().actions.updateSiblings(id, prevId, nextId);
 	m_model.swap(model::SwapType::HARD);
 }
 
-void ActionRecorder::deleteAction(ID id)
+void ActionManager::deleteAction(ID id)
 {
 	m_model.get().actions.deleteAction(id);
 	m_model.swap(model::SwapType::HARD);
 }
 
-void ActionRecorder::deleteAction(ID currId, ID nextId)
+void ActionManager::deleteAction(ID currId, ID nextId)
 {
 	m_model.get().actions.deleteAction(currId, nextId);
 	m_model.swap(model::SwapType::HARD);
 }
 
-void ActionRecorder::updateEvent(ID id, MidiEvent e)
+void ActionManager::updateEvent(ID id, MidiEvent e)
 {
 	m_model.get().actions.updateEvent(id, e);
 	m_model.swap(model::SwapType::HARD);

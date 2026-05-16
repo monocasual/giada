@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/rendering/midiReactions.h"
-#include "src/core/actions/actionRecorder.h"
+#include "src/core/actions/ActionManager.h"
 #include "src/core/kernelMidi.h"
 #include <cassert>
 
@@ -83,7 +83,7 @@ void rewindMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
 
 /* -------------------------------------------------------------------------- */
 
-void recordMidiAction(ID channelId, Scene scene, const MidiEvent& event, Frame currentFrameQuantized, ActionRecorder& actionRecorder)
+void recordMidiAction(ID channelId, Scene scene, const MidiEvent& event, Frame currentFrameQuantized, ActionManager& actionRecorder)
 {
 	MidiEvent flat(event);
 	flat.setChannel(0);

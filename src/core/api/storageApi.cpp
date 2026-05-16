@@ -41,7 +41,7 @@ namespace utils = mcl::utils;
 namespace giada::m
 {
 StorageApi::StorageApi(Engine& e, model::Model& m, PluginManager& pm, MidiSynchronizer& ms,
-    Mixer& mx, ChannelManager& cm, KernelAudio& ka, Sequencer& s, ActionRecorder& ar)
+    Mixer& mx, ChannelManager& cm, KernelAudio& ka, Sequencer& s, ActionManager& ar)
 : m_engine(e)
 , m_model(m)
 , m_pluginManager(pm)

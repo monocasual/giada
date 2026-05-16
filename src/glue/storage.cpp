@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/glue/storage.h"
-#include "src/core/actions/actionRecorder.h"
+#include "src/core/actions/ActionManager.h"
 #include "src/core/channels/channel.h"
 #include "src/core/conf.h"
 #include "src/core/engine.h"

@@ -33,10 +33,10 @@
 
 namespace giada::m::rendering
 {
-Reactor::Reactor(model::Model& model, MidiMapper<KernelMidi>& m, ActionRecorder& a, KernelMidi& km)
+Reactor::Reactor(model::Model& model, MidiMapper<KernelMidi>& m, ActionManager& a, KernelMidi& km)
 : m_model(model)
 , m_kernelMidi(km)
-, m_actionRecorder(a)
+, m_actionManager(a)
 , m_midiMapper(m)
 {
 }
@@ -58,7 +58,7 @@ void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecord
 		const SamplePlayerMode mode          = ch.sampleChannel->mode;
 
 		if (canRecordActions && !isAnyLoopMode)
-			recordSampleKeyPress(channelId, scene, *ch.shared, currentFrameQuantized, mode, m_actionRecorder);
+			recordSampleKeyPress(channelId, scene, *ch.shared, currentFrameQuantized, mode, m_actionManager);
 
 		pressSampleChannel(channelId, *ch.shared, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol);
 	}
@@ -96,7 +96,7 @@ void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Frame
 			/* Record a stop event only if channel is SINGLE_PRESS. For any other
 		mode the key release event is meaningless. */
 
-			recordSampleKeyRelease(channelId, scene, currentFrameQuantized, m_actionRecorder);
+			recordSampleKeyRelease(channelId, scene, currentFrameQuantized, m_actionManager);
 		}
 
 		releaseSampleChannel(*ch.shared, mode);
@@ -138,7 +138,7 @@ void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Frame cu
 			/* Record a stop event only if channel is SINGLE_PRESS. For any other
 			mode the key release event is meaningless. */
 
-			recordSampleKeyKill(channelId, scene, currentFrameQuantized, m_actionRecorder);
+			recordSampleKeyKill(channelId, scene, currentFrameQuantized, m_actionManager);
 		}
 
 		killSampleChannel(*ch.shared, mode);
@@ -163,7 +163,7 @@ void Reactor::processMidiEvent(ID channelId, Scene scene, const MidiEvent& e, bo
 
 	if (canRecordActions)
 	{
-		recordMidiAction(channelId, scene, e, currentFrameQuantized, m_actionRecorder);
+		recordMidiAction(channelId, scene, e, currentFrameQuantized, m_actionManager);
 		m_model.swap(model::SwapType::HARD);
 	}
 	sendMidiEventToPlugins(ch.shared->midiQueue, e);

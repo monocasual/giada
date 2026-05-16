@@ -1,4 +1,4 @@
-#include "src/core/actions/actionRecorder.h"
+#include "src/core/actions/ActionManager.h"
 #include "src/core/actions/action.h"
 #include "src/core/channels/channelFactory.h"
 #include "src/core/const.h"
@@ -29,7 +29,7 @@ TEST_CASE("ActionRecorder")
 	model.addChannelShared(std::move(channel2.shared));
 	model.swap(model::SwapType::NONE);
 
-	ActionRecorder ar(model);
+	ActionManager ar(model);
 
 	REQUIRE(ar.hasActions(channelID1) == false);
 

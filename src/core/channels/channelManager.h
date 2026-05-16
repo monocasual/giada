@@ -56,7 +56,7 @@ class Wave;
 class Plugin;
 class MidiEvent;
 class Engine;
-class ActionRecorder;
+class ActionManager;
 class KernelMidi;
 class ChannelManager final
 {
