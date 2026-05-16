@@ -98,7 +98,7 @@ public:
 	void stopInputRecording();
 	void toggleInputRecording();
 	void startActionRecOnCallback();
-	void setScene(Scene);
+	void setScene(Scene, bool forced);
 
 private:
 	KernelAudio&        m_kernelAudio;

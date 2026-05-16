@@ -147,7 +147,7 @@ void stopActionRecording();
 void toggleActionRecording();
 void stopInputRecording();
 void toggleInputRecording();
-void setScene(Scene);
+void setScene(Scene, bool forced);
 
 #if G_DEBUG_MODE
 void printDebugInfo();

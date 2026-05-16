@@ -171,9 +171,10 @@ public:
 	void forceScene(Scene);
 
 	/* setScene
-	Prepares for the requested scene, which will be set at the next first beat. */
+	Prepares for the requested scene, which will be set at the next first beat.
+	Pass forced = true to change the scene right away. */
 
-	void setScene(Scene);
+	void setScene(Scene, bool forced);
 
 #ifdef WITH_AUDIO_JACK
 	void jack_start();

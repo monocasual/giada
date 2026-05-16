@@ -310,7 +310,7 @@ void toggleInputRecording() { g_engine->getMainApi().toggleInputRecording(); }
 
 /* -------------------------------------------------------------------------- */
 
-void setScene(Scene scene) { g_engine->getMainApi().setScene(scene); }
+void setScene(Scene scene, bool forced) { g_engine->getMainApi().setScene(scene, forced); }
 
 /* -------------------------------------------------------------------------- */
 

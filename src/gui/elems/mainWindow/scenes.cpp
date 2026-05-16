@@ -99,7 +99,7 @@ gePlayButton* geScenes::makeButton(Scene scene)
 	button->setPadding(0);
 	button->copy_tooltip(fmt::format("{} {}", g_ui->getI18Text(LangMap::COMMON_SCENE), sceneStr).c_str());
 	button->onClick = [scene]()
-	{ c::main::setScene(scene); };
+	{ c::main::setScene(scene, /*forced=*/Fl::event_shift()); };
 
 	m_buttons[scene.getIndex()] = button;
 

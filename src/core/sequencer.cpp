@@ -416,7 +416,7 @@ void Sequencer::forceScene(Scene scene)
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::setScene(Scene scene)
+void Sequencer::setScene(Scene scene, bool forced)
 {
 	assert(scene.isValid());
 
@@ -432,8 +432,11 @@ void Sequencer::setScene(Scene scene)
 		sequencer.a_setSceneStatus(SceneStatus::IDLE);
 		return;
 	}
-	if (!isRunning())
+	if (!isRunning() || forced)
+	{
 		sequencer.a_setCurrentScene(scene);
+		sequencer.a_setSceneStatus(SceneStatus::IDLE);
+	}
 	else
 		sequencer.a_setSceneStatus(SceneStatus::CHANGING);
 	sequencer.a_setNextScene(scene);

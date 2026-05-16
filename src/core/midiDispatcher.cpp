@@ -314,7 +314,7 @@ void MidiDispatcher::processMaster(const MidiEvent& midiEvent)
 	}
 	else if (midiIn.hasScene(pure))
 	{
-		c::main::setScene(midiIn.getScene(pure));
+		c::main::setScene(midiIn.getScene(pure), /*forced=*/false);
 		G_DEBUG("   set scene {} (pure=0x{:0X})", midiIn.getScene(pure).getIndex(), pure);
 	}
 }
