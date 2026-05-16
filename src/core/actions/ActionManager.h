@@ -74,6 +74,11 @@ public:
 
 	void copyActionsToScene(ID channelId, Scene src, Scene dst);
 
+	/* copyAllActionsToScene
+	Copies all actions in all channels from a scene to another. */
+
+	void copyAllActionsToScene(Scene src, Scene dst);
+
 	/* liveRec
 	Records a user-generated action. NOTE_ON or NOTE_OFF only for now. */
 
@@ -144,7 +149,8 @@ private:
 	void consolidate(const Action& a1, std::size_t i);
 
 	/* cloneActions
-	Internal generic method for copying actions between channels and/or scenes. */
+	Internal generic method for copying actions between channels and/or scenes.
+	Pass invalid channelId's (both) to copy everything between scenes. */
 
 	void copyActions(ID channelId, Scene src, Scene dst, ID newChannelId);
 

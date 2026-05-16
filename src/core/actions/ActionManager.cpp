@@ -149,6 +149,13 @@ void ActionManager::copyActionsToScene(ID channelId, Scene src, Scene dst)
 
 /* -------------------------------------------------------------------------- */
 
+void ActionManager::copyAllActionsToScene(Scene src, Scene dst)
+{
+	copyActions({}, src, dst, {});
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ActionManager::liveRec(ID channelId, Scene scene, MidiEvent e, Frame globalFrame)
 {
 	assert(e.isNoteOnOff()); // Can't record any other kind of events for now
@@ -340,13 +347,16 @@ void ActionManager::consolidate(const Action& a1, std::size_t i)
 
 void ActionManager::copyActions(ID channelId, Scene src, Scene dst, ID newChannelId)
 {
+	// Both channel IDs must have the same validity state
+	assert(channelId.isValid() == newChannelId.isValid());
+
 	const Scene                scene = src == dst ? src : dst;
 	std::vector<Action>        actions;
 	std::unordered_map<ID, ID> map; // Action ID mapper, old -> new
 
 	m_model.get().actions.forEachAction([&](const Action& a)
 	{
-		if (a.channelId != channelId || a.scene != src)
+		if (channelId.isValid() && (a.channelId != channelId || a.scene != src))
 			return;
 
 		ID newActionId = actionFactory::getNewActionId();
@@ -355,7 +365,7 @@ void ActionManager::copyActions(ID channelId, Scene src, Scene dst, ID newChanne
 
 		Action clone(a);
 		clone.id        = newActionId;
-		clone.channelId = newChannelId;
+		clone.channelId = newChannelId.isValid() ? newChannelId : clone.channelId;
 		clone.scene     = scene;
 
 		actions.push_back(clone);

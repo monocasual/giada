@@ -124,6 +124,7 @@ void setBeats(int beats, int bars);
 void quantize(int val);
 void clearAllSamples(bool allscenes);
 void clearAllActions(bool allscenes);
+void copyCurrentScene(Scene dst);
 
 /* setInToOut
 Enables the "hear what you playing" feature. */

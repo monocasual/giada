@@ -51,6 +51,12 @@ Fl_Menu_Item makeMenuItem_(const char* l, Callback&& cb, int flags = 0)
 	return {g_ui->getI18Text(l), 0, cb, nullptr, flags, 0, 0, 0, 0};
 }
 
+template <typename Callback>
+Fl_Menu_Item makeMenuItemText_(const char* l, Callback&& cb, int flags = 0)
+{
+	return {l, 0, cb, nullptr, flags, 0, 0, 0, 0};
+}
+
 /* -------------------------------------------------------------------------- */
 
 Fl_Menu_Item beginSubMenu_(const char* l)
@@ -103,6 +109,25 @@ geMainMenu::geMainMenu()
 	{ c::main::clearAllActions(/*allScenes=*/false); }),
 	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_INALLSCENES, [](Fl_Widget*, void*)
 	{ c::main::clearAllActions(/*allScenes=*/true); }),
+	    endSubMenu_(),
+	    beginSubMenu_(LangMap::MAIN_MENU_EDIT_COPYCURRENTSCENE),
+	    // TODO - for some crappy reason we can't pass fmt::format().c_str() to this crappy menu system. Fuck it...
+	    makeMenuItemText_("Scene 1", [](Fl_Widget*, void*)
+	{ c::main::copyCurrentScene(Scene{0}); }),
+	    makeMenuItemText_("Scene 2", [](Fl_Widget*, void*)
+	{ c::main::copyCurrentScene(Scene{1}); }),
+	    makeMenuItemText_("Scene 3", [](Fl_Widget*, void*)
+	{ c::main::copyCurrentScene(Scene{2}); }),
+	    makeMenuItemText_("Scene 4", [](Fl_Widget*, void*)
+	{ c::main::copyCurrentScene(Scene{3}); }),
+	    makeMenuItemText_("Scene 5", [](Fl_Widget*, void*)
+	{ c::main::copyCurrentScene(Scene{4}); }),
+	    makeMenuItemText_("Scene 6", [](Fl_Widget*, void*)
+	{ c::main::copyCurrentScene(Scene{5}); }),
+	    makeMenuItemText_("Scene 7", [](Fl_Widget*, void*)
+	{ c::main::copyCurrentScene(Scene{6}); }),
+	    makeMenuItemText_("Scene 8", [](Fl_Widget*, void*)
+	{ c::main::copyCurrentScene(Scene{7}); }),
 	    endSubMenu_(),
 	    makeMenuItem_(LangMap::MAIN_MENU_EDIT_SETUPMIDIINPUT, [](Fl_Widget*, void*)
 	{ c::layout::openMasterMidiInputWindow(); }),

@@ -98,20 +98,21 @@ public:
 	static constexpr auto MESSAGE_STORAGE_FILEEXISTS          = "message_storage_fileExists";
 	static constexpr auto MESSAGE_STORAGE_SAVINGFILEERROR     = "message_storage_savingFileError";
 
-	static constexpr auto MAIN_MENU_FILE                 = "main_menu_file";
-	static constexpr auto MAIN_MENU_FILE_OPENPROJECT     = "main_menu_file_openProject";
-	static constexpr auto MAIN_MENU_FILE_SAVEPROJECT     = "main_menu_file_saveProject";
-	static constexpr auto MAIN_MENU_FILE_CLOSEPROJECT    = "main_menu_file_closeProject";
-	static constexpr auto MAIN_MENU_FILE_DEBUGSTATS      = "main_menu_file_debugStats";
-	static constexpr auto MAIN_MENU_FILE_QUIT            = "main_menu_file_quit";
-	static constexpr auto MAIN_MENU_EDIT                 = "main_menu_edit";
-	static constexpr auto MAIN_MENU_EDIT_FREEALLSAMPLES  = "main_menu_edit_freeAllSamples";
-	static constexpr auto MAIN_MENU_EDIT_INTHISSCENE     = "main_menu_edit_inThisScene";
-	static constexpr auto MAIN_MENU_EDIT_INALLSCENES     = "main_menu_edit_inAllScenes";
-	static constexpr auto MAIN_MENU_EDIT_CLEARALLACTIONS = "main_menu_edit_clearAllActions";
-	static constexpr auto MAIN_MENU_EDIT_SETUPMIDIINPUT  = "main_menu_edit_setupMidiInput";
-	static constexpr auto MAIN_MENU_CONFIG               = "main_menu_config";
-	static constexpr auto MAIN_MENU_ABOUT                = "main_menu_about";
+	static constexpr auto MAIN_MENU_FILE                  = "main_menu_file";
+	static constexpr auto MAIN_MENU_FILE_OPENPROJECT      = "main_menu_file_openProject";
+	static constexpr auto MAIN_MENU_FILE_SAVEPROJECT      = "main_menu_file_saveProject";
+	static constexpr auto MAIN_MENU_FILE_CLOSEPROJECT     = "main_menu_file_closeProject";
+	static constexpr auto MAIN_MENU_FILE_DEBUGSTATS       = "main_menu_file_debugStats";
+	static constexpr auto MAIN_MENU_FILE_QUIT             = "main_menu_file_quit";
+	static constexpr auto MAIN_MENU_EDIT                  = "main_menu_edit";
+	static constexpr auto MAIN_MENU_EDIT_FREEALLSAMPLES   = "main_menu_edit_freeAllSamples";
+	static constexpr auto MAIN_MENU_EDIT_INTHISSCENE      = "main_menu_edit_inThisScene";
+	static constexpr auto MAIN_MENU_EDIT_INALLSCENES      = "main_menu_edit_inAllScenes";
+	static constexpr auto MAIN_MENU_EDIT_CLEARALLACTIONS  = "main_menu_edit_clearAllActions";
+	static constexpr auto MAIN_MENU_EDIT_COPYCURRENTSCENE = "main_menu_edit_copyCurrentScene";
+	static constexpr auto MAIN_MENU_EDIT_SETUPMIDIINPUT   = "main_menu_edit_setupMidiInput";
+	static constexpr auto MAIN_MENU_CONFIG                = "main_menu_config";
+	static constexpr auto MAIN_MENU_ABOUT                 = "main_menu_about";
 
 	static constexpr auto MAIN_IO_LABEL_OUTMETER        = "main_IO_label_outMeter";
 	static constexpr auto MAIN_IO_LABEL_INMETER         = "main_IO_label_inMeter";

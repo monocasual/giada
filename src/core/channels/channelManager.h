@@ -165,6 +165,11 @@ public:
 
 	void copyChannelToScene(ID channelId, Scene srcScene, Scene dstScene);
 
+	/* copyAllChannelsToScene
+	Copies everything between scenes. */
+
+	void copyAllChannelsToScene(Scene srcScene, Scene dstScene);
+
 	/* finalizeInputRec
 	Fills armed Sample channel with audio data coming from an input recording
 	session. */
@@ -240,6 +245,11 @@ private:
 	Wave, overdub mode. */
 
 	void overdubChannel(Channel&, const mcl::AudioBuffer&, Frame currentFrame, Scene);
+
+	/* copyChannelToScene
+	Internal method that does not swap model. */
+
+	void copyChannelToScene(Channel&, Scene srcScene, Scene dstScene);
 
 	void triggerOnChannelsAltered();
 

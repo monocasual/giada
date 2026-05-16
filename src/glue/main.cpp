@@ -235,6 +235,13 @@ void clearAllActions(bool allScenes)
 
 /* -------------------------------------------------------------------------- */
 
+void copyCurrentScene(Scene dst)
+{
+	g_engine->getMainApi().copyCurrentScene(dst);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void setInToOut(bool v)
 {
 	g_engine->getMainApi().setInToOut(v);

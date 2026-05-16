@@ -34,13 +34,14 @@
 namespace giada::m
 {
 MainApi::MainApi(KernelAudio& ka, Mixer& m, Sequencer& s, MidiSynchronizer& ms,
-    ChannelManager& cm, Recorder& r, rendering::Reactor& re)
+    ChannelManager& cm, Recorder& r, ActionManager& am, rendering::Reactor& re)
 : m_kernelAudio(ka)
 , m_mixer(m)
 , m_sequencer(s)
 , m_midiSynchronizer(ms)
 , m_channelManager(cm)
 , m_recorder(r)
+, m_actionManager(am)
 , m_reactor(re)
 {
 }
@@ -359,5 +360,14 @@ void MainApi::setScene(Scene scene, bool forced)
 {
 	m_sequencer.setScene(scene, forced);
 	m_reactor.setScene(scene);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MainApi::copyCurrentScene(Scene dstScene)
+{
+	const Scene srcScene = m_sequencer.getCurrentScene();
+	m_channelManager.copyAllChannelsToScene(srcScene, dstScene);
+	m_actionManager.copyAllActionsToScene(srcScene, dstScene);
 }
 } // namespace giada::m

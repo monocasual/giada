@@ -42,11 +42,12 @@ class Sequencer;
 class MidiSynchronizer;
 class ChannelManager;
 class Recorder;
+class ActionManager;
 class MainApi
 {
 public:
 	MainApi(KernelAudio&, Mixer&, Sequencer&, MidiSynchronizer&, ChannelManager&, Recorder&,
-	    rendering::Reactor&);
+	    ActionManager&, rendering::Reactor&);
 
 	bool              isRecordingInput() const;
 	bool              isRecordingActions() const;
@@ -99,6 +100,7 @@ public:
 	void toggleInputRecording();
 	void startActionRecOnCallback();
 	void setScene(Scene, bool forced);
+	void copyCurrentScene(Scene dst);
 
 private:
 	KernelAudio&        m_kernelAudio;
@@ -107,6 +109,7 @@ private:
 	MidiSynchronizer&   m_midiSynchronizer;
 	ChannelManager&     m_channelManager;
 	Recorder&           m_recorder;
+	ActionManager&      m_actionManager;
 	rendering::Reactor& m_reactor;
 };
 } // namespace giada::m
