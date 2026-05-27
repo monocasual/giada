@@ -50,6 +50,17 @@ JackTransport::JackTransport()
 
 /* -------------------------------------------------------------------------- */
 
+bool JackTransport::isAvailable() const
+{
+#ifdef WITH_AUDIO_JACK
+	return m_jackHandle != nullptr;
+#else
+	return false;
+#endif
+}
+
+/* -------------------------------------------------------------------------- */
+
 bool JackTransport::start() const
 {
 #ifdef WITH_AUDIO_JACK

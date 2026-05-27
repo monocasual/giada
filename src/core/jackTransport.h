@@ -48,6 +48,7 @@ public:
 
 	JackTransport();
 
+	bool  isAvailable() const;
 	bool  start() const;
 	bool  stop() const;
 	bool  setPosition(uint32_t frame) const;
