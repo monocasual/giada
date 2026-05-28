@@ -235,11 +235,17 @@ Engine::Engine()
 		m_eventDispatcher.pumpEvent([this]()
 		{
 			registerThread(Thread::EVENTS, /*realtime=*/false);
+
+			const Scene newScene = m_sequencer.getCurrentScene();
+
 			/* When a scene change, reset inputRecMode to RIGID if Free input rec
 			can't be enabled anymore. Done via EventDispatcher, as this is a callback
 			fired from the realtime thread. */
-			if (!m_recorder.canEnableFreeInputRec(m_sequencer.getCurrentScene()))
+			if (!m_recorder.canEnableFreeInputRec(newScene))
 				m_mixer.setInputRecMode(InputRecMode::RIGID);
+
+			/* Also stop all those sample channels that don't have audio in it. */
+			m_reactor.killEmptySampleChannels(newScene);
 		});
 
 		/* Rebuild UI when the scene has changed to update channels. */

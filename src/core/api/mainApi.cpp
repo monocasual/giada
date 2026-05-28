@@ -359,7 +359,8 @@ void MainApi::startActionRecOnCallback()
 void MainApi::setScene(Scene scene, bool forced)
 {
 	m_sequencer.setScene(scene, forced);
-	m_reactor.killEmptySampleChannels(scene);
+	if (!m_sequencer.isRunning()) // If running, Sequencer will takecare
+		m_reactor.killEmptySampleChannels(scene);
 }
 
 /* -------------------------------------------------------------------------- */
