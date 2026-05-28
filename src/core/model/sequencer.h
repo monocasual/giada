@@ -85,6 +85,8 @@ public:
 
 	void reset();
 
+	void recomputeFrames(int sampleRate);
+
 	SeqStatus status       = SeqStatus::STOPPED;
 	int       framesInLoop = 0;
 	int       framesInBar  = 0;

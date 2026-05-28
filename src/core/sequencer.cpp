@@ -295,12 +295,7 @@ void Sequencer::recomputeFrames()
 	assert(m_currentSampleRate != 0);
 
 	model::Sequencer& s = m_model.get().sequencer;
-
-	s.framesInBeat = u::time::beatToFrame(1, m_currentSampleRate, s.bpm);
-	s.framesInLoop = s.framesInBeat * s.beats;
-	s.framesInBar  = s.framesInLoop / (float)s.bars;
-	s.framesInSeq  = s.framesInBeat * G_MAX_BEATS;
-
+	s.recomputeFrames(m_currentSampleRate);
 	if (s.quantize != 0)
 		m_quantizerStep = s.framesInBeat / s.quantize;
 

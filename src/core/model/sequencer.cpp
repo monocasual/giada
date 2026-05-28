@@ -156,4 +156,12 @@ void Sequencer::reset()
 	bpm      = G_DEFAULT_BPM;
 	quantize = G_DEFAULT_QUANTIZE;
 }
+
+void Sequencer::recomputeFrames(int sampleRate)
+{
+	framesInBeat = u::time::beatToFrame(1, sampleRate, bpm);
+	framesInLoop = framesInBeat * beats;
+	framesInBar  = framesInLoop / (float)bars;
+	framesInSeq  = framesInBeat * G_MAX_BEATS;
+}
 } // namespace giada::m::model
