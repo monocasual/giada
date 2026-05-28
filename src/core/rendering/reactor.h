@@ -61,7 +61,11 @@ public:
 	void toggleSolo(ID channelId);
 	void stopAll();
 	void rewindAll();
-	void setScene(Scene);
+
+	/* killEmptySampleChannels
+	Stop all channels that don't have a Wave to play for the selected scene. */
+
+	void killEmptySampleChannels(Scene);
 
 private:
 	model::Model&           m_model;

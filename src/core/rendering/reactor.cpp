@@ -294,10 +294,8 @@ void Reactor::rewindAll()
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::setScene(Scene scene)
+void Reactor::killEmptySampleChannels(Scene scene)
 {
-	/* Stop all channels that don't have a Wave to play for the selected scene. */
-
 	m_model.get().tracks.forEachChannel([scene](Channel& ch)
 	{
 		if (!ch.isInternal() && ch.type == ChannelType::SAMPLE && !ch.hasWave(scene) && ch.isPlaying())
