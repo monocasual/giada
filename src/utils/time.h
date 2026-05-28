@@ -29,6 +29,7 @@
 #ifndef G_UTILS_TIME_H
 #define G_UTILS_TIME_H
 
+#include "src/tick.h"
 #include "src/types.h"
 
 namespace giada::u::time
@@ -42,6 +43,19 @@ Frame beatToFrame(int beat, int sampleRate, float bpm);
 Returns the beat a frame corresponds to. */
 
 int frameToBeat(Frame frame, int sampleRate, float bpm);
+
+/* tickToFrame
+Converts Tick -> Frame. */
+Frame tickToFrame(Tick, int sampleRate, float bpm);
+
+/* frameToTick[...]
+Converts Frame -> Tick. Two different rounding modes since the frame -> tick
+conversion is not always exact: the result may lie between two integer tick
+values. These variants expose the two possible integer bounds, floor and ceil. */
+
+Tick frameToTickFloor(Frame, int sampleRate, float bpm);
+Tick frameToTickCeil(Frame, int sampleRate, float bpm);
+
 } // namespace giada::u::time
 
 #endif
