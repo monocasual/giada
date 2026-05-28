@@ -71,8 +71,8 @@ public:
 	bool prepareInputRec(RecTriggerMode, InputRecMode);
 	void startInputRec();
 	void startInputRecOnCallback();
-	void stopInputRec(int sampleRate);
-	void toggleInputRec(int sampleRate);
+	void stopInputRec();
+	void toggleInputRec();
 
 	void toggleRecOnSignal();
 	void toggleFreeInputRec();

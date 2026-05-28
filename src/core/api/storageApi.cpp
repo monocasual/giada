@@ -135,7 +135,7 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, std::fu
 
 	m_mixer.updateSoloCount(hasSolos);
 	m_actionRecorder.updateSamplerate(sampleRate, patch.samplerate);
-	m_sequencer.recomputeFrames(sampleRate);
+	m_sequencer.recomputeFrames();
 	m_mixer.allocRecBuffer(maxFramesInLoop);
 
 	progress(0.9f);

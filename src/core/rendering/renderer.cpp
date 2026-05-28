@@ -100,7 +100,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 		const int         quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
 		const SampleRange renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
-		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, kernelAudio.samplerate, actions);
+		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, actions);
 		m_sequencer.render(out, document_RT);
 		if (!document_RT.locked)
 			advanceTracks(events, tracks, renderRange, quantizerStep);

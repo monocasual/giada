@@ -55,6 +55,7 @@ Sequencer::Sequencer(model::Model& m, MidiSynchronizer& s, JackTransport& j)
 , m_midiSynchronizer(s)
 , m_jackTransport(j)
 , m_quantizerStep(1)
+, m_currentSampleRate(0)
 {
 	m_quantizer.schedule(Q_ACTION_REWIND, [this](Frame delta)
 	{ rawRewind(delta); });
@@ -88,9 +89,9 @@ SceneStatus Sequencer::getSceneStatus() const { return m_model.get().sequencer.a
 
 /* -------------------------------------------------------------------------- */
 
-float Sequencer::calcBpmFromRec(Frame recordedFrames, int sampleRate) const
+float Sequencer::calcBpmFromRec(Frame recordedFrames) const
 {
-	return (60.0f * getBeats()) / (recordedFrames / static_cast<float>(sampleRate));
+	return (60.0f * getBeats()) / (recordedFrames / static_cast<float>(m_currentSampleRate));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -108,13 +109,15 @@ Frame Sequencer::quantize(Frame f) const
 
 void Sequencer::reset(int sampleRate)
 {
+	m_currentSampleRate = sampleRate;
+
 	model::Sequencer& s = m_model.get().sequencer;
 
 	s.bars     = G_DEFAULT_BARS;
 	s.beats    = G_DEFAULT_BEATS;
 	s.bpm      = G_DEFAULT_BPM;
 	s.quantize = G_DEFAULT_QUANTIZE;
-	recomputeFrames(sampleRate); // Model swap is done here, no need to call it twice
+	recomputeFrames(); // Model swap is done here, no need to call it twice
 	rewind();
 }
 
@@ -122,13 +125,14 @@ void Sequencer::reset(int sampleRate)
 
 void Sequencer::setSampleRate(int sampleRate)
 {
-	recomputeFrames(sampleRate);
+	m_currentSampleRate = sampleRate;
+	recomputeFrames();
 }
 
 /* -------------------------------------------------------------------------- */
 
 const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequencer,
-    Frame bufferSize, int sampleRate, const model::Actions& actions) const
+    Frame bufferSize, const model::Actions& actions) const
 {
 	m_eventBuffer.clear();
 
@@ -183,7 +187,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	/* Advance this and quantizer after the event parsing. */
 
-	sequencer.a_setCurrentFrame(nextFrame, sampleRate);
+	sequencer.a_setCurrentFrame(nextFrame, m_currentSampleRate);
 	m_quantizer.advance(SampleRange(start, end), getQuantizerStep());
 
 	return m_eventBuffer;
@@ -292,11 +296,13 @@ void Sequencer::setMetronome(bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::recomputeFrames(int sampleRate)
+void Sequencer::recomputeFrames()
 {
+	assert(m_currentSampleRate != 0);
+
 	model::Sequencer& s = m_model.get().sequencer;
 
-	s.framesInBeat = u::time::beatToFrame(1, sampleRate, s.bpm);
+	s.framesInBeat = u::time::beatToFrame(1, m_currentSampleRate, s.bpm);
 	s.framesInLoop = s.framesInBeat * s.beats;
 	s.framesInBar  = s.framesInLoop / (float)s.bars;
 	s.framesInSeq  = s.framesInBeat * G_MAX_BEATS;
@@ -309,18 +315,18 @@ void Sequencer::recomputeFrames(int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::setBpm(float b, int sampleRate)
+void Sequencer::setBpm(float b)
 {
 	b = std::clamp(b, G_MIN_BPM, G_MAX_BPM);
 
 	/* If JACK is being used, let it handle the bpm change. */
 	if (!m_jackTransport.setBpm(b))
-		rawSetBpm(b, sampleRate);
+		rawSetBpm(b);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::rawSetBpm(float v, int sampleRate)
+void Sequencer::rawSetBpm(float v)
 {
 	assert(onBpmChange != nullptr);
 
@@ -330,7 +336,7 @@ void Sequencer::rawSetBpm(float v, int sampleRate)
 	m_model.get().sequencer.bpm = newVal;
 	m_model.swap(model::SwapType::HARD);
 
-	recomputeFrames(sampleRate);
+	recomputeFrames();
 
 	onBpmChange(oldVal, newVal, m_quantizerStep);
 
@@ -339,7 +345,7 @@ void Sequencer::rawSetBpm(float v, int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::setBeats(int newBeats, int newBars, int sampleRate)
+void Sequencer::setBeats(int newBeats, int newBars)
 {
 	newBeats = std::clamp(newBeats, 1, G_MAX_BEATS);
 	newBars  = std::clamp(newBars, 1, newBeats); // Bars cannot be greater than beats
@@ -348,7 +354,7 @@ void Sequencer::setBeats(int newBeats, int newBars, int sampleRate)
 	m_model.get().sequencer.bars  = newBars;
 	m_model.swap(model::SwapType::HARD);
 
-	recomputeFrames(sampleRate);
+	recomputeFrames();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -361,12 +367,12 @@ void Sequencer::rawGoToBeat(int beat, int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::setQuantize(int q, int sampleRate)
+void Sequencer::setQuantize(int q)
 {
 	m_model.get().sequencer.quantize = q;
 	m_model.swap(model::SwapType::HARD);
 
-	recomputeFrames(sampleRate);
+	recomputeFrames();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -454,7 +460,7 @@ void Sequencer::jack_start()
 
 void Sequencer::jack_stop() { rawStop(); }
 void Sequencer::jack_rewind() { rawRewind(0); }
-void Sequencer::jack_setBpm(float b, int sampleRate) { rawSetBpm(b, sampleRate); }
+void Sequencer::jack_setBpm(float b) { rawSetBpm(b); }
 
 #endif
 } // namespace giada::m

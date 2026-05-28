@@ -251,7 +251,7 @@ void MainApi::setBpm(float bpm)
 {
 	if (m_mixer.isRecordingInput())
 		return;
-	m_sequencer.setBpm(bpm, m_kernelAudio.getSampleRate());
+	m_sequencer.setBpm(bpm);
 	m_midiSynchronizer.setClockBpm(bpm);
 }
 
@@ -262,9 +262,9 @@ void MainApi::setBeats(int beats, int bars)
 	if (m_mixer.isRecordingInput())
 		return;
 
-	const int sampleRate = m_kernelAudio.getSampleRate();
-	m_sequencer.setBeats(beats, bars, sampleRate);
+	m_sequencer.setBeats(beats, bars);
 
+	const int sampleRate      = m_kernelAudio.getSampleRate();
 	const int maxFramesInLoop = m_sequencer.getMaxFramesInLoop(sampleRate);
 	m_mixer.allocRecBuffer(maxFramesInLoop);
 }
@@ -304,7 +304,7 @@ void MainApi::rewindSequencer()
 
 void MainApi::setQuantize(int v)
 {
-	m_sequencer.setQuantize(v, m_kernelAudio.getSampleRate());
+	m_sequencer.setQuantize(v);
 }
 /* -------------------------------------------------------------------------- */
 
@@ -334,14 +334,14 @@ void MainApi::toggleActionRecording()
 
 void MainApi::stopInputRecording()
 {
-	m_recorder.stopInputRec(m_kernelAudio.getSampleRate());
+	m_recorder.stopInputRec();
 }
 
 void MainApi::toggleInputRecording()
 {
 	if (!m_kernelAudio.isInputEnabled())
 		return;
-	m_recorder.toggleInputRec(m_kernelAudio.getSampleRate());
+	m_recorder.toggleInputRec();
 
 	if (m_mixer.isRecordingInput() && m_mixer.getInputRecMode() == InputRecMode::FREE && m_sequencer.isMetronomeOn())
 		m_sequencer.setMetronome(false);

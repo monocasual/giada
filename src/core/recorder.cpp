@@ -129,7 +129,7 @@ bool Recorder::prepareInputRec(RecTriggerMode triggerMode, InputRecMode inputMod
 
 /* -------------------------------------------------------------------------- */
 
-void Recorder::stopInputRec(int sampleRate)
+void Recorder::stopInputRec()
 {
 	if (!m_mixer.isRecordingInput())
 		return;
@@ -171,18 +171,18 @@ void Recorder::stopInputRec(int sampleRate)
 	if (recMode == InputRecMode::FREE)
 	{
 		m_sequencer.rewindForced();
-		m_sequencer.setBpm(m_sequencer.calcBpmFromRec(recordedFrames, sampleRate), sampleRate);
+		m_sequencer.setBpm(m_sequencer.calcBpmFromRec(recordedFrames));
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Recorder::toggleInputRec(int sampleRate)
+void Recorder::toggleInputRec()
 {
 	if (!m_channelManager.hasInputRecordableChannels(m_sequencer.getCurrentScene()))
 		return;
 	if (m_mixer.isRecordingInput())
-		stopInputRec(sampleRate);
+		stopInputRec();
 	else if (m_sequencer.getStatus() == SeqStatus::WAITING)
 		m_sequencer.setStatus(SeqStatus::STOPPED);
 	else

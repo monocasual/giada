@@ -184,7 +184,7 @@ Engine::Engine()
 			m_eventDispatcher.pumpEvent([this]()
 			{
 				registerThread(Thread::EVENTS, /*realtime=*/false);
-				m_recorder.stopInputRec(m_kernelAudio.getSampleRate());
+				m_recorder.stopInputRec();
 			});
 	};
 
@@ -224,7 +224,7 @@ Engine::Engine()
 		if (m_mixer.isRecordingActions())
 			m_recorder.stopActionRec();
 		else if (m_mixer.isRecordingInput())
-			m_recorder.stopInputRec(m_kernelAudio.getSampleRate());
+			m_recorder.stopInputRec();
 	};
 	m_sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep)
 	{

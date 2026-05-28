@@ -122,7 +122,7 @@ public:
 	Given the amount of recorded frames, returns the speed of the current
 	performance. Used while input recording in FREE mode. */
 
-	float calcBpmFromRec(Frame recordedFrames, int sampleRate) const;
+	float calcBpmFromRec(Frame recordedFrames) const;
 
 	/* quantize
 	Quantizes the frame 'f'.  */
@@ -145,8 +145,7 @@ public:
 	quantizer. Returns a reference to the internal EventBuffer filled with events
 	(if any). Call this on each new audio block. */
 
-	const EventBuffer& advance(const model::Sequencer&, Frame bufferSize, int sampleRate,
-	    const model::Actions&) const;
+	const EventBuffer& advance(const model::Sequencer&, Frame bufferSize, const model::Actions&) const;
 
 	/* render
 	Renders audio coming out from the sequencer: that is, the metronome! */
@@ -159,9 +158,9 @@ public:
 	void stop();
 	void toggleMetronome();
 	void setMetronome(bool v);
-	void setBpm(float b, int sampleRate);
-	void setBeats(int beats, int bars, int sampleRate);
-	void setQuantize(int q, int sampleRate);
+	void setBpm(float b);
+	void setBeats(int beats, int bars);
+	void setQuantize(int q);
 	void setStatus(SeqStatus);
 	void goToBeat(int beat, int sampleRate);
 
@@ -180,13 +179,13 @@ public:
 	void jack_start();
 	void jack_stop();
 	void jack_rewind();
-	void jack_setBpm(float b, int sampleRate);
+	void jack_setBpm(float b);
 #endif
 
 	/* recomputeFrames
 	Updates bpm, frames, beats and so on. */
 
-	void recomputeFrames(int sampleRate);
+	void recomputeFrames();
 
 	std::function<void(SeqStatus)>         onAboutStart;
 	std::function<void()>                  onAboutStop;
@@ -202,7 +201,7 @@ private:
 	void rawStart();
 	void rawStop();
 	void rawRewind(Frame delta);
-	void rawSetBpm(float v, int sampleRate);
+	void rawSetBpm(float v);
 	void rawGoToBeat(int beat, int sampleRate);
 
 	model::Model&     m_model;
@@ -222,6 +221,12 @@ private:
 	Tells how many frames to wait to perform a quantized action. */
 
 	int m_quantizerStep;
+
+	/* m_currentSampleRate
+	The sample rate currently in use by the system and passed in when the
+	sequencer is reset/initialized, or when updated via setSampleRate(). */
+
+	int m_currentSampleRate;
 };
 } // namespace giada::m
 
