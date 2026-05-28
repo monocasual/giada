@@ -40,7 +40,7 @@ namespace giada::v
 {
 gdAbout::gdAbout()
 #ifdef WITH_VST
-: gdWindow(u::gui::getCenterWinBounds({-1, -1, 340, 415}), g_ui->getI18Text(LangMap::ABOUT_TITLE), WID_ABOUT)
+: gdWindow(u::gui::getCenterWinBounds({-1, -1, 340, 365}), g_ui->getI18Text(LangMap::ABOUT_TITLE), WID_ABOUT)
 #else
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, 340, 330}), g_ui->getI18Text(LangMap::ABOUT_TITLE), WID_ABOUT)
 #endif
@@ -65,18 +65,13 @@ gdAbout::gdAbout()
 			        .c_str());
 
 #ifdef WITH_VST
-			geBox* vstLogo = new geBox();
-			vstLogo->setSvgImage(graphics::vstLogo);
-
 			geBox* vstText = new geBox();
 			vstText->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
 			vstText->label(g_ui->getI18Text(LangMap::ABOUT_BODY_VST));
 #endif
-
 			body->addWidget(logo, 120);
 			body->addWidget(text, 140);
 #ifdef WITH_VST
-			body->addWidget(vstLogo, 60);
 			body->addWidget(vstText);
 #endif
 			body->end();
