@@ -413,15 +413,6 @@ void Sequencer::goToBeat(int beat, int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::forceScene(Scene scene)
-{
-	assert(scene.isValid());
-
-	m_model.get().sequencer.a_setCurrentScene(scene);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Sequencer::setScene(Scene scene, bool forced)
 {
 	assert(scene.isValid());

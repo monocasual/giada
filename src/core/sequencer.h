@@ -164,11 +164,6 @@ public:
 	void setStatus(SeqStatus);
 	void goToBeat(int beat, int sampleRate);
 
-	/* forceScene
-	Force-changes to the requested scene. */
-
-	void forceScene(Scene);
-
 	/* setScene
 	Prepares for the requested scene, which will be set at the next first beat.
 	Pass forced = true to change the scene right away. */
