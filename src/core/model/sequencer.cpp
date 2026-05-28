@@ -146,4 +146,14 @@ void Sequencer::a_setSceneStatus(SceneStatus s) const
 {
 	shared->sceneStatus.store(s);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::reset()
+{
+	bars     = G_DEFAULT_BARS;
+	beats    = G_DEFAULT_BEATS;
+	bpm      = G_DEFAULT_BPM;
+	quantize = G_DEFAULT_QUANTIZE;
+}
 } // namespace giada::m::model

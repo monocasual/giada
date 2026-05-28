@@ -80,6 +80,11 @@ public:
 	void a_setNextScene(Scene) const;
 	void a_setSceneStatus(SceneStatus) const;
 
+	/* reset
+	Resets beats, bars, bpm and quantize to default values. */
+
+	void reset();
+
 	SeqStatus status       = SeqStatus::STOPPED;
 	int       framesInLoop = 0;
 	int       framesInBar  = 0;

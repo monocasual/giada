@@ -110,13 +110,7 @@ Frame Sequencer::quantize(Frame f) const
 void Sequencer::reset(int sampleRate)
 {
 	m_currentSampleRate = sampleRate;
-
-	model::Sequencer& s = m_model.get().sequencer;
-
-	s.bars     = G_DEFAULT_BARS;
-	s.beats    = G_DEFAULT_BEATS;
-	s.bpm      = G_DEFAULT_BPM;
-	s.quantize = G_DEFAULT_QUANTIZE;
+	m_model.get().sequencer.reset();
 	recomputeFrames(); // Model swap is done here, no need to call it twice
 	rewind();
 }
