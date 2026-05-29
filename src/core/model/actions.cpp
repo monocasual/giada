@@ -170,7 +170,15 @@ const Actions::Map& Actions::getAll() const { return m_actions_DEPR_; }
 
 /* -------------------------------------------------------------------------- */
 
-const Action* Actions::findAction_DEPR_(ID id) const { return findAction(m_actions_DEPR_, id); }
+const Action* Actions::findAction(ID id) const
+{
+	if (!id.isValid())
+		return nullptr;
+	for (const Action& a : m_actions)
+		if (a.id == id)
+			return &a;
+	return nullptr;
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -304,12 +312,7 @@ Action* Actions::findAction(Map& src, ID id)
 
 Action* Actions::findAction(ID id)
 {
-	if (!id.isValid())
-		return nullptr;
-	for (Action& a : m_actions)
-		if (a.id == id)
-			return &a;
-	return nullptr;
+	return const_cast<Action*>(std::as_const(*this).findAction(id));
 }
 
 /* -------------------------------------------------------------------------- */

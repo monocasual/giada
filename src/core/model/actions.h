@@ -83,7 +83,8 @@ public:
 	/* findAction
 	Finds action given ID. Returns nullptr if not found. */
 
-	const Action* findAction_DEPR_(ID) const;
+	const Action* findAction(ID) const;
+	Action*       findAction(ID id);
 
 #if G_DEBUG_MODE
 	void debug() const;
@@ -166,7 +167,6 @@ private:
 
 	Action*       findAction(Map& src, ID id);
 	const Action* findAction(const Map& src, ID id) const;
-	Action*       findAction(ID id);
 
 	/* optimize
 	Removes frames without actions. */
