@@ -149,7 +149,7 @@ Engine::Engine()
 		m_eventDispatcher.pumpEvent([this, bpm]()
 		{
 			registerThread(Thread::EVENTS, /*realtime=*/false);
-			m_sequencer.jack_setBpm(bpm, m_kernelAudio.getSampleRate());
+			m_sequencer.jack_setBpm(bpm);
 		});
 	};
 	m_jackSynchronizer.onJackStart = [this]()
