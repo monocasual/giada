@@ -91,24 +91,25 @@ void Actions::deleteAction(ID currId, ID nextId)
 
 void Actions::updateKeyFrames(std::function<Frame(Frame old)> f)
 {
-	Map temp;
+	std::vector<Action> temp;
 
 	/* Copy all existing actions in local map by cloning them, with just a
 	difference: they have a new frame value. */
 
-	for (const auto& [oldFrame, actions] : m_actions_DEPR_)
+	for (const Action& a : m_actions)
 	{
-		Frame newFrame = f(oldFrame);
-		for (const Action& a : actions)
-		{
-			Action copy = a;
-			copy.frame  = newFrame;
-			temp[newFrame].push_back(copy);
-		}
+		const Frame oldFrame = a.frame;
+		const Frame newFrame = f(oldFrame);
+
+		Action copy = a;
+		copy.frame  = newFrame;
+		temp.push_back(copy);
 		G_DEBUG("{} -> {}", oldFrame, newFrame);
 	}
 
-	m_actions_DEPR_ = std::move(temp);
+	m_actions = std::move(temp);
+
+	sort();
 }
 
 /* -------------------------------------------------------------------------- */
