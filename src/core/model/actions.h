@@ -73,7 +73,7 @@ public:
 	/* getAll
 	Returns a reference to the internal map. */
 
-	const Map& getAll() const;
+	const Map& getAll_DEPR_() const;
 
 	/* findAction
 	Finds action given ID. Returns nullptr if not found. */
