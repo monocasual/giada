@@ -125,9 +125,9 @@ void Actions::updateEvent(ID id, MidiEvent e)
 
 void Actions::updateSiblings(ID id, ID prevId, ID nextId)
 {
-	Action* pcurr = findAction(m_actions_DEPR_, id);
-	Action* pprev = findAction(m_actions_DEPR_, prevId);
-	Action* pnext = findAction(m_actions_DEPR_, nextId);
+	Action* pcurr = findAction(id);
+	Action* pprev = findAction(prevId);
+	Action* pnext = findAction(nextId);
 
 	pcurr->prevId = pprev->id;
 	pcurr->nextId = pnext->id;
