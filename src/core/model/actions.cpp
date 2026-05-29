@@ -212,8 +212,10 @@ void Actions::rec(std::vector<Action>& actions, Scene scene)
 		return;
 
 	for (const Action& a : actions)
-		if (!exists_DEPR_(a.channelId, scene, a.frame, a.event, m_actions_DEPR_))
-			m_actions_DEPR_[a.frame].push_back(a);
+		if (!exists(a.channelId, scene, a.frame, a.event))
+			m_actions.push_back(a);
+
+	sort();
 }
 
 /* -------------------------------------------------------------------------- */
