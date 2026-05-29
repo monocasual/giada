@@ -146,23 +146,18 @@ void Actions::updateSiblings(ID id, ID prevId, ID nextId)
 
 bool Actions::hasActions(ID channelId, int type) const
 {
-	for (const auto& [frame, actions] : m_actions_DEPR_)
-		for (const Action& a : actions)
-			if (a.channelId == channelId && (type == 0 || type == a.event.getStatus()))
-				return true;
+	for (const Action& a : m_actions)
+		if (a.channelId == channelId && (type == 0 || type == a.event.getStatus()))
+			return true;
 	return false;
 }
 
 bool Actions::hasActions(Scene scene) const
 {
-	return utils::container::hasIf(m_actions_DEPR_, [scene](const auto& pair)
-	{
-		const auto& [_, actions] = pair;
-		for (const Action& a : actions)
-			if (a.scene == scene)
-				return true;
-		return false;
-	});
+	for (const Action& a : m_actions)
+		if (a.scene == scene)
+			return true;
+	return false;
 }
 
 /* -------------------------------------------------------------------------- */
