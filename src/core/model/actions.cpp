@@ -53,7 +53,7 @@ void Actions::clearAll()
 
 void Actions::clearChannel(ID channelId, Scene scene)
 {
-	removeIf([=](const Action& a)
+	utils::container::removeIf(m_actions, [=](const Action& a)
 	{ return a.channelId == channelId && a.scene == scene; });
 }
 
@@ -61,7 +61,7 @@ void Actions::clearChannel(ID channelId, Scene scene)
 
 void Actions::clearActions(ID channelId, int type)
 {
-	removeIf([=](const Action& a)
+	utils::container::removeIf(m_actions, [=](const Action& a)
 	{
 		return a.channelId == channelId && a.event.getStatus() == type;
 	});
@@ -69,7 +69,7 @@ void Actions::clearActions(ID channelId, int type)
 
 void Actions::clearActions(Scene scene)
 {
-	removeIf([=](const Action& a)
+	utils::container::removeIf(m_actions, [=](const Action& a)
 	{ return a.scene == scene; });
 }
 
@@ -77,13 +77,13 @@ void Actions::clearActions(Scene scene)
 
 void Actions::deleteAction(ID id)
 {
-	removeIf([=](const Action& a)
+	utils::container::removeIf(m_actions, [=](const Action& a)
 	{ return a.id == id; });
 }
 
 void Actions::deleteAction(ID currId, ID nextId)
 {
-	removeIf([=](const Action& a)
+	utils::container::removeIf(m_actions, [=](const Action& a)
 	{ return a.id == currId || a.id == nextId; });
 }
 
@@ -305,15 +305,6 @@ void Actions::optimize(Map& map)
 void Actions::sort()
 {
 	std::ranges::sort(m_actions, std::ranges::less{}, &Action::frame);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Actions::removeIf(std::function<bool(const Action&)> f)
-{
-	for (auto& [frame, actions] : m_actions_DEPR_)
-		actions.erase(std::remove_if(actions.begin(), actions.end(), f), actions.end());
-	optimize(m_actions_DEPR_);
 }
 
 /* -------------------------------------------------------------------------- */

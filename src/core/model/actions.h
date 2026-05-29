@@ -169,8 +169,6 @@ private:
 
 	void sort();
 
-	void removeIf(std::function<bool(const Action&)> f);
-
 	Actions::Map m_actions_DEPR_;
 
 	/* m_actions
