@@ -179,14 +179,10 @@ const Action* Actions::findAction(ID id) const { return findAction(m_actions_DEP
 void Actions::debug() const
 {
 	puts("model::actions");
-
-	for (const auto& [frame, actions] : m_actions_DEPR_)
-	{
-		fmt::print("\tframe: {}\n", frame);
-		for (const Action& a : actions)
-			fmt::print("\t\t({}) - ID={}, scene={}, frame={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
-			    (void*)&a, a.id.getValue(), a.scene.getIndex(), a.frame, a.channelId.getValue(), a.event.getRaw(), a.prevId.getValue(), a.nextId.getValue());
-	}
+	for (const Action& a : m_actions)
+		fmt::print("\t\tframe={}, ID={}, scene={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
+		    a.frame, a.id.getValue(), a.scene.getIndex(), a.channelId.getValue(), a.event.getRaw(),
+		    a.prevId.getValue(), a.nextId.getValue());
 }
 
 #endif
