@@ -116,7 +116,7 @@ void Actions::updateKeyFrames(std::function<Frame(Frame old)> f)
 
 void Actions::updateEvent(ID id, MidiEvent e)
 {
-	Action* a = findAction(m_actions_DEPR_, id);
+	Action* a = findAction(id);
 	assert(a != nullptr);
 	a->event = e;
 }
