@@ -220,13 +220,20 @@ void Actions::rec(std::vector<Action>& actions, Scene scene)
 
 void Actions::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
-	m_actions_DEPR_[f1].push_back(actionFactory::makeAction({}, channelId, scene, f1, e1));
-	m_actions_DEPR_[f2].push_back(actionFactory::makeAction({}, channelId, scene, f2, e2));
+	Action a1 = actionFactory::makeAction({}, channelId, scene, f1, e1);
+	Action a2 = actionFactory::makeAction({}, channelId, scene, f2, e2);
+	m_actions.push_back(a1);
+	m_actions.push_back(a2);
 
-	Action* a1 = findAction(m_actions_DEPR_, m_actions_DEPR_[f1].back().id);
-	Action* a2 = findAction(m_actions_DEPR_, m_actions_DEPR_[f2].back().id);
-	a1->nextId = a2->id;
-	a2->prevId = a1->id;
+	Action* a1ptr = findAction(a1.id);
+	Action* a2ptr = findAction(a2.id);
+
+	assert(a1ptr != nullptr && a2ptr != nullptr);
+
+	a1ptr->nextId = a2ptr->id;
+	a2ptr->prevId = a1ptr->id;
+
+	sort();
 }
 
 /* -------------------------------------------------------------------------- */
