@@ -46,7 +46,7 @@ void Actions::set(model::Actions::Map&& actions)
 
 void Actions::clearAll()
 {
-	m_actions_DEPR_.clear();
+	m_actions.clear();
 }
 
 /* -------------------------------------------------------------------------- */
