@@ -333,4 +333,21 @@ bool Actions::exists_DEPR_(ID channelId, Scene scene, Frame frame, const MidiEve
 {
 	return exists_DEPR_(channelId, scene, frame, event, m_actions_DEPR_);
 }
+
+/* -------------------------------------------------------------------------- */
+
+bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& event, const std::vector<Action>& target) const
+{
+	for (const Action& a : target)
+		if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw() && a.scene == scene)
+			return true;
+	return false;
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& event) const
+{
+	return exists(channelId, scene, frame, event, m_actions);
+}
 } // namespace giada::m::model

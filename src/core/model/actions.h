@@ -161,6 +161,8 @@ public:
 private:
 	bool exists_DEPR_(ID channelId, Scene, Frame frame, const MidiEvent& event, const Map& target) const;
 	bool exists_DEPR_(ID channelId, Scene, Frame frame, const MidiEvent& event) const;
+	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&, const std::vector<Action>& target) const;
+	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&) const;
 
 	Action*       findAction(Map& src, ID id);
 	const Action* findAction(const Map& src, ID id) const;
