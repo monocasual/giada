@@ -172,7 +172,7 @@ private:
 
 	void removeIf(std::function<bool(const Action&)> f);
 
-	Actions::Map m_actions;
+	Actions::Map m_actions_DEPR_;
 };
 } // namespace giada::m::model
 

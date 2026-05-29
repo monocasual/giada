@@ -41,12 +41,12 @@ namespace giada::m::model
 {
 void Actions::set(model::Actions::Map&& actions)
 {
-	m_actions = std::move(actions);
+	m_actions_DEPR_ = std::move(actions);
 }
 
 void Actions::clearAll()
 {
-	m_actions.clear();
+	m_actions_DEPR_.clear();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -96,7 +96,7 @@ void Actions::updateKeyFrames(std::function<Frame(Frame old)> f)
 	/* Copy all existing actions in local map by cloning them, with just a
 	difference: they have a new frame value. */
 
-	for (const auto& [oldFrame, actions] : m_actions)
+	for (const auto& [oldFrame, actions] : m_actions_DEPR_)
 	{
 		Frame newFrame = f(oldFrame);
 		for (const Action& a : actions)
@@ -108,14 +108,14 @@ void Actions::updateKeyFrames(std::function<Frame(Frame old)> f)
 		G_DEBUG("{} -> {}", oldFrame, newFrame);
 	}
 
-	m_actions = std::move(temp);
+	m_actions_DEPR_ = std::move(temp);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Actions::updateEvent(ID id, MidiEvent e)
 {
-	Action* a = findAction(m_actions, id);
+	Action* a = findAction(m_actions_DEPR_, id);
 	assert(a != nullptr);
 	a->event = e;
 }
@@ -124,9 +124,9 @@ void Actions::updateEvent(ID id, MidiEvent e)
 
 void Actions::updateSiblings(ID id, ID prevId, ID nextId)
 {
-	Action* pcurr = findAction(m_actions, id);
-	Action* pprev = findAction(m_actions, prevId);
-	Action* pnext = findAction(m_actions, nextId);
+	Action* pcurr = findAction(m_actions_DEPR_, id);
+	Action* pprev = findAction(m_actions_DEPR_, prevId);
+	Action* pnext = findAction(m_actions_DEPR_, nextId);
 
 	pcurr->prevId = pprev->id;
 	pcurr->nextId = pnext->id;
@@ -145,7 +145,7 @@ void Actions::updateSiblings(ID id, ID prevId, ID nextId)
 
 bool Actions::hasActions(ID channelId, int type) const
 {
-	for (const auto& [frame, actions] : m_actions)
+	for (const auto& [frame, actions] : m_actions_DEPR_)
 		for (const Action& a : actions)
 			if (a.channelId == channelId && (type == 0 || type == a.event.getStatus()))
 				return true;
@@ -154,7 +154,7 @@ bool Actions::hasActions(ID channelId, int type) const
 
 bool Actions::hasActions(Scene scene) const
 {
-	return utils::container::hasIf(m_actions, [scene](const auto& pair)
+	return utils::container::hasIf(m_actions_DEPR_, [scene](const auto& pair)
 	{
 		const auto& [_, actions] = pair;
 		for (const Action& a : actions)
@@ -166,11 +166,11 @@ bool Actions::hasActions(Scene scene) const
 
 /* -------------------------------------------------------------------------- */
 
-const Actions::Map& Actions::getAll() const { return m_actions; }
+const Actions::Map& Actions::getAll() const { return m_actions_DEPR_; }
 
 /* -------------------------------------------------------------------------- */
 
-const Action* Actions::findAction(ID id) const { return findAction(m_actions, id); }
+const Action* Actions::findAction(ID id) const { return findAction(m_actions_DEPR_, id); }
 
 /* -------------------------------------------------------------------------- */
 
@@ -180,7 +180,7 @@ void Actions::debug() const
 {
 	puts("model::actions");
 
-	for (const auto& [frame, actions] : m_actions)
+	for (const auto& [frame, actions] : m_actions_DEPR_)
 	{
 		fmt::print("\tframe: {}\n", frame);
 		for (const Action& a : actions)
@@ -205,7 +205,7 @@ Action Actions::rec(ID channelId, Scene scene, Frame frame, MidiEvent event)
 	/* If key frame doesn't exist yet, the [] operator in std::map is smart
 	enough to insert a new item first. No plug-in data for now. */
 
-	m_actions[frame].push_back(a);
+	m_actions_DEPR_[frame].push_back(a);
 
 	return a;
 }
@@ -218,19 +218,19 @@ void Actions::rec(std::vector<Action>& actions, Scene scene)
 		return;
 
 	for (const Action& a : actions)
-		if (!exists(a.channelId, scene, a.frame, a.event, m_actions))
-			m_actions[a.frame].push_back(a);
+		if (!exists(a.channelId, scene, a.frame, a.event, m_actions_DEPR_))
+			m_actions_DEPR_[a.frame].push_back(a);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Actions::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
-	m_actions[f1].push_back(actionFactory::makeAction({}, channelId, scene, f1, e1));
-	m_actions[f2].push_back(actionFactory::makeAction({}, channelId, scene, f2, e2));
+	m_actions_DEPR_[f1].push_back(actionFactory::makeAction({}, channelId, scene, f1, e1));
+	m_actions_DEPR_[f2].push_back(actionFactory::makeAction({}, channelId, scene, f2, e2));
 
-	Action* a1 = findAction(m_actions, m_actions[f1].back().id);
-	Action* a2 = findAction(m_actions, m_actions[f2].back().id);
+	Action* a1 = findAction(m_actions_DEPR_, m_actions_DEPR_[f1].back().id);
+	Action* a2 = findAction(m_actions_DEPR_, m_actions_DEPR_[f2].back().id);
 	a1->nextId = a2->id;
 	a2->prevId = a1->id;
 }
@@ -239,9 +239,9 @@ void Actions::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, M
 
 const std::vector<Action>* Actions::getActionsOnFrame(Frame frame) const
 {
-	if (m_actions.count(frame) == 0)
+	if (m_actions_DEPR_.count(frame) == 0)
 		return nullptr;
-	return &m_actions.at(frame);
+	return &m_actions_DEPR_.at(frame);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -276,7 +276,7 @@ std::vector<Action> Actions::getActionsOnChannel(ID channelId, Scene scene) cons
 
 void Actions::forEachAction(std::function<void(const Action&)> f) const
 {
-	for (auto& [_, actions] : m_actions)
+	for (auto& [_, actions] : m_actions_DEPR_)
 		for (const Action& action : actions)
 			f(action);
 }
@@ -311,9 +311,9 @@ void Actions::optimize(Map& map)
 
 void Actions::removeIf(std::function<bool(const Action&)> f)
 {
-	for (auto& [frame, actions] : m_actions)
+	for (auto& [frame, actions] : m_actions_DEPR_)
 		actions.erase(std::remove_if(actions.begin(), actions.end(), f), actions.end());
-	optimize(m_actions);
+	optimize(m_actions_DEPR_);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -331,6 +331,6 @@ bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& ev
 
 bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& event) const
 {
-	return exists(channelId, scene, frame, event, m_actions);
+	return exists(channelId, scene, frame, event, m_actions_DEPR_);
 }
 } // namespace giada::m::model
