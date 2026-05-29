@@ -197,15 +197,13 @@ Action Actions::rec(ID channelId, Scene scene, Frame frame, MidiEvent event)
 {
 	/* Skip duplicates. */
 
-	if (exists_DEPR_(channelId, scene, frame, event))
+	if (exists(channelId, scene, frame, event))
 		return {};
 
 	Action a = actionFactory::makeAction({}, channelId, scene, frame, event);
 
-	/* If key frame doesn't exist yet, the [] operator in std::map is smart
-	enough to insert a new item first. No plug-in data for now. */
-
-	m_actions_DEPR_[frame].push_back(a);
+	m_actions.push_back(a);
+	sort();
 
 	return a;
 }
