@@ -34,6 +34,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <span>
 #include <vector>
 
 namespace giada::m::model
@@ -53,6 +54,11 @@ public:
 	if the frame has no actions. */
 
 	const std::vector<Action>* getActionsOnFrame(Frame f) const;
+
+	/* getActionsInSampleRange
+	Returns a span of all actions included in the required range. */
+
+	const std::span<const Action> getActionsInSampleRange(SampleRange) const;
 
 	/* hasActions (1)
 	Checks if the channel has at least one action recorded. */

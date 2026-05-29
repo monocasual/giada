@@ -251,6 +251,20 @@ const std::vector<Action>* Actions::getActionsOnFrame(Frame frame) const
 	return &m_actions_DEPR_.at(frame);
 }
 
+const std::span<const Action> Actions::getActionsInSampleRange(SampleRange r) const
+{
+	if (!r.isValid())
+		return {};
+
+	const auto first = std::lower_bound(m_actions.begin(), m_actions.end(), r.a, [](const Action& a, Frame value)
+	{ return a.frame < value; });
+
+	const auto last = std::lower_bound(m_actions.begin(), m_actions.end(), r.b, [](const Action& a, Frame value)
+	{ return a.frame < value; });
+
+	return {first, last};
+}
+
 /* -------------------------------------------------------------------------- */
 
 std::vector<Action> Actions::getActionsOnChannel(ID channelId, Scene scene) const
