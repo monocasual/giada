@@ -162,7 +162,6 @@ bool Actions::hasActions(Scene scene) const
 
 /* -------------------------------------------------------------------------- */
 
-const Actions::Map&        Actions::getAll_DEPR_() const { return m_actions_DEPR_; }
 const std::vector<Action>& Actions::getAll() const { return m_actions; }
 
 /* -------------------------------------------------------------------------- */
@@ -301,24 +300,6 @@ void Actions::optimize(Map& map)
 void Actions::sort()
 {
 	std::ranges::sort(m_actions, std::ranges::less{}, &Action::frame);
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool Actions::exists_DEPR_(ID channelId, Scene scene, Frame frame, const MidiEvent& event, const Map& target) const
-{
-	for (const auto& [_, actions] : target)
-		for (const Action& a : actions)
-			if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw() && a.scene == scene)
-				return true;
-	return false;
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool Actions::exists_DEPR_(ID channelId, Scene scene, Frame frame, const MidiEvent& event) const
-{
-	return exists_DEPR_(channelId, scene, frame, event, m_actions_DEPR_);
 }
 
 /* -------------------------------------------------------------------------- */

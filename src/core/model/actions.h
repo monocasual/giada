@@ -67,7 +67,6 @@ public:
 	/* getAll
 	Returns a reference to the internal map. */
 
-	const Map&                 getAll_DEPR_() const;
 	const std::vector<Action>& getAll() const;
 
 	/* findAction
@@ -150,8 +149,6 @@ public:
 	void rec(ID channelId, Scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 
 private:
-	bool exists_DEPR_(ID channelId, Scene, Frame frame, const MidiEvent& event, const Map& target) const;
-	bool exists_DEPR_(ID channelId, Scene, Frame frame, const MidiEvent& event) const;
 	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&, const std::vector<Action>& target) const;
 	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&) const;
 
