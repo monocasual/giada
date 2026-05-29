@@ -159,8 +159,8 @@ public:
 	void rec(ID channelId, Scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 
 private:
-	bool exists(ID channelId, Scene, Frame frame, const MidiEvent& event, const Map& target) const;
-	bool exists(ID channelId, Scene, Frame frame, const MidiEvent& event) const;
+	bool exists_DEPR_(ID channelId, Scene, Frame frame, const MidiEvent& event, const Map& target) const;
+	bool exists_DEPR_(ID channelId, Scene, Frame frame, const MidiEvent& event) const;
 
 	Action*       findAction(Map& src, ID id);
 	const Action* findAction(const Map& src, ID id) const;
