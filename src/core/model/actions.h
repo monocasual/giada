@@ -83,7 +83,7 @@ public:
 	/* findAction
 	Finds action given ID. Returns nullptr if not found. */
 
-	const Action* findAction(ID) const;
+	const Action* findAction_DEPR_(ID) const;
 
 #if G_DEBUG_MODE
 	void debug() const;

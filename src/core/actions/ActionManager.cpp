@@ -210,7 +210,7 @@ void ActionManager::deleteMidiAction(const Action& a)
 
 	/* Check if 'next' exist first: could be orphaned. */
 
-	const Action* next = m_model.get().actions.findAction(a.nextId);
+	const Action* next = m_model.get().actions.findAction_DEPR_(a.nextId);
 
 	if (next != nullptr)
 		deleteAction(a.id, next->id);
@@ -222,7 +222,7 @@ void ActionManager::deleteMidiAction(const Action& a)
 
 void ActionManager::deleteSampleAction(const Action& a)
 {
-	const Action* next = m_model.get().actions.findAction(a.nextId);
+	const Action* next = m_model.get().actions.findAction_DEPR_(a.nextId);
 
 	if (next != nullptr) // For ChannelMode::SINGLE_PRESS combo
 		deleteAction(a.id, next->id);
@@ -389,7 +389,7 @@ void ActionManager::copyActions(ID channelId, Scene src, Scene dst, ID newChanne
 
 const Action* ActionManager::findAction(ID id) const
 {
-	return m_model.get().actions.findAction(id);
+	return m_model.get().actions.findAction_DEPR_(id);
 }
 
 bool ActionManager::hasActions(ID channelId, int type) const

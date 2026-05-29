@@ -170,7 +170,7 @@ const Actions::Map& Actions::getAll() const { return m_actions_DEPR_; }
 
 /* -------------------------------------------------------------------------- */
 
-const Action* Actions::findAction(ID id) const { return findAction(m_actions_DEPR_, id); }
+const Action* Actions::findAction_DEPR_(ID id) const { return findAction(m_actions_DEPR_, id); }
 
 /* -------------------------------------------------------------------------- */
 
