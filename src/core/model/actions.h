@@ -80,9 +80,9 @@ public:
 #endif
 
 	/* set
-	Sets a new whole map of actions. Use this when deserializing stuff. */
+	Sets a new whole vector of actions. Use this when deserializing stuff. */
 
-	void set(model::Actions::Map&&);
+	void set(std::vector<Action>&&);
 
 	/* clearAll
 	Deletes all recorded actions. */

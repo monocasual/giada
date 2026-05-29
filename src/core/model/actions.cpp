@@ -39,9 +39,9 @@ namespace utils = mcl::utils;
 
 namespace giada::m::model
 {
-void Actions::set(model::Actions::Map&& actions)
+void Actions::set(std::vector<Action>&& actions)
 {
-	m_actions_DEPR_ = std::move(actions);
+	m_actions = std::move(actions);
 }
 
 void Actions::clearAll()

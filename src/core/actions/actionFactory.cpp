@@ -69,11 +69,11 @@ ID getNewActionId()
 
 /* -------------------------------------------------------------------------- */
 
-model::Actions::Map deserializeActions(const std::vector<Patch::Action>& pactions)
+std::vector<Action> deserializeActions(const std::vector<Patch::Action>& pactions)
 {
-	model::Actions::Map out;
+	std::vector<Action> out;
 	for (const Patch::Action& paction : pactions)
-		out[paction.frame].push_back(makeAction(paction));
+		out.push_back(makeAction(paction));
 	return out;
 }
 
