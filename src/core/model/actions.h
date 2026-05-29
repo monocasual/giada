@@ -173,6 +173,13 @@ private:
 	void removeIf(std::function<bool(const Action&)> f);
 
 	Actions::Map m_actions_DEPR_;
+
+	/* m_actions
+	Stored actions. Must always be sorted frame-wise, ascending, to allow
+	the fetch alogrithm to work properly. Sorting is needed any time you add
+	a new action to the vector. */
+
+	std::vector<Action> m_actions;
 };
 } // namespace giada::m::model
 
