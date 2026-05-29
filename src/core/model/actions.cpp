@@ -295,6 +295,18 @@ Action* Actions::findAction(Map& src, ID id)
 
 /* -------------------------------------------------------------------------- */
 
+Action* Actions::findAction(ID id)
+{
+	if (!id.isValid())
+		return nullptr;
+	for (Action& a : m_actions)
+		if (a.id == id)
+			return &a;
+	return nullptr;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Actions::optimize(Map& map)
 {
 	for (auto it = map.cbegin(); it != map.cend();)

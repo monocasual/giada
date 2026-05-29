@@ -166,6 +166,7 @@ private:
 
 	Action*       findAction(Map& src, ID id);
 	const Action* findAction(const Map& src, ID id) const;
+	Action*       findAction(ID id);
 
 	/* optimize
 	Removes frames without actions. */
