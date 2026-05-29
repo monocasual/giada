@@ -267,11 +267,9 @@ Action Actions::getClosestAction(ID channelId, Frame f, int type) const
 std::vector<Action> Actions::getActionsOnChannel(ID channelId, Scene scene) const
 {
 	std::vector<Action> out;
-	forEachAction([&](const Action& a)
-	{
+	for (const Action& a : m_actions)
 		if (a.channelId == channelId && a.scene == scene)
 			out.push_back(a);
-	});
 	return out;
 }
 
