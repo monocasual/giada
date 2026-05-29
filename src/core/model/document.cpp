@@ -124,7 +124,7 @@ void Document::store(Patch& patch) const
 	patch.bpm       = sequencer.bpm;
 	patch.quantize  = sequencer.quantize;
 	patch.metronome = sequencer.metronome;
-	patch.actions   = actionFactory::serializeActions(actions.getAll_DEPR_());
+	patch.actions   = actionFactory::serializeActions(actions.getAll());
 
 	for (const Track& track : tracks.getAll())
 	{
