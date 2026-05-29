@@ -166,7 +166,8 @@ bool Actions::hasActions(Scene scene) const
 
 /* -------------------------------------------------------------------------- */
 
-const Actions::Map& Actions::getAll_DEPR_() const { return m_actions_DEPR_; }
+const Actions::Map&        Actions::getAll_DEPR_() const { return m_actions_DEPR_; }
+const std::vector<Action>& Actions::getAll() const { return m_actions; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -264,15 +265,6 @@ std::vector<Action> Actions::getActionsOnChannel(ID channelId, Scene scene) cons
 		if (a.channelId == channelId && a.scene == scene)
 			out.push_back(a);
 	return out;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Actions::forEachAction(std::function<void(const Action&)> f) const
-{
-	for (auto& [_, actions] : m_actions_DEPR_)
-		for (const Action& action : actions)
-			f(action);
 }
 
 /* -------------------------------------------------------------------------- */

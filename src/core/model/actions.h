@@ -43,12 +43,6 @@ class Actions
 public:
 	using Map = std::map<Frame, std::vector<Action>>;
 
-	/* forEachAction
-	Applies a read-only callback on each action recorded. NEVER do anything
-	inside the callback that might alter the ActionMap. */
-
-	void forEachAction(std::function<void(const Action&)> f) const;
-
 	/* getActionsOnChannel
 	Returns a vector of actions belonging to channel 'ch'. */
 
@@ -73,7 +67,8 @@ public:
 	/* getAll
 	Returns a reference to the internal map. */
 
-	const Map& getAll_DEPR_() const;
+	const Map&                 getAll_DEPR_() const;
+	const std::vector<Action>& getAll() const;
 
 	/* findAction
 	Finds action given ID. Returns nullptr if not found. */
