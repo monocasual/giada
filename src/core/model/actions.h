@@ -172,6 +172,12 @@ private:
 
 	void optimize(Map& map);
 
+	/* sort
+	Sorts the internal vector of Actions, frame-wise, ascending. Mandatory each
+	time you add a new Action. */
+
+	void sort();
+
 	void removeIf(std::function<bool(const Action&)> f);
 
 	Actions::Map m_actions_DEPR_;

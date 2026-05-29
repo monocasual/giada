@@ -309,6 +309,13 @@ void Actions::optimize(Map& map)
 
 /* -------------------------------------------------------------------------- */
 
+void Actions::sort()
+{
+	std::ranges::sort(m_actions, std::ranges::less{}, &Action::frame);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void Actions::removeIf(std::function<bool(const Action&)> f)
 {
 	for (auto& [frame, actions] : m_actions_DEPR_)
