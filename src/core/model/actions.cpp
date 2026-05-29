@@ -257,21 +257,6 @@ const std::vector<Action>* Actions::getActionsOnFrame(Frame frame) const
 
 /* -------------------------------------------------------------------------- */
 
-Action Actions::getClosestAction(ID channelId, Frame f, int type) const
-{
-	Action out = {};
-	forEachAction([&](const Action& a)
-	{
-		if (a.event.getStatus() != type || a.channelId != channelId)
-			return;
-		if (!out.isValid() || (a.frame <= f && a.frame > out.frame))
-			out = a;
-	});
-	return out;
-}
-
-/* -------------------------------------------------------------------------- */
-
 std::vector<Action> Actions::getActionsOnChannel(ID channelId, Scene scene) const
 {
 	std::vector<Action> out;

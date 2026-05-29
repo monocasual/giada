@@ -54,11 +54,6 @@ public:
 
 	std::vector<Action> getActionsOnChannel(ID channelId, Scene) const;
 
-	/* getClosestAction
-	Given a frame 'f' returns the closest action. */
-
-	Action getClosestAction(ID channelId, Frame f, int type) const;
-
 	/* getActionsOnFrame
 	Returns a pointer to a vector of actions recorded on frame 'f', or nullptr
 	if the frame has no actions. */
