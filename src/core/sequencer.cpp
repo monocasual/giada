@@ -77,6 +77,27 @@ struct Block
 				fn(global, local++);
 	}
 };
+
+/* -------------------------------------------------------------------------- */
+
+/* ActionsBlock
+Same concept of Block above, but here it's just a small helper to loop over the
+entire block, contiguously. */
+
+struct ActionsBlock
+{
+	std::span<const Action> head;
+	std::span<const Action> tail;
+
+	template <typename F>
+	void onEachAction(F&& fn) const
+	{
+		for (const Action& a : head)
+			fn(a);
+		for (const Action& a : tail)
+			fn(a);
+	}
+};
 } // namespace
 
 /* -------------------------------------------------------------------------- */
