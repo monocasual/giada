@@ -167,7 +167,7 @@ void advanceSampleChannel(const Channel& ch, const Sequencer::Event& e)
 
 	case Sequencer::EventType::ACTIONS:
 		if (!isLoop && ch.shared->isReadingActions())
-			parseActions_(ch.id, e.scene, *ch.shared, *e.actions, e.delta, mode);
+			parseActions_(ch.id, e.scene, *ch.shared, *e.actions_DEPR_, e.delta, mode);
 		break;
 
 	default:
