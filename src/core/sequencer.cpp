@@ -41,6 +41,42 @@ namespace giada::m
 namespace
 {
 constexpr int Q_ACTION_REWIND = 0;
+
+/* -------------------------------------------------------------------------- */
+
+/* Block
+A pair of ranges that describe the current audio block to render from the Sequencer
+perspective, taking the wraparound at first beat into account. Head is always
+valid, tail can be valid if there is a wraparound in the current block. The
+'onEachFrame' helper method allows to process both ranges in one shot. */
+
+struct Block
+{
+	SampleRange head;
+	SampleRange tail;
+	Frame       nextFrame;
+
+	Block(Frame start, Frame end, int framesInLoop)
+	: head(start, std::min(end, framesInLoop))
+	, nextFrame(end % framesInLoop)
+	{
+		if (end > framesInLoop)
+			tail = {0, nextFrame};
+
+		assert(end - start == head.getLength() + tail.getLength());
+	}
+
+	template <typename F>
+	void onEachFrame(F&& fn) const
+	{
+		Frame local = 0;
+		for (Frame global = head.a; global < head.b; global++)
+			fn(global, local++);
+		if (tail.isValid())
+			for (Frame global = tail.a; global < tail.b; global++)
+				fn(global, local++);
+	}
+};
 } // namespace
 
 /* -------------------------------------------------------------------------- */
