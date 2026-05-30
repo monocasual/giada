@@ -42,6 +42,7 @@ namespace giada::m::model
 void Actions::set(std::vector<Action>&& actions)
 {
 	m_actions = std::move(actions);
+	sort(); // Always assume unsorted data coming in
 }
 
 void Actions::clearAll()
