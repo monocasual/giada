@@ -42,18 +42,10 @@ namespace giada::m::model
 class Actions
 {
 public:
-	using Map = std::map<Frame, std::vector<Action>>;
-
 	/* getActionsOnChannel
 	Returns a vector of actions belonging to channel 'ch'. */
 
 	std::vector<Action> getActionsOnChannel(ID channelId, Scene) const;
-
-	/* getActionsOnFrame
-	Returns a pointer to a vector of actions recorded on frame 'f', or nullptr
-	if the frame has no actions. */
-
-	const std::vector<Action>* getActionsOnFrame(Frame f) const;
 
 	/* getActionsInSampleRange
 	Returns a span of all actions included in the required range. */
@@ -158,21 +150,11 @@ private:
 	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&, const std::vector<Action>& target) const;
 	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&) const;
 
-	Action*       findAction(Map& src, ID id);
-	const Action* findAction(const Map& src, ID id) const;
-
-	/* optimize
-	Removes frames without actions. */
-
-	void optimize(Map& map);
-
 	/* sort
 	Sorts the internal vector of Actions, frame-wise, ascending. Mandatory each
 	time you add a new Action. */
 
 	void sort();
-
-	Actions::Map m_actions_DEPR_;
 
 	/* m_actions
 	Stored actions. Must always be sorted frame-wise, ascending, to allow

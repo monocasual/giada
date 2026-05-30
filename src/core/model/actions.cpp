@@ -245,13 +245,6 @@ void Actions::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, M
 
 /* -------------------------------------------------------------------------- */
 
-const std::vector<Action>* Actions::getActionsOnFrame(Frame frame) const
-{
-	if (m_actions_DEPR_.count(frame) == 0)
-		return nullptr;
-	return &m_actions_DEPR_.at(frame);
-}
-
 const std::span<const Action> Actions::getActionsInSampleRange(SampleRange r) const
 {
 	if (!r.isValid())
@@ -279,35 +272,9 @@ std::vector<Action> Actions::getActionsOnChannel(ID channelId, Scene scene) cons
 
 /* -------------------------------------------------------------------------- */
 
-const Action* Actions::findAction(const Map& src, ID id) const
-{
-	if (!id.isValid())
-		return nullptr;
-	for (const auto& [frame, actions] : src)
-		for (const Action& a : actions)
-			if (a.id == id)
-				return &a;
-	return nullptr;
-}
-
-Action* Actions::findAction(Map& src, ID id)
-{
-	return const_cast<Action*>(std::as_const(*this).findAction(src, id));
-}
-
-/* -------------------------------------------------------------------------- */
-
 Action* Actions::findAction(ID id)
 {
 	return const_cast<Action*>(std::as_const(*this).findAction(id));
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Actions::optimize(Map& map)
-{
-	for (auto it = map.cbegin(); it != map.cend();)
-		it->second.size() == 0 ? it = map.erase(it) : ++it;
 }
 
 /* -------------------------------------------------------------------------- */
