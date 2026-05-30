@@ -228,16 +228,23 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		{
 			m_metronome.trigger(Metronome::Click::BEAT, local);
 		}
+	});
 
-		/* Fetch actions in the current frame. Extra care is needed if the scene
-		has changed in this block: we need to process actions that belong to the
-		next scene, not the current one (which is the old one). */
+	/* Push actions from the current block into the event buffer. Extra care is
+	needed if the scene has changed in this block: we need to process actions
+	that belong to the next scene, not the current one (which is the old one). */
 
-		actionsBlock.onEachAction([&](const Action& action)
-		{
-			if (action.frame == global)
-				m_eventBuffer.push_back({EventType::ACTIONS, global, local, &action, sceneChanged ? nextScene : currentScene});
-		});
+	actionsBlock.onEachAction([&](const Action& action)
+	{
+		/* Adjusting local offset requires more tweaking if the action belongs to
+		the tail block: it means the sequencer has wrapped around the loop and
+		we are fetching actions from the beginning. */
+
+		bool        inTail = block.tail.isValid() && block.tail.contains(action.frame);
+		const Frame offset = inTail ? block.head.getLength() : -block.head.a;
+		const Frame local  = action.frame + offset;
+
+		m_eventBuffer.push_back({EventType::ACTIONS, 0, local, &action, sceneChanged ? nextScene : currentScene});
 	});
 
 	/* Advance this and quantizer after the event parsing. */
