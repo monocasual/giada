@@ -130,12 +130,14 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 {
 	m_eventBuffer.clear();
 
-	const Frame start        = sequencer.a_getCurrentFrame();
-	const Frame end          = start + bufferSize;
+	const Frame       start = sequencer.a_getCurrentFrame();
+	const Frame       end   = start + bufferSize;
+	const SampleRange range{start, end};
+
 	const Frame framesInLoop = sequencer.framesInLoop;
 	const Frame framesInBar  = sequencer.framesInBar;
 	const Frame framesInBeat = sequencer.framesInBeat;
-	const Frame nextFrame    = end % framesInLoop;
+	const Frame nextFrame    = range.b % framesInLoop;
 
 	const Scene currentScene = sequencer.a_getCurrentScene();
 	const Scene nextScene    = sequencer.a_getNextScene();
@@ -143,7 +145,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	/* Process events in the current block. */
 
-	for (Frame i = start, local = 0; i < end; i++, local++)
+	for (Frame i = range.a, local = 0; i < range.b; i++, local++)
 	{
 		Frame global = i % framesInLoop; // wraps around 'framesInLoop'
 
@@ -182,7 +184,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 	/* Advance this and quantizer after the event parsing. */
 
 	sequencer.a_setCurrentFrame(nextFrame, m_currentSampleRate);
-	m_quantizer.advance(SampleRange(start, end), getQuantizerStep());
+	m_quantizer.advance(range, getQuantizerStep());
 
 	return m_eventBuffer;
 }
