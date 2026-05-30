@@ -195,7 +195,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	const Scene currentScene = sequencer.a_getCurrentScene();
 	const Scene nextScene    = sequencer.a_getNextScene();
-	const bool  sceneChanged = currentScene != nextScene;
+	bool        sceneChanged = false;
 
 	/* Process events in the current block. */
 
@@ -210,11 +210,12 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		{
 			m_eventBuffer.push_back({EventType::FIRST_BEAT, global, local});
 			m_metronome.trigger(Metronome::Click::BEAT, local);
-			if (sceneChanged)
+			if (currentScene != nextScene)
 			{
 				assert(onSceneChanged != nullptr);
 				sequencer.a_setCurrentScene(nextScene);
 				sequencer.a_setSceneStatus(SceneStatus::IDLE);
+				sceneChanged = true;
 				onSceneChanged(); // Can't directly swap model here, this is real-time stuff
 			}
 		}
