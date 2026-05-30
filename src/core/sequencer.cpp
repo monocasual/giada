@@ -166,14 +166,11 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 {
 	m_eventBuffer.clear();
 
-	const Frame       start = sequencer.a_getCurrentFrame();
-	const Frame       end   = start + bufferSize;
-	const SampleRange range{start, end};
-
+	const Frame start        = sequencer.a_getCurrentFrame();
+	const Frame end          = start + bufferSize;
 	const Frame framesInLoop = sequencer.framesInLoop;
 	const Frame framesInBar  = sequencer.framesInBar;
 	const Frame framesInBeat = sequencer.framesInBeat;
-	const Frame nextFrame    = range.b % framesInLoop;
 
 	const Scene currentScene = sequencer.a_getCurrentScene();
 	const Scene nextScene    = sequencer.a_getNextScene();
@@ -181,10 +178,9 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	/* Process events in the current block. */
 
-	for (Frame i = range.a, local = 0; i < range.b; i++, local++)
+	const Block block(start, end, framesInLoop);
+	block.onEachFrame([&, this](Frame global, Frame local)
 	{
-		Frame global = i % framesInLoop; // wraps around 'framesInLoop'
-
 		if (global == 0)
 		{
 			m_eventBuffer.push_back({EventType::FIRST_BEAT, global, local});
@@ -214,12 +210,12 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		const std::vector<Action>* as = actions.getActionsOnFrame(global);
 		if (as != nullptr)
 			m_eventBuffer.push_back({EventType::ACTIONS, global, local, as, sceneChanged ? nextScene : currentScene});
-	}
+	});
 
 	/* Advance this and quantizer after the event parsing. */
 
-	sequencer.a_setCurrentFrame(nextFrame, m_currentSampleRate);
-	m_quantizer.advance(range, getQuantizerStep());
+	sequencer.a_setCurrentFrame(block.nextFrame, m_currentSampleRate);
+	m_quantizer.advance({start, end}, getQuantizerStep()); // TODO - this is wrong, pass block instead raw {start, end} range
 
 	return m_eventBuffer;
 }
