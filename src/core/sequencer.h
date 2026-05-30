@@ -71,6 +71,7 @@ public:
 		Frame                      global        = 0; // Where the event occurs in the whole sequencer [0, framesInLoop)
 		Frame                      delta         = 0; // Where the event occurs in the current block [0, blockSize)
 		const std::vector<Action>* actions_DEPR_ = nullptr;
+		const Action*              action        = nullptr;
 		Scene                      scene         = {};
 	};
 

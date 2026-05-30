@@ -199,7 +199,11 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	/* Process events in the current block. */
 
-	const Block block(start, end, framesInLoop);
+	const Block        block(start, end, framesInLoop);
+	const ActionsBlock actionsBlock{
+	    actions.getActionsInSampleRange(block.head),
+	    actions.getActionsInSampleRange(block.tail)};
+
 	block.onEachFrame([&, this](Frame global, Frame local)
 	{
 		if (global == 0)
@@ -228,9 +232,11 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		has changed in this block: we need to process actions that belong to the
 		next scene, not the current one (which is the old one). */
 
-		const std::vector<Action>* as = actions.getActionsOnFrame(global);
-		if (as != nullptr)
-			m_eventBuffer.push_back({EventType::ACTIONS, global, local, as, sceneChanged ? nextScene : currentScene});
+		actionsBlock.onEachAction([&](const Action& action)
+		{
+			if (action.frame == global)
+				m_eventBuffer.push_back({EventType::ACTIONS, global, local, nullptr, &action, sceneChanged ? nextScene : currentScene});
+		});
 	});
 
 	/* Advance this and quantizer after the event parsing. */
