@@ -235,7 +235,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		actionsBlock.onEachAction([&](const Action& action)
 		{
 			if (action.frame == global)
-				m_eventBuffer.push_back({EventType::ACTIONS, global, local, nullptr, &action, sceneChanged ? nextScene : currentScene});
+				m_eventBuffer.push_back({EventType::ACTIONS, global, local, &action, sceneChanged ? nextScene : currentScene});
 		});
 	});
 
