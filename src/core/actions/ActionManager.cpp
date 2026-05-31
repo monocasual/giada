@@ -164,7 +164,7 @@ void ActionManager::liveRec(ID channelId, Scene scene, MidiEvent e, Frame global
 	if (m_liveActions.size() >= m_liveActions.capacity())
 		m_liveActions.reserve(m_liveActions.size() + MAX_LIVE_RECS_CHUNK);
 
-	m_liveActions.push_back(actionFactory::makeAction(actionFactory::getNewActionId(), channelId, scene, globalFrame, e));
+	m_liveActions.push_back(actionFactory::makeAction_DEPR_(actionFactory::getNewActionId(), channelId, scene, globalFrame, e));
 }
 
 /* -------------------------------------------------------------------------- */

@@ -201,7 +201,7 @@ Action Actions::rec(ID channelId, Scene scene, Frame frame, MidiEvent event)
 	if (exists(channelId, scene, frame, event))
 		return {};
 
-	Action a = actionFactory::makeAction({}, channelId, scene, frame, event);
+	Action a = actionFactory::makeAction_DEPR_({}, channelId, scene, frame, event);
 
 	m_actions.push_back(a);
 	sort();
@@ -227,8 +227,8 @@ void Actions::rec(std::vector<Action>& actions, Scene scene)
 
 void Actions::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
-	Action a1 = actionFactory::makeAction({}, channelId, scene, f1, e1);
-	Action a2 = actionFactory::makeAction({}, channelId, scene, f2, e2);
+	Action a1 = actionFactory::makeAction_DEPR_({}, channelId, scene, f1, e1);
+	Action a2 = actionFactory::makeAction_DEPR_({}, channelId, scene, f2, e2);
 	m_actions.push_back(a1);
 	m_actions.push_back(a2);
 

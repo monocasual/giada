@@ -46,7 +46,7 @@ void reset()
 
 /* -------------------------------------------------------------------------- */
 
-Action makeAction(ID id, ID channelId, Scene scene, Frame frame, MidiEvent e)
+Action makeAction_DEPR_(ID id, ID channelId, Scene scene, Frame frame, MidiEvent e)
 {
 	Action out{actionId_.generate(id), channelId, scene, frame, {}, e, {}, -1};
 	actionId_.set(id);
