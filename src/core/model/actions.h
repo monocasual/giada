@@ -34,6 +34,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <span>
 #include <vector>
 
 namespace giada::m::model
@@ -41,29 +42,15 @@ namespace giada::m::model
 class Actions
 {
 public:
-	using Map = std::map<Frame, std::vector<Action>>;
-
-	/* forEachAction
-	Applies a read-only callback on each action recorded. NEVER do anything
-	inside the callback that might alter the ActionMap. */
-
-	void forEachAction(std::function<void(const Action&)> f) const;
-
 	/* getActionsOnChannel
 	Returns a vector of actions belonging to channel 'ch'. */
 
 	std::vector<Action> getActionsOnChannel(ID channelId, Scene) const;
 
-	/* getClosestAction
-	Given a frame 'f' returns the closest action. */
+	/* getActionsInSampleRange
+	Returns a span of all actions included in the required range. */
 
-	Action getClosestAction(ID channelId, Frame f, int type) const;
-
-	/* getActionsOnFrame
-	Returns a pointer to a vector of actions recorded on frame 'f', or nullptr
-	if the frame has no actions. */
-
-	const std::vector<Action>* getActionsOnFrame(Frame f) const;
+	const std::span<const Action> getActionsInSampleRange(SampleRange) const;
 
 	/* hasActions (1)
 	Checks if the channel has at least one action recorded. */
@@ -78,21 +65,22 @@ public:
 	/* getAll
 	Returns a reference to the internal map. */
 
-	const Map& getAll() const;
+	const std::vector<Action>& getAll() const;
 
 	/* findAction
 	Finds action given ID. Returns nullptr if not found. */
 
 	const Action* findAction(ID) const;
+	Action*       findAction(ID id);
 
 #if G_DEBUG_MODE
 	void debug() const;
 #endif
 
 	/* set
-	Sets a new whole map of actions. Use this when deserializing stuff. */
+	Sets a new whole vector of actions. Use this when deserializing stuff. */
 
-	void set(model::Actions::Map&&);
+	void set(std::vector<Action>&&);
 
 	/* clearAll
 	Deletes all recorded actions. */
@@ -159,20 +147,21 @@ public:
 	void rec(ID channelId, Scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 
 private:
-	bool exists(ID channelId, Scene, Frame frame, const MidiEvent& event, const Map& target) const;
-	bool exists(ID channelId, Scene, Frame frame, const MidiEvent& event) const;
+	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&, const std::vector<Action>& target) const;
+	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&) const;
 
-	Action*       findAction(Map& src, ID id);
-	const Action* findAction(const Map& src, ID id) const;
+	/* sort
+	Sorts the internal vector of Actions, frame-wise, ascending. Mandatory each
+	time you add a new Action. */
 
-	/* optimize
-	Removes frames without actions. */
+	void sort();
 
-	void optimize(Map& map);
+	/* m_actions
+	Stored actions. Must always be sorted frame-wise, ascending, to allow
+	the fetch alogrithm to work properly. Sorting is needed any time you add
+	a new action to the vector. */
 
-	void removeIf(std::function<bool(const Action&)> f);
-
-	Actions::Map m_actions;
+	std::vector<Action> m_actions;
 };
 } // namespace giada::m::model
 

@@ -41,6 +41,63 @@ namespace giada::m
 namespace
 {
 constexpr int Q_ACTION_REWIND = 0;
+
+/* -------------------------------------------------------------------------- */
+
+/* Block
+A pair of ranges that describe the current audio block to render from the Sequencer
+perspective, taking the wraparound at first beat into account. Head is always
+valid, tail can be valid if there is a wraparound in the current block. The
+'onEachFrame' helper method allows to process both ranges in one shot. */
+
+struct Block
+{
+	SampleRange head;
+	SampleRange tail;
+	Frame       nextFrame;
+
+	Block(Frame start, Frame end, int framesInLoop)
+	: head(start, std::min(end, framesInLoop))
+	, nextFrame(end % framesInLoop)
+	{
+		if (end > framesInLoop)
+			tail = {0, nextFrame};
+
+		assert(end - start == head.getLength() + tail.getLength());
+	}
+
+	template <typename F>
+	void onEachFrame(F&& fn) const
+	{
+		Frame local = 0;
+		for (Frame global = head.a; global < head.b; global++)
+			fn(global, local++);
+		if (tail.isValid())
+			for (Frame global = tail.a; global < tail.b; global++)
+				fn(global, local++);
+	}
+};
+
+/* -------------------------------------------------------------------------- */
+
+/* ActionsBlock
+Same concept of Block above, but here it's just a small helper to loop over the
+entire block, contiguously. */
+
+struct ActionsBlock
+{
+	std::span<const Action> head;
+	std::span<const Action> tail;
+
+	template <typename F>
+	void onEachAction(F&& fn) const
+	{
+		for (const Action& a : head)
+			fn(a);
+		for (const Action& a : tail)
+			fn(a);
+	}
+};
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -135,7 +192,6 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 	const Frame framesInLoop = sequencer.framesInLoop;
 	const Frame framesInBar  = sequencer.framesInBar;
 	const Frame framesInBeat = sequencer.framesInBeat;
-	const Frame nextFrame    = end % framesInLoop;
 
 	const Scene currentScene = sequencer.a_getCurrentScene();
 	const Scene nextScene    = sequencer.a_getNextScene();
@@ -143,10 +199,13 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	/* Process events in the current block. */
 
-	for (Frame i = start, local = 0; i < end; i++, local++)
-	{
-		Frame global = i % framesInLoop; // wraps around 'framesInLoop'
+	const Block        block(start, end, framesInLoop);
+	const ActionsBlock actionsBlock{
+	    actions.getActionsInSampleRange(block.head),
+	    actions.getActionsInSampleRange(block.tail)};
 
+	block.onEachFrame([&, this](Frame global, Frame local)
+	{
 		if (global == 0)
 		{
 			m_eventBuffer.push_back({EventType::FIRST_BEAT, global, local});
@@ -169,20 +228,29 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		{
 			m_metronome.trigger(Metronome::Click::BEAT, local);
 		}
+	});
 
-		/* Fetch actions in the current frame. Extra care is needed if the scene
-		has changed in this block: we need to process actions that belong to the
-		next scene, not the current one (which is the old one). */
+	/* Push actions from the current block into the event buffer. Extra care is
+	needed if the scene has changed in this block: we need to process actions
+	that belong to the next scene, not the current one (which is the old one). */
 
-		const std::vector<Action>* as = actions.getActionsOnFrame(global);
-		if (as != nullptr)
-			m_eventBuffer.push_back({EventType::ACTIONS, global, local, as, sceneChanged ? nextScene : currentScene});
-	}
+	actionsBlock.onEachAction([&](const Action& action)
+	{
+		/* Adjusting local offset requires more tweaking if the action belongs to
+		the tail block: it means the sequencer has wrapped around the loop and
+		we are fetching actions from the beginning. */
+
+		bool        inTail = block.tail.isValid() && block.tail.contains(action.frame);
+		const Frame offset = inTail ? block.head.getLength() : -block.head.a;
+		const Frame local  = action.frame + offset;
+
+		m_eventBuffer.push_back({EventType::ACTIONS, 0, local, &action, sceneChanged ? nextScene : currentScene});
+	});
 
 	/* Advance this and quantizer after the event parsing. */
 
-	sequencer.a_setCurrentFrame(nextFrame, m_currentSampleRate);
-	m_quantizer.advance(SampleRange(start, end), getQuantizerStep());
+	sequencer.a_setCurrentFrame(block.nextFrame, m_currentSampleRate);
+	m_quantizer.advance({start, end}, getQuantizerStep()); // TODO - this is wrong, pass block instead raw {start, end} range
 
 	return m_eventBuffer;
 }

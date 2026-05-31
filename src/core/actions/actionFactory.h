@@ -53,8 +53,8 @@ ID getNewActionId();
 /* (de)serializeActions
 Creates new Actions given the patch raw data and vice versa. */
 
-model::Actions::Map        deserializeActions(const std::vector<Patch::Action>&);
-std::vector<Patch::Action> serializeActions(const model::Actions::Map&);
+std::vector<Action>        deserializeActions(const std::vector<Patch::Action>&);
+std::vector<Patch::Action> serializeActions(const std::vector<Action>&);
 } // namespace giada::m::actionFactory
 
 #endif

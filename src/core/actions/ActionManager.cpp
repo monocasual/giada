@@ -354,7 +354,7 @@ void ActionManager::copyActions(ID channelId, Scene src, Scene dst, ID newChanne
 	std::vector<Action>        actions;
 	std::unordered_map<ID, ID> map; // Action ID mapper, old -> new
 
-	m_model.get().actions.forEachAction([&](const Action& a)
+	for (const Action& a : m_model.get().actions.getAll())
 	{
 		if (channelId.isValid() && (a.channelId != channelId || a.scene != src))
 			return;
@@ -369,7 +369,7 @@ void ActionManager::copyActions(ID channelId, Scene src, Scene dst, ID newChanne
 		clone.scene     = scene;
 
 		actions.push_back(clone);
-	});
+	};
 
 	/* Update nextId and prevId relationships given the new action ID. */
 

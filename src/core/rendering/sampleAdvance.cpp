@@ -114,29 +114,26 @@ void onNoteOn_(ChannelShared& shared, Frame localFrame, SamplePlayerMode mode, f
 
 /* -------------------------------------------------------------------------- */
 
-void parseActions_(ID channelId, Scene scene, ChannelShared& shared, const std::vector<Action>& as,
+void parseAction_(ID channelId, Scene scene, ChannelShared& shared, const Action& a,
     Frame localFrame, SamplePlayerMode mode)
 {
-	for (const Action& a : as)
+	if (a.channelId != channelId || a.scene != scene)
+		return;
+
+	switch (a.event.getStatus())
 	{
-		if (a.channelId != channelId || a.scene != scene)
-			continue;
+	case MidiEvent::CHANNEL_NOTE_ON:
+		onNoteOn_(shared, localFrame, mode, a.event.getVelocityFloat());
+		break;
 
-		switch (a.event.getStatus())
-		{
-		case MidiEvent::CHANNEL_NOTE_ON:
-			onNoteOn_(shared, localFrame, mode, a.event.getVelocityFloat());
-			break;
+	case MidiEvent::CHANNEL_NOTE_OFF:
+	case MidiEvent::CHANNEL_NOTE_KILL:
+		if (shared.playStatus.load() == ChannelStatus::PLAY)
+			stopSampleChannel(shared, localFrame);
+		break;
 
-		case MidiEvent::CHANNEL_NOTE_OFF:
-		case MidiEvent::CHANNEL_NOTE_KILL:
-			if (shared.playStatus.load() == ChannelStatus::PLAY)
-				stopSampleChannel(shared, localFrame);
-			break;
-
-		default:
-			break;
-		}
+	default:
+		break;
 	}
 }
 } // namespace
@@ -167,7 +164,7 @@ void advanceSampleChannel(const Channel& ch, const Sequencer::Event& e)
 
 	case Sequencer::EventType::ACTIONS:
 		if (!isLoop && ch.shared->isReadingActions())
-			parseActions_(ch.id, e.scene, *ch.shared, *e.actions, e.delta, mode);
+			parseAction_(ch.id, e.scene, *ch.shared, *e.action, e.delta, mode);
 		break;
 
 	default:

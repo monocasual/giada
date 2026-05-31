@@ -39,6 +39,7 @@ list(APPEND SOURCES
 	src/mapper.cpp
 	src/mapper.h
 	src/version.h
+	src/tick.h
 	src/core/engine.cpp
 	src/core/engine.h
 	src/core/rendering/renderer.cpp

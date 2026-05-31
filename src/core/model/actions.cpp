@@ -39,9 +39,10 @@ namespace utils = mcl::utils;
 
 namespace giada::m::model
 {
-void Actions::set(model::Actions::Map&& actions)
+void Actions::set(std::vector<Action>&& actions)
 {
 	m_actions = std::move(actions);
+	sort(); // Always assume unsorted data coming in
 }
 
 void Actions::clearAll()
@@ -53,7 +54,7 @@ void Actions::clearAll()
 
 void Actions::clearChannel(ID channelId, Scene scene)
 {
-	removeIf([=](const Action& a)
+	utils::container::removeIf(m_actions, [=](const Action& a)
 	{ return a.channelId == channelId && a.scene == scene; });
 }
 
@@ -61,7 +62,7 @@ void Actions::clearChannel(ID channelId, Scene scene)
 
 void Actions::clearActions(ID channelId, int type)
 {
-	removeIf([=](const Action& a)
+	utils::container::removeIf(m_actions, [=](const Action& a)
 	{
 		return a.channelId == channelId && a.event.getStatus() == type;
 	});
@@ -69,7 +70,7 @@ void Actions::clearActions(ID channelId, int type)
 
 void Actions::clearActions(Scene scene)
 {
-	removeIf([=](const Action& a)
+	utils::container::removeIf(m_actions, [=](const Action& a)
 	{ return a.scene == scene; });
 }
 
@@ -77,13 +78,13 @@ void Actions::clearActions(Scene scene)
 
 void Actions::deleteAction(ID id)
 {
-	removeIf([=](const Action& a)
+	utils::container::removeIf(m_actions, [=](const Action& a)
 	{ return a.id == id; });
 }
 
 void Actions::deleteAction(ID currId, ID nextId)
 {
-	removeIf([=](const Action& a)
+	utils::container::removeIf(m_actions, [=](const Action& a)
 	{ return a.id == currId || a.id == nextId; });
 }
 
@@ -91,31 +92,32 @@ void Actions::deleteAction(ID currId, ID nextId)
 
 void Actions::updateKeyFrames(std::function<Frame(Frame old)> f)
 {
-	Map temp;
+	std::vector<Action> temp;
 
 	/* Copy all existing actions in local map by cloning them, with just a
 	difference: they have a new frame value. */
 
-	for (const auto& [oldFrame, actions] : m_actions)
+	for (const Action& a : m_actions)
 	{
-		Frame newFrame = f(oldFrame);
-		for (const Action& a : actions)
-		{
-			Action copy = a;
-			copy.frame  = newFrame;
-			temp[newFrame].push_back(copy);
-		}
+		const Frame oldFrame = a.frame;
+		const Frame newFrame = f(oldFrame);
+
+		Action copy = a;
+		copy.frame  = newFrame;
+		temp.push_back(copy);
 		G_DEBUG("{} -> {}", oldFrame, newFrame);
 	}
 
 	m_actions = std::move(temp);
+
+	sort();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Actions::updateEvent(ID id, MidiEvent e)
 {
-	Action* a = findAction(m_actions, id);
+	Action* a = findAction(id);
 	assert(a != nullptr);
 	a->event = e;
 }
@@ -124,9 +126,9 @@ void Actions::updateEvent(ID id, MidiEvent e)
 
 void Actions::updateSiblings(ID id, ID prevId, ID nextId)
 {
-	Action* pcurr = findAction(m_actions, id);
-	Action* pprev = findAction(m_actions, prevId);
-	Action* pnext = findAction(m_actions, nextId);
+	Action* pcurr = findAction(id);
+	Action* pprev = findAction(prevId);
+	Action* pnext = findAction(nextId);
 
 	pcurr->prevId = pprev->id;
 	pcurr->nextId = pnext->id;
@@ -145,32 +147,35 @@ void Actions::updateSiblings(ID id, ID prevId, ID nextId)
 
 bool Actions::hasActions(ID channelId, int type) const
 {
-	for (const auto& [frame, actions] : m_actions)
-		for (const Action& a : actions)
-			if (a.channelId == channelId && (type == 0 || type == a.event.getStatus()))
-				return true;
+	for (const Action& a : m_actions)
+		if (a.channelId == channelId && (type == 0 || type == a.event.getStatus()))
+			return true;
 	return false;
 }
 
 bool Actions::hasActions(Scene scene) const
 {
-	return utils::container::hasIf(m_actions, [scene](const auto& pair)
-	{
-		const auto& [_, actions] = pair;
-		for (const Action& a : actions)
-			if (a.scene == scene)
-				return true;
-		return false;
-	});
+	for (const Action& a : m_actions)
+		if (a.scene == scene)
+			return true;
+	return false;
 }
 
 /* -------------------------------------------------------------------------- */
 
-const Actions::Map& Actions::getAll() const { return m_actions; }
+const std::vector<Action>& Actions::getAll() const { return m_actions; }
 
 /* -------------------------------------------------------------------------- */
 
-const Action* Actions::findAction(ID id) const { return findAction(m_actions, id); }
+const Action* Actions::findAction(ID id) const
+{
+	if (!id.isValid())
+		return nullptr;
+	for (const Action& a : m_actions)
+		if (a.id == id)
+			return &a;
+	return nullptr;
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -179,14 +184,10 @@ const Action* Actions::findAction(ID id) const { return findAction(m_actions, id
 void Actions::debug() const
 {
 	puts("model::actions");
-
-	for (const auto& [frame, actions] : m_actions)
-	{
-		fmt::print("\tframe: {}\n", frame);
-		for (const Action& a : actions)
-			fmt::print("\t\t({}) - ID={}, scene={}, frame={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
-			    (void*)&a, a.id.getValue(), a.scene.getIndex(), a.frame, a.channelId.getValue(), a.event.getRaw(), a.prevId.getValue(), a.nextId.getValue());
-	}
+	for (const Action& a : m_actions)
+		fmt::print("\t\tframe={}, ID={}, scene={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
+		    a.frame, a.id.getValue(), a.scene.getIndex(), a.channelId.getValue(), a.event.getRaw(),
+		    a.prevId.getValue(), a.nextId.getValue());
 }
 
 #endif
@@ -202,10 +203,8 @@ Action Actions::rec(ID channelId, Scene scene, Frame frame, MidiEvent event)
 
 	Action a = actionFactory::makeAction({}, channelId, scene, frame, event);
 
-	/* If key frame doesn't exist yet, the [] operator in std::map is smart
-	enough to insert a new item first. No plug-in data for now. */
-
-	m_actions[frame].push_back(a);
+	m_actions.push_back(a);
+	sort();
 
 	return a;
 }
@@ -218,45 +217,46 @@ void Actions::rec(std::vector<Action>& actions, Scene scene)
 		return;
 
 	for (const Action& a : actions)
-		if (!exists(a.channelId, scene, a.frame, a.event, m_actions))
-			m_actions[a.frame].push_back(a);
+		if (!exists(a.channelId, scene, a.frame, a.event))
+			m_actions.push_back(a);
+
+	sort();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Actions::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
-	m_actions[f1].push_back(actionFactory::makeAction({}, channelId, scene, f1, e1));
-	m_actions[f2].push_back(actionFactory::makeAction({}, channelId, scene, f2, e2));
+	Action a1 = actionFactory::makeAction({}, channelId, scene, f1, e1);
+	Action a2 = actionFactory::makeAction({}, channelId, scene, f2, e2);
+	m_actions.push_back(a1);
+	m_actions.push_back(a2);
 
-	Action* a1 = findAction(m_actions, m_actions[f1].back().id);
-	Action* a2 = findAction(m_actions, m_actions[f2].back().id);
-	a1->nextId = a2->id;
-	a2->prevId = a1->id;
+	Action* a1ptr = findAction(a1.id);
+	Action* a2ptr = findAction(a2.id);
+
+	assert(a1ptr != nullptr && a2ptr != nullptr);
+
+	a1ptr->nextId = a2ptr->id;
+	a2ptr->prevId = a1ptr->id;
+
+	sort();
 }
 
 /* -------------------------------------------------------------------------- */
 
-const std::vector<Action>* Actions::getActionsOnFrame(Frame frame) const
+const std::span<const Action> Actions::getActionsInSampleRange(SampleRange r) const
 {
-	if (m_actions.count(frame) == 0)
-		return nullptr;
-	return &m_actions.at(frame);
-}
+	if (!r.isValid())
+		return {};
 
-/* -------------------------------------------------------------------------- */
+	const auto first = std::lower_bound(m_actions.begin(), m_actions.end(), r.a, [](const Action& a, Frame value)
+	{ return a.frame < value; });
 
-Action Actions::getClosestAction(ID channelId, Frame f, int type) const
-{
-	Action out = {};
-	forEachAction([&](const Action& a)
-	{
-		if (a.event.getStatus() != type || a.channelId != channelId)
-			return;
-		if (!out.isValid() || (a.frame <= f && a.frame > out.frame))
-			out = a;
-	});
-	return out;
+	const auto last = std::lower_bound(m_actions.begin(), m_actions.end(), r.b, [](const Action& a, Frame value)
+	{ return a.frame < value; });
+
+	return {first, last};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -264,66 +264,33 @@ Action Actions::getClosestAction(ID channelId, Frame f, int type) const
 std::vector<Action> Actions::getActionsOnChannel(ID channelId, Scene scene) const
 {
 	std::vector<Action> out;
-	forEachAction([&](const Action& a)
-	{
+	for (const Action& a : m_actions)
 		if (a.channelId == channelId && a.scene == scene)
 			out.push_back(a);
-	});
 	return out;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Actions::forEachAction(std::function<void(const Action&)> f) const
+Action* Actions::findAction(ID id)
 {
-	for (auto& [_, actions] : m_actions)
-		for (const Action& action : actions)
-			f(action);
+	return const_cast<Action*>(std::as_const(*this).findAction(id));
 }
 
 /* -------------------------------------------------------------------------- */
 
-const Action* Actions::findAction(const Map& src, ID id) const
+void Actions::sort()
 {
-	if (!id.isValid())
-		return nullptr;
-	for (const auto& [frame, actions] : src)
-		for (const Action& a : actions)
-			if (a.id == id)
-				return &a;
-	return nullptr;
-}
-
-Action* Actions::findAction(Map& src, ID id)
-{
-	return const_cast<Action*>(std::as_const(*this).findAction(src, id));
+	std::ranges::sort(m_actions, std::ranges::less{}, &Action::frame);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void Actions::optimize(Map& map)
+bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& event, const std::vector<Action>& target) const
 {
-	for (auto it = map.cbegin(); it != map.cend();)
-		it->second.size() == 0 ? it = map.erase(it) : ++it;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void Actions::removeIf(std::function<bool(const Action&)> f)
-{
-	for (auto& [frame, actions] : m_actions)
-		actions.erase(std::remove_if(actions.begin(), actions.end(), f), actions.end());
-	optimize(m_actions);
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& event, const Map& target) const
-{
-	for (const auto& [_, actions] : target)
-		for (const Action& a : actions)
-			if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw() && a.scene == scene)
-				return true;
+	for (const Action& a : target)
+		if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw() && a.scene == scene)
+			return true;
 	return false;
 }
 

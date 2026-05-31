@@ -41,7 +41,7 @@ void advanceMidiChannel(const Channel& ch, const Sequencer::Event& e, KernelMidi
 
 	case Sequencer::EventType::ACTIONS:
 		if (ch.isPlaying())
-			sendMidiFromActions(ch, e.scene, *e.actions, e.delta, kernelMidi);
+			sendMidiFromAction(ch, e.scene, *e.action, e.delta, kernelMidi);
 		break;
 
 	default:

@@ -67,11 +67,11 @@ public:
 
 	struct Event
 	{
-		EventType                  type    = EventType::NONE;
-		Frame                      global  = 0;
-		Frame                      delta   = 0;
-		const std::vector<Action>* actions = nullptr;
-		Scene                      scene   = {};
+		EventType     type   = EventType::NONE;
+		Frame         global = 0; // Where the event occurs in the whole sequencer [0, framesInLoop)
+		Frame         delta  = 0; // Where the event occurs in the current block [0, blockSize)
+		const Action* action = nullptr;
+		Scene         scene  = {};
 	};
 
 	using EventBuffer = RingBuffer<Event, G_MAX_SEQUENCER_EVENTS>;

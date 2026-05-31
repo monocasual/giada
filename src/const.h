@@ -76,6 +76,9 @@ constexpr ID MASTER_OUT_CHANNEL_ID = ID{1};
 constexpr ID MASTER_IN_CHANNEL_ID  = ID{2};
 constexpr ID PREVIEW_CHANNEL_ID    = ID{3};
 
+/* -- Musical time / audio time --------------------------------------------- */
+constexpr int G_PPQ = 960;
+
 /* -- Min/max values -------------------------------------------------------- */
 // TODO - move other min/max values from src/core/const.h
 constexpr std::size_t G_MAX_NUM_SCENES = 8;

@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * utils
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2026 Giovanni A. Zuliani | Monocasual Laboratories
@@ -26,36 +24,61 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_UTILS_TIME_H
-#define G_UTILS_TIME_H
+#ifndef G_TICK_H
+#define G_TICK_H
 
-#include "src/tick.h"
-#include "src/types.h"
+#include <compare>
+#include <cstdint>
 
-namespace giada::u::time
+namespace giada
 {
-/* beatToFrame
-Returns the frame a beat corresponds to. */
+class Tick final
+{
+public:
+	using Value = std::int64_t;
 
-Frame beatToFrame(int beat, int sampleRate, float bpm);
+	constexpr Tick() noexcept = default;
 
-/* frameToBeat
-Returns the beat a frame corresponds to. */
+	explicit constexpr Tick(Value value) noexcept
+	: m_value(value)
+	{
+	}
 
-int frameToBeat(Frame frame, int sampleRate, float bpm);
+	[[nodiscard]] constexpr Value value() const noexcept
+	{
+		return m_value;
+	}
 
-/* tickToFrame
-Converts Tick -> Frame. */
-Frame tickToFrame(Tick, int sampleRate, float bpm);
+	constexpr Tick& operator+=(Tick other) noexcept
+	{
+		m_value += other.m_value;
+		return *this;
+	}
 
-/* frameToTick[...]
-Converts Frame -> Tick. Two different rounding modes since the frame -> tick
-conversion is not always exact: the result may lie between two integer tick
-values. These variants expose the two possible integer bounds, floor and ceil. */
+	constexpr Tick& operator-=(Tick other) noexcept
+	{
+		m_value -= other.m_value;
+		return *this;
+	}
 
-Tick frameToTickFloor(Frame, int sampleRate, float bpm);
-Tick frameToTickCeil(Frame, int sampleRate, float bpm);
+	[[nodiscard]] friend constexpr Tick operator+(Tick lhs, Tick rhs) noexcept
+	{
+		lhs += rhs;
+		return lhs;
+	}
 
-} // namespace giada::u::time
+	[[nodiscard]] friend constexpr Tick operator-(Tick lhs, Tick rhs) noexcept
+	{
+		lhs -= rhs;
+		return lhs;
+	}
+
+	[[nodiscard]] friend constexpr auto operator<=>(Tick, Tick) noexcept = default;
+	[[nodiscard]] friend constexpr bool operator==(Tick, Tick) noexcept  = default;
+
+private:
+	Value m_value = 0;
+};
+} // namespace giada
 
 #endif

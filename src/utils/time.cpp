@@ -28,10 +28,26 @@
 
 #include "src/utils/time.h"
 #include <chrono>
+#include <cmath>
 #include <thread>
 
 namespace giada::u::time
 {
+namespace
+{
+double frameToTickAsDouble_(Frame frame, int sampleRate, float bpm)
+{
+	// ticks = frame * (ppq * bpm) / (sampleRate * 60.0);
+	return static_cast<double>(frame) *
+	       (static_cast<double>(G_PPQ) * bpm) /
+	       (sampleRate * 60.0);
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 Frame beatToFrame(int beat, int sampleRate, float bpm)
 {
 	return static_cast<Frame>((sampleRate * (60.0f / bpm)) * beat);
@@ -42,5 +58,30 @@ Frame beatToFrame(int beat, int sampleRate, float bpm)
 int frameToBeat(Frame frame, int sampleRate, float bpm)
 {
 	return static_cast<int>(frame / (sampleRate * (60.0f / bpm)));
+}
+
+/* -------------------------------------------------------------------------- */
+
+Frame tickToFrame(Tick tick, int sampleRate, float bpm)
+{
+	// frames = ticks * sampleRate * 60.0 / (ppq * bpm);
+	const double frameDouble = static_cast<double>(tick.value()) *
+	                           static_cast<double>(sampleRate) * 60.0 /
+	                           (static_cast<double>(G_PPQ) * bpm);
+	return static_cast<Frame>(std::llround(frameDouble));
+}
+
+/* -------------------------------------------------------------------------- */
+
+Tick frameToTickFloor(Frame frame, int sampleRate, float bpm)
+{
+	const double tickDouble = frameToTickAsDouble_(frame, sampleRate, bpm);
+	return Tick{static_cast<Tick::Value>(std::floor(tickDouble))};
+}
+
+Tick frameToTickCeil(Frame frame, int sampleRate, float bpm)
+{
+	const double tickDouble = frameToTickAsDouble_(frame, sampleRate, bpm);
+	return Tick{static_cast<Tick::Value>(std::ceil(tickDouble))};
 }
 } // namespace giada::u::time
