@@ -209,6 +209,21 @@ Action Actions::rec_DEPR_(ID channelId, Scene scene, Frame frame, MidiEvent even
 	return a;
 }
 
+Action Actions::rec(ID channelId, Scene scene, Tick tick, MidiEvent event)
+{
+	/* Skip duplicates. */
+
+	if (exists(channelId, scene, tick, event))
+		return {};
+
+	Action a = actionFactory::makeAction({}, channelId, scene, tick, event);
+
+	m_actions.push_back(a);
+	sort();
+
+	return a;
+}
+
 /* -------------------------------------------------------------------------- */
 
 void Actions::rec(std::vector<Action>& actions, Scene scene)
@@ -294,10 +309,23 @@ bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& ev
 	return false;
 }
 
+bool Actions::exists(ID channelId, Scene scene, Tick tick, const MidiEvent& event, const std::vector<Action>& target) const
+{
+	for (const Action& a : target)
+		if (a.channelId == channelId && a.tick == tick && a.event.getRaw() == event.getRaw() && a.scene == scene)
+			return true;
+	return false;
+}
+
 /* -------------------------------------------------------------------------- */
 
 bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& event) const
 {
 	return exists(channelId, scene, frame, event, m_actions);
+}
+
+bool Actions::exists(ID channelId, Scene scene, Tick tick, const MidiEvent& event) const
+{
+	return exists(channelId, scene, tick, event, m_actions);
 }
 } // namespace giada::m::model

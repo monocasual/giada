@@ -133,6 +133,7 @@ public:
 	Records an action and returns it. Used by the Action Editor. */
 
 	Action rec_DEPR_(ID channelId, Scene, Frame frame, MidiEvent e);
+	Action rec(ID channelId, Scene, Tick, MidiEvent e);
 
 	/* rec (2)
 	Transfer a vector of actions into the current ActionMap. This is called by
@@ -149,6 +150,8 @@ public:
 private:
 	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&, const std::vector<Action>& target) const;
 	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&) const;
+	bool exists(ID channelId, Scene, Tick, const MidiEvent&, const std::vector<Action>& target) const;
+	bool exists(ID channelId, Scene, Tick, const MidiEvent&) const;
 
 	/* sort
 	Sorts the internal vector of Actions, frame-wise, ascending. Mandatory each
