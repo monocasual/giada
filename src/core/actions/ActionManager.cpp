@@ -67,6 +67,20 @@ std::tuple<Frame, Frame> sanitizeFrames_(Frame f1, Frame f2, int framesInLoop)
 	return {f1, f2};
 }
 
+TickRange sanitizeTickRange_(TickRange r, Tick ticksInLoop)
+{
+	if (!r.isValid())
+		r.b = r.a + G_DEFAULT_ACTION_SIZE;
+
+	/* Avoid overflow. */
+
+	const Tick overflow = r.b - ticksInLoop + Tick{1};
+	if (overflow > Tick{0})
+		r -= overflow;
+
+	return r;
+}
+
 Frame sanitizeFrame_(Frame f, int framesInLoop)
 {
 	return std::min(f, framesInLoop - 1);
@@ -180,6 +194,18 @@ void ActionManager::recordMidiAction_DEPR_(ID channelId, Scene scene, int note, 
 	e2.setVelocityFloat(velocity);
 
 	rec_DEPR_(channelId, scene, ff1, ff2, e1, e2);
+}
+
+void ActionManager::recordMidiAction(ID channelId, Scene scene, int note, float velocity,
+    TickRange range, Tick ticksInLoop)
+{
+	MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, note, 0);
+	MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, note, 0);
+
+	e1.setVelocityFloat(velocity);
+	e2.setVelocityFloat(velocity);
+
+	rec(channelId, scene, sanitizeTickRange_(range, ticksInLoop), e1, e2);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -434,6 +460,12 @@ Action ActionManager::rec_DEPR_(ID channelId, Scene scene, Frame frame, MidiEven
 void ActionManager::rec_DEPR_(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
 	m_model.get().actions.rec_DEPR_(channelId, scene, f1, f2, e1, e2);
+	m_model.swap(model::SwapType::HARD);
+}
+
+void ActionManager::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1, MidiEvent e2)
+{
+	m_model.get().actions.rec(channelId, scene, range, e1, e2);
 	m_model.swap(model::SwapType::HARD);
 }
 

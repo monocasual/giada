@@ -87,6 +87,7 @@ public:
 	/* record*Action */
 
 	void recordMidiAction_DEPR_(ID channelId, Scene, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
+	void recordMidiAction(ID channelId, Scene scene, int note, float velocity, TickRange, Tick ticksInLoop);
 	void recordSampleAction_DEPR_(ID channelId, Scene, int type, Frame f1, Frame f2, Frame framesInLoop);
 
 	/* delete*Action */
@@ -128,6 +129,7 @@ public:
 	void   clearActions(ID channelId, int type);
 	Action rec_DEPR_(ID channelId, Scene, Frame frame, MidiEvent e);
 	void   rec_DEPR_(ID channelId, Scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
+	void   rec(ID channelId, Scene, TickRange, MidiEvent e1, MidiEvent e2);
 	void   updateSiblings(ID id, ID prevId, ID nextId);
 	void   deleteAction(ID id);
 	void   deleteAction(ID currId, ID nextId);
