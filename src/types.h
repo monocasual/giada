@@ -99,6 +99,12 @@ struct Sample
 	Frame       shift = 0;
 	float       pitch = 1.0;
 };
+
+struct TimeSignature
+{
+	int beats = G_DEFAULT_BEATS;
+	int bars  = G_DEFAULT_BARS;
+};
 } // namespace giada
 
 #endif

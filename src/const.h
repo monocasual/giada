@@ -87,7 +87,8 @@ constexpr std::size_t G_INVALID_SCENE  = G_MAX_NUM_SCENES;
 
 /* -- Default values -------------------------------------------------------- */
 constexpr Tick G_DEFAULT_ACTION_SIZE = G_PPQ / 4; // 1/16th note
-
+constexpr int  G_DEFAULT_BEATS       = 4;
+constexpr int  G_DEFAULT_BARS        = 1;
 } // namespace giada
 
 #endif
