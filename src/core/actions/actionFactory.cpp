@@ -48,7 +48,7 @@ void reset()
 
 Action makeAction(ID id, ID channelId, Scene scene, Frame frame, MidiEvent e)
 {
-	Action out{actionId_.generate(id), channelId, scene, frame, e, {}, -1};
+	Action out{actionId_.generate(id), channelId, scene, frame, {}, e, {}, -1};
 	actionId_.set(id);
 	return out;
 }
@@ -56,7 +56,7 @@ Action makeAction(ID id, ID channelId, Scene scene, Frame frame, MidiEvent e)
 Action makeAction(const Patch::Action& a)
 {
 	actionId_.set(a.id);
-	return Action{a.id, a.channelId, Scene{a.scene}, a.frame,
+	return Action{a.id, a.channelId, Scene{a.scene}, a.frame, {},
 	    MidiEvent::makeFromRaw(a.event, /*numBytes=*/3), {}, -1, a.prevId, a.nextId};
 }
 
