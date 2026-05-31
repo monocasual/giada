@@ -53,6 +53,13 @@ Action makeAction_DEPR_(ID id, ID channelId, Scene scene, Frame frame, MidiEvent
 	return out;
 }
 
+Action makeAction(ID id, ID channelId, Scene scene, Tick tick, MidiEvent e)
+{
+	Action out{actionId_.generate(id), channelId, scene, 0, tick, e, {}, -1};
+	actionId_.set(id);
+	return out;
+}
+
 Action makeAction(const Patch::Action& a)
 {
 	actionId_.set(a.id);
