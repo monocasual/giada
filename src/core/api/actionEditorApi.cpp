@@ -59,6 +59,12 @@ void ActionEditorApi::recordMidiAction_DEPR_(ID channelId, int note, float veloc
 	m_actionManager.recordMidiAction_DEPR_(channelId, m_sequencer.getCurrentScene(), note, velocity, f1, f2, m_sequencer.getFramesInLoop());
 }
 
+void ActionEditorApi::recordMidiAction(ID channelId, int note, float velocity, TickRange range)
+{
+	m_actionManager.recordMidiAction(channelId, m_sequencer.getCurrentScene(),
+	    note, velocity, range, m_sequencer.getTicksInLoop());
+}
+
 /* -------------------------------------------------------------------------- */
 
 void ActionEditorApi::deleteMidiAction(ID channelId, const Action& a)
