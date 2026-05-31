@@ -19,6 +19,20 @@
 		</screenshot>
 	</screenshots>
 	<releases>
+		<release version="1.4.2" date="2026-06-02">
+			<description>
+				<p>This is the second bugfix release in the 1.4 series which makes working with scenes smoother and more flexible, fixes a few annoyances, and brings some welcome cleanup under the hood.</p>
+				<ul>
+					<li>Add ability to copy the entire scene to another;</li>
+					<li>Add ability to force-change a scene;</li>
+					<li>Add ability to clear all actions in current scene or in all scenes;</li>
+					<li>Add ability to free all sample channels in current scene or in all scenes;</li>
+					<li>Add missing pop-over labels to scene buttons;</li>
+					<li>Fix sample channels being killed abruptly on scene change;</li>
+					<li>Minor refactoring and code cleanup.</li>
+				</ul>
+			</description>
+		</release>
 		<release version="1.4.1" date="2026-05-10">
 			<description>
 				<p>This is a bugfix release that makes Giada feel smoother and more flexible, with better scene and channel workflow, customizable keyboard and MIDI control for switching scenes and a round of fixes for playback, editing, file browsing, and plug-in stability.</p>

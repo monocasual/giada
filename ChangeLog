@@ -1,3 +1,13 @@
+1.4.2 --- 2026 . 06 . 02
+- Add ability to copy the entire scene to another
+- Add ability to force-change a scene
+- Add ability to clear all actions in current scene or in all scenes
+- Add ability to free all sample channels in current scene or in all scenes
+- Add missing pop-over labels to scene buttons
+- Fix sample channels being killed abruptly on scene change
+- Minor refactoring and code cleanup
+
+
 1.4.1 --- 2026 . 05 . 10
 - Enable scene switching via keyboard or MIDI, with support for custom bindings
 - Display inactive scenes (i.e. with no audio or actions)
