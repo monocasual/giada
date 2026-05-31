@@ -80,7 +80,8 @@ public:
 	void a_setNextScene(Scene) const;
 	void a_setSceneStatus(SceneStatus) const;
 
-	float getBpm() const;
+	float         getBpm() const;
+	TimeSignature getTimeSignature() const;
 
 	/* reset
 	Resets beats, bars, bpm and quantize to default values. */
@@ -88,6 +89,7 @@ public:
 	void reset();
 
 	void setBpm(float);
+	void setTimeSignature(TimeSignature);
 	void recomputeFrames(int sampleRate);
 
 	SeqStatus status       = SeqStatus::STOPPED;
@@ -95,8 +97,6 @@ public:
 	int       framesInBar  = 0;
 	int       framesInBeat = 0;
 	int       framesInSeq  = 0;
-	int       bars         = G_DEFAULT_BARS;
-	int       beats        = G_DEFAULT_BEATS;
 	int       quantize     = G_DEFAULT_QUANTIZE;
 	bool      metronome    = false;
 
@@ -117,7 +117,8 @@ private:
 
 	Shared* shared = nullptr;
 
-	float m_bpm = G_DEFAULT_BPM;
+	float         m_bpm = G_DEFAULT_BPM;
+	TimeSignature m_timeSignature;
 };
 } // namespace giada::m::model
 

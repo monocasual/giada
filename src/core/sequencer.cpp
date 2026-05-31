@@ -126,8 +126,8 @@ bool        Sequencer::isOnBar() const { return m_model.get().sequencer.a_isOnBa
 bool        Sequencer::isOnBeat() const { return m_model.get().sequencer.a_isOnBeat(); }
 bool        Sequencer::isOnFirstBeat() const { return m_model.get().sequencer.a_isOnFirstBeat(); }
 float       Sequencer::getBpm() const { return m_model.get().sequencer.getBpm(); }
-int         Sequencer::getBeats() const { return m_model.get().sequencer.beats; }
-int         Sequencer::getBars() const { return m_model.get().sequencer.bars; }
+int         Sequencer::getBeats() const { return m_model.get().sequencer.getTimeSignature().beats; }
+int         Sequencer::getBars() const { return m_model.get().sequencer.getTimeSignature().bars; }
 int         Sequencer::getCurrentBeat() const { return m_model.get().sequencer.a_getCurrentBeat(); }
 Frame       Sequencer::getCurrentFrame() const { return m_model.get().sequencer.a_getCurrentFrame(); }
 Frame       Sequencer::getCurrentFrameQuantized() const { return quantize(getCurrentFrame()); }
@@ -404,11 +404,7 @@ void Sequencer::rawSetBpm(float v)
 
 void Sequencer::setBeats(int newBeats, int newBars)
 {
-	newBeats = std::clamp(newBeats, 1, G_MAX_BEATS);
-	newBars  = std::clamp(newBars, 1, newBeats); // Bars cannot be greater than beats
-
-	m_model.get().sequencer.beats = newBeats;
-	m_model.get().sequencer.bars  = newBars;
+	m_model.get().sequencer.setTimeSignature({newBeats, newBars});
 	m_model.swap(model::SwapType::HARD);
 
 	recomputeFrames();

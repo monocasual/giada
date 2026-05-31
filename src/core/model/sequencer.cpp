@@ -109,7 +109,7 @@ SceneStatus Sequencer::a_getSceneStatus() const
 
 int Sequencer::getMaxFramesInLoop(int sampleRate) const
 {
-	return (sampleRate * (60.0f / G_MIN_BPM)) * beats;
+	return (sampleRate * (60.0f / G_MIN_BPM)) * m_timeSignature.beats;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -149,23 +149,23 @@ void Sequencer::a_setSceneStatus(SceneStatus s) const
 
 /* -------------------------------------------------------------------------- */
 
-float Sequencer::getBpm() const { return m_bpm; }
+float         Sequencer::getBpm() const { return m_bpm; }
+TimeSignature Sequencer::getTimeSignature() const { return m_timeSignature; }
 
 /* -------------------------------------------------------------------------- */
 
 void Sequencer::reset()
 {
-	bars     = G_DEFAULT_BARS;
-	beats    = G_DEFAULT_BEATS;
-	m_bpm    = G_DEFAULT_BPM;
-	quantize = G_DEFAULT_QUANTIZE;
+	m_bpm           = G_DEFAULT_BPM;
+	m_timeSignature = {};
+	quantize        = G_DEFAULT_QUANTIZE;
 }
 
 void Sequencer::recomputeFrames(int sampleRate)
 {
 	framesInBeat = u::time::beatToFrame(1, sampleRate, m_bpm);
-	framesInLoop = framesInBeat * beats;
-	framesInBar  = framesInLoop / (float)bars;
+	framesInLoop = framesInBeat * m_timeSignature.beats;
+	framesInBar  = framesInLoop / (float)m_timeSignature.bars;
 	framesInSeq  = framesInBeat * G_MAX_BEATS;
 }
 
@@ -174,5 +174,13 @@ void Sequencer::recomputeFrames(int sampleRate)
 void Sequencer::setBpm(float v)
 {
 	m_bpm = std::clamp(v, G_MIN_BPM, G_MAX_BPM);
+}
+
+void Sequencer::setTimeSignature(TimeSignature t)
+{
+	t.beats = std::clamp(t.beats, 1, G_MAX_BEATS);
+	t.bars  = std::clamp(t.bars, 1, t.beats); // Bars cannot be greater than beats
+
+	m_timeSignature = t;
 }
 } // namespace giada::m::model
