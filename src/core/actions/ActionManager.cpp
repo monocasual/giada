@@ -433,7 +433,7 @@ Action ActionManager::rec_DEPR_(ID channelId, Scene scene, Frame frame, MidiEven
 
 void ActionManager::rec_DEPR_(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
-	m_model.get().actions.rec(channelId, scene, f1, f2, e1, e2);
+	m_model.get().actions.rec_DEPR_(channelId, scene, f1, f2, e1, e2);
 	m_model.swap(model::SwapType::HARD);
 }
 

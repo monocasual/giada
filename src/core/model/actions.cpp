@@ -240,7 +240,7 @@ void Actions::rec(std::vector<Action>& actions, Scene scene)
 
 /* -------------------------------------------------------------------------- */
 
-void Actions::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
+void Actions::rec_DEPR_(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
 	Action a1 = actionFactory::makeAction_DEPR_({}, channelId, scene, f1, e1);
 	Action a2 = actionFactory::makeAction_DEPR_({}, channelId, scene, f2, e2);

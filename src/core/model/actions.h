@@ -145,7 +145,7 @@ public:
 	Records two actions on channel 'channel'. Useful when recording composite
 	actions in the Action Editor. */
 
-	void rec(ID channelId, Scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
+	void rec_DEPR_(ID channelId, Scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 
 private:
 	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&, const std::vector<Action>& target) const;
