@@ -28,6 +28,7 @@
 #define G_CONST_H
 
 #include "src/aliases.h"
+#include "src/tick.h"
 #include "src/version.h"
 
 namespace giada
@@ -83,6 +84,9 @@ constexpr int G_PPQ = 960;
 // TODO - move other min/max values from src/core/const.h
 constexpr std::size_t G_MAX_NUM_SCENES = 8;
 constexpr std::size_t G_INVALID_SCENE  = G_MAX_NUM_SCENES;
+
+/* -- Default values -------------------------------------------------------- */
+constexpr Tick G_DEFAULT_ACTION_SIZE = G_PPQ / 4; // 1/16th note
 
 } // namespace giada
 

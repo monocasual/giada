@@ -90,7 +90,7 @@ constexpr int          G_DEFAULT_BARS                = 1;
 constexpr int          G_DEFAULT_QUANTIZE            = 0;     // quantizer off
 constexpr float        G_DEFAULT_FADEOUT_STEP        = 0.01f; // micro-fadeout speed
 constexpr auto         G_DEFAULT_PATCH_NAME          = "(default patch)";
-constexpr int          G_DEFAULT_ACTION_SIZE         = 8192; // frames
+constexpr int          G_DEFAULT_ACTION_SIZE_depr_   = 8192; // frames
 constexpr float        G_DEFAULT_REC_TRIGGER_LEVEL   = -10.0f;
 constexpr int          G_DEFAULT_VST_MIDIBUFFER_SIZE = 1024; // TODO - not 100% sure about this size
 

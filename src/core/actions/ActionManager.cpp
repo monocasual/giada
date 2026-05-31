@@ -53,7 +53,7 @@ constexpr int MAX_LIVE_RECS_CHUNK = 128;
 std::tuple<Frame, Frame> sanitizeFrames_(Frame f1, Frame f2, int framesInLoop)
 {
 	if (f2 == 0)
-		f2 = f1 + G_DEFAULT_ACTION_SIZE;
+		f2 = f1 + G_DEFAULT_ACTION_SIZE_depr_;
 
 	/* Avoid frame overflow. */
 
