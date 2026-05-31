@@ -84,4 +84,18 @@ Tick frameToTickCeil(Frame frame, int sampleRate, float bpm)
 	const double tickDouble = frameToTickAsDouble_(frame, sampleRate, bpm);
 	return Tick{static_cast<Tick::Value>(std::ceil(tickDouble))};
 }
+
+/* -------------------------------------------------------------------------- */
+
+int tickToPixel(Tick tick, double ratio)
+{
+	return static_cast<int>(tick.value() / ratio);
+}
+
+/* -------------------------------------------------------------------------- */
+
+Tick pixelToTick(int pixel, double ratio)
+{
+	return Tick{static_cast<std::int64_t>(pixel * ratio)};
+}
 } // namespace giada::u::time

@@ -56,6 +56,11 @@ values. These variants expose the two possible integer bounds, floor and ceil. *
 Tick frameToTickFloor(Frame, int sampleRate, float bpm);
 Tick frameToTickCeil(Frame, int sampleRate, float bpm);
 
+/* tickToPixel, pixelToTick
+Converts Tick <-> pixel. */
+
+int  tickToPixel(Tick, double ratio);
+Tick pixelToTick(int pixel, double ratio);
 } // namespace giada::u::time
 
 #endif
