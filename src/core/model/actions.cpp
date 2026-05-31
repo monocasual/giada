@@ -194,7 +194,7 @@ void Actions::debug() const
 
 /* -------------------------------------------------------------------------- */
 
-Action Actions::rec(ID channelId, Scene scene, Frame frame, MidiEvent event)
+Action Actions::rec_DEPR_(ID channelId, Scene scene, Frame frame, MidiEvent event)
 {
 	/* Skip duplicates. */
 

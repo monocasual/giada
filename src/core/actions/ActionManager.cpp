@@ -425,7 +425,7 @@ void ActionManager::clearActions(ID channelId, int type)
 
 Action ActionManager::rec(ID channelId, Scene scene, Frame frame, MidiEvent e)
 {
-	Action action = m_model.get().actions.rec(channelId, scene, frame, e);
+	Action action = m_model.get().actions.rec_DEPR_(channelId, scene, frame, e);
 
 	m_model.swap(model::SwapType::HARD);
 	return action;

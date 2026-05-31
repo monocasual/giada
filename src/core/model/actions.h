@@ -132,7 +132,7 @@ public:
 	/* rec (1)
 	Records an action and returns it. Used by the Action Editor. */
 
-	Action rec(ID channelId, Scene, Frame frame, MidiEvent e);
+	Action rec_DEPR_(ID channelId, Scene, Frame frame, MidiEvent e);
 
 	/* rec (2)
 	Transfer a vector of actions into the current ActionMap. This is called by
