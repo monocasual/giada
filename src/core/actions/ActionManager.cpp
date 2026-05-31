@@ -169,7 +169,7 @@ void ActionManager::liveRec(ID channelId, Scene scene, MidiEvent e, Frame global
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::recordMidiAction(ID channelId, Scene scene, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop)
+void ActionManager::recordMidiAction_DEPR_(ID channelId, Scene scene, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop)
 {
 	const auto [ff1, ff2] = sanitizeFrames_(f1, f2, framesInLoop);
 
@@ -179,12 +179,12 @@ void ActionManager::recordMidiAction(ID channelId, Scene scene, int note, float 
 	e1.setVelocityFloat(velocity);
 	e2.setVelocityFloat(velocity);
 
-	rec(channelId, scene, ff1, ff2, e1, e2);
+	rec_DEPR_(channelId, scene, ff1, ff2, e1, e2);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::recordSampleAction(ID channelId, Scene scene, int type, Frame f1, Frame f2, Frame framesInLoop)
+void ActionManager::recordSampleAction_DEPR_(ID channelId, Scene scene, int type, Frame f1, Frame f2, Frame framesInLoop)
 {
 	if (isSinglePressMode(channelId))
 	{
@@ -192,12 +192,12 @@ void ActionManager::recordSampleAction(ID channelId, Scene scene, int type, Fram
 
 		MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0, G_MAX_VELOCITY);
 		MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0, G_MAX_VELOCITY);
-		rec(channelId, scene, ff1, ff2, e1, e2);
+		rec_DEPR_(channelId, scene, ff1, ff2, e1, e2);
 	}
 	else
 	{
 		MidiEvent e1 = MidiEvent::makeFrom3Bytes(type, 0, G_MAX_VELOCITY);
-		rec(channelId, scene, sanitizeFrame_(f1, framesInLoop), e1);
+		rec_DEPR_(channelId, scene, sanitizeFrame_(f1, framesInLoop), e1);
 	}
 }
 
@@ -236,7 +236,7 @@ void ActionManager::updateMidiAction(ID channelId, Scene scene, const Action& a,
     Frame f1, Frame f2, Frame framesInLoop)
 {
 	deleteAction(a.id, a.nextId);
-	recordMidiAction(channelId, scene, note, velocity, f1, f2, framesInLoop);
+	recordMidiAction_DEPR_(channelId, scene, note, velocity, f1, f2, framesInLoop);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -248,7 +248,7 @@ void ActionManager::updateSampleAction(ID channelId, Scene scene, const Action& 
 	else
 		deleteAction(a.id);
 
-	recordSampleAction(channelId, scene, type, f1, f2, framesInLoop);
+	recordSampleAction_DEPR_(channelId, scene, type, f1, f2, framesInLoop);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -423,7 +423,7 @@ void ActionManager::clearActions(ID channelId, int type)
 	m_model.swap(model::SwapType::HARD);
 }
 
-Action ActionManager::rec(ID channelId, Scene scene, Frame frame, MidiEvent e)
+Action ActionManager::rec_DEPR_(ID channelId, Scene scene, Frame frame, MidiEvent e)
 {
 	Action action = m_model.get().actions.rec_DEPR_(channelId, scene, frame, e);
 
@@ -431,7 +431,7 @@ Action ActionManager::rec(ID channelId, Scene scene, Frame frame, MidiEvent e)
 	return action;
 }
 
-void ActionManager::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
+void ActionManager::rec_DEPR_(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
 	m_model.get().actions.rec(channelId, scene, f1, f2, e1, e2);
 	m_model.swap(model::SwapType::HARD);

@@ -56,7 +56,7 @@ const Action* ActionEditorApi::findAction(ID id) const
 
 void ActionEditorApi::recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2)
 {
-	m_actionManager.recordMidiAction(channelId, m_sequencer.getCurrentScene(), note, velocity, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionManager.recordMidiAction_DEPR_(channelId, m_sequencer.getCurrentScene(), note, velocity, f1, f2, m_sequencer.getFramesInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -84,7 +84,7 @@ void ActionEditorApi::updateMidiAction(ID channelId, const Action& a, int note, 
 
 void ActionEditorApi::recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
 {
-	m_actionManager.recordSampleAction(channelId, m_sequencer.getCurrentScene(), type, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionManager.recordSampleAction_DEPR_(channelId, m_sequencer.getCurrentScene(), type, f1, f2, m_sequencer.getFramesInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
