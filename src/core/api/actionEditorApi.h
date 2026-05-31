@@ -45,7 +45,7 @@ public:
 	std::vector<Action> getActionsOnChannel(ID channelId) const;
 	const Action*       findAction(ID) const;
 
-	void recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2);
+	void recordMidiAction_DEPR_(ID channelId, int note, float velocity, Frame f1, Frame f2);
 	void deleteMidiAction(ID channelId, const Action&);
 	void updateMidiAction(ID channelId, const Action&, int note, float velocity, Frame f1, Frame f2);
 	void recordSampleAction(ID channelId, int type, Frame f1, Frame f2);

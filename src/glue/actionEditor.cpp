@@ -92,7 +92,7 @@ const m::Action* findAction(ID id)
 
 void recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2)
 {
-	g_engine->getActionEditorApi().recordMidiAction(channelId, note, velocity, f1, f2);
+	g_engine->getActionEditorApi().recordMidiAction_DEPR_(channelId, note, velocity, f1, f2);
 }
 
 /* -------------------------------------------------------------------------- */
