@@ -258,6 +258,24 @@ void Actions::rec_DEPR_(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent
 	sort();
 }
 
+void Actions::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1, MidiEvent e2)
+{
+	Action a1 = actionFactory::makeAction({}, channelId, scene, range.a, e1);
+	Action a2 = actionFactory::makeAction({}, channelId, scene, range.b, e2);
+	m_actions.push_back(a1);
+	m_actions.push_back(a2);
+
+	Action* a1ptr = findAction(a1.id);
+	Action* a2ptr = findAction(a2.id);
+
+	assert(a1ptr != nullptr && a2ptr != nullptr);
+
+	a1ptr->nextId = a2ptr->id;
+	a2ptr->prevId = a1ptr->id;
+
+	sort();
+}
+
 /* -------------------------------------------------------------------------- */
 
 const std::span<const Action> Actions::getActionsInSampleRange(SampleRange r) const

@@ -29,12 +29,14 @@
 
 #include "src/deps/geompp/src/range.hpp"
 #include "src/deps/mcl-utils/src/id.hpp"
+#include "src/tick.h"
 
 namespace giada
 {
 using ID          = mcl::utils::Id;
 using Frame       = int;
 using SampleRange = geompp::Range<Frame>;
+using TickRange   = geompp::Range<Tick>;
 } // namespace giada
 
 #endif
