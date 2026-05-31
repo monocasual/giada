@@ -80,11 +80,14 @@ public:
 	void a_setNextScene(Scene) const;
 	void a_setSceneStatus(SceneStatus) const;
 
+	float getBpm() const;
+
 	/* reset
 	Resets beats, bars, bpm and quantize to default values. */
 
 	void reset();
 
+	void setBpm(float);
 	void recomputeFrames(int sampleRate);
 
 	SeqStatus status       = SeqStatus::STOPPED;
@@ -94,7 +97,6 @@ public:
 	int       framesInSeq  = 0;
 	int       bars         = G_DEFAULT_BARS;
 	int       beats        = G_DEFAULT_BEATS;
-	float     bpm          = G_DEFAULT_BPM;
 	int       quantize     = G_DEFAULT_QUANTIZE;
 	bool      metronome    = false;
 
@@ -114,6 +116,8 @@ private:
 	};
 
 	Shared* shared = nullptr;
+
+	float m_bpm = G_DEFAULT_BPM;
 };
 } // namespace giada::m::model
 

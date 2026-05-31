@@ -125,7 +125,7 @@ bool        Sequencer::isActive() const { return m_model.get().sequencer.isActiv
 bool        Sequencer::isOnBar() const { return m_model.get().sequencer.a_isOnBar(); }
 bool        Sequencer::isOnBeat() const { return m_model.get().sequencer.a_isOnBeat(); }
 bool        Sequencer::isOnFirstBeat() const { return m_model.get().sequencer.a_isOnFirstBeat(); }
-float       Sequencer::getBpm() const { return m_model.get().sequencer.bpm; }
+float       Sequencer::getBpm() const { return m_model.get().sequencer.getBpm(); }
 int         Sequencer::getBeats() const { return m_model.get().sequencer.beats; }
 int         Sequencer::getBars() const { return m_model.get().sequencer.bars; }
 int         Sequencer::getCurrentBeat() const { return m_model.get().sequencer.a_getCurrentBeat(); }
@@ -387,10 +387,10 @@ void Sequencer::rawSetBpm(float v)
 {
 	assert(onBpmChange != nullptr);
 
-	const float oldVal = m_model.get().sequencer.bpm;
-	const float newVal = std::clamp(v, G_MIN_BPM, G_MAX_BPM);
+	const float oldVal = m_model.get().sequencer.getBpm();
+	const float newVal = v;
 
-	m_model.get().sequencer.bpm = newVal;
+	m_model.get().sequencer.setBpm(newVal);
 	m_model.swap(model::SwapType::HARD);
 
 	recomputeFrames();
@@ -462,7 +462,7 @@ void Sequencer::setStatus(SeqStatus s)
 
 void Sequencer::goToBeat(int beat, int sampleRate)
 {
-	const float bpm   = m_model.get().sequencer.bpm;
+	const float bpm   = m_model.get().sequencer.getBpm();
 	const Frame frame = u::time::beatToFrame(beat, sampleRate, bpm);
 	if (!m_jackTransport.setPosition(frame))
 		rawGoToBeat(beat, sampleRate);

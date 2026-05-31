@@ -143,7 +143,7 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, std::fu
 	/* Bring everything back online. */
 
 	m_mixer.enable();
-	m_midiSynchronizer.startSendClock(m_model.get().sequencer.bpm);
+	m_midiSynchronizer.startSendClock(m_model.get().sequencer.getBpm());
 
 	progress(1.0f);
 

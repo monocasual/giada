@@ -199,7 +199,7 @@ void ConfigApi::midi_closeInDevice(std::size_t deviceIndex)
 
 void ConfigApi::midi_setSyncMode(int syncMode)
 {
-	const float currentBpm = m_model.get().sequencer.bpm;
+	const float currentBpm = m_model.get().sequencer.getBpm();
 
 	m_model.get().kernelMidi.sync = syncMode;
 	m_model.swap(model::SwapType::NONE);

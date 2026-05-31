@@ -117,12 +117,12 @@ int Sequencer::getMaxFramesInLoop(int sampleRate) const
 void Sequencer::a_setCurrentFrame(Frame f, int sampleRate) const
 {
 	shared->currentFrame.store(f);
-	shared->currentBeat.store(f == 0 ? 0 : u::time::frameToBeat(f, sampleRate, bpm));
+	shared->currentBeat.store(f == 0 ? 0 : u::time::frameToBeat(f, sampleRate, m_bpm));
 }
 
 void Sequencer::a_setCurrentBeat(int b, int sampleRate) const
 {
-	const Frame currentFrame = u::time::beatToFrame(b, sampleRate, bpm);
+	const Frame currentFrame = u::time::beatToFrame(b, sampleRate, m_bpm);
 
 	shared->currentFrame.store(currentFrame);
 	shared->currentBeat.store(b);
@@ -149,19 +149,30 @@ void Sequencer::a_setSceneStatus(SceneStatus s) const
 
 /* -------------------------------------------------------------------------- */
 
+float Sequencer::getBpm() const { return m_bpm; }
+
+/* -------------------------------------------------------------------------- */
+
 void Sequencer::reset()
 {
 	bars     = G_DEFAULT_BARS;
 	beats    = G_DEFAULT_BEATS;
-	bpm      = G_DEFAULT_BPM;
+	m_bpm    = G_DEFAULT_BPM;
 	quantize = G_DEFAULT_QUANTIZE;
 }
 
 void Sequencer::recomputeFrames(int sampleRate)
 {
-	framesInBeat = u::time::beatToFrame(1, sampleRate, bpm);
+	framesInBeat = u::time::beatToFrame(1, sampleRate, m_bpm);
 	framesInLoop = framesInBeat * beats;
 	framesInBar  = framesInLoop / (float)bars;
 	framesInSeq  = framesInBeat * G_MAX_BEATS;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::setBpm(float v)
+{
+	m_bpm = std::clamp(v, G_MIN_BPM, G_MAX_BPM);
 }
 } // namespace giada::m::model

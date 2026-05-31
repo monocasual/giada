@@ -62,10 +62,10 @@ void Document::load(const Patch& patch, Shared& shared, float sampleRateRatio)
 
 	actions.set(actionFactory::deserializeActions(patch.actions));
 
-	sequencer.status    = SeqStatus::STOPPED;
-	sequencer.bars      = patch.bars;
-	sequencer.beats     = patch.beats;
-	sequencer.bpm       = patch.bpm;
+	sequencer.status = SeqStatus::STOPPED;
+	sequencer.bars   = patch.bars;
+	sequencer.beats  = patch.beats;
+	sequencer.setBpm(patch.bpm);
 	sequencer.quantize  = patch.quantize;
 	sequencer.metronome = patch.metronome;
 }
@@ -121,7 +121,7 @@ void Document::store(Patch& patch) const
 {
 	patch.bars      = sequencer.bars;
 	patch.beats     = sequencer.beats;
-	patch.bpm       = sequencer.bpm;
+	patch.bpm       = sequencer.getBpm();
 	patch.quantize  = sequencer.quantize;
 	patch.metronome = sequencer.metronome;
 	patch.actions   = actionFactory::serializeActions(actions.getAll());
