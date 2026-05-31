@@ -108,6 +108,7 @@ public:
 	float       getCurrentSecond(int sampleRate) const;
 	Frame       getFramesInBar() const;
 	Frame       getFramesInBeat() const;
+	Tick        getTicksInLoop() const;
 	Frame       getFramesInLoop() const;
 	Frame       getFramesInSeq() const;
 	int         getQuantizerValue() const;

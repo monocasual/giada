@@ -82,6 +82,7 @@ public:
 
 	float         getBpm() const;
 	TimeSignature getTimeSignature() const;
+	Tick          getTicksInLoop() const;
 
 	/* reset
 	Resets beats, bars, bpm and quantize to default values. */

@@ -134,6 +134,7 @@ Frame       Sequencer::getCurrentFrameQuantized() const { return quantize(getCur
 float       Sequencer::getCurrentSecond(int sampleRate) const { return getCurrentFrame() / static_cast<float>(sampleRate); }
 Frame       Sequencer::getFramesInBar() const { return m_model.get().sequencer.framesInBar; }
 Frame       Sequencer::getFramesInBeat() const { return m_model.get().sequencer.framesInBeat; }
+Tick        Sequencer::getTicksInLoop() const { return m_model.get().sequencer.getTicksInLoop(); }
 Frame       Sequencer::getFramesInLoop() const { return m_model.get().sequencer.framesInLoop; }
 Frame       Sequencer::getFramesInSeq() const { return m_model.get().sequencer.framesInSeq; }
 int         Sequencer::getQuantizerValue() const { return m_model.get().sequencer.quantize; }
