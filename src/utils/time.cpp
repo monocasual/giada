@@ -39,7 +39,7 @@ double frameToTickAsDouble_(Frame frame, int sampleRate, float bpm)
 {
 	// ticks = frame * (ppq * bpm) / (sampleRate * 60.0);
 	return static_cast<double>(frame) *
-	       (static_cast<double>(G_PPQ) * bpm) /
+	       (static_cast<double>(G_PPQ.value()) * bpm) /
 	       (sampleRate * 60.0);
 }
 } // namespace
@@ -67,7 +67,7 @@ Frame tickToFrame(Tick tick, int sampleRate, float bpm)
 	// frames = ticks * sampleRate * 60.0 / (ppq * bpm);
 	const double frameDouble = static_cast<double>(tick.value()) *
 	                           static_cast<double>(sampleRate) * 60.0 /
-	                           (static_cast<double>(G_PPQ) * bpm);
+	                           (static_cast<double>(G_PPQ.value()) * bpm);
 	return static_cast<Frame>(std::llround(frameDouble));
 }
 
