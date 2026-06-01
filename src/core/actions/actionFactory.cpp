@@ -46,16 +46,9 @@ void reset()
 
 /* -------------------------------------------------------------------------- */
 
-Action makeAction_DEPR_(ID id, ID channelId, Scene scene, Frame frame, MidiEvent e)
-{
-	Action out{actionId_.generate(id), channelId, scene, frame, {}, e, {}, -1};
-	actionId_.set(id);
-	return out;
-}
-
 Action makeAction(ID id, ID channelId, Scene scene, Tick tick, MidiEvent e)
 {
-	Action out{actionId_.generate(id), channelId, scene, 0, tick, e, {}, -1};
+	Action out{actionId_.generate(id), channelId, scene, tick, e, {}, -1};
 	actionId_.set(id);
 	return out;
 }
@@ -63,7 +56,7 @@ Action makeAction(ID id, ID channelId, Scene scene, Tick tick, MidiEvent e)
 Action makeAction(const Patch::Action& a)
 {
 	actionId_.set(a.id);
-	return Action{a.id, a.channelId, Scene{a.scene}, 0, a.tick,
+	return Action{a.id, a.channelId, Scene{a.scene}, a.tick,
 	    MidiEvent::makeFromRaw(a.event, /*numBytes=*/3), {}, -1, a.prevId, a.nextId};
 }
 

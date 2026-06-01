@@ -40,7 +40,6 @@ struct Action
 	ID        id;
 	ID        channelId;
 	Scene     scene;
-	Frame     frame;
 	Tick      tick;
 	MidiEvent event;
 	ID        pluginId;

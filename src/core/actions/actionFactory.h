@@ -42,7 +42,6 @@ void reset();
 /* makeAction
 Makes a new action given some data. */
 
-Action makeAction_DEPR_(ID id, ID channelId, Scene, Frame frame, MidiEvent e);
 Action makeAction(ID id, ID channelId, Scene, Tick, MidiEvent e);
 Action makeAction(const Patch::Action&);
 
