@@ -195,9 +195,9 @@ void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 	/* Make sure the new content width doesn't underflow the window space (i.e.
 	the minimum width allowed). */
 
-	if (frameToPixel(m_data.framesInSeq) < minWidth)
+	if (tickToPixel(m_data.ticksInSeq) < minWidth)
 	{
-		m_ratio = m_data.framesInSeq / static_cast<float>(minWidth);
+		m_ratio = m_data.ticksInSeq.value() / static_cast<float>(minWidth);
 		m_splitScroll->setScrollX(0);
 	}
 
