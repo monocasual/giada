@@ -67,7 +67,7 @@ struct SampleData
 	SamplePlayerMode mode;
 	bool             isLoop;
 	float            pitch;
-	SampleRange      range;
+	FrameRange       range;
 	bool             inputMonitor;
 	bool             overdubProtection;
 

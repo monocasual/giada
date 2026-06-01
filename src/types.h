@@ -95,7 +95,7 @@ and invalid range by default. */
 struct Sample
 {
 	m::Wave*    wave = nullptr;
-	SampleRange range;
+	FrameRange range;
 	Frame       shift = 0;
 	float       pitch = 1.0;
 };

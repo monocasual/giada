@@ -40,8 +40,8 @@
 
 namespace geompp
 {
-void to_json(nlohmann::json&, const giada::SampleRange&);
-void from_json(const nlohmann::json&, giada::SampleRange&);
+void to_json(nlohmann::json&, const giada::FrameRange&);
+void from_json(const nlohmann::json&, giada::FrameRange&);
 } // namespace geompp
 
 namespace mcl::utils
@@ -63,10 +63,10 @@ struct Patch
 
 	struct Sample
 	{
-		ID          waveId;
-		SampleRange range;
-		Frame       shift = 0;
-		float       pitch = G_DEFAULT_PITCH;
+		ID         waveId;
+		FrameRange range;
+		Frame      shift = 0;
+		float      pitch = G_DEFAULT_PITCH;
 	};
 	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Sample, waveId, range, shift, pitch)
 

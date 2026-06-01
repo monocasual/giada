@@ -407,7 +407,7 @@ void ChannelManager::setPan(ID channelId, float value)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::setRange(ID channelId, SampleRange range, Scene scene)
+void ChannelManager::setRange(ID channelId, FrameRange range, Scene scene)
 {
 	Channel& c       = m_model.get().tracks.getChannel(channelId);
 	Channel& preview = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);

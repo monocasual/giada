@@ -278,7 +278,7 @@ void Actions::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1, Midi
 
 /* -------------------------------------------------------------------------- */
 
-const std::span<const Action> Actions::getActionsInSampleRange(SampleRange r) const
+const std::span<const Action> Actions::getActionsInSampleRange(FrameRange r) const
 {
 	if (!r.isValid())
 		return {};

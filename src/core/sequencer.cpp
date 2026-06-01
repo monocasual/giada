@@ -52,9 +52,9 @@ valid, tail can be valid if there is a wraparound in the current block. The
 
 struct Block
 {
-	SampleRange head;
-	SampleRange tail;
-	Frame       nextFrame;
+	FrameRange head;
+	FrameRange tail;
+	Frame      nextFrame;
 
 	Block(Frame start, Frame end, int framesInLoop)
 	: head(start, std::min(end, framesInLoop))

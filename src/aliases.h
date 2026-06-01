@@ -33,10 +33,10 @@
 
 namespace giada
 {
-using ID          = mcl::utils::Id;
-using Frame       = int;
-using SampleRange = geompp::Range<Frame>;
-using TickRange   = geompp::Range<Tick>;
+using ID         = mcl::utils::Id;
+using Frame      = int;
+using FrameRange = geompp::Range<Frame>;
+using TickRange  = geompp::Range<Tick>;
 } // namespace giada
 
 #endif

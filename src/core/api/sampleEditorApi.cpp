@@ -233,7 +233,7 @@ const Channel& SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorApi::setRange(ID channelId, SampleRange range)
+void SampleEditorApi::setRange(ID channelId, FrameRange range)
 {
 	m_channelManager.setRange(channelId, range, m_sequencer.getCurrentScene());
 }

@@ -188,7 +188,7 @@ public:
 	void setVolume(ID channelId, float value);
 	void setPitch(ID channelId, float value, Scene);
 	void setPan(ID channelId, float value);
-	void setRange(ID channelId, SampleRange, Scene);
+	void setRange(ID channelId, FrameRange, Scene);
 	void resetRange(ID channelId, Scene);
 	void toggleArm(ID channelId);
 	void setOverdubProtection(ID channelId, bool value);

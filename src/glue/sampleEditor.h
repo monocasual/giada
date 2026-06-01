@@ -88,7 +88,7 @@ v::gdSampleEditor* getWindow();
 /* setRange
 Sets start/end points in the sample editor. */
 
-void setRange(ID channelId, SampleRange);
+void setRange(ID channelId, FrameRange);
 
 void cut(ID channelId, Frame a, Frame b);
 void copy(ID channelId, Frame a, Frame b);

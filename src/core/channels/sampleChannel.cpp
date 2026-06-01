@@ -112,7 +112,7 @@ ID SampleChannel::getWaveId(Scene scene) const
 
 /* -------------------------------------------------------------------------- */
 
-SampleRange SampleChannel::getRange(Scene scene) const { return m_samples[scene.getIndex()].range; }
+FrameRange SampleChannel::getRange(Scene scene) const { return m_samples[scene.getIndex()].range; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -149,7 +149,7 @@ void SampleChannel::loadSample(const Sample& s, Scene scene)
 	if (s.wave != nullptr)
 	{
 		m_samples[scene.getIndex()].shift = s.shift == -1 ? 0 : s.shift;
-		m_samples[scene.getIndex()].range = s.range.isValid() ? s.range : SampleRange(0, s.wave->getBuffer().countFrames());
+		m_samples[scene.getIndex()].range = s.range.isValid() ? s.range : FrameRange(0, s.wave->getBuffer().countFrames());
 	}
 }
 
@@ -164,7 +164,7 @@ void SampleChannel::setWave(Wave* w, Scene scene, float samplerateRatio)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleChannel::setRange(SampleRange newRange, Scene scene)
+void SampleChannel::setRange(FrameRange newRange, Scene scene)
 {
 	m_samples[scene.getIndex()].range = newRange;
 }

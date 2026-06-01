@@ -28,12 +28,12 @@
 
 namespace geompp
 {
-void to_json(nlohmann::json& j, const giada::SampleRange& r)
+void to_json(nlohmann::json& j, const giada::FrameRange& r)
 {
 	j = nlohmann::json{{"a", r.a}, {"b", r.b}};
 }
 
-void from_json(const nlohmann::json& j, giada::SampleRange& r)
+void from_json(const nlohmann::json& j, giada::FrameRange& r)
 {
 	r.a = j.value("a", 0);
 	r.b = j.value("b", 0);

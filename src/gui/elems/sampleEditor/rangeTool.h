@@ -46,7 +46,7 @@ public:
 	geRangeTool(const c::sampleEditor::Data& d);
 
 	void rebuild(const c::sampleEditor::Data& d);
-	void update(SampleRange range);
+	void update(FrameRange range);
 
 private:
 	const c::sampleEditor::Data* m_data;
