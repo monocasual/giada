@@ -99,7 +99,7 @@ void geVelocityEditor::rebuild(c::actionEditor::Data& d)
 		if (action.event.getStatus() != m::MidiEvent::CHANNEL_NOTE_ON)
 			continue;
 
-		const Pixel px = x() + m_base->frameToPixel(action.frame) - (geEnvelopePoint::SIDE / 2);
+		const Pixel px = x() + m_base->tickToPixel(action.tick) - (geEnvelopePoint::SIDE / 2);
 		const Pixel py = y() + valueToY(action.event.getVelocityFloat());
 
 		add(new geEnvelopePoint(px, py, action));

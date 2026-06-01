@@ -72,6 +72,10 @@ public:
 	int               getFramesInLoop() const;
 	int               getFramesInSeq() const;
 	int               getFramesInBeat() const;
+	Tick              getTicksInBar() const;
+	Tick              getTicksInLoop() const;
+	Tick              getTicksInSeq() const;
+	Tick              getTicksInBeat() const;
 	SeqStatus         getSequencerStatus() const;
 	Scene             getCurrentScene() const;
 	Scene             getNextScene() const;

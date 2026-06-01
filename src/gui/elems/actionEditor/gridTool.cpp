@@ -116,10 +116,24 @@ Frame geGridTool::getSnapFrame(Frame v, Frame framesInBeat) const
 	return math::quantize(v, getCellSize(framesInBeat));
 }
 
+Tick geGridTool::getSnapTick(Tick t, Tick ticksInBeat) const
+{
+	namespace math = mcl::utils::math;
+
+	if (!isOn())
+		return t;
+	return Tick{math::quantize(t.value(), getCellSize(ticksInBeat).value())};
+}
+
 /* -------------------------------------------------------------------------- */
 
 Frame geGridTool::getCellSize(Frame framesInBeat) const
 {
 	return framesInBeat / getValue();
+}
+
+Tick geGridTool::getCellSize(Tick ticksInBeat) const
+{
+	return ticksInBeat / getValue();
 }
 } // namespace giada::v

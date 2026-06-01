@@ -94,6 +94,12 @@ void gdBaseActionEditor::computeWidth(Frame framesInSeq, Frame framesInLoop)
 	loopWidth = frameToPixel(framesInLoop);
 }
 
+void gdBaseActionEditor::computeWidth(Tick tickInSeq, Tick tickInLoop)
+{
+	fullWidth = tickToPixel(tickInSeq);
+	loopWidth = tickToPixel(tickInLoop);
+}
+
 /* -------------------------------------------------------------------------- */
 
 Pixel gdBaseActionEditor::frameToPixel(Frame f) const
@@ -110,6 +116,11 @@ Tick gdBaseActionEditor::pixelToTick(int p) const
 {
 	// TODO - ppq engine: enable snapping
 	return u::time::pixelToTick(p, m_ratio);
+}
+
+int gdBaseActionEditor::tickToPixel(Tick t) const
+{
+	return u::time::tickToPixel(t, m_ratio);
 }
 
 /* -------------------------------------------------------------------------- */

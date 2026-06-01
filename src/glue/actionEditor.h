@@ -67,6 +67,10 @@ struct Data
 	Frame                  framesInBeat;
 	Frame                  framesInBar;
 	Frame                  framesInLoop;
+	Tick                   ticksInSeq;
+	Tick                   ticksInBeat;
+	Tick                   ticksInBar;
+	Tick                   ticksInLoop;
 	std::vector<m::Action> actions;
 
 	std::optional<SampleData> sample;

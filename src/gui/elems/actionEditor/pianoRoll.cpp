@@ -223,10 +223,10 @@ Pixel gePianoRoll::snapToY(Pixel p) const
 Pixel gePianoRoll::getPianoItemW(Pixel px, const m::Action& a1, const m::Action& a2) const
 {
 	if (a2.isValid())
-	{                            // Regular
-		if (a1.frame > a2.frame) // Ring-loop
+	{                          // Regular
+		if (a1.tick > a2.tick) // Ring-loop
 			return m_base->loopWidth - (px - x());
-		return m_base->frameToPixel(a2.frame - a1.frame);
+		return m_base->tickToPixel(a2.tick - a1.tick);
 	}
 	return geBaseAction::MIN_WIDTH; // Orphaned
 }
@@ -252,7 +252,7 @@ void gePianoRoll::rebuild(c::actionEditor::Data& d)
 
 		const m::Action& a2 = a1.nextId.isValid() ? *c::actionEditor::findAction(a1.nextId) : m::Action{};
 
-		Pixel px = x() + m_base->frameToPixel(a1.frame);
+		Pixel px = x() + m_base->tickToPixel(a1.tick);
 		Pixel py = y() + noteToY(a1.event.getNote());
 		Pixel ph = CELL_H;
 		Pixel pw = getPianoItemW(px, a1, a2);

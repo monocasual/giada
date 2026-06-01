@@ -181,6 +181,11 @@ int MainApi::getFramesInBeat() const
 	return m_sequencer.getFramesInBeat();
 }
 
+Tick MainApi::getTicksInBar() const { return m_sequencer.getTicksInBar(); }
+Tick MainApi::getTicksInLoop() const { return m_sequencer.getTicksInLoop(); }
+Tick MainApi::getTicksInSeq() const { return m_sequencer.getTicksInSeq(); }
+Tick MainApi::getTicksInBeat() const { return m_sequencer.getTicksInBeat(); }
+
 /* -------------------------------------------------------------------------- */
 
 SeqStatus MainApi::getSequencerStatus() const

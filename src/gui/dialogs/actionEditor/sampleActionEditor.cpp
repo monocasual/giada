@@ -127,7 +127,7 @@ void gdSampleActionEditor::rebuild()
 	m_data = c::actionEditor::getData(channelId);
 
 	canChangeActionType() ? m_actionType->activate() : m_actionType->deactivate();
-	computeWidth(m_data.framesInSeq, m_data.framesInLoop);
+	computeWidth(m_data.ticksInSeq, m_data.ticksInLoop);
 	updateTitleWithScene(m_data.scene);
 
 	m_sampleActionEditor->rebuild(m_data);
