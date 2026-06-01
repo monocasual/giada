@@ -44,19 +44,19 @@ constexpr int Q_ACTION_REWIND = 0;
 
 /* -------------------------------------------------------------------------- */
 
-/* Block
+/* AudioBlock
 A pair of ranges that describe the current audio block to render from the Sequencer
 perspective, taking the wraparound at first beat into account. Head is always
 valid, tail can be valid if there is a wraparound in the current block. The
 'onEachFrame' helper method allows to process both ranges in one shot. */
 
-struct Block
+struct AudioBlock
 {
 	FrameRange head;
 	FrameRange tail;
 	Frame      nextFrame;
 
-	Block(Frame start, Frame end, int framesInLoop)
+	AudioBlock(Frame start, Frame end, int framesInLoop)
 	: head(start, std::min(end, framesInLoop))
 	, nextFrame(end % framesInLoop)
 	{
@@ -215,12 +215,12 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	/* Process events in the current block. */
 
-	const Block        block(start, end, framesInLoop);
+	const AudioBlock   audioBlock(start, end, framesInLoop);
 	const ActionsBlock actionsBlock{
-	    actions.getActionsInTickRange(u::time::frameRangeToTickRange(block.head, m_currentSampleRate, bpm)),
-	    actions.getActionsInTickRange(u::time::frameRangeToTickRange(block.tail, m_currentSampleRate, bpm))};
+	    actions.getActionsInTickRange(u::time::frameRangeToTickRange(audioBlock.head, m_currentSampleRate, bpm)),
+	    actions.getActionsInTickRange(u::time::frameRangeToTickRange(audioBlock.tail, m_currentSampleRate, bpm))};
 
-	block.onEachFrame([&, this](Frame global, Frame local)
+	audioBlock.onEachFrame([&, this](Frame global, Frame local)
 	{
 		if (global == 0)
 		{
@@ -257,8 +257,8 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		we are fetching actions from the beginning. */
 
 		const Frame frame  = u::time::tickToFrame(action.tick, m_currentSampleRate, bpm);
-		bool        inTail = block.tail.isValid() && block.tail.contains(frame);
-		const Frame offset = inTail ? block.head.getLength() : -block.head.a;
+		bool        inTail = audioBlock.tail.isValid() && audioBlock.tail.contains(frame);
+		const Frame offset = inTail ? audioBlock.head.getLength() : -audioBlock.head.a;
 		const Frame local  = frame + offset;
 
 		m_eventBuffer.push_back({EventType::ACTIONS, 0, local, &action, sceneChanged ? nextScene : currentScene});
@@ -266,7 +266,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	/* Advance this and quantizer after the event parsing. */
 
-	sequencer.a_setCurrentFrame(block.nextFrame, m_currentSampleRate);
+	sequencer.a_setCurrentFrame(audioBlock.nextFrame, m_currentSampleRate);
 	m_quantizer.advance({start, end}, getQuantizerStep()); // TODO - this is wrong, pass block instead raw {start, end} range
 
 	return m_eventBuffer;
