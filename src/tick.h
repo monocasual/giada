@@ -73,6 +73,12 @@ public:
 		return *this;
 	}
 
+	constexpr Tick& operator%=(Tick other) noexcept
+	{
+		m_value %= other.m_value;
+		return *this;
+	}
+
 	[[nodiscard]] friend constexpr Tick operator+(Tick lhs, Tick rhs) noexcept
 	{
 		lhs += rhs;
@@ -94,6 +100,12 @@ public:
 	[[nodiscard]] friend constexpr Tick operator/(Tick lhs, std::int64_t rhs) noexcept
 	{
 		lhs /= rhs;
+		return lhs;
+	}
+
+	[[nodiscard]] friend constexpr Tick operator%(Tick lhs, Tick rhs) noexcept
+	{
+		lhs %= rhs;
 		return lhs;
 	}
 
