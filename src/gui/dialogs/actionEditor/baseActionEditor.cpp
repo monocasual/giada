@@ -121,18 +121,18 @@ int gdBaseActionEditor::tickToPixel(Tick t) const
 
 void gdBaseActionEditor::zoomIn()
 {
-	// Explicit type std::max<int> to fix MINMAX macro hell on Windows
+	// Explicit type std::max<float> to fix MINMAX macro hell on Windows
 	zoomAbout([&r = m_ratio]()
-	{ return std::max<int>(r / RATIO_STEP, MIN_RATIO); });
+	{ return std::max<float>(r / RATIO_STEP, MIN_RATIO); });
 }
 
 /* -------------------------------------------------------------------------- */
 
 void gdBaseActionEditor::zoomOut()
 {
-	// Explicit type std::max<int> to fix MINMAX macro hell on Windows
+	// Explicit type std::max<float> to fix MINMAX macro hell on Windows
 	zoomAbout([&r = m_ratio]()
-	{ return std::min<int>(r * RATIO_STEP, MAX_RATIO); });
+	{ return std::min<float>(r * RATIO_STEP, MAX_RATIO); });
 }
 
 /* -------------------------------------------------------------------------- */
