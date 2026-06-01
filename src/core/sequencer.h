@@ -104,7 +104,6 @@ public:
 	int         getBars() const;
 	int         getCurrentBeat() const;
 	Frame       getCurrentFrame() const;
-	float       getCurrentSecond(int sampleRate) const;
 	Frame       getFramesInBar() const;
 	Frame       getFramesInBeat() const;
 	Frame       getFramesInLoop() const;
