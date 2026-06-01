@@ -121,6 +121,7 @@ public:
 	Scene       getCurrentScene() const;
 	Scene       getNextScene() const;
 	SceneStatus getSceneStatus() const;
+	Tick        getCurrentTick() const;
 
 	/* calcBpmFromRec
 	Given the amount of recorded frames, returns the speed of the current

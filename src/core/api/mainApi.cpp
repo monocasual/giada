@@ -161,6 +161,11 @@ Frame MainApi::getCurrentFrame() const
 	return m_sequencer.getCurrentFrame();
 }
 
+Tick MainApi::getCurrentTick() const
+{
+	return m_sequencer.getCurrentTick();
+}
+
 int MainApi::getFramesInBar() const
 {
 	return m_sequencer.getFramesInBar();

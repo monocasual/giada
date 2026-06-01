@@ -150,6 +150,17 @@ SceneStatus Sequencer::getSceneStatus() const { return m_model.get().sequencer.a
 
 /* -------------------------------------------------------------------------- */
 
+Tick Sequencer::getCurrentTick() const
+{
+	const model::Sequencer& s            = m_model.get().sequencer;
+	const Frame             currentFrame = s.a_getCurrentFrame();
+	const float             bpm          = s.getBpm();
+
+	return u::time::frameToTickFloor(currentFrame, m_currentSampleRate, bpm);
+}
+
+/* -------------------------------------------------------------------------- */
+
 float Sequencer::calcBpmFromRec(Frame recordedFrames) const
 {
 	return (60.0f * getBeats()) / (recordedFrames / static_cast<float>(m_currentSampleRate));

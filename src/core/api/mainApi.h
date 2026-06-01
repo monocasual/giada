@@ -68,6 +68,7 @@ public:
 	int               getQuantizerValue() const;
 	int               getCurrentBeat() const;
 	Frame             getCurrentFrame() const;
+	Tick              getCurrentTick() const;
 	int               getFramesInBar() const;
 	int               getFramesInLoop() const;
 	int               getFramesInSeq() const;
