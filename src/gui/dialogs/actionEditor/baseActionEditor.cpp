@@ -39,6 +39,7 @@
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
 #include "src/utils/string.h"
+#include "src/utils/time.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <cassert>
@@ -103,6 +104,12 @@ Pixel gdBaseActionEditor::frameToPixel(Frame f) const
 Frame gdBaseActionEditor::pixelToFrame(Pixel p, Frame framesInBeat, bool snap) const
 {
 	return snap ? gridTool->getSnapFrame(p * m_ratio, framesInBeat) : p * m_ratio;
+}
+
+Tick gdBaseActionEditor::pixelToTick(int p) const
+{
+	// TODO - ppq engine: enable snapping
+	return u::time::pixelToTick(p, m_ratio);
 }
 
 /* -------------------------------------------------------------------------- */

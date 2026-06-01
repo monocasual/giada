@@ -97,10 +97,11 @@ void gePianoRoll::draw()
 
 void gePianoRoll::onAddAction()
 {
-	Frame frame = m_base->pixelToFrame(Fl::event_x() - x(), m_data->framesInBeat);
-	int   note  = yToNote(Fl::event_y() - y());
-	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY_FLOAT,
-	    frame);
+	// TODO - ppq engine: re-enable snapping
+	const Tick tickOn  = m_base->pixelToTick(Fl::event_x() - x());
+	const Tick tickOff = tickOn + G_DEFAULT_ACTION_SIZE;
+	int        note    = yToNote(Fl::event_y() - y());
+	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY_FLOAT, {tickOn, tickOff});
 }
 
 /* -------------------------------------------------------------------------- */

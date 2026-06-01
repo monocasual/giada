@@ -78,8 +78,7 @@ const m::Action* findAction(ID);
 
 /* MIDI actions.  */
 
-void recordMidiAction(ID channelId, int note, float velocity, Frame f1,
-    Frame f2 = 0);
+void recordMidiAction(ID channelId, int note, float velocity, TickRange);
 void deleteMidiAction(ID channelId, const m::Action& a);
 void updateMidiAction(ID channelId, const m::Action& a, int note, float velocity,
     Frame f1, Frame f2);
