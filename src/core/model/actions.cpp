@@ -314,7 +314,7 @@ Action* Actions::findAction(ID id)
 
 void Actions::sort()
 {
-	std::ranges::sort(m_actions, std::ranges::less{}, &Action::frame);
+	std::ranges::sort(m_actions, std::ranges::less{}, &Action::tick);
 }
 
 /* -------------------------------------------------------------------------- */
