@@ -151,7 +151,10 @@ void Sequencer::a_setSceneStatus(SceneStatus s) const
 
 float         Sequencer::getBpm() const { return m_bpm; }
 TimeSignature Sequencer::getTimeSignature() const { return m_timeSignature; }
+Tick          Sequencer::getTicksInBeat() const { return G_PPQ; }
+Tick          Sequencer::getTicksInBar() const { return getTicksInLoop() / m_timeSignature.bars; }
 Tick          Sequencer::getTicksInLoop() const { return G_PPQ * m_timeSignature.beats; }
+Tick          Sequencer::getTicksInSeq() const { return G_PPQ * G_MAX_BEATS; }
 
 /* -------------------------------------------------------------------------- */
 
