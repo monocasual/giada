@@ -87,6 +87,15 @@ Tick frameToTickCeil(Frame frame, int sampleRate, float bpm)
 
 /* -------------------------------------------------------------------------- */
 
+TickRange frameRangeToTickRange(FrameRange frameRange, int sampleRate, float bpm)
+{
+	return {
+	    frameToTickFloor(frameRange.a, sampleRate, bpm),
+	    frameToTickCeil(frameRange.b, sampleRate, bpm)};
+}
+
+/* -------------------------------------------------------------------------- */
+
 int tickToPixel(Tick tick, double ratio)
 {
 	return static_cast<int>(tick.value() / ratio);

@@ -56,6 +56,13 @@ values. These variants expose the two possible integer bounds, floor and ceil. *
 Tick frameToTickFloor(Frame, int sampleRate, float bpm);
 Tick frameToTickCeil(Frame, int sampleRate, float bpm);
 
+/* frameRangeToTickRange
+Same as frameToTick[...], but on ranges. Uses floor for 'a' point and ceil for
+'b' point to maka sure the tick interval fully covers everything touched by the
+frame range. */
+
+TickRange frameRangeToTickRange(FrameRange, int sampleRate, float bpm);
+
 /* tickToPixel, pixelToTick
 Converts Tick <-> pixel. */
 
