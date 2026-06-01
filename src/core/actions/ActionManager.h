@@ -126,8 +126,6 @@ public:
 	void clearChannel(ID channelId, Scene);
 
 	void   clearActions(ID channelId, int type);
-	Action rec_DEPR_(ID channelId, Scene, Frame frame, MidiEvent e);
-	void   rec_DEPR_(ID channelId, Scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 	Action rec(ID channelId, Scene, Tick, MidiEvent e);
 	void   rec(ID channelId, Scene, TickRange, MidiEvent e1, MidiEvent e2);
 	void   updateSiblings(ID id, ID prevId, ID nextId);

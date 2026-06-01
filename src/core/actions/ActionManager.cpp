@@ -421,26 +421,12 @@ void ActionManager::clearActions(ID channelId, int type)
 	m_model.swap(model::SwapType::HARD);
 }
 
-Action ActionManager::rec_DEPR_(ID channelId, Scene scene, Frame frame, MidiEvent e)
-{
-	Action action = m_model.get().actions.rec_DEPR_(channelId, scene, frame, e);
-
-	m_model.swap(model::SwapType::HARD);
-	return action;
-}
-
 Action ActionManager::rec(ID channelId, Scene scene, Tick tick, MidiEvent e)
 {
 	Action action = m_model.get().actions.rec(channelId, scene, tick, e);
 
 	m_model.swap(model::SwapType::HARD);
 	return action;
-}
-
-void ActionManager::rec_DEPR_(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
-{
-	m_model.get().actions.rec_DEPR_(channelId, scene, f1, f2, e1, e2);
-	m_model.swap(model::SwapType::HARD);
 }
 
 void ActionManager::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1, MidiEvent e2)
