@@ -185,8 +185,8 @@ void Actions::debug() const
 {
 	puts("model::actions");
 	for (const Action& a : m_actions)
-		fmt::print("\t\tframe={}, ID={}, scene={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
-		    a.frame, a.id.getValue(), a.scene.getIndex(), a.channelId.getValue(), a.event.getRaw(),
+		fmt::print("\t\ttick={}, ID={}, scene={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
+		    a.tick.value(), a.id.getValue(), a.scene.getIndex(), a.channelId.getValue(), a.event.getRaw(),
 		    a.prevId.getValue(), a.nextId.getValue());
 }
 
