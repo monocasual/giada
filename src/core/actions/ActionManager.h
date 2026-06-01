@@ -127,8 +127,7 @@ private:
 
 	bool areComposite(const Action& a1, const Action& a2) const;
 
-	Frame fixVerticalEnvActions(Frame f, const Action& a1, const Action& a2) const;
-	bool  isSinglePressMode(ID channelId) const;
+	bool isSinglePressMode(ID channelId) const;
 
 	/* consolidate
 	Given an action 'a1' tries to find the matching NOTE_OFF and updates the

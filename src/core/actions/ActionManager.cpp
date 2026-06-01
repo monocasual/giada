@@ -259,19 +259,6 @@ bool ActionManager::areComposite(const Action& a1, const Action& a2) const
 
 /* -------------------------------------------------------------------------- */
 
-Frame ActionManager::fixVerticalEnvActions(Frame f, const Action& a1, const Action& a2) const
-{
-	if (a1.frame == f)
-		f += 1;
-	else if (a2.frame == f)
-		f -= 1;
-	if (a1.frame == f || a2.frame == f)
-		return -1;
-	return f;
-}
-
-/* -------------------------------------------------------------------------- */
-
 bool ActionManager::isSinglePressMode(ID channelId) const
 {
 	return m_model.get().tracks.getChannel(channelId).sampleChannel->mode == SamplePlayerMode::SINGLE_PRESS;
