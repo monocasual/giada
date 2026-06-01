@@ -402,19 +402,12 @@ void Sequencer::setBpm(float b)
 
 void Sequencer::rawSetBpm(float v)
 {
-	assert(onBpmChange != nullptr);
-
-	const float oldVal = m_model.get().sequencer.getBpm();
-	const float newVal = v;
-
-	m_model.get().sequencer.setBpm(newVal);
+	m_model.get().sequencer.setBpm(v);
 	m_model.swap(model::SwapType::HARD);
 
 	recomputeFrames();
 
-	onBpmChange(oldVal, newVal, m_quantizerStep);
-
-	u::log::print("[sequencer::rawSetBpm] Bpm changed to {}\n", newVal);
+	u::log::print("[sequencer::rawSetBpm] Bpm changed to {}\n", v);
 }
 
 /* -------------------------------------------------------------------------- */

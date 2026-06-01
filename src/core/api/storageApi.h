@@ -43,12 +43,11 @@ class MidiSynchronizer;
 class ChannelManager;
 class KernelAudio;
 class Sequencer;
-class ActionManager;
 class StorageApi
 {
 public:
 	StorageApi(Engine&, model::Model&, PluginManager&, MidiSynchronizer&,
-	    Mixer&, ChannelManager&, KernelAudio&, Sequencer&, ActionManager&);
+	    Mixer&, ChannelManager&, KernelAudio&, Sequencer&);
 
 	/* storeProject
 	Saves the current project. Returns true on success. */
@@ -71,7 +70,6 @@ private:
 	ChannelManager&   m_channelManager;
 	KernelAudio&      m_kernelAudio;
 	Sequencer&        m_sequencer;
-	ActionManager&   m_actionRecorder;
 };
 } // namespace giada::m
 

@@ -92,46 +92,6 @@ void ActionManager::reset()
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::updateBpm(float ratio, int quantizerStep)
-{
-	if (ratio == 1.0f)
-		return;
-
-	m_model.get().actions.updateKeyFrames([=](Frame old)
-	{
-		/* The division here cannot be precise. A new frame can be 44099 and the
-		quantizer set to 44100. That would mean two recs completely useless. So we
-		compute a reject value ('delta'): if it's lower than 6 frames the new frame
-		is collapsed with a quantized frame. FIXME - maybe 6 frames are too low. */
-		Frame frame = static_cast<Frame>(old * ratio);
-		if (frame != 0)
-		{
-			Frame delta = quantizerStep % frame;
-			if (delta > 0 && delta <= 6)
-				frame = frame + delta;
-		}
-		return frame;
-	});
-
-	m_model.swap(model::SwapType::NONE);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ActionManager::updateSamplerate(int systemRate, int patchRate)
-{
-	if (systemRate == patchRate)
-		return;
-
-	float ratio = systemRate / (float)patchRate;
-
-	m_model.get().actions.updateKeyFrames([=](Frame old)
-	{ return floorf(old * ratio); });
-	m_model.swap(model::SwapType::NONE);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void ActionManager::cloneActions(ID channelId, Scene scene, ID newChannelId)
 {
 	copyActions(channelId, scene, scene, newChannelId);

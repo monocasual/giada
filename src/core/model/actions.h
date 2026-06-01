@@ -112,12 +112,6 @@ public:
 
 	void deleteAction(ID currId, ID nextId);
 
-	/* updateKeyFrames
-	Update all the key frames in the internal map of actions, according to a
-	lambda function 'f'. */
-
-	void updateKeyFrames(std::function<Frame(Frame old)> f);
-
 	/* updateEvent
 	Changes the event in action 'a'. */
 

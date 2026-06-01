@@ -187,10 +187,9 @@ public:
 
 	void recomputeFrames();
 
-	std::function<void(SeqStatus)>         onAboutStart;
-	std::function<void()>                  onAboutStop;
-	std::function<void(float, float, int)> onBpmChange;
-	std::function<void()>                  onSceneChanged;
+	std::function<void(SeqStatus)> onAboutStart;
+	std::function<void()>          onAboutStop;
+	std::function<void()>          onSceneChanged;
 
 private:
 	/* raw[*]

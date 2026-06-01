@@ -51,18 +51,6 @@ public:
 
 	void reset();
 
-	/* updateBpm
-	Changes actions position by calculating the new bpm value. */
-
-	void updateBpm(float ratio, int quantizerStep);
-
-	/* updateSamplerate
-	Changes actions position by taking in account the new samplerate. If
-	f_system == f_patch nothing will change, otherwise the conversion is
-	mandatory. */
-
-	void updateSamplerate(int systemRate, int patchRate);
-
 	/* cloneActions
 	Clones actions in channel 'channelId', giving them a new channel ID. Returns
 	whether any action has been cloned. */
