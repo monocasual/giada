@@ -83,7 +83,7 @@ void ActionEditorApi::deleteMidiAction(ID channelId, const Action& a)
 
 void ActionEditorApi::updateMidiAction(ID channelId, const Action& a, int note, float velocity, Frame f1, Frame f2)
 {
-	m_actionManager.updateMidiAction(channelId, m_sequencer.getCurrentScene(), a, note, velocity, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionManager.updateMidiAction_DEPR_(channelId, m_sequencer.getCurrentScene(), a, note, velocity, f1, f2, m_sequencer.getFramesInLoop());
 }
 
 /* -------------------------------------------------------------------------- */

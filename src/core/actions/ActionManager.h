@@ -97,7 +97,7 @@ public:
 
 	/* update*Action */
 
-	void updateMidiAction(ID channelId, Scene, const Action&, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
+	void updateMidiAction_DEPR_(ID channelId, Scene, const Action&, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
 	void updateSampleAction(ID channelId, Scene, const Action&, int type, Frame f1, Frame f2, Frame framesInLoop);
 	void updateVelocity(const Action&, float value);
 

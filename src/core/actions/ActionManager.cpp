@@ -258,7 +258,7 @@ void ActionManager::deleteSampleAction(const Action& a)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::updateMidiAction(ID channelId, Scene scene, const Action& a, int note, float velocity,
+void ActionManager::updateMidiAction_DEPR_(ID channelId, Scene scene, const Action& a, int note, float velocity,
     Frame f1, Frame f2, Frame framesInLoop)
 {
 	deleteAction(a.id, a.nextId);
