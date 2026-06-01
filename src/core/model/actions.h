@@ -144,13 +144,13 @@ private:
 	bool exists(ID channelId, Scene, Tick, const MidiEvent&) const;
 
 	/* sort
-	Sorts the internal vector of Actions, frame-wise, ascending. Mandatory each
+	Sorts the internal vector of Actions, tick-wise, ascending. Mandatory each
 	time you add a new Action. */
 
 	void sort();
 
 	/* m_actions
-	Stored actions. Must always be sorted frame-wise, ascending, to allow
+	Stored actions. Must always be sorted tick-wise, ascending, to allow
 	the fetch alogrithm to work properly. Sorting is needed any time you add
 	a new action to the vector. */
 
