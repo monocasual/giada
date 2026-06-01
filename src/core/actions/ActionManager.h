@@ -70,7 +70,7 @@ public:
 	/* liveRec
 	Records a user-generated action. NOTE_ON or NOTE_OFF only for now. */
 
-	void liveRec(ID channelId, Scene, MidiEvent e, Frame global);
+	void liveRec(ID channelId, Scene, MidiEvent e, Tick global);
 
 	/* record*Action */
 

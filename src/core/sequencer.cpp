@@ -130,7 +130,6 @@ int         Sequencer::getBeats() const { return m_model.get().sequencer.getTime
 int         Sequencer::getBars() const { return m_model.get().sequencer.getTimeSignature().bars; }
 int         Sequencer::getCurrentBeat() const { return m_model.get().sequencer.a_getCurrentBeat(); }
 Frame       Sequencer::getCurrentFrame() const { return m_model.get().sequencer.a_getCurrentFrame(); }
-Frame       Sequencer::getCurrentFrameQuantized() const { return quantize(getCurrentFrame()); }
 float       Sequencer::getCurrentSecond(int sampleRate) const { return getCurrentFrame() / static_cast<float>(sampleRate); }
 Frame       Sequencer::getFramesInBar() const { return m_model.get().sequencer.framesInBar; }
 Frame       Sequencer::getFramesInBeat() const { return m_model.get().sequencer.framesInBeat; }
@@ -159,6 +158,8 @@ Tick Sequencer::getCurrentTick() const
 	return u::time::frameToTickFloor(currentFrame, m_currentSampleRate, bpm);
 }
 
+Tick Sequencer::getCurrentTickQuantized() const { return quantize(getCurrentTick()); }
+
 /* -------------------------------------------------------------------------- */
 
 float Sequencer::calcBpmFromRec(Frame recordedFrames) const
@@ -168,13 +169,13 @@ float Sequencer::calcBpmFromRec(Frame recordedFrames) const
 
 /* -------------------------------------------------------------------------- */
 
-Frame Sequencer::quantize(Frame f) const
+Tick Sequencer::quantize(Tick t) const
 {
 	namespace math = mcl::utils::math;
 
 	if (!canQuantize())
-		return f;
-	return math::quantize(f, m_quantizerStep) % getFramesInLoop(); // No overflow
+		return t;
+	return Tick{math::quantize(t.value(), m_quantizerStep) % getFramesInLoop()}; // No overflow
 }
 
 /* -------------------------------------------------------------------------- */

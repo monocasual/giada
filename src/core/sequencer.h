@@ -104,7 +104,6 @@ public:
 	int         getBars() const;
 	int         getCurrentBeat() const;
 	Frame       getCurrentFrame() const;
-	Frame       getCurrentFrameQuantized() const;
 	float       getCurrentSecond(int sampleRate) const;
 	Frame       getFramesInBar() const;
 	Frame       getFramesInBeat() const;
@@ -122,6 +121,7 @@ public:
 	Scene       getNextScene() const;
 	SceneStatus getSceneStatus() const;
 	Tick        getCurrentTick() const;
+	Tick        getCurrentTickQuantized() const;
 
 	/* calcBpmFromRec
 	Given the amount of recorded frames, returns the speed of the current
@@ -130,9 +130,9 @@ public:
 	float calcBpmFromRec(Frame recordedFrames) const;
 
 	/* quantize
-	Quantizes the frame 'f'.  */
+	Quantizes the tick in input. */
 
-	Frame quantize(Frame f) const;
+	Tick quantize(Tick) const;
 
 	/* reset
 	Brings everything back to the initial state. */

@@ -202,25 +202,25 @@ void ChannelsApi::press(ID channelId, float velocity)
 {
 	const bool  canRecordActions = m_recorder.canRecordActions();
 	const bool  canQuantize      = m_sequencer.canQuantize();
-	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
+	const Tick  currentTickQ     = m_sequencer.getCurrentTickQuantized();
 	const Scene scene            = m_sequencer.getCurrentScene();
-	m_reactor.keyPress(channelId, scene, velocity, canRecordActions, canQuantize, currentFrameQ);
+	m_reactor.keyPress(channelId, scene, velocity, canRecordActions, canQuantize, currentTickQ);
 }
 
 void ChannelsApi::release(ID channelId)
 {
 	const bool  canRecordActions = m_recorder.canRecordActions();
-	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
+	const Tick  currentTickQ     = m_sequencer.getCurrentTickQuantized();
 	const Scene scene            = m_sequencer.getCurrentScene();
-	m_reactor.keyRelease(channelId, scene, canRecordActions, currentFrameQ);
+	m_reactor.keyRelease(channelId, scene, canRecordActions, currentTickQ);
 }
 
 void ChannelsApi::kill(ID channelId)
 {
 	const bool  canRecordActions = m_recorder.canRecordActions();
-	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
+	const Tick  currentTickQ     = m_sequencer.getCurrentTickQuantized();
 	const Scene scene            = m_sequencer.getCurrentScene();
-	m_reactor.keyKill(channelId, scene, canRecordActions, currentFrameQ);
+	m_reactor.keyKill(channelId, scene, canRecordActions, currentTickQ);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -359,8 +359,8 @@ void ChannelsApi::freeAllSampleChannels(bool allScenes)
 void ChannelsApi::sendMidi(ID channelId, const MidiEvent& e)
 {
 	const bool  canRecordActions = m_recorder.canRecordActions();
-	const Frame currentFrameQ    = m_sequencer.getCurrentFrameQuantized();
+	const Tick  currentTickQ     = m_sequencer.getCurrentTickQuantized();
 	const Scene scene            = m_sequencer.getCurrentScene();
-	m_reactor.processMidiEvent(channelId, scene, e, canRecordActions, currentFrameQ);
+	m_reactor.processMidiEvent(channelId, scene, e, canRecordActions, currentTickQ);
 }
 } // namespace giada::m
