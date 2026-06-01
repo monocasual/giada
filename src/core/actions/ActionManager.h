@@ -86,7 +86,6 @@ public:
 
 	/* record*Action */
 
-	void recordMidiAction_DEPR_(ID channelId, Scene, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
 	void recordMidiAction(ID channelId, Scene scene, int note, float velocity, TickRange, Tick ticksInLoop);
 	void recordSampleAction_DEPR_(ID channelId, Scene, int type, Frame f1, Frame f2, Frame framesInLoop);
 
@@ -97,7 +96,6 @@ public:
 
 	/* update*Action */
 
-	void updateMidiAction_DEPR_(ID channelId, Scene, const Action&, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
 	void updateMidiAction(ID channelId, Scene, const Action&, int note, float velocity, TickRange, Tick ticksInLoop);
 	void updateSampleAction(ID channelId, Scene, const Action&, int type, Frame f1, Frame f2, Frame framesInLoop);
 	void updateVelocity(const Action&, float value);

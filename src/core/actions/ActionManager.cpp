@@ -183,19 +183,6 @@ void ActionManager::liveRec(ID channelId, Scene scene, MidiEvent e, Frame global
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::recordMidiAction_DEPR_(ID channelId, Scene scene, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop)
-{
-	const auto [ff1, ff2] = sanitizeFrames_(f1, f2, framesInLoop);
-
-	MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, note, 0);
-	MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, note, 0);
-
-	e1.setVelocityFloat(velocity);
-	e2.setVelocityFloat(velocity);
-
-	rec_DEPR_(channelId, scene, ff1, ff2, e1, e2);
-}
-
 void ActionManager::recordMidiAction(ID channelId, Scene scene, int note, float velocity,
     TickRange range, Tick ticksInLoop)
 {
@@ -257,13 +244,6 @@ void ActionManager::deleteSampleAction(const Action& a)
 }
 
 /* -------------------------------------------------------------------------- */
-
-void ActionManager::updateMidiAction_DEPR_(ID channelId, Scene scene, const Action& a, int note, float velocity,
-    Frame f1, Frame f2, Frame framesInLoop)
-{
-	deleteAction(a.id, a.nextId);
-	recordMidiAction_DEPR_(channelId, scene, note, velocity, f1, f2, framesInLoop);
-}
 
 void ActionManager::updateMidiAction(ID channelId, Scene scene, const Action& a, int note,
     float velocity, TickRange range, Tick ticksInLoop)

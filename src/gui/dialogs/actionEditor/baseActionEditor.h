@@ -84,7 +84,6 @@ protected:
 	/* computeWidth
 	Computes total width, in pixel. */
 
-	void computeWidth(Frame framesInSeq, Frame framesInLoop);
 	void computeWidth(Tick tickInSeq, Tick tickInLoop);
 
 	/* prepareWindow

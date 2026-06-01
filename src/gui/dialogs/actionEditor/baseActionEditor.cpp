@@ -88,12 +88,6 @@ int gdBaseActionEditor::getMouseOverContent() const
 
 /* -------------------------------------------------------------------------- */
 
-void gdBaseActionEditor::computeWidth(Frame framesInSeq, Frame framesInLoop)
-{
-	fullWidth = frameToPixel(framesInSeq);
-	loopWidth = frameToPixel(framesInLoop);
-}
-
 void gdBaseActionEditor::computeWidth(Tick tickInSeq, Tick tickInLoop)
 {
 	fullWidth = tickToPixel(tickInSeq);
