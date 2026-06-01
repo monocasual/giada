@@ -48,7 +48,7 @@ public:
 	void recordMidiAction_DEPR_(ID channelId, int note, float velocity, Frame f1, Frame f2);
 	void recordMidiAction(ID channelId, int note, float velocity, TickRange);
 	void deleteMidiAction(ID channelId, const Action&);
-	void updateMidiAction(ID channelId, const Action&, int note, float velocity, Frame f1, Frame f2);
+	void updateMidiAction(ID channelId, const Action&, int note, float velocity, TickRange);
 	void recordSampleAction(ID channelId, int type, Frame f1, Frame f2);
 	void updateSampleAction(ID channelId, const Action&, int type, Frame f1, Frame f2);
 	void deleteSampleAction(const Action&);

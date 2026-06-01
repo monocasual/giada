@@ -85,7 +85,7 @@ const m::Action* findAction(ID);
 void recordMidiAction(ID channelId, int note, float velocity, TickRange);
 void deleteMidiAction(ID channelId, const m::Action& a);
 void updateMidiAction(ID channelId, const m::Action& a, int note, float velocity,
-    Frame f1, Frame f2);
+    TickRange);
 void updateVelocity(const m::Action& a, float value);
 
 /* Sample Actions. */

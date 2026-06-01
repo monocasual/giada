@@ -109,9 +109,9 @@ void deleteMidiAction(ID channelId, const m::Action& a)
 /* -------------------------------------------------------------------------- */
 
 void updateMidiAction(ID channelId, const m::Action& a, int note, float velocity,
-    Frame f1, Frame f2)
+    TickRange range)
 {
-	g_engine->getActionEditorApi().updateMidiAction(channelId, a, note, velocity, f1, f2);
+	g_engine->getActionEditorApi().updateMidiAction(channelId, a, note, velocity, range);
 }
 
 /* -------------------------------------------------------------------------- */

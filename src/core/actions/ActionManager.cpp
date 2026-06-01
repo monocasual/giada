@@ -265,6 +265,13 @@ void ActionManager::updateMidiAction_DEPR_(ID channelId, Scene scene, const Acti
 	recordMidiAction_DEPR_(channelId, scene, note, velocity, f1, f2, framesInLoop);
 }
 
+void ActionManager::updateMidiAction(ID channelId, Scene scene, const Action& a, int note,
+    float velocity, TickRange range, Tick ticksInLoop)
+{
+	deleteAction(a.id, a.nextId);
+	recordMidiAction(channelId, scene, note, velocity, range, ticksInLoop);
+}
+
 /* -------------------------------------------------------------------------- */
 
 void ActionManager::updateSampleAction(ID channelId, Scene scene, const Action& a, int type, Frame f1, Frame f2, Frame framesInLoop)
