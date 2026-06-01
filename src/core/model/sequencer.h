@@ -62,6 +62,7 @@ public:
 	bool a_isOnFirstBeat() const;
 
 	Frame       a_getCurrentFrame() const;
+	Tick        a_getCurrentTick(int sampleRate) const;
 	Frame       a_getCurrentBeat() const;
 	float       a_getCurrentSecond(int sampleRate) const;
 	Scene       a_getCurrentScene() const;

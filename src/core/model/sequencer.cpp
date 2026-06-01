@@ -81,6 +81,13 @@ Frame Sequencer::a_getCurrentBeat() const { return shared->currentBeat.load(); }
 
 /* -------------------------------------------------------------------------- */
 
+Tick Sequencer::a_getCurrentTick(int sampleRate) const
+{
+	return u::time::frameToTickFloor(a_getCurrentFrame(), sampleRate, getBpm());
+}
+
+/* -------------------------------------------------------------------------- */
+
 float Sequencer::a_getCurrentSecond(int sampleRate) const
 {
 	return a_getCurrentFrame() / static_cast<float>(sampleRate);
