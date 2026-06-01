@@ -133,7 +133,7 @@ private:
 	Given an action 'a1' tries to find the matching NOTE_OFF and updates the
 	action accordingly. */
 
-	void consolidate(const Action& a1, std::size_t i);
+	void consolidate(Action& a1, std::size_t i);
 
 	/* cloneActions
 	Internal generic method for copying actions between channels and/or scenes.

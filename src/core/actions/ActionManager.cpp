@@ -266,7 +266,7 @@ bool ActionManager::isSinglePressMode(ID channelId) const
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::consolidate(const Action& a1, std::size_t i)
+void ActionManager::consolidate(Action& a1, std::size_t i)
 {
 	/* This algorithm must start searching from the element next to 'a1': since
 	live actions are recorded in linear sequence, the potential partner of 'a1'
@@ -275,14 +275,13 @@ void ActionManager::consolidate(const Action& a1, std::size_t i)
 
 	for (auto it = m_liveActions.begin() + i; it != m_liveActions.end(); ++it)
 	{
-
-		const Action& a2 = *it;
+		Action& a2 = *it;
 
 		if (!areComposite(a1, a2))
 			continue;
 
-		const_cast<Action&>(a1).nextId = a2.id;
-		const_cast<Action&>(a2).prevId = a1.id;
+		a1.nextId = a2.id;
+		a2.prevId = a1.id;
 
 		break;
 	}
