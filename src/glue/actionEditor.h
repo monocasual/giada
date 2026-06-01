@@ -63,10 +63,6 @@ struct Data
 	ID                     channelId;
 	Scene                  scene;
 	std::string            channelName;
-	Frame                  framesInSeq;
-	Frame                  framesInBeat;
-	Frame                  framesInBar;
-	Frame                  framesInLoop;
 	Tick                   ticksInSeq;
 	Tick                   ticksInBeat;
 	Tick                   ticksInBar;
