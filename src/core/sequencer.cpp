@@ -122,8 +122,8 @@ Sequencer::Sequencer(model::Model& m, MidiSynchronizer& s, JackTransport& j)
 bool        Sequencer::canQuantize() const { return m_model.get().sequencer.canQuantize(); }
 bool        Sequencer::isRunning() const { return m_model.get().sequencer.isRunning(); }
 bool        Sequencer::isActive() const { return m_model.get().sequencer.isActive(); }
-bool        Sequencer::isOnBar() const { return m_model.get().sequencer.a_isOnBar(); }
-bool        Sequencer::isOnBeat() const { return m_model.get().sequencer.a_isOnBeat(); }
+bool        Sequencer::isOnBar() const { return m_model.get().sequencer.a_isOnBar(m_currentSampleRate); }
+bool        Sequencer::isOnBeat() const { return m_model.get().sequencer.a_isOnBeat(m_currentSampleRate); }
 bool        Sequencer::isOnFirstBeat() const { return m_model.get().sequencer.a_isOnFirstBeat(); }
 float       Sequencer::getBpm() const { return m_model.get().sequencer.getBpm(); }
 int         Sequencer::getBeats() const { return m_model.get().sequencer.getTimeSignature().beats; }
@@ -131,10 +131,10 @@ int         Sequencer::getBars() const { return m_model.get().sequencer.getTimeS
 int         Sequencer::getCurrentBeat() const { return m_model.get().sequencer.a_getCurrentBeat(); }
 Frame       Sequencer::getCurrentFrame() const { return m_model.get().sequencer.a_getCurrentFrame(); }
 float       Sequencer::getCurrentSecond(int sampleRate) const { return getCurrentFrame() / static_cast<float>(sampleRate); }
-Frame       Sequencer::getFramesInBar() const { return m_model.get().sequencer.framesInBar; }
-Frame       Sequencer::getFramesInBeat() const { return m_model.get().sequencer.framesInBeat; }
-Frame       Sequencer::getFramesInLoop() const { return m_model.get().sequencer.framesInLoop; }
-Frame       Sequencer::getFramesInSeq() const { return m_model.get().sequencer.framesInSeq; }
+Frame       Sequencer::getFramesInBar() const { return u::time::tickToFrame(m_model.get().sequencer.getTicksInBar(), m_currentSampleRate, getBpm()); }
+Frame       Sequencer::getFramesInBeat() const { return u::time::tickToFrame(m_model.get().sequencer.getTicksInBeat(), m_currentSampleRate, getBpm()); }
+Frame       Sequencer::getFramesInLoop() const { return u::time::tickToFrame(m_model.get().sequencer.getTicksInLoop(), m_currentSampleRate, getBpm()); }
+Frame       Sequencer::getFramesInSeq() const { return u::time::tickToFrame(m_model.get().sequencer.getTicksInSeq(), m_currentSampleRate, getBpm()); }
 Tick        Sequencer::getTicksInBar() const { return m_model.get().sequencer.getTicksInBar(); }
 Tick        Sequencer::getTicksInBeat() const { return m_model.get().sequencer.getTicksInBeat(); }
 Tick        Sequencer::getTicksInLoop() const { return m_model.get().sequencer.getTicksInLoop(); }
@@ -176,7 +176,7 @@ void Sequencer::reset(int sampleRate)
 {
 	m_currentSampleRate = sampleRate;
 	m_model.get().sequencer.reset();
-	recomputeFrames(); // Model swap is done here, no need to call it twice
+	m_model.swap(model::SwapType::NONE);
 	rewind();
 }
 
@@ -185,7 +185,6 @@ void Sequencer::reset(int sampleRate)
 void Sequencer::setSampleRate(int sampleRate)
 {
 	m_currentSampleRate = sampleRate;
-	recomputeFrames();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -197,10 +196,10 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	const Frame start        = sequencer.a_getCurrentFrame();
 	const Frame end          = start + bufferSize;
-	const Frame framesInLoop = sequencer.framesInLoop;
-	const Frame framesInBar  = sequencer.framesInBar;
-	const Frame framesInBeat = sequencer.framesInBeat;
 	const float bpm          = sequencer.getBpm();
+	const Frame framesInLoop = u::time::tickToFrame(sequencer.getTicksInLoop(), m_currentSampleRate, bpm);
+	const Frame framesInBar  = u::time::tickToFrame(sequencer.getTicksInBar(), m_currentSampleRate, bpm);
+	const Frame framesInBeat = u::time::tickToFrame(sequencer.getTicksInBeat(), m_currentSampleRate, bpm);
 
 	const Scene currentScene = sequencer.a_getCurrentScene();
 	const Scene nextScene    = sequencer.a_getNextScene();
@@ -368,20 +367,6 @@ void Sequencer::setMetronome(bool v)
 
 /* -------------------------------------------------------------------------- */
 
-void Sequencer::recomputeFrames()
-{
-	assert(m_currentSampleRate != 0);
-
-	model::Sequencer& s = m_model.get().sequencer;
-	s.recomputeFrames(m_currentSampleRate);
-	if (s.quantize != 0)
-		m_quantizerStep = s.framesInBeat / s.quantize;
-
-	m_model.swap(model::SwapType::NONE);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Sequencer::setBpm(float b)
 {
 	b = std::clamp(b, G_MIN_BPM, G_MAX_BPM);
@@ -398,8 +383,6 @@ void Sequencer::rawSetBpm(float v)
 	m_model.get().sequencer.setBpm(v);
 	m_model.swap(model::SwapType::HARD);
 
-	recomputeFrames();
-
 	u::log::print("[sequencer::rawSetBpm] Bpm changed to {}\n", v);
 }
 
@@ -409,8 +392,6 @@ void Sequencer::setBeats(int newBeats, int newBars)
 {
 	m_model.get().sequencer.setTimeSignature({newBeats, newBars});
 	m_model.swap(model::SwapType::HARD);
-
-	recomputeFrames();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -427,8 +408,6 @@ void Sequencer::setQuantize(int q)
 {
 	m_model.get().sequencer.quantize = q;
 	m_model.swap(model::SwapType::HARD);
-
-	recomputeFrames();
 }
 
 /* -------------------------------------------------------------------------- */

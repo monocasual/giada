@@ -108,7 +108,8 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 	/* Then render Mixer, channels and finalize output. */
 
-	const int      maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
+	const int      sampleRate     = kernelAudio.samplerate;
+	const int      maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(sampleRate) : sequencer.getFramesInLoop(sampleRate);
 	const Scene    scene          = sequencer.a_getCurrentScene();
 	const bool     hasSolos       = mixer.hasSolos;
 	const bool     hasInput       = in.isAllocd();

@@ -51,20 +51,19 @@ bool Sequencer::isRunning() const
 
 /* -------------------------------------------------------------------------- */
 
-bool Sequencer::a_isOnBar() const
+bool Sequencer::a_isOnBar(int sampleRate) const
 {
-	const int currentFrame = shared->currentFrame.load();
-
-	if (status == SeqStatus::WAITING || currentFrame == 0)
+	const Tick currentTick = a_getCurrentTick(sampleRate);
+	if (status == SeqStatus::WAITING || currentTick == Tick{0})
 		return false;
-	return currentFrame % framesInBar == 0;
+	return currentTick % getTicksInBar() == Tick{0};
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool Sequencer::a_isOnBeat() const
+bool Sequencer::a_isOnBeat(int sampleRate) const
 {
-	return shared->currentFrame.load() % framesInBeat == 0;
+	return a_getCurrentTick(sampleRate) % getTicksInBeat() == Tick{0};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -110,6 +109,13 @@ Scene Sequencer::a_getNextScene() const
 SceneStatus Sequencer::a_getSceneStatus() const
 {
 	return shared->sceneStatus.load();
+}
+
+/* -------------------------------------------------------------------------- */
+
+int Sequencer::getFramesInLoop(int sampleRate) const
+{
+	return u::time::tickToFrame(getTicksInLoop(), sampleRate, m_bpm);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -170,14 +176,6 @@ void Sequencer::reset()
 	m_bpm           = G_DEFAULT_BPM;
 	m_timeSignature = {};
 	quantize        = G_DEFAULT_QUANTIZE;
-}
-
-void Sequencer::recomputeFrames(int sampleRate)
-{
-	framesInBeat = u::time::beatToFrame(1, sampleRate, m_bpm);
-	framesInLoop = framesInBeat * m_timeSignature.beats;
-	framesInBar  = framesInLoop / (float)m_timeSignature.bars;
-	framesInSeq  = framesInBeat * G_MAX_BEATS;
 }
 
 /* -------------------------------------------------------------------------- */

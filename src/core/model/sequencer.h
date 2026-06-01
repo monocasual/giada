@@ -57,8 +57,8 @@ public:
 
 	bool canQuantize() const;
 
-	bool a_isOnBar() const;
-	bool a_isOnBeat() const;
+	bool a_isOnBar(int sampleRate) const;
+	bool a_isOnBeat(int sampleRate) const;
 	bool a_isOnFirstBeat() const;
 
 	Frame       a_getCurrentFrame() const;
@@ -68,6 +68,11 @@ public:
 	Scene       a_getCurrentScene() const;
 	Scene       a_getNextScene() const;
 	SceneStatus a_getSceneStatus() const;
+
+	/* getFramesInLoop
+	Returns the number of frames in the current loop. */
+
+	int getFramesInLoop(int sampleRate) const;
 
 	/* getMaxFramesInLoop
 	Returns how many frames the current loop length might contain at the slowest
@@ -95,15 +100,10 @@ public:
 
 	void setBpm(float);
 	void setTimeSignature(TimeSignature);
-	void recomputeFrames(int sampleRate);
 
-	SeqStatus status       = SeqStatus::STOPPED;
-	int       framesInLoop = 0;
-	int       framesInBar  = 0;
-	int       framesInBeat = 0;
-	int       framesInSeq  = 0;
-	int       quantize     = G_DEFAULT_QUANTIZE;
-	bool      metronome    = false;
+	SeqStatus status    = SeqStatus::STOPPED;
+	int       quantize  = G_DEFAULT_QUANTIZE;
+	bool      metronome = false;
 
 private:
 	struct Shared

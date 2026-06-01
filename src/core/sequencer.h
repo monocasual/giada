@@ -182,11 +182,6 @@ public:
 	void jack_setBpm(float b);
 #endif
 
-	/* recomputeFrames
-	Updates bpm, frames, beats and so on. */
-
-	void recomputeFrames();
-
 	std::function<void(SeqStatus)> onAboutStart;
 	std::function<void()>          onAboutStop;
 	std::function<void()>          onSceneChanged;

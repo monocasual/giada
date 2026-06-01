@@ -133,7 +133,6 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, std::fu
 	const bool hasSolos        = m_channelManager.hasSolos();
 
 	m_mixer.updateSoloCount(hasSolos);
-	m_sequencer.recomputeFrames();
 	m_mixer.allocRecBuffer(maxFramesInLoop);
 
 	progress(0.9f);
