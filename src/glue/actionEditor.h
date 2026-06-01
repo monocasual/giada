@@ -90,10 +90,9 @@ void updateVelocity(const m::Action& a, float value);
 
 /* Sample Actions. */
 
-void recordSampleAction(ID channelId, int type, Frame f1, Frame f2 = 0);
+void recordSampleAction(ID channelId, int type, TickRange);
 void deleteSampleAction(const m::Action& a);
-void updateSampleAction(ID channelId, const m::Action& a, int type,
-    Frame f1, Frame f2 = 0);
+void updateSampleAction(ID channelId, const m::Action& a, int type, TickRange);
 } // namespace giada::c::actionEditor
 
 #endif

@@ -87,7 +87,7 @@ public:
 	/* record*Action */
 
 	void recordMidiAction(ID channelId, Scene scene, int note, float velocity, TickRange, Tick ticksInLoop);
-	void recordSampleAction_DEPR_(ID channelId, Scene, int type, Frame f1, Frame f2, Frame framesInLoop);
+	void recordSampleAction(ID channelId, Scene, int type, TickRange, Tick ticksInLoop);
 
 	/* delete*Action */
 
@@ -97,7 +97,7 @@ public:
 	/* update*Action */
 
 	void updateMidiAction(ID channelId, Scene, const Action&, int note, float velocity, TickRange, Tick ticksInLoop);
-	void updateSampleAction(ID channelId, Scene, const Action&, int type, Frame f1, Frame f2, Frame framesInLoop);
+	void updateSampleAction(ID channelId, Scene, const Action&, int type, TickRange, Tick ticksInLoop);
 	void updateVelocity(const Action&, float value);
 
 	/* consolidate
@@ -128,6 +128,7 @@ public:
 	void   clearActions(ID channelId, int type);
 	Action rec_DEPR_(ID channelId, Scene, Frame frame, MidiEvent e);
 	void   rec_DEPR_(ID channelId, Scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
+	Action rec(ID channelId, Scene, Tick, MidiEvent e);
 	void   rec(ID channelId, Scene, TickRange, MidiEvent e1, MidiEvent e2);
 	void   updateSiblings(ID id, ID prevId, ID nextId);
 	void   deleteAction(ID id);

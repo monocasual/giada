@@ -50,23 +50,6 @@ constexpr int MAX_LIVE_RECS_CHUNK = 128;
 
 /* -------------------------------------------------------------------------- */
 
-std::tuple<Frame, Frame> sanitizeFrames_(Frame f1, Frame f2, int framesInLoop)
-{
-	if (f2 == 0)
-		f2 = f1 + G_DEFAULT_ACTION_SIZE_depr_;
-
-	/* Avoid frame overflow. */
-
-	const Frame overflow = f2 - framesInLoop + 1;
-	if (overflow > 0)
-	{
-		f2 -= overflow;
-		f1 -= overflow;
-	}
-
-	return {f1, f2};
-}
-
 TickRange sanitizeTickRange_(TickRange r, Tick ticksInLoop)
 {
 	if (!r.isValid())
@@ -81,9 +64,9 @@ TickRange sanitizeTickRange_(TickRange r, Tick ticksInLoop)
 	return r;
 }
 
-Frame sanitizeFrame_(Frame f, int framesInLoop)
+Tick sanitizeTick_(Tick t, Tick ticksInLoop)
 {
-	return std::min(f, framesInLoop - 1);
+	return std::min(t, ticksInLoop - Tick{1});
 }
 } // namespace
 
@@ -197,20 +180,21 @@ void ActionManager::recordMidiAction(ID channelId, Scene scene, int note, float 
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::recordSampleAction_DEPR_(ID channelId, Scene scene, int type, Frame f1, Frame f2, Frame framesInLoop)
+void ActionManager::recordSampleAction(ID channelId, Scene scene, int type,
+    TickRange range, Tick ticksInLoop)
 {
 	if (isSinglePressMode(channelId))
 	{
-		const auto [ff1, ff2] = sanitizeFrames_(f1, f2, framesInLoop);
+		range = sanitizeTickRange_(range, ticksInLoop);
 
 		MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0, G_MAX_VELOCITY);
 		MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0, G_MAX_VELOCITY);
-		rec_DEPR_(channelId, scene, ff1, ff2, e1, e2);
+		rec(channelId, scene, range, e1, e2);
 	}
 	else
 	{
 		MidiEvent e1 = MidiEvent::makeFrom3Bytes(type, 0, G_MAX_VELOCITY);
-		rec_DEPR_(channelId, scene, sanitizeFrame_(f1, framesInLoop), e1);
+		rec(channelId, scene, sanitizeTick_(range.a, ticksInLoop), e1);
 	}
 }
 
@@ -254,14 +238,15 @@ void ActionManager::updateMidiAction(ID channelId, Scene scene, const Action& a,
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::updateSampleAction(ID channelId, Scene scene, const Action& a, int type, Frame f1, Frame f2, Frame framesInLoop)
+void ActionManager::updateSampleAction(ID channelId, Scene scene, const Action& a,
+    int type, TickRange range, Tick ticksInLoop)
 {
 	if (isSinglePressMode(channelId))
 		deleteAction(a.id, a.nextId);
 	else
 		deleteAction(a.id);
 
-	recordSampleAction_DEPR_(channelId, scene, type, f1, f2, framesInLoop);
+	recordSampleAction(channelId, scene, type, range, ticksInLoop);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -439,6 +424,14 @@ void ActionManager::clearActions(ID channelId, int type)
 Action ActionManager::rec_DEPR_(ID channelId, Scene scene, Frame frame, MidiEvent e)
 {
 	Action action = m_model.get().actions.rec_DEPR_(channelId, scene, frame, e);
+
+	m_model.swap(model::SwapType::HARD);
+	return action;
+}
+
+Action ActionManager::rec(ID channelId, Scene scene, Tick tick, MidiEvent e)
+{
+	Action action = m_model.get().actions.rec(channelId, scene, tick, e);
 
 	m_model.swap(model::SwapType::HARD);
 	return action;

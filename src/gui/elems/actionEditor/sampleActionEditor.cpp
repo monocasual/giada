@@ -105,8 +105,11 @@ void geSampleActionEditor::draw()
 
 void geSampleActionEditor::onAddAction()
 {
-	Frame f = m_base->pixelToFrame(Fl::event_x() - x(), m_data->framesInBeat);
-	c::actionEditor::recordSampleAction(m_data->channelId, static_cast<gdSampleActionEditor*>(m_base)->getActionType(), f);
+	// TODO - ppq engine: enable snapping
+	Tick t1 = m_base->pixelToTick(Fl::event_x() - x());
+	Tick t2 = t1 + G_DEFAULT_ACTION_SIZE;
+	c::actionEditor::recordSampleAction(m_data->channelId,
+	    static_cast<gdSampleActionEditor*>(m_base)->getActionType(), {t1, t2});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -157,31 +160,33 @@ void geSampleActionEditor::onResizeAction()
 
 void geSampleActionEditor::onRefreshAction()
 {
+	// TODO - ppq engine: enable snapping
+
 	namespace ca = c::actionEditor;
 
+	int   type = m_action->a1.event.getStatus();
 	Pixel p1   = m_action->x() - x();
 	Pixel p2   = m_action->x() + m_action->w() - x();
-	Frame f1   = 0;
-	Frame f2   = 0;
-	int   type = m_action->a1.event.getStatus();
+	Tick  t1;
+	Tick  t2;
 
 	if (!m_action->isOnEdges())
 	{
-		f1 = m_base->pixelToFrame(p1, m_data->framesInBeat);
-		f2 = m_base->pixelToFrame(p2, m_data->framesInBeat, /*snap=*/false) - (m_base->pixelToFrame(p1, m_data->framesInBeat, /*snap=*/false) - f1);
+		t1 = m_base->pixelToTick(p1);
+		t2 = m_base->pixelToTick(p2) - (m_base->pixelToTick(p1) - t1);
 	}
 	else if (m_action->onLeftEdge)
 	{
-		f1 = m_base->pixelToFrame(p1, m_data->framesInBeat);
-		f2 = m_action->a2.frame;
+		t1 = m_base->pixelToTick(p1);
+		t2 = m_action->a2.tick;
 	}
 	else if (m_action->onRightEdge)
 	{
-		f1 = m_action->a1.frame;
-		f2 = m_base->pixelToFrame(p2, m_data->framesInBeat);
+		t1 = m_action->a1.tick;
+		t2 = m_base->pixelToTick(p2);
 	}
 
-	ca::updateSampleAction(m_data->channelId, m_action->a1, type, f1, f2);
+	ca::updateSampleAction(m_data->channelId, m_action->a1, type, {t1, t2});
 }
 
 /* -------------------------------------------------------------------------- */

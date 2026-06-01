@@ -116,16 +116,16 @@ void updateMidiAction(ID channelId, const m::Action& a, int note, float velocity
 
 /* -------------------------------------------------------------------------- */
 
-void recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
+void recordSampleAction(ID channelId, int type, TickRange range)
 {
-	g_engine->getActionEditorApi().recordSampleAction(channelId, type, f1, f2);
+	g_engine->getActionEditorApi().recordSampleAction(channelId, type, range);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void updateSampleAction(ID channelId, const m::Action& a, int type, Frame f1, Frame f2)
+void updateSampleAction(ID channelId, const m::Action& a, int type, TickRange range)
 {
-	g_engine->getActionEditorApi().updateSampleAction(channelId, a, type, f1, f2);
+	g_engine->getActionEditorApi().updateSampleAction(channelId, a, type, range);
 }
 
 /* -------------------------------------------------------------------------- */
