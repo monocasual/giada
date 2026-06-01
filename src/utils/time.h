@@ -49,12 +49,15 @@ Converts Tick -> Frame. */
 Frame tickToFrame(Tick, int sampleRate, float bpm);
 
 /* frameToTick[...]
-Converts Frame -> Tick. Two different rounding modes since the frame -> tick
+Converts Frame -> Tick. Provides floor and ceil rounding modes since the frame -> tick
 conversion is not always exact: the result may lie between two integer tick
-values. These variants expose the two possible integer bounds, floor and ceil. */
+values. These variants expose the two possible integer bounds, floor and ceil,
+used when converting ranges to avoid skipping information at boundaries. Use the
+round one instead when converting a single frame to tick. */
 
 Tick frameToTickFloor(Frame, int sampleRate, float bpm);
 Tick frameToTickCeil(Frame, int sampleRate, float bpm);
+Tick frameToTickRound(Frame, int sampleRate, float bpm);
 
 /* frameRangeToTickRange
 Same as frameToTick[...], but on ranges. Uses floor for 'a' point and ceil for

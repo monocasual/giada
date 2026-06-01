@@ -85,6 +85,12 @@ Tick frameToTickCeil(Frame frame, int sampleRate, float bpm)
 	return Tick{static_cast<Tick::Value>(std::ceil(tickDouble))};
 }
 
+Tick frameToTickRound(Frame frame, int sampleRate, float bpm)
+{
+	const double tickDouble = frameToTickAsDouble_(frame, sampleRate, bpm);
+	return Tick{static_cast<Tick::Value>(std::llround(tickDouble))};
+}
+
 /* -------------------------------------------------------------------------- */
 
 TickRange frameRangeToTickRange(FrameRange frameRange, int sampleRate, float bpm)
