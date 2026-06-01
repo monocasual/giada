@@ -60,9 +60,9 @@ Data::Data(const m::Channel& c, Scene scene)
 
 /* -------------------------------------------------------------------------- */
 
-Frame Data::getCurrentFrame() const
+Tick Data::getCurrentTick() const
 {
-	return g_engine->getMainApi().getCurrentFrame();
+	return g_engine->getMainApi().getCurrentTick();
 }
 
 /* -------------------------------------------------------------------------- */

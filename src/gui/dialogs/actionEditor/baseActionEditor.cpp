@@ -226,6 +226,6 @@ void gdBaseActionEditor::refresh()
 
 Pixel gdBaseActionEditor::currentFrameToPixel() const
 {
-	return (frameToPixel(m_data.getCurrentFrame()) + m_splitScroll->x()) - m_splitScroll->getScrollX();
+	return (tickToPixel(m_data.getCurrentTick()) + m_splitScroll->x()) - m_splitScroll->getScrollX();
 }
 } // namespace giada::v

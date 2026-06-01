@@ -57,8 +57,8 @@ struct Data
 	Data() = default;
 	Data(const m::Channel&, Scene);
 
-	Frame getCurrentFrame() const;
-	bool  isChannelPlaying() const;
+	Tick getCurrentTick() const;
+	bool isChannelPlaying() const;
 
 	ID                     channelId;
 	Scene                  scene;
