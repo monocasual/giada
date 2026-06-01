@@ -47,10 +47,10 @@ public:
 
 	std::vector<Action> getActionsOnChannel(ID channelId, Scene) const;
 
-	/* getActionsInSampleRange
+	/* getActionsInTickRange
 	Returns a span of all actions included in the required range. */
 
-	const std::span<const Action> getActionsInSampleRange(FrameRange) const;
+	const std::span<const Action> getActionsInTickRange(TickRange) const;
 
 	/* hasActions (1)
 	Checks if the channel has at least one action recorded. */

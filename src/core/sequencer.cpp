@@ -207,6 +207,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 	const Frame framesInLoop = sequencer.framesInLoop;
 	const Frame framesInBar  = sequencer.framesInBar;
 	const Frame framesInBeat = sequencer.framesInBeat;
+	const float bpm          = sequencer.getBpm();
 
 	const Scene currentScene = sequencer.a_getCurrentScene();
 	const Scene nextScene    = sequencer.a_getNextScene();
@@ -216,8 +217,8 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	const Block        block(start, end, framesInLoop);
 	const ActionsBlock actionsBlock{
-	    actions.getActionsInSampleRange(block.head),
-	    actions.getActionsInSampleRange(block.tail)};
+	    actions.getActionsInTickRange(u::time::frameRangeToTickRange(block.head, m_currentSampleRate, bpm)),
+	    actions.getActionsInTickRange(u::time::frameRangeToTickRange(block.tail, m_currentSampleRate, bpm))};
 
 	block.onEachFrame([&, this](Frame global, Frame local)
 	{
@@ -255,9 +256,10 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		the tail block: it means the sequencer has wrapped around the loop and
 		we are fetching actions from the beginning. */
 
-		bool        inTail = block.tail.isValid() && block.tail.contains(action.frame);
+		const Frame frame  = u::time::tickToFrame(action.tick, m_currentSampleRate, bpm);
+		bool        inTail = block.tail.isValid() && block.tail.contains(frame);
 		const Frame offset = inTail ? block.head.getLength() : -block.head.a;
-		const Frame local  = action.frame + offset;
+		const Frame local  = frame + offset;
 
 		m_eventBuffer.push_back({EventType::ACTIONS, 0, local, &action, sceneChanged ? nextScene : currentScene});
 	});

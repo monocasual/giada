@@ -278,16 +278,16 @@ void Actions::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1, Midi
 
 /* -------------------------------------------------------------------------- */
 
-const std::span<const Action> Actions::getActionsInSampleRange(FrameRange r) const
+const std::span<const Action> Actions::getActionsInTickRange(TickRange r) const
 {
 	if (!r.isValid())
 		return {};
 
-	const auto first = std::lower_bound(m_actions.begin(), m_actions.end(), r.a, [](const Action& a, Frame value)
-	{ return a.frame < value; });
+	const auto first = std::lower_bound(m_actions.begin(), m_actions.end(), r.a, [](const Action& a, Tick value)
+	{ return a.tick < value; });
 
-	const auto last = std::lower_bound(m_actions.begin(), m_actions.end(), r.b, [](const Action& a, Frame value)
-	{ return a.frame < value; });
+	const auto last = std::lower_bound(m_actions.begin(), m_actions.end(), r.b, [](const Action& a, Tick value)
+	{ return a.tick < value; });
 
 	return {first, last};
 }
