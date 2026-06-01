@@ -261,18 +261,11 @@ void Actions::sort()
 
 /* -------------------------------------------------------------------------- */
 
-bool Actions::exists(ID channelId, Scene scene, Tick tick, const MidiEvent& event, const std::vector<Action>& target) const
+bool Actions::exists(ID channelId, Scene scene, Tick tick, const MidiEvent& event) const
 {
-	for (const Action& a : target)
+	for (const Action& a : m_actions)
 		if (a.channelId == channelId && a.tick == tick && a.event.getRaw() == event.getRaw() && a.scene == scene)
 			return true;
 	return false;
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool Actions::exists(ID channelId, Scene scene, Tick tick, const MidiEvent& event) const
-{
-	return exists(channelId, scene, tick, event, m_actions);
 }
 } // namespace giada::m::model

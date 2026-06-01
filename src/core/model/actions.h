@@ -141,7 +141,6 @@ public:
 	void rec(ID channelId, Scene, TickRange, MidiEvent e1, MidiEvent e2);
 
 private:
-	bool exists(ID channelId, Scene, Tick, const MidiEvent&, const std::vector<Action>& target) const;
 	bool exists(ID channelId, Scene, Tick, const MidiEvent&) const;
 
 	/* sort
