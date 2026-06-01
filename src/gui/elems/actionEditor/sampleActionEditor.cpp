@@ -64,12 +64,12 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 
 		const m::Action& a2 = a1.nextId.isValid() ? *c::actionEditor::findAction(a1.nextId) : m::Action{};
 
-		Pixel px = x() + m_base->frameToPixel(a1.frame);
+		Pixel px = x() + m_base->tickToPixel(a1.tick);
 		Pixel py = y() + 4;
 		Pixel pw = 0;
 		Pixel ph = h() - 8;
 		if (a2.isValid() && isSinglePressMode)
-			pw = m_base->frameToPixel(a2.frame - a1.frame);
+			pw = m_base->tickToPixel(a2.tick - a1.tick);
 
 		geSampleAction* gsa = new geSampleAction(px, py, pw, ph, isSinglePressMode, a1, a2);
 		add(gsa);
