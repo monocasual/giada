@@ -126,7 +126,6 @@ public:
 	/* rec (1)
 	Records an action and returns it. Used by the Action Editor. */
 
-	Action rec_DEPR_(ID channelId, Scene, Frame frame, MidiEvent e);
 	Action rec(ID channelId, Scene, Tick, MidiEvent e);
 
 	/* rec (2)
@@ -139,12 +138,9 @@ public:
 	Records two actions on channel 'channel'. Useful when recording composite
 	actions in the Action Editor. */
 
-	void rec_DEPR_(ID channelId, Scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 	void rec(ID channelId, Scene, TickRange, MidiEvent e1, MidiEvent e2);
 
 private:
-	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&, const std::vector<Action>& target) const;
-	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&) const;
 	bool exists(ID channelId, Scene, Tick, const MidiEvent&, const std::vector<Action>& target) const;
 	bool exists(ID channelId, Scene, Tick, const MidiEvent&) const;
 

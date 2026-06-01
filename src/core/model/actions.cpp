@@ -169,21 +169,6 @@ void Actions::debug() const
 
 /* -------------------------------------------------------------------------- */
 
-Action Actions::rec_DEPR_(ID channelId, Scene scene, Frame frame, MidiEvent event)
-{
-	/* Skip duplicates. */
-
-	if (exists(channelId, scene, frame, event))
-		return {};
-
-	Action a = actionFactory::makeAction_DEPR_({}, channelId, scene, frame, event);
-
-	m_actions.push_back(a);
-	sort();
-
-	return a;
-}
-
 Action Actions::rec(ID channelId, Scene scene, Tick tick, MidiEvent event)
 {
 	/* Skip duplicates. */
@@ -214,24 +199,6 @@ void Actions::rec(std::vector<Action>& actions, Scene scene)
 }
 
 /* -------------------------------------------------------------------------- */
-
-void Actions::rec_DEPR_(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
-{
-	Action a1 = actionFactory::makeAction_DEPR_({}, channelId, scene, f1, e1);
-	Action a2 = actionFactory::makeAction_DEPR_({}, channelId, scene, f2, e2);
-	m_actions.push_back(a1);
-	m_actions.push_back(a2);
-
-	Action* a1ptr = findAction(a1.id);
-	Action* a2ptr = findAction(a2.id);
-
-	assert(a1ptr != nullptr && a2ptr != nullptr);
-
-	a1ptr->nextId = a2ptr->id;
-	a2ptr->prevId = a1ptr->id;
-
-	sort();
-}
 
 void Actions::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1, MidiEvent e2)
 {
@@ -294,14 +261,6 @@ void Actions::sort()
 
 /* -------------------------------------------------------------------------- */
 
-bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& event, const std::vector<Action>& target) const
-{
-	for (const Action& a : target)
-		if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw() && a.scene == scene)
-			return true;
-	return false;
-}
-
 bool Actions::exists(ID channelId, Scene scene, Tick tick, const MidiEvent& event, const std::vector<Action>& target) const
 {
 	for (const Action& a : target)
@@ -311,11 +270,6 @@ bool Actions::exists(ID channelId, Scene scene, Tick tick, const MidiEvent& even
 }
 
 /* -------------------------------------------------------------------------- */
-
-bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& event) const
-{
-	return exists(channelId, scene, frame, event, m_actions);
-}
 
 bool Actions::exists(ID channelId, Scene scene, Tick tick, const MidiEvent& event) const
 {
