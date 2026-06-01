@@ -50,6 +50,12 @@ void to_json(nlohmann::json&, const Id&);
 void from_json(const nlohmann::json&, Id&);
 } // namespace mcl::utils
 
+namespace giada
+{
+void to_json(nlohmann::json&, const Tick&);
+void from_json(const nlohmann::json&, Tick&);
+} // namespace giada
+
 namespace giada::m
 {
 struct Patch
@@ -117,7 +123,7 @@ struct Patch
 		ID          id;
 		ID          channelId;
 		std::size_t scene = 0;
-		Frame       frame = 0;
+		Tick        tick;
 		uint32_t    event = 0;
 		ID          prevId;
 		ID          nextId;

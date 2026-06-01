@@ -54,3 +54,11 @@ void from_json(const nlohmann::json& j, Id& id)
 	id = Id(j.get<std::size_t>());
 }
 } // namespace mcl::utils
+
+/* -------------------------------------------------------------------------- */
+
+namespace giada
+{
+void to_json(nlohmann::json& j, const Tick& t) { j = t.value(); }
+void from_json(const nlohmann::json& j, Tick& t) { t = Tick(j.get<Tick::Value>()); }
+} // namespace giada

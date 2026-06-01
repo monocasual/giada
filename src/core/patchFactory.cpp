@@ -106,6 +106,7 @@ constexpr auto G_PATCH_KEY_ACTION_ID                  = "id";
 constexpr auto G_PATCH_KEY_ACTION_CHANNEL             = "channel";
 constexpr auto G_PATCH_KEY_ACTION_SCENE               = "scene";
 constexpr auto G_PATCH_KEY_ACTION_FRAME               = "frame";
+constexpr auto G_PATCH_KEY_ACTION_TICK                = "tick";
 constexpr auto G_PATCH_KEY_ACTION_EVENT               = "event";
 constexpr auto G_PATCH_KEY_ACTION_PREV                = "prev";
 constexpr auto G_PATCH_KEY_ACTION_NEXT                = "next";
@@ -200,7 +201,7 @@ void readActions_(Patch& patch, const nlohmann::json& j)
 		a.id        = jaction.value(G_PATCH_KEY_ACTION_ID, ++id);
 		a.channelId = jaction.value(G_PATCH_KEY_ACTION_CHANNEL, ID{});
 		a.scene     = jaction.value(G_PATCH_KEY_ACTION_SCENE, 0);
-		a.frame     = jaction.value(G_PATCH_KEY_ACTION_FRAME, 0);
+		a.tick      = jaction.value(G_PATCH_KEY_ACTION_TICK, Tick{});
 		a.event     = jaction.value(G_PATCH_KEY_ACTION_EVENT, 0);
 		a.prevId    = jaction.value(G_PATCH_KEY_ACTION_PREV, ID{});
 		a.nextId    = jaction.value(G_PATCH_KEY_ACTION_NEXT, ID{});
@@ -325,7 +326,7 @@ void writeActions_(const Patch& patch, nlohmann::json& j)
 		jaction[G_PATCH_KEY_ACTION_ID]      = a.id;
 		jaction[G_PATCH_KEY_ACTION_CHANNEL] = a.channelId;
 		jaction[G_PATCH_KEY_ACTION_SCENE]   = a.scene;
-		jaction[G_PATCH_KEY_ACTION_FRAME]   = a.frame;
+		jaction[G_PATCH_KEY_ACTION_TICK]    = a.tick;
 		jaction[G_PATCH_KEY_ACTION_EVENT]   = a.event;
 		jaction[G_PATCH_KEY_ACTION_PREV]    = a.prevId;
 		jaction[G_PATCH_KEY_ACTION_NEXT]    = a.nextId;

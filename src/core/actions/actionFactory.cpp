@@ -63,7 +63,7 @@ Action makeAction(ID id, ID channelId, Scene scene, Tick tick, MidiEvent e)
 Action makeAction(const Patch::Action& a)
 {
 	actionId_.set(a.id);
-	return Action{a.id, a.channelId, Scene{a.scene}, a.frame, {},
+	return Action{a.id, a.channelId, Scene{a.scene}, 0, a.tick,
 	    MidiEvent::makeFromRaw(a.event, /*numBytes=*/3), {}, -1, a.prevId, a.nextId};
 }
 
@@ -94,7 +94,7 @@ std::vector<Patch::Action> serializeActions(const std::vector<Action>& actions)
 		    a.id,
 		    a.channelId,
 		    a.scene.getIndex(),
-		    a.frame,
+		    a.tick,
 		    a.event.getRaw(),
 		    a.prevId,
 		    a.nextId,
