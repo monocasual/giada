@@ -97,8 +97,7 @@ void gePianoRoll::draw()
 
 void gePianoRoll::onAddAction()
 {
-	// TODO - ppq engine: re-enable snapping
-	const Tick tickOn  = m_base->pixelToTick(Fl::event_x() - x());
+	const Tick tickOn  = m_base->pixelToTick(Fl::event_x() - x(), /*snap=*/true);
 	const Tick tickOff = tickOn + G_DEFAULT_ACTION_SIZE;
 	int        note    = yToNote(Fl::event_y() - y());
 	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY_FLOAT, {tickOn, tickOff});
@@ -165,8 +164,6 @@ void gePianoRoll::onResizeAction()
 
 void gePianoRoll::onRefreshAction()
 {
-	// TODO - ppq engine: enable snapping
-
 	namespace ca = c::actionEditor;
 
 	Pixel p1 = m_action->x() - x();
@@ -177,12 +174,12 @@ void gePianoRoll::onRefreshAction()
 
 	if (!m_action->isOnEdges())
 	{
-		t1 = m_base->pixelToTick(p1);
-		t2 = m_base->pixelToTick(p2) - (m_base->pixelToTick(p1) - t1);
+		t1 = m_base->pixelToTick(p1, /*snap=*/true);
+		t2 = m_base->pixelToTick(p2, /*snap=*/true) - (m_base->pixelToTick(p1, /*snap=*/true) - t1);
 	}
 	else if (m_action->onLeftEdge)
 	{
-		t1 = m_base->pixelToTick(p1);
+		t1 = m_base->pixelToTick(p1, /*snap=*/true);
 		t2 = m_action->a2.tick;
 		if (t1 == t2) // If snapping makes an action fall onto the other
 			t1 -= G_DEFAULT_ACTION_SIZE;
@@ -190,7 +187,7 @@ void gePianoRoll::onRefreshAction()
 	else if (m_action->onRightEdge)
 	{
 		t1 = m_action->a1.tick;
-		t2 = m_base->pixelToTick(p2);
+		t2 = m_base->pixelToTick(p2, /*snap=*/true);
 		if (t1 == t2) // If snapping makes an action fall onto the other
 			t2 += G_DEFAULT_ACTION_SIZE;
 	}

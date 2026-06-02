@@ -105,8 +105,7 @@ void geSampleActionEditor::draw()
 
 void geSampleActionEditor::onAddAction()
 {
-	// TODO - ppq engine: enable snapping
-	Tick t1 = m_base->pixelToTick(Fl::event_x() - x());
+	Tick t1 = m_base->pixelToTick(Fl::event_x() - x(), /*snap=*/true);
 	Tick t2 = t1 + G_DEFAULT_ACTION_SIZE;
 	c::actionEditor::recordSampleAction(m_data->channelId,
 	    static_cast<gdSampleActionEditor*>(m_base)->getActionType(), {t1, t2});
@@ -160,8 +159,6 @@ void geSampleActionEditor::onResizeAction()
 
 void geSampleActionEditor::onRefreshAction()
 {
-	// TODO - ppq engine: enable snapping
-
 	namespace ca = c::actionEditor;
 
 	int   type = m_action->a1.event.getStatus();
@@ -172,18 +169,18 @@ void geSampleActionEditor::onRefreshAction()
 
 	if (!m_action->isOnEdges())
 	{
-		t1 = m_base->pixelToTick(p1);
-		t2 = m_base->pixelToTick(p2) - (m_base->pixelToTick(p1) - t1);
+		t1 = m_base->pixelToTick(p1, /*snap=*/true);
+		t2 = m_base->pixelToTick(p2, /*snap=*/true) - (m_base->pixelToTick(p1, /*snap=*/true) - t1);
 	}
 	else if (m_action->onLeftEdge)
 	{
-		t1 = m_base->pixelToTick(p1);
+		t1 = m_base->pixelToTick(p1, /*snap=*/true);
 		t2 = m_action->a2.tick;
 	}
 	else if (m_action->onRightEdge)
 	{
 		t1 = m_action->a1.tick;
-		t2 = m_base->pixelToTick(p2);
+		t2 = m_base->pixelToTick(p2, /*snap=*/true);
 	}
 
 	ca::updateSampleAction(m_data->channelId, m_action->a1, type, {t1, t2});

@@ -29,6 +29,7 @@
 #include "src/gui/elems/basics/check.h"
 #include "src/gui/elems/basics/choice.h"
 #include "src/gui/ui.h"
+#include "src/utils/time.h"
 #include <FL/Fl_Double_Window.H>
 
 extern giada::v::Ui* g_ui;
@@ -116,13 +117,13 @@ Frame geGridTool::getSnapFrame(Frame v, Frame framesInBeat) const
 	return math::quantize(v, getCellSize(framesInBeat));
 }
 
-Tick geGridTool::getSnapTick(Tick t, Tick ticksInBeat) const
+Tick geGridTool::getSnapTick(Tick t) const
 {
 	namespace math = mcl::utils::math;
 
 	if (!isOn())
 		return t;
-	return Tick{math::quantize(t.value(), getCellSize(ticksInBeat).value())};
+	return Tick{u::time::quantize(t, getCellSize())};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -132,8 +133,8 @@ Frame geGridTool::getCellSize(Frame framesInBeat) const
 	return framesInBeat / getValue();
 }
 
-Tick geGridTool::getCellSize(Tick ticksInBeat) const
+Tick geGridTool::getCellSize() const
 {
-	return ticksInBeat / getValue();
+	return G_TICKS_IN_BEAT / getValue();
 }
 } // namespace giada::v

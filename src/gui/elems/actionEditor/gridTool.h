@@ -45,13 +45,13 @@ public:
 	bool isOn() const;
 
 	Frame getSnapFrame(Frame f, Frame framesInBeat) const;
-	Tick  getSnapTick(Tick, Tick ticksInBeat) const;
+	Tick  getSnapTick(Tick) const;
 
 	/* getCellSize
 	Returns the size in frames of a single cell of the grid. */
 
 	Frame getCellSize(Frame framesInBeat) const;
-	Tick  getCellSize(Tick ticksInBeat) const;
+	Tick  getCellSize() const;
 
 private:
 	geChoice* gridType;

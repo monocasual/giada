@@ -55,7 +55,7 @@ public:
 
 	Pixel frameToPixel(Frame f) const;
 	Frame pixelToFrame(Pixel p, Frame framesInBeat, bool snap = true) const;
-	Tick  pixelToTick(int) const; // TODO - ppq engine: enable snapping
+	Tick  pixelToTick(int, bool snap) const;
 	int   tickToPixel(Tick) const;
 
 	ID channelId;

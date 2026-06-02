@@ -106,10 +106,10 @@ Frame gdBaseActionEditor::pixelToFrame(Pixel p, Frame framesInBeat, bool snap) c
 	return snap ? gridTool->getSnapFrame(p * m_ratio, framesInBeat) : p * m_ratio;
 }
 
-Tick gdBaseActionEditor::pixelToTick(int p) const
+Tick gdBaseActionEditor::pixelToTick(int p, bool snap) const
 {
-	// TODO - ppq engine: enable snapping
-	return u::time::pixelToTick(p, m_ratio);
+	const Tick t = u::time::pixelToTick(p, m_ratio);
+	return snap ? gridTool->getSnapTick(t) : t;
 }
 
 int gdBaseActionEditor::tickToPixel(Tick t) const
