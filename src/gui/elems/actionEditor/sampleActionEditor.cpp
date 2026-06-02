@@ -159,6 +159,8 @@ void geSampleActionEditor::onResizeAction()
 
 void geSampleActionEditor::onRefreshAction()
 {
+	// TODO - this code is identical to gePianoRoll::onRefreshAction()!
+
 	namespace ca = c::actionEditor;
 
 	int   type = m_action->a1.event.getStatus();

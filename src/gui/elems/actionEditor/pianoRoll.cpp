@@ -164,6 +164,7 @@ void gePianoRoll::onResizeAction()
 
 void gePianoRoll::onRefreshAction()
 {
+	// TODO - this code is identical to geSampleActionEditor::onRefreshAction()!
 	namespace ca = c::actionEditor;
 
 	Pixel p1 = m_action->x() - x();
