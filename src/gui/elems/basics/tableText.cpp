@@ -51,7 +51,7 @@ int geTableText::handle(int event)
 		if (callback_context() == Fl_Table::CONTEXT_CELL)
 		{
 			const geompp::Range<int> selection = getSelection();
-			set_selection(selection.a, 0, selection.b - 1, cols());
+			set_selection(selection.getA(), 0, selection.getB() - 1, cols());
 		}
 		else
 			set_selection(-1, -1, -1, -1);

@@ -98,8 +98,8 @@ TickRange frameRangeToTickRange(FrameRange frameRange, int sampleRate, float bpm
 	if (!frameRange.isValid())
 		return {};
 	return {
-	    frameToTickFloor(frameRange.a, sampleRate, bpm),
-	    frameToTickCeil(frameRange.b, sampleRate, bpm)};
+	    frameToTickFloor(frameRange.getA(), sampleRate, bpm),
+	    frameToTickCeil(frameRange.getB(), sampleRate, bpm)};
 }
 
 /* -------------------------------------------------------------------------- */

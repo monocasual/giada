@@ -53,11 +53,11 @@ constexpr int MAX_LIVE_RECS_CHUNK = 128;
 TickRange sanitizeTickRange_(TickRange r, Tick ticksInLoop)
 {
 	if (!r.isValid())
-		r.b = r.a + G_DEFAULT_ACTION_SIZE;
+		r.setB(r.getA() + G_DEFAULT_ACTION_SIZE);
 
 	/* Avoid overflow. */
 
-	const Tick overflow = r.b - ticksInLoop + Tick{1};
+	const Tick overflow = r.getB() - ticksInLoop + Tick{1};
 	if (overflow > Tick{0})
 		r -= overflow;
 
@@ -154,7 +154,7 @@ void ActionManager::recordSampleAction(ID channelId, Scene scene, int type,
 	else
 	{
 		MidiEvent e1 = MidiEvent::makeFrom3Bytes(type, 0, G_MAX_VELOCITY);
-		rec(channelId, scene, sanitizeTick_(range.a, ticksInLoop), e1);
+		rec(channelId, scene, sanitizeTick_(range.getA(), ticksInLoop), e1);
 	}
 }
 

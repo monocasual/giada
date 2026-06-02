@@ -202,8 +202,8 @@ void Actions::rec(std::vector<Action>& actions, Scene scene)
 
 void Actions::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1, MidiEvent e2)
 {
-	Action a1 = actionFactory::makeAction({}, channelId, scene, range.a, e1);
-	Action a2 = actionFactory::makeAction({}, channelId, scene, range.b, e2);
+	Action a1 = actionFactory::makeAction({}, channelId, scene, range.getA(), e1);
+	Action a2 = actionFactory::makeAction({}, channelId, scene, range.getB(), e2);
 	m_actions.push_back(a1);
 	m_actions.push_back(a2);
 
@@ -225,10 +225,10 @@ const std::span<const Action> Actions::getActionsInTickRange(TickRange r) const
 	if (!r.isValid())
 		return {};
 
-	const auto first = std::lower_bound(m_actions.begin(), m_actions.end(), r.a, [](const Action& a, Tick value)
+	const auto first = std::lower_bound(m_actions.begin(), m_actions.end(), r.getA(), [](const Action& a, Tick value)
 	{ return a.tick < value; });
 
-	const auto last = std::lower_bound(m_actions.begin(), m_actions.end(), r.b, [](const Action& a, Tick value)
+	const auto last = std::lower_bound(m_actions.begin(), m_actions.end(), r.getB(), [](const Action& a, Tick value)
 	{ return a.tick < value; });
 
 	return {first, last};

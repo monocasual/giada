@@ -35,8 +35,8 @@ TEST_CASE("rendering::sampleRendering")
 		channel.loadSample({&wave, {}}, Scene{0});
 
 		REQUIRE(channel.sampleChannel->hasWave(Scene{0}) == true);
-		REQUIRE(channel.sampleChannel->getRange(Scene{0}).a == 0);
-		REQUIRE(channel.sampleChannel->getRange(Scene{0}).b == wave.getBuffer().countFrames());
+		REQUIRE(channel.sampleChannel->getRange(Scene{0}).getA() == 0);
+		REQUIRE(channel.sampleChannel->getRange(Scene{0}).getB() == wave.getBuffer().countFrames());
 
 		REQUIRE(channelShared.tracker.load() == 0);
 		REQUIRE(channelShared.playStatus.load() == ChannelStatus::OFF);

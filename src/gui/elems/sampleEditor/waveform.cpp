@@ -169,8 +169,8 @@ int geWaveform::alloc(int datasize, bool force)
 
 void geWaveform::recalcPoints()
 {
-	m_chanStart = m_data->sample.range.a;
-	m_chanEnd   = m_data->sample.range.b;
+	m_chanStart = m_data->sample.range.getA();
+	m_chanEnd   = m_data->sample.range.getB();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -337,7 +337,7 @@ int geWaveform::handle(int e)
 		if (Fl::event_key() == ' ')
 			c::sampleEditor::togglePreview();
 		else if (Fl::event_key() == FL_BackSpace)
-			c::sampleEditor::setPreviewTracker(m_data->sample.range.a);
+			c::sampleEditor::setPreviewTracker(m_data->sample.range.getA());
 		return 1;
 	}
 

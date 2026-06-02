@@ -75,10 +75,10 @@ struct AudioBlock
 	void onEachFrame(F&& fn) const
 	{
 		Frame local = 0;
-		for (Frame global = head.a; global < head.b; global++)
+		for (Frame global = head.getA(); global < head.getB(); global++)
 			fn(global, local++);
 		if (tail.isValid())
-			for (Frame global = tail.a; global < tail.b; global++)
+			for (Frame global = tail.getA(); global < tail.getB(); global++)
 				fn(global, local++);
 	}
 };
@@ -261,7 +261,7 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 		we are fetching actions from the beginning. */
 
 		bool        inTail = audioBlock.tail.isValid() && audioBlock.tail.contains(frame);
-		const Frame offset = inTail ? audioBlock.head.getLength() : -audioBlock.head.a;
+		const Frame offset = inTail ? audioBlock.head.getLength() : -audioBlock.head.getA();
 		const Frame local  = frame + offset;
 
 		m_eventBuffer.push_back({EventType::ACTIONS, 0, local, &action, sceneChanged ? nextScene : currentScene});

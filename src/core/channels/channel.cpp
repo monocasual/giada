@@ -192,7 +192,7 @@ std::string Channel::debug() const
 		out += "\n\twaves:\n";
 		for (const Sample& s : sampleChannel->getSamples())
 			if (s.wave != nullptr)
-				out += fmt::format("\t\tID={} ({}), range=[{}, {})\n", s.wave->id.getValue(), (void*)s.wave, s.range.a, s.range.b);
+				out += fmt::format("\t\tID={} ({}), range=[{}, {})\n", s.wave->id.getValue(), (void*)s.wave, s.range.getA(), s.range.getB());
 	}
 
 	return out;

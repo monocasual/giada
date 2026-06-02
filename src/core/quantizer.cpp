@@ -56,7 +56,7 @@ void Quantizer::advance(FrameRange block, Frame quantizerStep) const
 
 	assert(m_callbacks.count(pid) > 0);
 
-	for (Frame global = block.a, local = 0; global < block.b; global++, local++)
+	for (Frame global = block.getA(), local = 0; global < block.getB(); global++, local++)
 	{
 
 		if (global % quantizerStep != 0) // Skip if it's not on a quantization unit.
