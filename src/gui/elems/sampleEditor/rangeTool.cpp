@@ -87,9 +87,9 @@ void geRangeTool::rebuild(const c::sampleEditor::Data& d)
 
 /* -------------------------------------------------------------------------- */
 
-void geRangeTool::update(SampleRange range)
+void geRangeTool::update(FrameRange range)
 {
-	m_begin->setValue(std::to_string(range.a));
-	m_end->setValue(std::to_string(range.b));
+	m_begin->setValue(std::to_string(range.getA()));
+	m_end->setValue(std::to_string(range.getB()));
 }
 } // namespace giada::v

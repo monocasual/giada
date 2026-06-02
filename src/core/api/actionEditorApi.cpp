@@ -54,9 +54,10 @@ const Action* ActionEditorApi::findAction(ID id) const
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2)
+void ActionEditorApi::recordMidiAction(ID channelId, int note, float velocity, TickRange range)
 {
-	m_actionManager.recordMidiAction(channelId, m_sequencer.getCurrentScene(), note, velocity, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionManager.recordMidiAction(channelId, m_sequencer.getCurrentScene(),
+	    note, velocity, range, m_sequencer.getTicksInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -75,23 +76,28 @@ void ActionEditorApi::deleteMidiAction(ID channelId, const Action& a)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::updateMidiAction(ID channelId, const Action& a, int note, float velocity, Frame f1, Frame f2)
+void ActionEditorApi::updateMidiAction(ID channelId, const Action& a, int note,
+    float velocity, TickRange range)
 {
-	m_actionManager.updateMidiAction(channelId, m_sequencer.getCurrentScene(), a, note, velocity, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionManager.updateMidiAction(channelId, m_sequencer.getCurrentScene(), a,
+	    note, velocity, range, m_sequencer.getTicksInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
+void ActionEditorApi::recordSampleAction(ID channelId, int type, TickRange range)
 {
-	m_actionManager.recordSampleAction(channelId, m_sequencer.getCurrentScene(), type, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionManager.recordSampleAction(channelId, m_sequencer.getCurrentScene(),
+	    type, range, m_sequencer.getTicksInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::updateSampleAction(ID channelId, const Action& a, int type, Frame f1, Frame f2)
+void ActionEditorApi::updateSampleAction(ID channelId, const Action& a, int type,
+    TickRange range)
 {
-	m_actionManager.updateSampleAction(channelId, m_sequencer.getCurrentScene(), a, type, f1, f2, m_sequencer.getFramesInLoop());
+	m_actionManager.updateSampleAction(channelId, m_sequencer.getCurrentScene(),
+	    a, type, range, m_sequencer.getTicksInLoop());
 }
 
 /* -------------------------------------------------------------------------- */

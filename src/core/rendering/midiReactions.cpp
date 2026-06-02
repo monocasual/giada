@@ -83,10 +83,11 @@ void rewindMidiChannel(WeakAtomic<ChannelStatus>& a_playStatus)
 
 /* -------------------------------------------------------------------------- */
 
-void recordMidiAction(ID channelId, Scene scene, const MidiEvent& event, Frame currentFrameQuantized, ActionManager& actionRecorder)
+void recordMidiAction(ID channelId, Scene scene, const MidiEvent& event,
+    Tick currentTickQuantized, ActionManager& actionRecorder)
 {
 	MidiEvent flat(event);
 	flat.setChannel(0);
-	actionRecorder.liveRec(channelId, scene, flat, currentFrameQuantized);
+	actionRecorder.liveRec(channelId, scene, flat, currentTickQuantized);
 }
 } // namespace giada::m::rendering

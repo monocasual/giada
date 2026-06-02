@@ -88,7 +88,7 @@ gdPluginChooser::gdPluginChooser(ID channelId, const Model& model)
 		const auto selection = browser->getSelection();
 		if (!selection.isValid())
 			return;
-		c::plugin::addPlugin(browser->getJuceId(selection.a), m_channelId);
+		c::plugin::addPlugin(browser->getJuceId(selection.getA()), m_channelId);
 		do_callback();
 	};
 	addBtn->shortcut(FL_Enter);

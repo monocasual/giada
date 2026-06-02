@@ -51,10 +51,10 @@ class Reactor
 public:
 	Reactor(model::Model&, MidiMapper<KernelMidi>&, ActionManager&, KernelMidi&);
 
-	void keyPress(ID channelId, Scene, float velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized);
-	void keyRelease(ID channelId, Scene, bool canRecordActions, Frame currentFrameQuantized);
-	void keyKill(ID channelId, Scene, bool canRecordActions, Frame currentFrameQuantized);
-	void processMidiEvent(ID channelId, Scene, const MidiEvent&, bool canRecordActions, Frame currentFrameQuantized);
+	void keyPress(ID channelId, Scene, float velocity, bool canRecordActions, bool canQuantize, Tick currentTickQuantized);
+	void keyRelease(ID channelId, Scene, bool canRecordActions, Tick currentTickQuantized);
+	void keyKill(ID channelId, Scene, bool canRecordActions, Tick currentTickQuantized);
+	void processMidiEvent(ID channelId, Scene, const MidiEvent&, bool canRecordActions, Tick currentTickQuantized);
 	void toggleReadActions(ID channelId, bool seqIsRunning);
 	void killReadActions(ID channelId);
 	void toggleMute(ID channelId);

@@ -37,7 +37,7 @@ namespace giada::v
 gePianoItem::gePianoItem(Pixel X, Pixel Y, Pixel W, Pixel H, m::Action a1,
     m::Action a2)
 : geBaseAction(X, Y, W, H, /*resizable=*/true, a1, a2)
-, m_ringLoop(a2.isValid() && a1.frame > a2.frame)
+, m_ringLoop(a2.isValid() && a1.tick > a2.tick)
 , m_orphaned(!a2.isValid())
 {
 	m_resizable = isResizable();

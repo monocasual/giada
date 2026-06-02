@@ -95,10 +95,10 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 	if (sequencer.isRunning())
 	{
-		const Frame       currentFrame  = sequencer.a_getCurrentFrame();
-		const int         bufferSize    = out.countFrames();
-		const int         quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
-		const SampleRange renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
+		const Frame      currentFrame  = sequencer.a_getCurrentFrame();
+		const int        bufferSize    = out.countFrames();
+		const int        quantizerStep = m_sequencer.getQuantizerStep();            // TODO pass this to m_sequencer.advance - or better, Advancer class
+		const FrameRange renderRange   = {currentFrame, currentFrame + bufferSize}; // TODO pass this to m_sequencer.advance - or better, Advancer class
 
 		const Sequencer::EventBuffer& events = m_sequencer.advance(sequencer, bufferSize, actions);
 		m_sequencer.render(out, document_RT);
@@ -108,7 +108,8 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 
 	/* Then render Mixer, channels and finalize output. */
 
-	const int      maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(kernelAudio.samplerate) : sequencer.framesInLoop;
+	const int      sampleRate     = kernelAudio.samplerate;
+	const int      maxFramesToRec = mixer.inputRecMode == InputRecMode::FREE ? sequencer.getMaxFramesInLoop(sampleRate) : sequencer.getFramesInLoop(sampleRate);
 	const Scene    scene          = sequencer.a_getCurrentScene();
 	const bool     hasSolos       = mixer.hasSolos;
 	const bool     hasInput       = in.isAllocd();
@@ -139,7 +140,7 @@ void Renderer::render(mcl::AudioBuffer& out, const mcl::AudioBuffer& in, const m
 /* -------------------------------------------------------------------------- */
 
 void Renderer::advanceTracks(const Sequencer::EventBuffer& events, const model::Tracks& tracks,
-    SampleRange block, int quantizerStep) const
+    FrameRange block, int quantizerStep) const
 {
 	for (const model::Track& track : tracks.getAll())
 		for (const Channel& c : track.getChannels().getAll())
@@ -150,7 +151,7 @@ void Renderer::advanceTracks(const Sequencer::EventBuffer& events, const model::
 /* -------------------------------------------------------------------------- */
 
 void Renderer::advanceChannel(const Channel& ch, const Sequencer::EventBuffer& events,
-    SampleRange block, Frame quantizerStep) const
+    FrameRange block, Frame quantizerStep) const
 {
 	if (ch.shared->quantizer)
 		ch.shared->quantizer->advance(block, quantizerStep);

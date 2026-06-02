@@ -39,6 +39,7 @@
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
 #include "src/utils/string.h"
+#include "src/utils/time.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <cassert>
@@ -87,40 +88,41 @@ int gdBaseActionEditor::getMouseOverContent() const
 
 /* -------------------------------------------------------------------------- */
 
-void gdBaseActionEditor::computeWidth(Frame framesInSeq, Frame framesInLoop)
+void gdBaseActionEditor::computeWidth(Tick tickInSeq, Tick tickInLoop)
 {
-	fullWidth = frameToPixel(framesInSeq);
-	loopWidth = frameToPixel(framesInLoop);
+	fullWidth = tickToPixel(tickInSeq);
+	loopWidth = tickToPixel(tickInLoop);
 }
 
 /* -------------------------------------------------------------------------- */
 
-Pixel gdBaseActionEditor::frameToPixel(Frame f) const
+Tick gdBaseActionEditor::pixelToTick(int p, bool snap) const
 {
-	return f / m_ratio;
+	const Tick t = u::time::pixelToTick(p, m_ratio);
+	return snap ? gridTool->getSnapTick(t) : t;
 }
 
-Frame gdBaseActionEditor::pixelToFrame(Pixel p, Frame framesInBeat, bool snap) const
+int gdBaseActionEditor::tickToPixel(Tick t) const
 {
-	return snap ? gridTool->getSnapFrame(p * m_ratio, framesInBeat) : p * m_ratio;
+	return u::time::tickToPixel(t, m_ratio);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void gdBaseActionEditor::zoomIn()
 {
-	// Explicit type std::max<int> to fix MINMAX macro hell on Windows
+	// Explicit type std::max<float> to fix MINMAX macro hell on Windows
 	zoomAbout([&r = m_ratio]()
-	{ return std::max<int>(r / RATIO_STEP, MIN_RATIO); });
+	{ return std::max<float>(r / RATIO_STEP, MIN_RATIO); });
 }
 
 /* -------------------------------------------------------------------------- */
 
 void gdBaseActionEditor::zoomOut()
 {
-	// Explicit type std::max<int> to fix MINMAX macro hell on Windows
+	// Explicit type std::max<float> to fix MINMAX macro hell on Windows
 	zoomAbout([&r = m_ratio]()
-	{ return std::min<int>(r * RATIO_STEP, MAX_RATIO); });
+	{ return std::min<float>(r * RATIO_STEP, MAX_RATIO); });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -165,7 +167,7 @@ void gdBaseActionEditor::draw()
 	gdWindow::draw();
 
 	const geompp::Rect splitBounds = m_splitScroll->getBoundsNoScrollbar();
-	const geompp::Line playhead    = splitBounds.getHeightAsLine().withX(currentFrameToPixel());
+	const geompp::Line playhead    = splitBounds.getHeightAsLine().withX(currentTickToPixel());
 
 	if (splitBounds.contains(playhead))
 		drawLine(playhead, G_COLOR_LIGHT_2);
@@ -183,9 +185,9 @@ void gdBaseActionEditor::zoomAbout(std::function<float()> f)
 	/* Make sure the new content width doesn't underflow the window space (i.e.
 	the minimum width allowed). */
 
-	if (frameToPixel(m_data.framesInSeq) < minWidth)
+	if (tickToPixel(m_data.ticksInSeq) < minWidth)
 	{
-		m_ratio = m_data.framesInSeq / static_cast<float>(minWidth);
+		m_ratio = m_data.ticksInSeq.value() / static_cast<float>(minWidth);
 		m_splitScroll->setScrollX(0);
 	}
 
@@ -212,8 +214,8 @@ void gdBaseActionEditor::refresh()
 
 /* -------------------------------------------------------------------------- */
 
-Pixel gdBaseActionEditor::currentFrameToPixel() const
+Pixel gdBaseActionEditor::currentTickToPixel() const
 {
-	return (frameToPixel(m_data.getCurrentFrame()) + m_splitScroll->x()) - m_splitScroll->getScrollX();
+	return (tickToPixel(m_data.getCurrentTick()) + m_splitScroll->x()) - m_splitScroll->getScrollX();
 }
 } // namespace giada::v

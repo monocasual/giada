@@ -35,17 +35,17 @@ TEST_CASE("ActionRecorder")
 
 	SECTION("Test record")
 	{
-		const Frame     f1 = 10;
-		const Frame     f2 = 70;
+		const Tick      t1 = Tick{10};
+		const Tick      t2 = Tick{70};
 		const MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0x00, 0x00, 0);
 		const MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0x00, 0x00, 0);
 
-		const Action a1 = ar.rec(channelID1, Scene{0}, f1, e1);
-		const Action a2 = ar.rec(channelID1, Scene{0}, f2, e2);
+		const Action a1 = ar.rec(channelID1, Scene{0}, t1, e1);
+		const Action a2 = ar.rec(channelID1, Scene{0}, t2, e2);
 
 		REQUIRE(ar.hasActions(channelID1) == true);
-		REQUIRE(a1.frame == f1);
-		REQUIRE(a2.frame == f2);
+		REQUIRE(a1.tick == t1);
+		REQUIRE(a2.tick == t2);
 		REQUIRE(!a1.prevId.isValid());
 		REQUIRE(!a1.nextId.isValid());
 		REQUIRE(!a2.prevId.isValid());
@@ -53,13 +53,13 @@ TEST_CASE("ActionRecorder")
 
 		SECTION("Test clear actions by channel")
 		{
-			const Frame     f1 = 100;
-			const Frame     f2 = 200;
+			const Tick      t1 = Tick{100};
+			const Tick      t2 = Tick{200};
 			const MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0x00, 0x00, 0);
 			const MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0x00, 0x00, 0);
 
-			ar.rec(channelID2, Scene{0}, f1, e1);
-			ar.rec(channelID2, Scene{0}, f2, e2);
+			ar.rec(channelID2, Scene{0}, t1, e1);
+			ar.rec(channelID2, Scene{0}, t2, e2);
 
 			ar.clearChannel(channelID1, Scene{0});
 

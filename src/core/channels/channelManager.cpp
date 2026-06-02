@@ -407,22 +407,22 @@ void ChannelManager::setPan(ID channelId, float value)
 
 /* -------------------------------------------------------------------------- */
 
-void ChannelManager::setRange(ID channelId, SampleRange range, Scene scene)
+void ChannelManager::setRange(ID channelId, FrameRange range, Scene scene)
 {
 	Channel& c       = m_model.get().tracks.getChannel(channelId);
 	Channel& preview = m_model.get().tracks.getChannel(PREVIEW_CHANNEL_ID);
 
 	assert(c.sampleChannel);
 
-	range.a = std::clamp(range.a, 0, c.sampleChannel->getWaveSize(scene) - 1);
-	range.b = std::clamp(range.b, 1, c.sampleChannel->getWaveSize(scene));
-	if (range.a >= range.b)
-		range.a = range.b - 1;
-	else if (range.b < range.a)
-		range.b = range.a + 1;
+	range.setA(std::clamp(range.getA(), 0, c.sampleChannel->getWaveSize(scene) - 1));
+	range.setB(std::clamp(range.getB(), 1, c.sampleChannel->getWaveSize(scene)));
+	if (range.getA() >= range.getB())
+		range.setA(range.getB() - 1);
+	else if (range.getB() < range.getA())
+		range.setB(range.getA() + 1);
 
-	if (c.shared->tracker.load() < range.a)
-		c.shared->tracker.store(range.a);
+	if (c.shared->tracker.load() < range.getA())
+		c.shared->tracker.store(range.getA());
 
 	c.sampleChannel->setRange(range, scene);
 	preview.sampleChannel->setRange(range, Scene{0});

@@ -103,7 +103,7 @@ v::gdSampleEditor* getWindow()
 
 /* -------------------------------------------------------------------------- */
 
-void setRange(ID channelId, SampleRange range)
+void setRange(ID channelId, FrameRange range)
 {
 	g_engine->getSampleEditorApi().setRange(channelId, range);
 }

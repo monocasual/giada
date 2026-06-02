@@ -57,16 +57,16 @@ struct Data
 	Data() = default;
 	Data(const m::Channel&, Scene);
 
-	Frame getCurrentFrame() const;
-	bool  isChannelPlaying() const;
+	Tick getCurrentTick() const;
+	bool isChannelPlaying() const;
 
 	ID                     channelId;
 	Scene                  scene;
 	std::string            channelName;
-	Frame                  framesInSeq;
-	Frame                  framesInBeat;
-	Frame                  framesInBar;
-	Frame                  framesInLoop;
+	Tick                   ticksInSeq;
+	Tick                   ticksInBeat;
+	Tick                   ticksInBar;
+	Tick                   ticksInLoop;
 	std::vector<m::Action> actions;
 
 	std::optional<SampleData> sample;
@@ -78,19 +78,17 @@ const m::Action* findAction(ID);
 
 /* MIDI actions.  */
 
-void recordMidiAction(ID channelId, int note, float velocity, Frame f1,
-    Frame f2 = 0);
+void recordMidiAction(ID channelId, int note, float velocity, TickRange);
 void deleteMidiAction(ID channelId, const m::Action& a);
 void updateMidiAction(ID channelId, const m::Action& a, int note, float velocity,
-    Frame f1, Frame f2);
+    TickRange);
 void updateVelocity(const m::Action& a, float value);
 
 /* Sample Actions. */
 
-void recordSampleAction(ID channelId, int type, Frame f1, Frame f2 = 0);
+void recordSampleAction(ID channelId, int type, TickRange);
 void deleteSampleAction(const m::Action& a);
-void updateSampleAction(ID channelId, const m::Action& a, int type,
-    Frame f1, Frame f2 = 0);
+void updateSampleAction(ID channelId, const m::Action& a, int type, TickRange);
 } // namespace giada::c::actionEditor
 
 #endif

@@ -48,10 +48,10 @@ Data::Data(const m::Channel& c, Scene scene)
 : channelId(c.id)
 , scene(scene)
 , channelName(c.getName(scene))
-, framesInSeq(g_engine->getMainApi().getFramesInSeq())
-, framesInBeat(g_engine->getMainApi().getFramesInBeat())
-, framesInBar(g_engine->getMainApi().getFramesInBar())
-, framesInLoop(g_engine->getMainApi().getFramesInLoop())
+, ticksInSeq(g_engine->getMainApi().getTicksInSeq())
+, ticksInBeat(g_engine->getMainApi().getTicksInBeat())
+, ticksInBar(g_engine->getMainApi().getTicksInBar())
+, ticksInLoop(g_engine->getMainApi().getTicksInLoop())
 , actions(g_engine->getActionEditorApi().getActionsOnChannel(c.id))
 {
 	if (c.type == ChannelType::SAMPLE)
@@ -60,9 +60,9 @@ Data::Data(const m::Channel& c, Scene scene)
 
 /* -------------------------------------------------------------------------- */
 
-Frame Data::getCurrentFrame() const
+Tick Data::getCurrentTick() const
 {
-	return g_engine->getMainApi().getCurrentFrame();
+	return g_engine->getMainApi().getCurrentTick();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -90,9 +90,9 @@ const m::Action* findAction(ID id)
 
 /* -------------------------------------------------------------------------- */
 
-void recordMidiAction(ID channelId, int note, float velocity, Frame f1, Frame f2)
+void recordMidiAction(ID channelId, int note, float velocity, TickRange range)
 {
-	g_engine->getActionEditorApi().recordMidiAction(channelId, note, velocity, f1, f2);
+	g_engine->getActionEditorApi().recordMidiAction(channelId, note, velocity, range);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -105,23 +105,23 @@ void deleteMidiAction(ID channelId, const m::Action& a)
 /* -------------------------------------------------------------------------- */
 
 void updateMidiAction(ID channelId, const m::Action& a, int note, float velocity,
-    Frame f1, Frame f2)
+    TickRange range)
 {
-	g_engine->getActionEditorApi().updateMidiAction(channelId, a, note, velocity, f1, f2);
+	g_engine->getActionEditorApi().updateMidiAction(channelId, a, note, velocity, range);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
+void recordSampleAction(ID channelId, int type, TickRange range)
 {
-	g_engine->getActionEditorApi().recordSampleAction(channelId, type, f1, f2);
+	g_engine->getActionEditorApi().recordSampleAction(channelId, type, range);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void updateSampleAction(ID channelId, const m::Action& a, int type, Frame f1, Frame f2)
+void updateSampleAction(ID channelId, const m::Action& a, int type, TickRange range)
 {
-	g_engine->getActionEditorApi().updateSampleAction(channelId, a, type, f1, f2);
+	g_engine->getActionEditorApi().updateSampleAction(channelId, a, type, range);
 }
 
 /* -------------------------------------------------------------------------- */

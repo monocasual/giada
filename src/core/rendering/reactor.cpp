@@ -43,7 +43,8 @@ Reactor::Reactor(model::Model& model, MidiMapper<KernelMidi>& m, ActionManager& 
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecordActions, bool canQuantize, Frame currentFrameQuantized)
+void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecordActions,
+    bool canQuantize, Tick currentTickQuantized)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
@@ -58,7 +59,7 @@ void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecord
 		const SamplePlayerMode mode          = ch.sampleChannel->mode;
 
 		if (canRecordActions && !isAnyLoopMode)
-			recordSampleKeyPress(channelId, scene, *ch.shared, currentFrameQuantized, mode, m_actionManager);
+			recordSampleKeyPress(channelId, scene, *ch.shared, currentTickQuantized, mode, m_actionManager);
 
 		pressSampleChannel(channelId, *ch.shared, mode, velocity, canQuantize, isAnyLoopMode, velocityAsVol);
 	}
@@ -72,7 +73,7 @@ void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecord
 	{
 		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
 			if (child.type != ChannelType::GROUP)
-				keyPress(child.id, scene, velocity, canRecordActions, canQuantize, currentFrameQuantized);
+				keyPress(child.id, scene, velocity, canRecordActions, canQuantize, currentTickQuantized);
 	}
 
 	m_model.swap(model::SwapType::SOFT);
@@ -80,7 +81,7 @@ void Reactor::keyPress(ID channelId, Scene scene, float velocity, bool canRecord
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Frame currentFrameQuantized)
+void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Tick currentTickQuantized)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
@@ -96,7 +97,7 @@ void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Frame
 			/* Record a stop event only if channel is SINGLE_PRESS. For any other
 		mode the key release event is meaningless. */
 
-			recordSampleKeyRelease(channelId, scene, currentFrameQuantized, m_actionManager);
+			recordSampleKeyRelease(channelId, scene, currentTickQuantized, m_actionManager);
 		}
 
 		releaseSampleChannel(*ch.shared, mode);
@@ -109,7 +110,7 @@ void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Frame
 	{
 		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
 			if (child.type != ChannelType::GROUP)
-				keyRelease(child.id, scene, canRecordActions, currentFrameQuantized);
+				keyRelease(child.id, scene, canRecordActions, currentTickQuantized);
 	}
 
 	m_model.swap(model::SwapType::SOFT);
@@ -117,7 +118,7 @@ void Reactor::keyRelease(ID channelId, Scene scene, bool canRecordActions, Frame
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Frame currentFrameQuantized)
+void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Tick currentTickQuantized)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
@@ -138,7 +139,7 @@ void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Frame cu
 			/* Record a stop event only if channel is SINGLE_PRESS. For any other
 			mode the key release event is meaningless. */
 
-			recordSampleKeyKill(channelId, scene, currentFrameQuantized, m_actionManager);
+			recordSampleKeyKill(channelId, scene, currentTickQuantized, m_actionManager);
 		}
 
 		killSampleChannel(*ch.shared, mode);
@@ -147,7 +148,7 @@ void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Frame cu
 	{
 		for (const Channel& child : m_model.get().tracks.getByChannel(ch.id).getChannels().getAll())
 			if (child.type != ChannelType::GROUP)
-				keyKill(child.id, scene, canRecordActions, currentFrameQuantized);
+				keyKill(child.id, scene, canRecordActions, currentTickQuantized);
 	}
 
 	m_model.swap(model::SwapType::SOFT);
@@ -155,7 +156,8 @@ void Reactor::keyKill(ID channelId, Scene scene, bool canRecordActions, Frame cu
 
 /* -------------------------------------------------------------------------- */
 
-void Reactor::processMidiEvent(ID channelId, Scene scene, const MidiEvent& e, bool canRecordActions, Frame currentFrameQuantized)
+void Reactor::processMidiEvent(ID channelId, Scene scene, const MidiEvent& e,
+    bool canRecordActions, Tick currentTickQuantized)
 {
 	Channel& ch = m_model.get().tracks.getChannel(channelId);
 
@@ -163,7 +165,7 @@ void Reactor::processMidiEvent(ID channelId, Scene scene, const MidiEvent& e, bo
 
 	if (canRecordActions)
 	{
-		recordMidiAction(channelId, scene, e, currentFrameQuantized, m_actionManager);
+		recordMidiAction(channelId, scene, e, currentTickQuantized, m_actionManager);
 		m_model.swap(model::SwapType::HARD);
 	}
 	sendMidiEventToPlugins(ch.shared->midiQueue, e);

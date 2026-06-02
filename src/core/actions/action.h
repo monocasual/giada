@@ -30,6 +30,7 @@
 #include "src/core/midiEvent.h"
 #include "src/core/types.h"
 #include "src/scene.h"
+#include "src/tick.h"
 #include "src/types.h"
 
 namespace giada::m
@@ -39,7 +40,7 @@ struct Action
 	ID        id;
 	ID        channelId;
 	Scene     scene;
-	Frame     frame;
+	Tick      tick;
 	MidiEvent event;
 	ID        pluginId;
 	int       pluginParam = -1;

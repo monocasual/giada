@@ -90,31 +90,6 @@ void Actions::deleteAction(ID currId, ID nextId)
 
 /* -------------------------------------------------------------------------- */
 
-void Actions::updateKeyFrames(std::function<Frame(Frame old)> f)
-{
-	std::vector<Action> temp;
-
-	/* Copy all existing actions in local map by cloning them, with just a
-	difference: they have a new frame value. */
-
-	for (const Action& a : m_actions)
-	{
-		const Frame oldFrame = a.frame;
-		const Frame newFrame = f(oldFrame);
-
-		Action copy = a;
-		copy.frame  = newFrame;
-		temp.push_back(copy);
-		G_DEBUG("{} -> {}", oldFrame, newFrame);
-	}
-
-	m_actions = std::move(temp);
-
-	sort();
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Actions::updateEvent(ID id, MidiEvent e)
 {
 	Action* a = findAction(id);
@@ -185,8 +160,8 @@ void Actions::debug() const
 {
 	puts("model::actions");
 	for (const Action& a : m_actions)
-		fmt::print("\t\tframe={}, ID={}, scene={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
-		    a.frame, a.id.getValue(), a.scene.getIndex(), a.channelId.getValue(), a.event.getRaw(),
+		fmt::print("\t\ttick={}, ID={}, scene={}, channel={}, value=0x{}, prevId={}, nextId={}\n",
+		    a.tick.value(), a.id.getValue(), a.scene.getIndex(), a.channelId.getValue(), a.event.getRaw(),
 		    a.prevId.getValue(), a.nextId.getValue());
 }
 
@@ -194,14 +169,14 @@ void Actions::debug() const
 
 /* -------------------------------------------------------------------------- */
 
-Action Actions::rec(ID channelId, Scene scene, Frame frame, MidiEvent event)
+Action Actions::rec(ID channelId, Scene scene, Tick tick, MidiEvent event)
 {
 	/* Skip duplicates. */
 
-	if (exists(channelId, scene, frame, event))
+	if (exists(channelId, scene, tick, event))
 		return {};
 
-	Action a = actionFactory::makeAction({}, channelId, scene, frame, event);
+	Action a = actionFactory::makeAction({}, channelId, scene, tick, event);
 
 	m_actions.push_back(a);
 	sort();
@@ -217,7 +192,7 @@ void Actions::rec(std::vector<Action>& actions, Scene scene)
 		return;
 
 	for (const Action& a : actions)
-		if (!exists(a.channelId, scene, a.frame, a.event))
+		if (!exists(a.channelId, scene, a.tick, a.event))
 			m_actions.push_back(a);
 
 	sort();
@@ -225,10 +200,10 @@ void Actions::rec(std::vector<Action>& actions, Scene scene)
 
 /* -------------------------------------------------------------------------- */
 
-void Actions::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
+void Actions::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1, MidiEvent e2)
 {
-	Action a1 = actionFactory::makeAction({}, channelId, scene, f1, e1);
-	Action a2 = actionFactory::makeAction({}, channelId, scene, f2, e2);
+	Action a1 = actionFactory::makeAction({}, channelId, scene, range.getA(), e1);
+	Action a2 = actionFactory::makeAction({}, channelId, scene, range.getB(), e2);
 	m_actions.push_back(a1);
 	m_actions.push_back(a2);
 
@@ -245,16 +220,16 @@ void Actions::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, M
 
 /* -------------------------------------------------------------------------- */
 
-const std::span<const Action> Actions::getActionsInSampleRange(SampleRange r) const
+const std::span<const Action> Actions::getActionsInTickRange(TickRange r) const
 {
 	if (!r.isValid())
 		return {};
 
-	const auto first = std::lower_bound(m_actions.begin(), m_actions.end(), r.a, [](const Action& a, Frame value)
-	{ return a.frame < value; });
+	const auto first = std::lower_bound(m_actions.begin(), m_actions.end(), r.getA(), [](const Action& a, Tick value)
+	{ return a.tick < value; });
 
-	const auto last = std::lower_bound(m_actions.begin(), m_actions.end(), r.b, [](const Action& a, Frame value)
-	{ return a.frame < value; });
+	const auto last = std::lower_bound(m_actions.begin(), m_actions.end(), r.getB(), [](const Action& a, Tick value)
+	{ return a.tick < value; });
 
 	return {first, last};
 }
@@ -281,23 +256,16 @@ Action* Actions::findAction(ID id)
 
 void Actions::sort()
 {
-	std::ranges::sort(m_actions, std::ranges::less{}, &Action::frame);
+	std::ranges::sort(m_actions, std::ranges::less{}, &Action::tick);
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& event, const std::vector<Action>& target) const
+bool Actions::exists(ID channelId, Scene scene, Tick tick, const MidiEvent& event) const
 {
-	for (const Action& a : target)
-		if (a.channelId == channelId && a.frame == frame && a.event.getRaw() == event.getRaw() && a.scene == scene)
+	for (const Action& a : m_actions)
+		if (a.channelId == channelId && a.tick == tick && a.event.getRaw() == event.getRaw() && a.scene == scene)
 			return true;
 	return false;
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool Actions::exists(ID channelId, Scene scene, Frame frame, const MidiEvent& event) const
-{
-	return exists(channelId, scene, frame, event, m_actions);
 }
 } // namespace giada::m::model

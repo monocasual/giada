@@ -104,12 +104,14 @@ public:
 	int         getBars() const;
 	int         getCurrentBeat() const;
 	Frame       getCurrentFrame() const;
-	Frame       getCurrentFrameQuantized() const;
-	float       getCurrentSecond(int sampleRate) const;
 	Frame       getFramesInBar() const;
 	Frame       getFramesInBeat() const;
 	Frame       getFramesInLoop() const;
 	Frame       getFramesInSeq() const;
+	Tick        getTicksInBar() const;
+	Tick        getTicksInBeat() const;
+	Tick        getTicksInLoop() const;
+	Tick        getTicksInSeq() const;
 	int         getQuantizerValue() const;
 	int         getQuantizerStep() const;
 	SeqStatus   getStatus() const;
@@ -117,6 +119,8 @@ public:
 	Scene       getCurrentScene() const;
 	Scene       getNextScene() const;
 	SceneStatus getSceneStatus() const;
+	Tick        getCurrentTick() const;
+	Tick        getCurrentTickQuantized() const;
 
 	/* calcBpmFromRec
 	Given the amount of recorded frames, returns the speed of the current
@@ -125,9 +129,9 @@ public:
 	float calcBpmFromRec(Frame recordedFrames) const;
 
 	/* quantize
-	Quantizes the frame 'f'.  */
+	Quantizes the tick in input. */
 
-	Frame quantize(Frame f) const;
+	Tick quantize(Tick) const;
 
 	/* reset
 	Brings everything back to the initial state. */
@@ -177,15 +181,9 @@ public:
 	void jack_setBpm(float b);
 #endif
 
-	/* recomputeFrames
-	Updates bpm, frames, beats and so on. */
-
-	void recomputeFrames();
-
-	std::function<void(SeqStatus)>         onAboutStart;
-	std::function<void()>                  onAboutStop;
-	std::function<void(float, float, int)> onBpmChange;
-	std::function<void()>                  onSceneChanged;
+	std::function<void(SeqStatus)> onAboutStart;
+	std::function<void()>          onAboutStop;
+	std::function<void()>          onSceneChanged;
 
 private:
 	/* raw[*]

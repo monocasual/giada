@@ -64,7 +64,7 @@ Engine::Engine()
 , m_sampleEditorApi(m_kernelAudio, m_model, m_channelManager, m_reactor, m_sequencer)
 , m_actionEditorApi(*this, m_sequencer, m_actionManager)
 , m_ioApi(m_model, m_midiDispatcher)
-, m_storageApi(*this, m_model, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer, m_actionManager)
+, m_storageApi(*this, m_model, m_pluginManager, m_midiSynchronizer, m_mixer, m_channelManager, m_kernelAudio, m_sequencer)
 , m_configApi(m_model, m_kernelAudio, m_kernelMidi, m_midiMapper, m_midiSynchronizer)
 {
 	m_kernelAudio.onAudioCallback = [this](mcl::AudioBuffer& out, const mcl::AudioBuffer& in)
@@ -225,10 +225,6 @@ Engine::Engine()
 			m_recorder.stopActionRec();
 		else if (m_mixer.isRecordingInput())
 			m_recorder.stopInputRec();
-	};
-	m_sequencer.onBpmChange = [this](float oldVal, float newVal, int quantizerStep)
-	{
-		m_actionManager.updateBpm(oldVal / newVal, quantizerStep);
 	};
 	m_sequencer.onSceneChanged = [this]()
 	{

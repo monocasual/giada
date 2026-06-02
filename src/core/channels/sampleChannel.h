@@ -40,19 +40,19 @@ public:
 	SampleChannel();
 	SampleChannel(const Patch::Channel&, const SceneArray<Sample>&, float samplerateRatio);
 
-	bool        isAnyLoopMode() const;
-	bool        isAnyLoopOnceMode() const;
-	bool        isAnyNonLoopingSingleMode() const;
-	bool        hasWave(Scene) const;
-	bool        hasWaves() const;
-	bool        hasLogicalWave(Scene) const;
-	bool        hasEditedWave(Scene) const;
-	ID          getWaveId(Scene) const;
-	Frame       getWaveSize(Scene) const;
-	Wave*       getWave(Scene) const;
-	SampleRange getRange(Scene) const;
-	Frame       getShift(Scene) const;
-	float       getPitch(Scene) const;
+	bool       isAnyLoopMode() const;
+	bool       isAnyLoopOnceMode() const;
+	bool       isAnyNonLoopingSingleMode() const;
+	bool       hasWave(Scene) const;
+	bool       hasWaves() const;
+	bool       hasLogicalWave(Scene) const;
+	bool       hasEditedWave(Scene) const;
+	ID         getWaveId(Scene) const;
+	Frame      getWaveSize(Scene) const;
+	Wave*      getWave(Scene) const;
+	FrameRange getRange(Scene) const;
+	Frame      getShift(Scene) const;
+	float      getPitch(Scene) const;
 
 	const SceneArray<Sample>& getSamples() const;
 	const Sample&             getSample(Scene) const;
@@ -70,7 +70,7 @@ public:
 
 	void setWave(Wave* w, Scene, float samplerateRatio);
 
-	void setRange(SampleRange, Scene);
+	void setRange(FrameRange, Scene);
 	void setSample(const Sample&, Scene, float samplerateRatio);
 	void setShift(Frame, Scene);
 	void setPitch(float, Scene);

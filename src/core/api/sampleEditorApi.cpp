@@ -83,10 +83,10 @@ void SampleEditorApi::togglePreview()
 {
 	const bool  canRecordActions = false;
 	const bool  canQuantize      = false;
-	const Frame currentFrameQ    = 0;
+	const Tick  currentTickQ     = Tick{0};
 	const float velocity         = G_MAX_VELOCITY_FLOAT;
 	const Scene scene            = m_sequencer.getCurrentScene();
-	m_reactor.keyPress(PREVIEW_CHANNEL_ID, scene, velocity, canRecordActions, canQuantize, currentFrameQ);
+	m_reactor.keyPress(PREVIEW_CHANNEL_ID, scene, velocity, canRecordActions, canQuantize, currentTickQ);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -233,7 +233,7 @@ const Channel& SampleEditorApi::toNewChannel(ID channelId, Frame a, Frame b)
 
 /* -------------------------------------------------------------------------- */
 
-void SampleEditorApi::setRange(ID channelId, SampleRange range)
+void SampleEditorApi::setRange(ID channelId, FrameRange range)
 {
 	m_channelManager.setRange(channelId, range, m_sequencer.getCurrentScene());
 }

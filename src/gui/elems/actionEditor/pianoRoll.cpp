@@ -97,10 +97,10 @@ void gePianoRoll::draw()
 
 void gePianoRoll::onAddAction()
 {
-	Frame frame = m_base->pixelToFrame(Fl::event_x() - x(), m_data->framesInBeat);
-	int   note  = yToNote(Fl::event_y() - y());
-	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY_FLOAT,
-	    frame);
+	const Tick tickOn  = m_base->pixelToTick(Fl::event_x() - x(), /*snap=*/true);
+	const Tick tickOff = tickOn + G_DEFAULT_ACTION_SIZE;
+	int        note    = yToNote(Fl::event_y() - y());
+	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY_FLOAT, {tickOn, tickOff});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -164,40 +164,41 @@ void gePianoRoll::onResizeAction()
 
 void gePianoRoll::onRefreshAction()
 {
+	// TODO - this code is identical to geSampleActionEditor::onRefreshAction()!
 	namespace ca = c::actionEditor;
 
 	Pixel p1 = m_action->x() - x();
 	Pixel p2 = m_action->x() + m_action->w() - x();
 
-	Frame f1 = 0;
-	Frame f2 = 0;
+	Tick t1;
+	Tick t2;
 
 	if (!m_action->isOnEdges())
 	{
-		f1 = m_base->pixelToFrame(p1, m_data->framesInBeat);
-		f2 = m_base->pixelToFrame(p2, m_data->framesInBeat, /*snap=*/false) - (m_base->pixelToFrame(p1, m_data->framesInBeat, /*snap=*/false) - f1);
+		t1 = m_base->pixelToTick(p1, /*snap=*/true);
+		t2 = m_base->pixelToTick(p2, /*snap=*/true) - (m_base->pixelToTick(p1, /*snap=*/true) - t1);
 	}
 	else if (m_action->onLeftEdge)
 	{
-		f1 = m_base->pixelToFrame(p1, m_data->framesInBeat);
-		f2 = m_action->a2.frame;
-		if (f1 == f2) // If snapping makes an action fall onto the other
-			f1 -= G_DEFAULT_ACTION_SIZE;
+		t1 = m_base->pixelToTick(p1, /*snap=*/true);
+		t2 = m_action->a2.tick;
+		if (t1 == t2) // If snapping makes an action fall onto the other
+			t1 -= G_DEFAULT_ACTION_SIZE;
 	}
 	else if (m_action->onRightEdge)
 	{
-		f1 = m_action->a1.frame;
-		f2 = m_base->pixelToFrame(p2, m_data->framesInBeat);
-		if (f1 == f2) // If snapping makes an action fall onto the other
-			f2 += G_DEFAULT_ACTION_SIZE;
+		t1 = m_action->a1.tick;
+		t2 = m_base->pixelToTick(p2, /*snap=*/true);
+		if (t1 == t2) // If snapping makes an action fall onto the other
+			t2 += G_DEFAULT_ACTION_SIZE;
 	}
 
-	assert(f2 != 0);
+	assert(t2.value() != 0);
 
 	int   note     = yToNote(m_action->y() - y());
 	float velocity = m_action->a1.event.getVelocityFloat();
 
-	ca::updateMidiAction(m_data->channelId, m_action->a1, note, velocity, f1, f2);
+	ca::updateMidiAction(m_data->channelId, m_action->a1, note, velocity, {t1, t2});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -222,10 +223,10 @@ Pixel gePianoRoll::snapToY(Pixel p) const
 Pixel gePianoRoll::getPianoItemW(Pixel px, const m::Action& a1, const m::Action& a2) const
 {
 	if (a2.isValid())
-	{                            // Regular
-		if (a1.frame > a2.frame) // Ring-loop
+	{                          // Regular
+		if (a1.tick > a2.tick) // Ring-loop
 			return m_base->loopWidth - (px - x());
-		return m_base->frameToPixel(a2.frame - a1.frame);
+		return m_base->tickToPixel(a2.tick - a1.tick);
 	}
 	return geBaseAction::MIN_WIDTH; // Orphaned
 }
@@ -251,7 +252,7 @@ void gePianoRoll::rebuild(c::actionEditor::Data& d)
 
 		const m::Action& a2 = a1.nextId.isValid() ? *c::actionEditor::findAction(a1.nextId) : m::Action{};
 
-		Pixel px = x() + m_base->frameToPixel(a1.frame);
+		Pixel px = x() + m_base->tickToPixel(a1.tick);
 		Pixel py = y() + noteToY(a1.event.getNote());
 		Pixel ph = CELL_H;
 		Pixel pw = getPianoItemW(px, a1, a2);

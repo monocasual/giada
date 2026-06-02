@@ -41,7 +41,7 @@ namespace utils = mcl::utils;
 namespace giada::m
 {
 StorageApi::StorageApi(Engine& e, model::Model& m, PluginManager& pm, MidiSynchronizer& ms,
-    Mixer& mx, ChannelManager& cm, KernelAudio& ka, Sequencer& s, ActionManager& ar)
+    Mixer& mx, ChannelManager& cm, KernelAudio& ka, Sequencer& s)
 : m_engine(e)
 , m_model(m)
 , m_pluginManager(pm)
@@ -50,7 +50,6 @@ StorageApi::StorageApi(Engine& e, model::Model& m, PluginManager& pm, MidiSynchr
 , m_channelManager(cm)
 , m_kernelAudio(ka)
 , m_sequencer(s)
-, m_actionRecorder(ar)
 {
 }
 
@@ -74,8 +73,6 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 	/* Write Model into Patch, then into file. */
 
 	Patch patch;
-	patch.samplerate = m_kernelAudio.getSampleRate();
-
 	uiModel.store(patch);
 	m_model.store(patch, projectPath);
 
@@ -134,8 +131,6 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, std::fu
 	const bool hasSolos        = m_channelManager.hasSolos();
 
 	m_mixer.updateSoloCount(hasSolos);
-	m_actionRecorder.updateSamplerate(sampleRate, patch.samplerate);
-	m_sequencer.recomputeFrames();
 	m_mixer.allocRecBuffer(maxFramesInLoop);
 
 	progress(0.9f);
@@ -143,7 +138,7 @@ model::LoadState StorageApi::loadProject(const std::string& projectPath, std::fu
 	/* Bring everything back online. */
 
 	m_mixer.enable();
-	m_midiSynchronizer.startSendClock(m_model.get().sequencer.bpm);
+	m_midiSynchronizer.startSendClock(m_model.get().sequencer.getBpm());
 
 	progress(1.0f);
 

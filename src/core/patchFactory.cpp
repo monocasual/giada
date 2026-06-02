@@ -30,6 +30,7 @@
 #include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/gui/const.h"
 #include "src/utils/log.h"
+#include "src/utils/time.h"
 #include <fstream>
 #include <nlohmann/json.hpp>
 
@@ -106,6 +107,7 @@ constexpr auto G_PATCH_KEY_ACTION_ID                  = "id";
 constexpr auto G_PATCH_KEY_ACTION_CHANNEL             = "channel";
 constexpr auto G_PATCH_KEY_ACTION_SCENE               = "scene";
 constexpr auto G_PATCH_KEY_ACTION_FRAME               = "frame";
+constexpr auto G_PATCH_KEY_ACTION_TICK                = "tick";
 constexpr auto G_PATCH_KEY_ACTION_EVENT               = "event";
 constexpr auto G_PATCH_KEY_ACTION_PREV                = "prev";
 constexpr auto G_PATCH_KEY_ACTION_NEXT                = "next";
@@ -200,10 +202,12 @@ void readActions_(Patch& patch, const nlohmann::json& j)
 		a.id        = jaction.value(G_PATCH_KEY_ACTION_ID, ++id);
 		a.channelId = jaction.value(G_PATCH_KEY_ACTION_CHANNEL, ID{});
 		a.scene     = jaction.value(G_PATCH_KEY_ACTION_SCENE, 0);
-		a.frame     = jaction.value(G_PATCH_KEY_ACTION_FRAME, 0);
+		a.tick      = jaction.value(G_PATCH_KEY_ACTION_TICK, Tick{});
 		a.event     = jaction.value(G_PATCH_KEY_ACTION_EVENT, 0);
 		a.prevId    = jaction.value(G_PATCH_KEY_ACTION_PREV, ID{});
 		a.nextId    = jaction.value(G_PATCH_KEY_ACTION_NEXT, ID{});
+		if (patch.version < Version{1, 5, 0}) // Old frame-based audio engine
+			a.tick = u::time::frameToTickRound(jaction.value(G_PATCH_KEY_ACTION_FRAME, 0), patch.samplerate, patch.bpm);
 		patch.actions.push_back(a);
 	}
 }
@@ -325,7 +329,7 @@ void writeActions_(const Patch& patch, nlohmann::json& j)
 		jaction[G_PATCH_KEY_ACTION_ID]      = a.id;
 		jaction[G_PATCH_KEY_ACTION_CHANNEL] = a.channelId;
 		jaction[G_PATCH_KEY_ACTION_SCENE]   = a.scene;
-		jaction[G_PATCH_KEY_ACTION_FRAME]   = a.frame;
+		jaction[G_PATCH_KEY_ACTION_TICK]    = a.tick;
 		jaction[G_PATCH_KEY_ACTION_EVENT]   = a.event;
 		jaction[G_PATCH_KEY_ACTION_PREV]    = a.prevId;
 		jaction[G_PATCH_KEY_ACTION_NEXT]    = a.nextId;
@@ -362,7 +366,6 @@ void writeCommons_(const Patch& patch, nlohmann::json& j)
 	j[PATCH_KEY_BEATS]         = patch.beats;
 	j[PATCH_KEY_BPM]           = patch.bpm;
 	j[PATCH_KEY_QUANTIZE]      = patch.quantize;
-	j[PATCH_KEY_SAMPLERATE]    = patch.samplerate;
 	j[PATCH_KEY_METRONOME]     = patch.metronome;
 }
 

@@ -51,20 +51,19 @@ bool Sequencer::isRunning() const
 
 /* -------------------------------------------------------------------------- */
 
-bool Sequencer::a_isOnBar() const
+bool Sequencer::a_isOnBar(int sampleRate) const
 {
-	const int currentFrame = shared->currentFrame.load();
-
-	if (status == SeqStatus::WAITING || currentFrame == 0)
+	const Tick currentTick = a_getCurrentTick(sampleRate);
+	if (status == SeqStatus::WAITING || currentTick == Tick{0})
 		return false;
-	return currentFrame % framesInBar == 0;
+	return currentTick % getTicksInBar() == Tick{0};
 }
 
 /* -------------------------------------------------------------------------- */
 
-bool Sequencer::a_isOnBeat() const
+bool Sequencer::a_isOnBeat(int sampleRate) const
 {
-	return shared->currentFrame.load() % framesInBeat == 0;
+	return a_getCurrentTick(sampleRate) % getTicksInBeat() == Tick{0};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -78,6 +77,13 @@ bool Sequencer::a_isOnFirstBeat() const
 
 Frame Sequencer::a_getCurrentFrame() const { return shared->currentFrame.load(); }
 Frame Sequencer::a_getCurrentBeat() const { return shared->currentBeat.load(); }
+
+/* -------------------------------------------------------------------------- */
+
+Tick Sequencer::a_getCurrentTick(int sampleRate) const
+{
+	return u::time::frameToTickFloor(a_getCurrentFrame(), sampleRate, getBpm());
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -107,9 +113,16 @@ SceneStatus Sequencer::a_getSceneStatus() const
 
 /* -------------------------------------------------------------------------- */
 
+int Sequencer::getFramesInLoop(int sampleRate) const
+{
+	return u::time::tickToFrame(getTicksInLoop(), sampleRate, m_bpm);
+}
+
+/* -------------------------------------------------------------------------- */
+
 int Sequencer::getMaxFramesInLoop(int sampleRate) const
 {
-	return (sampleRate * (60.0f / G_MIN_BPM)) * beats;
+	return (sampleRate * (60.0f / G_MIN_BPM)) * m_timeSignature.beats;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -117,12 +130,12 @@ int Sequencer::getMaxFramesInLoop(int sampleRate) const
 void Sequencer::a_setCurrentFrame(Frame f, int sampleRate) const
 {
 	shared->currentFrame.store(f);
-	shared->currentBeat.store(f == 0 ? 0 : u::time::frameToBeat(f, sampleRate, bpm));
+	shared->currentBeat.store(f == 0 ? 0 : u::time::frameToBeat(f, sampleRate, m_bpm));
 }
 
 void Sequencer::a_setCurrentBeat(int b, int sampleRate) const
 {
-	const Frame currentFrame = u::time::beatToFrame(b, sampleRate, bpm);
+	const Frame currentFrame = u::time::beatToFrame(b, sampleRate, m_bpm);
 
 	shared->currentFrame.store(currentFrame);
 	shared->currentBeat.store(b);
@@ -149,19 +162,34 @@ void Sequencer::a_setSceneStatus(SceneStatus s) const
 
 /* -------------------------------------------------------------------------- */
 
+float         Sequencer::getBpm() const { return m_bpm; }
+TimeSignature Sequencer::getTimeSignature() const { return m_timeSignature; }
+Tick          Sequencer::getTicksInBeat() const { return G_PPQ; }
+Tick          Sequencer::getTicksInBar() const { return getTicksInLoop() / m_timeSignature.bars; }
+Tick          Sequencer::getTicksInLoop() const { return G_PPQ * m_timeSignature.beats; }
+Tick          Sequencer::getTicksInSeq() const { return G_PPQ * G_MAX_BEATS; }
+
+/* -------------------------------------------------------------------------- */
+
 void Sequencer::reset()
 {
-	bars     = G_DEFAULT_BARS;
-	beats    = G_DEFAULT_BEATS;
-	bpm      = G_DEFAULT_BPM;
-	quantize = G_DEFAULT_QUANTIZE;
+	m_bpm           = G_DEFAULT_BPM;
+	m_timeSignature = {};
+	quantize        = G_DEFAULT_QUANTIZE;
 }
 
-void Sequencer::recomputeFrames(int sampleRate)
+/* -------------------------------------------------------------------------- */
+
+void Sequencer::setBpm(float v)
 {
-	framesInBeat = u::time::beatToFrame(1, sampleRate, bpm);
-	framesInLoop = framesInBeat * beats;
-	framesInBar  = framesInLoop / (float)bars;
-	framesInSeq  = framesInBeat * G_MAX_BEATS;
+	m_bpm = std::clamp(v, G_MIN_BPM, G_MAX_BPM);
+}
+
+void Sequencer::setTimeSignature(TimeSignature t)
+{
+	t.beats = std::clamp(t.beats, 1, G_MAX_BEATS);
+	t.bars  = std::clamp(t.bars, 1, t.beats); // Bars cannot be greater than beats
+
+	m_timeSignature = t;
 }
 } // namespace giada::m::model

@@ -131,7 +131,7 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Scene scene, Frame track
 
 	while (true)
 	{
-		ReadResult res = readWave(*wave, buf, tracker, range.b, offset, pitch, resampler);
+		ReadResult res = readWave(*wave, buf, tracker, range.getB(), offset, pitch, resampler);
 		tracker += res.used;
 		offset += res.generated;
 
@@ -141,9 +141,9 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Scene scene, Frame track
 		if (offset >= buf.countFrames())
 			break;
 
-		if (tracker >= range.b)
+		if (tracker >= range.getB())
 		{
-			tracker = range.a;
+			tracker = range.getA();
 			ch.shared->resampler->last();
 
 			if (testEnd)
@@ -172,7 +172,7 @@ void renderSampleChannel(const Channel& ch, Scene scene, bool seqIsRunning)
 	const auto        range     = ch.sampleChannel->getRange(scene);
 	const Resampler&  resampler = ch.shared->resampler.value();
 	mcl::AudioBuffer& buf       = ch.shared->audioBuffer;
-	Frame             tracker   = std::clamp(ch.shared->tracker.load(), range.a, range.b); /* Make sure tracker stays within begin-end range. */
+	Frame             tracker   = std::clamp(ch.shared->tracker.load(), range.getA(), range.getB()); /* Make sure tracker stays within begin-end range. */
 
 	if (renderInfo.mode == RenderInfo::Mode::NORMAL)
 	{
@@ -193,12 +193,12 @@ void renderSampleChannel(const Channel& ch, Scene scene, bool seqIsRunning)
 
 		if (renderInfo.mode == RenderInfo::Mode::REWIND)
 		{
-			tracker = render_(ch, buf, scene, range.a, renderInfo.offset, seqIsRunning, /*testEnd=*/true);
+			tracker = render_(ch, buf, scene, range.getA(), renderInfo.offset, seqIsRunning, /*testEnd=*/true);
 		}
 		else
 		{
 			stop_(ch, buf, renderInfo.offset, seqIsRunning);
-			tracker = range.a;
+			tracker = range.getA();
 		}
 	}
 

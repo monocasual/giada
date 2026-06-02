@@ -68,10 +68,15 @@ public:
 	int               getQuantizerValue() const;
 	int               getCurrentBeat() const;
 	Frame             getCurrentFrame() const;
+	Tick              getCurrentTick() const;
 	int               getFramesInBar() const;
 	int               getFramesInLoop() const;
 	int               getFramesInSeq() const;
 	int               getFramesInBeat() const;
+	Tick              getTicksInBar() const;
+	Tick              getTicksInLoop() const;
+	Tick              getTicksInSeq() const;
+	Tick              getTicksInBeat() const;
 	SeqStatus         getSequencerStatus() const;
 	Scene             getCurrentScene() const;
 	Scene             getNextScene() const;

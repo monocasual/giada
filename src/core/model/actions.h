@@ -47,10 +47,10 @@ public:
 
 	std::vector<Action> getActionsOnChannel(ID channelId, Scene) const;
 
-	/* getActionsInSampleRange
+	/* getActionsInTickRange
 	Returns a span of all actions included in the required range. */
 
-	const std::span<const Action> getActionsInSampleRange(SampleRange) const;
+	const std::span<const Action> getActionsInTickRange(TickRange) const;
 
 	/* hasActions (1)
 	Checks if the channel has at least one action recorded. */
@@ -112,12 +112,6 @@ public:
 
 	void deleteAction(ID currId, ID nextId);
 
-	/* updateKeyFrames
-	Update all the key frames in the internal map of actions, according to a
-	lambda function 'f'. */
-
-	void updateKeyFrames(std::function<Frame(Frame old)> f);
-
 	/* updateEvent
 	Changes the event in action 'a'. */
 
@@ -132,7 +126,7 @@ public:
 	/* rec (1)
 	Records an action and returns it. Used by the Action Editor. */
 
-	Action rec(ID channelId, Scene, Frame frame, MidiEvent e);
+	Action rec(ID channelId, Scene, Tick, MidiEvent e);
 
 	/* rec (2)
 	Transfer a vector of actions into the current ActionMap. This is called by
@@ -144,20 +138,19 @@ public:
 	Records two actions on channel 'channel'. Useful when recording composite
 	actions in the Action Editor. */
 
-	void rec(ID channelId, Scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
+	void rec(ID channelId, Scene, TickRange, MidiEvent e1, MidiEvent e2);
 
 private:
-	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&, const std::vector<Action>& target) const;
-	bool exists(ID channelId, Scene, Frame frame, const MidiEvent&) const;
+	bool exists(ID channelId, Scene, Tick, const MidiEvent&) const;
 
 	/* sort
-	Sorts the internal vector of Actions, frame-wise, ascending. Mandatory each
+	Sorts the internal vector of Actions, tick-wise, ascending. Mandatory each
 	time you add a new Action. */
 
 	void sort();
 
 	/* m_actions
-	Stored actions. Must always be sorted frame-wise, ascending, to allow
+	Stored actions. Must always be sorted tick-wise, ascending, to allow
 	the fetch alogrithm to work properly. Sorting is needed any time you add
 	a new action to the vector. */
 

@@ -28,15 +28,15 @@
 
 namespace geompp
 {
-void to_json(nlohmann::json& j, const giada::SampleRange& r)
+void to_json(nlohmann::json& j, const giada::FrameRange& r)
 {
-	j = nlohmann::json{{"a", r.a}, {"b", r.b}};
+	j = nlohmann::json{{"a", r.getA()}, {"b", r.getB()}};
 }
 
-void from_json(const nlohmann::json& j, giada::SampleRange& r)
+void from_json(const nlohmann::json& j, giada::FrameRange& r)
 {
-	r.a = j.value("a", 0);
-	r.b = j.value("b", 0);
+	r.setA(j.value("a", 0));
+	r.setB(j.value("b", 0));
 }
 } // namespace geompp
 
@@ -54,3 +54,11 @@ void from_json(const nlohmann::json& j, Id& id)
 	id = Id(j.get<std::size_t>());
 }
 } // namespace mcl::utils
+
+/* -------------------------------------------------------------------------- */
+
+namespace giada
+{
+void to_json(nlohmann::json& j, const Tick& t) { j = t.value(); }
+void from_json(const nlohmann::json& j, Tick& t) { t = Tick(j.get<Tick::Value>()); }
+} // namespace giada

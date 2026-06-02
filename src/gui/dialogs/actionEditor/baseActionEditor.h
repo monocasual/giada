@@ -53,8 +53,8 @@ public:
 	int  handle(int e) override;
 	void draw() override;
 
-	Pixel frameToPixel(Frame f) const;
-	Frame pixelToFrame(Pixel p, Frame framesInBeat, bool snap = true) const;
+	Tick pixelToTick(int, bool snap) const;
+	int  tickToPixel(Tick) const;
 
 	ID channelId;
 
@@ -64,8 +64,8 @@ public:
 	Pixel loopWidth; // Loop width, i.e. scaled-down sequencer range
 
 protected:
-	static constexpr float MIN_RATIO    = 25.0f;
-	static constexpr float MAX_RATIO    = 40000.0f;
+	static constexpr float MIN_RATIO    = 1.0f;
+	static constexpr float MAX_RATIO    = 4000.0f;
 	static constexpr float RATIO_STEP   = 1.5f;
 	static constexpr int   LEGEND_WIDTH = 35;
 
@@ -82,7 +82,7 @@ protected:
 	/* computeWidth
 	Computes total width, in pixel. */
 
-	void computeWidth(Frame framesInSeq, Frame framesInLoop);
+	void computeWidth(Tick tickInSeq, Tick tickInLoop);
 
 	/* prepareWindow
 	Initializes window (favicon, limits, ...). */
@@ -110,7 +110,7 @@ private:
 
 	void zoomAbout(std::function<float()> f);
 
-	Pixel currentFrameToPixel() const;
+	Pixel currentTickToPixel() const;
 
 	float m_ratio;
 };

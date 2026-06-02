@@ -40,8 +40,8 @@
 
 namespace geompp
 {
-void to_json(nlohmann::json&, const giada::SampleRange&);
-void from_json(const nlohmann::json&, giada::SampleRange&);
+void to_json(nlohmann::json&, const giada::FrameRange&);
+void from_json(const nlohmann::json&, giada::FrameRange&);
 } // namespace geompp
 
 namespace mcl::utils
@@ -49,6 +49,12 @@ namespace mcl::utils
 void to_json(nlohmann::json&, const Id&);
 void from_json(const nlohmann::json&, Id&);
 } // namespace mcl::utils
+
+namespace giada
+{
+void to_json(nlohmann::json&, const Tick&);
+void from_json(const nlohmann::json&, Tick&);
+} // namespace giada
 
 namespace giada::m
 {
@@ -63,10 +69,10 @@ struct Patch
 
 	struct Sample
 	{
-		ID          waveId;
-		SampleRange range;
-		Frame       shift = 0;
-		float       pitch = G_DEFAULT_PITCH;
+		ID         waveId;
+		FrameRange range;
+		Frame      shift = 0;
+		float      pitch = G_DEFAULT_PITCH;
 	};
 	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Sample, waveId, range, shift, pitch)
 
@@ -117,7 +123,7 @@ struct Patch
 		ID          id;
 		ID          channelId;
 		std::size_t scene = 0;
-		Frame       frame = 0;
+		Tick        tick;
 		uint32_t    event = 0;
 		ID          prevId;
 		ID          nextId;
@@ -145,7 +151,7 @@ struct Patch
 	int         beats      = G_DEFAULT_BEATS;
 	float       bpm        = G_DEFAULT_BPM;
 	bool        quantize   = G_DEFAULT_QUANTIZE;
-	int         samplerate = G_DEFAULT_SAMPLERATE;
+	int         samplerate = G_DEFAULT_SAMPLERATE; // TODO - remove in the future, used only for backward compatibility
 	bool        metronome  = false;
 
 	std::vector<Track>   tracks;

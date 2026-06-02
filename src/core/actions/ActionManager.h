@@ -51,18 +51,6 @@ public:
 
 	void reset();
 
-	/* updateBpm
-	Changes actions position by calculating the new bpm value. */
-
-	void updateBpm(float ratio, int quantizerStep);
-
-	/* updateSamplerate
-	Changes actions position by taking in account the new samplerate. If
-	f_system == f_patch nothing will change, otherwise the conversion is
-	mandatory. */
-
-	void updateSamplerate(int systemRate, int patchRate);
-
 	/* cloneActions
 	Clones actions in channel 'channelId', giving them a new channel ID. Returns
 	whether any action has been cloned. */
@@ -82,12 +70,12 @@ public:
 	/* liveRec
 	Records a user-generated action. NOTE_ON or NOTE_OFF only for now. */
 
-	void liveRec(ID channelId, Scene, MidiEvent e, Frame global);
+	void liveRec(ID channelId, Scene, MidiEvent e, Tick global);
 
 	/* record*Action */
 
-	void recordMidiAction(ID channelId, Scene, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
-	void recordSampleAction(ID channelId, Scene, int type, Frame f1, Frame f2, Frame framesInLoop);
+	void recordMidiAction(ID channelId, Scene scene, int note, float velocity, TickRange, Tick ticksInLoop);
+	void recordSampleAction(ID channelId, Scene, int type, TickRange, Tick ticksInLoop);
 
 	/* delete*Action */
 
@@ -96,8 +84,8 @@ public:
 
 	/* update*Action */
 
-	void updateMidiAction(ID channelId, Scene, const Action&, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop);
-	void updateSampleAction(ID channelId, Scene, const Action&, int type, Frame f1, Frame f2, Frame framesInLoop);
+	void updateMidiAction(ID channelId, Scene, const Action&, int note, float velocity, TickRange, Tick ticksInLoop);
+	void updateSampleAction(ID channelId, Scene, const Action&, int type, TickRange, Tick ticksInLoop);
 	void updateVelocity(const Action&, float value);
 
 	/* consolidate
@@ -126,8 +114,8 @@ public:
 	void clearChannel(ID channelId, Scene);
 
 	void   clearActions(ID channelId, int type);
-	Action rec(ID channelId, Scene, Frame frame, MidiEvent e);
-	void   rec(ID channelId, Scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
+	Action rec(ID channelId, Scene, Tick, MidiEvent e);
+	void   rec(ID channelId, Scene, TickRange, MidiEvent e1, MidiEvent e2);
 	void   updateSiblings(ID id, ID prevId, ID nextId);
 	void   deleteAction(ID id);
 	void   deleteAction(ID currId, ID nextId);
@@ -139,14 +127,13 @@ private:
 
 	bool areComposite(const Action& a1, const Action& a2) const;
 
-	Frame fixVerticalEnvActions(Frame f, const Action& a1, const Action& a2) const;
-	bool  isSinglePressMode(ID channelId) const;
+	bool isSinglePressMode(ID channelId) const;
 
 	/* consolidate
 	Given an action 'a1' tries to find the matching NOTE_OFF and updates the
 	action accordingly. */
 
-	void consolidate(const Action& a1, std::size_t i);
+	void consolidate(Action& a1, std::size_t i);
 
 	/* cloneActions
 	Internal generic method for copying actions between channels and/or scenes.

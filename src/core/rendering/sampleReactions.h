@@ -39,9 +39,9 @@ class ActionManager;
 
 namespace giada::m::rendering
 {
-void recordSampleKeyPress(ID channelId, Scene, ChannelShared&, Frame currentFrameQuantized, SamplePlayerMode, ActionManager&);
-void recordSampleKeyRelease(ID channelId, Scene, Frame currentFrameQuantized, ActionManager&);
-void recordSampleKeyKill(ID channelId, Scene, Frame currentFrameQuantized, ActionManager&);
+void recordSampleKeyPress(ID channelId, Scene, ChannelShared&, Tick currentTickQuantized, SamplePlayerMode, ActionManager&);
+void recordSampleKeyRelease(ID channelId, Scene, Tick currentTickQuantized, ActionManager&);
+void recordSampleKeyKill(ID channelId, Scene, Tick currentTickQuantized, ActionManager&);
 void killSampleReadActions(ChannelShared&);
 void toggleSampleReadActions(ChannelShared&, bool treatRecsAsLoops, bool seqIsRunning);
 

@@ -57,16 +57,22 @@ public:
 
 	bool canQuantize() const;
 
-	bool a_isOnBar() const;
-	bool a_isOnBeat() const;
+	bool a_isOnBar(int sampleRate) const;
+	bool a_isOnBeat(int sampleRate) const;
 	bool a_isOnFirstBeat() const;
 
 	Frame       a_getCurrentFrame() const;
+	Tick        a_getCurrentTick(int sampleRate) const;
 	Frame       a_getCurrentBeat() const;
 	float       a_getCurrentSecond(int sampleRate) const;
 	Scene       a_getCurrentScene() const;
 	Scene       a_getNextScene() const;
 	SceneStatus a_getSceneStatus() const;
+
+	/* getFramesInLoop
+	Returns the number of frames in the current loop. */
+
+	int getFramesInLoop(int sampleRate) const;
 
 	/* getMaxFramesInLoop
 	Returns how many frames the current loop length might contain at the slowest
@@ -80,23 +86,24 @@ public:
 	void a_setNextScene(Scene) const;
 	void a_setSceneStatus(SceneStatus) const;
 
+	float         getBpm() const;
+	TimeSignature getTimeSignature() const;
+	Tick          getTicksInBeat() const;
+	Tick          getTicksInBar() const;
+	Tick          getTicksInLoop() const;
+	Tick          getTicksInSeq() const;
+
 	/* reset
 	Resets beats, bars, bpm and quantize to default values. */
 
 	void reset();
 
-	void recomputeFrames(int sampleRate);
+	void setBpm(float);
+	void setTimeSignature(TimeSignature);
 
-	SeqStatus status       = SeqStatus::STOPPED;
-	int       framesInLoop = 0;
-	int       framesInBar  = 0;
-	int       framesInBeat = 0;
-	int       framesInSeq  = 0;
-	int       bars         = G_DEFAULT_BARS;
-	int       beats        = G_DEFAULT_BEATS;
-	float     bpm          = G_DEFAULT_BPM;
-	int       quantize     = G_DEFAULT_QUANTIZE;
-	bool      metronome    = false;
+	SeqStatus status    = SeqStatus::STOPPED;
+	int       quantize  = G_DEFAULT_QUANTIZE;
+	bool      metronome = false;
 
 private:
 	struct Shared
@@ -114,6 +121,9 @@ private:
 	};
 
 	Shared* shared = nullptr;
+
+	float         m_bpm = G_DEFAULT_BPM;
+	TimeSignature m_timeSignature;
 };
 } // namespace giada::m::model
 

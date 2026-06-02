@@ -28,6 +28,7 @@
 #define G_CONST_H
 
 #include "src/aliases.h"
+#include "src/tick.h"
 #include "src/version.h"
 
 namespace giada
@@ -69,7 +70,7 @@ namespace giada
 
 /* -- version --------------------------------------------------------------- */
 constexpr auto    G_APP_NAME = "Giada";
-constexpr Version G_VERSION(1, 4, 2);
+constexpr Version G_VERSION(1, 5, 0);
 
 /* -- Internal channels ----------------------------------------------------- */
 constexpr ID MASTER_OUT_CHANNEL_ID = ID{1};
@@ -77,13 +78,18 @@ constexpr ID MASTER_IN_CHANNEL_ID  = ID{2};
 constexpr ID PREVIEW_CHANNEL_ID    = ID{3};
 
 /* -- Musical time / audio time --------------------------------------------- */
-constexpr int G_PPQ = 960;
+constexpr Tick G_PPQ           = Tick{960};
+constexpr Tick G_TICKS_IN_BEAT = G_PPQ * 4;
 
 /* -- Min/max values -------------------------------------------------------- */
 // TODO - move other min/max values from src/core/const.h
 constexpr std::size_t G_MAX_NUM_SCENES = 8;
 constexpr std::size_t G_INVALID_SCENE  = G_MAX_NUM_SCENES;
 
+/* -- Default values -------------------------------------------------------- */
+constexpr Tick G_DEFAULT_ACTION_SIZE = G_PPQ / 4; // 1/16th note
+constexpr int  G_DEFAULT_BEATS       = 4;
+constexpr int  G_DEFAULT_BARS        = 1;
 } // namespace giada
 
 #endif

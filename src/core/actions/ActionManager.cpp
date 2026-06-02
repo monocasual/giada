@@ -50,26 +50,23 @@ constexpr int MAX_LIVE_RECS_CHUNK = 128;
 
 /* -------------------------------------------------------------------------- */
 
-std::tuple<Frame, Frame> sanitizeFrames_(Frame f1, Frame f2, int framesInLoop)
+TickRange sanitizeTickRange_(TickRange r, Tick ticksInLoop)
 {
-	if (f2 == 0)
-		f2 = f1 + G_DEFAULT_ACTION_SIZE;
+	if (!r.isValid())
+		r.setB(r.getA() + G_DEFAULT_ACTION_SIZE);
 
-	/* Avoid frame overflow. */
+	/* Avoid overflow. */
 
-	const Frame overflow = f2 - framesInLoop + 1;
-	if (overflow > 0)
-	{
-		f2 -= overflow;
-		f1 -= overflow;
-	}
+	const Tick overflow = r.getB() - ticksInLoop + Tick{1};
+	if (overflow > Tick{0})
+		r -= overflow;
 
-	return {f1, f2};
+	return r;
 }
 
-Frame sanitizeFrame_(Frame f, int framesInLoop)
+Tick sanitizeTick_(Tick t, Tick ticksInLoop)
 {
-	return std::min(f, framesInLoop - 1);
+	return std::min(t, ticksInLoop - Tick{1});
 }
 } // namespace
 
@@ -90,46 +87,6 @@ void ActionManager::reset()
 	m_liveActions.clear();
 	actionFactory::reset();
 	m_model.get().actions.clearAll();
-	m_model.swap(model::SwapType::NONE);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ActionManager::updateBpm(float ratio, int quantizerStep)
-{
-	if (ratio == 1.0f)
-		return;
-
-	m_model.get().actions.updateKeyFrames([=](Frame old)
-	{
-		/* The division here cannot be precise. A new frame can be 44099 and the
-		quantizer set to 44100. That would mean two recs completely useless. So we
-		compute a reject value ('delta'): if it's lower than 6 frames the new frame
-		is collapsed with a quantized frame. FIXME - maybe 6 frames are too low. */
-		Frame frame = static_cast<Frame>(old * ratio);
-		if (frame != 0)
-		{
-			Frame delta = quantizerStep % frame;
-			if (delta > 0 && delta <= 6)
-				frame = frame + delta;
-		}
-		return frame;
-	});
-
-	m_model.swap(model::SwapType::NONE);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void ActionManager::updateSamplerate(int systemRate, int patchRate)
-{
-	if (systemRate == patchRate)
-		return;
-
-	float ratio = systemRate / (float)patchRate;
-
-	m_model.get().actions.updateKeyFrames([=](Frame old)
-	{ return floorf(old * ratio); });
 	m_model.swap(model::SwapType::NONE);
 }
 
@@ -156,7 +113,7 @@ void ActionManager::copyAllActionsToScene(Scene src, Scene dst)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::liveRec(ID channelId, Scene scene, MidiEvent e, Frame globalFrame)
+void ActionManager::liveRec(ID channelId, Scene scene, MidiEvent e, Tick globalTick)
 {
 	assert(e.isNoteOnOff()); // Can't record any other kind of events for now
 
@@ -164,40 +121,40 @@ void ActionManager::liveRec(ID channelId, Scene scene, MidiEvent e, Frame global
 	if (m_liveActions.size() >= m_liveActions.capacity())
 		m_liveActions.reserve(m_liveActions.size() + MAX_LIVE_RECS_CHUNK);
 
-	m_liveActions.push_back(actionFactory::makeAction(actionFactory::getNewActionId(), channelId, scene, globalFrame, e));
+	m_liveActions.push_back(actionFactory::makeAction(actionFactory::getNewActionId(), channelId, scene, globalTick, e));
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::recordMidiAction(ID channelId, Scene scene, int note, float velocity, Frame f1, Frame f2, Frame framesInLoop)
+void ActionManager::recordMidiAction(ID channelId, Scene scene, int note, float velocity,
+    TickRange range, Tick ticksInLoop)
 {
-	const auto [ff1, ff2] = sanitizeFrames_(f1, f2, framesInLoop);
-
 	MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, note, 0);
 	MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, note, 0);
 
 	e1.setVelocityFloat(velocity);
 	e2.setVelocityFloat(velocity);
 
-	rec(channelId, scene, ff1, ff2, e1, e2);
+	rec(channelId, scene, sanitizeTickRange_(range, ticksInLoop), e1, e2);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::recordSampleAction(ID channelId, Scene scene, int type, Frame f1, Frame f2, Frame framesInLoop)
+void ActionManager::recordSampleAction(ID channelId, Scene scene, int type,
+    TickRange range, Tick ticksInLoop)
 {
 	if (isSinglePressMode(channelId))
 	{
-		const auto [ff1, ff2] = sanitizeFrames_(f1, f2, framesInLoop);
+		range = sanitizeTickRange_(range, ticksInLoop);
 
 		MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0, G_MAX_VELOCITY);
 		MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0, G_MAX_VELOCITY);
-		rec(channelId, scene, ff1, ff2, e1, e2);
+		rec(channelId, scene, range, e1, e2);
 	}
 	else
 	{
 		MidiEvent e1 = MidiEvent::makeFrom3Bytes(type, 0, G_MAX_VELOCITY);
-		rec(channelId, scene, sanitizeFrame_(f1, framesInLoop), e1);
+		rec(channelId, scene, sanitizeTick_(range.getA(), ticksInLoop), e1);
 	}
 }
 
@@ -232,23 +189,24 @@ void ActionManager::deleteSampleAction(const Action& a)
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::updateMidiAction(ID channelId, Scene scene, const Action& a, int note, float velocity,
-    Frame f1, Frame f2, Frame framesInLoop)
+void ActionManager::updateMidiAction(ID channelId, Scene scene, const Action& a, int note,
+    float velocity, TickRange range, Tick ticksInLoop)
 {
 	deleteAction(a.id, a.nextId);
-	recordMidiAction(channelId, scene, note, velocity, f1, f2, framesInLoop);
+	recordMidiAction(channelId, scene, note, velocity, range, ticksInLoop);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::updateSampleAction(ID channelId, Scene scene, const Action& a, int type, Frame f1, Frame f2, Frame framesInLoop)
+void ActionManager::updateSampleAction(ID channelId, Scene scene, const Action& a,
+    int type, TickRange range, Tick ticksInLoop)
 {
 	if (isSinglePressMode(channelId))
 		deleteAction(a.id, a.nextId);
 	else
 		deleteAction(a.id);
 
-	recordSampleAction(channelId, scene, type, f1, f2, framesInLoop);
+	recordSampleAction(channelId, scene, type, range, ticksInLoop);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -301,19 +259,6 @@ bool ActionManager::areComposite(const Action& a1, const Action& a2) const
 
 /* -------------------------------------------------------------------------- */
 
-Frame ActionManager::fixVerticalEnvActions(Frame f, const Action& a1, const Action& a2) const
-{
-	if (a1.frame == f)
-		f += 1;
-	else if (a2.frame == f)
-		f -= 1;
-	if (a1.frame == f || a2.frame == f)
-		return -1;
-	return f;
-}
-
-/* -------------------------------------------------------------------------- */
-
 bool ActionManager::isSinglePressMode(ID channelId) const
 {
 	return m_model.get().tracks.getChannel(channelId).sampleChannel->mode == SamplePlayerMode::SINGLE_PRESS;
@@ -321,7 +266,7 @@ bool ActionManager::isSinglePressMode(ID channelId) const
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::consolidate(const Action& a1, std::size_t i)
+void ActionManager::consolidate(Action& a1, std::size_t i)
 {
 	/* This algorithm must start searching from the element next to 'a1': since
 	live actions are recorded in linear sequence, the potential partner of 'a1'
@@ -330,14 +275,13 @@ void ActionManager::consolidate(const Action& a1, std::size_t i)
 
 	for (auto it = m_liveActions.begin() + i; it != m_liveActions.end(); ++it)
 	{
-
-		const Action& a2 = *it;
+		Action& a2 = *it;
 
 		if (!areComposite(a1, a2))
 			continue;
 
-		const_cast<Action&>(a1).nextId = a2.id;
-		const_cast<Action&>(a2).prevId = a1.id;
+		a1.nextId = a2.id;
+		a2.prevId = a1.id;
 
 		break;
 	}
@@ -423,17 +367,17 @@ void ActionManager::clearActions(ID channelId, int type)
 	m_model.swap(model::SwapType::HARD);
 }
 
-Action ActionManager::rec(ID channelId, Scene scene, Frame frame, MidiEvent e)
+Action ActionManager::rec(ID channelId, Scene scene, Tick tick, MidiEvent e)
 {
-	Action action = m_model.get().actions.rec(channelId, scene, frame, e);
+	Action action = m_model.get().actions.rec(channelId, scene, tick, e);
 
 	m_model.swap(model::SwapType::HARD);
 	return action;
 }
 
-void ActionManager::rec(ID channelId, Scene scene, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
+void ActionManager::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1, MidiEvent e2)
 {
-	m_model.get().actions.rec(channelId, scene, f1, f2, e1, e2);
+	m_model.get().actions.rec(channelId, scene, range, e1, e2);
 	m_model.swap(model::SwapType::HARD);
 }
 

@@ -64,12 +64,12 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 
 		const m::Action& a2 = a1.nextId.isValid() ? *c::actionEditor::findAction(a1.nextId) : m::Action{};
 
-		Pixel px = x() + m_base->frameToPixel(a1.frame);
+		Pixel px = x() + m_base->tickToPixel(a1.tick);
 		Pixel py = y() + 4;
 		Pixel pw = 0;
 		Pixel ph = h() - 8;
 		if (a2.isValid() && isSinglePressMode)
-			pw = m_base->frameToPixel(a2.frame - a1.frame);
+			pw = m_base->tickToPixel(a2.tick - a1.tick);
 
 		geSampleAction* gsa = new geSampleAction(px, py, pw, ph, isSinglePressMode, a1, a2);
 		add(gsa);
@@ -105,8 +105,10 @@ void geSampleActionEditor::draw()
 
 void geSampleActionEditor::onAddAction()
 {
-	Frame f = m_base->pixelToFrame(Fl::event_x() - x(), m_data->framesInBeat);
-	c::actionEditor::recordSampleAction(m_data->channelId, static_cast<gdSampleActionEditor*>(m_base)->getActionType(), f);
+	Tick t1 = m_base->pixelToTick(Fl::event_x() - x(), /*snap=*/true);
+	Tick t2 = t1 + G_DEFAULT_ACTION_SIZE;
+	c::actionEditor::recordSampleAction(m_data->channelId,
+	    static_cast<gdSampleActionEditor*>(m_base)->getActionType(), {t1, t2});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -157,31 +159,33 @@ void geSampleActionEditor::onResizeAction()
 
 void geSampleActionEditor::onRefreshAction()
 {
+	// TODO - this code is identical to gePianoRoll::onRefreshAction()!
+
 	namespace ca = c::actionEditor;
 
+	int   type = m_action->a1.event.getStatus();
 	Pixel p1   = m_action->x() - x();
 	Pixel p2   = m_action->x() + m_action->w() - x();
-	Frame f1   = 0;
-	Frame f2   = 0;
-	int   type = m_action->a1.event.getStatus();
+	Tick  t1;
+	Tick  t2;
 
 	if (!m_action->isOnEdges())
 	{
-		f1 = m_base->pixelToFrame(p1, m_data->framesInBeat);
-		f2 = m_base->pixelToFrame(p2, m_data->framesInBeat, /*snap=*/false) - (m_base->pixelToFrame(p1, m_data->framesInBeat, /*snap=*/false) - f1);
+		t1 = m_base->pixelToTick(p1, /*snap=*/true);
+		t2 = m_base->pixelToTick(p2, /*snap=*/true) - (m_base->pixelToTick(p1, /*snap=*/true) - t1);
 	}
 	else if (m_action->onLeftEdge)
 	{
-		f1 = m_base->pixelToFrame(p1, m_data->framesInBeat);
-		f2 = m_action->a2.frame;
+		t1 = m_base->pixelToTick(p1, /*snap=*/true);
+		t2 = m_action->a2.tick;
 	}
 	else if (m_action->onRightEdge)
 	{
-		f1 = m_action->a1.frame;
-		f2 = m_base->pixelToFrame(p2, m_data->framesInBeat);
+		t1 = m_action->a1.tick;
+		t2 = m_base->pixelToTick(p2, /*snap=*/true);
 	}
 
-	ca::updateSampleAction(m_data->channelId, m_action->a1, type, f1, f2);
+	ca::updateSampleAction(m_data->channelId, m_action->a1, type, {t1, t2});
 }
 
 /* -------------------------------------------------------------------------- */
