@@ -151,7 +151,7 @@ struct Patch
 	int         beats      = G_DEFAULT_BEATS;
 	float       bpm        = G_DEFAULT_BPM;
 	bool        quantize   = G_DEFAULT_QUANTIZE;
-	int         samplerate = G_DEFAULT_SAMPLERATE;
+	int         samplerate = G_DEFAULT_SAMPLERATE; // TODO - remove in the future, used only for backward compatibility
 	bool        metronome  = false;
 
 	std::vector<Track>   tracks;

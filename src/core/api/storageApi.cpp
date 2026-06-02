@@ -73,8 +73,6 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 	/* Write Model into Patch, then into file. */
 
 	Patch patch;
-	patch.samplerate = m_kernelAudio.getSampleRate();
-
 	uiModel.store(patch);
 	m_model.store(patch, projectPath);
 
