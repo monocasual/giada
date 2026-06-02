@@ -66,6 +66,11 @@ struct AudioBlock
 		assert(end - start == head.getLength() + tail.getLength());
 	}
 
+	bool contains(Frame f) const
+	{
+		return head.contains(f) || tail.contains(f);
+	}
+
 	template <typename F>
 	void onEachFrame(F&& fn) const
 	{
@@ -243,11 +248,18 @@ const Sequencer::EventBuffer& Sequencer::advance(const model::Sequencer& sequenc
 
 	actionsBlock.onEachAction([&](const Action& action)
 	{
+		/* An action may fall just outside the current block because the frame-to-tick
+		conversion above (AudioBlock -> ActionsBlock) is conservative. Double-check
+		here that we do not include actions that are not actually in the block. */
+
+		const Frame frame = u::time::tickToFrame(action.tick, m_currentSampleRate, bpm);
+		if (!audioBlock.contains(frame))
+			return;
+
 		/* Adjusting local offset requires more tweaking if the action belongs to
 		the tail block: it means the sequencer has wrapped around the loop and
 		we are fetching actions from the beginning. */
 
-		const Frame frame  = u::time::tickToFrame(action.tick, m_currentSampleRate, bpm);
 		bool        inTail = audioBlock.tail.isValid() && audioBlock.tail.contains(frame);
 		const Frame offset = inTail ? audioBlock.head.getLength() : -audioBlock.head.a;
 		const Frame local  = frame + offset;
