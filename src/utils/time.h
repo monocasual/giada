@@ -29,6 +29,7 @@
 #ifndef G_UTILS_TIME_H
 #define G_UTILS_TIME_H
 
+#include "src/deps/mcl-utils/src/math.hpp"
 #include "src/tick.h"
 #include "src/types.h"
 
@@ -71,6 +72,15 @@ Converts Tick <-> pixel. */
 
 int  tickToPixel(Tick, double ratio);
 Tick pixelToTick(int pixel, double ratio);
+
+/* Quantize
+Quantizes Tick 't' to the nearest multiple of 'step'. */
+
+constexpr Tick quantize(Tick t, Tick step) noexcept
+{
+	namespace math = mcl::utils::math;
+	return Tick{math::quantize(t.value(), step.value())};
+}
 } // namespace giada::u::time
 
 #endif
