@@ -30,6 +30,7 @@
 #include "src/deps/mcl-utils/src/fs.hpp"
 #include "src/gui/const.h"
 #include "src/utils/log.h"
+#include "src/utils/time.h"
 #include <fstream>
 #include <nlohmann/json.hpp>
 
@@ -205,6 +206,8 @@ void readActions_(Patch& patch, const nlohmann::json& j)
 		a.event     = jaction.value(G_PATCH_KEY_ACTION_EVENT, 0);
 		a.prevId    = jaction.value(G_PATCH_KEY_ACTION_PREV, ID{});
 		a.nextId    = jaction.value(G_PATCH_KEY_ACTION_NEXT, ID{});
+		if (patch.version < Version{1, 5, 0}) // Old frame-based audio engine
+			a.tick = u::time::frameToTickRound(jaction.value(G_PATCH_KEY_ACTION_FRAME, 0), patch.samplerate, patch.bpm);
 		patch.actions.push_back(a);
 	}
 }
