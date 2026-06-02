@@ -108,15 +108,6 @@ int geGridTool::getValue() const
 
 /* -------------------------------------------------------------------------- */
 
-Frame geGridTool::getSnapFrame(Frame v, Frame framesInBeat) const
-{
-	namespace math = mcl::utils::math;
-
-	if (!isOn())
-		return v;
-	return math::quantize(v, getCellSize(framesInBeat));
-}
-
 Tick geGridTool::getSnapTick(Tick t) const
 {
 	namespace math = mcl::utils::math;
@@ -127,11 +118,6 @@ Tick geGridTool::getSnapTick(Tick t) const
 }
 
 /* -------------------------------------------------------------------------- */
-
-Frame geGridTool::getCellSize(Frame framesInBeat) const
-{
-	return framesInBeat / getValue();
-}
 
 Tick geGridTool::getCellSize() const
 {

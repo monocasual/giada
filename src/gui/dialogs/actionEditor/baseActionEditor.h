@@ -53,10 +53,8 @@ public:
 	int  handle(int e) override;
 	void draw() override;
 
-	Pixel frameToPixel(Frame f) const;
-	Frame pixelToFrame(Pixel p, Frame framesInBeat, bool snap = true) const;
-	Tick  pixelToTick(int, bool snap) const;
-	int   tickToPixel(Tick) const;
+	Tick pixelToTick(int, bool snap) const;
+	int  tickToPixel(Tick) const;
 
 	ID channelId;
 
@@ -112,7 +110,7 @@ private:
 
 	void zoomAbout(std::function<float()> f);
 
-	Pixel currentFrameToPixel() const;
+	Pixel currentTickToPixel() const;
 
 	float m_ratio;
 };

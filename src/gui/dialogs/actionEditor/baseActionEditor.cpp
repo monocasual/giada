@@ -96,16 +96,6 @@ void gdBaseActionEditor::computeWidth(Tick tickInSeq, Tick tickInLoop)
 
 /* -------------------------------------------------------------------------- */
 
-Pixel gdBaseActionEditor::frameToPixel(Frame f) const
-{
-	return f / m_ratio;
-}
-
-Frame gdBaseActionEditor::pixelToFrame(Pixel p, Frame framesInBeat, bool snap) const
-{
-	return snap ? gridTool->getSnapFrame(p * m_ratio, framesInBeat) : p * m_ratio;
-}
-
 Tick gdBaseActionEditor::pixelToTick(int p, bool snap) const
 {
 	const Tick t = u::time::pixelToTick(p, m_ratio);
@@ -177,7 +167,7 @@ void gdBaseActionEditor::draw()
 	gdWindow::draw();
 
 	const geompp::Rect splitBounds = m_splitScroll->getBoundsNoScrollbar();
-	const geompp::Line playhead    = splitBounds.getHeightAsLine().withX(currentFrameToPixel());
+	const geompp::Line playhead    = splitBounds.getHeightAsLine().withX(currentTickToPixel());
 
 	if (splitBounds.contains(playhead))
 		drawLine(playhead, G_COLOR_LIGHT_2);
@@ -224,7 +214,7 @@ void gdBaseActionEditor::refresh()
 
 /* -------------------------------------------------------------------------- */
 
-Pixel gdBaseActionEditor::currentFrameToPixel() const
+Pixel gdBaseActionEditor::currentTickToPixel() const
 {
 	return (tickToPixel(m_data.getCurrentTick()) + m_splitScroll->x()) - m_splitScroll->getScrollX();
 }
