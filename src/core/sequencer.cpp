@@ -171,7 +171,7 @@ Tick Sequencer::quantize(Tick t) const
 
 	if (!canQuantize())
 		return t;
-	return Tick{math::quantize(t.value(), m_quantizerStep) % getFramesInLoop()}; // No overflow
+	return Tick{math::quantize(t.value(), Tick::Value{m_quantizerStep}) % getFramesInLoop()}; // No overflow
 }
 
 /* -------------------------------------------------------------------------- */
