@@ -236,12 +236,12 @@ const std::span<const Action> Actions::getActionsInTickRange(TickRange r) const
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Action> Actions::getActionsOnChannel(ID channelId, Scene scene) const
+std::vector<const Action*> Actions::getActionsOnChannel(ID channelId, Scene scene) const
 {
-	std::vector<Action> out;
+	std::vector<const Action*> out;
 	for (const Action& a : m_actions)
 		if (a.channelId == channelId && a.scene == scene)
-			out.push_back(a);
+			out.push_back(&a);
 	return out;
 }
 

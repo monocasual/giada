@@ -36,7 +36,7 @@ class geSampleAction : public geBaseAction
 {
 public:
 	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, bool singlePress,
-	    m::Action a1, m::Action a2);
+	    const m::Action& a1, const m::Action* a2);
 
 	void draw() override;
 

@@ -45,7 +45,7 @@ public:
 	/* getActionsOnChannel
 	Returns a vector of actions belonging to channel 'ch'. */
 
-	std::vector<Action> getActionsOnChannel(ID channelId, Scene) const;
+	std::vector<const Action*> getActionsOnChannel(ID channelId, Scene) const;
 
 	/* getActionsInTickRange
 	Returns a span of all actions included in the required range. */

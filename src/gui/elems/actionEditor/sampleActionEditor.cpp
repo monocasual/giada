@@ -57,21 +57,21 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 	clear();
 	size(m_base->fullWidth, h());
 
-	for (const m::Action& a1 : m_data->actions)
+	for (const m::Action* a1 : m_data->actions)
 	{
-		if (a1.event.getStatus() == m::MidiEvent::CHANNEL_CC || isNoteOffSinglePress(a1))
+		if (a1->event.getStatus() == m::MidiEvent::CHANNEL_CC || isNoteOffSinglePress(*a1))
 			continue;
 
-		const m::Action& a2 = a1.nextId.isValid() ? *c::actionEditor::findAction(a1.nextId) : m::Action{};
+		const m::Action* a2 = a1->nextId.isValid() ? c::actionEditor::findAction(a1->nextId) : nullptr;
 
-		Pixel px = x() + m_base->tickToPixel(a1.tick);
+		Pixel px = x() + m_base->tickToPixel(a1->tick);
 		Pixel py = y() + 4;
 		Pixel pw = 0;
 		Pixel ph = h() - 8;
-		if (a2.isValid() && isSinglePressMode)
-			pw = m_base->tickToPixel(a2.tick - a1.tick);
+		if (a2->isValid() && isSinglePressMode)
+			pw = m_base->tickToPixel(a2->tick - a1->tick);
 
-		geSampleAction* gsa = new geSampleAction(px, py, pw, ph, isSinglePressMode, a1, a2);
+		geSampleAction* gsa = new geSampleAction(px, py, pw, ph, isSinglePressMode, *a1, a2);
 		add(gsa);
 		resizable(gsa);
 	}
@@ -115,7 +115,7 @@ void geSampleActionEditor::onAddAction()
 
 void geSampleActionEditor::onDeleteAction()
 {
-	c::actionEditor::deleteSampleAction(m_action->a1.id);
+	c::actionEditor::deleteSampleAction(m_action->a1->id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -163,7 +163,7 @@ void geSampleActionEditor::onRefreshAction()
 
 	namespace ca = c::actionEditor;
 
-	int   type = m_action->a1.event.getStatus();
+	int   type = m_action->a1->event.getStatus();
 	Pixel p1   = m_action->x() - x();
 	Pixel p2   = m_action->x() + m_action->w() - x();
 	Tick  t1;
@@ -177,15 +177,15 @@ void geSampleActionEditor::onRefreshAction()
 	else if (m_action->onLeftEdge)
 	{
 		t1 = m_base->pixelToTick(p1, /*snap=*/true);
-		t2 = m_action->a2.tick;
+		t2 = m_action->a2->tick;
 	}
 	else if (m_action->onRightEdge)
 	{
-		t1 = m_action->a1.tick;
+		t1 = m_action->a1->tick;
 		t2 = m_base->pixelToTick(p2, /*snap=*/true);
 	}
 
-	ca::updateSampleAction(m_data->channelId, m_action->a1.id, type, {t1, t2});
+	ca::updateSampleAction(m_data->channelId, m_action->a1->id, type, {t1, t2});
 }
 
 /* -------------------------------------------------------------------------- */

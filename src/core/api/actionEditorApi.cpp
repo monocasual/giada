@@ -40,7 +40,7 @@ ActionEditorApi::ActionEditorApi(Engine& e, Sequencer& s, ActionManager& ar)
 
 /* -------------------------------------------------------------------------- */
 
-std::vector<Action> ActionEditorApi::getActionsOnChannel(ID channelId) const
+std::vector<const Action*> ActionEditorApi::getActionsOnChannel(ID channelId) const
 {
 	return m_actionManager.getActionsOnChannel(channelId, m_sequencer.getCurrentScene());
 }

@@ -39,7 +39,7 @@ namespace giada::v
 class gePianoItem : public geBaseAction
 {
 public:
-	gePianoItem(int x, int y, int w, int h, m::Action a1, m::Action a2);
+	gePianoItem(int x, int y, int w, int h, const m::Action& a1, const m::Action& a2);
 
 	void draw() override;
 

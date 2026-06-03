@@ -360,7 +360,7 @@ bool ActionManager::hasActions(Scene scene) const
 	return m_model.get().actions.hasActions(scene);
 }
 
-std::vector<Action> ActionManager::getActionsOnChannel(ID channelId, Scene scene) const
+std::vector<const Action*> ActionManager::getActionsOnChannel(ID channelId, Scene scene) const
 {
 	return m_model.get().actions.getActionsOnChannel(channelId, scene);
 }

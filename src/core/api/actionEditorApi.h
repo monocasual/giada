@@ -42,8 +42,8 @@ class ActionEditorApi
 public:
 	ActionEditorApi(Engine&, Sequencer&, ActionManager&);
 
-	std::vector<Action> getActionsOnChannel(ID channelId) const;
-	const Action*       findAction(ID) const;
+	std::vector<const Action*> getActionsOnChannel(ID channelId) const;
+	const Action*              findAction(ID) const;
 
 	void recordMidiAction(ID channelId, int note, float velocity, TickRange);
 	void deleteMidiAction(ID channelId, ID actionId);

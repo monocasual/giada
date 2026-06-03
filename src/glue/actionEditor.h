@@ -60,14 +60,14 @@ struct Data
 	Tick getCurrentTick() const;
 	bool isChannelPlaying() const;
 
-	ID                     channelId;
-	Scene                  scene;
-	std::string            channelName;
-	Tick                   ticksInSeq;
-	Tick                   ticksInBeat;
-	Tick                   ticksInBar;
-	Tick                   ticksInLoop;
-	std::vector<m::Action> actions;
+	ID                            channelId;
+	Scene                         scene;
+	std::string                   channelName;
+	Tick                          ticksInSeq;
+	Tick                          ticksInBeat;
+	Tick                          ticksInBar;
+	Tick                          ticksInLoop;
+	std::vector<const m::Action*> actions;
 
 	std::optional<SampleData> sample;
 };

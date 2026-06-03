@@ -59,7 +59,7 @@ void geVelocityEditor::draw()
 	{
 		geEnvelopePoint* p = static_cast<geEnvelopePoint*>(child(i));
 		if (m_action == nullptr)
-			p->position(p->x(), valueToY(p->a1.event.getVelocityFloat()));
+			p->position(p->x(), valueToY(p->a1->event.getVelocityFloat()));
 		const Pixel x1 = p->x() + (geEnvelopePoint::SIDE / 2);
 		const Pixel y1 = p->y();
 		const Pixel y2 = y() + h();
@@ -94,15 +94,15 @@ void geVelocityEditor::rebuild(c::actionEditor::Data& d)
 	clear();
 	size(m_base->fullWidth, h());
 
-	for (const m::Action& action : m_data->actions)
+	for (const m::Action* action : m_data->actions)
 	{
-		if (action.event.getStatus() != m::MidiEvent::CHANNEL_NOTE_ON)
+		if (action->event.getStatus() != m::MidiEvent::CHANNEL_NOTE_ON)
 			continue;
 
-		const Pixel px = x() + m_base->tickToPixel(action.tick) - (geEnvelopePoint::SIDE / 2);
-		const Pixel py = y() + valueToY(action.event.getVelocityFloat());
+		const Pixel px = x() + m_base->tickToPixel(action->tick) - (geEnvelopePoint::SIDE / 2);
+		const Pixel py = y() + valueToY(action->event.getVelocityFloat());
 
-		add(new geEnvelopePoint(px, py, action));
+		add(new geEnvelopePoint(px, py, *action));
 	}
 
 	resizable(nullptr);
@@ -131,7 +131,7 @@ void geVelocityEditor::onMoveAction()
 
 void geVelocityEditor::onRefreshAction()
 {
-	c::actionEditor::updateVelocity(m_action->a1.id, yToValue(m_action->y() - y()));
+	c::actionEditor::updateVelocity(m_action->a1->id, yToValue(m_action->y() - y()));
 
 	m_base->rebuild(); // Rebuild pianoRoll as well
 }

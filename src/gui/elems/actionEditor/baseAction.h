@@ -44,7 +44,7 @@ public:
 	static const Pixel HANDLE_WIDTH = 6;
 
 	geBaseAction(Pixel x, Pixel y, Pixel w, Pixel h, bool resizable,
-	    m::Action a1, m::Action a2);
+	    const m::Action& a1, const m::Action* a2);
 
 	int handle(int e) override;
 
@@ -64,8 +64,8 @@ public:
 	bool  altered;
 	Pixel pick;
 
-	m::Action a1;
-	m::Action a2;
+	const m::Action* a1;
+	const m::Action* a2;
 
 protected:
 	bool m_resizable;

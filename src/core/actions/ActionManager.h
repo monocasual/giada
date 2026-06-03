@@ -102,10 +102,10 @@ public:
 
 	/* Pass-thru functions. See Actions.h */
 
-	const Action*       findAction(ID) const;
-	bool                hasActions(ID channelId, int type = 0) const;
-	bool                hasActions(Scene) const;
-	std::vector<Action> getActionsOnChannel(ID channelId, Scene) const;
+	const Action*              findAction(ID) const;
+	bool                       hasActions(ID channelId, int type = 0) const;
+	bool                       hasActions(Scene) const;
+	std::vector<const Action*> getActionsOnChannel(ID channelId, Scene) const;
 
 	/* clearChannel
 	Removes all actions from channel 'channelId' from a given scene. Pass an invalid Scene

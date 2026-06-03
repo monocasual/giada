@@ -31,14 +31,14 @@
 namespace giada::v
 {
 geBaseAction::geBaseAction(Pixel X, Pixel Y, Pixel W, Pixel H, bool resizable,
-    m::Action a1, m::Action a2)
+    const m::Action& a1, const m::Action* a2)
 : geBox(X, Y, W, H)
 , onRightEdge(false)
 , onLeftEdge(false)
 , hovered(false)
 , altered(false)
 , pick(0)
-, a1(a1)
+, a1(&a1)
 , a2(a2)
 , m_resizable(resizable)
 {

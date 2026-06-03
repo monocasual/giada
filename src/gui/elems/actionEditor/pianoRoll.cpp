@@ -107,7 +107,7 @@ void gePianoRoll::onAddAction()
 
 void gePianoRoll::onDeleteAction()
 {
-	c::actionEditor::deleteMidiAction(m_data->channelId, m_action->a1.id);
+	c::actionEditor::deleteMidiAction(m_data->channelId, m_action->a1->id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -181,13 +181,13 @@ void gePianoRoll::onRefreshAction()
 	else if (m_action->onLeftEdge)
 	{
 		t1 = m_base->pixelToTick(p1, /*snap=*/true);
-		t2 = m_action->a2.tick;
+		t2 = m_action->a2->tick;
 		if (t1 == t2) // If snapping makes an action fall onto the other
 			t1 -= G_DEFAULT_ACTION_SIZE;
 	}
 	else if (m_action->onRightEdge)
 	{
-		t1 = m_action->a1.tick;
+		t1 = m_action->a1->tick;
 		t2 = m_base->pixelToTick(p2, /*snap=*/true);
 		if (t1 == t2) // If snapping makes an action fall onto the other
 			t2 += G_DEFAULT_ACTION_SIZE;
@@ -196,9 +196,9 @@ void gePianoRoll::onRefreshAction()
 	assert(t2.value() != 0);
 
 	int   note     = yToNote(m_action->y() - y());
-	float velocity = m_action->a1.event.getVelocityFloat();
+	float velocity = m_action->a1->event.getVelocityFloat();
 
-	ca::updateMidiAction(m_data->channelId, m_action->a1.id, note, velocity, {t1, t2});
+	ca::updateMidiAction(m_data->channelId, m_action->a1->id, note, velocity, {t1, t2});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -243,21 +243,21 @@ void gePianoRoll::rebuild(c::actionEditor::Data& d)
 	clear();
 	size(m_base->fullWidth, (MAX_KEYS + 1) * CELL_H);
 
-	for (const m::Action& a1 : m_data->actions)
+	for (const m::Action* a1 : m_data->actions)
 	{
-		if (a1.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF)
+		if (a1->event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF)
 			continue;
 
-		assert(a1.isValid()); // a2 might be null if orphaned
+		assert(a1->isValid()); // a2 might be null if orphaned
 
-		const m::Action& a2 = a1.nextId.isValid() ? *c::actionEditor::findAction(a1.nextId) : m::Action{};
+		const m::Action* a2 = a1->nextId.isValid() ? c::actionEditor::findAction(a1->nextId) : nullptr;
 
-		Pixel px = x() + m_base->tickToPixel(a1.tick);
-		Pixel py = y() + noteToY(a1.event.getNote());
+		Pixel px = x() + m_base->tickToPixel(a1->tick);
+		Pixel py = y() + noteToY(a1->event.getNote());
 		Pixel ph = CELL_H;
-		Pixel pw = getPianoItemW(px, a1, a2);
+		Pixel pw = getPianoItemW(px, *a1, *a2);
 
-		add(new gePianoItem(px, py, pw, ph, a1, a2));
+		add(new gePianoItem(px, py, pw, ph, *a1, *a2));
 	}
 
 	redraw();
