@@ -39,9 +39,10 @@ public:
 	geBox(int x, int y, int w, int h, const char* l = nullptr, Fl_Align al = FL_ALIGN_CENTER);
 	geBox(const char* l = nullptr, Fl_Align al = FL_ALIGN_CENTER);
 
-	void draw() override;
-
 	void setSvgImage(const char*);
+
+protected:
+	void draw() override;
 
 private:
 	std::unique_ptr<Fl_SVG_Image> m_image;
