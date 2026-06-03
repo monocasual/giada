@@ -97,17 +97,17 @@ void recordMidiAction(ID channelId, int note, float velocity, TickRange range)
 
 /* -------------------------------------------------------------------------- */
 
-void deleteMidiAction(ID channelId, const m::Action& a)
+void deleteMidiAction(ID channelId, ID actionId)
 {
-	g_engine->getActionEditorApi().deleteMidiAction(channelId, a);
+	g_engine->getActionEditorApi().deleteMidiAction(channelId, actionId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void updateMidiAction(ID channelId, const m::Action& a, int note, float velocity,
+void updateMidiAction(ID channelId, ID actionId, int note, float velocity,
     TickRange range)
 {
-	g_engine->getActionEditorApi().updateMidiAction(channelId, a, note, velocity, range);
+	g_engine->getActionEditorApi().updateMidiAction(channelId, actionId, note, velocity, range);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -119,22 +119,22 @@ void recordSampleAction(ID channelId, int type, TickRange range)
 
 /* -------------------------------------------------------------------------- */
 
-void updateSampleAction(ID channelId, const m::Action& a, int type, TickRange range)
+void updateSampleAction(ID channelId, ID actionId, int type, TickRange range)
 {
-	g_engine->getActionEditorApi().updateSampleAction(channelId, a, type, range);
+	g_engine->getActionEditorApi().updateSampleAction(channelId, actionId, type, range);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void deleteSampleAction(const m::Action& a)
+void deleteSampleAction(ID actionId)
 {
-	g_engine->getActionEditorApi().deleteSampleAction(a);
+	g_engine->getActionEditorApi().deleteSampleAction(actionId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void updateVelocity(const m::Action& a, float value)
+void updateVelocity(ID actionId, float value)
 {
-	g_engine->getActionEditorApi().updateVelocity(a, value);
+	g_engine->getActionEditorApi().updateVelocity(actionId, value);
 }
 } // namespace giada::c::actionEditor

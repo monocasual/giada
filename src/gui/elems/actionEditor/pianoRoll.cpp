@@ -107,7 +107,7 @@ void gePianoRoll::onAddAction()
 
 void gePianoRoll::onDeleteAction()
 {
-	c::actionEditor::deleteMidiAction(m_data->channelId, m_action->a1);
+	c::actionEditor::deleteMidiAction(m_data->channelId, m_action->a1.id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -198,7 +198,7 @@ void gePianoRoll::onRefreshAction()
 	int   note     = yToNote(m_action->y() - y());
 	float velocity = m_action->a1.event.getVelocityFloat();
 
-	ca::updateMidiAction(m_data->channelId, m_action->a1, note, velocity, {t1, t2});
+	ca::updateMidiAction(m_data->channelId, m_action->a1.id, note, velocity, {t1, t2});
 }
 
 /* -------------------------------------------------------------------------- */

@@ -79,16 +79,15 @@ const m::Action* findAction(ID);
 /* MIDI actions.  */
 
 void recordMidiAction(ID channelId, int note, float velocity, TickRange);
-void deleteMidiAction(ID channelId, const m::Action& a);
-void updateMidiAction(ID channelId, const m::Action& a, int note, float velocity,
-    TickRange);
-void updateVelocity(const m::Action& a, float value);
+void deleteMidiAction(ID channelId, ID actionId);
+void updateMidiAction(ID channelId, ID actionId, int note, float velocity, TickRange);
+void updateVelocity(ID actionId, float value);
 
 /* Sample Actions. */
 
 void recordSampleAction(ID channelId, int type, TickRange);
-void deleteSampleAction(const m::Action& a);
-void updateSampleAction(ID channelId, const m::Action& a, int type, TickRange);
+void deleteSampleAction(ID actionId);
+void updateSampleAction(ID channelId, ID actionId, int type, TickRange);
 } // namespace giada::c::actionEditor
 
 #endif

@@ -46,12 +46,12 @@ public:
 	const Action*       findAction(ID) const;
 
 	void recordMidiAction(ID channelId, int note, float velocity, TickRange);
-	void deleteMidiAction(ID channelId, const Action&);
-	void updateMidiAction(ID channelId, const Action&, int note, float velocity, TickRange);
+	void deleteMidiAction(ID channelId, ID actionId);
+	void updateMidiAction(ID channelId, ID actionId, int note, float velocity, TickRange);
 	void recordSampleAction(ID channelId, int type, TickRange);
-	void updateSampleAction(ID channelId, const Action&, int type, TickRange);
-	void deleteSampleAction(const Action&);
-	void updateVelocity(const Action&, float value);
+	void updateSampleAction(ID channelId, ID actionId, int type, TickRange);
+	void deleteSampleAction(ID actionId);
+	void updateVelocity(ID actionId, float value);
 
 private:
 	Engine&        m_engine;

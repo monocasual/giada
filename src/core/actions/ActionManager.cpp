@@ -160,62 +160,71 @@ void ActionManager::recordSampleAction(ID channelId, Scene scene, int type,
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::deleteMidiAction(const Action& a)
+void ActionManager::deleteMidiAction(ID actionId)
 {
-	assert(a.isValid());
-	assert(a.event.getStatus() == MidiEvent::CHANNEL_NOTE_ON);
+	const Action* curr = m_model.get().actions.findAction(actionId);
+
+	assert(curr->isValid());
+	assert(curr->event.getStatus() == MidiEvent::CHANNEL_NOTE_ON);
 
 	/* Check if 'next' exist first: could be orphaned. */
 
-	const Action* next = m_model.get().actions.findAction(a.nextId);
+	const Action* next = m_model.get().actions.findAction(curr->nextId);
 
 	if (next != nullptr)
-		deleteAction(a.id, next->id);
+		deleteAction(curr->id, next->id);
 	else
-		deleteAction(a.id);
+		deleteAction(curr->id);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::deleteSampleAction(const Action& a)
+void ActionManager::deleteSampleAction(ID actionId)
 {
-	const Action* next = m_model.get().actions.findAction(a.nextId);
+	const Action* curr = m_model.get().actions.findAction(actionId);
+	const Action* next = m_model.get().actions.findAction(curr->nextId);
 
 	if (next != nullptr) // For ChannelMode::SINGLE_PRESS combo
-		deleteAction(a.id, next->id);
+		deleteAction(curr->id, next->id);
 	else
-		deleteAction(a.id);
+		deleteAction(curr->id);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::updateMidiAction(ID channelId, Scene scene, const Action& a, int note,
+void ActionManager::updateMidiAction(ID channelId, Scene scene, ID actionId, int note,
     float velocity, TickRange range, Tick ticksInLoop)
 {
-	deleteAction(a.id, a.nextId);
+	const Action* action = m_model.get().actions.findAction(actionId);
+
+	deleteAction(action->id, action->nextId);
 	recordMidiAction(channelId, scene, note, velocity, range, ticksInLoop);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::updateSampleAction(ID channelId, Scene scene, const Action& a,
+void ActionManager::updateSampleAction(ID channelId, Scene scene, ID actionId,
     int type, TickRange range, Tick ticksInLoop)
 {
+	const Action* action = m_model.get().actions.findAction(actionId);
+
 	if (isSinglePressMode(channelId))
-		deleteAction(a.id, a.nextId);
+		deleteAction(action->id, action->nextId);
 	else
-		deleteAction(a.id);
+		deleteAction(action->id);
 
 	recordSampleAction(channelId, scene, type, range, ticksInLoop);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionManager::updateVelocity(const Action& a, float value)
+void ActionManager::updateVelocity(ID actionId, float value)
 {
-	MidiEvent event(a.event);
+	const Action* action = m_model.get().actions.findAction(actionId);
+
+	MidiEvent event(action->event);
 	event.setVelocityFloat(value);
-	updateEvent(a.id, event);
+	updateEvent(action->id, event);
 }
 
 /* -------------------------------------------------------------------------- */

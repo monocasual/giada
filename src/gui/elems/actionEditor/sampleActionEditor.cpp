@@ -115,7 +115,7 @@ void geSampleActionEditor::onAddAction()
 
 void geSampleActionEditor::onDeleteAction()
 {
-	c::actionEditor::deleteSampleAction(m_action->a1);
+	c::actionEditor::deleteSampleAction(m_action->a1.id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -185,7 +185,7 @@ void geSampleActionEditor::onRefreshAction()
 		t2 = m_base->pixelToTick(p2, /*snap=*/true);
 	}
 
-	ca::updateSampleAction(m_data->channelId, m_action->a1, type, {t1, t2});
+	ca::updateSampleAction(m_data->channelId, m_action->a1.id, type, {t1, t2});
 }
 
 /* -------------------------------------------------------------------------- */

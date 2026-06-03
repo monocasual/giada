@@ -79,14 +79,14 @@ public:
 
 	/* delete*Action */
 
-	void deleteMidiAction(const Action&);
-	void deleteSampleAction(const Action&);
+	void deleteMidiAction(ID);
+	void deleteSampleAction(ID);
 
 	/* update*Action */
 
-	void updateMidiAction(ID channelId, Scene, const Action&, int note, float velocity, TickRange, Tick ticksInLoop);
-	void updateSampleAction(ID channelId, Scene, const Action&, int type, TickRange, Tick ticksInLoop);
-	void updateVelocity(const Action&, float value);
+	void updateMidiAction(ID channelId, Scene, ID actionId, int note, float velocity, TickRange, Tick ticksInLoop);
+	void updateSampleAction(ID channelId, Scene, ID actionId, int type, TickRange, Tick ticksInLoop);
+	void updateVelocity(ID actionId, float value);
 
 	/* consolidate
 	Records all live actions. Returns a set of channels IDs that have been

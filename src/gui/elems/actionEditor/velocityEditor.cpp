@@ -131,7 +131,7 @@ void geVelocityEditor::onMoveAction()
 
 void geVelocityEditor::onRefreshAction()
 {
-	c::actionEditor::updateVelocity(m_action->a1, yToValue(m_action->y() - y()));
+	c::actionEditor::updateVelocity(m_action->a1.id, yToValue(m_action->y() - y()));
 
 	m_base->rebuild(); // Rebuild pianoRoll as well
 }

@@ -62,24 +62,25 @@ void ActionEditorApi::recordMidiAction(ID channelId, int note, float velocity, T
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::deleteMidiAction(ID channelId, const Action& a)
+void ActionEditorApi::deleteMidiAction(ID channelId, ID actionId)
 {
 	/* Send a note-off first in case we are deleting it in a middle of a
 	key_on/key_off sequence. Only if it exists (i.e. it's not orphaned). */
 
-	const Action* noteOff = m_actionManager.findAction(a.nextId);
+	const Action* noteOn  = m_actionManager.findAction(actionId);
+	const Action* noteOff = m_actionManager.findAction(noteOn->nextId);
 	if (noteOff != nullptr)
 		m_engine.getChannelsApi().sendMidi(channelId, noteOff->event);
 
-	m_actionManager.deleteMidiAction(a);
+	m_actionManager.deleteMidiAction(noteOn->id);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::updateMidiAction(ID channelId, const Action& a, int note,
+void ActionEditorApi::updateMidiAction(ID channelId, ID actionId, int note,
     float velocity, TickRange range)
 {
-	m_actionManager.updateMidiAction(channelId, m_sequencer.getCurrentScene(), a,
+	m_actionManager.updateMidiAction(channelId, m_sequencer.getCurrentScene(), actionId,
 	    note, velocity, range, m_sequencer.getTicksInLoop());
 }
 
@@ -93,24 +94,24 @@ void ActionEditorApi::recordSampleAction(ID channelId, int type, TickRange range
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::updateSampleAction(ID channelId, const Action& a, int type,
+void ActionEditorApi::updateSampleAction(ID channelId, ID actionId, int type,
     TickRange range)
 {
 	m_actionManager.updateSampleAction(channelId, m_sequencer.getCurrentScene(),
-	    a, type, range, m_sequencer.getTicksInLoop());
+	    actionId, type, range, m_sequencer.getTicksInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::deleteSampleAction(const Action& a)
+void ActionEditorApi::deleteSampleAction(ID actionId)
 {
-	m_actionManager.deleteSampleAction(a);
+	m_actionManager.deleteSampleAction(actionId);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::updateVelocity(const Action& a, float value)
+void ActionEditorApi::updateVelocity(ID actionId, float value)
 {
-	m_actionManager.updateVelocity(a, value);
+	m_actionManager.updateVelocity(actionId, value);
 }
 } // namespace giada::m
