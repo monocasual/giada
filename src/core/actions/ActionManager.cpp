@@ -162,14 +162,14 @@ void ActionManager::recordSampleAction(ID channelId, Scene scene, int type,
 
 void ActionManager::deleteMidiAction(ID actionId)
 {
-	const Action* curr = m_model.get().actions.findAction(actionId);
+	const Action* curr = findAction(actionId);
 
 	assert(curr->isValid());
 	assert(curr->event.getStatus() == MidiEvent::CHANNEL_NOTE_ON);
 
 	/* Check if 'next' exist first: could be orphaned. */
 
-	const Action* next = m_model.get().actions.findAction(curr->nextId);
+	const Action* next = findAction(curr->nextId);
 
 	if (next != nullptr)
 		deleteAction(curr->id, next->id);
@@ -181,8 +181,10 @@ void ActionManager::deleteMidiAction(ID actionId)
 
 void ActionManager::deleteSampleAction(ID actionId)
 {
-	const Action* curr = m_model.get().actions.findAction(actionId);
-	const Action* next = m_model.get().actions.findAction(curr->nextId);
+	const Action* curr = findAction(actionId);
+	assert(curr != nullptr);
+	const Action* next = findAction(curr->nextId);
+	assert(next != nullptr);
 
 	if (next != nullptr) // For ChannelMode::SINGLE_PRESS combo
 		deleteAction(curr->id, next->id);
@@ -195,7 +197,8 @@ void ActionManager::deleteSampleAction(ID actionId)
 void ActionManager::updateMidiAction(ID channelId, Scene scene, ID actionId, int note,
     float velocity, TickRange range, Tick ticksInLoop)
 {
-	const Action* action = m_model.get().actions.findAction(actionId);
+	const Action* action = findAction(actionId);
+	assert(action != nullptr);
 
 	deleteAction(action->id, action->nextId);
 	recordMidiAction(channelId, scene, note, velocity, range, ticksInLoop);
@@ -206,7 +209,8 @@ void ActionManager::updateMidiAction(ID channelId, Scene scene, ID actionId, int
 void ActionManager::updateSampleAction(ID channelId, Scene scene, ID actionId,
     int type, TickRange range, Tick ticksInLoop)
 {
-	const Action* action = m_model.get().actions.findAction(actionId);
+	const Action* action = findAction(actionId);
+	assert(action != nullptr);
 
 	if (isSinglePressMode(channelId))
 		deleteAction(action->id, action->nextId);
@@ -221,6 +225,7 @@ void ActionManager::updateSampleAction(ID channelId, Scene scene, ID actionId,
 void ActionManager::updateVelocity(ID actionId, float value)
 {
 	const Action* action = m_model.get().actions.findAction(actionId);
+	assert(action != nullptr);
 
 	MidiEvent event(action->event);
 	event.setVelocityFloat(value);
