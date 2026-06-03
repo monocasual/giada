@@ -73,6 +73,13 @@ void geBox::draw()
 
 /* -------------------------------------------------------------------------- */
 
+geompp::Rect<int> geBox::getBounds() const
+{
+	return {x(), y(), w(), h()};
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geBox::setSvgImage(const char* svg)
 {
 	m_image = std::make_unique<Fl_SVG_Image>(nullptr, svg);

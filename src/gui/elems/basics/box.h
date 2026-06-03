@@ -27,6 +27,7 @@
 #ifndef GE_BOX_H
 #define GE_BOX_H
 
+#include "src/deps/geompp/src/rect.hpp"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_SVG_Image.H>
 #include <memory>
@@ -38,6 +39,8 @@ class geBox : public Fl_Box
 public:
 	geBox(int x, int y, int w, int h, const char* l = nullptr, Fl_Align al = FL_ALIGN_CENTER);
 	geBox(const char* l = nullptr, Fl_Align al = FL_ALIGN_CENTER);
+
+	geompp::Rect<int> getBounds() const;
 
 	void setSvgImage(const char*);
 
