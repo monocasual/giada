@@ -32,7 +32,7 @@ namespace giada::v
 {
 geBaseAction::geBaseAction(Pixel X, Pixel Y, Pixel W, Pixel H, bool resizable,
     m::Action a1, m::Action a2)
-: Fl_Box(X, Y, W, H)
+: geBox(X, Y, W, H)
 , onRightEdge(false)
 , onLeftEdge(false)
 , hovered(false)

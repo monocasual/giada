@@ -28,8 +28,8 @@
 #define GE_BASE_ACTION_H
 
 #include "src/core/actions/action.h"
+#include "src/gui/elems/basics/box.h"
 #include "src/gui/types.h"
-#include <FL/Fl_Box.H>
 
 namespace giada::m
 {
@@ -37,7 +37,7 @@ struct Action;
 }
 namespace giada::v
 {
-class geBaseAction : public Fl_Box
+class geBaseAction : public geBox
 {
 public:
 	static const Pixel MIN_WIDTH    = 12;
