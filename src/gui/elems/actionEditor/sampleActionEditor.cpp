@@ -159,33 +159,12 @@ void geSampleActionEditor::onResizeAction()
 
 void geSampleActionEditor::onRefreshAction()
 {
-	// TODO - this code is identical to gePianoRoll::onRefreshAction()!
+	const Pixel     p1    = m_action->x() - x();
+	const Pixel     p2    = m_action->x() + m_action->w() - x();
+	const TickRange range = m_base->toTickRange({p1, p2}, /*snap=*/true);
+	const int       type  = m_action->a1->event.getStatus();
 
-	namespace ca = c::actionEditor;
-
-	int   type = m_action->a1->event.getStatus();
-	Pixel p1   = m_action->x() - x();
-	Pixel p2   = m_action->x() + m_action->w() - x();
-	Tick  t1;
-	Tick  t2;
-
-	if (!m_action->isOnEdges())
-	{
-		t1 = m_base->pixelToTick(p1, /*snap=*/true);
-		t2 = m_base->pixelToTick(p2, /*snap=*/true) - (m_base->pixelToTick(p1, /*snap=*/true) - t1);
-	}
-	else if (m_action->onLeftEdge)
-	{
-		t1 = m_base->pixelToTick(p1, /*snap=*/true);
-		t2 = m_action->a2->tick;
-	}
-	else if (m_action->onRightEdge)
-	{
-		t1 = m_action->a1->tick;
-		t2 = m_base->pixelToTick(p2, /*snap=*/true);
-	}
-
-	ca::updateSampleAction(m_data->channelId, m_action->a1->id, type, {t1, t2});
+	c::actionEditor::updateSampleAction(m_data->channelId, m_action->a1->id, type, range);
 }
 
 /* -------------------------------------------------------------------------- */

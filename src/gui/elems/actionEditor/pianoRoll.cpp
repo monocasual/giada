@@ -164,41 +164,13 @@ void gePianoRoll::onResizeAction()
 
 void gePianoRoll::onRefreshAction()
 {
-	// TODO - this code is identical to geSampleActionEditor::onRefreshAction()!
-	namespace ca = c::actionEditor;
+	const Pixel     p1       = m_action->x() - x();
+	const Pixel     p2       = m_action->x() + m_action->w() - x();
+	const TickRange range    = m_base->toTickRange({p1, p2}, /*snap=*/true);
+	const int       note     = yToNote(m_action->y() - y());
+	const float     velocity = m_action->a1->event.getVelocityFloat();
 
-	Pixel p1 = m_action->x() - x();
-	Pixel p2 = m_action->x() + m_action->w() - x();
-
-	Tick t1;
-	Tick t2;
-
-	if (!m_action->isOnEdges())
-	{
-		t1 = m_base->pixelToTick(p1, /*snap=*/true);
-		t2 = m_base->pixelToTick(p2, /*snap=*/true) - (m_base->pixelToTick(p1, /*snap=*/true) - t1);
-	}
-	else if (m_action->onLeftEdge)
-	{
-		t1 = m_base->pixelToTick(p1, /*snap=*/true);
-		t2 = m_action->a2->tick;
-		if (t1 == t2) // If snapping makes an action fall onto the other
-			t1 -= G_DEFAULT_ACTION_SIZE;
-	}
-	else if (m_action->onRightEdge)
-	{
-		t1 = m_action->a1->tick;
-		t2 = m_base->pixelToTick(p2, /*snap=*/true);
-		if (t1 == t2) // If snapping makes an action fall onto the other
-			t2 += G_DEFAULT_ACTION_SIZE;
-	}
-
-	assert(t2.value() != 0);
-
-	int   note     = yToNote(m_action->y() - y());
-	float velocity = m_action->a1->event.getVelocityFloat();
-
-	ca::updateMidiAction(m_data->channelId, m_action->a1->id, note, velocity, {t1, t2});
+	c::actionEditor::updateMidiAction(m_data->channelId, m_action->a1->id, note, velocity, range);
 }
 
 /* -------------------------------------------------------------------------- */
