@@ -63,11 +63,22 @@ public:
 protected:
 	geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h, gdBaseActionEditor*);
 
+	virtual void onAddAction()     = 0;
+	virtual void onDeleteAction()  = 0;
+	virtual void onMoveAction()    = 0;
+	virtual void onResizeAction()  = 0;
+	virtual void onRefreshAction() = 0;
+
 	/* toTickRange
 	Converts a pixel range to ticks. Useful for composite actions. Includes
 	sanity checks. */
 
 	TickRange toTickRange(geompp::Range<int>, bool snap) const;
+
+	/* baseDraw
+	Draws basic things like borders and grids. Optional background clear. */
+
+	void baseDraw(bool clear = true) const;
 
 	c::actionEditor::Data* m_data;
 
@@ -80,17 +91,6 @@ protected:
 	Selected action. Used while dragging. */
 
 	geBaseAction* m_action;
-
-	/* baseDraw
-	Draws basic things like borders and grids. Optional background clear. */
-
-	void baseDraw(bool clear = true) const;
-
-	virtual void onAddAction()     = 0;
-	virtual void onDeleteAction()  = 0;
-	virtual void onMoveAction()    = 0;
-	virtual void onResizeAction()  = 0;
-	virtual void onRefreshAction() = 0;
 
 private:
 	/* drawVerticals
