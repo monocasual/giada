@@ -39,29 +39,29 @@ namespace giada::v
 geGridTool::geGridTool(Pixel x, Pixel y, const Model& model)
 : Fl_Group(x, y, 80, 20)
 {
-	gridType = new geChoice(x, y, 40, 20);
-	gridType->addItem("1");
-	gridType->addItem("2");
-	gridType->addItem("3");
-	gridType->addItem("4");
-	gridType->addItem("6");
-	gridType->addItem("8");
-	gridType->addItem("16");
-	gridType->addItem("32");
-	gridType->showItem(0);
-	gridType->onChange = [this](int)
+	divisions = new geChoice(x, y, 40, 20);
+	divisions->addItem("1");
+	divisions->addItem("2");
+	divisions->addItem("3");
+	divisions->addItem("4");
+	divisions->addItem("6");
+	divisions->addItem("8");
+	divisions->addItem("16");
+	divisions->addItem("32");
+	divisions->showItem(0);
+	divisions->onChange = [this](int)
 	{
 		window()->redraw();
 	};
 
-	active = new geCheck(gridType->x() + gridType->w() + 4, y, 20, 20);
+	active = new geCheck(divisions->x() + divisions->w() + 4, y, 20, 20);
 
-	gridType->showItem(model.actionEditorGridVal);
+	divisions->showItem(model.actionEditorGridVal);
 	active->value(model.actionEditorGridOn);
 
 	end();
 
-	gridType->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_GRIDRES));
+	divisions->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_GRIDRES));
 	active->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_SNAPTOGRID));
 }
 
@@ -69,7 +69,7 @@ geGridTool::geGridTool(Pixel x, Pixel y, const Model& model)
 
 geGridTool::~geGridTool()
 {
-	g_ui->model.actionEditorGridVal = gridType->getSelectedId();
+	g_ui->model.actionEditorGridVal = divisions->getSelectedId();
 	g_ui->model.actionEditorGridOn  = active->value();
 }
 
@@ -84,7 +84,7 @@ bool geGridTool::isOn() const
 
 int geGridTool::getDivisionsPerBeat() const
 {
-	switch (gridType->getSelectedId())
+	switch (divisions->getSelectedId())
 	{
 	case 0:
 		return 1;

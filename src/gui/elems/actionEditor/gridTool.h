@@ -51,7 +51,7 @@ public:
 	Tick getDivisionSize() const;
 
 private:
-	geChoice* gridType;
+	geChoice* divisions;
 	geCheck*  active;
 };
 } // namespace giada::v
