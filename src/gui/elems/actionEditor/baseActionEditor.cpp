@@ -65,11 +65,8 @@ TickRange geBaseActionEditor::toTickRange(geompp::Range<int> pixelRange, ActionE
 
 	if (edit == ActionEdit::Move)
 	{
-		/* std::max to end to make sure not to have an invalid range begin == end
-		if you are moving a single action (e.g. a sample channel action). */
-
 		begin = m_base->gridTool->getSnapTick(begin);
-		end   = begin + std::max(Tick{1}, originalTickRange.getLength());
+		end   = begin + originalTickRange.getLength();
 	}
 	else if (edit == ActionEdit::ResizeLeft)
 	{
