@@ -144,15 +144,9 @@ void gePianoRoll::onResizeAction()
 	if (!static_cast<gePianoItem*>(m_action)->isResizable())
 		return;
 
-	Pixel ex = Fl::event_x();
-
-	Pixel x1 = x();
-	Pixel x2 = m_base->loopWidth + x();
-
-	if (ex < x1)
-		ex = x1;
-	else if (ex > x2)
-		ex = x2;
+	const Pixel leftEdge  = x();
+	const Pixel rightEdge = m_base->loopWidth + x();
+	Pixel       ex        = std::clamp(Fl::event_x(), leftEdge, rightEdge);
 
 	if (m_action->onRightEdge)
 		m_action->setRightEdge(ex - m_action->x());
