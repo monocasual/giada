@@ -117,12 +117,6 @@ public:
 
 	void updateEvent(ID id, MidiEvent e);
 
-	/* updateSiblings
-	Changes previous and next actions in action with id 'id'. Mostly used for
-	chained actions such as envelopes. */
-
-	void updateSiblings(ID id, ID prevId, ID nextId);
-
 	/* rec (1)
 	Records an action and returns it. Used by the Action Editor. */
 

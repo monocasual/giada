@@ -116,7 +116,6 @@ public:
 	void   clearActions(ID channelId, int type);
 	Action rec(ID channelId, Scene, Tick, MidiEvent e);
 	void   rec(ID channelId, Scene, TickRange, MidiEvent e1, MidiEvent e2);
-	void   updateSiblings(ID id, ID prevId, ID nextId);
 	void   deleteAction(ID id);
 	void   deleteAction(ID currId, ID nextId);
 	void   updateEvent(ID id, MidiEvent e);

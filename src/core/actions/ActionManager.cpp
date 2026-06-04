@@ -395,12 +395,6 @@ void ActionManager::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1
 	m_model.swap(model::SwapType::HARD);
 }
 
-void ActionManager::updateSiblings(ID id, ID prevId, ID nextId)
-{
-	m_model.get().actions.updateSiblings(id, prevId, nextId);
-	m_model.swap(model::SwapType::HARD);
-}
-
 void ActionManager::deleteAction(ID id)
 {
 	m_model.get().actions.deleteAction(id);

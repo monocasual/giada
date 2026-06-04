@@ -99,27 +99,6 @@ void Actions::updateEvent(ID id, MidiEvent e)
 
 /* -------------------------------------------------------------------------- */
 
-void Actions::updateSiblings(ID id, ID prevId, ID nextId)
-{
-	Action* pcurr = findAction(id);
-	Action* pprev = findAction(prevId);
-	Action* pnext = findAction(nextId);
-
-	pcurr->prevId = pprev->id;
-	pcurr->nextId = pnext->id;
-
-	if (pprev->id.isValid())
-	{
-		pprev->nextId = pcurr->id;
-	}
-	if (pnext->id.isValid())
-	{
-		pnext->prevId = pcurr->id;
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
 bool Actions::hasActions(ID channelId, int type) const
 {
 	for (const Action& a : m_actions)
