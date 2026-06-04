@@ -68,7 +68,7 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 		Pixel py = y() + 4;
 		Pixel pw = 0;
 		Pixel ph = h() - 8;
-		if (a2->isValid() && isSinglePressMode)
+		if (a2 != nullptr && a2->isValid() && isSinglePressMode)
 			pw = m_base->tickToPixel(a2->tick - a1->tick);
 
 		geSampleAction* gsa = new geSampleAction(px, py, pw, ph, isSinglePressMode, *a1, a2);
