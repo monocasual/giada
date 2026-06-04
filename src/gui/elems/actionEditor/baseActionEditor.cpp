@@ -75,14 +75,14 @@ void geBaseActionEditor::baseDraw(bool clear) const
 	if (m_base->gridTool->getValue() > 1)
 	{
 		fl_color(G_COLOR_GREY_3);
-		drawVerticals(m_base->gridTool->getCellSize().value());
+		drawVerticals(m_base->gridTool->getCellSize());
 	}
 
 	fl_color(G_COLOR_GREY_4);
-	drawVerticals(m_data->ticksInBeat.value());
+	drawVerticals(m_data->ticksInBeat);
 
 	fl_color(G_COLOR_GREY_5);
-	drawVerticals(m_data->ticksInBar.value());
+	drawVerticals(m_data->ticksInBar);
 
 	/* Cover unused area. Avoid drawing cover if width == 0 (i.e. beats are 32). */
 
@@ -93,13 +93,13 @@ void geBaseActionEditor::baseDraw(bool clear) const
 
 /* -------------------------------------------------------------------------- */
 
-void geBaseActionEditor::drawVerticals(int steps) const
+void geBaseActionEditor::drawVerticals(Tick steps) const
 {
 	/* Start drawing from steps, not from 0. The zero-th element is always
 	graphically useless. */
-	for (Frame i = steps; i < m_data->ticksInLoop.value(); i += steps)
+	for (Tick i = Tick{steps}; i < m_data->ticksInLoop; i += steps)
 	{
-		Pixel p = m_base->tickToPixel(Tick{i}) + x();
+		Pixel p = m_base->tickToPixel(i) + x();
 		fl_line(p, y() + 1, p, y() + h() - 2);
 	}
 }

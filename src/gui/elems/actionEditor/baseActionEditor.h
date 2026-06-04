@@ -29,6 +29,7 @@
 #define GE_BASE_ACTION_EDITOR_H
 
 #include "src/gui/types.h"
+#include "src/types.h"
 #include <FL/Fl_Group.H>
 
 namespace giada::c::actionEditor
@@ -89,7 +90,7 @@ private:
 	/* drawVerticals
 	Draws generic vertical lines (beats, bars, grid lines...). */
 
-	void drawVerticals(int steps) const;
+	void drawVerticals(Tick steps) const;
 
 	int push();
 	int drag();
