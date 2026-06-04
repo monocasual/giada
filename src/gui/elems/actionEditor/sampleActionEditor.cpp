@@ -155,7 +155,7 @@ void geSampleActionEditor::onRefreshAction()
 {
 	const Pixel     p1    = m_action->x() - x();
 	const Pixel     p2    = m_action->x() + m_action->w() - x();
-	const TickRange range = m_base->toTickRange({p1, p2}, /*snap=*/true);
+	const TickRange range = toTickRange({p1, p2}, /*snap=*/true);
 	const int       type  = m_action->a1->event.getStatus();
 
 	c::actionEditor::updateSampleAction(m_data->channelId, m_action->a1->id, type, range);

@@ -63,6 +63,12 @@ public:
 protected:
 	geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h, gdBaseActionEditor*);
 
+	/* toTickRange
+	Converts a pixel range to ticks. Useful for composite actions. Includes
+	sanity checks. */
+
+	TickRange toTickRange(geompp::Range<int>, bool snap) const;
+
 	c::actionEditor::Data* m_data;
 
 	/* m_base

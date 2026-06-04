@@ -56,12 +56,6 @@ public:
 	Tick pixelToTick(int, bool snap) const;
 	int  tickToPixel(Tick) const;
 
-	/* toTickRange
-	Converts a pixel range to ticks. Useful for composite actions. Includes
-	sanity checks. */
-
-	TickRange toTickRange(geompp::Range<int>, bool snap) const;
-
 	ID channelId;
 
 	geGridTool* gridTool;

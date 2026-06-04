@@ -57,6 +57,15 @@ geBaseAction* geBaseActionEditor::getActionAtCursor() const
 
 /* -------------------------------------------------------------------------- */
 
+TickRange geBaseActionEditor::toTickRange(geompp::Range<int> pixelRange, bool snap) const
+{
+	const Tick t1 = m_base->pixelToTick(pixelRange.getA(), snap);
+	const Tick t2 = std::max(t1 + Tick{1}, m_base->pixelToTick(pixelRange.getB(), snap));
+	return {t1, t2};
+}
+
+/* -------------------------------------------------------------------------- */
+
 void geBaseActionEditor::baseDraw(bool clear) const
 {
 	/* Clear the screen. */

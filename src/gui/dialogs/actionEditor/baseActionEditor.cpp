@@ -109,15 +109,6 @@ int gdBaseActionEditor::tickToPixel(Tick t) const
 
 /* -------------------------------------------------------------------------- */
 
-TickRange gdBaseActionEditor::toTickRange(geompp::Range<int> pixelRange, bool snap) const
-{
-	const Tick t1 = pixelToTick(pixelRange.getA(), snap);
-	const Tick t2 = std::max(t1 + Tick{1}, pixelToTick(pixelRange.getB(), snap));
-	return {t1, t2};
-}
-
-/* -------------------------------------------------------------------------- */
-
 void gdBaseActionEditor::zoomIn()
 {
 	// Explicit type std::max<float> to fix MINMAX macro hell on Windows
