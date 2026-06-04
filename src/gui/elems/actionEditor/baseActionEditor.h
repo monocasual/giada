@@ -80,7 +80,7 @@ protected:
 	Converts a pixel range to ticks. Useful for composite actions. Includes
 	sanity checks. */
 
-	TickRange toTickRange(geompp::Range<int>, bool snap) const;
+	TickRange toTickRange(geompp::Range<int>, ActionEdit, TickRange originalTickRange) const;
 
 	/* baseDraw
 	Draws basic things like borders and grids. Optional background clear. */

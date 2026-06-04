@@ -123,4 +123,13 @@ bool geBaseAction::isOnEdges() const
 {
 	return onLeftEdge || onRightEdge;
 }
+
+/* -------------------------------------------------------------------------- */
+
+TickRange geBaseAction::getTickRange() const
+{
+	if (a2 == nullptr)
+		return {};
+	return {a1->tick, a2->tick};
+}
 } // namespace giada::v

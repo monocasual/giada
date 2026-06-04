@@ -156,11 +156,11 @@ void gePianoRoll::onResizeAction()
 
 /* -------------------------------------------------------------------------- */
 
-void gePianoRoll::onRefreshAction(ActionEdit)
+void gePianoRoll::onRefreshAction(ActionEdit edit)
 {
 	const Pixel     p1       = m_action->x() - x();
 	const Pixel     p2       = m_action->x() + m_action->w() - x();
-	const TickRange range    = toTickRange({p1, p2}, /*snap=*/true);
+	const TickRange range    = toTickRange({p1, p2}, edit, m_action->getTickRange());
 	const int       note     = yToNote(m_action->y() - y());
 	const float     velocity = m_action->a1->event.getVelocityFloat();
 

@@ -48,7 +48,8 @@ public:
 
 	int handle(int e) override;
 
-	bool isOnEdges() const;
+	bool      isOnEdges() const;
+	TickRange getTickRange() const;
 
 	/* setLeftEdge/setRightEdge
 	Set new left/right edges position, relative range. */
