@@ -60,25 +60,24 @@ geBaseAction* geBaseActionEditor::getActionAtCursor() const
 TickRange geBaseActionEditor::toTickRange(geompp::Range<int> pixelRange, ActionEdit edit,
     TickRange originalTickRange) const
 {
-	const bool snap = m_base->gridTool->isOn();
-
 	Tick begin = m_base->pixelToTick(pixelRange.getA(), /*snap=*/false);
 	Tick end   = m_base->pixelToTick(pixelRange.getB(), /*snap=*/false);
 
-	if (snap)
-	{
-		if (edit != ActionEdit::ResizeRight)
-			begin = m_base->gridTool->getSnapTick(begin);
-		if (edit == ActionEdit::ResizeRight)
-			end = m_base->gridTool->getSnapTick(end);
-	}
-
 	if (edit == ActionEdit::Move)
-		end = begin + std::max(Tick{1}, originalTickRange.getLength());
+	{
+		begin = m_base->gridTool->getSnapTick(begin);
+		end   = begin + originalTickRange.getLength();
+	}
 	else if (edit == ActionEdit::ResizeLeft)
-		end = originalTickRange.getB();
+	{
+		end   = originalTickRange.getB();
+		begin = std::min(end - Tick{1}, m_base->gridTool->getSnapTick(begin));
+	}
 	else
-		end = std::max(begin + Tick{1}, end);
+	{
+		begin = originalTickRange.getA();
+		end   = std::max(begin + Tick{1}, m_base->gridTool->getSnapTick(end));
+	}
 
 	return {begin, end};
 }
