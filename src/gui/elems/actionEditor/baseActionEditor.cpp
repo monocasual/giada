@@ -115,6 +115,17 @@ void geBaseActionEditor::drawVerticals(Tick steps) const
 
 /* -------------------------------------------------------------------------- */
 
+geBaseActionEditor::ActionEdit geBaseActionEditor::getActionEdit(const geBaseAction& a) const
+{
+	if (a.onRightEdge)
+		return ActionEdit::ResizeRight;
+	if (a.onLeftEdge)
+		return ActionEdit::ResizeLeft;
+	return ActionEdit::Move;
+}
+
+/* -------------------------------------------------------------------------- */
+
 int geBaseActionEditor::handle(int e)
 {
 	switch (e)
@@ -177,7 +188,7 @@ int geBaseActionEditor::release()
 	int ret = 0;
 	if (m_action != nullptr && m_action->altered)
 	{
-		onRefreshAction();
+		onRefreshAction(getActionEdit(*m_action));
 		ret = 1;
 	}
 	m_action = nullptr;

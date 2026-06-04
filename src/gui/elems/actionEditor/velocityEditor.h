@@ -42,7 +42,7 @@ public:
 
 private:
 	void onMoveAction() override;
-	void onRefreshAction() override;
+	void onRefreshAction(ActionEdit) override;
 	void onAddAction() override {};
 	void onDeleteAction() override {};
 	void onResizeAction() override {};

@@ -51,7 +51,7 @@ private:
 	void onDeleteAction() override;
 	void onMoveAction() override;
 	void onResizeAction() override;
-	void onRefreshAction() override;
+	void onRefreshAction(ActionEdit) override;
 
 	bool isNoteOffSinglePress(const m::Action& a);
 };

@@ -151,7 +151,7 @@ void geSampleActionEditor::onResizeAction()
 
 /* -------------------------------------------------------------------------- */
 
-void geSampleActionEditor::onRefreshAction()
+void geSampleActionEditor::onRefreshAction(ActionEdit)
 {
 	const Pixel     p1    = m_action->x() - x();
 	const Pixel     p2    = m_action->x() + m_action->w() - x();
