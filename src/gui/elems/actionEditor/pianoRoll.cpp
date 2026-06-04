@@ -164,22 +164,22 @@ void gePianoRoll::onRefreshAction()
 	const int   note     = yToNote(m_action->y() - y());
 	const float velocity = m_action->a1->event.getVelocityFloat();
 
-	Tick t1 = m_base->pixelToTick(p1);
-	Tick t2 = m_base->pixelToTick(p2);
+	Tick t1;
+	Tick t2;
 
 	if (m_action->onLeftEdge)
 	{
 		t2 = m_action->getTickRange().getB();
-		t1 = std::min(t2 - Tick{1}, m_base->gridTool->getSnapTick(t1));
+		t1 = std::min(t2 - Tick{1}, m_base->pixelToTickSnapped(p1));
 	}
 	else if (m_action->onRightEdge)
 	{
 		t1 = m_action->getTickRange().getA();
-		t2 = std::max(t1 + Tick{1}, m_base->gridTool->getSnapTick(t2));
+		t2 = std::max(t1 + Tick{1}, m_base->pixelToTickSnapped(p2));
 	}
 	else
 	{
-		t1 = m_base->gridTool->getSnapTick(t1);
+		t1 = m_base->pixelToTickSnapped(p1);
 		t2 = t1 + m_action->getTickRange().getLength();
 	}
 
