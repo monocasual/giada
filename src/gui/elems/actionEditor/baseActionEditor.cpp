@@ -57,33 +57,6 @@ geBaseAction* geBaseActionEditor::getActionAtCursor() const
 
 /* -------------------------------------------------------------------------- */
 
-TickRange geBaseActionEditor::toTickRange(geompp::Range<int> pixelRange, ActionEdit edit,
-    TickRange originalTickRange) const
-{
-	Tick begin = m_base->pixelToTick(pixelRange.getA(), /*snap=*/false);
-	Tick end   = m_base->pixelToTick(pixelRange.getB(), /*snap=*/false);
-
-	if (edit == ActionEdit::Move)
-	{
-		begin = m_base->gridTool->getSnapTick(begin);
-		end   = begin + originalTickRange.getLength();
-	}
-	else if (edit == ActionEdit::ResizeLeft)
-	{
-		end   = originalTickRange.getB();
-		begin = std::min(end - Tick{1}, m_base->gridTool->getSnapTick(begin));
-	}
-	else
-	{
-		begin = originalTickRange.getA();
-		end   = std::max(begin + Tick{1}, m_base->gridTool->getSnapTick(end));
-	}
-
-	return {begin, end};
-}
-
-/* -------------------------------------------------------------------------- */
-
 void geBaseActionEditor::baseDraw(bool clear) const
 {
 	/* Clear the screen. */
@@ -129,17 +102,6 @@ void geBaseActionEditor::drawVerticals(Tick steps) const
 		Pixel p = m_base->tickToPixel(i) + x();
 		fl_line(p, y() + 1, p, y() + h() - 2);
 	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-geBaseActionEditor::ActionEdit geBaseActionEditor::getActionEdit(const geBaseAction& a) const
-{
-	if (a.onRightEdge)
-		return ActionEdit::ResizeRight;
-	if (a.onLeftEdge)
-		return ActionEdit::ResizeLeft;
-	return ActionEdit::Move;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -206,7 +168,7 @@ int geBaseActionEditor::release()
 	int ret = 0;
 	if (m_action != nullptr && m_action->altered)
 	{
-		onRefreshAction(getActionEdit(*m_action));
+		onRefreshAction();
 		ret = 1;
 	}
 	m_action = nullptr;

@@ -51,7 +51,7 @@ private:
 	void onDeleteAction() override;
 	void onMoveAction() override;
 	void onResizeAction() override;
-	void onRefreshAction(ActionEdit) override;
+	void onRefreshAction() override;
 };
 } // namespace giada::v
 

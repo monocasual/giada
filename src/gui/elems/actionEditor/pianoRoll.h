@@ -74,7 +74,7 @@ private:
 	void onDeleteAction() override;
 	void onMoveAction() override;
 	void onResizeAction() override;
-	void onRefreshAction(ActionEdit) override;
+	void onRefreshAction() override;
 
 	/* drawOffscreenGrid
 	Generates a complex drawing in memory first and copy it to the screen at a

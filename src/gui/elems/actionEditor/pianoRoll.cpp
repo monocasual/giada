@@ -31,6 +31,7 @@
 #include "src/glue/actionEditor.h"
 #include "src/gui/const.h"
 #include "src/gui/dialogs/actionEditor/baseActionEditor.h"
+#include "src/gui/elems/actionEditor/gridTool.h"
 #include "src/gui/elems/actionEditor/pianoItem.h"
 #include <cassert>
 
@@ -156,15 +157,33 @@ void gePianoRoll::onResizeAction()
 
 /* -------------------------------------------------------------------------- */
 
-void gePianoRoll::onRefreshAction(ActionEdit edit)
+void gePianoRoll::onRefreshAction()
 {
-	const Pixel     p1       = m_action->x() - x();
-	const Pixel     p2       = m_action->x() + m_action->w() - x();
-	const TickRange range    = toTickRange({p1, p2}, edit, m_action->getTickRange());
-	const int       note     = yToNote(m_action->y() - y());
-	const float     velocity = m_action->a1->event.getVelocityFloat();
+	const Pixel p1       = m_action->x() - x();
+	const Pixel p2       = m_action->x() + m_action->w() - x();
+	const int   note     = yToNote(m_action->y() - y());
+	const float velocity = m_action->a1->event.getVelocityFloat();
 
-	c::actionEditor::updateMidiAction(m_data->channelId, m_action->a1->id, note, velocity, range);
+	Tick t1 = m_base->pixelToTick(p1, /*snap=*/false);
+	Tick t2 = m_base->pixelToTick(p2, /*snap=*/false);
+
+	if (m_action->onLeftEdge)
+	{
+		t2 = m_action->getTickRange().getB();
+		t1 = std::min(t2 - Tick{1}, m_base->gridTool->getSnapTick(t1));
+	}
+	else if (m_action->onRightEdge)
+	{
+		t1 = m_action->getTickRange().getA();
+		t2 = std::max(t1 + Tick{1}, m_base->gridTool->getSnapTick(t2));
+	}
+	else
+	{
+		t1 = m_base->gridTool->getSnapTick(t1);
+		t2 = t1 + m_action->getTickRange().getLength();
+	}
+
+	c::actionEditor::updateMidiAction(m_data->channelId, m_action->a1->id, note, velocity, {t1, t2});
 }
 
 /* -------------------------------------------------------------------------- */

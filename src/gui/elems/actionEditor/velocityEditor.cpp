@@ -129,7 +129,7 @@ void geVelocityEditor::onMoveAction()
 
 /* -------------------------------------------------------------------------- */
 
-void geVelocityEditor::onRefreshAction(ActionEdit)
+void geVelocityEditor::onRefreshAction()
 {
 	c::actionEditor::updateVelocity(m_action->a1->id, yToValue(m_action->y() - y()));
 

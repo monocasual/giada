@@ -145,7 +145,7 @@ void geSampleActionEditor::onResizeAction()
 
 /* -------------------------------------------------------------------------- */
 
-void geSampleActionEditor::onRefreshAction(ActionEdit)
+void geSampleActionEditor::onRefreshAction()
 {
 	const Pixel p    = m_action->x() - x();
 	const Tick  t    = m_base->pixelToTick(p, /*snap=*/true);

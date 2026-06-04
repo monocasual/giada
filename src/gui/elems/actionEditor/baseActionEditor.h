@@ -61,26 +61,13 @@ public:
 	geBaseAction* getActionAtCursor() const;
 
 protected:
-	enum class ActionEdit
-	{
-		Move,
-		ResizeLeft,
-		ResizeRight
-	};
-
 	geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h, gdBaseActionEditor*);
 
-	virtual void onAddAction()               = 0;
-	virtual void onDeleteAction()            = 0;
-	virtual void onMoveAction()              = 0;
-	virtual void onResizeAction()            = 0;
-	virtual void onRefreshAction(ActionEdit) = 0;
-
-	/* toTickRange
-	Converts a pixel range to ticks. Useful for composite actions. Includes
-	sanity checks. */
-
-	TickRange toTickRange(geompp::Range<int>, ActionEdit, TickRange originalTickRange) const;
+	virtual void onAddAction()     = 0;
+	virtual void onDeleteAction()  = 0;
+	virtual void onMoveAction()    = 0;
+	virtual void onResizeAction()  = 0;
+	virtual void onRefreshAction() = 0;
 
 	/* baseDraw
 	Draws basic things like borders and grids. Optional background clear. */
@@ -104,8 +91,6 @@ private:
 	Draws generic vertical lines (beats, bars, grid lines...). */
 
 	void drawVerticals(Tick steps) const;
-
-	ActionEdit getActionEdit(const geBaseAction&) const;
 
 	int push();
 	int drag();
