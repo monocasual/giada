@@ -116,8 +116,7 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId, const Model& model)
 
 bool gdSampleActionEditor::canChangeActionType()
 {
-	return m_data.sample->channelMode != SamplePlayerMode::SINGLE_PRESS &&
-	       m_data.sample->isLoopMode == false;
+	return m_data.sample->isLoopMode == false;
 }
 
 /* -------------------------------------------------------------------------- */

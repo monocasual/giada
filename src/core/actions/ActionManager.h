@@ -75,7 +75,7 @@ public:
 	/* record*Action */
 
 	void recordMidiAction(ID channelId, Scene scene, int note, float velocity, TickRange, Tick ticksInLoop);
-	void recordSampleAction(ID channelId, Scene, int type, TickRange, Tick ticksInLoop);
+	void recordSampleAction(ID channelId, Scene, int type, Tick, Tick ticksInLoop);
 
 	/* delete*Action */
 
@@ -85,7 +85,7 @@ public:
 	/* update*Action */
 
 	void updateMidiAction(ID channelId, Scene, ID actionId, int note, float velocity, TickRange, Tick ticksInLoop);
-	void updateSampleAction(ID channelId, Scene, ID actionId, int type, TickRange, Tick ticksInLoop);
+	void updateSampleAction(ID channelId, Scene, ID actionId, int type, Tick, Tick ticksInLoop);
 	void updateVelocity(ID actionId, float value);
 
 	/* consolidate
@@ -125,8 +125,6 @@ private:
 	Composite: NOTE_ON + NOTE_OFF on the same note. */
 
 	bool areComposite(const Action& a1, const Action& a2) const;
-
-	bool isSinglePressMode(ID channelId) const;
 
 	/* consolidate
 	Given an action 'a1' tries to find the matching NOTE_OFF and updates the

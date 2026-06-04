@@ -48,8 +48,8 @@ public:
 	void recordMidiAction(ID channelId, int note, float velocity, TickRange);
 	void deleteMidiAction(ID channelId, ID actionId);
 	void updateMidiAction(ID channelId, ID actionId, int note, float velocity, TickRange);
-	void recordSampleAction(ID channelId, int type, TickRange);
-	void updateSampleAction(ID channelId, ID actionId, int type, TickRange);
+	void recordSampleAction(ID channelId, int type, Tick);
+	void updateSampleAction(ID channelId, ID actionId, int type, Tick);
 	void deleteSampleAction(ID actionId);
 	void updateVelocity(ID actionId, float value);
 

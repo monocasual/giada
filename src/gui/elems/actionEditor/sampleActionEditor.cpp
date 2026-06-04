@@ -48,8 +48,7 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 {
 	m_data = &d;
 
-	bool isSinglePressMode = m_data->sample->channelMode == SamplePlayerMode::SINGLE_PRESS;
-	bool isAnyLoopMode     = m_data->sample->isLoopMode;
+	bool isAnyLoopMode = m_data->sample->isLoopMode;
 
 	/* Remove all existing actions and set a new width, according to the current
 	zoom level. */
@@ -59,19 +58,15 @@ void geSampleActionEditor::rebuild(c::actionEditor::Data& d)
 
 	for (const m::Action* a1 : m_data->actions)
 	{
-		if (a1->event.getStatus() == m::MidiEvent::CHANNEL_CC || isNoteOffSinglePress(*a1))
+		if (a1->event.getStatus() == m::MidiEvent::CHANNEL_CC)
 			continue;
-
-		const m::Action* a2 = a1->nextId.isValid() ? c::actionEditor::findAction(a1->nextId) : nullptr;
 
 		Pixel px = x() + m_base->tickToPixel(a1->tick);
 		Pixel py = y() + 4;
 		Pixel pw = 0;
 		Pixel ph = h() - 8;
-		if (a2 != nullptr && a2->isValid() && isSinglePressMode)
-			pw = m_base->tickToPixel(a2->tick - a1->tick);
 
-		geSampleAction* gsa = new geSampleAction(px, py, pw, ph, isSinglePressMode, *a1, a2);
+		geSampleAction* gsa = new geSampleAction(px, py, pw, ph, *a1);
 		add(gsa);
 		resizable(gsa);
 	}
@@ -105,10 +100,9 @@ void geSampleActionEditor::draw()
 
 void geSampleActionEditor::onAddAction()
 {
-	Tick t1 = m_base->pixelToTick(Fl::event_x() - x(), /*snap=*/true);
-	Tick t2 = t1 + G_DEFAULT_ACTION_SIZE;
+	Tick t = m_base->pixelToTick(Fl::event_x() - x(), /*snap=*/true);
 	c::actionEditor::recordSampleAction(m_data->channelId,
-	    static_cast<gdSampleActionEditor*>(m_base)->getActionType(), {t1, t2});
+	    static_cast<gdSampleActionEditor*>(m_base)->getActionType(), t);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -151,21 +145,12 @@ void geSampleActionEditor::onResizeAction()
 
 /* -------------------------------------------------------------------------- */
 
-void geSampleActionEditor::onRefreshAction(ActionEdit edit)
+void geSampleActionEditor::onRefreshAction(ActionEdit)
 {
-	const Pixel     p1    = m_action->x() - x();
-	const Pixel     p2    = m_action->x() + m_action->w() - x();
-	const TickRange range = toTickRange({p1, p2}, edit, m_action->getTickRange());
-	const int       type  = m_action->a1->event.getStatus();
+	const Pixel p    = m_action->x() - x();
+	const Tick  t    = m_base->pixelToTick(p, /*snap=*/true);
+	const int   type = m_action->a1->event.getStatus();
 
-	c::actionEditor::updateSampleAction(m_data->channelId, m_action->a1->id, type, range);
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool geSampleActionEditor::isNoteOffSinglePress(const m::Action& a)
-{
-	return m_data->sample->channelMode == SamplePlayerMode::SINGLE_PRESS &&
-	       a.event.getStatus() == m::MidiEvent::CHANNEL_NOTE_OFF;
+	c::actionEditor::updateSampleAction(m_data->channelId, m_action->a1->id, type, t);
 }
 } // namespace giada::v

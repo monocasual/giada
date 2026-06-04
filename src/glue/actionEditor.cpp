@@ -112,16 +112,16 @@ void updateMidiAction(ID channelId, ID actionId, int note, float velocity,
 
 /* -------------------------------------------------------------------------- */
 
-void recordSampleAction(ID channelId, int type, TickRange range)
+void recordSampleAction(ID channelId, int type, Tick tick)
 {
-	g_engine->getActionEditorApi().recordSampleAction(channelId, type, range);
+	g_engine->getActionEditorApi().recordSampleAction(channelId, type, tick);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void updateSampleAction(ID channelId, ID actionId, int type, TickRange range)
+void updateSampleAction(ID channelId, ID actionId, int type, Tick tick)
 {
-	g_engine->getActionEditorApi().updateSampleAction(channelId, actionId, type, range);
+	g_engine->getActionEditorApi().updateSampleAction(channelId, actionId, type, tick);
 }
 
 /* -------------------------------------------------------------------------- */

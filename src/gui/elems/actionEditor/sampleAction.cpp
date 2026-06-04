@@ -31,10 +31,8 @@
 
 namespace giada::v
 {
-geSampleAction::geSampleAction(Pixel X, Pixel Y, Pixel W, Pixel H,
-    bool singlePress, const m::Action& a1, const m::Action* a2)
-: geBaseAction(X, Y, W, H, singlePress, a1, a2)
-, m_singlePress(singlePress)
+geSampleAction::geSampleAction(Pixel X, Pixel Y, Pixel W, Pixel H, const m::Action& a1)
+: geBaseAction(X, Y, W, H, /*resizable=*/false, a1, nullptr)
 {
 }
 
@@ -43,12 +41,6 @@ geSampleAction::geSampleAction(Pixel X, Pixel Y, Pixel W, Pixel H,
 void geSampleAction::draw()
 {
 	const Fl_Color color = hovered ? G_COLOR_LIGHT_2 : G_COLOR_LIGHT_1;
-
-	if (m_singlePress)
-	{
-		fl_rectf(x(), y(), w(), h(), color);
-		return;
-	}
 
 	if (a1->event.getStatus() == m::MidiEvent::CHANNEL_NOTE_KILL)
 	{

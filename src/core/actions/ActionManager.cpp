@@ -141,21 +141,10 @@ void ActionManager::recordMidiAction(ID channelId, Scene scene, int note, float 
 /* -------------------------------------------------------------------------- */
 
 void ActionManager::recordSampleAction(ID channelId, Scene scene, int type,
-    TickRange range, Tick ticksInLoop)
+    Tick tick, Tick ticksInLoop)
 {
-	if (isSinglePressMode(channelId))
-	{
-		range = sanitizeTickRange_(range, ticksInLoop);
-
-		MidiEvent e1 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_ON, 0, G_MAX_VELOCITY);
-		MidiEvent e2 = MidiEvent::makeFrom3Bytes(MidiEvent::CHANNEL_NOTE_OFF, 0, G_MAX_VELOCITY);
-		rec(channelId, scene, range, e1, e2);
-	}
-	else
-	{
-		MidiEvent e1 = MidiEvent::makeFrom3Bytes(type, 0, G_MAX_VELOCITY);
-		rec(channelId, scene, sanitizeTick_(range.getA(), ticksInLoop), e1);
-	}
+	MidiEvent e1 = MidiEvent::makeFrom3Bytes(type, 0, G_MAX_VELOCITY);
+	rec(channelId, scene, sanitizeTick_(tick, ticksInLoop), e1);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -181,14 +170,8 @@ void ActionManager::deleteMidiAction(ID actionId)
 
 void ActionManager::deleteSampleAction(ID actionId)
 {
-	const Action* curr = findAction(actionId);
-	assert(curr != nullptr);
-	const Action* next = findAction(curr->nextId);
-
-	if (next != nullptr) // For ChannelMode::SINGLE_PRESS combo
-		deleteAction(curr->id, next->id);
-	else
-		deleteAction(curr->id);
+	const Action* action = findAction(actionId);
+	deleteAction(action->id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -206,17 +189,13 @@ void ActionManager::updateMidiAction(ID channelId, Scene scene, ID actionId, int
 /* -------------------------------------------------------------------------- */
 
 void ActionManager::updateSampleAction(ID channelId, Scene scene, ID actionId,
-    int type, TickRange range, Tick ticksInLoop)
+    int type, Tick tick, Tick ticksInLoop)
 {
 	const Action* action = findAction(actionId);
 	assert(action != nullptr);
 
-	if (isSinglePressMode(channelId))
-		deleteAction(action->id, action->nextId);
-	else
-		deleteAction(action->id);
-
-	recordSampleAction(channelId, scene, type, range, ticksInLoop);
+	deleteAction(action->id);
+	recordSampleAction(channelId, scene, type, tick, ticksInLoop);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -268,13 +247,6 @@ bool ActionManager::areComposite(const Action& a1, const Action& a2) const
 	       a2.event.getStatus() == MidiEvent::CHANNEL_NOTE_OFF &&
 	       a1.event.getNote() == a2.event.getNote() &&
 	       a1.channelId == a2.channelId;
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool ActionManager::isSinglePressMode(ID channelId) const
-{
-	return m_model.get().tracks.getChannel(channelId).sampleChannel->mode == SamplePlayerMode::SINGLE_PRESS;
 }
 
 /* -------------------------------------------------------------------------- */

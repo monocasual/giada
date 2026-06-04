@@ -52,8 +52,6 @@ private:
 	void onMoveAction() override;
 	void onResizeAction() override;
 	void onRefreshAction(ActionEdit) override;
-
-	bool isNoteOffSinglePress(const m::Action& a);
 };
 } // namespace giada::v
 

@@ -86,19 +86,19 @@ void ActionEditorApi::updateMidiAction(ID channelId, ID actionId, int note,
 
 /* -------------------------------------------------------------------------- */
 
-void ActionEditorApi::recordSampleAction(ID channelId, int type, TickRange range)
+void ActionEditorApi::recordSampleAction(ID channelId, int type, Tick tick)
 {
 	m_actionManager.recordSampleAction(channelId, m_sequencer.getCurrentScene(),
-	    type, range, m_sequencer.getTicksInLoop());
+	    type, tick, m_sequencer.getTicksInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ActionEditorApi::updateSampleAction(ID channelId, ID actionId, int type,
-    TickRange range)
+    Tick tick)
 {
 	m_actionManager.updateSampleAction(channelId, m_sequencer.getCurrentScene(),
-	    actionId, type, range, m_sequencer.getTicksInLoop());
+	    actionId, type, tick, m_sequencer.getTicksInLoop());
 }
 
 /* -------------------------------------------------------------------------- */
