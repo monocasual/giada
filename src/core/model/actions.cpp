@@ -183,17 +183,10 @@ void Actions::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1, Midi
 {
 	Action a1 = actionFactory::makeAction({}, channelId, scene, range.getA(), e1);
 	Action a2 = actionFactory::makeAction({}, channelId, scene, range.getB(), e2);
+	a1.nextId = a2.id;
+	a2.prevId = a1.id;
 	m_actions.push_back(a1);
 	m_actions.push_back(a2);
-
-	Action* a1ptr = findAction(a1.id);
-	Action* a2ptr = findAction(a2.id);
-
-	assert(a1ptr != nullptr && a2ptr != nullptr);
-
-	a1ptr->nextId = a2ptr->id;
-	a2ptr->prevId = a1ptr->id;
-
 	sort();
 }
 
