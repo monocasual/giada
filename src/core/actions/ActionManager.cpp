@@ -184,7 +184,6 @@ void ActionManager::deleteSampleAction(ID actionId)
 	const Action* curr = findAction(actionId);
 	assert(curr != nullptr);
 	const Action* next = findAction(curr->nextId);
-	assert(next != nullptr);
 
 	if (next != nullptr) // For ChannelMode::SINGLE_PRESS combo
 		deleteAction(curr->id, next->id);
