@@ -96,10 +96,14 @@ void gdBaseActionEditor::computeWidth(Tick tickInSeq, Tick tickInLoop)
 
 /* -------------------------------------------------------------------------- */
 
-Tick gdBaseActionEditor::pixelToTick(int p, bool snap) const
+Tick gdBaseActionEditor::pixelToTick(int p) const
 {
-	const Tick t = u::time::pixelToTick(p, m_ratio);
-	return snap ? gridTool->getSnapTick(t) : t;
+	return u::time::pixelToTick(p, m_ratio);
+}
+
+Tick gdBaseActionEditor::pixelToTickSnapped(int p) const
+{
+	return gridTool->getSnapTick(pixelToTick(p));
 }
 
 int gdBaseActionEditor::tickToPixel(Tick t) const

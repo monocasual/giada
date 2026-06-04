@@ -53,7 +53,8 @@ public:
 	int  handle(int e) override;
 	void draw() override;
 
-	Tick pixelToTick(int, bool snap) const;
+	Tick pixelToTick(int) const;
+	Tick pixelToTickSnapped(int) const;
 	int  tickToPixel(Tick) const;
 
 	ID channelId;

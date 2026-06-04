@@ -100,7 +100,7 @@ void geSampleActionEditor::draw()
 
 void geSampleActionEditor::onAddAction()
 {
-	Tick t = m_base->pixelToTick(Fl::event_x() - x(), /*snap=*/true);
+	Tick t = m_base->pixelToTickSnapped(Fl::event_x() - x());
 	c::actionEditor::recordSampleAction(m_data->channelId,
 	    static_cast<gdSampleActionEditor*>(m_base)->getActionType(), t);
 }
@@ -148,7 +148,7 @@ void geSampleActionEditor::onResizeAction()
 void geSampleActionEditor::onRefreshAction()
 {
 	const Pixel p    = m_action->x() - x();
-	const Tick  t    = m_base->pixelToTick(p, /*snap=*/true);
+	const Tick  t    = m_base->pixelToTickSnapped(p);
 	const int   type = m_action->a1->event.getStatus();
 
 	c::actionEditor::updateSampleAction(m_data->channelId, m_action->a1->id, type, t);

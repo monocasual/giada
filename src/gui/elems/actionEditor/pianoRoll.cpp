@@ -98,7 +98,7 @@ void gePianoRoll::draw()
 
 void gePianoRoll::onAddAction()
 {
-	const Tick tickOn  = m_base->pixelToTick(Fl::event_x() - x(), /*snap=*/true);
+	const Tick tickOn  = m_base->pixelToTickSnapped(Fl::event_x() - x());
 	const Tick tickOff = tickOn + G_DEFAULT_ACTION_SIZE;
 	int        note    = yToNote(Fl::event_y() - y());
 	c::actionEditor::recordMidiAction(m_data->channelId, note, G_MAX_VELOCITY_FLOAT, {tickOn, tickOff});
@@ -164,8 +164,8 @@ void gePianoRoll::onRefreshAction()
 	const int   note     = yToNote(m_action->y() - y());
 	const float velocity = m_action->a1->event.getVelocityFloat();
 
-	Tick t1 = m_base->pixelToTick(p1, /*snap=*/false);
-	Tick t2 = m_base->pixelToTick(p2, /*snap=*/false);
+	Tick t1 = m_base->pixelToTick(p1);
+	Tick t2 = m_base->pixelToTick(p2);
 
 	if (m_action->onLeftEdge)
 	{
