@@ -37,7 +37,7 @@ class geEnvelopePoint : public geBaseAction
 public:
 	static const Pixel SIDE = 12;
 
-	geEnvelopePoint(Pixel x, Pixel y, m::Action a);
+	geEnvelopePoint(Pixel x, Pixel y, const m::Action&);
 
 	void draw() override;
 };
