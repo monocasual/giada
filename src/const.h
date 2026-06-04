@@ -78,8 +78,7 @@ constexpr ID MASTER_IN_CHANNEL_ID  = ID{2};
 constexpr ID PREVIEW_CHANNEL_ID    = ID{3};
 
 /* -- Musical time / audio time --------------------------------------------- */
-constexpr Tick G_PPQ           = Tick{960};
-constexpr Tick G_TICKS_IN_BEAT = G_PPQ * 4;
+constexpr Tick G_PPQ = Tick{960};
 
 /* -- Min/max values -------------------------------------------------------- */
 // TODO - move other min/max values from src/core/const.h

@@ -121,6 +121,6 @@ Tick geGridTool::getSnapTick(Tick t) const
 
 Tick geGridTool::getDivisionSize() const
 {
-	return G_TICKS_IN_BEAT / getDivisionsPerBeat();
+	return G_PPQ / getDivisionsPerBeat();
 }
 } // namespace giada::v
