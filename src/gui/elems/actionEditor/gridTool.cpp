@@ -82,7 +82,7 @@ bool geGridTool::isOn() const
 
 /* -------------------------------------------------------------------------- */
 
-int geGridTool::getValue() const
+int geGridTool::getDivisionsPerBeat() const
 {
 	switch (gridType->getSelectedId())
 	{
@@ -114,13 +114,13 @@ Tick geGridTool::getSnapTick(Tick t) const
 
 	if (!isOn())
 		return t;
-	return Tick{u::time::quantize(t, getCellSize())};
+	return Tick{u::time::quantize(t, getDivisionSize())};
 }
 
 /* -------------------------------------------------------------------------- */
 
-Tick geGridTool::getCellSize() const
+Tick geGridTool::getDivisionSize() const
 {
-	return G_TICKS_IN_BEAT / getValue();
+	return G_TICKS_IN_BEAT / getDivisionsPerBeat();
 }
 } // namespace giada::v

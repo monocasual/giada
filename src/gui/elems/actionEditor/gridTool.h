@@ -41,14 +41,14 @@ public:
 	geGridTool(Pixel x, Pixel y, const Model&);
 	~geGridTool();
 
-	int  getValue() const;
+	int  getDivisionsPerBeat() const;
 	bool isOn() const;
 	Tick getSnapTick(Tick) const;
 
 	/* getCellSize
 	Returns the size in frames of a single cell of the grid. */
 
-	Tick getCellSize() const;
+	Tick getDivisionSize() const;
 
 private:
 	geChoice* gridType;
