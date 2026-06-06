@@ -35,8 +35,9 @@ void to_json(nlohmann::json& j, const giada::FrameRange& r)
 
 void from_json(const nlohmann::json& j, giada::FrameRange& r)
 {
-	r.setA(j.value("a", 0));
-	r.setB(j.value("b", 0));
+	const auto a = j.value("a", 0);
+	const auto b = j.value("b", 0);
+	r            = b <= a ? giada::FrameRange{} : giada::FrameRange{a, b};
 }
 } // namespace geompp
 
