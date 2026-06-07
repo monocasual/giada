@@ -46,7 +46,7 @@ class AudioBuffer;
 
 namespace giada::m::model
 {
-struct KernelAudio;
+class KernelAudio;
 }
 
 namespace giada::m
