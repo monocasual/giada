@@ -118,11 +118,10 @@ void Model::store(Patch& patch, const std::string& projectPath)
 {
 	get().store(patch);
 
-	/* Lock the shared data before storing it. Real-time thread can't read from
-	it until this method goes out of scope. Even if it's mostly a read-only operation,
-	some Wave objects need to be updated at some point. */
-
-	const SharedLock lock = lockShared(SwapType::NONE);
+	/* We used to lock the Document here to prevent the rt-thread from reading Wave
+	objects. Actually, this is not necessary: the only thing that is being written
+	is the Wave's new file path, something that the real-time thread doesn't
+	care about. */
 
 	m_shared.store(patch, projectPath);
 }
