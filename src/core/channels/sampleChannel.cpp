@@ -85,8 +85,6 @@ bool SampleChannel::isAnyNonLoopingSingleMode() const
 /* -------------------------------------------------------------------------- */
 
 bool SampleChannel::hasWave(Scene scene) const { return m_samples[scene.getIndex()].wave != nullptr; }
-bool SampleChannel::hasLogicalWave(Scene scene) const { return hasWave(scene) && m_samples[scene.getIndex()].wave->isLogical(); }
-bool SampleChannel::hasEditedWave(Scene scene) const { return hasWave(scene) && m_samples[scene.getIndex()].wave->isEdited(); }
 
 /* -------------------------------------------------------------------------- */
 
