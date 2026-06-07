@@ -28,6 +28,7 @@
 #define G_MODEL_SHARED_H
 
 #include "src/core/model/channels.h"
+#include "src/core/model/kernelAudio.h"
 #include "src/core/model/loadState.h"
 #include "src/core/model/mixer.h"
 #include "src/core/model/sequencer.h"
@@ -97,6 +98,7 @@ public:
 	std::vector<Plugin*> findPlugins(std::vector<ID> pluginIds);
 
 private:
+	KernelAudio::Shared                         m_kernelAudio;
 	Sequencer::Shared                           m_sequencer;
 	Mixer::Shared                               m_mixer;
 	std::vector<std::unique_ptr<ChannelShared>> m_channels;
