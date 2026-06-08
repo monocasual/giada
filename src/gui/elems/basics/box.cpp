@@ -38,6 +38,7 @@ geBox::geBox(int x, int y, int w, int h, const char* l, Fl_Align al)
 	copy_label(l);
 	box(FL_NO_BOX);
 	color(G_COLOR_GREY_1);
+	labelcolor(G_COLOR_LIGHT_2);
 	align(al | FL_ALIGN_INSIDE);
 }
 
@@ -65,7 +66,7 @@ void geBox::draw()
 	}
 	else if (label() != nullptr)
 	{
-		fl_color(active() ? G_COLOR_LIGHT_2 : G_COLOR_GREY_4);
+		fl_color(active() ? labelcolor() : G_COLOR_GREY_4);
 		fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
 		fl_draw(giada::u::gui::truncate(label(), w()).c_str(), x(), y(), w(), h(), align());
 	}
