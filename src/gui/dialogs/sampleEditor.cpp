@@ -254,7 +254,7 @@ void gdSampleEditor::updateInfo()
 	    m_data.wavePath, m_data.waveSize, m_data.waveDuration,
 	    m_data.waveBits != 0 ? std::to_string(m_data.waveBits) : "?", m_data.waveRate);
 
-	info->copy_label(infoText.c_str());
+	info->setLabel(infoText);
 }
 
 /* -------------------------------------------------------------------------- */

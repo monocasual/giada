@@ -35,8 +35,8 @@ namespace giada::v
 {
 geBox::geBox(int x, int y, int w, int h, const char* l, Fl_Align al)
 : Fl_Box(x, y, w, h)
+, m_label(l != nullptr ? l : "")
 {
-	copy_label(l);
 	box(FL_NO_BOX);
 	color(G_COLOR_GREY_1);
 	labelcolor(G_COLOR_LIGHT_2);
@@ -49,6 +49,10 @@ geBox::geBox(const char* l, Fl_Align al)
 : geBox(0, 0, 0, 0, l, al)
 {
 }
+
+/* -------------------------------------------------------------------------- */
+
+std::string geBox::getLabel() const { return m_label; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -67,10 +71,10 @@ void geBox::draw()
 			m_image->scale(w(), h());
 		draw_label(); // draw_label also paints image, if any
 	}
-	else if (label() != nullptr)
+	else if (!m_label.empty())
 	{
 		const auto labelColor = active() ? labelcolor() : G_COLOR_GREY_4;
-		drawText(giada::u::gui::truncate(label(), w()), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE,
+		drawText(giada::u::gui::truncate(m_label, w()), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE,
 		    labelColor, align());
 	}
 }
@@ -82,4 +86,7 @@ void geBox::setSvgImage(const char* svg)
 	m_image = std::make_unique<Fl_SVG_Image>(nullptr, svg);
 	image(m_image.get());
 }
+/* -------------------------------------------------------------------------- */
+
+void geBox::setLabel(const std::string& l) { m_label = l; }
 } // namespace giada::v

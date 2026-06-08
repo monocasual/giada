@@ -31,22 +31,31 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_SVG_Image.H>
 #include <memory>
+#include <string>
 
 namespace giada::v
 {
 class geBox : public Fl_Box
 {
 public:
+	void        copy_label(const char*) = delete;
+	void        label(const char*)      = delete;
+	const char* label() const           = delete;
+
 	geBox(int x, int y, int w, int h, const char* l = nullptr, Fl_Align al = FL_ALIGN_CENTER);
 	geBox(const char* l = nullptr, Fl_Align al = FL_ALIGN_CENTER);
 
+	std::string getLabel() const;
+
 	void setSvgImage(const char*);
+	void setLabel(const std::string&);
 
 protected:
 	void draw() override;
 
 private:
 	std::unique_ptr<Fl_SVG_Image> m_image;
+	std::string                   m_label;
 };
 } // namespace giada::v
 

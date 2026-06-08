@@ -60,14 +60,13 @@ gdAbout::gdAbout()
 
 			geBox* text = new geBox();
 			text->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-			text->copy_label(fmt::format(fmt::runtime(g_ui->getI18Text(LangMap::ABOUT_BODY)),
-			    G_VERSION.toString(), debug ? "Debug" : "Release", BUILD_DATE)
-			        .c_str());
+			text->setLabel(fmt::format(fmt::runtime(g_ui->getI18Text(LangMap::ABOUT_BODY)),
+			    G_VERSION.toString(), debug ? "Debug" : "Release", BUILD_DATE));
 
 #ifdef WITH_VST
 			geBox* vstText = new geBox();
 			vstText->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-			vstText->label(g_ui->getI18Text(LangMap::ABOUT_BODY_VST));
+			vstText->setLabel(g_ui->getI18Text(LangMap::ABOUT_BODY_VST));
 #endif
 			body->addWidget(logo, 120);
 			body->addWidget(text, 140);

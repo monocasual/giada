@@ -92,7 +92,7 @@ void gdProgress::setProgress(float p)
 
 void gdProgress::popup(const char* s, bool cancellable)
 {
-	m_text->copy_label(s);
+	m_text->setLabel(s);
 
 	if (cancellable)
 		m_cancelBtn->show();
