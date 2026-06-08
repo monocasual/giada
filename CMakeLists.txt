@@ -347,6 +347,8 @@ list(APPEND SOURCES
 	src/gui/elems/mainWindow/sequencer.h
 	src/gui/elems/mainWindow/scenes.cpp
 	src/gui/elems/mainWindow/scenes.h
+	src/gui/elems/mainWindow/cpuLoad.cpp
+	src/gui/elems/mainWindow/cpuLoad.h
 	src/gui/elems/mainWindow/keyboard/sampleChannelMode.cpp
 	src/gui/elems/mainWindow/keyboard/sampleChannelMode.h
 	src/gui/elems/mainWindow/keyboard/channelButton.cpp
