@@ -92,7 +92,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 	{
 		geFlex* header = new geFlex(getContentBounds(), Direction::VERTICAL);
 		{
-			geMainMenu* mainMenu = new geMainMenu();
+			mainMenu = new geMainMenu();
 
 			header->addWidget(mainMenu);
 			header->end();
