@@ -321,6 +321,10 @@ void setScene(Scene scene, bool forced) { g_engine->getMainApi().setScene(scene,
 
 /* -------------------------------------------------------------------------- */
 
+double getCpuLoad() { return g_engine->getMainApi().getCpuLoad(); }
+
+/* -------------------------------------------------------------------------- */
+
 #if G_DEBUG_MODE
 
 void printDebugInfo()
