@@ -41,6 +41,7 @@ class geSequencer;
 class geMainTransport;
 class geMainTimer;
 class geScenes;
+class geCpuLoad;
 class gdMainWindow : public gdWindow
 {
 	class ScopedProgress;
@@ -67,6 +68,7 @@ public:
 	geSequencer*     sequencer;
 	geMainMenu*      mainMenu;
 	geMainTimer*     mainTimer;
+	geCpuLoad*       cpuLoad;
 	geMainTransport* mainTransport;
 	geMainInput*     mainInput;
 	geMainOutput*    mainOutput;

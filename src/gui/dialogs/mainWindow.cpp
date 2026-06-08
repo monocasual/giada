@@ -29,6 +29,7 @@
 #include "src/gui/dialogs/warnings.h"
 #include "src/gui/elems/basics/boxtypes.h"
 #include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/mainWindow/cpuLoad.h"
 #include "src/gui/elems/mainWindow/keyboard/keyboard.h"
 #include "src/gui/elems/mainWindow/mainInput.h"
 #include "src/gui/elems/mainWindow/mainMenu.h"
@@ -152,6 +153,9 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 
 		geFlex* footer = new geFlex(getContentBounds(), Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
+			cpuLoad = new geCpuLoad();
+
+			footer->addWidget(cpuLoad, 100);
 			footer->end();
 		}
 
@@ -183,6 +187,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 void gdMainWindow::refresh()
 {
 	mainTimer->refresh();
+	cpuLoad->refresh();
 	mainTransport->refresh();
 	sequencer->refresh();
 	keyboard->refresh();
