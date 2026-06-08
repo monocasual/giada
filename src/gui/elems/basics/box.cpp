@@ -26,6 +26,7 @@
 
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/const.h"
+#include "src/gui/drawing.h"
 #include "src/utils/gui.h"
 #include <FL/fl_draw.H>
 #include <cassert>
@@ -53,10 +54,12 @@ geBox::geBox(const char* l, Fl_Align al)
 
 void geBox::draw()
 {
-	fl_rectf(x(), y(), w(), h(), color()); // Clear background
+	const geompp::Rect<int> bounds{x(), y(), w(), h()};
+
+	drawRectf(bounds, color()); // Clear background
 
 	if (box() != FL_NO_BOX)
-		fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4); // Border
+		drawRect(bounds, G_COLOR_GREY_4); // Border
 
 	if (image() != nullptr)
 	{
@@ -66,9 +69,9 @@ void geBox::draw()
 	}
 	else if (label() != nullptr)
 	{
-		fl_color(active() ? labelcolor() : G_COLOR_GREY_4);
-		fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-		fl_draw(giada::u::gui::truncate(label(), w()).c_str(), x(), y(), w(), h(), align());
+		const auto labelColor = active() ? labelcolor() : G_COLOR_GREY_4;
+		drawText(giada::u::gui::truncate(label(), w()), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE,
+		    labelColor, align());
 	}
 }
 
