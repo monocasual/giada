@@ -152,7 +152,7 @@ void startup()
 
 	juce::initialiseJuce_GUI();
 	g_engine->init(conf);
-	g_ui->init(conf, G_DEFAULT_PATCH_NAME, g_engine->isAudioReady());
+	g_ui->init(conf, g_engine->isAudioReady());
 
 	printBuildInfo_();
 }

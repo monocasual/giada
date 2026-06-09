@@ -178,6 +178,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 	});
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
+	setTitle(fmt::format("{} v{}", G_APP_NAME, G_VERSION.toString()));
 	refresh();
 	show();
 }
