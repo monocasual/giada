@@ -57,10 +57,10 @@ public:
 
 	void clearKeyboard();
 
-	/* setMainTitle
-	Sets a new window title, prefixed by "Giada - [title]". */
+	/* setProjectTitle
+	Sets the current project title in the footer area. */
 
-	void setMainTitle(const std::string&);
+	void setProjectTitle(const std::string&);
 
 	[[nodiscard]] ScopedProgress getScopedProgress(const char* msg, std::function<void()> onCancel = nullptr);
 
@@ -73,6 +73,7 @@ public:
 	geMainInput*     mainInput;
 	geMainOutput*    mainOutput;
 	geScenes*        scenes;
+	geBox*           projectTitle;
 
 private:
 	class ScopedProgress

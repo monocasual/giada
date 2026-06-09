@@ -95,7 +95,7 @@ void Ui::load(const m::Patch& patch)
 	model.load(patch);
 
 	mainWindow->keyboard->rebuild();
-	mainWindow->setTitle(patch.name);
+	mainWindow->setProjectTitle(patch.name);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -140,11 +140,11 @@ void Ui::init(const m::Conf& conf, bool isAudioReady)
 void Ui::reset()
 {
 	model.projectName = "";
-	mainWindow->setTitle(G_DEFAULT_PATCH_NAME);
 	rebuildStaticWidgets();
 	closeAllSubwindows();
 	mainWindow->clearKeyboard();
 	mainWindow->rebuild();
+	mainWindow->setProjectTitle(G_DEFAULT_PATCH_NAME);
 }
 
 /* -------------------------------------------------------------------------- */
