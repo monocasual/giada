@@ -47,7 +47,7 @@ gePluginParameter::gePluginParameter(int X, int Y, int W, int labelWidth, const 
 	addWidget(m_value, VALUE_WIDTH);
 	end();
 
-	m_label->copy_label(m_param.name.c_str());
+	m_label->setLabel(m_param.name);
 
 	m_slider->value(m_param.value);
 	m_slider->callback(cb_setValue, (void*)this);
@@ -74,7 +74,7 @@ void gePluginParameter::cb_setValue()
 
 void gePluginParameter::update(const c::plugin::Param& p, bool changeSlider)
 {
-	m_value->copy_label(std::string(p.text + " " + p.label).c_str());
+	m_value->setLabel(std::string(p.text + " " + p.label));
 	if (changeSlider)
 		m_slider->value(p.value);
 }

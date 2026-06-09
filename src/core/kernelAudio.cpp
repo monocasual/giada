@@ -41,6 +41,9 @@ namespace giada::m
 {
 namespace
 {
+using Now      = std::chrono::time_point<std::chrono::high_resolution_clock>;
+using Duration = std::chrono::duration<double, std::micro>;
+
 /* RTAUDIO_MAX_PRIORITY
 The maximum priority level when instructing RtAudio to work in real-time mode
 (with RTAUDIO_SCHEDULE_REALTIME flag). This is actually the maximum value allowed
@@ -48,6 +51,20 @@ on Unix, however RtAudio has some magic hardcoded values when it comes to Window
 implementation, so we can safely pass this value below in the options struct.*/
 
 constexpr int RTAUDIO_MAX_PRIORITY = 99;
+
+/* -------------------------------------------------------------------------- */
+
+double computeCpuLoad(const Now& startTime, unsigned int sampleRate, int bufferSize)
+{
+	const Now      endTime        = std::chrono::high_resolution_clock::now();
+	const Duration processingTime = endTime - startTime;
+
+	const double callbackDuration = (static_cast<double>(bufferSize) / sampleRate) * 1e6; // in microseconds
+	const double load             = (processingTime.count() / callbackDuration) * 100.0;
+
+	return load;
+}
+
 } // namespace
 
 /* -------------------------------------------------------------------------- */
@@ -220,6 +237,13 @@ KernelAudio::Device KernelAudio::getCurrentInDevice() const
 	d.channelsStart = kernelAudio.deviceIn.channelsStart;
 
 	return d;
+}
+
+/* -------------------------------------------------------------------------- */
+
+double KernelAudio::getCpuLoad() const
+{
+	return m_model.get().kernelAudio.a_getCpuLoad();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -442,6 +466,8 @@ KernelAudio::OpenStreamResult KernelAudio::openStream_(
 int KernelAudio::audioCallback(void* outBuf, void* inBuf, unsigned bufferSize,
     double /*streamTime*/, RtAudioStreamStatus /*status*/, void*   data)
 {
+	const Now startTime = std::chrono::high_resolution_clock::now();
+
 	const CallbackInfo& info = *static_cast<CallbackInfo*>(data);
 
 	mcl::AudioBuffer out(static_cast<float*>(outBuf), bufferSize, info.channelsOutCount);
@@ -449,6 +475,16 @@ int KernelAudio::audioCallback(void* outBuf, void* inBuf, unsigned bufferSize,
 	if (info.channelsInCount > 0)
 		in = mcl::AudioBuffer(static_cast<float*>(inBuf), bufferSize, info.channelsInCount);
 
-	return info.kernelAudio->onAudioCallback(out, in);
+	const int ret = info.kernelAudio->onAudioCallback(out, in);
+
+	/* CPU load computation. */
+
+	const model::DocumentLock documentLock = info.kernelAudio->m_model.get_RT();
+	const model::Document&    document_RT  = documentLock.get();
+	const model::KernelAudio& kernelAudio  = document_RT.kernelAudio;
+
+	kernelAudio.a_setCpuLoad(computeCpuLoad(startTime, kernelAudio.samplerate, bufferSize));
+
+	return ret;
 }
 } // namespace giada::m

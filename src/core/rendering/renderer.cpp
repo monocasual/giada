@@ -33,6 +33,7 @@
 #include "src/core/rendering/pluginRendering.h"
 #include "src/core/rendering/sampleAdvance.h"
 #include "src/core/rendering/sampleRendering.h"
+#include <chrono>
 #ifdef WITH_AUDIO_JACK
 #include "src/core/jackSynchronizer.h"
 #include "src/core/jackTransport.h"
@@ -40,6 +41,26 @@
 
 namespace giada::m::rendering
 {
+using Now      = std::chrono::time_point<std::chrono::high_resolution_clock>;
+using Duration = std::chrono::duration<double, std::micro>;
+
+/* -------------------------------------------------------------------------- */
+
+double computeCPULoad_(const Now& startTime, unsigned int sampleRate, int bufferSize)
+{
+	const Now      endTime        = std::chrono::high_resolution_clock::now();
+	const Duration processingTime = endTime - startTime;
+
+	const double callbackDuration = (static_cast<double>(bufferSize) / sampleRate) * 1e6; // in microseconds
+	const double load             = (processingTime.count() / callbackDuration) * 100.0;
+
+	return load;
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 #ifdef WITH_AUDIO_JACK
 Renderer::Renderer(Sequencer& s, Mixer& m, PluginHost& ph, JackSynchronizer& js, JackTransport& jt, KernelMidi& km)
 #else

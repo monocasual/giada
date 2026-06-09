@@ -92,7 +92,7 @@ gdKeyGrabber::gdKeyGrabber(int key)
 void gdKeyGrabber::rebuild()
 {
 	std::string tmp = g_ui->getI18Text(LangMap::KEYGRABBER_BODY) + u::gui::keyToString(m_key);
-	m_text->copy_label(tmp.c_str());
+	m_text->setLabel(tmp);
 }
 
 /* -------------------------------------------------------------------------- */

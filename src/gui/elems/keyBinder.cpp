@@ -85,6 +85,6 @@ int geKeyBinder::getKey() const { return m_key; }
 void geKeyBinder::setKey(int key)
 {
 	m_key = key;
-	m_keyBox->copy_label(u::gui::keyToString(key).c_str());
+	m_keyBox->setLabel(u::gui::keyToString(key));
 }
 } // namespace giada::v

@@ -89,7 +89,7 @@ void geMidiLearner::update(uint32_t value)
 		tmp.pop_back(); // Remove last two digits, useless in MIDI messages
 	}
 
-	m_value->copy_label(tmp.c_str());
+	m_value->setLabel(tmp);
 	m_learnBtn->setValue(0);
 }
 
@@ -97,7 +97,7 @@ void geMidiLearner::update(uint32_t value)
 
 void geMidiLearner::update(const std::string& s)
 {
-	m_value->copy_label(s.c_str());
+	m_value->setLabel(s);
 	m_learnBtn->setValue(0);
 }
 

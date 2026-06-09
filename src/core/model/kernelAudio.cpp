@@ -24,39 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_BOX_H
-#define GE_BOX_H
+#include "src/core/model/kernelAudio.h"
 
-#include "src/deps/geompp/src/rect.hpp"
-#include <FL/Fl_Box.H>
-#include <FL/Fl_SVG_Image.H>
-#include <memory>
-#include <string>
-
-namespace giada::v
+namespace giada::m::model
 {
-class geBox : public Fl_Box
+void KernelAudio::a_setCpuLoad(double v) const
 {
-public:
-	void        copy_label(const char*) = delete;
-	void        label(const char*)      = delete;
-	const char* label() const           = delete;
+	shared->cpuLoad.store(v);
+}
 
-	geBox(int x, int y, int w, int h, const char* l = nullptr, Fl_Align al = FL_ALIGN_CENTER);
-	geBox(const char* l = nullptr, Fl_Align al = FL_ALIGN_CENTER);
-
-	std::string getLabel() const;
-
-	void setSvgImage(const char*);
-	void setLabel(const std::string&);
-
-protected:
-	void draw() override;
-
-private:
-	std::unique_ptr<Fl_SVG_Image> m_image;
-	std::string                   m_label;
-};
-} // namespace giada::v
-
-#endif
+double KernelAudio::a_getCpuLoad() const
+{
+	return shared->cpuLoad.load();
+}
+} // namespace giada::m::model

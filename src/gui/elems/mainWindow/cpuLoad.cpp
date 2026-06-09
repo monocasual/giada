@@ -24,39 +24,46 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef GE_BOX_H
-#define GE_BOX_H
-
-#include "src/deps/geompp/src/rect.hpp"
-#include <FL/Fl_Box.H>
-#include <FL/Fl_SVG_Image.H>
-#include <memory>
-#include <string>
+#include "src/gui/elems/mainWindow/cpuLoad.h"
+#include "src/glue/main.h"
+#include "src/gui/const.h"
+#include "src/gui/drawing.h"
+#include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/progress.h"
+#include <fmt/core.h>
 
 namespace giada::v
 {
-class geBox : public Fl_Box
+geCpuLoad::geCpuLoad()
+: geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN)
+, m_counter(0)
 {
-public:
-	void        copy_label(const char*) = delete;
-	void        label(const char*)      = delete;
-	const char* label() const           = delete;
+	m_text  = new geBox();
+	m_meter = new geProgress();
 
-	geBox(int x, int y, int w, int h, const char* l = nullptr, Fl_Align al = FL_ALIGN_CENTER);
-	geBox(const char* l = nullptr, Fl_Align al = FL_ALIGN_CENTER);
+	m_text->align(FL_ALIGN_LEFT);
+	m_text->labelcolor(G_COLOR_GREY_4);
 
-	std::string getLabel() const;
+	addWidget(m_text, 70);
+	addWidget(m_meter);
+	end();
 
-	void setSvgImage(const char*);
-	void setLabel(const std::string&);
+	refresh();
+}
 
-protected:
-	void draw() override;
+/* -------------------------------------------------------------------------- */
 
-private:
-	std::unique_ptr<Fl_SVG_Image> m_image;
-	std::string                   m_label;
-};
+void geCpuLoad::refresh()
+{
+	if (++m_counter % (G_GUI_FPS / 2) != 0)
+		return;
+	m_counter = 0;
+
+	const double load = c::main::getCpuLoad();
+
+	m_text->setLabel(fmt::format("CPU: {:.1f}%", load));
+	m_meter->value(load);
+
+	redraw();
+}
 } // namespace giada::v
-
-#endif

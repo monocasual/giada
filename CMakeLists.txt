@@ -164,6 +164,8 @@ list(APPEND SOURCES
 	src/core/model/sharedLock.h
 	src/core/model/shared.cpp
 	src/core/model/shared.h
+	src/core/model/kernelAudio.cpp
+	src/core/model/kernelAudio.h
 	src/core/model/sequencer.cpp
 	src/core/model/sequencer.h
 	src/core/model/mixer.cpp
@@ -345,6 +347,8 @@ list(APPEND SOURCES
 	src/gui/elems/mainWindow/sequencer.h
 	src/gui/elems/mainWindow/scenes.cpp
 	src/gui/elems/mainWindow/scenes.h
+	src/gui/elems/mainWindow/cpuLoad.cpp
+	src/gui/elems/mainWindow/cpuLoad.h
 	src/gui/elems/mainWindow/keyboard/sampleChannelMode.cpp
 	src/gui/elems/mainWindow/keyboard/sampleChannelMode.h
 	src/gui/elems/mainWindow/keyboard/channelButton.cpp

@@ -29,6 +29,7 @@
 #include "src/gui/dialogs/warnings.h"
 #include "src/gui/elems/basics/boxtypes.h"
 #include "src/gui/elems/basics/flex.h"
+#include "src/gui/elems/mainWindow/cpuLoad.h"
 #include "src/gui/elems/mainWindow/keyboard/keyboard.h"
 #include "src/gui/elems/mainWindow/mainInput.h"
 #include "src/gui/elems/mainWindow/mainMenu.h"
@@ -87,17 +88,17 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 	Fl::set_boxtype(FL_UP_BOX, G_CUSTOM_UP_BOX);
 	Fl::set_boxtype(FL_DOWN_BOX, G_CUSTOM_DOWN_BOX);
 
-	geFlex* container = new geFlex(getContentBounds(), Direction::VERTICAL);
+	geFlex* container = new geFlex(getContentBounds(), Direction::VERTICAL, G_GUI_OUTER_MARGIN, {G_GUI_OUTER_MARGIN});
 	{
 		geFlex* header = new geFlex(getContentBounds(), Direction::VERTICAL);
 		{
-			geMainMenu* mainMenu = new geMainMenu();
+			mainMenu = new geMainMenu();
 
 			header->addWidget(mainMenu);
 			header->end();
 		}
 
-		geFlex* body = new geFlex(getContentBounds(), Direction::VERTICAL, G_GUI_OUTER_MARGIN, {G_GUI_OUTER_MARGIN});
+		geFlex* body = new geFlex(getContentBounds(), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 		{
 			/* zone 2 - mainTransport and timing tools */
 
@@ -150,10 +151,19 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 			body->end();
 		}
 
+		geFlex* footer = new geFlex(getContentBounds(), Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+		{
+			cpuLoad = new geCpuLoad();
+
+			footer->addWidget(cpuLoad, 100);
+			footer->end();
+		}
+
 #if !G_OS_MAC // No need on macOS
 		container->addWidget(header, 25);
 #endif
 		container->addWidget(body);
+		container->addWidget(footer, G_GUI_UNIT);
 		container->end();
 	}
 
@@ -177,6 +187,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 void gdMainWindow::refresh()
 {
 	mainTimer->refresh();
+	cpuLoad->refresh();
 	mainTransport->refresh();
 	sequencer->refresh();
 	keyboard->refresh();

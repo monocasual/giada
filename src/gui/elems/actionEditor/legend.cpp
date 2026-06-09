@@ -48,6 +48,6 @@ void geLegend::draw()
 	drawLine(bounds.getLeftLine(), G_COLOR_GREY_4);
 	drawLine(bounds.getBottomLine().withShiftedY(-1), G_COLOR_GREY_4);
 
-	drawTextVertical(label(), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_GREY_5);
+	drawTextVertical(getLabel(), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, G_COLOR_GREY_5);
 }
 } // namespace giada::v
