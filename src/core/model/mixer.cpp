@@ -32,6 +32,27 @@
 
 namespace giada::m::model
 {
+namespace
+{
+/* updatePeak_
+Atomically raises the shared peak only if the new value is higher. This lets the
+audio thread accumulate the maximum peak between UI repaints (i.e. calls to
+getPeak() below), so short peaks aren't lost before the UI reads and resets the
+value. */
+
+void updatePeak_(std::atomic<float>& peak, float value)
+{
+	float old = peak.load(std::memory_order_relaxed);
+	while (old < value && !peak.compare_exchange_weak(old, value, std::memory_order_relaxed))
+	{
+	}
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 Mixer::Shared& Mixer::Shared::operator=(const Mixer::Shared& o)
 {
 	if (this == &o)
@@ -77,26 +98,38 @@ void Mixer::a_setInputTracker(Frame f) const
 
 Peak Mixer::a_getPeakOut() const
 {
-	return {shared->peakOutL.load(), shared->peakOutR.load()};
+	/* Atomically fetch the current L/R peaks and reset them to 0. exchange()
+	does both in one step, so we consume the maximum accumulated since the last
+	call and immediately start a new measurement window. This trick, paired with
+	the setter-side logic in updatePeak_() above, turns each interval between
+	calls to this method (done by the UI) into a small window that captures the
+	highest peak seen in that time span, instead of just the most recently written
+	block value. */
+	return {
+	    shared->peakOutL.exchange(0.0f, std::memory_order_relaxed),
+	    shared->peakOutR.exchange(0.0f, std::memory_order_relaxed)};
 }
 
 Peak Mixer::a_getPeakIn() const
 {
-	return {shared->peakInL.load(), shared->peakInR.load()};
+	/* Same as above. */
+	return {
+	    shared->peakInL.exchange(0.0f, std::memory_order_relaxed),
+	    shared->peakInR.exchange(0.0f, std::memory_order_relaxed)};
 }
 
 /* -------------------------------------------------------------------------- */
 
 void Mixer::a_setPeakOut(Peak p) const
 {
-	shared->peakOutL.store(p.left);
-	shared->peakOutR.store(p.right);
+	updatePeak_(shared->peakOutL, p.left);
+	updatePeak_(shared->peakOutR, p.right);
 }
 
 void Mixer::a_setPeakIn(Peak p) const
 {
-	shared->peakInL.store(p.left);
-	shared->peakInR.store(p.right);
+	updatePeak_(shared->peakInL, p.left);
+	updatePeak_(shared->peakInR, p.right);
 }
 
 /* -------------------------------------------------------------------------- */
