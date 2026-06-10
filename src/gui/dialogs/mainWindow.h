@@ -73,7 +73,6 @@ public:
 	geMainInput*     mainInput;
 	geMainOutput*    mainOutput;
 	geScenes*        scenes;
-	geBox*           projectTitle;
 
 private:
 	class ScopedProgress
@@ -91,6 +90,7 @@ private:
 	void resize(int x, int y, int w, int h) override;
 
 	gdProgress m_progress;
+	geBox*     m_projectTitle;
 	geBox*     m_versionInfo;
 };
 } // namespace giada::v

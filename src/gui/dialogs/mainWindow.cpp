@@ -153,16 +153,16 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 
 		geFlex* footer = new geFlex(getContentBounds(), Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			cpuLoad       = new geCpuLoad();
-			projectTitle  = new geBox(G_DEFAULT_PATCH_NAME);
-			m_versionInfo = new geBox(fmt::format("{} v{}", G_APP_NAME, G_VERSION.toString()).c_str());
+			cpuLoad        = new geCpuLoad();
+			m_projectTitle = new geBox(G_DEFAULT_PATCH_NAME);
+			m_versionInfo  = new geBox(fmt::format("{} v{}", G_APP_NAME, G_VERSION.toString()).c_str());
 
-			projectTitle->labelcolor(G_COLOR_GREY_4);
+			m_projectTitle->labelcolor(G_COLOR_GREY_4);
 			m_versionInfo->labelcolor(G_COLOR_GREY_4);
 			m_versionInfo->align(FL_ALIGN_RIGHT);
 
 			footer->addWidget(cpuLoad, 100);
-			footer->addWidget(projectTitle);
+			footer->addWidget(m_projectTitle);
 			footer->addWidget(m_versionInfo, 100);
 			footer->end();
 		}
@@ -227,8 +227,8 @@ void gdMainWindow::clearKeyboard()
 
 void gdMainWindow::setProjectTitle(const std::string& title)
 {
-	projectTitle->setLabel(title);
-	projectTitle->redraw();
+	m_projectTitle->setLabel(title);
+	m_projectTitle->redraw();
 }
 
 /* -------------------------------------------------------------------------- */
