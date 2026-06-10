@@ -202,7 +202,7 @@ private:
 
 	/* m_eventBuffer
 	Buffer of events found in each block sent to channels for event parsing.
-	This is filled during react(). */
+	This is filled during advance(). */
 
 	mutable EventBuffer m_eventBuffer;
 
