@@ -63,8 +63,7 @@ public:
 	Peak              getPeakIn() const;
 	double            getCpuLoad() const;
 	Mixer::RecordInfo getRecordInfo() const;
-	int               getBeats() const;
-	int               getBars() const;
+	TimeSignature     getTimeSignature() const;
 	float             getBpm() const;
 	int               getQuantizerValue() const;
 	int               getCurrentBeat() const;
@@ -88,7 +87,7 @@ public:
 	void setMasterInVolume(float);
 	void setMasterOutVolume(float);
 	void setBpm(float);
-	void setBeats(int beats, int bars);
+	void setTimeSignature(TimeSignature);
 	void multiplyBeats();
 	void divideBeats();
 	void goToBeat(int);

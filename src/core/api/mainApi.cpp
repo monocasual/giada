@@ -135,14 +135,9 @@ Mixer::RecordInfo MainApi::getRecordInfo() const
 
 /* -------------------------------------------------------------------------- */
 
-int MainApi::getBeats() const
+TimeSignature MainApi::getTimeSignature() const
 {
-	return m_sequencer.getBeats();
-}
-
-int MainApi::getBars() const
-{
-	return m_sequencer.getBars();
+	return m_sequencer.getTimeSignature();
 }
 
 float MainApi::getBpm() const
@@ -251,12 +246,16 @@ void MainApi::setMasterOutVolume(float v)
 
 void MainApi::multiplyBeats()
 {
-	setBeats(m_sequencer.getBeats() * 2, m_sequencer.getBars());
+	TimeSignature t = m_sequencer.getTimeSignature();
+	t.beats *= 2;
+	setTimeSignature(t);
 }
 
 void MainApi::divideBeats()
 {
-	setBeats(m_sequencer.getBeats() / 2, m_sequencer.getBars());
+	TimeSignature t = m_sequencer.getTimeSignature();
+	t.beats /= 2;
+	setTimeSignature(t);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -271,12 +270,12 @@ void MainApi::setBpm(float bpm)
 
 /* -------------------------------------------------------------------------- */
 
-void MainApi::setBeats(int beats, int bars)
+void MainApi::setTimeSignature(TimeSignature t)
 {
 	if (m_mixer.isRecordingInput())
 		return;
 
-	m_sequencer.setBeats(beats, bars);
+	m_sequencer.setTimeSignature(t);
 
 	const int sampleRate      = m_kernelAudio.getSampleRate();
 	const int maxFramesInLoop = m_sequencer.getMaxFramesInLoop(sampleRate);

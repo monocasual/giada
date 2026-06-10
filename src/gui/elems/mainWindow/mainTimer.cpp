@@ -42,28 +42,28 @@ namespace giada::v
 geMainTimer::geMainTimer()
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 {
-	m_bpm        = new geTextButton("");
-	m_meter      = new geTextButton("");
-	m_quantizer  = new geChoice();
-	m_multiplier = new geImageButton(graphics::multiplyOff, graphics::multiplyOn);
-	m_divider    = new geImageButton(graphics::divideOff, graphics::divideOn);
+	m_bpm           = new geTextButton("");
+	m_timeSignature = new geTextButton("");
+	m_quantizer     = new geChoice();
+	m_multiplier    = new geImageButton(graphics::multiplyOff, graphics::multiplyOn);
+	m_divider       = new geImageButton(graphics::divideOff, graphics::divideOn);
 	addWidget(m_quantizer, 60);
 	addWidget(m_bpm, 60);
-	addWidget(m_meter, 60);
+	addWidget(m_timeSignature, 60);
 	addWidget(m_multiplier, G_GUI_UNIT);
 	addWidget(m_divider, G_GUI_UNIT);
 	end();
 
 	m_bpm->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TIMER_LABEL_BPM));
-	m_meter->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TIMER_LABEL_METER));
+	m_timeSignature->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TIMER_LABEL_METER));
 	m_quantizer->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TIMER_LABEL_QUANTIZER));
 	m_multiplier->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TIMER_LABEL_MULTIPLIER));
 	m_divider->copy_tooltip(g_ui->getI18Text(LangMap::MAIN_TIMER_LABEL_DIVIDER));
 
 	m_bpm->onClick = [&timer = m_timer]()
 	{ c::layout::openBpmWindow(timer.bpm); };
-	m_meter->onClick = [&timer = m_timer]()
-	{ c::layout::openBeatsWindow(timer.beats, timer.bars); };
+	m_timeSignature->onClick = [&timer = m_timer]()
+	{ c::layout::openBeatsWindow(timer.timeSignature); };
 	m_multiplier->onClick = []()
 	{ c::main::multiplyBeats(); };
 	m_divider->onClick = []()
@@ -90,14 +90,14 @@ void geMainTimer::refresh()
 	if (m_timer.isRecordingInput)
 	{
 		m_bpm->deactivate();
-		m_meter->deactivate();
+		m_timeSignature->deactivate();
 		m_multiplier->deactivate();
 		m_divider->deactivate();
 	}
 	else
 	{
 		m_bpm->activate();
-		m_meter->activate();
+		m_timeSignature->activate();
 		m_multiplier->activate();
 		m_divider->activate();
 	}
@@ -110,7 +110,7 @@ void geMainTimer::rebuild()
 	m_timer = c::main::getTimer();
 
 	setBpm(m_timer.bpm);
-	setMeter(m_timer.beats, m_timer.bars);
+	setTimeSignature(m_timer.timeSignature);
 	setQuantizer(m_timer.quantize);
 }
 
@@ -133,14 +133,14 @@ void geMainTimer::setLock(bool v)
 	if (v)
 	{
 		m_bpm->deactivate();
-		m_meter->deactivate();
+		m_timeSignature->deactivate();
 		m_multiplier->deactivate();
 		m_divider->deactivate();
 	}
 	else
 	{
 		m_bpm->activate();
-		m_meter->activate();
+		m_timeSignature->activate();
 		m_multiplier->activate();
 		m_divider->activate();
 	}
@@ -155,8 +155,8 @@ void geMainTimer::setQuantizer(int q)
 
 /* -------------------------------------------------------------------------- */
 
-void geMainTimer::setMeter(int beats, int bars)
+void geMainTimer::setTimeSignature(TimeSignature t)
 {
-	m_meter->copy_label(fmt::format("{}/{}", beats, bars).c_str());
+	m_timeSignature->copy_label(fmt::format("{}/{}", t.beats, t.bars).c_str());
 }
 } // namespace giada::v

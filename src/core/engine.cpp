@@ -98,7 +98,7 @@ Engine::Engine()
 
 		registerThread(Thread::MIDI, /*realtime=*/false);
 		m_midiDispatcher.dispatch(e);
-		m_midiSynchronizer.receive(e, m_sequencer.getBeats());
+		m_midiSynchronizer.receive(e, m_sequencer.getTimeSignature().beats);
 		onMidiReceived();
 	};
 	m_kernelMidi.onMidiSent = [this]()

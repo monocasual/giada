@@ -82,21 +82,21 @@ void geSequencer::drawBody() const
 
 	/* Beat lines. */
 
-	for (int i = 1; i <= m_data.beats; i++)
+	for (int i = 1; i <= m_data.timeSignature.beats; i++)
 		drawLine(line.withShiftedX(m_cell.w * i), G_COLOR_GREY_4);
 
 	/* Bar lines. */
 
-	const int delta = m_data.beats / m_data.bars;
-	for (int i = 1; i < m_data.bars; i++)
+	const int delta = m_data.timeSignature.beats / m_data.timeSignature.bars;
+	for (int i = 1; i < m_data.timeSignature.bars; i++)
 		drawLine(line.withShiftedX(m_cell.w * i * delta), G_COLOR_LIGHT_1);
 
-	for (int i = 0; i < m_data.beats; i++)
+	for (int i = 0; i < m_data.timeSignature.beats; i++)
 		drawBeatNumber(i, G_COLOR_GREY_4);
 
 	/* Unused grey area. */
 
-	drawRectf(body.withTrimmedLeft(m_data.beats * m_cell.w), G_COLOR_GREY_4);
+	drawRectf(body.withTrimmedLeft(m_data.timeSignature.beats * m_cell.w), G_COLOR_GREY_4);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -134,7 +134,7 @@ void geSequencer::drawCursor() const
 {
 	if (m_data.isFreeModeInputRec)
 	{
-		for (int i = 0; i < m_data.beats; i++)
+		for (int i = 0; i < m_data.timeSignature.beats; i++)
 			drawCursor(i);
 	}
 	else

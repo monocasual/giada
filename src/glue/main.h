@@ -51,12 +51,11 @@ struct Timer
 {
 	Timer();
 
-	float bpm;
-	int   beats;
-	int   bars;
-	int   quantize;
-	bool  isUsingJack;
-	bool  isRecordingInput;
+	float         bpm;
+	TimeSignature timeSignature;
+	int           quantize;
+	bool          isUsingJack;
+	bool          isRecordingInput;
 };
 
 struct IO
@@ -77,13 +76,12 @@ struct IO
 
 struct Sequencer
 {
-	bool  isFreeModeInputRec;
-	bool  shouldBlink;
-	int   beats;
-	int   bars;
-	int   currentBeat;
-	Frame recPosition;
-	Frame recMaxLength;
+	bool          isFreeModeInputRec;
+	bool          shouldBlink;
+	TimeSignature timeSignature;
+	int           currentBeat;
+	Frame         recPosition;
+	Frame         recMaxLength;
 };
 
 struct Transport
@@ -120,7 +118,7 @@ Sequencer getSequencer();
 Transport getTransport();
 Scenes    getScenes();
 
-void setBeats(int beats, int bars);
+void setTimeSignature(TimeSignature);
 void quantize(int val);
 void clearAllSamples(bool allscenes);
 void clearAllActions(bool allscenes);

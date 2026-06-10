@@ -36,7 +36,7 @@ class geInput;
 class gdBeatsInput : public gdWindow
 {
 public:
-	gdBeatsInput(int beats, int bars);
+	gdBeatsInput(TimeSignature);
 
 private:
 	geInput*      m_beats;

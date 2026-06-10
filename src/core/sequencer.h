@@ -99,28 +99,27 @@ public:
 	bool isOnFirstBeat() const;
 	bool isMetronomeOn() const;
 
-	float       getBpm() const;
-	int         getBeats() const;
-	int         getBars() const;
-	int         getCurrentBeat() const;
-	Frame       getCurrentFrame() const;
-	Frame       getFramesInBar() const;
-	Frame       getFramesInBeat() const;
-	Frame       getFramesInLoop() const;
-	Frame       getFramesInSeq() const;
-	Tick        getTicksInBar() const;
-	Tick        getTicksInBeat() const;
-	Tick        getTicksInLoop() const;
-	Tick        getTicksInSeq() const;
-	int         getQuantizerValue() const;
-	int         getQuantizerStep() const;
-	SeqStatus   getStatus() const;
-	int         getMaxFramesInLoop(int sampleRate) const;
-	Scene       getCurrentScene() const;
-	Scene       getNextScene() const;
-	SceneStatus getSceneStatus() const;
-	Tick        getCurrentTick() const;
-	Tick        getCurrentTickQuantized() const;
+	float         getBpm() const;
+	TimeSignature getTimeSignature() const;
+	int           getCurrentBeat() const;
+	Frame         getCurrentFrame() const;
+	Frame         getFramesInBar() const;
+	Frame         getFramesInBeat() const;
+	Frame         getFramesInLoop() const;
+	Frame         getFramesInSeq() const;
+	Tick          getTicksInBar() const;
+	Tick          getTicksInBeat() const;
+	Tick          getTicksInLoop() const;
+	Tick          getTicksInSeq() const;
+	int           getQuantizerValue() const;
+	int           getQuantizerStep() const;
+	SeqStatus     getStatus() const;
+	int           getMaxFramesInLoop(int sampleRate) const;
+	Scene         getCurrentScene() const;
+	Scene         getNextScene() const;
+	SceneStatus   getSceneStatus() const;
+	Tick          getCurrentTick() const;
+	Tick          getCurrentTickQuantized() const;
 
 	/* calcBpmFromRec
 	Given the amount of recorded frames, returns the speed of the current
@@ -163,7 +162,7 @@ public:
 	void toggleMetronome();
 	void setMetronome(bool v);
 	void setBpm(float b);
-	void setBeats(int beats, int bars);
+	void setTimeSignature(TimeSignature);
 	void setQuantize(int q);
 	void setStatus(SeqStatus);
 	void goToBeat(int beat, int sampleRate);

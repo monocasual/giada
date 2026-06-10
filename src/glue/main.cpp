@@ -46,8 +46,7 @@ namespace giada::c::main
 {
 Timer::Timer()
 : bpm(g_engine->getMainApi().getBpm())
-, beats(g_engine->getMainApi().getBeats())
-, bars(g_engine->getMainApi().getBars())
+, timeSignature(g_engine->getMainApi().getTimeSignature())
 , quantize(g_engine->getMainApi().getQuantizerValue())
 , isUsingJack(g_engine->getConfigApi().audio_getAPI() == RtAudio::Api::UNIX_JACK)
 , isRecordingInput(g_engine->getMainApi().isRecordingInput())
@@ -165,8 +164,7 @@ Sequencer getSequencer()
 
 	out.isFreeModeInputRec = g_engine->getMainApi().isRecordingInput() && g_engine->getMainApi().getInputRecMode() == InputRecMode::FREE;
 	out.shouldBlink        = g_ui->shouldBlink() && (g_engine->getMainApi().getSequencerStatus() == SeqStatus::WAITING || out.isFreeModeInputRec);
-	out.beats              = g_engine->getMainApi().getBeats();
-	out.bars               = g_engine->getMainApi().getBars();
+	out.timeSignature      = g_engine->getMainApi().getTimeSignature();
 	out.currentBeat        = g_engine->getMainApi().getCurrentBeat();
 	out.recPosition        = recInfo.position;
 	out.recMaxLength       = recInfo.maxLength;
@@ -197,9 +195,9 @@ Scenes getScenes()
 
 /* -------------------------------------------------------------------------- */
 
-void setBeats(int beats, int bars)
+void setTimeSignature(TimeSignature t)
 {
-	g_engine->getMainApi().setBeats(beats, bars);
+	g_engine->getMainApi().setTimeSignature(t);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -45,7 +45,7 @@ public:
 
 	void setBpm(const char* v);
 	void setBpm(float v);
-	void setMeter(int beats, int bars);
+	void setTimeSignature(TimeSignature);
 	void setQuantizer(int q);
 
 	/* setLock
@@ -57,7 +57,7 @@ private:
 	c::main::Timer m_timer;
 
 	geTextButton*  m_bpm;
-	geTextButton*  m_meter;
+	geTextButton*  m_timeSignature;
 	geChoice*      m_quantizer;
 	geImageButton* m_multiplier;
 	geImageButton* m_divider;

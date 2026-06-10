@@ -39,7 +39,7 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gdBeatsInput::gdBeatsInput(int beats, int bars)
+gdBeatsInput::gdBeatsInput(TimeSignature t)
 : gdWindow(u::gui::getCenterWinBounds({-1, -1, 180, 36}), "Beats", WID_BEATS)
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
@@ -56,11 +56,11 @@ gdBeatsInput::gdBeatsInput(int beats, int bars)
 	add(container);
 
 	m_beats->setMaximumSize(2);
-	m_beats->setValue(std::to_string(beats));
+	m_beats->setValue(std::to_string(t.beats));
 	m_beats->setType(FL_INT_INPUT);
 
 	m_bars->setMaximumSize(2);
-	m_bars->setValue(std::to_string(bars));
+	m_bars->setValue(std::to_string(t.bars));
 	m_bars->setType(FL_INT_INPUT);
 
 	m_ok->shortcut(FL_Enter);
@@ -68,7 +68,7 @@ gdBeatsInput::gdBeatsInput(int beats, int bars)
 	{
 		if (m_beats->getValue() == "" || m_bars->getValue() == "")
 			return;
-		c::main::setBeats(std::stoi(m_beats->getValue()), std::stoi(m_bars->getValue()));
+		c::main::setTimeSignature({std::stoi(m_beats->getValue()), std::stoi(m_bars->getValue())});
 		do_callback();
 	};
 

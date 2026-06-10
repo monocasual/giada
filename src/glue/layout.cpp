@@ -114,9 +114,9 @@ void openBpmWindow(float bpm)
 
 /* -------------------------------------------------------------------------- */
 
-void openBeatsWindow(int beats, int bars)
+void openBeatsWindow(TimeSignature t)
 {
-	g_ui->openSubWindow(new v::gdBeatsInput(beats, bars));
+	g_ui->openSubWindow(new v::gdBeatsInput(t));
 }
 
 /* -------------------------------------------------------------------------- */
