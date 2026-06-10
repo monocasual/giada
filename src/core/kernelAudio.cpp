@@ -60,7 +60,7 @@ double computeCpuLoad(const Now& startTime, unsigned int sampleRate, int bufferS
 	const Duration processingTime = endTime - startTime;
 
 	const double callbackDuration = (static_cast<double>(bufferSize) / sampleRate) * 1e6; // in microseconds
-	const double load             = (processingTime.count() / callbackDuration) * 100.0;
+	const double load             = std::min((processingTime.count() / callbackDuration) * 100.0, 100.0);
 
 	return load;
 }
