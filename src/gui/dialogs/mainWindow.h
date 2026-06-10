@@ -91,6 +91,7 @@ private:
 	void resize(int x, int y, int w, int h) override;
 
 	gdProgress m_progress;
+	geBox*     m_versionInfo;
 };
 } // namespace giada::v
 

@@ -153,14 +153,17 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 
 		geFlex* footer = new geFlex(getContentBounds(), Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			cpuLoad      = new geCpuLoad();
-			projectTitle = new geBox(G_DEFAULT_PATCH_NAME);
+			cpuLoad       = new geCpuLoad();
+			projectTitle  = new geBox(G_DEFAULT_PATCH_NAME);
+			m_versionInfo = new geBox(fmt::format("{} v{}", G_APP_NAME, G_VERSION.toString()).c_str());
 
 			projectTitle->labelcolor(G_COLOR_GREY_4);
+			m_versionInfo->labelcolor(G_COLOR_GREY_4);
+			m_versionInfo->align(FL_ALIGN_RIGHT);
 
 			footer->addWidget(cpuLoad, 100);
 			footer->addWidget(projectTitle);
-			footer->addWidget(new geBox(), 100);
+			footer->addWidget(m_versionInfo, 100);
 			footer->end();
 		}
 
@@ -183,7 +186,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 	});
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
-	setTitle(fmt::format("{} v{}", G_APP_NAME, G_VERSION.toString()));
+	setTitle(G_APP_NAME);
 	refresh();
 	show();
 }
