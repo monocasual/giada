@@ -145,33 +145,35 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 				zone4->end();
 			}
 
+			/* zone 5 - CPU load, project title and other information. */
+
+			geFlex* zone5 = new geFlex(getContentBounds(), Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
+			{
+				cpuLoad        = new geCpuLoad();
+				m_projectTitle = new geBox(G_DEFAULT_PATCH_NAME);
+				m_versionInfo  = new geBox(fmt::format("{} v{}", G_APP_NAME, G_VERSION.toString()).c_str());
+
+				m_projectTitle->labelcolor(G_COLOR_GREY_4);
+				m_versionInfo->labelcolor(G_COLOR_GREY_4);
+				m_versionInfo->align(FL_ALIGN_RIGHT);
+
+				zone5->addWidget(cpuLoad, 100);
+				zone5->addWidget(m_projectTitle);
+				zone5->addWidget(m_versionInfo, 100);
+				zone5->end();
+			}
+
 			body->addWidget(zone2, 25);
 			body->addWidget(zone3, 70);
 			body->addWidget(zone4);
+			body->addWidget(zone5, G_GUI_UNIT);
 			body->end();
-		}
-
-		geFlex* footer = new geFlex(getContentBounds(), Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
-		{
-			cpuLoad        = new geCpuLoad();
-			m_projectTitle = new geBox(G_DEFAULT_PATCH_NAME);
-			m_versionInfo  = new geBox(fmt::format("{} v{}", G_APP_NAME, G_VERSION.toString()).c_str());
-
-			m_projectTitle->labelcolor(G_COLOR_GREY_4);
-			m_versionInfo->labelcolor(G_COLOR_GREY_4);
-			m_versionInfo->align(FL_ALIGN_RIGHT);
-
-			footer->addWidget(cpuLoad, 100);
-			footer->addWidget(m_projectTitle);
-			footer->addWidget(m_versionInfo, 100);
-			footer->end();
 		}
 
 #if !G_OS_MAC // No need on macOS
 		container->addWidget(header, 25);
 #endif
 		container->addWidget(body);
-		container->addWidget(footer, G_GUI_UNIT);
 		container->end();
 	}
 
