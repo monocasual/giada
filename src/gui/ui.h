@@ -120,11 +120,6 @@ public:
 
 	void closeAllPluginsEditors();
 
-	/* setMainWindowTitle
-	Changes Main Window title. */
-
-	void setMainWindowTitle(const std::string&);
-
 	std::unique_ptr<gdMainWindow> mainWindow;
 	Dispatcher                    dispatcher;
 	Model                         model;

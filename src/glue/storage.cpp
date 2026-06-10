@@ -159,7 +159,7 @@ void saveProject(void* data)
 
 	if (g_engine->getStorageApi().storeProject(projectPath, g_ui->model, engineProgress))
 	{
-		g_ui->setMainWindowTitle(projectName);
+		g_ui->mainWindow->setProjectTitle(projectName);
 		g_ui->model.patchPath = utils::fs::getUpDir(projectPath);
 		browser->do_callback();
 	}

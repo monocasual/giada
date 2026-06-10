@@ -268,13 +268,6 @@ void Ui::closeAllPluginsEditors()
 
 /* -------------------------------------------------------------------------- */
 
-void Ui::setMainWindowTitle(const std::string& title)
-{
-	mainWindow->setTitle(title);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Ui::startJuceDispatchLoop()
 {
 	Fl::add_timeout(G_GUI_REFRESH_RATE, juceDispatchLoop);
