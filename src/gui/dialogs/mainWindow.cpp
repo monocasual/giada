@@ -88,7 +88,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 	Fl::set_boxtype(FL_UP_BOX, G_CUSTOM_UP_BOX);
 	Fl::set_boxtype(FL_DOWN_BOX, G_CUSTOM_DOWN_BOX);
 
-	geFlex* container = new geFlex(getContentBounds(), Direction::VERTICAL, G_GUI_OUTER_MARGIN, {G_GUI_OUTER_MARGIN});
+	geFlex* container = new geFlex(getContentBounds(), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
 		geFlex* header = new geFlex(getContentBounds(), Direction::VERTICAL);
 		{
@@ -98,7 +98,7 @@ gdMainWindow::gdMainWindow(geompp::Rect<int> r, const char* title)
 			header->end();
 		}
 
-		geFlex* body = new geFlex(getContentBounds(), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+		geFlex* body = new geFlex(getContentBounds(), Direction::VERTICAL, G_GUI_OUTER_MARGIN, {G_GUI_OUTER_MARGIN});
 		{
 			/* zone 2 - mainTransport and timing tools */
 
