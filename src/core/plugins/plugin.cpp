@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/plugins/plugin.h"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include "src/utils/log.h"
 #include "src/utils/time.h"
 #include <FL/Fl.H>
@@ -35,6 +36,8 @@
 #undef IN
 #undef OUT
 #endif
+
+namespace utils = mcl::utils;
 
 namespace giada::m
 {
@@ -86,12 +89,8 @@ Plugin::Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPlug
 , m_juceId(juceId)
 , m_hasEditor(m_plugin->hasEditor())
 {
-	/* (1) Initialize midiInParams vector, where midiInParams.size == number of
-	plugin parameters. All values are initially empty (0x0): they will be filled
-	during MIDI learning process. */
-
-	for (int i = 0; i < m_plugin->getParameters().size(); i++)
-		midiInParams.emplace_back(0x0, i);
+	for (const auto& [index, parameter] : utils::container::enumerate(m_plugin->getParameters()))
+		m_parameters.emplace_back(parameter, index);
 
 	/* Try to set the main bus to the current number of channels. In the future
 	this setup will be performed manually through a proper channel matrix. Also,

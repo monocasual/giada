@@ -181,6 +181,11 @@ private:
 	take ages to query it, better fetch the property during construction. */
 
 	bool m_hasEditor;
+
+	/* m_parameters
+	Vector of plug-in parameters filled during plug-in construction. */
+
+	std::vector<Parameter> m_parameters;
 };
 } // namespace giada::m
 
