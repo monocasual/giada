@@ -74,7 +74,7 @@ void gePluginParameter::cb_setValue()
 
 void gePluginParameter::update(const c::plugin::Param& p, bool changeSlider)
 {
-	m_value->setLabel(std::string(p.text + " " + p.label));
+	m_value->setLabel(std::string(p.valueAsText + " " + p.label));
 	if (changeSlider)
 		m_slider->value(p.value);
 }

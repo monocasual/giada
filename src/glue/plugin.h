@@ -61,7 +61,7 @@ struct Param
 	ID          pluginId;
 	ID          channelId;
 	std::string name;
-	std::string text;
+	std::string valueAsText;
 	std::string label;
 	float       value;
 };

@@ -53,7 +53,7 @@ Param::Param(const m::Plugin::Parameter& p, ID pluginId, ID channelId)
 , pluginId(pluginId)
 , channelId(channelId)
 , name(p.name)
-, text(p.getValueAsText())
+, valueAsText(p.getValueAsText())
 , label(p.getLabel())
 , value(p.getValue())
 {
