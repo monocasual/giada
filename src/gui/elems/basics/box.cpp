@@ -88,5 +88,9 @@ void geBox::setSvgImage(const char* svg)
 }
 /* -------------------------------------------------------------------------- */
 
-void geBox::setLabel(const std::string& l) { m_label = l; }
+void geBox::setLabel(const std::string& l)
+{
+	m_label = l;
+	redraw();
+}
 } // namespace giada::v
