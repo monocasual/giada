@@ -119,10 +119,10 @@ Plugin::Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPlug
 
 	m_plugin->prepareToPlay(samplerate, buffersize);
 
-	u::log::print("[Plugin] plugin initialized and ready. Out buses: {}, in buses: {}, MIDI input params: {}\n",
+	u::log::print("[Plugin] plugin initialized and ready. Out buses: {}, in buses: {}, Parameters: {}\n",
 	    m_plugin->getBusCount(/*isInput=*/false),
 	    m_plugin->getBusCount(/*isInput=*/true),
-	    midiInParams.size());
+	    m_parameters.size());
 }
 
 /* -------------------------------------------------------------------------- */

@@ -43,7 +43,7 @@ namespace giada::c::io
 {
 struct PluginParamData
 {
-	int         index;
+	std::size_t index;
 	std::string name;
 	uint32_t    value;
 };

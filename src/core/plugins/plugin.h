@@ -135,12 +135,6 @@ public:
 
 	ID id;
 
-	/* midiInParams
-	A vector of MidiLearnParam's for controlling plug-in parameters with
-	external hardware. */
-
-	std::vector<MidiLearnParam> midiInParams;
-
 	/* valid
 	A missing plug-in is loaded anyway, yet marked as 'invalid'. */
 
