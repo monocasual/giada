@@ -38,6 +38,31 @@
 
 namespace giada::m
 {
+constexpr int MAX_PARAMETER_NAME_LENGTH = 64;
+
+/* -------------------------------------------------------------------------- */
+
+Plugin::Parameter::Parameter(juce::AudioProcessorParameter* ptr, std::size_t index)
+: index(index)
+, name(ptr->getName(MAX_PARAMETER_NAME_LENGTH).toStdString())
+, learnParam(0x0, index)
+, m_ptr(ptr)
+{
+	/* MidiInParam is set empty (0x0) initially: it will be filled during MIDI
+	learning process. */
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::string Plugin::Parameter::getLabel() const { return m_ptr->getLabel().toStdString(); }
+std::string Plugin::Parameter::getValueAsText() const { return m_ptr->getCurrentValueAsText().toStdString(); }
+void        Plugin::Parameter::setValue(float f) { m_ptr->setValue(f); }
+float       Plugin::Parameter::getValue() const { return m_ptr->getValue(); }
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 Plugin::Plugin(ID id, const std::string& juceId)
 : id(id)
 , valid(false)

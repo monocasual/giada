@@ -50,6 +50,25 @@ class Plugin : private juce::ComponentListener
 public:
 	using Buffer = juce::AudioBuffer<float>;
 
+	class Parameter
+	{
+	public:
+		Parameter(juce::AudioProcessorParameter*, std::size_t index);
+
+		std::string getLabel() const;
+		std::string getValueAsText() const;
+		float       getValue() const;
+
+		void setValue(float);
+
+		std::size_t    index = 0;
+		std::string    name;
+		MidiLearnParam learnParam;
+
+	private:
+		juce::AudioProcessorParameter* m_ptr = nullptr;
+	};
+
 	/* Plugin (1)
 	Constructs an invalid plug-in. */
 
