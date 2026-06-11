@@ -48,14 +48,14 @@ extern giada::m::Engine* g_engine;
 
 namespace giada::c::plugin
 {
-Param::Param(const m::Plugin& p, int index, ID channelId)
-: index(index)
-, pluginId(p.id)
+Param::Param(const m::Plugin::Parameter& p, ID pluginId, ID channelId)
+: index(p.index)
+, pluginId(pluginId)
 , channelId(channelId)
-, name(p.getParameterName(index))
-, text(p.getParameterText(index))
-, label(p.getParameterLabel(index))
-, value(p.getParameter(index))
+, name(p.name)
+, text(p.getValueAsText())
+, label(p.getLabel())
+, value(p.getValue())
 {
 }
 
@@ -77,8 +77,8 @@ Plugin::Plugin(m::Plugin& p, ID channelId)
 {
 	for (int i = 0; i < p.getNumPrograms(); i++)
 		programs.push_back({i, p.getProgramName(i)});
-	for (int i = 0; i < p.getNumParameters(); i++)
-		paramIndexes.push_back(i);
+	for (const m::Plugin::Parameter& param : p.getParameters())
+		paramIndexes.push_back(param.index);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -123,9 +123,9 @@ Plugin getPlugin(m::Plugin& plugin, ID channelId)
 	return Plugin(plugin, channelId);
 }
 
-Param getParam(int index, const m::Plugin& plugin, ID channelId)
+Param getParam(std::size_t index, const m::Plugin& plugin, ID channelId)
 {
-	return Param(plugin, index, channelId);
+	return Param(plugin.getParameters()[index], plugin.id, channelId);
 }
 
 std::vector<PluginInfo> getPluginsInfo()

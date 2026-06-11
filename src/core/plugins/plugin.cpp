@@ -202,20 +202,6 @@ std::string Plugin::getJuceId() const
 
 /* -------------------------------------------------------------------------- */
 
-int Plugin::getNumParameters() const
-{
-	return valid ? m_plugin->getParameters().size() : 0;
-}
-
-/* -------------------------------------------------------------------------- */
-
-float Plugin::getParameter(int paramIndex) const
-{
-	return m_plugin->getParameters()[paramIndex]->getValue();
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Plugin::setParameter(int paramIndex, float value) const
 {
 	m_plugin->getParameters()[paramIndex]->setValue(value);
@@ -333,29 +319,5 @@ std::string Plugin::getProgramName(int index) const
 	if (!valid)
 		return {};
 	return m_plugin->getProgramName(index).toStdString();
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::string Plugin::getParameterName(int index) const
-{
-	if (!valid)
-		return {};
-	const int labelSize = 64;
-	return m_plugin->getParameters()[index]->getName(labelSize).toStdString();
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::string Plugin::getParameterText(int index) const
-{
-	return m_plugin->getParameters()[index]->getCurrentValueAsText().toStdString();
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::string Plugin::getParameterLabel(int index) const
-{
-	return m_plugin->getParameters()[index]->getLabel().toStdString();
 }
 } // namespace giada::m

@@ -94,11 +94,6 @@ public:
 
 	std::string                 getName() const;
 	bool                        hasEditor() const;
-	int                         getNumParameters() const;
-	float                       getParameter(int index) const;
-	std::string                 getParameterName(int index) const;
-	std::string                 getParameterText(int index) const;
-	std::string                 getParameterLabel(int index) const;
 	bool                        isSuspended() const;
 	bool                        isBypassed() const;
 	bool                        isInstrument() const;
