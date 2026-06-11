@@ -116,6 +116,12 @@ editor. */
 
 void updateWindow(ID pluginId, Thread);
 
+/* updateParameter
+Update a specific parameter in the editor-less plug-in window. This is useless
+if the plug-in has an editor. */
+
+void updateParameter(ID pluginId, std::size_t paramIndex, Thread);
+
 /* addPlugin
 Add a new Plugin to channel 'channelId'. */
 

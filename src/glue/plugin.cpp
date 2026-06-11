@@ -48,6 +48,24 @@ extern giada::m::Engine* g_engine;
 
 namespace giada::c::plugin
 {
+namespace
+{
+v::gdPluginWindow* getPluginWindowByPluginId_(ID pluginId)
+{
+	const m::Plugin* p = g_engine->getPluginsApi().get(pluginId);
+
+	assert(p != nullptr);
+
+	if (p->hasEditor())
+		return nullptr;
+	return static_cast<v::gdPluginWindow*>(g_ui->getSubwindow(v::Ui::getPluginWindowId(pluginId)));
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 Param::Param(const m::Plugin::Parameter& p, ID pluginId, ID channelId)
 : index(p.index)
 , pluginId(pluginId)
@@ -137,18 +155,20 @@ std::vector<PluginInfo> getPluginsInfo()
 
 void updateWindow(ID pluginId, Thread t)
 {
-	const m::Plugin* p = g_engine->getPluginsApi().get(pluginId);
-
-	assert(p != nullptr);
-
-	if (p->hasEditor())
-		return;
-
-	v::gdPluginWindow* pluginWindow = static_cast<v::gdPluginWindow*>(g_ui->getSubwindow(v::Ui::getPluginWindowId(pluginId)));
+	v::gdPluginWindow* pluginWindow = getPluginWindowByPluginId_(pluginId);
 	if (pluginWindow == nullptr)
 		return;
-
 	pluginWindow->updateParameters(t != Thread::MAIN);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void updateParameter(ID pluginId, std::size_t paramIndex, Thread t)
+{
+	v::gdPluginWindow* pluginWindow = getPluginWindowByPluginId_(pluginId);
+	if (pluginWindow == nullptr)
+		return;
+	pluginWindow->updateParameter(paramIndex, t != Thread::MAIN);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -194,8 +214,8 @@ void setParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread
 	g_engine->getPluginsApi().setParameter(pluginId, paramIndex, value);
 	channel::notifyChannelForMidiIn(t, channelId);
 
-	g_ui->pumpEvent([pluginId, t]()
-	{ c::plugin::updateWindow(pluginId, t); });
+	g_ui->pumpEvent([pluginId, paramIndex, t]()
+	{ c::plugin::updateParameter(pluginId, paramIndex, t); });
 }
 
 /* -------------------------------------------------------------------------- */
