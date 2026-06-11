@@ -127,6 +127,9 @@ public:
 	void setState(PluginState p);
 	void setBypass(bool b);
 
+	const std::vector<Parameter>& getParameters() const;
+	std::vector<Parameter>&       getParameters();
+
 	/* id
 	Unique identifier. */
 

@@ -266,6 +266,11 @@ void Plugin::setBypass(bool b) { m_bypass.store(b); }
 
 /* -------------------------------------------------------------------------- */
 
+const std::vector<Plugin::Parameter>& Plugin::getParameters() const { return m_parameters; }
+std::vector<Plugin::Parameter>&       Plugin::getParameters() { return m_parameters; }
+
+/* -------------------------------------------------------------------------- */
+
 const Plugin::Buffer& Plugin::process(const Plugin::Buffer& out, juce::MidiBuffer m)
 {
 	/* Copy the incoming buffer data into the temporary one. This way FXes will
