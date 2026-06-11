@@ -47,6 +47,7 @@ public:
 	gdPluginWindow(const c::plugin::Plugin&, ID wid);
 
 	void updateParameters(bool changeSlider = false);
+	void updateParameter(std::size_t paramIndex, bool changeSlider = false);
 
 private:
 	c::plugin::Plugin m_plugin;

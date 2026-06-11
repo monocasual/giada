@@ -71,11 +71,16 @@ gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin, ID wid)
 void gdPluginWindow::updateParameters(bool changeSlider)
 {
 	for (const std::size_t index : m_plugin.paramIndexes)
-	{
-		const c::plugin::Param param  = c::plugin::getParam(index, m_plugin.getPluginRef(), m_plugin.channelId);
-		auto*                  widget = static_cast<v::gePluginParameter*>(m_list->child(index));
-		assert(widget != nullptr);
-		widget->update(param, changeSlider);
-	}
+		updateParameter(index, changeSlider);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdPluginWindow::updateParameter(std::size_t paramIndex, bool changeSlider)
+{
+	const c::plugin::Param param  = c::plugin::getParam(paramIndex, m_plugin.getPluginRef(), m_plugin.channelId);
+	auto*                  widget = static_cast<v::gePluginParameter*>(m_list->child(paramIndex));
+	assert(widget != nullptr);
+	widget->update(param, changeSlider);
 }
 } // namespace giada::v
