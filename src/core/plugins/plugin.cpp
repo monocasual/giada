@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/core/plugins/plugin.h"
+#include "src/deps/mcl-utils/src/container.hpp"
 #include "src/utils/log.h"
 #include "src/utils/time.h"
 #include <FL/Fl.H>
@@ -36,8 +37,35 @@
 #undef OUT
 #endif
 
+namespace utils = mcl::utils;
+
 namespace giada::m
 {
+constexpr int MAX_PARAMETER_NAME_LENGTH = 64;
+
+/* -------------------------------------------------------------------------- */
+
+Plugin::Parameter::Parameter(juce::AudioProcessorParameter* ptr, std::size_t index)
+: index(index)
+, name(ptr->getName(MAX_PARAMETER_NAME_LENGTH).toStdString())
+, learnParam(0x0, index)
+, m_ptr(ptr)
+{
+	/* MidiInParam is set empty (0x0) initially: it will be filled during MIDI
+	learning process. */
+}
+
+/* -------------------------------------------------------------------------- */
+
+std::string Plugin::Parameter::getLabel() const { return m_ptr->getLabel().toStdString(); }
+std::string Plugin::Parameter::getValueAsText() const { return m_ptr->getCurrentValueAsText().toStdString(); }
+void        Plugin::Parameter::setValue(float f) { m_ptr->setValue(f); }
+float       Plugin::Parameter::getValue() const { return m_ptr->getValue(); }
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 Plugin::Plugin(ID id, const std::string& juceId)
 : id(id)
 , valid(false)
@@ -61,12 +89,8 @@ Plugin::Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPlug
 , m_juceId(juceId)
 , m_hasEditor(m_plugin->hasEditor())
 {
-	/* (1) Initialize midiInParams vector, where midiInParams.size == number of
-	plugin parameters. All values are initially empty (0x0): they will be filled
-	during MIDI learning process. */
-
-	for (int i = 0; i < m_plugin->getParameters().size(); i++)
-		midiInParams.emplace_back(0x0, i);
+	for (const auto& [index, parameter] : utils::container::enumerate(m_plugin->getParameters()))
+		m_parameters.emplace_back(parameter, index);
 
 	/* Try to set the main bus to the current number of channels. In the future
 	this setup will be performed manually through a proper channel matrix. Also,
@@ -95,10 +119,10 @@ Plugin::Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPlug
 
 	m_plugin->prepareToPlay(samplerate, buffersize);
 
-	u::log::print("[Plugin] plugin initialized and ready. Out buses: {}, in buses: {}, MIDI input params: {}\n",
+	u::log::print("[Plugin] plugin initialized and ready. Out buses: {}, in buses: {}, Parameters: {}\n",
 	    m_plugin->getBusCount(/*isInput=*/false),
 	    m_plugin->getBusCount(/*isInput=*/true),
-	    midiInParams.size());
+	    m_parameters.size());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -178,20 +202,6 @@ std::string Plugin::getJuceId() const
 
 /* -------------------------------------------------------------------------- */
 
-int Plugin::getNumParameters() const
-{
-	return valid ? m_plugin->getParameters().size() : 0;
-}
-
-/* -------------------------------------------------------------------------- */
-
-float Plugin::getParameter(int paramIndex) const
-{
-	return m_plugin->getParameters()[paramIndex]->getValue();
-}
-
-/* -------------------------------------------------------------------------- */
-
 void Plugin::setParameter(int paramIndex, float value) const
 {
 	m_plugin->getParameters()[paramIndex]->setValue(value);
@@ -239,6 +249,11 @@ PluginState Plugin::getState() const
 
 bool Plugin::isBypassed() const { return m_bypass.load(); }
 void Plugin::setBypass(bool b) { m_bypass.store(b); }
+
+/* -------------------------------------------------------------------------- */
+
+const std::vector<Plugin::Parameter>& Plugin::getParameters() const { return m_parameters; }
+std::vector<Plugin::Parameter>&       Plugin::getParameters() { return m_parameters; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -304,29 +319,5 @@ std::string Plugin::getProgramName(int index) const
 	if (!valid)
 		return {};
 	return m_plugin->getProgramName(index).toStdString();
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::string Plugin::getParameterName(int index) const
-{
-	if (!valid)
-		return {};
-	const int labelSize = 64;
-	return m_plugin->getParameters()[index]->getName(labelSize).toStdString();
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::string Plugin::getParameterText(int index) const
-{
-	return m_plugin->getParameters()[index]->getCurrentValueAsText().toStdString();
-}
-
-/* -------------------------------------------------------------------------- */
-
-std::string Plugin::getParameterLabel(int index) const
-{
-	return m_plugin->getParameters()[index]->getLabel().toStdString();
 }
 } // namespace giada::m

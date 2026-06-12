@@ -27,6 +27,7 @@
 #ifndef G_GLUE_PLUGIN_H
 #define G_GLUE_PLUGIN_H
 
+#include "src/core/plugins/plugin.h"
 #include "src/core/types.h"
 #include "src/types.h"
 #include <functional>
@@ -40,7 +41,6 @@ class AudioProcessorEditor;
 
 namespace giada::m
 {
-class Plugin;
 class Channel;
 } // namespace giada::m
 
@@ -55,13 +55,13 @@ struct Program
 struct Param
 {
 	Param() = default;
-	Param(const m::Plugin&, int index, ID channelId);
+	Param(const m::Plugin::Parameter&, ID pluginId, ID channelId);
 
 	int         index;
 	ID          pluginId;
 	ID          channelId;
 	std::string name;
-	std::string text;
+	std::string valueAsText;
 	std::string label;
 	float       value;
 };
@@ -85,8 +85,8 @@ struct Plugin
 	int         currentProgram;
 	float       uiScaling;
 
-	std::vector<Program> programs;
-	std::vector<int>     paramIndexes;
+	std::vector<Program>     programs;
+	std::vector<std::size_t> paramIndexes;
 
 private:
 	m::Plugin& m_plugin;
@@ -106,7 +106,7 @@ Returns ViewModel objects. */
 
 Plugins getPlugins(ID channelId);
 Plugin  getPlugin(m::Plugin&, ID channelId);
-Param   getParam(int index, const m::Plugin& plugin, ID channelId);
+Param   getParam(std::size_t index, const m::Plugin& plugin, ID channelId);
 
 std::vector<PluginInfo> getPluginsInfo();
 
@@ -115,6 +115,12 @@ Updates the editor-less plug-in window. This is useless if the plug-in has an
 editor. */
 
 void updateWindow(ID pluginId, Thread);
+
+/* updateParameter
+Update a specific parameter in the editor-less plug-in window. This is useless
+if the plug-in has an editor. */
+
+void updateParameter(ID pluginId, std::size_t paramIndex, Thread);
 
 /* addPlugin
 Add a new Plugin to channel 'channelId'. */

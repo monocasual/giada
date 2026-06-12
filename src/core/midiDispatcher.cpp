@@ -160,20 +160,15 @@ void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& pl
 	const uint32_t pure      = midiEvent.getRawNoVelocity();
 	const float    velocityF = midiEvent.getVelocityFloat();
 
-	/* Plugins' parameters layout reflects the structure of the matrix
-	Channel::midiInPlugins. It is safe to assume then that Plugin 'p' and
-	parameter indexes match both the structure of Channel::midiInPlugins and the
-	vector of plugins. */
-
 	for (Plugin* p : plugins)
 	{
-		for (const MidiLearnParam& param : p->midiInParams)
+		for (const Plugin::Parameter& param : p->getParameters())
 		{
-			if (pure != param.getValue())
+			if (pure != param.learnParam.getValue())
 				continue;
-			c::plugin::setParameter(channelId, p->id, param.getIndex(), velocityF, Thread::MIDI);
+			c::plugin::setParameter(channelId, p->id, param.learnParam.getIndex(), velocityF, Thread::MIDI);
 			G_DEBUG("   [pluginId={} paramIndex={}] (pure=0x{:0X}, value={}, float={})",
-			    p->id.getValue(), param.getIndex(), pure, midiEvent.getVelocity(), velocityF);
+			    p->id.getValue(), param.learnParam.getIndex(), pure, midiEvent.getVelocity(), velocityF);
 		}
 	}
 }
@@ -421,9 +416,9 @@ void MidiDispatcher::learnPlugin(MidiEvent e, std::size_t paramIndex, ID pluginI
 	Plugin*           plugin = m_model.findPlugin(pluginId);
 
 	assert(plugin != nullptr);
-	assert(paramIndex < plugin->midiInParams.size());
+	assert(paramIndex < plugin->getParameters().size());
 
-	plugin->midiInParams[paramIndex].setValue(e.getRawNoVelocity());
+	plugin->getParameters()[paramIndex].learnParam.setValue(e.getRawNoVelocity());
 
 	stopLearn();
 	doneCb();

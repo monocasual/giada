@@ -28,6 +28,9 @@
 #include "src/core/idManager.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginHost.h"
+#include "src/deps/mcl-utils/src/container.hpp"
+
+namespace utils = mcl::utils;
 
 namespace giada::m::pluginFactory
 {
@@ -89,17 +92,8 @@ std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin& pplugin, std::uni
 	plugin->setBypass(pplugin.bypass);
 	plugin->setState(PluginState(pplugin.state));
 
-	/* Fill plug-in MidiIn parameters. Don't fill Plugin::midiInParam if
-	Patch::midiInParams are zero: it would wipe out the current default 0x0
-	values. */
-
-	if (!pplugin.midiInParams.empty())
-	{
-		plugin->midiInParams.clear();
-		std::size_t paramIndex = 0;
-		for (uint32_t midiInParam : pplugin.midiInParams)
-			plugin->midiInParams.emplace_back(midiInParam, paramIndex++);
-	}
+	for (const auto& [index, pparam] : utils::container::enumerate(pplugin.midiInParams))
+		plugin->getParameters()[index].learnParam = MidiLearnParam(pparam, index);
 
 	return plugin;
 }
@@ -114,8 +108,8 @@ Patch::Plugin serializePlugin(const Plugin& p)
 	pp.bypass = p.isBypassed();
 	pp.state  = p.getState().asBase64();
 
-	for (const MidiLearnParam& param : p.midiInParams)
-		pp.midiInParams.push_back(param.getValue());
+	for (const Plugin::Parameter& param : p.getParameters())
+		pp.midiInParams.push_back(param.learnParam.getValue());
 
 	return pp;
 }

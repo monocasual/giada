@@ -50,6 +50,25 @@ class Plugin : private juce::ComponentListener
 public:
 	using Buffer = juce::AudioBuffer<float>;
 
+	class Parameter
+	{
+	public:
+		Parameter(juce::AudioProcessorParameter*, std::size_t index);
+
+		std::string getLabel() const;
+		std::string getValueAsText() const;
+		float       getValue() const;
+
+		void setValue(float);
+
+		std::size_t    index = 0;
+		std::string    name;
+		MidiLearnParam learnParam;
+
+	private:
+		juce::AudioProcessorParameter* m_ptr = nullptr;
+	};
+
 	/* Plugin (1)
 	Constructs an invalid plug-in. */
 
@@ -75,11 +94,6 @@ public:
 
 	std::string                 getName() const;
 	bool                        hasEditor() const;
-	int                         getNumParameters() const;
-	float                       getParameter(int index) const;
-	std::string                 getParameterName(int index) const;
-	std::string                 getParameterText(int index) const;
-	std::string                 getParameterLabel(int index) const;
 	bool                        isSuspended() const;
 	bool                        isBypassed() const;
 	bool                        isInstrument() const;
@@ -108,16 +122,13 @@ public:
 	void setState(PluginState p);
 	void setBypass(bool b);
 
+	const std::vector<Parameter>& getParameters() const;
+	std::vector<Parameter>&       getParameters();
+
 	/* id
 	Unique identifier. */
 
 	ID id;
-
-	/* midiInParams
-	A vector of MidiLearnParam's for controlling plug-in parameters with
-	external hardware. */
-
-	std::vector<MidiLearnParam> midiInParams;
 
 	/* valid
 	A missing plug-in is loaded anyway, yet marked as 'invalid'. */
@@ -162,6 +173,11 @@ private:
 	take ages to query it, better fetch the property during construction. */
 
 	bool m_hasEditor;
+
+	/* m_parameters
+	Vector of plug-in parameters filled during plug-in construction. */
+
+	std::vector<Parameter> m_parameters;
 };
 } // namespace giada::m
 

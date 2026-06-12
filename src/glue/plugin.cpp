@@ -48,14 +48,32 @@ extern giada::m::Engine* g_engine;
 
 namespace giada::c::plugin
 {
-Param::Param(const m::Plugin& p, int index, ID channelId)
-: index(index)
-, pluginId(p.id)
+namespace
+{
+v::gdPluginWindow* getPluginWindowByPluginId_(ID pluginId)
+{
+	const m::Plugin* p = g_engine->getPluginsApi().get(pluginId);
+
+	assert(p != nullptr);
+
+	if (p->hasEditor())
+		return nullptr;
+	return static_cast<v::gdPluginWindow*>(g_ui->getSubwindow(v::Ui::getPluginWindowId(pluginId)));
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+Param::Param(const m::Plugin::Parameter& p, ID pluginId, ID channelId)
+: index(p.index)
+, pluginId(pluginId)
 , channelId(channelId)
-, name(p.getParameterName(index))
-, text(p.getParameterText(index))
-, label(p.getParameterLabel(index))
-, value(p.getParameter(index))
+, name(p.name)
+, valueAsText(p.getValueAsText())
+, label(p.getLabel())
+, value(p.getValue())
 {
 }
 
@@ -77,8 +95,8 @@ Plugin::Plugin(m::Plugin& p, ID channelId)
 {
 	for (int i = 0; i < p.getNumPrograms(); i++)
 		programs.push_back({i, p.getProgramName(i)});
-	for (int i = 0; i < p.getNumParameters(); i++)
-		paramIndexes.push_back(i);
+	for (const m::Plugin::Parameter& param : p.getParameters())
+		paramIndexes.push_back(param.index);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -123,9 +141,9 @@ Plugin getPlugin(m::Plugin& plugin, ID channelId)
 	return Plugin(plugin, channelId);
 }
 
-Param getParam(int index, const m::Plugin& plugin, ID channelId)
+Param getParam(std::size_t index, const m::Plugin& plugin, ID channelId)
 {
-	return Param(plugin, index, channelId);
+	return Param(plugin.getParameters()[index], plugin.id, channelId);
 }
 
 std::vector<PluginInfo> getPluginsInfo()
@@ -137,18 +155,20 @@ std::vector<PluginInfo> getPluginsInfo()
 
 void updateWindow(ID pluginId, Thread t)
 {
-	const m::Plugin* p = g_engine->getPluginsApi().get(pluginId);
-
-	assert(p != nullptr);
-
-	if (p->hasEditor())
-		return;
-
-	v::gdPluginWindow* pluginWindow = static_cast<v::gdPluginWindow*>(g_ui->getSubwindow(v::Ui::getPluginWindowId(pluginId)));
+	v::gdPluginWindow* pluginWindow = getPluginWindowByPluginId_(pluginId);
 	if (pluginWindow == nullptr)
 		return;
-
 	pluginWindow->updateParameters(t != Thread::MAIN);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void updateParameter(ID pluginId, std::size_t paramIndex, Thread t)
+{
+	v::gdPluginWindow* pluginWindow = getPluginWindowByPluginId_(pluginId);
+	if (pluginWindow == nullptr)
+		return;
+	pluginWindow->updateParameter(paramIndex, t != Thread::MAIN);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -194,8 +214,8 @@ void setParameter(ID channelId, ID pluginId, int paramIndex, float value, Thread
 	g_engine->getPluginsApi().setParameter(pluginId, paramIndex, value);
 	channel::notifyChannelForMidiIn(t, channelId);
 
-	g_ui->pumpEvent([pluginId, t]()
-	{ c::plugin::updateWindow(pluginId, t); });
+	g_ui->pumpEvent([pluginId, paramIndex, t]()
+	{ c::plugin::updateParameter(pluginId, paramIndex, t); });
 }
 
 /* -------------------------------------------------------------------------- */

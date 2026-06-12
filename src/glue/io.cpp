@@ -102,8 +102,8 @@ Channel_InputData::Channel_InputData(const m::Channel& c)
 		PluginData pd;
 		pd.id   = p->id;
 		pd.name = p->getName();
-		for (int i = 0; i < p->getNumParameters(); i++)
-			pd.params.push_back({i, p->getParameterName(i), p->midiInParams.at(i).getValue()});
+		for (const m::Plugin::Parameter& param : p->getParameters())
+			pd.params.push_back({param.index, param.name, param.learnParam.getValue()});
 		plugins.push_back(pd);
 	}
 }
