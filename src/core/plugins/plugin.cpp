@@ -72,7 +72,6 @@ Plugin::Plugin(ID id, const std::string& juceId)
 , onEditorResize(nullptr)
 , m_plugin(nullptr)
 , m_juceId(juceId)
-, m_hasEditor(false)
 {
 }
 
@@ -87,7 +86,6 @@ Plugin::Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPlug
 , m_playHead(std::move(playHead))
 , m_bypass(false)
 , m_juceId(juceId)
-, m_hasEditor(m_plugin->hasEditor())
 {
 	for (const auto& [index, parameter] : utils::container::enumerate(m_plugin->getParameters()))
 		m_parameters.emplace_back(parameter, index);
@@ -309,7 +307,7 @@ void Plugin::setCurrentProgram(int index) const
 
 bool Plugin::hasEditor() const
 {
-	return m_hasEditor;
+	return m_plugin->hasEditor();
 }
 
 /* -------------------------------------------------------------------------- */

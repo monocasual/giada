@@ -168,12 +168,6 @@ private:
 
 	std::string m_juceId;
 
-	/* m_hasEditor
-	Cached boolean value that tells if the plug-in has editor. Some plug-ins
-	take ages to query it, better fetch the property during construction. */
-
-	bool m_hasEditor;
-
 	/* m_parameters
 	Vector of plug-in parameters filled during plug-in construction. */
 
