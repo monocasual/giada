@@ -111,7 +111,7 @@ public:
 	/* freePlugins
 	Unloads multiple plugins. Useful when freeing or deleting a channel. */
 
-	void freePlugins(const std::vector<Plugin*>& plugins);
+	void freePlugins(const std::vector<ID>);
 
 	/* freeAllPlugins
 	Just deletes everything. */

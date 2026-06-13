@@ -138,10 +138,10 @@ void PluginHost::freePlugin(ID pluginId)
 	m_model.removePlugin(*m_model.findPlugin(pluginId));
 }
 
-void PluginHost::freePlugins(const std::vector<Plugin*>& plugins)
+void PluginHost::freePlugins(const std::vector<ID> ids)
 {
-	for (const Plugin* p : plugins)
-		m_model.removePlugin(*p);
+	for (const ID id : ids)
+		freePlugin(id);
 }
 
 /* -------------------------------------------------------------------------- */
