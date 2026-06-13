@@ -48,11 +48,11 @@ gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin, ID wid)
 
 	m_list->begin();
 	const int labelWidth = 150;
-	for (int index : m_plugin.paramIndexes)
+	for (const c::plugin::Param& param : m_plugin.parameters)
 	{
-		int py = m_list->y() + (index * (G_GUI_UNIT + G_GUI_INNER_MARGIN));
+		int py = m_list->y() + (param.index * (G_GUI_UNIT + G_GUI_INNER_MARGIN));
 		int pw = m_list->w() - m_list->scrollbar_size() - (G_GUI_OUTER_MARGIN * 3);
-		new v::gePluginParameter(m_list->x(), py, pw, labelWidth, c::plugin::getParam(index, m_plugin.getPluginRef(), m_plugin.channelId));
+		new v::gePluginParameter(m_list->x(), py, pw, labelWidth, param);
 	}
 	m_list->end();
 
@@ -70,8 +70,8 @@ gdPluginWindow::gdPluginWindow(const c::plugin::Plugin& plugin, ID wid)
 
 void gdPluginWindow::updateParameters(bool changeSlider)
 {
-	for (const std::size_t index : m_plugin.paramIndexes)
-		updateParameter(index, changeSlider);
+	for (const c::plugin::Param& param : m_plugin.parameters)
+		updateParameter(param.index, changeSlider);
 }
 
 /* -------------------------------------------------------------------------- */

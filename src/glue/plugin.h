@@ -60,7 +60,7 @@ struct Param
 	std::string getLabel() const;
 	float       getValue() const;
 
-	int         index;
+	std::size_t index;
 	ID          pluginId;
 	ID          channelId;
 	std::string name;
@@ -88,8 +88,8 @@ struct Plugin
 	int         currentProgram;
 	float       uiScaling;
 
-	std::vector<Program>     programs;
-	std::vector<std::size_t> paramIndexes;
+	std::vector<Program> programs;
+	std::vector<Param>   parameters;
 
 private:
 	m::Plugin& m_plugin;

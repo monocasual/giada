@@ -100,7 +100,7 @@ Plugin::Plugin(m::Plugin& p, ID channelId)
 	for (int i = 0; i < p.getNumPrograms(); i++)
 		programs.push_back({i, p.getProgramName(i)});
 	for (const m::Plugin::Parameter& param : p.getParameters())
-		paramIndexes.push_back(param.index);
+		parameters.emplace_back(param, p.id, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
