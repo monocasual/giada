@@ -127,8 +127,9 @@ void Plugin::setResizeCallback(std::function<void(int, int)> f)
 
 Plugins::Plugins(const m::Channel& c)
 : channelId(c.id)
-, plugins(c.plugins)
 {
+	for (m::Plugin* plugin : c.plugins)
+		plugins.emplace_back(*plugin, c.id);
 }
 
 /* -------------------------------------------------------------------------- */

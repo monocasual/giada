@@ -100,8 +100,8 @@ struct Plugins
 	Plugins() = default;
 	Plugins(const m::Channel&);
 
-	ID                      channelId;
-	std::vector<m::Plugin*> plugins;
+	ID                  channelId;
+	std::vector<Plugin> plugins;
 };
 
 /* get*
