@@ -141,11 +141,6 @@ Plugins getPlugins(ID channelId)
 	return Plugins(g_engine->getChannelsApi().get(channelId));
 }
 
-Plugin getPlugin(m::Plugin& plugin, ID channelId)
-{
-	return Plugin(plugin, channelId);
-}
-
 std::vector<PluginInfo> getPluginsInfo()
 {
 	return g_engine->getPluginsApi().getInfo();

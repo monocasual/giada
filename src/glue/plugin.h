@@ -104,11 +104,10 @@ struct Plugins
 	std::vector<Plugin> plugins;
 };
 
-/* get*
+/* getPlugins
 Returns ViewModel objects. */
 
 Plugins getPlugins(ID channelId);
-Plugin  getPlugin(m::Plugin&, ID channelId);
 
 std::vector<PluginInfo> getPluginsInfo();
 
