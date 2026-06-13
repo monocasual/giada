@@ -49,7 +49,7 @@ gePluginParameter::gePluginParameter(int X, int Y, int W, int labelWidth, const 
 
 	m_label->setLabel(m_param.name);
 
-	m_slider->value(m_param.value);
+	m_slider->value(m_param.getValue());
 	m_slider->callback(cb_setValue, (void*)this);
 
 	m_value->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
@@ -74,8 +74,8 @@ void gePluginParameter::cb_setValue()
 
 void gePluginParameter::update(const c::plugin::Param& p, bool changeSlider)
 {
-	m_value->setLabel(std::string(p.valueAsText + " " + p.label));
+	m_value->setLabel(std::string(p.getValueAsText() + " " + p.getLabel()));
 	if (changeSlider)
-		m_slider->value(p.value);
+		m_slider->value(p.getValue());
 }
 } // namespace giada::v

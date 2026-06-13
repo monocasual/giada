@@ -71,11 +71,15 @@ Param::Param(const m::Plugin::Parameter& p, ID pluginId, ID channelId)
 , pluginId(pluginId)
 , channelId(channelId)
 , name(p.name)
-, valueAsText(p.getValueAsText())
-, label(p.getLabel())
-, value(p.getValue())
+, m_parameter(p)
 {
 }
+
+/* -------------------------------------------------------------------------- */
+
+std::string Param::getValueAsText() const { return m_parameter.getValueAsText(); }
+std::string Param::getLabel() const { return m_parameter.getLabel(); }
+float       Param::getValue() const { return m_parameter.getValue(); }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */

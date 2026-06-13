@@ -54,16 +54,19 @@ struct Program
 
 struct Param
 {
-	Param() = default;
 	Param(const m::Plugin::Parameter&, ID pluginId, ID channelId);
+
+	std::string getValueAsText() const;
+	std::string getLabel() const;
+	float       getValue() const;
 
 	int         index;
 	ID          pluginId;
 	ID          channelId;
 	std::string name;
-	std::string valueAsText;
-	std::string label;
-	float       value;
+
+private:
+	const m::Plugin::Parameter& m_parameter;
 };
 
 struct Plugin
