@@ -91,11 +91,13 @@ void PluginsApi::add(const std::string& juceId, ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void PluginsApi::swap(const Plugin& p1, const Plugin& p2, ID channelId)
+void PluginsApi::swap(ID pluginId1, ID pluginId2, ID channelId)
 {
-	auto&       plugins = m_model.get().tracks.getChannel(channelId).plugins;
-	std::size_t index1  = utils::container::indexOf(plugins, &p1);
-	std::size_t index2  = utils::container::indexOf(plugins, &p2);
+	auto&             plugins = m_model.get().tracks.getChannel(channelId).plugins;
+	const std::size_t index1  = utils::container::indexOfIf(plugins, [pluginId1](const Plugin* p)
+	 { return p->id == pluginId1; });
+	const std::size_t index2  = utils::container::indexOfIf(plugins, [pluginId2](const Plugin* p)
+	 { return p->id == pluginId2; });
 	std::swap(plugins.at(index1), plugins.at(index2));
 	m_model.swap(model::SwapType::HARD);
 }

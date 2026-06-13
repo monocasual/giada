@@ -53,7 +53,7 @@ public:
 	int                     countAvailablePlugins() const;
 
 	void add(const std::string& juceId, ID channelId);
-	void swap(const Plugin&, const Plugin&, ID channelId);
+	void swap(ID pluginId1, ID pluginId2, ID channelId);
 	void sort(PluginSortMode);
 	void free(ID pluginId, ID channelId);
 	void setProgram(ID pluginId, int programIndex);

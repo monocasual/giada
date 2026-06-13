@@ -127,7 +127,7 @@ Add a new Plugin to channel 'channelId'. */
 
 void addPlugin(const std::string& juceId, ID channelId);
 
-void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId);
+void swapPlugins(ID pluginId1, ID pluginId2, ID channelId);
 void sortPlugins(PluginSortMode);
 void freePlugin(ID pluginId, ID channelId);
 void setProgram(ID pluginId, int programIndex);

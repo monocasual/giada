@@ -180,9 +180,9 @@ void addPlugin(const std::string& juceId, ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
-void swapPlugins(const m::Plugin& p1, const m::Plugin& p2, ID channelId)
+void swapPlugins(ID pluginId1, ID pluginId2, ID channelId)
 {
-	g_engine->getPluginsApi().swap(p1, p2, channelId);
+	g_engine->getPluginsApi().swap(pluginId1, pluginId2, channelId);
 }
 
 /* -------------------------------------------------------------------------- */
