@@ -124,15 +124,6 @@ const Plugin& PluginHost::addPlugin(std::unique_ptr<Plugin> p)
 
 /* -------------------------------------------------------------------------- */
 
-void PluginHost::swapPlugin(const m::Plugin& p1, const m::Plugin& p2, std::vector<Plugin*>& plugins)
-{
-	std::size_t index1 = utils::container::indexOf(plugins, &p1);
-	std::size_t index2 = utils::container::indexOf(plugins, &p2);
-	std::swap(plugins.at(index1), plugins.at(index2));
-}
-
-/* -------------------------------------------------------------------------- */
-
 void PluginHost::freePlugin(ID pluginId)
 {
 	m_model.removePlugin(*m_model.findPlugin(pluginId));

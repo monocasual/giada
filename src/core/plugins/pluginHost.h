@@ -98,11 +98,6 @@ public:
 	void processStack(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>& plugins,
 	    const juce::MidiBuffer* events = nullptr);
 
-	/* swapPlugin
-	Swaps plug-in 1 with plug-in 2 in the plug-in vector. */
-
-	void swapPlugin(const m::Plugin& p1, const m::Plugin& p2, std::vector<Plugin*>& plugins);
-
 	/* freePlugin.
 	Unloads plugin from memory. */
 
