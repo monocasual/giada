@@ -39,7 +39,7 @@ class geImageButton;
 class gePluginElement : public geFlex
 {
 public:
-	gePluginElement(int x, int y, int w, int h, c::plugin::Plugin);
+	gePluginElement(int x, int y, int w, int h, const c::plugin::Plugin&);
 
 	ID getPluginId() const;
 
@@ -56,7 +56,7 @@ private:
 	void shiftUp();
 	void shiftDown();
 
-	c::plugin::Plugin m_plugin;
+	const c::plugin::Plugin& m_plugin;
 };
 } // namespace giada::v
 

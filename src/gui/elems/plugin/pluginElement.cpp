@@ -44,7 +44,7 @@ extern giada::v::Ui* g_ui;
 
 namespace giada::v
 {
-gePluginElement::gePluginElement(int x, int y, int w, int h, c::plugin::Plugin data)
+gePluginElement::gePluginElement(int x, int y, int w, int h, const c::plugin::Plugin& data)
 : geFlex(x, y, w, h, Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , m_plugin(data)
 {
