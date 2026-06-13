@@ -160,7 +160,7 @@ void gePluginElement::openPluginWindow()
 		return;
 	}
 
-	if (m_plugin.hasEditor)
+	if (m_plugin.hasEditor())
 		pluginWindow = new gdPluginWindowGUI(m_plugin, pwid);
 	else
 		pluginWindow = new gdPluginWindow(m_plugin, pwid);

@@ -74,13 +74,13 @@ struct Plugin
 	Plugin(m::Plugin&, ID channelId);
 
 	juce::AudioProcessorEditor* createEditor() const;
+	bool                        hasEditor() const;
 
 	void setResizeCallback(std::function<void(int, int)> f);
 
 	ID          id;
 	ID          channelId;
 	bool        valid;
-	bool        hasEditor;
 	bool        isBypassed;
 	std::string name;
 	std::string juceId;

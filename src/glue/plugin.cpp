@@ -89,7 +89,6 @@ Plugin::Plugin(m::Plugin& p, ID channelId)
 : id(p.id)
 , channelId(channelId)
 , valid(p.valid)
-, hasEditor(p.hasEditor())
 , isBypassed(p.isBypassed())
 , name(p.getName())
 , juceId(p.getJuceId())
@@ -108,6 +107,13 @@ Plugin::Plugin(m::Plugin& p, ID channelId)
 juce::AudioProcessorEditor* Plugin::createEditor() const
 {
 	return m_plugin.createEditor();
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool Plugin::hasEditor() const
+{
+	return m_plugin.hasEditor();
 }
 
 /* -------------------------------------------------------------------------- */
