@@ -97,19 +97,15 @@ void gdPluginList::rebuild()
 
 const gePluginElement& gdPluginList::getNextElement(const gePluginElement& currEl) const
 {
-	int curr = list->find(currEl);
-	int next = curr + 1;
-	if (next > list->countChildren() - 2)
-		next = list->countChildren() - 2;
+	const int curr = list->find(currEl);
+	const int next = std::min(curr + 1, list->countChildren() - 2);
 	return *static_cast<gePluginElement*>(list->child(next));
 }
 
 const gePluginElement& gdPluginList::getPrevElement(const gePluginElement& currEl) const
 {
-	int curr = list->find(currEl);
-	int prev = curr - 1;
-	if (prev < 0)
-		prev = 0;
+	const int curr = list->find(currEl);
+	const int prev = std::max(0, curr - 1);
 	return *static_cast<gePluginElement*>(list->child(prev));
 }
 } // namespace giada::v
