@@ -109,7 +109,6 @@ Returns ViewModel objects. */
 
 Plugins getPlugins(ID channelId);
 Plugin  getPlugin(m::Plugin&, ID channelId);
-Param   getParam(std::size_t index, const m::Plugin& plugin, ID channelId);
 
 std::vector<PluginInfo> getPluginsInfo();
 

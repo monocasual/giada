@@ -145,11 +145,6 @@ Plugin getPlugin(m::Plugin& plugin, ID channelId)
 	return Plugin(plugin, channelId);
 }
 
-Param getParam(std::size_t index, const m::Plugin& plugin, ID channelId)
-{
-	return Param(plugin.getParameters()[index], plugin.id, channelId);
-}
-
 std::vector<PluginInfo> getPluginsInfo()
 {
 	return g_engine->getPluginsApi().getInfo();
