@@ -56,7 +56,7 @@ gePluginParameter::gePluginParameter(int X, int Y, int W, int labelWidth, const 
 	m_value->box(G_CUSTOM_BORDER_BOX);
 
 	resizable(m_slider);
-	update(m_param, false);
+	update(false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -72,10 +72,10 @@ void gePluginParameter::cb_setValue()
 
 /* -------------------------------------------------------------------------- */
 
-void gePluginParameter::update(const c::plugin::Param& p, bool changeSlider)
+void gePluginParameter::update(bool changeSlider)
 {
-	m_value->setLabel(std::string(p.getValueAsText() + " " + p.getLabel()));
+	m_value->setLabel(std::string(m_param.getValueAsText() + " " + m_param.getLabel()));
 	if (changeSlider)
-		m_slider->value(p.getValue());
+		m_slider->value(m_param.getValue());
 }
 } // namespace giada::v

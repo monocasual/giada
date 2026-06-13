@@ -39,7 +39,7 @@ class gePluginParameter : public geFlex
 public:
 	gePluginParameter(int x, int y, int w, int labelWidth, const c::plugin::Param);
 
-	void update(const c::plugin::Param& p, bool changeSlider);
+	void update(bool changeSlider);
 
 private:
 	static void cb_setValue(Fl_Widget* /*w*/, void* p);

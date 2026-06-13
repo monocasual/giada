@@ -78,9 +78,8 @@ void gdPluginWindow::updateParameters(bool changeSlider)
 
 void gdPluginWindow::updateParameter(std::size_t paramIndex, bool changeSlider)
 {
-	const c::plugin::Param param  = c::plugin::getParam(paramIndex, m_plugin.getPluginRef(), m_plugin.channelId);
-	auto*                  widget = static_cast<v::gePluginParameter*>(m_list->child(paramIndex));
+	auto* widget = static_cast<v::gePluginParameter*>(m_list->child(paramIndex));
 	assert(widget != nullptr);
-	widget->update(param, changeSlider);
+	widget->update(changeSlider);
 }
 } // namespace giada::v
