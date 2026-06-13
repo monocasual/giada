@@ -366,6 +366,7 @@ void writeCommons_(const Patch& patch, nlohmann::json& j)
 	j[PATCH_KEY_BEATS]         = patch.beats;
 	j[PATCH_KEY_BPM]           = patch.bpm;
 	j[PATCH_KEY_QUANTIZE]      = patch.quantize;
+	j[PATCH_KEY_SAMPLERATE]    = patch.samplerate;
 	j[PATCH_KEY_METRONOME]     = patch.metronome;
 }
 

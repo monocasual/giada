@@ -76,6 +76,11 @@ bool StorageApi::storeProject(const std::string& projectPath, const v::Model& ui
 	uiModel.store(patch);
 	m_model.store(patch, projectPath);
 
+	/* Store current sample rate in Patch. Needed for adjusting sample range points
+	in case project sample rate != current sample rate when loading a project. */
+	
+	patch.samplerate = m_kernelAudio.getSampleRate();
+
 	progress(0.6f);
 
 	const std::string patchPath = utils::fs::join(projectPath, patch.name + G_PATCH_EXT);
