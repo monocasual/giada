@@ -146,7 +146,7 @@ void gePluginElement::removePlugin()
 	/* Any subwindow linked to the plugin must be destroyed first. */
 
 	g_ui->closeSubWindow(Ui::getPluginWindowId(m_plugin.id));
-	c::plugin::freePlugin(m_plugin.getPluginRef(), m_plugin.channelId);
+	c::plugin::freePlugin(m_plugin.id, m_plugin.channelId);
 }
 
 /* -------------------------------------------------------------------------- */

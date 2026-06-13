@@ -106,7 +106,7 @@ public:
 	/* freePlugin.
 	Unloads plugin from memory. */
 
-	void freePlugin(const m::Plugin& plugin);
+	void freePlugin(ID pluginId);
 
 	/* freePlugins
 	Unloads multiple plugins. Useful when freeing or deleting a channel. */

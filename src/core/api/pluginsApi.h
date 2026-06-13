@@ -55,7 +55,7 @@ public:
 	void add(const std::string& juceId, ID channelId);
 	void swap(const Plugin&, const Plugin&, ID channelId);
 	void sort(PluginSortMode);
-	void free(const Plugin&, ID channelId);
+	void free(ID pluginId, ID channelId);
 	void setProgram(ID pluginId, int programIndex);
 	void toggleBypass(ID pluginId);
 	void setParameter(ID pluginId, int paramIndex, float value);

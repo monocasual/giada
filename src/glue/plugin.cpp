@@ -194,9 +194,9 @@ void sortPlugins(PluginSortMode mode)
 
 /* -------------------------------------------------------------------------- */
 
-void freePlugin(const m::Plugin& plugin, ID channelId)
+void freePlugin(ID pluginId, ID channelId)
 {
-	g_engine->getPluginsApi().free(plugin, channelId);
+	g_engine->getPluginsApi().free(pluginId, channelId);
 }
 
 /* -------------------------------------------------------------------------- */

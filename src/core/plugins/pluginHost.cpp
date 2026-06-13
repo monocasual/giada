@@ -133,9 +133,9 @@ void PluginHost::swapPlugin(const m::Plugin& p1, const m::Plugin& p2, std::vecto
 
 /* -------------------------------------------------------------------------- */
 
-void PluginHost::freePlugin(const m::Plugin& plugin)
+void PluginHost::freePlugin(ID pluginId)
 {
-	m_model.removePlugin(plugin);
+	m_model.removePlugin(*m_model.findPlugin(pluginId));
 }
 
 void PluginHost::freePlugins(const std::vector<Plugin*>& plugins)
