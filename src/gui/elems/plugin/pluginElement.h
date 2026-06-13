@@ -41,8 +41,7 @@ class gePluginElement : public geFlex
 public:
 	gePluginElement(int x, int y, int w, int h, c::plugin::Plugin);
 
-	ID               getPluginId() const;
-	const m::Plugin& getPluginRef() const;
+	ID getPluginId() const;
 
 	geTextButton*  button;
 	geChoice*      program;

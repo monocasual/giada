@@ -112,10 +112,6 @@ juce::AudioProcessorEditor* Plugin::createEditor() const
 
 /* -------------------------------------------------------------------------- */
 
-const m::Plugin& Plugin::getPluginRef() const { return m_plugin; }
-
-/* -------------------------------------------------------------------------- */
-
 void Plugin::setResizeCallback(std::function<void(int, int)> f)
 {
 	m_plugin.onEditorResize = f;

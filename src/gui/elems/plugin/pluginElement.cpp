@@ -116,18 +116,13 @@ ID gePluginElement::getPluginId() const
 	return m_plugin.id;
 }
 
-const m::Plugin& gePluginElement::getPluginRef() const
-{
-	return m_plugin.getPluginRef();
-}
-
 /* -------------------------------------------------------------------------- */
 
 void gePluginElement::shiftUp()
 {
 	const gdPluginList* parent = static_cast<const gdPluginList*>(window());
 
-	c::plugin::swapPlugins(m_plugin.getPluginRef().id, parent->getPrevElement(*this).getPluginRef().id, m_plugin.channelId);
+	c::plugin::swapPlugins(m_plugin.id, parent->getPrevElement(*this).getPluginId(), m_plugin.channelId);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -136,7 +131,7 @@ void gePluginElement::shiftDown()
 {
 	const gdPluginList* parent = static_cast<const gdPluginList*>(window());
 
-	c::plugin::swapPlugins(m_plugin.getPluginRef().id, parent->getNextElement(*this).getPluginRef().id, m_plugin.channelId);
+	c::plugin::swapPlugins(m_plugin.id, parent->getNextElement(*this).getPluginId(), m_plugin.channelId);
 }
 
 /* -------------------------------------------------------------------------- */

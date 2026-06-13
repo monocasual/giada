@@ -74,7 +74,6 @@ struct Plugin
 	Plugin(m::Plugin&, ID channelId);
 
 	juce::AudioProcessorEditor* createEditor() const;
-	const m::Plugin&            getPluginRef() const;
 
 	void setResizeCallback(std::function<void(int, int)> f);
 
