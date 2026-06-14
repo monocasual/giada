@@ -54,7 +54,7 @@ struct Program
 
 struct Param
 {
-	Param(const m::Plugin::Parameter&, ID pluginId, ID channelId);
+	Param(const m::PluginParameter&, ID pluginId, ID channelId);
 
 	std::string getValueAsText() const;
 	std::string getLabel() const;
@@ -66,7 +66,7 @@ struct Param
 	std::string name;
 
 private:
-	const m::Plugin::Parameter& m_parameter;
+	const m::PluginParameter& m_parameter;
 };
 
 struct Plugin

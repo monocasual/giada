@@ -37,6 +37,7 @@ Windows. */
 
 #include "src/core/midiLearnParam.h"
 #include "src/core/plugins/pluginHost.h"
+#include "src/core/plugins/pluginParameter.h"
 #include "src/core/plugins/pluginState.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -49,25 +50,6 @@ class Plugin : private juce::ComponentListener
 {
 public:
 	using Buffer = juce::AudioBuffer<float>;
-
-	class Parameter
-	{
-	public:
-		Parameter(juce::AudioProcessorParameter*, std::size_t index);
-
-		std::string getLabel() const;
-		std::string getValueAsText() const;
-		float       getValue() const;
-
-		void setValue(float);
-
-		std::size_t    index = 0;
-		std::string    name;
-		MidiLearnParam learnParam;
-
-	private:
-		juce::AudioProcessorParameter* m_ptr = nullptr;
-	};
 
 	/* Plugin (1)
 	Constructs an invalid plug-in. */
@@ -122,8 +104,8 @@ public:
 	void setState(PluginState p);
 	void setBypass(bool b);
 
-	const std::vector<Parameter>& getParameters() const;
-	std::vector<Parameter>&       getParameters();
+	const std::vector<PluginParameter>& getParameters() const;
+	std::vector<PluginParameter>&       getParameters();
 
 	/* id
 	Unique identifier. */
@@ -171,7 +153,7 @@ private:
 	/* m_parameters
 	Vector of plug-in parameters filled during plug-in construction. */
 
-	std::vector<Parameter> m_parameters;
+	std::vector<PluginParameter> m_parameters;
 };
 } // namespace giada::m
 

@@ -108,7 +108,7 @@ Patch::Plugin serializePlugin(const Plugin& p)
 	pp.bypass = p.isBypassed();
 	pp.state  = p.getState().asBase64();
 
-	for (const Plugin::Parameter& param : p.getParameters())
+	for (const PluginParameter& param : p.getParameters())
 		pp.midiInParams.push_back(param.learnParam.getValue());
 
 	return pp;

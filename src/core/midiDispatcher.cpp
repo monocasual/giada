@@ -162,7 +162,7 @@ void MidiDispatcher::processPlugins(ID channelId, const std::vector<Plugin*>& pl
 
 	for (Plugin* p : plugins)
 	{
-		for (const Plugin::Parameter& param : p->getParameters())
+		for (const PluginParameter& param : p->getParameters())
 		{
 			if (pure != param.learnParam.getValue())
 				continue;
