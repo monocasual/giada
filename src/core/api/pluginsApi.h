@@ -61,7 +61,6 @@ public:
 	void setParameter(ID pluginId, int paramIndex, float value);
 
 	void scan(const std::string& dir, const std::function<bool(float)>& progress);
-	void process(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>&, juce::MidiBuffer* events = nullptr);
 
 private:
 	KernelAudio&   m_kernelAudio;

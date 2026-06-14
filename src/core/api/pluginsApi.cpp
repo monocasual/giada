@@ -149,11 +149,4 @@ void PluginsApi::scan(const std::string& dir, const std::function<bool(float)>& 
 	m_pluginManager.scanDirs(dir, progress);
 	m_pluginManager.saveList(utils::fs::join(u::fs::getConfigDirPath(), "plugins.xml"));
 }
-
-/* -------------------------------------------------------------------------- */
-
-void PluginsApi::process(mcl::AudioBuffer& outBuf, const std::vector<Plugin*>& plugins, juce::MidiBuffer* events)
-{
-	m_pluginHost.processStack(outBuf, plugins, events);
-}
 } // namespace giada::m
