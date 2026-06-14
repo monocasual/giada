@@ -27,7 +27,6 @@
 #ifndef G_GLUE_PLUGIN_H
 #define G_GLUE_PLUGIN_H
 
-#include "src/core/plugins/plugin.h"
 #include "src/core/types.h"
 #include "src/types.h"
 #include <functional>
@@ -42,6 +41,8 @@ class AudioProcessorEditor;
 namespace giada::m
 {
 class Channel;
+class Plugin;
+class PluginParameter;
 } // namespace giada::m
 
 namespace giada::c::plugin
