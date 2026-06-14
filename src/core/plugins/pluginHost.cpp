@@ -56,6 +56,7 @@ juce::Optional<juce::AudioPlayHead::PositionInfo> PluginHost::Info::getPosition(
 	info.setBpm(m_sequencer.getBpm());
 	info.setTimeInSamples(m_sequencer.a_getCurrentFrame());
 	info.setTimeInSeconds(m_sequencer.a_getCurrentSecond(m_sampleRate));
+	info.setPpqPosition(m_sequencer.a_getCurrentQuarterNotePosition(m_sampleRate));
 	info.setIsPlaying(m_sequencer.isRunning());
 
 	return {info};

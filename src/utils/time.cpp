@@ -104,6 +104,15 @@ TickRange frameRangeToTickRange(FrameRange frameRange, int sampleRate, float bpm
 
 /* -------------------------------------------------------------------------- */
 
+double frameToQuarterNotes(Frame frame, int sampleRate, double bpm)
+{
+	/* quarterNotes = seconds * quarterNotesPerSecond
+	                = (frame / sampleRate) * (bpm / 60) */
+	return static_cast<double>(frame) * bpm / (static_cast<double>(sampleRate) * 60.0);
+}
+
+/* -------------------------------------------------------------------------- */
+
 int tickToPixel(Tick tick, double ratio)
 {
 	return static_cast<int>(tick.value() / ratio);

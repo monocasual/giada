@@ -94,6 +94,13 @@ float Sequencer::a_getCurrentSecond(int sampleRate) const
 
 /* -------------------------------------------------------------------------- */
 
+double Sequencer::a_getCurrentQuarterNotePosition(int sampleRate) const
+{
+	return u::time::frameToQuarterNotes(a_getCurrentFrame(), sampleRate, getBpm());
+}
+
+/* -------------------------------------------------------------------------- */
+
 Scene Sequencer::a_getCurrentScene() const
 {
 	return Scene{shared->currentSceneIndex.load()};

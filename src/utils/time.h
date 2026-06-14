@@ -67,6 +67,23 @@ frame range. */
 
 TickRange frameRangeToTickRange(FrameRange, int sampleRate, float bpm);
 
+/* frameToQuarterNotes
+Converts an absolute frame position into a musical position expressed in quarter
+notes (aka PPQ position in JUCE terminology, which is different from Giada's
+PPQ - pulse per quarter). The returned value is not a Giada Tick. It is a
+continuous time value where:
+- 0.0 = start of timeline
+- 1.0 = one quarter note
+- 2.5 = two and a half quarter notes
+Use this when filling juce::AudioPlayHead::PositionInfo::setPpqPosition().
+You could obtain the same result by doing tick / G_PPQ, which is conceptually
+correct, but since a tick has already been floored to an integer tick (with
+frameToTickFloor()), then you’ve baked in a tiny quantization error before
+converting to JUCE ppqPosition. The goal is to provide the most accurate position,
+so the path frame -> quarter notes is the cleaner source. */
+
+double frameToQuarterNotes(Frame, int sampleRate, double bpm);
+
 /* tickToPixel, pixelToTick
 Converts Tick <-> pixel. */
 

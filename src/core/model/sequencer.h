@@ -65,6 +65,7 @@ public:
 	Tick        a_getCurrentTick(int sampleRate) const;
 	Frame       a_getCurrentBeat() const;
 	float       a_getCurrentSecond(int sampleRate) const;
+	double      a_getCurrentQuarterNotePosition(int sampleRate) const;
 	Scene       a_getCurrentScene() const;
 	Scene       a_getNextScene() const;
 	SceneStatus a_getSceneStatus() const;
