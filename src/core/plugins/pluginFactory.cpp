@@ -71,7 +71,7 @@ std::unique_ptr<Plugin> create(ID id, const std::string& juceId, std::unique_ptr
 	    pluginId_.generate(id),
 	    juceId,
 	    std::move(pi),
-	    std::make_unique<PluginHost::PluginAudioPlayHead>(sequencer, sampleRate),
+	    std::make_unique<PluginAudioPlayHead>(sequencer, sampleRate),
 	    sampleRate, bufferSize);
 }
 

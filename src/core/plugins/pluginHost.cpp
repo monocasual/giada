@@ -41,38 +41,6 @@ namespace utils = mcl::utils;
 
 namespace giada::m
 {
-PluginHost::PluginAudioPlayHead::PluginAudioPlayHead(const model::Sequencer& s, int sampleRate)
-: m_sequencer(s)
-, m_sampleRate(sampleRate)
-{
-}
-
-/* -------------------------------------------------------------------------- */
-
-juce::Optional<juce::AudioPlayHead::PositionInfo> PluginHost::PluginAudioPlayHead::getPosition() const
-{
-	juce::AudioPlayHead::PositionInfo info;
-
-	info.setBpm(m_sequencer.getBpm());
-	info.setTimeInSamples(m_sequencer.a_getCurrentFrame());
-	info.setTimeInSeconds(m_sequencer.a_getCurrentSecond(m_sampleRate));
-	info.setPpqPosition(m_sequencer.a_getCurrentQuarterNotePosition(m_sampleRate));
-	info.setIsPlaying(m_sequencer.isRunning());
-
-	return {info};
-}
-
-/* -------------------------------------------------------------------------- */
-
-bool PluginHost::PluginAudioPlayHead::canControlTransport()
-{
-	return false;
-}
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 PluginHost::PluginHost(model::Model& m)
 : m_model(m)
 {

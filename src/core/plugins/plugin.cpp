@@ -53,7 +53,7 @@ Plugin::Plugin(ID id, const std::string& juceId)
 /* -------------------------------------------------------------------------- */
 
 Plugin::Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPluginInstance> plugin,
-    std::unique_ptr<PluginHost::PluginAudioPlayHead> playHead, double samplerate, int buffersize)
+    std::unique_ptr<PluginAudioPlayHead> playHead, double samplerate, int buffersize)
 : id(id)
 , valid(true)
 , onEditorResize(nullptr)

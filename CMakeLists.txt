@@ -142,6 +142,8 @@ list(APPEND SOURCES
 	src/core/plugins/pluginFactory.h
 	src/core/plugins/pluginParameter.cpp
 	src/core/plugins/pluginParameter.h
+	src/core/plugins/pluginAudioPlayHead.cpp
+	src/core/plugins/pluginAudioPlayHead.h
 	src/core/channels/channelManager.cpp
 	src/core/channels/channelManager.h
 	src/core/channels/midiLightning.cpp
