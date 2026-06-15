@@ -60,10 +60,10 @@ namespace giada::m
 class PluginHost final
 {
 public:
-	class Info final : public juce::AudioPlayHead
+	class PluginAudioPlayHead final : public juce::AudioPlayHead
 	{
 	public:
-		Info(const model::Sequencer&, int sampleRate);
+		PluginAudioPlayHead(const model::Sequencer&, int sampleRate);
 
 		juce::Optional<juce::AudioPlayHead::PositionInfo> getPosition() const override;
 		bool                                              canControlTransport() override;

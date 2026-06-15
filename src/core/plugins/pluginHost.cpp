@@ -41,7 +41,7 @@ namespace utils = mcl::utils;
 
 namespace giada::m
 {
-PluginHost::Info::Info(const model::Sequencer& s, int sampleRate)
+PluginHost::PluginAudioPlayHead::PluginAudioPlayHead(const model::Sequencer& s, int sampleRate)
 : m_sequencer(s)
 , m_sampleRate(sampleRate)
 {
@@ -49,7 +49,7 @@ PluginHost::Info::Info(const model::Sequencer& s, int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-juce::Optional<juce::AudioPlayHead::PositionInfo> PluginHost::Info::getPosition() const
+juce::Optional<juce::AudioPlayHead::PositionInfo> PluginHost::PluginAudioPlayHead::getPosition() const
 {
 	juce::AudioPlayHead::PositionInfo info;
 
@@ -64,7 +64,7 @@ juce::Optional<juce::AudioPlayHead::PositionInfo> PluginHost::Info::getPosition(
 
 /* -------------------------------------------------------------------------- */
 
-bool PluginHost::Info::canControlTransport()
+bool PluginHost::PluginAudioPlayHead::canControlTransport()
 {
 	return false;
 }

@@ -59,7 +59,7 @@ public:
 	/* Plugin (2)
 	Constructs a valid and working plug-in. */
 
-	Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPluginInstance>, std::unique_ptr<PluginHost::Info>,
+	Plugin(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPluginInstance>, std::unique_ptr<PluginHost::PluginAudioPlayHead>,
 	    double samplerate, int buffersize);
 
 	Plugin(const Plugin& o)          = delete;
@@ -139,9 +139,9 @@ private:
 	juce::AudioProcessor::Bus* getMainBus(BusType b) const;
 	int                        countChannelsForCurrentBusLayout(BusType) const;
 
-	std::unique_ptr<juce::AudioPluginInstance> m_plugin;
-	std::unique_ptr<PluginHost::Info>          m_playHead;
-	Buffer                                     m_buffer;
+	std::unique_ptr<juce::AudioPluginInstance>       m_plugin;
+	std::unique_ptr<PluginHost::PluginAudioPlayHead> m_playHead;
+	Buffer                                           m_buffer;
 
 	std::atomic<bool> m_bypass;
 
