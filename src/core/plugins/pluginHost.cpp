@@ -165,36 +165,32 @@ void PluginHost::juceToGiadaOutBuf(mcl::AudioBuffer& outBuf) const
 
 void PluginHost::processPlugins(const std::vector<Plugin*>& plugins, const juce::MidiBuffer& events)
 {
+	/* Plugins receive a mutable, local copy of the incoming MIDI buffer so they
+	can modify existing events or generate new ones; the resulting MIDI stream
+	is then passed downstream to the next plugins in the stack. This allows
+	MIDI-generating plugins to forward their output to subsequent plugins. */
+
+	juce::MidiBuffer localEvents = events;
 	for (Plugin* p : plugins)
 	{
 		if (!p->valid || p->isSuspended() || p->isBypassed())
 			continue;
-		processPlugin(p, events);
+		processPlugin(p, localEvents);
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-void PluginHost::processPlugin(Plugin* p, const juce::MidiBuffer& events)
+void PluginHost::processPlugin(Plugin* p, juce::MidiBuffer& events)
 {
 	const Plugin::Buffer& pluginBuffer = p->process(m_audioBuffer, events);
-	const bool            isInstrument = p->isInstrument();
 
 	/* Merge the plugin buffer back into the local one. Special care is needed
 	if audio channels mismatch. */
 
 	for (int i = 0, j = 0; i < m_audioBuffer.getNumChannels(); i++)
 	{
-		/* If instrument (i.e. a plug-in that accepts MIDI and produces audio
-		out of it), SUM the local working buffer to the main one. This allows
-		multiple plug-in instruments to play simultaneously on a given set of
-		MIDI events. If it's a normal FX instead (!isInstrument), the local
-		working buffer is simply copied over the main one. */
-
-		if (isInstrument)
-			m_audioBuffer.addFrom(i, 0, pluginBuffer, j, 0, pluginBuffer.getNumSamples());
-		else
-			m_audioBuffer.copyFrom(i, 0, pluginBuffer, j, 0, pluginBuffer.getNumSamples());
+		m_audioBuffer.copyFrom(i, 0, pluginBuffer, j, 0, pluginBuffer.getNumSamples());
 		if (i < p->countMainOutChannels() - 1)
 			j++;
 	}

@@ -118,7 +118,7 @@ private:
 
 	void processPlugins(const std::vector<Plugin*>&, const juce::MidiBuffer& events);
 
-	void processPlugin(Plugin*, const juce::MidiBuffer& events);
+	void processPlugin(Plugin*, juce::MidiBuffer& events);
 
 	model::Model& m_model;
 

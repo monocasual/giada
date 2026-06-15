@@ -230,7 +230,7 @@ std::vector<PluginParameter>&       Plugin::getParameters() { return m_parameter
 
 /* -------------------------------------------------------------------------- */
 
-const Plugin::Buffer& Plugin::process(const Plugin::Buffer& out, juce::MidiBuffer m)
+const Plugin::Buffer& Plugin::process(const Plugin::Buffer& out, juce::MidiBuffer& m)
 {
 	/* Copy the incoming buffer data into the temporary one. This way FXes will
 	process	existing audio data on the private buffer. This is needed later on

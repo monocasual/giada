@@ -94,13 +94,10 @@ public:
 	int countMainOutChannels() const;
 
 	/* process
-	Process the plug-in with audio and MIDI data. The audio buffer is a
-	reference, while the MIDI buffer must be passed by copy: each plug-in must
-	receive its own copy of the event set, so that any attempt to change/clear
-	the MIDI buffer will only modify the local copy. Returns a reference of the
+	Process the plug-in with audio and MIDI data. Returns a reference of the
 	local buffer filled with processed data. */
 
-	const Buffer& process(const Buffer& b, juce::MidiBuffer m);
+	const Buffer& process(const Buffer& b, juce::MidiBuffer& m);
 
 	void setState(PluginState p);
 	void setBypass(bool b);
