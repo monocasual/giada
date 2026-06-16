@@ -1,8 +1,6 @@
 1.5.0 --- 2026 . 06 . 17
 - New tick-based audio rendering engine, improving consistency across sequencing, playback and action editing
 - Rework the internal storage of actions, improving performance and simplifying action handling
-- Add support for forced scene switching
-- Add the ability to copy the current scene to another
 - Add options to clear all actions in the current scene or across all scenes
 - Add options to free all sample channels in the current scene or across all scenes
 - Allow plug-ins that generate MIDI to forward their output to subsequent plug-ins
