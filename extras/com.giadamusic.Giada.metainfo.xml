@@ -19,6 +19,25 @@
 		</screenshot>
 	</screenshots>
 	<releases>
+		<release version="1.5.0" date="2026-06-17">
+			<description>
+				<p>This release introduces a major overhaul of Giada's timing and sequencing engine, with a new tick-based internal timeline that improves musical precision across editing and playback. It also expands scene management with more flexible copy, clear and switching features, improves plug-in and MIDI workflow, adds CPU load monitoring to the main window and includes a broad round of internal cleanup and UI polish.</p>
+				<ul>
+					<li>New tick-based audio rendering engine, improving consistency across sequencing, playback and action editing;</li>
+					<li>Rework the internal storage of actions, improving performance and simplifying action handling;</li>
+					<li>Add support for forced scene switching;</li>
+					<li>Add the ability to copy the current scene to another;</li>
+					<li>Add options to clear all actions in the current scene or across all scenes;</li>
+					<li>Add options to free all sample channels in the current scene or across all scenes;</li>
+					<li>Allow plug-ins that generate MIDI to forward their output to subsequent plug-ins;</li>
+					<li>Improve transport and position reporting for plug-ins;</li>
+					<li>Add CPU load meter in the main window, along with a new footer area with extra information;</li>
+					<li>Fix audio glitches while saving a project;</li>
+					<li>Fix wrong sample range points computation when the system sample rate changes;</li>
+					<li>Include broader internal cleanup, refactoring, dependency updates and UI polish.</li>
+				</ul>
+			</description>
+		</release>
 		<release version="1.4.2" date="2026-06-02">
 			<description>
 				<p>This is the second bugfix release in the 1.4 series which makes working with scenes smoother and more flexible, fixes a few annoyances, and brings some welcome cleanup under the hood.</p>
