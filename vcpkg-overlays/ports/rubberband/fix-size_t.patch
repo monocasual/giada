@@ -1,0 +1,51 @@
+diff --git a/src/common/mathmisc.h b/src/common/mathmisc.h
+--- a/src/common/mathmisc.h
++++ b/src/common/mathmisc.h
+@@ -18,6 +18,7 @@
+ */
+ 
+ #ifndef RUBBERBAND_MATHMISC_H
++#include <cstddef>
+ #define RUBBERBAND_MATHMISC_H
+ 
+ #include "sysutils.h"
+@@ -37,7 +38,7 @@ inline double frequencyForBin(int b, int fftSize, double sampleRate) {
+ 
+ void pickNearestRational(double ratio, int maxDenom, int &num, int &denom);
+ 
+-size_t roundUp(size_t value); // to nearest power of two
++std::size_t roundUp(std::size_t value); // to nearest power of two
+ 
+-size_t roundUpDiv(double divisionOf, size_t divisor);
++std::size_t roundUpDiv(double divisionOf, std::size_t divisor);
+ 
+ }
+diff --git a/src/common/mathmisc.cpp b/src/common/mathmisc.cpp
+--- a/src/common/mathmisc.cpp
++++ b/src/common/mathmisc.cpp
+@@ -66,15 +66,15 @@ void pickNearestRational(double ratio, int max_denom, int &num, int &denom)
+     } else {
+         num = pa;
+         denom = pb;
+     }
+ }
+ 
+-size_t roundUp(size_t value)
++std::size_t roundUp(std::size_t value)
+ {
+     if (!(value & (value - 1))) return value;
+-    size_t bits = 0;
++    std::size_t bits = 0;
+     while (value) { ++bits; value >>= 1; }
+-    value = size_t(1) << bits;
++    value = std::size_t(1) << bits;
+     return value;
+ }
+ 
+-size_t roundUpDiv(double divisionOf, size_t divisor)
++std::size_t roundUpDiv(double divisionOf, std::size_t divisor)
+ {
+     if (divisionOf < 0.0) return 0;
+-    return roundUp(size_t(ceil(divisionOf / double(divisor))));
++    return roundUp(std::size_t(ceil(divisionOf / double(divisor))));
+ }

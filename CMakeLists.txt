@@ -538,7 +538,12 @@ list(APPEND LIBRARIES Threads::Threads)
 
 # pkg-config/pkgconf, required to find some external dependencies on some
 # platforms
-find_package(PkgConfig)
+find_package(PkgConfig REQUIRED)
+
+# Librubberband (no cmake support)
+
+pkg_check_modules(RUBBERBAND REQUIRED IMPORTED_TARGET rubberband)
+list(APPEND LIBRARIES PkgConfig::RUBBERBAND)
 
 # RtMidi
 

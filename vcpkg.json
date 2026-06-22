@@ -7,6 +7,7 @@
         "catch2",
         "nlohmann-json",
         "libsamplerate",
+        "rubberband",
         {
             "name": "rtmidi",
             "platform": "linux",
@@ -49,6 +50,10 @@
         {
             "name": "libsndfile",
             "version": "1.2.2"
+        },
+        {
+            "name": "rubberband",
+            "version": "4.0.0"
         }
     ]
 }
