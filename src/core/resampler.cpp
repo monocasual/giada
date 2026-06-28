@@ -27,10 +27,9 @@
 #include "src/core/resampler.h"
 #include <algorithm>
 #include <cassert>
+#include <cstdio>
 #include <new>
 #include <utility>
-
-#include <cstdio>
 
 namespace giada::m
 {
