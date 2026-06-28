@@ -58,8 +58,8 @@ TEST_CASE("WaveReading")
 			});
 
 			REQUIRE(numFramesFilled == BUFFER_SIZE / 2);
-			REQUIRE(out[(BUFFER_SIZE / 2) - 1][0] == 0.0f);
-			REQUIRE(out[BUFFER_SIZE / 2][0] != 0.0f);
+			REQUIRE(out.at((BUFFER_SIZE / 2) - 1, 0) == 0.0f);
+			REQUIRE(out.at(BUFFER_SIZE / 2, 0) != 0.0f);
 			REQUIRE(numFramesFilled == res.used);
 			REQUIRE(numFramesFilled == res.generated);
 		}

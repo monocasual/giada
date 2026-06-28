@@ -76,7 +76,7 @@ TEST_CASE("rendering::sampleRendering")
 				m::rendering::renderSampleChannel(channel, Scene{0}, /*seqIsRunning=*/false);
 
 				// Rendering should start over again at buffer[OFFSET]
-				REQUIRE(channelShared.audioBuffer[OFFSET][0] == 1.0f);
+				REQUIRE(channelShared.audioBuffer.at(OFFSET, 0) == 1.0f);
 			}
 
 			SECTION("Stop, pitch == " + std::to_string(pitch))

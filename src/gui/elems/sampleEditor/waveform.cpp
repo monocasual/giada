@@ -131,8 +131,8 @@ int geWaveform::alloc(int datasize, bool force)
 
 			/* Compute average of stereo signal. */
 
-			float  avg   = 0.0f;
-			float* frame = wave.getBuffer()[k];
+			float        avg   = 0.0f;
+			const float* frame = wave.getBuffer().at(k);
 			for (int j = 0; j < wave.getBuffer().countChannels(); j++)
 				avg += frame[j];
 			avg /= wave.getBuffer().countChannels();

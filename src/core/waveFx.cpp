@@ -46,7 +46,7 @@ namespace
 void fadeFrame_(Wave& w, int i, float val)
 {
 	for (int j = 0; j < w.getBuffer().countChannels(); j++)
-		w.getBuffer()[i][j] *= val;
+		w.getBuffer().at(i, j) *= val;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -58,7 +58,7 @@ float getPeak_(const Wave& w, int a, int b)
 	for (int i = a; i < b; i++)
 	{
 		for (int j = 0; j < w.getBuffer().countChannels(); j++) // Find highest value in any channel
-			abs = fabs(w.getBuffer()[i][j]);
+			abs = fabs(w.getBuffer().at(i, j));
 		if (abs > peak)
 			peak = abs;
 	}
@@ -81,7 +81,7 @@ void normalize(Wave& w, int a, int b)
 	for (int i = a; i < b; i++)
 	{
 		for (int j = 0; j < w.getBuffer().countChannels(); j++)
-			w.getBuffer()[i][j] = w.getBuffer()[i][j] * (1.0f / peak);
+			w.getBuffer().at(i, j) = w.getBuffer().at(i, j) * (1.0f / peak);
 	}
 	w.setEdited(true);
 }
@@ -98,7 +98,7 @@ int monoToStereo(Wave& w)
 
 	for (int i = 0; i < newData.countFrames(); i++)
 		for (int j = 0; j < newData.countChannels(); j++)
-			newData[i][j] = w.getBuffer()[i][0];
+			newData.at(i, j) = w.getBuffer().at(i, 0);
 
 	w.replaceData(std::move(newData));
 
@@ -113,7 +113,7 @@ void silence(Wave& w, int a, int b)
 
 	for (int i = a; i < b; i++)
 		for (int j = 0; j < w.getBuffer().countChannels(); j++)
-			w.getBuffer()[i][j] = 0.0f;
+			w.getBuffer().at(i, j) = 0.0f;
 	w.setEdited(true);
 }
 
@@ -141,7 +141,7 @@ void cut(Wave& w, int a, int b)
 		if (i < a || i >= b)
 		{
 			for (int j = 0; j < w.getBuffer().countChannels(); j++)
-				newData[k][j] = w.getBuffer()[i][j];
+				newData.at(k, j) = w.getBuffer().at(i, j);
 			k++;
 		}
 	}
@@ -168,7 +168,7 @@ void trim(Wave& w, Frame a, Frame b)
 
 	for (int i = 0; i < newData.countFrames(); i++)
 		for (int j = 0; j < newData.countChannels(); j++)
-			newData[i][j] = w.getBuffer()[i + a][j];
+			newData.at(i, j) = w.getBuffer().at(i + a, j);
 
 	w.replaceData(std::move(newData));
 	w.setEdited(true);
@@ -240,8 +240,8 @@ void shift(Wave& w, Frame offset)
 	if (offset < 0)
 		offset = (w.getBuffer().countFrames() + w.getBuffer().countChannels()) + offset;
 
-	float* begin = w.getBuffer()[0];
-	float* end   = w.getBuffer()[0] + (w.getBuffer().countFrames() * w.getBuffer().countChannels());
+	float* begin = w.getBuffer().at(0);
+	float* end   = w.getBuffer().at(0) + (w.getBuffer().countFrames() * w.getBuffer().countChannels());
 
 	std::rotate(begin, end - (offset * w.getBuffer().countChannels()), end);
 	w.setEdited(true);
@@ -252,8 +252,8 @@ void shift(Wave& w, Frame offset)
 void reverse(Wave& w, Frame a, Frame b)
 {
 	/* https://stackoverflow.com/questions/33201528/reversing-an-array-of-structures-in-c */
-	float* begin = w.getBuffer()[0] + (a * w.getBuffer().countChannels());
-	float* end   = w.getBuffer()[0] + (b * w.getBuffer().countChannels());
+	float* begin = w.getBuffer().at(0) + (a * w.getBuffer().countChannels());
+	float* end   = w.getBuffer().at(0) + (b * w.getBuffer().countChannels());
 
 	std::reverse(begin, end);
 

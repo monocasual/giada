@@ -316,7 +316,7 @@ void Mixer::limit(mcl::AudioBuffer& outBuf) const
 {
 	for (int i = 0; i < outBuf.countFrames(); i++)
 		for (int j = 0; j < outBuf.countChannels(); j++)
-			outBuf[i][j] = std::max(-1.0f, std::min(outBuf[i][j], 1.0f));
+			outBuf.at(i, j) = std::max(-1.0f, std::min(outBuf.at(i, j), 1.0f));
 }
 
 /* -------------------------------------------------------------------------- */

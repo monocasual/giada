@@ -149,7 +149,7 @@ Result createFromFile(const std::string& path, ID id, int samplerate, Resampler:
 	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.generate(id));
 	wave->alloc(header.frames, header.channels, header.samplerate, getBits_(header), path);
 
-	if (sf_readf_float(fileIn, wave->getBuffer()[0], header.frames) != header.frames)
+	if (sf_readf_float(fileIn, wave->getBuffer().getData(), header.frames) != header.frames)
 		u::log::print("[waveFactory::create] warning: incomplete read!\n");
 
 	sf_close(fileIn);
@@ -228,9 +228,9 @@ int resample(Wave& w, Resampler::Quality quality, int samplerate)
 	newData.alloc(newSizeFrames, w.getBuffer().countChannels());
 
 	SRC_DATA src_data;
-	src_data.data_in       = w.getBuffer()[0];
+	src_data.data_in       = w.getBuffer().getData();
 	src_data.input_frames  = w.getBuffer().countFrames();
-	src_data.data_out      = newData[0];
+	src_data.data_out      = newData.getData();
 	src_data.output_frames = newSizeFrames;
 	src_data.src_ratio     = ratio;
 
@@ -266,7 +266,7 @@ int save(const Wave& w, const std::string& path)
 		return G_RES_ERR_IO;
 	}
 
-	if (sf_writef_float(file, w.getBuffer()[0], w.getBuffer().countFrames()) != w.getBuffer().countFrames())
+	if (sf_writef_float(file, w.getBuffer().getData(), w.getBuffer().countFrames()) != w.getBuffer().countFrames())
 		u::log::print("[waveFactory::save] warning: incomplete write!\n");
 
 	sf_close(file);

@@ -143,7 +143,7 @@ void PluginHost::giadaToJuceTempBuf(const mcl::AudioBuffer& outBuf)
 	using Format = AudioData::Format<AudioData::Float32, AudioData::BigEndian>;
 
 	AudioData::deinterleaveSamples(
-	    AudioData::InterleavedSource<Format>{outBuf[0], outBuf.countChannels()},
+	    AudioData::InterleavedSource<Format>{outBuf.getData(), outBuf.countChannels()},
 	    AudioData::NonInterleavedDest<Format>{m_audioBuffer.getArrayOfWritePointers(), m_audioBuffer.getNumChannels()},
 	    outBuf.countFrames());
 }
@@ -157,7 +157,7 @@ void PluginHost::juceToGiadaOutBuf(mcl::AudioBuffer& outBuf) const
 
 	AudioData::interleaveSamples(
 	    AudioData::NonInterleavedSource<Format>{m_audioBuffer.getArrayOfReadPointers(), m_audioBuffer.getNumChannels()},
-	    AudioData::InterleavedDest<Format>{outBuf[0], outBuf.countChannels()},
+	    AudioData::InterleavedDest<Format>{outBuf.getData(), outBuf.countChannels()},
 	    outBuf.countFrames());
 }
 

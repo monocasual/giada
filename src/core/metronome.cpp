@@ -44,7 +44,7 @@ void Metronome::render(mcl::AudioBuffer& outBuf) const
 	for (Frame f = m_offset; f < outBuf.countFrames() && m_rendering; f++)
 	{
 		for (int c = 0; c < outBuf.countChannels(); c++)
-			outBuf[f][c] += data[m_tracker];
+			outBuf.at(f, c) += data[m_tracker];
 		m_tracker = (m_tracker + 1) % CLICK_SIZE;
 		if (m_tracker == 0)
 			m_rendering = false;

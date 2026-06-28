@@ -41,10 +41,10 @@ ReadResult readResampled_(const Wave& wave, mcl::AudioBuffer& dest, Frame start,
     Frame max, Frame offset, float pitch, const Resampler& resampler)
 {
 	Resampler::Result res = resampler.process(
-	    /*input=*/wave.getBuffer()[0],
+	    /*input=*/wave.getBuffer().getData(),
 	    /*inputPos=*/start,
 	    /*inputLen=*/max,
-	    /*output=*/dest[offset],
+	    /*output=*/dest.at(offset),
 	    /*outputLen=*/dest.countFrames() - offset,
 	    /*pitch=*/pitch);
 

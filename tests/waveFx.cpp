@@ -47,7 +47,7 @@ TEST_CASE("waveFx")
 
 		for (int i = a; i < b; i++)
 			for (int k = 0; k < waveStereo.getBuffer().countChannels(); k++)
-				REQUIRE(waveStereo.getBuffer()[i][k] == 0.0f);
+				REQUIRE(waveStereo.getBuffer().at(i, k) == 0.0f);
 	}
 
 	SECTION("test cut")
@@ -95,10 +95,10 @@ TEST_CASE("waveFx")
 		wfx::fade(waveStereo, a, b, wfx::Fade::IN);
 		wfx::fade(waveStereo, a, b, wfx::Fade::OUT);
 
-		REQUIRE(waveStereo.getBuffer()[a][0] == 0.0f);
-		REQUIRE(waveStereo.getBuffer()[a][1] == 0.0f);
-		REQUIRE(waveStereo.getBuffer()[b][0] == 0.0f);
-		REQUIRE(waveStereo.getBuffer()[b][1] == 0.0f);
+		REQUIRE(waveStereo.getBuffer().at(a, 0) == 0.0f);
+		REQUIRE(waveStereo.getBuffer().at(a, 1) == 0.0f);
+		REQUIRE(waveStereo.getBuffer().at(b, 0) == 0.0f);
+		REQUIRE(waveStereo.getBuffer().at(b, 1) == 0.0f);
 	}
 
 	SECTION("test smooth")
@@ -108,9 +108,9 @@ TEST_CASE("waveFx")
 
 		wfx::smooth(waveStereo, a, b);
 
-		REQUIRE(waveStereo.getBuffer()[a][0] == 0.0f);
-		REQUIRE(waveStereo.getBuffer()[a][1] == 0.0f);
-		REQUIRE(waveStereo.getBuffer()[b][0] == 0.0f);
-		REQUIRE(waveStereo.getBuffer()[b][1] == 0.0f);
+		REQUIRE(waveStereo.getBuffer().at(a, 0) == 0.0f);
+		REQUIRE(waveStereo.getBuffer().at(a, 1) == 0.0f);
+		REQUIRE(waveStereo.getBuffer().at(b, 0) == 0.0f);
+		REQUIRE(waveStereo.getBuffer().at(b, 1) == 0.0f);
 	}
 }
