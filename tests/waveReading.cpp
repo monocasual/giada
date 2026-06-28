@@ -14,11 +14,11 @@ TEST_CASE("WaveReading")
 
 	m::Wave wave({});
 	wave.getBuffer().alloc(BUFFER_SIZE, NUM_CHANNELS);
-	wave.getBuffer().forEachFrame([](float* f, int i)
+	for (int i = 0; i < wave.getBuffer().countFrames(); ++i)
 	{
-		f[0] = static_cast<float>(i + 1);
-		f[1] = static_cast<float>(i + 1);
-	});
+		wave.getBuffer().at(i, 0) = static_cast<float>(i + 1);
+		wave.getBuffer().at(i, 1) = static_cast<float>(i + 1);
+	}
 	m::Resampler resampler;
 
 	SECTION("Test fill, pitch 1.0")
@@ -32,13 +32,13 @@ TEST_CASE("WaveReading")
 
 			bool allFilled       = true;
 			int  numFramesFilled = 0;
-			out.forEachFrame([&allFilled, &numFramesFilled](const float* f, int)
+			for (int i = 0; i < out.countFrames(); ++i)
 			{
-				if (f[0] == 0.0f)
+				if (out.at(i, 0) == 0.0f)
 					allFilled = false;
 				else
 					numFramesFilled++;
-			});
+			}
 
 			REQUIRE(allFilled);
 			REQUIRE(numFramesFilled == res.used);
@@ -51,11 +51,11 @@ TEST_CASE("WaveReading")
 			    /*start=*/0, BUFFER_SIZE, /*offset=*/BUFFER_SIZE / 2, /*pitch=*/1.0f, resampler);
 
 			int numFramesFilled = 0;
-			out.forEachFrame([&numFramesFilled](const float* f, int)
+			for (int i = 0; i < out.countFrames(); ++i)
 			{
-				if (f[0] != 0.0f)
+				if (out.at(i, 0) != 0.0f)
 					numFramesFilled++;
-			});
+			}
 
 			REQUIRE(numFramesFilled == BUFFER_SIZE / 2);
 			REQUIRE(out.at((BUFFER_SIZE / 2) - 1, 0) == 0.0f);
