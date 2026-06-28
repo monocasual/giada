@@ -65,7 +65,7 @@ public:
 	Resamples a certain amount of frames from 'input' starting at 'inputPos' and
 	puts the result into 'output'. */
 
-	Result process(float* input, long inputPos, long inputLength, float* output,
+	Result process(const float* input, long inputPos, long inputLength, float* output,
 	    long outputLength, float ratio) const;
 
 	/* last

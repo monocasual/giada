@@ -109,12 +109,12 @@ void Resampler::alloc(Quality quality, int channels)
 
 /* -------------------------------------------------------------------------- */
 
-Resampler::Result Resampler::process(float* input, long inputPos, long inputLength,
+Resampler::Result Resampler::process(const float* input, long inputPos, long inputLength,
     float* output, long outputLength, float ratio) const
 {
 	assert(m_state != nullptr); // Must be initialized first!
 
-	m_input       = input;
+	m_input       = const_cast<float*>(input);
 	m_inputPos    = inputPos;
 	m_inputLength = inputLength;
 	m_usedFrames  = 0;
