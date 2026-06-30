@@ -23,7 +23,7 @@ TEST_CASE("rendering::sampleRendering")
 
 	channelShared.quantizer.emplace();
 	channelShared.renderQueue.emplace(/*size=*/16);
-	channelShared.resampler.emplace(Resampler::Quality::LINEAR, G_MAX_IO_CHANS);
+	channelShared.resampler.emplace(Resampler::Quality::LINEAR);
 
 	SECTION("Test initialization")
 	{

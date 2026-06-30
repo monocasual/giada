@@ -138,27 +138,29 @@ void PluginHost::toggleBypass(ID pluginId)
 void PluginHost::giadaToJuceTempBuf(const mcl::AudioBuffer& outBuf)
 {
 	assert(outBuf.countChannels() == m_audioBuffer.getNumChannels());
+	assert(outBuf.countFrames() == m_audioBuffer.getNumSamples());
 
-	using namespace juce;
-	using Format = AudioData::Format<AudioData::Float32, AudioData::BigEndian>;
+	for (int ch = 0; ch < outBuf.countChannels(); ++ch)
+	{
+		const float* src = outBuf.getChannel(ch);
+		float*       dst = m_audioBuffer.getWritePointer(ch);
 
-	AudioData::deinterleaveSamples(
-	    AudioData::InterleavedSource<Format>{outBuf.getData(), outBuf.countChannels()},
-	    AudioData::NonInterleavedDest<Format>{m_audioBuffer.getArrayOfWritePointers(), m_audioBuffer.getNumChannels()},
-	    outBuf.countFrames());
+		std::copy(src, src + outBuf.countFrames(), dst);
+	}
 }
 
 void PluginHost::juceToGiadaOutBuf(mcl::AudioBuffer& outBuf) const
 {
 	assert(outBuf.countChannels() == m_audioBuffer.getNumChannels());
+	assert(outBuf.countFrames() == m_audioBuffer.getNumSamples());
 
-	using namespace juce;
-	using Format = AudioData::Format<AudioData::Float32, AudioData::BigEndian>;
+	for (int ch = 0; ch < outBuf.countChannels(); ++ch)
+	{
+		const float* src = m_audioBuffer.getReadPointer(ch);
+		float*       dst = outBuf.getChannel(ch);
 
-	AudioData::interleaveSamples(
-	    AudioData::NonInterleavedSource<Format>{m_audioBuffer.getArrayOfReadPointers(), m_audioBuffer.getNumChannels()},
-	    AudioData::InterleavedDest<Format>{outBuf.getData(), outBuf.countChannels()},
-	    outBuf.countFrames());
+		std::copy(src, src + outBuf.countFrames(), dst);
+	}
 }
 
 /* -------------------------------------------------------------------------- */

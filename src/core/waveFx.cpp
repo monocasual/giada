@@ -237,13 +237,22 @@ void smooth(Wave& w, int a, int b)
 
 void shift(Wave& w, Frame offset)
 {
+	const int frames   = w.getBuffer().countFrames();
+	const int channels = w.getBuffer().countChannels();
+
+	if (frames == 0)
+		return;
+
+	offset %= frames;
 	if (offset < 0)
-		offset = (w.getBuffer().countFrames() + w.getBuffer().countChannels()) + offset;
+		offset += frames;
 
-	float* begin = w.getBuffer().at(0);
-	float* end   = w.getBuffer().at(0) + (w.getBuffer().countFrames() * w.getBuffer().countChannels());
+	for (int ch = 0; ch < channels; ++ch)
+	{
+		float* begin = w.getBuffer().getChannel(ch);
+		std::rotate(begin, begin + offset, begin + frames);
+	}
 
-	std::rotate(begin, end - (offset * w.getBuffer().countChannels()), end);
 	w.setEdited(true);
 }
 
@@ -251,11 +260,12 @@ void shift(Wave& w, Frame offset)
 
 void reverse(Wave& w, Frame a, Frame b)
 {
-	/* https://stackoverflow.com/questions/33201528/reversing-an-array-of-structures-in-c */
-	float* begin = w.getBuffer().at(0) + (a * w.getBuffer().countChannels());
-	float* end   = w.getBuffer().at(0) + (b * w.getBuffer().countChannels());
-
-	std::reverse(begin, end);
+	for (int ch = 0; ch < w.getBuffer().countChannels(); ++ch)
+	{
+		float* begin = w.getBuffer().getChannel(ch) + a;
+		float* end   = w.getBuffer().getChannel(ch) + b;
+		std::reverse(begin, end);
+	}
 
 	w.setEdited(true);
 }

@@ -54,7 +54,7 @@ public:
 	};
 
 	Resampler(); // Invalid
-	Resampler(Quality quality, int channels);
+	Resampler(Quality quality);
 	Resampler(const Resampler& o)          = delete;
 	Resampler(Resampler&&)                 = delete;
 	Resampler& operator=(const Resampler&) = delete;
@@ -77,7 +77,7 @@ private:
 	static long callback(void* self, float** audio);
 	long        callback(float** audio);
 
-	void alloc(Quality quality, int channels);
+	void alloc(Quality quality);
 
 	/* CHUNK_LEN
 	How many chunks of data to read from input in the callback. */
@@ -89,7 +89,6 @@ private:
 	mutable float* m_input;       // Pointer to input data
 	mutable long   m_inputPos;    // Where to read from input
 	mutable long   m_inputLength; // Total number of frames in input data
-	int            m_channels;    // Number of channels
 	mutable long   m_usedFrames;  // How many frames have been read from input with a process() call
 };
 } // namespace giada::m

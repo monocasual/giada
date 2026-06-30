@@ -38,17 +38,16 @@ Resampler::Resampler()
 , m_input(nullptr)
 , m_inputPos(0)
 , m_inputLength(0)
-, m_channels(0)
 , m_usedFrames(0)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 
-Resampler::Resampler(Quality quality, int channels)
+Resampler::Resampler(Quality quality)
 : Resampler()
 {
-	alloc(quality, channels);
+	alloc(quality);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -74,7 +73,7 @@ long Resampler::callback(float** audio)
 	/* Move pointer properly, taking into account read data and number of
 	channels in input data. */
 
-	*audio = m_input + (m_inputPos * m_channels);
+	*audio = m_input + m_inputPos;
 
 	/* Returns how many frames have been read in this callback shot. */
 
@@ -95,13 +94,12 @@ long Resampler::callback(float** audio)
 
 /* -------------------------------------------------------------------------- */
 
-void Resampler::alloc(Quality quality, int channels)
+void Resampler::alloc(Quality quality)
 {
 	if (m_state != nullptr)
 		src_delete(m_state);
-	m_state    = src_callback_new(callback, static_cast<int>(quality), channels, nullptr, this);
-	m_quality  = quality;
-	m_channels = channels;
+	m_state   = src_callback_new(callback, static_cast<int>(quality), /*channels=*/1, nullptr, this);
+	m_quality = quality;
 	if (m_state == nullptr)
 		throw std::bad_alloc();
 	src_reset(m_state);

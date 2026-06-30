@@ -40,17 +40,35 @@ namespace
 ReadResult readResampled_(const Wave& wave, mcl::AudioBuffer& dest, Frame start,
     Frame max, Frame offset, float pitch, const Resampler& resampler)
 {
-	Resampler::Result res = resampler.process(
-	    /*input=*/wave.getBuffer().getData(),
-	    /*inputPos=*/start,
-	    /*inputLen=*/max,
-	    /*output=*/dest.at(offset),
-	    /*outputLen=*/dest.countFrames() - offset,
-	    /*pitch=*/pitch);
+	const int channels = wave.getBuffer().countChannels();
+	const int frames   = dest.countFrames();
 
-	return {
-	    static_cast<int>(res.used),
-	    static_cast<int>(res.generated)};
+	assert(channels == dest.countChannels());
+	assert(start >= 0);
+	assert(max <= wave.getBuffer().countFrames());
+	assert(offset < frames);
+
+	Frame used      = 0;
+	Frame generated = 0;
+
+	for (int ch = 0; ch < channels; ++ch)
+	{
+		const float* src = wave.getBuffer().getChannel(ch);
+		float*       dst = dest.getChannel(ch) + offset;
+
+		Resampler::Result res = resampler.process(
+		    /*input=*/src,
+		    /*inputPos=*/start,
+		    /*inputLength=*/max,
+		    /*output=*/dst,
+		    /*outputLength=*/frames - offset,
+		    /*ratio=*/pitch);
+
+		used      = std::max(used, static_cast<Frame>(res.used));
+		generated = std::max(generated, static_cast<Frame>(res.generated));
+	}
+
+	return {used, generated};
 }
 
 /* -------------------------------------------------------------------------- */
