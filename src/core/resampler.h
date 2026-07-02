@@ -32,6 +32,13 @@
 
 namespace giada::m
 {
+/* Resampler
+A mono resampler built on libsamplerate. This class expects a single-channel
+input stream: the input pointer must reference one contiguous mono buffer, and
+all positions/lengths are expressed in frames for that mono stream. It does not
+handle interleaved or stereo planar audio directly. For stereo audio, use one
+Resampler instance per channel. */
+
 class Resampler final
 {
 public:
