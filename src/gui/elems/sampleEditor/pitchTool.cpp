@@ -53,7 +53,6 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	geFlex* row1 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{
 		m_label       = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT);
-		m_dial        = new geDial();
 		m_input       = new geInput();
 		m_pitchToBar  = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOBAR));
 		m_pitchToSong = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOSONG));
@@ -61,7 +60,6 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 		m_pitchDouble = new geImageButton(graphics::multiplyOff, graphics::multiplyOn);
 		m_pitchReset  = new geTextButton(g_ui->getI18Text(LangMap::COMMON_RESET));
 		row1->addWidget(m_label, 50);
-		row1->addWidget(m_dial, G_GUI_UNIT);
 		row1->addWidget(m_input, 70);
 		row1->addWidget(m_pitchToBar, 70);
 		row1->addWidget(m_pitchToSong, 70);
@@ -84,13 +82,6 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	addWidget(row2, G_GUI_UNIT);
 	end();
 
-	m_dial->range(0.01f, 4.0f);
-	m_dial->when(FL_WHEN_RELEASE);
-	m_dial->onChange = [this](float val)
-	{
-		c::channel::setChannelPitch(m_data->channelId, val, Thread::MAIN);
-	};
-
 	m_input->setType(FL_FLOAT_INPUT);
 	m_input->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_input->onChange = [this](const std::string& val)
@@ -112,12 +103,12 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 
 	m_pitchHalf->onClick = [this]()
 	{
-		c::channel::setChannelPitch(m_data->channelId, m_dial->value() / 2, Thread::MAIN);
+		c::channel::setChannelPitch(m_data->channelId, utils::string::toFloat(m_input->getValue()) / 2, Thread::MAIN);
 	};
 
 	m_pitchDouble->onClick = [this]()
 	{
-		c::channel::setChannelPitch(m_data->channelId, m_dial->value() * 2, Thread::MAIN);
+		c::channel::setChannelPitch(m_data->channelId, utils::string::toFloat(m_input->getValue()) * 2, Thread::MAIN);
 	};
 
 	m_pitchReset->onClick = [this]()
@@ -156,11 +147,9 @@ void gePitchTool::rebuild(const c::sampleEditor::Data& d)
 
 /* -------------------------------------------------------------------------- */
 
-void gePitchTool::refresh(bool isDial)
+void gePitchTool::refresh()
 {
 	m_input->setValue(fmt::format("{:.4f}", m_data->getSample().pitch)); // 4 digits
-	if (!isDial)
-		m_dial->value(m_data->getSample().pitch);
 }
 
 } // namespace giada::v
