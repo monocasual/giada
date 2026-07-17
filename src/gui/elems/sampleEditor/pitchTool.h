@@ -53,8 +53,8 @@ public:
 private:
 	const c::sampleEditor::Data* m_data;
 
-	geBox*         m_label;
-	geInput*       m_input;
+	geBox*         m_pitchLabel;
+	geInput*       m_pitch;
 	geTextButton*  m_pitchToBar;
 	geTextButton*  m_pitchToSong;
 	geImageButton* m_pitchHalf;

@@ -52,15 +52,15 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 {
 	geFlex* row1 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{
-		m_label       = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT);
-		m_input       = new geInput();
+		m_pitchLabel  = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT);
+		m_pitch       = new geInput();
 		m_pitchToBar  = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOBAR));
 		m_pitchToSong = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOSONG));
 		m_pitchHalf   = new geImageButton(graphics::divideOff, graphics::divideOn);
 		m_pitchDouble = new geImageButton(graphics::multiplyOff, graphics::multiplyOn);
 		m_pitchReset  = new geTextButton(g_ui->getI18Text(LangMap::COMMON_RESET));
-		row1->addWidget(m_label, 50);
-		row1->addWidget(m_input, 70);
+		row1->addWidget(m_pitchLabel, 50);
+		row1->addWidget(m_pitch, 70);
 		row1->addWidget(m_pitchToBar, 70);
 		row1->addWidget(m_pitchToSong, 70);
 		row1->addWidget(m_pitchHalf, G_GUI_UNIT);
@@ -82,9 +82,9 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	addWidget(row2, G_GUI_UNIT);
 	end();
 
-	m_input->setType(FL_FLOAT_INPUT);
-	m_input->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
-	m_input->onChange = [this](const std::string& val)
+	m_pitch->setType(FL_FLOAT_INPUT);
+	m_pitch->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
+	m_pitch->onChange = [this](const std::string& val)
 	{
 		c::channel::setChannelPitch(m_data->channelId, utils::string::toFloat(val), Thread::MAIN);
 	};
@@ -103,12 +103,12 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 
 	m_pitchHalf->onClick = [this]()
 	{
-		c::channel::setChannelPitch(m_data->channelId, utils::string::toFloat(m_input->getValue()) / 2, Thread::MAIN);
+		c::channel::setChannelPitch(m_data->channelId, utils::string::toFloat(m_pitch->getValue()) / 2, Thread::MAIN);
 	};
 
 	m_pitchDouble->onClick = [this]()
 	{
-		c::channel::setChannelPitch(m_data->channelId, utils::string::toFloat(m_input->getValue()) * 2, Thread::MAIN);
+		c::channel::setChannelPitch(m_data->channelId, utils::string::toFloat(m_pitch->getValue()) * 2, Thread::MAIN);
 	};
 
 	m_pitchReset->onClick = [this]()
@@ -141,7 +141,7 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 void gePitchTool::rebuild(const c::sampleEditor::Data& d)
 {
 	m_data = &d;
-	m_input->setValue(fmt::format("{:.4f}", m_data->getSample().pitch)); // 4 digits
+	m_pitch->setValue(fmt::format("{:.4f}", m_data->getSample().pitch)); // 4 digits
 	m_time->setValue(fmt::format("{:.4f}", m_data->getSample().time));   // 4 digits
 }
 
@@ -149,7 +149,7 @@ void gePitchTool::rebuild(const c::sampleEditor::Data& d)
 
 void gePitchTool::refresh()
 {
-	m_input->setValue(fmt::format("{:.4f}", m_data->getSample().pitch)); // 4 digits
+	m_pitch->setValue(fmt::format("{:.4f}", m_data->getSample().pitch)); // 4 digits
 }
 
 } // namespace giada::v
