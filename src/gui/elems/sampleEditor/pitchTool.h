@@ -48,13 +48,12 @@ public:
 	gePitchTool(const c::sampleEditor::Data& d);
 
 	void rebuild(const c::sampleEditor::Data& d);
-	void refresh(bool isDial = false);
+	void refresh();
 
 private:
 	const c::sampleEditor::Data* m_data;
 
 	geBox*         m_label;
-	geDial*        m_dial;
 	geInput*       m_input;
 	geTextButton*  m_pitchToBar;
 	geTextButton*  m_pitchToSong;
