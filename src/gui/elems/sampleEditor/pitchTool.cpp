@@ -100,13 +100,13 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 
 	m_pitchToBar->onClick = [this]()
 	{
-		c::channel::setChannelPitch(m_data->channelId, m_data->sample.range.getB() / (float)m_data->getFramesInBar(),
+		c::channel::setChannelPitch(m_data->channelId, m_data->getSample().range.getB() / (float)m_data->getFramesInBar(),
 		    Thread::MAIN);
 	};
 
 	m_pitchToSong->onClick = [this]()
 	{
-		c::channel::setChannelPitch(m_data->channelId, m_data->sample.range.getB() / (float)m_data->getFramesInLoop(),
+		c::channel::setChannelPitch(m_data->channelId, m_data->getSample().range.getB() / (float)m_data->getFramesInLoop(),
 		    Thread::MAIN);
 	};
 
@@ -150,17 +150,17 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 void gePitchTool::rebuild(const c::sampleEditor::Data& d)
 {
 	m_data = &d;
-	update(m_data->sample.pitch, /*isDial=*/false);
-	m_time->setValue(fmt::format("{:.4f}", m_data->sample.time)); // 4 digits
+	m_input->setValue(fmt::format("{:.4f}", m_data->getSample().pitch)); // 4 digits
+	m_time->setValue(fmt::format("{:.4f}", m_data->getSample().time));   // 4 digits
 }
 
 /* -------------------------------------------------------------------------- */
 
-void gePitchTool::update(float v, bool isDial)
+void gePitchTool::refresh(bool isDial)
 {
-	m_input->setValue(fmt::format("{:.4f}", v)); // 4 digits
+	m_input->setValue(fmt::format("{:.4f}", m_data->getSample().pitch)); // 4 digits
 	if (!isDial)
-		m_dial->value(v);
+		m_dial->value(m_data->getSample().pitch);
 }
 
 } // namespace giada::v
