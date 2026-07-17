@@ -408,10 +408,10 @@ float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi)
 float setChannelPitch(ID channelId, float v, Thread t)
 {
 	g_engine->getChannelsApi().setPitch(channelId, v);
-	g_ui->pumpEvent([v]()
+	g_ui->pumpEvent([]()
 	{
 		if (auto* w = sampleEditor::getWindow(); w != nullptr)
-			w->pitchTool->update(v); });
+			w->pitchTool->refresh(); });
 	notifyChannelForMidiIn(t, channelId);
 	return v;
 }

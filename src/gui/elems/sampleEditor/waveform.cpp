@@ -78,7 +78,7 @@ int geWaveform::alloc(int datasize, bool force)
 	if (!m_data->isValid())
 		return 0;
 
-	const m::Wave& wave = *m_data->sample.wave;
+	const m::Wave& wave = *m_data->getSample().wave;
 
 	m_ratio = wave.getBuffer().countFrames() / (float)datasize;
 
@@ -168,8 +168,8 @@ int geWaveform::alloc(int datasize, bool force)
 
 void geWaveform::recalcPoints()
 {
-	m_chanStart = m_data->sample.range.getA();
-	m_chanEnd   = m_data->sample.range.getB();
+	m_chanStart = m_data->getSample().range.getA();
+	m_chanEnd   = m_data->getSample().range.getB();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -319,7 +319,7 @@ int geWaveform::handle(int e)
 	if (!m_data->isValid())
 		return 0;
 
-	const m::Wave& wave = *m_data->sample.wave;
+	const m::Wave& wave = *m_data->getSample().wave;
 
 	m_mouseX = pixelToFrame(Fl::event_x() - x());
 	m_mouseY = pixelToFrame(Fl::event_y() - y());
@@ -336,7 +336,7 @@ int geWaveform::handle(int e)
 		if (Fl::event_key() == ' ')
 			c::sampleEditor::togglePreview();
 		else if (Fl::event_key() == FL_BackSpace)
-			c::sampleEditor::setPreviewTracker(m_data->sample.range.getA());
+			c::sampleEditor::setPreviewTracker(m_data->getSample().range.getA());
 		return 1;
 	}
 

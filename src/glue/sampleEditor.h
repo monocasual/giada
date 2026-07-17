@@ -52,7 +52,6 @@ namespace giada::c::sampleEditor
 {
 struct Data
 {
-	Data() = default;
 	Data(const m::Channel&, Scene scene);
 
 	bool          isValid() const;
@@ -60,19 +59,22 @@ struct Data
 	Frame         a_getPreviewTracker() const;
 	Frame         getFramesInBar() const;
 	Frame         getFramesInLoop() const;
+	Sample        getSample() const;
 
 	ID          channelId;
 	Scene       scene;
 	std::string name;
 	float       volume;
 	float       pan;
-	Sample      sample;
 	Frame       waveSize;
 	int         waveBits;
 	float       waveDuration;
 	int         waveRate;
 	std::string wavePath;
 	bool        isLogical;
+
+private:
+	const m::Channel* m_channel;
 };
 
 /* getData

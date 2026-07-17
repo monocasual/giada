@@ -40,12 +40,12 @@ Data::Data(const m::Channel& c, Scene scene)
 , name(c.getName(scene))
 , volume(c.volume)
 , pan(c.pan.asFloat())
-, sample(c.sampleChannel->getSample(scene))
 , waveSize(0)
 , waveBits(0)
 , waveDuration(0.0f)
 , waveRate(0)
 , isLogical(false)
+, m_channel(&c)
 {
 	if (!isValid())
 		return;
@@ -59,7 +59,7 @@ Data::Data(const m::Channel& c, Scene scene)
 
 bool Data::isValid() const
 {
-	return sample.wave != nullptr;
+	return getSample().wave != nullptr;
 }
 
 ChannelStatus Data::a_getPreviewStatus() const
@@ -80,6 +80,11 @@ Frame Data::getFramesInBar() const
 Frame Data::getFramesInLoop() const
 {
 	return g_engine->getMainApi().getFramesInLoop();
+}
+
+Sample Data::getSample() const
+{
+	return m_channel->sampleChannel->getSample(scene);
 }
 
 /* -------------------------------------------------------------------------- */

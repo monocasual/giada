@@ -48,7 +48,7 @@ public:
 	gePitchTool(const c::sampleEditor::Data& d);
 
 	void rebuild(const c::sampleEditor::Data& d);
-	void update(float v, bool isDial = false);
+	void refresh(bool isDial = false);
 
 private:
 	const c::sampleEditor::Data* m_data;

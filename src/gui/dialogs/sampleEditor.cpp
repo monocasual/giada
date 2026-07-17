@@ -66,6 +66,7 @@ namespace giada::v
 gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 : gdWindow(u::gui::getCenterWinBounds(model.sampleEditorBounds), g_ui->getI18Text(LangMap::SAMPLEEDITOR_TITLE), WID_SAMPLE_EDITOR)
 , m_channelId(channelId)
+, m_data(c::sampleEditor::getData(channelId))
 {
 	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 	{
@@ -179,7 +180,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 
 	rewind->onClick = [this]()
 	{
-		c::sampleEditor::setPreviewTracker(m_data.sample.range.getA());
+		c::sampleEditor::setPreviewTracker(m_data.getSample().range.getA());
 	};
 
 	loop->onChange = [](bool shouldLoop)
