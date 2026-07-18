@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 #include "src/gui/dialogs/warnings.h"
-#include "src/gui/dialogs/window.h"
 #include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/flex.h"
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
@@ -40,6 +40,41 @@ namespace giada::v
 namespace
 {
 bool confirmRet_ = false;
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+gdInfo::gdInfo(std::string_view text, int width, int height)
+: gdWindow(u::gui::getCenterWinBounds({-1, 1, width, height}), g_ui->getI18Text(LangMap::COMMON_INFO))
+{
+	geFlex* container = new geFlex(getContentBounds().reduced({G_GUI_OUTER_MARGIN}), Direction::VERTICAL, G_GUI_OUTER_MARGIN);
+	{
+		m_textBox = new geBox(text.data(), FL_ALIGN_LEFT);
+
+		geFlex* footer = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+		{
+			m_closeBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_CLOSE));
+			footer->addWidget(new geBox());
+			footer->addWidget(m_closeBtn, 80);
+			footer->end();
+		}
+
+		container->addWidget(m_textBox);
+		container->addWidget(footer, G_GUI_UNIT);
+		container->end();
+	}
+
+	m_textBox->setTruncate(false);
+
+	m_closeBtn->onClick = [this]()
+	{ hide(); };
+
+	add(container);
+	resizable(container);
+	set_modal();
+	show();
 }
 
 /* -------------------------------------------------------------------------- */

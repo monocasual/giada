@@ -55,6 +55,7 @@
 #include "src/gui/dialogs/pluginChooser.h"
 #include "src/gui/dialogs/pluginList.h"
 #include "src/gui/dialogs/sampleEditor.h"
+#include "src/gui/dialogs/warnings.h"
 #include "src/gui/ui.h"
 
 extern giada::v::Ui*     g_ui;
@@ -237,5 +238,12 @@ void openPluginChooser(ID channelId)
 {
 	g_engine->getPluginsApi().sort(g_ui->model.pluginChooserSortMode);
 	g_ui->openSubWindow(new v::gdPluginChooser(channelId, g_ui->model));
+}
+
+/* -------------------------------------------------------------------------- */
+
+void openInfoWindow(std::string_view text, int w, int h)
+{
+	g_ui->openSubWindow(new v::gdInfo(text, w, h));
 }
 } // namespace giada::c::layout

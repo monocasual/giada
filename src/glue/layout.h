@@ -71,6 +71,7 @@ void openChannelPluginListWindow(ID channelId);
 void openMasterInPluginListWindow();
 void openMasterOutPluginListWindow();
 void openPluginChooser(ID channelId);
+void openInfoWindow(std::string_view text, int w, int h);
 } // namespace giada::c::layout
 
 #endif

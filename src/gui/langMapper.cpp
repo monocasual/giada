@@ -47,6 +47,7 @@ LangMap::LangMap()
 	m_data[COMMON_SAVE]       = "Save";
 	m_data[COMMON_WARNING]    = "Warning";
 	m_data[COMMON_CLOSE]      = "Close";
+	m_data[COMMON_INFO]       = "Info";
 	m_data[COMMON_ADD]        = "Add";
 	m_data[COMMON_CLEAR]      = "Clear";
 	m_data[COMMON_RELOAD]     = "Reload";
