@@ -218,4 +218,16 @@ std::string keyToString(int key)
 		return std::string(1, key); // Regular key
 	}
 }
+
+/* -------------------------------------------------------------------------- */
+
+void setActive(Fl_Widget* w, bool condition)
+{
+	condition ? w->activate() : w->deactivate();
+}
+
+void setActive(Fl_Widget& w, bool condition)
+{
+	setActive(&w, condition);
+}
 } // namespace giada::u::gui
