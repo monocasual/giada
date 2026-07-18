@@ -52,12 +52,16 @@ public:
 private:
 	const c::sampleEditor::Data* m_data;
 
+	geBox*  m_playbackModeLabel;
+	geMenu* m_playbackMode;
+
 	geBox*        m_pitchLabel;
 	geInput*      m_pitch;
 	geTextButton* m_pitchToBar;
 	geTextButton* m_pitchToSong;
-	geMenu*       m_playbackMode;
-	geInput*      m_time;
+
+	geBox*   m_timeLabel;
+	geInput* m_time;
 };
 } // namespace giada::v
 

@@ -51,28 +51,39 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 {
 	geFlex* row1 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{
-		m_pitchLabel  = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT);
-		m_pitch       = new geInput();
-		m_pitchToBar  = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOBAR));
-		m_pitchToSong = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOSONG));
-		row1->addWidget(m_pitchLabel, 50);
-		row1->addWidget(m_pitch, 70);
-		row1->addWidget(m_pitchToBar, 70);
-		row1->addWidget(m_pitchToSong, 70);
+		m_playbackModeLabel = new geBox("Mode", FL_ALIGN_LEFT);
+		m_playbackMode      = new geMenu();
+
+		row1->addWidget(m_playbackModeLabel, 50);
+		row1->addWidget(m_playbackMode, 70);
 		row1->end();
 	}
 
 	geFlex* row2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{
-		m_playbackMode = new geMenu();
-		m_time         = new geInput();
-		row2->addWidget(m_playbackMode);
-		row2->addWidget(m_time);
+		m_pitchLabel  = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT);
+		m_pitch       = new geInput();
+		m_pitchToBar  = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOBAR));
+		m_pitchToSong = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOSONG));
+		row2->addWidget(m_pitchLabel, 50);
+		row2->addWidget(m_pitch, 70);
+		row2->addWidget(m_pitchToBar, 70);
+		row2->addWidget(m_pitchToSong, 70);
 		row2->end();
+	}
+
+	geFlex* row3 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+	{
+		m_timeLabel = new geBox("Time", FL_ALIGN_LEFT);
+		m_time      = new geInput();
+		row3->addWidget(m_timeLabel, 50);
+		row3->addWidget(m_time, 70);
+		row3->end();
 	}
 
 	addWidget(row1, G_GUI_UNIT);
 	addWidget(row2, G_GUI_UNIT);
+	addWidget(row3, G_GUI_UNIT);
 	end();
 
 	m_pitch->setType(FL_FLOAT_INPUT);
