@@ -49,6 +49,7 @@ public:
 
 	void setSvgImage(const char*);
 	void setLabel(const std::string&);
+	void setTruncate(bool);
 
 protected:
 	void draw() override;
@@ -56,6 +57,7 @@ protected:
 private:
 	std::unique_ptr<Fl_SVG_Image> m_image;
 	std::string                   m_label;
+	bool                          m_truncate;
 };
 } // namespace giada::v
 
