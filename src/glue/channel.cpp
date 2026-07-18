@@ -411,7 +411,7 @@ float setChannelPitch(ID channelId, float v, Thread t)
 	g_ui->pumpEvent([]()
 	{
 		if (auto* w = sampleEditor::getWindow(); w != nullptr)
-			w->pitchTool->refresh(); });
+			w->refreshPitch(); });
 	notifyChannelForMidiIn(t, channelId);
 	return v;
 }
