@@ -56,13 +56,12 @@ public:
 	void refreshPitch();
 
 private:
-	void updateInfo();
-
 	/* updateTitleWithScene
 	Updates window title with the current scene being edited. */
 
 	void updateTitleWithScene(Scene);
 
+	geTextButton*  m_infoBtn;
 	geChoice*      m_grid;
 	geCheck*       m_snap;
 	geImageButton* m_zoomIn;
@@ -78,7 +77,6 @@ private:
 	geImageButton* m_play;
 	geImageButton* m_rewind;
 	geCheck*       m_loop;
-	geBox*         m_info;
 
 	ID                    m_channelId;
 	c::sampleEditor::Data m_data;
