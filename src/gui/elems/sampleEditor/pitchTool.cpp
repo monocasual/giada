@@ -31,7 +31,6 @@
 #include "src/gui/dialogs/sampleEditor.h"
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/dial.h"
-#include "src/gui/elems/basics/imageButton.h"
 #include "src/gui/elems/basics/input.h"
 #include "src/gui/elems/basics/menu.h"
 #include "src/gui/elems/basics/textButton.h"
@@ -56,16 +55,10 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 		m_pitch       = new geInput();
 		m_pitchToBar  = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOBAR));
 		m_pitchToSong = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOSONG));
-		m_pitchHalf   = new geImageButton(graphics::divideOff, graphics::divideOn);
-		m_pitchDouble = new geImageButton(graphics::multiplyOff, graphics::multiplyOn);
-		m_pitchReset  = new geTextButton(g_ui->getI18Text(LangMap::COMMON_RESET));
 		row1->addWidget(m_pitchLabel, 50);
 		row1->addWidget(m_pitch, 70);
 		row1->addWidget(m_pitchToBar, 70);
 		row1->addWidget(m_pitchToSong, 70);
-		row1->addWidget(m_pitchHalf, G_GUI_UNIT);
-		row1->addWidget(m_pitchDouble, G_GUI_UNIT);
-		row1->addWidget(m_pitchReset, 70);
 		row1->end();
 	}
 
@@ -99,21 +92,6 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	{
 		c::channel::setChannelPitch(m_data->channelId, m_data->getSample().range.getB() / (float)m_data->getFramesInLoop(),
 		    Thread::MAIN);
-	};
-
-	m_pitchHalf->onClick = [this]()
-	{
-		c::channel::setChannelPitch(m_data->channelId, utils::string::toFloat(m_pitch->getValue()) / 2, Thread::MAIN);
-	};
-
-	m_pitchDouble->onClick = [this]()
-	{
-		c::channel::setChannelPitch(m_data->channelId, utils::string::toFloat(m_pitch->getValue()) * 2, Thread::MAIN);
-	};
-
-	m_pitchReset->onClick = [this]()
-	{
-		c::channel::setChannelPitch(m_data->channelId, G_DEFAULT_PITCH, Thread::MAIN);
 	};
 
 	m_playbackMode->addItem(ID{1}, "Tape");

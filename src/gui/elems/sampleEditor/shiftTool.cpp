@@ -45,10 +45,8 @@ geShiftTool::geShiftTool(const c::sampleEditor::Data& d)
 {
 	m_label = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_SHIFT), FL_ALIGN_LEFT);
 	m_shift = new geInput();
-	m_reset = new geTextButton(g_ui->getI18Text(LangMap::COMMON_RESET));
 	addWidget(m_label, 50);
 	addWidget(m_shift, 70);
-	addWidget(m_reset, 70);
 	end();
 
 	m_shift->setType(FL_INT_INPUT);
@@ -56,11 +54,6 @@ geShiftTool::geShiftTool(const c::sampleEditor::Data& d)
 	m_shift->onChange = [this](const std::string& val)
 	{
 		c::sampleEditor::shift(m_data->channelId, utils::string::toInt(val));
-	};
-
-	m_reset->onClick = [this]()
-	{
-		c::sampleEditor::shift(m_data->channelId, 0);
 	};
 
 	rebuild(d);
