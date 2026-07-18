@@ -73,6 +73,12 @@ Translates an FLTK key event into a human-readable string. */
 
 std::string keyToString(int key);
 
+/* setActive
+Helper function to activate or deactivate an Fl_Widget element based on a
+certain condition. */
+
+void setActive(Fl_Widget*, bool condition);
+void setActive(Fl_Widget&, bool condition);
 } // namespace giada::u::gui
 
 #endif
