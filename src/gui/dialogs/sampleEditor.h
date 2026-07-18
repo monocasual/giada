@@ -53,22 +53,7 @@ public:
 	void rebuild() override;
 	void refresh() override;
 
-	geChoice*      grid;
-	geCheck*       snap;
-	geImageButton* zoomIn;
-	geImageButton* zoomOut;
-
-	geWaveTools* waveTools;
-
-	gePitchTool*  pitchTool;
-	geRangeTool*  rangeTool;
-	geShiftTool*  shiftTool;
-	geTextButton* reload;
-
-	geImageButton* play;
-	geImageButton* rewind;
-	geCheck*       loop;
-	geBox*         info;
+	void refreshPitch();
 
 private:
 	void updateInfo();
@@ -77,6 +62,23 @@ private:
 	Updates window title with the current scene being edited. */
 
 	void updateTitleWithScene(Scene);
+
+	geChoice*      m_grid;
+	geCheck*       m_snap;
+	geImageButton* m_zoomIn;
+	geImageButton* m_zoomOut;
+
+	geWaveTools* m_waveTools;
+
+	gePitchTool*  m_pitchTool;
+	geRangeTool*  m_rangeTool;
+	geShiftTool*  m_shiftTool;
+	geTextButton* m_reload;
+
+	geImageButton* m_play;
+	geImageButton* m_rewind;
+	geCheck*       m_loop;
+	geBox*         m_info;
 
 	ID                    m_channelId;
 	c::sampleEditor::Data m_data;

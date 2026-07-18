@@ -72,58 +72,58 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 	{
 		geFlex* top = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 		{
-			reload  = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_RELOAD));
-			grid    = new geChoice();
-			snap    = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::COMMON_SNAPTOGRID));
-			zoomOut = new geImageButton(graphics::minusOff, graphics::minusOn);
-			zoomIn  = new geImageButton(graphics::plusOff, graphics::plusOn);
-			top->addWidget(reload, 70);
+			m_reload  = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_RELOAD));
+			m_grid    = new geChoice();
+			m_snap    = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::COMMON_SNAPTOGRID));
+			m_zoomOut = new geImageButton(graphics::minusOff, graphics::minusOn);
+			m_zoomIn  = new geImageButton(graphics::plusOff, graphics::plusOn);
+			top->addWidget(m_reload, 70);
 			top->addWidget(new geBox(), G_GUI_INNER_MARGIN);
-			top->addWidget(grid, 50);
-			top->addWidget(snap, 12);
+			top->addWidget(m_grid, 50);
+			top->addWidget(m_snap, 12);
 			top->addWidget(new geBox());
-			top->addWidget(zoomOut, G_GUI_UNIT);
-			top->addWidget(zoomIn, G_GUI_UNIT);
+			top->addWidget(m_zoomOut, G_GUI_UNIT);
+			top->addWidget(m_zoomIn, G_GUI_UNIT);
 			top->end();
 		}
 
-		waveTools = new geWaveTools(0, 0, 0, 0, model.sampleEditorGridOn, model.sampleEditorGridVal);
-		waveTools->rebuild(c::sampleEditor::getData(m_channelId)); // TODO - crappy temporary workaround for WaveTools
+		m_waveTools = new geWaveTools(0, 0, 0, 0, model.sampleEditorGridOn, model.sampleEditorGridVal);
+		m_waveTools->rebuild(c::sampleEditor::getData(m_channelId)); // TODO - crappy temporary workaround for WaveTools
 
 		geFlex* bottom = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
 			geFlex* controls = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {21, 0, 22, 0});
 			{
-				rewind = new geImageButton(graphics::rewindOff, graphics::rewindOn);
-				play   = new geImageButton(graphics::playOff, graphics::playOn);
-				loop   = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::SAMPLEEDITOR_LOOP));
-				controls->addWidget(rewind, 25);
-				controls->addWidget(play, 25);
-				controls->addWidget(loop, -1);
+				m_rewind = new geImageButton(graphics::rewindOff, graphics::rewindOn);
+				m_play   = new geImageButton(graphics::playOff, graphics::playOn);
+				m_loop   = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::SAMPLEEDITOR_LOOP));
+				controls->addWidget(m_rewind, 25);
+				controls->addWidget(m_play, 25);
+				controls->addWidget(m_loop, -1);
 				controls->end();
 			}
 
 			geFlex* tools = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN);
 			{
-				pitchTool = new gePitchTool(m_data);
-				rangeTool = new geRangeTool(m_data);
-				shiftTool = new geShiftTool(m_data);
-				tools->addWidget(pitchTool, G_GUI_UNIT * 2);
-				tools->addWidget(rangeTool, G_GUI_UNIT);
-				tools->addWidget(shiftTool, G_GUI_UNIT);
+				m_pitchTool = new gePitchTool(m_data);
+				m_rangeTool = new geRangeTool(m_data);
+				m_shiftTool = new geShiftTool(m_data);
+				tools->addWidget(m_pitchTool, G_GUI_UNIT * 2);
+				tools->addWidget(m_rangeTool, G_GUI_UNIT);
+				tools->addWidget(m_shiftTool, G_GUI_UNIT);
 				tools->end();
 			}
 
-			info = new geBox();
+			m_info = new geBox();
 
 			bottom->addWidget(controls, 120);
 			bottom->addWidget(tools, 420);
-			bottom->addWidget(info);
+			bottom->addWidget(m_info);
 			bottom->end();
 		}
 
 		container->addWidget(top, G_GUI_UNIT);
-		container->addWidget(waveTools);
+		container->addWidget(m_waveTools);
 		container->addWidget(bottom, 88);
 		container->end();
 	}
@@ -131,63 +131,63 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 	add(container);
 	resizable(container);
 
-	reload->onClick = [this]()
+	m_reload->onClick = [this]()
 	{
 		c::sampleEditor::reload(m_data.channelId);
 		redraw();
 	};
 
-	grid->addItem("1", 1);
-	grid->addItem("2", 2);
-	grid->addItem("3", 3);
-	grid->addItem("4", 4);
-	grid->addItem("6", 6);
-	grid->addItem("8", 8);
-	grid->addItem("16", 16);
-	grid->addItem("32", 32);
-	grid->addItem("64", 64);
-	grid->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_GRIDRES));
-	grid->showItem(model.sampleEditorGridVal);
-	grid->onChange = [this](int)
+	m_grid->addItem("1", 1);
+	m_grid->addItem("2", 2);
+	m_grid->addItem("3", 3);
+	m_grid->addItem("4", 4);
+	m_grid->addItem("6", 6);
+	m_grid->addItem("8", 8);
+	m_grid->addItem("16", 16);
+	m_grid->addItem("32", 32);
+	m_grid->addItem("64", 64);
+	m_grid->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_GRIDRES));
+	m_grid->showItem(model.sampleEditorGridVal);
+	m_grid->onChange = [this](int)
 	{
 		/* TODO - redraw grid if != (off) */
-		waveTools->waveform->setGridLevel(grid->getSelectedId());
+		m_waveTools->waveform->setGridLevel(m_grid->getSelectedId());
 	};
 
-	snap->value(model.sampleEditorGridOn);
-	snap->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_SNAPTOGRID));
-	snap->onChange = [this](bool val)
+	m_snap->value(model.sampleEditorGridOn);
+	m_snap->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_SNAPTOGRID));
+	m_snap->onChange = [this](bool val)
 	{
-		waveTools->waveform->setSnap(val);
+		m_waveTools->waveform->setSnap(val);
 	};
 
-	zoomOut->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMOUT));
-	zoomOut->onClick = [this]()
+	m_zoomOut->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMOUT));
+	m_zoomOut->onClick = [this]()
 	{
-		waveTools->waveform->setZoom(geWaveform::Zoom::OUT);
-		waveTools->redraw();
+		m_waveTools->waveform->setZoom(geWaveform::Zoom::OUT);
+		m_waveTools->redraw();
 	};
 
-	zoomIn->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMIN));
-	zoomIn->onClick = [this]()
+	m_zoomIn->copy_tooltip(g_ui->getI18Text(LangMap::COMMON_ZOOMIN));
+	m_zoomIn->onClick = [this]()
 	{
-		waveTools->waveform->setZoom(geWaveform::Zoom::IN);
-		waveTools->redraw();
+		m_waveTools->waveform->setZoom(geWaveform::Zoom::IN);
+		m_waveTools->redraw();
 	};
 
-	play->setToggleable(true);
-	play->onClick = []()
+	m_play->setToggleable(true);
+	m_play->onClick = []()
 	{ c::sampleEditor::togglePreview(); };
 
-	rewind->onClick = [this]()
+	m_rewind->onClick = [this]()
 	{
 		c::sampleEditor::setPreviewTracker(m_data.getSample().range.getA());
 	};
 
-	loop->onChange = [](bool shouldLoop)
+	m_loop->onChange = [](bool shouldLoop)
 	{ c::sampleEditor::setLoop(shouldLoop); };
 
-	info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
+	m_info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
 
 	size_range(720, 480);
 	set_non_modal();
@@ -200,8 +200,8 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 gdSampleEditor::~gdSampleEditor()
 {
 	g_ui->model.sampleEditorBounds  = getBounds();
-	g_ui->model.sampleEditorGridVal = grid->getSelectedId();
-	g_ui->model.sampleEditorGridOn  = snap->value();
+	g_ui->model.sampleEditorGridVal = m_grid->getSelectedId();
+	g_ui->model.sampleEditorGridOn  = m_snap->value();
 
 	c::sampleEditor::cleanupPreview();
 }
@@ -213,39 +213,46 @@ void gdSampleEditor::rebuild()
 	c::sampleEditor::preparePreview(m_channelId);
 
 	m_data = c::sampleEditor::getData(m_channelId);
-	waveTools->rebuild(m_data);
-	pitchTool->rebuild(m_data);
-	rangeTool->rebuild(m_data);
-	shiftTool->rebuild(m_data);
+	m_waveTools->rebuild(m_data);
+	m_pitchTool->rebuild(m_data);
+	m_rangeTool->rebuild(m_data);
+	m_shiftTool->rebuild(m_data);
 
 	updateInfo();
 	updateTitleWithScene(m_data.scene);
 
 	if (!m_data.isValid())
 	{
-		rangeTool->deactivate();
-		pitchTool->deactivate();
-		shiftTool->deactivate();
-		reload->deactivate();
+		m_rangeTool->deactivate();
+		m_pitchTool->deactivate();
+		m_shiftTool->deactivate();
+		m_reload->deactivate();
 	}
 	else
 	{
-		rangeTool->activate();
-		pitchTool->activate();
-		shiftTool->activate();
-		reload->activate();
+		m_rangeTool->activate();
+		m_pitchTool->activate();
+		m_shiftTool->activate();
+		m_reload->activate();
 	}
 
 	if (m_data.isLogical) // Logical samples (aka takes) cannot be reloaded.
-		reload->deactivate();
+		m_reload->deactivate();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void gdSampleEditor::refresh()
 {
-	waveTools->refresh();
-	play->setValue(m_data.a_getPreviewStatus() == ChannelStatus::PLAY);
+	m_waveTools->refresh();
+	m_play->setValue(m_data.a_getPreviewStatus() == ChannelStatus::PLAY);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void gdSampleEditor::refreshPitch()
+{
+	m_pitchTool->refresh();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -256,7 +263,7 @@ void gdSampleEditor::updateInfo()
 	    m_data.wavePath, m_data.waveSize, m_data.waveDuration,
 	    m_data.waveBits != 0 ? std::to_string(m_data.waveBits) : "?", m_data.waveRate);
 
-	info->setLabel(infoText);
+	m_info->setLabel(infoText);
 }
 
 /* -------------------------------------------------------------------------- */
