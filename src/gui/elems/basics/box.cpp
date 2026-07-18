@@ -36,6 +36,7 @@ namespace giada::v
 geBox::geBox(int x, int y, int w, int h, const char* l, Fl_Align al)
 : Fl_Box(x, y, w, h)
 , m_label(l != nullptr ? l : "")
+, m_truncate(true)
 {
 	box(FL_NO_BOX);
 	color(G_COLOR_GREY_1);
@@ -74,8 +75,8 @@ void geBox::draw()
 	else if (!m_label.empty())
 	{
 		const auto labelColor = active() ? labelcolor() : G_COLOR_GREY_4;
-		drawText(giada::u::gui::truncate(m_label, w()), bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE,
-		    labelColor, align());
+		const auto text       = m_truncate ? giada::u::gui::truncate(m_label, w()) : m_label;
+		drawText(text, bounds, FL_HELVETICA, G_GUI_FONT_SIZE_BASE, labelColor, align());
 	}
 }
 
@@ -86,6 +87,7 @@ void geBox::setSvgImage(const char* svg)
 	m_image = std::make_unique<Fl_SVG_Image>(nullptr, svg);
 	image(m_image.get());
 }
+
 /* -------------------------------------------------------------------------- */
 
 void geBox::setLabel(const std::string& l)
@@ -93,4 +95,8 @@ void geBox::setLabel(const std::string& l)
 	m_label = l;
 	redraw();
 }
+
+/* -------------------------------------------------------------------------- */
+
+void geBox::setTruncate(bool v) { m_truncate = v; };
 } // namespace giada::v
