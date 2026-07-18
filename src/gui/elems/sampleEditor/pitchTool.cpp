@@ -30,9 +30,9 @@
 #include "src/glue/channel.h"
 #include "src/gui/dialogs/sampleEditor.h"
 #include "src/gui/elems/basics/box.h"
+#include "src/gui/elems/basics/choice.h"
 #include "src/gui/elems/basics/dial.h"
 #include "src/gui/elems/basics/input.h"
-#include "src/gui/elems/basics/menu.h"
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/graphics.h"
 #include "src/gui/ui.h"
@@ -52,7 +52,7 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	geFlex* row1 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{
 		m_playbackModeLabel = new geBox("Mode", FL_ALIGN_LEFT);
-		m_playbackMode      = new geMenu();
+		m_playbackMode      = new geChoice();
 
 		row1->addWidget(m_playbackModeLabel, 50);
 		row1->addWidget(m_playbackMode, 70);
@@ -105,14 +105,11 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 		    Thread::MAIN);
 	};
 
-	m_playbackMode->addItem(ID{1}, "Tape");
-	m_playbackMode->addItem(ID{2}, "Elastic");
-	m_playbackMode->onSelect = [this](ID id)
+	m_playbackMode->addItem("Tape", static_cast<int>(PlaybackMode::TAPE));
+	m_playbackMode->addItem("Elastic", static_cast<int>(PlaybackMode::ELASTIC));
+	m_playbackMode->onChange = [this](int id)
 	{
-		if (id == ID{1})
-			c::channel::setChannelPlaybackMode(m_data->channelId, PlaybackMode::TAPE);
-		else
-			c::channel::setChannelPlaybackMode(m_data->channelId, PlaybackMode::ELASTIC);
+		c::channel::setChannelPlaybackMode(m_data->channelId, static_cast<PlaybackMode>(id));
 	};
 
 	m_time->setType(FL_FLOAT_INPUT);
@@ -130,6 +127,7 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 void gePitchTool::rebuild(const c::sampleEditor::Data& d)
 {
 	m_data = &d;
+	m_playbackMode->showItem(static_cast<int>(m_data->getSample().playbackMode));
 	m_pitch->setValue(fmt::format("{:.4f}", m_data->getSample().pitch)); // 4 digits
 	m_time->setValue(fmt::format("{:.4f}", m_data->getSample().time));   // 4 digits
 }
