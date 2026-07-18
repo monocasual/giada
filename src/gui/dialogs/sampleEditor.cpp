@@ -27,6 +27,7 @@
 #include "src/glue/sampleEditor.h"
 #include "src/deps/geompp/src/range.hpp"
 #include "src/glue/channel.h"
+#include "src/glue/layout.h"
 #include "src/gui/dialogs/sampleEditor.h"
 #include "src/gui/dialogs/warnings.h"
 #include "src/gui/elems/basics/box.h"
@@ -72,11 +73,14 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 	{
 		geFlex* top = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 		{
+			m_infoBtn = new geTextButton(g_ui->getI18Text(LangMap::COMMON_INFO));
 			m_reload  = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_RELOAD));
 			m_grid    = new geChoice();
 			m_snap    = new geCheck(0, 0, 0, 0, g_ui->getI18Text(LangMap::COMMON_SNAPTOGRID));
 			m_zoomOut = new geImageButton(graphics::minusOff, graphics::minusOn);
 			m_zoomIn  = new geImageButton(graphics::plusOff, graphics::plusOn);
+			top->addWidget(m_infoBtn, 70);
+			top->addWidget(new geBox(), G_GUI_INNER_MARGIN);
 			top->addWidget(m_reload, 70);
 			top->addWidget(new geBox(), G_GUI_INNER_MARGIN);
 			top->addWidget(m_grid, 50);
@@ -114,11 +118,8 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 				tools->end();
 			}
 
-			m_info = new geBox();
-
 			bottom->addWidget(controls, 120);
 			bottom->addWidget(tools, 420);
-			bottom->addWidget(m_info);
 			bottom->end();
 		}
 
@@ -130,6 +131,15 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 
 	add(container);
 	resizable(container);
+
+	m_infoBtn->onClick = [this]()
+	{
+		std::string text = fmt::format(fmt::runtime(g_ui->getI18Text(LangMap::SAMPLEEDITOR_INFO)),
+		    m_data.wavePath, m_data.waveSize, m_data.waveDuration,
+		    m_data.waveBits != 0 ? std::to_string(m_data.waveBits) : "?", m_data.waveRate);
+
+		c::layout::openInfoWindow(text, 300, 120);
+	};
 
 	m_reload->onClick = [this]()
 	{
@@ -187,8 +197,6 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 	m_loop->onChange = [](bool shouldLoop)
 	{ c::sampleEditor::setLoop(shouldLoop); };
 
-	m_info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-
 	size_range(720, 480);
 	set_non_modal();
 	rebuild();
@@ -218,7 +226,6 @@ void gdSampleEditor::rebuild()
 	m_rangeTool->rebuild(m_data);
 	m_shiftTool->rebuild(m_data);
 
-	updateInfo();
 	updateTitleWithScene(m_data.scene);
 
 	if (!m_data.isValid())
@@ -253,17 +260,6 @@ void gdSampleEditor::refresh()
 void gdSampleEditor::refreshPitch()
 {
 	m_pitchTool->refresh();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void gdSampleEditor::updateInfo()
-{
-	std::string infoText = fmt::format(fmt::runtime(g_ui->getI18Text(LangMap::SAMPLEEDITOR_INFO)),
-	    m_data.wavePath, m_data.waveSize, m_data.waveDuration,
-	    m_data.waveBits != 0 ? std::to_string(m_data.waveBits) : "?", m_data.waveRate);
-
-	m_info->setLabel(infoText);
 }
 
 /* -------------------------------------------------------------------------- */
