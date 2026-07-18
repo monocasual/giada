@@ -39,7 +39,7 @@ namespace giada::v
 class geInput;
 class geBox;
 class geDial;
-class geMenu;
+class geChoice;
 class geTextButton;
 class gePitchTool : public geFlex
 {
@@ -52,8 +52,8 @@ public:
 private:
 	const c::sampleEditor::Data* m_data;
 
-	geBox*  m_playbackModeLabel;
-	geMenu* m_playbackMode;
+	geBox*    m_playbackModeLabel;
+	geChoice* m_playbackMode;
 
 	geBox*        m_pitchLabel;
 	geInput*      m_pitch;
