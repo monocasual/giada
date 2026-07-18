@@ -110,6 +110,7 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	m_playbackMode->onChange = [this](int id)
 	{
 		c::channel::setChannelPlaybackMode(m_data->channelId, static_cast<PlaybackMode>(id));
+		updateInputStates();
 	};
 
 	m_time->setType(FL_FLOAT_INPUT);
@@ -130,6 +131,7 @@ void gePitchTool::rebuild(const c::sampleEditor::Data& d)
 	m_playbackMode->showItem(static_cast<int>(m_data->getSample().playbackMode));
 	m_pitch->setValue(fmt::format("{:.4f}", m_data->getSample().pitch)); // 4 digits
 	m_time->setValue(fmt::format("{:.4f}", m_data->getSample().time));   // 4 digits
+	updateInputStates();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -139,4 +141,11 @@ void gePitchTool::refresh()
 	m_pitch->setValue(fmt::format("{:.4f}", m_data->getSample().pitch)); // 4 digits
 }
 
+/* -------------------------------------------------------------------------- */
+
+void gePitchTool::updateInputStates()
+{
+	const auto currentPlaybackMode = static_cast<PlaybackMode>(m_playbackMode->getSelectedId());
+	u::gui::setActive(m_time, currentPlaybackMode == PlaybackMode::ELASTIC);
+}
 } // namespace giada::v

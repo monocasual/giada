@@ -50,6 +50,8 @@ public:
 	void refresh();
 
 private:
+	void updateInputStates();
+
 	const c::sampleEditor::Data* m_data;
 
 	geBox*    m_playbackModeLabel;
