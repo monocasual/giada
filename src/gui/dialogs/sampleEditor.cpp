@@ -78,6 +78,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 			zoomOut = new geImageButton(graphics::minusOff, graphics::minusOn);
 			zoomIn  = new geImageButton(graphics::plusOff, graphics::plusOn);
 			top->addWidget(reload, 70);
+			top->addWidget(new geBox(), G_GUI_INNER_MARGIN);
 			top->addWidget(grid, 50);
 			top->addWidget(snap, 12);
 			top->addWidget(new geBox());
