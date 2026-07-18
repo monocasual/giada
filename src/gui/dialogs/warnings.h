@@ -27,8 +27,23 @@
 #ifndef GD_WARNINGS_H
 #define GD_WARNINGS_H
 
+#include "src/gui/dialogs/window.h"
+
 namespace giada::v
 {
+class geTextButton;
+class geBox;
+
+class gdInfo : public gdWindow
+{
+public:
+	gdInfo(std::string_view text, int w, int h);
+
+private:
+	geBox*        m_textBox;
+	geTextButton* m_closeBtn;
+};
+
 void gdAlert(const char* c, bool resizable = false);
 int  gdConfirmWin(const char* title, const char* msg);
 } // namespace giada::v

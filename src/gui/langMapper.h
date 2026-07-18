@@ -52,6 +52,7 @@ public:
 	static constexpr auto COMMON_SAVE       = "common_save";
 	static constexpr auto COMMON_WARNING    = "common_warning";
 	static constexpr auto COMMON_CLOSE      = "common_close";
+	static constexpr auto COMMON_INFO       = "common_info";
 	static constexpr auto COMMON_ADD        = "common_add";
 	static constexpr auto COMMON_CLEAR      = "common_clear";
 	static constexpr auto COMMON_RELOAD     = "common_reload";
