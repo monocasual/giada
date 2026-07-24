@@ -421,6 +421,11 @@ float setChannelPitch(ID channelId, float v, Thread t)
 void setChannelTime(ID channelId, float v)
 {
 	g_engine->getChannelsApi().setTime(channelId, v);
+	g_ui->pumpEvent([]()
+	{
+		if (auto* w = sampleEditor::getWindow(); w != nullptr)
+			w->refreshPitch();
+	});
 }
 
 /* -------------------------------------------------------------------------- */

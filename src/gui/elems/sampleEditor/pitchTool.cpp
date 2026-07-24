@@ -137,6 +137,7 @@ void gePitchTool::rebuild(const c::sampleEditor::Data& d)
 void gePitchTool::refresh()
 {
 	m_pitch->setValue(fmt::format("{:.4f}", m_data->getSample().pitch)); // 4 digits
+	m_time->setValue(fmt::format("{:.4f}", m_data->getSample().time));   // 4 digits
 }
 
 /* -------------------------------------------------------------------------- */
