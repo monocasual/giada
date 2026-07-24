@@ -95,14 +95,12 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 
 	m_pitchToBar->onClick = [this]()
 	{
-		const float pitch = m_data->getSample().range.getLength() / (float)m_data->getFramesInBar();
-		c::channel::setChannelPitch(m_data->channelId, pitch, Thread::MAIN);
+		spreadSampleToLength(m_data->getFramesInBar());
 	};
 
 	m_pitchToSong->onClick = [this]()
 	{
-		const float pitch = m_data->getSample().range.getLength() / (float)m_data->getFramesInLoop();
-		c::channel::setChannelPitch(m_data->channelId, pitch, Thread::MAIN);
+		spreadSampleToLength(m_data->getFramesInLoop());
 	};
 
 	m_playbackMode->addItem("Tape", static_cast<int>(PlaybackMode::TAPE));
@@ -148,4 +146,22 @@ void gePitchTool::updateInputStates()
 	const auto currentPlaybackMode = static_cast<PlaybackMode>(m_playbackMode->getSelectedId());
 	u::gui::setActive(m_time, currentPlaybackMode == PlaybackMode::ELASTIC);
 }
+
+/* -------------------------------------------------------------------------- */
+
+void gePitchTool::spreadSampleToLength(Frame length)
+{
+	const auto currentPlaybackMode = static_cast<PlaybackMode>(m_playbackMode->getSelectedId());
+	if (currentPlaybackMode == PlaybackMode::TAPE)
+	{
+		const float value = m_data->getSample().range.getLength() / static_cast<float>(length);
+		c::channel::setChannelPitch(m_data->channelId, value, Thread::MAIN);
+	}
+	else
+	{
+		const float value = length / static_cast<float>(m_data->getSample().range.getLength());
+		c::channel::setChannelTime(m_data->channelId, value);
+	}
+}
+
 } // namespace giada::v

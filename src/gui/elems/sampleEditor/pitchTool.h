@@ -27,6 +27,7 @@
 #ifndef GE_PITCH_TOOL_H
 #define GE_PITCH_TOOL_H
 
+#include "src/aliases.h"
 #include "src/gui/elems/basics/flex.h"
 
 namespace giada::c::sampleEditor
@@ -51,6 +52,7 @@ public:
 
 private:
 	void updateInputStates();
+	void spreadSampleToLength(Frame length);
 
 	const c::sampleEditor::Data* m_data;
 
