@@ -95,14 +95,14 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 
 	m_pitchToBar->onClick = [this]()
 	{
-		c::channel::setChannelPitch(m_data->channelId, m_data->getSample().range.getB() / (float)m_data->getFramesInBar(),
-		    Thread::MAIN);
+		const float pitch = m_data->getSample().range.getLength() / (float)m_data->getFramesInBar();
+		c::channel::setChannelPitch(m_data->channelId, pitch, Thread::MAIN);
 	};
 
 	m_pitchToSong->onClick = [this]()
 	{
-		c::channel::setChannelPitch(m_data->channelId, m_data->getSample().range.getB() / (float)m_data->getFramesInLoop(),
-		    Thread::MAIN);
+		const float pitch = m_data->getSample().range.getLength() / (float)m_data->getFramesInLoop();
+		c::channel::setChannelPitch(m_data->channelId, pitch, Thread::MAIN);
 	};
 
 	m_playbackMode->addItem("Tape", static_cast<int>(PlaybackMode::TAPE));
