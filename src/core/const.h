@@ -86,6 +86,7 @@ constexpr int          G_DEFAULT_BIT_DEPTH           = 32;
 constexpr float        G_DEFAULT_VOL                 = 1.0f;
 constexpr float        G_DEFAULT_PAN                 = 0.5f;
 constexpr float        G_DEFAULT_PITCH               = 1.0f;
+constexpr float        G_DEFAULT_TIME                = 1.0f;
 constexpr float        G_DEFAULT_BPM                 = 120.0f;
 constexpr int          G_DEFAULT_QUANTIZE            = 0;     // quantizer off
 constexpr float        G_DEFAULT_FADEOUT_STEP        = 0.01f; // micro-fadeout speed
