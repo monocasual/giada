@@ -31,8 +31,8 @@
 #include "src/gui/dialogs/sampleEditor.h"
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/choice.h"
-#include "src/gui/elems/basics/dial.h"
 #include "src/gui/elems/basics/input.h"
+#include "src/gui/elems/basics/menu.h"
 #include "src/gui/elems/basics/textButton.h"
 #include "src/gui/graphics.h"
 #include "src/gui/ui.h"
@@ -45,6 +45,20 @@ namespace utils = mcl::utils;
 
 namespace giada::v
 {
+namespace
+{
+enum class AdjustMenu
+{
+	SPREAD_TO_BAR = 1,
+	SPREAD_TO_SONG,
+	RESET_ALL
+};
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 : geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN)
 , m_data(nullptr)
@@ -61,14 +75,12 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 
 	geFlex* row2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
 	{
-		m_pitchLabel  = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT);
-		m_pitch       = new geInput();
-		m_pitchToBar  = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOBAR));
-		m_pitchToSong = new geTextButton(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH_TOSONG));
+		m_pitchLabel = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT);
+		m_pitch      = new geInput();
+		m_adjust     = new geTextButton("Adjust...");
 		row2->addWidget(m_pitchLabel, 50);
 		row2->addWidget(m_pitch, 70);
-		row2->addWidget(m_pitchToBar, 70);
-		row2->addWidget(m_pitchToSong, 70);
+		row2->addWidget(m_adjust, 70);
 		row2->end();
 	}
 
@@ -93,14 +105,27 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 		c::channel::setChannelPitch(m_data->channelId, utils::string::toFloat(val), Thread::MAIN);
 	};
 
-	m_pitchToBar->onClick = [this]()
+	m_adjust->onClick = [this]()
 	{
-		spreadSampleToLength(m_data->getFramesInBar());
-	};
+		geMenu menu;
+		menu.addItem(ID{AdjustMenu::SPREAD_TO_BAR}, "Spread to bar");
+		menu.addItem(ID{AdjustMenu::SPREAD_TO_SONG}, "Spread to song");
+		menu.addItem(ID{AdjustMenu::RESET_ALL}, "Reset all");
 
-	m_pitchToSong->onClick = [this]()
-	{
-		spreadSampleToLength(m_data->getFramesInLoop());
+		menu.onSelect = [this](ID id)
+		{
+			if (id == AdjustMenu::SPREAD_TO_BAR)
+				spreadSampleToLength(m_data->getFramesInBar());
+			else if (id == AdjustMenu::SPREAD_TO_SONG)
+				spreadSampleToLength(m_data->getFramesInLoop());
+			else if (id == AdjustMenu::RESET_ALL)
+			{
+				c::channel::setChannelPitch(m_data->channelId, G_DEFAULT_PITCH, Thread::MAIN);
+				c::channel::setChannelTime(m_data->channelId, G_DEFAULT_TIME);
+			}
+		};
+
+		menu.popup();
 	};
 
 	m_playbackMode->addItem("Tape", static_cast<int>(PlaybackMode::TAPE));
