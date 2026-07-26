@@ -50,13 +50,26 @@ void Stretcher::last() { m_stretcher.reset(); }
 
 /* -------------------------------------------------------------------------- */
 
+/* Rubber Band expects de-interleaved audio as an array of channel pointers
+(one pointer per channel), while Stretcher::process() uses a flat stereo buffer
+for a simpler API. So here we build temporary channel-pointer arrays that point
+into the flat input/output buffers:
+
+    - inputPtrs[0]  -> left channel
+    - inputPtrs[1]  -> right channel
+    - outputPtrs[0] -> left channel
+    - outputPtrs[1] -> right channel
+
+This is only an adapter for the Rubber Band API; the actual audio data remains
+flat and planar in the caller-facing interface. */
+
 Stretcher::Result Stretcher::process(const float* input, std::size_t inputLength,
     std::size_t inputStart, float* output, std::size_t outputLength,
     std::size_t outputStart, double timeRatio, double pitchRatio)
 {
 	assert(input != nullptr);
 	assert(output != nullptr);
-	assert(inputStart < inputLength);
+	assert(inputStart <= inputLength); // <= now, since a drain-only call may pass inputStart == inputLength
 	assert(outputStart < outputLength);
 
 	m_stretcher.setTimeRatio(timeRatio);
@@ -65,48 +78,103 @@ Stretcher::Result Stretcher::process(const float* input, std::size_t inputLength
 	std::size_t framesGenerated  = 0;
 	std::size_t framesUsed       = 0;
 	bool        outputIsEmpty    = true;
-	bool        inputIsAvailable = true;
+	bool        inputIsAvailable = inputStart < inputLength;
+	bool        fullyDrained     = false; // true only once available() actually reaches -1
 
-	while (outputIsEmpty && inputIsAvailable)
+	while (outputIsEmpty)
 	{
-		/* Rubber Band expects de-interleaved audio as an array of channel pointers
-		(one pointer per channel), while Stretcher::process() uses a flat stereo buffer
-		for a simpler API. So here we build temporary channel-pointer arrays that point
-		into the flat input/output buffers:
+		/* We check available() first, before doing anything else, because it's
+		a free status check that tells us whether the stretcher already has
+		output waiting, possibly enough to skip calling process() entirely
+		this iteration. Here specifically, a return of -1 means "input ended
+		AND every last frame has been retrieved": the stretcher is completely
+		spent and will never produce anything else, no matter what we do, so we
+		bail out immediately instead of looping further. */
 
-		    - inputPtrs[0]  -> left channel
-		    - inputPtrs[1]  -> right channel
-		    - outputPtrs[0] -> left channel
-		    - outputPtrs[1] -> right channel
+		if (!inputIsAvailable && m_stretcher.available() < 0)
+		{
+			fullyDrained = true;
+			break;
+		}
 
-		This is only an adapter for the Rubber Band API; the actual audio data remains
-		flat and planar in the caller-facing interface. */
+		std::size_t       framesAvailable = static_cast<std::size_t>(std::max(m_stretcher.available(), 0));
+		const std::size_t outputRemaining = outputLength - outputStart - framesGenerated;
 
-		const float* inputPtrs[G_MAX_IO_CHANS] = {
-		    input + inputStart + framesUsed,
-		    input + inputStart + inputLength + framesUsed};
+		/* Feed more input to the stretcher only if what's already available()
+		isn't enough to cover the rest of the output buffer. */
+
+		if (framesAvailable < outputRemaining && inputIsAvailable)
+		{
+			const float* inputPtrs[G_MAX_IO_CHANS] = {
+			    input + inputStart + framesUsed,
+			    input + inputStart + inputLength + framesUsed};
+
+			/* stretcher.getSamplesRequired() means: "how much input the stretcher
+			needs before it can do any work?" This tells us the right-sized batch
+			to hand over next. */
+
+			const std::size_t framesRequired  = m_stretcher.getSamplesRequired();
+			const std::size_t framesRemaining = inputLength - inputStart - framesUsed;
+			const std::size_t framesToProcess = std::min(framesRequired, framesRemaining);
+
+			/* If this batch covers everything left in the input file, this is
+			the last input we'll ever hand over. Tell the stretcher so via the
+			`final` flag below, so it knows to flush its internal buffers rather
+			than wait for more input that isn't coming. */
+
+			inputIsAvailable = framesToProcess < framesRemaining;
+
+			/* strecther.process(): this is the call that consumes input. It may
+			produce more output than fits in our output buffer (the surplus stays
+			queued inside the stretcher until a later call to available()/retrieve()),
+			or it may produce nothing yet if it's still filling its internal window. */
+
+			m_stretcher.process(inputPtrs, framesToProcess, !inputIsAvailable);
+			framesUsed += framesToProcess;
+
+			/* Re-check available(). The process() call above may have just been
+			the final flush, in which case draining could already be complete
+			(available() now -1) with nothing to retrieve. */
+
+			if (!inputIsAvailable && m_stretcher.available() < 0)
+			{
+				fullyDrained = true;
+				break;
+			}
+			framesAvailable = static_cast<std::size_t>(std::max(m_stretcher.available(), 0));
+		}
 
 		float* outputPtrs[G_MAX_IO_CHANS] = {
 		    output + outputStart + framesGenerated,
 		    output + outputLength + outputStart + framesGenerated};
 
-		const std::size_t framesRequired  = m_stretcher.getSamplesRequired();
-		const std::size_t framesRemaining = inputLength - inputStart - framesUsed;
-		const std::size_t framesToProcess = std::min(framesRequired, framesRemaining);
-		inputIsAvailable                  = framesUsed + framesToProcess < inputLength - inputStart;
-		m_stretcher.process(inputPtrs, framesToProcess, !inputIsAvailable);
+		/* stretcher.retrieve(): gets stretched data. We only ever take as much as
+		our buffer has room for (outputRemaining); anything left over stays queued
+		inside the stretcher for the next callback. */
 
-		const std::size_t framesAvailable  = m_stretcher.available();
-		const std::size_t outputRemaining  = outputLength - outputStart - framesGenerated;
 		const std::size_t framesToRetrieve = std::min(framesAvailable, outputRemaining);
 		const std::size_t framesRetrieved  = m_stretcher.retrieve(outputPtrs, framesToRetrieve);
 
 		framesGenerated += framesRetrieved;
-		framesUsed += framesToProcess;
 		outputIsEmpty = framesGenerated < (outputLength - outputStart);
+
+		/* Safety check: input is gone and nothing is available from the stretcher,
+		but make sure to avoid spinning forever just in case retrieve() still
+		returns nothing here. */
+
+		if (!inputIsAvailable && framesAvailable == 0 && framesRetrieved == 0)
+		{
+			fullyDrained = true;
+			break;
+		}
 	}
 
-	if (!inputIsAvailable)
+	/* Only reset once the stretcher has truly given up everything it will ever
+	produce, NOT just because the source file ran out of input. A long tail (e.g.
+	when slowing audio down) can still have real, unread output queued up after
+	input ends, spanning into future callbacks. */
+
+	if (fullyDrained)
 		m_stretcher.reset();
 
 	return {
