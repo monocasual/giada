@@ -50,23 +50,46 @@ void Stretcher::last() { m_stretcher.reset(); }
 
 /* -------------------------------------------------------------------------- */
 
-/* Rubber Band expects de-interleaved audio as an array of channel pointers
-(one pointer per channel), while Stretcher::process() uses a flat stereo buffer
-for a simpler API. So here we build temporary channel-pointer arrays that point
-into the flat input/output buffers:
-
-    - inputPtrs[0]  -> left channel
-    - inputPtrs[1]  -> right channel
-    - outputPtrs[0] -> left channel
-    - outputPtrs[1] -> right channel
-
-This is only an adapter for the Rubber Band API; the actual audio data remains
-flat and planar in the caller-facing interface. */
-
 Stretcher::Result Stretcher::process(const float* input, std::size_t inputLength,
     std::size_t inputStart, float* output, std::size_t outputLength,
     std::size_t outputStart, double timeRatio, double pitchRatio)
 {
+	/* General algorithm -
+	1. While the output buffer still has room:
+	2. Ask the stretcher: how much output is already buffered with no extra work,
+	via available()
+	    - If input has run out AND this returns "nothing, ever again",
+	    we're truly finished. Stop.
+	3. If what's buffered isn't enough to fill the rest of the output buffer,
+	AND there's still source audio left:
+	    a. Ask the stretcher how many input frames it wants before it can produce
+	    more output (getSamplesRequired())
+	    b. Hand it that many frames, or fewer, if the input source is about to run
+	    out (process()), flagging "final" if this is truly the last chunk of source audio
+	    c. Re-check how much is now buffered
+	4. Take as much as fits from what's buffered into the caller's output buffer
+	(retrieve()). Anything left over stays queued inside the stretcher for next time
+	5. If the output buffer is now full, then stop and return to caller (there may
+	still be more real audio queued for later calls)
+	6. Only once step 2 confirms "nothing left, ever" do we reset() the stretcher,
+	not simply when the source has run dry, since real audio can still be queued
+	internally by librubberband for several more calls after the last input was
+	fed (especially when stretching audio longer).
+
+	Note on interleaved audio -
+	Rubber Band expects de-interleaved audio as an array of channel pointers (one
+	pointer per channel), while Stretcher::process() uses a flat stereo buffer for
+	a simpler API. So here we build temporary channel-pointer arrays that point
+	into the flat input/output buffers:
+
+	- inputPtrs[0]  -> left channel
+	- inputPtrs[1]  -> right channel
+	- outputPtrs[0] -> left channel
+	- outputPtrs[1] -> right channel
+
+	This is only an adapter for the Rubber Band API; the actual audio data remains
+	flat and planar in the caller-facing interface. */
+
 	assert(input != nullptr);
 	assert(output != nullptr);
 	assert(inputStart <= inputLength); // <= now, since a drain-only call may pass inputStart == inputLength
