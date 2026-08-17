@@ -863,7 +863,7 @@ target_link_options(giada PRIVATE ${LINK_OPTIONS})
 # Install rules
 # ------------------------------------------------------------------------------
 
-if(DEFINED OS_LINUX)
+if(DEFINED OS_LINUX OR DEFINED OS_FREEBSD)
 	include(GNUInstallDirs)
 	install(TARGETS giada DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR})
 	install(FILES ${CMAKE_SOURCE_DIR}/extras/com.giadamusic.Giada.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
