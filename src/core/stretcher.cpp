@@ -202,6 +202,7 @@ Stretcher::Result Stretcher::process(const float* input, std::size_t inputLength
 
 	return {
 	    .used      = static_cast<long>(framesUsed),
-	    .generated = static_cast<long>(framesGenerated)};
+	    .generated = static_cast<long>(framesGenerated),
+	    .finished  = fullyDrained};
 }
 } // namespace giada::m
