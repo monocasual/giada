@@ -133,7 +133,7 @@ int geWaveform::alloc(int datasize, bool force)
 
 			float avg = 0.0f;
 			for (int j = 0; j < wave.getBuffer().countChannels(); j++)
-				avg += wave.getBuffer().getChannelPtr(j)[k];
+				avg += wave.getBuffer().getChannel(j).data()[k];
 			avg /= wave.getBuffer().countChannels();
 
 			/* Find peaks (greater and lower). */

@@ -249,7 +249,7 @@ void shift(Wave& w, Frame offset)
 
 	for (int ch = 0; ch < channels; ++ch)
 	{
-		float* begin = w.getBuffer().getChannelPtr(ch);
+		float* begin = w.getBuffer().getChannel(ch).data();
 		std::rotate(begin, begin + offset, begin + frames);
 	}
 
@@ -262,8 +262,8 @@ void reverse(Wave& w, Frame a, Frame b)
 {
 	for (int ch = 0; ch < w.getBuffer().countChannels(); ++ch)
 	{
-		float* begin = w.getBuffer().getChannelPtr(ch) + a;
-		float* end   = w.getBuffer().getChannelPtr(ch) + b;
+		float* begin = w.getBuffer().getChannel(ch).data() + a;
+		float* end   = w.getBuffer().getChannel(ch).data() + b;
 		std::reverse(begin, end);
 	}
 
