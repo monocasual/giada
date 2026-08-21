@@ -43,8 +43,8 @@ ReadResult readResampled_(const Sample& sample, mcl::AudioBuffer& dest, Frame st
 {
 	assert(sample.wave != nullptr);
 
-	const float* srcPtr = sample.wave->getBuffer().getChannel(0);
-	float*       dstPtr = dest.getChannel(0) + offset;
+	const float* srcPtr = sample.wave->getBuffer().getChannelPtr(0);
+	float*       dstPtr = dest.getChannelPtr(0) + offset;
 
 	Resampler::Result res = resampler.process(
 	    /*input=*/srcPtr,
@@ -68,11 +68,11 @@ ReadResult readStretched_(const Sample& sample, mcl::AudioBuffer& dest, Frame st
 	assert(sample.wave != nullptr);
 
 	Stretcher::Result res = stretcher.process(
-	    /*input=*/sample.wave->getBuffer().getData(),
+	    /*input=*/sample.wave->getBuffer().getDataPtr(),
 	    /*channelStride=*/sample.wave->getBuffer().countFrames(), // true full buffer size, never shrinks
-	    /*inputEnd=*/sample.range.getB(),                      // logical boundary — respects the B point
+	    /*inputEnd=*/sample.range.getB(),                         // logical boundary — respects the B point
 	    /*inputStart=*/start,
-	    /*output=*/dest.getData(),
+	    /*output=*/dest.getDataPtr(),
 	    /*outputLength=*/dest.countFrames(),
 	    /*outputStart=*/offset,
 	    /*timeRatio=*/sample.time,

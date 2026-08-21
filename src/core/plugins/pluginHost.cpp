@@ -142,7 +142,7 @@ void PluginHost::giadaToJuceTempBuf(const mcl::AudioBuffer& outBuf)
 
 	for (int ch = 0; ch < outBuf.countChannels(); ++ch)
 	{
-		const float* src = outBuf.getChannel(ch);
+		const float* src = outBuf.getChannelPtr(ch);
 		float*       dst = m_audioBuffer.getWritePointer(ch);
 
 		std::copy(src, src + outBuf.countFrames(), dst);
@@ -157,7 +157,7 @@ void PluginHost::juceToGiadaOutBuf(mcl::AudioBuffer& outBuf) const
 	for (int ch = 0; ch < outBuf.countChannels(); ++ch)
 	{
 		const float* src = m_audioBuffer.getReadPointer(ch);
-		float*       dst = outBuf.getChannel(ch);
+		float*       dst = outBuf.getChannelPtr(ch);
 
 		std::copy(src, src + outBuf.countFrames(), dst);
 	}
