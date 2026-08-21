@@ -69,7 +69,8 @@ ReadResult readStretched_(const Sample& sample, mcl::AudioBuffer& dest, Frame st
 
 	Stretcher::Result res = stretcher.process(
 	    /*input=*/sample.wave->getBuffer().getData(),
-	    /*inputLength=*/sample.wave->getBuffer().countFrames(),
+	    /*channelStride=*/sample.wave->getBuffer().countFrames(), // true full buffer size, never shrinks
+	    /*inputEnd=*/sample.range.getB(),                      // logical boundary — respects the B point
 	    /*inputStart=*/start,
 	    /*output=*/dest.getData(),
 	    /*outputLength=*/dest.countFrames(),

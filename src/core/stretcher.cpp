@@ -50,8 +50,8 @@ void Stretcher::last() { m_stretcher.reset(); }
 
 /* -------------------------------------------------------------------------- */
 
-Stretcher::Result Stretcher::process(const float* input, std::size_t inputLength,
-    std::size_t inputStart, float* output, std::size_t outputLength,
+Stretcher::Result Stretcher::process(const float* input, std::size_t inputChannelStride,
+    std::size_t inputEnd, std::size_t inputStart, float* output, std::size_t outputLength,
     std::size_t outputStart, double timeRatio, double pitchRatio)
 {
 	/* General algorithm -
@@ -92,7 +92,8 @@ Stretcher::Result Stretcher::process(const float* input, std::size_t inputLength
 
 	assert(input != nullptr);
 	assert(output != nullptr);
-	assert(inputStart <= inputLength); // <= now, since a drain-only call may pass inputStart == inputLength
+	assert(inputStart <= inputEnd);         // <= now, since a drain-only call may pass inputStart == inputLength
+	assert(inputEnd <= inputChannelStride); // the playable range can never exceed the real buffer
 	assert(outputStart < outputLength);
 
 	m_stretcher.setTimeRatio(timeRatio);
@@ -101,7 +102,7 @@ Stretcher::Result Stretcher::process(const float* input, std::size_t inputLength
 	std::size_t framesGenerated  = 0;
 	std::size_t framesUsed       = 0;
 	bool        outputIsEmpty    = true;
-	bool        inputIsAvailable = inputStart < inputLength;
+	bool        inputIsAvailable = inputStart < inputEnd;
 	bool        fullyDrained     = false; // true only once available() actually reaches -1
 
 	while (outputIsEmpty)
@@ -130,14 +131,14 @@ Stretcher::Result Stretcher::process(const float* input, std::size_t inputLength
 		{
 			const float* inputPtrs[G_MAX_IO_CHANS] = {
 			    input + inputStart + framesUsed,
-			    input + inputStart + inputLength + framesUsed};
+			    input + inputChannelStride + inputStart + framesUsed};
 
 			/* stretcher.getSamplesRequired() means: "how much input the stretcher
 			needs before it can do any work?" This tells us the right-sized batch
 			to hand over next. */
 
 			const std::size_t framesRequired  = m_stretcher.getSamplesRequired();
-			const std::size_t framesRemaining = inputLength - inputStart - framesUsed;
+			const std::size_t framesRemaining = inputEnd - inputStart - framesUsed;
 			const std::size_t framesToProcess = std::min(framesRequired, framesRemaining);
 
 			/* If this batch covers everything left in the input file, this is
