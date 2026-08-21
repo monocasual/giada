@@ -48,6 +48,7 @@ ReadResult readResampled_(const Sample& sample, mcl::AudioBuffer& dest, Frame st
 
 	Resampler::Result res = resampler.process(
 	    /*input=*/srcPtr,
+	    /*channelStride=*/sample.wave->getBuffer().countFrames(), // true full buffer size, never shrinks
 	    /*inputPos=*/start,
 	    /*inputLength=*/sample.range.getB(),
 	    /*output=*/dstPtr,

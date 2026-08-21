@@ -147,12 +147,12 @@ Resampler::Resampler(Quality quality)
 
 /* -------------------------------------------------------------------------- */
 
-Resampler::Result Resampler::process(const float* input, long inputPos, long inputLength,
-    float* output, long outputLength, float ratio) const
+Resampler::Result Resampler::process(const float* input, long inputChannelStride, long inputPos,
+    long inputLength, float* output, long outputLength, float ratio) const
 {
 	const Result left  = m_left.process(input, inputPos, inputLength, output,
 	     outputLength, ratio);
-	const Result right = m_right.process(input + inputLength, inputPos, inputLength,
+	const Result right = m_right.process(input + inputChannelStride, inputPos, inputLength,
 	    output + outputLength, outputLength, ratio);
 
 	return {

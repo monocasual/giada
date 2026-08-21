@@ -83,8 +83,8 @@ public:
 
 	The same layout applies to 'output'. */
 
-	Result process(const float* input, long inputPos, long inputLength, float* output,
-	    long outputLength, float ratio) const;
+	Result process(const float* input, long inputChannelStride, long inputPos,
+	    long inputLength, float* output, long outputLength, float ratio) const;
 
 	/* last
 	Call this when you are about to process the last chunk of data. */
