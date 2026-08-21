@@ -56,7 +56,8 @@ ReadResult readResampled_(const Sample& sample, mcl::AudioBuffer& dest, Frame st
 
 	return {
 	    static_cast<Frame>(res.used),
-	    static_cast<Frame>(res.generated)};
+	    static_cast<Frame>(res.generated),
+	    true};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -78,7 +79,8 @@ ReadResult readStretched_(const Sample& sample, mcl::AudioBuffer& dest, Frame st
 
 	return {
 	    static_cast<Frame>(res.used),
-	    static_cast<Frame>(res.generated)};
+	    static_cast<Frame>(res.generated),
+	    res.finished};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -94,7 +96,7 @@ ReadResult readCopy_(const Sample& sample, mcl::AudioBuffer& dest, Frame start,
 
 	dest.setAll(sample.wave->getBuffer(), used, start, offset);
 
-	return {used, used};
+	return {used, used, true};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -164,7 +166,7 @@ Frame render_(const Channel& ch, mcl::AudioBuffer& buf, Scene scene, Frame track
 		tracker += res.used;
 		offset += res.generated;
 
-		if (tracker >= sample.range.getB())
+		if (tracker >= sample.range.getB() && res.finished)
 		{
 			tracker = sample.range.getA();
 			ch.shared->resampler->last();

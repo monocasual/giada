@@ -72,11 +72,16 @@ struct RenderInfo
 A ReadResult object is returned by the readWave() function below, containing the
 number of frames used and generated from a buffer filling operation. The two
 values are different only when pitch is != 1.0, where a chunk of audio in input
-(used) might result in a longer or shorter portion of audio in output (generated). */
+(used) might result in a longer or shorter portion of audio in output (generated).
+'finished', used only by the Stretcher class, determines whether the stretch
+process has really ended or not - a stretch operation might take more than one
+callback, especially if the stretching factor is high. */
 
 struct ReadResult
 {
-	Frame used, generated;
+	Frame used;
+	Frame generated;
+	bool finished;
 };
 
 void renderSampleChannel(const Channel&, Scene, bool seqIsRunning);
