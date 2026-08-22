@@ -27,6 +27,7 @@
 #include "src/core/resampler.h"
 #include "const.h"
 #include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
+#include "src/utils/log.h"
 #include <algorithm>
 #include <cassert>
 #include <cstdio>
@@ -119,11 +120,13 @@ Resampler::Result Resampler::MonoResampler::process(const float* input, std::siz
 	m_inputLength = inputLength;
 	m_usedFrames  = 0;
 
-	std::size_t generated = src_callback_read(m_state, 1 / ratio, outputLength, output);
+	const long generated = src_callback_read(m_state, 1 / ratio, outputLength, output);
+	if (generated < 0)
+		G_DEBUG("src_callback_read error!");
 
 	return {
 	    .used      = m_usedFrames,
-	    .generated = generated};
+	    .generated = static_cast<std::size_t>(generated)};
 }
 
 /* -------------------------------------------------------------------------- */
