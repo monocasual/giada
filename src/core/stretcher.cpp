@@ -26,6 +26,7 @@
 
 #include "src/core/stretcher.h"
 #include "src/core/const.h"
+#include "src/deps/mcl-audio-buffer/src/audioBuffer.hpp"
 #include <cassert>
 
 namespace giada::m
@@ -50,9 +51,14 @@ void Stretcher::last() { m_stretcher.reset(); }
 
 /* -------------------------------------------------------------------------- */
 
-Stretcher::Result Stretcher::process(const float* input, std::size_t inputChannelStride,
-    std::size_t inputEnd, std::size_t inputStart, float* output, std::size_t outputLength,
-    std::size_t outputStart, double timeRatio, double pitchRatio)
+Stretcher::Result Stretcher::process(
+    const mcl::AudioBuffer& input,
+    std::size_t             inputStart,
+    std::size_t             inputEnd,
+    mcl::AudioBuffer&       output,
+    std::size_t             outputStart,
+    double                  timeRatio,
+    double                  pitchRatio)
 {
 	/* General algorithm -
 	1. While the output buffer still has room:
@@ -90,19 +96,22 @@ Stretcher::Result Stretcher::process(const float* input, std::size_t inputChanne
 	This is only an adapter for the Rubber Band API; the actual audio data remains
 	flat and planar in the caller-facing interface. */
 
-	assert(input != nullptr);
-	assert(output != nullptr);
-	assert(inputStart <= inputEnd);         // <= now, since a drain-only call may pass inputStart == inputLength
-	assert(inputEnd <= inputChannelStride); // the playable range can never exceed the real buffer
-	assert(outputStart < outputLength);
+	assert(input.countChannels() == G_MAX_IO_CHANS);
+	assert(output.countChannels() == G_MAX_IO_CHANS);
+	assert(inputStart <= inputEnd);
+	assert(inputEnd <= static_cast<std::size_t>(input.countFrames()));
+	assert(outputStart < static_cast<std::size_t>(output.countFrames()));
 
 	m_stretcher.setTimeRatio(timeRatio);
 	m_stretcher.setPitchScale(pitchRatio);
 
+	const std::size_t inputLength  = inputEnd - inputStart;
+	const std::size_t outputLength = static_cast<std::size_t>(output.countFrames()) - outputStart;
+
 	std::size_t framesGenerated  = 0;
 	std::size_t framesUsed       = 0;
 	bool        outputIsEmpty    = true;
-	bool        inputIsAvailable = inputStart < inputEnd;
+	bool        inputIsAvailable = inputLength > 0;
 	bool        fullyDrained     = false; // true only once available() actually reaches -1
 
 	while (outputIsEmpty)
@@ -122,7 +131,7 @@ Stretcher::Result Stretcher::process(const float* input, std::size_t inputChanne
 		}
 
 		std::size_t       framesAvailable = static_cast<std::size_t>(std::max(m_stretcher.available(), 0));
-		const std::size_t outputRemaining = outputLength - outputStart - framesGenerated;
+		const std::size_t outputRemaining = outputLength - framesGenerated;
 
 		/* Feed more input to the stretcher only if what's already available()
 		isn't enough to cover the rest of the output buffer. */
@@ -130,15 +139,15 @@ Stretcher::Result Stretcher::process(const float* input, std::size_t inputChanne
 		if (framesAvailable < outputRemaining && inputIsAvailable)
 		{
 			const float* inputPtrs[G_MAX_IO_CHANS] = {
-			    input + inputStart + framesUsed,
-			    input + inputChannelStride + inputStart + framesUsed};
+			    input.getChannelView(0, inputStart + framesUsed, inputEnd).data(),
+			    input.getChannelView(1, inputStart + framesUsed, inputEnd).data()};
 
 			/* stretcher.getSamplesRequired() means: "how much input the stretcher
 			needs before it can do any work?" This tells us the right-sized batch
 			to hand over next. */
 
 			const std::size_t framesRequired  = m_stretcher.getSamplesRequired();
-			const std::size_t framesRemaining = inputEnd - inputStart - framesUsed;
+			const std::size_t framesRemaining = inputEnd - framesUsed;
 			const std::size_t framesToProcess = std::min(framesRequired, framesRemaining);
 
 			/* If this batch covers everything left in the input file, this is
@@ -169,8 +178,8 @@ Stretcher::Result Stretcher::process(const float* input, std::size_t inputChanne
 		}
 
 		float* outputPtrs[G_MAX_IO_CHANS] = {
-		    output + outputStart + framesGenerated,
-		    output + outputLength + outputStart + framesGenerated};
+		    output.getChannelView(0, outputStart + framesGenerated).data(),
+		    output.getChannelView(1, outputStart + framesGenerated).data()};
 
 		/* stretcher.retrieve(): gets stretched data. We only ever take as much as
 		our buffer has room for (outputRemaining); anything left over stays queued
@@ -180,7 +189,7 @@ Stretcher::Result Stretcher::process(const float* input, std::size_t inputChanne
 		const std::size_t framesRetrieved  = m_stretcher.retrieve(outputPtrs, framesToRetrieve);
 
 		framesGenerated += framesRetrieved;
-		outputIsEmpty = framesGenerated < (outputLength - outputStart);
+		outputIsEmpty = framesGenerated < outputLength;
 
 		/* Safety check: input is gone and nothing is available from the stretcher,
 		but make sure to avoid spinning forever just in case retrieve() still

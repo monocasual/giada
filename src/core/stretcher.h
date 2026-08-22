@@ -29,6 +29,11 @@
 
 #include <rubberband/RubberBandStretcher.h>
 
+namespace mcl
+{
+class AudioBuffer;
+}
+
 namespace giada::m
 {
 /* Stretcher
@@ -76,15 +81,13 @@ public:
 	many processed frames as will fit in the output buffer. */
 
 	Result process(
-	    const float* input,
-	    std::size_t  inputChannelStride, // true per-channel size of the input buffer
-	    std::size_t  inputEnd,           // logical end of the playable range, boundary-aware (e.g. sample.range.getB())
-	    std::size_t  inputStart,
-	    float*       output,
-	    std::size_t  outputLength,
-	    std::size_t  outputStart,
-	    double       timeRatio,
-	    double       pitchRatio);
+	    const mcl::AudioBuffer& input,
+	    std::size_t             inputStart,
+	    std::size_t             inputEnd,
+	    mcl::AudioBuffer&       output,
+	    std::size_t             outputStart,
+	    double                  timeRatio,
+	    double                  pitchRatio);
 
 private:
 	RubberBand::RubberBandStretcher m_stretcher;
