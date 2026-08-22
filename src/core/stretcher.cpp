@@ -39,14 +39,6 @@ Stretcher::Stretcher(int sampleRate)
 
 /* -------------------------------------------------------------------------- */
 
-void Stretcher::setTempo(double ratio) { m_stretcher.setTimeRatio(ratio); }
-
-/* -------------------------------------------------------------------------- */
-
-void Stretcher::setPitch(double ratio) { m_stretcher.setPitchScale(ratio); }
-
-/* -------------------------------------------------------------------------- */
-
 void Stretcher::last() { m_stretcher.reset(); }
 
 /* -------------------------------------------------------------------------- */

@@ -59,9 +59,6 @@ public:
 
 	Stretcher(int sampleRate);
 
-	void setTempo(double ratio);
-	void setPitch(double ratio);
-
 	/* last
 	Notifies Rubber Band that this is the last chunk of audio. */
 
