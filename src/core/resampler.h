@@ -30,6 +30,11 @@
 #include <cstddef>
 #include <samplerate.h>
 
+namespace mcl
+{
+class AudioBuffer;
+}
+
 namespace giada::m
 {
 class Resampler final
@@ -84,8 +89,13 @@ public:
 
 	The same layout applies to 'output'. */
 
-	Result process(const float* input, std::size_t inputChannelStride, std::size_t inputPos,
-	    std::size_t inputLength, float* output, std::size_t outputLength, float ratio) const;
+	Result process(
+	    const mcl::AudioBuffer& input,
+	    std::size_t             inputStart,
+	    std::size_t             inputEnd,
+	    mcl::AudioBuffer&       output,
+	    std::size_t             outputStart,
+	    float                   ratio) const;
 
 	/* last
 	Call this when you are about to process the last chunk of data. */
@@ -115,8 +125,13 @@ private:
 		Resamples a certain amount of frames from 'input' starting at 'inputPos' and
 		puts the result into 'output'. */
 
-		Result process(const float* input, std::size_t inputPos, std::size_t inputLength, float* output,
-		    std::size_t outputLength, float ratio) const;
+		Result process(
+		    const float* input,
+		    std::size_t  inputPos,
+		    std::size_t  inputLength,
+		    float*       output,
+		    std::size_t  outputLength,
+		    float        ratio) const;
 
 		/* last
 		Call this when you are about to process the last chunk of data. */

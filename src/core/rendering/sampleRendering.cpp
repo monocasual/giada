@@ -43,16 +43,12 @@ ReadResult readResampled_(const Sample& sample, mcl::AudioBuffer& dest, Frame st
 {
 	assert(sample.wave != nullptr);
 
-	const float* srcPtr = sample.wave->getBuffer().getChannelView(0).data();
-	float*       dstPtr = dest.getChannelView(0).data() + offset;
-
 	Resampler::Result res = resampler.process(
-	    /*input=*/srcPtr,
-	    /*channelStride=*/sample.wave->getBuffer().countFrames(), // true full buffer size, never shrinks
+	    /*input=*/sample.wave->getBuffer(),
 	    /*inputPos=*/start,
 	    /*inputLength=*/sample.range.getB(),
-	    /*output=*/dstPtr,
-	    /*outputLength=*/dest.countFrames() - offset,
+	    /*output=*/dest,
+	    /*outputLength=*/offset,
 	    /*ratio=*/sample.pitch);
 
 	return {
