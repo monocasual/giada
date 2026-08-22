@@ -68,17 +68,11 @@ public:
 	void last();
 
 	/* process
-	Process a block of planar stereo audio through Rubber Band. The input and
-	output buffers are flat planar stereo layouts:
-
-	    - input[0 .. inputLength - 1]              = left channel
-	    - input[inputLength .. 2*inputLength-1]    = right channel
-	    - output[0 .. outputLength - 1]            = left channel
-	    - output[outputLength .. 2*outputLength-1] = right channel
-
-	This method adapts those flat buffers into Rubber Band's de-interleaved
-	channel-pointer format, feeds the input to the stretcher, then retrieves as
-	many processed frames as will fit in the output buffer. */
+	Stretches/pitch-shifts a stereo buffer's [inputStart, inputEnd) range into
+	'output', starting at 'outputStart', using the given time/pitch ratios.
+	Since Rubber Band doesn't guarantee a fixed input/output ratio per call,
+	this may take several calls to fully drain real audio after the input
+	range ends: see Result::finished. */
 
 	Result process(
 	    const mcl::AudioBuffer& input,
