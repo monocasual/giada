@@ -79,9 +79,9 @@ callback, especially if the stretching factor is high. */
 
 struct ReadResult
 {
-	Frame used;
-	Frame generated;
-	bool finished;
+	Frame used      = 0;
+	Frame generated = 0;
+	bool  finished  = false;
 };
 
 void renderSampleChannel(const Channel&, Scene, bool seqIsRunning);
