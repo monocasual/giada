@@ -237,9 +237,9 @@ int resample(Wave& w, Resampler::Quality quality, int samplerate)
 	newData.alloc(newSizeFrames, w.getBuffer().countChannels());
 
 	SRC_DATA src_data;
-	src_data.data_in       = w.getBuffer().getDataView().data();
+	src_data.data_in       = w.getBuffer().getDataView().data_handle();
 	src_data.input_frames  = w.getBuffer().countFrames();
-	src_data.data_out      = newData.getDataView().data();
+	src_data.data_out      = newData.getDataView().data_handle();
 	src_data.output_frames = newSizeFrames;
 	src_data.src_ratio     = ratio;
 
@@ -275,7 +275,7 @@ int save(const Wave& w, const std::string& path)
 		return G_RES_ERR_IO;
 	}
 
-	if (sf_writef_float(file, w.getBuffer().getDataView().data(), w.getBuffer().countFrames()) != w.getBuffer().countFrames())
+	if (sf_writef_float(file, w.getBuffer().getDataView().data_handle(), w.getBuffer().countFrames()) != w.getBuffer().countFrames())
 		u::log::print("[waveFactory::save] warning: incomplete write!\n");
 
 	sf_close(file);
