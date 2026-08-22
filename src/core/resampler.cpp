@@ -77,7 +77,7 @@ long Resampler::MonoResampler::callback(float** audio)
 
 	/* Returns how many frames have been read in this callback shot. */
 
-	long frames;
+	std::size_t frames = 0;
 
 	/* Read in CHUNK_LEN parts, checking if there is enough data left. */
 
@@ -89,7 +89,7 @@ long Resampler::MonoResampler::callback(float** audio)
 	m_usedFrames += frames;
 	m_inputPos += frames;
 
-	return frames;
+	return static_cast<long>(frames);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -107,8 +107,8 @@ void Resampler::MonoResampler::alloc(Quality quality)
 
 /* -------------------------------------------------------------------------- */
 
-Resampler::Result Resampler::MonoResampler::process(const float* input, long inputPos, long inputLength,
-    float* output, long outputLength, float ratio) const
+Resampler::Result Resampler::MonoResampler::process(const float* input, std::size_t inputPos, std::size_t inputLength,
+    float* output, std::size_t outputLength, float ratio) const
 {
 	assert(m_state != nullptr); // Must be initialized first!
 
@@ -117,7 +117,7 @@ Resampler::Result Resampler::MonoResampler::process(const float* input, long inp
 	m_inputLength = inputLength;
 	m_usedFrames  = 0;
 
-	long generated = src_callback_read(m_state, 1 / ratio, outputLength, output);
+	std::size_t generated = src_callback_read(m_state, 1 / ratio, outputLength, output);
 
 	return {m_usedFrames, generated};
 }
@@ -147,8 +147,8 @@ Resampler::Resampler(Quality quality)
 
 /* -------------------------------------------------------------------------- */
 
-Resampler::Result Resampler::process(const float* input, long inputChannelStride, long inputPos,
-    long inputLength, float* output, long outputLength, float ratio) const
+Resampler::Result Resampler::process(const float* input, std::size_t inputChannelStride, std::size_t inputPos,
+    std::size_t inputLength, float* output, std::size_t outputLength, float ratio) const
 {
 	const Result left  = m_left.process(input, inputPos, inputLength, output,
 	     outputLength, ratio);

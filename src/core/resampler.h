@@ -50,7 +50,8 @@ public:
 
 	struct Result
 	{
-		long used, generated;
+		std::size_t used      = 0;
+		std::size_t generated = 0;
 	};
 
 	Resampler(); // Invalid
@@ -83,8 +84,8 @@ public:
 
 	The same layout applies to 'output'. */
 
-	Result process(const float* input, long inputChannelStride, long inputPos,
-	    long inputLength, float* output, long outputLength, float ratio) const;
+	Result process(const float* input, std::size_t inputChannelStride, std::size_t inputPos,
+	    std::size_t inputLength, float* output, std::size_t outputLength, float ratio) const;
 
 	/* last
 	Call this when you are about to process the last chunk of data. */
@@ -114,8 +115,8 @@ private:
 		Resamples a certain amount of frames from 'input' starting at 'inputPos' and
 		puts the result into 'output'. */
 
-		Result process(const float* input, long inputPos, long inputLength, float* output,
-		    long outputLength, float ratio) const;
+		Result process(const float* input, std::size_t inputPos, std::size_t inputLength, float* output,
+		    std::size_t outputLength, float ratio) const;
 
 		/* last
 		Call this when you are about to process the last chunk of data. */
@@ -133,12 +134,12 @@ private:
 
 		static constexpr int CHUNK_LEN = 256;
 
-		SRC_STATE*     m_state;
-		Quality        m_quality;
-		mutable float* m_input;       // Pointer to input data
-		mutable long   m_inputPos;    // Where to read from input
-		mutable long   m_inputLength; // Total number of frames in input data
-		mutable long   m_usedFrames;  // How many frames have been read from input with a process() call
+		SRC_STATE*          m_state;
+		Quality             m_quality;
+		mutable float*      m_input;       // Pointer to input data
+		mutable std::size_t m_inputPos;    // Where to read from input
+		mutable std::size_t m_inputLength; // Total number of frames in input data
+		mutable std::size_t m_usedFrames;  // How many frames have been read from input with a process() call
 	};
 
 	MonoResampler m_left;
