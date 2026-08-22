@@ -67,27 +67,8 @@ public:
 	Resampler& operator=(Resampler&&)      = delete;
 
 	/* process
-	Resamples a stereo planar buffer. The input buffer must contain two contiguous
-	mono channels laid out as:
-
-	    [left channel frames][right channel frames]
-
-	'input' points to the first frame of the left channel.
-	'input + inputLength' points to the first frame of the right channel.
-
-	The output buffer uses the same planar layout:
-
-	    [left channel frames][right channel frames]
-
-	All positions and lengths are expressed in frames per channel, not samples.
-	The left and right channels are resampled independently using the same ratio.
-
-	Example: if 'inputLength' is 512 frames, then:
-
-	    - input[0 .. 511] contains the left channel
-	    - input[512 .. 1023] contains the right channel
-
-	The same layout applies to 'output'. */
+	Resamples a stereo buffer's [inputStart, inputEnd) range into 'output',
+	starting at 'outputStart', using the given ratio. */
 
 	Result process(
 	    const mcl::AudioBuffer& input,
