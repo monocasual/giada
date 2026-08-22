@@ -147,7 +147,7 @@ Stretcher::Result Stretcher::process(
 			to hand over next. */
 
 			const std::size_t framesRequired  = m_stretcher.getSamplesRequired();
-			const std::size_t framesRemaining = inputEnd - framesUsed;
+			const std::size_t framesRemaining = inputLength - framesUsed;
 			const std::size_t framesToProcess = std::min(framesRequired, framesRemaining);
 
 			/* If this batch covers everything left in the input file, this is
