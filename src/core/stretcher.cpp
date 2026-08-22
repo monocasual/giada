@@ -211,8 +211,8 @@ Stretcher::Result Stretcher::process(
 		m_stretcher.reset();
 
 	return {
-	    .used      = static_cast<long>(framesUsed),
-	    .generated = static_cast<long>(framesGenerated),
+	    .used      = framesUsed,
+	    .generated = framesGenerated,
 	    .finished  = fullyDrained};
 }
 } // namespace giada::m

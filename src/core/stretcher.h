@@ -52,9 +52,9 @@ public:
 
 	struct Result
 	{
-		long used;
-		long generated;
-		bool finished;
+		std::size_t used      = 0;
+		std::size_t generated = 0;
+		bool        finished  = false;
 	};
 
 	Stretcher(int sampleRate);
