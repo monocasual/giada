@@ -44,6 +44,19 @@ Wave::Wave(ID id)
 
 /* -------------------------------------------------------------------------- */
 
+Wave::Wave(ID id, mcl::AudioBuffer&& buffer, int rate, int bits, const std::string& path)
+: id(id)
+, m_buffer(std::move(buffer))
+, m_rate(rate)
+, m_bits(bits)
+, m_logical(false)
+, m_edited(false)
+, m_path(path)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
 Wave::Wave(const Wave& other)
 : id(other.id)
 , m_buffer(other.getBuffer())
