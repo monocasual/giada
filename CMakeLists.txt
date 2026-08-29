@@ -132,6 +132,8 @@ list(APPEND SOURCES
 	src/core/resampler.h
 	src/core/stretcher.cpp
 	src/core/stretcher.h
+	src/core/audioFileIO.cpp
+	src/core/audioFileIO.h
 	src/core/plugins/pluginHost.cpp
 	src/core/plugins/pluginHost.h
 	src/core/plugins/pluginManager.cpp
