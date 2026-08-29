@@ -37,6 +37,14 @@ class AudioBuffer;
 
 namespace giada::m::audioFileIO
 {
+struct Info
+{
+	int sampleRate = 0;
+	int format     = 0;
+};
+
+Info getInfo(const std::string& path);
+
 std::expected<mcl::AudioBuffer, int> read(const std::string& path);
 
 int write(const std::string& path, const mcl::AudioBuffer&, int sampleRate);

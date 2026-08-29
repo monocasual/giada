@@ -91,10 +91,48 @@ std::vector<float> interleave_(const mcl::AudioBuffer& in)
 
 	return out;
 }
+
+/* -------------------------------------------------------------------------- */
+
+int getBits_(int sfFormat)
+{
+	if (sfFormat & SF_FORMAT_PCM_S8)
+		return 8;
+	else if (sfFormat & SF_FORMAT_PCM_16)
+		return 16;
+	else if (sfFormat & SF_FORMAT_PCM_24)
+		return 24;
+	else if (sfFormat & SF_FORMAT_PCM_32)
+		return 32;
+	else if (sfFormat & SF_FORMAT_PCM_U8)
+		return 8;
+	else if (sfFormat & SF_FORMAT_FLOAT)
+		return 32;
+	else if (sfFormat & SF_FORMAT_DOUBLE)
+		return 64;
+	return 0;
+}
 } // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+Info getInfo(const std::string& path)
+{
+	SF_INFO        header{};
+	SndFileHandle_ file(sf_open(path.c_str(), SFM_READ, &header));
+
+	if (file == nullptr)
+		return {};
+
+	Info info;
+	info.sampleRate = header.samplerate;
+	info.format     = getBits_(header.format);
+
+	return info;
+}
+
 /* -------------------------------------------------------------------------- */
 
 std::expected<mcl::AudioBuffer, int> read(const std::string& path)
