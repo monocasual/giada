@@ -39,7 +39,7 @@ namespace giada::m::audioFileIO
 {
 std::expected<mcl::AudioBuffer, int> read(const std::string& path);
 
-int writeAudioFile(const std::string& path, const mcl::AudioBuffer&, int sampleRate);
+int write(const std::string& path, const mcl::AudioBuffer&, int sampleRate);
 
 } // namespace giada::m::audioFileIO
 

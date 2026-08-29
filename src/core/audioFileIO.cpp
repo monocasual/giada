@@ -137,7 +137,7 @@ std::expected<mcl::AudioBuffer, int> read(const std::string& path)
 
 /* -------------------------------------------------------------------------- */
 
-int writeAudioFile(const std::string& path, const mcl::AudioBuffer& buffer, int sampleRate)
+int write(const std::string& path, const mcl::AudioBuffer& buffer, int sampleRate)
 {
 	SF_INFO info{};
 	info.samplerate = sampleRate;
