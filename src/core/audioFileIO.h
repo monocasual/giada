@@ -43,9 +43,20 @@ struct Info
 	int format     = 0;
 };
 
+/* getInfo
+Returns information on the given audio file. */
+
 Info getInfo(const std::string& path);
 
+/* read
+Reads audio file at 'path' and returns an mcl::AudioBuffer filled with planar
+data. */
+
 std::expected<mcl::AudioBuffer, int> read(const std::string& path);
+
+/* write
+Writes the AudioBuffer content to 'path' as a Wave file, with the required sample
+rate. The audio data is interleaved internally, as required by the Wave format. */
 
 int write(const std::string& path, const mcl::AudioBuffer&, int sampleRate);
 
