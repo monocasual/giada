@@ -166,10 +166,16 @@ const Patch::Channel serializeChannel(const Channel& c)
 	if (c.type == ChannelType::SAMPLE)
 	{
 		for (const std::size_t i : utils::container::range(G_MAX_NUM_SCENES))
-			pc.samples[i] = {c.sampleChannel->getWaveId(Scene{i}),
-			    c.sampleChannel->getRange(Scene{i}),
-			    c.sampleChannel->getShift(Scene{i}),
-			    c.sampleChannel->getPitch(Scene{i})};
+		{
+			const Sample& sample = c.sampleChannel->getSample(Scene{i});
+			pc.samples[i]        = {
+			           .waveId       = sample.wave != nullptr ? sample.wave->id : utils::Id{0},
+			           .range        = sample.range,
+			           .shift        = sample.shift,
+			           .pitch        = sample.pitch,
+			           .time         = sample.time,
+			           .playbackMode = sample.playbackMode};
+		}
 		pc.mode              = c.sampleChannel->mode;
 		pc.midiInVeloAsVol   = c.sampleChannel->velocityAsVol;
 		pc.inputMonitor      = c.sampleChannel->inputMonitor;

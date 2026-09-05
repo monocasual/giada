@@ -69,12 +69,14 @@ struct Patch
 
 	struct Sample
 	{
-		ID         waveId;
-		FrameRange range;
-		Frame      shift = 0;
-		float      pitch = G_DEFAULT_PITCH;
+		ID           waveId;
+		FrameRange   range;
+		Frame        shift        = 0;
+		float        pitch        = G_DEFAULT_PITCH;
+		float        time         = 1.0;
+		PlaybackMode playbackMode = PlaybackMode::TAPE;
 	};
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Sample, waveId, range, shift, pitch)
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Sample, waveId, range, shift, pitch, time, playbackMode)
 
 	struct Channel
 	{
