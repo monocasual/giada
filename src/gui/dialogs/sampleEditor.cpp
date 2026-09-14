@@ -107,25 +107,26 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 				controls->end();
 			}
 
-			geFlex* tools1 = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN);
+			geFlex* tools = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN);
 			{
 				m_pitchTool = new gePitchTool(m_data);
-				tools1->addWidget(m_pitchTool);
-				tools1->end();
-			}
 
-			geFlex* tools2 = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN);
-			{
-				m_rangeTool = new geRangeTool(m_data);
-				m_shiftTool = new geShiftTool(m_data);
-				tools2->addWidget(m_rangeTool, G_GUI_UNIT);
-				tools2->addWidget(m_shiftTool, G_GUI_UNIT);
-				tools2->end();
+				geFlex* rangeShift = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
+				{
+					m_rangeTool = new geRangeTool(m_data);
+					m_shiftTool = new geShiftTool(m_data);
+					rangeShift->addWidget(m_rangeTool);
+					rangeShift->addWidget(m_shiftTool);
+					rangeShift->end();
+				}
+
+				tools->addWidget(m_pitchTool, G_GUI_UNIT);
+				tools->addWidget(rangeShift, G_GUI_UNIT);
+				tools->end();
 			}
 
 			bottom->addWidget(controls, 120);
-			bottom->addWidget(tools1, 280);
-			bottom->addWidget(tools2, 280);
+			bottom->addWidget(tools);
 			bottom->end();
 		}
 

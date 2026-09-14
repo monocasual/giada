@@ -60,42 +60,25 @@ enum class AdjustMenu
 /* -------------------------------------------------------------------------- */
 
 gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
-: geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN)
+: geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , m_data(nullptr)
 {
-	geFlex* row1 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
-	{
-		m_playbackModeLabel = new geBox("Mode", FL_ALIGN_LEFT);
-		m_playbackMode      = new geChoice();
+	m_playbackModeLabel = new geBox("Mode", FL_ALIGN_LEFT);
+	m_playbackMode      = new geChoice();
+	m_pitchLabel        = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT);
+	m_pitch             = new geInput();
+	m_timeLabel         = new geBox("Time", FL_ALIGN_LEFT);
+	m_time              = new geInput();
+	m_adjust            = new geTextButton("Adjust...");
 
-		row1->addWidget(m_playbackModeLabel, 50);
-		row1->addWidget(m_playbackMode, 70);
-		row1->end();
-	}
+	addWidget(m_playbackModeLabel, 50);
+	addWidget(m_playbackMode, 70);
+	addWidget(m_pitchLabel, 50);
+	addWidget(m_pitch, 70);
+	addWidget(m_timeLabel, 50);
+	addWidget(m_time, 70);
+	addWidget(m_adjust, 70);
 
-	geFlex* row2 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
-	{
-		m_pitchLabel = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT);
-		m_pitch      = new geInput();
-		m_adjust     = new geTextButton("Adjust...");
-		row2->addWidget(m_pitchLabel, 50);
-		row2->addWidget(m_pitch, 70);
-		row2->addWidget(m_adjust, 70);
-		row2->end();
-	}
-
-	geFlex* row3 = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN);
-	{
-		m_timeLabel = new geBox("Time", FL_ALIGN_LEFT);
-		m_time      = new geInput();
-		row3->addWidget(m_timeLabel, 50);
-		row3->addWidget(m_time, 70);
-		row3->end();
-	}
-
-	addWidget(row1, G_GUI_UNIT);
-	addWidget(row2, G_GUI_UNIT);
-	addWidget(row3, G_GUI_UNIT);
 	end();
 
 	m_pitch->setType(FL_FLOAT_INPUT);
