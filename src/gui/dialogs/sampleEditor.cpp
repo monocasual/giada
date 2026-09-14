@@ -34,6 +34,7 @@
 #include "src/gui/elems/basics/check.h"
 #include "src/gui/elems/basics/choice.h"
 #include "src/gui/elems/basics/dial.h"
+#include "src/gui/elems/basics/divider.h"
 #include "src/gui/elems/basics/group.h"
 #include "src/gui/elems/basics/imageButton.h"
 #include "src/gui/elems/basics/input.h"
@@ -96,7 +97,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 
 		geFlex* bottom = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
-			geFlex* controls = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {21, 0, 22, 0});
+			geFlex* controls = new geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN, {16, 0, 17, 0});
 			{
 				m_rewind = new geImageButton(graphics::rewindOff, graphics::rewindOn);
 				m_play   = new geImageButton(graphics::playOff, graphics::playOn);
@@ -107,7 +108,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 				controls->end();
 			}
 
-			geFlex* tools = new geFlex(Direction::VERTICAL, G_GUI_INNER_MARGIN);
+			geFlex* tools = new geFlex(Direction::VERTICAL, G_GUI_OUTER_MARGIN);
 			{
 				m_pitchTool = new gePitchTool(m_data);
 
@@ -121,6 +122,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 				}
 
 				tools->addWidget(m_pitchTool, G_GUI_UNIT);
+				tools->addWidget(new geDivider(G_COLOR_GREY_3), 1);
 				tools->addWidget(rangeShift, G_GUI_UNIT);
 				tools->end();
 			}
@@ -132,7 +134,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 
 		container->addWidget(top, G_GUI_UNIT);
 		container->addWidget(m_waveTools);
-		container->addWidget(bottom, 68);
+		container->addWidget(bottom, 58);
 		container->end();
 	}
 

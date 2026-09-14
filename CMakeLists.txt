@@ -447,6 +447,8 @@ list(APPEND SOURCES
 	src/gui/elems/basics/tableBase.h
 	src/gui/elems/basics/tableWidget.cpp
 	src/gui/elems/basics/tableWidget.h
+	src/gui/elems/basics/divider.cpp
+	src/gui/elems/basics/divider.h
 	src/utils/log.cpp
 	src/utils/log.h
 	src/utils/time.cpp
