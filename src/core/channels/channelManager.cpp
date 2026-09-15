@@ -402,6 +402,22 @@ void ChannelManager::setPitch(ID channelId, float value, Scene scene)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelManager::increasePitchBySemitone(ID channelId, Scene scene)
+{
+	const Channel& ch = getChannel(channelId);
+	assert(ch.sampleChannel);
+	setPitch(channelId, ch.sampleChannel->getPitch(scene) * G_SEMITONE_RATIO, scene);
+}
+
+void ChannelManager::decreasePitchBySemitone(ID channelId, Scene scene)
+{
+	const Channel& ch = getChannel(channelId);
+	assert(ch.sampleChannel);
+	setPitch(channelId, ch.sampleChannel->getPitch(scene) / G_SEMITONE_RATIO, scene);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelManager::setTime(ID channelId, float value, Scene scene)
 {
 	Channel& c       = m_model.get().tracks.getChannel(channelId);

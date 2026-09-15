@@ -244,6 +244,18 @@ void ChannelsApi::setPitch(ID channelId, float v)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelsApi::increasePitchBySemitone(ID channelId)
+{
+	m_channelManager.increasePitchBySemitone(channelId, m_sequencer.getCurrentScene());
+}
+
+void ChannelsApi::decreasePitchBySemitone(ID channelId)
+{
+	m_channelManager.decreasePitchBySemitone(channelId, m_sequencer.getCurrentScene());
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelsApi::setTime(ID channelId, float v)
 {
 	m_channelManager.setTime(channelId, v, m_sequencer.getCurrentScene());

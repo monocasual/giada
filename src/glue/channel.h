@@ -240,6 +240,8 @@ void  releaseChannel(ID channelId, Thread t);
 void  killChannel(ID channelId, Thread t);
 float setChannelVolume(ID channelId, float v, Thread t, bool repaintMainUi = false);
 float setChannelPitch(ID channelId, float v, Thread t);
+void  increasePitchBySemitone(ID channelId);
+void  decreasePitchBySemitone(ID channelId);
 void  setChannelTime(ID channelId, float v);
 void  setChannelPlaybackMode(ID channelId, PlaybackMode);
 float setChannelPan(ID channelId, float v);

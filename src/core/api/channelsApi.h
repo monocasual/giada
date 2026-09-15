@@ -92,6 +92,8 @@ public:
 	void kill(ID);
 	void setVolume(ID, float);
 	void setPitch(ID, float);
+	void increasePitchBySemitone(ID);
+	void decreasePitchBySemitone(ID);
 	void setTime(ID, float);
 	void setPlaybackMode(ID, PlaybackMode);
 	void setPan(ID, float);

@@ -52,6 +52,8 @@ enum class AdjustMenu
 {
 	SPREAD_TO_BAR = 1,
 	SPREAD_TO_SONG,
+	INCREASE_SEMITONE,
+	DECREASE_SEMITONE,
 	RESET_ALL
 };
 } // namespace
@@ -97,6 +99,8 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 		geMenu menu;
 		menu.addItem(ID{AdjustMenu::SPREAD_TO_BAR}, "Spread to bar");
 		menu.addItem(ID{AdjustMenu::SPREAD_TO_SONG}, "Spread to song");
+		menu.addItem(ID{AdjustMenu::INCREASE_SEMITONE}, "+1 Semitone");
+		menu.addItem(ID{AdjustMenu::DECREASE_SEMITONE}, "−1 Semitone");
 		menu.addItem(ID{AdjustMenu::RESET_ALL}, "Reset all");
 
 		menu.onSelect = [this](ID id)
@@ -105,6 +109,10 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 				spreadSampleToLength(m_data->getFramesInBar());
 			else if (id == AdjustMenu::SPREAD_TO_SONG)
 				spreadSampleToLength(m_data->getFramesInLoop());
+			else if (id == AdjustMenu::INCREASE_SEMITONE)
+				c::channel::increasePitchBySemitone(m_data->channelId);
+			else if (id == AdjustMenu::DECREASE_SEMITONE)
+				c::channel::decreasePitchBySemitone(m_data->channelId);
 			else if (id == AdjustMenu::RESET_ALL)
 			{
 				c::channel::setChannelPitch(m_data->channelId, G_DEFAULT_PITCH, Thread::MAIN);

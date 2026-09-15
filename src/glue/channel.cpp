@@ -418,6 +418,28 @@ float setChannelPitch(ID channelId, float v, Thread t)
 
 /* -------------------------------------------------------------------------- */
 
+void increasePitchBySemitone(ID channelId)
+{
+	g_engine->getChannelsApi().increasePitchBySemitone(channelId);
+	g_ui->pumpEvent([]()
+	{
+		if (auto* w = sampleEditor::getWindow(); w != nullptr)
+			w->refreshPitch();
+	});
+}
+
+void decreasePitchBySemitone(ID channelId)
+{
+	g_engine->getChannelsApi().decreasePitchBySemitone(channelId);
+	g_ui->pumpEvent([]()
+	{
+		if (auto* w = sampleEditor::getWindow(); w != nullptr)
+			w->refreshPitch();
+	});
+}
+
+/* -------------------------------------------------------------------------- */
+
 void setChannelTime(ID channelId, float v)
 {
 	g_engine->getChannelsApi().setTime(channelId, v);
