@@ -43,7 +43,7 @@ geShiftTool::geShiftTool(const c::sampleEditor::Data& d)
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , m_data(nullptr)
 {
-	m_label = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_SHIFT), FL_ALIGN_LEFT);
+	m_label = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_SHIFT), FL_ALIGN_CENTER);
 	m_shift = new geInput();
 	addWidget(m_label, 50);
 	addWidget(m_shift, 70);

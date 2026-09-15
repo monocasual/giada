@@ -116,7 +116,7 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 				{
 					m_rangeTool = new geRangeTool(m_data);
 					m_shiftTool = new geShiftTool(m_data);
-					rangeShift->addWidget(m_rangeTool);
+					rangeShift->addWidget(m_rangeTool, 272);
 					rangeShift->addWidget(m_shiftTool);
 					rangeShift->end();
 				}

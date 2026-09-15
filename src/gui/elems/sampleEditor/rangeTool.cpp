@@ -45,7 +45,7 @@ geRangeTool::geRangeTool(const c::sampleEditor::Data& d)
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , m_data(nullptr)
 {
-	m_label = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_RANGE), FL_ALIGN_LEFT);
+	m_label = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_RANGE), FL_ALIGN_CENTER);
 	m_begin = new geInput();
 	m_end   = new geInput();
 	m_reset = new geTextButton(g_ui->getI18Text(LangMap::COMMON_RESET));

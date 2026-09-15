@@ -31,6 +31,7 @@
 #include "src/gui/dialogs/sampleEditor.h"
 #include "src/gui/elems/basics/box.h"
 #include "src/gui/elems/basics/choice.h"
+#include "src/gui/elems/basics/divider.h"
 #include "src/gui/elems/basics/input.h"
 #include "src/gui/elems/basics/menu.h"
 #include "src/gui/elems/basics/textButton.h"
@@ -63,11 +64,11 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
 , m_data(nullptr)
 {
-	m_playbackModeLabel = new geBox("Mode", FL_ALIGN_LEFT);
+	m_playbackModeLabel = new geBox("Mode", FL_ALIGN_CENTER);
 	m_playbackMode      = new geChoice();
-	m_pitchLabel        = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_LEFT);
+	m_pitchLabel        = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_PITCH), FL_ALIGN_CENTER);
 	m_pitch             = new geInput();
-	m_timeLabel         = new geBox("Time", FL_ALIGN_LEFT);
+	m_timeLabel         = new geBox("Time", FL_ALIGN_CENTER);
 	m_time              = new geInput();
 	m_adjust            = new geTextButton("Adjust...");
 
@@ -77,6 +78,9 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	addWidget(m_pitch, 70);
 	addWidget(m_timeLabel, 50);
 	addWidget(m_time, 70);
+	addWidget(new geBox(), G_GUI_INNER_MARGIN);
+	addWidget(new geDivider(G_COLOR_GREY_3), 1);
+	addWidget(new geBox(), G_GUI_INNER_MARGIN);
 	addWidget(m_adjust, 70);
 
 	end();
