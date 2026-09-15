@@ -97,8 +97,8 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	m_adjust->onClick = [this]()
 	{
 		geMenu menu;
-		menu.addItem(ID{AdjustMenu::SPREAD_TO_BAR}, "Spread to bar");
-		menu.addItem(ID{AdjustMenu::SPREAD_TO_SONG}, "Spread to song");
+		menu.addItem(ID{AdjustMenu::SPREAD_TO_BAR}, "Spread sample to bar");
+		menu.addItem(ID{AdjustMenu::SPREAD_TO_SONG}, "Spread sample to song");
 		menu.addItem(ID{AdjustMenu::INCREASE_SEMITONE}, "+1 Semitone");
 		menu.addItem(ID{AdjustMenu::DECREASE_SEMITONE}, "−1 Semitone");
 		menu.addItem(ID{AdjustMenu::RESET_ALL}, "Reset all");
