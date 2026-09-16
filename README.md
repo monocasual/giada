@@ -59,6 +59,8 @@ Found a typo or a terrible mistake? Feel free to clone the [website repository](
 
 We do our best to make the compilation process as simple as possible. You can find all the information in the [compiling from source](https://www.giadamusic.com/documentation-compiling-from-source) chapter from the user guide.
 
+A minimal go Taskfile.yml is included to simplify building, running and testing Giada on POSIX and Windows.  `task` will run the `default` task which performs the typical developer flow: configure -> build -> run; additional details in [Taskfile.yml](Taskfile.yml)
+
 ## Bugs, requests and questions for non-developers
 
 Feel free to ask anything in the [discussions area](https://github.com/monocasual/giada/discussions).
