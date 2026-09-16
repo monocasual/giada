@@ -29,6 +29,7 @@ project(giada LANGUAGES C CXX)
 # LIBRARIES - external dependencies to link
 # COMPILER_FEATURES - e.g. C++17
 # TARGET_PROPERTIES - additional properties for the target 'giada'.
+# LINK_OPTIONS - additional flags for the linker
 # ------------------------------------------------------------------------------
 
 list(APPEND SOURCES
@@ -480,6 +481,7 @@ list(APPEND COMPILER_OPTIONS)
 list(APPEND LIBRARIES)
 list(APPEND COMPILER_FEATURES cxx_std_23)
 list(APPEND TARGET_PROPERTIES)
+list(APPEND LINK_OPTIONS)
 
 # ------------------------------------------------------------------------------
 # Detect OS
@@ -519,6 +521,7 @@ set(VST2_SDK_PATH "" CACHE STRING "Path to VST2 SDK")
 option(WITH_VST2 "Enable VST2 support (requires path to VST2 SDK with -DVST2_SDK_PATH=...)." OFF)
 option(WITH_VST3 "Enable VST3 support." OFF)
 option(WITH_TESTS "Include the test suite." OFF)
+option(WITH_ASAN "Build with AddressSanitizer + UBSan (debug builds only)" OFF)
 
 if(DEFINED OS_LINUX)
 	option(WITH_ALSA "Enable ALSA support (Linux only)." ON)
@@ -530,6 +533,16 @@ if(WITH_TESTS)
 	list(APPEND PREPROCESSOR_DEFS 
 		WITH_TESTS
 		TEST_RESOURCES_DIR="${CMAKE_SOURCE_DIR}/tests/resources/")
+endif()
+
+if(WITH_ASAN)
+	if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+		message(FATAL_ERROR
+			"WITH_ASAN available only for debug builds (-DCMAKE_BUILD_TYPE=Debug, "
+			"got: -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}).")
+	endif()
+	list(APPEND COMPILER_OPTIONS -fsanitize=address,undefined -fno-omit-frame-pointer)
+	list(APPEND LINK_OPTIONS -fsanitize=address,undefined)
 endif()
 
 # ------------------------------------------------------------------------------
@@ -844,6 +857,7 @@ target_compile_definitions(giada PRIVATE ${PREPROCESSOR_DEFS})
 target_include_directories(giada PRIVATE ${INCLUDE_DIRS})
 target_link_libraries(giada PRIVATE ${LIBRARIES})
 target_compile_options(giada PRIVATE ${COMPILER_OPTIONS})
+target_link_options(giada PRIVATE ${LINK_OPTIONS})
 
 # ------------------------------------------------------------------------------
 # Install rules
