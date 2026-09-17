@@ -101,7 +101,7 @@ void gdWindow::deleteChild(ID wid)
 	{
 		if (m_children.at(j)->getId() != wid)
 			continue;
-		delete m_children.at(j);
+		Fl::delete_widget(m_children.at(j));
 		m_children.erase(m_children.begin() + j);
 		return;
 	}
@@ -112,7 +112,7 @@ void gdWindow::deleteChild(ID wid)
 void gdWindow::deleteChildren()
 {
 	for (auto* child : m_children)
-		delete child;
+		Fl::delete_widget(child);
 	m_children.clear();
 }
 
