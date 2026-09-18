@@ -46,14 +46,14 @@ class gePitchTool : public geFlex
 public:
 	gePitchTool(const c::sampleEditor::Data& d);
 
-	void rebuild(const c::sampleEditor::Data& d);
+	void rebuild();
 	void refresh();
 
 private:
 	void updateInputStates();
 	void spreadSampleToLength(Frame length);
 
-	const c::sampleEditor::Data* m_data;
+	const c::sampleEditor::Data& m_data;
 
 	geBox*    m_playbackModeLabel;
 	geChoice* m_playbackMode;

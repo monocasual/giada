@@ -41,7 +41,7 @@ namespace giada::v
 {
 geShiftTool::geShiftTool(const c::sampleEditor::Data& d)
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
-, m_data(nullptr)
+, m_data(d)
 {
 	m_label = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_SHIFT), FL_ALIGN_CENTER);
 	m_shift = new geInput();
@@ -53,18 +53,17 @@ geShiftTool::geShiftTool(const c::sampleEditor::Data& d)
 	m_shift->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_shift->onChange = [this](const std::string& val)
 	{
-		c::sampleEditor::shift(m_data->channelId, utils::string::toInt(val));
+		c::sampleEditor::shift(m_data.channelId, utils::string::toInt(val));
 	};
 
-	rebuild(d);
+	rebuild();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geShiftTool::rebuild(const c::sampleEditor::Data& d)
+void geShiftTool::rebuild()
 {
-	m_data = &d;
-	update(m_data->getSample().shift);
+	update(m_data.getSample().shift);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -92,8 +92,8 @@ gdSampleEditor::gdSampleEditor(ID channelId, const Model& model)
 			top->end();
 		}
 
-		m_waveTools = new geWaveTools(0, 0, 0, 0, model.sampleEditorGridOn, model.sampleEditorGridVal);
-		m_waveTools->rebuild(m_data); // TODO - crappy temporary workaround for WaveTools
+		m_waveTools = new geWaveTools(0, 0, 0, 0, model.sampleEditorGridOn, model.sampleEditorGridVal, m_data);
+		m_waveTools->rebuild(); // TODO - crappy temporary workaround for WaveTools
 
 		geFlex* bottom = new geFlex(Direction::HORIZONTAL, G_GUI_OUTER_MARGIN);
 		{
@@ -230,10 +230,10 @@ void gdSampleEditor::rebuild()
 	c::sampleEditor::preparePreview(m_channelId);
 
 	m_data = c::sampleEditor::getData(m_channelId);
-	m_waveTools->rebuild(m_data);
-	m_pitchTool->rebuild(m_data);
-	m_rangeTool->rebuild(m_data);
-	m_shiftTool->rebuild(m_data);
+	m_waveTools->rebuild();
+	m_pitchTool->rebuild();
+	m_rangeTool->rebuild();
+	m_shiftTool->rebuild();
 
 	updateTitleWithScene(m_data.scene);
 

@@ -40,7 +40,7 @@ class geWaveform;
 class geWaveTools : public Fl_Scroll
 {
 public:
-	geWaveTools(int x, int y, int w, int h, bool gridEnabled, int gridVal);
+	geWaveTools(int x, int y, int w, int h, bool gridEnabled, int gridVal, const c::sampleEditor::Data&);
 
 	void resize(int x, int y, int w, int h) override;
 	int  handle(int e) override;
@@ -49,7 +49,7 @@ public:
 	Updates the waveform by realloc-ing new data (i.e. when the waveform has
 	changed). */
 
-	void rebuild(const c::sampleEditor::Data& d);
+	void rebuild();
 
 	/* refresh
 	Redraws the waveform, called by the video thread. This is meant to be called
@@ -58,14 +58,14 @@ public:
 
 	void refresh();
 
-	const c::sampleEditor::Data& getChannelData() const { return *m_data; }
+	const c::sampleEditor::Data& getChannelData() const { return m_data; }
 
 	v::geWaveform* waveform;
 
 private:
 	void openMenu();
 
-	const c::sampleEditor::Data* m_data;
+	const c::sampleEditor::Data& m_data;
 };
 } // namespace giada::v
 

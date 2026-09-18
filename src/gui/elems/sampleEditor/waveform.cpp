@@ -41,10 +41,11 @@
 
 namespace giada::v
 {
-geWaveform::geWaveform(int x, int y, int w, int h, bool gridEnabled, int gridVal)
+geWaveform::geWaveform(int x, int y, int w, int h, bool gridEnabled, int gridVal,
+    const c::sampleEditor::Data& data)
 : Fl_Widget(x, y, w, h, nullptr)
 , m_selection{}
-, m_data(nullptr)
+, m_data(data)
 , m_chanStart(0)
 , m_chanStartLit(false)
 , m_chanEnd(0)
@@ -75,10 +76,10 @@ void geWaveform::clearData()
 
 int geWaveform::alloc(int datasize, bool force)
 {
-	if (!m_data->isValid())
+	if (!m_data.isValid())
 		return 0;
 
-	const m::Wave& wave = *m_data->getSample().wave;
+	const m::Wave& wave = *m_data.getSample().wave;
 
 	m_ratio = wave.getBuffer().countFrames() / (float)datasize;
 
@@ -168,8 +169,8 @@ int geWaveform::alloc(int datasize, bool force)
 
 void geWaveform::recalcPoints()
 {
-	m_chanStart = m_data->getSample().range.getA();
-	m_chanEnd   = m_data->getSample().range.getB();
+	m_chanStart = m_data.getSample().range.getA();
+	m_chanEnd   = m_data.getSample().range.getB();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -272,7 +273,7 @@ void geWaveform::drawStartEndPoints()
 
 void geWaveform::drawPlayHead()
 {
-	int p = frameToPixel(m_data->a_getPreviewTracker()) + x();
+	int p = frameToPixel(m_data.a_getPreviewTracker()) + x();
 	fl_color(G_COLOR_LIGHT_2);
 	fl_line(p, y() + 1, p, y() + h() - 2);
 }
@@ -286,7 +287,7 @@ void geWaveform::draw()
 
 	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2); // blank canvas
 
-	if (m_data->isValid())
+	if (m_data.isValid())
 	{
 		/* Draw things from 'from' (offset driven by the scrollbar) to 'to' (width of
 		parent window). We don't draw the entire waveform, only the visible part. */
@@ -316,10 +317,10 @@ void geWaveform::draw()
 
 int geWaveform::handle(int e)
 {
-	if (!m_data->isValid())
+	if (!m_data.isValid())
 		return 0;
 
-	const m::Wave& wave = *m_data->getSample().wave;
+	const m::Wave& wave = *m_data.getSample().wave;
 
 	m_mouseX = pixelToFrame(Fl::event_x() - x());
 	m_mouseY = pixelToFrame(Fl::event_y() - y());
@@ -336,7 +337,7 @@ int geWaveform::handle(int e)
 		if (Fl::event_key() == ' ')
 			c::sampleEditor::togglePreview();
 		else if (Fl::event_key() == FL_BackSpace)
-			c::sampleEditor::setPreviewTracker(m_data->getSample().range.getA());
+			c::sampleEditor::setPreviewTracker(m_data.getSample().range.getA());
 		return 1;
 	}
 
@@ -376,7 +377,7 @@ int geWaveform::handle(int e)
 		/* Handle begin/end markers interaction. */
 
 		if (m_chanStartLit || m_chanEndLit)
-			c::sampleEditor::setRange(m_data->channelId, {m_chanStart, m_chanEnd});
+			c::sampleEditor::setRange(m_data.channelId, {m_chanStart, m_chanEnd});
 
 		m_pushed   = false;
 		m_dragged  = false;
@@ -557,7 +558,7 @@ int geWaveform::pixelToFrame(int p) const
 	if (p <= 0)
 		return 0;
 	if (p > m_waveform.size)
-		return m_data->waveSize;
+		return m_data.waveSize;
 	return p * m_ratio;
 }
 
@@ -639,9 +640,8 @@ void geWaveform::stretchToWindow()
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveform::rebuild(const c::sampleEditor::Data& d)
+void geWaveform::rebuild()
 {
-	m_data = &d;
 	clearSelection();
 	alloc(m_waveform.size, /*force=*/true);
 	redraw();
@@ -685,7 +685,7 @@ int geWaveform::getSelectionB() const { return m_selection.b; }
 void geWaveform::selectAll()
 {
 	m_selection.a = 0;
-	m_selection.b = m_data->waveSize - 1;
+	m_selection.b = m_data.waveSize - 1;
 	redraw();
 }
 } // namespace giada::v

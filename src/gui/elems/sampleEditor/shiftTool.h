@@ -44,11 +44,11 @@ class geShiftTool : public geFlex
 public:
 	geShiftTool(const c::sampleEditor::Data& d);
 
-	void rebuild(const c::sampleEditor::Data& d);
+	void rebuild();
 	void update(Frame shift);
 
 private:
-	const c::sampleEditor::Data* m_data;
+	const c::sampleEditor::Data& m_data;
 
 	geBox*   m_label;
 	geInput* m_shift;

@@ -62,9 +62,10 @@ enum class Menu
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-geWaveTools::geWaveTools(int x, int y, int w, int h, bool gridEnabled, int gridVal)
+geWaveTools::geWaveTools(int x, int y, int w, int h, bool gridEnabled, int gridVal,
+    const c::sampleEditor::Data& data)
 : Fl_Scroll(x, y, w, h, nullptr)
-, m_data(nullptr)
+, m_data(data)
 {
 	type(Fl_Scroll::HORIZONTAL_ALWAYS);
 	hscrollbar.color(G_COLOR_GREY_2);
@@ -72,15 +73,14 @@ geWaveTools::geWaveTools(int x, int y, int w, int h, bool gridEnabled, int gridV
 	hscrollbar.labelcolor(G_COLOR_LIGHT_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-	waveform = new v::geWaveform(x, y, w, h - 24, gridEnabled, gridVal);
+	waveform = new v::geWaveform(x, y, w, h - 24, gridEnabled, gridVal, m_data);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveTools::rebuild(const c::sampleEditor::Data& d)
+void geWaveTools::rebuild()
 {
-	m_data = &d;
-	waveform->rebuild(d);
+	waveform->rebuild();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -99,7 +99,7 @@ void geWaveTools::resize(int x, int y, int w, int h)
 	if (this->w() == w || (this->w() != w && this->h() != h))
 	{ // vertical or both resize
 		waveform->resize(x, y, waveform->w(), h - 24);
-		waveform->rebuild(*m_data);
+		waveform->rebuild();
 	}
 
 	if (this->w() > waveform->w())
@@ -175,7 +175,7 @@ void geWaveTools::openMenu()
 		menu.setEnabled(ID{Menu::TO_NEW_CHANNEL}, false);
 	}
 
-	menu.onSelect = [channelId = m_data->channelId,
+	menu.onSelect = [channelId = m_data.channelId,
 	                    a      = waveform->getSelectionA(),
 	                    b      = waveform->getSelectionB()](ID id)
 	{

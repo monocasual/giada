@@ -52,7 +52,7 @@ public:
 		OUT
 	};
 
-	geWaveform(int x, int y, int w, int h, bool gridEnabled, int gridVal);
+	geWaveform(int x, int y, int w, int h, bool gridEnabled, int gridVal, const c::sampleEditor::Data&);
 
 	void draw() override;
 	int  handle(int e) override;
@@ -86,7 +86,7 @@ public:
 	/* rebuild
 	Redraws the waveform. */
 
-	void rebuild(const c::sampleEditor::Data& d);
+	void rebuild();
 
 	/* setGridLevel
 	Sets a new frequency level for the grid. 0 means disabled. */
@@ -191,7 +191,7 @@ private:
 
 	int alloc(int datasize, bool force = false);
 
-	const c::sampleEditor::Data* m_data;
+	const c::sampleEditor::Data& m_data;
 
 	int   m_chanStart;
 	bool  m_chanStartLit;

@@ -64,7 +64,7 @@ enum class AdjustMenu
 
 gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
-, m_data(nullptr)
+, m_data(d)
 {
 	m_playbackModeLabel = new geBox("Mode", FL_ALIGN_CENTER);
 	m_playbackMode      = new geChoice();
@@ -91,7 +91,7 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	m_pitch->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_pitch->onChange = [this](const std::string& val)
 	{
-		c::channel::setChannelPitch(m_data->channelId, utils::string::toFloat(val), Thread::MAIN);
+		c::channel::setChannelPitch(m_data.channelId, utils::string::toFloat(val), Thread::MAIN);
 	};
 
 	m_adjust->onClick = [this]()
@@ -106,17 +106,17 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 		menu.onSelect = [this](ID id)
 		{
 			if (id == AdjustMenu::SPREAD_TO_BAR)
-				spreadSampleToLength(m_data->getFramesInBar());
+				spreadSampleToLength(m_data.getFramesInBar());
 			else if (id == AdjustMenu::SPREAD_TO_SONG)
-				spreadSampleToLength(m_data->getFramesInLoop());
+				spreadSampleToLength(m_data.getFramesInLoop());
 			else if (id == AdjustMenu::INCREASE_SEMITONE)
-				c::channel::increasePitchBySemitone(m_data->channelId);
+				c::channel::increasePitchBySemitone(m_data.channelId);
 			else if (id == AdjustMenu::DECREASE_SEMITONE)
-				c::channel::decreasePitchBySemitone(m_data->channelId);
+				c::channel::decreasePitchBySemitone(m_data.channelId);
 			else if (id == AdjustMenu::RESET_ALL)
 			{
-				c::channel::setChannelPitch(m_data->channelId, G_DEFAULT_PITCH, Thread::MAIN);
-				c::channel::setChannelTime(m_data->channelId, G_DEFAULT_TIME);
+				c::channel::setChannelPitch(m_data.channelId, G_DEFAULT_PITCH, Thread::MAIN);
+				c::channel::setChannelTime(m_data.channelId, G_DEFAULT_TIME);
 			}
 		};
 
@@ -127,7 +127,7 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	m_playbackMode->addItem("Elastic", static_cast<int>(PlaybackMode::ELASTIC));
 	m_playbackMode->onChange = [this](int id)
 	{
-		c::channel::setChannelPlaybackMode(m_data->channelId, static_cast<PlaybackMode>(id));
+		c::channel::setChannelPlaybackMode(m_data.channelId, static_cast<PlaybackMode>(id));
 		updateInputStates();
 	};
 
@@ -135,20 +135,19 @@ gePitchTool::gePitchTool(const c::sampleEditor::Data& d)
 	m_time->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_time->onChange = [this](const std::string& val)
 	{
-		c::channel::setChannelTime(m_data->channelId, utils::string::toFloat(val));
+		c::channel::setChannelTime(m_data.channelId, utils::string::toFloat(val));
 	};
 
-	rebuild(d);
+	rebuild();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void gePitchTool::rebuild(const c::sampleEditor::Data& d)
+void gePitchTool::rebuild()
 {
-	m_data = &d;
-	m_playbackMode->showItem(static_cast<int>(m_data->getSample().playbackMode));
-	m_pitch->setValue(fmt::format("{:.4f}", m_data->getSample().pitch)); // 4 digits
-	m_time->setValue(fmt::format("{:.4f}", m_data->getSample().time));   // 4 digits
+	m_playbackMode->showItem(static_cast<int>(m_data.getSample().playbackMode));
+	m_pitch->setValue(fmt::format("{:.4f}", m_data.getSample().pitch)); // 4 digits
+	m_time->setValue(fmt::format("{:.4f}", m_data.getSample().time));   // 4 digits
 	updateInputStates();
 }
 
@@ -156,8 +155,8 @@ void gePitchTool::rebuild(const c::sampleEditor::Data& d)
 
 void gePitchTool::refresh()
 {
-	m_pitch->setValue(fmt::format("{:.4f}", m_data->getSample().pitch)); // 4 digits
-	m_time->setValue(fmt::format("{:.4f}", m_data->getSample().time));   // 4 digits
+	m_pitch->setValue(fmt::format("{:.4f}", m_data.getSample().pitch)); // 4 digits
+	m_time->setValue(fmt::format("{:.4f}", m_data.getSample().time));   // 4 digits
 }
 
 /* -------------------------------------------------------------------------- */
@@ -175,13 +174,13 @@ void gePitchTool::spreadSampleToLength(Frame length)
 	const auto currentPlaybackMode = static_cast<PlaybackMode>(m_playbackMode->getSelectedId());
 	if (currentPlaybackMode == PlaybackMode::TAPE)
 	{
-		const float value = m_data->getSample().range.getLength() / static_cast<float>(length);
-		c::channel::setChannelPitch(m_data->channelId, value, Thread::MAIN);
+		const float value = m_data.getSample().range.getLength() / static_cast<float>(length);
+		c::channel::setChannelPitch(m_data.channelId, value, Thread::MAIN);
 	}
 	else
 	{
-		const float value = length / static_cast<float>(m_data->getSample().range.getLength());
-		c::channel::setChannelTime(m_data->channelId, value);
+		const float value = length / static_cast<float>(m_data.getSample().range.getLength());
+		c::channel::setChannelTime(m_data.channelId, value);
 	}
 }
 

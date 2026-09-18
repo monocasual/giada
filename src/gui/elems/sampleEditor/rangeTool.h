@@ -45,11 +45,11 @@ class geRangeTool : public geFlex
 public:
 	geRangeTool(const c::sampleEditor::Data& d);
 
-	void rebuild(const c::sampleEditor::Data& d);
+	void rebuild();
 	void update(FrameRange range);
 
 private:
-	const c::sampleEditor::Data* m_data;
+	const c::sampleEditor::Data& m_data;
 
 	geBox*        m_label;
 	geInput*      m_begin;

@@ -43,7 +43,7 @@ namespace giada::v
 {
 geRangeTool::geRangeTool(const c::sampleEditor::Data& d)
 : geFlex(Direction::HORIZONTAL, G_GUI_INNER_MARGIN)
-, m_data(nullptr)
+, m_data(d)
 {
 	m_label = new geBox(g_ui->getI18Text(LangMap::SAMPLEEDITOR_RANGE), FL_ALIGN_CENTER);
 	m_begin = new geInput();
@@ -59,30 +59,29 @@ geRangeTool::geRangeTool(const c::sampleEditor::Data& d)
 	m_begin->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_begin->onChange = [this](const std::string& val)
 	{
-		c::sampleEditor::setRange(m_data->channelId, {utils::string::toInt(val), utils::string::toInt(m_end->getValue())});
+		c::sampleEditor::setRange(m_data.channelId, {utils::string::toInt(val), utils::string::toInt(m_end->getValue())});
 	};
 
 	m_end->setType(FL_INT_INPUT);
 	m_end->setWhen(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
 	m_end->onChange = [this](const std::string& val)
 	{
-		c::sampleEditor::setRange(m_data->channelId, {utils::string::toInt(m_begin->getValue()), utils::string::toInt(val)});
+		c::sampleEditor::setRange(m_data.channelId, {utils::string::toInt(m_begin->getValue()), utils::string::toInt(val)});
 	};
 
 	m_reset->onClick = [this]()
 	{
-		c::sampleEditor::setRange(m_data->channelId, {0, m_data->waveSize});
+		c::sampleEditor::setRange(m_data.channelId, {0, m_data.waveSize});
 	};
 
-	rebuild(d);
+	rebuild();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geRangeTool::rebuild(const c::sampleEditor::Data& d)
+void geRangeTool::rebuild()
 {
-	m_data = &d;
-	update(m_data->getSample().range);
+	update(m_data.getSample().range);
 }
 
 /* -------------------------------------------------------------------------- */
