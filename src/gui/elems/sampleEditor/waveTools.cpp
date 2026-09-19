@@ -30,6 +30,8 @@
 #include "src/gui/dialogs/sampleEditor.h"
 #include "src/gui/elems/basics/boxtypes.h"
 #include "src/gui/elems/basics/menu.h"
+#include "src/gui/elems/basics/scrollbar.h"
+#include "src/gui/elems/sampleEditor/waveform.h"
 #include "src/gui/elems/sampleEditor/waveform_DEPR_.h"
 #include "src/gui/ui.h"
 #include "src/utils/gui.h"
@@ -64,50 +66,64 @@ enum class Menu
 
 geWaveTools::geWaveTools(int x, int y, int w, int h, bool gridEnabled, int gridVal,
     const c::sampleEditor::Data& data)
-: Fl_Scroll(x, y, w, h, nullptr)
+: geFlex(Direction::VERTICAL, G_GUI_OUTER_MARGIN)
 , m_data(data)
 {
-	type(Fl_Scroll::HORIZONTAL_ALWAYS);
-	hscrollbar.color(G_COLOR_GREY_2);
-	hscrollbar.selection_color(G_COLOR_GREY_4);
-	hscrollbar.labelcolor(G_COLOR_LIGHT_1);
-	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
+	m_waveform  = new v::geWaveform(data);
+	m_scrollbar = new geScrollbar();
+	addWidget(m_waveform);
+	addWidget(m_scrollbar, 20);
+	end();
 
-	waveform_DEPR_ = new v::geWaveform_DEPR_(x, y, w, h - 24, gridEnabled, gridVal, m_data);
+	const geompp::Range<Frame> range = m_waveform->getMoveableRange();
+
+	m_scrollbar->type(FL_HORIZONTAL);
+	m_scrollbar->bounds(range.getA(), range.getB());
+	m_scrollbar->slider_size(1);
+	m_scrollbar->onScroll = [this](double value)
+	{
+		m_waveform->moveToFrame(static_cast<Frame>(value));
+	};
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geWaveTools::rebuild()
 {
-	waveform_DEPR_->rebuild();
+	m_waveform->rebuild();
+
+	const geompp::Range<Frame> range = m_waveform->getMoveableRange();
+	m_scrollbar->bounds(range.getA(), range.getB());
+	m_scrollbar->value(0);
+	m_scrollbar->slider_size(1);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void geWaveTools::refresh()
 {
-	waveform_DEPR_->redraw();
 }
 
 /* -------------------------------------------------------------------------- */
 
-void geWaveTools::resize(int x, int y, int w, int h)
+void geWaveTools::zoomIn()
 {
-	Fl_Widget::resize(x, y, w, h);
+	m_waveform->zoomIn();
+	m_scrollbar->slider_size(m_scrollbar->slider_size() / 2);
 
-	if (this->w() == w || (this->w() != w && this->h() != h))
-	{ // vertical or both resize
-		waveform_DEPR_->resize(x, y, waveform_DEPR_->w(), h - 24);
-		waveform_DEPR_->rebuild();
-	}
+	const geompp::Range<Frame> range = m_waveform->getMoveableRange();
+	m_scrollbar->bounds(range.getA(), range.getB());
+}
 
-	if (this->w() > waveform_DEPR_->w())
-		waveform_DEPR_->stretchToWindow();
+/* -------------------------------------------------------------------------- */
 
-	int offset = waveform_DEPR_->x() + waveform_DEPR_->w() - this->w() - this->x();
-	if (offset < 0)
-		waveform_DEPR_->position(waveform_DEPR_->x() - offset, this->y());
+void geWaveTools::zoomOut()
+{
+	m_waveform->zoomOut();
+	m_scrollbar->slider_size(m_scrollbar->slider_size() * 2);
+
+	const geompp::Range<Frame> range = m_waveform->getMoveableRange();
+	m_scrollbar->bounds(range.getA(), range.getB());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -121,8 +137,8 @@ int geWaveTools::handle(int e)
 		/* Zoom with mousewheel (or two fingers gesture on the mac trackpad) only
 		works if Ctrl or Cmd are pressed. */
 		if (!Fl::event_command())
-			return Fl_Group::handle(e);
-		waveform_DEPR_->setZoom(Fl::event_dy() <= 0 ? geWaveform_DEPR_::Zoom::IN : geWaveform_DEPR_::Zoom::OUT);
+			return geFlex::handle(e);
+		// waveform_DEPR_->setZoom(Fl::event_dy() <= 0 ? geWaveform_DEPR_::Zoom::IN : geWaveform_DEPR_::Zoom::OUT);
 		redraw();
 		return 1;
 	}
@@ -133,11 +149,11 @@ int geWaveTools::handle(int e)
 			openMenu();
 			return 1;
 		}
-		Fl::focus(waveform_DEPR_);
-		return Fl_Group::handle(e);
+		// Fl::focus(waveform_DEPR_);
+		return geFlex::handle(e);
 	}
 	default:
-		return Fl_Group::handle(e);
+		return geFlex::handle(e);
 	}
 }
 
@@ -160,6 +176,7 @@ void geWaveTools::openMenu()
 	menu.addItem(ID{Menu::SET_RANGE}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_SET_RANGE));
 	menu.addItem(ID{Menu::TO_NEW_CHANNEL}, g_ui->getI18Text(LangMap::SAMPLEEDITOR_TOOLS_TO_NEW_CHANNEL));
 
+#if 0
 	if (!waveform_DEPR_->isSelected())
 	{
 		menu.setEnabled(ID{Menu::CUT}, false);
@@ -204,7 +221,7 @@ void geWaveTools::openMenu()
 		else if (id == Menu::TO_NEW_CHANNEL)
 			c::sampleEditor::toNewChannel(channelId, a, b);
 	};
-
+#endif
 	menu.popup();
 }
 } // namespace giada::v
