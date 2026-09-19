@@ -87,6 +87,13 @@ Sample Data::getSample() const
 	return m_channel->sampleChannel->getSample(scene);
 }
 
+const mcl::AudioBuffer& Data::getAudioBufferRef() const
+{
+	assert(isValid());
+
+	return m_channel->sampleChannel->getSample(scene).wave->getBuffer();
+}
+
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */

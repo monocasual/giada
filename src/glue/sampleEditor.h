@@ -37,6 +37,11 @@
 /* giada::c::sampleEditor
 Functions to interact with the Sample Editor. Only the main thread can use these! */
 
+namespace mcl
+{
+class AudioBuffer;
+}
+
 namespace giada::m
 {
 class Wave;
@@ -60,6 +65,12 @@ struct Data
 	Frame         getFramesInBar() const;
 	Frame         getFramesInLoop() const;
 	Sample        getSample() const;
+
+	/* getAudioBufferRef
+	Returns a immutable reference to the internal Wave's AudioBuffer. Used by
+	the Sample Editor to display the waveform. */
+
+	const mcl::AudioBuffer& getAudioBufferRef() const;
 
 	ID          channelId;
 	Scene       scene;
