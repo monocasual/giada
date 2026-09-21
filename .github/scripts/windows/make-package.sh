@@ -14,9 +14,10 @@ echo "Create working dirs"
 mkdir dist
 mkdir temp
 
-echo "Copy binary file to temp/"
+echo "Copy binary and DLLs to temp/"
 
 cp build/Release/giada.exe temp/
+cp build/Release/*.dll temp/
 
 echo "Make zip archive, save it to to dist/"
 
