@@ -19,6 +19,12 @@ jobs:
       - name: Install dependencies
         run: bash ./.github/scripts/linux/install-deps.sh
 
+      - name: Setup vcpkg binary caching
+        shell: bash
+        run: bash ./.github/scripts/setup-vcpkg-cache.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Generate Makefile
         run: cmake -S . -B build/ -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON -DWITH_VST3=ON
 
@@ -38,6 +44,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Setup vcpkg binary caching
+        shell: bash
+        run: bash ./.github/scripts/setup-vcpkg-cache.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate Makefile
         shell: bash
@@ -60,6 +72,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Setup vcpkg binary caching
+        shell: bash
+        run: bash ./.github/scripts/setup-vcpkg-cache.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate Makefile
         run: cmake -S . -B build/ -G "Xcode" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_CXX_FLAGS="-x objective-c++" -DWITH_TESTS=ON -DWITH_VST3=ON
