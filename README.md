@@ -33,6 +33,8 @@ Giada is an open source, minimalistic and hardcore music production tool. Design
 * ALSA, JACK + Transport, CoreAudio, ASIO and DirectSound full support;
 * unlimited number of channels (optionally controllable via computer keyboard);
 * BPM and beat sync with sample-accurate loop engine;
+* rock-solid, tick-based event engine for sample-accurate timing of every action;
+* time stretching/pitch shifting algorithm for samples, allowing smooth tempo and pitch manipulation on the fly;
 * MIDI input and output support, featuring custom [MIDI lightning messages](https://github.com/monocasual/giada-midimaps);
 * super-sleek, built-in Wave Editor for audio samples and Piano Roll editor for MIDI messages;
 * automatic quantizer;
