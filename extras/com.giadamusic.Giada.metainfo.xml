@@ -19,6 +19,21 @@
 		</screenshot>
 	</screenshots>
 	<releases>
+		<release version="1.6.0" date="2026-09-22">
+			<description>
+				<p>This release introduces elastic time-stretching for sample channels, letting users independently adjust playback speed and pitch, powered by the Rubber Band audio library. The Sample Editor has been reworked accordingly with a redesigned Pitch/Time panel, a new Playback Mode selector (Tape vs. Elastic), a quick "Adjust..." menu for common pitch/time operations, and a dedicated sample info window.</p>
+				<ul>
+					<li>Add elastic (time-stretching) playback mode for sample channels, allowing tempo and pitch to be changed independently;</li>
+					<li>Sample Editor: major UI rework, focusing on the pitch tools and audio file info sections;</li>
+					<li>Sample Editor: organize the sample-spreading actions (spread to bar, spread to song) into a dedicated menu;</li>
+					<li>Sample Editor: add "+1 Semitone" and "-1 Semitone" options to quickly adjust sample pitch in semitone increments;</li>
+					<li>Improve audio buffer performance and internal data handling by switching to a more efficient memory layout;</li>
+					<li>CMake: add a new WITH_ASAN option (disabled by default) to build with AddressSanitizer + UndefinedBehaviorSanitizer;</li>
+					<li>Fix a crash that could occur when closing sub-windows;</li>
+					<li>Various minor internal optimizations and code cleanups.</li>
+				</ul>
+			</description>
+		</release>
 		<release version="1.5.0" date="2026-06-17">
 			<description>
 				<p>This release introduces a major overhaul of Giada's timing and sequencing engine, with a new tick-based internal timeline that improves musical precision across editing and playback. It also expands scene management with more flexible copy, clear and switching features, improves plug-in and MIDI workflow, adds CPU load monitoring to the main window and includes a broad round of internal cleanup and UI polish.</p>

@@ -1,3 +1,14 @@
+1.6.0 --- 2026 . 09 . 22
+- Add elastic (time-stretching) playback mode for sample channels, allowing tempo and pitch to be changed independently
+- Sample Editor: major UI rework, focusing on the pitch tools and audio file info sections
+- Sample Editor: organize the sample-spreading actions (spread to bar, spread to song) into a dedicated menu
+- Sample Editor: add "+1 Semitone" and "-1 Semitone" options to quickly adjust sample pitch in semitone increments
+- Improve audio buffer performance and internal data handling by switching to a more efficient memory layout
+- CMake: add a new WITH_ASAN option (disabled by default) to build with AddressSanitizer + UndefinedBehaviorSanitizer
+- Fix a crash that could occur when closing sub-windows
+- Various minor internal optimizations and code cleanups
+
+
 1.5.0 --- 2026 . 06 . 17
 - New tick-based audio rendering engine, improving consistency across sequencing, playback and action editing
 - Rework the internal storage of actions, improving performance and simplifying action handling
