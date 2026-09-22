@@ -13,19 +13,16 @@ jobs:
   create-release:
     name: Create release
     runs-on: ubuntu-24.04
-    outputs: # Output contains the upload url. Will be reused on upload release
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
       - name: Create
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           draft: true
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Windows --------------------------------------------------------------------
   windows:
@@ -51,15 +48,12 @@ jobs:
         run: bash ./.github/scripts/windows/make-package.sh ${{ github.ref_name }}
 
       - name: Upload release
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: dist/giada-${{ github.ref_name }}-x86_64-windows.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: dist/giada-${{ github.ref_name }}-x86_64-windows.zip
-          asset_name: giada-${{ github.ref_name }}-x86_64-windows.zip
-          asset_content_type: application/zip
 
   # macOS ----------------------------------------------------------------------
   macos:
@@ -83,15 +77,12 @@ jobs:
         run: bash ./.github/scripts/macos/make-package.sh ${{ github.ref_name }}
 
       - name: Upload release
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: dist/giada-${{ github.ref_name }}-arm64-macos.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: dist/giada-${{ github.ref_name }}-arm64-macos.zip
-          asset_name: giada-${{ github.ref_name }}-arm64-macos.zip
-          asset_content_type: application/zip
 
   # source ---------------------------------------------------------------------
   source:
@@ -108,12 +99,9 @@ jobs:
         run: python3 ./.github/scripts/make-src.py ${{ github.ref_name }}
 
       - name: Upload release
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: dist/giada-${{ github.ref_name }}-src.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: dist/giada-${{ github.ref_name }}-src.tar.gz
-          asset_name: giada-${{ github.ref_name }}-src.tar.gz
-          asset_content_type: application/gzip
