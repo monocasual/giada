@@ -50,4 +50,7 @@ $NUGET_CMD sources add \
 # "readwrite" means:
 #  - read:  restore already-built packages when available (cache hit)
 #  - write: upload newly built packages, so future runs can reuse them
-echo "VCPKG_BINARY_SOURCES=clear;nuget,GitHubPackages,readwrite" >> "$GITHUB_ENV"
+# "nugettimeout=1000" raises the nuget.exe push/restore timeout (default is
+# only 100s), since some packages (e.g. sleef) produce large .nupkg files
+# that can't reliably upload through Mono's HTTP stack in that time on Linux.
+echo "VCPKG_BINARY_SOURCES=clear;nuget,GitHubPackages,readwrite;nugettimeout,1000" >> "$GITHUB_ENV"
