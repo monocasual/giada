@@ -50,6 +50,8 @@ jobs:
       - name: Upload release
         uses: softprops/action-gh-release@v3
         with:
+          draft: true
+          prerelease: false
           tag_name: ${{ github.ref_name }}
           files: dist/giada-${{ github.ref_name }}-x86_64-windows.zip
         env:
@@ -79,6 +81,8 @@ jobs:
       - name: Upload release
         uses: softprops/action-gh-release@v3
         with:
+          draft: true
+          prerelease: false
           tag_name: ${{ github.ref_name }}
           files: dist/giada-${{ github.ref_name }}-arm64-macos.zip
         env:
@@ -101,6 +105,8 @@ jobs:
       - name: Upload release
         uses: softprops/action-gh-release@v3
         with:
+          draft: true
+          prerelease: false
           tag_name: ${{ github.ref_name }}
           files: dist/giada-${{ github.ref_name }}-src.tar.gz
         env:
