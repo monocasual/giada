@@ -31,9 +31,43 @@
 
 namespace giada::m
 {
-Stretcher::Stretcher(int sampleRate)
+namespace
+{
+RubberBand::RubberBandStretcher::Options toRubberBandOptions_(Stretcher::Quality q)
+{
+	using Option = RubberBand::RubberBandStretcher::Option;
+
+	/* Rationale for the base options:
+		- OptionProcessRealTime: Run the stretcher in real-time mode;
+		- OptionChannelsTogether: Channels are handled for higher synchronisation.
+		  The Stretcher input will be treaded as a stereo pair to maximise clarity
+		  at the centre and preserve mono compatibility. The counterpart
+		  'OptionChannelsApart' tends to generate an unnatural increase in "width". */
+	const auto base = Option::OptionProcessRealTime | Option::OptionChannelsTogether;
+
+	switch (q)
+	{
+	case Stretcher::Quality::FAST:
+		return base | Option::OptionEngineFaster | Option::OptionPitchHighSpeed;
+	case Stretcher::Quality::NORMAL:
+		return base | Option::OptionEngineFaster | Option::OptionPitchHighConsistency;
+	case Stretcher::Quality::HIGH:
+		return base | Option::OptionEngineFiner | Option::OptionPitchHighConsistency;
+	case Stretcher::Quality::BEST:
+		return base | Option::OptionEngineFiner | Option::OptionPitchHighQuality;
+	default:
+		assert(false);
+	}
+}
+} // namespace
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+Stretcher::Stretcher(int sampleRate, Quality quality)
 : m_stretcher(RubberBand::RubberBandStretcher(
-      sampleRate, G_MAX_IO_CHANS, RubberBand::RubberBandStretcher::OptionProcessRealTime))
+      sampleRate, G_MAX_IO_CHANS, toRubberBandOptions_(quality)))
 {
 }
 

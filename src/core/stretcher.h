@@ -42,6 +42,14 @@ A small wrapper around Rubber Band's time-stretching engine. */
 class Stretcher final
 {
 public:
+	enum class Quality
+	{
+		FAST = 1, // Cheapest pitch mode, lowest CPU, for scrubbing/preview only
+		NORMAL,   // Safe for live pitch changes, good realtime default
+		HIGH,     // Safe for live pitch changes, higher quality, more CPU
+		BEST      // Max quality, assumes pitch is held steady during a given stretch
+	};
+
 	/* Result
 	Reports the outcome of a single call to process(): how many input frames
 	were consumed and how many output frames were generated. 'finished' is
@@ -57,7 +65,7 @@ public:
 		bool        finished  = false;
 	};
 
-	Stretcher(int sampleRate);
+	Stretcher(int sampleRate, Quality = Quality::FAST);
 
 	/* last
 	Notifies Rubber Band that this is the last chunk of audio. */
