@@ -592,6 +592,18 @@ void ChannelManager::setPreviewTracker(Frame f)
 
 /* -------------------------------------------------------------------------- */
 
+void ChannelManager::setStretcherQuality(ID channelId, int sampleRate, Stretcher::Quality quality)
+{
+	const Channel&          ch   = m_model.get().tracks.getChannel(channelId);
+	const model::SharedLock lock = m_model.lockShared(); // Lock the model
+
+	assert(ch.sampleChannel);
+
+	ch.shared->stretcher.emplace(sampleRate, quality);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ChannelManager::finalizeActionRec(const std::unordered_set<ID>& ids)
 {
 	for (ID id : ids)

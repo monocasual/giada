@@ -70,6 +70,7 @@ public:
 	void           setRange(ID channelId, FrameRange);
 	void           resetRange(ID channelId);
 	void           reload(ID channelId);
+	void           setStretcherQuality(ID channelId, Stretcher::Quality);
 
 private:
 	Wave& getWave(ID channelId) const;

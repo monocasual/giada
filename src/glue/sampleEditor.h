@@ -104,6 +104,7 @@ void fade(ID channelId, Frame a, Frame b, m::wfx::Fade type);
 void smoothEdges(ID channelId, Frame a, Frame b);
 void shift(ID channelId, Frame offset);
 void reload(ID channelId);
+void setStretcherQuality(ID channelId, m::Stretcher::Quality);
 
 void setLoop(bool);
 void preparePreview(ID channelId);

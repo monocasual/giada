@@ -223,6 +223,13 @@ void reload(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
+void setStretcherQuality(ID channelId, m::Stretcher::Quality q)
+{
+	g_engine->getSampleEditorApi().setStretcherQuality(channelId, q);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void shift(ID channelId, Frame offset)
 {
 	g_engine->getSampleEditorApi().shift(channelId, offset);

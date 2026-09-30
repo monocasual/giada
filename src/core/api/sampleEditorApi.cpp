@@ -257,6 +257,14 @@ void SampleEditorApi::reload(ID channelId)
 
 /* -------------------------------------------------------------------------- */
 
+void SampleEditorApi::setStretcherQuality(ID channelId, Stretcher::Quality q)
+{
+	const int sampleRate = m_kernelAudio.getSampleRate();
+	m_channelManager.setStretcherQuality(channelId, sampleRate, q);)
+}
+
+/* -------------------------------------------------------------------------- */
+
 Wave& SampleEditorApi::getWave(ID channelId) const
 {
 	const Scene currentScene = m_sequencer.getCurrentScene();

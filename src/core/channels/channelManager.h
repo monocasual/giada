@@ -204,6 +204,7 @@ public:
 	void loadWaveInPreviewChannel(ID sourceChannelId, Scene);
 	void freeWaveInPreviewChannel();
 	void setPreviewTracker(Frame f);
+	void setStretcherQuality(ID channelId, int sampleRate, Stretcher::Quality);
 
 	/* onChannelsAltered
 	Fired when something is done on channels (added, removed, loaded, ...). */
