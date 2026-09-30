@@ -25,3 +25,6 @@
 [submodule "src/deps/mcl-utils"]
 	path = src/deps/mcl-utils
 	url = https://github.com/monocasual/mcl-utils.git
+[submodule "src/deps/realtime-model"]
+	path = src/deps/realtime-model
+	url = https://github.com/monocasual/realtime-model
