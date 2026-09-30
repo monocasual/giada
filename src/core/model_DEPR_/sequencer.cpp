@@ -24,11 +24,11 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/sequencer.h"
+#include "src/core/model_DEPR_/sequencer.h"
 #include "src/core/const.h"
 #include "src/utils/time.h"
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 bool Sequencer::isActive() const
 {

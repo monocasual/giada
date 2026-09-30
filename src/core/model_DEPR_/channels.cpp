@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/channels.h"
+#include "src/core/model_DEPR_/channels.h"
 #include "src/core/plugins/plugin.h"
 #include "src/deps/mcl-utils/src/container.hpp"
 #include <cassert>
@@ -35,7 +35,7 @@
 
 namespace utils = mcl::utils;
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 Channel* Channels::find(ID id)
 {

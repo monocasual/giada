@@ -197,7 +197,7 @@ void openRenameChannelWindow(const c::channel::Data& data, bool allscenes)
 
 /* -------------------------------------------------------------------------- */
 
-void openMissingAssetsWindow(const m::model::LoadState& state)
+void openMissingAssetsWindow(const m::model_DEPR_::LoadState& state)
 {
 	g_ui->openSubWindow(new v::gdMissingAssets(state));
 }

@@ -26,7 +26,7 @@
 
 #include "src/glue/actionEditor.h"
 #include "src/core/engine.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/sequencer.h"
 #include "src/glue/channel.h"
 #include "src/glue/main.h"

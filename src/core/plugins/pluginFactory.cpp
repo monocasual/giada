@@ -58,7 +58,7 @@ std::unique_ptr<Plugin> createInvalid(ID id, const std::string& juceId)
 /* -------------------------------------------------------------------------- */
 
 std::unique_ptr<Plugin> create(ID id, const std::string& juceId, std::unique_ptr<juce::AudioPluginInstance> pi,
-    const model::Sequencer& sequencer, int sampleRate, int bufferSize)
+    const model_DEPR_::Sequencer& sequencer, int sampleRate, int bufferSize)
 {
 	/* If the original juce::AudioPluginInstance is invalid, just return an
 	invalid giada::m::Plugin object. This way we can keep track of invalid
@@ -78,7 +78,7 @@ std::unique_ptr<Plugin> create(ID id, const std::string& juceId, std::unique_ptr
 /* -------------------------------------------------------------------------- */
 
 std::unique_ptr<Plugin> deserializePlugin(const Patch::Plugin& pplugin, std::unique_ptr<juce::AudioPluginInstance> pi,
-    const model::Sequencer& sequencer, int sampleRate, int bufferSize)
+    const model_DEPR_::Sequencer& sequencer, int sampleRate, int bufferSize)
 {
 	/* If the original juce::AudioPluginInstance is invalid, just return an
 	invalid giada::m::Plugin object. This way we can keep track of invalid

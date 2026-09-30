@@ -27,7 +27,7 @@
 #ifndef G_ACTION_EDITOR_API_H
 #define G_ACTION_EDITOR_API_H
 
-#include "src/core/model/actions.h"
+#include "src/core/model_DEPR_/actions.h"
 #include "src/core/patch.h"
 #include "src/core/types.h"
 #include <vector>

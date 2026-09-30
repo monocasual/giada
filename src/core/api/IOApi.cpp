@@ -26,11 +26,11 @@
 
 #include "src/core/api/IOApi.h"
 #include "src/core/midiDispatcher.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 
 namespace giada::m
 {
-IOApi::IOApi(model::Model& m, MidiDispatcher& md)
+IOApi::IOApi(model_DEPR_::Model& m, MidiDispatcher& md)
 : m_model(m)
 , m_midiDispatcher(md)
 {
@@ -38,7 +38,7 @@ IOApi::IOApi(model::Model& m, MidiDispatcher& md)
 
 /* -------------------------------------------------------------------------- */
 
-const model::MidiIn& IOApi::getModelMidiIn() const
+const model_DEPR_::MidiIn& IOApi::getModelMidiIn() const
 {
 	return m_model.get().midiIn;
 }
@@ -48,7 +48,7 @@ const model::MidiIn& IOApi::getModelMidiIn() const
 void IOApi::channel_enableMidiInput(ID channelId, bool v)
 {
 	m_model.get().tracks.getChannel(channelId).midiInput.enabled = v;
-	m_model.swap(m::model::SwapType::NONE);
+	m_model.swap(m::model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -64,7 +64,7 @@ void IOApi::channel_enableMidiLightning(ID channelId, bool v)
 	if (v)
 		ch.midiInput.enabled = true;
 
-	m_model.swap(m::model::SwapType::NONE);
+	m_model.swap(m::model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -72,7 +72,7 @@ void IOApi::channel_enableMidiLightning(ID channelId, bool v)
 void IOApi::channel_enableMidiOutput(ID channelId, bool v)
 {
 	m_model.get().tracks.getChannel(channelId).midiChannel->outputEnabled = v;
-	m_model.swap(m::model::SwapType::HARD); // Rebuild info printed in MIDI channels
+	m_model.swap(m::model_DEPR_::SwapType::HARD); // Rebuild info printed in MIDI channels
 }
 
 /* -------------------------------------------------------------------------- */
@@ -80,7 +80,7 @@ void IOApi::channel_enableMidiOutput(ID channelId, bool v)
 void IOApi::channel_enableVelocityAsVol(ID channelId, bool v)
 {
 	m_model.get().tracks.getChannel(channelId).sampleChannel->velocityAsVol = v;
-	m_model.swap(m::model::SwapType::NONE);
+	m_model.swap(m::model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -88,13 +88,13 @@ void IOApi::channel_enableVelocityAsVol(ID channelId, bool v)
 void IOApi::channel_setMidiInputFilter(ID channelId, int ch)
 {
 	m_model.get().tracks.getChannel(channelId).midiInput.filter = ch;
-	m_model.swap(m::model::SwapType::NONE);
+	m_model.swap(m::model_DEPR_::SwapType::NONE);
 }
 
 void IOApi::channel_setMidiOutputFilter(ID channelId, int ch)
 {
 	m_model.get().tracks.getChannel(channelId).midiChannel->outputFilter = ch;
-	m_model.swap(m::model::SwapType::HARD); // Rebuild info printed in MIDI channels
+	m_model.swap(m::model_DEPR_::SwapType::HARD); // Rebuild info printed in MIDI channels
 }
 
 /* -------------------------------------------------------------------------- */
@@ -102,7 +102,7 @@ void IOApi::channel_setMidiOutputFilter(ID channelId, int ch)
 bool IOApi::channel_setKey(ID channelId, int k)
 {
 	m_model.get().tracks.getChannel(channelId).key = k;
-	m_model.swap(m::model::SwapType::HARD);
+	m_model.swap(m::model_DEPR_::SwapType::HARD);
 	return true;
 }
 
@@ -152,7 +152,7 @@ void IOApi::plugin_clearMidiLearn(int param, ID pluginId, std::function<void()> 
 void IOApi::master_enableMidiLearn(bool v)
 {
 	m_model.get().midiIn.enabled = v;
-	m_model.swap(m::model::SwapType::NONE);
+	m_model.swap(m::model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -160,6 +160,6 @@ void IOApi::master_enableMidiLearn(bool v)
 void IOApi::master_setMidiFilter(int c)
 {
 	m_model.get().midiIn.filter = c;
-	m_model.swap(m::model::SwapType::NONE);
+	m_model.swap(m::model_DEPR_::SwapType::NONE);
 }
 } // namespace giada::m

@@ -24,42 +24,22 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_MIDI_IN_H
-#define G_MODEL_MIDI_IN_H
+#include "src/core/model_DEPR_/sharedLock.h"
+#include "src/core/model_DEPR_/model.h"
 
-#include "src/scene.h"
-#include "src/types.h"
-#include <cstdint>
-
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
-struct MidiIn
+SharedLock::SharedLock(Model& m, SwapType t)
+: m_model(m)
+, m_swapType(t)
 {
-	bool                 enabled    = false;
-	int                  filter     = -1;
-	uint32_t             rewind     = 0x0;
-	uint32_t             startStop  = 0x0;
-	uint32_t             actionRec  = 0x0;
-	uint32_t             inputRec   = 0x0;
-	uint32_t             volumeIn   = 0x0;
-	uint32_t             volumeOut  = 0x0;
-	uint32_t             beatDouble = 0x0;
-	uint32_t             beatHalf   = 0x0;
-	uint32_t             metronome  = 0x0;
-	SceneArray<uint32_t> scenes     = {};
+	m_model.get().locked = true;
+	m_model.swap(SwapType::NONE);
+}
 
-	/* isScene
-	True if MIDI learn value passed in exists in the 'scenes' array. */
-
-	bool hasScene(uint32_t) const;
-
-	/* getScene
-	Returns the corresponding scene given a certain MIDI learn value. */
-
-	Scene getScene(uint32_t) const;
-
-	void setScene(Scene scene, uint32_t);
-};
+SharedLock::~SharedLock()
+{
+	m_model.get().locked = false;
+	m_model.swap(m_swapType);
+}
 } // namespace giada::m::model
-
-#endif

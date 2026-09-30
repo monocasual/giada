@@ -47,7 +47,7 @@
 #include "src/core/midiMapper.h"
 #include "src/core/midiSynchronizer.h"
 #include "src/core/mixer.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/plugins/pluginManager.h"
 #include "src/core/recorder.h"
@@ -119,12 +119,12 @@ public:
 	/* onModelSwap
 	Callback fired when the model gets swapped. */
 
-	std::function<void(model::SwapType)> onModelSwap;
+	std::function<void(model_DEPR_::SwapType)> onModelSwap;
 
 private:
 	void registerThread(Thread, bool isRealtime) const;
 
-	model::Model           m_model;
+	model_DEPR_::Model           m_model;
 	KernelAudio            m_kernelAudio;
 	KernelMidi             m_kernelMidi;
 	MidiMapper<KernelMidi> m_midiMapper;

@@ -24,8 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_KERNEL_AUDIO_H
-#define G_MODEL_KERNEL_AUDIO_H
+#ifndef G_MODEL_DEPR_KERNEL_AUDIO_H
+#define G_MODEL_DEPR_KERNEL_AUDIO_H
 
 #include "src/core/const.h"
 #include "src/core/resampler.h"
@@ -33,7 +33,7 @@
 #include "src/core/weakAtomic.h"
 #include "src/deps/rtaudio/RtAudio.h"
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class KernelAudio
 {

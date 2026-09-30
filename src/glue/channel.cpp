@@ -67,7 +67,7 @@ void printLoadError_(int res)
 
 /* -------------------------------------------------------------------------- */
 
-Data makeData_(ID channelId, const m::model::Track& modelTrack, Scene scene)
+Data makeData_(ID channelId, const m::model_DEPR_::Track& modelTrack, Scene scene)
 {
 	const std::size_t channelIndex = modelTrack.getChannelIndex(channelId);
 	const std::size_t trackIndex   = modelTrack.getIndex();
@@ -76,7 +76,7 @@ Data makeData_(ID channelId, const m::model::Track& modelTrack, Scene scene)
 
 /* -------------------------------------------------------------------------- */
 
-Track makeTrack_(const m::model::Track& modelTrack, Scene scene)
+Track makeTrack_(const m::model_DEPR_::Track& modelTrack, Scene scene)
 {
 	Track track{modelTrack.getIndex(), modelTrack.width, {}};
 
@@ -163,7 +163,7 @@ std::vector<Track> getTracks()
 {
 	const Scene        scene = g_engine->getMainApi().getCurrentScene();
 	std::vector<Track> out;
-	for (const m::model::Track& modelTrack : g_engine->getChannelsApi().getTracks().getAll())
+	for (const m::model_DEPR_::Track& modelTrack : g_engine->getChannelsApi().getTracks().getAll())
 		if (!modelTrack.isInternal())
 			out.push_back(makeTrack_(modelTrack, scene));
 	return out;

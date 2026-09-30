@@ -28,7 +28,7 @@
 #define G_KERNELMIDI_H
 
 #include "src/core/midiMapper.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/worker.h"
 #include "src/deps/concurrentqueue/concurrentqueue.h"
 #include <RtMidi.h>
@@ -64,7 +64,7 @@ public:
 		bool        isOpen;
 	};
 
-	KernelMidi(model::Model&);
+	KernelMidi(model_DEPR_::Model&);
 
 	static void logCompiledAPIs();
 
@@ -183,7 +183,7 @@ private:
 	Result openOutDevice_(std::size_t deviceIndex);
 	Result openInDevice_(std::size_t deviceIndex);
 
-	model::Model&      m_model;
+	model_DEPR_::Model&      m_model;
 	Devices<RtMidiOut> m_midiOuts;
 	Devices<RtMidiIn>  m_midiIns;
 

@@ -24,12 +24,12 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/tracks.h"
+#include "src/core/model_DEPR_/tracks.h"
 #include "src/deps/mcl-utils/src/container.hpp"
 
 namespace utils = mcl::utils;
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 const std::vector<Track>& Tracks::getAll() const
 {

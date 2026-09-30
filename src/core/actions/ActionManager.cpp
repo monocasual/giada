@@ -28,8 +28,8 @@
 #include "src/core/actions/action.h"
 #include "src/core/actions/actionFactory.h"
 #include "src/core/const.h"
-#include "src/core/model/actions.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/actions.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/patch.h"
 #include "src/deps/mcl-utils/src/container.hpp"
 #include "src/utils/log.h"
@@ -74,7 +74,7 @@ Tick sanitizeTick_(Tick t, Tick ticksInLoop)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-ActionManager::ActionManager(model::Model& m)
+ActionManager::ActionManager(model_DEPR_::Model& m)
 : m_model(m)
 {
 	m_liveActions.reserve(MAX_LIVE_RECS_CHUNK);
@@ -87,7 +87,7 @@ void ActionManager::reset()
 	m_liveActions.clear();
 	actionFactory::reset();
 	m_model.get().actions.clearAll();
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -218,7 +218,7 @@ std::unordered_set<ID> ActionManager::consolidate(Scene scene)
 		consolidate(*it, it - m_liveActions.begin()); // Pass current index
 
 	m_model.get().actions.rec(m_liveActions, scene);
-	m_model.swap(model::SwapType::SOFT);
+	m_model.swap(model_DEPR_::SwapType::SOFT);
 
 	std::unordered_set<ID> out;
 	for (const Action& action : m_liveActions)
@@ -236,7 +236,7 @@ void ActionManager::clearAllActions(Scene scene)
 		m_model.get().actions.clearActions(scene);
 	else
 		m_model.get().actions.clearAll();
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -311,7 +311,7 @@ void ActionManager::copyActions(ID channelId, Scene src, Scene dst, ID newChanne
 	}
 
 	m_model.get().actions.rec(actions, scene);
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -343,44 +343,44 @@ void ActionManager::clearChannel(ID channelId, Scene sceneToClear)
 	for (const std::size_t sceneIndex : utils::container::range(G_MAX_NUM_SCENES))
 		if (!sceneToClear.isValid() || (sceneToClear.isValid() && sceneToClear.getIndex() == sceneIndex))
 			m_model.get().actions.clearChannel(channelId, Scene{sceneIndex});
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 }
 
 void ActionManager::clearActions(ID channelId, int type)
 {
 	m_model.get().actions.clearActions(channelId, type);
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 }
 
 Action ActionManager::rec(ID channelId, Scene scene, Tick tick, MidiEvent e)
 {
 	Action action = m_model.get().actions.rec(channelId, scene, tick, e);
 
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 	return action;
 }
 
 void ActionManager::rec(ID channelId, Scene scene, TickRange range, MidiEvent e1, MidiEvent e2)
 {
 	m_model.get().actions.rec(channelId, scene, range, e1, e2);
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 }
 
 void ActionManager::deleteAction(ID id)
 {
 	m_model.get().actions.deleteAction(id);
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 }
 
 void ActionManager::deleteAction(ID currId, ID nextId)
 {
 	m_model.get().actions.deleteAction(currId, nextId);
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 }
 
 void ActionManager::updateEvent(ID id, MidiEvent e)
 {
 	m_model.get().actions.updateEvent(id, e);
-	m_model.swap(model::SwapType::HARD);
+	m_model.swap(model_DEPR_::SwapType::HARD);
 }
 } // namespace giada::m

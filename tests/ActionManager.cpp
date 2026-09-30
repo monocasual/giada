@@ -2,8 +2,8 @@
 #include "src/core/actions/action.h"
 #include "src/core/channels/channelFactory.h"
 #include "src/core/const.h"
-#include "src/core/model/actions.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/actions.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/types.h"
 #include <catch2/catch_test_macros.hpp>
 
@@ -15,7 +15,7 @@ TEST_CASE("ActionRecorder")
 	const ID channelID1 = ID{1};
 	const ID channelID2 = ID{2};
 
-	model::Model model;
+	model_DEPR_::Model model;
 
 	model.registerThread(Thread::MAIN, /*realtime=*/false);
 	model.reset();
@@ -27,7 +27,7 @@ TEST_CASE("ActionRecorder")
 	model.get().tracks.get(0).getChannels().getAll() = {channel1.channel, channel2.channel};
 	model.addChannelShared(std::move(channel1.shared));
 	model.addChannelShared(std::move(channel2.shared));
-	model.swap(model::SwapType::NONE);
+	model.swap(model_DEPR_::SwapType::NONE);
 
 	ActionManager ar(model);
 

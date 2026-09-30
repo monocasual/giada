@@ -40,7 +40,7 @@ namespace mcl
 class AudioBuffer;
 }
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Mixer;
 class Channels;
@@ -63,7 +63,7 @@ public:
 		int   maxLength;
 	};
 
-	Mixer(model::Model&);
+	Mixer(model_DEPR_::Model&);
 
 	Peak getPeakOut() const;
 	Peak getPeakIn() const;
@@ -83,7 +83,7 @@ public:
 	/* render
 	Core rendering function. */
 
-	void render(const mcl::AudioBuffer& in, const model::Document&, int maxFramesToRec) const;
+	void render(const mcl::AudioBuffer& in, const model_DEPR_::Document&, int maxFramesToRec) const;
 
 	/* reset
 	Brings everything back to the initial state. Must be called only when mixer
@@ -137,13 +137,13 @@ public:
 	Last touches after the output has been rendered: apply inToOut if any, apply
 	output volume. */
 
-	void finalizeOutput(const model::Mixer&, mcl::AudioBuffer&, bool inToOut,
+	void finalizeOutput(const model_DEPR_::Mixer&, mcl::AudioBuffer&, bool inToOut,
 	    bool limit, float vol) const;
 
 	/* updateOutputPeak
 	Reads the maximum peak in the given buffer and updates the value in model::Mixer. */
 
-	void updateOutputPeak(const model::Mixer&, const mcl::AudioBuffer&) const;
+	void updateOutputPeak(const model_DEPR_::Mixer&, const mcl::AudioBuffer&) const;
 
 	void setRecTriggerMode(RecTriggerMode);
 	void setInputRecMode(InputRecMode);
@@ -184,7 +184,7 @@ private:
 	Computes line in peaks and prepares the internal working buffer for input
 	recording. */
 
-	void processLineIn(const model::Mixer& mixer, const mcl::AudioBuffer& inBuf,
+	void processLineIn(const model_DEPR_::Mixer& mixer, const mcl::AudioBuffer& inBuf,
 	    float inVol, float recTriggerLevel, bool isSeqActive) const;
 
 	/* limit
@@ -192,7 +192,7 @@ private:
 
 	void limit(mcl::AudioBuffer& outBuf) const;
 
-	model::Model& m_model;
+	model_DEPR_::Model& m_model;
 
 	/* m_signalCbFired, m_endOfRecCbFired
 	Boolean guards to determine whether the callbacks have been fired or not,

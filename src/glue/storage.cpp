@@ -31,7 +31,7 @@
 #include "src/core/engine.h"
 #include "src/core/init.h"
 #include "src/core/mixer.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/patch.h"
 #include "src/core/plugins/plugin.h"
 #include "src/core/plugins/pluginHost.h"
@@ -117,7 +117,7 @@ void loadProject(void* data)
 	auto engineProgress = [&uiProgress](float v)
 	{ uiProgress.setProgress(v); };
 
-	m::model::LoadState state = g_engine->getStorageApi().loadProject(projectPath, engineProgress);
+	m::model_DEPR_::LoadState state = g_engine->getStorageApi().loadProject(projectPath, engineProgress);
 
 	if (state.patch.status != G_FILE_OK)
 	{

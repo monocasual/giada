@@ -24,34 +24,17 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_TYPES_H
-#define G_MODEL_TYPES_H
+#ifndef G_MODEL_DEPR_BEHAVIORS_H
+#define G_MODEL_DEPR_BEHAVIORS_H
 
-#include "src/core/model/document.h"
-#include "src/deps/mcl-atomic-swapper/src/atomic-swapper.hpp"
-
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
-/* DocumentLock
-Alias for a REALTIME scoped lock provided by the Swapper class. Use this in the
-real-time thread to lock the Document. */
-
-using AtomicSwapper = mcl::AtomicSwapper<Document, /*size=*/6>;
-using DocumentLock  = AtomicSwapper::RtLock;
-
-/* SwapType
-Type of Document change.
-    Hard: the structure has changed (e.g. add a new channel);
-    Soft: a property has changed (e.g. change volume);
-    None: something has changed but we don't care.
-Used by model listeners to determine the type of change that occurred in the
-Document. */
-
-enum class SwapType
+struct Behaviors
 {
-	HARD,
-	SOFT,
-	NONE
+	bool chansStopOnSeqHalt         = false;
+	bool treatRecsAsLoops           = false;
+	bool inputMonitorDefaultOn      = false;
+	bool overdubProtectionDefaultOn = false;
 };
 } // namespace giada::m::model
 

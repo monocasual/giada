@@ -27,7 +27,7 @@
 #include "src/core/kernelMidi.h"
 #include "src/core/const.h"
 #include "src/core/midiEvent.h"
-#include "src/core/model/kernelAudio.h"
+#include "src/core/model_DEPR_/kernelAudio.h"
 #include "src/utils/log.h"
 #include <algorithm>
 #include <cassert>
@@ -202,7 +202,7 @@ template class KernelMidi::Device<RtMidiOut>;
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-KernelMidi::KernelMidi(model::Model& m)
+KernelMidi::KernelMidi(model_DEPR_::Model& m)
 : onMidiReceived(nullptr)
 , onMidiSent(nullptr)
 , m_model(m)
@@ -224,7 +224,7 @@ bool KernelMidi::init()
 
 	/* Open devices accoring to model::KernelMidi info. */
 
-	const model::KernelMidi& kernelMidi = m_model.get().kernelMidi;
+	const model_DEPR_::KernelMidi& kernelMidi = m_model.get().kernelMidi;
 	openDevices(m_midiOuts, kernelMidi.devicesOut);
 	openDevices(m_midiIns, kernelMidi.devicesIn);
 
@@ -238,7 +238,7 @@ bool KernelMidi::setAPI(RtMidi::Api api)
 	m_model.get().kernelMidi.api        = api;
 	m_model.get().kernelMidi.devicesOut = {};
 	m_model.get().kernelMidi.devicesIn  = {};
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 
 	return true;
 }
@@ -253,7 +253,7 @@ KernelMidi::Result KernelMidi::openOutDevice(std::size_t deviceIndex)
 		return res;
 
 	m_model.get().kernelMidi.devicesOut.insert(deviceIndex);
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 
 	return res;
 }
@@ -266,7 +266,7 @@ KernelMidi::Result KernelMidi::openInDevice(std::size_t deviceIndex)
 		return res;
 
 	m_model.get().kernelMidi.devicesIn.insert(deviceIndex);
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 
 	return res;
 }
@@ -279,7 +279,7 @@ void KernelMidi::closeOutDevice(std::size_t deviceIndex)
 	m_midiOuts[deviceIndex]->close();
 
 	m_model.get().kernelMidi.devicesOut.erase(deviceIndex);
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 }
 
 void KernelMidi::closeInDevice(std::size_t deviceIndex)
@@ -288,7 +288,7 @@ void KernelMidi::closeInDevice(std::size_t deviceIndex)
 	m_midiIns[deviceIndex]->close();
 
 	m_model.get().kernelMidi.devicesIn.erase(deviceIndex);
-	m_model.swap(model::SwapType::NONE);
+	m_model.swap(model_DEPR_::SwapType::NONE);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/shared.h"
+#include "src/core/model_DEPR_/shared.h"
 #include "src/core/channels/channelFactory.h"
 #include "src/core/plugins/pluginFactory.h"
 #include "src/core/plugins/pluginManager.h"
@@ -37,7 +37,7 @@
 
 namespace utils = mcl::utils;
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 namespace
 {

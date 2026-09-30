@@ -24,13 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef G_MODEL_KERNEL_MIDI_H
-#define G_MODEL_KERNEL_MIDI_H
+#ifndef G_MODEL_DEPR_KERNEL_MIDI_H
+#define G_MODEL_DEPR_KERNEL_MIDI_H
 
 #include "src/core/const.h"
 #include <RtMidi.h>
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 struct KernelMidi
 {

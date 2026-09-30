@@ -31,7 +31,7 @@
 #include "src/core/kernelMidi.h"
 #include <vector>
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
 class Model;
 }
@@ -42,7 +42,7 @@ class MidiSynchronizer;
 class ConfigApi
 {
 public:
-	ConfigApi(model::Model&, KernelAudio&, KernelMidi&, MidiMapper<KernelMidi>&, MidiSynchronizer&);
+	ConfigApi(model_DEPR_::Model&, KernelAudio&, KernelMidi&, MidiMapper<KernelMidi>&, MidiSynchronizer&);
 
 	bool                             audio_hasAPI(RtAudio::Api) const;
 	RtAudio::Api                     audio_getAPI() const;
@@ -58,8 +58,8 @@ public:
 	void audio_setAPI(RtAudio::Api);
 
 	bool audio_openStream(
-	    const model::KernelAudio::Device& out,
-	    const model::KernelAudio::Device& in,
+	    const model_DEPR_::KernelAudio::Device& out,
+	    const model_DEPR_::KernelAudio::Device& in,
 	    unsigned int                      sampleRate,
 	    unsigned int                      bufferSize);
 
@@ -82,12 +82,12 @@ public:
 	void midi_setSyncMode(int syncMode);
 	void midi_setMidiMapPath(const std::string& midiMapPath);
 
-	const model::Behaviors& behaviors_getData() const;
+	const model_DEPR_::Behaviors& behaviors_getData() const;
 
-	void behaviors_storeData(const model::Behaviors&);
+	void behaviors_storeData(const model_DEPR_::Behaviors&);
 
 private:
-	model::Model&           m_model;
+	model_DEPR_::Model&           m_model;
 	KernelAudio&            m_kernelAudio;
 	KernelMidi&             m_kernelMidi;
 	MidiMapper<KernelMidi>& m_midiMapper;

@@ -24,33 +24,25 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "src/core/model/midiIn.h"
-#include "src/deps/mcl-utils/src/container.hpp"
+#ifndef G_MODEL_DEPR_LOADSTATE_H
+#define G_MODEL_DEPR_LOADSTATE_H
 
-namespace utils = mcl::utils;
+#include "src/core/patch.h"
+#include <unordered_set>
 
-namespace giada::m::model
+namespace giada::m::model_DEPR_
 {
-bool MidiIn::hasScene(uint32_t val) const
+/* LoadState
+Contains information about the model state after a patch has been loaded. */
+
+struct LoadState
 {
-	return utils::container::has(scenes, val);
-}
+	bool isGood() const;
 
-/* -------------------------------------------------------------------------- */
-
-Scene MidiIn::getScene(uint32_t val) const
-{
-	assert(hasScene(val));
-
-	return Scene{utils::container::indexOf(scenes, val)};
-}
-
-/* -------------------------------------------------------------------------- */
-
-void MidiIn::setScene(Scene scene, uint32_t val)
-{
-	assert(scene.getIndex() < scenes.size());
-
-	scenes[scene.getIndex()] = val;
-}
+	Patch                           patch;
+	std::vector<std::string>        missingWaves   = {};
+	std::unordered_set<std::string> missingPlugins = {};
+};
 } // namespace giada::m::model
+
+#endif

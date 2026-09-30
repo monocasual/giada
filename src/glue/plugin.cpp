@@ -28,7 +28,7 @@
 #include "src/core/engine.h"
 #include "src/core/kernelAudio.h"
 #include "src/core/mixer.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/plugins/pluginHost.h"
 #include "src/core/plugins/pluginManager.h"
 #include "src/glue/channel.h"

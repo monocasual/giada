@@ -27,7 +27,7 @@
 #include "src/core/engine.h"
 #include "src/core/conf.h"
 #include "src/core/confFactory.h"
-#include "src/core/model/model.h"
+#include "src/core/model_DEPR_/model.h"
 #include "src/core/rendering/midiOutput.h"
 #include "src/utils/fs.h"
 #include "src/utils/log.h"
@@ -246,10 +246,10 @@ Engine::Engine()
 
 		/* Rebuild UI when the scene has changed to update channels. */
 		assert(onModelSwap != nullptr);
-		onModelSwap(model::SwapType::HARD);
+		onModelSwap(model_DEPR_::SwapType::HARD);
 	};
 
-	m_model.onSwap = [this](model::SwapType t)
+	m_model.onSwap = [this](model_DEPR_::SwapType t)
 	{
 		assert(onModelSwap != nullptr);
 		onModelSwap(t);
@@ -277,7 +277,7 @@ void Engine::init(const Conf& conf)
 	m_model.init();
 	m_model.load(conf);
 
-	const model::Document& document = m_model.get();
+	const model_DEPR_::Document& document = m_model.get();
 
 	m_kernelAudio.init();
 
